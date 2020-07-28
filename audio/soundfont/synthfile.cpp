@@ -1,3 +1,24 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 /*
  * VGMTrans (c) 2002-2019
  * Licensed under the zlib license,
@@ -15,71 +36,44 @@ using namespace std;
 //DLS.
 //  **********************************************************************************
 
-SynthFile::SynthFile(Common::String synth_name) : name(synth_name) {}
+SynthFile::SynthFile(Common::String synth_name) : _name(synth_name) {}
 
 SynthFile::~SynthFile() {
-	DeleteVect(vInstrs);
-	DeleteVect(vWaves);
+	DeleteVect(_vInstrs);
+	DeleteVect(_vWaves);
 }
 
 SynthInstr *SynthFile::AddInstr(uint32 bank, uint32 instrNum) {
 	Common::String str = Common::String::format("Instr bnk%d num%d", bank, instrNum);
-	vInstrs.insert(vInstrs.end(), new SynthInstr(bank, instrNum, str));
-	return vInstrs.back();
+	_vInstrs.insert(_vInstrs.end(), new SynthInstr(bank, instrNum, str));
+	return _vInstrs.back();
 }
-
-SynthInstr *SynthFile::AddInstr(uint32 bank, uint32 instrNum, Common::String instrName) {
-	vInstrs.insert(vInstrs.end(), new SynthInstr(bank, instrNum, instrName));
-	return vInstrs.back();
-}
-
-void SynthFile::DeleteInstr(uint32 bank, uint32 instrNum) {}
 
 SynthWave *SynthFile::AddWave(uint16 formatTag, uint16 channels, int samplesPerSec,
 							  int aveBytesPerSec, uint16 blockAlign, uint16 bitsPerSample,
 							  uint32 waveDataSize, unsigned char *waveData, Common::String WaveName) {
-	vWaves.insert(vWaves.end(),
-				  new SynthWave(formatTag, channels, samplesPerSec, aveBytesPerSec, blockAlign,
+	_vWaves.insert(_vWaves.end(),
+				   new SynthWave(formatTag, channels, samplesPerSec, aveBytesPerSec, blockAlign,
 								bitsPerSample, waveDataSize, waveData, WaveName));
-	return vWaves.back();
+	return _vWaves.back();
 }
 
 //  **********
 //  SynthInstr
 //  **********
 
-SynthInstr::SynthInstr(uint32 bank, uint32 instrument)
-		: ulBank(bank), ulInstrument(instrument) {
-	name = Common::String::format("Instr bnk %d num %d", bank, instrument);
-	// RiffFile::AlignName(name);
-}
-
 SynthInstr::SynthInstr(uint32 bank, uint32 instrument, Common::String instrName)
-		: ulBank(bank), ulInstrument(instrument), name(instrName) {
+		: _ulBank(bank), _ulInstrument(instrument), _name(instrName) {
 	// RiffFile::AlignName(name);
-}
-
-SynthInstr::SynthInstr(uint32 bank, uint32 instrument, Common::String instrName,
-					   Common::Array<SynthRgn *> listRgns)
-		: ulBank(bank), ulInstrument(instrument), name(instrName) {
-	// RiffFile::AlignName(name);
-	vRgns = listRgns;
 }
 
 SynthInstr::~SynthInstr() {
-	DeleteVect(vRgns);
+	DeleteVect(_vRgns);
 }
 
 SynthRgn *SynthInstr::AddRgn(void) {
-	vRgns.insert(vRgns.end(), new SynthRgn());
-	return vRgns.back();
-}
-
-SynthRgn *SynthInstr::AddRgn(SynthRgn rgn) {
-	SynthRgn *newRgn = new SynthRgn();
-	*newRgn = rgn;
-	vRgns.insert(vRgns.end(), newRgn);
-	return vRgns.back();
+	_vRgns.insert(_vRgns.end(), new SynthRgn());
+	return _vRgns.back();
 }
 
 //  ********
@@ -87,35 +81,35 @@ SynthRgn *SynthInstr::AddRgn(SynthRgn rgn) {
 //  ********
 
 SynthRgn::~SynthRgn(void) {
-	if (sampinfo)
-		delete sampinfo;
-	if (art)
-		delete art;
+	if (_sampinfo)
+		delete _sampinfo;
+	if (_art)
+		delete _art;
 }
 
 SynthArt *SynthRgn::AddArt(void) {
-	art = new SynthArt();
-	return art;
+	_art = new SynthArt();
+	return _art;
 }
 
 SynthSampInfo *SynthRgn::AddSampInfo(void) {
-	sampinfo = new SynthSampInfo();
-	return sampinfo;
+	_sampinfo = new SynthSampInfo();
+	return _sampinfo;
 }
 
 void SynthRgn::SetRanges(uint16 keyLow, uint16 keyHigh, uint16 velLow, uint16 velHigh) {
-	usKeyLow = keyLow;
-	usKeyHigh = keyHigh;
-	usVelLow = velLow;
-	usVelHigh = velHigh;
+	_usKeyLow = keyLow;
+	_usKeyHigh = keyHigh;
+	_usVelLow = velLow;
+	_usVelHigh = velHigh;
 }
 
 void SynthRgn::SetWaveLinkInfo(uint16 options, uint16 phaseGroup, uint32 theChannel,
 							   uint32 theTableIndex) {
-	fusOptions = options;
-	usPhaseGroup = phaseGroup;
-	channel = theChannel;
-	tableIndex = theTableIndex;
+	_fusOptions = options;
+	_usPhaseGroup = phaseGroup;
+	_channel = theChannel;
+	_tableIndex = theTableIndex;
 }
 
 //  ********
@@ -127,17 +121,17 @@ SynthArt::~SynthArt() {
 
 void SynthArt::AddADSR(double attack, Transform atk_transform, double decay, double sustain_level,
 					   double sustain, double release, Transform rls_transform) {
-	this->attack_time = attack;
-	this->attack_transform = atk_transform;
-	this->decay_time = decay;
-	this->sustain_lev = sustain_level;
-	this->sustain_time = sustain;
-	this->release_time = release;
-	this->release_transform = rls_transform;
+	this->_attack_time = attack;
+	this->_attack_transform = atk_transform;
+	this->_decay_time = decay;
+	this->_sustain_lev = sustain_level;
+	this->_sustain_time = sustain;
+	this->_release_time = release;
+	this->_release_transform = rls_transform;
 }
 
 void SynthArt::AddPan(double thePan) {
-	this->pan = thePan;
+	this->_pan = thePan;
 }
 
 //  *************
@@ -145,28 +139,28 @@ void SynthArt::AddPan(double thePan) {
 //  *************
 
 void SynthSampInfo::SetLoopInfo(Loop &loop, VGMSamp *samp) {
-	const int origFormatBytesPerSamp = samp->bps / 8;
+	const int origFormatBytesPerSamp = samp->_bps / 8;
 	double compressionRatio = samp->GetCompressionRatio();
 
 	// If the sample loops, but the loop length is 0, then assume the length should
 	// extend to the end of the sample.
 	if (loop.loopStatus && loop.loopLength == 0)
-		loop.loopLength = samp->dataLength - loop.loopStart;
+		loop.loopLength = samp->_dataLength - loop.loopStart;
 
-	cSampleLoops = loop.loopStatus;
-	ulLoopType = loop.loopType;
-	ulLoopStart = (loop.loopStartMeasure == LM_BYTES)
+	_cSampleLoops = loop.loopStatus;
+	_ulLoopType = loop.loopType;
+	_ulLoopStart = (loop.loopStartMeasure == LM_BYTES)
 				  ? (uint32) ((loop.loopStart * compressionRatio) / origFormatBytesPerSamp)
 				  : loop.loopStart;
-	ulLoopLength = (loop.loopLengthMeasure == LM_BYTES)
+	_ulLoopLength = (loop.loopLengthMeasure == LM_BYTES)
 				   ? (uint32) ((loop.loopLength * compressionRatio) / origFormatBytesPerSamp)
 				   : loop.loopLength;
 }
 
 void SynthSampInfo::SetPitchInfo(uint16 unityNote, short fineTune, double atten) {
-	usUnityNote = unityNote;
-	sFineTune = fineTune;
-	attenuation = atten;
+	_usUnityNote = unityNote;
+	_sFineTune = fineTune;
+	_attenuation = atten;
 }
 
 //  *********
@@ -174,26 +168,26 @@ void SynthSampInfo::SetPitchInfo(uint16 unityNote, short fineTune, double atten)
 //  *********
 
 void SynthWave::ConvertTo16bitSigned() {
-	if (wBitsPerSample == 8) {
-		this->wBitsPerSample = 16;
-		this->wBlockAlign = 16 / 8 * this->wChannels;
-		this->dwAveBytesPerSec *= 2;
+	if (_wBitsPerSample == 8) {
+		this->_wBitsPerSample = 16;
+		this->_wBlockAlign = 16 / 8 * this->_wChannels;
+		this->_dwAveBytesPerSec *= 2;
 
-		int16 *newData = new int16[this->dataSize];
-		for (unsigned int i = 0; i < this->dataSize; i++)
-			newData[i] = ((int16) this->data[i] - 128) << 8;
-		delete[] this->data;
-		this->data = (uint8 *) newData;
-		this->dataSize *= 2;
+		int16 *newData = new int16[this->_dataSize];
+		for (unsigned int i = 0; i < this->_dataSize; i++)
+			newData[i] = ((int16) this->_data[i] - 128) << 8;
+		delete[] this->_data;
+		this->_data = (uint8 *) newData;
+		this->_dataSize *= 2;
 	}
 }
 
 SynthWave::~SynthWave() {
-	delete sampinfo;
-	delete[] data;
+	delete _sampinfo;
+	delete[] _data;
 }
 
 SynthSampInfo *SynthWave::AddSampInfo(void) {
-	sampinfo = new SynthSampInfo();
-	return sampinfo;
+	_sampinfo = new SynthSampInfo();
+	return _sampinfo;
 }

@@ -1,3 +1,24 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 /*
  * VGMTrans (c) 2002-2019
  * Licensed under the zlib license,
@@ -160,8 +181,8 @@ bool PSXSampColl::GetSampleInfo() {
 
 				PSXSamp *samp = new PSXSamp(this, beginOffset, i - beginOffset, beginOffset,
 											i - beginOffset - extraGunkLength, 1, 16, 44100,
-											Common::String::format("Sample %d", samples.size()));
-				samples.push_back(samp);
+											Common::String::format("Sample %d", _samples.size()));
+				_samples.push_back(samp);
 			} else {
 				break;
 			}
@@ -190,7 +211,7 @@ bool PSXSampColl::GetSampleInfo() {
 			PSXSamp *samp = new PSXSamp(this, _dwOffset + it->offset, it->size,
 										_dwOffset + it->offset, offSampEnd - offSampStart, 1, 16,
 										44100, Common::String::format("Sample %d", sampleIndex));
-			samples.push_back(samp);
+			_samples.push_back(samp);
 			sampleIndex++;
 		}
 	}
@@ -206,7 +227,7 @@ PSXSamp::PSXSamp(VGMSampColl *sampColl, uint32 offset, uint32 length, uint32 dat
 				 Common::String name, bool bSetloopOnConversion)
 		: VGMSamp(sampColl, offset, length, dataOffset, dataLen, nChannels, theBPS, theRate, name),
 		  _setLoopOnConversion(bSetloopOnConversion) {
-	bPSXLoopInfoPrioritizing = true;
+	_bPSXLoopInfoPrioritizing = true;
 }
 
 double PSXSamp::GetCompressionRatio() {
@@ -223,7 +244,7 @@ void PSXSamp::ConvertToStdWave(uint8 *buf) {
 		SetLoopStatus(0);  // loopStatus is initiated to -1.  We should default it now to not loop
 
 	bool addrOutOfVirtFile = false;
-	for (uint32 k = 0; k < dataLength; k += 0x10)  // for every adpcm chunk
+	for (uint32 k = 0; k < _dataLength; k += 0x10)  // for every adpcm chunk
 	{
 		if (_dwOffset + k + 16 > _vgmfile->GetEndOffset()) {
 			debug("Unexpected EOF (%s)", _name.c_str());
@@ -243,7 +264,7 @@ void PSXSamp::ConvertToStdWave(uint8 *buf) {
 		if (this->_setLoopOnConversion) {
 			if (theBlock.flag.loop) {
 				this->SetLoopOffset(k);
-				this->SetLoopLength(dataLength - k);
+				this->SetLoopLength(_dataLength - k);
 			}
 			if (theBlock.flag.end && theBlock.flag.looping) {
 				SetLoopStatus(1);

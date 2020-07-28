@@ -1,3 +1,24 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 /*
  * VGMTrans (c) 2002-2019
  * Licensed under the zlib license,
@@ -30,30 +51,28 @@ public:
 	// used to calculate both uncompressed sample size and loopOff after conversion
 	virtual void ConvertToStdWave(uint8 *buf) {};
 
-	inline void SetLoopStatus(int loopStat) { loop.loopStatus = loopStat; }
-	inline void SetLoopOffset(uint32 loopStart) { loop.loopStart = loopStart; }
-	inline void SetLoopLength(uint32 theLoopLength) { loop.loopLength = theLoopLength; }
+	inline void SetLoopStatus(int loopStat) { _loop.loopStatus = loopStat; }
+	inline void SetLoopOffset(uint32 loopStart) { _loop.loopStart = loopStart; }
+	inline void SetLoopLength(uint32 theLoopLength) { _loop.loopLength = theLoopLength; }
 
 public:
-	WAVE_TYPE waveType;
-	uint32 dataOff;  // offset of original sample data
-	uint32 dataLength;
-	uint16 bps;      // bits per sample
-	uint32 rate;     // sample rate in herz (samples per second)
-	uint8 channels;  // mono or stereo?
-	uint32 ulUncompressedSize;
+	WAVE_TYPE _waveType;
+	uint32 _dataOff;  // offset of original sample data
+	uint32 _dataLength;
+	uint16 _bps;      // bits per sample
+	uint32 _rate;     // sample rate in herz (samples per second)
+	uint8 _channels;  // mono or stereo?
+	uint32 _ulUncompressedSize;
 
-	bool bPSXLoopInfoPrioritizing;
-	Loop loop;
+	bool _bPSXLoopInfoPrioritizing;
+	Loop _loop;
 
-	int8 unityKey;
-	short fineTune;
-	double volume;  // as percent of full volume.  This will be converted to attenuation for SynthFile
+	int8 _unityKey;
+	short _fineTune;
+	double _volume;  // as percent of full volume.  This will be converted to attenuation for SynthFile
 
-	long pan;
-
-	VGMSampColl *parSampColl;
-	Common::String sampName;
+	VGMSampColl *_parSampColl;
+	Common::String _sampName;
 };
 
 class VGMSampColl : public VGMFile {
@@ -71,12 +90,12 @@ public:
 protected:
 
 public:
-	bool bLoaded;
+	bool _bLoaded;
 
-	uint32 sampDataOffset;  // offset of the beginning of the sample data.  Used for
+	uint32 _sampDataOffset;  // offset of the beginning of the sample data.  Used for
 	// rgn->sampOffset matching
-	VGMInstrSet *parInstrSet;
-	Common::Array<VGMSamp *> samples;
+	VGMInstrSet *_parInstrSet;
+	Common::Array<VGMSamp *> _samples;
 };
 
 #endif // AUDIO_SOUNDFONT_VGMSAMP_H

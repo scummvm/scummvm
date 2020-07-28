@@ -1,3 +1,24 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 /*
  * VGMTrans (c) 2002-2019
  * Licensed under the zlib license,
@@ -18,20 +39,20 @@
 //////////////////////////////////////////////
 class Chunk {
 public:
-	char id[4];     //  A chunk ID identifies the type of data within the chunk.
-	uint32 size;  //  The size of the chunk data in bytes, excluding any pad byte.
-	uint8 *data;  //  The actual data not including a possible pad byte to word align
+	char _id[4];     //  A chunk ID identifies the type of data within the chunk.
+	uint32 _size;  //  The size of the chunk data in bytes, excluding any pad byte.
+	uint8 *_data;  //  The actual data not including a possible pad byte to word align
 
 public:
-	Chunk(Common::String theId) : data(NULL), size(0) {
+	Chunk(Common::String theId) : _data(NULL), _size(0) {
 		assert(theId.size() == 4);
-		memcpy(id, theId.c_str(), 4);
+		memcpy(_id, theId.c_str(), 4);
 	}
 
 	virtual ~Chunk() {
-		if (data != NULL) {
-			delete[] data;
-			data = NULL;
+		if (_data != NULL) {
+			delete[] _data;
+			_data = NULL;
 		}
 	}
 
@@ -50,17 +71,17 @@ protected:
 ////////////////////////////////////////////////////////////////////////////
 class ListTypeChunk : public Chunk {
 public:
-	char type[4];  // 4 byte sig that begins the data field, "LIST" or "sfbk" for ex
-	Common::List<Chunk *> childChunks;
+	char _type[4];  // 4 byte sig that begins the data field, "LIST" or "sfbk" for ex
+	Common::List<Chunk *> _childChunks;
 
 public:
 	ListTypeChunk(Common::String theId, Common::String theType) : Chunk(theId) {
 		assert(theType.size() == 4);
-		memcpy(type, theType.c_str(), 4);
+		memcpy(_type, theType.c_str(), 4);
 	}
 
 	virtual ~ListTypeChunk() {
-		childChunks.erase(childChunks.begin(), childChunks.end());
+		_childChunks.erase(_childChunks.begin(), _childChunks.end());
 	}
 
 	Chunk *AddChildChunk(Chunk *ck);
@@ -107,7 +128,7 @@ public:
 	}
 
 protected:
-	Common::String name;
+	Common::String _name;
 };
 
 #endif // AUDIO_SOUNDFONT_RIFFFILE_H

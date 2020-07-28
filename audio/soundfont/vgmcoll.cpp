@@ -1,3 +1,24 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 /*
  * VGMTrans (c) 2002-2019
  * Licensed under the zlib license,
@@ -31,44 +52,44 @@ void VGMColl::UnpackSampColl(SynthFile &synthfile, VGMSampColl *sampColl,
 							 Common::Array<VGMSamp *> &finalSamps) {
 	assert(sampColl != nullptr);
 
-	size_t nSamples = sampColl->samples.size();
+	size_t nSamples = sampColl->_samples.size();
 	for (size_t i = 0; i < nSamples; i++) {
-		VGMSamp *samp = sampColl->samples[i];
+		VGMSamp *samp = sampColl->_samples[i];
 
 		uint32 bufSize;
-		if (samp->ulUncompressedSize)
-			bufSize = samp->ulUncompressedSize;
+		if (samp->_ulUncompressedSize)
+			bufSize = samp->_ulUncompressedSize;
 		else
-			bufSize = (uint32) ceil((double) samp->dataLength * samp->GetCompressionRatio());
+			bufSize = (uint32) ceil((double) samp->_dataLength * samp->GetCompressionRatio());
 
 		uint8 *uncompSampBuf =
 				new uint8[bufSize];  // create a new memory space for the uncompressed wave
 		samp->ConvertToStdWave(uncompSampBuf);  // and uncompress into that space
 
-		uint16 blockAlign = samp->bps / 8 * samp->channels;
+		uint16 blockAlign = samp->_bps / 8 * samp->_channels;
 		SynthWave *wave =
-				synthfile.AddWave(1, samp->channels, samp->rate, samp->rate * blockAlign, blockAlign,
-								  samp->bps, bufSize, uncompSampBuf, (samp->_name));
+				synthfile.AddWave(1, samp->_channels, samp->_rate, samp->_rate * blockAlign, blockAlign,
+								  samp->_bps, bufSize, uncompSampBuf, (samp->_name));
 		finalSamps.push_back(samp);
 
 		// If we don't have any loop information, then don't create a sampInfo structure for the
 		// Wave
-		if (samp->loop.loopStatus == -1) {
+		if (samp->_loop.loopStatus == -1) {
 			debug("No loop information for %s - some parameters might be incorrect",
-				  samp->sampName.c_str());
+				  samp->_sampName.c_str());
 			return;
 		}
 
 		SynthSampInfo *sampInfo = wave->AddSampInfo();
-		if (samp->bPSXLoopInfoPrioritizing) {
-			if (samp->loop.loopStart != 0 || samp->loop.loopLength != 0)
-				sampInfo->SetLoopInfo(samp->loop, samp);
+		if (samp->_bPSXLoopInfoPrioritizing) {
+			if (samp->_loop.loopStart != 0 || samp->_loop.loopLength != 0)
+				sampInfo->SetLoopInfo(samp->_loop, samp);
 		} else
-			sampInfo->SetLoopInfo(samp->loop, samp);
+			sampInfo->SetLoopInfo(samp->_loop, samp);
 
-		double attenuation = (samp->volume != -1) ? ConvertLogScaleValToAtten(samp->volume) : 0;
-		uint8 unityKey = (samp->unityKey != -1) ? samp->unityKey : 0x3C;
-		short fineTune = samp->fineTune;
+		double attenuation = (samp->_volume != -1) ? ConvertLogScaleValToAtten(samp->_volume) : 0;
+		uint8 unityKey = (samp->_unityKey != -1) ? samp->_unityKey : 0x3C;
+		short fineTune = samp->_fineTune;
 		sampInfo->SetPitchInfo(unityKey, fineTune, attenuation);
 	}
 }
@@ -156,7 +177,7 @@ SynthFile *VGMColl::CreateSynthFile(VGMInstrSet *theInstrSet) {
 				//   now we add the number of samples from the preceding SampColls to the value to
 				//   get the real sampNum in the final DLS file.
 				for (uint32 k = 0; k < sampCollNum; k++)
-					realSampNum += finalSampColls[k]->samples.size();
+					realSampNum += finalSampColls[k]->_samples.size();
 
 				SynthRgn *newRgn = newInstr->AddRgn();
 				newRgn->SetRanges(rgn->_keyLow, rgn->_keyHigh, rgn->_velLow, rgn->_velHigh);
@@ -176,34 +197,32 @@ SynthFile *VGMColl::CreateSynthFile(VGMInstrSet *theInstrSet) {
 				// loopStatus to determine if a loop occurs.  If it does, see if the sample provides
 				// loop info (gathered during ADPCM > PCM conversion.  If the sample doesn't provide
 				// loop offset info, then use the region's loop info.
-				if (samp->bPSXLoopInfoPrioritizing) {
-					if (samp->loop.loopStatus != -1) {
-						if (samp->loop.loopStart != 0 || samp->loop.loopLength != 0)
-							sampInfo->SetLoopInfo(samp->loop, samp);
+				if (samp->_bPSXLoopInfoPrioritizing) {
+					if (samp->_loop.loopStatus != -1) {
+						if (samp->_loop.loopStart != 0 || samp->_loop.loopLength != 0)
+							sampInfo->SetLoopInfo(samp->_loop, samp);
 						else {
-							rgn->_loop.loopStatus = samp->loop.loopStatus;
+							rgn->_loop.loopStatus = samp->_loop.loopStatus;
 							sampInfo->SetLoopInfo(rgn->_loop, samp);
 						}
 					} else {
-						delete synthfile;
-						error("argh"); //TODO
+						error("_bPSXLoopInfoPrioritizing: Invalid sample loop status");
 					}
 				}
 					// The normal method: First, we check if the rgn has loop info defined.
 					// If it doesn't, then use the sample's loop info.
 				else if (rgn->_loop.loopStatus == -1) {
-					if (samp->loop.loopStatus != -1)
-						sampInfo->SetLoopInfo(samp->loop, samp);
+					if (samp->_loop.loopStatus != -1)
+						sampInfo->SetLoopInfo(samp->_loop, samp);
 					else {
-						delete synthfile;
-						error("argh2"); //TODO
+						error("Invalid sample loop status");
 					}
 				} else
 					sampInfo->SetLoopInfo(rgn->_loop, samp);
 
 				int8 realUnityKey = -1;
 				if (rgn->_unityKey == -1)
-					realUnityKey = samp->unityKey;
+					realUnityKey = samp->_unityKey;
 				else
 					realUnityKey = rgn->_unityKey;
 				if (realUnityKey == -1)
@@ -211,15 +230,15 @@ SynthFile *VGMColl::CreateSynthFile(VGMInstrSet *theInstrSet) {
 
 				short realFineTune;
 				if (rgn->_fineTune == 0)
-					realFineTune = samp->fineTune;
+					realFineTune = samp->_fineTune;
 				else
 					realFineTune = rgn->_fineTune;
 
 				double attenuation;
 				if (rgn->_volume != -1)
 					attenuation = ConvertLogScaleValToAtten(rgn->_volume);
-				else if (samp->volume != -1)
-					attenuation = ConvertLogScaleValToAtten(samp->volume);
+				else if (samp->_volume != -1)
+					attenuation = ConvertLogScaleValToAtten(samp->_volume);
 				else
 					attenuation = 0;
 
