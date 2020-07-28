@@ -463,7 +463,7 @@ void Actor::teleport(int newmap, int32 newx, int32 newy, int32 newz) {
 }
 
 uint16 Actor::doAnim(Animation::Sequence anim, int dir, unsigned int steps) {
-	if (dir < 0 || dir > 8) {
+	if (dir < 0 || dir > 16) {
 		perr << "Actor::doAnim: Invalid _direction (" << dir << ")" << Std::endl;
 		return 0;
 	}
@@ -489,9 +489,10 @@ bool Actor::hasAnim(Animation::Sequence anim) {
 
 Animation::Result Actor::tryAnim(Animation::Sequence anim, int dir,
                                  unsigned int steps, PathfindingState *state) {
-	if (dir < 0 || dir > 8) return Animation::FAILURE;
+	if (dir < 0 || dir > 16) return Animation::FAILURE;
 
-	if (dir == 8) dir = getDir();
+	if (dir == dir_current)
+		dir = getDir();
 
 	AnimationTracker tracker;
 	if (!tracker.init(this, anim, dir, state))
@@ -597,7 +598,7 @@ uint16 Actor::setActivityU8(int activity) {
 		return 0;
 	case 2: // stand
 		// NOTE: temporary fall-throughs!
-		return doAnim(Animation::stand, 8);
+		return doAnim(Animation::stand, dir_current);
 
 	default:
 		perr << "Actor::setActivityU8: invalid activity (" << activity << ")"
@@ -616,7 +617,7 @@ uint16 Actor::setActivityCru(int activity) {
 
 	switch (activity) {
 	case 1: // stand
-		return doAnim(Animation::stand, 8);
+		return doAnim(Animation::stand, dir_current);
 	case 3: // pace
 		perr << "Actor::setActivityCru TODO: Implement new PaceProcess(this);" << Std::endl;
 		return Kernel::get_instance()->addProcess(new LoiterProcess(this));
@@ -651,7 +652,7 @@ uint16 Actor::setActivityCru(int activity) {
 	default:
 		perr << "Actor::setActivityCru: invalid activity (" << activity << ")"
 		     << Std::endl;
-		return doAnim(Animation::stand, 8);
+		return doAnim(Animation::stand, dir_current);
 	}
 
 	return 0;
@@ -751,8 +752,8 @@ void Actor::receiveHitCru(uint16 other, int dir, int damage, uint16 damage_type)
 		// TODO: Finish special case for Vargas.  Should not do any damage
 		// if there is a particular anim process running.  Also, check if the
 		// same special case exists in REGRET.
-		doAnim(static_cast<Animation::Sequence>(0x21), getDir());
-		doAnim(static_cast<Animation::Sequence>(0x20), getDir());
+		doAnim(static_cast<Animation::Sequence>(0x21), dir_current);
+		doAnim(static_cast<Animation::Sequence>(0x20), dir_current);
 		_hitPoints -= damage;
 		return;
 	}
@@ -824,7 +825,7 @@ void Actor::receiveHitCru(uint16 other, int dir, int damage, uint16 damage_type)
 		if (damage_type == 0xf || damage_type == 7) {
 			if (shape == 1) {
 				kernel->killProcesses(_objId, 0x204, true);
-				doAnim(static_cast<Animation::Sequence>(0x37), getDir());
+				doAnim(static_cast<Animation::Sequence>(0x37), dir_current);
 			} else if (shape == 0x4e6 || shape == 0x338 || shape == 0x385 || shape == 899) {
 				if (!(getRandom() % 3)) {
 					// Randomly stun the NPC for these damage types.
@@ -915,7 +916,7 @@ void Actor::receiveHitU8(uint16 other, int dir, int damage, uint16 damage_type) 
 	if (_objId == 1 && damage > 0) {
 		if ((damage_type & WeaponInfo::DMG_FALLING) && damage >= 6) {
 			// high falling damage knocks you down
-			doAnim(Animation::fallBackwards, 8);
+			doAnim(Animation::fallBackwards, dir_current);
 
 			// TODO: shake head after getting back up when not in combat
 			return;
@@ -927,8 +928,8 @@ void Actor::receiveHitU8(uint16 other, int dir, int damage, uint16 damage_type) 
 
 	// if avatar was blocking; do a quick stopBlock/startBlock and play SFX
 	if (_objId == 1 && getLastAnim() == Animation::startBlock) {
-		ProcId anim1pid = doAnim(Animation::stopBlock, 8);
-		ProcId anim2pid = doAnim(Animation::startBlock, 8);
+		ProcId anim1pid = doAnim(Animation::stopBlock, dir_current);
+		ProcId anim2pid = doAnim(Animation::startBlock, dir_current);
 
 		Process *anim1proc = Kernel::get_instance()->getProcess(anim1pid);
 		Process *anim2proc = Kernel::get_instance()->getProcess(anim2pid);
@@ -995,7 +996,7 @@ ProcId Actor::die(uint16 damageType) {
 #endif
 
 	if (!animprocid)
-		animprocid = doAnim(Animation::die, getDir());
+		animprocid = doAnim(Animation::die, dir_current);
 
 
 	MainActor *avatar = getMainActor();
@@ -1029,7 +1030,7 @@ ProcId Actor::die(uint16 damageType) {
 		Process *delayproc = new DelayProcess(timeout);
 		Kernel::get_instance()->addProcess(delayproc);
 
-		ProcId animpid = doAnim(Animation::standUp, 8);
+		ProcId animpid = doAnim(Animation::standUp, dir_current);
 		Process *animproc = Kernel::get_instance()->getProcess(animpid);
 		assert(animproc);
 
@@ -1798,11 +1799,11 @@ uint32 Actor::I_setFeignDeath(const uint8 *args, unsigned int /*argsize*/) {
 
 	actor->setActorFlag(ACT_FEIGNDEATH);
 
-	ProcId animfallpid = actor->doAnim(Animation::die, 8);
+	ProcId animfallpid = actor->doAnim(Animation::die, dir_current);
 	Process *animfallproc = Kernel::get_instance()->getProcess(animfallpid);
 	assert(animfallproc);
 
-	ProcId animstandpid = actor->doAnim(Animation::standUp, 8);
+	ProcId animstandpid = actor->doAnim(Animation::standUp, dir_current);
 	Process *animstandproc = Kernel::get_instance()->getProcess(animstandpid);
 	assert(animstandproc);
 

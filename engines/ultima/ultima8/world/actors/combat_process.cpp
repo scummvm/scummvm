@@ -34,6 +34,7 @@
 #include "ultima/ultima8/world/actors/pathfinder_process.h"
 #include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/world/actors/monster_info.h"
+#include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/actors/loiter_process.h"
 #include "ultima/ultima8/world/actors/ambush_process.h"
@@ -120,12 +121,12 @@ void CombatProcess::run() {
 				else
 					idleanim = Animation::idle2;
 			}
-			uint16 idlepid = a->doAnim(idleanim, 8);
+			uint16 idlepid = a->doAnim(idleanim, dir_current);
 			waitFor(idlepid);
 		} else {
 
 			// attack
-			ProcId attackanim = a->doAnim(Animation::attack, 8);
+			ProcId attackanim = a->doAnim(Animation::attack, dir_current);
 
 			// wait a while, depending on dexterity, before attacking again
 			int dex = a->getDex();
@@ -312,10 +313,10 @@ void CombatProcess::waitForTarget() {
 
 		// shift into a tree if nobody is around
 
-		ProcId shift1pid = a->doAnim(static_cast<Animation::Sequence>(20), 8);
+		ProcId shift1pid = a->doAnim(static_cast<Animation::Sequence>(20), dir_current);
 		Process *ambushproc = new AmbushProcess(a);
 		ProcId ambushpid = Kernel::get_instance()->addProcess(ambushproc);
-		ProcId shift2pid = a->doAnim(static_cast<Animation::Sequence>(21), 8);
+		ProcId shift2pid = a->doAnim(static_cast<Animation::Sequence>(21), dir_current);
 		Process *shift2proc = Kernel::get_instance()->getProcess(shift2pid);
 
 		ambushproc->waitFor(shift1pid);

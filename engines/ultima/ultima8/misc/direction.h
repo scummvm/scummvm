@@ -30,14 +30,15 @@ namespace Ultima8 {
  *  Directions:
  */
 enum Direction {
-	north = 0,
-	northeast = 1,
-	east = 2,
-	southeast = 3,
-	south = 4,
-	southwest = 5,
-	west = 6,
-	northwest = 7
+	dir_north = 0,
+	dir_northeast = 1,
+	dir_east = 2,
+	dir_southeast = 3,
+	dir_south = 4,
+	dir_southwest = 5,
+	dir_west = 6,
+	dir_northwest = 7,
+	dir_current = 16
 };
 
 /*
@@ -60,40 +61,40 @@ static const int y_fact16[] = { -2, -2, -2, -1,  0, +1, +2, +2, +2, +2, +2, +1, 
 
 inline Direction Get_direction(int deltay, int deltax) {
 	if (deltax == 0)
-		return deltay > 0 ? northwest : southeast;
+		return deltay > 0 ? dir_northwest : dir_southeast;
 	int dydx = (1024 * deltay) / deltax; // Figure 1024*tan.
 	if (dydx >= 0)
 		if (deltax > 0) // Top-right
-			return dydx <= 424 ? northeast : dydx <= 2472 ? north
-			       : northwest;
+			return dydx <= 424 ? dir_northeast : dydx <= 2472 ? dir_north
+			       : dir_northwest;
 		else            // Bottom-left.
-			return dydx <= 424 ? southwest : dydx <= 2472 ? south
-			       : southeast;
+			return dydx <= 424 ? dir_southwest : dydx <= 2472 ? dir_south
+			       : dir_southeast;
 	else if (deltax > 0) // Bottom-right.
-		return dydx >= -424 ? northeast : dydx >= -2472 ? east
-		       : southeast;
+		return dydx >= -424 ? dir_northeast : dydx >= -2472 ? dir_east
+		       : dir_southeast;
 	else            // Top-left
-		return dydx >= -424 ? southwest : dydx >= -2472 ? west
-		       : northwest;
+		return dydx >= -424 ? dir_southwest : dydx >= -2472 ? dir_west
+		       : dir_northwest;
 }
 
 
 inline Direction Get_WorldDirection(int deltay, int deltax) {
 	if (deltax == 0) {
-		if (deltay == 0) return northeast; // for better compatibility with U8
-		return deltay > 0 ? south : north;
+		if (deltay == 0) return dir_northeast; // for better compatibility with U8
+		return deltay > 0 ? dir_south : dir_north;
 	}
 	int dydx = (1024 * deltay) / deltax;
 
 	if (dydx >= 0)
 		if (deltax > 0) // south-east
-			return dydx <= 424 ? east : dydx <= 2472 ? southeast : south;
+			return dydx <= 424 ? dir_east : dydx <= 2472 ? dir_southeast : dir_south;
 		else            // north-west
-			return dydx <= 424 ? west : dydx <= 2472 ? northwest : north;
+			return dydx <= 424 ? dir_west : dydx <= 2472 ? dir_northwest : dir_north;
 	else if (deltax > 0) // north-east
-		return dydx >= -424 ? east : dydx >= -2472 ? northeast : north;
+		return dydx >= -424 ? dir_east : dydx >= -2472 ? dir_northeast : dir_north;
 	else            // south-west
-		return dydx >= -424 ? west : dydx >= -2472 ? southwest : south;
+		return dydx >= -424 ? dir_west : dydx >= -2472 ? dir_southwest : dir_south;
 }
 
 inline Direction Get_WorldDirectionClosestInRange(int deltay, int deltax, uint16 ndirs, uint16 mindir, uint16 maxdir) {

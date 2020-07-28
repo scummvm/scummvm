@@ -85,10 +85,10 @@ bool ActorAnimProcess::init() {
 	Actor *actor = getActor(_itemNum);
 	assert(actor);
 
-	if (_dir == 8)
+	if (_dir == dir_current)
 		_dir = actor->getDir();
 
-	if (_dir > 7) {
+	if ((GAME_IS_U8 && _dir > 7) || (GAME_IS_CRUSADER && _dir > 15)) {
 		// invalid direction
 		return false;
 	}

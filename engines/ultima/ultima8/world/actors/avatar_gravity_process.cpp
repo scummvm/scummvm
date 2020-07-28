@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
-
+#include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/world/actors/avatar_gravity_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/world.h"
@@ -62,7 +62,7 @@ void AvatarGravityProcess::run() {
 		// CHECKME: do we need to perform any other checks?
 
 		if (avatar->getLastAnim() != Animation::hang)
-			avatar->doAnim(Animation::hang, 8);
+			avatar->doAnim(Animation::hang, dir_current);
 
 		return;
 	} else {

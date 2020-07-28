@@ -119,9 +119,9 @@ void AvatarMoverProcess::handleHangingMode() {
 		_mouseButton[0]._lastDown = 0;
 		MainActor *avatar = getMainActor();
 
-		if (avatar->tryAnim(Animation::climb40, 8) == Animation::SUCCESS) {
+		if (avatar->tryAnim(Animation::climb40, dir_current) == Animation::SUCCESS) {
 			avatar->ensureGravityProcess()->terminate();
-			waitFor(avatar->doAnim(Animation::climb40, 8));
+			waitFor(avatar->doAnim(Animation::climb40, dir_current));
 		}
 	}
 }
