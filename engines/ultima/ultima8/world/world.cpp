@@ -32,6 +32,7 @@
 #include "ultima/ultima8/world/loop_script.h"
 #include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/misc/id_man.h"
+#include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/object_manager.h"
@@ -280,7 +281,7 @@ void World::loadItemCachNPCData(Common::SeekableReadStream *itemcach, Common::Se
 		actor->setDex(npcds->readByte()); // 0x01: dexterity
 		actor->setInt(npcds->readByte()); // 0x02: intelligence
 		actor->setHP(npcds->readByte());  // 0x03: hitpoints
-		actor->setDir(static_cast<Direction>(npcds->readByte())); // 0x04: direction
+		actor->setDir(Direction_FromUsecodeDir(npcds->readByte())); // 0x04: direction
 		uint16 la = npcds->readUint16LE();    // 0x05,0x06: last anim
 		actor->setLastAnim(static_cast<Animation::Sequence>(la));
 		npcds->skip(1); // 0x07: high byte of framenum

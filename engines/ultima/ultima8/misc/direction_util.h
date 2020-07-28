@@ -24,6 +24,7 @@
 #define ULTIMA8_MISC_DIRECTIONUTIL_H
 
 #include "ultima/ultima8/misc/direction.h"
+#include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -121,9 +122,19 @@ inline Direction Direction_GetWorldDirInRange(int deltay, int deltax, uint16 ndi
 }
 
 inline Direction Direction_Invert(Direction dir) {
-	// TODO: support 16 dirs here.
 	assert(dir != dir_current);
-	return static_cast<Direction>((static_cast<int>(dir) + 4) % 8);
+	// TODO: Will need to add more cases for 16 dir support.
+	switch (dir) {
+		case dir_north:		return dir_south;
+		case dir_northeast:	return dir_southwest;
+		case dir_east:		return dir_west;
+		case dir_southeast:	return dir_northwest;
+		case dir_south:		return dir_north;
+		case dir_southwest:	return dir_northeast;
+		case dir_west:		return dir_east;
+		case dir_northwest:	return dir_southeast;
+		default:			return dir_north;
+	}
 }
 
 //! Return the direction one left (aka counter-clockwise) of the input
@@ -139,8 +150,7 @@ inline Direction Direction_OneRight(Direction dir) {
 }
 
 inline Direction Direction_TurnByDelta(Direction dir, int delta) {
-	// TODO: support 16 dirs here.
-	return static_cast<Direction>((static_cast<int>(dir) + delta + 8) % 8);
+	return delta == 1 ? Direction_OneRight(dir) : Direction_OneLeft(dir);
 }
 
 //! Get a turn delta (-1 for left, +1 for right) to turn the fastest
@@ -150,6 +160,24 @@ inline int Direction_GetShorterTurnDelta(Direction from, Direction to) {
 	if ((from - to + 8) % 8 < 4)
 		return -1;
 	return 1;
+}
+
+inline int Direction_ToUsecodeDir(Direction dir) {
+	// TODO: Will need changing when we support 16 dirs
+	if (GAME_IS_U8) {
+		return static_cast<int32>(dir);
+	} else {
+		return static_cast<int32>(dir) * 2;
+	}
+}
+
+inline Direction Direction_FromUsecodeDir(int dir) {
+	// TODO: Will need changing when we support 16 dirs
+	if (GAME_IS_U8) {
+		return static_cast<Direction>(dir);
+	} else {
+		return static_cast<Direction>(dir / 2);
+	}
 }
 
 } // End of namespace Ultima8

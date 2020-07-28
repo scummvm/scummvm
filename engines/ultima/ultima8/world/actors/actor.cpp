@@ -1467,7 +1467,7 @@ uint32 Actor::I_doAnim(const uint8 *args, unsigned int /*argsize*/) {
 
 	if (!actor) return 0;
 
-	return actor->doAnim(static_cast<Animation::Sequence>(anim), static_cast<Direction>(dir));
+	return actor->doAnim(static_cast<Animation::Sequence>(anim), Direction_FromUsecodeDir(dir));
 }
 
 uint32 Actor::I_getDir(const uint8 *args, unsigned int /*argsize*/) {
@@ -1948,7 +1948,7 @@ uint32 Actor::I_createActorCru(const uint8 *args, unsigned int /*argsize*/) {
 		return 0;
 	}
 
-	newactor->setDir(static_cast<Direction>(dir));
+	newactor->setDir(Direction_FromUsecodeDir(dir));
 
 	int32 x, y, z;
 	item->getLocation(x, y, z);
@@ -2137,8 +2137,7 @@ uint32 Actor::I_turnToward(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(dir);
 	ARG_UINT16(unk);
 
-	// FIXME: This is hacked to be the 8 dir version..
-	return actor->turnTowardDir(static_cast<Direction>(dir / 2));
+	return actor->turnTowardDir(Direction_FromUsecodeDir(dir));
 }
 
 

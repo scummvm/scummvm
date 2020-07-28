@@ -3276,10 +3276,7 @@ uint32 Item::I_getDirToCoords(const uint8 *args, unsigned int /*argsize*/) {
 	int32 ix, iy, iz;
 	item->getLocationAbsolute(ix, iy, iz);
 
-	uint32 retval = static_cast<uint32>(Direction_GetWorldDir(y - iy, x - ix));
-	if (GAME_IS_CRUSADER)
-		retval *= 2;
-	return retval;
+	return Direction_ToUsecodeDir(Direction_GetWorldDir(y - iy, x - ix));
 }
 
 uint32 Item::I_getDirFromCoords(const uint8 *args, unsigned int /*argsize*/) {
@@ -3296,10 +3293,7 @@ uint32 Item::I_getDirFromCoords(const uint8 *args, unsigned int /*argsize*/) {
 	int32 ix, iy, iz;
 	item->getLocationAbsolute(ix, iy, iz);
 
-	uint32 retval = static_cast<uint32>(Direction_GetWorldDir(iy - y, ix - x));
-	if (GAME_IS_CRUSADER)
-		retval *= 2;
-	return retval;
+	return Direction_ToUsecodeDir(Direction_GetWorldDir(iy - y, ix - x));
 }
 
 uint32 Item::I_getDirToItem(const uint8 *args, unsigned int /*argsize*/) {
@@ -3314,10 +3308,7 @@ uint32 Item::I_getDirToItem(const uint8 *args, unsigned int /*argsize*/) {
 	int32 i2x, i2y, i2z;
 	item2->getLocationAbsolute(i2x, i2y, i2z);
 
-	uint32 retval = static_cast<uint32>(Direction_GetWorldDir(i2y - iy, i2x - ix));
-	if (GAME_IS_CRUSADER)
-		retval *= 2;
-	return retval;
+	return Direction_ToUsecodeDir(Direction_GetWorldDir(i2y - iy, i2x - ix));
 }
 
 uint32 Item::I_getDirFromItem(const uint8 *args, unsigned int /*argsize*/) {
@@ -3332,10 +3323,7 @@ uint32 Item::I_getDirFromItem(const uint8 *args, unsigned int /*argsize*/) {
 	int32 i2x, i2y, i2z;
 	item2->getLocationAbsolute(i2x, i2y, i2z);
 
-	uint32 retval = static_cast<uint32>(Direction_Invert(Direction_GetWorldDir(i2y - iy, i2x - ix)));
-	if (GAME_IS_CRUSADER)
-		retval *= 2;
-	return retval;
+	return Direction_ToUsecodeDir(Direction_Invert(Direction_GetWorldDir(i2y - iy, i2x - ix)));
 }
 
 uint32 Item::I_getDirFromTo16(const uint8 *args, unsigned int /*argsize*/) {
@@ -3347,9 +3335,7 @@ uint32 Item::I_getDirFromTo16(const uint8 *args, unsigned int /*argsize*/) {
 	if (x1 == x2 && y1 == y2)
 		return 16;
 
-	// TODO: Implement proper 16 directions here.
-	uint32 retval = static_cast<uint32>(Direction_GetWorldDir(y2 - y1, x2 - x1));
-	return retval * 2;
+	return Direction_ToUsecodeDir(Direction_GetWorldDir(y2 - y1, x2 - x1));
 }
 
 uint32 Item::I_getClosestDirectionInRange(const uint8 *args, unsigned int /*argsize*/) {
@@ -3361,7 +3347,7 @@ uint32 Item::I_getClosestDirectionInRange(const uint8 *args, unsigned int /*args
 	ARG_UINT16(mindir);
 	ARG_UINT16(maxdir);
 
-	return Direction_GetWorldDirInRange(y2 - y1, x2 - x1, ndirs, mindir, maxdir);
+	return Direction_ToUsecodeDir(Direction_GetWorldDirInRange(y2 - y1, x2 - x1, ndirs, mindir, maxdir));
 }
 
 uint32 Item::I_hurl(const uint8 *args, unsigned int /*argsize*/) {
@@ -3490,7 +3476,7 @@ uint32 Item::I_receiveHit(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(type); // hit type
 	if (!item) return 0;
 
-	item->receiveHit(other, static_cast<Direction>(dir), damage, type);
+	item->receiveHit(other, Direction_FromUsecodeDir(dir), damage, type);
 
 	return 0;
 }
@@ -3629,7 +3615,7 @@ uint32 Item::I_fireWeapon(const uint8 *args, unsigned int /*argsize*/) {
 
 	if (!item) return 0;
 
-	return item->fireWeapon(x * 2, y * 2, z, static_cast<Direction>(dir), firetype, unkflag);
+	return item->fireWeapon(x * 2, y * 2, z, Direction_FromUsecodeDir(dir), firetype, unkflag);
 }
 
 } // End of namespace Ultima8
