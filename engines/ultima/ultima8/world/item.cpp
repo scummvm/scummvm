@@ -3344,10 +3344,13 @@ uint32 Item::I_getClosestDirectionInRange(const uint8 *args, unsigned int /*args
 	ARG_UINT16(x2);
 	ARG_UINT16(y2);
 	ARG_UINT16(ndirs);
-	ARG_UINT16(mindir);
-	ARG_UINT16(maxdir);
+	ARG_UINT16(mind);
+	ARG_UINT16(maxd);
 
-	return Direction_ToUsecodeDir(Direction_GetWorldDirInRange(y2 - y1, x2 - x1, ndirs, mindir, maxdir));
+	Direction mindir = Direction_FromUsecodeDir(mind);
+	Direction maxdir = Direction_FromUsecodeDir(maxd);
+	Direction result = Direction_GetWorldDirInRange(y2 - y1, x2 - x1, ndirs, mindir, maxdir);
+	return Direction_ToUsecodeDir(result);
 }
 
 uint32 Item::I_hurl(const uint8 *args, unsigned int /*argsize*/) {

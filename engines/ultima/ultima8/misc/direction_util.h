@@ -83,12 +83,10 @@ inline Direction Direction_GetWorldDir(int deltay, int deltax) {
 		return dydx >= -424 ? dir_west : dydx >= -2472 ? dir_southwest : dir_south;
 }
 
-inline Direction Direction_GetWorldDirInRange(int deltay, int deltax, uint16 ndirs, uint16 mindir, uint16 maxdir) {
-	// TODO: Implement proper 16 directions here.
-	uint32 dir = static_cast<uint32>(Direction_GetWorldDir(deltay, deltax));
-	if (ndirs == 16) {
-		dir *= 2;
-	}
+inline Direction Direction_GetWorldDirInRange(int deltay, int deltax, uint16 ndirs, Direction mindir, Direction maxdir) {
+	// TODO: Implement 16 directions here.
+	ndirs = 8;
+	Direction dir = Direction_GetWorldDir(deltay, deltax);
 
 	if ((dir < mindir) || (dir > maxdir)) {
 		int32 dmin1 = dir - mindir;
@@ -112,13 +110,13 @@ inline Direction Direction_GetWorldDirInRange(int deltay, int deltax, uint16 ndi
 		int32 dist_to_max = MIN(dmax1, dmax2);
 
 		if (dist_to_min < dist_to_max) {
-			return static_cast<Direction>(mindir);
+			return mindir;
 		} else {
-			return static_cast<Direction>(maxdir);
+			return maxdir;
 		}
 	}
 
-	return static_cast<Direction>(dir);
+	return dir;
 }
 
 inline Direction Direction_Invert(Direction dir) {
@@ -162,7 +160,7 @@ inline int Direction_GetShorterTurnDelta(Direction from, Direction to) {
 	return 1;
 }
 
-inline int Direction_ToUsecodeDir(Direction dir) {
+inline uint32 Direction_ToUsecodeDir(Direction dir) {
 	// TODO: Will need changing when we support 16 dirs
 	if (GAME_IS_U8) {
 		return static_cast<int32>(dir);
@@ -171,7 +169,7 @@ inline int Direction_ToUsecodeDir(Direction dir) {
 	}
 }
 
-inline Direction Direction_FromUsecodeDir(int dir) {
+inline Direction Direction_FromUsecodeDir(uint32 dir) {
 	// TODO: Will need changing when we support 16 dirs
 	if (GAME_IS_U8) {
 		return static_cast<Direction>(dir);
