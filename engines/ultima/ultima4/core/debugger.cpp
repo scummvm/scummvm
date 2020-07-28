@@ -170,7 +170,7 @@ bool Debugger::handleCommand(int argc, const char **argv, bool &keepRunning) {
 	static const char *COMBAT_DISALLOWED[] = {
 		"board", "climb", "descend", "enter", "exit", "fire", "hole",
 		"ignite", "jimmy", "mix", "order", "open", "peer", "quitAndSave",
-		"search", "use", "wear", "yell", nullptr
+		"search", "wear", "yell", nullptr
 	};
 
 	if (g_context && g_context->_location) {
