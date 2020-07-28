@@ -33,7 +33,6 @@ public:
 	WWSurface(int width, int height);
 	WWSurface(const Graphics::Surface *sourceSurface);
 	~WWSurface();
-	void drawSurfaceIntern(const Graphics::Surface *surface, int x, int y, bool transparent);
 	void drawSurface(const Graphics::Surface *surface, int x, int y);
 	void drawSurfaceTransparent(const Graphics::Surface *surface, int x, int y);
 	void scaleSurface(const Graphics::Surface *surface);
@@ -76,9 +75,8 @@ public:
 	void drawText(GFTFont *font, const char *text, int x, int y, byte color);
 	void drawWrappedText(GFTFont *font, const char *text, int x, int y, int maxWidth, byte color);
 protected:
-	WWSurface *_surface;
+	Graphics::Surface *_vgaSurface;
 	int _lockCtr;
-	void updateScreen();
 };
 
 class ScreenEffect {
@@ -92,7 +90,10 @@ protected:
 	int _x, _y;
 	int _grainWidth, _grainHeight;
 	int _blockCountW, _blockCountH;
-	int _blockCtr, _blockUpdateCtr;
+	int _blockCtr;
+	uint32 _timePerSlice;
+	uint32 _totalSliceTicks;
+	int _blocksPerSlice;
 	void drawBlock(int blockX, int blockY);
 	uint getBitCount(int value) const;
 	uint getSeed(uint bitCount) const;

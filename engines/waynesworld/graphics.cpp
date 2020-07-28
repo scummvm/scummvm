@@ -27,6 +27,57 @@
 
 namespace WaynesWorld {
 
+void drawSurfaceIntern(Graphics::Surface *destSurface, const Graphics::Surface *surface, int x, int y, bool transparent) {
+	int width, height, skipX = 0, skipY = 0;
+
+	if (x >= destSurface->w || y >= destSurface->h)
+		return;
+
+	height = surface->h;
+	if (y < 0) {
+		height += y;
+		if (height <= 0)
+			return;
+		skipY = -y;
+		y = 0;
+	}
+	if (y + height > destSurface->h)
+		height = destSurface->h - y;
+
+	width = surface->w;
+	if (x < 0) {
+		width += x;
+		if (width <= 0)
+			return;
+		skipX = -x;
+		x = 0;
+	}
+	if (x + width >= destSurface->w)
+		width = destSurface->w - x;
+
+	// debug(6, "drawSurfaceIntern() (%d, %d, %d, %d); skipX: %d; skipY: %d", x, y, width, height, skipX, skipY);
+
+	if (transparent) {
+		for (int yc = 0; yc < height; ++yc) {
+			const byte *source = (const byte*)surface->getBasePtr(skipX, skipY + yc);
+			byte *dest = (byte*)destSurface->getBasePtr(x, y + yc);
+			for (int xc = 0; xc < width; ++xc) {
+				byte value = *source++;
+				if (value != 0) {
+					*dest = value;
+				}
+				++dest;
+			}
+		}
+	} else {
+		for (int yc = 0; yc < height; ++yc) {
+			const byte *source = (const byte*)surface->getBasePtr(skipX, skipY + yc);
+			byte *dest = (byte*)destSurface->getBasePtr(x, y + yc);
+			memcpy(dest, source, width);
+		}
+	}
+}
+
 // WWSurface
 
 WWSurface::WWSurface(int width, int height) {
@@ -41,63 +92,12 @@ WWSurface::~WWSurface() {
 	free();
 }
 
-void WWSurface::drawSurfaceIntern(const Graphics::Surface *surface, int x, int y, bool transparent) {
-	int width, height, skipX = 0, skipY = 0;
-
-	if (x >= w || y >= h)
-		return;
-
-	height = surface->h;
-	if (y < 0) {
-		height += y;
-		if (height <= 0)
-			return;
-		skipY = -y;
-		y = 0;
-	}
-	if (y + height > h)
-		height = h - y;
-
-	width = surface->w;
-	if (x < 0) {
-		width += x;
-		if (width <= 0)
-			return;
-		skipX = -x;
-		x = 0;
-	}
-	if (x + width >= w)
-		width = w - x;
-
-	// debug(6, "drawSurfaceIntern() (%d, %d, %d, %d); skipX: %d; skipY: %d", x, y, width, height, skipX, skipY);
-
-	if (transparent) {
-		for (int yc = 0; yc < height; ++yc) {
-			const byte *source = (const byte*)surface->getBasePtr(skipX, skipY + yc);
-			byte *dest = (byte*)getBasePtr(x, y + yc);
-			for (int xc = 0; xc < width; ++xc) {
-				byte value = *source++;
-				if (value != 0) {
-					*dest = value;
-				}
-				++dest;
-			}
-		}
-	} else {
-		for (int yc = 0; yc < height; ++yc) {
-			const byte *source = (const byte*)surface->getBasePtr(skipX, skipY + yc);
-			byte *dest = (byte*)getBasePtr(x, y + yc);
-			memcpy(dest, source, width);
-		}
-	}
-}
-
 void WWSurface::drawSurface(const Graphics::Surface *surface, int x, int y) {
-	drawSurfaceIntern(surface, x, y, false);
+	drawSurfaceIntern(this, surface, x, y, false);
 }
 
 void WWSurface::drawSurfaceTransparent(const Graphics::Surface *surface, int x, int y) {
-	drawSurfaceIntern(surface, x, y, true);
+	drawSurfaceIntern(this, surface, x, y, true);
 }
 
 void WWSurface::scaleSurface(const Graphics::Surface *surface) {
@@ -260,15 +260,16 @@ int GFTFont::getCharWidth(byte ch) const {
 
 // Screen
 
-Screen::Screen() : _lockCtr(0) {
-	_surface = new WWSurface(320, 200);
+Screen::Screen() : _lockCtr(0), _vgaSurface(nullptr) {
 }
 
 Screen::~Screen() {
-	delete _surface;
 }
 
 void Screen::beginUpdate() {
+	if (_lockCtr == 0) {
+		_vgaSurface = g_system->lockScreen();
+	}
 	_lockCtr++;
 }
 
@@ -276,57 +277,59 @@ void Screen::endUpdate() {
 	if (_lockCtr > 0) {
 		--_lockCtr;
 		if (_lockCtr == 0) {
-			updateScreen();
+			g_system->unlockScreen();
+			_vgaSurface = nullptr;
+			g_system->updateScreen();
 		}
 	}
 }
 
 void Screen::drawSurface(const Graphics::Surface *surface, int x, int y) {
-	_surface->drawSurface(surface, x, y);
-	updateScreen();
+	beginUpdate();
+	drawSurfaceIntern(_vgaSurface, surface, x, y, false);
+	endUpdate();
 }
 
 void Screen::drawSurfaceTransparent(const Graphics::Surface *surface, int x, int y) {
-	_surface->drawSurfaceTransparent(surface, x, y);
-	updateScreen();
+	beginUpdate();
+	drawSurfaceIntern(_vgaSurface, surface, x, y, true);
+	endUpdate();
 }
 
 void Screen::frameRect(int x1, int y1, int x2, int y2, byte color) {
-	_surface->frameRect(x1, y1, x2, y2, color);
-	updateScreen();
+	beginUpdate();
+	_vgaSurface->frameRect(Common::Rect(x1, y1, x2, y2), color);
+	endUpdate();
 }
 
 void Screen::fillSquare(int x, int y, int length, byte color) {
-	_surface->fillSquare(x, y, length, color);
-	updateScreen();
+	beginUpdate();
+	_vgaSurface->fillRect(Common::Rect(x, y, x + length, y + length), color);
+	endUpdate();
 }
 
 void Screen::fillRect(int x1, int y1, int x2, int y2, byte color) {
-	_surface->fillRect(x1, y1, x2, y2, color);
-	updateScreen();
+	beginUpdate();
+	_vgaSurface->fillRect(Common::Rect(x1, y1, x2, y2), color);
+	endUpdate();
 }
 
 void Screen::clear(byte color) {
-	_surface->clear(color);
-	updateScreen();
+	beginUpdate();
+	_vgaSurface->fillRect(Common::Rect(_vgaSurface->w, _vgaSurface->h), color);
+	endUpdate();
 }
 
 void Screen::drawText(GFTFont *font, const char *text, int x, int y, byte color) {
-	font->drawText(_surface, text, x, y, color);
-	updateScreen();
+	beginUpdate();
+	font->drawText(_vgaSurface, text, x, y, color);
+	endUpdate();
 }
 
 void Screen::drawWrappedText(GFTFont *font, const char *text, int x, int y, int maxWidth, byte color) {
-	font->drawWrappedText(_surface, text, x, y, maxWidth, color);
-	updateScreen();
-}
-
-void Screen::updateScreen() {
-	// TODO Use dirty rectangles or similar
-	if (_lockCtr == 0) {
-		g_system->copyRectToScreen(_surface->getPixels(), _surface->pitch, 0, 0, _surface->w, _surface->h);
-		g_system->updateScreen();
-	}
+	beginUpdate();
+	font->drawWrappedText(_vgaSurface, text, x, y, maxWidth, color);
+	endUpdate();
 }
 
 // ScreenEffect
@@ -335,7 +338,10 @@ ScreenEffect::ScreenEffect(WaynesWorldEngine *vm, Graphics::Surface *surface, in
 	: _vm(vm), _surface(surface), _x(x), _y(y), _grainWidth(grainWidth), _grainHeight(grainHeight), _blockCtr(0) {
     _blockCountW = _surface->w / _grainWidth + (_surface->w % _grainWidth > 0 ? 1 : 0);
 	_blockCountH = _surface->h / _grainHeight + (_surface->h % _grainHeight > 0 ? 1 : 0);
-	_blockUpdateCtr = _blockCountW * _blockCountH / 1000;
+	int blockCount = _blockCountW * _blockCountH;
+	int duration = blockCount / 5; // Approximate time this effect should take in ms
+	_timePerSlice = 50; // Time after which the screen should be updated
+	_blocksPerSlice = blockCount / (duration / _timePerSlice);
 }
 
 void ScreenEffect::drawSpiralEffect() {
@@ -344,6 +350,7 @@ void ScreenEffect::drawSpiralEffect() {
 	int startBlock = (middleBlockW < middleBlockH ? middleBlockW : middleBlockH) - 1;
 	int sideLenW = _blockCountW - startBlock;
 	int sideLenH = _blockCountH - startBlock;
+	_totalSliceTicks = g_system->getMillis();
 	_vm->_screen->beginUpdate();
 	while (startBlock >= 0 && !_vm->shouldQuit()) {
 		int blockX, blockY;
@@ -380,6 +387,7 @@ void ScreenEffect::drawRandomEffect() {
 	uint bitCount = bitCountW + bitCountH;
 	uint mask = (1 << bitCountW) - 1;
 	uint rvalue = getSeed(bitCount), value = 1;
+	_totalSliceTicks = g_system->getMillis();
 	_vm->_screen->beginUpdate();
 	do {
 		int blockX = value & mask;
@@ -405,10 +413,19 @@ void ScreenEffect::drawBlock(int blockX, int blockY) {
 		Common::Rect r(sourceLeft, sourceTop, sourceRight, sourceBottom);
 		Graphics::Surface blockSurface = _surface->getSubArea(r);
 		_vm->_screen->drawSurface(&blockSurface, _x + sourceLeft, _y + sourceTop);
-		_vm->updateEvents();
-		// Update the screen only each _blockUpdateCtr blocks
-		if (++_blockCtr % _blockUpdateCtr == 0) {
+		if (++_blockCtr == _blocksPerSlice) {
 			_vm->_screen->endUpdate();
+			uint32 currTicks = g_system->getMillis();
+			_blockCtr = 0;
+			_totalSliceTicks += _timePerSlice;
+			// Check if the system is faster than the current slice ticks
+			// and wait for the difference.
+			if (currTicks < _totalSliceTicks) {
+				uint32 waitTicks = _totalSliceTicks - currTicks;
+				_vm->waitMillis(waitTicks);
+			} else {
+				_vm->updateEvents();
+			}
 			_vm->_screen->beginUpdate();
 		}
 	}
