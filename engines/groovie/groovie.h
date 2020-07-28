@@ -111,6 +111,7 @@ protected:
 
 public:
 	void waitForInput();
+	bool isWaitingForInput() { return _waitingForInput; }
 
 	Graphics::PixelFormat _pixelFormat;
 	bool _spookyMode;
