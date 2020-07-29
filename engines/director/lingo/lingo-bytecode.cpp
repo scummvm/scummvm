@@ -945,7 +945,7 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream
 		sc = _assemblyContext = new ScriptContext(factoryName, _assemblyArchive, scriptType, castId);
 		codeFactory(factoryName);
 	} else {
-		debugC(1, kDebugCompile, "Add V4 script %d: maybe %s %d", lctxIndex, scriptType2str(scriptType), castId);
+		debugC(1, kDebugCompile, "Add V4 script %d: %s %d", lctxIndex, scriptType2str(scriptType), castId);
 
 		sc = _assemblyContext = new ScriptContext(!castName.empty() ? castName : Common::String::format("%d", castId), _assemblyArchive, scriptType, castId);
 	}
