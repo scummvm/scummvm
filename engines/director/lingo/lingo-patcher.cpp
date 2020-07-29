@@ -64,6 +64,42 @@ struct ScriptPatch {
 	{"warlock", kPlatformMacintosh, "DATA/WARLOCKSHIP/ENG/D10", kScoreScript, 8,
 			4, "Frames 165 to 180", ""},
 
+	// Garbage at end of script
+	{"warlock", kPlatformMacintosh, "DATA/WARLOCKSHIP/Up.c2", kScoreScript, 10,
+			2, "Frames 150 to 160", ""},
+
+	// Garbage at end of script
+	{"warlock", kPlatformMacintosh, "DATA/WARLOCKSHIP/Up.ForeECall", kScoreScript, 12,
+			2, "SS Warlock:DATA:WARLOCKSHIP:Up.GCGunner", ""},
+	{"warlock", kPlatformMacintosh, "DATA/WARLOCKSHIP/Up.ForeECall", kScoreScript, 12,
+			3, "Channels 17 to 18", ""},
+	{"warlock", kPlatformMacintosh, "DATA/WARLOCKSHIP/Up.ForeECall", kScoreScript, 12,
+			4, "Frames 150 to 160", ""},
+
+	// Garbage at end of script
+	{"warlock", kPlatformMacintosh, "DATA/WARLOCKSHIP/Up.B2", kScoreScript, 9,
+			2, "SS Warlock:DATA:WARLOCKSHIP:Up.GCGunner", ""},
+	{"warlock", kPlatformMacintosh, "DATA/WARLOCKSHIP/Up.B2", kScoreScript, 9,
+			3, "Channels 17 to 18", ""},
+	{"warlock", kPlatformMacintosh, "DATA/WARLOCKSHIP/Up.B2", kScoreScript, 9,
+			4, "Frames 150 to 160", ""},
+
+	// Garbage at end of script
+	{"warlock", kPlatformMacintosh, "DATA/BELSHAZZAR/STELLA/ORIGIN", kScoreScript, 12,
+			2, "Frames 1 to 1", ""},
+
+	// Garbage at end of script
+	{"warlock", kPlatformMacintosh, "DATA/WARLOCKSHIP/HangHallAft", kScoreScript, 7,
+			2, "SS Warlock:DATA:WARLOCKSHIP:HangStairsFore", ""},
+	{"warlock", kPlatformMacintosh, "DATA/WARLOCKSHIP/HangHallAft", kScoreScript, 7,
+			3, "Channels 4 to 5", ""},
+	{"warlock", kPlatformMacintosh, "DATA/WARLOCKSHIP/HangHallAft", kScoreScript, 7,
+			4, "Frames 20 to 20", ""},
+
+	// Unbalanced 'end if' at the end of the script
+	{"warlock", kPlatformMacintosh, "DATA/STAMBUL/DRUNK", kMovieScript, 4,
+			5, "end if", ""},
+
 	// Unbalanced 'end if' at the end of the script
 	{"warlock", kPlatformMacintosh, "STAMBUL/DRUNK", kMovieScript, 5,
 			5, "end if", ""},
