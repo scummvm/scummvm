@@ -88,7 +88,7 @@ bool TargetReticleProcess::findTargetItem() {
 	int32 x, y, z;
 	mainactor->getCentre(x, y, z);
 
-	Item *item = currentmap->findBestTargetItem(x, y, dir);
+	Item *item = currentmap->findBestTargetItem(x, y, dir, dirmode_16dirs);
 
 	if (item && item->getObjId() != _lastTargetItem) {
 		Item *lastItem = getItem(_lastTargetItem);

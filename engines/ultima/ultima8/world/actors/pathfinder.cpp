@@ -436,7 +436,7 @@ void Pathfinder::expandNode(PathNode *node) {
 	// try walking in all 8 directions - TODO: should this support 16 dirs?
 	Direction dir = dir_north;
 	for (int i = 0; i < 8; i++) {
-		dir = Direction_OneRight(dir);
+		dir = Direction_OneRight(dir, dirmode_8dirs);
 		state = node->state;
 		state._lastAnim = walkanim;
 		state._direction = dir;

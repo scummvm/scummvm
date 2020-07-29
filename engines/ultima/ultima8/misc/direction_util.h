@@ -54,7 +54,7 @@ inline int Direction_YFactor(Direction dir) {
  *  NOTE: The returned direction is rotated 45 degrees clockwise! This is
  *  how U8 things should be.
  */
-inline Direction Direction_Get(int deltay, int deltax) {
+inline Direction Direction_Get(int deltay, int deltax, DirectionMode dirmode) {
 	if (deltax == 0)
 		return deltay > 0 ? dir_northwest : dir_southeast;
 	int dydx = (1024 * deltay) / deltax; // Figure 1024*tan.
@@ -73,7 +73,7 @@ inline Direction Direction_Get(int deltay, int deltax) {
 			   : dir_northwest;
 }
 
-inline Direction Direction_GetWorldDir(int deltay, int deltax) {
+inline Direction Direction_GetWorldDir(int deltay, int deltax, DirectionMode dirmode) {
 	if (deltax == 0) {
 		if (deltay == 0) return dir_northeast; // for better compatibility with U8
 		return deltay > 0 ? dir_south : dir_north;
@@ -91,10 +91,11 @@ inline Direction Direction_GetWorldDir(int deltay, int deltax) {
 		return dydx >= -424 ? dir_west : dydx >= -2472 ? dir_southwest : dir_south;
 }
 
-inline Direction Direction_GetWorldDirInRange(int deltay, int deltax, uint16 ndirs, Direction mindir, Direction maxdir) {
+inline Direction Direction_GetWorldDirInRange(int deltay, int deltax, DirectionMode dirmode, Direction mindir, Direction maxdir) {
 	// TODO: Implement 16 directions here.
-	ndirs = 8;
-	Direction dir = Direction_GetWorldDir(deltay, deltax);
+	int ndirs = 8;
+	dirmode = dirmode_8dirs;
+	Direction dir = Direction_GetWorldDir(deltay, deltax, dirmode);
 
 	if ((dir < mindir) || (dir > maxdir)) {
 		int32 dmin1 = dir - mindir;
@@ -151,19 +152,20 @@ inline Direction Direction_Invert(Direction dir) {
 }
 
 //! Return the direction one left (aka counter-clockwise) of the input
-inline Direction Direction_OneLeft(Direction dir) {
+inline Direction Direction_OneLeft(Direction dir, DirectionMode mode) {
 	// TODO: support 16 dirs here.
 	return static_cast<Direction>((static_cast<int>(dir) + 7) % 8);
 }
 
 //! Return the direction one right (aka clockwise) of the input
-inline Direction Direction_OneRight(Direction dir) {
+inline Direction Direction_OneRight(Direction dir, DirectionMode mode) {
 	// TODO: support 16 dirs here.
 	return static_cast<Direction>((static_cast<int>(dir) + 1) % 8);
 }
 
-inline Direction Direction_TurnByDelta(Direction dir, int delta) {
-	return delta == 1 ? Direction_OneRight(dir) : Direction_OneLeft(dir);
+inline Direction Direction_TurnByDelta(Direction dir, int delta, DirectionMode mode) {
+	assert(delta == 1 || delta == -1);
+	return delta == 1 ? Direction_OneRight(dir, mode) : Direction_OneLeft(dir, mode);
 }
 
 //! Get a turn delta (-1 for left, +1 for right) to turn the fastest

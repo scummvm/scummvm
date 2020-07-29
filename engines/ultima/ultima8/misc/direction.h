@@ -49,6 +49,11 @@ enum Direction {
 	dir_nnw
 };
 
+enum DirectionMode {
+	dirmode_8dirs,
+	dirmode_16dirs
+};
+
 } // End of namespace Ultima8
 } // End of namespace Ultima
 

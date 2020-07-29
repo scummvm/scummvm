@@ -131,7 +131,7 @@ void FireballProcess::run() {
 	}
 
 	Item *tailitem = getItem(_tail[2]);
-	Direction movedir = Direction_GetWorldDir(_ySpeed, _xSpeed);
+	Direction movedir = Direction_GetWorldDir(_ySpeed, _xSpeed, dirmode_8dirs);
 	tailitem->setFrame(Direction_ToUsecodeDir(movedir));
 	tailitem->move(x, y, z);
 

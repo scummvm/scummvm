@@ -180,7 +180,7 @@ Direction Mouse::getMouseDirectionWorld(int mx, int my) {
 	int dx = mx - dims.w / 2;
 	int dy = (dims.h / 2 + (dims.h * 14 / 200)) - my; //! constant
 
-	return Direction_Get(dy * 2, dx);
+	return Direction_Get(dy * 2, dx, dirmode_8dirs);
 }
 
 int Mouse::getMouseDirectionScreen(int mx, int my) {

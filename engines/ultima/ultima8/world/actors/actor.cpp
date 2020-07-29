@@ -546,6 +546,14 @@ Animation::Result Actor::tryAnim(Animation::Sequence anim, Direction dir,
 	return Animation::END_OFF_LAND;
 }
 
+DirectionMode Actor::animDirMode(Animation::Sequence anim) const {
+	const AnimAction *action = GameData::get_instance()->getMainShapes()->
+	getAnim(getShape(), anim);
+	if (!action)
+		return dirmode_8dirs;
+	return action->getDirCount() == 8 ? dirmode_8dirs : dirmode_16dirs;
+}
+
 uint16 Actor::turnTowardDir(Direction targetdir) {
 	Direction curdir = _direction;
 	if (targetdir == curdir)
@@ -561,9 +569,11 @@ uint16 Actor::turnTowardDir(Direction targetdir) {
 
 	ProcId prevpid = 0;
 
+	DirectionMode dirmode = animDirMode(turnanim);
+
 	// Create a sequence of turn animations from
 	// our current direction to the new one
-	for (Direction dir = curdir; dir != targetdir; dir = Direction_TurnByDelta(dir, stepDelta)) {
+	for (Direction dir = curdir; dir != targetdir; dir = Direction_TurnByDelta(dir, stepDelta, dirmode)) {
 		ProcId animpid = doAnim(turnanim, dir);
 		if (prevpid) {
 			Process *proc = Kernel::get_instance()->getProcess(animpid);

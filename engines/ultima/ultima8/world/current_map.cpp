@@ -311,7 +311,7 @@ void CurrentMap::removeTargetItem(const Item *item) {
 }
 
 
-Item *CurrentMap::findBestTargetItem(int32 x, int32 y, Direction dir) {
+Item *CurrentMap::findBestTargetItem(int32 x, int32 y, Direction dir, DirectionMode dirmode) {
 	// "best" means:
 	// Shape info SI_OCCL
 	// isNPC
@@ -338,7 +338,7 @@ Item *CurrentMap::findBestTargetItem(int32 x, int32 y, Direction dir) {
 
 		int32 ix, iy, iz;
 		item->getLocation(ix, iy, iz);
-		Direction itemdir = Direction_GetWorldDir(iy - y, ix - x);
+		Direction itemdir = Direction_GetWorldDir(iy - y, ix - x, dirmode);
 		if (itemdir != dir)
 			continue;
 

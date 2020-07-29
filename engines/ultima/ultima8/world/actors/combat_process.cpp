@@ -256,7 +256,9 @@ void CombatProcess::turnToDirection(Direction direction) {
 	ProcId prevpid = 0;
 	bool done = false;
 
-	for (Direction dir = curdir; !done;	dir = Direction_TurnByDelta(dir, stepDelta)) {
+	DirectionMode mode = a->animDirMode(turnanim);
+
+	for (Direction dir = curdir; !done;	dir = Direction_TurnByDelta(dir, stepDelta, mode)) {
 		ProcId animpid = a->doAnim(turnanim, dir);
 
 		if (dir == direction) done = true;

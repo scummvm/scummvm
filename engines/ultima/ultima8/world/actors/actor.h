@@ -238,6 +238,9 @@ public:
 	//! \param state the state to start from, or 0 to use the current state
 	Animation::Result tryAnim(Animation::Sequence anim, Direction dir, unsigned int steps = 0, PathfindingState *state = 0);
 
+	//! Get the number of directions supported by a given animation
+	DirectionMode animDirMode(Animation::Sequence anim) const;
+
 	//! overrides the standard item collideMove so we  can notify nearby objects.
 	int32 collideMove(int32 x, int32 y, int32 z, bool teleport, bool force,
 	                  ObjId *hititem = 0, uint8 *dirs = 0) override;

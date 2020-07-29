@@ -200,7 +200,7 @@ void SuperSpriteProcess::run() {
 
 		if (_fireType == 9 && !_expired) {
 			if (_nowpt.x != newpt.x || _nowpt.y != newpt.y) {
-				Direction dir = Direction_GetWorldDir(_nowpt.y - newpt.y, _nowpt.x - newpt.x);
+				Direction dir = Direction_GetWorldDir(_nowpt.y - newpt.y, _nowpt.x - newpt.x, dirmode_8dirs);
 				Item *item;
 				if (_itemNum == 0) {
 					item = getItem(_spriteNo);
@@ -318,7 +318,7 @@ void SuperSpriteProcess::hitAndFinish() {
 		// it should work? See disasm 1138:1384, lines 142 ~ 172
 		// There is some random factor added for non-actor items
 		// which needs checking
-		Direction dir = Direction_GetWorldDir(iy - _nowpt.y, ix - _nowpt.x);
+		Direction dir = Direction_GetWorldDir(iy - _nowpt.y, ix - _nowpt.x, dirmode_8dirs);
 		item->receiveHit(_itemNum, dir, _damage, _fireType);
 	}
 	makeBulletSplash(pt);

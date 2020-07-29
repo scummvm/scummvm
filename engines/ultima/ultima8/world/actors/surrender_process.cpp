@@ -85,10 +85,10 @@ void SurrenderProcess::run() {
 		Animation::Sequence turnanim;
 		Direction nextdir;
 		if (Direction_GetShorterTurnDelta(curdir, direction) == -1) {
-			nextdir = Direction_OneLeft(curdir);
+			nextdir = Direction_OneLeft(curdir, dirmode_8dirs);
 			turnanim = Animation::lookLeft;
 		} else {
-			nextdir = Direction_OneRight(curdir);
+			nextdir = Direction_OneRight(curdir, dirmode_8dirs);
 			turnanim = Animation::lookRight;
 		}
 		ProcId animpid = a->doAnim(turnanim, nextdir);

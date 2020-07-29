@@ -629,14 +629,14 @@ Direction Item::getDirToItemCentre(const Item &item2) const {
 	int32 i2x, i2y, i2z;
 	item2.getCentre(i2x, i2y, i2z);
 
-	return Direction_GetWorldDir(i2y - yv, i2x - xv);
+	return Direction_GetWorldDir(i2y - yv, i2x - xv, dirmode_8dirs);
 }
 
 Direction Item::getDirToItemCentre(const Point3 &pt) const {
 	int32 xv, yv, zv;
 	getCentre(xv, yv, zv);
 
-	return Direction_GetWorldDir(pt.y - yv, pt.x - xv);
+	return Direction_GetWorldDir(pt.y - yv, pt.x - xv, dirmode_8dirs);
 }
 
 
@@ -1180,7 +1180,7 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 		Item *block = getItem(blocker->getObjId());
 		Point3 blockpt;
 		block->getLocation(blockpt);
-		Direction damagedir = Direction_GetWorldDir(blockpt.y - iy, blockpt.x - ix);
+		Direction damagedir = Direction_GetWorldDir(blockpt.y - iy, blockpt.x - ix, dirmode_8dirs);
 		block->receiveHit(getObjId(), damagedir, damage, firetype);
 		int splashdamage = firetypedat->getRandomDamage();
 		firetypedat->applySplashDamageAround(blockpt, splashdamage, block, this);
@@ -1222,7 +1222,7 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 			if (this != getControlledActor()) {
 				target = getControlledActor();
 			} else {
-				target = currentmap->findBestTargetItem(ix, iy, dir);
+				target = currentmap->findBestTargetItem(ix, iy, dir, dirmode_8dirs);
 			}
 		}
 
@@ -1919,7 +1919,7 @@ void Item::explode(int explosion_type, bool destroy_item, bool cause_damage) {
 		if (getRange(*item, true) > 160) continue; // check vertical distance
 
 		item->getLocation(xv, yv, zv);
-		Direction dir = Direction_GetWorldDir(xv - xv, yv - yv); //!! CHECKME
+		Direction dir = Direction_GetWorldDir(xv - xv, yv - yv, dirmode_8dirs); //!! CHECKME
 		item->receiveHit(0, dir, 6 + (getRandom() % 6),
 		                 WeaponInfo::DMG_BLUNT | WeaponInfo::DMG_FIRE);
 	}
@@ -3276,7 +3276,7 @@ uint32 Item::I_getDirToCoords(const uint8 *args, unsigned int /*argsize*/) {
 	int32 ix, iy, iz;
 	item->getLocationAbsolute(ix, iy, iz);
 
-	return Direction_ToUsecodeDir(Direction_GetWorldDir(y - iy, x - ix));
+	return Direction_ToUsecodeDir(Direction_GetWorldDir(y - iy, x - ix, dirmode_8dirs));
 }
 
 uint32 Item::I_getDirFromCoords(const uint8 *args, unsigned int /*argsize*/) {
@@ -3293,7 +3293,7 @@ uint32 Item::I_getDirFromCoords(const uint8 *args, unsigned int /*argsize*/) {
 	int32 ix, iy, iz;
 	item->getLocationAbsolute(ix, iy, iz);
 
-	return Direction_ToUsecodeDir(Direction_GetWorldDir(iy - y, ix - x));
+	return Direction_ToUsecodeDir(Direction_GetWorldDir(iy - y, ix - x, dirmode_8dirs));
 }
 
 uint32 Item::I_getDirToItem(const uint8 *args, unsigned int /*argsize*/) {
@@ -3308,7 +3308,7 @@ uint32 Item::I_getDirToItem(const uint8 *args, unsigned int /*argsize*/) {
 	int32 i2x, i2y, i2z;
 	item2->getLocationAbsolute(i2x, i2y, i2z);
 
-	return Direction_ToUsecodeDir(Direction_GetWorldDir(i2y - iy, i2x - ix));
+	return Direction_ToUsecodeDir(Direction_GetWorldDir(i2y - iy, i2x - ix, dirmode_8dirs));
 }
 
 uint32 Item::I_getDirFromItem(const uint8 *args, unsigned int /*argsize*/) {
@@ -3323,7 +3323,7 @@ uint32 Item::I_getDirFromItem(const uint8 *args, unsigned int /*argsize*/) {
 	int32 i2x, i2y, i2z;
 	item2->getLocationAbsolute(i2x, i2y, i2z);
 
-	return Direction_ToUsecodeDir(Direction_Invert(Direction_GetWorldDir(i2y - iy, i2x - ix)));
+	return Direction_ToUsecodeDir(Direction_Invert(Direction_GetWorldDir(i2y - iy, i2x - ix, dirmode_8dirs)));
 }
 
 uint32 Item::I_getDirFromTo16(const uint8 *args, unsigned int /*argsize*/) {
@@ -3335,7 +3335,7 @@ uint32 Item::I_getDirFromTo16(const uint8 *args, unsigned int /*argsize*/) {
 	if (x1 == x2 && y1 == y2)
 		return 16;
 
-	return Direction_ToUsecodeDir(Direction_GetWorldDir(y2 - y1, x2 - x1));
+	return Direction_ToUsecodeDir(Direction_GetWorldDir(y2 - y1, x2 - x1, dirmode_16dirs));
 }
 
 uint32 Item::I_getClosestDirectionInRange(const uint8 *args, unsigned int /*argsize*/) {
@@ -3349,7 +3349,8 @@ uint32 Item::I_getClosestDirectionInRange(const uint8 *args, unsigned int /*args
 
 	Direction mindir = Direction_FromUsecodeDir(mind);
 	Direction maxdir = Direction_FromUsecodeDir(maxd);
-	Direction result = Direction_GetWorldDirInRange(y2 - y1, x2 - x1, ndirs, mindir, maxdir);
+	DirectionMode mode = (ndirs == 16 ? dirmode_16dirs : dirmode_8dirs);
+	Direction result = Direction_GetWorldDirInRange(y2 - y1, x2 - x1, mode, mindir, maxdir);
 	return Direction_ToUsecodeDir(result);
 }
 

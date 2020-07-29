@@ -290,14 +290,16 @@ void AvatarMoverProcess::handleCombatMode() {
 
 	bool moving = (lastanim == Animation::advance || lastanim == Animation::retreat);
 
+	DirectionMode dirmode = avatar->animDirMode(Animation::combatStand);
+
 	//  if we are trying to move, allow change direction only after move occurs to avoid spinning
 	if (moving || !hasMovementFlags(MOVE_FORWARD | MOVE_BACK)) {
 		if (hasMovementFlags(MOVE_TURN_LEFT)) {
-			direction = Direction_OneLeft(direction);
+			direction = Direction_OneLeft(direction, dirmode);
 		}
 
 		if (hasMovementFlags(MOVE_TURN_RIGHT)) {
-			direction = Direction_OneRight(direction);
+			direction = Direction_OneRight(direction, dirmode);
 		}
 	}
 
@@ -344,7 +346,7 @@ void AvatarMoverProcess::handleCombatMode() {
 	}
 
 	if (x != 0 || y != 0) {
-		Direction nextdir = Direction_Get(y, x);
+		Direction nextdir = Direction_Get(y, x, dirmode_8dirs);
 
 		if (checkTurn(nextdir, true))
 			return;
@@ -621,14 +623,16 @@ void AvatarMoverProcess::handleNormalMode() {
 
 	bool moving = (lastanim == Animation::step || lastanim == Animation::run || lastanim == Animation::walk);
 
+	DirectionMode dirmode = avatar->animDirMode(Animation::step);
+
 	//  if we are trying to move, allow change direction only after move occurs to avoid spinning
 	if (moving || !hasMovementFlags(MOVE_FORWARD | MOVE_BACK)) {
 		if (hasMovementFlags(MOVE_TURN_LEFT)) {
-			direction = Direction_OneLeft(direction);
+			direction = Direction_OneLeft(direction, dirmode);
 		}
 
 		if (hasMovementFlags(MOVE_TURN_RIGHT)) {
-			direction = Direction_OneRight(direction);
+			direction = Direction_OneRight(direction, dirmode);
 		}
 	}
 
@@ -674,7 +678,7 @@ void AvatarMoverProcess::handleNormalMode() {
 	}
 
 	if (x != 0 || y != 0) {
-		direction = Direction_Get(y, x);
+		direction = Direction_Get(y, x, dirmode_8dirs);
 		step(nextanim, direction);
 		return;
 	}
@@ -737,8 +741,8 @@ void AvatarMoverProcess::step(Animation::Sequence action, Direction direction,
 	if (res == Animation::FAILURE ||
 	        (action == Animation::step && res == Animation::END_OFF_LAND)) {
 		debug(6, "Step: end off land dir %d, try other dir", stepdir);
-		Direction altdir1 = Direction_OneRight(stepdir);
-		Direction altdir2 = Direction_OneLeft(stepdir);
+		Direction altdir1 = Direction_OneRight(stepdir, dirmode_8dirs);
+		Direction altdir2 = Direction_OneLeft(stepdir, dirmode_8dirs);
 
 		res = avatar->tryAnim(action, altdir1);
 		if (res == Animation::FAILURE ||
@@ -870,7 +874,9 @@ void AvatarMoverProcess::turnToDirection(Direction direction) {
 
 	// Create a sequence of turn animations from
 	// our current direction to the new one
-	for (Direction dir = curdir; dir != direction; dir = Direction_TurnByDelta(dir, stepDelta)) {
+	DirectionMode dirmode = avatar->animDirMode(turnanim);
+
+	for (Direction dir = curdir; dir != direction; dir = Direction_TurnByDelta(dir, stepDelta, dirmode)) {
 		ProcId animpid = avatar->doAnim(turnanim, dir);
 
 		if (prevpid) {
