@@ -126,6 +126,8 @@ private:
 	void startDragging(int mx, int my);
 	void moveDragging(int mx, int my);
 	void stopDragging(int mx, int my);
+	int mouseFrameForDir(Direction mousedir) const;
+
 public:
 	static Mouse *get_instance() { return _instance; }
 public:
@@ -151,7 +153,7 @@ public:
 	int getMouseLength(int mx, int my);
 
 	//! get mouse cursor direction on the screen. 0 = up, 1 = up-right, 2 = right, etc...
-	int getMouseDirectionScreen(int mx, int my);
+	Direction getMouseDirectionScreen(int mx, int my);
 
 	//! get mouse cursor direction in the world. 0 = up, 1 = up-right, 2 = right, etc...
 	Direction getMouseDirectionWorld(int mx, int my);

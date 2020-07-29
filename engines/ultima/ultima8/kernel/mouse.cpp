@@ -183,8 +183,8 @@ Direction Mouse::getMouseDirectionWorld(int mx, int my) {
 	return Direction_Get(dy * 2, dx, dirmode_8dirs);
 }
 
-int Mouse::getMouseDirectionScreen(int mx, int my) {
-	return ((getMouseDirectionWorld(mx, my)) + 1) % 8;
+Direction Mouse::getMouseDirectionScreen(int mx, int my) {
+	return Direction_OneRight(getMouseDirectionWorld(mx, my), dirmode_8dirs);
 }
 
 int Mouse::getMouseFrame() {
@@ -222,7 +222,8 @@ int Mouse::getMouseFrame() {
 		}
 
 		// Calculate frame based on direction
-		int frame = getMouseDirectionScreen(_mousePos.x, _mousePos.y);
+		Direction mousedir = getMouseDirectionScreen(_mousePos.x, _mousePos.y);
+		int frame = mouseFrameForDir(mousedir);
 
 		/** length --- frame offset
 		 *    0              0
@@ -254,6 +255,20 @@ int Mouse::getMouseFrame() {
 		return 40;
 	default:
 		return -1;
+	}
+}
+
+int Mouse::mouseFrameForDir(Direction mousedir) const {
+	switch (mousedir) {
+		case dir_north:		return 0;
+		case dir_northeast: return 1;
+		case dir_east:		return 2;
+		case dir_southeast: return 3;
+		case dir_south:		return 4;
+		case dir_southwest: return 5;
+		case dir_west:		return 6;
+		case dir_northwest: return 7;
+		default:			return 0;
 	}
 }
 

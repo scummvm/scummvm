@@ -886,7 +886,7 @@ void Actor::receiveHitU8(uint16 other, Direction dir, int damage, uint16 damage_
 	if (damage >= 4 && _objId == 1 && attacker) {
 		// play blood sprite
 		int start = 0, end = 12;
-		if (dir > 2) {
+		if (dir > dir_east) {
 			start = 13;
 			end = 25;
 		}
@@ -1484,7 +1484,7 @@ uint32 Actor::I_getDir(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ACTOR_FROM_PTR(actor);
 	if (!actor) return 0;
 
-	return actor->getDir();
+	return Direction_ToUsecodeDir(actor->getDir());
 }
 
 uint32 Actor::I_getLastAnimSet(const uint8 *args, unsigned int /*argsize*/) {

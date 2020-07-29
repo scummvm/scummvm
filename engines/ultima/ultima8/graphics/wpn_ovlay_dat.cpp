@@ -49,7 +49,7 @@ const AnimWeaponOverlay *WpnOvlayDat::getAnimOverlay(uint32 action) const {
 }
 
 const WeaponOverlayFrame *WpnOvlayDat::getOverlayFrame(uint32 action, int type,
-        int direction,
+        Direction direction,
         int frame) const {
 	if (action >= _overlay.size())
 		return nullptr;

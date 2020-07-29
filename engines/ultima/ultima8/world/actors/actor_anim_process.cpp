@@ -89,11 +89,6 @@ bool ActorAnimProcess::init() {
 	if (_dir == dir_current)
 		_dir = actor->getDir();
 
-	if ((GAME_IS_U8 && _dir > 7) || (GAME_IS_CRUSADER && _dir > 15)) {
-		// invalid direction
-		return false;
-	}
-
 	if (!actor->hasFlags(Item::FLG_FASTAREA)) {
 		// not in the fast area? Can't play an animation then.
 		// (If we do, the actor will likely fall because the floor is gone.)
