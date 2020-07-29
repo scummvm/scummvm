@@ -198,6 +198,7 @@ private:
 	OpenGL::Shader *_spriteShader;
 	OpenGL::Shader *_fadeShader;
 	OpenGL::Shader *_modelXShader;
+	OpenGL::Shader *_geometryShader;
 };
 
 } // namespace Wintermute

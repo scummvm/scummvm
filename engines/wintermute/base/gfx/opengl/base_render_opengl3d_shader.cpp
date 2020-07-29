@@ -347,6 +347,9 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 	_spriteShader->enableVertexAttribute("texcoord", _spriteVBO, 2, GL_FLOAT, false, sizeof(SpriteVertexShader), 8);
 	_spriteShader->enableVertexAttribute("color", _spriteVBO, 4, GL_FLOAT, false, sizeof(SpriteVertexShader), 16);
 
+	static const char *geometryAttributes[] = { "position", nullptr };
+	_geometryShader = OpenGL::Shader::fromFiles("geometry", geometryAttributes);
+
 	_transformStack.push_back(Math::Matrix4());
 	_transformStack.back().setToIdentity();
 
@@ -488,6 +491,10 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 	_modelXShader->setUniform("projMatrix", _projectionMatrix3d);
 	// this is 8 / 255, since 8 is the value used by wme (as a DWORD)
 	_modelXShader->setUniform1f("alphaRef", 0.031f);
+
+	_geometryShader->use();
+	_geometryShader->setUniform("viewMatrix", _lastViewMatrix);
+	_geometryShader->setUniform("projMatrix", _projectionMatrix3d);
 
 	return true;
 }
@@ -643,7 +650,7 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wint
 }
 
 Mesh3DS *BaseRenderOpenGL3DShader::createMesh3DS() {
-	return new Mesh3DSOpenGLShader();
+	return new Mesh3DSOpenGLShader(_geometryShader);
 }
 
 MeshX *BaseRenderOpenGL3DShader::createMeshX() {

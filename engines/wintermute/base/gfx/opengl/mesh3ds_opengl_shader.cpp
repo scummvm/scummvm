@@ -28,7 +28,7 @@
 
 namespace Wintermute {
 
-Mesh3DSOpenGLShader::Mesh3DSOpenGLShader() : _vertexData(nullptr), _vertexCount(0), _indexData(nullptr), _indexCount(0) {
+Mesh3DSOpenGLShader::Mesh3DSOpenGLShader(OpenGL::Shader *shader) : _vertexData(nullptr), _vertexCount(0), _indexData(nullptr), _indexCount(0), _shader(shader) {
 }
 
 Mesh3DSOpenGLShader::~Mesh3DSOpenGLShader() {
@@ -37,63 +37,25 @@ Mesh3DSOpenGLShader::~Mesh3DSOpenGLShader() {
 }
 
 void Mesh3DSOpenGLShader::computeNormals() {
-	for (int i = 0; i < _vertexCount; ++i) {
-		_vertexData[i].n1 = 0.0f;
-		_vertexData[i].n2 = 0.0f;
-		_vertexData[i].n3 = 0.0f;
-	}
-
-	for (int i = 0; i < faceCount(); ++i) {
-		uint16 index1 = _indexData[3 * i + 0];
-		uint16 index2 = _indexData[3 * i + 1];
-		uint16 index3 = _indexData[3 * i + 2];
-
-		Math::Vector3d v1(getVertexPosition(index1));
-		Math::Vector3d v2(getVertexPosition(index2));
-		Math::Vector3d v3(getVertexPosition(index3));
-
-		Math::Vector3d edge1 = v2 - v1;
-		Math::Vector3d edge2 = v3 - v2;
-		Math::Vector3d normal = Math::Vector3d::crossProduct(edge1, edge2);
-
-		_vertexData[index1].n1 += normal.x();
-		_vertexData[index1].n2 += normal.y();
-		_vertexData[index1].n3 += normal.z();
-
-		_vertexData[index2].n1 += normal.x();
-		_vertexData[index2].n2 += normal.y();
-		_vertexData[index2].n3 += normal.z();
-
-		_vertexData[index3].n1 += normal.x();
-		_vertexData[index3].n2 += normal.y();
-		_vertexData[index3].n3 += normal.z();
-	}
-
-	for (int i = 0; i < _vertexCount; ++i) {
-		Math::Vector3d normal;
-		normal.x() = _vertexData[i].n1;
-		normal.y() = _vertexData[i].n2;
-		normal.z() = _vertexData[i].n3;
-		normal.normalize();
-
-		_vertexData[i].n1 = normal.x();
-		_vertexData[i].n2 = normal.y();
-		_vertexData[i].n3 = normal.z();
-	}
+	// wme calls this for the geometry, but I am not sure anymore why this is necessary
 }
 
 void Mesh3DSOpenGLShader::fillVertexBuffer(uint32 color) {
-	byte r = RGBCOLGetR(color);
-	byte g = RGBCOLGetG(color);
-	byte b = RGBCOLGetB(color);
-	byte a = RGBCOLGetA(color);
+	_color.x() = RGBCOLGetR(color) / 255.0f;
+	_color.y() = RGBCOLGetG(color) / 255.0f;
+	_color.z() = RGBCOLGetB(color) / 255.0f;
+	_color.w() = RGBCOLGetA(color) / 255.0f;
 
-	for (int i = 0; i < _vertexCount; ++i) {
-		_vertexData[i].r = r;
-		_vertexData[i].g = g;
-		_vertexData[i].b = b;
-		_vertexData[i].a = a;
-	}
+	glGenBuffers(1, &_vertexBuffer);
+	glGenBuffers(1, &_indexBuffer);
+
+	glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GeometryVertexShader) * _vertexCount, _vertexData, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2 * _indexCount, _indexData, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 bool Wintermute::Mesh3DSOpenGLShader::loadFrom3DS(Common::MemoryReadStream &fileStream) {
@@ -107,7 +69,7 @@ bool Wintermute::Mesh3DSOpenGLShader::loadFrom3DS(Common::MemoryReadStream &file
 		switch (chunkId) {
 		case VERTICES:
 			_vertexCount = fileStream.readUint16LE();
-			_vertexData = new GeometryVertex[_vertexCount]();
+			_vertexData = new GeometryVertexShader[_vertexCount]();
 
 			for (int i = 0; i < _vertexCount; ++i) {
 				// note that .3ds has a right handed coordinate system
@@ -146,15 +108,17 @@ bool Wintermute::Mesh3DSOpenGLShader::loadFrom3DS(Common::MemoryReadStream &file
 }
 
 void Mesh3DSOpenGLShader::render() {
-	glEnableClientState(GL_COLOR_ARRAY);
-	glEnableClientState(GL_NORMAL_ARRAY);
-	glEnableClientState(GL_VERTEX_ARRAY);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
 
-	glColorPointer(4, GL_UNSIGNED_BYTE, kVertexSize, _vertexData);
-	glNormalPointer(3, kVertexSize, reinterpret_cast<byte *>(_vertexData) + 4);
-	glVertexPointer(3, GL_FLOAT, kVertexSize, reinterpret_cast<byte *>(_vertexData) + 16);
+	_shader->enableVertexAttribute("position", _vertexBuffer, 3, GL_FLOAT, false, sizeof(GeometryVertexShader), 0);
 
-	glDrawElements(GL_TRIANGLES, _indexCount, GL_UNSIGNED_SHORT, _indexData);
+	_shader->use(true);
+	_shader->setUniform("color", _color);
+
+	glDrawElements(GL_TRIANGLES, _indexCount, GL_UNSIGNED_SHORT, 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void Mesh3DSOpenGLShader::dumpVertexCoordinates(const char *filename) {

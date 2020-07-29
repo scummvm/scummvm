@@ -26,20 +26,15 @@
 #include "common/memstream.h"
 #include "common/scummsys.h"
 #include "engines/wintermute/base/gfx/opengl/mesh3ds.h"
+#include "graphics/opengl/shader.h"
 #include "graphics/opengl/system_headers.h"
+#include "math/vector4d.h"
 
 namespace Wintermute {
 
 #include "common/pack-start.h"
 
-struct GeometryVertex {
-	uint8 r;
-	uint8 g;
-	uint8 b;
-	uint8 a;
-	float n1;
-	float n2;
-	float n3;
+struct GeometryVertexShader {
 	float x;
 	float y;
 	float z;
@@ -52,7 +47,7 @@ public:
 	// vertex size in bytes, for the moment we only have
 	// position and color components
 	static const int kVertexSize = 28;
-	Mesh3DSOpenGLShader();
+	Mesh3DSOpenGLShader(OpenGL::Shader *shader);
 	~Mesh3DSOpenGLShader();
 	void computeNormals();
 	void fillVertexBuffer(uint32 color);
@@ -66,10 +61,14 @@ public:
 	float *getVertexPosition(int index);
 
 private:
-	GeometryVertex *_vertexData;
+	GeometryVertexShader *_vertexData;
 	uint16 _vertexCount;
 	uint16 *_indexData;
 	uint16 _indexCount;
+	GLuint _vertexBuffer;
+	GLuint _indexBuffer;
+	OpenGL::Shader *_shader;
+	Math::Vector4d _color;
 };
 
 } // namespace Wintermute
