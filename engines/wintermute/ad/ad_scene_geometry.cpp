@@ -465,34 +465,34 @@ bool AdSceneGeometry::render(bool render) {
 
 	_gameRef->_renderer3D->resetModelViewTransform();
 
-	for (i = 0; i < _lights.size(); ++i) {
-		if (!_lights[i]->_active) {
-			continue;
-		}
+//	for (i = 0; i < _lights.size(); ++i) {
+//		if (!_lights[i]->_active) {
+//			continue;
+//		}
 
-		glBegin(GL_LINES);
-		glColor3f(1.0f, 1.0f, 0.0f);
-		Math::Vector3d right = _lights[i]->_position + Math::Vector3d(1000.0f, 0.0f, 0.0f);
-		Math::Vector3d up = _lights[i]->_position + Math::Vector3d(0.0f, 1000.0f, 0.0f);
-		Math::Vector3d backward = _lights[i]->_position + Math::Vector3d(0.0f, 0.0f, 1000.0f);
-		Math::Vector3d left = _lights[i]->_position + Math::Vector3d(-1000.0f, 0.0f, 0.0f);
-		Math::Vector3d down = _lights[i]->_position + Math::Vector3d(0.0f, -1000.0f, 0.0f);
-		Math::Vector3d forward = _lights[i]->_position + Math::Vector3d(0.0f, 0.0f, -1000.0f);
+//		glBegin(GL_LINES);
+//		glColor3f(1.0f, 1.0f, 0.0f);
+//		Math::Vector3d right = _lights[i]->_position + Math::Vector3d(1000.0f, 0.0f, 0.0f);
+//		Math::Vector3d up = _lights[i]->_position + Math::Vector3d(0.0f, 1000.0f, 0.0f);
+//		Math::Vector3d backward = _lights[i]->_position + Math::Vector3d(0.0f, 0.0f, 1000.0f);
+//		Math::Vector3d left = _lights[i]->_position + Math::Vector3d(-1000.0f, 0.0f, 0.0f);
+//		Math::Vector3d down = _lights[i]->_position + Math::Vector3d(0.0f, -1000.0f, 0.0f);
+//		Math::Vector3d forward = _lights[i]->_position + Math::Vector3d(0.0f, 0.0f, -1000.0f);
 
-		glVertex3fv(_lights[i]->_position.getData());
-		glVertex3fv(right.getData());
-		glVertex3fv(_lights[i]->_position.getData());
-		glVertex3fv(up.getData());
-		glVertex3fv(_lights[i]->_position.getData());
-		glVertex3fv(backward.getData());
-		glVertex3fv(_lights[i]->_position.getData());
-		glVertex3fv(left.getData());
-		glVertex3fv(_lights[i]->_position.getData());
-		glVertex3fv(down.getData());
-		glVertex3fv(_lights[i]->_position.getData());
-		glVertex3fv(forward.getData());
-		glEnd();
-	}
+//		glVertex3fv(_lights[i]->_position.getData());
+//		glVertex3fv(right.getData());
+//		glVertex3fv(_lights[i]->_position.getData());
+//		glVertex3fv(up.getData());
+//		glVertex3fv(_lights[i]->_position.getData());
+//		glVertex3fv(backward.getData());
+//		glVertex3fv(_lights[i]->_position.getData());
+//		glVertex3fv(left.getData());
+//		glVertex3fv(_lights[i]->_position.getData());
+//		glVertex3fv(down.getData());
+//		glVertex3fv(_lights[i]->_position.getData());
+//		glVertex3fv(forward.getData());
+//		glEnd();
+//	}
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
