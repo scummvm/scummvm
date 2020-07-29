@@ -273,7 +273,18 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common
 		_crop = !(flags2 & 0x02);
 		_center = flags2 & 0x01;
 		_directToStage = true;
+		debugC(2, kDebugLoading, "DigitalVideoCastMember(): flags1: (%d 0x%x)", flags1, flags1);
+
+		debugC(2, kDebugLoading, "DigitalVideoCastMember(): flags2: (%d 0x%x)", flags2, flags2);
 	}
+	debugC(2, kDebugLoading, "_frameRate: %d", _frameRateType);
+	debugC(2, kDebugLoading, "_frameRateType: %d, _preload: %d, _enableVideo %d, _pausedAtStart %d",
+			_frameRateType, _preload, _enableVideo, _pausedAtStart);
+	debugC(2, kDebugLoading, "_showControls: %d, _looping: %d, _enableSound: %d, _crop %d, _center: %d, _directToStage: %d",
+			_showControls, _looping, _enableSound, _crop, _center, _directToStage);
+
+	if (debugChannelSet(2, kDebugLoading))
+		_initialRect.debugPrint(2, "DigitalVideoCastMember(): rect:");
 }
 
 DigitalVideoCastMember::~DigitalVideoCastMember() {
