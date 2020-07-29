@@ -624,7 +624,6 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheMovieFileSize:
 		d.type = INT;
 		d.u.i = _vm->getCurrentMovie()->getArchive()->getFileSize();
-		getTheEntitySTUB(kTheMovieFileSize);
 		break;
 	case kTheMoviePath:
 	case kThePathName:
