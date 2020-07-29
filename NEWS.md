@@ -26,6 +26,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed animation speed.
 
  Kyra:
+   - Added support for the SegaCD version of Eye of the Beholder I (with CD-Audio, animated
+     cutscenes and map function).
    - Added support for the PC-98 version of Eye of the Beholder I.
    - Added support for the Spanish versions of Eye of the Beholder I and II, Legend of
      Kyrandia 1 (CD-ROM fan translation) and Legend of Kyrandia 2 (floppy version and
