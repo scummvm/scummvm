@@ -98,7 +98,7 @@ uint8 *Disk::loadFile(uint16 fileNr) {
 	fileOffset &= 0x7FFFFF;
 
 	if (cflag) {
-		if (SkyEngine::_systemVars.gameVersion == 331)
+		if (SkyEngine::_systemVars->gameVersion == 331)
 			fileOffset <<= 3;
 		else
 			fileOffset <<= 4;

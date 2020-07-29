@@ -215,7 +215,7 @@ SkyCompact::SkyCompact() {
 	uint16 diffSize = _cptFile->readUint16LE();
 	uint16 *diffBuf = (uint16 *)malloc(diffSize * sizeof(uint16));
 	_cptFile->read(diffBuf, diffSize * sizeof(uint16));
-	if (SkyEngine::_systemVars.gameVersion == 288) {
+	if (SkyEngine::_systemVars->gameVersion == 288) {
 		uint16 *diffPos = diffBuf;
 		for (cnt = 0; cnt < numDiffs; cnt++) {
 			uint16 cptId = READ_LE_UINT16(diffPos++);

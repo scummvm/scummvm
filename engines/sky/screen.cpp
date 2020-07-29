@@ -245,7 +245,7 @@ void Screen::fnDrawScreen(uint32 palette, uint32 scroll) {
 }
 
 void Screen::fnFadeDown(uint32 scroll) {
-	if (((scroll != 123) && (scroll != 321)) || (SkyEngine::_systemVars.systemFlags & SF_NO_SCROLL)) {
+	if (((scroll != 123) && (scroll != 321)) || (SkyEngine::_systemVars->systemFlags & SF_NO_SCROLL)) {
 		uint32 delayTime = _system->getMillis();
 		for (uint8 cnt = 0; cnt < 32; cnt++) {
 			delayTime += 20;
@@ -328,7 +328,7 @@ void Screen::fnFadeUp(uint32 palNum, uint32 scroll) {
 	if ((scroll != 123) && (scroll != 321))
 		scroll = 0;
 
-	if ((scroll == 0) || (SkyEngine::_systemVars.systemFlags & SF_NO_SCROLL)) {
+	if ((scroll == 0) || (SkyEngine::_systemVars->systemFlags & SF_NO_SCROLL)) {
 		uint8 *palette = (uint8 *)_skyCompact->fetchCpt(palNum);
 		if (palette == NULL)
 			error("Screen::fnFadeUp: can't fetch compact %X", palNum);

@@ -55,14 +55,14 @@ void AdLibMusic::onTimer() {
 }
 
 void AdLibMusic::setupPointers() {
-	if (SkyEngine::_systemVars.gameVersion == 109) {
+	if (SkyEngine::_systemVars->gameVersion == 109) {
 		// disk demo uses a different AdLib driver version, some offsets have changed
 		//_musicDataLoc = (_musicData[0x11CC] << 8) | _musicData[0x11CB];
 		//_initSequence = _musicData + 0xEC8;
 
 		_musicDataLoc = READ_LE_UINT16(_musicData + 0x1200);
 		_initSequence = _musicData + 0xEFB;
-	} else if (SkyEngine::_systemVars.gameVersion == 267) {
+	} else if (SkyEngine::_systemVars->gameVersion == 267) {
 		_musicDataLoc = READ_LE_UINT16(_musicData + 0x11F7);
 		_initSequence = _musicData + 0xE87;
 	} else {

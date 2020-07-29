@@ -125,7 +125,7 @@ void Text::getText(uint32 textNr) { //load text #"textNr" into textBuffer
 	if (SkyEngine::_itemList[FIRST_TEXT_SEC + sectionNo] == NULL) { //check if already loaded
 		debug(5, "Loading Text item(s) for Section %d", (sectionNo >> 2));
 
-		uint32 fileNo = sectionNo + ((SkyEngine::_systemVars.language * NO_OF_TEXT_SECTIONS) + 60600);
+		uint32 fileNo = sectionNo + ((SkyEngine::_systemVars->language * NO_OF_TEXT_SECTIONS) + 60600);
 		SkyEngine::_itemList[FIRST_TEXT_SEC + sectionNo] = (void **)_skyDisk->loadFile((uint16)fileNo);
 	}
 	uint8 *textDataPtr = (uint8 *)SkyEngine::_itemList[FIRST_TEXT_SEC + sectionNo];
@@ -417,7 +417,7 @@ uint32 Text::giveCurrentCharSet() {
 }
 
 void Text::initHuffTree() {
-	switch (SkyEngine::_systemVars.gameVersion) {
+	switch (SkyEngine::_systemVars->gameVersion) {
 	case 109:
 		_huffTree = _huffTree_00109;
 		break;
@@ -447,13 +447,13 @@ void Text::initHuffTree() {
 		_huffTree = _huffTree_00372;
 		break;
 	default:
-		error("Unknown game version %d", SkyEngine::_systemVars.gameVersion);
+		error("Unknown game version %d", SkyEngine::_systemVars->gameVersion);
 	}
 }
 
 bool Text::patchMessage(uint32 textNum) {
-	uint16 patchIdx = _patchLangIdx[SkyEngine::_systemVars.language];
-	uint16 patchNum = _patchLangNum[SkyEngine::_systemVars.language];
+	uint16 patchIdx = _patchLangIdx[SkyEngine::_systemVars->language];
+	uint16 patchNum = _patchLangNum[SkyEngine::_systemVars->language];
 	for (uint16 cnt = 0; cnt < patchNum; cnt++) {
 		if (_patchedMessages[cnt + patchIdx].textNr == textNum) {
 			strcpy(_textBuffer, _patchedMessages[cnt + patchIdx].text);

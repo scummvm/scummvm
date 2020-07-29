@@ -75,7 +75,7 @@ void GmMusic::timerCall() {
 }
 
 void GmMusic::setupPointers() {
-	if (SkyEngine::_systemVars.gameVersion == 109) {
+	if (SkyEngine::_systemVars->gameVersion == 109) {
 		_musicDataLoc = READ_LE_UINT16(_musicData + 0x79B);
 		_sysExSequence = _musicData + 0x1EF2;
 	} else {
