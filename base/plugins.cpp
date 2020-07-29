@@ -543,6 +543,10 @@ DetectionResults EngineManager::detectGames(const Common::FSList &fslist) const 
 	DetectedGames candidates;
 	PluginList plugins;
 	PluginList::const_iterator iter;
+
+	/**
+	 * Reference to old detection of games.
+	 * PLUGINS TODO: Remove at end.
 	PluginMan.loadFirstPlugin();
 	do {
 		plugins = getPlugins();
@@ -560,6 +564,24 @@ DetectionResults EngineManager::detectGames(const Common::FSList &fslist) const 
 
 		}
 	} while (PluginMan.loadNextPlugin());
+	 */
+
+	// MetaEngines are always loaded into memory, so, get them and
+	// run detection for all of them.
+	plugins = getPlugins(PLUGIN_TYPE_METAENGINE);
+
+	// Iterate over all known games and for each check if it might be
+	// the game in the presented directory.
+	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
+		const MetaEngine &metaEngine = (*iter)->get<MetaEngine>();
+		DetectedGames engineCandidates = metaEngine.detectGames(fslist);
+
+		for (uint i = 0; i < engineCandidates.size(); i++) {
+			engineCandidates[i].path = fslist.begin()->getParent().getPath();
+			engineCandidates[i].shortPath = fslist.begin()->getParent().getDisplayName();
+			candidates.push_back(engineCandidates[i]);
+		}
+	}
 
 	return DetectionResults(candidates);
 }
