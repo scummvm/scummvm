@@ -1812,6 +1812,15 @@ void LB::b_puppetSprite(int nargs) {
 		Datum state = g_lingo->pop();
 		Datum sprite = g_lingo->pop();
 		if ((uint)sprite.asInt() < sc->_channels.size()) {
+			if (sc->getNextFrame()) {
+				// WORKAROUND: If a frame update is queued, update the sprite to the
+				// sprite in new frame before setting puppet (Majestic).
+				Channel *channel = sc->getChannelById(sprite.asInt());
+
+				channel->replaceSprite(sc->_frames[sc->getNextFrame()]->_sprites[sprite.asInt()]);
+				channel->_dirty = true;
+			}
+
 			sc->getSpriteById(sprite.asInt())->_puppet = state.asInt();
 		} else {
 			warning("b_puppetSprite: sprite index out of bounds");

@@ -84,6 +84,8 @@ public:
 
 	void setCurrentFrame(uint16 frameId) { _nextFrame = frameId; }
 	uint16 getCurrentFrame() { return _currentFrame; }
+	int getNextFrame() { return _nextFrame; }
+
 	int getCurrentPalette();
 	int resolvePaletteId(int id);
 
