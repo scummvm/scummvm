@@ -447,19 +447,18 @@ void Cast::loadCastChildren() {
 			continue;
 
 		// First, handle palettes
-		if (c->_value->_type != kCastBitmap) {
-			if (c->_value->_type == kCastPalette) {
-				PaletteCastMember *member = ((PaletteCastMember *)c->_value);
-				if (member->_children.size() != 1) {
-					warning("Cast::loadSpriteChildren(): Expected 1 child for palette cast, got %d", member->_children.size());
-					continue;
-				}
-
+		if (c->_value->_type == kCastPalette) {
+			PaletteCastMember *member = ((PaletteCastMember *)c->_value);
+			if (member->_children.size() == 1) {
 				member->_palette = g_director->getPalette(member->_children[0].index);
+			} else {
+				warning("Cast::loadSpriteChildren(): Expected 1 child for palette cast, got %d", member->_children.size());
 			}
-
 			continue;
 		}
+
+		if (c->_value->_type != kCastBitmap)
+			continue;
 
 		// Then handle bitmaps
 		BitmapCastMember *bitmapCast = (BitmapCastMember *)c->_value;
