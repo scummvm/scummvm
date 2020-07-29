@@ -1425,7 +1425,7 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream
 			functionName = archive->names[nameIndex];
 		} else if (i == 0 && (scriptFlags & kScriptFlagEventScript)) {
 			// event script (lingo not contained within a handler)
-			functionName = "scummvm_script";
+			functionName = _eventHandlerTypes[kEventGeneric];
 		}
 
 		Symbol sym;
