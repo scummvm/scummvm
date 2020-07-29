@@ -677,7 +677,7 @@ Datum LC::addData(Datum &d1, Datum &d2) {
 	} else if (alignedType == INT) {
 		res = Datum(d1.asInt() + d2.asInt());
 	} else {
-		warning("LC::addData: not supported between types %s and %s", d1.type2str(), d2.type2str());
+		warning("LC::addData(): not supported between types %s and %s", d1.type2str(), d2.type2str());
 	}
 	return res;
 }
@@ -701,7 +701,7 @@ Datum LC::subData(Datum &d1, Datum &d2) {
 	} else if (alignedType == INT) {
 		res = Datum(d1.asInt() - d2.asInt());
 	} else {
-		warning("LC::subData: not supported between types %s and %s", d1.type2str(), d2.type2str());
+		warning("LC::subData(): not supported between types %s and %s", d1.type2str(), d2.type2str());
 	}
 	return res;
 }
@@ -725,7 +725,7 @@ Datum LC::mulData(Datum &d1, Datum &d2) {
 	} else if (alignedType == INT) {
 		res = Datum(d1.asInt() * d2.asInt());
 	} else {
-		warning("LC::mulData: not supported between types %s and %s", d1.type2str(), d2.type2str());
+		warning("LC::mulData(): not supported between types %s and %s", d1.type2str(), d2.type2str());
 	}
 	return res;
 }
@@ -755,7 +755,7 @@ Datum LC::divData(Datum &d1, Datum &d2) {
 	} else if (alignedType == INT) {
 		res = Datum(d1.asInt() / d2.asInt());
 	} else {
-		warning("LC::divData: not supported between types %s and %s", d1.type2str(), d2.type2str());
+		warning("LC::divData(): not supported between types %s and %s", d1.type2str(), d2.type2str());
 	}
 
 	return res;
@@ -807,7 +807,7 @@ Datum LC::negateData(Datum &d) {
 	} else if (res.type == FLOAT) {
 		res.u.f = -res.u.f;
 	} else {
-		warning("LC::negateData: not supported for type %s", res.type2str());
+		warning("LC::negateData(): not supported for type %s", res.type2str());
 	}
 
 	return res;
@@ -939,9 +939,9 @@ void LC::c_of() {
 		int last = first;
 		if (last_line.u.i > 0) {
 			if ((first_item.u.i > 0) || (first_word.u.i > 0) || (first_char.u.i > 0)) {
-				warning("c_of: last_line defined but unused");
+				warning("LC::c_of(): last_line defined but unused");
 			} else if (last_line.u.i < first_line.u.i) {
-				warning("c_of: last_line before first_line, ignoring");
+				warning("LC::c_of(): last_line before first_line, ignoring");
 			} else {
 				last = last_line.u.i;
 			}
@@ -962,7 +962,7 @@ void LC::c_of() {
 			}
 		}
 		if (firstIndex < 0 || lastIndex < 0) {
-			warning("c_of: first_line or last_line out of range");
+			warning("LC::c_of(): first_line or last_line out of range");
 			result = "";
 		} else {
 			result = result.substr(firstIndex, lastIndex);
@@ -970,7 +970,7 @@ void LC::c_of() {
 	}
 
 	if (first_item.u.i > 0 || last_item.u.i > 0) {
-		warning("STUB: c_of item indexing");
+		warning("STUB: LC::c_of() item indexing");
 	}
 
 	if (first_word.u.i > 0) {
@@ -978,9 +978,9 @@ void LC::c_of() {
 		int last = first;
 		if (last_word.u.i > 0) {
 			if (first_char.u.i > 0) {
-				warning("c_of: last_word defined but unused");
+				warning("LC::c_of(): last_word defined but unused");
 			} else if (last_word.u.i < first_word.u.i) {
-				warning("c_of: last_word before first_word, ignoring");
+				warning("LC::c_of(): last_word before first_word, ignoring");
 			} else {
 				last = last_word.u.i;
 			}
@@ -1012,7 +1012,7 @@ void LC::c_of() {
 		}
 		lastIndex = pointer;
 		if (firstIndex < 0) {
-			warning("c_of: first_word out of range");
+			warning("LC::c_of(): first_word out of range");
 			result = "";
 		} else {
 			result = result.substr(firstIndex, lastIndex - firstIndex);
@@ -1024,7 +1024,7 @@ void LC::c_of() {
 		int last = first;
 		if (last_char.u.i > 0) {
 			if (last_char.u.i < first_char.u.i) {
-				warning("c_of: last_char before first_char, ignoring");
+				warning("LC::c_of(): last_char before first_char, ignoring");
 			} else {
 				last = last_char.u.i;
 			}
@@ -1041,7 +1041,7 @@ void LC::c_charOf() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	warning("STUB: c_charOf: %d %d", d1.u.i, d2.u.i);
+	warning("STUB: LC::c_charOf(): %d %d", d1.u.i, d2.u.i);
 
 	g_lingo->push(d1);
 }
@@ -1051,7 +1051,7 @@ void LC::c_charToOf() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	warning("STUB: c_charToOf: %d %d %d", d1.u.i, d2.u.i, d3.u.i);
+	warning("STUB: LC::c_charToOf(): %d %d %d", d1.u.i, d2.u.i, d3.u.i);
 
 	g_lingo->push(d1);
 }
@@ -1060,7 +1060,7 @@ void LC::c_itemOf() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	warning("STUB: c_itemOf: %d %d", d1.u.i, d2.u.i);
+	warning("STUB: LC::c_itemOf(): %d %d", d1.u.i, d2.u.i);
 
 	g_lingo->push(d1);
 }
@@ -1070,7 +1070,7 @@ void LC::c_itemToOf() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	warning("STUB: c_itemToOf: %d %d %d", d1.u.i, d2.u.i, d3.u.i);
+	warning("STUB: LC::c_itemToOf(): %d %d %d", d1.u.i, d2.u.i, d3.u.i);
 
 	g_lingo->push(d1);
 }
@@ -1079,7 +1079,7 @@ void LC::c_lineOf() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	warning("STUB: c_lineOf: %d %d", d1.u.i, d2.u.i);
+	warning("STUB: LC::c_lineOf(): %d %d", d1.u.i, d2.u.i);
 
 	g_lingo->push(d1);
 }
@@ -1089,7 +1089,7 @@ void LC::c_lineToOf() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	warning("STUB: c_lineToOf: %d %d %d", d1.u.i, d2.u.i, d3.u.i);
+	warning("STUB: LC::c_lineToOf(): %d %d %d", d1.u.i, d2.u.i, d3.u.i);
 
 	g_lingo->push(d1);
 }
@@ -1098,7 +1098,7 @@ void LC::c_wordOf() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	warning("STUB: c_wordOf: %d %d", d1.u.i, d2.u.i);
+	warning("STUB: LC::c_wordOf(): %d %d", d1.u.i, d2.u.i);
 
 	g_lingo->push(d1);
 }
@@ -1108,7 +1108,7 @@ void LC::c_wordToOf() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	warning("STUB: c_wordToOf: %d %d %d", d1.u.i, d2.u.i, d3.u.i);
+	warning("STUB: LC::c_wordToOf(): %d %d %d", d1.u.i, d2.u.i, d3.u.i);
 
 	g_lingo->push(d1);
 }
@@ -1330,7 +1330,7 @@ void LC::c_whencode() {
 	} else if (eventname.equalsIgnoreCase("timeOut")) {
 		g_lingo->setTheEntity(kTheTimeoutScript, nullId, kTheNOField, code);
 	} else {
-		warning("c_whencode(): unsupported event handler %s", eventname.c_str());
+		warning("LC::c_whencode(): unsupported event handler %s", eventname.c_str());
 	}
 }
 
@@ -1339,11 +1339,11 @@ void LC::c_tell() {
 	Datum window = g_lingo->pop();
 	g_lingo->push(g_director->getCurrentStage());
 	if (window.type != OBJECT || window.u.obj->getObjType() != kWindowObj) {
-		warning("c_tell(): wrong argument type: %s", window.type2str());
+		warning("LC::c_tell(): wrong argument type: %s", window.type2str());
 		return;
 	}
 	if (static_cast<Stage *>(window.u.obj)->getCurrentMovie() == nullptr) {
-		warning("c_tell: window has no movie");
+		warning("LC::c_tell(): window has no movie");
 		return;
 	}
 	g_director->setCurrentStage(static_cast<Stage *>(window.u.obj));
@@ -1353,7 +1353,7 @@ void LC::c_tell() {
 void LC::c_telldone() {
 	Datum returnWindow = g_lingo->pop();
 	if (returnWindow.type != OBJECT || returnWindow.u.obj->getObjType() != kWindowObj) {
-		warning("c_tell(): wrong return window type: %s", returnWindow.type2str());
+		warning("LC::c_telldone(): wrong return window type: %s", returnWindow.type2str());
 		return;
 	}
 	g_director->setCurrentStage(static_cast<Stage *>(returnWindow.u.obj));
@@ -1581,7 +1581,7 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 
 void LC::c_procret() {
 	if (g_lingo->_callstack.size() == 0) {
-		warning("c_procret: Call stack underflow");
+		warning("LC::c_procret(): Call stack underflow");
 		g_lingo->_abort = true;
 		return;
 	}
@@ -1606,7 +1606,7 @@ void LC::c_hilite() {
 	Datum last_line = g_lingo->pop();
 	Datum cast_id = g_lingo->pop();
 
-	warning("STUB: c_hilite: %d %d %d %d %d %d %d %d %d",
+	warning("STUB: LC::c_hilite(): %d %d %d %d %d %d %d %d %d",
 		first_char.u.i, last_char.u.i, first_word.u.i, last_word.u.i,
 		first_item.u.i, last_item.u.i, first_line.u.i, last_line.u.i,
 		cast_id.u.i);
