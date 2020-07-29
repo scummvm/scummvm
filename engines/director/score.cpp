@@ -297,9 +297,8 @@ void Score::update() {
 			_activeFade = 0;
 	}
 
-	if (g_system->getMillis() < _nextFrameTime && !debugChannelSet(-1, kDebugFast)) {
+	if (g_system->getMillis() < _nextFrameTime && !debugChannelSet(-1, kDebugFast) && !_nextFrame)
 		return;
-	}
 
 	// For previous frame
 	if (_currentFrame > 0 && !_vm->_playbackPaused) {
