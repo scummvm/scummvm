@@ -475,6 +475,7 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 
 			channel->setClean(nextSprite, i);
 			_stage->addDirtyRect(channel->getBbox());
+			debugC(2, kDebugImages, "Score::renderSprites(): CH: %-3d castId: %03d(%s) [ink: %x, puppet: %d, moveable: %d, visible: %d] [bbox: %d,%d,%d,%d] [type: %d fg: %d bg: %d] [script: %d]", i, currentSprite->_castId, numToCastNum(currentSprite->_castId), currentSprite->_ink, currentSprite->_puppet, currentSprite->_moveable, channel->_visible, PRINT_RECT(channel->getBbox()), currentSprite->_spriteType, currentSprite->_foreColor, currentSprite->_backColor, currentSprite->_scriptId);
 		} else {
 			channel->setClean(nextSprite, i, true);
 		}
