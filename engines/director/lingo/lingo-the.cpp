@@ -683,7 +683,14 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		getTheEntitySTUB(kTheSearchPath);
 		break;
 	case kTheSelection:
-		getTheEntitySTUB(kTheSelection);
+		if (_vm->getCurrentMovie()->_currentEditableTextChannel) {
+			Channel *channel = _vm->getCurrentMovie()->getScore()->_channels[_vm->getCurrentMovie()->_currentEditableTextChannel];
+
+			if (channel->_widget) {
+				d.type = STRING;
+				d.u.s = new Common::String(Common::convertFromU32String(((Graphics::MacText *)channel->_widget)->getSelection()));
+			}
+		}
 		break;
 	case kTheSelEnd:
 		getTheEntitySTUB(kTheSelEnd);
