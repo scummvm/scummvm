@@ -652,8 +652,8 @@ DetectionResults EngineManager::detectGames(const Common::FSList &fslist) const 
 	return DetectionResults(candidates);
 }
 
-const PluginList &EngineManager::getPlugins() const {
-	return PluginManager::instance().getPlugins(PLUGIN_TYPE_ENGINE);
+const PluginList &EngineManager::getPlugins(const PluginType fetchPluginType) const {
+	return PluginManager::instance().getPlugins(fetchPluginType);
 }
 
 namespace {
