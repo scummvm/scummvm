@@ -1012,6 +1012,27 @@ void MacText::clearSelection() {
 	_selectedText.endY = _selectedText.startY = -1;
 }
 
+uint MacText::getSelectionIndex(bool start) {
+	int pos = 0;
+
+	if (!_inTextSelection && (_selectedText.startY < 0 && _selectedText.endY < 0))
+		return pos;
+
+	if (start) {
+		for (int row = 0; row < _selectedText.startRow; row++)
+			pos += getLineCharWidth(row);
+
+		pos += _selectedText.startCol;
+		return pos;
+	} else {
+		for (int row = 0; row < _selectedText.endRow; row++)
+			pos += getLineCharWidth(row);
+
+		pos += _selectedText.endCol;
+		return pos;
+	}
+}
+
 void MacText::setSelection(int pos, bool start) {
 	int row = 0, col = 0;
 	int colX = 0;
