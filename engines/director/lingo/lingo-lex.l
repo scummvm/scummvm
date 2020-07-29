@@ -42,6 +42,17 @@
 using namespace Director;
 
 int yyparse();
+static const char *inputbuffer;
+
+// Push lines in stack
+static void pushLine(int num) {
+	if (!inputbuffer[num])
+		return;
+
+	g_lingo->_lines[2] = g_lingo->_lines[1];
+	g_lingo->_lines[1] = g_lingo->_lines[0];
+	g_lingo->_lines[0] = &inputbuffer[num];
+}
 
 static void count() {
 	if (debugChannelSet(-1, kDebugParse))
@@ -53,10 +64,14 @@ static void count() {
 		if (*p == '\n' || *p == '\xC2') {
 			g_lingo->_linenumber++;
 			g_lingo->_colnumber = 0;
+
+			if (*p == '\n')
+				pushLine(g_lingo->_bytenumber + 1);
 		} else {
 			g_lingo->_colnumber++;
 		}
 		p++;
+		g_lingo->_bytenumber++;
 	}
 }
 
@@ -413,12 +428,13 @@ word			{ count(); return varCheck(tWORD, "word"); }
 
 extern int yydebug;
 
-static const char *inputbuffer;
-
 namespace Director {
 
 int Lingo::parse(const char *code) {
 	inputbuffer = code;
+	g_lingo->_bytenumber = 0;
+
+	_lines[0] = _lines[1] = _lines[2] = code;
 
 	YY_BUFFER_STATE bp;
 

@@ -72,6 +72,24 @@ using namespace Director;
 static void yyerror(const char *s) {
 	g_lingo->_hadError = true;
 	warning("######################  LINGO: %s at line %d col %d", s, g_lingo->_linenumber, g_lingo->_colnumber);
+	if (g_lingo->_lines[2] != g_lingo->_lines[1])
+		warning("# %3d: %s", g_lingo->_linenumber - 2, Common::String(g_lingo->_lines[2], g_lingo->_lines[1] - 1).c_str());
+
+	if (g_lingo->_lines[1] != g_lingo->_lines[0])
+		warning("# %3d: %s", g_lingo->_linenumber - 1, Common::String(g_lingo->_lines[1], g_lingo->_lines[0] - 1).c_str());
+
+	const char *ptr = g_lingo->_lines[0];
+
+	while (*ptr && *ptr != '\n')
+		ptr++;
+
+	warning("# %3d: %s", g_lingo->_linenumber, Common::String(g_lingo->_lines[0], ptr).c_str());
+
+	Common::String arrow;
+	for (uint i = 0; i < g_lingo->_colnumber; i++)
+		arrow += ' ';
+
+	warning("#      %s^ about here", arrow.c_str());
 }
 
 static void checkEnd(Common::String *token, const char *expect, bool required) {
