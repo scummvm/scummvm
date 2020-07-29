@@ -137,6 +137,7 @@ struct DirectorPlotData {
 	InkType ink;
 	int colorWhite;
 	int colorBlack;
+	int alpha;
 
 	int backColor;
 	int foreColor;
@@ -144,7 +145,7 @@ struct DirectorPlotData {
 
 	void setApplyColor(); // graphics.cpp
 
-	DirectorPlotData(Graphics::MacWindowManager *w, SpriteType s,InkType i, uint b, uint f) : _wm(w), sprite(s), ink(i), backColor(b), foreColor(f) {
+	DirectorPlotData(Graphics::MacWindowManager *w, SpriteType s, InkType i, int a, uint b, uint f) : _wm(w), sprite(s), ink(i), alpha(a), backColor(b), foreColor(f) {
 		srf = nullptr;
 		ms = nullptr;
 		dst = nullptr;

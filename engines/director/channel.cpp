@@ -58,7 +58,7 @@ Channel::~Channel() {
 }
 
 DirectorPlotData Channel::getPlotData() {
-	DirectorPlotData pd(g_director->_wm, _sprite->_spriteType, _sprite->_ink, getBackColor(), getForeColor());
+	DirectorPlotData pd(g_director->_wm, _sprite->_spriteType, _sprite->_ink, _sprite->_blend, getBackColor(), getForeColor());
 	pd.colorWhite = pd._wm->_colorWhite;
 	pd.colorBlack = pd._wm->_colorBlack;
 	pd.dst = nullptr;
@@ -91,7 +91,8 @@ const Graphics::Surface *Channel::getMask(bool forceMatte) {
 		_sprite->_ink == kInkTypeNotCopy ||
 		_sprite->_ink == kInkTypeNotTrans ||
 		_sprite->_ink == kInkTypeNotReverse ||
-		_sprite->_ink == kInkTypeNotGhost;
+		_sprite->_ink == kInkTypeNotGhost ||
+		_sprite->_blend > 0;
 
 	if (needsMatte || forceMatte) {
 		// Mattes are only supported in bitmaps for now. Shapes don't need mattes,

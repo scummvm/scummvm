@@ -1219,7 +1219,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheBlend:
 		if (d.asInt() != sprite->_blend) {
-			sprite->_blend = d.asInt();
+			sprite->_blend = (d.asInt() == 100 ? 0 : d.asInt());
 			channel->_dirty = true;
 		}
 		break;

@@ -845,6 +845,21 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 		src = *dst;
 
 		*dst = tmpDst;
+	} else if (p->alpha) {
+		// Sprite blend does not respect colourization; defaults to matte ink
+		byte rSrc, gSrc, bSrc;
+		byte rDst, gDst, bDst;
+
+		g_director->_wm->decomposeColor(src, rSrc, gSrc, bSrc);
+		g_director->_wm->decomposeColor(*dst, rDst, gDst, bDst);
+
+		double alpha = (double)p->alpha / 100.0;
+		rDst = static_cast<byte>((rSrc * alpha) + (rDst * (1.0 - alpha)));
+		gDst = static_cast<byte>((gSrc * alpha) + (gDst * (1.0 - alpha)));
+		bDst = static_cast<byte>((bSrc * alpha) + (bDst * (1.0 - alpha)));
+
+		*dst = p->_wm->findBestColor(rDst, gDst, bDst);
+		return;
 	}
 
  	switch (p->ink) {
