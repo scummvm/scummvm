@@ -114,7 +114,7 @@ void Item::dumpInfo() const {
 	     << ", f:0x" << Std::hex << getFlags() << ", ef:0x"
 		 << getExtFlags();
 
-	ShapeInfo *info = getShapeInfo();
+	const ShapeInfo *info = getShapeInfo();
 	if (info) {
 		pout << " shapeinfo f:" << info->_flags << ", fam:"
 			 << info->_family << ", et:" << info->_equipType;
@@ -457,7 +457,7 @@ void Item::randomGumpLocation() {
 
 void Item::getCentre(int32 &X, int32 &Y, int32 &Z) const {
 	// constants!
-	ShapeInfo *shapeinfo = getShapeInfo();
+	const ShapeInfo *shapeinfo = getShapeInfo();
 	if (_flags & FLG_FLIPPED) {
 		X = _x - shapeinfo->_y * 16;
 		Y = _y - shapeinfo->_x * 16;
@@ -713,7 +713,7 @@ int Item::getRangeIfVisible(const Item &item2) const {
 	return distance;
 }
 
-ShapeInfo *Item::getShapeInfoFromGameInstance() const {
+const ShapeInfo *Item::getShapeInfoFromGameInstance() const {
 	return GameData::get_instance()->getMainShapes()->getShapeInfo(_shape);
 }
 
@@ -1540,8 +1540,8 @@ void Item::setupLerp(int32 gametick) {
 
 // Animate the item
 void Item::animateItem() {
-	ShapeInfo *info = getShapeInfo();
-	Shape *shp = getShapeObject();
+	const ShapeInfo *info = getShapeInfo();
+	const Shape *shp = getShapeObject();
 
 	if (!info->_animType) return;
 
@@ -1630,7 +1630,7 @@ void Item::enterFastArea() {
 	}
 
 	if (!hasFlags(FLG_BROKEN) && GAME_IS_CRUSADER) {
-		ShapeInfo *si = getShapeInfo();
+		const ShapeInfo *si = getShapeInfo();
 		if ((si->_flags & ShapeInfo::SI_TARGETABLE) || (si->_flags & ShapeInfo::SI_OCCL)) {
 			World::get_instance()->getCurrentMap()->addTargetItem(this);
 		}
@@ -1926,7 +1926,7 @@ void Item::explode(int explosion_type, bool destroy_item, bool cause_damage) {
 }
 
 uint16 Item::getDamageType() const {
-	ShapeInfo *si = getShapeInfo();
+	const ShapeInfo *si = getShapeInfo();
 	if (si->_weaponInfo) {
 		return si->_weaponInfo->_damageType;
 	}
@@ -2004,7 +2004,7 @@ void Item::receiveHitCru(uint16 other, Direction dir, int damage, uint16 type) {
 
 
 bool Item::canDrag() {
-	ShapeInfo *si = getShapeInfo();
+	const ShapeInfo *si = getShapeInfo();
 	if (si->is_fixed()) return false;
 	if (si->_weight == 0) return false;
 
@@ -3571,7 +3571,7 @@ uint32 Item::I_isCrusTypeNPC(const uint8 *args, unsigned int /*argsize*/) {
 
 	if (sh == 0x7FE) return 1;
 
-	ShapeInfo *info;
+	const ShapeInfo *info;
 	info = GameData::get_instance()->getMainShapes()->getShapeInfo(sh);
 	if (!info) return 0;
 

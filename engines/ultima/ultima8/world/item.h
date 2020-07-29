@@ -241,10 +241,10 @@ public:
 	}
 
 	//! Get the ShapeInfo object for this Item. (The pointer will be cached.)
-	inline ShapeInfo *getShapeInfo() const;
+	inline const ShapeInfo *getShapeInfo() const;
 
 	//! Get the ShapeInfo object for this Item from the game instance.
-	ShapeInfo *getShapeInfoFromGameInstance() const;
+	const ShapeInfo *getShapeInfoFromGameInstance() const;
 
 	//! Get the Shape object for this Item. (The pointer will be cached.)
 	Shape *getShapeObject() const;
@@ -607,7 +607,7 @@ protected:
 	ObjId _parent; // objid container this item is in (or 0 for top-level items)
 
 	mutable Shape *_cachedShape;
-	mutable ShapeInfo *_cachedShapeInfo;
+	mutable const ShapeInfo *_cachedShapeInfo;
 
 	// This is stuff that is used for displaying and interpolation
 	struct Lerped {
@@ -682,7 +682,7 @@ public:
 	};
 };
 
-inline ShapeInfo *Item::getShapeInfo() const {
+inline const ShapeInfo *Item::getShapeInfo() const {
 	if (!_cachedShapeInfo)
 		_cachedShapeInfo = getShapeInfoFromGameInstance();
 	return _cachedShapeInfo;

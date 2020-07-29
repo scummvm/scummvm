@@ -81,7 +81,7 @@ Item *ItemFactory::createItem(uint32 shape, uint32 frame, uint16 quality,
                               uint16 flags, uint16 npcnum, uint16 mapnum,
                               uint32 extendedflags, bool objId) {
 	// check what class to create
-	ShapeInfo *info = GameData::get_instance()->getMainShapes()->
+	const ShapeInfo *info = GameData::get_instance()->getMainShapes()->
 	                  getShapeInfo(shape);
 	if (info == nullptr)
 		return nullptr;

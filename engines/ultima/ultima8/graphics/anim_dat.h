@@ -39,8 +39,8 @@ public:
 
 	void load(Common::SeekableReadStream *rs);
 
-	ActorAnim *getAnim(uint32 shape) const;
-	AnimAction *getAnim(uint32 shape, uint32 action) const;
+	const ActorAnim *getAnim(uint32 shape) const;
+	const AnimAction *getAnim(uint32 shape, uint32 action) const;
 
 	//! Return the action number for a given animation sequence
 	static uint32 getActionNumberForSequence(Animation::Sequence action);

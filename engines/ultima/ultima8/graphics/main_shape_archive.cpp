@@ -54,7 +54,7 @@ void MainShapeArchive::loadDamageDat(Common::SeekableReadStream *rs) {
 	_typeFlags->loadDamageDat(rs);
 }
 
-ShapeInfo *MainShapeArchive::getShapeInfo(uint32 shapenum) {
+const ShapeInfo *MainShapeArchive::getShapeInfo(uint32 shapenum) {
 	assert(_typeFlags);
 
 	return _typeFlags->getShapeInfo(shapenum);
@@ -70,13 +70,13 @@ void MainShapeArchive::loadAnimDat(Common::SeekableReadStream *rs) {
 	_animDat->load(rs);
 }
 
-ActorAnim *MainShapeArchive::getAnim(uint32 shape) const {
+const ActorAnim *MainShapeArchive::getAnim(uint32 shape) const {
 	assert(_animDat);
 
 	return _animDat->getAnim(shape);
 }
 
-AnimAction *MainShapeArchive::getAnim(uint32 shape, uint32 action) const {
+const AnimAction *MainShapeArchive::getAnim(uint32 shape, uint32 action) const {
 	assert(_animDat);
 
 	return _animDat->getAnim(shape, action);

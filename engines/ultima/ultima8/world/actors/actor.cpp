@@ -129,7 +129,7 @@ bool Actor::loadMonsterStatsCru() {
 
 bool Actor::loadMonsterStatsU8() {
 
-	ShapeInfo *shapeinfo = getShapeInfo();
+	const ShapeInfo *shapeinfo = getShapeInfo();
 	MonsterInfo *mi = nullptr;
 	if (shapeinfo) mi = shapeinfo->_monsterInfo;
 	if (!mi)
@@ -358,7 +358,7 @@ bool Actor::giveTreasure() {
 			n = getRandom() % ti._frames.size();
 			uint32 frameNum = ti._frames[n];
 
-			ShapeInfo *si = GameData::get_instance()->getMainShapes()->
+			const ShapeInfo *si = GameData::get_instance()->getMainShapes()->
 			                getShapeInfo(shapeNum);
 			if (!si) {
 				perr << "Trying to create treasure with an invalid shapeNum ("
@@ -510,7 +510,7 @@ Animation::Result Actor::tryAnim(Animation::Sequence anim, Direction dir,
 	}
 
 	if (tracker.isBlocked() &&
-	        !(animaction->_flags & AnimAction::AAF_UNSTOPPABLE)) {
+	        !animaction->hasFlags(AnimAction::AAF_UNSTOPPABLE)) {
 		return Animation::FAILURE;
 	}
 
@@ -681,7 +681,7 @@ int16 Actor::getAttackingDex() const {
 }
 
 uint16 Actor::getDamageType() const {
-	ShapeInfo *si = getShapeInfo();
+	const ShapeInfo *si = getShapeInfo();
 	if (si->_monsterInfo)
 		return si->_monsterInfo->_damageType;
 	else
@@ -1010,7 +1010,7 @@ ProcId Actor::die(uint16 damageType) {
 	destroyContents();
 	giveTreasure();
 
-	ShapeInfo *shapeinfo = getShapeInfo();
+	const ShapeInfo *shapeinfo = getShapeInfo();
 	MonsterInfo *mi = nullptr;
 	if (shapeinfo) mi = shapeinfo->_monsterInfo;
 

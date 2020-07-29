@@ -363,7 +363,7 @@ uint16 MainActor::getDefenseType() const {
 	Std::list<Item *>::const_iterator iter;
 	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		uint32 frameNum = (*iter)->getFrame();
-		ShapeInfo *si = (*iter)->getShapeInfo();
+		const ShapeInfo *si = (*iter)->getShapeInfo();
 		if (si->_armourInfo) {
 			type |= si->_armourInfo[frameNum]._defenseType;
 		}
@@ -378,7 +378,7 @@ uint32 MainActor::getArmourClass() const {
 	Std::list<Item *>::const_iterator iter;
 	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		uint32 frameNum = (*iter)->getFrame();
-		ShapeInfo *si = (*iter)->getShapeInfo();
+		const ShapeInfo *si = (*iter)->getShapeInfo();
 		if (si->_armourInfo) {
 			armour += si->_armourInfo[frameNum]._armourClass;
 		}
@@ -395,7 +395,7 @@ int16 MainActor::getDefendingDex() const {
 
 	Item *weapon = getItem(getEquip(ShapeInfo::SE_WEAPON));
 	if (weapon) {
-		ShapeInfo *si = weapon->getShapeInfo();
+		const ShapeInfo *si = weapon->getShapeInfo();
 		assert(si->_weaponInfo);
 		dex += si->_weaponInfo->_dexDefendBonus;
 	}
@@ -410,7 +410,7 @@ int16 MainActor::getAttackingDex() const {
 
 	Item *weapon = getItem(getEquip(ShapeInfo::SE_WEAPON));
 	if (weapon) {
-		ShapeInfo *si = weapon->getShapeInfo();
+		const ShapeInfo *si = weapon->getShapeInfo();
 		assert(si->_weaponInfo);
 		dex += si->_weaponInfo->_dexAttackBonus;
 	}
@@ -442,7 +442,7 @@ int MainActor::getDamageAmount() const {
 		int kick_bonus = 0;
 		Item *legs = getItem(getEquip(ShapeInfo::SE_LEGS));
 		if (legs) {
-			ShapeInfo *si = legs->getShapeInfo();
+			const ShapeInfo *si = legs->getShapeInfo();
 			assert(si->_armourInfo);
 			kick_bonus = si->_armourInfo[legs->getFrame()]._kickAttackBonus;
 		}
@@ -459,7 +459,7 @@ int MainActor::getDamageAmount() const {
 	if (weapon) {
 		// weapon equipped?
 
-		ShapeInfo *si = weapon->getShapeInfo();
+		const ShapeInfo *si = weapon->getShapeInfo();
 		assert(si->_weaponInfo);
 
 		int base = si->_weaponInfo->_baseDamage;
@@ -581,7 +581,7 @@ void MainActor::getWeaponOverlay(const WeaponOverlayFrame *&frame_, uint32 &shap
 	Item *weapon = getItem(weaponid);
 	if (!weapon) return;
 
-	ShapeInfo *shapeinfo = weapon->getShapeInfo();
+	const ShapeInfo *shapeinfo = weapon->getShapeInfo();
 	if (!shapeinfo) return;
 
 	WeaponInfo *weaponinfo = shapeinfo->_weaponInfo;

@@ -742,7 +742,7 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 				if (item->hasExtFlags(Item::EXT_SPRITE))
 					continue;
 
-				ShapeInfo *si = item->getShapeInfo();
+				const ShapeInfo *si = item->getShapeInfo();
 				//!! need to check is_sea() and is_land() maybe?
 				if (!(si->_flags & flagmask))
 					continue; // not an interesting item

@@ -250,7 +250,7 @@ void Map::loadFixedFormatObjects(Std::list<Item *> &itemlist,
 		if (!item) {
 			pout << shape << "," << frame << ":\t(" << x << "," << y << "," << z << "),\t" << Std::hex << flags << Std::dec << ", " << quality << ", " << npcNum << ", " << mapNum << ", " << next;
 
-			ShapeInfo *info = GameData::get_instance()->getMainShapes()->
+			const ShapeInfo *info = GameData::get_instance()->getMainShapes()->
 			                  getShapeInfo(shape);
 			if (info) pout << ", family = " << info->_family;
 			pout << Std::endl;
@@ -258,7 +258,7 @@ void Map::loadFixedFormatObjects(Std::list<Item *> &itemlist,
 			pout << "Couldn't create item" << Std::endl;
 			continue;
 		} else {
-			ShapeInfo *info = item->getShapeInfo();
+			const ShapeInfo *info = item->getShapeInfo();
 			assert(info);
 			if (info->_family > 10) {
 				//warning("Created fixed item unknown family %d, shape (%d, %d) at (%d, %d, %d)", info->_family, shape, frame, x, y, z);

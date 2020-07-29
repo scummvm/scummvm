@@ -277,7 +277,7 @@ bool CombatProcess::inAttackRange() {
 	Actor *a = getActor(_itemNum);
 	if (!a)
 		return false; // shouldn't happen
-	ShapeInfo *shapeinfo = a->getShapeInfo();
+	const ShapeInfo *shapeinfo = a->getShapeInfo();
 	MonsterInfo *mi = nullptr;
 	if (shapeinfo) mi = shapeinfo->_monsterInfo;
 
@@ -302,7 +302,7 @@ void CombatProcess::waitForTarget() {
 	Actor *a = getActor(_itemNum);
 	if (!a)
 		return; // shouldn't happen
-	ShapeInfo *shapeinfo = a->getShapeInfo();
+	const ShapeInfo *shapeinfo = a->getShapeInfo();
 	MonsterInfo *mi = nullptr;
 	if (shapeinfo) mi = shapeinfo->_monsterInfo;
 

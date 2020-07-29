@@ -124,7 +124,7 @@ private:
 	ObjId _actor;
 	Direction _dir;
 
-	AnimAction *_animAction;
+	const AnimAction *_animAction;
 
 	// actor state
 	int32 _prevX, _prevY, _prevZ;

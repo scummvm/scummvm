@@ -155,7 +155,7 @@ void ActorAnimProcess::run() {
 
 	if (!_firstFrame)
 		_repeatCounter++;
-	if (_repeatCounter > _tracker->getAnimAction()->_frameRepeat)
+	if (_repeatCounter > _tracker->getAnimAction()->getFrameRepeat())
 		_repeatCounter = 0;
 
 	Actor *a = getActor(_itemNum);
@@ -228,7 +228,7 @@ void ActorAnimProcess::run() {
 
 
 			if (_tracker->isBlocked() &&
-			        !(_tracker->getAnimAction()->_flags & AnimAction::AAF_UNSTOPPABLE)) {
+			        !(_tracker->getAnimAction()->hasFlags(AnimAction::AAF_UNSTOPPABLE))) {
 				// FIXME: For blocked large _steps we may still want to do
 				//        a partial move. (But how would that work with
 				//        repeated frames?)
@@ -332,7 +332,7 @@ void ActorAnimProcess::run() {
 #endif
 
 
-	if (_repeatCounter == _tracker->getAnimAction()->_frameRepeat) {
+	if (_repeatCounter == _tracker->getAnimAction()->getFrameRepeat()) {
 		if (_tracker->isUnsupported()) {
 			_animAborted = true;
 
@@ -610,7 +610,7 @@ void ActorAnimProcess::terminate() {
 	if (a) {
 		if (_tracker) { // if we were really animating...
 			a->clearActorFlag(Actor::ACT_ANIMLOCK);
-			if (_tracker->getAnimAction()->_flags & AnimAction::AAF_DESTROYACTOR) {
+			if (_tracker->getAnimAction()->hasFlags(AnimAction::AAF_DESTROYACTOR)) {
 				// destroy the actor
 #ifdef WATCHACTOR
 				if (_itemNum == watchactor)

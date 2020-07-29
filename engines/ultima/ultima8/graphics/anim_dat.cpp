@@ -42,14 +42,14 @@ AnimDat::~AnimDat() {
 		delete _anims[i];
 }
 
-ActorAnim *AnimDat::getAnim(uint32 shape) const {
+const ActorAnim *AnimDat::getAnim(uint32 shape) const {
 	if (shape >= _anims.size())
 		return nullptr;
 
 	return _anims[shape];
 }
 
-AnimAction *AnimDat::getAnim(uint32 shape, uint32 action) const {
+const AnimAction *AnimDat::getAnim(uint32 shape, uint32 action) const {
 	if (shape >= _anims.size())
 		return nullptr;
 	if (_anims[shape] == 0)
@@ -169,7 +169,7 @@ void AnimDat::load(Common::SeekableReadStream *rs) {
 			a->_actions[action]->_dirCount = dirCount;
 
 			for (unsigned int dir = 0; dir < dirCount; dir++) {
-				a->_actions[action]->frames[dir].clear();
+				a->_actions[action]->_frames[dir].clear();
 
 				for (unsigned int j = 0; j < actionsize; j++) {
 					if (GAME_IS_U8) {
@@ -201,7 +201,7 @@ void AnimDat::load(Common::SeekableReadStream *rs) {
 						f._deltaZ = 0;
 						f._sfx = 0;
 					}
-					a->_actions[action]->frames[dir].push_back(f);
+					a->_actions[action]->_frames[dir].push_back(f);
 				}
 			}
 		}
