@@ -107,8 +107,12 @@ Conf::Conf(InterpreterType interpType) : _interpType(interpType), _graphics(true
 	if (_screenFormat.bytesPerPixel == 1)
 		_graphics = false;
 
-	Common::copy(T_STYLES, T_STYLES + style_NUMSTYLES, _tStyles);
-	Common::copy(G_STYLES, G_STYLES + style_NUMSTYLES, _gStyles);
+	for (int i = 0; i < style_NUMSTYLES; ++i) {
+		_tStyles[i].fg = parseColor(T_STYLES[i].fg);
+		_tStyles[i].bg = parseColor(T_STYLES[i].bg);
+		_gStyles[i].fg = parseColor(G_STYLES[i].fg);
+		_gStyles[i].bg = parseColor(G_STYLES[i].bg);
+	}
 
 	Common::copy(_tStyles, _tStyles + style_NUMSTYLES, _tStylesDefault);
 	Common::copy(_gStyles, _gStyles + style_NUMSTYLES, _gStylesDefault);
