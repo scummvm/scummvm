@@ -420,15 +420,81 @@ void PluginManager::unloadAllPlugins() {
 
 void PluginManager::unloadPluginsExcept(PluginType type, const Plugin *plugin, bool deletePlugin /*=true*/) {
 	Plugin *found = NULL;
-	for (PluginList::iterator p = _pluginsInMem[type].begin(); p != _pluginsInMem[type].end(); ++p) {
-		if (*p == plugin) {
-			found = *p;
-		} else {
-			(*p)->unloadPlugin();
-			if (deletePlugin)
-				delete *p;
+
+	// If someone calls this function with a nullptr Plugin, we clear everything, and no need to search
+	// for individual plugin.
+	if (plugin) {
+
+		if (type != plugin->getType() && type != PLUGIN_TYPE_ENGINE) {
+			warning("Plugins: unloadPluginExcept: mismatching type of plugins requested to unload. Operation not carried out.");
+			return;
+		}
+
+		Common::String enginePluginTitle("");
+		bool toDelete = false;
+
+		if (type == PLUGIN_TYPE_ENGINE) {
+			/**
+			 * We've got in a plugin of type MetaEngine, and we want to keep
+			 * the relevant plugin of Engine type in memory.
+			 * To do this, we first construct a name from the given MetaEngine.
+			 */
+
+#ifdef PLUGIN_PREFIX
+			enginePluginTitle += PLUGIN_PREFIX;
+#endif
+
+			enginePluginTitle += Common::String(plugin->getEngineId());
+
+#ifdef PLUGIN_SUFFIX
+			enginePluginTitle += PLUGIN_SUFFIX;
+#endif
+		}
+
+		for (PluginList::iterator p = _pluginsInMem[type].begin(); p != _pluginsInMem[type].end(); ++p) {
+			if (type == PLUGIN_TYPE_ENGINE) {
+				Common::String enginePluginFilename((*p)->getFileName());
+
+				/**
+				 * Take the ending of the filename, and subtract it with the size of enginePluginTitle.
+				 * This should effectively cancel out directory names and exactly leave the plugin filename
+				 * ONLY for the one we require. That's why we do a equals call.
+				 * Example: We got the request to unload engine of AGI, and were given a AGIMetaEngine.
+				 * So, plugins/agi.dll will beome agi.dll (fetched by getFileName) and will try
+				 * to match to our generated enginePluginTitle from the plugin we got. (A metaengine type plugin)
+				 * This will then pass the check and be the only one loaded in memory.
+				 */
+				if (enginePluginFilename.size() > enginePluginTitle.size()) {
+					Common::String::const_iterator beginItr = enginePluginFilename.end() - enginePluginTitle.size();
+					Common::String strippedFileName(beginItr, enginePluginFilename.end());
+
+					if (strippedFileName.equalsIgnoreCase(enginePluginTitle)) {
+						found = *p;
+					} else {
+						toDelete = true;
+					}
+				} else {
+					toDelete = true;
+				}
+			} else {
+				// The type is something other than a engine type.
+				if (*p == plugin) {
+					found = *p;
+				} else {
+					toDelete = true;
+				}
+			}
+
+			if (toDelete) {
+				(*p)->unloadPlugin();
+				if (deletePlugin) {
+					delete *p;
+				}
+				toDelete = false;
+			}
 		}
 	}
+
 	_pluginsInMem[type].clear();
 	if (found != NULL) {
 		_pluginsInMem[type].push_back(found);
