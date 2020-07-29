@@ -94,6 +94,9 @@ const uint kStaticRoomObjectsMapCount = 40;
 const uint kStaticRoomObjectsCount = 58;
 const uint kStaticRoomObjectSpritesCount = 4;
 const uint kAnimationTimersCount = 4;
+const int kInventorySize = 50;
+const int kFirstInventoryObjectId = 28;
+const int kLastInventoryObjectId = 77;
 
 class WaynesWorldEngine : public Engine {
 protected:
@@ -182,9 +185,9 @@ public:
 	// Inventory
 	WWSurface *_inventorySprite;
 	int _inventoryItemsCount;
-	int _inventoryItemsObjectMap[50];
-	int _wayneInventory[50];
-	int _garthInventory[50];
+	int _inventoryItemsObjectMap[kInventorySize];
+	int _wayneInventory[kInventorySize];
+	int _garthInventory[kInventorySize];
 
 	// Dialog
 	int _selectedDialogChoice;
@@ -271,6 +274,10 @@ public:
 	void redrawInventory();
 	void refreshInventory(bool doRefresh);
 	void drawInventory();
+	void setWayneInventoryItemQuantity(int objectId, int quantity);
+	void setGarthInventoryItemQuantity(int objectId, int quantity);
+	int getWayneInventoryItemQuantity(int objectId);
+	int getGarthInventoryItemQuantity(int objectId);
 
 	// Actors and animations
 	void loadMainActorSprites();

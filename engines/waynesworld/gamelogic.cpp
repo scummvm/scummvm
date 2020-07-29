@@ -2127,10 +2127,10 @@ bool GameLogic::r2_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 		_vm->_gameState = 0;
 		break;
 	case 369: case 384:
-		if (_vm->isActorWayne() && _vm->_wayneInventory[kObjectIdInventoryDollar] < 1) {
+		if (_vm->isActorWayne() && _vm->getWayneInventoryItemQuantity(kObjectIdInventoryDollar) < 1) {
 			replyTextIndex1 = 579;
 			continueDialog = true;
-		} else if (_vm->isActorGarth() && _vm->_garthInventory[kObjectIdInventoryDollar] < 1) {
+		} else if (_vm->isActorGarth() && _vm->getGarthInventoryItemQuantity(kObjectIdInventoryDollar) < 1) {
 			replyTextIndex1 = 579;
 			continueDialog = true;
 		} else {
@@ -2139,10 +2139,10 @@ bool GameLogic::r2_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 		_vm->_gameState = 0;
 		break;
 	case 385:
-		if (_vm->isActorWayne() && _vm->_wayneInventory[kObjectIdInventoryDollar] < 10) {
+		if (_vm->isActorWayne() && _vm->getWayneInventoryItemQuantity(kObjectIdInventoryDollar) < 10) {
 			replyTextIndex1 = 579;
 			continueDialog = true;
-		} else if (_vm->isActorGarth() && _vm->_garthInventory[kObjectIdInventoryDollar] < 10) {
+		} else if (_vm->isActorGarth() && _vm->getGarthInventoryItemQuantity(kObjectIdInventoryDollar) < 10) {
 			replyTextIndex1 = 579;
 			continueDialog = true;
 		} else {
@@ -2198,13 +2198,13 @@ bool GameLogic::r2_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 		continueDialog = true;
 		_r2_flags |= 0x10;
 		if (_vm->isActorWayne()) {
-			if (_vm->_wayneInventory[kObjectIdInventoryDollar] >= 10) {
+			if (_vm->getWayneInventoryItemQuantity(kObjectIdInventoryDollar) >= 10) {
 				_vm->setDialogChoices(379, 366, -1, -1, -1);
 			} else {
 				_vm->setDialogChoices(380, 366, -1, -1, -1);
 			}
 		} else if (_vm->isActorGarth()) {
-			if (_vm->_garthInventory[kObjectIdInventoryDollar] >= 10) {
+			if (_vm->getGarthInventoryItemQuantity(kObjectIdInventoryDollar) >= 10) {
 				_vm->setDialogChoices(379, 366, -1, -1, -1);
 			} else {
 				_vm->setDialogChoices(380, 366, -1, -1, -1);
@@ -4465,9 +4465,9 @@ bool GameLogic::r10_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 				break;
 			case 0: case 1: case 2:
 				_r10_selectedItemToBuy = _vm->_selectedDialogChoice;
-				if (_vm->isActorWayne() && _vm->_wayneInventory[kObjectIdInventoryDollar - 28] == 0) {
+				if (_vm->isActorWayne() && _vm->getWayneInventoryItemQuantity(kObjectIdInventoryDollar) == 0) {
 					_vm->setDialogChoices(8, -1, -1, -1, -1);
-				} else if (_vm->isActorGarth() && _vm->_garthInventory[kObjectIdInventoryDollar - 28] == 0) {
+				} else if (_vm->isActorGarth() && _vm->getGarthInventoryItemQuantity(kObjectIdInventoryDollar) == 0) {
 					_vm->setDialogChoices(8, -1, -1, -1, -1);
 				} else {
 					_vm->setDialogChoices(6, 7, -1, -1, -1);

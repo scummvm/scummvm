@@ -129,8 +129,8 @@ Common::Error WaynesWorldEngine::run() {
 	memset(_wayneInventory, 0, sizeof(_wayneInventory));
 	memset(_garthInventory, 0, sizeof(_garthInventory));
 
-    _wayneInventory[kObjectIdInventoryDollar - 28] = 5;
-    _garthInventory[kObjectIdInventoryDrumstick - 28] = 1;
+	setWayneInventoryItemQuantity(kObjectIdInventoryDollar, 5);
+	setGarthInventoryItemQuantity(kObjectIdInventoryDrumstick, 1);
 
 #if 0
 	while (!shouldQuit()) {
@@ -339,18 +339,18 @@ void WaynesWorldEngine::updateMouseMove() {
         int inventorySlotIndex = _mouseY / 20 * 12 + _mouseX / 26;
         if (inventorySlotIndex < _inventoryItemsCount) {
             int inventoryObjectId = _inventoryItemsObjectMap[inventorySlotIndex];
-            int itemCount;
+            int inventoryItemQuantity;
             if (isActorWayne()) {
-                itemCount = _wayneInventory[inventoryObjectId - 28];
+                inventoryItemQuantity = getWayneInventoryItemQuantity(inventoryObjectId);
             } else {
-                itemCount = _garthInventory[inventoryObjectId - 28];
+                inventoryItemQuantity = getGarthInventoryItemQuantity(inventoryObjectId);
             }
             const char *roomObjectName = getRoomObjectName(inventoryObjectId);
             char objectName[32];
-            if (itemCount == 1) {
+            if (inventoryItemQuantity == 1) {
                 sprintf(objectName, "%s", roomObjectName);
             } else {
-                sprintf(objectName, "%d %ss", itemCount, roomObjectName);
+                sprintf(objectName, "%d %ss", inventoryItemQuantity, roomObjectName);
             }
             drawVerbLine(_verbNumber, inventoryObjectId, objectName);
             return;
@@ -738,8 +738,8 @@ void WaynesWorldEngine::selectVerbNumber(int x) {
 }
 
 void WaynesWorldEngine::changeActor() {
-    if (_currentRoomNumber == 31)
-        return;
+	if (_currentRoomNumber == 31)
+		return;
 	toggleActor();
     drawInterface(_verbNumber);
     _isTextVisible = false;
@@ -805,13 +805,12 @@ void WaynesWorldEngine::rememberFirstObjectName(int objectId) {
         _firstObjectName = "Wayne";
     } else if (objectId == -3) {
         _firstObjectName = "Garth";
-    } else if (objectId <= 77) {
-        int inventoryIndex = objectId - 28;
+    } else if (objectId <= kLastInventoryObjectId) {
         int inventoryItemQuantity = 0;
         if (isActorWayne()) {
-            inventoryItemQuantity = _wayneInventory[inventoryIndex];
+            inventoryItemQuantity = getWayneInventoryItemQuantity(objectId);
         } else {
-            inventoryItemQuantity = _garthInventory[inventoryIndex];
+            inventoryItemQuantity = getGarthInventoryItemQuantity(objectId);
         }
         if (inventoryItemQuantity == 1) {
             _firstObjectName = getRoomObjectName(objectId);
@@ -849,8 +848,8 @@ void WaynesWorldEngine::drawInventory() {
     int iconX = 0;
     int iconY = 0;
     _inventorySprite->clear(0);
-    for (int inventoryItemIndex = 0; inventoryItemIndex < 50; inventoryItemIndex++) {
-        int objectRoomNumber = getObjectRoom(inventoryItemIndex + 28);
+    for (int inventoryItemIndex = 0; inventoryItemIndex < kInventorySize; inventoryItemIndex++) {
+        int objectRoomNumber = getObjectRoom(inventoryItemIndex + kFirstInventoryObjectId);
         if ((isActorWayne() && objectRoomNumber == 99 && _wayneInventory[inventoryItemIndex] > 0) ||
             (isActorGarth() && objectRoomNumber == 99 && _garthInventory[inventoryItemIndex] > 0)) {
             Common::String filename = Common::String::format("m03/icon%02d", inventoryItemIndex + 1);
@@ -861,10 +860,26 @@ void WaynesWorldEngine::drawInventory() {
                 iconX = 0;
                 iconY += 20;
             }
-            _inventoryItemsObjectMap[_inventoryItemsCount] = inventoryItemIndex + 28;
+            _inventoryItemsObjectMap[_inventoryItemsCount] = inventoryItemIndex + kFirstInventoryObjectId;
             _inventoryItemsCount++;
         }
     }
+}
+
+void WaynesWorldEngine::setWayneInventoryItemQuantity(int objectId, int quantity) {
+	_wayneInventory[objectId - kFirstInventoryObjectId] = quantity;
+}
+
+void WaynesWorldEngine::setGarthInventoryItemQuantity(int objectId, int quantity) {
+	_garthInventory[objectId - kFirstInventoryObjectId] = quantity;
+}
+
+int WaynesWorldEngine::getWayneInventoryItemQuantity(int objectId) {
+	return _wayneInventory[objectId - kFirstInventoryObjectId];
+}
+
+int WaynesWorldEngine::getGarthInventoryItemQuantity(int objectId) {
+	return _garthInventory[objectId - kFirstInventoryObjectId];
 }
 
 void WaynesWorldEngine::loadMainActorSprites() {
@@ -1471,8 +1486,8 @@ void WaynesWorldEngine::initRoomObjects() {
 
 void WaynesWorldEngine::moveObjectToRoom(int objectId, int roomNum) {
     _roomObjects[objectId].roomNumber = roomNum;
-    if (objectId <= 77) {
-        int inventoryIndex = objectId - 28;
+    if (objectId <= kLastInventoryObjectId) {
+        int inventoryIndex = objectId - kFirstInventoryObjectId;
         if (isActorWayne()) {
             _wayneInventory[inventoryIndex]++;
         } else {
@@ -1482,8 +1497,8 @@ void WaynesWorldEngine::moveObjectToRoom(int objectId, int roomNum) {
 }
 
 void WaynesWorldEngine::moveObjectToNowhere(int objectId) {
-    if (objectId <= 77) {
-        int inventoryIndex = objectId - 28;
+    if (objectId <= kLastInventoryObjectId) {
+        int inventoryIndex = objectId - kFirstInventoryObjectId;
         if (isActorWayne()) {
             _wayneInventory[inventoryIndex]--;
         } else {
@@ -1531,7 +1546,7 @@ void WaynesWorldEngine::walkToObject() {
         walkTo(_garthSpriteX, _garthSpriteY, _actorSpriteValue, -1, -1);
     } else if (_hoverObjectNumber == -3) {
         walkTo(_wayneSpriteX, _wayneSpriteY, _actorSpriteValue, -1, -1);
-    } else if (_hoverObjectNumber > 77) {
+    } else if (_hoverObjectNumber > kLastInventoryObjectId) {
         const RoomObject *roomObject = getRoomObject(_hoverObjectNumber);
         walkTo(roomObject->walkX, roomObject->walkY, roomObject->direction, -1, -1);
     } else {
@@ -1650,7 +1665,7 @@ void WaynesWorldEngine::handleVerbPickUp() {
     int actionTextIndex = -1;
 
     _isTextVisible = false;
-    if (_objectNumber <= 77) {
+    if (_objectNumber <= kLastInventoryObjectId) {
         refreshActors();
     }
 
@@ -1702,7 +1717,7 @@ void WaynesWorldEngine::handleVerbPickUp() {
 
 void WaynesWorldEngine::handleVerbLookAt() {
     _isTextVisible = 0;
-    if (_objectNumber <= 77) {
+    if (_objectNumber <= kLastInventoryObjectId) {
         refreshActors();
     }
     if (_objectNumber == kObjectIdComputer) {
@@ -1729,7 +1744,7 @@ void WaynesWorldEngine::handleVerbUse() {
     int actionTextIndex = -1;
 
     _isTextVisible = false;
-    if (_objectNumber <= 77) {
+    if (_objectNumber <= kLastInventoryObjectId) {
         refreshActors();
     }
 
@@ -1865,7 +1880,7 @@ void WaynesWorldEngine::handleVerbPush() {
     int actionTextIndex = -1;
 
     _isTextVisible = false;
-    if (_objectNumber <= 77) {
+    if (_objectNumber <= kLastInventoryObjectId) {
         refreshActors();
     }
 
@@ -1890,7 +1905,7 @@ void WaynesWorldEngine::handleVerbPull() {
     int actionTextIndex = -1;
 
     _isTextVisible = false;
-    if (_objectNumber <= 77) {
+    if (_objectNumber <= kLastInventoryObjectId) {
         refreshActors();
     }
 
@@ -1921,12 +1936,12 @@ void WaynesWorldEngine::handleVerbGive() {
         return;
     }
 
-    if (_firstObjectNumber >= 28 && _firstObjectNumber <= 77 &&
+    if (_firstObjectNumber >= kFirstInventoryObjectId && _firstObjectNumber <= kLastInventoryObjectId &&
         (_objectNumber == -2 || _objectNumber == -3)) {
         if (_firstObjectNumber == kObjectIdInventoryDrumstick || _firstObjectNumber == kObjectIdInventoryGuitar) {
             displayText("c08", 2, 0, -1, -1, 0);
         } else {
-            int inventoryIndex = _firstObjectNumber - 28;
+            int inventoryIndex = _firstObjectNumber - kFirstInventoryObjectId;
             if (_objectNumber == -3) {
                 _garthInventory[inventoryIndex] += _wayneInventory[inventoryIndex];
                 _wayneInventory[inventoryIndex] = 0;
@@ -1955,7 +1970,7 @@ void WaynesWorldEngine::handleVerbOpen() {
     int actionTextIndex = -1;
 
     _isTextVisible = false;
-    if (_objectNumber <= 77) {
+    if (_objectNumber <= kLastInventoryObjectId) {
         refreshActors();
     }
 
@@ -1995,7 +2010,7 @@ void WaynesWorldEngine::handleVerbClose() {
     int actionTextIndex = -1;
 
     _isTextVisible = false;
-    if (_objectNumber <= 77) {
+    if (_objectNumber <= kLastInventoryObjectId) {
         refreshActors();
     }
 
