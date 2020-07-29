@@ -852,51 +852,9 @@ void AvatarMoverProcess::jump(Animation::Sequence action, Direction direction) {
 
 void AvatarMoverProcess::turnToDirection(Direction direction) {
 	MainActor *avatar = getMainActor();
-	bool combatRun = avatar->hasActorFlags(Actor::ACT_COMBATRUN);
-	Direction curdir = avatar->getDir();
-	bool combat = avatar->isInCombat() && !combatRun;
-	Animation::Sequence standanim = Animation::stand;
-
-	int stepDelta = Direction_GetShorterTurnDelta(curdir, direction);
-	Animation::Sequence turnanim;
-	if (stepDelta == -1) {
-		turnanim = Animation::lookLeft;
-	} else {
-		turnanim = Animation::lookRight;
-	}
-
-	if (combat) {
-		turnanim = Animation::combatStand;
-		standanim = Animation::combatStand;
-	}
-
-	ProcId prevpid = 0;
-
-	// Create a sequence of turn animations from
-	// our current direction to the new one
-	DirectionMode dirmode = avatar->animDirMode(turnanim);
-
-	for (Direction dir = curdir; dir != direction; dir = Direction_TurnByDelta(dir, stepDelta, dirmode)) {
-		ProcId animpid = avatar->doAnim(turnanim, dir);
-
-		if (prevpid) {
-			Process *proc = Kernel::get_instance()->getProcess(animpid);
-			assert(proc);
-			proc->waitFor(prevpid);
-		}
-
-		prevpid = animpid;
-	}
-
-	ProcId animpid = avatar->doAnim(standanim, direction);
-
-	if (prevpid) {
-		Process *proc = Kernel::get_instance()->getProcess(animpid);
-		assert(proc);
-		proc->waitFor(prevpid);
-	}
-
-	waitFor(animpid);
+	uint16 turnpid = avatar->turnTowardDir(direction);
+	if (turnpid)
+		waitFor(turnpid);
 }
 
 bool AvatarMoverProcess::checkTurn(Direction direction, bool moving) {
@@ -907,13 +865,13 @@ bool AvatarMoverProcess::checkTurn(Direction direction, bool moving) {
 	// Note: don't need to turn if moving backward in combat stance
 	// CHECKME: currently, first turn in the right direction
 	if (direction != curdir && !(
-	            combat && ABS(direction - curdir) == 4)) {
+	            combat && ABS(direction - curdir) == 8)) {
 		Animation::Sequence lastanim = avatar->getLastAnim();
 
 		if (moving &&
 		        (lastanim == Animation::walk || lastanim == Animation::run ||
 		         lastanim == Animation::combatStand) &&
-		        (ABS(direction - curdir) + 1 % 8 <= 2)) {
+		        (ABS(direction - curdir) + 2 % 16 <= 4)) {
 			// don't need to explicitly do a turn animation
 			return false;
 		}

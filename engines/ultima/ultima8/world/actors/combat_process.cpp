@@ -257,8 +257,13 @@ void CombatProcess::turnToDirection(Direction direction) {
 	bool done = false;
 
 	DirectionMode mode = a->animDirMode(turnanim);
+	// slight hack - avoid making 8-step turns if our target is a 16-step direction
+	// - we'll never get to the right direction that way.
+	if (static_cast<uint32>(direction) % 2) {
+		mode = dirmode_16dirs;
+	}
 
-	for (Direction dir = curdir; !done;	dir = Direction_TurnByDelta(dir, stepDelta, mode)) {
+	for (Direction dir = curdir; dir != direction; dir = Direction_TurnByDelta(dir, stepDelta, mode)) {
 		ProcId animpid = a->doAnim(turnanim, dir);
 
 		if (dir == direction) done = true;

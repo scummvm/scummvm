@@ -31,22 +31,22 @@ namespace Ultima8 {
  */
 enum Direction {
 	dir_north = 0,
-	dir_northeast = 1,
-	dir_east = 2,
-	dir_southeast = 3,
-	dir_south = 4,
-	dir_southwest = 5,
-	dir_west = 6,
-	dir_northwest = 7,
-	dir_current = 16,
-	dir_nne,
-	dir_ene,
-	dir_ese,
-	dir_sse,
-	dir_ssw,
-	dir_wsw,
-	dir_wnw,
-	dir_nnw
+	dir_nne = 1,
+	dir_northeast = 2,
+	dir_ene = 3,
+	dir_east = 4,
+	dir_ese = 5,
+	dir_southeast = 6,
+	dir_sse = 7,
+	dir_south = 8,
+	dir_ssw = 9,
+	dir_southwest = 10,
+	dir_wsw = 11,
+	dir_west = 12,
+	dir_wnw = 13,
+	dir_northwest = 14,
+	dir_nnw = 15,
+	dir_current = 16
 };
 
 enum DirectionMode {

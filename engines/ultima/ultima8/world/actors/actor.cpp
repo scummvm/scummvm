@@ -555,9 +555,10 @@ DirectionMode Actor::animDirMode(Animation::Sequence anim) const {
 }
 
 uint16 Actor::turnTowardDir(Direction targetdir) {
-	Direction curdir = _direction;
-	if (targetdir == curdir)
-		return 0;
+	bool combatRun = hasActorFlags(Actor::ACT_COMBATRUN);
+	Direction curdir = getDir();
+	bool combat = isInCombat() && !combatRun;
+	Animation::Sequence standanim = Animation::stand;
 
 	int stepDelta = Direction_GetShorterTurnDelta(curdir, targetdir);
 	Animation::Sequence turnanim;
@@ -567,14 +568,26 @@ uint16 Actor::turnTowardDir(Direction targetdir) {
 		turnanim = Animation::lookRight;
 	}
 
-	ProcId prevpid = 0;
+	if (combat) {
+		turnanim = Animation::combatStand;
+		standanim = Animation::combatStand;
+	}
 
-	DirectionMode dirmode = animDirMode(turnanim);
+	ProcId prevpid = 0;
 
 	// Create a sequence of turn animations from
 	// our current direction to the new one
-	for (Direction dir = curdir; dir != targetdir; dir = Direction_TurnByDelta(dir, stepDelta, dirmode)) {
+	DirectionMode mode = animDirMode(turnanim);
+
+	// slight hack - avoid making 8-step turns if our target is a 16-step direction
+	// - we'll never get to the right direction that way.
+	if (static_cast<uint32>(targetdir) % 2) {
+		mode = dirmode_16dirs;
+	}
+
+	for (Direction dir = curdir; dir != targetdir; dir = Direction_TurnByDelta(dir, stepDelta, mode)) {
 		ProcId animpid = doAnim(turnanim, dir);
+
 		if (prevpid) {
 			Process *proc = Kernel::get_instance()->getProcess(animpid);
 			assert(proc);
@@ -584,7 +597,14 @@ uint16 Actor::turnTowardDir(Direction targetdir) {
 		prevpid = animpid;
 	}
 
-	return prevpid;
+	ProcId animpid = doAnim(standanim, targetdir);
+	if (prevpid) {
+		Process *proc = Kernel::get_instance()->getProcess(animpid);
+		assert(proc);
+		proc->waitFor(prevpid);
+	}
+
+	return animpid;
 }
 
 uint16 Actor::setActivity(int activity) {

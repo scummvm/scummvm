@@ -37,13 +37,13 @@ namespace Ultima8 {
 inline int Direction_XFactor(Direction dir) {
 	static const int _x_fact[] = {  0, +1, +1, +1,  0, -1, -1, -1 };
 	//static const int _x_fact16[] = {  0, +1, +2, +2, +2, +2, +2, +1, 0, -1, -2, -2, -2, -2, -2, -1 };
-	return _x_fact[dir];
+	return _x_fact[(int)dir / 2];
 }
 
 inline int Direction_YFactor(Direction dir) {
 	static const int _y_fact[] = { -1, -1,  0, +1, +1, +1,  0, -1 };
 	//static const int _y_fact16[] = { -2, -2, -2, -1,  0, +1, +2, +2, +2, +2, +2, +1, 0, -1, -2, -2 };
-	return _y_fact[dir];
+	return _y_fact[(int)dir / 2];
 }
 
 /**
@@ -153,14 +153,18 @@ inline Direction Direction_Invert(Direction dir) {
 
 //! Return the direction one left (aka counter-clockwise) of the input
 inline Direction Direction_OneLeft(Direction dir, DirectionMode mode) {
-	// TODO: support 16 dirs here.
-	return static_cast<Direction>((static_cast<int>(dir) + 7) % 8);
+	if (mode == dirmode_8dirs)
+		return static_cast<Direction>((static_cast<int>(dir) + 14) % 16);
+	else
+		return static_cast<Direction>((static_cast<int>(dir) + 15) % 16);
 }
 
 //! Return the direction one right (aka clockwise) of the input
 inline Direction Direction_OneRight(Direction dir, DirectionMode mode) {
-	// TODO: support 16 dirs here.
-	return static_cast<Direction>((static_cast<int>(dir) + 1) % 8);
+	if (mode == dirmode_8dirs)
+		return static_cast<Direction>((static_cast<int>(dir) + 2) % 16);
+	else
+		return static_cast<Direction>((static_cast<int>(dir) + 1) % 16);
 }
 
 inline Direction Direction_TurnByDelta(Direction dir, int delta, DirectionMode mode) {
@@ -171,27 +175,24 @@ inline Direction Direction_TurnByDelta(Direction dir, int delta, DirectionMode m
 //! Get a turn delta (-1 for left, +1 for right) to turn the fastest
 //! way from one direction to another
 inline int Direction_GetShorterTurnDelta(Direction from, Direction to) {
-	// TODO: Support 16 dirs here.
-	if ((from - to + 8) % 8 < 4)
+	if ((from - to + 16) % 16 < 8)
 		return -1;
 	return 1;
 }
 
 inline uint32 Direction_ToUsecodeDir(Direction dir) {
-	// TODO: Will need changing when we support 16 dirs
 	if (GAME_IS_U8) {
-		return static_cast<int32>(dir);
+		return static_cast<int32>(dir / 2);
 	} else {
-		return static_cast<int32>(dir) * 2;
+		return static_cast<int32>(dir);
 	}
 }
 
 inline Direction Direction_FromUsecodeDir(uint32 dir) {
-	// TODO: Will need changing when we support 16 dirs
 	if (GAME_IS_U8) {
-		return static_cast<Direction>(dir);
+		return static_cast<Direction>(dir * 2);
 	} else {
-		return static_cast<Direction>(dir / 2);
+		return static_cast<Direction>(dir);
 	}
 }
 

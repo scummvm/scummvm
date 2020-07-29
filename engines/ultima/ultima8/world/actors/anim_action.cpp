@@ -68,13 +68,13 @@ void AnimAction::getAnimRange(const Actor *actor, Direction dir,
 }
 
 const AnimFrame &AnimAction::getFrame(Direction dir, unsigned int frameno) const {
-	assert((unsigned int)dir < _dirCount);
-	assert(frameno < _frames[dir].size());
-
 	uint32 diroff = static_cast<uint32>(dir);
 	// HACK for 16 dir support
-	if (_dirCount == 16)
-		diroff *= 2;
+	if (_dirCount == 8)
+		diroff /= 2;
+
+	assert(diroff < _dirCount);
+	assert(frameno < _frames[diroff].size());
 
 	return _frames[diroff][frameno];
 }
