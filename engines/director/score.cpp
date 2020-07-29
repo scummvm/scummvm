@@ -782,7 +782,7 @@ void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
 	byte subId = stream.readByte(); // I couldn't find how it used in continuity (except print). Frame actionId = 1 byte.
 	uint32 stringPos = stream.readUint16() + offset;
 
-	for (uint16 i = 0; i < count; i++) {
+	for (uint16 i = 1; i <= count; i++) {
 		uint16 nextId = stream.readByte();
 		byte nextSubId = stream.readByte();
 		uint32 nextStringPos = stream.readUint16() + offset;
@@ -790,15 +790,17 @@ void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
 
 		stream.seek(stringPos);
 
+		Common::String script;
 		for (uint16 j = stringPos; j < nextStringPos; j++) {
 			byte ch = stream.readByte();
 			if (ch == 0x0d) {
 				ch = '\n';
 			}
-			_actions[i + 1] += ch;
+			script += ch;
 		}
+		_actions[i] = script;
 
-		debugC(3, kDebugLoading, "Action id: %d nextId: %d subId: %d, code: %s", id, nextId, subId, _actions[id].c_str());
+		debugC(3, kDebugLoading, "Action index: %d id: %d nextId: %d subId: %d, code: %s", i, id, nextId, subId, _actions[i].c_str());
 
 		stream.seek(streamPos);
 
@@ -810,7 +812,7 @@ void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
 			break;
 	}
 
-	bool *scriptRefs = (bool *)calloc(_actions.size() + 1, sizeof(int));
+	bool *scriptRefs = (bool *)calloc(_actions.size() + 1, sizeof(bool));
 
 	// Now let's scan which scripts are actually referenced
 	for (uint i = 0; i < _frames.size(); i++) {
