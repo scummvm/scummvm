@@ -693,10 +693,15 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		}
 		break;
 	case kTheSelEnd:
-		getTheEntitySTUB(kTheSelEnd);
-		break;
 	case kTheSelStart:
-		getTheEntitySTUB(kTheSelStart);
+		if (_vm->getCurrentMovie()->_currentEditableTextChannel) {
+			Channel *channel = _vm->getCurrentMovie()->getScore()->_channels[_vm->getCurrentMovie()->_currentEditableTextChannel];
+
+			if (channel->_widget) {
+				d.type = INT;
+				d.u.i = ((Graphics::MacText *)channel->_widget)->getSelectionIndex(entity == kTheSelStart);
+			}
+		}
 		break;
 	case kTheShiftDown:
 		d.type = INT;
