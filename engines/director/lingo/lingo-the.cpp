@@ -1650,8 +1650,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		}
 		break;
 	case kTheHeight:
-		cast->getCastMemberInitialRect(id).setHeight(d.asInt());
-		cast->setCastMemberModified(id);
+		warning("Lingo::setTheCast(): Attempt to set read-only field \"%s\" of cast %d", field2str(field), id);
 		break;
 	case kTheHilite:
 		// TODO: Understand how texts can be selected programmatically as well.
@@ -1743,8 +1742,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		}
 		break;
 	case kTheWidth:
-		cast->getCastMemberInitialRect(id).setWidth(d.asInt());
-		cast->setCastMemberModified(id);
+		warning("Lingo::setTheCast(): Attempt to set read-only field \"%s\" of cast %d", field2str(field), id);
 		break;
 	default:
 		warning("Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
