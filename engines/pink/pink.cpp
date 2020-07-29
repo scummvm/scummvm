@@ -100,7 +100,7 @@ Common::Error PinkEngine::init() {
 		if (!_bro->open(broName))
 			return Common::kNoGameDataFoundError;
 		if (_orb.getTimestamp() != _bro->getTimestamp()) {
-			warning("ORB and BRO timestamp mismatch. %lx != %lx", _orb.getTimestamp(), _bro->getTimestamp());
+			warning("ORB and BRO timestamp mismatch. %x != %x", _orb.getTimestamp(), _bro->getTimestamp());
 			return Common::kNoGameDataFoundError;
 		}
 	}
