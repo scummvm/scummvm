@@ -373,7 +373,7 @@ bool WaynesWorldEngine::walkTo(int actor1_destX, int actor1_destY, int direction
 
     _isTextVisible = false;
 
-    if (_currentActorNum != 0) {
+    if (isActorWayne()) {
         actor1Points = _wayneWalkPoints;
         actor2Points = _garthWalkPoints;
         flag1 = 0;
@@ -471,7 +471,7 @@ bool WaynesWorldEngine::walkTo(int actor1_destX, int actor1_destY, int direction
         }
     }
 
-    if (_currentActorNum != 0) {
+    if (isActorWayne()) {
         drawActors(direction, 1, 1, 0, actor1_destX - _scrollPosition, actor1_destY, actor2WalkDestX - _scrollPosition, actor2WalkDestY);
     } else {
         drawActors(direction, 1, 1, 0, actor2WalkDestX - _scrollPosition, actor2WalkDestY, actor1_destX - _scrollPosition, actor1_destY);

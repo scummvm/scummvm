@@ -283,6 +283,11 @@ public:
 	void playAnimation(const char *prefix, int startIndex, int count, int x, int y, int flag, uint ticks);
 	void setWaynePosition(int x, int y);
 	void setGarthPosition(int x, int y);
+	bool isActorWayne();
+	bool isActorGarth();
+	void selectActorWayne();
+	void selectActorGarth();
+	void toggleActor();
 
 	// Pathfinding
 	bool walkIsPixelWalkable(int x, int y);

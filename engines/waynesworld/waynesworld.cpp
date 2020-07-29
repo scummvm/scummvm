@@ -147,9 +147,9 @@ Common::Error WaynesWorldEngine::run() {
 	drawImageToScreen("r00/backg", 0, 0);
 
 	drawInterface(2);
-	changeRoom(1);
+	// changeRoom(0);
 	// _wayneSpriteX = -1; _garthSpriteX = -1;
-	// changeRoom(31); // DEBUG
+	changeRoom(37); // DEBUG
 	// _logic->r31_displayCategories();
 	// _logic->_r1_eventFlag = 1;
 	// _logic->_r1_eventCtr = 3;
@@ -340,7 +340,7 @@ void WaynesWorldEngine::updateMouseMove() {
         if (inventorySlotIndex < _inventoryItemsCount) {
             int inventoryObjectId = _inventoryItemsObjectMap[inventorySlotIndex];
             int itemCount;
-            if (_currentActorNum != 0) {
+            if (isActorWayne()) {
                 itemCount = _wayneInventory[inventoryObjectId - 28];
             } else {
                 itemCount = _garthInventory[inventoryObjectId - 28];
@@ -358,9 +358,9 @@ void WaynesWorldEngine::updateMouseMove() {
     }
 
     // Wayne and Garth
-    if (_gameState == 0 && _currentActorNum != 0 && isPointAtGarth(_mouseX, _mouseY)) {
+    if (_gameState == 0 && isActorWayne() && isPointAtGarth(_mouseX, _mouseY)) {
         drawVerbLine(_verbNumber, -3, "Garth");
-    } else if (_gameState == 0 && _currentActorNum == 0 && isPointAtWayne(_mouseX, _mouseY)) {
+    } else if (_gameState == 0 && isActorGarth() && isPointAtWayne(_mouseX, _mouseY)) {
         drawVerbLine(_verbNumber, -2, "Wayne");
     } else {
         // Room objects
@@ -634,7 +634,7 @@ void WaynesWorldEngine::drawCurrentText(int x, int y, WWSurface *destSurface) {
         textCenterX = x;
         textY = y;
         textColor = 15;
-    } else if (_currentActorNum != 0) {
+    } else if (isActorWayne()) {
         textCenterX = _wayneSpriteX;
         actorY = _wayneSpriteY;
         textColor = 4;
@@ -695,7 +695,7 @@ void WaynesWorldEngine::changeMusic() {
 }
 
 void WaynesWorldEngine::drawInterface(int verbNum) {
-    if (_currentActorNum != 0) {
+    if (isActorWayne()) {
         drawImageToScreen("m00/winter", 0, 151);
     } else {
         drawImageToScreen("m00/ginter", 0, 151);
@@ -740,11 +740,7 @@ void WaynesWorldEngine::selectVerbNumber(int x) {
 void WaynesWorldEngine::changeActor() {
     if (_currentRoomNumber == 31)
         return;
-    if (_currentActorNum != 0) {
-        _currentActorNum = 0;
-    } else {
-        _currentActorNum = 1;
-    }
+	toggleActor();
     drawInterface(_verbNumber);
     _isTextVisible = false;
     refreshInventory(true);
@@ -812,7 +808,7 @@ void WaynesWorldEngine::rememberFirstObjectName(int objectId) {
     } else if (objectId <= 77) {
         int inventoryIndex = objectId - 28;
         int inventoryItemQuantity = 0;
-        if (_currentActorNum != 0) {
+        if (isActorWayne()) {
             inventoryItemQuantity = _wayneInventory[inventoryIndex];
         } else {
             inventoryItemQuantity = _garthInventory[inventoryIndex];
@@ -855,8 +851,8 @@ void WaynesWorldEngine::drawInventory() {
     _inventorySprite->clear(0);
     for (int inventoryItemIndex = 0; inventoryItemIndex < 50; inventoryItemIndex++) {
         int objectRoomNumber = getObjectRoom(inventoryItemIndex + 28);
-        if ((_currentActorNum != 0 && objectRoomNumber == 99 && _wayneInventory[inventoryItemIndex] > 0) ||
-            (_currentActorNum == 0 && objectRoomNumber == 99 && _garthInventory[inventoryItemIndex] > 0)) {
+        if ((isActorWayne() && objectRoomNumber == 99 && _wayneInventory[inventoryItemIndex] > 0) ||
+            (isActorGarth() && objectRoomNumber == 99 && _garthInventory[inventoryItemIndex] > 0)) {
             Common::String filename = Common::String::format("m03/icon%02d", inventoryItemIndex + 1);
 			debug("filename: [%s]", filename.c_str());
             drawImageToSurface(filename.c_str(), _inventorySprite, iconX, iconY);
@@ -908,7 +904,7 @@ int WaynesWorldEngine::getActorScaleFromY(int actorY) {
 
 void WaynesWorldEngine::drawActorReachObject(int objectId, int spriteIndex) {
     int direction = getObjectDirection(objectId);
-    if (_currentActorNum != 0) {
+    if (isActorWayne()) {
         drawActors(direction, 2, 1, spriteIndex, _wayneSpriteX, _wayneSpriteY, _garthSpriteX, _garthSpriteY);
     } else {
         drawActors(direction, 1, 2, spriteIndex, _wayneSpriteX, _wayneSpriteY, _garthSpriteX, _garthSpriteY);
@@ -1100,6 +1096,30 @@ void WaynesWorldEngine::setGarthPosition(int x, int y) {
     _garthSpriteY = y;
 }
 
+bool WaynesWorldEngine::isActorWayne() {
+	return _currentActorNum != 0;
+}
+
+bool WaynesWorldEngine::isActorGarth() {
+	return _currentActorNum == 0;
+}
+
+void WaynesWorldEngine::selectActorWayne() {
+	_currentActorNum = 1;
+}
+
+void WaynesWorldEngine::selectActorGarth() {
+	_currentActorNum = 0;
+}
+
+void WaynesWorldEngine::toggleActor() {
+	if (isActorWayne()) {
+		selectActorGarth();
+	} else {
+		selectActorWayne();
+	}
+}
+
 void WaynesWorldEngine::openRoomLibrary(int roomNum) {
     _roomName = Common::String::format("r%02d", roomNum);
 }
@@ -1151,7 +1171,7 @@ void WaynesWorldEngine::changeRoomScrolling() {
         roomNumber = 14;
         break;
     case 8:
-        if (_currentActorNum != 0) {
+        if (isActorWayne()) {
             _garthSpriteX = 319;
             _garthSpriteY = 131;
         } else {
@@ -1161,7 +1181,7 @@ void WaynesWorldEngine::changeRoomScrolling() {
         roomNumber = 21;
         break;
     case 22:
-        if (_currentActorNum != 0) {
+        if (isActorWayne()) {
             _garthSpriteX = 2;
             _garthSpriteY = 131;
         } else {
@@ -1172,7 +1192,7 @@ void WaynesWorldEngine::changeRoomScrolling() {
         break;
     case 21:
         if (_hoverObjectNumber == kObjectIdFoyer) {
-            if (_currentActorNum != 0) {
+            if (isActorWayne()) {
                 _garthSpriteX = 5;
                 _garthSpriteY = 130;
             } else {
@@ -1181,7 +1201,7 @@ void WaynesWorldEngine::changeRoomScrolling() {
             }
             roomNumber = 8;
         } else {
-            if (_currentActorNum != 0) {
+            if (isActorWayne()) {
                 _garthSpriteX = 319;
                 _garthSpriteY = 131;
             } else {
@@ -1453,7 +1473,7 @@ void WaynesWorldEngine::moveObjectToRoom(int objectId, int roomNum) {
     _roomObjects[objectId].roomNumber = roomNum;
     if (objectId <= 77) {
         int inventoryIndex = objectId - 28;
-        if (_currentActorNum != 0) {
+        if (isActorWayne()) {
             _wayneInventory[inventoryIndex]++;
         } else {
             _garthInventory[inventoryIndex]++;
@@ -1464,7 +1484,7 @@ void WaynesWorldEngine::moveObjectToRoom(int objectId, int roomNum) {
 void WaynesWorldEngine::moveObjectToNowhere(int objectId) {
     if (objectId <= 77) {
         int inventoryIndex = objectId - 28;
-        if (_currentActorNum != 0) {
+        if (isActorWayne()) {
             _wayneInventory[inventoryIndex]--;
         } else {
             _garthInventory[inventoryIndex]--;
@@ -1539,7 +1559,7 @@ void WaynesWorldEngine::drawDialogChoices(int choiceIndex) {
         // Redraw all and clear the background
         _screen->fillRect(0, 151, 319, 199, 0);
     }
-    byte choiceTextColor = _currentActorNum != 0 ? 11 : 10;
+    byte choiceTextColor = isActorWayne() ? 11 : 10;
     byte selectedTextColor = 13;
     for (int index = 0; index < 5 && _dialogChoices[index] != -1; index++) {
         byte textColor = index + choiceIndex + 11 == 0 ? selectedTextColor : choiceTextColor;
@@ -1697,7 +1717,7 @@ void WaynesWorldEngine::handleVerbLookAt() {
 		} else {
 			textIndex = _objectNumber - 27;
 		}
-        if (_currentActorNum != 0) {
+        if (isActorWayne()) {
             displayText("c02w", textIndex, 1, -1, -1, 1);
         } else {
             displayText("c02g", textIndex, 1, -1, -1, 1);
@@ -1803,7 +1823,7 @@ void WaynesWorldEngine::handleVerbTalkTo() {
     _dialogChoices[0] = -1;
 
     if (_objectNumber == -3 || _objectNumber == -2) {
-        bool room1Special = !(_logic->_r1_flags1 & 0x10) && _currentActorNum != 0 && _currentRoomNumber == 1 && (_logic->_r1_flags2 & 0x01);
+        bool room1Special = !(_logic->_r1_flags1 & 0x10) && isActorWayne() && _currentRoomNumber == 1 && (_logic->_r1_flags2 & 0x01);
         if (room1Special) {
             actionTextIndex = 14;
         } else {
@@ -1820,18 +1840,10 @@ void WaynesWorldEngine::handleVerbTalkTo() {
         } else {
             actionTextIndex += 10;
         }
-        if (_currentActorNum != 0) {
-            _currentActorNum = 0;
-        } else {
-            _currentActorNum = 1;
-        }
+		toggleActor();
         loadRoomBackground();
         displayText("c11", actionTextIndex, 0, -1, -1, 0);
-        if (_currentActorNum != 0) {
-            _currentActorNum = 0;
-        } else {
-            _currentActorNum = 1;
-        }
+		toggleActor();
         waitSeconds(2);
         _isTextVisible = false;
         loadRoomBackground();

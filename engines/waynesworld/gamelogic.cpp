@@ -1251,7 +1251,7 @@ int GameLogic::r0_handleVerbPickUp() {
 	int actionTextIndex = -1;
 	switch (_vm->_objectNumber) {
 	case kObjectIdGuitar:
-		if (_vm->_currentActorNum != 0) {
+		if (_vm->isActorWayne()) {
 			_vm->pickupObject(kObjectIdGuitar, _r0_flags, 1, kObjectIdInventoryGuitar);
 			actionTextIndex = 1;
 		} else {
@@ -1390,9 +1390,9 @@ void GameLogic::r0_refreshRoomBackground() {
 
 void GameLogic::r0_handleRoomEvent2() {
 	_vm->displayTextLines("c11", 1, -1, -1, 2);
-	_vm->_currentActorNum = 0;
+	_vm->selectActorGarth();
 	_vm->displayTextLines("c11", 3, -1, -1, 2);
-	_vm->_currentActorNum = 1;
+	_vm->selectActorWayne();
 	_vm->displayTextLines("c11", 5, -1, -1, 5);
 	_vm->setDialogChoices(-1, -1, -1, -1, -1);
 	r0_buildRandomDialogChoices(-1);
@@ -1402,7 +1402,7 @@ void GameLogic::r0_handleRoomEvent2() {
 void GameLogic::r0_handleRoomEvent3() {
 	for (int textIndex = 0; textIndex < 4; textIndex++) {
 		_vm->displayTextLines("c11", textIndex + 10, -1, -1, 1);
-		_vm->_currentActorNum = (_vm->_currentActorNum + 1) % 2;
+		_vm->toggleActor();
 		_vm->waitSeconds(1);
 	}
 	_vm->moveObjectToRoom(kObjectIdInventoryPizzathonList, 99);
@@ -1848,9 +1848,9 @@ void GameLogic::r1_handleRoomEvent(bool startTongueTrick) {
 	}
 	if (_r1_tongueTrickCtr == 9) {
 		_vm->refreshActors();
-		_vm->_currentActorNum = 0;
+		_vm->selectActorGarth();
 		_vm->displayTextLines("c04", 199, -1, -1, 3);
-		_vm->_currentActorNum = 1;
+		_vm->selectActorWayne();
 		_r1_tongueTrickActive = false;
 		_r1_tongueTrickCtr = -1;
 		_vm->_garthSpriteX = 146;
@@ -1864,7 +1864,7 @@ void GameLogic::r1_handleRoomEvent(bool startTongueTrick) {
 }
 
 void GameLogic::r1_pullScreen() {
-	if (_vm->_currentActorNum != 0) {
+	if (_vm->isActorWayne()) {
 		_vm->walkTo(_vm->_wayneSpriteX - 1, _vm->_wayneSpriteY, _vm->_actorSpriteValue, 180, 115);
 		_vm->_wayneSpriteX = -1;
 		_vm->playAnimation("wscreen", 0, 7, 117, 53, 0, 100);
@@ -2127,10 +2127,10 @@ bool GameLogic::r2_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 		_vm->_gameState = 0;
 		break;
 	case 369: case 384:
-		if (_vm->_currentActorNum != 0 && _vm->_wayneInventory[kObjectIdInventoryDollar] < 1) {
+		if (_vm->isActorWayne() && _vm->_wayneInventory[kObjectIdInventoryDollar] < 1) {
 			replyTextIndex1 = 579;
 			continueDialog = true;
-		} else if (_vm->_currentActorNum == 0 && _vm->_garthInventory[kObjectIdInventoryDollar] < 1) {
+		} else if (_vm->isActorGarth() && _vm->_garthInventory[kObjectIdInventoryDollar] < 1) {
 			replyTextIndex1 = 579;
 			continueDialog = true;
 		} else {
@@ -2139,10 +2139,10 @@ bool GameLogic::r2_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 		_vm->_gameState = 0;
 		break;
 	case 385:
-		if (_vm->_currentActorNum != 0 && _vm->_wayneInventory[kObjectIdInventoryDollar] < 10) {
+		if (_vm->isActorWayne() && _vm->_wayneInventory[kObjectIdInventoryDollar] < 10) {
 			replyTextIndex1 = 579;
 			continueDialog = true;
-		} else if (_vm->_currentActorNum == 0 && _vm->_garthInventory[kObjectIdInventoryDollar] < 10) {
+		} else if (_vm->isActorGarth() && _vm->_garthInventory[kObjectIdInventoryDollar] < 10) {
 			replyTextIndex1 = 579;
 			continueDialog = true;
 		} else {
@@ -2197,13 +2197,13 @@ bool GameLogic::r2_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 		replyTextIndex2 = 405;
 		continueDialog = true;
 		_r2_flags |= 0x10;
-		if (_vm->_currentActorNum == 0) {
+		if (_vm->isActorWayne()) {
 			if (_vm->_wayneInventory[kObjectIdInventoryDollar] >= 10) {
 				_vm->setDialogChoices(379, 366, -1, -1, -1);
 			} else {
 				_vm->setDialogChoices(380, 366, -1, -1, -1);
 			}
-		} else if (_vm->_currentActorNum != 0) {
+		} else if (_vm->isActorGarth()) {
 			if (_vm->_garthInventory[kObjectIdInventoryDollar] >= 10) {
 				_vm->setDialogChoices(379, 366, -1, -1, -1);
 			} else {
@@ -2720,7 +2720,7 @@ int GameLogic::r4_useTubeWithShade() {
 		return 61;
 	}
 	_vm->walkTo(162, 46, 1, -1, -1);
-	if (_vm->_currentActorNum != 0) {
+	if (_vm->isActorWayne()) {
 		_r4_flags |= 0x20;
 		oldX = _vm->_wayneSpriteX;
 		_vm->_wayneSpriteX = -1;
@@ -2736,7 +2736,7 @@ int GameLogic::r4_useTubeWithShade() {
 	_r4_flags &= ~0x40;
 	_vm->playAnimation("mouse", 0, 7, 212, 61, 0, 100);
 	_vm->playAnimation("shoot", 0, 14, 187, 29, 0, 100);
-	if (_vm->_currentActorNum != 0) {
+	if (_vm->isActorWayne()) {
 		_vm->_wayneSpriteX = oldX;
 	} else {
 		_vm->_garthSpriteX = oldX;
@@ -2943,7 +2943,7 @@ int GameLogic::r6_handleVerbUse() {
 		}
 		break;
 	case kObjectIdSeat:
-		if (_vm->_currentActorNum != 0) {
+		if (_vm->isActorWayne()) {
 			actionTextIndex = 53;
 		} else {
 			r6_useSeat();
@@ -2962,7 +2962,7 @@ int GameLogic::r6_handleVerbPull() {
 	case kObjectIdRope_1:
 		if (!(_r6_flags & 0x10)) {
 			actionTextIndex = 3;
-		} else if (_vm->_currentActorNum == 0) {
+		} else if (_vm->isActorGarth()) {
 			actionTextIndex = 4;
 		} else {
 			r6_pullRope();
@@ -3160,7 +3160,7 @@ void GameLogic::r6_handleRoomEvent2() {
 	_r6_flags &= ~0x10;
 	_vm->_garthSpriteX = 155;
 	_vm->_wayneSpriteX = 150;
-	_vm->_currentActorNum = 1;
+	_vm->selectActorWayne();
 	_vm->loadRoomBackground();
 	_r6_flags &= ~0x08;
 	_vm->loadRoomBackground();
@@ -3211,7 +3211,7 @@ void GameLogic::r6_giveLuckySausageToDog() {
 }
 
 void GameLogic::r6_useRopeWithBeam() {
-	if (_vm->_currentActorNum != 0) {
+	if (_vm->isActorWayne()) {
 		_vm->walkTo(_vm->_wayneSpriteX, _vm->_wayneSpriteY, _vm->_actorSpriteValue, 165, 99);
 	} else {
 		_vm->walkTo(165, 99, _vm->_actorSpriteValue, _vm->_garthSpriteX, _vm->_garthSpriteY);
@@ -3247,7 +3247,7 @@ void GameLogic::r6_pullRope() {
 		_vm->playAnimation("knock", 0, 2, 148, 61, 0, 100);
 	}
 	_vm->waitSeconds(1);
-	_vm->_currentActorNum = 0;
+	_vm->selectActorGarth();
 	_vm->playAnimation("cindi", 0, 5, 143, 55, 0, 100);
 	_vm->displayText("c04r", 138, 0, 160, 10, 0);
 	for (int i = 0; i < 5; i++) {
@@ -4042,7 +4042,7 @@ int GameLogic::r9_handleVerbGive() {
 	int actionTextIndex = -1;
 	switch (_vm->_objectNumber) {
 	case kObjectIdMan9:
-		if (_vm->_currentActorNum != 0) {
+		if (_vm->isActorWayne()) {
 			_vm->walkTo(_vm->_wayneSpriteX - 1, _vm->_wayneSpriteY, _vm->_actorSpriteValue, 173, 86);
 		} else {
 			_vm->walkTo(173, 86, _vm->_actorSpriteValue, _vm->_garthSpriteX - 1, _vm->_garthSpriteY);
@@ -4142,9 +4142,9 @@ bool GameLogic::r9_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 	case 248:
 		_vm->displayTextLines("c04r", 196, 250, 25, 1);
 		_vm->displayTextLines("c04", 251, -1, -1, 1);
-		_vm->_currentActorNum = (_vm->_currentActorNum + 1) % 2;
+		_vm->toggleActor();
 		_vm->displayTextLines("c04", 252, -1, -1, 1);
-		_vm->_currentActorNum = (_vm->_currentActorNum + 1) % 2;
+		_vm->toggleActor();
 		replyTextIndex1 = 197;
 		continueDialog = true;
 		break;
@@ -4257,7 +4257,7 @@ int GameLogic::r10_handleVerbPickUp() {
 		actionTextIndex = 8;
 		break;
 	case kObjectIdSalesgirl:
-		if (_vm->_currentActorNum != 0) {
+		if (_vm->isActorWayne()) {
 			actionTextIndex = 17;
 		} else {
 			actionTextIndex = 18;
@@ -4354,7 +4354,7 @@ int GameLogic::r10_handleVerbUse() {
 		actionTextIndex = 3;
 		break;
 	case kObjectIdSalesgirl:
-		if (_vm->_currentActorNum != 0) {
+		if (_vm->isActorWayne()) {
 			actionTextIndex = 21;
 		} else {
 			actionTextIndex = 22;
@@ -4384,7 +4384,7 @@ void GameLogic::r10_handleVerbTalkTo() {
 	_vm->_dialogChoices[0] = -1;
 	switch (_vm->_objectNumber) {
 	case kObjectIdSalesgirl:
-		if (_vm->_currentActorNum != 0) {
+		if (_vm->isActorWayne()) {
 			_vm->setDialogChoices(0, 5, 2, 3, 4);
 		} else {
 			_vm->setDialogChoices(0, 1, 2, 3, 4);
@@ -4465,9 +4465,9 @@ bool GameLogic::r10_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 				break;
 			case 0: case 1: case 2:
 				_r10_selectedItemToBuy = _vm->_selectedDialogChoice;
-				if (_vm->_currentActorNum != 0 && _vm->_wayneInventory[kObjectIdInventoryDollar - 28] == 0) {
+				if (_vm->isActorWayne() && _vm->_wayneInventory[kObjectIdInventoryDollar - 28] == 0) {
 					_vm->setDialogChoices(8, -1, -1, -1, -1);
-				} else if (_vm->_currentActorNum == 0 && _vm->_garthInventory[kObjectIdInventoryDollar - 28] == 0) {
+				} else if (_vm->isActorGarth() && _vm->_garthInventory[kObjectIdInventoryDollar - 28] == 0) {
 					_vm->setDialogChoices(8, -1, -1, -1, -1);
 				} else {
 					_vm->setDialogChoices(6, 7, -1, -1, -1);
@@ -4550,7 +4550,7 @@ int GameLogic::r11_handleVerbPickUp() {
 		break;
 	case kObjectIdExtensionCord_1:
 		if (_r11_flags & 0x08) {
-			if (_vm->_currentActorNum != 0) {
+			if (_vm->isActorWayne()) {
 				actionTextIndex = 38;
 			} else {
 				actionTextIndex = 39;
@@ -4587,7 +4587,7 @@ int GameLogic::r11_handleVerbUse() {
 		break;
 	case kObjectIdLampPost:
 		if (_vm->_firstObjectNumber == kObjectIdInventoryPlungers) {
-			if (_vm->_currentActorNum != 0) {
+			if (_vm->isActorWayne()) {
 				actionTextIndex = 43;
 			} else if (_r11_flags & 0x10) {
 				actionTextIndex = 80;
@@ -4605,7 +4605,7 @@ int GameLogic::r11_handleVerbUse() {
 			actionTextIndex = 7;
 		} else {
 			if (_vm->_firstObjectNumber == kObjectIdInventoryExtensionCord) {
-				if (_vm->_currentActorNum != 0) {
+				if (_vm->isActorWayne()) {
 					actionTextIndex = 46;
 				} else {
 					r11_useExtensionCordWithOutlet();
@@ -4617,7 +4617,7 @@ int GameLogic::r11_handleVerbUse() {
 		break;
 	case kObjectIdExtensionCord_1:
 		if (_vm->_firstObjectNumber == kObjectIdInventorySuckCut) {
-			if (_vm->_currentActorNum == 0) {
+			if (_vm->isActorGarth()) {
 				actionTextIndex = 47;
 			} else {
 				r11_useSuckCutWithExtensionCord();
@@ -4629,7 +4629,7 @@ int GameLogic::r11_handleVerbUse() {
 	case kObjectIdFountain11_0:
 	case kObjectIdFountain11_1:
 		if (_vm->_firstObjectNumber == kObjectIdSuckCut) {
-			if (_vm->_currentActorNum == 0) {
+			if (_vm->isActorGarth()) {
 				actionTextIndex = 47;
 			} else {
 				r11_useSuckCutWithFountain();
@@ -4735,7 +4735,7 @@ void GameLogic::r11_useCar2() {
 }
 
 void GameLogic::r11_pickUpExtensionCord() {
-	if (_vm->_currentActorNum == 0 && (_r11_flags & 0x01)) {
+	if (_vm->isActorGarth() && (_r11_flags & 0x01)) {
 		r11_useCar1();
 	}
 	if (_r11_flags & 0x04) {
@@ -4801,9 +4801,9 @@ void GameLogic::r11_usePlungersWithLampPost() {
 	_vm->displayText("c04", 166, 0, -1, -1, 0);
 	_vm->waitSeconds(1);
 	_vm->_isTextVisible = false;
-	_vm->_currentActorNum = 1;
+	_vm->selectActorWayne();
 	_vm->walkTo(146, 146, 1, _vm->_garthSpriteX, _vm->_garthSpriteY);
-	_vm->_currentActorNum = 0;
+	_vm->selectActorGarth();
 	_vm->_garthSpriteX = -1;
 	_vm->playAnimation("plunge", 0, 16, 190, 62, 0, 150);
 	_r11_flags |= 0x01;
@@ -6359,7 +6359,7 @@ void GameLogic::r28_refreshRoomBackground() {
 
 void GameLogic::r28_handleRoomEvent1() {
 	_r20_flags |= 0x01;
-	if (_vm->_currentActorNum != 0) {
+	if (_vm->isActorWayne()) {
 		_vm->walkTo(172, 136, 7, 142, 136);
 	} else {
 		_vm->walkTo(142, 136, 7, 172, 136);
@@ -6419,20 +6419,12 @@ void GameLogic::r28_handleRoomEvent2() {
 	_r20_flags |= 0x02;
 	_vm->moveObjectToNowhere(kObjectIdGiantLizard);
 	_vm->displayText("c04", 27, 0, -1, -1, 0);
-	if (_vm->_currentActorNum != 0) {
-		_vm->_currentActorNum = 0;
-	} else {
-		_vm->_currentActorNum = 1;
-	}
+	_vm->toggleActor();
 	_vm->waitSeconds(2);
 	_vm->_isTextVisible = false;
 	_vm->refreshActors();
 	_vm->displayText("c04", 28, 0, -1, -1, 0);
-	if (_vm->_currentActorNum != 0) {
-		_vm->_currentActorNum = 0;
-	} else {
-		_vm->_currentActorNum = 1;
-	}
+	_vm->toggleActor();
 	_vm->waitSeconds(1);
 	_vm->_isTextVisible = false;
 	_vm->loadRoomBackground();
@@ -6661,8 +6653,8 @@ void GameLogic::r30_refreshRoomBackground() {
 void GameLogic::r30_handleRoomEvent1() {
 	_r30_flags |= 0x02;
 	_vm->displayTextLines("c04r", 51, 150, 10, 23);
-	if (_vm->_currentActorNum == 0) {
-		_vm->_currentActorNum = 1;
+	if (_vm->isActorGarth()) {
+		_vm->selectActorWayne();
 		_vm->drawInterface(_vm->_verbNumber);
 	}
 	_vm->walkTo(237, 51, 6, _vm->_garthSpriteX, _vm->_garthSpriteY);
@@ -6944,10 +6936,10 @@ void GameLogic::r31_handleRoomEvent5() {
 	_vm->walkTo(230, 140, 0, _vm->_garthSpriteX, _vm->_garthSpriteY);
 	_vm->displayText("c04", 164, 0, -1, -1, 0);
 	_vm->waitSeconds(2);
-	_vm->_currentActorNum = 0;
+	_vm->selectActorGarth();
 	_vm->loadRoomBackground();
 	_vm->displayText("c04", 165, 0, -1, -1, 0);
-	_vm->_currentActorNum = 1;
+	_vm->selectActorWayne();
 	_vm->waitSeconds(2);
 	_vm->_isTextVisible = false;
 	_vm->loadRoomBackground();
@@ -7303,11 +7295,11 @@ void GameLogic::r32_pickUpMemo() {
 	_vm->_isTextVisible = false;
 	_vm->waitSeconds(3);
 	_vm->refreshActors();
-	_vm->_currentActorNum = (_vm->_currentActorNum + 1) % 2;
+	_vm->toggleActor();
 	_vm->displayText("c04", 169, 0, -1, -1, 0);
 	_vm->_isTextVisible = false;
 	_vm->waitSeconds(3);
-	_vm->_currentActorNum = (_vm->_currentActorNum + 1) % 2;
+	_vm->toggleActor();
 	_vm->refreshActors();
 }
 
@@ -7740,7 +7732,7 @@ int GameLogic::r37_handleVerbPickUp() {
 		actionTextIndex = 43;
 		break;
 	case kObjectIdMagazines:
-		if (_vm->_currentActorNum != 0) {
+		if (_vm->isActorWayne()) {
 			actionTextIndex = 40;
 		} else {
 			actionTextIndex = 41;
@@ -8429,7 +8421,7 @@ void GameLogic::r39_refreshRoomBackground() {
 
 void GameLogic::r39_useSquirtGunWithHinges() {
 	int oldSpriteX;
-	if (_vm->_currentActorNum != 0) {
+	if (_vm->isActorWayne()) {
 		_vm->walkTo(_vm->_wayneSpriteX - 1, _vm->_wayneSpriteY, _vm->_actorSpriteValue, 60, 135);
 		oldSpriteX = _vm->_wayneSpriteX;
 		_vm->_wayneSpriteX = -1;
@@ -8449,7 +8441,7 @@ void GameLogic::r39_useSquirtGunWithHinges() {
 	_vm->moveObjectToRoom(kObjectIdExit, 39);
 	_r39_flags &= ~0x04;
 	_r39_flags &= ~0x08;
-	if (_vm->_currentActorNum != 0) {
+	if (_vm->isActorWayne()) {
 		_vm->_wayneSpriteX = oldSpriteX;
 	} else {
 		_vm->_garthSpriteX = oldSpriteX;
