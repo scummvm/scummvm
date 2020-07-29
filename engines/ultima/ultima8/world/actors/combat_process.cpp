@@ -249,35 +249,10 @@ void CombatProcess::turnToDirection(Direction direction) {
 	Actor *a = getActor(_itemNum);
 	if (!a)
 		return;
-	Direction curdir = a->getDir();
-	int stepDelta = Direction_GetShorterTurnDelta(curdir, direction);
-	Animation::Sequence turnanim = Animation::combatStand;
-
-	ProcId prevpid = 0;
-	bool done = false;
-
-	DirectionMode mode = a->animDirMode(turnanim);
-	// slight hack - avoid making 8-step turns if our target is a 16-step direction
-	// - we'll never get to the right direction that way.
-	if (static_cast<uint32>(direction) % 2) {
-		mode = dirmode_16dirs;
-	}
-
-	for (Direction dir = curdir; dir != direction; dir = Direction_TurnByDelta(dir, stepDelta, mode)) {
-		ProcId animpid = a->doAnim(turnanim, dir);
-
-		if (dir == direction) done = true;
-
-		if (prevpid) {
-			Process *proc = Kernel::get_instance()->getProcess(animpid);
-			assert(proc);
-			proc->waitFor(prevpid);
-		}
-
-		prevpid = animpid;
-	}
-
-	if (prevpid) waitFor(prevpid);
+	assert(a->isInCombat());
+	uint16 waitpid = a->turnTowardDir(direction);
+	if (waitpid)
+		waitFor(waitpid);
 }
 
 bool CombatProcess::inAttackRange() const {
