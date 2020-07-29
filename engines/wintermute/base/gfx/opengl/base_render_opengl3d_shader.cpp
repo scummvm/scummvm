@@ -26,6 +26,7 @@
 #include "engines/wintermute/base/gfx/opengl/camera3d.h"
 #include "engines/wintermute/base/gfx/opengl/mesh3ds_opengl_shader.h"
 #include "engines/wintermute/base/gfx/opengl/meshx_opengl_shader.h"
+#include "engines/wintermute/base/gfx/opengl/shadow_volume_opengl_shader.h"
 #include "graphics/opengl/system_headers.h"
 #include "math/glmath.h"
 
@@ -279,6 +280,9 @@ bool BaseRenderOpenGL3DShader::setProjection2D() {
 	_projectionMatrix2d(3, 0) = -1.0f;
 	_projectionMatrix2d(3, 1) = -1.0f;
 	_projectionMatrix2d(3, 2) = -(farPlane + nearPlane) / (farPlane - nearPlane);
+
+	_shadowMaskShader->use();
+	_shadowMaskShader->setUniform("projMatrix", _projectionMatrix2d);
 	return true;
 }
 
@@ -302,6 +306,9 @@ void BaseRenderOpenGL3DShader::pushWorldTransform(const Math::Matrix4 &transform
 	_modelXShader->use();
 	_modelXShader->setUniform("modelMatrix", newTop);
 	_modelXShader->setUniform("normalMatrix", newInvertedTranspose);
+
+	_shadowVolumeShader->use();
+	_shadowVolumeShader->setUniform("modelMatrix", newTop);
 }
 
 void BaseRenderOpenGL3DShader::popWorldTransform() {
@@ -317,6 +324,9 @@ void BaseRenderOpenGL3DShader::popWorldTransform() {
 	_modelXShader->use();
 	_modelXShader->setUniform("modelMatrix", currentTransform);
 	_modelXShader->setUniform("normalMatrix", currentInvertedTranspose);
+
+	_shadowVolumeShader->use();
+	_shadowVolumeShader->setUniform("modelMatrix", currentTransform);
 }
 
 bool BaseRenderOpenGL3DShader::windowedBlt() {
@@ -349,6 +359,12 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 
 	static const char *geometryAttributes[] = { "position", nullptr };
 	_geometryShader = OpenGL::Shader::fromFiles("geometry", geometryAttributes);
+
+	static const char *shadowVolumeAttributes[] = { "position", nullptr };
+	_shadowVolumeShader = OpenGL::Shader::fromFiles("shadow_volume", shadowVolumeAttributes);
+
+	static const char *shadowMaskAttributes[] = { "position", nullptr };
+	_shadowMaskShader = OpenGL::Shader::fromFiles("shadow_mask", shadowMaskAttributes);
 
 	_transformStack.push_back(Math::Matrix4());
 	_transformStack.back().setToIdentity();
@@ -495,6 +511,10 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 	_geometryShader->use();
 	_geometryShader->setUniform("viewMatrix", _lastViewMatrix);
 	_geometryShader->setUniform("projMatrix", _projectionMatrix3d);
+
+	_shadowVolumeShader->use();
+	_shadowVolumeShader->setUniform("viewMatrix", _lastViewMatrix);
+	_shadowVolumeShader->setUniform("projMatrix", _projectionMatrix3d);
 
 	return true;
 }
@@ -655,6 +675,10 @@ Mesh3DS *BaseRenderOpenGL3DShader::createMesh3DS() {
 
 MeshX *BaseRenderOpenGL3DShader::createMeshX() {
 	return new MeshXOpenGLShader(_gameRef, _modelXShader);
+}
+
+ShadowVolume *BaseRenderOpenGL3DShader::createShadowVolume() {
+	return new ShadowVolumeOpenGLShader(_gameRef, _shadowVolumeShader, _shadowMaskShader);
 }
 
 } // namespace Wintermute

@@ -26,6 +26,7 @@
 #include "engines/wintermute/base/gfx/opengl/camera3d.h"
 #include "engines/wintermute/base/gfx/opengl/mesh3ds_opengl.h"
 #include "engines/wintermute/base/gfx/opengl/meshx_opengl.h"
+#include "engines/wintermute/base/gfx/opengl/shadow_volume_opengl.h"
 #include "graphics/opengl/system_headers.h"
 #include "math/glmath.h"
 
@@ -612,6 +613,10 @@ Mesh3DS *BaseRenderOpenGL3D::createMesh3DS() {
 
 MeshX *BaseRenderOpenGL3D::createMeshX() {
 	return new MeshXOpenGL(_gameRef);
+}
+
+ShadowVolume *BaseRenderOpenGL3D::createShadowVolume() {
+	return new ShadowVolumeOpenGL(_gameRef);
 }
 
 } // namespace Wintermute

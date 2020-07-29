@@ -179,6 +179,7 @@ public:
 
 	Mesh3DS *createMesh3DS() override;
 	MeshX *createMeshX() override;
+	ShadowVolume *createShadowVolume() override;
 
 private:
 	Math::Matrix4 _lastProjectionMatrix;

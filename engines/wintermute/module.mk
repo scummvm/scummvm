@@ -87,6 +87,8 @@ MODULE_OBJS := \
 	base/gfx/opengl/mesh3ds_opengl_shader.o \
 	base/gfx/opengl/loader3ds.o \
 	base/gfx/opengl/shadow_volume.o \
+	base/gfx/opengl/shadow_volume_opengl.o \
+	base/gfx/opengl/shadow_volume_opengl_shader.o \
 	base/gfx/x/active_animation.o \
 	base/gfx/x/animation.o \
 	base/gfx/x/animation_channel.o \

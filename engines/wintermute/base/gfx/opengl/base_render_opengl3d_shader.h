@@ -180,6 +180,7 @@ public:
 
 	Mesh3DS *createMesh3DS() override;
 	MeshX *createMeshX() override;
+	ShadowVolume *createShadowVolume() override;
 
 private:
 	Math::Matrix4 _lastViewMatrix;
@@ -199,6 +200,8 @@ private:
 	OpenGL::Shader *_fadeShader;
 	OpenGL::Shader *_modelXShader;
 	OpenGL::Shader *_geometryShader;
+	OpenGL::Shader *_shadowVolumeShader;
+	OpenGL::Shader *_shadowMaskShader;
 };
 
 } // namespace Wintermute

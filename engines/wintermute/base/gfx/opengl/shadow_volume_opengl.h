@@ -26,49 +26,25 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-#ifndef WINTERMUTE_SHADOW_VOLUME_H
-#define WINTERMUTE_SHADOW_VOLUME_H
+#ifndef WINTERMUTE_SHADOW_VOLUME_OPENGL_H
+#define WINTERMUTE_SHADOW_VOLUME_OPENGL_H
 
-#include "engines/wintermute//base/base.h"
-#include "engines/wintermute/coll_templ.h"
-#include "math/matrix4.h"
-#include "math/vector3d.h"
+#include "engines/wintermute/base/gfx/opengl/shadow_volume.h"
 
 namespace Wintermute {
 
-#include "common/pack-start.h"
-
-struct ShadowVertex {
-	uint8 r;
-	uint8 g;
-	uint8 b;
-	uint8 a;
-	float x;
-	float y;
-	float z;
-} PACKED_STRUCT;
-
-#include "common/pack-end.h"
-
-class ShadowVolume : public BaseClass {
+class ShadowVolumeOpenGL : public ShadowVolume {
 public:
-	ShadowVolume(BaseGame *inGame);
-	virtual ~ShadowVolume();
+	ShadowVolumeOpenGL(BaseGame *inGame);
+	virtual ~ShadowVolumeOpenGL();
 
-	void addVertex(const Math::Vector3d &vertex);
-	bool reset();
-
-	virtual bool renderToStencilBuffer() = 0;
-	virtual bool renderToScene() = 0;
-
-	bool setColor(uint32 color);
-
-protected:
-	BaseArray<Math::Vector3d> _vertices; // Vertex data for rendering shadow volume
-	uint32 _color;
+	bool renderToStencilBuffer() override;
+	bool renderToScene() override;
 
 private:
-	virtual bool initMask() = 0;
+	bool render();
+	ShadowVertex _shadowMask[4];
+	bool initMask();
 };
 
 } // namespace Wintermute

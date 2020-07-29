@@ -576,7 +576,7 @@ bool AdObject3D::skipTo(int x, int y, bool tolerant) {
 //////////////////////////////////////////////////////////////////////////
 ShadowVolume *AdObject3D::getShadowVolume() {
 	if (_shadowVolume == nullptr) {
-		_shadowVolume = new ShadowVolume(_gameRef);
+		_shadowVolume = _gameRef->_renderer3D->createShadowVolume();
 	}
 
 	return _shadowVolume;

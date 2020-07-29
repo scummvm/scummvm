@@ -38,6 +38,7 @@ namespace Wintermute {
 class BaseSurfaceOpenGL3D;
 class Mesh3DS;
 class MeshX;
+class ShadowVolume;
 
 class BaseRenderer3D : public BaseRenderer {
 public:
@@ -74,6 +75,7 @@ public:
 
 	virtual Mesh3DS *createMesh3DS() = 0;
 	virtual MeshX *createMeshX() = 0;
+	virtual ShadowVolume *createShadowVolume() = 0;
 
 	virtual bool drawSprite(BaseSurfaceOpenGL3D &tex, const Rect32 &rect, float zoomX, float zoomY, const Vector2 &pos,
 	                        uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) = 0;
