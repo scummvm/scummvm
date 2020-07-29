@@ -462,7 +462,11 @@ void WindowsTextToSpeechManager::updateVoices() {
 	ISpObjectTokenCategory *cpCategory;
 	HRESULT hr = CoCreateInstance(CLSID_SpObjectTokenCategory, NULL, CLSCTX_ALL, IID_ISpObjectTokenCategory, (void**)&cpCategory);
 	if (SUCCEEDED(hr)) {
-		hr = cpCategory->SetId(SPCAT_VOICES, FALSE);
+		hr = cpCategory->SetId(L"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Speech_OneCore\\Voices", FALSE);
+		if (!SUCCEEDED(hr)) {
+			hr = cpCategory->SetId(SPCAT_VOICES, FALSE);
+		}
+
 		if (SUCCEEDED(hr)) {
 			hr = cpCategory->EnumTokens(NULL, NULL, &cpEnum);
 		}
