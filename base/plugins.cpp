@@ -49,6 +49,14 @@ const char *Plugin::getName() const {
 	return _pluginObject->getName();
 }
 
+const char *Plugin::getEngineId() const {
+	if (_type == PLUGIN_TYPE_METAENGINE) {
+		return _pluginObject->getEngineId();
+	}
+
+	return nullptr;
+}
+
 class StaticPlugin : public Plugin {
 public:
 	StaticPlugin(PluginObject *pluginobject, PluginType type) {
