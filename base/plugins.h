@@ -152,6 +152,18 @@ public:
 
 	/** Returns the name of the plugin. */
 	virtual const char *getName() const = 0;
+
+	/**
+	 * Returns the engine id of the plugin, if implemented.
+	 * This mostly has the use with MetaEngines, but if another
+	 * type of plugins request this, we return a nullptr.
+	 * This is used because MetaEngines are now available in the
+	 * executable, and querying this we can match a MetaEngine
+	 * with it's related engine.
+	 */
+	virtual const char *getEngineId() const {
+		return nullptr;
+	}
 };
 
 /**
@@ -182,6 +194,7 @@ public:
 	 **/
 	PluginType getType() const;
 	const char *getName() const;
+	const char *getEngineId() const;
 
 	template <class T>
 	T &get() const {
