@@ -257,7 +257,6 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 	if (!nextSprite)
 		return;
 
-	bool newSprite = (_sprite->_spriteType == kInactiveSprite && nextSprite->_spriteType != kInactiveSprite);
 	bool replace = isDirty(nextSprite);
 
 	if (nextSprite) {
@@ -265,17 +264,7 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 			// Updating scripts, etc. does not require a full re-render
 			_sprite->_scriptId = nextSprite->_scriptId;
 		} else {
-			_sprite = nextSprite;
-
-			// Sprites marked moveable are constrained to the same bounding box until
-			// the moveable is disabled
-			if (!_sprite->_moveable || newSprite)
-				_currentPoint = _sprite->_startPoint;
-
-			if (!_sprite->_stretch) {
-				_width = _sprite->_width;
-				_height = _sprite->_height;
-			}
+			replaceSprite(nextSprite);
 		}
 
 		_currentPoint += _delta;
@@ -287,6 +276,25 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 		replaceWidget();
 	}
 	_dirty = false;
+}
+
+void Channel::replaceSprite(Sprite *nextSprite) {
+	if (!nextSprite)
+		return;
+
+	bool newSprite = (_sprite->_spriteType == kInactiveSprite && nextSprite->_spriteType != kInactiveSprite);
+	_sprite = nextSprite;
+
+	// Sprites marked moveable are constrained to the same bounding box until
+	// the moveable is disabled
+	if (!_sprite->_moveable || newSprite) {
+		_currentPoint = _sprite->_startPoint;
+
+		if (!_sprite->_stretch) {
+			_width = _sprite->_width;
+			_height = _sprite->_height;
+		}
+	}
 }
 
 void Channel::setWidth(int w) {
