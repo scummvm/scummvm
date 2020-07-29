@@ -1587,11 +1587,11 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 
 	switch (field) {
 	case kTheBackColor:
-		{
+		if (castType == kCastText) {
 			int color = _vm->transformColor(d.asInt());
 			member->setColors(nullptr, &color);
-			break;
 		}
+		break;
 	case kTheCastType:
 		warning("Lingo::setTheCast(): Attempt to set read-only field %s of cast %d", entity2str(field), id);
 		break;
@@ -1637,11 +1637,11 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		castInfo->fileName = d.asString();
 		break;
 	case kTheForeColor:
-		{
+		if (castType == kCastText) {
 			int color = _vm->transformColor(d.asInt());
 			member->setColors(&color, nullptr);
-			break;
 		}
+		break;
 	case kTheFrameRate:
 		if (castType == kCastDigitalVideo) {
 			((DigitalVideoCastMember *)member)->_frameRate = d.asInt();
