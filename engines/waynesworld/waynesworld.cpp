@@ -149,7 +149,7 @@ Common::Error WaynesWorldEngine::run() {
 	drawInterface(2);
 	// changeRoom(0);
 	// _wayneSpriteX = -1; _garthSpriteX = -1;
-	changeRoom(37); // DEBUG
+	changeRoom(1); // DEBUG
 	// _logic->r31_displayCategories();
 	// _logic->_r1_eventFlag = 1;
 	// _logic->_r1_eventCtr = 3;
@@ -1345,8 +1345,18 @@ void WaynesWorldEngine::loadRoomMask(int roomNum) {
 	fd.read(_walkMap, kWalkMapSize);
 }
 
-void WaynesWorldEngine::fillRoomMaskArea(int x1, int y1, int x2, int y2, int enabled) {
-	// TODO
+void WaynesWorldEngine::fillRoomMaskArea(int x1, int y1, int x2, int y2, bool blocked) {
+	for (int y = y1; y <= y2; y++) {
+		for (int x = x1; x <= x2; x++) {
+			int offset = (y * 40) + (x / 8);
+			byte value = 0x80 >> (x % 8);
+			if (blocked) {
+				_walkMap[offset] &= ~value;
+			} else {
+				_walkMap[offset] |= value;
+			}
+		}
+	}
 }
 
 void WaynesWorldEngine::loadAnimationSpriteRange(int baseIndex, const char *filename, int count) {

@@ -1705,13 +1705,13 @@ void GameLogic::r1_refreshRoomBackground() {
 		if (!(_r1_flags2 & 0x08)) {
 			_vm->moveObjectToRoom(kObjectIdDrGadget_0, 1);
 			_vm->drawRoomImageToBackground("gadget2", 127, 82);
-			_vm->fillRoomMaskArea(100, 0, 319, 149, 1);
+			_vm->fillRoomMaskArea(100, 0, 319, 149, true);
 		} else {
 			_vm->moveObjectToNowhere(kObjectIdDrGadget_0);
 			if (!(_r1_flags2 & 0x04)) {
 				_vm->moveObjectToRoom(kObjectIdExtensionCord_0, 1);
 			} else {
-				_vm->fillRoomMaskArea(175, 0, 319, 149, 1);
+				_vm->fillRoomMaskArea(175, 0, 319, 149, true);
 			}
 		}
 		if (!(_r1_flags1 & 0x08)) {
@@ -1803,7 +1803,7 @@ void GameLogic::r1_handleRoomEvent(bool startTongueTrick) {
 		break;
 	case 1:
 		_vm->walkTo(209, 120, 7, 151, 127);
-		_vm->fillRoomMaskArea(0, 0, 180, 149, 1);
+		_vm->fillRoomMaskArea(0, 0, 180, 149, true);
 		_vm->_garthSpriteX = -1;
 		_vm->playAnimation("tt0", 0, 12, 119, 81, 0, 150);
 		break;
@@ -3109,8 +3109,8 @@ void GameLogic::r6_updateRoomAnimations() {
 void GameLogic::r6_refreshRoomBackground() {
 	if (!(_r6_flags & 0x01)) {
 		_vm->drawRoomImageToBackground("sitdog0", 49, 111);
-		_vm->fillRoomMaskArea(65, 110, 106, 124, 0);
-		_vm->fillRoomMaskArea(96, 111, 125, 123, 1);
+		_vm->fillRoomMaskArea(65, 110, 106, 124, false);
+		_vm->fillRoomMaskArea(96, 111, 125, 123, true);
 	}
 	if (_r6_flags & 0x02) {
 		_vm->drawRoomImageToBackground("norope", 49, 111);
@@ -3206,8 +3206,8 @@ void GameLogic::r6_giveLuckySausageToDog() {
 	_vm->moveObjectToRoom(kObjectIdRope_0, 6);
 	_vm->moveObjectToNowhere(kObjectIdInventoryLuckySausage);
 	_vm->refreshInventory(true);
-	_vm->fillRoomMaskArea(65, 110, 106, 124, 0);
-	_vm->fillRoomMaskArea(96, 111, 125, 123, 1);
+	_vm->fillRoomMaskArea(65, 110, 106, 124, false);
+	_vm->fillRoomMaskArea(96, 111, 125, 123, true);
 }
 
 void GameLogic::r6_useRopeWithBeam() {
@@ -4764,8 +4764,8 @@ void GameLogic::r11_useSuckCutWithFountain() {
 	_vm->moveObjectToRoom(kObjectIdManholeCover, 11);
 	_r11_flags &= ~0x04;
 	_vm->setStaticRoomObjectPosition(_vm->_currentRoomNumber, 0, 0, 97, 106);
-	_vm->fillRoomMaskArea(117, 110, 140, 130, 0);
-	_vm->fillRoomMaskArea(81, 131, 119, 148, 1);
+	_vm->fillRoomMaskArea(117, 110, 140, 130, false);
+	_vm->fillRoomMaskArea(81, 131, 119, 148, true);
 	r11_useCar1();
 	_vm->loadRoomBackground();
 }
@@ -6029,13 +6029,13 @@ void GameLogic::r24_refreshRoomBackground() {
 			_vm->drawRoomImageToBackground(holeFilename.c_str(), kRoom24MazeHolePositionsX[holeIndex], kRoom24MazeHolePositionsY[holeIndex]);
 			if (holeIndex == 0) {
 				_vm->setStaticRoomObjectPosition(24, 0, 0, 95, 18);
-				_vm->fillRoomMaskArea(87, 128, 116, 136, 1);
+				_vm->fillRoomMaskArea(87, 128, 116, 136, true);
 			} else if (holeIndex == 1) {
 				_vm->setStaticRoomObjectPosition(24, 1, 1, 206, 18);
-				_vm->fillRoomMaskArea(199, 128, 227, 136, 1);
+				_vm->fillRoomMaskArea(199, 128, 227, 136, true);
 			} else if (holeIndex == 6) {
 				_vm->setStaticRoomObjectPosition(24, 2, 2, 95, 26);
-				_vm->fillRoomMaskArea(58, 128, 147, 146, 1);
+				_vm->fillRoomMaskArea(58, 128, 147, 146, true);
 			}
 		} else {
 			_vm->moveObjectToNowhere(kObjectIdOpening_0 + holeIndex);
@@ -7263,7 +7263,7 @@ void GameLogic::r32_updateRoomAnimations() {
 void GameLogic::r32_refreshRoomBackground() {
 	if (!(_pizzathonListFlags2 & 0x08)) {
 		_vm->drawRoomImageToBackground("cdoor", 13, 65);
-		_vm->fillRoomMaskArea(0, 0, 33, 149, 1);
+		_vm->fillRoomMaskArea(0, 0, 33, 149, true);
 	} else {
 		_vm->moveObjectToNowhere(kObjectIdDoor32_0);
 		_vm->moveObjectToRoom(kObjectIdOffice, 32);

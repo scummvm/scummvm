@@ -319,7 +319,7 @@ public:
 	void loadScrollSprite();
 	void scrollRoom();
 	void loadRoomMask(int roomNum);
-	void fillRoomMaskArea(int x1, int y1, int x2, int y2, int enabled);
+	void fillRoomMaskArea(int x1, int y1, int x2, int y2, bool blocked);
 
 	// Room animations
 	void loadAnimationSpriteRange(int baseIndex, const char *filename, int count);
