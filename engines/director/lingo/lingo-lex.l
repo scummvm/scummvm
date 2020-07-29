@@ -43,10 +43,11 @@ using namespace Director;
 
 int yyparse();
 static const char *inputbuffer;
+static uint inputlen;
 
 // Push lines in stack
 static void pushLine(int num) {
-	if (!inputbuffer[num])
+	if (num > inputlen)
 		return;
 
 	g_lingo->_lines[2] = g_lingo->_lines[1];
@@ -433,6 +434,7 @@ namespace Director {
 int Lingo::parse(const char *code) {
 	inputbuffer = code;
 	g_lingo->_bytenumber = 0;
+	inputlen = strlen(code);
 
 	_lines[0] = _lines[1] = _lines[2] = code;
 
