@@ -53,10 +53,10 @@ public:
 	void saveData(Common::WriteStream *ws) override;
 
 protected:
-	bool isValidTarget(Actor *target_);
-	bool isEnemy(Actor *target_);
-	bool inAttackRange();
-	Direction getTargetDirection();
+	bool isValidTarget(const Actor *target_) const;
+	bool isEnemy(const Actor *target_) const;
+	bool inAttackRange() const;
+	Direction getTargetDirection() const;
 
 	void turnToDirection(Direction direction);
 	void waitForTarget();

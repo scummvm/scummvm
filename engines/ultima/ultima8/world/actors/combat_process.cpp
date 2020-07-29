@@ -158,7 +158,7 @@ void CombatProcess::run() {
 }
 
 ObjId CombatProcess::getTarget() {
-	Actor *t = getActor(_target);
+	const Actor *t = getActor(_target);
 
 	if (!t || !isValidTarget(t))
 		_target = 0;
@@ -174,9 +174,9 @@ void CombatProcess::setTarget(ObjId newtarget) {
 	_target = newtarget;
 }
 
-bool CombatProcess::isValidTarget(Actor *target_) {
+bool CombatProcess::isValidTarget(const Actor *target_) const {
 	assert(target_);
-	Actor *a = getActor(_itemNum);
+	const Actor *a = getActor(_itemNum);
 	if (!a) return false; // uh oh
 
 	// don't target_ self
@@ -199,10 +199,10 @@ bool CombatProcess::isValidTarget(Actor *target_) {
 	return true;
 }
 
-bool CombatProcess::isEnemy(Actor *target_) {
+bool CombatProcess::isEnemy(const Actor *target_) const {
 	assert(target_);
 
-	Actor *a = getActor(_itemNum);
+	const Actor *a = getActor(_itemNum);
 	if (!a) return false; // uh oh
 
 	return ((a->getEnemyAlignment() & target_->getAlignment()) != 0);
@@ -236,9 +236,9 @@ ObjId CombatProcess::seekTarget() {
 	return 0;
 }
 
-Direction CombatProcess::getTargetDirection() {
-	Actor *a = getActor(_itemNum);
-	Actor *t = getActor(_target);
+Direction CombatProcess::getTargetDirection() const {
+	const Actor *a = getActor(_itemNum);
+	const Actor *t = getActor(_target);
 	if (!a || !t)
 		return dir_north; // shouldn't happen
 
@@ -273,12 +273,12 @@ void CombatProcess::turnToDirection(Direction direction) {
 	if (prevpid) waitFor(prevpid);
 }
 
-bool CombatProcess::inAttackRange() {
-	Actor *a = getActor(_itemNum);
+bool CombatProcess::inAttackRange() const {
+	const Actor *a = getActor(_itemNum);
 	if (!a)
 		return false; // shouldn't happen
 	const ShapeInfo *shapeinfo = a->getShapeInfo();
-	MonsterInfo *mi = nullptr;
+	const MonsterInfo *mi = nullptr;
 	if (shapeinfo) mi = shapeinfo->_monsterInfo;
 
 	if (mi && mi->_ranged)
@@ -303,7 +303,7 @@ void CombatProcess::waitForTarget() {
 	if (!a)
 		return; // shouldn't happen
 	const ShapeInfo *shapeinfo = a->getShapeInfo();
-	MonsterInfo *mi = nullptr;
+	const MonsterInfo *mi = nullptr;
 	if (shapeinfo) mi = shapeinfo->_monsterInfo;
 
 	if (mi && mi->_shifter && a->getMapNum() != 43 && (getRandom() % 2) == 0) {

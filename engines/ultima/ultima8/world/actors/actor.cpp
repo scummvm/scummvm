@@ -130,7 +130,7 @@ bool Actor::loadMonsterStatsCru() {
 bool Actor::loadMonsterStatsU8() {
 
 	const ShapeInfo *shapeinfo = getShapeInfo();
-	MonsterInfo *mi = nullptr;
+	const MonsterInfo *mi = nullptr;
 	if (shapeinfo) mi = shapeinfo->_monsterInfo;
 	if (!mi)
 		return false;
@@ -159,7 +159,7 @@ bool Actor::loadMonsterStatsU8() {
 bool Actor::giveTreasure() {
 	MainShapeArchive *mainshapes = GameData::get_instance()->getMainShapes();
 	const ShapeInfo *shapeinfo = getShapeInfo();
-	MonsterInfo *mi = nullptr;
+	const MonsterInfo *mi = nullptr;
 	if (shapeinfo) mi = shapeinfo->_monsterInfo;
 	if (!mi)
 		return false;
@@ -1011,7 +1011,7 @@ ProcId Actor::die(uint16 damageType) {
 	giveTreasure();
 
 	const ShapeInfo *shapeinfo = getShapeInfo();
-	MonsterInfo *mi = nullptr;
+	const MonsterInfo *mi = nullptr;
 	if (shapeinfo) mi = shapeinfo->_monsterInfo;
 
 	if (mi && mi->_resurrection && !(damageType & WeaponInfo::DMG_FIRE)) {
