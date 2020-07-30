@@ -1091,12 +1091,46 @@ void LC::c_charToOf() {
 }
 
 void LC::c_itemOf() {
-	Datum d2 = g_lingo->pop();
-	Datum d1 = g_lingo->pop();
 
-	warning("STUB: LC::c_itemOf(): %d %d", d1.u.i, d2.u.i);
+	Datum d2 = g_lingo->pop(); // chunkExpression
+	Datum d1 = g_lingo->pop(); // index
 
-	g_lingo->push(d1);
+	char delimiter = g_lingo->_itemDelimiter;
+
+	if ((d1.type != INT && d1.type != FLOAT) ||  d2.type != STRING) {
+		warning("LC::c_itemOf(): Called with wrong data types: %s and %s", d1.type2str(), d2.type2str());
+		g_lingo->push(Datum(""));
+		return;
+	}
+
+	int index = d1.asInt();
+
+	if (index < 1) {
+		// returns the input string
+		g_lingo->push(d2);
+		return;
+	}
+	Common::String chunkExpr = *d2.u.s;
+	uint startPos = 0;
+
+	while (index-- > 1) {
+		startPos = chunkExpr.find(delimiter, startPos);
+		if (startPos == Common::String::npos)
+			break;
+		startPos++;  // skipping comma
+	}
+
+	Datum res;
+	if (startPos == Common::String::npos) {
+		res = Datum("");
+	} else {
+		uint endPos = chunkExpr.find(delimiter, startPos);
+		if (endPos == Common::String::npos)
+			endPos = chunkExpr.size();
+		res = Datum(chunkExpr.substr(startPos, endPos - startPos));
+	}
+
+	g_lingo->push(res);
 }
 
 void LC::c_itemToOf() {
