@@ -125,13 +125,9 @@ void AnimDat::load(Common::SeekableReadStream *rs) {
 	_anims.resize(2048);
 
 	unsigned int actioncount = 64;
-	unsigned int frame_repeat_factor = 1;
 
 	if (GAME_IS_CRUSADER) {
 		actioncount = 256;
-		// TODO: this is based on making the game "feel" right, not disassembly.
-		// Should confirm if this is the right way to do it.
-		frame_repeat_factor = 2;
 	}
 
 	for (unsigned int shape = 0; shape < _anims.size(); shape++) {
@@ -166,7 +162,7 @@ void AnimDat::load(Common::SeekableReadStream *rs) {
 			uint32 actionsize = rs->readByte();
 			a->_actions[action]->_size = actionsize;
 			a->_actions[action]->_flags = rs->readByte();
-			a->_actions[action]->_frameRepeat = rs->readByte() / frame_repeat_factor;
+			a->_actions[action]->_frameRepeat = rs->readByte();
 			a->_actions[action]->_flags |= rs->readByte() << 8;
 
 			unsigned int dirCount = 8;
@@ -200,7 +196,7 @@ void AnimDat::load(Common::SeekableReadStream *rs) {
 						// byte 2, 3: unknown; byte 3 might contain flags
 						f._unk1 = rs->readSint16LE();
 						// byte 4: deltadir (signed) - convert to pixels
-						f._deltaDir = rs->readSByte() * 2;
+						f._deltaDir = rs->readSByte();
 						// byte 5: flags?
 						f._flags = rs->readByte();
 						// byte 6, 7: unknown

@@ -491,6 +491,8 @@ void Ultima8Engine::runGame() {
 
 		if (!_frameLimit) {
 			_kernel->runProcesses();
+			if (GAME_IS_CRUSADER)
+				_kernel->runProcesses();
 			_desktopGump->run();
 			_inBetweenFrame = false;
 			next_ticks = _animationRate + g_system->getMillis() * 3;
@@ -502,6 +504,8 @@ void Ultima8Engine::runGame() {
 			while (diff < 0) {
 				next_ticks += _animationRate;
 				_kernel->runProcesses();
+				if (GAME_IS_CRUSADER)
+					_kernel->runProcesses();
 				_desktopGump->run();
 #if 0
 				perr << "--------------------------------------" << Std::endl;
