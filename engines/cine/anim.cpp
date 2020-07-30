@@ -436,8 +436,7 @@ void freeAnimDataRange(byte startIdx, byte numIdx) {
 		if (startIdx + numIdx > g_cine->_animDataTable.size()) {
 			numIdx = (byte)(g_cine->_animDataTable.size() - startIdx);
 		}
-		assert(startIdx < g_cine->_animDataTable.size() ||
-			(g_cine->_animDataTable.empty() && numIdx == 0));
+		assert(startIdx < g_cine->_animDataTable.size());
 		assert(startIdx + numIdx <= g_cine->_animDataTable.size());
 	}
 		
