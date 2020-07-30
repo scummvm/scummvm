@@ -519,122 +519,76 @@ void GameLogic::handleDialogReply(int index, int x, int y) {
     switch (_vm->_currentRoomNumber) {
     case 2:
         if (index < 300) {
-            for (int i = 0; i < 4; i++) {
-                _vm->playAnimation("btalk", 0, 2, 95, 72, 0, 100);
-            }
+            _vm->playAnimationLoops("btalk", 0, 2, 95, 72, 0, 100, 4);
         } else {
-            for (int i = 0; i < 4; i++) {
-                _vm->playAnimation("wait", 0, 2, 237, 69, 0, 100);
-            }
+            _vm->playAnimationLoops("wait", 0, 2, 237, 69, 0, 100, 4);
         }
         break;
     case 4:
-        for (int i = 0; i < 4; i++) {
-            _vm->playAnimation("btalk", 1, -2, 146, 45, 0, 100);
-        }
+        _vm->playAnimationLoops("btalk", 1, -2, 146, 45, 0, 100, 4);
         break;
     case 6:
         if (index < 154) {
-            for (int i = 0; i < 4; i++) {
-                _vm->playAnimation("cindi", 4, 2, 143, 55, 0, 100);
-            }
+            _vm->playAnimationLoops("cindi", 4, 2, 143, 55, 0, 100, 4);
         }
         break;
     case 13:
         if (index > 400) {
-            for (int i = 0; i < 4; i++) {
-                _vm->playAnimation("ctalk", 0, 2, 85, 73, 0, 100);
-            }
+            _vm->playAnimationLoops("ctalk", 0, 2, 85, 73, 0, 100, 4);
         } else {
-            for (int i = 0; i < 4; i++) {
-                _vm->playAnimation("ptalk", 0, 2, 72, 60, 0, 100);
-            }
+            _vm->playAnimationLoops("ptalk", 0, 2, 72, 60, 0, 100, 4);
         }
         break;
     case 9:
         if (index < 192) {
-            for (int i = 0; i < 4; i++) {
-                _vm->playAnimation("talk", 0, 2, 92, 60, 0, 100);
-            }
+            _vm->playAnimationLoops("talk", 0, 2, 92, 60, 0, 100, 4);
         } else {
-            for (int i = 0; i < 4; i++) {
-                _vm->playAnimation("mtalk", 0, 2, 215, 60, 0, 100);
-            }
+            _vm->playAnimationLoops("mtalk", 0, 2, 215, 60, 0, 100, 4);
         }
         break;
     case 10:
-        for (int i = 0; i < 4; i++) {
-            _vm->playAnimation("talk", 0, 8, 153, 30, 1, 100);
-        }
+        _vm->playAnimationLoops("talk", 0, 8, 153, 30, 1, 100, 4);
         break;
     case 23:
-        for (int i = 0; i < 4; i++) {
-            _vm->playAnimation("talk", 0, 2, 75, 63, 0, 100);
-        }
+        _vm->playAnimationLoops("talk", 0, 2, 75, 63, 0, 100, 4);
         break;
     case 19:
-        for (int i = 0; i < 4; i++) {
-            _vm->playAnimation("gill", 1, -2, 273, 84, 0, 100);
-        }
+        _vm->playAnimationLoops("gill", 1, -2, 273, 84, 0, 100, 4);
         break;
     case 20:
-        for (int i = 0; i < 4; i++) {
-            _vm->playAnimation("mtalk", 0, 2, 184, 68, 0, 100);
-        }
+        _vm->playAnimationLoops("mtalk", 0, 2, 184, 68, 0, 100, 4);
         break;
     case 12:
         if (index < 236) {
-            for (int i = 0; i < 4; i++) {
-                _vm->playAnimation("lawyer", 6, -2, 55, 84, 0, 100);
-            }
+            _vm->playAnimationLoops("lawyer", 6, -2, 55, 84, 0, 100, 4);
         } else if (index < 238) {
-            for (int i = 0; i < 4; i++) {
-                _vm->playAnimation("man1", 0, 2, 108, 83, 0, 100);
-            }
+            _vm->playAnimationLoops("man1", 0, 2, 108, 83, 0, 100, 4);
         } else if (index < 240) {
-            for (int i = 0; i < 4; i++) {
-                _vm->playAnimation("man3", 0, 2, 168, 84, 0, 100);
-            }
+            _vm->playAnimationLoops("man3", 0, 2, 168, 84, 0, 100, 4);
         } else if (index < 242) {
-            for (int i = 0; i < 4; i++) {
-                _vm->playAnimation("man4", 0, 2, 190, 84, 0, 100);
-            }
+            _vm->playAnimationLoops("man4", 0, 2, 190, 84, 0, 100, 4);
         }
         break;
     case 8:
-        for (int i = 0; i < 4; i++) {
-            _vm->playAnimation("mtalk", 0, 2, 195, 69, 0, 100);
-        }
+        _vm->playAnimationLoops("mtalk", 0, 2, 195, 69, 0, 100, 4);
         break;
     case 32:
-        for (int i = 0; i < 4; i++) {
-            _vm->playAnimation("jtalk", 0, 2, 262, 84, 0, 100);
-        }
+        _vm->playAnimationLoops("jtalk", 0, 2, 262, 84, 0, 100, 4);
         break;
     case 30:
-        for (int i = 0; i < 4; i++) {
-            _vm->playAnimation("ctalk", 0, 2, 183, 107, 0, 100);
-        }
+        _vm->playAnimationLoops("ctalk", 0, 2, 183, 107, 0, 100, 4);
         break;
     case 28:
-        for (int i = 0; i < 4; i++) {
-            _vm->playAnimation("reptalk", 0, 6, 26, 51, 1, 100);
-        }
+        _vm->playAnimationLoops("reptalk", 0, 6, 26, 51, 1, 100, 4);
         break;
     case 34:
-        for (int i = 0; i < 4; i++) {
-            _vm->playAnimation("talk", 0, 2, 203, 73, 0, 100);
-        }
+        _vm->playAnimationLoops("talk", 0, 2, 203, 73, 0, 100, 4);
         break;
     case 35:
-        for (int i = 0; i < 4; i++) {
-            _vm->playAnimation("cass", 0, 2, 179, 68, 0, 100);
-        }
+        _vm->playAnimationLoops("cass", 0, 2, 179, 68, 0, 100, 4);
         break;
     case 17:
-        for (int i = 0; i < 4; i++) {
-            _vm->playAnimation("g1talk", 0, 2, 54, 81, 0, 100);
-        }
+		_vm->playAnimationLoops("g1talk", 0, 2, 54, 81, 0, 100, 4);
         break;
     default:
         _vm->waitSeconds(2);
@@ -2288,18 +2242,14 @@ void GameLogic::r2_giveCandyBarToBikerGang() {
 	_vm->refreshInventory(false);
 	_vm->changeRoom(_vm->_currentRoomNumber);
 	for (int textIndex = 288; textIndex < 291; textIndex++) {
-		for (int i = 0; i < 4; i++) {
-			_vm->playAnimation("btalk", 0, 2, 95, 72, 0, 100);
-		}
+		_vm->playAnimationLoops("btalk", 0, 2, 95, 72, 0, 100, 4);
 		_vm->displayTextLines("c04r", textIndex, 70, 30, 1);
 	}
 	_vm->playAnimation("givech", 0, 2, 94, 70, 0, 150);
 	_vm->moveObjectToRoom(kObjectIdInventoryChain, 99);
 	_vm->refreshInventory(false);
 	_vm->changeRoom(_vm->_currentRoomNumber);
-	for (int i = 0; i < 4; i++) {
-		_vm->playAnimation("btalk", 0, 2, 95, 72, 0, 100);
-	}
+	_vm->playAnimationLoops("btalk", 0, 2, 95, 72, 0, 100, 4);
 	_vm->displayTextLines("c04r", 291, 70, 30, 1);
 }
 
@@ -3131,9 +3081,7 @@ void GameLogic::r6_refreshRoomBackground() {
 
 void GameLogic::r6_handleRoomEvent1() {
 	_vm->displayTextLines("c04", 208, -1, -1, 3);
-	for (int i = 0; i < 4; i++) {
-		_vm->playAnimation("cindi", 4, 2, 143, 55, 0, 100);
-	}
+	_vm->playAnimationLoops("cindi", 4, 2, 143, 55, 0, 100, 4);
 	_vm->displayTextLines("c04r", 141, 160, 10, 1);
 	_vm->setDialogChoices(211, 212, 213, 214, -1);
 	_vm->startDialog();
@@ -3141,19 +3089,13 @@ void GameLogic::r6_handleRoomEvent1() {
 
 void GameLogic::r6_handleRoomEvent2() {
 	_vm->displayTextLines("c04", 215, -1, -1, 1);
-	for (int i = 0; i < 4; i++) {
-	  _vm->playAnimation("cindi", 4, 2, 143, 55, 0, 100);
-	}
+	_vm->playAnimationLoops("cindi", 4, 2, 143, 55, 0, 100, 4);
 	_vm->displayTextLines("c04r", 147, 160, 10, 1);
 	_vm->displayTextLines("c04", 216, -1, -1, 1);
-	for (int i = 0; i < 10; i++) {
-		_vm->playAnimation("cindi", 4, 2, 143, 55, 0, 100);
-	}
+	_vm->playAnimationLoops("cindi", 4, 2, 143, 55, 0, 100, 10);
 	_vm->displayTextLines("c04r", 148, 160, 10, 4);
 	_vm->displayTextLines("c04", 217, -1, -1, 1);
-	for (int i = 0; i < 7; i++) {
-		_vm->playAnimation("cindi", 4, 2, 143, 55, 0, 100);
-	}
+	_vm->playAnimationLoops("cindi", 4, 2, 143, 55, 0, 100, 7);
 	_vm->displayTextLines("c04r", 152, 160, 10, 2);
 	_vm->playAnimation("cindi", 4, -5, 143, 55, 0, 100);
 	_vm->playAnimation("raiseg", 12, -13, 133, 46, 0, 150);
@@ -3243,16 +3185,12 @@ void GameLogic::r6_useSeat() {
 void GameLogic::r6_pullRope() {
 	_vm->playAnimation("raiseg", 0, 13, 133, 46, 0, 150);
 	_vm->_wayneSpriteX = -1;
-	for (int i = 0; i < 5; i++) {
-		_vm->playAnimation("knock", 0, 2, 148, 61, 0, 100);
-	}
+	_vm->playAnimationLoops("knock", 0, 2, 148, 61, 0, 100, 5);
 	_vm->waitSeconds(1);
 	_vm->selectActorGarth();
 	_vm->playAnimation("cindi", 0, 5, 143, 55, 0, 100);
 	_vm->displayText("c04r", 138, 0, 160, 10, 0);
-	for (int i = 0; i < 5; i++) {
-		_vm->playAnimation("cindi", 4, 2, 143, 55, 0, 100);
-	}
+	_vm->playAnimationLoops("cindi", 4, 2, 143, 55, 0, 100, 5);
 	_vm->waitSeconds(2);
 	_vm->setDialogChoices(202, 203, 204, -1, -1);
 	_vm->startDialog();
@@ -4009,9 +3947,7 @@ void GameLogic::r9_handleVerbTalkTo() {
 		if (!(_r9_flags & 0x02)) {
 			_vm->displayTextLines("c04", 245, -1, -1, 1);
 			_vm->displayTextLines("c04r", 192, 250, 25, 1);
-			for (int i = 0; i < 8; i++) {
-				_vm->playAnimation("utrick", 0, 2, 206, 58, 0, 100);
-			}
+			_vm->playAnimationLoops("utrick", 0, 2, 206, 58, 0, 100, 8);
 			_vm->loadRoomBackground();
 			_vm->displayTextLines("c04r", 193, 250, 25, 1);
 			_vm->setDialogChoices(246, 247, 248, 249, 250);
@@ -4205,9 +4141,7 @@ void GameLogic::r9_giveCoatOrTopHatToMan() {
 	} else {
 		_vm->displayTextLines("c04r", 200, 250, 25, 2);
 		_vm->playAnimation("strick", 0, 17, 191, 32, 0, 100);
-		for (int i = 0; i < 5; i++) {
-			_vm->playAnimation("strick", 16, -2, 191, 32, 0, 100);
-		}
+		_vm->playAnimationLoops("strick", 16, -2, 191, 32, 0, 100, 5);
 		_vm->playAnimation("strick", 14, -15, 191, 32, 0, 100);
 		_vm->loadRoomBackground();
 		_vm->displayTextLines("c04r", 202, 250, 25, 1);
@@ -4882,21 +4816,15 @@ void GameLogic::r12_handleVerbTalkTo() {
 		_vm->displayTextLines("c04", 284, -1, -1, 1);
 		break;
 	case kObjectIdCecil:
-		for (int i = 0; i < 4; i++) {
-			_vm->playAnimation("ctalk", 0, 2, 203, 85, 0, 100);
-		}
+		_vm->playAnimationLoops("ctalk", 0, 2, 203, 85, 0, 100, 4);
 		_vm->displayTextLines("c04r", 358, 250, 20, 1);
 		if (_vm->getObjectRoom(kObjectIdInventoryPotatoChip) == 99) {
 			_vm->displayTextLines("c04", 52, -1, -1, 1);
-			for (int i = 0; i < 4; i++) {
-				_vm->playAnimation("ctalk", 0, 2, 203, 85, 0, 100);
-			}
+			_vm->playAnimationLoops("ctalk", 0, 2, 203, 85, 0, 100, 4);
 			_vm->displayTextLines("c04r", 359, 250, 20, 1);
 		} else {
 			_vm->displayTextLines("c04", 341, -1, -1, 1);
-			for (int i = 0; i < 4; i++) {
-				_vm->playAnimation("ctalk", 0, 2, 203, 85, 0, 100);
-			}
+			_vm->playAnimationLoops("ctalk", 0, 2, 203, 85, 0, 100, 4);
 			_vm->displayTextLines("c04r", 360, 250, 20, 1);
 		}
 		break;
@@ -5041,16 +4969,12 @@ void GameLogic::r12_givePotatoChipToCecil() {
 	_vm->refreshInventory(true);
 	setPizzathonStatus(5);
 	for (int textIndex = 361; textIndex < 363; textIndex++) {
-		for (int i = 0; i < 4; i++) {
-			_vm->playAnimation("ctalk", 0, 2, 203, 85, 0, 100);
-		}
+		_vm->playAnimationLoops("ctalk", 0, 2, 203, 85, 0, 100, 4);
 		_vm->displayTextLines("c04r", textIndex, 250, 20, 1);
 	}
 	_vm->displayTextLines("c04", 342, -1, -1, 1);
 	for (int textIndex = 363; textIndex < 365; textIndex++) {
-		for (int i = 0; i < 4; i++) {
-			_vm->playAnimation("ctalk", 0, 2, 203, 85, 0, 100);
-		}
+		_vm->playAnimationLoops("ctalk", 0, 2, 203, 85, 0, 100, 4);
 		_vm->displayTextLines("c04r", textIndex, 250, 20, 1);
 	}
 	_vm->playAnimation("cwalk", 0, 13, 198, 84, 0, 100);
@@ -6509,9 +6433,7 @@ void GameLogic::r29_refreshRoomBackground() {
 }
 
 void GameLogic::r29_handleRoomEvent() {
-	for (int i = 0; i < 4; i++) {
-		_vm->playAnimation("doc", 0, 2, 138, 69, 0, 100);
-	}
+	_vm->playAnimationLoops("doc", 0, 2, 138, 69, 0, 100, 4);
 	_vm->displayTextLines("c04r", 365, 200, 30, 1);
 }
 
@@ -7531,9 +7453,7 @@ bool GameLogic::r35_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 	switch (_vm->_selectedDialogChoice) {
 	case 328: case 329: case 330:
 		for (int textIndex = 323; textIndex < 326; textIndex++) {
-			for (int i = 0; i < 4; i++) {
-				_vm->playAnimation("cass", 0, 2, 179, 68, 0, 100);
-			}
+			_vm->playAnimationLoops("cass", 0, 2, 179, 68, 0, 100, 4);
 			_vm->displayTextLines("c04r", textIndex, replyTextX, replyTextY, 1);
 		}
 		replyTextIndex1 = 326;
@@ -7607,17 +7527,13 @@ void GameLogic::r35_refreshRoomBackground() {
 void GameLogic::r35_talkToCassandra() {
 	_vm->_gameState = 7;
 	if (_r35_flags & 0x02) {
-		for (int i = 0; i < 4; i++) {
-			_vm->playAnimation("cass", 0, 2, 179, 68, 0, 100);
-		}
+		_vm->playAnimationLoops("cass", 0, 2, 179, 68, 0, 100, 4);
 		_vm->displayTextLines("c04r", 342, 150, 20, 1);
 		if (_vm->getObjectRoom(kObjectIdInventory50000) == 99) {
 			_vm->walkTo(217, 112, 5, 230, 115);
 			_vm->displayTextLines("c04", 339, -1, -1, 1);
 			for (int textIndex = 335; textIndex < 337; textIndex++) {
-				for (int i = 0; i < 4; i++) {
-					_vm->playAnimation("cass", 0, 2, 179, 68, 0, 100);
-				}
+				_vm->playAnimationLoops("cass", 0, 2, 179, 68, 0, 100, 4);
 				_vm->displayTextLines("c04r", textIndex, 150, 20, 1);
 			}
 			if (_vm->getObjectRoom(kObjectIdInventorySetOfKeys) == 99 && (_r38_flags & 0x01)) {
@@ -7630,9 +7546,7 @@ void GameLogic::r35_talkToCassandra() {
 	} else {
 		_r35_flags |= 0x02;
 		for (int textIndex = 317; textIndex < 323; textIndex++) {
-			for (int i = 0; i < 4; i++) {
-				_vm->playAnimation("cass", 0, 2, 179, 68, 0, 100);
-			}
+			_vm->playAnimationLoops("cass", 0, 2, 179, 68, 0, 100, 4);
 			_vm->displayTextLines("c04r", textIndex, 150, 20, 1);
 		}
 		_vm->walkTo(217, 112, 5, 230, 115);

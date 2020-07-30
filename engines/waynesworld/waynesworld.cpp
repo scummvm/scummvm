@@ -1076,29 +1076,35 @@ void WaynesWorldEngine::pickupObject(int objectId, byte &flags, byte flagsSet, i
 void WaynesWorldEngine::playAnimation(const char *prefix, int startIndex, int count, int x, int y, int flag, uint ticks) {
     char filename[32];
     // sysMouseDriver(2);
-    if (count > 0) {
-        for (int index = startIndex; index < startIndex + count; index++) {
-            updateRoomAnimations();
-            sprintf(filename, "%s%d", prefix, index);
-            drawRoomImageToScreen(filename, x, y);
-            drawRoomImageToBackground(filename, x, y);
-            waitMillis(ticks);
-        }
-    } else {
-        for (int index = startIndex; index > startIndex + count; index--) {
-            updateRoomAnimations();
-            sprintf(filename, "%s%d", prefix, index);
-            drawRoomImageToScreen(filename, x, y);
-            drawRoomImageToBackground(filename, x, y);
-            waitMillis(ticks);
-        }
-    }
+	if (count > 0) {
+		for (int index = startIndex; index < startIndex + count; index++) {
+			updateRoomAnimations();
+			sprintf(filename, "%s%d", prefix, index);
+			drawRoomImageToScreen(filename, x, y);
+			drawRoomImageToBackground(filename, x, y);
+			waitMillis(ticks);
+		}
+	} else {
+		for (int index = startIndex; index > startIndex + count; index--) {
+			updateRoomAnimations();
+			sprintf(filename, "%s%d", prefix, index);
+			drawRoomImageToScreen(filename, x, y);
+			drawRoomImageToBackground(filename, x, y);
+			waitMillis(ticks);
+		}
+	}
     if (flag) {
         sprintf(filename, "%s%d", prefix, startIndex);
         drawRoomImageToScreen(filename, x, y);
         drawRoomImageToBackground(filename, x, y);
     }
     // sysMouseDriver(1)
+}
+
+void WaynesWorldEngine::playAnimationLoops(const char *prefix, int startIndex, int count, int x, int y, int flag, uint ticks, int loopCount) {
+	for (int loop = 0; loop < loopCount; loop++) {
+		playAnimation(prefix, startIndex, count, x, y, flag, ticks);
+	}
 }
 
 void WaynesWorldEngine::setWaynePosition(int x, int y) {

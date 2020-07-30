@@ -288,6 +288,7 @@ public:
 	void refreshActors();
 	void pickupObject(int objectId, byte &flags, byte flagsSet, int inventoryObjectId);
 	void playAnimation(const char *prefix, int startIndex, int count, int x, int y, int flag, uint ticks);
+	void playAnimationLoops(const char *prefix, int startIndex, int count, int x, int y, int flag, uint ticks, int loopCount);
 	void setWaynePosition(int x, int y);
 	void setGarthPosition(int x, int y);
 	bool isActorWayne();
