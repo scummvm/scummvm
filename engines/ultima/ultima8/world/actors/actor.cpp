@@ -47,6 +47,7 @@
 #include "ultima/ultima8/world/actors/pathfinder_process.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/world/actors/loiter_process.h"
+#include "ultima/ultima8/world/actors/guard_process.h"
 #include "ultima/ultima8/world/actors/combat_process.h"
 #include "ultima/ultima8/world/actors/surrender_process.h"
 #include "ultima/ultima8/audio/audio_process.h"
@@ -670,8 +671,7 @@ uint16 Actor::setActivityCru(int activity) {
 		return Kernel::get_instance()->addProcess(new SurrenderProcess(this));
 	    break;
 	case 8:
-		perr << "Actor::setActivityCru TODO: Implement new GuardProcess(this);" << Std::endl;
-		return Kernel::get_instance()->addProcess(new LoiterProcess(this));
+		return Kernel::get_instance()->addProcess(new GuardProcess(this));
 	    break;
 	case 5:
 	case 9:
@@ -1040,9 +1040,10 @@ ProcId Actor::die(uint16 damageType) {
 	Kernel::get_instance()->killProcesses(getObjId(), 6, true); // CONSTANT!
 #endif
 
+	// TODO: In Crusader, this should default to 0x12, but randomly choose anim 0x14
+	// if it's available.
 	if (!animprocid)
 		animprocid = doAnim(Animation::die, dir_current);
-
 
 	MainActor *avatar = getMainActor();
 	// if hostile to avatar
@@ -1053,6 +1054,21 @@ ProcId Actor::die(uint16 damageType) {
 			// and resume combat music afterwards
 			MusicProcess::get_instance()->queueMusic(98);
 		}
+	} else if (GAME_IS_CRUSADER) {
+		uint16 sfxno;
+		static const uint16 FADING_SCREAM_SFX[] = { 0xD9, 0xDA };
+		static const uint16 MALE_DEATH_SFX[] = { 0x88, 0x8C, 0x8F };
+		static const uint16 FEMALE_DEATH_SFX[] = { 0xD8, 0x10 };
+		if (damageType == 0xf) {
+			sfxno = FADING_SCREAM_SFX[getRandom() % 2];
+		} else {
+			if (hasExtFlags(EXT_FEMALE)) {
+				sfxno = FEMALE_DEATH_SFX[getRandom() % 2];
+			} else {
+				sfxno = MALE_DEATH_SFX[getRandom() % 3];
+			}
+		}
+		AudioProcess::get_instance()->playSFX(sfxno, 0x10, _objId, 0, true);
 	}
 
 	destroyContents();

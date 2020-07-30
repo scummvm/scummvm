@@ -72,8 +72,11 @@ void GuardProcess::run() {
 			return;
 		} else {
 			// TODO: What animation happens in here?
-			//int animno = (getRandom() % 2 ? 0x1e : 0x1f);
-			//a->tryAnim(0x1e, a->getDir());
+			int animno = (getRandom() % 2 ? 0x1e : 0x1f);
+			int animproc = a->doAnim(static_cast<Animation::Sequence>(animno), dir_current);
+			Process *animstand = new ActorAnimProcess(a, Animation::stand, dir_current, 0);
+			Kernel::get_instance()->addProcess(animstand);
+			animstand->waitFor(animproc);
 		}
 		return;
 	}
