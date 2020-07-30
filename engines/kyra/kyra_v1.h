@@ -181,6 +181,7 @@ friend class ::KyraMetaEngine;
 friend class GUI;
 friend class GUI_v1;
 friend class GUI_EoB;
+friend class GUI_EoB_SegaCD;
 friend class SoundMidiPC;		// For _eventMan
 friend class SeqPlayer_HOF;		// For skipFlag()
 friend class TransferPartyWiz;	// For save state API
