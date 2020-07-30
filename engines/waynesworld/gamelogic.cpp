@@ -6802,14 +6802,7 @@ void GameLogic::r31_handleRoomEvent4() {
 		_r31_askedQuestions[_r31_categoryIndex * 5 + _r31_questionIndex] = true;
 		_vm->drawRoomImageToBackground("star", kRoom31StarPositionsX[_r31_categoryIndex], kRoom31StarPositionsY[_r31_categoryIndex * 5 + _r31_questionIndex]);
 
-        // Wait for mouse release
-		//sysMouseDriver(5, 1);
-		while (_vm->_mouseClickButtons != 0) {
-			_vm->_mouseClickButtons = 0;
-			//sysMouseDriver(5, 1);
-			//sysMouseDriver(5, 2);
-			//updateKeyInput();
-		}
+		_vm->_mouseClickButtons = 0;
 
 		_vm->displayText("gms", _r31_categoryIndex * 5 + _r31_questionIndex, 0, 50, 10, 0);
 		_vm->playAnimation("rdcard", 0, 6, 155, 30, 0, 300);
@@ -6818,11 +6811,16 @@ void GameLogic::r31_handleRoomEvent4() {
 		_r31_questionsAsked++;
 		_vm->_isTextVisible = false;
 		_vm->refreshActors();
-		_vm->waitMillis(_vm->getRandom(1300) + 200);
-		//sysMouseDriver(3);
 
-		//sysMouseDriver(5, 1);
-		if (_vm->_mouseClickButtons != 0 && _vm->_mouseX > 130 && _vm->_mouseX < 180 && _vm->_mouseY > 106 && _vm->_mouseY < 128) {
+		// Give the player some time to press the buzzer by clicking the mouse
+		uint32 timeOutTicks = _vm->_system->getMillis() + (uint32)_vm->getRandom(1300) + 200;
+		while (_vm->_system->getMillis() < timeOutTicks && _vm->_mouseClickButtons == 0 && !_vm->shouldQuit()) {
+			_vm->updateEvents();
+			_vm->_system->updateScreen();
+			_vm->_system->delayMillis(50);
+		}
+
+		if (_vm->_mouseClickButtons != 0 && _vm->_mouseClickX > 130 && _vm->_mouseClickX < 180 && _vm->_mouseClickY > 106 && _vm->_mouseClickY < 128) {
 			_r31_currentPlayer = 0;
 			r31_useBuzzer();
 			_vm->drawRoomImageToBackground("dlook", 287, 30);
@@ -7000,6 +6998,7 @@ void GameLogic::r31_buildQuestionDialogChoices(int categoryIndex, int questionIn
 		}
 	}
 	_vm->setDialogChoices(133, answerChoices[0], answerChoices[1], answerChoices[2], 132);
+	_vm->startDialog();
 }
 
 void GameLogic::r31_correctAnswerSelected() {
