@@ -4048,6 +4048,7 @@ bool GameLogic::r9_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 	case 241:
 		replyTextIndex1 = 189;
 		setPizzathonStatus(6);
+		// Fall-through
 	case 242:
 		_vm->_gameState = 0;
 		break;
@@ -4411,11 +4412,13 @@ bool GameLogic::r10_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 				break;
 			case 6:
 				r10_buyItem();
+				// Fall-through
 			case 4:
 				_vm->_gameState = 0;
 				break;
 			case 8:
 				replyTextIndex1 = 4;
+				// Fall-through
 			case 7:
 				_r10_selectedItemToBuy = -1;
 				handleVerbTalkTo();
@@ -5459,6 +5462,7 @@ bool GameLogic::r17_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 		break;
 	case 315:
 		_r17_dialogCtr = _r17_dialogCtr + 1;
+		// Fall-through
 	case 312: case 313: case 314:
 		replyTextIndex1 = 307;
 		replyTextIndex2 = 308;
@@ -5468,6 +5472,7 @@ bool GameLogic::r17_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 		break;
 	case 317:
 		_r17_dialogCtr = _r17_dialogCtr + 1;
+		// Fall-through
 	case 316: case 318: case 319:
 		replyTextIndex1 = 310;
 		replyTextIndex2 = 311;
@@ -5476,6 +5481,7 @@ bool GameLogic::r17_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 		break;
 	case 322:
 		_r17_dialogCtr = _r17_dialogCtr + 1;
+		// Fall-through
 	case 320: case 321: case 323:
 		replyTextIndex1 = 312;
 		replyTextIndex2 = 313;
@@ -5484,6 +5490,7 @@ bool GameLogic::r17_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 		break;
 	case 324:
 		_r17_dialogCtr = _r17_dialogCtr + 1;
+		// Fall-through
 	case 325: case 326: case 327:
 		if (_r17_dialogCtr != 4) {
 			replyTextIndex1 = 314;
