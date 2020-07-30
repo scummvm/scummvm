@@ -311,7 +311,7 @@ bool AdSceneGeometry::setActiveCamera(int camera, float fov, float nearClipPlane
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdSceneGeometry::setActiveCamera(char *camera, float fov, float nearClipPlane, float farClipPlane) {
+bool AdSceneGeometry::setActiveCamera(const char *camera, float fov, float nearClipPlane, float farClipPlane) {
 	for (uint i = 0; i < _cameras.size(); i++) {
 		if (scumm_stricmp(_cameras[i]->getName(), camera) == 0)
 			return setActiveCamera(i, fov, nearClipPlane, farClipPlane);

@@ -169,6 +169,8 @@ public:
 	virtual TShadowType getMaxShadowType(BaseObject *object);
 
 	virtual uint32 getAmbientLightColor();
+
+	virtual bool getFogParams(bool *fogEnabled, uint32 *fogColor, float *fogStart, float *fogEnd);
 #endif
 	BaseSoundMgr *_soundMgr;
 #if EXTENDED_DEBUGGER_ENABLED

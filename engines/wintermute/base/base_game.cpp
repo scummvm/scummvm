@@ -610,6 +610,11 @@ TShadowType BaseGame::getMaxShadowType(BaseObject *object) {
 uint32 BaseGame::getAmbientLightColor() {
 	return 0x00000000;
 }
+
+bool BaseGame::getFogParams(bool *fogEnabled, uint32 *fogColor, float *fogStart, float *fogEnd) {
+	*fogEnabled = false;
+	return true;
+}
 #endif
 
 //////////////////////////////////////////////////////////////////////////
@@ -2573,6 +2578,45 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 			_scValue->setInt(0);
 		}
 
+		return _scValue;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Direct3DDevice
+	//////////////////////////////////////////////////////////////////////////
+	else if (name == "Direct3DDevice") {
+		warning("BaseGame::scGetProperty Direct3D device is not available");
+		_scValue->setNULL();
+
+		return _scValue;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// DirectDrawInterface
+	//////////////////////////////////////////////////////////////////////////
+	else if (name == "DirectDrawInterface") {
+		warning("BaseGame::scGetProperty DirectDraw interface is not available");
+		_scValue->setNULL();
+
+		return _scValue;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// HardwareTL
+	//////////////////////////////////////////////////////////////////////////
+	else if (name == "HardwareTL") {
+		// TODO: Once we have a TinyGL renderer, we could potentially return false here
+		// otherwise, as long as WME3D is enabled, vertex processing is done by the hardware
+		_scValue->setBool(true);
+		return _scValue;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// UsedMemory
+	//////////////////////////////////////////////////////////////////////////
+	else if (name == "UsedMemory") {
+		// wme only returns a non-zero value in debug mode
+		_scValue->setInt(0);
 		return _scValue;
 	}
 #endif

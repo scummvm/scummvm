@@ -414,6 +414,25 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		}
 		return STATUS_OK;
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// UnloadActor3D
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "UnloadActor3D") == 0) {
+		// this does the same as UnloadActor etc. ..
+		// even WmeLite has this script call in AdScene
+		stack->correctParams(1);
+		ScValue *val = stack->pop();
+		AdObject *obj = static_cast<AdObject *>(val->getNative());
+
+		removeObject(obj);
+		if (val->getType() == VAL_VARIABLE_REF) {
+			val->setNULL();
+		}
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1086,6 +1105,17 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 		return _scValue;
 	}
 
+#ifdef ENABLE_WME3D
+	//////////////////////////////////////////////////////////////////////////
+	// VideoSkipButton
+	//////////////////////////////////////////////////////////////////////////
+	else if (name == "VideoSkipButton") {
+		warning("AdGame::scGetProperty VideoSkipButton not implemented");
+		_scValue->setInt(0);
+		return _scValue;
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// ChangingScene
 	//////////////////////////////////////////////////////////////////////////
@@ -1207,6 +1237,16 @@ bool AdGame::scSetProperty(const char *name, ScValue *value) {
 		_talkSkipButton = (TTalkSkipButton)val;
 		return STATUS_OK;
 	}
+
+#ifdef ENABLE_WME3D
+	//////////////////////////////////////////////////////////////////////////
+	// VideoSkipButton
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "VideoSkipButton") == 0) {
+		warning("AdGame::scSetProperty VideoSkipButton not implemented");
+		return STATUS_OK;
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// StartupScene
@@ -1696,6 +1736,19 @@ Wintermute::TShadowType Wintermute::AdGame::getMaxShadowType(Wintermute::BaseObj
 	TShadowType ret = BaseGame::getMaxShadowType(object);
 
 	return MIN(ret, _scene->_maxShadowType);
+}
+
+bool Wintermute::AdGame::getFogParams(bool *fogEnabled, uint32 *fogColor, float *fogStart, float *fogEnd) {
+	if (_scene) {
+		*fogEnabled = _scene->_fogEnabled;
+		*fogColor = _scene->_fogColor;
+		*fogStart = _scene->_fogStart;
+		*fogEnd = _scene->_fogEnd;
+
+		return true;
+	} else {
+		return BaseGame::getFogParams(fogEnabled, fogColor, fogStart, fogEnd);
+	}
 }
 #endif
 
