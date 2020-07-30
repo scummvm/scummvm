@@ -292,6 +292,16 @@ Common::String getPath(Common::String path, Common::String cwd) {
 	return cwd; // The path is not altered
 }
 
+bool testPath(Common::String &path) {
+	Common::File f;
+	if (f.open(path)) {
+		if (f.size())
+			return true;
+		f.close();
+	}
+	return false;
+}
+
 Common::String pathMakeRelative(Common::String path, bool recursive, bool addexts) {
 	Common::String initialPath(path);
 
@@ -309,7 +319,7 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 	// Strip the leading whitespace from the path
 	initialPath.trim();
 
-	if (f.open(initialPath))
+	if (testPath(initialPath))
 		return initialPath;
 
 	// Now try to search the file
@@ -336,7 +346,7 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 
 		debug(2, "pathMakeRelative(): s4 %s", convPath.c_str());
 
-		if (f.open(initialPath))
+		if (testPath(initialPath))
 			return initialPath;
 
 		// Now try to search the file
@@ -356,6 +366,8 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 			break;
 		}
 	}
+
+	f.close();
 
 	if (!opened && recursive) {
 		// Hmmm. We couldn't find the path as is.
@@ -393,16 +405,13 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 
 				Common::String res = pathMakeRelative(newpath, false, false);
 
-				if (f.open(res))
+				if (testPath(res))
 					return res;
 			}
 		}
 
-
 		return initialPath;	// Anyway nothing good is happening
 	}
-
-	f.close();
 
 	if (opened)
 		return convPath;

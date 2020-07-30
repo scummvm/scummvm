@@ -38,6 +38,8 @@ Common::String convertPath(Common::String &path);
 
 Common::String getPath(Common::String path, Common::String cwd);
 
+bool testPath(Common::String path);
+
 Common::String pathMakeRelative(Common::String path, bool recursive = true, bool addexts = true);
 
 Common::String getFileName(Common::String path);
