@@ -1472,7 +1472,7 @@ void WaynesWorldEngine::setStaticRoomObjectPosition(int roomNum, int fromIndex, 
 	int startIndex = kStaticRoomObjectsMap[roomNum].index + fromIndex;
 	int endIndex = kStaticRoomObjectsMap[roomNum].index + toIndex;
 	unloadStaticRoomObjects();
-	for (int index = startIndex; index < endIndex; index++) {
+	for (int index = startIndex; index <= endIndex; index++) {
 		StaticRoomObject &roomObject = _staticRoomObjects[index];
 		roomObject.x1 = x;
 		roomObject.y1 = y;
