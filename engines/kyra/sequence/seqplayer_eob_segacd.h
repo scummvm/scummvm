@@ -101,7 +101,7 @@ private:
 	class SQOpcode : public Common::Functor1Mem<const uint8*, void, SegaSequencePlayer> {
 	public:
 		typedef Common::Functor1Mem<const uint8*, void, SegaSequencePlayer> SQFunc;
-		SQOpcode(SegaSequencePlayer *sq, const typename SQFunc::FuncType &func, const char *dbgName) : SQFunc(sq, func), _msg(Common::String::format("    %s()", dbgName)) {}
+		SQOpcode(SegaSequencePlayer *sq, const SQFunc::FuncType &func, const char *dbgName) : SQFunc(sq, func), _msg(Common::String::format("    %s()", dbgName)) {}
 		~SQOpcode() override {}
 		void run(const uint8 *arg) {
 			assert(arg);
