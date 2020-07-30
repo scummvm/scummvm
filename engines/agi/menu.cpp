@@ -75,6 +75,11 @@ void GfxMenu::addMenu(const char *menuText) {
 	GuiMenuEntry *menuEntry = new GuiMenuEntry();
 
 	menuEntry->text = menuText;
+	// WORKAROUND: Apple II gs Goldrush! Speed menu exceeds screen width, because of a redundant space at 'Special' menu, remove it
+	if (_vm->getPlatform() == Common::kPlatformApple2GS && ConfMan.getBool("apple2gs_speedmenu") && _vm->getGameID() == GID_GOLDRUSH)
+		if (menuEntry->text == " Special ")
+			menuEntry->text = "Special ";
+
 	menuEntry->textLen = menuEntry->text.size();
 
 	// Cut menu name in case menu bar is full
