@@ -1864,18 +1864,18 @@ int LoLEngine::playCharacterScriptChat(int charId, int mode, int restorePortrait
 
 	if (textEnabled()) {
 		if (mode == 0) {
-			_txt->printDialogueText(3, str, script, paramList, paramIndex);
+			_txt->printDialogueText2(3, str, script, paramList, paramIndex);
 
 		} else if (mode == 1) {
 			_txt->clearDim(4);
 			_screen->modifyScreenDim(4, 16, 123, 23, 47);
-			_txt->printDialogueText(4, str, script, paramList, paramIndex);
+			_txt->printDialogueText2(4, str, script, paramList, paramIndex);
 			_screen->modifyScreenDim(4, 11, 123, 28, 47);
 
 		} else if (mode == 2) {
 			_txt->clearDim(4);
 			_screen->modifyScreenDim(4, 9, 133, 30, 60);
-			_txt->printDialogueText(4, str, script, paramList, 3);
+			_txt->printDialogueText2(4, str, script, paramList, 3);
 			_screen->modifyScreenDim(4, 1, 133, 37, 60);
 		}
 	}
