@@ -178,6 +178,23 @@ static const TonyGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Tony Tough Polish provided by iGom bug #11546
+		{
+			"tony",
+			0,
+			{
+				{"roasted.mpr", 0, "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071},
+				{"roasted.mpc", 0, "c212a81e34edf92bc177a80f24780bd2", 380200},
+				AD_LISTEND
+			},
+			Common::PL_POL,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOMIDI)
+		},
+	},
+
+	{
 		// Tony Tough German "Gamestar" provided in bug #3566035
 		{
 			"tony",
