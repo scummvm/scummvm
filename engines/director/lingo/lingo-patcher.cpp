@@ -96,6 +96,10 @@ struct ScriptPatch {
 	{"warlock", kPlatformMacintosh, "DATA/WARLOCKSHIP/HangHallAft", kScoreScript, 7,
 			4, "Frames 20 to 20", ""},
 
+	// Stray 'then' (obvious copy/paste error)
+	{"warlock", kPlatformMacintosh, "DATA/K/KT/OutMarauderKT", kMovieScript, 2,
+			23, "set Spacesuit = 0 then", "set Spacesuit = 0"},
+
 	// Unbalanced 'end if' at the end of the script
 	{"warlock", kPlatformMacintosh, "DATA/STAMBUL/DRUNK", kMovieScript, 4,
 			5, "end if", ""},
