@@ -47,6 +47,7 @@ struct WeaponInfo {
 	uint16 _ammoShape;	//!< The shape number for the ammo used
 	uint16 _displayGumpShape; //! The gump shape to use for inventory display (3,4,5)
 	uint16 _displayGumpFrame; //!< The frame to use in the inventory gump
+	uint8 _small;	//! A flag whether or not the weapon is "small" (changes the animations used)
 
 	enum DmgType {
 		DMG_NORMAL = 0x0001,

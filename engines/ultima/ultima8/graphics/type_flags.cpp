@@ -262,6 +262,11 @@ void TypeFlags::loadWeaponInfo() {
 		else
 			wi->_displayGumpShape = 3;
 
+		if (config->get(k + "/small", val))
+			wi->_small = static_cast<uint8>(val);
+		else
+			wi->_small = 0;
+
 		if (wi->_shape > _shapeInfo.size()) {
 			warning("ignoring weapon info for shape %d beyond size %d.",
 					wi->_shape, _shapeInfo.size());
