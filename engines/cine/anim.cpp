@@ -196,6 +196,27 @@ void convert8BBP(byte *dest, const byte *source, int16 width, int16 height);
 void convert8BBP2(byte *dest, byte *source, int16 width, int16 height);
 int loadSet(const char *resourceName, int16 idx, int16 frameIndex = -1);
 
+void checkAnimDataTableBounds(int entry) {
+	if (entry < 0) {
+		error("Out of free animation space");
+	} else if (entry >= g_cine->_animDataTable.size()) {
+		error("Animation entry (%d) out of bounds", entry);
+	}
+}
+
+int16 fixAnimDataTableEndFrame(int entry, int16 startFrame, int16 endFrame) {
+	checkAnimDataTableBounds(entry);
+
+	// Ensure that a non-empty range [entry, entry + endFrame - startFrame) stays in bounds
+	if (endFrame > startFrame &&
+		entry + (endFrame - startFrame - 1) >= g_cine->_animDataTable.size()) {
+		warning("Restricting out of bounds animation data table write to in bounds");
+		return (int16)(g_cine->_animDataTable.size() - entry + startFrame);
+	} else {
+		return endFrame;
+	}
+}
+
 AnimData::AnimData() : _width(0), _height(0), _bpp(0), _var1(0), _data(NULL),
 	_mask(NULL), _fileIdx(-1), _frameIdx(-1), _realWidth(0), _size(0) {
 
@@ -405,6 +426,21 @@ void AnimData::save(Common::OutSaveFile &fHandle) const {
  * @param numIdx Number of image frames to be cleared
  */
 void freeAnimDataRange(byte startIdx, byte numIdx) {
+	if (numIdx > 0) {
+		// Make sure starting index is in bounds
+		if (startIdx >= g_cine->_animDataTable.size()) {
+			startIdx = (byte)(MAX<int>(0, g_cine->_animDataTable.size() - 1));
+		}
+
+		// Make sure last accessed index is in bounds
+		if (startIdx + numIdx > g_cine->_animDataTable.size()) {
+			numIdx = (byte)(g_cine->_animDataTable.size() - startIdx);
+		}
+		assert(startIdx < g_cine->_animDataTable.size() ||
+			(g_cine->_animDataTable.empty() && numIdx == 0));
+		assert(startIdx + numIdx <= g_cine->_animDataTable.size());
+	}
+		
 	for (byte i = 0; i < numIdx; i++) {
 		g_cine->_animDataTable[startIdx + i].clear();
 	}
@@ -543,7 +579,7 @@ int loadSpl(const char *resourceName, int16 idx) {
 	byte *dataPtr = readBundleFile(foundFileIdx);
 
 	entry = idx < 0 ? emptyAnimSpace() : idx;
-	assert(entry >= 0);
+	checkAnimDataTableBounds(entry);
 	g_cine->_animDataTable[entry].load(dataPtr, ANIM_RAW, g_cine->_partBuffer[foundFileIdx].unpackedSize, 1, foundFileIdx, 0, currentPartName);
 
 	free(dataPtr);
@@ -582,7 +618,7 @@ int loadMsk(const char *resourceName, int16 idx, int16 frameIndex) {
 	}
 
 	entry = idx < 0 ? emptyAnimSpace() : idx;
-	assert(entry >= 0);
+	endFrame = fixAnimDataTableEndFrame(entry, startFrame, endFrame);
 	for (int16 i = startFrame; i < endFrame; i++, entry++) {
 		g_cine->_animDataTable[entry].load(ptr, ANIM_MASK, animHeader.frameWidth, animHeader.frameHeight, foundFileIdx, i, currentPartName);
 		ptr += animHeader.frameWidth * animHeader.frameHeight;
@@ -644,7 +680,7 @@ int loadAni(const char *resourceName, int16 idx, int16 frameIndex) {
 	}
 
 	entry = idx < 0 ? emptyAnimSpace() : idx;
-	assert(entry >= 0);
+	endFrame = fixAnimDataTableEndFrame(entry, startFrame, endFrame);
 
 	for (int16 i = startFrame; i < endFrame; i++, entry++) {
 		// special case transparency handling
@@ -755,6 +791,7 @@ int loadSet(const char *resourceName, int16 idx, int16 frameIndex) {
 		ptr += 0x10 * frameIndex;
 	}
 
+	endFrame = fixAnimDataTableEndFrame(entry, startFrame, endFrame);
 	for (int16 i = startFrame; i < endFrame; i++, entry++) {
 		Common::MemoryReadStream readS(ptr, 0x10);
 
@@ -801,7 +838,7 @@ int loadSeq(const char *resourceName, int16 idx) {
 
 	byte *dataPtr = readBundleFile(foundFileIdx);
 	int entry = idx < 0 ? emptyAnimSpace() : idx;
-
+	checkAnimDataTableBounds(entry);
 	g_cine->_animDataTable[entry].load(dataPtr + ANIM_HEADER_SIZE, ANIM_RAW, g_cine->_partBuffer[foundFileIdx].unpackedSize - 0x16, 1, foundFileIdx, 0, currentPartName);
 	free(dataPtr);
 	return entry + 1;
