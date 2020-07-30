@@ -790,8 +790,8 @@ void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage
 		// TODO: Finish special case for Vargas.  Should not do any damage
 		// if there is a particular anim process running.  Also, check if the
 		// same special case exists in REGRET.
-		doAnim(static_cast<Animation::Sequence>(0x21), dir_current);
-		doAnim(static_cast<Animation::Sequence>(0x20), dir_current);
+		doAnim(Animation::teleportOutReplacement, dir_current);
+		doAnim(Animation::teleportInReplacement, dir_current);
 		_hitPoints -= damage;
 		return;
 	}
@@ -1319,7 +1319,7 @@ int32 Actor::collideMove(int32 x, int32 y, int32 z, bool teleport, bool force,
 	if (_objId == 1 && GAME_IS_CRUSADER) {
 		notifyNearbyItems();
 		TargetReticleProcess::get_instance()->avatarMoved();
-		ItemSelectionProcess::get_instance()->clearSelection();
+		ItemSelectionProcess::get_instance()->avatarMoved();
 	}
 	return result;
 }
@@ -1526,6 +1526,20 @@ uint32 Actor::I_doAnim(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(unk2); // appears to be 0 or 1. Some flag?
 
 	if (!actor) return 0;
+
+	//
+	// HACK: In Crusader, anims 32 and 33 are teleport in/out.  In U8 they are
+	// turn left/right.  We want to remap those numbers in most cases, but when
+	// they come out of usecode we don't want to remap them.  Here we give them
+	// temporary values so we can set them back later.
+	//
+	if (GAME_IS_CRUSADER) {
+		Animation::Sequence seq = static_cast<Animation::Sequence>(anim);
+		if (seq == Animation::teleportIn)
+			anim = static_cast<uint16>(Animation::teleportInReplacement);
+		else if (seq == Animation::teleportOut)
+			anim = static_cast<uint16>(Animation::teleportOutReplacement);
+	}
 
 	return actor->doAnim(static_cast<Animation::Sequence>(anim), Direction_FromUsecodeDir(dir));
 }

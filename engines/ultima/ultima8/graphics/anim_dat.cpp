@@ -108,6 +108,10 @@ uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action, const Act
 			return 0;
 		case Animation::lookRight:
 			return 0;
+		case Animation::teleportInReplacement:
+			return Animation::teleportIn;
+		case Animation::teleportOutReplacement:
+			return Animation::teleportOut;
 		default:
 			return static_cast<uint32>(action);;
 		}

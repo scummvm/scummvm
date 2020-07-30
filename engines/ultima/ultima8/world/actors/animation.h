@@ -112,7 +112,9 @@ enum Sequence {
 	kneelAndFire3 = 43,
 	runWithLargeWeapon = 50,
 	surrender = 57,
-	surrenderStand = 60
+	surrenderStand = 60,
+	teleportInReplacement = 0x1020,	//!< See notes in Actor::I_doAnim
+	teleportOutReplacement = 0x1021	//!< See notes in Actor::I_doAnim
 };
 
 enum Result {
