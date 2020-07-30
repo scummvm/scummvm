@@ -36,6 +36,7 @@
 #include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/games/game_data.h"
+#include "ultima/ultima8/graphics/anim_dat.h"
 #include "ultima/ultima8/graphics/wpn_ovlay_dat.h"
 #include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/gumps/cru_pickup_area_gump.h"
@@ -572,6 +573,8 @@ void MainActor::getWeaponOverlay(const WeaponOverlayFrame *&frame_, uint32 &shap
 
 	if (!isInCombat() && _lastAnim != Animation::unreadyWeapon) return;
 
+	uint32 action = AnimDat::getActionNumberForSequence(_lastAnim, this);
+
 	ObjId weaponid;
 	if (GAME_IS_U8)
 		weaponid = getEquip(ShapeInfo::SE_WEAPON);
@@ -590,7 +593,7 @@ void MainActor::getWeaponOverlay(const WeaponOverlayFrame *&frame_, uint32 &shap
 	shape_ = weaponinfo->_overlayShape;
 
 	WpnOvlayDat *wpnovlay = GameData::get_instance()->getWeaponOverlay();
-	frame_ = wpnovlay->getOverlayFrame(_lastAnim, weaponinfo->_overlayType,
+	frame_ = wpnovlay->getOverlayFrame(action, weaponinfo->_overlayType,
 	                                  _direction, _animFrame);
 
 	if (frame_ == 0) shape_ = 0;

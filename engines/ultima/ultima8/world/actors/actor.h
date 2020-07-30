@@ -343,6 +343,7 @@ public:
 		ACT_FIRSTSTEP      = 0x000400, // flags from npcdata byte 0x2F
 		ACT_INCOMBAT       = 0x000800,
 		ACT_DEAD           = 0x001000,
+		ACT_SURRENDERED    = 0x002000, // not the same bit as used in Crusader, but we use this because it's empty.
 		ACT_COMBATRUN      = 0x008000,
 
 		ACT_AIRWALK        = 0x010000, // flags from npcdata byte 0x30

@@ -58,7 +58,7 @@ const AnimAction *AnimDat::getAnim(uint32 shape, uint32 action) const {
 	return _anims[shape]->getAction(action);
 }
 
-uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action) {
+uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action, const Actor *actor) {
 	if (GAME_IS_U8) {
 		return static_cast<uint32>(action);
 	} else {
@@ -101,9 +101,9 @@ uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action) {
 			return 46; // 47 is knee with a larger weapon
 		// 48 is nothing for avatar
 		case Animation::lookLeft:
-			return 0x3c;
+			return 0;
 		case Animation::lookRight:
-			return 0x3c;
+			return 0;
 		default:
 			return static_cast<uint32>(action);;
 		}

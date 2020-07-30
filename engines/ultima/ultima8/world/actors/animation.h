@@ -111,7 +111,8 @@ enum Sequence {
 	kneelAndFire2 = 42,
 	kneelAndFire3 = 43,
 	runWithLargeWeapon = 50,
-	surrender = 57
+	surrender = 57,
+	surrenderStand = 60
 };
 
 enum Result {

@@ -78,25 +78,21 @@ void SurrenderProcess::run() {
 		return;
 	}
 
+	a->setActorFlag(Actor::ACT_SURRENDERED);
+
 	Direction curdir = a->getDir();
 	Direction direction = a->getDirToItemCentre(*main);
 
 	if (curdir != direction) {
-		Animation::Sequence turnanim;
-		Direction nextdir;
-		if (Direction_GetShorterTurnDelta(curdir, direction) == -1) {
-			nextdir = Direction_OneLeft(curdir, dirmode_8dirs);
-			turnanim = Animation::lookLeft;
-		} else {
-			nextdir = Direction_OneRight(curdir, dirmode_8dirs);
-			turnanim = Animation::lookRight;
+		uint16 animpid = a->turnTowardDir(direction);
+		if (animpid) {
+			waitFor(animpid);
+			return;
 		}
-		ProcId animpid = a->doAnim(turnanim, nextdir);
-		waitFor(animpid);
-		return;
 	}
 
 	if (_playedSound || a->getRangeIfVisible(*main) == 0)
+		// Nothing to do.
 		return;
 
 	int16 soundno = -1;

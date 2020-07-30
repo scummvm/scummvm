@@ -559,6 +559,7 @@ uint16 Actor::turnTowardDir(Direction targetdir) {
 	Direction curdir = getDir();
 	bool combat = isInCombat() && !combatRun;
 	Animation::Sequence standanim = Animation::stand;
+	bool surrendered = hasActorFlags(Actor::ACT_SURRENDERED);
 
 	int stepDelta = Direction_GetShorterTurnDelta(curdir, targetdir);
 	Animation::Sequence turnanim;
@@ -571,6 +572,9 @@ uint16 Actor::turnTowardDir(Direction targetdir) {
 	if (combat) {
 		turnanim = Animation::combatStand;
 		standanim = Animation::combatStand;
+	} else if (surrendered) {
+		turnanim = Animation::surrenderStand;
+		standanim = Animation::surrenderStand;
 	}
 
 	ProcId prevpid = 0;
@@ -579,13 +583,16 @@ uint16 Actor::turnTowardDir(Direction targetdir) {
 	// our current direction to the new one
 	DirectionMode mode = animDirMode(turnanim);
 
-	// slight hack - avoid making 8-step turns if our target is a 16-step direction
-	// - we'll never get to the right direction that way.
-	if (static_cast<uint32>(targetdir) % 2) {
+	// slight hack - avoid making 8-step turns if we need to swap
+	// to/from a 16-step direction - we'll never get to the right
+	// direction that way.
+	if (static_cast<uint32>(targetdir) % 2 !=
+		static_cast<uint32>(curdir) % 2) {
 		mode = dirmode_16dirs;
 	}
 
-	for (Direction dir = curdir; dir != targetdir; dir = Direction_TurnByDelta(dir, stepDelta, mode)) {
+	bool done = false;
+	for (Direction dir = curdir; !done; dir = Direction_TurnByDelta(dir, stepDelta, mode)) {
 		ProcId animpid = doAnim(turnanim, dir);
 
 		if (prevpid) {
@@ -594,14 +601,18 @@ uint16 Actor::turnTowardDir(Direction targetdir) {
 			proc->waitFor(prevpid);
 		}
 
+		done = (dir == targetdir);
 		prevpid = animpid;
 	}
 
-	ProcId animpid = doAnim(standanim, targetdir);
-	if (prevpid) {
-		Process *proc = Kernel::get_instance()->getProcess(animpid);
-		assert(proc);
-		proc->waitFor(prevpid);
+	ProcId animpid = prevpid;
+	if (turnanim != standanim) {
+		animpid = doAnim(standanim, targetdir);
+		if (prevpid) {
+			Process *proc = Kernel::get_instance()->getProcess(animpid);
+			assert(proc);
+			proc->waitFor(prevpid);
+		}
 	}
 
 	return animpid;

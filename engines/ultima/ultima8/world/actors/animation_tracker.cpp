@@ -64,7 +64,7 @@ bool AnimationTracker::init(const Actor *actor, Animation::Sequence action,
 	assert(actor);
 	_actor = actor->getObjId();
 	uint32 shape = actor->getShape();
-	uint32 actionnum = AnimDat::getActionNumberForSequence(action);
+	uint32 actionnum = AnimDat::getActionNumberForSequence(action, actor);
 	_animAction = GameData::get_instance()->getMainShapes()->
 	             getAnim(shape, actionnum);
 	if (!_animAction)
