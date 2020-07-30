@@ -147,7 +147,7 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 	for (i = 0; i < MAX_VARS; i++)
 		out->writeByte(_game.vars[i]);
 
-	out->writeSint16BE((int8)_game.horizon);
+	out->writeSint16BE((int16)_game.horizon);
 	out->writeSint16BE((int16)_text->statusRow_Get());
 	out->writeSint16BE((int16)_text->promptRow_Get());
 	out->writeSint16BE((int16)_text->getWindowRowMin());
