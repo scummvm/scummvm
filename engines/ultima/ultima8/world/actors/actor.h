@@ -268,6 +268,12 @@ public:
 		return 0;
 	}
 
+	uint16 getActiveWeapon() const {
+		return _activeWeapon;
+	}
+
+	bool activeWeaponIsSmall() const;
+
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	INTRINSIC(I_isNPC);
@@ -390,6 +396,9 @@ protected:
 	//! Current and last activity (only used in Crusader)
 	uint16 _currentActivityNo;
 	uint16 _lastActivityNo;
+
+	//! Active weapon item (only used in Crusader)
+	uint16 _activeWeapon;
 
 	//! starts an activity (Ultima 8 version)
 	//! \return processID of process handling the activity or zero

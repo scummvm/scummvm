@@ -59,7 +59,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(MainActor)
 
 MainActor::MainActor() : _justTeleported(false), _accumStr(0), _accumDex(0),
 	_accumInt(0), _cruBatteryType(ChemicalBattery), _keycards(0),
-	_activeWeapon(0), _activeInvItem(0), _shieldType(0), _shieldSpriteProc(0) {
+	_activeInvItem(0), _shieldType(0), _shieldSpriteProc(0) {
 }
 
 MainActor::~MainActor() {
@@ -666,7 +666,6 @@ void MainActor::saveData(Common::WriteStream *ws) {
 	if (GAME_IS_CRUSADER) {
 		ws->writeByte(static_cast<byte>(_cruBatteryType));
 		ws->writeUint32LE(_keycards);
-		ws->writeUint16LE(_activeWeapon);
 		ws->writeUint16LE(_activeInvItem);
 		ws->writeUint16LE(_shieldType);
 		ws->writeUint16LE(_shieldSpriteProc);
@@ -690,7 +689,6 @@ bool MainActor::loadData(Common::ReadStream *rs, uint32 version) {
 	if (GAME_IS_CRUSADER) {
 		_cruBatteryType = static_cast<CruBatteryType>(rs->readByte());
 		_keycards = rs->readUint32LE();
-		_activeWeapon = rs->readUint16LE();
 		_activeInvItem = rs->readUint16LE();
 		_shieldType = rs->readUint16LE();
 		_shieldSpriteProc = rs->readUint16LE();

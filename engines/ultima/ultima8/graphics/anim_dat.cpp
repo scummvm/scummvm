@@ -28,6 +28,7 @@
 #include "ultima/ultima8/world/actors/actor_anim.h"
 #include "ultima/ultima8/world/actors/anim_action.h"
 #include "ultima/ultima8/world/actors/animation.h"
+#include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/games/game_info.h"
 
@@ -62,10 +63,13 @@ uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action, const Act
 	if (GAME_IS_U8) {
 		return static_cast<uint32>(action);
 	} else {
+		bool smallwpn = (actor && actor->activeWeaponIsSmall());
 		// For crusader the actions have different IDs.  Rather than
 		// rewrite everything, we just translate them here for all the ones
 		// we want to use programmatically.  There are more, but they are
 		// called from usecode so don't need translation.
+		//
+		// TODO: Also handle kneeling weapon animations
 		switch (action) {
 		case Animation::stand:
 			return 0;
@@ -78,14 +82,14 @@ uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action, const Act
 		case Animation::run:
 			return 3;
 		case Animation::combatStand:
-			return 4; // TODO: 8, 37 is also a combat stand for other weapons?
+			return (smallwpn ? 4 : 37);
 		// Note: 5, 6, 9, 10 == nothing (for avatar)?
 		case Animation::unreadyWeapon:
-			return 11; // TODO: 16 is also a unready-weapon move, which is right?
+			return (smallwpn ? 11: 16);
 		case Animation::readyWeapon:
-			return 12; // TODO: 7 is also a ready-weapon move, which is right?
+			return (smallwpn ? 7 : 12);
 		case Animation::attack:
-			return 13;
+			return (smallwpn ? 8 : 13);
 		// Note: 14, 17, 21, 22, 29 == nothing for avatar
 		case Animation::fallBackwards:
 			return 18;

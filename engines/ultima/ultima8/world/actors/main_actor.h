@@ -118,10 +118,6 @@ public:
 		_keycards = 0;
 	}
 
-	uint16 getActiveWeapon() const {
-		return _activeWeapon;
-	}
-
 	uint16 getActiveInvItem() const {
 		return _activeInvItem;
 	}
@@ -168,7 +164,6 @@ protected:
 
 	uint32 _keycards;
 	CruBatteryType _cruBatteryType;
-	uint16 _activeWeapon;
 	uint16 _activeInvItem;
 
 	Std::string _name;

@@ -73,7 +73,7 @@ Actor::Actor() : _strength(0), _dexterity(0), _intelligence(0),
 		_lastAnim(Animation::stand), _animFrame(0), _direction(dir_north),
 		_fallStart(0), _unkByte(0), _actorFlags(0), _combatTactic(0),
 		_homeX(0), _homeY(0), _homeZ(0), _currentActivityNo(0),
-		_lastActivityNo(0) {
+		_lastActivityNo(0), _activeWeapon(0) {
 	_defaultActivity[0] = 0;
 	_defaultActivity[1] = 0;
 	_defaultActivity[2] = 0;
@@ -800,18 +800,25 @@ void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage
 		return;
 
 	if (shape != 1 && this != getControlledActor()) {
-		//Actor *controlled = getControlledActor();
+		Actor *controlled = getControlledActor();
 		if (!isInCombat()) {
 			setActivity(getDefaultActivity(2)); // get activity from field 0xA
 			if (!isInCombat()) {
 				setInCombat();
-				// TODO: attack the currently controlled NPC.
+				CombatProcess *combat = getCombatProcess();
+				if (combat && controlled) {
+					combat->setTarget(controlled->getObjId());
+				}
 			}
 		} else {
 			if (getCurrentActivityNo() == 8) {
 				setActivity(5);
 			}
-			// TODO: attack the currently controlled NPC.
+			setInCombat();
+			CombatProcess *combat = getCombatProcess();
+			if (combat && controlled) {
+				combat->setTarget(controlled->getObjId());
+			}
 		}
 
 		// If the attacker is the controlled npc and this actor is not pathfinding
@@ -1342,6 +1349,16 @@ void Actor::notifyNearbyItems() {
 	}*/
 }
 
+bool Actor::activeWeaponIsSmall() const {
+	const Item *wpn = getItem(_activeWeapon);
+	if (wpn) {
+		const WeaponInfo *wi = wpn->getShapeInfo()->_weaponInfo;
+		return wi && (wi->_small != 0);
+	}
+	return false;
+}
+
+
 bool Actor::areEnemiesNear() {
 	UCList uclist(2);
 	LOOPSCRIPT(script, LS_TOKEN_TRUE); // we want all items
@@ -1438,6 +1455,7 @@ void Actor::saveData(Common::WriteStream *ws) {
 		ws->writeUint32LE(_homeZ);
 		ws->writeUint16LE(_currentActivityNo);
 		ws->writeUint16LE(_lastActivityNo);
+		ws->writeUint16LE(_activeWeapon);
 	}
 }
 
@@ -1468,6 +1486,7 @@ bool Actor::loadData(Common::ReadStream *rs, uint32 version) {
 		_homeZ = rs->readUint32LE();
 		_currentActivityNo = rs->readUint16LE();
 		_lastActivityNo = rs->readUint16LE();
+		_activeWeapon = rs->readUint16LE();
 	}
 
 	return true;
