@@ -53,7 +53,6 @@ private:
 	int _savedTrack;
 
 	Audio::SoundHandle _soundHandle;
-	Audio::AudioStream *_playingStream;
 
 public:
 	RemorseMusicProcess();
