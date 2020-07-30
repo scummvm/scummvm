@@ -1039,8 +1039,8 @@ void MacText::setSelection(int pos, bool start) {
 
 	while (pos > 0) {
 		if (pos < getLineCharWidth(row)) {
-			for (int i = 0; i < _textLines[row].chunks.size(); i++) {
-				if (pos < _textLines[row].chunks[i].text.size()) {
+			for (uint i = 0; i < _textLines[row].chunks.size(); i++) {
+				if ((uint)pos < _textLines[row].chunks[i].text.size()) {
 					colX += _textLines[row].chunks[i].getFont()->getStringWidth(Common::U32String(_textLines[row].chunks[i].text.c_str(), pos));
 					col += pos;
 					pos = 0;
@@ -1057,7 +1057,7 @@ void MacText::setSelection(int pos, bool start) {
 		}
 
 		row++;
-		if (row >= _textLines.size()) {
+		if ((uint)row >= _textLines.size()) {
 			colX = _surface->w;
 			col = getLineCharWidth(row);
 
