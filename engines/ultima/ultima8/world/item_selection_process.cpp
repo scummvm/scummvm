@@ -61,13 +61,12 @@ bool ItemSelectionProcess::selectNextItem() {
 	if (!mainactor || !currentmap)
 		return false;
 
-	int32 x, y, z;
-	mainactor->getCentre(x, y, z);
+	mainactor->getCentre(_ax, _ay, _az);
 
 	UCList uclist(2);
 	LOOPSCRIPT(script, LS_TOKEN_TRUE); // we want all items
 	currentmap->areaSearch(&uclist, script, sizeof(script),
-						   mainactor, 0x100, false);
+						   mainactor, 0x120, false);
 
 	Std::vector<Item *> candidates;
 
@@ -91,7 +90,7 @@ bool ItemSelectionProcess::selectNextItem() {
 
 			int32 cx, cy, cz;
 			item->getCentre(cx, cy, cz);
-			if (abs(cx - x) > 0x100 || abs(cy - y) > 0x100 || abs(cz - z) > 50)
+			if (abs(cx - _ax) > 0x100 || abs(cy - _ay) > 0x100 || abs(cz - _az) > 50)
 				continue;
 
 			candidates.push_back(item);
@@ -112,7 +111,7 @@ bool ItemSelectionProcess::selectNextItem() {
 		int offset = 0;
 		for (Std::vector<Item *>::iterator iter = candidates.begin();
 			 iter != candidates.end();
-			 iter++) {
+			 offset++, iter++) {
 			ObjId num = item->getObjId();
 			if (_selectedItem == num) {
 				offset++;
@@ -134,6 +133,22 @@ void ItemSelectionProcess::useSelectedItem() {
 	if (item)
 		item->callUsecodeEvent_use();
 	clearSelection();
+}
+
+void ItemSelectionProcess::avatarMoved() {
+	if (!_selectedItem)
+		return;
+	Item *item = getItem(_selectedItem);
+	MainActor *mainactor = getMainActor();
+
+	// Only clear if actor has moved a little
+	if (item && mainactor) {
+		int32 ax, ay, az;
+		mainactor->getCentre(ax, ay, az);
+		uint32 range = MAX(abs(ax - _ax), MAX(abs(ay - _ay), abs(az - _az)));
+		if (range > 16)
+			clearSelection();
+	}
 }
 
 void ItemSelectionProcess::clearSelection() {
@@ -165,12 +180,18 @@ void ItemSelectionProcess::putItemSelectionOnItem(Item *item) {
 void ItemSelectionProcess::saveData(Common::WriteStream *ws) {
 	Process::saveData(ws);
 	ws->writeUint16LE(_selectedItem);
+	ws->writeSint32LE(_ax);
+	ws->writeSint32LE(_ay);
+	ws->writeSint32LE(_az);
 }
 
 bool ItemSelectionProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	if (!Process::loadData(rs, version)) return false;
 
 	_selectedItem = rs->readUint16LE();
+	_ax = rs->readSint32LE();
+	_ay = rs->readSint32LE();
+	_az = rs->readSint32LE();
 	return true;
 }
 

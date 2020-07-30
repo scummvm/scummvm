@@ -46,8 +46,11 @@ public:
 	//!< Select the next item
 	bool selectNextItem();
 
-	//!< Avatar moved - clear the selector
+	//!< Clear the selector
 	void clearSelection();
+
+	//!< Avatar moved - clear the selector if needed.
+	void avatarMoved();
 
 	//!< Use the selected item (if any)
 	void useSelectedItem();
@@ -67,6 +70,9 @@ private:
 	void putItemSelectionOnItem(Item *item);
 
 	uint16 _selectedItem;
+	int32 _ax;
+	int32 _ay;
+	int32 _az;
 
 	static ItemSelectionProcess *_instance;
 };
