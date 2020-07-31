@@ -32,6 +32,7 @@
 #include "engines/wintermute/base/base_named_object.h"
 #include "engines/wintermute/base/gfx/opengl/meshx.h"
 #include "engines/wintermute/coll_templ.h"
+#include "graphics/opengl/shader.h"
 #include "graphics/opengl/system_headers.h"
 #include "math/matrix4.h"
 #include "math/vector3d.h"
@@ -49,7 +50,7 @@ struct SkinWeights {
 
 class MeshXOpenGLShader : public MeshX {
 public:
-	MeshXOpenGLShader(BaseGame *inGame);
+	MeshXOpenGLShader(BaseGame *inGame, OpenGL::Shader *shader);
 	~MeshXOpenGLShader() override;
 
 	bool loadFromX(const Common::String &filename, XFileLexer &lexer) override;
@@ -95,6 +96,11 @@ protected:
 	uint32 _vertexCount;
 	uint16 *_indexData;
 	uint32 _indexCount;
+
+	GLuint _vertexBuffer;
+	GLuint _indexBuffer;
+
+	OpenGL::Shader *_shader;
 
 	BaseArray<Math::Matrix4 *> _boneMatrices;
 	BaseArray<SkinWeights> skinWeightsList;

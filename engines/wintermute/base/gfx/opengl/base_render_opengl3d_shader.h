@@ -186,12 +186,15 @@ private:
 	Math::Matrix4 _projectionMatrix3d;
 	Math::Matrix4 _projectionMatrix2d;
 
+	Common::Array<Math::Matrix4> _transformStack;
+
 	float _fov;
 	bool _spriteBatchMode;
 	bool _state3D;
 
 	GLuint _spriteVBO;
 	OpenGL::Shader *_spriteShader;
+	OpenGL::Shader *_modelXShader;
 };
 
 } // namespace Wintermute

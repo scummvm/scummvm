@@ -251,9 +251,10 @@ bool BaseRenderOpenGL3DShader::setProjection() {
 	// same defaults as wme
 	float nearPlane = 90.0f;
 	float farPlane = 10000.0f;
+
 	float top = nearPlane * tanf(verticalViewAngle * 0.5f);
 
-	glFrustum(-top * aspectRatio, top * aspectRatio, -top, top, nearPlane, farPlane);
+	_projectionMatrix3d = Math::makeFrustumMatrix(-top * aspectRatio, top * aspectRatio, -top, top, nearPlane, farPlane);
 	return true;
 }
 
@@ -282,12 +283,35 @@ void BaseRenderOpenGL3DShader::resetModelViewTransform() {
 }
 
 void BaseRenderOpenGL3DShader::pushWorldTransform(const Math::Matrix4 &transform) {
-	glPushMatrix();
-	glMultMatrixf(transform.getData());
+	Math::Matrix4 tmp = transform;
+	tmp.transpose();
+	Math::Matrix4 newTop = _transformStack.back() * tmp;
+	_transformStack.push_back(newTop);
+
+	newTop.transpose();
+
+	Math::Matrix4 newInvertedTranspose = newTop * _lastViewMatrix;
+	newInvertedTranspose.inverse();
+	newInvertedTranspose.transpose();
+
+	_modelXShader->use();
+	_modelXShader->setUniform("modelMatrix", newTop);
+	_modelXShader->setUniform("normalMatrix", newInvertedTranspose);
 }
 
 void BaseRenderOpenGL3DShader::popWorldTransform() {
-	glPopMatrix();
+	_transformStack.pop_back();
+
+	Math::Matrix4 currentTransform = _transformStack.back();
+	currentTransform.transpose();
+
+	Math::Matrix4 currentInvertedTranspose = currentTransform * _lastViewMatrix;
+	currentInvertedTranspose.inverse();
+	currentTransform.transpose();
+
+	_modelXShader->use();
+	_modelXShader->setUniform("modelMatrix", currentTransform);
+	_modelXShader->setUniform("normalMatrix", currentInvertedTranspose);
 }
 
 bool BaseRenderOpenGL3DShader::windowedBlt() {
@@ -317,6 +341,12 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 	_spriteShader->enableVertexAttribute("position", _spriteVBO, 2, GL_FLOAT, false, sizeof(SpriteVertexShader), 0);
 	_spriteShader->enableVertexAttribute("texcoord", _spriteVBO, 2, GL_FLOAT, false, sizeof(SpriteVertexShader), 8);
 	_spriteShader->enableVertexAttribute("color", _spriteVBO, 4, GL_FLOAT, false, sizeof(SpriteVertexShader), 16);
+
+	_transformStack.push_back(Math::Matrix4());
+	_transformStack.back().setToIdentity();
+
+	static const char *modelXAttributes[] = {"position", "texcoord", "normal", nullptr};
+	_modelXShader = OpenGL::Shader::fromFiles("modelx", modelXAttributes);
 
 	_windowed = windowed;
 	_width = width;
@@ -377,22 +407,20 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 		_state3D = true;
 
 		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_LIGHTING);
 		glEnable(GL_BLEND);
-		glAlphaFunc(GL_GEQUAL, 0x08);
 
 		setAmbientLight();
-
-		glEnable(GL_NORMALIZE);
 
 		if (camera) {
 			_fov = camera->_fov;
 
 			Math::Matrix4 viewMatrix;
 			camera->getViewMatrix(&viewMatrix);
-			glMultMatrixf(viewMatrix.getData());
-			glTranslatef(-camera->_position.x(), -camera->_position.y(), -camera->_position.z());
-			glGetFloatv(GL_MODELVIEW_MATRIX, _lastViewMatrix.getData());
+			Math::Matrix4 cameraTranslate;
+			cameraTranslate.setPosition(-camera->_position);
+			cameraTranslate.transpose();
+			viewMatrix = cameraTranslate * viewMatrix;
+			_lastViewMatrix = viewMatrix;
 		}
 
 		bool fogEnabled;
@@ -421,6 +449,12 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 
 		setProjection();
 	}
+
+	_modelXShader->use();
+	_modelXShader->setUniform("viewMatrix", _lastViewMatrix);
+	_modelXShader->setUniform("projMatrix", _projectionMatrix3d);
+	// this is 8 / 255, since 8 is the value used by wme (as a DWORD)
+	_modelXShader->setUniform1f("alphaRef", 0.031f);
 
 	return true;
 }
@@ -580,7 +614,7 @@ Mesh3DS *BaseRenderOpenGL3DShader::createMesh3DS() {
 }
 
 MeshX *BaseRenderOpenGL3DShader::createMeshX() {
-	return new MeshXOpenGLShader(_gameRef);
+	return new MeshXOpenGLShader(_gameRef, _modelXShader);
 }
 
 } // namespace Wintermute

@@ -45,11 +45,14 @@ namespace Wintermute {
 const uint32 MeshXOpenGLShader::kNullIndex;
 
 //////////////////////////////////////////////////////////////////////////
-MeshXOpenGLShader::MeshXOpenGLShader(BaseGame *inGame) : MeshX(inGame),
-								 _numAttrs(0), _maxFaceInfluence(0),
-								 _vertexData(nullptr), _vertexPositionData(nullptr),
-								 _vertexCount(0), _indexData(nullptr), _indexCount(0),
-								 _skinAdjacency(nullptr), _skinnedMesh(false) {
+MeshXOpenGLShader::MeshXOpenGLShader(BaseGame *inGame, OpenGL::Shader *shader) :
+	MeshX(inGame),
+	_numAttrs(0), _maxFaceInfluence(0),
+	_vertexData(nullptr), _vertexPositionData(nullptr),
+	_vertexCount(0), _indexData(nullptr), _indexCount(0),
+	_shader(shader), _skinAdjacency(nullptr), _skinnedMesh(false) {
+	glGenBuffers(1, &_vertexBuffer);
+	glGenBuffers(1, &_indexBuffer);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -64,6 +67,9 @@ MeshXOpenGLShader::~MeshXOpenGLShader() {
 	}
 
 	_materials.clear();
+
+	glDeleteBuffers(1, &_vertexBuffer);
+	glDeleteBuffers(1, &_indexBuffer);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -142,6 +148,12 @@ bool MeshXOpenGLShader::loadFromX(const Common::String &filename, XFileLexer &le
 		} else if (lexer.reachedClosedBraces()) {
 			lexer.advanceToNextToken(); // skip closed braces
 
+			glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
+
+			glBufferData(GL_ARRAY_BUFFER, 4 * kVertexComponentCount * _vertexCount, _vertexData, GL_DYNAMIC_DRAW);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2 * _indexCount, _indexData, GL_STATIC_DRAW);
+
 			generateAdjacency();
 
 			return true;
@@ -150,6 +162,12 @@ bool MeshXOpenGLShader::loadFromX(const Common::String &filename, XFileLexer &le
 			lexer.advanceToNextToken();
 		}
 	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
+
+	glBufferData(GL_ARRAY_BUFFER, 4 * kVertexComponentCount * _vertexCount, _vertexData, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2 * _indexCount, _indexData, GL_STATIC_DRAW);
 
 	generateAdjacency();
 
@@ -285,6 +303,10 @@ bool MeshXOpenGLShader::update(FrameNode *parentFrame) {
 			}
 		}
 
+		glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * kVertexComponentCount * _vertexCount, _vertexData);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 //		updateNormals();
 	} else { // update static
 		warning("MeshXOpenGLShader::update update of static mesh is not implemented yet");
@@ -392,27 +414,32 @@ bool MeshXOpenGLShader::render(ModelX *model) {
 
 	bool res = false;
 
-	// is this correct?
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
+
+	_shader->enableVertexAttribute("position", _vertexBuffer, 3, GL_FLOAT, false, 4 * kVertexComponentCount, 4 * kPositionOffset);
+	_shader->enableVertexAttribute("texcoord", _vertexBuffer, 2, GL_FLOAT, false, 4 * kVertexComponentCount, 4 * kTextureCoordOffset);
+	_shader->enableVertexAttribute("normal", _vertexBuffer, 3, GL_FLOAT, false, 4 * kVertexComponentCount, 4 * kNormalOffset);
+
+	_shader->use(true);
+
 	for (uint32 i = 0; i < _numAttrs; i++) {
-		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, _materials[i]->_diffuse.data);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, _materials[i]->_diffuse.data);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, _materials[i]->_specular.data);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, _materials[i]->_emissive.data);
-		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, _materials[i]->_shininess);
-
-		// set texture (if any)
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glEnable(GL_TEXTURE_2D);
 		static_cast<BaseSurfaceOpenGL3D *>(_materials[i]->getSurface())->setTexture();
-		glInterleavedArrays(GL_T2F_N3F_V3F, 0, _vertexData);
-		glDrawElements(GL_TRIANGLES, _indexRanges[i + 1] - _indexRanges[i], GL_UNSIGNED_SHORT, _indexData + _indexRanges[i]);
 
-		// maintain polycount
+		// wme does not seem to care about specular or emissive light values
+		Math::Vector4d diffuse(_materials[i]->_diffuse.data);
+		_shader->setUniform("diffuse", diffuse);
+		_shader->setUniform("ambient", diffuse);
+
+		size_t offset = 2 * _indexRanges[i];
+		glDrawElements(GL_TRIANGLES, _indexRanges[i + 1] - _indexRanges[i], GL_UNSIGNED_SHORT, (void *)offset);
 	}
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	return res;
 }
