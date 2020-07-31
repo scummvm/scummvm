@@ -268,7 +268,7 @@ bool BaseRenderOpenGL3D::setProjection() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glFrustum(-top * aspectRatio, top * aspectRatio, -top, top, nearPlane, farPlane);
-	glGetFloatv(GL_PROJECTION_MATRIX, _lastProjectionMatrix.getData());
+	glGetFloatv(GL_PROJECTION_MATRIX, _projectionMatrix3d.getData());
 	glMatrixMode(GL_MODELVIEW);
 	return true;
 }
@@ -287,13 +287,11 @@ void BaseRenderOpenGL3D::resetModelViewTransform() {
 	glLoadIdentity();
 }
 
-void BaseRenderOpenGL3D::pushWorldTransform(const Math::Matrix4 &transform) {
-	glPushMatrix();
-	glMultMatrixf(transform.getData());
-}
-
-void BaseRenderOpenGL3D::popWorldTransform() {
-	glPopMatrix();
+void BaseRenderOpenGL3D::setWorldTransform(const Math::Matrix4 &transform) {
+	Math::Matrix4 tmp = transform;
+	tmp.transpose();
+	Math::Matrix4 newModelViewTransform = tmp * _lastViewMatrix;
+	glLoadMatrixf(newModelViewTransform.getData());
 }
 
 bool BaseRenderOpenGL3D::windowedBlt() {
@@ -436,31 +434,6 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D *camera, bool force) {
 bool BaseRenderOpenGL3D::setupLines() {
 	warning("BaseRenderOpenGL3D::setupLines not yet implemented");
 	return true;
-}
-
-void BaseRenderOpenGL3D::project(const Math::Matrix4 &worldMatrix, const Math::Vector3d &point, int &x, int &y) {
-	Math::Vector3d windowCoords;
-	Math::Matrix4 modelMatrix = worldMatrix * _lastViewMatrix;
-	GLint viewport[4];
-	glGetIntegerv(GL_VIEWPORT, viewport);
-	Math::gluMathProject(point, modelMatrix.getData(), _lastProjectionMatrix.getData(), viewport, windowCoords);
-	x = windowCoords.x();
-	// The Wintermute script code will expect a Direct3D viewport
-	y = viewport[3] - windowCoords.y();
-}
-
-Math::Ray BaseRenderOpenGL3D::rayIntoScene(int x, int y) {
-	Math::Vector3d direction((((2.0f * x) / _viewportRect.width()) - 1) / _lastProjectionMatrix(0, 0),
-	                         -(((2.0f * y) / _viewportRect.height()) - 1) / _lastProjectionMatrix(1, 1),
-	                         -1.0f);
-
-	Math::Matrix4 m = _lastViewMatrix;
-	m.inverse();
-	m.transpose();
-	m.transform(&direction, false);
-
-	Math::Vector3d origin = m.getPosition();
-	return Math::Ray(origin, direction);
 }
 
 BaseSurface *Wintermute::BaseRenderOpenGL3D::createSurface() {

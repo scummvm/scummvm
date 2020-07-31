@@ -1378,7 +1378,6 @@ bool BaseObject::getMatrix(Math::Matrix4 *modelMatrix, Math::Vector3d *posVect) 
 	translation.setPosition(*posVect);
 
 	*modelMatrix = translation * rotation * scale;
-	modelMatrix->transpose();
 	return true;
 }
 #endif

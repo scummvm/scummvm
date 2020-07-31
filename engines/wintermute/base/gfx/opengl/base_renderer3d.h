@@ -65,13 +65,14 @@ public:
 
 	virtual bool setProjection2D() = 0;
 	virtual void resetModelViewTransform() = 0;
-	virtual void pushWorldTransform(const Math::Matrix4 &transform) = 0;
-	virtual void popWorldTransform() = 0;
+	virtual void setWorldTransform(const Math::Matrix4 &transform) = 0;
 
-	virtual void project(const Math::Matrix4 &worldMatrix, const Math::Vector3d &point, int &x, int &y) = 0;
-	virtual Math::Ray rayIntoScene(int x, int y) = 0;
+	virtual void project(const Math::Matrix4 &worldMatrix, const Math::Vector3d &point, int &x, int &y);
+	virtual Math::Ray rayIntoScene(int x, int y);
 
-	virtual Math::Matrix4 lastProjectionMatrix() = 0;
+	virtual Math::Matrix4 lastProjectionMatrix() {
+		return _projectionMatrix3d;
+	}
 
 	virtual Mesh3DS *createMesh3DS() = 0;
 	virtual MeshX *createMeshX() = 0;
@@ -81,6 +82,10 @@ public:
 	                        uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) = 0;
 	virtual bool drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Rect32 &rect, const Vector2 &pos, const Vector2 &rot, const Vector2 &scale,
 	                          float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) = 0;
+
+protected:
+	Math::Matrix4 _lastViewMatrix;
+	Math::Matrix4 _projectionMatrix3d;
 };
 
 } // namespace Wintermute

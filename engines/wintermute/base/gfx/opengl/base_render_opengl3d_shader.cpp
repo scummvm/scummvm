@@ -291,42 +291,20 @@ void BaseRenderOpenGL3DShader::resetModelViewTransform() {
 	glLoadIdentity();
 }
 
-void BaseRenderOpenGL3DShader::pushWorldTransform(const Math::Matrix4 &transform) {
+void BaseRenderOpenGL3DShader::setWorldTransform(const Math::Matrix4 &transform) {
 	Math::Matrix4 tmp = transform;
 	tmp.transpose();
-	Math::Matrix4 newTop = _transformStack.back() * tmp;
-	_transformStack.push_back(newTop);
 
-	newTop.transpose();
-
-	Math::Matrix4 newInvertedTranspose = newTop * _lastViewMatrix;
+	Math::Matrix4 newInvertedTranspose = tmp * _lastViewMatrix;
 	newInvertedTranspose.inverse();
 	newInvertedTranspose.transpose();
 
 	_modelXShader->use();
-	_modelXShader->setUniform("modelMatrix", newTop);
+	_modelXShader->setUniform("modelMatrix", tmp);
 	_modelXShader->setUniform("normalMatrix", newInvertedTranspose);
 
 	_shadowVolumeShader->use();
-	_shadowVolumeShader->setUniform("modelMatrix", newTop);
-}
-
-void BaseRenderOpenGL3DShader::popWorldTransform() {
-	_transformStack.pop_back();
-
-	Math::Matrix4 currentTransform = _transformStack.back();
-	currentTransform.transpose();
-
-	Math::Matrix4 currentInvertedTranspose = currentTransform * _lastViewMatrix;
-	currentInvertedTranspose.inverse();
-	currentTransform.transpose();
-
-	_modelXShader->use();
-	_modelXShader->setUniform("modelMatrix", currentTransform);
-	_modelXShader->setUniform("normalMatrix", currentInvertedTranspose);
-
-	_shadowVolumeShader->use();
-	_shadowVolumeShader->setUniform("modelMatrix", currentTransform);
+	_shadowVolumeShader->setUniform("modelMatrix", tmp);
 }
 
 bool BaseRenderOpenGL3DShader::windowedBlt() {
@@ -522,31 +500,6 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 bool BaseRenderOpenGL3DShader::setupLines() {
 	warning("BaseRenderOpenGL3DShader::setupLines not yet implemented");
 	return true;
-}
-
-void BaseRenderOpenGL3DShader::project(const Math::Matrix4 &worldMatrix, const Math::Vector3d &point, int &x, int &y) {
-	Math::Vector3d windowCoords;
-	Math::Matrix4 modelMatrix = worldMatrix * _lastViewMatrix;
-	GLint viewport[4];
-	glGetIntegerv(GL_VIEWPORT, viewport);
-	Math::gluMathProject(point, modelMatrix.getData(), _projectionMatrix3d.getData(), viewport, windowCoords);
-	x = windowCoords.x();
-	// The Wintermute script code will expect a Direct3D viewport
-	y = viewport[3] - windowCoords.y();
-}
-
-Math::Ray BaseRenderOpenGL3DShader::rayIntoScene(int x, int y) {
-	Math::Vector3d direction((((2.0f * x) / _viewportRect.width()) - 1) / _projectionMatrix3d(0, 0),
-							 -(((2.0f * y) / _viewportRect.height()) - 1) / _projectionMatrix3d(1, 1),
-	                         -1.0f);
-
-	Math::Matrix4 m = _lastViewMatrix;
-	m.inverse();
-	m.transpose();
-	m.transform(&direction, false);
-
-	Math::Vector3d origin = m.getPosition();
-	return Math::Ray(origin, direction);
 }
 
 BaseSurface *Wintermute::BaseRenderOpenGL3DShader::createSurface() {

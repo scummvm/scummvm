@@ -85,9 +85,8 @@ bool AdAttach3DX::update() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdAttach3DX::displayAttachable(const Math::Matrix4 &viewMat, bool registerObjects) {
-	Math::Matrix4 finalMat = viewMat * _worldMatrix;
-	finalMat.transpose();
-	_gameRef->_renderer3D->pushWorldTransform(finalMat);
+	Math::Matrix4 finalMat = _owner->_worldMatrix * viewMat * _worldMatrix;
+	_gameRef->_renderer3D->setWorldTransform(finalMat);
 
 	if (_modelX) {
 		_modelX->render();
@@ -102,15 +101,12 @@ bool AdAttach3DX::displayAttachable(const Math::Matrix4 &viewMat, bool registerO
 		}
 	}
 
-	_gameRef->_renderer3D->popWorldTransform();
-
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool AdAttach3DX::displayShadowVol(const Math::Matrix4 &modelMat, const Math::Vector3d &light, float extrusionDepth, bool update) {
 	Math::Matrix4 finalMat = modelMat * _worldMatrix;
-	finalMat.transpose();
 
 	if (_modelX) {
 		if (update) {
@@ -118,9 +114,8 @@ bool AdAttach3DX::displayShadowVol(const Math::Matrix4 &modelMat, const Math::Ve
 			_modelX->updateShadowVol(getShadowVolume(), finalMat, light, extrusionDepth);
 		}
 
-		_gameRef->_renderer3D->pushWorldTransform(finalMat);
+		_gameRef->_renderer3D->setWorldTransform(finalMat);
 		getShadowVolume()->renderToStencilBuffer();
-		_gameRef->_renderer3D->popWorldTransform();
 	}
 
 	return true;

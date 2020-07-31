@@ -95,8 +95,7 @@ public:
 	bool setProjection() override;
 	bool setProjection2D() override;
 	void resetModelViewTransform() override;
-	void pushWorldTransform(const Math::Matrix4 &transform) override;
-	void popWorldTransform() override;
+	void setWorldTransform(const Math::Matrix4 &transform) override;
 
 	bool windowedBlt() override;
 	/**
@@ -126,13 +125,6 @@ public:
 	bool setup2D(bool force = false) override;
 	bool setup3D(Camera3D *camera, bool force = false) override;
 	bool setupLines() override;
-
-	void project(const Math::Matrix4 &worldMatrix, const Math::Vector3d &point, int &x, int &y) override;
-	Math::Ray rayIntoScene(int x, int y) override;
-
-	Math::Matrix4 lastProjectionMatrix() override {
-		return _projectionMatrix3d;
-	}
 
 	/**
 	 * Get the name of the current renderer
@@ -183,9 +175,6 @@ public:
 	ShadowVolume *createShadowVolume() override;
 
 private:
-	Math::Matrix4 _lastViewMatrix;
-
-	Math::Matrix4 _projectionMatrix3d;
 	Math::Matrix4 _projectionMatrix2d;
 
 	Common::Array<Math::Matrix4> _transformStack;

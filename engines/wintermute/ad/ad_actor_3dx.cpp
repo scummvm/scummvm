@@ -387,7 +387,7 @@ bool AdActor3DX::display() {
 	}
 
 	_gameRef->_renderer3D->setSpriteBlendMode(_blendMode);
-	_gameRef->_renderer3D->pushWorldTransform(_worldMatrix);
+	_gameRef->_renderer3D->setWorldTransform(_worldMatrix);
 	_modelX->_lastWorldMat = _worldMatrix;
 
 	bool res = _modelX->render();
@@ -420,8 +420,6 @@ bool AdActor3DX::display() {
 	//		_gameRef->_accessMgr->SetHintRect(&_modelX->m_BoundingRect);
 	//	}
 
-	_gameRef->_renderer3D->popWorldTransform();
-
 	return res;
 }
 
@@ -431,7 +429,7 @@ bool AdActor3DX::renderModel() {
 		return true;
 	}
 
-	_gameRef->_renderer3D->pushWorldTransform(_worldMatrix);
+	_gameRef->_renderer3D->setWorldTransform(_worldMatrix);
 	bool res;
 
 	if (_shadowModel) {
@@ -447,7 +445,6 @@ bool AdActor3DX::renderModel() {
 	_modelX->_lastWorldMat = _worldMatrix;
 
 	displayAttachments(false);
-	_gameRef->_renderer3D->popWorldTransform();
 	return res;
 }
 
@@ -488,20 +485,15 @@ bool AdActor3DX::displayShadowVolume() {
 			continue;
 		}
 
-		Math::Matrix4 transposedWorldMatrix = _worldMatrix;
-		transposedWorldMatrix.transpose();
-
-		at->displayShadowVol(transposedWorldMatrix * (*boneMat), lightVector, extrusionDepth, true);
+		at->displayShadowVol(_worldMatrix * (*boneMat), lightVector, extrusionDepth, true);
 	}
 
-	_gameRef->_renderer3D->pushWorldTransform(_worldMatrix);
+	_gameRef->_renderer3D->setWorldTransform(_worldMatrix);
 
 	getShadowVolume()->renderToStencilBuffer();
 
 	// finally display all the shadows rendered into stencil buffer
 	getShadowVolume()->renderToScene();
-
-	_gameRef->_renderer3D->popWorldTransform();
 
 	return true;
 }

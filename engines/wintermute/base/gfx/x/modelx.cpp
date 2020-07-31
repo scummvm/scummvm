@@ -380,7 +380,7 @@ bool ModelX::isTransparentAt(int x, int y) {
 	Math::Vector3d end = ray.getOrigin() + ray.getDirection();
 	Math::Matrix4 m = _lastWorldMat;
 	m.inverse();
-	m.transpose();
+//	m.transpose();
 	m.transform(&ray.getOrigin(), true);
 	m.transform(&end, true);
 	Math::Vector3d pickRayDirection = end - ray.getOrigin();

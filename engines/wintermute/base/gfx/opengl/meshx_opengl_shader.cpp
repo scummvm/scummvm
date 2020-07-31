@@ -325,7 +325,6 @@ bool MeshXOpenGLShader::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &mod
 
 	Math::Vector3d invLight = light;
 	Math::Matrix4 matInverseModel = modelMat;
-	matInverseModel.transpose();
 	matInverseModel.inverse();
 	matInverseModel.transform(&invLight, false);
 
