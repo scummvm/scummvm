@@ -390,13 +390,11 @@ void MacWindow::setBorder(Graphics::TransparentSurface *surface, bool active, in
 	else
 		_macBorder.addInactiveBorder(surface);
 
-	if (!_macBorder.hasOffsets()) {
-		if (lo + ro + to + bo > -4) { // Checking against default -1
-			_macBorder.setOffsets(lo, ro, to, bo);
-		}
+	if (lo + ro + to + bo > -4) { // Checking against default -1
+		_macBorder.setOffsets(lo, ro, to, bo);
 	}
 
-	updateInnerDims();
+	updateOuterDims();
 }
 
 void MacWindow::setCloseable(bool closeable) {
