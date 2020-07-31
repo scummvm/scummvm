@@ -235,22 +235,33 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common
 	_type = kCastDigitalVideo;
 
 	if (version < 4) {
-		warning("STUB: DigitalVideoCastMember: unhandled properties data");
-		for (int i = 0; i < 0xc; i++) {
-			stream.readByte();
-		}
+		warning("STUB: DigitalVideoCastMember: unhandled rect data");
+		if (debugChannelSet(5, kDebugLoading))
+			stream.hexdump(stream.size());
+		for (int i = 0; i < 0x4; i++)
+			stream.readByte(); // 0
+
+		for (int i = 0; i < 0x4; i++)
+			stream.readByte(); // looks rect like, but as bytes not uint16.
+
+		for ( int i = 0; i < 0x3; i++)
+			stream.readByte(); // 0
+
 		_frameRate = 12;
 		_frameRateType = kFrameRateDefault;
 
 		_preload = false;
 		_enableVideo = false;
 		_pausedAtStart = false;
-		_showControls = false;
-		_looping = false;
-		_enableSound = false;
-		_crop = false;
-		_center = false;
-		_directToStage = true;
+
+		byte flag = stream.readByte();
+
+		_showControls = flag & 0x40;
+		_looping = flag & 0x10;
+		_enableSound = flag & 0x08;
+		_crop = !(flag & 0x02);
+		_center = flag & 0x01;
+		_directToStage = flag & 0x20;
 	} else {
 		stream.readByte();
 		_initialRect = Movie::readRect(stream);
