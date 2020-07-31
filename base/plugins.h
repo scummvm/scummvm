@@ -178,6 +178,10 @@ class Plugin {
 protected:
 	PluginObject *_pluginObject;
 	PluginType _type;
+	
+	virtual bool loadPlugin() = 0;   // TODO: Rename to load() ?
+	virtual void unloadPlugin() = 0; // TODO: Rename to unload() ?
+
 
 public:
 	Plugin() : _pluginObject(0), _type(PLUGIN_TYPE_MAX) {}
@@ -187,9 +191,6 @@ public:
 	}
 
 //	virtual bool isLoaded() const = 0; // TODO
-	virtual bool loadPlugin() = 0;     // TODO: Rename to load() ?
-	virtual void unloadPlugin() = 0;   // TODO: Rename to unload() ?
-
 	/**
 	 * The following functions query information from the plugin object once
 	 * it's loaded into memory.
@@ -213,6 +214,8 @@ public:
 	 * object to be loaded into memory, unlike getName()
 	 **/
 	virtual const char *getFileName() const { return 0; }
+
+	friend class PluginManager;
 };
 
 class StaticPlugin : public Plugin {
