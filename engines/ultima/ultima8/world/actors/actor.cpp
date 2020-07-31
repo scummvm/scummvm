@@ -478,6 +478,12 @@ uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps
 	}
 #endif
 
+	// HACK: When switching from 16-dir combat to 8-dir walking,
+	// fix the direction to only 8 dirs
+	if (GAME_IS_CRUSADER && anim == Animation::stand) {
+		dir = static_cast<Direction>(dir - (static_cast<uint32>(dir) % 2));
+	}
+
 	Process *p = new ActorAnimProcess(this, anim, dir, steps);
 
 	return Kernel::get_instance()->addProcess(p);
