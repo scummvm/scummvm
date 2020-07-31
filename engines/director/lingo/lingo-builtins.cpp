@@ -2333,6 +2333,7 @@ void LB::b_window(int nargs) {
 	window->setTitle(windowName);
 	window->resize(1, 1, true);
 	window->setVisible(false, true);
+	window->setBorderType(0);
 	wm->addWindowInitialized(window);
 	windowList->push_back(window);
 	g_lingo->push(window);

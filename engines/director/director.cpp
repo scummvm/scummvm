@@ -154,7 +154,9 @@ Common::Error DirectorEngine::run() {
 	_mainStage = new Stage(_wm->getNextId(), false, false, false, _wm, this);
 	*_mainStage->_refCount += 1;
 
-	if (!debugChannelSet(-1, kDebugDesktop))
+	if (debugChannelSet(-1, kDebugDesktop))
+		_mainStage->setBorderType(3);
+	else
 		_mainStage->disableBorder();
 
 	_surface = new Graphics::ManagedSurface;
