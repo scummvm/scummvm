@@ -768,7 +768,7 @@ void MidiSoundDriverH32::playSample(const byte *data, int size, int channel, int
 	if (data[0] < 0x80) {
 		selectInstrument(channel, data[0] / 0x40, data[0] % 0x40, volume);
 	} else {
-		writeInstrument(channel * 512 + 0x80000, data + 1, size - 1);
+		writeInstrument(channel * 512 + 0x80000, data + 1, 256);
 		selectInstrument(channel, 2, channel, volume);
 	}
 
