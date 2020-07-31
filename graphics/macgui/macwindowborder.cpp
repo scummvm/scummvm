@@ -66,7 +66,8 @@ void MacWindowBorder::addInactiveBorder(TransparentSurface *source) {
 }
 
 bool MacWindowBorder::hasOffsets() {
-	return _borderOffsets.isValidRect();
+	return _borderOffsets.left > -1 && _borderOffsets.right > -1
+		&& _borderOffsets.top > -1 && _borderOffsets.bottom > -1;
 }
 
 void MacWindowBorder::setOffsets(int left, int right, int top, int bottom) {
