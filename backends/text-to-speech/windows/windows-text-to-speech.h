@@ -77,7 +77,7 @@ private:
 	void init();
 	virtual void updateVoices() override;
 	void createVoice(void *cpVoiceToken);
-	Common::String lcidToLocale(Common::String lcid);
+	Common::String lcidToLocale(WCHAR *lcid);
 	SpeechState _speechState;
 	Common::String _lastSaid;
 	HANDLE _thread;
