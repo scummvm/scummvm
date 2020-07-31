@@ -340,6 +340,13 @@ void ActorAnimProcess::run() {
 
 			int32 dx, dy, dz;
 			_tracker->getSpeed(dx, dy, dz);
+			if (GAME_IS_CRUSADER) {
+				// HACK: Hurl people a bit less hard in crusader until
+				// the movement bugs are fixed to make them fall less..
+				dx /= 4;
+				dy /= 4;
+				dz /= 4;
+			}
 			a->hurl(dx, dy, dz, 2);
 
 			// Note: do not wait for the fall to finish: this breaks
@@ -591,8 +598,6 @@ void ActorAnimProcess::doHitSpecial(Item *hit) {
 
 }
 
-
-
 void ActorAnimProcess::terminate() {
 #ifdef WATCHACTOR
 	if (_itemNum == watchactor)
@@ -601,6 +606,7 @@ void ActorAnimProcess::terminate() {
 		     << "] ActorAnimProcess terminating"
 		     << Std::endl;
 #endif
+
 	Actor *a = getActor(_itemNum);
 	if (a) {
 		if (_tracker) { // if we were really animating...
