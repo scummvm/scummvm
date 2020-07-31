@@ -429,6 +429,7 @@ public:
 	uint32 callUsecodeEvent_equipWithParam(ObjId param);        // event A
 	uint32 callUsecodeEvent_unequip();                          // event B
 	uint32 callUsecodeEvent_combine();                          // event C
+	uint32 callUsecodeEvent_calledFromAnim();                   // event E
 	uint32 callUsecodeEvent_enterFastArea();                    // event F
 	uint32 callUsecodeEvent_leaveFastArea();                    // event 10
 	uint32 callUsecodeEvent_cast(uint16 unk);                   // event 11

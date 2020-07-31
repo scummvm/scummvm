@@ -169,7 +169,7 @@ void AnimationTracker::evaluateMaxAnimTravel(int32 &max_endx, int32 &max_endy, D
 bool AnimationTracker::step() {
 	if (_done) return false;
 
-	const Actor *a = getActor(_actor);
+	Actor *a = getActor(_actor);
 	assert(a);
 
 	if (_firstFrame)
@@ -421,6 +421,10 @@ bool AnimationTracker::step() {
 			}
 #endif
 		}
+	}
+
+	if (f.is_callusecode() && GAME_IS_CRUSADER) {
+		a->callUsecodeEvent_calledFromAnim();
 	}
 
 	return true;

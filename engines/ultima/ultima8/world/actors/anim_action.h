@@ -44,7 +44,8 @@ struct AnimFrame {
 		AFF_UNK1     = 0x0001,
 		AFF_ONGROUND = 0x0002,
 		AFF_FLIPPED  = 0x0020,
-		AFF_SPECIAL  = 0x0800
+		AFF_SPECIAL  = 0x0800,
+		AFF_USECODE  = 0x4000
 	};
 
 	inline bool is_flipped() const {
@@ -52,6 +53,10 @@ struct AnimFrame {
 	}
 	inline int attack_range() const {
 		return ((_flags >> 2) & 0x07);
+	}
+
+	inline bool is_callusecode() const {
+		return (_flags & AFF_USECODE) != 0;
 	}
 };
 

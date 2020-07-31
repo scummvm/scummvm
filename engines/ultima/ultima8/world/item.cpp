@@ -1318,7 +1318,7 @@ uint32 Item::callUsecodeEvent(uint32 event, const uint8 *args, int argsize) {
 
 	// CHECKME: to make Pentagram behave as much like the original as possible,
 	// don't call any usecode if the original would call the wrong class
-	if (_objId < 256 && !(_extendedFlags & EXT_PERMANENT_NPC) &&
+	if (GAME_IS_U8 && _objId < 256 && !(_extendedFlags & EXT_PERMANENT_NPC) &&
 	        !(_flags & FLG_FAST_ONLY))
 		return 0;
 
@@ -1398,6 +1398,10 @@ uint32 Item::callUsecodeEvent_unequip() {                       // event B
 
 uint32 Item::callUsecodeEvent_combine() {                       // event C
 	return callUsecodeEvent(0xC);   // CONSTANT
+}
+
+uint32 Item::callUsecodeEvent_calledFromAnim() {                // event E
+	return callUsecodeEvent(0xE);   // CONSTANT
 }
 
 uint32 Item::callUsecodeEvent_enterFastArea() {                 // event F
