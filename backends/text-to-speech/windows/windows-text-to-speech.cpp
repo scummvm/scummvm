@@ -362,7 +362,7 @@ void WindowsTextToSpeechManager::createVoice(void *cpVoiceToken) {
 	if (SUCCEEDED(hr)) {
 		buffer = Win32::unicodeToAnsi(descW);
 		desc = buffer;
-		delete[] buffer;
+		free(buffer);
 		CoTaskMemFree(descW);
 	}
 
