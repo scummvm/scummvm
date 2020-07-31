@@ -85,7 +85,7 @@ wchar_t *ansiToUnicode(const char *s, uint codePage) {
 	DWORD size = MultiByteToWideChar(codePage, 0, s, -1, NULL, 0);
 
 	if (size > 0) {
-		LPWSTR result = new WCHAR[size];
+		LPWSTR result = (LPWSTR)calloc(size, sizeof(WCHAR));
 		if (MultiByteToWideChar(codePage, 0, s, -1, result, size) != 0)
 			return result;
 	}
@@ -97,7 +97,7 @@ char *unicodeToAnsi(const wchar_t *s, uint codePage) {
 	DWORD size = WideCharToMultiByte(codePage, 0, s, -1, NULL, 0, 0, 0);
 
 	if (size > 0) {
-		char *result = new char[size];
+		char *result = (char *)calloc(size, sizeof(char));
 		if (WideCharToMultiByte(codePage, 0, s, -1, result, size, 0, 0) != 0)
 			return result;
 	}

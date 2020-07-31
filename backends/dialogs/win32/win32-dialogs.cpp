@@ -95,7 +95,7 @@ HRESULT getShellPath(IShellItem *item, Common::String &path) {
 		char *str = Win32::unicodeToAnsi(name);
 		path = Common::String(str);
 		CoTaskMemFree(name);
-		delete[] str;
+		free(str);
 	}
 	return hr;
 }
@@ -132,11 +132,11 @@ Common::DialogManager::DialogResult Win32DialogManager::showFileBrowser(const ch
 
 		LPWSTR str = Win32::ansiToUnicode(title, Win32::getCurrentCharset());
 		hr = dialog->SetTitle(str);
-		delete[] str;
+		free(str);
 
 		str = Win32::ansiToUnicode(_("Choose"), Win32::getCurrentCharset());
 		hr = dialog->SetOkButtonLabel(str);
-		delete[] str;
+		free(str);
 
 		if (ConfMan.hasKey("browser_lastpath")) {
 			str = Win32::ansiToUnicode(ConfMan.get("browser_lastpath").c_str());
@@ -145,7 +145,7 @@ Common::DialogManager::DialogResult Win32DialogManager::showFileBrowser(const ch
 			if (SUCCEEDED(hr)) {
 				hr = dialog->SetDefaultFolder(item);
 			}
-			delete[] str;
+			free(str);
 		}
 
 		// Show dialog
