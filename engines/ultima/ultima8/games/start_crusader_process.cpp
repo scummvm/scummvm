@@ -113,6 +113,9 @@ void StartCrusaderProcess::run() {
 		// TODO: The game actually teleports to egg 0x1f (31) which has another
 		// egg to teleport to egg 99.  Is there any purpose to that?
 		Kernel::get_instance()->addProcess(new TeleportToEggProcess(1, 99));
+
+		Process *fader = new PaletteFaderProcess(0x003F3F3F, true, 0x7FFF, 60, false);
+		Kernel::get_instance()->addProcess(fader);
 	}
 
 	//MusicProcess::get_instance()->playMusic(2);
