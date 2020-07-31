@@ -293,6 +293,17 @@ public:
 	 */
 	void setCloseable(bool closeable);
 
+	/**
+	 * Mutator to change the border type.
+	 * @param borderType Border type.
+	 */
+	void setBorderType(int borderType);
+	/**
+	 * Accessor to get the border type.
+	 * @return Border type.
+	 */
+	int getBorderType() { return _borderType; };
+
 private:
 	void prepareBorderSurface(ManagedSurface *g);
 	void drawSimpleBorder(ManagedSurface *g);
@@ -339,6 +350,8 @@ private:
 
 	Common::String _title;
 	bool _titleVisible;
+
+	int _borderType;
 };
 
 

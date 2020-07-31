@@ -196,6 +196,8 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns) {
 	CursorMan.replaceCursorPalette(palette, 0, ARRAYSIZE(palette) / 3);
 	CursorMan.replaceCursor(macCursorArrow, 11, 16, 1, 1, 3);
 	CursorMan.showMouse(true);
+
+	loadDataBundle();
 }
 
 MacWindowManager::~MacWindowManager() {

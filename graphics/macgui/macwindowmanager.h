@@ -33,6 +33,10 @@
 
 #include "engines/engine.h"
 
+namespace Common {
+class Archive;
+}
+
 namespace Graphics {
 
 namespace MacGUIConstants {
@@ -283,6 +287,10 @@ public:
 
 	void removeMarked();
 
+	void loadDataBundle();
+	Common::Rect getBorderOffsets(byte windowType);
+	Common::SeekableReadStream *getBorderFile(byte windowType, bool isActive);
+
 public:
 	MacFontManager *_fontMan;
 	uint32 _mode;
@@ -344,6 +352,8 @@ private:
 
 	Common::Array<ZoomBox *> _zoomBoxes;
 	Common::HashMap<uint32, uint> _colorHash;
+
+	Common::Archive *_dataBundle;
 };
 
 } // End of namespace Graphics

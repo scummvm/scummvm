@@ -67,6 +67,7 @@ MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, Mac
 
 	_closeable = false;
 
+	_borderType = -1;
 	_borderWidth = kBorderWidth;
 
 	_titleVisible = true;
@@ -578,6 +579,27 @@ bool MacWindow::processEvent(Common::Event &event) {
 		return (*_callback)(click, event, _dataPtr);
 	else
 		return false;
+}
+
+void MacWindow::setBorderType(int borderType) {
+	_borderType = borderType;
+	if (borderType < 0) {
+		disableBorder();
+	} else {
+		Common::Rect offsets = _wm->getBorderOffsets(borderType);
+	
+		Common::SeekableReadStream *activeFile = _wm->getBorderFile(borderType, true);
+		if (activeFile) {
+			loadBorder(*activeFile, true, offsets.left, offsets.right, offsets.top, offsets.bottom);
+			delete activeFile;
+		}
+
+		Common::SeekableReadStream *inactiveFile = _wm->getBorderFile(borderType, false);
+		if (inactiveFile) {
+			loadBorder(*inactiveFile, false, offsets.left, offsets.right, offsets.top, offsets.bottom);
+			delete inactiveFile;
+		}
+	}
 }
 
 } // End of namespace Graphics
