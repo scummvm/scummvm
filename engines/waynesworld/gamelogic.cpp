@@ -136,8 +136,9 @@ GameLogic::~GameLogic() {
 }
 
 void GameLogic::initVariables() {
-	_word_34464 = 0;
-	_word_34466 = 0;
+	_r0_pizzathonIdeasCtr = 0;
+	_r0_pizzathonChoiceCtr = 0;
+	memset(_r0_pizzathonChoicesUsed, 0, sizeof(_r0_pizzathonChoicesUsed));
 	_r37_safeCombinationLockIndex = 0;
 	_r37_safeCombinationDirection = 0;
 	_r37_safeCombinationIndex = 0;
@@ -809,7 +810,7 @@ void GameLogic::handleRoomEvent(int eventNum) {
     case 0:
         switch (eventNum) {
         case 1:
-            // TODO r0_handleRoomEvent1();
+            r0_handleRoomEvent1();
             break;
         case 2:
             r0_handleRoomEvent2();
@@ -1307,18 +1308,18 @@ bool GameLogic::r0_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 	case 37: case 38: case 39: case 40: case 41:
 	case 42: case 43: case 44: case 45: case 46:
 	case 47: case 48: case 49: case 50: case 51:
-		_word_34466 = _word_34466 + 1;
+		_r0_pizzathonChoiceCtr++;
 		if (_vm->_selectedDialogChoice < 47) {
 			replyTextIndex1 = 45;
-			_word_34464 = _word_34464 + 1;
+			_r0_pizzathonIdeasCtr++;
 		} else {
 			replyTextIndex1 = _vm->_selectedDialogChoice - 1;
 		}
-		if (_word_34464 == 10) {
+		if (_r0_pizzathonIdeasCtr == 10) {
 			_vm->_roomEventNum = 3;
 		} else {
 			continueDialog = true;
-			r0_buildRandomDialogChoices(_vm->_selectedDialogChoice);
+			r0_updatePizzathonDialogChoices(_vm->_selectedDialogChoice);
 		}
 		break;
 	default:
@@ -1342,6 +1343,18 @@ void GameLogic::r0_refreshRoomBackground() {
 	}
 }
 
+void GameLogic::r0_handleRoomEvent1() {
+	// TODO Call the main menu
+	// When 'Exit' is selected in the menu it starts this dialog
+	if (!(_r0_flags & 0x02)) {
+		_r0_flags |= 0x02;
+		_vm->displayText("c11", 0, 0, -1, -1, 0);
+		_vm->setDialogChoices(29, 30, 31, 32, 33);
+		_vm->waitSeconds(2);
+		_vm->startDialog();
+	}
+}
+
 void GameLogic::r0_handleRoomEvent2() {
 	_vm->displayTextLines("c11", 1, -1, -1, 2);
 	_vm->selectActorGarth();
@@ -1349,7 +1362,7 @@ void GameLogic::r0_handleRoomEvent2() {
 	_vm->selectActorWayne();
 	_vm->displayTextLines("c11", 5, -1, -1, 5);
 	_vm->setDialogChoices(-1, -1, -1, -1, -1);
-	r0_buildRandomDialogChoices(-1);
+	r0_updatePizzathonDialogChoices(-1);
 	_vm->startDialog();
 }
 
@@ -1364,8 +1377,33 @@ void GameLogic::r0_handleRoomEvent3() {
 	_vm->drawInterface(_vm->_verbNumber);
 }
 
-void GameLogic::r0_buildRandomDialogChoices(int selectedDialogChoice) {
-	// TODO
+void GameLogic::r0_updatePizzathonDialogChoices(int selectedDialogChoice) {
+	if (_r0_pizzathonChoiceCtr >= 10) {
+		for (int index = 10; index < 15; index++) {
+			_r0_pizzathonChoicesUsed[index] = false;
+		}
+		for (int index = 0; index < 5; index++) {
+			int choiceIndex = _vm->_dialogChoices[index];
+			if (choiceIndex >= 47) {
+				_r0_pizzathonChoicesUsed[choiceIndex - 47 + 10] = true;
+			}
+		}
+	}
+	int newDialogChoices[5];
+	for (int index = 0; index < 5; index++) {
+		if (_vm->_dialogChoices[index] != selectedDialogChoice) {
+			newDialogChoices[index] = _vm->_dialogChoices[index];
+		} else {
+			int choiceIndex;
+			do {
+				choiceIndex = _vm->getRandom(15);
+			} while (_r0_pizzathonChoicesUsed[choiceIndex]);
+			_r0_pizzathonChoicesUsed[choiceIndex] = true;
+			newDialogChoices[index] = choiceIndex + 37;
+		}
+	}
+	_vm->setDialogChoices(newDialogChoices[0], newDialogChoices[1],
+		newDialogChoices[2], newDialogChoices[3], newDialogChoices[4]);
 }
 
 int GameLogic::r1_handleVerbPickUp() {

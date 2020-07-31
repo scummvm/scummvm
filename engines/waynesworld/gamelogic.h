@@ -50,8 +50,9 @@ public:
 	void setPizzathonStatus(int flagNum);
 	void r38_atrap();
 public:
-	int _word_34464;
-	int _word_34466;
+	int _r0_pizzathonIdeasCtr;
+	int _r0_pizzathonChoiceCtr;
+	bool _r0_pizzathonChoicesUsed[15];
 	int _r37_safeCombinationLockIndex;
 	int _r37_safeCombinationDirection;
 	int _r37_safeCombinationIndex;
@@ -127,7 +128,7 @@ public://DEBUG So logic functions can be called from the engine class for testin
 	void r0_handleRoomEvent1();
 	void r0_handleRoomEvent2();
 	void r0_handleRoomEvent3();
-	void r0_buildRandomDialogChoices(int selectedDialogChoice);
+	void r0_updatePizzathonDialogChoices(int selectedDialogChoice);
 
 	int r1_handleVerbPickUp();
 	int r1_handleVerbUse();
