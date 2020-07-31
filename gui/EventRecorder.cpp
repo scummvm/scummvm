@@ -615,7 +615,7 @@ SDL_Surface *EventRecorder::getSurface(int width, int height) {
 }
 
 bool EventRecorder::switchMode() {
-	const Plugin *plugin = EngineMan.findPlugin(ConfMan.get("engineid"));
+	const Plugin *plugin = EngineMan.findPluginForEngine(ConfMan.get("engineid"));
 	bool metaInfoSupport = plugin->get<MetaEngine>().hasFeature(MetaEngine::kSavesSupportMetaInfo);
 	bool featuresSupport = metaInfoSupport &&
 						  g_engine->canSaveGameStateCurrently() &&
@@ -663,7 +663,7 @@ bool EventRecorder::checkForContinueGame() {
 
 void EventRecorder::deleteTemporarySave() {
 	if (_temporarySlot == -1) return;
-	const Plugin *plugin = EngineMan.findPlugin(ConfMan.get("engineid"));
+	const Plugin *plugin = EngineMan.findPluginForEngine(ConfMan.get("engineid"));
 	const Common::String target = ConfMan.getActiveDomainName();
 	 plugin->get<MetaEngine>().removeSaveState(target.c_str(), _temporarySlot);
 	_temporarySlot = -1;

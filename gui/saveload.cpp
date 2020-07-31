@@ -27,6 +27,7 @@
 #include "gui/saveload-dialog.h"
 
 #include "engines/metaengine.h"
+#include "engines/engineman.h"
 
 namespace GUI {
 
@@ -76,18 +77,18 @@ Common::String SaveLoadChooser::createDefaultSaveDescription(const int slot) con
 }
 
 int SaveLoadChooser::runModalWithCurrentTarget() {
-	const Plugin *plugin = EngineMan.findPlugin(ConfMan.get("engineid"));
+	const Plugin *metaPlugin = EngineMan.findPluginForEngine(ConfMan.get("engineid"));
 	const Plugin *enginePlugin = nullptr;
-	if (!plugin) {
+	if (!metaPlugin) {
 		error("SaveLoadChooser::runModalWithCurrentTarget(): Cannot find plugin");
 	} else {
-		enginePlugin = PluginMan.getEngineFromMetaEngine(plugin);
+		enginePlugin = EngineMan.getEngineFromMetaEngine(metaPlugin);
 
 		if (!enginePlugin) {
 			error("SaveLoadChooser::runModalWithCurrentTarget(): Couldn't match a Engine from the MetaEngine. \
 				You will not be able to see savefiles until you have the necessary plugins.");
-		}
 	}
+}
 	return runModalWithPluginAndTarget(enginePlugin, ConfMan.getActiveDomainName());
 }
 

@@ -33,6 +33,7 @@
 
 #include "engines/engine.h"
 #include "engines/metaengine.h"
+#include "engines/engineman.h"
 #include "base/commandLine.h"
 #include "base/plugins.h"
 #include "base/version.h"
@@ -125,7 +126,7 @@ static const Plugin *detectPlugin() {
 		return 0;
 	}
 
-	const Plugin *plugin = EngineMan.findPlugin(engineId);
+	const Plugin *plugin = EngineMan.findPluginForEngine(engineId);
 	if (!plugin) {
 		warning("'%s' is an invalid engine ID. Use the --list-engines command to list supported engine IDs", engineId.c_str());
 		return 0;
@@ -192,7 +193,7 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 
 	// Right now we have a MetaEngine plugin. We must find the matching engine plugin to
 	// call createInstance and other connecting functions.
-	Plugin *enginePluginToLaunchGame = PluginMan.getEngineFromMetaEngine(plugin);
+	Plugin *enginePluginToLaunchGame = EngineMan.getEngineFromMetaEngine(plugin);
 
 	if (!enginePluginToLaunchGame) {
 		err = Common::kEnginePluginNotFound;
@@ -438,7 +439,6 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 	ConfMan.registerDefault("always_run_fallback_detection_extern", true);
 	PluginManager::instance().init();
- 	PluginManager::instance().loadAllPlugins(); // load plugins for cached plugin manager
 	PluginManager::instance().loadDetectionPlugin(); // load detection plugin for uncached plugin manager
 
 	// If we received an invalid music parameter via command line we check this here.
@@ -548,13 +548,14 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		const Plugin *plugin = detectPlugin();
 		if (plugin) {
 			// Unload all plugins not needed for this game, to save memory
+			PluginMan.unloadAllPluginsOfTypeExcept(PLUGIN_TYPE_ENGINE_DETECTION, plugin);
 
 			// Right now, we have a MetaEngine plugin, and we want to unload all except Engine.
 			// First, get the relevant Engine plugin from MetaEngine.
-			const Plugin *enginePlugin = PluginMan.getEngineFromMetaEngine(plugin);
+			const Plugin *enginePlugin = EngineMan.getEngineFromMetaEngine(plugin);
 
 			// Then, pass in the pointer to enginePlugin, with the matching type, so our function behaves as-is.
-			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE, enginePlugin);
+			PluginMan.unloadAllPluginsOfTypeExcept(PLUGIN_TYPE_ENGINE, enginePlugin);
 
 #if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES)
 			// Unload all MetaEngines not needed for the current engine, if we're using uncached plugins
@@ -655,8 +656,6 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 				// Clear the active config domain
 				ConfMan.setActiveDomain("");
 			}
-
-			PluginManager::instance().loadAllPluginsOfType(PLUGIN_TYPE_ENGINE); // only for cached manager
 			PluginManager::instance().loadDetectionPlugin(); // only for uncached manager
 		} else {
 			GUI::displayErrorDialog(_("Could not find any engine capable of running the selected game"));
@@ -682,7 +681,6 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 #endif
 #endif
 	PluginManager::instance().unloadDetectionPlugin();
-	PluginManager::instance().unloadAllPlugins();
 	PluginManager::destroy();
 	GUI::GuiManager::destroy();
 	Common::ConfigManager::destroy();

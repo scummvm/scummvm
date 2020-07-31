@@ -34,6 +34,7 @@
 #include "gui/message.h"
 #include "engines/advancedDetector.h"
 #include "engines/obsolete.h"
+#include "engines/engineman.h"
 
 /**
  * Adapter to be able to use Common::Archive based code from the AD.
@@ -353,7 +354,7 @@ Common::Error AdvancedMetaEngineDetection::createInstance(OSystem *syst, Engine 
 	debug(2, "Running %s", gameDescriptor.description.c_str());
 	initSubSystems(agdDesc.desc);
 
-	PluginList pl = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE);
+	PluginList pl = EngineMan.getEnginePlugins();
 	Plugin *plugin = nullptr;
 
 	// By this point of time, we should have only one plugin in memory.
@@ -683,9 +684,9 @@ void AdvancedMetaEngineDetection::initSubSystems(const ADGameDescription *gameDe
 }
 
 Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
-	PluginList pl = PluginMan.getPlugins(PLUGIN_TYPE_ENGINE);
+	PluginList pl = PluginMan.getLoadedPluginsOfType(PLUGIN_TYPE_ENGINE);
 	if (pl.size() == 1) {
-		Plugin *metaEnginePlugin = PluginMan.getMetaEngineFromEngine(pl[0]);
+		Plugin *metaEnginePlugin = EngineMan.getMetaEngineFromEngine(pl[0]);
 		if (metaEnginePlugin) {
 			return metaEnginePlugin->get<AdvancedMetaEngineDetection>().createInstance(syst, engine);
 		}

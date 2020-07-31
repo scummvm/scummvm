@@ -32,6 +32,7 @@
 #include "engines/dialogs.h"
 #include "engines/util.h"
 #include "engines/metaengine.h"
+#include "engines/engineman.h"
 
 #include "common/config-manager.h"
 #include "common/events.h"
@@ -868,25 +869,22 @@ GUI::Debugger *Engine::getOrCreateDebugger() {
 
 /*
 EnginePlugin *Engine::getMetaEnginePlugin() const {
-	return EngineMan.findPlugin(ConfMan.get("engineid"));
+	return EngineMan.findPluginForEngine(ConfMan.get("engineid"));
 }
 
 */
 
 MetaEngineDetection &Engine::getMetaEngineDetection() {
-	const Plugin *plugin = EngineMan.findPlugin(ConfMan.get("engineid"));
+	const Plugin *plugin = EngineMan.findPluginForEngine(ConfMan.get("engineid"));
 	assert(plugin);
 	return plugin->get<MetaEngineDetection>();
 }
 
 MetaEngine &Engine::getMetaEngine() {
-	const Plugin *metaEnginePlugin = EngineMan.findPlugin(ConfMan.get("engineid"));
+	const Plugin *metaEnginePlugin = EngineMan.findPluginForEngine(ConfMan.get("engineid"));
 	assert(metaEnginePlugin);
 
-	const Plugin *enginePlugin = PluginMan.getEngineFromMetaEngine(metaEnginePlugin);
-	assert(enginePlugin);
-
-	return enginePlugin->get<MetaEngine>();
+	return metaEnginePlugin->get<MetaEngine>();
 }
 
 PauseToken::PauseToken() : _engine(nullptr) {}

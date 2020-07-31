@@ -30,6 +30,8 @@
 #include "common/system.h"
 #include "common/translation.h"
 
+#include "engines/engineman.h"
+
 #include "gui/about.h"
 #include "gui/browser.h"
 #include "gui/chooser.h"
@@ -481,7 +483,7 @@ void LauncherDialog::loadGame(int item) {
 
 	// If we found a relevant plugin, find the matching engine plugin.
 	if (metaEnginePlugin) {
-		enginePlugin = PluginMan.getEngineFromMetaEngine(metaEnginePlugin);
+		enginePlugin = EngineMan.getEngineFromMetaEngine(metaEnginePlugin);
 	}
 
 	if (enginePlugin) {

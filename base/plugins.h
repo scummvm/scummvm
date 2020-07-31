@@ -323,11 +323,19 @@ protected:
 	PluginList _pluginsInMem[PLUGIN_TYPE_MAX];
 	ProviderList _providers;
 
-	bool tryLoadPlugin(Plugin *plugin);
-	void addToPluginsInMemList(Plugin *plugin);
+	bool loadPlugin(Plugin *plugin);
+	void unloadPlugin(Plugin *plugin);
 
 	static PluginManager *_instance;
 	PluginManager();
+
+	void unloadAllPlugins();
+	void unloadAllPluginsOfType(PluginType type);
+
+	Plugin *getPluginByFileName(const Common::String &filename) const;
+
+	PluginList getAllPlugins() const;
+	PluginList getAllPluginsOfType(PluginType type) const;
 
 public:
 	virtual ~PluginManager();
@@ -337,76 +345,16 @@ public:
 
 	void addPluginProvider(PluginProvider *pp);
 
-	/**
-	 * A method which takes in a plugin of type ENGINE,
-	 * and returns the appropriate & matching METAENGINE.
-	 * It uses the Engine plugin's getName method, which is an identifier,
-	 * and then tries to matches it with each plugin present in memory.
-	 *
-	 * @param A plugin of type ENGINE.
-	 *
-	 * @return A plugin of type METAENGINE.
-	 */
-	Plugin *getMetaEngineFromEngine(const Plugin *plugin);
-
-	/**
-	 * A method which takes in a plugin of type METAENGINE,
-	 * and returns the appropriate & matching ENGINE.
-	 * It uses the MetaEngine's getEngineID to reconstruct the name
-	 * of engine plugin, and then tries to matches it with each plugin in memory.
-	 *
-	 * @param A plugin of type METAENGINE.
-	 *
-	 * @return A plugin of type ENGINE.
-	 */
-	Plugin *getEngineFromMetaEngine(const Plugin *plugin);
-
 	// Functions used by the uncached PluginManager
 	virtual void init()	{}
-	virtual void loadFirstPlugin() {}
-	virtual bool loadNextPlugin() { return false; }
-	virtual bool loadPluginFromEngineId(const Common::String &engineId) { return false; }
-	virtual void updateConfigWithFileName(const Common::String &engineId) {}
 	virtual void loadDetectionPlugin() {}
 	virtual void unloadDetectionPlugin() {}
 
-	// Functions used only by the cached PluginManager
-	virtual void loadAllPlugins();
-	virtual void loadAllPluginsOfType(PluginType type);
-	void unloadAllPlugins();
+	void unloadAllPluginsOfTypeExcept(PluginType type, const Plugin *plugin);
 
-	void unloadPluginsExcept(PluginType type, const Plugin *plugin, bool deletePlugin = true);
+	const PluginList &getLoadedPluginsOfType(PluginType t) { return _pluginsInMem[t]; }
 
-	const PluginList &getPlugins(PluginType t) { return _pluginsInMem[t]; }
-};
-
-/**
- *  Uncached version of plugin manager
- *  Keeps only one dynamic plugin in memory at a time
- **/
-class PluginManagerUncached : public PluginManager {
-protected:
-	friend class PluginManager;
-	PluginList _allEnginePlugins;
-	Plugin  *_detectionPlugin;
-	PluginList::iterator _currentPlugin;
-
-	bool _isDetectionLoaded;
-
-	PluginManagerUncached() : _isDetectionLoaded(false) {}
-	bool loadPluginByFileName(const Common::String &filename);
-
-public:
-	virtual void init() override;
-	virtual void loadFirstPlugin() override;
-	virtual bool loadNextPlugin() override;
-	virtual bool loadPluginFromEngineId(const Common::String &engineId) override;
-	virtual void updateConfigWithFileName(const Common::String &engineId) override;
-	virtual void loadDetectionPlugin() override;
-	virtual void unloadDetectionPlugin() override;
-
-	virtual void loadAllPlugins() override {} 	// we don't allow these
-	virtual void loadAllPluginsOfType(PluginType type) override {}
+	friend class EngineManager;
 };
 
 #endif

@@ -28,6 +28,7 @@
 #include <limits.h>
 
 #include "engines/metaengine.h"
+#include "engines/engineman.h"
 #include "base/commandLine.h"
 #include "base/plugins.h"
 #include "base/version.h"
@@ -818,7 +819,7 @@ static void listGames() {
 	printf("Game ID                        Full Title                                                 \n"
 	       "------------------------------ -----------------------------------------------------------\n");
 
-	const PluginList &plugins = EngineMan.getPlugins();
+	const PluginList &plugins = EngineMan.getEngineDetectionPlugins();
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		const MetaEngineDetection &metaengine = (*iter)->get<MetaEngineDetection>();
 
@@ -834,7 +835,7 @@ static void listEngines() {
 	printf("Engine ID       Engine Name                                           \n"
 	       "--------------- ------------------------------------------------------\n");
 
-	const PluginList &plugins = EngineMan.getPlugins();
+	const PluginList &plugins = EngineMan.getEnginePlugins();
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
 		printf("%-15s %s\n", metaEngine.getEngineId(), metaEngine.getName());
@@ -914,7 +915,7 @@ static Common::Error listSaves(const Common::String &singleTarget) {
 			game = EngineMan.findTarget(*i, &metaEnginePlugin);
 		} else if (game = findGameMatchingName(*i), !game.gameId.empty()) {
 			// The name is a known game id
-			metaEnginePlugin = EngineMan.findPlugin(game.engineId);
+			metaEnginePlugin = EngineMan.findPluginForEngine(game.engineId);
 			currentTarget = createTemporaryTarget(game.engineId, game.gameId);
 		} else {
 			return Common::Error(Common::kEnginePluginNotFound, Common::String::format("target '%s'", singleTarget.c_str()));
@@ -931,16 +932,16 @@ static Common::Error listSaves(const Common::String &singleTarget) {
 			printf("MetaEnginePlugin could not be loaded for target '%s'\n", i->c_str());
 			continue;
 		} else {
-			enginePlugin = PluginMan.getEngineFromMetaEngine(metaEnginePlugin);
+			enginePlugin = EngineMan.getEngineFromMetaEngine(metaEnginePlugin);
 
 			if (!enginePlugin) {
 				// If the target was specified, treat this as an error, and otherwise skip it.
 				if (!singleTarget.empty())
-					return Common::Error(Common::kEnginePluginNotFound,
-				                     	 Common::String::format("target '%s'", i->c_str()));
+				return Common::Error(Common::kEnginePluginNotFound,
+				                     Common::String::format("target '%s'", i->c_str()));
 				printf("EnginePlugin could not be loaded for target '%s'\n", i->c_str());
-				continue;
-			}
+			continue;
+		}
 		}
 
 		const MetaEngine &metaEngine = enginePlugin->get<MetaEngine>();

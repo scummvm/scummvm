@@ -21,6 +21,7 @@
  */
 
 #include "engines/advancedDetector.h"
+#include "engines/engineman.h"
 
 #include "common/config-manager.h"
 #include "common/error.h"
@@ -102,10 +103,10 @@ public:
 			}
 		}
 
-		const Plugin *metaEnginePlugin = EngineMan.findPlugin(getEngineId());
+		const Plugin *metaEnginePlugin = EngineMan.findPluginForEngine(getEngineId());
 
 		if (metaEnginePlugin) {
-			const Plugin *enginePlugin = PluginMan.getEngineFromMetaEngine(metaEnginePlugin);
+			const Plugin *enginePlugin = EngineMan.getEngineFromMetaEngine(metaEnginePlugin);
 			if (enginePlugin) {
 				return enginePlugin->get<AdvancedMetaEngine>().fallbackDetectExtern(_md5Bytes, allFiles, fslist);
 			} else {

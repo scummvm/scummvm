@@ -21,6 +21,7 @@
  */
 
 #include "engines/advancedDetector.h"
+#include "engines/engineman.h"
 #include "base/plugins.h"
 #include "common/file.h"
 #include "common/hashmap.h"
@@ -458,10 +459,10 @@ ADDetectedGame SciMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 		}
 	}
 
-	const Plugin *metaEnginePlugin = EngineMan.findPlugin(getEngineId());
+	const Plugin *metaEnginePlugin = EngineMan.findPluginForEngine(getEngineId());
 
 	if (metaEnginePlugin) {
-		const Plugin *enginePlugin = PluginMan.getEngineFromMetaEngine(metaEnginePlugin);
+		const Plugin *enginePlugin = EngineMan.getEngineFromMetaEngine(metaEnginePlugin);
 		if (enginePlugin) {
 			return enginePlugin->get<AdvancedMetaEngine>().fallbackDetectExtern(_md5Bytes, allFiles, fslist);
 		} else {

@@ -24,7 +24,6 @@
 
 #include "common/func.h"
 #include "common/debug.h"
-#include "common/config-manager.h"
 
 #ifdef DYNAMIC_MODULES
 #include "common/fs.h"
@@ -61,15 +60,15 @@ const char *Plugin::getEngineId() const {
 }
 
 StaticPlugin::StaticPlugin(PluginObject *pluginobject, PluginType type) {
-	assert(pluginobject);
-	assert(type < PLUGIN_TYPE_MAX);
-	_pluginObject = pluginobject;
-	_type = type;
-}
+		assert(pluginobject);
+		assert(type < PLUGIN_TYPE_MAX);
+		_pluginObject = pluginobject;
+		_type = type;
+	}
 
 StaticPlugin::~StaticPlugin() {
-	delete _pluginObject;
-}
+		delete _pluginObject;
+	}
 
 bool StaticPlugin::loadPlugin()		{ return true; }
 void StaticPlugin::unloadPlugin()	{}
@@ -271,658 +270,92 @@ void PluginManager::addPluginProvider(PluginProvider *pp) {
 	_providers.push_back(pp);
 }
 
-Plugin *PluginManager::getEngineFromMetaEngine(const Plugin *plugin) {
-	assert(plugin->getType() == PLUGIN_TYPE_ENGINE_DETECTION);
-
-	Plugin *enginePlugin = nullptr;
-	bool found = false;
-
-	// Use the engineID from MetaEngine for comparasion.
-	Common::String metaEnginePluginName = plugin->getEngineId();
-	PluginMan.loadFirstPlugin();
-	do {
-		PluginList pl = PluginMan.getPlugins(PLUGIN_TYPE_ENGINE);
-		// Iterate over all engine plugins.
-		for (PluginList::const_iterator itr = pl.begin(); itr != pl.end(); itr++) {
-			// The getName() provides a name which is similiar to getEngineId.
-			// Because engines are engines themselves, this function is simply named getName.
-			Common::String enginePluginName((*itr)->getName());
-
-			if (metaEnginePluginName.equalsIgnoreCase(enginePluginName)) {
-				enginePlugin = (*itr);
-				found = true;
-				break;
-			}
-		}
-	} while (!found && PluginMan.loadNextPlugin());
-
-	if (enginePlugin) {
-		debug(9, "MetaEngine: %s \t matched to \t Engine: %s", plugin->getName(), enginePlugin->getFileName());
-		return enginePlugin;
-	}
-
-	debug(9, "MetaEngine: %s couldn't find a match for an engine plugin.", plugin->getName());
-	return nullptr;
-}
-
-Plugin *PluginManager::getMetaEngineFromEngine(const Plugin *plugin) {
-	assert(plugin->getType() == PLUGIN_TYPE_ENGINE);
-
-	Plugin *metaEngine = nullptr;
-
-	PluginList pl = PluginMan.getPlugins(PLUGIN_TYPE_ENGINE_DETECTION);
-
-	// This will return a name of the Engine plugin, which will be identical to
-	// a getEngineID from a relevant MetaEngine.
-	Common::String enginePluginName(plugin->getName());
-
-	for (PluginList::const_iterator itr = pl.begin(); itr != pl.end(); itr++) {
-		Common::String metaEngineName = (*itr)->getEngineId();
-
-		if (metaEngineName.equalsIgnoreCase(enginePluginName)) {
-			metaEngine = (*itr);
-			break;
-		}
-	}
-
-	if (metaEngine) {
-		debug(9, "Engine: %s matched to MetaEngine: %s", plugin->getFileName(), metaEngine->getName());
-		return metaEngine;
-	}
-
-	debug(9, "Engine: %s couldn't find a match for an MetaEngine plugin.", plugin->getFileName());
-	return nullptr;
-}
-
-/**
- * This should only be called once by main()
- **/
-void PluginManagerUncached::init() {
-	unloadAllPlugins();
-	_allEnginePlugins.clear();
-	ConfMan.setBool("always_run_fallback_detection_extern", false);
-
-	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false); // empty the engine plugins
-
-	Common::String detectPluginName = "detection";
-#ifdef PLUGIN_SUFFIX
-	detectPluginName += PLUGIN_SUFFIX;
-#endif
-
-	bool foundDetectPlugin = false;
-
-	for (ProviderList::iterator pp = _providers.begin();
-	                            pp != _providers.end();
-	                            ++pp) {
-		PluginList pl((*pp)->getPlugins());
-
-		for (PluginList::iterator p = pl.begin(); p != pl.end(); ++p) {
-			// This is a 'hack' based on the assumption that we have no sound
-			// file plugins. Currently this is the case. If it changes, we
-			// should find a fast way of detecting whether a plugin is a
-			// music or an engine plugin.
-			if (!foundDetectPlugin && (*pp)->isFilePluginProvider()) {
-				Common::String pName = (*p)->getFileName();
-				if (pName.hasSuffix(detectPluginName)) {
-					_detectionPlugin = (*p);
-					foundDetectPlugin = true;
-					debug(9, "Detection plugin found!");
-					continue;
-				}
-			}
-
-			if ((*pp)->isFilePluginProvider()) {
-				_allEnginePlugins.push_back(*p);
-			} else if ((*p)->loadPlugin()) { // and this is the proper method
-				if ((*p)->getType() == PLUGIN_TYPE_ENGINE) {
-					(*p)->unloadPlugin();
-					_allEnginePlugins.push_back(*p);
-				} else {	// add non-engine plugins to the 'in-memory' list
-							// these won't ever get unloaded
-					addToPluginsInMemList(*p);
-				}
-			}
- 		}
- 	}
-}
-
-/**
- * Try to load the plugin by searching in the ConfigManager for a matching
- * engine ID under the domain 'engine_plugin_files'.
- **/
-bool PluginManagerUncached::loadPluginFromEngineId(const Common::String &engineId) {
-	Common::ConfigManager::Domain *domain = ConfMan.getDomain("engine_plugin_files");
-
-	if (domain) {
-		if (domain->contains(engineId)) {
-			Common::String filename = (*domain)[engineId];
-
-			if (loadPluginByFileName(filename)) {
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
-/**
- * Load a plugin with a filename taken from ConfigManager.
- **/
-bool PluginManagerUncached::loadPluginByFileName(const Common::String &filename) {
+Plugin *PluginManager::getPluginByFileName(const Common::String &filename) const {
 	if (filename.empty())
-		return false;
+		return nullptr;
 
-	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);
+	PluginList allPlugins = getAllPlugins();
 
 	PluginList::iterator i;
-	for (i = _allEnginePlugins.begin(); i != _allEnginePlugins.end(); ++i) {
-		if (Common::String((*i)->getFileName()) == filename && (*i)->loadPlugin()) {
-			addToPluginsInMemList(*i);
-			_currentPlugin = i;
-			return true;
-		}
+	for (i = allPlugins.begin(); i != allPlugins.end(); ++i) {
+		if (Common::String((*i)->getFileName()) == filename)
+			return *i;
 	}
-	return false;
+	return nullptr;
 }
 
-/**
- * Update the config manager with a plugin file name that we found can handle
- * the engine.
- **/
-void PluginManagerUncached::updateConfigWithFileName(const Common::String &engineId) {
-	// Check if we have a filename for the current plugin
-	if ((*_currentPlugin)->getFileName()) {
-		if (!ConfMan.hasMiscDomain("engine_plugin_files"))
-			ConfMan.addMiscDomain("engine_plugin_files");
+PluginList PluginManager::getAllPlugins() const {
+	PluginList list;
 
-		Common::ConfigManager::Domain *domain = ConfMan.getDomain("engine_plugin_files");
-		assert(domain);
-		(*domain)[engineId] = (*_currentPlugin)->getFileName();
-
-		ConfMan.flushToDisk();
+	ProviderList::const_iterator i;
+	for (i = _providers.begin(); i != _providers.end(); ++i) {
+		list.push_back((*i)->getPlugins());
 	}
+	return list;
 }
 
-void PluginManagerUncached::loadDetectionPlugin() {
-	bool linkMetaEngines = false;
+PluginList PluginManager::getAllPluginsOfType(PluginType type) const {
+	PluginList allPlugins = getAllPlugins();
+	PluginList filteredList;
 
-	if (_isDetectionLoaded) {
-		debug(9, "Detection plugin is already loaded. Adding each available engines to the memory.");
-		linkMetaEngines = true;
+	PluginList::const_iterator i;
+	for (i = allPlugins.begin(); i != allPlugins.end(); ++i) {
+		Plugin *plugin = *i;
+		if (plugin->getType() != type)
+			continue;
+		filteredList.push_back(plugin);
+	}
+	return filteredList;
+}
+
+bool PluginManager::loadPlugin(Plugin *plugin) {
+	assert(plugin);
+	// Try to load the plugin
+	if (plugin->loadPlugin()) {
+		_pluginsInMem[plugin->getType()].push_back(plugin);
+		return true;
 	} else {
-		if (_detectionPlugin) {
-			if (_detectionPlugin->loadPlugin()) {
-				assert((_detectionPlugin)->getType() == PLUGIN_TYPE_DETECTION);
-
-				linkMetaEngines = true;
-				_isDetectionLoaded = true;
-			} else {
-				debug(9, "Detection plugin was not loaded correctly.");
-				return;
-			}
-		} else {
-			debug(9, "Detection plugin not found.");
-			return;
-		}
-	}
-
-	if (linkMetaEngines) {
-		_pluginsInMem[PLUGIN_TYPE_ENGINE_DETECTION].clear();
-		const Detection &detectionConnect = _detectionPlugin->get<Detection>();
-		const PluginList &pl = detectionConnect.getPlugins();
-		Common::for_each(pl.begin(), pl.end(), Common::bind1st(Common::mem_fun(&PluginManagerUncached::tryLoadPlugin), this));
-	}
-
-}
-
-void PluginManagerUncached::unloadDetectionPlugin() {
-	if (_isDetectionLoaded) {
-		_pluginsInMem[PLUGIN_TYPE_ENGINE_DETECTION].clear();
-		_detectionPlugin->unloadPlugin();
-		_isDetectionLoaded = false;
-	} else {
-		debug(9, "Detection plugin is already unloaded.");
-	}
-}
-
-void PluginManagerUncached::loadFirstPlugin() {
-	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);
-
-	// let's try to find one we can load
-	for (_currentPlugin = _allEnginePlugins.begin(); _currentPlugin != _allEnginePlugins.end(); ++_currentPlugin) {
-		if ((*_currentPlugin)->loadPlugin()) {
-			addToPluginsInMemList(*_currentPlugin);
-			break;
-		}
-	}
-}
-
-bool PluginManagerUncached::loadNextPlugin() {
-	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);
-
-	if (!_currentPlugin || _currentPlugin == _allEnginePlugins.end())
+		// Failed to load the plugin
 		return false;
-
-	for (++_currentPlugin; _currentPlugin != _allEnginePlugins.end(); ++_currentPlugin) {
-		if ((*_currentPlugin)->loadPlugin()) {
-			addToPluginsInMemList(*_currentPlugin);
-			return true;
-		}
-	}
-	return false; // no more in list
-}
-
-/**
- * Used by only the cached plugin manager. The uncached manager can only have
- * one plugin in memory at a time.
- **/
-void PluginManager::loadAllPlugins() {
-	for (ProviderList::iterator pp = _providers.begin();
-	                            pp != _providers.end();
-	                            ++pp) {
-		PluginList pl((*pp)->getPlugins());
-		Common::for_each(pl.begin(), pl.end(), Common::bind1st(Common::mem_fun(&PluginManager::tryLoadPlugin), this));
-	}
-}
-
-void PluginManager::loadAllPluginsOfType(PluginType type) {
-	for (ProviderList::iterator pp = _providers.begin();
-	                            pp != _providers.end();
-	                            ++pp) {
-		PluginList pl((*pp)->getPlugins());
-		for (PluginList::iterator p = pl.begin();
-				                  p != pl.end();
-								  ++p) {
-			if ((*p)->loadPlugin()) {
-				if ((*p)->getType() == type) {
-					addToPluginsInMemList((*p));
-				} else {
-					// Plugin is wrong type
-					(*p)->unloadPlugin();
-					delete (*p);
-				}
-			} else {
-				// Plugin did not load
-				delete (*p);
-			}
-		}
 	}
 }
 
 void PluginManager::unloadAllPlugins() {
 	for (int i = 0; i < PLUGIN_TYPE_MAX; i++)
-		unloadPluginsExcept((PluginType)i, NULL);
+		unloadAllPluginsOfType((PluginType)i);
 }
 
-void PluginManager::unloadPluginsExcept(PluginType type, const Plugin *plugin, bool deletePlugin /*=true*/) {
+void PluginManager::unloadPlugin(Plugin *plugin) {
+	PluginList &list = _pluginsInMem[plugin->getType()];
+	for (PluginList::iterator p = list.begin(); p != list.end(); ++p) {
+		if (*p == plugin) {
+			unloadPlugin(*p);
+			p=list.erase(p);
+		}
+	}
+}
+
+void PluginManager::unloadAllPluginsOfType(PluginType type) {
+	PluginList &list = _pluginsInMem[type];
+	for (PluginList::iterator p = list.begin(); p != list.end(); ++p) {
+			(*p)->unloadPlugin();
+	}
+	_pluginsInMem[type].clear();
+}
+
+void PluginManager::unloadAllPluginsOfTypeExcept(PluginType type, const Plugin *plugin) {
 	Plugin *found = NULL;
 	for (PluginList::iterator p = _pluginsInMem[type].begin(); p != _pluginsInMem[type].end(); ++p) {
 		if (*p == plugin) {
 			found = *p;
 		} else {
 			(*p)->unloadPlugin();
-			if (deletePlugin) {
-				delete *p;
-			}
 		}
 	}
 	_pluginsInMem[type].clear();
 	if (found != NULL) {
 		_pluginsInMem[type].push_back(found);
 	}
-}
-
-/*
- * Used only by the cached plugin manager since it deletes the plugin.
- */
-bool PluginManager::tryLoadPlugin(Plugin *plugin) {
-	assert(plugin);
-	// Try to load the plugin
-	if (plugin->loadPlugin()) {
-		addToPluginsInMemList(plugin);
-		return true;
-	} else {
-		// Failed to load the plugin
-		delete plugin;
-		return false;
-	}
-}
-
-/**
- * Add to the list of plugins loaded in memory.
- */
-void PluginManager::addToPluginsInMemList(Plugin *plugin) {
-	bool found = false;
-	// The plugin is valid, see if it provides the same module as an
-	// already loaded one and should replace it.
-
-	PluginList::iterator pl = _pluginsInMem[plugin->getType()].begin();
-	while (!found && pl != _pluginsInMem[plugin->getType()].end()) {
-		if (!strcmp(plugin->getName(), (*pl)->getName())) {
-			// Found a duplicated module. Replace the old one.
-			found = true;
-			delete *pl;
-			*pl = plugin;
-			debug(1, "Replaced the duplicated plugin: '%s'", plugin->getName());
-		}
-		pl++;
-	}
-
-	if (!found) {
-		// If it provides a new module, just add it to the list of known plugins in memory.
-		_pluginsInMem[plugin->getType()].push_back(plugin);
-	}
-}
-
-// Engine plugins
-
-#include "engines/metaengine.h"
-
-namespace Common {
-DECLARE_SINGLETON(EngineManager);
-}
-
-/**
- * This function works for both cached and uncached PluginManagers.
- * For the cached version, most of the logic here will short circuit.
- *
- * For the uncached version, we first try to find the plugin using the engineId
- * and only if we can't find it there, we loop through the plugins.
- **/
-QualifiedGameList EngineManager::findGamesMatching(const Common::String &engineId, const Common::String &gameId) const {
-	QualifiedGameList results;
-
-	if (!engineId.empty()) {
-		// If we got an engine name, look for THE game only in that engine
-		const Plugin *p = EngineMan.findPlugin(engineId);
-		if (p) {
-			const MetaEngineDetection &engine = p->get<MetaEngineDetection>();
-
-			PlainGameDescriptor pluginResult = engine.findGame(gameId.c_str());
-			if (pluginResult.gameId) {
-				results.push_back(QualifiedGameDescriptor(engine.getEngineId(), pluginResult));
-			}
-		}
-	} else {
-		// This is a slow path, we have to scan the list of plugins
-		PluginMan.loadFirstPlugin();
-		do {
-			results.push_back(findGameInLoadedPlugins(gameId));
-		} while (PluginMan.loadNextPlugin());
-	}
-
-	return results;
-}
-
-/**
- * Find the game within the plugins loaded in memory
- **/
-QualifiedGameList EngineManager::findGameInLoadedPlugins(const Common::String &gameId) const {
-	// Find the GameDescriptor for this target
-	const PluginList &plugins = getPlugins();
-
-	QualifiedGameList results;
-	PluginList::const_iterator iter;
-
-	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		const MetaEngineDetection &engine = (*iter)->get<MetaEngineDetection>();
-		PlainGameDescriptor pluginResult = engine.findGame(gameId.c_str());
-
-		if (pluginResult.gameId) {
-			results.push_back(QualifiedGameDescriptor(engine.getEngineId(), pluginResult));
-		}
-	}
-
-	return results;
-}
-
-DetectionResults EngineManager::detectGames(const Common::FSList &fslist) const {
-	DetectedGames candidates;
-	PluginList plugins;
-	PluginList::const_iterator iter;
-
-	// MetaEngines are always loaded into memory, so, get them and
-	// run detection for all of them.
-	plugins = getPlugins(PLUGIN_TYPE_ENGINE_DETECTION);
-
-	// Iterate over all known games and for each check if it might be
-	// the game in the presented directory.
-	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
-		DetectedGames engineCandidates = metaEngine.detectGames(fslist);
-
-		for (uint i = 0; i < engineCandidates.size(); i++) {
-			engineCandidates[i].path = fslist.begin()->getParent().getPath();
-			engineCandidates[i].shortPath = fslist.begin()->getParent().getDisplayName();
-			candidates.push_back(engineCandidates[i]);
-		}
-	}
-
-	return DetectionResults(candidates);
-}
-
-const PluginList &EngineManager::getPlugins(const PluginType fetchPluginType) const {
-	return PluginManager::instance().getPlugins(fetchPluginType);
-}
-
-namespace {
-
-void addStringToConf(const Common::String &key, const Common::String &value, const Common::String &domain) {
-	if (!value.empty())
-		ConfMan.set(key, value, domain);
-}
-
-} // End of anonymous namespace
-
-Common::String EngineManager::createTargetForGame(const DetectedGame &game) {
-	// The auto detector or the user made a choice.
-	// Pick a domain name which does not yet exist (after all, we
-	// are *adding* a game to the config, not replacing).
-	Common::String domain = game.preferredTarget;
-
-	assert(!domain.empty());
-	if (ConfMan.hasGameDomain(domain)) {
-		int suffixN = 1;
-		Common::String gameid(domain);
-
-		while (ConfMan.hasGameDomain(domain)) {
-			domain = gameid + Common::String::format("-%d", suffixN);
-			suffixN++;
-		}
-	}
-
-	// Add the name domain
-	ConfMan.addGameDomain(domain);
-
-	// Copy all non-empty relevant values into the new domain
-	addStringToConf("engineid", game.engineId, domain);
-	addStringToConf("gameid", game.gameId, domain);
-	addStringToConf("description", game.description, domain);
-	addStringToConf("language", Common::getLanguageCode(game.language), domain);
-	addStringToConf("platform", Common::getPlatformCode(game.platform), domain);
-	addStringToConf("path", game.path, domain);
-	addStringToConf("extra", game.extra, domain);
-	addStringToConf("guioptions", game.getGUIOptions(), domain);
-
-	// Add any extra configuration keys
-	for (Common::StringMap::iterator i = game._extraConfigEntries.begin();
-			i != game._extraConfigEntries.end(); ++i)
-		addStringToConf((*i)._key, (*i)._value, domain);
-
-	// TODO: Setting the description field here has the drawback
-	// that the user does never notice when we upgrade our descriptions.
-	// It might be nice to leave this field empty, and only set it to
-	// a value when the user edits the description string.
-	// However, at this point, that's impractical. Once we have a method
-	// to query all backends for the proper & full description of a given
-	// game target, we can change this (currently, you can only query
-	// for the generic gameid description; it's not possible to obtain
-	// a description which contains extended information like language, etc.).
-
-	return domain;
-}
-
-const Plugin *EngineManager::findLoadedPlugin(const Common::String &engineId) const {
-	const PluginList &plugins = getPlugins();
-
-	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); iter++)
-		if (engineId == (*iter)->get<MetaEngineDetection>().getEngineId())
-			return *iter;
-
-	return 0;
-}
-
-const Plugin *EngineManager::findPlugin(const Common::String &engineId) const {
-	// First look for the game using the plugins in memory. This is critical
-	// for calls coming from inside games
-	const Plugin *plugin = findLoadedPlugin(engineId);
-	if (plugin)
-		return plugin;
-
-	// Now look for the plugin using the engine ID. This is much faster than scanning plugin
-	// by plugin
-	if (PluginMan.loadPluginFromEngineId(engineId))  {
-		plugin = findLoadedPlugin(engineId);
-		if (plugin)
-			return plugin;
-	}
-
-	// We failed to find it using the engine ID. Scan the list of plugins
-	PluginMan.loadFirstPlugin();
-	do {
-		plugin = findLoadedPlugin(engineId);
-		if (plugin) {
-			// Update with new plugin file name
-			PluginMan.updateConfigWithFileName(engineId);
-			return plugin;
-		}
-	} while (PluginMan.loadNextPlugin());
-
-	return 0;
-}
-
-QualifiedGameDescriptor EngineManager::findTarget(const Common::String &target, const Plugin **plugin) const {
-	// Ignore empty targets
-	if (target.empty())
-		return QualifiedGameDescriptor();
-
-	// Lookup the domain. If we have no domain, fallback on the old function [ultra-deprecated].
-	const Common::ConfigManager::Domain *domain = ConfMan.getDomain(target);
-	if (!domain || !domain->contains("gameid") || !domain->contains("engineid"))
-		return QualifiedGameDescriptor();
-
-	// Look for the engine ID
-	const Plugin *foundPlugin = findPlugin(domain->getVal("engineid"));
-	if (!foundPlugin) {
-		return QualifiedGameDescriptor();
-	}
-
-	// Make sure it does support the game ID
-	const MetaEngineDetection &engine = foundPlugin->get<MetaEngineDetection>();
-	PlainGameDescriptor desc = engine.findGame(domain->getVal("gameid").c_str());
-	if (!desc.gameId) {
-		return QualifiedGameDescriptor();
-	}
-
-	if (plugin)
-		*plugin = foundPlugin;
-
-	return QualifiedGameDescriptor(engine.getEngineId(), desc);
-}
-
-void EngineManager::upgradeTargetIfNecessary(const Common::String &target) const {
-	Common::ConfigManager::Domain *domain = ConfMan.getDomain(target);
-	assert(domain);
-
-	if (!domain->contains("engineid")) {
-		upgradeTargetForEngineId(target);
-	} else {
-		if (domain->getVal("engineid").equals("fullpipe")) {
-			domain->setVal("engineid", "ngi");
-
-			debug("Upgrading engineid from 'fullpipe' to 'ngi'");
-
-			ConfMan.flushToDisk();
-		}
-	}
-}
-
-void EngineManager::upgradeTargetForEngineId(const Common::String &target) const {
-	Common::ConfigManager::Domain *domain = ConfMan.getDomain(target);
-	assert(domain);
-
-	debug("Target '%s' lacks an engine ID, upgrading...", target.c_str());
-
-	Common::String oldGameId = domain->getVal("gameid");
-	Common::String path = domain->getVal("path");
-
-	// At this point the game ID and game path must be known
-	if (oldGameId.empty()) {
-		warning("The game ID is required to upgrade target '%s'", target.c_str());
-		return;
-	}
-	if (path.empty()) {
-		warning("The game path is required to upgrade target '%s'", target.c_str());
-		return;
-	}
-
-	// Game descriptor for the upgraded target
-	Common::String engineId;
-	Common::String newGameId;
-
-	// First, try to update entries for engines that previously used the "single id" system
-	// Search for an engine whose ID is the game ID
-	const Plugin *plugin = findPlugin(oldGameId);
-	if (plugin) {
-		// Run detection on the game path
-		Common::FSNode dir(path);
-		Common::FSList files;
-		if (!dir.getChildren(files, Common::FSNode::kListAll)) {
-			warning("Failed to access path '%s' when upgrading target '%s'", path.c_str(), target.c_str());
-			return;
-		}
-
-		// Take the first detection entry
-		const MetaEngineDetection &metaEngine = plugin->get<MetaEngineDetection>();
-		DetectedGames candidates = metaEngine.detectGames(files);
-		if (candidates.empty()) {
-			warning("No games supported by the engine '%s' were found in path '%s' when upgrading target '%s'",
-			        metaEngine.getEngineId(), path.c_str(), target.c_str());
-			return;
-		}
-
-		engineId = candidates[0].engineId;
-		newGameId = candidates[0].gameId;
-	}
-
-	// Next, try to find an engine with the game ID in its supported games list
-	if (engineId.empty()) {
-		QualifiedGameList candidates = findGamesMatching("", oldGameId);
-		if (candidates.size() > 1) {
-			warning("Multiple matching engines were found when upgrading target '%s'", target.c_str());
-			return;
-		} else if (!candidates.empty()) {
-			engineId = candidates[0].engineId;
-			newGameId = candidates[0].gameId;
-		}
-	}
-
-	if (engineId.empty() || newGameId.empty()) {
-		warning("No matching engine was found when upgrading target '%s'", target.c_str());
-		return;
-	}
-
-	domain->setVal("engineid", engineId);
-	domain->setVal("gameid", newGameId);
-
-	// Save a backup of the pre-upgrade gameId to the config file
-	if (newGameId != oldGameId) {
-		domain->setVal("oldgameid", oldGameId);
-	}
-
-	debug("Upgrade complete (engine ID '%s', game ID '%s')", engineId.c_str(), newGameId.c_str());
-
-	ConfMan.flushToDisk();
 }
 
 // Music plugins
@@ -934,5 +367,5 @@ DECLARE_SINGLETON(MusicManager);
 }
 
 const PluginList &MusicManager::getPlugins() const {
-	return PluginManager::instance().getPlugins(PLUGIN_TYPE_MUSIC);
+	return PluginManager::instance().getLoadedPluginsOfType(PLUGIN_TYPE_MUSIC);
 }

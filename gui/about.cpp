@@ -21,6 +21,7 @@
  */
 
 #include "engines/metaengine.h"
+#include "engines/engineman.h"
 #include "base/plugins.h"
 #include "base/version.h"
 #include "common/events.h"
@@ -118,7 +119,7 @@ AboutDialog::AboutDialog()
 	engines += _("Available engines:");
 	addLine(engines);
 
-	const PluginList &plugins = EngineMan.getPlugins();
+	const PluginList &plugins = EngineMan.getEnginePlugins();
 	PluginList::const_iterator iter = plugins.begin();
 	for (; iter != plugins.end(); ++iter) {
 		Common::String str;
