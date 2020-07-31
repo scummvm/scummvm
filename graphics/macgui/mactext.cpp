@@ -1037,35 +1037,35 @@ void MacText::setSelection(int pos, bool start) {
 	int row = 0, col = 0;
 	int colX = 0;
 
-	while (pos > 0) {
-		if (pos < getLineCharWidth(row)) {
-			for (uint i = 0; i < _textLines[row].chunks.size(); i++) {
-				if ((uint)pos < _textLines[row].chunks[i].text.size()) {
-					colX += _textLines[row].chunks[i].getFont()->getStringWidth(Common::U32String(_textLines[row].chunks[i].text.c_str(), pos));
-					col += pos + 1;
-					pos = 0;
-					break;
-				} else {
-					colX += _textLines[row].chunks[i].getFont()->getStringWidth(Common::U32String(_textLines[row].chunks[i].text));
-					pos -= _textLines[row].chunks[i].text.size();
-					col += _textLines[row].chunks[i].text.size() + 1;
+	if (pos > 0) {
+		while (pos > 0) {
+			if (pos < getLineCharWidth(row)) {
+				for (uint i = 0; i < _textLines[row].chunks.size(); i++) {
+					if ((uint)pos < _textLines[row].chunks[i].text.size()) {
+						colX += _textLines[row].chunks[i].getFont()->getStringWidth(Common::U32String(_textLines[row].chunks[i].text.c_str(), pos));
+						col += pos + 1;
+						pos = 0;
+						break;
+					} else {
+						colX += _textLines[row].chunks[i].getFont()->getStringWidth(Common::U32String(_textLines[row].chunks[i].text));
+						pos -= _textLines[row].chunks[i].text.size();
+						col += _textLines[row].chunks[i].text.size() + 1;
+					}
 				}
+				break;
+			} else {
+				pos -= getLineCharWidth(row) + 1; // (row ? 1 : 0);
 			}
-			break;
-		} else {
-			pos -= getLineCharWidth(row) + (row ? 1 : 0);
+
+			row++;
+			if ((uint)row >= _textLines.size()) {
+				colX = _surface->w;
+				col = getLineCharWidth(row);
+
+				break;
+			}
 		}
-
-		row++;
-		if ((uint)row >= _textLines.size()) {
-			colX = _surface->w;
-			col = getLineCharWidth(row);
-
-			break;
-		}
-	}
-
-	if (pos == -1) {
+	} else {
 		row = _textLines.size() - 1;
 		colX = _surface->w;
 		col = getLineCharWidth(row);
