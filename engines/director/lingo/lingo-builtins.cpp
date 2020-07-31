@@ -2435,7 +2435,6 @@ void LB::b_scummvmassert(int nargs) {
 		warning("LB::b_scummvmassert: is false");
 	}
 	assert(d.asInt() != 0);
-	g_lingo->push(d);
 }
 
 void LB::b_scummvmassertequal(int nargs) {
@@ -2444,10 +2443,9 @@ void LB::b_scummvmassertequal(int nargs) {
 
 	int result = d1.equalTo(d2);
 	if (!result) {
-		warning("LB::b_scummvmassertequals: is false");
+		warning("LB::b_scummvmassertequals: %s is not equal %s", d1.asString(), d2.asString());
 	}
 	assert(result == 1);
-	g_lingo->push(Datum(result));
 }
 
 } // End of namespace Director
