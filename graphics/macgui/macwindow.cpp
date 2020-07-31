@@ -255,7 +255,7 @@ void MacWindow::drawBorderFromSurface(ManagedSurface *g) {
 	inside.moveTo(_macBorder.getOffset().left, _macBorder.getOffset().top);
 	g->fillRect(inside, kColorGreen);
 
-	_macBorder.blitBorderInto(_borderSurface, _active);
+	_macBorder.blitBorderInto(*g, _active, _wm);
 }
 
 void MacWindow::drawSimpleBorder(ManagedSurface *g) {

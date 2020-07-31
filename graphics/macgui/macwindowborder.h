@@ -98,8 +98,9 @@ public:
 	 * It automatically resizes the border to fit the given surface.
 	 * @param destination The surface we want to blit into.
 	 * @param active True if we want to blit the active border, false otherwise.
+	 * @param wm The window manager.
 	 */
-	void blitBorderInto(ManagedSurface &destination, bool active);
+	void blitBorderInto(ManagedSurface &destination, bool active, MacWindowManager *wm);
 
 private:
 
