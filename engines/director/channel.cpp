@@ -287,13 +287,12 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 
 	// Sprites marked moveable are constrained to the same bounding box until
 	// the moveable is disabled
-	if (!_sprite->_moveable || newSprite) {
+	if (!_sprite->_moveable || newSprite)
 		_currentPoint = _sprite->_startPoint;
 
-		if (!_sprite->_stretch) {
-			_width = _sprite->_width;
-			_height = _sprite->_height;
-		}
+	if (!_sprite->_stretch) {
+		_width = _sprite->_width;
+		_height = _sprite->_height;
 	}
 }
 
