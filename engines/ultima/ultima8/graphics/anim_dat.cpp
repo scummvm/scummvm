@@ -193,17 +193,17 @@ void AnimDat::load(Common::SeekableReadStream *rs) {
 						// byte 1: low nibble part of frame
 						uint8 x = rs->readByte();
 						f._frame += (x & 0xF) << 8;
-						// byte 2, 3: unknown; byte 3 might contain flags
-						f._unk1 = rs->readSint16LE();
+						// byte 2: delta z
+						f._deltaZ = rs->readByte();
+						// byte 3: sfx
+						f._sfx = rs->readByte();
 						// byte 4: deltadir (signed) - convert to pixels
 						f._deltaDir = rs->readSByte();
-						// byte 5: flags?
+						// byte 5: flags? TODO: Ensure "flipped" flag is mapped correctly
 						f._flags = rs->readByte();
+						f._flags += (x & 0xF0) << 8;
 						// byte 6, 7: unknown
 						f._unk2 = rs->readSint16LE();
-
-						f._deltaZ = 0;
-						f._sfx = 0;
 					}
 					a->_actions[action]->_frames[dir].push_back(f);
 				}
