@@ -189,12 +189,33 @@ typedef uint16 SFTransform;
 //    ICOP_FIELD
 //};
 
+static inline void uint16Write(uint8 **buffer, uint16 value) {
+	WRITE_LE_UINT16(*buffer, value);
+	*buffer += 2;
+}
+
+static inline void uint32Write(uint8 **buffer, uint32 value) {
+	WRITE_LE_UINT32(*buffer, value);
+	*buffer += 4;
+}
+
+static inline void writeBytes(uint8 **buffer, byte *bytes, uint32 size) {
+	memcpy(*buffer, bytes, size);
+	*buffer += size;
+}
+
 #pragma pack(push) /* push current alignment to stack */
 #pragma pack(2)    /* set alignment to 2 byte boundary */
 
 struct sfVersionTag {
 	uint16 wMajor;
 	uint16 wMinor;
+
+	uint8 *write(uint8 *buffer) {
+		uint16Write(&buffer, wMajor);
+		uint16Write(&buffer, wMinor);
+		return buffer;
+	}
 };
 
 struct sfPresetHeader {
@@ -205,11 +226,28 @@ struct sfPresetHeader {
 	uint32 dwLibrary;
 	uint32 dwGenre;
 	uint32 dwMorphology;
+
+	uint8 *write(uint8 *buffer) {
+		writeBytes(&buffer, (byte *)achPresetName, 20);
+		uint16Write(&buffer, wPreset);
+		uint16Write(&buffer, wBank);
+		uint16Write(&buffer, wPresetBagNdx);
+		uint32Write(&buffer, dwLibrary);
+		uint32Write(&buffer, dwGenre);
+		uint32Write(&buffer, dwMorphology);
+		return buffer;
+	}
 };
 
 struct sfPresetBag {
 	uint16 wGenNdx;
 	uint16 wModNdx;
+
+	uint8 *write(uint8 *buffer) {
+		uint16Write(&buffer, wGenNdx);
+		uint16Write(&buffer, wModNdx);
+		return buffer;
+	}
 };
 
 struct sfModList {
@@ -218,34 +256,27 @@ struct sfModList {
 	int16 modAmount;
 	SFModulator sfModAmtSrcOper;
 	SFTransform sfModTransOper;
+
+	uint8 *write(uint8 *buffer) {
+		uint16Write(&buffer, sfModSrcOper);
+		uint16Write(&buffer, sfModDestOper);
+		uint16Write(&buffer, modAmount);
+		uint16Write(&buffer, sfModAmtSrcOper);
+		uint16Write(&buffer, sfModTransOper);
+		return buffer;
+	}
 };
 
 typedef struct {
-	uint8 byLo;
-	uint8 byHi;
+	byte data[2];
 
-	uint8 *write(uint8 *buffer, uint32 *offset) {
-		buffer[0] = byLo;
-		buffer[1] = byHi;
-		*offset += 2;
-		return buffer + 2;
-	}
-} rangesType;
+	void setRangeLo(uint8 lo) { data[0] = lo; }
+	void setRangeHi(uint8 hi) { data[1] = hi; }
+	void setShAmount(int16 shAmount) { WRITE_LE_INT16(data, shAmount); }
+	void setwAmount(int16 wAmount) { WRITE_LE_UINT16(data, wAmount); }
 
-typedef union {
-	rangesType ranges;
-	int16 shAmount;
-	uint16 wAmount;
-
-	//TODO fix union.
-	uint8 *write(uint8 *buffer, uint32 *offset) {
-		buffer = ranges.write(buffer, offset);
-		WRITE_LE_INT16(buffer, shAmount);
-		buffer += 2;
-		*offset += 2;
-		WRITE_LE_UINT16(buffer, wAmount);
-		buffer += 2;
-		*offset += 2;
+	uint8 *write(uint8 *buffer) {
+		writeBytes(&buffer, (byte *)data, 2);
 		return buffer;
 	}
 } genAmountType;
@@ -254,35 +285,42 @@ struct sfGenList {
 	SFGenerator sfGenOper;
 	genAmountType genAmount;
 
-	uint8 *write(uint8 *buffer, uint32 *offset) {
-		WRITE_LE_UINT16(buffer, sfGenOper);
-		buffer += 2;
-		*offset += 2;
-		return genAmount.write(buffer, offset);
+	uint8 *write(uint8 *buffer) {
+		uint16Write(&buffer, sfGenOper);
+		return genAmount.write(buffer);
 	}
-};
-
-struct sfInstModList {
-	SFModulator sfModSrcOper;
-	SFGenerator sfModDestOper;
-	int16 modAmount;
-	SFModulator sfModAmtSrcOper;
-	SFTransform sfModTransOper;
 };
 
 struct sfInstGenList {
 	SFGenerator sfGenOper;
 	genAmountType genAmount;
+
+	uint8 *write(uint8 *buffer) {
+		uint16Write(&buffer, sfGenOper);
+		return genAmount.write(buffer);
+	}
 };
 
 struct sfInst {
 	char achInstName[20];
 	uint16 wInstBagNdx;
+
+	uint8 *write(uint8 *buffer) {
+		writeBytes(&buffer, (byte *)achInstName, 20);
+		uint16Write(&buffer, wInstBagNdx);
+		return buffer;
+	}
 };
 
 struct sfInstBag {
 	uint16 wInstGenNdx;
 	uint16 wInstModNdx;
+
+	uint8 *write(uint8 *buffer) {
+		uint16Write(&buffer, wInstGenNdx);
+		uint16Write(&buffer, wInstModNdx);
+		return buffer;
+	}
 };
 
 typedef enum {
@@ -309,6 +347,20 @@ struct sfSample {
 	char chCorrection;
 	uint16 wSampleLink;
 	SFSampleLink sfSampleType;
+
+	uint8 *write(uint8 *buffer) {
+		writeBytes(&buffer, (byte *)achSampleName, 20);
+		uint32Write(&buffer, dwStart);
+		uint32Write(&buffer, dwEnd);
+		uint32Write(&buffer, dwStartloop);
+		uint32Write(&buffer, dwEndloop);
+		uint32Write(&buffer, dwSampleRate);
+		*buffer++ = byOriginalKey;
+		*buffer++ = chCorrection;
+		uint16Write(&buffer, wSampleLink);
+		uint16Write(&buffer, sfSampleType);
+		return buffer;
+	}
 };
 
 #pragma pack(pop) /* restore original alignment from stack */
