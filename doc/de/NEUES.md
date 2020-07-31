@@ -27,6 +27,8 @@ Programmcodes finden Sie auf Englisch unter:
    - Animationsgeschwindigkeit korrigiert.
 
  Kyra:
+   - Unterstützung für die SegaCD-Version von Eye of the Beholder I (mit CD-Audio, animierten
+     Zwischensequenzen und der Karten-Funktion) hinzugefügt.
    - Unterstützung für die PC-98-Version von Eye of the Beholder I hinzugefügt.
    - Unterstützung für die spanische Version von Eye of the Beholder I und II, Legend of Kyrandia 1 (Fan-Übersetzung auf CD-ROM) und Legend of Kyrandia 2 (Disketten-Version und Fan-Übersetzung auf CD-ROM) hinzugefügt.
 
