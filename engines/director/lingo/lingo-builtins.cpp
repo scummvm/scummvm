@@ -2443,7 +2443,7 @@ void LB::b_scummvmassertequal(int nargs) {
 
 	int result = d1.equalTo(d2);
 	if (!result) {
-		warning("LB::b_scummvmassertequals: %s is not equal %s", d1.asString(), d2.asString());
+		warning("LB::b_scummvmassertequals: %s is not equal %s", d1.asString().c_str(), d2.asString().c_str());
 	}
 	assert(result == 1);
 }
