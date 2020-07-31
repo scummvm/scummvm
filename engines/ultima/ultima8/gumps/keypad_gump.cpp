@@ -109,6 +109,7 @@ void KeypadGump::ChildNotify(Gump *child, uint32 message) {
 			_value /= 10;
 			sfxno = 0x3a;
 		} else if (buttonNo == 11) {
+			SetResult(_value);
 			// TODO: Do something as a result of this other than just play a sound.
 			if (_value == _targetValue) {
 				sfxno = 0x32;
