@@ -46,10 +46,12 @@ double SecondsToTimecents(double secs) {
 SF2InfoListChunk::SF2InfoListChunk(Common::String name) : LISTChunk("INFO") {
 	// Add the child info chunks
 	Chunk *ifilCk = new Chunk("ifil");
+	ifilCk->_size = sizeof(sfVersionTag);
+	ifilCk->_data = new uint8[ifilCk->_size];
 	sfVersionTag versionTag;  // soundfont version 2.01
 	versionTag.wMajor = 2;
 	versionTag.wMinor = 1;
-	ifilCk->SetData(&versionTag, sizeof(versionTag));
+	versionTag.write(ifilCk->_data);
 	AddChildChunk(ifilCk);
 	AddChildChunk(new SF2StringChunk("isng", "EMU8000"));
 	AddChildChunk(new SF2StringChunk("INAM", name));
@@ -130,13 +132,13 @@ SF2File::SF2File(SynthFile *synthfile) : RiffFile(synthfile->_name, "sfbk") {
 		presetHdr.dwGenre = 0;
 		presetHdr.dwMorphology = 0;
 
-		memcpy(phdrCk->_data + (i * sizeof(sfPresetHeader)), &presetHdr, sizeof(sfPresetHeader));
+		presetHdr.write(phdrCk->_data + (i * sizeof(sfPresetHeader)));
 	}
 	//  add terminal sfPresetBag
 	sfPresetHeader presetHdr;
 	memset(&presetHdr, 0, sizeof(sfPresetHeader));
 	presetHdr.wPresetBagNdx = (uint16) numInstrs;
-	memcpy(phdrCk->_data + (numInstrs * sizeof(sfPresetHeader)), &presetHdr, sizeof(sfPresetHeader));
+	presetHdr.write(phdrCk->_data + (numInstrs * sizeof(sfPresetHeader)));
 	pdtaCk->AddChildChunk(phdrCk);
 
 	//***********
@@ -152,13 +154,13 @@ SF2File::SF2File(SynthFile *synthfile) : RiffFile(synthfile->_name, "sfbk") {
 		presetBag.wGenNdx = (uint16) (i * ITEMS_IN_PGEN);
 		presetBag.wModNdx = 0;
 
-		memcpy(pbagCk->_data + (i * sizeof(sfPresetBag)), &presetBag, sizeof(sfPresetBag));
+		presetBag.write(pbagCk->_data + (i * sizeof(sfPresetBag)));
 	}
 	//  add terminal sfPresetBag
 	sfPresetBag presetBag;
 	memset(&presetBag, 0, sizeof(sfPresetBag));
 	presetBag.wGenNdx = (uint16) (numInstrs * ITEMS_IN_PGEN);
-	memcpy(pbagCk->_data + (numInstrs * sizeof(sfPresetBag)), &presetBag, sizeof(sfPresetBag));
+	presetBag.write(pbagCk->_data + (numInstrs * sizeof(sfPresetBag)));
 	pdtaCk->AddChildChunk(pbagCk);
 
 	//***********
@@ -191,19 +193,19 @@ SF2File::SF2File(SynthFile *synthfile) : RiffFile(synthfile->_name, "sfbk") {
 
 		// reverbEffectsSend
 		genList.sfGenOper = reverbEffectsSend;
-		genList.genAmount.shAmount = 250;
-		memcpy(pgenCk->_data + dataPtr, &genList, sizeof(sfGenList));
+		genList.genAmount.setShAmount(250);
+		genList.write(pgenCk->_data + dataPtr);
 		dataPtr += sizeof(sfGenList);
 
 		genList.sfGenOper = instrument;
-		genList.genAmount.wAmount = (uint16) i;
-		memcpy(pgenCk->_data + dataPtr, &genList, sizeof(sfGenList));
+		genList.genAmount.setwAmount((uint16) i);
+		genList.write(pgenCk->_data + dataPtr);
 		dataPtr += sizeof(sfGenList);
 	}
 	//  add terminal sfGenList
 	sfGenList genList;
 	memset(&genList, 0, sizeof(sfGenList));
-	memcpy(pgenCk->_data + dataPtr, &genList, sizeof(sfGenList));
+	genList.write(pgenCk->_data + dataPtr);
 
 	pdtaCk->AddChildChunk(pgenCk);
 
@@ -224,13 +226,13 @@ SF2File::SF2File(SynthFile *synthfile) : RiffFile(synthfile->_name, "sfbk") {
 		inst.wInstBagNdx = (uint16) rgnCounter;
 		rgnCounter += instr->_vRgns.size();
 
-		memcpy(instCk->_data + (i * sizeof(sfInst)), &inst, sizeof(sfInst));
+		inst.write(instCk->_data + (i * sizeof(sfInst)));
 	}
 	//  add terminal sfInst
 	sfInst inst;
 	memset(&inst, 0, sizeof(sfInst));
 	inst.wInstBagNdx = (uint16) rgnCounter;
-	memcpy(instCk->_data + (numInstrs * sizeof(sfInst)), &inst, sizeof(sfInst));
+	inst.write(instCk->_data + (numInstrs * sizeof(sfInst)));
 	pdtaCk->AddChildChunk(instCk);
 
 	//***********
@@ -258,7 +260,7 @@ SF2File::SF2File(SynthFile *synthfile) : RiffFile(synthfile->_name, "sfbk") {
 			instGenCounter += 11;
 			instBag.wInstModNdx = 0;
 
-			memcpy(ibagCk->_data + (rgnCounter++ * sizeof(sfInstBag)), &instBag, sizeof(sfInstBag));
+			instBag.write(ibagCk->_data + (rgnCounter++ * sizeof(sfInstBag)));
 		}
 	}
 	//  add terminal sfInstBag
@@ -266,7 +268,7 @@ SF2File::SF2File(SynthFile *synthfile) : RiffFile(synthfile->_name, "sfbk") {
 	memset(&instBag, 0, sizeof(sfInstBag));
 	instBag.wInstGenNdx = instGenCounter;
 	instBag.wInstModNdx = 0;
-	memcpy(ibagCk->_data + (rgnCounter * sizeof(sfInstBag)), &instBag, sizeof(sfInstBag));
+	instBag.write(ibagCk->_data + (rgnCounter * sizeof(sfInstBag)));
 	pdtaCk->AddChildChunk(ibagCk);
 
 	//***********
@@ -295,90 +297,90 @@ SF2File::SF2File(SynthFile *synthfile) : RiffFile(synthfile->_name, "sfbk") {
 			sfInstGenList instGenList;
 			// Key range - (if exists) this must be the first chunk
 			instGenList.sfGenOper = keyRange;
-			instGenList.genAmount.ranges.byLo = (uint8) rgn->_usKeyLow;
-			instGenList.genAmount.ranges.byHi = (uint8) rgn->_usKeyHigh;
-			memcpy(igenCk->_data + dataPtr, &instGenList, sizeof(sfInstGenList));
+			instGenList.genAmount.setRangeLo((uint8) rgn->_usKeyLow);
+			instGenList.genAmount.setRangeHi((uint8) rgn->_usKeyHigh);
+			instGenList.write(igenCk->_data + dataPtr);
 			dataPtr += sizeof(sfInstGenList);
 
 			if (rgn->_usVelHigh)  // 0 means 'not set', fixes TriAce instruments
 			{
 				// Velocity range (if exists) this must be the next chunk
 				instGenList.sfGenOper = velRange;
-				instGenList.genAmount.ranges.byLo = (uint8) rgn->_usVelLow;
-				instGenList.genAmount.ranges.byHi = (uint8) rgn->_usVelHigh;
-				memcpy(igenCk->_data + dataPtr, &instGenList, sizeof(sfInstGenList));
+				instGenList.genAmount.setRangeLo((uint8) rgn->_usVelLow);
+				instGenList.genAmount.setRangeHi((uint8) rgn->_usVelHigh);
+				instGenList.write(igenCk->_data + dataPtr);
 				dataPtr += sizeof(sfInstGenList);
 			}
 
 			// initialAttenuation
 			instGenList.sfGenOper = initialAttenuation;
-			instGenList.genAmount.shAmount = (int16) (rgn->_sampinfo->_attenuation * 10);
-			memcpy(igenCk->_data + dataPtr, &instGenList, sizeof(sfInstGenList));
+			instGenList.genAmount.setShAmount((int16) (rgn->_sampinfo->_attenuation * 10));
+			instGenList.write(igenCk->_data + dataPtr);
 			dataPtr += sizeof(sfInstGenList);
 
 			// pan
 			instGenList.sfGenOper = pan;
-			instGenList.genAmount.shAmount =
-					(int16) ConvertPercentPanTo10thPercentUnits(rgn->_art->_pan);
-			memcpy(igenCk->_data + dataPtr, &instGenList, sizeof(sfInstGenList));
+			instGenList.genAmount.setShAmount(
+					(int16) ConvertPercentPanTo10thPercentUnits(rgn->_art->_pan));
+			instGenList.write(igenCk->_data + dataPtr);
 			dataPtr += sizeof(sfInstGenList);
 
 			// sampleModes
 			instGenList.sfGenOper = sampleModes;
-			instGenList.genAmount.wAmount = rgn->_sampinfo->_cSampleLoops;
-			memcpy(igenCk->_data + dataPtr, &instGenList, sizeof(sfInstGenList));
+			instGenList.genAmount.setwAmount(rgn->_sampinfo->_cSampleLoops);
+			instGenList.write(igenCk->_data + dataPtr);
 			dataPtr += sizeof(sfInstGenList);
 
 			// overridingRootKey
 			instGenList.sfGenOper = overridingRootKey;
-			instGenList.genAmount.wAmount = rgn->_sampinfo->_usUnityNote;
-			memcpy(igenCk->_data + dataPtr, &instGenList, sizeof(sfInstGenList));
+			instGenList.genAmount.setwAmount(rgn->_sampinfo->_usUnityNote);
+			instGenList.write(igenCk->_data + dataPtr);
 			dataPtr += sizeof(sfInstGenList);
 
 			// attackVolEnv
 			instGenList.sfGenOper = attackVolEnv;
-			instGenList.genAmount.shAmount =
+			instGenList.genAmount.setShAmount(
 					(rgn->_art->_attack_time == 0)
 					? -32768
-					: round(SecondsToTimecents(rgn->_art->_attack_time));
-			memcpy(igenCk->_data + dataPtr, &instGenList, sizeof(sfInstGenList));
+					: round(SecondsToTimecents(rgn->_art->_attack_time)));
+			instGenList.write(igenCk->_data + dataPtr);
 			dataPtr += sizeof(sfInstGenList);
 
 			// decayVolEnv
 			instGenList.sfGenOper = decayVolEnv;
-			instGenList.genAmount.shAmount =
+			instGenList.genAmount.setShAmount(
 					(rgn->_art->_decay_time == 0) ? -32768
-												  : round(SecondsToTimecents(rgn->_art->_decay_time));
-			memcpy(igenCk->_data + dataPtr, &instGenList, sizeof(sfInstGenList));
+												  : round(SecondsToTimecents(rgn->_art->_decay_time)));
+			instGenList.write(igenCk->_data + dataPtr);
 			dataPtr += sizeof(sfInstGenList);
 
 			// sustainVolEnv
 			instGenList.sfGenOper = sustainVolEnv;
 			if (rgn->_art->_sustain_lev > 100.0)
 				rgn->_art->_sustain_lev = 100.0;
-			instGenList.genAmount.shAmount = (int16) (rgn->_art->_sustain_lev * 10);
-			memcpy(igenCk->_data + dataPtr, &instGenList, sizeof(sfInstGenList));
+			instGenList.genAmount.setShAmount((int16) (rgn->_art->_sustain_lev * 10));
+			instGenList.write(igenCk->_data + dataPtr);
 			dataPtr += sizeof(sfInstGenList);
 
 			// releaseVolEnv
 			instGenList.sfGenOper = releaseVolEnv;
-			instGenList.genAmount.shAmount =
+			instGenList.genAmount.setShAmount(
 					(rgn->_art->_release_time == 0)
 					? -32768
-					: round(SecondsToTimecents(rgn->_art->_release_time));
-			memcpy(igenCk->_data + dataPtr, &instGenList, sizeof(sfInstGenList));
+					: round(SecondsToTimecents(rgn->_art->_release_time)));
+			instGenList.write(igenCk->_data + dataPtr);
 			dataPtr += sizeof(sfInstGenList);
 
 			// reverbEffectsSend
 			// instGenList.sfGenOper = reverbEffectsSend;
-			// instGenList.genAmount.shAmount = 800;
+			// instGenList.genAmount.setShAmount(800);
 			// memcpy(pgenCk->data + dataPtr, &instGenList, sizeof(sfInstGenList));
 			// dataPtr += sizeof(sfInstGenList);
 
 			// sampleID - this is the terminal chunk
 			instGenList.sfGenOper = sampleID;
-			instGenList.genAmount.wAmount = (uint16) (rgn->_tableIndex);
-			memcpy(igenCk->_data + dataPtr, &instGenList, sizeof(sfInstGenList));
+			instGenList.genAmount.setwAmount((uint16) (rgn->_tableIndex));
+			instGenList.write(igenCk->_data + dataPtr);
 			dataPtr += sizeof(sfInstGenList);
 
 			// int numConnBlocks = rgn->art->vConnBlocks.size();
@@ -392,7 +394,7 @@ SF2File::SF2File(SynthFile *synthfile) : RiffFile(synthfile->_name, "sfbk") {
 	//  add terminal sfInstBag
 	sfInstGenList instGenList;
 	memset(&instGenList, 0, sizeof(sfInstGenList));
-	memcpy(igenCk->_data + dataPtr, &instGenList, sizeof(sfInstGenList));
+	instGenList.write(igenCk->_data + dataPtr);
 	// memset(ibagCk->data + (totalNumRgns*sizeof(sfInstBag)), 0, sizeof(sfInstBag));
 	// igenCk->SetData(&genList, sizeof(sfGenList));
 	pdtaCk->AddChildChunk(igenCk);
@@ -447,7 +449,7 @@ SF2File::SF2File(SynthFile *synthfile) : RiffFile(synthfile->_name, "sfbk") {
 		samp.wSampleLink = 0;
 		samp.sfSampleType = monoSample;
 
-		memcpy(shdrCk->_data + (i * sizeof(sfSample)), &samp, sizeof(sfSample));
+		samp.write(shdrCk->_data + (i * sizeof(sfSample)));
 	}
 
 	//  add terminal sfSample
