@@ -1038,22 +1038,56 @@ void LC::c_of() {
 }
 
 void LC::c_charOf() {
-	Datum d2 = g_lingo->pop();
-	Datum d1 = g_lingo->pop();
+	Datum d2 = g_lingo->pop(); // string
+	Datum d1 = g_lingo->pop(); // index
 
-	warning("STUB: LC::c_charOf(): %d %d", d1.u.i, d2.u.i);
+    if (d1.type != INT || d2.type != STRING ) {
+		warning("LC::c_charOf(): Called with wrong data types: %s and %s", d1.type2str(), d2.type2str());
+		g_lingo->push(Datum(""));
+		return;
+	}
 
-	g_lingo->push(d1);
+	Datum res;
+	int index = d1.u.i;
+	Common::String chunkExpr = *d2.u.s;
+
+	if (index < 1)
+		res = Datum(chunkExpr);
+	else if (uint(index) > chunkExpr.size())
+		res = Datum("");
+	else
+		res = Datum(Common::String(chunkExpr[index - 1]));
+	g_lingo->push(res);
 }
 
 void LC::c_charToOf() {
-	Datum d3 = g_lingo->pop();
-	Datum d2 = g_lingo->pop();
-	Datum d1 = g_lingo->pop();
+	Datum d3 = g_lingo->pop(); // string
+	Datum d2 = g_lingo->pop(); // indexFrom
+	Datum d1 = g_lingo->pop(); // indexTo
 
-	warning("STUB: LC::c_charToOf(): %d %d %d", d1.u.i, d2.u.i, d3.u.i);
+	if (d1.type != INT || d2.type != INT || d3.type != STRING) {
+		warning("LC::c_charToOf(): Called with wrong data types: %s, %s and %s", d1.type2str(), d2.type2str(), d3.type2str());
+		g_lingo->push(Datum(""));
+		return;
+	}
 
-	g_lingo->push(d1);
+	int indexFrom = d1.u.i;
+	int indexTo = d2.u.i;
+	Common::String chunkExpr = *d3.u.s;
+
+	Datum res;
+	// The if order is important. It mimicks the checks, i.e. bugs, of Director 4.
+	if (indexFrom < 0)
+		res = Datum(chunkExpr);
+	else if (indexTo < 0)
+		res = Datum(Common::String(chunkExpr[indexTo - 1])); // treat as charOf
+	else if (indexFrom > indexTo)
+		res = Datum("");
+	else if (uint(indexFrom) > chunkExpr.size())
+		res = Datum("");
+	else
+		res = Datum(chunkExpr.substr(indexFrom - 1, indexTo - 1));
+	g_lingo->push(res);
 }
 
 void LC::c_itemOf() {

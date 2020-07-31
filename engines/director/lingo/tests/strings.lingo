@@ -34,3 +34,40 @@ scummvmAssertEqual(test, return & "foo" & return)
 
 put return into test
 scummvmAssertEqual(test, return)
+
+-- LC::charOF
+set string to "Macromedia"
+set res to char 6 of string
+scummvmAssertEqual(res, "m")
+put "m" && res
+
+-- error and bounds checks
+set res to  char 60 of string
+scummvmAssertEqual(res, EMPTY)
+put "" && res
+set res to char 0 of string
+scummvmAssertEqual(res, string)
+put string && res
+
+-- LC::charToOf
+set string to "Macromedia"
+set res to char 6 to 9 of string
+put "media" && res
+scummvmAssertEqual(res, "media")
+
+-- error and bounds checks
+set res to char 6 to 5 of string
+put "" && res
+scummvmAssert(res="")
+
+set res to char 6 to 60 of string
+put "media" && res
+scummvmAssertEqual(res, "media")
+
+set res to char -1 to -2 of string
+put string && res
+scummvmAssertEqual(res, string)
+
+set res to char 50 to 60 of string
+put "" && res
+scummvmAssertEqual(res, "")
