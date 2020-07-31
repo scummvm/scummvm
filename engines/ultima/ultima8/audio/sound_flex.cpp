@@ -38,6 +38,7 @@ SoundFlex::SoundFlex(Common::SeekableReadStream *rs) : Archive(rs), _samples(nul
 
 	Common::MemoryReadStream st(buf, size);
 
+	_index.push_back(SoundFlexEntry(""));
 	if (buf[0] == 0xFF) {
 		// Crusader flex has an index in the first object with the format:
 		// [00 or FF] [ 3 bytes, often 'oB0' or 'pB0' ] [ null-terminated name ]
