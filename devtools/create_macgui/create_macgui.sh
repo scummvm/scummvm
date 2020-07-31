@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 printf "Creating border file...\n"
 
 zip -r macgui.zip *.bmp
