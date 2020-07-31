@@ -50,28 +50,13 @@ Light3D::~Light3D() {
 
 //////////////////////////////////////////////////////////////////////////
 bool Light3D::setLight(int index) {
-	_gameRef->_renderer3D->resetModelViewTransform();
+	Math::Vector4d diffuse;
+	diffuse.getData()[0] = RGBCOLGetR(_diffuseColor) / 256.0f;
+	diffuse.getData()[1] = RGBCOLGetG(_diffuseColor) / 256.0f;
+	diffuse.getData()[2] = RGBCOLGetB(_diffuseColor) / 256.0f;
+	diffuse.getData()[3] = 1.0f;
 
-	float zero[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	float diffuse[4] = { RGBCOLGetR(_diffuseColor) / 256.0f, RGBCOLGetG(_diffuseColor) / 256.0f, RGBCOLGetB(_diffuseColor) / 256.0f, 1.0f };
-	float position[4] = { _position.x(), _position.y(), _position.z(), 1.0f };
-
-	glLightfv(GL_LIGHT0 + index, GL_DIFFUSE, diffuse);
-	glLightfv(GL_LIGHT0 + index, GL_AMBIENT, zero);
-	glLightfv(GL_LIGHT0 + index, GL_SPECULAR, zero);
-	glLightfv(GL_LIGHT0 + index, GL_POSITION, position);
-
-	if (_isSpotlight) {
-		Math::Vector3d dir = _target - _position;
-		glLightfv(GL_LIGHT0 + index, GL_SPOT_DIRECTION, dir.getData());
-
-		glLightf(GL_LIGHT0 + index, GL_SPOT_EXPONENT, 1.0f);
-		// wme sets the phi angle to 1.0 (in radians)
-		// so either 180/pi or (180/pi)/2 should give the same result
-		glLightf(GL_LIGHT0 + index, GL_SPOT_CUTOFF, 0.5f * (180.0f / M_PI));
-	} else {
-		glLightf(GL_LIGHT0 + index, GL_SPOT_CUTOFF, 180.0f);
-	}
+	_gameRef->_renderer3D->setLightParameters(index, _position, _target - _position, diffuse, _isSpotlight);
 
 	if (_active) {
 		_gameRef->_renderer3D->enableLight(index);

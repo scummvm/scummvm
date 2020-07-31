@@ -54,6 +54,7 @@ public:
 	virtual int maximumLightsCount() = 0;
 	virtual void enableLight(int index) = 0;
 	virtual void disableLight(int index) = 0;
+	virtual void setLightParameters(int index, const Math::Vector3d &position, const Math::Vector3d &direction, const Math::Vector4d &diffuse, bool spotlight) = 0;
 
 	virtual void setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode) = 0;
 

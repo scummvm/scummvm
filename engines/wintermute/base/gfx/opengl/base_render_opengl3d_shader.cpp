@@ -51,7 +51,6 @@ struct SpriteVertexShader {
 
 BaseRenderOpenGL3DShader::BaseRenderOpenGL3DShader(BaseGame *inGame)
     : BaseRenderer3D(inGame), _spriteBatchMode(false) {
-	setDefaultAmbientLightColor();
 }
 
 BaseRenderOpenGL3DShader::~BaseRenderOpenGL3DShader() {
@@ -87,22 +86,59 @@ void BaseRenderOpenGL3DShader::setAmbientLight() {
 		b = RGBCOLGetB(color);
 	}
 
-	float value[] = {r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f};
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, value);
+	Math::Vector4d value;
+	value.x() = r / 255.0f;
+	value.y() = g / 255.0f;
+	value.z() = b / 255.0f;
+	value.w() = a / 255.0f;
+
+	_modelXShader->use();
+	_modelXShader->setUniform("ambientLight", value);
 }
 
 int BaseRenderOpenGL3DShader::maximumLightsCount() {
-	GLint maxLightCount = 0;
-	glGetIntegerv(GL_MAX_LIGHTS, &maxLightCount);
-	return maxLightCount;
+	return 8;
 }
 
 void BaseRenderOpenGL3DShader::enableLight(int index) {
-	glEnable(GL_LIGHT0 + index);
+	_modelXShader->use();
+	Common::String uniform = Common::String::format("lights[%i].enabled", index);
+	_modelXShader->setUniform1f(uniform.c_str(), 1.0f);
 }
 
 void BaseRenderOpenGL3DShader::disableLight(int index) {
-	glDisable(GL_LIGHT0 + index);
+	_modelXShader->use();
+	Common::String uniform = Common::String::format("lights[%i].enabled", index);
+	_modelXShader->setUniform1f(uniform.c_str(), -1.0f);
+}
+
+void BaseRenderOpenGL3DShader::setLightParameters(int index, const Math::Vector3d &position, const Math::Vector3d &direction, const Math::Vector4d &diffuse, bool spotlight) {
+	Math::Vector4d position4d;
+	position4d.x() = position.x();
+	position4d.y() = position.y();
+	position4d.z() = position.z();
+	position4d.w() = 1.0f;
+
+	Math::Vector4d direction4d;
+	direction4d.x() = direction.x();
+	direction4d.y() = direction.y();
+	direction4d.z() = direction.z();
+	direction4d.w() = 0.0f;
+
+	if (spotlight) {
+		direction4d.w() = -1.0f;
+	}
+
+	_modelXShader->use();
+
+	Common::String uniform = Common::String::format("lights[%i]._position", index);
+	_modelXShader->setUniform(uniform.c_str(), position4d);
+
+	uniform = Common::String::format("lights[%i]._direction", index);
+	_modelXShader->setUniform(uniform.c_str(), direction4d);
+
+	uniform = Common::String::format("lights[%i]._color", index);
+	_modelXShader->setUniform(uniform.c_str(), diffuse);
 }
 
 void BaseRenderOpenGL3DShader::setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode) {
@@ -347,6 +383,13 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 
 	static const char *modelXAttributes[] = {"position", "texcoord", "normal", nullptr};
 	_modelXShader = OpenGL::Shader::fromFiles("modelx", modelXAttributes);
+
+	setDefaultAmbientLightColor();
+
+	for (int i = 0; i < maximumLightsCount(); ++i) {
+		setLightParameters(i, Math::Vector3d(0, 0, 0), Math::Vector3d(0, 0, 0), Math::Vector4d(0, 0, 0, 0), false);
+		disableLight(i);
+	}
 
 	_windowed = windowed;
 	_width = width;

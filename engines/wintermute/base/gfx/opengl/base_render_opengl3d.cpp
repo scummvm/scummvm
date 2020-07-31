@@ -94,6 +94,28 @@ void BaseRenderOpenGL3D::disableLight(int index) {
 	glDisable(GL_LIGHT0 + index);
 }
 
+void BaseRenderOpenGL3D::setLightParameters(int index, const Math::Vector3d &position, const Math::Vector3d &direction, const Math::Vector4d &diffuse, bool spotlight) {
+	resetModelViewTransform();
+
+	float zero[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+
+	glLightfv(GL_LIGHT0 + index, GL_DIFFUSE, diffuse.getData());
+	glLightfv(GL_LIGHT0 + index, GL_AMBIENT, zero);
+	glLightfv(GL_LIGHT0 + index, GL_SPECULAR, zero);
+	glLightfv(GL_LIGHT0 + index, GL_POSITION, position.getData());
+
+	if (spotlight) {
+		glLightfv(GL_LIGHT0 + index, GL_SPOT_DIRECTION, direction.getData());
+
+		glLightf(GL_LIGHT0 + index, GL_SPOT_EXPONENT, 1.0f);
+		// wme sets the phi angle to 1.0 (in radians)
+		// so either 180/pi or (180/pi)/2 should give the same result
+		glLightf(GL_LIGHT0 + index, GL_SPOT_CUTOFF, 0.5f * (180.0f / M_PI));
+	} else {
+		glLightf(GL_LIGHT0 + index, GL_SPOT_CUTOFF, 180.0f);
+	}
+}
+
 void BaseRenderOpenGL3D::setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode) {
 	switch (blendMode) {
 	case Graphics::BLEND_NORMAL:
