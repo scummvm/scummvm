@@ -563,7 +563,7 @@ void EoBEngine::runNpcDialogue(int npcIndex) {
 		if (r < 2) {
 			if (r == 0)
 				JOIN(8, 27, 44, 45);
-			else
+			else if (_flags.platform != Common::kPlatformSegaCD)
 				TXT(31);
 			setScriptFlags(0x4000000);
 		}
