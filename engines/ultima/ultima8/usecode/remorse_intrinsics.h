@@ -233,7 +233,7 @@ Intrinsic RemorseIntrinsics[] = {
 	MainActor::I_addItemCru, // int Intrinsic0B8(4 bytes)
 	Actor::I_getLastAnimSet, // void Intrinsic0B9(4 bytes)
 	Item::I_setQuality,
-	0, // int Intrinsic0BB(8 bytes)
+	CurrentMap::I_canExistAt, // int Intrinsic0BB(8 bytes)
 	Item::I_isOn,
 	Item::I_hurl, // void Intrinsic0BD(12 bytes)
 	Item::I_getQHi,  // based on same coff set as 026

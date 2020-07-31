@@ -1283,20 +1283,28 @@ bool CurrentMap::load(Common::ReadStream *rs, uint32 version) {
 	return true;
 }
 
-uint32 CurrentMap::I_canExistAt(const uint8 *args, unsigned int /*argsize*/) {
+uint32 CurrentMap::I_canExistAt(const uint8 *args, unsigned int argsize) {
 	ARG_UINT16(shape);
 	ARG_UINT16(x);
 	ARG_UINT16(y);
 	ARG_UINT16(z);
-	//!! TODO: figure these out
-	ARG_UINT16(unk1); // is either 1 or 4
-	ARG_UINT16(unk2); // looks like it could be an objid
-	ARG_UINT16(unk3); // always zero
+	if (argsize > 8) {
+		//!! TODO: figure these out
+		ARG_UINT16(unk1); // is either 1 or 4
+		ARG_UINT16(unk2); // looks like it could be an objid
+		ARG_UINT16(unk3); // always zero
+	}
 
 	if (GAME_IS_CRUSADER) {
 		x *= 2;
 		y *= 2;
 	}
+
+	//
+	// TODO: The crusader version of this function actually checks by
+	// changing the shapeinfo of shape 0x31A to match the target
+	// shape.  For a first level approximation, this is the same.
+	//
 
 	const CurrentMap *cm = World::get_instance()->getCurrentMap();
 	bool valid = cm->isValidPosition(x, y, z, shape, 0, 0, 0);

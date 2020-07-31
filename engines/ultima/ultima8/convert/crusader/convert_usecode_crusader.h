@@ -265,7 +265,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"byte MainActor::I_addItemCru(4 bytes)", // same coff as 037
 	"int16 Actor::I_getLastAnimSet(4 bytes)", // part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
 	"void Item::I_setQuality(Item *, int)", // same coff as 07F, 125
-	"byte Intrinsic0BB(8 bytes)", // TODO: check usecode.. code is weird, something with an imaginary chequered wall shape? (0x31A)
+	"byte CurrentMap::I_canExistAt(int shapeno, word x, word y, byte z)", // NOTE: actually slightly different, uses shape info for an imaginary chequered wall shape? (0x31A)
 	"byte Item::I_isOn(Item *, itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
 	"int16 Item::I_hurl(Item *,8 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133
