@@ -643,7 +643,7 @@ protected:
 	virtual void setLevelPalettes(int level) {}
 
 	void drawScene(int refresh);
-	void drawSceneShapes(int start = 0, int drawFlags = 0xFF);
+	void drawSceneShapes(int start = 0, int end = 18, int drawFlags = 0xFF);
 	void drawDecorations(int index);
 
 	int calcNewBlockPositionAndTestPassability(uint16 curBlock, uint16 direction);

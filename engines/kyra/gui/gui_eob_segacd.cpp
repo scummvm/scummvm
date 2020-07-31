@@ -457,14 +457,15 @@ void EoBEngine::gui_updateAnimations() {
 		// For whatever reason the original shakes all types of shapes (decorations, doors, etc.) except the monsters and
 		// the items lying on the floor. So we do the same. I've added drawing flags to drawSceneShapes() which allow
 		// separate drawing passes for the different shape types.
-		_shapeShakeOffsetX = _sceneShakeOffsetX;
-		_shapeShakeOffsetY = _sceneShakeOffsetY;
-		// All shapes except monsters and items
-		drawSceneShapes(0, 0xFF & ~0x2A);
-		_shapeShakeOffsetX = _shapeShakeOffsetY = 0;
-		// Monsters and items
-		drawSceneShapes(0, 0x2A);
-
+		for (int i = 0; i < 18; i++) {
+			_shapeShakeOffsetX = _sceneShakeOffsetX;
+			_shapeShakeOffsetY = _sceneShakeOffsetY;
+			// All shapes except monsters and items
+			drawSceneShapes(i, i + 1, 0xFF & ~0x2A);
+			_shapeShakeOffsetX = _shapeShakeOffsetY = 0;
+			// Monsters and items
+			drawSceneShapes(i, i + 1, 0x2A);
+		}
 		_screen->copyRegion(0, 0, 0, 0, 179, 123, _sceneDrawPage1, 0, Screen::CR_NO_P_CHECK);
 		updScreen = true;
 	}
