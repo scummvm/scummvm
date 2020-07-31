@@ -85,8 +85,7 @@ bool Stage::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 
 	if (forceRedraw) {
 		blitTo->clear(_stageColor);
-		_dirtyRects.clear();
-		_dirtyRects.push_back(Common::Rect(_composeSurface->w, _composeSurface->h));
+		markAllDirty();
 	} else {
 		if (_dirtyRects.size() == 0)
 			return false;
@@ -118,6 +117,7 @@ void Stage::setStageColor(uint stageColor) {
 	if (stageColor != _stageColor) {
 		_stageColor = stageColor;
 		reset();
+		markAllDirty();
 	}
 }
 
@@ -135,6 +135,11 @@ void Stage::addDirtyRect(const Common::Rect &r) {
 
 	if (bounds.width() > 0 && bounds.height() > 0)
 		_dirtyRects.push_back(bounds);
+}
+
+void Stage::markAllDirty() {
+	_dirtyRects.clear();
+	_dirtyRects.push_back(Common::Rect(_composeSurface->w, _composeSurface->h));
 }
 
 void Stage::mergeDirtyRects() {

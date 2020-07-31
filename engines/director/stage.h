@@ -92,11 +92,14 @@ class Stage : public Graphics::MacWindow, public Object<Stage> {
 	~Stage();
 
 	bool render(bool forceRedraw = false, Graphics::ManagedSurface *blitTo = nullptr);
-	bool needsAppliedColor(DirectorPlotData *pd);
-
 	void invertChannel(Channel *channel);
+
+	bool needsAppliedColor(DirectorPlotData *pd);
 	void setStageColor(uint stageColor);
+	int getStageColor() { return _stageColor; }
+
 	void addDirtyRect(const Common::Rect &r);
+	void markAllDirty();
 	void mergeDirtyRects();
 	void reset();
 
