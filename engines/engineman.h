@@ -99,7 +99,7 @@ private:
 	/** Find a loaded plugin with the given engine ID */
 	const Plugin *findLoadedPluginByEngine(const Common::String &engineId) const;
 
-	Common::String getFileNameFromEngineIdCached(const Common::String &engineId) const;
+	bool getFileNameFromEngineIdCached(const Common::String &engineId, Common::String &out) const;
 	Plugin *getPluginByEngineIdCached(const Common::String &engineId);
 	Plugin *getPluginByEngineIdUncached(const Common::String &engineId);
 
