@@ -704,13 +704,13 @@ bool MainActor::loadData(Common::ReadStream *rs, uint32 version) {
 
 uint32 MainActor::I_teleportToEgg(const uint8 *args, unsigned int argsize) {
 	uint16 mapnum;
-	if (argsize == 12) {
+	if (argsize == 6) {
 		ARG_UINT16(map);
 		mapnum = map;
 	} else {
 		// Crusader teleport intrinsic 096 uses main actor map.
 		// Intrinsic 079 provides a map argument.
-		assert(argsize == 8);
+		assert(argsize == 4);
 		MainActor *av = getMainActor();
 		mapnum = av->getMapNum();
 	}
