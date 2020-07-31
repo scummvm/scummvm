@@ -20,6 +20,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Errors are more likely to open the debugger, and be displayed, than just crash ScummVM.
    - Games are sorted in GUI ignoring the articles.
    - Now Hebrew is displayed correctly in GUI (requires FriBiDi library).
+   - Updated the Roland MT-32 emulation code to Munt 2.3.0.
 
  Dreamweb:
    - Added support for Russian fan-translation.

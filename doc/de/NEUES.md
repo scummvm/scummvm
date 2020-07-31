@@ -21,6 +21,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Fehler werden nun im Debugger angezeigt, anstatt ScummVM einfach abstürzen zu lassen.
    - Artikel werden bei der Sortierung der Spiele im Launcher nicht mehr berücksichtigt.
    - Hebräisch wird nun korrekt in der Benutzeroberfläche dargestellt (benötigt die FriBiDi-Bibliothek).
+  - Code der Roland MT-32-Emulation auf Munt 2.4.0 aktualisiert.
 
  Dreamweb:
    - Unterstützung für russische Fan-Übersetzung hinzugefügt.
