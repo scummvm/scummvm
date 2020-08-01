@@ -331,11 +331,6 @@ MODULE_OBJS += \
 	events/samsungtvsdl/samsungtvsdl-events.o
 endif
 
-ifeq ($(BACKEND),webos)
-MODULE_OBJS += \
-	events/webossdl/webossdl-events.o
-endif
-
 ifeq ($(BACKEND),wii)
 MODULE_OBJS += \
 	fs/wii/wii-fs.o \
