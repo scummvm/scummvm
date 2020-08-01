@@ -777,8 +777,6 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask, VirtScre
 
 	if (_vm->_game.version >= 7)
 		_vm->markRectAsDirty(kMainVirtScreen, _left, _left + _width, drawTop, drawTop + _height);
-	else
-		_vm->markRectAsDirty(vs->number, _left, _left + _width, drawTop, drawTop + _height);
 
 	// This check for kPlatformFMTowns and kMainVirtScreen is at least required for the chat with
 	// the navigator's head in front of the ghost ship in Monkey Island 1
@@ -794,7 +792,12 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask, VirtScre
 	if (_vm->_game.platform == Common::kPlatformAmiga && _vm->_game.id == GID_INDY4)
 		_drawScreen = vs->number;
 
-	printCharIntern(is2byte, _charPtr, _origWidth, _origHeight, _width, _height, vs, ignoreCharsetMask);
+	if (printCharIntern(is2byte, _charPtr, _origWidth, _origHeight, _width, _height, vs, ignoreCharsetMask) && _vm->_game.version <= 6) {
+		_vm->markRectAsDirty(kMainVirtScreen, _left, _left + _width, drawTop, drawTop + _height);
+		_vm->markRectAsDirty(kTextSurface, _left, _left + _width, drawTop, drawTop + _height);
+	}
+	else if (_vm->_game.version <= 6)
+		_vm->markRectAsDirty(vs->number, _left, _left + _width, drawTop, drawTop + _height);
 
 	// Original keeps glyph width and character dimensions separately
 	if ((_vm->_language == Common::ZH_TWN || _vm->_language == Common::KO_KOR) && is2byte)
@@ -814,9 +817,10 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask, VirtScre
 	_top -= _offsY;
 }
 
-void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, int origWidth, int origHeight, int width, int height, VirtScreen *vs, bool ignoreCharsetMask) {
+bool CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, int origWidth, int origHeight, int width, int height, VirtScreen *vs, bool ignoreCharsetMask) {
 	byte *dstPtr;
 	byte *back = NULL;
+	bool destIsTextSurface = false;
 	int drawTop = _top - vs->topline;
 
 	if ((_vm->_game.heversion >= 71 && _bytesPerPixel >= 8) || (_vm->_game.heversion >= 90 && _bytesPerPixel == 0)) {
@@ -824,6 +828,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 		if (ignoreCharsetMask || !vs->hasTwoBuffers) {
 			dstPtr = vs->getPixels(0, 0);
 		} else {
+			destIsTextSurface = true;
 			dstPtr = (byte *)_vm->_textSurface.getBasePtr(0, 0);
 		}
 
@@ -853,6 +858,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 			dstSurface = *vs;
 			dstPtr = vs->getPixels(_left, drawTop);
 		} else {
+			destIsTextSurface = true;
 			dstSurface = _vm->_textSurface;
 			dstPtr = (byte *)_vm->_textSurface.getBasePtr(_left * _vm->_textSurfaceMultiplier, (_top - _vm->_screenTop) * _vm->_textSurfaceMultiplier);
 		}
@@ -908,6 +914,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 			}
 		}
 	}
+	return destIsTextSurface;
 }
 
 bool CharsetRendererClassic::prepareDraw(uint16 chr) {

@@ -73,7 +73,8 @@ enum VirtScreenNumber {
 	kTextVirtScreen,	// In V0-V3 games: the area where text is printed
 	kVerbVirtScreen,	// The verb area
 	kUnkVirtScreen,		// ?? Not sure what this one is good for...
-	kNumVirtScreens
+	kNumVirtScreens,
+	kTextSurface		// The text surface exists outside the main virtscreen index
 };
 
 /**

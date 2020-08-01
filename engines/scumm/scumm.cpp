@@ -1369,7 +1369,9 @@ void ScummEngine::setupScumm() {
 	setupCharsetRenderer();
 
 	// Create and clear the text surface
+	memset((void *)&_textSurface, 0x00, sizeof(VirtScreen));
 	_textSurface.create(_screenWidth * _textSurfaceMultiplier, _screenHeight * _textSurfaceMultiplier, Graphics::PixelFormat::createFormatCLUT8());
+	_textSurface.number = kTextSurface;
 	clearTextSurface();
 
 	// Create the costume renderer
