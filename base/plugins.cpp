@@ -368,7 +368,6 @@ void PluginManager::unloadAllPluginsOfType(PluginType type) {
 
 void PluginManager::unloadAllPluginsOfTypeExcept(PluginType type, const Plugin *keep) {
 	assert(keep);
-	Plugin *found = NULL;
 	PluginList &list = _pluginsInMem[type];
 	for (PluginList::iterator i = list.begin(); i != list.end(); ++i) {
 		Plugin *p = *i;
@@ -376,12 +375,11 @@ void PluginManager::unloadAllPluginsOfTypeExcept(PluginType type, const Plugin *
 			continue;
 		if (!p->isLoaded())
 			continue;
-		if (p == keep) {
-			found = p;
-		} else {
-			p->unloadPlugin();
-			i = list.erase(i);
-		}
+		if (p == keep)
+			continue;
+		
+		p->unloadPlugin();
+		i = list.erase(i);
 	}
 }
 
