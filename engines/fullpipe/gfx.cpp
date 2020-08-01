@@ -849,6 +849,7 @@ bool Bitmap::putDibRB(byte *pixels, const Palette &palette) {
 						if (y <= endy) {
 							int bgcolor = palette.pal[(pixel >> 8) & 0xff];
 							curDestPtr = (uint32 *)_surface->getBasePtr(start1, y);
+							fillLen = MIN(_width - start1, fillLen);
 							colorFill(curDestPtr, fillLen, bgcolor);
 						}
 					}
@@ -875,6 +876,7 @@ bool Bitmap::putDibRB(byte *pixels, const Palette &palette) {
 
 				if (y <= endy) {
 					curDestPtr = (uint32 *)_surface->getBasePtr(start1, y);
+					fillLen = MIN(_width - start1, fillLen);
 					paletteFill(curDestPtr, (byte *)srcPtr2, fillLen, palette);
 				}
 			}
