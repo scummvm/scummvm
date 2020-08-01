@@ -149,7 +149,7 @@ void SoundTowns_LoK::loadSoundFile(uint file) {
 	_sfxFileData = _vm->resource()->fileData(res()->fileList[file], 0);
 }
 
-void SoundTowns_LoK::playSoundEffect(uint8 track, uint8) {
+void SoundTowns_LoK::playSoundEffect(uint16 track, uint8) {
 	if (!_sfxEnabled || !_sfxFileData)
 		return;
 

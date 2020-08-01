@@ -139,6 +139,7 @@ public:
 	virtual bool setTextInClipboard(const Common::String &text);
 	virtual bool isConnectionLimited();
 	virtual Common::String getSystemLanguage() const;
+	virtual char *convertEncoding(const char *to, const char *from, const char *string, size_t length);
 };
 
 #endif

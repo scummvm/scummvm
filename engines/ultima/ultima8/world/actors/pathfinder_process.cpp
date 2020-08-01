@@ -26,12 +26,15 @@
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/actors/pathfinder.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/misc/direction_util.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 static const unsigned int PATH_OK = 1;
 static const unsigned int PATH_FAILED = 0;
+
+const uint16 PathfinderProcess::PATHFINDER_PROC_TYPE = 0x204;
 
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(PathfinderProcess)
@@ -46,7 +49,7 @@ PathfinderProcess::PathfinderProcess(Actor *actor, ObjId item_, bool hit) :
 		_targetX(0), _targetY(0), _targetZ(0) {
 	assert(actor);
 	_itemNum = actor->getObjId();
-	_type = 0x0204; // CONSTANT !
+	_type = PATHFINDER_PROC_TYPE; // CONSTANT !
 
 	Item *item = getItem(item_);
 	if (!item) {
@@ -248,7 +251,7 @@ void PathfinderProcess::saveData(Common::WriteStream *ws) {
 	ws->writeUint16LE(static_cast<uint16>(_path.size()));
 	for (unsigned int i = 0; i < _path.size(); ++i) {
 		ws->writeUint16LE(static_cast<uint16>(_path[i]._action));
-		ws->writeUint16LE(static_cast<uint16>(_path[i]._direction));
+		ws->writeUint16LE(static_cast<uint16>(Direction_ToUsecodeDir(_path[i]._direction)));
 	}
 }
 
@@ -266,7 +269,7 @@ bool PathfinderProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	_path.resize(pathsize);
 	for (unsigned int i = 0; i < pathsize; ++i) {
 		_path[i]._action = static_cast<Animation::Sequence>(rs->readUint16LE());
-		_path[i]._direction = rs->readUint16LE();
+		_path[i]._direction = Direction_FromUsecodeDir(rs->readUint16LE());
 	}
 
 	return true;

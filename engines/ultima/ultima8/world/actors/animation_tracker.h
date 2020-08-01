@@ -41,12 +41,12 @@ public:
 	//! initialize the AnimationTracker for the given actor, action, dir
 	//! if state is non-zero, start from that state instead of the Actor's
 	//! current state
-	bool init(const Actor *actor, Animation::Sequence action, uint32 dir,
+	bool init(const Actor *actor, Animation::Sequence action, Direction dir,
 	          const PathfindingState *state = 0);
 
 	//! evaluate the maximum distance the actor will travel if the current
 	//! animation runs to completion by incremental calls to step
-	void evaluateMaxAnimTravel(int32 &max_endx, int32 &max_endy, uint32 dir_);
+	void evaluateMaxAnimTravel(int32 &max_endx, int32 &max_endy, Direction dir_);
 
 	//! do a single step of the animation
 	//! returns true if everything ok, false if not
@@ -122,9 +122,9 @@ private:
 	unsigned int _currentFrame;
 
 	ObjId _actor;
-	unsigned int _dir;
+	Direction _dir;
 
-	AnimAction *_animAction;
+	const AnimAction *_animAction;
 
 	// actor state
 	int32 _prevX, _prevY, _prevZ;

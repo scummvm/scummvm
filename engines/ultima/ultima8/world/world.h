@@ -139,15 +139,30 @@ public:
 	//! load World data
 	bool load(Common::ReadStream *rs, uint32 version);
 
-	bool isAlertActive() {
+	bool isAlertActive() const {
 		return _alertActive;
 	}
 
 	void setAlertActive(bool active);
 
+	uint8 getGameDifficulty() const {
+		return _difficulty;
+	}
+	void setGameDifficulty(uint8 difficulty) {
+		_difficulty = difficulty;
+	}
+
+	uint16 getControlledNPCNum() const {
+		return _controlledNPCNum;
+	}
+	void setControlledNPCNum(uint16 num);
+
 	INTRINSIC(I_getAlertActive); // for Crusader
 	INTRINSIC(I_setAlertActive); // for Crusader
 	INTRINSIC(I_clrAlertActive); // for Crusader
+	INTRINSIC(I_gameDifficulty); // for Crusader
+	INTRINSIC(I_getControlledNPCNum); // for Crusader
+	INTRINSIC(I_setControlledNPCNum); // for Crusader
 
 private:
 	static World *_world;
@@ -158,6 +173,8 @@ private:
 	Std::list<ObjId> _ethereal;
 
 	bool _alertActive; //!< is intruder alert active (Crusader)
+	uint8 _difficulty; //!< game difficulty level (Crusader)
+	uint16 _controlledNPCNum; //!< Current controlled NPC (normally 1, the avatar)
 
 };
 

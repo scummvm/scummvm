@@ -30,16 +30,14 @@
 #include "kyra/engine/eobcommon.h"
 #include "kyra/resource/resource.h"
 #include "kyra/engine/util.h"
+#include "kyra/graphics/screen_eob_segacd.h"
 
 #include "common/system.h"
-#include "common/translation.h"
 #include "common/memstream.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
 #include "graphics/sjis.h"
-
-#include "gui/error.h"
 
 namespace Kyra {
 
@@ -66,8 +64,13 @@ Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, 
 	_cyclePalette = 0;
 	_cpsFilePattern = "%s.";
 	_activePalCycle = 0;
-	for (int i = 0; i < 10; ++i)
-		_palette16c[i] = 0;	
+	_segaRenderer = 0;
+	_segaAnimator = 0;
+	_segaCustomPalettes = 0;
+	_palFaders = 0;
+	_defaultRenderBuffer = 0;
+	_specialColorReplace = false;
+	memset(_segaCurPalette, 0, sizeof(_segaCurPalette));
 }
 
 Screen_EoB::~Screen_EoB() {
@@ -80,6 +83,11 @@ Screen_EoB::~Screen_EoB() {
 	delete[] _cgaDitheringTables[0];
 	delete[] _cgaDitheringTables[1];
 	delete[] _cyclePalette;
+	delete[] _segaCustomPalettes;
+	delete[] _palFaders;
+	delete[] _defaultRenderBuffer;
+	delete _segaRenderer;
+	delete _segaAnimator;
 }
 
 bool Screen_EoB::init() {
@@ -91,13 +99,10 @@ bool Screen_EoB::init() {
 		if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
 			_shpBuffer = new uint8[SCREEN_H * SCREEN_W];
 			_convertHiColorBuffer = new uint8[SCREEN_H * SCREEN_W];
-			enableHiColorMode(true);			
-			loadFont(FID_SJIS_SMALL_FNT, "FONT.DMP");
-			assert(_fonts[FID_SJIS_FNT]);
-			_fonts[FID_SJIS_FNT]->setStyle(Font::kFSFat);
+			enableHiColorMode(true);
+			setFontStyles(FID_SJIS_FNT, Font::kStyleFat);
 			_fonts[FID_SJIS_LARGE_FNT] = new SJISFontLarge(_sjisFontShared);
 		} else if (_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98) {
-			loadFont(FID_SJIS_SMALL_FNT, "FONT12.FNT");
 			_fonts[FID_SJIS_FNT] = new SJISFontEoB1PC98(_sjisFontShared, /*12,*/ _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable1, temp), _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable2, temp));
 		}
 
@@ -118,13 +123,18 @@ bool Screen_EoB::init() {
 			memset(_cgaScaleTable, 0, 256 * sizeof(uint8));
 			for (int i = 0; i < 256; i++)
 				_cgaScaleTable[i] = ((i & 0xF0) >> 2) | (i & 0x03);
+		} else if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
+			sega_initGraphics();
+			_segaCustomPalettes = new uint16[128];
+			_palFaders = new PaletteFader[4];
+			_defaultRenderBufferSize = SCREEN_W * _screenHeight;
+			_defaultRenderBuffer = new uint8[_defaultRenderBufferSize];
+			memset(_defaultRenderBuffer, 0, _defaultRenderBufferSize);
+			sega_setTextBuffer(0, 0);
+			memset(_segaCustomPalettes, 0, 128 * sizeof(uint16));
 		}
 
-		const uint8 *pal16c = _vm->staticres()->loadRawData(kEoB1Palettes16c, temp);
-		if (pal16c) {
-			for (int i = 0; i < 10; i++)
-				_palette16c[i] = pal16c + i * 48;
-		}
+		_useShapeShading = (_bytesPerPixel != 2 && !_isAmiga && !_isSegaCD && !_use16ColorMode && _renderMode != Common::kRenderCGA && _renderMode != Common::kRenderEGA) || _useHiResEGADithering;
 
 		static const char *cpsExt[] = { "CPS", "EGA", "SHP", "BIN" };
 		int ci = 0;
@@ -250,24 +260,24 @@ void Screen_EoB::loadFileDataToPage(Common::SeekableReadStream *s, int pageNum, 
 	s->read(_pagePtrs[pageNum], size);
 }
 
-void Screen_EoB::printShadedText(const char *string, int x, int y, int col1, int col2, int shadowCol) {
-	if (_vm->gameFlags().lang != Common::JA_JPN) {
+void Screen_EoB::printShadedText(const char *string, int x, int y, int col1, int col2, int shadowCol, int pitch) {
+	if (_isSegaCD && shadowCol) {
+		printText(string, x + 1, y + 1, shadowCol, 0, pitch);
+	} else if (!_isSegaCD && _vm->gameFlags().lang != Common::JA_JPN) {
 		printText(string, x - 1, y, shadowCol, col2);
 		printText(string, x, y + 1, shadowCol, 0);
 		printText(string, x - 1, y + 1, shadowCol, 0);
-	} else if (col2) {
+	} else if (!_isSegaCD && col2) {
 		fillRect(x, y, x + getTextWidth(string) - 1, y + getFontHeight() - 1, col2);
 	}
 
-	if (_vm->gameFlags().use16ColorMode) {
-		assert(_fonts[_currentFont]);
-		_fonts[_currentFont]->setStyle(Font::kFSLeftShadow);
-	}
+	if (_vm->gameFlags().use16ColorMode)
+		setFontStyles(_currentFont, Font::kStyleLeftShadow);
 
-	printText(string, x, y, col1, 0);
+	printText(string, x, y, col1, 0, pitch);
 
 	if (_vm->gameFlags().use16ColorMode)
-		_fonts[_currentFont]->setStyle(Font::kFSNone);
+		setFontStyles(_currentFont, Font::kStyleNone);
 }
 
 void Screen_EoB::loadShapeSetBitmap(const char *file, int tempPage, int destPage) {
@@ -430,7 +440,8 @@ void Screen_EoB::setScreenPalette(const Palette &pal) {
 			createFadeTable16bit((const uint16*)(pal.getData()), &_16bitPalette[i * 256], 0, i * 85);
 	} else if (_useHiResEGADithering && pal.getNumColors() != 16) {
 		generateEGADitheringTable(pal);
-	} else if ((_renderMode == Common::kRenderEGA) && pal.getNumColors() == 16) {
+	} else if (_isSegaCD || (_renderMode == Common::kRenderEGA && pal.getNumColors() == 16)) {
+		_paletteChanged = true;
 		_screenPalette->copy(pal);
 		_system->getPaletteManager()->setPalette(_screenPalette->getData(), 0, _screenPalette->getNumColors());
 	} else if (_renderMode != Common::kRenderCGA && _renderMode != Common::kRenderEGA) {
@@ -1501,16 +1512,21 @@ bool Screen_EoB::loadFont(FontId fontId, const char *filename) {
 	if (fnt)
 		delete fnt;
 
-	if (!scumm_stricmp(filename, "FONT.DMP"))
-		fnt = new SJISFont12x12(_vm->staticres()->loadRawDataBe16(kEoB2FontDmpSearchTbl, temp));
-	else if (!scumm_stricmp(filename, "FONT12.FNT"))
-		fnt = new Font12x12PC98(12, _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable1, temp),
-			_vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable2, temp), _vm->staticres()->loadRawData(kEoB1FontLookupTable, temp));
-	else if (_isAmiga)
+	if (fontId == FID_SJIS_SMALL_FNT) {
+		if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
+			fnt = new SJISFont12x12(_vm->staticres()->loadRawDataBe16(kEoB2FontDmpSearchTbl, temp));
+		else if (_vm->gameFlags().platform == Common::kPlatformPC98)
+			fnt = new Font12x12PC98(12, _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable1, temp),
+				_vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable2, temp), _vm->staticres()->loadRawData(kEoB1FontLookupTable, temp));
+	} else if (_isAmiga) {
 		fnt = new AmigaDOSFont(_vm->resource(), _vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::DE_DEU);
-	else
+	} else if (_isSegaCD) {
+		fnt = new SegaCDFont(_vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable1, temp), _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable2, temp),
+			_vm->staticres()->loadRawData(kEoB1CharWidthTable1, temp), _vm->staticres()->loadRawData(kEoB1CharWidthTable2, temp), _vm->staticres()->loadRawData(kEoB1CharWidthTable3, temp));
+	} else {
 		// We use normal VGA rendering in EOB II, since we do the complete EGA dithering in updateScreen().
 		fnt = new OldDOSFont(_useHiResEGADithering ? Common::kRenderVGA : _renderMode, 12);
+	}
 
 	assert(fnt);
 
@@ -1522,330 +1538,6 @@ bool Screen_EoB::loadFont(FontId fontId, const char *filename) {
 	fnt->setColorMap(_textColorsMap);
 	delete file;
 	return ret;
-}
-
-void Screen_EoB::decodeSHP(const uint8 *data, int dstPage) {
-	int32 bytesLeft = READ_LE_UINT32(data);
-	const uint8 *src = data + 4;
-	uint8 *dst = getPagePtr(dstPage);
-
-	if (bytesLeft < 0) {
-		memcpy(dst, data, 64000);
-		return;
-	}
-
-	while (bytesLeft > 0) {
-		uint8 code = *src++;
-		bytesLeft--;
-
-		for (int i = 8; i; i--) {
-			if (code & 0x80) {
-				uint16 copyOffs = (src[0] << 4) | (src[1] >> 4);
-				uint8 count = (src[1] & 0x0F) + 3;
-				src += 2;
-				bytesLeft -= 2;
-				const uint8 *copySrc = dst - 1 - copyOffs;
-				while (count--)
-					*dst++ = *copySrc++;
-			} else if (bytesLeft) {
-				*dst++ = *src++;
-				bytesLeft--;
-			} else {
-				break;
-			}
-			code <<= 1;
-		}
-	}
-}
-
-void Screen_EoB::convertToHiColor(int page) {
-	if (!_16bitPalette)
-		return;
-	uint16 *dst = (uint16 *)getPagePtr(page);
-	memcpy(_convertHiColorBuffer, dst, SCREEN_H * SCREEN_W);
-	uint8 *src = _convertHiColorBuffer;
-	for (int s = SCREEN_H * SCREEN_W; s; --s)
-		*dst++ = _16bitPalette[*src++];
-}
-
-void Screen_EoB::shadeRect(int x1, int y1, int x2, int y2, int shadingLevel) {
-	if (!_16bitPalette)
-		return;
-
-	int l = _16bitShadingLevel;
-	_16bitShadingLevel = shadingLevel;
-
-	if (_curPage == 0 || _curPage == 1)
-		addDirtyRect(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
-
-	uint16 *dst = (uint16*)(getPagePtr(_curPage) + y1 * SCREEN_W * _bytesPerPixel + x1 * _bytesPerPixel);
-
-	for (; y1 < y2; ++y1) {
-		uint16 *ptr = dst;
-		for (int i = 0; i < x2 - x1; i++) {
-			*ptr = shade16bitColor(*ptr);
-			ptr++;
-		}
-		dst += SCREEN_W;
-	}
-
-	_16bitShadingLevel = l;
-}
-
-void Screen_EoB::selectPC98Palette(int paletteIndex, Palette &dest, int brightness, bool set) {
-	if (paletteIndex < 0 || paletteIndex > 9)
-		return;
-	if (!_use16ColorMode || !_palette16c[paletteIndex])
-		return;
-
-	uint8 pal[48];
-	for (int i = 0; i < 48; ++i)
-		pal[i] = CLIP<int>(_palette16c[paletteIndex][i] + brightness, 0, 15);
-	loadPalette(pal, dest, 48);
-	
-	if (set)
-		setScreenPalette(dest);
-}
-
-void Screen_EoB::decodeBIN(const uint8 *src, uint8 *dst, uint16 inSize) {
-	const uint8 *end = src + inSize;
-	memset(_dsTempPage, 0, 2048);
-	int tmpDstOffs = 0;
-
-	while (src < end) {
-		uint8 code = *src++;
-		if (!(code & 0x80)) {
-			int offs = code << 4;
-			code = *src++;
-			offs |= (code >> 4);
-			int len = (code & 0x0F) + 2;
-			int tmpSrcOffs = (tmpDstOffs - offs) & 0x7FF;
-			const uint8 *tmpSrc2 = dst;
-
-			for (int len2 = len; len2; len2--) {
-				*dst++ = _dsTempPage[tmpSrcOffs++];
-				tmpSrcOffs &= 0x7FF;
-			}
-
-			while (len--) {
-				_dsTempPage[tmpDstOffs++] = *tmpSrc2++;
-				tmpDstOffs &= 0x7FF;
-			}
-
-		} else if (code & 0x40) {
-			int len = code & 7;
-			if (code & 0x20)
-				len = (len << 8) | *src++;
-			len += 2;
-
-			int planes = ((code >> 3) & 3) + 1;
-			while (len--) {
-				for (int i = 0; i < planes; ++i) {
-					*dst++ = _dsTempPage[tmpDstOffs++] = src[i];
-					tmpDstOffs &= 0x7FF;
-				}
-			}
-			src += planes;
-		} else {
-			for (int len = (code & 0x3F) + 1; len; len--) {
-				*dst++ = _dsTempPage[tmpDstOffs++] = *src++;
-				tmpDstOffs &= 0x7FF;
-			}
-		}
-	}
-}
-
-void Screen_EoB::decodePC98PlanarBitmap(uint8 *srcDstBuffer, uint8 *tmpBuffer, uint16 size) {
-	assert(tmpBuffer != srcDstBuffer);
-	memcpy(tmpBuffer, srcDstBuffer, size);
-	const uint8 *src = tmpBuffer;
-	uint8 *dst1 = srcDstBuffer;
-	uint8 *dst2 = srcDstBuffer + 4;
-	size >>= 3;
-	while (size--) {
-		for (int i = 0; i < 4; ++i) {
-			uint8 col1 = 0;
-			uint8 col2 = 0;
-			for (int ii = 0; ii < 4; ++ii) {
-				col1 |= ((src[ii] >> (7 - i)) & 1) << ii;
-				col2 |= ((src[ii] >> (3 - i)) & 1) << ii;
-			}
-			*dst1++ = col1;
-			*dst2++ = col2;
-		}
-		src += 4;
-		dst1 += 4;
-		dst2 += 4;
-	}
-}
-
-void Screen_EoB::initPC98PaletteCycle(int paletteIndex, PalCycleData *data) {
-	if (!_use16ColorMode || !_cyclePalette)
-		return;
-
-	_activePalCycle = data;
-
-	if (data)
-		memcpy(_cyclePalette, _palette16c[paletteIndex], 48);
-	else
-		memset(_cyclePalette, 0, 48);
-}
-
-void Screen_EoB::updatePC98PaletteCycle(int brightness) {
-	if (_activePalCycle) {
-		for (int i = 0; i < 48; ++i) {
-			if (--_activePalCycle[i].delay)
-				continue;
-			for (int8 in = 32; in == 32; ) {
-				in = *_activePalCycle[i].data++;
-				if (in < 16 && in > -16) {
-					_cyclePalette[i] += in;
-					_activePalCycle[i].delay = *_activePalCycle[i].data++;
-				} else if (in < 32) {
-					_cyclePalette[i] = in - 16;
-					_activePalCycle[i].delay = *_activePalCycle[i].data++;
-				} else if (in == 32)
-					_activePalCycle[i].data += READ_BE_INT16(_activePalCycle[i].data);
-			}
-		}
-	}
-
-	uint8 pal[48];
-	for (int i = 0; i < 48; ++i)
-		pal[i] = CLIP<int>(_cyclePalette[i] + brightness, 0, 15);
-	loadPalette(pal, *_palettes[0], 48);
-	setScreenPalette(*_palettes[0]);
-}
-
-static uint32 _decodeFrameAmiga_x = 0;
-
-bool decodeFrameAmiga_readNextBit(const uint8 *&data, uint32 &code, uint32 &chk) {
-	_decodeFrameAmiga_x = code & 1;
-	code >>= 1;
-	if (code)
-		return _decodeFrameAmiga_x;
-
-	data -= 4;
-	code = READ_BE_UINT32(data);
-	chk ^= code;
-	_decodeFrameAmiga_x = code & 1;
-	code = (code >> 1) | (1 << 31);
-
-	return _decodeFrameAmiga_x;
-}
-
-uint32 decodeFrameAmiga_readBits(const uint8 *&data, uint32 &code, uint32 &chk, int count) {
-	uint32 res = 0;
-	while (count--) {
-		decodeFrameAmiga_readNextBit(data, code, chk);
-		uint32 bt1 = _decodeFrameAmiga_x;
-		_decodeFrameAmiga_x = res >> 31;
-		res = (res << 1) | bt1;
-	}
-	return res;
-}
-
-void Screen_EoB::loadSpecialAmigaCPS(const char *fileName, int destPage, bool isGraphics) {
-	uint32 fileSize = 0;
-	const uint8 *file = _vm->resource()->fileData(fileName, &fileSize);
-
-	if (!file)
-		error("Screen_EoB::loadSpecialAmigaCPS(): Failed to load file '%s'", file);
-
-	uint32 inSize = READ_BE_UINT32(file);
-	const uint8 *pos = file;
-
-	// Check whether the file starts with the actual compression header.
-	// If this is not the case, there should a palette before the header.
-	// Unlike normal CPS files these files never have more than one palette.
-	if (((inSize + 15) & ~3) != ((fileSize + 3) & ~3)) {
-		Common::MemoryReadStream in(pos, 64);
-		_palettes[0]->loadAmigaPalette(in, 0, 32);
-		pos += 64;
-	}
-
-	inSize = READ_BE_UINT32(pos);
-	uint32 outSize = READ_BE_UINT32(pos + 4);
-	uint32 chk = READ_BE_UINT32(pos + 8);
-
-	pos = pos + 8 + inSize;
-	uint8 *dstStart = _pagePtrs[destPage];
-	uint8 *dst = dstStart + outSize;
-
-	uint32 val = READ_BE_UINT32(pos);
-	_decodeFrameAmiga_x = 0;
-	chk ^= val;
-
-	while (dst > dstStart) {
-		int para = -1;
-		int para2 = 0;
-
-		if (decodeFrameAmiga_readNextBit(pos, val, chk)) {
-			uint32 code = decodeFrameAmiga_readBits(pos, val, chk, 2);
-
-			if (code == 3) {
-				para = para2 = 8;
-			} else {
-				int cnt = 0;
-				if (code < 2) {
-					cnt = 3 + code;
-					para2 = 9 + code;
-				} else {
-					cnt = decodeFrameAmiga_readBits(pos, val, chk, 8) + 1;
-					para2 = 12;
-				}
-					
-				code = decodeFrameAmiga_readBits(pos, val, chk, para2);
-				while (cnt--) {
-					dst--;
-					*dst = dst[code & 0xFFFF];
-				}
-			}
-		} else {
-			if (decodeFrameAmiga_readNextBit(pos, val, chk)) {
-				uint32 code = decodeFrameAmiga_readBits(pos, val, chk, 8);
-				dst--;
-				*dst = dst[code & 0xFFFF];
-				dst--;
-				*dst = dst[code & 0xFFFF];
-
-			} else {
-				para = 3;				
-			}
-		}
-
-		if (para > 0) {
-			uint32 code = decodeFrameAmiga_readBits(pos, val, chk, para);
-			uint32 cnt = (code & 0xFFFF) + para2 + 1;
-
-			while (cnt--) {
-				for (int i = 0; i < 8; ++i) {
-					decodeFrameAmiga_readNextBit(pos, val, chk);
-					uint32 bt1 = _decodeFrameAmiga_x;
-					_decodeFrameAmiga_x = code >> 31;
-					code = (code << 1) | bt1;
-				}
-				*(--dst) = code & 0xFF;
-			}
-		}
-	}
-
-	delete[] file;
-
-	if (chk)
-		error("Screen_EoB::loadSpecialAmigaCPS(): Checksum error");
-
-	if (isGraphics)
-		convertAmigaGfx(_pagePtrs[destPage], 320, 200);
-}
-
-void Screen_EoB::setDualPalettes(Palette &top, Palette &bottom) {
-	// The original supports simultaneous fading of both palettes, but doesn't make any use of that
-	// feature. The fade rate is always set to 0. So I see no need to implement that.
-	_palettes[0]->copy(top, 0, 32, 0);
-	_palettes[0]->copy(bottom, 0, 32, 32);
-	setScreenPalette(*_palettes[0]);
-	enableDualPaletteMode(120);
 }
 
 void Screen_EoB::updateDirtyRects() {
@@ -1894,7 +1586,7 @@ void Screen_EoB::drawShapeSetPixel(uint8 *dst, uint8 col) {
 	if (_bytesPerPixel == 2) {
 		*(uint16*)dst = _16bitPalette[(_dsShapeFadingLevel << 8) + col];
 		return;
-	} else if (_use256ColorMode || _useHiResEGADithering) {
+	} else if (_useShapeShading) {
 		if (_dsBackgroundFading) {
 			if (_dsShapeFadingLevel) {
 				col = *dst;
@@ -2073,11 +1765,11 @@ const uint8 Screen_EoB::_egaMatchTable[] = {
 uint16 *OldDOSFont::_cgaDitheringTable = 0;
 int OldDOSFont::_numRef = 0;
 
-OldDOSFont::OldDOSFont(Common::RenderMode mode, uint8 shadowColor) : _renderMode(mode), _shadowColor(shadowColor) {
+OldDOSFont::OldDOSFont(Common::RenderMode mode, uint8 shadowColor) : _renderMode(mode), _shadowColor(shadowColor), _colorMap8bit(0), _colorMap16bit(0) {
 	_data = 0;
 	_width = _height = _numGlyphs = 0;
 	_bitmapOffsets = 0;
-	_style = kFSNone;
+	_style = kStyleNone;
 
 	_numRef++;
 	if (!_cgaDitheringTable && _numRef == 1) {
@@ -2142,7 +1834,7 @@ void OldDOSFont::drawChar(uint16 c, byte *dst, int pitch, int bpp) const {
 	uint16 color1 = _colorMap8bit[1];
 	uint16 color2 = _colorMap8bit[0];
 
-    if (_style == kFSLeftShadow) {
+    if (_style == kStyleLeftShadow) {
 		drawCharIntern(c, dst + pitch, pitch, 1, _shadowColor, 0);
 		drawCharIntern(c, dst - 1, pitch, 1, _shadowColor, 0);
 		drawCharIntern(c, dst - 1 + pitch, pitch, 1, _shadowColor, 0);
@@ -2317,433 +2009,6 @@ void OldDOSFont::unload() {
 	_data = 0;
 	_width = _height = _numGlyphs = 0;
 	_bitmapOffsets = 0;
-}
-
-AmigaDOSFont::AmigaDOSFont(Resource *res, bool needsLocalizedFont) : _res(res), _needsLocalizedFont(needsLocalizedFont), _width(0), _height(0), _first(0), _last(0), _content(0), _numElements(0), _selectedElement(0), _maxPathLen(256) {
-	assert(_res);
-}
-
-bool AmigaDOSFont::load(Common::SeekableReadStream &file) {
-	unload();
-
-	uint16 id = file.readUint16BE();
-	// We only support type 0x0f00, since this is the only type used for EOB 
-	if (id != 0x0f00)
-		return false;
-
-	_numElements = file.readUint16BE();
-	_content = new FontContent[_numElements];
-	char *cfile = new char[_maxPathLen];
-
-	for (int i = 0; i < _numElements; ++i) {
-		file.read(cfile, _maxPathLen);
-		_content[i].height = file.readUint16BE();;
-		_content[i].style = file.readByte();
-		_content[i].flags = file.readByte();
-		_content[i].contentFile = cfile;
-
-		for (int ii = 0; ii < i; ++ii) {
-			if (_content[ii].contentFile == _content[i].contentFile && _content[ii].data.get())
-				_content[i].data = _content[ii].data;
-		}
-
-		if (!_content[i].data.get()) {
-			TextFont *contentData = loadContentFile(cfile);
-			if (contentData) {
-				_content[i].data = Common::SharedPtr<TextFont>(contentData);
-			} else {
-				unload();
-				return false;
-			}
-		}
-
-		if (!(_content[i].flags & 0x40) && (_content[i].height != _content[i].data->height)) {
-			warning("Amiga DOS Font construction / scaling not implemented.");
-		}
-	}
-	
-	delete[] cfile;
-
-	selectMode(0);
-
-	return true;
-}
-
-int AmigaDOSFont::getCharWidth(uint16 c) const {
-	if (c < _first || c > _last)
-		return 0;
-	c -= _first;
-
-	int width = _content[_selectedElement].data->spacing ? _content[_selectedElement].data->spacing[c] : _content[_selectedElement].data->width;
-
-	/*if (_content[_selectedElement].data->kerning)
-		width += _content[_selectedElement].data->kerning[c];*/
-
-	return width;
-}
-
-void AmigaDOSFont::drawChar(uint16 c, byte *dst, int pitch, int) const {
-	if (c < _first || c > _last || !dst)
-		return;
-
-	static const uint16 table[] = {
-		0x8000, 0xc000, 0xe000, 0xf000, 0xf800, 0xfc00, 0xfe00, 0xff00,
-		0xff80, 0xffc0, 0xffe0, 0xfff0, 0xfff8, 0xfffc, 0xfffe, 0xffff
-	};
-
-	c -= _first;
-
-	int w = _content[_selectedElement].data->spacing ? _content[_selectedElement].data->spacing[c] : _content[_selectedElement].data->width;
-	int xbits = _content[_selectedElement].data->location[c * 2 + 1];
-	int h = _content[_selectedElement].data->height;
-	
-	uint16 bitPos = _content[_selectedElement].data->location[c * 2] & 0x0F;
-	uint16 mod = _content[_selectedElement].data->modulo;
-	const uint8 *data = _content[_selectedElement].data->bitmap + ((_content[_selectedElement].data->location[c * 2] >> 3) & ~1);
-	uint32 xbt_mask = xbits ? table[(xbits - 1) & 0x0F] << 16 : 0;
-
-	for (int y = 0; y < h; ++y) {
-		uint32 mask = 0x80000000;
-		uint32 bits = (READ_BE_UINT32(data) << bitPos) & xbt_mask;
-		data += mod;
-		
-		for (int x = 0; x < w; ++x) {
-			if (bits & mask) {
-				if (_colorMap[1])
-					*dst = _colorMap[1];
-			} else {
-				if (_colorMap[0])
-					*dst = _colorMap[0];
-			}
-			mask >>= 1;
-			dst++;
-		}
-		dst += (pitch - w);
-	}
-}
-
-uint8 AmigaDOSFont::_errorDialogDisplayed = 0;
-
-void AmigaDOSFont::errorDialog(int index) {
-	if (_errorDialogDisplayed & (1 << index))
-		return;
-	_errorDialogDisplayed |= (1 << index);
-
-	// I've made rather elaborate dialogs here, since the Amiga font file handling is quite prone to cause problems for users.
-	// This will hopefully prevent unnecessary forum posts and bug reports.
-	if (index == 0) {
-		::GUI::displayErrorDialog(_(
-			"This AMIGA version requires the following font files:\n\nEOBF6.FONT\nEOBF6/6\nEOBF8.FONT\nEOBF8/8\n\n"
-			"If you used the orginal installer for the installation these files\nshould be located in the AmigaDOS system 'Fonts/' folder.\n"
-			"Please copy them into the EOB game data directory.\n"
-		));
-		
-		error("Failed to load font files.");
-	} else if (index == 1) {
-		::GUI::displayErrorDialog(_(
-			"This AMIGA version requires the following font files:\n\nEOBF6.FONT\nEOBF6/6\nEOBF8.FONT\nEOBF8/8\n\n"
-			"This is a localized (non-English) version of EOB II which uses language specific characters\n"
-			"contained only in the specific font files that came with your game. You cannot use the font\n"
-			"files from the English version or from any EOB I game which seems to be what you are doing.\n\n"
-			"The game will continue, but the language specific characters will not be displayed.\n"
-			"Please copy the correct font files into your EOB II game data directory.\n\n"
-		));
-	}
-}
-
-void AmigaDOSFont::unload() {
-	delete[] _content;
-}
-
-AmigaDOSFont::TextFont *AmigaDOSFont::loadContentFile(const Common::String fileName) {
-	Common::SeekableReadStreamEndian *str = _res->createEndianAwareReadStream(fileName);
-
-	if (!str && fileName.contains('/')) {
-		// These content files are usually located in sub directories (i. e. the eobf8.font
-		// has a sub dir named 'eobf8' with a file '8' in it). In case someone put the content
-		// files directly in the game directory we still try to open it.
-		Common::String fileNameAlt = fileName;
-		while (fileNameAlt.firstChar() != '/')
-			fileNameAlt.deleteChar(0);
-		fileNameAlt.deleteChar(0);
-
-		str = _res->createEndianAwareReadStream(fileNameAlt);
-
-		if (!str) {
-			// Someone might even have copied the floppy disks to the game directory with the
-			// full sub directory structure. So we also try that...
-			fileNameAlt = "fonts/";
-			fileNameAlt += fileName;
-
-			str = _res->createEndianAwareReadStream(fileNameAlt);
-		}
-
-		if (!str)
-			errorDialog(0);
-	}
-
-	uint32 hunkId = str->readUint32();
-	// Except for some sanity checks we skip all of the Amiga hunk file magic
-	if (hunkId != 0x03f3)
-		return 0;
-	str->seek(20, SEEK_CUR);
-
-	uint32 hunkType = str->readUint32();
-	if (hunkType != 0x3E9)
-		return 0;
-	uint32 dataSize = str->readUint32() * 4;
-	int32 hunkStartPos = str->pos();
-
-	str->seek(34, SEEK_CUR);
-	TextFont *fnt = new TextFont();
-	int32 fntStartPos = str->pos();
-	str->seek(44, SEEK_CUR);
-	fnt->height = str->readUint16();
-	str->seek(2, SEEK_CUR);
-	fnt->width = str->readUint16();
-	fnt->baseLine = str->readUint16();
-	str->seek(4, SEEK_CUR);
-	fnt->firstChar = str->readByte();
-	fnt->lastChar = str->readByte();
-
-	if (_needsLocalizedFont && fnt->lastChar <= 127)
-		errorDialog(1);
-
-	str->seek(18, SEEK_CUR);
-	int32 curPos = str->pos();
-	uint32 bufferSize = dataSize - (curPos - fntStartPos);
-	uint8 *buffer = new uint8[bufferSize];
-	str->read(buffer, bufferSize);
-
-	str->seek(curPos - 18, SEEK_SET);
-	uint32 offset = str->readUint32();
-	fnt->bitmap = offset ? buffer + offset - (curPos - hunkStartPos) : 0;
-	fnt->modulo = str->readUint16();
-
-	offset = str->readUint32();
-	uint16 *loc = (uint16*) (offset ? buffer + offset - (curPos - hunkStartPos) : 0);
-	for (int i = 0; i <= (fnt->lastChar - fnt->firstChar) * 2 + 1; ++i)
-		loc[i] = READ_BE_UINT16(&loc[i]);
-	fnt->location = loc;
-
-	offset = str->readUint32();
-	int16 *idat = offset ? (int16*)(buffer + offset - (curPos - hunkStartPos)) : 0;
-	if (idat) {
-		for (int i = 0; i <= (fnt->lastChar - fnt->firstChar) * 2 + 1; ++i)
-			idat[i] = (int16)READ_BE_UINT16(&idat[i]);
-	}
-	fnt->spacing = idat;
-
-	offset = str->readUint32();
-	// This warning will only show up if someone tries to use this code elsewhere. It cannot happen with EOB fonts.
-	if (offset)
-		warning("Trying to load an AmigaDOS font with kerning data. This is not implemented. Font Rendering will not be accurate.");
-	idat = offset ? (int16*)(buffer + offset - (curPos - hunkStartPos)) : 0;
-	if (idat) {
-		for (int i = 0; i <= (fnt->lastChar - fnt->firstChar) * 2 + 1; ++i)
-			idat[i] = (int16)READ_BE_UINT16(&idat[i]);
-	}
-	fnt->kerning = idat;	
-
-	fnt->data = buffer;
-
-	delete str;
-
-	return fnt;
-}
-
-void AmigaDOSFont::selectMode(int mode) {
-	if (mode < 0 || mode > _numElements - 1)
-		return;
-
-	_selectedElement = mode;
-
-	_width = _content[mode].data->width;
-	_height = _content[mode].data->height;
-	_first = _content[mode].data->firstChar;
-	_last = _content[mode].data->lastChar;
-}
-
-SJISFontEoB1PC98::SJISFontEoB1PC98(Common::SharedPtr<Graphics::FontSJIS> &font, /*uint8 shadowColor,*/ const uint16 *convTable1, const uint16 *convTable2)	: SJISFont(font, 0, false, false, 0),
-	/*_shadowColor(shadowColor),*/ _convTable1(convTable1), _convTable2(convTable2), _defaultConv(true) {
-	assert(_convTable1);
-	assert(_convTable2);
-}
-
-int SJISFontEoB1PC98::getCharWidth(uint16 c) const {
-	return SJISFont::getCharWidth(convert(c));
-}
-
-void SJISFontEoB1PC98::drawChar(uint16 c, byte *dst, int pitch, int) const {
-	c = convert(c);
-	_font->setDrawingMode(_style == kFSLeftShadow ? Graphics::FontSJIS::kShadowLeftMode : Graphics::FontSJIS::kDefaultMode);
-	_font->toggleFatPrint(false);
-	_font->drawChar(dst, c, 640, 1, _colorMap[1], _colorMap[0], 640, 400);
-}
-
-uint16 SJISFontEoB1PC98::convert(uint16 c) const {
-	uint8 l = c & 0xFF;
-	uint8 h = c >> 8;
-
-	if (c < 128) {
-		assert(l > 31);
-		c = _convTable2[l - 32];
-	} else if (l > 160 && l < 225) {
-		bool done = false;
-		if (_defaultConv) {
-			if (h == 0xDE) {
-				if ((l >= 182 && l <= 196) || (l >= 202 && l <= 206)) {
-					c = _convTable1[l - 182];
-					done = true;
-				}
-			} else if (h == 0xDF) {
-				if (l >= 202 && l <= 206) {
-					c = _convTable1[l - 177];
-					done = true;
-				}
-			}
-		}
-		if (!done)
-			c = _convTable2[l - 64];
-	}
-
-	return c;
-}
-
-Font12x12PC98::Font12x12PC98(uint8 shadowColor, const uint16 *convTable1, const uint16 *convTable2, const uint8 *lookupTable) : OldDOSFont(Common::kRenderDefault, 12),
-	_convTable1(convTable1), _convTable2(convTable2) {
-	assert(convTable1);
-	assert(convTable2);
-	assert(lookupTable);
-
-	_width = _height = 12;
-	_numGlyphs = 275;
-	_bmpOffs = new uint16[_numGlyphs];
-	for (int i = 0; i < _numGlyphs; ++i)
-		_bmpOffs[i] = lookupTable[i] * 24;
-}
-
-Font12x12PC98::~Font12x12PC98() {
-	delete[] _bmpOffs;
-}
-
-bool Font12x12PC98::load(Common::SeekableReadStream &file) {
-	unload();
-
-	_width = _height = 12;
-	_numGlyphs = 275;
-	_bitmapOffsets = _bmpOffs;
-
-	_data = new uint8[file.size()];
-	assert(_data);
-
-	file.read(_data, file.size());
-	if (file.err())
-		return false;
-
-	return true;
-}
-
-uint16 Font12x12PC98::convert(uint16 c) const {
-	uint8 l = c & 0xFF;
-	uint8 h = c >> 8;
-
-	if (c < 128) {
-		c = _convTable2[l - 32];
-	} else if (l > 160 && l < 225) {
-		bool done = false;
-		if (1) {
-			if (h == 0xDE) {
-				if ((l >= 182 && l <= 196) || (l >= 202 && l <= 206)) {
-					c = _convTable1[l - 182];
-					done = true;
-				}
-			} else if (h == 0xDF) {
-				if (l >= 202 && l <= 206) {
-					c = _convTable1[l - 177];
-					done = true;
-				}
-			}
-		}
-		if (!done)
-			c = _convTable2[l - 64];
-	}
-	
-	c = SWAP_BYTES_16(c);
-	if (c < 0x813F)
-		c = 1;
-	else if (c < 0x824F)
-		c -= 0x813F;
-	else if (c < 0x833F)
-		c -= 0x81EE;
-	else if (c > 0x839F)
-		c = 1;
-	else
-		c -= 0x828D;
-
-	return c;
-}
-
-SJISFontLarge::SJISFontLarge(Common::SharedPtr<Graphics::FontSJIS> &font) : SJISFont(font, 0, false, false, 0) {
-	_sjisWidth = _font->getMaxFontWidth();
-	_fontHeight = _font->getFontHeight();
-	_asciiWidth = _font->getCharWidth('a');
-}
-
-void SJISFontLarge::drawChar(uint16 c, byte *dst, int pitch, int) const {
-	_font->setDrawingMode(Graphics::FontSJIS::kDefaultMode);
-	_font->toggleFatPrint(false);
-	_font->drawChar(dst, c, 320, 1, _colorMap[1], _colorMap[0], 320, 200);
-}
-
-SJISFont12x12::SJISFont12x12(const uint16 *searchTable) : _height(6), _width(6), _data(0) {
-	assert(searchTable);
-	for (int i = 0; i < 148; i++)
-		_searchTable[searchTable[i]] = i + 1;
-}
-
-bool SJISFont12x12::load(Common::SeekableReadStream &file) {
-	delete[] _data;
-	int size = 148 * 24;
-	if (file.size() < size)
-		return false;
-
-	_data = new uint8[size];
-	file.read(_data, size);
-
-	return true;
-}
-
-void SJISFont12x12::unload() {
-	delete[] _data;
-	_data = 0;
-	_searchTable.clear();
-}
-
-void SJISFont12x12::drawChar(uint16 c, byte *dst, int pitch, int) const {
-	int offs = _searchTable[c];
-	if (!offs)
-		return;
-
-	const uint8 *src = _data + (offs - 1) * 24;
-	uint8 color1 = _colorMap[1];
-	
-	int bt = 0;
-	uint16 chr = 0;
-
-	for (int i = 0; i < 192; ++i) {
-		if (!bt) {
-			chr = *src++;
-			bt = 8;
-		}		
-		if (chr & 0x80)
-			*dst = color1;
-		dst++;
-		if (--bt)
-			chr <<= 1;
-		else if (i & 8)
-			dst += (pitch - 16);
-	}
 }
 
 } // End of namespace Kyra

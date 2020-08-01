@@ -24,7 +24,6 @@
 #include "glk/utils.h"
 #include "glk/windows.h"
 #include "common/config-manager.h"
-#include "common/system.h"
 
 namespace Glk {
 
@@ -34,142 +33,207 @@ const byte SCROLL_BG[3] = { 0xb0, 0xb0, 0xb0 };
 const byte SCROLL_FG[3] = { 0x80, 0x80, 0x80 };
 
 WindowStyleStatic T_STYLES[style_NUMSTYLES] = {
-	{ PROPR, { 0xff, 0xff, 0xff }, { 0x00, 0x00, 0x00 }, 0 }, ///< Normal
-	{ PROPI, { 0xff, 0xff, 0xff }, { 0x00, 0x00, 0x00 }, 0 }, ///< Emphasized
-	{ MONOR, { 0xff, 0xff, 0xff }, { 0x00, 0x00, 0x00 }, 0 }, ///< Preformatted
-	{ PROPB, { 0xff, 0xff, 0xff }, { 0x00, 0x00, 0x00 }, 0 }, ///< Header
-	{ PROPB, { 0xff, 0xff, 0xff }, { 0x00, 0x00, 0x00 }, 0 }, ///< Subheader
-	{ PROPZ, { 0xff, 0xff, 0xff }, { 0x00, 0x00, 0x00 }, 0 }, ///< Alert
-	{ PROPR, { 0xff, 0xff, 0xff }, { 0x00, 0x00, 0x00 }, 0 }, ///< Note
-	{ PROPR, { 0xff, 0xff, 0xff }, { 0x00, 0x00, 0x00 }, 0 }, ///< BlockQuote
-	{ PROPB, { 0xff, 0xff, 0xff }, { 0x00, 0x60, 0x00 }, 0 }, ///< Input
-	{ MONOR, { 0xff, 0xff, 0xff }, { 0x00, 0x00, 0x00 }, 0 }, ///< User1
-	{ MONOR, { 0xff, 0xff, 0xff }, { 0x00, 0x00, 0x00 }, 0 }  ///< User2
+	{ PROPR, { 0xff, 0xff, 0xff }, { 0x00, 0x00, 0x00 }, false }, ///< Normal
+	{ PROPI, { 0xff, 0xff, 0xff }, { 0x00, 0x00, 0x00 }, false }, ///< Emphasized
+	{ MONOR, { 0xff, 0xff, 0xff }, { 0x00, 0x00, 0x00 }, false }, ///< Preformatted
+	{ PROPB, { 0xff, 0xff, 0xff }, { 0x00, 0x00, 0x00 }, false }, ///< Header
+	{ PROPB, { 0xff, 0xff, 0xff }, { 0x00, 0x00, 0x00 }, false }, ///< Subheader
+	{ PROPZ, { 0xff, 0xff, 0xff }, { 0x00, 0x00, 0x00 }, false }, ///< Alert
+	{ PROPR, { 0xff, 0xff, 0xff }, { 0x00, 0x00, 0x00 }, false }, ///< Note
+	{ PROPR, { 0xff, 0xff, 0xff }, { 0x00, 0x00, 0x00 }, false }, ///< BlockQuote
+	{ PROPB, { 0xff, 0xff, 0xff }, { 0x00, 0x60, 0x00 }, false }, ///< Input
+	{ MONOR, { 0xff, 0xff, 0xff }, { 0x00, 0x00, 0x00 }, false }, ///< User1
+	{ MONOR, { 0xff, 0xff, 0xff }, { 0x00, 0x00, 0x00 }, false }  ///< User2
 };
 
 WindowStyleStatic G_STYLES[style_NUMSTYLES] = {
-	{ MONOR, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, 0 }, ///< Normal
-	{ MONOI, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, 0 }, ///< Emphasized
-	{ MONOR, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, 0 }, ///< Preformatted
-	{ MONOB, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, 0 }, ///< Header
-	{ MONOB, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, 0 }, ///< Subheader
-	{ MONOR, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, 0 }, ///< Alert
-	{ MONOR, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, 0 }, ///< Note
-	{ MONOR, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, 0 }, ///< BlockQuote
-	{ MONOR, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, 0 }, ///< Input
-	{ MONOR, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, 0 }, ///< User1
-	{ MONOR, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, 0 }  ///< User2
+	{ MONOR, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, false }, ///< Normal
+	{ MONOI, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, false }, ///< Emphasized
+	{ MONOR, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, false }, ///< Preformatted
+	{ MONOB, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, false }, ///< Header
+	{ MONOB, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, false }, ///< Subheader
+	{ MONOR, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, false }, ///< Alert
+	{ MONOR, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, false }, ///< Note
+	{ MONOR, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, false }, ///< BlockQuote
+	{ MONOR, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, false }, ///< Input
+	{ MONOR, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, false }, ///< User1
+	{ MONOR, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, false }  ///< User2
 };
 
 Conf *g_conf;
 
-Conf::Conf(InterpreterType interpType) {
+Conf::Conf(InterpreterType interpType) : _interpType(interpType), _graphics(true),
+		_width(640), _height(400), _screenFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),
+		_rows(25), _cols(60), _lockRows(0), _lockCols(0), _wPaddingX(0), _wPaddingY(0),
+		_wBorderX(0), _wBorderY(0), _tMarginX(7), _tMarginY(7), _gamma(1.0),
+		_borderColor(0), _borderSave(0),
+		_windowColor(parseColor(WHITE)), _windowSave(parseColor(WHITE)),
+		_sound(true), _speak(false), _speakInput(false), _styleHint(1),
+		_scrollBg(parseColor(SCROLL_BG)), _scrollFg(parseColor(SCROLL_FG)),
+		_scrollWidth(0), _safeClicks(false) {
 	g_conf = this;
-	_imageW = g_system->getWidth();
-	_imageH = g_system->getHeight();
+	_imageW = _width;
+	_imageH = _height;
 
-	get("moreprompt", _propInfo._morePrompt, "\207 more \207");
-	get("morecolor", _propInfo._moreColor, nullptr);
-	get("morecolor", _propInfo._moreSave, nullptr);
-	get("morefont", _propInfo._moreFont, PROPB);
-	get("morealign", _propInfo._moreAlign);
-	get("monoaspect", _monoInfo._aspect, 1.0);
-	get("propaspect", _propInfo._aspect, 1.0);
-	get("monosize", _monoInfo._size, 11);
-	get("propsize", _propInfo._size, 12);
-	get("rows", _rows, 25);
-	get("cols", _cols, 60);
+	_propInfo._morePrompt = "\207 more \207";
+	_propInfo._moreColor = 0;
+	_propInfo._moreSave = 0;
+	_propInfo._moreFont = PROPB;
+	_propInfo._moreAlign = 0;
+	_monoInfo._aspect = 1.0;
+	_propInfo._aspect = 1.0;
+	_monoInfo._size = 11;
+	_propInfo._size = 12;
+	_propInfo._linkColor = parseColor(BLUE);
+	_monoInfo._linkColor = _propInfo._linkColor;
+	_propInfo._linkSave = _propInfo._linkColor;
+	_propInfo._caretColor = 0;
+	_propInfo._caretSave = 0;
+	_propInfo._caretShape = 2;
+	_propInfo._linkStyle = 1;
+	_monoInfo._linkStyle = 1;
+	_propInfo._justify = 0;
+	_propInfo._quotes = 1;
+	_propInfo._dashes = 1;
+	_propInfo._spaces = 0;
+	_propInfo._caps = 0;
 
-	if (ConfMan.hasKey("leading"))
-		_monoInfo._leading = _propInfo._leading = static_cast<int>(atof(ConfMan.get("leading").c_str()) + 0.5);
-	if (ConfMan.hasKey("baseline"))
-		_propInfo._baseLine = static_cast<int>(atof(ConfMan.get("baseline").c_str()) + 0.5);
+	const int DEFAULT_MARGIN_X = (_interpType == INTERPRETER_ZCODE) ? 0 : 15;
+	const int DEFAULT_MARGIN_Y = (_interpType == INTERPRETER_ZCODE) ? 0 : 15;
+	_wMarginX = _wMarginSaveX = DEFAULT_MARGIN_X;
+	_wMarginY = _wMarginSaveY = DEFAULT_MARGIN_Y;
 
-	if (ConfMan.hasKey("minrows"))
-		_rows = MAX(_rows, strToInt(ConfMan.get("minrows").c_str()));
-	if (ConfMan.hasKey("maxrows"))
-		_rows = MIN(_rows, strToInt(ConfMan.get("maxrows").c_str()));
-	if (ConfMan.hasKey("mincols"))
-		_cols = MAX(_cols, strToInt(ConfMan.get("mincols").c_str()));
-	if (ConfMan.hasKey("maxcols"))
-		_cols = MIN(_cols, strToInt(ConfMan.get("maxcols").c_str()));
+	// For simplicity's sake, only allow graphics when in non-paletted graphics modes
+	if (_screenFormat.bytesPerPixel == 1)
+		_graphics = false;
 
-	const int DEFAULT_MARGIN_X = (interpType == INTERPRETER_ZCODE) ? 0 : 15;
-	const int DEFAULT_MARGIN_Y = (interpType == INTERPRETER_ZCODE) ? 0 : 15;
+	for (int i = 0; i < style_NUMSTYLES; ++i) {
+		_tStyles[i].fg = parseColor(T_STYLES[i].fg);
+		_tStyles[i].bg = parseColor(T_STYLES[i].bg);
+		_tStyles[i].font = T_STYLES[i].font;
+		_tStyles[i].reverse = T_STYLES[i].reverse;
 
-	get("lockrows", _lockRows);
-	get("lockcols", _lockCols);
-	get("wmarginx", _wMarginX, DEFAULT_MARGIN_X);
-	get("wmarginy", _wMarginY, DEFAULT_MARGIN_Y);
+		_gStyles[i].fg = parseColor(G_STYLES[i].fg);
+		_gStyles[i].bg = parseColor(G_STYLES[i].bg);
+		_gStyles[i].font = G_STYLES[i].font;
+		_gStyles[i].reverse = G_STYLES[i].reverse;
+	}
+
+	Common::copy(_tStyles, _tStyles + style_NUMSTYLES, _tStylesDefault);
+	Common::copy(_gStyles, _gStyles + style_NUMSTYLES, _gStylesDefault);
+}
+
+void Conf::synchronize() {
+	syncAsInt("width", _width);
+	syncAsInt("height", _height);
+	syncAsString("moreprompt", _propInfo._morePrompt);
+	syncAsColor("morecolor", _propInfo._moreColor);
+	syncAsColor("morecolor", _propInfo._moreSave);
+	syncAsFont("morefont", _propInfo._moreFont);
+	syncAsInt("morealign", _propInfo._moreAlign);
+	syncAsDouble("monoaspect", _monoInfo._aspect);
+	syncAsDouble("propaspect", _propInfo._aspect);
+	syncAsDouble("monosize", _monoInfo._size);
+	syncAsDouble("propsize", _propInfo._size);
+	syncAsInt("rows", _rows);
+	syncAsInt("cols", _cols);
+
+	_imageW = _width;
+	_imageH = _height;
+
+	syncAsInt("leading", _monoInfo._leading);
+	syncAsInt("leading", _propInfo._leading);
+	syncAsInt("baseline", _propInfo._baseLine);
+
+	if (_isLoading) {
+		if (exists("minrows"))
+			_rows = MAX(_rows, ConfMan.getInt("minrows"));
+		if (exists("maxrows"))
+			_rows = MIN(_rows, ConfMan.getInt("maxrows"));
+		if (exists("mincols"))
+			_cols = MAX(_cols, ConfMan.getInt("mincols"));
+		if (exists("maxcols"))
+			_cols = MIN(_cols, ConfMan.getInt("maxcols"));
+	} else {
+		ConfMan.setInt("minrows", 0);
+		ConfMan.setInt("maxrows", 999);
+		ConfMan.setInt("mincols", 0);
+		ConfMan.setInt("maxcols", 999);
+	}
+
+	syncAsInt("lockrows", _lockRows);
+	syncAsInt("lockcols", _lockCols);
+	syncAsInt("wmarginx", _wMarginX);
+	syncAsInt("wmarginy", _wMarginY);
+
 	_wMarginSaveX = _wMarginX;
 	_wMarginSaveY = _wMarginY;
 
-	get("wpaddingx", _wPaddingX);
-	get("wpaddingy", _wPaddingY);
-	get("wborderx", _wBorderX);
-	get("wbordery", _wBorderY);
-	get("tmarginx", _tMarginX, 7);
-	get("tmarginy", _tMarginY, 7);
-	get("gamma", _gamma, 1.0);
+	syncAsInt("wpaddingx", _wPaddingX);
+	syncAsInt("wpaddingy", _wPaddingY);
+	syncAsInt("wborderx", _wBorderX);
+	syncAsInt("wbordery", _wBorderY);
+	syncAsInt("tmarginx", _tMarginX);
+	syncAsInt("tmarginy", _tMarginY);
+	syncAsDouble("gamma", _gamma);
 
-	get("linkcolor", _propInfo._linkColor, BLUE);
+	syncAsColor("linkcolor", _propInfo._linkColor);
 	_monoInfo._linkColor = _propInfo._linkColor;
 	_propInfo._linkSave = _propInfo._linkColor;
 
-	get("bordercolor", _borderColor, nullptr);
-	get("bordercolor", _borderSave, nullptr);
-	get("windowcolor", _windowColor, WHITE);
-	get("windowcolor", _windowSave, WHITE);
-	get("lcd", _lcd, 1);
-	get("caretcolor", _propInfo._caretColor, nullptr);
-	get("caretcolor", _propInfo._caretSave, nullptr);
-	get("caretshape", _propInfo._caretShape, 2);
+	syncAsColor("bordercolor", _borderColor);
+	syncAsColor("bordercolor", _borderSave);
+	syncAsColor("windowcolor", _windowColor);
+	syncAsColor("windowcolor", _windowSave);
 
-	_propInfo._linkStyle = _monoInfo._linkStyle = ConfMan.hasKey("linkstyle")
-		&& !strToInt(ConfMan.get("linkstyle").c_str()) ? 0 : 1;
+	syncAsColor("caretcolor", _propInfo._caretColor);
+	syncAsInt("caretshape", _propInfo._caretShape);
+	syncAsInt("linkstyle", _propInfo._linkStyle);
+	if (_isLoading) {
+		_propInfo._caretSave = _propInfo._caretColor;
 
-	get("scrollwidth", _scrollWidth);
-	get("scrollbg", _scrollBg, SCROLL_BG);
-	get("scrollfg", _scrollFg, SCROLL_FG);
-	get("justify", _propInfo._justify);
-	get("quotes", _propInfo._quotes, 1);
-	get("dashes", _propInfo._dashes, 1);
-	get("spaces", _propInfo._spaces);
-	get("caps", _propInfo._caps);
-	get("graphics", _graphics, true);
-	get("sound", _sound, true);
-	get("speak", _speak);
-	get("speak_input", _speakInput);
-	get("speak_language", _speakLanguage);
-	get("stylehint", _styleHint, 1);
-	get("safeclicks", _safeClicks);
+		_monoInfo._caretColor = _propInfo._caretColor;
+		_monoInfo._caretSave = _propInfo._caretSave;
+		_monoInfo._caretShape = _propInfo._caretShape;
+		_monoInfo._linkStyle = _propInfo._linkStyle;
+	}
+	 
+	syncAsInt("scrollwidth", _scrollWidth);
+	syncAsColor("scrollbg", _scrollBg);
+	syncAsColor("scrollfg", _scrollFg);
+	syncAsInt("justify", _propInfo._justify);
+	syncAsInt("quotes", _propInfo._quotes);
+	syncAsInt("dashes", _propInfo._dashes);
+	syncAsInt("spaces", _propInfo._spaces);
+	syncAsInt("caps", _propInfo._caps);
 
-	// For simplicity's sake, only allow graphics when in non-paletted graphics modes
-	if (g_system->getScreenFormat().bytesPerPixel == 1)
-		_graphics = false;
+	syncAsBool("graphics", _graphics);
+	syncAsBool("sound", _sound);
+	syncAsBool("speak", _speak);
+	syncAsBool("speak_input", _speakInput);
+	syncAsString("speak_language", _speakLanguage);
+	syncAsInt("stylehint", _styleHint);
+	syncAsBool("safeclicks", _safeClicks);
 
-	Common::copy(T_STYLES, T_STYLES + style_NUMSTYLES, _tStyles);
-	Common::copy(G_STYLES, G_STYLES + style_NUMSTYLES, _gStyles);
-
-	char buffer[256];
 	const char *const TG_COLOR[2] = { "tcolor_%d", "gcolor_%d" };
 	for (int tg = 0; tg < 2; ++tg) {
 		for (int style = 0; style <= 10; ++style) {
 			Common::String key = Common::String::format(TG_COLOR[tg], style);
-			if (!ConfMan.hasKey(key))
-				continue;
 
-			strncpy(buffer, ConfMan.get(key).c_str(), 254);
-			buffer[255] = '\0';
-			char *fg = strtok(buffer, "\r\n\t ");
-			char *bg = strtok(nullptr, "\r\n\t ");
-
-			if (tg == 0) {
-				_tStyles[style].fg = parseColor(fg);
-				_tStyles[style].bg = parseColor(bg);
+			if (_isLoading) {
+				if (exists(key)) {
+					Common::String line = ConfMan.get(key);
+					if (line.find(',') == 6) {
+						_tStyles[style].fg = parseColor(Common::String(line.c_str(), 6));
+						_tStyles[style].bg = parseColor(Common::String(line.c_str() + 7));
+					}
+				}
 			} else {
-				_gStyles[style].fg = parseColor(fg);
-				_gStyles[style].bg = parseColor(bg);
+				Common::String line = Common::String::format("%s,%s",
+					encodeColor(_tStyles[style].fg).c_str(),
+					encodeColor(_tStyles[style].bg).c_str()
+				);
+				ConfMan.set(key, line);
 			}
 		}
 	}
@@ -178,54 +242,38 @@ Conf::Conf(InterpreterType interpType) {
 	for (int tg = 0; tg < 2; ++tg) {
 		for (int style = 0; style <= 10; ++style) {
 			Common::String key = Common::String::format(TG_FONT[tg], style);
-			if (!ConfMan.hasKey(key))
-				continue;
 
-			strncpy(buffer, ConfMan.get(key).c_str(), 254);
-			buffer[255] = '\0';
-			char *font = strtok(buffer, "\r\n\t ");
-
-			if (tg == 0)
-				_tStyles[style].font = Screen::getFontId(font);
-			else
-				_gStyles[style].font = Screen::getFontId(font);
+			if (_isLoading) {
+				if (exists(key)) {
+					FACES font = Screen::getFontId(ConfMan.get(key));
+					if (tg == 0)
+						_tStyles[style].font = font;
+					else
+						_gStyles[style].font = font;
+				}
+			} else {
+				FACES font = (tg == 0) ? _tStyles[style].font : _gStyles[style].font;
+				ConfMan.set(key, Screen::getFontName(font));
+			}
 		}
 	}
+}
+
+void Conf::load() {
+	_isLoading = true;
+	synchronize();
 
 	Common::copy(_tStyles, _tStyles + style_NUMSTYLES, _tStylesDefault);
 	Common::copy(_gStyles, _gStyles + style_NUMSTYLES, _gStylesDefault);
 }
 
-void Conf::get(const Common::String &key, Common::String &field, const char *defaultVal) {
-	field = ConfMan.hasKey(key) ? ConfMan.get(key) : defaultVal;
-	field.trim();
-}
-
-void Conf::get(const Common::String &key, uint &color, const byte *defaultColor) {
-	if (ConfMan.hasKey(key)) {
-		color = parseColor(ConfMan.get(key));
-	} else if (defaultColor) {
-		color = g_system->getScreenFormat().RGBToColor(defaultColor[0], defaultColor[1], defaultColor[2]);
-	} else {
-		color = 0;
+void Conf::flush() {
+	// Default settings are only saved if they're not already present
+	if (!exists("width") || !exists("height")) {
+		_isLoading = false;
+		synchronize();
+		ConfMan.flushToDisk();
 	}
-}
-
-void Conf::get(const Common::String &key, int &field, int defaultVal) {
-	field = ConfMan.hasKey(key) ? strToInt(ConfMan.get(key).c_str()) : defaultVal;
-}
-
-void Conf::get(const Common::String &key, bool &field, bool defaultVal) {
-	if (!ConfMan.hasKey(key) || !Common::parseBool(ConfMan.get(key), field))
-		field = defaultVal;
-}
-
-void Conf::get(const Common::String &key, FACES &field, FACES defaultFont) {
-	field = ConfMan.hasKey(key) ? Screen::getFontId(ConfMan.get(key)) : defaultFont;
-}
-
-void Conf::get(const Common::String &key, double &field, double defaultVal) {
-	field = ConfMan.hasKey(key) ?  atof(ConfMan.get(key).c_str()) : defaultVal;
 }
 
 uint Conf::parseColor(const Common::String &str) {
@@ -246,10 +294,69 @@ uint Conf::parseColor(const Common::String &str) {
 		rv = strtol(r, nullptr, 16);
 		gv = strtol(g, nullptr, 16);
 		bv = strtol(b, nullptr, 16);
-		return g_system->getScreenFormat().RGBToColor(rv, gv, bv);
+		return _screenFormat.RGBToColor(rv, gv, bv);
 	}
 
 	return 0;
+}
+
+Common::String Conf::encodeColor(uint color) {
+	byte r, g, b;
+	_screenFormat.colorToRGB(color, r, g, b);
+	return Common::String::format("%.2x%.2x%.2x", (int)r, (int)g, (int)b);
+}
+
+uint Conf::parseColor(const byte *rgb) {
+	return _screenFormat.RGBToColor(rgb[0], rgb[1], rgb[2]);
+}
+
+void Conf::syncAsString(const Common::String &name, Common::String &val) {
+	if (_isLoading && exists(name))
+		val = ConfMan.get(name);
+	else if (!_isLoading)
+		ConfMan.set(name, val);
+}
+
+void Conf::syncAsInt(const Common::String &name, int &val) {
+	if (_isLoading && exists(name))
+		val = ConfMan.getInt(name);
+	else if (!_isLoading)
+		ConfMan.setInt(name, val);
+}
+
+void Conf::syncAsInt(const Common::String &name, uint &val) {
+	if (_isLoading && exists(name))
+		val = ConfMan.getInt(name);
+	else if (!_isLoading)
+		ConfMan.setInt(name, val);
+}
+
+void Conf::syncAsDouble(const Common::String &name, double &val) {
+	if (_isLoading && exists(name))
+		val = atof(ConfMan.get(name).c_str());
+	else if (!_isLoading)
+		ConfMan.set(name, Common::String::format("%f", (float)val).c_str());
+}
+
+void Conf::syncAsBool(const Common::String &name, bool &val) {
+	if (_isLoading && exists(name))
+		val = ConfMan.getBool(name);
+	else if (!_isLoading)
+		ConfMan.setBool(name, val);
+}
+
+void Conf::syncAsColor(const Common::String &name, uint &val) {
+	if (_isLoading && exists(name))
+		val = parseColor(ConfMan.get(name));
+	else if (!_isLoading)
+		ConfMan.set(name, encodeColor(val));
+}
+
+void Conf::syncAsFont(const Common::String &name, FACES &val) {
+	if (_isLoading && exists(name))
+		val = Screen::getFontId(ConfMan.get(name));
+	else if (!_isLoading)
+		ConfMan.set(name, Screen::getFontName(val));
 }
 
 } // End of namespace Glk

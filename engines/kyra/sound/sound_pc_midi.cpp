@@ -40,12 +40,12 @@ SoundMidiPC::SoundMidiPC(KyraEngine_v1 *vm, Audio::Mixer *mixer, MidiDriver *dri
 	_currentResourceSet = 0;
 	memset(&_resInfo, 0, sizeof(_resInfo));
 
-	_music = MidiParser::createParser_XMIDI(MidiParser::defaultXMidiCallback, NULL, NULL, NULL, 0);
+	_music = MidiParser::createParser_XMIDI(MidiParser::defaultXMidiCallback, NULL, 0);
 	assert(_music);
 	_music->property(MidiParser::mpDisableAllNotesOffMidiEvents, true);
 	_music->property(MidiParser::mpDisableAutoStartPlayback, true);
 	for (int i = 0; i < 3; ++i) {
-		_sfx[i] = MidiParser::createParser_XMIDI(MidiParser::defaultXMidiCallback, NULL, NULL, NULL, i + 1);
+		_sfx[i] = MidiParser::createParser_XMIDI(MidiParser::defaultXMidiCallback, NULL, i + 1);
 		assert(_sfx[i]);
 		_sfx[i]->property(MidiParser::mpDisableAllNotesOffMidiEvents, true);
 		_sfx[i]->property(MidiParser::mpDisableAutoStartPlayback, true);
@@ -89,7 +89,7 @@ SoundMidiPC::~SoundMidiPC() {
 	delete _music;
 	for (int i = 0; i < 3; ++i)
 		delete _sfx[i];
-	_output->allNotesOff();
+	_output->stopAllNotes();
 
 	delete _output; // This automatically frees _driver (!)
 
@@ -318,7 +318,7 @@ bool SoundMidiPC::isPlaying() const {
 	return _music->isPlaying();
 }
 
-void SoundMidiPC::playSoundEffect(uint8 track, uint8) {
+void SoundMidiPC::playSoundEffect(uint16 track, uint8) {
 	if (!_sfxEnabled)
 		return;
 
@@ -356,7 +356,7 @@ void SoundMidiPC::pause(bool paused) {
 		for (int i = 0; i < 3; i++)
 			_sfx[i]->pausePlaying();
 		if (_output)
-			_output->allNotesOff();
+			_output->stopAllNotes();
 	} else {
 		_music->resumePlaying();
 		for (int i = 0; i < 3; ++i)

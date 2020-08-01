@@ -24,6 +24,7 @@
 #define WORLD_ACTORS_ANIMACTION_H
 
 #include "ultima/shared/std/containers.h"
+#include "ultima/ultima8/misc/direction.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -43,7 +44,8 @@ struct AnimFrame {
 		AFF_UNK1     = 0x0001,
 		AFF_ONGROUND = 0x0002,
 		AFF_FLIPPED  = 0x0020,
-		AFF_SPECIAL  = 0x0800
+		AFF_SPECIAL  = 0x0800,
+		AFF_USECODE  = 0x4000
 	};
 
 	inline bool is_flipped() const {
@@ -52,25 +54,22 @@ struct AnimFrame {
 	inline int attack_range() const {
 		return ((_flags >> 2) & 0x07);
 	}
+
+	inline bool is_callusecode() const {
+		return (_flags & AFF_USECODE) != 0;
+	}
 };
 
-struct AnimAction {
-	uint32 _shapeNum;
-	uint32 _action;
+class AnimAction {
+	friend class AnimDat;
 
-	Std::vector<AnimFrame> frames[16]; // 8 or 16 directions
-	unsigned int _size;
-	int _frameRepeat;
-	uint32 _flags;
-
-	unsigned int _dirCount;
-
+public:
 	//! return the range of the animation to play
 	//! \param actor The actor to play the animation for
 	//! \param dir The direction
 	//! \param startframe The first frame to play
 	//! \param endframe The frame after the last frame to play
-	void getAnimRange(const Actor *actor, int dir,
+	void getAnimRange(const Actor *actor, Direction dir,
 	                  unsigned int &startframe, unsigned int &endframe) const;
 
 	//! return the range of the animation to play
@@ -80,11 +79,35 @@ struct AnimAction {
 	//! \param dir The direction
 	//! \param startframe The first frame to play
 	//! \param endframe The frame after the last frame to play
-	void getAnimRange(unsigned int lastanim, int lastdir,
-	                  bool firststep, int dir,
+	void getAnimRange(unsigned int lastanim, Direction lastdir,
+	                  bool firststep, Direction dir,
 	                  unsigned int &startframe, unsigned int &endframe) const;
 
-	unsigned int getDirCount() const;
+	unsigned int getDirCount() const {
+		return _dirCount;
+	}
+
+	unsigned int getSize() const {
+		return _size;
+	}
+	
+	int getFrameRepeat() const {
+		return _frameRepeat;
+	}
+	
+	uint32 getShapeNum() const {
+		return _shapeNum;
+	}
+	
+	uint32 getAction() const {
+		return _action;
+	}
+	
+	bool hasFlags(uint32 mask) const {
+		return (_flags & mask) != 0;
+	}
+	
+	const AnimFrame &getFrame(Direction dir, unsigned int frameno) const;
 
 	enum AnimActionFlags {
 		AAF_TWOSTEP      = 0x0001,
@@ -96,6 +119,17 @@ struct AnimAction {
 		AAF_CRUS_16DIRS  = 0x4000, // Crusader
 		AAF_DESTROYACTOR = 0x8000  // destroy actor after animation finishes
 	};
+
+private:
+	uint32 _shapeNum;
+	uint32 _action;
+
+	Std::vector<AnimFrame> _frames[16]; // 8 or 16 directions
+	unsigned int _size;
+	int _frameRepeat;
+	uint32 _flags;
+
+	unsigned int _dirCount;
 };
 
 } // End of namespace Ultima8

@@ -59,10 +59,26 @@ Common::Language DirectorEngine::getLanguage() const {
 }
 
 Common::String DirectorEngine::getEXEName() const {
-	if (ConfMan.hasKey("start_movie"))
-		return ConfMan.get("start_movie");
+	StartMovie startMovie = getStartMovie();
+	if (startMovie.startMovie.size() > 0)
+		return startMovie.startMovie;
 
 	return _gameDescription->desc.filesDescriptions[0].fileName;
+}
+
+StartMovie DirectorEngine::getStartMovie() const {
+	StartMovie startMovie;
+	startMovie.startFrame = -1;
+
+	if (ConfMan.hasKey("start_movie")) {
+		Common::String option = ConfMan.get("start_movie");
+		int atPos = option.findLastOf("@");
+		startMovie.startMovie = option.substr(0, atPos);
+		Common::String tail = option.substr(atPos + 1, option.size());
+		if (tail.size() > 0)
+			startMovie.startFrame = atoi(tail.c_str());
+	}
+	return startMovie;
 }
 
 bool DirectorEngine::hasFeature(EngineFeature f) const {
@@ -198,6 +214,8 @@ static const PlainGameDescriptor directorGames[] = {
 
 static const char *directoryGlobs[] = {
 	"install",
+	"l_zone",
+	"win_data",	// L-ZONE
 	0
 };
 

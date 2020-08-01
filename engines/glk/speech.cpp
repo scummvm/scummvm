@@ -175,7 +175,7 @@ void Speech::gli_tts_purge(void) {
 void Speech::gli_tts_speak(const uint32 *buf, size_t len) {
 	debugC(1, kDebugSpeech, "gli_tts_speak(const uint32 *, size_t)");
 	if (_speechManager) {
-		for (int i = 0 ; i < len ; ++i, ++buf) {
+		for (uint i = 0 ; i < len ; ++i, ++buf) {
 			// Should we automatically flush on new lines without waiting for the call to gli_tts_flush?
 			// Should we also flush on '.', '?', and '!'?
 			//if (*buf == '\n') {
@@ -192,7 +192,7 @@ void Speech::gli_tts_speak(const uint32 *buf, size_t len) {
 void Speech::gli_tts_speak(const char *buf, size_t len) {
 	debugC(1, kDebugSpeech, "gli_tts_speak(const char *, size_t)");
 	if (_speechManager) {
-		for (int i = 0 ; i < len ; ++i, ++buf) {
+		for (uint i = 0 ; i < len ; ++i, ++buf) {
 			// Should we automatically flush on new lines without waiting for the call to gli_tts_flush?
 			// Should we also flush on '.', '?', and '!'?
 			//if (*buf == '\n') {

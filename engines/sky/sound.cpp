@@ -1055,7 +1055,7 @@ void Sound::loadSection(uint8 pSection) {
 	free(_soundData);
 	_soundData = _skyDisk->loadFile(pSection * 4 + SOUND_FILE_BASE);
 	uint16 asmOfs;
-	if (SkyEngine::_systemVars.gameVersion == 109) {
+	if (SkyEngine::_systemVars->gameVersion == 109) {
 		if (pSection == 0)
 			asmOfs = 0x78;
 		else
@@ -1075,7 +1075,7 @@ void Sound::loadSection(uint8 pSection) {
 
 	_sfxInfo = _soundData + _sfxBaseOfs;
 	// if we just restored a savegame, the sfxqueue holds the sound we need to restart
-	if (!(SkyEngine::_systemVars.systemFlags & SF_GAME_RESTORED))
+	if (!(SkyEngine::_systemVars->systemFlags & SF_GAME_RESTORED))
 		for (uint8 cnt = 0; cnt < 4; cnt++)
 			_sfxQueue[cnt].count = 0;
 }
@@ -1132,7 +1132,7 @@ void Sound::playSound(uint16 sound, uint16 volume, uint8 channel) {
 
 void Sound::fnStartFx(uint32 sound, uint8 channel) {
 	_saveSounds[channel] = 0xFFFF;
-	if (sound < 256 || sound > MAX_FX_NUMBER || (SkyEngine::_systemVars.systemFlags & SF_FX_OFF))
+	if (sound < 256 || sound > MAX_FX_NUMBER || (SkyEngine::_systemVars->systemFlags & SF_FX_OFF))
 		return;
 
 	uint8 screen = (uint8)(Logic::_scriptVariables[SCREEN] & 0xff);
@@ -1156,9 +1156,9 @@ void Sound::fnStartFx(uint32 sound, uint8 channel) {
 
 	uint8 volume = _mainSfxVolume; // start with standard vol
 
-	if (SkyEngine::_systemVars.systemFlags & SF_SBLASTER)
+	if (SkyEngine::_systemVars->systemFlags & SF_SBLASTER)
 		volume = roomList[i].adlibVolume;
-	else if (SkyEngine::_systemVars.systemFlags & SF_ROLAND)
+	else if (SkyEngine::_systemVars->systemFlags & SF_ROLAND)
 		volume = roomList[i].rolandVolume;
 	volume = (volume * _mainSfxVolume) >> 8;
 
@@ -1222,7 +1222,7 @@ void Sound::stopSpeech() {
 }
 
 bool Sound::startSpeech(uint16 textNum) {
-	if (!(SkyEngine::_systemVars.systemFlags & SF_ALLOW_SPEECH))
+	if (!(SkyEngine::_systemVars->systemFlags & SF_ALLOW_SPEECH))
 		return false;
 	uint16 speechFileNum = _speechConvertTable[textNum >> 12] + (textNum & 0xFFF);
 

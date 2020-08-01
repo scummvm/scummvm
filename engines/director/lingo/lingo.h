@@ -42,7 +42,7 @@ struct TheEntityField;
 struct LingoArchive;
 struct LingoV4Bytecode;
 struct LingoV4TheEntity;
-struct Object;
+class AbstractObject;
 class ScriptContext;
 class DirectorEngine;
 class Frame;
@@ -78,7 +78,7 @@ typedef Common::HashMap<void *, FuncDesc *> FuncHash;
 
 struct Symbol {	/* symbol table entry */
 	Common::String *name;
-	int type;
+	SymbolType type;
 	union {
 		ScriptData	*defn;	/* HANDLER */
 		void (*func)();		/* OPCODE */
@@ -97,7 +97,7 @@ struct Symbol {	/* symbol table entry */
 	Common::Array<Common::String> *varNames;
 	ScriptContext *ctx;		/* optional script context to execute with */
 	LingoArchive *archive; 	/* optional archive to execute with */
-	Object *target;			/* optional method target */
+	AbstractObject *target;			/* optional method target */
 	bool anonymous;
 
 	Symbol();
@@ -117,7 +117,7 @@ struct Datum {	/* interpreter stack type */
 		Common::String *s;	/* STRING, VAR, OBJECT */
 		DatumArray *farr;	/* ARRAY, POINT, RECT */
 		PropertyArray *parr; /* PARRAY */
-		Object *obj;
+		AbstractObject *obj;
 	} u;
 
 	int *refCount;
@@ -128,7 +128,7 @@ struct Datum {	/* interpreter stack type */
 	Datum(int val);
 	Datum(double val);
 	Datum(const Common::String &val);
-	Datum(Object *val);
+	Datum(AbstractObject *val);
 	void reset();
 
 	~Datum() {
@@ -136,14 +136,14 @@ struct Datum {	/* interpreter stack type */
 	}
 
 	Datum eval();
-	double asFloat();
-	int asInt();
-	Common::String asString(bool printonly = false);
+	double asFloat() const;
+	int asInt() const;
+	Common::String asString(bool printonly = false) const;
 
-	const char *type2str(bool isk = false);
+	const char *type2str(bool isk = false) const;
 
-	int equalTo(Datum &d, bool ignoreCase = false);
-	int compareTo(Datum &d, bool ignoreCase = false);
+	int equalTo(Datum &d, bool ignoreCase = false) const;
+	int compareTo(Datum &d, bool ignoreCase = false) const;
 };
 
 struct PCell {
@@ -171,49 +171,6 @@ typedef Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common
 typedef Common::HashMap<Common::String, TheEntity *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TheEntityHash;
 typedef Common::HashMap<Common::String, TheEntityField *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TheEntityFieldHash;
 
-class ScriptContext {
-public:
-	Common::String _name;
-	LingoArchive *_archive;
-	ScriptType _type;
-	uint16 _id;
-	Common::Array<Common::String> _functionNames; // used by cb_localcall
-	SymbolHash _functionHandlers;
-	Common::HashMap<uint32, Symbol> _eventHandlers;
-	Common::Array<Datum> _constants;
-	Common::Array<Common::String> _propNames;
-
-	ScriptContext(Common::String name, LingoArchive *archive = nullptr, ScriptType type = kNoneScript, uint16 id = 0)
-		: _name(name), _archive(archive), _type(type), _id(id), _target(nullptr) {}
-	ScriptContext(const ScriptContext &sc) {
-		_type = sc._type;
-		_name = sc._name;
-		_functionNames = sc._functionNames;
-		for (SymbolHash::iterator it = sc._functionHandlers.begin(); it != sc._functionHandlers.end(); ++it) {
-			_functionHandlers[it->_key] = it->_value;
-			_functionHandlers[it->_key].ctx = this;
-		}
-		for (Common::HashMap<uint32, Symbol>::iterator it = sc._eventHandlers.begin(); it != sc._eventHandlers.end(); ++it) {
-			_eventHandlers[it->_key] = it->_value;
-			_eventHandlers[it->_key].ctx = this;
-		}
-		_constants = sc._constants;
-		_propNames = sc._propNames;
-
-		_archive = sc._archive;
-		_id = sc._id;
-	}
-
-	Object *getTarget() const { return _target; }
-	void setTarget(Object *target);
-	Datum getParentScript();
-	Symbol define(Common::String &name, int nargs, ScriptData *code, Common::Array<Common::String> *argNames, Common::Array<Common::String> *varNames);
-
-private:
-	Datum _parentScript;
-	Object *_target;
-};
-
 struct CFrame {	/* proc/func call stack frame */
 	Symbol	sp;	/* symbol table entry */
 	int		retpc;	/* where to resume after return */
@@ -222,6 +179,9 @@ struct CFrame {	/* proc/func call stack frame */
 	LingoArchive *retarchive;	/* which archive to use after return */
 	DatumHash *localvars;
 	Datum retMe; /* which me obj to use after return */
+	uint stackSizeBefore;
+	bool allowRetVal;			/* whether to allow a return value */
+	Datum defaultRetVal;		/* default return value */
 };
 
 struct LingoEvent {
@@ -244,6 +204,11 @@ struct LingoEvent {
 
 
 struct LingoArchive {
+	LingoArchive(Cast *c) : cast(c) {};
+	~LingoArchive();
+
+	Cast *cast;
+	ScriptContextHash lctxContexts;
 	ScriptContextHash scriptContexts[kMaxScriptType + 1];
 	Common::Array<Common::String> names;
 	Common::HashMap<uint32, Common::String> primaryEventHandlers;
@@ -253,7 +218,7 @@ struct LingoArchive {
 	Common::String getName(uint16 id);
 
 	void addCode(const char *code, ScriptType type, uint16 id, const char *scriptName = nullptr);
-	void addCodeV4(Common::SeekableSubReadStreamEndian &stream, const Common::String &archName);
+	void addCodeV4(Common::SeekableSubReadStreamEndian &stream, uint16 lctxIndex, const Common::String &archName);
 	void addNamesV4(Common::SeekableSubReadStreamEndian &stream);
 };
 
@@ -285,16 +250,16 @@ public:
 	void initBytecode();
 	void initMethods();
 	void initXLibs();
-	void openXLib(const Common::String &name, ObjectType type);
+	void openXLib(Common::String name, ObjectType type);
 
 	void runTests();
 
 	// lingo-preprocessor.cpp
 public:
-	Common::String codePreprocessor(const char *s, ScriptType type, uint16 id, bool simple = false);
+	Common::String codePreprocessor(const char *s, LingoArchive *archive, ScriptType type, uint16 id, bool simple = false);
 
 	// lingo-patcher.cpp
-	Common::String patchLingoCode(Common::String &line, ScriptType type, uint16 id, int linenumber);
+	Common::String patchLingoCode(Common::String &line, LingoArchive *archive, ScriptType type, uint16 id, int linenumber);
 
 	// lingo.cpp
 private:
@@ -303,34 +268,24 @@ private:
 	// lingo-events.cpp
 private:
 	void initEventHandlerTypes();
-	void setPrimaryEventHandler(LEvent event, const Common::String &code);
-	void queueSpriteEvent(LEvent event, int eventId, int spriteId);
-	void queueFrameEvent(LEvent event, int eventId);
-	void queueMovieEvent(LEvent event, int eventId);
 	void processEvent(LEvent event, ScriptType st, int entityId, int channelId = -1);
-
-	int _nextEventId;
-	Common::Queue<LingoEvent> _eventQueue;
 
 public:
 	ScriptType event2script(LEvent ev);
 	Symbol getHandler(const Common::String &name);
 
-	int getEventCount();
-	void processEvent(LEvent event, int spriteId = 0);
 	void processEvents();
-	void registerEvent(LEvent event, int spriteId = 0);
 
 public:
 	void execute(uint pc);
-	void pushContext(const Symbol funcSym, bool preserveVarFrame = false);
+	void pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal);
 	void popContext();
 	void cleanLocalVars();
 	int castIdFetch(Datum &var);
 	void varAssign(Datum &var, Datum &value, bool global = false, DatumHash *localvars = nullptr);
-	Datum varFetch(Datum &var, bool global = false, DatumHash *localvars = nullptr);
+	Datum varFetch(Datum &var, bool global = false, DatumHash *localvars = nullptr, bool silent = false);
 
-	int getAlignedType(Datum &d1, Datum &d2);
+	int getAlignedType(const Datum &d1, const Datum &d2);
 
 	void printAllVars();
 
@@ -374,12 +329,16 @@ public:
 	void func_playdone();
 	void func_cursor(int cursorId, int maskId);
 	int func_marker(int m);
+	uint16 func_label(Datum &label);
 
 	// lingo-the.cpp
 public:
 	void initTheEntities();
 	const char *entity2str(int id);
 	const char *field2str(int id);
+
+	// global kTheEntity
+	char _itemDelimiter;
 
 	Datum getTheEntity(int entity, Datum &id, int field);
 	void setTheEntity(int entity, Datum &id, int field, Datum &d);
@@ -410,7 +369,8 @@ public:
 	int code3(inst code_1, inst code_2, inst code_3) { int o = code1(code_1); code1(code_2); code1(code_3); return o; }
 	int code4(inst code_1, inst code_2, inst code_3, inst code_4) { int o = code1(code_1); code1(code_2); code1(code_3); code1(code_4); return o; }
 	void codeArg(Common::String *s);
-	Symbol codeDefine(Common::String &s, int start, int nargs, Object *obj = nullptr, int end = -1, bool removeCode = true);
+	int codeCmd(Common::String *s, int numpar);
+	Symbol codeDefine(Common::String &s, int start, int nargs, int end = -1, bool removeCode = true);
 	void codeFactory(Common::String &s);
 	int codeFloat(double f);
 	int codeFunc(Common::String *s, int numpar);
@@ -428,13 +388,8 @@ public:
 	int _linenumber;
 	int _colnumber;
 	int _bytenumber;
-	Common::String _lasttoken;
-	int _lastbytenumber;
-	Common::String _errortoken;
-	int _errorbytenumber;
-	bool _ignoreError;
+	const char *_lines[3];
 	bool _inFactory;
-	Object *_currentFactory;
 	Common::Array<RepeatBlock *> _repeatStack;
 
 	Common::Array<Common::String *> _argstack;
@@ -459,7 +414,9 @@ public:
 
 	Common::Array<int> _labelstack;
 
-	SymbolHash _builtins;
+	SymbolHash _builtinCmds;
+	SymbolHash _builtinFuncs;
+	SymbolHash _builtinConsts;
 	SymbolHash _methods;
 	SymbolHash _xlibInitializers;
 
@@ -469,14 +426,9 @@ public:
 
 	bool _inCond;
 
-	bool _cursorOnStack;
-
 private:
 	int parse(const char *code);
 	void parseMenu(const char *code);
-
-public:
-	Common::String genMenuHandler(int *commandId, Common::String &command);
 
 public:
 	void push(Datum d);
@@ -504,9 +456,13 @@ public:
 
 	int _floatPrecision;
 
+	Datum _theResult;
+
 	// events
 	bool _passEvent;
 	Datum _perFrameHook;
+
+	Datum _windowList;
 
 public:
 	void executeImmediateScripts(Frame *frame);

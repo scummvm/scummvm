@@ -59,7 +59,6 @@ backends/events/gph/gph-events.cpp
 backends/events/maemosdl/maemosdl-events.cpp
 backends/events/openpandora/op-events.cpp
 backends/events/symbiansdl/symbiansdl-events.cpp
-backends/events/webossdl/webossdl-events.cpp
 backends/graphics/opengl/opengl-graphics.cpp
 backends/graphics/openglsdl/openglsdl-graphics.cpp
 backends/graphics/surfacesdl/surfacesdl-graphics.cpp
@@ -86,7 +85,5 @@ backends/platform/maemo/maemo.cpp
 backends/platform/sdl/macosx/appmenu_osx.mm
 backends/platform/sdl/ps3/ps3.cpp
 backends/platform/symbian/src/SymbianActions.cpp
-backends/platform/tizen/form.cpp
-backends/platform/tizen/fs.cpp
 backends/platform/wii/options.cpp
 backends/updates/macosx/macosx-updates.mm

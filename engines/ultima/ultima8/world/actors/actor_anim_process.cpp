@@ -29,6 +29,7 @@
 #include "ultima/ultima8/world/actors/anim_action.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/misc/direction.h"
+#include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/gravity_process.h"
 #include "ultima/ultima8/kernel/kernel.h"
@@ -61,13 +62,13 @@ static const int watchactor = WATCHACTOR;
 DEFINE_RUNTIME_CLASSTYPE_CODE(ActorAnimProcess)
 
 ActorAnimProcess::ActorAnimProcess() : Process(), _tracker(nullptr),
-	_dir(0), _action(Animation::walk), _steps(0), _firstFrame(true),
+	_dir(dir_north), _action(Animation::walk), _steps(0), _firstFrame(true),
 	_currentStep(0), _repeatCounter(0), _animAborted(false),
 	_attackedSomething(false) {
 }
 
 ActorAnimProcess::ActorAnimProcess(Actor *actor, Animation::Sequence action,
-                                   uint32 dir, uint32 steps) :
+                                   Direction dir, uint32 steps) :
 		_dir(dir), _action(action), _steps(steps), _tracker(nullptr),
 		_firstFrame(true), _currentStep(0), _repeatCounter(0),
 		_animAborted(false), _attackedSomething(false)  {
@@ -85,13 +86,8 @@ bool ActorAnimProcess::init() {
 	Actor *actor = getActor(_itemNum);
 	assert(actor);
 
-	if (_dir == 8)
+	if (_dir == dir_current)
 		_dir = actor->getDir();
-
-	if (_dir > 7) {
-		// invalid direction
-		return false;
-	}
 
 	if (!actor->hasFlags(Item::FLG_FASTAREA)) {
 		// not in the fast area? Can't play an animation then.
@@ -154,7 +150,7 @@ void ActorAnimProcess::run() {
 
 	if (!_firstFrame)
 		_repeatCounter++;
-	if (_repeatCounter > _tracker->getAnimAction()->_frameRepeat)
+	if (_repeatCounter > _tracker->getAnimAction()->getFrameRepeat())
 		_repeatCounter = 0;
 
 	Actor *a = getActor(_itemNum);
@@ -227,7 +223,7 @@ void ActorAnimProcess::run() {
 
 
 			if (_tracker->isBlocked() &&
-			        !(_tracker->getAnimAction()->_flags & AnimAction::AAF_UNSTOPPABLE)) {
+			        !(_tracker->getAnimAction()->hasFlags(AnimAction::AAF_UNSTOPPABLE))) {
 				// FIXME: For blocked large _steps we may still want to do
 				//        a partial move. (But how would that work with
 				//        repeated frames?)
@@ -279,7 +275,7 @@ void ActorAnimProcess::run() {
 				_attackedSomething = true;
 				Item *hit_item = getItem(hit);
 				assert(hit_item);
-				hit_item->receiveHit(_itemNum, (_dir + 4) % 8, 0, 0);
+				hit_item->receiveHit(_itemNum, Direction_Invert(_dir), 0, 0);
 				doHitSpecial(hit_item);
 			}
 		}
@@ -331,7 +327,7 @@ void ActorAnimProcess::run() {
 #endif
 
 
-	if (_repeatCounter == _tracker->getAnimAction()->_frameRepeat) {
+	if (_repeatCounter == _tracker->getAnimAction()->getFrameRepeat()) {
 		if (_tracker->isUnsupported()) {
 			_animAborted = true;
 
@@ -344,6 +340,13 @@ void ActorAnimProcess::run() {
 
 			int32 dx, dy, dz;
 			_tracker->getSpeed(dx, dy, dz);
+			if (GAME_IS_CRUSADER) {
+				// HACK: Hurl people a bit less hard in crusader until
+				// the movement bugs are fixed to make them fall less..
+				dx /= 4;
+				dy /= 4;
+				dz /= 4;
+			}
 			a->hurl(dx, dy, dz, 2);
 
 			// Note: do not wait for the fall to finish: this breaks
@@ -356,6 +359,10 @@ void ActorAnimProcess::run() {
 void ActorAnimProcess::doSpecial() {
 	Actor *a = getActor(_itemNum);
 	assert(a);
+
+	// All this stuff is U8 specific.
+	if (!GAME_IS_U8)
+		return;
 
 	// play SFX when Avatar draws/sheathes weapon
 	if (_itemNum == 1 && (_action == Animation::readyWeapon ||
@@ -380,8 +387,8 @@ void ActorAnimProcess::doSpecial() {
 			skull->setFlag(Item::FLG_FAST_ONLY);
 			int32 x, y, z;
 			a->getLocation(x, y, z);
-			int dirNum = a->getDir();
-			skull->move(x + 32 * x_fact[dirNum], y + 32 * y_fact[dirNum], z);
+			Direction dirNum = a->getDir();
+			skull->move(x + 32 * Direction_XFactor(dirNum), y + 32 * Direction_XFactor(dirNum), z);
 			hostile = skull;
 		} else if (a->getMapNum() != 54) { // Khumash-Gor doesn't summon ghouls
 			// otherwise, summon ghoul
@@ -401,7 +408,7 @@ void ActorAnimProcess::doSpecial() {
 				return;
 			}
 			ghoul->move(x, y, z);
-			ghoul->doAnim(Animation::standUp, 0);
+			ghoul->doAnim(Animation::standUp, dir_north);
 			hostile = ghoul;
 		}
 
@@ -417,7 +424,7 @@ void ActorAnimProcess::doSpecial() {
 	}
 
 	// ghost's fireball
-	if (a->getShape() == 0x19d && GAME_IS_U8) {
+	if (a->getShape() == 0x19d) {
 		Actor *av = getMainActor();
 		if (a->getRange(*av) < 96) {
 			a->setActorFlag(Actor::ACT_DEAD);
@@ -548,8 +555,8 @@ void ActorAnimProcess::doHitSpecial(Item *hit) {
 			Kernel *kernel = Kernel::get_instance();
 
 			int32 fx, fy, fz;
-			fx = x + 96 * x_fact[_dir];
-			fy = y + 96 * y_fact[_dir];
+			fx = x + 96 * Direction_XFactor(_dir);
+			fy = y + 96 * Direction_YFactor(_dir);
 			fz = z;
 
 			// CONSTANTS!! (lots of them)
@@ -591,8 +598,6 @@ void ActorAnimProcess::doHitSpecial(Item *hit) {
 
 }
 
-
-
 void ActorAnimProcess::terminate() {
 #ifdef WATCHACTOR
 	if (_itemNum == watchactor)
@@ -601,11 +606,12 @@ void ActorAnimProcess::terminate() {
 		     << "] ActorAnimProcess terminating"
 		     << Std::endl;
 #endif
+
 	Actor *a = getActor(_itemNum);
 	if (a) {
 		if (_tracker) { // if we were really animating...
 			a->clearActorFlag(Actor::ACT_ANIMLOCK);
-			if (_tracker->getAnimAction()->_flags & AnimAction::AAF_DESTROYACTOR) {
+			if (_tracker->getAnimAction()->hasFlags(AnimAction::AAF_DESTROYACTOR)) {
 				// destroy the actor
 #ifdef WATCHACTOR
 				if (_itemNum == watchactor)
@@ -641,7 +647,7 @@ void ActorAnimProcess::saveData(Common::WriteStream *ws) {
 	ws->writeByte(ab);
 	uint8 attacked = _attackedSomething ? 1 : 0;
 	ws->writeByte(attacked);
-	ws->writeByte(static_cast<uint8>(_dir));
+	ws->writeByte(static_cast<uint8>(Direction_ToUsecodeDir(_dir)));
 	ws->writeUint16LE(static_cast<uint16>(_action));
 	ws->writeUint16LE(static_cast<uint16>(_steps));
 	ws->writeUint16LE(static_cast<uint16>(_repeatCounter));
@@ -660,7 +666,7 @@ bool ActorAnimProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	_firstFrame = (rs->readByte() != 0);
 	_animAborted = (rs->readByte() != 0);
 	_attackedSomething = (rs->readByte() != 0);
-	_dir = rs->readByte();
+	_dir = Direction_FromUsecodeDir(rs->readByte());
 	_action = static_cast<Animation::Sequence>(rs->readUint16LE());
 	_steps = rs->readUint16LE();
 	_repeatCounter = rs->readUint16LE();

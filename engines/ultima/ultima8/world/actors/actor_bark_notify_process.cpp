@@ -21,6 +21,7 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/world/actors/actor_bark_notify_process.h"
 #include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/kernel/delay_process.h"
@@ -70,7 +71,7 @@ void ActorBarkNotifyProcess::run() {
 	ProcId delaypid = Kernel::get_instance()->addProcess(delayproc);
 
 	if (doAnim)
-		a->doAnim(Animation::talk, 8);
+		a->doAnim(Animation::talk, dir_current);
 
 	waitFor(delaypid);
 }

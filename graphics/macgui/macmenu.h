@@ -85,7 +85,7 @@ public:
 	void disableAllMenus();
 
 	bool isVisible() { return _isVisible; }
-	void setVisible(bool visible) { _isVisible = visible; _contentIsDirty = true; }
+	void setVisible(bool visible, bool silent = false) { _isVisible = visible; _contentIsDirty = true; }
 
 	void printMenu(int level = 0, MacMenuSubMenu *submenu = nullptr);
 

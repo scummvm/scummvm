@@ -66,6 +66,7 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	_isSaveAllowed = false;
 
 	_mouseX = _mouseY = 0;
+	_transOffsY = 0;
 	_asciiCodeEvents = _kbEventSkip = false;
 
 	// sets up all engine specific debug levels
@@ -213,11 +214,12 @@ KyraEngine_v1::~KyraEngine_v1() {
 
 Common::Point KyraEngine_v1::getMousePos() {
 	Common::Point mouse = _eventMan->getMousePos();
+	mouse.y -= -_transOffsY;
 
 	if (_flags.useHiRes) {
 		mouse.x >>= 1;
 		mouse.y >>= 1;
-	}
+	}	
 
 	return mouse;
 }
@@ -297,7 +299,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_LBUTTONUP: {
 			_mouseX = event.mouse.x;
-			_mouseY = event.mouse.y;
+			_mouseY = event.mouse.y - _transOffsY;
 			if (_flags.useHiRes) {
 				_mouseX >>= 1;
 				_mouseY >>= 1;
@@ -309,7 +311,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 		case Common::EVENT_RBUTTONDOWN:
 		case Common::EVENT_RBUTTONUP: {
 			_mouseX = event.mouse.x;
-			_mouseY = event.mouse.y;
+			_mouseY = event.mouse.y - _transOffsY;
 			if (_flags.useHiRes) {
 				_mouseX >>= 1;
 				_mouseY >>= 1;
@@ -491,6 +493,11 @@ void KyraEngine_v1::updateInput() {
 void KyraEngine_v1::removeInputTop() {
 	if (!_eventList.empty())
 		_eventList.erase(_eventList.begin());
+}
+
+void KyraEngine_v1::transposeScreenOutputY(int yAdd) {
+	_transOffsY = yAdd;
+	screen()->transposeScreenOutputY(yAdd);
 }
 
 bool KyraEngine_v1::skipFlag() const {

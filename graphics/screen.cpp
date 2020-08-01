@@ -122,6 +122,7 @@ void Screen::setPalette(const byte palette[PALETTE_SIZE]) {
 void Screen::setPalette(const byte *palette, uint start, uint num) {
 	assert(format.bytesPerPixel == 1);
 	g_system->getPaletteManager()->setPalette(palette, start, num);
+	ManagedSurface::setPalette(palette, start, num);
 }
 
 void Screen::clearPalette() {

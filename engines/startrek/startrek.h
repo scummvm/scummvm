@@ -23,6 +23,7 @@
 #ifndef STARTREK_H
 #define STARTREK_H
 
+#include "common/cosinetables.h"
 #include "common/events.h"
 #include "common/list.h"
 #include "common/ptr.h"
@@ -259,15 +260,6 @@ public:
 	 */
 	Common::String getLoadedText(int textIndex);
 
-
-	// math.cpp
-	/**
-	 * Unit of the angle is "quadrants" (90 degrees = 1.0)
-	 */
-	Fixed14 sin(Angle angle);
-	Fixed14 cos(Angle angle);
-	Angle atan2(int32 deltaX, int32 deltaZ);
-
 	// awaymission.cpp
 	void initAwayMission();
 	void runAwayMission();
@@ -292,7 +284,6 @@ public:
 	Fixed8 getActorScaleAtPosition(int16 y);
 	void addAction(const Action &action);
 	void addAction(byte type, byte b1, byte b2, byte b3);
-	bool checkItemInteractionExists(int action, int activeItem, int passiveItem, int16 arg6);
 	void handleAwayMissionAction();
 
 	void checkTouchedLoadingZone(int16 x, int16 y);
@@ -314,6 +305,7 @@ public:
 	// intro.cpp
 private:
 	void playIntro();
+	void showCreditsScreen(R3 *creditsBuffer, int index, bool deletePrevious = true);
 	/**
 	 * Initializes an object to spawn at one position and move toward another position.
 	 * @param ticks The number of ticks it should take for the object to reach the destination
@@ -768,6 +760,7 @@ public:
 private:
 	Common::RandomSource _randomSource;
 	Common::SineTable _sineTable;
+	Common::CosineTable _cosineTable;
 	Room *_room;
 	Common::MacResManager *_macResFork;
 };

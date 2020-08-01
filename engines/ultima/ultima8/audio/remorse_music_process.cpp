@@ -64,17 +64,12 @@ static const char *TRACK_FILE_NAMES[] = {
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(RemorseMusicProcess)
 
-RemorseMusicProcess::RemorseMusicProcess() : MusicProcess(), _currentTrack(0), _savedTrack(0), _playingStream(nullptr), _combatMusicActive(false) {
+RemorseMusicProcess::RemorseMusicProcess() : MusicProcess(), _currentTrack(0), _savedTrack(0), _combatMusicActive(false) {
 }
 
 RemorseMusicProcess::~RemorseMusicProcess() {
-	if (_playingStream) {
-		Audio::Mixer *mixer = Ultima8Engine::get_instance()->_mixer;
-		assert(mixer);
-		mixer->stopHandle(_soundHandle);
-		// FIXME: Some destruction order problem here..
-		//delete _playingStream;
-	}
+	// We shouldn't need to do anything here - the mixer will
+	// clean up the stream for us.
 }
 
 void RemorseMusicProcess::playMusic(int track) {
@@ -114,19 +109,15 @@ void RemorseMusicProcess::playMusic_internal(int track) {
 		return;
 	}
 
-	if (track == _currentTrack && _playingStream &&
-			!_playingStream->endOfStream())
+	Audio::Mixer *mixer = Ultima8Engine::get_instance()->_mixer;
+	assert(mixer);
+
+	if (track == _currentTrack && mixer->isSoundHandleActive(_soundHandle))
 		// Already playing what we want.
 		return;
 
-	Audio::Mixer *mixer = Ultima8Engine::get_instance()->_mixer;
-	assert(mixer);
 	mixer->stopHandle(_soundHandle);
 	_soundHandle = Audio::SoundHandle();
-	if (_playingStream) {
-		delete _playingStream;
-		_playingStream = nullptr;
-	}
 
 	if (track > 0) {
 		// TODO: It's a bit ugly having this here.  Should be in GameData.
@@ -139,24 +130,22 @@ void RemorseMusicProcess::playMusic_internal(int track) {
 			return;
 		}
 
-		_playingStream = Audio::makeModXmS3mStream(rs, DisposeAfterUse::NO);
-		if (!_playingStream) {
+		Audio::AudioStream *stream = Audio::makeModXmS3mStream(rs, DisposeAfterUse::NO);
+		if (!stream) {
 			error("Couldn't create stream from AMF file: %s", fname.c_str());
 			return;
 		}
-		mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, _playingStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+		mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
 	}
 }
 
 void RemorseMusicProcess::run() {
-	if (!_playingStream) {
+	Audio::Mixer *mixer = Ultima8Engine::get_instance()->_mixer;
+	assert(mixer);
+	if (mixer->isSoundHandleActive(_soundHandle)) {
 		return;
 	}
-	if (_playingStream->endOfStream()) {
-		delete _playingStream;
-		_playingStream = nullptr;
-		return;
-	}
+
 	// hit end of stream, play it again.
 	// TODO: This doesn't loop to the correct spot, should do something a bit nicer..
 	playMusic_internal(_currentTrack);

@@ -21,6 +21,8 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/misc/direction.h"
+#include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/world/actors/surrender_process.h"
 #include "ultima/ultima8/world/actors/actor.h"
@@ -76,25 +78,21 @@ void SurrenderProcess::run() {
 		return;
 	}
 
-	int16 curdir = a->getDir();
-	int16 direction = a->getDirToItemCentre(*main);
+	a->setActorFlag(Actor::ACT_SURRENDERED);
+
+	Direction curdir = a->getDir();
+	Direction direction = a->getDirToItemCentre(*main);
 
 	if (curdir != direction) {
-		int stepDelta;
-		Animation::Sequence turnanim;
-		if ((curdir - direction + 8) % 8 < 4) {
-			stepDelta = -1;
-			turnanim = Animation::lookLeft;
-		} else {
-			stepDelta = 1;
-			turnanim = Animation::lookRight;
+		uint16 animpid = a->turnTowardDir(direction);
+		if (animpid) {
+			waitFor(animpid);
+			return;
 		}
-		ProcId animpid = a->doAnim(turnanim, curdir + stepDelta);
-		waitFor(animpid);
-		return;
 	}
 
 	if (_playedSound || a->getRangeIfVisible(*main) == 0)
+		// Nothing to do.
 		return;
 
 	int16 soundno = -1;

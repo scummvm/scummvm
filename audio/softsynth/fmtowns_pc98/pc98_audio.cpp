@@ -24,7 +24,7 @@
 #include "audio/softsynth/fmtowns_pc98/towns_pc98_fmsynth.h"
 #include "common/mutex.h"
 
-class PC98AudioCoreInternal : public TownsPC98_FmSynth {
+class PC98AudioCoreInternal final : public TownsPC98_FmSynth {
 private:
 	PC98AudioCoreInternal(Audio::Mixer *mixer, PC98AudioCore *owner, PC98AudioPluginDriver *driver, PC98AudioPluginDriver::EmuType type);
 public:

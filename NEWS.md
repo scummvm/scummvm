@@ -8,23 +8,32 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Ultima IV - Quest of the Avatar.
    - Added support for Ultima VI - The False Prophet.
    - Added support for Ultima VIII - Pagan.
+   - Added support for Interactive Fiction games based on the following engines:
+     ADRIFT (except for version 5), AdvSys, AGT, Alan 2 & 3,
+     Archetype (newly reimplemented for Glk from the original Pascal sources),
+     Hugo, JACL, Level 9, Magnetic Scrolls, Quest, Scott Adams,
+     ZCode (all ZCode games except the Infocom graphical version 6 games).
+     Currently, more than 1600 games are detected and supported.
 
  General:
    - Autosaves are now supported for all the engines.
    - Errors are more likely to open the debugger, and be displayed, than just crash ScummVM.
    - Games are sorted in GUI ignoring the articles.
    - Now Hebrew is displayed correctly in GUI (requires FriBiDi library).
+   - Updated the Roland MT-32 emulation code to Munt 2.4.0.
 
  Dreamweb:
    - Added support for Russian fan-translation.
    - Fixed animation speed.
 
  Kyra:
+   - Added support for the SegaCD version of Eye of the Beholder I (with CD-Audio, animated
+     cutscenes and map function).
    - Added support for the PC-98 version of Eye of the Beholder I.
    - Added support for the Spanish versions of Eye of the Beholder I and II, Legend of
      Kyrandia 1 (CD-ROM fan translation) and Legend of Kyrandia 2 (floppy version and
-	 CD-ROM fan translation). Fix Spanish Lands of Lore support (floppy version and
-	 CD-ROM fan translation).
+     CD-ROM fan translation). Fix Spanish Lands of Lore support (floppy version and
+     CD-ROM fan translation).
 
  Prince:
    - Fixed inventory item descriptions display.

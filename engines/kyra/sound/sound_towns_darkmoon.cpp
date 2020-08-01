@@ -214,7 +214,7 @@ bool SoundTowns_Darkmoon::isPlaying() const {
 	return g_system->getAudioCDManager()->isPlaying();
 }
 
-void SoundTowns_Darkmoon::playSoundEffect(uint8 track, uint8 volume) {
+void SoundTowns_Darkmoon::playSoundEffect(uint16 track, uint8 volume) {
 	if (!_sfxEnabled)
 		return;
 

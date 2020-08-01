@@ -28,6 +28,7 @@
 #include "common/stack.h"
 #include "ultima/shared/engine/events.h"
 #include "ultima/ultima8/graphics/texture.h"
+#include "ultima/ultima8/misc/direction.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -125,6 +126,8 @@ private:
 	void startDragging(int mx, int my);
 	void moveDragging(int mx, int my);
 	void stopDragging(int mx, int my);
+	int mouseFrameForDir(Direction mousedir) const;
+
 public:
 	static Mouse *get_instance() { return _instance; }
 public:
@@ -150,10 +153,10 @@ public:
 	int getMouseLength(int mx, int my);
 
 	//! get mouse cursor direction on the screen. 0 = up, 1 = up-right, 2 = right, etc...
-	int getMouseDirectionScreen(int mx, int my);
+	Direction getMouseDirectionScreen(int mx, int my);
 
 	//! get mouse cursor direction in the world. 0 = up, 1 = up-right, 2 = right, etc...
-	int getMouseDirectionWorld(int mx, int my);
+	Direction getMouseDirectionWorld(int mx, int my);
 
 	//! get current mouse cursor location
 	void getMouseCoords(int32 &mx, int32 &my) const {

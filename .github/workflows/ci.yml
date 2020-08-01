@@ -1,0 +1,93 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  windows:
+    name: Windows
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: win32
+            triplet: x86-windows
+            arch: x86
+            # fribidi is disabled due to timeouts when installing the package
+            configFlags: --enable-faad --enable-mpeg2 --disable-fribidi
+            vcpkgPackages: 'curl faad2 fluidsynth freetype libflac libjpeg-turbo libmad libmpeg2 libogg libpng libtheora libvorbis sdl2 sdl2-net zlib'
+            useNasm: 'true'
+          - platform: x64
+            arch: x64
+            triplet: x64-windows
+            # fribidi is disabled due to timeouts when installing the package
+            configFlags: --enable-faad --enable-mpeg2 --disable-fribidi
+            vcpkgPackages: 'curl faad2 fluidsynth freetype libflac libjpeg-turbo libmad libmpeg2 libogg libpng libtheora libvorbis sdl2 sdl2-net zlib'
+          - platform: arm64
+            arch: arm64
+            triplet: arm64-windows
+            # fribidi is disabled due to https://github.com/microsoft/vcpkg/issues/11248 [fribidi] Fribidi doesn't cross-compile on x86-64 to target arm/arm64
+            # Note that fribidi is also disabled on arm64 in devtools/create_project/msvc.cpp
+            configFlags: --enable-faad --enable-mpeg2 --disable-fribidi
+            vcpkgPackages: 'curl faad2 fluidsynth freetype libflac libjpeg-turbo libmad libmpeg2 libogg libpng libtheora libvorbis sdl2 sdl2-net zlib'
+    env:
+      CONFIGURATION: Release
+      PLATFORM: ${{ matrix.platform }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: ilammy/setup-nasm@v1
+        if: ${{ matrix.useNasm }} == 'true'
+      - name: Install vcpkg and packages
+        uses: lukka/run-vcpkg@v2
+        id: runvcpkg
+        with:
+          vcpkgGitCommitId: 2f7a104d4d6f1f3790db929f85a4086aa6973d7f
+          vcpkgTriplet: '${{ matrix.triplet }}'
+          vcpkgArguments: '${{ matrix.vcpkgPackages }}'
+      - name: Upload libs
+        uses: actions/upload-artifact@v2
+        with:
+          name: libs-${{ matrix.triplet }}
+          path: ${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}\\installed\\${{ matrix.triplet }}
+      - name: Build create_project
+        run: |
+          cd devtools/create_project/cmake
+          cmake .
+          cmake --build . -j 2
+          ls
+          cd ../../../
+      - name: Call create_project
+        run: |
+          mkdir build-scummvm
+          cd build-scummvm
+          ../devtools/create_project/cmake/Debug/create_project.exe .. --msvc --enable-all-engines ${{ matrix.configflags }} --use-canonical-lib-names
+          ls
+      - name: set SCUMMVM_LIBS env variable
+        run: |
+          echo "::set-env name=SCUMMVM_LIBS::${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}\\installed\\${{ matrix.triplet }}"
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.0
+      - name: Build scummvm
+        run: |
+          cd build-scummvm
+          ls
+          msbuild scummvm.sln /m /p:BuildInParallel=true /p:Configuration=Release /p:Platform=${{ matrix.platform }}
+      - name: Upload scummvm
+        uses: actions/upload-artifact@v2
+        with:
+          name: scummvm-${{ matrix.arch }}
+          path: build-scummvm/Release${{ matrix.arch }}/*.exe
+      - name: Upload scummvm libs
+        uses: actions/upload-artifact@v2
+        with:
+          name: scummvm-${{ matrix.arch }}
+          path: ${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}\\installed\\${{ matrix.triplet }}\\bin\\*.dll
+      - name: Upload scummvm symbols
+        uses: actions/upload-artifact@v2
+        with:
+          name: symbols-${{ matrix.arch }}
+          path: build-scummvm/Release${{ matrix.arch }}/*.pdb
+      - name: Upload scummvm libs symbols
+        uses: actions/upload-artifact@v2
+        with:
+          name: symbols-${{ matrix.arch }}
+          path: ${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}\\installed\\${{ matrix.triplet }}\\bin\\*.pdb

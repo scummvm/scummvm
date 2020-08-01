@@ -80,6 +80,11 @@ private:
 	 */
 	void createGame();
 
+protected:
+	/**
+	 * Loads the configuration
+	 */
+	void createConfiguration() override;
 public:
 	/**
 	 * Constructor

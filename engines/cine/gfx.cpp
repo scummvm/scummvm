@@ -26,17 +26,23 @@
 #include "cine/various.h"
 #include "cine/pal.h"
 
+#include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/events.h"
+#include "common/str.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/primitives.h"
 
 namespace Cine {
 
 byte *collisionPage;
 FWRenderer *renderer = NULL;
+
+#define DEFAULT_MESSAGE_BG 1
+#define DEFAULT_CMD_Y 185
 
 // Constants related to kLowPalFormat
 #define kLowPalBytesPerColor 2
@@ -103,12 +109,19 @@ static const byte cursorPalette[] = {
 	0xff, 0xff, 0xff, 0xff
 };
 
+void plotPoint(int x, int y, int color, void *data) {
+	byte *output = (byte *)data;
+	if (x >= 0 && x < 320 && y >= 0 && y < 200) {
+		output[y * 320 + x] = (byte)color;
+	}
+}
+
 /**
  * Initialize renderer
  */
-FWRenderer::FWRenderer() : _background(NULL), _backupPal(), _cmd(""),
-	_cmdY(0), _messageBg(0), _backBuffer(new byte[_screenSize]),
-	_activePal(), _changePal(0), _showCollisionPage(false) {
+FWRenderer::FWRenderer() : _savedBackBuffers(), _background(NULL), _backupPal(), _cmd(""),
+	_messageBg(DEFAULT_MESSAGE_BG), _cmdY(DEFAULT_CMD_Y), _backBuffer(new byte[_screenSize]),
+	_activePal(), _changePal(0), _showCollisionPage(false), _fadeToBlackLastCalledMs(0) {
 
 	assert(_backBuffer);
 
@@ -116,6 +129,14 @@ FWRenderer::FWRenderer() : _background(NULL), _backupPal(), _cmd(""),
 	memset(_bgName, 0, sizeof(_bgName));
 }
 
+void FWRenderer::removeSavedBackBuffers() {
+	for (int i = 0; i < ARRAYSIZE(_savedBackBuffers); i++) {
+		if (_savedBackBuffers[i]) {
+			delete[] _savedBackBuffers[i];
+			_savedBackBuffers[i] = nullptr;
+		}
+	}
+}
 
 /**
  * Destroy renderer
@@ -124,11 +145,13 @@ FWRenderer::~FWRenderer() {
 	delete[] _background;
 	delete[] _backBuffer;
 
+	removeSavedBackBuffers();
+
 	clearMenuStack();
 }
 
 bool FWRenderer::initialize() {
-	_activePal = Palette(kLowPalFormat, kLowPalNumColors);
+	_backupPal = _activePal = Palette(kLowPalFormat, kLowPalNumColors);
 	return true;
 }
 
@@ -144,12 +167,17 @@ void FWRenderer::clear() {
 	_activePal.clear();
 
 	memset(_backBuffer, 0, _screenSize);
+	removeSavedBackBuffers();
 
 	_cmd = "";
-	_cmdY = 0;
-	_messageBg = 0;
+	_cmdY = DEFAULT_CMD_Y;
+	_messageBg = DEFAULT_MESSAGE_BG;
 	_changePal = 0;
 	_showCollisionPage = false;
+}
+
+const Cine::Palette& FWRenderer::getFadeInSourcePalette() {
+	return _backupPal;
 }
 
 /**
@@ -263,11 +291,34 @@ void FWRenderer::drawCommand() {
 
 void FWRenderer::drawString(const char *string, byte param) {
 	int width;
+	byte minBrightnessColorIndex = 4;
 
-	width = getStringWidth(string) + 10;
-	width = width > 300 ? 300 : width;
+	bool useEnsureContrast = true;
+	if (useEnsureContrast && g_cine->getGameType() == Cine::GType_OS) {
+		bool paletteChanged = _activePal.ensureContrast(minBrightnessColorIndex);
+		if (paletteChanged) {
+			clearBackBuffer();
+			setPalette();
+		}
+	}
 
-	drawMessage(string, (320 - width) / 2, 80, width, 4);
+	// Both Future Wars and Operation Stealth 16 color PC versions do this
+	int y = 80;
+	if (param == 1) {
+		y = 20;
+	} else if (param == 2) {
+		y = 140;
+	}
+
+	width = getStringWidth(string);
+
+	if (width == 0) {
+		return;
+	}
+
+	width = MIN<int>(width + 20, 300);
+
+	drawMessage(string, (320 - width) / 2, y, width, minBrightnessColorIndex);
 
 	blit();
 }
@@ -287,10 +338,8 @@ void FWRenderer::drawMessage(const char *str, int x, int y, int width, int color
 	int line = 0, words = 0, cw = 0;
 	int space = 0, extraSpace = 0;
 
-	const bool isAmiga = (g_cine->getPlatform() == Common::kPlatformAmiga);
-
 	if (color >= 0) {
-		if (isAmiga)
+		if (useTransparentDialogBoxes())
 			drawTransparentBox(x, y, width, 4);
 		else
 			drawPlainBox(x, y, width, 4, color);
@@ -316,7 +365,7 @@ void FWRenderer::drawMessage(const char *str, int x, int y, int width, int color
 
 			ty += 9;
 			if (color >= 0) {
-				if (isAmiga)
+				if (useTransparentDialogBoxes())
 					drawTransparentBox(x, ty, width, 9);
 				else
 					drawPlainBox(x, ty, width, 9, color);
@@ -338,11 +387,11 @@ void FWRenderer::drawMessage(const char *str, int x, int y, int width, int color
 
 	ty += 9;
 	if (color >= 0) {
-		if (isAmiga)
+		if (useTransparentDialogBoxes())
 			drawTransparentBox(x, ty, width, 4);
 		else
 			drawPlainBox(x, ty, width, 4, color);
-		drawDoubleBorder(x, y, width, ty - y + 4, isAmiga ? 18 : 2);
+		drawDoubleBorder(x, y, width, ty - y + 4, (useTransparentDialogBoxes() ? transparentDialogBoxStartColor() : 0) + 2);
 	}
 }
 
@@ -357,19 +406,6 @@ void FWRenderer::drawMessage(const char *str, int x, int y, int width, int color
  * @note An on-screen rectangle's drawn height is always at least one.
  */
 void FWRenderer::drawPlainBox(int x, int y, int width, int height, byte color) {
-	// Make width's and height's absolute values at least one
-	// which forces this function to always draw something if the
-	// drawing position is inside screen bounds. This fixes at least
-	// the showing of the oxygen gauge meter in Operation Stealth's
-	// first arcade sequence where this function is called with a
-	// height of zero.
-	if (width == 0) {
-		width = 1;
-	}
-	if (height == 0) {
-		height = 1;
-	}
-
 	// Handle horizontally flipped boxes
 	if (width < 0) {
 		width = ABS(width);
@@ -393,7 +429,19 @@ void FWRenderer::drawPlainBox(int x, int y, int width, int height, byte color) {
 	}
 }
 
+bool FWRenderer::useTransparentDialogBoxes() {
+	return _activePal.colorCount() == 16 &&
+		((g_cine->getPlatform() == Common::kPlatformAmiga) ||
+		ConfMan.getBool("transparentdialogboxes"));
+}
+
+byte FWRenderer::transparentDialogBoxStartColor() {
+	return 16;
+}
+
 void FWRenderer::drawTransparentBox(int x, int y, int width, int height) {
+	byte startColor = transparentDialogBoxStartColor();
+
 	// Handle horizontally flipped boxes
 	if (width < 0) {
 		width = ABS(width);
@@ -415,8 +463,8 @@ void FWRenderer::drawTransparentBox(int x, int y, int width, int height) {
 	const int lineAdd = 320 - boxRect.width();
 	for (int i = 0; i < boxRect.height(); ++i) {
 		for (int j = 0; j < boxRect.width(); ++j, ++dest) {
-			if (*dest < 16)
-				*dest += 16;
+			if (*dest < startColor)
+				*dest += startColor;
 		}
 		dest += lineAdd;
 	}
@@ -506,16 +554,24 @@ int FWRenderer::undrawChar(char character, int x, int y) {
 }
 
 int FWRenderer::getStringWidth(const char *str) {
+	int padding = (g_cine->getGameType() == Cine::GType_OS) ? 2 : 1;
 	const char *p = str;
 	int width = 0;
+	int maxWidth = 0;
 
 	while (*p) {
-		if (*p == ' ')
+		unsigned char currChar = (unsigned char)*p;
+		if (currChar == '|') {
+			maxWidth = MAX<int>(width, maxWidth);
+			width = 0;
+		} else if (currChar == ' ')
 			width += 5;
 		else
-			width += g_cine->_textHandler.fontParamTable[(unsigned char)*p].characterWidth;
+			width += g_cine->_textHandler.fontParamTable[currChar].characterWidth + padding;
 		p++;
 	}
+
+	maxWidth = MAX<int>(width, maxWidth);
 
 	return width;
 }
@@ -570,6 +626,12 @@ void FWRenderer::remaskSprite(byte *mask, Common::List<overlay>::iterator it) {
 void FWRenderer::drawBackground() {
 	assert(_background);
 	memcpy(_backBuffer, _background, _screenSize);
+}
+
+void FWRenderer::clearBackBuffer() {
+	if (_backBuffer) {
+		memset(_backBuffer, 0, _screenSize);
+	}
 }
 
 /**
@@ -645,6 +707,20 @@ void FWRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
  * Draw overlays
  */
 void FWRenderer::drawOverlays() {
+	// WORKAROUND: Show player behind stairs by moving him behind everything
+	// in the scene right after leaving Dr. Why's control room.
+	if (g_cine->getGameType() == Cine::GType_OS &&
+		g_cine->_overlayList.size() >= 2 &&
+		g_cine->_overlayList.back().objIdx == 1 &&
+		g_cine->_objectTable.size() >= 2 &&
+		g_cine->_objectTable[1].x == 231 &&
+		g_cine->_objectTable[1].y >= 142 &&
+		scumm_stricmp(renderer->getBgName(), "56VIDE.PI1") == 0) {
+		Cine::overlay playerOverlay = g_cine->_overlayList.back();
+		g_cine->_overlayList.pop_back();
+		g_cine->_overlayList.push_front(playerOverlay);
+	}
+
 	Common::List<overlay>::iterator it;
 
 	for (it = g_cine->_overlayList.begin(); it != g_cine->_overlayList.end(); ++it) {
@@ -655,7 +731,7 @@ void FWRenderer::drawOverlays() {
 /**
  * Draw another frame
  */
-void FWRenderer::drawFrame() {
+void FWRenderer::drawFrame(bool wait) {
 	drawBackground();
 	drawOverlays();
 
@@ -663,8 +739,24 @@ void FWRenderer::drawFrame() {
 		drawCommand();
 	}
 
-	if (_changePal) {
-		refreshPalette();
+	// DIFFERENCE FROM DISASSEMBLY:
+	// Waiting for g_cine->getTimerDelay() since last call to this function
+	// from mainLoop() was in Future Wars and Operation Stealth disassembly here.
+	// The wait did nothing else but simply wait for the waiting period to end.
+	// It has been moved to manageEvents() function call in executePlayerInput()
+	// to make better use of the waiting period. Now it is used to read mouse button
+	// status and possibly update the command line while moving the mouse
+	// (e.g. "EXAMINE DOOR" -> "EXAMINE BUTTON").
+
+	if (reloadBgPalOnNextFlip) {
+		_activePal = getFadeInSourcePalette();
+		reloadBgPalOnNextFlip = 0;
+		_changePal = 1; // From disassembly
+	}
+
+	if (_changePal) { // From disassembly
+		setPalette();
+		_changePal = 0; // From disassembly
 	}
 
 	const int menus = _menuStack.size();
@@ -672,6 +764,11 @@ void FWRenderer::drawFrame() {
 		_menuStack[i]->drawMenu(*this, (i == menus - 1));
 
 	blit();
+
+	if (gfxFadeInRequested) {
+		fadeFromBlack();
+		gfxFadeInRequested = 0;
+	}
 }
 
 /**
@@ -683,14 +780,53 @@ void FWRenderer::showCollisionPage(bool state) {
 	_showCollisionPage = state;
 }
 
+void FWRenderer::blitBackBuffer() {
+	blit(false);
+}
+
+void FWRenderer::blit(bool useCollisionPage) {
+	// Show the back buffer or the collision page. Normally the back
+	// buffer but showing the collision page is useful for debugging.
+	byte *source = (useCollisionPage ? collisionPage : _backBuffer);
+	g_system->copyRectToScreen(source, 320, 0, 0, 320, 200);
+	g_system->updateScreen();
+}
+
 /**
  * Update screen
  */
 void FWRenderer::blit() {
-	// Show the back buffer or the collision page. Normally the back
-	// buffer but showing the collision page is useful for debugging.
-	byte *source = (_showCollisionPage ? collisionPage : _backBuffer);
-	g_system->copyRectToScreen(source, 320, 0, 0, 320, 200);
+	blit(_showCollisionPage);
+}
+
+bool FWRenderer::hasSavedBackBuffer(BackBufferSource source) {
+	return source >= 0 && source < MAX_BACK_BUFFER_SOURCES && _savedBackBuffers[source];
+}
+
+void FWRenderer::saveBackBuffer(BackBufferSource source) {
+	if (_backBuffer && source >= 0 && source < MAX_BACK_BUFFER_SOURCES) {
+		if (!_savedBackBuffers[source]) {
+			_savedBackBuffers[source] = new byte[_screenSize];
+		}
+		memcpy(_savedBackBuffers[source], _backBuffer, _screenSize);
+	}
+}
+
+void FWRenderer::popSavedBackBuffer(BackBufferSource source) {
+	restoreSavedBackBuffer(source);
+	removeSavedBackBuffer(source);
+}
+
+void FWRenderer::restoreSavedBackBuffer(BackBufferSource source) {
+	if (_backBuffer && hasSavedBackBuffer(source)) {
+		memcpy(_backBuffer, _savedBackBuffers[source], _screenSize);
+		blitBackBuffer();
+	}
+}
+
+void FWRenderer::removeSavedBackBuffer(BackBufferSource source) {
+	delete[] _savedBackBuffers[source];
+	_savedBackBuffers[source] = nullptr;
 }
 
 /**
@@ -701,22 +837,24 @@ void FWRenderer::setCommand(Common::String cmd) {
 	_cmd = cmd;
 }
 
-/**
- * Refresh current palette
- */
-void FWRenderer::refreshPalette() {
-	assert(_activePal.isValid() && !_activePal.empty());
-	_activePal.setGlobalOSystemPalette();
-	_changePal = 0;
+Common::String FWRenderer::getCommand() {
+	return _cmd;
 }
 
-/**
- * Load palette of current background
- */
-void FWRenderer::reloadPalette() {
-	assert(_backupPal.isValid() && !_backupPal.empty());
-	_activePal = _backupPal;
-	_changePal = 1;
+void FWRenderer::setBlackPalette(bool updateChangePal) {
+	_activePal.fillWithBlack();
+	if (updateChangePal) {
+		_changePal = 1; // From disassembly when called from main loop's initialization section
+	}
+}
+
+void FWRenderer::setPalette() {
+	assert(_activePal.isValid() && !_activePal.empty());
+	_activePal.setGlobalOSystemPalette();
+}
+
+int16 FWRenderer::addBackground(const char *bgName, uint16 bgIdx) {
+	error("Future Wars renderer doesn't support multiple backgrounds");
 }
 
 /**
@@ -824,7 +962,7 @@ void FWRenderer::restorePalette(Common::SeekableReadStream &fHandle, int version
 	fHandle.read(buf, kLowPalNumBytes);
 	_backupPal.load(buf, sizeof(buf), kLowPalFormat, kLowPalNumColors, CINE_BIG_ENDIAN);
 
-	_changePal = 1;
+	_changePal = 1; // From disassembly
 }
 
 /**
@@ -867,8 +1005,8 @@ void OSRenderer::savePalette(Common::OutSaveFile &fHandle) {
 	_activePal.save(buf, sizeof(buf), CINE_LITTLE_ENDIAN);
 	fHandle.write(buf, kHighPalNumBytes);
 
-	// Write the active 256 color palette a second time.
-	// FIXME: The backup 256 color palette should be saved here instead of the active one.
+	// Write the backup 256 color palette.
+	_backupPal.save(buf, sizeof(buf), CINE_LITTLE_ENDIAN);
 	fHandle.write(buf, kHighPalNumBytes);
 }
 
@@ -878,22 +1016,29 @@ void OSRenderer::savePalette(Common::OutSaveFile &fHandle) {
  */
 void OSRenderer::restorePalette(Common::SeekableReadStream &fHandle, int version) {
 	byte buf[kHighPalNumBytes];
-	uint colorCount = (version > 0) ? fHandle.readUint16LE() : kHighPalNumBytes;
+	uint colorCount = (version > 0) ? fHandle.readUint16LE() : kHighPalNumColors;
 
+	// Load the active color palette
 	fHandle.read(buf, kHighPalNumBytes);
 
 	if (colorCount == kHighPalNumColors) {
 		// Load the active 256 color palette from file
 		_activePal.load(buf, sizeof(buf), kHighPalFormat, kHighPalNumColors, CINE_LITTLE_ENDIAN);
 	} else {
+		// Load the active 16 color palette from file
 		_activePal.load(buf, sizeof(buf), kLowPalFormat, kLowPalNumColors, CINE_LITTLE_ENDIAN);
 	}
 
-	// Jump over the backup 256 color palette.
-	// FIXME: Load the backup 256 color palette and use it properly.
-	fHandle.seek(kHighPalNumBytes, SEEK_CUR);
+	// Load the backup color palette
+	fHandle.read(buf, kHighPalNumBytes);
 
-	_changePal = 1;
+	if (colorCount == kHighPalNumColors) {
+		_backupPal.load(buf, sizeof(buf), kHighPalFormat, kHighPalNumColors, CINE_LITTLE_ENDIAN);
+	} else {
+		_backupPal.load(buf, sizeof(buf), kLowPalFormat, kLowPalNumColors, CINE_LITTLE_ENDIAN);
+	}
+
+	_changePal = 1; // From disassembly
 }
 
 /**
@@ -902,9 +1047,28 @@ void OSRenderer::restorePalette(Common::SeekableReadStream &fHandle, int version
  * @param b Last color to rotate
  * @param c Possibly rotation step, must be 0 or 1 at the moment
  */
-void FWRenderer::rotatePalette(int a, int b, int c) {
-	_activePal.rotateRight(a, b, c);
-	refreshPalette();
+void FWRenderer::rotatePalette(int firstIndex, int lastIndex, int mode) {
+	if (mode == 1) {
+		_activePal.rotateRight(firstIndex, lastIndex);
+	} else if (mode == 2) {
+		_activePal.rotateLeft(firstIndex, lastIndex);
+	} else {
+		_activePal = _backupPal;
+	}
+	setPalette();
+}
+
+void OSRenderer::rotatePalette(int firstIndex, int lastIndex, int mode) {
+	if (mode == 1) {
+		_activePal.rotateRight(firstIndex, lastIndex);
+	} else if (mode == 2) {
+		_activePal.rotateLeft(firstIndex, lastIndex);
+	} else if (_currentBg > 0 && _currentBg < 8) {
+		_activePal = _bgTable[_currentBg].pal;
+	} else { // background indices 0 and 8 use backup palette
+		_activePal = _backupPal;
+	}
+	setPalette();
 }
 
 /**
@@ -921,7 +1085,24 @@ void FWRenderer::transformPalette(int first, int last, int r, int g, int b) {
 	}
 
 	_backupPal.saturatedAddColor(_activePal, first, last, r, g, b);
-	refreshPalette();
+	_changePal = 1; // From disassembly
+	gfxFadeOutCompleted = 0;
+}
+
+uint FWRenderer::fadeDelayMs() {
+	// For PC wait for vertical retrace and wait for three timer interrupt ticks.
+	// On PC vertical retrace is 70Hz (1000ms / 70 ~= 14.29ms) and
+	// timer interrupt tick is set to (10923000ms / 1193180) ~= 9.15ms.
+	// So 14.29ms + 3 * 9.15ms ~= 41.74ms ~= 42ms. That's the maximum to wait for PC.
+	// Because the vertical retrace might come earlier the minimum to wait is
+	// 0ms + 3 * 9.15ms (The wait for three timer ticks is absolute) = 27.45ms ~= 27ms.
+	// So the wait on PC is something between 27ms and 42ms.
+	// Probably something else on Amiga (Didn't they have 50Hz or 60Hz monitors?).
+	return 42;
+}
+
+uint FWRenderer::fadeToBlackMinMs() {
+	return 1000;
 }
 
 /**
@@ -932,15 +1113,59 @@ void FWRenderer::transformPalette(int first, int last, int r, int g, int b) {
 void FWRenderer::fadeToBlack() {
 	assert(_activePal.isValid() && !_activePal.empty());
 
-	for (int i = 0; i < 8; i++) {
+	bool skipFade = false;
+	uint32 now = g_system->getMillis();
+
+	// HACK: Try to cirmumvent double fade outs by throttling function call.
+	if (hacksEnabled && _fadeToBlackLastCalledMs != 0 && (now - _fadeToBlackLastCalledMs) < fadeToBlackMinMs()) {
+		skipFade = true;
+		warning("Skipping fade to black (Time since last called = %d ms < throttling value of %d ms)",
+			now - _fadeToBlackLastCalledMs, fadeToBlackMinMs());
+	} else {
+		_fadeToBlackLastCalledMs = now;
+	}
+
+	for (int i = (skipFade ? 7 : 0); i < 8; i++) {
 		// Fade out the whole palette by 1/7th
 		// (Operation Stealth used 36 / 252, which is 1 / 7. Future Wars used 1 / 7 directly).
 		_activePal.saturatedAddNormalizedGray(_activePal, 0, _activePal.colorCount() - 1, -1, 7);
 
-		refreshPalette();
+		setPalette();
 		g_system->updateScreen();
-		g_system->delayMillis(50);
+		g_system->delayMillis(fadeDelayMs());
 	}
+
+	clearBackBuffer();
+	forbidBgPalReload = gfxFadeOutCompleted = 1;
+
+	// HACK: This is not present in disassembly
+	// but this is an attempt to prevent flashing a
+	// normally illuminated screen and then fading it in by
+	// resetting possible pending background palette reload.
+	if (hacksEnabled) {
+		reloadBgPalOnNextFlip = 0;
+	}
+}
+
+void FWRenderer::fadeFromBlack() {
+	assert(_activePal.isValid() && !_activePal.empty());
+
+	const Palette& sourcePalette = getFadeInSourcePalette();
+
+	// Initialize active palette to source palette's format and size if they differ
+	if (_activePal.colorFormat() != sourcePalette.colorFormat() || _activePal.colorCount() != sourcePalette.colorCount()) {
+		_activePal = Cine::Palette(sourcePalette.colorFormat(), sourcePalette.colorCount());
+	}
+
+	for (int i = 7; i >= 0; i--) {
+		sourcePalette.saturatedAddNormalizedGray(_activePal, 0, _activePal.colorCount() - 1, -i, 7);
+
+		setPalette();
+		g_system->updateScreen();
+		g_system->delayMillis(fadeDelayMs());
+	}
+
+	forbidBgPalReload = gfxFadeOutCompleted = 0;
 }
 
 // Menu implementation
@@ -988,14 +1213,14 @@ void SelectionMenu::drawMenu(FWRenderer &r, bool top) {
 	if (y + height > 199)
 		y = 199 - height;
 
-	const bool isAmiga = (g_cine->getPlatform() == Common::kPlatformAmiga);
+	byte doubleBorderColor = (r.useTransparentDialogBoxes() ? r.transparentDialogBoxStartColor() : 0) + 2;
 
-	if (isAmiga) {
+	if (r.useTransparentDialogBoxes()) {
 		r.drawTransparentBox(x, y, _width, height);
-		r.drawDoubleBorder(x, y, _width, height, 18);
+		r.drawDoubleBorder(x, y, _width, height, doubleBorderColor);
 	} else {
 		r.drawPlainBox(x, y, _width, height, r._messageBg);
-		r.drawDoubleBorder(x, y, _width, height, 2);
+		r.drawDoubleBorder(x, y, _width, height, doubleBorderColor);
 	}
 
 	int lineY = y + 4;
@@ -1005,16 +1230,10 @@ void SelectionMenu::drawMenu(FWRenderer &r, bool top) {
 		int charX = x + 4;
 
 		if (i == _selection) {
-			int color;
+			int color = (r.useTransparentDialogBoxes() ? 2 : 0);
 
-			if (isAmiga) {
-				if (top) {
-					color = 2;
-				} else {
-					color = 18;
-				}
-			} else {
-				color = 0;
+			if (!top) {
+				color += (r.useTransparentDialogBoxes() ? r.transparentDialogBoxStartColor() : 0);
 			}
 
 			r.drawPlainBox(x + 2, lineY - 1, _width - 3, 9, color);
@@ -1022,7 +1241,7 @@ void SelectionMenu::drawMenu(FWRenderer &r, bool top) {
 
 		const int size = _elements[i].size();
 		for (int j = 0; j < size; ++j) {
-			if (isAmiga && i == _selection) {
+			if (r.useTransparentDialogBoxes() && i == _selection) {
 				charX = r.undrawChar(_elements[i][j], charX, lineY);
 			} else {
 				charX = r.drawChar(_elements[i][j], charX, lineY);
@@ -1048,9 +1267,7 @@ void TextInputMenu::drawMenu(FWRenderer &r, bool top) {
 	int line = 0, words = 0, cw = 0;
 	int space = 0, extraSpace = 0;
 
-	const bool isAmiga = (g_cine->getPlatform() == Common::kPlatformAmiga);
-
-	if (isAmiga)
+	if (r.useTransparentDialogBoxes())
 		r.drawTransparentBox(x, y, _width, 4);
 	else
 		r.drawPlainBox(x, y, _width, 4, r._messageBg);
@@ -1075,7 +1292,7 @@ void TextInputMenu::drawMenu(FWRenderer &r, bool top) {
 			}
 
 			ty += 9;
-			if (isAmiga)
+			if (r.useTransparentDialogBoxes())
 				r.drawTransparentBox(x, ty, _width, 9);
 			else
 				r.drawPlainBox(x, ty, _width, 9, r._messageBg);
@@ -1096,7 +1313,7 @@ void TextInputMenu::drawMenu(FWRenderer &r, bool top) {
 
 	// input area background
 	ty += 9;
-	if (isAmiga)
+	if (r.useTransparentDialogBoxes())
 		r.drawTransparentBox(x, ty, _width, 9);
 	else
 		r.drawPlainBox(x, ty, _width, 9, r._messageBg);
@@ -1118,11 +1335,11 @@ void TextInputMenu::drawMenu(FWRenderer &r, bool top) {
 	}
 
 	ty += 9;
-	if (isAmiga)
+	if (r.useTransparentDialogBoxes())
 		r.drawTransparentBox(x, ty, _width, 4);
 	else
 		r.drawPlainBox(x, ty, _width, 4, r._messageBg);
-	r.drawDoubleBorder(x, y, _width, ty - y + 4, isAmiga ? 18 : 2);
+	r.drawDoubleBorder(x, y, _width, ty - y + 4, (r.useTransparentDialogBoxes() ? r.transparentDialogBoxStartColor() : 0) + 2);
 }
 
 // -------------------
@@ -1146,7 +1363,7 @@ OSRenderer::~OSRenderer() {
 }
 
 bool OSRenderer::initialize() {
-	_activePal = Palette(kHighPalFormat, kHighPalNumColors);
+	_backupPal = _activePal = Palette(kHighPalFormat, kHighPalNumColors);
 	return true;
 }
 
@@ -1175,13 +1392,23 @@ void OSRenderer::incrustMask(const BGIncrust &incrust, uint8 color) {
 	const byte *data = g_cine->_animDataTable[obj.frame].data();
 	int x, y, width, height;
 
-	x = obj.x;
-	y = obj.y;
+	x = incrust.x;
+	y = incrust.y;
 	width = g_cine->_animDataTable[obj.frame]._realWidth;
 	height = g_cine->_animDataTable[obj.frame]._height;
 
-	if (_bgTable[_currentBg].bg) {
-		gfxFillSprite(data, width, height, _bgTable[_currentBg].bg, x, y, color);
+	if (_bgTable[incrust.bgIdx].bg) {
+		gfxFillSprite(data, width, height, _bgTable[incrust.bgIdx].bg, x, y, color);
+	}
+}
+
+const Cine::Palette& OSRenderer::getFadeInSourcePalette() {
+	assert(_currentBg <= 8);
+
+	if (_currentBg == 0) {
+		return _backupPal;
+	} else {
+		return _bgTable[_currentBg].pal;
 	}
 }
 
@@ -1217,8 +1444,16 @@ void OSRenderer::incrustSprite(const BGIncrust &incrust) {
 	width = g_cine->_animDataTable[incrust.frame]._realWidth;
 	height = g_cine->_animDataTable[incrust.frame]._height;
 
-	if (_bgTable[_currentBg].bg) {
-		drawSpriteRaw2(data, transColor, width, height, _bgTable[_currentBg].bg, x, y);
+	if (_bgTable[incrust.bgIdx].bg) {
+		// HACK: Fix transparency colors of shadings near walls
+		// in labyrinth scene in Operation Stealth after loading a savegame
+		// saved in the labyrinth.
+		if (hacksEnabled && incrust.objIdx == 1 && incrust.frame < 16 && transColor == 5 &&
+			scumm_stricmp(currentPrcName, "LABY.PRC") == 0) {
+			transColor = 0;
+		}
+
+		drawSpriteRaw2(data, transColor, width, height, _bgTable[incrust.bgIdx].bg, x, y);
 	}
 }
 
@@ -1254,17 +1489,22 @@ void OSRenderer::drawBackground() {
 	if (!_bgShift) {
 		memcpy(_backBuffer, main, _screenSize);
 	} else {
+		unsigned int rowShift = _bgShift % 200;
 		byte *scroll = _bgTable[_scrollBg].bg;
-		int mainShift = _bgShift * _screenWidth;
-		int mainSize = _screenSize - mainShift;
-
 		assert(scroll);
 
-		if (mainSize > 0) { // Just a precaution
-			memcpy(_backBuffer, main + mainShift, mainSize);
-		}
-		if (mainShift > 0) { // Just a precaution
-			memcpy(_backBuffer + mainSize, scroll, mainShift);
+		if (!rowShift) {
+			memcpy(_backBuffer, scroll, _screenSize);
+		} else {
+			int mainShift = rowShift * _screenWidth;
+			int mainSize = _screenSize - mainShift;
+
+			if (mainSize > 0) { // Just a precaution
+				memcpy(_backBuffer, main + mainShift, mainSize);
+			}
+			if (mainShift > 0) { // Just a precaution
+				memcpy(_backBuffer + mainSize, scroll, mainShift);
+			}
 		}
 	}
 }
@@ -1278,7 +1518,8 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	int len, idx, width, height;
 	ObjectStruct *obj;
 	AnimData *sprite;
-	byte color;
+	byte color, transparentColor;
+	bool useTopLeftForTransCol = false;
 
 	switch (it->type) {
 	// color sprite
@@ -1286,8 +1527,44 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		if (g_cine->_objectTable[it->objIdx].frame < 0) {
 			break;
 		}
+
 		sprite = &g_cine->_animDataTable[g_cine->_objectTable[it->objIdx].frame];
-		drawSprite(&(*it), sprite->data(), sprite->_realWidth, sprite->_height, _backBuffer, g_cine->_objectTable[it->objIdx].x, g_cine->_objectTable[it->objIdx].y, g_cine->_objectTable[it->objIdx].part, sprite->_bpp);
+		obj = &g_cine->_objectTable[it->objIdx];
+		transparentColor = obj->part & 0x0F;
+
+		// HACK: Correct transparency color from 6 to 0 for the first frame of sea animation
+		// in 16 color DOS version of Operation Stealth in the flower shop scene
+		// (The scene in which the player arrives immediately after leaving the airport).
+		if (hacksEnabled && it->objIdx == 141 && obj->frame == 100 && obj->part == 6 && sprite->_bpp == 4 &&
+			scumm_stricmp(currentPrcName, "AIRPORT.PRC") == 0 &&
+			scumm_stricmp(renderer->getBgName(), "21.PI1") == 0) {
+			useTopLeftForTransCol = true;
+		}
+
+		// HACK: Correct transparency color from 8 to 51 for the player's walking animation
+		// in 256 color DOS version of Operation Stealth in the scene right after
+		// leaving Dr. Why's control room.
+		if (hacksEnabled && it->objIdx == 1 && obj->part == 8 && sprite->_bpp == 5 &&
+			scumm_stricmp(currentPrcName, "ILE.PRC") == 0 &&
+			scumm_stricmp(renderer->getBgName(), "56VIDE.PI1") == 0) {
+			useTopLeftForTransCol = true;
+		}
+
+		// HACK: Correct transparency color from 1 to 3 for the player emerging from a manhole
+		// in 256 color DOS version of Operation Stealth when entering the Dr. Why's island.
+		if (hacksEnabled && it->objIdx == 43 && obj->frame >= 100 && obj->frame <= 102 &&
+			obj->part == 1 && sprite->_bpp == 5 &&
+			scumm_stricmp(currentPrcName, "SOUSMAR2.PRC") == 0 &&
+			scumm_stricmp(renderer->getBgName(), "56.PI1") == 0) {
+			useTopLeftForTransCol = true;
+		}
+
+		if (useTopLeftForTransCol) {
+			// Use top left corner value for transparency
+			transparentColor = sprite->getColor(0, 0);
+		}
+
+		drawSprite(&(*it), sprite->data(), sprite->_realWidth, sprite->_height, _backBuffer, g_cine->_objectTable[it->objIdx].x, g_cine->_objectTable[it->objIdx].y, transparentColor, sprite->_bpp);
 		break;
 
 	// game message
@@ -1326,7 +1603,7 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	// masked background
 	case 20:
 		assert(it->objIdx < NUM_MAX_OBJECT);
-		var5 = it->x; // A global variable updated here!
+		lastType20OverlayBgIdx = it->x; // A global variable updated here!
 		obj = &g_cine->_objectTable[it->objIdx];
 		sprite = &g_cine->_animDataTable[obj->frame];
 
@@ -1334,19 +1611,18 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 			break;
 		}
 
-		maskBgOverlay(_bgTable[it->x].bg, sprite->data(), sprite->_realWidth, sprite->_height, _backBuffer, obj->x, obj->y);
+		maskBgOverlay(it->x, _bgTable[it->x].bg, sprite->data(), sprite->_realWidth, sprite->_height, _backBuffer, obj->x, obj->y);
 		break;
 
+	// line drawing
 	case 22:
-		// TODO: Check it this implementation really works correctly (Some things might be wrong, needs testing).
 		assert(it->objIdx < NUM_MAX_OBJECT);
 		obj = &g_cine->_objectTable[it->objIdx];
 		color = obj->part & 0x0F;
 		width = obj->frame;
 		height = obj->costume;
-		drawPlainBox(obj->x, obj->y, width, height, color);
-		debug(5, "renderOverlay: type=%d, x=%d, y=%d, width=%d, height=%d, color=%d",
-			  it->type, obj->x, obj->y, width, height, color);
+		// Using Bresenham's algorithm, looks good enough for visual purposes in Operation Stealth
+		Graphics::drawLine(obj->x, obj->y, width, height, color, plotPoint, _backBuffer);
 		break;
 
 	// something else
@@ -1354,20 +1630,6 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		FWRenderer::renderOverlay(it);
 		break;
 	}
-}
-
-/**
- * Load palette of current background
- */
-void OSRenderer::reloadPalette() {
-	// selected background in plane takeoff scene has swapped colors 12
-	// and 14, shift background has it right
-	palBg *bg = _bgShift ? &_bgTable[_scrollBg] : &_bgTable[_currentBg];
-
-	assert(bg->pal.isValid() && !(bg->pal.empty()));
-
-	_activePal = bg->pal;
-	_changePal = 1;
 }
 
 /**
@@ -1379,15 +1641,55 @@ void OSRenderer::reloadPalette() {
  * @param b Blue channel transformation
  */
 void OSRenderer::transformPalette(int first, int last, int r, int g, int b) {
-	palBg *bg = _bgShift ? &_bgTable[_scrollBg] : &_bgTable[_currentBg];
+	// Background indices 0 and 8 use backup palette
+	const Cine::Palette& srcPal =
+		(_currentBg > 0 && _currentBg < 8) ? _bgTable[_currentBg].pal : _backupPal;
 
 	// Initialize active palette to current background's palette format and size if they differ
-	if (_activePal.colorFormat() != bg->pal.colorFormat() || _activePal.colorCount() != bg->pal.colorCount()) {
-		_activePal = Cine::Palette(bg->pal.colorFormat(), bg->pal.colorCount());
+	if (_activePal.colorFormat() != srcPal.colorFormat() || _activePal.colorCount() != srcPal.colorCount()) {
+		_activePal = Cine::Palette(srcPal.colorFormat(), srcPal.colorCount());
 	}
 
-	bg->pal.saturatedAddColor(_activePal, first, last, r, g, b, kLowPalFormat);
-	refreshPalette();
+	// If asked to change whole 16 color palette then
+	// assume it means the whole palette regardless of size.
+	// In Operation Stealth DOS 16 color and 256 color disassembly mapping was from 0-15 to 0-255.
+	if (first == 0 && last == 15) {
+		last = srcPal.colorCount() - 1;
+	}
+
+	srcPal.saturatedAddColor(_activePal, first, last, r, g, b, kLowPalFormat);
+	_changePal = 1; // From disassembly
+	gfxFadeOutCompleted = 0;
+}
+
+int16 OSRenderer::addBackground(const char *bgName, uint16 bgIdx) {
+	byte *ptr, *dataPtr;
+
+	int16 fileIdx = findFileInBundle(bgName);
+	if (fileIdx < 0) {
+		warning("OSRenderer::addBackground(\"%s\", %d): Could not find background in file bundle.", bgName, bgIdx);
+		return -1;
+	}
+	checkDataDisk(-1);
+	ptr = dataPtr = readBundleFile(fileIdx);
+
+	uint16 bpp = READ_BE_UINT16(ptr); ptr += 2;
+
+	if (!_bgTable[bgIdx].bg) {
+		_bgTable[bgIdx].bg = new byte[_screenSize];
+	}
+
+	Common::strlcpy(_bgTable[bgIdx].name, bgName, sizeof(_bgTable[bgIdx].name));
+
+	if (bpp == 8) {
+		_bgTable[bgIdx].pal.load(ptr, kHighPalNumBytes, kHighPalFormat, kHighPalNumColors, CINE_LITTLE_ENDIAN);
+		memcpy(_bgTable[bgIdx].bg, ptr + kHighPalNumBytes, _screenSize);
+	} else {
+		_bgTable[bgIdx].pal.load(ptr, kLowPalNumBytes, kLowPalFormat, kLowPalNumColors, CINE_BIG_ENDIAN);
+		gfxConvertSpriteToRaw(_bgTable[bgIdx].bg, ptr + kLowPalNumBytes, 160, 200);
+	}
+	free(dataPtr);
+	return 0;
 }
 
 /**
@@ -1409,7 +1711,7 @@ void OSRenderer::loadBg16(const byte *bg, const char *name, unsigned int idx) {
 	Common::strlcpy(_bgTable[idx].name, name, sizeof(_bgTable[idx].name));
 
 	// Load the 16 color palette
-	_bgTable[idx].pal.load(bg, kLowPalNumBytes, kLowPalFormat, kLowPalNumColors, CINE_BIG_ENDIAN);
+	_backupPal.load(bg, kLowPalNumBytes, kLowPalFormat, kLowPalNumColors, CINE_BIG_ENDIAN);
 
 	// Jump over the palette data to the background data
 	bg += kLowPalNumBytes;
@@ -1423,10 +1725,21 @@ void OSRenderer::loadBg16(const byte *bg, const char *name, unsigned int idx) {
  * @param name Background filename
  */
 void OSRenderer::loadCt16(const byte *ct, const char *name) {
+	assert(collisionPage);
+
 	// Make the 9th background point directly to the collision page
 	// and load the picture into it.
+	setBackground8ToCollisionPage();
+	_bgTable[kCollisionPageBgIdxAlias].pal.load(ct, kLowPalNumBytes, kLowPalFormat, kLowPalNumColors, CINE_BIG_ENDIAN);
+	gfxConvertSpriteToRaw(_bgTable[kCollisionPageBgIdxAlias].bg, ct + kLowPalNumBytes, 160, 200);
+}
+
+void OSRenderer::setBackground8ToCollisionPage() {
+	byte* oldBg = _bgTable[kCollisionPageBgIdxAlias].bg;
+	if (oldBg && oldBg != collisionPage) {
+		delete[] _bgTable[kCollisionPageBgIdxAlias].bg;
+	}
 	_bgTable[kCollisionPageBgIdxAlias].bg = collisionPage;
-	loadBg16(ct, name, kCollisionPageBgIdxAlias);
 }
 
 /**
@@ -1445,7 +1758,8 @@ void OSRenderer::loadBg256(const byte *bg, const char *name, unsigned int idx) {
 	assert(_bgTable[idx].bg);
 
 	Common::strlcpy(_bgTable[idx].name, name, sizeof(_bgTable[idx].name));
-	_bgTable[idx].pal.load(bg, kHighPalNumBytes, kHighPalFormat, kHighPalNumColors, CINE_LITTLE_ENDIAN);
+	_backupPal.load(bg, kHighPalNumBytes, kHighPalFormat, kHighPalNumColors, CINE_LITTLE_ENDIAN);
+
 	memcpy(_bgTable[idx].bg, bg + kHighPalNumBytes, _screenSize);
 }
 
@@ -1455,10 +1769,13 @@ void OSRenderer::loadBg256(const byte *bg, const char *name, unsigned int idx) {
  * @param name Background filename
  */
 void OSRenderer::loadCt256(const byte *ct, const char *name) {
+	assert(collisionPage);
+
 	// Make the 9th background point directly to the collision page
 	// and load the picture into it.
-	_bgTable[kCollisionPageBgIdxAlias].bg = collisionPage;
-	loadBg256(ct, name, kCollisionPageBgIdxAlias);
+	setBackground8ToCollisionPage();
+	_bgTable[kCollisionPageBgIdxAlias].pal.load(ct, kHighPalNumBytes, kHighPalFormat, kHighPalNumColors, CINE_LITTLE_ENDIAN);
+	memcpy(_bgTable[kCollisionPageBgIdxAlias].bg, ct + kHighPalNumBytes, _screenSize);
 }
 
 /**
@@ -1468,12 +1785,13 @@ void OSRenderer::loadCt256(const byte *ct, const char *name) {
 void OSRenderer::selectBg(unsigned int idx) {
 	assert(idx < 9);
 
-	if (_bgTable[idx].bg) {
-		assert(_bgTable[idx].pal.isValid() && !(_bgTable[idx].pal.empty()));
+	if (idx <= 8 && _bgTable[idx].bg) {
 		_currentBg = idx;
+		if (!forbidBgPalReload) {
+			reloadBgPalOnNextFlip = 1;
+		}
 	} else
 		warning("OSRenderer::selectBg(%d) - attempt to select null background", idx);
-	reloadPalette();
 }
 
 /**
@@ -1483,10 +1801,9 @@ void OSRenderer::selectBg(unsigned int idx) {
 void OSRenderer::selectScrollBg(unsigned int idx) {
 	assert(idx < 9);
 
-	if (_bgTable[idx].bg) {
+	if (idx <= 8 && _bgTable[idx].bg) {
 		_scrollBg = idx;
 	}
-	reloadPalette();
 }
 
 /**
@@ -1494,9 +1811,7 @@ void OSRenderer::selectScrollBg(unsigned int idx) {
  * @param shift Background scroll in pixels
  */
 void OSRenderer::setScroll(unsigned int shift) {
-	assert(shift <= 200);
-
-	_bgShift = shift;
+	_bgShift = shift % 400;
 }
 
 /**
@@ -1884,7 +2199,7 @@ void drawSpriteRaw2(const byte *spritePtr, byte transColor, int16 width, int16 h
 	}
 }
 
-void maskBgOverlay(const byte *bgPtr, const byte *maskPtr, int16 width, int16 height,
+void maskBgOverlay(int targetBgIdx, const byte *bgPtr, const byte *maskPtr, int16 width, int16 height,
 				   byte *page, int16 x, int16 y) {
 	int16 i, j, tmpWidth, tmpHeight;
 	Common::List<BGIncrust>::iterator it;
@@ -1915,6 +2230,12 @@ void maskBgOverlay(const byte *bgPtr, const byte *maskPtr, int16 width, int16 he
 
 	// incrust pass
 	for (it = g_cine->_bgIncrustList.begin(); it != g_cine->_bgIncrustList.end(); ++it) {
+		// HACK: Remove drawing of red corners around doors in rat maze in Operation Stealth
+		// by skipping drawing of possible collision table data to non-collision table page.
+		if (hacksEnabled && it->bgIdx == kCollisionPageBgIdxAlias && targetBgIdx != kCollisionPageBgIdxAlias) {
+			continue;
+		}
+
 		tmpWidth = g_cine->_animDataTable[it->frame]._realWidth;
 		tmpHeight = g_cine->_animDataTable[it->frame]._height;
 		byte *mask = (byte *)malloc(tmpWidth * tmpHeight);

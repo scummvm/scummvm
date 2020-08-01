@@ -39,7 +39,8 @@ namespace Kyra {
 
 Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, const int dimTableSize)
 	: _system(system), _vm(vm), _sjisInvisibleColor(0), _dimTable(dimTable), _dimTableCount(dimTableSize),
-	_cursorColorKey((vm->game() == GI_KYRA1 || vm->game() == GI_EOB1 || vm->game() == GI_EOB2) ? 0xFF : 0) {
+	_cursorColorKey((vm->game() == GI_KYRA1 || vm->game() == GI_EOB1 || vm->game() == GI_EOB2) ? 0xFF : 0),
+	_screenHeight(vm->gameFlags().platform == Common::kPlatformSegaCD ? SCREEN_H_SEGA_NTSC : SCREEN_H) {
 	_debugEnabled = false;
 	_maskMinY = _maskMaxY = -1;
 
@@ -58,23 +59,27 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, co
 	_sjisMixedFontMode = false;
 
 	_screenPalette = _internFadePalette = 0;
-	_animBlockPtr = _decodeShapeBuffer = 0;
+	_animBlockPtr = _textRenderBuffer = 0;
+	_textRenderBufferSize = 0;
 
 	_useHiColorScreen = _vm->gameFlags().useHiColorMode;
-	_use256ColorMode = true;
+	_useShapeShading = true;
 	_screenPageSize = SCREEN_PAGE_SIZE;
 	_16bitPalette = 0;
 	_16bitConversionPalette = 0;
 	_16bitShadingLevel = 0;
 	_bytesPerPixel = 1;
-	_4bitPixelPacking = false;
+	_4bitPixelPacking = _useAmigaExtraColors = _isAmiga = _isSegaCD = _use16ColorMode = false;
+	_useSJIS = _useOverlays = false;
 
 	_currentFont = FID_8_FNT;
-	_currentFontType = FTYPE_ASCII;
+	_fontStyles = 0;
 	_paletteChanged = true;
 	_textMarginRight = SCREEN_W;
 	_customDimTable = 0;
 	_curDim = 0;
+
+	_yTransOffs = 0;
 }
 
 Screen::~Screen() {
@@ -88,7 +93,6 @@ Screen::~Screen() {
 
 	delete _screenPalette;
 	delete _internFadePalette;
-	delete[] _decodeShapeBuffer;
 	delete[] _animBlockPtr;
 	delete[] _16bitPalette;
 	delete[] _16bitConversionPalette;
@@ -112,6 +116,7 @@ bool Screen::init() {
 	_use16ColorMode = _vm->gameFlags().use16ColorMode;
 	_4bitPixelPacking = (_use16ColorMode && _vm->game() == GI_LOL);
 	_isAmiga = (_vm->gameFlags().platform == Common::kPlatformAmiga);
+	_isSegaCD = (_vm->gameFlags().platform == Common::kPlatformSegaCD);
 	// Amiga copper palette magic requires the use of more than 32 colors for some purposes.
 	_useAmigaExtraColors = (_isAmiga && _vm->game() == GI_EOB2);
 
@@ -191,7 +196,6 @@ bool Screen::init() {
 	// We allow 256 color palettes in EGA mode, since original EOB II code does the same and requires it
 	const int numColors = _use16ColorMode ? 16 : (_isAmiga ? 32 : (_renderMode == Common::kRenderCGA ? 4 : 256));
 	const int numColorsInternal = _useAmigaExtraColors ? 64 : numColors;
-	_use256ColorMode = (_bytesPerPixel != 2 && !_isAmiga && !_use16ColorMode && _renderMode != Common::kRenderCGA && _renderMode != Common::kRenderEGA);
 
 	_dualPaletteModeSplitY = 0;
 
@@ -240,13 +244,11 @@ bool Screen::init() {
 
 	_curDimIndex = -1;
 	_curDim = 0;
-	_charWidth = 0;
-	_charOffset = 0;
+	_charSpacing = 0;
+	_lineSpacing = 0;
 	for (int i = 0; i < ARRAYSIZE(_textColorsMap); ++i)
 		_textColorsMap[i] = i;
 	_textColorsMap16bit[0] = _textColorsMap16bit[1] = 0;
-	_decodeShapeBuffer = NULL;
-	_decodeShapeBufferSize = 0;
 	_animBlockPtr = NULL;
 	_animBlockSize = 0;
 	_mouseLockCount = 1;
@@ -291,6 +293,9 @@ void Screen::setResolution() {
 			width = 320;
 	}
 
+	if (_vm->gameFlags().platform == Common::kPlatformSegaCD)
+		height = 224;
+
 	if (_useHiColorScreen) {
 		Graphics::PixelFormat px(2, 5, 5, 5, 0, 10, 5, 0, 0);
 		Common::List<Graphics::PixelFormat> tryModes = _system->getSupportedFormats();
@@ -333,7 +338,7 @@ void Screen::enableHiColorMode(bool enabled) {
 		_bytesPerPixel = 1;
 	}
 
-	resetPagePtrsAndBuffers(SCREEN_PAGE_SIZE * _bytesPerPixel);
+	resetPagePtrsAndBuffers(_isSegaCD ? SCREEN_W * _screenHeight : SCREEN_PAGE_SIZE * _bytesPerPixel);
 }
 
 void Screen::updateScreen() {
@@ -362,12 +367,12 @@ void Screen::updateScreen() {
 
 void Screen::updateDirtyRects() {
 	if (_forceFullUpdate) {
-		_system->copyRectToScreen(getCPagePtr(0), SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
+		_system->copyRectToScreen(getCPagePtr(0), SCREEN_W, 0, _yTransOffs, SCREEN_W, _screenHeight - _yTransOffs);
 	} else {
 		const byte *page0 = getCPagePtr(0);
 		Common::List<Common::Rect>::iterator it;
 		for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
-			_system->copyRectToScreen(page0 + it->top * SCREEN_W + it->left, SCREEN_W, it->left, it->top, it->width(), it->height());
+			_system->copyRectToScreen(page0 + it->top * SCREEN_W + it->left, SCREEN_W, it->left, it->top + _yTransOffs, it->width(), it->height());
 		}
 	}
 	_forceFullUpdate = false;
@@ -721,7 +726,7 @@ void Screen::copyWsaRect(int x, int y, int w, int h, int dimState, int plotFunc,
 
 int Screen::getPagePixel(int pageNum, int x, int y) {
 	assert(pageNum < SCREEN_PAGE_NUM);
-	assert(x >= 0 && x < SCREEN_W && y >= 0 && y < SCREEN_H);
+	assert(x >= 0 && x < SCREEN_W && y >= 0 && y < _screenHeight);
 	if (_bytesPerPixel == 1)
 		return _pagePtrs[pageNum][y * SCREEN_W + x];
 	else
@@ -730,7 +735,7 @@ int Screen::getPagePixel(int pageNum, int x, int y) {
 
 void Screen::setPagePixel(int pageNum, int x, int y, uint8 color) {
 	assert(pageNum < SCREEN_PAGE_NUM);
-	assert(x >= 0 && x < SCREEN_W && y >= 0 && y < SCREEN_H);
+	assert(x >= 0 && x < SCREEN_W && y >= 0 && y < _screenHeight);
 
 	if (pageNum == 0 || pageNum == 1)
 		addDirtyRect(x, y, 1, 1);
@@ -918,6 +923,11 @@ void Screen::setScreenPalette(const Palette &pal) {
 	_system->getPaletteManager()->setPalette(screenPal, 0, pal.getNumColors());
 }
 
+void Screen::transposeScreenOutputY(int yAdd) {
+	updateScreen();
+	_yTransOffs = yAdd;
+}
+
 void Screen::enableDualPaletteMode(int splitY) {
 	_dualPaletteModeSplitY = splitY;
 
@@ -935,7 +945,7 @@ void Screen::disableDualPaletteMode() {
 }
 
 void Screen::copyToPage0(int y, int h, uint8 page, uint8 *seqBuf) {
-	assert(y + h <= SCREEN_H);
+	assert(y + h <= _screenHeight);
 	const uint8 *src = getPagePtr(page) + y * SCREEN_W;
 	uint8 *dstPage = getPagePtr(0) + y * SCREEN_W;
 	for (int i = 0; i < h; ++i) {
@@ -977,10 +987,10 @@ void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPag
 		h += y2;
 		y1 -= y2;
 		y2 = 0;
-	} else if (y2 + h >= SCREEN_H) {
-		if (y2 > SCREEN_H)
+	} else if (y2 + h >= _screenHeight) {
+		if (y2 > _screenHeight)
 			return;
-		h = SCREEN_H - y2;
+		h = _screenHeight - y2;
 	}
 
 	const uint8 *src = getPagePtr(srcPage) + y1 * SCREEN_W * _bytesPerPixel + x1 * _bytesPerPixel;
@@ -1023,8 +1033,8 @@ void Screen::copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *
 		dest += (-y) * w * _bytesPerPixel;
 		h += y;
 		y = 0;
-	} else if (y + h > SCREEN_H) {
-		h = SCREEN_H - y;
+	} else if (y + h > _screenHeight) {
+		h = _screenHeight - y;
 	}
 
 	if (x < 0) {
@@ -1048,8 +1058,8 @@ void Screen::copyPage(uint8 srcPage, uint8 dstPage) {
 	uint8 *src = getPagePtr(srcPage);
 	uint8 *dst = getPagePtr(dstPage);
 	if (src != dst)
-		memcpy(dst, src, SCREEN_W * SCREEN_H * _bytesPerPixel);
-	copyOverlayRegion(0, 0, 0, 0, SCREEN_W, SCREEN_H, srcPage, dstPage);
+		memcpy(dst, src, SCREEN_W * _screenHeight * _bytesPerPixel);
+	copyOverlayRegion(0, 0, 0, 0, SCREEN_W, _screenHeight, srcPage, dstPage);
 
 	if (dstPage == 0 || dstPage == 1)
 		_forceFullUpdate = true;
@@ -1060,10 +1070,11 @@ void Screen::copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint
 		src += (-y) * w * _bytesPerPixel;
 		h += y;
 		y = 0;
-	} else if (y + h > SCREEN_H) {
-		h = SCREEN_H - y;
+	} else if (y + h > _screenHeight) {
+		h = _screenHeight - y;
 	}
 
+	int pitch = w;
 	if (x < 0) {
 		src += -x * _bytesPerPixel;
 		w += x;
@@ -1085,7 +1096,7 @@ void Screen::copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint
 	while (h--) {
 		memcpy(dst, src, w * _bytesPerPixel);
 		dst += SCREEN_W * _bytesPerPixel;
-		src += w * _bytesPerPixel;
+		src += pitch * _bytesPerPixel;
 	}
 }
 
@@ -1146,7 +1157,7 @@ void Screen::shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPag
 }
 
 void Screen::fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum, bool xored) {
-	assert(x2 < SCREEN_W && y2 < SCREEN_H);
+	assert(x2 < SCREEN_W && y2 < _screenHeight);
 	uint16 color16 = 0;
 	if (pageNum == -1)
 		pageNum = _curPage;
@@ -1312,6 +1323,13 @@ void Screen::setTextColor16bit(const uint16 *cmap16) {
 	}
 }
 
+int Screen::setFontStyles(FontId fontId, int styles) {
+	assert(_fonts[fontId]);
+	SWAP(_fontStyles, styles);
+	_fonts[fontId]->setStyles(_fontStyles);
+	return styles;
+}
+
 bool Screen::loadFont(FontId fontId, const char *filename) {
 	if (fontId == FID_SJIS_FNT) {
 		warning("Trying to replace system SJIS font");
@@ -1342,7 +1360,6 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 Screen::FontId Screen::setFont(FontId fontId) {
 	FontId prev = _currentFont;
 	_currentFont = fontId;
-	_currentFontType = _currentFont >= FID_SJIS_FNT ? FTYPE_SJIS : FTYPE_ASCII;
 
 	assert(_fonts[_currentFont]);
 	return prev;
@@ -1358,23 +1375,27 @@ int Screen::getFontWidth() const {
 
 int Screen::getCharWidth(uint16 c) const {
 	const int width = _fonts[_currentFont]->getCharWidth(c);
-	return width + ((_currentFont != FID_SJIS_FNT && _currentFont != FID_SJIS_LARGE_FNT && _currentFont != FID_SJIS_SMALL_FNT) ? _charWidth : 0);
+	return width + ((_currentFont != FID_SJIS_FNT && _currentFont != FID_SJIS_LARGE_FNT && _currentFont != FID_SJIS_SMALL_FNT) ? _charSpacing : 0);
 }
 
-int Screen::getTextWidth(const char *str) {
+int Screen::getCharHeight(uint16 c) const {
+	return _fonts[_currentFont]->getCharHeight(c);
+}
+
+int Screen::getTextWidth(const char *str, bool nextWordOnly) {
 	int curLineLen = 0;
 	int maxLineLen = 0;
 
 	FontId curFont = _currentFont;
-	FontType curType = _currentFontType;
+	Font::Type curType = _fonts[curFont]->getType();
 
 	while (1) {
-		if (_sjisMixedFontMode && curType == FTYPE_ASCII)
+		if (_sjisMixedFontMode && curType == Font::kASCII)
 			setFont((*str & 0x80) ? ((_vm->game() == GI_EOB2 && curFont == FID_6_FNT) ? FID_SJIS_SMALL_FNT : FID_SJIS_FNT) : curFont);
 
 		uint c = fetchChar(str);
 
-		if (c == 0) {
+		if (c == 0 || (nextWordOnly && (c == 2 || c == 6 || c == 13 || c == 32 || c == 0x4081))) {
 			break;
 		} else if (c == '\r') {
 			if (curLineLen > maxLineLen)
@@ -1389,13 +1410,13 @@ int Screen::getTextWidth(const char *str) {
 	return MAX(curLineLen, maxLineLen);
 }
 
-void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2) {
+void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2, int pitch) {
 	uint16 cmap16[2];
 	if (_16bitPalette) {
 		cmap16[0] = color2 ? shade16bitColor(_16bitPalette[color2]) : 0xFFFF;
 		cmap16[1] = _16bitPalette[color1];
 		setTextColor16bit(cmap16);
-	}	
+	}
 
 	uint8 cmap8[2];
 	cmap8[0] = color2;
@@ -1403,7 +1424,7 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 	setTextColor(cmap8, 0, 1);
 
 	FontId curFont = _currentFont;
-	FontType curType = _currentFontType;
+	Font::Type curType = _fonts[curFont]->getType();
 
 	if (x < 0)
 		x = 0;
@@ -1413,39 +1434,49 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 	int x_start = x;
 	if (y < 0)
 		y = 0;
-	else if (y >= SCREEN_H)
+	else if (y >= _screenHeight)
 		return;
 
+	int charHeight = 0;
+	bool enableWordWrap = _isSegaCD && _vm->gameFlags().lang != Common::JA_JPN;
+
 	while (1) {
-		if (_sjisMixedFontMode && curType == FTYPE_ASCII)
+		if (_sjisMixedFontMode && curType == Font::kASCII)
 			setFont((*str & 0x80) ? ((_vm->game() == GI_EOB2 && curFont == FID_6_FNT) ? FID_SJIS_SMALL_FNT : FID_SJIS_FNT) : curFont);
 
-		uint8 charHeightFnt = getFontHeight();
-
 		uint c = fetchChar(str);
+		charHeight = MAX<int>(charHeight, getCharHeight(c));
 
 		if (c == 0) {
 			break;
 		} else if (c == '\r') {
 			x = x_start;
-			y += (charHeightFnt + _charOffset);
+			y += (charHeight + _lineSpacing);
 		} else {
 			int charWidth = getCharWidth(c);
-			if (x + charWidth > _textMarginRight) {
+			int needSpace = enableWordWrap ? getTextWidth(str, true) + charWidth : charWidth;
+			if (x + needSpace > _textMarginRight) {
 				x = x_start;
-				y += (charHeightFnt + _charOffset);
-				if (y >= SCREEN_H)
+				y += (charHeight + _lineSpacing);
+				if (enableWordWrap) {
+					// skip space at beginning of the line
+					c = fetchChar(str);
+					if (c == 0)
+						return;
+					charWidth = getCharWidth(c);
+				}
+				if (y >= _screenHeight)
 					break;
 			}
 
-			drawChar(c, x, y);
+			drawChar(c, x, y, pitch);
 			x += charWidth;
 		}
 	}
 }
 
 uint16 Screen::fetchChar(const char *&s) const {
-	if (_currentFontType == FTYPE_ASCII)
+	if (_fonts[_currentFont]->getType() == Font::kASCII)
 		return (uint8)*s++;
 
 	uint16 ch = (uint8)*s++;
@@ -1457,7 +1488,7 @@ uint16 Screen::fetchChar(const char *&s) const {
 	return ch;
 }
 
-void Screen::drawChar(uint16 c, int x, int y) {
+void Screen::drawChar(uint16 c, int x, int y, int pitch) {
 	Font *fnt = _fonts[_currentFont];
 	assert(fnt);
 
@@ -1467,10 +1498,12 @@ void Screen::drawChar(uint16 c, int x, int y) {
 
 	if (x < 0 || y < 0)
 		return;
-	if (x + charWidth > SCREEN_W || y + charHeight > SCREEN_H)
+	if (x + charWidth > SCREEN_W || y + charHeight > _screenHeight)
 		return;
 
-	if (useOverlay) {
+	if (_isSegaCD) {
+		fnt->drawChar(c, _textRenderBuffer + (((y >> 3) * pitch + (x >> 3)) << 5) + ((y & 7) << 2) + ((x & 7) >> 1), pitch, x & 7, y & 7);
+	} else if (useOverlay) {
 		uint8 *destPage = getOverlayPtr(_curPage);
 		if (!destPage) {
 			warning("trying to draw SJIS char on unsupported page %d", _curPage);
@@ -1485,7 +1518,7 @@ void Screen::drawChar(uint16 c, int x, int y) {
 		fnt->drawChar(c, getPagePtr(_curPage) + y * SCREEN_W * _bytesPerPixel + x * _bytesPerPixel, SCREEN_W, _bytesPerPixel);
 	}
 
-	if (_curPage == 0 || _curPage == 1)
+	if (!_isSegaCD && (_curPage == 0 || _curPage == 1))
 		addDirtyRect(x, y, charWidth, charHeight);
 }
 
@@ -3364,7 +3397,7 @@ void Screen::addDirtyRect(int x, int y, int w, int h) {
 	Common::Rect r(x, y, x + w, y + h);
 
 	// Clip rectangle
-	r.clip(SCREEN_W, SCREEN_H);
+	r.clip(SCREEN_W, _screenHeight - _yTransOffs);
 
 	// If it is empty after clipping, we are done
 	if (r.isEmpty())
@@ -3750,7 +3783,7 @@ void AMIGAFont::unload() {
 }
 
 SJISFont::SJISFont(Common::SharedPtr<Graphics::FontSJIS> &font, const uint8 invisColor, bool is16Color, bool drawOutline, int extraSpacing)
-	: _colorMap(0), _font(font), _invisColor(invisColor), _isTextMode(is16Color), _style(kFSNone), _drawOutline(drawOutline), _sjisWidthOffset(extraSpacing) {
+	: _colorMap(0), _font(font), _invisColor(invisColor), _isTextMode(is16Color), _style(kStyleNone), _drawOutline(drawOutline), _sjisWidthOffset(extraSpacing) {
 	assert(_font);
 	_sjisWidth = _font->getMaxFontWidth() >> 1;
 	_fontHeight = _font->getFontHeight() >> 1;
@@ -3794,7 +3827,7 @@ void SJISFont::drawChar(uint16 c, byte *dst, int pitch, int) const {
 	else
 		_font->setDrawingMode(_drawOutline ? Graphics::FontSJIS::kOutlineMode : Graphics::FontSJIS::kDefaultMode);
 
-	_font->toggleFatPrint(_style == kFSFat);
+	_font->toggleFatPrint(_style == kStyleFat);
 	_font->drawChar(dst, c, 640, 1, color1, color2, 640, 400);
 }
 

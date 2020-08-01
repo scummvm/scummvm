@@ -1,4 +1,4 @@
-# [ScummVM README](https://www.scummvm.org/) · [![Build Status](https://travis-ci.org/scummvm/scummvm.svg?branch=master)](https://travis-ci.org/scummvm/scummvm) [![Translation status](https://translations.scummvm.org/widgets/scummvm/-/scummvm/svg-badge.svg)](https://translations.scummvm.org/engage/scummvm/?utm_source=widget) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md#pull-requests) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/200a9bd3f7a647b48415efb484cc8bdc)](https://www.codacy.com/app/sev-/scummvm?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=scummvm/scummvm&amp;utm_campaign=Badge_Grade)
+# [ScummVM README](https://www.scummvm.org/) · [![Build Status](https://travis-ci.org/scummvm/scummvm.svg?branch=master)](https://travis-ci.org/scummvm/scummvm) ![CI](https://github.com/scummvm/scummvm/workflows/CI/badge.svg) [![Translation status](https://translations.scummvm.org/widgets/scummvm/-/scummvm/svg-badge.svg)](https://translations.scummvm.org/engage/scummvm/?utm_source=widget) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md#pull-requests) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/200a9bd3f7a647b48415efb484cc8bdc)](https://www.codacy.com/app/sev-/scummvm?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=scummvm/scummvm&amp;utm_campaign=Badge_Grade)
 
 For more information, compatibility lists, details on donating, the
 latest release, progress reports and more, please visit the ScummVM home
@@ -151,8 +151,8 @@ check back often.
 
 Among the systems on which you can play those games are regular desktop
 computers (running Windows, Linux, Mac OS X, ...), game consoles
-(Dreamcast, Nintendo DS & Wii, PS2, PSP, ...), smartphones (Android,
-iPhone, Symbian ...) and more.
+(Dreamcast, Nintendo DS & Wii, PSP, ...), smartphones (Android, iPhone,
+Symbian ...) and more.
 
 At this time ScummVM is still under heavy development. Be aware that
 whilst we attempt to make sure that many games can be completed with few
@@ -2760,8 +2760,8 @@ Lands of Lore: The Throne of Chaos adds the following non-standard keywords:
 
 Maniac Mansion NES adds the following non-standard keyword:
 
-    mm_nes_classic_palette  bool    If true, use a more natural palette that 
-                                    closely resembles the Nintendo NES Classic 
+    mm_nes_classic_palette  bool    If true, use a more natural palette that
+                                    closely resembles the Nintendo NES Classic
                                     instead of the default NTSC palette
 
 Space Quest IV CD adds the following non-standard keyword:
@@ -2929,11 +2929,6 @@ debug messages (see
 
       - Please refer to:
         <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Atari/FreeMiNT>
-
-  - Bada/Tizen:
-
-      - Please refer to:
-        <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Bada/Tizen>
 
   - BeOS/ZETA/Haiku:
 

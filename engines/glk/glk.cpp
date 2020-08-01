@@ -81,10 +81,13 @@ GlkEngine::~GlkEngine() {
 }
 
 void GlkEngine::initialize() {
+	createConfiguration();
+	_conf->load();
+	//_conf->flush();
+
 	initGraphicsMode();
 	createDebugger();
 
-	_conf = new Conf(getInterpreterType());
 	_screen = createScreen();
 	_screen->initialize();
 	_clipboard = new Clipboard();
@@ -105,23 +108,15 @@ Screen *GlkEngine::createScreen() {
 }
 
 void GlkEngine::initGraphicsMode() {
-	uint width = ConfMan.hasKey("width") ? ConfMan.getInt("width") : 640;
-	uint height = ConfMan.hasKey("height") ? ConfMan.getInt("height") : 480;
-	Common::List<Graphics::PixelFormat> formats = g_system->getSupportedFormats();
-	Graphics::PixelFormat format = formats.front();
-
-	for (Common::List<Graphics::PixelFormat>::iterator i = formats.begin(); i != formats.end(); ++i) {
-		if ((*i).bytesPerPixel > 1) {
-			format = *i;
-			break;
-		}
-	}
-
-	initGraphics(width, height, &format);
+	initGraphics(_conf->_width, _conf->_height, &_conf->_screenFormat);
 }
 
 void GlkEngine::createDebugger() {
 	setDebugger(new Debugger());
+}
+
+void GlkEngine::createConfiguration() {
+	_conf = new Conf(getInterpreterType());
 }
 
 Common::Error GlkEngine::run() {
@@ -162,6 +157,18 @@ Common::Error GlkEngine::run() {
 	runGame();
 
 	return Common::kNoError;
+}
+
+bool GlkEngine::canLoadGameStateCurrently() {
+	// Only allow savegames by default when sub-engines are waiting for a line
+	Window *win = _windows->getFocusWindow();
+	return win && (win->_lineRequest || win->_lineRequestUni);
+}
+
+bool GlkEngine::canSaveGameStateCurrently() {
+	// Only allow savegames by default when sub-engines are waiting for a line
+	Window *win = _windows->getFocusWindow();
+	return win && (win->_lineRequest || win->_lineRequestUni);
 }
 
 Common::Error GlkEngine::loadGame() {
@@ -278,6 +285,25 @@ void GlkEngine::syncSoundSettings() {
 
 void GlkEngine::beep() {
 	_pcSpeaker->speakerOn(50, 50);
+}
+
+void GlkEngine::switchToWhiteOnBlack() {
+	const uint WHITE = _conf->parseColor("ffffff");
+	const uint BLACK = _conf->parseColor("000000");
+
+	_conf->_wMarginX = 0;
+	_conf->_wMarginY = 0;
+	_conf->_tMarginY = 4;
+	_conf->_propInfo._caretColor = WHITE;
+
+	_conf->_windowColor = _conf->_windowSave = 0;
+	WindowStyle &ws1 = _conf->_tStyles[style_Normal];
+	ws1.bg = BLACK;
+	ws1.fg = WHITE;
+
+	WindowStyle &ws2 = _conf->_tStyles[style_Input];
+	ws2.bg = BLACK;
+	ws2.fg = WHITE;
 }
 
 } // End of namespace Glk

@@ -76,6 +76,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		gameId == "carolreed7" ||
 		gameId == "carolreed8" ||
 		gameId == "colorsoncanvas" ||
+		gameId == "conspiracao" ||
 		gameId == "corrosion" ||
 		gameId == "deadcity" ||
 		gameId == "darkfallls" ||
@@ -101,12 +102,14 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		gameId == "sofiasdebt" ||
 		gameId == "spaceinvaders" ||
 		gameId == "spacemadness" ||
+		gameId == "strangechange" ||
 		gameId == "tanya1" ||
 		gameId == "tanya2" ||
 		gameId == "theancientmark1" ||
 		gameId == "thebox" ||
 		gameId == "thekite" ||
 		gameId == "tradestory" ||
+		gameId == "war" ||
 		gameId == "wmedemo"
 	) {
 		/* no game-specific keymap */
@@ -223,6 +226,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		gameId == "carolreed11" ||
 		gameId == "carolreed12" ||
 		gameId == "kulivocko" ||
+		gameId == "sunrise" ||
 		gameId == "rebeccacarlson1"
 	) {
 		act = new Action("HINT", _("Show hints"));
@@ -246,7 +250,56 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->setMiddleClickEvent();
 		act->addDefaultInputMapping("MOUSE_MIDDLE"); // original mouse
 		act->addDefaultInputMapping("JOY_Y"); // extra joy
-		engineKeyMap->addAction(act);
+		gameKeyMap->addAction(act);
+	} else if (gameId == "qajarycat") {
+		act = new Action("HINT", _("Show hints"));
+		act->setKeyEvent(KeyState(KEYCODE_SPACE, ASCII_SPACE));
+		act->addDefaultInputMapping("SPACE"); // original keyboard
+		act->addDefaultInputMapping("MOUSE_MIDDLE"); // extra mouse
+		act->addDefaultInputMapping("JOY_Y"); // extra joy
+		gameKeyMap->addAction(act);
+
+		act = new Action("GUIA", _("GUI variant A"));
+		act->setKeyEvent(KEYCODE_F10);
+		act->addDefaultInputMapping("F10"); // original keyboard
+		act->addDefaultInputMapping("MOUSE_WHEEL_UP"); // extra mouse
+		act->addDefaultInputMapping("JOY_LEFT"); // extra joy
+		gameKeyMap->addAction(act);
+
+		act = new Action("GUIB", _("GUI variant B"));
+		act->setKeyEvent(KEYCODE_F11);
+		act->addDefaultInputMapping("F11"); // original keyboard
+		act->addDefaultInputMapping("MOUSE_WHEEL_DOWN"); // extra mouse
+		act->addDefaultInputMapping("JOY_RIGHT"); // extra joy
+		gameKeyMap->addAction(act);
+
+		act = new Action("PHONEX", _("Phone cancel button"));
+		act->setKeyEvent(KeyState(KEYCODE_BACKSPACE, ASCII_BACKSPACE));
+		act->addDefaultInputMapping("BACKSPACE"); // original keyboard
+		gameKeyMap->addAction(act);
+
+		act = new Action("PHONEU", _("Phone up button"));
+		act->setKeyEvent(KEYCODE_UP);
+		act->addDefaultInputMapping("UP"); // original keyboard
+		act->addDefaultInputMapping("JOY_UP"); // extra joy
+		gameKeyMap->addAction(act);
+
+		act = new Action("PHONED", _("Phone down button"));
+		act->setKeyEvent(KEYCODE_DOWN);
+		act->addDefaultInputMapping("DOWN"); // original keyboard
+		act->addDefaultInputMapping("JOY_DOWN"); // extra joy
+		gameKeyMap->addAction(act);
+
+		act = new Action("MCLK", _("Middle Click"));
+		act->setMiddleClickEvent();
+		act->addDefaultInputMapping("MOUSE_MIDDLE"); // original mouse
+		gameKeyMap->addAction(act);
+
+		act = new Action("WTF", _("???"));
+		act->setKeyEvent(KEYCODE_HOME);
+		act->addDefaultInputMapping("HOME"); // original keyboard
+		//TODO: extra joy control, e.g. "JOY_R+JOY_B"
+		gameKeyMap->addAction(act);
 	} else if (gameId == "alimardan1") {
 		act = new Action("HINT", _("Show hints"));
 		act->setKeyEvent(KeyState(KEYCODE_SPACE, ASCII_SPACE));
@@ -1420,6 +1473,51 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("MOUSE_MIDDLE"); // extra mouse
 		act->addDefaultInputMapping("JOY_DOWN"); // extra joy
 		gameKeyMap->addAction(act);
+	} else if (gameId == "zilm") {
+		act = new Action("P1UP", _("Player 1: Up"));
+		act->setKeyEvent(KeyState(KEYCODE_w, 'w'));
+		act->addDefaultInputMapping("w"); // original keyboard
+		gameKeyMap->addAction(act);
+
+		act = new Action("P1LT", _("Player 1: Left"));
+		act->setKeyEvent(KeyState(KEYCODE_a, 'a'));
+		act->addDefaultInputMapping("a"); // original keyboard
+		gameKeyMap->addAction(act);
+
+		act = new Action("P1DN", _("Player 1: Down"));
+		act->setKeyEvent(KeyState(KEYCODE_s, 's'));
+		act->addDefaultInputMapping("s"); // original keyboard
+		gameKeyMap->addAction(act);
+
+		act = new Action("P1RT", _("Player 1: Right"));
+		act->setKeyEvent(KeyState(KEYCODE_d, 'd'));
+		act->addDefaultInputMapping("d"); // original keyboard
+		gameKeyMap->addAction(act);
+
+		act = new Action("P2UP", _("Player 2: Up"));
+		act->setKeyEvent(KEYCODE_UP);
+		act->addDefaultInputMapping("UP"); // original keyboard
+		gameKeyMap->addAction(act);
+
+		act = new Action("P2LT", _("Player 2: Left"));
+		act->setKeyEvent(KEYCODE_LEFT);
+		act->addDefaultInputMapping("LEFT"); // original keyboard
+		gameKeyMap->addAction(act);
+
+		act = new Action("P2DN", _("Player 2: Down"));
+		act->setKeyEvent(KEYCODE_DOWN);
+		act->addDefaultInputMapping("DOWN"); // original keyboard
+		gameKeyMap->addAction(act);
+
+		act = new Action("P2RT", _("Player 2: Right"));
+		act->setKeyEvent(KEYCODE_RIGHT);
+		act->addDefaultInputMapping("RIGHT"); // original keyboard
+		gameKeyMap->addAction(act);
+
+		act = new Action("DBGFPS", _("Debug FPS"));
+		act->setKeyEvent(KEYCODE_F2);
+		act->addDefaultInputMapping("F2"); // original keyboard
+		gameKeyMap->addAction(act);
 	} else if (gameId == "zbang") {
 		act = new Action("ACTNXT", _("Next action"));
 		act->setMouseWheelUpEvent();
@@ -1501,7 +1599,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act = new Action("MCLK", _("Middle Click"));
 		act->setMiddleClickEvent();
 		act->addDefaultInputMapping("MOUSE_MIDDLE"); // original mouse
-		engineKeyMap->addAction(act);
+		gameKeyMap->addAction(act);
 
 		act = new Action("SCRLUP", _("Scroll up"));
 		act->setMouseWheelUpEvent();

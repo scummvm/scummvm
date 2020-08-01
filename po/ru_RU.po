@@ -7,17 +7,17 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
-"PO-Revision-Date: 2019-12-18 20:26+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2020-07-23 21:43+0000\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
 "Language: ru_RU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 3.9.1\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Russian\n"
 
 #: gui/about.cpp:102
@@ -277,32 +277,29 @@ msgstr "Грф"
 
 #: gui/editgamedialog.cpp:202
 msgid "Override global graphic settings"
-msgstr "Перекрыть глобальные установки графики"
+msgstr "Перекрыть глобальные настройки графики"
 
 #: gui/editgamedialog.cpp:204
 msgctxt "lowres"
 msgid "Override global graphic settings"
-msgstr "Перекрыть глобальные установки графики"
+msgstr "Перекрыть глобальные настройки графики"
 
 #: gui/editgamedialog.cpp:214 gui/options.cpp:1705
 msgid "Shader"
 msgstr "Шейдер"
 
 #: gui/editgamedialog.cpp:217
-#, fuzzy
 msgid "Override global shader settings"
-msgstr "Перекрыть глобальные установки аудио"
+msgstr "Перекрыть глобальные настройки шейдера"
 
 #: gui/editgamedialog.cpp:219
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global shader settings"
-msgstr "Перекрыть глобальные установки аудио"
+msgstr "Перекрыть глобальные настройки шейдера"
 
 #: gui/editgamedialog.cpp:233 gui/options.cpp:1739 engines/dialogs.cpp:329
-#, fuzzy
 msgid "Keymaps"
-msgstr "Таблица клавиш:"
+msgstr "Таблица клавиш"
 
 #: gui/editgamedialog.cpp:240 gui/options.cpp:1746 engines/dialogs.cpp:304
 msgid "Audio"
@@ -310,12 +307,12 @@ msgstr "Аудио"
 
 #: gui/editgamedialog.cpp:243
 msgid "Override global audio settings"
-msgstr "Перекрыть глобальные установки аудио"
+msgstr "Перекрыть глобальные настройки аудио"
 
 #: gui/editgamedialog.cpp:245
 msgctxt "lowres"
 msgid "Override global audio settings"
-msgstr "Перекрыть глобальные установки аудио"
+msgstr "Перекрыть глобальные настройки аудио"
 
 #: gui/editgamedialog.cpp:254 gui/options.cpp:1751
 msgid "Volume"
@@ -328,12 +325,12 @@ msgstr "Громк"
 
 #: gui/editgamedialog.cpp:259
 msgid "Override global volume settings"
-msgstr "Перекрыть глобальные установки громкости"
+msgstr "Перекрыть глобальные настройки громкости"
 
 #: gui/editgamedialog.cpp:261
 msgctxt "lowres"
 msgid "Override global volume settings"
-msgstr "Перекрыть глобальные установки громкости"
+msgstr "Перекрыть глобальные настройки громкости"
 
 #: gui/editgamedialog.cpp:272 gui/options.cpp:1761
 msgid "MIDI"
@@ -341,12 +338,12 @@ msgstr "MIDI"
 
 #: gui/editgamedialog.cpp:275
 msgid "Override global MIDI settings"
-msgstr "Перекрыть глобальные установки MIDI"
+msgstr "Перекрыть глобальные настройки MIDI"
 
 #: gui/editgamedialog.cpp:277
 msgctxt "lowres"
 msgid "Override global MIDI settings"
-msgstr "Перекрыть глобальные установки MIDI"
+msgstr "Перекрыть глобальные настройки MIDI"
 
 #: gui/editgamedialog.cpp:287 gui/options.cpp:1767
 msgid "MT-32"
@@ -354,12 +351,12 @@ msgstr "MT-32"
 
 #: gui/editgamedialog.cpp:290
 msgid "Override global MT-32 settings"
-msgstr "Перекрыть глобальные установки MT-32"
+msgstr "Перекрыть глобальные настройки MT-32"
 
 #: gui/editgamedialog.cpp:292
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
-msgstr "Перекрыть глобальные установки MT-32"
+msgstr "Перекрыть глобальные настройки MT-32"
 
 #: gui/editgamedialog.cpp:301 gui/options.cpp:1774
 msgid "Paths"
@@ -410,7 +407,7 @@ msgstr "Путь сохр:"
 
 #: gui/editgamedialog.cpp:340 engines/dialogs.cpp:338
 msgid "Achievements"
-msgstr ""
+msgstr "Достижения"
 
 #: gui/editgamedialog.cpp:364 gui/editgamedialog.cpp:454
 #: gui/editgamedialog.cpp:516 gui/editgamedialog.cpp:577 gui/options.cpp:1861
@@ -561,24 +558,23 @@ msgstr "Сброс"
 
 #: gui/fluidsynth-dialog.cpp:151
 msgid "Reset all FluidSynth settings to their default values."
-msgstr "Сбросить все установки FluidSynth в значения по умолчанию."
+msgstr "Сбросить все настройки FluidSynth в значения по умолчанию."
 
 #: gui/fluidsynth-dialog.cpp:218
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr ""
-"Вы действительно хотите сбросить все установки FluidSynth в значения по "
+"Вы действительно хотите сбросить все настройки FluidSynth в значения по "
 "умолчанию?"
 
 #: gui/gui-manager.cpp:116
 msgid "GUI"
-msgstr ""
+msgstr "Графический Интерфейс"
 
 #: gui/gui-manager.cpp:120 engines/mohawk/myst.cpp:585
 #: engines/mohawk/riven.cpp:854
-#, fuzzy
 msgid "Interact"
-msgstr "Интерполяция:"
+msgstr "Взаимодействие"
 
 #: gui/gui-manager.cpp:125 gui/unknown-game-dialog.cpp:54
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
@@ -933,12 +929,12 @@ msgstr "Мёртвая зона джойстика:"
 #: gui/options.cpp:1169
 #, c-format
 msgid "%d hidden achievements remaining"
-msgstr ""
+msgstr "Осталось %d скрытых достижений"
 
 #: gui/options.cpp:1174
 #, c-format
 msgid "Achievements unlocked: %d/%d"
-msgstr ""
+msgstr "Достижений разблокировано: %d/%d"
 
 #: gui/options.cpp:1193
 msgid "HW Shader:"
@@ -1560,7 +1556,6 @@ msgid "Will read text in gui on mouse over."
 msgstr "Будет читать текст в GUI при наведении мыши."
 
 #: gui/options.cpp:2183
-#, fuzzy
 msgid "None"
 msgstr "Не задан"
 
@@ -2018,7 +2013,7 @@ msgstr "<Неправильное значение>"
 
 #: engines/advancedDetector.cpp:139
 msgid "Illegitimate game copy detected. We provide no support in such cases"
-msgstr ""
+msgstr "Обнаружена нелегальная копия. Мы не поддерживаем такие игры"
 
 #: engines/dialogs.cpp:73
 msgid "~R~esume"
@@ -2179,14 +2174,12 @@ msgstr ""
 "файле README."
 
 #: engines/engine.cpp:510 engines/sky/detection.cpp:316
-#, fuzzy
 msgid "Autosave"
-msgstr "Автосохранение:"
+msgstr "Автосохранение"
 
 #: engines/engine.cpp:512
-#, fuzzy
 msgid "Error occurred making autosave"
-msgstr "Ошибка чтения файла сохранения"
+msgstr "Ошибка создания автоматического сохранения"
 
 #: engines/engine.cpp:584
 #, c-format
@@ -2214,11 +2207,11 @@ msgstr "Всё равно запустить"
 
 #: engines/engine.cpp:744
 msgid "Loading game is currently unavailable"
-msgstr ""
+msgstr "В данный момент загрузка игры недоступна"
 
 #: engines/engine.cpp:773
 msgid "Saving game is currently unavailable"
-msgstr ""
+msgstr "В данный момент сохранение игры недоступно"
 
 #: engines/game.cpp:171
 #, c-format
@@ -2309,7 +2302,7 @@ msgstr ""
 
 #: audio/mididrv.cpp:635
 msgid "Starting MIDI dump"
-msgstr ""
+msgstr "Начинаю создание дампа MIDI"
 
 #: audio/mods/paula.cpp:303
 msgid "Amiga Audio emulator"
@@ -2410,9 +2403,8 @@ msgid "Quit"
 msgstr "Выход"
 
 #: backends/events/default/default-events.cpp:293
-#, fuzzy
 msgid "Global"
-msgstr " (Глобальная)"
+msgstr "Глобальная"
 
 #: backends/events/default/default-events.cpp:296
 #, fuzzy
@@ -2424,14 +2416,12 @@ msgid "Display keyboard"
 msgstr "Показать клавиатуру"
 
 #: backends/events/default/default-events.cpp:310
-#, fuzzy
 msgid "Toggle mute"
-msgstr "Переключение перехвата мыши"
+msgstr "Вкл/выкл звук"
 
 #: backends/events/default/default-events.cpp:336
-#, fuzzy
 msgid "Open Debugger"
-msgstr "Отладчик"
+msgstr "Открыть отладчик"
 
 #: backends/events/gph/gph-events.cpp:423
 #: backends/events/gph/gph-events.cpp:466
@@ -2608,87 +2598,79 @@ msgstr "Переключение перехвата мыши"
 #: engines/wintermute/keymapper_tables.h:1258
 #: engines/wintermute/keymapper_tables.h:1289
 msgid "Save screenshot"
-msgstr ""
+msgstr "Сохранить скриншот"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:387
-#, fuzzy
 msgid "Toggle aspect ratio correction"
 msgstr "Переключение коррекции соотношения сторон"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:394
-#, fuzzy
 msgid "Toggle linear filtered scaling"
-msgstr "Использовать линейную фильтрацию для увеличения разрешения"
+msgstr "Использовать линейное сглаживание при масштабировании"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:401
-#, fuzzy
 msgid "Cycle through stretch modes"
-msgstr "Не удалось переключиться в режим растяжения '%s'."
+msgstr "Переключение режима растягивания"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:407
-#, fuzzy
 msgid "Increase the scale factor"
-msgstr "Увеличить / уменьшить масштаб"
+msgstr "Увеличить масштаб"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:413
-#, fuzzy
 msgid "Decrease the scale factor"
-msgstr "Увеличить / уменьшить масштаб"
+msgstr "Уменьшить масштаб"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:425
 msgid "Switch to nearest neighbour scaling"
-msgstr ""
+msgstr "Переключить масштабирование на nearest neighbour"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:426
 msgid "Switch to AdvMame 2x/3x scaling"
-msgstr ""
+msgstr "Переключить масштабирование на AdvMame 2x/3x"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:428
 msgid "Switch to HQ 2x/3x scaling"
-msgstr ""
+msgstr "Переключить масштабирование на HQ 2x/3x"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:430
 msgid "Switch to 2xSai scaling"
-msgstr ""
+msgstr "Переключить масштабирование на 2xSai"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:431
 msgid "Switch to Super2xSai scaling"
-msgstr ""
+msgstr "Переключить масштабирование на Super2xSai"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:432
 msgid "Switch to SuperEagle scaling"
-msgstr ""
+msgstr "Переключить масштабирование на SuperEagle"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:433
 msgid "Switch to TV 2x scaling"
-msgstr ""
+msgstr "Переключить масштабирование на TV 2x"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:434
 msgid "Switch to DotMatrix scaling"
-msgstr ""
+msgstr "Переключить масштабирование на DotMatrix"
 
 #: backends/keymapper/hardware-input.cpp:245
-#, fuzzy
 msgid "Left Mouse Button"
-msgstr "Эмуляция нажатия левой клавиши мыши"
+msgstr "Левая кнопка мыши"
 
 #: backends/keymapper/hardware-input.cpp:246
-#, fuzzy
 msgid "Right Mouse Button"
-msgstr "Эмуляция правой клавиши мыши"
+msgstr "Правая кнопка мыши"
 
 #: backends/keymapper/hardware-input.cpp:247
-#, fuzzy
 msgid "Middle Mouse Button"
-msgstr "Эмуляция нажатия левой клавиши мыши"
+msgstr "Средняя кнопка мыши"
 
 #: backends/keymapper/hardware-input.cpp:248
 msgid "Mouse Wheel Up"
-msgstr ""
+msgstr "Колесо мыши вверх"
 
 #: backends/keymapper/hardware-input.cpp:249
 msgid "Mouse Wheel Down"
-msgstr ""
+msgstr "Колесо мыши вниз"
 
 #: backends/keymapper/hardware-input.cpp:250
 #, fuzzy
@@ -2702,118 +2684,108 @@ msgstr "Эмуляция нажатия левой клавиши мыши"
 
 #: backends/keymapper/hardware-input.cpp:256
 msgid "Joy A"
-msgstr ""
+msgstr "Джойстик A"
 
 #: backends/keymapper/hardware-input.cpp:257
 msgid "Joy B"
-msgstr ""
+msgstr "Джойстик B"
 
 #: backends/keymapper/hardware-input.cpp:258
 msgid "Joy X"
-msgstr ""
+msgstr "Джойстик X"
 
 #: backends/keymapper/hardware-input.cpp:259
 msgid "Joy Y"
-msgstr ""
+msgstr "Джойстик Y"
 
 #: backends/keymapper/hardware-input.cpp:260
-#, fuzzy
 msgid "Joy Back"
-msgstr "Идти назад"
+msgstr "Джойстик назад"
 
 #: backends/keymapper/hardware-input.cpp:261
 msgid "Joy Guide"
-msgstr ""
+msgstr "Джойстик меню"
 
 #: backends/keymapper/hardware-input.cpp:262
-#, fuzzy
 msgid "Joy Start"
-msgstr "П~у~ск"
+msgstr "Джойстик старт"
 
 #: backends/keymapper/hardware-input.cpp:263
-#, fuzzy
 msgid "Left Stick"
-msgstr "Левый щелчок"
+msgstr "Левый стик"
 
 #: backends/keymapper/hardware-input.cpp:264
-#, fuzzy
 msgid "Right Stick"
-msgstr "Правый щелчок"
+msgstr "Правый стик"
 
 #: backends/keymapper/hardware-input.cpp:265
 msgid "Left Shoulder"
-msgstr ""
+msgstr "Левый курок"
 
 #: backends/keymapper/hardware-input.cpp:266
 msgid "Right Shoulder"
-msgstr ""
+msgstr "Правый курок"
 
 #: backends/keymapper/hardware-input.cpp:267
 #: backends/platform/3ds/osystem-events.cpp:58
 #: backends/platform/sdl/ps3/ps3.cpp:52
 msgid "D-pad Up"
-msgstr ""
+msgstr "Стрелка вверх"
 
 #: backends/keymapper/hardware-input.cpp:268
 #: backends/platform/3ds/osystem-events.cpp:59
 #: backends/platform/sdl/ps3/ps3.cpp:53
 msgid "D-pad Down"
-msgstr ""
+msgstr "Стрелка вниз"
 
 #: backends/keymapper/hardware-input.cpp:269
 #: backends/platform/3ds/osystem-events.cpp:60
 #: backends/platform/sdl/ps3/ps3.cpp:54
-#, fuzzy
 msgid "D-pad Left"
-msgstr "Скользить влево"
+msgstr "Стрелка влево"
 
 #: backends/keymapper/hardware-input.cpp:270
 #: backends/platform/3ds/osystem-events.cpp:61
 #: backends/platform/sdl/ps3/ps3.cpp:55
-#, fuzzy
 msgid "D-pad Right"
-msgstr "Скользить вправо"
+msgstr "Стрелка вправо"
 
 #: backends/keymapper/hardware-input.cpp:275
 msgid "Left Trigger"
-msgstr ""
+msgstr "Левый курок"
 
 #: backends/keymapper/hardware-input.cpp:276
 msgid "Right Trigger"
-msgstr ""
+msgstr "Правый курок"
 
 #: backends/keymapper/hardware-input.cpp:277
 #: backends/platform/sdl/ps3/ps3.cpp:62
-#, fuzzy
 msgid "Left Stick X"
-msgstr "Левый щелчок"
+msgstr "Левый стик ось X"
 
 #: backends/keymapper/hardware-input.cpp:278
 #: backends/platform/sdl/ps3/ps3.cpp:63
-#, fuzzy
 msgid "Left Stick Y"
-msgstr "Левый щелчок"
+msgstr "Левый стик ось Y"
 
 #: backends/keymapper/hardware-input.cpp:279
 #: backends/platform/sdl/ps3/ps3.cpp:64
-#, fuzzy
 msgid "Right Stick X"
-msgstr "Правый щелчок"
+msgstr "Правый стик ось X"
 
 #: backends/keymapper/hardware-input.cpp:280
 #: backends/platform/sdl/ps3/ps3.cpp:65
-#, fuzzy
 msgid "Right Stick Y"
-msgstr "Правый щелчок"
+msgstr "Правый стик ось Y"
 
 #: backends/keymapper/remap-widget.cpp:281
 #: backends/keymapper/remap-widget.cpp:311
 msgid "Reset to defaults"
-msgstr ""
+msgstr "Сбросить к исходным"
 
 #: backends/keymapper/remap-widget.cpp:282
 msgid "Clear mapping"
-msgstr ""
+msgstr "Очистить раскладку"
 
 #: backends/keymapper/virtual-mouse.cpp:154
 msgid "Virtual mouse up"
@@ -2938,7 +2910,7 @@ msgstr "Или выберите каталог (работает только в Chrome):"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:74
 msgid "Index of "
-msgstr "Индекс "
+msgstr "Порядковый номер "
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:76
 msgid "Error occurred"
@@ -2962,11 +2934,11 @@ msgstr "ScummVM не может перечислить каталог, который вы указали."
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
 msgid "Index of"
-msgstr "Индекс чего-либо"
+msgstr "Порядковый номер"
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
 msgid "This is a local webserver index page."
-msgstr "Это страница индекса локального веб-сервера."
+msgstr "Это главная страница локального веб-сервера."
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:43
 msgid "Open Files manager"
@@ -3054,19 +3026,19 @@ msgstr "Оба"
 
 #: backends/platform/3ds/osystem-events.cpp:48
 msgid "A"
-msgstr ""
+msgstr "A"
 
 #: backends/platform/3ds/osystem-events.cpp:49
 msgid "B"
-msgstr ""
+msgstr "B"
 
 #: backends/platform/3ds/osystem-events.cpp:50
 msgid "X"
-msgstr ""
+msgstr "X"
 
 #: backends/platform/3ds/osystem-events.cpp:51
 msgid "Y"
-msgstr ""
+msgstr "Y"
 
 #: backends/platform/3ds/osystem-events.cpp:52
 #: backends/platform/sdl/ps3/ps3.cpp:45
@@ -3082,96 +3054,101 @@ msgstr "П~у~ск"
 
 #: backends/platform/3ds/osystem-events.cpp:54
 msgid "ZL"
-msgstr ""
+msgstr "ZL"
 
 #: backends/platform/3ds/osystem-events.cpp:55
 msgid "ZR"
-msgstr ""
+msgstr "ZR"
 
 #: backends/platform/3ds/osystem-events.cpp:56
 msgid "L"
-msgstr ""
+msgstr "L"
 
 #: backends/platform/3ds/osystem-events.cpp:57
 msgid "R"
-msgstr ""
+msgstr "R"
 
 #: backends/platform/3ds/osystem-events.cpp:66
 msgid "C-Pad X"
-msgstr ""
+msgstr "C-пад X"
 
 #: backends/platform/3ds/osystem-events.cpp:67
 msgid "C-Pad Y"
-msgstr ""
+msgstr "C-пад Y"
 
 #: backends/platform/3ds/osystem-events.cpp:72
 msgid "Touch"
-msgstr ""
+msgstr "Касание"
 
 #: backends/platform/3ds/osystem-events.cpp:310
-#, fuzzy
 msgid "Toggle Drag Mode"
-msgstr "Режим протягивания"
+msgstr "Вкл/выкл режим перетаскивания"
 
 #: backends/platform/3ds/osystem-events.cpp:315
 msgid "Toggle Magnify Mode"
-msgstr ""
+msgstr "Вкл/выкл режим увеличения"
 
 #: backends/platform/3ds/osystem-events.cpp:320
 msgid "Open 3DS Settings"
-msgstr ""
+msgstr "Открыть настройки 3DS"
 
 #: backends/platform/3ds/osystem-events.cpp:350
 msgid ""
 "Magnify Mode Off. Reactivating Drag Mode.\n"
 "Returning to Launcher..."
 msgstr ""
+"Режим увеличения выключен. Возврат к режиму перетаскивания.\n"
+"Переходим в лаунчер..."
 
 #: backends/platform/3ds/osystem-events.cpp:352
 msgid "Magnify Mode Off. Returning to Launcher..."
-msgstr ""
+msgstr "Режим увеличения выключен. Переходим в лаунчер..."
 
 #: backends/platform/3ds/osystem-events.cpp:386
 msgid "Hover Mode"
-msgstr "Режим скольжения"
+msgstr "Режим парения"
 
 #: backends/platform/3ds/osystem-events.cpp:390
 msgid "Drag Mode"
-msgstr "Режим протягивания"
+msgstr "Режим перетаскивания"
 
 #: backends/platform/3ds/osystem-events.cpp:392
 msgid "Cannot Switch to Drag Mode while Magnify Mode is On"
 msgstr ""
+"Невозможно переключиться в режим перетаскивания при включенном режиме "
+"увеличения"
 
 #: backends/platform/3ds/osystem-events.cpp:399
 msgid "Magnify Mode cannot be activated in menus."
-msgstr ""
+msgstr "Режим увеличения не может быть активирован в меню."
 
 #: backends/platform/3ds/osystem-events.cpp:402
 msgid ""
 "Magnify Mode can only be activated\n"
 " when both screens are enabled."
 msgstr ""
+"Режим увеличения можно активировать только \n"
+" когда оба экрана включены."
 
 #: backends/platform/3ds/osystem-events.cpp:404
 msgid "In-game resolution too small to magnify."
-msgstr ""
+msgstr "Внутриигровое разрешение слишком мало для увеличения."
 
 #: backends/platform/3ds/osystem-events.cpp:410
 msgid "Magnify Mode On. Switching to Hover Mode..."
-msgstr ""
+msgstr "Режим увеличения включен. Переключение в режим парения..."
 
 #: backends/platform/3ds/osystem-events.cpp:412
 msgid "Magnify Mode On"
-msgstr ""
+msgstr "Режим увеличения включен"
 
 #: backends/platform/3ds/osystem-events.cpp:419
 msgid "Magnify Mode Off. Reactivating Drag Mode..."
-msgstr ""
+msgstr "Режим Увеличения выключен. Переключение в режим протягивания..."
 
 #: backends/platform/3ds/osystem-events.cpp:421
 msgid "Magnify Mode Off"
-msgstr ""
+msgstr "Режим увеличения выключен"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:57
 msgid "ScummVM Main Menu"
@@ -3862,13 +3839,15 @@ msgstr ""
 
 #: engines/bladerunner/detection.cpp:75
 msgid "Max frames per second limit"
-msgstr ""
+msgstr "Максимальный лимит кадров в секунду"
 
 #: engines/bladerunner/detection.cpp:76
 msgid ""
 "This mode targets a maximum of 120 fps. When disabled, the game targets 60 "
 "fps"
 msgstr ""
+"Этот режим может использовать максимально 120 кадров в секунду. Когда он "
+"выключен, игра использует максимально 60 кадров в секунду"
 
 #: engines/bladerunner/detection.cpp:84
 msgid "Disable McCoy's quick stamina drain"
@@ -4896,9 +4875,8 @@ msgid "???"
 msgstr ""
 
 #: engines/pegasus/pegasus.cpp:2577
-#, fuzzy
 msgid "Save Game"
-msgstr "Сохранить игру:"
+msgstr "Сохранить игру"
 
 #: engines/pegasus/pegasus.cpp:2583
 #, fuzzy
@@ -6181,14 +6159,14 @@ msgid "Unable to locate the '%s' data file."
 msgstr "Не удалось найти файл движка %s."
 
 #: engines/ultima/shared/engine/data_archive.cpp:81
-#, fuzzy, c-format
+#, c-format
 msgid "Could not locate engine data %s"
-msgstr "Не удалось найти файл движка %s."
+msgstr "Не удалось найти файл движка %s"
 
 #: engines/ultima/shared/engine/data_archive.cpp:99
-#, fuzzy, c-format
+#, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
-msgstr "Неверная версия файла движка %s. Ожидается %d.%d, а найдена %d.%d."
+msgstr "Неверная версия файла движка. Ожидается %d.%d, а найдена %d.%d"
 
 #: engines/ultima/nuvie/save/save_game.cpp:212
 #, fuzzy
@@ -6533,9 +6511,8 @@ msgid "Change font size"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:602
-#, fuzzy
 msgid "Save game"
-msgstr "Сохранить игру:"
+msgstr "Сохранить игру"
 
 #: engines/wintermute/keymapper_tables.h:612
 #, fuzzy
@@ -6594,39 +6571,32 @@ msgid "Select next music record"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:690
-#, fuzzy
 msgid "Play note 1: A"
-msgstr "Время игры: "
+msgstr "Нота 1: Ля"
 
 #: engines/wintermute/keymapper_tables.h:695
-#, fuzzy
 msgid "Play note 2: F#"
-msgstr "Время игры: "
+msgstr "Нота 2: Фа-диез"
 
 #: engines/wintermute/keymapper_tables.h:700
-#, fuzzy
 msgid "Play note 3: D#"
-msgstr "Время игры: "
+msgstr "Нота 3: Ре-диез"
 
 #: engines/wintermute/keymapper_tables.h:705
-#, fuzzy
 msgid "Play note 4: C#"
-msgstr "Время игры: "
+msgstr "Нота 4: До-диез"
 
 #: engines/wintermute/keymapper_tables.h:710
-#, fuzzy
 msgid "Play note 5: E"
-msgstr "Время игры: "
+msgstr "Нота 5: Ми-диез"
 
 #: engines/wintermute/keymapper_tables.h:715
-#, fuzzy
 msgid "Play note 6: G#"
-msgstr "Время игры: "
+msgstr "Нота 6: Соль-диез"
 
 #: engines/wintermute/keymapper_tables.h:720
-#, fuzzy
 msgid "Play note 7: B"
-msgstr "Время игры: "
+msgstr "Нота 7: Си"
 
 #: engines/wintermute/keymapper_tables.h:733
 msgid "Ability: Telekinesis"
@@ -6714,7 +6684,7 @@ msgstr "~П~ред"
 #: engines/wintermute/keymapper_tables.h:1128
 #: engines/wintermute/keymapper_tables.h:1263
 msgid "Settings"
-msgstr ""
+msgstr "Настройки"
 
 #: engines/wintermute/keymapper_tables.h:1133
 msgid "Dialogue answer 1"
@@ -6756,9 +6726,8 @@ msgid "Show journal"
 msgstr "Показать все"
 
 #: engines/wintermute/keymapper_tables.h:1356
-#, fuzzy
 msgid "Music menu"
-msgstr "Громк. музыки:"
+msgstr "Меню музыки"
 
 #: engines/wintermute/keymapper_tables.h:1376
 msgid "Rotate"

@@ -316,7 +316,7 @@ void OSystem_Android::initBackend() {
 	// The key is thus registered to default to a "false" value
 	ConfMan.registerDefault("swap_menu_and_back", false);
 
-	ConfMan.setInt("autosave_period", 0);
+	ConfMan.registerDefault("autosave_period", 0);
 	ConfMan.setBool("FM_high_quality", false);
 	ConfMan.setBool("FM_medium_quality", true);
 
@@ -526,7 +526,7 @@ Common::String OSystem_Android::getSystemLanguage() const {
 }
 
 bool OSystem_Android::openUrl(const Common::String &url) {
-	return JNI::openUrl(url.c_str());
+	return JNI::openUrl(url);
 }
 
 bool OSystem_Android::hasTextInClipboard() {
@@ -551,6 +551,10 @@ Common::String OSystem_Android::getSystemProperty(const char *name) const {
 	int len = __system_property_get(name, value);
 
 	return Common::String(value, len);
+}
+
+char *OSystem_Android::convertEncoding(const char *to, const char *from, const char *string, size_t length) {
+	return JNI::convertEncoding(to, from, string, length);
 }
 
 #endif

@@ -27,6 +27,7 @@
 #include "common/endian.h"
 #include "common/memstream.h"
 #include "common/textconsole.h"
+#include "audio/mididrv.h"
 
 #include "cine/cine.h"
 #include "cine/anim.h"
@@ -39,12 +40,21 @@ namespace Cine {
 
 struct AnimHeader2Struct {
 	uint32 field_0;
-	uint16 width;
-	uint16 height;
-	uint16 type;
+	int16 width;
+	int16 height;
+	int16 type;
 	uint16 field_A;
 	uint16 field_C;
 	uint16 field_E;
+};
+
+static const AnimDataMapping resNameMapping[] = {
+	{"PLONGEON", "PLONG110"},
+	{"PNEUMATI", "PNEUMA05"},
+	{"RELAITRE", "RIDEAU__"},
+	{"TIRROIR_", "PORTE___"},
+	{"VERREDO_", "EAU_____"},
+	{"ZODIAC__", "TAXIGO__"}
 };
 
 static const AnimDataEntry transparencyData[] = {
@@ -184,6 +194,28 @@ static const AnimDataEntry transparencyData[] = {
 void convertMask(byte *dest, const byte *source, int16 width, int16 height);
 void convert8BBP(byte *dest, const byte *source, int16 width, int16 height);
 void convert8BBP2(byte *dest, byte *source, int16 width, int16 height);
+int loadSet(const char *resourceName, int16 idx, int16 frameIndex = -1);
+
+void checkAnimDataTableBounds(int entry) {
+	if (entry < 0) {
+		error("Out of free animation space");
+	} else if (entry >= g_cine->_animDataTable.size()) {
+		error("Animation entry (%d) out of bounds", entry);
+	}
+}
+
+int16 fixAnimDataTableEndFrame(int entry, int16 startFrame, int16 endFrame) {
+	checkAnimDataTableBounds(entry);
+
+	// Ensure that a non-empty range [entry, entry + endFrame - startFrame) stays in bounds
+	if (endFrame > startFrame &&
+		entry + (endFrame - startFrame - 1) >= g_cine->_animDataTable.size()) {
+		warning("Restricting out of bounds animation data table write to in bounds");
+		return (int16)(g_cine->_animDataTable.size() - entry + startFrame);
+	} else {
+		return endFrame;
+	}
+}
 
 AnimData::AnimData() : _width(0), _height(0), _bpp(0), _var1(0), _data(NULL),
 	_mask(NULL), _fileIdx(-1), _frameIdx(-1), _realWidth(0), _size(0) {
@@ -394,6 +426,20 @@ void AnimData::save(Common::OutSaveFile &fHandle) const {
  * @param numIdx Number of image frames to be cleared
  */
 void freeAnimDataRange(byte startIdx, byte numIdx) {
+	if (numIdx > 0) {
+		// Make sure starting index is in bounds
+		if (startIdx >= g_cine->_animDataTable.size()) {
+			startIdx = (byte)(MAX<int>(0, g_cine->_animDataTable.size() - 1));
+		}
+
+		// Make sure last accessed index is in bounds
+		if (startIdx + numIdx > g_cine->_animDataTable.size()) {
+			numIdx = (byte)(g_cine->_animDataTable.size() - startIdx);
+		}
+		assert(startIdx < g_cine->_animDataTable.size());
+		assert(startIdx + numIdx <= g_cine->_animDataTable.size());
+	}
+		
 	for (byte i = 0; i < numIdx; i++) {
 		g_cine->_animDataTable[startIdx + i].clear();
 	}
@@ -483,19 +529,17 @@ void convert4BBP(byte *dest, const byte *source, int16 width, int16 height) {
  * @param readS Input stream open for reading
  */
 void loadAnimHeader(AnimHeaderStruct &animHeader, Common::SeekableReadStream &readS) {
-	animHeader.field_0 = readS.readByte();
-	animHeader.field_1 = readS.readByte();
-	animHeader.field_2 = readS.readByte();
-	animHeader.field_3 = readS.readByte();
-	animHeader.frameWidth = readS.readUint16BE();
-	animHeader.frameHeight = readS.readUint16BE();
+	readS.read(animHeader.idString, sizeof(animHeader.idString));
+	animHeader.idString[sizeof(animHeader.idString) - 1] = 0;
+	animHeader.frameWidth = readS.readSint16BE();
+	animHeader.frameHeight = readS.readSint16BE();
 	animHeader.field_8 = readS.readByte();
 	animHeader.field_9 = readS.readByte();
 	animHeader.field_A = readS.readByte();
 	animHeader.field_B = readS.readByte();
 	animHeader.field_C = readS.readByte();
 	animHeader.field_D = readS.readByte();
-	animHeader.numFrames = readS.readUint16BE();
+	animHeader.numFrames = readS.readSint16BE();
 	animHeader.field_10 = readS.readByte();
 	animHeader.field_11 = readS.readByte();
 	animHeader.field_12 = readS.readByte();
@@ -534,7 +578,7 @@ int loadSpl(const char *resourceName, int16 idx) {
 	byte *dataPtr = readBundleFile(foundFileIdx);
 
 	entry = idx < 0 ? emptyAnimSpace() : idx;
-	assert(entry >= 0);
+	checkAnimDataTableBounds(entry);
 	g_cine->_animDataTable[entry].load(dataPtr, ANIM_RAW, g_cine->_partBuffer[foundFileIdx].unpackedSize, 1, foundFileIdx, 0, currentPartName);
 
 	free(dataPtr);
@@ -559,9 +603,9 @@ int loadMsk(const char *resourceName, int16 idx, int16 frameIndex) {
 	byte *ptr;
 	AnimHeaderStruct animHeader;
 
-	Common::MemoryReadStream readS(dataPtr, 0x16);
+	Common::MemoryReadStream readS(dataPtr, ANIM_HEADER_SIZE);
 	loadAnimHeader(animHeader, readS);
-	ptr = dataPtr + 0x16;
+	ptr = dataPtr + ANIM_HEADER_SIZE;
 
 	int16 startFrame = 0;
 	int16 endFrame = animHeader.numFrames;
@@ -573,7 +617,7 @@ int loadMsk(const char *resourceName, int16 idx, int16 frameIndex) {
 	}
 
 	entry = idx < 0 ? emptyAnimSpace() : idx;
-	assert(entry >= 0);
+	endFrame = fixAnimDataTableEndFrame(entry, startFrame, endFrame);
 	for (int16 i = startFrame; i < endFrame; i++, entry++) {
 		g_cine->_animDataTable[entry].load(ptr, ANIM_MASK, animHeader.frameWidth, animHeader.frameHeight, foundFileIdx, i, currentPartName);
 		ptr += animHeader.frameWidth * animHeader.frameHeight;
@@ -602,9 +646,18 @@ int loadAni(const char *resourceName, int16 idx, int16 frameIndex) {
 	byte transparentColor;
 	AnimHeaderStruct animHeader;
 
-	Common::MemoryReadStream readS(dataPtr, 0x16);
+	Common::MemoryReadStream readS(dataPtr, ANIM_HEADER_SIZE);
 	loadAnimHeader(animHeader, readS);
-	ptr = dataPtr + 0x16;
+	ptr = dataPtr + ANIM_HEADER_SIZE;
+
+	// HACK: If the underlying resource is really a ".SET" then use that loading routine.
+	// Try to detect door animations in SP11_01.ANI and SP11_02.ANI that are .SET files.
+	// These are on Dr. Why's island the opening and closing doors.
+	if (hacksEnabled && scumm_stricmp(animHeader.idString, "SET") == 0 &&
+		idx >= 161 && idx <= 164 && animHeader.frameHeight == 0) {
+		free(dataPtr);
+		return loadSet(resourceName, idx, frameIndex);
+	}
 
 	int16 startFrame = 0;
 	int16 endFrame = animHeader.numFrames;
@@ -621,12 +674,12 @@ int loadAni(const char *resourceName, int16 idx, int16 frameIndex) {
 	// HACK: Versions of TITRE.ANI with height 37 use color 0xF for transparency.
 	//       Versions of TITRE.ANI with height 57 use color 0x0 for transparency.
 	//       Fixes bug #2057619: FW: Glitches in title display of demo (regression).
-	if (scumm_stricmp(resourceName, "TITRE.ANI") == 0 && animHeader.frameHeight == 37) {
+	if (hacksEnabled && scumm_stricmp(resourceName, "TITRE.ANI") == 0 && animHeader.frameHeight == 37) {
 		transparentColor = 0xF;
 	}
 
 	entry = idx < 0 ? emptyAnimSpace() : idx;
-	assert(entry >= 0);
+	endFrame = fixAnimDataTableEndFrame(entry, startFrame, endFrame);
 
 	for (int16 i = startFrame; i < endFrame; i++, entry++) {
 		// special case transparency handling
@@ -704,7 +757,7 @@ void convert8BBP2(byte *dest, byte *source, int16 width, int16 height) {
  * @param frameIndex frame of animation to load (-1 for all frames)
  * @return The number of the animDataTable entry after the loaded image set (-1 if error)
  */
-int loadSet(const char *resourceName, int16 idx, int16 frameIndex = -1) {
+int loadSet(const char *resourceName, int16 idx, int16 frameIndex) {
 	AnimHeader2Struct header2;
 	uint16 numSpriteInAnim;
 	int16 foundFileIdx = findFileInBundle(resourceName);
@@ -737,6 +790,7 @@ int loadSet(const char *resourceName, int16 idx, int16 frameIndex = -1) {
 		ptr += 0x10 * frameIndex;
 	}
 
+	endFrame = fixAnimDataTableEndFrame(entry, startFrame, endFrame);
 	for (int16 i = startFrame; i < endFrame; i++, entry++) {
 		Common::MemoryReadStream readS(ptr, 0x10);
 
@@ -783,8 +837,8 @@ int loadSeq(const char *resourceName, int16 idx) {
 
 	byte *dataPtr = readBundleFile(foundFileIdx);
 	int entry = idx < 0 ? emptyAnimSpace() : idx;
-
-	g_cine->_animDataTable[entry].load(dataPtr + 0x16, ANIM_RAW, g_cine->_partBuffer[foundFileIdx].unpackedSize - 0x16, 1, foundFileIdx, 0, currentPartName);
+	checkAnimDataTableBounds(entry);
+	g_cine->_animDataTable[entry].load(dataPtr + ANIM_HEADER_SIZE, ANIM_RAW, g_cine->_partBuffer[foundFileIdx].unpackedSize - 0x16, 1, foundFileIdx, 0, currentPartName);
 	free(dataPtr);
 	return entry + 1;
 }
@@ -798,8 +852,33 @@ int loadSeq(const char *resourceName, int16 idx) {
  */
 int loadResource(const char *resourceName, int16 idx, int16 frameIndex) {
 	int result = -1; // Return an error by default
+
+	if (g_cine->getGameType() == Cine::GType_OS &&
+		g_cine->getPlatform() == Common::kPlatformDOS &&
+		g_sound->musicType() != MT_MT32 &&
+		(strstr(resourceName, ".SPL") || strstr(resourceName, ".H32"))) {
+		char base[20];
+		removeExtention(base, resourceName);
+
+		for (uint i = 0; i < ARRAYSIZE(resNameMapping); i++) {
+			if (scumm_stricmp(base, resNameMapping[i].from) == 0) {
+				Common::strlcpy(base, resNameMapping[i].to, sizeof(base));
+				break;
+			}
+		}
+
+		const char *ext = (g_sound->musicType() == MT_ADLIB) ? ".ADL" : ".HP";
+		Common::strlcat(base, ext, sizeof(base));
+		return loadResource(base, idx, frameIndex);
+	}
+
+	bool preferSeq = (g_cine->getGameType() == Cine::GType_OS && g_sound->musicType() == MT_MT32);
+
 	if (strstr(resourceName, ".SPL")) {
-		result = loadSpl(resourceName, idx);
+		if (preferSeq)
+			result = loadSeq(resourceName, idx);
+		else
+			result = loadSpl(resourceName, idx);
 	} else if (strstr(resourceName, ".MSK")) {
 		result = loadMsk(resourceName, idx, frameIndex);
 	} else if (strstr(resourceName, ".ANI")) {
@@ -811,9 +890,16 @@ int loadResource(const char *resourceName, int16 idx, int16 frameIndex) {
 	} else if (strstr(resourceName, ".SEQ")) {
 		result = loadSeq(resourceName, idx);
 	} else if (strstr(resourceName, ".H32")) {
-		warning("loadResource: Ignoring file '%s' (Load at %d)", resourceName, idx);
+		if (preferSeq)
+			result = loadSeq(resourceName, idx);
+		else
+			result = loadSpl(resourceName, idx);
+	} else if (strstr(resourceName, ".HP")) {
+		result = loadSpl(resourceName, idx);
+	} else if (strstr(resourceName, ".ADL")) {
+		result = loadSpl(resourceName, idx);
 	} else if (strstr(resourceName, ".AMI")) {
-		warning("loadResource: Ignoring file '%s' (Load at %d)", resourceName, idx);
+		result = loadAni(resourceName, idx, frameIndex);
 	} else if (strstr(resourceName, "ECHEC")) { // Echec (French) means failure
 		g_cine->quitGame();
 	} else {

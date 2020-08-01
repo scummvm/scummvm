@@ -37,12 +37,12 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(CruAmmoGump)
 
-CruAmmoGump::CruAmmoGump() : CruStatGump() {
+CruAmmoGump::CruAmmoGump() : CruStatGump(), _clipsText(nullptr), _bulletsText(nullptr) {
 
 }
 
-CruAmmoGump::CruAmmoGump(Shape *shape, int x)
-	: CruStatGump(shape, x), _ammoShape(nullptr) {
+CruAmmoGump::CruAmmoGump(Shape *shape, int x) : CruStatGump(shape, x),
+		_clipsText(nullptr), _bulletsText(nullptr) {
 	_frameNum = 1;
 }
 
@@ -77,13 +77,13 @@ void CruAmmoGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 			bullets = 0;
 		} else {
 			WeaponInfo *weaponinfo = item->getShapeInfo()->_weaponInfo;
-			uint16 frameno = 0;
+			//uint16 frameno = 0;
 			if (weaponinfo) {
-				frameno = weaponinfo->_ammoType;
+				//frameno = weaponinfo->_ammoType;
 				ammoitem = weaponinfo->_ammoShape;
 			}
 
-			bullets= item->getQuality();
+			bullets = item->getQuality();
 		}
 	}
 

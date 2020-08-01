@@ -23,15 +23,21 @@
 #include "common/endian.h"
 
 #include "director/director.h"
+#include "director/stage.h"
+#include "director/util.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-object.h"
+#include "director/lingo/lingo-the.h"
 #include "director/lingo/lingo-gr.h"
 #include "director/lingo/xlibs/fileio.h"
+#include "director/lingo/xlibs/palxobj.h"
+#include "director/lingo/xlibs/flushxobj.h"
+#include "director/lingo/xlibs/winxobj.h"
 
 namespace Director {
 
-static struct MethodProto {
+static struct PredefinedProto {
 	const char *name;
 	void (*func)(int);
 	int minArgs;	// -1 -- arglist
@@ -59,20 +65,31 @@ static struct MethodProto {
 	{ 0, 0, 0, 0, 0, 0 }
 };
 
+static MethodProto windowMethods[] = {
+	// window / stage
+	{ "close",					LM::m_close,				 0, 0,	4 },			// D4
+	{ "forget",					LM::m_forget,				 0, 0,	4 },			// D4
+	{ "open",					LM::m_open,					 0, 0,	4 },			// D4
+	{ "moveToBack",				LM::m_moveToBack,			 0, 0,	4 },			// D4
+	{ "moveToFront",			LM::m_moveToFront,			 0, 0,	4 },			// D4
+	{ 0, 0, 0, 0, 0 }
+};
+
 void Lingo::initMethods() {
-	for (MethodProto *mtd = predefinedMethods; mtd->name; mtd++) {
+	for (PredefinedProto *mtd = predefinedMethods; mtd->name; mtd++) {
 		if (mtd->version > _vm->getVersion())
 			continue;
 
 		Symbol sym;
 		sym.name = new Common::String(mtd->name);
-		sym.type = FBLTIN;
+		sym.type = HBLTIN;
 		sym.nargs = mtd->minArgs;
 		sym.maxArgs = mtd->maxArgs;
 		sym.targetType = mtd->type;
 		sym.u.bltin = mtd->func;
 		_methods[mtd->name] = sym;
 	}
+	Stage::initMethods(windowMethods);
 }
 
 static struct XLibProto {
@@ -82,7 +99,11 @@ static struct XLibProto {
 	int version;
 } xlibs[] = {
 	{ "FileIO",					FileIO::initialize,					kXObj | kFactoryObj,	2 },	// D2
+	{ "FlushXObj",				FlushXObj::initialize,				kXObj,					4 },	// D4
+	{ "PalXObj",				PalXObj:: initialize,				kXObj,					4 }, 	// D4
+	{ "winXObj",				RearWindowXObj::initialize,			kXObj,					4 },	// D4
 	{ 0, 0, 0, 0 }
+
 };
 
 void Lingo::initXLibs() {
@@ -92,7 +113,7 @@ void Lingo::initXLibs() {
 
 		Symbol sym;
 		sym.name = new Common::String(lib->name);
-		sym.type = FBLTIN;
+		sym.type = HBLTIN;
 		sym.nargs = 0;
 		sym.maxArgs = 0;
 		sym.targetType = lib->type;
@@ -101,159 +122,18 @@ void Lingo::initXLibs() {
 	}
 }
 
-void Lingo::openXLib(const Common::String &name, ObjectType type) {
+void Lingo::openXLib(Common::String name, ObjectType type) {
+	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
+		int pos = name.findLastOf(':');
+		name = name.substr(pos + 1, name.size());
+	}
+
 	if (_xlibInitializers.contains(name)) {
 		Symbol sym = _xlibInitializers[name];
 		(*sym.u.bltin)(type);
 	} else {
 		warning("Unimplemented xlib: '%s'", name.c_str());
 	}
-}
-
-Object::Object(const Common::String &objName, ObjectType objType, ScriptContext *objCtx) {
-	name = new Common::String(objName);
-	type = objType;
-	disposed = false;
-	inheritanceLevel = 1;
-	refCount = new int;
-	*refCount = 0;
-	ctx = objCtx;
-	if (ctx)
-		ctx->setTarget(this);
-
-	if (objType == kFactoryObj) {
-		objArray = new Common::HashMap<uint32, Datum>;
-	} else {
-		objArray = nullptr;
-	}
-}
-
-Object::Object(const Object &obj) {
-	name = new Common::String(*obj.name);
-	type = obj.type;
-	disposed = obj.disposed;
-	inheritanceLevel = obj.inheritanceLevel + 1;
-	properties = obj.properties;
-	refCount = new int;
-	*refCount = 0;
-	if (obj.ctx) {
-		ctx = new ScriptContext(*obj.ctx);
-		ctx->setTarget(this);
-	} else {
-		ctx = nullptr;
-	}
-
-	if (obj.objArray) {
-		objArray = new Common::HashMap<uint32, Datum>(*obj.objArray);
-	} else {
-		objArray = nullptr;
-	}
-}
-
-Object::~Object() {
-	delete name;
-	delete objArray;
-	delete refCount;
-	delete ctx;
-}
-
-Object *Object::clone() {
-	return new Object(*this);
-}
-
-Symbol Object::getMethod(const Common::String &methodName) {
-	if (disposed) {
-		error("Method '%s' called on disposed object <%s>", methodName.c_str(), Datum(this).asString(true).c_str());
-	}
-
-	// instance method (factory, script object, and Xtra)
-	if ((type & (kFactoryObj | kScriptObj | kXtraObj)) && ctx->_functionHandlers.contains(methodName)) {
-		return ctx->_functionHandlers[methodName];
-	}
-
-	if ((type & (kFactoryObj | kXObj)) && methodName.hasPrefixIgnoreCase("m")) {
-		// factory or XObject
-		Common::String shortName = methodName.substr(1);
-		if (type == kXObj && ctx->_functionHandlers.contains(shortName) && inheritanceLevel > 1) {
-			// instance method (XObject)
-			return ctx->_functionHandlers[shortName];
-		}
-		if (g_lingo->_methods.contains(shortName) && (type & g_lingo->_methods[shortName].targetType)) {
-			// predefined method
-			Symbol sym = g_lingo->_methods[shortName];
-			sym.target = this;
-			return sym;
-		}
-	} else {
-		// script object, Xtra, etc.
-		if (g_lingo->_methods.contains(methodName) && (type & g_lingo->_methods[methodName].targetType)) {
-			// predefined method
-			Symbol sym = g_lingo->_methods[methodName];
-			sym.target = this;
-			return sym;
-		}
-		if (properties.contains("ancestor") && properties["ancestor"].type == OBJECT
-				&& (properties["ancestor"].u.obj->type & (kScriptObj | kXtraObj))) {
-			// ancestor method
-			debugC(3, kDebugLingoExec, "Calling method '%s' on ancestor: <%s>", methodName.c_str(), properties["ancestor"].asString(true).c_str());
-			return properties["ancestor"].u.obj->getMethod(methodName);
-		}
-	}
-
-	return Symbol();
-}
-
-// Property access
-
-bool Object::hasProp(const Common::String &propName) {
-	if (disposed) {
-		error("Property '%s' accessed on disposed object <%s>", propName.c_str(), Datum(this).asString(true).c_str());
-	}
-	if (properties.contains(propName)) {
-		return true;
-	}
-	if (type & (kScriptObj | kXtraObj)) {
-		if (properties.contains("ancestor") && properties["ancestor"].type == OBJECT
-				&& (properties["ancestor"].u.obj->type & (kScriptObj | kXtraObj))) {
-			return properties["ancestor"].u.obj->hasProp(propName);
-		}
-	}
-	return false;
-}
-
-Datum Object::getProp(const Common::String &propName) {
-	if (disposed) {
-		error("Property '%s' accessed on disposed object <%s>", propName.c_str(), Datum(this).asString(true).c_str());
-	}
-	if (properties.contains(propName)) {
-		return properties[propName];
-	}
-	if (type & (kScriptObj | kXtraObj)) {
-		if (properties.contains("ancestor") && properties["ancestor"].type == OBJECT
-				&& (properties["ancestor"].u.obj->type & (kScriptObj | kXtraObj))) {
-			debugC(3, kDebugLingoExec, "Getting prop '%s' from ancestor: <%s>", propName.c_str(), properties["ancestor"].asString(true).c_str());
-			return properties["ancestor"].u.obj->getProp(propName);
-		}
-	}
-	return properties[propName]; // return new property
-}
-
-bool Object::setProp(const Common::String &propName, const Datum &value) {
-	if (disposed) {
-		error("Property '%s' accessed on disposed object <%s>", propName.c_str(), Datum(this).asString(true).c_str());
-	}
-	if (properties.contains(propName)) {
-		properties[propName] = value;
-		return true;
-	}
-	if (type & (kScriptObj | kXtraObj)) {
-		if (properties.contains("ancestor") && properties["ancestor"].type == OBJECT
-				&& (properties["ancestor"].u.obj->type & (kScriptObj | kXtraObj))) {
-			debugC(3, kDebugLingoExec, "Getting prop '%s' from ancestor: <%s>", propName.c_str(), properties["ancestor"].asString(true).c_str());
-			return properties["ancestor"].u.obj->setProp(propName, value);
-		}
-	}
-	return false;
 }
 
 // Initialization/disposal
@@ -265,28 +145,135 @@ void LM::m_new(int nargs) {
 }
 
 void LM::m_dispose(int nargs) {
-	g_lingo->_currentMe.u.obj->disposed = true;
+	g_lingo->_currentMe.u.obj->dispose();
+}
+
+/* ScriptContext */
+
+ScriptContext::ScriptContext(Common::String name, LingoArchive *archive, ScriptType type, uint16 id)
+	: Object<ScriptContext>(name), _archive(archive), _scriptType(type), _id(id) {
+	_objType = kScriptObj;
+}
+
+ScriptContext::ScriptContext(const ScriptContext &sc) : Object<ScriptContext>(sc) {
+	_scriptType = sc._scriptType;
+	_functionNames = sc._functionNames;
+	for (SymbolHash::iterator it = sc._functionHandlers.begin(); it != sc._functionHandlers.end(); ++it) {
+		_functionHandlers[it->_key] = it->_value;
+		_functionHandlers[it->_key].ctx = this;
+	}
+	for (Common::HashMap<uint32, Symbol>::iterator it = sc._eventHandlers.begin(); it != sc._eventHandlers.end(); ++it) {
+		_eventHandlers[it->_key] = it->_value;
+		_eventHandlers[it->_key].ctx = this;
+	}
+	_constants = sc._constants;
+	_properties = sc._properties;
+
+	_archive = sc._archive;
+	_id = sc._id;
+}
+
+ScriptContext::~ScriptContext() {}
+
+Common::String ScriptContext::asString() {
+	return Common::String::format("script: #%s %d %p", _name.c_str(), _inheritanceLevel, (void *)this);
+}
+
+Symbol ScriptContext::getMethod(const Common::String &methodName) {
+	Symbol sym;
+
+	if (_functionHandlers.contains(methodName)) {
+		sym = _functionHandlers[methodName];
+		sym.target = this;
+		return sym;
+	}
+
+	sym = Object<ScriptContext>::getMethod(methodName);
+	if (sym.type != VOIDSYM)
+		return sym;
+
+	if (_objType == kScriptObj) {
+		if (_properties.contains("ancestor") && _properties["ancestor"].type == OBJECT
+				&& (_properties["ancestor"].u.obj->getObjType() & (kScriptObj | kXtraObj))) {
+			// ancestor method
+			debugC(3, kDebugLingoExec, "Calling method '%s' on ancestor: <%s>", methodName.c_str(), _properties["ancestor"].asString(true).c_str());
+			return _properties["ancestor"].u.obj->getMethod(methodName);
+		}
+	}
+
+	return sym;
+}
+
+bool ScriptContext::hasProp(const Common::String &propName) {
+	if (_disposed) {
+		error("Property '%s' accessed on disposed object <%s>", propName.c_str(), Datum(this).asString(true).c_str());
+	}
+	if (_properties.contains(propName)) {
+		return true;
+	}
+	if (_objType == kScriptObj) {
+		if (_properties.contains("ancestor") && _properties["ancestor"].type == OBJECT
+				&& (_properties["ancestor"].u.obj->getObjType() & (kScriptObj | kXtraObj))) {
+			return _properties["ancestor"].u.obj->hasProp(propName);
+		}
+	}
+	return false;
+}
+
+Datum ScriptContext::getProp(const Common::String &propName) {
+	if (_disposed) {
+		error("Property '%s' accessed on disposed object <%s>", propName.c_str(), Datum(this).asString(true).c_str());
+	}
+	if (_properties.contains(propName)) {
+		return _properties[propName];
+	}
+	if (_objType == kScriptObj) {
+		if (_properties.contains("ancestor") && _properties["ancestor"].type == OBJECT
+				&& (_properties["ancestor"].u.obj->getObjType() & (kScriptObj | kXtraObj))) {
+			debugC(3, kDebugLingoExec, "Getting prop '%s' from ancestor: <%s>", propName.c_str(), _properties["ancestor"].asString(true).c_str());
+			return _properties["ancestor"].u.obj->getProp(propName);
+		}
+	}
+	return _properties[propName]; // return new property
+}
+
+bool ScriptContext::setProp(const Common::String &propName, const Datum &value) {
+	if (_disposed) {
+		error("Property '%s' accessed on disposed object <%s>", propName.c_str(), Datum(this).asString(true).c_str());
+	}
+	if (_properties.contains(propName)) {
+		_properties[propName] = value;
+		return true;
+	}
+	if (_objType == kScriptObj) {
+		if (_properties.contains("ancestor") && _properties["ancestor"].type == OBJECT
+				&& (_properties["ancestor"].u.obj->getObjType() & (kScriptObj | kXtraObj))) {
+			debugC(3, kDebugLingoExec, "Getting prop '%s' from ancestor: <%s>", propName.c_str(), _properties["ancestor"].asString(true).c_str());
+			return _properties["ancestor"].u.obj->setProp(propName, value);
+		}
+	}
+	return false;
 }
 
 // Object array
 
 void LM::m_get(int nargs) {
-	Object *me = g_lingo->_currentMe.u.obj;
+	ScriptContext *me = static_cast<ScriptContext *>(g_lingo->_currentMe.u.obj);
 	Datum indexD = g_lingo->pop();
 	uint index = MAX(0, indexD.asInt());
-	if (me->objArray->contains(index)) {
-		g_lingo->push((*me->objArray)[index]);
+	if (me->_objArray.contains(index)) {
+		g_lingo->push(me->_objArray[index]);
 	} else {
 		g_lingo->push(Datum(0));
 	}
 }
 
 void LM::m_put(int nargs) {
-	Object *me = g_lingo->_currentMe.u.obj;
+	ScriptContext *me = static_cast<ScriptContext *>(g_lingo->_currentMe.u.obj);
 	Datum value = g_lingo->pop();
 	Datum indexD = g_lingo->pop();
 	uint index = MAX(0, indexD.asInt());
-	(*me->objArray)[index] = value;
+	me->_objArray[index] = value;
 }
 
 // Other
@@ -294,11 +281,11 @@ void LM::m_put(int nargs) {
 void LM::m_perform(int nargs) {
 	// Lingo doesn't seem to bother cloning the object when
 	// mNew is called with mPerform
-	Object *me = g_lingo->_currentMe.u.obj;
+	AbstractObject *me = g_lingo->_currentMe.u.obj;
 	Datum methodName = g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs); // Take method name out of stack
 	nargs -= 1;
 	Symbol funcSym = me->getMethod(*methodName.u.s);
-	LC::call(funcSym, nargs);
+	LC::call(funcSym, nargs, true);
 }
 
 // XObject
@@ -308,19 +295,15 @@ void LM::m_describe(int nargs) {
 }
 
 void LM::m_instanceRespondsTo(int nargs) {
-	Object *me = g_lingo->_currentMe.u.obj;
+	AbstractObject *me = g_lingo->_currentMe.u.obj;
 	Datum d = g_lingo->pop();
 	Common::String methodName = d.asString();
 
-	if (me->ctx->_functionHandlers.contains(methodName)) {
+	if (me->getMethod(methodName).type != VOIDSYM) {
 		g_lingo->push(Datum(1));
-		return;
+	} else {
+		g_lingo->push(Datum(0));
 	}
-	if (g_lingo->_methods.contains(methodName) && (me->type & g_lingo->_methods[methodName].type)) {
-		g_lingo->push(Datum(1));
-		return;
-	}
-	g_lingo->push(Datum(0));
 }
 
 void LM::m_messageList(int nargs) {
@@ -329,24 +312,131 @@ void LM::m_messageList(int nargs) {
 }
 
 void LM::m_name(int nargs) {
-	Object *me = g_lingo->_currentMe.u.obj;
-	g_lingo->push(Datum(*me->name));
+	AbstractObject *me = g_lingo->_currentMe.u.obj;
+	g_lingo->push(me->getName());
 }
 
 void LM::m_respondsTo(int nargs) {
-	Object *me = g_lingo->_currentMe.u.obj;
+	AbstractObject *me = g_lingo->_currentMe.u.obj;
 	Datum d = g_lingo->pop();
 	Common::String methodName = d.asString();
 
-	if (me->ctx->_functionHandlers.contains(methodName) && me->inheritanceLevel > 1) {
+	// TODO: Check inheritance level
+	if (me->getMethod(methodName).type != VOIDSYM) {
 		g_lingo->push(Datum(1));
-		return;
+	} else {
+		g_lingo->push(Datum(0));
 	}
-	if (g_lingo->_methods.contains(methodName) && (me->type & g_lingo->_methods[methodName].type)) {
-		g_lingo->push(Datum(1));
-		return;
+}
+
+// Window
+
+Common::String Stage::asString() {
+	return "window \"" + getName() + "\"";
+}
+
+bool Stage::hasProp(const Common::String &propName) {
+	Common::String fieldName = Common::String::format("%d%s", kTheWindow, propName.c_str());
+	return g_lingo->_theEntityFields.contains(fieldName);
+}
+
+Datum Stage::getProp(const Common::String &propName) {
+	Common::String fieldName = Common::String::format("%d%s", kTheWindow, propName.c_str());
+	if (g_lingo->_theEntityFields.contains(fieldName)) {
+		return getField(g_lingo->_theEntityFields[fieldName]->field);
 	}
-	g_lingo->push(Datum(0));
+
+	warning("Stage::getProp: unknown property '%s'", propName.c_str());
+	return Datum();
+}
+
+bool Stage::setProp(const Common::String &propName, const Datum &value) {
+	Common::String fieldName = Common::String::format("%d%s", kTheWindow, propName.c_str());
+	if (g_lingo->_theEntityFields.contains(fieldName)) {
+		return setField(g_lingo->_theEntityFields[fieldName]->field, value);
+	}
+
+	warning("Stage::setProp: unknown property '%s'", propName.c_str());
+	return false;
+}
+
+Datum Stage::getField(int field) {
+	switch (field) {
+	case kTheTitle:
+		return getTitle();
+	case kTheTitleVisible:
+		return isTitleVisible();
+	case kTheVisible:
+		return isVisible();
+	default:
+		warning("Stage::getField: unhandled field '%s'", g_lingo->field2str(field));
+		return Datum();
+	}
+}
+
+bool Stage::setField(int field, const Datum &value) {
+	switch (field) {
+	case kTheTitle:
+		setTitle(value.asString());
+		return true;
+	case kTheTitleVisible:
+		setTitleVisible(value.asInt());
+		return true;
+	case kTheVisible:
+		setVisible(value.asInt());
+		return true;
+	default:
+		warning("Stage::setField: unhandled field '%s'", g_lingo->field2str(field));
+		return false;
+	}
+}
+
+void LM::m_close(int nargs) {
+	Stage *me = static_cast<Stage *>(g_lingo->_currentMe.u.obj);
+	me->setVisible(false);
+}
+
+void LM::m_forget(int nargs) {
+	Stage *me = static_cast<Stage *>(g_lingo->_currentMe.u.obj);
+	DatumArray *windowList = g_lingo->_windowList.u.farr;
+
+	uint i;
+	for (i = 0; i < windowList->size(); i++) {
+		if ((*windowList)[i].type != OBJECT || (*windowList)[i].u.obj->getObjType() != kWindowObj)
+			continue;
+
+		Stage *window = static_cast<Stage *>((*windowList)[i].u.obj);
+		if (window == me)
+			break;
+	}
+
+	if (i < windowList->size())
+		windowList->remove_at(i);
+
+	// remove me from global vars
+	for (DatumHash::iterator it = g_lingo->_globalvars.begin(); it != g_lingo->_globalvars.end(); ++it) {
+		if (it->_value.type != OBJECT || it->_value.u.obj->getObjType() != kWindowObj)
+			continue;
+
+		Stage *window = static_cast<Stage *>((*windowList)[i].u.obj);
+		if (window == me)
+			g_lingo->_globalvars[it->_key] = 0;
+	}
+}
+
+void LM::m_open(int nargs) {
+	Stage *me = static_cast<Stage *>(g_lingo->_currentMe.u.obj);
+	me->setVisible(true);
+}
+
+void LM::m_moveToBack(int nargs) {
+	g_lingo->printSTUBWithArglist("m_moveToBack", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void LM::m_moveToFront(int nargs) {
+	g_lingo->printSTUBWithArglist("m_moveToFront", nargs);
+	g_lingo->dropStack(nargs);
 }
 
 } // End of namespace Director

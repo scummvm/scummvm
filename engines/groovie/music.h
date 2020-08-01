@@ -27,6 +27,7 @@
 #include "common/mutex.h"
 #include "audio/mididrv.h"
 #include "audio/mixer.h"
+#include "audio/miles.h"
 
 class MidiParser;
 
@@ -44,6 +45,15 @@ public:
 	void playCD(uint8 track);
 	void startBackground();
 	bool isPlaying() { return _isPlaying; }
+	// Pause or resume the music. Note that digital music
+	// already pauses when the ScummVM menu is open, so
+	// it does not seem to need an implementation.
+	virtual void pause(bool pause) { }
+
+	// Set the MIDI initialization state
+	void setMidiInit(bool midiInit) { _midiInit = midiInit; }
+	// Returns true if MIDI has been fully initialized
+	bool isMidiInit() { return _midiInit; }
 
 	void frameTick();
 	void setBackgroundDelay(uint16 delay);
@@ -76,6 +86,9 @@ private:
 protected:
 	GroovieEngine *_vm;
 
+	// True if the MIDI initialization has completed
+	bool _midiInit;
+
 	// Callback
 	static void onTimer(void *data);
 	virtual void onTimerInternal() {}
@@ -100,14 +113,15 @@ public:
 	// MidiDriver_BASE interface
 	void send(uint32 b) override;
 	void sysEx(const byte* msg, uint16 length) override;
+	uint16 sysExNoDelay(const byte *msg, uint16 length) override;
 	void metaEvent(byte type, byte *data, uint16 length) override;
+
+	void pause(bool pause) override;
 
 private:
 	// Channel volumes
 	byte _chanVolumes[0x10];
 	void updateChanVolume(byte channel);
-
-	void endTrack();
 
 protected:
 	byte *_data;
@@ -117,43 +131,35 @@ protected:
 	void onTimerInternal() override;
 	void updateVolume() override;
 	void unload() override;
+	void endTrack();
 
 	bool loadParser(Common::SeekableReadStream *stream, bool loop);
 };
 
-class MusicPlayerXMI : public MusicPlayerMidi {
+class MusicPlayerXMI : public MusicPlayerMidi, public Audio::MidiDriver_Miles_Xmidi_Timbres {
 public:
 	MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName);
-	~MusicPlayerXMI() override;
+	~MusicPlayerXMI();
 
-	void send(uint32 b) override;
+	void send(int8 source, uint32 b) override;
+	void metaEvent(int8 source, byte type, byte *data, uint16 length) override;
+	void stopAllNotes(bool stopSustainedNotes) override;
+	void processXMIDITimbreChunk(const byte *timbreListPtr, uint32 timbreListSize) override {
+		if (_milesMidiDriver)
+			_milesMidiDriver->processXMIDITimbreChunk(timbreListPtr, timbreListSize);
+	};
+	bool isReady() override;
 
 protected:
+	void updateVolume() override;
 	bool load(uint32 fileref, bool loop) override;
+	void unload() override;
 
 private:
-	// Channel banks
-	byte _chanBanks[0x10];
-
 	// Output music type
 	uint8 _musicType;
 
-	bool _milesAudioMode;
-
-	// Timbres
-	class Timbre {
-	public:
-		Timbre() : data(NULL), patch(0), bank(0), size(0) {}
-		byte patch;
-		byte bank;
-		uint32 size;
-		byte *data;
-	};
-	Common::Array<Timbre> _timbres;
-	void loadTimbres(const Common::String &filename);
-	void clearTimbres();
-	void setTimbreAD(byte channel, const Timbre &timbre);
-	void setTimbreMT(byte channel, const Timbre &timbre);
+	Audio::MidiDriver_Miles_Midi *_milesMidiDriver;
 };
 
 class MusicPlayerMac_t7g : public MusicPlayerMidi {

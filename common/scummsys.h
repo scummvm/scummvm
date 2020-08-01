@@ -272,7 +272,6 @@
 		  defined(__DS__) || \
 		  defined(__3DS__) || \
 		  defined(IPHONE) || \
-		  defined(__PLAYSTATION2__) || \
 		  defined(__PSP__) || \
 		  defined(__SYMBIAN32__)
 
@@ -438,13 +437,8 @@
 	typedef unsigned int uint32;
 	typedef signed int int32;
 	typedef unsigned int uint;
-	#ifdef __PLAYSTATION2__
-	typedef signed long int64;
-	typedef unsigned long uint64;
-	#else
 	typedef signed long long int64;
 	typedef unsigned long long uint64;
-	#endif
 #endif
 
 //
@@ -457,7 +451,8 @@
 		  defined(_M_X64) || \
 		  defined(__ppc64__) || \
 		  defined(__powerpc64__) || \
-		  defined(__LP64__)
+		  defined(__LP64__) || \
+		  defined(_M_ARM64)
 
 typedef uint64 uintptr;
 

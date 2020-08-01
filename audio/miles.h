@@ -26,6 +26,7 @@
 #include "audio/mididrv.h"
 #include "common/error.h"
 #include "common/mutex.h"
+#include "common/queue.h"
 #include "common/stream.h"
 
 namespace Audio {
@@ -70,11 +71,11 @@ namespace Audio {
 #define MILES_CONTROLLER_SYSEX_QUEUE_COUNT 3
 #define MILES_CONTROLLER_SYSEX_QUEUE_SIZE 32
 
-#define MILES_CONTROLLER_SYSEX_COMMAND_ADDRESS1 0
-#define MILES_CONTROLLER_SYSEX_COMMAND_ADDRESS2 1
-#define MILES_CONTROLLER_SYSEX_COMMAND_ADDRESS3 2
-#define MILES_CONTROLLER_SYSEX_COMMAND_DATA     3
-#define MILES_CONTROLLER_SYSEX_COMMAND_SEND     4
+#define MILES_CONTROLLER_SYSEX_COMMAND_ADDRESS1   0
+#define MILES_CONTROLLER_SYSEX_COMMAND_ADDRESS2   1
+#define MILES_CONTROLLER_SYSEX_COMMAND_ADDRESS3   2
+#define MILES_CONTROLLER_SYSEX_COMMAND_DATA       3
+#define MILES_CONTROLLER_SYSEX_COMMAND_FINAL_DATA 4
 
 #define MILES_CONTROLLER_XMIDI_RANGE_BEGIN 110
 #define MILES_CONTROLLER_XMIDI_RANGE_END 120
@@ -110,7 +111,29 @@ struct MilesMT32InstrumentEntry {
 	byte partialParameters[MILES_MT32_PATCHDATA_PARTIALPARAMETERS_COUNT][MILES_MT32_PATCHDATA_PARTIALPARAMETER_SIZE + 1];
 };
 
-class MidiDriver_Miles_Midi : public MidiDriver {
+/**
+ * Abstract class containing the interface for loading
+ * the XMIDI timbres specified in the timbre chunks of
+ * an XMIDI file.
+ */
+class MidiDriver_Miles_Xmidi_Timbres {
+public:
+	/**
+	 * Processes the timbre chunk specified for a track
+	 * in an XMIDI file. This will load the necessary
+	 * timbres into the MIDI device using SysEx messages.
+	 *
+	 * This function will likely return before all SysEx
+	 * messages have been sent. Use the isReady method to
+	 * check if the driver has finished preparing for
+	 * playback. Playback should not be started before
+	 * this process has finished.
+	 */
+	virtual void processXMIDITimbreChunk(const byte *timbreListPtr, uint32 timbreListSize) = 0;
+	virtual ~MidiDriver_Miles_Xmidi_Timbres() { }
+};
+
+class MidiDriver_Miles_Midi : public MidiDriver, public MidiDriver_Miles_Xmidi_Timbres {
 public:
 	MidiDriver_Miles_Midi(MusicType midiType, MilesMT32InstrumentEntry *instrumentTablePtr, uint16 instrumentTableCount);
 	virtual ~MidiDriver_Miles_Midi();
@@ -146,8 +169,7 @@ public:
 	 */
 	void setSourceVolume(uint8 source, uint16 volume);
 
-	/** Stops all notes currently playing on the MIDI device. */
-	void allNotesOff();
+	void stopAllNotes(bool stopSustainedNotes = false) override;
 
 	MidiChannel *allocateChannel() override {
 		if (_driver)
@@ -161,9 +183,11 @@ public:
 	}
 
 	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) override {
-		if (_driver)
-			_driver->setTimerCallback(timer_param, timer_proc);
+		_timer_param = timer_param;
+		_timer_proc = timer_proc;
 	}
+
+	void onTimer();
 
 	uint32 getBaseTempo() override {
 		if (_driver) {
@@ -188,26 +212,28 @@ protected:
 	uint16 _outputChannelMask;
 
 	int _baseFreq;
+	uint32 _timerRate;
 
 public:
-	void processXMIDITimbreChunk(const byte *timbreListPtr, uint32 timbreListSize);
+	void processXMIDITimbreChunk(const byte *timbreListPtr, uint32 timbreListSize) override;
+	bool isReady() override { return _sysExQueue.empty(); }
 
 private:
 	void initMidiDevice();
 
-	void MT32SysEx(const uint32 targetAddress, const byte *dataPtr);
+	void MT32SysEx(const uint32 targetAddress, const byte *dataPtr, bool useSysExQueue = false);
 
 	uint32 calculateSysExTargetAddress(uint32 baseAddress, uint32 index);
 
 	void writeRhythmSetup(byte note, byte customTimbreId);
-	void writePatchTimbre(byte patchId, byte timbreGroup, byte timbreId);
+	void writePatchTimbre(byte patchId, byte timbreGroup, byte timbreId, bool useSysExQueue = false);
 	void writePatchByte(byte patchId, byte index, byte patchValue);
 	void writeToSystemArea(byte index, byte value);
 
 	const MilesMT32InstrumentEntry *searchCustomInstrument(byte patchBank, byte patchId);
 	int16 searchCustomTimbre(byte patchBank, byte patchId);
 
-	void setupPatch(byte patchBank, byte patchId);
+	void setupPatch(byte patchBank, byte patchId, bool useSysExQueue = false);
 	int16 installCustomTimbre(byte patchBank, byte patchId);
 
 	bool isOutputChannelUsed(uint8 outputChannel) { return _outputChannelMask & (1 << outputChannel); }
@@ -388,8 +414,8 @@ private:
 
 	uint32 _noteCounter; // used to figure out, which timbres are outdated
 
-	// SysEx Queues
-	MilesMT32SysExQueueEntry _sysExQueues[MILES_CONTROLLER_SYSEX_QUEUE_COUNT];
+	// Queues for Miles SysEx controllers
+	MilesMT32SysExQueueEntry _milesSysExQueues[MILES_CONTROLLER_SYSEX_QUEUE_COUNT];
 
 	// MIDI sources sending messages to this driver.
 	MidiSource _sources[MILES_MAXIMUM_SOURCES];
@@ -410,6 +436,56 @@ private:
 	uint8 _maximumActiveNotes;
 	// Tracks the notes being played by the MIDI device.
 	ActiveNote *_activeNotes;
+
+	/**
+	 * Stores data which is to be transmitted as a SysEx message
+	 * to a MIDI device. Neither data nor length should include
+	 * the SysEx start and stop bytes.
+	 */
+	struct SysExData {
+		byte data[270];
+		uint16 length;
+		SysExData() : length(0) {
+			memset(data, 0, sizeof(data));
+		}
+	};
+
+	// The number of microseconds to wait before sending the
+	// next SysEx message.
+	uint32 _sysExDelay;
+
+	/**
+	 * Queue of SysEx messages that must be sent to the
+	 * MIDI device. Used by processXMIDITimbreChunk to
+	 * send SysEx messages before starting playback of
+	 * a track.
+	 *
+	 * Sending other MIDI messages to the driver should
+	 * be suspended until all SysEx messages in the
+	 * queue have been sent to the MIDI device. Use the
+	 * isReady function to check if the driver is ready
+	 * to receive other messages.
+	 */
+	Common::Queue<SysExData> _sysExQueue;
+
+	// Mutex for write access to the SysEx queue.
+	Common::Mutex _sysExQueueMutex;
+
+	// External timer callback
+	void *_timer_param;
+	Common::TimerManager::TimerProc _timer_proc;
+
+public:
+	// Callback hooked up to the driver wrapped by the
+	// Miles MIDI driver object. Executes onTimer and
+	// the external callback set by the
+	// setTimerCallback function.
+	static void timerCallback(void *data) {
+		MidiDriver_Miles_Midi *driver = (MidiDriver_Miles_Midi *) data;
+		driver->onTimer();
+		if (driver->_timer_proc && driver->_timer_param)
+			driver->_timer_proc(driver->_timer_param);
+	}
 };
 
 extern MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &filenameAdLib, const Common::String &filenameOPL3, Common::SeekableReadStream *streamAdLib = nullptr, Common::SeekableReadStream *streamOPL3 = nullptr);
@@ -417,8 +493,6 @@ extern MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &filenameA
 extern MidiDriver_Miles_Midi *MidiDriver_Miles_MT32_create(const Common::String &instrumentDataFilename);
 
 extern MidiDriver_Miles_Midi *MidiDriver_Miles_MIDI_create(MusicType midiType, const Common::String &instrumentDataFilename);
-
-extern void MidiDriver_Miles_MT32_processXMIDITimbreChunk(MidiDriver_BASE *driver, const byte *timbreListPtr, uint32 timbreListSize);
 
 } // End of namespace Audio
 

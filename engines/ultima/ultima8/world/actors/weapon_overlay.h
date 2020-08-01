@@ -52,15 +52,22 @@ struct AnimWeaponOverlay {
 	//! \param frame the animation frame
 	//! \return nullptr if invalid, or pointer to a frame; don't delete it.
 	const WeaponOverlayFrame *getFrame(unsigned int type,
-	                                   unsigned int direction,
+	                                   Direction direction,
 	                                   unsigned int frame) const {
 		if (type >= _overlay.size())
 			return nullptr;
-		if (direction >= _overlay[type]._dirCount)
+
+		uint32 diroff;
+		if (_overlay[type]._dirCount == 8)
+			diroff = static_cast<uint32>(direction) / 2;
+		else
+			diroff = static_cast<uint32>(direction);
+
+		if (diroff >= _overlay[type]._dirCount)
 			return nullptr;
-		if (frame >= _overlay[type]._frames[direction].size())
+		if (frame >= _overlay[type]._frames[diroff].size())
 			return nullptr;
-		return &(_overlay[type]._frames[direction][frame]);
+		return &(_overlay[type]._frames[diroff][frame]);
 	}
 
 	Std::vector<WeaponOverlay> _overlay;

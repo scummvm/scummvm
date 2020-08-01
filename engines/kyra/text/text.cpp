@@ -44,9 +44,9 @@ void TextDisplayer::setTalkCoords(uint16 y) {
 }
 
 int TextDisplayer::getCenterStringX(const char *str, int x1, int x2) {
-	_screen->_charWidth = -2;
+	_screen->_charSpacing = -2;
 	int strWidth = _screen->getTextWidth(str);
-	_screen->_charWidth = 0;
+	_screen->_charSpacing = 0;
 	int w = x2 - x1 + 1;
 	return x1 + (w - strWidth) / 2;
 }
@@ -54,7 +54,7 @@ int TextDisplayer::getCenterStringX(const char *str, int x1, int x2) {
 int TextDisplayer::getCharLength(const char *str, int len) {
 	int charsCount = 0;
 	if (*str) {
-		_screen->_charWidth = -2;
+		_screen->_charSpacing = -2;
 		int i = 0;
 		while (i <= len && *str) {
 			uint c = *str++;
@@ -66,7 +66,7 @@ int TextDisplayer::getCharLength(const char *str, int len) {
 			i += _screen->getCharWidth(c);
 			++charsCount;
 		}
-		_screen->_charWidth = 0;
+		_screen->_charSpacing = 0;
 	}
 	return charsCount;
 }
@@ -99,17 +99,17 @@ char *TextDisplayer::preprocessString(const char *str) {
 	}
 	p = _talkBuffer;
 	Screen::FontId curFont = _screen->setFont(Screen::FID_8_FNT);
-	_screen->_charWidth = -2;
+	_screen->_charSpacing = -2;
 	int textWidth = _screen->getTextWidth(p);
-	_screen->_charWidth = 0;
+	_screen->_charSpacing = 0;
 	if (textWidth > 176) {
 		if (textWidth > 352) {
 			int count = getCharLength(p, textWidth / 3);
 			int offs = dropCRIntoString(p, count);
 			p += count + offs;
-			_screen->_charWidth = -2;
+			_screen->_charSpacing = -2;
 			textWidth = _screen->getTextWidth(p);
-			_screen->_charWidth = 0;
+			_screen->_charSpacing = 0;
 			count = getCharLength(p, textWidth / 2);
 			dropCRIntoString(p, count);
 		} else {
@@ -144,14 +144,14 @@ int TextDisplayer::buildMessageSubstrings(const char *str) {
 
 int TextDisplayer::getWidestLineWidth(int linesCount) {
 	int maxWidth = 0;
-	_screen->_charWidth = -2;
+	_screen->_charSpacing = -2;
 	for (int l = 0; l < linesCount; ++l) {
 		int w = _screen->getTextWidth(&_talkSubstrings[l * TALK_SUBSTRING_LEN]);
 		if (maxWidth < w) {
 			maxWidth = w;
 		}
 	}
-	_screen->_charWidth = 0;
+	_screen->_charSpacing = 0;
 	return maxWidth;
 }
 
@@ -207,9 +207,9 @@ void TextDisplayer::printText(const char *str, int x, int y, uint8 c0, uint8 c1,
 	uint8 colorMap[] = { 0, 15, 12, 12 };
 	colorMap[3] = c1;
 	_screen->setTextColor(colorMap, 0, 3);
-	_screen->_charWidth = -2;
+	_screen->_charSpacing = -2;
 	_screen->printText(str, x, y, c0, c2);
-	_screen->_charWidth = 0;
+	_screen->_charSpacing = 0;
 }
 
 void TextDisplayer::printCharacterText(const char *text, int8 charNum, int charX) {

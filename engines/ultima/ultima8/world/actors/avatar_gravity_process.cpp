@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
-
+#include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/world/actors/avatar_gravity_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/world.h"
@@ -55,14 +55,14 @@ void AvatarGravityProcess::run() {
 
 	// right mouse button down, so see if we can cling to a ledge
 	MainActor *avatar = getMainActor();
-	int32 direction = avatar->getDir();
+	Direction direction = avatar->getDir();
 	if (avatar->tryAnim(Animation::climb40, direction) == Animation::SUCCESS) {
 
 		// we can, so perform a hang animation
 		// CHECKME: do we need to perform any other checks?
 
 		if (avatar->getLastAnim() != Animation::hang)
-			avatar->doAnim(Animation::hang, 8);
+			avatar->doAnim(Animation::hang, dir_current);
 
 		return;
 	} else {

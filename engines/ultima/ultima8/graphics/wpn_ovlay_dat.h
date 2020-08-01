@@ -23,6 +23,8 @@
 #ifndef ULTIMA8_GRAPHICS_WPNOVLAYDAT_H
 #define ULTIMA8_GRAPHICS_WPNOVLAYDAT_H
 
+#include "ultima/ultima8/misc/direction.h"
+
 namespace Ultima {
 namespace Ultima8 {
 
@@ -41,7 +43,7 @@ public:
 
 	const AnimWeaponOverlay *getAnimOverlay(uint32 action) const;
 	const WeaponOverlayFrame *getOverlayFrame(uint32 action, int type,
-	        int direction, int frame) const;
+	        Direction direction, int frame) const;
 
 private:
 	Std::vector<AnimWeaponOverlay *> _overlay;

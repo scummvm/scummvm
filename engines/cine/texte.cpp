@@ -28,6 +28,7 @@
 
 namespace Cine {
 
+bool allocatedFailureMessages = false;
 const char *const *failureMessages;
 const CommandeType *defaultActionCommand;
 const CommandeType *systemMenu;
@@ -539,7 +540,7 @@ void initLanguage(Common::Language lang) {
 
 	switch (lang) {
 	case Common::FR_FRA:
-		failureMessages = failureMessages_FR;
+		setFailureMessages(failureMessages_FR, false);
 		defaultActionCommand = defaultActionCommand_FR;
 		systemMenu = systemMenu_FR;
 		confirmMenu = confirmMenu_FR;
@@ -549,7 +550,7 @@ void initLanguage(Common::Language lang) {
 		break;
 
 	case Common::ES_ESP:
-		failureMessages = failureMessages_ES;
+		setFailureMessages(failureMessages_ES, false);
 		defaultActionCommand = defaultActionCommand_ES;
 		systemMenu = systemMenu_ES;
 		confirmMenu = confirmMenu_ES;
@@ -559,7 +560,7 @@ void initLanguage(Common::Language lang) {
 		break;
 
 	case Common::DE_DEU:
-		failureMessages = failureMessages_DE;
+		setFailureMessages(failureMessages_DE, false);
 		defaultActionCommand = defaultActionCommand_DE;
 		systemMenu = systemMenu_DE;
 		confirmMenu = confirmMenu_DE;
@@ -569,7 +570,7 @@ void initLanguage(Common::Language lang) {
 		break;
 
 	case Common::IT_ITA:
-		failureMessages = failureMessages_IT;
+		setFailureMessages(failureMessages_IT, false);
 		defaultActionCommand = defaultActionCommand_IT;
 		systemMenu = systemMenu_IT;
 		confirmMenu = confirmMenu_IT;
@@ -579,7 +580,7 @@ void initLanguage(Common::Language lang) {
 		break;
 
 	default:
-		failureMessages = failureMessages_EN;
+		setFailureMessages(failureMessages_EN, false);
 		defaultActionCommand = defaultActionCommand_EN;
 		systemMenu = systemMenu_EN;
 		confirmMenu = confirmMenu_EN;
@@ -604,15 +605,17 @@ void loadErrmessDat(const char *fname) {
 	in.open(fname);
 
 	if (in.isOpen()) {
-		// FIXME - This can leak in some situations in Operation Stealth
-		//         Engine Restart - multiple allocations with no free?
+		if (allocatedFailureMessages) {
+			freeErrmessDat();
+		}
+
 		char **ptr = (char **)malloc(sizeof(char *) * 6 * 4 + 60 * 6 * 4);
 
 		for (int i = 0; i < 6 * 4; i++) {
 			ptr[i] = (char *)ptr + (sizeof(char *) * 6 * 4) + 60 * i;
 			in.read(ptr[i], 60);
 		}
-		failureMessages = const_cast<const char *const *>(ptr);
+		setFailureMessages(const_cast<const char *const *>(ptr), true);
 
 		in.close();
 	} else {
@@ -620,9 +623,20 @@ void loadErrmessDat(const char *fname) {
 	}
 }
 
+void setFailureMessages(const char *const *messages, bool allocated) {
+	if (allocatedFailureMessages) {
+		freeErrmessDat();
+	}
+	failureMessages = messages;
+	allocatedFailureMessages = allocated;
+}
+
 void freeErrmessDat() {
-	free(const_cast<const char **>(failureMessages));
+	if (allocatedFailureMessages) {
+		free(const_cast<const char **>(failureMessages));
+	}
 	failureMessages = 0;
+	allocatedFailureMessages = false;
 }
 
 void loadPoldatDat(const char *fname) {

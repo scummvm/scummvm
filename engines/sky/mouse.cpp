@@ -150,11 +150,11 @@ void Mouse::fnSaveCoods() {
 }
 
 void Mouse::lockMouse() {
-	SkyEngine::_systemVars.systemFlags |= SF_MOUSE_LOCKED;
+	SkyEngine::_systemVars->systemFlags |= SF_MOUSE_LOCKED;
 }
 
 void Mouse::unlockMouse() {
-	SkyEngine::_systemVars.systemFlags &= ~SF_MOUSE_LOCKED;
+	SkyEngine::_systemVars->systemFlags &= ~SF_MOUSE_LOCKED;
 }
 
 void Mouse::restoreMouseData(uint16 frameNum) {

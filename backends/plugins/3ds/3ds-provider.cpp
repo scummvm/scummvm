@@ -51,7 +51,7 @@ protected:
 	uint32 _segmentHeapAddress;
 
 	void flushDataCache(void *ptr, uint32 len) const override {
-		svcFlushProcessDataCache(CUR_PROCESS_HANDLE, ptr, len);
+		svcFlushProcessDataCache(CUR_PROCESS_HANDLE, (uint32)ptr, len);
 	}
 
 	void protectMemory(void *ptr, uint32 len, int prot) const override {

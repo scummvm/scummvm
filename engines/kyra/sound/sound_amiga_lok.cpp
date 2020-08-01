@@ -189,7 +189,7 @@ void SoundAmiga_LoK::beginFadeOut() {
 	_driver->setVolume(0x40);
 }
 
-void SoundAmiga_LoK::playSoundEffect(uint8 track, uint8) {
+void SoundAmiga_LoK::playSoundEffect(uint16 track, uint8) {
 	debugC(5, kDebugLevelSound, "SoundAmiga_LoK::playSoundEffect(%d)", track);
 	const AmigaSfxTable *sfx = 0;
 	bool pan = false;

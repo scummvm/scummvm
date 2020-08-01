@@ -77,6 +77,60 @@ Common::Error DarkMoonEngine::init() {
 	return Common::kNoError;
 }
 
+
+void DarkMoonEngine::loadItemsAndDecorationsShapes() {
+	if (_flags.platform != Common::kPlatformFMTowns) {
+		EoBCoreEngine::loadItemsAndDecorationsShapes();
+		return;
+	}
+
+	releaseItemsAndDecorationsShapes();
+	int size = 0;
+
+	_largeItemShapes = new const uint8 *[_numLargeItemShapes];
+	for (int i = 0; i < _numLargeItemShapes; i++)
+		_largeItemShapes[i] = _staticres->loadRawData(kEoB2LargeItemsShapeData00 + i, size);
+	_smallItemShapes = new const uint8 *[_numSmallItemShapes];
+	for (int i = 0; i < _numSmallItemShapes; i++)
+		_smallItemShapes[i] = _staticres->loadRawData(kEoB2SmallItemsShapeData00 + i, size);
+	_thrownItemShapes = new const uint8 *[_numThrownItemShapes];
+	for (int i = 0; i < _numThrownItemShapes; i++)
+		_thrownItemShapes[i] = _staticres->loadRawData(kEoB2ThrownShapeData00 + i, size);
+	_spellShapes = new const uint8 *[4];
+	for (int i = 0; i < 4; i++)
+		_spellShapes[i] = _staticres->loadRawData(kEoB2SpellShapeData00 + i, size);
+	_firebeamShapes = new const uint8 *[3];
+	for (int i = 0; i < 3; i++)
+		_firebeamShapes[i] = _staticres->loadRawData(kEoB2FirebeamShapeData00 + i, size);
+	_redSplatShape = _staticres->loadRawData(kEoB2RedSplatShapeData, size);
+	_greenSplatShape = _staticres->loadRawData(kEoB2GreenSplatShapeData, size);
+	_itemIconShapes = new const uint8 *[_numItemIconShapes];
+	for (int i = 0; i < _numItemIconShapes; i++)
+		_itemIconShapes[i] = _staticres->loadRawData(kEoB2ItemIconShapeData00 + i, size);
+
+	_teleporterShapes = new const uint8 *[6];
+	_sparkShapes = new const uint8 *[3];
+	_compassShapes = new const uint8 *[12];
+	if (_flags.gameID == GI_EOB2)
+		_wallOfForceShapes = new const uint8 *[6];
+
+	_lightningColumnShape = _staticres->loadRawData(kEoB2LightningColumnShapeData, size);
+	for (int i = 0; i < 6; i++)
+		_wallOfForceShapes[i] = _staticres->loadRawData(kEoB2WallOfForceShapeData00 + i, size);
+	for (int i = 0; i < 6; i++)
+		_teleporterShapes[i] = _staticres->loadRawData(kEoB2TeleporterShapeData00 + i, size);
+	for (int i = 0; i < 3; i++)
+		_sparkShapes[i] = _staticres->loadRawData(kEoB2SparkShapeData00 + i, size);
+	for (int i = 0; i < 12; i++)
+		_compassShapes[i] = _staticres->loadRawData(kEoB2CompassShapeData00 + i, size);
+
+	_deadCharShape = _staticres->loadRawData(kEoB2DeadCharShapeData, size);
+	_disabledCharGrid = _staticres->loadRawData(kEoB2DisabledCharGridShapeData, size);
+	_blackBoxSmallGrid = _staticres->loadRawData(kEoB2SmallGridShapeData, size);
+	_weaponSlotGrid = _staticres->loadRawData(kEoB2WeaponSlotGridShapeData, size);
+	_blackBoxWideGrid = _staticres->loadRawData(kEoB2WideGridShapeData, size);
+}
+
 void DarkMoonEngine::startupNew() {
 	_sound->selectAudioResourceSet(kMusicIngame);
 	_currentLevel = 4;
@@ -115,7 +169,7 @@ void DarkMoonEngine::runNpcDialogue(int npcIndex) {
 		gui_drawDialogueBox();
 
 		_txt->printDialogueText(4, 0);
-		int r = runDialogue(-1, 2, _npcStrings[0][0], _npcStrings[0][1]) - 1;
+		int r = runDialogue(-1, 2, -1, _npcStrings[0][0], _npcStrings[0][1]) - 1;
 
 		if (r == 0) {
 			snd_stopSound();
@@ -131,7 +185,7 @@ void DarkMoonEngine::runNpcDialogue(int npcIndex) {
 		gui_drawDialogueBox();
 
 		_txt->printDialogueText(8, 0);
-		int r = runDialogue(-1, 2, _npcStrings[1][0], _npcStrings[1][1]) - 1;
+		int r = runDialogue(-1, 2, -1, _npcStrings[1][0], _npcStrings[1][1]) - 1;
 
 		if (r == 0) {
 			if (rollDice(1, 2, -1))
@@ -158,6 +212,40 @@ void DarkMoonEngine::updateUsedCharacterHandItem(int charIndex, int slot) {
 	} else if (itm->type == 26 || itm->type == 34 || itm->type == 35) {
 		deleteInventoryItem(charIndex, slot);
 	}
+}
+
+void DarkMoonEngine::loadMonsterShapes(const char *filename, int monsterIndex, bool hasDecorations, int encodeTableIndex) {
+	if (_flags.platform != Common::kPlatformFMTowns) {
+		EoBCoreEngine::loadMonsterShapes(filename, monsterIndex, hasDecorations, encodeTableIndex);
+		return;
+	}
+
+	Common::String tmp = Common::String::format("%s.MNT", filename);
+	Common::SeekableReadStream *s = _res->createReadStream(tmp);
+	if (!s)
+		error("Screen_EoB::loadMonsterShapes(): Failed to load file '%s'", tmp.c_str());
+
+	for (int i = 0; i < 6; i++)
+		_monsterShapes[monsterIndex + i] = loadFMTownsShape(s);
+
+	for (int i = 0; i < 6; i++) {
+		for (int ii = 0; ii < 2; ii++)
+			s->read(_monsterPalettes[(monsterIndex >= 18 ? i + 6 : i) * 2 + ii], 16);
+	}
+
+	if (hasDecorations)
+		loadMonsterDecoration(s, monsterIndex);
+
+	delete s;
+}
+
+uint8 *DarkMoonEngine::loadFMTownsShape(Common::SeekableReadStream *stream) {
+	uint32 size = stream->readUint32LE();
+	uint8 *shape = new uint8[size];
+	stream->read(shape, size);
+	if (shape[0] == 1)
+		shape[0]++;
+	return shape;
 }
 
 void DarkMoonEngine::generateMonsterPalettes(const char *file, int16 monsterIndex) {
@@ -232,7 +320,7 @@ void DarkMoonEngine::loadMonsterDecoration(Common::SeekableReadStream *stream, i
 
 	if (_flags.platform == Common::kPlatformFMTowns) {
 		while (!activeDecorations.empty()) {
-			activeDecorations.front()->shp = loadTownsShape(stream);
+			activeDecorations.front()->shp = loadFMTownsShape(stream);
 			activeDecorations.pop_front();
 		}
 	}
@@ -390,6 +478,19 @@ bool DarkMoonEngine::killMonsterExtra(EoBMonsterInPlay *m) {
 		return false;
 	}
 	return true;
+}
+
+void DarkMoonEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
+	if (file)
+		strcpy(_lastBlockDataFile, file);
+	delete[] _vcnBlocks;
+
+	if (_flags.platform == Common::kPlatformFMTowns) {
+		Common::String fn = Common::String::format(_vcnFilePattern.c_str(), _lastBlockDataFile);
+		_vcnBlocks = _res->fileData(fn.c_str(), 0);
+	} else {
+		EoBCoreEngine::loadVcnData(file, cgaMapping);
+	}
 }
 
 const uint8 *DarkMoonEngine::loadDoorShapes(const char *filename, int doorIndex, const uint8 *shapeDefs) {
@@ -616,7 +717,7 @@ int DarkMoonEngine::resurrectionSelectDialogue() {
 	_rrNames[_rrCount] = _abortStrings[0];
 	_rrId[_rrCount++] = 99;
 
-	int r = _rrId[runDialogue(-1, 9, _rrNames[0], _rrNames[1], _rrNames[2], _rrNames[3], _rrNames[4], _rrNames[5], _rrNames[6], _rrNames[7], _rrNames[8]) - 1];
+	int r = _rrId[runDialogue(-1, 9, -1, _rrNames[0], _rrNames[1], _rrNames[2], _rrNames[3], _rrNames[4], _rrNames[5], _rrNames[6], _rrNames[7], _rrNames[8]) - 1];
 	if (r == 99)
 		return 0;
 
@@ -644,7 +745,7 @@ int DarkMoonEngine::charSelectDialogue() {
 
 	namesList[cnt++] = _abortStrings[0];
 
-	int r = runDialogue(-1, 7, namesList[0], namesList[1], namesList[2], namesList[3], namesList[4], namesList[5], namesList[6]) - 1;
+	int r = runDialogue(-1, 7, -1, namesList[0], namesList[1], namesList[2], namesList[3], namesList[4], namesList[5], namesList[6]) - 1;
 	if (r == cnt - 1)
 		return 99;
 

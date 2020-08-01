@@ -351,6 +351,9 @@ void EoBCoreEngine::initStaticResource() {
 	_characterStatusStrings12 = _staticres->loadStrings(kEoBBaseCharStatusStrings12, temp);
 	_characterStatusStrings13 = _staticres->loadStrings(_flags.gameID == GI_EOB2 ? kEoBBaseCharStatusStrings132 : kEoBBaseCharStatusStrings131, temp);
 
+	_textInputCharacterLines = _staticres->loadStrings(kEoBBaseTextInputCharacterLines, temp);
+	_textInputSelectStrings = _staticres->loadStrings(kEoBBaseTextInputSelectStrings, temp);
+
 	_levelGainStrings = _staticres->loadStrings(kEoBBaseLevelGainStrings, temp);
 	for (int i = 0; i < 5; i++)
 		_expRequirementTables[i] = _staticres->loadRawDataBe32(kEoBBaseExperienceTable0 + i, temp);
@@ -425,6 +428,8 @@ void EoBCoreEngine::initStaticResource() {
 	_bookNumbers = _staticres->loadStrings(kEoBBaseBookNumbers, temp);
 	_mageSpellList = _staticres->loadStrings(kEoBBaseMageSpellsList, _mageSpellListSize);
 	_clericSpellList = _staticres->loadStrings(kEoBBaseClericSpellsList, temp);
+	_mageSpellList2 = _staticres->loadStrings(_flags.platform == Common::kPlatformSegaCD ? kEoBBaseMageSpellsList2 : kEoBBaseMageSpellsList, temp);
+	_clericSpellList2 = _staticres->loadStrings(_flags.platform == Common::kPlatformSegaCD ? kEoBBaseClericSpellsList2 : kEoBBaseClericSpellsList, temp);
 	_spellNames = _staticres->loadStrings(kEoBBaseSpellNames, temp);
 
 	_magicStrings1 = _staticres->loadStrings(kEoBBaseMagicStrings1, temp);
@@ -519,14 +524,17 @@ void EoBCoreEngine::initStaticResource() {
 	// Hard code the following strings, since EOB I doesn't have them in the original.
 	// EOB I doesn't have load and save menus, because there is only one single
 	// save slot. Instead of emulating this we provide a menu similiar to EOB II.
+	// EOB I SegaCD actually has save/load menus with more than 1 slot if there is
+	// a RAM cart present). I supply the strings here, too... 
 
-	static const char *const saveLoadStrings[6][4] = {
+	static const char *const saveLoadStrings[7][4] = {
 		{   "Cancel",   "Empty Slot",		"Save Game",    "Load Game"     },
 		{   "Abbr.",    "Leerer Slot",		"Speichern",    "  Laden"       },
 		{	" < < ",	"Posizione Vuota",	"Salva",		"Carica"	    },
 		{	"Anular",	"Sin Uso",			"Grabar",		"Cargar"	    },
 		{   0,          0,					0,					0			},
-		{	0,          0,					0,					0			}
+		{	0,          0,					0,					0			},
+		{   "Cancel",   "\x82""d""\x82\x8d\x82\x90\x82\x94\x82\x99\x81""@""\x82\x92\x82\x85\x82\x87\x82\x89\x82\x8f\x82\x8e",		"Select save area",    "Select load data"     }
 	};
 
 	static const char *const errorSlotEmptyString[6] = {
@@ -539,31 +547,38 @@ void EoBCoreEngine::initStaticResource() {
 	};
 	
 	switch (_flags.lang) {
-		case Common::EN_ANY:
+	case Common::EN_ANY: {
+		if (_flags.platform == Common::kPlatformSegaCD) {
+			_saveLoadStrings = saveLoadStrings[6];
+			_errorSlotEmptyString = errorSlotEmptyString[5];
+		} else {
 			_saveLoadStrings = saveLoadStrings[0];
 			_errorSlotEmptyString = errorSlotEmptyString[0];
-			break;
-		case Common::DE_DEU:
-			_saveLoadStrings = saveLoadStrings[1];
-			_errorSlotEmptyString = errorSlotEmptyString[1];
-			break;
-		case Common::IT_ITA:
-			_saveLoadStrings = saveLoadStrings[2];
-			_errorSlotEmptyString = errorSlotEmptyString[2];
-			break;
-		case Common::ES_ESP:
-			_saveLoadStrings = saveLoadStrings[3];
-			_errorSlotEmptyString = errorSlotEmptyString[3];
-			break;
-		case Common::JA_JPN:
-			// EOB II FM-Towns uses English here.
-			// Only the empty slot warning is in Japanese.
-			_saveLoadStrings = saveLoadStrings[0];
-			_errorSlotEmptyString = errorSlotEmptyString[4];
-			break;
-		default:
-			_saveLoadStrings = saveLoadStrings[5];
-			_errorSlotEmptyString = errorSlotEmptyString[5];
+		}
+		break;
+	}
+	case Common::DE_DEU:
+		_saveLoadStrings = saveLoadStrings[1];
+		_errorSlotEmptyString = errorSlotEmptyString[1];
+		break;
+	case Common::IT_ITA:
+		_saveLoadStrings = saveLoadStrings[2];
+		_errorSlotEmptyString = errorSlotEmptyString[2];
+		break;
+	case Common::ES_ESP:
+		_saveLoadStrings = saveLoadStrings[3];
+		_errorSlotEmptyString = errorSlotEmptyString[3];
+		break;
+	case Common::JA_JPN:
+		// EOB II FM-Towns uses English here.
+		// Only the empty slot warning is in Japanese.
+		_saveLoadStrings = saveLoadStrings[0];
+		_errorSlotEmptyString = errorSlotEmptyString[4];
+		break;
+	default:
+		_saveLoadStrings = saveLoadStrings[5];
+		_errorSlotEmptyString = errorSlotEmptyString[5];
+		break;
 	}
 
 	_menuOkString = "OK";
@@ -666,19 +681,51 @@ void EoBCoreEngine::initButtonData() {
 		{ 116, 117, 0x1100, 320, 200, 1, 1, 2 },
 		{ 7, 0, 0x1100, 158, 121, 15, 10, 5 },
 		{ 0, 0, 0x1100, 146, 168, 32, 10, 0 },
+		{ 0, 0, 0x1100, 296, 56, 16, 16, 27 },
 
-		// EOB1 spellbook modifications
-		{ 2, 0, 0x1100, 71, 122, 20, 8, 0 },
-		{ 3, 0, 0x1100, 92, 122, 20, 8, 1 },
-		{ 4, 0, 0x1100, 113, 122, 20, 8, 2 },
-		{ 5, 0, 0x1100, 134, 122, 20, 8, 3 },
-		{ 6, 0, 0x1100, 155, 122, 20, 8, 4 },
-		{ 110, 0, 0x1100, 75, 168, 97, 6, 0 }
+		{ 101, 96, 0x1100, 248, 152, 64, 14, 65535 },
+		{ 103, 98, 0x1100, 248, 168, 64, 14, 1 },
+		{ 110, 0, 0x1100, 248, 184, 64, 14, 2 }
 	};
 
 	_buttonDefs = new EoBGuiButtonDef[ARRAYSIZE(buttonDefs)];
 	memcpy(_buttonDefs, buttonDefs, sizeof(buttonDefs));
 
+	// The spellbook buttons in the table above are from EOB II. We make the necessary coordinates modifications for EOB I.
+	if (_flags.gameID == GI_EOB1) {
+		static const EoBGuiButtonDef eob1SpellbookButtonDefs[7] = {
+			{ 2, 0, 0x1100, 71, 122, 20, 8, 0 },
+			{ 3, 0, 0x1100, 92, 122, 20, 8, 1 },
+			{ 4, 0, 0x1100, 113, 122, 20, 8, 2 },
+			{ 5, 0, 0x1100, 134, 122, 20, 8, 3 },
+			{ 6, 0, 0x1100, 155, 122, 20, 8, 4 },
+			{ 110, 0, 0x1100, 75, 168, 97, 6, 0 },
+			{ 110, 0, 0x1100, 160, 120, 16, 8, 0 }
+		};
+
+		memcpy(&_buttonDefs[61], eob1SpellbookButtonDefs, 5 * sizeof(EoBGuiButtonDef));
+		memcpy(&_buttonDefs[88], &eob1SpellbookButtonDefs[_flags.platform == Common::kPlatformSegaCD ? 6 : 5], sizeof(EoBGuiButtonDef));
+		for (int i = 66; i < 72; ++i)
+			_buttonDefs[i].y++;
+		for (int i = 77; i < 79; ++i)
+			_buttonDefs[i].y++;
+
+		if (_flags.platform == Common::kPlatformSegaCD) {
+			for (int i = 0; i < 5; ++i) {
+				_buttonDefs[61 + i].x = 80 + (i << 4);
+				_buttonDefs[61 + i].y -= 2;
+				_buttonDefs[61 + i].w -= 4;
+			}
+			for (int i = 0; i < 6; ++i) {
+				_buttonDefs[66 + i].x = 80;
+				_buttonDefs[66 + i].y = (16 + i) << 3;
+				_buttonDefs[66 + i].w = 96;
+				_buttonDefs[66 + i].h = 8;
+			}
+		}
+	}
+
+	// Replace keycodes for EOB II FM-Towns
 	if (_flags.platform == Common::kPlatformFMTowns) {
 		static const uint16 keyCodesFMTowns[] = {
 			93, 94, 95, 96, 67, 27, 24, 349, 350, 351, 352, 80, 27, 24, 30, 0, 31, 0, 29, 0, 28, 0, 127, 18, 27, 93, 94, 95, 96,
@@ -692,6 +739,53 @@ void EoBCoreEngine::initButtonData() {
 			if (_buttonDefs[i].keyCode2)
 				_buttonDefs[i].keyCode2 = *c++;
 		}
+	}
+
+	// Adjust EOB I SegaCD button coordinates
+	if (_flags.platform == Common::kPlatformSegaCD) {
+		// Arrow field
+		static const EoBGuiButtonDef eob1SegaArrowDefs[6] = {
+			{ 96, 352, 0x1100, 29, 128, 21, 19, 25 },
+			{ 98, 97, 0x1100, 29, 148, 21, 19, 25 },
+			{ 92, 348, 0x1100, 8, 148, 21, 19, 25 },
+			{ 102, 358, 0x1100, 50, 148, 21, 19, 25 },
+			{ 91, 0, 0x1100, 8, 128, 21, 19, 25 },
+			{ 101, 0, 0x1100, 50, 128, 21, 19, 25 }
+		};
+		memcpy(&_buttonDefs[49], eob1SegaArrowDefs, 6 * sizeof(EoBGuiButtonDef));
+		// Character portrait boxes
+		for (int i = 0; i < 4; ++i) {
+			_buttonDefs[i].y = _buttonDefs[i + 17].y = _buttonDefs[i + 72].y = guiSettings()->charBoxCoords.boxY[i >> 1];
+			_buttonDefs[i].h = _buttonDefs[i + 72].h = guiSettings()->charBoxCoords.boxHeight;
+			_buttonDefs[i + 17].h = 16;
+			_buttonDefs[9 + i].x = guiSettings()->charBoxCoords.facePosX_1[i & 1] + 176;
+			_buttonDefs[9 + i].y = guiSettings()->charBoxCoords.facePosY_1[i >> 1];
+			_buttonDefs[13 + i].y = guiSettings()->charBoxCoords.boxY[i >> 1] + 15;
+		}
+		for (int i = 4; i < 6; ++i) {
+			_buttonDefs[i + 78].y = _buttonDefs[i + 82].y = _buttonDefs[i + 86].y = guiSettings()->charBoxCoords.boxY[i >> 1];
+			_buttonDefs[i + 82].h = _buttonDefs[i + 86].h = guiSettings()->charBoxCoords.boxHeight;
+			_buttonDefs[i + 78].h = 16;
+			_buttonDefs[i + 74].x = guiSettings()->charBoxCoords.facePosX_1[i & 1] + 176;
+			_buttonDefs[i + 74].y = guiSettings()->charBoxCoords.facePosY_1[i >> 1];
+			_buttonDefs[i + 76].y = guiSettings()->charBoxCoords.boxY[i >> 1] + 15;
+		}
+		_buttonDefs[48].x = guiSettings()->charBoxCoords.facePosX_2[0];
+		_buttonDefs[48].y = guiSettings()->charBoxCoords.facePosY_2[0];
+	}
+
+	// Match the inventory button coords to the values that are used for drawing the inventory slots, so that
+	// the buttons get fixed if the target uses a different inventory screen layout (currently only EOB I SegaCD).
+	int temp = 0;
+	const uint16 *invX = _staticres->loadRawDataBe16(kEoBBaseInvSlotX, temp);
+	const uint8 *invY = _staticres->loadRawData(kEoBBaseInvSlotY, temp);
+	for (int i = 0; i < 25; ++i) {
+		_buttonDefs[21 + i].x = invX[i];
+		_buttonDefs[21 + i].y = invY[i];
+	}
+	for (int i = 25; i < 27; ++i) {
+		_buttonDefs[59 + i].x = invX[i];
+		_buttonDefs[59 + i].y = invY[i];
 	}
 
 	_buttonCallbacks.clear();
@@ -735,14 +829,14 @@ void EoBCoreEngine::initButtonData() {
 	EOB_CBI(1, 60);
 	EOB_CBI(1, 61);
 	EOB_CBN(1, clickedSpellbookScroll);
-	EOB_CBI(5, 61);
-	EOB_CBI(1, 88);
+	EOB_CBI(1, 21);
+	EOB_CBN(3, clickedButtonReturnIndex);
 #undef EOB_CBI
 #undef EOB_CBN
 }
 
 void EoBCoreEngine::initMenus() {
-	static const EoBMenuButtonDef buttonDefs[] = {
+	static const EoBMenuButtonDef buttonDefsDefault[] = {
 		{  2,   12,  20, 158,  14,  20,  3  },
 		{  3,   12,  37, 158,  14,  52,  3  },
 		{  4,   12,  54, 158,  14,  26,  3  },
@@ -800,9 +894,52 @@ void EoBCoreEngine::initMenus() {
 		{  8,  128, 122,  40,  14,  19,  7  }
 	};
 
-	_menuButtonDefs = buttonDefs;
+	static const EoBMenuButtonDef buttonDefsSegaCD[] = {
+		{   0,   8,  40,  80,  16,  20,  3  },
+		{   0,  88,  40,  80,  16,  52,  3  },
+		{   0,  88,  64,  80,  16,  26,  3  },
+		{   0,  88,  88,  80,  16,  32,  3  },
+		{   0,   8, 112,  80,  16,   0,  3  },
+		{   0,   0,   0,   0,   0,   0,  0  },
+		{   0, 120, 144,  48,  16,  19,  7  },
+		{   0,   8,  88,  80,  16,   0,  3  },
+		{   0,   8,  64,  80,  16,   0,  3  },
+		{   0,  88, 112,  80,  16,   0,  3  },
+		{   0,   8, 112,  48,  16,   0,  3  },
+		{   0, 120, 144,  48,  16,  19,  7  },
+		{   0,   8,  64,  48,  16,   0,  3  },
+		{   0,   8,  88,  48,  16,   0,  3  },
+		{   0,   0,   0,   0,   0,   0,  0  },
+		{   0,   8,  40,  48,  16,   0,  3  },
+		{   0, 120,  40,  24,  16,   0,  3  },		
+		{   0,  24,  80,  48,  16,  48,  3  },
+		{   0, 104,  80,  48,  16,  19,  3  },
+		{   0, 120, 144,  48,  16,  19,  5  },
+		{   0, 184,   2,  63,  50, 112,  0  },
+		{   0, 256,   2,  63,  50, 113,  0  },
+		{   0, 184,  58,  63,  50, 114,  0  },
+		{   0, 256,  58,  63,  50, 115,  0  },
+		{   0, 184, 114,  63,  50, 116,  0  },
+		{   0, 256, 114,  63,  50, 117,  0  },
+		{  36,   8, 144,  48,  16,  48,  5  },
+		{  8,  120, 144,  48,  16,  19,  5  },
+		{  0,    0,  50, 168,  72,  61,  0  },
+		{  31,   8,  48,  24,  16,   2,  5  },
+		{  32,  40,  48,  24,  16,   3,  5  },
+		{  33,  72,  48,  24,  16,   4,  5  },
+		{  34, 104,  48,  24,  16,   5,  5  },
+		{  35, 136,  48,  24,  16,   6,  5  },
+		{   0,  88, 112,  48,  16,   0,  3  },
+		{   0, 120,  40,  24,  16,   0,  3  },
+		{   0,   8,  40,  48,  16,   0,  3  },
+		{   0,   8, 136,  80,  16,   0,  3  },
+		{   0, 120, 144,  48,  16,   0,  3  },
+		{   0,  24,  80,  80,  48,   0,  3  }
+	};
 
-	static const EoBMenuDef menuDefs[] = {
+	_menuButtonDefs = (_flags.platform == Common::kPlatformSegaCD) ? buttonDefsSegaCD : buttonDefsDefault;
+
+	static const EoBMenuDef menuDefsDefault[7] = {
 		{  1, 10,  0, 7,  9 },
 		{  1, 10,  7, 5,  9 },
 		{  1, 10, 12, 3,  9 },
@@ -812,30 +949,44 @@ void EoBCoreEngine::initMenus() {
 		{ 48, 10, 34, 2,  9 }
 	};
 
+	static const EoBMenuDef menuDefsSegaCD[7] = {
+		{  -1, 0,  0, 10,   -1 },
+		{  -1, 0,  0,  0,   -1 },
+		{  -1, 0, 10,  7,   -1 },
+		{   0, 0, 19,  7, 0x55 },
+		{  -1, 0, 26,  8,   -1 },
+		{  -1, 0, 17,  2,   -1 },
+		{  -1, 0, 38,  2,   -1 }
+	};
+
 	delete[] _menuDefs;
-	_menuDefs = new EoBMenuDef[ARRAYSIZE(menuDefs)];
-	memcpy(_menuDefs, menuDefs, sizeof(menuDefs));
+	if (_flags.platform == Common::kPlatformSegaCD) {
+		_menuDefs = new EoBMenuDef[ARRAYSIZE(menuDefsSegaCD)];
+		memcpy(_menuDefs, menuDefsSegaCD, sizeof(menuDefsSegaCD));
+	} else {
+		_menuDefs = new EoBMenuDef[ARRAYSIZE(menuDefsDefault)];
+		memcpy(_menuDefs, menuDefsDefault, sizeof(menuDefsDefault));
+		if (_flags.gameID == GI_EOB1) {
+			// assign EOB 1 style memorize/pray menu
+			_menuDefs[4].numButtons = 8;
+			_menuDefs[4].firstButtonStrId = 36;
+		}
 
-	if (_flags.gameID == GI_EOB1) {
-		// assign EOB 1 style memorize/pray menu
-		_menuDefs[4].numButtons = 8;
-		_menuDefs[4].firstButtonStrId = 36;
-	}
-
-	if (_flags.platform == Common::kPlatformFMTowns) {
-		// assign FM-Towns style options menu
-		_menuDefs[2].numButtons = 4;
-		_menuDefs[2].firstButtonStrId = 44;
-		_prefMenuPlatformOffset = 32;
-	} else if (_flags.platform == Common::kPlatformPC98) {
-		// assign PC-98 style options menu
-		_menuDefs[2].numButtons = 4;
-		_menuDefs[2].firstButtonStrId = 48;
-		_prefMenuPlatformOffset = 36;
-	} else if (_flags.platform == Common::kPlatformAmiga) {
-		// assign Amiga text colors
-		_menuDefs[0].titleCol = _menuDefs[1].titleCol = _menuDefs[2].titleCol = _menuDefs[4].titleCol = _menuDefs[6].titleCol = guiSettings()->colors.guiColorLightBlue;
-		_menuDefs[3].titleCol = _menuDefs[5].titleCol = guiSettings()->colors.guiColorWhite;
+		if (_flags.platform == Common::kPlatformFMTowns) {
+			// assign FM-Towns style options menu
+			_menuDefs[2].numButtons = 4;
+			_menuDefs[2].firstButtonStrId = 44;
+			_prefMenuPlatformOffset = 32;
+		} else if (_flags.platform == Common::kPlatformPC98) {
+			// assign PC-98 style options menu
+			_menuDefs[2].numButtons = 4;
+			_menuDefs[2].firstButtonStrId = 48;
+			_prefMenuPlatformOffset = 36;
+		} else if (_flags.platform == Common::kPlatformAmiga) {
+			// assign Amiga text colors
+			_menuDefs[0].titleCol = _menuDefs[1].titleCol = _menuDefs[2].titleCol = _menuDefs[4].titleCol = _menuDefs[6].titleCol = guiSettings()->colors.guiColorLightBlue;
+			_menuDefs[3].titleCol = _menuDefs[5].titleCol = guiSettings()->colors.guiColorWhite;
+		}
 	}
 }
 
@@ -1146,6 +1297,7 @@ void EoBCoreEngine::initSpells() {
 }
 
 void EoBEngine::initStaticResource() {
+	bool bigEndian = (_flags.platform == Common::kPlatformAmiga || _flags.platform == Common::kPlatformSegaCD);
 	int temp;
 	_mainMenuStrings = _staticres->loadStrings(kEoB1MainMenuStrings, temp);
 	_finBonusStrings = _staticres->loadStrings(kEoB1BonusStrings, temp);
@@ -1181,7 +1333,7 @@ void EoBEngine::initStaticResource() {
 	for (int i = 0; i < 5; i++)
 		_cgaMappingLevel[i] = _staticres->loadRawData(kEoB1CgaMappingLevel0 + i, temp);
 
-	_itemNamesPC98 = _staticres->loadStrings(kEoB1ItemNames, _numItemNamesPC98);
+	_itemNamesStatic = _staticres->loadStrings(kEoB1ItemNames, _numItemNamesStatic);
 
 	_turnUndeadString = _staticres->loadStrings(kEoB1TurnUndeadString, temp);
 
@@ -1214,9 +1366,9 @@ void EoBEngine::initStaticResource() {
 		p->dmgDc[2].base = (int8)*ps++;
 		ps++;
 		p->capsFlags = *ps++;
-		p->typeFlags = (_flags.platform == Common::kPlatformAmiga) ? READ_BE_UINT32(++ps) : READ_LE_UINT32(ps);
+		p->typeFlags = bigEndian ? READ_BE_UINT32(++ps) : READ_LE_UINT32(ps);
 		ps += 4;
-		p->experience = (_flags.platform == Common::kPlatformAmiga) ? READ_BE_UINT16(ps) : READ_LE_UINT16(ps);
+		p->experience = bigEndian ? READ_BE_UINT16(ps) : READ_LE_UINT16(ps);
 		ps += 2;
 		p->u30 = *ps++;
 		p->sound1 = (int8)*ps++;
@@ -1236,6 +1388,41 @@ void EoBEngine::initStaticResource() {
 		files = _staticres->loadStrings(kEoBBaseSoundFilesFinale, temp);
 		SoundResourceInfo_PC finale(files, temp);
 		_sound->initAudioResourceInfo(kMusicFinale, &finale);
+	}
+
+	_addrTbl1 = _staticres->loadRawDataBe16(kEoB1PatternAddTable1, temp);
+	_textFieldPattern = _staticres->loadRawDataBe16(kEoB1PatternAddTable2, temp);
+	_playFldPattern1 = _staticres->loadRawDataBe16(kEoB1PatternTable0, temp);
+	_invPattern = _staticres->loadRawDataBe16(kEoB1PatternTable3, temp);
+	_statsPattern = _staticres->loadRawDataBe16(kEoB1PatternTable4, temp);
+	_charTilesTable = _staticres->loadRawData(kEoB1CharTilesTable, temp);
+	_mapStrings1 = _staticres->loadStrings(kEoB1MapStrings1, temp);
+	_mapStrings2 = _staticres->loadStrings(kEoB1MapStrings2, temp);
+	_mapStrings3 = _staticres->loadStrings(kEoB1MapStrings3, temp);
+
+	// Build offset tables for door shapes encoding
+	if (_flags.platform == Common::kPlatformSegaCD) {
+		const uint8 *e1 = _doorShapeEncodeDefs;
+		const uint8 *e2 = _doorSwitchShapeEncodeDefs;
+		const uint8 **doorShapesSrc = new const uint8*[30];
+		const uint8 **doorSwitchShapesSrc = new const uint8*[15];
+
+		for (int i = 0; i < 5; ++i) {
+			const uint8 *shp = _screen->getCPagePtr(2);
+			for (int ii = 0; ii < 6; ++ii) {
+				doorShapesSrc[i * 6 + ii] = shp;
+				shp += ((e1[0] * e1[1]) << 5);
+				e1 += 4;
+			}
+			for (int ii = 0; ii < 3; ++ii) {
+				doorSwitchShapesSrc[i * 3 + ii] = shp;
+				shp += ((e2[0] * e2[1]) << 5);
+				e2 += 4;
+			}
+		}
+
+		_doorShapesSrc = doorShapesSrc;
+		_doorSwitchShapesSrc = doorSwitchShapesSrc;
 	}
 
 	_monsterAcHitChanceTable1 = _monsterAcHitChanceTbl1;
@@ -1350,28 +1537,79 @@ void EoBEngine::initSpells() {
 }
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsVGA = {
-	{ 9, 15, 95, 9, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
-	{ 135, 130, 132, 180, 133, 17, 23, 20, 184, 177, 180, 184, 177, 180, 15, 6, 8, 9, 2, 5, 4, 3, 12 }
+	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 9, 15, 95, 9, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
+	{ 135, 130, 132, 180, 133, 17, 23, 20, 184, 177, 180, 184, 177, 180, 15, 6, 8, 9, 2, 5, 4, 3, 12 },
+	{	{ 184, 256, -1}, { 2, 54, 106 }, 64, 50,
+		{ 8, 80, -1 }, { 11, 63, 115 }, { 181, -1, -1 }, { 3, -1, -1 },
+		{ 40, 112, -1 }, { 11, 27, 63, 79, 115, 131 },
+		{ 23, 95, -1}, { 46, 98, 150 }, 38, 3, { 250, 250, -1}, { 16, 25, -1 }, 51, 5,
+		13, 30
+	}
 };
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsEGA = {
-	{ 9, 15, 95, 9, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
-	{ 13, 9, 2, 14, 2, 6, 13, 8, 13, 15, 14, 13, 15, 14, 15, 6, 8, 9, 2, 5, 4, 3, 12 }
+	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 9, 15, 95, 9, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
+	{ 13, 9, 2, 14, 2, 6, 13, 8, 13, 15, 14, 13, 15, 14, 15, 6, 8, 9, 2, 5, 4, 3, 12 },
+	{	{ 184, 256, -1}, { 2, 54, 106 }, 64, 50,
+		{ 8, 80, -1 }, { 11, 63, 115 }, { 181, -1, -1 }, { 3, -1, -1 },
+		{ 40, 112, -1 }, { 11, 27, 63, 79, 115, 131 },
+		{ 23, 95, -1}, { 46, 98, 150 }, 38, 3, { 250, 250, -1}, { 16, 25, -1 }, 51, 5,
+		13, 30
+	}
 };
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsPC98 = {
-	{ 9, 15, 95, 11, 1, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
-	{ 13, 9, 2, 14, 2, 6, 13, 8, 13, 15, 14, 13, 15, 14, 15, 6, 8, 9, 2, 5, 4, 3, 12 }
+	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 9, 15, 95, 11, 1, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
+	{ 13, 9, 2, 14, 2, 6, 13, 8, 13, 15, 14, 13, 15, 14, 15, 6, 8, 9, 2, 5, 4, 3, 12 },
+	{	{ 184, 256, -1}, { 2, 54, 106 }, 64, 50,
+		{ 8, 80, -1 }, { 11, 63, 115 }, { 181, -1, -1 }, { 3, -1, -1 },
+		{ 40, 112, -1 }, { 11, 27, 63, 79, 115, 131 },
+		{ 23, 95, -1}, { 46, 98, 150 }, 38, 3, { 250, 250, -1}, { 16, 25, -1 }, 51, 5,
+		13, 30
+	}
 };
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsAmiga = {
-	{ 28, 31, 95, 9, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
-	{ 18, 17, 10, 17, 11, 24, 22, 25, 18, 9, 10, 18, 9, 10, 31, 24, 25, 28, 29, 7, 26, 27, 19 }
+	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 28, 31, 95, 9, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
+	{ 18, 17, 10, 17, 11, 24, 22, 25, 18, 9, 10, 18, 9, 10, 31, 24, 25, 28, 29, 7, 26, 27, 19 },
+	{	{ 184, 256, -1}, { 2, 54, 106 }, 64, 50,
+		{ 8, 80, -1 }, { 11, 63, 115 }, { 181, -1, -1 }, { 3, -1, -1 },
+		{ 40, 112, -1 }, { 11, 27, 63, 79, 115, 131 },
+		{ 23, 95, -1}, { 46, 98, 150 }, 38, 3, { 250, 250, -1}, { 16, 25, -1 }, 51, 5,
+		13, 30
+	}
 };
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsAmigaMainMenu = {
-	{ 28, 31, 95, 9, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
-	{ 22, 28, 30, 17, 11, 24, 22, 25, 18, 9, 10, 18, 9, 10, 31, 24, 25, 28, 29, 7, 26, 27, 19 }
+	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 28, 31, 95, 9, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
+	{ 22, 28, 30, 17, 11, 24, 22, 25, 18, 9, 10, 18, 9, 10, 31, 24, 25, 28, 29, 7, 26, 27, 19 },
+	{	{ 184, 256, -1}, { 2, 54, 106 }, 64, 50,
+		{ 8, 80, -1 }, { 11, 63, 115 }, { 181, -1, -1 }, { 3, -1, -1 },
+		{ 40, 112, -1 }, { 11, 27, 63, 79, 115, 131 },
+		{ 23, 95, -1}, { 46, 98, 150 }, 38, 3, { 250, 250, -1}, { 16, 25, -1 }, 51, 5,
+		13, 30
+	}
+};
+
+const KyraRpgGUISettings EoBEngine::_guiSettingsSegaCD = {
+	{ _dlgButtonPosX_Sega, _dlgButtonPosY_Sega, 0x66, 0xFF, 90, 14, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
+	{ 135, 130, 132, 180, 0x00, 17, 23, 20, 184, 177, 180, 184, 177, 180, 15, 6, 0x31, 9, 2, 0x35, 4, 0x33, 0x3C },
+	{	{ 184, 256, -1}, { 1, 57, 113 }, 64, 55,
+		{ 8, 80, -1 }, { 16, 72, 128 }, { 184, -1, -1 }, { 8, -1, -1 },
+		{ 40, 112, -1 }, { 16, 32, 72, 88, 128, 144 },
+		{ 24, 96, -1}, { 51, 107, 163 }, 40, 2, { 248, 248, -1}, { 19, 27, -1 }, 47, 2,
+		16, 39
+	}
+
+};
+
+const uint8 EoBEngine::_redGridTile[8] = {
+	0x1C, 0x1C, 0x1C, 0x1C, 0xC1, 0xC1, 0xC1, 0xC1
+};
+
+const int8 EoBEngine::_sceneShakeOffsets[66] = {
+	0, 0, -1, -1, -1, 1, 1, 1, 1, -1, -1, -1, -1, 1, 1, 1, 1, -1, -2, -2, -2, 2, 2, 2, 2, -2, -2, -2, -2, 2, 2, 2, 2,
+	-2, -2, -2, -2, 2, 2, 2, 2, -2, -3, -3, -3, 3, 3, 3, 3, -3, -3, -3, -3, 3, 3, 3, 3, -3, -3, -3, -3, 3, 3, 3, 3, -3
 };
 
 const uint8 EoBEngine::_egaDefaultPalette[] = {
@@ -1386,13 +1624,17 @@ const uint8 EoBEngine::_monsterAcHitChanceTbl2[] = {
 	2, 1, 1, 1
 };
 
+const uint16 EoBEngine::_dlgButtonPosX_Sega[18] = { 59, 166, 4, 104, 204, 4, 104, 204, 4, 104, 204, 4, 104, 204, 4, 104, 204, 4 };
+
+const uint8 EoBEngine::_dlgButtonPosY_Sega[18] = { 16, 16, 16, 16, 16, 0, 0, 0, 16, 16, 16, 32, 32, 32, 16, 16, 16, 32 };
+
 const EoBEngine::RenderModePalFile EoBEngine::_renderModePalFiles[3] = {
 	{	Common::kRenderDefault, "EOBPAL.COL" },
 	{	Common::kRenderVGA, "EOBPAL.COL" },
 	{	-1, "" }
 };
 
-const EoBEngine::TitleScreenConfig EoBEngine::_titleConfig[4] = {
+const EoBEngine::TitleScreenConfig EoBEngine::_titleConfig[5] = {
 	{
 		Common::kPlatformDOS,
 		Common::UNK_LANG,
@@ -1441,6 +1683,18 @@ const EoBEngine::TitleScreenConfig EoBEngine::_titleConfig[4] = {
 		76, 164, 175, 31, 14, 13, -1,
 		0
 	},
+	{
+		Common::kPlatformSegaCD,
+		Common::UNK_LANG,
+		"",
+		&_renderModePalFiles[2],
+		1,
+		2,
+		false,
+		77, 161, 173, 29, 1, 2, 12,
+		76, 160, 175, 31, 1, 2, -1,
+		41
+	}
 };
 
 void DarkMoonEngine::initStaticResource() {
@@ -1466,8 +1720,6 @@ void DarkMoonEngine::initStaticResource() {
 
 	_utilMenuStrings = _staticres->loadStrings(kEoB2UtilMenuStrings, temp);
 	_2431Strings = _staticres->loadStrings(kEoB2Config2431Strings, temp);
-	_katakanaLines = _staticres->loadStrings(kEoB2KatakanaLines, temp);
-	_katakanaSelectStrings = _staticres->loadStrings(kEoB2KanaSelectStrings, temp);
 
 	_ascii2SjisTables = _staticres->loadStrings(kEoB2Ascii2SjisTables, temp);
 	_ascii2SjisTables2 = _staticres->loadStrings(kEoB2Ascii2SjisTables2, temp);
@@ -1558,18 +1810,36 @@ void DarkMoonEngine::initSpells() {
 }
 
 const KyraRpgGUISettings DarkMoonEngine::_guiSettingsFMTowns = {
-	{ 9, 15, 95, 11, 1, 7, { 221, 76 }, { 187, 162 }, { 95, 95 } },
-	{ 186, 181, 183, 183, 184, 17, 23, 20, 186, 181, 183, 182, 177, 180, 15, 6, 8, 9, 2, 5, 4, 3, 12 }
+	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 9, 15, 95, 11, 1, 7, { 221, 76 }, { 187, 162 }, { 95, 95 } },
+	{ 186, 181, 183, 183, 184, 17, 23, 20, 186, 181, 183, 182, 177, 180, 15, 6, 8, 9, 2, 5, 4, 3, 12 },
+	{	{ 184, 256, -1}, { 2, 54, 106 }, 64, 50,
+		{ 8, 80, -1 }, { 11, 63, 115 }, { 181, -1, -1 }, { 3, -1, -1 },
+		{ 40, 112, -1 }, { 11, 27, 63, 79, 115, 131 },
+		{ 23, 95, -1}, { 46, 98, 150 }, 38, 3, { 250, 250, -1}, { 16, 25, -1 }, 51, 5,
+		13, 30
+	}
 };
 
 const KyraRpgGUISettings DarkMoonEngine::_guiSettingsDOS = {
-	{ 9, 15, 95, 9, 2, 7, { 221, 76 }, { 189, 162 }, { 95, 95 } },
-	{ 186, 181, 183, 183, 184, 17, 23, 20, 186, 181, 183, 182, 177, 180, 15, 6, 8, 9, 2, 5, 4, 3, 12 }
+	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 9, 15, 95, 9, 2, 7, { 221, 76 }, { 189, 162 }, { 95, 95 } },
+	{ 186, 181, 183, 183, 184, 17, 23, 20, 186, 181, 183, 182, 177, 180, 15, 6, 8, 9, 2, 5, 4, 3, 12 },
+	{	{ 184, 256, -1}, { 2, 54, 106 }, 64, 50,
+		{ 8, 80, -1 }, { 11, 63, 115 }, { 181, -1, -1 }, { 3, -1, -1 },
+		{ 40, 112, -1 }, { 11, 27, 63, 79, 115, 131 },
+		{ 23, 95, -1}, { 46, 98, 150 }, 38, 3, { 250, 250, -1}, { 16, 25, -1 }, 51, 5,
+		13, 30
+	}
 };
 
 const KyraRpgGUISettings DarkMoonEngine::_guiSettingsAmiga = {
-	{ 28, 31, 95, 9, 2, 7, { 221, 76 }, { 189, 162 }, { 95, 95 } },
-	{ 18, 17, 10, 17, 11, 10, 12, 25, 18, 9, 10, 18, 9, 10, 31, 24, 25, 28, 29, 7, 26, 27, 19 }
+	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 28, 31, 95, 9, 2, 7, { 221, 76 }, { 189, 162 }, { 95, 95 } },
+	{ 18, 17, 10, 17, 11, 10, 12, 25, 18, 9, 10, 18, 9, 10, 31, 24, 25, 28, 29, 7, 26, 27, 19 },
+	{	{ 184, 256, -1}, { 2, 54, 106 }, 64, 50,
+		{ 8, 80, -1 }, { 11, 63, 115 }, { 181, -1, -1 }, { 3, -1, -1 },
+		{ 40, 112, -1 }, { 11, 27, 63, 79, 115, 131 },
+		{ 23, 95, -1}, { 46, 98, 150 }, 38, 3, { 250, 250, -1}, { 16, 25, -1 }, 51, 5,
+		13, 30
+	}
 };
 
 const uint8 DarkMoonEngine::_egaDefaultPalette[] = {

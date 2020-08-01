@@ -55,12 +55,12 @@ public:
 	int processButtonList(Button *buttonList, uint16 inputFlags, int8 mouseWheel) override;
 
 	// Non button based menu handling (main menu, character generation)
-	void simpleMenu_setup(int sd, int maxItem, const char *const *strings, int32 menuItemsMask, int unk, int lineSpacing);
-	int simpleMenu_process(int sd, const char *const *strings, void *b, int32 menuItemsMask, int unk);
+	void simpleMenu_setup(int sd, int maxItem, const char *const *strings, int32 menuItemsMask, int itemOffset, int lineSpacing);
+	int simpleMenu_process(int sd, const char *const *strings, void *b, int32 menuItemsMask, int itemOffset);
 
 	// Button based menus (camp menu, load menu)
-	void runCampMenu();
-	bool runLoadMenu(int x, int y, bool fromMainMenu = false);
+	virtual void runCampMenu();
+	virtual bool runLoadMenu(int x, int y, bool fromMainMenu = false);
 
 	bool confirmDialogue2(int dim, int id, int deflt);
 	void messageDialogue(int dim, int id, int buttonTextCol);
@@ -78,48 +78,63 @@ public:
 	// utilities for thumbnail creation
 	void createScreenThumbnail(Graphics::Surface &dst) override;
 
+protected:
+	const char *getMenuString(int id);
+	Button *initMenu(int id);
+	void releaseButtons(Button *list);
+
+	int8 *_numAssignedSpellsOfType;
+	char** _saveSlotStringsTemp;
+	int16 _saveSlotX;
+	int16 _saveSlotY;
+	int _menuCur;
+
+	int _clickableCharactersPage;
+	char _csjis[3];
+
+	Screen_EoB *_screen;
+
 private:
 	int simpleMenu_getMenuItem(int index, int32 menuItemsMask, int itemOffset);
 	void simpleMenu_flashSelection(const char *str, int x, int y, int color1, int color2, int color3);
 	void simpleMenu_initMenuItemsMask(int menuId, int maxItem, int32 menuItemsMask, int unk);
 
 	bool runSaveMenu(int x, int y);
-	int selectSaveSlotDialogue(int x, int y, int id);
+	int selectSaveSlotDialog(int x, int y, int id);
+	virtual void drawSaveSlotDialog(int x, int y, int id);
 	void runMemorizePrayMenu(int charIndex, int spellType);
 	void scribeScrollDialogue();
 	bool restParty();
 
-	bool confirmDialogue(int id);
+	virtual void drawCampMenu() {}
+	virtual void initMemorizePrayMenu() {}
+	virtual void initScribeScrollMenu() {}
+	virtual void printScribeScrollSpellString(const int16 *menuItems, int id, bool highlight);
+	virtual bool confirmDialogue(int id);
 	int selectCharacterDialogue(int id);
-	void displayTextBox(int id);
+	virtual void displayTextBox(int id, int textColor = 0xFF, bool wait = true);
 
-	Button *initMenu(int id);
-	void drawMenuButton(Button *b, bool clicked, bool highlight, bool noFill);
+	virtual void drawMenuButton(Button *b, bool clicked, bool highlight, bool noFill);
 	void drawMenuButtonBox(int x, int y, int w, int h, bool clicked, bool noFill);
 	void drawTextBox(int dim, int id);
-	void drawSaveSlotButton(int slot, int redrawBox, int textCol);
-	void memorizePrayMenuPrintString(int spellId, int bookPageIndex, int spellType, bool noFill, bool highLight);
-	void updateOptionsStrings();
-	const char *getMenuString(int id);
+	virtual void drawSaveSlotButton(int slot, int redrawBox, bool highlight);
+	virtual void memorizePrayMenuPrintString(int spellId, int bookPageIndex, int spellType, bool noFill, bool highLight);
+	virtual void updateOptionsStrings();
 
 	Button *linkButton(Button *list, Button *newbt);
-	void releaseButtons(Button *list);
 
 	void setupSaveMenuSlots();
-	int getHighlightSlot();
+	virtual int getHighlightSlot();
 	void sortSaveSlots() override;
 
-	void restParty_updateRestTime(int hours, bool init);
+	virtual void restParty_updateRestTime(int hours, bool init);
 
 	char **_menuStringsPrefsTemp;
-	char **_saveSlotStringsTemp;
 	int16 *_saveSlotIdTemp;
 	int _savegameOffset;
-	int16 _saveSlotX;
-	int16 _saveSlotY;
+	const int _numSlotsVisible;
 
 	EoBCoreEngine *_vm;
-	Screen_EoB *_screen;
 
 	bool _pressFlag;
 
@@ -137,12 +152,10 @@ private:
 
 	uint8 _numPages;
 	uint8 _numVisPages;
-	int8 *_numAssignedSpellsOfType;
 	uint32 _clericSpellAvltyFlags;
 	uint32 _paladinSpellAvltyFlags;
 	bool _needRest;
 
-	int _menuCur;
 	int _menuNumItems;
 	bool _charSelectRedraw;
 
@@ -151,18 +164,17 @@ private:
 	const uint8 *_highLightColorTable;
 	uint32 _highLightBoxTimer;
 
-	static const EoBRect16 _highlightFrames[];
+	const EoBRect16 *_highlightFrames;
+	static const EoBRect16 _highlightFramesDefault[];
 	static const uint8 _highlightColorTableVGA[];
 	static const uint8 _highlightColorTableEGA[];
 	static const uint8 _highlightColorTableAmiga[];
 	static const uint8 _highlightColorTablePC98[];
+	static const uint8 _highlightColorTableSegaCD[];
 
-	// FM-Towns specific
-	int checkKatakanaSelection();
-	void printKatakanaOptions(int page);
-
-	int _currentKanaPage;
-	char _csjis[3];
+	// FM-Towns / SegaCD specific
+	virtual int checkClickableCharactersSelection();
+	virtual void printClickableCharacters(int page);
 };
 
 } // End of namespace Kyra

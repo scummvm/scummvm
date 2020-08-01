@@ -49,7 +49,7 @@ AdLibChannel::AdLibChannel(OPL::OPL *opl, uint8 *pMusicData, uint16 startOfData)
 
 	uint16 instrumentDataLoc;
 
-	if (SkyEngine::_systemVars.gameVersion == 109) {
+	if (SkyEngine::_systemVars->gameVersion == 109) {
 		//instrumentDataLoc = (_musicData[0x11D0] << 8) | _musicData[0x11CF];
 		//_frequenceTable = (uint16 *)(_musicData + 0x835);
 		//_registerTable = _musicData + 0xE35;
@@ -61,7 +61,7 @@ AdLibChannel::AdLibChannel(OPL::OPL *opl, uint8 *pMusicData, uint16 startOfData)
 		_registerTable = _musicData + 0xE68;
 		_opOutputTable = _musicData + 0xE7A;
 		_adlibRegMirror = _musicData + 0xF7D;
-	} else if (SkyEngine::_systemVars.gameVersion == 267) {
+	} else if (SkyEngine::_systemVars->gameVersion == 267) {
 		instrumentDataLoc = READ_LE_UINT16(_musicData + 0x11FB);
 		_frequenceTable = (uint16 *)(_musicData + 0x7F4);
 		_registerTable = _musicData + 0xDF4;

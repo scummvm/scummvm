@@ -93,7 +93,7 @@ ProcId Kernel::addProcess(Process *proc) {
 
 #if 0
 	perr << "[Kernel] Adding process " << proc
-	     << ", pid = " << proc->_pid << Std::endl;
+	<< ", pid = " << proc->_pid << " type " << proc->GetClassType()._className << Std::endl;
 #endif
 
 //	processes.push_back(proc);

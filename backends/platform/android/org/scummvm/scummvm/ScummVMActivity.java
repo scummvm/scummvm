@@ -32,6 +32,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 public class ScummVMActivity extends Activity {
@@ -88,7 +89,6 @@ public class ScummVMActivity extends Activity {
 		@Override
 		protected void displayMessageOnOSD(final String msg) {
 			if (msg != null) {
-				Log.i(LOG_TAG, "MessageOnOSD: " + msg + " " + getCurrentCharset());
 				runOnUiThread(new Runnable() {
 					public void run() {
 						Toast.makeText(ScummVMActivity.this, msg, Toast.LENGTH_SHORT).show();
@@ -108,33 +108,17 @@ public class ScummVMActivity extends Activity {
 		}
 
 		@Override
-		protected byte[] getTextFromClipboard() {
+		protected String getTextFromClipboard() {
 			CharSequence text = _clipboard.getText();
 			if (text != null) {
-				String encoding = getCurrentCharset();
-				byte[] out;
-				Log.d(LOG_TAG, String.format("Converting from UTF-8 to %s", encoding));
-				try {
-					out = text.toString().getBytes(encoding);
-				} catch (java.io.UnsupportedEncodingException e) {
-					out = text.toString().getBytes();
-				}
-				return out;
+				return text.toString();
 			}
 			return null;
 		}
 
 		@Override
-		protected boolean setTextInClipboard(byte[] text) {
-			String encoding = getCurrentCharset();
-			String out;
-			Log.d(LOG_TAG, String.format("Converting from %s to UTF-8", encoding));
-			try {
-				out = new String(text, encoding);
-			} catch (java.io.UnsupportedEncodingException e) {
-				out = new String(text);
-			}
-			_clipboard.setText(out);
+		protected boolean setTextInClipboard(String text) {
+			_clipboard.setText(text);
 			return true;
 		}
 
@@ -179,6 +163,12 @@ public class ScummVMActivity extends Activity {
 		@Override
 		protected String[] getSysArchives() {
 			return new String[0];
+		}
+
+		@Override
+		protected byte[] convertEncoding(String to, String from, byte[] string) throws UnsupportedEncodingException {
+			String str = new String(string, from);
+			return str.getBytes(to);
 		}
 
 		@Override

@@ -104,9 +104,12 @@ struct EventInfo {
 	               ///< For Note On events, a non-zero value indicates that no Note Off event
 	               ///< will occur, and the MidiParser will have to generate one itself.
 	               ///< For all other events, this value should always be zero.
+	bool   loop;   ///< Indicates that this event loops (part of) the MIDI data.
 
 	byte channel() const { return event & 0x0F; } ///< Separates the MIDI channel from the event.
 	byte command() const { return event >> 4; }   ///< Separates the command code from the event.
+
+	EventInfo() : start(0), delta(0), event(0), length(0), loop(false) { basic.param1 = 0; basic.param2 = 0; ext.type = 0; ext.data = 0; }
 };
 
 /**
@@ -158,10 +161,17 @@ struct NoteTimer {
  * may also override the default MidiParser behavior for
  * the following methods:
  *   - resetTracking
+ *   - getTick
+ *   - jumpToIndex
+ *   - hasJumpIndex
  *   - allNotesOff
  *   - unloadMusic
  *   - property
- *   - getTick
+ *   - processEvent
+ *   - onTrackStart
+ *   - sendToDriver
+ *   - sendMetaEventToDriver
+ *   - setMidiDriver
  *
  * Please see the documentation for these individual
  * functions for more information on their use.
@@ -186,10 +196,12 @@ struct NoteTimer {
  * MidiDriver. In the simplest configuration, you can plug
  * a single MidiParser directly into the output MidiDriver
  * being used. However, you can only plug in one at a time;
- * otherwise channel conflicts will occur. Furthermore,
- * meta events that may be needed to interactively control
- * music flow cannot be handled because they are being
- * sent directly to the output device.
+ * otherwise channel conflicts will occur. Multiple parsers
+ * can be used if they do not use the same channels, or if
+ * they use some form of dynamic channel allocation.
+ * Furthermore, meta events that may be needed to
+ * interactively control music flow cannot be handled
+ * because they are being sent directly to the output device.
  *
  * If you need more control over the MidiParser while it's
  * playing, you can create your own "pseudo-MidiDriver" and
@@ -197,7 +209,10 @@ struct NoteTimer {
  * MidiDriver. The MidiParser will send events to your
  * pseudo-MidiDriver, which in turn must send them to the
  * output MidiDriver (or do whatever special handling is
- * required).
+ * required). Make sure to implement all functions which
+ * are necessary for proper functioning of the parser and
+ * forward the calls to the real driver (even if you do not
+ * want to customize the functionality).
  *
  * To specify the MidiDriver to send music output to,
  * use the MidiParser::setMidiDriver method.
@@ -230,13 +245,17 @@ struct NoteTimer {
  * to the music data and the size of the data. (NOTE: Some
  * MidiParser variants don't require a size, and 0 is fine.
  * However, when writing client code to use MidiParser, it is
- * best to assume that a valid size will be required.
+ * best to assume that a valid size will be required.)
  *
  * Convention requires that each implementation of
  * MidiParser::loadMusic automatically set up default tempo
  * and current track. This effectively means that the
  * MidiParser will start playing as soon as timer events
- * start coming in.
+ * start coming in. If you want to start playback at a later
+ * point, you can specify the mpDisableAutoStartPlayback
+ * property. You can then specify the track and/or starting
+ * point using setTrack, jumpToTick or jumpToIndex, and then
+ * call startPlaying to start playback.
  *
  * <b>STEP 6: Activate a timer source for the MidiParser.</b>
  * The easiest timer source to use is the timer of the
@@ -247,7 +266,7 @@ struct NoteTimer {
  * and timer_param will be a pointer to your MidiParser object.
  *
  * This configuration only allows one MidiParser to be driven
- * by the MidiDriver at a time. To drive more MidiDrivers, you
+ * by the MidiDriver at a time. To drive more MidiParsers, you
  * will need to create a "pseudo-MidiDriver" as described earlier,
  * In such a configuration, the pseudo-MidiDriver should be set
  * as the timer recipient in MidiDriver::setTimerCallback, and
@@ -255,9 +274,15 @@ struct NoteTimer {
  *
  * <b>STEP 7: Music shall begin to play!</b>
  * Congratulations! At this point everything should be hooked up
- * and the MidiParser should generate music. Note that there is
- * no way to "stop" the MidiParser. You can "pause" the MidiParser
- * simply by not sending timer events to it, or you can call
+ * and the MidiParser should generate music. You can pause
+ * playback and resume playing from the point you left off using
+ * the pausePlaying and resumePlaying functions. (Note that MIDI
+ * does not pause very well and active notes will be missing when
+ * you resume playback.) You can also "pause" the MidiParser
+ * simply by not sending timer events to it. You can stop
+ * playback using the stopPlaying function; you can then later
+ * play the track again from the start using startPlaying (or
+ * select a new track first using setTrack). You can call
  * MidiParser::unloadMusic to permanently stop the music. (This
  * method resets everything and detaches the MidiParser from the
  * memory block containing the music data.)
@@ -293,7 +318,7 @@ protected:
 	                        ///< simulated events in certain formats.
 	bool   _abortParse;    ///< If a jump or other operation interrupts parsing, flag to abort.
 	bool   _jumpingToTick; ///< True if currently inside jumpToTick
-	bool   _doParse;       ///< True if the parser should be parsing; false if it should be active
+	bool   _doParse;       ///< True if the parser should be parsing; false if it should not be active
 	bool   _pause;		   ///< True if the parser has paused parsing
 
 protected:
@@ -306,6 +331,13 @@ protected:
 	void activeNote(byte channel, byte note, bool active);
 	void hangingNote(byte channel, byte note, uint32 ticksLeft, bool recycle = true);
 	void hangAllActiveNotes();
+
+	/**
+	 * Called before starting playback of a track.
+	 * Can be implemented by subclasses if they need to
+	 * perform actions at this point.
+	 */
+	virtual void onTrackStart(uint8 track) { };
 
 	virtual void sendToDriver(uint32 b);
 	void sendToDriver(byte status, byte firstOp, byte secondOp) {
@@ -390,21 +422,20 @@ public:
 		  * or setting the track. Use startPlaying to start playback.
 		  * Note that not every parser implementation might support this.
 		  */
-		  mpDisableAutoStartPlayback = 7
+		 mpDisableAutoStartPlayback = 7
 	};
 
 public:
 	typedef void (*XMidiCallbackProc)(byte eventData, void *refCon);
-	typedef void (*XMidiNewTimbreListProc)(MidiDriver_BASE *driver, const byte *timbreListPtr, uint32 timbreListSize);
 
 	MidiParser();
-	virtual ~MidiParser() { allNotesOff(); }
+	virtual ~MidiParser() { stopPlaying(); }
 
 	virtual bool loadMusic(byte *data, uint32 size) = 0;
 	virtual void unloadMusic();
 	virtual void property(int prop, int value);
 
-	void setMidiDriver(MidiDriver_BASE *driver) { _driver = driver; }
+	virtual void setMidiDriver(MidiDriver_BASE *driver) { _driver = driver; }
 	void setTimerRate(uint32 rate) { _timerRate = rate; }
 	void setTempo(uint32 tempo);
 	void onTimer();
@@ -463,7 +494,7 @@ public:
 	static void defaultXMidiCallback(byte eventData, void *refCon);
 
 	static MidiParser *createParser_SMF();
-	static MidiParser *createParser_XMIDI(XMidiCallbackProc proc = defaultXMidiCallback, void *refCon = 0, XMidiNewTimbreListProc newTimbreListProc = NULL, MidiDriver_BASE *newTimbreListDriver = NULL, int source = -1);
+	static MidiParser *createParser_XMIDI(XMidiCallbackProc proc = defaultXMidiCallback, void *refCon = 0, int source = -1);
 	static MidiParser *createParser_QT();
 	static void timerCallback(void *data) { ((MidiParser *) data)->onTimer(); }
 };

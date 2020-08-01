@@ -153,7 +153,7 @@ bool SoundPC_v1::isPlaying() const {
 	return _driver->isChannelPlaying(0);
 }
 
-void SoundPC_v1::playSoundEffect(uint8 track, uint8 volume) {
+void SoundPC_v1::playSoundEffect(uint16 track, uint8 volume) {
 	if (_sfxEnabled)
 		play(track, volume);
 }

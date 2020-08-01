@@ -26,6 +26,7 @@
 #include "common/util.h"
 #include "common/mutex.h"
 #include "audio/mixer.h"
+#include "audio/mididrv.h"
 
 namespace Audio {
 class AudioStream;
@@ -38,14 +39,16 @@ class CineEngine;
 class Sound {
 public:
 
-	Sound(Audio::Mixer *mixer, CineEngine *vm) : _mixer(mixer), _vm(vm) {}
+	Sound(Audio::Mixer *mixer, CineEngine *vm) : _mixer(mixer), _vm(vm), _musicType(MT_INVALID) {}
 	virtual ~Sound() {}
 
+	virtual MusicType musicType();
 	virtual void loadMusic(const char *name) = 0;
 	virtual void playMusic() = 0;
 	virtual void stopMusic() = 0;
 	virtual void fadeOutMusic() = 0;
 
+	virtual void playSound(int mode, int channel, int param3, int param4, int param5, int size) = 0;
 	virtual void playSound(int channel, int frequency, const uint8 *data, int size, int volumeStep, int stepCount, int volume, int repeat) = 0;
 	virtual void stopSound(int channel) = 0;
 	virtual void setBgMusic(int num) = 0;
@@ -54,6 +57,7 @@ protected:
 
 	Audio::Mixer *_mixer;
 	CineEngine *_vm;
+	MusicType _musicType;
 };
 
 class PCSoundDriver;
@@ -70,6 +74,7 @@ public:
 	void stopMusic() override;
 	void fadeOutMusic() override;
 
+	void playSound(int mode, int channel, int param3, int param4, int param5, int size) override;
 	void playSound(int channel, int frequency, const uint8 *data, int size, int volumeStep, int stepCount, int volume, int repeat) override;
 	void stopSound(int channel) override;
 	void setBgMusic(int num) override;
@@ -93,6 +98,7 @@ public:
 	void stopMusic() override;
 	void fadeOutMusic() override;
 
+	void playSound(int mode, int channel, int param3, int param4, int param5, int size) override;
 	void playSound(int channel, int frequency, const uint8 *data, int size, int volumeStep, int stepCount, int volume, int repeat) override;
 	void stopSound(int channel) override;
 	void setBgMusic(int num) override;

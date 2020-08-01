@@ -320,6 +320,27 @@ void Words::parseUsingDictionary(const char *rawUserInput) {
 	userInputLen = userInput.size();
 	userInputPtr = userInput.c_str();
 
+	// WORKAROUND: For Apple II support speed changes
+	// some of the games hadn't this feature
+	// some (like PQ1) had it, but we override the speed that the game request
+	// with `timeDelayOverwrite`
+	// this mechanism works for all the games, and therefore, doesn't bother to search in the dictionary
+	if (_vm->getPlatform() == Common::kPlatformApple2GS) {
+		if (userInput.equals("fastest")) {
+			_vm->_game.setAppleIIgsSpeedLevel(0);
+			return;
+		} else if (userInput.equals("fast")) {
+			_vm->_game.setAppleIIgsSpeedLevel(1);
+			return;
+		} else if (userInput.equals("normal")) {
+			_vm->_game.setAppleIIgsSpeedLevel(2);
+			return;
+		} else if (userInput.equals("slow")) {
+			_vm->_game.setAppleIIgsSpeedLevel(3);
+			return;
+		}
+	}
+
 	while (userInputPos < userInputLen) {
 		// Skip trailing space
 		if (userInput[userInputPos] == ' ')

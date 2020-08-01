@@ -108,9 +108,7 @@ public:
 
 	static void *fetchItem(uint32 num);
 	static void *_itemList[300];
-
-	static SystemVars _systemVars;
-
+	static SystemVars *_systemVars;
 	static const char *shortcutsKeymapId;
 
 protected:

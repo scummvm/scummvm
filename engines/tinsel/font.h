@@ -49,7 +49,7 @@ public:
 	/**
 	 * Return hTalkFont handle.
 	 */
-	SCNHANDLE GetTalkFontHandle() { return _hTalkFont; }
+	SCNHANDLE GetTalkFontHandle();
 
 	/**
 	 * Called from dec_tagfont() Glitter function. Store the tag font handle.

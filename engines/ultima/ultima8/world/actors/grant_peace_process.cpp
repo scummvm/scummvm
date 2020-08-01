@@ -112,7 +112,7 @@ void GrantPeaceProcess::run() {
 
 			// undead?
 			if (t->getDefenseType() & WeaponInfo::DMG_UNDEAD) {
-				t->receiveHit(_itemNum, 8, target->getHP(),
+				t->receiveHit(_itemNum, dir_current, target->getHP(),
 				              (WeaponInfo::DMG_MAGIC |
 				               WeaponInfo::DMG_PIERCE |
 				               WeaponInfo::DMG_FIRE));
@@ -153,7 +153,7 @@ void GrantPeaceProcess::run() {
 								   Actor::ACT_IMMORTAL |
 								   Actor::ACT_INVINCIBLE)) {
 			if (getRandom() % 10 == 0) {
-				target->receiveHit(_itemNum, 8, target->getHP(),
+				target->receiveHit(_itemNum, dir_current, target->getHP(),
 				                   (WeaponInfo::DMG_MAGIC |
 				                    WeaponInfo::DMG_PIERCE |
 				                    WeaponInfo::DMG_FIRE));
@@ -199,14 +199,14 @@ uint32 GrantPeaceProcess::I_castGrantPeace(const uint8 *args,
 	Kernel::get_instance()->addProcess(gpp);
 
 	// start casting
-	ProcId anim1 = avatar->doAnim(Animation::cast1, 8);
+	ProcId anim1 = avatar->doAnim(Animation::cast1, dir_current);
 
 	// cast
-	ProcId anim2 = avatar->doAnim(Animation::cast3, 8);
+	ProcId anim2 = avatar->doAnim(Animation::cast3, dir_current);
 	Process *anim2p = Kernel::get_instance()->getProcess(anim2);
 
 	// end casting
-	ProcId anim3 = avatar->doAnim(Animation::cast2, 8);
+	ProcId anim3 = avatar->doAnim(Animation::cast2, dir_current);
 	Process *anim3p = Kernel::get_instance()->getProcess(anim3);
 
 	anim2p->waitFor(anim1);

@@ -163,7 +163,7 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 		char buf4[128];
 		char buf5[128];
 		char buf6[512];
-		ShapeInfo *info = mainshapes->getShapeInfo(_curShape);
+		const ShapeInfo *info = mainshapes->getShapeInfo(_curShape);
 		if (info) {
 			sprintf(buf3, "x: %d, y: %d, z: %d\n flags: 0x%04X, family: %d",
 					info->_x, info->_y, info->_z, info->_flags, info->_family);

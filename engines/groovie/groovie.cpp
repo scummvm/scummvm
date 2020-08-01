@@ -340,6 +340,12 @@ Common::Error GroovieEngine::run() {
 	return Common::kNoError;
 }
 
+void GroovieEngine::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+	if (_musicPlayer)
+		_musicPlayer->pause(pause);
+}
+
 Common::Platform GroovieEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
 }

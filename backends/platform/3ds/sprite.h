@@ -59,6 +59,8 @@ public:
 	int getPosY() const { return posY; }
 	C3D_Mtx* getMatrix();
 
+	void setFilteringMode(bool enableLinearFiltering);
+
 	uint16 actualWidth;
 	uint16 actualHeight;
 

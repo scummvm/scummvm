@@ -39,7 +39,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 101
+#define RESFILE_VERSION 102
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -106,6 +106,7 @@ const IndexTable iPlatformTable[] = {
 	{ Common::kPlatformAmiga, 1 },
 	{ Common::kPlatformFMTowns, 2 },
 	{ Common::kPlatformPC98, 3 },
+	{ Common::kPlatformSegaCD, 4 },
 	{ Common::kPlatformMacintosh, 0 }, // HACK: Should be type "4", but as long as we can't extract Macintosh data, we need to use DOS data.
 	{ -1, -1 }
 };

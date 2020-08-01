@@ -28,8 +28,13 @@
 
 namespace Kyra {
 
+Common::SeekableReadStreamEndian *EoBCoreEngine::getItemDefinitionFile(int index) {
+	assert(index == 0 || index == 1);
+	return _res->createEndianAwareReadStream(index ? "itemtype.dat" : "item.dat");
+}
+
 void EoBCoreEngine::loadItemDefs() {
-	Common::SeekableReadStreamEndian *s = _res->createEndianAwareReadStream("item.dat");
+	Common::SeekableReadStreamEndian *s = getItemDefinitionFile(0);
 	memset(_items, 0, sizeof(EoBItem) * 600);
 	_numItems = s->readUint16();
 
@@ -46,15 +51,41 @@ void EoBCoreEngine::loadItemDefs() {
 		_items[i].block = s->readSint16();
 		_items[i].next = s->readSint16();
 		_items[i].prev = s->readSint16();
-		_items[i].level = s->readSByte();
+		_items[i].level = s->readByte();
 		_items[i].value = s->readSByte();
 	}
 
-	if (_itemNamesPC98) {
-		_numItemNames = _numItemNamesPC98;
+	if (_flags.platform == Common::kPlatformSegaCD) {
+		_items[498].block = _items[499].block = -2;
+
+		int temp = 0;
+		const uint8 *pos = _staticres->loadRawData(kEoB1MapLevelData, temp);
+
+		for (int i = _numItems; i < _numItems + temp / 14; i++) {
+			_items[i].nameUnid = *pos++;
+			_items[i].nameId = *pos++;
+			_items[i].flags = *pos++;
+			_items[i].icon = (int8)*pos++;
+			_items[i].type = (int8)*pos++;
+			_items[i].pos = (int8)*pos++;
+			_items[i].block = (int16)READ_BE_UINT16(pos);
+			pos += 2;
+			_items[i].next = (int16)READ_BE_UINT16(pos);
+			pos += 2;
+			_items[i].prev = (int16)READ_BE_UINT16(pos);
+			pos += 2;
+			_items[i].level = *pos++;
+			_items[i].value = (int8)*pos++;
+		}
+		_numItems += (temp / 14);
+		_items[22].nameUnid = _items[27].nameUnid = _items[28].nameUnid = _items[29].nameUnid = _items[59].nameUnid = 96;
+	}
+
+	if (_itemNamesStatic) {
+		_numItemNames = _numItemNamesStatic;
 		for (int i = 0; i < _numItemNames; i++) {
-			assert(strlen(_itemNamesPC98[i]) < 35);
-			Common::strlcpy(_itemNames[i], _itemNamesPC98[i], 34);
+			assert(strlen(_itemNamesStatic[i]) < 35);
+			Common::strlcpy(_itemNames[i], _itemNamesStatic[i], 34);
 		}
 	} else {
 		_numItemNames = s->readUint16();
@@ -64,7 +95,7 @@ void EoBCoreEngine::loadItemDefs() {
 
 	delete s;
 
-	s = _res->createEndianAwareReadStream("itemtype.dat");
+	s = getItemDefinitionFile(1);
 	uint16 numTypes = s->readUint16();
 
 	delete[] _itemTypes;
@@ -210,6 +241,9 @@ int EoBCoreEngine::validateInventorySlotForItem(Item item, int charIndex, int sl
 	if (item < 0)
 		return 0;
 
+	if (slot == 27)
+		return 1;
+
 	if (slot == 17 && item && !itemUsableByCharacter(charIndex, item)) {
 		_txt->printMessage(_validateArmorString[0], -1, _characters[charIndex].name);
 		return 0;
@@ -301,14 +335,14 @@ bool EoBCoreEngine::deletePartyItems(int16 itemType, int16 itemValue) {
 	return res;
 }
 
-int EoBCoreEngine::itemUsableByCharacter(int charIndex, Item item) {
+int EoBCoreEngine::itemUsableByCharacter(int charIndex, Item item) const {
 	if (!item)
 		return 1;
 
 	return (_itemTypes[_items[item].type].allowedClasses & _classModifierFlags[_characters[charIndex].cClass]);
 }
 
-int EoBCoreEngine::countQueuedItems(Item itemQueue, int16 id, int16 type, int count, int includeFlyingItems) {
+int EoBCoreEngine::countQueuedItems(Item itemQueue, int16 id, int16 type, int count, int includeFlyingItems) const {
 	uint16 o1 = itemQueue;
 	uint16 o2 = o1;
 
@@ -481,9 +515,22 @@ void EoBCoreEngine::drawItemIconShape(int pageNum, Item itemId, int x, int y) {
 	const uint8 *ovl = 0;
 	const uint8 *shp = _itemIconShapes[icn];
 
+	if (_xtraItemIconShapes) {
+		bool applyBluePalC = applyBluePal;
+		applyBluePal = false;
+		if (_items[itemId].nameUnid == 23)
+			shp = _xtraItemIconShapes[0];
+		else if (_items[itemId].nameUnid == 97)
+			shp = _xtraItemIconShapes[1];
+		else if (_items[itemId].nameId == 39)
+			shp = _xtraItemIconShapes[2];
+		else
+			applyBluePal = applyBluePalC;
+	}
+
 	if (applyBluePal) {
-		if (_amigaBlueItemIconShapes) {
-			shp = _amigaBlueItemIconShapes[icn];
+		if (_blueItemIconShapes) {
+			shp = _blueItemIconShapes[icn];
 		} else if (_flags.gameID == GI_EOB1) {
 			ovl = (_configRenderMode == Common::kRenderCGA) ? _itemsOverlayCGA : &_itemsOverlay[icn << 4];
 		} else {
@@ -712,7 +759,7 @@ void EoBCoreEngine::endObjectFlight(EoBFlyingObject *fo) {
 	if (fo->enable == 1) {
 		_items[fo->item].pos &= 3;
 		runLevelScript(fo->curBlock, 4);
-		updateEnvironmentalSfx(18);
+		snd_updateEnvironmentalSfx(18);
 	}
 	memset(fo, 0, sizeof(EoBFlyingObject));
 }

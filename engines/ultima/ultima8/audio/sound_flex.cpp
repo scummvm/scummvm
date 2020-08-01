@@ -38,6 +38,7 @@ SoundFlex::SoundFlex(Common::SeekableReadStream *rs) : Archive(rs), _samples(nul
 
 	Common::MemoryReadStream st(buf, size);
 
+	_index.push_back(SoundFlexEntry(""));
 	if (buf[0] == 0xFF) {
 		// Crusader flex has an index in the first object with the format:
 		// [00 or FF] [ 3 bytes, often 'oB0' or 'pB0' ] [ null-terminated name ]
@@ -94,7 +95,6 @@ void SoundFlex::cache(uint32 index) {
 
 	if (Std::strncmp(reinterpret_cast<const char *>(buf), "ASFX", 4) == 0) {
 		// After the 32 byte header, ASFX (crusader audio) is just raw data
-		// TODO: Check that 11025 is correct (seems like it?)
 		// TODO: Check if No Regret is Stereo and/or 16 bit?
 		const SoundFlexEntry &entry = _index[index];
 		debug(6, "SoundFlex: Playing sfx %d (%s) with data 0x%04X", index, entry._name.c_str(), entry._data);

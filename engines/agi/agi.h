@@ -500,6 +500,11 @@ struct AgiGame {
 
 	bool automaticRestoreGame;
 
+	uint16 appleIIgsSpeedControllerSlot;
+	int appleIIgsSpeedLevel;
+
+	void setAppleIIgsSpeedLevel(int appleIIgsSpeedLevel);
+
 	AgiGame() {
 		_vm = nullptr;
 
@@ -591,6 +596,9 @@ struct AgiGame {
 		nonBlockingTextCyclesLeft = 0;
 
 		automaticRestoreGame = false;
+
+		appleIIgsSpeedControllerSlot = 0xffff;	// we didn't add yet speed menu
+		appleIIgsSpeedLevel = 2;  // normal speed
 	}
 };
 

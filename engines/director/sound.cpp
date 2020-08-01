@@ -63,10 +63,8 @@ DirectorSound::~DirectorSound() {
 }
 
 SoundChannel *DirectorSound::getChannel(uint8 soundChannel) {
-	if (soundChannel == 0 || soundChannel > _channels.size()) {
-		warning("Invalid sound channel %d", soundChannel);
+	if (!isChannelValid(soundChannel))
 		return nullptr;
-	}
 	return &_channels[soundChannel - 1];
 }
 
@@ -77,6 +75,7 @@ void DirectorSound::playFile(Common::String filename, uint8 soundChannel) {
 	AudioFileDecoder af(filename);
 	Audio::RewindableAudioStream *sound = af.getAudioStream(DisposeAfterUse::YES);
 
+	cancelFade(soundChannel);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channels[soundChannel - 1].handle, sound, -1, _channels[soundChannel - 1].volume);
 }
 
@@ -89,11 +88,10 @@ void DirectorSound::playMCI(Audio::AudioStream &stream, uint32 from, uint32 to) 
 }
 
 void DirectorSound::playStream(Audio::AudioStream &stream, uint8 soundChannel) {
-	if (soundChannel == 0 || soundChannel > _channels.size()) {
-		warning("Invalid sound channel %d", soundChannel);
+	if (!isChannelValid(soundChannel))
 		return;
-	}
 
+	cancelFade(soundChannel);
 	_mixer->stopHandle(_channels[soundChannel - 1].handle);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channels[soundChannel - 1].handle, &stream, -1, _channels[soundChannel - 1].volume);
 }
@@ -133,30 +131,82 @@ void DirectorSound::playCastMember(int castId, uint8 soundChannel, bool allowRep
 	}
 }
 
-bool DirectorSound::isChannelActive(uint8 soundChannel) {
-	if (soundChannel == 0 || soundChannel > _channels.size()) {
-		warning("Invalid sound channel %d", soundChannel);
+void DirectorSound::registerFade(uint8 soundChannel, bool fadeIn, int ticks) {
+	if (!isChannelValid(soundChannel))
+		return;
+
+	cancelFade(soundChannel);
+
+	int startVol = fadeIn ? 0 :  _channels[soundChannel - 1].volume;
+	int targetVol = fadeIn ? _channels[soundChannel - 1].volume : 0;
+
+	_channels[soundChannel - 1].fade = new FadeParams(startVol, targetVol, ticks, _vm->getMacTicks(), fadeIn);
+	_mixer->setChannelVolume(_channels[soundChannel - 1].handle, startVol);
+}
+
+bool DirectorSound::fadeChannel(uint8 soundChannel) {
+	if (!isChannelValid(soundChannel) || !isChannelActive(soundChannel))
+		return false;
+
+	FadeParams *fade = _channels[soundChannel - 1].fade;
+	if (!fade)
+		return false;
+
+	fade->lapsedTicks = _vm->getMacTicks() - fade->startTicks;
+	if (fade->lapsedTicks > fade->totalTicks) {
+		cancelFade(soundChannel);
 		return false;
 	}
 
+	int fadeVol;
+	if (fade->fadeIn) {
+		fadeVol = MIN(fade->lapsedTicks * ((float)fade->targetVol / fade->totalTicks), (float)Audio::Mixer::kMaxChannelVolume);
+	} else {
+		fadeVol = MAX((fade->totalTicks - fade->lapsedTicks) * ((float)fade->startVol / fade->totalTicks), (float)0);
+	}
+
+	_mixer->setChannelVolume(_channels[soundChannel - 1].handle, fadeVol);
+	return true;
+}
+
+void DirectorSound::cancelFade(uint8 soundChannel) {
+	// NOTE: It is assumed that soundChannel has already been validated, which is
+	// why this method is private.
+
+	if (_channels[soundChannel - 1].fade) {
+		_mixer->setChannelVolume(_channels[soundChannel - 1].handle, _channels[soundChannel - 1].fade->targetVol);
+
+		delete _channels[soundChannel - 1].fade;
+		_channels[soundChannel - 1].fade = nullptr;
+	}
+}
+
+bool DirectorSound::isChannelActive(uint8 soundChannel) {
+	if (!isChannelValid(soundChannel))
+		return false;
 	return _mixer->isSoundHandleActive(_channels[soundChannel - 1].handle);
 }
 
-int DirectorSound::lastPlayingCast(uint8 soundChannel) {
+bool DirectorSound::isChannelValid(uint8 soundChannel) {
 	if (soundChannel == 0 || soundChannel > _channels.size()) {
 		warning("Invalid sound channel %d", soundChannel);
 		return false;
 	}
+	return true;
+}
+
+int DirectorSound::lastPlayingCast(uint8 soundChannel) {
+	if (!isChannelValid(soundChannel))
+		return false;
 
 	return _channels[soundChannel - 1].lastPlayingCast;
 }
 
 void DirectorSound::stopSound(uint8 soundChannel) {
-	if (soundChannel == 0 || soundChannel > _channels.size()) {
-		warning("Invalid sound channel %d", soundChannel);
+	if (!isChannelValid(soundChannel))
 		return;
-	}
 
+	cancelFade(soundChannel);
 	_mixer->stopHandle(_channels[soundChannel - 1].handle);
 	_channels[soundChannel - 1].lastPlayingCast = 0;
 	return;
@@ -164,9 +214,12 @@ void DirectorSound::stopSound(uint8 soundChannel) {
 
 void DirectorSound::stopSound() {
 	for (uint i = 0; i < _channels.size(); i++) {
+		cancelFade(i);
+
 		_mixer->stopHandle(_channels[i].handle);
 		_channels[i].lastPlayingCast = 0;
 	}
+
 	_mixer->stopHandle(*_scriptSound);
 	_mixer->stopHandle(*_pcSpeakerHandle);
 }

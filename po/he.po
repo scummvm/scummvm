@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
-"PO-Revision-Date: 2020-04-27 16:15+0000\n"
+"PO-Revision-Date: 2020-07-23 21:43+0000\n"
 "Last-Translator: Zvika <haramaty.zvika@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/he/>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
 "n % 10 == 0) ? 2 : 3));\n"
-"X-Generator: Weblate 3.11\n"
+"X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Hebrew\n"
 
 #: gui/about.cpp:102
@@ -40,21 +40,18 @@ msgstr "הצגת קבצים נסתרים"
 
 #: gui/browser.cpp:75
 msgid "Show files marked with the hidden attribute"
-msgstr "הצגת קבצים שסומנו כנסתרים"
+msgstr "הצגת קבצים עם תכונת הסתרה"
 
 #: gui/browser.cpp:79 gui/remotebrowser.cpp:57
-#, fuzzy
 msgid "Go up"
 msgstr "תיקיה למעלה"
 
 #: gui/browser.cpp:79 gui/browser.cpp:81 gui/remotebrowser.cpp:57
 #: gui/remotebrowser.cpp:59
-#, fuzzy
 msgid "Go to previous directory level"
 msgstr "חזרה אל התיקיה הקודמת"
 
 #: gui/browser.cpp:81 gui/remotebrowser.cpp:59
-#, fuzzy
 msgctxt "lowres"
 msgid "Go up"
 msgstr "תיקיה למעלה"
@@ -124,7 +121,7 @@ msgstr "הסתרה"
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
-msgstr "נראה כי החיבור שלך מוגבל. האם באמת להוריד קבצים?"
+msgstr "נראה כי החיבור מוגבל. האם להמשיך בהורדת קבצים?"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
@@ -154,8 +151,7 @@ msgstr "ScummVM לא הצליח לפתוח את התיקייה שנבחרה!"
 msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
-msgstr ""
-"לא ניתן ליצור תיקייה להורדות - ישנו קובץ עם אותו שם בתוך התיקייה שנבחרה."
+msgstr "לא ניתן ליצור תיקיה להורדה - קובץ באותו שם כבר קיים בתיקייה שנבחרה."
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:351
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:38 gui/launcher.cpp:487
@@ -236,7 +232,6 @@ msgid "Language:"
 msgstr "שפה:"
 
 #: gui/editgamedialog.cpp:152 gui/editgamedialog.cpp:153
-#, fuzzy
 msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
@@ -255,7 +250,7 @@ msgstr "פלטפורמה:"
 #: gui/editgamedialog.cpp:164 gui/editgamedialog.cpp:166
 #: gui/editgamedialog.cpp:167
 msgid "Platform the game was originally designed for"
-msgstr "פלטפורמה שהמשחק נבנה לה במקור"
+msgstr "הפלטפורמה עבורה עיצבו את המשחק במקור"
 
 #: gui/editgamedialog.cpp:166
 msgctxt "lowres"
@@ -277,12 +272,12 @@ msgstr "תצוגה"
 
 #: gui/editgamedialog.cpp:202
 msgid "Override global graphic settings"
-msgstr "ביטול הגדרות תצוגה גלובליות"
+msgstr "ביטול הגדרות תצוגה מקיפות"
 
 #: gui/editgamedialog.cpp:204
 msgctxt "lowres"
 msgid "Override global graphic settings"
-msgstr "בטל הגדרות תצוגה גלובליות"
+msgstr "ביטול הגדרות תצוגה מקיפות"
 
 #: gui/editgamedialog.cpp:214 gui/options.cpp:1705
 msgid "Shader"
@@ -310,12 +305,12 @@ msgstr "שמע"
 
 #: gui/editgamedialog.cpp:243
 msgid "Override global audio settings"
-msgstr "בטל הגדרות שמע גלובליות"
+msgstr "ביטול הגדרות שמע מקיפות"
 
 #: gui/editgamedialog.cpp:245
 msgctxt "lowres"
 msgid "Override global audio settings"
-msgstr "בטל הגדרות שמע גלובליות"
+msgstr "ביטול הגדרות שמע מקיפות"
 
 #: gui/editgamedialog.cpp:254 gui/options.cpp:1751
 msgid "Volume"
@@ -328,12 +323,12 @@ msgstr "עוצמת שמע"
 
 #: gui/editgamedialog.cpp:259
 msgid "Override global volume settings"
-msgstr "בטל הגדרות עוצמת שמע גלובליות"
+msgstr "ביטול הגדרות עוצמת שמע מקיפות"
 
 #: gui/editgamedialog.cpp:261
 msgctxt "lowres"
 msgid "Override global volume settings"
-msgstr "בטל הגדרות עוצמת שמע גלובליות"
+msgstr "ביטול הגדרות עוצמת שמע מקיפות"
 
 #: gui/editgamedialog.cpp:272 gui/options.cpp:1761
 msgid "MIDI"
@@ -341,12 +336,12 @@ msgstr "MIDI"
 
 #: gui/editgamedialog.cpp:275
 msgid "Override global MIDI settings"
-msgstr "בטל הגדרות MIDI גלובליות"
+msgstr "ביטול הגדרות MIDI מקיפות"
 
 #: gui/editgamedialog.cpp:277
 msgctxt "lowres"
 msgid "Override global MIDI settings"
-msgstr "בטל הגדרות MIDI גלובליות"
+msgstr "ביטול הגדרות MIDI מקיפות"
 
 #: gui/editgamedialog.cpp:287 gui/options.cpp:1767
 msgid "MT-32"
@@ -410,7 +405,7 @@ msgstr "נתיב שמירה:"
 
 #: gui/editgamedialog.cpp:340 engines/dialogs.cpp:338
 msgid "Achievements"
-msgstr ""
+msgstr "הישגים"
 
 #: gui/editgamedialog.cpp:364 gui/editgamedialog.cpp:454
 #: gui/editgamedialog.cpp:516 gui/editgamedialog.cpp:577 gui/options.cpp:1861
@@ -439,7 +434,7 @@ msgstr "בחר תיקיה על קבצי משחק נוספים"
 
 #: gui/editgamedialog.cpp:561 gui/options.cpp:2387
 msgid "Select directory for saved games"
-msgstr "בחר תיקיה לשמירת משחקים"
+msgstr "בחירת תיקיה לשמירת משחקים"
 
 #: gui/editgamedialog.cpp:567
 msgid ""
@@ -695,7 +690,7 @@ msgstr "ה~ו~ספת משחק..."
 
 #: gui/launcher.cpp:156 gui/launcher.cpp:166
 msgid "Add games to the list"
-msgstr ""
+msgstr "הוספת משחקים לרשימה"
 
 #: gui/launcher.cpp:157
 msgid "Mass Add..."
@@ -723,7 +718,6 @@ msgid "~A~dd Game..."
 msgstr "ה~ו~ספת משחק..."
 
 #: gui/launcher.cpp:167
-#, fuzzy
 msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "הוספה המונית..."
@@ -1220,7 +1214,7 @@ msgstr "נגישות"
 
 #: gui/options.cpp:1835
 msgid "Apply"
-msgstr "החל"
+msgstr "החלת הגדרות"
 
 #: gui/options.cpp:1925
 msgid "FluidSynth Settings"
@@ -2119,10 +2113,10 @@ msgid ""
 "the data files to your hard disk instead.\n"
 "See the README file for details."
 msgstr ""
-"נראה שאתה משחק ישירות במשחק הזה\n"
-"מהדיסק. ידוע שזה גורם לבעיות,\n"
-"ולכן מומלץ להעתיק\n"
-"במקום זאת, קבצי הנתונים בדיסק הקשיח.\n"
+"נראה שאתה משחק במשחק זה ישירות\n"
+"מהדיסק. ידוע שזה גורם לבעיות, \n"
+"ולכן מומלץ להעתיק את\n"
+"קבצי הנתונים לדיסק הקשיח.\n"
 "לפרטים, עיין בקובץ README."
 
 #: engines/engine.cpp:480
@@ -2544,7 +2538,7 @@ msgstr "מצב חלון"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:369 engines/scumm/help.cpp:87
 msgid "Toggle fullscreen"
-msgstr "הפעל/בטל מסך מלא"
+msgstr "מיתוג מסך מלא"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:376 engines/scumm/help.cpp:100
 #: engines/wintermute/keymapper_tables.h:642
@@ -2979,13 +2973,12 @@ msgid "Snap to edges"
 msgstr "הצמד לקצוות"
 
 #: backends/platform/3ds/options-dialog.cpp:53
-#, fuzzy
 msgid "Stretch to fit"
-msgstr "מתחים לחלון"
+msgstr "מתיחה"
 
 #: backends/platform/3ds/options-dialog.cpp:56
 msgid "Use Screen:"
-msgstr ""
+msgstr "שימוש במסך:"
 
 #: backends/platform/3ds/options-dialog.cpp:58
 msgctxt "3ds-screen"
@@ -3098,17 +3091,19 @@ msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:399
 msgid "Magnify Mode cannot be activated in menus."
-msgstr ""
+msgstr "מצב זכוכית מגדלת אינו זמין בתפריטים."
 
 #: backends/platform/3ds/osystem-events.cpp:402
 msgid ""
 "Magnify Mode can only be activated\n"
 " when both screens are enabled."
 msgstr ""
+"מצב זכוכית מגדלת ניתן להפעלה רק\n"
+"כאשר שני המסכים פעילים."
 
 #: backends/platform/3ds/osystem-events.cpp:404
 msgid "In-game resolution too small to magnify."
-msgstr ""
+msgstr "הפרדת משחק קטנה מכדי להפעיל זכוכית מגדלת."
 
 #: backends/platform/3ds/osystem-events.cpp:410
 msgid "Magnify Mode On. Switching to Hover Mode..."

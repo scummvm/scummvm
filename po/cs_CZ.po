@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
-"PO-Revision-Date: 2019-11-28 00:09+0000\n"
-"Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
+"PO-Revision-Date: 2020-07-23 21:43+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/cs/>\n"
 "Language: cs_CZ\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-2\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 3.9.1\n"
+"X-Generator: Weblate 4.0.4\n"
 "X-Poedit-SourceCharset: iso-8859-2\n"
 "X-Poedit-Basepath: ..\n"
 "X-Language-name: Cesky\n"
@@ -301,9 +301,8 @@ msgid "Override global shader settings"
 msgstr "Potlaèit globální nastavení zvuku"
 
 #: gui/editgamedialog.cpp:233 gui/options.cpp:1739 engines/dialogs.cpp:329
-#, fuzzy
 msgid "Keymaps"
-msgstr "Mapa Kláves:"
+msgstr "Rozlo¾ení klávesnice"
 
 #: gui/editgamedialog.cpp:240 gui/options.cpp:1746 engines/dialogs.cpp:304
 msgid "Audio"
@@ -411,7 +410,7 @@ msgstr "Cesta pro ulo¾ení:"
 
 #: gui/editgamedialog.cpp:340 engines/dialogs.cpp:338
 msgid "Achievements"
-msgstr ""
+msgstr "Úspìchy"
 
 #: gui/editgamedialog.cpp:364 gui/editgamedialog.cpp:454
 #: gui/editgamedialog.cpp:516 gui/editgamedialog.cpp:577 gui/options.cpp:1861
@@ -572,13 +571,12 @@ msgstr ""
 
 #: gui/gui-manager.cpp:116
 msgid "GUI"
-msgstr ""
+msgstr "GUI"
 
 #: gui/gui-manager.cpp:120 engines/mohawk/myst.cpp:585
 #: engines/mohawk/riven.cpp:854
-#, fuzzy
 msgid "Interact"
-msgstr "Interpolace:"
+msgstr "Interakce"
 
 #: gui/gui-manager.cpp:125 gui/unknown-game-dialog.cpp:54
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
@@ -698,7 +696,7 @@ msgstr "~P~øidat hru..."
 
 #: gui/launcher.cpp:156 gui/launcher.cpp:166
 msgid "Add games to the list"
-msgstr ""
+msgstr "Pøidat hry do seznamu"
 
 #: gui/launcher.cpp:157
 msgid "Mass Add..."
@@ -795,7 +793,7 @@ msgstr "ScummVM nemohl v zadaném adresáøi najít ¾ádnou hru!"
 
 #: gui/launcher.cpp:571
 msgid "Unknown variant"
-msgstr "Neznámá verze"
+msgstr "Neznámá varianta"
 
 #: gui/launcher.cpp:577
 msgid "Pick the game:"
@@ -931,12 +929,12 @@ msgstr "Mrtvá zóna Joysticku:"
 #: gui/options.cpp:1169
 #, c-format
 msgid "%d hidden achievements remaining"
-msgstr ""
+msgstr "Zbývá %d skrytých úkolù"
 
 #: gui/options.cpp:1174
 #, c-format
 msgid "Achievements unlocked: %d/%d"
-msgstr ""
+msgstr "Úkolù splnìno: %d/%d"
 
 #: gui/options.cpp:1193
 msgid "HW Shader:"
@@ -969,7 +967,7 @@ msgstr "Speciální re¾imy chvìní podporované nìkterými hrami"
 
 #: gui/options.cpp:1243
 msgid "Stretch mode:"
-msgstr "Re¾im rozta¾ení:"
+msgstr "Re¾im prota¾ení:"
 
 #: gui/options.cpp:1254 backends/graphics/sdl/sdl-graphics.cpp:356
 msgid "Fullscreen mode"
@@ -993,7 +991,7 @@ msgstr "Korigovat pomìr stran pro hry 320x200"
 
 #: gui/options.cpp:1268
 msgid "Preferred device:"
-msgstr "Upøednostòované zaøízení:"
+msgstr "Prioritní zaøízení:"
 
 #: gui/options.cpp:1268
 msgid "Music device:"
@@ -1008,10 +1006,9 @@ msgid "Specifies output sound device or sound card emulator"
 msgstr "Stanoví výstupní zvukové zaøízení nebo emulátor zvukové karty"
 
 #: gui/options.cpp:1270
-#, fuzzy
 msgctxt "lowres"
 msgid "Preferred dev.:"
-msgstr "Prioritní Zaø.:"
+msgstr "Prioritní zaøízení:"
 
 #: gui/options.cpp:1270
 msgctxt "lowres"
@@ -1027,9 +1024,8 @@ msgid "AdLib is used for music in many games"
 msgstr "AdLib se pou¾ívá pro hudbu v mnoha hrách"
 
 #: gui/options.cpp:1311
-#, fuzzy
 msgid "GM device:"
-msgstr "GM Zaøízení:"
+msgstr "GM zaøízení:"
 
 #: gui/options.cpp:1311
 msgid "Specifies default sound device for General MIDI output"
@@ -1222,12 +1218,12 @@ msgstr "LAN"
 
 #: gui/options.cpp:1823
 msgid "Accessibility"
-msgstr ""
+msgstr "Pøístupnost"
 
 #: gui/options.cpp:1825
 msgctxt "lowres"
 msgid "Accessibility"
-msgstr ""
+msgstr "Pøístupnost"
 
 #: gui/options.cpp:1835
 msgid "Apply"
@@ -1281,7 +1277,6 @@ msgid "Keys"
 msgstr "Klávesy"
 
 #: gui/options.cpp:2005
-#, fuzzy
 msgid "GUI language:"
 msgstr "Jazyk GUI:"
 
@@ -1291,7 +1286,7 @@ msgstr "Jazyk GUI ScummVM"
 
 #: gui/options.cpp:2031
 msgid "Switch the GUI language to the game language"
-msgstr "Zmìnit jazyk GUI na jazyk hry"
+msgstr "Pøepnout jazyk GUI do jazyka hry"
 
 #: gui/options.cpp:2032
 msgid ""
@@ -1299,18 +1294,20 @@ msgid ""
 "if a game uses the ScummVM save and load dialogs, they are in the same "
 "language as the game."
 msgstr ""
-"Pøi spu¹tìní hry bude jazyk rozhraní zmìnìn na jazyk hry. Pokud hra vyu¾ívá "
-"dialogová okna ScummVM, zobrazí se následnì ve stejném jazyce jako má hra."
+"Pøi spou¹tìní hry zmìòte jazyk GUI na jazyk hry. Tímto zpùsobem jsou ve høe "
+"pøi ukládání a nahrávání dialogy ScummVM ve stejném jazyce."
 
 #: gui/options.cpp:2045
 msgid "Use native system file browser"
-msgstr ""
+msgstr "Pou¾ít systémový prohlí¾eè souborù"
 
 #: gui/options.cpp:2046
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
 msgstr ""
+"Pou¾ití systémového prohlí¾eèe souborù k výbìru souboru nebo adresáøe místo "
+"prohlí¾eèe ScummVM."
 
 #: gui/options.cpp:2053 gui/updates-dialog.cpp:86
 msgid "Update check:"
@@ -1337,16 +1334,19 @@ msgctxt "lowres"
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
+"4. Úlo¾i¹tì je¹tì není povoleno. Ovìøte správnost u¾ivatelského jména a "
+"povolte jej:"
 
 #: gui/options.cpp:2083
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
+"4. Úlo¾i¹tì není je¹tì povoleno. Ovìøte správnost u¾ivatelského jména a "
+"povolte jej:"
 
 #: gui/options.cpp:2084
-#, fuzzy
 msgid "Enable storage"
-msgstr "Povolit publikum ve studiu"
+msgstr "Povolit úlo¾i¹tì"
 
 #: gui/options.cpp:2084
 msgid "Confirm you want to use this account for this storage"
@@ -1373,14 +1373,13 @@ msgid "Space used by ScummVM's saved games on this storage"
 msgstr "Prostor vyu¾itý ulo¾enými hrami ScummVM v tomto úlo¾i¹ti"
 
 #: gui/options.cpp:2092
-#, fuzzy
 msgid "Last sync:"
-msgstr "Datum poslední synchronizace:"
+msgstr "Poslední synchronizace:"
 
 #: gui/options.cpp:2092
-#, fuzzy
 msgid "When was the last time saved games were synced with this storage"
-msgstr "Kdy byla provedena poslední synchronizace ulo¾ených her"
+msgstr ""
+"Kdy byla provedena poslední synchronizace ulo¾ených her s tímto ulo¾i¹tìm"
 
 #: gui/options.cpp:2093 gui/options.cpp:2812
 msgid "<never>"
@@ -1427,11 +1426,11 @@ msgstr "Otevøít dialogové okno správce stahovaní"
 #: gui/options.cpp:2107
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
-msgstr ""
+msgstr "Pro zmìnu úètu k tomuto ulo¾i¹ti se odpojte a znovu pøipojte:"
 
 #: gui/options.cpp:2109
 msgid "To change account for this storage, disconnect and connect again:"
-msgstr ""
+msgstr "Pro zmìnu úètu pro toto úlo¾i¹tì se odpojte a znovu pøipojte:"
 
 #: gui/options.cpp:2110
 msgid "Disconnect"
@@ -1439,16 +1438,16 @@ msgstr "Odpojit"
 
 #: gui/options.cpp:2110
 msgid "Stop using this storage on this device"
-msgstr ""
+msgstr "Pøestat pou¾ívat toto úlo¾i¹tì na tomto zaøízení"
 
 #: gui/options.cpp:2113
 msgctxt "lowres"
 msgid "This storage is not connected yet! To connect,"
-msgstr ""
+msgstr "Toto úlo¾i¹tì není je¹tì pøipojeno! Pro pøipojení"
 
 #: gui/options.cpp:2115
 msgid "This storage is not connected yet! To connect,"
-msgstr ""
+msgstr "Toto úlo¾i¹tì není je¹tì pøipojeno! Pro pøipojení"
 
 #: gui/options.cpp:2116
 msgid "1. Open this link:"
@@ -1473,19 +1472,15 @@ msgstr "Vlo¾it"
 
 #: gui/options.cpp:2123
 msgid "Paste code from clipboard"
-msgstr ""
+msgstr "Vlo¾it kód ze schránky"
 
 #: gui/options.cpp:2124
-#, fuzzy
 msgid "3. Connect"
-msgstr "Pøipojit"
+msgstr "3. Pøipojit"
 
 #: gui/options.cpp:2124
-#, fuzzy
 msgid "Connect your cloud storage account"
-msgstr ""
-"Otevøít dialogové okno prùvodce pro pøipojení k va¹emu úètu cloudového "
-"úlo¾i¹tì"
+msgstr "Pøipojení úètu cloudového úlo¾i¹tì"
 
 #: gui/options.cpp:2133
 msgid "Run server"
@@ -1505,9 +1500,8 @@ msgid "/root/ Path:"
 msgstr "Cesta /root/:"
 
 #: gui/options.cpp:2138 gui/options.cpp:2140 gui/options.cpp:2141
-#, fuzzy
 msgid "Select which directory will be shown as /root/ in the Files Manager"
-msgstr "Urèuje do kterého adresáøe má Správce souborù pøístup"
+msgstr "Vyberte slo¾ku, která se zobrazí jako /root/ ve Správci souborù"
 
 #: gui/options.cpp:2140
 msgid "/root/ Path:"
@@ -1524,33 +1518,32 @@ msgstr ""
 #: gui/options.cpp:2151
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
-msgstr ""
+msgstr "Spustit server pro správu souborù v prohlí¾eèi (ve stejné síti)."
 
 #: gui/options.cpp:2152
 msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
-msgstr ""
+msgstr "Zavøení okna mo¾ností zastaví server."
 
 #: gui/options.cpp:2154
 msgid "Run server to manage files with browser (in the same network)."
-msgstr ""
+msgstr "Spustit server pro správu souborù pomocí prohlí¾eèe (ve stejné síti)."
 
 #: gui/options.cpp:2155
 msgid "Closing options dialog will stop the server."
-msgstr ""
+msgstr "Zavøení dialogu mo¾ností zastaví server."
 
 #: gui/options.cpp:2167
 msgid "Use Text to speech"
-msgstr "Pou¾ít pøevod textu na øeè"
+msgstr "Pou¾ít Text ke ètení"
 
 #: gui/options.cpp:2167
 msgid "Will read text in gui on mouse over."
-msgstr ""
+msgstr "Bude èíst text GUI pøi najetí my¹i."
 
 #: gui/options.cpp:2183
-#, fuzzy
 msgid "None"
-msgstr "®ádné"
+msgstr "Prázdné"
 
 #: gui/options.cpp:2253
 msgid "Failed to change cloud storage!"
@@ -1605,9 +1598,8 @@ msgstr ""
 "Prosím pøejdìte na tuto stránku sami."
 
 #: gui/options.cpp:2574
-#, fuzzy
 msgid "Another Storage is working now. Do you want to interrupt it?"
-msgstr "Jiné úlo¾i¹tì je aktivní. Chcete ho pøeru¹it?"
+msgstr "Jiné úlo¾i¹tì právì pracuje. Chcete ho pøeru¹it?"
 
 #: gui/options.cpp:2583 gui/options.cpp:2621
 msgid "Wait until current Storage finishes up and try again."
@@ -1616,14 +1608,12 @@ msgstr ""
 "znova."
 
 #: gui/options.cpp:2596
-#, fuzzy
 msgid "Connecting..."
-msgstr "Pøipojit"
+msgstr "Pøipojování..."
 
 #: gui/options.cpp:2612
-#, fuzzy
 msgid "This Storage is working now. Do you want to interrupt it?"
-msgstr "Jiné úlo¾i¹tì je aktivní. Chcete ho pøeru¹it?"
+msgstr "Toto úlo¾i¹tì právì pracuje. Chcete ho pøeru¹it?"
 
 #: gui/options.cpp:2810 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
@@ -1638,19 +1628,16 @@ msgid "Stop local webserver"
 msgstr "Zastavit místní internetový server"
 
 #: gui/options.cpp:2972
-#, fuzzy
 msgid "Storage connected."
-msgstr "Prùvodce pøipojením k úlo¾i¹ti %s"
+msgstr "Úlo¾i¹tì pøipojeno."
 
 #: gui/options.cpp:2974
-#, fuzzy
 msgid "Failed to connect storage."
-msgstr "Nelze zmìnit cloudové úlo¾i¹tì!"
+msgstr "Pøipojení úlo¾i¹tì selhalo."
 
 #: gui/options.cpp:2976
-#, fuzzy
 msgid "Failed to connect storage: "
-msgstr "Nelze zmìnit cloudové úlo¾i¹tì!"
+msgstr "Pøipojení k úlo¾i¹ti selhalo: "
 
 #: gui/options.cpp:2996
 msgid ""
@@ -1830,37 +1817,36 @@ msgid "Antialiased"
 msgstr "S vyhlazenými hranami"
 
 #: gui/unknown-game-dialog.cpp:49
-#, fuzzy
 msgid "Add anyway"
-msgstr "Pøesto spustit"
+msgstr "Pøesto pøidat"
 
 #: gui/unknown-game-dialog.cpp:58
 msgid "Copy to clipboard"
 msgstr "Zkopírovat do schránky"
 
 #: gui/unknown-game-dialog.cpp:64
-#, fuzzy
 msgid "Report game"
-msgstr "Obnovit hru:"
+msgstr "Nahlásit hru"
 
 #: gui/unknown-game-dialog.cpp:101
 msgid ""
 "Use the button below to copy the required game information into your "
 "clipboard."
 msgstr ""
+"Pou¾ijte toto tlaèítko pro zkopírování potøebných herních dat do schránky."
 
 #: gui/unknown-game-dialog.cpp:106
 msgid "You can also directly report your game to the Bug Tracker."
-msgstr ""
+msgstr "Také je mo¾no pøímo nahlásit chybu ve høe do Bug Trackeru."
 
 #: gui/unknown-game-dialog.cpp:156
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
-msgstr ""
+msgstr "V¹echna potøebná data o høe byla zkopírována do schránky"
 
 #: gui/unknown-game-dialog.cpp:158
 msgid "Copying the game information to the clipboard has failed!"
-msgstr ""
+msgstr "Kopírování herních dat do schránky selhalo!"
 
 #: gui/updates-dialog.cpp:49
 msgid ""
@@ -1919,7 +1905,7 @@ msgstr "Nepodporovaný barevný re¾im"
 
 #: common/error.cpp:46
 msgid "Audio device initialization failed"
-msgstr ""
+msgstr "Automatické rozpoznání zaøízení selhalo"
 
 #: common/error.cpp:49
 msgid "Read permission denied"
@@ -2015,6 +2001,7 @@ msgstr "<©patná hodnota>"
 #: engines/advancedDetector.cpp:139
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr ""
+"Rozpoznána nelegální kopie hry. V tìchto pøípadech ¾ádnou podporu nenabízíme"
 
 #: engines/dialogs.cpp:73
 msgid "~R~esume"
@@ -2115,9 +2102,9 @@ msgid "~K~eys"
 msgstr "~K~lávesy"
 
 #: engines/engine.cpp:318
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to resolution '%dx%d'."
-msgstr "Nelze pøepnout na re¾im obrazu: '"
+msgstr "Nelze pøepnout na re¾im obrazu: '%dx%d'."
 
 #: engines/engine.cpp:327
 msgid "Could not initialize color format."
@@ -2174,14 +2161,12 @@ msgstr ""
 "Pro podrobnosti si pøeètìte README."
 
 #: engines/engine.cpp:510 engines/sky/detection.cpp:316
-#, fuzzy
 msgid "Autosave"
-msgstr "Autoukládání:"
+msgstr "Automatické ukládání"
 
 #: engines/engine.cpp:512
-#, fuzzy
 msgid "Error occurred making autosave"
-msgstr "Chyba pøi spu¹tìní hry:"
+msgstr "Pøi ukládání se vyskytla chyba"
 
 #: engines/engine.cpp:584
 #, c-format
@@ -2209,11 +2194,11 @@ msgstr "Pøesto spustit"
 
 #: engines/engine.cpp:744
 msgid "Loading game is currently unavailable"
-msgstr ""
+msgstr "Naètení hry je momentálnì nedostupné"
 
 #: engines/engine.cpp:773
 msgid "Saving game is currently unavailable"
-msgstr ""
+msgstr "Ulo¾ení hry je momentálnì nedostupné"
 
 #: engines/game.cpp:171
 #, c-format
@@ -2229,14 +2214,13 @@ msgstr ""
 "kterou jste chtìli pøidat, a její verzí, jazykem, atd.:"
 
 #: engines/game.cpp:175
-#, fuzzy, c-format
+#, c-format
 msgid "Matched game IDs for the %s engine:"
-msgstr "Shodné ID hry:"
+msgstr "Odpovídající herní ID pro engine %s:"
 
 #: audio/adlib.cpp:2293
-#, fuzzy
 msgid "AdLib emulator"
-msgstr "AdLib emulátor:"
+msgstr "AdLib emulátor"
 
 #: audio/fmopl.cpp:72
 msgid "MAME OPL emulator"
@@ -2308,23 +2292,20 @@ msgid "Starting MIDI dump"
 msgstr ""
 
 #: audio/mods/paula.cpp:303
-#, fuzzy
 msgid "Amiga Audio emulator"
-msgstr "Emulátor zvuku Amiga"
+msgstr "Emulátor zvuku pro Amiga"
 
 #: audio/null.h:44
 msgid "No music"
 msgstr "Bez hudby"
 
 #: audio/softsynth/appleiigs.cpp:33
-#, fuzzy
 msgid "Apple II GS emulator (NOT IMPLEMENTED)"
-msgstr "Apple II GS Emulátor (NENÍ ZAVEDEN)"
+msgstr "Apple II GS Emulátor (NENÍ IMPLEMENTOVÁN)"
 
 #: audio/softsynth/cms.cpp:351
-#, fuzzy
 msgid "Creative Music System emulator"
-msgstr "Emulátor hudebního systému Creative"
+msgstr "Emulátor pro Creative Music System"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:32
 msgid "FM-Towns Audio"
@@ -2339,29 +2320,24 @@ msgid "Initializing MT-32 Emulator"
 msgstr "Zavádím MT-32 Emulátor"
 
 #: audio/softsynth/mt32.cpp:442
-#, fuzzy
 msgid "MT-32 emulator"
-msgstr "MT-32 Emulátor"
+msgstr "MT-32 emulátor"
 
 #: audio/softsynth/pcspk.cpp:139
-#, fuzzy
 msgid "PC Speaker emulator"
-msgstr "PC Speaker Emulátor"
+msgstr "PC Speaker emulátor"
 
 #: audio/softsynth/pcspk.cpp:158
-#, fuzzy
 msgid "IBM PCjr emulator"
-msgstr "IBM PCjr Emulátor"
+msgstr "IBM PCjr emulátor"
 
 #: audio/softsynth/sid.cpp:1434
-#, fuzzy
 msgid "C64 Audio emulator"
 msgstr "Emulátor zvuku C64"
 
 #: backends/cloud/cloudmanager.cpp:156
-#, fuzzy
 msgid "<syncing...>"
-msgstr "Pøipojit"
+msgstr "<synchronizace...>"
 
 #: backends/cloud/storage.cpp:242
 msgid "Saved games sync was cancelled."
@@ -2414,9 +2390,8 @@ msgid "Quit"
 msgstr "Ukonèit"
 
 #: backends/events/default/default-events.cpp:293
-#, fuzzy
 msgid "Global"
-msgstr " (Globální)"
+msgstr "Globální"
 
 #: backends/events/default/default-events.cpp:296
 #, fuzzy
@@ -2433,9 +2408,8 @@ msgid "Toggle mute"
 msgstr "Povolit zachycování my¹i"
 
 #: backends/events/default/default-events.cpp:336
-#, fuzzy
 msgid "Open Debugger"
-msgstr "Ladící program"
+msgstr "Otevøít ladící program"
 
 #: backends/events/gph/gph-events.cpp:423
 #: backends/events/gph/gph-events.cpp:466
@@ -2523,29 +2497,28 @@ msgstr "OpenGL"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:237
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:81
-#, fuzzy
 msgid "Center"
-msgstr "Enter"
+msgstr "Vystøedit"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:238
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:82
 msgid "Pixel-perfect scaling"
-msgstr ""
+msgstr "Pixelovì pøesné ¹kálování"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:239
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:83
 msgid "Fit to window"
-msgstr ""
+msgstr "Pøizpùsobit oknu"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:240
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:84
 msgid "Stretch to window"
-msgstr ""
+msgstr "Roztáhnout do okna"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:241
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:85
 msgid "Fit to window (4:3)"
-msgstr ""
+msgstr "Pøizpùsobit oknu (4:3)"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:586
 #, c-format
@@ -2613,48 +2586,43 @@ msgstr "Povolit zachycování my¹i"
 #: engines/wintermute/keymapper_tables.h:1258
 #: engines/wintermute/keymapper_tables.h:1289
 msgid "Save screenshot"
-msgstr ""
+msgstr "Ulo¾it snímek obrazovky"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:387
-#, fuzzy
 msgid "Toggle aspect ratio correction"
-msgstr "Povolit korekci pomìru stran"
+msgstr "Pøepnout korekci pomìru stran"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:394
-#, fuzzy
 msgid "Toggle linear filtered scaling"
-msgstr "Pro ¹kálování grafiky pou¾ít lineární filtrování"
+msgstr "Pou¾ít lineární ¹kálování"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:401
-#, fuzzy
 msgid "Cycle through stretch modes"
-msgstr "Nelze pøepnout na re¾im rozta¾ení '%s'."
+msgstr "Pøepínat mezi re¾imy rozta¾ení"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:407
-#, fuzzy
 msgid "Increase the scale factor"
-msgstr "Zvìt¹it / Zmen¹it faktor zmìny velikosti"
+msgstr "Zvìt¹it faktor zmìny velikosti"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:413
-#, fuzzy
 msgid "Decrease the scale factor"
-msgstr "Zvìt¹it / Zmen¹it faktor zmìny velikosti"
+msgstr "Zmen¹it faktor zmìny velikosti"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:425
 msgid "Switch to nearest neighbour scaling"
-msgstr ""
+msgstr "Pøepnout na nejbli¾¹í ¹kálování"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:426
 msgid "Switch to AdvMame 2x/3x scaling"
-msgstr ""
+msgstr "Pøepnout na velikost AdvMama 2x/3x"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:428
 msgid "Switch to HQ 2x/3x scaling"
-msgstr ""
+msgstr "Pøepnout na ¹kálování HQ 2x/3x"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:430
 msgid "Switch to 2xSai scaling"
-msgstr ""
+msgstr "Pøepnout na ¹kálování 2xSai"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:431
 msgid "Switch to Super2xSai scaling"
@@ -4610,14 +4578,12 @@ msgid "Open main menu"
 msgstr ""
 
 #: engines/mohawk/myst.cpp:591 engines/mohawk/riven.cpp:860
-#, fuzzy
 msgid "Load game state"
-msgstr "Nahrát hru:"
+msgstr "Nahrát hru"
 
 #: engines/mohawk/myst.cpp:596 engines/mohawk/riven.cpp:865
-#, fuzzy
 msgid "Save game state"
-msgstr "Ulo¾it hru:"
+msgstr "Ulo¾it hru"
 
 #: engines/mohawk/myst.cpp:601 engines/mohawk/riven.cpp:870
 msgid "Show options menu"
@@ -4885,14 +4851,12 @@ msgid "???"
 msgstr ""
 
 #: engines/pegasus/pegasus.cpp:2577
-#, fuzzy
 msgid "Save Game"
-msgstr "Ulo¾it hru:"
+msgstr "Ulo¾it hru"
 
 #: engines/pegasus/pegasus.cpp:2583
-#, fuzzy
 msgid "Load Game"
-msgstr "Nahrát hru:"
+msgstr "Nahrát hru"
 
 #: engines/queen/detection.cpp:56
 msgid "Alternative intro"
@@ -6137,15 +6101,14 @@ msgid "Unable to locate the '%s' data file."
 msgstr "Nelze najít datové soubory jádra '%s'."
 
 #: engines/ultima/shared/engine/data_archive.cpp:81
-#, fuzzy, c-format
+#, c-format
 msgid "Could not locate engine data %s"
-msgstr "Nelze najít datové soubory jádra '%s'."
+msgstr "Nelze najít datové soubory jádra %s"
 
 #: engines/ultima/shared/engine/data_archive.cpp:99
-#, fuzzy, c-format
+#, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
-msgstr ""
-"Nalezena data jádra '%s' s nesprávnou verzí. Oèekávána %d.%d, ale byla %d.%d."
+msgstr "Nalezena data jádra. Oèekávána %d.%d, ale byla %d.%d"
 
 #: engines/ultima/nuvie/save/save_game.cpp:212
 #, fuzzy
@@ -6484,9 +6447,8 @@ msgid "Change font size"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:602
-#, fuzzy
 msgid "Save game"
-msgstr "Ulo¾it hru:"
+msgstr "Ulo¾it hru"
 
 #: engines/wintermute/keymapper_tables.h:612
 #, fuzzy
@@ -6545,39 +6507,32 @@ msgid "Select next music record"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:690
-#, fuzzy
 msgid "Play note 1: A"
-msgstr "Doba hraní: "
+msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:695
-#, fuzzy
 msgid "Play note 2: F#"
-msgstr "Doba hraní: "
+msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:700
-#, fuzzy
 msgid "Play note 3: D#"
-msgstr "Doba hraní: "
+msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:705
-#, fuzzy
 msgid "Play note 4: C#"
-msgstr "Doba hraní: "
+msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:710
-#, fuzzy
 msgid "Play note 5: E"
-msgstr "Doba hraní: "
+msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:715
-#, fuzzy
 msgid "Play note 6: G#"
-msgstr "Doba hraní: "
+msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:720
-#, fuzzy
 msgid "Play note 7: B"
-msgstr "Doba hraní: "
+msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:733
 msgid "Ability: Telekinesis"
@@ -6706,9 +6661,8 @@ msgid "Show journal"
 msgstr "Zobrazit V¹e"
 
 #: engines/wintermute/keymapper_tables.h:1356
-#, fuzzy
 msgid "Music menu"
-msgstr "Hlasitost hudby:"
+msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:1376
 msgid "Rotate"

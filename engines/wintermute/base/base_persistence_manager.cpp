@@ -36,7 +36,6 @@
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/save_thumb_helper.h"
 #include "engines/wintermute/base/sound/base_sound.h"
-#include "graphics/transparent_surface.h"
 #include "engines/wintermute/wintermute.h"
 #include "graphics/scaler.h"
 #include "image/bmp.h"
@@ -173,11 +172,9 @@ void BasePersistenceManager::getSaveStateDesc(int slot, SaveStateDescriptor &des
 		Image::BitmapDecoder bmpDecoder;
 		if (bmpDecoder.loadStream(thumbStream)) {
 			const Graphics::Surface *bmpSurface = bmpDecoder.getSurface();
-			Graphics::TransparentSurface *scaleableSurface = new Graphics::TransparentSurface(*bmpSurface, false);
-			Graphics::Surface *scaled = scaleableSurface->scale(kThumbnailWidth, kThumbnailHeight2);
+			Graphics::Surface *scaled = bmpSurface->scale(kThumbnailWidth, kThumbnailHeight2);
 			Graphics::Surface *thumb = scaled->convertTo(g_system->getOverlayFormat());
 			desc.setThumbnail(thumb);
-			delete scaleableSurface;
 			scaled->free();
 			delete scaled;
 		}

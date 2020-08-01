@@ -29,7 +29,7 @@
 
 #include "common/textconsole.h"
 
-static bool timerInstalled = false;
+static volatile bool timerInstalled = false;
 
 static Uint32 timer_handler(Uint32 interval, void *param) {
 	if (!timerInstalled)

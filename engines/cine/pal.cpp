@@ -140,19 +140,29 @@ int power(int base, int power) {
 }
 } // end of anonymous namespace
 
-// a.k.a. palRotate
-Palette &Palette::rotateRight(byte firstIndex, byte lastIndex, signed rotationAmount) {
-	debug(1, "Palette::rotateRight(firstIndex: %d, lastIndex: %d, rotationAmount:%d)", firstIndex, lastIndex, rotationAmount);
-	assert(rotationAmount >= 0);
+Palette &Palette::rotateRight(byte firstIndex, byte lastIndex) {
+	debug(1, "Palette::rotateRight(firstIndex: %d, lastIndex: %d)", firstIndex, lastIndex);
 
-	for (int j = 0; j < rotationAmount; j++) {
-		const Color lastColor = _colors[lastIndex];
+	const Color lastColor = _colors[lastIndex];
 
-		for (int i = lastIndex; i > firstIndex; i--)
-			_colors[i] = _colors[i - 1];
+	for (uint i = lastIndex; i > firstIndex; i--)
+		_colors[i] = _colors[i - 1];
 
-		_colors[firstIndex] = lastColor;
-	}
+	_colors[firstIndex] = lastColor;
+
+	return *this;
+}
+
+Palette &Palette::rotateLeft(byte firstIndex, byte lastIndex) {
+	debug(1, "Palette::rotateLeft(firstIndex: %d, lastIndex: %d)", firstIndex, lastIndex);
+
+	const Color firstColor = _colors[firstIndex];
+
+	for (uint i = firstIndex; i < lastIndex; i++)
+		_colors[i] = _colors[i + 1];
+
+	_colors[lastIndex] = firstColor;
+
 	return *this;
 }
 
@@ -162,6 +172,47 @@ bool Palette::empty() const {
 
 uint Palette::colorCount() const {
 	return _colors.size();
+}
+
+byte Palette::brightness(byte colorIndex) {
+	return (byte) ((_colors[colorIndex].r*19 +
+		_colors[colorIndex].g*38 +
+		_colors[colorIndex].b*7) / 64);
+}
+
+bool Palette::isEqual(byte index1, byte index2) {
+	return _colors[index1].r == _colors[index2].r &&
+		_colors[index1].g == _colors[index2].g &&
+		_colors[index1].b == _colors[index2].b;
+}
+
+int Palette::findMinBrightnessColorIndex(uint minColorIndex) {
+	int minFoundBrightness = 999;
+	int foundColorIndex = 0;
+	for (uint i = minColorIndex; i < colorCount(); i++) {
+		byte currColorBrightness = brightness(i);
+		if (currColorBrightness < minFoundBrightness) {
+			minFoundBrightness = currColorBrightness;
+			foundColorIndex = i;
+		}
+	}
+
+	return (_colors.size() >= 3 && isEqual(2, foundColorIndex)) ? 0 : foundColorIndex;
+}
+
+bool Palette::ensureContrast(byte &minBrightnessColorIndex) {
+	minBrightnessColorIndex = findMinBrightnessColorIndex();
+	if (_colors.size() >= 3 && isEqual(2, minBrightnessColorIndex)) {
+		Color black = {0, 0, 0};
+		Color white = {_format.rMax(), _format.gMax(), _format.bMax()};
+
+		_colors[2] = white;
+		if (isEqual(2, minBrightnessColorIndex)) {
+			_colors[minBrightnessColorIndex] = black;
+		}
+		return true;
+	}
+	return false;
 }
 
 Palette &Palette::fillWithBlack() {
@@ -187,10 +238,15 @@ const Graphics::PixelFormat &Palette::colorFormat() const {
 
 void Palette::setGlobalOSystemPalette() const {
 	byte buf[256 * 3]; // Allocate space for the largest possible palette
+
+	if (g_cine->mayHave256Colors()) {
+		memset(buf, 0, sizeof(buf)); // Clear whole palette
+	}
+	
 	// The color format used by OSystem's setPalette-function:
 	save(buf, sizeof(buf), Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0), CINE_LITTLE_ENDIAN);
 
-	if (g_cine->getPlatform() == Common::kPlatformAmiga && colorCount() == 16) {
+	if (renderer->useTransparentDialogBoxes() && colorCount() == 16) {
 		// The Amiga version of Future Wars does use the upper 16 colors for a darkened
 		// game palette to allow transparent dialog boxes. To support that in our code
 		// we do calculate that palette over here and append it to the screen palette.
@@ -198,6 +254,13 @@ void Palette::setGlobalOSystemPalette() const {
 			buf[16 * 3 + i] = buf[i] >> 1;
 
 		g_system->getPaletteManager()->setPalette(buf, 0, colorCount() * 2);
+	} else if (g_cine->mayHave256Colors()) {
+		// If 256 colors are possible then always set 256 colors
+		// because resources may be a combination of 16 colors and 256 colors
+		// and going from a 16 color screen to a 256 color screen (e.g. when leaving
+		// the rat maze on Dr. Why's island in Operation Stealth) may leave
+		// the upper 240 colors not faded out.
+		g_system->getPaletteManager()->setPalette(buf, 0, 256);
 	} else {
 		g_system->getPaletteManager()->setPalette(buf, 0, colorCount());
 	}
@@ -263,6 +326,19 @@ void Palette::saturatedAddColor(Color &result, const Color &baseColor, signed r,
 Palette::Palette(const Graphics::PixelFormat format, const uint numColors) : _format(format), _colors() {
 	_colors.resize(numColors);
 	fillWithBlack();
+}
+
+Palette::Palette(const Palette& other) :
+	_format(other._format),
+	_colors(other._colors) {
+}
+
+Palette& Palette::operator=(const Palette& other) {
+	if (this != &other) {
+		_format = other._format;
+		_colors = other._colors;
+	}
+	return *this;
 }
 
 Palette &Palette::clear() {

@@ -476,7 +476,6 @@ void EE::run() {
 			case Common::EVENT_RETURN_TO_LAUNCHER:
 				_shouldQuit = true;
 				break;
-
 			case Common::EVENT_LBUTTONDOWN:
 				break;
 			case Common::EVENT_KEYDOWN:
@@ -595,13 +594,12 @@ void EE::processKeyDown(Common::Event &e) {
 }
 
 void EE::getPos() {
-	int tx, velx, bnd;
-
 	for (int i = 0; i < 2; i++) {
 		if (_keymove[i][kDirUp] && _frameindex[i] == -1)
 			_frameindex[i] = 0;
-		tx = _x[i] + (velx = _keymove[i][kDirLeft] + _keymove[i][kDirRight]);
-		bnd = 3 + i * 155;
+		int velx = _keymove[i][kDirLeft] + _keymove[i][kDirRight];
+		int tx = _x[i] + velx;
+		int bnd = 3 + i * 155;
 		if (velx > 0) {
 			if (tx < bnd + 119)
 				_x[i] = tx;
@@ -705,9 +703,7 @@ void EE::calcscore() {
 }
 
 int EE::destination(int pl, int destx, int tol) {
-	int xp;
-
-	xp = _x[pl];
+	int xp = _x[pl];
 	if (abs(xp - destx) < tol) {
 		_keymove[pl][kDirLeft] = 0;
 		_keymove[pl][kDirRight] = 0;
@@ -726,16 +722,13 @@ int EE::destination(int pl, int destx, int tol) {
 int reset = false;
 
 bool EE::moveball() {
-	int rbvelx, rbvely;
-	bool hitfloor;
-
 	if (!reset) {
 		_bx = 4096; _by = 8640; _bvelx = 125; _bvely = -259;
 		reset = true;
 	}
 
-	rbvelx = _bvelx;
-	rbvely = _bvely;
+	int rbvelx = _bvelx;
+	int rbvely = _bvely;
 	if (rbvelx > 319) rbvelx = 319;
 	if (rbvelx < -319) rbvelx = -319;
 	if (rbvely > 319) rbvely = 319;
@@ -771,6 +764,7 @@ bool EE::moveball() {
 		rbvelx -= rbvelx >> 4;
 		rbvely -= rbvely >> 4;
 	}
+	bool hitfloor;
 	if (_by > 11392) {
 		_by = 11392;
 		rbvely = -rbvely;
@@ -793,14 +787,12 @@ bool EE::moveball() {
 }
 
 void EE::docollisions() {
-	int dx, dy, dist, rndoff;
-
 	for (int i = 0; i < 2; i++) {
-		dx = _tbx - _x[i] - i * 7;
-		dy = (_tby - _y[i]) >> 1;
-		dist = (dx >> 2) * dx + dy * dy;
+		int dx = _tbx - _x[i] - i * 7;
+		int dy = (_tby - _y[i]) >> 1;
+		int dist = (dx >> 2) * dx + dy * dy;
 		if (dist < 110) {
-			rndoff = 8 - (_rnd & 15);
+			int rndoff = 8 - (_rnd & 15);
 			if (_frameindex[i] > -1)
 				_bvely = -abs(_bvely) + (jump[_frameindex[i]] << (3 << _servevel));
 			else
@@ -849,7 +841,7 @@ void EE::docollisions() {
 		} else if ((_tbx > 147 && 161 - _tbx >= polecol[91 - _tby]) ||
 				   (_tbx < 148 && _tbx - 133 >= polecol[91 - _tby])) {
 			if (_bvely > 0) {
-				dx = _tbx - 145;
+				int dx = _tbx - 145;
 				if (dx < -5) _bvelx = -abs(_bvelx);
 				if (dx > 5) _bvelx = abs(_bvelx);
 				_bvely = -abs(_bvely);
@@ -862,11 +854,10 @@ void EE::docollisions() {
 
 
 void EE::computer0() {
-	int ystep, destx, dx, rndoff, dest = 0;
-
 	_keymove[0][kDirUp] = 0;
 	if (_tby < _bytop) _bytop = _tby;
-	rndoff = 5 - _rnd % 10;
+	int rndoff = 5 - _rnd % 10;
+	int dest = 0;
 	if (_serve && ((_server & 1) == 0)) {
 		switch (_compserve) {
 		case 0:
@@ -911,6 +902,7 @@ void EE::computer0() {
 		}
 		_keymove[0][kDirUp] = dest;
 	} else if (_bvely > 0 && _tbx < 140) {
+		int ystep, destx;
 		if (_bvely >> 6 == 0)
 			ystep = 0;
 		else
@@ -921,7 +913,7 @@ void EE::computer0() {
 		else
 			destx = _tbx + (_bvelx >> 6) * ystep - 4;
 
-		dx = _x[0] - _tbx;
+		int dx = _x[0] - _tbx;
 
 		if (abs(_bvelx) < 128 && _bytop < 75) {
 			if ((_tby < 158) ^ (_bvelx < 0))
@@ -949,12 +941,11 @@ void EE::computer0() {
 }
 
 void EE::computer1() {
-	int ystep, destx, dx, rndoff, dest = 0;
-
 	_keymove[1][kDirUp] = 0;
 	if (_tby < _bytop) _bytop = _tby;
-	rndoff = 5 - _rnd % 10;
+	int rndoff = 5 - _rnd % 10;
 	if (_serve && ((_server & 1) == 1)) {
+		int dest = 0;
 		switch (_compserve) {
 		case 0:
 			dest = destination(1, 232, 2);
@@ -998,6 +989,7 @@ void EE::computer1() {
 		}
 		_keymove[1][kDirUp] = dest;
 	} else if (_bvely > 0 && _tbx > 125) {
+		int ystep, destx;
 		if (_bvely >> 6 == 0)
 			ystep = 0;
 		else
@@ -1008,7 +1000,7 @@ void EE::computer1() {
 		else
 			destx = _tbx + (_bvelx >> 6) * ystep - 4;
 
-		dx = _x[1] - _tbx;
+		int dx = _x[1] - _tbx;
 
 		if (abs(_bvelx) < 128 && _bytop < 75) {
 			if ((_tby < 158) ^ (_bvelx < 0))
@@ -1041,11 +1033,9 @@ void EE::init() {
 	_rnd = 0;
 	_starter = _winner = _hits = 0;
 	_bvelx = _bvely = 0;
-	_tbx = 200;
-	_tby = 20;
+	_tbx = 200; _tby = 20;
 	_bytop = 200;
-	_x[0] = 64;
-	_x[1] = 226;
+	_x[0] = 64; _x[1] = 226;
 
 	_air = false;
 
@@ -1332,7 +1322,7 @@ static const uint32 head[38] = {
 };
 
 static const uint32 legs[42] = {
-	0xa0000000, 0x00000000, 0x80000000, 0x00000002, 0x80000000, 0x00000002,0xa0000000,
+	0xa0000000, 0x00000000, 0x80000000, 0x00000002, 0x80000000, 0x00000002, 0xa0000000,
 	0x00000000, 0x50000000, 0x00000000, 0xf0000000, 0x00000003, 0xfc000000, 0x000003ff,
 
 	0xa0000000, 0x00000002, 0x0a000000, 0x0000000a, 0x02400000, 0x00000028, 0x00700000,

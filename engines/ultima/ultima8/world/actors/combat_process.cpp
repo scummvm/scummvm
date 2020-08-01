@@ -34,6 +34,8 @@
 #include "ultima/ultima8/world/actors/pathfinder_process.h"
 #include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/world/actors/monster_info.h"
+#include "ultima/ultima8/misc/direction.h"
+#include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/actors/loiter_process.h"
 #include "ultima/ultima8/world/actors/ambush_process.h"
@@ -90,7 +92,7 @@ void CombatProcess::run() {
 		_combatMode = CM_WAITING;
 	}
 
-	int targetdir = getTargetDirection();
+	Direction targetdir = getTargetDirection();
 	if (a->getDir() != targetdir) {
 		turnToDirection(targetdir);
 		return;
@@ -120,12 +122,12 @@ void CombatProcess::run() {
 				else
 					idleanim = Animation::idle2;
 			}
-			uint16 idlepid = a->doAnim(idleanim, 8);
+			uint16 idlepid = a->doAnim(idleanim, dir_current);
 			waitFor(idlepid);
 		} else {
 
 			// attack
-			ProcId attackanim = a->doAnim(Animation::attack, 8);
+			ProcId attackanim = a->doAnim(Animation::attack, dir_current);
 
 			// wait a while, depending on dexterity, before attacking again
 			int dex = a->getDex();
@@ -156,7 +158,7 @@ void CombatProcess::run() {
 }
 
 ObjId CombatProcess::getTarget() {
-	Actor *t = getActor(_target);
+	const Actor *t = getActor(_target);
 
 	if (!t || !isValidTarget(t))
 		_target = 0;
@@ -172,9 +174,9 @@ void CombatProcess::setTarget(ObjId newtarget) {
 	_target = newtarget;
 }
 
-bool CombatProcess::isValidTarget(Actor *target_) {
+bool CombatProcess::isValidTarget(const Actor *target_) const {
 	assert(target_);
-	Actor *a = getActor(_itemNum);
+	const Actor *a = getActor(_itemNum);
 	if (!a) return false; // uh oh
 
 	// don't target_ self
@@ -197,10 +199,10 @@ bool CombatProcess::isValidTarget(Actor *target_) {
 	return true;
 }
 
-bool CombatProcess::isEnemy(Actor *target_) {
+bool CombatProcess::isEnemy(const Actor *target_) const {
 	assert(target_);
 
-	Actor *a = getActor(_itemNum);
+	const Actor *a = getActor(_itemNum);
 	if (!a) return false; // uh oh
 
 	return ((a->getEnemyAlignment() & target_->getAlignment()) != 0);
@@ -234,52 +236,31 @@ ObjId CombatProcess::seekTarget() {
 	return 0;
 }
 
-int CombatProcess::getTargetDirection() {
-	Actor *a = getActor(_itemNum);
-	Actor *t = getActor(_target);
+Direction CombatProcess::getTargetDirection() const {
+	const Actor *a = getActor(_itemNum);
+	const Actor *t = getActor(_target);
 	if (!a || !t)
-		return 0; // shouldn't happen
+		return dir_north; // shouldn't happen
 
 	return a->getDirToItemCentre(*t);
 }
 
-void CombatProcess::turnToDirection(int direction) {
+void CombatProcess::turnToDirection(Direction direction) {
 	Actor *a = getActor(_itemNum);
 	if (!a)
 		return;
-	int curdir = a->getDir();
-	int step = 1;
-	if ((curdir - direction + 8) % 8 < 4) step = -1;
-	Animation::Sequence turnanim = Animation::combatStand;
-
-	ProcId prevpid = 0;
-	bool done = false;
-
-	for (int dir = curdir; !done;) {
-		ProcId animpid = a->doAnim(turnanim, dir);
-
-		if (dir == direction) done = true;
-
-		if (prevpid) {
-			Process *proc = Kernel::get_instance()->getProcess(animpid);
-			assert(proc);
-			proc->waitFor(prevpid);
-		}
-
-		prevpid = animpid;
-
-		dir = (dir + step + 8) % 8;
-	}
-
-	if (prevpid) waitFor(prevpid);
+	assert(a->isInCombat());
+	uint16 waitpid = a->turnTowardDir(direction);
+	if (waitpid)
+		waitFor(waitpid);
 }
 
-bool CombatProcess::inAttackRange() {
-	Actor *a = getActor(_itemNum);
+bool CombatProcess::inAttackRange() const {
+	const Actor *a = getActor(_itemNum);
 	if (!a)
 		return false; // shouldn't happen
-	ShapeInfo *shapeinfo = a->getShapeInfo();
-	MonsterInfo *mi = nullptr;
+	const ShapeInfo *shapeinfo = a->getShapeInfo();
+	const MonsterInfo *mi = nullptr;
 	if (shapeinfo) mi = shapeinfo->_monsterInfo;
 
 	if (mi && mi->_ranged)
@@ -303,8 +284,8 @@ void CombatProcess::waitForTarget() {
 	Actor *a = getActor(_itemNum);
 	if (!a)
 		return; // shouldn't happen
-	ShapeInfo *shapeinfo = a->getShapeInfo();
-	MonsterInfo *mi = nullptr;
+	const ShapeInfo *shapeinfo = a->getShapeInfo();
+	const MonsterInfo *mi = nullptr;
 	if (shapeinfo) mi = shapeinfo->_monsterInfo;
 
 	if (mi && mi->_shifter && a->getMapNum() != 43 && (getRandom() % 2) == 0) {
@@ -312,10 +293,10 @@ void CombatProcess::waitForTarget() {
 
 		// shift into a tree if nobody is around
 
-		ProcId shift1pid = a->doAnim(static_cast<Animation::Sequence>(20), 8);
+		ProcId shift1pid = a->doAnim(static_cast<Animation::Sequence>(20), dir_current);
 		Process *ambushproc = new AmbushProcess(a);
 		ProcId ambushpid = Kernel::get_instance()->addProcess(ambushproc);
-		ProcId shift2pid = a->doAnim(static_cast<Animation::Sequence>(21), 8);
+		ProcId shift2pid = a->doAnim(static_cast<Animation::Sequence>(21), dir_current);
 		Process *shift2proc = Kernel::get_instance()->getProcess(shift2pid);
 
 		ambushproc->waitFor(shift1pid);

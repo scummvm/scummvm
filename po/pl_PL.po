@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
-"PO-Revision-Date: 2020-06-04 22:41+0000\n"
+"PO-Revision-Date: 2020-07-23 21:43+0000\n"
 "Last-Translator: Krzysztof G³odo <krzysiek9106@wp.pl>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
@@ -571,7 +571,7 @@ msgstr ""
 
 #: gui/gui-manager.cpp:116
 msgid "GUI"
-msgstr ""
+msgstr "Interfejs graficzny"
 
 #: gui/gui-manager.cpp:120 engines/mohawk/myst.cpp:585
 #: engines/mohawk/riven.cpp:854
@@ -928,12 +928,12 @@ msgstr "Martwa strefa joysticka:"
 #: gui/options.cpp:1169
 #, c-format
 msgid "%d hidden achievements remaining"
-msgstr ""
+msgstr "%d ukryte osi±gniêcia"
 
 #: gui/options.cpp:1174
 #, c-format
 msgid "Achievements unlocked: %d/%d"
-msgstr ""
+msgstr "Odblokowane osi±gniêcia %d%d"
 
 #: gui/options.cpp:1193
 msgid "HW Shader:"
@@ -1128,7 +1128,6 @@ msgid "Subtitle speed:"
 msgstr "Prêd. napisów:"
 
 #: gui/options.cpp:1422
-#, fuzzy
 msgctxt "lowres"
 msgid "Text and speech:"
 msgstr "Tekst i mowa:"
@@ -1210,7 +1209,7 @@ msgstr "Chmura"
 
 #: gui/options.cpp:1813
 msgid "LAN"
-msgstr ""
+msgstr "LAN"
 
 #: gui/options.cpp:1815
 msgctxt "lowres"
@@ -1224,7 +1223,7 @@ msgstr "U³atwienia dostêpu"
 #: gui/options.cpp:1825
 msgctxt "lowres"
 msgid "Accessibility"
-msgstr ""
+msgstr "Dostêpno¶æ"
 
 #: gui/options.cpp:1835
 msgid "Apply"
@@ -1262,7 +1261,7 @@ msgstr "Styl:"
 
 #: gui/options.cpp:1976
 msgid "GUI renderer:"
-msgstr "Renderer interfejsu graficznego"
+msgstr "Renderer graficzny:"
 
 #: gui/options.cpp:1988
 msgid "Autosave:"
@@ -1278,9 +1277,8 @@ msgid "Keys"
 msgstr "Klawisze"
 
 #: gui/options.cpp:2005
-#, fuzzy
 msgid "GUI language:"
-msgstr "Jêzyk interfejsu:"
+msgstr "Jêzyk interfejsu graficznego:"
 
 #: gui/options.cpp:2005
 msgid "Language of ScummVM GUI"
@@ -1296,6 +1294,9 @@ msgid ""
 "if a game uses the ScummVM save and load dialogs, they are in the same "
 "language as the game."
 msgstr ""
+"Podczas w³±czania gry zmieñ jêzyk interfejsu na jêzyk gry. W ten sposób "
+"je¿eli gra u¿ywa ScummVM zapisze i za³aduje dialogi w tym samym jêzyku co "
+"gra."
 
 #: gui/options.cpp:2045
 msgid "Use native system file browser"
@@ -1306,6 +1307,8 @@ msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
 msgstr ""
+"U¿yj systemowego programu do przegl±dania plików zamiast programu od SummVM "
+"¿eby wybieraæ plik lub folder."
 
 #: gui/options.cpp:2053 gui/updates-dialog.cpp:86
 msgid "Update check:"
@@ -1332,12 +1335,12 @@ msgstr "Wybrany dostawca przechowywania w chmurze"
 msgctxt "lowres"
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
-msgstr ""
+msgstr "4. Przechowywanie jest wy³±czone. Zweryfikuj nazwê u¿ytkownika i w³±cz:"
 
 #: gui/options.cpp:2083
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
-msgstr ""
+msgstr "4. Przechowywanie jest wy³±czone. Zweryfikuj nazwê u¿ytkownika i w³±cz:"
 
 #: gui/options.cpp:2084
 msgid "Enable storage"
@@ -1368,12 +1371,10 @@ msgid "Space used by ScummVM's saved games on this storage"
 msgstr "Ilo¶æ miejsca zajmowana przez gry zapisane przez ScummVM w tej us³udze"
 
 #: gui/options.cpp:2092
-#, fuzzy
 msgid "Last sync:"
 msgstr "Ostatnia synchronizacja:"
 
 #: gui/options.cpp:2092
-#, fuzzy
 msgid "When was the last time saved games were synced with this storage"
 msgstr "Czas ostatniej synchronizacji zapisanych stanów gry z t± us³ug±"
 
@@ -1385,6 +1386,8 @@ msgstr "<nigdy>"
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
+"Zapisane gry synchronizuj± siê podczas startu, po zapisie i w czasie "
+"za³adowania."
 
 #: gui/options.cpp:2097
 msgid "Saved games sync automatically on launch, after saving and on loading."
@@ -1394,20 +1397,21 @@ msgstr ""
 
 #: gui/options.cpp:2098
 msgid "Sync now"
-msgstr ""
+msgstr "Zsynchronizuj teraz"
 
 #: gui/options.cpp:2098
 msgid "Start saved games sync"
-msgstr "Zsynchronizuj zapisane gry"
+msgstr "Rozpocznij synchronizacjê zapisanych gier."
 
 #: gui/options.cpp:2101
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr ""
+msgstr "Mo¿esz pobraæ pliki gry z twojego folderu ScummVM w chmurze:"
 
 #: gui/options.cpp:2103
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr ""
+"Mo¿esz pobraæ pliki gry z twojego folderu ScummVM znajduj±cego siê w chmurze:"
 
 #: gui/options.cpp:2104
 msgid "Download game files"
@@ -1420,7 +1424,7 @@ msgstr "Otwiera okno dialogowe zarz±dzania pobieraniem"
 #: gui/options.cpp:2107
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
-msgstr ""
+msgstr "Aby zmieniæ konto przechowywania, roz³±cz i po³±cz ponownie:"
 
 #: gui/options.cpp:2109
 msgid "To change account for this storage, disconnect and connect again:"
@@ -1432,12 +1436,12 @@ msgstr "Roz³±cz"
 
 #: gui/options.cpp:2110
 msgid "Stop using this storage on this device"
-msgstr ""
+msgstr "Przestañ u¿ywaæ przechowywania na tym urz±dzeniu"
 
 #: gui/options.cpp:2113
 msgctxt "lowres"
 msgid "This storage is not connected yet! To connect,"
-msgstr ""
+msgstr "Przechowywanie jest wy³±czone! Aby po³±czyæ,"
 
 #: gui/options.cpp:2115
 msgid "This storage is not connected yet! To connect,"
@@ -1445,7 +1449,7 @@ msgstr ""
 
 #: gui/options.cpp:2116
 msgid "1. Open this link:"
-msgstr ""
+msgstr "1. Otwórz ten link:"
 
 #: gui/options.cpp:2117
 msgid "Open URL"
@@ -1454,7 +1458,7 @@ msgstr "Otwórz URL"
 #: gui/options.cpp:2119
 msgctxt "lowres"
 msgid "2. Get the code and enter it here:"
-msgstr ""
+msgstr "2. Wpisz kod który dosta³e¶ tutaj:"
 
 #: gui/options.cpp:2121
 msgid "2. Get the code and enter it here:"
@@ -1466,15 +1470,15 @@ msgstr "Wklej"
 
 #: gui/options.cpp:2123
 msgid "Paste code from clipboard"
-msgstr ""
+msgstr "Wklej kod ze schowka"
 
 #: gui/options.cpp:2124
 msgid "3. Connect"
-msgstr "3. Po³±cz"
+msgstr "Po³±cz"
 
 #: gui/options.cpp:2124
 msgid "Connect your cloud storage account"
-msgstr "Po³±cz z kontem przechowywania danych w chmurze"
+msgstr "Otwórz asystenta po³±czenia z us³ug± przechowywania danych w chmurze"
 
 #: gui/options.cpp:2133
 msgid "Run server"
@@ -1521,7 +1525,7 @@ msgstr ""
 
 #: gui/options.cpp:2154
 msgid "Run server to manage files with browser (in the same network)."
-msgstr ""
+msgstr "Uruchom serwer aby zarz±dzaæ plikami ( w tej samej sieci)."
 
 #: gui/options.cpp:2155
 msgid "Closing options dialog will stop the server."
@@ -1536,9 +1540,8 @@ msgid "Will read text in gui on mouse over."
 msgstr ""
 
 #: gui/options.cpp:2183
-#, fuzzy
 msgid "None"
-msgstr "Brak"
+msgstr "¯aden"
 
 #: gui/options.cpp:2253
 msgid "Failed to change cloud storage!"
@@ -1812,7 +1815,7 @@ msgstr "Wyg³adzany"
 
 #: gui/unknown-game-dialog.cpp:49
 msgid "Add anyway"
-msgstr "Dodaj mimo tego"
+msgstr "Dodaj mimo tego "
 
 #: gui/unknown-game-dialog.cpp:58
 msgid "Copy to clipboard"
@@ -1830,7 +1833,7 @@ msgstr "U¿yj przycisku poni¿ej ¿eby skopiowaæ wymagan± informacje o grze."
 
 #: gui/unknown-game-dialog.cpp:106
 msgid "You can also directly report your game to the Bug Tracker."
-msgstr ""
+msgstr "Mo¿esz równie¿ zg³osiæ swoj± grê do systemu ¶ledzenia b³êdów."
 
 #: gui/unknown-game-dialog.cpp:156
 msgid ""
@@ -2388,12 +2391,10 @@ msgid "Quit"
 msgstr "Zakoñcz"
 
 #: backends/events/default/default-events.cpp:293
-#, fuzzy
 msgid "Global"
-msgstr " (Globalny)"
+msgstr "Globalny"
 
 #: backends/events/default/default-events.cpp:296
-#, fuzzy
 msgid "Global Main Menu"
 msgstr "Menu globalne"
 
@@ -2402,14 +2403,12 @@ msgid "Display keyboard"
 msgstr "Wy¶wietl klawiaturê"
 
 #: backends/events/default/default-events.cpp:310
-#, fuzzy
 msgid "Toggle mute"
-msgstr "W³±cz/wy³±cz przechwytywanie myszy"
+msgstr "Wycisz d¼wiêk"
 
 #: backends/events/default/default-events.cpp:336
-#, fuzzy
 msgid "Open Debugger"
-msgstr "Debugger"
+msgstr "Otwórz Debugger"
 
 #: backends/events/gph/gph-events.cpp:423
 #: backends/events/gph/gph-events.cpp:466
@@ -2497,9 +2496,8 @@ msgstr "OpenGL"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:237
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:81
-#, fuzzy
 msgid "Center"
-msgstr "Enter"
+msgstr "Wycentrowany"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:238
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:82
@@ -2538,15 +2536,13 @@ msgstr "Wy³±czono korekcjê formatu obrazu"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:632
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2563
-#, fuzzy
 msgid "Filtering enabled"
-msgstr "Klikanie w³±czone"
+msgstr "Filtrowanie w³±czone"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:634
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2565
-#, fuzzy
 msgid "Filtering disabled"
-msgstr "Klikanie wy³±czone"
+msgstr "Filtrowanie wy³±czone"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:663
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2593
@@ -2589,10 +2585,9 @@ msgstr "W³±cz/wy³±cz przechwytywanie myszy"
 #: engines/wintermute/keymapper_tables.h:1258
 #: engines/wintermute/keymapper_tables.h:1289
 msgid "Save screenshot"
-msgstr ""
+msgstr "Zapisz zrzut ekranu"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:387
-#, fuzzy
 msgid "Toggle aspect ratio correction"
 msgstr "W³±cz/wy³±cz korekcjê formatu obrazu"
 
@@ -2607,14 +2602,12 @@ msgid "Cycle through stretch modes"
 msgstr "Nie uda³o siê prze³±czyæ w tryb wideo: '"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:407
-#, fuzzy
 msgid "Increase the scale factor"
-msgstr "Zwiêksz / zmniejsz wspó³czynnik skalowania"
+msgstr "Zwiêksz wspó³czynnik skalowania"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:413
-#, fuzzy
 msgid "Decrease the scale factor"
-msgstr "Zwiêksz / zmniejsz wspó³czynnik skalowania"
+msgstr "Zmniejsz wspó³czynnik skalowania"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:425
 msgid "Switch to nearest neighbour scaling"
@@ -2626,27 +2619,27 @@ msgstr ""
 
 #: backends/graphics/sdl/sdl-graphics.cpp:428
 msgid "Switch to HQ 2x/3x scaling"
-msgstr ""
+msgstr "Prze³±cz na skalowanie HQ 2x/3x"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:430
 msgid "Switch to 2xSai scaling"
-msgstr ""
+msgstr "Prze³±cz na skalowanie 2xSai"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:431
 msgid "Switch to Super2xSai scaling"
-msgstr ""
+msgstr "Prze³±cz na skalowanie Super 2xSai"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:432
 msgid "Switch to SuperEagle scaling"
-msgstr ""
+msgstr "Prze³±cz na skalowanie SuperEagle"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:433
 msgid "Switch to TV 2x scaling"
-msgstr ""
+msgstr "Prze³±cz na skalowanie TV 2x"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:434
 msgid "Switch to DotMatrix scaling"
-msgstr ""
+msgstr "Prze³±cz na skalowanie DotMatrix"
 
 #: backends/keymapper/hardware-input.cpp:245
 msgid "Left Mouse Button"
@@ -3767,7 +3760,7 @@ msgstr "Nie znaleziono pliku przerywnika '%s'!"
 
 #: engines/bladerunner/bladerunner.cpp:359
 msgid "Failed to initialize resources"
-msgstr ""
+msgstr "Nie uda³o siê zainicjowaæ zasobów"
 
 #: engines/bladerunner/bladerunner.cpp:1063
 msgid "A required game resource was not found"

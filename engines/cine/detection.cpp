@@ -27,11 +27,16 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
+#include "common/util.h"
 
 #include "cine/cine.h"
 #include "cine/various.h"
 
 namespace Cine {
+
+#define MAX_SAVEGAMES (ARRAYSIZE(Cine::currentSaveName))
+#define SAVEGAME_NAME_LEN (sizeof(Cine::currentSaveName[0]))
+#define SAVELIST_SIZE (MAX_SAVEGAMES * SAVEGAME_NAME_LEN)
 
 struct CINEGameDescription {
 	ADGameDescription desc;
@@ -40,6 +45,7 @@ struct CINEGameDescription {
 	uint32 features;
 };
 
+bool CineEngine::mayHave256Colors() const { return getGameType() == Cine::GType_OS && getPlatform() == Common::kPlatformDOS; }
 int CineEngine::getGameType() const { return _gameDescription->gameType; }
 uint32 CineEngine::getFeatures() const { return _gameDescription->features; }
 Common::Language CineEngine::getLanguage() const { return _gameDescription->desc.language; }
@@ -65,6 +71,15 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			false
 		}
 	},
+	{
+		GAMEOPTION_TRANSPARENT_DIALOG_BOXES,
+		{
+			_s("Use transparent dialog boxes in 16 color scenes"),
+			_s("Use transparent dialog boxes in 16 color scenes even if the original game version did not support them"),
+			"transparentdialogboxes",
+			false
+		}
+	},
 
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
@@ -72,7 +87,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 class CineMetaEngine : public AdvancedMetaEngine {
 public:
 	CineMetaEngine() : AdvancedMetaEngine(Cine::gameDescriptions, sizeof(Cine::CINEGameDescription), cineGames, optionsList) {
-		_guiOptions = GUIO2(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVELOAD);
+		_guiOptions = GUIO3(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TRANSPARENT_DIALOG_BOXES);
 	}
 
 	const char *getEngineId() const override {
@@ -96,13 +111,20 @@ public:
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
 	void removeSaveState(const char *target, int slot) const override;
+	const char *getSavegameFile(int saveGameIdx, const char *target = nullptr) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
 bool CineMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave);
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail) ||
+		(f == kSavesSupportCreationDate) ||
+		(f == kSavesSupportPlayTime) ||
+		(f == kSavesUseExtendedFormat);
 }
 
 bool Cine::CineEngine::hasFeature(EngineFeature f) const {
@@ -124,51 +146,159 @@ SaveStateList CineMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	SaveStateList saveList;
 
-	Common::String pattern = target;
-	pattern += ".#";
-	Common::StringArray filenames = saveFileMan->listSavefiles(pattern);
+	Common::String pattern;
+
 	Common::StringArray::const_iterator file;
 
 	Common::String filename = target;
 	filename += ".dir";
 	Common::InSaveFile *in = saveFileMan->openForLoading(filename);
+	bool foundAutosave = false;
 	if (in) {
-		typedef char CommandeType[20];
-		CommandeType saveNames[10];
+		typedef char CommandeType[SAVEGAME_NAME_LEN];
+		CommandeType saveNames[MAX_SAVEGAMES];
 
 		// Initialize all savegames' descriptions to empty strings
 		// so that if the savegames' descriptions can only be partially read from file
 		// then the missing ones are correctly set to empty strings.
 		memset(saveNames, 0, sizeof(saveNames));
 
-		in->read(saveNames, 10 * 20);
+		in->read(saveNames, SAVELIST_SIZE);
 		CommandeType saveDesc;
 
+		pattern = target;
+		pattern += ".#*";
+		Common::StringArray filenames = saveFileMan->listSavefiles(pattern);
+
 		for (file = filenames.begin(); file != filenames.end(); ++file) {
-			// Obtain the last digit of the filename, since they correspond to the save slot
-			int slotNum = atoi(file->c_str() + file->size() - 1);
+			// Obtain the extension part of the filename, since it corresponds to the save slot number
+			Common::String ext = Common::lastPathComponent(*file, '.');
+			int slotNum = (int)ext.asUint64();
 
-			// Copy the savegame description making sure it ends with a trailing zero
-			strncpy(saveDesc, saveNames[slotNum], 20);
-			saveDesc[sizeof(CommandeType) - 1] = 0;
+			if (ext.equals(Common::String::format("%d", slotNum)) &&
+				slotNum >= 0 && slotNum < MAX_SAVEGAMES) {
+				// Copy the savegame description making sure it ends with a trailing zero
+				strncpy(saveDesc, saveNames[slotNum], SAVEGAME_NAME_LEN);
+				saveDesc[sizeof(CommandeType) - 1] = 0;
 
-			saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
+				SaveStateDescriptor saveStateDesc(slotNum, saveDesc);
+				saveStateDesc.setAutosave(slotNum == getAutosaveSlot());
+				saveStateDesc.setWriteProtectedFlag(saveStateDesc.isAutosave());
+
+				if (saveStateDesc.getDescription().empty()) {
+					if (saveStateDesc.isAutosave()) {
+						saveStateDesc.setDescription(_("Unnamed autosave"));
+					} else {
+						saveStateDesc.setDescription(_("Unnamed savegame"));
+					}
+				}
+
+				if (saveStateDesc.isAutosave()) {
+					foundAutosave = true;
+				}
+
+				saveList.push_back(saveStateDesc);
+			}
 		}
 	}
 
 	delete in;
+
+	// No saving on empty autosave slot
+	if (!foundAutosave) {
+		SaveStateDescriptor desc;
+		desc.setDescription(_("Empty autosave"));
+		desc.setSaveSlot(getAutosaveSlot());
+		desc.setWriteProtectedFlag(true);
+		saveList.push_back(desc);
+	}
 
 	// Sort saves based on slot number.
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
-int CineMetaEngine::getMaximumSaveSlot() const { return 9; }
+int CineMetaEngine::getMaximumSaveSlot() const { return MAX_SAVEGAMES - 1; }
+
+const char *CineMetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
+	static char buffer[200];
+
+	snprintf(buffer, sizeof(buffer), "%s.%d", target == nullptr ? getEngineId() : target, saveGameIdx);
+
+	return buffer;
+}
+
+SaveStateDescriptor CineMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	if (slot < 0 || slot > getMaximumSaveSlot()) {
+		// HACK: Try to make SaveLoadChooserGrid::open() not use save slot
+		// numbers over the maximum save slot number for "New save".
+		SaveStateDescriptor desc;
+		desc.setWriteProtectedFlag(true);
+		return desc;
+	}
+
+	Common::ScopedPtr<Common::InSaveFile> f(g_system->getSavefileManager()->openForLoading(
+		getSavegameFile(slot, target)));
+
+	if (f) {
+		// Create the return descriptor
+		SaveStateDescriptor desc;
+
+		ExtendedSavegameHeader header;
+		if (readSavegameHeader(f.get(), &header, false)) {
+			parseSavegameHeader(&header, &desc);
+			desc.setThumbnail(header.thumbnail);
+		} else {
+			// Load savegame descriptions from index file
+			typedef char CommandeType[SAVEGAME_NAME_LEN];
+			CommandeType saveNames[MAX_SAVEGAMES];
+			memset(saveNames, 0, sizeof(saveNames));
+
+			Common::InSaveFile *in;
+			in = g_system->getSavefileManager()->openForLoading(Common::String::format("%s.dir", target));
+
+			if (in) {
+				in->read(saveNames, SAVELIST_SIZE);
+				delete in;
+			}
+
+			saveNames[slot][SAVEGAME_NAME_LEN - 1] = 0;
+			Common::String saveNameStr((const char *)saveNames[slot]);
+			desc.setDescription(saveNameStr);
+		}
+
+		if (desc.getDescription().empty()) {
+			desc.setDescription(_("Unnamed savegame"));
+		}
+
+		desc.setSaveSlot(slot);
+		desc.setAutosave(slot == getAutosaveSlot());
+		desc.setWriteProtectedFlag(desc.isAutosave());
+
+		return desc;
+	}
+
+	// No saving on empty autosave slot
+	if (slot == getAutosaveSlot()) {
+		SaveStateDescriptor desc;
+		desc.setDescription(_("Empty autosave"));
+		desc.setSaveSlot(slot);
+		desc.setAutosave(true);		
+		desc.setWriteProtectedFlag(true);
+		return desc;
+	}
+
+	return SaveStateDescriptor();
+}
 
 void CineMetaEngine::removeSaveState(const char *target, int slot) const {
+	if (slot < 0 || slot >= MAX_SAVEGAMES) {
+		return;
+	}
+
 	// Load savegame descriptions from index file
-	typedef char CommandeType[20];
-	CommandeType saveNames[10];
+	typedef char CommandeType[SAVEGAME_NAME_LEN];
+	CommandeType saveNames[MAX_SAVEGAMES];
 
 	// Initialize all savegames' descriptions to empty strings
 	// so that if the savegames' descriptions can only be partially read from file
@@ -181,13 +311,13 @@ void CineMetaEngine::removeSaveState(const char *target, int slot) const {
 	if (!in)
 		return;
 
-	in->read(saveNames, 10 * 20);
+	in->read(saveNames, SAVELIST_SIZE);
 	delete in;
 
 	// Set description for selected slot
-	char slotName[20];
+	char slotName[SAVEGAME_NAME_LEN];
 	slotName[0] = 0;
-	Common::strlcpy(saveNames[slot], slotName, 20);
+	Common::strlcpy(saveNames[slot], slotName, SAVEGAME_NAME_LEN);
 
 	// Update savegame descriptions
 	Common::String indexFile = Common::String::format("%s.dir", target);
@@ -197,12 +327,11 @@ void CineMetaEngine::removeSaveState(const char *target, int slot) const {
 		return;
 	}
 
-	out->write(saveNames, 10 * 20);
+	out->write(saveNames, SAVELIST_SIZE);
 	delete out;
 
 	// Delete save file
-	char saveFileName[256];
-	sprintf(saveFileName, "%s.%1d", target, slot);
+	const char *saveFileName = getSavegameFile(slot, target);
 
 	g_system->getSavefileManager()->removeSavefile(saveFileName);
 }
@@ -222,11 +351,15 @@ Common::Error CineEngine::loadGameState(int slot) {
 }
 
 Common::Error CineEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+	if (slot < 0 || slot >= MAX_SAVEGAMES) {
+		return Common::kCreatingFileFailed;
+	}
+
 	// Load savegame descriptions from index file
 	loadSaveDirectory();
 
 	// Set description for selected slot making sure it ends with a trailing zero
-	strncpy(currentSaveName[slot], desc.c_str(), 20);
+	strncpy(currentSaveName[slot], desc.c_str(), sizeof(CommandeType));
 	currentSaveName[slot][sizeof(CommandeType) - 1] = 0;
 
 	// Update savegame descriptions
@@ -238,11 +371,11 @@ Common::Error CineEngine::saveGameState(int slot, const Common::String &desc, bo
 		return Common::kUnknownError;
 	}
 
-	fHandle->write(currentSaveName, 10 * 20);
+	fHandle->write(currentSaveName, SAVELIST_SIZE);
 	delete fHandle;
 
 	// Save game
-	makeSave(getSaveStateName(slot));
+	makeSave(getSaveStateName(slot), getTotalPlayTime() / 1000, desc, isAutosave);
 
 	checkDataDisk(-1);
 
@@ -250,7 +383,7 @@ Common::Error CineEngine::saveGameState(int slot, const Common::String &desc, bo
 }
 
 Common::String CineEngine::getSaveStateName(int slot) const {
-	return Common::String::format("%s.%1d", _targetName.c_str(), slot);
+	return getMetaEngine().getSavegameFile(slot, _targetName.c_str());
 }
 
 bool CineEngine::canLoadGameStateCurrently() {

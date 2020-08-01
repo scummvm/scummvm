@@ -69,7 +69,7 @@ public:
 	void haltTrack() override;
 	bool isPlaying() const override;
 
-	void playSoundEffect(uint8 track, uint8 volume = 0xFF) override;
+	void playSoundEffect(uint16 track, uint8 volume = 0xFF) override;
 
 	void beginFadeOut() override;
 

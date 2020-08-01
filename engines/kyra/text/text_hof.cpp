@@ -91,9 +91,9 @@ char *TextDisplayer_HoF::preprocessString(const char *str) {
 
 	p = _talkBuffer;
 	Screen::FontId curFont = _screen->setFont(Screen::FID_8_FNT);
-	_screen->_charWidth = -2;
+	_screen->_charSpacing = -2;
 	int textWidth = _screen->getTextWidth(p);
-	_screen->_charWidth = 0;
+	_screen->_charSpacing = 0;
 
 	int maxTextWidth = (_vm->language() == 0) ? 176 : 240;
 
@@ -102,9 +102,9 @@ char *TextDisplayer_HoF::preprocessString(const char *str) {
 			int count = getCharLength(p, textWidth / 3);
 			int offs = dropCRIntoString(p, count);
 			p += count + offs;
-			_screen->_charWidth = -2;
+			_screen->_charSpacing = -2;
 			textWidth = _screen->getTextWidth(p);
-			_screen->_charWidth = 0;
+			_screen->_charSpacing = 0;
 			count = getCharLength(p, textWidth / 2);
 			dropCRIntoString(p, count);
 		} else {

@@ -24,6 +24,7 @@
 #define DIRECTOR_STAGE_H
 
 #include "graphics/macgui/macwindow.h"
+#include "director/lingo/lingo-object.h"
 
 namespace Common {
 class Error;
@@ -37,20 +38,68 @@ class MacWindowManager;
 
 namespace Director {
 
-struct Channel;
-struct MacShape;
-struct TransParams;
+const int SCALE_THRESHOLD = 0x100;
 
-class Stage : public Graphics::MacWindow {
+class Channel;
+struct MacShape;
+
+struct TransParams {
+	TransitionType type;
+	uint frame;
+	uint duration;
+	uint chunkSize;
+	uint area;
+
+	int steps;
+	int stepDuration;
+
+	int xStepSize;
+	int yStepSize;
+
+	int xpos, ypos;
+
+	int stripSize;
+
+	TransParams() {
+		type = kTransNone;
+		frame = 0;
+		duration = 250;
+		chunkSize = 1;
+		area = 0;
+		steps = 0;
+		stepDuration = 0;
+		stripSize = 0;
+
+		xStepSize = yStepSize = 0;
+		xpos = ypos = 0;
+	}
+
+	TransParams(uint16 d, uint16 a, uint16 c, TransitionType t) :
+			duration(d), area(a), chunkSize(c), type(t) {
+		frame = 0;
+		steps = 0;
+		stepDuration = 0;
+		stripSize = 0;
+
+		xStepSize = yStepSize = 0;
+		xpos = ypos = 0;
+	}
+};
+
+class Stage : public Graphics::MacWindow, public Object<Stage> {
  public:
 	Stage(int id, bool scrollable, bool resizable, bool editable, Graphics::MacWindowManager *wm, DirectorEngine *vm);
 	~Stage();
 
 	bool render(bool forceRedraw = false, Graphics::ManagedSurface *blitTo = nullptr);
-
 	void invertChannel(Channel *channel);
+
+	bool needsAppliedColor(DirectorPlotData *pd);
 	void setStageColor(uint stageColor);
+	int getStageColor() { return _stageColor; }
+
 	void addDirtyRect(const Common::Rect &r);
+	void markAllDirty();
 	void mergeDirtyRects();
 	void reset();
 
@@ -70,7 +119,13 @@ class Stage : public Graphics::MacWindow {
 	Movie *getCurrentMovie() const { return _currentMovie; }
 	Common::String getCurrentPath() const { return _currentPath; }
 
+	virtual void setVisible(bool visible, bool silent = false);
+	bool setNextMovie(Common::String &movieFilenameRaw);
+
 	bool step();
+
+	// events.cpp
+	virtual bool processEvent(Common::Event &event);
 
 	// tests.cpp
 	Common::HashMap<Common::String, Movie *> *scanMovies(const Common::String &folder);
@@ -82,6 +137,7 @@ class Stage : public Graphics::MacWindow {
 
 	// resource.cpp
 	Common::Error loadInitialMovie();
+	void probeProjector(const Common::String &movie);
 	Archive *openMainArchive(const Common::String movie);
 	void loadEXE(const Common::String movie);
 	void loadEXEv3(Common::SeekableReadStream *stream);
@@ -90,6 +146,14 @@ class Stage : public Graphics::MacWindow {
 	void loadEXEv7(Common::SeekableReadStream *stream);
 	void loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset);
 	void loadMac(const Common::String movie);
+
+	// lingo/lingo-object.cpp
+	virtual Common::String asString();
+	virtual bool hasProp(const Common::String &propName);
+	virtual Datum getProp(const Common::String &propName);
+	virtual bool setProp(const Common::String &propName, const Datum &value);
+	virtual Datum getField(int field);
+	virtual bool setField(int field, const Datum &value);
 
 public:
 	Common::List<Common::Rect> _dirtyRects;
@@ -109,11 +173,16 @@ private:
 	Movie *_currentMovie;
 	Common::String _currentPath;
 	Common::StringArray _movieQueue;
+	int16 _startFrame;
 
 private:
+	int preprocessColor(DirectorPlotData *p, int src);
+
 	void inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::ManagedSurface *blitTo = nullptr);
-	void inkBlitShape(DirectorPlotData *pd, Common::Rect &srcRect, MacShape *ms);
+	void inkBlitShape(DirectorPlotData *pd, Common::Rect &srcRect);
+
 	void inkBlitSurface(DirectorPlotData *pd, Common::Rect &srcRect, const Graphics::Surface *mask);
+	void inkBlitStretchSurface(DirectorPlotData *pd, Common::Rect &srcRect, const Graphics::Surface *mask);
 };
 
 } // end of namespace Director

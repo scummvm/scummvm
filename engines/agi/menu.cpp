@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "agi/agi.h"
 #include "agi/graphics.h"
 #include "agi/text.h"
@@ -151,6 +153,28 @@ void GfxMenu::submit() {
 
 	if ((_array.size() == 0) || (_itemArray.size() == 0))
 		return;
+
+	// WORKAROUND: For Apple II gs we add a Speed menu
+	if (_vm->getPlatform() == Common::kPlatformApple2GS && ConfMan.getBool("apple2gs_speedmenu")) {
+		uint16 maxControllerSlot = 0;
+		for (GuiMenuItemArray::iterator menuIter = _itemArray.begin(); menuIter != _itemArray.end(); ++menuIter)
+			if ((*menuIter)->controllerSlot > maxControllerSlot)
+				maxControllerSlot = (*menuIter)->controllerSlot;
+		for (uint16 curMapping = 0; curMapping < MAX_CONTROLLER_KEYMAPPINGS; curMapping++)
+			if (_vm->_game.controllerKeyMapping[curMapping].controllerSlot > maxControllerSlot)
+				maxControllerSlot = _vm->_game.controllerKeyMapping[curMapping].controllerSlot;
+
+		if (maxControllerSlot >= 0xff - 4)
+			warning("GfxMenu::submit : failed to add 'Speed' menu");
+		else {
+			_vm->_game.appleIIgsSpeedControllerSlot = maxControllerSlot + 1;
+			addMenu("Speed");
+			addMenuItem("Normal", _vm->_game.appleIIgsSpeedControllerSlot + 2);
+			addMenuItem("Slow", _vm->_game.appleIIgsSpeedControllerSlot + 3);
+			addMenuItem("Fast", _vm->_game.appleIIgsSpeedControllerSlot + 1);
+			addMenuItem("Fastest", _vm->_game.appleIIgsSpeedControllerSlot + 0);
+		}
+	}
 
 	_submitted = true;
 

@@ -102,7 +102,8 @@ public:
 		kPC98,
 		kPCSpkr,
 		kPCjr,
-		kAmiga
+		kAmiga,
+		kSegaCD
 	};
 
 	virtual kType getMusicType() const = 0;
@@ -194,7 +195,7 @@ public:
 	 *
 	 * @param track sound effect id
 	 */
-	virtual void playSoundEffect(uint8 track, uint8 volume = 0xFF) = 0;
+	virtual void playSoundEffect(uint16 track, uint8 volume = 0xFF) = 0;
 
 	/**
 	 * Stop playback of all sfx tracks.
@@ -349,7 +350,7 @@ public:
 	void haltTrack() override;
 	bool isPlaying() const override;
 
-	void playSoundEffect(uint8 track, uint8 volume = 0xFF) override;
+	void playSoundEffect(uint16 track, uint8 volume = 0xFF) override;
 
 	void stopAllSoundEffects() override;
 

@@ -30,68 +30,29 @@ namespace Ultima8 {
  *  Directions:
  */
 enum Direction {
-	north = 0,
-	northeast = 1,
-	east = 2,
-	southeast = 3,
-	south = 4,
-	southwest = 5,
-	west = 6,
-	northwest = 7
+	dir_north = 0,
+	dir_nne = 1,
+	dir_northeast = 2,
+	dir_ene = 3,
+	dir_east = 4,
+	dir_ese = 5,
+	dir_southeast = 6,
+	dir_sse = 7,
+	dir_south = 8,
+	dir_ssw = 9,
+	dir_southwest = 10,
+	dir_wsw = 11,
+	dir_west = 12,
+	dir_wnw = 13,
+	dir_northwest = 14,
+	dir_nnw = 15,
+	dir_current = 16
 };
 
-/*
- * Tables to map a Direction to x/y deltas
- */
-const int x_fact[] = {  0, +1, +1, +1,  0, -1, -1, -1 };
-const int y_fact[] = { -1, -1,  0, +1, +1, +1,  0, -1 };
-
-/*
- *  Return the direction for a given slope (0-7).
- *  NOTE:  Assumes cartesian coords, NOT screen coords. (which have y
- *      growing downwards).
- *
- *  NOTE: The returned direction is rotated 45 degrees clockwise! This is
- *  how U8 things should be.
- */
-
-inline Direction Get_direction(int deltay, int deltax) {
-	if (deltax == 0)
-		return deltay > 0 ? northwest : southeast;
-	int dydx = (1024 * deltay) / deltax; // Figure 1024*tan.
-	if (dydx >= 0)
-		if (deltax > 0) // Top-right
-			return dydx <= 424 ? northeast : dydx <= 2472 ? north
-			       : northwest;
-		else            // Bottom-left.
-			return dydx <= 424 ? southwest : dydx <= 2472 ? south
-			       : southeast;
-	else if (deltax > 0) // Bottom-right.
-		return dydx >= -424 ? northeast : dydx >= -2472 ? east
-		       : southeast;
-	else            // Top-left
-		return dydx >= -424 ? southwest : dydx >= -2472 ? west
-		       : northwest;
-}
-
-
-inline Direction Get_WorldDirection(int deltay, int deltax) {
-	if (deltax == 0) {
-		if (deltay == 0) return northeast; // for better compatibility with U8
-		return deltay > 0 ? south : north;
-	}
-	int dydx = (1024 * deltay) / deltax;
-
-	if (dydx >= 0)
-		if (deltax > 0) // south-east
-			return dydx <= 424 ? east : dydx <= 2472 ? southeast : south;
-		else            // north-west
-			return dydx <= 424 ? west : dydx <= 2472 ? northwest : north;
-	else if (deltax > 0) // north-east
-		return dydx >= -424 ? east : dydx >= -2472 ? northeast : north;
-	else            // south-west
-		return dydx >= -424 ? west : dydx >= -2472 ? southwest : south;
-}
+enum DirectionMode {
+	dirmode_8dirs,
+	dirmode_16dirs
+};
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

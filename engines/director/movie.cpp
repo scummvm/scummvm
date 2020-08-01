@@ -23,6 +23,8 @@
 #include "common/config-manager.h"
 #include "common/substream.h"
 
+#include "engines/util.h"
+
 #include "director/director.h"
 #include "director/archive.h"
 #include "director/cast.h"
@@ -30,6 +32,7 @@
 #include "director/score.h"
 #include "director/stage.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-object.h"
 
 namespace Director {
 
@@ -41,13 +44,22 @@ Movie::Movie(Stage *stage) {
 	_flags = 0;
 	_stageColor = 0xFF;
 
-	_currentMouseDownSpriteId = 0;
 	_currentClickOnSpriteId = 0;
+	_currentEditableTextChannel = 0;
 	_lastEventTime = _vm->getMacTicks();
 	_lastKeyTime = _lastEventTime;
 	_lastClickTime = _lastEventTime;
 	_lastRollTime = _lastEventTime;
 	_lastTimerReset = _lastEventTime;
+	_nextEventId = 0;
+
+	_key = 0;
+	_keyCode = 0;
+	_keyFlags = 0;
+
+	_currentDraggedChannel = nullptr;
+
+	_allowOutdatedLingo = false;
 
 	_movieArchive = nullptr;
 
@@ -102,11 +114,14 @@ bool Movie::loadArchive() {
 		_stage->resize(_movieRect.width(), _movieRect.height(), true);
 	}
 	// TODO: Add more options for desktop dimensions
-	uint16 windowWidth = debugChannelSet(-1, kDebugDesktop) ? 1024 : _movieRect.width();
-	uint16 windowHeight = debugChannelSet(-1, kDebugDesktop) ? 768 : _movieRect.height();
-	if (g_director->_surface->w != windowWidth || g_director->_surface->h != windowHeight) {
-		g_director->_surface->free();
-		g_director->_surface->create(windowWidth, windowHeight, Graphics::PixelFormat::createFormatCLUT8());
+	if (_stage == _vm->getMainStage()) {
+		uint16 windowWidth = debugChannelSet(-1, kDebugDesktop) ? 1024 : _movieRect.width();
+		uint16 windowHeight = debugChannelSet(-1, kDebugDesktop) ? 768 : _movieRect.height();
+		if (_vm->_surface->w != windowWidth || _vm->_surface->h != windowHeight) {
+			_vm->_surface->free();
+			_vm->_surface->create(windowWidth, windowHeight, Graphics::PixelFormat::createFormatCLUT8());
+		}
+		initGraphics(windowWidth, windowHeight);
 	}
 
 	_stage->setStageColor(_stageColor);
@@ -140,57 +155,54 @@ Common::Rect Movie::readRect(Common::ReadStreamEndian &stream) {
 	return rect;
 }
 
-Common::Array<Common::String> Movie::loadStrings(Common::SeekableSubReadStreamEndian &stream, uint32 &entryType, bool hasHeader) {
-	Common::Array<Common::String> strings;
-	uint32 offset = 0;
+InfoEntries Movie::loadInfoEntries(Common::SeekableSubReadStreamEndian &stream) {
+	uint32 offset = stream.pos();
+	offset += stream.readUint32();
 
-	if (hasHeader) {
-		offset = stream.readUint32();
-		/*uint32 unk1 = */ stream.readUint32();
-		/*uint32 unk2 = */ stream.readUint32();
-		entryType = stream.readUint32();
-		stream.seek(offset);
-	}
+	InfoEntries res;
+	res.unk1 = stream.readUint32();
+	res.unk2 = stream.readUint32();
+	res.flags = stream.readUint32();
 
+	if (g_director->getVersion() >= 4)
+		res.scriptId = stream.readUint32();
+
+	stream.seek(offset);
 	uint16 count = stream.readUint16() + 1;
 
-	debugC(3, kDebugLoading, "Movie::loadStrings(): Strings: %d entries", count);
+	debugC(3, kDebugLoading, "Movie::loadInfoEntries(): InfoEntry: %d entries", count - 1);
+
+	if (count == 1)
+		return res;
 
 	uint32 *entries = (uint32 *)calloc(count, sizeof(uint32));
 
 	for (uint i = 0; i < count; i++)
 		entries[i] = stream.readUint32();
 
-	byte *data = (byte *)malloc(entries[count - 1]);
-	stream.read(data, entries[count - 1]);
+	res.strings.resize(count - 1);
 
 	for (uint16 i = 0; i < count - 1; i++) {
-		Common::String entryString;
+		res.strings[i].len = entries[i + 1] - entries[i];
+		res.strings[i].data = (byte *)malloc(res.strings[i].len);
+		stream.read(res.strings[i].data, res.strings[i].len);
 
-		uint start = i == 1 ? entries[i] + 1 : entries[i]; // Skip first byte which is string length
-
-		for (uint j = start; j < entries[i + 1]; j++)
-			if (data[j] == '\r')
-				entryString += '\n';
-			else if (data[j] >= 0x20)
-				entryString += data[j];
-
-		strings.push_back(entryString);
-
-		debugC(6, kDebugLoading, "String %d:\n%s\n", i, Common::toPrintable(entryString).c_str());
+		debugC(6, kDebugLoading, "InfoEntry %d: %d bytes", i, res.strings[i].len);
 	}
 
-	free(data);
 	free(entries);
 
-	return strings;
+	return res;
 }
 
 void Movie::loadFileInfo(Common::SeekableSubReadStreamEndian &stream) {
 	debugC(2, kDebugLoading, "****** Loading FileInfo VWFI");
 
-	Common::Array<Common::String> fileInfoStrings = Movie::loadStrings(stream, _flags);
-	_script = fileInfoStrings[0];
+	InfoEntries fileInfo = Movie::loadInfoEntries(stream);
+
+	_allowOutdatedLingo = (fileInfo.flags & kMovieFlagAllowOutdatedLingo) != 0;
+
+	_script = fileInfo.strings[0].readString(false);
 
 	if (!_script.empty() && ConfMan.getBool("dump_scripts"))
 		_cast->dumpScript(_script.c_str(), kMovieScript, _cast->_movieScriptCount);
@@ -199,9 +211,32 @@ void Movie::loadFileInfo(Common::SeekableSubReadStreamEndian &stream) {
 		_cast->_lingoArchive->addCode(_script.c_str(), kMovieScript, _cast->_movieScriptCount);
 
 	_cast->_movieScriptCount++;
-	_changedBy = fileInfoStrings[1];
-	_createdBy = fileInfoStrings[2];
-	_directory = fileInfoStrings[3];
+	_changedBy = fileInfo.strings[1].readString();
+	_createdBy = fileInfo.strings[2].readString();
+	_createdBy = fileInfo.strings[3].readString();
+
+	uint16 preload = 0;
+	if (fileInfo.strings[4].len) {
+		if (stream.isBE())
+			preload = READ_BE_INT16(fileInfo.strings[4].data);
+		else
+			preload = READ_LE_INT16(fileInfo.strings[4].data);
+	}
+
+	if (debugChannelSet(3, kDebugLoading)) {
+		debug("VWFI: flags: %d", fileInfo.flags);
+		debug("VWFI: allow outdated lingo: %d", _allowOutdatedLingo);
+		debug("VWFI: script: '%s'", _script.c_str());
+		debug("VWFI: changed by: '%s'", _changedBy.c_str());
+		debug("VWFI: created by: '%s'", _createdBy.c_str());
+		debug("VWFI: directory: '%s'", _createdBy.c_str());
+		debug("VWFI: preload: %d (0x%x)", preload, preload);
+
+		for (uint i = 5; i < fileInfo.strings.size(); i++) {
+			debug("VWFI: entry %d (%d bytes)", i, fileInfo.strings[i].len);
+			Common::hexdump(fileInfo.strings[i].data, fileInfo.strings[i].len);
+		}
+	}
 }
 
 void Movie::clearSharedCast() {
@@ -225,10 +260,10 @@ void Movie::loadSharedCastsFrom(Common::String filename) {
 
 		return;
 	}
-	sharedCast->setFileName(filename);
+	sharedCast->setPathName(filename);
 
 	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-	debug(0, "@@@@ Loading Shared cast '%s'", filename.c_str());
+	debug(0, "@@@@   Loading shared cast '%s'", filename.c_str());
 	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 	_sharedCast = new Cast(this, true);
@@ -248,6 +283,14 @@ CastMember *Movie::getCastMemberByName(const Common::String &name) {
 	CastMember *result = _cast->getCastMemberByName(name);
 	if (result == nullptr && _sharedCast) {
 		result = _sharedCast->getCastMemberByName(name);
+	}
+	return result;
+}
+
+CastMember *Movie::getCastMemberByScriptId(int scriptId) {
+	CastMember *result = _cast->getCastMemberByScriptId(scriptId);
+	if (result == nullptr && _sharedCast) {
+		result = _sharedCast->getCastMemberByScriptId(scriptId);
 	}
 	return result;
 }

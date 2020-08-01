@@ -45,7 +45,7 @@ namespace Groovie {
 MusicPlayer::MusicPlayer(GroovieEngine *vm) :
 	_vm(vm), _isPlaying(false), _backgroundFileRef(0), _gameVolume(100),
 	_prevCDtrack(0), _backgroundDelay(0), _fadingStartTime(0), _fadingStartVolume(0),
-	_fadingEndVolume(0), _fadingDuration(0), _userVolume(0) {
+	_fadingEndVolume(0), _fadingDuration(0), _midiInit(false), _userVolume(0) {
 }
 
 MusicPlayer::~MusicPlayer() {
@@ -296,6 +296,10 @@ void MusicPlayerMidi::sysEx(const byte *msg, uint16 length) {
 		_driver->sysEx(msg, length);
 }
 
+uint16 MusicPlayerMidi::sysExNoDelay(const byte *msg, uint16 length) {
+	return _driver ? _driver->sysExNoDelay(msg, length) : 0;
+}
+
 void MusicPlayerMidi::metaEvent(byte type, byte *data, uint16 length) {
 	switch (type) {
 	case 0x2F:
@@ -306,6 +310,16 @@ void MusicPlayerMidi::metaEvent(byte type, byte *data, uint16 length) {
 		if (_driver)
 			_driver->metaEvent(type, data, length);
 		break;
+	}
+}
+
+void MusicPlayerMidi::pause(bool pause) {
+	if (_midiParser) {
+		if (pause) {
+			_midiParser->pausePlaying();
+		} else {
+			_midiParser->resumePlaying();
+		}
 	}
 }
 
@@ -385,159 +399,95 @@ bool MusicPlayerMidi::loadParser(Common::SeekableReadStream *stream, bool loop) 
 // MusicPlayerXMI
 
 MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName) :
-	MusicPlayerMidi(vm) {
+	MusicPlayerMidi(vm),
+	_milesMidiDriver(NULL) {
 
 	// Create the driver
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	MusicType musicType = MidiDriver::getMusicType(dev);
+	if (musicType == MT_GM && ConfMan.getBool("native_mt32"))
+		musicType = MT_MT32;
 	_driver = NULL;
-
-	// new Miles Audio support, to disable set milesAudioEnabled to false
-	_milesAudioMode = false;
-	bool milesAudioEnabled = true;
-	MidiParser::XMidiNewTimbreListProc newTimbreListProc = NULL;
 
 	_musicType = 0;
 
-	if (milesAudioEnabled) {
-		// 7th Guest uses FAT.AD/FAT.OPL/FAT.MT
-		// 11th Hour uses SAMPLE.AD/SAMPLE.OPL/SAMPLE.MT
-		switch (musicType) {
-		case MT_ADLIB:
-			_driver = Audio::MidiDriver_Miles_AdLib_create(gtlName + ".AD", gtlName + ".OPL");
-			break;
-		case MT_MT32:
-			_driver = Audio::MidiDriver_Miles_MT32_create(gtlName + ".MT");
-			break;
-		case MT_GM:
-			if (ConfMan.getBool("native_mt32")) {
-				_driver = Audio::MidiDriver_Miles_MT32_create(gtlName + ".MT");
-				musicType = MT_MT32;
-			}
-			break;
-		default:
-			break;
-		}
-
-		if (musicType == MT_MT32) {
-			newTimbreListProc = Audio::MidiDriver_Miles_MT32_processXMIDITimbreChunk;
-		}
-	}
-
-	if (_driver) {
-		_milesAudioMode = true;
-	}
-
-	if (!_driver) {
-		// No driver yet? create a generic one
+	// 7th Guest uses FAT.AD/FAT.OPL/FAT.MT
+	// 11th Hour uses SAMPLE.AD/SAMPLE.OPL/SAMPLE.MT
+	switch (musicType) {
+	case MT_ADLIB:
+		// TODO Would be nice if the Miles AdLib and MIDI drivers shared
+		// a common interface, then we can use only _milesMidiDriver in
+		// this class.
+		_driver = Audio::MidiDriver_Miles_AdLib_create(gtlName + ".AD", gtlName + ".OPL");
+		break;
+	case MT_MT32:
+		_driver = _milesMidiDriver = Audio::MidiDriver_Miles_MIDI_create(musicType, gtlName + ".MT");
+		break;
+	case MT_GM:
+		_driver = _milesMidiDriver = Audio::MidiDriver_Miles_MIDI_create(musicType, "");
+		break;
+	case MT_NULL:
 		_driver = MidiDriver::createMidi(dev);
+		break;
+	default:
+		break;
 	}
+	_musicType = musicType;
 
 	assert(_driver);
 
 	// Create the parser
-	_midiParser = MidiParser::createParser_XMIDI(NULL, NULL, newTimbreListProc, _driver);
+	_midiParser = MidiParser::createParser_XMIDI(NULL, NULL, 0);
 
-	_driver->open();	// TODO: Handle return value != 0 (indicating an error)
+	int result = _driver->open();
+	if (result > 0 && result != MidiDriver::MERR_ALREADY_OPEN)
+		error("Opening MidiDriver failed with error code %i", result);
 
 	// Set the parser's driver
 	_midiParser->setMidiDriver(this);
 
 	// Set the timer rate
 	_midiParser->setTimerRate(_driver->getBaseTempo());
-
-	// Initialize the channel banks
-	for (int i = 0; i < 0x10; i++) {
-		_chanBanks[i] = 0;
-	}
-
-	if (_milesAudioMode)
-		return;
-
-	// Load the Global Timbre Library
-	if (MidiDriver::getMusicType(dev) == MT_ADLIB) {
-		// MIDI through AdLib
-		_musicType = MT_ADLIB;
-		loadTimbres(gtlName + ".ad");
-
-		// Setup the percussion channel
-		for (uint i = 0; i < _timbres.size(); i++) {
-			if (_timbres[i].bank == 0x7F)
-				setTimbreAD(9, _timbres[i]);
-		}
-	} else if ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32")) {
-		_driver->sendMT32Reset();
-
-		// MT-32
-		_musicType = MT_MT32;
-		loadTimbres(gtlName + ".mt");
-	} else {
-		_driver->sendGMReset();
-
-		// GM
-		_musicType = 0;
-	}
 }
 
 MusicPlayerXMI::~MusicPlayerXMI() {
-	//~MusicPlayer();
-
-	// Unload the timbres
-	clearTimbres();
+	_midiParser->stopPlaying();
 }
 
-void MusicPlayerXMI::send(uint32 b) {
-	if (_milesAudioMode) {
+void MusicPlayerXMI::send(int8 source, uint32 b) {
+	if (_milesMidiDriver) {
+		_milesMidiDriver->send(source, b);
+	} else {
 		MusicPlayerMidi::send(b);
-		return;
 	}
+}
 
-	uint32 bytesToSend = b;
-	if ((b & 0xFFF0) == 0x72B0) { // XMIDI Patch Bank Select 114
-		// From AIL2's documentation: XMIDI Patch Bank Select controller (114)
-		// selects a bank to be used when searching the next patches
-		byte chan = b & 0xF;
-		byte bank = (b >> 16) & 0xFF;
-
-		debugC(5, kDebugMIDI, "Groovie::Music: Selecting bank %X for channel %X", bank, chan);
-		_chanBanks[chan] = bank;
-		return;
-	} else if ((b & 0xF0) == 0xC0) { // Program change
-		// We intercept the program change when using AdLib or MT32 drivers,
-		// since we have custom timbres for them.  The command is sent
-		// unchanged to GM drivers.
-		byte chan = b & 0xF;
-		byte patch = (b >> 8) & 0xFF;
-		if (_musicType != 0) {
-
-			debugC(5, kDebugMIDI, "Groovie::Music: Setting custom patch %X from bank %X to channel %X", patch, _chanBanks[chan], chan);
-
-			// Try to find the requested patch from the previously
-			// specified bank
-			int numTimbres = _timbres.size();
-			for (int i = 0; i < numTimbres; i++) {
-				if ((_timbres[i].bank == _chanBanks[chan]) &&
-					(_timbres[i].patch == patch)) {
-					if (_musicType == MT_ADLIB) {
-						setTimbreAD(chan, _timbres[i]);
-					} else if (_musicType == MT_MT32) {
-						setTimbreMT(chan, _timbres[i]);
-					}
-					return;
-				}
-			}
-
-			// If we got here we couldn't find the patch, and the
-			// received message will be sent unchanged.
-		} else if (chan == 0x9) {
-			// GM program change on the rhythm channel (drumkit selection).
-			// Apply drumkit fallback to correct invalid drumkit numbers.
-			byte correctedPatch = _driver->_gsDrumkitFallbackMap[patch];
-			debugC(5, kDebugMIDI, "Groovie::Music: Selected drumkit %X (requested %X)", correctedPatch, patch);
-			bytesToSend = 0xC0 | chan | (correctedPatch << 8);
-		}
+void MusicPlayerXMI::metaEvent(int8 source, byte type, byte *data, uint16 length) {
+	if (_milesMidiDriver) {
+		if (type == 0x2F) // End Of Track
+			MusicPlayerMidi::endTrack();
+		_milesMidiDriver->metaEvent(source, type, data, length);
+	} else {
+		MusicPlayerMidi::metaEvent(type, data, length);
 	}
-	MusicPlayerMidi::send(bytesToSend);
+}
+
+void MusicPlayerXMI::stopAllNotes(bool stopSustainedNotes) {
+	if (_driver)
+		_driver->stopAllNotes(stopSustainedNotes);
+}
+
+bool MusicPlayerXMI::isReady() {
+	return _driver ? _driver->isReady() : false;
+}
+
+void MusicPlayerXMI::updateVolume() {
+	if (_milesMidiDriver) {
+		uint16 val = (_userVolume * _gameVolume) / 100;
+		_milesMidiDriver->setSourceVolume(0, val);
+	} else {
+		MusicPlayerMidi::updateVolume();
+	}
 }
 
 bool MusicPlayerXMI::load(uint32 fileref, bool loop) {
@@ -553,196 +503,12 @@ bool MusicPlayerXMI::load(uint32 fileref, bool loop) {
 	return loadParser(file, loop);
 }
 
-void MusicPlayerXMI::loadTimbres(const Common::String &filename) {
-	// Load the Global Timbre Library format as documented in AIL2
-	debugC(1, kDebugMIDI, "Groovie::Music: Loading the GTL file %s", filename.c_str());
-
-	// Does it exist?
-	if (!Common::File::exists(filename)) {
-		error("Groovie::Music: %s not found", filename.c_str());
-		return;
-	}
-
-	// Open the GTL
-	Common::File *gtl = new Common::File();
-	if (!gtl->open(filename.c_str())) {
-		delete gtl;
-		error("Groovie::Music: Couldn't open %s", filename.c_str());
-		return;
-	}
-
-	// Clear the old timbres before loading the new ones
-	clearTimbres();
-
-	// Get the list of timbres
-	while (true) {
-		Timbre t;
-		t.patch = gtl->readByte();
-		t.bank = gtl->readByte();
-		if ((t.patch == 0xFF) && (t.bank == 0xFF)) {
-			// End of list
-			break;
-		}
-		// We temporarily use the size field to store the offset
-		t.size = gtl->readUint32LE();
-
-		// Add it to the list
-		_timbres.push_back(t);
-	}
-
-	// Read the timbres
-	for (unsigned int i = 0; i < _timbres.size(); i++) {
-		// Seek to the start of the timbre
-		gtl->seek(_timbres[i].size);
-
-		// Read the size
-		_timbres[i].size = gtl->readUint16LE() - 2;
-
-		// Allocate memory for the timbre data
-		_timbres[i].data = new byte[_timbres[i].size];
-
-		// Read the timbre data
-		gtl->read(_timbres[i].data, _timbres[i].size);
-		debugC(5, kDebugMIDI, "Groovie::Music: Loaded patch %x in bank %x with size %d",
-			_timbres[i].patch, _timbres[i].bank, _timbres[i].size);
-	}
-
-	// Close the file
-	delete gtl;
-}
-
-void MusicPlayerXMI::clearTimbres() {
-	// Delete the allocated data
-	int num = _timbres.size();
-	for (int i = 0; i < num; i++) {
-		delete[] _timbres[i].data;
-	}
-
-	// Erase the array entries
-	_timbres.clear();
-}
-
-void MusicPlayerXMI::setTimbreAD(byte channel, const Timbre &timbre) {
-	// Verify the timbre size
-	if (timbre.size != 12) {
-		error("Groovie::Music: Invalid size for an AdLib timbre: %d", timbre.size);
-	}
-
-	// Prepare the AdLib Instrument array from the GTL entry
-	//
-	// struct AdLibInstrument used by our AdLib MIDI synth is 30 bytes.
-	// Since we pass data + 2 for non percussion instruments we need to
-	// have a buffer of size 32, so there are no invalid memory reads,
-	// when setting up an AdLib instrument.
-	byte data[32];
-	memset(data, 0, sizeof(data));
-
-	data[2] = timbre.data[1];        // mod_characteristic
-	data[3] = timbre.data[2] ^ 0x3F; // mod_scalingOutputLevel
-	data[4] = ~timbre.data[3];       // mod_attackDecay
-	data[5] = ~timbre.data[4];       // mod_sustainRelease
-	data[6] = timbre.data[5];        // mod_waveformSelect
-	data[7] = timbre.data[7];        // car_characteristic
-	data[8] = timbre.data[8] ^ 0x3F; // car_scalingOutputLevel
-	data[9] = ~timbre.data[9];       // car_attackDecay
-	data[10] = ~timbre.data[10];     // car_sustainRelease
-	data[11] = timbre.data[11];      // car_waveformSelect
-	data[12] = timbre.data[6];       // feedback
-
-	// Send the instrument to the driver
-	if (timbre.bank == 0x7F) {
-		// This is a Percussion instrument, this will always be set on the same note
-		data[0] = timbre.patch;
-
-		// From AIL2's documentation: If the instrument is to be played in MIDI
-		// channel 10, num specifies its desired absolute MIDI note number.
-		data[1] = timbre.data[0];
-
-		_driver->getPercussionChannel()->sysEx_customInstrument('ADLP', data);
-	} else {
-		// Some tweaks for non-percussion instruments
-		byte mult1 = timbre.data[1] & 0xF;
-		if (mult1 < 4)
-			mult1 = 1 << mult1;
-		data[2] = (timbre.data[1] & 0xF0) + (mult1 & 0xF);
-		byte mult2 = timbre.data[7] & 0xF;
-		if (mult2 < 4)
-			mult2 = 1 << mult2;
-		data[7] = (timbre.data[7] & 0xF0) + (mult2 & 0xF);
-		// TODO: Fix CHARACTERISTIC: 0xF0: pitch_vib, amp_vib, sustain_sound, env_scaling  0xF: freq_mult
-		// TODO: Fix KSL_TL: 0xC: key_scale_lvl  0x3F: out_lvl
-
-		// From AIL2's documentation: num specifies the number of semitones
-		// by which to transpose notes played with the instrument.
-		if (timbre.data[0] != 0)
-			warning("Groovie::Music: AdLib instrument's transposing not supported");
-
-		_driver->sysEx_customInstrument(channel, 'ADL ', data + 2);
+void MusicPlayerXMI::unload() {
+	MusicPlayerMidi::unload();
+	if (_milesMidiDriver) {
+		_milesMidiDriver->deinitSource(0);
 	}
 }
-
-
-#include "common/pack-start.h"	// START STRUCT PACKING
-
-struct RolandInstrumentSysex {
-	byte roland_id;
-	byte device_id;
-	byte model_id;
-	byte command;
-	byte address[3];
-	byte instrument[0xF6];
-	byte checksum;
-} PACKED_STRUCT;
-
-#include "common/pack-end.h"	// END STRUCT PACKING
-
-void setRolandInstrument(MidiDriver *drv, byte channel, byte *instrument) {
-	RolandInstrumentSysex sysex;
-	memcpy(&sysex.instrument, instrument, 0xF6);
-
-	// Show the timbre name as extra debug information
-	Common::String name((char *)instrument, 10);
-	debugC(5, kDebugMIDI, "Groovie::Music: Setting MT32 timbre '%s' to channel %d", name.c_str(), channel);
-
-	sysex.roland_id = 0x41;
-	sysex.device_id = channel; // Unit#
-	sysex.model_id = 0x16; // MT32
-	sysex.command = 0x12; // Data set
-
-	// Remap instrument to appropriate address space.
-	int address = 0x008000;
-	sysex.address[0] = (address >> 14) & 0x7F;
-	sysex.address[1] = (address >>  7) & 0x7F;
-	sysex.address[2] = (address      ) & 0x7F;
-
-	// Compute the checksum.
-	byte checksum = 0;
-	byte *ptr = sysex.address;
-	for (int i = 4; i < (int)sizeof(RolandInstrumentSysex) - 1; ++i)
-		checksum -= *ptr++;
-	sysex.checksum = checksum & 0x7F;
-
-	// Send sysex
-	drv->sysEx((byte *)&sysex, sizeof(RolandInstrumentSysex));
-
-
-	// Wait the time it takes to send the SysEx data
-	uint32 delay = (sizeof(RolandInstrumentSysex) + 2) * 1000 / 3125;
-
-	// Plus an additional delay for the MT-32 rev00
-	delay += 40;
-
-	g_system->delayMillis(delay);
-}
-
-void MusicPlayerXMI::setTimbreMT(byte channel, const Timbre &timbre) {
-	// Verify the timbre size
-	if (timbre.size != 0xF6)
-		error("Groovie::Music: Invalid size for an MT-32 timbre: %d", timbre.size);
-
-	setRolandInstrument(_driver, channel, timbre.data);
-}
-
 
 // MusicPlayerMac_t7g
 

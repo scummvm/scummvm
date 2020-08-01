@@ -35,16 +35,16 @@ protected:
 	void createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
 	                       const StringList &includeList, const StringList &excludeList);
 
-	void outputProjectSettings(std::ofstream &project, const std::string &name, const BuildSetup &setup, bool isRelease, bool isWin32, std::string configuration);
+	void outputProjectSettings(std::ofstream &project, const std::string &name, const BuildSetup &setup, bool isRelease, MSVC_Architecture arch, const std::string &configuration);
 
 	void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
 	                            const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix);
 
 	void writeReferences(const BuildSetup &setup, std::ofstream &output);
 
-	void outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, int bits, const StringList &defines, const std::string &prefix, bool runBuildEvents);
+	void outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, MSVC_Architecture arch, const StringList &defines, const std::string &prefix, bool runBuildEvents) override;
 
-	void createBuildProp(const BuildSetup &setup, bool isRelease, bool isWin32, std::string configuration);
+	void createBuildProp(const BuildSetup &setup, bool isRelease, MSVC_Architecture arch, const std::string &configuration) override;
 
 	const char *getProjectExtension();
 	const char *getPropertiesExtension();
@@ -56,8 +56,8 @@ private:
 		std::string filter;
 		std::string prefix;
 
-		bool operator<(const FileEntry& rhs) const {
-			return path.compare(rhs.path) == -1;   // Not exactly right for alphabetical order, but good enough
+		bool operator<(const FileEntry &rhs) const {
+			return path.compare(rhs.path) == -1; // Not exactly right for alphabetical order, but good enough
 		}
 	};
 	typedef std::list<FileEntry> FileEntries;
@@ -76,6 +76,6 @@ private:
 	void outputFiles(std::ostream &projectFile, const FileEntries &files, const std::string &action);
 };
 
-} // End of CreateProjectTool namespace
+} // namespace CreateProjectTool
 
 #endif // TOOLS_CREATE_PROJECT_MSBUILD_H

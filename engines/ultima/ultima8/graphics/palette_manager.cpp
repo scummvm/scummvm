@@ -136,7 +136,7 @@ Palette *PaletteManager::getPalette(PalIndex index) {
 	return _palettes[index];
 }
 
-void PaletteManager::transformPalette(PalIndex index, int16 matrix[12]) {
+void PaletteManager::transformPalette(PalIndex index, const int16 matrix[12]) {
 	Palette *pal = getPalette(index);
 
 	if (!pal) return;

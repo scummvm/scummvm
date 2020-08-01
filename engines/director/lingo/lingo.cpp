@@ -32,6 +32,7 @@
 #include "director/movie.h"
 #include "director/score.h"
 #include "director/sprite.h"
+#include "director/stage.h"
 #include "director/util.h"
 
 #include "director/lingo/lingo.h"
@@ -45,7 +46,7 @@ Lingo *g_lingo;
 
 Symbol::Symbol() {
 	name = nullptr;
-	type = VOID;
+	type = VOIDSYM;
 	u.s = nullptr;
 	refCount = new int;
 	*refCount = 1;
@@ -80,24 +81,26 @@ Symbol::Symbol(const Symbol &s) {
 }
 
 Symbol& Symbol::operator=(const Symbol &s) {
-	if (this != &s) {
-		reset();
-		name = s.name;
-		type = s.type;
-		u = s.u;
-		refCount = s.refCount;
-		*refCount += 1;
-		nargs = s.nargs;
-		maxArgs = s.maxArgs;
-		parens = s.parens;
-		targetType = s.targetType;
-		argNames = s.argNames;
-		varNames = s.varNames;
-		ctx = s.ctx;
-		archive = s.archive;
-		target = s.target;
-		anonymous = s.anonymous;
-	}
+	if (this == &s)
+		return *this;
+
+	reset();
+	name = s.name;
+	type = s.type;
+	u = s.u;
+	refCount = s.refCount;
+	*refCount += 1;
+	nargs = s.nargs;
+	maxArgs = s.maxArgs;
+	parens = s.parens;
+	targetType = s.targetType;
+	argNames = s.argNames;
+	varNames = s.varNames;
+	ctx = s.ctx;
+	archive = s.archive;
+	target = s.target;
+	anonymous = s.anonymous;
+
 	return *this;
 }
 
@@ -113,8 +116,6 @@ void Symbol::reset() {
 
 		if (type == HANDLER)
 			delete u.defn;
-		else if (type == STRING)
-			delete u.s;
 
 		if (argNames)
 			delete argNames;
@@ -155,8 +156,8 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_indef = kStateNone;
 	_immediateMode = false;
 
-	_linenumber = _colnumber = _bytenumber = _lastbytenumber = _errorbytenumber = 0;
-	_ignoreError = false;
+	_linenumber = _colnumber = _bytenumber = 0;
+	_lines[0] = _lines[1] = _lines[2] = nullptr;
 
 	_hadError = false;
 
@@ -166,14 +167,17 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_floatPrecision = 4;
 	_floatPrecisionFormat = "%.4f";
 
-	_cursorOnStack = false;
-
 	_localvars = NULL;
 
+	//kTheEntities
+	_itemDelimiter = ',';
+
 	// events
-	_nextEventId = 0;
 	_passEvent = false;
 	_perFrameHook = Datum();
+
+	_windowList.type = ARRAY;
+	_windowList.u.farr = new DatumArray;
 
 	initEventHandlerTypes();
 
@@ -190,6 +194,14 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 Lingo::~Lingo() {
 	resetLingo();
 	cleanupBuiltins();
+}
+
+LingoArchive::~LingoArchive() {
+	for (int i = 0; i <= kMaxScriptType; i++) {
+		for (ScriptContextHash::iterator it = scriptContexts[i].begin(); it != scriptContexts[i].end(); ++it) {
+			delete it->_value;
+		}
+	}
 }
 
 ScriptContext *LingoArchive::getScriptContext(ScriptType type, uint16 id) {
@@ -216,11 +228,8 @@ Symbol Lingo::getHandler(const Common::String &name) {
 			return _currentScriptContext->_functionHandlers[name];
 
 		Symbol sym = g_director->getCurrentMovie()->getHandler(name);
-		if (sym.type != VOID)
+		if (sym.type != VOIDSYM)
 			return sym;
-
-		if (_builtins.contains(name))
-			return _builtins[name];
 	}
 	return Symbol();
 }
@@ -263,8 +272,8 @@ const char *Lingo::findNextDefinition(const char *s) {
 }
 
 void LingoArchive::addCode(const char *code, ScriptType type, uint16 id, const char *scriptName) {
-	debugC(1, kDebugCompile, "Add code for type %s(%d) with id %d\n"
-			"***********\n%s\n\n***********", scriptType2str(type), type, id, code);
+	debugC(1, kDebugCompile, "Add code for type %s(%d) with id %d in '%s%s'\n"
+			"***********\n%s\n\n***********", scriptType2str(type), type, id, g_director->getCurrentPath().c_str(), cast->getMacName().c_str(), code);
 
 	if (getScriptContext(type, id)) {
 		// We can't undefine context data because it could be used in e.g. symbols.
@@ -280,7 +289,10 @@ void LingoArchive::addCode(const char *code, ScriptType type, uint16 id, const c
 		contextName = Common::String::format("%d", id);
 
 	ScriptContext *sc = g_lingo->compileLingo(code, this, type, id, contextName);
-	scriptContexts[type][id] = sc;
+	if (sc) {
+		scriptContexts[type][id] = sc;
+		*sc->_refCount += 1;
+	}
 }
 
 ScriptContext *Lingo::compileAnonymous(const char *code) {
@@ -292,7 +304,7 @@ ScriptContext *Lingo::compileAnonymous(const char *code) {
 
 ScriptContext *Lingo::compileLingo(const char *code, LingoArchive *archive, ScriptType type, uint16 id, const Common::String &scriptName, bool anonymous) {
 	_assemblyArchive = archive;
-	ScriptContext *sc = _assemblyContext = new ScriptContext(scriptName, archive, type, id);
+	ScriptContext *mainContext = _assemblyContext = new ScriptContext(scriptName, archive, type, id);
 	_currentAssembly = new ScriptData;
 
 	_methodVars = new VarTypeHash;
@@ -309,7 +321,7 @@ ScriptContext *Lingo::compileLingo(const char *code, LingoArchive *archive, Scri
 	}
 
 	// Preprocess the code for ease of the parser
-	Common::String codeNorm = codePreprocessor(code, type, id);
+	Common::String codeNorm = codePreprocessor(code, archive, type, id);
 	code = codeNorm.c_str();
 	begin = code;
 
@@ -318,12 +330,19 @@ ScriptContext *Lingo::compileLingo(const char *code, LingoArchive *archive, Scri
 		do {
 			Common::String chunk(begin, end);
 
-			if (chunk.hasPrefixIgnoreCase("factory") || chunk.hasPrefixIgnoreCase("method"))
+			if (chunk.hasPrefixIgnoreCase("factory")) {
 				_inFactory = true;
-			else if (chunk.hasPrefixIgnoreCase("macro") || chunk.hasPrefixIgnoreCase("on"))
+				_assemblyContext = new ScriptContext(scriptName, archive, type, id);
+			} else if (chunk.hasPrefixIgnoreCase("method")) {
+				_inFactory = true;
+				// remain in factory context
+			} else if (chunk.hasPrefixIgnoreCase("macro") || chunk.hasPrefixIgnoreCase("on")) {
 				_inFactory = false;
-			else
+				_assemblyContext = mainContext;
+			} else {
 				_inFactory = false;
+				_assemblyContext = mainContext;
+			}
 
 			debugC(1, kDebugCompile, "Code chunk:\n#####\n%s#####", chunk.c_str());
 
@@ -343,82 +362,83 @@ ScriptContext *Lingo::compileLingo(const char *code, LingoArchive *archive, Scri
 			begin = end;
 		} while ((end = findNextDefinition(begin + 1)));
 
-		debugC(1, kDebugCompile, "Last code chunk:\n#####\n%s\n#####", begin);
-		parse(begin);
+		_inFactory = false;
+		_assemblyContext = mainContext;
 
+		debugC(1, kDebugCompile, "Last code chunk:\n#####\n%s\n#####", begin);
+	}
+
+	parse(begin);
+
+	// for D4 and above, there usually won't be any code left.
+	// all scoped methods will be defined and stored by the code parser
+	// however D3 and below allow scopeless functions!
+	// and these can show up in D4 when imported from other movies
+
+	if (!_currentAssembly->empty()) {
 		// end of script, add a c_procret so stack frames work as expected
 		code1(LC::c_procret);
 		code1(STOP);
-	} else {
-		parse(code);
 
-		code1(LC::c_procret);
-		code1(STOP);
-	}
+		if (debugChannelSet(3, kDebugCompile)) {
+			if (_currentAssembly->size() && !_hadError)
+				Common::hexdump((byte *)&_currentAssembly->front(), _currentAssembly->size() * sizeof(inst));
 
-	_inFactory = false;
-
-	if (debugChannelSet(3, kDebugCompile)) {
-		if (_currentAssembly->size() && !_hadError)
-			Common::hexdump((byte *)&_currentAssembly->front(), _currentAssembly->size() * sizeof(inst));
-
-		debugC(2, kDebugCompile, "<resulting code>");
-		uint pc = 0;
-		while (pc < _currentAssembly->size()) {
-			uint spc = pc;
-			Common::String instr = decodeInstruction(_assemblyArchive, _currentAssembly, pc, &pc);
-			debugC(2, kDebugCompile, "[%5d] %s", spc, instr.c_str());
+			debugC(2, kDebugCompile, "<resulting code>");
+			uint pc = 0;
+			while (pc < _currentAssembly->size()) {
+				uint spc = pc;
+				Common::String instr = decodeInstruction(_assemblyArchive, _currentAssembly, pc, &pc);
+				debugC(2, kDebugCompile, "[%5d] %s", spc, instr.c_str());
+			}
+			debugC(2, kDebugCompile, "<end code>");
 		}
-		debugC(2, kDebugCompile, "<end code>");
+
+		Symbol currentFunc;
+
+		currentFunc.type = HANDLER;
+		currentFunc.u.defn = _currentAssembly;
+		Common::String typeStr = Common::String(scriptType2str(type));
+		currentFunc.name = new Common::String("[" + typeStr + " " + _assemblyContext->getName() + "]");
+		currentFunc.ctx = _assemblyContext;
+		currentFunc.archive = archive;
+		currentFunc.anonymous = anonymous;
+		// arg names should be empty, but just in case
+		Common::Array<Common::String> *argNames = new Common::Array<Common::String>;
+		for (uint i = 0; i < _argstack.size(); i++) {
+			argNames->push_back(Common::String(_argstack[i]->c_str()));
+		}
+		Common::Array<Common::String> *varNames = new Common::Array<Common::String>;
+		for (Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _methodVars->begin(); it != _methodVars->end(); ++it) {
+			if (it->_value == kVarLocal)
+				varNames->push_back(Common::String(it->_key));
+		}
+
+		if (debugChannelSet(1, kDebugCompile)) {
+			debug("Function vars");
+			debugN("  Args: ");
+			for (uint i = 0; i < argNames->size(); i++) {
+				debugN("%s, ", (*argNames)[i].c_str());
+			}
+			debugN("\n");
+			debugN("  Local vars: ");
+			for (uint i = 0; i < varNames->size(); i++) {
+				debugN("%s, ", (*varNames)[i].c_str());
+			}
+			debugN("\n");
+		}
+
+		currentFunc.argNames = argNames;
+		currentFunc.varNames = varNames;
+		_assemblyContext->_eventHandlers[kEventGeneric] = currentFunc;
 	}
 
-	// for D4 and above, there won't be any code left. all scoped methods
-	// will be defined and stored by the code parser, and this function we save
-	// will be blank.
-	// however D3 and below allow scopeless functions!
-	Symbol currentFunc;
-
-	currentFunc.type = HANDLER;
-	currentFunc.u.defn = _currentAssembly;
-	Common::String typeStr = Common::String(scriptType2str(type));
-	currentFunc.name = new Common::String("[" + typeStr + " " + _assemblyContext->_name + "]");
-	currentFunc.ctx = _assemblyContext;
-	currentFunc.archive = archive;
-	currentFunc.anonymous = anonymous;
-	// arg names should be empty, but just in case
-	Common::Array<Common::String> *argNames = new Common::Array<Common::String>;
-	for (uint i = 0; i < _argstack.size(); i++) {
-		argNames->push_back(Common::String(_argstack[i]->c_str()));
-	}
-	Common::Array<Common::String> *varNames = new Common::Array<Common::String>;
-	for (Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _methodVars->begin(); it != _methodVars->end(); ++it) {
-		if (it->_value == kVarLocal)
-			varNames->push_back(Common::String(it->_key));
-	}
 	delete _methodVars;
 	_methodVars = nullptr;
-
-	if (debugChannelSet(1, kDebugCompile)) {
-		debug("Function vars");
-		debugN("  Args: ");
-		for (uint i = 0; i < argNames->size(); i++) {
-			debugN("%s, ", (*argNames)[i].c_str());
-		}
-		debugN("\n");
-		debugN("  Local vars: ");
-		for (uint i = 0; i < varNames->size(); i++) {
-			debugN("%s, ", (*varNames)[i].c_str());
-		}
-		debugN("\n");
-	}
-
-	currentFunc.argNames = argNames;
-	currentFunc.varNames = varNames;
 	_currentAssembly = nullptr;
-	_assemblyContext->_eventHandlers[kEventNone] = currentFunc;
 	_assemblyContext = nullptr;
 	_assemblyArchive = nullptr;
-	return sc;
+	return mainContext;
 }
 
 void Lingo::printStack(const char *s, uint pc) {
@@ -439,7 +459,7 @@ void Lingo::printCallStack(uint pc) {
 		if (i < (int)g_lingo->_callstack.size() - 1)
 			framePc = g_lingo->_callstack[i + 1]->retpc;
 
-		if (frame->sp.type != VOID) {
+		if (frame->sp.type != VOIDSYM) {
 			debugC(5, kDebugLingoExec, "#%d %s:%d", i + 1,
 				g_lingo->_callstack[i]->sp.name->c_str(),
 				framePc
@@ -576,8 +596,15 @@ void Lingo::execute(uint pc) {
 
 		if (++counter > 1000 && debugChannelSet(-1, kDebugFewFramesOnly)) {
 			warning("Lingo::execute(): Stopping due to debug few frames only");
-			_vm->getCurrentMovie()->getScore()->_stopPlay = true;
+			_vm->getCurrentMovie()->getScore()->_playState = kPlayStopped;
 			break;
+		}
+
+		// process events every so often
+		if (counter % 100 == 0) {
+			_vm->processEvents();
+			if (_vm->getCurrentMovie()->getScore()->_playState == kPlayStopped)
+				break;
 		}
 	}
 
@@ -594,21 +621,26 @@ void Lingo::executeScript(ScriptType type, uint16 id) {
 	ScriptContext *sc = movie->getScriptContext(type, id);
 
 	if (!sc) {
-		debugC(3, kDebugLingoExec, "Request to execute non-existant script type %d id %d", type, id);
+		debugC(3, kDebugLingoExec, "Request to execute non-existent script type %d id %d", type, id);
+		return;
+	}
+
+	if (!sc->_eventHandlers.contains(kEventGeneric)) {
+		debugC(3, kDebugLingoExec, "Request to execute script type %d id %d with no scopeless lingo", type, id);
 		return;
 	}
 
 	debugC(1, kDebugLingoExec, "Executing script type: %s, id: %d", scriptType2str(type), id);
 
-	Symbol sym = sc->_eventHandlers[kEventNone];
-	LC::call(sym, 0);
+	Symbol sym = sc->_eventHandlers[kEventGeneric];
+	LC::call(sym, 0, false);
 	execute(_pc);
 }
 
 void Lingo::executeHandler(const Common::String &name) {
 	debugC(1, kDebugLingoExec, "Executing script handler : %s", name.c_str());
 	Symbol sym = getHandler(name);
-	LC::call(sym, 0);
+	LC::call(sym, 0, false);
 	execute(_pc);
 }
 
@@ -634,7 +666,7 @@ void Lingo::resetLingo() {
 	// timeoutScript is not reset
 }
 
-int Lingo::getAlignedType(Datum &d1, Datum &d2) {
+int Lingo::getAlignedType(const Datum &d1, const Datum &d2) {
 	int opType = VOID;
 
 	int d1Type = d1.type;
@@ -642,18 +674,22 @@ int Lingo::getAlignedType(Datum &d1, Datum &d2) {
 
 	if (d1Type == STRING || d1Type == FIELDREF) {
 		Common::String src = d1.asString();
-		char *endPtr = 0;
-		strtod(src.c_str(), &endPtr);
-		if (*endPtr == 0) {
-			d1Type = FLOAT;
+		if (!src.empty()) {
+			char *endPtr = 0;
+			strtod(src.c_str(), &endPtr);
+			if (*endPtr == 0) {
+				d1Type = FLOAT;
+			}
 		}
 	}
 	if (d2Type == STRING || d2Type == FIELDREF) {
-		Common::String src = d1.asString();
-		char *endPtr = 0;
-		strtod(src.c_str(), &endPtr);
-		if (*endPtr == 0) {
-			d2Type = FLOAT;
+		Common::String src = d2.asString();
+		if (!src.empty()) {
+			char *endPtr = 0;
+			strtod(src.c_str(), &endPtr);
+			if (*endPtr == 0) {
+				d2Type = FLOAT;
+			}
 		}
 	}
 
@@ -689,8 +725,6 @@ Datum::Datum(const Datum &d) {
 }
 
 Datum& Datum::operator=(const Datum &d) {
-	if (d.type == OBJECT)
-		warning("%p = REFCOUNT %d", (void *)this, *refCount);
 	if (this != &d && refCount != d.refCount) {
 		reset();
 		type = d.type;
@@ -725,13 +759,12 @@ Datum::Datum(const Common::String &val) {
 	*refCount = 1;
 }
 
-Datum::Datum(Object *val) {
+Datum::Datum(AbstractObject *val) {
 	u.obj = val;
 	type = OBJECT;
 	lazy = false;
-	refCount = val->refCount;
+	refCount = val->getRefCount();
 	*refCount += 1;
-	warning("%p create REFCOUNT %d", (void *)this, *refCount);
 }
 
 void Datum::reset() {
@@ -761,7 +794,13 @@ void Datum::reset() {
 			delete u.parr;
 			break;
 		case OBJECT:
-			delete u.obj;
+			if (u.obj->getObjType() == kWindowObj) {
+				Stage *window = static_cast<Stage *>(u.obj);
+				g_director->_wm->removeWindow(window);
+				g_director->_wm->removeMarked();
+			} else {
+				delete u.obj;
+			}
 			break;
 		case CASTREF:
 		case FIELDREF:
@@ -788,7 +827,7 @@ Datum Datum::eval() {
 	return g_lingo->varFetch(*this);
 }
 
-int Datum::asInt() {
+int Datum::asInt() const {
 	int res = 0;
 
 	switch (type) {
@@ -822,7 +861,7 @@ int Datum::asInt() {
 	return res;
 }
 
-double Datum::asFloat() {
+double Datum::asFloat() const {
 	double res = 0.0;
 
 	switch (type) {
@@ -856,7 +895,7 @@ double Datum::asFloat() {
 	return res;
 }
 
-Common::String Datum::asString(bool printonly) {
+Common::String Datum::asString(bool printonly) const {
 	Common::String s;
 	switch (type) {
 	case INT:
@@ -889,9 +928,9 @@ Common::String Datum::asString(bool printonly) {
 		break;
 	case OBJECT:
 		if (!printonly) {
-			s = Common::String::format("#%s", u.obj->name->c_str());
+			s = Common::String::format("#%s", u.obj->getName().c_str());
 		} else {
-			s = Common::String::format("object: #%s %d %p", u.obj->name->c_str(), u.obj->inheritanceLevel, (void *)u.obj);
+			s = u.obj->asString();
 		}
 		break;
 	case VOID:
@@ -962,7 +1001,7 @@ Common::String Datum::asString(bool printonly) {
 	return s;
 }
 
-const char *Datum::type2str(bool isk) {
+const char *Datum::type2str(bool isk) const {
 	static char res[20];
 
 	switch (isk ? u.i : type) {
@@ -992,7 +1031,7 @@ const char *Datum::type2str(bool isk) {
 	}
 }
 
-int Datum::equalTo(Datum &d, bool ignoreCase) {
+int Datum::equalTo(Datum &d, bool ignoreCase) const {
 	int alignType = g_lingo->getAlignedType(*this, d);
 
 	if (alignType == FLOAT) {
@@ -1012,7 +1051,7 @@ int Datum::equalTo(Datum &d, bool ignoreCase) {
 	}
 }
 
-int Datum::compareTo(Datum &d, bool ignoreCase) {
+int Datum::compareTo(Datum &d, bool ignoreCase) const {
 	int alignType = g_lingo->getAlignedType(*this, d);
 
 	if (alignType == FLOAT) {
@@ -1047,27 +1086,6 @@ int Datum::compareTo(Datum &d, bool ignoreCase) {
 	}
 }
 
-void ScriptContext::setTarget(Object *target) {
-	_target = target;
-	for (SymbolHash::iterator it = _functionHandlers.begin(); it != _functionHandlers.end(); ++it) {
-		it->_value.target = target;
-	}
-	for (Common::HashMap<uint32, Symbol>::iterator it = _eventHandlers.begin(); it != _eventHandlers.end(); ++it) {
-		it->_value.target = target;
-	}
-}
-
-Datum ScriptContext::getParentScript() {
-	if (_parentScript.type != OBJECT) {
-		_parentScript.type = OBJECT;
-		_parentScript.u.obj = new Object(_name, kScriptObj, new ScriptContext(*this));
-		for (Common::Array<Common::String>::iterator it = _propNames.begin(); it != _propNames.end(); ++it) {
-			_parentScript.u.obj->properties[*it] = Datum();
-		}
-	}
-	return _parentScript;
-}
-
 void Lingo::parseMenu(const char *code) {
 	warning("STUB: parseMenu");
 }
@@ -1080,9 +1098,9 @@ void Lingo::runTests() {
 
 	LingoArchive *mainArchive = g_director->getCurrentMovie()->getMainLingoArch();
 
-	// Repurpose commandline option --start-movie to run a specific lingo script.
-	if (ConfMan.hasKey("start_movie")) {
-		fileList.push_back(ConfMan.get("start_movie"));
+	Common::String startMovie = _vm->getStartMovie().startMovie;
+	if (startMovie.size() > 0) {
+		fileList.push_back(startMovie);
 	} else {
 		for (Common::ArchiveMemberList::iterator it = fsList.begin(); it != fsList.end(); ++it)
 			fileList.push_back((*it)->getName());
@@ -1128,7 +1146,7 @@ void Lingo::executeImmediateScripts(Frame *frame) {
 			// From D5 only explicit event handlers are processed
 			// Before that you could specify commands which will be executed on mouse up
 			if (_vm->getVersion() < 5)
-				g_lingo->processEvent(kEventNone, kScoreScript, frame->_sprites[i]->_scriptId, i);
+				g_lingo->processEvent(kEventGeneric, kScoreScript, frame->_sprites[i]->_scriptId, i);
 			else
 				g_lingo->processEvent(kEventMouseUp, kScoreScript, frame->_sprites[i]->_scriptId, i);
 		}
@@ -1138,11 +1156,11 @@ void Lingo::executeImmediateScripts(Frame *frame) {
 void Lingo::executePerFrameHook(int frame, int subframe) {
 	if (_perFrameHook.type == OBJECT) {
 		Symbol method = _perFrameHook.u.obj->getMethod("mAtFrame");
-		if (method.type != VOID) {
+		if (method.type != VOIDSYM) {
 			debugC(1, kDebugLingoExec, "Executing perFrameHook : <%s>(mAtFrame, %d, %d)", _perFrameHook.asString(true).c_str(), frame, subframe);
 			push(Datum(frame));
 			push(Datum(subframe));
-			LC::call(method, 2);
+			LC::call(method, 2, false);
 			execute(_pc);
 		}
 	}
@@ -1159,9 +1177,10 @@ void Lingo::printAllVars() {
 	}
 	debugN("\n");
 
-	if (_currentMe.type == OBJECT) {
+	if (_currentMe.type == OBJECT && _currentMe.u.obj->getObjType() & (kFactoryObj | kScriptObj)) {
+		ScriptContext *script = static_cast<ScriptContext *>(_currentMe.u.obj);
 		debugN("  Instance/property vars: ");
-		for (DatumHash::iterator i = _currentMe.u.obj->properties.begin(); i != _currentMe.u.obj->properties.end(); ++i) {
+		for (DatumHash::iterator i = script->_properties.begin(); i != script->_properties.end(); ++i) {
 			debugN("%s, ", (*i)._key.c_str());
 		}
 		debugN("\n");
@@ -1264,7 +1283,7 @@ void Lingo::varAssign(Datum &var, Datum &value, bool global, DatumHash *localvar
 	}
 }
 
-Datum Lingo::varFetch(Datum &var, bool global, DatumHash *localvars) {
+Datum Lingo::varFetch(Datum &var, bool global, DatumHash *localvars, bool silent) {
 	if (localvars == nullptr) {
 		localvars = _localvars;
 	}
@@ -1282,7 +1301,7 @@ Datum Lingo::varFetch(Datum &var, bool global, DatumHash *localvars) {
 
 		// For kScriptObj handlers the target is an argument
 		// (and can be renamed from 'me)
-		if (_currentMe.type == OBJECT && _currentMe.u.obj->type != kScriptObj && name.equalsIgnoreCase("me")) {
+		if (_currentMe.type == OBJECT && _currentMe.u.obj->getObjType() != kScriptObj && name.equalsIgnoreCase("me")) {
 			result = _currentMe;
 			return result;
 		}
@@ -1302,7 +1321,8 @@ Datum Lingo::varFetch(Datum &var, bool global, DatumHash *localvars) {
 			return _globalvars[name];
 		}
 
-		warning("varFetch: variable %s not found", name.c_str());
+		if (!silent)
+			warning("varFetch: variable %s not found", name.c_str());
 		return result;
 	} else if (var.type == FIELDREF) {
 		CastMember *cast = _vm->getCurrentMovie()->getCastMember(var.u.i);

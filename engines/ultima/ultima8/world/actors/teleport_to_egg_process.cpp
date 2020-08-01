@@ -32,12 +32,12 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(TeleportToEggProcess)
 
 TeleportToEggProcess::TeleportToEggProcess() : Process(),
-	_mapNum(0), _teleportId(0) {
+	_mapNum(0), _teleportId(0), _arrivalAnim(0) {
 }
 
 
-TeleportToEggProcess::TeleportToEggProcess(int mapNum, int teleportId)
-	: _mapNum(mapNum), _teleportId(teleportId) {
+TeleportToEggProcess::TeleportToEggProcess(int mapNum, int teleportId, int arrivalAnim)
+	: _mapNum(mapNum), _teleportId(teleportId), _arrivalAnim(0) {
 	_type = 1; // CONSTANT! (type 1 = persistent)
 }
 
@@ -46,6 +46,9 @@ void TeleportToEggProcess::run() {
 	MainActor *av = getMainActor();
 
 	av->teleport(_mapNum, _teleportId);
+
+	if (_arrivalAnim)
+		av->doAnim(static_cast<Animation::Sequence>(_arrivalAnim), av->getDir());
 
 	terminate();
 }

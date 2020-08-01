@@ -4,6 +4,8 @@ MODULE_OBJS = \
 	archive.o \
 	cast.o \
 	castmember.o \
+	channel.o \
+	cursor.o \
 	detection.o \
 	director.o \
 	events.o \
@@ -21,7 +23,6 @@ MODULE_OBJS = \
 	transitions.o \
 	util.o \
 	video.o \
-	lingo/lingo-gr.o \
 	lingo/lingo.o \
 	lingo/lingo-builtins.o \
 	lingo/lingo-bytecode.o \
@@ -29,12 +30,16 @@ MODULE_OBJS = \
 	lingo/lingo-codegen.o \
 	lingo/lingo-events.o \
 	lingo/lingo-funcs.o \
+	lingo/lingo-gr.o \
 	lingo/lingo-lex.o \
 	lingo/lingo-object.o \
 	lingo/lingo-patcher.o \
 	lingo/lingo-preprocessor.o \
 	lingo/lingo-the.o \
-	lingo/xlibs/fileio.o
+	lingo/xlibs/fileio.o \
+	lingo/xlibs/flushxobj.o \
+	lingo/xlibs/palxobj.o \
+	lingo/xlibs/winxobj.o
 
 director-grammar:
 	`brew --prefix flex`/bin/flex engines/director/lingo/lingo-lex.l

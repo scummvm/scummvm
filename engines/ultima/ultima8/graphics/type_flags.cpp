@@ -51,10 +51,6 @@ ShapeInfo *TypeFlags::getShapeInfo(uint32 shapenum) {
 
 
 void TypeFlags::load(Common::SeekableReadStream *rs) {
-	// TODO: detect U8/crusader format somehow?!
-	// (Or probably pass it as parameter)
-	// The 'parsing' below is only for U8
-
 	unsigned int blocksize = 8;
 	if (GAME_IS_CRUSADER) {
 		blocksize = 9;
@@ -138,13 +134,13 @@ void TypeFlags::load(Common::SeekableReadStream *rs) {
 			si._y = (data[3] >> 2) & 0x1F;
 			si._z = ((data[4] << 1) | (data[3] >> 7)) & 0x1F;
 
-			si._unknown = (unk2data << 24) + ((data[4] & 0xF0) << 16) | (data[5] << 8) | data[8];
+			si._unknown = (unk2data << 24) + (((data[4] & 0xF0) << 16) | (data[5] << 8) | data[8]);
 
 			// This seems to be how it's used..
 			si._weight = data[7];
 
 			if (data[6] & 0x01) si._flags |= ShapeInfo::SI_EDITOR;
-			if (data[6] & 0x02) si._flags |= ShapeInfo::SI_CRUSUNK61;
+			if (data[6] & 0x02) si._flags |= ShapeInfo::SI_SELECTABLE;
 			if (data[6] & 0x04) si._flags |= ShapeInfo::SI_CRUSUNK62;
 			if (data[6] & 0x08) si._flags |= ShapeInfo::SI_CRUSUNK63;
 			if (data[6] & 0x10) si._flags |= ShapeInfo::SI_TARGETABLE;
@@ -266,7 +262,17 @@ void TypeFlags::loadWeaponInfo() {
 		else
 			wi->_displayGumpShape = 3;
 
-		assert(wi->_shape < _shapeInfo.size());
+		if (config->get(k + "/small", val))
+			wi->_small = static_cast<uint8>(val);
+		else
+			wi->_small = 0;
+
+		if (wi->_shape > _shapeInfo.size()) {
+			warning("ignoring weapon info for shape %d beyond size %d.",
+					wi->_shape, _shapeInfo.size());
+			delete wi;
+			continue;
+		}
 		_shapeInfo[wi->_shape]._weaponInfo = wi;
 	}
 }
@@ -415,6 +421,24 @@ void TypeFlags::loadMonsterInfo() {
 		_shapeInfo[mi->_shape]._monsterInfo = mi;
 	}
 }
+
+void TypeFlags::loadDamageDat(Common::SeekableReadStream *rs) {
+	uint32 count = rs->size() / 6;
+	if (_shapeInfo.size() < count) {
+		warning("more damage info than shape info");
+		return;
+	}
+	for (uint32 i = 0; i < count; i++) {
+		byte damagedata[6];
+		rs->read(damagedata, 6);
+		if (damagedata[0] == 0)
+			continue;
+
+		DamageInfo *di = new DamageInfo(damagedata);
+		_shapeInfo[i]._damageInfo = di;
+	}
+}
+
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

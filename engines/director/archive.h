@@ -52,8 +52,10 @@ public:
 	virtual bool openStream(Common::SeekableReadStream *stream, uint32 offset = 0) = 0;
 	virtual void close();
 
-	Common::String getFileName() const { return _fileName; }
-	void setFileName(const Common::String &name) { _fileName = name; }
+	Common::String getPathName() const { return _pathName; }
+	Common::String getFileName() const;
+	void setPathName(const Common::String &name) { _pathName = name; }
+	int getFileSize();
 
 	bool isOpen() const { return _stream != 0; }
 
@@ -77,7 +79,7 @@ protected:
 	typedef Common::HashMap<uint32, ResourceMap> TypeMap;
 	TypeMap _types;
 
-	Common::String _fileName;
+	Common::String _pathName;
 };
 
 class MacArchive : public Archive {

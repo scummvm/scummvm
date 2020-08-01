@@ -21,7 +21,7 @@
  */
 
 #include "kyra/engine/kyra_lok.h"
-#include "kyra/sequence/seqplayer.h"
+#include "kyra/sequence/seqplayer_lok.h"
 #include "kyra/resource/resource.h"
 #include "kyra/engine/sprites.h"
 #include "kyra/graphics/wsamovie.h"
@@ -315,7 +315,7 @@ bool KyraEngine_LoK::seq_introMalcolmTree() {
 bool KyraEngine_LoK::seq_introKallakWriting() {
 	_seq->makeHandShapes();
 	_screen->setAnimBlockPtr(5060);
-	_screen->_charWidth = -2;
+	_screen->_charSpacing = -2;
 	_screen->clearPage(3);
 	const bool skipped = _seq->playSequence(_seq_KallakWriting, true);
 	_seq->freeHandShapes();
@@ -1192,7 +1192,7 @@ void KyraEngine_LoK::seq_playEnding() {
 	_eventList.clear();
 
 	if (_flags.platform == Common::kPlatformAmiga) {
-		_screen->_charWidth = -2;
+		_screen->_charSpacing = -2;
 		_screen->setCurPage(2);
 
 		_screen->getPalette(2).clear();
@@ -1238,7 +1238,7 @@ void KyraEngine_LoK::seq_playCredits() {
 	_screen->setCurPage(0);
 	_screen->clearCurPage();
 	_screen->setTextColorMap(colorMap);
-	_screen->_charWidth = -1;
+	_screen->_charSpacing = -1;
 
 	// we only need this for the FM-TOWNS version
 	if (_flags.platform == Common::kPlatformFMTowns && _configMusic == 1)

@@ -69,13 +69,33 @@
 namespace Sky {
 
 void *SkyEngine::_itemList[300];
-
-SystemVars SkyEngine::_systemVars = {0, 0, 0, 0, 4316, 0, 0, false, false };
-
+SystemVars *SkyEngine::_systemVars = nullptr;
 const char *SkyEngine::shortcutsKeymapId = "sky-shortcuts";
 
 SkyEngine::SkyEngine(OSystem *syst)
-	: Engine(syst), _fastMode(0), _debugger(0) {
+    : Engine(syst), _fastMode(0), _debugger(0) {
+	_systemVars = new SystemVars();
+	_systemVars->systemFlags    = 0;
+	_systemVars->gameVersion    = 0;
+	_systemVars->mouseFlag      = 0;
+	_systemVars->language       = 0;
+	_systemVars->currentPalette = 4316;
+	_systemVars->gameSpeed      = 0;
+	_systemVars->currentMusic   = 0;
+	_systemVars->pastIntro      = false;
+	_systemVars->paused         = false;
+
+	_action     = kSkyActionNone;
+	_skyLogic   = nullptr;
+	_skySound   = nullptr;
+	_skyMusic   = nullptr;
+	_skyText    = nullptr;
+	_skyMouse   = nullptr;
+	_skyScreen  = nullptr;
+
+	_skyDisk    = nullptr;
+	_skyControl = nullptr;
+	_skyCompact = nullptr;
 }
 
 SkyEngine::~SkyEngine() {
@@ -93,6 +113,8 @@ SkyEngine::~SkyEngine() {
 	for (int i = 0; i < 300; i++)
 		if (_itemList[i])
 			free(_itemList[i]);
+
+	delete _systemVars;
 }
 
 void SkyEngine::syncSoundSettings() {
@@ -103,10 +125,10 @@ void SkyEngine::syncSoundSettings() {
 		mute = ConfMan.getBool("mute");
 
 	if (ConfMan.getBool("sfx_mute")) // set mute sfx status for native options menu (F5)
-		SkyEngine::_systemVars.systemFlags |= SF_FX_OFF;
+		SkyEngine::_systemVars->systemFlags |= SF_FX_OFF;
 
 	if (ConfMan.getBool("music_mute")) { // CD version allows to mute music from native options menu (F5)
-		SkyEngine::_systemVars.systemFlags |= SF_MUS_OFF;
+		SkyEngine::_systemVars->systemFlags |= SF_MUS_OFF;
 	}
 	// SkyEngine native sound volume range is [0, 127]
 	// However, via ScummVM UI, the volume range can be set within [0, 256]
@@ -123,10 +145,10 @@ void SkyEngine::initVirgin() {
 }
 
 void SkyEngine::handleKey() {
-	if ((_action != kSkyActionNone || _keyPressed.keycode) && _systemVars.paused) {
+	if ((_action != kSkyActionNone || _keyPressed.keycode) && _systemVars->paused) {
 		_skySound->fnUnPauseFx();
-		_systemVars.paused = false;
-		_skyScreen->setPaletteEndian((uint8 *)_skyCompact->fetchCpt(SkyEngine::_systemVars.currentPalette));
+		_systemVars->paused = false;
+		_skyScreen->setPaletteEndian((uint8 *)_skyCompact->fetchCpt(SkyEngine::_systemVars->currentPalette));
 	} else {
 		switch (_action) {
 		case kSkyActionToggleFastMode:
@@ -142,7 +164,7 @@ void SkyEngine::handleKey() {
 			break;
 
 		case kSkyActionSkip:
-			if (!_systemVars.pastIntro)
+			if (!_systemVars->pastIntro)
 				_skyControl->restartGame();
 			break;
 
@@ -153,7 +175,7 @@ void SkyEngine::handleKey() {
 		case kSkyActionPause:
 			_skyScreen->halvePalette();
 			_skySound->fnPauseFx();
-			_systemVars.paused = true;
+			_systemVars->paused = true;
 			break;
 
 		default:
@@ -171,13 +193,16 @@ Common::Error SkyEngine::go() {
 	uint16 result = 0;
 	if (ConfMan.hasKey("save_slot")) {
 		int saveSlot = ConfMan.getInt("save_slot");
-		if (saveSlot >= 0 && saveSlot <= 999)
+		if (saveSlot >= 0 && saveSlot <= MAX_SAVE_GAMES)
 			result = _skyControl->quickXRestore(ConfMan.getInt("save_slot"));
 	}
 
 	if (result != GAME_RESTORED) {
 		bool introSkipped = false;
-		if (_systemVars.gameVersion > 272) { // don't do intro for floppydemos
+		// Clear pastIntro here (set to false) explicilty
+		// It should be false already, but better to ensure it
+		_systemVars->pastIntro = false; 
+		if (_systemVars->gameVersion > 272) { // don't do intro for floppydemos
 			Intro *skyIntro = new Intro(_skyDisk, _skyScreen, _skyMusic, _skySound, _skyText, _mixer, _system);
 			bool floppyIntro = ConfMan.getBool("alt_intro");
 			introSkipped = !skyIntro->doIntro(floppyIntro);
@@ -190,10 +215,13 @@ Common::Error SkyEngine::go() {
 			// initial animation where Foster is being chased. initScreen0()
 			// shows the first scene together with that animation. We can't
 			// call both, as they both load the same scene.
-			if (introSkipped)
+			if (introSkipped) {
+				// restart game sets the _systemVars->pastIntro = true; 
 				_skyControl->restartGame();
-			else
+			} else {
+
 				_skyLogic->initScreen0();
+			}
 		}
 	}
 
@@ -202,12 +230,12 @@ Common::Error SkyEngine::go() {
 		_skySound->checkFxQueue();
 		_skyMouse->mouseEngine();
 		handleKey();
-		if (_systemVars.paused) {
+		if (_systemVars->paused) {
 			do {
 				_system->updateScreen();
 				delay(50);
 				handleKey();
-			} while (_systemVars.paused);
+			} while (_systemVars->paused);
 			delayCount = _system->getMillis();
 		}
 
@@ -229,9 +257,9 @@ Common::Error SkyEngine::go() {
 		else if (_fastMode & 1)
 			delay(10);
 		else {
-			delayCount += _systemVars.gameSpeed;
+			delayCount += _systemVars->gameSpeed;
 			int needDelay = delayCount - (int)_system->getMillis();
-			if ((needDelay < 0) || (needDelay > _systemVars.gameSpeed)) {
+			if ((needDelay < 0) || (needDelay > _systemVars->gameSpeed)) {
 				needDelay = 0;
 				delayCount = _system->getMillis();
 			}
@@ -252,14 +280,14 @@ Common::Error SkyEngine::init() {
 	_skyDisk = new Disk();
 	_skySound = new Sound(_mixer, _skyDisk, Audio::Mixer::kMaxChannelVolume);
 
-	_systemVars.gameVersion = _skyDisk->determineGameVersion();
+	_systemVars->gameVersion = _skyDisk->determineGameVersion();
 
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32);
 	if (MidiDriver::getMusicType(dev) == MT_ADLIB) {
-		_systemVars.systemFlags |= SF_SBLASTER;
+		_systemVars->systemFlags |= SF_SBLASTER;
 		_skyMusic = new AdLibMusic(_mixer, _skyDisk);
 	} else {
-		_systemVars.systemFlags |= SF_ROLAND;
+		_systemVars->systemFlags |= SF_ROLAND;
 		if ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"))
 			_skyMusic = new MT32Music(MidiDriver::createMidi(dev), _mixer, _skyDisk);
 		else
@@ -270,20 +298,20 @@ Common::Error SkyEngine::init() {
 		if (ConfMan.hasKey("nosubtitles")) {
 			warning("Configuration key 'nosubtitles' is deprecated. Use 'subtitles' instead");
 			if (!ConfMan.getBool("nosubtitles"))
-				_systemVars.systemFlags |= SF_ALLOW_TEXT;
+				_systemVars->systemFlags |= SF_ALLOW_TEXT;
 		}
 
 		if (ConfMan.getBool("subtitles"))
-			_systemVars.systemFlags |= SF_ALLOW_TEXT;
+			_systemVars->systemFlags |= SF_ALLOW_TEXT;
 
 		if (!ConfMan.getBool("speech_mute"))
-			_systemVars.systemFlags |= SF_ALLOW_SPEECH;
+			_systemVars->systemFlags |= SF_ALLOW_SPEECH;
 
 	} else
-		_systemVars.systemFlags |= SF_ALLOW_TEXT;
+		_systemVars->systemFlags |= SF_ALLOW_TEXT;
 
-	_systemVars.systemFlags |= SF_PLAY_VOCS;
-	_systemVars.gameSpeed = 80;
+	_systemVars->systemFlags |= SF_PLAY_VOCS;
+	_systemVars->gameSpeed = 80;
 
 	_skyCompact = new SkyCompact();
 	_skyText = new Text(_skyDisk, _skyCompact);
@@ -305,44 +333,44 @@ Common::Error SkyEngine::init() {
 
 	switch (Common::parseLanguage(ConfMan.get("language"))) {
 	case Common::EN_USA:
-		_systemVars.language = SKY_USA;
+		_systemVars->language = SKY_USA;
 		break;
 	case Common::DE_DEU:
-		_systemVars.language = SKY_GERMAN;
+		_systemVars->language = SKY_GERMAN;
 		break;
 	case Common::FR_FRA:
-		_systemVars.language = SKY_FRENCH;
+		_systemVars->language = SKY_FRENCH;
 		break;
 	case Common::IT_ITA:
-		_systemVars.language = SKY_ITALIAN;
+		_systemVars->language = SKY_ITALIAN;
 		break;
 	case Common::PT_BRA:
-		_systemVars.language = SKY_PORTUGUESE;
+		_systemVars->language = SKY_PORTUGUESE;
 		break;
 	case Common::ES_ESP:
-		_systemVars.language = SKY_SPANISH;
+		_systemVars->language = SKY_SPANISH;
 		break;
 	case Common::SE_SWE:
-		_systemVars.language = SKY_SWEDISH;
+		_systemVars->language = SKY_SWEDISH;
 		break;
 	case Common::EN_GRB:
-		_systemVars.language = SKY_ENGLISH;
+		_systemVars->language = SKY_ENGLISH;
 		break;
 	default:
-		_systemVars.language = SKY_ENGLISH;
+		_systemVars->language = SKY_ENGLISH;
 		break;
 	}
 
-	if (!_skyDisk->fileExists(60600 + SkyEngine::_systemVars.language * 8)) {
+	if (!_skyDisk->fileExists(60600 + SkyEngine::_systemVars->language * 8)) {
 		warning("The language you selected does not exist in your BASS version");
 		if (_skyDisk->fileExists(60600))
-			SkyEngine::_systemVars.language = SKY_ENGLISH; // default to GB english if it exists..
+			SkyEngine::_systemVars->language = SKY_ENGLISH; // default to GB english if it exists..
 		else if (_skyDisk->fileExists(60600 + SKY_USA * 8))
-			SkyEngine::_systemVars.language = SKY_USA;		// try US english...
+			SkyEngine::_systemVars->language = SKY_USA;		// try US english...
 		else
 			for (uint8 cnt = SKY_ENGLISH; cnt <= SKY_SPANISH; cnt++)
 				if (_skyDisk->fileExists(60600 + cnt * 8)) {	// pick the first language we can find
-					SkyEngine::_systemVars.language = cnt;
+					SkyEngine::_systemVars->language = cnt;
 					break;
 				}
 	}
@@ -410,16 +438,16 @@ void SkyEngine::delay(int32 amount) {
 				_keyPressed = event.kbd;
 				break;
 			case Common::EVENT_MOUSEMOVE:
-				if (!(_systemVars.systemFlags & SF_MOUSE_LOCKED))
+				if (!(_systemVars->systemFlags & SF_MOUSE_LOCKED))
 					_skyMouse->mouseMoved(event.mouse.x, event.mouse.y);
 				break;
 			case Common::EVENT_LBUTTONDOWN:
-				if (!(_systemVars.systemFlags & SF_MOUSE_LOCKED))
+				if (!(_systemVars->systemFlags & SF_MOUSE_LOCKED))
 					_skyMouse->mouseMoved(event.mouse.x, event.mouse.y);
 				_skyMouse->buttonPressed(2);
 				break;
 			case Common::EVENT_RBUTTONDOWN:
-				if (!(_systemVars.systemFlags & SF_MOUSE_LOCKED))
+				if (!(_systemVars->systemFlags & SF_MOUSE_LOCKED))
 					_skyMouse->mouseMoved(event.mouse.x, event.mouse.y);
 				_skyMouse->buttonPressed(1);
 				break;
@@ -437,7 +465,7 @@ void SkyEngine::delay(int32 amount) {
 }
 
 bool SkyEngine::isDemo() {
-	switch (_systemVars.gameVersion) {
+	switch (_systemVars->gameVersion) {
 	case 109: // PC Gamer demo
 	case 267: // English floppy demo
 	case 272: // German floppy demo
@@ -451,12 +479,12 @@ bool SkyEngine::isDemo() {
 	case 372:
 		return false;
 	default:
-		error("Unknown game version %d", _systemVars.gameVersion);
+		error("Unknown game version %d", _systemVars->gameVersion);
 	}
 }
 
 bool SkyEngine::isCDVersion() {
-	switch (_systemVars.gameVersion) {
+	switch (_systemVars->gameVersion) {
 	case 109:
 	case 267:
 	case 272:
@@ -470,7 +498,7 @@ bool SkyEngine::isCDVersion() {
 	case 372:
 		return true;
 	default:
-		error("Unknown game version %d", _systemVars.gameVersion);
+		error("Unknown game version %d", _systemVars->gameVersion);
 	}
 }
 

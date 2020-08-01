@@ -23,6 +23,7 @@
 #ifdef ENABLE_EOB
 
 #include "kyra/engine/eobcommon.h"
+#include "kyra/graphics/screen_eob_segacd.h"
 #include "kyra/resource/resource.h"
 #include "kyra/sound/sound_intern.h"
 
@@ -43,15 +44,17 @@ public:
 	CharacterGenerator(EoBCoreEngine *vm, Screen_EoB *screen);
 	~CharacterGenerator();
 
-	bool start(EoBCharacter *characters, uint8 ***faceShapes);
+	bool start(EoBCharacter *characters, const uint8 ***faceShapes, bool defaultParty);
 
 private:
-	void init();
+	void init(bool defaultParty);
+	bool createCustomParty(const uint8 ***faceShapes);
+	void createDefaultParty();
 	void initButtonsFromList(int first, int numButtons);
 	void initButton(int index, int x, int y, int w, int h, int keyCode);
 	void checkForCompleteParty();
-	void toggleSpecialButton(int index, int bodyCustom, int pageNum);
-	void processSpecialButton(int index);
+	void drawButton(int index, int buttonState, int pageNum);
+	void processButtonClick(int index);
 	int viewDeleteCharacter();
 	void createPartyMember();
 	int raceSexMenu();
@@ -99,12 +102,16 @@ private:
 	const uint8 *_chargenRaceMinStats;
 	const uint16 *_chargenRaceMaxStats;
 
+	const char *const *_chargenDefaultNames;
+	const uint8 *_chargenDefaultStats;
+
 	const EoBChargenButtonDef *_chargenButtonDefs;
 
 	static const EoBChargenButtonDef _chargenButtonDefsDOS[];
 	static const uint16 _chargenButtonKeyCodesFMTOWNS[];
 	static const CreatePartyModButton _chargenModButtons[];
 	static const EoBRect8 _chargenButtonBodyCoords[];
+	static const uint8 _chargenSegaButtonCoords[60];
 	static const int16 _chargenBoxX[];
 	static const int16 _chargenBoxY[];
 	static const int16 _chargenNameFieldX[];
@@ -116,14 +123,16 @@ private:
 	static const int16 _raceModifiers[];
 
 	EoBCharacter *_characters;
-	uint8 **_faceShapes;
+	const uint8 **_faceShapes;
+
+	uint8 *_wndBackgrnd;
 
 	EoBCoreEngine *_vm;
 	Screen_EoB *_screen;
 };
 
 CharacterGenerator::CharacterGenerator(EoBCoreEngine *vm, Screen_EoB *screen) : _vm(vm), _screen(screen),
-	_characters(0), _faceShapes(0), _chargenMagicShapes(0), _chargenMagicShapeTimer(0),
+	_characters(0), _faceShapes(0), _chargenMagicShapes(0), _chargenMagicShapeTimer(0), _wndBackgrnd(0),
 	_updateBoxShapesIndex(0), _lastUpdateBoxShapesIndex(0), _magicShapesBox(6), _activeBox(0) {
 
 	_chargenStatStrings = _vm->_chargenStatStrings;
@@ -135,6 +144,7 @@ CharacterGenerator::CharacterGenerator(EoBCoreEngine *vm, Screen_EoB *screen) : 
 	memset(_chargenSelectedPortraits2, 0, sizeof(_chargenSelectedPortraits2));
 	memset(_chargenMinStats, 0, sizeof(_chargenMinStats));
 	memset(_chargenMaxStats, 0, sizeof(_chargenMaxStats));
+	memset(_chargenButtonLabels, 0, sizeof(_chargenButtonLabels));
 
 	int temp;
 	_chargenStrings1 = _vm->staticres()->loadStrings(kEoBBaseChargenStrings1, temp);
@@ -144,6 +154,8 @@ CharacterGenerator::CharacterGenerator(EoBCoreEngine *vm, Screen_EoB *screen) : 
 	_chargenClassMinStats = _vm->staticres()->loadRawData(kEoBBaseChargenClassMinStats, temp);
 	_chargenRaceMinStats = _vm->staticres()->loadRawData(kEoBBaseChargenRaceMinStats, temp);
 	_chargenRaceMaxStats = _vm->staticres()->loadRawDataBe16(kEoBBaseChargenRaceMaxStats, temp);
+	_chargenDefaultNames = _vm->staticres()->loadStrings(kEoB1DefaultPartyNames, temp);
+	_chargenDefaultStats = _vm->staticres()->loadRawData(kEoB1DefaultPartyStats, temp);
 
 	EoBChargenButtonDef *chargenButtonDefs = new EoBChargenButtonDef[41];
 	memcpy(chargenButtonDefs, _chargenButtonDefsDOS, 41 * sizeof(EoBChargenButtonDef));
@@ -154,6 +166,13 @@ CharacterGenerator::CharacterGenerator(EoBCoreEngine *vm, Screen_EoB *screen) : 
 			if (chargenButtonDefs[i].keyCode)
 				chargenButtonDefs[i].keyCode = *c++;
 		}
+	}
+
+	if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
+		// Adjust modify menu buttons for SegaCD
+		for (int i = 31; i < 38; ++i)
+			chargenButtonDefs[i].y += 8;
+		chargenButtonDefs[37].x--;
 	}
 
 	_chargenButtonDefs = chargenButtonDefs;
@@ -172,13 +191,15 @@ CharacterGenerator::~CharacterGenerator() {
 		delete[] _chargenButtonLabels[i];
 
 	delete[] _chargenButtonDefs;
+	delete[] _wndBackgrnd;
+	_vm->_wndBackgrnd = 0;
 
 	_screen->clearPage(2);
 }
 
-bool CharacterGenerator::start(EoBCharacter *characters, uint8 ***faceShapes) {
+bool CharacterGenerator::start(EoBCharacter *characters, const uint8 ***faceShapes, bool defaultParty) {
 	if (!characters || !faceShapes) {
-		warning("CharacterGenerator::start: Called without character data");
+		warning("CharacterGenerator::start(): Called without character data");
 		return true;
 	}
 
@@ -188,14 +209,134 @@ bool CharacterGenerator::start(EoBCharacter *characters, uint8 ***faceShapes) {
 	_vm->snd_stopSound();
 	_vm->delay(_vm->_tickLength);
 
-	init();
+	init(defaultParty);
+
+	if (defaultParty)
+		createDefaultParty();
+	else if (!createCustomParty(faceShapes))
+		return false;
+
+	if (!_vm->shouldQuit()) {
+		if (!defaultParty)
+			processButtonClick(15);
+		finish();
+	}
+
+	if (_vm->game() == GI_EOB2)
+		_vm->snd_fadeOut();
+
+	*faceShapes = _faceShapes;
+	return true;
+}
+
+void CharacterGenerator::init(bool defaultParty) {
+	if (_faceShapes) {
+		for (int i = 0; i < 44; i++)
+			delete[] _faceShapes[i];
+		delete[] _faceShapes;
+	}
+
+	_faceShapes = new const uint8 *[44];
+	if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
+		uint8 *in = _vm->resource()->fileData("FACE", 0);
+		_screen->sega_encodeShapesFromSprites(_faceShapes, in, 44, 32, 32, 3);
+		delete[] in;
+	} else {
+		_screen->loadShapeSetBitmap("CHARGENA", 5, 3);
+		for (int i = 0; i < 44; i++)
+			_faceShapes[i] = _screen->encodeShape((i % 10) << 2, (i / 10) << 5, 4, 32, true, _vm->_cgaMappingDefault);
+	}
+	_screen->_curPage = 0;
+
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga || (_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98))
+		_screen->fadeToBlack(32);
+
+	// If we start with a default party we only need the face shapes
+	if (defaultParty)
+		return;
+
+	if (_chargenMagicShapes) {
+		for (int i = 0; i < 10; i++)
+			delete[] _chargenMagicShapes[i];
+		delete[] _chargenMagicShapes;
+	}
+
+	if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
+		_screen->sega_fadeToBlack(0);
+		_screen->sega_selectPalette(13, 0);
+		_screen->sega_selectPalette(14, 1);
+		_screen->sega_selectPalette(15, 2);
+		_screen->sega_selectPalette(15, 3);
+		_vm->_txt->clearDim(1);
+
+		Common::SeekableReadStream *in = _vm->resource()->createReadStream("CHARGEN");
+		_screen->sega_getRenderer()->loadStreamToVRAM(in, 0x20);
+		_wndBackgrnd = new uint8[10240];
+		_vm->_wndBackgrnd = _wndBackgrnd;
+		for (int i = 0; i < 16; ++i) {
+			in->seek(((8 + i) * 40 + 18) << 5);
+			in->read(&_wndBackgrnd[i * 640], 640);
+		}
+		delete in;
+
+		uint8 *cgb = _vm->resource()->fileData("CGBUTTON", 0);
+		_screen->sega_getRenderer()->loadToVRAM(&cgb[0x21E0], 0x1400, 0x8220);
+		for (int i = 0; i < 10; i++)
+			_screen->sega_getRenderer()->fillRectWithTiles(1, i << 2, 0, 4, 4, 0x4411 + (i << 4), true);
+		_screen->sega_getRenderer()->render(2);
+		_screen->_curPage = 2;
+		_chargenMagicShapes = new uint8*[10];
+		for (int i = 0; i < 10; i++)
+			_chargenMagicShapes[i] = _screen->encodeShape(i << 2, 0, 4, 32);
+		_screen->_curPage = 0;
+
+		_screen->sega_getRenderer()->loadToVRAM(&cgb[0], 0x1900, 0x8220);
+		_screen->sega_getRenderer()->loadToVRAM(&cgb[0x1900], 0x8E0, 0xB080);
+		delete[] cgb;
+		
+		_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 40, 28, 0);
+		_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 40, 28, 0);
+		_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 40, 26, 1, true);
+		_screen->sega_getRenderer()->render(0);
+
+		for (int i = 0; i < 4; ++i)
+			_screen->copyRegion(_chargenBoxX[i], _chargenBoxY[i] + 1, i << 5, 128, 32, 32, 0, 2, Screen::CR_NO_P_CHECK);
+
+		_screen->sega_fadeToNeutral(4);
+
+	} else {
+		_screen->loadEoBBitmap((_vm->game() == GI_EOB1 && _vm->_flags.lang == Common::ES_ESP) ? "CCARGEN" : "CHARGEN", _vm->_cgaMappingDefault, 5, 3, 0);
+		_screen->selectPC98Palette(4, _screen->getPalette(0));
+
+		if (_vm->gameFlags().platform == Common::kPlatformAmiga || (_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98))
+			_screen->fadeFromBlack(32);
+
+		_screen->loadShapeSetBitmap((_vm->game() == GI_EOB1 && _vm->_flags.lang == Common::ES_ESP) ? "CCARGENB" : "CHARGENB", 5, 3);
+		_chargenMagicShapes = new uint8*[10];
+		for (int i = 0; i < 10; i++)
+			_chargenMagicShapes[i] = _screen->encodeShape(i << 2, 0, 4, 32, true, _vm->_cgaMappingDefault);
+
+		for (int i = 0; i < 17; i++) {
+			const CreatePartyModButton *c = &_chargenModButtons[i];
+			_chargenButtonLabels[i] = c->labelW?_screen->encodeShape(c->encodeLabelX, c->encodeLabelY, c->labelW, c->labelH, true, _vm->_cgaMappingDefault):0;
+		}
+
+		_screen->convertPage(3, 2, _vm->_cgaMappingDefault);
+	}
 
 	_screen->setScreenDim(2);
+	_screen->_curPage = 0;
+	_screen->convertToHiColor(2);
+	_screen->shadeRect(142, 63, 306, 193, 4);
+	_screen->copyRegion(144, 64, 0, 0, 180, 128, 0, 2, Screen::CR_NO_P_CHECK);
+	_screen->updateScreen();
+}
 
+bool CharacterGenerator::createCustomParty(const uint8 ***faceShapes) {
 	checkForCompleteParty();
 	initButtonsFromList(0, 5);
 
-	_vm->snd_playSong(_vm->game() == GI_EOB1 ? (_vm->gameFlags().platform == Common::kPlatformPC98 ? 1 : 20) : 13);
+	_vm->snd_playSong(_vm->game() == GI_EOB1 ? (_vm->gameFlags().platform == Common::kPlatformPC98 ? 1 : (_vm->gameFlags().platform == Common::kPlatformSegaCD ? 8: 20)) : 13);
 	_activeBox = 0;
 
 	for (bool loop = true; loop && (!_vm->shouldQuit());) {
@@ -253,62 +394,31 @@ bool CharacterGenerator::start(EoBCharacter *characters, uint8 ***faceShapes) {
 		}
 	}
 
-	if (!_vm->shouldQuit()) {
-		processSpecialButton(15);
-		finish();
-	}
-
-	if (_vm->game() == GI_EOB2)
-		_vm->snd_fadeOut();
-
-	*faceShapes = _faceShapes;
 	return true;
 }
 
-void CharacterGenerator::init() {
-	_screen->loadShapeSetBitmap("CHARGENA", 5, 3);
-	if (_faceShapes) {
-		for (int i = 0; i < 44; i++)
-			delete[] _faceShapes[i];
-		delete[] _faceShapes;
+void CharacterGenerator::createDefaultParty() {
+	assert(_chargenDefaultNames);
+	assert(_chargenDefaultStats);
+	const uint8 *pos = _chargenDefaultStats;
+	for (int i = 0; i < 4; ++i) {
+		EoBCharacter &c = _characters[i];
+		c.raceSex = *pos++;
+		c.cClass = *pos++;
+		c.alignment = *pos++;
+		generateStats(i);
+		c.portrait = *pos++;
+		c.faceShape = _faceShapes[c.portrait];
+		c.strengthCur = *pos++;
+		c.intelligenceCur = *pos++;
+		c.wisdomCur = *pos++;
+		c.dexterityCur = *pos++;
+		c.constitutionCur = *pos++;
+		c.charismaCur = *pos++;
+		c.armorClass = *pos++;
+		c.hitPointsCur = *pos++;
+		Common::strlcpy(c.name, _chargenDefaultNames[i], 11);
 	}
-
-	_faceShapes = new uint8*[44];
-	for (int i = 0; i < 44; i++)
-		_faceShapes[i] = _screen->encodeShape((i % 10) << 2, (i / 10) << 5, 4, 32, true, _vm->_cgaMappingDefault);
-	_screen->_curPage = 0;
-
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga || (_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98))
-		_screen->fadeToBlack(32);
-
-	_screen->loadEoBBitmap((_vm->game() == GI_EOB1 && _vm->_flags.lang == Common::ES_ESP) ? "CCARGEN" : "CHARGEN", _vm->_cgaMappingDefault, 5, 3, 0);
-	_screen->selectPC98Palette(4, _screen->getPalette(0));
-
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga || (_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98))
-		_screen->fadeFromBlack(32);
-
-	_screen->loadShapeSetBitmap((_vm->game() == GI_EOB1 && _vm->_flags.lang == Common::ES_ESP) ? "CCARGENB" : "CHARGENB", 5, 3);
-	if (_chargenMagicShapes) {
-		for (int i = 0; i < 10; i++)
-			delete[] _chargenMagicShapes[i];
-		delete[] _chargenMagicShapes;
-	}
-
-	_chargenMagicShapes = new uint8*[10];
-	for (int i = 0; i < 10; i++)
-		_chargenMagicShapes[i] = _screen->encodeShape(i << 2, 0, 4, 32, true, _vm->_cgaMappingDefault);
-
-	for (int i = 0; i < 17; i++) {
-		const CreatePartyModButton *c = &_chargenModButtons[i];
-		_chargenButtonLabels[i] = c->labelW ? _screen->encodeShape(c->encodeLabelX, c->encodeLabelY, c->labelW, c->labelH, true, _vm->_cgaMappingDefault) : 0;
-	}
-
-	_screen->convertPage(3, 2, _vm->_cgaMappingDefault);
-	_screen->_curPage = 0;
-	_screen->convertToHiColor(2);
-	_screen->shadeRect(142, 63, 306, 193, 4);
-	_screen->copyRegion(144, 64, 0, 0, 180, 128, 0, 2, Screen::CR_NO_P_CHECK);
-	_screen->updateScreen();
 }
 
 void CharacterGenerator::initButtonsFromList(int first, int numButtons) {
@@ -359,9 +469,18 @@ void CharacterGenerator::checkForCompleteParty() {
 	_screen->copyRegion(0, 0, 160, 0, 160, 128, 2, 2, Screen::CR_NO_P_CHECK);
 	int cp = _screen->setCurPage(2);
 	int x = (_vm->gameFlags().platform == Common::kPlatformFMTowns) ? 184 : 168;
-	_screen->printShadedText(_chargenStrings1[8], x, 16, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+	int cs = 0;
+
+	if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
+		_screen->sega_loadTextBackground(_wndBackgrnd, 10240);
+		_screen->sega_getRenderer()->fillRectWithTiles(0, 18, 8, 20, 16, 0);
+		cs = _screen->setFontStyles(_screen->_currentFont, _vm->gameFlags().lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat);
+		_vm->_txt->printShadedText(_chargenStrings1[8], 0, 0, -1, 0x99);
+	} else {		
+		_screen->printShadedText(_chargenStrings1[8], x, 16, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+		_screen->copyRegion(160, 0, 144, 64, 160, 128, 2, 0, Screen::CR_NO_P_CHECK);
+	}
 	_screen->setCurPage(cp);
-	_screen->copyRegion(160, 0, 144, 64, 160, 128, 2, 0, Screen::CR_NO_P_CHECK);
 
 	int numChars = 0;
 	for (int i = 0; i < 4; i++) {
@@ -370,24 +489,53 @@ void CharacterGenerator::checkForCompleteParty() {
 	}
 
 	if (numChars == 4) {
-		_screen->setCurPage(2);
-		_screen->printShadedText(_chargenStrings1[0], x, 61, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
-		_screen->setCurPage(0);
-		_screen->copyRegion(168, 61, 152, 125, 136, 40, 2, 0, Screen::CR_NO_P_CHECK);
-		toggleSpecialButton(15, 0, 0);
+		if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
+			_vm->_txt->printShadedText(_chargenStrings1[0], 0, 60, -1, 0x99);
+		} else {
+			_screen->setCurPage(2);
+			_screen->printShadedText(_chargenStrings1[0], x, 61, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+			_screen->setCurPage(0);
+			_screen->copyRegion(168, 61, 152, 125, 136, 40, 2, 0, Screen::CR_NO_P_CHECK);
+		}
+		drawButton(15, 0, 0);
 	} else {
-		toggleSpecialButton(14, 0, 0);
+		drawButton(14, 0, 0);
+	}
+
+	if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
+		_screen->setFontStyles(_screen->_currentFont, cs);
+		_screen->sega_getRenderer()->render(0, 18, 8, 20, 16);
 	}
 
 	_screen->updateScreen();
 }
 
-void CharacterGenerator::toggleSpecialButton(int index, int bodyCustom, int pageNum) {
+void CharacterGenerator::drawButton(int index, int buttonState, int pageNum) {
 	if (index >= 17)
 		return;
 
+	if (_vm->_flags.platform == Common::kPlatformSegaCD && index > 3) {
+		static const int8 buttonOrder[] = { -1, -1, -1, -1, 9, 10, 8, 6, 7, 11, 4, 5, 2, 3, -2, 0, 1 };
+		index = buttonOrder[index];
+		if (index < 0) {
+			if (index == -2) {
+				// The original SegaCD version doesn't remove the 'PLAY' button here. We do it nonetheless,
+				// since it seems weird to have the button still there, even when it is dysfunctional.
+				_screen->sega_getRenderer()->fillRectWithTiles(0, 3, 23, 11, 1, 0x39C, true);
+				_screen->sega_getRenderer()->fillRectWithTiles(0, 3, 24, 11, 1, 0x3C4, true);
+				_screen->sega_getRenderer()->render(0, 3, 23, 11, 2);
+			}
+			return;
+		}
+		const uint8 *bt = &_chargenSegaButtonCoords[index * 5];
+		_screen->sega_getRenderer()->fillRectWithTiles(0, bt[0], bt[1], bt[2], bt[3], (index > 9 ? 0x24BC : 0x2411) + bt[4] + (buttonState ? (bt[2] * bt[3]) : 0), true);
+		_screen->sega_getRenderer()->render(0, bt[0], bt[1], bt[2], bt[3]);
+		_screen->updateScreen();
+		return;
+	}
+
 	const CreatePartyModButton *c = &_chargenModButtons[index];
-	const EoBRect8 *p = &_chargenButtonBodyCoords[c->bodyIndex + bodyCustom];
+	const EoBRect8 *p = &_chargenButtonBodyCoords[c->bodyIndex + buttonState];
 
 	int x2 = 20;
 	int y2 = 0;
@@ -408,12 +556,12 @@ void CharacterGenerator::toggleSpecialButton(int index, int bodyCustom, int page
 	_screen->updateScreen();
 }
 
-void CharacterGenerator::processSpecialButton(int index) {
-	toggleSpecialButton(index, 1, 0);
+void CharacterGenerator::processButtonClick(int index) {
+	drawButton(index, 1, 0);
 	if (!(_vm->game() == GI_EOB1 && _vm->_flags.platform == Common::kPlatformPC98))
 		_vm->snd_playSoundEffect(76);
 	_vm->_system->delayMillis(80);
-	toggleSpecialButton(index, 0, 0);
+	drawButton(index, 0, 0);
 }
 
 int CharacterGenerator::viewDeleteCharacter() {
@@ -431,7 +579,7 @@ int CharacterGenerator::viewDeleteCharacter() {
 		_vm->removeInputTop();
 
 		if (inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN] || inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP5] || inputFlag == _vm->_keyMap[Common::KEYCODE_ESCAPE]) {
-			processSpecialButton(9);
+			processButtonClick(9);
 			res = 0;
 			loop = false;
 		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_LEFT] || inputFlag == _vm->_keyMap[Common::KEYCODE_RIGHT]) {
@@ -446,15 +594,20 @@ int CharacterGenerator::viewDeleteCharacter() {
 				res = 1;
 				loop = false;
 			} else if (inputFlag == 5) {
-				processSpecialButton(9);
+				processButtonClick(9);
 				res = 0;
 				loop = false;
 			} else if (inputFlag == 6) {
 				if (_characters[_activeBox].name[0]) {
-					processSpecialButton(16);
+					processButtonClick(16);
 					_characters[_activeBox].name[0] = 0;
 					_characters[_activeBox].faceShape = 0;
-					processNameInput(_activeBox, _vm->guiSettings()->colors.guiColorBlack);
+					if (_vm->_flags.platform == Common::kPlatformSegaCD) {
+						_screen->sega_getRenderer()->memsetVRAM((((_chargenBoxY[_activeBox] + 41) >> 3) * 40 + (_chargenBoxX[_activeBox] >> 3)) << 5, 0, 224);
+						_screen->sega_getRenderer()->render(0, (_chargenBoxX[_activeBox] >> 3) - 1, (_chargenBoxY[_activeBox] + 41) >> 3, 7, 1);
+					} else {
+						processNameInput(_activeBox, _vm->guiSettings()->colors.guiColorBlack);
+					}
 					processFaceMenuSelection(_activeBox + 50);
 				}
 			} else {
@@ -515,26 +668,47 @@ void CharacterGenerator::createPartyMember() {
 		for (_characters[_activeBox].name[0] = 0; _characters[_activeBox].name[0] == 0 && !_vm->shouldQuit();) {
 			processFaceMenuSelection(_chargenMinStats[6]);
 			printStats(_activeBox, 0);
-			_screen->printShadedText(_chargenStrings2[11], 149, 100, _vm->guiSettings()->colors.guiColorLightBlue, 0, _vm->guiSettings()->colors.guiColorBlack);
-			if (!_vm->shouldQuit()) {
-				_vm->_gui->getTextInput(_characters[_activeBox].name, 24, 100, 10, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorDarkRed);
-				processNameInput(_activeBox, _vm->guiSettings()->colors.guiColorBlue);
+			if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
+				_screen->sega_loadTextBackground(_wndBackgrnd, 10240);
+				_vm->_txt->printShadedText(_chargenStrings2[11], 0, 0);
+				_screen->sega_getRenderer()->render(0, 18, 8, 20, 2);
+				if (!_vm->shouldQuit())
+					_vm->_gui->getTextInput(_characters[_activeBox].name, (_chargenBoxX[_activeBox] >> 3) - 1, _chargenBoxY[_activeBox] + 41, 7, 0xFF, 0x00, 0xFF);
+			} else {
+				_screen->printShadedText(_chargenStrings2[11], 149, 100, _vm->guiSettings()->colors.guiColorLightBlue, 0, _vm->guiSettings()->colors.guiColorBlack);
+				if (!_vm->shouldQuit()) {
+					_vm->_gui->getTextInput(_characters[_activeBox].name, 24, 100, 10, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorDarkRed);
+					processNameInput(_activeBox, _vm->guiSettings()->colors.guiColorBlue);
+				}
 			}
 		}
 	}
 }
 
 int CharacterGenerator::raceSexMenu() {
-	_screen->drawBox(_chargenBoxX[_activeBox], _chargenBoxY[_activeBox], _chargenBoxX[_activeBox] + 32, _chargenBoxY[_activeBox] + 33, 12);
+	_screen->drawBox(_chargenBoxX[_activeBox], _chargenBoxY[_activeBox], _chargenBoxX[_activeBox] + 32, _chargenBoxY[_activeBox] + 33, _vm->guiSettings()->colors.guiColorBlack);
 	_screen->copyRegion(0, 0, 144, 64, 160, 128, 2, 0, Screen::CR_NO_P_CHECK);
-	_screen->printShadedText(_chargenStrings2[8], 147, 67, _vm->guiSettings()->colors.guiColorLightBlue, 0, _vm->guiSettings()->colors.guiColorBlack);
+
+	if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
+		_screen->sega_loadTextBackground(_wndBackgrnd, 10240);
+		_screen->sega_getRenderer()->fillRectWithTiles(0, 18, 8, 20, 16, 0);
+		_vm->_txt->printShadedText(_chargenStrings2[8], 0, 0, -1, 0x99);
+	} else {
+		_screen->printShadedText(_chargenStrings2[8], 147, 67, _vm->guiSettings()->colors.guiColorLightBlue, 0, _vm->guiSettings()->colors.guiColorBlack);
+	}
 	_vm->removeInputTop();
 
 	_vm->_gui->simpleMenu_setup(1, 0, _chargenRaceSexStrings, -1, 0, 0);
+	if (_vm->_flags.platform == Common::kPlatformSegaCD)
+		_screen->sega_getRenderer()->render(0, 18, 8, 20, 16);
+	_screen->updateScreen();
 	int16 res = -1;
 
 	while (res == -1 && !_vm->shouldQuit()) {
 		res = _vm->_gui->simpleMenu_process(1, _chargenRaceSexStrings, 0, -1, 0);
+		if (_vm->_flags.platform == Common::kPlatformSegaCD)
+			_screen->sega_getRenderer()->render(0, 18, 8, 20, 16);
+		_screen->updateScreen();
 		updateMagicShapes();
 	}
 
@@ -554,12 +728,20 @@ int CharacterGenerator::classMenu(int raceSex) {
 	updateMagicShapes();
 
 	_screen->copyRegion(0, 0, 144, 64, 160, 128, 2, 0, Screen::CR_NO_P_CHECK);
-	_screen->printShadedText(_chargenStrings2[9], 147, 67, _vm->guiSettings()->colors.guiColorLightBlue, 0, _vm->guiSettings()->colors.guiColorBlack);
-
-	toggleSpecialButton(5, 0, 0);
+	if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
+		_screen->sega_loadTextBackground(_wndBackgrnd, 10240);
+		_screen->sega_getRenderer()->fillRectWithTiles(0, 18, 8, 20, 16, 0);
+		_vm->_txt->printShadedText(_chargenStrings2[9], 0, 0, -1, 0x99);
+	} else {
+		_screen->printShadedText(_chargenStrings2[9], 147, 67, _vm->guiSettings()->colors.guiColorLightBlue, 0, _vm->guiSettings()->colors.guiColorBlack);
+	}
+	drawButton(5, 0, 0);
 
 	itemsMask &= _classMenuMasks[raceSex / 2];
 	_vm->_gui->simpleMenu_setup(2, 15, _chargenClassStrings, itemsMask, 0, 0);
+	if (_vm->_flags.platform == Common::kPlatformSegaCD)
+		_screen->sega_getRenderer()->render(0, 18, 8, 20, 16);
+	_screen->updateScreen();
 
 	_vm->_mouseX = _vm->_mouseY = 0;
 	int16 res = -1;
@@ -578,13 +760,16 @@ int CharacterGenerator::classMenu(int raceSex) {
 				_vm->removeInputTop();
 		} else {
 			res = _vm->_gui->simpleMenu_process(2, _chargenClassStrings, 0, itemsMask, 0);
+			if (_vm->_flags.platform == Common::kPlatformSegaCD)
+				_screen->sega_getRenderer()->render(0, 18, 8, 20, 16);
+			_screen->updateScreen();
 		}
 	}
 
 	_vm->removeInputTop();
 
 	if (res == _vm->_keyMap[Common::KEYCODE_ESCAPE])
-		processSpecialButton(5);
+		processButtonClick(5);
 
 	return res;
 }
@@ -602,12 +787,21 @@ int CharacterGenerator::alignmentMenu(int cClass) {
 	updateMagicShapes();
 
 	_screen->copyRegion(0, 0, 144, 64, 160, 128, 2, 0, Screen::CR_NO_P_CHECK);
-	_screen->printShadedText(_chargenStrings2[10], 147, 67, _vm->guiSettings()->colors.guiColorLightBlue, 0, _vm->guiSettings()->colors.guiColorBlack);
+	if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
+		_screen->sega_loadTextBackground(_wndBackgrnd, 10240);
+		_screen->sega_getRenderer()->fillRectWithTiles(0, 18, 8, 20, 16, 0);
+		_vm->_txt->printShadedText(_chargenStrings2[10], 0, 0, -1, 0x99);
+	} else {
+		_screen->printShadedText(_chargenStrings2[10], 147, 67, _vm->guiSettings()->colors.guiColorLightBlue, 0, _vm->guiSettings()->colors.guiColorBlack);
+	}
 
-	toggleSpecialButton(5, 0, 0);
+	drawButton(5, 0, 0);
 
 	itemsMask &= _alignmentMenuMasks[cClass];
 	_vm->_gui->simpleMenu_setup(3, 9, _chargenAlignmentStrings, itemsMask, 0, 0);
+	if (_vm->_flags.platform == Common::kPlatformSegaCD)
+		_screen->sega_getRenderer()->render(0, 18, 8, 20, 16);
+	_screen->updateScreen();
 
 	_vm->_mouseX = _vm->_mouseY = 0;
 	int16 res = -1;
@@ -626,13 +820,16 @@ int CharacterGenerator::alignmentMenu(int cClass) {
 				_vm->removeInputTop();
 		} else {
 			res = _vm->_gui->simpleMenu_process(3, _chargenAlignmentStrings, 0, itemsMask, 0);
+			if (_vm->_flags.platform == Common::kPlatformSegaCD)
+				_screen->sega_getRenderer()->render(0, 18, 9, 20, 16);
+			_screen->updateScreen();
 		}
 	}
 
 	_vm->removeInputTop();
 
 	if (res == _vm->_keyMap[Common::KEYCODE_ESCAPE])
-		processSpecialButton(5);
+		processButtonClick(5);
 
 	return res;
 }
@@ -783,20 +980,20 @@ void CharacterGenerator::statsAndFacesMenu() {
 		_vm->removeInputTop();
 
 		if (in == 0x8001) {
-			processSpecialButton(4);
+			processButtonClick(4);
 			updateMagicShapes();
 			generateStats(_activeBox);
 			in = -1;
 		} else if (in == 0x8002) {
-			processSpecialButton(7);
+			processButtonClick(7);
 			modifyMenu();
 			in = -1;
 		} else if (in == 0x8003) {
-			processSpecialButton(8);
+			processButtonClick(8);
 			faceSelectMenu();
 			in = -1;
 		} else if (in == 0x8004 || in == _vm->_keyMap[Common::KEYCODE_KP5]) {
-			processSpecialButton(6);
+			processButtonClick(6);
 			in = 1;
 		} else {
 			in = 0;
@@ -823,8 +1020,8 @@ void CharacterGenerator::faceSelectMenu() {
 	int8 shp = charSex ? 26 : 0;
 
 	printStats(_activeBox, 4);
-	toggleSpecialButton(12, 0, 0);
-	toggleSpecialButton(13, 0, 0);
+	drawButton(12, 0, 0);
+	drawButton(13, 0, 0);
 	_vm->_gui->updateBoxFrameHighLight(-1);
 
 	shp = getNextFreeFaceShape(shp, charSex, 1, _chargenSelectedPortraits);
@@ -852,13 +1049,13 @@ void CharacterGenerator::faceSelectMenu() {
 			_vm->_gui->updateBoxFrameHighLight(box + 10);
 
 			if (in == 0x8002 || in == _vm->_keyMap[Common::KEYCODE_RIGHT]) {
-				processSpecialButton(13);
+				processButtonClick(13);
 				in = 2;
 			} else if (in > 0x8002 && in < 0x8007) {
 				box = (in & 7) - 3;
 				in = 3;
 			} else if (in == 0x8001 || in == _vm->_keyMap[Common::KEYCODE_LEFT]) {
-				processSpecialButton(12);
+				processButtonClick(12);
 				in = 1;
 			} else if (in == _vm->_keyMap[Common::KEYCODE_RETURN] || in == _vm->_keyMap[Common::KEYCODE_KP5]) {
 				in = 3;
@@ -919,61 +1116,77 @@ void CharacterGenerator::processFaceMenuSelection(int index) {
 	if (index <= 48)
 		_screen->drawShape(0, _characters[_activeBox].faceShape, _chargenBoxX[_activeBox], _chargenBoxY[_activeBox] + 1, 0);
 	else
-		toggleSpecialButton(index - 50, 0, 0);
+		drawButton(index - 50, 0, 0);
 }
 
 void CharacterGenerator::printStats(int index, int mode) {
-	_screen->copyRegion(0, 0, 160, 0, 160, 128, 2, 2, Screen::CR_NO_P_CHECK);
-	_screen->_curPage = 2;
-
 	EoBCharacter *c = &_characters[index];
 
-	if (mode != 4)
-		_screen->drawShape(2, c->faceShape, 224, 2, 0);
+	if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
+		_screen->sega_loadTextBackground(_wndBackgrnd, 10240);
+		_screen->sega_getRenderer()->fillRectWithTiles(0, 18, 8, 20, 16, 0);
+	} else {
+		_screen->copyRegion(0, 0, 160, 0, 160, 128, 2, 2, Screen::CR_NO_P_CHECK);
+		_screen->_curPage = 2;
+		if (mode != 4)
+			_screen->drawShape(2, c->faceShape, 224, 2, 0);
+	}
 
-	_screen->printShadedText(c->name, 160 + ((160 - _screen->getTextWidth(c->name)) / 2), 35, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
-	_screen->printShadedText(_chargenRaceSexStrings[c->raceSex], 160 + ((160 - _screen->getTextWidth(_chargenRaceSexStrings[c->raceSex])) / 2), 45, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
-	_screen->printShadedText(_chargenClassStrings[c->cClass], 160 + ((160 - _screen->getTextWidth(_chargenClassStrings[c->cClass])) / 2), 54, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
-
-	for (int i = 0; i < 6; i++)
-		_screen->printShadedText(_chargenStatStrings[i], 163, (i + 8) << 3, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
-
-	_screen->printShadedText(_chargenStrings1[2], 248, 64, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
-
-	Common::String str = Common::String::format(_chargenStrings1[3], _vm->getCharStrength(c->strengthCur, c->strengthExtCur).c_str(), c->intelligenceCur, c->wisdomCur, c->dexterityCur, c->constitutionCur, c->charismaCur);
-	_screen->printShadedText(str.c_str(), 192, 64, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
-
-	str = Common::String::format(_chargenStrings1[4], c->armorClass, c->hitPointsMax);
-	_screen->printShadedText(str.c_str(), 280, 64, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
-
+	Common::String str1 = Common::String::format(_chargenStrings1[3], _vm->getCharStrength(c->strengthCur, c->strengthExtCur, _vm->gameFlags().platform == Common::kPlatformSegaCD).c_str(), c->intelligenceCur, c->wisdomCur, c->dexterityCur, c->constitutionCur, c->charismaCur);
+	Common::String str2 = Common::String::format(_chargenStrings1[4], c->armorClass, c->hitPointsMax);
 	const char *lvlStr = c->level[2] ? _chargenStrings1[7] : (c->level[1] ? _chargenStrings1[6] : _chargenStrings1[5]);
-	str = Common::String::format(lvlStr, c->level[0], c->level[1], c->level[2]);
-	_screen->printShadedText(str.c_str(), 280, 80, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+	Common::String str3 = Common::String::format(lvlStr, c->level[0], c->level[1], c->level[2]);
+
+	if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
+		_vm->_txt->printShadedText(_chargenStatStrings[0], 0, 72);
+		_vm->_txt->printShadedText(_chargenRaceSexStrings[c->raceSex], 80 - _screen->getTextWidth(_chargenRaceSexStrings[c->raceSex]) / 2, 48);
+		_vm->_txt->printShadedText(_chargenClassStrings[c->cClass], 80 - _screen->getTextWidth(_chargenClassStrings[c->cClass]) / 2, 56);
+		_vm->_txt->printShadedText(str1.c_str(), 32, 72);
+		_vm->_txt->printShadedText(str2.c_str(), 112, 72);
+		_vm->_txt->printShadedText(str3.c_str(), 120, 88);
+	} else {
+		_screen->printShadedText(c->name, 160 + ((160 - _screen->getTextWidth(c->name)) / 2), 35, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+		_screen->printShadedText(_chargenRaceSexStrings[c->raceSex], 160 + ((160 - _screen->getTextWidth(_chargenRaceSexStrings[c->raceSex])) / 2), 45, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+		_screen->printShadedText(_chargenClassStrings[c->cClass], 160 + ((160 - _screen->getTextWidth(_chargenClassStrings[c->cClass])) / 2), 54, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+
+		for (int i = 0; i < 6; i++)
+			_screen->printShadedText(_chargenStatStrings[i], 163, (i + 8) << 3, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+
+		_screen->printShadedText(_chargenStrings1[2], 248, 64, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+		_screen->printShadedText(str1.c_str(), 192, 64, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);		
+		_screen->printShadedText(str2.c_str(), 280, 64, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+		_screen->printShadedText(str3.c_str(), 280, 80, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+	}
 
 	switch (mode) {
 	case 1:
-		toggleSpecialButton(4, 0, 2);
-		toggleSpecialButton(7, 0, 2);
-		toggleSpecialButton(8, 0, 2);
-		toggleSpecialButton(6, 0, 2);
+		drawButton(4, 0, 2);
+		drawButton(7, 0, 2);
+		drawButton(8, 0, 2);
+		drawButton(6, 0, 2);
 		break;
 
 	case 2:
-		toggleSpecialButton(16, 0, 2);
-		toggleSpecialButton(9, 0, 2);
+		drawButton(16, 0, 2);
+		drawButton(9, 0, 2);
 		break;
 
 	case 3:
-		toggleSpecialButton(10, 0, 2);
-		toggleSpecialButton(11, 0, 2);
-		toggleSpecialButton(9, 0, 2);
+		drawButton(10, 0, 2);
+		drawButton(11, 0, 2);
+		drawButton(9, 0, 2);
 		break;
 
 	default:
 		break;
 	}
 
-	_screen->copyRegion(160, 0, 144, 64, 160, 128, 2, 0, Screen::CR_NO_P_CHECK);
+	if (_vm->_flags.platform == Common::kPlatformSegaCD) {
+		_screen->sega_getRenderer()->render(0, 18, 8, 20, 16);
+		if (mode != 4)
+			_screen->drawShape(0, c->faceShape, 208, 66, 0);
+	} else
+		_screen->copyRegion(160, 0, 144, 64, 160, 128, 2, 0, Screen::CR_NO_P_CHECK);
 
 	if (mode != 3)
 		_screen->updateScreen();
@@ -982,9 +1195,9 @@ void CharacterGenerator::printStats(int index, int mode) {
 }
 
 void CharacterGenerator::processNameInput(int index, int textColor) {
-	Screen::FontId of = _screen->setFont(_vm->_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
+	Screen::FontId of = _screen->setFont(_vm->_conFont);
 	_screen->fillRect(_chargenNameFieldX[index], _chargenNameFieldY[index], _chargenNameFieldX[index] + 59, _chargenNameFieldY[index] + 5, _vm->guiSettings()->colors.guiColorBlack);
-	_screen->setFont(_vm->_flags.use16ColorMode ? Screen::FID_SJIS_SMALL_FNT : Screen::FID_6_FNT);
+	_screen->setFont(_vm->_invFont1);
 	int xOffs = (60 - _screen->getTextWidth(_characters[index].name)) >> 1;
 	_screen->printText(_characters[index].name, _chargenNameFieldX[index] + xOffs, _chargenNameFieldY[index], textColor, 0);
 	_screen->updateScreen();
@@ -1016,10 +1229,15 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 	printStats(_activeBox, 3);
 	_vm->removeInputTop();
 
-	Common::String statStr = index ? Common::String::format("%d", *s1) : _vm->getCharStrength(*s1, *s2);
-
-	_screen->copyRegion(b->x - 112, b->y - 64, b->x + 32, b->y, 40, b->height, 2, 0, Screen::CR_NO_P_CHECK);
-	_screen->printShadedText(statStr.c_str(), b->x + 32, b->y, _vm->guiSettings()->colors.guiColorLightRed, 0, _vm->guiSettings()->colors.guiColorBlack);
+	if (_vm->_flags.platform == Common::kPlatformSegaCD) {
+		Common::String statStr = index ? Common::String::format("%02d", *s1) : _vm->getCharStrength(*s1, *s2, true);
+		_vm->_txt->printShadedText(statStr.c_str(), b->x - 112, b->y - 64, 0x55);
+		_screen->sega_getRenderer()->render(0, (b->x + 32) >> 3, b->y >> 3, 5, 1);
+	} else {
+		Common::String statStr = index ? Common::String::format("%d", *s1) : _vm->getCharStrength(*s1, *s2);
+		_screen->copyRegion(b->x - 112, b->y - 64, b->x + 32, b->y, 40, b->height, 2, 0, Screen::CR_NO_P_CHECK);
+		_screen->printShadedText(statStr.c_str(), b->x + 32, b->y, _vm->guiSettings()->colors.guiColorLightRed, 0, _vm->guiSettings()->colors.guiColorBlack);
+	}
 	_screen->updateScreen();
 
 	EoBCharacter *c = &_characters[_activeBox];
@@ -1039,11 +1257,11 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 		_vm->removeInputTop();
 
 		if (inputFlag == _vm->_keyMap[Common::KEYCODE_LEFT] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP4] || inputFlag == _vm->_keyMap[Common::KEYCODE_MINUS] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP_MINUS] || inputFlag == 0x8009) {
-			processSpecialButton(11);
+			processButtonClick(11);
 			v1--;
 
 		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_RIGHT] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP6] || inputFlag == _vm->_keyMap[Common::KEYCODE_PLUS] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP_PLUS] || inputFlag == 0x8008) {
-			processSpecialButton(10);
+			processButtonClick(10);
 			v1++;
 
 		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_UP] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP8]) {
@@ -1055,7 +1273,7 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 			loop = false;
 
 		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_o] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP5] || inputFlag == _vm->_keyMap[Common::KEYCODE_ESCAPE] || inputFlag == 0x800A) {
-			processSpecialButton(9);
+			processButtonClick(9);
 			loop = false;
 			ci = -2;
 
@@ -1095,40 +1313,50 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 		if (index == 6)
 			_characters[_activeBox].hitPointsMax = v1;
 
-		statStr = index ? Common::String::format("%d", *s1) : _vm->getCharStrength(*s1, *s2);
-
-		_screen->copyRegion(b->x - 112, b->y - 64, b->x + 32, b->y, 40, b->height, 2, 0, Screen::CR_NO_P_CHECK);
-		_screen->printShadedText(statStr.c_str(), b->x + 32, b->y, _vm->guiSettings()->colors.guiColorLightRed, 0, _vm->guiSettings()->colors.guiColorBlack);
-		_screen->updateScreen();
+		bool hpChanged = false;
+		bool acChanged = false;
 
 		if (index == 4) {
 			int oldVal = c->hitPointsCur;
 			_chargenMaxStats[6] = getMaxHp(c->cClass, c->constitutionCur, c->level[0], c->level[1], c->level[2]);
 			_chargenMinStats[6] = getMinHp(c->cClass, c->constitutionCur, c->level[0], c->level[1], c->level[2]);
 			c->hitPointsMax = c->hitPointsCur = CLIP<int16>(c->hitPointsCur, _chargenMinStats[6], _chargenMaxStats[6]);
-
-			if (c->hitPointsCur != oldVal) {
-				statStr = Common::String::format("%d", c->hitPointsCur);
-				_screen->copyRegion(120, 72, 264, 136, 40, 8, 2, 0, Screen::CR_NO_P_CHECK);
-				_screen->printShadedText(statStr.c_str(), 264, 136, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
-				_screen->updateScreen();
-			}
-
+			hpChanged = c->hitPointsCur != oldVal;
 		} else if (index == 3) {
 			int oldVal = c->armorClass;
 			c->armorClass = _vm->getDexterityArmorClassModifier(v1) + 10;
+			acChanged = c->armorClass != oldVal;
+		}
 
-			if (c->armorClass != oldVal) {
+		if (_vm->_flags.platform == Common::kPlatformSegaCD) {
+			Common::String statStr = index ? Common::String::format("%02d", *s1) : _vm->getCharStrength(*s1, *s2, true);
+			printStats(_activeBox, 3);
+			_vm->_txt->printShadedText(statStr.c_str(), b->x - 112, b->y - 64, 0x55);
+			_screen->sega_getRenderer()->render(0, (b->x + 32) >> 3, b->y >> 3, 5, 1);
+		} else {
+			Common::String statStr = index ? Common::String::format("%d", *s1) : _vm->getCharStrength(*s1, *s2);
+			_screen->copyRegion(b->x - 112, b->y - 64, b->x + 32, b->y, 40, b->height, 2, 0, Screen::CR_NO_P_CHECK);
+			_screen->printShadedText(statStr.c_str(), b->x + 32, b->y, _vm->guiSettings()->colors.guiColorLightRed, 0, _vm->guiSettings()->colors.guiColorBlack);
+			if (hpChanged) {
+				statStr = Common::String::format("%d", c->hitPointsCur);
+				_screen->copyRegion(120, 72, 264, 136, 40, 8, 2, 0, Screen::CR_NO_P_CHECK);
+				_screen->printShadedText(statStr.c_str(), 264, 136, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+			} else if (acChanged) {
 				statStr = Common::String::format("%d", c->armorClass);
 				_screen->copyRegion(120, 64, 264, 128, 40, 8, 2, 0, Screen::CR_NO_P_CHECK);
 				_screen->printShadedText(statStr.c_str(), 264, 128, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
-				_screen->updateScreen();
 			}
 		}
 
+		_screen->updateScreen();
+
 		if (loop == false) {
-			statStr = index ? Common::String::format("%d", *s1) : _vm->getCharStrength(*s1, *s2);
-			_screen->printText(statStr.c_str(), b->x + 32, b->y, _vm->guiSettings()->colors.guiColorWhite, 0);
+			if (_vm->_flags.platform == Common::kPlatformSegaCD) {
+				printStats(_activeBox, 3);
+			} else {
+				Common::String statStr = index ? Common::String::format("%d", *s1) : _vm->getCharStrength(*s1, *s2);
+				_screen->printText(statStr.c_str(), b->x + 32, b->y, _vm->guiSettings()->colors.guiColorWhite, 0);
+			}
 			_screen->updateScreen();
 		}
 	}
@@ -1180,9 +1408,11 @@ int CharacterGenerator::getMinHp(int cclass, int constitution, int level1, int l
 
 void CharacterGenerator::finish() {
 	_screen->copyRegion(0, 0, 160, 0, 160, 128, 2, 2, Screen::CR_NO_P_CHECK);
-	int cp = _screen->setCurPage(2);
-	_screen->printShadedText(_chargenEnterGameStrings[0], (_vm->gameFlags().platform == Common::kPlatformFMTowns) ? 184 : 168, 32, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
-	_screen->setCurPage(cp);
+	if (_chargenEnterGameStrings) {
+		int cp = _screen->setCurPage(2);
+		_screen->printShadedText(_chargenEnterGameStrings[0], (_vm->gameFlags().platform == Common::kPlatformFMTowns) ? 184 : 168, 32, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+		_screen->setCurPage(cp);
+	}
 	_screen->copyRegion(160, 0, 144, 64, 160, 128, 2, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
 
@@ -1466,6 +1696,21 @@ const EoBRect8 CharacterGenerator::_chargenButtonBodyCoords[] = {
 	{ 0x00, 0xA0, 0x0B, 0x10 },
 	{ 0x14, 0x80, 0x0B, 0x10 },
 	{ 0x14, 0x90, 0x0B, 0x10 }
+};
+
+const uint8 CharacterGenerator::_chargenSegaButtonCoords[60] = {
+	0x03, 0x17, 0x0b, 0x02, 0x00,
+	0x1c, 0x16, 0x05, 0x02, 0x2c,
+	0x12, 0x08, 0x04, 0x02, 0x40,
+	0x12, 0x0a, 0x04, 0x02, 0x50,
+	0x1b, 0x16, 0x03, 0x02, 0x60,
+	0x1e, 0x16, 0x03, 0x02, 0x6c,
+	0x21, 0x14, 0x05, 0x02, 0x78,
+	0x1c, 0x16, 0x05, 0x02, 0x8c,
+	0x21, 0x16, 0x05, 0x02, 0xa0,
+	0x1c, 0x14, 0x05, 0x02, 0xb4,
+	0x21, 0x16, 0x05, 0x02, 0xc8,
+	0x21, 0x16, 0x05, 0x02, 0xdc
 };
 
 const int16 CharacterGenerator::_chargenBoxX[] = { 0x10, 0x50, 0x10, 0x50 };
@@ -1988,9 +2233,9 @@ void TransferPartyWiz::giveKhelbensCoin() {
 
 // Start functions
 
-bool EoBCoreEngine::startCharacterGeneration() {
+bool EoBCoreEngine::startCharacterGeneration(bool defaultParty) {
 	_sound->selectAudioResourceSet(_flags.platform == Common::kPlatformAmiga ? kMusicIntro : kMusicIngame);
-	return CharacterGenerator(this, _screen).start(_characters, &_faceShapes);
+	return CharacterGenerator(this, _screen).start(_characters, &_faceShapes, defaultParty);
 }
 
 bool EoBCoreEngine::startPartyTransfer() {

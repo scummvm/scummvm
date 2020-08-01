@@ -61,6 +61,16 @@ struct ScreenDim {
  */
 class Font {
 public:
+	/* Font types
+	 * Currently, we actually only care about oneByte and twoByte, but
+	 * naming it like this makes it easier to extend if the need arises.
+	 */
+	enum Type {
+		kASCII = 0,
+		kSJIS
+	};
+
+public:
 	virtual ~Font() {}
 
 	/**
@@ -72,6 +82,11 @@ public:
 	 * Whether the font draws on the overlay.
 	 */
 	virtual bool usesOverlay() const { return false; }
+
+	/**
+	* Whether the font is Ascii or Sjis.
+	*/
+	virtual Type getType() const = 0;
 
 	/**
 	 * The font height.
@@ -90,6 +105,12 @@ public:
 	virtual int getCharWidth(uint16 c) const = 0;
 
 	/**
+	 * Gets the height of a specific character. The only font that needs this
+	 * is the SegaCD one. For all other fonts this is a fixed value.
+	 */
+	virtual int getCharHeight(uint16 c) const { return getHeight(); }
+
+	/**
 	 * Sets a text palette map. The map contains 16 entries.
 	 */
 	virtual void setColorMap(const uint8 *src) = 0;
@@ -100,15 +121,19 @@ public:
 	virtual void set16bitColorMap(const uint16 *src) {}
 	
 	enum FontStyle {
-		kFSNone = 0,
-		kFSLeftShadow,
-		kFSFat
+		kStyleNone			=	0,
+		kStyleLeftShadow	=	1	<<	0,
+		kStyleFat			=	1	<<	1,
+		kStyleNarrow1		=	1	<<	2,
+		kStyleNarrow2		=	1	<<	3,
+		kStyleForceTwoByte	=	1	<<	4,
+		kStyleFixedWidth	=	1	<<	5
 	};
 
 	/**
 	* Sets a drawing style. Only rudimentary implementation based on what is needed.
 	*/
-	virtual void setStyle(FontStyle style) {}
+	virtual void setStyles(int styles) {}
 
 	/**
 	 * Draws a specific character.
@@ -119,6 +144,8 @@ public:
 	 * handling from outside Screen.
 	 */
 	virtual void drawChar(uint16 c, byte *dst, int pitch, int bpp) const = 0;
+
+	virtual void drawChar(uint16 c, byte *dst, int pitch, int xOffs, int yOffs) const {}
 };
 
 /**
@@ -133,6 +160,7 @@ public:
 	~DOSFont() override { unload(); }
 
 	bool load(Common::SeekableReadStream &file) override;
+	Type getType() const override { return kASCII; }
 	int getHeight() const override { return _height; }
 	int getWidth() const override { return _width; }
 	int getCharWidth(uint16 c) const override;
@@ -164,6 +192,7 @@ public:
 	~AMIGAFont() override { unload(); }
 
 	bool load(Common::SeekableReadStream &file) override;
+	Type getType() const override { return kASCII; }
 	int getHeight() const override { return _height; }
 	int getWidth() const override { return _width; }
 	int getCharWidth(uint16 c) const override;
@@ -196,13 +225,14 @@ public:
 	~SJISFont() override {}
 
 	bool usesOverlay() const override { return true; }
+	Type getType() const override { return kSJIS; }
 
 	bool load(Common::SeekableReadStream &) override { return true; }
 	int getHeight() const override;
 	int getWidth() const override;
 	int getCharWidth(uint16 c) const override;
 	void setColorMap(const uint8 *src) override;
-	void setStyle(FontStyle style) override { _style = style; }
+	void setStyles(int style) override { _style = style; }
 	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
 
 protected:
@@ -211,7 +241,7 @@ protected:
 	int _sjisWidth, _asciiWidth;
 	int _fontHeight;
 	const bool _drawOutline;
-	FontStyle _style;
+	int _style;
 
 private:
 	const uint8 _invisColor;
@@ -354,6 +384,7 @@ public:
 	enum {
 		SCREEN_W = 320,
 		SCREEN_H = 200,
+		SCREEN_H_SEGA_NTSC = 224,
 		SCREEN_PAGE_SIZE = 320 * 200 + 1024,
 		SCREEN_OVL_SJIS_SIZE = 640 * 400,
 		SCREEN_PAGE_NUM = 16,
@@ -391,11 +422,6 @@ public:
 		FID_SJIS_LARGE_FNT,
 		FID_SJIS_SMALL_FNT,
 		FID_NUM
-	};
-
-	enum FontType {
-		FTYPE_ASCII = 0,
-		FTYPE_SJIS
 	};
 
 	Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, const int dimTableSize);
@@ -452,6 +478,11 @@ public:
 	void setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue);
 	virtual void setScreenPalette(const Palette &pal);
 
+	// SegaCD version
+	// This is a somewhat hacky but probably least invasive way to
+	// move the whole ingame screen output down a couple of lines.
+	void transposeScreenOutputY(int yAdd);
+
 	// AMIGA version only
 	bool isInterfacePaletteEnabled() const { return _dualPaletteModeSplitY; }
 	void enableDualPaletteMode(int splitY);
@@ -475,13 +506,15 @@ public:
 	int getFontWidth() const;
 
 	int getCharWidth(uint16 c) const;
-	int getTextWidth(const char *str);
+	int getCharHeight(uint16 c) const;
+	int getTextWidth(const char *str, bool nextWordOnly = false);
 
-	void printText(const char *str, int x, int y, uint8 color1, uint8 color2);
+	void printText(const char *str, int x, int y, uint8 color1, uint8 color2, int pitch = -1);
 
 	virtual void setTextColorMap(const uint8 *cmap) = 0;
 	void setTextColor(const uint8 *cmap, int a, int b);
 	void setTextColor16bit(const uint16 *cmap16);
+	int setFontStyles(FontId fontId, int styles);
 
 	const ScreenDim *getScreenDim(int dim) const;
 	void modifyScreenDim(int dim, int x, int y, int w, int h);
@@ -534,13 +567,12 @@ public:
 	void blockInRegion(int x, int y, int width, int height);
 	void blockOutRegion(int x, int y, int width, int height);
 
-	int _charWidth;
-	int _charOffset;
+	int _charSpacing;
+	int _lineSpacing;
 	int _curPage;
 	uint8 *_shapePages[2];
 	int _maskMinY, _maskMaxY;
 	FontId _currentFont;
-	FontType _currentFontType;
 
 	// decoding functions
 	static void decodeFrame1(const uint8 *src, uint8 *dst, uint32 size);
@@ -582,7 +614,7 @@ protected:
 
 	// font/text specific
 	uint16 fetchChar(const char *&s) const;
-	void drawChar(uint16 c, int x, int y);
+	void drawChar(uint16 c, int x, int y, int pitch = -1);
 
 	int16 encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size);
 
@@ -595,20 +627,33 @@ protected:
 
 	bool _useOverlays;
 	bool _useSJIS;
+	int _fontStyles;
+
+	Font *_fonts[FID_NUM];
+	uint8 _textColorsMap[16];
+	uint16 _textColorsMap16bit[2];
+
+	uint8 *_textRenderBuffer;
+	int _textRenderBufferSize;
+
+	Common::SharedPtr<Graphics::FontSJIS> _sjisFontShared;
+	uint8 _sjisInvisibleColor;
+	bool _sjisMixedFontMode;
+
+	// colors/palette specific
 	bool _use16ColorMode;
-	bool _use256ColorMode;
+	bool _useShapeShading;
 	bool _4bitPixelPacking;
 	bool _useHiResEGADithering;
 	bool _useHiColorScreen;
 	bool _isAmiga;
 	bool _useAmigaExtraColors;
+	bool _isSegaCD;
 	Common::RenderMode _renderMode;
 	int _bytesPerPixel;
 	int _screenPageSize;
-	
-	Common::SharedPtr<Graphics::FontSJIS> _sjisFontShared;
-	uint8 _sjisInvisibleColor;
-	bool _sjisMixedFontMode;
+	const int _screenHeight;
+	int _yTransOffs;
 
 	Palette *_screenPalette;
 	Common::Array<Palette *> _palettes;
@@ -619,13 +664,6 @@ protected:
 	uint16 *_16bitPalette;
 	uint16 *_16bitConversionPalette;
 	uint8 _16bitShadingLevel;
-
-	Font *_fonts[FID_NUM];
-	uint8 _textColorsMap[16];
-	uint16 _textColorsMap16bit[2];
-
-	uint8 *_decodeShapeBuffer;
-	int _decodeShapeBufferSize;
 
 	uint8 *_animBlockPtr;
 	int _animBlockSize;

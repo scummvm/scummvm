@@ -45,8 +45,6 @@ MouseStatusStruct mouseData;
 uint16 mouseRight = 0;
 uint16 mouseLeft = 0;
 
-int lastKeyStroke = 0;
-
 uint16 mouseUpdateStatus;
 uint16 dummyU16;
 
@@ -58,13 +56,25 @@ static void processEvent(Common::Event &event) {
 	case Common::EVENT_RBUTTONDOWN:
 		mouseRight = 1;
 		break;
+	case Common::EVENT_MBUTTONDOWN:
+		mouseLeft = mouseRight = 1;
+		break;
 	case Common::EVENT_LBUTTONUP:
 		mouseLeft = 0;
 		break;
 	case Common::EVENT_RBUTTONUP:
 		mouseRight = 0;
 		break;
+	case Common::EVENT_MBUTTONUP:
+		mouseLeft = mouseRight = 0;
+		break;
 	case Common::EVENT_MOUSEMOVE:
+		break;
+	case Common::EVENT_WHEELUP:
+		g_cine->_keyInputList.push_back(Common::KeyState(Common::KEYCODE_UP));
+		break;
+	case Common::EVENT_WHEELDOWN:
+		g_cine->_keyInputList.push_back(Common::KeyState(Common::KEYCODE_DOWN));
 		break;
 	case Common::EVENT_KEYDOWN:
 		switch (event.kbd.keycode) {
@@ -130,6 +140,9 @@ static void processEvent(Common::Event &event) {
 		case Common::KEYCODE_F11:
 			renderer->showCollisionPage(true);
 			break;
+		case Common::KEYCODE_KP0:
+			g_cine->setDefaultGameSpeed();
+			break;
 		case Common::KEYCODE_MINUS:
 		case Common::KEYCODE_KP_MINUS:
 			g_cine->modifyGameSpeed(-1); // Slower
@@ -138,19 +151,15 @@ static void processEvent(Common::Event &event) {
 		case Common::KEYCODE_KP_PLUS:
 			g_cine->modifyGameSpeed(+1); // Faster
 			break;
-		case Common::KEYCODE_LEFT:
 		case Common::KEYCODE_KP4:
 			moveUsingKeyboard(-1, 0); // Left
 			break;
-		case Common::KEYCODE_RIGHT:
 		case Common::KEYCODE_KP6:
 			moveUsingKeyboard(+1, 0); // Right
 			break;
-		case Common::KEYCODE_UP:
 		case Common::KEYCODE_KP8:
 			moveUsingKeyboard(0, +1); // Up
 			break;
-		case Common::KEYCODE_DOWN:
 		case Common::KEYCODE_KP2:
 			moveUsingKeyboard(0, -1); // Down
 			break;
@@ -166,24 +175,39 @@ static void processEvent(Common::Event &event) {
 		case Common::KEYCODE_KP3:
 			moveUsingKeyboard(+1, -1); // Down & Right
 			break;
+		case Common::KEYCODE_LEFT:
+			// fall through
+		case Common::KEYCODE_RIGHT:
+			// fall through
+		case Common::KEYCODE_UP:
+			// fall through
+		case Common::KEYCODE_DOWN:
+			// fall through
 		default:
-			lastKeyStroke = event.kbd.keycode;
+			g_cine->_keyInputList.push_back(event.kbd);
 			break;
 		}
 		break;
 	case Common::EVENT_KEYUP:
 		switch (event.kbd.keycode) {
+		case Common::KEYCODE_RETURN:
+		case Common::KEYCODE_KP_ENTER:
+		case Common::KEYCODE_KP5:
+			if (allowPlayerInput) {
+				mouseLeft = 0;
+			}
+			break;
+		case Common::KEYCODE_ESCAPE:
+			if (allowPlayerInput) {
+				mouseRight = 0;
+			}
+			break;
 		case Common::KEYCODE_F11:
 			renderer->showCollisionPage(false);
 			break;
-		case Common::KEYCODE_KP5:   // Emulated left mouse button click
-		case Common::KEYCODE_LEFT:  // Left
 		case Common::KEYCODE_KP4:   // Left
-		case Common::KEYCODE_RIGHT: // Right
 		case Common::KEYCODE_KP6:   // Right
-		case Common::KEYCODE_UP:    // Up
 		case Common::KEYCODE_KP8:   // Up
-		case Common::KEYCODE_DOWN:  // Down
 		case Common::KEYCODE_KP2:   // Down
 		case Common::KEYCODE_KP9:   // Up & Right
 		case Common::KEYCODE_KP7:   // Up & Left
@@ -200,23 +224,166 @@ static void processEvent(Common::Event &event) {
 	}
 }
 
-void manageEvents() {
+void manageEvents(CallSource callSource, EventTarget eventTarget, bool useMaxMouseButtonState, Common::Array<Common::Rect> rects) {
 	Common::EventManager *eventMan = g_system->getEventManager();
+	Common::Point mousePos;
+	uint keysPressed = g_cine->_keyInputList.size();
+	bool foundTarget = false;
+	int eventsChecked = 0;
+	uint16 maxMouseLeft = mouseLeft;
+	uint16 maxMouseRight = mouseRight;
+	uint32 waitStart = g_system->getMillis();
+	uint32 waitEnd = waitStart + g_cine->getTimerDelay();
+	uint32 frameEnd = waitStart + 20;
+	bool frameEnded = false;
+	bool waitEnded = false;
+	bool checkWaitEnd = (eventTarget == UNTIL_WAIT_ENDED);
+	bool updateScreen = false;
+	bool updateAudio = false;
 
-	uint32 nextFrame = g_system->getMillis() + g_cine->getTimerDelay();
 	do {
 		Common::Event event;
-		while (eventMan->pollEvent(event)) {
+		int eventsCheckedBeforePolling = eventsChecked;
+		while (!foundTarget && !frameEnded && eventMan->pollEvent(event)) {
 			processEvent(event);
+			eventsChecked++;
+			maxMouseLeft = MAX<uint16>(mouseLeft, maxMouseLeft);
+			maxMouseRight = MAX<uint16>(mouseRight, maxMouseRight);
+
+			bool mouseButtonDown = (mouseLeft != 0 || mouseRight != 0);
+			bool mouseButtonUp = !mouseButtonDown;
+
+			switch (eventTarget) {
+			case UNTIL_MOUSE_BUTTON_UP_DOWN_UP:
+				// fall through
+			case UNTIL_MOUSE_BUTTON_UP_DOWN:
+				// fall through
+			case UNTIL_MOUSE_BUTTON_UP:
+				// fall through
+			case UNTIL_MOUSE_BUTTON_UP_AND_WAIT_ENDED:
+				foundTarget = mouseButtonUp;
+				break;
+			case UNTIL_MOUSE_BUTTON_DOWN_UP:
+				// fall through
+			case UNTIL_MOUSE_BUTTON_DOWN:
+				foundTarget = mouseButtonDown;
+				break;
+			case UNTIL_MOUSE_BUTTON_DOWN_OR_KEY_UP_OR_DOWN_OR_IN_RECTS:
+				foundTarget = mouseButtonDown;
+				if (!g_cine->_keyInputList.empty()) {
+					Common::KeyState key = g_cine->_keyInputList.back();
+					if (key.keycode == Common::KEYCODE_UP || key.keycode == Common::KEYCODE_DOWN) {
+						foundTarget = true;
+					}
+				}
+				mousePos = g_system->getEventManager()->getMousePos();
+				for (Common::Array<Common::Rect>::iterator it = rects.begin(); it != rects.end(); ++it) {
+					if (it->contains(mousePos)) {
+						foundTarget = true;
+						break;
+					}
+				}
+				break;
+			case UNTIL_MOUSE_BUTTON_DOWN_OR_KEY_INPUT:
+				foundTarget = mouseButtonDown || keysPressed < g_cine->_keyInputList.size();
+				break;
+			}
+
+			uint32 now = g_system->getMillis();
+			frameEnded = (now >= frameEnd);
+			waitEnded = (now >= waitEnd);
+			
+			if (foundTarget) {
+				switch (eventTarget) {
+				case UNTIL_MOUSE_BUTTON_UP_DOWN_UP:
+					eventTarget = UNTIL_MOUSE_BUTTON_DOWN_UP;
+					foundTarget = false;
+					break;
+				case UNTIL_MOUSE_BUTTON_UP_DOWN:
+					eventTarget = UNTIL_MOUSE_BUTTON_DOWN;
+					foundTarget = false;
+					break;
+				case UNTIL_MOUSE_BUTTON_DOWN_UP:
+					eventTarget = UNTIL_MOUSE_BUTTON_UP;
+					foundTarget = false;
+					break;
+				case UNTIL_MOUSE_BUTTON_UP_AND_WAIT_ENDED:
+					eventTarget = UNTIL_WAIT_ENDED;
+					checkWaitEnd = true;
+					foundTarget = false;
+					break;
+				}
+			}
+
+			foundTarget |= (checkWaitEnd && waitEnded);
 		}
-		g_system->updateScreen();
-		g_system->delayMillis(20);
-	} while (g_system->getMillis() < nextFrame);
+		int eventsCheckedAfterPolling = eventsChecked;
 
-	mouseData.left = mouseLeft;
-	mouseData.right = mouseRight;
+		bool eventQueueEmpty = (eventsCheckedBeforePolling == eventsCheckedAfterPolling);
 
-	g_system->getAudioCDManager()->update();
+		if (eventQueueEmpty) {
+			uint32 now = g_system->getMillis();
+			frameEnded = (now >= frameEnd);
+			waitEnded = (now >= waitEnd);
+		}
+
+		if (eventTarget == UNTIL_WAIT_ENDED) {
+			foundTarget = waitEnded;
+		}
+
+		if (eventTarget == EMPTY_EVENT_QUEUE) {
+			foundTarget = eventQueueEmpty;
+		}
+
+		foundTarget |= (checkWaitEnd && waitEnded);
+
+		if (!foundTarget && eventsChecked == 0) {
+			// If there are no events to check then
+			// add an empty event to check the current state.
+			eventMan->pushEvent(Common::Event());
+			continue;
+		}
+		
+		updateScreen = updateAudio = (foundTarget || frameEnded);
+
+		if (updateScreen) {
+			if (callSource != EXECUTE_PLAYER_INPUT) {
+				g_system->updateScreen();
+			} else {
+				// Make the command line (e.g. "EXAMINE DOOR" -> "EXAMINE BUTTON")
+				// responsive by updating it here.
+				if (allowPlayerInput && playerCommand != -1 && !mouseLeft && !mouseRight) {
+					// A player command is given, left and right mouse buttons are up
+					Common::String oldCommand = renderer->getCommand();
+					mousePos = eventMan->getMousePos();
+					playerCommandMouseLeftRightUp(mousePos.x, mousePos.y);
+					if (!oldCommand.equals(renderer->getCommand())) {
+						renderer->drawCommand();
+					}
+				}
+
+				renderer->blit();
+			}
+		}
+
+		if (updateAudio) {
+			g_system->getAudioCDManager()->update(); // For Future Wars CD version
+		}
+
+		if (frameEnded) {
+			frameEnd += 20;
+		}
+
+		g_system->delayMillis(10);
+	} while (!foundTarget && !g_cine->shouldQuit());
+
+	if (useMaxMouseButtonState) {
+		mouseData.left = maxMouseLeft;
+		mouseData.right = maxMouseRight;
+	} else {
+		mouseData.left = mouseLeft;
+		mouseData.right = mouseRight;
+	}
 }
 
 void getMouseData(uint16 param, uint16 *pButton, uint16 *pX, uint16 *pY) {
@@ -233,14 +400,6 @@ void getMouseData(uint16 param, uint16 *pButton, uint16 *pX, uint16 *pY) {
 	if (mouseData.left) {
 		(*pButton) |= 1;
 	}
-}
-
-int getKeyData() {
-	int k = lastKeyStroke;
-
-	lastKeyStroke = -1;
-
-	return k;
 }
 
 /** Removes elements from seqList that have their member variable var4 set to value -1. */
@@ -260,7 +419,6 @@ void purgeSeqList() {
 void CineEngine::mainLoop(int bootScriptIdx) {
 	bool playerAction;
 	byte di;
-	uint16 mouseButton;
 
 	if (_preLoad == false) {
 		resetBgIncrustList();
@@ -281,7 +439,10 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 		allowPlayerInput = 0;
 		checkForPendingDataLoadSwitch = 0;
 
-		fadeRequired = false;
+		reloadBgPalOnNextFlip = 0;
+		forbidBgPalReload = 0;
+		gfxFadeOutCompleted = 0;
+		gfxFadeInRequested = 0;
 		isDrawCommandEnabled = 0;
 		waitForPlayerClick = 0;
 		menuCommandLen = 0;
@@ -297,6 +458,8 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 			g_cine->_globalVars[VAR_BYPASS_PROTECTION] = 0; // set to 1 to bypass the copy protection
 			g_cine->_globalVars[VAR_LOW_MEMORY] = 0; // set to 1 to disable some animations, sounds etc.
 		}
+
+		renderer->setBlackPalette(true); // Sets _changePal = true
 
 		strcpy(newPrcName, "");
 		strcpy(newRelName, "");
@@ -336,7 +499,7 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 		// jump over by moving the character to (204, 109). The script handling the
 		// flower shop scene is AIRPORT.PRC's 13th script.
 		// FIXME: Remove the hack and solve what's really causing the problem in the first place.
-		if (g_cine->getGameType() == Cine::GType_OS) {
+		if (hacksEnabled && g_cine->getGameType() == Cine::GType_OS) {
 			if (scumm_stricmp(renderer->getBgName(), "21.PI1") == 0 && g_cine->_objectTable[1].x == 204 && g_cine->_objectTable[1].y == 110) {
 				g_cine->_objectTable[1].y--; // Move the player character upward on-screen by one pixel
 			}
@@ -368,8 +531,12 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 			setMouseCursor(MOUSE_CURSOR_CROSS);
 		}
 
+		if (gfxFadeInRequested) {
+			gfxFadeOutCompleted = 0;
+		}
+
 		if (renderer->ready()) {
-			renderer->drawFrame();
+			renderer->drawFrame(true);
 		}
 
 		// NOTE: In the original Future Wars and Operation Stealth messages
@@ -384,27 +551,7 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 			if (_messageLen < 800)
 				_messageLen = 800;
 
-			do {
-				manageEvents();
-				getMouseData(mouseUpdateStatus, &mouseButton, &dummyU16, &dummyU16);
-			} while (mouseButton != 0 && !shouldQuit());
-
-			menuVar = 0;
-
-			do {
-				manageEvents();
-				getMouseData(mouseUpdateStatus, &mouseButton, &dummyU16, &dummyU16);
-				playerAction = (mouseButton != 0) || processKeyboard(menuVar);
-				mainLoopSub6();
-			} while (!playerAction && !shouldQuit());
-
-			menuVar = 0;
-
-			do {
-				manageEvents();
-				getMouseData(mouseUpdateStatus, &mouseButton, &dummyU16, &dummyU16);
-			} while (mouseButton != 0 && !shouldQuit());
-
+			manageEvents(MAIN_LOOP_WAIT_FOR_PLAYER_CLICK, UNTIL_MOUSE_BUTTON_UP_DOWN_UP);
 			waitForPlayerClick = 0;
 		}
 
@@ -424,9 +571,6 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 				menuCommandLen = 0;
 			}
 		}
-
-		manageEvents();
-
 	} while (!shouldQuit() && !_restartRequested);
 
 	hideMouse();

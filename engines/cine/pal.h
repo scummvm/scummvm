@@ -67,6 +67,8 @@ public:
 	 * @note For the default constructed object (i.e. no parameters given) this will hold: empty() && !isValid()
 	 */
 	Palette(const Graphics::PixelFormat format = Graphics::PixelFormat(), const uint numColors = 0);
+	Palette(const Palette& other);
+	Palette& operator=(const Palette& other);
 
 	/**
 	 * Clear the palette (Set color count to zero, release memory, overwrite color format with default value).
@@ -113,10 +115,10 @@ public:
 	byte *save(byte *buf, const uint size, const Graphics::PixelFormat format, const uint numColors, const EndianType endian, const byte firstIndex = 0) const;
 
 	/**
-	 * Rotate the palette in color range [firstIndex, lastIndex] to the right by the specified rotation amount.
-	 * @param rotationAmount Amount to rotate the sub-palette to the right. Only values 0 and 1 are currently supported!
+	 * Rotate the palette in color range [firstIndex, lastIndex] to the right by one.
 	 */
-	Palette &rotateRight(byte firstIndex, byte lastIndex, signed rotationAmount = 1);
+	Palette &rotateRight(byte firstIndex, byte lastIndex);
+	Palette &rotateLeft(byte firstIndex, byte lastIndex);
 	Palette &saturatedAddColor(Palette &output, byte firstIndex, byte lastIndex, signed r, signed g, signed b) const;
 
 	/**
@@ -146,8 +148,7 @@ public:
 	Palette &saturatedAddNormalizedGray(Palette &output, byte firstIndex, byte lastIndex, signed grayDividend, signed grayDenominator) const;
 
 	bool empty() const;
-	uint colorCount() const;
-
+	uint colorCount() const;	
 	Palette &fillWithBlack();
 
 	/** Is the palette valid? (Mostly just checks the color format for correctness) */
@@ -171,7 +172,12 @@ public:
 	/** Get the blue color component of the color at the given palette index. */
 	uint8 getB(byte index) const;
 
+	bool ensureContrast(byte &minBrightnessColorIndex);
+	bool isEqual(byte index1, byte index2);
+
 private:
+	int findMinBrightnessColorIndex(uint minColorIndex = 1);
+	byte brightness(byte colorIndex);
 	void setColorFormat(const Graphics::PixelFormat format);
 
 	// WORKAROUND: Using a reference to a result here instead of returning an Color object.

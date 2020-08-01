@@ -44,6 +44,7 @@ protected:
 
 private:
 	MohawkBitmap *_bmpDecoder;
+	LivingBooksBitmap_v1 *_bmpDecoderLB;
 	MohawkEngine_LivingBooks *_vm;
 };
 

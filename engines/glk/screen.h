@@ -65,6 +65,11 @@ public:
 	 * Return the font Id for a given name
 	 */
 	static FACES getFontId(const Common::String &name);
+
+	/**
+	 * Return the name for a given font Id
+	 */
+	static Common::String getFontName(FACES font);
 public:
 	/**
 	 * Constructor

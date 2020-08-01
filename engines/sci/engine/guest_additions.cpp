@@ -64,11 +64,9 @@ GuestAdditions::GuestAdditions(EngineState *state, GameFeatures *features, Kerne
 #pragma mark -
 
 void GuestAdditions::syncSoundSettingsFromScummVM() const {
-#ifdef ENABLE_SCI32
 	if (_features->audioVolumeSyncUsesGlobals())
 		syncAudioVolumeGlobalsFromScummVM();
 	else
-#endif
 		syncMasterVolumeFromScummVM();
 }
 
@@ -107,7 +105,8 @@ bool GuestAdditions::shouldSyncAudioToScummVM() const {
 			return true;
 		} else if (gameId == GID_SLATER && objName == "volButton") {
 			return true;
-		} else if (gameId == GID_LSL6 && objName == "menuBar") {
+		} else if (gameId == GID_LSL6 && (objName == "menuBar" ||
+										  objName == "volumeDial")) {
 			return true;
 #ifdef ENABLE_SCI32
 		} else if ((gameId == GID_GK1 || gameId == GID_SQ6) && (objName == "musicBar" ||
@@ -161,33 +160,32 @@ void GuestAdditions::sciEngineRunGameHook() {
 
 void GuestAdditions::writeVarHook(const int type, const int index, const reg_t value) {
 	if (type == VAR_GLOBAL) {
+		if (_features->audioVolumeSyncUsesGlobals() && shouldSyncAudioToScummVM()) {
+			syncAudioVolumeGlobalsToScummVM(index, value);
 #ifdef ENABLE_SCI32
-		if (getSciVersion() >= SCI_VERSION_2) {
-			if (_features->audioVolumeSyncUsesGlobals() && shouldSyncAudioToScummVM()) {
-				syncAudioVolumeGlobalsToScummVM(index, value);
-			} else if (g_sci->getGameId() == GID_GK1) {
-				syncGK1StartupVolumeFromScummVM(index, value);
-			} else if (g_sci->getGameId() == GID_HOYLE5 && index == kGlobalVarHoyle5MusicVolume) {
-				syncHoyle5VolumeFromScummVM((ConfMan.getInt("music_volume") + 1) * kHoyle5VolumeMax / Audio::Mixer::kMaxMixerVolume);
-			} else if (g_sci->getGameId() == GID_HOYLE5 && index == kGlobalVarHoyle5ResponseTime && value.getOffset() == 0) {
-				// WORKAROUND: Global 899 contains the response time value,
-				// which may have values between 1 and 15. There is a script
-				// bug when loading values from game.opt, where this variable
-				// may be incorrectly set to 0. This makes the opponent freeze
-				// while playing Backgammon and Bridge. Fix this case here, by
-				// setting the correct minimum value, 1.
-				// TODO: Either make this a script patch, or find out if it's
-				// a bug with ScummVM when reading values from text files.
-				_state->variables[VAR_GLOBAL][index].setOffset(1);
-			} else if (g_sci->getGameId() == GID_RAMA && !g_sci->isDemo() && index == kGlobalVarRamaMusicVolume) {
-				syncRamaVolumeFromScummVM((ConfMan.getInt("music_volume") + 1) * kRamaVolumeMax / Audio::Mixer::kMaxMixerVolume);
-			}
-
-			if (_features->supportsTextSpeed()) {
-				syncTextSpeedToScummVM(index, value);
-			}
+		} else if (g_sci->getGameId() == GID_GK1) {
+			syncGK1StartupVolumeFromScummVM(index, value);
+		} else if (g_sci->getGameId() == GID_HOYLE5 && index == kGlobalVarHoyle5MusicVolume) {
+			syncHoyle5VolumeFromScummVM((ConfMan.getInt("music_volume") + 1) * kHoyle5VolumeMax / Audio::Mixer::kMaxMixerVolume);
+		} else if (g_sci->getGameId() == GID_HOYLE5 && index == kGlobalVarHoyle5ResponseTime && value.getOffset() == 0) {
+			// WORKAROUND: Global 899 contains the response time value,
+			// which may have values between 1 and 15. There is a script
+			// bug when loading values from game.opt, where this variable
+			// may be incorrectly set to 0. This makes the opponent freeze
+			// while playing Backgammon and Bridge. Fix this case here, by
+			// setting the correct minimum value, 1.
+			// TODO: Either make this a script patch, or find out if it's
+			// a bug with ScummVM when reading values from text files.
+			_state->variables[VAR_GLOBAL][index].setOffset(1);
+		} else if (g_sci->getGameId() == GID_RAMA && !g_sci->isDemo() && index == kGlobalVarRamaMusicVolume) {
+			syncRamaVolumeFromScummVM((ConfMan.getInt("music_volume") + 1) * kRamaVolumeMax / Audio::Mixer::kMaxMixerVolume);
 		}
+
+		if (_features->supportsTextSpeed()) {
+			syncTextSpeedToScummVM(index, value);
 #endif
+		}
+
 		syncMessageTypeToScummVM(index, value);
 	}
 }
@@ -1074,7 +1072,6 @@ void GuestAdditions::syncMasterVolumeToScummVM(const int16 masterVolume) const {
 	g_sci->updateSoundMixerVolumes();
 }
 
-#ifdef ENABLE_SCI32
 #pragma mark -
 #pragma mark Globals volume sync
 
@@ -1085,6 +1082,7 @@ void GuestAdditions::syncAudioVolumeGlobalsFromScummVM() const {
 	// audio for music do not need any extra code since that always runs
 	// straight through the audio mixer, which gets muted directly
 	switch (g_sci->getGameId()) {
+#ifdef ENABLE_SCI32
 	case GID_GK1: {
 		const int16 musicVolume = (ConfMan.getInt("music_volume") + 1) * MUSIC_VOLUME_MAX / Audio::Mixer::kMaxMixerVolume;
 		const int16 dacVolume = (ConfMan.getInt("sfx_volume") + 1) * Audio32::kMaxVolume / Audio::Mixer::kMaxMixerVolume;
@@ -1104,13 +1102,6 @@ void GuestAdditions::syncAudioVolumeGlobalsFromScummVM() const {
 		const int16 musicVolume = (ConfMan.getInt("music_volume") + 1) * kHoyle5VolumeMax / Audio::Mixer::kMaxMixerVolume;
 		syncHoyle5VolumeFromScummVM(musicVolume);
 		syncHoyle5UI(musicVolume);
-		break;
-	}
-
-	case GID_LSL6HIRES: {
-		const int16 musicVolume = (ConfMan.getInt("music_volume") + 1) * kLSL6HiresUIVolumeMax / Audio::Mixer::kMaxMixerVolume;
-		syncLSL6HiresVolumeFromScummVM(musicVolume);
-		syncLSL6HiresUI(musicVolume);
 		break;
 	}
 
@@ -1155,12 +1146,27 @@ void GuestAdditions::syncAudioVolumeGlobalsFromScummVM() const {
 		syncTorinUI(musicVolume, sfxVolume, speechVolume);
 		break;
 	}
+#endif
+
+	case GID_LSL6:
+	case GID_LSL6HIRES:	{
+		const int16 musicVolume = (ConfMan.getInt("music_volume") + 1) * kLSL6UIVolumeMax / Audio::Mixer::kMaxMixerVolume;
+		syncLSL6VolumeFromScummVM(musicVolume);
+		syncLSL6UI(musicVolume);
+		break;
+	}
 
 	default:
 		error("Trying to sync audio volume globals in a game with no implementation");
 	}
 }
 
+void GuestAdditions::syncLSL6VolumeFromScummVM(const int16 musicVolume) const {
+	_state->variables[VAR_GLOBAL][kGlobalVarLSL6MusicVolume] = make_reg(0, musicVolume);
+	g_sci->_soundCmd->setMasterVolume(ConfMan.getBool("mute") ? 0 : (musicVolume * MUSIC_MASTERVOLUME_MAX / kLSL6UIVolumeMax));
+}
+
+#ifdef ENABLE_SCI32
 void GuestAdditions::syncGK1StartupVolumeFromScummVM(const int index, const reg_t value) const {
 	if (index == kGlobalVarGK1Music1 || index == kGlobalVarGK1Music2 ||
 		index == kGlobalVarGK1DAC1 || index == kGlobalVarGK1DAC2 ||
@@ -1244,11 +1250,6 @@ void GuestAdditions::syncHoyle5VolumeFromScummVM(const int16 musicVolume) const 
 	g_sci->_soundCmd->setMasterVolume(ConfMan.getBool("mute") ? 0 : (musicVolume * MUSIC_MASTERVOLUME_MAX / kHoyle5VolumeMax));
 }
 
-void GuestAdditions::syncLSL6HiresVolumeFromScummVM(const int16 musicVolume) const {
-	_state->variables[VAR_GLOBAL][kGlobalVarLSL6HiresMusicVolume] = make_reg(0, musicVolume);
-	g_sci->_soundCmd->setMasterVolume(ConfMan.getBool("mute") ? 0 : (musicVolume * MUSIC_MASTERVOLUME_MAX / kLSL6HiresUIVolumeMax));
-}
-
 void GuestAdditions::syncPhant2VolumeFromScummVM(const int16 masterVolume) const {
 	_state->variables[VAR_GLOBAL][kGlobalVarPhant2MasterVolume] = make_reg(0, masterVolume);
 	_state->variables[VAR_GLOBAL][kGlobalVarPhant2SecondaryVolume] = make_reg(0, masterVolume);
@@ -1293,9 +1294,11 @@ void GuestAdditions::syncTorinVolumeFromScummVM(const int16 musicVolume, const i
 		}
 	}
 }
+#endif
 
 void GuestAdditions::syncAudioVolumeGlobalsToScummVM(const int index, const reg_t value) const {
 	switch (g_sci->getGameId()) {
+#ifdef ENABLE_SCI32
 	case GID_GK2:
 		if (index == kGlobalVarGK2MusicVolume) {
 			const int16 musicVolume = value.toSint16() * Audio::Mixer::kMaxMixerVolume / Audio32::kMaxVolume;
@@ -1309,13 +1312,6 @@ void GuestAdditions::syncAudioVolumeGlobalsToScummVM(const int index, const reg_
 			ConfMan.setInt("music_volume", masterVolume);
 			ConfMan.setInt("sfx_volume", masterVolume);
 			ConfMan.setInt("speech_volume", masterVolume);
-		}
-		break;
-
-	case GID_LSL6HIRES:
-		if (index == kGlobalVarLSL6HiresMusicVolume) {
-			const int16 musicVolume = value.toSint16() * Audio::Mixer::kMaxMixerVolume / kLSL6HiresUIVolumeMax;
-			ConfMan.setInt("music_volume", musicVolume);
 		}
 		break;
 
@@ -1369,12 +1365,22 @@ void GuestAdditions::syncAudioVolumeGlobalsToScummVM(const int index, const reg_
 			}
 		}
 		break;
+#endif
+
+	case GID_LSL6:
+	case GID_LSL6HIRES:
+		if (index == kGlobalVarLSL6MusicVolume) {
+			const int16 musicVolume = value.toSint16() * Audio::Mixer::kMaxMixerVolume / kLSL6UIVolumeMax;
+			ConfMan.setInt("music_volume", musicVolume);
+		}
+		break;
 
 	default:
 		break;
 	}
 }
 
+#ifdef ENABLE_SCI32
 void GuestAdditions::syncGK1AudioVolumeToScummVM(const reg_t soundObj, int16 volume) const {
 	const Common::String objName = _segMan->getObjectName(soundObj);
 	volume = volume * Audio::Mixer::kMaxMixerVolume / MUSIC_VOLUME_MAX;
@@ -1487,20 +1493,31 @@ void GuestAdditions::syncHoyle5UI(const int16 musicVolume) const {
 		}
 	}
 }
+#endif
 
-void GuestAdditions::syncLSL6HiresUI(const int16 musicVolume) const {
+void GuestAdditions::syncLSL6UI(const int16 musicVolume) const {
 	const reg_t musicDialId = _segMan->findObjectByName("volumeDial");
 	if (!musicDialId.isNull()) {
 		writeSelectorValue(_segMan, musicDialId, SELECTOR(curPos), musicVolume);
 		writeSelectorValue(_segMan, musicDialId, SELECTOR(cel), musicVolume);
 		reg_t params[] = { make_reg(0, musicVolume) };
-		invokeSelector(musicDialId, SELECTOR(update), 1, params);
-		if (_segMan->getObject(musicDialId)->isInserted()) {
-			g_sci->_gfxFrameout->kernelUpdateScreenItem(musicDialId);
+		// volumeDial's method is doit in the lo-res version and update in hi-res
+		if (g_sci->getGameId() == GID_LSL6) {
+			invokeSelector(musicDialId, SELECTOR(doit), 1, params);
+		} else {
+			invokeSelector(musicDialId, SELECTOR(update), 1, params);
 		}
+#ifdef ENABLE_SCI32
+		if (g_sci->getGameId() == GID_LSL6HIRES) {
+			if (_segMan->getObject(musicDialId)->isInserted()) {
+				g_sci->_gfxFrameout->kernelUpdateScreenItem(musicDialId);
+			}
+		}
+#endif
 	}
 }
 
+#ifdef ENABLE_SCI32
 void GuestAdditions::syncPhant1UI(const int16 oldMusicVolume, const int16 musicVolume, reg_t &musicGlobal, const int16 oldDacVolume, const int16 dacVolume, reg_t &dacGlobal) const {
 	const reg_t buttonId = _segMan->findObjectByName("dacVolUp");
 	if (buttonId.isNull() || !_segMan->getObject(buttonId)->isInserted()) {

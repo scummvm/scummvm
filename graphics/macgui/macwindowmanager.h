@@ -33,6 +33,10 @@
 
 #include "engines/engine.h"
 
+namespace Common {
+class Archive;
+}
+
 namespace Graphics {
 
 namespace MacGUIConstants {
@@ -58,6 +62,16 @@ enum {
 	kPatternDarkGray = 6
 };
 
+enum MacCursorType {
+ kMacCursorArrow,
+ kMacCursorBeam,
+ kMacCursorCrossHair,
+ kMacCursorCrossBar,
+ kMacCursorWatch,
+ kMacCursorCustom,
+ kMacCursorOff
+};
+
 enum {
 	kWMModeNone         	= 0,
 	kWMModeNoDesktop    	= (1 << 0),
@@ -77,6 +91,7 @@ class Cursor;
 
 class ManagedSurface;
 
+class MacCursor;
 class MacMenu;
 class MacTextWindow;
 class MacWidget;
@@ -114,7 +129,6 @@ struct ZoomBox {
 };
 
 void macDrawPixel(int x, int y, int color, void *data);
-void macInvertPixel(int x, int y, int color, void *data);
 
 /**
  * A manager class to handle window creation, destruction,
@@ -242,11 +256,17 @@ public:
 
 	MacWidget *getActiveWidget() { return _activeWidget; }
 
+	void clearWidgetRefs(MacWidget *widget);
+
+	void pushCursor(MacCursorType type, Cursor *cursor = nullptr);
+	void replaceCursor(MacCursorType type, Cursor *cursor = nullptr);
+
 	void pushArrowCursor();
 	void pushBeamCursor();
 	void pushCrossHairCursor();
 	void pushCrossBarCursor();
 	void pushWatchCursor();
+
 	void pushCustomCursor(const byte *data, int w, int h, int hx, int hy, int transcolor);
 	void pushCustomCursor(const Graphics::Cursor *cursor);
 	void popCursor();
@@ -265,10 +285,17 @@ public:
 	void renderZoomBox(bool redraw = false);
 	void addZoomBox(ZoomBox *box);
 
+	void removeMarked();
+
+	void loadDataBundle();
+	Common::Rect getBorderOffsets(byte windowType);
+	Common::SeekableReadStream *getBorderFile(byte windowType, bool isActive);
+
 public:
 	MacFontManager *_fontMan;
 	uint32 _mode;
 
+	Common::Point _lastClickPos;
 	Common::Point _lastMousePos;
 	Common::Rect _menuHotzone;
 
@@ -278,12 +305,10 @@ public:
 	int _colorBlack, _colorWhite;
 
 	MacWidget *_hoveredWidget;
-	MacWidget *_mouseDownWidget;
 
 private:
 	void drawDesktop();
 
-	void removeMarked();
 	void removeFromStack(BaseMacWindow *target);
 	void removeFromWindowList(BaseMacWindow *target);
 
@@ -317,13 +342,18 @@ private:
 	void *_engineR;
 	void (*_redrawEngineCallback)(void *engine);
 
-	bool _cursorIsArrow;
+	MacCursorType _tempType;
+	MacCursorType _cursorType;
+	Cursor *_cursor;
 
 	MacWidget *_activeWidget;
 
 	PauseToken _screenCopyPauseToken;
 
 	Common::Array<ZoomBox *> _zoomBoxes;
+	Common::HashMap<uint32, uint> _colorHash;
+
+	Common::Archive *_dataBundle;
 };
 
 } // End of namespace Graphics

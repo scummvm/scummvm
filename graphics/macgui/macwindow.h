@@ -99,10 +99,21 @@ public:
 	bool isEditable() { return _editable; }
 
 	/**
-	 * Method to access the entire surface of the window (e.g. to draw an image).
-	 * @return A pointer to the entire surface of the window.
+	 * Mutator to change the visible state of the window.
+	 * @param visible Target state.
 	 */
-	ManagedSurface *getWindowSurface() { return &_surface; }
+	virtual void setVisible(bool visible, bool silent = false);
+	/**
+	 * Accessor to determine whether a window is active.
+	 * @return True if the window is active.
+	 */
+	bool isVisible();
+
+	/**
+	 * Method to access the entire interior surface of the window (e.g. to draw an image).
+	 * @return A pointer to the entire interior surface of the window.
+	 */
+	ManagedSurface *getWindowSurface() { return _composeSurface; }
 
 	/**
 	 * Method called to draw the window into the target surface.
@@ -137,10 +148,10 @@ protected:
 
 	bool _editable;
 
-	ManagedSurface _surface;
-
 	bool (*_callback)(WindowClick, Common::Event &, void *);
 	void *_dataPtr;
+
+	bool _visible;
 };
 
 /**
@@ -160,7 +171,7 @@ public:
 	 * @param wm See BaseMacWindow.
 	 */
 	MacWindow(int id, bool scrollable, bool resizable, bool editable, MacWindowManager *wm);
-	virtual ~MacWindow();
+	virtual ~MacWindow() {}
 
 	/**
 	 * Change the window's location to fixed coordinates (not delta).
@@ -224,9 +235,25 @@ public:
 
 	/**
 	 * Mutator to change the title of the window.
-	 * @param title Target title of the window.
+	 * @param title Target title.
 	 */
-	void setTitle(Common::String &title) { _title = title; }
+	void setTitle(const Common::String &title) { _title = title; _borderIsDirty = true; }
+	/**
+	 * Accessor to get the title of the window.
+	 * @return Title.
+	 */
+	Common::String getTitle() { return _title; };
+	/**
+	 * Mutator to change the visible state of the title.
+	 * @param active Target state.
+	 */
+	void setTitleVisible(bool titleVisible) { _titleVisible = titleVisible; _borderIsDirty = true; };
+	/**
+	 * Accessor to determine whether the title is visible.
+	 * @return True if the title is visible.
+	 */
+	bool isTitleVisible() { return _titleVisible; };
+
 	/**
 	 * Highlight the target part of the window.
 	 * Used for the default borders.
@@ -265,6 +292,17 @@ public:
 	 * @param closeable True if the window can be closed.
 	 */
 	void setCloseable(bool closeable);
+
+	/**
+	 * Mutator to change the border type.
+	 * @param borderType Border type.
+	 */
+	void setBorderType(int borderType);
+	/**
+	 * Accessor to get the border type.
+	 * @return Border type.
+	 */
+	int getBorderType() { return _borderType; };
 
 private:
 	void prepareBorderSurface(ManagedSurface *g);
@@ -311,6 +349,9 @@ private:
 	float _scrollPos, _scrollSize;
 
 	Common::String _title;
+	bool _titleVisible;
+
+	int _borderType;
 };
 
 

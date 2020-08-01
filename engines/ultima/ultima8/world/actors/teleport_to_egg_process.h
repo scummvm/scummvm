@@ -32,7 +32,7 @@ namespace Ultima8 {
 class TeleportToEggProcess : public Process {
 public:
 	TeleportToEggProcess();
-	TeleportToEggProcess(int mapnum_, int teleport_id_);
+	TeleportToEggProcess(int mapnum, int teleportId, int arrivalAnim = 0);
 
 	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
@@ -46,6 +46,7 @@ public:
 protected:
 	int _mapNum;
 	int _teleportId;
+	int _arrivalAnim;
 };
 
 } // End of namespace Ultima8

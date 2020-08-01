@@ -59,3 +59,13 @@ put 5 into field the number of cast "MasterList"
 set the text of field 1 = "Hello"
 
 set gMarkerName = the length of h + 2
+
+set save = the itemDelimiter
+scummvmAssert(save=",")
+set the itemDelimiter = ":"
+scummvmAssert(the itemDelimiter=":")
+set the itemDelimiter = ":,"
+scummvmAssert(the itemDelimiter=":")
+set the itemDelimiter = ""
+scummvmAssert(the itemDelimiter="")
+set the itemDelimiter = save

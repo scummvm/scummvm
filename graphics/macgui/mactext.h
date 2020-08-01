@@ -187,9 +187,12 @@ public:
 	Common::U32String getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted = false, bool newlines = true);
 
 	Common::U32String getSelection(bool formatted = false, bool newlines = true);
+	uint getSelectionIndex(bool start);
 	void clearSelection();
 	Common::U32String cutSelection();
 	const SelectedText *getSelectedText() { return &_selectedText; }
+
+	void setSelection(int pos, bool start);
 
 	Common::U32String getEditedString();
 

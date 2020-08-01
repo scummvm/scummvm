@@ -28,6 +28,7 @@
 #include "ultima/ultima8/world/actors/actor_anim.h"
 #include "ultima/ultima8/world/actors/anim_action.h"
 #include "ultima/ultima8/world/actors/animation.h"
+#include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/games/game_info.h"
 
@@ -42,14 +43,14 @@ AnimDat::~AnimDat() {
 		delete _anims[i];
 }
 
-ActorAnim *AnimDat::getAnim(uint32 shape) const {
+const ActorAnim *AnimDat::getAnim(uint32 shape) const {
 	if (shape >= _anims.size())
 		return nullptr;
 
 	return _anims[shape];
 }
 
-AnimAction *AnimDat::getAnim(uint32 shape, uint32 action) const {
+const AnimAction *AnimDat::getAnim(uint32 shape, uint32 action) const {
 	if (shape >= _anims.size())
 		return nullptr;
 	if (_anims[shape] == 0)
@@ -58,14 +59,17 @@ AnimAction *AnimDat::getAnim(uint32 shape, uint32 action) const {
 	return _anims[shape]->getAction(action);
 }
 
-uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action) {
+uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action, const Actor *actor) {
 	if (GAME_IS_U8) {
 		return static_cast<uint32>(action);
 	} else {
+		bool smallwpn = (actor && actor->activeWeaponIsSmall());
 		// For crusader the actions have different IDs.  Rather than
 		// rewrite everything, we just translate them here for all the ones
 		// we want to use programmatically.  There are more, but they are
 		// called from usecode so don't need translation.
+		//
+		// TODO: Also handle kneeling weapon animations
 		switch (action) {
 		case Animation::stand:
 			return 0;
@@ -78,14 +82,14 @@ uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action) {
 		case Animation::run:
 			return 3;
 		case Animation::combatStand:
-			return 4; // TODO: 8, 37 is also a combat stand for other weapons?
+			return (smallwpn ? 4 : 37);
 		// Note: 5, 6, 9, 10 == nothing (for avatar)?
 		case Animation::unreadyWeapon:
-			return 11; // TODO: 16 is also a unready-weapon move, which is right?
+			return (smallwpn ? 11: 16);
 		case Animation::readyWeapon:
-			return 12; // TODO: 7 is also a ready-weapon move, which is right?
+			return (smallwpn ? 7 : 12);
 		case Animation::attack:
-			return 13;
+			return (smallwpn ? 8 : 13);
 		// Note: 14, 17, 21, 22, 29 == nothing for avatar
 		case Animation::fallBackwards:
 			return 18;
@@ -101,9 +105,13 @@ uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action) {
 			return 46; // 47 is knee with a larger weapon
 		// 48 is nothing for avatar
 		case Animation::lookLeft:
-			return 14;
+			return 0;
 		case Animation::lookRight:
-			return 14;
+			return 0;
+		case Animation::teleportInReplacement:
+			return Animation::teleportIn;
+		case Animation::teleportOutReplacement:
+			return Animation::teleportOut;
 		default:
 			return static_cast<uint32>(action);;
 		}
@@ -117,8 +125,10 @@ void AnimDat::load(Common::SeekableReadStream *rs) {
 	_anims.resize(2048);
 
 	unsigned int actioncount = 64;
-	if (GAME_IS_CRUSADER)
+
+	if (GAME_IS_CRUSADER) {
 		actioncount = 256;
+	}
 
 	for (unsigned int shape = 0; shape < _anims.size(); shape++) {
 		rs->seek(4 * shape);
@@ -163,7 +173,7 @@ void AnimDat::load(Common::SeekableReadStream *rs) {
 			a->_actions[action]->_dirCount = dirCount;
 
 			for (unsigned int dir = 0; dir < dirCount; dir++) {
-				a->_actions[action]->frames[dir].clear();
+				a->_actions[action]->_frames[dir].clear();
 
 				for (unsigned int j = 0; j < actionsize; j++) {
 					if (GAME_IS_U8) {
@@ -183,19 +193,19 @@ void AnimDat::load(Common::SeekableReadStream *rs) {
 						// byte 1: low nibble part of frame
 						uint8 x = rs->readByte();
 						f._frame += (x & 0xF) << 8;
-						// byte 2, 3: unknown; byte 3 might contain flags
-						f._unk1 = rs->readSint16LE();
+						// byte 2: delta z
+						f._deltaZ = rs->readByte();
+						// byte 3: sfx
+						f._sfx = rs->readByte();
 						// byte 4: deltadir (signed) - convert to pixels
-						f._deltaDir = rs->readSByte() * 2;
-						// byte 5: flags?
+						f._deltaDir = rs->readSByte();
+						// byte 5: flags? TODO: Ensure "flipped" flag is mapped correctly
 						f._flags = rs->readByte();
+						f._flags += (x & 0xF0) << 8;
 						// byte 6, 7: unknown
 						f._unk2 = rs->readSint16LE();
-
-						f._deltaZ = 0;
-						f._sfx = 0;
 					}
-					a->_actions[action]->frames[dir].push_back(f);
+					a->_actions[action]->_frames[dir].push_back(f);
 				}
 			}
 		}

@@ -34,7 +34,7 @@ class TargetedAnimProcess : public ActorAnimProcess {
 public:
 	TargetedAnimProcess();
 	//! note: this probably needs some more parameters
-	TargetedAnimProcess(Actor *actor, Animation::Sequence action, uint32 dir,
+	TargetedAnimProcess(Actor *actor, Animation::Sequence action, Direction dir,
 	                    int32 coords[3]);
 
 	// p_dynamic_cast stuff

@@ -46,10 +46,10 @@ Intrinsic RemorseIntrinsics[] = {
 	Actor::I_isNPC, // byte Intrinsic008(Item *)
 	Item::I_getZ, // byte Intrinsic009(Item *)
 	Item::I_destroy, // void Intrinsic00A(Item *)
-	0, // get something npcdata, maybe HP void Intrinsic00B(4 bytes)
+	Actor::I_getUnkByte, // get something about npcdata - struct byte 0x63 (99)
 	Ultima8Engine::I_setAvatarInStasis, // void Intrinsic00C(2 bytes)
 	Item::I_getDirToItem, // byte Intrinsic00D(6 bytes)
-	0, // TODO: Actor::I_turnToward(Actor *, direction, unk)
+	Actor::I_turnToward, // TODO: Actor::I_turnToward(Actor *, direction, unk)
 	0, // TODO: VideoGump::I_playVideo(item, vidname, int16 sizex, int16 sizey)
 	// 0x010
 	Item::I_getQLo, // Based on having same coff as 02B
@@ -63,10 +63,10 @@ Intrinsic RemorseIntrinsics[] = {
 	UCMachine::I_rndRange, // int16 Intrinsic018(4 bytes) // probably.. always called with 2 constants, then result compared to some number between
 	Item::I_legalCreateAtCoords, // byte Intrinsic019(14 bytes)
 	Item::I_andStatus, // void Intrinsic01A(6 bytes)
-	UCMachine::I_true, // FIXME: get the num of some npc - maybe currently controlled NPC? For now default to 1 (avatar).
+	World::I_getControlledNPCNum,  // int16 Intrinsic01B(void)
 	Actor::I_getDir, // byte Intrinsic01C(4 bytes)
 	Actor::I_getLastAnimSet, // int Intrinsic01D(4 bytes)
-	0, // int Intrinsic01E(16 bytes)
+	Item::I_fireWeapon, // int Intrinsic01E(16 bytes)
 	Item::I_create,
 	// 0x020
 	Item::I_popToCoords, // void Intrinsic020(10 bytes)
@@ -78,13 +78,13 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_getQHi, // int16 Intrinsic026(Item *)
 	Item::I_getClosestDirectionInRange, // int Intrinsic027(14 bytes)
 	Item::I_hurl, // int Intrinsic028(12 bytes)
-	UCMachine::I_true, // TODO: This is actually game difficulty level.  Make an intrinsic for that once it's implemented (for now return 1, easiest difficulty).
+	World::I_gameDifficulty,
 	AudioProcess::I_playAmbientSFXCru,
 	Item::I_getQLo, // int16 Intrinsic02B(4 bytes)
 	Item::I_inFastArea, // byte Intrinsic02C(4 bytes) // based on disassembly - checks for flag 0x2000
 	Item::I_setQHi,
 	Item::I_legalMoveToPoint, // byte Intrinsic02E(12 bytes)
-	0, // byte Intrinsic02F(10 bytes)
+	CurrentMap::I_canExistAtPoint, // byte Intrinsic02F(10 bytes)
 	// 0x030
 	Item::I_pop,
 	Item::I_andStatus,
@@ -120,22 +120,22 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_isOn,
 	Item::I_getQHi,  // based on same coff set as 026
 	// 0x050
-	0, // void Intrinsic050(4 bytes)
+	Actor::I_getCurrentActivityNo, // void Intrinsic050(4 bytes)
 	Actor::I_clrInCombat, // void Intrinsic051(4 bytes)
 	Actor::I_setDefaultActivity0, // void Intrinsic052(6 bytes)
 	Actor::I_setDefaultActivity1, // void Intrinsic053(6 bytes)
 	Actor::I_setDefaultActivity2, // void Intrinsic054(6 bytes)
 	Actor::I_setActivity, // void Intrinsic055(6 bytes)
-	0, // void Intrinsic056(2 bytes)
+	World::I_setControlledNPCNum, // void Intrinsic056(2 bytes)
 	Item::I_getSurfaceWeight, // void Intrinsic057(4 bytes)
 	Item::I_isCentreOn, // int Intrinsic058(6 bytes)
 	Item::I_setFrame, // based on same coff as 002
 	Actor::I_getLastAnimSet, // void Intrinsic05A(4 bytes)
 	Item::I_legalCreateAtPoint, // probably. see PEPSIEW::use
 	Item::I_getPoint, // void Intrinsic05C(8 bytes)
-	0, // void Intrinsic05D(void)
-	0, // int16 Intrinsic05E(uint32, char *, int16 a, int16 b)  // Play video (as texture? parameters like (150, 250, "MVA11A") and other mvas)
-	0, // void Intrinsic05F(void)
+	CruStatusGump::I_hideStatusGump, // void Intrinsic05D(void)
+	MovieGump::I_playMovieOverlay, // int16 Intrinsic05E(uint32, char *, int16 a, int16 b)
+	CruStatusGump::I_showStatusGump, // void Intrinsic05F(void)
 	// 0x060
 	Actor::I_setDead, // void Intrinsic060(4 bytes)
 	Actor::I_createActor, // void Intrinsic061(8 bytes)
@@ -186,19 +186,19 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_setBroken, // void Intrinsic08C(4 bytes)
 	Item::I_hurl, // void Intrinsic08D(12 bytes)
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
-	0, // TODO: PaletteFaderProcess::I_setPalToAllBlack
+	PaletteFaderProcess::I_jumpToAllBlack, // TODO: PaletteFaderProcess::I_setPalToAllBlack - should also resume cycle process.
 	// 0x090
 	MusicProcess::I_musicStop, // void Intrinsic090(void)
 	0, // void Intrinsic091(void)
 	0, // TODO: I_playFlic(char *)? void Intrinsic092(void)
 	0, // void Intrinsic093(void)
 	Game::I_playCredits, // TODO: Implement this
-	0, // TODO: Kernel::I_getCurrentKeyDown
+	Ultima8Engine::I_moveKeyDownRecently,
 	MainActor::I_teleportToEgg, // void Intrinsic096(4 bytes)
-	0, // TODO: PaletteFaderProcess:I_setScreenGreyscale(void) (converts all colors to their Y values on each channel)
+	PaletteFaderProcess::I_jumpToGreyScale,
 	0, // void Intrinsic098(void) // TODO: reset vargas health to 500.. weird.
 	Item::I_andStatus, // void Intrinsic099(6 bytes)
-	0, // TODO: PaletteFaderProcess::I_stopFadesAndResetToGamePal(void),
+	PaletteFaderProcess::I_jumpToNormalPalette, // TODO: should also stop cycle process?
 	PaletteFaderProcess::I_fadeFromBlack, // fade to game pal with number of steps
 	0, // TODO: PaletteFaderProcess::I_fadeFromBlackWithParam
 	PaletteFaderProcess::I_fadeToBlack, // fade to black with number of steps
@@ -233,7 +233,7 @@ Intrinsic RemorseIntrinsics[] = {
 	MainActor::I_addItemCru, // int Intrinsic0B8(4 bytes)
 	Actor::I_getLastAnimSet, // void Intrinsic0B9(4 bytes)
 	Item::I_setQuality,
-	0, // int Intrinsic0BB(8 bytes)
+	CurrentMap::I_canExistAt, // int Intrinsic0BB(8 bytes)
 	Item::I_isOn,
 	Item::I_hurl, // void Intrinsic0BD(12 bytes)
 	Item::I_getQHi,  // based on same coff set as 026
@@ -249,7 +249,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_getDirFromItem, // int Intrinsic0C7(6 bytes)
 	Item::I_hurl, // void Intrinsic0C8(12 bytes)
 	Item::I_getQHi,  // based on same coff set as 026
-	Actor::I_setHp, // int Intrinsic0CA(6 bytes)
+	Actor::I_addHp, // int Intrinsic0CA(6 bytes)
 	0, // 0CB void I_createMapJumpProcess(int16 mapnum)", // TODO: Implement me
 	Actor::I_isInCombat, // int Intrinsic0CC(4 bytes)
 	Actor::I_setActivity, // void Intrinsic0CD(6 bytes)
@@ -269,7 +269,7 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // TODO: PaletteFaderProcess::I_setPalToAllGrey // sets all colors to 0x3F3F3F
 	Actor::I_setActivity, // void Intrinsic0DB(6 bytes)
 	Item::I_isOn,
-	0, // void Intrinsic0DD(4 bytes)
+	Actor::I_getLastActivityNo, // void Intrinsic0DD(4 bytes)
 	Actor::I_setCombatTactic, // void Intrinsic0DE(6 bytes)
 	Actor::I_getEquip, // void Intrinsic0DF(6 bytes)
 	// 0x0E0
@@ -279,12 +279,12 @@ Intrinsic RemorseIntrinsics[] = {
 	Actor::I_getDefaultActivity2, // void Intrinsic0E3(4 bytes)
 	Actor::I_getLastAnimSet, // void Intrinsic0E4(4 bytes)
 	0, // TODO: Actor::I_attack(Actor *, uint16 target) (implement me)
-	0, // void Intrinsic0E6(6 bytes)
+	Actor::I_setUnkByte, // void Intrinsic0E6(6 bytes)
 	Actor::I_setDead,
 	Item::I_cast, // void Intrinsic0E8(6 bytes)
 	Item::I_andStatus, // void Intrinsic0E9(6 bytes)
 	Item::I_getQLo, // based on same coff set as 02B
-	0, // void Intrinsic0EB(void)
+	MainActor::I_getNumberOfCredits, // void Intrinsic0EB(void)
 	Item::I_popToEnd,
 	Item::I_popToContainer,
 	BatteryChargerProcess::I_create,

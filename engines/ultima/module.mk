@@ -526,23 +526,30 @@ MODULE_OBJS := \
 	ultima8/world/camera_process.o \
 	ultima8/world/container.o \
 	ultima8/world/create_item_process.o \
+	ultima8/world/crosshair_process.o \
 	ultima8/world/current_map.o \
+	ultima8/world/damage_info.o \
 	ultima8/world/destroy_item_process.o \
 	ultima8/world/egg.o \
 	ultima8/world/egg_hatcher_process.o \
 	ultima8/world/fireball_process.o \
+	ultima8/world/fire_type.o \
+	ultima8/world/fire_type_table.o \
 	ultima8/world/get_object.o \
 	ultima8/world/glob_egg.o \
 	ultima8/world/gravity_process.o \
 	ultima8/world/item.o \
 	ultima8/world/item_factory.o \
+	ultima8/world/item_selection_process.o \
 	ultima8/world/item_sorter.o \
 	ultima8/world/map.o \
 	ultima8/world/map_glob.o \
 	ultima8/world/missile_tracker.o \
 	ultima8/world/monster_egg.o \
+	ultima8/world/snap_process.o \
 	ultima8/world/split_item_process.o \
 	ultima8/world/sprite_process.o \
+	ultima8/world/super_sprite_process.o \
 	ultima8/world/target_reticle_process.o \
 	ultima8/world/teleport_egg.o \
 	ultima8/world/world.o \
@@ -562,6 +569,7 @@ MODULE_OBJS := \
 	ultima8/world/actors/combat_dat.o \
 	ultima8/world/actors/combat_process.o \
 	ultima8/world/actors/grant_peace_process.o \
+	ultima8/world/actors/guard_process.o \
 	ultima8/world/actors/heal_process.o \
 	ultima8/world/actors/loiter_process.o \
 	ultima8/world/actors/main_actor.o \

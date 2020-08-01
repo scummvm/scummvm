@@ -46,6 +46,14 @@ public:
 
 	static CycleProcess *get_instance();
 
+	void pauseCycle() {
+		_running = 0;
+	}
+
+	void resumeCycle() {
+		_running = 1;
+	}
+
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
 };

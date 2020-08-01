@@ -54,6 +54,7 @@ namespace Graphics {
 
 struct TransparentSurface;
 struct Surface;
+class MacWindowManager;
 
 struct NinePatchMark {
 	int offset;
@@ -88,7 +89,7 @@ public:
 	NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bitmap);
 	~NinePatchBitmap();
 
-	void blit(Graphics::Surface &target, int dx, int dy, int dw, int dh, byte *palette = NULL, int numColors = 0);
+	void blit(Graphics::Surface &target, int dx, int dy, int dw, int dh, byte *palette = NULL, int numColors = 0, MacWindowManager *wm = NULL);
 	void blitClip(Graphics::Surface &target, Common::Rect clip, int dx, int dy, int dw, int dh);
 
 	int getWidth() { return _width; }

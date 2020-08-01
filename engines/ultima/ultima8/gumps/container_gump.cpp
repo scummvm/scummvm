@@ -285,7 +285,7 @@ Container *ContainerGump::getTargetContainer(Item *item, int mx, int my) {
 		targetcontainer = nullptr;
 
 	if (targetcontainer) {
-		ShapeInfo *targetinfo = targetcontainer->getShapeInfo();
+		const ShapeInfo *targetinfo = targetcontainer->getShapeInfo();
 		if ((targetcontainer->getObjId() == item->getObjId()) ||
 		        targetinfo->is_land() ||
 		        targetcontainer->hasFlags(Item::FLG_IN_NPC_LIST)) {

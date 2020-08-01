@@ -46,8 +46,13 @@
 #include "director/director.h"
 #include "director/movie.h"
 #include "director/score.h"
+#include "director/sprite.h"
+#include "director/stage.h"
+#include "director/cursor.h"
+#include "director/channel.h"
 #include "director/util.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-the.h"
@@ -62,18 +67,20 @@ static struct FuncDescr {
 } funcDescr[] = {
 	{ 0,					"STOP",				""  },
 	{ LC::c_add,			"c_add",			"" },
-	{ LC::c_after,			"c_after",			"" },	// D3
+	{ LC::c_putafter,		"c_putafter",		"" },	// D3
 	{ LC::c_ampersand,		"c_ampersand",		"" },
 	{ LC::c_and,			"c_and",			"" },
 	{ LC::c_argcnoretpush,	"c_argcnoretpush",	"i" },
 	{ LC::c_argcpush,		"c_argcpush",		"i" },
 	{ LC::c_arraypush,		"c_arraypush",		"i" },
 	{ LC::c_assign,			"c_assign",			""  },
-	{ LC::c_before,			"c_before",			"" },	// D3
-	{ LC::c_call,			"c_call",			"si" },
+	{ LC::c_putbefore,		"c_putbefore",		"" },	// D3
+	{ LC::c_callcmd,		"c_callcmd",		"si" },
+	{ LC::c_callfunc,		"c_callfunc",		"si" },
 	{ LC::c_charOf,			"c_charOf",			"" },	// D3
 	{ LC::c_charToOf,		"c_charToOf",		"" },	// D3
 	{ LC::c_concat,			"c_concat",			"" },
+	{ LC::c_constpush,		"c_constpush",		"s" },
 	{ LC::c_contains,		"c_contains",		"" },
 	{ LC::c_div,			"c_div",			"" },
 	{ LC::c_eq,				"c_eq",				"" },
@@ -106,7 +113,6 @@ static struct FuncDescr {
 	{ LC::c_objectpropassign,"c_objectpropassign","ss" }, // object, prop
 	{ LC::c_objectproppush,	"c_objectproppush","ss" }, // object, prop
 	{ LC::c_of,				"c_of",				"" },
-	{ LC::c_open,			"c_open",			"" },
 	{ LC::c_or,				"c_or",				"" },
 	{ LC::c_play,			"c_play",			"" },
 	{ LC::c_printtop,		"c_printtop",		""  },
@@ -143,7 +149,6 @@ static struct FuncDescr {
 	{ LC::cb_objectfieldassign, "cb_objectfieldassign", "N" },
 	{ LC::cb_objectfieldpush, "cb_objectfieldpush", "N" },
 	{ LC::cb_objectpush,	"cb_objectpush",	"N" },
-	{ LC::cb_tellcall,		"cb_tellcall",		"N" },
 	{ LC::cb_theassign,		"cb_theassign",		"N" },
 	{ LC::cb_theassign2,	"cb_theassign2",	"N" },
 	{ LC::cb_thepush,		"cb_thepush",		"N" },
@@ -209,7 +214,7 @@ void LC::c_xpop() {
 	g_lingo->pop();
 }
 
-void Lingo::pushContext(const Symbol funcSym, bool preserveVarFrame) {
+void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal) {
 	debugC(5, kDebugLingoExec, "Pushing frame %d", g_lingo->_callstack.size() + 1);
 	CFrame *fp = new CFrame;
 
@@ -220,6 +225,8 @@ void Lingo::pushContext(const Symbol funcSym, bool preserveVarFrame) {
 	fp->localvars = g_lingo->_localvars;
 	fp->retMe = g_lingo->_currentMe;
 	fp->sp = funcSym;
+	fp->allowRetVal = allowRetVal;
+	fp->defaultRetVal = defaultRetVal;
 
 	g_lingo->_currentScript = funcSym.u.defn;
 
@@ -231,9 +238,51 @@ void Lingo::pushContext(const Symbol funcSym, bool preserveVarFrame) {
 
 	g_lingo->_currentArchive = funcSym.archive;
 
-	// Execute anonymous functions within the current var frame.
-	if (!preserveVarFrame && !funcSym.anonymous)
-		g_lingo->_localvars = new DatumHash;
+	DatumHash *localvars = g_lingo->_localvars;
+	if (!funcSym.anonymous) {
+		// Execute anonymous functions within the current var frame.
+		localvars = new DatumHash;
+	}
+
+	if (funcSym.argNames) {
+		int symNArgs = funcSym.nargs;
+		if ((int)funcSym.argNames->size() < symNArgs) {
+			int dropSize = symNArgs - funcSym.argNames->size();
+			warning("%d arg names defined for %d args! Dropping the last %d values", funcSym.argNames->size(), symNArgs, dropSize);
+			for (int i = 0; i < dropSize; i++) {
+				g_lingo->pop();
+				symNArgs -= 1;
+			}
+		} else if ((int)funcSym.argNames->size() > symNArgs) {
+			warning("%d arg names defined for %d args! Ignoring the last %d names", funcSym.argNames->size(), symNArgs, funcSym.argNames->size() - symNArgs);
+		}
+		for (int i = symNArgs - 1; i >= 0; i--) {
+			Common::String name = (*funcSym.argNames)[i];
+			if (!localvars->contains(name)) {
+				g_lingo->varCreate(name, false, localvars);
+				Datum arg(name);
+				arg.type = VAR;
+				Datum value = g_lingo->pop();
+				g_lingo->varAssign(arg, value, false, localvars);
+			} else {
+				warning("Argument %s already defined", name.c_str());
+				g_lingo->pop();
+			}
+		}
+	}
+	if (funcSym.varNames) {
+		for (Common::Array<Common::String>::iterator it = funcSym.varNames->begin(); it != funcSym.varNames->end(); ++it) {
+			Common::String name = *it;
+			if (!localvars->contains(name)) {
+				(*localvars)[name] = Datum();
+			} else {
+				warning("Variable %s already defined", name.c_str());
+			}
+		}
+	}
+	g_lingo->_localvars = localvars;
+
+	fp->stackSizeBefore = _stack.size();
 
 	g_lingo->_callstack.push_back(fp);
 
@@ -246,6 +295,22 @@ void Lingo::popContext() {
 	debugC(5, kDebugLingoExec, "Popping frame %d", g_lingo->_callstack.size());
 	CFrame *fp = g_lingo->_callstack.back();
 	g_lingo->_callstack.pop_back();
+
+	if (_stack.size() == fp->stackSizeBefore + 1) {
+		if (!fp->allowRetVal) {
+			warning("dropping return value");
+			g_lingo->pop();
+		}
+	} else if (_stack.size() == fp->stackSizeBefore) {
+		if (fp->allowRetVal) {
+			warning("handler %s did not return value", fp->sp.name->c_str());
+			g_lingo->push(fp->defaultRetVal);
+		}
+	} else if (_stack.size() > fp->stackSizeBefore) {
+		error("handler %s returned extra %d values", fp->sp.name->c_str(), _stack.size() - fp->stackSizeBefore);
+	} else {
+		error("handler %s popped extra %d values", fp->sp.name->c_str(), fp->stackSizeBefore - _stack.size());
+	}
 
 	// Destroy anonymous function context
 	if (fp->sp.anonymous) {
@@ -315,6 +380,17 @@ void LC::c_printtop(void) {
 	default:
 		warning("--unknown--");
 	}
+}
+
+void LC::c_constpush() {
+	Common::String name(g_lingo->readString());
+
+	Symbol funcSym;
+	if (g_lingo->_builtinConsts.contains(name)) {
+		funcSym = g_lingo->_builtinConsts[name];
+	}
+
+	LC::call(funcSym, 0, true);
 }
 
 void LC::c_intpush() {
@@ -419,7 +495,7 @@ void LC::c_varpush() {
 	}
 
 	// Looking for the cast member constants
-	if (g_director->getVersion() < 4) { // TODO: There could be a flag 'Allow Outdated Lingo' in Movie Info in D4
+	if (g_director->getVersion() < 4 || g_director->getCurrentMovie()->_allowOutdatedLingo) {
 		int val = castNumToNum(name.c_str());
 
 		if (val != -1) {
@@ -601,7 +677,7 @@ Datum LC::addData(Datum &d1, Datum &d2) {
 	} else if (alignedType == INT) {
 		res = Datum(d1.asInt() + d2.asInt());
 	} else {
-		warning("LC::addData: not supported between types %s and %s", d1.type2str(), d2.type2str());
+		warning("LC::addData(): not supported between types %s and %s", d1.type2str(), d2.type2str());
 	}
 	return res;
 }
@@ -625,7 +701,7 @@ Datum LC::subData(Datum &d1, Datum &d2) {
 	} else if (alignedType == INT) {
 		res = Datum(d1.asInt() - d2.asInt());
 	} else {
-		warning("LC::subData: not supported between types %s and %s", d1.type2str(), d2.type2str());
+		warning("LC::subData(): not supported between types %s and %s", d1.type2str(), d2.type2str());
 	}
 	return res;
 }
@@ -649,7 +725,7 @@ Datum LC::mulData(Datum &d1, Datum &d2) {
 	} else if (alignedType == INT) {
 		res = Datum(d1.asInt() * d2.asInt());
 	} else {
-		warning("LC::mulData: not supported between types %s and %s", d1.type2str(), d2.type2str());
+		warning("LC::mulData(): not supported between types %s and %s", d1.type2str(), d2.type2str());
 	}
 	return res;
 }
@@ -679,7 +755,7 @@ Datum LC::divData(Datum &d1, Datum &d2) {
 	} else if (alignedType == INT) {
 		res = Datum(d1.asInt() / d2.asInt());
 	} else {
-		warning("LC::divData: not supported between types %s and %s", d1.type2str(), d2.type2str());
+		warning("LC::divData(): not supported between types %s and %s", d1.type2str(), d2.type2str());
 	}
 
 	return res;
@@ -731,7 +807,7 @@ Datum LC::negateData(Datum &d) {
 	} else if (res.type == FLOAT) {
 		res.u.f = -res.u.f;
 	} else {
-		warning("LC::negateData: not supported for type %s", res.type2str());
+		warning("LC::negateData(): not supported for type %s", res.type2str());
 	}
 
 	return res;
@@ -750,30 +826,18 @@ void LC::c_ampersand() {
 	g_lingo->push(res);
 }
 
-void LC::c_before() {
+void LC::c_putbefore() {
 	Datum var = g_lingo->pop();
 	Datum a = g_lingo->pop();
-
-	if (var.type != VAR) {
-		warning("STUB: c_before(%s, %s)", a.asString(true).c_str(), var.asString(true).c_str());
-		return;
-	}
-
 	Datum b = g_lingo->varFetch(var);
 
 	Datum res(a.asString() + b.asString());
 	g_lingo->varAssign(var, res);
 }
 
-void LC::c_after() {
+void LC::c_putafter() {
 	Datum var = g_lingo->pop();
 	Datum a = g_lingo->pop();
-
-	if (var.type != VAR) {
-		warning("STUB: c_after(%s, %s)", a.asString(true).c_str(), var.asString(true).c_str());
-		return;
-	}
-
 	Datum b = g_lingo->varFetch(var);
 
 	Datum res(b.asString() + a.asString());
@@ -828,7 +892,11 @@ void LC::c_intersects() {
 		return;
 	}
 
-	g_lingo->push(Datum(sprite1->getBbox().intersects(sprite2->getBbox())));
+	if (sprite1->_sprite->_ink == kInkTypeMatte && sprite2->_sprite->_ink == kInkTypeMatte) {
+		g_lingo->push(Datum(sprite2->isMatteIntersect(sprite1)));
+	} else {
+		g_lingo->push(Datum(sprite2->getBbox().intersects(sprite1->getBbox())));
+	}
 }
 
 void LC::c_within() {
@@ -844,7 +912,11 @@ void LC::c_within() {
 		return;
 	}
 
-	g_lingo->push(Datum(sprite2->getBbox().contains(sprite1->getBbox())));
+	if (sprite1->_sprite->_ink == kInkTypeMatte && sprite2->_sprite->_ink == kInkTypeMatte) {
+		g_lingo->push(Datum(sprite2->isMatteWithin(sprite1)));
+	} else {
+		g_lingo->push(Datum(sprite1->getBbox().contains(sprite2->getBbox())));
+	}
 }
 
 void LC::c_of() {
@@ -867,9 +939,9 @@ void LC::c_of() {
 		int last = first;
 		if (last_line.u.i > 0) {
 			if ((first_item.u.i > 0) || (first_word.u.i > 0) || (first_char.u.i > 0)) {
-				warning("c_of: last_line defined but unused");
+				warning("LC::c_of(): last_line defined but unused");
 			} else if (last_line.u.i < first_line.u.i) {
-				warning("c_of: last_line before first_line, ignoring");
+				warning("LC::c_of(): last_line before first_line, ignoring");
 			} else {
 				last = last_line.u.i;
 			}
@@ -890,7 +962,7 @@ void LC::c_of() {
 			}
 		}
 		if (firstIndex < 0 || lastIndex < 0) {
-			warning("c_of: first_line or last_line out of range");
+			warning("LC::c_of(): first_line or last_line out of range");
 			result = "";
 		} else {
 			result = result.substr(firstIndex, lastIndex);
@@ -898,7 +970,7 @@ void LC::c_of() {
 	}
 
 	if (first_item.u.i > 0 || last_item.u.i > 0) {
-		warning("STUB: c_of item indexing");
+		warning("STUB: LC::c_of() item indexing");
 	}
 
 	if (first_word.u.i > 0) {
@@ -906,9 +978,9 @@ void LC::c_of() {
 		int last = first;
 		if (last_word.u.i > 0) {
 			if (first_char.u.i > 0) {
-				warning("c_of: last_word defined but unused");
+				warning("LC::c_of(): last_word defined but unused");
 			} else if (last_word.u.i < first_word.u.i) {
-				warning("c_of: last_word before first_word, ignoring");
+				warning("LC::c_of(): last_word before first_word, ignoring");
 			} else {
 				last = last_word.u.i;
 			}
@@ -940,7 +1012,7 @@ void LC::c_of() {
 		}
 		lastIndex = pointer;
 		if (firstIndex < 0) {
-			warning("c_of: first_word out of range");
+			warning("LC::c_of(): first_word out of range");
 			result = "";
 		} else {
 			result = result.substr(firstIndex, lastIndex - firstIndex);
@@ -952,7 +1024,7 @@ void LC::c_of() {
 		int last = first;
 		if (last_char.u.i > 0) {
 			if (last_char.u.i < first_char.u.i) {
-				warning("c_of: last_char before first_char, ignoring");
+				warning("LC::c_of(): last_char before first_char, ignoring");
 			} else {
 				last = last_char.u.i;
 			}
@@ -966,29 +1038,63 @@ void LC::c_of() {
 }
 
 void LC::c_charOf() {
-	Datum d2 = g_lingo->pop();
-	Datum d1 = g_lingo->pop();
+	Datum d2 = g_lingo->pop(); // string
+	Datum d1 = g_lingo->pop(); // index
 
-	warning("STUB: c_charOf: %d %d", d1.u.i, d2.u.i);
+    if (d1.type != INT || d2.type != STRING ) {
+		warning("LC::c_charOf(): Called with wrong data types: %s and %s", d1.type2str(), d2.type2str());
+		g_lingo->push(Datum(""));
+		return;
+	}
 
-	g_lingo->push(d1);
+	Datum res;
+	int index = d1.u.i;
+	Common::String chunkExpr = *d2.u.s;
+
+	if (index < 1)
+		res = Datum(chunkExpr);
+	else if (uint(index) > chunkExpr.size())
+		res = Datum("");
+	else
+		res = Datum(Common::String(chunkExpr[index - 1]));
+	g_lingo->push(res);
 }
 
 void LC::c_charToOf() {
-	Datum d3 = g_lingo->pop();
-	Datum d2 = g_lingo->pop();
-	Datum d1 = g_lingo->pop();
+	Datum d3 = g_lingo->pop(); // string
+	Datum d2 = g_lingo->pop(); // indexFrom
+	Datum d1 = g_lingo->pop(); // indexTo
 
-	warning("STUB: c_charToOf: %d %d %d", d1.u.i, d2.u.i, d3.u.i);
+	if (d1.type != INT || d2.type != INT || d3.type != STRING) {
+		warning("LC::c_charToOf(): Called with wrong data types: %s, %s and %s", d1.type2str(), d2.type2str(), d3.type2str());
+		g_lingo->push(Datum(""));
+		return;
+	}
 
-	g_lingo->push(d1);
+	int indexFrom = d1.u.i;
+	int indexTo = d2.u.i;
+	Common::String chunkExpr = *d3.u.s;
+
+	Datum res;
+	// The if order is important. It mimicks the checks, i.e. bugs, of Director 4.
+	if (indexFrom < 0)
+		res = Datum(chunkExpr);
+	else if (indexTo < 0)
+		res = Datum(Common::String(chunkExpr[indexTo - 1])); // treat as charOf
+	else if (indexFrom > indexTo)
+		res = Datum("");
+	else if (uint(indexFrom) > chunkExpr.size())
+		res = Datum("");
+	else
+		res = Datum(chunkExpr.substr(indexFrom - 1, indexTo - 1));
+	g_lingo->push(res);
 }
 
 void LC::c_itemOf() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	warning("STUB: c_itemOf: %d %d", d1.u.i, d2.u.i);
+	warning("STUB: LC::c_itemOf(): %d %d", d1.u.i, d2.u.i);
 
 	g_lingo->push(d1);
 }
@@ -998,7 +1104,7 @@ void LC::c_itemToOf() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	warning("STUB: c_itemToOf: %d %d %d", d1.u.i, d2.u.i, d3.u.i);
+	warning("STUB: LC::c_itemToOf(): %d %d %d", d1.u.i, d2.u.i, d3.u.i);
 
 	g_lingo->push(d1);
 }
@@ -1007,7 +1113,7 @@ void LC::c_lineOf() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	warning("STUB: c_lineOf: %d %d", d1.u.i, d2.u.i);
+	warning("STUB: LC::c_lineOf(): %d %d", d1.u.i, d2.u.i);
 
 	g_lingo->push(d1);
 }
@@ -1017,7 +1123,7 @@ void LC::c_lineToOf() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	warning("STUB: c_lineToOf: %d %d %d", d1.u.i, d2.u.i, d3.u.i);
+	warning("STUB: LC::c_lineToOf(): %d %d %d", d1.u.i, d2.u.i, d3.u.i);
 
 	g_lingo->push(d1);
 }
@@ -1026,7 +1132,7 @@ void LC::c_wordOf() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	warning("STUB: c_wordOf: %d %d", d1.u.i, d2.u.i);
+	warning("STUB: LC::c_wordOf(): %d %d", d1.u.i, d2.u.i);
 
 	g_lingo->push(d1);
 }
@@ -1036,7 +1142,7 @@ void LC::c_wordToOf() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	warning("STUB: c_wordToOf: %d %d %d", d1.u.i, d2.u.i, d3.u.i);
+	warning("STUB: LC::c_wordToOf(): %d %d %d", d1.u.i, d2.u.i, d3.u.i);
 
 	g_lingo->push(d1);
 }
@@ -1258,17 +1364,33 @@ void LC::c_whencode() {
 	} else if (eventname.equalsIgnoreCase("timeOut")) {
 		g_lingo->setTheEntity(kTheTimeoutScript, nullId, kTheNOField, code);
 	} else {
-		warning("c_whencode(): unsupported event handler %s", eventname.c_str());
+		warning("LC::c_whencode(): unsupported event handler %s", eventname.c_str());
 	}
 }
 
 void LC::c_tell() {
-	Datum d1 = g_lingo->pop();
-	warning("STUB: c_tell %d", d1.u.i);
+	// swap out current stage
+	Datum window = g_lingo->pop();
+	g_lingo->push(g_director->getCurrentStage());
+	if (window.type != OBJECT || window.u.obj->getObjType() != kWindowObj) {
+		warning("LC::c_tell(): wrong argument type: %s", window.type2str());
+		return;
+	}
+	if (static_cast<Stage *>(window.u.obj)->getCurrentMovie() == nullptr) {
+		warning("LC::c_tell(): window has no movie");
+		return;
+	}
+	g_director->setCurrentStage(static_cast<Stage *>(window.u.obj));
+
 }
 
 void LC::c_telldone() {
-	warning("STUB: c_telldone");
+	Datum returnWindow = g_lingo->pop();
+	if (returnWindow.type != OBJECT || returnWindow.u.obj->getObjType() != kWindowObj) {
+		warning("LC::c_telldone(): wrong return window type: %s", returnWindow.type2str());
+		return;
+	}
+	g_director->setCurrentStage(static_cast<Stage *>(returnWindow.u.obj));
 }
 
 
@@ -1313,32 +1435,67 @@ void LC::c_play() {
 	g_lingo->func_play(frame, movie);
 }
 
-void LC::c_call() {
+void LC::c_callcmd() {
 	Common::String name(g_lingo->readString());
 
 	int nargs = g_lingo->readInt();
 
-	LC::call(name, nargs);
+	LC::call(name, nargs, false);
 }
 
-void LC::call(const Common::String &name, int nargs) {
-	if (debugChannelSet(3, kDebugLingoExec))
+void LC::c_callfunc() {
+	Common::String name(g_lingo->readString());
+
+	int nargs = g_lingo->readInt();
+
+	LC::call(name, nargs, true);
+}
+
+void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
+	if (debugChannelSet(5, kDebugLingoExec))
 		g_lingo->printSTUBWithArglist(name.c_str(), nargs, "call:");
 
 	Symbol funcSym;
 
-	// Script/Xtra method call
 	if (nargs > 0) {
-		Datum d = g_lingo->peek(nargs - 1);
-		if (d.type == OBJECT && (d.u.obj->type & (kScriptObj | kXtraObj))) {
-			debugC(3, kDebugLingoExec, "Method called on object: <%s>", d.asString(true).c_str());
-			Object *target = d.u.obj;
+		Datum firstArg = g_lingo->_stack[g_lingo->_stack.size() - nargs];
+
+		// Factory/XObject method call
+		if (firstArg.lazy) { // first arg could be method name
+			Datum objName(name);
+			objName.type = VAR;
+			Datum obj = g_lingo->varFetch(objName, false, nullptr, true);
+			if (obj.type == OBJECT && (obj.u.obj->getObjType() & (kFactoryObj | kXObj))) {
+				debugC(3, kDebugLingoExec, "Method called on object: <%s>", obj.asString(true).c_str());
+				AbstractObject *target = obj.u.obj;
+				if (firstArg.u.s->equalsIgnoreCase("mNew")) {
+					target = target->clone();
+				}
+				funcSym = target->getMethod(*firstArg.u.s);
+				if (target->getObjType() == kScriptObj && funcSym.type == HANDLER) {
+					// For kFactoryObj handlers the target is the first argument
+					g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.target;
+				} else {
+					// Otherwise, take the method name out of the stack
+					g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs);
+					nargs -= 1;
+				}
+				call(funcSym, nargs, allowRetVal);
+				return;
+			}
+			firstArg = firstArg.eval();
+		}
+
+		// Script/Xtra method call
+		if (firstArg.type == OBJECT && !(firstArg.u.obj->getObjType() & (kFactoryObj | kXObj))) {
+			debugC(3, kDebugLingoExec, "Method called on object: <%s>", firstArg.asString(true).c_str());
+			AbstractObject *target = firstArg.u.obj;
 			if (name.equalsIgnoreCase("birth") || name.equalsIgnoreCase("new")) {
 				target = target->clone();
 			}
 			funcSym = target->getMethod(name);
-			if (funcSym.type != VOID) {
-				if (target->type == kScriptObj && funcSym.type == HANDLER) {
+			if (funcSym.type != VOIDSYM) {
+				if (target->getObjType() == kScriptObj && funcSym.type == HANDLER) {
 					// For kScriptObj handlers the target is the first argument
 					g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.target;
 				} else {
@@ -1346,51 +1503,37 @@ void LC::call(const Common::String &name, int nargs) {
 					g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs);
 					nargs -= 1;
 				}
-				call(funcSym, nargs);
+				call(funcSym, nargs, allowRetVal);
 				return;
 			}
 		}
 	}
 
-	// Normal handler call
+	// Handler
 	funcSym = g_lingo->getHandler(name);
 
-	// Factory/XObject method call
-	if (funcSym.type == VOID) {
-		Datum objName(name);
-		objName.type = VAR;
-		Datum d = g_lingo->varFetch(objName);
-		if (d.type == OBJECT && (d.u.obj->type & (kFactoryObj | kXObj))) {
-			debugC(3, kDebugLingoExec, "Method called on object: <%s>", d.asString(true).c_str());
-			Object *target = d.u.obj;
-			Datum methodName = g_lingo->_stack[g_lingo->_stack.size() - nargs];
-			if (methodName.u.s->equalsIgnoreCase("mNew")) {
-				target = target->clone();
-			}
-			funcSym = target->getMethod(*methodName.u.s);
-			if (target->type == kScriptObj && funcSym.type == HANDLER) {
-				// For kFactoryObj handlers the target is the first argument
-				g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.target;
-			} else {
-				// Otherwise, take the methodName out of the stack
-				g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs);
-				nargs -= 1;
-			}
+	// Builtin
+	if (allowRetVal) {
+		if (g_lingo->_builtinFuncs.contains(name)) {
+			funcSym = g_lingo->_builtinFuncs[name];
+		}
+	} else {
+		if (g_lingo->_builtinCmds.contains(name)) {
+			funcSym = g_lingo->_builtinCmds[name];
 		}
 	}
 
-	call(funcSym, nargs);
+	call(funcSym, nargs, allowRetVal);
 }
 
-void LC::call(const Symbol &funcSym, int nargs) {
+void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 	bool dropArgs = false;
 
-	if (funcSym.type == VOID) {
+	if (funcSym.type == VOIDSYM) {
 		warning("Call to undefined handler. Dropping %d stack items", nargs);
 		dropArgs = true;
 	} else {
-		if ((funcSym.type == BLTIN || funcSym.type == FBLTIN || funcSym.type == RBLTIN)
-				&& funcSym.nargs != -1 && funcSym.nargs != nargs && funcSym.maxArgs != nargs) {
+		if (funcSym.type != HANDLER && funcSym.nargs != -1 && (funcSym.nargs > nargs || funcSym.maxArgs < nargs)) {
 			if (funcSym.nargs == funcSym.maxArgs)
 				warning("Incorrect number of arguments to handler '%s', expecting %d. Dropping %d stack items", funcSym.name->c_str(), funcSym.nargs, nargs);
 			else
@@ -1405,7 +1548,8 @@ void LC::call(const Symbol &funcSym, int nargs) {
 			g_lingo->pop();
 
 		// Push dummy value
-		g_lingo->pushVoid();
+		if (allowRetVal)
+			g_lingo->pushVoid();
 
 		return;
 	}
@@ -1417,33 +1561,36 @@ void LC::call(const Symbol &funcSym, int nargs) {
 			g_lingo->pop();
 	}
 
-	if (funcSym.type == BLTIN || funcSym.type == FBLTIN || funcSym.type == RBLTIN) {
-		int stackSize = g_lingo->_stack.size() - nargs;
+	if (funcSym.type != HANDLER) {
+		uint stackSizeBefore = g_lingo->_stack.size() - nargs;
 
-		Datum target;
-		if (funcSym.ctx) {
-			target = funcSym.target;
-		}
-
-		if (target.type == OBJECT) {
+		if (funcSym.target) {
 			// Only need to update the me obj
 			// Pushing an entire stack frame is not necessary
 			Datum retMe = g_lingo->_currentMe;
-			g_lingo->_currentMe = target;
+			g_lingo->_currentMe = funcSym.target;
 			(*funcSym.u.bltin)(nargs);
 			g_lingo->_currentMe = retMe;
 		} else {
 			(*funcSym.u.bltin)(nargs);
 		}
 
-		int stackNewSize = g_lingo->_stack.size();
+		uint stackSize = g_lingo->_stack.size();
 
-		if (funcSym.type == FBLTIN || funcSym.type == RBLTIN) {
-			if (stackNewSize - stackSize != 1)
-				warning("built-in function %s did not return value", funcSym.name->c_str());
-		} else {
-			if (stackNewSize - stackSize != 0)
-				warning("built-in procedure %s returned extra %d values", funcSym.name->c_str(), stackNewSize - stackSize);
+		if (funcSym.u.bltin != LB::b_return && funcSym.u.bltin != LB::b_returnNumber && funcSym.u.bltin != LB::b_value) {
+			if (stackSize == stackSizeBefore + 1) {
+				if (!allowRetVal) {
+					warning("dropping return value");
+					g_lingo->pop();
+				}
+			} else if (stackSize == stackSizeBefore) {
+				if (allowRetVal)
+					error("builtin function %s did not return value", funcSym.name->c_str());
+			} else if (stackSize > stackSizeBefore) {
+				error("builtin %s returned extra %d values", funcSym.name->c_str(), stackSize - stackSizeBefore);
+			} else {
+				error("builtin %s popped extra %d values", funcSym.name->c_str(), stackSizeBefore - stackSize);
+			}
 		}
 		return;
 	}
@@ -1456,68 +1603,21 @@ void LC::call(const Symbol &funcSym, int nargs) {
 		g_lingo->push(d);
 	}
 
-	g_lingo->pushContext(funcSym, true);
-
-	DatumHash *localvars = g_lingo->_localvars;
-	if (!funcSym.anonymous) {
-		// Create new set of local variables
-		// g_lingo->_localvars is not set until later so any lazy arguments
-		// can be evaluated within the current variable frame
-		localvars = new DatumHash;
+	Datum defaultRetVal;
+	if (funcSym.target && funcSym.target->getObjType() == kFactoryObj && funcSym.name->equalsIgnoreCase("mNew")) {
+		defaultRetVal = funcSym.target; // return me
 	}
 
-	if (funcSym.argNames) {
-		int symNArgs = funcSym.nargs;
-		if ((int)funcSym.argNames->size() < symNArgs) {
-			int dropSize = symNArgs - funcSym.argNames->size();
-			warning("%d arg names defined for %d args! Dropping the last %d values", funcSym.argNames->size(), symNArgs, dropSize);
-			for (int i = 0; i < dropSize; i++) {
-				g_lingo->pop();
-				symNArgs -= 1;
-			}
-		} else if ((int)funcSym.argNames->size() > symNArgs) {
-			warning("%d arg names defined for %d args! Ignoring the last %d names", funcSym.argNames->size(), symNArgs, funcSym.argNames->size() - symNArgs);
-		}
-		for (int i = symNArgs - 1; i >= 0; i--) {
-			Common::String name = (*funcSym.argNames)[i];
-			if (!localvars->contains(name)) {
-				g_lingo->varCreate(name, false, localvars);
-				Datum arg(name);
-				arg.type = VAR;
-				Datum value = g_lingo->pop();
-				g_lingo->varAssign(arg, value, false, localvars);
-			} else {
-				warning("Argument %s already defined", name.c_str());
-				g_lingo->pop();
-			}
-		}
-	}
-	if (funcSym.varNames) {
-		for (Common::Array<Common::String>::iterator it = funcSym.varNames->begin(); it != funcSym.varNames->end(); ++it) {
-			Common::String name = *it;
-			if (!localvars->contains(name)) {
-				(*localvars)[name] = Datum();
-			} else {
-				warning("Variable %s already defined", name.c_str());
-			}
-		}
-	}
-	g_lingo->_localvars = localvars;
+	g_lingo->pushContext(funcSym, allowRetVal, defaultRetVal);
 
 	g_lingo->_pc = 0;
 }
 
 void LC::c_procret() {
 	if (g_lingo->_callstack.size() == 0) {
-		warning("c_procret: Call stack underflow");
+		warning("LC::c_procret(): Call stack underflow");
 		g_lingo->_abort = true;
 		return;
-	}
-
-	CFrame *fp = g_lingo->_callstack.back();
-	if (g_lingo->_currentMe.type == OBJECT && g_lingo->_currentMe.u.obj->type == kFactoryObj && fp->sp.name->equalsIgnoreCase("mNew")) {
-		// Return the newly created object after executing mNew
-		g_lingo->push(g_lingo->_currentMe);
 	}
 
 	g_lingo->popContext();
@@ -1527,13 +1627,6 @@ void LC::c_procret() {
 		g_lingo->_abort = true;
 		return;
 	}
-}
-
-void LC::c_open() {
-	Datum d2 = g_lingo->pop();
-	Datum d1 = g_lingo->pop();
-
-	warning("STUB: c_open(%s, %s)", d1.asString().c_str(), d2.asString().c_str());
 }
 
 void LC::c_hilite() {
@@ -1547,7 +1640,7 @@ void LC::c_hilite() {
 	Datum last_line = g_lingo->pop();
 	Datum cast_id = g_lingo->pop();
 
-	warning("STUB: c_hilite: %d %d %d %d %d %d %d %d %d",
+	warning("STUB: LC::c_hilite(): %d %d %d %d %d %d %d %d %d",
 		first_char.u.i, last_char.u.i, first_word.u.i, last_word.u.i,
 		first_item.u.i, last_item.u.i, first_line.u.i, last_line.u.i,
 		cast_id.u.i);

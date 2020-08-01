@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
-"PO-Revision-Date: 2020-07-03 22:43+0000\n"
+"PO-Revision-Date: 2020-07-23 21:43+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -2448,7 +2448,7 @@ msgstr "Έξοδος"
 
 #: backends/events/default/default-events.cpp:293
 msgid "Global"
-msgstr "Καθολικό"
+msgstr "Γενικά"
 
 #: backends/events/default/default-events.cpp:296
 msgid "Global Main Menu"
@@ -2653,7 +2653,7 @@ msgstr "Εναλλαγή χρήσης γραμμικού φίλτρου σε κλιμάκωση εικόνας"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:401
 msgid "Cycle through stretch modes"
-msgstr "Κυκλική εναλλαγή λειτουργίας εξάπλωσης εικόνας"
+msgstr "Κυκλική περιήγηση στις λειτουργίες εξάπλωσης εικόνας"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:407
 msgid "Increase the scale factor"
@@ -4931,7 +4931,7 @@ msgstr "???"
 
 #: engines/pegasus/pegasus.cpp:2577
 msgid "Save Game"
-msgstr "Αποθήκευση Παιχνιδιού"
+msgstr "Αποθήκευση παιχνιδιού"
 
 #: engines/pegasus/pegasus.cpp:2583
 msgid "Load Game"
@@ -6279,7 +6279,7 @@ msgstr "[κατεστραμμένο]"
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:302
 msgid "[outdated]"
-msgstr "[παλιό]"
+msgstr "[ξεπερασμένο]"
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:305
 msgid "[too modern]"
@@ -6287,7 +6287,7 @@ msgstr "[πολύ καινούργιο]"
 
 #: engines/wintermute/detection.cpp:62
 msgid "Show FPS-counter"
-msgstr "Προβολή μετρητή FPS"
+msgstr "Προβολή μετρητή καρέ ανά δευτερόλεπτο"
 
 #: engines/wintermute/detection.cpp:63
 msgid "Show the current number of frames per second in the upper left corner"

@@ -22,6 +22,8 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
+#include "ultima/ultima8/gumps/message_box_gump.h"
+#include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/target_reticle_process.h"
@@ -34,13 +36,13 @@
 namespace Ultima {
 namespace Ultima8 {
 
-TargetReticleProcess *TargetReticleProcess::_instance;
+TargetReticleProcess *TargetReticleProcess::_instance = nullptr;
 
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(TargetReticleProcess)
 
 TargetReticleProcess::TargetReticleProcess() : Process(), _reticleEnabled(true),
-		_lastUpdate(0), _reticleSpriteProcess(0), _lastTargetDir(0x10), _lastTargetItem(0) {
+		_lastUpdate(0), _reticleSpriteProcess(0), _lastTargetDir(dir_current), _lastTargetItem(0) {
 	_instance = this;
 }
 
@@ -48,12 +50,13 @@ void TargetReticleProcess::run() {
 	Kernel *kernel = Kernel::get_instance();
 	assert(kernel);
 	uint32 frameno = kernel->getFrameNum();
+	Actor *mainactor = getMainActor();
 	Process *spriteProc = nullptr;
 	if (_reticleSpriteProcess != 0) {
 		spriteProc = kernel->getProcess(_reticleSpriteProcess);
 	}
 
-	if (!_reticleEnabled) {
+	if (!_reticleEnabled || (mainactor && !mainactor->isInCombat())) {
 		if (spriteProc) {
 			spriteProc->terminate();
 		}
@@ -80,12 +83,12 @@ bool TargetReticleProcess::findTargetItem() {
 	if (!mainactor || !currentmap)
 		return false;
 
-	int dir = mainactor->getDir();
+	Direction dir = mainactor->getDir();
 
 	int32 x, y, z;
 	mainactor->getCentre(x, y, z);
 
-	Item *item = currentmap->findBestTargetItem(x, y, dir);
+	Item *item = currentmap->findBestTargetItem(x, y, dir, dirmode_16dirs);
 
 	if (item && item->getObjId() != _lastTargetItem) {
 		Item *lastItem = getItem(_lastTargetItem);
@@ -116,8 +119,10 @@ void TargetReticleProcess::putTargetReticleOnItem(Item *item) {
 	int32 x, y, z;
 
 	// TODO: the game does a bunch of other maths here to pick the right location.
-	// This is an over-simplification.
+	// This is an over-simplification and is usually too high so it's
+	// hacked a little lower.
 	item->getCentre(x, y, z);
+	z -= 8;
 
 	Process *p = new SpriteProcess(0x59a, 0, 5, 1, 10, x, y, z, false);
 
@@ -130,9 +135,6 @@ void TargetReticleProcess::putTargetReticleOnItem(Item *item) {
 void TargetReticleProcess::itemMoved(Item *item) {
 	assert(item);
 	if (!_reticleSpriteProcess || item->getObjId() != _lastTargetItem) {
-		// Shouldn't happen, but to be sure..
-		warning("TargetReticleProcess: no active reticle or notified by the wrong item (%d, expected %d, process %d)",
-				item->getObjId(), _lastTargetItem, _reticleSpriteProcess);
 		clearSprite();
 		return;
 	}
@@ -169,7 +171,14 @@ void TargetReticleProcess::clearSprite() {
 		}
 	}
 	_lastTargetItem = 0;
-	_lastTargetDir = 0x10;
+	_lastTargetDir = dir_current;
+}
+
+void TargetReticleProcess::toggle() {
+	bool newstate = !getEnabled();
+	Std::string msg = newstate ? _TL_("TARGETING RETICLE ACTIVE") : _TL_("TARGETING RETICLE INACTIVE");
+	MessageBoxGump::Show("", msg, 0xFF707070);
+	setEnabled(newstate);
 }
 
 void TargetReticleProcess::saveData(Common::WriteStream *ws) {

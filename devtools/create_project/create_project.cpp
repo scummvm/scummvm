@@ -28,26 +28,27 @@
 #undef main
 #endif // main
 
-#include "config.h"
 #include "create_project.h"
+#include "config.h"
 
 #include "cmake.h"
 #include "codeblocks.h"
+#include "msbuild.h"
 #include "msvc.h"
 #include "visualstudio.h"
-#include "msbuild.h"
 #include "xcode.h"
 
+#include <algorithm>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
+#include <iterator>
 #include <sstream>
 #include <stack>
-#include <algorithm>
-#include <iomanip>
-#include <iterator>
+#include <utility>
 
-#include <cstring>
 #include <cstdlib>
+#include <cstring>
 #include <ctime>
 
 #if (defined(_WIN32) || defined(WIN32)) && !defined(__GNUC__)
@@ -57,11 +58,11 @@
 #if (defined(_WIN32) || defined(WIN32))
 #include <windows.h>
 #else
+#include <dirent.h>
+#include <errno.h>
 #include <sstream>
 #include <sys/param.h>
 #include <sys/stat.h>
-#include <dirent.h>
-#include <errno.h>
 #endif
 
 namespace {
@@ -133,7 +134,7 @@ int main(int argc, char *argv[]) {
 	setup.features = getAllFeatures();
 
 	ProjectType projectType = kProjectNone;
-	const MSVCVersion* msvc = NULL;
+	const MSVCVersion *msvc = NULL;
 	int msvcVersion = 0;
 
 	// Parse command line arguments
@@ -141,7 +142,7 @@ int main(int argc, char *argv[]) {
 	for (int i = 2; i < argc; ++i) {
 		if (!std::strcmp(argv[i], "--list-engines")) {
 			cout << " The following enables are available in the " PROJECT_DESCRIPTION " source distribution\n"
-			        " located at \"" << srcDir << "\":\n";
+			     << " located at \"" << srcDir << "\":\n";
 
 			cout << "   state  |       name      |     description\n\n";
 			cout.setf(std::ios_base::left, std::ios_base::adjustfield);
@@ -275,7 +276,7 @@ int main(int argc, char *argv[]) {
 		} else if (!std::strcmp(argv[i], "--build-events")) {
 			setup.runBuildEvents = true;
 		} else if (!std::strcmp(argv[i], "--installer")) {
-			setup.runBuildEvents  = true;
+			setup.runBuildEvents = true;
 			setup.createInstaller = true;
 		} else if (!std::strcmp(argv[i], "--tools")) {
 			setup.devTools = true;
@@ -283,6 +284,8 @@ int main(int argc, char *argv[]) {
 			setup.tests = true;
 		} else if (!std::strcmp(argv[i], "--sdl1")) {
 			setup.useSDL2 = false;
+		} else if (!std::strcmp(argv[i], "--use-canonical-lib-names")) {
+			setup.useCanonicalLibNames = true;
 		} else {
 			std::cerr << "ERROR: Unknown parameter \"" << argv[i] << "\"\n";
 			return -1;
@@ -431,6 +434,12 @@ int main(int argc, char *argv[]) {
 		setup.libraries.push_back("sdl2");
 	}
 
+	if (setup.useCanonicalLibNames) {
+		for (StringList::iterator lib = setup.libraries.begin(); lib != setup.libraries.end(); ++lib) {
+			*lib = getCanonicalLibName(*lib);
+		}
+	}
+
 	// Add additional project-specific library
 #ifdef ADDITIONAL_LIBRARY
 	setup.libraries.push_back(ADDITIONAL_LIBRARY);
@@ -474,7 +483,6 @@ int main(int argc, char *argv[]) {
 		addGCCWarnings(globalWarnings);
 
 		provider = new CreateProjectTool::CodeBlocksProvider(globalWarnings, projectWarnings);
-
 
 		// Those libraries are automatically added by MSVC, but we need to add them manually with mingw
 		setup.libraries.push_back("ole32");
@@ -665,11 +673,11 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Setup project name and description
-	setup.projectName        = PROJECT_NAME;
+	setup.projectName = PROJECT_NAME;
 	setup.projectDescription = PROJECT_DESCRIPTION;
 
 	if (setup.devTools) {
-		setup.projectName        += "-tools";
+		setup.projectName += "-tools";
 		setup.projectDescription += "Tools";
 	}
 
@@ -704,49 +712,52 @@ void displayHelp(const char *exe) {
 	        " Additionally there are the following switches for changing various settings:\n"
 	        "\n"
 	        "Project specific settings:\n"
-	        " --cmake                  build CMake project files\n"
-	        " --codeblocks             build Code::Blocks project files\n"
-	        " --msvc                   build Visual Studio project files\n"
-	        " --xcode                  build XCode project files\n"
-	        " --file-prefix prefix     allow overwriting of relative file prefix in the\n"
-	        "                          MSVC project files. By default the prefix is the\n"
-	        "                          \"path\\to\\source\" argument\n"
-	        " --output-dir path        overwrite path, where the project files are placed\n"
-	        "                          By default this is \".\", i.e. the current working\n"
-	        "                          directory\n"
+	        " --cmake                    build CMake project files\n"
+	        " --codeblocks               build Code::Blocks project files\n"
+	        " --msvc                     build Visual Studio project files\n"
+	        " --xcode                    build XCode project files\n"
+	        " --file-prefix prefix       allow overwriting of relative file prefix in the\n"
+	        "                            MSVC project files. By default the prefix is the\n"
+	        "                            \"path\\to\\source\" argument\n"
+	        " --output-dir path          overwrite path, where the project files are placed\n"
+	        "                            By default this is \".\", i.e. the current working\n"
+	        "                            directory\n"
 	        "\n"
 	        "MSVC specific settings:\n"
-	        " --msvc-version version   set the targeted MSVC version. Possible values:\n";
+	        " --msvc-version version     set the targeted MSVC version. Possible values:\n";
 
 	const MSVCList msvc = getAllMSVCVersions();
 	for (MSVCList::const_iterator i = msvc.begin(); i != msvc.end(); ++i)
 		cout << "                           " << i->version << " stands for \"" << i->name << "\"\n";
 
-	cout << "                           If no version is set, the latest installed version is used\n"
-	        " --build-events           Run custom build events as part of the build\n"
-	        "                          (default: false)\n"
-	        " --installer              Create installer after the build (implies --build-events)\n"
-	        "                          (default: false)\n"
-	        " --tools                  Create project files for the devtools\n"
-	        "                          (ignores --build-events and --installer, as well as engine settings)\n"
-	        "                          (default: false)\n"
-	        " --tests                  Create project files for the tests\n"
-	        "                          (ignores --build-events and --installer, as well as engine settings)\n"
-	        "                          (default: false)\n"
+	cout << "                            If no version is set, the latest installed version is used\n"
+	        " --build-events             Run custom build events as part of the build\n"
+	        "                            (default: false)\n"
+	        " --installer                Create installer after the build (implies --build-events)\n"
+	        "                            (default: false)\n"
+	        " --tools                    Create project files for the devtools\n"
+	        "                            (ignores --build-events and --installer, as well as engine settings)\n"
+	        "                            (default: false)\n"
+	        " --tests                    Create project files for the tests\n"
+	        "                            (ignores --build-events and --installer, as well as engine settings)\n"
+	        "                            (default: false)\n"
+	        " --use-canonical-lib-names  Use canonical library names for linking. This makes it easy to use\n"
+	        "                            e.g. vcpkg-provided libraries\n"
+	        "                            (default: false)\n"
 	        "\n"
 	        "Engines settings:\n"
-	        " --list-engines           list all available engines and their default state\n"
-	        " --enable-engine=<name>   enable building of the engine with the name \"name\"\n"
-	        " --disable-engine=<name>  disable building of the engine with the name \"name\"\n"
-	        " --enable-all-engines     enable building of all engines\n"
-	        " --disable-all-engines    disable building of all engines\n"
+	        " --list-engines             list all available engines and their default state\n"
+	        " --enable-engine=<name>     enable building of the engine with the name \"name\"\n"
+	        " --disable-engine=<name>    disable building of the engine with the name \"name\"\n"
+	        " --enable-all-engines       enable building of all engines\n"
+	        " --disable-all-engines      disable building of all engines\n"
 	        "\n"
 	        "Optional features settings:\n"
-	        " --enable-<name>          enable inclusion of the feature \"name\"\n"
-	        " --disable-<name>         disable inclusion of the feature \"name\"\n"
+	        " --enable-<name>            enable inclusion of the feature \"name\"\n"
+	        " --disable-<name>           disable inclusion of the feature \"name\"\n"
 	        "\n"
 	        "SDL settings:\n"
-	        " --sdl1                   link to SDL 1.2, instead of SDL 2.0\n"
+	        " --sdl1                     link to SDL 1.2, instead of SDL 2.0\n"
 	        "\n"
 	        " There are the following features available:\n"
 	        "\n";
@@ -952,9 +963,12 @@ bool parseEngine(const std::string &line, EngineDesc &engine) {
 		return false;
 	++token;
 
-	engine.name = *token; ++token;
-	engine.desc = *token; ++token;
-	engine.enable = (*token == "yes"); ++token;
+	engine.name = *token;
+	++token;
+	engine.desc = *token;
+	++token;
+	engine.enable = (*token == "yes");
+	++token;
 	if (token != tokens.end()) {
 		engine.subEngines = tokenize(*token);
 		++token;
@@ -1043,6 +1057,7 @@ TokenList tokenize(const std::string &input, char separator) {
 }
 
 namespace {
+// clang-format off
 const Feature s_features[] = {
 	// Libraries
 	{      "libz",        "USE_ZLIB", "zlib",             true,  "zlib (compression) support" },
@@ -1111,7 +1126,45 @@ const MSVCVersion s_msvc[] = {
 	{ 15,    "Visual Studio 2017",    "12.00",            "15",    "15.0",    "v141",    "llvm"        },
 	{ 16,    "Visual Studio 2019",    "12.00",    "Version 16",    "16.0",    "v142",    "llvm"        }
 };
+
+const std::pair<std::string, std::string> s_canonical_lib_name_map[] = {
+	std::make_pair("jpeg-static", "jpeg"),
+	std::make_pair("libfaad", "faad"),
+	std::make_pair("libFLAC_static", "FLAC"),
+	std::make_pair("libfluidsynth", "fluidsynth"),
+	std::make_pair("libmad", "mad"),
+	std::make_pair("libmpeg2", "mpeg2"),
+	std::make_pair("libogg_static", "ogg"),
+	std::make_pair("libtheora_static", "theora"),
+	std::make_pair("libvorbis_static", "vorbis"),
+	std::make_pair("libvorbisfile_static", "vorbisfile"),
+	std::make_pair("SDL_net", "SDL2_net"), // Only support SDL2
+	std::make_pair("win_utf8_io_static", "FLAC") // This is some FLAC-specific library not needed with vcpkg, but as there's '.lib' appended to each library, we can't set it to empty, so set it to FLAC again instead
+};
+
+const char *s_msvc_arch_names[] = {"arm64", "x86", "x64"};
+const char *s_msvc_config_names[] = {"arm64", "Win32", "x64"};
+// clang-format on
 } // End of anonymous namespace
+
+std::string getMSVCArchName(MSVC_Architecture arch) {
+	return s_msvc_arch_names[arch];
+}
+
+std::string getMSVCConfigName(MSVC_Architecture arch) {
+	return s_msvc_config_names[arch];
+}
+
+std::string getCanonicalLibName(const std::string &lib) {
+	const size_t libCount = sizeof(s_canonical_lib_name_map) / sizeof(s_canonical_lib_name_map[0]);
+
+	for (size_t i = 0; i < libCount; ++i) {
+		if (s_canonical_lib_name_map[i].first == lib) {
+			return s_canonical_lib_name_map[i].second;
+		}
+	}
+	return lib;
+}
 
 FeatureList getAllFeatures() {
 	const size_t featureCount = sizeof(s_features) / sizeof(s_features[0]);
@@ -1134,15 +1187,30 @@ StringList getFeatureDefines(const FeatureList &features) {
 	return defines;
 }
 
+StringList getFeatureLibraries(const Feature &feature) {
+	StringList libraries;
+
+	if (feature.enable && feature.libraries && feature.libraries[0]) {
+		StringList fLibraries = tokenize(feature.libraries);
+		libraries.splice(libraries.end(), fLibraries);
+	}
+	// The libraries get sorted as they can get used in algorithms where ordering is a
+	// precondition, e.g. merge()
+	libraries.sort();
+
+	return libraries;
+}
+
 StringList getFeatureLibraries(const FeatureList &features) {
 	StringList libraries;
 
 	for (FeatureList::const_iterator i = features.begin(); i != features.end(); ++i) {
-		if (i->enable && i->libraries && i->libraries[0]) {
-			StringList fLibraries = tokenize(i->libraries);
-			libraries.splice(libraries.end(), fLibraries);
+		StringList fl = getFeatureLibraries(*i);
+		for (StringList::const_iterator flit = fl.begin(); flit != fl.end(); ++flit) {
+			libraries.push_back(*flit);
 		}
 	}
+	libraries.sort();
 
 	return libraries;
 }
@@ -1164,6 +1232,27 @@ bool getFeatureBuildState(const std::string &name, FeatureList &features) {
 	} else {
 		return false;
 	}
+}
+
+BuildSetup removeFeatureFromSetup(BuildSetup setup, const std::string &feature) {
+	// TODO: use const_iterator in C++11
+	for (FeatureList::iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
+		if (i->enable && feature == i->name) {
+			StringList feature_libs = getFeatureLibraries(*i);
+			for (StringList::iterator lib = feature_libs.begin(); lib != feature_libs.end(); ++lib) {
+				if (setup.useCanonicalLibNames) {
+					*lib = getCanonicalLibName(*lib);
+				}
+				setup.libraries.remove(*lib);
+			}
+			if (i->define && i->define[0]) {
+				setup.defines.remove(i->define);
+			}
+			setup.features.erase(i);
+			break;
+		}
+	}
+	return setup;
 }
 
 ToolList getAllTools() {
@@ -1260,7 +1349,8 @@ void splitFilename(const std::string &fileName, std::string &name, std::string &
 
 std::string basename(const std::string &fileName) {
 	const std::string::size_type slash = fileName.find_last_of('/');
-	if (slash == std::string::npos) return fileName;
+	if (slash == std::string::npos)
+		return fileName;
 	return fileName.substr(slash + 1);
 }
 
@@ -1420,7 +1510,6 @@ void createDirectory(const std::string &dir) {
 		}
 	}
 #endif
-
 }
 
 /**
@@ -1485,7 +1574,7 @@ FileNode *scanFiles(const std::string &dir, const StringList &includeList, const
 // Project Provider methods
 //////////////////////////////////////////////////////////////////////////
 ProjectProvider::ProjectProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version)
-	: _version(version), _globalWarnings(global_warnings), _projectWarnings(project_warnings) {
+    : _version(version), _globalWarnings(global_warnings), _projectWarnings(project_warnings) {
 }
 
 void ProjectProvider::createProject(BuildSetup &setup) {
@@ -1511,7 +1600,8 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		if (i->first == setup.projectName)
 			continue;
 		// Retain the files between engines if we're creating a single project
-		in.clear(); ex.clear();
+		in.clear();
+		ex.clear();
 
 		const std::string moduleDir = setup.srcDir + targetFolder + i->first;
 
@@ -1521,7 +1611,8 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 
 	if (setup.tests) {
 		// Create the main project file.
-		in.clear(); ex.clear();
+		in.clear();
+		ex.clear();
 		createModuleList(setup.srcDir + "/backends", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/backends/platform/sdl", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/base", setup.defines, setup.testDirs, in, ex);
@@ -1535,7 +1626,8 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		createProjectFile(setup.projectName, svmUUID, setup, setup.srcDir, in, ex);
 	} else if (!setup.devTools) {
 		// Last but not least create the main project file.
-		in.clear(); ex.clear();
+		in.clear();
+		ex.clear();
 		// File list for the Project file
 		createModuleList(setup.srcDir + "/backends", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/backends/platform/sdl", setup.defines, setup.testDirs, in, ex);
@@ -1628,8 +1720,10 @@ std::string ProjectProvider::createUUID() const {
 	for (int i = 0; i < kUUIDLen; ++i)
 		uuid[i] = (unsigned char)((std::rand() / (double)(RAND_MAX)) * 0xFF);
 
-	uuid[8] &= 0xBF; uuid[8] |= 0x80;
-	uuid[6] &= 0x4F; uuid[6] |= 0x40;
+	uuid[8] &= 0xBF;
+	uuid[8] |= 0x80;
+	uuid[6] &= 0x4F;
+	uuid[6] |= 0x40;
 
 	return UUIDToString(uuid);
 #endif
@@ -1641,7 +1735,7 @@ std::string ProjectProvider::createUUID(const std::string &name) const {
 	if (!CryptAcquireContext(&hProv, NULL, NULL, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT)) {
 		error("CryptAcquireContext failed");
 	}
-	
+
 	// Use MD5 hashing algorithm
 	HCRYPTHASH hHash = NULL;
 	if (!CryptCreateHash(hProv, CALG_MD5, 0, 0, &hHash)) {
@@ -1651,7 +1745,7 @@ std::string ProjectProvider::createUUID(const std::string &name) const {
 
 	// Hash unique ScummVM namespace {5f5b43e8-35ff-4f1e-ad7e-a2a87e9b5254}
 	const BYTE uuidNs[kUUIDLen] =
-		{ 0x5f, 0x5b, 0x43, 0xe8, 0x35, 0xff, 0x4f, 0x1e, 0xad, 0x7e, 0xa2, 0xa8, 0x7e, 0x9b, 0x52, 0x54 };
+	    {0x5f, 0x5b, 0x43, 0xe8, 0x35, 0xff, 0x4f, 0x1e, 0xad, 0x7e, 0xa2, 0xa8, 0x7e, 0x9b, 0x52, 0x54};
 	if (!CryptHashData(hHash, uuidNs, kUUIDLen, 0)) {
 		CryptDestroyHash(hHash);
 		CryptReleaseContext(hProv, 0);
@@ -1675,8 +1769,10 @@ std::string ProjectProvider::createUUID(const std::string &name) const {
 	}
 
 	// Add version and variant
-	uuid[6] &= 0x0F; uuid[6] |= 0x30;
-	uuid[8] &= 0x3F; uuid[8] |= 0x80;
+	uuid[6] &= 0x0F;
+	uuid[6] |= 0x30;
+	uuid[8] &= 0x3F;
+	uuid[8] |= 0x80;
 
 	CryptDestroyHash(hHash);
 	CryptReleaseContext(hProv, 0);
@@ -1727,7 +1823,8 @@ void ProjectProvider::addFilesToProject(const std::string &dir, std::ofstream &p
 			continue;
 
 		// Search for duplicates
-		StringList::const_iterator j = i; ++j;
+		StringList::const_iterator j = i;
+		++j;
 		for (; j != includeList.end(); ++j) {
 			std::string candidateFileName = getLastPathComponent(*j);
 			std::transform(candidateFileName.begin(), candidateFileName.end(), candidateFileName.begin(), tolower);
@@ -1998,7 +2095,7 @@ void ProjectProvider::createEnginePluginsTable(const BuildSetup &setup) {
 		                   << "#endif\n";
 	}
 }
-} // End of anonymous namespace
+} // namespace CreateProjectTool
 
 void error(const std::string &message) {
 	std::cerr << "ERROR: " << message << "!" << std::endl;

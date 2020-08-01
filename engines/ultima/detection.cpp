@@ -123,11 +123,11 @@ SaveStateList UltimaMetaEngine::listSaves(const char *target) const {
 }
 
 Common::KeymapArray UltimaMetaEngine::initKeymaps(const char *target) const {
-	Common::String gameId = getGameId(target);
+	const Common::String gameId = getGameId(target);
 	if (gameId == "ultima4" || gameId == "ultima4_enh")
 		return Ultima::Ultima4::MetaEngine::initKeymaps();
 	if (gameId == "ultima8" || gameId == "remorse" || gameId == "regret")
-		return Ultima::Ultima8::MetaEngine::initKeymaps();
+		return Ultima::Ultima8::MetaEngine::initKeymaps(gameId);
 
 	return Common::KeymapArray();
 }

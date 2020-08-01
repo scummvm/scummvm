@@ -62,15 +62,9 @@ static const char *version_cookie __attribute__((used)) = "$VER: ScummVM " SCUMM
 #ifdef __MORPHOS__
 static const char *version_cookie __attribute__((used)) = "$VER: ScummVM " SCUMMVM_VERSION SCUMMVM_REVISION " (" __DATE__ ")";
 #endif
-#ifdef __PLAYSTATION2__
-const char *gScummVMBuildDate = "Git Master"; /* ScummVM Git Master */
-const char *gScummVMVersionDate = SCUMMVM_VERSION SCUMMVM_REVISION " - PlayStation2";
-const char *gScummVMFullVersion = "ScummVM " SCUMMVM_VERSION SCUMMVM_REVISION " - PlayStation2";
-#else
 const char *gScummVMBuildDate = __DATE__ " " __TIME__;
 const char *gScummVMVersionDate = SCUMMVM_VERSION SCUMMVM_REVISION " (" __DATE__ " " __TIME__ ")";
 const char *gScummVMFullVersion = "ScummVM " SCUMMVM_VERSION SCUMMVM_REVISION " (" __DATE__ " " __TIME__ ")";
-#endif
 const char *gScummVMFeatures = ""
 #ifdef TAINTED_BUILD
 	// TAINTED means the build contains engines/subengines not enabled by default

@@ -31,6 +31,7 @@
 #include "kyra/gui/debugger.h"
 
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
 #include "common/translation.h"
 
 #include "gui/error.h"
@@ -52,21 +53,28 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_playFinale = false;
 	_runFlag = true;
 	_configMouse = _config2431 = true;
+	_mouseSpeed = _padSpeed = 1;
+	_inputMode = 0;
 	_loading = false;
 
 	_enableHiResDithering = false;
 
+	_tickLength = (_flags.platform == Common::kPlatformSegaCD) ? 38 : 55;
 	_envAudioTimer = 0;
 	_flashShapeTimer = 0;
+	_flashShapeTimerIntv0 = (_flags.platform == Common::kPlatformSegaCD ? 2 * _tickLength : 0);
+	_flashShapeTimerIntv1 = _tickLength * (_flags.platform == Common::kPlatformSegaCD ? 2 : 8);
+	_flashShapeTimerIntv2 = _tickLength * 8;
 	_drawSceneTimer = 0;
 	_vcnFilePattern = "%s.VCN";
 	_vmpFilePattern = "%s.VMP";
 
 	_largeItemShapes = _smallItemShapes = _thrownItemShapes = _spellShapes = _firebeamShapes = 0;
-	_itemIconShapes = _amigaBlueItemIconShapes = _wallOfForceShapes = _teleporterShapes = _sparkShapes = _compassShapes = 0;
-	_redSplatShape = _greenSplatShape = _deadCharShape = _disabledCharGrid = 0;
+	_itemIconShapes = _blueItemIconShapes = _xtraItemIconShapes = _wallOfForceShapes = _teleporterShapes = _sparkShapes = _compassShapes = 0;
+	_redSplatShape = _greenSplatShape = _deadCharShape = _disabledCharGrid = _swapShape = 0;
 	_blackBoxSmallGrid = _weaponSlotGrid = _blackBoxWideGrid = _lightningColumnShape = 0;
 
+	memset(_redSplatBG, 0, sizeof(_redSplatBG));
 	memset(_largeItemShapesScl, 0, sizeof(_largeItemShapesScl));
 	memset(_smallItemShapesScl, 0, sizeof(_smallItemShapesScl));
 	memset(_thrownItemShapesScl, 0, sizeof(_thrownItemShapesScl));
@@ -84,9 +92,9 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_items = 0;
 	_itemTypes = 0;
 	_itemNames = 0;
-	_itemNamesPC98 = 0;
+	_itemNamesStatic = 0;
 	_itemInHand = -1;
-	_numItems = _numItemNames = _numItemNamesPC98 = 0;
+	_numItems = _numItemNames = _numItemNamesStatic = 0;
 
 	_castScrollSlot = 0;
 	_currentSub = 0;
@@ -104,6 +112,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_monsters = 0;
 	_dstMonsterIndex = 0;
 	_preventMonsterFlash = false;
+	_sceneShakeCountdown = 0;
 
 	_teleporterPulse = 0;
 
@@ -120,6 +129,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_dscDoorY1 = 0;
 	_dscDoorXE = 0;
 
+	_shapeShakeOffsetX = _shapeShakeOffsetY = 0;
 	_greenFadingTable = _blueFadingTable = _lightBlueFadingTable = _blackFadingTable = _greyFadingTable = 0;
 
 	_menuDefs = 0;
@@ -188,6 +198,8 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_buttonList3Size = _buttonList4Size = _buttonList5Size = _buttonList6Size = 0;
 	_buttonList7Size = _buttonList8Size = 0;
 	_inventorySlotsY = _mnDef = 0;
+	_invFont1 = _invFont2 = _conFont = Screen::FID_6_FNT;
+	_invFont3 = Screen::FID_8_FNT;
 	_transferStringsScummVM = 0;
 	_buttonDefs = 0;
 	_npcPreset = 0;
@@ -218,16 +230,22 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_menuStringsScribe = _menuStringsDrop2 = _menuStringsHead = _menuStringsPoison = 0;
 	_menuStringsMgc = _menuStringsPrefs = _menuStringsRest2 = _menuStringsRest3 = 0;
 	_menuStringsRest4 = _menuStringsDefeat = _menuStringsTransfer = _menuStringsSpec = 0;
-	_menuStringsSpellNo = _menuYesNoStrings = _2431Strings = _katakanaLines = _katakanaSelectStrings = 0;
+	_menuStringsSpellNo = _menuYesNoStrings = _2431Strings = _textInputCharacterLines = _textInputSelectStrings = 0;
 	_errorSlotEmptyString = _errorSlotNoNameString = _menuOkString = 0;
 	_spellLevelsMage = _spellLevelsCleric = _numSpellsCleric = _numSpellsWisAdj = _numSpellsPal = _numSpellsMage = 0;
 	_mnNumWord = _numSpells = _mageSpellListSize = _spellLevelsMageSize = _spellLevelsClericSize = 0;
 	_inventorySlotsX = _slotValidationFlags = _encodeMonsterShpTable = 0;
 	_cgaMappingDefault = _cgaMappingAlt = _cgaMappingInv = _cgaLevelMappingIndex = _cgaMappingItemsL = _cgaMappingItemsS = _cgaMappingThrown = _cgaMappingIcons = _cgaMappingDeco = 0;
 	_amigaLevelSoundList1 = _amigaLevelSoundList2 = 0;
+	_dcrShpDataPos = 0;
 	_amigaSoundMap = 0;
 	_amigaCurSoundFile = -1;
-	_prefMenuPlatformOffset = 0;
+	_prefMenuPlatformOffset = 0;	
+	_lastVIntTick = _lastSecTick = _totalPlaySecs = _totalEnemiesKilled = _totalSteps = 0;
+	_levelMaps = 0;
+	_closeSpellbookAfterUse = false;
+	_wndBackgrnd = 0;
+
 	memset(_cgaMappingLevel, 0, sizeof(_cgaMappingLevel));
 	memset(_expRequirementTables, 0, sizeof(_expRequirementTables));
 	memset(_saveThrowTables, 0, sizeof(_saveThrowTables));
@@ -271,18 +289,17 @@ EoBCoreEngine::~EoBCoreEngine() {
 	}
 
 	if (_characters) {
-		for (int i = 0; i < 6; i++)
+		for (int i = 0; i < 6; i++) {
 			delete[] _characters[i].faceShape;
+			delete[] _characters[i].nameShape;
+		}
 	}
 
 	delete[] _characters;
 	delete[] _items;
 	delete[] _itemTypes;
-	if (_itemNames) {
-		for (int i = 0; i < 130; i++)
-			delete[] _itemNames[i];
-	}
-	delete[] _itemNames;
+
+	releaseShpArr(_itemNames, 130);
 	delete[] _flyingObjects;
 
 	delete[] _monsterFlashOverlay;
@@ -321,6 +338,9 @@ EoBCoreEngine::~EoBCoreEngine() {
 	delete[] _wallsOfForce;
 	delete[] _buttonDefs;
 
+	for (int i = 0; i < 6; i++)
+		delete[] _redSplatBG[i];
+
 	delete _gui;
 	_gui = 0;
 	delete _screen;
@@ -339,125 +359,36 @@ EoBCoreEngine::~EoBCoreEngine() {
 	delete _txt;
 	_txt = 0;
 }
-
+ 
 Common::KeymapArray EoBCoreEngine::initKeymaps(const Common::String &gameId) {
-	Common::Keymap *const engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kKeymapName, "Eye of the Beholder");
+	Common::Keymap *const keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kKeymapName, "Eye of the Beholder");
 
-	Common::Action *act;
-
-	act = new Common::Action("LCLK", _("Interact via Left Click"));
-	act->setLeftClickEvent();
-	act->addDefaultInputMapping("MOUSE_LEFT");
-	act->addDefaultInputMapping("JOY_A");
-	engineKeyMap->addAction(act);
-
-	act = new Common::Action("RCLK", _("Interact via Right Click"));
-	act->setRightClickEvent();
-	act->addDefaultInputMapping("MOUSE_RIGHT");
-	act->addDefaultInputMapping("JOY_B");
-	engineKeyMap->addAction(act);
-
-	act = new Common::Action("MVF", _("Move Forward"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_UP));
-	act->addDefaultInputMapping("UP");
-	act->addDefaultInputMapping("JOY_UP");
-	engineKeyMap->addAction(act);
-
-	act = new Common::Action("MVB", _("Move Back"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_DOWN));
-	act->addDefaultInputMapping("DOWN");
-	act->addDefaultInputMapping("JOY_DOWN");
-	engineKeyMap->addAction(act);
-
-	act = new Common::Action("MVL", _("Move Left"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_LEFT));
-	act->addDefaultInputMapping("LEFT");
-	act->addDefaultInputMapping("JOY_LEFT_TRIGGER");
-	engineKeyMap->addAction(act);
-
-	act = new Common::Action("MVR", _("Move Right"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_RIGHT));
-	act->addDefaultInputMapping("RIGHT");
-	act->addDefaultInputMapping("JOY_RIGHT_TRIGGER");
-	engineKeyMap->addAction(act);
-
-	act = new Common::Action("TL", _("Turn Left"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_HOME));
-	act->addDefaultInputMapping("HOME");
-	act->addDefaultInputMapping("JOY_LEFT");
-	engineKeyMap->addAction(act);
-
-	act = new Common::Action("TR", _("Turn Right"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_PAGEUP));
-	act->addDefaultInputMapping("PAGEUP");
-	act->addDefaultInputMapping("JOY_RIGHT");
-	engineKeyMap->addAction(act);
-
-	act = new Common::Action("INV", _("Open/Close Inventory"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_i, 'i'));
-	act->addDefaultInputMapping("i");
-	act->addDefaultInputMapping("JOY_X");
-	engineKeyMap->addAction(act);
-
-	act = new Common::Action("SCE", _("Switch Inventory/Character screen"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_p, 'p'));
-	act->addDefaultInputMapping("p");
-	act->addDefaultInputMapping("JOY_Y");
-	engineKeyMap->addAction(act);
-
-	act = new Common::Action("CMP", _("Camp"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_c, 'c'));
-	act->addDefaultInputMapping("c");
-	engineKeyMap->addAction(act);
-
-	act = new Common::Action("CSP", _("Cast Spell"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_SPACE, ' '));
-	act->addDefaultInputMapping("SPACE");
-	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
-	engineKeyMap->addAction(act);
-
+	addKeymapAction(keyMap, "LCLK", _("Interact via Left Click)"), &Common::Action::setLeftClickEvent, "MOUSE_LEFT", "JOY_A");
+	addKeymapAction(keyMap, "RCLK", _("Interact via Right Click)"), &Common::Action::setRightClickEvent, "MOUSE_RIGHT", "JOY_B");
+	addKeymapAction(keyMap, "MVF", _("Move Forward"), Common::KeyState(Common::KEYCODE_UP), "UP", "JOY_UP");
+	addKeymapAction(keyMap, "MVB", _("Move Back"), Common::KeyState(Common::KEYCODE_DOWN), "DOWN", "JOY_DOWN");
+	addKeymapAction(keyMap, "MVL", _("Move Left"), Common::KeyState(Common::KEYCODE_LEFT), "LEFT", "JOY_LEFT_TRIGGER");
+	addKeymapAction(keyMap, "MVR", _("Move Right"), Common::KeyState(Common::KEYCODE_RIGHT), "RIGHT", "JOY_RIGHT_TRIGGER");
+	addKeymapAction(keyMap, "TL", _("Turn Left"), Common::KeyState(Common::KEYCODE_HOME), "HOME", "JOY_LEFT");
+	addKeymapAction(keyMap, "TR", _("Turn Right"), Common::KeyState(Common::KEYCODE_PAGEUP), "PAGEUP", "JOY_RIGHT");
+	addKeymapAction(keyMap, "INV", _("Open/Close Inventory"), Common::KeyState(Common::KEYCODE_i, 'i'), "i", "JOY_X");
+	addKeymapAction(keyMap, "SCE", _("Switch Inventory/Character screen"), Common::KeyState(Common::KEYCODE_p, 'p'), "p", "JOY_Y");
+	addKeymapAction(keyMap, "CMP", _("Camp"), Common::KeyState(Common::KEYCODE_c, 'c'), "c", "");
+	addKeymapAction(keyMap, "CSP", _("Cast Spell"), Common::KeyState(Common::KEYCODE_SPACE, ' '), "SPACE", "JOY_LEFT_SHOULDER");
 	// TODO: Spell cursor, but this needs more thought, since different
 	// game versions use different keycodes.
-	act = new Common::Action("SL1", _("Spell Level 1"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_1, '1'));
-	act->addDefaultInputMapping("1");
-	engineKeyMap->addAction(act);
+	addKeymapAction(keyMap, "SL1", _("Spell Level 1"), Common::KeyState(Common::KEYCODE_1, '1'), "1", "");
+	addKeymapAction(keyMap, "SL2", _("Spell Level 2"), Common::KeyState(Common::KEYCODE_2, '2'), "2", "");
+	addKeymapAction(keyMap, "SL3", _("Spell Level 3"), Common::KeyState(Common::KEYCODE_3, '3'), "3", "");
+	addKeymapAction(keyMap, "SL4", _("Spell Level 4"), Common::KeyState(Common::KEYCODE_4, '4'), "4", "");
+	addKeymapAction(keyMap, "SL5", _("Spell Level 5"), Common::KeyState(Common::KEYCODE_5, '5'), "5", "");
+	if (gameId == "eob2")
+		addKeymapAction(keyMap, "SL6", _("Spell Level 6"), Common::KeyState(Common::KEYCODE_6, '6'), "6", "");
 
-	act = new Common::Action("SL2", _("Spell Level 2"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_2, '2'));
-	act->addDefaultInputMapping("2");
-	engineKeyMap->addAction(act);
-
-	act = new Common::Action("SL3", _("Spell Level 3"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_3, '2'));
-	act->addDefaultInputMapping("3");
-	engineKeyMap->addAction(act);
-
-	act = new Common::Action("SL4", _("Spell Level 4"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_4, '4'));
-	act->addDefaultInputMapping("4");
-	engineKeyMap->addAction(act);
-
-	act = new Common::Action("SL5", _("Spell Level 5"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_5, '5'));
-	act->addDefaultInputMapping("5");
-	engineKeyMap->addAction(act);
-
-	if (gameId == "eob2") {
-		act = new Common::Action("SL6", _("Spell Level 6"));
-		act->setKeyEvent(Common::KeyState(Common::KEYCODE_6, '6'));
-		act->addDefaultInputMapping("6");
-		engineKeyMap->addAction(act);
-	}
-
-	return Common::Keymap::arrayOf(engineKeyMap);
+	return Common::Keymap::arrayOf(keyMap);
 }
 
 Common::Error EoBCoreEngine::init() {
-	// In EOB the timer proc is directly invoked via interrupt 0x1C, 18.2 times per second.
-	// This makes a tick length of 54.94.
-	_tickLength = 55;
-
 	if (ConfMan.hasKey("render_mode"))
 		_configRenderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
 
@@ -470,35 +401,46 @@ Common::Error EoBCoreEngine::init() {
 	_res = new Resource(this);
 	assert(_res);
 	_res->reset();
-
+ 
 	_staticres = new StaticResource(this);
 	assert(_staticres);
 	if (!_staticres->init())
 		error("_staticres->init() failed");
 
-	// We start the respective sound driver even if "No Music" has
-	// been selected, because we don't have a null driver class (and
-	// don't really need one). We just disable the sound in the settings.
+	// We start the respective sound driver even if "No Music" has been selected, because we
+	// don't have a null driver class (and don't really need one). We just disable the sound here.
 	MidiDriver::DeviceHandle dev = 0;
-	if (_flags.platform == Common::kPlatformDOS) {
+	switch (_flags.platform) {
+	case Common::kPlatformDOS: {
 		int flags = MDT_ADLIB | MDT_PCSPK;
 		dev = MidiDriver::detectDevice(_flags.gameID == GI_EOB1 ? flags | MDT_PCJR : flags);
 		MusicType type = MidiDriver::getMusicType(dev);
 		_sound = new SoundPC_v1(this, _mixer, type == MT_ADLIB ? Sound::kAdLib : type == MT_PCSPK ? Sound::kPCSpkr : Sound::kPCjr);
-	} else if (_flags.platform == Common::kPlatformFMTowns) {
+		} break;
+	case Common::kPlatformFMTowns:
 		dev = MidiDriver::detectDevice(MDT_TOWNS);
-		// SoundTowns_Darkmoon requires initialized _staticres
 		_sound = new SoundTowns_Darkmoon(this, _mixer);
-	} else if (_flags.platform == Common::kPlatformPC98) {
+		break;
+	case Common::kPlatformPC98:
 		if (_flags.gameID == GI_EOB1) {
 			dev = MidiDriver::detectDevice(MDT_PC98);
 			_sound = new SoundPC98_EoB(this, _mixer);
 		} else {
 			dev = MidiDriver::detectDevice(MDT_PC98 | MDT_MIDI);
+			/**/
 		}
-	} else if (_flags.platform == Common::kPlatformAmiga) {
+		break;
+	case Common::kPlatformAmiga:
 		dev = MidiDriver::detectDevice(MDT_AMIGA);
 		_sound = new SoundAmiga_EoB(this, _mixer);
+		break;
+	case Common::kPlatformSegaCD:
+		dev = MidiDriver::detectDevice(MDT_SEGACD);
+		_sound = new SoundSegaCD_EoB(this, _mixer);
+		break;
+	default:
+		// Dummy error message. Unsupported platforms don't have detection entries.
+		error("Unsupported platform '%d'", _flags.platform);
 	}
 
 	assert(_sound);
@@ -509,7 +451,7 @@ Common::Error EoBCoreEngine::init() {
 
 	// Setup volume settings (and read in all ConfigManager settings)
 	_configNullSound = (MidiDriver::getMusicType(dev) == MT_NULL);
-	syncSoundSettings();	
+	syncSoundSettings();
 
 	if (!_screen->init())
 		error("screen()->init() failed");
@@ -522,33 +464,18 @@ Common::Error EoBCoreEngine::init() {
 
 	setupKeyMap();
 
-	_gui = new GUI_EoB(this);
-	assert(_gui);
-	_txt = new TextDisplayer_rpg(this, _screen);
-	assert(_txt);
+	if (_flags.platform != Common::kPlatformSegaCD) {
+		_gui = new GUI_EoB(this);
+		assert(_gui);
+		_txt = new TextDisplayer_rpg(this, _screen);
+		assert(_txt);
+	}
+
 	_inf = new EoBInfProcessor(this, _screen);
 	assert(_inf);
 	setDebugger(new Debugger_EoB(this));
 	
-	if (_flags.platform == Common::kPlatformAmiga) {
-		if (_res->exists("EOBF6.FONT"))
-			_screen->loadFont(Screen::FID_6_FNT, "EOBF6.FONT");
-		else if (_res->exists("FONTS/EOBF6.FONT"))
-			_screen->loadFont(Screen::FID_6_FNT, "FONTS/EOBF6.FONT");
-		else
-			AmigaDOSFont::errorDialog(0);
-
-		if (_res->exists("EOBF8.FONT"))
-			_screen->loadFont(Screen::FID_8_FNT, "EOBF8.FONT");
-		else if (_res->exists("FONTS/EOBF8.FONT"))
-			_screen->loadFont(Screen::FID_8_FNT, "FONTS/EOBF8.FONT");
-		else
-			AmigaDOSFont::errorDialog(0);
-
-	} else {
-		_screen->loadFont(Screen::FID_6_FNT, "FONT6.FNT");
-		_screen->loadFont(Screen::FID_8_FNT, "FONT8.FNT");
-	}
+	loadFonts();
 
 	Common::Error err = KyraRpgEngine::init();
 	if (err.getCode() != Common::kNoError)
@@ -636,16 +563,56 @@ Common::Error EoBCoreEngine::init() {
 	return Common::kNoError;
 }
 
+void EoBCoreEngine::loadFonts() {
+	// Only the fonts that are based on game resource files are loaded here. ScummVM builtin fonts like the
+	// FM-Towns ROM font or the PC-98 SJIS font get initialized in Screen::init() and Screen_EoB::init().
+
+	if (_flags.platform == Common::kPlatformAmiga) {
+		if (_res->exists("EOBF6.FONT"))
+			_screen->loadFont(Screen::FID_6_FNT, "EOBF6.FONT");
+		else if (_res->exists("FONTS/EOBF6.FONT"))
+			_screen->loadFont(Screen::FID_6_FNT, "FONTS/EOBF6.FONT");
+		else
+			AmigaDOSFont::errorDialog(0);
+
+		if (_res->exists("EOBF8.FONT"))
+			_screen->loadFont(Screen::FID_8_FNT, "EOBF8.FONT");
+		else if (_res->exists("FONTS/EOBF8.FONT"))
+			_screen->loadFont(Screen::FID_8_FNT, "FONTS/EOBF8.FONT");
+		else
+			AmigaDOSFont::errorDialog(0);
+
+	} else if (_flags.platform != Common::kPlatformSegaCD) {
+		_screen->loadFont(Screen::FID_6_FNT, "FONT6.FNT");
+		_screen->loadFont(Screen::FID_8_FNT, "FONT8.FNT");
+	}
+
+	if (_flags.platform == Common::kPlatformFMTowns) {
+		_screen->loadFont(Screen::FID_SJIS_SMALL_FNT, "FONT.DMP");
+	} else if (_flags.platform == Common::kPlatformPC98) {
+		_screen->loadFont(Screen::FID_SJIS_SMALL_FNT, "FONT12.FNT");
+		_invFont1 = Screen::FID_SJIS_SMALL_FNT;
+		_conFont = _invFont3 = Screen::FID_SJIS_FNT;
+	} else if (_flags.platform == Common::kPlatformSegaCD) {
+		_screen->loadFont(Screen::FID_8_FNT, "FONTK12");
+		_screen->setFontStyles(Screen::FID_8_FNT, _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleFat);
+		_invFont1 = _invFont2 = _conFont = Screen::FID_8_FNT;
+	}
+}
+
 Common::Error EoBCoreEngine::go() {
 	static_cast<Debugger_EoB *>(getDebugger())->initialize();
 	_txt->removePageBreakFlag();
 	_screen->setFont(_flags.platform == Common::kPlatformPC98 ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
 	loadItemsAndDecorationsShapes();
+
 	_screen->setMouseCursor(0, 0, _itemIconShapes[0]);
 
-	// Import original save game files (especially the "Quick Start Party")
+	// Import original save game files (especially the "Quick Start Party").
+	// The SegaCD version has a "Default Party" main menu option instead.
 	if (ConfMan.getBool("importOrigSaves")) {
-		importOriginalSaveFile(-1);
+		if (_flags.platform != Common::kPlatformSegaCD)
+			importOriginalSaveFile(-1);
 		ConfMan.setBool("importOrigSaves", false);
 		ConfMan.flushToDisk();
 	}
@@ -669,13 +636,16 @@ Common::Error EoBCoreEngine::go() {
 		if (action == -1) {
 			// load game
 			startupLoad();
-			repeatLoop = _gui->runLoadMenu(72, 14, true);
-				
-		} else if (action == -2) {
+			repeatLoop = _gui->runLoadMenu(_flags.platform == Common::kPlatformSegaCD ? 80 : 72, _flags.platform == Common::kPlatformSegaCD ? 16 : 14, true);
+			if (!repeatLoop)
+				startupReset();
+		} else if (action == -2 || action == -4) {
 			// new game
-			repeatLoop = startCharacterGeneration();
+			repeatLoop = startCharacterGeneration(action == -4);
 			if (repeatLoop && !shouldQuit())
 				startupNew();
+			else
+				startupReset();
 		} else if (action == -3) {
 			// transfer party
 			repeatLoop = startPartyTransfer();
@@ -684,7 +654,7 @@ Common::Error EoBCoreEngine::go() {
 		}
 	}
 
-	if (!shouldQuit() && action >= -3) {
+	if (!shouldQuit() && action >= -4) {
 		runLoop();
 
 		if (_playFinale) {
@@ -709,7 +679,7 @@ void EoBCoreEngine::readSettings() {
 	_configHpBarGraphs = ConfMan.getBool("hpbargraphs");
 	_configMouseBtSwap = ConfMan.getBool("mousebtswap");
 	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;	
-	_configMusic = (_flags.platform == Common::kPlatformPC98) ? (ConfMan.getBool("music_mute") ? 0 : 1) : (_configSounds ? 1 : 0);
+	_configMusic = (_flags.platform == Common::kPlatformPC98 || _flags.platform == Common::kPlatformSegaCD) ? (ConfMan.getBool("music_mute") ? 0 : 1) : (_configSounds ? 1 : 0);
 
 	if (_sound) {
 		_sound->enableMusic(_configNullSound ? false : _configMusic);
@@ -721,11 +691,11 @@ void EoBCoreEngine::writeSettings() {
 	ConfMan.setBool("hpbargraphs", _configHpBarGraphs);
 	ConfMan.setBool("mousebtswap", _configMouseBtSwap);
 	ConfMan.setBool("sfx_mute", _configSounds == 0);
-	if (_flags.platform == Common::kPlatformPC98)
+	if (_flags.platform == Common::kPlatformPC98 || _flags.platform == Common::kPlatformSegaCD)
 		ConfMan.setBool("music_mute", _configMusic == 0);
 
 	if (_sound) {
-		if (_flags.platform == Common::kPlatformPC98) {
+		if (_flags.platform == Common::kPlatformPC98 || _flags.platform == Common::kPlatformSegaCD) {
 			if (!_configMusic)
 				snd_playSong(0);
 		} else if (!_configSounds) {
@@ -753,8 +723,7 @@ void EoBCoreEngine::runLoop() {
 	_envAudioTimer = _system->getMillis() + (rollDice(1, 10, 3) * 18 * _tickLength);
 	_flashShapeTimer = 0;
 	_drawSceneTimer = _system->getMillis();
-
-	_screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
+	_screen->setFont(_conFont);
 	_screen->setScreenDim(7);
 
 	_runFlag = true;
@@ -771,15 +740,19 @@ void EoBCoreEngine::runLoop() {
 		updateScriptTimers();
 		updateWallOfForceTimers();
 
-		if (_sceneUpdateRequired)
+		if (_sceneUpdateRequired && !_sceneShakeCountdown)
 			drawScene(1);
 
-		if (_envAudioTimer < _system->getMillis() && !(_flags.gameID == GI_EOB1 && (_flags.platform == Common::kPlatformAmiga || _currentLevel == 0 || _currentLevel > 3))) {
-			_envAudioTimer = _system->getMillis() + (rollDice(1, 10, 3) * 18 * _tickLength);
+		updateAnimTimers();
+
+		uint32 curTime = _system->getMillis();
+		if (_envAudioTimer < curTime && !(_flags.gameID == GI_EOB1 && (_flags.platform == Common::kPlatformSegaCD || _flags.platform == Common::kPlatformAmiga || _currentLevel == 0 || _currentLevel > 3))) {
+			_envAudioTimer = curTime + (rollDice(1, 10, 3) * 18 * _tickLength);
 			snd_processEnvironmentalSoundEffect(_flags.gameID == GI_EOB1 ? 30 : (rollDice(1, 2, -1) ? 27 : 28), _currentBlock + rollDice(1, 12, -1));
 		}
 
-		updateEnvironmentalSfx(0);
+		snd_updateLevelScore();
+		snd_updateEnvironmentalSfx(0);
 		turnUndeadAuto();
 	}
 }
@@ -800,55 +773,69 @@ bool EoBCoreEngine::checkPartyStatus(bool handleDeath) {
 	if (checkPartyStatusExtra()) {
 		Screen::FontId of = _screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
 		gui_updateControls();
-		if (_gui->runLoadMenu(0, 0)) {
+		int x = 0;
+		int y = 0;
+		if (_flags.platform == Common::kPlatformSegaCD) {
+			startupLoad();
+			x = 80;
+			y = 16;
+		}
+		if (_gui->runLoadMenu(x, y)) {
 			_screen->setFont(of);
 			return true;
 		}
 	}
 
-	quitGame();
+	if (_flags.platform == Common::kPlatformSegaCD)
+		_screen->sega_fadeToBlack(1);
+
+	if (!shouldQuit())
+		quitGame();
+
 	return false;
+}
+
+void EoBCoreEngine::updateAnimTimers() {
+	uint32 curTime = _system->getMillis();
+	if (_lastSecTick + 1000 <= curTime) {
+		_lastSecTick = curTime;
+		_totalPlaySecs++;
+	}
+
+	if (_lastVIntTick + 16 <= curTime) {
+		_lastVIntTick = curTime;
+		gui_updateAnimations();
+	}
 }
 
 void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 	releaseItemsAndDecorationsShapes();
 	int div = (_flags.gameID == GI_EOB1) ? 3 : 8;
 	int mul = (_flags.gameID == GI_EOB1) ? 64 : 24;
-	int size = 0;
 
 	_largeItemShapes = new const uint8*[_numLargeItemShapes];
-	if (_flags.platform == Common::kPlatformFMTowns && _flags.gameID == GI_EOB2) {
-		for (int i = 0; i < _numLargeItemShapes; i++)
-			_largeItemShapes[i] = _staticres->loadRawData(kEoB2LargeItemsShapeData00 + i, size);
-	} else {
-		_screen->loadShapeSetBitmap("ITEML1", 5, 3);
-		for (int i = 0; i < _numLargeItemShapes; i++)
-			_largeItemShapes[i] = _screen->encodeShape((i / div) << 3, (i % div) * mul, 8, 24, false, _cgaMappingItemsL);
+	_screen->loadShapeSetBitmap("ITEML1", 5, 3);
+	for (int i = 0; i < _numLargeItemShapes; i++)
+		_largeItemShapes[i] = _screen->encodeShape((i / div) << 3, (i % div) * mul, 8, 24, false, _cgaMappingItemsL);
 
-		if (_flags.gameID == GI_EOB1) {
-			for (int c = 0; c < 3; ++c) {
-				_largeItemShapesScl[c] = new const uint8*[_numLargeItemShapes];
-				for (int i = 0; i < _numLargeItemShapes; i++)
-					_largeItemShapesScl[c][i] = _screen->encodeShape((i / div) << 3, (i % div) * mul + 24 + (c << 4), 6 - 2 * c, 16 - ((c >> 1) << 3), false, _cgaMappingItemsL);
-			}
+	if (_flags.gameID == GI_EOB1) {
+		for (int c = 0; c < 3; ++c) {
+			_largeItemShapesScl[c] = new const uint8*[_numLargeItemShapes];
+			for (int i = 0; i < _numLargeItemShapes; i++)
+				_largeItemShapesScl[c][i] = _screen->encodeShape((i / div) << 3, (i % div) * mul + 24 + (c << 4), 6 - 2 * c, 16 - ((c >> 1) << 3), false, _cgaMappingItemsL);
 		}
 	}
 
 	_smallItemShapes = new const uint8*[_numSmallItemShapes];
-	if (_flags.platform == Common::kPlatformFMTowns && _flags.gameID == GI_EOB2) {
-		for (int i = 0; i < _numSmallItemShapes; i++)
-			_smallItemShapes[i] = _staticres->loadRawData(kEoB2SmallItemsShapeData00 + i, size);
-	} else {
-		_screen->loadShapeSetBitmap("ITEMS1", 5, 3);
-		for (int i = 0; i < _numSmallItemShapes; i++)
-			_smallItemShapes[i] = _screen->encodeShape((i / div) << 2, (i % div) * mul, 4, 24, false, _cgaMappingItemsS);
+	_screen->loadShapeSetBitmap("ITEMS1", 5, 3);
+	for (int i = 0; i < _numSmallItemShapes; i++)
+		_smallItemShapes[i] = _screen->encodeShape((i / div) << 2, (i % div) * mul, 4, 24, false, _cgaMappingItemsS);
 
-		if (_flags.gameID == GI_EOB1) {
-			for (int c = 0; c < 3; ++c) {
-				_smallItemShapesScl[c] = new const uint8*[_numSmallItemShapes];
-				for (int i = 0; i < _numSmallItemShapes; i++)
-					_smallItemShapesScl[c][i] = _screen->encodeShape((i / div) << 2, (i % div) * mul + 24 + (c << 4), 3 - c, 16 - ((c >> 1) << 3), false, _cgaMappingItemsS);
-			}
+	if (_flags.gameID == GI_EOB1) {
+		for (int c = 0; c < 3; ++c) {
+			_smallItemShapesScl[c] = new const uint8*[_numSmallItemShapes];
+			for (int i = 0; i < _numSmallItemShapes; i++)
+				_smallItemShapesScl[c][i] = _screen->encodeShape((i / div) << 2, (i % div) * mul + 24 + (c << 4), 3 - c, 16 - ((c >> 1) << 3), false, _cgaMappingItemsS);
 		}
 	}
 
@@ -857,192 +844,99 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 		_spellShapes = new const uint8*[4];
 	_firebeamShapes = new const uint8*[3];
 
-	if (_flags.platform == Common::kPlatformFMTowns && _flags.gameID == GI_EOB2) {
-		for (int i = 0; i < _numThrownItemShapes; i++)
-			_thrownItemShapes[i] = _staticres->loadRawData(kEoB2ThrownShapeData00 + i, size);
-		for (int i = 0; i < 4; i++)
-			_spellShapes[i] = _staticres->loadRawData(kEoB2SpellShapeData00 + i, size);
-		for (int i = 0; i < 3; i++)
-			_firebeamShapes[i] = _staticres->loadRawData(kEoB2FirebeamShapeData00 + i, size);
-		_redSplatShape = _staticres->loadRawData(kEoB2RedSplatShapeData, size);
-		_greenSplatShape = _staticres->loadRawData(kEoB2GreenSplatShapeData, size);
-	} else {
-		_screen->loadShapeSetBitmap("THROWN", 5, 3);
-		for (int i = 0; i < _numThrownItemShapes; i++)
-			_thrownItemShapes[i] = _screen->encodeShape((i / div) << 2, (i % div) * mul, 4, 24, false, _cgaMappingThrown);
+	_screen->loadShapeSetBitmap("THROWN", 5, 3);
+	for (int i = 0; i < _numThrownItemShapes; i++)
+		_thrownItemShapes[i] = _screen->encodeShape((i / div) << 2, (i % div) * mul, 4, 24, false, _cgaMappingThrown);
 
-		if (_flags.gameID == GI_EOB1) {
-			for (int c = 0; c < 3; ++c) {
-				_thrownItemShapesScl[c] = new const uint8*[_numThrownItemShapes];
-				for (int i = 0; i < _numThrownItemShapes; i++)
-					_thrownItemShapesScl[c][i] = _screen->encodeShape((i / div) << 2, (i % div) * mul + 24 + (c << 4), 3 - c, 16 - ((c >> 1) << 3), false, _cgaMappingThrown);
-			}
-		} else {
-			for (int i = 0; i < 4; i++)
-				_spellShapes[i] = _screen->encodeShape(8, i << 5, 6, 32, false, _cgaMappingThrown);
+	if (_flags.gameID == GI_EOB1) {
+		for (int c = 0; c < 3; ++c) {
+			_thrownItemShapesScl[c] = new const uint8*[_numThrownItemShapes];
+			for (int i = 0; i < _numThrownItemShapes; i++)
+				_thrownItemShapesScl[c][i] = _screen->encodeShape((i / div) << 2, (i % div) * mul + 24 + (c << 4), 3 - c, 16 - ((c >> 1) << 3), false, _cgaMappingThrown);
 		}
-
-		_firebeamShapes[0] = _screen->encodeShape(16, 0, 4, 24, false, _cgaMappingThrown);
-		_firebeamShapes[1] = _screen->encodeShape(16, 24, 4, 24, false, _cgaMappingThrown);
-		_firebeamShapes[2] = _screen->encodeShape(16, 48, 3, 24, false, _cgaMappingThrown);
-		_redSplatShape = _screen->encodeShape(16, _flags.gameID == GI_EOB1 ? 144 : 72, 5, 24, false, _cgaMappingThrown);
-		_greenSplatShape = _screen->encodeShape(16, _flags.gameID == GI_EOB1 ? 168 : 96, 5, 16, false, _cgaMappingThrown);
+	} else {
+		for (int i = 0; i < 4; i++)
+			_spellShapes[i] = _screen->encodeShape(8, i << 5, 6, 32, false, _cgaMappingThrown);
 	}
 
+	_firebeamShapes[0] = _screen->encodeShape(16, 0, 4, 24, false, _cgaMappingThrown);
+	_firebeamShapes[1] = _screen->encodeShape(16, 24, 4, 24, false, _cgaMappingThrown);
+	_firebeamShapes[2] = _screen->encodeShape(16, 48, 3, 24, false, _cgaMappingThrown);
+	_redSplatShape = _screen->encodeShape(16, _flags.gameID == GI_EOB1 ? 144 : 72, 5, 24, false, _cgaMappingThrown);
+	_greenSplatShape = _screen->encodeShape(16, _flags.gameID == GI_EOB1 ? 168 : 96, 5, 16, false, _cgaMappingThrown);
+
 	_itemIconShapes = new const uint8*[_numItemIconShapes];
-	if (_flags.platform == Common::kPlatformFMTowns && _flags.gameID == GI_EOB2) {
-		for (int i = 0; i < _numItemIconShapes; i++)
-			_itemIconShapes[i] = _staticres->loadRawData(kEoB2ItemIconShapeData00 + i, size);
-	} else {
-		_screen->loadShapeSetBitmap("ITEMICN", 5, 3);
-		for (int i = 0; i < _numItemIconShapes; i++)
-			_itemIconShapes[i] = _screen->encodeShape((i % 0x14) << 1, (i / 0x14) << 4, 2, 0x10, false, _cgaMappingIcons);
-		
-		if (_flags.platform == Common::kPlatformAmiga) {
-			const uint8 offsY = (_flags.gameID == GI_EOB1) ? 80 : 96;
-			_amigaBlueItemIconShapes = new const uint8*[_numItemIconShapes];
-			for (int i = 0; i < _numItemIconShapes; i++) {
-				int bx = (i % 0x14) << 1;
-				int by = (i / 0x14) << 4;
-				_amigaBlueItemIconShapes[i] = _screen->getPagePixel(2, (bx << 3) + 8, by + offsY + 8) ? _screen->encodeShape(bx, by + offsY, 2, 0x10, false, 0) : _screen->encodeShape(bx, by, 2, 0x10, false, 0);
-			}
+	_screen->loadShapeSetBitmap("ITEMICN", 5, 3);
+	for (int i = 0; i < _numItemIconShapes; i++)
+		_itemIconShapes[i] = _screen->encodeShape((i % 0x14) << 1, (i / 0x14) << 4, 2, 0x10, false, _cgaMappingIcons);
+
+	if (_flags.platform == Common::kPlatformAmiga) {
+		const uint8 offsY = (_flags.gameID == GI_EOB1) ? 80 : 96;
+		_blueItemIconShapes = new const uint8*[_numItemIconShapes];
+		for (int i = 0; i < _numItemIconShapes; i++) {
+			int bx = (i % 0x14) << 1;
+			int by = (i / 0x14) << 4;
+			_blueItemIconShapes[i] = _screen->getPagePixel(2, (bx << 3) + 8, by + offsY + 8) ? _screen->encodeShape(bx, by + offsY, 2, 0x10, false, 0) : _screen->encodeShape(bx, by, 2, 0x10, false, 0);
 		}
 	}
 
 	_teleporterShapes = new const uint8*[6];
-	_sparkShapes = new const uint8*[3];
+	_sparkShapes = new const uint8*[4];
 	_compassShapes = new const uint8*[12];
 	if (_flags.gameID == GI_EOB2)
 		_wallOfForceShapes = new const uint8*[6];
 
-	if (_flags.platform == Common::kPlatformFMTowns && _flags.gameID == GI_EOB2) {
-		_lightningColumnShape = _staticres->loadRawData(kEoB2LightningColumnShapeData, size);
+	_screen->loadShapeSetBitmap("DECORATE", 5, 3);
+	if (_flags.gameID == GI_EOB2) {
+		_lightningColumnShape = _screen->encodeShape(18, 88, 4, 64);
 		for (int i = 0; i < 6; i++)
-			_wallOfForceShapes[i] = _staticres->loadRawData(kEoB2WallOfForceShapeData00 + i, size);
-		for (int i = 0; i < 6; i++)
-			_teleporterShapes[i] = _staticres->loadRawData(kEoB2TeleporterShapeData00 + i, size);
-		for (int i = 0; i < 3; i++)
-			_sparkShapes[i] = _staticres->loadRawData(kEoB2SparkShapeData00 + i, size);
-		for (int i = 0; i < 12; i++)
-			_compassShapes[i] = _staticres->loadRawData(kEoB2CompassShapeData00 + i, size);
+			_wallOfForceShapes[i] = _screen->encodeShape(_wallOfForceShapeDefs[(i << 2)], _wallOfForceShapeDefs[(i << 2) + 1], _wallOfForceShapeDefs[(i << 2) + 2], _wallOfForceShapeDefs[(i << 2) + 3]);
+	}
 
-		_deadCharShape = _staticres->loadRawData(kEoB2DeadCharShapeData, size);
-		_disabledCharGrid = _staticres->loadRawData(kEoB2DisabledCharGridShapeData, size);
-		_blackBoxSmallGrid = _staticres->loadRawData(kEoB2SmallGridShapeData, size);
-		_weaponSlotGrid = _staticres->loadRawData(kEoB2WeaponSlotGridShapeData, size);
-		_blackBoxWideGrid = _staticres->loadRawData(kEoB2WideGridShapeData, size);
-
-	} else {
-		_screen->loadShapeSetBitmap("DECORATE", 5, 3);
-		if (_flags.gameID == GI_EOB2) {
-			_lightningColumnShape = _screen->encodeShape(18, 88, 4, 64);
-			for (int i = 0; i < 6; i++)
-				_wallOfForceShapes[i] = _screen->encodeShape(_wallOfForceShapeDefs[(i << 2)], _wallOfForceShapeDefs[(i << 2) + 1], _wallOfForceShapeDefs[(i << 2) + 2], _wallOfForceShapeDefs[(i << 2) + 3]);
-		}
-
-		for (int i = 0; i < 6; i++)
-			_teleporterShapes[i] = _screen->encodeShape(_teleporterShapeDefs[(i << 2)], _teleporterShapeDefs[(i << 2) + 1], _teleporterShapeDefs[(i << 2) + 2], _teleporterShapeDefs[(i << 2) + 3], false, _cgaMappingDefault);
+	for (int i = 0; i < 6; i++)
+		_teleporterShapes[i] = _screen->encodeShape(_teleporterShapeDefs[(i << 2)], _teleporterShapeDefs[(i << 2) + 1], _teleporterShapeDefs[(i << 2) + 2], _teleporterShapeDefs[(i << 2) + 3], false, _cgaMappingDefault);
 		
-		_sparkShapes[0] = _screen->encodeShape(29, 0, 2, 16, false, _cgaMappingDeco);
-		_sparkShapes[1] = _screen->encodeShape(31, 0, 2, 16, false, _cgaMappingDeco);
-		_sparkShapes[2] = _screen->encodeShape(33, 0, 2, 16, false, _cgaMappingDeco);
-		_deadCharShape = _screen->encodeShape(0, 88, 4, 32, false, _cgaMappingDeco);
-		_disabledCharGrid = _screen->encodeShape(4, 88, 4, 32, false, _cgaMappingDeco);
-		_blackBoxSmallGrid = _screen->encodeShape(9, 88, 2, 8, false, _cgaMappingDeco);
-		_weaponSlotGrid = _screen->encodeShape(8, 88, 4, 16, false, _cgaMappingDeco);
-		_blackBoxWideGrid = _screen->encodeShape(8, 104, 4, 8, false, _cgaMappingDeco);
+	_sparkShapes[0] = _screen->encodeShape(29, 0, 2, 16, false, _cgaMappingDeco);
+	_sparkShapes[1] = _screen->encodeShape(31, 0, 2, 16, false, _cgaMappingDeco);
+	_sparkShapes[2] = _screen->encodeShape(33, 0, 2, 16, false, _cgaMappingDeco);
+	_sparkShapes[3] = 0;
+	_deadCharShape = _screen->encodeShape(0, 88, 4, 32, false, _cgaMappingDeco);
+	_disabledCharGrid = _screen->encodeShape(4, 88, 4, 32, false, _cgaMappingDeco);
+	_blackBoxSmallGrid = _screen->encodeShape(9, 88, 2, 8, false, _cgaMappingDeco);
+	_weaponSlotGrid = _screen->encodeShape(8, 88, 4, 16, false, _cgaMappingDeco);
+	_blackBoxWideGrid = _screen->encodeShape(8, 104, 4, 8, false, _cgaMappingDeco);
 
-		static const uint8 dHeight[] = { 17, 10, 10 };
-		static const uint8 dY[] = { 120, 137, 147 };
+	static const uint8 dHeight[] = { 17, 10, 10 };
+	static const uint8 dY[] = { 120, 137, 147 };
 		
-		for (int y = 0; y < 3; y++) {
-			for (int x = 0; x < 4; x++)
-				_compassShapes[(y << 2) + x] = _screen->encodeShape(x * 3, dY[y], 3, dHeight[y], false, _cgaMappingDeco);
-		}
+	for (int y = 0; y < 3; y++) {
+		for (int x = 0; x < 4; x++)
+			_compassShapes[(y << 2) + x] = _screen->encodeShape(x * 3, dY[y], 3, dHeight[y], false, _cgaMappingDeco);
 	}
 }
 
 void EoBCoreEngine::releaseItemsAndDecorationsShapes() {
 	if (_flags.platform != Common::kPlatformFMTowns || _flags.gameID != GI_EOB2) {
-		if (_largeItemShapes) {
-			for (int i = 0; i < _numLargeItemShapes; i++) {
-				if (_largeItemShapes[i])
-					delete[] _largeItemShapes[i];
-			}
-		}
+		releaseShpArr(_largeItemShapes, _numLargeItemShapes);
+		releaseShpArr(_smallItemShapes, _numSmallItemShapes);
+		releaseShpArr(_thrownItemShapes, _numThrownItemShapes);
+		releaseShpArr(_spellShapes, 4);
+		releaseShpArr(_itemIconShapes, _numItemIconShapes);
+		releaseShpArr(_blueItemIconShapes, _numItemIconShapes);
+		releaseShpArr(_xtraItemIconShapes, 3);
+		releaseShpArr(_sparkShapes, 4);
+		releaseShpArr(_wallOfForceShapes, 6);
+		releaseShpArr(_compassShapes, 12);
+		releaseShpArr(_firebeamShapes, 3);
 
-		if (_smallItemShapes) {
-			for (int i = 0; i < _numSmallItemShapes; i++) {
-				if (_smallItemShapes[i])
-					delete[] _smallItemShapes[i];
-			}
-		}
-
-		if (_thrownItemShapes) {
-			for (int i = 0; i < _numThrownItemShapes; i++) {
-				if (_thrownItemShapes[i])
-					delete[] _thrownItemShapes[i];
-			}
-		}
-
-		if (_spellShapes) {
-			for (int i = 0; i < 4; i++) {
-				if (_spellShapes[i])
-					delete[] _spellShapes[i];
-			}
-		}
-
-		if (_itemIconShapes) {
-			for (int i = 0; i < _numItemIconShapes; i++) {
-				if (_itemIconShapes[i])
-					delete[] _itemIconShapes[i];
-			}
-		}
-
-		if (_amigaBlueItemIconShapes) {
-			for (int i = 0; i < _numItemIconShapes; i++) {
-				if (_amigaBlueItemIconShapes[i])
-					delete[] _amigaBlueItemIconShapes[i];
-			}
-		}
-
-		if (_sparkShapes) {
-			for (int i = 0; i < 3; i++) {
-				if (_sparkShapes[i])
-					delete[] _sparkShapes[i];
-			}
-		}
-
-		if (_wallOfForceShapes) {
-			for (int i = 0; i < 6; i++) {
-				if (_wallOfForceShapes[i])
-					delete[] _wallOfForceShapes[i];
-			}
-		}
-
-		if (_teleporterShapes) {
-			for (int i = 0; i < 6; i++) {
-				if (_teleporterShapes[i])
-					delete[] _teleporterShapes[i];
-			}
-		}
-
-		if (_compassShapes) {
-			for (int i = 0; i < 12; i++) {
-				if (_compassShapes[i])
-					delete[] _compassShapes[i];
-			}
-		}
-
-		if (_firebeamShapes) {
-			for (int i = 0; i < 3; i++) {
-				if (_firebeamShapes[i])
-					delete[] _firebeamShapes[i];
-			}
+		// SegaCD uses the spark shapes for drawing the teleporters. We copy only the pointers, not the whole shapes.
+		if (_flags.platform != Common::kPlatformSegaCD) {
+			releaseShpArr(_teleporterShapes, 6);
 		}
 
 		delete[] _redSplatShape;
 		delete[] _greenSplatShape;
+		delete[] _swapShape;
 		delete[] _deadCharShape;
 		delete[] _disabledCharGrid;
 		delete[] _blackBoxSmallGrid;
@@ -1056,7 +950,8 @@ void EoBCoreEngine::releaseItemsAndDecorationsShapes() {
 	delete[] _thrownItemShapes;
 	delete[] _spellShapes;
 	delete[] _itemIconShapes;
-	delete[] _amigaBlueItemIconShapes;
+	delete[] _blueItemIconShapes;
+	delete[] _xtraItemIconShapes;
 	delete[] _sparkShapes;
 	delete[] _wallOfForceShapes;
 	delete[] _teleporterShapes;
@@ -1064,27 +959,9 @@ void EoBCoreEngine::releaseItemsAndDecorationsShapes() {
 	delete[] _firebeamShapes;
 
 	for (int i = 0; i < 3; ++i) {
-		if (_largeItemShapesScl[i]) {
-			for (int ii = 0; ii < _numLargeItemShapes; ++ii) {
-				if (_largeItemShapesScl[i][ii])
-					delete[] _largeItemShapesScl[i][ii];
-			}
-		}
-
-		if (_smallItemShapesScl[i]) {
-			for (int ii = 0; ii < _numSmallItemShapes; ++ii) {
-				if (_smallItemShapesScl[i][ii])
-					delete[] _smallItemShapesScl[i][ii];
-			}
-		}
-
-		if (_thrownItemShapesScl[i]) {
-			for (int ii = 0; ii < _numThrownItemShapes; ++ii) {
-				if (_thrownItemShapesScl[i][ii])
-					delete[] _thrownItemShapesScl[i][ii];
-			}
-		}
-
+		releaseShpArr(_largeItemShapesScl[i], _numLargeItemShapes);
+		releaseShpArr(_smallItemShapesScl[i], _numSmallItemShapes);
+		releaseShpArr(_thrownItemShapesScl[i], _numThrownItemShapes);
 		delete[] _largeItemShapesScl[i];
 		delete[] _smallItemShapesScl[i];
 		delete[] _thrownItemShapesScl[i];
@@ -1107,10 +984,24 @@ void EoBCoreEngine::setHandItem(Item itemIndex) {
 	int icon = _items[_itemInHand].icon;
 	const uint8 *shp = _itemIconShapes[icon];
 	const uint8 *ovl = 0;
+	bool applyBluePal = ((_partyEffectFlags & 2) && (_items[_itemInHand].flags & 0x80)) ? true : false;
 
-	if (icon && (_items[_itemInHand].flags & 0x80) && (_partyEffectFlags & 2)) {
-		if (_amigaBlueItemIconShapes)
-			shp = _amigaBlueItemIconShapes[icon];
+	if (_xtraItemIconShapes) {
+		bool applyBluePalC = applyBluePal;
+		applyBluePal = false;
+		if (_items[_itemInHand].nameUnid == 23)
+			shp = _xtraItemIconShapes[0];
+		else if (_items[_itemInHand].nameUnid == 97)
+			shp = _xtraItemIconShapes[1];
+		else if (_items[_itemInHand].nameId == 39)
+			shp = _xtraItemIconShapes[2];
+		else
+			applyBluePal = applyBluePalC;
+	}
+
+	if (icon && applyBluePal) {
+		if (_blueItemIconShapes)
+			shp = _blueItemIconShapes[icon];
 		else
 			ovl = _flags.gameID == GI_EOB1 ? ((_configRenderMode == Common::kRenderCGA) ? _itemsOverlayCGA : &_itemsOverlay[icon << 4]) : _screen->generateShapeOverlay(shp, _lightBlueFadingTable);
 	}
@@ -1188,13 +1079,13 @@ int EoBCoreEngine::getModifiedHpLimits(int hpModifier, int constModifier, int le
 	return res;
 }
 
-Common::String EoBCoreEngine::getCharStrength(int str, int strExt) {
+Common::String EoBCoreEngine::getCharStrength(int str, int strExt, bool twoDigitsPadding) {
 	if (strExt) {
 		if (strExt == 100)
 			strExt = 0;
-		_strenghtStr = Common::String::format("%d/%02d", str, strExt);
+		_strenghtStr = Common::String::format(twoDigitsPadding ? "%02d/%02d" : "%d/%02d", str, strExt);
 	} else {
-		_strenghtStr = Common::String::format("%d", str);
+		_strenghtStr = Common::String::format(twoDigitsPadding ? "%02d" : "%d", str);
 	}
 
 	return _strenghtStr;
@@ -1432,26 +1323,28 @@ void EoBCoreEngine::neutralizePoison(int character) {
 }
 
 void EoBCoreEngine::npcSequence(int npcIndex) {
-	_screen->loadShapeSetBitmap("OUTTAKE", 5, 3);
-	_screen->copyRegion(0, 0, 0, 0, 176, 120, 0, 6, Screen::CR_NO_P_CHECK);
+	if (_flags.platform != Common::kPlatformSegaCD) {
+		_screen->loadShapeSetBitmap("OUTTAKE", 5, 3);
+		_screen->copyRegion(0, 0, 0, 0, 176, 120, 0, 6, Screen::CR_NO_P_CHECK);
 
-	drawNpcScene(npcIndex);
+		drawNpcScene(npcIndex);
 
-	Common::SeekableReadStream *s = _res->createReadStream("TEXT.DAT");
-	if (s) {
-		_screen->loadFileDataToPage(s, 5, 32000);
-	} else {
-		s = _res->createReadStream("TEXT.CPS");
-		if (s->readSint32BE() + 12 == s->size())
-			_screen->loadSpecialAmigaCPS("TEXT.CPS", 5, false);
-		else
-			_screen->loadBitmap("TEXT.CPS", 5, 5, 0, true);
-	}		
-	delete s;
+		Common::SeekableReadStream *s = _res->createReadStream("TEXT.DAT");
+		if (s) {
+			_screen->loadFileDataToPage(s, 5, 32000);
+		} else {
+			s = _res->createReadStream("TEXT.CPS");
+			if (s->readSint32BE() + 12 == s->size())
+				_screen->loadSpecialAmigaCPS("TEXT.CPS", 5, false);
+			else
+				_screen->loadBitmap("TEXT.CPS", 5, 5, 0, true);
+		}
+		delete s;
 
-	gui_drawBox(0, 121, 320, 79, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
-	_txt->setupField(9, true);
-	_txt->resetPageBreakString();
+		gui_drawBox(0, 121, 320, 79, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
+		_txt->setupField(9, true);
+		_txt->resetPageBreakString();
+	}
 
 	runNpcDialogue(npcIndex);
 
@@ -1472,24 +1365,19 @@ void EoBCoreEngine::initNpc(int npcIndex) {
 	delete[] c->faceShape;
 	memcpy(c, &_npcPreset[npcIndex], sizeof(EoBCharacter));
 	recalcArmorClass(i);
+	makeFaceShapes(i);
+	makeNameShapes(i);
 
 	for (i = 0; i < 25; i++) {
 		if (!c->inventory[i])
 			continue;
 		c->inventory[i] = duplicateItem(c->inventory[i]);
 	}
-
-	_screen->loadShapeSetBitmap(_flags.gameID == GI_EOB2 ? "OUTPORTS" : "OUTTAKE", 3, 3);
-	_screen->_curPage = 2;
-	c->faceShape = _screen->encodeShape(npcIndex << 2, _flags.gameID == GI_EOB2 ? 0 : 160, 4, 32, true, _cgaMappingDefault);
-	_screen->_curPage = 0;
 }
 
 int EoBCoreEngine::npcJoinDialogue(int npcIndex, int queryJoinTextId, int confirmJoinTextId, int noJoinTextId) {
 	gui_drawDialogueBox();
-	_txt->printDialogueText(queryJoinTextId, 0);
-
-	int r = runDialogue(-1, 2, _yesNoStrings[0], _yesNoStrings[1]) - 1;
+	int r = runDialogue(queryJoinTextId, _flags.platform == Common::kPlatformSegaCD ? 3 : 2, _flags.platform == Common::kPlatformSegaCD ? 3 : -1, _yesNoStrings[0], _yesNoStrings[1], _flags.platform == Common::kPlatformSegaCD ? _yesNoStrings[2] : 0) - 1;
 	if (r == 0) {
 		if (confirmJoinTextId == -1) {
 			Common::String tmp = Common::String::format(_npcJoinStrings[0], _npcPreset[npcIndex].name);
@@ -1501,7 +1389,7 @@ int EoBCoreEngine::npcJoinDialogue(int npcIndex, int queryJoinTextId, int confir
 		if (prepareForNewPartyMember(33, npcIndex + 1))
 			initNpc(npcIndex);
 
-	} else if (r == 1) {
+	} else if (r == 1 && noJoinTextId != -1) {
 		_txt->printDialogueText(noJoinTextId, _okStrings[0]);
 	}
 
@@ -1520,8 +1408,17 @@ int EoBCoreEngine::prepareForNewPartyMember(int16 itemType, int16 itemValue) {
 		_screen->set16bitShadingLevel(4);
 		_txt->printDialogueText(_npcMaxStrings[0]);
 		_screen->set16bitShadingLevel(0);
-		int r = runDialogue(-1, 7, _characters[0].name, _characters[1].name, _characters[2].name, _characters[3].name,
-		                    _characters[4].name, _characters[5].name, _abortStrings[0]) - 1;
+
+		if (_flags.platform == Common::kPlatformSegaCD) {
+			resetSkipFlag();
+			_allowSkip = true;
+			while (!(shouldQuit() || skipFlag()))
+				delay(20);
+			_allowSkip = false;
+			resetSkipFlag();
+		}
+
+		int r = runDialogue(-1, 7, -1, _characters[0].name, _characters[1].name, _characters[2].name, _characters[3].name, _characters[4].name, _characters[5].name, _abortStrings[0]) - 1;
 
 		if (r == 6)
 			return 0;
@@ -1631,7 +1528,7 @@ void EoBCoreEngine::increaseCharacterLevel(int charIndex, int levelIndex) {
 
 	gui_drawCharPortraitWithStats(charIndex);
 	_txt->printMessage(_levelGainStrings[0], -1, _characters[charIndex].name);
-	snd_playSoundEffect(23);
+	snd_playSoundEffect(_flags.platform == Common::kPlatformSegaCD ? 0x1017 : 0x17);
 }
 
 void EoBCoreEngine::setWeaponSlotStatus(int charIndex, int mode, int slot) {
@@ -1651,22 +1548,20 @@ void EoBCoreEngine::setupDialogueButtons(int presetfirst, int numStr, va_list &a
 	Screen::FontId of = _screen->setFont((_flags.gameID == GI_EOB2 && _flags.platform == Common::kPlatformFMTowns) ? Screen::FID_8_FNT : _screen->_currentFont);
 
 	for (int i = 0; i < numStr; i++) {
-		const char *s = va_arg(args, const char *);
+		const char *s = va_arg(args, const char*);
 		if (s)
 			_dialogueButtonString[i] = s;
 		else
 			_dialogueNumButtons = numStr = i;
 	}
 
-	static const uint16 prsX[] = { 59, 166, 4, 112, 220, 4, 112, 220, 4, 112, 220, 4, 112, 220 };
-	static const uint8 prsY[] = { 0, 0, 0, 0, 0, 12, 12, 12, 24, 24, 24, 36, 36, 36 };
-
 	const ScreenDim *dm = screen()->_curDim;
 	int yOffs = (_txt->lineCount() + 1) * _screen->getFontHeight() + dm->sy + 4;
 
-	_dialogueButtonPosX = &prsX[presetfirst];
-	_dialogueButtonPosY = &prsY[presetfirst];
-	_dialogueButtonYoffs = yOffs;
+	_dialogueButtonPosX = &guiSettings()->buttons.posX[presetfirst];
+	_dialogueButtonPosY = &guiSettings()->buttons.posY[presetfirst];
+	_dialogueButtonXoffs = (_flags.platform == Common::kPlatformSegaCD) ? 8 : 0;
+	_dialogueButtonYoffs = (_flags.platform == Common::kPlatformSegaCD) ? 160 : yOffs;
 
 	drawDialogueButtons();
 
@@ -1775,23 +1670,29 @@ void EoBCoreEngine::drawSequenceBitmap(const char *file, int destRect, int x1, i
 	_screen->updateScreen();
 }
 
-int EoBCoreEngine::runDialogue(int dialogueTextId, int numStr, ...) {
-	if (dialogueTextId != -1)
-		txt()->printDialogueText(dialogueTextId, 0);
+int EoBCoreEngine::runDialogue(int dialogueTextId, int numStr, int loopButtonId, ...) {
+	int res;
+	do {
+		res = 0;
+		if (dialogueTextId != -1)
+			txt()->printDialogueText(dialogueTextId, 0);
 
-	va_list args;
-	va_start(args, numStr);
-	if (numStr > 2)
-		setupDialogueButtons(2, numStr, args);
-	else
-		setupDialogueButtons(0, numStr, args);
-	va_end(args);
+		va_list args;
+		va_start(args, loopButtonId);
+		if (_flags.platform == Common::kPlatformSegaCD && numStr > 3)
+			setupDialogueButtons(numStr == 4 ? 14 : 5, numStr, args);
+		else if (numStr > 2)
+			setupDialogueButtons(2, numStr, args);
+		else
+			setupDialogueButtons(0, numStr, args);
+		va_end(args);
 
-	int res = 0;
-	while (res == 0 && !shouldQuit())
-		res = processDialogue();
+		while (res == 0 && !shouldQuit())
+			res = processDialogue();
+	} while (res == loopButtonId && !shouldQuit());
 
-	gui_drawDialogueBox();
+	if (_flags.platform != Common::kPlatformSegaCD)
+		gui_drawDialogueBox();
 
 	return res;
 }
@@ -1799,10 +1700,10 @@ int EoBCoreEngine::runDialogue(int dialogueTextId, int numStr, ...) {
 void EoBCoreEngine::restParty_displayWarning(const char *str) {
 	int od = _screen->curDimIndex();
 	_screen->setScreenDim(7);
-	Screen::FontId of = _screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
+	Screen::FontId of = _screen->setFont(_conFont);
 	_screen->setCurPage(0);
 
-	_txt->printMessage(Common::String::format("\r%s\r", str).c_str());
+	_txt->printMessage(Common::String::format(_flags.platform == Common::kPlatformSegaCD ? "%s" : "\r%s\r", str).c_str());
 
 	_screen->setFont(of);
 	_screen->setScreenDim(od);
@@ -1816,7 +1717,12 @@ bool EoBCoreEngine::restParty_updateMonsters() {
 
 	for (int i = 0; i < 5; i++) {
 		_partyResting = true;
-		Screen::FontId of = _screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
+
+		// The original SegaCD code does not update the monsters during resting. I presume to
+		// avoid graphical issues which I have (apparently successfully) tried to fix. At first
+		// I had disabled the monster updated just like the original, but it annoyed me, since
+		// it felt like a step backwards...
+		Screen::FontId of = _screen->setFont(_conFont);
 		int od = _screen->curDimIndex();
 		_screen->setScreenDim(7);
 		updateMonsters(0);
@@ -1824,6 +1730,7 @@ bool EoBCoreEngine::restParty_updateMonsters() {
 		timerProcessFlyingObjects(0);
 		_screen->setScreenDim(od);
 		_screen->setFont(of);
+
 		_partyResting = false;
 
 		for (int ii = 0; ii < 30; ii++) {
@@ -1911,6 +1818,11 @@ void EoBCoreEngine::delay(uint32 millis, bool, bool) {
 		_system->delayMillis(step);
 		millis -= step;
 	}
+}
+
+void EoBCoreEngine::pauseEngineIntern(bool pause) {
+	KyraEngine_v1::pauseEngineIntern(pause);
+	seq_segaPausePlayer(pause);
 }
 
 void EoBCoreEngine::displayParchment(int id) {
@@ -2005,78 +1917,90 @@ int EoBCoreEngine::countResurrectionCandidates() {
 }
 
 void EoBCoreEngine::seq_portal() {
-	uint8 *shapes1[5];
-	uint8 *shapes2[5];
-	uint8 *shapes3[5];
-	uint8 *shape0;
+	const uint8 **shapes = makePortalShapes();
+	assert(shapes);
 
-	_screen->loadShapeSetBitmap("PORTALA", 5, 3);
-
-	for (int i = 0; i < 5; i++) {
-		shapes1[i] = _screen->encodeShape(i * 3, 0, 3, 75, false, _cgaMappingDefault);
-		shapes2[i] = _screen->encodeShape(i * 3, 80, 3, 75, false, _cgaMappingDefault);
-		shapes3[i] = _screen->encodeShape(15, i * 18, 15, 18, false, _cgaMappingDefault);
-	}
-
-	shape0 = _screen->encodeShape(30, 0, 8, 77, false, _cgaMappingDefault);
-	_screen->loadEoBBitmap("PORTALB", _cgaMappingDefault, 5, 3, 2);
-
-	snd_playSoundEffect(33);
-	snd_playSoundEffect(19);
 	_screen->copyRegion(24, 0, 24, 0, 144, 104, 2, 5, Screen::CR_NO_P_CHECK);
 	_screen->copyRegion(24, 0, 24, 0, 144, 104, 0, 2, Screen::CR_NO_P_CHECK);
-	_screen->drawShape(2, shapes3[0], 28, 9, 0);
-	_screen->drawShape(2, shapes1[0], 34, 28, 0);
-	_screen->drawShape(2, shapes2[0], 120, 28, 0);
-	_screen->drawShape(2, shape0, 56, 27, 0);
-	_screen->crossFadeRegion(24, 0, 24, 0, 144, 104, 2, 0);
+	_screen->drawShape(2, shapes[11], 28, 9, 0);
+	_screen->drawShape(2, shapes[1], 34, 28, 0);
+	_screen->drawShape(2, shapes[6], 120, 28, 0);
+	_screen->drawShape(2, shapes[0], 56, 27, 0);
+
+	if (_flags.platform == Common::kPlatformSegaCD) {
+		snd_playSoundEffect(19);
+		_screen->copyRegion(24, 0, 24, 0, 144, 104, 2, 0, Screen::CR_NO_P_CHECK);
+		_screen->updateScreen();
+	} else {
+		snd_playSoundEffect(33);
+		snd_playSoundEffect(19);
+		_screen->crossFadeRegion(24, 0, 24, 0, 144, 104, 2, 0);
+		delay(30 * _tickLength);
+	}
+
 	_screen->copyRegion(24, 0, 24, 0, 144, 104, 5, 2, Screen::CR_NO_P_CHECK);
-	delay(30 * _tickLength);
 
 	for (const int8 *pos = _portalSeq; *pos > -1 && !shouldQuit();) {
 		int s = *pos++;
-		_screen->drawShape(0, shapes3[s], 28, 9, 0);
-		_screen->drawShape(0, shapes1[s], 34, 28, 0);
-		_screen->drawShape(0, shapes2[s], 120, 28, 0);
+		_screen->drawShape(0, shapes[11 + s], 28, 9, 0);
+		_screen->drawShape(0, shapes[1 + s], 34, 28, 0);
+		_screen->drawShape(0, shapes[6 + s], 120, 28, 0);
 
-		if ((s == 1) && (pos >= _portalSeq + 3)) {
-			if (*(pos - 3) == 0) {
-				snd_playSoundEffect(24);
-				snd_playSoundEffect(86);
+		if (_flags.platform != Common::kPlatformSegaCD) {
+			if ((s == 1) && (pos >= _portalSeq + 3)) {
+				if (*(pos - 3) == 0) {
+					snd_playSoundEffect(24);
+					snd_playSoundEffect(86);
+				}
 			}
 		}
 
 		s = *pos++;
 		if (s == 0) {
-			_screen->drawShape(0, shape0, 56, 27, 0);
+			_screen->drawShape(0, shapes[0], 56, 27, 0);
 		} else {
 			s--;
 			_screen->copyRegion((s % 5) << 6, s / 5 * 77, 56, 27, 64, 77, 2, 0, Screen::CR_NO_P_CHECK);
 		}
 
-		if (s == 1)
-			snd_playSoundEffect(31);
-		else if (s == 3) {
-			if (*(pos - 2) == 3)
-				snd_playSoundEffect(90);
+		if (_flags.platform != Common::kPlatformSegaCD) {
+			if (s == 1)
+				snd_playSoundEffect(31);
+			else if (s == 3) {
+				if (*(pos - 2) == 3)
+					snd_playSoundEffect(90);
+			}
 		}
-
+	
 		_screen->updateScreen();
 		delay(2 * _tickLength);
 	}
+	
+	for (int i = 0; i < 16; i++)
+		delete[] shapes[i];
+	delete[] shapes;
+}
 
-	delete[] shape0;
+const uint8 **EoBCoreEngine::makePortalShapes() {
+	const uint8 **shapes = new const uint8*[16];
+	_screen->loadShapeSetBitmap("PORTALA", 5, 3);
+
 	for (int i = 0; i < 5; i++) {
-		delete[] shapes1[i];
-		delete[] shapes2[i];
-		delete[] shapes3[i];
+		shapes[1 + i] = _screen->encodeShape(i * 3, 0, 3, 75, false, _cgaMappingDefault);
+		shapes[6 + i] = _screen->encodeShape(i * 3, 80, 3, 75, false, _cgaMappingDefault);
+		shapes[11 + i] = _screen->encodeShape(15, i * 18, 15, 18, false, _cgaMappingDefault);
 	}
+
+	shapes[0] = _screen->encodeShape(30, 0, 8, 77, false, _cgaMappingDefault);
+	_screen->loadEoBBitmap("PORTALB", _cgaMappingDefault, 5, 3, 2);
+
+	return shapes;
 }
 
 bool EoBCoreEngine::checkPassword() {
 	char answ[20];
 	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
-	_screen->copyPage(0, 10);
+	_screen->copyPage(0, Screen_EoB::kCheckPwBackupPage);
 
 	_screen->setScreenDim(13);
 	gui_drawBox(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, guiSettings()->colors.frame1, guiSettings()->colors.frame2, -1);
@@ -2103,7 +2027,7 @@ bool EoBCoreEngine::checkPassword() {
 
 	_screen->modifyScreenDim(13, _screen->_curDim->sx - 1, _screen->_curDim->sy - 2, _screen->_curDim->w + 2, _screen->_curDim->h + 16);
 	_screen->setFont(of);
-	_screen->copyPage(10, 0);
+	_screen->copyPage(Screen_EoB::kCheckPwBackupPage, 0);
 	return true;
 }
 
@@ -2146,6 +2070,7 @@ void EoBCoreEngine::useSlotWeapon(int charIndex, int slotIndex, Item item) {
 		if (!inflict)
 			inflict = -1;
 		snd_playSoundEffect(32);
+		playStrikeAnimation(inflict > 0 ? (_monsters[_dstMonsterIndex].pos == 4 ? 4 : _dscItemPosIndex[(_currentDirection << 2) | (_monsters[_dstMonsterIndex].pos & 3)]) : 4, item);
 	} else if (ep == 2) {
 		inflict = thrownAttack(charIndex, slotIndex, item);
 	} else if (ep == 3) {
@@ -2294,10 +2219,13 @@ void EoBCoreEngine::inflictMonsterDamage(EoBMonsterInPlay *m, int damage, bool g
 		}
 	}
 
-	if (m->hitPointsCur <= 0)
+	if (m->hitPointsCur <= 0) {
+		if (_flags.platform == Common::kPlatformSegaCD)
+			snd_playSoundEffect(0x1082);
 		killMonster(m, giveExperience);
-	else if (getBlockDistance(m->block, _currentBlock) < 4)
+	} else if (getBlockDistance(m->block, _currentBlock) < 4) {
 		m->dest = _currentBlock;
+	}
 }
 
 void EoBCoreEngine::calcAndInflictMonsterDamage(EoBMonsterInPlay *m, int times, int pips, int offs, int flags, int savingThrowType, int savingThrowEffect) {
@@ -2354,12 +2282,14 @@ void EoBCoreEngine::inflictCharacterDamage(int charIndex, int damage) {
 
 	if (c->hitPointsCur > -10) {
 		snd_playSoundEffect(21);
+		if (_flags.platform == Common::kPlatformSegaCD)
+			_sceneShakeCountdown = c->gfxUpdateCountdown = 32;
 	} else {
 		c->hitPointsCur = -10;
 		c->flags &= 1;
 		c->food = 0;
 		removeAllCharacterEffects(charIndex);
-		snd_playSoundEffect(22);
+		snd_playSoundEffect(_flags.platform == Common::kPlatformSegaCD ? 0x8001 + (c->raceSex & 1) : 22);
 	}
 
 	if (c->effectsRemainder[0]) {
@@ -2744,13 +2674,57 @@ void EoBCoreEngine::explodeMonster(EoBMonsterInPlay *m) {
 	m->flags &= ~2;
 }
 
-void EoBCoreEngine::snd_playSong(int track) {
+void EoBCoreEngine::addLevelMap(int level) {
+	assert(level);
+	_levelMaps |= (1 << (level - 1));
+}
+
+bool EoBCoreEngine::hasLevelMap(int level) const {
+	return _levelMaps & (1 << (level - 1));
+}
+
+uint32 EoBCoreEngine::countMaps() const {
+	uint32 res = 0;
+	for (int i = 1; i < 13; ++i) {
+		if (hasLevelMap(i))
+			res++;
+	}
+	return res;
+}
+
+uint32 EoBCoreEngine::countArrows() const {
+	uint32 res = 0;
+	for (int i = 0; i < 6; ++i)
+		res += countQueuedItems(_characters[i].inventory[16], -1, -1, 1, 1);
+	return res;
+}
+
+void EoBCoreEngine::snd_playSong(int track, bool loop) {
+	if (_flags.platform == Common::kPlatformSegaCD && !loop)
+		track |= 0x80;
 	_sound->playTrack(track);
+}
+
+void EoBCoreEngine::snd_playLevelScore() {
+	if (_flags.platform == Common::kPlatformPC98) {
+		if (_flags.gameID == GI_EOB1)
+			snd_playSong(_currentLevel + 1);
+	} else if (_flags.platform == Common::kPlatformSegaCD) {
+		static const uint8 levelTracksSegaCD[13] = { 7, 7, 7, 7, 6, 6, 6, 4, 4, 4, 5, 5, 10 };
+		snd_playSong(levelTracksSegaCD[_currentLevel]);
+	}
 }
 
 void EoBCoreEngine::snd_playSoundEffect(int track, int volume) {
 	if ((track < 1) || (_flags.gameID == GI_EOB2 && track > 119) || shouldQuit())
 		return;
+
+	if (_flags.platform == Common::kPlatformSegaCD) {
+		if (volume == 0xFF)
+			volume = 0x0E;
+		if (track == 23 || track == 28)
+			track |= 0x1000;
+	}
 
 	_sound->playSoundEffect(track, volume);
 }

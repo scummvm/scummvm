@@ -1537,7 +1537,7 @@ static const byte kEoB1FindBlockMonstersTableAmiga[64] = {
 
 static const ByteProvider kEoB1FindBlockMonstersTableAmigaProvider = { ARRAYSIZE(kEoB1FindBlockMonstersTableAmiga), kEoB1FindBlockMonstersTableAmiga };
 
-static const byte kEoB1MonsterDirChangeTableAmiga[48] = {
+static const byte kEoB1MonsterDirChangeTableAmiga[16] = {
 	0xff, 0x06, 0x02, 0xff, 0x00, 0x07, 0x01, 0xff,
 	0x04, 0x05, 0x03, 0xff, 0xff, 0xff, 0xff, 0xff
 };

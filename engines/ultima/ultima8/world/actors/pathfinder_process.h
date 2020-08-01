@@ -57,6 +57,9 @@ protected:
 
 	Std::vector<PathfindingAction> _path;
 	unsigned int _currentStep;
+
+public:
+	static const uint16 PATHFINDER_PROC_TYPE;
 };
 
 } // End of namespace Ultima8

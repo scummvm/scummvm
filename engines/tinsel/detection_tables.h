@@ -389,7 +389,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_CD,
+			ADGF_CD | ADGF_UNSTABLE,
 			GUIO0()
 		},
 		GID_DW1,

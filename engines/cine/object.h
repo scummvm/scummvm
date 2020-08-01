@@ -61,7 +61,7 @@ struct overlay {
 #define NUM_MAX_VAR 255
 
 void resetObjectTable();
-void loadObject(char *pObjectName);
+int16 loadObject(char *pObjectName);
 void setupObject(byte objIdx, uint16 param1, uint16 param2, uint16 param3, uint16 param4);
 void modifyObjectParam(byte objIdx, byte paramIdx, int16 newValue);
 

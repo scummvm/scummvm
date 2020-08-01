@@ -40,6 +40,7 @@ Item *getItem(ObjId id);
 Container *getContainer(ObjId id);
 Actor *getActor(ObjId id);
 MainActor *getMainActor();
+Actor *getControlledActor();
 
 Gump *getGump(ObjId id);
 

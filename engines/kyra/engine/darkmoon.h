@@ -52,10 +52,11 @@ public:
 	~DarkMoonEngine() override;
 
 private:
-	// Init / Release
+	// Init
 	Common::Error init() override;
 	void initStaticResource();
 	void initSpells() override;
+	void loadItemsAndDecorationsShapes() override;
 
 	// Main Menu
 	int mainMenu() override;
@@ -92,6 +93,8 @@ private:
 	void updateUsedCharacterHandItem(int charIndex, int slot) override;
 
 	// Monsters
+	void loadMonsterShapes(const char *filename, int monsterIndex, bool hasDecorations, int encodeTableIndex) override;
+	uint8 *loadFMTownsShape(Common::SeekableReadStream *stream);
 	void generateMonsterPalettes(const char *file, int16 monsterIndex) override;
 	void loadMonsterDecoration(Common::SeekableReadStream *stream, int16 monsterIndex) override;
 	const uint8 *loadMonsterProperties(const uint8 *data) override;
@@ -99,6 +102,7 @@ private:
 	bool killMonsterExtra(EoBMonsterInPlay *m) override;
 
 	// Level
+	void loadVcnData(const char *file, const uint8 *cgaMapping) override;
 	void loadDoorShapes(int doorType1, int shapeId1, int doorType2, int shapeId2) override {}
 	const uint8 *loadDoorShapes(const char *filename, int doorIndex, const uint8 *shapeDefs) override;
 	void drawDoorIntern(int type, int, int x, int y, int w, int wall, int mDim, int16, int16) override;

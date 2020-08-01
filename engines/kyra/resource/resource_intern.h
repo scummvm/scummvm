@@ -28,6 +28,7 @@
 #include "common/hashmap.h"
 #include "common/str.h"
 #include "common/list.h"
+#include "common/stream.h"
 
 namespace Kyra {
 
@@ -139,6 +140,28 @@ public:
 class InstallerLoader {
 public:
 	static Common::Archive *load(Resource *owner, const Common::String &filename, const Common::String &extension, const uint8 offset);
+};
+
+class EndianAwareStreamWrapper : public Common::SeekableReadStreamEndian {
+public:
+	EndianAwareStreamWrapper(Common::SeekableReadStream *stream, bool bigEndian, bool disposeAfterUse = true) : Common::SeekableReadStreamEndian(bigEndian), Common::ReadStreamEndian(bigEndian), _stream(stream), _dispose(disposeAfterUse) {}
+	~EndianAwareStreamWrapper() override { if (_dispose) delete _stream; }
+
+	// Common::Stream interface
+	bool err() const override { return _stream->err(); }
+
+	// Common::ReadStream interface
+	bool eos() const override { return _stream->eos(); }
+	uint32 read(void *dataPtr, uint32 dataSize) override { return _stream->read(dataPtr, dataSize); }
+
+	// Common::SeekableReadStream interface
+	int32 pos() const override { return _stream->pos(); }
+	int32 size() const override { return _stream->size(); }
+	bool seek(int32 offset, int whence = SEEK_SET) override { return _stream->seek(offset, whence); }
+
+private:
+	Common::SeekableReadStream *_stream;
+	bool _dispose;
 };
 
 } // End of namespace Kyra

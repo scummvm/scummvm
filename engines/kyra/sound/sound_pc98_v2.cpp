@@ -246,7 +246,7 @@ int32 SoundTownsPC98_v2::voicePlay(const char *file, Audio::SoundHandle *handle,
 	return 1;
 }
 
-void SoundTownsPC98_v2::playSoundEffect(uint8 track, uint8) {
+void SoundTownsPC98_v2::playSoundEffect(uint16 track, uint8) {
 	if (!_useFmSfx || !_sfxTrackData)
 		return;
 

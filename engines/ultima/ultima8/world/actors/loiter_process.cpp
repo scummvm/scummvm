@@ -21,6 +21,7 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/world/actors/loiter_process.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/actors/pathfinder_process.h"
@@ -89,7 +90,7 @@ void LoiterProcess::run() {
 			else
 				idleanim = Animation::idle2;
 		}
-		uint16 idlepid = a->doAnim(idleanim, 8);
+		uint16 idlepid = a->doAnim(idleanim, dir_current);
 		Process *idlep = Kernel::get_instance()->getProcess(idlepid);
 		idlep->waitFor(pfp);
 

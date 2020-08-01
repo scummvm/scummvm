@@ -55,7 +55,7 @@ MODULE_OBJS := \
 	script/script_mr.o \
 	script/script.o \
 	script/script_tim.o \
-	sequence/seqplayer.o \
+	sequence/seqplayer_lok.o \
 	sequence/sequences_lok.o \
 	sequence/sequences_v2.o \
 	sequence/sequences_hof.o \
@@ -121,18 +121,28 @@ MODULE_OBJS += \
 	engine/sprites_eob.o \
 	engine/timer_eob.o \
 	graphics/screen_eob.o \
+	graphics/screen_eob_amiga.o \
+	graphics/screen_eob_pc98.o \
+	graphics/screen_eob_segacd.o \
+	graphics/screen_eob_towns.o \
 	gui/gui_eob.o \
+	gui/gui_eob_segacd.o \
 	gui/saveload_eob.o \
+	resource/resource_segacd.o \
 	resource/staticres_eob.o \
 	script/script_eob.o \
+	sequence/seqplayer_eob_segacd.o \
 	sequence/sequences_eob.o \
 	sequence/sequences_darkmoon.o \
 	sound/sound_amiga_eob.o \
 	sound/sound_pc98_eob.o \
+	sound/sound_segacd_eob.o \
 	sound/sound_towns_darkmoon.o \
 	sound/drivers/audiomaster2.o \
 	sound/drivers/mlalf98.o \
-	sound/drivers/pcspeaker_v1.o
+	sound/drivers/pcspeaker_v1.o \
+	sound/drivers/segacd.o \
+	text/text_eob_segacd.o
 endif
 
 # This module can be built as a plugin

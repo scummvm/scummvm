@@ -21,15 +21,14 @@
  */
 
 #include "director/director.h"
+#include "director/movie.h"
 #include "director/lingo/lingo.h"
 
 namespace Director {
 
 Common::String preprocessWhen(Common::String in, bool *changed);
-Common::String preprocessReturn(Common::String in);
 Common::String preprocessPlay(Common::String in);
 Common::String preprocessSound(Common::String in);
-Common::String preprocessSimpleMacro(Common::String in);
 
 bool isspec(char c) {
 	return strchr("-+*/%%^:,()><&[]=", c) != NULL;
@@ -127,7 +126,7 @@ static const char *findtokstart(const char *start, const char *token) {
 	return ptr;
 }
 
-Common::String Lingo::codePreprocessor(const char *s, ScriptType type, uint16 id, bool simple) {
+Common::String Lingo::codePreprocessor(const char *s, LingoArchive *archive, ScriptType type, uint16 id, bool simple) {
 	Common::String res;
 
 	// We start from processing the continuation synbols
@@ -150,8 +149,12 @@ Common::String Lingo::codePreprocessor(const char *s, ScriptType type, uint16 id
 	s = tmp.c_str();
 
 	// Strip comments
+	bool inString = false;
 	while (*s) {
-		if (*s == '-' && *(s + 1) == '-') { // At the end of the line we will have \0
+		if (*s == '"')
+			inString = !inString;
+
+		if (!inString && *s == '-' && *(s + 1) == '-') { // At the end of the line we will have \0
 			while (*s && *s != '\n')
 				s++;
 		}
@@ -225,7 +228,7 @@ Common::String Lingo::codePreprocessor(const char *s, ScriptType type, uint16 id
 		}
 		debugC(2, kDebugParse | kDebugPreprocess, "line: %d                         '%s'", iflevel, line.c_str());
 
-		if (type == kMovieScript && _vm->getVersion() <= 3 && !defFound) {
+		if (!defFound && (type == kMovieScript || type == kCastScript) && (_vm->getVersion() <= 3 || _vm->getCurrentMovie()->_allowOutdatedLingo)) {
 			tok = nexttok(line.c_str());
 			if (tok.equals("macro") || tok.equals("factory") || tok.equals("on")) {
 				defFound = true;
@@ -238,16 +241,14 @@ Common::String Lingo::codePreprocessor(const char *s, ScriptType type, uint16 id
 			}
 		}
 
-		res1 = patchLingoCode(res1, type, id, linenumber);
+		res1 = patchLingoCode(res1, archive, type, id, linenumber);
 
 		bool changed = false;
 		res1 = preprocessWhen(res1, &changed);
 
 		if (!changed) {
-			res1 = preprocessReturn(res1);
 			res1 = preprocessPlay(res1);
 			res1 = preprocessSound(res1);
-			res1 = preprocessSimpleMacro(res1);
 		}
 
 		res += res1;
@@ -493,50 +494,6 @@ Common::String preprocessWhen(Common::String in, bool *changed) {
 	return res;
 }
 
-// "hello" & return && "world" -> "hello" & scummvm_return && "world"
-//
-// This is to let the grammar not confuse RETURN constant with
-// return command
-Common::String preprocessReturn(Common::String in) {
-	Common::String res, prev, next;
-	const char *ptr = in.c_str();
-	const char *beg = ptr;
-
-	while ((ptr = scumm_strcasestr(beg, "return")) != NULL) {
-		if (ptr != findtokstart(in.c_str(), ptr)) { // If we're in the middle of a word
-			res += *beg++;
-			continue;
-		}
-
-		res += Common::String(beg, ptr);
-
-		if (ptr == beg)
-			prev = "";
-		else
-			prev = prevtok(ptr - 1, beg);
-
-		next = nexttok(ptr + 6); // end of 'return'
-
-		debugC(2, kDebugParse | kDebugPreprocess, "RETURN: prevtok: %s nexttok: %s", prev.c_str(), next.c_str());
-
-		if (prev.hasSuffix("&") || prev.hasSuffix("&&") || prev.hasSuffix("=") ||
-				next.hasPrefix("&") || next.hasPrefix("&&") || prev.hasSuffix(",") ||
-				next.hasPrefix(")") || prev.equalsIgnoreCase("put")) {
-			res += "scummvm_"; // Turn it into scummvm_return
-		}
-
-		res += *ptr++; // We advance one character, so 'eturn' is left
-		beg = ptr;
-	}
-
-	res += Common::String(beg);
-
-	if (in.size() != res.size())
-		debugC(2, kDebugParse | kDebugPreprocess, "RETURN: in: %s\nout: %s", in.c_str(), res.c_str());
-
-	return res;
-}
-
 // play done -> play #done
 Common::String preprocessPlay(Common::String in) {
 	Common::String res, next;
@@ -638,24 +595,6 @@ Common::String preprocessSound(Common::String in) {
 		debugC(2, kDebugParse | kDebugPreprocess, "SOUND: in: %s\nout: %s", in.c_str(), res.c_str());
 
 	return res;
-}
-
-// <macro> '\n' -> <macro>() '\n'
-Common::String preprocessSimpleMacro(Common::String in) {
-	const char *second;
-	Common::String next = nexttok(in.c_str(), &second);
-
-	if (!next.empty() && Common::isAlpha(next[0]))
-		if (nexttok(second).empty() && // Filter out possible standalone tokens
-				!next.equalsIgnoreCase("end") &&
-				!next.equalsIgnoreCase("exit") &&
-				!next.equalsIgnoreCase("else")) {
-			debugC(2, kDebugParse | kDebugPreprocess, "MACRO: in: %s\nout: %s()", in.c_str(), in.c_str());
-
-			return in + "()";
-		}
-
-	return in;
 }
 
 } // End of namespace Director

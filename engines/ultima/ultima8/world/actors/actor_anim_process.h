@@ -24,6 +24,7 @@
 #define WORLD_ACTORS_ACTORANIMPROCESS_H
 
 #include "ultima/ultima8/kernel/process.h"
+#include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/world/actors/animation.h"
 
 namespace Ultima {
@@ -38,7 +39,7 @@ class ActorAnimProcess : public Process {
 public:
 	ActorAnimProcess();
 	//! note: this probably needs some more parameters
-	ActorAnimProcess(Actor *actor, Animation::Sequence action, uint32 dir,
+	ActorAnimProcess(Actor *actor, Animation::Sequence action, Direction dir,
 	                 uint32 steps = 0);
 
 	// p_dynamic_cast stuff
@@ -69,7 +70,7 @@ protected:
 	void doHitSpecial(Item *hit);
 
 	Animation::Sequence _action;
-	uint32 _dir;
+	Direction _dir;
 	uint32 _steps;
 
 	AnimationTracker *_tracker;

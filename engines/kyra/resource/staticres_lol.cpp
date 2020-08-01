@@ -777,9 +777,18 @@ const int8 LoLEngine::_mapCoords[12][4] = {
 	{  3,  1,  3,  1 }, { -1,  6, -1, -8 }, { -7, -1,  5, -1 }
 };
 
+// Most of these settings won't get used in LOL, since the engine was already finished when these were introduced.
+// And it is hardly worth the time to add any usage for this, since the only significant version difference would
+// be the PC-98 16 color version. That said, I have filled all the unused parts of the struct with zeroes.
 const KyraRpgGUISettings LoLEngine::_guiSettings = {
-	{ 144, 254, 74, 9, 2, 80, { 0, 0 }, { 0, 0 }, { 0, 0 } },
-	{ 136, 251, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 144, 254, 74, 9, 2, 80, { 0, 0 }, { 0, 0 }, { 0, 0 } },
+	{ 136, 251, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{	{ 0, 0, 0 }, { 0, 0, 0 }, 0, 0,
+		{ 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 },
+		{ 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 },
+		{ 0, 0, 0 }, { 0, 0, 0 }, 0, 0, { 0, 0, 0 }, { 0, 0, 0 }, 0, 0,
+		0, 0
+	}
 };
 
 const MistOfDoomAnimData LoLEngine::_mistAnimData[] = {

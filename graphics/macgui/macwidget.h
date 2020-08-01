@@ -81,7 +81,6 @@ public:
 	void removeWidget(MacWidget *child, bool del = true);
 
 	Graphics::ManagedSurface *getSurface() { return _composeSurface; }
-	Graphics::ManagedSurface *getMask() { return _maskSurface; }
 
 protected:
 	uint16 _border;
@@ -91,7 +90,6 @@ protected:
 	int _fgcolor, _bgcolor;
 
 	Graphics::ManagedSurface *_composeSurface;
-	Graphics::ManagedSurface *_maskSurface;
 
 public:
 	bool _focusable;

@@ -62,7 +62,7 @@ public:
 	void updatedPalette(PalIndex index, int maxindex = 0);
 
 	//! Apply a transform matrix to a palette (-4.11 fixed)
-	void transformPalette(PalIndex index, int16 matrix[12]);
+	void transformPalette(PalIndex index, const int16 matrix[12]);
 
 	//! reset the transformation matrix of a palette
 	void untransformPalette(PalIndex index);

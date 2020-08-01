@@ -46,6 +46,8 @@
 #include "ultima/ultima8/gumps/widgets/sliding_widget.h"
 #include "ultima/ultima8/gumps/mini_stats_gump.h"
 #include "ultima/ultima8/gumps/minimap_gump.h"
+#include "ultima/ultima8/gumps/cru_pickup_gump.h"
+#include "ultima/ultima8/gumps/cru_pickup_area_gump.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -369,6 +371,8 @@ void ObjectManager::setupLoaders() {
 	addObjectLoader("SlidingWidget", ObjectLoader<SlidingWidget>::load);
 	addObjectLoader("MiniStatsGump", ObjectLoader<MiniStatsGump>::load);
 	addObjectLoader("MiniMapGump", ObjectLoader<MiniMapGump>::load);
+	addObjectLoader("CruPickupAreaGump", ObjectLoader<CruPickupAreaGump>::load);
+	addObjectLoader("CruPickupGump", ObjectLoader<CruPickupGump>::load);
 }
 
 } // End of namespace Ultima8

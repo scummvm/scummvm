@@ -33,18 +33,15 @@ namespace Cine {
 
 uint16 bgVar0;
 byte *additionalBgTable[9];
-int16 currentAdditionalBgIdx = 0, currentAdditionalBgIdx2 = 0;
 
-byte loadCtFW(const char *ctName) {
+int16 loadCtFW(const char *ctName) {
 	debugC(1, kCineDebugCollision, "loadCtFW(\"%s\")", ctName);
 	byte *ptr, *dataPtr;
 
 	int16 foundFileIdx = findFileInBundle(ctName);
-	if (foundFileIdx == -1) {
+	if (foundFileIdx < 0) {
 		warning("loadCtFW: Unable to find collision data file '%s'", ctName);
-		// FIXME: Rework this function's return value policy and return an appropriate value here.
-		// The return value isn't yet used for anything so currently it doesn't really matter.
-		return 0;
+		return -1;
 	}
 
 	if (currentCtName != ctName)
@@ -62,16 +59,14 @@ byte loadCtFW(const char *ctName) {
 	return 0;
 }
 
-byte loadCtOS(const char *ctName) {
+int16 loadCtOS(const char *ctName) {
 	debugC(1, kCineDebugCollision, "loadCtOS(\"%s\")", ctName);
 	byte *ptr, *dataPtr;
 
 	int16 foundFileIdx = findFileInBundle(ctName);
-	if (foundFileIdx == -1) {
+	if (foundFileIdx < 0) {
 		warning("loadCtOS: Unable to find collision data file '%s'", ctName);
-		// FIXME: Rework this function's return value policy and return an appropriate value here.
-		// The return value isn't yet used for anything so currently it doesn't really matter.
-		return 0;
+		return -1;
 	}
 
 	if (currentCtName != ctName)
@@ -85,7 +80,6 @@ byte loadCtOS(const char *ctName) {
 	if (bpp == 8) {
 		renderer->loadCt256(ptr, ctName);
 	} else {
-		gfxConvertSpriteToRaw(collisionPage, ptr + 32, 160, 200);
 		renderer->loadCt16(ptr, ctName);
 	}
 
@@ -93,10 +87,15 @@ byte loadCtOS(const char *ctName) {
 	return 0;
 }
 
-byte loadBg(const char *bgName) {
+int16 loadBg(const char *bgName) {
 	byte *ptr, *dataPtr;
 
-	byte fileIdx = findFileInBundle(bgName);
+	int16 fileIdx = findFileInBundle(bgName);
+	if (fileIdx < 0) {
+		warning("loadBg(\"%s\"): Could not find background in file bundle.", bgName);
+		return -1;
+	}
+	checkDataDisk(-1);
 	ptr = dataPtr = readBundleFile(fileIdx);
 
 	uint16 bpp = READ_BE_UINT16(ptr);
@@ -112,23 +111,8 @@ byte loadBg(const char *bgName) {
 		renderer->loadBg16(ptr, bgName);
 	}
 	free(dataPtr);
+
 	return 0;
-}
-
-void addBackground(const char *bgName, uint16 bgIdx) {
-	byte *ptr, *dataPtr;
-
-	byte fileIdx = findFileInBundle(bgName);
-	ptr = dataPtr = readBundleFile(fileIdx);
-
-	uint16 bpp = READ_BE_UINT16(ptr); ptr += 2;
-
-	if (bpp == 8) {
-		renderer->loadBg256(ptr, bgName, bgIdx);
-	} else {
-		renderer->loadBg16(ptr, bgName, bgIdx);
-	}
-	free(dataPtr);
 }
 
 } // End of namespace Cine

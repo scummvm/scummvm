@@ -94,8 +94,16 @@ Common::Error PinkEngine::init() {
 		orbName = "HPP.ORB";
 	}
 
-	if (!_orb.open(orbName) || (_bro && !_bro->open(broName) && _orb.getTimestamp() == _bro->getTimestamp()))
+	if (!_orb.open(orbName))
 		return Common::kNoGameDataFoundError;
+	if (_bro) {
+		if (!_bro->open(broName))
+			return Common::kNoGameDataFoundError;
+		if (_orb.getTimestamp() != _bro->getTimestamp()) {
+			warning("ORB and BRO timestamp mismatch. %x != %x", _orb.getTimestamp(), _bro->getTimestamp());
+			return Common::kNoGameDataFoundError;
+		}
+	}
 
 	if (!loadCursors())
 		return Common::kNoGameDataFoundError;

@@ -53,6 +53,7 @@ const struct GameOpt {
 	{ GUIO_MIDIAPPLEIIGS,"midiAppleIIgs" },
 	{ GUIO_MIDITOWNS,    "midiTowns" },
 	{ GUIO_MIDIPC98,     "midiPC98" },
+	{ GUIO_MIDISEGACD,   "midiSegaCD" },
 	{ GUIO_MIDIMT32,     "midiMt32" },
 	{ GUIO_MIDIGM,       "midiGM" },
 

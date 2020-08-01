@@ -32,18 +32,25 @@
 namespace Mohawk {
 
 LBGraphics::LBGraphics(MohawkEngine_LivingBooks *vm, uint16 width, uint16 height) : GraphicsManager(), _vm(vm) {
-	_bmpDecoder = _vm->isPreMohawk() ? new LivingBooksBitmap_v1() : new MohawkBitmap();
+	_bmpDecoder = nullptr;
+	_bmpDecoderLB = nullptr;
+
+	if (_vm->isPreMohawk())
+		_bmpDecoderLB = new LivingBooksBitmap_v1();
+	else
+		_bmpDecoder =  new MohawkBitmap();
 
 	initGraphics(width, height);
 }
 
 LBGraphics::~LBGraphics() {
 	delete _bmpDecoder;
+	delete _bmpDecoderLB;
 }
 
 MohawkSurface *LBGraphics::decodeImage(uint16 id) {
 	if (_vm->isPreMohawk())
-		return _bmpDecoder->decodeImage(_vm->wrapStreamEndian(ID_BMAP, id));
+		return _bmpDecoderLB->decodeImage(_vm->wrapStreamEndian(ID_BMAP, id));
 
 	return _bmpDecoder->decodeImage(_vm->getResource(ID_TBMP, id));
 }

@@ -43,14 +43,8 @@ MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, MacWindowMan
 	if (parent)
 		parent->_children.push_back(this);
 
-	_composeSurface = nullptr;
-	_maskSurface = nullptr;
-
 	_composeSurface = new ManagedSurface(_dims.width(), _dims.height());
 	_composeSurface->clear(_bgcolor);
-
-	_maskSurface = new ManagedSurface(_dims.width(), _dims.height());
-	_maskSurface->clear(1);
 
 	_active = false;
 	_editable = false;
@@ -59,6 +53,14 @@ MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, MacWindowMan
 MacWidget::~MacWidget() {
 	if (_parent)
 		_parent->removeWidget(this, false);
+
+	if (_wm)
+		_wm->clearWidgetRefs(this);
+
+	if (_composeSurface) {
+		_composeSurface->free();
+		delete _composeSurface;
+	}
 }
 
 void MacWidget::setActive(bool active) {
@@ -126,8 +128,10 @@ MacWidget *MacWidget::findEventHandler(Common::Event &event, int dx, int dy) {
 
 				for (uint i = 0; i < _children.size(); i++) {
 					MacWidget *res = _children[i]->findEventHandler(event, dx + _dims.left, dy + _dims.top);
-					if (res && res->_priority > priority)
+					if (res && res->_priority > priority) {
+						priority = res->_priority;
 						widget = res;
+					}
 				}
 				return widget ? widget : this;
 			}

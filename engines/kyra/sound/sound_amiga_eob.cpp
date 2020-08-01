@@ -168,7 +168,7 @@ void SoundAmiga_EoB::haltTrack() {
 	_lastSound.clear();
 }
 
-void SoundAmiga_EoB::playSoundEffect(uint8 track, uint8 volume) {
+void SoundAmiga_EoB::playSoundEffect(uint16 track, uint8 volume) {
 	if (_currentResourceSet == -1 || !_sfxEnabled || !_ready)
 		return;
 

@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
-"PO-Revision-Date: 2020-05-24 23:41+0000\n"
-"Last-Translator: anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2020-07-23 21:43+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
 "Language: de_DE\n"
@@ -6357,77 +6357,77 @@ msgstr "GUI-Variante B"
 #: engines/wintermute/keymapper_tables.h:291
 #: engines/wintermute/keymapper_tables.h:798
 msgid "Phone cancel button"
-msgstr ""
+msgstr "Telefon Taste Abbruch"
 
 #: engines/wintermute/keymapper_tables.h:296
 #: engines/wintermute/keymapper_tables.h:803
 msgid "Phone up button"
-msgstr ""
+msgstr "Telefon Taste hoch"
 
 #: engines/wintermute/keymapper_tables.h:302
 #: engines/wintermute/keymapper_tables.h:809
 msgid "Phone down button"
-msgstr ""
+msgstr "Telefon Taste runter"
 
 #: engines/wintermute/keymapper_tables.h:308
 #: engines/wintermute/keymapper_tables.h:815
 msgid "Phone 0 button"
-msgstr ""
+msgstr "Telefon Taste 0"
 
 #: engines/wintermute/keymapper_tables.h:313
 #: engines/wintermute/keymapper_tables.h:820
 msgid "Phone 1 button"
-msgstr ""
+msgstr "Telefon Taste 1"
 
 #: engines/wintermute/keymapper_tables.h:318
 #: engines/wintermute/keymapper_tables.h:825
 msgid "Phone 2 button"
-msgstr ""
+msgstr "Telefon Taste 2"
 
 #: engines/wintermute/keymapper_tables.h:323
 #: engines/wintermute/keymapper_tables.h:830
 msgid "Phone 3 button"
-msgstr ""
+msgstr "Telefon Taste 3"
 
 #: engines/wintermute/keymapper_tables.h:328
 #: engines/wintermute/keymapper_tables.h:835
 msgid "Phone 4 button"
-msgstr ""
+msgstr "Telefon Taste 4"
 
 #: engines/wintermute/keymapper_tables.h:333
 #: engines/wintermute/keymapper_tables.h:840
 msgid "Phone 5 button"
-msgstr ""
+msgstr "Telefon Taste 5"
 
 #: engines/wintermute/keymapper_tables.h:338
 #: engines/wintermute/keymapper_tables.h:845
 msgid "Phone 6 button"
-msgstr ""
+msgstr "Telefon Taste 6"
 
 #: engines/wintermute/keymapper_tables.h:343
 #: engines/wintermute/keymapper_tables.h:850
 msgid "Phone 7 button"
-msgstr ""
+msgstr "Telefon Taste 7"
 
 #: engines/wintermute/keymapper_tables.h:348
 #: engines/wintermute/keymapper_tables.h:855
 msgid "Phone 8 button"
-msgstr ""
+msgstr "Telefon Taste 8"
 
 #: engines/wintermute/keymapper_tables.h:353
 #: engines/wintermute/keymapper_tables.h:860
 msgid "Phone 9 button"
-msgstr ""
+msgstr "Telefon Taste 9"
 
 #: engines/wintermute/keymapper_tables.h:358
 #: engines/wintermute/keymapper_tables.h:865
 msgid "Phone * button"
-msgstr ""
+msgstr "Telefon Taste *"
 
 #: engines/wintermute/keymapper_tables.h:363
 #: engines/wintermute/keymapper_tables.h:870
 msgid "Phone # button"
-msgstr ""
+msgstr "Telefon Taste #"
 
 #: engines/wintermute/keymapper_tables.h:387
 #: engines/wintermute/keymapper_tables.h:1005
@@ -6559,52 +6559,44 @@ msgid "Walking speed: Ultra Super Mega Fast"
 msgstr "Lauf-Geschwindigkeit: Ultrasupermegaschnell"
 
 #: engines/wintermute/keymapper_tables.h:675
-#, fuzzy
 msgid "Show game credits"
-msgstr "Mauszeiger anzeigen"
+msgstr "Abspann des Spieles anzeigen"
 
 #: engines/wintermute/keymapper_tables.h:680
 msgid "Play selected music record"
-msgstr ""
+msgstr "Ausgewählte Musikaufzeichnung abspielen"
 
 #: engines/wintermute/keymapper_tables.h:685
 msgid "Select next music record"
-msgstr ""
+msgstr "Nächste Musikaufzeichnung auswählen"
 
 #: engines/wintermute/keymapper_tables.h:690
-#, fuzzy
 msgid "Play note 1: A"
-msgstr "Spieldauer: "
+msgstr "Note 1: A"
 
 #: engines/wintermute/keymapper_tables.h:695
-#, fuzzy
 msgid "Play note 2: F#"
-msgstr "Spieldauer: "
+msgstr "Note 2: F#"
 
 #: engines/wintermute/keymapper_tables.h:700
-#, fuzzy
 msgid "Play note 3: D#"
-msgstr "Spieldauer: "
+msgstr "Note 3: D#"
 
 #: engines/wintermute/keymapper_tables.h:705
-#, fuzzy
 msgid "Play note 4: C#"
-msgstr "Spieldauer: "
+msgstr "Note 4: C#"
 
 #: engines/wintermute/keymapper_tables.h:710
-#, fuzzy
 msgid "Play note 5: E"
-msgstr "Spieldauer: "
+msgstr "Note 5: E"
 
 #: engines/wintermute/keymapper_tables.h:715
-#, fuzzy
 msgid "Play note 6: G#"
-msgstr "Spieldauer: "
+msgstr "Note 6: G#"
 
 #: engines/wintermute/keymapper_tables.h:720
-#, fuzzy
 msgid "Play note 7: B"
-msgstr "Spieldauer: "
+msgstr "Note 7: B"
 
 #: engines/wintermute/keymapper_tables.h:733
 msgid "Ability: Telekinesis"

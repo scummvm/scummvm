@@ -50,11 +50,12 @@ public:
 	~MainShapeArchive() override;
 
 	void loadTypeFlags(Common::SeekableReadStream *rs);
-	ShapeInfo *getShapeInfo(uint32 shapenum);
+	void loadDamageDat(Common::SeekableReadStream *rs);
+	const ShapeInfo *getShapeInfo(uint32 shapenum);
 
 	void loadAnimDat(Common::SeekableReadStream *rs);
-	ActorAnim *getAnim(uint32 shape) const;
-	AnimAction *getAnim(uint32 shape, uint32 action) const;
+	const ActorAnim *getAnim(uint32 shape) const;
+	const AnimAction *getAnim(uint32 shape, uint32 action) const;
 
 protected:
 	TypeFlags *_typeFlags;

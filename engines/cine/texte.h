@@ -60,6 +60,7 @@ extern const char *const *commandPrepositionTable;
 
 void loadTextData(const char *filename);
 void loadErrmessDat(const char *fname);
+void setFailureMessages(const char *const *messages, bool allocated);
 void freeErrmessDat();
 void loadPoldatDat(const char *fname);
 

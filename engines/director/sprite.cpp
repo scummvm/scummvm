@@ -24,13 +24,20 @@
 
 #include "director/director.h"
 #include "director/castmember.h"
+#include "director/frame.h"
 #include "director/movie.h"
+#include "director/score.h"
 #include "director/sprite.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-object.h"
 
 namespace Director {
 
-Sprite::Sprite() {
+Sprite::Sprite(Frame *frame) {
+	_frame = frame;
+	_score = _frame->getScore();
+	_movie = _score->getMovie();
+
 	_scriptId = 0;
 	_scriptCastIndex = 0;
 	_colorcode = 0;
@@ -60,10 +67,7 @@ Sprite::Sprite() {
 	_foreColor = 0;
 
 	_blend = 0;
-	_movieRate = 0;
-	_movieTime = 0;
-	_startTime = 0;
-	_stopTime = 0;
+
 	_volume = 0;
 	_stretch = 0;
 }
@@ -91,18 +95,33 @@ void Sprite::updateCast() {
 		_cast->setEditable(_editable);
 }
 
-bool Sprite::isFocusable() {
-	if (_moveable || _puppet || _scriptId)
+bool Sprite::respondsToMouse() {
+	if (_moveable)
+		return true;
+
+	ScriptContext *spriteScript = _movie->getScriptContext(kScoreScript, _scriptId);
+	if (spriteScript && (spriteScript->_eventHandlers.contains(kEventGeneric)
+					  || spriteScript->_eventHandlers.contains(kEventMouseDown)
+					  || spriteScript->_eventHandlers.contains(kEventMouseUp)))
+		return true;
+
+	ScriptContext *castScript = _movie->getScriptContext(kCastScript, _castId);
+	if (castScript && (castScript->_eventHandlers.contains(kEventMouseDown)
+					|| castScript->_eventHandlers.contains(kEventMouseUp)))
 		return true;
 
 	return false;
 }
 
+bool Sprite::isActive() {
+	return _movie->getScriptContext(kScoreScript, _scriptId) != nullptr;
+}
+
 bool Sprite::shouldHilite() {
 	if ((_cast && _cast->_autoHilite) || (isQDShape() && _ink == kInkTypeMatte))
 		if (g_director->getVersion() < 4 && !_moveable)
-			if (g_director->getCurrentMovie()->getScriptContext(kScoreScript, _scriptId) ||
-					g_director->getCurrentMovie()->getScriptContext(kCastScript, _castId))
+			if (_movie->getScriptContext(kScoreScript, _scriptId) ||
+					_movie->getScriptContext(kCastScript, _castId))
 				return true;
 
 	return false;
@@ -143,7 +162,7 @@ void Sprite::setPattern(uint16 pattern) {
 }
 
 void Sprite::setCast(uint16 castId) {
-	CastMember *member = g_director->getCurrentMovie()->getCastMember(castId);
+	CastMember *member = _movie->getCastMember(castId);
 	_castId = castId;
 
 	if (castId == 0)
@@ -160,36 +179,16 @@ void Sprite::setCast(uint16 castId) {
 			// information set in the sprite.
 			warning("Sprite::setCast(): Working around D2/3 button glitch");
 
-			delete _cast->_widget;
 			_cast->_type = kCastButton;
 			((TextCastMember *)_cast)->_buttonType = (ButtonType)(_spriteType - 8);
-			((TextCastMember *)_cast)->createWidget();
 		}
+
+		Common::Rect dims = _cast->getWidgetRect();
+		_width = dims.width();
+		_height = dims.height();
 	} else {
 		warning("Sprite::setCast(): CastMember id %d has null member", castId);
 	}
 }
-
-Common::Rect Sprite::getDims() {
-	Common::Rect result;
-
-	if (!_cast || _cast->_type == kCastShape) {
-		result = Common::Rect(_width, _height);
-	} else if (_cast->_widget) {
-		result = Common::Rect(_cast->_widget->_dims.width(), _cast->_widget->_dims.height());
-	} else {
-		warning("Sprite::getDims(): Unable to find sprite dimensions");
-	}
-
-	if (_puppet && _stretch) {
-		// TODO: Properly align the bounding box
-
-		result.setHeight(_height);
-		result.setWidth(_width);
-	}
-
-	return result;
-}
-
 
 } // End of namespace Director

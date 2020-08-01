@@ -534,7 +534,7 @@ get_system_exe_extension() {
 	riscos)
 		_exeext=",e1f"
 		;;
-	3ds | dreamcast | ds | gamecube | n64 | ps2 | psp | switch | wii)
+	3ds | dreamcast | ds | gamecube | n64 | psp | switch | wii)
 		_exeext=".elf"
 		;;
 	gph-linux)
@@ -947,7 +947,7 @@ Configuration:
   -h, --help              display this help and exit
   --backend=BACKEND       backend to build (3ds, android, dc, dingux, ds, gcw0,
                           gph, iphone, ios7, maemo, n64, null, openpandora,
-                          ps2, psp, psp2, samsungtv, sdl, switch, tizen, webos, wii) [sdl]
+                          psp, psp2, samsungtv, sdl, switch, wii) [sdl]
 
 Installation directories:
   --prefix=PREFIX         install architecture-independent files in PREFIX
@@ -994,14 +994,11 @@ Special configuration feature:
                                            n64 for Nintendo 64
                                            openpandora for OpenPandora
                                            ouya for OUYA
-                                           ps2 for PlayStation 2
                                            ps3 for PlayStation 3
                                            psp2 for PlayStation Vita
                                            psp for PlayStation Portable
                                            samsungtv for Samsung TV
                                            switch for Nintendo Switch
-                                           tizen for Samsung Tizen
-                                           webos for HP Palm WebOS
                                            wii for Nintendo Wii
 
 Game engines:
@@ -1734,14 +1731,6 @@ ppc-morphos)
 	_host_cpu=powerpc
 	_host_alias=$_host
 	;;
-ps2)
-	_host_os=ps2
-	_host_cpu=mips64r5900el
-	_host_alias=ee
-	# PS2 bogus dirs: they actually depend on launch medium
-	datadir='host:data'
-	docdir='host:docs'
-	;;
 ps3)
 	_host_os=ps3
 	_host_cpu=powerpc
@@ -1795,26 +1784,6 @@ switch)
 	# Switch SDK has C++11 constructs so we must enable it
 	_use_cxx11=yes
 	;;
-tizen)
- 	_host_os=tizen
-	_host_cpu=arm
-	_host_alias=arm-linux-gnueabi
-	;;
-webos)
-	_host_os=webos
-	_host_cpu=arm
-	_host_alias=arm-none-linux-gnueabi
-	# The prefix is always the same on WebOS so we hardcode the default
-	# here. It is still possible to define a custom prefix which is
-	# needed when packaging the app with a user-specific app ID.
-	test "x$prefix" = xNONE && prefix=/media/cryptofs/apps/usr/palm/applications/org.scummvm.scummvm
-	# WebOS apps are installed into app-specific directories. The
-	# default directory structure of ScummVM makes no sense here so we
-	# hardcode WebOS specific directories here.
-	datarootdir='${prefix}/data'
-	datadir='${datarootdir}'
-	docdir='${prefix}/doc'
-	;;
 wii)
 	_host_os=wii
 	_host_cpu=powerpc
@@ -1843,7 +1812,7 @@ else
 fi
 
 case $_host in
-arm-*riscos | caanoo | gp2x | gp2xwiz | openpandora | ps2 | psp | psp2 | switch)
+arm-*riscos | caanoo | gp2x | gp2xwiz | openpandora | psp | psp2 | switch)
 	if test "$_debug_build" = auto; then
 		# If you want to debug one of these platforms, use '--disable-optimizations --enable-debug'
 		_debug_build=no
@@ -1881,11 +1850,11 @@ esac
 case $_host_os in
 android)
 	if test -z "$ANDROID_SDK_ROOT"; then
-		echo "Please set ANDROID_SDK_ROOT in your environment. export ANDROID_SDK_ROOT=<path to Android SDK>"
+		echo "Please set ANDROID_SDK_ROOT in your environment: export ANDROID_SDK_ROOT=<path to Android SDK>"
  		exit 1
 	fi
 	if test -z "$ANDROID_NDK_ROOT"; then
-		echo "Please set ANDROID_NDK_ROOT in your environment. export ANDROID_NDK_ROOT=<path to Android NDK>"
+		echo "Please set ANDROID_NDK_ROOT in your environment: export ANDROID_NDK_ROOT=<path to Android NDK>"
  		exit 1
  	fi
 	;;
@@ -1904,12 +1873,6 @@ dreamcast)
 n64)
 	if test -z "$N64SDK"; then
 		echo "Please set N64SDK in your environment. export N64SDK=<path to n64 sdk>"
-		exit 1
-	fi
-	;;
-ps2)
-	if test -z "$PS2SDK"; then
-		echo "Please set PS2SDK in your environment. export PS2SDK=<path to ps2 sdk>"
 		exit 1
 	fi
 	;;
@@ -1968,22 +1931,6 @@ riscos)
 		add_line_to_config_mk "BINDHELP := bindhelp"
 	fi
 	;;
-tizen)
-	if test -z "$TIZEN_ROOTSTRAP"; then
-		echo "Please set TIZEN_ROOTSTRAP in your environment. export TIZEN_ROOTSTRAP=<path to Tizen SDK device profile>"
-		exit 1
-	fi
-	;;
-webos)
-	if test -z "$WEBOS_SDK"; then
-		echo "Please set WEBOS_SDK in your environment. export WEBOS_SDK=<path to WebOS SDK>"
-		exit 1
-	fi
-	if test -z "$WEBOS_PDK"; then
-		echo "Please set WEBOS_PDK in your environment. export WEBOS_PDK=<path to WebOS PDK>"
-		exit 1
-	fi
-	;;
 *)
 	;;
 esac
@@ -1991,7 +1938,7 @@ esac
 
 # Toolchain for Android is in NDK and is using different naming convention
 if test "$_host_os" = android; then
-	
+
 	# Check that we have the correct NDK version
 	echo_n "Checking NDK version... "
 	_ndk_gradle=$(grep "^[[:space:]]*ndkVersion" $_srcdir/dists/android/build.gradle | sed 's/[^0-9\.]//g')
@@ -2004,8 +1951,8 @@ if test "$_host_os" = android; then
 	fi
 
 	# Try to use a known to work toolchain
-	android_toolchains="windows-x86_64 darwin-x86_64 linux-x86_64"	
-	for toolchain in $android_toolchains; do 
+	android_toolchains="windows-x86_64 darwin-x86_64 linux-x86_64"
+	for toolchain in $android_toolchains; do
 		_android_toolchain="$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/$toolchain"
 
 		if test -d "$_android_toolchain"; then
@@ -2046,7 +1993,7 @@ if test "$_host_os" = android; then
 		esac
 
 		CXX="$_android_toolchain/bin/clang++"
-		# If CXX is defined don't alter CXXFLAGS and LDFLAGS as the user can do it himself
+		# If CXX is defined, don't alter CXXFLAGS and LDFLAGS as it can be done by the user explicitly
 		append_var CXXFLAGS "-target ${_android_target}"
 		append_var LDFLAGS "-target ${_android_target}"
 	fi
@@ -2285,7 +2232,7 @@ if test "$have_gcc" = yes ; then
 		case $_host_os in
 		# newlib-based system include files suppress non-C89 function
 		# declarations under __STRICT_ANSI__, undefine it
-		3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | mint* | morphos* | n64 | psp | ps2 | ps3 | psp2 | switch | tizen | wii )
+		3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | mint* | morphos* | n64 | psp | ps3 | psp2 | switch | wii )
 			append_var CXXFLAGS "-U__STRICT_ANSI__"
 			;;
 		*)
@@ -2359,7 +2306,7 @@ fi
 # However, some platforms use GNU extensions in system header files, so
 # for these we must not use -pedantic.
 case $_host_os in
-3ds | android | androidsdl | gamecube | ps2 | psp | switch | tizen | wii | webos)
+3ds | android | androidsdl | gamecube | psp | switch | wii)
 	;;
 *)
 	# ICC does not support pedantic, while GCC and clang do.
@@ -2599,7 +2546,7 @@ case $_host_cpu in
 			openpandora)
 				define_in_config_if_yes yes 'USE_ARM_NEON_ASPECT_CORRECTOR'
 				;;
-			androidsdl-armeabi | arm-*riscos | caanoo | ds | gp2x | gp2xwiz | maemo | tizen)
+			androidsdl-armeabi | arm-*riscos | caanoo | ds | gp2x | gp2xwiz | maemo )
 				define_in_config_if_yes yes 'USE_ARM_SCALER_ASM'
 				# FIXME: The following feature exhibits a bug. It produces distorted
 				# sound since 9003ce517ff9906b0288f9f7c02197fd091d4554. The ARM
@@ -3050,14 +2997,6 @@ EOF
 		add_line_to_config_mk 'N64 = 1'
 		_nuked_opl=no
 		;;
-	ps2)
-		append_var CXXFLAGS "-G2"
-		append_var DEFINES "-D_EE"
-		append_var DEFINES "-D__PLAYSTATION2__"
-		if test -z "$PS2SDK_OLD"; then
-			append_var DEFINES "-D__NEW_PS2SDK__"
-		fi
-		;;
 	ps3)
 		# Force use of SDL and freetype from the ps3 toolchain
 		_sdlpath="$PS3DEV/portlibs/ppu:$PS3DEV/portlibs/ppu/bin"
@@ -3161,28 +3100,6 @@ EOF
 		else
 			_optimization_level=-O3
 		fi
-		;;
-	tizen)
-		add_line_to_config_mk "TIZEN_ROOTSTRAP = $TIZEN_ROOTSTRAP"
-		append_var LDFLAGS "--sysroot=${TIZEN_ROOTSTRAP}"
-		append_var LDFLAGS "-L${TIZEN_LIBS}/lib"
-		append_var CXXFLAGS "-I${TIZEN_LIBS}/include"
-		;;
-	webos)
-		append_var CXXFLAGS "--sysroot=$WEBOS_PDK/arm-gcc/sysroot"
-		append_var CXXFLAGS "-I$WEBOS_PDK/include"
-		append_var CXXFLAGS "-I$WEBOS_PDK/include/SDL"
-		append_var CXXFLAGS "-I$WEBOS_PDK/device/usr/include"
-		# These compiler options are needed to support the Palm Pixi
-		append_var CXXFLAGS "-mcpu=arm1136jf-s"
-		append_var CXXFLAGS "-mfpu=vfp "
-		append_var CXXFLAGS "-mfloat-abi=softfp"
-		append_var LDFLAGS "-L$WEBOS_PDK/device/lib"
-		append_var LDFLAGS "-L$WEBOS_PDK/device/usr/lib"
-		append_var LDFLAGS "-Wl,--allow-shlib-undefined"
-		append_var LDFLAGS "--sysroot=$WEBOS_PDK/arm-gcc/sysroot"
-		add_line_to_config_mk "WEBOS_SDK = $WEBOS_SDK"
-		_seq_midi=no
 		;;
 	wii)
 		_optimization_level=-Os
@@ -3548,47 +3465,6 @@ if test -n "$_host"; then
 
 			_port_mk="backends/platform/sdl/morphos/morphos.mk"
 			;;
-		ps2)
-			append_var DEFINES "-DDISABLE_TEXT_CONSOLE"
-			append_var DEFINES "-DDISABLE_COMMAND_LINE"
-			append_var DEFINES "-DDISABLE_DOSBOX_OPL"
-			append_var DEFINES "-DDISABLE_SID"
-			append_var DEFINES "-DDISABLE_NES_APU"
-			append_var CXXFLAGS "-fno-exceptions"
-			append_var CXXFLAGS "-fno-rtti"
-			_backend="ps2"
-			_build_scalers=no
-			_mt32emu=no
-			_nuked_opl=no
-			# HACK to enable mad & zlib (they are not properly detected due to linker issues).
-			# This trick doesn't work for tremor right now, as the PS2 port the resulting library
-			# libtremor, while our code later on expects it to be called libvorbisidec.
-			# TODO: Enable tremor, e.g. by adding  -ltremor or by renaming the lib.
-			# Disable this for older SDK as this breaks the build otherwise...
-			if test -z "$PS2SDK_OLD" && test "$_tremor" = auto; then
-				_tremor=yes
-			fi
-			_mad=yes
-			_zlib=yes
-			# HACK to fix compilation of C source files for now.
-			add_line_to_config_mk 'CC := ee-gcc'
-			add_line_to_config_mk 'CFLAGS := -std=c99 -W -Wno-unused-parameter -Wconversion -pedantic -G2 -s -O2 -Wuninitialized'
-			# HACK to fix linking for now. It seems ee-g++ does not handle linking correctly.
-			LD=ee-gcc
-
-			if test "$_debug_build" = yes; then
-				# TODO: Setup debug build properly
-				append_var DEFINES "-D__PS2_DEBUG__"
-				#append_var INCLUDES "-I$(PS2GDB)/ee"
-				#append_var LDFLAGS "-L$(PS2GDB)/lib"
-				append_var LDFLAGS "-lps2gdbStub"
-				append_var LDFLAGS "-lps2ip"
-				append_var LDFLAGS "-ldebug"
-			else
-				# If not building for debug mode, strip binaries.
-				append_var CXXFLAGS "-s"
-			fi
-			;;
 		ps3)
 			_timidity=no
 			_vkeybd=yes
@@ -3630,29 +3506,6 @@ if test -n "$_host"; then
 			_opengl_mode=gles2
 			_vkeybd=yes
 			_port_mk="backends/platform/sdl/switch/switch.mk"
-			;;
-		tizen)
-			_unix=yes
-			_backend="tizen"
-			_port_mk="backends/platform/tizen/tizen.mk"
-			_build_scalers=no
-			_seq_midi=no
-			_mt32emu=no
-			_timidity=no
-			_vkeybd=yes
-			# Tizen relies on the OpenGL ES output thus we always enable it.
-			_opengl_mode=gles
-			;;
-		webos)
-			_backend="webos"
-			_port_mk="backends/platform/webos/webos.mk"
-			_build_scalers=yes
-			_build_hq_scalers=no
-			_timidity=no
-			_mt32emu=no
-			_seq_midi=no
-			_vkeybd=no
-			add_line_to_config_mk "HOST_COMPILER = `uname`"
 			;;
 		wii)
 			_backend="wii"
@@ -3767,6 +3620,7 @@ case $_backend in
 		;;
 	null)
 		append_var DEFINES "-DUSE_NULL_DRIVER"
+		_text_console=yes
 		;;
 	openpandora)
 		append_var DEFINES "-DOPENPANDORA"
@@ -3775,26 +3629,6 @@ case $_backend in
 			append_var DEFINES "-DOP_DEBUG"
 		fi
 		_sdl=auto
-		;;
-	ps2)
-		append_var DEFINES "-D_EE"
-		append_var DEFINES "-DFORCE_RETURN_TO_LAUNCHER"
-		append_var INCLUDES "-I$PS2SDK/ee/include"
-		append_var INCLUDES "-I$PS2SDK/common/include"
-		append_var INCLUDES "-I$PS2SDK/ports/include"
-		if test "$_dynamic_modules" = no ; then
-			append_var LDFLAGS "-mno-crt0"
-			append_var LDFLAGS "$PS2SDK/ee/startup/crt0.o"
-			append_var LDFLAGS "-T $PS2SDK/ee/startup/linkfile"
-		fi
-		append_var LDFLAGS "-L$PS2SDK/ee/lib"
-		append_var LDFLAGS "-L$PS2SDK/ports/lib"
-		if test -d "$PS2DEV/isjpcm"; then
-			append_var INCLUDES "-I$PS2DEV/isjpcm/include"
-			append_var LDFLAGS "-L$PS2DEV/isjpcm/lib"
-		fi
-		append_var LIBS "-lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm"
-		append_var LIBS "-lm -lc -lfileXio -lkernel -lstdc++"
 		;;
 	psp)
 		append_var DEFINES "-D__PSP__"
@@ -3827,34 +3661,6 @@ case $_backend in
 	switch)
 		_sdl=auto
 		append_var MODULES "backends/platform/sdl"
-		;;
-	tizen)
-		# dirent.h not available. NONSTANDARD_PORT==ensure portdefs.h is included
-		append_var DEFINES "-DTIZEN -DDISABLE_STDIO_FILESTREAM -DNONSTANDARD_PORT"
-		append_var DEFINES "-DNO_STDERR_STDOUT"
-		append_var DEFINES "-DDISABLE_COMMAND_LINE"
-		append_var INCLUDES '-I$(srcdir)/backends/platform/tizen'
-		append_var INCLUDES '-I$(TIZEN_ROOTSTRAP)/usr/include'
-		append_var INCLUDES '-I$(TIZEN_ROOTSTRAP)/usr/include/osp'
-		if test "$_debug_build" = yes; then
-			append_var CXXFLAGS "-D_DEBUG -DBUILD_DLL -O0 -g3"
-		fi
-		# created a shared library for inclusion via the eclipse build
-		append_var CXXFLAGS "-Wno-psabi"
-		append_var CXXFLAGS "--sysroot=${TIZEN_ROOTSTRAP}"
-		append_var CXXFLAGS "-fmessage-length=0"
-		append_var CXXFLAGS "-fPIC"
-		HOSTEXEPRE=lib
-		HOSTEXEEXT=.a
-		;;
-	webos)
-		# There is no sdl-config in the WebOS PDK so we don't use find_sdlconfig here.
-		# The PDL library acts as the WebOS device toolchain, and is required to control the virtual keyboard among other OS-level events.
-		append_var LIBS "-lSDL -lpdl"
-		append_var DEFINES "-DWEBOS"
-		append_var MODULES "backends/platform/sdl"
-		_sdl=yes
-		_sdlversion=1.2.0
 		;;
 	wii)
 		append_var DEFINES "-D__WII__"
@@ -3999,7 +3805,7 @@ fi
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	3ds | android | androidsdl | dingux | dc | gph | iphone | ios7 | maemo | null | openpandora | psp | psp2 | samsungtv | sdl | switch | tizen | webos | wii)
+	3ds | android | androidsdl | dingux | dc | gph | iphone | ios7 | maemo | null | openpandora | psp | psp2 | samsungtv | sdl | switch | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -4072,10 +3878,10 @@ esac
 #
 echo_n "Checking if host is POSIX compliant... "
 case $_host_os in
-	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | morphos | n64 | ps2 | ps3 | psp2 | psp | riscos | wii)
+	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | morphos* |  n64 | ps3 | psp2 | psp | riscos | wii)
 		_posix=no
 		;;
-	3ds | android | androidsdl | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | switch | uclinux* | webos)
+	3ds | android | androidsdl | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | switch | uclinux*)
 		_posix=yes
 		;;
 	os2-emx*)
@@ -4283,32 +4089,12 @@ PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a
 '
 		;;
-	ps2)
-		_elf_loader=yes
-		append_var DEFINES "-DUNCACHED_PLUGINS"
-_mak_plugins='
-LDFLAGS         += -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backends/plugins/ps2/main_prog.ld
-PLUGIN_LDFLAGS  += -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backends/plugins/ps2/plugin.ld -lstdc++ -lc
-'
-		;;
 	psp)
 		_elf_loader=yes
 		append_var DEFINES "-DUNCACHED_PLUGINS"
 _mak_plugins='
 LDFLAGS				+= -Wl,-T$(srcdir)/backends/plugins/psp/main_prog.ld
 PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/psp/plugin.ld -lstdc++ -lc
-'
-		;;
-	webos)
-		_plugin_prefix="lib"
-		_plugin_suffix=".so"
-		append_var CXXFLAGS "-fpic"
-		append_var LIBS "-ldl"
-_mak_plugins='
-PLUGIN_EXTRA_DEPS =
-PLUGIN_LDFLAGS  += -shared $(LDFLAGS)
-PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
-POST_OBJS_FLAGS := -Wl,-no-whole-archive
 '
 		;;
 	*)
@@ -4501,8 +4287,6 @@ if test "$_tremor" = yes && test "$_vorbis" = no; then
 	if test "$_tremolo" = yes ; then
 		add_line_to_config_h '#define USE_TREMOLO'
 		append_var LIBS "$TREMOR_LIBS -ltremolo"
-	elif test "$_host" = ps2 ; then
-		LIBS="-ltremor $LIBS"
 	else
 		append_var LIBS "$TREMOR_LIBS -lvorbisidec"
 	fi
@@ -5370,11 +5154,6 @@ if test "$_opengl_mode" = auto ; then
 			esac
 			;;
 
-		tizen)
-			# Tizen always runs in GLES mode
-			_opengl_mode=gles
-			;;
-
 		*)
 			_opengl_mode=none
 			;;
@@ -5818,14 +5597,10 @@ case $_backend in
 		# Add ../plugins as a path so plugins can be found when running from a .PND.
 		append_var DEFINES "-DPLUGIN_DIRECTORY=\\\"../plugins\\\""
 		;;
-	maemo | webos)
-		# The WebOS and Maemo apps want the plugins in the "lib" directory
+	maemo)
+		# The Maemo apps want the plugins in the "lib" directory
 		# without a scummvm sub directory.
 		append_var DEFINES "-DPLUGIN_DIRECTORY=\\\"$libdir\\\""
-		;;
-	ps2)
-		# PS2 bogus dir: it actually depends on launch medium
-		append_var DEFINES "-DPLUGIN_DIRECTORY=\\\"host:plugins\\\""
 		;;
 	*)
 		append_var DEFINES "-DPLUGIN_DIRECTORY=\\\"$libdir/scummvm\\\""

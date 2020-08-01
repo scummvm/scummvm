@@ -133,7 +133,7 @@ void TextDisplayer_LoL::expandField() {
 	}
 }
 
-void TextDisplayer_LoL::printDialogueText(int dim, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex) {
+void TextDisplayer_LoL::printDialogueText2(int dim, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex) {
 	int oldDim = 0;
 
 	if (dim == 3) {

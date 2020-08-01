@@ -44,7 +44,7 @@ public:
 	void setupField(bool mode);
 	void expandField();
 
-	void printDialogueText(int dim, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
+	void printDialogueText2(int dim, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
 	void printMessage(uint16 type, const char *str, ...) GCC_PRINTF(3, 4);
 
 	int16 _scriptTextParameter;

@@ -25,6 +25,7 @@
 #include "common/file.h"
 #include "common/macresman.h"
 #include "common/substream.h"
+#include "common/winexe.h"
 
 #include "director/director.h"
 #include "director/cast.h"
@@ -51,8 +52,12 @@ Archive *DirectorEngine::createArchive() {
 }
 
 Common::Error Stage::loadInitialMovie() {
-	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\nObtaining movie name\n");
+	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+	debug(0, "@@@@   Loading initial movie");
+	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 	Common::String movie = (_vm->getGameGID() == GID_TESTALL) ? getNextMovieFromQueue().movie : _vm->getEXEName();
+
+	probeProjector(movie);
 
 	if (g_director->getPlatform() == Common::kPlatformWindows)
 		loadEXE(movie);
@@ -68,24 +73,56 @@ Common::Error Stage::loadInitialMovie() {
 	_currentPath = getPath(movie, _currentPath);
 	_currentMovie->loadSharedCastsFrom(_currentPath + g_director->_sharedCastFile);
 
+	if (_currentMovie)
+		_currentMovie->setArchive(_mainArchive);
+
+	return Common::kNoError;
+}
+
+void Stage::probeProjector(const Common::String &movie) {
+	if (g_director->getPlatform() == Common::kPlatformWindows)
+		return;
+
+	Director::MacArchive *archive = new MacArchive();
+
+	if (!archive->openFile(movie)) {
+		delete archive;
+
+		return;
+	}
+
 	// Let's check if it is a projector file
 	// So far tested with Spaceship Warlock, D2
-	if (_mainArchive->hasResource(MKTAG('B', 'N', 'D', 'L'), "Projector")) {
+	if (archive->hasResource(MKTAG('B', 'N', 'D', 'L'), "Projector")) {
 		warning("Detected Projector file");
 
-		if (_mainArchive->hasResource(MKTAG('X', 'C', 'O', 'D'), -1)) {
-			Common::Array<uint16> xcod = _mainArchive->getResourceIDList(MKTAG('X', 'C', 'O', 'D'));
+		if (archive->hasResource(MKTAG('v', 'e', 'r', 's'), -1)) {
+			Common::Array<uint16> vers = archive->getResourceIDList(MKTAG('v', 'e', 'r', 's'));
+			for (Common::Array<uint16>::iterator iterator = vers.begin(); iterator != vers.end(); ++iterator) {
+				Common::SeekableSubReadStreamEndian *vvers = archive->getResource(MKTAG('v', 'e', 'r', 's'), *iterator);
+				Common::MacResManager::MacVers *v = Common::MacResManager::parseVers(vvers);
+
+				debug(0, "Detected vers %d.%d %s.%d region %d '%s' '%s'", v->majorVer, v->minorVer, v->devStr.c_str(),
+					v->preReleaseVer, v->region, v->str.c_str(), v->msg.c_str());
+
+				delete v;
+			}
+		}
+
+		if (archive->hasResource(MKTAG('X', 'C', 'O', 'D'), -1)) {
+			Common::Array<uint16> xcod = archive->getResourceIDList(MKTAG('X', 'C', 'O', 'D'));
 			for (Common::Array<uint16>::iterator iterator = xcod.begin(); iterator != xcod.end(); ++iterator) {
-				Resource res = _mainArchive->getResourceDetail(MKTAG('X', 'C', 'O', 'D'), *iterator);
+				Resource res = archive->getResourceDetail(MKTAG('X', 'C', 'O', 'D'), *iterator);
 				debug(0, "Detected XObject '%s'", res.name.c_str());
 				g_lingo->openXLib(res.name, kXObj);
 			}
 		}
 
-		if (_mainArchive->hasResource(MKTAG('S', 'T', 'R', '#'), 0)) {
-			_currentMovie->setArchive(_mainArchive);
+		if (archive->hasResource(MKTAG('S', 'T', 'R', '#'), 0)) {
+			if (_currentMovie)
+				_currentMovie->setArchive(archive);
 
-			Common::SeekableSubReadStreamEndian *name = _mainArchive->getResource(MKTAG('S', 'T', 'R', '#'), 0);
+			Common::SeekableSubReadStreamEndian *name = archive->getResource(MKTAG('S', 'T', 'R', '#'), 0);
 			int num = name->readUint16();
 			if (num != 1) {
 				warning("Incorrect number of strings in Projector file");
@@ -106,10 +143,7 @@ Common::Error Stage::loadInitialMovie() {
 		}
 	}
 
-	if (_currentMovie)
-		_currentMovie->setArchive(_mainArchive);
-
-	return Common::kNoError;
+	delete archive;
 }
 
 Archive *Stage::openMainArchive(const Common::String movie) {
@@ -136,7 +170,7 @@ void Stage::loadEXE(const Common::String movie) {
 
 		_currentMovie = new Movie(this);
 		_currentMovie->getMainLingoArch()->addCode(script, kMovieScript, 0);
-		g_lingo->processEvent(kEventStartUp);
+		_currentMovie->processEvent(kEventStartUp);
 		delete _currentMovie;
 		_currentMovie = nullptr;
 
@@ -159,6 +193,22 @@ void Stage::loadEXE(const Common::String movie) {
 		if (!_mainArchive->openStream(exeStream, 0))
 			error("Failed to load RIFF");
 	} else {
+		Common::WinResources *exe = Common::WinResources::createFromEXE(movie);
+		const Common::Array<Common::WinResourceID> versions = exe->getIDList(Common::kWinVersion);
+		for (uint i = 0; i < versions.size(); i++) {
+			Common::SeekableReadStream *res = exe->getResource(Common::kWinVersion, versions[i]);
+
+			Common::WinResources::VersionHash *versionMap = Common::WinResources::parseVersionInfo(res);
+
+			for (Common::WinResources::VersionHash::const_iterator it = versionMap->begin(); it != versionMap->end(); ++it)
+				warning("info <%s>: <%s>", it->_key.c_str(), it->_value.encode().c_str());
+
+			delete versionMap;
+			delete res;
+
+		}
+		delete exe;
+
 		exeStream->seek(-4, SEEK_END);
 		exeStream->seek(exeStream->readUint32LE());
 
@@ -181,7 +231,8 @@ void Stage::loadEXE(const Common::String movie) {
 		}
 	}
 
-	_mainArchive->setFileName(movie);
+	if (_mainArchive)
+		_mainArchive->setPathName(movie);
 }
 
 void Stage::loadEXEv3(Common::SeekableReadStream *stream) {
@@ -229,9 +280,9 @@ void Stage::loadEXEv3(Common::SeekableReadStream *stream) {
 		_mainArchive = new RIFFArchive();
 
 		if (!_mainArchive->openStream(stream, riffOffset))
-			error("Failed to load RIFF from EXE");
-
-		return;
+			warning("Failed to load RIFF from EXE");
+		else
+			return;
 	}
 
 	openMainArchive(mmmFileName);
@@ -311,7 +362,7 @@ void Stage::loadMac(const Common::String movie) {
 
 		Common::SeekableReadStream *dataFork = _macBinary->getDataFork();
 		_mainArchive = new RIFXArchive();
-		_mainArchive->setFileName(movie);
+		_mainArchive->setPathName(movie);
 
 		// First we need to detect PPC vs. 68k
 

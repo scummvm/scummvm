@@ -118,10 +118,6 @@ public:
 		_keycards = 0;
 	}
 
-	uint16 getActiveWeapon() const {
-		return _activeWeapon;
-	}
-
 	uint16 getActiveInvItem() const {
 		return _activeInvItem;
 	}
@@ -131,6 +127,9 @@ public:
 
 	//!< Swap to the next inventory item (in Crusader)
 	void nextInvItem();
+
+	//! Check if we can absorb a hit with the shield. Returns the modified damage value.
+	int receiveShieldHit(int damage, uint16 damage_type) override;
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
@@ -148,12 +147,14 @@ public:
 	INTRINSIC(I_hasKeycard);
 	INTRINSIC(I_clrKeycards);
 	INTRINSIC(I_addItemCru);
+	INTRINSIC(I_getNumberOfCredits);
 
 	void getWeaponOverlay(const WeaponOverlayFrame *&frame_, uint32 &shape_);
 
 
 protected:
 	void useInventoryItem(uint32 shapenum);
+	void useInventoryItem(Item *item);
 
 	bool _justTeleported;
 
@@ -163,10 +164,12 @@ protected:
 
 	uint32 _keycards;
 	CruBatteryType _cruBatteryType;
-	uint16 _activeWeapon;
 	uint16 _activeInvItem;
 
 	Std::string _name;
+
+	uint16 _shieldSpriteProc;
+	uint16 _shieldType;
 
 };
 

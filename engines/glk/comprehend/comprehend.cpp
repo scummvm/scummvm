@@ -63,6 +63,11 @@ void Comprehend::initGraphicsMode() {
 	initGraphics(640, 400, &pixelFormat);
 }
 
+void Comprehend::createConfiguration() {
+	GlkAPI::createConfiguration();
+	switchToWhiteOnBlack();
+}
+
 void Comprehend::runGame() {
 	initialize();
 
@@ -76,22 +81,11 @@ void Comprehend::runGame() {
 }
 
 void Comprehend::initialize() {
-	// Set up the GLK windows
-	g_conf->_wMarginX = 0;
-	g_conf->_wMarginY = 0;
-	g_conf->_tMarginY = 4;
-
 	_bottomWindow = (TextBufferWindow *)glk_window_open(0, 0, 0, wintype_TextBuffer, 1);
 	glk_set_window(_bottomWindow);
 
 	showGraphics();
 	_topWindow->fillRect(0, Rect(0, 0, _topWindow->_w, _topWindow->_h));
-
-	const Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
-	_bottomWindow->_stream->setZColors(
-		pixelFormat.RGBToColor(0xff, 0xff, 0xff),
-		pixelFormat.RGBToColor(0, 0, 0)
-	);
 
 	// Initialize drawing surface, and the archive that abstracts
 	// the room and item graphics as as individual files

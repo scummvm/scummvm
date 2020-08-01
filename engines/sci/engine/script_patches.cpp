@@ -121,6 +121,7 @@ static const char *const selectorNameTable[] = {
 	"startText",    // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	"startAudio",   // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	"modNum",       // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
+	"add",          // King's Quest 6
 	"givePoints",   // King's Quest 6
 	"has",          // King's Quest 6, GK1
 	"modeless",     // King's Quest 6 CD
@@ -240,6 +241,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_startText,
 	SELECTOR_startAudio,
 	SELECTOR_modNum,
+	SELECTOR_add,
 	SELECTOR_givePoints,
 	SELECTOR_has,
 	SELECTOR_modeless,
@@ -4895,6 +4897,27 @@ static const uint16 kq6PatchDuplicateBabyTearsPoint[] = {
 	PATCH_END
 };
 
+// Clicking the lamp on the Baby Tears when the lamp already contains the sacred
+//  water awards the tears even if the babies aren't crying, allowing the puzzle
+//  to be bypassed. The script tests for the sacred water, even though the water
+//  shouldn't affect this sequence, and its only function is to skip the crying
+//  test which is always necessary. We fix this by disabling the water test.
+//
+// Applies to: All versions
+// Responsible method: Brat:doVerb
+static const uint16 kq6SignatureGetBabyTears[] = {
+	SIG_MAGICDWORD,
+	0x89, 0xa1,                         // lsg a1 [ lamp flags ]
+	0x35, 0x02,                         // ldi 02 [ sacred water ]
+	0x12,                               // and    [ is sacred water in lamp? ]
+	SIG_END
+};
+
+static const uint16 kq6PatchGetBabyTears[] = {
+	0x39, 0x00,                         // pushi 00 [ disable sacred water test ]
+	PATCH_END
+};
+
 // KQ6 truncates messages longer than 400 characters in the CD and Mac versions.
 //  This is most prominent when reading Cassima's letter to Alexander. When the
 //  Messager class was upgraded to support audio, a 400 character buffer was
@@ -5043,6 +5066,119 @@ static const uint16 kq6PatchTalkingInventory[] = {
 	0x39, 0x00,                         // pushi 00
 	0x43, 0x2c, 0x00,                   // callk GameIsRestarting [ custom throttling ]
 	0x34, PATCH_UINT16(0x0000),         // ldi 0000 [ exit loop ]
+	PATCH_END
+};
+
+// Exiting the pawnshop while the Genie's eye is glinting locks up the game.
+//  Unlike the bookstore, the pawnshop script fails to dispose the "eye" object
+//  if it's in the middle of animating, causing the door animation in the next
+//  room to loop forever. Sierra added a simple workaround to the CD version to
+//  prevent this: the eye no longer glints when ego is close the pawnshop exit.
+//  We apply this same workaround to vulnerable versions.
+//
+// Applies to: English, French, and German PC Floppy, English Mac Floppy
+// Responsible method: genieBrowseScr:changeState(3)
+static const uint16 kq6SignaturePawnshopGenieEye[] = {
+	SIG_MAGICDWORD,
+	0x31, 0x37,                         // bnt 37
+	0x39, 0x03,                         // pushi 03
+	0x7a,                               // push2
+	0x76,                               // push0
+	0x7a,                               // push2
+	0x43, 0x3c, 0x04,                   // callk Random [ Random 0 2 ]
+	0x36,                               // push
+	0x76,                               // push0
+	0x78,                               // push1
+	0x46, SIG_UINT16(0x03e7),           // calle proc999_5 [ OneOf (Random 0 2) 0 1 ]
+	      SIG_UINT16(0x0005), 0x06,
+	SIG_END
+};
+
+static const uint16 kq6PatchPawnshopGenieEye[] = {
+	PATCH_ADDTOOFFSET(+2),
+	0x39, 0x43,                         // pushi 43
+	0x78,                               // push1 [ x ]
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x04,                         // send 04 [ ego x? ]
+	0x22,                               // lt?     [ 67 < ego:x ]
+	0x31, 0x06,                         // bnt 06  [ skip glint ]
+	0x7a,                               // push2
+	0x76,                               // push0
+	0x7a,                               // push2
+	0x43, 0x3c, 0x04,                   // callk Random [ Random 0 2 ]
+	PATCH_END
+};
+
+// During the wedding close-up with the Vizier and the Genie in room 740,
+//  clicking almost any of the wrong lamps on the Genie results in the wrong
+//  message sequence. Alexander says "I have this lamp, 'princess'" twice
+//  instead of the Genie responding after the first message. The script passes
+//  the wrong sequence number in the second message tuple.
+//
+// Applies to: All versions
+// Responsible method: genieHead:doVerb
+static const uint16 kq6SignatureWeddingGenieLampMessage[] = {
+	0x39, SIG_SELECTOR8(add),           // pushi add
+	0x39, 0x05,                         // pushi 05
+	0x67, SIG_ADDTOOFFSET(+1),          // pTos modNum
+	0x67, SIG_ADDTOOFFSET(+1),          // pTos noun
+	SIG_MAGICDWORD,
+	0x39, 0x39,                         // pushi 39 [ verb ]
+	0x76,                               // push0    [ cond ]
+	0x78,                               // push1    [ wrong seq ]
+	SIG_END
+};
+
+static const uint16 kq6PatchWeddingGenieLampMessage[] = {
+	PATCH_ADDTOOFFSET(+11),
+	0x7a,                               // push2 [ correct seq ]
+	PATCH_END
+};
+
+// Clicking Look on the first catacombs room (405) or the dead-end room (407)
+//  while in text-mode breaks the CD and Spanish versions. The message boxes
+//  never leave the screen, even after restarting. The doVerb methods in these
+//  rooms are missing the necessary "return true" statements that were added to
+//  all other rooms in the CD version. In earlier versions, Messager:say always
+//  set the accumulator to non-zero and these statements weren't necessary.
+//
+// Applies to: PC CD, Spanish PC Floppy
+// Responsible methods: rm405:doVerb(1), rm407:doVerb(1)
+static const uint16 kq6SignatureRoom405LookMessage[] = {
+	0x33, 0x1f,                         // jmp 1f
+	SIG_ADDTOOFFSET(+18),
+	0x33, 0x0b,                         // jmp 0b
+	SIG_ADDTOOFFSET(+8),
+	SIG_MAGICDWORD,
+	0x57, 0x93, 0x06,                   // super LabRoom 06 [ super doVerb: param1 &rest ]
+	0x3a,                               // toss
+	0x48,                               // ret
+	SIG_END
+};
+
+static const uint16 kq6PatchRoom405LookMessage[] = {
+	0x14,                               // or [ acc |= 1  ]
+	0x48,                               // ret
+	PATCH_ADDTOOFFSET(+18),
+	0x14,                               // or [ acc |= 1  ]
+	0x48,                               // ret
+	PATCH_END
+};
+
+static const uint16 kq6SignatureRoom407LookMessage[] = {
+	0x33, 0x0b,                         // jmp 0b
+	SIG_ADDTOOFFSET(+8),
+	SIG_MAGICDWORD,
+	0x57, 0x93, 0x06,                   // super LabRoom 06 [ super doVerb: param1 &rest ]
+	0x3a,                               // toss
+	0x48,                               // ret
+	SIG_END
+};
+
+static const uint16 kq6PatchRoom407LookMessage[] = {
+	0x14,                               // or [ acc |= 1  ]
+	0x48,                               // ret
 	PATCH_END
 };
 
@@ -5489,11 +5625,16 @@ static const uint16 kq6CDPatchAudioTextMenuSupport[] = {
 static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,    87, "fix Drink Me bottle",                            1, kq6SignatureDrinkMeFix,                   kq6PatchDrinkMeFix },
 	{ false,    87, "Mac: Drink Me pic",                              1, kq6SignatureMacDrinkMePic,                kq6PatchMacDrinkMePic },
+	{  true,   281, "fix pawnshop genie eye",                         1, kq6SignaturePawnshopGenieEye,             kq6PatchPawnshopGenieEye },
 	{  true,   300, "fix floating off steps",                         2, kq6SignatureCliffStepFloatFix,            kq6PatchCliffStepFloatFix },
+	{  true,   405, "fix catacombs room message",                     1, kq6SignatureRoom405LookMessage,           kq6PatchRoom405LookMessage },
+	{  true,   407, "fix catacombs room message",                     1, kq6SignatureRoom407LookMessage,           kq6PatchRoom407LookMessage },
 	{  true,   480, "CD: fix wallflower dance",                       1, kq6CDSignatureWallFlowerDanceFix,         kq6CDPatchWallFlowerDanceFix },
+	{  true,   480, "fix getting baby tears",                         1, kq6SignatureGetBabyTears,                 kq6PatchGetBabyTears },
 	{  true,   481, "fix duplicate baby cry",                         1, kq6SignatureDuplicateBabyCry,             kq6PatchDuplicateBabyCry },
 	{  true,   481, "fix duplicate baby tears point",                 1, kq6SignatureDuplicateBabyTearsPoint,      kq6PatchDuplicateBabyTearsPoint },
 	{  true,   640, "fix 'Tickets, only' message",                    1, kq6SignatureTicketsOnly,                  kq6PatchTicketsOnly },
+	{  true,   745, "fix wedding genie lamp message",                 1, kq6SignatureWeddingGenieLampMessage,      kq6PatchWeddingGenieLampMessage },
 	{  true,   800, "fix Cassima secret passage peephole",            1, kq6SignatureCassimaSecretPassage,         kq6PatchCassimaSecretPassage },
 	{  true,   907, "fix inventory stack leak",                       1, kq6SignatureInventoryStackFix,            kq6PatchInventoryStackFix },
 	{  true,   907, "fix hair detection for ribbon's look msg",       1, kq6SignatureLookRibbonFix,                kq6PatchLookRibbonFix },

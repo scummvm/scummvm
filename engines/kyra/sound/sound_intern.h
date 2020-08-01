@@ -74,7 +74,7 @@ public:
 	void haltTrack() override;
 	bool isPlaying() const override;
 
-	void playSoundEffect(uint8 track, uint8 volume = 0xFF) override;
+	void playSoundEffect(uint16 track, uint8 volume = 0xFF) override;
 	void stopAllSoundEffects() override;
 
 	void beginFadeOut() override;
@@ -130,7 +130,7 @@ public:
 	void playTrack(uint8 track) override;
 	void haltTrack() override;
 
-	void playSoundEffect(uint8 track, uint8 volume = 0xFF) override;
+	void playSoundEffect(uint16 track, uint8 volume = 0xFF) override;
 	void stopAllSoundEffects() override;
 
 	void beginFadeOut() override;
@@ -185,7 +185,7 @@ public:
 	void beginFadeOut() override;
 
 	int32 voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume, uint8 priority, bool isSfx) override { return -1; }
-	void playSoundEffect(uint8 track, uint8 volume = 0xFF) override;
+	void playSoundEffect(uint16 track, uint8 volume = 0xFF) override;
 
 	void updateVolumeSettings() override;
 
@@ -221,7 +221,7 @@ public:
 	void beginFadeOut() override;
 
 	int32 voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume = 255, uint8 priority = 255, bool isSfx = true) override;
-	void playSoundEffect(uint8 track, uint8 volume = 0xFF) override;
+	void playSoundEffect(uint16 track, uint8 volume = 0xFF) override;
 
 	void updateVolumeSettings() override;
 
@@ -336,7 +336,7 @@ public:
 	void beginFadeOut() override;
 
 	int32 voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume, uint8 priority, bool isSfx) override { return -1; }
-	void playSoundEffect(uint8 track, uint8 volume = 0xFF) override;
+	void playSoundEffect(uint16 track, uint8 volume = 0xFF) override;
 
 protected:
 	Audio::MaxTrax *_driver;
@@ -373,7 +373,7 @@ public:
 	void haltTrack() override;
 	bool isPlaying() const override;
 
-	void playSoundEffect(uint8 track, uint8 volume = 0xFF) override;
+	void playSoundEffect(uint16 track, uint8 volume = 0xFF) override;
 	void stopAllSoundEffects() override;
 
 	void beginFadeOut() override;
@@ -425,7 +425,7 @@ public:
 	void unloadSoundFile(Common::String file) override;
 	void playTrack(uint8 track) override;
 	void haltTrack() override;
-	void playSoundEffect(uint8 track, uint8 volume = 0xFF) override;
+	void playSoundEffect(uint16 track, uint8 volume = 0xFF) override;
 	void beginFadeOut() override { beginFadeOut(160); }
 	void beginFadeOut(int delay) override;
 	void updateVolumeSettings() override;
@@ -461,7 +461,7 @@ public:
 	void loadSfxFile(Common::String file) override;
 	void playTrack(uint8 track) override;
 	void haltTrack() override;
-	void playSoundEffect(uint8 track, uint8) override;
+	void playSoundEffect(uint16 track, uint8) override;
 	void beginFadeOut() override {}
 	void updateVolumeSettings() override;
 
@@ -475,6 +475,43 @@ private:
 	uint32 _sfxDelay;
 
 	bool _ready;
+};
+
+class SegaAudioDriver;
+class SoundSegaCD_EoB : public Sound {
+public:
+	SoundSegaCD_EoB(KyraEngine_v1 *vm, Audio::Mixer *mixer);
+	~SoundSegaCD_EoB() override;
+
+	kType getMusicType() const override;
+
+	bool init() override;
+	void initAudioResourceInfo(int, void*) override {}
+	void selectAudioResourceSet(int) override {}
+	bool hasSoundFile(uint file) const override { return false; }
+	void loadSoundFile(uint file) override {}
+	void loadSoundFile(Common::String file) override {}
+	void playTrack(uint8 track) override;
+	void haltTrack() override;
+	void playSoundEffect(uint16 track, uint8 volume) override;
+	bool isPlaying() const override;
+	void beginFadeOut() override {}
+	void updateVolumeSettings() override;
+
+private:
+	void loadPCMData();
+	void loadFMData();
+
+	KyraEngine_v1 *_vm;
+	SegaAudioDriver *_driver;
+
+	uint8 _pcmOffsets[8];
+	uint16 _fmOffsets[140];
+	const uint8 *_fmData;
+	int _lastSoundEffect;
+	bool _ready;
+
+	static const uint8 _fmTrackMap[140];
 };
 
 #endif

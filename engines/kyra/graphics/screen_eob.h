@@ -30,7 +30,27 @@
 namespace Kyra {
 
 class EoBCoreEngine;
+class SegaRenderer;
+class SegaAnimator;
 class Screen_EoB : public Screen {
+friend class SegaRenderer;
+public:
+	// The purpose of this enum is to keep better track of which page is used
+	// when and for which purpose. We use the pages for more backup operations
+	// than the original and also have to deal with the different ports which
+	// all do their own things. This is supposed to help avoid using pages that
+	// are already in use for something else. It also allows for quick fixes
+	// if necessary.
+	enum {
+		kSegaInitShapesPage		=	7,
+		kSegaRenderPage			=	8,
+		kDefeatMsgBackupPage	=	10,
+		kCheckPwBackupPage		=	10,
+		kSpellbookBackupPage	=	10,
+		kEoB2ScriptHelperPage	=	12,
+		kCampMenuBackupPage		=	12
+	};
+
 public:
 	Screen_EoB(EoBCoreEngine *vm, OSystem *system);
 	~Screen_EoB() override;
@@ -46,7 +66,7 @@ public:
 
 	void loadFileDataToPage(Common::SeekableReadStream *s, int pageNum, uint32 size);
 
-	void printShadedText(const char *string, int x, int y, int col1, int col2, int shadowCol);
+	void printShadedText(const char *string, int x, int y, int col1, int col2, int shadowCol, int pitch = -1);
 
 	void loadBitmap(const char *filename, int tempPage, int dstPage, Palette *pal, bool skip = false) override;
 	void loadEoBBitmap(const char *file, const uint8 *cgaMapping, int tempPage, int destPage, int convertToPage);
@@ -92,7 +112,7 @@ public:
 	void shadeRect(int x1, int y1, int x2, int y2, int shadingLevel);
 
 	// PC-98 specific
-	void selectPC98Palette(int paletteIndex, Palette &dest, int brightness = 0, bool set = false);
+	void selectPC98Palette(int palID, Palette &dest, int brightness = 0, bool set = false);
 	void decodeBIN(const uint8 *src, uint8 *dst, uint16 inSize);
 	void decodePC98PlanarBitmap(uint8 *srcDstBuffer, uint8 *tmpBuffer, uint16 size = 64000);
 
@@ -101,7 +121,7 @@ public:
 		uint8 delay;
 	};
 
-	void initPC98PaletteCycle(int paletteIndex, PalCycleData *data);
+	void initPC98PaletteCycle(int palID, PalCycleData *data);
 	void updatePC98PaletteCycle(int brightness);
 
 	PalCycleData *_activePalCycle;
@@ -113,6 +133,29 @@ public:
 	// I use colors 32 to 63 for these extra colors (which the Amiga copper sends to the color
 	// registers on the fly at vertical beam position 120).
 	void setDualPalettes(Palette &top, Palette &bottom);
+
+	// SegaCD specific
+	void sega_initGraphics();
+	void sega_selectPalette(int srcPalID, int dstPalID, bool set = false);
+	void sega_loadCustomPaletteData(Common::ReadStream *in);
+	void sega_updatePaletteFaders(int palID);
+	void sega_fadePalette(int delay, int16 brEnd, int dstPalID = -1, bool waitForCompletion = true, bool noUpdate = false);
+	void sega_fadeToBlack(int delay) { sega_fadePalette(delay, -7); }
+	void sega_fadeToWhite(int delay) { sega_fadePalette(delay, 7); }
+	void sega_fadeToNeutral(int delay) { sega_fadePalette(delay, 0); }
+	void sega_paletteOps(int16 opPal, int16 par1, int16 par2);
+	void sega_setTextBuffer(uint8 *buffer, uint32 bufferSize);
+	void sega_clearTextBuffer(uint8 col);
+	void sega_loadTextBackground(const uint8 *src, uint16 size);
+	void sega_drawTextBox(int pW, int pH, int x, int y, int w, int h, uint8 color1, uint8 color2);
+	void sega_loadTextBufferToVRAM(uint16 srcOffset, uint16 addr, int size);
+	void sega_gfxScale(uint8 *out, uint16 w, uint16 h, uint16 pitch, const uint8 *in, const uint16 *stampMap, const uint16 *traceVectors);
+	void sega_drawClippedLine(int pW, int pH, int x, int y, int w, int h, uint8 color);
+	uint8 *sega_convertShape(const uint8 *src, int w, int h, int pal, int hOffs = 0);
+	void sega_encodeShapesFromSprites(const uint8 **dst, const uint8 *src, int numShapes, int w, int h, int pal, bool removeSprites = true);
+
+	SegaRenderer *sega_getRenderer() const { return _segaRenderer; }
+	SegaAnimator *sega_getAnimator() const { return _segaAnimator; }
 
 private:
 	void updateDirtyRects() override;
@@ -150,9 +193,6 @@ private:
 	uint8 *_egaDitheringTable;
 	uint8 *_egaDitheringTempPage;
 
-	// hard coded 16 color palettes for PC98 version of EOB1
-	const uint8 *_palette16c[10];
-
 	Common::String _cpsFilePattern;
 
 	const uint16 _cursorColorKey16Bit;
@@ -160,6 +200,26 @@ private:
 	static const uint8 _egaMatchTable[];
 	static const ScreenDim _screenDimTable[];
 	static const int _screenDimTableCount;
+
+	// SegaCD specific
+	struct PaletteFader {
+		PaletteFader() : _brCur(0), _brDest(0), _fadeIncr(0), _fadeDelay(0), _fadeTimer(0), _needRefresh(false) {}
+		int16 _brCur;
+		int16 _brDest;
+		int16 _fadeIncr;
+		int16 _fadeDelay;
+		int16 _fadeTimer;
+		bool _needRefresh;
+	};
+
+	PaletteFader *_palFaders;
+	bool _specialColorReplace;
+	SegaRenderer *_segaRenderer;
+	SegaAnimator *_segaAnimator;
+	uint16 _segaCurPalette[64];
+	uint16 *_segaCustomPalettes;
+	uint8 *_defaultRenderBuffer;
+	int _defaultRenderBufferSize;
 };
 
 /**
@@ -173,18 +233,19 @@ public:
 	~OldDOSFont() override;
 
 	bool load(Common::SeekableReadStream &file) override;
+	Type getType() const override { return kASCII; }
 	int getHeight() const override { return _height; }
 	int getWidth() const override { return _width; }
 	int getCharWidth(uint16 c) const override;
 	void setColorMap(const uint8 *src) override;
 	void set16bitColorMap(const uint16 *src) override { _colorMap16bit = src; }
-	void setStyle(FontStyle style) override { _style = style; }
+	void setStyles(int styles) override { _style = styles; }
 	void drawChar(uint16 c, byte *dst, int pitch, int bpp) const override;
 
 protected:
 	void unload();
 
-	FontStyle _style;
+	int _style;
 	const uint8 *_colorMap8bit;
 	uint8 *_data;
 	uint16 *_bitmapOffsets;
@@ -212,6 +273,7 @@ public:
 	~AmigaDOSFont() override { unload(); }
 
 	bool load(Common::SeekableReadStream &file) override;
+	Type getType() const override { return kASCII; }
 	int getHeight() const override { return _height; }
 	int getWidth() const override { return _width; }
 	int getCharWidth(uint16 c) const override;
@@ -299,6 +361,7 @@ public:
 	Font12x12PC98(uint8 shadowColor, const uint16 *convTable1, const uint16 *convTable2, const uint8 *lookupTable);
 	~Font12x12PC98() override;
 	bool usesOverlay() const override { return true; }
+	Type getType() const override { return kSJIS; }
 	int getHeight() const override { return _height >> 1; }
 	int getWidth() const override { return _width >> 1; }
 	int getCharWidth(uint16 c) const override { return _width >> 1; };
@@ -331,6 +394,7 @@ public:
 	~SJISFont12x12() override { unload(); }
 
 	bool load(Common::SeekableReadStream &file) override;
+	Type getType() const override { return kSJIS; }
 	bool usesOverlay() const override { return true; }
 	int getHeight() const override { return _height; }
 	int getWidth() const override { return _width; }
@@ -346,6 +410,37 @@ private:
 
 	const uint8 *_colorMap;
 	const int _height, _width;
+};
+
+class SegaCDFont : public Font {
+public:
+	SegaCDFont(const uint16 *convTable1, const uint16 *convTable2, const uint8 *widthTable1, const uint8 *widthTable2, const uint8 *widthTable3);
+	~SegaCDFont() override;
+
+	bool load(Common::SeekableReadStream &file) override;
+	Type getType() const override { return kSJIS; }
+	int getHeight() const override { return _height; }
+	int getWidth() const override { return _width; }
+	int getCharWidth(uint16 c) const override;
+	int getCharHeight(uint16 c) const override;
+	void setStyles(int styles) override;
+	void setColorMap(const uint8 *src) override { _colorMap = src; }
+	void drawChar(uint16 c, byte *dst, int pitch, int bpp) const override { drawChar(c, dst, pitch, 0, 0); }
+	void drawChar(uint16 c, byte *dst, int pitch, int xOffs, int yOffs) const override;
+
+private:
+	const uint8 *getGlyphData(uint16 c, uint8 &charWidth, uint8 &charHeight, uint8 &pitch) const;
+
+	const uint8 *_data;
+	const uint8 *_buffer;
+	bool _forceTwoByte;
+	bool _fixedWidth;
+	uint8 _style;
+
+	const uint8 *_colorMap;
+	const int _height, _width;
+	const uint16 *_convTable1, *_convTable2;
+	const uint8 *_widthTable1, *_widthTable2, *_widthTable3;
 };
 
 } // End of namespace Kyra

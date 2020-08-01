@@ -65,8 +65,11 @@ void OSystem_3DS::init3DSGraphics() {
 	C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
 
 	// Initialize the render targets
+
+	int topScreenWidth = gfxIsWide() ? 800 : 400;
+
 	_renderTargetTop =
-	    C3D_RenderTargetCreate(240, 400, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
+	    C3D_RenderTargetCreate(240, topScreenWidth, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
 	C3D_RenderTargetClear(_renderTargetTop, C3D_CLEAR_ALL, 0x0000000, 0);
 	C3D_RenderTargetSetOutput(_renderTargetTop, GFX_TOP, GFX_LEFT,
 	                          DISPLAY_TRANSFER_FLAGS);
@@ -123,6 +126,7 @@ void OSystem_3DS::destroy3DSGraphics() {
 
 bool OSystem_3DS::hasFeature(OSystem::Feature f) {
 	return (f == OSystem::kFeatureCursorPalette ||
+	        f == OSystem::kFeatureFilteringMode ||
 	        f == OSystem::kFeatureOverlaySupportsAlpha ||
 	        f == OSystem::kFeatureKbdMouseSpeed ||
 	        f == OSystem::kFeatureJoystickDeadzone);
@@ -134,6 +138,9 @@ void OSystem_3DS::setFeatureState(OSystem::Feature f, bool enable) {
 		_cursorPaletteEnabled = enable;
 		flushCursor();
 		break;
+	case OSystem::kFeatureFilteringMode:
+		_filteringEnabled = enable;
+		break;
 	default:
 		break;
 	}
@@ -143,6 +150,8 @@ bool OSystem_3DS::getFeatureState(OSystem::Feature f) {
 	switch (f) {
 	case OSystem::kFeatureCursorPalette:
 		return _cursorPaletteEnabled;
+	case OSystem::kFeatureFilteringMode:
+		return _filteringEnabled;
 	default:
 		return false;
 	}
@@ -429,6 +438,7 @@ void OSystem_3DS::updateScreen() {
 		if (config.screen == kScreenTop || config.screen == kScreenBoth) {
 			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _projectionLocation, &_projectionTop);
 			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _gameTopTexture.getMatrix());
+			_gameTopTexture.setFilteringMode(_magnifyMode != MODE_MAGON && _filteringEnabled);
 			_gameTopTexture.render();
 			if (_overlayVisible && config.screen == kScreenTop) {
 				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _overlay.getMatrix());
@@ -446,6 +456,7 @@ void OSystem_3DS::updateScreen() {
 			}
 			if (_cursorVisible && config.showCursor && config.screen == kScreenTop) {
 				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _cursorTexture.getMatrix());
+				_cursorTexture.setFilteringMode(!_overlayVisible && _filteringEnabled);
 				_cursorTexture.render();
 			}
 		}
@@ -456,6 +467,7 @@ void OSystem_3DS::updateScreen() {
 		if (config.screen == kScreenBottom || config.screen == kScreenBoth) {
 			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _projectionLocation, &_projectionBottom);
 			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _gameBottomTexture.getMatrix());
+			_gameTopTexture.setFilteringMode(_filteringEnabled);
 			_gameTopTexture.render();
 			if (_overlayVisible) {
 				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _overlay.getMatrix());
@@ -473,6 +485,7 @@ void OSystem_3DS::updateScreen() {
 			}
 			if (_cursorVisible && config.showCursor) {
 				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _cursorTexture.getMatrix());
+				_cursorTexture.setFilteringMode(!_overlayVisible && _filteringEnabled);
 				_cursorTexture.render();
 			}
 		}

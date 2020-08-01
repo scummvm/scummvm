@@ -53,7 +53,16 @@ public:
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
 
-	static TargetReticleProcess *getProcess() {
+	void setEnabled(bool val) {
+		_reticleEnabled = val;
+	}
+	bool getEnabled() const {
+		return _reticleEnabled;
+	}
+
+	void toggle();
+
+	static TargetReticleProcess *get_instance() {
 		return _instance;
 	}
 
@@ -65,7 +74,7 @@ private:
     bool _reticleEnabled;
 	int32 _lastUpdate;
 	uint16 _reticleSpriteProcess;
-	uint16 _lastTargetDir;
+	Direction _lastTargetDir;
 	uint16 _lastTargetItem;
 
 	static TargetReticleProcess *_instance;

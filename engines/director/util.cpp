@@ -244,7 +244,7 @@ Common::String convertPath(Common::String &path) {
 	if (path.empty())
 		return path;
 
-	if (!path.contains(':')) {
+	if (!path.contains(':') && !path.contains('/') && !path.contains('\\')) {
 		return path;
 	}
 
@@ -252,10 +252,10 @@ Common::String convertPath(Common::String &path) {
 	uint32 idx = 0;
 
 	if (path.hasPrefix("::")) {
-		res = "../";
+		res = "..\\";
 		idx = 2;
 	} else {
-		res = "./";
+		res = ".\\";
 
 		if (path[0] == ':')
 			idx = 1;
@@ -263,14 +263,24 @@ Common::String convertPath(Common::String &path) {
 
 	while (idx != path.size()) {
 		if (path[idx] == ':')
-			res += '/';
+			res += '\\';
+		else if (path[idx] == '/')
+			res += ':';
 		else
 			res += path[idx];
 
 		idx++;
 	}
 
-	return res;
+	// And now convert everything to Unix style paths
+	Common::String res1;
+	for (idx = 0; idx < res.size(); idx++)
+		if (res[idx] == '\\')
+			res1 += '/';
+		else
+			res1 += res[idx];
+
+	return res1;
 }
 
 Common::String getPath(Common::String path, Common::String cwd) {
@@ -282,26 +292,34 @@ Common::String getPath(Common::String path, Common::String cwd) {
 	return cwd; // The path is not altered
 }
 
+bool testPath(Common::String &path) {
+	Common::File f;
+	if (f.open(path)) {
+		if (f.size())
+			return true;
+		f.close();
+	}
+	return false;
+}
+
 Common::String pathMakeRelative(Common::String path, bool recursive, bool addexts) {
 	Common::String initialPath(path);
 
-	// First, convert Windows-style separators
-	if (g_director->getPlatform() == Common::kPlatformWindows) {
-		if (initialPath.contains('\\'))
-			for (uint i = 0; i < initialPath.size(); i++)
-				if (initialPath[i] == '\\')
-					initialPath.setChar('/', i);
-	}
+	if (recursive) // first level
+		initialPath = convertPath(initialPath);
 
 	debug(2, "pathMakeRelative(): s1 %s -> %s", path.c_str(), initialPath.c_str());
 
-	initialPath = Common::normalizePath(g_director->getCurrentPath() + convertPath(initialPath), '/');
+	initialPath = Common::normalizePath(g_director->getCurrentPath() + initialPath, '/');
 	Common::File f;
 	Common::String convPath = initialPath;
 
 	debug(2, "pathMakeRelative(): s2 %s", convPath.c_str());
 
-	if (f.open(initialPath))
+	// Strip the leading whitespace from the path
+	initialPath.trim();
+
+	if (testPath(initialPath))
 		return initialPath;
 
 	// Now try to search the file
@@ -328,7 +346,7 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 
 		debug(2, "pathMakeRelative(): s4 %s", convPath.c_str());
 
-		if (f.open(initialPath))
+		if (testPath(initialPath))
 			return initialPath;
 
 		// Now try to search the file
@@ -348,6 +366,8 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 			break;
 		}
 	}
+
+	f.close();
 
 	if (!opened && recursive) {
 		// Hmmm. We couldn't find the path as is.
@@ -385,21 +405,26 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 
 				Common::String res = pathMakeRelative(newpath, false, false);
 
-				if (f.open(res))
+				if (testPath(res))
 					return res;
 			}
 		}
 
-
 		return initialPath;	// Anyway nothing good is happening
 	}
-
-	f.close();
 
 	if (opened)
 		return convPath;
 	else
 		return initialPath;
+}
+
+Common::String getFileName(Common::String path) {
+	while (path.contains('/')) {
+		int pos = path.find('/');
+		path = Common::String(&path.c_str()[pos + 1]);
+	}
+	return path;
 }
 
 //////////////////
@@ -526,8 +551,8 @@ Common::String dumpScriptName(const char *prefix, int type, int id, const char *
 	case kCastScript:
 		typeName = "cast";
 		break;
-	case kGlobalScript:
-		typeName = "global";
+	case kEventScript:
+		typeName = "event";
 		break;
 	case kScoreScript:
 		typeName = "score";
@@ -537,5 +562,64 @@ Common::String dumpScriptName(const char *prefix, int type, int id, const char *
 	return Common::String::format("./dumps/%s-%s-%d.%s", prefix, typeName.c_str(), id, ext);
 }
 
+void RandomState::setSeed(int seed) {
+	init(32);
+
+	_seed = seed ? seed : 1;
+}
+
+int32 RandomState::getRandom(int32 range) {
+	int32 res;
+
+	if (_seed == 0)
+		init(32);
+
+	res = perlin(genNextRandom() * 71);
+
+	if (range > 0)
+		res = ((res & 0x7fffffff) % range);
+
+	return res;
+}
+
+static const uint32 masks[31] = {
+	0x00000003, 0x00000006, 0x0000000c, 0x00000014, 0x00000030, 0x00000060, 0x000000b8, 0x00000110,
+	0x00000240, 0x00000500, 0x00000ca0, 0x00001b00, 0x00003500, 0x00006000, 0x0000b400, 0x00012000,
+	0x00020400, 0x00072000, 0x00090000, 0x00140000, 0x00300000, 0x00400000, 0x00d80000, 0x01200000,
+	0x03880000, 0x07200000, 0x09000000, 0x14000000, 0x32800000, 0x48000000, 0xa3000000
+};
+
+void RandomState::init(int len) {
+	if (len < 2 || len > 32) {
+		len = 32;
+		_len = (uint32)-1; // Since we cannot shift 32 bits
+	} else {
+		_len = (1 << len) - 1;
+	}
+
+	_seed = 1;
+	_mask = masks[len - 2];
+}
+
+int32 RandomState::genNextRandom() {
+	if (_seed & 1)
+		_seed = (_seed >> 1) ^ _mask;
+	else
+		_seed >>= 1;
+
+	return _seed;
+}
+
+int32 RandomState::perlin(int32 val) {
+	int32 res;
+
+	val = ((val << 13) ^ val) - (val >> 21);
+
+	res = (val * (val * val * 15731 + 789221) + 1376312589) & 0x7fffffff;
+	res += val;
+	res = ((res << 13) ^ res) - (res >> 21);
+
+	return res;
+}
 
 } // End of namespace Director

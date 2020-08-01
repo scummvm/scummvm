@@ -20,11 +20,11 @@
  *
  */
 
-#include "config.h"
 #include "visualstudio.h"
+#include "config.h"
 
-#include <fstream>
 #include <algorithm>
+#include <fstream>
 
 namespace CreateProjectTool {
 
@@ -32,8 +32,11 @@ namespace CreateProjectTool {
 // Visual Studio Provider (Visual Studio 2008)
 //////////////////////////////////////////////////////////////////////////
 
-VisualStudioProvider::VisualStudioProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version, const MSVCVersion& msvc)
-	: MSVCProvider(global_warnings, project_warnings, version, msvc) {
+VisualStudioProvider::VisualStudioProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version, const MSVCVersion &msvc)
+    : MSVCProvider(global_warnings, project_warnings, version, msvc) {
+
+	_archs.push_back(ARCH_X86);
+	_archs.push_back(ARCH_AMD64);
 }
 
 const char *VisualStudioProvider::getProjectExtension() {
@@ -48,29 +51,32 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
                                              const StringList &includeList, const StringList &excludeList) {
 	const std::string projectFile = setup.outputDir + '/' + name + getProjectExtension();
 	std::ofstream project(projectFile.c_str());
-	if (!project)
+	if (!project || !project.is_open()) {
 		error("Could not open \"" + projectFile + "\" for writing");
+		return;
+	}
 
 	project << "<?xml version=\"1.0\" encoding=\"windows-1252\"?>\n"
-	           "<VisualStudioProject\n"
-	           "\tProjectType=\"Visual C++\"\n"
-	           "\tVersion=\"" << _version << ".00\"\n"
-	           "\tName=\"" << name << "\"\n"
-	           "\tProjectGUID=\"{" << uuid << "}\"\n"
-	           "\tRootNamespace=\"" << name << "\"\n"
-	           "\tKeyword=\"Win32Proj\"\n";
+	        << "<VisualStudioProject\n"
+	        << "\tProjectType=\"Visual C++\"\n"
+	        << "\tVersion=\"" << _version << ".00\"\n"
+	        << "\tName=\"" << name << "\"\n"
+	        << "\tProjectGUID=\"{" << uuid << "}\"\n"
+	        << "\tRootNamespace=\"" << name << "\"\n"
+	        << "\tKeyword=\"Win32Proj\"\n";
 
 	project << "\tTargetFrameworkVersion=\"131072\"\n";
 
 	project << "\t>\n"
-	           "\t<Platforms>\n"
-	           "\t\t<Platform Name=\"Win32\" />\n"
-	           "\t\t<Platform Name=\"x64\" />\n"
-	           "\t</Platforms>\n"
-	           "\t<Configurations>\n";
+	           "\t<Platforms>\n";
+	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
+		project << "\t\t<Platform Name=\"" << getMSVCConfigName(*arch) << "\" />\n";
+	}
+	project << "\t</Platforms>\n"
+	        << "\t<Configurations>\n";
 
 	// Check for project-specific warnings:
-	std::map< std::string, std::list<std::string> >::iterator warningsIterator = _projectWarnings.find(name);
+	std::map<std::string, std::list<std::string> >::iterator warningsIterator = _projectWarnings.find(name);
 
 	if (setup.devTools || setup.tests || name == setup.projectName) {
 		std::string libraries;
@@ -78,20 +84,15 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 		for (StringList::const_iterator i = setup.libraries.begin(); i != setup.libraries.end(); ++i)
 			libraries += ' ' + *i + ".lib";
 
-		// Win32
-		outputConfiguration(project, setup, libraries, "Debug", "Win32", "", true);
-		outputConfiguration(project, setup, libraries, "Analysis", "Win32", "", true);
-		outputConfiguration(project, setup, libraries, "LLVM", "Win32", "", true);
-		outputConfiguration(project, setup, libraries, "Release", "Win32", "", true);
-
-		// x64
 		// For 'x64' we must disable NASM support. Usually we would need to disable the "nasm" feature for that and
 		// re-create the library list, BUT since NASM doesn't link any additional libraries, we can just use the
 		// libraries list created for IA-32. If that changes in the future, we need to adjust this part!
-		outputConfiguration(project, setup, libraries, "Debug", "x64", "64", false);
-		outputConfiguration(project, setup, libraries, "Analysis", "x64", "64", false);
-		outputConfiguration(project, setup, libraries, "LLVM", "Win32", "64", false);
-		outputConfiguration(project, setup, libraries, "Release", "x64", "64", false);
+		for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
+			outputConfiguration(project, setup, libraries, "Debug", *arch);
+			outputConfiguration(project, setup, libraries, "Analysis", *arch);
+			outputConfiguration(project, setup, libraries, "LLVM", *arch);
+			outputConfiguration(project, setup, libraries, "Release", *arch);
+		}
 
 	} else {
 		bool enableLanguageExtensions = find(_enableLanguageExtensions.begin(), _enableLanguageExtensions.end(), name) != _enableLanguageExtensions.end();
@@ -100,26 +101,23 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 		std::string warnings = "";
 		if (warningsIterator != _projectWarnings.end())
 			for (StringList::const_iterator i = warningsIterator->second.begin(); i != warningsIterator->second.end(); ++i)
-				warnings +=  *i + ';';
+				warnings += *i + ';';
 
 		std::string toolConfig;
-		toolConfig  = (!warnings.empty() ? "DisableSpecificWarnings=\"" + warnings + "\"" : "");
-		toolConfig += (disableEditAndContinue   ? "DebugInformationFormat=\"3\" " : "");
+		toolConfig = (!warnings.empty() ? "DisableSpecificWarnings=\"" + warnings + "\"" : "");
+		toolConfig += (disableEditAndContinue ? "DebugInformationFormat=\"3\" " : "");
 		toolConfig += (enableLanguageExtensions ? "DisableLanguageExtensions=\"false\" " : "");
 
-		// Win32
-		outputConfiguration(setup, project, toolConfig, "Debug", "Win32", "");
-		outputConfiguration(setup, project, toolConfig, "Analysis", "Win32", "");
-		outputConfiguration(setup, project, toolConfig, "LLVM", "Win32", "");
-		outputConfiguration(setup, project, toolConfig, "Release", "Win32", "");
-		outputConfiguration(setup, project, toolConfig, "Debug", "x64", "64");
-		outputConfiguration(setup, project, toolConfig, "Analysis", "x64", "64");
-		outputConfiguration(setup, project, toolConfig, "LLVM", "x64", "64");
-		outputConfiguration(setup, project, toolConfig, "Release", "x64", "64");
+		for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
+			outputConfiguration(setup, project, toolConfig, "Debug", *arch);
+			outputConfiguration(setup, project, toolConfig, "Analysis", *arch);
+			outputConfiguration(setup, project, toolConfig, "LLVM", *arch);
+			outputConfiguration(setup, project, toolConfig, "Release", *arch);
+		}
 	}
 
 	project << "\t</Configurations>\n"
-	           "\t<Files>\n";
+	        << "\t<Files>\n";
 
 	std::string modulePath;
 	if (!moduleDir.compare(0, setup.srcDir.size(), setup.srcDir)) {
@@ -139,44 +137,44 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 	}
 
 	project << "\t</Files>\n"
-	           "</VisualStudioProject>\n";
+	        << "</VisualStudioProject>\n";
 }
 
-void VisualStudioProvider::outputConfiguration(std::ostream &project, const BuildSetup &setup, const std::string &libraries, const std::string &config, const std::string &platform, const std::string &props, const bool isWin32) {
-	project << "\t\t<Configuration Name=\"" << config << "|" << platform << "\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\" << setup.projectDescription << "_" << config << props << ".vsprops\">\n"
-	           "\t\t\t<Tool\tName=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" DebugInformationFormat=\"3\" />\n"
-	           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/" << setup.projectName << ".exe\"\n"
-	           "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n"
-	           "\t\t\t/>\n";
-	outputBuildEvents(project, setup, isWin32);
+void VisualStudioProvider::outputConfiguration(std::ostream &project, const BuildSetup &setup, const std::string &libraries, const std::string &config, const MSVC_Architecture arch) {
+	project << "\t\t<Configuration Name=\"" << config << "|" << getMSVCConfigName(arch) << "\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\" << setup.projectDescription << "_" << config << getMSVCArchName(arch) << ".vsprops\">\n"
+	        << "\t\t\t<Tool\tName=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" DebugInformationFormat=\"3\" />\n"
+	        << "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/" << setup.projectName << ".exe\"\n"
+	        << "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n"
+	        << "\t\t\t/>\n";
+	outputBuildEvents(project, setup, arch);
 	project << "\t\t</Configuration>\n";
 }
 
-void VisualStudioProvider::outputConfiguration(const BuildSetup &setup, std::ostream &project, const std::string &toolConfig, const std::string &config, const std::string &platform, const std::string &props) {
-	project << "\t\t<Configuration Name=\"" << config << "|" << platform << "\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\" << setup.projectDescription << "_" << config << props << ".vsprops\">\n"
-	           "\t\t\t<Tool Name=\"VCCLCompilerTool\" "<< toolConfig << "/>\n"
-	           "\t\t</Configuration>\n";
+void VisualStudioProvider::outputConfiguration(const BuildSetup &setup, std::ostream &project, const std::string &toolConfig, const std::string &config, const MSVC_Architecture arch) {
+	project << "\t\t<Configuration Name=\"" << config << "|" << getMSVCConfigName(arch) << "\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\" << setup.projectDescription << "_" << config << getMSVCArchName(arch) << ".vsprops\">\n"
+	        << "\t\t\t<Tool Name=\"VCCLCompilerTool\" " << toolConfig << "/>\n"
+	        << "\t\t</Configuration>\n";
 }
 
-void VisualStudioProvider::outputBuildEvents(std::ostream &project, const BuildSetup &setup, const bool isWin32) {
+void VisualStudioProvider::outputBuildEvents(std::ostream &project, const BuildSetup &setup, const MSVC_Architecture arch) {
 	if (!setup.devTools && !setup.tests && setup.runBuildEvents) {
 		project << "\t\t\t<Tool\tName=\"VCPreBuildEventTool\"\n"
-		           "\t\t\t\tCommandLine=\"" << getPreBuildEvent() << "\"\n"
-		           "\t\t\t/>\n"
-		           "\t\t\t<Tool\tName=\"VCPostBuildEventTool\"\n"
-		           "\t\t\t\tCommandLine=\"" << getPostBuildEvent(isWin32, setup) << "\"\n"
-		           "\t\t\t/>\n";
+		        << "\t\t\t\tCommandLine=\"" << getPreBuildEvent() << "\"\n"
+		        << "\t\t\t/>\n"
+		        << "\t\t\t<Tool\tName=\"VCPostBuildEventTool\"\n"
+		        << "\t\t\t\tCommandLine=\"" << getPostBuildEvent(arch, setup) << "\"\n"
+		        << "\t\t\t/>\n";
 	}
 
 	// Generate runner file before build for tests
 	if (setup.tests) {
 		project << "\t\t\t<Tool\tName=\"VCPreBuildEventTool\"\n"
-			"\t\t\t\tCommandLine=\"" << getTestPreBuildEvent(setup) << "\"\n"
-			"\t\t\t/>\n";
+		        << "\t\t\t\tCommandLine=\"" << getTestPreBuildEvent(setup) << "\"\n"
+		        << "\t\t\t/>\n";
 
 		project << "\t\t\t<Tool\tName=\"VCPostBuildEventTool\"\n"
-			"\t\t\t\tCommandLine=\"$(TargetPath)\" IgnoreExitCode=\"true\"\n"
-			"\t\t\t/>\n";
+		        << "\t\t\t\tCommandLine=\"$(TargetPath)\" IgnoreExitCode=\"true\"\n"
+		        << "\t\t\t/>\n";
 	}
 }
 
@@ -193,10 +191,10 @@ void VisualStudioProvider::writeReferences(const BuildSetup &setup, std::ofstrea
 	output << "\tEndProjectSection\n";
 }
 
-void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, int bits, const StringList &defines, const std::string &prefix, bool runBuildEvents) {
+void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, MSVC_Architecture arch, const StringList &defines, const std::string &prefix, bool runBuildEvents) {
 	std::string warnings;
 	for (StringList::const_iterator i = _globalWarnings.begin(); i != _globalWarnings.end(); ++i)
-		warnings +=  *i + ';';
+		warnings += *i + ';';
 
 	std::string definesList;
 	for (StringList::const_iterator i = defines.begin(); i != defines.end(); ++i) {
@@ -210,20 +208,20 @@ void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::of
 		definesList += REVISION_DEFINE ";";
 
 	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
-	              "<VisualStudioPropertySheet\n"
-	              "\tProjectType=\"Visual C++\"\n"
-	              "\tVersion=\"8.00\"\n"
-	              "\tName=\"" << setup.projectDescription << "_Global\"\n"
-	              "\tOutputDirectory=\"$(ConfigurationName)" << bits << "\"\n"
-	              "\tIntermediateDirectory=\"$(ConfigurationName)" << bits << "/$(ProjectName)\"\n"
-	              "\t>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCCLCompilerTool\"\n"
-	              "\t\tDisableLanguageExtensions=\"" << (setup.devTools ? "false" : "true") << "\"\n"
-	              "\t\tDisableSpecificWarnings=\"" << warnings << "\"\n"
-	              "\t\tAdditionalIncludeDirectories=\".\\;" << prefix << ";" << prefix << "\\engines;$(" << LIBS_DEFINE << ")\\include;$(" << LIBS_DEFINE << ")\\include\\SDL;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "\"\n"
-	              "\t\tPreprocessorDefinitions=\"" << definesList << "\"\n"
-	              "\t\tExceptionHandling=\"" << ((setup.devTools || setup.tests || _version == 14) ? "1" : "0") << "\"\n";
+	           << "<VisualStudioPropertySheet\n"
+	           << "\tProjectType=\"Visual C++\"\n"
+	           << "\tVersion=\"8.00\"\n"
+	           << "\tName=\"" << setup.projectDescription << "_Global\"\n"
+	           << "\tOutputDirectory=\"$(ConfigurationName)" << getMSVCArchName(arch) << "\"\n"
+	           << "\tIntermediateDirectory=\"$(ConfigurationName)" << getMSVCArchName(arch) << "/$(ProjectName)\"\n"
+	           << "\t>\n"
+	           << "\t<Tool\n"
+	           << "\t\tName=\"VCCLCompilerTool\"\n"
+	           << "\t\tDisableLanguageExtensions=\"" << (setup.devTools ? "false" : "true") << "\"\n"
+	           << "\t\tDisableSpecificWarnings=\"" << warnings << "\"\n"
+	           << "\t\tAdditionalIncludeDirectories=\".\\;" << prefix << ";" << prefix << "\\engines;$(" << LIBS_DEFINE << ")\\include;$(" << LIBS_DEFINE << ")\\include\\SDL;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "\"\n"
+	           << "\t\tPreprocessorDefinitions=\"" << definesList << "\"\n"
+	           << "\t\tExceptionHandling=\"" << ((setup.devTools || setup.tests || _version == 14) ? "1" : "0") << "\"\n";
 
 #if NEEDS_RTTI
 	properties << "\t\tRuntimeTypeInfo=\"true\"\n";
@@ -232,87 +230,88 @@ void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::of
 #endif
 
 	properties << "\t\tWarningLevel=\"4\"\n"
-	              "\t\tWarnAsError=\"false\"\n"
-	              "\t\tCompileAs=\"0\"\n"
-	              "\t\t/>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCLibrarianTool\"\n"
-	              "\t\tIgnoreDefaultLibraryNames=\"\"\n"
-	              "\t/>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCLinkerTool\"\n"
-	              "\t\tIgnoreDefaultLibraryNames=\"\"\n"
-	              "\t\tSubSystem=\"1\"\n";
+	           << "\t\tWarnAsError=\"false\"\n"
+	           << "\t\tCompileAs=\"0\"\n"
+	           << "\t\t/>\n"
+	           << "\t<Tool\n"
+	           << "\t\tName=\"VCLibrarianTool\"\n"
+	           << "\t\tIgnoreDefaultLibraryNames=\"\"\n"
+	           << "\t/>\n"
+	           << "\t<Tool\n"
+	           << "\t\tName=\"VCLinkerTool\"\n"
+	           << "\t\tIgnoreDefaultLibraryNames=\"\"\n"
+	           << "\t\tSubSystem=\"1\"\n";
 
 	if (!setup.devTools && !setup.tests)
 		properties << "\t\tEntryPointSymbol=\"WinMainCRTStartup\"\n";
 
-	properties << "\t\tAdditionalLibraryDirectories=\"$(" << LIBS_DEFINE << ")\\lib\\" << ((bits == 32) ? "x86" : "x64") << "\"\n"
-	              "\t/>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCResourceCompilerTool\"\n"
-	              "\t\tAdditionalIncludeDirectories=\".\\;" << prefix << "\"\n"
-	              "\t\tPreprocessorDefinitions=\"" << definesList << "\"\n"
-	              "\t/>\n"
-	              "</VisualStudioPropertySheet>\n";
+	properties << "\t\tAdditionalLibraryDirectories=\"$(" << LIBS_DEFINE << ")\\lib\\" << getMSVCArchName(arch) << "\"\n"
+	           << "\t/>\n"
+	           << "\t<Tool\n"
+	           << "\t\tName=\"VCResourceCompilerTool\"\n"
+	           << "\t\tAdditionalIncludeDirectories=\".\\;" << prefix << "\"\n"
+	           << "\t\tPreprocessorDefinitions=\"" << definesList << "\"\n"
+	           << "\t/>\n"
+	           << "</VisualStudioPropertySheet>\n";
 
 	properties.flush();
 }
 
-void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelease, bool isWin32, std::string configuration) {
-	const std::string outputBitness = (isWin32 ? "32" : "64");
+void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelease, MSVC_Architecture arch, const std::string &configuration) {
 
-	std::ofstream properties((setup.outputDir + '/' + setup.projectDescription + "_" + configuration + (isWin32 ? "" : "64") + getPropertiesExtension()).c_str());
-	if (!properties)
-		error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_" + configuration + (isWin32 ? "" : "64") + getPropertiesExtension() + "\" for writing");
+	std::ofstream properties((setup.outputDir + '/' + setup.projectDescription + "_" + configuration + getMSVCArchName(arch) + getPropertiesExtension()).c_str());
+	if (!properties || !properties.is_open()) {
+		error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_" + configuration + getMSVCArchName(arch) + getPropertiesExtension() + "\" for writing");
+		return;
+	}
 
 	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
-	              "<VisualStudioPropertySheet\n"
-	              "\tProjectType=\"Visual C++\"\n"
-	              "\tVersion=\"8.00\"\n"
-	              "\tName=\"" << setup.projectDescription << "_" << configuration << outputBitness << "\"\n"
-	              "\tInheritedPropertySheets=\".\\" << setup.projectDescription << "_Global" << (isWin32 ? "" : "64") << ".vsprops\"\n"
-	              "\t>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCCLCompilerTool\"\n";
+	           << "<VisualStudioPropertySheet\n"
+	           << "\tProjectType=\"Visual C++\"\n"
+	           << "\tVersion=\"8.00\"\n"
+	           << "\tName=\"" << setup.projectDescription << "_" << configuration << getMSVCArchName(arch) << "\"\n"
+	           << "\tInheritedPropertySheets=\".\\" << setup.projectDescription << "_Global" << getMSVCArchName(arch) << ".vsprops\"\n"
+	           << "\t>\n"
+	           << "\t<Tool\n"
+	           << "\t\tName=\"VCCLCompilerTool\"\n";
 
 	if (isRelease) {
 		properties << "\t\tEnableIntrinsicFunctions=\"true\"\n"
-		              "\t\tWholeProgramOptimization=\"true\"\n"
-		              "\t\tPreprocessorDefinitions=\"WIN32;RELEASE_BUILD\"\n"
-		              "\t\tStringPooling=\"true\"\n"
-		              "\t\tBufferSecurityCheck=\"false\"\n"
-		              "\t\tDebugInformationFormat=\"0\"\n"
-		              "\t\tRuntimeLibrary=\"0\"\n"
-		              "\t\tAdditionalOption=\"" << (configuration == "Analysis" ? "/analyze" : "") << "\"\n"
-		              "\t/>\n"
-		              "\t<Tool\n"
-		              "\t\tName=\"VCLinkerTool\"\n"
-		              "\t\tLinkIncremental=\"1\"\n"
-		              "\t\tGenerateManifest=\"false\"\n"
-		              "\t\tIgnoreDefaultLibraryNames=\"\"\n"
-		              "\t\tSetChecksum=\"true\"\n";
+		           << "\t\tWholeProgramOptimization=\"true\"\n"
+		           << "\t\tPreprocessorDefinitions=\"WIN32;RELEASE_BUILD\"\n"
+		           << "\t\tStringPooling=\"true\"\n"
+		           << "\t\tBufferSecurityCheck=\"false\"\n"
+		           << "\t\tDebugInformationFormat=\"0\"\n"
+		           << "\t\tRuntimeLibrary=\"0\"\n"
+		           << "\t\tAdditionalOption=\"" << (configuration == "Analysis" ? "/analyze" : "") << "\"\n"
+		           << "\t/>\n"
+		           << "\t<Tool\n"
+		           << "\t\tName=\"VCLinkerTool\"\n"
+		           << "\t\tLinkIncremental=\"1\"\n"
+		           << "\t\tGenerateManifest=\"false\"\n"
+		           << "\t\tIgnoreDefaultLibraryNames=\"\"\n"
+		           << "\t\tSetChecksum=\"true\"\n";
 	} else {
 		properties << "\t\tOptimization=\"0\"\n"
-		              "\t\tPreprocessorDefinitions=\"WIN32\"\n"
-		              "\t\tMinimalRebuild=\"true\"\n"
-		              "\t\tBasicRuntimeChecks=\"3\"\n"
-		              "\t\tRuntimeLibrary=\"1\"\n"
-		              "\t\tEnableFunctionLevelLinking=\"true\"\n"
-		              "\t\tWarnAsError=\"false\"\n"
-		              "\t\tDebugInformationFormat=\"" << (isWin32 ? "4" : "3") << "\"\n" // For x64 format "4" (Edit and continue) is not supported, thus we default to "3"
-		              "\t\tAdditionalOption=\"" << (configuration == "Analysis" ? "/analyze" : "") << "\"\n"
-		              "\t/>\n"
-		              "\t<Tool\n"
-		              "\t\tName=\"VCLinkerTool\"\n"
-		              "\t\tLinkIncremental=\"2\"\n"
-		              "\t\tGenerateManifest=\"false\"\n"
-		              "\t\tGenerateDebugInformation=\"true\"\n"
-		              "\t\tIgnoreDefaultLibraryNames=\"libcmt.lib\"\n";
+		           << "\t\tPreprocessorDefinitions=\"WIN32\"\n"
+		           << "\t\tMinimalRebuild=\"true\"\n"
+		           << "\t\tBasicRuntimeChecks=\"3\"\n"
+		           << "\t\tRuntimeLibrary=\"1\"\n"
+		           << "\t\tEnableFunctionLevelLinking=\"true\"\n"
+		           << "\t\tWarnAsError=\"false\"\n"
+		           << "\t\tDebugInformationFormat=\"" << (arch == ARCH_X86 ? "3" : "4") << "\"\n" // For x64 format "4" (Edit and continue) is not supported, thus we default to "3"
+		           << "\t\tAdditionalOption=\"" << (configuration == "Analysis" ? "/analyze" : "") << "\"\n"
+		           << "\t/>\n"
+		           << "\t<Tool\n"
+		           << "\t\tName=\"VCLinkerTool\"\n"
+		           << "\t\tLinkIncremental=\"2\"\n"
+		           << "\t\tGenerateManifest=\"false\"\n"
+		           << "\t\tGenerateDebugInformation=\"true\"\n"
+		           << "\t\tIgnoreDefaultLibraryNames=\"libcmt.lib\"\n";
 	}
 
 	properties << "\t/>\n"
-	              "</VisualStudioPropertySheet>\n";
+	           << "</VisualStudioPropertySheet>\n";
 
 	properties.flush();
 	properties.close();
@@ -337,6 +336,7 @@ void VisualStudioProvider::writeFileListToProject(const FileNode &dir, std::ofst
 				name += ".o";
 				std::transform(name.begin(), name.end(), name.begin(), tolower);
 				const bool isDuplicate = (std::find(duplicate.begin(), duplicate.end(), name) != duplicate.end());
+				std::string filePath = convertPathToWin(filePrefix + node->name);
 
 				if (ext == "asm") {
 					std::string objFileName = "$(IntDir)\\";
@@ -347,41 +347,14 @@ void VisualStudioProvider::writeFileListToProject(const FileNode &dir, std::ofst
 					const std::string toolLine = indentString + "\t\t<Tool Name=\"VCCustomBuildTool\" CommandLine=\"nasm.exe -f win32 -g -o &quot;" + objFileName + "&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;\" Outputs=\"" + objFileName + "\" />\n";
 
 					// NASM is not supported for x64, thus we do not need to add additional entries here :-).
-					projectFile << indentString << "<File RelativePath=\"" << convertPathToWin(filePrefix + node->name) << "\">\n"
-					            << indentString << "\t<FileConfiguration Name=\"Debug|Win32\">\n"
-					            << toolLine
-					            << indentString << "\t</FileConfiguration>\n"
-					            << indentString << "\t<FileConfiguration Name=\"Analysis|Win32\">\n"
-					            << toolLine
-					            << indentString << "\t</FileConfiguration>\n"
-					            << indentString << "\t<FileConfiguration Name=\"Release|Win32\">\n"
-					            << toolLine
-					            << indentString << "\t</FileConfiguration>\n"
-					            << indentString << "</File>\n";
+					writeFileToProject(projectFile, filePath, ARCH_X86, indentString, toolLine);
 				} else {
 					if (isDuplicate) {
 						const std::string toolLine = indentString + "\t\t<Tool Name=\"VCCLCompilerTool\" ObjectFile=\"$(IntDir)\\" + objPrefix + "$(InputName).obj\" XMLDocumentationFileName=\"$(IntDir)\\" + objPrefix + "$(InputName).xdc\" />\n";
 
-						projectFile << indentString << "<File RelativePath=\"" << convertPathToWin(filePrefix + node->name) << "\">\n"
-						            << indentString << "\t<FileConfiguration Name=\"Debug|Win32\">\n"
-						            << toolLine
-						            << indentString << "\t</FileConfiguration>\n"
-						            << indentString << "\t<FileConfiguration Name=\"Analysis|Win32\">\n"
-						            << toolLine
-						            << indentString << "\t</FileConfiguration>\n"
-						            << indentString << "\t<FileConfiguration Name=\"Release|Win32\">\n"
-						            << toolLine
-						            << indentString << "\t</FileConfiguration>\n"
-						            << indentString << "\t<FileConfiguration Name=\"Debug|x64\">\n"
-						            << toolLine
-						            << indentString << "\t</FileConfiguration>\n"
-						            << indentString << "\t<FileConfiguration Name=\"Analysis|x64\">\n"
-						            << toolLine
-						            << indentString << "\t</FileConfiguration>\n"
-						            << indentString << "\t<FileConfiguration Name=\"Release|x64\">\n"
-						            << toolLine
-						            << indentString << "\t</FileConfiguration>\n"
-						            << indentString << "</File>\n";
+						for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
+							writeFileToProject(projectFile, filePath, *arch, indentString, toolLine);
+						}
 					} else {
 						projectFile << indentString << "<File RelativePath=\"" << convertPathToWin(filePrefix + node->name) << "\" />\n";
 					}
@@ -396,4 +369,22 @@ void VisualStudioProvider::writeFileListToProject(const FileNode &dir, std::ofst
 		projectFile << getIndent(indentation + 1) << "</Filter>\n";
 }
 
-} // End of CreateProjectTool namespace
+void VisualStudioProvider::writeFileToProject(std::ofstream &projectFile, const std::string &filePath, MSVC_Architecture arch,
+                                              const std::string &indentString, const std::string &toolLine) {
+	projectFile << indentString << "<File RelativePath=\"" << filePath << "\">\n"
+	            << indentString << "\t<FileConfiguration Name=\"Debug|" << getMSVCConfigName(arch) << "\">\n"
+	            << toolLine
+	            << indentString << "\t</FileConfiguration>\n"
+	            << indentString << "\t<FileConfiguration Name=\"Analysis|" << getMSVCConfigName(arch) << "\">\n"
+	            << toolLine
+	            << indentString << "\t</FileConfiguration>\n"
+	            << indentString << "\t<FileConfiguration Name=\"LLVM|" << getMSVCConfigName(arch) << "\">\n"
+	            << toolLine
+	            << indentString << "\t</FileConfiguration>\n"
+	            << indentString << "\t<FileConfiguration Name=\"Release|" << getMSVCConfigName(arch) << "\">\n"
+	            << toolLine
+	            << indentString << "\t</FileConfiguration>\n"
+	            << indentString << "</File>\n";
+}
+
+} // namespace CreateProjectTool

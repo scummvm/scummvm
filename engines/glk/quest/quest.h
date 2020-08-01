@@ -78,14 +78,14 @@ public:
 	 * Returns true if a savegame can be loaded
 	 */
 	bool canLoadGameStateCurrently() override {
-		return _runner != nullptr;
+		return _runner != nullptr && GlkAPI::canLoadGameStateCurrently();
 	}
 
 	/**
 	 * Returns true if the game can be saved
 	 */
 	bool canSaveGameStateCurrently() override {
-		return _runner != nullptr;
+		return _runner != nullptr && GlkAPI::canLoadGameStateCurrently();
 	}
 
 	/**

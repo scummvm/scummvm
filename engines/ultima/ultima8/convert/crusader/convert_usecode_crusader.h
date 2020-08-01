@@ -78,7 +78,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"byte Actor::I_isNPC(Item *)", // proably - actually checks is itemno < 256?
 	"byte Item::I_getZ(Item *)",
 	"void Item::I_destroy(Item *)", // probably? often called after creating a replacement object and setting it to the same position (eg, LUGGAGE::gotHit)
-	"int16 Actor::I_GetNPCDataField0x63_00B(Actor *)", // Maybe get HP? Called from ANDROID::calledFromAnim, goes to NPCDEATH
+	"int16 Actor::I_GetNPCDataField0x63_00B(Actor *)", // Some unknown value set for NPCs based on Q of egg.
 	"void Ultima8Engine::I_setAvatarInStasis(int)",
 	"byte Item::I_getDirToItem(Item *, itemno)", // based on disasm
 	"int16 Actor::I_turnToward(Actor *, direction, unk)", // TODO: work out what unk is
@@ -95,28 +95,28 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 UCMachine::I_rndRange(uint16 x, uint16 y)", // // probably.. always called with 2 constants, then result often compared to some number between
 	"byte Item::I_legalCreateAtCoords(Item *, int16 shapeno, int16 frame, int16 x, int16 y, int16 z)", // probably, see usage in DOOR2::ordinal37
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132. Always associated with a bitwise-not or bitmask
-	"int16 I_getTargetNPCNumMaybe(void)",
+	"int16 World::I_getControlledNPCNum()",
 	"byte Actor::I_getDir(4 bytes)", // based on disasm. same coff as 112, 121
 	"int16 Actor::I_getLastAnimSet(4 bytes)", // based on disasm. part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
-	"int16 Actor::I_maybeFire(Actor *, x, y, z, byte, int, byte)", // TODO: investigate more
+	"int16 Item::I_fireWeapon(Item *, x, y, z, byte, int, byte)",
 	"byte Item::I_create(Item *, uint16 shapenum, uint16 framenum)", // probably - used in MISS1EGG referencing keycards and NPCDEATH in creating blood spills
 	// 0020
 	"void Item::I_popToCoords(Item *, uint16 x, uint16 y, uint16 z)", // set coords, used after creating blood spills in NPCDEATH
 	"void Actor::I_setDead(4 bytes)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
-	"void I_push(Item *)", // same code as U8
-	"int16 Item::I_getEtherealTop(void)", // from disasmww
+	"void Item::I_push(Item *)", // same code as U8
+	"int16 Item::I_getEtherealTop(void)", // based on disasm
 	"void Item::I_setShape(Item *, int16 shapeno)", // probably. See PEPSIEW::gotHit.
 	"void Item::I_touch(Item *)", // same code as U8
 	"int16 Item::I_getQHi(Item *)", // guess, based on variable name in BOUNCBOX::gotHit
 	"int16 I_getClosestDirectionInRange(x1, y1, x2, y2, numdirs, mindir, maxdir)",
 	"int16 Item::I_hurl(Item *,8 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
-	"int16 Game::I_getDifficultyLevel(void)",
+	"int16 World::I_gameDifficulty(void)",
 	"void AudioProcess::I_playAmbientSFXCru(Item *, sndno)",
 	"int16 Item::I_getQLo(Item *)", // guess, based on variable name in BOUNCBOX::gotHit
 	"byte Item::I_inFastArea(Item *)",
 	"void Item::I_setQHi(Item *, uint16 qhi)", // probably setQHi, see usage in FREE::ordinal2E where object position is copied
-	"byte I_legalMoveToPoint(Item *, Point *, int16 force)", // based on disasm
-	"byte Intrinsic02F(int, int, shapeno, Point *)", // no idea what this does..
+	"byte Item::I_legalMoveToPoint(Item *, Point *, int16 force)", // based on disasm
+	"byte CurrentMap::I_canExistAtPoint(int, int, shapeno, Point *)",
 	// 0030
 	"void Item::I_pop(Item *)", // same code as U8
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
@@ -152,22 +152,22 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"byte Item::I_IsOn(Item *, uint16 itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133
 	// 0050
-	"int16 I_GetNPCDataField0x2_050(Actor *)",
+	"int16 Actor::I_getCurrentActivityNo(Actor *)",
 	"void Actor::I_clrInCombat(Actor *)", // probably, based on disasm.
 	"void Actor::I_setDefaultActivity0(Actor *, int)",
 	"void Actor::I_setDefaultActivity1(Actor *, int)",
 	"void Actor::I_setDefaultActivity2(Actor *, int)",
 	"void Actor::I_setActivity(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
-	"void Intrinsic056(int itemno)", // Maybe set new target? TODO: check usecode to understand this.
+	"void World::I_setControlledNPCNum(int itemno)", // when you take over the Thermatron etc.
 	"int16 Item::I_getSurfaceWeight(Item *)",
 	"byte Item::I_isCentreOn(Item *, uint16 other)",
 	"void Item::I_setFrame(Item *, frame)", // based on same coff as 002
 	"int16 Actor::I_getLastAnimSet(4 bytes)", // part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
 	"byte Item::I_legalCreateAtPoint(Item *, int16 shape, int16 frame, Point *)", // see PEPSIEW::use
 	"void Item::I_getPoint(Item *, Point *)",
-	"void I_mouseSomethingOffMaybe05D(void)",
-	"int16 I_playFlicsomething(uint32, char *, int16 a, int16 b)", // Play video (as texture? parameters like (150, 250, "MVA11A") and other mvas)
-	"void I_mouseSomethingResume05F(void)",
+	"void StatusGump::I_hideStatusGump(void)", // Probably hides gumps at the bottom, among other things.
+	"int16 MovieGump::I_playMovieOverlay(uint32, char *, int16 a, int16 b)", // Play video (as texture? parameters like (150, 250, "MVA11A") and other mvas)
+	"void StatusGump::I_showStatusGump(void)",  // Probably shows gumps at the bottom, among other things.
 	// 0060
 	"void Actor::I_setDead(4 bytes)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
 	"void Actor::I_create(8 bytes)",
@@ -198,7 +198,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 MainActor::I_teleportToEgg(int, int, int)",
 	"int16 PaletteFaderProcess::I_fadeFromBlack(void)", // from black, no arg (40 frames)
 	"void Actor::I_clrImmortal(Actor *)", // same coff as 130
-	"int16 Actor::I_getHp(Actor *)", // TODO: double-check whether field 0 of NPC data is HP or *max* HP.
+	"int16 Actor::I_getHp(Actor *)",
 	"void Actor::I_setActivity(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
 	"int16 Item::I_getQuality(Item *)", // based on disassembly
 	"void Item::I_setQuality(Item *, int)", // based on disassembly. same coff as 0BA, 125
@@ -218,7 +218,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void Item::I_setIsBroken(Item *)", // same coff as 119, 12A
 	"int16 Item::I_hurl(Item *,8 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
 	"int16 Item::I_getNPCNum(Item *)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
-	"void PaletteFaderProcess::I_setPalToAllBlack(void)",
+	"void PaletteFaderProcess::I_jumpToAllBlack(void)",
 	// 0090
 	"void MusicProcess::I_musicStop(void)",
 	"void I_setSomeMovieGlobal(void)", // sets some global (cleared by 93)
@@ -227,7 +227,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void Game::I_playCredits(void)",
 	"byte Kernel::I_getCurrentKeyDown(void)", // get global - something about keyboard (by disasm)
 	"int16 MainActor::I_teleportToEgg(int, int)", // a bit different to the U8 one - uses main actor map by default.
-	"void PaletteFaderProcess:I_setScreenGreyscale(void)", // TODO: Implement this - converts all colors to their Y values on each channel.
+	"void PaletteFaderProcess:I_jumpToGreyScale(void)",
 	"void I_resetVargasHealthTo500(void)", // TODO: look how this is used in disasm and usecode .. seems weird.
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"void PaletteFaderProcess::I_stopFadesAndResetToGamePal(void)", // TODO: Implement this.
@@ -247,7 +247,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Egg::I_getEggXRange(Egg *)", // based on disasm
 	"void Actor::I_setDead(Actor *)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
 	"void I_playFlic0A9(char *)", // same coff as 092
-	"void I_playSFX(2 bytes)", // same coff as 0D4
+	"void AudioProcess::I_playSFX(2 bytes)", // same coff as 0D4
 	"byte Actor::I_NPCGetField0x59Flag1_0AB(Actor *)",
 	"int16 Item::I_getFamilyOfType(Item *)", // per pentagram notes, matches disasm.
 	"int16 Item::I_getNPCNum(Item *)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
@@ -265,7 +265,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"byte MainActor::I_addItemCru(4 bytes)", // same coff as 037
 	"int16 Actor::I_getLastAnimSet(4 bytes)", // part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
 	"void Item::I_setQuality(Item *, int)", // same coff as 07F, 125
-	"byte Intrinsic0BB(8 bytes)", // TODO: check usecode.. code is weird, something with an imaginary chequered wall shape? (0x31A)
+	"byte CurrentMap::I_canExistAt(int shapeno, word x, word y, byte z)", // NOTE: actually slightly different, uses shape info for an imaginary chequered wall shape? (0x31A)
 	"byte Item::I_isOn(Item *, itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
 	"int16 Item::I_hurl(Item *,8 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133
@@ -301,7 +301,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void PaletteFaderProcess::I_setPalToAllGrey(void)", // sets all colors to 0x3F3F3F
 	"void Actor::I_setActivity(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
 	"byte Item::I_isOn(Item *, itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
-	"int16 Actor::I_GetNPCDataField0x4_0DD(Actor *)",
+	"int16 Actor::I_getLastActivityNo(Actor *)",
 	"void Actor::I_setCombatTactic(Actor *, int)",
 	"int16 Actor::I_getEquip(6 bytes)", // based on disasm
 	// 00E0

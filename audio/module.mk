@@ -47,6 +47,8 @@ MODULE_OBJS := \
 	softsynth/opl/dosbox.o \
 	softsynth/opl/mame.o \
 	softsynth/fmtowns_pc98/pc98_audio.o \
+	softsynth/fmtowns_pc98/pcm_common.o \
+	softsynth/fmtowns_pc98/sega_audio.o \
 	softsynth/fmtowns_pc98/towns_audio.o \
 	softsynth/fmtowns_pc98/towns_euphony.o \
 	softsynth/fmtowns_pc98/towns_pc98_driver.o \

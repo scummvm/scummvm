@@ -35,6 +35,16 @@ class Keymap;
 
 namespace Kyra {
 
+#define releaseShpArr(shapes, num) \
+if (shapes) { \
+	for (int iii = 0; iii < num; iii++) { \
+		if (shapes[iii]) \
+			delete[] shapes[iii]; \
+	} \
+	delete[] shapes; \
+} \
+shapes = 0
+
 struct DarkMoonShapeDef {
 	int16 index;
 	uint8 x, y, w, h;
@@ -107,7 +117,8 @@ struct EoBCharacter {
 	uint8 food;
 	uint8 level[3];
 	uint32 experience[3];
-	uint8 *faceShape;
+	const uint8 *faceShape;
+	const uint8 *nameShape;
 
 	int8 mageSpells[80];
 	int8 clericSpells[80];
@@ -120,6 +131,8 @@ struct EoBCharacter {
 	uint32 effectFlags;
 	uint8 damageTaken;
 	int8 slotStatus[5];
+
+	int8 gfxUpdateCountdown;
 };
 
 struct EoBItem {
@@ -202,6 +215,8 @@ struct EoBMonsterInPlay {
 	int8 mode;
 	int8 stray;
 	int8 curAttackFrame;
+	uint8 animProgress;
+	uint8 animType;
 	int8 spellStatusLeft;
 	int16 hitPointsMax;
 	int16 hitPointsCur;
@@ -231,10 +246,11 @@ struct EoBMenuDef {
 	int8 numButtons;
 	int8 titleCol;
 };
+
 struct EoBMenuButtonDef {
 	int8 labelId;
 	int16 x;
-	int8 y;
+	int16 y;
 	uint8 width;
 	uint8 height;
 	int16 keyCode;
@@ -263,6 +279,7 @@ public:
 protected:
 	// Startup
 	Common::Error init() override;
+	void loadFonts();
 	Common::Error go() override;
 
 	// Main Menu, Intro, Finale
@@ -272,7 +289,7 @@ protected:
 	bool _playFinale;
 
 	//Init, config
-	void loadItemsAndDecorationsShapes();
+	virtual void loadItemsAndDecorationsShapes();
 	void releaseItemsAndDecorationsShapes();
 
 	void initButtonData();
@@ -290,6 +307,8 @@ protected:
 	const uint8 **_largeItemShapesScl[3];
 	const uint8 **_smallItemShapesScl[3];
 	const uint8 **_thrownItemShapesScl[3];
+	const uint8 **_blueItemIconShapes;
+	const uint8 **_xtraItemIconShapes;
 	const int _numLargeItemShapes;
 	const int _numSmallItemShapes;
 	const int _numThrownItemShapes;
@@ -309,6 +328,7 @@ protected:
 	const uint8 *_blackBoxWideGrid;
 	const uint8 *_lightningColumnShape;
 
+	uint8 *_redSplatBG[6];
 	uint8 *_itemsOverlay;
 	static const uint8 _itemsOverlayCGA[];
 
@@ -320,17 +340,20 @@ protected:
 	// Main loop
 	virtual void startupNew();
 	virtual void startupLoad() = 0;
+	virtual void startupReset() {}
 	void runLoop();
 	void update() override { screen()->updateScreen(); }
 	bool checkPartyStatus(bool handleDeath);
+	void updateAnimTimers();
 
 	bool _runFlag;
 
 	// Character generation / party transfer
-	bool startCharacterGeneration();
+	bool startCharacterGeneration(bool defaultParty);
 	bool startPartyTransfer();
 
-	uint8 **_faceShapes;
+	const uint8 **_faceShapes;
+	const uint8 *_wndBackgrnd;
 
 	static const int8 _characterClassType[];
 	static const uint8 _hpIncrPerLevel[];
@@ -366,6 +389,12 @@ protected:
 	uint32 _disableElapsedTime;
 	uint32 _restPartyElapsedTime;
 
+	uint32 _lastVIntTick;
+	uint32 _lastSecTick;
+	uint32 _totalPlaySecs;
+	uint32 _totalEnemiesKilled;
+	uint32 _totalSteps;
+
 	// Mouse
 	void setHandItem(Item itemIndex) override;
 
@@ -375,7 +404,7 @@ protected:
 	int getClassAndConstHitpointsModifier(int cclass, int constitution);
 	int getCharacterClassType(int cclass, int levelIndex);
 	int getModifiedHpLimits(int hpModifier, int constModifier, int level, bool mode);
-	Common::String getCharStrength(int str, int strExt);
+	Common::String getCharStrength(int str, int strExt, bool twoDigitsPadding = false);
 	int testCharacter(int16 index, int flags);
 	int getNextValidCharIndex(int curCharIndex, int searchStep);
 
@@ -427,6 +456,7 @@ protected:
 	bool _loading;
 
 	// Items
+	virtual Common::SeekableReadStreamEndian *getItemDefinitionFile(int index);
 	void loadItemDefs();
 	Item duplicateItem(Item itemIndex);
 	void setItemPosition(Item *itemQueue, int block, Item item, int pos);
@@ -438,8 +468,8 @@ protected:
 	int stripPartyItems(int16 itemType, int16 itemValue, int handleValueMode, int numItems);
 	bool deletePartyItems(int16 itemType, int16 itemValue);
 	virtual void updateUsedCharacterHandItem(int charIndex, int slot) = 0;
-	int itemUsableByCharacter(int charIndex, Item item);
-	int countQueuedItems(Item itemQueue, int16 id, int16 type, int count, int includeFlyingItems);
+	int itemUsableByCharacter(int charIndex, Item item) const;
+	int countQueuedItems(Item itemQueue, int16 id, int16 type, int count, int includeFlyingItems) const;
 	int getQueuedItem(Item *items, int pos, int id);
 	void printFullItemName(Item item);
 	void identifyQueuedItems(Item itemQueue);
@@ -463,8 +493,8 @@ protected:
 	EoBItemType *_itemTypes;
 	char **_itemNames;
 	uint16 _numItemNames;
-	int _numItemNamesPC98;
-	const char * const *_itemNamesPC98;
+	int _numItemNamesStatic;
+	const char * const *_itemNamesStatic;
 	uint32 _partyEffectFlags;
 	Item _lastUsedItem;
 
@@ -492,9 +522,8 @@ protected:
 	const char *const *_ascii2SjisTables2;
 
 	// Monsters
-	void loadMonsterShapes(const char *filename, int monsterIndex, bool hasDecorations, int encodeTableIndex);
+	virtual void loadMonsterShapes(const char *filename, int monsterIndex, bool hasDecorations, int encodeTableIndex);
 	void releaseMonsterShapes(int first, int num);
-	uint8 *loadTownsShape(Common::SeekableReadStream *stream);
 	virtual void generateMonsterPalettes(const char *file, int16 monsterIndex) {}
 	virtual void loadMonsterDecoration(Common::SeekableReadStream *stream, int16 monsterIndex) {}
 	virtual const uint8 *loadMonsterProperties(const uint8 *data) { return 0; }
@@ -546,6 +575,8 @@ protected:
 
 	uint8 *_monsterFlashOverlay;
 	uint8 *_monsterStoneOverlay;
+	int16 _shapeShakeOffsetX;
+	int16 _shapeShakeOffsetY;
 
 	SpriteDecoration *_monsterDecorations;
 	EoBMonsterProperty *_monsterProps;
@@ -590,28 +621,34 @@ protected:
 
 	// Level
 	void loadLevel(int level, int sub);
-	void readLevelFileData(int level);
+	virtual void readLevelFileData(int level);
 	Common::String initLevelData(int sub);
 	void addLevelItems() override;
-	void loadVcnData(const char *file, const uint8 *cgaMapping);
+	virtual void loadVcnData(const char *file, const uint8 *cgaMapping);
+	virtual Common::SeekableReadStreamEndian *getVmpData(const char *file);
 	void loadBlockProperties(const char *mazFile) override;
-	const uint8 *getBlockFileData(int levelIndex = 0) override;
-	Common::String getBlockFileName(int levelIndex, int sub);
+	virtual const uint8 *getBlockFileData(int levelIndex) override;
 	const uint8 *getBlockFileData(const char *mazFile);
+	Common::String getBlockFileName(int levelIndex, int sub);
 	void loadDecorations(const char *cpsFile, const char *decFile);
+	virtual Common::SeekableReadStreamEndian *getDecDefinitions(const char *decFile);
+	virtual void loadDecShapesToPage3(const char *shpFile);
 	void assignWallsAndDecorations(int wallIndex, int vmpIndex, int decDataIndex, int specialType, int flags);
 	void releaseDecorations();
 	void releaseDoorShapes();
+	void resetWallData();
 	void toggleWallState(int wall, int flags);
 	virtual void loadDoorShapes(int doorType1, int shapeId1, int doorType2, int shapeId2) = 0;
 	virtual const uint8 *loadDoorShapes(const char *filename, int doorIndex, const uint8 *shapeDefs) = 0;
+	virtual void setLevelPalettes(int level) {}
 
-	void drawScene(int refresh) override;
-	void drawSceneShapes(int start = 0) override;
-	void drawDecorations(int index) override;
+	void drawScene(int refresh);
+	void drawSceneShapes(int start = 0, int end = 18, int drawFlags = 0xFF);
+	void drawDecorations(int index);
 
 	int calcNewBlockPositionAndTestPassability(uint16 curBlock, uint16 direction);
 	void notifyBlockNotPassable();
+	void increaseStepsCounter();
 	void moveParty(uint16 block);
 
 	int clickedDoorSwitch(uint16 block, uint16 direction) override;
@@ -624,11 +661,17 @@ protected:
 	void openDoor(int block);
 	void closeDoor(int block);
 
+	void addLevelMap(int level);
+	bool hasLevelMap(int level) const;
+	uint32 countMaps() const;
+	uint32 countArrows() const;
+
 	int16 _doorType[2];
 	int16 _noDoorSwitch[2];
 
 	EoBRect8 *_levelDecorationRects;
 	SpriteDecoration *_doorSwitches;
+	const uint8 *_dcrShpDataPos;
 
 	int8 _currentSub;
 	Common::String _curGfxFile;
@@ -638,6 +681,9 @@ protected:
 
 	uint32 _drawSceneTimer;
 	uint32 _flashShapeTimer;
+	uint32 _flashShapeTimerIntv0;
+	uint32 _flashShapeTimerIntv1;
+	uint32 _flashShapeTimerIntv2;
 	uint32 _envAudioTimer;
 	uint16 _teleporterPulse;
 
@@ -667,6 +713,8 @@ protected:
 	const uint8 *_teleporterShapeCoords;
 	const int8 *_portalSeq;
 
+	uint32 _levelMaps;
+
 	// Script
 	void runLevelScript(int block, int flags) override;
 	void setScriptFlags(uint32 flags);
@@ -685,21 +733,26 @@ protected:
 	uint8 _scriptTimersMode;
 
 	// Gui
-	void gui_drawPlayField(bool refresh);
+	virtual void gui_drawPlayField(bool refresh);
+	virtual void gui_setupPlayFieldHelperPages(bool keepText = false);
 	void gui_restorePlayField();
 	void gui_drawAllCharPortraitsWithStats();
-	void gui_drawCharPortraitWithStats(int index);
+	void gui_drawCharPortraitWithStats(int index, bool screenUpdt = true);
 	void gui_drawFaceShape(int index);
 	void gui_drawWeaponSlot(int charIndex, int slot);
-	void gui_drawWeaponSlotStatus(int x, int y, int status);
+	virtual void gui_drawWeaponSlotStatus(int x, int y, int status);
+	virtual void gui_printInventoryDigits(int x, int y, int val) {}
+	virtual void gui_playStrikeAnimation(uint8 pos, Item itm) {}
 	void gui_drawHitpoints(int index);
 	void gui_drawFoodStatusGraph(int index);
 	void gui_drawHorizontalBarGraph(int x, int y, int w, int h, int32 curVal, int32 maxVal, int col1, int col2) override;
 	void gui_drawCharPortraitStatusFrame(int index);
 	void gui_drawInventoryItem(int slot, int redraw, int pageNum);
+	virtual void gui_drawCharacterStatsPage();
+	virtual void gui_displayMap() {}
 	void gui_drawCompass(bool force);
 	void gui_drawDialogueBox();
-	void gui_drawSpellbook();
+	virtual void gui_drawSpellbook();
 	void gui_drawSpellbookScrollArrow(int x, int y, int direction);
 	void gui_updateSlotAfterScrollUse();
 	void gui_updateControls();
@@ -715,7 +768,7 @@ protected:
 	int clickedInventoryNextPage(Button *button);
 	int clickedPortraitRestore(Button *button);
 	int clickedCharPortraitDefault(Button *button);
-	int clickedCamp(Button *button);
+	virtual int clickedCamp(Button *button);
 	int clickedSceneDropPickupItem(Button *button);
 	int clickedCharPortrait2(Button *button);
 	int clickedWeaponSlot(Button *button);
@@ -738,12 +791,14 @@ protected:
 	int clickedSceneSpecial(Button *button);
 	int clickedSpellbookAbort(Button *button);
 	int clickedSpellbookScroll(Button *button);
-	int clickedUnk(Button *button);
+	int clickedButtonReturnIndex(Button *button);
 
 	void gui_processCharPortraitClick(int index);
 	void gui_processWeaponSlotClickLeft(int charIndex, int slotIndex);
 	void gui_processWeaponSlotClickRight(int charIndex, int slotIndex);
 	void gui_processInventorySlotClick(int slot);
+
+	virtual void gui_updateAnimations() {}
 
 	static const uint8 _buttonList1[];
 	int _buttonList1Size;
@@ -778,8 +833,13 @@ protected:
 
 	const uint16 *_inventorySlotsX;
 	const uint8 *_inventorySlotsY;
+	Screen::FontId _invFont1;
+	Screen::FontId _invFont2;
+	Screen::FontId _invFont3;
+	Screen::FontId _conFont;
 	const uint8 **_compassShapes;
 	uint8 _charExchangeSwap;
+	uint8 *_swapShape;
 	bool _configHpBarGraphs;
 	bool _configMouseBtSwap;
 
@@ -790,7 +850,7 @@ protected:
 	void initDialogueSequence();
 	void restoreAfterDialogueSequence();
 	void drawSequenceBitmap(const char *file, int destRect, int x1, int y1, int flags);
-	int runDialogue(int dialogueTextId, int numStr, ...);
+	int runDialogue(int dialogueTextId, int numStr, int loopButtonId, ...);
 
 	char _dialogueLastBitmap[13];
 	int _moveCounter;
@@ -843,11 +903,15 @@ protected:
 
 	// misc
 	void delay(uint32 millis, bool doUpdate = false, bool isMainLoop = false) override;
+	void pauseEngineIntern(bool pause) override;
 
-	void displayParchment(int id);
+	virtual void displayParchment(int id);
 	int countResurrectionCandidates();
 
 	void seq_portal();
+	virtual const uint8 **makePortalShapes();
+	//bool seq_playSegaSequence(int id) { return true; }
+	virtual void seq_segaPausePlayer(bool pause) {}
 	bool checkPassword();
 
 	Common::String convertAsciiToSjis(Common::String str);
@@ -858,9 +922,6 @@ protected:
 	virtual void drawLightningColumn() {}
 	virtual int charSelectDialogue() { return -1; }
 	virtual void characterLevelGain(int charIndex) {}
-
-	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail) override;
 
 	const uint8 *_cgaMappingDefault;
 	const uint8 *_cgaMappingAlt;
@@ -878,6 +939,10 @@ protected:
 
 	bool _enableHiResDithering;
 
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail) override;
+	virtual void makeNameShapes(int charId = -1) {}
+	virtual void makeFaceShapes(int charId = -1);
 	// Default parameters will import all present original save files and push them to the top of the save dialog.
 	bool importOriginalSaveFile(int destSlot, const char *sourceFile = 0);
 	Common::String readOriginalSaveFile(Common::String &file);
@@ -904,6 +969,8 @@ protected:
 	bool _allowSkip;
 	bool _allowImport;
 
+	bool _closeSpellbookAfterUse;
+
 	Screen_EoB *_screen;
 	GUI_EoB *_gui;
 
@@ -912,6 +979,7 @@ protected:
 	int closeDistanceAttack(int charIndex, Item item);
 	int thrownAttack(int charIndex, int slotIndex, Item item);
 	int projectileWeaponAttack(int charIndex, Item item);
+	virtual void playStrikeAnimation(uint8 pos, Item itm) {}
 
 	void inflictMonsterDamage(EoBMonsterInPlay *m, int damage, bool giveExperience);
 	void calcAndInflictMonsterDamage(EoBMonsterInPlay *m, int times, int pips, int offs, int flags, int savingThrowType, int savingThrowEffect);
@@ -944,6 +1012,7 @@ protected:
 
 	int _dstMonsterIndex;
 	bool _preventMonsterFlash;
+	int8 _sceneShakeCountdown;
 	int16 _foundMonstersArray[5];
 	int8 _monsterBlockPosArray[6];
 	const uint8 *_monsterAcHitChanceTable1;
@@ -1106,6 +1175,8 @@ protected:
 	int _clericSpellOffset;
 	const char *const *_clericSpellList;
 	const char *const *_spellNames;
+	const char *const *_mageSpellList2;
+	const char *const *_clericSpellList2;	
 	const char *const *_magicStrings1;
 	const char *const *_magicStrings2;
 	const char *const *_magicStrings3;
@@ -1146,6 +1217,9 @@ protected:
 	int _prefMenuPlatformOffset;
 	bool _configMouse;
 	bool _config2431;
+	int _mouseSpeed;
+	int _padSpeed;
+	int _inputMode;
 
 	const char *const *_menuStringsMain;
 	const char *const *_menuStringsSaveLoad;
@@ -1169,8 +1243,8 @@ protected:
 	const char *_errorSlotNoNameString;
 	const char *_menuOkString;
 	const char *const *_2431Strings;
-	const char *const *_katakanaLines;
-	const char *const *_katakanaSelectStrings;
+	const char *const *_textInputCharacterLines;
+	const char *const *_textInputSelectStrings;
 	const char *const *_menuStringsTransfer;
 	const char *const *_transferStringsScummVM;
 	const char *const *_menuStringsSpec;
@@ -1188,11 +1262,13 @@ protected:
 	const uint8 *_numSpellsMage;
 
 	// sound
-	void snd_playSong(int id);
-	void snd_playSoundEffect(int id, int volume=0xFF) override;
+	void snd_playSong(int id, bool loop = true);
+	void snd_playLevelScore();
+	void snd_playSoundEffect(int id, int volume = 0xFF) override;
 	void snd_stopSound();
 	void snd_fadeOut(int del = 160);
 	virtual void snd_loadAmigaSounds(int level, int sub) = 0;
+	virtual void snd_updateLevelScore() {}
 
 	const char **_amigaSoundMap;
 	const char *const *_amigaLevelSoundList1;

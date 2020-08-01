@@ -229,6 +229,7 @@ private:
 	Sprite _overlay;
 	Sprite _activityIcon;
 	Sprite _osdMessage;
+	bool _filteringEnabled;
 
 	enum {
 		kOSDMessageDuration = 800

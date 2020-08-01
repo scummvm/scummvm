@@ -48,8 +48,8 @@ namespace LC {
 	void c_not();
 
 	void c_ampersand();
-	void c_after();
-	void c_before();
+	void c_putafter();
+	void c_putbefore();
 	void c_concat();
 	void c_contains();
 	void c_starts();
@@ -66,6 +66,7 @@ namespace LC {
 	void c_wordOf();
 	void c_wordToOf();
 
+	void c_constpush();
 	void c_intpush();
 	void c_voidpush();
 	void c_floatpush();
@@ -112,10 +113,11 @@ namespace LC {
 	void c_le();
 	void c_jump();
 	void c_jumpifz();
-	void c_call();
+	void c_callcmd();
+	void c_callfunc();
 
-	void call(const Symbol &targetSym, int nargs);
-	void call(const Common::String &name, int nargs);
+	void call(const Symbol &targetSym, int nargs, bool allowRetVal);
+	void call(const Common::String &name, int nargs, bool allowRetVal);
 
 	void c_procret();
 
@@ -148,7 +150,6 @@ namespace LC {
 	void cb_objectfieldassign();
 	void cb_objectfieldpush();
 	void cb_objectpush();
-	void cb_tellcall();
 	void cb_theassign();
 	void cb_theassign2();
 	void cb_thepush();

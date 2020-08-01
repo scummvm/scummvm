@@ -28,6 +28,7 @@
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/misc/direction.h"
+#include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/world/weapon_info.h"
 #include "ultima/ultima8/world/get_object.h"
 
@@ -99,11 +100,11 @@ void FireballProcess::run() {
 	dx = tx - x;
 	dy = ty - y;
 
-	int targetdir = item->getDirToItemCentre(*t);
+	Direction targetdir = item->getDirToItemCentre(*t);
 
 	if (_xSpeed == 0 && _ySpeed == 0 && dx / 64 == 0 && dy / 64 == 0) {
-		_xSpeed += 2 * x_fact[targetdir];
-		_ySpeed += 2 * y_fact[targetdir];
+		_xSpeed += 2 * Direction_XFactor(targetdir);
+		_ySpeed += 2 * Direction_YFactor(targetdir);
 	} else {
 		_xSpeed += (dx / 64);
 		_ySpeed += (dy / 64);
@@ -130,7 +131,8 @@ void FireballProcess::run() {
 	}
 
 	Item *tailitem = getItem(_tail[2]);
-	tailitem->setFrame(Get_WorldDirection(_ySpeed, _xSpeed));
+	Direction movedir = Direction_GetWorldDir(_ySpeed, _xSpeed, dirmode_8dirs);
+	tailitem->setFrame(Direction_ToUsecodeDir(movedir));
 	tailitem->move(x, y, z);
 
 	_tail[2] = _tail[1];
@@ -141,7 +143,7 @@ void FireballProcess::run() {
 		Actor *hit = getActor(hititem);
 		if (hit) {
 			// hit an actor: deal damage and explode
-			hit->receiveHit(0, 8 - targetdir, 5 + (getRandom() % 5),
+			hit->receiveHit(0, Direction_Invert(targetdir), 5 + (getRandom() % 5),
 			                WeaponInfo::DMG_FIRE);
 			terminate();
 			return;

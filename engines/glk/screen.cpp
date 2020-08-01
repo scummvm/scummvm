@@ -145,6 +145,18 @@ FACES Screen::getFontId(const Common::String &name) {
 	return MONOR;
 }
 
+Common::String Screen::getFontName(FACES font) {
+	if (font == MONOR) return "monor";
+	if (font == MONOB) return "monob";
+	if (font == MONOI) return "monoi";
+	if (font == MONOZ) return "monoz";
+	if (font == PROPR) return "propr";
+	if (font == PROPB) return "propb";
+	if (font == PROPI) return "propi";
+	if (font == PROPZ) return "propz";
+	return "monor";
+}
+
 int Screen::drawString(const Point &pos, int fontIdx, uint color, const Common::String &text, int spw) {
 	int baseLine = (fontIdx >= PROPR) ? g_conf->_propInfo._baseLine : g_conf->_monoInfo._baseLine;
 	Point pt(pos.x / GLI_SUBPIX, pos.y - baseLine);

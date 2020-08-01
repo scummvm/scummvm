@@ -39,11 +39,12 @@ public:
 
 	void setupField(int dim, bool mode);
 
-	void printDialogueText(int stringId, const char *pageBreakString);
-	void printDialogueText(const char *str, bool wait = false);
+	virtual void printDialogueText(int stringId, const char *pageBreakString, const char *pageBreakString2 = 0);
+	virtual void printDialogueText(const char *str, bool wait = false);
 	void printMessage(const char *str, int textColor = -1, ...);
+	virtual void printShadedText(const char *str, int x = -1, int y = -1, int textColor = -1, int shadowColor = -1, int pitchW = -1, int pitchH = -1, int marginRight = 0, bool screenUpdate = true) {}
 
-	int clearDim(int dim);
+	virtual int clearDim(int dim);
 	void clearCurDim();
 
 	void resetDimTextPositions(int dim);
@@ -60,7 +61,7 @@ protected:
 	virtual KyraRpgEngine *vm() { return _vm; }
 	virtual Screen *screen() { return _screen; }
 
-	void displayText(char *str, ...);
+	virtual void displayText(char *str, ...);
 	char parseCommand();
 	void readNextPara();
 	void printLine(char *str);
@@ -103,9 +104,9 @@ protected:
 	};
 
 	TextDimData *_textDimData;
+	KyraRpgEngine *_vm;
 
 private:
-	KyraRpgEngine *_vm;
 	Screen *_screen;
 
 	char *_table1;

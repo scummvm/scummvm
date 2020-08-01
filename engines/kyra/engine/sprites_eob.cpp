@@ -33,40 +33,21 @@
 namespace Kyra {
 
 void EoBCoreEngine::loadMonsterShapes(const char *filename, int monsterIndex, bool hasDecorations, int encodeTableIndex) {
-	if (_flags.platform == Common::kPlatformFMTowns) {
-		Common::String tmp = Common::String::format("%s.MNT", filename);
-		Common::SeekableReadStream *s = _res->createReadStream(tmp);
-		if (!s)
-			error("Screen_EoB::loadMonsterShapes(): Failed to load file '%s'", tmp.c_str());
+	_screen->loadShapeSetBitmap(filename, 3, 3);
+	const uint16 *enc = &_encodeMonsterShpTable[encodeTableIndex << 2];
 
-		for (int i = 0; i < 6; i++)
-			_monsterShapes[monsterIndex + i] = loadTownsShape(s);
+	for (int i = 0; i < 6; i++, enc += 4)
+		_monsterShapes[monsterIndex + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, _cgaMappingDefault);
 
-		for (int i = 0; i < 6; i++) {
-			for (int ii = 0; ii < 2; ii++)
-				s->read(_monsterPalettes[(monsterIndex >= 18 ? i + 6 : i) * 2 + ii], 16);
-		}
+	generateMonsterPalettes(filename, monsterIndex);
 
-		if (hasDecorations)
+	if (hasDecorations) {
+		Common::SeekableReadStream *s = _res->createReadStream(Common::String::format("%s.DCR", filename));
+		if (s)
 			loadMonsterDecoration(s, monsterIndex);
-
 		delete s;
-	} else {
-		_screen->loadShapeSetBitmap(filename, 3, 3);
-		const uint16 *enc = &_encodeMonsterShpTable[encodeTableIndex << 2];
-
-		for (int i = 0; i < 6; i++, enc += 4)
-			_monsterShapes[monsterIndex + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, _cgaMappingDefault);
-
-		generateMonsterPalettes(filename, monsterIndex);
-
-		if (hasDecorations) {
-			Common::SeekableReadStream *s = _res->createReadStream(Common::String::format("%s.DCR", filename));
-			if (s)
-				loadMonsterDecoration(s, monsterIndex);
-			delete s;
-		}
 	}
+
 	_screen->_curPage = 0;
 }
 
@@ -79,18 +60,14 @@ void EoBCoreEngine::releaseMonsterShapes(int first, int num) {
 	}
 }
 
-uint8 *EoBCoreEngine::loadTownsShape(Common::SeekableReadStream *stream) {
-	uint32 size = stream->readUint32LE();
-	uint8 *shape= new uint8[size];
-	stream->read(shape, size);
-	if (shape[0] == 1)
-		shape[0]++;
-	return shape;
-}
-
 const uint8 *EoBCoreEngine::loadActiveMonsterData(const uint8 *data, int level) {
+	static const uint8 intervals[4] = { 35, 30, 25, 0 };
 	for (uint8 p = *data++; p != 0xFF; p = *data++) {
 		uint8 v = *data++;
+		if (_flags.platform == Common::kPlatformSegaCD) {
+			assert(v < ARRAYSIZE(intervals));
+			v = intervals[v];
+		}
 		_timer->setCountdown(0x20 + (p << 1), v);
 		_timer->setCountdown(0x21 + (p << 1), v);
 	}
@@ -185,6 +162,9 @@ void EoBCoreEngine::killMonster(EoBMonsterInPlay *m, bool giveExperience) {
 
 	if (giveExperience)
 		increasePartyExperience(_monsterProps[m->type].experience);
+
+	if (_totalEnemiesKilled < 0xFFFF)
+		_totalEnemiesKilled++;
 
 	if (killMonsterExtra(m)) {
 		placeMonster(m, 0, -1);
@@ -308,7 +288,7 @@ void EoBCoreEngine::drawBlockObject(int flipped, int page, const uint8 *shape, i
 	if (_flags.gameID == GI_EOB1)
 		x &= ~1;
 	
-	_screen->drawShape(page, shape, x - (d->sx << 3), y - d->sy, sd, flipped | (ovl ? 2 : 0), ovl);
+	_screen->drawShape(page, shape, x - (d->sx << 3) + _shapeShakeOffsetX, y - d->sy + _shapeShakeOffsetY, sd, flipped | (ovl ? 2 : 0), ovl);
 }
 
 void EoBCoreEngine::drawMonsterShape(const uint8 *shape, int x, int y, int flipped, int flags, int palIndex) {
@@ -366,12 +346,11 @@ void EoBCoreEngine::drawBlockItems(int index) {
 		return;
 
 	uint16 o2 = o = _items[o].next;
-	bool forceLoop = true;
 	static const int8 itemPosYNiche[] = { 0x25, 0x31, 0x38, 0x00 };
 	static const int8 itemPosFin[] = { 0, -2, 1, -1, 2, 0, 1, -1 };
 	int tile2 = 0;
 
-	while (o != o2 || forceLoop) {
+	for (bool loop = true; o != o2 || loop; ) {
 		EoBItem *itm = &_items[o];
 		if (itm->pos == 8 || itm->pos < 4) {
 			tile2 = -1;
@@ -383,6 +362,14 @@ void EoBCoreEngine::drawBlockItems(int index) {
 
 			if (itm->pos == 8) {
 				x = _dscItemShpX[index];
+
+				if (_flags.gameID == Common::kPlatformSegaCD && _currentLevel == 12 && (_currentBlock & 0x1F) < 17 && (_currentBlock >> 5) < 20) {
+					if (index == 8)
+						x += 20;
+					else if (index == 10)
+						x -= 20;
+				}
+
 				y = itemPosYNiche[_dscDimMap[index]];
 				ps = 0;
 			} else {
@@ -416,7 +403,7 @@ void EoBCoreEngine::drawBlockItems(int index) {
 		}
 
 		o = itm->next;
-		forceLoop = false;
+		loop = false;
 		if (tile2 != -1)
 			setLevelShapesDim(index, _shpDmX1, _shpDmX2, 5);
 	}
@@ -447,6 +434,7 @@ void EoBCoreEngine::drawDoor(int index) {
 
 void EoBCoreEngine::drawMonsters(int index) {
 	static const uint8 distMap[] = { 2, 1, 0, 4 };
+	// SEGA: 2, 1, 0, 3 ??
 	static const uint8 yAdd[] = { 20, 12, 4, 4, 2, 0, 0 };
 
 	int blockDistance = distMap[_dscDimMap[index]];
@@ -486,62 +474,93 @@ void EoBCoreEngine::drawMonsters(int index) {
 		int subFrame = ABS(f);
 		int shpIndex = d->shpIndex ? 18 : 0;
 		int palIndex = d->palette ? ((((shpIndex == 18) ? subFrame + 5 : subFrame - 1) << 1) + (d->palette - 1)) : -1;
-
-		const uint8 *shp = _screen->scaleShape(_monsterShapes[subFrame + shpIndex - 1], blockDistance);
+		int shpOffs = subFrame + shpIndex - 1;
+		int xAdd2 = 0;
+		int yAdd2 = 0;
 
 		int v30 = (subFrame == 1 || subFrame > 3) ? 1 : 0;
-		int v1e = (d->pos == 4) ? 4 : _dscItemPosIndex[cDirOffs + d->pos];
-		int posIndex = (index * 5 + v1e) << 1;
+		int posOffs = (d->pos == 4) ? 4 : _dscItemPosIndex[cDirOffs + d->pos];
+		int posIndex = (index * 5 + posOffs) << 1;
 
-		int x = _dscShapeCoords[posIndex] + 88;
-		int y = _dscShapeCoords[posIndex + 1] + 127;
+		if (_flags.platform == Common::kPlatformSegaCD) {
+			if (d->curAttackFrame < 0)
+				subFrame = 5;
+			else if (subFrame >= 3)
+				subFrame--;
 
-		if (p->u30 == 1) {
-			if (v30) {
-				if (_flags.gameID == GI_EOB2)
-					posIndex = ((posIndex >> 1) - v1e) << 1;
-				y = _dscShapeCoords[posIndex + 1] + 127 + yAdd[blockDistance + ((v1e == 4 || _flags.gameID == GI_EOB1) ? 0 : 3)];
-			} else {
-				if (_flags.gameID == GI_EOB2)
-					posIndex = ((posIndex >> 1) - v1e + 4) << 1;
-				x = _dscShapeCoords[posIndex] + 88;
+			if (d->animType != subFrame) {
+				d->animType = subFrame;
+				d->animProgress = 0;
 			}
+		} else if (d->curAttackFrame < 0) {
+			d->curAttackFrame++;
 		}
 
-		int w = shp[2] << 3;
-		int h = shp[1];
+		for (int numFrames = 1; numFrames; --numFrames) {
+			if (_flags.platform == Common::kPlatformSegaCD) {
+				int temp = 0;
+				const uint8 *frm = _staticres->loadRawData(kEoB1MonsterAnimFrames00 + d->type * 5 + subFrame - 1, temp) + ((d->animProgress++) << 2);
+				shpOffs = shpIndex + (frm[0] & 0x3F);
+				numFrames += ((frm[0] >> 6) & 1);
+				xAdd2 = (int8)frm[1];
+				yAdd2 = (int8)frm[2];
+				if (frm[4] == 0xFE) {
+					d->animProgress = 0;
+				} else if (frm[4] == 0xFF) {
+					d->curAttackFrame = 0;
+					d->animType = 0;
+				}
+			}
 
-		x = x - (w >> 1) + (d->idleAnimState >> 4);
-		y = y - h + (d->idleAnimState & 0x0F);
+			const uint8 *shp = _screen->scaleShape(_monsterShapes[shpOffs], blockDistance);
 
-		drawMonsterShape(shp, x, y, f >= 0 ? 0 : 1, d->flags, palIndex);
+			int x = _dscShapeCoords[posIndex] + 88;
+			int y = _dscShapeCoords[posIndex + 1] + 127;
 
-		if (_flags.gameID == GI_EOB1) {
+			if (p->u30 == 1) {
+				if (v30) {
+					if (_flags.gameID == GI_EOB2)
+						posIndex = ((posIndex >> 1) - posOffs) << 1;
+					y = _dscShapeCoords[posIndex + 1] + 127 + yAdd[blockDistance + ((posOffs == 4 || _flags.gameID == GI_EOB1) ? 0 : 3)];
+				} else {
+					if (_flags.gameID == GI_EOB2)
+						posIndex = ((posIndex >> 1) - posOffs + 4) << 1;
+					x = _dscShapeCoords[posIndex] + 88;
+				}
+			}
+
+			int w = shp[2] << 3;
+			int h = shp[1];
+
+			x = x - (w >> 1) + (d->idleAnimState >> 4) + xAdd2;
+			y = y - h + (d->idleAnimState & 0x0F) + yAdd2;
+
+			drawMonsterShape(shp, x, y, f >= 0 ? 0 : 1, d->flags, palIndex);
+
+			if (_flags.gameID == GI_EOB2) {
+				for (int ii = 0; ii < 3; ii++) {
+					if (!p->decorations[ii])
+						continue;
+
+					SpriteDecoration *dcr = &_monsterDecorations[(p->decorations[ii] - 1) * 6 + subFrame + shpIndex - 1];
+
+					if (!dcr->shp)
+						continue;
+
+					shp = _screen->scaleShape(dcr->shp, blockDistance);
+					int dx = dcr->x;
+					int dy = dcr->y;
+
+					for (int iii = 0; iii < blockDistance; iii++) {
+						dx = (dx << 1) / 3;
+						dy = (dy << 1) / 3;
+					}
+
+					drawMonsterShape(shp, x + ((f < 0) ? (w - dx - (shp[2] << 3)) : dx), y + dy, f >= 0 ? 0 : 1, d->flags, -1);
+				}
+			}
 			_screen->setShapeFadingLevel(0);
-			continue;
 		}
-
-		for (int ii = 0; ii < 3; ii++) {
-			if (!p->decorations[ii])
-				continue;
-
-			SpriteDecoration *dcr = &_monsterDecorations[(p->decorations[ii] - 1) * 6 + subFrame + shpIndex - 1];
-
-			if (!dcr->shp)
-				continue;
-
-			shp = _screen->scaleShape(dcr->shp, blockDistance);
-			int dx = dcr->x;
-			int dy = dcr->y;
-
-			for (int iii = 0; iii < blockDistance; iii++) {
-				dx = (dx << 1) / 3;
-				dy = (dy << 1) / 3;
-			}
-
-			drawMonsterShape(shp, x + ((f < 0) ? (w - dx - (shp[2] << 3)) : dx), y + dy, f >= 0 ? 0 : 1, d->flags, -1);
-		}
-		_screen->setShapeFadingLevel(0);
 	}
 }
 
@@ -646,7 +665,7 @@ void EoBCoreEngine::drawFlyingObjects(int index) {
 		}
 
 		x -= (shp[2] << 2);
-		y -= (y == 44 ? (shp[1]  >> 1) : shp[1]);
+		y -= (y == 44 ? (shp[1] >> 1) : shp[1]);
 
 		drawBlockObject(flipped, 2, shp, x, y, 5);
 		_screen->setShapeFadingLevel(0);
@@ -665,7 +684,6 @@ void EoBCoreEngine::drawTeleporter(int index) {
 	int16 y1 = telprtY[t];
 
 	for (int i = 0; i < 2; i++) {
-
 		int16 x2 = 0;
 		int16 y2 = 0;
 		int d = (t << 1) + i;
@@ -1023,18 +1041,30 @@ bool EoBCoreEngine::updateMonsterTryCloseAttack(EoBMonsterInPlay *m, int block) 
 
 		if (facing) {
 			disableSysTimer(2);
-			if (m->type == 4)
-				updateEnvironmentalSfx(_monsterProps[m->type].sound1);
+			if ((_flags.platform == Common::kPlatformSegaCD) == (m->type != 4))
+				snd_updateEnvironmentalSfx(_monsterProps[m->type].sound1);
+
+			_flashShapeTimer = _flashShapeTimerIntv0;
 			m->curAttackFrame = -2;
-			_flashShapeTimer = 0;
-			drawScene(1);
-			m->curAttackFrame = -1;
-			if (m->type != 4)
-				updateEnvironmentalSfx(_monsterProps[m->type].sound1);
-			_flashShapeTimer = _system->getMillis() + 8 * _tickLength;
-			drawScene(1);
+
+			for (int i = 0; i < 16 && m->curAttackFrame < 0; ++i) {
+				if (m->type != 4 && m->curAttackFrame == -1)
+					snd_updateEnvironmentalSfx(_monsterProps[m->type].sound1);
+				if (_flags.platform == Common::kPlatformSegaCD && _partyResting) {
+					// The original SegaCD code does not update the monsters during resting. I presume to
+					// avoid graphical issues which I try to fix here...
+					setLevelPalettes(_currentLevel);
+					_screen->sega_selectPalette(-1, 2, true);
+					gui_setupPlayFieldHelperPages(true);
+					gui_drawAllCharPortraitsWithStats();
+					_partyResting = false;
+				}
+				drawScene(1);
+				_flashShapeTimer = _system->getMillis() + _flashShapeTimerIntv1;
+			}
+
 		} else {
-			updateEnvironmentalSfx(_monsterProps[m->type].sound1);
+			snd_updateEnvironmentalSfx(_monsterProps[m->type].sound1);
 		}
 
 		monsterCloseAttack(m);
@@ -1044,7 +1074,7 @@ bool EoBCoreEngine::updateMonsterTryCloseAttack(EoBMonsterInPlay *m, int block) 
 			m->animStep ^= 1;
 			_sceneUpdateRequired = 1;
 			enableSysTimer(2);
-			_flashShapeTimer = _system->getMillis() + 8 * _tickLength;
+			_flashShapeTimer = _system->getMillis() + _flashShapeTimerIntv2;
 		}
 	} else {
 		int b = m->block;
@@ -1184,8 +1214,9 @@ bool EoBCoreEngine::walkMonsterNextStep(EoBMonsterInPlay *m, int destBlock, int 
 		m->dir = direction;
 
 	checkSceneUpdateNeed(obl);
+	uint16 prioFlag = (_flags.platform == Common::kPlatformSegaCD) ? 0x2000 : 0;
 	if (!_partyResting && p->sound2 > 0)
-		snd_processEnvironmentalSoundEffect(p->sound2, m->block);
+		snd_processEnvironmentalSoundEffect(p->sound2 | prioFlag, m->block);
 
 	return true;
 }

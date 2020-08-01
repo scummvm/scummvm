@@ -43,7 +43,6 @@ Sound::Sound(StarTrekEngine *vm) : _vm(vm) {
 		_midiDevice = MidiDriver::detectDevice(MDT_PCSPK | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32);
 		_midiDriver = MidiDriver::createMidi(_midiDevice);
 		_midiDriver->open();
-		_midiDriver->setTimerCallback(this, Sound::midiDriverCallback);
 
 		for (int i = 0; i < NUM_MIDI_SLOTS; i++) {
 			_midiSlots[i].slot = i;
@@ -58,6 +57,8 @@ Sound::Sound(StarTrekEngine *vm) : _vm(vm) {
 			_midiSlots[i].midiParser->setMidiDriver(_midiDriver);
 			_midiSlots[i].midiParser->setTimerRate(_midiDriver->getBaseTempo());
 		}
+
+		_midiDriver->setTimerCallback(this, Sound::midiDriverCallback);
 	}
 
 	_soundHandle = new Audio::SoundHandle();

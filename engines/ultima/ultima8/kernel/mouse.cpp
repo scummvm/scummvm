@@ -30,6 +30,7 @@
 #include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/misc/direction.h"
+#include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/misc/rect.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
@@ -170,7 +171,7 @@ int Mouse::getMouseLength(int mx, int my) {
 	}
 }
 
-int Mouse::getMouseDirectionWorld(int mx, int my) {
+Direction Mouse::getMouseDirectionWorld(int mx, int my) {
 	Rect dims;
 	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 	screen->GetSurfaceDims(dims);
@@ -179,11 +180,11 @@ int Mouse::getMouseDirectionWorld(int mx, int my) {
 	int dx = mx - dims.w / 2;
 	int dy = (dims.h / 2 + (dims.h * 14 / 200)) - my; //! constant
 
-	return Get_direction(dy * 2, dx);
+	return Direction_Get(dy * 2, dx, dirmode_8dirs);
 }
 
-int Mouse::getMouseDirectionScreen(int mx, int my) {
-	return ((getMouseDirectionWorld(mx, my)) + 1) % 8;
+Direction Mouse::getMouseDirectionScreen(int mx, int my) {
+	return Direction_OneRight(getMouseDirectionWorld(mx, my), dirmode_8dirs);
 }
 
 int Mouse::getMouseFrame() {
@@ -221,7 +222,8 @@ int Mouse::getMouseFrame() {
 		}
 
 		// Calculate frame based on direction
-		int frame = getMouseDirectionScreen(_mousePos.x, _mousePos.y);
+		Direction mousedir = getMouseDirectionScreen(_mousePos.x, _mousePos.y);
+		int frame = mouseFrameForDir(mousedir);
 
 		/** length --- frame offset
 		 *    0              0
@@ -253,6 +255,20 @@ int Mouse::getMouseFrame() {
 		return 40;
 	default:
 		return -1;
+	}
+}
+
+int Mouse::mouseFrameForDir(Direction mousedir) const {
+	switch (mousedir) {
+		case dir_north:		return 0;
+		case dir_northeast: return 1;
+		case dir_east:		return 2;
+		case dir_southeast: return 3;
+		case dir_south:		return 4;
+		case dir_southwest: return 5;
+		case dir_west:		return 6;
+		case dir_northwest: return 7;
+		default:			return 0;
 	}
 }
 

@@ -22,6 +22,7 @@
 
 #include "graphics/macgui/macbutton.h"
 #include "image/image_decoder.h"
+#include "video/qt_decoder.h"
 
 #include "director/director.h"
 #include "director/castmember.h"
@@ -31,30 +32,34 @@
 
 namespace Director {
 
-CastMember::CastMember(Cast* cast, uint16 castId) {
+CastMember::CastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream) {
 	_type = kCastTypeNull;
 	_cast = cast;
 	_castId = castId;
-	_widget = nullptr;
 	_hilite = false;
 	_autoHilite = false;
+	_purgePriority = 3;
+	_size = stream.size();
+	_flags1 = 0;
 
 	_modified = true;
 }
 
-BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint32 castTag, uint16 version)
-		: CastMember(cast, castId) {
+BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint32 castTag, uint16 version, uint8 flags1)
+		: CastMember(cast, castId, stream) {
 	_type = kCastBitmap;
 	_img = nullptr;
 	_matte = nullptr;
+	_noMatte = false;
 	_bytes = 0;
 	_pitch = 0;
-	_flags1 = 0;
 	_flags2 = 0;
 	_regX = _regY = 0;
+	_clut = kClutSystemMac;
+	_bitsPerPixel = 0;
 
 	if (version < 4) {
-		_flags1 = stream.readByte();	// region: 0 - auto, 1 - matte, 2 - disabled, 8 - no auto
+		_flags1 = flags1;	// region: 0 - auto, 1 - matte, 2 - disabled, 8 - no auto
 		if (_flags1 >> 4 == 0x0)
 			_autoHilite = true;
 
@@ -66,7 +71,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::ReadStream
 
 		if (_bytes & 0x8000) {
 			_bitsPerPixel = stream.readUint16();
-			_clut = (PaletteType)stream.readUint16();
+			_clut = stream.readSint16() - 1;
 		} else {
 			_bitsPerPixel = 1;
 			_clut = kClutSystemMac;
@@ -77,7 +82,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::ReadStream
 			_pitch += 16 - (_initialRect.width() % 16);
 
 	} else if (version == 4) {
-		_flags1 = stream.readByte();
+		_flags1 = flags1;
 		_pitch = stream.readUint16();
 		_pitch &= 0x0fff;
 
@@ -87,31 +92,46 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::ReadStream
 		_regX = stream.readUint16();
 
 		_bitsPerPixel = stream.readUint16();
+
+		if (stream.eos()) {
+			_bitsPerPixel = 0;
+		} else {
+			_clut = stream.readSint16() - 1;
+			stream.readUint16();
+			/* uint16 unk1 = */ stream.readUint16();
+			stream.readUint16();
+
+			stream.readUint32();
+			stream.readUint32();
+
+			_flags2 = stream.readUint16();
+		}
+
 		if (_bitsPerPixel == 0)
 			_bitsPerPixel = 1;
 
 		if (_bitsPerPixel == 1)
 			_pitch *= 8;
 
-		_clut = (PaletteType)stream.readUint16();
-		stream.readUint16();
-		/* uint16 unk1 = */ stream.readUint16();
-		stream.readUint16();
-
-		stream.readUint32();
-		stream.readUint32();
-
-		_flags2 = stream.readUint16();
 		_autoHilite = (_flags2 % 4 != 0);
 
 		int tail = 0;
+		byte buf[256];
 
 		while (!stream.eos()) {
-			stream.readByte();
+			byte c = stream.readByte();
+			if (tail < 256)
+				buf[tail] = c;
 			tail++;
 		}
 
-		warning("BitmapCastMember: %d bytes left", tail);
+		if (tail)
+			warning("BUILDBOT: BitmapCastMember: %d bytes left", tail);
+
+		if (tail && debugChannelSet(2, kDebugLoading)) {
+			debug("BitmapCastMember: tail");
+			Common::hexdump(buf, tail);
+		}
 	} else if (version == 5) {
 		uint16 count = stream.readUint16();
 		for (uint16 cc = 0; cc < count; cc++)
@@ -143,16 +163,15 @@ BitmapCastMember::~BitmapCastMember() {
 		delete _matte;
 }
 
-void BitmapCastMember::createWidget() {
-	CastMember::createWidget();
-
+Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox) {
 	if (!_img) {
 		warning("BitmapCastMember::createWidget: No image decoder");
-		return;
+		return nullptr;
 	}
 
-	_widget = new Graphics::MacWidget(g_director->getStage(), 0, 0, _initialRect.width(), _initialRect.height(), g_director->_wm, false);
-	_widget->getSurface()->blitFrom(*_img->getSurface());
+	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentStage(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
+	widget->getSurface()->blitFrom(*_img->getSurface());
+	return widget;
 }
 
 void BitmapCastMember::createMatte() {
@@ -180,6 +199,7 @@ void BitmapCastMember::createMatte() {
 
 	if (whiteColor == -1) {
 		debugC(1, kDebugImages, "BitmapCastMember::createMatte(): No white color for matte image");
+		_noMatte = true;
 	} else {
 		delete _matte;
 
@@ -196,6 +216,7 @@ void BitmapCastMember::createMatte() {
 		}
 
 		_matte->fillMask();
+		_noMatte = false;
 	}
 
 	tmp.free();
@@ -203,37 +224,49 @@ void BitmapCastMember::createMatte() {
 
 Graphics::Surface *BitmapCastMember::getMatte() {
 	// Lazy loading of mattes
-	if (!_matte) {
+	if (!_matte && !_noMatte) {
 		createMatte();
 	}
 
 	return _matte ? _matte->getMask() : nullptr;
 }
 
-DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version)
-		: CastMember(cast, castId) {
+DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
+		: CastMember(cast, castId, stream) {
 	_type = kCastDigitalVideo;
+	_video = nullptr;
 
 	if (version < 4) {
-		warning("STUB: DigitalVideoCastMember: unhandled properties data");
-		for (int i = 0; i < 0xd; i++) {
-			stream.readByte();
-		}
+		warning("STUB: DigitalVideoCastMember: unhandled rect data");
+		if (debugChannelSet(5, kDebugLoading))
+			stream.hexdump(stream.size());
+		for (int i = 0; i < 0x4; i++)
+			stream.readByte(); // 0
+
+		for (int i = 0; i < 0x4; i++)
+			stream.readByte(); // looks rect like, but as bytes not uint16.
+
+		for ( int i = 0; i < 0x3; i++)
+			stream.readByte(); // 0
+
 		_frameRate = 12;
 		_frameRateType = kFrameRateDefault;
 
 		_preload = false;
 		_enableVideo = false;
-		_pauseAtStart = false;
-		_showControls = false;
-		_looping = false;
-		_enableSound = false;
-		_enableCrop = false;
-		_center = false;
+		_pausedAtStart = false;
+
+		byte flag = stream.readByte();
+
+		_showControls = flag & 0x40;
+		_looping = flag & 0x10;
+		_enableSound = flag & 0x08;
+		_crop = !(flag & 0x02);
+		_center = flag & 0x01;
+		_directToStage = flag & 0x20;
 	} else {
-		for (int i = 0; i < 5; i++) {
-			stream.readUint16();
-		}
+		stream.readByte();
+		_initialRect = Movie::readRect(stream);
 		_frameRate = stream.readByte();
 		stream.readByte();
 
@@ -244,46 +277,57 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common
 		}
 		_preload = flags1 & 0x04;
 		_enableVideo = !(flags1 & 0x02);
-		_pauseAtStart = flags1 & 0x01;
+		_pausedAtStart = flags1 & 0x01;
 
 		byte flags2 = stream.readByte();
 		_showControls = flags2 & 0x40;
 		_looping = flags2 & 0x10;
 		_enableSound = flags2 & 0x08;
-		_enableCrop = !(flags2 & 0x02);
+		_crop = !(flags2 & 0x02);
 		_center = flags2 & 0x01;
+		_directToStage = true;
+		debugC(2, kDebugLoading, "DigitalVideoCastMember(): flags1: (%d 0x%x)", flags1, flags1);
+
+		debugC(2, kDebugLoading, "DigitalVideoCastMember(): flags2: (%d 0x%x)", flags2, flags2);
 	}
+	debugC(2, kDebugLoading, "_frameRate: %d", _frameRateType);
+	debugC(2, kDebugLoading, "_frameRateType: %d, _preload: %d, _enableVideo %d, _pausedAtStart %d",
+			_frameRateType, _preload, _enableVideo, _pausedAtStart);
+	debugC(2, kDebugLoading, "_showControls: %d, _looping: %d, _enableSound: %d, _crop %d, _center: %d, _directToStage: %d",
+			_showControls, _looping, _enableSound, _crop, _center, _directToStage);
+
+	if (debugChannelSet(2, kDebugLoading))
+		_initialRect.debugPrint(2, "DigitalVideoCastMember(): rect:");
 }
 
-SoundCastMember::SoundCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version)
-		: CastMember(cast, castId) {
+DigitalVideoCastMember::~DigitalVideoCastMember() {
+
+}
+
+SoundCastMember::SoundCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
+		: CastMember(cast, castId, stream) {
 	_type = kCastSound;
 	_audio = nullptr;
 	_looping = 0;
-
-	if (version == 4) {
-		for (int i = 0; i < 0xf; i++) {
-			stream.readByte();
-		}
-		_looping = stream.readByte() & 0x10 ? 0 : 1;
-	}
 }
 
-TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version, bool asButton)
-		: CastMember(cast, castId) {
+TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version, uint8 flags1, bool asButton)
+		: CastMember(cast, castId, stream) {
 	_type = kCastText;
 
 	_borderSize = kSizeNone;
 	_gutterSize = kSizeNone;
 	_boxShadow = kSizeNone;
 	_buttonType = kTypeButton;
+	_editable = false;
+	_maxHeight = _textHeight = 0;
 
 	_bgcolor = 0;
 	_fgcolor = 0;
 
-	_flags = 0;
 	_textFlags = 0;
-	_fontId = 0;
+	_scroll = 0;
+	_fontId = 1;
 	_fontSize = 12;
 	_textType = kTextTypeFixed;
 	_textAlign = kTextAlignLeft;
@@ -293,7 +337,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndi
 	_fgpalinfo1 = _fgpalinfo2 = _fgpalinfo3 = 0xff;
 
 	if (version <= 3) {
-		_flags = stream.readByte(); // region: 0 - auto, 1 - matte, 2 - disabled
+		_flags1 = flags1; // region: 0 - auto, 1 - matte, 2 - disabled
 		_borderSize = static_cast<SizeType>(stream.readByte());
 		_gutterSize = static_cast<SizeType>(stream.readByte());
 		_boxShadow = static_cast<SizeType>(stream.readByte());
@@ -332,14 +376,14 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndi
 		}
 
 		debugC(2, kDebugLoading, "TextCastMember(): flags1: %d, border: %d gutter: %d shadow: %d pad1: %x align: %04x",
-				_flags, _borderSize, _gutterSize, _boxShadow, pad1, _textAlign);
+				_flags1, _borderSize, _gutterSize, _boxShadow, pad1, _textAlign);
 		debugC(2, kDebugLoading, "TextCastMember(): background rgb: 0x%04x 0x%04x 0x%04x, pad2: %x pad3: %d pad4: %d shadow: %d flags: %d totHeight: %d",
 				_bgpalinfo1, _bgpalinfo2, _bgpalinfo3, pad2, pad3, pad4, _textShadow, _textFlags, totalTextHeight);
 		if (debugChannelSet(2, kDebugLoading)) {
 			_initialRect.debugPrint(2, "TextCastMember(): rect:");
 		}
 	} else if (version == 4) {
-		byte flags = stream.readByte();
+		_flags1 = flags1;
 		_borderSize = static_cast<SizeType>(stream.readByte());
 		_gutterSize = static_cast<SizeType>(stream.readByte());
 		_boxShadow = static_cast<SizeType>(stream.readByte());
@@ -348,23 +392,19 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndi
 		_bgpalinfo1 = stream.readUint16();
 		_bgpalinfo2 = stream.readUint16();
 		_bgpalinfo3 = stream.readUint16();
-		stream.readUint16();
+		_scroll = stream.readUint16();
 
 		_fontId = 1; // this is in STXT
 
 		_initialRect = Movie::readRect(stream);
-		stream.readUint16();
+		_maxHeight = stream.readUint16();
 		_textShadow = static_cast<SizeType>(stream.readByte());
-		byte flags2 = stream.readByte();
+		_textFlags = stream.readByte();
 
-		if (flags || flags2)
-			warning("Unprocessed text cast flags: %x, flags:2 %x", flags, flags2);
-
-		_fontSize = stream.readUint16();
+		_textHeight = stream.readUint16();
 		_textSlant = 0;
 	} else {
 		_fontId = 1;
-		_fontSize = 12;
 
 		stream.readUint32();
 		stream.readUint32();
@@ -392,17 +432,11 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndi
 	if (asButton) {
 		_type = kCastButton;
 
-		if (version < 4) {
+		if (version <= 4) {
 			_buttonType = static_cast<ButtonType>(stream.readUint16BE() - 1);
 		} else {
-			stream.readByte();
-			stream.readByte();
-
-			// This has already been populated in the super TextCastMember constructor
-			//initialRect = Score::readRect(stream);
-			//boundingRect = Score::readRect(stream);
-
-			_buttonType = static_cast<ButtonType>(stream.readUint16BE());
+			warning("TextCastMember(): Attempting to initialize >D4 button castmember");
+			_buttonType = kTypeButton;
 		}
 	}
 
@@ -412,25 +446,11 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndi
 }
 
 void TextCastMember::setColors(int *fgcolor, int *bgcolor) {
-	if (!_widget)
-		return;
-
 	if (fgcolor)
 		_fgcolor = *fgcolor;
 
 	if (bgcolor)
 		_bgcolor = *bgcolor;
-
-	_widget->setColors(_fgcolor, _bgcolor);
-	((Graphics::MacText *)_widget)->_fullRefresh = true;
-}
-
-void TextCastMember::getColors(int *fgcolor, int *bgcolor) {
-	if (fgcolor)
-		*fgcolor = _fgcolor;
-
-	if (bgcolor)
-		*bgcolor = _bgcolor;
 }
 
 Graphics::TextAlign TextCastMember::getAlignment() {
@@ -446,36 +466,37 @@ Graphics::TextAlign TextCastMember::getAlignment() {
 }
 
 void TextCastMember::importStxt(const Stxt *stxt) {
-	_fontId = stxt->_fontId;
-	_textSlant = stxt->_textSlant;
-	_fontSize = stxt->_fontSize;
-	_fgpalinfo1 = stxt->_palinfo1;
-	_fgpalinfo2 = stxt->_palinfo2;
-	_fgpalinfo3 = stxt->_palinfo3;
+	_fontId = stxt->_style.fontId;
+	_textSlant = stxt->_style.textSlant;
+	_fontSize = stxt->_style.fontSize;
+	_fgpalinfo1 = stxt->_style.r;
+	_fgpalinfo2 = stxt->_style.g;
+	_fgpalinfo3 = stxt->_style.b;
 	_ftext = stxt->_ftext;
 	_ptext = stxt->_ptext;
-
-	_fgcolor = g_director->_wm->findBestColor(_fgpalinfo1 & 0xff, _fgpalinfo2 & 0xff, _fgpalinfo3 & 0xff);
 }
 
-void TextCastMember::createWidget() {
-	CastMember::createWidget();
-
+Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox) {
 	Graphics::MacFont *macFont = new Graphics::MacFont(_fontId, _fontSize, _textSlant);
+	Graphics::MacWidget *widget = nullptr;
 
 	switch (_type) {
 	case kCastText:
-		_widget = new Graphics::MacText(g_director->getStage(), 0, 0, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), _initialRect.width(), getAlignment(), 0, _borderSize, _gutterSize, _boxShadow, _textShadow);
-
-		((Graphics::MacText *)_widget)->draw();
+		widget = new Graphics::MacText(g_director->getCurrentStage(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), bbox.width(), getAlignment(), 0, _borderSize, _gutterSize, _boxShadow, _textShadow);
+		((Graphics::MacText *)widget)->draw();
+		((Graphics::MacText *)widget)->_focusable = _editable;
+		((Graphics::MacText *)widget)->setEditable(_editable);
+		((Graphics::MacText *)widget)->_selectable = _editable;
 		break;
 
 	case kCastButton:
-		_widget = new Graphics::MacButton(Graphics::MacButtonType(_buttonType), getAlignment(), g_director->getStage(), 0, 0, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, getForeColor(), 0xff);
-		((Graphics::MacButton *)_widget)->draw();
-		_widget->_focusable = true;
+		// note that we use _initialRect for the dimensions of the button;
+		// the values provided in the sprite bounding box are ignored
+		widget = new Graphics::MacButton(Graphics::MacButtonType(_buttonType), getAlignment(), g_director->getCurrentStage(), bbox.left, bbox.top, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, getForeColor(), 0xff);
+		((Graphics::MacButton *)widget)->draw();
+		widget->_focusable = true;
 
-		((Graphics::MacButton *)(_widget))->draw();
+		((Graphics::MacButton *)widget)->draw();
 		break;
 
 	default:
@@ -483,6 +504,17 @@ void TextCastMember::createWidget() {
 	}
 
 	delete macFont;
+	return widget;
+}
+
+Common::Rect TextCastMember::getWidgetRect() {
+	Graphics::MacWidget *widget = createWidget(_initialRect);
+	Common::Rect result = _initialRect;
+	if (widget) {
+		result = widget->_dims;
+		delete widget;
+	}
+	return result;
 }
 
 void TextCastMember::importRTE(byte *text) {
@@ -499,62 +531,40 @@ void TextCastMember::setText(const char *text) {
 		return;
 
 	_ptext = _ftext = text;
-
-	if (_widget) {
-		Graphics::MacText *wtext = (Graphics::MacText *)_widget;
-		wtext->clearText();
-		wtext->appendTextDefault(_ftext);
-		wtext->draw();
-	}
-
 	_modified = true;
 }
 
 Common::String TextCastMember::getText() {
-	if (_widget)
-		_ptext = ((Graphics::MacText *)_widget)->getEditedString().encode();
-
 	return _ptext;
 }
 
 bool TextCastMember::isModified() {
-	return _modified || (_widget ? ((Graphics::MacText *)_widget)->_contentIsDirty : false);
+	return _modified;
 }
 
 bool TextCastMember::isEditable() {
-	if (!_widget) {
-		warning("TextCastMember::setEditable: Attempt to set editable of null widget");
-		return false;
-	}
-
-	return (Graphics::MacText *)_widget->_editable;
+	return _editable;
 }
 
-bool TextCastMember::setEditable(bool editable) {
-	if (!_widget) {
-		warning("TextCastMember::setEditable: Attempt to set editable of null widget");
-		return false;
-	}
-
-	Graphics::MacText *text = (Graphics::MacText *)_widget;
-	text->_focusable = editable;
-	text->setEditable(editable);
-	text->_selectable = editable;
-	// text->setActive(editable);
-
-	return true;
+void TextCastMember::setEditable(bool editable) {
+	_editable = editable;
 }
 
-ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version)
-		: CastMember(cast, castId) {
+void TextCastMember::updateFromWidget(Graphics::MacWidget *widget) {
+	if (widget && _type == kCastText) {
+		_ptext = ((Graphics::MacText *)widget)->getEditedString().encode();
+	}
+}
+
+ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
+		: CastMember(cast, castId, stream) {
 	_type = kCastShape;
 
-	byte flags, unk1;
+	byte unk1;
 
 	_ink = kInkTypeCopy;
 
 	if (version < 4) {
-		flags = stream.readByte();
 		unk1 = stream.readByte();
 		_shapeType = static_cast<ShapeType>(stream.readByte());
 		_initialRect = Movie::readRect(stream);
@@ -567,7 +577,6 @@ ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::ReadStreamEn
 		_lineThickness = stream.readByte();
 		_lineDirection = stream.readByte();
 	} else if (version == 4) {
-		flags = stream.readByte();
 		unk1 = stream.readByte();
 		_shapeType = static_cast<ShapeType>(stream.readByte());
 		_initialRect = Movie::readRect(stream);
@@ -579,7 +588,7 @@ ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::ReadStreamEn
 		_lineThickness = stream.readByte();
 		_lineDirection = stream.readByte();
 	} else {
-		flags = stream.readByte();
+		stream.readByte(); // FIXME: Was this copied from D4 by mistake?
 		unk1 = stream.readByte();
 
 		_initialRect = Movie::readRect(stream);
@@ -594,22 +603,21 @@ ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::ReadStreamEn
 	}
 	_modified = false;
 
-	debugC(3, kDebugLoading, "ShapeCastMember: fl: %x unk1: %x type: %d pat: %d fg: %d bg: %d fill: %d thick: %d dir: %d",
-		flags, unk1, _shapeType, _pattern, _fgCol, _bgCol, _fillType, _lineThickness, _lineDirection);
+	debugC(3, kDebugLoading, "ShapeCastMember: unk1: %x type: %d pat: %d fg: %d bg: %d fill: %d thick: %d dir: %d",
+		unk1, _shapeType, _pattern, _fgCol, _bgCol, _fillType, _lineThickness, _lineDirection);
 
 	if (debugChannelSet(3, kDebugLoading))
 		_initialRect.debugPrint(0, "ShapeCastMember: rect:");
 }
 
-ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version)
-		: CastMember(cast, castId) {
+ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
+		: CastMember(cast, castId, stream) {
 	_type = kCastLingoScript;
 	_scriptType = kNoneScript;
 
 	if (version < 4) {
 		error("Unhandled Script cast");
 	} else if (version == 4) {
-		byte flags = stream.readByte();
 		byte unk1 = stream.readByte();
 		byte type = stream.readByte();
 
@@ -624,12 +632,7 @@ ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, Common::ReadStream
 			error("ScriptCastMember: Unprocessed script type: %d", type);
 		}
 
-		_initialRect = Movie::readRect(stream);
-		_boundingRect = Movie::readRect(stream);
-
-		_id = stream.readUint32();
-
-		debugC(3, kDebugLoading, "CASt: Script id: %d type: %s (%d), flags: (%x), unk1: %d", _id, scriptType2str(_scriptType), type, flags, unk1);
+		debugC(3, kDebugLoading, "CASt: Script type: %s (%d), unk1: %d", scriptType2str(_scriptType), type, unk1);
 
 		stream.readByte(); // There should be no more data
 		assert(stream.eos());
@@ -637,18 +640,13 @@ ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, Common::ReadStream
 		stream.readByte();
 		stream.readByte();
 
-		_initialRect = Movie::readRect(stream);
-		_boundingRect = Movie::readRect(stream);
-
-		_id = stream.readUint32();
-
-		debugC(4, kDebugLoading, "CASt: Script id: %d", _id);
+		debugC(4, kDebugLoading, "CASt: Script");
 
 		// WIP need to complete this!
 	}
 }
 
-RTECastMember::RTECastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version)
+RTECastMember::RTECastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
 		: TextCastMember(cast, castId, stream, version) {
 
 	_type = kCastRTE;
@@ -668,4 +666,10 @@ void RTECastMember::loadChunks() {
 #endif
 }
 
-} // End of namespace Director
+PaletteCastMember::PaletteCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
+	: CastMember(cast, castId, stream) {
+	_type = kCastPalette;
+	_palette = nullptr;
+}
+
+} // end of namespace Director

@@ -33,6 +33,7 @@
 #include "common/rect.h"
 #include "common/math.h"
 #include "common/textconsole.h"
+#include "graphics/conversion.h"
 #include "graphics/primitives.h"
 #include "graphics/transparent_surface.h"
 #include "graphics/transform_tools.h"
@@ -750,7 +751,7 @@ void TransparentSurface::setAlphaMode(AlphaType mode) {
 
 /*
 
-The below two functions are adapted from SDL_rotozoom.c,
+The function below is adapted from SDL_rotozoom.c,
 taken from SDL_gfx-2.0.18.
 
 Its copyright notice:
@@ -908,186 +909,16 @@ TransparentSurface *TransparentSurface::rotoscaleT(const TransformStruct &transf
 	return target;
 }
 
-template <TFilteringMode filteringMode>
-TransparentSurface *TransparentSurface::scaleT(uint16 newWidth, uint16 newHeight) const {
+TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight, bool filtering) const {
 
 	TransparentSurface *target = new TransparentSurface();
 
-	int srcW = w;
-	int srcH = h;
-	int dstW = newWidth;
-	int dstH = newHeight;
+	target->create(newWidth, newHeight, format);
 
-	target->create((uint16)dstW, (uint16)dstH, format);
-
-	if (filteringMode == FILTER_BILINEAR) {
-		assert(format.bytesPerPixel == 4);
-
-		bool flipx = false, flipy = false; // TODO: See mirroring comment in RenderTicket ctor
-
-
-		int *sax = new int[dstW + 1];
-		int *say = new int[dstH + 1];
-		assert(sax && say);
-
-		/*
-		* Precalculate row increments
-		*/
-		int spixelw = (srcW - 1);
-		int spixelh = (srcH - 1);
-		int sx = (int)(65536.0f * (float) spixelw / (float) (dstW - 1));
-		int sy = (int)(65536.0f * (float) spixelh / (float) (dstH - 1));
-
-		/* Maximum scaled source size */
-		int ssx = (srcW << 16) - 1;
-		int ssy = (srcH << 16) - 1;
-
-		/* Precalculate horizontal row increments */
-		int csx = 0;
-		int *csax = sax;
-		for (int x = 0; x <= dstW; x++) {
-			*csax = csx;
-			csax++;
-			csx += sx;
-
-			/* Guard from overflows */
-			if (csx > ssx) {
-				csx = ssx;
-			}
-		}
-
-		/* Precalculate vertical row increments */
-		int csy = 0;
-		int *csay = say;
-		for (int y = 0; y <= dstH; y++) {
-			*csay = csy;
-			csay++;
-			csy += sy;
-
-			/* Guard from overflows */
-			if (csy > ssy) {
-				csy = ssy;
-			}
-		}
-
-		const tColorRGBA *sp = (const tColorRGBA *) getBasePtr(0, 0);
-		tColorRGBA *dp = (tColorRGBA *) target->getBasePtr(0, 0);
-		int spixelgap = srcW;
-
-		if (flipx) {
-			sp += spixelw;
-		}
-		if (flipy) {
-			sp += spixelgap * spixelh;
-		}
-
-		csay = say;
-		for (int y = 0; y < dstH; y++) {
-			const tColorRGBA *csp = sp;
-			csax = sax;
-			for (int x = 0; x < dstW; x++) {
-				/*
-				* Setup color source pointers
-				*/
-				int ex = (*csax & 0xffff);
-				int ey = (*csay & 0xffff);
-				int cx = (*csax >> 16);
-				int cy = (*csay >> 16);
-
-				const tColorRGBA *c00, *c01, *c10, *c11;
-				c00 = sp;
-				c01 = sp;
-				c10 = sp;
-				if (cy < spixelh) {
-					if (flipy) {
-						c10 -= spixelgap;
-					} else {
-						c10 += spixelgap;
-					}
-				}
-				c11 = c10;
-				if (cx < spixelw) {
-					if (flipx) {
-						c01--;
-						c11--;
-					} else {
-						c01++;
-						c11++;
-					}
-				}
-
-				/*
-				* Draw and interpolate colors
-				*/
-				int t1, t2;
-				t1 = ((((c01->r - c00->r) * ex) >> 16) + c00->r) & 0xff;
-				t2 = ((((c11->r - c10->r) * ex) >> 16) + c10->r) & 0xff;
-				dp->r = (((t2 - t1) * ey) >> 16) + t1;
-				t1 = ((((c01->g - c00->g) * ex) >> 16) + c00->g) & 0xff;
-				t2 = ((((c11->g - c10->g) * ex) >> 16) + c10->g) & 0xff;
-				dp->g = (((t2 - t1) * ey) >> 16) + t1;
-				t1 = ((((c01->b - c00->b) * ex) >> 16) + c00->b) & 0xff;
-				t2 = ((((c11->b - c10->b) * ex) >> 16) + c10->b) & 0xff;
-				dp->b = (((t2 - t1) * ey) >> 16) + t1;
-				t1 = ((((c01->a - c00->a) * ex) >> 16) + c00->a) & 0xff;
-				t2 = ((((c11->a - c10->a) * ex) >> 16) + c10->a) & 0xff;
-				dp->a = (((t2 - t1) * ey) >> 16) + t1;
-
-				/*
-				* Advance source pointer x
-				*/
-				int *salastx = csax;
-				csax++;
-				int sstepx = (*csax >> 16) - (*salastx >> 16);
-				if (flipx) {
-					sp -= sstepx;
-				} else {
-					sp += sstepx;
-				}
-
-				/*
-				* Advance destination pointer x
-				*/
-				dp++;
-			}
-			/*
-			* Advance source pointer y
-			*/
-			int *salasty = csay;
-			csay++;
-			int sstepy = (*csay >> 16) - (*salasty >> 16);
-			sstepy *= spixelgap;
-			if (flipy) {
-				sp = csp - sstepy;
-			} else {
-				sp = csp + sstepy;
-			}
-		}
-
-		delete[] sax;
-		delete[] say;
-
+	if (filtering) {
+		scaleBlitBilinear((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format);
 	} else {
-		int *scaleCacheX = new int[dstW];
-		for (int x = 0; x < dstW; x++) {
-			scaleCacheX[x] = (x * srcW) / dstW;
-		}
-
-		switch (format.bytesPerPixel) {
-		case 1:
-			scaleNN<uint8>(scaleCacheX, target);
-			break;
-		case 2:
-			scaleNN<uint16>(scaleCacheX, target);
-			break;
-		case 4:
-			scaleNN<uint32>(scaleCacheX, target);
-			break;
-		default:
-			error("Can only scale 8bpp, 16bpp, and 32bpp");
-		}
-
-		delete[] scaleCacheX;
+		scaleBlit((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format);
 	}
 
 	return target;
@@ -1171,32 +1002,11 @@ TransparentSurface *TransparentSurface::convertTo(const PixelFormat &dstFormat, 
 	return surface;
 }
 
-template <typename Size>
-void TransparentSurface::scaleNN(int *scaleCacheX, TransparentSurface *target) const {
-	for (int y = 0; y < target->h; y++) {
-		Size *destP = (Size *)target->getBasePtr(0, y);
-		const Size *srcP = (const Size *)getBasePtr(0, (y * h) / target->h);
-		for (int x = 0; x < target->w; x++) {
-			*destP++ = srcP[scaleCacheX[x]];
-		}
-	}
-}
-
 template TransparentSurface *TransparentSurface::rotoscaleT<FILTER_NEAREST>(const TransformStruct &transform) const;
 template TransparentSurface *TransparentSurface::rotoscaleT<FILTER_BILINEAR>(const TransformStruct &transform) const;
-template TransparentSurface *TransparentSurface::scaleT<FILTER_NEAREST>(uint16 newWidth, uint16 newHeight) const;
-template TransparentSurface *TransparentSurface::scaleT<FILTER_BILINEAR>(uint16 newWidth, uint16 newHeight) const;
-
-template void TransparentSurface::scaleNN<uint8>(int *scaleCacheX, TransparentSurface *target) const;
-template void TransparentSurface::scaleNN<uint16>(int *scaleCacheX, TransparentSurface *target) const;
-template void TransparentSurface::scaleNN<uint32>(int *scaleCacheX, TransparentSurface *target) const;
 
 TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transform) const {
 	return rotoscaleT<FILTER_BILINEAR>(transform);
-}
-
-TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight) const {
-	return scaleT<FILTER_NEAREST>(newWidth, newHeight);
 }
 
 } // End of namespace Graphics

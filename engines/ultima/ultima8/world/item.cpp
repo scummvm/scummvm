@@ -40,8 +40,10 @@
 #include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/current_map.h"
+#include "ultima/ultima8/world/fire_type.h"
 #include "ultima/ultima8/usecode/uc_stack.h"
 #include "ultima/ultima8/misc/direction.h"
+#include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/gumps/bark_gump.h"
 #include "ultima/ultima8/gumps/ask_gump.h"
 #include "ultima/ultima8/gumps/gump_notify_process.h"
@@ -58,13 +60,18 @@
 #include "ultima/ultima8/usecode/uc_process.h"
 #include "ultima/ultima8/world/destroy_item_process.h"
 #include "ultima/ultima8/world/target_reticle_process.h"
+#include "ultima/ultima8/world/snap_process.h"
+#include "ultima/ultima8/world/super_sprite_process.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/games/game_info.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/missile_tracker.h"
+#include "ultima/ultima8/world/crosshair_process.h"
 
 namespace Ultima {
 namespace Ultima8 {
+
+static const uint32 SNAP_EGG_SHAPE = 0x4fe;
 
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(Item)
@@ -75,7 +82,7 @@ Item::Item()
 	  _extendedFlags(0), _parent(0),
 	  _cachedShape(nullptr), _cachedShapeInfo(nullptr),
 	  _gump(0), _gravityPid(0), _lastSetup(0),
-	  _ix(0), _iy(0), _iz(0) {
+	  _ix(0), _iy(0), _iz(0), _damagePoints(1) {
 }
 
 
@@ -107,7 +114,7 @@ void Item::dumpInfo() const {
 	     << ", f:0x" << Std::hex << getFlags() << ", ef:0x"
 		 << getExtFlags();
 
-	ShapeInfo *info = getShapeInfo();
+	const ShapeInfo *info = getShapeInfo();
 	if (info) {
 		pout << " shapeinfo f:" << info->_flags << ", fam:"
 			 << info->_family << ", et:" << info->_equipType;
@@ -149,6 +156,10 @@ void Item::setLocation(int32 X, int32 Y, int32 Z) {
 	_z = Z;
 }
 
+void Item::move(const Point3 &pt) {
+	move(pt.x, pt.y, pt.z);
+}
+
 void Item::move(int32 X, int32 Y, int32 Z) {
 	bool no_lerping = false;
 	CurrentMap *map = World::get_instance()->getCurrentMap();
@@ -157,6 +168,9 @@ void Item::move(int32 X, int32 Y, int32 Z) {
 	if (getObjId() == 1 && Z < 0) {
 		perr.Print("Warning: moving avatar below Z=0. (%d,%d,%d)\n", X, Y, Z);
 	}
+
+	// TODO: In Crusader, if we are moving the avatar the game also checks whether
+	// there is an active "shield zap" sprite that needs moving at the same time.
 
 	// It's currently in the ethereal void, remove it from there
 	if (_flags & FLG_ETHEREAL) {
@@ -243,7 +257,7 @@ void Item::move(int32 X, int32 Y, int32 Z) {
 		CameraProcess::GetCameraProcess()->ItemMoved();
 
 	if (_extendedFlags & EXT_TARGET)
-		TargetReticleProcess::getProcess()->itemMoved(this);
+		TargetReticleProcess::get_instance()->itemMoved(this);
 }
 
 bool Item::moveToContainer(Container *container, bool checkwghtvol) {
@@ -443,7 +457,7 @@ void Item::randomGumpLocation() {
 
 void Item::getCentre(int32 &X, int32 &Y, int32 &Z) const {
 	// constants!
-	ShapeInfo *shapeinfo = getShapeInfo();
+	const ShapeInfo *shapeinfo = getShapeInfo();
 	if (_flags & FLG_FLIPPED) {
 		X = _x - shapeinfo->_y * 16;
 		Y = _y - shapeinfo->_x * 16;
@@ -535,8 +549,9 @@ bool Item::isOn(const Item &item2) const {
 }
 
 bool Item::isCompletelyOn(const Item &item2) const {
-	warning("TODO: Properly implement Item::isCompletelyOn");
-	// FIXME: this is just a copy of isOn at the moment
+	if (hasFlags(FLG_CONTAINED) || item2.hasFlags(FLG_CONTAINED))
+		return false;
+
 	int32 x1a, y1a, z1a, x1b, y1b;
 	int32 x2a, y2a, z2a, x2b, y2b, z2b;
 	getLocation(x1b, y1b, z1a);
@@ -552,10 +567,9 @@ bool Item::isCompletelyOn(const Item &item2) const {
 	y2a = y2b - yd;
 	z2b = z2a + zd;
 
-	if (x1b <= x2a || x2b <= x1a) return false;
-	if (y1b <= y2a || y2b <= y1a) return false;
-	if (z2b == z1a) return true;
-	return false;
+	return ((x1b <= x2b && x2a <= x1a) &&
+			(y1b <= y2b && y2a <= y1a) &&
+			(z2b == z1a));
 }
 
 bool Item::isCentreOn(const Item &item2) const {
@@ -608,15 +622,23 @@ bool Item::canExistAt(int32 x_, int32 y_, int32 z_, bool needsupport) const {
 	return valid && (!needsupport || support);
 }
 
-int Item::getDirToItemCentre(const Item &item2) const {
+Direction Item::getDirToItemCentre(const Item &item2) const {
 	int32 xv, yv, zv;
 	getCentre(xv, yv, zv);
 
 	int32 i2x, i2y, i2z;
 	item2.getCentre(i2x, i2y, i2z);
 
-	return Get_WorldDirection(i2y - yv, i2x - xv);
+	return Direction_GetWorldDir(i2y - yv, i2x - xv, dirmode_8dirs);
 }
+
+Direction Item::getDirToItemCentre(const Point3 &pt) const {
+	int32 xv, yv, zv;
+	getCentre(xv, yv, zv);
+
+	return Direction_GetWorldDir(pt.y - yv, pt.x - xv, dirmode_8dirs);
+}
+
 
 int Item::getRange(const Item &item2, bool checkz) const {
 	int32 thisX, thisY, thisZ;
@@ -691,7 +713,7 @@ int Item::getRangeIfVisible(const Item &item2) const {
 	return distance;
 }
 
-ShapeInfo *Item::getShapeInfoFromGameInstance() const {
+const ShapeInfo *Item::getShapeInfoFromGameInstance() const {
 	return GameData::get_instance()->getMainShapes()->getShapeInfo(_shape);
 }
 
@@ -1131,6 +1153,148 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 	return 0;
 }
 
+uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, char someflag) {
+	int32 ix, iy, iz;
+	getLocation(ix, iy, iz);
+
+	if (!GAME_IS_CRUSADER)
+		return 0;
+
+	static const uint32 BULLET_SPLASH_SHAPE = 0x1d9;
+
+	ix += x;
+	iy += y;
+	iz += z;
+
+	CurrentMap *currentmap = World::get_instance()->getCurrentMap();
+	const FireType *firetypedat = GameData::get_instance()->getFireType(firetype);
+
+	if (!firetypedat)
+		return 0;
+
+	int damage = firetypedat->getRandomDamage();
+
+	const Item *blocker = nullptr;
+	bool isvalid = currentmap->isValidPosition(ix, iy, iz, BULLET_SPLASH_SHAPE, 0, nullptr, nullptr, &blocker);
+	if (!isvalid && blocker) {
+		Item *block = getItem(blocker->getObjId());
+		Point3 blockpt;
+		block->getLocation(blockpt);
+		Direction damagedir = Direction_GetWorldDir(blockpt.y - iy, blockpt.x - ix, dirmode_8dirs);
+		block->receiveHit(getObjId(), damagedir, damage, firetype);
+		int splashdamage = firetypedat->getRandomDamage();
+		firetypedat->applySplashDamageAround(blockpt, splashdamage, block, this);
+
+		firetypedat->makeBulletSplashShapeAndPlaySound(ix, iy, iz);
+		return 0;
+	} else {
+		int spriteframe = 0;
+		switch (firetype) {
+		case 3:
+		case 9:
+		case 10:
+			spriteframe = dir + 0x11;
+			break;
+		case 5:
+			spriteframe = dir + 1;
+			break;
+		case 6:
+			spriteframe = 0x46;
+			break;
+		case 0xe:
+			spriteframe = 0x47 + getRandom() % 5;
+			break;
+		case 0xf:
+			spriteframe = 0x4c;
+			break;
+		}
+
+		// HACK: this should be fixed to use inheritence so the behavior
+		// is clean for both Item and Actor.
+		const Actor *thisactor = dynamic_cast<Actor *>(this);
+		if (thisactor) {
+			// TODO: Get damage for active inventory item, and do something with
+			// animation here (lines 185~208 of disasm)
+		}
+
+		Item *target = nullptr;
+		if (someflag) {
+			if (this != getControlledActor()) {
+				target = getControlledActor();
+			} else {
+				target = currentmap->findBestTargetItem(ix, iy, dir, dirmode_8dirs);
+			}
+		}
+
+		int32 tx = -1;
+		int32 ty = 0;
+		int32 tz = 0;
+		if (target) {
+			int32 tsx, tsy, tsz;
+			target->getCentre(tx, ty, tz);
+			target->getFootpadData(tsx, tsy, tsz);
+
+			tz = target->getZ() + tsz * 8;
+
+			if (tsz < 3) {
+				if (tsz)
+					tz -= 8;
+			} else {
+				int32 targetz = tz;
+				int32 thisz = getZ();
+				tz -= 16;
+				if (thisz - targetz < -0x2f) {
+					tz += 8;
+				} else if (thisz - targetz > 0x2f) {
+					if (tsz == 6) {
+						tz -= 16;
+					} else if (tsz >= 7) {
+						tz -= 24;
+					}
+				}
+			}
+		}
+
+		// TODO: check if we need the equivalent of FUN_1130_0299 here..
+		// maybe not? It seems to reset the target reticle etc which we
+		// handle differently.
+
+		int numshots = firetypedat->getNumShots();
+		for (int i = 0; i < numshots; i++) {
+			SuperSpriteProcess *ssp;
+			CrosshairProcess *chp = CrosshairProcess::get_instance();
+			assert(chp);
+			Item *crosshair = getItem(chp->getItemNum());
+			int32 ssx, ssy, ssz;
+			if (tx != -1) {
+				// Shoot toward the target
+				ssx = tx;
+				ssy = ty;
+				ssz = tz;
+			} else if (this == getControlledActor() && crosshair) {
+				// Shoot toward the crosshair
+				crosshair->getLocation(ssx, ssy, ssz);
+				ssz = iz;
+			} else {
+				// Just send the projectile off into the distance
+				// CHECKME: This is not how the game does it - it has different
+				// tables (at 1478:129b and 1478:12ac). Check the logic here.
+				ssx = ix + Direction_XFactor(dir) * 0x500;
+				ssy = iy + Direction_YFactor(dir) * 0x500;
+				ssz = iz;
+			}
+
+			uint16 targetid = (target ? target->getObjId() : 0);
+			ssp = new SuperSpriteProcess(BULLET_SPLASH_SHAPE, spriteframe,
+										 ix, iy, iz, ssx, ssy, ssz, firetype,
+										 damage, _objId, targetid, someflag);
+			Kernel::get_instance()->addProcess(ssp);
+		}
+	}
+
+	return 0;
+}
+
 unsigned int Item::countNearby(uint32 shape_, uint16 range) {
 	CurrentMap *currentmap = World::get_instance()->getCurrentMap();
 	UCList itemlist(2);
@@ -1154,7 +1318,7 @@ uint32 Item::callUsecodeEvent(uint32 event, const uint8 *args, int argsize) {
 
 	// CHECKME: to make Pentagram behave as much like the original as possible,
 	// don't call any usecode if the original would call the wrong class
-	if (_objId < 256 && !(_extendedFlags & EXT_PERMANENT_NPC) &&
+	if (GAME_IS_U8 && _objId < 256 && !(_extendedFlags & EXT_PERMANENT_NPC) &&
 	        !(_flags & FLG_FAST_ONLY))
 		return 0;
 
@@ -1165,12 +1329,6 @@ uint32 Item::callUsecodeEvent(uint32 event, const uint8 *args, int argsize) {
 	Usecode *u = GameData::get_instance()->getMainUsecode();
 	uint32 offset = u->get_class_event(class_id, event);
 	if (!offset) return 0; // event not found
-
-	/*if (GAME_IS_CRUSADER && event != 1) {
-		debug(6, "Crusader: not running event %d for item %d shape %d",
-					event, _objId, _shape);
-		return 0;
-	}*/
 
 	debug(10, "Item: %d (shape %d) calling usecode event %d @ %04X:%04X",
 			_objId, _shape, event, class_id, offset);
@@ -1224,22 +1382,26 @@ uint32 Item::callUsecodeEvent_release() {                       // event 9
 	return callUsecodeEvent(9);     // CONSTANT
 }
 
-uint32 Item::callUsecodeEvent_equip() {                           // event A
+uint32 Item::callUsecodeEvent_equip() {                         // event A
 	return callUsecodeEvent(0xA); // CONSTANT
 }
 
-uint32 Item::callUsecodeEvent_npcNearby(ObjId npc) {                           // event A
+uint32 Item::callUsecodeEvent_equipWithParam(ObjId param) {     // event A
 	DynamicUCStack  arg_stack(2);
-	arg_stack.push2(npc);
+	arg_stack.push2(param);
 	return callUsecodeEvent(0xA, arg_stack.access(), 2);
 }
 
-uint32 Item::callUsecodeEvent_unequip() {                           // event B
+uint32 Item::callUsecodeEvent_unequip() {                       // event B
 	return callUsecodeEvent(0xB); // CONSTANT
 }
 
 uint32 Item::callUsecodeEvent_combine() {                       // event C
 	return callUsecodeEvent(0xC);   // CONSTANT
+}
+
+uint32 Item::callUsecodeEvent_calledFromAnim() {                // event E
+	return callUsecodeEvent(0xE);   // CONSTANT
 }
 
 uint32 Item::callUsecodeEvent_enterFastArea() {                 // event F
@@ -1276,11 +1438,13 @@ uint32 Item::use() {
 	Actor *actor = dynamic_cast<Actor *>(this);
 	if (actor) {
 		if (actor->isDead()) {
-			// dead actor, so open/close the dead-body-_gump
-			if (hasFlags(FLG_GUMP_OPEN)) {
-				closeGump();
-			} else {
-				openGump(12); // CONSTANT!!
+			if (GAME_IS_U8) {
+				// dead actor, so open/close the dead-body-gump
+				if (hasFlags(FLG_GUMP_OPEN)) {
+					closeGump();
+				} else {
+					openGump(12); // CONSTANT!!
+				}
 			}
 			return 0;
 		}
@@ -1308,6 +1472,11 @@ void Item::destroy(bool delnow) {
 		AudioProcess *audio = AudioProcess::get_instance();
 		if (audio)
 			audio->stopSFX(-1, _objId);
+		if (_shape == SNAP_EGG_SHAPE) {
+			SnapProcess *snap = SnapProcess::get_instance();
+			if (snap)
+				snap->removeEgg(this);
+		}
 	}
 
 	if (_extendedFlags & Item::EXT_CAMERA)
@@ -1375,8 +1544,8 @@ void Item::setupLerp(int32 gametick) {
 
 // Animate the item
 void Item::animateItem() {
-	ShapeInfo *info = getShapeInfo();
-	Shape *shp = getShapeObject();
+	const ShapeInfo *info = getShapeInfo();
+	const Shape *shp = getShapeObject();
 
 	if (!info->_animType) return;
 
@@ -1449,19 +1618,30 @@ void Item::enterFastArea() {
 
 	// Call usecode
 	if (!(_flags & FLG_FASTAREA)) {
-
 		Actor *actor = dynamic_cast<Actor *>(this);
-		if (actor && actor->isDead()) {
+		// Crusader special-cases a few shapes even when they are dead.
+		bool call_even_if_dead = (_shape == 0x576 || _shape == 0x596 ||
+								  _shape == 0x59c || _shape == 0x58f) && GAME_IS_CRUSADER;
+		if (actor && actor->isDead() && !call_even_if_dead) {
 			// dead actor, don't call the usecode
 		} else {
+			if (actor && GAME_IS_CRUSADER) {
+				actor->clearLastActivityNo();
+				actor->clearInCombat();
+			}
 			callUsecodeEvent_enterFastArea();
 		}
 	}
 
 	if (!hasFlags(FLG_BROKEN) && GAME_IS_CRUSADER) {
-		ShapeInfo *si = getShapeInfo();
+		const ShapeInfo *si = getShapeInfo();
 		if ((si->_flags & ShapeInfo::SI_TARGETABLE) || (si->_flags & ShapeInfo::SI_OCCL)) {
 			World::get_instance()->getCurrentMap()->addTargetItem(this);
+		}
+		if (_shape == SNAP_EGG_SHAPE) {
+			SnapProcess *snap = SnapProcess::get_instance();
+			if (snap)
+				snap->addEgg(this);
 		}
 	}
 
@@ -1476,7 +1656,7 @@ void Item::leaveFastArea() {
 	        (_flags & FLG_FASTAREA))
 		callUsecodeEvent_leaveFastArea();
 
-	// If we have a _gump open, close it (unless we're in a container)
+	// If we have a gump open, close it (unless we're in a container)
 	if (!_parent && (_flags & FLG_GUMP_OPEN)) {
 		Gump *g = Ultima8Engine::get_instance()->getGump(_gump);
 		if (g) g->Close();
@@ -1487,6 +1667,11 @@ void Item::leaveFastArea() {
 
 	if (!hasFlags(FLG_BROKEN) && GAME_IS_CRUSADER) {
 		World::get_instance()->getCurrentMap()->removeTargetItem(this);
+		if (_shape == SNAP_EGG_SHAPE) {
+			SnapProcess *snap = SnapProcess::get_instance();
+			if (snap)
+				snap->removeEgg(this);
+		}
 	}
 
 	// CHECKME: what do we need to do exactly?
@@ -1543,10 +1728,10 @@ void Item::closeGump() {
 	if (!(_flags & FLG_GUMP_OPEN)) return;
 
 	Gump *g = Ultima8Engine::get_instance()->getGump(_gump);
-	assert(g);
-	g->Close();
+	if (g)
+		g->Close();
 
-	// can we already clear _gump here, or do we need to wait for the _gump
+	// can we already clear gump here, or do we need to wait for the gump
 	// to really close??
 	clearGump();
 }
@@ -1670,14 +1855,14 @@ void Item::hurl(int xs, int ys, int zs, int grav) {
 }
 
 
-void Item::explode(int explosion_type, bool destroy_item) {
+void Item::explode(int explosion_type, bool destroy_item, bool cause_damage) {
 	Process *p;
 
 	if (GAME_IS_CRUSADER) {
 		setFlag(FLG_BROKEN);
 		// TODO: original game puts them at cx/cy/cz, but that looks wrong..
-		//int32 cx, cy, cz;
-		//getCentre(cx, cy, cz);
+		int32 cx, cy, cz;
+		getCentre(cx, cy, cz);
 		static const int expshapes[] = {0x31C, 0x31F, 0x326, 0x320, 0x321, 0x324, 0x323, 0x325};
 		int rnd = getRandom();
 		int spriteno;
@@ -1696,7 +1881,7 @@ void Item::explode(int explosion_type, bool destroy_item) {
 			break;
 		}
 		p = new SpriteProcess(spriteno, 0, 39, 1, 1, //!! constants
-	                               _x, _y, _z);
+	                               _x, _y, cz);
 	} else {
 		p = new SpriteProcess(578, 20, 34, 1, 1, //!! constants
 	                               _x, _y, _z);
@@ -1723,6 +1908,9 @@ void Item::explode(int explosion_type, bool destroy_item) {
 		// WARNING: we are deleted at this point
 	}
 
+	if (!cause_damage)
+		return;
+
 	UCList itemlist(2);
 	LOOPSCRIPT(script, LS_TOKEN_TRUE); // we want all items
 	CurrentMap *currentmap = World::get_instance()->getCurrentMap();
@@ -1735,14 +1923,14 @@ void Item::explode(int explosion_type, bool destroy_item) {
 		if (getRange(*item, true) > 160) continue; // check vertical distance
 
 		item->getLocation(xv, yv, zv);
-		int dir = Get_WorldDirection(xv - xv, yv - yv); //!! CHECKME
+		Direction dir = Direction_GetWorldDir(xv - xv, yv - yv, dirmode_8dirs); //!! CHECKME
 		item->receiveHit(0, dir, 6 + (getRandom() % 6),
 		                 WeaponInfo::DMG_BLUNT | WeaponInfo::DMG_FIRE);
 	}
 }
 
 uint16 Item::getDamageType() const {
-	ShapeInfo *si = getShapeInfo();
+	const ShapeInfo *si = getShapeInfo();
 	if (si->_weaponInfo) {
 		return si->_weaponInfo->_damageType;
 	}
@@ -1750,7 +1938,14 @@ uint16 Item::getDamageType() const {
 	return 0;
 }
 
-void Item::receiveHit(uint16 other, int dir, int damage, uint16 type) {
+void Item::receiveHit(uint16 other, Direction dir, int damage, uint16 type) {
+	if (GAME_IS_U8)
+		receiveHitU8(other, dir, damage, type);
+	else
+		receiveHitCru(other, dir, damage, type);
+}
+
+void Item::receiveHitU8(uint16 other, Direction dir, int damage, uint16 type) {
 	// first, check if the item has a 'gotHit' usecode event
 	if (callUsecodeEvent_gotHit(other, 0)) //!! TODO: what should the 0 be??
 		return;
@@ -1775,11 +1970,45 @@ void Item::receiveHit(uint16 other, int dir, int damage, uint16 type) {
 
 	// nothing special, so just hurl the item
 	// TODO: hurl item in direction, with speed depending on damage
-	hurl(-16 * x_fact[dir], -16 * y_fact[dir], 16, 4); //!! constants
+	hurl(-16 * Direction_XFactor(dir), -16 * Direction_YFactor(dir), 16, 4); //!! constants
 }
 
+
+void Item::receiveHitCru(uint16 other, Direction dir, int damage, uint16 type) {
+	damage = scaleReceivedDamageCru(damage, type);
+	const ShapeInfo *shapeInfo = getShapeInfo();
+	if (!shapeInfo)
+		return;
+	const DamageInfo *damageInfo = shapeInfo->_damageInfo;
+
+	// TODO: work out how this flag is decided.
+	uint8 shouldCallUsecode = 1;
+
+	if (shouldCallUsecode)
+		callUsecodeEvent_gotHit(other, 0);
+
+	if (damageInfo) {
+		bool wasbroken = damageInfo->applyToItem(this, damage);
+		if (wasbroken) {
+			Kernel::get_instance()->killProcesses(_objId, 0xc, true);
+		}
+	}
+
+	if (shapeInfo->is_fixed() || shapeInfo->_weight == 0) {
+		// can't move
+		return;
+	}
+
+	int xhurl = 10 + getRandom() % 15;
+	int yhurl = 10 + getRandom() % 15;
+
+	// nothing special, so just hurl the item
+	hurl(-xhurl * Direction_XFactor(dir), -yhurl * Direction_YFactor(dir), 16, 4); //!! constants
+}
+
+
 bool Item::canDrag() {
-	ShapeInfo *si = getShapeInfo();
+	const ShapeInfo *si = getShapeInfo();
 	if (si->is_fixed()) return false;
 	if (si->_weight == 0) return false;
 
@@ -1988,6 +2217,42 @@ bool Item::canMergeWith(Item *other) {
 		}*/
 	}
 	return false;
+}
+
+bool Item::isRobotCru() const {
+	uint32 shape = getShape();
+	return (shape == 0x4c8 || shape == 0x338 || shape == 0x45d ||
+			shape == 0x2cb || shape == 0x4e6 || shape == 899 ||
+			shape == 0x385);
+}
+
+int Item::scaleReceivedDamageCru(int damage, uint16 type) const {
+	uint8 difficulty = World::get_instance()->getGameDifficulty();
+	const Actor *actor = dynamic_cast<const Actor *>(this);
+	//
+	// For difficulty 1 and 2, we scale damage to others *up* and damage
+	// to avatar *down*.
+	//
+	if (!actor || (this != getMainActor() && this != getControlledActor())) {
+		if (difficulty == 1) {
+			damage *= 5;
+		} else if (difficulty == 2) {
+			damage *= 3;
+		}
+	} else {
+		if (difficulty == 1) {
+			damage /= 5;
+		} else if (difficulty == 2) {
+			damage /= 3;
+		}
+	}
+
+	if (isRobotCru() && (type == 1 || type == 2 || type == 0xb || type == 0xd)) {
+		damage /= 3;
+	}
+
+	damage = CLIP(damage, 1, 0xfa);
+	return damage;
 }
 
 
@@ -2349,7 +2614,7 @@ uint32 Item::I_getTypeFlag(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(typeflag);
 	if (!item) return 0;
 
-	ShapeInfo *info = item->getShapeInfo();
+	const ShapeInfo *info = item->getShapeInfo();
 
 	if (GAME_IS_U8 && typeflag >= 64)
 		perr << "Invalid TypeFlag greater than 63 requested (" << typeflag << ") by Usecode" << Std::endl;
@@ -2462,9 +2727,10 @@ uint32 Item::I_gotHit(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_equip(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
+	ARG_UINT16(unk);
 	if (!item) return 0;
 
-	return item->callUsecodeEvent_equip();
+	return item->callUsecodeEvent_equipWithParam(unk);
 }
 
 uint32 Item::I_unequip(const uint8 *args, unsigned int /*argsize*/) {
@@ -2747,7 +3013,7 @@ uint32 Item::I_push(const uint8 *args, unsigned int /*argsize*/) {
 	if (!item)
 		return 0;
 
-	#if 1
+	#if 0
 		perr << "Pushing item to ethereal void: " << item->getShape() << "," << item->getFrame() << Std::endl;
 	#endif
 
@@ -2937,6 +3203,8 @@ uint32 Item::I_legalMoveToPoint(const uint8 *args, unsigned int argsize) {
 		point.setY(point.getY() * 2);
 	}
 
+	if (!item)
+		return 0;
 	//! What should this do to ethereal items?
 
 //	if (item->canExistAt(point.getX(), point.getY(), point.getZ())) {
@@ -3012,10 +3280,7 @@ uint32 Item::I_getDirToCoords(const uint8 *args, unsigned int /*argsize*/) {
 	int32 ix, iy, iz;
 	item->getLocationAbsolute(ix, iy, iz);
 
-	uint32 retval = static_cast<uint32>(Get_WorldDirection(y - iy, x - ix));
-	if (GAME_IS_CRUSADER)
-		retval *= 2;
-	return retval;
+	return Direction_ToUsecodeDir(Direction_GetWorldDir(y - iy, x - ix, dirmode_8dirs));
 }
 
 uint32 Item::I_getDirFromCoords(const uint8 *args, unsigned int /*argsize*/) {
@@ -3032,10 +3297,7 @@ uint32 Item::I_getDirFromCoords(const uint8 *args, unsigned int /*argsize*/) {
 	int32 ix, iy, iz;
 	item->getLocationAbsolute(ix, iy, iz);
 
-	uint32 retval = static_cast<uint32>(Get_WorldDirection(iy - y, ix - x));
-	if (GAME_IS_CRUSADER)
-		retval *= 2;
-	return retval;
+	return Direction_ToUsecodeDir(Direction_GetWorldDir(iy - y, ix - x, dirmode_8dirs));
 }
 
 uint32 Item::I_getDirToItem(const uint8 *args, unsigned int /*argsize*/) {
@@ -3050,10 +3312,7 @@ uint32 Item::I_getDirToItem(const uint8 *args, unsigned int /*argsize*/) {
 	int32 i2x, i2y, i2z;
 	item2->getLocationAbsolute(i2x, i2y, i2z);
 
-	uint32 retval = static_cast<uint32>(Get_WorldDirection(i2y - iy, i2x - ix));
-	if (GAME_IS_CRUSADER)
-		retval *= 2;
-	return retval;
+	return Direction_ToUsecodeDir(Direction_GetWorldDir(i2y - iy, i2x - ix, dirmode_8dirs));
 }
 
 uint32 Item::I_getDirFromItem(const uint8 *args, unsigned int /*argsize*/) {
@@ -3068,10 +3327,7 @@ uint32 Item::I_getDirFromItem(const uint8 *args, unsigned int /*argsize*/) {
 	int32 i2x, i2y, i2z;
 	item2->getLocationAbsolute(i2x, i2y, i2z);
 
-	uint32 retval = static_cast<uint32>((Get_WorldDirection(i2y - iy, i2x - ix) + 4) % 8);
-	if (GAME_IS_CRUSADER)
-		retval *= 2;
-	return retval;
+	return Direction_ToUsecodeDir(Direction_Invert(Direction_GetWorldDir(i2y - iy, i2x - ix, dirmode_8dirs)));
 }
 
 uint32 Item::I_getDirFromTo16(const uint8 *args, unsigned int /*argsize*/) {
@@ -3083,9 +3339,7 @@ uint32 Item::I_getDirFromTo16(const uint8 *args, unsigned int /*argsize*/) {
 	if (x1 == x2 && y1 == y2)
 		return 16;
 
-	// TODO: Implement proper 16 directions here.
-	uint32 retval = static_cast<uint32>(Get_WorldDirection(y2 - y1, x2 - x1));
-	return retval * 2;
+	return Direction_ToUsecodeDir(Direction_GetWorldDir(y2 - y1, x2 - x1, dirmode_16dirs));
 }
 
 uint32 Item::I_getClosestDirectionInRange(const uint8 *args, unsigned int /*argsize*/) {
@@ -3094,44 +3348,14 @@ uint32 Item::I_getClosestDirectionInRange(const uint8 *args, unsigned int /*args
 	ARG_UINT16(x2);
 	ARG_UINT16(y2);
 	ARG_UINT16(ndirs);
-	ARG_UINT16(mindir);
-	ARG_UINT16(maxdir);
+	ARG_UINT16(mind);
+	ARG_UINT16(maxd);
 
-	// TODO: Implement proper 16 directions here.
-	uint32 dir = static_cast<uint32>(Get_WorldDirection(y2 - y1, x2 - x1));
-	if (ndirs == 16) {
-		dir *= 2;
-	}
-
-	if ((dir < mindir) || (dir > maxdir)) {
-		int32 dmin1 = dir - mindir;
-		int32 dmin2 = mindir - dir;
-		if (dmin1 < 0) {
-			dmin1 = dmin1 + ndirs;
-		}
-		if (dmin2 < 0) {
-			dmin2 = dmin2 + ndirs;
-		}
-		int32 dist_to_min = MIN(dmin1, dmin2);
-
-		int dmax1 = dir - maxdir;
-		int dmax2 = maxdir - dir;
-		if (dmax1 < 0) {
-			dmax1 = dmax1 + ndirs;
-		}
-		if (dmax2 < 0) {
-			dmax2 = dmax2 + ndirs;
-		}
-		int32 dist_to_max = MIN(dmax1, dmax2);
-
-		if (dist_to_min < dist_to_max) {
-			return mindir;
-		} else {
-			return maxdir;
-		}
-	}
-
-	return dir;
+	Direction mindir = Direction_FromUsecodeDir(mind);
+	Direction maxdir = Direction_FromUsecodeDir(maxd);
+	DirectionMode mode = (ndirs == 16 ? dirmode_16dirs : dirmode_8dirs);
+	Direction result = Direction_GetWorldDirInRange(y2 - y1, x2 - x1, mode, mindir, maxdir);
+	return Direction_ToUsecodeDir(result);
 }
 
 uint32 Item::I_hurl(const uint8 *args, unsigned int /*argsize*/) {
@@ -3260,7 +3484,7 @@ uint32 Item::I_receiveHit(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(type); // hit type
 	if (!item) return 0;
 
-	item->receiveHit(other, dir, damage, type);
+	item->receiveHit(other, Direction_FromUsecodeDir(dir), damage, type);
 
 	return 0;
 }
@@ -3352,7 +3576,7 @@ uint32 Item::I_isCrusTypeNPC(const uint8 *args, unsigned int /*argsize*/) {
 
 	if (sh == 0x7FE) return 1;
 
-	ShapeInfo *info;
+	const ShapeInfo *info;
 	info = GameData::get_instance()->getMainShapes()->getShapeInfo(sh);
 	if (!info) return 0;
 
@@ -3388,6 +3612,19 @@ uint32 Item::I_isOnScreen(const uint8 *args, unsigned int /*argsize*/) {
 	return item->isOnScreen();
 }
 
+uint32 Item::I_fireWeapon(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ITEM_FROM_PTR(item);
+	ARG_SINT16(x);
+	ARG_SINT16(y);
+	ARG_SINT16(z);
+	ARG_UINT16(dir);
+	ARG_UINT16(firetype);
+	ARG_UINT16(unkflag);
+
+	if (!item) return 0;
+
+	return item->fireWeapon(x * 2, y * 2, z, Direction_FromUsecodeDir(dir), firetype, unkflag);
+}
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

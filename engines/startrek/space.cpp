@@ -59,6 +59,9 @@ void StarTrekEngine::addR3(R3 *r3) {
 }
 
 void StarTrekEngine::delR3(R3 *r3) {
+	delete r3->bitmap;
+	r3->bitmap = nullptr;
+
 	for (int i = 0; i < NUM_SPACE_OBJECTS; i++) {
 		if (_r3List[i] == r3) {
 			_r3List[i] = nullptr;
@@ -499,9 +502,9 @@ void StarTrekEngine::drawR3Shape(R3 *r3) {
 }
 
 bool StarTrekEngine::sub_1c022(R3 *r3) {
-	Point3 point = r3->field36;
-	if (point.z < _flt_50898)
-		return false;
+	//Point3 point = r3->field36;
+	//if (point.z < _flt_50898)
+	//	return false;
 	return true; // TODO: finish this properly
 }
 
@@ -535,6 +538,8 @@ Point3 StarTrekEngine::matrixMult(const Point3 &point, const Matrix &weight) {
 }
 
 int32 StarTrekEngine::scaleSpacePosition(int32 x, int32 z) {
+	if (x == 0 || z == 0)
+		return 0;
 	return (x * _starfieldPointDivisor) / z;
 }
 
@@ -547,8 +552,8 @@ Matrix StarTrekEngine::initMatrix() {
 }
 
 Matrix StarTrekEngine::initSpeedMatrixForXZMovement(Angle angle, const Matrix &matrix) {
-	Fixed14 sinVal = sin(angle);
-	Fixed14 cosVal = cos(angle);
+	Fixed14 sinVal = sin(angle.toDouble());
+	Fixed14 cosVal = cos(angle.toDouble());
 
 	Matrix matrix1 = initMatrix();
 	matrix1[0].x = cosVal;

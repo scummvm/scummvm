@@ -39,24 +39,15 @@ struct KeybindingRecord {
 	const char *_joy;
 };
 
-static const KeybindingRecord KEYS[] = {
+static const KeybindingRecord COMMON_KEYS[] = {
 	{ ACTION_QUICKSAVE, "QUICKSAVE", "Quick Save", "GUIApp::saveGame QuickSave", nullptr, "F1", nullptr },
 	{ ACTION_SAVE, "SAVE", "Save Game", "GUIApp::saveGame", nullptr, "F5", nullptr },
 	{ ACTION_LOAD, "LOAD", "Load Game", "GUIApp::loadGame", nullptr, "F7", nullptr },
-	{ ACTION_BEDROLL, "BEDROLL", "Bedroll", "MainActor::useBedroll", nullptr, "b", nullptr },
 	{ ACTION_COMBAT, "COMBAT", "Combat", "MainActor::toggleCombat", nullptr, "c", "JOY_X" },
-	{ ACTION_BACKPACK, "BACKPACK", "Use Backpack", "MainActor::useBackpack", nullptr, "i", nullptr },
-	{ ACTION_KEYRING, "KEYRING", "Keyring", "MainActor::useKeyring", nullptr, "k", nullptr },
-	{ ACTION_MINIMAP, "MINIMAP", "Toggle Minimap", "MiniMapGump::toggle", nullptr, "m", "JOY_LEFT_TRIGGER" },
-	{ ACTION_RECALL, "RECALL", "Use Recall", "MainActor::useRecall", nullptr, "r", nullptr },
-	{ ACTION_INVENTORY, "INVENTORY", "Inventory", "MainActor::useInventory", nullptr, "z", "JOY_LEFT_SHOULDER" },
-	{ ACTION_NEXT_WEAPON, "NEXT_WEAPON", "Next Crusader Weapon", "MainActor::nextWeapon", nullptr, "w", nullptr },
 	{ ACTION_MENU, "MENU", "Game Menu", "MenuGump::showMenu", nullptr, "ESCAPE", "JOY_Y" },
-	{ ACTION_CLOSE_GUMPS, "CLOSE_GUMPS", "Close Gumps", "GUIApp::closeItemGumps", nullptr, "BACKSPACE", nullptr },
 	{ ACTION_HIGHLIGHT_ITEMS, "HIGHLIGHT_ITEMS", "Show Highlight Items", "GameMapGump::toggleHighlightItems",
 		"GameMapGump::toggleHighlightItems", "TAB", nullptr },
 	{ ACTION_TOGGLE_TOUCHING, "TOUCHING", "Show Touching Items", "GUIApp::toggleShowTouchingItems", nullptr, "h", nullptr },
-	{ ACTION_JUMP, "JUMP", "Jump (fake both-button-click)", "AvatarMoverProcess::startJump", "AvatarMoverProcess::stopJump", "SPACE", nullptr },
 	{ ACTION_TURN_LEFT, "TURN_LEFT", "Turn Left", "AvatarMoverProcess::startTurnLeft", "AvatarMoverProcess::stopTurnLeft", "LEFT", nullptr },
 	{ ACTION_TURN_RIGHT, "TURN_RIGHT", "Turn Right", "AvatarMoverProcess::startTurnRight", "AvatarMoverProcess::stopTurnRight", "RIGHT", nullptr },
 	{ ACTION_MOVE_FORWARD, "MOVE_FORWARD", "Move Forward", "AvatarMoverProcess::startMoveForward", "AvatarMoverProcess::stopMoveForward", "UP", nullptr },
@@ -68,6 +59,30 @@ static const KeybindingRecord KEYS[] = {
 	{ ACTION_MOVE_RUN, "MOVE_RUN", "Run", "AvatarMoverProcess::startMoveRun", "AvatarMoverProcess::stopMoveRun", "LSHIFT", "JOY_RIGHT_TRIGGER" },
 	{ ACTION_MOVE_STEP, "MOVE_STEP", "Step", "AvatarMoverProcess::startMoveStep", "AvatarMoverProcess::stopMoveStep", "LCTRL", "JOY_RIGHT_SHOULDER" },
 
+	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }
+};
+
+static const KeybindingRecord U8_KEYS[] = {
+	{ ACTION_BEDROLL, "BEDROLL", "Bedroll", "MainActor::useBedroll", nullptr, "b", nullptr },
+	{ ACTION_BACKPACK, "BACKPACK", "Use Backpack", "MainActor::useBackpack", nullptr, "i", nullptr },
+	{ ACTION_KEYRING, "KEYRING", "Keyring", "MainActor::useKeyring", nullptr, "k", nullptr },
+	{ ACTION_MINIMAP, "MINIMAP", "Toggle Minimap", "MiniMapGump::toggle", nullptr, "m", "JOY_LEFT_TRIGGER" },
+	{ ACTION_RECALL, "RECALL", "Use Recall", "MainActor::useRecall", nullptr, "r", nullptr },
+	{ ACTION_INVENTORY, "INVENTORY", "Inventory", "MainActor::useInventory", nullptr, "z", "JOY_LEFT_SHOULDER" },
+	{ ACTION_CLOSE_GUMPS, "CLOSE_GUMPS", "Close Gumps", "GUIApp::closeItemGumps", nullptr, "BACKSPACE", nullptr },
+	{ ACTION_JUMP, "JUMP", "Jump (fake both-button-click)", "AvatarMoverProcess::startJump", "AvatarMoverProcess::stopJump", "SPACE", nullptr },
+	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }
+};
+
+static const KeybindingRecord CRUSADER_KEYS[] = {
+	{ ACTION_NEXT_WEAPON, "NEXT_WEAPON", "Next Weapon", "MainActor::nextWeapon", nullptr, "w", nullptr },
+	{ ACTION_NEXT_INVENTORY, "NEXT_INVENTORY", "Next Inventory Item", "MainActor::nextInvItem", nullptr, "i", nullptr },
+	{ ACTION_USE_INVENTORY, "USE_INVENTORY", "Use Inventroy Item", "MainActor::useInventoryItem", nullptr, "u", nullptr },
+	{ ACTION_USE_MEDIKIT, "USE_MEDIKIT", "Use Medical Kit", "MainActor::useMedikit", nullptr, "M", nullptr },
+	{ ACTION_SELECT_ITEMS, "SELECT_ITEM", "Select Item", "ItemSelectionProcess::startSelection", nullptr, "s", nullptr },
+	{ ACTION_USE_SELECTION, "USE_SELECTION", "Use Selection", "ItemSelectionProcess::useSelectedItem", nullptr, "RETURN", nullptr },
+	{ ACTION_ATTACK, "ATTACK", "Attack", "AvatarMoverProcess::tryAttack", nullptr, "SPACE", nullptr },
+	{ ACTION_CAMERA_AVATAR, "CAMERA_AVATAR", "Focus Camera on Silencer", "CameraProcess::moveToAvatar", nullptr, "z", nullptr },
 	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
 
@@ -100,11 +115,13 @@ static const KeybindingRecord DEBUG_KEYS[] = {
 #endif
 
 
-Common::KeymapArray MetaEngine::initKeymaps(bool isMenuActive) {
+Common::KeymapArray MetaEngine::initKeymaps(const Common::String &gameId, bool isMenuActive) {
 	Common::KeymapArray keymapArray;
 
 	// Core keymaps
-	Common::Keymap *keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "ultima8", _("Ultima VIII"));
+	const char *desc = (gameId == "ultima8" ? _("Ultima VIII") : _("Crusader"));
+
+	Common::Keymap *keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, gameId, desc);
 	keymapArray.push_back(keyMap);
 
 	Common::Action *act;
@@ -121,7 +138,7 @@ Common::KeymapArray MetaEngine::initKeymaps(bool isMenuActive) {
 	act->addDefaultInputMapping("JOY_B");
 	keyMap->addAction(act);
 
-	for (const KeybindingRecord *r = KEYS; r->_id; ++r) {
+	for (const KeybindingRecord *r = COMMON_KEYS; r->_id; ++r) {
 		if (!isMenuActive || !strcmp(r->_id, "MENU")) {
 			act = new Common::Action(r->_id, _(r->_desc));
 			act->setCustomEngineActionEvent(r->_action);
@@ -134,6 +151,19 @@ Common::KeymapArray MetaEngine::initKeymaps(bool isMenuActive) {
 	}
 
 	if (!isMenuActive) {
+		// Game specific keymaps
+		const KeybindingRecord *game_keys = (gameId.equals("ultima8") ? U8_KEYS : CRUSADER_KEYS);
+		for (const KeybindingRecord *r = game_keys; r->_id; ++r) {
+			act = new Common::Action(r->_id, _(r->_desc));
+			act->setCustomEngineActionEvent(r->_action);
+			if (r->_key)
+				act->addDefaultInputMapping(r->_key);
+			if (r->_joy)
+				act->addDefaultInputMapping(r->_joy);
+			keyMap->addAction(act);
+		}
+
+
 		// Cheat keymaps
 		keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "ultima8_cheats", _("Ultima VIII Cheats"));
 		keymapArray.push_back(keyMap);
@@ -172,7 +202,9 @@ void MetaEngine::setGameMenuActive(bool isActive) {
 	Common::Keymapper *const mapper = g_engine->getEventManager()->getKeymapper();
 	mapper->cleanupGameKeymaps();
 
-	Common::KeymapArray arr = initKeymaps(isActive);
+	const Common::String gameId = CoreApp::get_instance()->getGameInfo()->_name;
+
+	Common::KeymapArray arr = initKeymaps(gameId, isActive);
 
 	for (uint idx = 0; idx < arr.size(); ++idx)
 		mapper->addGameKeymap(arr[idx]);
@@ -193,9 +225,9 @@ void MetaEngine::releaseAction(KeybindingAction keyAction) {
 
 Common::String MetaEngine::getMethod(KeybindingAction keyAction, bool isPress) {
 #ifdef RELEASE_BUILD
-	const KeybindingRecord *KEY_ARRAYS[] = { KEYS, CHEAT_KEYS, nullptr };
+	const KeybindingRecord *KEY_ARRAYS[] = { COMMON_KEYS, U8_KEYS, CRUSADER_KEYS, CHEAT_KEYS, nullptr };
 #else
-	const KeybindingRecord *KEY_ARRAYS[] = { KEYS, CHEAT_KEYS, DEBUG_KEYS, nullptr };
+	const KeybindingRecord *KEY_ARRAYS[] = { COMMON_KEYS, U8_KEYS, CRUSADER_KEYS, CHEAT_KEYS, DEBUG_KEYS, nullptr };
 #endif
 
 	for (const KeybindingRecord **arr = KEY_ARRAYS; *arr; ++arr) {

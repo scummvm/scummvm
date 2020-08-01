@@ -130,6 +130,8 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"sofiasdebt",      "Sofia's Debt"},
 	{"sotv1",           "Shadows on the Vatican - Act I: Greed"},
 	{"sotv2",           "Shadows on the Vatican - Act II: Wrath"},
+	{"strangechange",   "Strange Change"},
+	{"sunrise",         "Sunrise: The game"},
 	{"tanya1",          "Tanya Grotter and the Magical Double Bass"},
 	{"tanya2",          "Tanya Grotter and the Disappearing Floor"},
 	{"tehran1933",      "Murder In Tehran's Alleys 1933"},
@@ -591,7 +593,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Conspiracao Dumont (Demo)
 	WME_WINENTRY("conspiracao", "Demo",
-		WME_ENTRY1s("ConspiracaoDumont.exe", "106f3f2c8f18bb5ffffeed634ace256c", 32908032), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+		WME_ENTRY1s("ConspiracaoDumont.exe", "106f3f2c8f18bb5ffffeed634ace256c", 32908032), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_7_0),
 
 	// Corrosion: Cold Winter Waiting
 	WME_WINENTRY("corrosion", "",
@@ -1404,7 +1406,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Life In 3 Minutes
 	WME_WINENTRY("lifein3minutes", "",
-		WME_ENTRY1s("data.dcp", "c6368950e37a95bf098b02b4eaa5b929", 141787214), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "c6368950e37a95bf098b02b4eaa5b929", 141787214), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Looky Demo (English)
 	WME_WINENTRY("looky", "Demo",
@@ -4865,6 +4867,16 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("data.dcp", "5c88a51d010ad24225dee432ed38b238", 25987377,
 					"lang-german.dcp", "78d06de2b4a8c68517eb6df3ded86d82", 1524330), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_1),
 
+	// Strange Change
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("strangechange", "",
+		WME_ENTRY1s("data.dcp", "818e53c1584dac28f336195d7dcfb97d", 3762512), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_8_6),
+
+	// Sunrise: The game (Demo) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sunrise", "",
+		WME_ENTRY1s("data.dcp", "3bac4da87472d2e7676e9548970d521a", 52095549), Common::DE_DEU, ADGF_UNSTABLE | GF_3D, WME_1_7_93),
+
 	// Tanya Grotter and the Magical Double Bass
 	WME_WINENTRY("tanya1", "",
 		WME_ENTRY1s("data.dcp", "035bbdaff078cc4053ecf4b518c0d0fd", 1007507786), Common::RU_RUS, ADGF_UNSTABLE, WME_1_8_0),
@@ -5000,7 +5012,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// War
 	WME_WINENTRY("war", "",
-		WME_ENTRY1s("data.dcp", "003e317cda6d0137bbd5e5d7f089ee4d", 32591890), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "003e317cda6d0137bbd5e5d7f089ee4d", 32591890), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Wintermute Engine Technology Demo (1.2)
 	WME_WINENTRY("wmedemo", "1.2",
@@ -5025,11 +5037,11 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Zilm: A Game of Reflex
 	WME_WINENTRY("zilm", "",
-		WME_ENTRY1s("data.dcp", "81cece0c8105b4725fc35064a32b4b52", 351726), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "81cece0c8105b4725fc35064a32b4b52", 351726), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Zilm: A Game of Reflex 1.0
 	WME_WINENTRY("zilm", "1.0",
-		WME_ENTRY1s("data.dcp", "098dffaf03d8adbb4cb5633e4733e63c", 351726), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "098dffaf03d8adbb4cb5633e4733e63c", 351726), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Zbang! The Game (Demo)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope

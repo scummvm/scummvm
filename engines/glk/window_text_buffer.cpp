@@ -741,7 +741,7 @@ void TextBufferWindow::cancelLineEvent(Event *ev) {
 	int len;
 	void *inbuf;
 	int inmax;
-	int unicode = _lineRequestUni;
+	bool unicode = _lineRequestUni;
 	Event dummyEv;
 
 	if (!ev)
@@ -1399,7 +1399,7 @@ void TextBufferWindow::acceptLine(uint32 keycode) {
 	Common::U32String s, o;
 	int inmax;
 	gidispatch_rock_t inarrayrock;
-	int unicode = _lineRequestUni;
+	bool unicode = _lineRequestUni;
 
 	if (!_inBuf)
 		return;

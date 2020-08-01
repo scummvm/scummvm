@@ -22,6 +22,7 @@
 
 #include "audio/midiparser.h"
 #include "audio/mididrv.h"
+#include "audio/miles.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 
@@ -60,21 +61,15 @@ protected:
 	XMidiCallbackProc _callbackProc;
 	void *_callbackData;
 
-	// TODO:
-	// This should possibly get cleaned up at some point, but it's very tricks.
 	// We need to support XMIDI TIMB for 7th guest, which uses
 	// Miles Audio drivers. The MT32 driver needs to get the TIMB chunk, so that it
 	// can install all required timbres before the song starts playing.
-	// But we can't easily implement this directly like for example creating
-	// a special Miles Audio class for usage in this XMIDI-class, because other engines use this
-	// XMIDI-parser but w/o using Miles Audio drivers.
-	XMidiNewTimbreListProc _newTimbreListProc;
-	MidiDriver_BASE       *_newTimbreListDriver;
+	// This contains a pointer to _driver if it supports the required
+	// interface; otherwise it is null.
+	Audio::MidiDriver_Miles_Xmidi_Timbres *_newTimbreListDriver;
 
 	byte  *_tracksTimbreList[120]; ///< Timbre-List for each track.
 	uint32 _tracksTimbreListSize[120]; ///< Size of the Timbre-List for each track.
-	byte  *_activeTrackTimbreList;
-	uint32 _activeTrackTimbreListSize;
 
 protected:
 	uint32 readVLQ2(byte * &data);
@@ -92,26 +87,25 @@ protected:
 		MidiParser::resetTracking();
 		_loopCount = -1;
 	}
+	void onTrackStart(uint8 track) override;
 
 	void sendToDriver(uint32 b) override;
 	void sendMetaEventToDriver(byte type, byte *data, uint16 length) override;
 public:
-	MidiParser_XMIDI(XMidiCallbackProc proc, void *data, XMidiNewTimbreListProc newTimbreListProc, MidiDriver_BASE *newTimbreListDriver, int8 source = -1) :
+	MidiParser_XMIDI(XMidiCallbackProc proc, void *data, int8 source = -1) :
 			_callbackProc(proc),
 			_callbackData(data),
-			_newTimbreListProc(newTimbreListProc),
-			_newTimbreListDriver(newTimbreListDriver),
+			_newTimbreListDriver(0),
 			_source(source),
-			_loopCount(-1),
-			_activeTrackTimbreList(NULL),
-			_activeTrackTimbreListSize(0) {
+			_loopCount(-1) {
 		memset(_loop, 0, sizeof(_loop));
 		memset(_trackBranches, 0, sizeof(_trackBranches));
 		memset(_tracksTimbreList, 0, sizeof(_tracksTimbreList));
 		memset(_tracksTimbreListSize, 0, sizeof(_tracksTimbreListSize));
 	}
-	~MidiParser_XMIDI() { }
+	~MidiParser_XMIDI() { stopPlaying(); }
 
+	void setMidiDriver(MidiDriver_BASE *driver) override;
 	bool loadMusic(byte *data, uint32 size) override;
 	bool hasJumpIndex(uint8 index) override;
 	bool jumpToIndex(uint8 index, bool stopNotes) override;
@@ -172,6 +166,7 @@ bool MidiParser_XMIDI::jumpToIndex(uint8 index, bool stopNotes) {
 void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 	info.start = _position._playPos;
 	info.delta = readVLQ2(_position._playPos);
+	info.loop = false;
 
 	// Process the next event.
 	info.event = *(_position._playPos++);
@@ -236,12 +231,15 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 				} else {
 					// Repeat 0 means "loop forever".
 					if (_loop[_loopCount].repeat) {
-						if (--_loop[_loopCount].repeat == 0)
+						if (--_loop[_loopCount].repeat == 0) {
 							_loopCount--;
-						else
+						} else {
 							_position._playPos = _loop[_loopCount].pos;
+							info.loop = true;
+						}
 					} else {
 						_position._playPos = _loop[_loopCount].pos;
+						info.loop = true;
 					}
 				}
 			}
@@ -332,6 +330,11 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 	default:
 		break;
 	}
+}
+
+void MidiParser_XMIDI::setMidiDriver(MidiDriver_BASE *driver) {
+	MidiParser::setMidiDriver(driver);
+	_newTimbreListDriver = dynamic_cast<Audio::MidiDriver_Miles_Xmidi_Timbres *>(driver);
 }
 
 bool MidiParser_XMIDI::loadMusic(byte *data, uint32 size) {
@@ -438,6 +441,9 @@ bool MidiParser_XMIDI::loadMusic(byte *data, uint32 size) {
 		int tracksRead = 0;
 		uint32 branchOffsets[128];
 		memset(branchOffsets, 0, sizeof(branchOffsets));
+		memset(_trackBranches, 0, sizeof(_trackBranches));
+		memset(_tracksTimbreList, 0, sizeof(_tracksTimbreList));
+		memset(_tracksTimbreListSize, 0, sizeof(_tracksTimbreListSize));
 		while (tracksRead < _numTracks) {
 			if (!memcmp(pos, "FORM", 4)) {
 				// Skip this plus the 4 bytes after it.
@@ -511,17 +517,20 @@ bool MidiParser_XMIDI::loadMusic(byte *data, uint32 size) {
 		_ppqn = 60;
 		resetTracking();
 		setTempo(500000);
-		setTrack(0);
-		_activeTrackTimbreList = _tracksTimbreList[0];
-		_activeTrackTimbreListSize = _tracksTimbreListSize[0];
 
-		if (_newTimbreListProc)
-			_newTimbreListProc(_newTimbreListDriver, _activeTrackTimbreList, _activeTrackTimbreListSize);
+		// Start playback of the first track.
+		setTrack(0);
 
 		return true;
 	}
 
 	return false;
+}
+
+void MidiParser_XMIDI::onTrackStart(uint8 track) {
+	// Load custom timbres
+	if (_newTimbreListDriver && _tracksTimbreListSize[track] > 0)
+		_newTimbreListDriver->processXMIDITimbreChunk(_tracksTimbreList[track], _tracksTimbreListSize[track]);
 }
 
 void MidiParser_XMIDI::sendToDriver(uint32 b) {
@@ -544,6 +553,6 @@ void MidiParser::defaultXMidiCallback(byte eventData, void *data) {
 	warning("MidiParser: defaultXMidiCallback(%d)", eventData);
 }
 
-MidiParser *MidiParser::createParser_XMIDI(XMidiCallbackProc proc, void *data, XMidiNewTimbreListProc newTimbreListProc, MidiDriver_BASE *newTimbreListDriver, int source) {
-	return new MidiParser_XMIDI(proc, data, newTimbreListProc, newTimbreListDriver, source);
+MidiParser *MidiParser::createParser_XMIDI(XMidiCallbackProc proc, void *data, int source) {
+	return new MidiParser_XMIDI(proc, data, source);
 }

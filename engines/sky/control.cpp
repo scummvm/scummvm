@@ -281,7 +281,7 @@ void Control::initPanel() {
 	memset(_screenBuf, 0, GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 
 	uint16 volY = (127 - _skyMusic->giveVolume()) / 4 + 59 - MPNL_Y; // volume slider's Y coordinate
-	uint16 spdY = (SkyEngine::_systemVars.gameSpeed - 2) / SPEED_MULTIPLY;
+	uint16 spdY = (SkyEngine::_systemVars->gameSpeed - 2) / SPEED_MULTIPLY;
 	spdY += MPNL_Y + 83; // speed slider's initial position
 
 	_sprites.controlPanel	= _skyDisk->loadFile(60500);
@@ -293,7 +293,7 @@ void Control::initPanel() {
 	_sprites.slode			= _skyDisk->loadFile(60506);
 	_sprites.slode2			= _skyDisk->loadFile(60507);
 	_sprites.slide2			= _skyDisk->loadFile(60508);
-	if (SkyEngine::_systemVars.gameVersion < 368)
+	if (SkyEngine::_systemVars->gameVersion < 368)
 		_sprites.musicBodge = NULL;
 	else
 		_sprites.musicBodge = _skyDisk->loadFile(60509);
@@ -447,7 +447,7 @@ void Control::drawMainPanel() {
 	_slide2->drawToScreen(WITH_MASK);
 	_bodge->drawToScreen(WITH_MASK);
 	if (SkyEngine::isCDVersion())
-		drawTextCross(SkyEngine::_systemVars.systemFlags & TEXT_FLAG_MASK);
+		drawTextCross(SkyEngine::_systemVars->systemFlags & TEXT_FLAG_MASK);
 	_statusBar->drawToScreen();
 }
 
@@ -456,7 +456,7 @@ void Control::doLoadSavePanel() {
 		return; // I don't think this can even happen
 	initPanel();
 	_skyScreen->clearScreen();
-	if (SkyEngine::_systemVars.gameVersion < 331)
+	if (SkyEngine::_systemVars->gameVersion < 331)
 		_skyScreen->setPalette(60509);
 	else
 		_skyScreen->setPalette(60510);
@@ -474,7 +474,7 @@ void Control::doLoadSavePanel() {
 	_system->copyRectToScreen(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
 	_system->updateScreen();
 	_skyScreen->forceRefresh();
-	_skyScreen->setPaletteEndian((uint8 *)_skyCompact->fetchCpt(SkyEngine::_systemVars.currentPalette));
+	_skyScreen->setPaletteEndian((uint8 *)_skyCompact->fetchCpt(SkyEngine::_systemVars->currentPalette));
 	removePanel();
 	_skyMouse->spriteMouse(_savedMouse, 0, 0);
 	_skyText->fnSetFont(_savedCharSet);
@@ -491,19 +491,19 @@ void Control::doControlPanel() {
 	_skyText->fnSetFont(2);
 
 	_skyScreen->clearScreen();
-	if (SkyEngine::_systemVars.gameVersion < 331)
+	if (SkyEngine::_systemVars->gameVersion < 331)
 		_skyScreen->setPalette(60509);
 	else
 		_skyScreen->setPalette(60510);
 
 	// Set initial button lights
 	_fxPanButton->_curSprite =
-		(SkyEngine::_systemVars.systemFlags & SF_FX_OFF ? 0 : 2);
+		(SkyEngine::_systemVars->systemFlags & SF_FX_OFF ? 0 : 2);
 
 	// music button only available in floppy version
 	if (!SkyEngine::isCDVersion())
 		_musicPanButton->_curSprite =
-			(SkyEngine::_systemVars.systemFlags & SF_MUS_OFF ? 0 : 2);
+			(SkyEngine::_systemVars->systemFlags & SF_MUS_OFF ? 0 : 2);
 
 	drawMainPanel();
 
@@ -554,7 +554,7 @@ void Control::doControlPanel() {
 	if (!Engine::shouldQuit())
 		_system->updateScreen();
 	_skyScreen->forceRefresh();
-	_skyScreen->setPaletteEndian((uint8 *)_skyCompact->fetchCpt(SkyEngine::_systemVars.currentPalette));
+	_skyScreen->setPaletteEndian((uint8 *)_skyCompact->fetchCpt(SkyEngine::_systemVars->currentPalette));
 	removePanel();
 	_skyMouse->spriteMouse(_savedMouse, 0, 0);
 	_skyText->fnSetFont(_savedCharSet);
@@ -757,13 +757,13 @@ uint16 Control::doSpeedSlide() {
 		_text->drawToScreen(WITH_MASK);
 		_system->updateScreen();
 	}
-	SkyEngine::_systemVars.gameSpeed = speedDelay;
+	SkyEngine::_systemVars->gameSpeed = speedDelay;
 	return SPEED_CHANGED;
 }
 
 void Control::toggleFx(ConResource *pButton) {
-	SkyEngine::_systemVars.systemFlags ^= SF_FX_OFF;
-	if (SkyEngine::_systemVars.systemFlags & SF_FX_OFF) {
+	SkyEngine::_systemVars->systemFlags ^= SF_FX_OFF;
+	if (SkyEngine::_systemVars->systemFlags & SF_FX_OFF) {
 		pButton->_curSprite = 0;
 		_statusBar->setToText(0x7000 + 87);
 	} else {
@@ -771,15 +771,15 @@ void Control::toggleFx(ConResource *pButton) {
 		_statusBar->setToText(0x7000 + 86);
 	}
 
-	ConfMan.setBool("sfx_mute", (SkyEngine::_systemVars.systemFlags & SF_FX_OFF) != 0);
+	ConfMan.setBool("sfx_mute", (SkyEngine::_systemVars->systemFlags & SF_FX_OFF) != 0);
 
 	pButton->drawToScreen(WITH_MASK);
 	_system->updateScreen();
 }
 
 uint16 Control::toggleText() {
-	uint32 flags = SkyEngine::_systemVars.systemFlags & TEXT_FLAG_MASK;
-	SkyEngine::_systemVars.systemFlags &= ~TEXT_FLAG_MASK;
+	uint32 flags = SkyEngine::_systemVars->systemFlags & TEXT_FLAG_MASK;
+	SkyEngine::_systemVars->systemFlags &= ~TEXT_FLAG_MASK;
 
 	if (flags == SF_ALLOW_TEXT) {
 		flags = SF_ALLOW_SPEECH;
@@ -795,7 +795,7 @@ uint16 Control::toggleText() {
 	ConfMan.setBool("subtitles", (flags & SF_ALLOW_TEXT) != 0);
 	ConfMan.setBool("speech_mute", (flags & SF_ALLOW_SPEECH) == 0);
 
-	SkyEngine::_systemVars.systemFlags |= flags;
+	SkyEngine::_systemVars->systemFlags |= flags;
 
 	drawTextCross(flags);
 
@@ -804,18 +804,18 @@ uint16 Control::toggleText() {
 }
 
 void Control::toggleMusic(ConResource *pButton) {
-	SkyEngine::_systemVars.systemFlags ^= SF_MUS_OFF;
-	if (SkyEngine::_systemVars.systemFlags & SF_MUS_OFF) {
+	SkyEngine::_systemVars->systemFlags ^= SF_MUS_OFF;
+	if (SkyEngine::_systemVars->systemFlags & SF_MUS_OFF) {
 		_skyMusic->startMusic(0);
 		pButton->_curSprite = 0;
 		_statusBar->setToText(0x7000 + 89);
 	} else {
-		_skyMusic->startMusic(SkyEngine::_systemVars.currentMusic);
+		_skyMusic->startMusic(SkyEngine::_systemVars->currentMusic);
 		pButton->_curSprite = 2;
 		_statusBar->setToText(0x7000 + 88);
 	}
 
-	ConfMan.setBool("music_mute", (SkyEngine::_systemVars.systemFlags & SF_MUS_OFF) != 0);
+	ConfMan.setBool("music_mute", (SkyEngine::_systemVars->systemFlags & SF_MUS_OFF) != 0);
 
 	pButton->drawToScreen(WITH_MASK);
 	_system->updateScreen();
@@ -1109,7 +1109,7 @@ void Control::loadDescriptions(Common::StringArray &savenames) {
 }
 
 bool Control::loadSaveAllowed() {
-	if (SkyEngine::_systemVars.systemFlags & SF_CHOOSING)
+	if (SkyEngine::_systemVars->systemFlags & SF_CHOOSING)
 		return false; // texts get lost during load/save, so don't allow it during choosing
 	if (Logic::_scriptVariables[SCREEN] >= 101)
 		return false; // same problem with LINC terminals
@@ -1140,7 +1140,7 @@ void Control::saveDescriptions(const Common::StringArray &list) {
 
 	outf = _saveFileMan->openForSaving("SKY-VM.SAV");
 	bool ioFailed = true;
-	if (outf) {
+	if (outf != nullptr) {
 		for (uint16 cnt = 0; cnt < MAX_SAVE_GAMES; cnt++) {
 			outf->write(list[cnt].c_str(), list[cnt].size() + 1);
 		}
@@ -1162,7 +1162,7 @@ uint16 Control::saveGameToFile(bool fromControlPanel, const char *filename, bool
 
 	Common::OutSaveFile *outf;
 	outf = _saveFileMan->openForSaving(filename);
-	if (outf == NULL)
+	if (outf == nullptr)
 		return NO_DISK_SPACE;
 
 	if (!fromControlPanel) {
@@ -1193,7 +1193,7 @@ uint32 Control::prepareSaveData(uint8 *destBuf) {
 	memset(destBuf, 0, 4); // space for data size
 	uint8 *destPos = destBuf + 4;
 	STOSD(destPos, SAVE_FILE_REVISION);
-	STOSD(destPos, SkyEngine::_systemVars.gameVersion);
+	STOSD(destPos, SkyEngine::_systemVars->gameVersion);
 
 	STOSW(destPos, _skySound->_saveSounds[0]);
 	STOSW(destPos, _skySound->_saveSounds[1]);
@@ -1201,7 +1201,7 @@ uint32 Control::prepareSaveData(uint8 *destBuf) {
 	STOSD(destPos, _skyMusic->giveCurrentMusic());
 	STOSD(destPos, _savedCharSet);
 	STOSD(destPos, _savedMouse);
-	STOSD(destPos, SkyEngine::_systemVars.currentPalette);
+	STOSD(destPos, SkyEngine::_systemVars->currentPalette);
 	for (cnt = 0; cnt < 838; cnt++)
 		STOSD(destPos, Logic::_scriptVariables[cnt]);
 	uint32 *loadedFilesList = _skyDisk->giveLoadedFilesList();
@@ -1360,16 +1360,16 @@ uint16 Control::parseSaveData(uint8 *srcBuf) {
 		return RESTORE_FAILED;
 	}
 	LODSD(srcPos, gameVersion);
-	if (gameVersion != SkyEngine::_systemVars.gameVersion) {
+	if (gameVersion != SkyEngine::_systemVars->gameVersion) {
 		if ((!SkyEngine::isCDVersion()) || (gameVersion < 365)) { // cd versions are compatible
 			displayMessage(NULL, "This saved game was created by\n"
 				"Beneath a Steel Sky v0.0%03d\n"
 				"It cannot be loaded by this version (v0.0%3d)",
-				gameVersion, SkyEngine::_systemVars.gameVersion);
+				gameVersion, SkyEngine::_systemVars->gameVersion);
 			return RESTORE_FAILED;
 		}
 	}
-	SkyEngine::_systemVars.systemFlags |= SF_GAME_RESTORED;
+	SkyEngine::_systemVars->systemFlags |= SF_GAME_RESTORED;
 
 	LODSW(srcPos, _skySound->_saveSounds[0]);
 	LODSW(srcPos, _skySound->_saveSounds[1]);
@@ -1424,11 +1424,11 @@ uint16 Control::parseSaveData(uint8 *srcBuf) {
 		error("Restore failed! Savegame data = %lu bytes. Expected size: %d", (long)(srcPos-srcBuf), size);
 
 	_skyDisk->refreshFilesList(reloadList);
-	SkyEngine::_systemVars.currentMusic = (uint16)music;
-	if (!(SkyEngine::_systemVars.systemFlags & SF_MUS_OFF))
+	SkyEngine::_systemVars->currentMusic = (uint16)music;
+	if (!(SkyEngine::_systemVars->systemFlags & SF_MUS_OFF))
 		_skyMusic->startMusic((uint16)music);
 	_savedMouse = (uint16)mouseType;
-	SkyEngine::_systemVars.currentPalette = palette; // will be set when doControlPanel ends
+	SkyEngine::_systemVars->currentPalette = palette; // will be set when doControlPanel ends
 
 	return GAME_RESTORED;
 }
@@ -1457,12 +1457,16 @@ uint16 Control::restoreGameFromFile(bool autoSave) {
 	}
 
 	uint16 res = parseSaveData(saveData);
-	SkyEngine::_systemVars.pastIntro = true;
+	SkyEngine::_systemVars->pastIntro = true;
 	delete inf;
 	free(saveData);
 	return res;
 }
 
+/**
+* @param slot The slot index in the ScummVM Save file manager. "0" is the auto-save slot.
+* @return The result of the restore attempt. A value from "onClick return codes" eg GAME_RESTORED, RESTORE_FAILED etc
+*/
 uint16 Control::quickXRestore(uint16 slot) {
 	uint16 result;
 	if (!_controlPanel)
@@ -1475,7 +1479,7 @@ uint16 Control::quickXRestore(uint16 slot) {
 	_system->copyRectToScreen(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
 	_system->updateScreen();
 
-	if (SkyEngine::_systemVars.gameVersion < 331)
+	if (SkyEngine::_systemVars->gameVersion < 331)
 		_skyScreen->setPalette(60509);
 	else
 		_skyScreen->setPalette(60510);
@@ -1493,7 +1497,7 @@ uint16 Control::quickXRestore(uint16 slot) {
 		memset(_skyScreen->giveCurrent(), 0, GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT);
 		_skyScreen->showScreen(_skyScreen->giveCurrent());
 		_skyScreen->forceRefresh();
-		_skyScreen->setPaletteEndian((uint8 *)_skyCompact->fetchCpt(SkyEngine::_systemVars.currentPalette));
+		_skyScreen->setPaletteEndian((uint8 *)_skyCompact->fetchCpt(SkyEngine::_systemVars->currentPalette));
 	} else {
 		memset(_screenBuf, 0, FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 		_system->copyRectToScreen(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
@@ -1508,20 +1512,25 @@ uint16 Control::quickXRestore(uint16 slot) {
 	return result;
 }
 
+/**
+ * Restarts the game (skipping intro) and places Foster (the player)
+ * already on the top level of the factory.
+ *
+*/
 void Control::restartGame() {
-	if (SkyEngine::_systemVars.gameVersion <= 267)
+	if (SkyEngine::_systemVars->gameVersion <= 267)
 		return; // no restart for floppy demo
 
-	uint8 *resetData = _skyCompact->createResetData((uint16)SkyEngine::_systemVars.gameVersion);
+	uint8 *resetData = _skyCompact->createResetData((uint16)SkyEngine::_systemVars->gameVersion);
 	parseSaveData((uint8 *)resetData);
 	free(resetData);
 	_skyScreen->forceRefresh();
 
 	memset(_skyScreen->giveCurrent(), 0, GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 	_skyScreen->showScreen(_skyScreen->giveCurrent());
-	_skyScreen->setPaletteEndian((uint8 *)_skyCompact->fetchCpt(SkyEngine::_systemVars.currentPalette));
+	_skyScreen->setPaletteEndian((uint8 *)_skyCompact->fetchCpt(SkyEngine::_systemVars->currentPalette));
 	_skyMouse->spriteMouse(_savedMouse, 0, 0);
-	SkyEngine::_systemVars.pastIntro = true;
+	SkyEngine::_systemVars->pastIntro = true;
 }
 
 void Control::delay(unsigned int amount) {
@@ -1543,7 +1552,7 @@ void Control::delay(unsigned int amount) {
 				_keyPressed = event.kbd;
 				break;
 			case Common::EVENT_MOUSEMOVE:
-				if (!(SkyEngine::_systemVars.systemFlags & SF_MOUSE_LOCKED))
+				if (!(SkyEngine::_systemVars->systemFlags & SF_MOUSE_LOCKED))
 					_skyMouse->mouseMoved(event.mouse.x, event.mouse.y);
 				break;
 			case Common::EVENT_LBUTTONDOWN:
@@ -1589,8 +1598,8 @@ void Control::showGameQuitMsg() {
 		_skyText->displayText(_quitTexts[8 * 2 + 0], textBuf1, true, 320, 255);
 		_skyText->displayText(_quitTexts[8 * 2 + 1], textBuf2, true, 320, 255);
 	} else {
-		_skyText->displayText(_quitTexts[SkyEngine::_systemVars.language * 2 + 0], textBuf1, true, 320, 255);
-		_skyText->displayText(_quitTexts[SkyEngine::_systemVars.language * 2 + 1], textBuf2, true, 320, 255);
+		_skyText->displayText(_quitTexts[SkyEngine::_systemVars->language * 2 + 0], textBuf1, true, 320, 255);
+		_skyText->displayText(_quitTexts[SkyEngine::_systemVars->language * 2 + 1], textBuf2, true, 320, 255);
 	}
 	uint8 *curLine1 = textBuf1 + sizeof(DataFileHeader);
 	uint8 *curLine2 = textBuf2 + sizeof(DataFileHeader);

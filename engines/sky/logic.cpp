@@ -105,7 +105,7 @@ Logic::~Logic() {
 void Logic::initScreen0() {
 	fnEnterSection(0, 0, 0);
 	_skyMusic->startMusic(2);
-	SkyEngine::_systemVars.currentMusic = 2;
+	SkyEngine::_systemVars->currentMusic = 2;
 }
 
 void Logic::parseSaveData(uint32 *data) {
@@ -541,7 +541,7 @@ void Logic::talk() {
 	if (_skyMouse->wasClicked())
 		for (int i = 0; i < ARRAYSIZE(clickTable); i++)
 			if (clickTable[i] == (uint16)_scriptVariables[CUR_ID]) {
-				if ((SkyEngine::_systemVars.systemFlags & SF_ALLOW_SPEECH) && (!_skySound->speechFinished()))
+				if ((SkyEngine::_systemVars->systemFlags & SF_ALLOW_SPEECH) && (!_skySound->speechFinished()))
 					_skySound->stopSpeech();
 				if ((_compact->spTextId > 0) &&
 					(_compact->spTextId < 0xFFFF)) {
@@ -648,7 +648,7 @@ void Logic::choose() {
 
 	fnNoHuman(0, 0, 0); // kill mouse again
 
-	SkyEngine::_systemVars.systemFlags &= ~SF_CHOOSING; // restore save/restore
+	SkyEngine::_systemVars->systemFlags &= ~SF_CHOOSING; // restore save/restore
 
 	_compact->logic = L_SCRIPT; // and continue script
 	logicScript();
@@ -1158,7 +1158,7 @@ void Logic::initScriptVariables() {
 	_scriptVariables[SC40_LOCKER_4_FLAG] = 1;
 	_scriptVariables[SC40_LOCKER_5_FLAG] = 1;
 
-	if (SkyEngine::_systemVars.gameVersion == 288)
+	if (SkyEngine::_systemVars->gameVersion == 288)
 		memcpy(_scriptVariables + 352, forwardList1b288, sizeof(forwardList1b288));
 	else
 		memcpy(_scriptVariables + 352, forwardList1b, sizeof(forwardList1b));
@@ -1407,7 +1407,7 @@ bool Logic::fnCacheFast(uint32 a, uint32 b, uint32 c) {
 
 bool Logic::fnDrawScreen(uint32 a, uint32 b, uint32 c) {
 	debug(5, "Call: fnDrawScreen(%X, %X)",a,b);
-	SkyEngine::_systemVars.currentPalette = a;
+	SkyEngine::_systemVars->currentPalette = a;
 	_skyScreen->fnDrawScreen(a, b);
 
 	if (Logic::_scriptVariables[SCREEN] == 32) {
@@ -1746,7 +1746,7 @@ bool Logic::fnChooser(uint32 a, uint32 b, uint32 c) {
 	// setup the text questions to be clicked on
 	// read from TEXT1 until 0
 
-	SkyEngine::_systemVars.systemFlags |= SF_CHOOSING; // can't save/restore while choosing
+	SkyEngine::_systemVars->systemFlags |= SF_CHOOSING; // can't save/restore while choosing
 
 	_scriptVariables[THE_CHOSEN_ONE] = 0; // clear result
 
@@ -2233,7 +2233,7 @@ bool Logic::fnCustomJoey(uint32 id, uint32 b, uint32 c) {
 
 bool Logic::fnSetPalette(uint32 a, uint32 b, uint32 c) {
 	_skyScreen->setPaletteEndian((uint8 *)_skyCompact->fetchCpt(a));
-	SkyEngine::_systemVars.currentPalette = a;
+	SkyEngine::_systemVars->currentPalette = a;
 	return true;
 }
 
@@ -2312,19 +2312,19 @@ bool Logic::fnEnterSection(uint32 sectionNo, uint32 b, uint32 c) {
 		_skyControl->showGameQuitMsg();
 
 	_scriptVariables[CUR_SECTION] = sectionNo;
-	SkyEngine::_systemVars.currentMusic = 0;
+	SkyEngine::_systemVars->currentMusic = 0;
 
 	if (sectionNo == 5) //linc section - has different mouse icons
 		_skyMouse->replaceMouseCursors(60302);
 
-	if ((sectionNo != _currentSection) || (SkyEngine::_systemVars.systemFlags & SF_GAME_RESTORED)) {
+	if ((sectionNo != _currentSection) || (SkyEngine::_systemVars->systemFlags & SF_GAME_RESTORED)) {
 		_currentSection = sectionNo;
 
 		sectionNo++;
 		_skyMusic->loadSection((byte)sectionNo);
 		_skySound->loadSection((byte)sectionNo);
 		_skyGrid->loadGrids();
-		SkyEngine::_systemVars.systemFlags &= ~SF_GAME_RESTORED;
+		SkyEngine::_systemVars->systemFlags &= ~SF_GAME_RESTORED;
 	}
 
 	return true;
@@ -2355,8 +2355,14 @@ bool Logic::fnWaitSwingEnd(uint32 a, uint32 b, uint32 c) {
 	return true;
 }
 
+/**
+ * This function is called by the script logic
+ * even when the intro sequence has completed without skipping it.
+ * This means that it (also) gets called at the point after the intro
+ * when Foster in on the top level of the factory and finished his monologue.
+*/
 bool Logic::fnSkipIntroCode(uint32 a, uint32 b, uint32 c) {
-	SkyEngine::_systemVars.pastIntro = true;
+	SkyEngine::_systemVars->pastIntro = true;
 	return true;
 }
 
@@ -2452,15 +2458,15 @@ bool Logic::fnStopFx(uint32 a, uint32 b, uint32 c) {
 }
 
 bool Logic::fnStartMusic(uint32 a, uint32 b, uint32 c) {
-	if (!(SkyEngine::_systemVars.systemFlags & SF_MUS_OFF))
+	if (!(SkyEngine::_systemVars->systemFlags & SF_MUS_OFF))
 		_skyMusic->startMusic((uint16)a);
-	SkyEngine::_systemVars.currentMusic = (uint16)a;
+	SkyEngine::_systemVars->currentMusic = (uint16)a;
 	return true;
 }
 
 bool Logic::fnStopMusic(uint32 a, uint32 b, uint32 c) {
 	_skyMusic->startMusic(0);
-	SkyEngine::_systemVars.currentMusic = 0;
+	SkyEngine::_systemVars->currentMusic = 0;
 	return true;
 }
 
@@ -2470,7 +2476,7 @@ bool Logic::fnFadeDown(uint32 a, uint32 b, uint32 c) {
 }
 
 bool Logic::fnFadeUp(uint32 a, uint32 b, uint32 c) {
-	SkyEngine::_systemVars.currentPalette = a;
+	SkyEngine::_systemVars->currentPalette = a;
 	_skyScreen->fnFadeUp(a,b);
 	return true;
 }
@@ -2524,7 +2530,7 @@ void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 bas
 	_skyScreen->setFocusRectangle(Common::Rect::center(x, y, 192, 128));
 
 
-	if ((SkyEngine::_systemVars.systemFlags & SF_ALLOW_TEXT) || !speechFileFound) {
+	if ((SkyEngine::_systemVars->systemFlags & SF_ALLOW_TEXT) || !speechFileFound) {
 		// form the text sprite, if player wants subtitles or
 		// if we couldn't find the speech file
 		DisplayedText textInfo;

@@ -107,9 +107,20 @@ protected:
 	virtual Screen *createScreen();
 
 	/**
+	 * Loads the configuration
+	 */
+	virtual void createConfiguration();
+
+	/**
 	 * Main game loop for the individual interpreters
 	 */
 	virtual void runGame() = 0;
+
+	/**
+	 * Switches Glk from the default black on white color scheme
+	 * to white on black
+	 */
+	void switchToWhiteOnBlack();
 public:
 	Blorb *_blorb;
 	Clipboard *_clipboard;
@@ -135,16 +146,12 @@ public:
 	/**
 	 * Returns true if a savegame can be loaded
 	 */
-	bool canLoadGameStateCurrently() override {
-		return true;
-	}
+	bool canLoadGameStateCurrently() override;
 
 	/**
 	 * Returns true if the game can be saved
 	 */
-	bool canSaveGameStateCurrently() override {
-		return true;
-	}
+	bool canSaveGameStateCurrently() override;
 
 	/**
 	 * Returns the language

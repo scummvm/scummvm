@@ -94,9 +94,13 @@ UCMachine::UCMachine(Intrinsic *iset, unsigned int icount) {
 		_convUse = new ConvertUsecodeU8();
 	} else if (GAME_IS_REMORSE) {
 		_globals = new ByteSet(0x1000);
+		// slight hack: set global 003C to start as avatar number.
+		_globals->setEntries(0x3C, 2, 1);
 		_convUse = new ConvertUsecodeCrusader();
 	} else {
 		_globals = new ByteSet(0x1000);
+		// slight hack: set global 003C to start as avatar number.
+		_globals->setEntries(0x3C, 2, 1);
 		// TODO: Need a separate convertor for Regret
 		_convUse = new ConvertUsecodeCrusader();
 	}
@@ -128,6 +132,11 @@ void UCMachine::reset() {
 
 	// clear _globals
 	_globals->setSize(0x1000);
+
+	if (GAME_IS_CRUSADER) {
+		// slight hack: set global 003C to start as avatar number.
+		_globals->setEntries(0x3C, 2, 1);
+	}
 
 	// clear strings, lists
 	Std::map<uint16, UCList *>::iterator iter;
@@ -357,7 +366,6 @@ void UCMachine::execProcess(UCProcess *p) {
 			// (includes this pointer, if present)
 			// NB: do not actually pop these argument bytes
 		{
-			//! TODO
 			uint16 arg_bytes = cs.readByte();
 			uint16 func = cs.readUint16LE();
 			LOGPF(("calli\t\t%04Xh (%02Xh arg bytes) %s\n", func, arg_bytes, _convUse->intrinsics()[func]));
@@ -1226,8 +1234,6 @@ void UCMachine::execProcess(UCProcess *p) {
 			// push global xxxx size yy bits
 			ui16a = cs.readUint16LE();
 			ui16b = cs.readByte();
-			// TODO: get flagname for output?
-
 			ui32a = _globals->getEntries(ui16a, ui16b);
 			p->_stack.push2(static_cast<uint16>(ui32a));
 			LOGPF(("push\t\tglobal [%04X %02X] = %02X\n", ui16a, ui16b, ui32a));
@@ -1238,7 +1244,6 @@ void UCMachine::execProcess(UCProcess *p) {
 			// pop value into global xxxx size yy bits
 			ui16a = cs.readUint16LE();
 			ui16b = cs.readByte();
-			// TODO: get flagname for output?
 			ui32a = p->_stack.pop2();
 			_globals->setEntries(ui16a, ui16b, ui32a);
 
@@ -1262,7 +1267,6 @@ void UCMachine::execProcess(UCProcess *p) {
 			// return from function
 
 			if (p->ret()) { // returning from process
-				// TODO
 				LOGPF(("ret\t\tfrom process\n"));
 				p->terminateDeferred();
 
@@ -1983,7 +1987,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			// assigns item number and ProcessType
 			p->setItemNum(p->_stack.pop2());
 			p->setType(p->_stack.pop2());
-			LOGPF(("set info\n"));
+			LOGPF(("set info itemno: %d type: %d\n", p->getItemNum(), p->getType()));
 			break;
 
 		case 0x78:
@@ -2013,6 +2017,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			ui16a = cs.readUint16LE(); // global address
 			ui32a = globalToPtr(ui16a);
 			p->_stack.push4(ui32a);
+			LOGPF(("push global 0x%x (value: %x)\n", ui16a, ui32a));
 			break;
 
 		case 0x7A:
@@ -2027,6 +2032,7 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x5B: {
 			ui16a = cs.readUint16LE(); // source line number
 			debug(10, "ignore debug opcode %02X: line offset %d", opcode, ui16a);
+			LOGPF(("line number %d\n", ui16a));
 			break;
 		}
 		case 0x5C: {
@@ -2036,6 +2042,7 @@ void UCMachine::execProcess(UCProcess *p) {
 				// skip over class name and null terminator
 				name[x] = cs.readByte();
 			}
+			LOGPF(("line number %s %d\n", name, ui16a));
 			debug(10, "ignore debug opcode %02X: %s line offset %d", opcode, name, ui16a);
 			break;
 		}
@@ -2306,8 +2313,10 @@ uint16 UCMachine::ptrToObject(uint32 ptr) {
 		} else {
 			return proc->_stack.access2(offset);
 		}
-	} else if (segment == SEG_OBJ || segment == SEG_STRING || segment == SEG_GLOBAL) {
+	} else if (segment == SEG_OBJ || segment == SEG_STRING) {
 		return offset;
+	} else if (segment == SEG_GLOBAL) {
+		return get_instance()->_globals->getEntries(offset, 2);
 	} else {
 		perr << "Trying to access segment " << Std::hex
 		     << segment << Std::dec << Std::endl;
@@ -2454,8 +2463,8 @@ uint32 UCMachine::I_rndRange(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_SINT16(hi);
 
 	// return random integer between lo (incl.) to hi (incl.)
-
-	if (hi <= lo) return lo;
+	if (hi <= lo)
+		return lo;
 
 	return (lo + (getRandom() % (hi - lo + 1)));
 }

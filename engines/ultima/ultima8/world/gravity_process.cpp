@@ -21,6 +21,7 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/world/gravity_process.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/audio/audio_process.h"
@@ -325,12 +326,12 @@ void GravityProcess::fallStopped() {
 
 			// play land animation, overriding other animations
 			Kernel::get_instance()->killProcesses(_itemNum, 0xF0, false); // CONSTANT!
-			ProcId lpid = actor->doAnim(Animation::land, 8);
+			ProcId lpid = actor->doAnim(Animation::land, dir_current);
 
 			if (actor->isInCombat()) {
 				// need to get back to a combat stance to prevent weapon from
 				// being drawn again
-				ProcId spid = actor->doAnim(Animation::combatStand, 8);
+				ProcId spid = actor->doAnim(Animation::combatStand, dir_current);
 				Process *sp = Kernel::get_instance()->getProcess(spid);
 				sp->waitFor(lpid);
 			}

@@ -87,6 +87,7 @@ jmethodID JNI::_MID_setWindowCaption = 0;
 jmethodID JNI::_MID_showVirtualKeyboard = 0;
 jmethodID JNI::_MID_showKeyboardControl = 0;
 jmethodID JNI::_MID_getSysArchives = 0;
+jmethodID JNI::_MID_convertEncoding = 0;
 jmethodID JNI::_MID_getAllStorageLocations = 0;
 jmethodID JNI::_MID_initSurface = 0;
 jmethodID JNI::_MID_deinitSurface = 0;
@@ -116,9 +117,7 @@ const JNINativeMethod JNI::_natives[] = {
 	{ "pushEvent", "(IIIIIII)V",
 		(void *)JNI::pushEvent },
 	{ "setPause", "(Z)V",
-		(void *)JNI::setPause },
-	{ "getCurrentCharset", "()Ljava/lang/String;",
-		(void *)JNI::getCurrentCharset }
+		(void *)JNI::setPause }
 };
 
 JNI::JNI() {
@@ -227,24 +226,16 @@ void JNI::getDPI(float *values) {
 	env->DeleteLocalRef(array);
 }
 
-void JNI::displayMessageOnOSD(const char *msg) {
+void JNI::displayMessageOnOSD(const Common::String &msg) {
 	// called from common/osd_message_queue, method: OSDMessageQueue::pollEvent()
 	JNIEnv *env = JNI::getEnv();
-	Common::String fromEncoding = "ISO-8859-1";
-#ifdef USE_TRANSLATION
-	if (TransMan.getCurrentCharset() != "ASCII") {
-		fromEncoding = TransMan.getCurrentCharset();
-	}
-#endif
-	Common::Encoding converter("UTF-8", fromEncoding.c_str());
 
-	const char *utf8Msg = converter.convert(msg, converter.stringLength(msg, fromEncoding) );
-	if (utf8Msg == nullptr) {
+	jstring java_msg = convertToJString(env, msg, getCurrentCharset());
+	if (java_msg == nullptr) {
 		// Show a placeholder indicative of the translation error instead of silent failing
-		utf8Msg = "?";
+		java_msg = env->NewStringUTF("?");
 		LOGE("Failed to convert message to UTF-8 for OSD!");
 	}
-	jstring java_msg = env->NewStringUTF(utf8Msg);
 
 	env->CallVoidMethod(_jobj, _MID_displayMessageOnOSD, java_msg);
 
@@ -258,10 +249,10 @@ void JNI::displayMessageOnOSD(const char *msg) {
 	env->DeleteLocalRef(java_msg);
 }
 
-bool JNI::openUrl(const char *url) {
+bool JNI::openUrl(const Common::String &url) {
 	bool success = true;
 	JNIEnv *env = JNI::getEnv();
-	jstring javaUrl = env->NewStringUTF(url);
+	jstring javaUrl = env->NewStringUTF(url.c_str());
 
 	env->CallVoidMethod(_jobj, _MID_openUrl, javaUrl);
 
@@ -295,7 +286,7 @@ bool JNI::hasTextInClipboard() {
 Common::String JNI::getTextFromClipboard() {
 	JNIEnv *env = JNI::getEnv();
 
-	jbyteArray javaText = (jbyteArray)env->CallObjectMethod(_jobj, _MID_getTextFromClipboard);
+	jstring javaText = (jstring)env->CallObjectMethod(_jobj, _MID_getTextFromClipboard);
 
 	if (env->ExceptionCheck()) {
 		LOGE("Failed to retrieve text from the clipboard");
@@ -306,20 +297,15 @@ Common::String JNI::getTextFromClipboard() {
 		return Common::String();
 	}
 
-	int len = env->GetArrayLength(javaText);
-	char* buf = new char[len];
-	env->GetByteArrayRegion(javaText, 0, len, reinterpret_cast<jbyte*>(buf));
-	Common::String text(buf, len);
-	delete[] buf;
+	Common::String text = convertFromJString(env, javaText, getCurrentCharset());
+	env->DeleteLocalRef(javaText);
 
 	return text;
 }
 
 bool JNI::setTextInClipboard(const Common::String &text) {
 	JNIEnv *env = JNI::getEnv();
-
-	jbyteArray javaText = env->NewByteArray(text.size());
-	env->SetByteArrayRegion(javaText, 0, text.size(), reinterpret_cast<const jbyte*>(text.c_str()));
+	jstring javaText = convertToJString(env, text, getCurrentCharset());
 
 	bool success = env->CallBooleanMethod(_jobj, _MID_setTextInClipboard, javaText);
 
@@ -350,9 +336,9 @@ bool JNI::isConnectionLimited() {
 	return limited;
 }
 
-void JNI::setWindowCaption(const char *caption) {
+void JNI::setWindowCaption(const Common::String &caption) {
 	JNIEnv *env = JNI::getEnv();
-	jstring java_caption = env->NewStringUTF(caption);
+	jstring java_caption = convertToJString(env, caption, "ISO-8859-1");
 
 	env->CallVoidMethod(_jobj, _MID_setWindowCaption, java_caption);
 
@@ -421,6 +407,36 @@ void JNI::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 
 		env->DeleteLocalRef(path_obj);
 	}
+}
+
+char *JNI::convertEncoding(const char *to, const char *from, const char *string, size_t length) {
+	JNIEnv *env = JNI::getEnv();
+
+	jstring javaTo = env->NewStringUTF(to);
+	jstring javaFrom = env->NewStringUTF(from);
+	jbyteArray javaString = env->NewByteArray(length);
+	env->SetByteArrayRegion(javaString, 0, length, reinterpret_cast<const jbyte*>(string));
+
+	jbyteArray javaOut = (jbyteArray)env->CallObjectMethod(_jobj, _MID_convertEncoding, javaTo, javaFrom, javaString);
+
+	if (!javaOut || env->ExceptionCheck()) {
+		LOGE("Failed to convert text from %s to %s", from, to);
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+
+		return nullptr;
+	}
+
+	int outLength = env->GetArrayLength(javaOut);
+	char *buf = (char *)malloc(outLength + 1);
+	if (!buf)
+		return nullptr;
+
+	env->GetByteArrayRegion(javaOut, 0, outLength, reinterpret_cast<jbyte *>(buf));
+	buf[outLength] = 0;
+
+	return buf;
 }
 
 bool JNI::initSurface() {
@@ -544,13 +560,14 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, displayMessageOnOSD, "(Ljava/lang/String;)V");
 	FIND_METHOD(, openUrl, "(Ljava/lang/String;)V");
 	FIND_METHOD(, hasTextInClipboard, "()Z");
-	FIND_METHOD(, getTextFromClipboard, "()[B");
-	FIND_METHOD(, setTextInClipboard, "([B)Z");
+	FIND_METHOD(, getTextFromClipboard, "()Ljava/lang/String;");
+	FIND_METHOD(, setTextInClipboard, "(Ljava/lang/String;)Z");
 	FIND_METHOD(, isConnectionLimited, "()Z");
 	FIND_METHOD(, showVirtualKeyboard, "(Z)V");
 	FIND_METHOD(, showKeyboardControl, "(Z)V");
 	FIND_METHOD(, getSysArchives, "()[Ljava/lang/String;");
 	FIND_METHOD(, getAllStorageLocations, "()[Ljava/lang/String;");
+	FIND_METHOD(, convertEncoding, "(Ljava/lang/String;Ljava/lang/String;[B)[B");
 	FIND_METHOD(, initSurface, "()Ljavax/microedition/khronos/egl/EGLSurface;");
 	FIND_METHOD(, deinitSurface, "()V");
 
@@ -711,14 +728,40 @@ void JNI::setPause(JNIEnv *env, jobject self, jboolean value) {
 	}
 }
 
-jstring JNI::getCurrentCharset(JNIEnv *env, jobject self) {
+Common::String JNI::getCurrentCharset() {
 #ifdef USE_TRANSLATION
 	if (TransMan.getCurrentCharset() != "ASCII") {
-//		LOGD("getCurrentCharset: %s", TransMan.getCurrentCharset().c_str());
-		return env->NewStringUTF(TransMan.getCurrentCharset().c_str());
+		return TransMan.getCurrentCharset();
 	}
 #endif
-	return env->NewStringUTF("ISO-8859-1");
+	return "ISO-8859-1";
+}
+
+jstring JNI::convertToJString(JNIEnv *env, const Common::String &str, const Common::String &from) {
+	Common::Encoding converter("UTF-8", from.c_str());
+	char *utf8Str = converter.convert(str.c_str(), converter.stringLength(str.c_str(), from));
+	if (utf8Str == nullptr)
+		return nullptr;
+
+	jstring jstr = env->NewStringUTF(utf8Str);
+	free(utf8Str);
+
+	return jstr;
+}
+
+Common::String JNI::convertFromJString(JNIEnv *env, const jstring &jstr, const Common::String &to) {
+	const char *utf8Str = env->GetStringUTFChars(jstr, 0);
+	if (!utf8Str)
+		return Common::String();
+
+	Common::Encoding converter(to.c_str(), "UTF-8");
+	char *asciiStr = converter.convert(utf8Str, env->GetStringUTFLength(jstr));
+	env->ReleaseStringUTFChars(jstr, utf8Str);
+
+	Common::String str(asciiStr);
+	free(asciiStr);
+
+	return str;
 }
 
 Common::Array<Common::String> JNI::getAllStorageLocations() {

@@ -1579,7 +1579,7 @@ int LoLEngine::olol_addSpellToScroll(EMCState *script) {
 
 int LoLEngine::olol_playDialogueText(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_playDialogueText(%p) (%d)", (const void *)script, stackPos(0));
-	_txt->printDialogueText(3, getLangString(stackPos(0)), script, 0, 1);
+	_txt->printDialogueText2(3, getLangString(stackPos(0)), script, 0, 1);
 	return 1;
 }
 
@@ -1589,7 +1589,7 @@ int LoLEngine::olol_playDialogueTalkText(EMCState *script) {
 
 	if (!snd_playCharacterSpeech(track, 0, 0) || textEnabled()) {
 		char *s = getLangString(track);
-		_txt->printDialogueText(4, s, script, 0, 1);
+		_txt->printDialogueText2(4, s, script, 0, 1);
 	}
 
 	return 1;
@@ -1660,7 +1660,7 @@ int LoLEngine::olol_printWindowText(EMCState *script) {
 		_txt->clearCurDim();
 	if (flg & 3)
 		_txt->resetDimTextPositions(dim);
-	_txt->printDialogueText(dim, getLangString(stackPos(2)), script, 0, 3);
+	_txt->printDialogueText2(dim, getLangString(stackPos(2)), script, 0, 3);
 	return 1;
 }
 
@@ -2545,7 +2545,7 @@ int LoLEngine::tlol_playMusicTrack(const TIM *tim, const uint16 *param) {
 int LoLEngine::tlol_playDialogueTalkText(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_playDialogueTalkText(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
 	if (!snd_playCharacterSpeech(param[0], 0, 0) || textEnabled())
-		_txt->printDialogueText(4, getLangString(param[0]), 0, param, 1);
+		_txt->printDialogueText2(4, getLangString(param[0]), 0, param, 1);
 	return 1;
 }
 

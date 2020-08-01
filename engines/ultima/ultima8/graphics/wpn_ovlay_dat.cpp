@@ -49,7 +49,7 @@ const AnimWeaponOverlay *WpnOvlayDat::getAnimOverlay(uint32 action) const {
 }
 
 const WeaponOverlayFrame *WpnOvlayDat::getOverlayFrame(uint32 action, int type,
-        int direction,
+        Direction direction,
         int frame) const {
 	if (action >= _overlay.size())
 		return nullptr;
@@ -73,7 +73,7 @@ void WpnOvlayDat::load(RawArchive *overlaydat) {
 
 		if (rs && rs->size()) {
 			// get Avatar's animation
-			AnimAction *anim = msf->getAnim(1, action);
+			const AnimAction *anim = msf->getAnim(1, action);
 			if (!anim) {
 				perr << "Skipping wpnovlay action " << action << " because animation doesn't exist." << Std::endl;
 				continue;
@@ -82,8 +82,8 @@ void WpnOvlayDat::load(RawArchive *overlaydat) {
 			AnimWeaponOverlay *awo = new AnimWeaponOverlay;
 			_overlay[action] = awo;
 
-			unsigned int animlength = anim->_size;
-			unsigned int dircount = anim->_dirCount;
+			unsigned int animlength = anim->getSize();
+			unsigned int dircount = anim->getDirCount();
 
 			unsigned int typecount = rs->size() / (4 * dircount * animlength);
 			awo->_overlay.resize(typecount);

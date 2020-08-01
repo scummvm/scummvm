@@ -45,6 +45,26 @@
 
 namespace Groovie {
 
+// Adapted from SCRIPT.GRV
+const byte t7gMidiInitScript[] = {
+	0x1A, 0x00, 0x01, 0xB1, 0x12, 0x00,		// strcmpnejmp (if (var 0100 != 01) jmp 0012)
+	0x02, 0x46, 0x4C,						// playsong 4C46 (GM init)
+	0x03,									// bf9on (fade-in)
+	0x09, 0x60, 0x24,						// videofromref 2460 (GM init video)
+	0x09, 0x60, 0x24,						// videofromref 2460 (GM init video)
+	0x04,									// palfadeout
+	0x29,									// stopmidi
+	0x1A, 0x00, 0x01, 0xB2, 0x21, 0x00,		// :0012 - strcmpnejmp (if (var 0100 != 02) jmp 0021)
+	0x02, 0x45, 0x4C,						// playsong 4C45 (MT-32 init)
+	0x03,									// bf9on (fade-in)
+	0x09, 0x61, 0x24,						// videofromref 2461 (MT-32 init video)
+	0x04,									// palfadeout
+	0x29,									// stopmidi
+	0x31, 0x63, 0x00, 0x00, 0x00,			// :0021 - midivolume 0063, 0000
+	0x3C,									// checkvalidsaves
+	0x43, 0x00								// returnscript 00
+};
+
 Script::Script(GroovieEngine *vm, EngineVersion version) :
 	_code(NULL), _savedCode(NULL), _stacktop(0), _debugger(NULL), _vm(vm),
 	_videoFile(NULL), _videoRef(0), _staufsMove(NULL), _lastCursor(0xff),
@@ -188,6 +208,10 @@ void Script::directGameLoad(int slot) {
 		_savedCode = nullptr;
 	}
 
+	uint16 targetInstruction;
+	const byte *midiInitScript = 0;
+	uint8 midiInitScriptSize = 0;
+
 	// HACK: We set the slot to load in the appropriate variable, and set the
 	// current instruction to the one that actually loads the saved game
 	// specified in that variable. This differs depending on the game and its
@@ -195,21 +219,46 @@ void Script::directGameLoad(int slot) {
 	if (_version == kGroovieT7G) {
 		// 7th Guest
 		setVariable(0x19, slot);
-		_currentInstruction = 0x287;
+		targetInstruction = 0x287;
+		// TODO Not sure if this works on or is necessary for Mac or iOS
+		// versions. Disabling it to prevent breaking game loading.
+		if (_vm->getPlatform() == Common::kPlatformDOS) {
+			midiInitScript = t7gMidiInitScript;
+			midiInitScriptSize = sizeof(t7gMidiInitScript);
+		}
 	} else {
 		// 11th Hour
 		setVariable(0xF, slot);
 		// FIXME: This bypasses a lot of the game's initialization procedure
-		_currentInstruction = 0xE78E;
+		targetInstruction = 0xE78E;
 	}
 
-	// TODO: We'll probably need to start by running the beginning of the
-	// script to let it do the soundcard initialization and then do the
-	// actual loading.
+	if (midiInitScript && !_vm->_musicPlayer->isMidiInit()) {
+		// Run the MIDI init script as a subscript.
 
-	// Due to HACK above, the call to check valid save slots is not run.
-	// As this is where we load save names, manually call it here.
-	o_checkvalidsaves();
+		// Backup the current script state
+		_savedCode = _code;
+		_savedCodeSize = _codeSize;
+		_savedStacktop = _stacktop;
+		_savedScriptFile = _scriptFile;
+		// Set the game load instruction as the backup instruction. This
+		// will run when the subscript returns.
+		_savedInstruction = targetInstruction;
+
+		// Set the MIDI init script as the current script.
+		_codeSize = midiInitScriptSize;
+		_code = new byte[_codeSize];
+		memcpy(_code, midiInitScript, _codeSize);
+		_stacktop = 0;
+		_currentInstruction = 0;
+	} else {
+		// No MIDI initialization necessary. Just jump to the game load
+		// instruction.
+		_currentInstruction = targetInstruction;
+		// Due to HACK above, the call to check valid save slots is not run.
+		// As this is where we load save names, manually call it here.
+		o_checkvalidsaves();
+	}
 }
 
 void Script::step() {
@@ -577,20 +626,25 @@ void Script::o_videofromref() {			// 0x09
 		debugCN(1, kDebugScript, "\n");
 	}
 
-	// Determine if the GM initialization video is being played
-	bool gmInitVideo = (_version == kGroovieT7G && fileref == 0x2460);
+	// Determine if the MT-32 or GM initialization video is being played
+	bool gmInitVideo = _version == kGroovieT7G && fileref == 0x2460;
+	bool mt32InitVideo = _version == kGroovieT7G && fileref == 0x2461;
 	// Play the video
-	// If the GM init video is being played, loop it until the "audio"
+	// If a MIDI init video is being played, loop it until the "audio"
 	// (init commands) has finished playing
-	if (!playvideofromref(fileref, gmInitVideo)) {
+	if (!playvideofromref(fileref, gmInitVideo || mt32InitVideo)) {
 		// Move _currentInstruction back
 		_currentInstruction -= 3;
-	} else if (gmInitVideo) {
-		// The script plays the GM init video twice to give the "audio"
-		// enough time to play. It has just looped until the audio finished,
-		// so the second play is no longer necessary.
-		// Skip the next instruction.
-		_currentInstruction += 3;
+	} else if (gmInitVideo || mt32InitVideo) {
+		// MIDI initialization has completed. Set this on the music player,
+		// so that MIDI init will not be done again on game load.
+		_vm->_musicPlayer->setMidiInit(true);
+		if (gmInitVideo)
+			// The script plays the GM init video twice to give the "audio"
+			// enough time to play. It has just looped until the audio finished,
+			// so the second play is no longer necessary.
+			// Skip the next instruction.
+			_currentInstruction += 3;
 	}
 }
 

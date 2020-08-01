@@ -161,110 +161,110 @@ void KyraRpgEngine::generateBlockDrawingBuffer() {
 
 	uint8 t = _visibleBlocks[0]->walls[_sceneDrawVarRight];
 	if (t)
-		generateVmpTileData(-2, 3, t, 102, 3, 5);
+		generateVmpTileData(-2, 3, t, _vmpVisOffs[0], 3, 5);
 
 	t = _visibleBlocks[6]->walls[_sceneDrawVarLeft];
 	if (t)
-		generateVmpTileDataFlipped(21, 3, t, 102, 3, 5);
+		generateVmpTileDataFlipped(21, 3, t, _vmpVisOffs[0], 3, 5);
 
 	t = _visibleBlocks[1]->walls[_sceneDrawVarRight];
 	uint8 t2 = _visibleBlocks[2]->walls[_sceneDrawVarDown];
 
 	if (hasWall(t) && !(_wllWallFlags[t2] & 8))
-		generateVmpTileData(2, 3, t, 102, 3, 5);
+		generateVmpTileData(2, 3, t, _vmpVisOffs[0], 3, 5);
 	else if (t && (_wllWallFlags[t2] & 8))
-		generateVmpTileData(2, 3, t2, 102, 3, 5);
+		generateVmpTileData(2, 3, t2, _vmpVisOffs[0], 3, 5);
 
 	t = _visibleBlocks[5]->walls[_sceneDrawVarLeft];
 	t2 = _visibleBlocks[4]->walls[_sceneDrawVarDown];
 
 	if (hasWall(t) && !(_wllWallFlags[t2] & 8))
-		generateVmpTileDataFlipped(17, 3, t, 102, 3, 5);
+		generateVmpTileDataFlipped(17, 3, t, _vmpVisOffs[0], 3, 5);
 	else if (t && (_wllWallFlags[t2] & 8))
-		generateVmpTileDataFlipped(17, 3, t2, 102, 3, 5);
+		generateVmpTileDataFlipped(17, 3, t2, _vmpVisOffs[0], 3, 5);
 
 	t = _visibleBlocks[2]->walls[_sceneDrawVarRight];
 	if (t)
-		generateVmpTileData(8, 3, t, 97, 1, 5);
+		generateVmpTileData(8, 3, t, _vmpVisOffs[1], 1, 5);
 
 	t = _visibleBlocks[4]->walls[_sceneDrawVarLeft];
 	if (t)
-		generateVmpTileDataFlipped(13, 3, t, 97, 1, 5);
+		generateVmpTileDataFlipped(13, 3, t, _vmpVisOffs[1], 1, 5);
 
 	t = _visibleBlocks[1]->walls[_sceneDrawVarDown];
 	if (hasWall(t))
-		generateVmpTileData(-4, 3, t, 129, 6, 5);
+		generateVmpTileData(-4, 3, t, _vmpVisOffs[2], 6, 5);
 
 	t = _visibleBlocks[5]->walls[_sceneDrawVarDown];
 	if (hasWall(t))
-		generateVmpTileData(20, 3, t, 129, 6, 5);
+		generateVmpTileData(20, 3, t, _vmpVisOffs[2], 6, 5);
 
 	t = _visibleBlocks[2]->walls[_sceneDrawVarDown];
 	if (hasWall(t))
-		generateVmpTileData(2, 3, t, 129, 6, 5);
+		generateVmpTileData(2, 3, t, _vmpVisOffs[2], 6, 5);
 
 	t = _visibleBlocks[4]->walls[_sceneDrawVarDown];
 	if (hasWall(t))
-		generateVmpTileData(14, 3, t, 129, 6, 5);
+		generateVmpTileData(14, 3, t, _vmpVisOffs[2], 6, 5);
 
 	t = _visibleBlocks[3]->walls[_sceneDrawVarDown];
 	if (t)
-		generateVmpTileData(8, 3, t, 129, 6, 5);
+		generateVmpTileData(8, 3, t, _vmpVisOffs[2], 6, 5);
 
 	t = _visibleBlocks[7]->walls[_sceneDrawVarRight];
 	if (t)
-		generateVmpTileData(0, 3, t, 117, 2, 6);
+		generateVmpTileData(0, 3, t, _vmpVisOffs[3], 2, 6);
 
 	t = _visibleBlocks[11]->walls[_sceneDrawVarLeft];
 	if (t)
-		generateVmpTileDataFlipped(20, 3, t, 117, 2, 6);
+		generateVmpTileDataFlipped(20, 3, t, _vmpVisOffs[3], 2, 6);
 
 	t = _visibleBlocks[8]->walls[_sceneDrawVarRight];
 	if (t)
-		generateVmpTileData(6, 2, t, 81, 2, 8);
+		generateVmpTileData(6, 2, t, _vmpVisOffs[4], 2, 8);
 
 	t = _visibleBlocks[10]->walls[_sceneDrawVarLeft];
 	if (t)
-		generateVmpTileDataFlipped(14, 2, t, 81, 2, 8);
+		generateVmpTileDataFlipped(14, 2, t, _vmpVisOffs[4], 2, 8);
 
 	t = _visibleBlocks[8]->walls[_sceneDrawVarDown];
 	if (hasWall(t))
-		generateVmpTileData(-4, 2, t, 159, 10, 8);
+		generateVmpTileData(-4, 2, t, _vmpVisOffs[5], 10, 8);
 
 	t = _visibleBlocks[10]->walls[_sceneDrawVarDown];
 	if (hasWall(t))
-		generateVmpTileData(16, 2, t, 159, 10, 8);
+		generateVmpTileData(16, 2, t, _vmpVisOffs[5], 10, 8);
 
 	t = _visibleBlocks[9]->walls[_sceneDrawVarDown];
 	if (t)
-		generateVmpTileData(6, 2, t, 159, 10, 8);
+		generateVmpTileData(6, 2, t, _vmpVisOffs[5], 10, 8);
 
 	t = _visibleBlocks[12]->walls[_sceneDrawVarRight];
 	if (t)
-		generateVmpTileData(3, 1, t, 45, 3, 12);
+		generateVmpTileData(3, 1, t, _vmpVisOffs[6], 3, 12);
 
 	t = _visibleBlocks[14]->walls[_sceneDrawVarLeft];
 	if (t)
-		generateVmpTileDataFlipped(16, 1, t, 45, 3, 12);
+		generateVmpTileDataFlipped(16, 1, t, _vmpVisOffs[6], 3, 12);
 
 	t = _visibleBlocks[12]->walls[_sceneDrawVarDown];
 	if (!(_wllWallFlags[t] & 8))
-		generateVmpTileData(-13, 1, t, 239, 16, 12);
+		generateVmpTileData(-13, 1, t, _vmpVisOffs[7], 16, 12);
 
 	t = _visibleBlocks[14]->walls[_sceneDrawVarDown];
 	if (!(_wllWallFlags[t] & 8))
-		generateVmpTileData(19, 1, t, 239, 16, 12);
+		generateVmpTileData(19, 1, t, _vmpVisOffs[7], 16, 12);
 
 	t = _visibleBlocks[13]->walls[_sceneDrawVarDown];
 	if (t)
-		generateVmpTileData(3, 1, t, 239, 16, 12);
+		generateVmpTileData(3, 1, t, _vmpVisOffs[7], 16, 12);
 
 	t = _visibleBlocks[15]->walls[_sceneDrawVarRight];
 	t2 = _visibleBlocks[17]->walls[_sceneDrawVarLeft];
 	if (t)
-		generateVmpTileData(0, 0, t, 0, 3, 15);
+		generateVmpTileData(0, 0, t, _vmpVisOffs[8], 3, 15);
 	if (t2)
-		generateVmpTileDataFlipped(19, 0, t2, 0, 3, 15);
+		generateVmpTileDataFlipped(19, 0, t2, _vmpVisOffs[8], 3, 15);
 }
 
 void KyraRpgEngine::generateVmpTileData(int16 startBlockX, uint8 startBlockY, uint8 vmpMapIndex, int16 vmpOffset, uint8 numBlocksX, uint8 numBlocksY) {
@@ -288,24 +288,20 @@ void KyraRpgEngine::generateVmpTileDataFlipped(int16 startBlockX, uint8 startBlo
 	if (!_wllVmpMap[vmpMapIndex])
 		return;
 
-	uint16 *vmp = &_vmpPtr[(_wllVmpMap[vmpMapIndex] - 1) * 431 + vmpOffset + 330];
+	uint16 *vmp = &_vmpPtr[(_wllVmpMap[vmpMapIndex] - 1) * 431 + vmpOffset + 330] + (numBlocksX - 1);
+	uint16 *bl = &_blockDrawingBuffer[startBlockY * 22 + startBlockX];
 
 	for (int i = 0; i < numBlocksY; i++) {
+		uint16 *bl2 = bl;
+		uint16 *vmpb = vmp;
 		for (int ii = 0; ii < numBlocksX; ii++) {
-			if ((startBlockX + ii) < 0 || (startBlockX + ii) > 21)
-				continue;
-
-			uint16 v = vmp[i * numBlocksX + (numBlocksX - 1 - ii)];
-			if (!v)
-				continue;
-
-			if (v & 0x4000)
-				v -= 0x4000;
-			else
-				v |= 0x4000;
-
-			_blockDrawingBuffer[(startBlockY + i) * 22 + startBlockX + ii] = v;
+			if ((startBlockX + ii >= 0) && (startBlockX + ii < 22) && *vmp)
+				*bl = (*vmp & 0x4000) ? *vmp - 0x4000 : *vmp | 0x4000;
+			bl++;
+			vmp--;
 		}
+		bl = bl2 + 22;
+		vmp = vmpb + numBlocksX;
 	}
 }
 
@@ -319,7 +315,6 @@ void KyraRpgEngine::assignVisibleBlocks(int block, int direction) {
 	for (int i = 0; i < 18; i++) {
 		uint16 t = (block + _dscBlockIndex[direction * 18 + i]) & 0x3FF;
 		_visibleBlockIndex[i] = t;
-
 		_visibleBlocks[i] = &_levelBlockProperties[t];
 		_lvlShapeLeftRight[i] = _lvlShapeLeftRight[18 + i] = -1;
 	}
@@ -682,13 +677,13 @@ void KyraRpgEngine::openCloseDoor(int block, int openClose) {
 			_levelBlockProperties[block].walls[c] += openClose;
 			_levelBlockProperties[block].walls[c ^ 2] += openClose;
 
-			int snd = (openClose == -1) ? 4 : 3;
+			int snd = (openClose == -1) ? 4 : (isSpecialDoor(block) ? 126 : 3);
 			if (_flags.gameID == GI_LOL) {
 				snd_processEnvironmentalSoundEffect(snd + 28, _currentBlock);
 				if (!checkSceneUpdateNeed(block))
-					updateEnvironmentalSfx(0);
+					snd_updateEnvironmentalSfx(0);
 			} else {
-				updateEnvironmentalSfx(snd);
+				snd_updateEnvironmentalSfx(snd);
 			}
 		}
 
@@ -717,6 +712,20 @@ void KyraRpgEngine::completeDoorOperations() {
 
 		_openDoorState[i].block = 0;
 	}
+}
+
+bool KyraRpgEngine::isSpecialDoor(int block) {
+	if (_flags.platform != Common::kPlatformSegaCD || _currentLevel != 2)
+		return false;
+
+	static const uint16 specialBlocks[4] = { 0x122, 0x275, 0x3C8, 0x1E7 };
+
+	for (int i = 0; i < 4; ++i) {
+		if (block == specialBlocks[i])
+			return true;
+	}
+
+	return false;
 }
 
 } // End of namespace Kyra

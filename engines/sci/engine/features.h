@@ -187,16 +187,12 @@ public:
 	 */
 	bool supportsTextSpeed() const {
 		switch (g_sci->getGameId()) {
-#ifdef ENABLE_SCI32
 		case GID_GK1:
 		case GID_SQ6:
 			return true;
-#endif
 		default:
-			break;
+			return false;
 		}
-
-		return false;
 	}
 
 	/**

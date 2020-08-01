@@ -48,7 +48,8 @@ class Frame;
 struct Label;
 class Movie;
 struct Resource;
-struct Channel;
+class Cursor;
+class Channel;
 class Sprite;
 class CastMember;
 
@@ -59,97 +60,35 @@ enum RenderMode {
 	kRenderNoUnrender
 };
 
-struct TransParams {
-	TransitionType type;
-	uint frame;
-	uint duration;
-	uint chunkSize;
-	uint area;
-
-	int steps;
-	int stepDuration;
-
-	int xStepSize;
-	int yStepSize;
-
-	int xpos, ypos;
-
-	int stripSize;
-
-	TransParams() {
-		type = kTransNone;
-		frame = 0;
-		duration = 250;
-		chunkSize = 1;
-		area = 0;
-		steps = 0;
-		stepDuration = 0;
-		stripSize = 0;
-
-		xStepSize = yStepSize = 0;
-		xpos = ypos = 0;
-	}
-
-	TransParams(uint16 d, uint16 a, uint16 c, TransitionType t) :
-			duration(d), area(a), chunkSize(c), type(t) {
-		frame = 0;
-		steps = 0;
-		stepDuration = 0;
-		stripSize = 0;
-
-		xStepSize = yStepSize = 0;
-		xpos = ypos = 0;
-	}
-};
-
-struct MacShape {
-	InkType ink;
-	byte spriteType;
-	byte foreColor;
-	byte backColor;
-	int lineSize;
-	uint pattern;
-};
-
-struct Channel {
-	Sprite *_sprite;
-
-	bool _dirty;
-	bool _visible;
-	uint _constraint;
-	Common::Point _currentPoint;
-	Common::Point _delta;
-
-	Channel(Sprite *sp);
-	bool isDirty(Sprite *nextSprite = nullptr);
-
-	Common::Rect getBbox();
-	Common::Point getPosition();
-	MacShape *getShape();
-	Graphics::ManagedSurface *getSurface();
-	const Graphics::Surface *getMask(bool forceMatte = false);
-
-	void setClean(Sprite *nextSprite, int spriteId);
-	void addDelta(Common::Point pos);
-};
-
 class Score {
 public:
 	Score(Movie *movie);
 	~Score();
+
+	Movie *getMovie() const { return _movie; }
 
 	void loadFrames(Common::SeekableSubReadStreamEndian &stream);
 	void loadLabels(Common::SeekableSubReadStreamEndian &stream);
 	void loadActions(Common::SeekableSubReadStreamEndian &stream);
 
 	static int compareLabels(const void *a, const void *b);
-	void setStartToLabel(Common::String label);
+	uint16 getLabel(Common::String &label);
+	Common::String *getLabelList();
+	void setStartToLabel(Common::String &label);
 	void gotoLoop();
 	void gotoNext();
 	void gotoPrevious();
-	void startLoop();
+	void startPlay();
+	void step();
+	void stopPlay();
+
 	void setCurrentFrame(uint16 frameId) { _nextFrame = frameId; }
 	uint16 getCurrentFrame() { return _currentFrame; }
+	int getNextFrame() { return _nextFrame; }
+
+	int getCurrentPalette();
+	int resolvePaletteId(int id);
+
 	Channel *getChannelById(uint16 id);
 	Sprite *getSpriteById(uint16 id);
 
@@ -159,13 +98,16 @@ public:
 	int getCurrentLabelNumber();
 	int getNextLabelNumber(int referenceFrame);
 
-	uint16 getSpriteIDFromPos(Common::Point pos, bool onlyActive = false);
+	uint16 getSpriteIDFromPos(Common::Point pos);
+	uint16 getMouseSpriteIDFromPos(Common::Point pos);
+	uint16 getActiveSpriteIDFromPos(Common::Point pos);
 	bool checkSpriteIntersection(uint16 spriteId, Common::Point pos);
 	Common::List<Channel *> getSpriteIntersections(const Common::Rect &r);
 
 	bool renderTransition(uint16 frameId);
 	void renderFrame(uint16 frameId, RenderMode mode = kRenderModeNormal);
 	void renderSprites(uint16 frameId, RenderMode mode = kRenderModeNormal);
+	void renderCursor(uint spriteId);
 
 private:
 	void update();
@@ -186,8 +128,14 @@ public:
 	byte _currentFrameRate;
 
 	byte _puppetTempo;
-	bool _stopPlay;
+	bool _puppetPalette;
+	int _lastPalette;
+
+	PlayState _playState;
 	uint32 _nextFrameTime;
+	int _waitForChannel;
+	int _activeFade;
+	Cursor *_currentCursor;
 
 	int _numChannelsDisplayed;
 

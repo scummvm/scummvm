@@ -42,10 +42,10 @@ QObjectPetka::QObjectPetka() {
 	_x = 574;
 	_y = 44;
 	_z = 200;
-	_surfId  = -5;
+	// _surfId  = -5;
 	_surfH = 0;
 	_surfW = 0;
-	_field98 = 1.0;
+	_k = 1.0;
 }
 
 void QObjectPetka::processMessage(const QMessage &arg) {
@@ -53,6 +53,11 @@ void QObjectPetka::processMessage(const QMessage &arg) {
 	if (msg.opcode == kImage) {
 		msg.opcode = kSet;
 		_imageId = msg.arg1;
+		// delete _walkObj;
+		// _walkObj = new Walk(_imageId + 10);
+		// int backgroundId = g_vm->resMgr()->findResourceName(g_vm->getQSystem()->_room->_resourceId)
+		// _walkObj->setBackground(backgroundId);
+
 	}
 	if (msg.opcode == kSaid || msg.opcode == kStand) {
 		msg.opcode = kSet;
@@ -86,10 +91,8 @@ void QObjectPetka::processMessage(const QMessage &arg) {
 void QObjectPetka::initSurface() {
 	QManager *resMgr = g_vm->resMgr();
 	FlicDecoder *flc = resMgr->loadFlic(_resourceId);
-	resMgr->removeResource(_surfId);
-	resMgr->findOrCreateSurface(_surfId, flc->getWidth(), flc->getHeight());
-	_surfW = flc->getWidth() * _field98;
-	_surfH = flc->getHeight() * _field98;
+	_surfW = flc->getWidth() * _k;
+	_surfH = flc->getHeight() * _k;
 }
 
 void QObjectPetka::walk(int x, int y) {
@@ -142,18 +145,16 @@ void QObjectPetka::draw() {
 	}
 
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
-	Graphics::Surface *surf = g_vm->resMgr()->loadBitmap(_surfId);
-	if (!flc || !surf) {
+	if (!flc) {
 		return;
 	}
 	Graphics::Surface *conv = flc->getCurrentFrame()->convertTo(g_system->getScreenFormat(), flc->getPalette());
-	surf->copyRectToSurface(*conv, 0, 0, Common::Rect(0, 0, flc->getWidth() - 1, flc->getHeight() - 1));
 
-	Common::Rect srcRect(0, 0, _surfW, _surfH);
-	Common::Rect dstRect(srcRect);
+	Common::Rect srcRect(0, 0, conv->w, conv->h);
+	Common::Rect dstRect(0, 0, _surfW, _surfH);
 	dstRect.translate(_x, _y);
 
-	g_vm->videoSystem()->transBlitFrom(*surf, srcRect, dstRect, flc->getTransColor(surf->format));
+	g_vm->videoSystem()->transBlitFrom(*conv, srcRect, dstRect, flc->getTransColor(conv->format));
 	conv->free();
 	delete conv;
 }
@@ -162,10 +163,10 @@ void QObjectPetka::setPos(Common::Point p, bool) {
 	p.y = MIN<int16>(p.y, 480);
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
 
-	_field98 = calcSmth(p.y);
+	_k = calcPerspective(p.y);
 
-	_surfH = flc->getHeight() * _field98;
-	_surfW = flc->getWidth() * _field98;
+	_surfH = flc->getHeight() * _k;
+	_surfW = flc->getWidth() * _k;
 
 	_x_ = p.x;
 	_y_ = p.y;
@@ -176,7 +177,7 @@ void QObjectPetka::setPos(Common::Point p, bool) {
 	g_vm->videoSystem()->makeAllDirty();
 }
 
-double QObjectPetka::calcSmth(int y) {
+double QObjectPetka::calcPerspective(int y) {
 	QSystem *qsys = g_vm->getQSystem();
 
 	y = MIN(y, 480);
@@ -290,8 +291,8 @@ void QObjectPetka::update(int time) {
 			updateWalk();
 			flc = g_vm->resMgr()->loadFlic(_resourceId);
 
-			_surfH = flc->getHeight() * _field98;
-			_surfW = flc->getWidth() * _field98;
+			_surfH = flc->getHeight() * _k;
+			_surfW = flc->getWidth() * _k;
 
 			_time -= flc->getDelay();
 
@@ -304,21 +305,32 @@ bool QObjectPetka::isInPoint(Common::Point p) {
 	if (!_isActive)
 		return false;
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
-	Graphics::Surface *s = g_vm->resMgr()->loadBitmap(_surfId);
-	if (!s)
-		return false;
+	const Graphics::Surface *flcSurface = flc->getCurrentFrame();
 	Common::Rect bounds(_surfW, _surfH);
+	Graphics::ManagedSurface s(_surfW, _surfH, flcSurface->format);
+	s.transBlitFrom(*flcSurface, Common::Rect(0, 0, flcSurface->w, flcSurface->h), bounds);
 	p.x -= _x;
 	p.y -= _y;
 	if (!bounds.contains(p.x, p.y))
 		return false;
-	return *(uint16 *)s->getBasePtr(p.x, p.y) != flc->getTransColor(s->format);
+	return *(uint16 *)s.getBasePtr(p.x, p.y) != 0;
+}
+
+void QObjectPetka::updateZ() {
+	if (_animate && _isShown && _updateZ) {
+		FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+		if (_isWalking) {
+			// _z = _walkObj->currPos().y
+		} else {
+			_z = _y + flc->getHeight() * _k;
+		}
+	}
 }
 
 QObjectChapayev::QObjectChapayev() {
 	_x = 477;
 	_y = 350;
-	_surfId = -6;
+	// _surfId = -6;
 	_isPetka = false;
 }
 

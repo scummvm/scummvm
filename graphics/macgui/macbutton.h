@@ -30,6 +30,7 @@ namespace Graphics {
 
 class MacWidget;
 class MacText;
+struct MacPlotData;
 
 enum MacButtonType {
 	kRound,
@@ -52,6 +53,7 @@ public:
 
 private:
 	MacButtonType _buttonType;
+	MacPlotData _pd;
 };
 
 } // End of namespace Graphics

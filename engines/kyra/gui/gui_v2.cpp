@@ -448,13 +448,13 @@ void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 			Util::convertISOToDOS(s);
 
 			// Trim long GMM save descriptions to fit our save slots
-			_screen->_charWidth = -2;
+			_screen->_charSpacing = -2;
 			int fC = _screen->getTextWidth(s);
 			while (s[0] && fC > 240) {
 				s[strlen(s) - 1]  = 0;
 				fC = _screen->getTextWidth(s);
 			}
-			_screen->_charWidth = 0;
+			_screen->_charSpacing = 0;
 
 			menu.item[i].saveSlot = _saveSlots[i + _savegameOffset];
 			menu.item[i].enabled = true;
@@ -827,9 +827,9 @@ bool GUI_v2::checkSavegameDescription(const char *buffer, int size) {
 
 int GUI_v2::getCharWidth(uint8 c) {
 	Screen::FontId old = _screen->setFont(Screen::FID_8_FNT);
-	_screen->_charWidth = -2;
+	_screen->_charSpacing = -2;
 	int width = _screen->getCharWidth(c);
-	_screen->_charWidth = 0;
+	_screen->_charSpacing = 0;
 	_screen->setFont(old);
 	return width;
 }

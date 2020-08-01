@@ -543,7 +543,9 @@ private:
 	}
 
 	bool isNormallyComposited() const {
-		return getSciVersion() == SCI_VERSION_3;
+		return (getSciVersion() == SCI_VERSION_3) || 
+				(g_sci->getPlatform() == Common::kPlatformMacintosh &&
+				 getSciVersion() >= SCI_VERSION_2_1_LATE);
 	}
 
 	void initOverlay();

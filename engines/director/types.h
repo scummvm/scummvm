@@ -25,6 +25,10 @@
 
 namespace Director {
 
+enum MovieFlag {
+	kMovieFlagAllowOutdatedLingo	= (1 << 8)
+};
+
 enum CastType {
 	kCastTypeNull = 0,
 	kCastBitmap = 1,
@@ -46,22 +50,22 @@ enum ScriptType {
 	kScoreScript = 0,
 	kCastScript = 1,
 	kMovieScript = 2,
-	kGlobalScript = 3,
+	kEventScript = 3,
 	kMaxScriptType = 3	// Sync with score-loading.cpp:45, array scriptTypes[]
 };
 
 enum ScriptFlag {
 	kScriptFlagUnk0			= (1 << 0x0),
-	kScriptFlagGlobal		= (1 << 0x1),
-	kScriptFlagUnk2			= (1 << 0x2),
+	kScriptFlagFuncsGlobal	= (1 << 0x1),
+	kScriptFlagVarsGlobal	= (1 << 0x2),	// Occurs in event scripts (which have no local vars). Correlated with use of alternate global var opcodes.
 	kScriptFlagUnk3			= (1 << 0x3),
 	kScriptFlagFactoryDef	= (1 << 0x4),
 	kScriptFlagUnk5			= (1 << 0x5),
 	kScriptFlagUnk6			= (1 << 0x6),
 	kScriptFlagUnk7			= (1 << 0x7),
 	kScriptFlagHasFactory	= (1 << 0x8),
-	kScriptFlagUnk9			= (1 << 0x9),
-	kScriptFlagUnkA			= (1 << 0xa),
+	kScriptFlagEventScript	= (1 << 0x9),
+	kScriptFlagEventScript2	= (1 << 0xa),
 	kScriptFlagUnkB			= (1 << 0xb),
 	kScriptFlagUnkC			= (1 << 0xc),
 	kScriptFlagUnkD			= (1 << 0xd),
@@ -75,7 +79,8 @@ enum ObjectType {
 	kXObj = 1 << 1,
 	kScriptObj = 1 << 2,
 	kXtraObj = 1 << 3,
-	kAllObj = kFactoryObj | kXObj | kScriptObj | kXtraObj
+	kAllObj = kFactoryObj | kXObj | kScriptObj | kXtraObj,
+	kWindowObj = 1 << 4
 };
 
 enum ShapeType {
@@ -180,6 +185,7 @@ enum LEvent {
 	kEventEndSprite,
 
 	kEventNone,
+	kEventGeneric,
 	kEventEnterFrame,
 	kEventPrepareFrame,
 	kEventIdle,
@@ -205,7 +211,9 @@ enum LEvent {
 	kEventMouseUpOutSide,
 	kEventMouseWithin,
 
-	kEventStartUp
+	kEventStartUp,
+
+	kEventMenuCallback
 };
 
 enum TransitionType {
@@ -266,20 +274,36 @@ enum TransitionType {
 
 // TODO: Can there be any more built-in palette types?
 enum PaletteType {
- kClutSystemMac = 0x0000,
- kClutSystemWin = 0xff9c,
- kClutRainbow = 0xffff,
- kClutGrayscale = 0xfffe,
- kClutPastels = 0xfffd,
- kClutVivid = 0xfffc,
- kClutNTSC = 0xfffb,
- kClutMetallic = 0xfffa
+ kClutSystemMac = -1,
+ kClutRainbow = -2,
+ kClutGrayscale = -3,
+ kClutPastels = -4,
+ kClutVivid = -5,
+ kClutNTSC = -6,
+ kClutMetallic = -7,
+ kClutSystemWin = -101
 };
 
 enum {
 	kCursorDefault,
 	kCursorMouseDown,
 	kCursorMouseUp
+};
+
+enum PlayState {
+	kPlayNotStarted,
+	kPlayStarted,
+	kPlayStopped
+};
+
+enum SymbolType {
+	VOIDSYM,
+	OPCODE,
+	CBLTIN,	// builtin command
+	FBLTIN,	// builtin function
+	HBLTIN,	// builtin handler (can be called as either command or func)
+	KBLTIN,	// builtin constant
+	HANDLER	// user-defined handler
 };
 
 struct Datum;

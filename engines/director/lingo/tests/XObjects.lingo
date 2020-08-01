@@ -1,0 +1,14 @@
+openXLib("FlushXObj")
+set flush = FlushXObj(mNew)
+flush(mClearMask)
+flush(mAddToMask, 0, 0)
+flush(mFlush)
+flush(mFlushEvents, 0, 0)
+
+openXLib("PalXObj")
+set fixpal = FixPalette(mNew, 0, 20, 512, 20)
+fixpal(mPatchIt)
+
+openXLib("winXOBJ")
+set winxobj = RearWindow(mNew, "M")
+scummVMAssert(winxobj(mGetMemoryNeeded) = 0)

@@ -380,13 +380,37 @@ void SkyMetaEngine::removeSaveState(const char *target, int slot) const {
 
 namespace Sky {
 Common::Error SkyEngine::loadGameState(int slot) {
-	uint16 result = _skyControl->quickXRestore(slot - 1);
+	// We don't need to offset "slot" here. Both loadGameState and quickXRestore
+	// are called with the ScummVM Save File Manager's "slot" as argument
+	uint16 result = _skyControl->quickXRestore(slot);
 	return (result == GAME_RESTORED) ? Common::kNoError : Common::kUnknownError;
 }
 
+/**
+* Manually saving a game should save it into ScummVM Save File Managers slots 1 or greater.
+* ScummVM Save file manager's slot 0 is reserved for the autosave.
+* However, natively, the index 0 (_selectedGame) is the first manually saved game.
+* @param slot is the save slot on the ScummVM file manager's list
+*
+*/
 Common::Error SkyEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+	// prevent writing to autosave slot when user selects it manually
+	// ie. from the ScummVM in-game menu Save feature
+	// This also secures _selectedGame which is unsigned integer (uint16)
+	// from overflowing in the subtraction below
+	if (slot < 0 || (!isAutosave && slot == 0)) {
+		return Common::kWritePermissionDenied;
+	}
 	// Set the save slot and save the game
-	_skyControl->_selectedGame = isAutosave ? 0 : slot - 1;
+	// _selectedGame value is one unit lower than the ScummVM's Save File Manager's slot value
+	// Note that *_selectedGame* value 0 corresponds to a manually saved game (the first in order)
+	//   whereas *slot* value 0 corresponds to the autosave
+	if (slot > 0) {
+		// We don't care for updating the _selectedGame when slot == 0
+		// (in the case of autosave) but we do include the check for slot > 0
+		// to guard from overflow, which would be bad practice to allow.
+		_skyControl->_selectedGame = slot - 1;
+	}
 	if (_skyControl->saveGameToFile(false, nullptr, isAutosave) != GAME_SAVED)
 		return Common::kWritePermissionDenied;
 
@@ -396,8 +420,9 @@ Common::Error SkyEngine::saveGameState(int slot, const Common::String &desc, boo
 	_skyControl->loadDescriptions(saveGameTexts);
 
 	// Update the save game description at the given slot
-	if (!isAutosave)
-		saveGameTexts[slot - 1] = desc;
+	if (!isAutosave) {
+		saveGameTexts[_skyControl->_selectedGame] = desc;
+	}
 
 	// Save the updated descriptions
 	_skyControl->saveDescriptions(saveGameTexts);
@@ -406,11 +431,11 @@ Common::Error SkyEngine::saveGameState(int slot, const Common::String &desc, boo
 }
 
 bool SkyEngine::canLoadGameStateCurrently() {
-	return _systemVars.pastIntro && _skyControl->loadSaveAllowed();
+	return _systemVars->pastIntro && _skyControl->loadSaveAllowed();
 }
 
 bool SkyEngine::canSaveGameStateCurrently() {
-	return _systemVars.pastIntro && _skyControl->loadSaveAllowed();
+	return _systemVars->pastIntro && _skyControl->loadSaveAllowed();
 }
 
 } // End of namespace Sky

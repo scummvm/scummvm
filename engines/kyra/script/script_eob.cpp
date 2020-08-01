@@ -527,9 +527,22 @@ int EoBInfProcessor::oeob_printMessage_v1(int8 *data) {
 	strcpy(col, colorConfig);
 	const char *str = (const char *)pos;
 	pos += (strlen(str) + 1);
+	bool lineBreak = true;
 
-	col[1] = *pos++;
-	col[3] = *pos++;
+	if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
+		assert((uint8)*pos < 16);
+		col[1] = _segaCDColorMap[*pos];
+		if (str[0] == '/') {
+			lineBreak = false;
+			str++;
+		}
+		_vm->txt()->clearDim(0);
+		_vm->snd_playSoundEffect(0x204F);
+
+	} else {
+		col[1] = *pos++;
+		col[3] = *pos++;
+	}
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
 		assert((uint8)col[1] < 16);
@@ -541,10 +554,12 @@ int EoBInfProcessor::oeob_printMessage_v1(int8 *data) {
 	_vm->txt()->printMessage(col);
 	_vm->txt()->printMessage(str);
 
-	col[1] = _vm->txt()->colorMap()[_screen->_curDim->unk8];
+	col[1] = _vm->gameFlags().platform == Common::kPlatformSegaCD ? 0xFF : _vm->txt()->colorMap()[_screen->_curDim->unk8];
 	col[3] = _vm->txt()->colorMap()[_screen->_curDim->unkA];
 	_vm->txt()->printMessage(col);
-	_vm->txt()->printMessage("\r");
+
+	if (lineBreak)
+		_vm->txt()->printMessage("\r");
 
 	return pos - data;
 }
@@ -619,15 +634,19 @@ int EoBInfProcessor::oeob_setFlags(int8 *data) {
 
 int EoBInfProcessor::oeob_playSoundEffect(int8 *data) {
 	int8 *pos = data;
-	uint16 block = READ_LE_UINT16(pos + 1);
+	uint16 snd = (uint8)*pos++;
+	uint16 block = READ_LE_UINT16(pos);
+	pos += 2;
+
+	if (_vm->gameFlags().platform == Common::kPlatformSegaCD && (snd == 28 || snd == 133))
+		snd |= 0x1000;
 
 	if (block) {
-		_vm->snd_processEnvironmentalSoundEffect(pos[0], block);
+		_vm->snd_processEnvironmentalSoundEffect(snd, block);
 	} else {
-		_vm->snd_playSoundEffect(pos[0]);
+		_vm->snd_playSoundEffect(snd);
 	}
 
-	pos += 3;
 	return pos - data;
 }
 
@@ -1567,7 +1586,7 @@ int EoBInfProcessor::oeob_dialogue(int8 *data) {
 		break;
 
 	case -40:
-		_dlgResult = _vm->runDialogue(READ_LE_UINT16(pos), READ_LE_UINT16(pos + 6) == 0xFFFF ? 2 : 3, getString(READ_LE_UINT16(pos + 2)), getString(READ_LE_UINT16(pos + 4)), getString(READ_LE_UINT16(pos + 6)));
+		_dlgResult = _vm->runDialogue(READ_LE_UINT16(pos), READ_LE_UINT16(pos + 6) == 0xFFFF ? 2 : 3, -1, getString(READ_LE_UINT16(pos + 2)), getString(READ_LE_UINT16(pos + 4)), getString(READ_LE_UINT16(pos + 6)));
 		pos += 8;
 		break;
 
@@ -1595,14 +1614,14 @@ int EoBInfProcessor::oeob_specialEvent(int8 *data) {
 	case 0:
 		_vm->drawScene(1);
 		_screen->_curPage = 2;
-		_screen->copyRegion(72, 0, 0, 0, 32, 120, 2, 12, Screen::CR_NO_P_CHECK);
+		_screen->copyRegion(72, 0, 0, 0, 32, 120, 2, Screen_EoB::kEoB2ScriptHelperPage, Screen::CR_NO_P_CHECK);
 
 		for (; i < 4; i++) {
 			endTime = _vm->_system->getMillis() + _vm->_tickLength;
 			_vm->drawLightningColumn();
 			_screen->copyRegion(72, 0, 72, 0, 32, 120, 2, 0, Screen::CR_NO_P_CHECK);
 			_screen->updateScreen();
-			_screen->copyRegion(0, 0, 72, 0, 32, 120, 12, 2, Screen::CR_NO_P_CHECK);
+			_screen->copyRegion(0, 0, 72, 0, 32, 120, Screen_EoB::kEoB2ScriptHelperPage, 2, Screen::CR_NO_P_CHECK);
 			_vm->delayUntil(endTime);
 		}
 
@@ -1645,6 +1664,10 @@ int EoBInfProcessor::oeob_specialEvent(int8 *data) {
 
 const uint8 EoBInfProcessor::_amigaColorMap[16] = {
 	0x00, 0x06, 0x1d, 0x1b, 0x1a, 0x17, 0x18, 0x0e, 0x19, 0x1c, 0x1c, 0x1e, 0x13, 0x0a, 0x11, 0x1f
+};
+
+const uint8 EoBInfProcessor::_segaCDColorMap[16] = {
+	0x00, 0xFF, 0x99, 0x55, 0xFF, 0x99, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
 };
 
 } // End of namespace Kyra

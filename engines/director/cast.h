@@ -54,6 +54,7 @@ public:
 	bool loadArchive();
 	void setArchive(Archive *archive);
 	Archive *getArchive() const { return _castArchive; };
+	Common::String getMacName() const { return _macName; }
 
 	void loadConfig(Common::SeekableSubReadStreamEndian &stream);
 	void loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream);
@@ -62,22 +63,23 @@ public:
 	void loadLingoNames(Common::SeekableSubReadStreamEndian &stream);
 	void loadLingoContext(Common::SeekableSubReadStreamEndian &stream);
 
-	void loadSpriteImages();
-	void loadSpriteSounds();
+	void loadCastChildren();
+	void loadSoundCasts();
+	void loadDigitalVideoCasts();
 
 	void copyCastStxts();
-	void createCastWidgets();
 	Common::Rect getCastMemberInitialRect(int castId);
 	void setCastMemberModified(int castId);
 	CastMember *getCastMember(int castId);
 	CastMember *getCastMemberByName(const Common::String &name);
+	CastMember *getCastMemberByScriptId(int scriptId);
 	CastMemberInfo *getCastMemberInfo(int castId);
 	const Stxt *getStxt(int castId);
 
 	void dumpScript(const char *script, ScriptType type, uint16 id);
 
 private:
-	void loadPalette(Common::SeekableSubReadStreamEndian &stream);
+	PaletteV4 loadPalette(Common::SeekableSubReadStreamEndian &stream);
 	void loadScriptText(Common::SeekableSubReadStreamEndian &stream);
 	void loadFontMap(Common::SeekableSubReadStreamEndian &stream);
 	Common::String getString(Common::String str);
@@ -91,6 +93,8 @@ public:
 	uint16 _castIDoffset;
 	uint16 _castArrayStart;
 	uint16 _castArrayEnd;
+
+	int _defaultPalette;
 
 	uint16 _movieScriptCount;
 	LingoArchive *_lingoArchive;
@@ -106,6 +110,7 @@ private:
 
 	Common::HashMap<uint16, CastMemberInfo *> _castsInfo;
 	Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _castsNames;
+	Common::HashMap<uint16, int> _castsScriptIds;
 };
 
 } // End of namespace Director

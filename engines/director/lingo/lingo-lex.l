@@ -42,19 +42,32 @@
 using namespace Director;
 
 int yyparse();
+static const char *inputbuffer;
+static uint inputlen;
+
+// Push lines in stack
+static void pushLine(int num) {
+	if (num > inputlen)
+		return;
+
+	g_lingo->_lines[2] = g_lingo->_lines[1];
+	g_lingo->_lines[1] = g_lingo->_lines[0];
+	g_lingo->_lines[0] = &inputbuffer[num];
+}
 
 static void count() {
 	if (debugChannelSet(-1, kDebugParse))
 		debug("LEXER: Read '%s' at %d:%d", yytext, g_lingo->_linenumber, g_lingo->_colnumber);
 
 	char *p = yytext;
-	g_lingo->_lasttoken = yytext;
-	g_lingo->_lastbytenumber = g_lingo->_bytenumber;
 
 	while (*p) {
 		if (*p == '\n' || *p == '\xC2') {
 			g_lingo->_linenumber++;
 			g_lingo->_colnumber = 0;
+
+			if (*p == '\n')
+				pushLine(g_lingo->_bytenumber + 1);
 		} else {
 			g_lingo->_colnumber++;
 		}
@@ -68,7 +81,7 @@ static int checkImmediate(int token) {
 			g_lingo->_methodVars->contains(yytext)) {
 		yylval.s = new Common::String(yytext);
 
-		return ID;
+		return VARID;
 	}
 
 	return token;
@@ -94,7 +107,7 @@ static int varCheck(int token, const char *name) {
 	if (g_lingo->_indef == kStateInArgs || g_lingo->_methodVars->contains(name)) {
 		yylval.s = new Common::String(name);
 
-		return ID;
+		return VARID;
 	}
 
 	return token;
@@ -119,6 +132,7 @@ spc [ \t\xC2]
 after		{ count(); return varCheck(tAFTER, "after"); }		// D3
 and			{ count(); return varCheck(tAND, "and"); }
 before		{ count(); return varCheck(tBEFORE, "before"); }	// D3
+cast		{ count(); return tCAST; }
 char		{ count(); return varCheck(tCHAR, "char"); }		// D3
 contains	{ count(); return varCheck(tCONTAINS, "contains"); }
 down		{ count(); return varCheck(tDOWN, "down"); }
@@ -140,8 +154,8 @@ end({spc}+{identifier})?	{
 			return tENDTELL;
 
 		if (!*ptr) {	// If it is stale "end", check it
-			if (varCheck(ENDCLAUSE, "end") == ID)
-				return ID;
+			if (varCheck(ENDCLAUSE, "end") == VARID)
+				return VARID;
 		}
 
 		yylval.s = new Common::String(ptr);
@@ -150,6 +164,7 @@ end({spc}+{identifier})?	{
 	}
 ^{spc}*factory { count(); return tFACTORY; }
 exit		{ count(); return varCheck(tEXIT, "exit"); }
+field		{ count(); return tFIELD; }
 global		{ count(); return varCheck(tGLOBAL, "global"); }
 go{spc}+(to{spc}+)?frame	{ count(); return tGO; }
 go{spc}+(to)?	{ count(); return tGO; }
@@ -187,6 +202,7 @@ previous	{ count(); return varCheck(tPREVIOUS, "previous"); }
 property	{ count(); return varCheck(tPROPERTY, "property"); }	// D4
 put			{ count(); return varCheck(tPUT, "put"); }
 repeat		{ count(); return checkImmediate(tREPEAT); }
+script		{ count(); return tSCRIPT; }
 set			{ count(); return varCheck(tSET, "set"); }
 starts		{ count(); return varCheck(tSTARTS, "starts"); }
 tell		{ count(); return varCheck(tTELL, "tell"); }
@@ -218,8 +234,8 @@ the{spc}+number{spc}+of{spc}+[[:alpha:]]+{spc}+(in|of){spc}+ {
 
 		yylval.s = new Common::String(Common::String::format("numberOf%s", field.c_str()));
 
-		if (g_lingo->_builtins.contains(*yylval.s)) {
-			return FBLTIN;
+		if (g_lingo->_builtinFuncs.contains(*yylval.s)) {
+			return THEFUNCINOF;
 		} else {
 			warning("LEXER: Unhandled chunk expression '%s'", yylval.s->c_str());
 			return LEXERROR;
@@ -240,8 +256,8 @@ the{spc}+last{spc}+[[:alpha:]]+{spc}+(in|of){spc}+	{
 
 		yylval.s = new Common::String(Common::String::format("last%sOf", field.c_str()));
 
-		if (g_lingo->_builtins.contains(*yylval.s)) {
-			return FBLTIN;
+		if (g_lingo->_builtinFuncs.contains(*yylval.s)) {
+			return THEFUNCINOF;
 		} else {
 			warning("LEXER: Unhandled chunk expression '%s'", yylval.s->c_str());
 			return LEXERROR;
@@ -298,23 +314,22 @@ the{spc}+[[:alpha:]]+{spc}+of{spc}+{identifier}	{
 				yylval.objectprop.prop = new Common::String(field);
 
 				return THEOBJECTPROP;
-			} else if (g_lingo->_builtins.contains(field)) { // Let's hope they don't do it in D4+
-				if (g_lingo->_builtins[field].type == FBLTIN &&
-						g_lingo->_builtins[field].nargs == 1 && g_lingo->_builtins[field].maxArgs == 1) {
+			} else if (g_lingo->_builtinFuncs.contains(field)) { // Let's hope they don't do it in D4+
+				if (g_lingo->_builtinFuncs[field].nargs == 1 && g_lingo->_builtinFuncs[field].maxArgs == 1) {
 					yylval.s = new Common::String(field);
 					Common::String rest(ptr);
 
 					// It is the dreaded 'the <builtin> of <expr>'
-					// with 'expr' starting with ID, which leads to clash
+					// with 'expr' starting with VARID, which leads to clash
 					//
-					// put 'of ID' back.
+					// put 'of VARID' back.
 
 					for (int i = rest.size() - 1; i >= 0; i--)
 						unput(rest[i]);
 
 					unput(' '); unput('f'); unput('o');
 
-					return THEFBLTIN;
+					return THEFUNC;
 				}
 			}
 		}
@@ -372,11 +387,10 @@ the{spc}+[[:alpha:]]+		{
 				return THEENTITY;
 		}
 
-		if (g_lingo->_builtins.contains(ptr)) {
-			if (g_lingo->_builtins[ptr].type == FBLTIN &&
-					g_lingo->_builtins[ptr].nargs == 1 && g_lingo->_builtins[ptr].maxArgs == 1) {
+		if (g_lingo->_builtinFuncs.contains(ptr)) {
+			if (g_lingo->_builtinFuncs[ptr].nargs == 1 && g_lingo->_builtinFuncs[ptr].maxArgs == 1) {
 				yylval.s = new Common::String(ptr);
-				return THEFBLTIN;
+				return THEFUNC;
 			}
 		}
 
@@ -389,6 +403,7 @@ with			{ count(); return varCheck(tWITH, "with"); }
 within			{ count(); return varCheck(tWITHIN, "within"); }
 when			{ count(); return varCheck(tWHEN, "when"); }
 while			{ count(); return varCheck(tWHILE, "while"); }
+window			{ count(); return tWINDOW; }
 word			{ count(); return varCheck(tWORD, "word"); }
 
 [<][>]			{ count(); return tNEQ; }
@@ -401,37 +416,7 @@ word			{ count(); return varCheck(tWORD, "word"); }
 		count();
 		yylval.s = new Common::String(yytext);
 
-		// When we are defining arguments, allow any string
-		if (g_lingo->_indef == kStateInArgs)
-			return ID;
-
-		// Check that this is one of locally used names:
-		// argument, property, instance or global
-		if (g_lingo->_methodVars->contains(yytext))
-			return ID;
-
-		// First of all, match against argument list
-		if (g_lingo->_indef == kStateInDef)
-			if (g_lingo->isInArgStack(yylval.s))
-				return ID;
-
-		if (g_lingo->_builtins.contains(yytext)) {
-			int type = g_lingo->_builtins[yytext].type;
-			if ((type == BLTIN || type == FBLTIN || type == RBLTIN) && g_lingo->_builtins[yytext].parens == false) {
-				if (type == RBLTIN) {
-					if (g_lingo->_builtins[yytext].nargs != 1 || g_lingo->_builtins[yytext].maxArgs != 1) {
-						warning("Incorrectly set RBLTIN %s", yytext);
-						return LEXERROR;
-					}
-
-					return RBLTIN;
-				}
-
-				return type;
-			}
-		}
-
-		return ID;
+		return VARID;
 	}
 {constfloat}	{ count(); yylval.f = atof(yytext); return FLOAT; }
 {constinteger}	{ count(); yylval.i = strtol(yytext, NULL, 10); return INT; }
@@ -444,40 +429,14 @@ word			{ count(); return varCheck(tWORD, "word"); }
 
 extern int yydebug;
 
-void lex_unput(int c) {
-	unput(c);
-	g_lingo->_bytenumber--;
-	g_lingo->_linenumber--;
-}
-
-static const char *inputbuffer;
-
-bool lex_check_parens() {
-	// D2 and D3 were forgiving for trailing braces, so
-	// set a = 1)))()))))))  --   is a valid Lingo!
-	if (g_director->getVersion() > 3)
-		return false;
-
-	if (!g_lingo->_lasttoken.equals(")"))
-		return false;
-
-	const char *ptr = &inputbuffer[g_lingo->_lastbytenumber];
-
-	while (*ptr && *ptr != '\n') {
-		if (*ptr != ')' && *ptr != '(' && *ptr != ' ' && *ptr != '\t' && *ptr != '\xC2')
-			return false;
-
-		ptr++;
-	}
-
-	return true;
-}
-
 namespace Director {
 
 int Lingo::parse(const char *code) {
 	inputbuffer = code;
 	g_lingo->_bytenumber = 0;
+	inputlen = strlen(code);
+
+	_lines[0] = _lines[1] = _lines[2] = code;
 
 	YY_BUFFER_STATE bp;
 

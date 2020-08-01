@@ -33,9 +33,9 @@
 namespace Ultima {
 namespace Ultima8 {
 
-AVIPlayer::AVIPlayer(Common::SeekableReadStream *rs, int width, int height)
+AVIPlayer::AVIPlayer(Common::SeekableReadStream *rs, int width, int height, const byte *overridePal)
 	: MoviePlayer(), _playing(false), _width(width), _height(height),
-	  _doubleSize(false) {
+	  _doubleSize(false), _overridePal(overridePal) {
 	_decoder = new Video::AVIDecoder();
 	_decoder->loadStream(rs);
 	uint32 vidWidth = _decoder->getWidth();
@@ -77,7 +77,12 @@ void AVIPlayer::paint(RenderSurface *surf, int /*lerp*/) {
 			return;
 		}
 		if (frame->format.bytesPerPixel == 1) {
-			const byte *pal = _decoder->getPalette();
+			const byte *pal;
+			if (_overridePal)
+				pal = _overridePal;
+			else
+				pal = _decoder->getPalette();
+
 			_currentFrame.loadSurface8Bit(frame, pal);
 		} else {
 			_currentFrame.loadSurface(frame);

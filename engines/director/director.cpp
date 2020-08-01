@@ -45,8 +45,7 @@ uint32 wmMode = 0;
 
 DirectorEngine *g_director;
 
-DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc),
-		_rnd("director") {
+DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	DebugMan.addDebugChannel(kDebugLingoExec, "lingoexec", "Lingo Execution");
 	DebugMan.addDebugChannel(kDebugCompile, "compile", "Lingo Compilation");
 	DebugMan.addDebugChannel(kDebugParse, "parse", "Lingo code parsing");
@@ -70,7 +69,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	syncSoundSettings();
 
 	// Load Palettes
-	loadPalettes();
+	loadDefaultPalettes();
 
 	// Load Patterns
 	loadPatterns();
@@ -81,6 +80,10 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_soundManager = nullptr;
 	_currentPalette = nullptr;
 	_currentPaletteLength = 0;
+	_mainStage = nullptr;
+	_windowList = new Datum;
+	_windowList->type = ARRAY;
+	_windowList->u.farr = new DatumArray;
 	_currentStage = nullptr;
 	_lingo = nullptr;
 
@@ -95,31 +98,45 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "install");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "main");		// Meet Mediaband
+	SearchMan.addSubDirectoryMatching(gameDataDir, "l_zone");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "win_data", 0, 2);	// L-ZONE
 
 	_colorDepth = 8;	// 256-color
-	_key = 0;
-	_keyCode = 0;
 	_machineType = 9; // Macintosh IIci
 	_playbackPaused = false;
 	_skipFrameAdvance = false;
-
-	_draggingSprite = false;
-	_draggingSpriteId = 0;
 }
 
 DirectorEngine::~DirectorEngine() {
+	delete _windowList;
 	delete _soundManager;
 	delete _lingo;
 	delete _wm;
 	delete _surface;
+
+	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _openResFiles.begin(); it != _openResFiles.end(); ++it) {
+		delete it->_value;
+	}
+
+	clearPalettes();
 }
 
 Archive *DirectorEngine::getMainArchive() const { return _currentStage->getMainArchive(); }
 Movie *DirectorEngine::getCurrentMovie() const { return _currentStage->getCurrentMovie(); }
 Common::String DirectorEngine::getCurrentPath() const { return _currentStage->getCurrentPath(); }
 
+static void buildbotErrorHandler(const char *msg) { }
+
+void DirectorEngine::setCurrentMovie(Movie *movie) {
+	_currentStage = movie->getStage();
+}
+
 Common::Error DirectorEngine::run() {
 	debug("Starting v%d Director game", getVersion());
+
+	// We want to avoid GUI errors for buildbot, because they hang it
+	if (debugChannelSet(-1, kDebugFewFramesOnly))
+		Common::setErrorHandler(buildbotErrorHandler);
 
 	if (!_mixer->isReady()) {
 		return Common::kAudioDeviceInitFailed;
@@ -133,15 +150,22 @@ Common::Error DirectorEngine::run() {
 	_wm = new Graphics::MacWindowManager(wmMode, &_director3QuickDrawPatterns);
 	_wm->setEngine(this);
 
-	_currentStage = new Stage(_wm->getNextId(), false, false, false, _wm, this);
 
-	if (!debugChannelSet(-1, kDebugDesktop))
-		_currentStage->disableBorder();
+	_mainStage = new Stage(_wm->getNextId(), false, false, false, _wm, this);
+	*_mainStage->_refCount += 1;
+
+	if (debugChannelSet(-1, kDebugDesktop))
+		_mainStage->setBorderType(3);
+	else
+		_mainStage->disableBorder();
 
 	_surface = new Graphics::ManagedSurface;
 	_wm->setScreen(_surface);
-	_wm->addWindowInitialized(_currentStage);
-	_wm->setActiveWindow(_currentStage->getId());
+	_wm->addWindowInitialized(_mainStage);
+	_wm->setActiveWindow(_mainStage->getId());
+	setPalette(-1);
+
+	_currentStage = _mainStage;
 
 	_lingo = new Lingo(this);
 	_soundManager = new DirectorSound(this);
@@ -177,7 +201,24 @@ Common::Error DirectorEngine::run() {
 	bool loop = true;
 
 	while (loop) {
+		if (_mainStage->getCurrentMovie())
+			processEvents();
+
+		_currentStage = _mainStage;
 		loop = _currentStage->step();
+
+		if (loop) {
+			DatumArray *windowList = g_lingo->_windowList.u.farr;
+			for (uint i = 0; i < windowList->size(); i++) {
+				if ((*windowList)[i].type != OBJECT || (*windowList)[i].u.obj->getObjType() != kWindowObj)
+					continue;
+
+				_currentStage = static_cast<Stage *>((*windowList)[i].u.obj);
+				_currentStage->step();
+			}
+		}
+
+		draw();
 	}
 
 	return Common::kNoError;

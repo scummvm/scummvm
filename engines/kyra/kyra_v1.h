@@ -181,6 +181,7 @@ friend class ::KyraMetaEngine;
 friend class GUI;
 friend class GUI_v1;
 friend class GUI_EoB;
+friend class GUI_EoB_SegaCD;
 friend class SoundMidiPC;		// For _eventMan
 friend class SeqPlayer_HOF;		// For skipFlag()
 friend class TransferPartyWiz;	// For save state API
@@ -274,6 +275,11 @@ protected:
 	void removeInputTop();
 
 	int _mouseX, _mouseY;
+
+	// This is a somewhat hacky but probably least invasive way to move
+	// the whole ingame screen output down a couple of lines for EOB SegaCD.
+	void transposeScreenOutputY(int yAdd);
+	int _transOffsY;
 
 	struct Event {
 		Common::Event event;

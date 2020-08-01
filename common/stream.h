@@ -279,6 +279,8 @@ public:
  */
 class ReadStream : virtual public Stream {
 public:
+	ReadStream() {}
+
 	/**
 	 * Returns true if a read failed because the stream end has been reached.
 	 * This flag is cleared by clearErr().
@@ -707,7 +709,7 @@ public:
  * This is a SeekableReadStream subclass which adds non-endian read
  * methods whose endianness is set during the stream creation.
  */
-class SeekableReadStreamEndian : public SeekableReadStream, public ReadStreamEndian {
+class SeekableReadStreamEndian : virtual public SeekableReadStream, virtual public ReadStreamEndian {
 public:
 	SeekableReadStreamEndian(bool bigEndian) : ReadStreamEndian(bigEndian) {}
 };

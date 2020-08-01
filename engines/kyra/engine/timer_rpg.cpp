@@ -73,11 +73,12 @@ void KyraRpgEngine::timerProcessDoors(int timerNum) {
 			if (!(_updateFlags & 1)) {
 				snd_processEnvironmentalSoundEffect(snd + 28, b);
 				if (!checkSceneUpdateNeed(b))
-					updateEnvironmentalSfx(0);
+					snd_updateEnvironmentalSfx(0);
 			}
 		} else {
 			checkSceneUpdateNeed(b);
-			updateEnvironmentalSfx(snd);
+			if (!isSpecialDoor(b))
+				snd_updateEnvironmentalSfx(snd);
 		}
 
 		if (flg & 0x30)

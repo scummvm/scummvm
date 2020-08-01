@@ -176,6 +176,9 @@ private:
 	bool cmdStopMoveRun(int argc, const char **argv);
 	bool cmdStartMoveStep(int argc, const char **argv);
 	bool cmdStopMoveStep(int argc, const char **argv);
+	bool cmdAttack(int argc, const char **argv);
+
+	bool cmdCameraOnAvatar(int argc, const char **argv);
 
 	// Audio Process
 	bool cmdListSFX(int argc, const char **argv);
@@ -214,8 +217,13 @@ private:
 	bool cmdUseRecall(int argc, const char **argv);
 	bool cmdUseBedroll(int argc, const char **argv);
 	bool cmdUseKeyring(int argc, const char **argv);
+	bool cmdNextInventory(int argc, const char **argv);
 	bool cmdNextWeapon(int argc, const char **argv);
 	bool cmdToggleCombat(int argc, const char **argv);
+	bool cmdUseInventoryItem(int argc, const char **argv);
+	bool cmdUseMedikit(int argc, const char **argv);
+	bool cmdStartSelection(int argc, const char **argv);
+	bool cmdUseSelection(int argc, const char **argv);
 
 	// Object Manager
 	bool cmdObjectTypes(int argc, const char **argv);

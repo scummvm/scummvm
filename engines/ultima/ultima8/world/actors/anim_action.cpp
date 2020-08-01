@@ -27,8 +27,8 @@
 namespace Ultima {
 namespace Ultima8 {
 
-void AnimAction::getAnimRange(unsigned int lastanim, int lastdir,
-                              bool firststep, int dir,
+void AnimAction::getAnimRange(unsigned int lastanim, Direction lastdir,
+                              bool firststep, Direction dir,
                               unsigned int &startframe, unsigned int &endframe) const {
 	startframe = 0;
 	endframe = _size;
@@ -59,12 +59,24 @@ void AnimAction::getAnimRange(unsigned int lastanim, int lastdir,
 	}
 }
 
-void AnimAction::getAnimRange(const Actor *actor, int dir,
+void AnimAction::getAnimRange(const Actor *actor, Direction dir,
                               unsigned int &startframe,
                               unsigned int &endframe) const {
 	getAnimRange(actor->getLastAnim(), actor->getDir(),
 	             actor->hasActorFlags(Actor::ACT_FIRSTSTEP),
 	             dir, startframe, endframe);
+}
+
+const AnimFrame &AnimAction::getFrame(Direction dir, unsigned int frameno) const {
+	uint32 diroff = static_cast<uint32>(dir);
+	// HACK for 16 dir support
+	if (_dirCount == 8)
+		diroff /= 2;
+
+	assert(diroff < _dirCount);
+	assert(frameno < _frames[diroff].size());
+
+	return _frames[diroff][frameno];
 }
 
 } // End of namespace Ultima8

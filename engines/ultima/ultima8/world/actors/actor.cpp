@@ -31,6 +31,7 @@
 #include "ultima/ultima8/world/actors/animation_tracker.h"
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/misc/direction.h"
+#include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/world/actors/anim_action.h"
@@ -46,16 +47,19 @@
 #include "ultima/ultima8/world/actors/pathfinder_process.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/world/actors/loiter_process.h"
+#include "ultima/ultima8/world/actors/guard_process.h"
 #include "ultima/ultima8/world/actors/combat_process.h"
 #include "ultima/ultima8/world/actors/surrender_process.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/world/sprite_process.h"
 #include "ultima/ultima8/world/target_reticle_process.h"
+#include "ultima/ultima8/world/item_selection_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/loop_script.h"
+#include "ultima/ultima8/world/fire_type.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -66,9 +70,11 @@ static const unsigned int BACKPACK_SHAPE = 529;
 DEFINE_RUNTIME_CLASSTYPE_CODE(Actor)
 
 Actor::Actor() : _strength(0), _dexterity(0), _intelligence(0),
-	  _hitPoints(0), _mana(0), _alignment(0), _enemyAlignment(0),
-	  _lastAnim(Animation::stand), _animFrame(0), _direction(0),
-		_fallStart(0), _unk0C(0), _actorFlags(0), _combatTactic(0) {
+		_hitPoints(0), _mana(0), _alignment(0), _enemyAlignment(0),
+		_lastAnim(Animation::stand), _animFrame(0), _direction(dir_north),
+		_fallStart(0), _unkByte(0), _actorFlags(0), _combatTactic(0),
+		_homeX(0), _homeY(0), _homeZ(0), _currentActivityNo(0),
+		_lastActivityNo(0), _activeWeapon(0) {
 	_defaultActivity[0] = 0;
 	_defaultActivity[1] = 0;
 	_defaultActivity[2] = 0;
@@ -124,8 +130,8 @@ bool Actor::loadMonsterStatsCru() {
 
 bool Actor::loadMonsterStatsU8() {
 
-	ShapeInfo *shapeinfo = getShapeInfo();
-	MonsterInfo *mi = nullptr;
+	const ShapeInfo *shapeinfo = getShapeInfo();
+	const MonsterInfo *mi = nullptr;
 	if (shapeinfo) mi = shapeinfo->_monsterInfo;
 	if (!mi)
 		return false;
@@ -153,16 +159,16 @@ bool Actor::loadMonsterStatsU8() {
 
 bool Actor::giveTreasure() {
 	MainShapeArchive *mainshapes = GameData::get_instance()->getMainShapes();
-	ShapeInfo *shapeinfo = getShapeInfo();
-	MonsterInfo *mi = nullptr;
+	const ShapeInfo *shapeinfo = getShapeInfo();
+	const MonsterInfo *mi = nullptr;
 	if (shapeinfo) mi = shapeinfo->_monsterInfo;
 	if (!mi)
 		return false;
 
-	Std::vector<TreasureInfo> &treasure = mi->_treasure;
+	const Std::vector<TreasureInfo> &treasure = mi->_treasure;
 
 	for (unsigned int i = 0; i < treasure.size(); ++i) {
-		TreasureInfo &ti = treasure[i];
+		const TreasureInfo &ti = treasure[i];
 		Item *item;
 
 		// check map
@@ -190,7 +196,7 @@ bool Actor::giveTreasure() {
 
 				// NB: this is rather biased towards weapons with low _shapes...
 				for (unsigned int s = 0; s < mainshapes->getCount(); ++s) {
-					ShapeInfo *si = mainshapes->getShapeInfo(s);
+					const ShapeInfo *si = mainshapes->getShapeInfo(s);
 					if (!si->_weaponInfo) continue;
 
 					int chance = si->_weaponInfo->_treasureChance;
@@ -316,7 +322,7 @@ bool Actor::giveTreasure() {
 
 		if (ti._shapes.size() == 1) {
 			uint32 shapeNum = ti._shapes[0];
-			ShapeInfo *si = mainshapes->getShapeInfo(shapeNum);
+			const ShapeInfo *si = mainshapes->getShapeInfo(shapeNum);
 			if (!si) {
 				perr << "Trying to create treasure with an invalid shapeNum ("
 				     << shapeNum << ")" << Std::endl;
@@ -353,7 +359,7 @@ bool Actor::giveTreasure() {
 			n = getRandom() % ti._frames.size();
 			uint32 frameNum = ti._frames[n];
 
-			ShapeInfo *si = GameData::get_instance()->getMainShapes()->
+			const ShapeInfo *si = GameData::get_instance()->getMainShapes()->
 			                getShapeInfo(shapeNum);
 			if (!si) {
 				perr << "Trying to create treasure with an invalid shapeNum ("
@@ -458,8 +464,8 @@ void Actor::teleport(int newmap, int32 newx, int32 newy, int32 newz) {
 		notifyNearbyItems();
 }
 
-uint16 Actor::doAnim(Animation::Sequence anim, int dir, unsigned int steps) {
-	if (dir < 0 || dir > 8) {
+uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps) {
+	if (dir < 0 || dir > 16) {
 		perr << "Actor::doAnim: Invalid _direction (" << dir << ")" << Std::endl;
 		return 0;
 	}
@@ -472,6 +478,12 @@ uint16 Actor::doAnim(Animation::Sequence anim, int dir, unsigned int steps) {
 	}
 #endif
 
+	// HACK: When switching from 16-dir combat to 8-dir walking,
+	// fix the direction to only 8 dirs
+	if (GAME_IS_CRUSADER && anim == Animation::stand) {
+		dir = static_cast<Direction>(dir - (static_cast<uint32>(dir) % 2));
+	}
+
 	Process *p = new ActorAnimProcess(this, anim, dir, steps);
 
 	return Kernel::get_instance()->addProcess(p);
@@ -480,14 +492,15 @@ uint16 Actor::doAnim(Animation::Sequence anim, int dir, unsigned int steps) {
 bool Actor::hasAnim(Animation::Sequence anim) {
 	AnimationTracker tracker;
 
-	return tracker.init(this, anim, 0);
+	return tracker.init(this, anim, dir_north);
 }
 
-Animation::Result Actor::tryAnim(Animation::Sequence anim, int dir,
+Animation::Result Actor::tryAnim(Animation::Sequence anim, Direction dir,
                                  unsigned int steps, PathfindingState *state) {
-	if (dir < 0 || dir > 8) return Animation::FAILURE;
+	if (dir < 0 || dir > 16) return Animation::FAILURE;
 
-	if (dir == 8) dir = getDir();
+	if (dir == dir_current)
+		dir = getDir();
 
 	AnimationTracker tracker;
 	if (!tracker.init(this, anim, dir, state))
@@ -504,7 +517,7 @@ Animation::Result Actor::tryAnim(Animation::Sequence anim, int dir,
 	}
 
 	if (tracker.isBlocked() &&
-	        !(animaction->_flags & AnimAction::AAF_UNSTOPPABLE)) {
+	        !animaction->hasFlags(AnimAction::AAF_UNSTOPPABLE)) {
 		return Animation::FAILURE;
 	}
 
@@ -540,6 +553,78 @@ Animation::Result Actor::tryAnim(Animation::Sequence anim, int dir,
 	return Animation::END_OFF_LAND;
 }
 
+DirectionMode Actor::animDirMode(Animation::Sequence anim) const {
+	const AnimAction *action = GameData::get_instance()->getMainShapes()->
+	getAnim(getShape(), anim);
+	if (!action)
+		return dirmode_8dirs;
+	return action->getDirCount() == 8 ? dirmode_8dirs : dirmode_16dirs;
+}
+
+uint16 Actor::turnTowardDir(Direction targetdir) {
+	bool combatRun = hasActorFlags(Actor::ACT_COMBATRUN);
+	Direction curdir = getDir();
+	bool combat = isInCombat() && !combatRun;
+	Animation::Sequence standanim = Animation::stand;
+	bool surrendered = hasActorFlags(Actor::ACT_SURRENDERED);
+
+	int stepDelta = Direction_GetShorterTurnDelta(curdir, targetdir);
+	Animation::Sequence turnanim;
+	if (stepDelta == -1) {
+		turnanim = Animation::lookLeft;
+	} else {
+		turnanim = Animation::lookRight;
+	}
+
+	if (combat) {
+		turnanim = Animation::combatStand;
+		standanim = Animation::combatStand;
+	} else if (surrendered) {
+		turnanim = Animation::surrenderStand;
+		standanim = Animation::surrenderStand;
+	}
+
+	ProcId prevpid = 0;
+
+	// Create a sequence of turn animations from
+	// our current direction to the new one
+	DirectionMode mode = animDirMode(turnanim);
+
+	// slight hack - avoid making 8-step turns if we need to swap
+	// to/from a 16-step direction - we'll never get to the right
+	// direction that way.
+	if (static_cast<uint32>(targetdir) % 2 !=
+		static_cast<uint32>(curdir) % 2) {
+		mode = dirmode_16dirs;
+	}
+
+	bool done = false;
+	for (Direction dir = curdir; !done; dir = Direction_TurnByDelta(dir, stepDelta, mode)) {
+		ProcId animpid = doAnim(turnanim, dir);
+
+		if (prevpid) {
+			Process *proc = Kernel::get_instance()->getProcess(animpid);
+			assert(proc);
+			proc->waitFor(prevpid);
+		}
+
+		done = (dir == targetdir);
+		prevpid = animpid;
+	}
+
+	ProcId animpid = prevpid;
+	if (turnanim != standanim) {
+		animpid = doAnim(standanim, targetdir);
+		if (prevpid) {
+			Process *proc = Kernel::get_instance()->getProcess(animpid);
+			assert(proc);
+			proc->waitFor(prevpid);
+		}
+	}
+
+	return animpid;
+}
+
 uint16 Actor::setActivity(int activity) {
 	if (GAME_IS_CRUSADER)
 		return setActivityCru(activity);
@@ -558,7 +643,7 @@ uint16 Actor::setActivityU8(int activity) {
 		return 0;
 	case 2: // stand
 		// NOTE: temporary fall-throughs!
-		return doAnim(Animation::stand, 8);
+		return doAnim(Animation::stand, dir_current);
 
 	default:
 		perr << "Actor::setActivityU8: invalid activity (" << activity << ")"
@@ -572,9 +657,12 @@ uint16 Actor::setActivityCru(int activity) {
 	if (isDead())
 		return 0;
 
+	_lastActivityNo = _currentActivityNo;
+	_currentActivityNo = activity;
+
 	switch (activity) {
 	case 1: // stand
-		return doAnim(Animation::stand, 8);
+		return doAnim(Animation::stand, dir_current);
 	case 3: // pace
 		perr << "Actor::setActivityCru TODO: Implement new PaceProcess(this);" << Std::endl;
 		return Kernel::get_instance()->addProcess(new LoiterProcess(this));
@@ -589,8 +677,7 @@ uint16 Actor::setActivityCru(int activity) {
 		return Kernel::get_instance()->addProcess(new SurrenderProcess(this));
 	    break;
 	case 8:
-		perr << "Actor::setActivityCru TODO: Implement new GuardProcess(this);" << Std::endl;
-		return Kernel::get_instance()->addProcess(new LoiterProcess(this));
+		return Kernel::get_instance()->addProcess(new GuardProcess(this));
 	    break;
 	case 5:
 	case 9:
@@ -609,7 +696,7 @@ uint16 Actor::setActivityCru(int activity) {
 	default:
 		perr << "Actor::setActivityCru: invalid activity (" << activity << ")"
 		     << Std::endl;
-		return doAnim(Animation::stand, 8);
+		return doAnim(Animation::stand, dir_current);
 	}
 
 	return 0;
@@ -641,7 +728,7 @@ int16 Actor::getAttackingDex() const {
 }
 
 uint16 Actor::getDamageType() const {
-	ShapeInfo *si = getShapeInfo();
+	const ShapeInfo *si = getShapeInfo();
 	if (si->_monsterInfo)
 		return si->_monsterInfo->_damageType;
 	else
@@ -674,7 +761,140 @@ uint16 Actor::getDefaultActivity(int no) const {
 	return _defaultActivity[no];
 }
 
-void Actor::receiveHit(uint16 other, int dir, int damage, uint16 damage_type) {
+void Actor::setHomePosition(int32 x, int32 y, int32 z) {
+	_homeX = x;
+	_homeY = y;
+	_homeZ = z;
+}
+
+void Actor::getHomePosition(int32 &x, int32 &y, int32 &z) const {
+	x = _homeX;
+	y = _homeY;
+	z = _homeZ;
+}
+
+
+void Actor::receiveHit(uint16 other, Direction dir, int damage, uint16 damage_type) {
+	if (GAME_IS_U8) {
+		receiveHitU8(other, dir, damage, damage_type);
+	} else {
+		receiveHitCru(other, dir, damage, damage_type);
+	}
+}
+
+void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage_type) {
+	//
+	// This is a big stack of constants and hard-coded things.
+	// It's like that in the original game.
+	//
+	Actor *attacker = getActor(other);
+	AudioProcess *audio = AudioProcess::get_instance();
+	Kernel *kernel = Kernel::get_instance();
+	uint32 shape = getShape();
+
+	if (shape == 0x3ac && _hitPoints > 0) {
+		// TODO: Finish special case for Vargas.  Should not do any damage
+		// if there is a particular anim process running.  Also, check if the
+		// same special case exists in REGRET.
+		doAnim(Animation::teleportOutReplacement, dir_current);
+		doAnim(Animation::teleportInReplacement, dir_current);
+		_hitPoints -= damage;
+		return;
+	}
+
+	if (isDead())
+		return;
+
+	if (shape != 1 && this != getControlledActor()) {
+		Actor *controlled = getControlledActor();
+		if (!isInCombat()) {
+			setActivity(getDefaultActivity(2)); // get activity from field 0xA
+			if (!isInCombat()) {
+				setInCombat();
+				CombatProcess *combat = getCombatProcess();
+				if (combat && controlled) {
+					combat->setTarget(controlled->getObjId());
+				}
+			}
+		} else {
+			if (getCurrentActivityNo() == 8) {
+				setActivity(5);
+			}
+			setInCombat();
+			CombatProcess *combat = getCombatProcess();
+			if (combat && controlled) {
+				combat->setTarget(controlled->getObjId());
+			}
+		}
+
+		// If the attacker is the controlled npc and this actor is not pathfinding
+		if (attacker && attacker == getControlledActor() &&
+			kernel->findProcess(_objId, PathfinderProcess::PATHFINDER_PROC_TYPE) != nullptr) {
+			int32 x, y, z;
+			int32 ox, oy, oz;
+			getLocation(x, y, z);
+			attacker->getLocation(ox, oy, oz);
+			int32 maxdiff = MAX(MAX(abs(x - ox), abs(y - oy)), abs(z - oz));
+			if (maxdiff < 641 && isOnScreen()) {
+				// TODO: implement the equivalent of this function.  For now, we always
+				// cancel pathfinding for the NPC.
+				// uint32 direction = static_cast<uint32>(Get_WorldDirection(y - oy, x - ox));
+				// int result = FUN_1128_1755(this, attacker, direction, 0, 0, 0);
+				// if (result) {
+					kernel->killProcesses(_objId, PathfinderProcess::PATHFINDER_PROC_TYPE, true);
+				// }
+			}
+		}
+	} else {
+		damage = receiveShieldHit(damage, damage_type);
+	}
+
+	if (hasActorFlags(ACT_IMMORTAL))
+		damage = 0;
+
+	if (damage > _hitPoints)
+		damage = _hitPoints;
+
+	setHP(static_cast<uint16>(_hitPoints - damage));
+
+	if (_hitPoints == 0) {
+		// Die!
+		die(damage_type);
+	} else if (damage) {
+		// Not dead yet.
+		if (!isRobotCru()) {
+			uint16 sfxno;
+			if (hasExtFlags(EXT_FEMALE)) {
+				sfxno = 0xd8; // female scream
+			} else {
+				sfxno = 0x8f; // male scream
+			}
+			if (audio && !audio->isSFXPlayingForObject(sfxno, other)) {
+				audio->playSFX(sfxno, 0x10, other, 1, false);
+			}
+		}
+		if (damage_type == 0xf || damage_type == 7) {
+			if (shape == 1) {
+				kernel->killProcesses(_objId, 0x204, true);
+				doAnim(static_cast<Animation::Sequence>(0x37), dir_current);
+			} else if (shape == 0x4e6 || shape == 0x338 || shape == 0x385 || shape == 899) {
+				if (!(getRandom() % 3)) {
+					// Randomly stun the NPC for these damage types.
+					// CHECK ME: is this time accurate?
+					Process *attack = kernel->findProcess(_objId, 0x259);
+					uint stun = ((getRandom() % 10) + 8) * 60;
+					if (attack && stun) {
+						Process *delay = new DelayProcess(stun);
+						kernel->addProcess(delay);
+						attack->waitFor(delay);
+					}
+				}
+			}
+		}
+	}
+}
+
+void Actor::receiveHitU8(uint16 other, Direction dir, int damage, uint16 damage_type) {
 	if (isDead())
 		return; // already dead, so don't bother
 
@@ -710,7 +930,7 @@ void Actor::receiveHit(uint16 other, int dir, int damage, uint16 damage_type) {
 	if (damage >= 4 && _objId == 1 && attacker) {
 		// play blood sprite
 		int start = 0, end = 12;
-		if (dir > 2) {
+		if (dir > dir_east) {
 			start = 13;
 			end = 25;
 		}
@@ -747,7 +967,7 @@ void Actor::receiveHit(uint16 other, int dir, int damage, uint16 damage_type) {
 	if (_objId == 1 && damage > 0) {
 		if ((damage_type & WeaponInfo::DMG_FALLING) && damage >= 6) {
 			// high falling damage knocks you down
-			doAnim(Animation::fallBackwards, 8);
+			doAnim(Animation::fallBackwards, dir_current);
 
 			// TODO: shake head after getting back up when not in combat
 			return;
@@ -759,8 +979,8 @@ void Actor::receiveHit(uint16 other, int dir, int damage, uint16 damage_type) {
 
 	// if avatar was blocking; do a quick stopBlock/startBlock and play SFX
 	if (_objId == 1 && getLastAnim() == Animation::startBlock) {
-		ProcId anim1pid = doAnim(Animation::stopBlock, 8);
-		ProcId anim2pid = doAnim(Animation::startBlock, 8);
+		ProcId anim1pid = doAnim(Animation::stopBlock, dir_current);
+		ProcId anim2pid = doAnim(Animation::startBlock, dir_current);
 
 		Process *anim1proc = Kernel::get_instance()->getProcess(anim1pid);
 		Process *anim2proc = Kernel::get_instance()->getProcess(anim2pid);
@@ -826,27 +1046,42 @@ ProcId Actor::die(uint16 damageType) {
 	Kernel::get_instance()->killProcesses(getObjId(), 6, true); // CONSTANT!
 #endif
 
+	// TODO: In Crusader, this should default to 0x12, but randomly choose anim 0x14
+	// if it's available.
 	if (!animprocid)
-		animprocid = doAnim(Animation::die, getDir());
-
+		animprocid = doAnim(Animation::die, dir_current);
 
 	MainActor *avatar = getMainActor();
 	// if hostile to avatar
-	if (getEnemyAlignment() & avatar->getAlignment()) {
+	if (GAME_IS_U8 && (getEnemyAlignment() & avatar->getAlignment())) {
 		if (avatar->isInCombat()) {
 			// play victory fanfare
 			MusicProcess::get_instance()->playCombatMusic(109);
 			// and resume combat music afterwards
 			MusicProcess::get_instance()->queueMusic(98);
 		}
+	} else if (GAME_IS_CRUSADER) {
+		uint16 sfxno;
+		static const uint16 FADING_SCREAM_SFX[] = { 0xD9, 0xDA };
+		static const uint16 MALE_DEATH_SFX[] = { 0x88, 0x8C, 0x8F };
+		static const uint16 FEMALE_DEATH_SFX[] = { 0xD8, 0x10 };
+		if (damageType == 0xf) {
+			sfxno = FADING_SCREAM_SFX[getRandom() % 2];
+		} else {
+			if (hasExtFlags(EXT_FEMALE)) {
+				sfxno = FEMALE_DEATH_SFX[getRandom() % 2];
+			} else {
+				sfxno = MALE_DEATH_SFX[getRandom() % 3];
+			}
+		}
+		AudioProcess::get_instance()->playSFX(sfxno, 0x10, _objId, 0, true);
 	}
-
 
 	destroyContents();
 	giveTreasure();
 
-	ShapeInfo *shapeinfo = getShapeInfo();
-	MonsterInfo *mi = nullptr;
+	const ShapeInfo *shapeinfo = getShapeInfo();
+	const MonsterInfo *mi = nullptr;
 	if (shapeinfo) mi = shapeinfo->_monsterInfo;
 
 	if (mi && mi->_resurrection && !(damageType & WeaponInfo::DMG_FIRE)) {
@@ -862,7 +1097,7 @@ ProcId Actor::die(uint16 damageType) {
 		Process *delayproc = new DelayProcess(timeout);
 		Kernel::get_instance()->addProcess(delayproc);
 
-		ProcId animpid = doAnim(Animation::standUp, 8);
+		ProcId animpid = doAnim(Animation::standUp, dir_current);
 		Process *animproc = Kernel::get_instance()->getProcess(animpid);
 		assert(animproc);
 
@@ -1105,16 +1340,23 @@ int32 Actor::collideMove(int32 x, int32 y, int32 z, bool teleport, bool force,
 	int32 result = Item::collideMove(x, y, z, teleport, force, hititem, dirs);
 	if (_objId == 1 && GAME_IS_CRUSADER) {
 		notifyNearbyItems();
-		TargetReticleProcess::getProcess()->avatarMoved();
+		TargetReticleProcess::get_instance()->avatarMoved();
+		ItemSelectionProcess::get_instance()->avatarMoved();
 	}
 	return result;
 }
 
+static Std::set<uint16> _notifiedItems;
+
 void Actor::notifyNearbyItems() {
-/*
+	/*
 	TODO: This is not right - maybe we want to trigger each item only when it gets close,
 	then reset the status after it moves away?  Need to dig into the assembly more.
- 
+
+	For now this is a temporary hack to trigger some usecode events so we can
+	debug more of the game.
+	 */
+	/*
 	UCList uclist(2);
 	LOOPSCRIPT(script, LS_TOKEN_TRUE); // we want all items
 	CurrentMap *currentmap = World::get_instance()->getCurrentMap();
@@ -1122,9 +1364,22 @@ void Actor::notifyNearbyItems() {
 
 	for (unsigned int i = 0; i < uclist.getSize(); ++i) {
 		Item *item = getItem(uclist.getuint16(i));
-		item->callUsecodeEvent_npcNearby(_objId);
+		if (_notifiedItems.find(item->getObjId()) != _notifiedItems.end())
+			continue;
+		item->callUsecodeEvent_equipWithParam(_objId);
+		_notifiedItems.insert(item->getObjId());
 	}*/
 }
+
+bool Actor::activeWeaponIsSmall() const {
+	const Item *wpn = getItem(_activeWeapon);
+	if (wpn) {
+		const WeaponInfo *wi = wpn->getShapeInfo()->_weaponInfo;
+		return wi && (wi->_small != 0);
+	}
+	return false;
+}
+
 
 bool Actor::areEnemiesNear() {
 	UCList uclist(2);
@@ -1207,16 +1462,22 @@ void Actor::saveData(Common::WriteStream *ws) {
 	ws->writeUint16LE(_enemyAlignment);
 	ws->writeUint16LE(_lastAnim);
 	ws->writeUint16LE(_animFrame);
-	ws->writeUint16LE(_direction);
+	ws->writeUint16LE(Direction_ToUsecodeDir(_direction));
 	ws->writeUint32LE(_fallStart);
 	ws->writeUint32LE(_actorFlags);
-	ws->writeByte(_unk0C);
+	ws->writeByte(_unkByte);
 
 	if (GAME_IS_CRUSADER) {
 		ws->writeUint16LE(_defaultActivity[0]);
 		ws->writeUint16LE(_defaultActivity[1]);
 		ws->writeUint16LE(_defaultActivity[2]);
 		ws->writeUint16LE(_combatTactic);
+		ws->writeUint32LE(_homeX);
+		ws->writeUint32LE(_homeY);
+		ws->writeUint32LE(_homeZ);
+		ws->writeUint16LE(_currentActivityNo);
+		ws->writeUint16LE(_lastActivityNo);
+		ws->writeUint16LE(_activeWeapon);
 	}
 }
 
@@ -1232,16 +1493,22 @@ bool Actor::loadData(Common::ReadStream *rs, uint32 version) {
 	_enemyAlignment = rs->readUint16LE();
 	_lastAnim = static_cast<Animation::Sequence>(rs->readUint16LE());
 	_animFrame = rs->readUint16LE();
-	_direction = rs->readUint16LE();
+	_direction = Direction_FromUsecodeDir(rs->readUint16LE());
 	_fallStart = rs->readUint32LE();
 	_actorFlags = rs->readUint32LE();
-	_unk0C = rs->readByte();
+	_unkByte = rs->readByte();
 
 	if (GAME_IS_CRUSADER) {
 		_defaultActivity[0] = rs->readUint16LE();
 		_defaultActivity[1] = rs->readUint16LE();
 		_defaultActivity[2] = rs->readUint16LE();
 		_combatTactic = rs->readUint16LE();
+		_homeX = rs->readUint32LE();
+		_homeY = rs->readUint32LE();
+		_homeZ = rs->readUint32LE();
+		_currentActivityNo = rs->readUint16LE();
+		_lastActivityNo = rs->readUint16LE();
+		_activeWeapon = rs->readUint16LE();
 	}
 
 	return true;
@@ -1282,14 +1549,28 @@ uint32 Actor::I_doAnim(const uint8 *args, unsigned int /*argsize*/) {
 
 	if (!actor) return 0;
 
-	return actor->doAnim(static_cast<Animation::Sequence>(anim), dir);
+	//
+	// HACK: In Crusader, anims 32 and 33 are teleport in/out.  In U8 they are
+	// turn left/right.  We want to remap those numbers in most cases, but when
+	// they come out of usecode we don't want to remap them.  Here we give them
+	// temporary values so we can set them back later.
+	//
+	if (GAME_IS_CRUSADER) {
+		Animation::Sequence seq = static_cast<Animation::Sequence>(anim);
+		if (seq == Animation::teleportIn)
+			anim = static_cast<uint16>(Animation::teleportInReplacement);
+		else if (seq == Animation::teleportOut)
+			anim = static_cast<uint16>(Animation::teleportOutReplacement);
+	}
+
+	return actor->doAnim(static_cast<Animation::Sequence>(anim), Direction_FromUsecodeDir(dir));
 }
 
 uint32 Actor::I_getDir(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ACTOR_FROM_PTR(actor);
 	if (!actor) return 0;
 
-	return actor->getDir();
+	return Direction_ToUsecodeDir(actor->getDir());
 }
 
 uint32 Actor::I_getLastAnimSet(const uint8 *args, unsigned int /*argsize*/) {
@@ -1611,11 +1892,11 @@ uint32 Actor::I_setFeignDeath(const uint8 *args, unsigned int /*argsize*/) {
 
 	actor->setActorFlag(ACT_FEIGNDEATH);
 
-	ProcId animfallpid = actor->doAnim(Animation::die, 8);
+	ProcId animfallpid = actor->doAnim(Animation::die, dir_current);
 	Process *animfallproc = Kernel::get_instance()->getProcess(animfallpid);
 	assert(animfallproc);
 
-	ProcId animstandpid = actor->doAnim(Animation::standUp, 8);
+	ProcId animstandpid = actor->doAnim(Animation::standUp, dir_current);
 	Process *animstandproc = Kernel::get_instance()->getProcess(animstandpid);
 	assert(animstandproc);
 
@@ -1726,8 +2007,7 @@ uint32 Actor::I_createActorCru(const uint8 *args, unsigned int /*argsize*/) {
 	if (!item || !other)
 		return 0;
 
-	// TODO: get game difficulty here.
-	static const int gameDifficulty = 1;
+	const int gameDifficulty = World::get_instance()->getGameDifficulty();
 	int npcDifficulty = (item->getMapNum() & 3) + 1;
 
 	if (gameDifficulty < npcDifficulty)
@@ -1764,7 +2044,7 @@ uint32 Actor::I_createActorCru(const uint8 *args, unsigned int /*argsize*/) {
 		return 0;
 	}
 
-	newactor->setDir(dir);
+	newactor->setDir(Direction_FromUsecodeDir(dir));
 
 	int32 x, y, z;
 	item->getLocation(x, y, z);
@@ -1774,22 +2054,40 @@ uint32 Actor::I_createActorCru(const uint8 *args, unsigned int /*argsize*/) {
 	newactor->setDefaultActivity(1, item->getQuality() >> 8);
 	newactor->setDefaultActivity(2, other->getMapNum());
 
-	// TODO: once I know what these fields are...
+	newactor->setUnkByte(item->getQuality() & 0xff);
+
+	uint16 wpntype = npcData->getWpnType();
+	Item *weapon = ItemFactory::createItem(wpntype, 0, 0, 0, 0, newactor->getMapNum(), 0, true);
+	if (World::get_instance()->getGameDifficulty() == 4) {
+	   wpntype = NPCDat::randomlyGetStrongerWeaponTypes(shape);
+	}
+
+	// TODO: should this be addItemCru? If so need to move it from MainActor.
+	weapon->moveToContainer(newactor, false);
+	newactor->setCombatTactic(0);
+	newactor->setHomePosition(x, y, z);
+
 	/*
-	 newactor->setField0x5c(0);
-	 newactor->setField0x5e(x, y);
+	 TODO: once I know what this field is.. seems to never be used in game?
 	 newactor->setField0x12(item->getNpcNum() >> 4);
-	 newactor->setField0x63(item->getQuality() & 0xff);
-
-	 uint16 wpnType = npcData->getWpnType();
-	 if (gameDifficulty == 4) {
-		wpnType = randomlyGetHigherWeaponType(shape, wpntype);
-	 }
-
-	 // give weapon to NPC.
 	 */
 
 	return newactor->getObjId();
+}
+
+uint32 Actor::I_setUnkByte(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	ARG_UINT16(value);
+	if (actor)
+		actor->setUnkByte(static_cast<uint8>(value & 0xff));
+	return 0;
+}
+
+uint32 Actor::I_getUnkByte(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	if (!actor) return 0;
+
+	return actor->getUnkByte();
 }
 
 uint32 Actor::I_setActivity(const uint8 *args, unsigned int /*argsize*/) {
@@ -1914,6 +2212,29 @@ uint32 Actor::I_setCombatTactic(const uint8 *args, unsigned int /*argsize*/) {
 	return 0;
 }
 
+uint32 Actor::I_getCurrentActivityNo(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	if (!actor) return 0;
+
+	return actor->getCurrentActivityNo();
+}
+
+uint32 Actor::I_getLastActivityNo(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	if (!actor) return 0;
+
+	return actor->getLastActivityNo();
+}
+
+uint32 Actor::I_turnToward(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	if (!actor) return 0;
+
+	ARG_UINT16(dir);
+	ARG_UINT16(unk);
+
+	return actor->turnTowardDir(Direction_FromUsecodeDir(dir));
+}
 
 
 } // End of namespace Ultima8
