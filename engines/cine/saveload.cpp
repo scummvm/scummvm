@@ -1026,7 +1026,7 @@ void CineEngine::makeSave(const Common::String &saveFileName, uint32 playtime,
 	}
 
 	renderer->saveBackBuffer(BEFORE_TAKING_THUMBNAIL);
-	if (renderer->hasSavedBackBuffer(BEFORE_OPENING_MENU)) {
+	if (!isAutosave && renderer->hasSavedBackBuffer(BEFORE_OPENING_MENU)) {
 		renderer->popSavedBackBuffer(BEFORE_OPENING_MENU);
 	}
 
