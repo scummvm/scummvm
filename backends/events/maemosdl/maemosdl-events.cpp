@@ -51,9 +51,6 @@ static const KeymapEntry keymapEntries[] = {
 
 bool MaemoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 
-	Model model = Model(((OSystem_SDL_Maemo *)g_system)->getModel());
-	debug(10, "Model: %s %u %s %s", model.hwId, model.modelType, model.hwAlias, model.hasHwKeyboard ? "true" : "false");
-
 	// List of special N810 keys:
 	// SDLK_F4 -> menu
 	// SDLK_F5 -> home
