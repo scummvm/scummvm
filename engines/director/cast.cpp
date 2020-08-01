@@ -628,7 +628,9 @@ void Cast::loadDigitalVideoCasts() {
 			// TODO: detect file type (AVI, QuickTime, FLIC) based on magic number,
 			// insert the right video decoder
 			digitalVideoCast->_video = new Video::QuickTimeDecoder();
-			if (!digitalVideoCast->_video->loadFile(_castsInfo[c->_key]->fileName)) {
+			Common::String filename = _castsInfo[c->_key]->fileName;
+			Common::String directory = _castsInfo[c->_key]->directory;
+			if (!digitalVideoCast->_video->loadFile(pathMakeRelative(directory + "\\" + filename)) {
 				warning("Cast::loadDigitalVideoCasts: failed to load QuickTime file for cast member %d", videoId);
 			}
 		} else {
