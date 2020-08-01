@@ -235,6 +235,12 @@ void CineEngine::initialize() {
 		// A proper fix here would be to save this variable in FW's saves.
 		// Since it seems these are unversioned so far, there would be need
 		// to properly add versioning to them first.
+		//
+		// Adding versioning to FW saves didn't solve this problem. Setting
+		// disableSystemMenu according to the saved value still caused the
+		// action menu (EXAMINE, TAKE, INVENTORY, ...) sometimes to be
+		// disabled when it wasn't supposed to be disabled when
+		// loading from the launcher or command line.
 		disableSystemMenu = 0;
 	}
 
