@@ -22,6 +22,7 @@
 
 #include "graphics/macgui/macbutton.h"
 #include "image/image_decoder.h"
+#include "video/qt_decoder.h"
 
 #include "director/director.h"
 #include "director/castmember.h"
@@ -233,6 +234,7 @@ Graphics::Surface *BitmapCastMember::getMatte() {
 DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
 		: CastMember(cast, castId, stream) {
 	_type = kCastDigitalVideo;
+	_video = nullptr;
 
 	if (version < 4) {
 		warning("STUB: DigitalVideoCastMember: unhandled rect data");

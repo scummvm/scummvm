@@ -28,6 +28,7 @@
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "image/bmp.h"
+#include "video/qt_decoder.h"
 
 #include "director/director.h"
 #include "director/cast.h"
@@ -352,7 +353,8 @@ bool Cast::loadArchive() {
 	copyCastStxts();
 
 	loadCastChildren();
-	loadSpriteSounds();
+	loadSoundCasts();
+	loadDigitalVideoCasts();
 
 	return true;
 }
@@ -538,8 +540,8 @@ void Cast::loadCastChildren() {
 	}
 }
 
-void Cast::loadSpriteSounds() {
-	debugC(1, kDebugLoading, "****** Preloading sprite sounds");
+void Cast::loadSoundCasts() {
+	debugC(1, kDebugLoading, "****** Preloading sound casts");
 
 	for (Common::HashMap<int, CastMember *>::iterator c = _loadedCast->begin(); c != _loadedCast->end(); ++c) {
 		if (!c->_value)
@@ -574,7 +576,7 @@ void Cast::loadSpriteSounds() {
 			break;
 		}
 
-		if (sndData != NULL && soundCast != NULL) {
+		if (sndData != NULL) {
 			if (sndData->size() == 0) {
 				// audio file is linked, load from the filesystem
 				AudioFileDecoder *audio = new AudioFileDecoder(_castsInfo[c->_key]->fileName);
@@ -588,6 +590,54 @@ void Cast::loadSpriteSounds() {
 			delete sndData;
 		}
 	}
+}
+
+void Cast::loadDigitalVideoCasts() {
+	debugC(1, kDebugLoading, "****** Preloading digital video casts");
+
+	for (Common::HashMap<int, CastMember *>::iterator c = _loadedCast->begin(); c != _loadedCast->end(); ++c) {
+		if (!c->_value)
+			continue;
+
+		if (c->_value->_type != kCastDigitalVideo)
+			continue;
+
+		DigitalVideoCastMember *digitalVideoCast = (DigitalVideoCastMember *)c->_value;
+		uint32 tag = MKTAG('M', 'o', 'o', 'V');
+		uint16 videoId = (uint16)(c->_key + _castIDoffset);
+
+		if (_vm->getVersion() >= 4 && digitalVideoCast->_children.size() > 0) {
+			videoId = digitalVideoCast->_children[0].index;
+			tag = digitalVideoCast->_children[0].tag;
+		}
+
+		Common::SeekableSubReadStreamEndian *videoData = NULL;
+
+		switch (tag) {
+		case MKTAG('M', 'o', 'o', 'V'):
+			if (_castArchive->hasResource(MKTAG('M', 'o', 'o', 'V'), videoId)) {
+				debugC(2, kDebugLoading, "****** Loading 'MooV' id: %d", videoId);
+				videoData = _castArchive->getResource(MKTAG('M', 'o', 'o', 'V'), videoId);
+			}
+			break;
+		}
+
+		if (videoData == NULL || videoData->size() == 0) {
+			// video file is linked, load from the filesystem
+
+			// TODO: detect file type (AVI, QuickTime, FLIC) based on magic number,
+			// insert the right video decoder
+			digitalVideoCast->_video = new Video::QuickTimeDecoder();
+			if (!digitalVideoCast->_video->loadFile(_castsInfo[c->_key]->fileName)) {
+				warning("Cast::loadDigitalVideoCasts: failed to load QuickTime file for cast member %d", videoId);
+			}
+		} else {
+			warning("STUB: Cast::loadDigitalVideoCasts: unsupported non-zero MooV block");
+		}
+		if (videoData)
+			delete videoData;
+	}
+
 }
 
 PaletteV4 Cast::loadPalette(Common::SeekableSubReadStreamEndian &stream) {

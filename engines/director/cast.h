@@ -64,7 +64,8 @@ public:
 	void loadLingoContext(Common::SeekableSubReadStreamEndian &stream);
 
 	void loadCastChildren();
-	void loadSpriteSounds();
+	void loadSoundCasts();
+	void loadDigitalVideoCasts();
 
 	void copyCastStxts();
 	Common::Rect getCastMemberInitialRect(int castId);

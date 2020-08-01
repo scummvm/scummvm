@@ -46,6 +46,10 @@ namespace Image {
 class ImageDecoder;
 }
 
+namespace Video {
+class VideoDecoder;
+}
+
 namespace Director {
 
 class Stxt;
@@ -130,6 +134,8 @@ public:
 	FrameRateType _frameRateType;
 
 	uint16 _frameRate;
+
+	Video::VideoDecoder *_video;
 };
 
 class SoundCastMember : public CastMember {
