@@ -1434,6 +1434,10 @@ uint32 Item::callUsecodeEvent_guardianBark(int16 unk) {         // event 15
 	return callUsecodeEvent(0x15, arg_stack.access(), 2); // CONSTANT 0x15
 }
 
+uint32 Item::callUsecodeEvent_unhatch() {                     // event 15
+	return callUsecodeEvent(0x15);  // CONSTANT
+}
+
 uint32 Item::use() {
 	Actor *actor = dynamic_cast<Actor *>(this);
 	if (actor) {

@@ -45,6 +45,15 @@ uint16 Egg::hatch() {
 	return callUsecodeEvent_hatch();
 }
 
+uint16 Egg::unhatch() {
+	if (GAME_IS_CRUSADER) {
+		if (!_hatched) return 0;
+		_hatched = false;
+		return callUsecodeEvent_unhatch();
+	}
+	return 0;
+}
+
 void Egg::dumpInfo() const {
 	Item::dumpInfo();
 	pout << "range: " << getXRange() << "," << getYRange()
