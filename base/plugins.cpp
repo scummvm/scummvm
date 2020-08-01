@@ -382,15 +382,3 @@ void PluginManager::unloadAllPluginsOfTypeExcept(PluginType type, const Plugin *
 		i = list.erase(i);
 	}
 }
-
-// Music plugins
-
-#include "audio/musicplugin.h"
-
-namespace Common {
-DECLARE_SINGLETON(MusicManager);
-}
-
-const PluginList &MusicManager::getMusicPlugins() const {
-	return PluginManager::instance().getLoadedPluginsOfType(PLUGIN_TYPE_MUSIC);
-}

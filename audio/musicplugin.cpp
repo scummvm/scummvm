@@ -59,3 +59,11 @@ Common::String MusicDevice::getCompleteId() {
 MidiDriver::DeviceHandle MusicDevice::getHandle() {
 	return (MidiDriver::DeviceHandle)Common::hashit(getCompleteId());
 }
+
+namespace Common {
+DECLARE_SINGLETON(MusicManager);
+}
+
+const PluginList &MusicManager::getMusicPlugins() const {
+	return PluginManager::instance().getLoadedPluginsOfType(PLUGIN_TYPE_MUSIC);
+}
