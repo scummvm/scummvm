@@ -99,7 +99,8 @@ struct ExtendedSavegameHeader {
  * Every engine "plugin" provides a hook to get an instance of a MetaEngine
  * subclass for that "engine plugin". E.g. SCUMM povides ScummMetaEngine.
  * This is then in turn used by the frontend code to detect games,
- * and instantiate actual Engine objects.
+ * and other useful functionality. To instantiate actual Engine objects,
+ * See the class MetaEngineConnect below.
  */
 class MetaEngine : public PluginObject {
 private:
@@ -399,6 +400,20 @@ public:
 	static WARN_UNUSED_RESULT bool readSavegameHeader(Common::InSaveFile *in, ExtendedSavegameHeader *header, bool skipThumbnail = true);
 
 	//@}
+};
+
+/**
+ * A MetaEngineConnect is another factory for Engine instances, and is very
+ * similiar to meta engines. This class, however, composes of bridged functionalities
+ * that can be used to connect an actual Engine with a MetaEngine.
+ * Every engine "plugin" provides a hook to get an instance of MetaEngineConnector subclass
+ * for that "engine plugin.". E.g. SCUMM provides a ScummMetaEngineConnect.
+ * This is then in turn used for things like instantiating engine objects, listing savefiles,
+ * querying save metadata, etc.
+ * Since engine plugins can be used a external runtime libraries, these can live and build inside
+ * the engine, while a MetaEngine will always build into the executable to be able to detect code.
+ */
+class MetaEngineConnect : public PluginObject {
 };
 
 /**

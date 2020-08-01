@@ -322,4 +322,10 @@ protected:
 	friend class FileMapArchive; // for FileMap
 };
 
+/**
+ * A MetaEngineConnect implementation of AdvancedMetaEngine.
+ */
+class AdvancedMetaEngineConnect : public MetaEngineConnect {
+};
+
 #endif
