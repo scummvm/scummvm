@@ -4847,6 +4847,10 @@ if test "$_fluidsynth" = auto; then
 int main(void) { delete_fluid_settings(new_fluid_settings()); return 0; }
 EOF
 	cc_check_no_clean $FLUIDSYNTH_CFLAGS $FLUIDSYNTH_LIBS && _fluidsynth=yes
+	if test "$_fluidsynth" != yes && test "$_pkg_config" = "yes" && $_pkgconfig --exists fluidsynth; then
+		FLUIDSYNTH_LIBS="`$_pkgconfig --static --libs fluidsynth`"
+		cc_check_no_clean $FLUIDSYNTH_CFLAGS $FLUIDSYNTH_LIBS && _fluidsynth=yes
+	fi
 	if test "$_fluidsynth" != yes; then
 		FLUIDSYNTH_LIBS="$FLUIDSYNTH_STATIC_LIBS"
 		cc_check_no_clean $FLUIDSYNTH_CFLAGS $FLUIDSYNTH_LIBS && _fluidsynth=yes
