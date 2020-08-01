@@ -206,8 +206,10 @@ Plugin *EngineManager::loadPluginByEngineIdUncached(const Common::String &engine
 			PluginMan.loadPlugin(p);
 		}
 
-		if (engineId == p->get<MetaEngine>().getEngineId())
+		if (engineId == p->get<MetaEngine>().getEngineId()) {
+			updateConfigWithFileName(p, engineId);
 			return p;
+		}
 
 		if (!loaded) {
 			PluginMan.unloadPlugin(p);
