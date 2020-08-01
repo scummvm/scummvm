@@ -33,7 +33,7 @@ namespace Common {
  * Simple memory based 'stream', which implements the ReadStream interface for
  * a plain memory block.
  */
-class MemoryReadStream : public SeekableReadStream {
+class MemoryReadStream : virtual public SeekableReadStream {
 private:
 	const byte * const _ptrOrig;
 	const byte *_ptr;
