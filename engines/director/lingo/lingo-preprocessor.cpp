@@ -149,8 +149,12 @@ Common::String Lingo::codePreprocessor(const char *s, LingoArchive *archive, Scr
 	s = tmp.c_str();
 
 	// Strip comments
+	bool inString = false;
 	while (*s) {
-		if (*s == '-' && *(s + 1) == '-') { // At the end of the line we will have \0
+		if (*s == '"')
+			inString = !inString;
+
+		if (!inString && *s == '-' && *(s + 1) == '-') { // At the end of the line we will have \0
 			while (*s && *s != '\n')
 				s++;
 		}
