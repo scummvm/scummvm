@@ -112,6 +112,9 @@ public:
 	bool drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Rect32 &rect, const Vector2 &pos, const Vector2 &rot, const Vector2 &scale,
 	                  float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY);
 
+	void renderSceneGeometry(BaseArray<AdWalkplane *> &planes, BaseArray<AdBlock *> &blocks, BaseArray<AdGeneric *> &generics, Camera3D *camera) override;
+	void renderShadowGeometry(BaseArray<AdWalkplane *> &planes, BaseArray<AdBlock *> &blocks, BaseArray<AdGeneric *> &generics, Camera3D *camera) override;
+
 	Mesh3DS *createMesh3DS() override;
 	MeshX *createMeshX() override;
 	ShadowVolume *createShadowVolume() override;

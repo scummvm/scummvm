@@ -20,6 +20,9 @@
  *
  */
 
+#include "engines/wintermute/ad/ad_block.h"
+#include "engines/wintermute/ad/ad_generic.h"
+#include "engines/wintermute/ad/ad_walkplane.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d_shader.h"
 #include "engines/wintermute/base/gfx/opengl/base_surface_opengl3d.h"
@@ -577,6 +580,47 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wint
 	}
 
 	return true;
+}
+
+void BaseRenderOpenGL3DShader::renderSceneGeometry(BaseArray<AdWalkplane *> &planes, BaseArray<AdBlock *> &blocks, BaseArray<AdGeneric *> &generics, Camera3D *camera) {
+	// don't render scene geometry, as OpenGL ES 2 has no wireframe rendering and we don't have a shader alternative yet
+}
+
+void BaseRenderOpenGL3DShader::renderShadowGeometry(BaseArray<AdWalkplane *> &planes, BaseArray<AdBlock *> &blocks, BaseArray<AdGeneric *> &generics, Camera3D *camera) {
+	resetModelViewTransform();
+	setup3D(camera, true);
+
+	// disable color write
+	glBlendFunc(GL_ZERO, GL_ONE);
+
+	glFrontFace(GL_CCW);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	// render walk planes
+	for (uint i = 0; i < planes.size(); i++) {
+		if (planes[i]->_active && planes[i]->_receiveShadows) {
+			planes[i]->_mesh->render();
+			//m_Renderer->m_NumPolygons += _planes[i]->m_Mesh->m_NumFaces;
+		}
+	}
+
+	// render blocks
+	for (uint i = 0; i < blocks.size(); i++) {
+		if (blocks[i]->_active && blocks[i]->_receiveShadows) {
+			blocks[i]->_mesh->render();
+			//m_Renderer->m_NumPolygons += _blocks[i]->m_Mesh->m_NumFaces;
+		}
+	}
+
+	// render generic objects
+	for (uint i = 0; i < generics.size(); i++) {
+		if (generics[i]->_active && generics[i]->_receiveShadows) {
+			generics[i]->_mesh->render();
+			//m_Renderer->m_NumPolygons += _generics[i]->m_Mesh->m_NumFaces;
+		}
+	}
+
+	setSpriteBlendMode(Graphics::BLEND_NORMAL);
 }
 
 Mesh3DS *BaseRenderOpenGL3DShader::createMesh3DS() {

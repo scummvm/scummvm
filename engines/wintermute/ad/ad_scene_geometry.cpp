@@ -404,165 +404,16 @@ bool AdSceneGeometry::storeDrawingParams() {
 bool AdSceneGeometry::render(bool render) {
 	//	store values
 	//	StoreDrawingParams();
-	if (!render) {
-		return true;
+	if (render) {
+		_gameRef->_renderer3D->renderSceneGeometry(_planes, _blocks, _generics, getActiveCamera());
 	}
 
-	_gameRef->_renderer3D->resetModelViewTransform();
-	_gameRef->_renderer3D->setup3D(getActiveCamera(), true);
-
-	// factor this out later
-
-	glDisable(GL_LIGHTING);
-	glDisable(GL_DEPTH_TEST);
-	glFrontFace(GL_CCW);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	//	m_Renderer->m_Device->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
-	//	m_Renderer->m_Device->SetRenderState(D3DRS_LIGHTING, FALSE);
-	//	m_Renderer->m_Device->SetRenderState(D3DRS_ZENABLE, FALSE);
-	//	m_Renderer->m_Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-	//	m_Renderer->m_Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-	//	m_Renderer->m_Device->SetRenderState(D3DRS_ALPHATESTENABLE,  FALSE);
-	//	m_Renderer->m_Device->SetTexture(0, NULL);
-
-	uint i;
-
-	// render walk planes
-	for (i = 0; i < _planes.size(); i++) {
-		if (!_planes[i]->_active) {
-			continue;
-		}
-
-		_planes[i]->_mesh->render();
-
-		//m_Renderer->m_NumPolygons += _planes[i]->m_Mesh->m_NumFaces;
-	}
-
-	// render blocks
-	for (i = 0; i < _blocks.size(); i++) {
-		if (!_blocks[i]->_active) {
-			continue;
-		}
-
-		_blocks[i]->_mesh->render();
-
-		//		m_Renderer->m_NumPolygons += _blocks[i]->m_Mesh->m_NumFaces;
-	}
-
-	// render generic objects
-	for (i = 0; i < _generics.size(); i++) {
-		if (!_generics[i]->_active) {
-			continue;
-		}
-
-		_generics[i]->_mesh->render();
-
-		//		m_Renderer->m_NumPolygons += _generics[i]->m_Mesh->m_NumFaces;
-	}
-
-	_gameRef->_renderer3D->resetModelViewTransform();
-
-//	for (i = 0; i < _lights.size(); ++i) {
-//		if (!_lights[i]->_active) {
-//			continue;
-//		}
-
-//		glBegin(GL_LINES);
-//		glColor3f(1.0f, 1.0f, 0.0f);
-//		Math::Vector3d right = _lights[i]->_position + Math::Vector3d(1000.0f, 0.0f, 0.0f);
-//		Math::Vector3d up = _lights[i]->_position + Math::Vector3d(0.0f, 1000.0f, 0.0f);
-//		Math::Vector3d backward = _lights[i]->_position + Math::Vector3d(0.0f, 0.0f, 1000.0f);
-//		Math::Vector3d left = _lights[i]->_position + Math::Vector3d(-1000.0f, 0.0f, 0.0f);
-//		Math::Vector3d down = _lights[i]->_position + Math::Vector3d(0.0f, -1000.0f, 0.0f);
-//		Math::Vector3d forward = _lights[i]->_position + Math::Vector3d(0.0f, 0.0f, -1000.0f);
-
-//		glVertex3fv(_lights[i]->_position.getData());
-//		glVertex3fv(right.getData());
-//		glVertex3fv(_lights[i]->_position.getData());
-//		glVertex3fv(up.getData());
-//		glVertex3fv(_lights[i]->_position.getData());
-//		glVertex3fv(backward.getData());
-//		glVertex3fv(_lights[i]->_position.getData());
-//		glVertex3fv(left.getData());
-//		glVertex3fv(_lights[i]->_position.getData());
-//		glVertex3fv(down.getData());
-//		glVertex3fv(_lights[i]->_position.getData());
-//		glVertex3fv(forward.getData());
-//		glEnd();
-//	}
-
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-	//	m_Renderer->m_Device->SetRenderState( D3DRS_FILLMODE, D3DFILL_SOLID );
-
-	//	// render waypoints
-	//	if(m_WptMarker)
-	//	{
-	//		Math::Matrix4 viewMat, projMat, worldMat;
-	//		Math::Vector3d vec2d(0,0,0);
-	//		m_Renderer->m_Device->GetTransform(D3DTS_VIEW, &viewMat);
-	//		m_Renderer->m_Device->GetTransform(D3DTS_PROJECTION, &projMat);
-	//		Math::Matrix4Identity(&worldMat);
-	//		D3DVIEWPORT vport;
-	//		m_Renderer->m_Device->GetViewport(&vport);
-
-	//		m_Renderer->Setup2D();
-
-	//		CAdScene* Scene = ((CAd_gameRef*)_gameRef)->m_Scene;
-
-	//		for(i=0; i<_waypointGroups.size(); i++)
-	//		{
-	//			for(int j=0; j<_waypointGroups[i]->m_Points.size(); j++)
-	//			{
-	//				Math::Vector3d *vect = _waypointGroups[i]->m_Points[j];
-	//				D3DXVec3Project(&vec2d, _waypointGroups[i]->m_Points[j], &vport, &projMat, &viewMat, &worldMat);
-	//				m_WptMarker->Display(vec2d.x + Scene->GetOffsetLeft() - m_Renderer->m_DrawOffsetX, vec2d.y + Scene->GetOffsetTop() - m_Renderer->m_DrawOffsetY);
-	//			}
-	//		}
-	//	}
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::renderShadowGeometry() {
-	_gameRef->_renderer3D->resetModelViewTransform();
-	_gameRef->_renderer3D->setup3D(getActiveCamera(), true);
-
-	// disable color write
-	glBlendFunc(GL_ZERO, GL_ONE);
-
-	glFrontFace(GL_CCW);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	// render walk planes
-	for (uint i = 0; i < _planes.size(); i++) {
-		if (_planes[i]->_active && _planes[i]->_receiveShadows) {
-			_planes[i]->_mesh->render();
-			//m_Renderer->m_NumPolygons += _planes[i]->m_Mesh->m_NumFaces;
-		}
-	}
-
-	// render blocks
-	for (uint i = 0; i < _blocks.size(); i++) {
-		if (_blocks[i]->_active && _blocks[i]->_receiveShadows) {
-			_blocks[i]->_mesh->render();
-			//m_Renderer->m_NumPolygons += _blocks[i]->m_Mesh->m_NumFaces;
-		}
-	}
-
-	// render generic objects
-	for (uint i = 0; i < _generics.size(); i++) {
-		if (_generics[i]->_active && _generics[i]->_receiveShadows) {
-			_generics[i]->_mesh->render();
-			//m_Renderer->m_NumPolygons += _generics[i]->m_Mesh->m_NumFaces;
-		}
-	}
-
-	_gameRef->_renderer3D->setSpriteBlendMode(Graphics::BLEND_NORMAL);
-
+	_gameRef->_renderer3D->renderShadowGeometry(_planes, _blocks, _generics, getActiveCamera());
 	return true;
 }
 

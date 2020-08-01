@@ -24,6 +24,7 @@
 #define WINTERMUTE_BASE_RENDERER_3D_H
 
 #include "engines/wintermute/base/gfx/base_renderer.h"
+#include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/dctypes.h"
 #include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/math/vector2.h"
@@ -35,6 +36,9 @@
 
 namespace Wintermute {
 
+class AdBlock;
+class AdGeneric;
+class AdWalkplane;
 class BaseSurfaceOpenGL3D;
 class Mesh3DS;
 class MeshX;
@@ -89,6 +93,9 @@ public:
 					uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY);
 	virtual bool drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Rect32 &rect, const Vector2 &pos, const Vector2 &rot, const Vector2 &scale,
 	                          float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) = 0;
+
+	virtual void renderSceneGeometry(BaseArray<AdWalkplane *> &planes, BaseArray<AdBlock *> &blocks, BaseArray<AdGeneric *> &generics, Camera3D *camera) = 0;
+	virtual void renderShadowGeometry(BaseArray<AdWalkplane *> &planes, BaseArray<AdBlock *> &blocks, BaseArray<AdGeneric *> &generics, Camera3D *camera) = 0;
 
 protected:
 	Math::Matrix4 _lastViewMatrix;

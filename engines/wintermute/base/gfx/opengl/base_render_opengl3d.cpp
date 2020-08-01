@@ -20,6 +20,9 @@
  *
  */
 
+#include "engines/wintermute/ad/ad_block.h"
+#include "engines/wintermute/ad/ad_generic.h"
+#include "engines/wintermute/ad/ad_walkplane.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/base_surface_opengl3d.h"
@@ -535,6 +538,149 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute
 	}
 
 	return true;
+}
+
+void BaseRenderOpenGL3D::renderSceneGeometry(BaseArray<AdWalkplane *> &planes, BaseArray<AdBlock *> &blocks, BaseArray<AdGeneric *> &generics, Camera3D *camera) {
+	_gameRef->_renderer3D->resetModelViewTransform();
+	_gameRef->_renderer3D->setup3D(camera, true);
+
+	glDisable(GL_LIGHTING);
+	glDisable(GL_DEPTH_TEST);
+	glFrontFace(GL_CCW);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	// render walk planes
+	for (uint i = 0; i < planes.size(); i++) {
+		if (!planes[i]->_active) {
+			continue;
+		}
+
+		planes[i]->_mesh->render();
+
+		//m_Renderer->m_NumPolygons += _planes[i]->m_Mesh->m_NumFaces;
+	}
+
+	// render blocks
+	for (uint i = 0; i < blocks.size(); i++) {
+		if (!blocks[i]->_active) {
+			continue;
+		}
+
+		blocks[i]->_mesh->render();
+
+		//		m_Renderer->m_NumPolygons += _blocks[i]->m_Mesh->m_NumFaces;
+	}
+
+	// render generic objects
+	for (uint i = 0; i < generics.size(); i++) {
+		if (!generics[i]->_active) {
+			continue;
+		}
+
+		generics[i]->_mesh->render();
+
+		//		m_Renderer->m_NumPolygons += _generics[i]->m_Mesh->m_NumFaces;
+	}
+
+	_gameRef->_renderer3D->resetModelViewTransform();
+
+//	for (i = 0; i < _lights.size(); ++i) {
+//		if (!_lights[i]->_active) {
+//			continue;
+//		}
+
+//		glBegin(GL_LINES);
+//		glColor3f(1.0f, 1.0f, 0.0f);
+//		Math::Vector3d right = _lights[i]->_position + Math::Vector3d(1000.0f, 0.0f, 0.0f);
+//		Math::Vector3d up = _lights[i]->_position + Math::Vector3d(0.0f, 1000.0f, 0.0f);
+//		Math::Vector3d backward = _lights[i]->_position + Math::Vector3d(0.0f, 0.0f, 1000.0f);
+//		Math::Vector3d left = _lights[i]->_position + Math::Vector3d(-1000.0f, 0.0f, 0.0f);
+//		Math::Vector3d down = _lights[i]->_position + Math::Vector3d(0.0f, -1000.0f, 0.0f);
+//		Math::Vector3d forward = _lights[i]->_position + Math::Vector3d(0.0f, 0.0f, -1000.0f);
+
+//		glVertex3fv(_lights[i]->_position.getData());
+//		glVertex3fv(right.getData());
+//		glVertex3fv(_lights[i]->_position.getData());
+//		glVertex3fv(up.getData());
+//		glVertex3fv(_lights[i]->_position.getData());
+//		glVertex3fv(backward.getData());
+//		glVertex3fv(_lights[i]->_position.getData());
+//		glVertex3fv(left.getData());
+//		glVertex3fv(_lights[i]->_position.getData());
+//		glVertex3fv(down.getData());
+//		glVertex3fv(_lights[i]->_position.getData());
+//		glVertex3fv(forward.getData());
+//		glEnd();
+//	}
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+	//	m_Renderer->m_Device->SetRenderState( D3DRS_FILLMODE, D3DFILL_SOLID );
+
+	//	// render waypoints
+	//	if(m_WptMarker)
+	//	{
+	//		Math::Matrix4 viewMat, projMat, worldMat;
+	//		Math::Vector3d vec2d(0,0,0);
+	//		m_Renderer->m_Device->GetTransform(D3DTS_VIEW, &viewMat);
+	//		m_Renderer->m_Device->GetTransform(D3DTS_PROJECTION, &projMat);
+	//		Math::Matrix4Identity(&worldMat);
+	//		D3DVIEWPORT vport;
+	//		m_Renderer->m_Device->GetViewport(&vport);
+
+	//		m_Renderer->Setup2D();
+
+	//		CAdScene* Scene = ((CAd_gameRef*)_gameRef)->m_Scene;
+
+	//		for(i=0; i<_waypointGroups.size(); i++)
+	//		{
+	//			for(int j=0; j<_waypointGroups[i]->m_Points.size(); j++)
+	//			{
+	//				Math::Vector3d *vect = _waypointGroups[i]->m_Points[j];
+	//				D3DXVec3Project(&vec2d, _waypointGroups[i]->m_Points[j], &vport, &projMat, &viewMat, &worldMat);
+	//				m_WptMarker->Display(vec2d.x + Scene->GetOffsetLeft() - m_Renderer->m_DrawOffsetX, vec2d.y + Scene->GetOffsetTop() - m_Renderer->m_DrawOffsetY);
+	//			}
+	//		}
+	//	}
+}
+
+void BaseRenderOpenGL3D::renderShadowGeometry(BaseArray<AdWalkplane *> &planes, BaseArray<AdBlock *> &blocks, BaseArray<AdGeneric *> &generics, Camera3D *camera) {
+	resetModelViewTransform();
+	setup3D(camera, true);
+
+	// disable color write
+	glBlendFunc(GL_ZERO, GL_ONE);
+
+	glFrontFace(GL_CCW);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	// render walk planes
+	for (uint i = 0; i < planes.size(); i++) {
+		if (planes[i]->_active && planes[i]->_receiveShadows) {
+			planes[i]->_mesh->render();
+			//m_Renderer->m_NumPolygons += _planes[i]->m_Mesh->m_NumFaces;
+		}
+	}
+
+	// render blocks
+	for (uint i = 0; i < blocks.size(); i++) {
+		if (blocks[i]->_active && blocks[i]->_receiveShadows) {
+			blocks[i]->_mesh->render();
+			//m_Renderer->m_NumPolygons += _blocks[i]->m_Mesh->m_NumFaces;
+		}
+	}
+
+	// render generic objects
+	for (uint i = 0; i < generics.size(); i++) {
+		if (generics[i]->_active && generics[i]->_receiveShadows) {
+			generics[i]->_mesh->render();
+			//m_Renderer->m_NumPolygons += _generics[i]->m_Mesh->m_NumFaces;
+		}
+	}
+
+	setSpriteBlendMode(Graphics::BLEND_NORMAL);
 }
 
 Mesh3DS *BaseRenderOpenGL3D::createMesh3DS() {
