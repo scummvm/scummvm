@@ -867,8 +867,8 @@ bool Bitmap::putDibRB(byte *pixels, const Palette &palette) {
 					}
 				}
 
-				if (x > _width + 1) {
-					fillLen += _width - x + 1;
+				if (x > _width) {
+					fillLen += _width - x;
 					if (fillLen <= 0)
 						continue;
 				}
