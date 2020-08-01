@@ -244,6 +244,11 @@ public:
 	void destroy();
 
 	/**
+	 * The following method should be called once, after g_system is created.
+	 */
+	virtual void init() {}
+
+	/**
 	 * The following method is called once, from main.cpp, after all
 	 * config data (including command line params etc.) are fully loaded.
 	 *
