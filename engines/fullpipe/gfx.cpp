@@ -112,9 +112,9 @@ bool PictureObject::load(MfcArchive &file, bool bigPicture) {
 	GameObject::load(file);
 
 	if (bigPicture)
-		_picture = Common::SharedPtr<Picture>(new BigPicture());
+		_picture = new BigPicture();
 	else
-		_picture = Common::SharedPtr<Picture>(new Picture());
+		_picture = new Picture();
 
 	_picture->load(file);
 
@@ -713,8 +713,7 @@ Bitmap::Bitmap(const Bitmap &src) {
 Bitmap::~Bitmap() {
 	// TODO: This is a hack because Graphics::Surface has terrible resource
 	// management
-	if (_surface.unique())
-		_surface->free();
+	//_surface->free();
 }
 
 void Bitmap::load(Common::ReadStream *s) {
@@ -744,7 +743,7 @@ bool Bitmap::isPixelHitAtPos(int x, int y) {
 }
 
 void Bitmap::decode(byte *pixels, const Palette &palette) {
-	_surface = TransSurfacePtr(new Graphics::TransparentSurface, Graphics::SurfaceDeleter());
+	_surface = new Graphics::TransparentSurface, Graphics::SurfaceDeleter();
 	_surface->create(_width, _height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 
 	if (_type == MKTAG('R', 'B', '\0', '\0'))

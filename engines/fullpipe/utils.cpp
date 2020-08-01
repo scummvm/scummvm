@@ -151,7 +151,7 @@ void MemoryObject::loadFile(const Common::String &filename) {
 		if (g_fp->_currArchive != _libHandle && _libHandle)
 			g_fp->_currArchive = _libHandle;
 
-		Common::ScopedPtr<Common::SeekableReadStream> s(g_fp->_currArchive->createReadStreamForMember(filename));
+		Common::SeekableReadStream *s = g_fp->_currArchive->createReadStreamForMember(filename);
 
 		if (s) {
 			assert(s->size() > 0);
