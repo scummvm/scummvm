@@ -120,7 +120,7 @@ private:
 	friend class Common::Singleton<SingletonBaseType>;
 
 public:
-	const PluginList &getPlugins() const;
+	const PluginList &getMusicPlugins() const;
 };
 
 /** Convenience shortcut for accessing the Music manager. */

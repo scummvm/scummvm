@@ -386,6 +386,6 @@ namespace Common {
 DECLARE_SINGLETON(MusicManager);
 }
 
-const PluginList &MusicManager::getPlugins() const {
+const PluginList &MusicManager::getMusicPlugins() const {
 	return PluginManager::instance().getLoadedPluginsOfType(PLUGIN_TYPE_MUSIC);
 }

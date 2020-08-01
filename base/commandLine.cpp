@@ -1003,7 +1003,7 @@ static void listThemes() {
 
 /** Lists all output devices */
 static void listAudioDevices() {
-	PluginList pluginList = MusicMan.getPlugins();
+	PluginList pluginList = MusicMan.getMusicPlugins();
 
 	printf("ID                             Description\n");
 	printf("------------------------------ ------------------------------------------------\n");

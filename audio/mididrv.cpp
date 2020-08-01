@@ -133,7 +133,7 @@ MusicType MidiDriver::getMusicType(MidiDriver::DeviceHandle handle) {
 		return MT_MT32;
 
 	if (handle) {
-		const PluginList p = MusicMan.getPlugins();
+		const PluginList p = MusicMan.getMusicPlugins();
 		for (PluginList::const_iterator m = p.begin(); m != p.end(); m++) {
 			MusicDevices i = (*m)->get<MusicPluginObject>().getDevices();
 			for (MusicDevices::iterator d = i.begin(); d != i.end(); d++) {
@@ -148,7 +148,7 @@ MusicType MidiDriver::getMusicType(MidiDriver::DeviceHandle handle) {
 
 Common::String MidiDriver::getDeviceString(DeviceHandle handle, DeviceStringType type) {
 	if (handle) {
-		const PluginList p = MusicMan.getPlugins();
+		const PluginList p = MusicMan.getMusicPlugins();
 		for (PluginList::const_iterator m = p.begin(); m != p.end(); m++) {
 			MusicDevices i = (*m)->get<MusicPluginObject>().getDevices();
 			for (MusicDevices::iterator d = i.begin(); d != i.end(); d++) {
@@ -279,7 +279,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 
 	// If the selected driver did not match the flags setting,
 	// we try to determine a suitable and "optimal" music driver.
-	const PluginList p = MusicMan.getPlugins();
+	const PluginList p = MusicMan.getMusicPlugins();
 	// If only MDT_MIDI but not MDT_PREFER_MT32 or MDT_PREFER_GM is set we prefer the other devices (which will always be
 	// detected since they are hard coded and cannot be disabled).
 	bool skipMidi = !(flags & (MDT_PREFER_GM | MDT_PREFER_MT32));
@@ -425,7 +425,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 
 MidiDriver *MidiDriver::createMidi(MidiDriver::DeviceHandle handle) {
 	MidiDriver *driver = 0;
-	const PluginList p = MusicMan.getPlugins();
+	const PluginList p = MusicMan.getMusicPlugins();
 	for (PluginList::const_iterator m = p.begin(); m != p.end(); m++) {
 		const MusicPluginObject &musicPlugin = (*m)->get<MusicPluginObject>();
 		if (getDeviceString(handle, MidiDriver::kDriverId).equals(musicPlugin.getId()))
@@ -436,7 +436,7 @@ MidiDriver *MidiDriver::createMidi(MidiDriver::DeviceHandle handle) {
 }
 
 bool MidiDriver::checkDevice(MidiDriver::DeviceHandle handle) {
-	const PluginList p = MusicMan.getPlugins();
+	const PluginList p = MusicMan.getMusicPlugins();
 	for (PluginList::const_iterator m = p.begin(); m != p.end(); m++) {
 		const MusicPluginObject &musicPlugin = (*m)->get<MusicPluginObject>();
 		if (getDeviceString(handle, MidiDriver::kDriverId).equals(musicPlugin.getId()))
@@ -447,7 +447,7 @@ bool MidiDriver::checkDevice(MidiDriver::DeviceHandle handle) {
 }
 
 MidiDriver::DeviceHandle MidiDriver::getDeviceHandle(const Common::String &identifier) {
-	const PluginList p = MusicMan.getPlugins();
+	const PluginList p = MusicMan.getMusicPlugins();
 
 	if (p.begin() == p.end())
 		error("MidiDriver::getDeviceHandle: Music plugins must be loaded prior to calling this method");
