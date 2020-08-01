@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
 	g_system = new Maemo::OSystem_SDL_Maemo();
 	assert(g_system);
 
-	((Maemo::OSystem_SDL_Maemo *)g_system)->init();
+	g_system->init();
 
 #ifdef DYNAMIC_MODULES
 	PluginManager::instance().addPluginProvider(new SDLPluginProvider());

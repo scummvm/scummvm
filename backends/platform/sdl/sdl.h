@@ -46,7 +46,7 @@ public:
 	 * instantiating the backend. Early needed managers are
 	 * created here.
 	 */
-	virtual void init();
+	virtual void init() override;
 
 	/**
 	 * Get the Mixer Manager instance. Not to confuse with getMixer(),
