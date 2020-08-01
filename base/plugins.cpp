@@ -270,6 +270,15 @@ PluginManager::~PluginManager() {
 
 void PluginManager::addPluginProvider(PluginProvider *pp) {
 	_providers.push_back(pp);
+
+	PluginList newPlugins=pp->getPlugins();
+	PluginList::const_iterator i;
+	for (i = newPlugins.begin(); i != newPlugins.end(); ++i) {
+		Plugin *p = *i;
+		if (!p->isLoaded())
+			continue;
+		_pluginsInMem[p->getType()].push_back(p);
+	}
 }
 
 Plugin *PluginManager::getPluginByFileName(const Common::String &filename) const {
