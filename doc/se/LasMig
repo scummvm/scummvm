@@ -70,7 +70,7 @@ Från början var programmet designat för att köra LucasArts SCUMM-spel, till 
 
 Med tiden har stöd lagts till för många spel som inte använder SCUMM-systemet och ScummVM stöder nu även många av Sierras AGI- och SCI-spel (till exempel King’s Quest 1-6, Space Quest 1-5, ...), Discworld 1 och 2, Simon the Sorcerer 1 och 2, Beneath A Steel Sky, Lure of the Temptress, Broken Sword I och II, Flight of the Amazon Queen, Gobliiins 1-3, Legend of Kyrandia-serien, många av Humongous Entertainments barnspel (inklusive Freddi Fish och Putt Putt-spelen) med flera. Du kan se en fullständig lista med delaljer om vilka äventyr som stöds och hur väl de fungerar på kompatibilitetssidan. ScummVM förbättras konstant, så håll ett öga på listan.
 
-Bland systemen du kan använda för att spela dessa spel räknas vanliga persondatorer (Windows, Linux, Mac OS X, ...) spelkonsoler (Dreamcast, Nintendo DS & Wii, PS2, PSP, ...), smartphones (Android, iPhone, Symbian ...) med flera.
+Bland systemen du kan använda för att spela dessa spel räknas vanliga persondatorer (Windows, Linux, Mac OS X, ...) spelkonsoler (Dreamcast, Nintendo DS & Wii, PSP, ...), smartphones (Android, iPhone, Symbian ...) med flera.
 
 Just nu är ScummVM fortfarande under utveckling. Var medveten om att trots att vi försöker se till att många spel kan avklaras utan att stöta på allvarliga buggar finns det ändå risk för krasher, och vi erbjuder inga garantier. Dock har många spel varit stödda av programmet väldigt länge och borde fungera utmärkt i vilken som helst av de senaste stabila versionerna. Du kan få en uppfattning om hur väl varje spel fungerar i ScummVM genom att titta på kompatibilitetssidan. Faktum är att ScummVM används kommersiellt för nyutgåvor av vissa spel på moderna plattformar. Alltså är många företag nöjda med mjukvarans kvalitet och hur väl programmet stöder spelen.
 
@@ -222,7 +222,7 @@ MADE-spel från Activision:
      Inherit the Earth: Quest for the Orb        [ite]
      Nippon Safes Inc.                           [nippon]
      Lands of Lore: The Throne of Chaos          [lol]
-     The Journeyman Project: Pegasus Prime       [pegasus] 
+     The Journeyman Project: Pegasus Prime       [pegasus]
      The Legend of Kyrandia                      [kyra1]
      The Legend of Kyrandia: The Hand of Fate    [kyra2]
      The Legend of Kyrandia: Malcolm's Revenge   [kyra3]
@@ -326,7 +326,7 @@ ScummVM skippar kopieringsskyddet för följande spel:
       -- överskridit med tillstånd från Revolution Software.
   * Dreamweb
       -- en lista med tillgängliga kommandon i spelets terminaler visas nu
-         när spelaren använder 'help'-kommandot. 
+         när spelaren använder 'help'-kommandot.
   * Inherit the Earth: Quest for the Orb (Diskettversionen)
       -- överskridit med tillstånd från Wyrmkeep Entertainment,
          då det överskridits på alla CD-utgåvor av spelet.
@@ -353,7 +353,7 @@ Annars kan du använda ”extract_mm_c64” från tools-paketet för att extrahe
 ---- ----------------------------------
 Versionerna av spelet som stöds av ScummVM är engelska (E), franska (F), tyska (G) italienska (I), svenska (SW) och amerikanska (U). ScummVM kräver endast PRG-delen av ROM-filen för att köra spelet.
 
-För att få igång spelet måste du radera de första 16 byten från ROM-filen du vill använda. Du kan använda vilken hex-redigerare du vill så länge du har möjlighet att kopiera/klistra in. När du öppnat ROM-filen med hex-redigeraren, markera allt från den andra raden (17:e byten) till och med slutet av filen. Kopiera och klistra in i en ny hex-fil. Namnge den nya filen “Maniac Mansion (XX).prg” där XX står för vilken version av spelet du jobbar med (E, F, G, I, SW eller U). Den slutliga filstorleken borde vara exakt 262144 bytes. 
+För att få igång spelet måste du radera de första 16 byten från ROM-filen du vill använda. Du kan använda vilken hex-redigerare du vill så länge du har möjlighet att kopiera/klistra in. När du öppnat ROM-filen med hex-redigeraren, markera allt från den andra raden (17:e byten) till och med slutet av filen. Kopiera och klistra in i en ny hex-fil. Namnge den nya filen “Maniac Mansion (XX).prg” där XX står för vilken version av spelet du jobbar med (E, F, G, I, SW eller U). Den slutliga filstorleken borde vara exakt 262144 bytes.
 Om du lägger till spelet manuellt, se till att plattformen är inställd för NES.
 
 De vanligaste misstagen som förhindrar att spelet fungerar:
@@ -501,7 +501,7 @@ För att spela The Legend of Kyrandia i ScummVM behöver du “kyra.dat”-filen
 ----- ---------------------------------------------------
 Textinmatningshjälpen är ett hjälpmedel i ScummVM för att spela AGI-spel (som är ökända för kommandoradsinmatning) på enheter med begränsat stöd för tangentbord. I dessa situationer (då det lätt kan bli långtråkigt att skriva med emulerade tangentbord) kan kommandon matas in snabbt och enkelt via textinmatningshjälpen.
 
-För att använda textinmatningshjälp i AGI-spel måste du kopiera pred.dic-filen till ”ScummVM extras”-katalogen eller till katalogen för spelet du vill spela. Den här ordboken har skapats genom att söka igenom alla kända AGI-spel och innehåller det maximala antalet vanliga ord. 
+För att använda textinmatningshjälp i AGI-spel måste du kopiera pred.dic-filen till ”ScummVM extras”-katalogen eller till katalogen för spelet du vill spela. Den här ordboken har skapats genom att söka igenom alla kända AGI-spel och innehåller det maximala antalet vanliga ord.
 
 Om ScummVM känner igen ordboken visas textinmatningshjälpen antingen när du klickar på kommandoraden (när helst tangetbordsinmatning krävs, även i dialogrutor), eller i vissa konversioner genom att trycka på en angiven tangent.
 
@@ -565,7 +565,7 @@ Den här versionen har följande kända problem. Du behöver inte rapportera dem
 
   The Secret of Monkey Island:
     - MIDI stöd i EGA-versionen kräver Roland-uppdateringen från LucasArts
- 
+
   Beneath a Steel Sky:
     - Amiga-versionerna stöds ej
     - Diskett-demon stöds ej
@@ -668,7 +668,7 @@ Ordning: scummvm [INSTÄLLNINGAR]... [SPEL]
   -h, --help               Visar kortfattad hjälptext
   -z, --list-games         Visar lista med stödda spel
   -t, --list-targets       Visar lista med konfigurerade targets
-  --list-saves=TARGET      Visar en lista med sparade data för det specificerade    
+  --list-saves=TARGET      Visar en lista med sparade data för det specificerade
                            spelet (TARGET)
   --console                Öppnar konsolfönstret (standard: på) (endast Windows)
   -c, --config=CONFIG      Använd alternativ konfigurationsfil (CONFIG)
@@ -681,7 +681,7 @@ Ordning: scummvm [INSTÄLLNINGAR]... [SPEL]
   --themepath=PATH         Sökväg dit GUI-teman lagras
   --list-themes            Visa full lista med alla användbara GUI-teman
   -e, --music-driver=MODE  Välj musik-driver (se även avdelning 7.0)
-  --list-audio-devices     Visar tillgängliga ljudenheter 
+  --list-audio-devices     Visar tillgängliga ljudenheter
   -q, --language=LANG      Välj spelets språk (se även avdelning 5.2)
   -m, --music-volume=NUM   Ställ in musikvolym, 0-255 (standard: 192)
   -s, --sfx-volume=NUM     Ställ in ljudeffektsvolym, 0-255 (standard: 192)
@@ -713,7 +713,7 @@ Ordning: scummvm [INSTÄLLNINGAR]... [SPEL]
   --output-rate=RATE       Välj ljudfrekvens i Hz (t.ex. 22050)
   --opl-driver=DRIVER      Välj AdLib (OPL)-emulator (db, mame, nuked)
   --aspect-ratio           Aktivera korrektion av bildförhållande
-  --render-mode=MODE       Aktivera ytterligare renderingslägen (cga, ega,                      
+  --render-mode=MODE       Aktivera ytterligare renderingslägen (cga, ega,
                            hercGreen, hercAmber, amiga)
 
   --alt-intro              Använd alternativt intro för CD-versionerna av Beneath a
@@ -875,9 +875,9 @@ ScummVM stöder ett antal kortkommandon medan du spelar. De är olika för SCUMM
     Ctrl-Alt 1-8           - Växla grafikfilter
     Ctrl-Alt + och -       - Höj/sänk skalningsfaktor
     Ctrl-Alt a             - Aktivera/deaktivera korrigering av bild-
-                             förhållanden. De flesta spelen använder en 
+                             förhållanden. De flesta spelen använder en
                              upplösning på 320x200 pixlar, vilket kan
-                             se förvrängt ut på moderna skärmar. 
+                             se förvrängt ut på moderna skärmar.
                              Korrigering av bildförhållanden sträcker
                              bilden proportionellt till 320x240.
 
@@ -1032,7 +1032,7 @@ Plattformar som för närvarande har annorlunda standardkataloger:
 
     Övriga unix-system:
     $HOME/.scummvm/
-    
+
     Windows Vista/7:
     \Users\username\AppData\Roaming\ScummVM\Saved games\
 
@@ -1369,7 +1369,7 @@ Som ovan, men ScummVM måste kompileras med Flac-stöd. Kör:
 
   compress_scumm_sou --flac monster.sou
 
-Detta borde skapa en mindre monster.sof-fil som du bör kopiera till din spelkatalog. Kom ihåg att kvaliteten alltid är den samma; att ändra komprimeringsinställningarna påverkar endast komprimeringstiden och den slutgiltiga filstorleken. Att leka med blockstorleken (-b <value>) har störst inverkan på den slutliga filstorleken – 1152 verkar vara ett bra värde för dessa typer av ljudfiler. Se till att läsa instruktionerna för kompressorn innan du använder andra värden. 
+Detta borde skapa en mindre monster.sof-fil som du bör kopiera till din spelkatalog. Kom ihåg att kvaliteten alltid är den samma; att ändra komprimeringsinställningarna påverkar endast komprimeringstiden och den slutgiltiga filstorleken. Att leka med blockstorleken (-b <value>) har störst inverkan på den slutliga filstorleken – 1152 verkar vara ett bra värde för dessa typer av ljudfiler. Se till att läsa instruktionerna för kompressorn innan du använder andra värden.
 
 7.8.6) Att komprimera musik/ljudeffekter/tal i AGOS-spel:
 ------ --------------------------------------------------
@@ -1438,7 +1438,7 @@ Uppspelningsfrekvensen bestämmer hur många ljudsamplingar som spelas per kanal
 
 De flesta ljuden ScummVM måste spela upp samplades med antingen 22050 Hz eller 11025 Hz. En högre uppspelningsfrekvens kommer alltså inte som av trolleri förbättra ljudkvaliten för dessa ljud. Sålunda räcker 22050 Hz gott och väl.
 
-Vissa spel använder CD-ljud. Om du vill använda komprimerade filer för CD-ljudspåren kan du utgå ifrån att de samplades med 44100 Hz, så för dessa spel är detta ett bättre val av uppspelningsfrekvens. 
+Vissa spel använder CD-ljud. Om du vill använda komprimerade filer för CD-ljudspåren kan du utgå ifrån att de samplades med 44100 Hz, så för dessa spel är detta ett bättre val av uppspelningsfrekvens.
 
 När du använder AdLib, FM Towns, PC Speaker eller IBM PCjr musikdrivers är ScummVM ansvarigt för att generera samplingarna. Vanligtvis är 22050 Hz mer än nog för dessa, men det finns minst ett stycke AdLib musik i Beneath a Steel Sky som låter mycket bättre i 44100 Hz.
 
@@ -1517,7 +1517,7 @@ Ett exempel på en konfigurationsfil ser ut så här:
 Följande nyckelord kan användas:
 
     path               string   Sökvägen dit spelets datafiler ligger
-    autosave_period    number   Antal sekunder mellan autosparningar 
+    autosave_period    number   Antal sekunder mellan autosparningar
                                 (standard: 300)
     save_slot          number   Positionsnumret för spardata att ladda vid
                                 uppstart.
@@ -1622,9 +1622,9 @@ Broken Sword II lägger till följande nyckelord:
                                 deaktivera musik
     object_labels      bool     Ställ in till “true” för att aktivera
                                 etiketter för föremål
-    reverse_stereo     bool     Ställ in till “true” för att ivertera  
+    reverse_stereo     bool     Ställ in till “true” för att ivertera
                                 stereokanalerna
-    sfx_mute           bool     Ställ in till “true” för att deaktivera      
+    sfx_mute           bool     Ställ in till “true” för att deaktivera
                                 ljudeffekter
 
 Flight of the Amazon Queen lägger till följande nyckelord:
@@ -1639,7 +1639,7 @@ Jones in the Fast Lane använder även följande nyckelord:
     music_mute         bool     Ställ in till “true” för att använda
                                 CD-ljud, om tillgängligt, istället
                                 spelets vanliga ljud.
-      
+
 
 King's Quest VI Windows lägger till följande nyckelord:
 
@@ -1649,7 +1649,7 @@ King's Quest VI Windows lägger till följande nyckelord:
                                 Ställ in till ”false” för att använda
                                 de uppskalade muspekarna som matchar
                                 resten av grafiken.
-    
+
 
 Lands of Lore: The Throne of Chaos använder även följande nyckelord:
 
@@ -1727,7 +1727,7 @@ På Windows kan du definiera USE_WINDBG och lägga till WinDbg för att visa deb
 
   GCC och MinGW32:
     * Skriv "./configure"
-    * Skriv "make" (eller "gmake", eller "gnumake", beroende på vilken GNU 
+    * Skriv "make" (eller "gmake", eller "gnumake", beroende på vilken GNU
       används av ditt system) så kompilerar ScummVM förhoppningsvis allt åt dig.
     * För ytterligare information se:
       https://wiki.scummvm.org/index.php/Compiling_ScummVM/GCC

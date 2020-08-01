@@ -304,15 +304,7 @@ public:
  * Base constructor, creates an empty hashmap.
  */
 template<class Key, class Val, class HashFunc, class EqualFunc>
-HashMap<Key, Val, HashFunc, EqualFunc>::HashMap()
-//
-// We have to skip _defaultVal() on PS2 to avoid gcc 3.2.2 ICE
-//
-#ifdef __PLAYSTATION2__
-	{
-#else
-	: _defaultVal() {
-#endif
+HashMap<Key, Val, HashFunc, EqualFunc>::HashMap() : _defaultVal() {
 	_mask = HASHMAP_MIN_CAPACITY - 1;
 	_storage = new Node *[HASHMAP_MIN_CAPACITY];
 	assert(_storage != NULL);

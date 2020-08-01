@@ -300,13 +300,6 @@ MODULE_OBJS += \
 	graphics/openpandora/op-graphics.o
 endif
 
-ifeq ($(BACKEND),ps2)
-MODULE_OBJS += \
-	fs/ps2/ps2-fs.o \
-	fs/ps2/ps2-fs-factory.o \
-	plugins/ps2/ps2-provider.o
-endif
-
 ifeq ($(BACKEND),psp)
 MODULE_OBJS += \
 	fs/psp/psp-fs.o \

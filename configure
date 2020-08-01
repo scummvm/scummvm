@@ -533,7 +533,7 @@ get_system_exe_extension() {
 	riscos)
 		_exeext=",e1f"
 		;;
-	3ds | dreamcast | ds | gamecube | n64 | ps2 | psp | switch | wii)
+	3ds | dreamcast | ds | gamecube | n64 | psp | switch | wii)
 		_exeext=".elf"
 		;;
 	gph-linux)
@@ -946,7 +946,7 @@ Configuration:
   -h, --help              display this help and exit
   --backend=BACKEND       backend to build (3ds, android, dc, dingux, ds, gcw0,
                           gph, iphone, ios7, maemo, n64, null, openpandora,
-                          ps2, psp, psp2, samsungtv, sdl, switch, wii) [sdl]
+                          psp, psp2, samsungtv, sdl, switch, wii) [sdl]
 
 Installation directories:
   --prefix=PREFIX         install architecture-independent files in PREFIX
@@ -993,7 +993,6 @@ Special configuration feature:
                                            n64 for Nintendo 64
                                            openpandora for OpenPandora
                                            ouya for OUYA
-                                           ps2 for PlayStation 2
                                            ps3 for PlayStation 3
                                            psp2 for PlayStation Vita
                                            psp for PlayStation Portable
@@ -1726,14 +1725,6 @@ ppc-amigaos)
 	_host_cpu=powerpc
 	_host_alias=$_host
 	;;
-ps2)
-	_host_os=ps2
-	_host_cpu=mips64r5900el
-	_host_alias=ee
-	# PS2 bogus dirs: they actually depend on launch medium
-	datadir='host:data'
-	docdir='host:docs'
-	;;
 ps3)
 	_host_os=ps3
 	_host_cpu=powerpc
@@ -1815,7 +1806,7 @@ else
 fi
 
 case $_host in
-arm-*riscos | caanoo | gp2x | gp2xwiz | openpandora | ps2 | psp | psp2 | switch)
+arm-*riscos | caanoo | gp2x | gp2xwiz | openpandora | psp | psp2 | switch)
 	if test "$_debug_build" = auto; then
 		# If you want to debug one of these platforms, use '--disable-optimizations --enable-debug'
 		_debug_build=no
@@ -1876,12 +1867,6 @@ dreamcast)
 n64)
 	if test -z "$N64SDK"; then
 		echo "Please set N64SDK in your environment. export N64SDK=<path to n64 sdk>"
-		exit 1
-	fi
-	;;
-ps2)
-	if test -z "$PS2SDK"; then
-		echo "Please set PS2SDK in your environment. export PS2SDK=<path to ps2 sdk>"
 		exit 1
 	fi
 	;;
@@ -2241,7 +2226,7 @@ if test "$have_gcc" = yes ; then
 		case $_host_os in
 		# newlib-based system include files suppress non-C89 function
 		# declarations under __STRICT_ANSI__, undefine it
-		3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | mint* | n64 | psp | ps2 | ps3 | psp2 | switch | wii )
+		3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | mint* | n64 | psp | ps3 | psp2 | switch | wii )
 			append_var CXXFLAGS "-U__STRICT_ANSI__"
 			;;
 		*)
@@ -2315,7 +2300,7 @@ fi
 # However, some platforms use GNU extensions in system header files, so
 # for these we must not use -pedantic.
 case $_host_os in
-3ds | android | androidsdl | gamecube | ps2 | psp | switch | wii)
+3ds | android | androidsdl | gamecube | psp | switch | wii)
 	;;
 *)
 	# ICC does not support pedantic, while GCC and clang do.
@@ -2992,14 +2977,6 @@ EOF
 		add_line_to_config_mk 'N64 = 1'
 		_nuked_opl=no
 		;;
-	ps2)
-		append_var CXXFLAGS "-G2"
-		append_var DEFINES "-D_EE"
-		append_var DEFINES "-D__PLAYSTATION2__"
-		if test -z "$PS2SDK_OLD"; then
-			append_var DEFINES "-D__NEW_PS2SDK__"
-		fi
-		;;
 	ps3)
 		# Force use of SDL and freetype from the ps3 toolchain
 		_sdlpath="$PS3DEV/portlibs/ppu:$PS3DEV/portlibs/ppu/bin"
@@ -3458,47 +3435,6 @@ if test -n "$_host"; then
 
 			_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
 			;;
-		ps2)
-			append_var DEFINES "-DDISABLE_TEXT_CONSOLE"
-			append_var DEFINES "-DDISABLE_COMMAND_LINE"
-			append_var DEFINES "-DDISABLE_DOSBOX_OPL"
-			append_var DEFINES "-DDISABLE_SID"
-			append_var DEFINES "-DDISABLE_NES_APU"
-			append_var CXXFLAGS "-fno-exceptions"
-			append_var CXXFLAGS "-fno-rtti"
-			_backend="ps2"
-			_build_scalers=no
-			_mt32emu=no
-			_nuked_opl=no
-			# HACK to enable mad & zlib (they are not properly detected due to linker issues).
-			# This trick doesn't work for tremor right now, as the PS2 port the resulting library
-			# libtremor, while our code later on expects it to be called libvorbisidec.
-			# TODO: Enable tremor, e.g. by adding  -ltremor or by renaming the lib.
-			# Disable this for older SDK as this breaks the build otherwise...
-			if test -z "$PS2SDK_OLD" && test "$_tremor" = auto; then
-				_tremor=yes
-			fi
-			_mad=yes
-			_zlib=yes
-			# HACK to fix compilation of C source files for now.
-			add_line_to_config_mk 'CC := ee-gcc'
-			add_line_to_config_mk 'CFLAGS := -std=c99 -W -Wno-unused-parameter -Wconversion -pedantic -G2 -s -O2 -Wuninitialized'
-			# HACK to fix linking for now. It seems ee-g++ does not handle linking correctly.
-			LD=ee-gcc
-
-			if test "$_debug_build" = yes; then
-				# TODO: Setup debug build properly
-				append_var DEFINES "-D__PS2_DEBUG__"
-				#append_var INCLUDES "-I$(PS2GDB)/ee"
-				#append_var LDFLAGS "-L$(PS2GDB)/lib"
-				append_var LDFLAGS "-lps2gdbStub"
-				append_var LDFLAGS "-lps2ip"
-				append_var LDFLAGS "-ldebug"
-			else
-				# If not building for debug mode, strip binaries.
-				append_var CXXFLAGS "-s"
-			fi
-			;;
 		ps3)
 			_timidity=no
 			_vkeybd=yes
@@ -3663,26 +3599,6 @@ case $_backend in
 			append_var DEFINES "-DOP_DEBUG"
 		fi
 		_sdl=auto
-		;;
-	ps2)
-		append_var DEFINES "-D_EE"
-		append_var DEFINES "-DFORCE_RETURN_TO_LAUNCHER"
-		append_var INCLUDES "-I$PS2SDK/ee/include"
-		append_var INCLUDES "-I$PS2SDK/common/include"
-		append_var INCLUDES "-I$PS2SDK/ports/include"
-		if test "$_dynamic_modules" = no ; then
-			append_var LDFLAGS "-mno-crt0"
-			append_var LDFLAGS "$PS2SDK/ee/startup/crt0.o"
-			append_var LDFLAGS "-T $PS2SDK/ee/startup/linkfile"
-		fi
-		append_var LDFLAGS "-L$PS2SDK/ee/lib"
-		append_var LDFLAGS "-L$PS2SDK/ports/lib"
-		if test -d "$PS2DEV/isjpcm"; then
-			append_var INCLUDES "-I$PS2DEV/isjpcm/include"
-			append_var LDFLAGS "-L$PS2DEV/isjpcm/lib"
-		fi
-		append_var LIBS "-lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm"
-		append_var LIBS "-lm -lc -lfileXio -lkernel -lstdc++"
 		;;
 	psp)
 		append_var DEFINES "-D__PSP__"
@@ -3932,7 +3848,7 @@ esac
 #
 echo_n "Checking if host is POSIX compliant... "
 case $_host_os in
-	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | ps3 | psp2 | psp | riscos | wii)
+	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps3 | psp2 | psp | riscos | wii)
 		_posix=no
 		;;
 	3ds | android | androidsdl | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | switch | uclinux*)
@@ -4143,14 +4059,6 @@ PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a
 '
 		;;
-	ps2)
-		_elf_loader=yes
-		append_var DEFINES "-DUNCACHED_PLUGINS"
-_mak_plugins='
-LDFLAGS         += -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backends/plugins/ps2/main_prog.ld
-PLUGIN_LDFLAGS  += -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backends/plugins/ps2/plugin.ld -lstdc++ -lc
-'
-		;;
 	psp)
 		_elf_loader=yes
 		append_var DEFINES "-DUNCACHED_PLUGINS"
@@ -4349,8 +4257,6 @@ if test "$_tremor" = yes && test "$_vorbis" = no; then
 	if test "$_tremolo" = yes ; then
 		add_line_to_config_h '#define USE_TREMOLO'
 		append_var LIBS "$TREMOR_LIBS -ltremolo"
-	elif test "$_host" = ps2 ; then
-		LIBS="-ltremor $LIBS"
 	else
 		append_var LIBS "$TREMOR_LIBS -lvorbisidec"
 	fi
@@ -5665,10 +5571,6 @@ case $_backend in
 		# The Maemo apps want the plugins in the "lib" directory
 		# without a scummvm sub directory.
 		append_var DEFINES "-DPLUGIN_DIRECTORY=\\\"$libdir\\\""
-		;;
-	ps2)
-		# PS2 bogus dir: it actually depends on launch medium
-		append_var DEFINES "-DPLUGIN_DIRECTORY=\\\"host:plugins\\\""
 		;;
 	*)
 		append_var DEFINES "-DPLUGIN_DIRECTORY=\\\"$libdir/scummvm\\\""
