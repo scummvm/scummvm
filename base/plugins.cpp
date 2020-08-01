@@ -70,9 +70,10 @@ StaticPlugin::~StaticPlugin() {
 		delete _pluginObject;
 	}
 
-	virtual bool isLoaded() const   { return true; }
-	virtual bool loadPlugin()		{ return true; }
-	virtual void unloadPlugin()		{}
+	virtual bool isDynamic() const override { return false; }
+	virtual bool isLoaded() const override { return true; }
+	virtual bool loadPlugin() override { return true; }
+	virtual void unloadPlugin() override {}
 };
 
 class StaticPluginProvider : public PluginProvider {
@@ -321,6 +322,7 @@ PluginList PluginManager::getAllPluginsOfType(PluginType type) const {
 
 bool PluginManager::loadPlugin(Plugin *plugin) {
 	assert(plugin);
+	assert(!plugin->isLoaded());
 	// Try to load the plugin
 	if (plugin->loadPlugin()) {
 		_pluginsInMem[plugin->getType()].push_back(plugin);
@@ -337,6 +339,9 @@ void PluginManager::unloadAllPlugins() {
 }
 
 void PluginManager::unloadPlugin(Plugin *plugin) {
+	if (!plugin->isDynamic())
+		return;
+
 	PluginList &list = _pluginsInMem[plugin->getType()];
 	for (PluginList::iterator p = list.begin(); p != list.end(); ++p) {
 		if (*p == plugin) {
@@ -348,24 +353,28 @@ void PluginManager::unloadPlugin(Plugin *plugin) {
 
 void PluginManager::unloadAllPluginsOfType(PluginType type) {
 	PluginList &list = _pluginsInMem[type];
-	for (PluginList::iterator p = list.begin(); p != list.end(); ++p) {
-			(*p)->unloadPlugin();
+	for (PluginList::iterator i = list.begin(); i != list.end(); ++i) {
+		Plugin *p = *i;
+		if (!p->isDynamic())
+			continue;
+		p->unloadPlugin();
+		i = list.erase(i);
 	}
-	_pluginsInMem[type].clear();
 }
 
 void PluginManager::unloadAllPluginsOfTypeExcept(PluginType type, const Plugin *plugin) {
 	Plugin *found = NULL;
-	for (PluginList::iterator p = _pluginsInMem[type].begin(); p != _pluginsInMem[type].end(); ++p) {
-		if (*p == plugin) {
-			found = *p;
+	PluginList &list = _pluginsInMem[type];
+	for (PluginList::iterator i = list.begin(); i != list.end(); ++i) {
+		Plugin *p = *i;
+		if (!p->isDynamic())
+			continue;
+		if (p == plugin) {
+			found = p;
 		} else {
-			(*p)->unloadPlugin();
+			p->unloadPlugin();
+			i = list.erase(i);
 		}
-	}
-	_pluginsInMem[type].clear();
-	if (found != NULL) {
-		_pluginsInMem[type].push_back(found);
 	}
 }
 

@@ -190,7 +190,8 @@ public:
 			//unloadPlugin();
 	}
 
-	virtual bool isLoaded() const = 0; // TODO
+	virtual bool isDynamic() const = 0;
+	virtual bool isLoaded() const = 0;
 	/**
 	 * The following functions query information from the plugin object once
 	 * it's loaded into memory.

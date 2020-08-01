@@ -106,6 +106,9 @@ public:
 		delete _pluginObject;
 	}
 
+	virtual bool isDynamic() const override { return true; }
+	virtual bool isLoaded() const override { return _isLoaded; }
+
 	virtual const char *getFileName() const {
 		return _filename.c_str();
 	}
