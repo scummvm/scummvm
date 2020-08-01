@@ -144,7 +144,7 @@ public:
 
 class EndianAwareStreamWrapper : public Common::SeekableReadStreamEndian {
 public:
-	EndianAwareStreamWrapper(Common::SeekableReadStream *stream, bool bigEndian, bool disposeAfterUse = true) : Common::SeekableReadStreamEndian(bigEndian), Common::ReadStreamEndian(bigEndian), _stream(stream), _dispose(disposeAfterUse) {}
+	EndianAwareStreamWrapper(Common::SeekableReadStream *stream, bool bigEndian, bool disposeAfterUse = true) : Common::ReadStreamEndian(bigEndian), _stream(stream), _dispose(disposeAfterUse) {}
 	~EndianAwareStreamWrapper() override { if (_dispose) delete _stream; }
 
 	// Common::Stream interface

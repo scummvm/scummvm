@@ -90,7 +90,6 @@ class SeekableSubReadStreamEndian :  virtual public SeekableSubReadStream, virtu
 public:
 	SeekableSubReadStreamEndian(SeekableReadStream *parentStream, uint32 begin, uint32 end, bool bigEndian, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO)
 		: SeekableSubReadStream(parentStream, begin, end, disposeParentStream),
-		  SeekableReadStreamEndian(bigEndian),
 		  ReadStreamEndian(bigEndian) {
 	}
 
