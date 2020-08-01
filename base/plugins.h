@@ -192,11 +192,21 @@ public:
 
 	virtual bool isDynamic() const = 0;
 	virtual bool isLoaded() const = 0;
-	/**
-	 * The following functions query information from the plugin object once
-	 * it's loaded into memory.
-	 **/
+
+	
 	PluginType getType() const;
+	
+
+	/**
+	 * The getFileName() function gets the name of the plugin file for those
+	 * plugins that have files (ie. not static). It doesn't require the plugin
+	 * object to be loaded into memory, unlike getName()
+	 **/
+	virtual const char *getFileName() const { return 0; }
+
+	/**
+	 * All following functions require that the plugin is loaded
+	 **/
 	const char *getName() const;
 	const char *getEngineId() const;
 
@@ -209,13 +219,6 @@ public:
 		}
 		return *pluginObject;
 	}
-
-	/**
-	 * The getFileName() function gets the name of the plugin file for those
-	 * plugins that have files (ie. not static). It doesn't require the plugin
-	 * object to be loaded into memory, unlike getName()
-	 **/
-	virtual const char *getFileName() const { return 0; }
 
 	friend class PluginManager;
 };
