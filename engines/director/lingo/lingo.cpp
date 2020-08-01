@@ -671,18 +671,22 @@ int Lingo::getAlignedType(const Datum &d1, const Datum &d2) {
 
 	if (d1Type == STRING || d1Type == FIELDREF) {
 		Common::String src = d1.asString();
-		char *endPtr = 0;
-		strtod(src.c_str(), &endPtr);
-		if (*endPtr == 0) {
-			d1Type = FLOAT;
+		if (!src.empty()) {
+			char *endPtr = 0;
+			strtod(src.c_str(), &endPtr);
+			if (*endPtr == 0) {
+				d1Type = FLOAT;
+			}
 		}
 	}
 	if (d2Type == STRING || d2Type == FIELDREF) {
 		Common::String src = d1.asString();
-		char *endPtr = 0;
-		strtod(src.c_str(), &endPtr);
-		if (*endPtr == 0) {
-			d2Type = FLOAT;
+		if (!src.empty()) {
+			char *endPtr = 0;
+			strtod(src.c_str(), &endPtr);
+			if (*endPtr == 0) {
+				d2Type = FLOAT;
+			}
 		}
 	}
 
