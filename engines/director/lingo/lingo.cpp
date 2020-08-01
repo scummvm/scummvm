@@ -169,6 +169,9 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 
 	_localvars = NULL;
 
+	//kTheEntities
+	_itemDelimiter = ',';
+
 	// events
 	_passEvent = false;
 	_perFrameHook = Datum();

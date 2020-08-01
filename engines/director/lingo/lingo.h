@@ -337,6 +337,9 @@ public:
 	const char *entity2str(int id);
 	const char *field2str(int id);
 
+	// global kTheEntity
+	char _itemDelimiter;
+
 	Datum getTheEntity(int entity, Datum &id, int field);
 	void setTheEntity(int entity, Datum &id, int field, Datum &d);
 	Datum getTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &menuItemId);

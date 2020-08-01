@@ -452,7 +452,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = 1;					// We always allow it in ScummVM
 		break;
 	case kTheItemDelimiter:
-		getTheEntitySTUB(kTheItemDelimiter);
+		d.type = STRING;
+		d.u.s = new Common::String(g_lingo->_itemDelimiter);
 		break;
 	case kTheKey:
 		d.type = STRING;
@@ -899,7 +900,10 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		// No op in ScummVM. We always allow it
 		break;
 	case kTheItemDelimiter:
-		setTheEntitySTUB(kTheItemDelimiter);
+		if (d.asString().size() == 0)
+			g_lingo->_itemDelimiter = *"";
+		else
+			g_lingo->_itemDelimiter = d.asString()[0];
 		break;
 	case kTheKeyDownScript:
 		_vm->getCurrentMovie()->setPrimaryEventHandler(kEventKeyDown, d.asString());
