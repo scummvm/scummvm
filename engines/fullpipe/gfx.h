@@ -36,7 +36,6 @@ class DynamicPhase;
 class Movement;
 struct PicAniInfo;
 
-typedef Common::Array<int32> Palette;
 typedef Common::Point Dims;
 
 typedef Common::SharedPtr<Graphics::TransparentSurface> TransSurfacePtr;

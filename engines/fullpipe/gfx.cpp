@@ -462,10 +462,10 @@ bool Picture::load(MfcArchive &file) {
 	int havePal = file.readUint32LE();
 
 	if (havePal > 0) {
-		_paletteData.reserve(256);
 		for (int i = 0; i < 256; ++i) {
-			_paletteData.push_back(file.readUint32LE());
+			_paletteData.pal[i] = file.readUint32LE();
 		}
+		_paletteData.size = 256;
 	}
 
 	getData();
@@ -529,7 +529,7 @@ void Picture::getDibInfo() {
 	_bitmap->load(s);
 	delete s;
 
-	_bitmap->decode(_data, _paletteData.size() ? _paletteData : *g_fp->_globalPalette);
+	_bitmap->decode(_data, _paletteData.size ? _paletteData : *g_fp->_globalPalette);
 }
 
 const Bitmap *Picture::getPixelData() {
@@ -562,7 +562,7 @@ void Picture::draw(int x, int y, int style, int angle) {
 	}
 
 	const Palette *pal;
-	if (_paletteData.size()) {
+	if (_paletteData.size) {
 		pal = &_paletteData;
 	} else {
 		//warning("Picture:draw: using global palette");
@@ -628,10 +628,10 @@ void Picture::displayPicture() {
 }
 
 void Picture::setPaletteData(const Palette &pal) {
-	if (pal.size()) {
-		_paletteData = pal;
+	if (pal.size) {
+		_paletteData.copy(pal);
 	} else {
-		_paletteData.clear();
+		_paletteData.size = 0;
 	}
 }
 
@@ -793,7 +793,7 @@ bool Bitmap::putDibRB(byte *pixels, const Palette &palette) {
 	uint16 *srcPtr2;
 	uint16 *srcPtr;
 
-	if (!palette.size()) {
+	if (!palette.size) {
 		debugC(2, kDebugDrawing, "Bitmap::putDibRB(): Both global and local palettes are empty");
 		return false;
 	}
@@ -847,7 +847,7 @@ bool Bitmap::putDibRB(byte *pixels, const Palette &palette) {
 				if (fillLen > 0 || start1 >= 0) {
 					if (x <= _width + 1 || (fillLen += _width - x + 1, fillLen > 0)) {
 						if (y <= endy) {
-							int bgcolor = palette[(pixel >> 8) & 0xff];
+							int bgcolor = palette.pal[(pixel >> 8) & 0xff];
 							curDestPtr = (uint32 *)_surface->getBasePtr(start1, y);
 							colorFill(curDestPtr, fillLen, bgcolor);
 						}
@@ -897,7 +897,7 @@ void Bitmap::putDibCB(byte *pixels, const Palette &palette) {
 
 	cb05_format = (_type == MKTAG('C', 'B', '\05', 'e'));
 
-	if (!palette.size() && !cb05_format)
+	if (!palette.size && !cb05_format)
 		error("Bitmap::putDibCB(): Both global and local palettes are empty");
 
 	bpp = cb05_format ? 2 : 1;
@@ -960,7 +960,7 @@ void Bitmap::paletteFill(uint32 *dest, byte *src, int len, const Palette &palett
 	byte r, g, b;
 
 	for (int i = 0; i < len; i++) {
-		g_fp->_origFormat.colorToRGB(palette[*src++] & 0xffff, r, g, b);
+		g_fp->_origFormat.colorToRGB(palette.pal[*src++] & 0xffff, r, g, b);
 
 		*dest++ = TS_ARGB(0xff, r, g, b);
 	}
@@ -989,7 +989,7 @@ void Bitmap::copierKeyColor(uint32 *dest, byte *src, int len, int keyColor, cons
 	if (!cb05_format) {
 		for (int i = 0; i < len; i++) {
 			if (*src != keyColor) {
-				g_fp->_origFormat.colorToRGB(palette[*src] & 0xffff, r, g, b);
+				g_fp->_origFormat.colorToRGB(palette.pal[*src] & 0xffff, r, g, b);
 				*dest = TS_ARGB(0xff, r, g, b);
 			}
 
@@ -1033,7 +1033,7 @@ void Bitmap::copier(uint32 *dest, byte *src, int len, const Palette &palette, bo
 
 	if (!cb05_format) {
 		for (int i = 0; i < len; i++) {
-			g_fp->_origFormat.colorToRGB(palette[*src++] & 0xffff, r, g, b);
+			g_fp->_origFormat.colorToRGB(palette.pal[*src++] & 0xffff, r, g, b);
 
 			*dest++ = TS_ARGB(0xff, r, g, b);
 		}
