@@ -256,11 +256,6 @@ MODULE_OBJS += \
 	audiocd/linux/linux-audiocd.o
 endif
 
-ifeq ($(BACKEND),tizen)
-MODULE_OBJS += \
-	timer/tizen/timer.o
-endif
-
 ifeq ($(BACKEND),3ds)
 MODULE_OBJS += \
 	plugins/3ds/3ds-provider.o

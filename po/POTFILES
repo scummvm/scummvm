@@ -86,7 +86,5 @@ backends/platform/maemo/maemo.cpp
 backends/platform/sdl/macosx/appmenu_osx.mm
 backends/platform/sdl/ps3/ps3.cpp
 backends/platform/symbian/src/SymbianActions.cpp
-backends/platform/tizen/form.cpp
-backends/platform/tizen/fs.cpp
 backends/platform/wii/options.cpp
 backends/updates/macosx/macosx-updates.mm

@@ -58,18 +58,7 @@
 	#define USE_FORCED_GLES2 0
 #endif
 
-// On Tizen we include the toolchain's OpenGL file. This is something we
-// actually want to avoid. However, since Tizen uses eglGetProcAddress which
-// is not required to return valid function pointers to non OpenGL extension
-// functions, we need the system's definitions to resolve all OpenGL
-// functions.
-// TODO: See if there is an alternative which allows us to avoid including
-// Tizen's OpenGL header here.
-#if defined(TIZEN)
-	#include <FGraphicsOpengl.h>
-	using namespace Tizen::Graphics::Opengl;
-	#define USE_BUILTIN_OPENGL
-#elif defined(__ANDROID__)
+#ifdef __ANDROID__
 	#include <GLES/gl.h>
 	#define USE_BUILTIN_OPENGL
 #else

@@ -2760,8 +2760,8 @@ Lands of Lore: The Throne of Chaos adds the following non-standard keywords:
 
 Maniac Mansion NES adds the following non-standard keyword:
 
-    mm_nes_classic_palette  bool    If true, use a more natural palette that 
-                                    closely resembles the Nintendo NES Classic 
+    mm_nes_classic_palette  bool    If true, use a more natural palette that
+                                    closely resembles the Nintendo NES Classic
                                     instead of the default NTSC palette
 
 Space Quest IV CD adds the following non-standard keyword:
@@ -2929,11 +2929,6 @@ debug messages (see
 
       - Please refer to:
         <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Atari/FreeMiNT>
-
-  - Bada/Tizen:
-
-      - Please refer to:
-        <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Bada/Tizen>
 
   - BeOS/ZETA/Haiku:
 

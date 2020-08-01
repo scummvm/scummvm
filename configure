@@ -946,7 +946,7 @@ Configuration:
   -h, --help              display this help and exit
   --backend=BACKEND       backend to build (3ds, android, dc, dingux, ds, gcw0,
                           gph, iphone, ios7, maemo, n64, null, openpandora,
-                          ps2, psp, psp2, samsungtv, sdl, switch, tizen, webos, wii) [sdl]
+                          ps2, psp, psp2, samsungtv, sdl, switch, webos, wii) [sdl]
 
 Installation directories:
   --prefix=PREFIX         install architecture-independent files in PREFIX
@@ -999,7 +999,6 @@ Special configuration feature:
                                            psp for PlayStation Portable
                                            samsungtv for Samsung TV
                                            switch for Nintendo Switch
-                                           tizen for Samsung Tizen
                                            webos for HP Palm WebOS
                                            wii for Nintendo Wii
 
@@ -1789,11 +1788,6 @@ switch)
 	# Switch SDK has C++11 constructs so we must enable it
 	_use_cxx11=yes
 	;;
-tizen)
- 	_host_os=tizen
-	_host_cpu=arm
-	_host_alias=arm-linux-gnueabi
-	;;
 webos)
 	_host_os=webos
 	_host_cpu=arm
@@ -1962,12 +1956,6 @@ riscos)
 		add_line_to_config_mk "BINDHELP := bindhelp"
 	fi
 	;;
-tizen)
-	if test -z "$TIZEN_ROOTSTRAP"; then
-		echo "Please set TIZEN_ROOTSTRAP in your environment. export TIZEN_ROOTSTRAP=<path to Tizen SDK device profile>"
-		exit 1
-	fi
-	;;
 webos)
 	if test -z "$WEBOS_SDK"; then
 		echo "Please set WEBOS_SDK in your environment. export WEBOS_SDK=<path to WebOS SDK>"
@@ -1985,7 +1973,7 @@ esac
 
 # Toolchain for Android is in NDK and is using different naming convention
 if test "$_host_os" = android; then
-	
+
 	# Check that we have the correct NDK version
 	echo_n "Checking NDK version... "
 	_ndk_gradle=$(grep "^[[:space:]]*ndkVersion" $_srcdir/dists/android/build.gradle | sed 's/[^0-9\.]//g')
@@ -1998,8 +1986,8 @@ if test "$_host_os" = android; then
 	fi
 
 	# Try to use a known to work toolchain
-	android_toolchains="windows-x86_64 darwin-x86_64 linux-x86_64"	
-	for toolchain in $android_toolchains; do 
+	android_toolchains="windows-x86_64 darwin-x86_64 linux-x86_64"
+	for toolchain in $android_toolchains; do
 		_android_toolchain="$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/$toolchain"
 
 		if test -d "$_android_toolchain"; then
@@ -2279,7 +2267,7 @@ if test "$have_gcc" = yes ; then
 		case $_host_os in
 		# newlib-based system include files suppress non-C89 function
 		# declarations under __STRICT_ANSI__, undefine it
-		3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | mint* | n64 | psp | ps2 | ps3 | psp2 | switch | tizen | wii )
+		3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | mint* | n64 | psp | ps2 | ps3 | psp2 | switch | wii )
 			append_var CXXFLAGS "-U__STRICT_ANSI__"
 			;;
 		*)
@@ -2353,7 +2341,7 @@ fi
 # However, some platforms use GNU extensions in system header files, so
 # for these we must not use -pedantic.
 case $_host_os in
-3ds | android | androidsdl | gamecube | ps2 | psp | switch | tizen | wii | webos)
+3ds | android | androidsdl | gamecube | ps2 | psp | switch | wii | webos)
 	;;
 *)
 	# ICC does not support pedantic, while GCC and clang do.
@@ -2593,7 +2581,7 @@ case $_host_cpu in
 			openpandora)
 				define_in_config_if_yes yes 'USE_ARM_NEON_ASPECT_CORRECTOR'
 				;;
-			androidsdl-armeabi | arm-*riscos | caanoo | ds | gp2x | gp2xwiz | maemo | tizen)
+			androidsdl-armeabi | arm-*riscos | caanoo | ds | gp2x | gp2xwiz | maemo )
 				define_in_config_if_yes yes 'USE_ARM_SCALER_ASM'
 				# FIXME: The following feature exhibits a bug. It produces distorted
 				# sound since 9003ce517ff9906b0288f9f7c02197fd091d4554. The ARM
@@ -3142,12 +3130,6 @@ EOF
 			_optimization_level=-O3
 		fi
 		;;
-	tizen)
-		add_line_to_config_mk "TIZEN_ROOTSTRAP = $TIZEN_ROOTSTRAP"
-		append_var LDFLAGS "--sysroot=${TIZEN_ROOTSTRAP}"
-		append_var LDFLAGS "-L${TIZEN_LIBS}/lib"
-		append_var CXXFLAGS "-I${TIZEN_LIBS}/include"
-		;;
 	webos)
 		append_var CXXFLAGS "--sysroot=$WEBOS_PDK/arm-gcc/sysroot"
 		append_var CXXFLAGS "-I$WEBOS_PDK/include"
@@ -3601,18 +3583,6 @@ if test -n "$_host"; then
 			_vkeybd=yes
 			_port_mk="backends/platform/sdl/switch/switch.mk"
 			;;
-		tizen)
-			_unix=yes
-			_backend="tizen"
-			_port_mk="backends/platform/tizen/tizen.mk"
-			_build_scalers=no
-			_seq_midi=no
-			_mt32emu=no
-			_timidity=no
-			_vkeybd=yes
-			# Tizen relies on the OpenGL ES output thus we always enable it.
-			_opengl_mode=gles
-			;;
 		webos)
 			_backend="webos"
 			_port_mk="backends/platform/webos/webos.mk"
@@ -3799,25 +3769,6 @@ case $_backend in
 		_sdl=auto
 		append_var MODULES "backends/platform/sdl"
 		;;
-	tizen)
-		# dirent.h not available. NONSTANDARD_PORT==ensure portdefs.h is included
-		append_var DEFINES "-DTIZEN -DDISABLE_STDIO_FILESTREAM -DNONSTANDARD_PORT"
-		append_var DEFINES "-DNO_STDERR_STDOUT"
-		append_var DEFINES "-DDISABLE_COMMAND_LINE"
-		append_var INCLUDES '-I$(srcdir)/backends/platform/tizen'
-		append_var INCLUDES '-I$(TIZEN_ROOTSTRAP)/usr/include'
-		append_var INCLUDES '-I$(TIZEN_ROOTSTRAP)/usr/include/osp'
-		if test "$_debug_build" = yes; then
-			append_var CXXFLAGS "-D_DEBUG -DBUILD_DLL -O0 -g3"
-		fi
-		# created a shared library for inclusion via the eclipse build
-		append_var CXXFLAGS "-Wno-psabi"
-		append_var CXXFLAGS "--sysroot=${TIZEN_ROOTSTRAP}"
-		append_var CXXFLAGS "-fmessage-length=0"
-		append_var CXXFLAGS "-fPIC"
-		HOSTEXEPRE=lib
-		HOSTEXEEXT=.a
-		;;
 	webos)
 		# There is no sdl-config in the WebOS PDK so we don't use find_sdlconfig here.
 		# The PDL library acts as the WebOS device toolchain, and is required to control the virtual keyboard among other OS-level events.
@@ -3970,7 +3921,7 @@ fi
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	3ds | android | androidsdl | dingux | dc | gph | iphone | ios7 | maemo | null | openpandora | psp | psp2 | samsungtv | sdl | switch | tizen | webos | wii)
+	3ds | android | androidsdl | dingux | dc | gph | iphone | ios7 | maemo | null | openpandora | psp | psp2 | samsungtv | sdl | switch | webos | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -5339,11 +5290,6 @@ if test "$_opengl_mode" = auto ; then
 					esac
 					;;
 			esac
-			;;
-
-		tizen)
-			# Tizen always runs in GLES mode
-			_opengl_mode=gles
 			;;
 
 		*)
