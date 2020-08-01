@@ -1143,10 +1143,10 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.i = sprite->_moveable;
 		break;
 	case kTheMovieRate:
-		d.u.i = sprite->_movieRate;
+		d.u.i = channel->_movieRate;
 		break;
 	case kTheMovieTime:
-		d.u.i = sprite->_movieTime;
+		d.u.i = channel->_movieTime;
 		break;
 	case kThePattern:
 		d.u.i = sprite->getPattern();
@@ -1167,10 +1167,10 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		warning("STUB: Lingo::getTheSprite(): Unprocessed getting field \"%s\" of sprite", field2str(field));
 		break;
 	case kTheStartTime:
-		d.u.i = sprite->_startTime;
+		d.u.i = channel->_startTime;
 		break;
 	case kTheStopTime:
-		d.u.i = sprite->_stopTime;
+		d.u.i = channel->_stopTime;
 		break;
 	case kTheStretch:
 		d.u.i = sprite->_stretch;
@@ -1323,10 +1323,10 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->_moveable = d.asInt();
 		break;
 	case kTheMovieRate:
-		sprite->_movieRate = d.asInt();
+		channel->_movieRate = d.asInt();
 		break;
 	case kTheMovieTime:
-		sprite->_movieTime = d.asInt();
+		channel->_movieTime = d.asInt();
 		break;
 	case kThePattern:
 		if (d.asInt() != sprite->getPattern()){
@@ -1342,10 +1342,10 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		}
 		break;
 	case kTheStartTime:
-		sprite->_startTime = d.asInt();
+		channel->_startTime = d.asInt();
 		break;
 	case kTheStopTime:
-		sprite->_stopTime = d.asInt();
+		channel->_stopTime = d.asInt();
 		break;
 	case kTheStretch:
 		if (d.asInt() != sprite->_stretch) {

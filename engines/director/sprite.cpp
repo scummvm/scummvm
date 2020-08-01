@@ -67,10 +67,7 @@ Sprite::Sprite(Frame *frame) {
 	_foreColor = 0;
 
 	_blend = 0;
-	_movieRate = 0;
-	_movieTime = 0;
-	_startTime = 0;
-	_stopTime = 0;
+
 	_volume = 0;
 	_stretch = 0;
 }

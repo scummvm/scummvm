@@ -78,6 +78,12 @@ public:
 	int _width;
 	int _height;
 
+	// Using in digital movie sprites
+	byte _movieRate;
+	uint16 _movieTime;
+	uint16 _startTime;
+	uint16 _stopTime;
+
 private:
 	Graphics::ManagedSurface *getSurface();
 	MacShape *getShape();
