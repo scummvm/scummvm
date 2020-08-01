@@ -101,7 +101,7 @@ private:
 
 	bool getFileNameFromEngineIdCached(const Common::String &engineId, Common::String &out) const;
 	Plugin *getPluginByEngineIdCached(const Common::String &engineId);
-	Plugin *getPluginByEngineIdUncached(const Common::String &engineId);
+	Plugin *loadPluginByEngineIdUncached(const Common::String &engineId);
 
 	Plugin *loadPluginFromEngineId(const Common::String &engineId);
 

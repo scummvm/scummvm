@@ -177,14 +177,15 @@ bool EngineManager::getFileNameFromEngineIdCached(const Common::String &engineId
 
 Plugin *EngineManager::loadPluginFromEngineId(const Common::String &engineId) {
 	Plugin *plugin = getPluginByEngineIdCached(engineId);
-	if (!plugin)
-		plugin = getPluginByEngineIdUncached(engineId);
-	if (!plugin)
-		return nullptr;
-	if (PluginMan.loadPlugin(plugin)) {
-		return plugin;
+	if (plugin) {
+		if (PluginMan.loadPlugin(plugin)) {
+			return plugin;
+		} else {
+			return nullptr;
+		}
 	}
-	return nullptr;
+	
+	return loadPluginByEngineIdUncached(engineId);
 }
 
 Plugin *EngineManager::getPluginByEngineIdCached(const Common::String &engineId) {
@@ -194,13 +195,24 @@ Plugin *EngineManager::getPluginByEngineIdCached(const Common::String &engineId)
 	return PluginMan.getPluginByFileName(fileName);
 }
 
-Plugin *EngineManager::getPluginByEngineIdUncached(const Common::String &engineId) {
+Plugin *EngineManager::loadPluginByEngineIdUncached(const Common::String &engineId) {
 	const PluginList &plugins = getEnginePlugins();
 
-	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); iter++)
-		if (engineId == (*iter)->get<MetaEngine>().getEngineId())
-			return *iter;
+	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); iter++) {
+		Plugin *p = *iter;
 
+		bool loaded = p->isLoaded();
+		if (!loaded) {
+			PluginMan.loadPlugin(p);
+		}
+
+		if (engineId == p->get<MetaEngine>().getEngineId())
+			return p;
+
+		if (!loaded) {
+			PluginMan.unloadPlugin(p);
+		}
+	}
 	return nullptr;
 }
 
