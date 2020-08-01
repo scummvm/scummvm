@@ -70,8 +70,10 @@ StaticPlugin::~StaticPlugin() {
 		delete _pluginObject;
 	}
 
-bool StaticPlugin::loadPlugin()		{ return true; }
-void StaticPlugin::unloadPlugin()	{}
+	virtual bool isLoaded() const   { return true; }
+	virtual bool loadPlugin()		{ return true; }
+	virtual void unloadPlugin()		{}
+};
 
 class StaticPluginProvider : public PluginProvider {
 public:

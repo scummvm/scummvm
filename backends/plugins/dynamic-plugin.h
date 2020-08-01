@@ -37,9 +37,11 @@ protected:
 
 	const Common::String _filename;
 
+	bool _isLoaded;
+
 public:
 	DynamicPlugin(const Common::String &filename) :
-		_filename(filename) {}
+		_filename(filename), _isLoaded(false) {}
 
 	virtual bool loadPlugin() {
 		// Validate the plugin API version
@@ -94,10 +96,13 @@ public:
 			return false;
 		}
 
+		_isLoaded = true;
+
 		return true;
 	}
 
 	virtual void unloadPlugin() {
+		_isLoaded = false;
 		delete _pluginObject;
 	}
 
