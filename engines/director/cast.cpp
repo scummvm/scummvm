@@ -630,7 +630,7 @@ void Cast::loadDigitalVideoCasts() {
 			digitalVideoCast->_video = new Video::QuickTimeDecoder();
 			Common::String filename = _castsInfo[c->_key]->fileName;
 			Common::String directory = _castsInfo[c->_key]->directory;
-			if (!digitalVideoCast->_video->loadFile(pathMakeRelative(directory + "\\" + filename)) {
+			if (!digitalVideoCast->_video->loadFile(pathMakeRelative(directory + "\\" + filename))) {
 				warning("Cast::loadDigitalVideoCasts: failed to load QuickTime file for cast member %d", videoId);
 			}
 		} else {
