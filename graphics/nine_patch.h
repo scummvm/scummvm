@@ -54,7 +54,7 @@ namespace Graphics {
 
 struct TransparentSurface;
 struct Surface;
-struct MacWindowManager;
+class MacWindowManager;
 
 struct NinePatchMark {
 	int offset;
