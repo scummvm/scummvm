@@ -29,153 +29,147 @@
 #include "common/timer.h"
 #include "graphics/pixelformat.h"
 
-ModularBackend::ModularBackend()
+ModularGraphicsBackend::ModularGraphicsBackend()
 	:
-	_mutexManager(0),
 	_graphicsManager(0) {
 
 }
 
-ModularBackend::~ModularBackend() {
+ModularGraphicsBackend::~ModularGraphicsBackend() {
 	delete _graphicsManager;
 	_graphicsManager = 0;
-	// _timerManager needs to be deleted before _mutexManager to avoid a crash.
-	delete _timerManager;
-	_timerManager = 0;
-	delete _mutexManager;
-	_mutexManager = 0;
 }
 
-bool ModularBackend::hasFeature(Feature f) {
+bool ModularGraphicsBackend::hasFeature(Feature f) {
 	return _graphicsManager->hasFeature(f);
 }
 
-void ModularBackend::setFeatureState(Feature f, bool enable) {
+void ModularGraphicsBackend::setFeatureState(Feature f, bool enable) {
 	_graphicsManager->setFeatureState(f, enable);
 }
 
-bool ModularBackend::getFeatureState(Feature f) {
+bool ModularGraphicsBackend::getFeatureState(Feature f) {
 	return _graphicsManager->getFeatureState(f);
 }
 
-GraphicsManager *ModularBackend::getGraphicsManager() {
+GraphicsManager *ModularGraphicsBackend::getGraphicsManager() {
 	assert(_graphicsManager);
 	return (GraphicsManager *)_graphicsManager;
 }
 
-const OSystem::GraphicsMode *ModularBackend::getSupportedGraphicsModes() const {
+const OSystem::GraphicsMode *ModularGraphicsBackend::getSupportedGraphicsModes() const {
 	return _graphicsManager->getSupportedGraphicsModes();
 }
 
-int ModularBackend::getDefaultGraphicsMode() const {
+int ModularGraphicsBackend::getDefaultGraphicsMode() const {
 	return _graphicsManager->getDefaultGraphicsMode();
 }
 
-bool ModularBackend::setGraphicsMode(int mode) {
+bool ModularGraphicsBackend::setGraphicsMode(int mode) {
 	return _graphicsManager->setGraphicsMode(mode);
 }
 
-int ModularBackend::getGraphicsMode() const {
+int ModularGraphicsBackend::getGraphicsMode() const {
 	return _graphicsManager->getGraphicsMode();
 }
 
-const OSystem::GraphicsMode *ModularBackend::getSupportedShaders() const {
+const OSystem::GraphicsMode *ModularGraphicsBackend::getSupportedShaders() const {
 	return _graphicsManager->getSupportedShaders();
 }
 
-int ModularBackend::getDefaultShader() const {
+int ModularGraphicsBackend::getDefaultShader() const {
 	return _graphicsManager->getDefaultShader();
 }
 
-bool ModularBackend::setShader(int id) {
+bool ModularGraphicsBackend::setShader(int id) {
 	return _graphicsManager->setShader(id);
 }
 
-int ModularBackend::getShader() const {
+int ModularGraphicsBackend::getShader() const {
 	return _graphicsManager->getShader();
 }
 
-const OSystem::GraphicsMode *ModularBackend::getSupportedStretchModes() const {
+const OSystem::GraphicsMode *ModularGraphicsBackend::getSupportedStretchModes() const {
 	return _graphicsManager->getSupportedStretchModes();
 }
 
-int ModularBackend::getDefaultStretchMode() const {
+int ModularGraphicsBackend::getDefaultStretchMode() const {
 	return _graphicsManager->getDefaultStretchMode();
 }
 
-bool ModularBackend::setStretchMode(int mode) {
+bool ModularGraphicsBackend::setStretchMode(int mode) {
 	return _graphicsManager->setStretchMode(mode);
 }
 
-int ModularBackend::getStretchMode() const {
+int ModularGraphicsBackend::getStretchMode() const {
 	return _graphicsManager->getStretchMode();
 }
 
-void ModularBackend::resetGraphicsScale() {
+void ModularGraphicsBackend::resetGraphicsScale() {
 	_graphicsManager->resetGraphicsScale();
 }
 
 #ifdef USE_RGB_COLOR
 
-Graphics::PixelFormat ModularBackend::getScreenFormat() const {
+Graphics::PixelFormat ModularGraphicsBackend::getScreenFormat() const {
 	return _graphicsManager->getScreenFormat();
 }
 
-Common::List<Graphics::PixelFormat> ModularBackend::getSupportedFormats() const {
+Common::List<Graphics::PixelFormat> ModularGraphicsBackend::getSupportedFormats() const {
 	return _graphicsManager->getSupportedFormats();
 }
 
 #endif
 
-void ModularBackend::initSize(uint w, uint h, const Graphics::PixelFormat *format ) {
+void ModularGraphicsBackend::initSize(uint w, uint h, const Graphics::PixelFormat *format ) {
 	_graphicsManager->initSize(w, h, format);
 }
 
-void ModularBackend::initSizeHint(const Graphics::ModeList &modes) {
+void ModularGraphicsBackend::initSizeHint(const Graphics::ModeList &modes) {
 	_graphicsManager->initSizeHint(modes);
 }
 
-int ModularBackend::getScreenChangeID() const {
+int ModularGraphicsBackend::getScreenChangeID() const {
 	return _graphicsManager->getScreenChangeID();
 }
 
-void ModularBackend::beginGFXTransaction() {
+void ModularGraphicsBackend::beginGFXTransaction() {
 	_graphicsManager->beginGFXTransaction();
 }
 
-OSystem::TransactionError ModularBackend::endGFXTransaction() {
+OSystem::TransactionError ModularGraphicsBackend::endGFXTransaction() {
 	return _graphicsManager->endGFXTransaction();
 }
 
-int16 ModularBackend::getHeight() {
+int16 ModularGraphicsBackend::getHeight() {
 	return _graphicsManager->getHeight();
 }
 
-int16 ModularBackend::getWidth() {
+int16 ModularGraphicsBackend::getWidth() {
 	return _graphicsManager->getWidth();
 }
 
-PaletteManager *ModularBackend::getPaletteManager() {
+PaletteManager *ModularGraphicsBackend::getPaletteManager() {
 	return _graphicsManager;
 }
 
-void ModularBackend::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
+void ModularGraphicsBackend::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
 	_graphicsManager->copyRectToScreen(buf, pitch, x, y, w, h);
 }
 
-Graphics::Surface *ModularBackend::lockScreen() {
+Graphics::Surface *ModularGraphicsBackend::lockScreen() {
 	return _graphicsManager->lockScreen();
 }
 
-void ModularBackend::unlockScreen() {
+void ModularGraphicsBackend::unlockScreen() {
 	_graphicsManager->unlockScreen();
 }
 
-void ModularBackend::fillScreen(uint32 col) {
+void ModularGraphicsBackend::fillScreen(uint32 col) {
 	_graphicsManager->fillScreen(col);
 }
 
-void ModularBackend::updateScreen() {
+void ModularGraphicsBackend::updateScreen() {
 #ifdef ENABLE_EVENTRECORDER
 	g_eventRec.preDrawOverlayGui();
 #endif
@@ -187,90 +181,105 @@ void ModularBackend::updateScreen() {
 #endif
 }
 
-void ModularBackend::setShakePos(int shakeXOffset, int shakeYOffset) {
+void ModularGraphicsBackend::setShakePos(int shakeXOffset, int shakeYOffset) {
 	_graphicsManager->setShakePos(shakeXOffset, shakeYOffset);
 }
-void ModularBackend::setFocusRectangle(const Common::Rect& rect) {
+void ModularGraphicsBackend::setFocusRectangle(const Common::Rect& rect) {
 	_graphicsManager->setFocusRectangle(rect);
 }
 
-void ModularBackend::clearFocusRectangle() {
+void ModularGraphicsBackend::clearFocusRectangle() {
 	_graphicsManager->clearFocusRectangle();
 }
 
-void ModularBackend::showOverlay() {
+void ModularGraphicsBackend::showOverlay() {
 	_graphicsManager->showOverlay();
 }
 
-void ModularBackend::hideOverlay() {
+void ModularGraphicsBackend::hideOverlay() {
 	_graphicsManager->hideOverlay();
 }
 
-Graphics::PixelFormat ModularBackend::getOverlayFormat() const {
+Graphics::PixelFormat ModularGraphicsBackend::getOverlayFormat() const {
 	return _graphicsManager->getOverlayFormat();
 }
 
-void ModularBackend::clearOverlay() {
+void ModularGraphicsBackend::clearOverlay() {
 	_graphicsManager->clearOverlay();
 }
 
-void ModularBackend::grabOverlay(void *buf, int pitch) {
+void ModularGraphicsBackend::grabOverlay(void *buf, int pitch) {
 	_graphicsManager->grabOverlay(buf, pitch);
 }
 
-void ModularBackend::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
+void ModularGraphicsBackend::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
 	_graphicsManager->copyRectToOverlay(buf, pitch, x, y, w, h);
 }
 
-int16 ModularBackend::getOverlayHeight() {
+int16 ModularGraphicsBackend::getOverlayHeight() {
 	return _graphicsManager->getOverlayHeight();
 }
 
-int16 ModularBackend::getOverlayWidth() {
+int16 ModularGraphicsBackend::getOverlayWidth() {
 	return _graphicsManager->getOverlayWidth();
 }
 
-bool ModularBackend::showMouse(bool visible) {
+bool ModularGraphicsBackend::showMouse(bool visible) {
 	return _graphicsManager->showMouse(visible);
 }
 
-void ModularBackend::warpMouse(int x, int y) {
+void ModularGraphicsBackend::warpMouse(int x, int y) {
 	_eventManager->purgeMouseEvents();
 	_graphicsManager->warpMouse(x, y);
 }
 
-void ModularBackend::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
+void ModularGraphicsBackend::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
 	_graphicsManager->setMouseCursor(buf, w, h, hotspotX, hotspotY, keycolor, dontScale, format);
 }
 
-void ModularBackend::setCursorPalette(const byte *colors, uint start, uint num) {
+void ModularGraphicsBackend::setCursorPalette(const byte *colors, uint start, uint num) {
 	_graphicsManager->setCursorPalette(colors, start, num);
 }
 
-OSystem::MutexRef ModularBackend::createMutex() {
+void ModularGraphicsBackend::displayMessageOnOSD(const char *msg) {
+	_graphicsManager->displayMessageOnOSD(msg);
+}
+
+void ModularGraphicsBackend::displayActivityIconOnOSD(const Graphics::Surface *icon) {
+	_graphicsManager->displayActivityIconOnOSD(icon);
+}
+
+
+ModularMutexBackend::ModularMutexBackend()
+	:
+	_mutexManager(0) {
+
+}
+
+ModularMutexBackend::~ModularMutexBackend() {
+	// _timerManager needs to be deleted before _mutexManager to avoid a crash.
+	delete _timerManager;
+	_timerManager = 0;
+	delete _mutexManager;
+	_mutexManager = 0;
+}
+
+OSystem::MutexRef ModularMutexBackend::createMutex() {
 	assert(_mutexManager);
 	return _mutexManager->createMutex();
 }
 
-void ModularBackend::lockMutex(MutexRef mutex) {
+void ModularMutexBackend::lockMutex(MutexRef mutex) {
 	assert(_mutexManager);
 	_mutexManager->lockMutex(mutex);
 }
 
-void ModularBackend::unlockMutex(MutexRef mutex) {
+void ModularMutexBackend::unlockMutex(MutexRef mutex) {
 	assert(_mutexManager);
 	_mutexManager->unlockMutex(mutex);
 }
 
-void ModularBackend::deleteMutex(MutexRef mutex) {
+void ModularMutexBackend::deleteMutex(MutexRef mutex) {
 	assert(_mutexManager);
 	_mutexManager->deleteMutex(mutex);
-}
-
-void ModularBackend::displayMessageOnOSD(const char *msg) {
-	_graphicsManager->displayMessageOnOSD(msg);
-}
-
-void ModularBackend::displayActivityIconOnOSD(const Graphics::Surface *icon) {
-	_graphicsManager->displayActivityIconOnOSD(icon);
 }

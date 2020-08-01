@@ -65,7 +65,7 @@
 	#include "backends/fs/windows/windows-fs-factory.h"
 #endif
 
-class OSystem_NULL : public ModularBackend, Common::EventSource {
+class OSystem_NULL : public ModularMutexBackend, public ModularGraphicsBackend, Common::EventSource {
 public:
 	OSystem_NULL();
 	virtual ~OSystem_NULL();
@@ -145,7 +145,7 @@ void OSystem_NULL::initBackend() {
 	// into the system somehow to be functional. Of course, can't do
 	// that in a NULL backend :).
 
-	ModularBackend::initBackend();
+	BaseBackend::initBackend();
 }
 
 bool OSystem_NULL::pollEvent(Common::Event &event) {

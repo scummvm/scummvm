@@ -368,7 +368,7 @@ void OSystem_Android::initBackend() {
 
 	JNI::setReadyForEvents(true);
 
-	ModularBackend::initBackend();
+	BaseBackend::initBackend();
 }
 
 bool OSystem_Android::hasFeature(Feature f) {
@@ -379,7 +379,7 @@ bool OSystem_Android::hasFeature(Feature f) {
 			f == kFeatureClipboardSupport) {
 		return true;
 	}
-	return ModularBackend::hasFeature(f);
+	return ModularGraphicsBackend::hasFeature(f);
 }
 
 void OSystem_Android::setFeatureState(Feature f, bool enable) {
@@ -399,7 +399,7 @@ void OSystem_Android::setFeatureState(Feature f, bool enable) {
 		JNI::showKeyboardControl(enable);
 		break;
 	default:
-		ModularBackend::setFeatureState(f, enable);
+		ModularGraphicsBackend::setFeatureState(f, enable);
 		break;
 	}
 }
@@ -413,7 +413,7 @@ bool OSystem_Android::getFeatureState(Feature f) {
 	case kFeatureOnScreenControl:
 		return ConfMan.getBool("onscreen_control");
 	default:
-		return ModularBackend::getFeatureState(f);
+		return ModularGraphicsBackend::getFeatureState(f);
 	}
 }
 
