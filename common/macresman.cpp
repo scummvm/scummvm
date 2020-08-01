@@ -424,10 +424,11 @@ bool MacResManager::loadFromMacBinary(SeekableReadStream &stream) {
 		uint32 rsrcSize = READ_BE_UINT32(infoHeader + MBI_RFLEN);
 
 		uint32 dataSizePad = (((dataSize + 127) >> 7) << 7);
-		uint32 rsrcSizePad = (((rsrcSize + 127) >> 7) << 7);
+		// Files produced by ISOBuster are not padded, thus, compare with the actual size
+		//uint32 rsrcSizePad = (((rsrcSize + 127) >> 7) << 7);
 
 		// Length check
-		if (MBI_INFOHDR + dataSizePad + rsrcSizePad == (uint32)stream.size()) {
+		if (MBI_INFOHDR + dataSizePad + rsrcSize <= (uint32)stream.size()) {
 			_resForkOffset = MBI_INFOHDR + dataSizePad;
 			_resForkSize = rsrcSize;
 		}
