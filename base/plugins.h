@@ -202,6 +202,7 @@ public:
 
 	template <class T>
 	T &get() const {
+		assert(isLoaded());
 		T *pluginObject = dynamic_cast<T *>(_pluginObject);
 		if (!pluginObject) {
 			error("Invalid cast of plugin %s", getName());
