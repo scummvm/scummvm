@@ -680,7 +680,7 @@ int Lingo::getAlignedType(const Datum &d1, const Datum &d2) {
 		}
 	}
 	if (d2Type == STRING || d2Type == FIELDREF) {
-		Common::String src = d1.asString();
+		Common::String src = d2.asString();
 		if (!src.empty()) {
 			char *endPtr = 0;
 			strtod(src.c_str(), &endPtr);
