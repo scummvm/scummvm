@@ -43,8 +43,8 @@ public:
 	BaseRenderOpenGL3DShader(BaseGame *inGame = nullptr);
 	~BaseRenderOpenGL3DShader() override;
 
-	bool setAmbientLightColor(uint32 color) override;
-	bool setDefaultAmbientLightColor() override;
+	void setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode) override;
+
 	void setAmbientLight() override;
 
 	int maximumLightsCount() override;
@@ -52,43 +52,18 @@ public:
 	void disableLight(int index) override;
 	void setLightParameters(int index, const Math::Vector3d &position, const Math::Vector3d &direction, const Math::Vector4d &diffuse, bool spotlight) override;
 
-	void setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode) override;
-
 	bool enableShadows() override;
 	bool disableShadows() override;
 	bool stencilSupported() override;
 
 	void dumpData(const char *filename) override {}
-	/**
-	 * Take a screenshot of the current screenstate
-	 *
-	 * @return a BaseImage containing the current screen-buffer.
-	 */
 	BaseImage *takeScreenshot() override;
 	bool saveScreenShot(const Common::String &filename, int sizeX = 0, int sizeY = 0) override;
-	bool setViewport(int left, int top, int right, int bottom) override;
-	bool setViewport(Rect32 *rect) override;
-	Rect32 getViewPort() override;
 	void setWindowed(bool windowed) override;
-
-	Graphics::PixelFormat getPixelFormat() const override;
-	/**
-	 * Fade the screen to black
-	 *
-	 * @param alpha amount to fade by (alpha value of black)
-	 */
-	void fade(uint16 alpha) override;
-	/**
-	 * Fade a portion of the screen to a specific color
-	 *
-	 * @param r the red component to fade too.
-	 * @param g the green component to fade too.
-	 * @param b the blue component to fade too.
-	 * @param a the alpha component to fade too.
-	 * @param rect the portion of the screen to fade (if nullptr, the entire screen will be faded).
-	 */
 	void fadeToColor(byte r, byte g, byte b, byte a) override;
+	bool fill(byte r, byte g, byte b, Common::Rect *rect = nullptr) override;
 
+	bool setViewport(int left, int top, int right, int bottom) override;
 	bool drawLine(int x1, int y1, int x2, int y2, uint32 color) override;                // Unused outside indicator-display
 	bool drawRect(int x1, int y1, int x2, int y2, uint32 color, int width = 1) override; // Unused outside indicator-display
 
@@ -98,39 +73,16 @@ public:
 	void setWorldTransform(const Math::Matrix4 &transform) override;
 
 	bool windowedBlt() override;
-	/**
-	 * Fill a portion of the screen with a specified color
-	 *
-	 * @param r the red component to fill with.
-	 * @param g the green component to fill with.
-	 * @param b the blue component to fill with.
-	 */
-	bool fill(byte r, byte g, byte b, Common::Rect *rect = nullptr) override;
+
 	void onWindowChange() override;
 	bool initRenderer(int width, int height, bool windowed) override;
-	/**
-	 * Flip the backbuffer onto the screen-buffer
-	 * The screen will NOT be updated before calling this function.
-	 *
-	 * @return true if successfull, false on error.
-	 */
 	bool flip() override;
-	/**
-	 * Special flip for the indicator drawn during save/load
-	 * essentially, just copies the region defined by the _indicator-variables.
-	 */
 	bool indicatorFlip() override;
 	bool forcedFlip() override;
-	void initLoop() override;
 	bool setup2D(bool force = false) override;
 	bool setup3D(Camera3D *camera, bool force = false) override;
 	bool setupLines() override;
 
-	/**
-	 * Get the name of the current renderer
-	 *
-	 * @return the name of the renderer.
-	 */
 	Common::String getName() const override {
 		return "OpenGL 3D renderer";
 	};
@@ -148,14 +100,6 @@ public:
 		return 1.0f;
 	}
 
-	/**
-	 * Create a Surface fit for use with the renderer.
-	 * As diverse implementations of BaseRenderer might have different solutions for storing surfaces
-	 * this allows for a common interface for creating surface-handles. (Mostly usefull to ease future
-	 * implementation of hw-accelerated rendering, or readding 3D-support at some point).
-	 *
-	 * @return a surface that can be used with this renderer
-	 */
 	BaseSurface *createSurface() override;
 
 	bool startSpriteBatch() override {
@@ -165,8 +109,6 @@ public:
 		return STATUS_OK;
 	};
 
-	bool drawSprite(BaseSurfaceOpenGL3D &tex, const Rect32 &rect, float zoomX, float zoomY, const Vector2 &pos,
-	                uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY);
 	bool drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Rect32 &rect, const Vector2 &pos, const Vector2 &rot, const Vector2 &scale,
 	                  float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY);
 

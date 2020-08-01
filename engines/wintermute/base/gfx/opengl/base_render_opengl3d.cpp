@@ -43,18 +43,24 @@ BaseRenderOpenGL3D::BaseRenderOpenGL3D(BaseGame *inGame)
 BaseRenderOpenGL3D::~BaseRenderOpenGL3D() {
 }
 
-bool BaseRenderOpenGL3D::setAmbientLightColor(uint32 color) {
-	_ambientLightColor = color;
-	_overrideAmbientLightColor = true;
-	setAmbientLight();
-	return true;
-}
+void BaseRenderOpenGL3D::setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode) {
+	switch (blendMode) {
+	case Graphics::BLEND_NORMAL:
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		break;
 
-bool BaseRenderOpenGL3D::setDefaultAmbientLightColor() {
-	_ambientLightColor = 0x00000000;
-	_overrideAmbientLightColor = false;
-	setAmbientLight();
-	return true;
+	case Graphics::BLEND_ADDITIVE:
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+		break;
+
+	case Graphics::BLEND_SUBTRACTIVE:
+		// wme3d takes the color value here
+		glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
+		break;
+
+	default:
+		error("BaseRenderOpenGL3DShader::setSpriteBlendMode unsupported blend mode %i", blendMode);
+	}
 }
 
 void BaseRenderOpenGL3D::setAmbientLight() {
@@ -117,26 +123,6 @@ void BaseRenderOpenGL3D::setLightParameters(int index, const Math::Vector3d &pos
 	}
 }
 
-void BaseRenderOpenGL3D::setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode) {
-	switch (blendMode) {
-	case Graphics::BLEND_NORMAL:
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		break;
-
-	case Graphics::BLEND_ADDITIVE:
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-		break;
-
-	case Graphics::BLEND_SUBTRACTIVE:
-		// wme3d takes the color value here
-		glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
-		break;
-
-	default:
-		error("BaseRenderOpenGL3D::setSpriteBlendMode unsupported blend mode %i", blendMode);
-	}
-}
-
 bool BaseRenderOpenGL3D::enableShadows() {
 	warning("BaseRenderOpenGL3D::enableShadows not implemented yet");
 	return true;
@@ -162,30 +148,8 @@ bool BaseRenderOpenGL3D::saveScreenShot(const Common::String &filename, int size
 	return true;
 }
 
-bool BaseRenderOpenGL3D::setViewport(int left, int top, int right, int bottom) {
-	_viewportRect.setRect(left, top, right, bottom);
-	glViewport(left, top, right - left, bottom - top);
-	return true;
-}
-
-bool BaseRenderOpenGL3D::setViewport(Rect32 *rect) {
-	return setViewport(rect->left, rect->top, rect->right, rect->bottom);
-}
-
-Rect32 BaseRenderOpenGL3D::getViewPort() {
-	return _viewportRect;
-}
-
 void BaseRenderOpenGL3D::setWindowed(bool windowed) {
 	warning("BaseRenderOpenGL3D::setWindowed not yet implemented");
-}
-
-Graphics::PixelFormat BaseRenderOpenGL3D::getPixelFormat() const {
-	return OpenGL::Texture::getRGBAPixelFormat();
-}
-
-void BaseRenderOpenGL3D::fade(uint16 alpha) {
-	fadeToColor(0, 0, 0, (byte)(255 - alpha));
 }
 
 void BaseRenderOpenGL3D::fadeToColor(byte r, byte g, byte b, byte a) {
@@ -241,6 +205,18 @@ void BaseRenderOpenGL3D::fadeToColor(byte r, byte g, byte b, byte a) {
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	setup2D(true);
+}
+
+bool BaseRenderOpenGL3D::fill(byte r, byte g, byte b, Common::Rect *rect) {
+	glClearColor(float(r) / 255.0f, float(g) / 255.0f, float(b) / 255.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	return true;
+}
+
+bool BaseRenderOpenGL3D::setViewport(int left, int top, int right, int bottom) {
+	_viewportRect.setRect(left, top, right, bottom);
+	glViewport(left, top, right - left, bottom - top);
+	return true;
 }
 
 bool BaseRenderOpenGL3D::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
@@ -299,12 +275,6 @@ bool BaseRenderOpenGL3D::windowedBlt() {
 	return true;
 }
 
-bool BaseRenderOpenGL3D::fill(byte r, byte g, byte b, Common::Rect *rect) {
-	glClearColor(float(r) / 255.0f, float(g) / 255.0f, float(b) / 255.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	return true;
-}
-
 void Wintermute::BaseRenderOpenGL3D::onWindowChange() {
 	warning("BaseRenderOpenGL3D::onWindowChange not yet implemented");
 }
@@ -335,11 +305,6 @@ bool BaseRenderOpenGL3D::indicatorFlip() {
 bool BaseRenderOpenGL3D::forcedFlip() {
 	warning("BaseRenderOpenGL3D::forcedFlip not yet implemented");
 	return true;
-}
-
-void BaseRenderOpenGL3D::initLoop() {
-	deleteRectList();
-	setup2D();
 }
 
 bool BaseRenderOpenGL3D::setup2D(bool force) {
@@ -438,14 +403,6 @@ bool BaseRenderOpenGL3D::setupLines() {
 
 BaseSurface *Wintermute::BaseRenderOpenGL3D::createSurface() {
 	return new BaseSurfaceOpenGL3D(_gameRef, this);
-}
-
-bool BaseRenderOpenGL3D::drawSprite(BaseSurfaceOpenGL3D &tex, const Wintermute::Rect32 &rect,
-                                    float zoomX, float zoomY, const Wintermute::Vector2 &pos,
-                                    uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
-                                    bool mirrorX, bool mirrorY) {
-	Vector2 scale(zoomX / 100.0f, zoomY / 100.0f);
-	return drawSpriteEx(tex, rect, pos, Vector2(0.0f, 0.0f), scale, 0.0f, color, alphaDisable, blendMode, mirrorX, mirrorY);
 }
 
 #include "common/pack-start.h"

@@ -45,8 +45,8 @@ public:
 	BaseRenderer3D(BaseGame *inGame = nullptr);
 	~BaseRenderer3D() override;
 
-	virtual bool setAmbientLightColor(uint32 color) = 0;
-	virtual bool setDefaultAmbientLightColor() = 0;
+	bool setAmbientLightColor(uint32 color);
+	bool setDefaultAmbientLightColor();
 	virtual void setAmbientLight() = 0;
 
 	uint32 _ambientLightColor;
@@ -63,14 +63,21 @@ public:
 	virtual bool disableShadows() = 0;
 	virtual bool stencilSupported() = 0;
 
+	Rect32 getViewPort() override;
+
+	Graphics::PixelFormat getPixelFormat() const override;
+	void fade(uint16 alpha) override;
+
+	void initLoop() override;
+
 	virtual bool setProjection2D() = 0;
 	virtual void resetModelViewTransform() = 0;
 	virtual void setWorldTransform(const Math::Matrix4 &transform) = 0;
 
-	virtual void project(const Math::Matrix4 &worldMatrix, const Math::Vector3d &point, int &x, int &y);
-	virtual Math::Ray rayIntoScene(int x, int y);
+	void project(const Math::Matrix4 &worldMatrix, const Math::Vector3d &point, int &x, int &y);
+	Math::Ray rayIntoScene(int x, int y);
 
-	virtual Math::Matrix4 lastProjectionMatrix() {
+	Math::Matrix4 lastProjectionMatrix() {
 		return _projectionMatrix3d;
 	}
 
@@ -78,8 +85,8 @@ public:
 	virtual MeshX *createMeshX() = 0;
 	virtual ShadowVolume *createShadowVolume() = 0;
 
-	virtual bool drawSprite(BaseSurfaceOpenGL3D &tex, const Rect32 &rect, float zoomX, float zoomY, const Vector2 &pos,
-	                        uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) = 0;
+	bool drawSprite(BaseSurfaceOpenGL3D &tex, const Rect32 &rect, float zoomX, float zoomY, const Vector2 &pos,
+					uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY);
 	virtual bool drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Rect32 &rect, const Vector2 &pos, const Vector2 &rot, const Vector2 &scale,
 	                          float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) = 0;
 
