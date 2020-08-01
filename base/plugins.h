@@ -354,7 +354,7 @@ public:
 	virtual void loadDetectionPlugin() {}
 	virtual void unloadDetectionPlugin() {}
 
-	void unloadAllPluginsOfTypeExcept(PluginType type, const Plugin *plugin);
+	void unloadAllPluginsOfTypeExcept(PluginType type, const Plugin *keep);
 
 	const PluginList &getLoadedPluginsOfType(PluginType t) { return _pluginsInMem[t]; }
 

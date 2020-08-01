@@ -339,6 +339,8 @@ void PluginManager::unloadAllPlugins() {
 }
 
 void PluginManager::unloadPlugin(Plugin *plugin) {
+	assert(plugin);
+	assert(plugin->isLoaded());
 	if (!plugin->isDynamic())
 		return;
 
@@ -357,19 +359,24 @@ void PluginManager::unloadAllPluginsOfType(PluginType type) {
 		Plugin *p = *i;
 		if (!p->isDynamic())
 			continue;
+		if (!p->isLoaded())
+			continue;
 		p->unloadPlugin();
 		i = list.erase(i);
 	}
 }
 
-void PluginManager::unloadAllPluginsOfTypeExcept(PluginType type, const Plugin *plugin) {
+void PluginManager::unloadAllPluginsOfTypeExcept(PluginType type, const Plugin *keep) {
+	assert(keep);
 	Plugin *found = NULL;
 	PluginList &list = _pluginsInMem[type];
 	for (PluginList::iterator i = list.begin(); i != list.end(); ++i) {
 		Plugin *p = *i;
 		if (!p->isDynamic())
 			continue;
-		if (p == plugin) {
+		if (!p->isLoaded())
+			continue;
+		if (p == keep) {
 			found = p;
 		} else {
 			p->unloadPlugin();
