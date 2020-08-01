@@ -40,6 +40,7 @@ class MutexManager;
  *   OSystem::getMillis()
  *   OSystem::delayMillis()
  *   OSystem::getTimeAndDate()
+ *   OSystem::getMixer()
  *   OSystem::quit()
  *
  * And, it should also initialize all the managers variables
@@ -125,13 +126,6 @@ public:
 
 	//@}
 
-	/** @name Sound */
-	//@{
-
-	virtual Audio::Mixer *getMixer() override;
-
-	//@}
-
 	/** @name Miscellaneous */
 	//@{
 
@@ -146,7 +140,6 @@ protected:
 
 	MutexManager *_mutexManager;
 	GraphicsManager *_graphicsManager;
-	Audio::Mixer *_mixer;
 
 	//@}
 };

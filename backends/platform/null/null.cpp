@@ -79,17 +79,21 @@ public:
 	virtual void delayMillis(uint msecs);
 	virtual void getTimeAndDate(TimeDate &t) const;
 
+	virtual Audio::Mixer *getMixer();
+
 	virtual void quit();
 
 	virtual void logMessage(LogMessageType::Type type, const char *message);
 
-#ifdef POSIX
 private:
+	Audio::MixerImpl *_mixer;
+
+#ifdef POSIX
 	timeval _startTime;
 #endif
 };
 
-OSystem_NULL::OSystem_NULL() {
+OSystem_NULL::OSystem_NULL() : _mixer(0) {
 	#if defined(__amigaos4__)
 		_fsFactory = new AmigaOSFilesystemFactory();
 	#elif defined(__MORPHOS__)	
@@ -106,6 +110,8 @@ OSystem_NULL::OSystem_NULL() {
 }
 
 OSystem_NULL::~OSystem_NULL() {
+	delete _mixer;
+	_mixer = 0;
 }
 
 #ifdef POSIX
@@ -133,7 +139,7 @@ void OSystem_NULL::initBackend() {
 	_graphicsManager = new NullGraphicsManager();
 	_mixer = new Audio::MixerImpl(22050);
 
-	((Audio::MixerImpl *)_mixer)->setReady(false);
+	_mixer->setReady(false);
 
 	// Note that the mixer is useless this way; it needs to be hooked
 	// into the system somehow to be functional. Of course, can't do
@@ -195,6 +201,11 @@ void OSystem_NULL::getTimeAndDate(TimeDate &td) const {
 	td.tm_mon = t.tm_mon;
 	td.tm_year = t.tm_year;
 	td.tm_wday = t.tm_wday;
+}
+
+Audio::Mixer *OSystem_NULL::getMixer() {
+	assert(_mixer);
+	return (Audio::Mixer *)_mixer;
 }
 
 void OSystem_NULL::quit() {
