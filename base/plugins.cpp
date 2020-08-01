@@ -340,7 +340,7 @@ void PluginManager::unloadPlugin(Plugin *plugin) {
 	PluginList &list = _pluginsInMem[plugin->getType()];
 	for (PluginList::iterator p = list.begin(); p != list.end(); ++p) {
 		if (*p == plugin) {
-			unloadPlugin(*p);
+			(*p)->unloadPlugin();
 			p=list.erase(p);
 		}
 	}
