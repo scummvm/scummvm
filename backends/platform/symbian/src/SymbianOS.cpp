@@ -85,7 +85,7 @@ void OSystem_SDL_Symbian::initBackend() {
 	TFileName fname;
 	TPtrC8 ptr((const unsigned char*)currentPath.c_str(), currentPath.size());
 	fname.Copy(ptr);
-	BaflUtils::EnsurePathExistsL(static_cast<OSystem_SDL_Symbian *>(g_system)->FsSession(), fname);
+	BaflUtils::EnsurePathExistsL(dynamic_cast<OSystem_SDL_Symbian *>(g_system)->FsSession(), fname);
 
 	ConfMan.setBool("FM_high_quality", false);
 #if !defined(S60) || defined(S60V3) // S60 has low quality as default

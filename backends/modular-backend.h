@@ -29,12 +29,12 @@ class GraphicsManager;
 class MutexManager;
 
 /**
- * Base class for modular backends.
+ * Base classes for modular backends.
  *
- * It wraps most functions to their manager equivalent, but not
+ * They wrap most functions to their manager equivalent, but not
  * all OSystem functions are implemented here.
  *
- * A backend derivated from this class, will need to implement
+ * A backend derivated from these classes, will need to implement
  * these functions on its own:
  *   OSystem::pollEvent()
  *   OSystem::getMillis()
@@ -46,10 +46,10 @@ class MutexManager;
  * And, it should also initialize all the managers variables
  * declared in this class, or override their related functions.
  */
-class ModularBackend : public BaseBackend {
+class ModularGraphicsBackend : virtual public BaseBackend {
 public:
-	ModularBackend();
-	virtual ~ModularBackend();
+	ModularGraphicsBackend();
+	virtual ~ModularGraphicsBackend();
 
 	/** @name Features */
 	//@{
@@ -116,16 +116,6 @@ public:
 
 	//@}
 
-	/** @name Mutex handling */
-	//@{
-
-	virtual MutexRef createMutex() override final;
-	virtual void lockMutex(MutexRef mutex) override final;
-	virtual void unlockMutex(MutexRef mutex) override final;
-	virtual void deleteMutex(MutexRef mutex) override final;
-
-	//@}
-
 	/** @name Miscellaneous */
 	//@{
 
@@ -138,8 +128,31 @@ protected:
 	/** @name Managers variables */
 	//@{
 
-	MutexManager *_mutexManager;
 	GraphicsManager *_graphicsManager;
+
+	//@}
+};
+
+class ModularMutexBackend : virtual public BaseBackend {
+public:
+	ModularMutexBackend();
+	virtual ~ModularMutexBackend();
+
+	/** @name Mutex handling */
+	//@{
+
+	virtual MutexRef createMutex() override final;
+	virtual void lockMutex(MutexRef mutex) override final;
+	virtual void unlockMutex(MutexRef mutex) override final;
+	virtual void deleteMutex(MutexRef mutex) override final;
+
+	//@}
+
+protected:
+	/** @name Managers variables */
+	//@{
+
+	MutexManager *_mutexManager;
 
 	//@}
 };

@@ -91,7 +91,7 @@ OSystem_SDL::~OSystem_SDL() {
 	SDL_ShowCursor(SDL_ENABLE);
 
 	// Delete the various managers here. Note that the ModularBackend
-	// destructor would also take care of this for us. However, various
+	// destructors would also take care of this for us. However, various
 	// of our managers must be deleted *before* we call SDL_Quit().
 	// Hence, we perform the destruction on our own.
 	delete _savefileManager;
@@ -170,7 +170,7 @@ bool OSystem_SDL::hasFeature(Feature f) {
 	if (f == kFeatureJoystickDeadzone || f == kFeatureKbdMouseSpeed) {
 		return _eventSource->isJoystickConnected();
 	}
-	return ModularBackend::hasFeature(f);
+	return ModularGraphicsBackend::hasFeature(f);
 }
 
 void OSystem_SDL::initBackend() {
@@ -266,7 +266,7 @@ void OSystem_SDL::initBackend() {
 
 	_inited = true;
 
-	ModularBackend::initBackend();
+	BaseBackend::initBackend();
 
 	// We have to initialize the graphics manager before the event manager
 	// so the virtual keyboard can be initialized, but we have to add the
@@ -376,7 +376,7 @@ void OSystem_SDL::fatalError() {
 }
 
 Common::KeymapArray OSystem_SDL::getGlobalKeymaps() {
-	Common::KeymapArray globalMaps = ModularBackend::getGlobalKeymaps();
+	Common::KeymapArray globalMaps = BaseBackend::getGlobalKeymaps();
 
 	SdlGraphicsManager *graphicsManager = dynamic_cast<SdlGraphicsManager *>(_graphicsManager);
 	globalMaps.push_back(graphicsManager->getKeymap());
@@ -447,7 +447,7 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 
 	// Detect the language from the locale
 	if (locale.empty()) {
-		return ModularBackend::getSystemLanguage();
+		return BaseBackend::getSystemLanguage();
 	} else {
 		int length = 0;
 
@@ -465,7 +465,7 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 		return Common::String(locale.c_str(), length);
 	}
 #else // USE_DETECTLANG
-	return ModularBackend::getSystemLanguage();
+	return BaseBackend::getSystemLanguage();
 #endif // USE_DETECTLANG
 }
 
@@ -781,6 +781,6 @@ char *OSystem_SDL::convertEncoding(const char *to, const char *from, const char 
 	SDL_free(result);
 	return finalResult;
 #else
-	return ModularBackend::convertEncoding(to, from, string, length);
+	return BaseBackend::convertEncoding(to, from, string, length);
 #endif // SDL_VERSION_ATLEAST(1, 2, 10)
 }

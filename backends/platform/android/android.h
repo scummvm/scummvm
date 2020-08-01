@@ -55,7 +55,7 @@ extern const char *android_log_tag;
 #define ENTER(fmt, args...) do {  } while (false)
 #endif
 
-class OSystem_Android : public ModularBackend, Common::EventSource {
+class OSystem_Android : public ModularMutexBackend, public ModularGraphicsBackend, Common::EventSource {
 private:
 	// passed from the dark side
 	int _audio_sample_rate;

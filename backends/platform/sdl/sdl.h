@@ -36,7 +36,7 @@
 /**
  * Base OSystem class for all SDL ports.
  */
-class OSystem_SDL : public ModularBackend {
+class OSystem_SDL : public ModularMutexBackend, public ModularGraphicsBackend {
 public:
 	OSystem_SDL();
 	virtual ~OSystem_SDL();
