@@ -22,13 +22,11 @@
 /*
  * VGMTrans (c) 2002-2019
  * Licensed under the zlib license,
- * refer to the included LICENSE.txt file
+ * refer to the included VGMTrans_LICENSE.txt file
  */
 #ifndef AUDIO_SOUNDFONT_RIFFFILE_H
 #define AUDIO_SOUNDFONT_RIFFFILE_H
 
-#include <cstring>
-#include <cassert>
 #include "common/scummsys.h"
 #include "common/list.h"
 #include "common/str.h"

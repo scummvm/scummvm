@@ -22,10 +22,9 @@
 /*
  * VGMTrans (c) 2002-2019
  * Licensed under the zlib license,
- * refer to the included LICENSE.txt file
+ * refer to the included VGMTrans_LICENSE.txt file
  */
 
-#include <math.h>
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "sf2file.h"
