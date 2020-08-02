@@ -86,7 +86,7 @@ bool ItemSelectionProcess::selectNextItem() {
 		if (item->getShape() == 0x4ed || family == ShapeInfo::SF_CRUWEAPON ||
 			family == ShapeInfo::SF_CRUAMMO || family == ShapeInfo::SF_CRUBOMB ||
 			family == ShapeInfo::SF_CRUINVITEM ||
-			(info && info->_flags & ShapeInfo::SI_SELECTABLE)) {
+			(info && (info->_flags & ShapeInfo::SI_SELECTABLE))) {
 
 			int32 cx, cy, cz;
 			item->getCentre(cx, cy, cz);
@@ -130,8 +130,16 @@ void ItemSelectionProcess::useSelectedItem() {
 	if (!_selectedItem)
 		return;
 	Item *item = getItem(_selectedItem);
-	if (item)
-		item->callUsecodeEvent_use();
+	if (item) {
+		const ShapeInfo *info = item->getShapeInfo();
+		if (info && (info->_flags & ShapeInfo::SI_SELECTABLE)) {
+			item->callUsecodeEvent_use();
+		} else {
+			MainActor *actor = getMainActor();
+			if (actor)
+				actor->addItemCru(item, true);
+		}
+	}
 	clearSelection();
 }
 
