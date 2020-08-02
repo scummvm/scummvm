@@ -415,6 +415,15 @@ public:
 	 */
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const = 0;
 
+	/**
+	 * Name of the engine plugin.
+	 * Classes inheriting a MetaEngineConnect must provide a engineID here,
+	 * which can then be used to match an Engine with MetaEngine.
+	 * E.g. ScummMetaEngine inherits MetaEngine & provides a engineID of "Scumm".
+	 * 		ScummMetaEngineConnect inherits MetaEngineConnect & provides the name "Scumm".
+	 * This way, we can easily match a Engine with a MetaEngine.
+	 */
+	virtual const char *getName() const = 0;
 };
 
 /**
