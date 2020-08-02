@@ -45,8 +45,19 @@ set res to  char 60 of string
 scummvmAssertEqual(res, EMPTY)
 set res to char 0 of string
 scummvmAssertEqual(res, string)
-set res to char 5.4 of string
+-- Test D4, it does a floor
+set res to char 5.49 of string
 scummvmAssertEqual(res, "o")
+set res to char 5.5 of string
+scummvmAssertEqual(res, "o")
+-- Test D3, it does a round
+set save to the scummvmVersion
+set the scummvmVersion to 3
+set res to char 5.49 of string
+scummvmAssertEqual(res, "o")
+set res to char 5.5 of string
+scummvmAssertEqual(res, "m")
+set the scummvmVersion to save
 
 -- LC::charToOf
 set string to "Macromedia"

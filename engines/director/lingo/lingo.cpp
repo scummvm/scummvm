@@ -20,6 +20,8 @@
  *
  */
 
+#include <math.h>
+
 #include "common/file.h"
 #include "common/config-manager.h"
 
@@ -852,7 +854,10 @@ int Datum::asInt() const {
 		res = u.i;
 		break;
 	case FLOAT:
-		res = (int)u.f;
+		if (g_director->getVersion() < 4)
+			res = round(u.f);
+		else
+			res = (int)u.f;
 		break;
 	default:
 		warning("Incorrect operation asInt() for type: %s", type2str());
