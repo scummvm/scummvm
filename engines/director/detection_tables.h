@@ -154,6 +154,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME("kyoto", "v1.01", "Cosmology of KYOTO", "f5277c53bacd27936158dd3867e587e2", 392505, 3),
 
 	MACGAME("lzone", "", "L-ZONE", "f5277c53bacd27936158dd3867e587e2", 392484, 3),
+	MACGAME("lzone", "v2", "L-ZONE", "276bee761e48a6fd709df77d5c2f60dd", 395344, 3),
 	{
 		{
 			"lzone", "",
