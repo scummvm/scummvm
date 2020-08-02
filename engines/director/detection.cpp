@@ -50,7 +50,7 @@ Common::Platform DirectorEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
 }
 
-uint16 DirectorEngine::getVersion() const {
+uint16 DirectorEngine::getDescriptionVersion() const {
 	return _gameDescription->version;
 }
 

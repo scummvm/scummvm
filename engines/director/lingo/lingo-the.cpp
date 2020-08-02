@@ -120,6 +120,7 @@ TheEntity entities[] = {
 	{ kTheRightMouseDown,	"rightMouseDown",	false, 5 },	//					D5 f
 	{ kTheRightMouseUp,		"rightMouseUp",		false, 5 },	//					D5 f
 	{ kTheRomanLingo,		"romanLingo",		false, 3 },	//		D3.1 p
+	{ kTheScummvmVersion,	"scummvmVersion",	false, 2 }, // 					ScummVM only
 	{ kTheSearchCurrentFolder,"searchCurrentFolder",false,4 },//		D4 f
 	{ kTheSearchPath,		"searchPath",		false, 4 },	//			D4 f
 	{ kTheSelection,		"selection",		false, 2 },	// D2 f
@@ -677,6 +678,10 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheRomanLingo:
 		getTheEntitySTUB(kTheRomanLingo);
 		break;
+	case kTheScummvmVersion:
+		d.type = INT;
+		d.u.i = _vm->getVersion();
+		break;
 	case kTheSearchCurrentFolder:
 		getTheEntitySTUB(kTheSearchCurrentFolder);
 		break;
@@ -937,6 +942,10 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		break;
 	case kTheRomanLingo:
 		setTheEntitySTUB(kTheRomanLingo);
+		break;
+	case kTheScummvmVersion:
+		// Allow director version change: used for testing version differences via the lingo tests.
+		_vm->setVersion(d.asInt());
 		break;
 	case kTheSelEnd:
 		if (_vm->getCurrentMovie()->_currentEditableTextChannel != 0) {
