@@ -1041,14 +1041,14 @@ void LC::c_charOf() {
 	Datum d2 = g_lingo->pop(); // string
 	Datum d1 = g_lingo->pop(); // index
 
-    if (d1.type != INT || d2.type != STRING ) {
+    if ((d1.type != INT && d1.type != FLOAT) || d2.type != STRING) {
 		warning("LC::c_charOf(): Called with wrong data types: %s and %s", d1.type2str(), d2.type2str());
 		g_lingo->push(Datum(""));
 		return;
 	}
 
 	Datum res;
-	int index = d1.u.i;
+	int index = d1.asInt();
 	Common::String chunkExpr = *d2.u.s;
 
 	if (index < 1)
@@ -1065,14 +1065,14 @@ void LC::c_charToOf() {
 	Datum d2 = g_lingo->pop(); // indexFrom
 	Datum d1 = g_lingo->pop(); // indexTo
 
-	if (d1.type != INT || d2.type != INT || d3.type != STRING) {
+	if ((d1.type != INT && d1.type != FLOAT) || (d2.type != INT && d2.type != FLOAT) || d3.type != STRING) {
 		warning("LC::c_charToOf(): Called with wrong data types: %s, %s and %s", d1.type2str(), d2.type2str(), d3.type2str());
 		g_lingo->push(Datum(""));
 		return;
 	}
 
-	int indexFrom = d1.u.i;
-	int indexTo = d2.u.i;
+	int indexFrom = d1.asInt();
+	int indexTo = d2.asInt();
 	Common::String chunkExpr = *d3.u.s;
 
 	Datum res;
@@ -1086,7 +1086,7 @@ void LC::c_charToOf() {
 	else if (uint(indexFrom) > chunkExpr.size())
 		res = Datum("");
 	else
-		res = Datum(chunkExpr.substr(indexFrom - 1, indexTo - 1));
+		res = Datum(chunkExpr.substr(indexFrom - 1, indexTo - indexFrom + 1));
 	g_lingo->push(res);
 }
 

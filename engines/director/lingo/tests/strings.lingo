@@ -39,35 +39,32 @@ scummvmAssertEqual(test, return)
 set string to "Macromedia"
 set res to char 6 of string
 scummvmAssertEqual(res, "m")
-put "m" && res
 
 -- error and bounds checks
 set res to  char 60 of string
 scummvmAssertEqual(res, EMPTY)
-put "" && res
 set res to char 0 of string
 scummvmAssertEqual(res, string)
-put string && res
+set res to char 5.4 of string
+scummvmAssertEqual(res, "o")
 
 -- LC::charToOf
 set string to "Macromedia"
 set res to char 6 to 9 of string
-put "media" && res
-scummvmAssertEqual(res, "media")
+scummvmAssertEqual(res, "medi")
 
 -- error and bounds checks
+set res to char 5.4 to 7.9 of string
+scummvmAssertEqual(res, "ome")
+
 set res to char 6 to 5 of string
-put "" && res
-scummvmAssert(res="")
+scummvmAssertEqual(res, "")
 
 set res to char 6 to 60 of string
-put "media" && res
 scummvmAssertEqual(res, "media")
 
 set res to char -1 to -2 of string
-put string && res
 scummvmAssertEqual(res, string)
 
 set res to char 50 to 60 of string
-put "" && res
 scummvmAssertEqual(res, "")
