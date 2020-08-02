@@ -258,14 +258,16 @@ public:
 
 	DetectedGames detectGames(const Common::FSList &fslist) const override;
 
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const override;
+	/**
+	 * A generic createInstance.
+	 * For instantiating engine objects, this method is called first,
+	 * and then the subclass implemented createInstance is called from within.
+	 */
+	Common::Error createInstance(OSystem *syst, Engine **engine) const;
 
 	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 
 protected:
-	// To be implemented by subclasses
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const = 0;
-
 	typedef Common::HashMap<Common::String, Common::FSNode, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
 
 	/**
@@ -326,6 +328,21 @@ protected:
  * A MetaEngineConnect implementation of AdvancedMetaEngine.
  */
 class AdvancedMetaEngineConnect : public MetaEngineConnect {
+public:
+	/**
+	 * Base createInstance for AMEC.
+	 * The AME provides a default createInstance which is called first, so we should invoke that
+	 * first.
+	 * By the point of time we call this, we assume that we only have one
+	 * plugin engine loaded in memory.
+	 */
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const override;
+
+	/**
+	 * To be implemented by subclasses, which is called after we call the base
+	 * createInstance function above.
+	 */
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const = 0;
 };
 
 #endif
