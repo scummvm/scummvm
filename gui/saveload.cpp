@@ -39,7 +39,7 @@ SaveLoadChooser::~SaveLoadChooser() {
 	_impl = nullptr;
 }
 
-void SaveLoadChooser::selectChooser(const MetaEngine &engine) {
+void SaveLoadChooser::selectChooser(const MetaEngineConnect &engine) {
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 	const SaveLoadChooserType requestedType = getRequestedSaveLoadDialog(engine);
 	if (!_impl || _impl->getType() != requestedType) {
@@ -77,14 +77,24 @@ Common::String SaveLoadChooser::createDefaultSaveDescription(const int slot) con
 
 int SaveLoadChooser::runModalWithCurrentTarget() {
 	const Plugin *plugin = EngineMan.findPlugin(ConfMan.get("engineid"));
+	const Plugin *enginePlugin = nullptr;
 	if (!plugin) {
 		error("SaveLoadChooser::runModalWithCurrentTarget(): Cannot find plugin");
+	} else {
+		enginePlugin = PluginMan.giveEngineFromMetaEngine(plugin);
+
+		if (!enginePlugin) {
+			error("SaveLoadChooser::runModalWithCurrentTarget(): Couldn't match a Engine from the MetaEngine. \
+				You will not be able to see savefiles until you have the necessary plugins.");
+		}
 	}
-	return runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+	return runModalWithPluginAndTarget(enginePlugin, ConfMan.getActiveDomainName());
 }
 
 int SaveLoadChooser::runModalWithPluginAndTarget(const Plugin *plugin, const String &target) {
-	selectChooser(plugin->get<MetaEngine>());
+	assert(plugin->getType() == PLUGIN_TYPE_ENGINE);
+
+	selectChooser(plugin->get<MetaEngineConnect>());
 	if (!_impl)
 		return -1;
 
@@ -99,10 +109,10 @@ int SaveLoadChooser::runModalWithPluginAndTarget(const Plugin *plugin, const Str
 
 	int ret;
 	do {
-		ret = _impl->run(target, &plugin->get<MetaEngine>());
+		ret = _impl->run(target, &plugin->get<MetaEngineConnect>());
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 		if (ret == kSwitchSaveLoadDialog) {
-			selectChooser(plugin->get<MetaEngine>());
+			selectChooser(plugin->get<MetaEngineConnect>());
 		}
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
 	} while (ret < -1);

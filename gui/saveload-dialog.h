@@ -65,7 +65,7 @@ enum SaveLoadChooserType {
 	kSaveLoadDialogGrid = 1
 };
 
-SaveLoadChooserType getRequestedSaveLoadDialog(const MetaEngine &metaEngine);
+SaveLoadChooserType getRequestedSaveLoadDialog(const MetaEngineConnect &metaEngine);
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
 
 class SaveLoadChooserDialog : protected Dialog {
@@ -91,7 +91,7 @@ public:
 	virtual SaveLoadChooserType getType() const = 0;
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
 
-	int run(const Common::String &target, const MetaEngine *metaEngine);
+	int run(const Common::String &target, const MetaEngineConnect *metaEngine);
 	virtual const Common::U32String &getResultString() const = 0;
 
 protected:
@@ -110,16 +110,16 @@ protected:
 	*/
 	virtual void listSaves();
 
-	const bool				_saveMode;
-	const MetaEngine		*_metaEngine;
-	bool					_delSupport;
-	bool					_metaInfoSupport;
-	bool					_thumbnailSupport;
-	bool					_saveDateSupport;
-	bool					_playTimeSupport;
-	Common::String			_target;
+	const bool					_saveMode;
+	const MetaEngineConnect		*_metaEngine;
+	bool						_delSupport;
+	bool						_metaInfoSupport;
+	bool						_thumbnailSupport;
+	bool						_saveDateSupport;
+	bool						_playTimeSupport;
+	Common::String				_target;
 	bool _dialogWasShown;
-	SaveStateList			_saveList;
+	SaveStateList				_saveList;
 
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 	ButtonWidget *_listButton;

@@ -469,14 +469,20 @@ void LauncherDialog::loadGame(int item) {
 	EngineMan.upgradeTargetIfNecessary(target);
 
 	// Look for the plugin
-	const Plugin *plugin = nullptr;
-	EngineMan.findTarget(target, &plugin);
+	const Plugin *metaEnginePlugin = nullptr;
+	const Plugin *enginePlugin = nullptr;
+	EngineMan.findTarget(target, &metaEnginePlugin);
 
-	if (plugin) {
-		const MetaEngine &metaEngine = plugin->get<MetaEngine>();
-		if (metaEngine.hasFeature(MetaEngine::kSupportsListSaves) &&
-			metaEngine.hasFeature(MetaEngine::kSupportsLoadingDuringStartup)) {
-			int slot = _loadDialog->runModalWithPluginAndTarget(plugin, target);
+	// If we found a relevant plugin, find the matching engine plugin.
+	if (metaEnginePlugin) {
+		enginePlugin = PluginMan.giveEngineFromMetaEngine(metaEnginePlugin);
+	}
+
+	if (enginePlugin) {
+		const MetaEngineConnect &metaEngineConnect = enginePlugin->get<MetaEngineConnect>();
+		if (metaEngineConnect.hasFeature(MetaEngineConnect::kSupportsListSaves) &&
+			metaEngineConnect.hasFeature(MetaEngineConnect::kSupportsLoadingDuringStartup)) {
+			int slot = _loadDialog->runModalWithPluginAndTarget(enginePlugin, target);
 			if (slot >= 0) {
 				ConfMan.setActiveDomain(_domains[item]);
 				ConfMan.setInt("save_slot", slot, Common::ConfigManager::kTransientDomain);
