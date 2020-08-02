@@ -380,7 +380,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Actor::I_getLastAnimSet(4 bytes)", // part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
 	"void Item::I_setQuality(Item *, int)", // same coff as 07F, 0BA
 	"int16 UCMachine::I_numToStr(int16 num)", // same as 113 based on same coff set 0FF, 113, 126
-	"byte Item::I_getDirToCoords(Item *, uin16 x, uint16 y)", // based on disassembly - FIXME: returns 2* values from U8
+	"byte Item::I_getDirToCoords(Item *, uin16 x, uint16 y)", // based on disassembly
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int16 Item::I_getNPCNum(Item *)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
 	"void Item::I_setIsBroken(Item *)", // same coff as 08C, 119

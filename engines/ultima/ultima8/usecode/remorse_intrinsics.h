@@ -186,7 +186,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_setBroken, // void Intrinsic08C(4 bytes)
 	Item::I_hurl, // void Intrinsic08D(12 bytes)
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
-	PaletteFaderProcess::I_jumpToAllBlack, // TODO: PaletteFaderProcess::I_setPalToAllBlack - should also resume cycle process.
+	PaletteFaderProcess::I_jumpToAllBlack, // TODO: should also resume cycle process.
 	// 0x090
 	MusicProcess::I_musicStop, // void Intrinsic090(void)
 	0, // void Intrinsic091(void)
