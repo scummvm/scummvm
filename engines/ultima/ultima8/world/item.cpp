@@ -587,7 +587,7 @@ bool Item::isCentreOn(const Item &item2) const {
 
 	if (x1c <= x2a || x2b <= x1c) return false;
 	if (y1c <= y2a || y2b <= y1c) return false;
-	if (z2b == z1c) return true;
+	if (z2b == getZ()) return true;
 	return false;
 }
 
