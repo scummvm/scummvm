@@ -343,6 +343,13 @@ public:
 	 * createInstance function above.
 	 */
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const = 0;
+
+	/**
+	 * Provide the engineID here, must match the one from MetaEngine.
+	 *
+	 * @see MetaEngineConnect::getName().
+	 */
+	virtual const char *getName() const = 0;
 };
 
 #endif
