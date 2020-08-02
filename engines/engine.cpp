@@ -871,6 +871,16 @@ MetaEngine &Engine::getMetaEngine() {
 	return plugin->get<MetaEngine>();
 }
 
+MetaEngineConnect &Engine::getMetaEngineConnect() {
+	const Plugin *metaEnginePlugin = EngineMan.findPlugin(ConfMan.get("engineid"));
+	assert(metaEnginePlugin);
+
+	const Plugin *enginePlugin = PluginMan.giveEngineFromMetaEngine(metaEnginePlugin);
+	assert(enginePlugin);
+
+	return enginePlugin->get<MetaEngineConnect>();
+}
+
 PauseToken::PauseToken() : _engine(nullptr) {}
 
 PauseToken::PauseToken(Engine *engine) : _engine(engine) {}

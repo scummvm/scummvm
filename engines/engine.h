@@ -32,6 +32,7 @@
 
 class OSystem;
 class MetaEngine;
+class MetaEngineConnect;
 
 namespace Audio {
 class Mixer;
@@ -379,6 +380,7 @@ public:
 	static bool shouldQuit();
 
 	static MetaEngine &getMetaEngine();
+	static MetaEngineConnect &getMetaEngineConnect();
 
 	/**
 	 * Pause the engine. This should stop any audio playback
