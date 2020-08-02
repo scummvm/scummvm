@@ -70,7 +70,6 @@ public:
 
 	virtual void initBackend();
 
-	virtual Common::EventSource *getDefaultEventSource() { return this; }
 	virtual bool pollEvent(Common::Event &event);
 
 	virtual uint32 getMillis(bool skipRecord = false);

@@ -29,7 +29,7 @@ static bool hasAudio = false;
 
 static void audioThreadFunc(void *arg) {
 	Audio::MixerImpl *mixer = (Audio::MixerImpl *)arg;
-	OSystem_3DS *osys = (OSystem_3DS *)g_system;
+	OSystem_3DS *osys = dynamic_cast<OSystem_3DS *>(g_system);
 
 	const int channel = 0;
 	int bufferIndex = 0;

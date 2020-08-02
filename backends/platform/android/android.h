@@ -80,9 +80,6 @@ private:
 
 	Common::String getSystemProperty(const char *name) const;
 
-protected:
-	virtual Common::EventSource *getDefaultEventSource() { return this; }
-
 public:
 	OSystem_Android(int audio_sample_rate, int audio_buffer_size);
 	virtual ~OSystem_Android();

@@ -74,7 +74,7 @@ void loadConfig() {
 		gspLcdExit();
 	}
 
-	OSystem_3DS *osys = (OSystem_3DS *)g_system;
+	OSystem_3DS *osys = dynamic_cast<OSystem_3DS *>(g_system);
 	osys->updateConfig();
 }
 

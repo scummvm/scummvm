@@ -91,7 +91,7 @@ static void doJoyEvent(Common::Queue<Common::Event> *queue, u32 keysPressed, u32
 }
 
 static void eventThreadFunc(void *arg) {
-	OSystem_3DS *osys = (OSystem_3DS *)g_system;
+	OSystem_3DS *osys = dynamic_cast<OSystem_3DS *>(g_system);
 	Common::Queue<Common::Event> *eventQueue = (Common::Queue<Common::Event> *)arg;
 
 	uint32 touchStartTime = osys->getMillis();
@@ -206,7 +206,7 @@ static void eventThreadFunc(void *arg) {
 }
 
 static void aptHookFunc(APT_HookType hookType, void *param) {
-	OSystem_3DS *osys = (OSystem_3DS *)g_system;
+	OSystem_3DS *osys = dynamic_cast<OSystem_3DS *>(g_system);
 
 	switch (hookType) {
 		case APTHOOK_ONSUSPEND:
