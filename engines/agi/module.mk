@@ -5,7 +5,6 @@ MODULE_OBJS := \
 	checks.o \
 	console.o \
 	cycle.o \
-	detection.o \
 	font.o \
 	global.o \
 	graphics.o \
@@ -17,6 +16,7 @@ MODULE_OBJS := \
 	logic.o \
 	lzw.o \
 	menu.o \
+	metaengine.o \
 	motion.o \
 	objects.o \
 	opcodes.o \
@@ -39,7 +39,6 @@ MODULE_OBJS := \
 	systemui.o \
 	text.o \
 	view.o \
-	wagparser.o \
 	words.o
 
 
@@ -50,3 +49,11 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
+
+# External dependencies of detection.
+# This is unneeded by the engine module itself,
+# so seperate it completely.
+DETECT_OBJS += $(MODULE)/wagparser.o
