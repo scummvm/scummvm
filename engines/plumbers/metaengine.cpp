@@ -23,61 +23,36 @@
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
-#include "engines/game.h"
 
-static const PlainGameDescriptor plumbersGames[] = {
-	{"plumbers", "Plumbers Don't Wear Ties!"},
-	{0, 0}
-};
+#include "plumbers/plumbers.h"
 
 namespace Plumbers {
-
-static const ADGameDescription gameDescriptions[] = {
-	// Plumbers PC version
-	{
-		"plumbers",
-		0,
-		AD_ENTRY1s("GAME.BIN", 0, 41622),
-		Common::EN_ANY,
-		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NOMIDI)
-	},
-
-	/*
-	// Plumbers 3DO version
-	{
-		"plumbers",
-		0,
-		AD_ENTRY1s("launchme", 0, 143300),
-		Common::EN_ANY,
-		Common::kPlatform3DO,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOMIDI)
-	},
-	*/
-
-	AD_TABLE_END_MARKER
-};
-
+const char *PlumbersGame::getGameId() const { return _gameDescription->gameId; }
+Common::Platform PlumbersGame::getPlatform() const { return _gameDescription->platform; }
 } // End of namespace Plumbers
 
-class PlumbersMetaEngine : public AdvancedMetaEngine {
-public:
-	PlumbersMetaEngine() : AdvancedMetaEngine(Plumbers::gameDescriptions, sizeof(ADGameDescription), plumbersGames) {
-	}
-
-	const char *getEngineId() const override {
+class PlumbersMetaEngineConnect : public AdvancedMetaEngineConnect {
+	const char *getName() const override {
 		return "plumbers";
 	}
 
-	const char *getName() const override {
-		return "Plumbers Don't Wear Ties";
-	}
-
-	const char *getOriginalCopyright() const override {
-		return "Plumbers Don't Wear Ties (C) 1993-94 Kirin Entertainment";
-	}
+    bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
 };
 
-REGISTER_PLUGIN_STATIC(PLUMBERS_DETECTION, PLUGIN_TYPE_METAENGINE, PlumbersMetaEngine);
+bool PlumbersMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	if (desc)
+		*engine = new Plumbers::PlumbersGame(syst, desc);
+
+	return desc != nullptr;
+}
+
+bool PlumbersMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+	return false;
+}
+
+#if PLUGIN_ENABLED_DYNAMIC(PLUMBERS)
+	REGISTER_PLUGIN_DYNAMIC(PLUMBERS, PLUGIN_TYPE_ENGINE, PlumbersMetaEngineConnect);
+#else
+	REGISTER_PLUGIN_STATIC(PLUMBERS, PLUGIN_TYPE_ENGINE, PlumbersMetaEngineConnect);
+#endif
