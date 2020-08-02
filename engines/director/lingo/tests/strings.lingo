@@ -10,6 +10,11 @@ set c = chars("Macromedia", 6, 10)
 scummvmAssertEqual(c, "media")
 set c = chars("Macromedia", -1, 15)
 scummvmAssertEqual(c, "Macromedia")
+set save to the scummvmVersion
+set the scummvmVersion to 3
+set c = chars("Macromedia", 1, 1.1)
+scummvmAssertEqual(c, 0)
+set the scummvmVersion to save
 
 scummvmAssert("meow" = "MeÍW")
 

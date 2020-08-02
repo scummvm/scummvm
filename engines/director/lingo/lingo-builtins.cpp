@@ -438,10 +438,19 @@ void LB::b_tan(int nargs) {
 // String
 ///////////////////
 void LB::b_chars(int nargs) {
-	int to = g_lingo->pop().asInt();
-	int from = g_lingo->pop().asInt();
+	Datum d3 = g_lingo->pop();
+	Datum d2 = g_lingo->pop();
 	Datum s = g_lingo->pop();
 	TYPECHECK2(s, STRING, FIELDREF);
+
+	if (g_director->getVersion() < 4 && (d2.type == FLOAT || d3.type == FLOAT)) {
+		// D3 throws an error when called with a float.
+		g_lingo->push(Datum(0));
+		return;
+	}
+
+	int to = d3.asInt();
+	int from = d2.asInt();
 
 	Common::String src = s.asString();
 
