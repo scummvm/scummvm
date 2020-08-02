@@ -326,6 +326,30 @@ public:
 
 	void addPluginProvider(PluginProvider *pp);
 
+	/**
+	 * A method which takes in a plugin of type ENGINE,
+	 * and returns the appropriate & matching METAENGINE.
+	 * It uses the Engine plugin's getName method, which is an identifier,
+	 * and then tries to matches it with each plugin present in memory.
+	 *
+	 * @param A plugin of type ENGINE.
+	 *
+	 * @return A plugin of type METAENGINE.
+	 */
+	Plugin *giveMetaEngineFromEngine(const Plugin *plugin);
+
+	/**
+	 * A method which takes in a plugin of type METAENGINE,
+	 * and returns the appropriate & matching ENGINE.
+	 * It uses the MetaEngine's getEngineID to reconstruct the name
+	 * of engine plugin, and then tries to matches it with each plugin in memory.
+	 *
+	 * @param A plugin of type METAENGINE.
+	 *
+	 * @return A plugin of type ENGINE.
+	 */
+	Plugin *giveEngineFromMetaEngine(const Plugin *plugin);
+
 	// Functions used by the uncached PluginManager
 	virtual void init()	{}
 	virtual void loadFirstPlugin() {}

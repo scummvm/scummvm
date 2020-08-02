@@ -266,6 +266,65 @@ void PluginManager::addPluginProvider(PluginProvider *pp) {
 	_providers.push_back(pp);
 }
 
+Plugin *PluginManager::giveEngineFromMetaEngine(const Plugin *plugin) {
+	assert(plugin->getType() == PLUGIN_TYPE_METAENGINE);
+
+	PluginList pl = PluginMan.getPlugins(PLUGIN_TYPE_ENGINE);
+	Plugin *enginePlugin = nullptr;
+
+	// Use the engineID from MetaEngine for comparasion.
+	Common::String metaEnginePluginName = plugin->getEngineId();
+
+	// Iterate over all engine plugins.
+	for (PluginList::const_iterator itr = pl.begin(); itr != pl.end(); itr++) {
+		// The getName() provides a name which is similiar to getEngineId.
+		// Because engines are engines themselves, this function is simply named getName.
+		Common::String enginePluginName((*itr)->getName());
+
+		if (metaEnginePluginName.equalsIgnoreCase(enginePluginName)) {
+			enginePlugin = (*itr);
+			break;
+		}
+	}
+
+	if (enginePlugin) {
+		warning("MetaEngine: %s \t matched to \t Engine: %s", plugin->getName(), enginePlugin->getFileName());
+		return enginePlugin;
+	}
+
+	warning("MetaEngine: %s couldn't find a match for an engine plugin.", plugin->getName());
+	return nullptr;
+}
+
+Plugin *PluginManager::giveMetaEngineFromEngine(const Plugin *plugin) {
+	assert(plugin->getType() == PLUGIN_TYPE_ENGINE);
+
+	Plugin *metaEngine = nullptr;
+
+	PluginList pl = PluginMan.getPlugins(PLUGIN_TYPE_METAENGINE);
+
+	// This will return a name of the Engine plugin, which will be identical to
+	// a getEngineID from a relevant MetaEngine.
+	Common::String enginePluginName(plugin->getName());
+
+	for (PluginList::const_iterator itr = pl.begin(); itr != pl.end(); itr++) {
+		Common::String metaEngineName = (*itr)->getEngineId();
+
+		if (metaEngineName.equalsIgnoreCase(enginePluginName)) {
+			metaEngine = (*itr);
+			break;
+		}
+	}
+
+	if (metaEngine) {
+		warning("Engine: %s matched to MetaEngine: %s", plugin->getFileName(), metaEngine->getName());
+		return metaEngine;
+	}
+
+	warning("Engine: %s couldn't find a match for an MetaEngine plugin.", plugin->getFileName());
+	return nullptr;
+}
+
 /**
  * This should only be called once by main()
  **/
