@@ -44,7 +44,7 @@
 #include "agi/picture.h"
 #include "agi/logic.h"
 #include "agi/sound.h"
-#include "agi/detection.h"
+#include "agi/detection_enums.h"
 
 namespace Common {
 class RandomSource;
