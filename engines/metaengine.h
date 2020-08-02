@@ -131,18 +131,6 @@ public:
 	virtual DetectedGames detectGames(const Common::FSList &fslist) const = 0;
 
 	/**
-	 * Tries to instantiate an engine instance based on the settings of
-	 * the currently active ConfMan target. That is, the MetaEngine should
-	 * query the ConfMan singleton for the target, gameid, path etc. data.
-	 *
-	 * @param syst	Pointer to the global OSystem object
-	 * @param engine	Pointer to a pointer which the MetaEngine sets to
-	 *					the newly create Engine, or 0 in case of an error
-	 * @return		a Common::Error describing the error which occurred, or kNoError
-	 */
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const = 0;
-
-	/**
 	 * Return a list of all save states associated with the given target.
 	 *
 	 * The returned list is guaranteed to be sorted by slot numbers. That
@@ -414,6 +402,19 @@ public:
  * the engine, while a MetaEngine will always build into the executable to be able to detect code.
  */
 class MetaEngineConnect : public PluginObject {
+public:
+	/**
+	 * Tries to instantiate an engine instance based on the settings of
+	 * the currently active ConfMan target. That is, the MetaEngine should
+	 * query the ConfMan singleton for the target, gameid, path etc. data.
+	 *
+	 * @param syst	Pointer to the global OSystem object
+	 * @param engine	Pointer to a pointer which the MetaEngine sets to
+	 *					the newly create Engine, or 0 in case of an error
+	 * @return		a Common::Error describing the error which occurred, or kNoError
+	 */
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const = 0;
+
 };
 
 /**
