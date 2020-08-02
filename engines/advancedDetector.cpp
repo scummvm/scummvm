@@ -348,10 +348,23 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 
 	debug(2, "Running %s", gameDescriptor.description.c_str());
 	initSubSystems(agdDesc.desc);
-	if (!createInstance(syst, engine, agdDesc.desc))
-		return Common::kNoGameDataFoundError;
-	else
-		return Common::kNoError;
+
+	PluginList pl = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE);
+	Plugin *plugin = nullptr;
+
+	// By this point of time, we should have only one plugin in memory.
+	if (pl.size() == 1) {
+		plugin = pl[0];
+	}
+
+	if (plugin) {
+		// Call child class's createInstanceMethod.
+		if (plugin->get<AdvancedMetaEngineConnect>().createInstance(syst, engine, agdDesc.desc)) {
+			return Common::Error(Common::kNoError);
+		}
+	}
+
+	return Common::Error(Common::kNoGameDataFoundError);
 }
 
 void AdvancedMetaEngine::composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth, const Common::String &parentName) const {
@@ -631,4 +644,16 @@ void AdvancedMetaEngine::initSubSystems(const ADGameDescription *gameDesc) const
 		g_eventRec.processGameDescription(gameDesc);
 	}
 #endif
+}
+
+Common::Error AdvancedMetaEngineConnect::createInstance(OSystem *syst, Engine **engine) const {
+	PluginList pl = PluginMan.getPlugins(PLUGIN_TYPE_ENGINE);
+	if (pl.size() == 1) {
+		Plugin *metaEnginePlugin = PluginMan.giveMetaEngineFromEngine(pl[0]);
+		if (metaEnginePlugin) {
+			return metaEnginePlugin->get<AdvancedMetaEngine>().createInstance(syst, engine);
+		}
+	}
+
+	return Common::Error();
 }
