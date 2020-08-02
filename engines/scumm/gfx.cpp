@@ -722,9 +722,11 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 		blit(dst, width * bpp, srcPtr, vs->pitch, width, height, bpp);
 	
 #endif
-		if (_game.heversion == 0) { // If 16-bit color HE game using old charset, draw nothing.
-		masked_blit(dst, width * bpp, textPtr, vs->pitch, width, height, bpp,
-			(bpp == 4) ? CHARSET_MASK_TRANSPARENCY_32 : CHARSET_MASK_TRANSPARENCY, _16BitPalette);
+		// 16-bit color HE games and the NES version of Maniac Mansion do not
+		// use the text surface.
+		if (_game.heversion == 0 && _game.platform != Common::kPlatformNES) {
+			masked_blit(dst, width * bpp, textPtr, vs->pitch, width, height, bpp,
+				(bpp == 4) ? CHARSET_MASK_TRANSPARENCY_32 : CHARSET_MASK_TRANSPARENCY, _16BitPalette);
 		}
 
 		src = _compositeBuf;
@@ -1199,9 +1201,16 @@ void ScummEngine::restoreCharsetBg() {
 			start = i + 1;
 		}
 
-		if (_game.platform == Common::kPlatformNES) {
+		if (_game.version <= 3) {
+			vs = &_virtscr[kTextVirtScreen];
 			byte *screenBuf = vs->getPixels(0, 0);
-			memset(screenBuf, 0x1d, vs->h * vs->pitch);
+			
+			if (_game.platform == Common::kPlatformNES)
+				memset(screenBuf, 0x1d, vs->h * vs->pitch);
+			else
+				memset(screenBuf, 0x00, vs->h * vs->pitch);
+
+			markRectAsDirty(kTextVirtScreen, Common::Rect(0, 0, vs->w, vs->h), USAGE_BIT_RESTORED);
 		}
 
 		if (vs->hasTwoBuffers) {
