@@ -386,12 +386,10 @@ bool BaseRenderOpenGL3DShader::setup2D(bool force) {
 
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_STENCIL_TEST);
-		glDisable(GL_CLIP_PLANE0);
 
 		glEnable(GL_CULL_FACE);
 		glFrontFace(GL_CCW);
 		glEnable(GL_BLEND);
-		glPolygonMode(GL_FRONT, GL_FILL);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		setProjection2D();
@@ -429,20 +427,14 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 		_gameRef->getFogParams(&fogEnabled, &fogColor, &fogStart, &fogEnd);
 
 		if (fogEnabled) {
-			glEnable(GL_FOG);
-			glFogi(GL_FOG_MODE, GL_LINEAR);
-			glFogf(GL_FOG_START, fogStart);
-			glFogf(GL_FOG_END, fogEnd);
-
+			// TODO: Implement fog
 			GLfloat color[4];
 			color[0] = RGBCOLGetR(fogColor) / 255.0f;
 			color[1] = RGBCOLGetG(fogColor) / 255.0f;
 			color[2] = RGBCOLGetB(fogColor) / 255.0f;
 			color[3] = RGBCOLGetA(fogColor) / 255.0f;
-
-			glFogfv(GL_FOG_COLOR, color);
 		} else {
-			glDisable(GL_FOG);
+			// TODO: Disable fog in shader
 		}
 
 		setProjection();
@@ -560,10 +552,6 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wint
 
 	// transform vertices here if necessary, add offset
 
-	if (alphaDisable) {
-		glDisable(GL_ALPHA_TEST);
-	}
-
 	_spriteShader->use();
 	_spriteShader->setUniform("alphaTest", !alphaDisable);
 	_spriteShader->setUniform("projMatrix", _projectionMatrix2d);
@@ -574,10 +562,6 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wint
 	setSpriteBlendMode(blendMode);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-	if (alphaDisable) {
-		glEnable(GL_ALPHA_TEST);
-	}
 
 	return true;
 }
