@@ -187,7 +187,15 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 		// need to set this up before instance creation.
 		metaEngine.registerDefaultSettings(target);
 
-		err = metaEngine.createInstance(&system, &engine);
+		// Right now we have a MetaEngine plugin. We must find the matching engine plugin to
+		// call createInstance and other connecting functions.
+		Plugin *enginePluginToLaunchGame = PluginMan.giveEngineFromMetaEngine(plugin);
+
+		if (enginePluginToLaunchGame) {
+			err = enginePluginToLaunchGame->get<MetaEngineConnect>().createInstance(&system, &engine);
+		} else {
+			err = Common::Error(Common::kEnginePluginNotFound);
+		}
 	}
 
 	// Check for errors
