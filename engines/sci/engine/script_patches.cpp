@@ -4448,9 +4448,55 @@ static const uint16 kq5PatchWinGMSignals[] = {
 	PATCH_END
 };
 
+// During the introduction at Crispin's house in later floppy versions, Graham's
+//  initial message immediately disappears. This is another KQ5 sound regression
+//  caused by a broken signal that a script depends on.
+//
+// Sound 80's first signal is supposed to be set after 781 ticks to trigger the
+//  second message in room 109, but starting in the French version the sound
+//  changed to set this signal on the first tick. This causes the first message
+//  to miss the signal and display for too long until the second signal occurs
+//  and closes the first message and immediately closes the second.
+//
+// We fix this by replacing the first signal wait with a 13 second delay.
+//  781 ticks / 60 = 13 seconds and 1 tick. All subsequent signals in sound 80
+//  are correct. Sierra noticed this bug in the German Amiga Floppy version, but
+//  instead of fixing the broken sound, they peppered this script with similar
+//  delays except for the one place that needed it. This covers up that the
+//  wrong signals are still triggering messages with unintentional timings, but
+//  the results are acceptable. Due to this messy history, and that it involves
+//  multiple versions of multiple resources, we only enable this patch on game
+//  versions known to disappear Graham's message.
+//
+// Applies to: French PC Floppy, Italian PC Floppy, English Mac Floppy,
+//             English Amiga Floppy
+// Responsible method: a2s5Script:changeState(2)
+// Fixes bug: #11543
+static const uint16 kq5SignatureCrispinIntroSignal[] = {
+	SIG_MAGICDWORD,
+	0x36,                            // push
+	0x35, 0x0a,                      // ldi 0a
+	0x22,                            // lt? [ globalMusic:prevSignal < 10 ]
+	0x30, SIG_UINT16(0x0002),        // bnt 0002
+	0x6d, 0x0a,                      // dpToa state
+	0x35, 0x01,                      // ldi 01
+	0x65, 0x10,                      // aTop cycles
+	SIG_END
+};
+
+static const uint16 kq5PatchCrispinIntroSignal[] = {
+	0x38, PATCH_SELECTOR16(seconds), // pushi seconds
+	0x78,                            // push1
+	0x39, 0x0d,                      // pushi 0d
+	0x54, 0x06,                      // self 06 [ self seconds: 13 ]
+	0x32, PATCH_UINT16(0x0002),      // jmp 0002
+	PATCH_END
+};
+
 //          script, description,                                      signature                  patch
 static const SciScriptPatcherEntry kq5Signatures[] = {
 	{  true,     0, "CD: harpy volume change",                     1, kq5SignatureCdHarpyVolume,            kq5PatchCdHarpyVolume },
+	{ false,   109, "Crispin intro signal",                        1, kq5SignatureCrispinIntroSignal,       kq5PatchCrispinIntroSignal },
 	{  true,   124, "Multilingual: Ending glitching out",          3, kq5SignatureMultilingualEndingGlitch, kq5PatchMultilingualEndingGlitch },
 	{ false,   124, "Win: GM Music signal checks",                 4, kq5SignatureWinGMSignals,             kq5PatchWinGMSignals },
 	{  true,   200, "CD: witch cage init",                         1, kq5SignatureWitchCageInit,            kq5PatchWitchCageInit },
@@ -19946,6 +19992,14 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 				if (g_sci->_features->useAltWinGMSound()) {
 					// See the explanation in the kq5SignatureWinGMSignals comment
 					enablePatch(signatureTable, "Win: GM Music signal checks");
+				}
+				// enable a patch for dealing with a buggy sound that appears in
+				//  various forms in a sporadic set of versions
+				if (g_sci->getLanguage() == Common::FR_FRA ||
+					g_sci->getLanguage() == Common::IT_ITA ||
+					g_sci->getPlatform() == Common::kPlatformMacintosh ||
+					(g_sci->getPlatform() == Common::kPlatformAmiga && g_sci->getLanguage() == Common::EN_ANY)) {
+					enablePatch(signatureTable, "Crispin intro signal");
 				}
 				break;
 			case GID_KQ6:
