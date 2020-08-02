@@ -867,15 +867,18 @@ static Common::Error listSaves(const Common::String &singleTarget) {
 		// the specified game name, or alternatively whether there is a matching game id.
 		Common::String currentTarget;
 		QualifiedGameDescriptor game;
-		const Plugin *plugin = nullptr;
+
+		const Plugin *metaEnginePlugin = nullptr;
+		const Plugin *enginePlugin = nullptr;
+
 		if (ConfMan.hasGameDomain(*i)) {
 			// The name is a known target
 			currentTarget = *i;
 			EngineMan.upgradeTargetIfNecessary(*i);
-			game = EngineMan.findTarget(*i, &plugin);
+			game = EngineMan.findTarget(*i, &metaEnginePlugin);
 		} else if (game = findGameMatchingName(*i), !game.gameId.empty()) {
 			// The name is a known game id
-			plugin = EngineMan.findPlugin(game.engineId);
+			metaEnginePlugin = EngineMan.findPlugin(game.engineId);
 			currentTarget = createTemporaryTarget(game.engineId, game.gameId);
 		} else {
 			return Common::Error(Common::kEnginePluginNotFound, Common::String::format("target '%s'", singleTarget.c_str()));
@@ -884,19 +887,30 @@ static Common::Error listSaves(const Common::String &singleTarget) {
 		// If we actually found a domain, we're going to change the domain
 		ConfMan.setActiveDomain(currentTarget);
 
-		if (!plugin) {
+		if (!metaEnginePlugin) {
 			// If the target was specified, treat this as an error, and otherwise skip it.
 			if (!singleTarget.empty())
-				return Common::Error(Common::kEnginePluginNotFound,
+				return Common::Error(Common::kMetaEnginePluginNotFound,
 				                     Common::String::format("target '%s'", i->c_str()));
-			printf("Plugin could not be loaded for target '%s'\n", i->c_str());
+			printf("MetaEnginePlugin could not be loaded for target '%s'\n", i->c_str());
 			continue;
+		} else {
+			enginePlugin = PluginMan.giveEngineFromMetaEngine(metaEnginePlugin);
+
+			if (!enginePlugin) {
+				// If the target was specified, treat this as an error, and otherwise skip it.
+				if (!singleTarget.empty())
+					return Common::Error(Common::kEnginePluginNotFound,
+				                     	 Common::String::format("target '%s'", i->c_str()));
+				printf("EnginePlugin could not be loaded for target '%s'\n", i->c_str());
+				continue;
+			}
 		}
 
-		const MetaEngine &metaEngine = plugin->get<MetaEngine>();
+		const MetaEngineConnect &metaEngine = enginePlugin->get<MetaEngineConnect>();
 		Common::String qualifiedGameId = buildQualifiedGameName(game.engineId, game.gameId);
 
-		if (!metaEngine.hasFeature(MetaEngine::kSupportsListSaves)) {
+		if (!metaEngine.hasFeature(MetaEngineConnect::kSupportsListSaves)) {
 			// If the target was specified, treat this as an error, and otherwise skip it.
 			if (!singleTarget.empty())
 				// TODO: Include more info about the target (desc, engine name, ...) ???

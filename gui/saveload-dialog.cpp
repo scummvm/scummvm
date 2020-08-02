@@ -103,7 +103,7 @@ void SaveLoadCloudSyncProgressDialog::handleTickle() {
 #endif
 
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
-SaveLoadChooserType getRequestedSaveLoadDialog(const MetaEngine &metaEngine) {
+SaveLoadChooserType getRequestedSaveLoadDialog(const MetaEngineConnect &metaEngine) {
 	const Common::String &userConfig = ConfMan.get("gui_saveload_chooser", Common::ConfigManager::kApplicationDomain);
 
 	// Check (and update if necessary) the theme config here. This catches
@@ -114,8 +114,8 @@ SaveLoadChooserType getRequestedSaveLoadDialog(const MetaEngine &metaEngine) {
 	g_gui.checkScreenChange();
 
 	if (g_gui.getWidth() >= 640 && g_gui.getHeight() >= 400
-		&& metaEngine.hasFeature(MetaEngine::kSavesSupportMetaInfo)
-		&& metaEngine.hasFeature(MetaEngine::kSavesSupportThumbnail)
+		&& metaEngine.hasFeature(MetaEngineConnect::kSavesSupportMetaInfo)
+		&& metaEngine.hasFeature(MetaEngineConnect::kSavesSupportThumbnail)
 		&& userConfig.equalsIgnoreCase("grid")) {
 		// In case we are 640x400 or higher, this dialog is not in save mode,
 		// the user requested the grid dialog and the engines supports it we
@@ -182,14 +182,14 @@ void SaveLoadChooserDialog::close() {
 	Dialog::close();
 }
 
-int SaveLoadChooserDialog::run(const Common::String &target, const MetaEngine *metaEngine) {
+int SaveLoadChooserDialog::run(const Common::String &target, const MetaEngineConnect *metaEngine) {
 	_metaEngine = metaEngine;
 	_target = target;
-	_delSupport = _metaEngine->hasFeature(MetaEngine::kSupportsDeleteSave);
-	_metaInfoSupport = _metaEngine->hasFeature(MetaEngine::kSavesSupportMetaInfo);
-	_thumbnailSupport = _metaInfoSupport && _metaEngine->hasFeature(MetaEngine::kSavesSupportThumbnail);
-	_saveDateSupport = _metaInfoSupport && _metaEngine->hasFeature(MetaEngine::kSavesSupportCreationDate);
-	_playTimeSupport = _metaInfoSupport && _metaEngine->hasFeature(MetaEngine::kSavesSupportPlayTime);
+	_delSupport = _metaEngine->hasFeature(MetaEngineConnect::kSupportsDeleteSave);
+	_metaInfoSupport = _metaEngine->hasFeature(MetaEngineConnect::kSavesSupportMetaInfo);
+	_thumbnailSupport = _metaInfoSupport && _metaEngine->hasFeature(MetaEngineConnect::kSavesSupportThumbnail);
+	_saveDateSupport = _metaInfoSupport && _metaEngine->hasFeature(MetaEngineConnect::kSavesSupportCreationDate);
+	_playTimeSupport = _metaInfoSupport && _metaEngine->hasFeature(MetaEngineConnect::kSavesSupportPlayTime);
 
 	return runIntern();
 }
