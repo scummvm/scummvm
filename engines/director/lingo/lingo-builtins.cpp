@@ -2439,8 +2439,8 @@ void LB::b_scummvmassert(int nargs) {
 }
 
 void LB::b_scummvmassertequal(int nargs) {
-	Datum d1 = g_lingo->pop();
 	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
 
 	int result = d1.equalTo(d2);
 	if (!result) {
