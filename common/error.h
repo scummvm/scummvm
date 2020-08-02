@@ -60,7 +60,12 @@ enum ErrorCode {
 	kWritingFailed,				///< Failure to write data -- disk full?
 
 	// The following are used by --list-saves
-	kEnginePluginNotFound,		///< Failed to find plugin to handle target
+
+	// Failed to find a MetaEnginePlugin. This should never happen, because all MetaEngines must always
+	// be built into the executable, regardless if the engine plugins are present or not.
+	kMetaEnginePluginNotFound,	///< See comment above
+
+	kEnginePluginNotFound,		///< Failed to find a Engine plugin to handle target
 	kEnginePluginNotSupportSaves,	///< Failed if plugin does not support listing save states
 
 	kUserCanceled,			///< User has canceled the launching of the game
