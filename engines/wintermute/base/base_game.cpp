@@ -621,8 +621,8 @@ uint32 BaseGame::getAmbientLightColor() {
 	return 0x00000000;
 }
 
-bool BaseGame::getFogParams(bool *fogEnabled, uint32 *fogColor, float *fogStart, float *fogEnd) {
-	*fogEnabled = false;
+bool BaseGame::getFogParams(FogParameters &fogParameters) {
+	fogParameters._enabled = false;
 	return true;
 }
 #endif

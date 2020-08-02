@@ -419,20 +419,17 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 			_lastViewMatrix = viewMatrix;
 		}
 
-		bool fogEnabled;
-		uint32 fogColor;
-		float fogStart;
-		float fogEnd;
+		FogParameters fogParameters;
 
-		_gameRef->getFogParams(&fogEnabled, &fogColor, &fogStart, &fogEnd);
+		_gameRef->getFogParams(fogParameters);
 
-		if (fogEnabled) {
+		if (fogParameters._enabled) {
 			// TODO: Implement fog
 			GLfloat color[4];
-			color[0] = RGBCOLGetR(fogColor) / 255.0f;
-			color[1] = RGBCOLGetG(fogColor) / 255.0f;
-			color[2] = RGBCOLGetB(fogColor) / 255.0f;
-			color[3] = RGBCOLGetA(fogColor) / 255.0f;
+			color[0] = RGBCOLGetR(fogParameters._color) / 255.0f;
+			color[1] = RGBCOLGetG(fogParameters._color) / 255.0f;
+			color[2] = RGBCOLGetB(fogParameters._color) / 255.0f;
+			color[3] = RGBCOLGetA(fogParameters._color) / 255.0f;
 		} else {
 			// TODO: Disable fog in shader
 		}

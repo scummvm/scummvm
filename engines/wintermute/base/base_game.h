@@ -70,6 +70,7 @@ class SaveThumbHelper;
 
 #ifdef ENABLE_WME3D
 class BaseRenderer3D;
+class FogParameters;
 #endif
 
 class BaseGame: public BaseObject {
@@ -170,7 +171,7 @@ public:
 
 	virtual uint32 getAmbientLightColor();
 
-	virtual bool getFogParams(bool *fogEnabled, uint32 *fogColor, float *fogStart, float *fogEnd);
+	virtual bool getFogParams(FogParameters &fogParameters);
 #endif
 	BaseSoundMgr *_soundMgr;
 #if EXTENDED_DEBUGGER_ENABLED
