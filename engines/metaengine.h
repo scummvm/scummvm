@@ -103,11 +103,6 @@ struct ExtendedSavegameHeader {
  * See the class MetaEngineConnect below.
  */
 class MetaEngine : public PluginObject {
-private:
-	/**
-	 * Converts the current screen contents to a thumbnail, and saves it
-	 */
-	static void saveScreenThumbnail(Common::OutSaveFile *saveFile);
 public:
 	virtual ~MetaEngine() {}
 
@@ -129,46 +124,6 @@ public:
 	 * to detect amongst the given files.
 	 */
 	virtual DetectedGames detectGames(const Common::FSList &fslist) const = 0;
-
-	/**
-	 * Return a list of all save states associated with the given target.
-	 *
-	 * The returned list is guaranteed to be sorted by slot numbers. That
-	 * means smaller slot numbers are always stored before bigger slot numbers.
-	 *
-	 * The caller has to ensure that this (Meta)Engine is responsible
-	 * for the specified target (by using findGame on it respectively
-	 * on the associated gameid from the relevant ConfMan entry, if present).
-	 *
-	 * The default implementation returns an empty list.
-	 *
-	 * @note MetaEngines must indicate that this function has been implemented
-	 *       via the kSupportsListSaves feature flag.
-	 *
-	 * @param target	name of a config manager target
-	 * @return			a list of save state descriptors
-	 */
-	virtual SaveStateList listSaves(const char *target) const;
-
-	/**
-	 * Return a list of all save states associated with the given target.
-	 *
-	 * This is a wrapper around the basic listSaves virtual method, but which
-	 * has some extra logic for autosave handling
-	 *
-	 * @param target	name of a config manager target
-	 * @param saveMode	If true, getting the list for a save dialog
-	 * @return			a list of save state descriptors
-	 */
-	SaveStateList listSaves(const char *target, bool saveMode) const;
-
-	/**
-	 * Returns the slot number being used for autosaves.
-	 * @note	This should match the engine getAutosaveSlot() method
-	 */
-	virtual int getAutosaveSlot() const {
-		return 0;
-	}
 
 	/**
 	 * Return a list of extra GUI options for the specified target.
@@ -222,6 +177,92 @@ public:
 	 */
 	virtual const Common::AchievementsInfo getAchievementsInfo(const Common::String &target) const {
 		return Common::AchievementsInfo();
+	}
+
+	/**
+	 * Return the keymap used by the target.
+	 */
+	virtual Common::Array<Common::Keymap *> initKeymaps(const char *target) const;
+};
+
+/**
+ * A MetaEngineConnect is another factory for Engine instances, and is very
+ * similiar to meta engines. This class, however, composes of bridged functionalities
+ * that can be used to connect an actual Engine with a MetaEngine.
+ * Every engine "plugin" provides a hook to get an instance of MetaEngineConnector subclass
+ * for that "engine plugin.". E.g. SCUMM provides a ScummMetaEngineConnect.
+ * This is then in turn used for things like instantiating engine objects, listing savefiles,
+ * querying save metadata, etc.
+ * Since engine plugins can be used a external runtime libraries, these can live and build inside
+ * the engine, while a MetaEngine will always build into the executable to be able to detect code.
+ */
+class MetaEngineConnect : public PluginObject {
+private:
+	/**
+	 * Converts the current screen contents to a thumbnail, and saves it
+	 */
+	static void saveScreenThumbnail(Common::OutSaveFile *saveFile);
+public:
+	/**
+	 * Name of the engine plugin.
+	 * Classes inheriting a MetaEngineConnect must provide a engineID here,
+	 * which can then be used to match an Engine with MetaEngine.
+	 * E.g. ScummMetaEngine inherits MetaEngine & provides a engineID of "Scumm".
+	 * 		ScummMetaEngineConnect inherits MetaEngineConnect & provides the name "Scumm".
+	 * This way, we can easily match a Engine with a MetaEngine.
+	 */
+	virtual const char *getName() const = 0;
+
+	/**
+	 * Tries to instantiate an engine instance based on the settings of
+	 * the currently active ConfMan target. That is, the MetaEngine should
+	 * query the ConfMan singleton for the target, gameid, path etc. data.
+	 *
+	 * @param syst	Pointer to the global OSystem object
+	 * @param engine	Pointer to a pointer which the MetaEngine sets to
+	 *					the newly create Engine, or 0 in case of an error
+	 * @return		a Common::Error describing the error which occurred, or kNoError
+	 */
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const = 0;
+
+	/**
+	 * Return a list of all save states associated with the given target.
+	 *
+	 * The returned list is guaranteed to be sorted by slot numbers. That
+	 * means smaller slot numbers are always stored before bigger slot numbers.
+	 *
+	 * The caller has to ensure that this (Meta)Engine is responsible
+	 * for the specified target (by using findGame on it respectively
+	 * on the associated gameid from the relevant ConfMan entry, if present).
+	 *
+	 * The default implementation returns an empty list.
+	 *
+	 * @note MetaEngines must indicate that this function has been implemented
+	 *       via the kSupportsListSaves feature flag.
+	 *
+	 * @param target	name of a config manager target
+	 * @return			a list of save state descriptors
+	 */
+	virtual SaveStateList listSaves(const char *target) const;
+
+	/**
+	 * Return a list of all save states associated with the given target.
+	 *
+	 * This is a wrapper around the basic listSaves virtual method, but which
+	 * has some extra logic for autosave handling
+	 *
+	 * @param target	name of a config manager target
+	 * @param saveMode	If true, getting the list for a save dialog
+	 * @return			a list of save state descriptors
+	 */
+	SaveStateList listSaves(const char *target, bool saveMode) const;
+
+	/**
+	 * Returns the slot number being used for autosaves.
+	 * @note	This should match the engine getAutosaveSlot() method
+	 */
+	virtual int getAutosaveSlot() const {
+		return 0;
 	}
 
 	/**
@@ -282,11 +323,6 @@ public:
 	Common::String getSavegameFilePattern(const char *target = nullptr) const {
 		return getSavegameFile(kSavegameFilePattern, target);
 	}
-
-	/**
-	 * Return the keymap used by the target.
-	 */
-	virtual Common::Array<Common::Keymap *> initKeymaps(const char *target) const;
 
 	/** @name MetaEngineFeature flags */
 	//@{
@@ -375,55 +411,18 @@ public:
 		kSavesUseExtendedFormat
 	};
 
+	//@}
+
 	/**
 	 * Determine whether the engine supports the specified MetaEngine feature.
 	 * Used by e.g. the launcher to determine whether to enable the "Load" button.
 	 */
 	virtual bool hasFeature(MetaEngineFeature f) const;
 
-	static void appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playtime,
-		Common::String desc, bool isAutosave);
+	static void appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playtime, Common::String desc, bool isAutosave);
 	static void parseSavegameHeader(ExtendedSavegameHeader *header, SaveStateDescriptor *desc);
 	static void fillDummyHeader(ExtendedSavegameHeader *header);
 	static WARN_UNUSED_RESULT bool readSavegameHeader(Common::InSaveFile *in, ExtendedSavegameHeader *header, bool skipThumbnail = true);
-
-	//@}
-};
-
-/**
- * A MetaEngineConnect is another factory for Engine instances, and is very
- * similiar to meta engines. This class, however, composes of bridged functionalities
- * that can be used to connect an actual Engine with a MetaEngine.
- * Every engine "plugin" provides a hook to get an instance of MetaEngineConnector subclass
- * for that "engine plugin.". E.g. SCUMM provides a ScummMetaEngineConnect.
- * This is then in turn used for things like instantiating engine objects, listing savefiles,
- * querying save metadata, etc.
- * Since engine plugins can be used a external runtime libraries, these can live and build inside
- * the engine, while a MetaEngine will always build into the executable to be able to detect code.
- */
-class MetaEngineConnect : public PluginObject {
-public:
-	/**
-	 * Tries to instantiate an engine instance based on the settings of
-	 * the currently active ConfMan target. That is, the MetaEngine should
-	 * query the ConfMan singleton for the target, gameid, path etc. data.
-	 *
-	 * @param syst	Pointer to the global OSystem object
-	 * @param engine	Pointer to a pointer which the MetaEngine sets to
-	 *					the newly create Engine, or 0 in case of an error
-	 * @return		a Common::Error describing the error which occurred, or kNoError
-	 */
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const = 0;
-
-	/**
-	 * Name of the engine plugin.
-	 * Classes inheriting a MetaEngineConnect must provide a engineID here,
-	 * which can then be used to match an Engine with MetaEngine.
-	 * E.g. ScummMetaEngine inherits MetaEngine & provides a engineID of "Scumm".
-	 * 		ScummMetaEngineConnect inherits MetaEngineConnect & provides the name "Scumm".
-	 * This way, we can easily match a Engine with a MetaEngine.
-	 */
-	virtual const char *getName() const = 0;
 };
 
 /**

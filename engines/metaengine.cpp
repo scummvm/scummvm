@@ -37,7 +37,7 @@
 #include "graphics/managed_surface.h"
 #include "graphics/thumbnail.h"
 
-Common::String MetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
+Common::String MetaEngineConnect::getSavegameFile(int saveGameIdx, const char *target) const {
 	if (saveGameIdx == kSavegameFilePattern) {
 		// Pattern requested
 		const char *pattern = hasFeature(kSavesUseExtendedFormat) ? "%s.###" : "%s.s##";
@@ -128,7 +128,7 @@ Common::KeymapArray MetaEngine::initKeymaps(const char *target) const {
 	return Keymap::arrayOf(engineKeyMap);
 }
 
-bool MetaEngine::hasFeature(MetaEngineFeature f) const {
+bool MetaEngineConnect::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsDeleteSave) ||
@@ -140,7 +140,7 @@ bool MetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesUseExtendedFormat);
 }
 
-void MetaEngine::appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playtime,
+void MetaEngineConnect::appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playtime,
 		Common::String desc, bool isAutosave) {
 	ExtendedSavegameHeader header;
 
@@ -172,7 +172,7 @@ void MetaEngine::appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playti
 	saveFile->finalize();
 }
 
-void MetaEngine::saveScreenThumbnail(Common::OutSaveFile *saveFile) {
+void MetaEngineConnect::saveScreenThumbnail(Common::OutSaveFile *saveFile) {
 	// Create a thumbnail surface from the screen
 	Graphics::Surface thumb;
 	::createThumbnailFromScreen(&thumb);
@@ -182,7 +182,7 @@ void MetaEngine::saveScreenThumbnail(Common::OutSaveFile *saveFile) {
 	thumb.free();
 }
 
-void MetaEngine::parseSavegameHeader(ExtendedSavegameHeader *header, SaveStateDescriptor *desc) {
+void MetaEngineConnect::parseSavegameHeader(ExtendedSavegameHeader *header, SaveStateDescriptor *desc) {
 	int day = (header->date >> 24) & 0xFF;
 	int month = (header->date >> 16) & 0xFF;
 	int year = header->date & 0xFFFF;
@@ -195,14 +195,14 @@ void MetaEngine::parseSavegameHeader(ExtendedSavegameHeader *header, SaveStateDe
 	desc->setDescription(header->description);
 }
 
-void MetaEngine::fillDummyHeader(ExtendedSavegameHeader *header) {
+void MetaEngineConnect::fillDummyHeader(ExtendedSavegameHeader *header) {
 	// This is wrong header, perhaps it is original savegame. Thus fill out dummy values
 	header->date = (20 << 24) | (9 << 16) | 2016;
 	header->time = (9 << 8) | 56;
 	header->playtime = 0;
 }
 
-WARN_UNUSED_RESULT bool MetaEngine::readSavegameHeader(Common::InSaveFile *in, ExtendedSavegameHeader *header, bool skipThumbnail) {
+WARN_UNUSED_RESULT bool MetaEngineConnect::readSavegameHeader(Common::InSaveFile *in, ExtendedSavegameHeader *header, bool skipThumbnail) {
 	uint oldPos = in->pos();
 
 	in->seek(-4, SEEK_END);
@@ -260,11 +260,11 @@ WARN_UNUSED_RESULT bool MetaEngine::readSavegameHeader(Common::InSaveFile *in, E
 }
 
 
-///////////////////////////////////////
-// MetaEngine default implementations
-///////////////////////////////////////
+//////////////////////////////////////////////
+// MetaEngineConnect default implementations
+//////////////////////////////////////////////
 
-SaveStateList MetaEngine::listSaves(const char *target) const {
+SaveStateList MetaEngineConnect::listSaves(const char *target) const {
 	if (!hasFeature(kSavesUseExtendedFormat))
 		return SaveStateList();
 
@@ -305,7 +305,7 @@ SaveStateList MetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-SaveStateList MetaEngine::listSaves(const char *target, bool saveMode) const {
+SaveStateList MetaEngineConnect::listSaves(const char *target, bool saveMode) const {
 	SaveStateList saveList = listSaves(target);
 	int autosaveSlot = ConfMan.getInt("autosave_period") ? getAutosaveSlot() : -1;
 	if (!saveMode || autosaveSlot == -1)
@@ -354,14 +354,14 @@ GUI::OptionsContainerWidget *MetaEngine::buildEngineOptionsWidget(GUI::GuiObject
 	return new GUI::ExtraGuiOptionsWidget(boss, name, target, engineOptions);
 }
 
-void MetaEngine::removeSaveState(const char *target, int slot) const {
+void MetaEngineConnect::removeSaveState(const char *target, int slot) const {
 	if (!hasFeature(kSavesUseExtendedFormat))
 		return;
 
 	g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
 }
 
-SaveStateDescriptor MetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor MetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
 	if (!hasFeature(kSavesUseExtendedFormat))
 		return SaveStateDescriptor();
 
