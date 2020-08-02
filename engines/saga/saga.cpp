@@ -254,7 +254,10 @@ Common::Error SagaEngine::run() {
 	_events = new Events(this);
 
 	if (!isSaga2()) {
-		_font = new Font(this);
+		if (getLanguage() == Common::JA_JPN)
+			_font = new SJISFont(this);
+		else
+			_font = new DefaultFont(this);
 		_sprite = new Sprite(this);
 		_script = new SAGA1Script(this);
 	} else {
