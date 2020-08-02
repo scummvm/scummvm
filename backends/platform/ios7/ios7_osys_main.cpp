@@ -353,7 +353,7 @@ void OSystem_iOS7::addSysArchivesToSearchSet(Common::SearchSet &s, int priority)
 }
 
 bool iOS7_touchpadModeEnabled() {
-	OSystem_iOS7 *sys = (OSystem_iOS7 *) g_system;
+	OSystem_iOS7 *sys = dynamic_cast<OSystem_iOS7 *>(g_system);
 	return sys && sys->touchpadModeEnabled();
 }
 

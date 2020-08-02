@@ -104,7 +104,7 @@ bool findWordCompletions(const char *input) {
 	if (wordBufferPtrPos == 0)
 		return false;
 
-	OSystem_DS *system = (OSystem_DS *) g_system;
+	OSystem_DS *system = dynamic_cast<OSystem_DS *>(g_system);
 	system->clearAutoComplete();
 
 	int start = 0;

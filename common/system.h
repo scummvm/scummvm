@@ -149,7 +149,7 @@ protected:
 
 	/**
 	 * No default value is provided for _eventManager by OSystem.
-	 * However, BaseBackend::initBackend() does set a default value
+	 * However, EventsBaseBackend::initBackend() does set a default value
 	 * if none has been set before.
 	 *
 	 * @note _eventManager is deleted by the OSystem destructor.
