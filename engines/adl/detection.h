@@ -62,7 +62,11 @@ enum GameVersion {
 	GAME_VER_HR1_PD
 };
 
-struct AdlGameDescription;
+struct AdlGameDescription {
+	ADGameDescription desc;
+	GameType gameType;
+	GameVersion version;
+};
 
 Common::String getDiskImageName(const AdlGameDescription &adlDesc, byte volume);
 GameType getGameType(const AdlGameDescription &desc);

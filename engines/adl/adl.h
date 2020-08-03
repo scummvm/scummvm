@@ -34,6 +34,7 @@
 #include "common/scummsys.h"
 
 #include "engines/engine.h"
+#include "engines/advancedDetector.h"
 
 #include "audio/mixer.h"
 #include "audio/softsynth/pcspk.h"
