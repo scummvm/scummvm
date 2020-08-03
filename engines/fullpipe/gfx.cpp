@@ -97,6 +97,7 @@ PictureObject::PictureObject() {
 	_ox2 = 0;
 	_oy2 = 0;
 	_objtype = kObjTypePictureObject;
+	_picture = nullptr;
 }
 
 PictureObject::PictureObject(PictureObject *src) : GameObject(src) {
