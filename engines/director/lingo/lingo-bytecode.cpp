@@ -863,7 +863,7 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream
 	/* uint32 length = */ stream.readUint32();
 	/* uint32 length2 = */ stream.readUint32();
 	uint16 codeStoreOffset = stream.readUint16();
-	uint16 lctxIndex = stream.readUint16();
+	uint16 scriptId = stream.readUint16() + 1;
 	// unk2
 	for (uint32 i = 0; i < 0x10; i++) {
 		stream.readByte();
@@ -914,7 +914,7 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream
 	// initialise the script
 	ScriptType scriptType = kCastScript;
 	Common::String castName;
-	CastMember *member = g_director->getCurrentMovie()->getCastMemberByScriptId(lctxIndex + 1);
+	CastMember *member = g_director->getCurrentMovie()->getCastMemberByScriptId(scriptId);
 	uint16 castId;
 	if (member) {
 		if (member->_type == kCastLingoScript)
@@ -926,7 +926,7 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream
 			castName = info->name;
 	} else {
 		castId = -1;
-		warning("Script %d has invalid cast member %d", lctxIndex, castId);
+		warning("Script %d has invalid cast member %d", scriptId, castId);
 	}
 
 	_assemblyArchive = archive;
@@ -937,15 +937,15 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream
 		if (0 <= factoryNameId && factoryNameId < (int16)archive->names.size()) {
 			factoryName = archive->names[factoryNameId];
 		} else {
-			warning("Factory %d has unknown name id %d, skipping define", lctxIndex, factoryNameId);
+			warning("Factory %d has unknown name id %d, skipping define", scriptId, factoryNameId);
 			return nullptr;
 		}
-		debugC(1, kDebugCompile, "Add V4 script %d: factory '%s'", lctxIndex, factoryName.c_str());
+		debugC(1, kDebugCompile, "Add V4 script %d: factory '%s'", scriptId, factoryName.c_str());
 
 		sc = _assemblyContext = new ScriptContext(factoryName, _assemblyArchive, scriptType, castId);
 		codeFactory(factoryName);
 	} else {
-		debugC(1, kDebugCompile, "Add V4 script %d: %s %d", lctxIndex, scriptType2str(scriptType), castId);
+		debugC(1, kDebugCompile, "Add V4 script %d: %s %d", scriptId, scriptType2str(scriptType), castId);
 
 		sc = _assemblyContext = new ScriptContext(!castName.empty() ? castName : Common::String::format("%d", castId), _assemblyArchive, scriptType, castId);
 	}
