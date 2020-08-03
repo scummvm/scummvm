@@ -166,7 +166,7 @@ end({spc}+{identifier})?	{
 exit		{ count(); return varCheck(tEXIT, "exit"); }
 field		{ count(); return tFIELD; }
 global		{ count(); return varCheck(tGLOBAL, "global"); }
-go{spc}+(to{spc}+)?frame	{ count(); return tGO; }
+go{spc}+(to{spc}+)?(the{spc}+)?frame	{ count(); return tGO; }
 go{spc}+(to)?	{ count(); return tGO; }
 go{spc}+loop	{ count(); return tGOLOOP; }
 instance	{ count(); return varCheck(tINSTANCE, "instance"); }
