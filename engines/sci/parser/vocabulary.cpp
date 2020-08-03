@@ -251,33 +251,10 @@ bool Vocabulary::loadSuffixes() {
 
 		_parserSuffixes.push_back(suffix);
 	}
-	appendSuffixes();
 
 	return true;
 }
 
-void Vocabulary::appendSuffixes() {
-	if (g_sci->getLanguage() == Common::HE_ISR) {
-		for (int i = 0; i < 2; i++) {
-			int cls;
-			if (i == 0)
-				cls = VOCAB_CLASS_PREPOSITION << 4;
-			else
-				cls = VOCAB_CLASS_NOUN << 4;
-
-			suffix_t suffixes[] = {
-				{cls, cls, 1, 0, "\xea", ""},					// get rid of Kaf Sofit
-				{cls, cls, 2, 0, "\xe9\xed", ""},				// get rid of Yud, Mem Sofit
-				{cls, cls, 2, 0, "\xe5\xfa", ""},				// get rid of Vav, Taf
-				{cls, cls, 3, 2, "\xe9\xe5\xfa", "\xe9\xfa"},	// Yud, Vav, Taf -> Yud, Taf
-				{cls, cls, 3, 2, "\xe0\xe5\xfa", "\xe0\xe4"}	// Alef, Vav, Taf -> Alef, He
-			};
-
-			for (int j = 0; j < ARRAYSIZE(suffixes); j++)
-				_parserSuffixes.push_back(suffixes[j]);
-		}
-	}
-}
 
 void Vocabulary::freeSuffixes() {
 	Resource* resource = _resMan->findResource(ResourceId(kResourceTypeVocab, _resourceIdSuffixes), false);
@@ -512,9 +489,10 @@ void Vocabulary::lookupWordPrefix(ResultWordListList &parent_retval, ResultWordL
 	if (g_sci->getLanguage() != Common::HE_ISR)
 		return;
 
-	if (--word_len <= 0)
+	if (word_len <= 1)
 		return;
 
+	// check "Otiyot Shimush" for nouns and prepositions - Hebrew prefixes that are like English words
 	PrefixMeaning prefixes[] = {
 		{0xe1, "1hebrew1prefix1bet"},           // "Bet"
 		{0xe4, "the"},                          // "He Hayedia"
@@ -523,11 +501,40 @@ void Vocabulary::lookupWordPrefix(ResultWordListList &parent_retval, ResultWordL
 	};
 
 	for (int i = 0; i < ARRAYSIZE(prefixes); i++)
-		if (lookupSpecificPrefix(parent_retval, retval, word, word_len, prefixes[i].prefix, prefixes[i].meaning))
+		if (lookupSpecificPrefixWithMeaning(parent_retval, retval, word, word_len - 1, prefixes[i].prefix, prefixes[i].meaning))
 			return;
+
+	// check verbs - the user might type the verb in some other form, try to match it against its basic form
+
+	// e.g., 'open' : 'Taf Pe Taf Het' try to match 'Pe Taf Het'
+	if (lookupVerbPrefix(parent_retval, retval, word, word_len, "\xfa"))
+		return;
+
+	// e.g., 'take' : 'Taf Yud Kaf Het' try to match 'Kaf Het'
+	if (word_len == 4 && lookupVerbPrefix(parent_retval, retval, word, word_len, "\xfa\xe9"))
+		return;
+
+	// e.g. 'look' : 'Taf Sameh Taf Kaf Lamed' try to match 'He Sameh Taf Kaf Lamed'
+	if (word[0] == '\xfa') {                                 		// first letter is Taf
+		Common::String modified_word = word;
+		modified_word.setChar('\xe4', 0);							// replace the initial Taf with He
+
+		if (lookupVerbPrefix(parent_retval, retval, modified_word, modified_word.size(), ""))
+			return;
+	}
+
+	// e.g. 'put' : 'Taf Nun Yud Het' try to match 'He Nun Het'
+	if (word[0] == '\xfa' && word[word_len - 2] == '\xe9') {		// first letter is Taf, one before the last is Yud
+		Common::String modified_word = word;
+		modified_word.setChar('\xe4', 0);							// replace the initial Taf with He
+		modified_word.deleteChar(word_len - 2);						// delete the Yud
+
+		if (lookupVerbPrefix(parent_retval, retval, modified_word, modified_word.size(), ""))
+			return;
+	}
 }
 
-bool Vocabulary::lookupSpecificPrefix(ResultWordListList &parent_retval, ResultWordList &retval, const char *word, int word_len, unsigned char prefix, const char *meaning) {
+bool Vocabulary::lookupSpecificPrefixWithMeaning(ResultWordListList &parent_retval, ResultWordList &retval, const char *word, int word_len, unsigned char prefix, const char *meaning) {
 	if (!_parserWords.contains(meaning)) {
 		warning("Vocabulary::lookupSpecificPrefix: _parserWords doesn't contains '%s'", meaning);
 		return false;
@@ -536,7 +543,7 @@ bool Vocabulary::lookupSpecificPrefix(ResultWordListList &parent_retval, ResultW
 		ResultWordList word_list;
 		lookupWord(word_list, word + 1, word_len);
 		if (!word_list.empty())
-			if (word_list.front()._class == VOCAB_CLASS_NOUN << 4 || word_list.front()._class == VOCAB_CLASS_PREPOSITION << 4) {
+			if (word_list.front()._class & (VOCAB_CLASS_NOUN << 4) || word_list.front()._class & (VOCAB_CLASS_PREPOSITION << 4)) {
 				parent_retval.push_back(_parserWords[meaning]);
 				retval = word_list;
 				return true;
@@ -544,6 +551,20 @@ bool Vocabulary::lookupSpecificPrefix(ResultWordListList &parent_retval, ResultW
 	}
 	return false;
 }
+
+bool Vocabulary::lookupVerbPrefix(ResultWordListList &parent_retval, ResultWordList &retval, Common::String word, int word_len, Common::String prefix) {
+	if (word.hasPrefix(prefix)) {
+		ResultWordList word_list;
+		lookupWord(word_list, word.c_str() +  prefix.size(), word_len);
+		if (!word_list.empty())
+			if (word_list.front()._class & (VOCAB_CLASS_IMPERATIVE_VERB << 4)) {
+				retval = word_list;
+				return true;
+			}
+	}
+	return false;
+}
+
 
 void Vocabulary::debugDecipherSaidBlock(const SciSpan<const byte> &data) {
 	bool first = true;
