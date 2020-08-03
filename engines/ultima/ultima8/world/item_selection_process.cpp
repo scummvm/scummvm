@@ -47,7 +47,8 @@ static const uint16 SELECTION_FAILED_SOUND = 0xb0;
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(ItemSelectionProcess)
 
-ItemSelectionProcess::ItemSelectionProcess() : Process(), _selectedItem(0) {
+ItemSelectionProcess::ItemSelectionProcess() : Process(), _selectedItem(0),
+_ax(0), _ay(0), _az(0) {
 	_instance = this;
 }
 
