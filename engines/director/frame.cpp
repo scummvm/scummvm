@@ -163,13 +163,14 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 		}
 
 		// palette
-		_palette.paletteId = stream->readUint16();
+		stream->read(unk, 4);
+
+		_palette.paletteId = stream->readByte();
 		_palette.firstColor = stream->readByte(); // for cycles. note: these start at 0x80 (for pal entry 0)!
 		_palette.lastColor = stream->readByte();
 		_palette.flags = stream->readByte();
 		_palette.speed = stream->readByte();
-		_palette.frameCount = stream->readUint16();
-		_palette.cycleCount = stream->readUint16();
+		_palette.frameCount = stream->readByte();
 
 		stream->read(unk, 6);
 
