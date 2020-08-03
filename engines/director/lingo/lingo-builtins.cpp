@@ -258,8 +258,8 @@ static struct BuiltinProto {
 	{ "lastWordOf",		LB::b_lastwordof,	1, 1, false, 4, FBLTIN },	//			D4 f
 
 	// ScummVM Asserts: Used for testing ScummVM's Lingo implementation
-	{ "scummvmAssert",	LB::b_scummvmassert,1, 1, true,  2, HBLTIN },
-	{ "scummvmAssertEqual",	LB::b_scummvmassertequal,2,2,true,2,HBLTIN },
+	{ "scummvmAssert",	LB::b_scummvmassert,1, 2, true,  2, HBLTIN },
+	{ "scummvmAssertEqual",	LB::b_scummvmassertequal,2,3,true,2,HBLTIN },
 
 
 	{ 0, 0, 0, 0, false, 0, VOIDSYM }
@@ -2438,21 +2438,23 @@ void LB::b_lastwordof(int nargs) {
 }
 
 void LB::b_scummvmassert(int nargs) {
+	Datum line = g_lingo->pop();
 	Datum d = g_lingo->pop();
 
 	if (d.asInt() == 0) {
-		warning("LB::b_scummvmassert: is false");
+		warning("LB::b_scummvmassert: is false at line %d", line.asInt());
 	}
 	assert(d.asInt() != 0);
 }
 
 void LB::b_scummvmassertequal(int nargs) {
+	Datum line = g_lingo->pop();
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
 	int result = d1.equalTo(d2);
 	if (!result) {
-		warning("LB::b_scummvmassertequals: %s is not equal %s", d1.asString().c_str(), d2.asString().c_str());
+		warning("LB::b_scummvmassertequals: %s is not equal %s at line %d", d1.asString().c_str(), d2.asString().c_str(), line.asInt());
 	}
 	assert(result == 1);
 }
