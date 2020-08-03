@@ -6158,6 +6158,7 @@ EOF
 done
 
 declare -a static_detect_engines=()
+detectId="_DETECTION"
 
 echo "Creating engines/plugins_table.h"
 cat > engines/plugins_table.h << EOF
@@ -6173,13 +6174,18 @@ for engine in $_sorted_engines; do
 			if [ $j == $eng ]; then
 				cat >> engines/plugins_table.h << EOF
 #if PLUGIN_ENABLED($j)
+LINK_PLUGIN(${j}${detectId})
+#endif
+EOF
+				cat >> engines/plugins_table.h << EOF
+#if PLUGIN_ENABLED_STATIC($j)
 LINK_PLUGIN($j)
 #endif
 EOF
 				continue 2
 			fi
 		done
-		
+
 		cat >> engines/plugins_table.h << EOF
 #if PLUGIN_ENABLED_STATIC($j)
 LINK_PLUGIN($j)
