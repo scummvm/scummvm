@@ -1766,7 +1766,6 @@ void LB::b_puppetPalette(int nargs) {
 		break;
 	default:
 		ARGNUMCHECK(1);
-		g_lingo->dropStack(nargs);
 		return;
 	}
 
