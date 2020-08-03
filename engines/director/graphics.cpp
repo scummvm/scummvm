@@ -766,9 +766,7 @@ void DirectorEngine::addPalette(int id, byte *palette, int length) {
 		warning("DirectorEngine::addPalette(): Negative palette ids reserved for default palettes");
 		return;
 	} else if (_loadedPalettes.contains(id)) {
-		// TODO: Can castmember palettes conflict with those in the cast config?
-		warning("DirectorEngine::addPalette(): Attempting to replace palette %d", id);
-		return;
+		delete[] _loadedPalettes[id].palette;
 	}
 
 	_loadedPalettes[id] = PaletteV4(id, palette, length);
