@@ -312,18 +312,18 @@ asgn: tPUT expr tINTO ID 			{
 		g_lingo->codeInt($THEENTITY[0]);
 		g_lingo->codeInt($THEENTITY[1]);
 		$$ = $expr; }
-	| tSET THEENTITYWITHID simpleexpr tTO expr	{
+	| tSET THEENTITYWITHID expr[entityId] tTO expr[value]	{
 		g_lingo->code1(LC::c_swap);
 		g_lingo->code1(LC::c_theentityassign);
 		g_lingo->codeInt($THEENTITYWITHID[0]);
 		g_lingo->codeInt($THEENTITYWITHID[1]);
-		$$ = $expr; }
-	| tSET THEENTITYWITHID simpleexpr tEQ expr	{
+		$$ = $value; }
+	| tSET THEENTITYWITHID expr[entityId] tEQ expr[value]	{
 		g_lingo->code1(LC::c_swap);
 		g_lingo->code1(LC::c_theentityassign);
 		g_lingo->codeInt($THEENTITYWITHID[0]);
 		g_lingo->codeInt($THEENTITYWITHID[1]);
-		$$ = $expr; }
+		$$ = $value; }
 	// the <field> of menuItem <expr> of menu <expr>
 	| tSET THEMENUITEMENTITY simpleexpr tOF ID simpleexpr tTO expr	{
 		if (!$ID->equalsIgnoreCase("menu")) {
