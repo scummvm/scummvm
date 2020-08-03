@@ -873,10 +873,16 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream
 	/* uint16 unk3 = */ stream.readUint16();
 	uint32 scriptFlags = stream.readUint32();
 	debugC(1, kDebugCompile, "Script flags (%d 0x%x):", scriptFlags, scriptFlags);
-	debugC(1, kDebugCompile, "unk0: %d funcsGlobal: %d varsGlobal: %d unk3: %d", (scriptFlags & kScriptFlagUnk0) != 0, (scriptFlags & kScriptFlagFuncsGlobal) != 0, (scriptFlags & kScriptFlagVarsGlobal) != 0, (scriptFlags & kScriptFlagUnk3) != 0);
+	debugC(1, kDebugCompile, "unused: %d funcsGlobal: %d varsGlobal: %d unk3: %d", (scriptFlags & kScriptFlagUnused) != 0, (scriptFlags & kScriptFlagFuncsGlobal) != 0, (scriptFlags & kScriptFlagVarsGlobal) != 0, (scriptFlags & kScriptFlagUnk3) != 0);
 	debugC(1, kDebugCompile, "factoryDef: %d unk5: %d unk6: %d unk7: %d", (scriptFlags & kScriptFlagFactoryDef) != 0, (scriptFlags & kScriptFlagUnk5) != 0, (scriptFlags & kScriptFlagUnk6) != 0, (scriptFlags & kScriptFlagUnk7) != 0);
 	debugC(1, kDebugCompile, "hasFactory: %d eventScript: %d eventScript2: %d unkB: %d", (scriptFlags & kScriptFlagHasFactory) != 0, (scriptFlags & kScriptFlagEventScript) != 0, (scriptFlags & kScriptFlagEventScript2) != 0, (scriptFlags & kScriptFlagUnkB) != 0);
 	debugC(1, kDebugCompile, "unkC: %d unkD: %d unkE: %d unkF: %d", (scriptFlags & kScriptFlagUnkC) != 0, (scriptFlags & kScriptFlagUnkD) != 0, (scriptFlags & kScriptFlagUnkE) != 0, (scriptFlags & kScriptFlagUnkF) != 0);
+
+	if (scriptFlags & kScriptFlagUnused) {
+		warning("Script %d is unused", scriptId);
+		return nullptr;
+	}
+
 	// unk4
 	for (uint32 i = 0; i < 0x4; i++) {
 		stream.readByte();

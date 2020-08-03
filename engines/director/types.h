@@ -55,7 +55,7 @@ enum ScriptType {
 };
 
 enum ScriptFlag {
-	kScriptFlagUnk0			= (1 << 0x0),
+	kScriptFlagUnused		= (1 << 0x0),
 	kScriptFlagFuncsGlobal	= (1 << 0x1),
 	kScriptFlagVarsGlobal	= (1 << 0x2),	// Occurs in event scripts (which have no local vars). Correlated with use of alternate global var opcodes.
 	kScriptFlagUnk3			= (1 << 0x3),
