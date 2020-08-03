@@ -192,6 +192,9 @@ void Stage::loadEXE(const Common::String movie) {
 			error("Failed to load RIFF");
 	} else {
 		Common::WinResources *exe = Common::WinResources::createFromEXE(movie);
+		if (!exe)
+			error("Failed to open EXE '%s'", g_director->getEXEName().c_str());
+
 		const Common::Array<Common::WinResourceID> versions = exe->getIDList(Common::kWinVersion);
 		for (uint i = 0; i < versions.size(); i++) {
 			Common::SeekableReadStream *res = exe->getResource(Common::kWinVersion, versions[i]);
