@@ -537,12 +537,17 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 		EngineMan.upgradeTargetIfNecessary(ConfMan.getActiveDomainName());
 
-		// Try to find a plugin which feels responsible for the specified game.
+		// Try to find a MetaEnginePlugin which feels responsible for the specified game.
 		const Plugin *plugin = detectPlugin();
 		if (plugin) {
-			// Unload all plugins not needed for this game,
-			// to save memory
-			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE, plugin);
+			// Unload all plugins not needed for this game, to save memory
+
+			// Right now, we have a MetaEngine plugin, and we want to unload all except Engine.
+			// First, get the relevant Engine plugin from MetaEngine.
+			const Plugin *enginePlugin = PluginMan.giveEngineFromMetaEngine(plugin);
+
+			// Then, pass in the pointer to enginePlugin, with the matching type, so our function behaves as-is.
+			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE, enginePlugin);
 
 #ifdef ENABLE_EVENTRECORDER
 			Common::String recordMode = ConfMan.get("record_mode");
