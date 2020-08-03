@@ -5,10 +5,10 @@ MODULE_OBJS := \
 	animation.o \
 	console.o \
 	converse.o \
-	detection.o \
 	drascula.o \
 	graphics.o \
 	interface.o \
+	metaengine.o \
 	objects.o \
 	palette.o \
 	resource.o \
@@ -25,3 +25,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o

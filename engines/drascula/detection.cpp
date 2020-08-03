@@ -25,40 +25,9 @@
 #include "common/translation.h"
 
 #include "engines/advancedDetector.h"
-#include "engines/savestate.h"
 
-#include "graphics/thumbnail.h"
-
-#include "drascula/drascula.h"
-
-namespace Drascula {
-
-struct DrasculaGameDescription {
-	ADGameDescription desc;
-};
-
-uint32 DrasculaEngine::getFeatures() const {
-	return _gameDescription->desc.flags;
-}
-
-Common::Language DrasculaEngine::getLanguage() const {
-	return _gameDescription->desc.language;
-}
-
-void DrasculaEngine::loadArchives() {
-	const ADGameFileDescription *ag;
-
-	if (getFeatures() & GF_PACKED) {
-		for (ag = _gameDescription->desc.filesDescriptions; ag->fileName; ag++) {
-			if (!_archives.hasArchive(ag->fileName))
-				_archives.registerArchive(ag->fileName, ag->fileType);
-		}
-	}
-
-	_archives.enableFallback(true);
-}
-
-}
+#include "drascula/detection_enums.h"
+#include "drascula/detection.h"
 
 static const PlainGameDescriptor drasculaGames[] = {
 	{"drascula", "Drascula: The Vampire Strikes Back"},
@@ -334,8 +303,6 @@ static const ExtraGuiOption drasculaExtraGuiOption = {
 	false
 };
 
-SaveStateDescriptor loadMetaData(Common::ReadStream *s, int slot, bool setPlayTime);
-
 class DrasculaMetaEngine : public AdvancedMetaEngine {
 public:
 	DrasculaMetaEngine() : AdvancedMetaEngine(Drascula::gameDescriptions, sizeof(Drascula::DrasculaGameDescription), drasculaGames) {
@@ -354,26 +321,8 @@ public:
 		return "Drascula: The Vampire Strikes Back (C) 2000 Alcachofa Soft, (C) 1996 Digital Dreams Multimedia, (C) 1994 Emilio de Paz";
 	}
 
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
-	bool hasFeature(MetaEngineFeature f) const override;
 	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
-	SaveStateList listSaves(const char *target) const override;
-	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
-
-bool DrasculaMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSimpleSavesNames);
-}
 
 const ExtraGuiOptions DrasculaMetaEngine::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
@@ -381,90 +330,6 @@ const ExtraGuiOptions DrasculaMetaEngine::getExtraGuiOptions(const Common::Strin
 	return options;
 }
 
-SaveStateList DrasculaMetaEngine::listSaves(const char *target) const {
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringArray filenames;
-	Common::String pattern = target;
-	pattern += ".###";
-
-	filenames = saveFileMan->listSavefiles(pattern);
-
-	SaveStateList saveList;
-	int slotNum = 0;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		slotNum = atoi(file->c_str() + file->size() - 3);
-
-		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
-			if (in) {
-				SaveStateDescriptor desc = loadMetaData(in, slotNum, false);
-				if (desc.getSaveSlot() != slotNum) {
-					// invalid
-					delete in;
-					continue;
-				}
-				saveList.push_back(desc);
-				delete in;
-			}
-		}
-	}
-
-	// Sort saves based on slot number.
-	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
-	return saveList;
-}
-
-SaveStateDescriptor DrasculaMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-
-	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);
-
-	SaveStateDescriptor desc;
-	// Do not allow save slot 0 (used for auto-saving) to be deleted or
-	// overwritten.
-	desc.setDeletableFlag(slot != 0);
-	desc.setWriteProtectedFlag(slot == 0);
-
-	if (in) {
-		desc = Drascula::loadMetaData(in, slot, false);
-		if (desc.getSaveSlot() != slot) {
-			delete in;
-			return SaveStateDescriptor();
-		}
-
-		Graphics::Surface *thumbnail;
-		if (!Graphics::loadThumbnail(*in, thumbnail)) {
-			delete in;
-			return SaveStateDescriptor();
-		}
-		desc.setThumbnail(thumbnail);
-
-		delete in;
-	}
-
-	return desc;
-}
-
-int DrasculaMetaEngine::getMaximumSaveSlot() const { return 999; }
-
-void DrasculaMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
-}
-
-bool DrasculaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Drascula::DrasculaGameDescription *gd = (const Drascula::DrasculaGameDescription *)desc;
-	if (gd) {
-		*engine = new Drascula::DrasculaEngine(syst, gd);
-	}
-	return gd != 0;
-}
-
 } // End of namespace Drascula
 
-#if PLUGIN_ENABLED_DYNAMIC(DRASCULA)
-	REGISTER_PLUGIN_DYNAMIC(DRASCULA, PLUGIN_TYPE_ENGINE, Drascula::DrasculaMetaEngine);
-#else
-	REGISTER_PLUGIN_STATIC(DRASCULA, PLUGIN_TYPE_ENGINE, Drascula::DrasculaMetaEngine);
-#endif
+REGISTER_PLUGIN_STATIC(DRASCULA_DETECTION, PLUGIN_TYPE_METAENGINE, Drascula::DrasculaMetaEngine);
