@@ -2,7 +2,7 @@ MODULE := engines/sword25
 
 MODULE_OBJS := \
 	console.o \
-	detection.o \
+	metaengine.o \
 	sword25.o \
 	fmv/movieplayer.o \
 	fmv/movieplayer_script.o \
@@ -62,3 +62,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
