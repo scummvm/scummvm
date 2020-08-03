@@ -1264,7 +1264,7 @@ void Lingo::varAssign(Datum &var, Datum &value, bool global, DatumHash *localvar
 		}
 
 		warning("varAssign: variable %s not defined", name.c_str());
-	} else if (var.type == FIELDREF) {
+	} else if (var.type == FIELDREF || var.type == CASTREF) {
 		Movie *movie = g_director->getCurrentMovie();
 		if (!movie) {
 			warning("varAssign: Assigning to a reference to an empty movie");

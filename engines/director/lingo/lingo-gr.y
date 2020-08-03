@@ -656,6 +656,9 @@ expr: simpleexpr { $$ = $simpleexpr; }
 chunkexpr:  tFIELD simpleexprnoparens	{
 		Common::String field("field");
 		g_lingo->codeFunc(&field, 1); }
+	| tCAST simpleexprnoparens		{
+		Common::String cast("cast");
+		g_lingo->codeFunc(&cast, 1); }
 	| tCHAR expr tOF simpleexpr				{ g_lingo->code1(LC::c_charOf); }
 	| tCHAR expr tTO expr tOF simpleexpr	{ g_lingo->code1(LC::c_charToOf); }
 	| tITEM expr tOF simpleexpr				{ g_lingo->code1(LC::c_itemOf); }
@@ -666,9 +669,6 @@ chunkexpr:  tFIELD simpleexprnoparens	{
 	| tWORD expr tTO expr tOF simpleexpr	{ g_lingo->code1(LC::c_wordToOf); }
 
 reference: 	chunkexpr
-	| tCAST simpleexprnoparens		{
-		Common::String cast("cast");
-		g_lingo->codeFunc(&cast, 1); }
 	| tSCRIPT simpleexprnoparens	{
 		Common::String script("script");
 		g_lingo->codeFunc(&script, 1); }

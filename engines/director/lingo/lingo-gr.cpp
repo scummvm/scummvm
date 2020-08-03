@@ -771,7 +771,7 @@ static const yytype_int16 yyrline[] =
      608,   609,   610,   611,   617,   617,   622,   625,   634,   635,
      637,   638,   639,   640,   641,   642,   643,   644,   645,   646,
      647,   648,   649,   650,   651,   652,   653,   654,   656,   659,
-     660,   661,   662,   663,   664,   665,   666,   668,   669,   672,
+     662,   663,   664,   665,   666,   667,   668,   669,   671,   672,
      675,   679,   680,   681,   682,   690,   691,   691,   692,   692,
      693,   693,   694,   697,   700,   706,   706,   711,   714,   718,
      719,   722,   726,   727,   730,   734,   735,   738,   749,   750,
@@ -913,11 +913,11 @@ static const yytype_uint8 yydefact[] =
       50,   178,    62,   124,   139,    67,    75,     0,    68,     0,
        0,    70,    69,    79,     8,     9,    10,    11,     0,   149,
        0,   150,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,   185,    87,    88,    90,   151,   117,    74,   153,    82,
+       0,   185,    87,    88,    90,   151,   118,    74,   153,    82,
        0,    46,     0,   121,     0,    62,     0,     0,     0,     0,
        0,     0,   163,   133,   156,   158,   145,     0,   142,     0,
        1,     0,   178,   179,   138,    58,   171,   160,   171,   140,
-     127,    76,     0,    77,   118,   108,   119,   120,   155,     0,
+     127,    76,     0,    77,   109,   108,   119,   120,   155,     0,
       73,     0,     0,     0,     0,     0,    71,    72,     0,    70,
       69,   186,    87,   189,     0,   188,   187,   191,   178,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
@@ -932,13 +932,13 @@ static const yytype_uint8 yydefact[] =
       94,   171,     0,    12,    13,    15,    16,    17,    18,     0,
        0,    58,    22,    20,     0,     0,     0,    27,    28,    21,
       19,    47,   132,   145,     0,     0,   142,   134,   135,   137,
-     180,     0,   171,   177,   177,   141,   109,     0,   111,     0,
-     113,     0,   115,     0,    80,    81,   194,   193,   195,   190,
+     180,     0,   171,   177,   177,   141,   110,     0,   112,     0,
+     114,     0,   116,     0,    80,    81,   194,   193,   195,   190,
        0,     0,     0,   192,    83,    84,    86,     0,     0,    42,
       34,    51,    23,    98,     0,   147,    62,    66,    62,    63,
      144,     0,    59,   173,     0,     0,     0,     0,     0,     0,
        0,   177,    14,    62,    60,    60,     0,     0,    49,     0,
-       0,   181,     0,    55,   167,   165,   110,   112,   114,   116,
+       0,   181,     0,    55,   167,   165,   111,   113,   115,   117,
        0,     0,    43,    35,    39,    59,     0,     0,    48,    64,
      182,   136,    62,   174,    85,   162,    58,     0,     0,     0,
       25,    26,   183,     0,     0,    56,     0,   175,   166,    44,
@@ -979,7 +979,7 @@ static const yytype_int16 yytable[] =
 {
       29,   191,    32,   107,   291,    95,   305,   330,   100,   349,
      138,   373,   239,   302,    40,   208,   145,    43,    90,    91,
-      92,    81,     2,   383,   145,   -24,   145,   146,   387,     5,
+      92,    81,     2,   383,   145,   -24,   145,   146,   387,    54,
       55,     7,     8,   240,   138,   108,   112,   352,   152,   153,
      154,   155,    84,    85,   109,   151,   152,   153,   154,   155,
      154,   155,   -24,   331,   172,   385,   324,   325,   156,   164,
@@ -1421,7 +1421,7 @@ static const yytype_uint8 yyr1[] =
      131,   131,   131,   131,   132,   131,   131,   131,   133,   133,
      134,   134,   134,   134,   134,   134,   134,   134,   134,   134,
      134,   134,   134,   134,   134,   134,   134,   134,   135,   135,
-     135,   135,   135,   135,   135,   135,   135,   136,   136,   136,
+     135,   135,   135,   135,   135,   135,   135,   135,   136,   136,
      136,   137,   137,   137,   137,   137,   138,   137,   139,   137,
      140,   137,   137,   137,   137,   141,   137,   137,   137,   142,
      142,   142,   143,   143,   143,   144,   144,   144,   145,   145,
@@ -1445,8 +1445,8 @@ static const yytype_int8 yyr2[] =
        1,     2,     2,     2,     1,     1,     2,     2,     3,     1,
        4,     4,     1,     4,     0,     7,     4,     1,     1,     3,
        1,     3,     3,     3,     3,     3,     3,     3,     3,     3,
-       3,     3,     3,     3,     3,     3,     3,     3,     2,     4,
-       6,     4,     6,     4,     6,     4,     6,     1,     2,     2,
+       3,     3,     3,     3,     3,     3,     3,     3,     2,     2,
+       4,     6,     4,     6,     4,     6,     4,     6,     1,     2,
        2,     2,     1,     1,     2,     1,     0,     3,     0,     3,
        0,     3,     4,     2,     4,     0,     7,     4,     2,     0,
        1,     3,     0,     1,     3,     0,     1,     3,     1,     2,
@@ -2843,59 +2843,59 @@ yyreduce:
 #line 2844 "engines/director/lingo/lingo-gr.cpp"
     break;
 
-  case 109: /* chunkexpr: tCHAR expr tOF simpleexpr  */
+  case 109: /* chunkexpr: tCAST simpleexprnoparens  */
 #line 659 "engines/director/lingo/lingo-gr.y"
-                                                                { g_lingo->code1(LC::c_charOf); }
-#line 2850 "engines/director/lingo/lingo-gr.cpp"
-    break;
-
-  case 110: /* chunkexpr: tCHAR expr tTO expr tOF simpleexpr  */
-#line 660 "engines/director/lingo/lingo-gr.y"
-                                                { g_lingo->code1(LC::c_charToOf); }
-#line 2856 "engines/director/lingo/lingo-gr.cpp"
-    break;
-
-  case 111: /* chunkexpr: tITEM expr tOF simpleexpr  */
-#line 661 "engines/director/lingo/lingo-gr.y"
-                                                                { g_lingo->code1(LC::c_itemOf); }
-#line 2862 "engines/director/lingo/lingo-gr.cpp"
-    break;
-
-  case 112: /* chunkexpr: tITEM expr tTO expr tOF simpleexpr  */
-#line 662 "engines/director/lingo/lingo-gr.y"
-                                                { g_lingo->code1(LC::c_itemToOf); }
-#line 2868 "engines/director/lingo/lingo-gr.cpp"
-    break;
-
-  case 113: /* chunkexpr: tLINE expr tOF simpleexpr  */
-#line 663 "engines/director/lingo/lingo-gr.y"
-                                                                { g_lingo->code1(LC::c_lineOf); }
-#line 2874 "engines/director/lingo/lingo-gr.cpp"
-    break;
-
-  case 114: /* chunkexpr: tLINE expr tTO expr tOF simpleexpr  */
-#line 664 "engines/director/lingo/lingo-gr.y"
-                                                { g_lingo->code1(LC::c_lineToOf); }
-#line 2880 "engines/director/lingo/lingo-gr.cpp"
-    break;
-
-  case 115: /* chunkexpr: tWORD expr tOF simpleexpr  */
-#line 665 "engines/director/lingo/lingo-gr.y"
-                                                                { g_lingo->code1(LC::c_wordOf); }
-#line 2886 "engines/director/lingo/lingo-gr.cpp"
-    break;
-
-  case 116: /* chunkexpr: tWORD expr tTO expr tOF simpleexpr  */
-#line 666 "engines/director/lingo/lingo-gr.y"
-                                                { g_lingo->code1(LC::c_wordToOf); }
-#line 2892 "engines/director/lingo/lingo-gr.cpp"
-    break;
-
-  case 118: /* reference: tCAST simpleexprnoparens  */
-#line 669 "engines/director/lingo/lingo-gr.y"
                                                 {
 		Common::String cast("cast");
 		g_lingo->codeFunc(&cast, 1); }
+#line 2852 "engines/director/lingo/lingo-gr.cpp"
+    break;
+
+  case 110: /* chunkexpr: tCHAR expr tOF simpleexpr  */
+#line 662 "engines/director/lingo/lingo-gr.y"
+                                                                { g_lingo->code1(LC::c_charOf); }
+#line 2858 "engines/director/lingo/lingo-gr.cpp"
+    break;
+
+  case 111: /* chunkexpr: tCHAR expr tTO expr tOF simpleexpr  */
+#line 663 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_charToOf); }
+#line 2864 "engines/director/lingo/lingo-gr.cpp"
+    break;
+
+  case 112: /* chunkexpr: tITEM expr tOF simpleexpr  */
+#line 664 "engines/director/lingo/lingo-gr.y"
+                                                                { g_lingo->code1(LC::c_itemOf); }
+#line 2870 "engines/director/lingo/lingo-gr.cpp"
+    break;
+
+  case 113: /* chunkexpr: tITEM expr tTO expr tOF simpleexpr  */
+#line 665 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_itemToOf); }
+#line 2876 "engines/director/lingo/lingo-gr.cpp"
+    break;
+
+  case 114: /* chunkexpr: tLINE expr tOF simpleexpr  */
+#line 666 "engines/director/lingo/lingo-gr.y"
+                                                                { g_lingo->code1(LC::c_lineOf); }
+#line 2882 "engines/director/lingo/lingo-gr.cpp"
+    break;
+
+  case 115: /* chunkexpr: tLINE expr tTO expr tOF simpleexpr  */
+#line 667 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_lineToOf); }
+#line 2888 "engines/director/lingo/lingo-gr.cpp"
+    break;
+
+  case 116: /* chunkexpr: tWORD expr tOF simpleexpr  */
+#line 668 "engines/director/lingo/lingo-gr.y"
+                                                                { g_lingo->code1(LC::c_wordOf); }
+#line 2894 "engines/director/lingo/lingo-gr.cpp"
+    break;
+
+  case 117: /* chunkexpr: tWORD expr tTO expr tOF simpleexpr  */
+#line 669 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_wordToOf); }
 #line 2900 "engines/director/lingo/lingo-gr.cpp"
     break;
 

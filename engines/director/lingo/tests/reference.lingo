@@ -8,6 +8,7 @@ set a = window "windowname"
 
 -- assign to field reference
 put "asdf" into field 1
+put "lorem ipsum" into cast 1
 
 -- the property of reference
 put the text of cast "castname"
