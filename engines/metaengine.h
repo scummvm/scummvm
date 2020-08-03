@@ -178,11 +178,6 @@ public:
 	virtual const Common::AchievementsInfo getAchievementsInfo(const Common::String &target) const {
 		return Common::AchievementsInfo();
 	}
-
-	/**
-	 * Return the keymap used by the target.
-	 */
-	virtual Common::Array<Common::Keymap *> initKeymaps(const char *target) const;
 };
 
 /**
@@ -323,6 +318,11 @@ public:
 	Common::String getSavegameFilePattern(const char *target = nullptr) const {
 		return getSavegameFile(kSavegameFilePattern, target);
 	}
+
+	/**
+	 * Return the keymap used by the target.
+	 */
+	virtual Common::Array<Common::Keymap *> initKeymaps(const char *target) const;
 
 	/** @name MetaEngineFeature flags */
 	//@{
