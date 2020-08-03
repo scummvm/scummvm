@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef DREAMWEB_DETECTION_H
+#define DREAMWEB_DETECTION_H
+
 namespace DreamWeb {
 
 struct DreamWebGameDescription {
@@ -27,3 +30,5 @@ struct DreamWebGameDescription {
 };
 
 } // End of namespace DreamWeb
+
+#endif // DREAMWEB_DETECTION_H
