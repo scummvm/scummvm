@@ -749,6 +749,9 @@ Datum LC::divData(Datum &d1, Datum &d2) {
 
 	int alignedType = g_lingo->getAlignedType(d1, d2);
 
+	if (g_director->getVersion() < 4)	// pre-D4 is INT-only
+		alignedType = INT;
+
 	Datum res;
 	if (alignedType == FLOAT) {
 		res = Datum(d1.asFloat() / d2.asFloat());
