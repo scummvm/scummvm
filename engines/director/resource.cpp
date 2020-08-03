@@ -72,9 +72,7 @@ Common::Error Stage::loadInitialMovie() {
 	_currentMovie = new Movie(this);
 	_currentPath = getPath(movie, _currentPath);
 	_currentMovie->loadSharedCastsFrom(_currentPath + g_director->_sharedCastFile);
-
-	if (_currentMovie)
-		_currentMovie->setArchive(_mainArchive);
+	_currentMovie->setArchive(_mainArchive);
 
 	return Common::kNoError;
 }
