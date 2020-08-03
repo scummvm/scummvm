@@ -179,24 +179,27 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 		err = Common::kPathNotDirectory;
 	}
 
-	// Create the game engine
+	// Create the game's MetaEngine.
 	const MetaEngine &metaEngine = plugin->get<MetaEngine>();
 	if (err.getCode() == Common::kNoError) {
 		// Set default values for all of the custom engine options
 		// Apparently some engines query them in their constructor, thus we
 		// need to set this up before instance creation.
 		metaEngine.registerDefaultSettings(target);
-
-		// Right now we have a MetaEngine plugin. We must find the matching engine plugin to
-		// call createInstance and other connecting functions.
-		Plugin *enginePluginToLaunchGame = PluginMan.giveEngineFromMetaEngine(plugin);
-
-		if (enginePluginToLaunchGame) {
-			err = enginePluginToLaunchGame->get<MetaEngineConnect>().createInstance(&system, &engine);
-		} else {
-			err = Common::Error(Common::kEnginePluginNotFound);
-		}
 	}
+
+	// Right now we have a MetaEngine plugin. We must find the matching engine plugin to
+	// call createInstance and other connecting functions.
+	Plugin *enginePluginToLaunchGame = PluginMan.giveEngineFromMetaEngine(plugin);
+
+	if (!enginePluginToLaunchGame) {
+		err = Common::kEnginePluginNotFound;
+		return err;
+	}
+
+	// Create the game's MetaEngineConnect.
+	const MetaEngineConnect &metaEngineConnect = enginePluginToLaunchGame->get<MetaEngineConnect>();
+	err = metaEngineConnect.createInstance(&system, &engine);
 
 	// Check for errors
 	if (!engine || err.getCode() != Common::kNoError) {
@@ -287,7 +290,7 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 #endif // USE_TRANSLATION
 
 	// Initialize any game-specific keymaps
-	Common::KeymapArray gameKeymaps = metaEngine.initKeymaps(target.c_str());
+	Common::KeymapArray gameKeymaps = metaEngineConnect.initKeymaps(target.c_str());
 	Common::Keymapper *keymapper = system.getEventManager()->getKeymapper();
 	for (uint i = 0; i < gameKeymaps.size(); i++) {
 		keymapper->addGameKeymap(gameKeymaps[i]);

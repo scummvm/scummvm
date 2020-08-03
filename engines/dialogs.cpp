@@ -274,6 +274,7 @@ ConfigDialog::ConfigDialog() :
 
 	const Common::String &gameDomain = ConfMan.getActiveDomainName();
 	const MetaEngine &metaEngine = g_engine->getMetaEngine();
+	const MetaEngineConnect &metaEngineConnect = g_engine->getMetaEngineConnect();
 
 	// GUI:  Add tab widget
 	GUI::TabWidget *tab = new GUI::TabWidget(this, "GlobalConfig.TabWidget");
@@ -321,7 +322,7 @@ ConfigDialog::ConfigDialog() :
 	// The Keymap tab
 	//
 
-	Common::KeymapArray keymaps = metaEngine.initKeymaps(gameDomain.c_str());
+	Common::KeymapArray keymaps = metaEngineConnect.initKeymaps(gameDomain.c_str());
 	if (!keymaps.empty()) {
 		tab->addTab(_("Keymaps"), "GlobalConfig_KeyMapper");
 		addKeyMapperControls(tab, "GlobalConfig_KeyMapper.", keymaps, gameDomain);
