@@ -6160,7 +6160,7 @@ EOF
 	fi
 done
 
-declare -a static_detect_engines=("PLUMBERS" "AGI")
+declare -a static_detect_engines=("PLUMBERS" "AGI" "SCUMM")
 detectId="_DETECTION"
 
 echo "Creating engines/plugins_table.h"

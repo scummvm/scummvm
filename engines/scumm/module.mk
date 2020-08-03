@@ -35,6 +35,7 @@ MODULE_OBJS := \
 	imuse/drivers/mac_m68k.o \
 	imuse/drivers/pcspk.o \
 	input.o \
+	metaengine.o \
 	midiparser_ro.o \
 	object.o \
 	palette.o \
@@ -168,3 +169,12 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects, if building as a Dynamic Plugin.
+# Scumm uses detection files when creating an instance,
+# so we can't remove dependency completely.
+ifeq ($(ENABLE_SCUMM), DYNAMIC_PLUGIN)
+DETECT_OBJS += $(MODULE)/detection.o
+DETECT_OBJS += $(MODULE)/file.o
+DETECT_OBJS += $(MODULE)/file_nes.o
+endif
