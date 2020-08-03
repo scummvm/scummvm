@@ -49,7 +49,7 @@ Common::String MetaEngineConnect::getSavegameFile(int saveGameIdx, const char *t
 	}
 }
 
-Common::KeymapArray MetaEngine::initKeymaps(const char *target) const {
+Common::KeymapArray MetaEngineConnect::initKeymaps(const char *target) const {
 	using namespace Common;
 
 	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "engine-default", _("Default game keymap"));
