@@ -1,0 +1,8 @@
+on test a, b, c,
+  put a
+end
+
+global foo, bar,
+property baz,
+
+test "foo", "bar", "baz",

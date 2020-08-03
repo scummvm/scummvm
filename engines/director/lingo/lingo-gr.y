@@ -715,24 +715,27 @@ proc: tPUT expr					{ g_lingo->code1(LC::c_printtop); }
 		g_lingo->codeCmd($ID, $arglist);
 		delete $ID; }
 
-globallist: ID					{
+globallist:		/* nothing */
+	| ID						{
 		mVar($ID, kVarGlobal);
 		delete $ID; }
-	| globallist ',' ID			{
+	| ID ',' globallist			{
 		mVar($ID, kVarGlobal);
 		delete $ID; }
 
-propertylist: ID				{
+propertylist:	/* nothing */
+	| ID						{
 		mVar($ID, kVarProperty);
 		delete $ID; }
-	| propertylist ',' ID		{
+	| ID ',' propertylist		{
 		mVar($ID, kVarProperty);
 		delete $ID; }
 
-instancelist: ID				{
+instancelist:	/* nothing */
+	| ID						{
 		mVar($ID, kVarInstance);
 		delete $ID; }
-	| instancelist ',' ID		{
+	| ID ',' instancelist		{
 		mVar($ID, kVarInstance);
 		delete $ID; }
 
@@ -833,9 +836,11 @@ defn: tMACRO { startDef(); } ID
 
 on:  tON { startDef(); } ID 	{ $$ = $ID; }
 
+argname: ID						{ g_lingo->codeArg($ID); mVar($ID, kVarArgument); delete $ID; }
+
 argdef:  /* nothing */ 			{ $$ = 0; }
-	| ID						{ g_lingo->codeArg($ID); mVar($ID, kVarArgument); $$ = 1; delete $ID; }
-	| argdef ',' ID				{ g_lingo->codeArg($ID); mVar($ID, kVarArgument); $$ = $1 + 1; delete $ID; }
+	| argname					{ $$ = 1; }
+	| argname ',' argdef		{ $$ = $3 + 1; }
 
 endargdef:	/* nothing */
 	| ID						{ delete $ID; }
@@ -845,10 +850,11 @@ argstore:	  /* nothing */		{ inDef(); }
 
 arglist:  /* nothing */ 		{ $$ = 0; }
 	| expr						{ $$ = 1; }
-	| arglist ',' expr			{ $$ = $1 + 1; }
+	| expr ',' arglist			{ $$ = $3 + 1; }
 
 nonemptyarglist:  expr			{ $$ = 1; }
-	| nonemptyarglist ',' expr	{ $$ = $1 + 1; }
+	| expr ','					{ $$ = 1; }
+	| expr ',' nonemptyarglist	{ $$ = $3 + 1; }
 
 list: '[' valuelist ']'			{ $$ = $valuelist; }
 
