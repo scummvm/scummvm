@@ -912,7 +912,7 @@ int MainActor::receiveShieldHit(int damage, uint16 damage_type) {
 				getLocation(x, y, z);
 				x += 0x10;
 				y += 0x18;
-				remembersprite = false;
+				remembersprite = true;
 				break;
 			}
 			Process *p = new SpriteProcess(shieldsprite, shieldstartframe,
