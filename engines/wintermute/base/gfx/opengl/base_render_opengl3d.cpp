@@ -545,6 +545,9 @@ void BaseRenderOpenGL3D::renderSceneGeometry(BaseArray<AdWalkplane *> &planes, B
 	glDisable(GL_DEPTH_TEST);
 	glFrontFace(GL_CCW);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glDisableClientState(GL_COLOR_ARRAY);
+	glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
+	glEnable(GL_COLOR_MATERIAL);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -612,6 +615,7 @@ void BaseRenderOpenGL3D::renderSceneGeometry(BaseArray<AdWalkplane *> &planes, B
 //		glEnd();
 //	}
 
+	glDisable(GL_COLOR_MATERIAL);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	//	m_Renderer->m_Device->SetRenderState( D3DRS_FILLMODE, D3DFILL_SOLID );

@@ -24,25 +24,40 @@
 #define WINTERMUTE_MESH_3DS_H
 
 #include "common/memstream.h"
-#include "common/scummsys.h"
-#include "graphics/opengl/system_headers.h"
-#include "math/vector3d.h"
+#include "math/vector4d.h"
 
 namespace Wintermute {
 
+#include "common/pack-start.h"
+
+struct GeometryVertex {
+	float x;
+	float y;
+	float z;
+} PACKED_STRUCT;
+
+#include "common/pack-end.h"
+
 class Mesh3DS {
 public:
+	Mesh3DS();
 	virtual ~Mesh3DS();
-	virtual void computeNormals() = 0;
 	virtual void fillVertexBuffer(uint32 color) = 0;
-	virtual bool loadFrom3DS(Common::MemoryReadStream &fileStream) = 0;
+	virtual bool loadFrom3DS(Common::MemoryReadStream &fileStream);
 	virtual void render() = 0;
-	virtual void dumpVertexCoordinates(const char *filename) = 0;
-	virtual int faceCount() = 0;
-	virtual uint16 *getFace(int index) = 0;
+	virtual void dumpVertexCoordinates(const char *filename);
+	virtual int faceCount();
+	virtual uint16 *getFace(int index);
 
-	virtual int vertexCount() = 0;
-	virtual float *getVertexPosition(int index) = 0;
+	virtual int vertexCount();
+	virtual float *getVertexPosition(int index);
+
+protected:
+	GeometryVertex *_vertexData;
+	uint16 _vertexCount;
+	uint16 *_indexData;
+	uint16 _indexCount;
+	Math::Vector4d _color;
 };
 
 } // namespace Wintermute

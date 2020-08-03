@@ -23,52 +23,22 @@
 #ifndef WINTERMUTE_MESH_OPENGL_H
 #define WINTERMUTE_MESH_OPENGL_H
 
-#include "common/memstream.h"
-#include "common/scummsys.h"
 #include "engines/wintermute/base/gfx/opengl/mesh3ds.h"
 #include "graphics/opengl/shader.h"
-#include "graphics/opengl/system_headers.h"
-#include "math/vector4d.h"
 
 namespace Wintermute {
 
-#include "common/pack-start.h"
-
-struct GeometryVertexShader {
-	float x;
-	float y;
-	float z;
-} PACKED_STRUCT;
-
-#include "common/pack-end.h"
-
 class Mesh3DSOpenGLShader : public Mesh3DS {
 public:
-	// vertex size in bytes, for the moment we only have
-	// position and color components
-	static const int kVertexSize = 28;
 	Mesh3DSOpenGLShader(OpenGL::Shader *shader);
 	~Mesh3DSOpenGLShader();
-	void computeNormals();
-	void fillVertexBuffer(uint32 color);
-	bool loadFrom3DS(Common::MemoryReadStream &fileStream);
-	void render();
-	void dumpVertexCoordinates(const char *filename);
-	int faceCount();
-	uint16 *getFace(int index);
-
-	int vertexCount();
-	float *getVertexPosition(int index);
+	void fillVertexBuffer(uint32 color) override;
+	void render() override;
 
 private:
-	GeometryVertexShader *_vertexData;
-	uint16 _vertexCount;
-	uint16 *_indexData;
-	uint16 _indexCount;
 	GLuint _vertexBuffer;
 	GLuint _indexBuffer;
 	OpenGL::Shader *_shader;
-	Math::Vector4d _color;
 };
 
 } // namespace Wintermute

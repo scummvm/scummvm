@@ -214,7 +214,6 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 			AdWalkplane *plane = new AdWalkplane(_gameRef);
 			plane->setName(meshNames[i].c_str());
 			plane->_mesh = meshes[i];
-			plane->_mesh->computeNormals();
 			// TODO: These constants are endianness dependent
 			plane->_mesh->fillVertexBuffer(0xFF0000FF);
 			plane->_receiveShadows = ExtNode->_receiveShadows;
@@ -225,7 +224,6 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 			AdBlock *block = new AdBlock(_gameRef);
 			block->setName(meshNames[i].c_str());
 			block->_mesh = meshes[i];
-			block->_mesh->computeNormals();
 			block->_mesh->fillVertexBuffer(0xFFFF0000);
 			block->_receiveShadows = ExtNode->_receiveShadows;
 			_blocks.add(block);
@@ -245,7 +243,6 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 			AdGeneric *generic = new AdGeneric(_gameRef);
 			generic->setName(meshNames[i].c_str());
 			generic->_mesh = meshes[i];
-			generic->_mesh->computeNormals();
 			generic->_mesh->fillVertexBuffer(0xFF00FF00);
 			generic->_receiveShadows = ExtNode->_receiveShadows;
 			_generics.add(generic);
