@@ -443,6 +443,7 @@ void Cast::loadCastChildren() {
 	debugC(1, kDebugLoading, "****** Preloading sprite palettes and images");
 
 	Cast *sharedCast = _movie ? _movie->getSharedCast() : nullptr;
+	int defaultId = 1025;
 
 	for (Common::HashMap<int, CastMember *>::iterator c = _loadedCast->begin(); c != _loadedCast->end(); ++c) {
 		if (!c->_value)
@@ -451,8 +452,13 @@ void Cast::loadCastChildren() {
 		// First, handle palettes
 		if (c->_value->_type == kCastPalette) {
 			PaletteCastMember *member = ((PaletteCastMember *)c->_value);
-			if (member->_children.size() == 1) {
+
+			// TODO: Verify how palettes work in >D4 versions
+			if (_vm->getVersion() == 4 && member->_children.size() == 1) {
 				member->_palette = g_director->getPalette(member->_children[0].index);
+			} else if (_vm->getVersion() < 4) {
+				// D3 palettes are always kept in this ascending order
+				member->_palette = g_director->getPalette(defaultId++);
 			} else {
 				warning("Cast::loadSpriteChildren(): Expected 1 child for palette cast, got %d", member->_children.size());
 			}
@@ -724,6 +730,10 @@ void Cast::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
 		case kCastDigitalVideo:
 			debugC(3, kDebugLoading, "Cast::loadCastDataVWCR(): CastTypes id: %d(%s) DigitalVideoCastMember", id, numToCastNum(id));
 			_loadedCast->setVal(id, new DigitalVideoCastMember(this, id, stream, _vm->getVersion()));
+			break;
+		case kCastPalette:
+			debugC(3, kDebugLoading, "Cast::loadCastDataVWCR(): CastTypes id: %d(%s) PaletteCastMember", id, numToCastNum(id));
+			_loadedCast->setVal(id, new PaletteCastMember(this, id, stream, _vm->getVersion()));
 			break;
 		default:
 			warning("Cast::loadCastDataVWCR(): Unhandled cast id: %d(%s), type: %d, %d bytes", id, numToCastNum(id), castType, size);
