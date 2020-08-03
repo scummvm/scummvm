@@ -852,10 +852,10 @@ int Datum::asInt() const {
 		res = u.i;
 		break;
 	case FLOAT:
-		if (g_director->getVersion() < 5) {
-			res = (int)(u.f + 0.5);		// Yes, +0.5 even for negative numbers
-		} else {
+		if (g_director->getVersion() < 4) {
 			res = round(u.f);
+		} else {
+			res = (int)u.f;
 		}
 		break;
 	default:

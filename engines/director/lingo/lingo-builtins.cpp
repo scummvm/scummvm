@@ -388,7 +388,14 @@ void LB::b_float(int nargs) {
 
 void LB::b_integer(int nargs) {
 	Datum d = g_lingo->pop();
-	Datum res(d.asInt());
+	Datum res;
+
+	if (g_director->getVersion() < 5) {	// Note that D4 behaves differently from asInt()
+		res = (int)(d.u.f + 0.5);		// Yes, +0.5 even for negative numbers
+	} else {
+		res = round(d.u.f);
+	}
+
 	g_lingo->push(res);
 }
 
