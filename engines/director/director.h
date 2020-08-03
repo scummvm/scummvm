@@ -173,6 +173,7 @@ public:
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
 	Common::Language getLanguage() const;
+	const char *getExtra();
 	Common::String getEXEName() const;
 	StartMovie getStartMovie() const;
 	DirectorSound *getSoundManager() const { return _soundManager; }

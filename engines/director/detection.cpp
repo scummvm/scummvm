@@ -58,6 +58,10 @@ Common::Language DirectorEngine::getLanguage() const {
 	return _gameDescription->desc.language;
 }
 
+const char *DirectorEngine::getExtra() {
+	return _gameDescription->desc.extra;
+}
+
 Common::String DirectorEngine::getEXEName() const {
 	StartMovie startMovie = getStartMovie();
 	if (startMovie.startMovie.size() > 0)
