@@ -483,6 +483,9 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 }
 
 void Score::renderCursor(uint spriteId) {
+	if (!spriteId)
+		return;
+
 	if (_channels[spriteId]->_cursor.isEmpty()) {
 		if (_currentCursor) {
 			_vm->_wm->popCursor();
