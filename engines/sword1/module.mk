@@ -5,11 +5,11 @@ MODULE_OBJS := \
 	console.o \
 	control.o \
 	debug.o \
-	detection.o \
 	eventman.o \
 	logic.o \
 	memman.o \
 	menu.o \
+	metaengine.o \
 	mouse.o \
 	music.o \
 	objectman.o \
@@ -28,3 +28,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
