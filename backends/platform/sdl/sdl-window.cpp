@@ -40,7 +40,7 @@ SdlWindow::SdlWindow()
 	{
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-#elif SDL_VERSION_ATLEAST(1, 2, 13)
+#elif SDL_VERSION_ATLEAST(1, 2, 10)
 	// Query the desktop resolution. We simply hope nothing tried to change
 	// the resolution so far.
 	const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
