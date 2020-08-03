@@ -696,6 +696,7 @@ Bitmap::Bitmap() {
 	_dataSize = 0;
 	_flags = 0;
 	_flipping = Graphics::FLIP_NONE;
+	_surface = nullptr;
 }
 
 Bitmap::Bitmap(const Bitmap &src) {
@@ -708,6 +709,7 @@ Bitmap::Bitmap(const Bitmap &src) {
 	_height = src._height;
 	_surface = src._surface;
 	_flipping = src._flipping;
+	_surface = src._surface;
 }
 
 Bitmap::~Bitmap() {
