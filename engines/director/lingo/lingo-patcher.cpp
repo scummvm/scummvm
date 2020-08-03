@@ -42,75 +42,75 @@ struct ScriptPatch {
 	const char *replace;
 } const scriptPatches[] = {
 	// Garbage at end of script
-	{"warlock", "", kPlatformMacintosh, "WARLOCKSHIP/UpForeECall", kScoreScript, 12,
+	{"warlock", nullptr, kPlatformMacintosh, "WARLOCKSHIP/UpForeECall", kScoreScript, 12,
 			2, "SS Warlock:DATA:WARLOCKSHIP:Up.GCGunner", ""},
-	{"warlock", "", kPlatformMacintosh, "WARLOCKSHIP/UpForeECall", kScoreScript, 12,
+	{"warlock", nullptr, kPlatformMacintosh, "WARLOCKSHIP/UpForeECall", kScoreScript, 12,
 			3, "Channels 17 to 18", ""},
-	{"warlock", "", kPlatformMacintosh, "WARLOCKSHIP/UpForeECall", kScoreScript, 12,
+	{"warlock", nullptr, kPlatformMacintosh, "WARLOCKSHIP/UpForeECall", kScoreScript, 12,
 			4, "Frames 150 to 160", ""},
 
 	// Garbage at end of script
-	{"warlock", "", kPlatformMacintosh, "DATA/WARLOCKSHIP/HE.Aft", kScoreScript, 8,
+	{"warlock", nullptr, kPlatformMacintosh, "DATA/WARLOCKSHIP/HE.Aft", kScoreScript, 8,
 			2, "SS Warlock:DATA:WARLOCKSHIP:HangStairsFore", ""},
-	{"warlock", "", kPlatformMacintosh, "DATA/WARLOCKSHIP/HE.Aft", kScoreScript, 8,
+	{"warlock", nullptr, kPlatformMacintosh, "DATA/WARLOCKSHIP/HE.Aft", kScoreScript, 8,
 			3, "Channels 4 to 5", ""},
-	{"warlock", "", kPlatformMacintosh, "DATA/WARLOCKSHIP/HE.Aft", kScoreScript, 8,
+	{"warlock", nullptr, kPlatformMacintosh, "DATA/WARLOCKSHIP/HE.Aft", kScoreScript, 8,
 			4, "Frames 20 to 20", ""},
 
 	// Garbage at end of script
-	{"warlock", "", kPlatformMacintosh, "DATA/WARLOCKSHIP/ENG/D10", kScoreScript, 8,
+	{"warlock", nullptr, kPlatformMacintosh, "DATA/WARLOCKSHIP/ENG/D10", kScoreScript, 8,
 			2, "SS Warlock:ENG.Fold:C9", ""},
-	{"warlock", "", kPlatformMacintosh, "DATA/WARLOCKSHIP/ENG/D10", kScoreScript, 8,
+	{"warlock", nullptr, kPlatformMacintosh, "DATA/WARLOCKSHIP/ENG/D10", kScoreScript, 8,
 			3, "Channels 19 to 20", ""},
-	{"warlock", "", kPlatformMacintosh, "DATA/WARLOCKSHIP/ENG/D10", kScoreScript, 8,
+	{"warlock", nullptr, kPlatformMacintosh, "DATA/WARLOCKSHIP/ENG/D10", kScoreScript, 8,
 			4, "Frames 165 to 180", ""},
 
 	// Garbage at end of script
-	{"warlock", "", kPlatformMacintosh, "DATA/WARLOCKSHIP/Up.c2", kScoreScript, 10,
+	{"warlock", nullptr, kPlatformMacintosh, "DATA/WARLOCKSHIP/Up.c2", kScoreScript, 10,
 			2, "Frames 150 to 160", ""},
 
 	// Garbage at end of script
-	{"warlock", "", kPlatformMacintosh, "DATA/WARLOCKSHIP/Up.ForeECall", kScoreScript, 12,
+	{"warlock", nullptr, kPlatformMacintosh, "DATA/WARLOCKSHIP/Up.ForeECall", kScoreScript, 12,
 			2, "SS Warlock:DATA:WARLOCKSHIP:Up.GCGunner", ""},
-	{"warlock", "", kPlatformMacintosh, "DATA/WARLOCKSHIP/Up.ForeECall", kScoreScript, 12,
+	{"warlock", nullptr, kPlatformMacintosh, "DATA/WARLOCKSHIP/Up.ForeECall", kScoreScript, 12,
 			3, "Channels 17 to 18", ""},
-	{"warlock", "", kPlatformMacintosh, "DATA/WARLOCKSHIP/Up.ForeECall", kScoreScript, 12,
+	{"warlock", nullptr, kPlatformMacintosh, "DATA/WARLOCKSHIP/Up.ForeECall", kScoreScript, 12,
 			4, "Frames 150 to 160", ""},
 
 	// Garbage at end of script
-	{"warlock", "", kPlatformMacintosh, "DATA/WARLOCKSHIP/Up.B2", kScoreScript, 9,
+	{"warlock", nullptr, kPlatformMacintosh, "DATA/WARLOCKSHIP/Up.B2", kScoreScript, 9,
 			2, "SS Warlock:DATA:WARLOCKSHIP:Up.GCGunner", ""},
-	{"warlock", "", kPlatformMacintosh, "DATA/WARLOCKSHIP/Up.B2", kScoreScript, 9,
+	{"warlock", nullptr, kPlatformMacintosh, "DATA/WARLOCKSHIP/Up.B2", kScoreScript, 9,
 			3, "Channels 17 to 18", ""},
-	{"warlock", "", kPlatformMacintosh, "DATA/WARLOCKSHIP/Up.B2", kScoreScript, 9,
+	{"warlock", nullptr, kPlatformMacintosh, "DATA/WARLOCKSHIP/Up.B2", kScoreScript, 9,
 			4, "Frames 150 to 160", ""},
 
 	// Garbage at end of script
-	{"warlock", "", kPlatformMacintosh, "DATA/BELSHAZZAR/STELLA/ORIGIN", kScoreScript, 12,
+	{"warlock", nullptr, kPlatformMacintosh, "DATA/BELSHAZZAR/STELLA/ORIGIN", kScoreScript, 12,
 			2, "Frames 1 to 1", ""},
 
 	// Garbage at end of script
-	{"warlock", "", kPlatformMacintosh, "DATA/WARLOCKSHIP/HangHallAft", kScoreScript, 7,
+	{"warlock", nullptr, kPlatformMacintosh, "DATA/WARLOCKSHIP/HangHallAft", kScoreScript, 7,
 			2, "SS Warlock:DATA:WARLOCKSHIP:HangStairsFore", ""},
-	{"warlock", "", kPlatformMacintosh, "DATA/WARLOCKSHIP/HangHallAft", kScoreScript, 7,
+	{"warlock", nullptr, kPlatformMacintosh, "DATA/WARLOCKSHIP/HangHallAft", kScoreScript, 7,
 			3, "Channels 4 to 5", ""},
-	{"warlock", "", kPlatformMacintosh, "DATA/WARLOCKSHIP/HangHallAft", kScoreScript, 7,
+	{"warlock", nullptr, kPlatformMacintosh, "DATA/WARLOCKSHIP/HangHallAft", kScoreScript, 7,
 			4, "Frames 20 to 20", ""},
 
 	// Stray 'then' (obvious copy/paste error)
-	{"warlock", "", kPlatformMacintosh, "DATA/K/KT/OutMarauderKT", kMovieScript, 2,
+	{"warlock", nullptr, kPlatformMacintosh, "DATA/K/KT/OutMarauderKT", kMovieScript, 2,
 			23, "set Spacesuit = 0 then", "set Spacesuit = 0"},
 
 	// Unbalanced 'end if' at the end of the script
-	{"warlock", "", kPlatformMacintosh, "DATA/STAMBUL/DRUNK", kMovieScript, 4,
+	{"warlock", nullptr, kPlatformMacintosh, "DATA/STAMBUL/DRUNK", kMovieScript, 4,
 			5, "end if", ""},
 
 	// Unbalanced 'end if' at the end of the script
-	{"warlock", "", kPlatformMacintosh, "STAMBUL/DRUNK", kMovieScript, 5,
+	{"warlock", nullptr, kPlatformMacintosh, "STAMBUL/DRUNK", kMovieScript, 5,
 			5, "end if", ""},
 
 	// Missing '&'
-	{"warlock", "", kPlatformMacintosh, "DATA/NAV/Shared Cast", kMovieScript, 1,
+	{"warlock", nullptr, kPlatformMacintosh, "DATA/NAV/Shared Cast", kMovieScript, 1,
 			19, "alert \"Failed Save.\" & return & \"Error message number: \" string ( filer )",
 				"alert \"Failed Save.\" & return & \"Error message number: \" & string ( filer )"},
 
@@ -163,7 +163,7 @@ Common::String Lingo::patchLingoCode(Common::String &line, LingoArchive *archive
 
 		// Now expensive ones
 		if (movie.compareToIgnoreCase(patch->movie) || strcmp(patch->gameId, _vm->getGameId())
-				|| strcmp(patch->extra, _vm->getExtra())) {
+				|| (patch->extra && strcmp(patch->extra, _vm->getExtra()))) {
 			patch++;
 			continue;
 		}
