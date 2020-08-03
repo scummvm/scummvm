@@ -24,13 +24,8 @@
 #include "common/translation.h"
 #include "engines/advancedDetector.h"
 
-#include "sword25/sword25.h"
+#include "sword25/detection_enums.h"
 #include "sword25/detection_tables.h"
-#include "sword25/kernel/persistenceservice.h"
-
-namespace Sword25 {
-uint32 Sword25Engine::getGameFlags() const { return _gameDescription->flags; }
-}
 
 static const PlainGameDescriptor sword25Game[] = {
 	{"sword25", "Broken Sword 2.5"},
@@ -69,24 +64,8 @@ public:
 		return "Broken Sword 2.5 (C) Malte Thiesen, Daniel Queteschiner and Michael Elsdorfer";
 	}
 
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-	bool hasFeature(MetaEngineFeature f) const override;
 	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
-	int getMaximumSaveSlot() const override { return Sword25::PersistenceService::getSlotCount(); }
-	SaveStateList listSaves(const char *target) const override;
 };
-
-bool Sword25MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc) {
-		*engine = new Sword25::Sword25Engine(syst, desc);
-	}
-	return desc != 0;
-}
-
-bool Sword25MetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves);
-}
 
 const ExtraGuiOptions Sword25MetaEngine::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
@@ -94,28 +73,4 @@ const ExtraGuiOptions Sword25MetaEngine::getExtraGuiOptions(const Common::String
 	return options;
 }
 
-SaveStateList Sword25MetaEngine::listSaves(const char *target) const {
-	Common::String pattern = target;
-	pattern = pattern + ".###";
-	SaveStateList saveList;
-
-	Sword25::PersistenceService ps;
-	Sword25::setGameTarget(target);
-
-	ps.reloadSlots();
-
-	for (uint i = 0; i < ps.getSlotCount(); ++i) {
-		if (ps.isSlotOccupied(i)) {
-			Common::String desc = ps.getSavegameDescription(i);
-			saveList.push_back(SaveStateDescriptor(i, desc));
-		}
-	}
-
-	return saveList;
-}
-
-#if PLUGIN_ENABLED_DYNAMIC(SWORD25)
-	REGISTER_PLUGIN_DYNAMIC(SWORD25, PLUGIN_TYPE_ENGINE, Sword25MetaEngine);
-#else
-	REGISTER_PLUGIN_STATIC(SWORD25, PLUGIN_TYPE_ENGINE, Sword25MetaEngine);
-#endif
+REGISTER_PLUGIN_STATIC(SWORD25_DETECTION, PLUGIN_TYPE_METAENGINE, Sword25MetaEngine);
