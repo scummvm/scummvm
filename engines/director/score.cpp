@@ -142,6 +142,17 @@ Common::String *Score::getLabelList() {
 	return res;
 }
 
+Common::String *Score::getFrameLabel(uint id) {
+	for (Common::SortedArray<Label *>::iterator i = _labels->begin(); i != _labels->end(); ++i) {
+		if ((*i)->number == id) {
+			return new Common::String((*i)->name);
+			break;
+		}
+	}
+
+	return new Common::String;
+}
+
 void Score::setStartToLabel(Common::String &label) {
 	uint16 num = getLabel(label);
 

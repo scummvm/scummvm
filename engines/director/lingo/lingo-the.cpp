@@ -426,7 +426,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = _vm->getCurrentMovie()->getScore()->getCurrentFrame();
 		break;
 	case kTheFrameLabel:
-		getTheEntitySTUB(kTheFrameLabel);
+		d.type = STRING;
+		d.u.s = _vm->getCurrentMovie()->getScore()->getFrameLabel(_vm->getCurrentMovie()->getScore()->getCurrentFrame());
 		break;
 	case kTheFrameScript:
 		getTheEntitySTUB(kTheFrameScript);
@@ -887,7 +888,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		_floatPrecisionFormat = Common::String::format("%%.%df", _floatPrecision);
 		break;
 	case kTheFrameLabel:
-		setTheEntitySTUB(kTheFrameLabel);
+		setTheEntityReadOnly(kTheFrameLabel);
 		break;
 	case kTheFrameScript:
 		setTheEntitySTUB(kTheFrameScript);
