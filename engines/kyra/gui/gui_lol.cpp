@@ -2673,6 +2673,12 @@ int GUI_LoL::clickedSaveMenu(Button *button) {
 	_saveDescription[0] = 0;
 	if (_saveMenu.item[-s - 2].saveSlot != -3)
 		strcpy(_saveDescription, _saveMenu.item[-s - 2].itemString);
+	else {
+		TimeDate td;
+		g_system->getTimeAndDate(td);
+		Common::String ts = Common::String::format("%d:%d:%d on %d/%d/%d", td.tm_hour, td.tm_min, td.tm_sec, td.tm_mday, td.tm_mon + 1, td.tm_year + 1900);
+		strcpy(_saveDescription, ts.c_str());
+	}
 
 	return 1;
 }
