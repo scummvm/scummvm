@@ -171,17 +171,22 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			_palette.speed = stream->readByte();
 			_palette.frameCount = stream->readUint16();
 			_palette.cycleCount = stream->readUint16();
+
+			stream->read(unk, 6);
 		} else {
 			stream->read(unk, 4);
+
 			_palette.paletteId = stream->readByte();
 			_palette.firstColor = stream->readByte(); // for cycles. note: these start at 0x80 (for pal entry 0)!
 			_palette.lastColor = stream->readByte();
 			_palette.flags = stream->readByte();
+			_palette.cycleCount = stream->readByte();
 			_palette.speed = stream->readByte();
 			_palette.frameCount = stream->readByte();
-		}
+			_palette.cycleLength = stream->readByte();
 
-		stream->read(unk, 6);
+			stream->read(unk, 4);
+		}
 
 		debugC(8, kDebugLoading, "Frame::readChannels(): %d %d %d %d %d %d %d %d %d %d %d", _actionId, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1, _skipFrameFlag, _blend, _sound2, _soundType2);
 
