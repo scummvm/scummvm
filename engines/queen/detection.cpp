@@ -24,23 +24,12 @@
 
 #include "engines/advancedDetector.h"
 
-#include "common/config-manager.h"
-#include "common/file.h"
 #include "common/gui_options.h"
-#include "common/savefile.h"
-#include "common/system.h"
+#include "common/file.h"
 #include "common/translation.h"
 
-#include "queen/queen.h"
+#include "queen/detection.h"
 #include "queen/resource.h"
-
-namespace Queen {
-
-struct QueenGameDescription {
-	ADGameDescription desc;
-};
-
-} // End of namespace Queen
 
 static const PlainGameDescriptor queenGames[] = {
 	{"queen", "Flight of the Amazon Queen"},
@@ -496,22 +485,8 @@ public:
 		return "Flight of the Amazon Queen (C) John Passfield and Steve Stamatiadis";
 	}
 
-	bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-	SaveStateList listSaves(const char *target) const override;
-	int getMaximumSaveSlot() const override { return 99; }
-	void removeSaveState(const char *target, int slot) const override;
-	int getAutosaveSlot() const override { return 99; }
-
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
 };
-
-bool QueenMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave);
-}
 
 ADDetectedGame QueenMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 	static ADGameDescription desc;
@@ -557,53 +532,4 @@ ADDetectedGame QueenMetaEngine::fallbackDetect(const FileMap &allFiles, const Co
 	return ADDetectedGame();
 }
 
-SaveStateList QueenMetaEngine::listSaves(const char *target) const {
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringArray filenames;
-	char saveDesc[32];
-	Common::String pattern("queen.s##");
-
-	filenames = saveFileMan->listSavefiles(pattern);
-
-	SaveStateList saveList;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		// Obtain the last 2 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(file->c_str() + file->size() - 2);
-
-		if (slotNum >= 0 && slotNum <= 99) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
-			if (in) {
-				for (int i = 0; i < 4; i++)
-					in->readUint32BE();
-				in->read(saveDesc, 32);
-				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
-				delete in;
-			}
-		}
-	}
-
-	// Sort saves based on slot number.
-	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
-	return saveList;
-}
-
-void QueenMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String filename = Common::String::format("queen.s%02d", slot);
-
-	g_system->getSavefileManager()->removeSavefile(filename);
-}
-
-bool QueenMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Queen::QueenGameDescription *gd = (const Queen::QueenGameDescription *)desc;
-
-	if (gd)
-		*engine = new Queen::QueenEngine(syst); //FIXME , gd);
-
-	return (gd != 0);
-}
-
-#if PLUGIN_ENABLED_DYNAMIC(QUEEN)
-	REGISTER_PLUGIN_DYNAMIC(QUEEN, PLUGIN_TYPE_ENGINE, QueenMetaEngine);
-#else
-	REGISTER_PLUGIN_STATIC(QUEEN, PLUGIN_TYPE_ENGINE, QueenMetaEngine);
-#endif
+REGISTER_PLUGIN_STATIC(QUEEN_DETECTION, PLUGIN_TYPE_METAENGINE, QueenMetaEngine);
