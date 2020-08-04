@@ -65,18 +65,6 @@ void DirectorEngine::processEvents() {
 
 	uint endTime = g_system->getMillis() + 10;
 
-	Movie *m = getCurrentMovie();
-	if (m) {
-		Score *sc = m->getScore();
-
-		if (sc && sc->getCurrentFrame() >= sc->_frames.size()) {
-			warning("processEvents: request to access frame %d of %d", sc->getCurrentFrame(), sc->_frames.size() - 1);
-			return;
-		}
-	}
-
-	Common::Point pos;
-
 	while (g_system->getMillis() < endTime) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			if (_wm->processEvent(event)) {
