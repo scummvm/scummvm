@@ -2369,7 +2369,7 @@ void LB::b_numberofitems(int nargs) {
 	int numberofitems = 1;
 	Common::String contents = d.asString();
 	for (uint32 i = 0;  i < contents.size(); i++) {
-		if (contents[i] == ',')
+		if (contents[i] == g_lingo->_itemDelimiter)
 			numberofitems++;
 	}
 

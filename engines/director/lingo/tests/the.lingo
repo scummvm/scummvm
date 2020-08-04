@@ -61,6 +61,8 @@ set the text of field 0 + 1 = "Hello"
 
 set gMarkerName = the length of h + 2
 
+
+-- test the itemDelimiter
 set save = the itemDelimiter
 scummvmAssert(save=",")
 set the itemDelimiter = ":"
@@ -70,3 +72,10 @@ scummvmAssert(the itemDelimiter=":")
 set the itemDelimiter = ""
 scummvmAssert(the itemDelimiter="")
 set the itemDelimiter = save
+
+-- test number of items
+set chunkExpr to "one:two:three"
+scummvmAssertEqual(the number of items in chunkExpr, 1)
+set the itemDelimiter to ":"
+scummvmAssertEqual(the number of items in chunkExpr, 3)
+set the itemDelimiter to save
