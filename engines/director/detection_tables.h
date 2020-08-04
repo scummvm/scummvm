@@ -151,6 +151,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME_l("jman", "", "JOURNEY.EXE", "65d06b5fef155a2473434571aff5bc29", -1, Common::JA_JPN, 3),
 	WINDEMO("jman", "Demo", "JMDEMO.EXE", "7c8230a804abf9353b05627a675b5ffb", 375305, 3),
 
+	MACGAME("jmmd", "", "Just Me & My Dad", "ea646eccc9a53f44ce082459d4809a06", 486966, 4),
+
 	MACGAME("kyoto", "v1.01", "Cosmology of KYOTO", "f5277c53bacd27936158dd3867e587e2", 392505, 3),
 
 	MACGAME("lzone", "", "L-ZONE", "f5277c53bacd27936158dd3867e587e2", 392484, 3),

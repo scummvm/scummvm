@@ -149,6 +149,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "jewels",				"Jewels of the Oracle" },
 	{ "jman",				"The Journeyman Project" },
 	{ "jman2",				"The Journeyman Project 2: Buried in Time" },
+	{ "jmmd",       "Just Me & My Dad" },
 	{ "karma",				"Karma: Curse of the 12 Caves" },
 	{ "kyoto",				"Cosmology of Kyoto" },
 	{ "lion",				"Lion" },
