@@ -20,14 +20,12 @@
  *
  */
 
-#include "common/config-manager.h"
-#include "engines/advancedDetector.h"
-#include "common/savefile.h"
-#include "common/system.h"
-#include "common/translation.h"
 #include "base/plugins.h"
-#include "graphics/thumbnail.h"
-#include "cge/cge.h"
+
+#include "engines/advancedDetector.h"
+
+#include "common/translation.h"
+
 #include "cge/fileio.h"
 
 namespace CGE {
@@ -140,12 +138,6 @@ public:
 	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
-	bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-	int getMaximumSaveSlot() const override;
-	SaveStateList listSaves(const char *target) const override;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	void removeSaveState(const char *target, int slot) const override;
 };
 
 static ADGameDescription s_fallbackDesc = {
@@ -183,122 +175,6 @@ ADDetectedGame CGEMetaEngine::fallbackDetect(const FileMap &allFiles, const Comm
 	return game;
 }
 
-bool CGEMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSimpleSavesNames);
-}
-
-void CGEMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
-}
-
-int CGEMetaEngine::getMaximumSaveSlot() const {
-	return 99;
-}
-
-SaveStateList CGEMetaEngine::listSaves(const char *target) const {
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringArray filenames;
-	Common::String pattern = target;
-	pattern += ".###";
-
-	filenames = saveFileMan->listSavefiles(pattern);
-
-	SaveStateList saveList;
-	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
-		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(filename->c_str() + filename->size() - 3);
-
-		if (slotNum >= 0 && slotNum <= 99) {
-
-			Common::InSaveFile *file = saveFileMan->openForLoading(*filename);
-			if (file) {
-				CGE::SavegameHeader header;
-
-				// Check to see if it's a ScummVM savegame or not
-				char buffer[kSavegameStrSize + 1];
-				file->read(buffer, kSavegameStrSize + 1);
-
-				if (!strncmp(buffer, CGE::savegameStr, kSavegameStrSize + 1)) {
-					// Valid savegame
-					if (CGE::CGEEngine::readSavegameHeader(file, header)) {
-						saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
-					}
-				} else {
-					// Must be an original format savegame
-					saveList.push_back(SaveStateDescriptor(slotNum, "Unknown"));
-				}
-
-				delete file;
-			}
-		}
-	}
-
-	// Sort saves based on slot number.
-	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
-	return saveList;
-}
-
-SaveStateDescriptor CGEMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(fileName);
-
-	if (f) {
-		CGE::SavegameHeader header;
-
-		// Check to see if it's a ScummVM savegame or not
-		char buffer[kSavegameStrSize + 1];
-		f->read(buffer, kSavegameStrSize + 1);
-
-		bool hasHeader = !strncmp(buffer, CGE::savegameStr, kSavegameStrSize + 1) &&
-			CGE::CGEEngine::readSavegameHeader(f, header, false);
-		delete f;
-
-		if (!hasHeader) {
-			// Original savegame perhaps?
-			SaveStateDescriptor desc(slot, "Unknown");
-			return desc;
-		} else {
-			// Create the return descriptor
-			SaveStateDescriptor desc(slot, header.saveName);
-			desc.setThumbnail(header.thumbnail);
-			desc.setSaveDate(header.saveYear, header.saveMonth, header.saveDay);
-			desc.setSaveTime(header.saveHour, header.saveMinutes);
-
-			if (header.playTime) {
-				desc.setPlayTime(header.playTime * 1000);
-			}
-
-			// Slot 0 is used for the 'automatic save on exit' save in Soltys, thus
-			// we prevent it from being deleted or overwritten by accident.
-			desc.setDeletableFlag(slot != 0);
-			desc.setWriteProtectedFlag(slot == 0);
-
-			return desc;
-		}
-	}
-
-	return SaveStateDescriptor();
-}
-
-bool CGEMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc) {
-		*engine = new CGE::CGEEngine(syst, desc);
-	}
-	return desc != 0;
-}
 } // End of namespace CGE
 
-#if PLUGIN_ENABLED_DYNAMIC(CGE)
-REGISTER_PLUGIN_DYNAMIC(CGE, PLUGIN_TYPE_ENGINE, CGE::CGEMetaEngine);
-#else
-REGISTER_PLUGIN_STATIC(CGE, PLUGIN_TYPE_ENGINE, CGE::CGEMetaEngine);
-#endif
+REGISTER_PLUGIN_STATIC(CGE_DETECTION, PLUGIN_TYPE_METAENGINE, CGE::CGEMetaEngine);

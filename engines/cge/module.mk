@@ -5,10 +5,10 @@ MODULE_OBJS := \
 	cge.o \
 	cge_main.o \
 	console.o \
-	detection.o \
 	events.o \
 	fileio.o \
 	game.o \
+	metaengine.o \
 	snail.o \
 	sound.o \
 	talk.o \
@@ -28,3 +28,12 @@ endif
 # Include common rules
 include $(srcdir)/rules.mk
 
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
+
+# Only include if building as a dynamic module.
+# Static module already has the contents.
+ifeq ($(ENABLE_CGE), DYNAMIC_PLUGIN)
+# External dependencies for detection.
+DETECT_OBJS += $(MODULE)/fileio.o
+endif
