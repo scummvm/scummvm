@@ -201,7 +201,7 @@ bool Movie::processEvent(Common::Event &event) {
 		_lastEventTime = g_director->getMacTicks();
 		_lastKeyTime = _lastEventTime;
 		registerEvent(kEventKeyDown);
-		break;
+		return true;
 
 	case Common::EVENT_KEYUP:
 		_keyFlags = event.kbd.flags;
