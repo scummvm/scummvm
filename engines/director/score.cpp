@@ -285,20 +285,22 @@ void Score::stopPlay() {
 }
 
 void Score::update() {
-	if (_waitForChannel) {
-		if (_soundManager->isChannelActive(_waitForChannel))
-			return;
-
-		_waitForChannel = 0;
-	}
-
 	if (_activeFade) {
 		if (!_soundManager->fadeChannel(_activeFade))
 			_activeFade = 0;
 	}
 
-	if (g_system->getMillis() < _nextFrameTime && !debugChannelSet(-1, kDebugFast) && !_nextFrame)
-		return;
+	if (!debugChannelSet(-1, kDebugFast)) {
+		if (_waitForChannel) {
+			if (_soundManager->isChannelActive(_waitForChannel))
+				return;
+
+			_waitForChannel = 0;
+		}
+		
+		if (g_system->getMillis() < _nextFrameTime && !_nextFrame)
+			return;
+	}
 
 	// For previous frame
 	if (_currentFrame > 0 && !_vm->_playbackPaused) {
@@ -393,27 +395,28 @@ void Score::update() {
 		if (tempo > 161) {
 			// Delay
 			_nextFrameTime = g_system->getMillis() + (256 - tempo) * 1000;
-
-			return;
 		} else if (tempo <= 60) {
 			// FPS
-			_nextFrameTime = g_system->getMillis() + (float)tempo / 60 * 1000;
 			_currentFrameRate = tempo;
-		} else if (tempo >= 136) {
-			// TODO Wait for channel tempo - 135
-			warning("STUB: tempo >= 136");
-		} else if (tempo == 128) {
-			_vm->waitForClick();
-		} else if (tempo == 135) {
-			// Wait for sound channel 1
-			_waitForChannel = 1;
-		} else if (tempo == 134) {
-			// Wait for sound channel 2
-			_waitForChannel = 2;
+			_nextFrameTime = g_system->getMillis() + 1000.0 / (float)_currentFrameRate;
+		} else {
+			if (tempo >= 136) {
+				// TODO Wait for channel tempo - 135
+				warning("STUB: tempo >= 136");
+			} else if (tempo == 128) {
+				_vm->waitForClick();
+			} else if (tempo == 135) {
+				// Wait for sound channel 1
+				_waitForChannel = 1;
+			} else if (tempo == 134) {
+				// Wait for sound channel 2
+				_waitForChannel = 2;
+			}
+			_nextFrameTime = g_system->getMillis();
 		}
+	} else {
+		_nextFrameTime = g_system->getMillis() + 1000.0 / (float)_currentFrameRate;
 	}
-
-	_nextFrameTime = g_system->getMillis() + 1000.0 / (float)_currentFrameRate;
 
 	if (debugChannelSet(-1, kDebugSlow))
 		_nextFrameTime += 1000;
