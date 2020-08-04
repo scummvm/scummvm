@@ -20,37 +20,13 @@
  *
  */
 
-#include "base/plugins.h"
-#include "engines/advancedDetector.h"
-#include "access/detection.h"
-#include "access/detection_enums.h"
+namespace Access {
 
-static const PlainGameDescriptor AccessGames[] = {
-	{"amazon", "Amazon: Guardians of Eden"},
-	{"martian", "Martian Memorandum"},
-	{0, 0}
+struct AccessGameDescription {
+	ADGameDescription desc;
+
+	int gameID;
+	uint32 features;
 };
 
-#include "access/detection_tables.h"
-
-class AccessMetaEngine : public AdvancedMetaEngine {
-public:
-	AccessMetaEngine() : AdvancedMetaEngine(Access::gameDescriptions, sizeof(Access::AccessGameDescription), AccessGames) {
-		_maxScanDepth = 3;
-	}
-
-	const char *getEngineId() const override {
-		return "access";
-	}
-
-	const char *getName() const override {
-		return "Access";
-	}
-
-	const char *getOriginalCopyright() const override {
-		return "Access Engine (C) 1989-1994 Access Software";
-	}
-};
-
-
-REGISTER_PLUGIN_STATIC(ACCESS_DETECTION, PLUGIN_TYPE_METAENGINE, AccessMetaEngine);
+} // End of namespace Access
