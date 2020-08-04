@@ -2429,10 +2429,23 @@ void LB::b_lastcharof(int nargs) {
 
 void LB::b_lastitemof(int nargs) {
 	Datum d = g_lingo->pop();
+	if (d.type != STRING) {
+		warning("LB::b_lastitemof(): Called with wrong data type: %s", d.type2str());
+		g_lingo->push(Datum(""));
+		return;
+	}
 
-	warning("STUB: b_lastitemof");
+	Common::String res;
+	Common::String chunkExpr = d.asString();
+	uint pos = chunkExpr.findLastOf(g_lingo->_itemDelimiter);
+	if (pos == Common::String::npos) {
+		res = chunkExpr;
+	} else {
+		pos++; // skip the item delimiter
+		res = chunkExpr.substr(pos , chunkExpr.size() - pos);
+	}
 
-	g_lingo->push(Datum(0));
+	g_lingo->push(Datum(res));
 }
 
 void LB::b_lastlineof(int nargs) {

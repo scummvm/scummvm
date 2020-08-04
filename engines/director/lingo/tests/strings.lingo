@@ -88,3 +88,13 @@ scummvmAssertEqual(res, "")
 -- LB::b_lastcharof
 scummvmAssertEqual(the last char of "", "")
 scummvmAssertEqual(the last char of "hello", "o")
+
+-- LB::b_lastitemof
+scummvmAssertEqual(the last item of "", "")
+scummvmAssertEqual(the last item of "onetwo", "onetwo")
+scummvmAssertEqual(the last item of "one,two", "two")
+set save to the itemDelimiter
+set the itemDelimiter to ":"
+scummvmAssertEqual(the last item of "one:two", "two")
+set the itemDelimiter to save
+scummvmAssertEqual(the last item of "onetwo", "onetwo")
