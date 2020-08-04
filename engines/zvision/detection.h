@@ -20,37 +20,11 @@
  *
  */
 
-#include "common/scummsys.h"
+namespace ZVision {
 
-#include "base/plugins.h"
-
-#include "engines/advancedDetector.h"
-
-#include "common/translation.h"
-#include "common/str-array.h"
-
-#include "zvision/detection_enums.h"
-#include "zvision/detection.h"
-#include "zvision/detection_tables.h"
-
-class ZVisionMetaEngine : public AdvancedMetaEngine {
-public:
-	ZVisionMetaEngine() : AdvancedMetaEngine(ZVision::gameDescriptions, sizeof(ZVision::ZVisionGameDescription), ZVision::zVisionGames, ZVision::optionsList) {
-		_maxScanDepth = 2;
-		_directoryGlobs = ZVision::directoryGlobs;
-	}
-
-	const char *getEngineId() const override {
-		return "zvision";
-	}
-
-	const char *getName() const override {
-		return "Z-Vision";
-	}
-
-	const char *getOriginalCopyright() const override {
-		return "Z-Vision (C) 1996 Activision";
-	}
+struct ZVisionGameDescription {
+	ADGameDescription desc;
+	ZVisionGameId gameId;
 };
 
-REGISTER_PLUGIN_STATIC(ZVISION_DETECTION, PLUGIN_TYPE_METAENGINE, ZVisionMetaEngine);
+} // End of namespace ZVision
