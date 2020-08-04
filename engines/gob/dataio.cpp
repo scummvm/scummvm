@@ -25,10 +25,7 @@
 #include "common/memstream.h"
 #include "common/substream.h"
 
-#include "gob/gob.h"
 #include "gob/dataio.h"
-#include "gob/global.h"
-#include "gob/util.h"
 
 namespace Gob {
 
@@ -242,6 +239,12 @@ bool DataIO::openArchive(Common::String name, bool base) {
 	return true;
 }
 
+// A copy of replaceChar utlity function from util.cpp
+static void replaceChar(char *str, char c1, char c2) {
+	while ((str = strchr(str, c1)))
+		*str = c2;
+}
+
 DataIO::Archive *DataIO::openArchive(const Common::String &name) {
 	Archive *archive = new Archive;
 	if (!archive->file.open(name)) {
@@ -265,11 +268,11 @@ DataIO::Archive *DataIO::openArchive(const Common::String &name) {
 		file.compression = archive->file.readByte() != 0;
 
 		// Replacing cyrillic characters
-		Util::replaceChar(fileName, (char) 0x85, 'E');
-		Util::replaceChar(fileName, (char) 0x8A, 'K');
-		Util::replaceChar(fileName, (char) 0x8E, 'O');
-		Util::replaceChar(fileName, (char) 0x91, 'C');
-		Util::replaceChar(fileName, (char) 0x92, 'T');
+		replaceChar(fileName, (char) 0x85, 'E');
+		replaceChar(fileName, (char) 0x8A, 'K');
+		replaceChar(fileName, (char) 0x8E, 'O');
+		replaceChar(fileName, (char) 0x91, 'C');
+		replaceChar(fileName, (char) 0x92, 'T');
 
 		file.name = fileName;
 
