@@ -130,8 +130,6 @@ struct SteamIndexFile {
 	int32 len;
 };
 
-const SteamIndexFile *lookUpSteamIndexFile(Common::String pattern, Common::Platform platform);
-
 class ScummSteamFile : public ScummFile {
 private:
 	const SteamIndexFile &_indexFile;
