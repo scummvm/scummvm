@@ -23,9 +23,8 @@
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
 
-#include "gob/gob.h"
 #include "gob/dataio.h"
-
+#include "gob/detection/detection_enums.h"
 #include "gob/detection/tables.h"
 
 class GobMetaEngine : public AdvancedMetaEngine {
@@ -36,15 +35,10 @@ public:
 		return "gob";
 	}
 
-	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
-
 	const char *getName() const override;
 	const char *getOriginalCopyright() const override;
 
-	bool hasFeature(MetaEngineFeature f) const override;
-
-	Common::Error createInstance(OSystem *syst, Engine **engine) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
 
 private:
 	/**
@@ -162,54 +156,4 @@ const char *GobMetaEngine::getOriginalCopyright() const {
 	return "Goblins Games (C) Coktel Vision";
 }
 
-bool GobMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return false;
-}
-
-bool Gob::GobEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsReturnToLauncher);
-}
-
-Common::Error GobMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
-	return AdvancedMetaEngine::createInstance(syst, engine);
-}
-
-bool GobMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Gob::GOBGameDescription *gd = (const Gob::GOBGameDescription *)desc;
-	if (gd) {
-		*engine = new Gob::GobEngine(syst);
-		((Gob::GobEngine *)*engine)->initGame(gd);
-	}
-	return gd != 0;
-}
-
-
-#if PLUGIN_ENABLED_DYNAMIC(GOB)
-	REGISTER_PLUGIN_DYNAMIC(GOB, PLUGIN_TYPE_ENGINE, GobMetaEngine);
-#else
-	REGISTER_PLUGIN_STATIC(GOB, PLUGIN_TYPE_ENGINE, GobMetaEngine);
-#endif
-
-namespace Gob {
-
-void GobEngine::initGame(const GOBGameDescription *gd) {
-	if (gd->startTotBase == 0)
-		_startTot = "intro.tot";
-	else
-		_startTot = gd->startTotBase;
-
-	if (gd->startStkBase == 0)
-		_startStk = "intro.stk";
-	else
-		_startStk = gd->startStkBase;
-
-	_demoIndex = gd->demoIndex;
-
-	_gameType = gd->gameType;
-	_features = gd->features;
-	_language = gd->desc.language;
-	_platform = gd->desc.platform;
-}
-
-} // End of namespace Gob
+REGISTER_PLUGIN_STATIC(GOB_DETECTION, PLUGIN_TYPE_METAENGINE, GobMetaEngine);
