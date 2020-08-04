@@ -91,6 +91,7 @@ public:
 	}
 
 	void drawDirtyRects();
+	void scale2xAndMergeOverlay(int x, int y, int w, int h);
 	void restoreChangedRects();
 
 private:
@@ -106,9 +107,11 @@ private:
 	bool _initialized;
 	Common::List<Common::Rect> _dirtyRects;
 	bool _fullRefresh;
+	bool _dualSurface;
 
 	// Module data
 	Surface _backGroundSurface;
+	Surface _mergeSurface;
 
 	uint32 _flags;
 };
