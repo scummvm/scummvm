@@ -3465,18 +3465,6 @@ if test -n "$_host"; then
 
 			_port_mk="backends/platform/sdl/morphos/morphos.mk"
 			;;
-		
-	
-
-
-			append_var DEFINES "-DDISABLE_SID"
-			append_var DEFINES "-DDISABLE_NES_APU"
-			append_var CXXFLAGS "-fno-exceptions"
-			append_var CXXFLAGS "-fno-rtti"
-			_backend="ps2"
-			_build_scalers=no
-			_mt32emu=no
-			;;
 		ps3)
 			_timidity=no
 			_vkeybd=yes
