@@ -293,19 +293,6 @@ bool Cast::loadArchive() {
 
 	// For D4+ we may request to force Lingo scripts and skip precompiled bytecode
 	if (_vm->getVersion() >= 4 && !debugChannelSet(-1, kDebugNoBytecode)) {
-		// Try to load script name lists
-		Common::Array<uint16> lnam =  _castArchive->getResourceIDList(MKTAG('L','n','a','m'));
-		if (lnam.size() > 0) {
-
-			int maxLnam = -1;
-			for (Common::Array<uint16>::iterator iterator = lnam.begin(); iterator != lnam.end(); ++iterator) {
-				maxLnam = MAX(maxLnam, (int)*iterator);
-			}
-			debugC(2, kDebugLoading, "****** Loading Lnam resource with highest ID (%d)", maxLnam);
-			loadLingoNames(*(r = _castArchive->getResource(MKTAG('L','n','a','m'), maxLnam)));
-			delete r;
-		}
-
 		// Try to load script context
 		Common::Array<uint16> lctx =  _castArchive->getResourceIDList(MKTAG('L','c','t','x'));
 		if (lctx.size() > 0) {
@@ -910,14 +897,6 @@ void Cast::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, 
 		warning("Cast::loadCastData(): size3: %x", size3);
 }
 
-void Cast::loadLingoNames(Common::SeekableSubReadStreamEndian &stream) {
-	if (_vm->getVersion() >= 4) {
-		_lingoArchive->addNamesV4(stream);
-	} else {
-		error("Cast::loadLingoNames: unsuported Director version (%d)", _vm->getVersion());
-	}
-}
-
 struct LingoContextEntry {
 	int32 index;
 	int16 nextUnused;
@@ -949,10 +928,15 @@ void Cast::loadLingoContext(Common::SeekableSubReadStreamEndian &stream) {
 		/* uint32 unk1 = */ stream.readUint32();
 		/* uint32 fileType = */ stream.readUint32();
 		/* uint32 unk2 = */ stream.readUint32();
-		/* uint32 nameTableId = */ stream.readUint32();
+		int32 nameTableId = stream.readSint32();
 		/* int16 validCount = */ stream.readSint16();
 		/* uint16 flags = */ stream.readUint16();
 		int16 firstUnused = stream.readSint16();
+
+		Common::SeekableSubReadStreamEndian *r;
+		debugC(2, kDebugLoading, "****** Loading Lnam resource (%d)", nameTableId);
+		_lingoArchive->addNamesV4(*(r = _castArchive->getResource(MKTAG('L','n','a','m'), nameTableId)));
+		delete r;
 
 		Common::Array<LingoContextEntry> entries;
 		stream.seek(itemsOffset);
@@ -992,7 +976,6 @@ void Cast::loadLingoContext(Common::SeekableSubReadStreamEndian &stream) {
 				debugC(1, kDebugCompile, "Cast::loadLingoContext: Script %d is used but empty", i);
 				continue;
 			}
-			Common::SeekableSubReadStreamEndian *r;
 			_lingoArchive->addCodeV4(*(r = _castArchive->getResource(MKTAG('L', 's', 'c', 'r'), entry.index)), i, _macName);
 			delete r;
 		}

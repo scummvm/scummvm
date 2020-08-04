@@ -60,7 +60,6 @@ public:
 	void loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream);
 	void loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, Resource *res);
 	void loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id);
-	void loadLingoNames(Common::SeekableSubReadStreamEndian &stream);
 	void loadLingoContext(Common::SeekableSubReadStreamEndian &stream);
 
 	void loadCastChildren();
