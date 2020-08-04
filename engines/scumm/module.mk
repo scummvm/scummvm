@@ -13,7 +13,6 @@ MODULE_OBJS := \
 	costume.o \
 	cursor.o \
 	debugger.o \
-	detection.o \
 	dialogs.o \
 	file.o \
 	file_nes.o \
@@ -170,11 +169,14 @@ endif
 # Include common rules
 include $(srcdir)/rules.mk
 
-# Detection objects, if building as a Dynamic Plugin.
-# Scumm uses detection files when creating an instance,
-# so we can't remove dependency completely.
-ifeq ($(ENABLE_SCUMM), DYNAMIC_PLUGIN)
+# Detection objects
 DETECT_OBJS += $(MODULE)/detection.o
+
+# If this module is being built as a dynamic plugin,
+# add the additional dependencies of detection.
+# Otherwise, these are not added because they're already
+# present in the module objects.
+ifeq ($(ENABLE_SCUMM), DYNAMIC_PLUGIN)
 DETECT_OBJS += $(MODULE)/file.o
 DETECT_OBJS += $(MODULE)/file_nes.o
 endif

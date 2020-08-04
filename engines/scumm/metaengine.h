@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef SCUMM_METAENGINE_H
+#define SCUMM_METAENGINE_H
+
 #include "engines/metaengine.h"
 
 class ScummMetaEngineConnect : public MetaEngineConnect {
@@ -34,3 +37,5 @@ class ScummMetaEngineConnect : public MetaEngineConnect {
 	void removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
+
+#endif // SCUMM_METAENGINE_H

@@ -26,6 +26,7 @@
 #include "common/config-manager.h"
 #include "common/translation.h"
 #include "common/gui_options.h"
+#include "common/md5.h"
 
 #include "audio/mididrv.h"
 
@@ -34,8 +35,12 @@
 #include "scumm/scumm_v8.h"
 #include "scumm/resource.h"
 
+// Files related for detection.
 #include "scumm/metaengine.h"
 #include "scumm/detection.h"
+#include "scumm/detection_tables.h"
+#include "scumm/file.h"
+#include "scumm/file_nes.h"
 
 namespace Scumm {
 
@@ -196,21 +201,18 @@ bool ScummEngine::isMacM68kIMuse() const {
 } // End of namespace Scumm
 
 #pragma mark -
+#pragma mark --- Detection code ---
+#pragma mark -
+
+
+// Various methods to help in core detection.
+#include "scumm/detection_internal.h"
+
+
+#pragma mark -
 #pragma mark --- Plugin code ---
 #pragma mark -
 
-namespace Scumm {
-
-void detectGames(const Common::FSList &fslist, Common::List<DetectorResult> &results, const char *gameid);
-
-struct MD5Table;
-const MD5Table *findInMD5Table(const char *md5);
-
-Common::String generateFilenameForDetection(const char *pattern, FilenameGenMethod genMethod, Common::Platform platform);
-
-bool getSavegameName(Common::InSaveFile *in, Common::String &desc, int heversion);
-
-} // End of namespace Scumm
 
 using namespace Scumm;
 
@@ -238,8 +240,6 @@ bool ScummEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSubtitleOptions);
 }
 
-
-#include "scumm/obsolete.h"
 
 /**
  * Create a ScummEngine instance, based on the given detector data.
@@ -441,6 +441,10 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 }
 
 int ScummMetaEngineConnect::getMaximumSaveSlot() const { return 99; }
+
+namespace Scumm {
+bool getSavegameName(Common::InSaveFile *in, Common::String &desc, int heversion);
+} // End of namespace Scumm
 
 SaveStateList ScummMetaEngineConnect::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();

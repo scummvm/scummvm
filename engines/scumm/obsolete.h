@@ -20,6 +20,8 @@
  *
  */
 
+#ifndef SCUMM_OBSOLETE_H
+#define SCUMM_OBSOLETE_H
 
 namespace Scumm {
 
@@ -64,3 +66,5 @@ static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
 };
 
 } // End of namespace Scumm
+
+#endif // SCUMM_OBSOLETE_H
