@@ -68,6 +68,8 @@ Score::Score(Movie *movie) {
 	_currentLabel = 0;
 	_nextFrameTime = 0;
 	_waitForChannel = 0;
+	_waitForClick = false;
+	_waitForClickCursor = false;
 	_activeFade = 0;
 	_playState = kPlayNotStarted;
 
@@ -297,6 +299,16 @@ void Score::update() {
 
 			_waitForChannel = 0;
 		}
+
+		if (_waitForClick) {
+			if (g_system->getMillis() >= _nextFrameTime + 1000) {
+				_waitForClickCursor = !_waitForClickCursor;
+				_vm->setCursor(kCursorDefault);
+				_vm->setCursor(_waitForClickCursor ? kCursorMouseDown : kCursorMouseUp);
+				_nextFrameTime = g_system->getMillis();
+			}
+			return;
+		}
 		
 		if (g_system->getMillis() < _nextFrameTime && !_nextFrame)
 			return;
@@ -404,7 +416,9 @@ void Score::update() {
 				// TODO Wait for channel tempo - 135
 				warning("STUB: tempo >= 136");
 			} else if (tempo == 128) {
-				_vm->waitForClick();
+				_waitForClick = true;
+				_waitForClickCursor = false;
+				_vm->setCursor(kCursorMouseUp);
 			} else if (tempo == 135) {
 				// Wait for sound channel 1
 				_waitForChannel = 1;

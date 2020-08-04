@@ -217,7 +217,6 @@ public:
 	// events.cpp
 	void processEvents();
 	uint32 getMacTicks();
-	void waitForClick();
 
 public:
 	RandomState _rnd;

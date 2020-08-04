@@ -139,26 +139,31 @@ bool Movie::processEvent(Common::Event &event) {
 		return true;
 
 	case Common::EVENT_LBUTTONDOWN:
-		pos = _stage->getMousePos();
+		if (sc->_waitForClick) {
+			sc->_waitForClick = false;
+			_vm->setCursor(kCursorDefault);
+		} else {
+			pos = _stage->getMousePos();
 
-		// D3 doesn't have both mouse up and down.
-		// But we still want to know if the mouse is down for press effects.
-		spriteId = sc->getMouseSpriteIDFromPos(pos);
-		_currentClickOnSpriteId = sc->getActiveSpriteIDFromPos(pos);
+			// D3 doesn't have both mouse up and down.
+			// But we still want to know if the mouse is down for press effects.
+			spriteId = sc->getMouseSpriteIDFromPos(pos);
+			_currentClickOnSpriteId = sc->getActiveSpriteIDFromPos(pos);
 
-		if (spriteId > 0 && sc->_channels[spriteId]->_sprite->shouldHilite())
-			g_director->getCurrentStage()->invertChannel(sc->_channels[spriteId]);
+			if (spriteId > 0 && sc->_channels[spriteId]->_sprite->shouldHilite())
+				g_director->getCurrentStage()->invertChannel(sc->_channels[spriteId]);
 
-		_lastEventTime = g_director->getMacTicks();
-		_lastClickTime = _lastEventTime;
-		_lastClickPos = pos;
+			_lastEventTime = g_director->getMacTicks();
+			_lastClickTime = _lastEventTime;
+			_lastClickPos = pos;
 
-		debugC(3, kDebugEvents, "event: Button Down @(%d, %d), movie '%s', sprite id: %d", pos.x, pos.y, _macName.c_str(), spriteId);
-		registerEvent(kEventMouseDown, spriteId);
+			debugC(3, kDebugEvents, "event: Button Down @(%d, %d), movie '%s', sprite id: %d", pos.x, pos.y, _macName.c_str(), spriteId);
+			registerEvent(kEventMouseDown, spriteId);
 
-		if (sc->_channels[spriteId]->_sprite->_moveable) {
-			_draggingSpritePos = _stage->getMousePos();
-			_currentDraggedChannel = sc->_channels[spriteId];
+			if (sc->_channels[spriteId]->_sprite->_moveable) {
+				_draggingSpritePos = _stage->getMousePos();
+				_currentDraggedChannel = sc->_channels[spriteId];
+			}
 		}
 
 		return true;
@@ -207,30 +212,6 @@ bool Movie::processEvent(Common::Event &event) {
 	}
 
 	return false;
-}
-
-void DirectorEngine::waitForClick() {
-	setCursor(kCursorMouseUp);
-
-	bool cursor = false;
-	uint32 nextTime = g_system->getMillis() + 1000;
-
-	while (!processQuitEvent(true)) {
-		g_system->updateScreen();
-		g_system->delayMillis(10);
-
-		if (g_system->getMillis() >= nextTime) {
-			nextTime = g_system->getMillis() + 1000;
-
-			setCursor(kCursorDefault);
-
-			setCursor(cursor ? kCursorMouseDown : kCursorMouseUp);
-
-			cursor = !cursor;
-		}
-	}
-
-	setCursor(kCursorDefault);
 }
 
 } // End of namespace Director

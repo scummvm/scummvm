@@ -134,6 +134,8 @@ public:
 	PlayState _playState;
 	uint32 _nextFrameTime;
 	int _waitForChannel;
+	bool _waitForClick;
+	bool _waitForClickCursor;
 	int _activeFade;
 	Cursor *_currentCursor;
 
