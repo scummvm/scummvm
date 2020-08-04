@@ -408,6 +408,12 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 				if (testPath(res))
 					return res;
 			}
+		} else if (g_director->getPlatform() == Common::kPlatformMacintosh && addexts) {
+			// Try adding an extension D4 Mac movies
+			Common::String res = pathMakeRelative(convPath + ".Dir", false, false);
+
+			if (testPath(res))
+				return res;
 		}
 
 		return initialPath;	// Anyway nothing good is happening
