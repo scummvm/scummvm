@@ -9,11 +9,11 @@ MODULE_OBJS := \
 	data.o \
 	debugger.o \
 	decompress.o \
-	detection.o \
 	events.o \
 	files.o \
 	font.o \
 	inventory.o \
+	metaengine.o \
 	player.o \
 	resources.o \
 	room.o \
@@ -41,3 +41,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
