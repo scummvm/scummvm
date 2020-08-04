@@ -152,7 +152,7 @@ void FileIO::m_new(int nargs) {
 		me->_inStream = me->_inFile;
 		if (!me->_inFile) {
 			saveFileError();
-			delete me;
+			me->dispose();
 			return;
 		}
 	} else if (option.equalsIgnoreCase("write")) {
@@ -162,14 +162,14 @@ void FileIO::m_new(int nargs) {
 		me->_outStream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 		if (!me->_outFile) {
 			saveFileError();
-			delete me;
+			me->dispose();
 			return;
 		}
 	} else if (option.equalsIgnoreCase("append")) {
 		Common::InSaveFile *_inFile = saves->openForLoading(filename);
 		if (!_inFile) {
 			saveFileError();
-			delete me;
+			me->dispose();
 			return;
 		}
 		me->_outStream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
@@ -182,7 +182,7 @@ void FileIO::m_new(int nargs) {
 		me->_outFile = saves->openForSaving(filename, false);
 		if (!me->_outFile) {
 			saveFileError();
-			delete me;
+			me->dispose();
 			return;
 		}
 	} else {
