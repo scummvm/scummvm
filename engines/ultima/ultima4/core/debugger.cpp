@@ -183,7 +183,7 @@ bool Debugger::handleCommand(int argc, const char **argv, bool &keepRunning) {
 			for (; *mth; ++mth) {
 				if (method.equalsIgnoreCase(*mth)) {
 					print("%cNot here!%c", FG_GREY, FG_WHITE);
-					g_game->finishTurn();
+					g_context->_location->_turnCompleter->finishTurn();
 					keepRunning = false;
 					return true;
 				}
