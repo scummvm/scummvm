@@ -199,6 +199,8 @@ public:
 	PaletteV4 *getPalette(int id);
 	void loadDefaultPalettes();
 
+	const Common::HashMap<int, PaletteV4> &getLoadedPalettes() { return _loadedPalettes; }
+
 	const byte *getPalette() const { return _currentPalette; }
 	uint16 getPaletteColorCount() const { return _currentPaletteLength; }
 

@@ -443,7 +443,7 @@ void Cast::loadCastChildren() {
 	debugC(1, kDebugLoading, "****** Preloading sprite palettes and images");
 
 	Cast *sharedCast = _movie ? _movie->getSharedCast() : nullptr;
-	int defaultId = 1025;
+	Common::HashMap<int, PaletteV4>::iterator p = _vm->getLoadedPalettes().find(0);
 
 	for (Common::HashMap<int, CastMember *>::iterator c = _loadedCast->begin(); c != _loadedCast->end(); ++c) {
 		if (!c->_value)
@@ -458,7 +458,7 @@ void Cast::loadCastChildren() {
 				member->_palette = g_director->getPalette(member->_children[0].index);
 			} else if (_vm->getVersion() < 4) {
 				// D3 palettes are always kept in this ascending order
-				member->_palette = g_director->getPalette(defaultId++);
+				member->_palette = g_director->getPalette((++p)->_value.id);
 			} else {
 				warning("Cast::loadSpriteChildren(): Expected 1 child for palette cast, got %d", member->_children.size());
 			}
