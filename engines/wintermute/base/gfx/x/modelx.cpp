@@ -104,9 +104,11 @@ bool ModelX::loadFromFile(const Common::String &filename, ModelX *parentModel) {
 	uint32 fileSize = 0;
 	byte *buffer = BaseFileManager::getEngineInstance()->getEngineInstance()->readWholeFile(filename, &fileSize);
 
-	byte *dataFormatBlock = buffer + 8;
+	byte dataFormatBlock[4];
+	Common::copy(buffer + 8, buffer + 11, dataFormatBlock);
+	dataFormatBlock[3] = '\0';
 
-	bool textMode = strcmp((char *)dataFormatBlock, "txt");
+	bool textMode = (strcmp((char *)dataFormatBlock, "txt") == 0);
 
 	if (strcmp((char *)dataFormatBlock, "bzip") == 0 || strcmp((char *)dataFormatBlock, "tzip") == 0) {
 		warning("ModelX::loadFromFile compressed .X files are not supported yet");
