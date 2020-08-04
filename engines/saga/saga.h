@@ -338,6 +338,7 @@ enum KnownColor {
 	kKnownColorBlack,
 
 	kKnownColorSubtitleTextColor,
+	kKnownColorSubtitleEffectColorPC98,
 	kKnownColorVerbText,
 	kKnownColorVerbTextShadow,
 	kKnownColorVerbTextActive

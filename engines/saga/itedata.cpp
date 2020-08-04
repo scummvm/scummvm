@@ -1181,6 +1181,7 @@ const IntroCredit creditsTreeHouse1[] = {
 	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "und Carolly Hauksdottir"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "e Carolly Hauksdottir"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "et Carolly Hauksdottir"},
+	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "and Carolly Hauksdottir"},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Screenplay and Dialog"},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein, and Bill Rotsler"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Geschichte und Dialoge"},
@@ -1190,7 +1191,8 @@ const IntroCredit creditsTreeHouse1[] = {
 	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Sc\202nario et Dialogues"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein et Bill Rotsler"},
 	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "Screenplay and Dialog"},
-	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein, and Bill Rotsler"},
+	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein"},
+	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "and Bill Rotsler"}
 };
 
 const IntroCredit creditsTreeHouse2[] = {
@@ -1202,7 +1204,11 @@ const IntroCredit creditsTreeHouse2[] = {
 	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Graphismes"},
 	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "Art"},
 	{Common::UNK_LANG, kITECreditsWyrmKeep, kITECreditsText, "Ed Lacabanne, Glenn Price, April Lee,"},
-	{Common::UNK_LANG, kITECreditsNotWyrmKeep, kITECreditsText, "Edward Lacabanne, Glenn Price, April Lee,"},
+	{Common::EN_ANY, kITECreditsNotWyrmKeep, kITECreditsText, "Edward Lacabanne, Glenn Price, April Lee,"},
+	{Common::DE_DEU, kITECreditsNotWyrmKeep, kITECreditsText, "Edward Lacabanne, Glenn Price, April Lee,"},
+	{Common::IT_ITA, kITECreditsNotWyrmKeep, kITECreditsText, "Edward Lacabanne, Glenn Price, April Lee,"},
+	{Common::FR_FRA, kITECreditsNotWyrmKeep, kITECreditsText, "Edward Lacabanne, Glenn Price, April Lee,"},
+	{Common::JA_JPN, kITECreditsNotWyrmKeep, kITECreditsText, "Edward Lacabanne, Glenn Price,"},
 	{Common::UNK_LANG, kITECreditsWyrmKeep, kITECreditsText, "Lisa Sample, Brian Dowrick, Reed Waller,"},
 	{Common::EN_ANY, kITECreditsWyrmKeep, kITECreditsText, "Allison Hershey and Talin"},
 	{Common::DE_DEU, kITECreditsWyrmKeep, kITECreditsText, "Allison Hershey und Talin"},
@@ -1210,11 +1216,12 @@ const IntroCredit creditsTreeHouse2[] = {
 	{Common::FR_FRA, kITECreditsWyrmKeep, kITECreditsText, "Allison Hershey et Talin"},
 	{Common::EN_ANY, kITECreditsNotWyrmKeep, kITECreditsText, "Lisa Iennaco, Brian Dowrick, Reed"},
 	{Common::EN_ANY, kITECreditsNotWyrmKeep, kITECreditsText, "Waller, Allison Hershey and Talin"},
-	{Common::JA_JPN, kITECreditsNotWyrmKeep, kITECreditsText, "Lisa Iennaco, Brian Dowrick, Reed"},
-	{Common::JA_JPN, kITECreditsNotWyrmKeep, kITECreditsText, "Waller, Allison Hershey and Talin"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Waller, Allison Hershey und Talin"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Waller, Allison Hershey e Talin"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "Waller, Allison Hershey et Talin"},
+	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "April Lee, Lisa Iennaco,"},
+	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "Brian Dowrick, Reed Waller,"},
+	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "Allison Hershey and Talin"},
 	{Common::EN_ANY, kITECreditsNotWyrmKeep, kITECreditsHeader, "Art Direction"},
 	{Common::DE_DEU, kITECreditsNotWyrmKeep, kITECreditsHeader, "Grafische Leitung"},
 	{Common::IT_ITA, kITECreditsNotWyrmKeep, kITECreditsHeader, "Direzione Grafica"},
@@ -1261,12 +1268,12 @@ const IntroCredit creditsFairePath2[] = {
 };
 
 const IntroCredit creditsTent[6] = {
-	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "NEC PC-9821 version by"},
-	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "STARCRAFT,Inc."},
-	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "Programming"},
-	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "Toshio Sato"},
-	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "Music and Sound"},
-	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "Takeshi Abo"}
+	{Common::JA_JPN, kITECreditsPC98, kITECreditsHeader, "NEC PC-9821 version by"},
+	{Common::JA_JPN, kITECreditsPC98, kITECreditsText, "STARCRAFT,Inc."},
+	{Common::JA_JPN, kITECreditsPC98, kITECreditsHeader, "Programming"},
+	{Common::JA_JPN, kITECreditsPC98, kITECreditsText, "Toshio Sato"},
+	{Common::JA_JPN, kITECreditsPC98, kITECreditsHeader, "Music and Sound"},
+	{Common::JA_JPN, kITECreditsPC98, kITECreditsText, "Takeshi Abo"}
 };
 
 } // End of namespace Saga
