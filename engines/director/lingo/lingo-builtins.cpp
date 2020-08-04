@@ -2414,10 +2414,17 @@ void LB::b_numberofwords(int nargs) {
 
 void LB::b_lastcharof(int nargs) {
 	Datum d = g_lingo->pop();
+	if (d.type != STRING) {
+		warning("LB::b_lastcharof(): Called with wrong data type: %s", d.type2str());
+		g_lingo->push(Datum(""));
+		return;
+	}
 
-	warning("STUB: b_lastcharof");
-
-	g_lingo->push(Datum(0));
+	Common::String contents = d.asString();
+	Common::String res;
+	if (contents.size() != 0)
+		res = contents.lastChar();
+	g_lingo->push(Datum(res));
 }
 
 void LB::b_lastitemof(int nargs) {

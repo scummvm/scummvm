@@ -84,3 +84,7 @@ scummvmAssertEqual(res, string)
 
 set res to char 50 to 60 of string
 scummvmAssertEqual(res, "")
+
+-- LB::b_lastcharof
+scummvmAssertEqual(the last char of "", "")
+scummvmAssertEqual(the last char of "hello", "o")
