@@ -576,6 +576,9 @@ ColorId SagaEngine::KnownColor2ColorId(KnownColor knownColor) {
 		case (kKnownColorSubtitleTextColor):
 			colorId = (ColorId)255;
 			break;
+		case (kKnownColorSubtitleEffectColorPC98):
+			colorId = (ColorId)210;
+			break;
 		case (kKnownColorVerbText):
 			colorId = kITEColorBlue;
 			break;
