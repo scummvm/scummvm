@@ -394,14 +394,12 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 				ptr++;
 			}
 
-			Common::String convname = convertMacFilename(component.c_str());
-			debug(2, "pathMakeRelative(): s6 %s -> %s%s", initialPath.c_str(), convPath.c_str(), convname.c_str());
-
 			const char *exts[] = { ".MMM", ".DIR", ".DXR", 0 };
 			for (int i = 0; exts[i] && addexts; ++i) {
-				Common::String newpath = convPath + convname + exts[i];
+				Common::String newpath = convPath +
+					(strcmp(exts[i], ".MMM") == 0 ?  convertMacFilename(component.c_str()) : component.c_str()) + exts[i];
 
-				debug(2, "pathMakeRelative(): s6 try %s", newpath.c_str());
+				debug(2, "pathMakeRelative(): s6 %s -> try %s", initialPath.c_str(), newpath.c_str());
 
 				Common::String res = pathMakeRelative(newpath, false, false);
 
