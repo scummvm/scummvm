@@ -342,15 +342,17 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	}
 
 	Datum d;
+	Movie *movie = _vm->getCurrentMovie();
 
-	if (!_vm->getCurrentMovie()) {
+	if (!movie) {
 		warning("Lingo::getTheEntity(): Movie is missing");
 		d.type = VOID;
 
 		return d;
 	}
 
-	LingoArchive *mainArchive = _vm->getCurrentMovie()->getMainLingoArch();
+	LingoArchive *mainArchive = movie->getMainLingoArch();
+	Score *score = movie->getScore();
 
 	switch (entity) {
 	case kTheActorList:
@@ -380,13 +382,13 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheClickLoc:
 		d.u.farr = new DatumArray;
 
-		d.u.farr->push_back(_vm->getCurrentMovie()->_lastClickPos.x);
-		d.u.farr->push_back(_vm->getCurrentMovie()->_lastClickPos.y);
+		d.u.farr->push_back(movie->_lastClickPos.x);
+		d.u.farr->push_back(movie->_lastClickPos.y);
 		d.type = POINT;
 		break;
 	case kTheClickOn:
 		d.type = INT;
-		d.u.i = _vm->getCurrentMovie()->_currentClickOnSpriteId;
+		d.u.i = movie->_currentClickOnSpriteId;
 		break;
 	case kTheColorDepth:
 		// bpp. 1, 2, 4, 8, 32
@@ -399,11 +401,11 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheCommandDown:
 		d.type = INT;
-		d.u.i = (_vm->getCurrentMovie()->_keyFlags & Common::KBD_META) ? 1 : 0;
+		d.u.i = (movie->_keyFlags & Common::KBD_META) ? 1 : 0;
 		break;
 	case kTheControlDown:
 		d.type = INT;
-		d.u.i = (_vm->getCurrentMovie()->_keyFlags & Common::KBD_CTRL) ? 1 : 0;
+		d.u.i = (movie->_keyFlags & Common::KBD_CTRL) ? 1 : 0;
 		break;
 	case kTheDate:
 		d = getTheDate(field);
@@ -423,22 +425,22 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheFrame:
 		d.type = INT;
-		d.u.i = _vm->getCurrentMovie()->getScore()->getCurrentFrame();
+		d.u.i = score->getCurrentFrame();
 		break;
 	case kTheFrameLabel:
 		d.type = STRING;
-		d.u.s = _vm->getCurrentMovie()->getScore()->getFrameLabel(_vm->getCurrentMovie()->getScore()->getCurrentFrame());
+		d.u.s = score->getFrameLabel(score->getCurrentFrame());
 		break;
 	case kTheFrameScript:
 		getTheEntitySTUB(kTheFrameScript);
 		break;
 	case kTheFramePalette:
 		d.type = INT;
-		d.u.i = _vm->getCurrentMovie()->getScore()->getCurrentPalette();
+		d.u.i = score->getCurrentPalette();
 		break;
 	case kTheFrameTempo:
 		d.type = INT;
-		d.u.i = _vm->getCurrentMovie()->getScore()->_currentFrameRate;
+		d.u.i = score->_currentFrameRate;
 		break;
 	case kTheFreeBlock:
 	case kTheFreeBytes:
@@ -459,11 +461,11 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheKey:
 		d.type = STRING;
-		d.u.s = new Common::String(_vm->getCurrentMovie()->_key);
+		d.u.s = new Common::String(movie->_key);
 		break;
 	case kTheKeyCode:
 		d.type = INT;
-		d.u.i = _vm->getCurrentMovie()->_keyCode;
+		d.u.i = movie->_keyCode;
 		break;
 	case kTheKeyDownScript:
 		d.type = STRING;
@@ -481,27 +483,27 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheLabelList:
 		d.type = STRING;
-		d.u.s = _vm->getCurrentMovie()->getScore()->getLabelList();
+		d.u.s = score->getLabelList();
 		break;
 	case kTheLastClick:
 		d.type = INT;
-		d.u.i = _vm->getMacTicks() - _vm->getCurrentMovie()->_lastClickTime;
+		d.u.i = _vm->getMacTicks() - movie->_lastClickTime;
 		break;
 	case kTheLastEvent:
 		d.type = INT;
-		d.u.i = _vm->getMacTicks() - _vm->getCurrentMovie()->_lastEventTime;
+		d.u.i = _vm->getMacTicks() - movie->_lastEventTime;
 		break;
 	case kTheLastFrame:
 		d.type = INT;
-		d.u.i = _vm->getCurrentMovie()->getScore()->_frames.size() - 1;
+		d.u.i = score->_frames.size() - 1;
 		break;
 	case kTheLastKey:
 		d.type = INT;
-		d.u.i = _vm->getMacTicks() - _vm->getCurrentMovie()->_lastKeyTime;
+		d.u.i = _vm->getMacTicks() - movie->_lastKeyTime;
 		break;
 	case kTheLastRoll:
 		d.type = INT;
-		d.u.i = _vm->getMacTicks() - _vm->getCurrentMovie()->_lastRollTime;
+		d.u.i = _vm->getMacTicks() - movie->_lastRollTime;
 		break;
 	case kTheMachineType:
 		// 1 - Macintosh 512Ke			D2
@@ -565,10 +567,9 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheMouseCast:
 		{
 			Common::Point pos = g_director->getCurrentStage()->getMousePos();
-			Score *sc = _vm->getCurrentMovie()->getScore();
-			uint16 spriteId = sc->getSpriteIDFromPos(pos);
+			uint16 spriteId = score->getSpriteIDFromPos(pos);
 			d.type = INT;
-			d.u.i = sc->getSpriteById(spriteId)->_castId;
+			d.u.i = score->getSpriteById(spriteId)->_castId;
 			if (d.u.i == 0)
 				d.u.i = -1;
 		}
@@ -618,7 +619,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheMovie:
 	case kTheMovieName:
 		d.type = STRING;
-		d.u.s = new Common::String(_vm->getCurrentMovie()->getMacName());
+		d.u.s = new Common::String(movie->getMacName());
 		break;
 	case kTheMovieFileFreeSize:
 		d.type = INT;
@@ -626,7 +627,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheMovieFileSize:
 		d.type = INT;
-		d.u.i = _vm->getCurrentMovie()->getArchive()->getFileSize();
+		d.u.i = movie->getArchive()->getFileSize();
 		break;
 	case kTheMoviePath:
 	case kThePathName:
@@ -640,7 +641,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheOptionDown:
 		d.type = INT;
-		d.u.i = (_vm->getCurrentMovie()->_keyFlags & Common::KBD_ALT) ? 1 : 0;
+		d.u.i = (movie->_keyFlags & Common::KBD_ALT) ? 1 : 0;
 		break;
 	case kThePauseState:
 		getTheEntitySTUB(kThePauseState);
@@ -690,8 +691,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		getTheEntitySTUB(kTheSearchPath);
 		break;
 	case kTheSelection:
-		if (_vm->getCurrentMovie()->_currentEditableTextChannel) {
-			Channel *channel = _vm->getCurrentMovie()->getScore()->_channels[_vm->getCurrentMovie()->_currentEditableTextChannel];
+		if (movie->_currentEditableTextChannel) {
+			Channel *channel = score->_channels[movie->_currentEditableTextChannel];
 
 			if (channel->_widget) {
 				d.type = STRING;
@@ -701,8 +702,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheSelEnd:
 	case kTheSelStart:
-		if (_vm->getCurrentMovie()->_currentEditableTextChannel) {
-			Channel *channel = _vm->getCurrentMovie()->getScore()->_channels[_vm->getCurrentMovie()->_currentEditableTextChannel];
+		if (movie->_currentEditableTextChannel) {
+			Channel *channel = score->_channels[movie->_currentEditableTextChannel];
 
 			if (channel->_widget) {
 				d.type = INT;
@@ -712,7 +713,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheShiftDown:
 		d.type = INT;
-		d.u.i = (_vm->getCurrentMovie()->_keyFlags & Common::KBD_SHIFT) ? 1 : 0;
+		d.u.i = (movie->_keyFlags & Common::KBD_SHIFT) ? 1 : 0;
 		break;
 	case kTheSoundEnabled:
 		getTheEntitySTUB(kTheSoundEnabled);
@@ -746,22 +747,22 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheStageBottom:
 		d.type = INT;
-		d.u.i = _vm->getCurrentMovie()->_movieRect.bottom;
+		d.u.i = movie->_movieRect.bottom;
 		break;
 	case kTheStageColor:
 		getTheEntitySTUB(kTheStageColor);
 		break;
 	case kTheStageLeft:
 		d.type = INT;
-		d.u.i = _vm->getCurrentMovie()->_movieRect.left;
+		d.u.i = movie->_movieRect.left;
 		break;
 	case kTheStageRight:
 		d.type = INT;
-		d.u.i = _vm->getCurrentMovie()->_movieRect.right;
+		d.u.i = movie->_movieRect.right;
 		break;
 	case kTheStageTop:
 		d.type = INT;
-		d.u.i = _vm->getCurrentMovie()->_movieRect.top;
+		d.u.i = movie->_movieRect.top;
 		break;
 	case kTheStillDown:
 		d.type = INT;
@@ -801,7 +802,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheTimer:
 		d.type = INT;
-		d.u.i = _vm->getMacTicks() - _vm->getCurrentMovie()->_lastTimerReset;
+		d.u.i = _vm->getMacTicks() - movie->_lastTimerReset;
 		break;
 	case kTheTrace:
 		getTheEntitySTUB(kTheTrace);
@@ -841,6 +842,9 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 	if (debugChannelSet(3, kDebugLingoExec)) {
 		debugC(3, kDebugLingoExec, "Lingo::setTheEntity(%s, %s, %s, %s)", entity2str(entity), id.asString(true).c_str(), field2str(field), d.asString(true).c_str());
 	}
+
+	Movie *movie = _vm->getCurrentMovie();
+	Score *score = movie->getScore();
 
 	switch (entity) {
 	case kTheActorList:
@@ -912,10 +916,10 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 			g_lingo->_itemDelimiter = d.asString()[0];
 		break;
 	case kTheKeyDownScript:
-		_vm->getCurrentMovie()->setPrimaryEventHandler(kEventKeyDown, d.asString());
+		movie->setPrimaryEventHandler(kEventKeyDown, d.asString());
 		break;
 	case kTheKeyUpScript:
-		_vm->getCurrentMovie()->setPrimaryEventHandler(kEventKeyUp, d.asString());
+		movie->setPrimaryEventHandler(kEventKeyUp, d.asString());
 		break;
 	case kTheMenu:
 		setTheEntitySTUB(kTheMenu);
@@ -924,10 +928,10 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		setTheEntitySTUB(kTheMenuItem);
 		break;
 	case kTheMouseDownScript:
-		_vm->getCurrentMovie()->setPrimaryEventHandler(kEventMouseDown, d.asString());
+		movie->setPrimaryEventHandler(kEventMouseDown, d.asString());
 		break;
 	case kTheMouseUpScript:
-		_vm->getCurrentMovie()->setPrimaryEventHandler(kEventMouseUp, d.asString());
+		movie->setPrimaryEventHandler(kEventMouseUp, d.asString());
 		break;
 	case kThePerFrameHook:
 		_perFrameHook = d;
@@ -949,16 +953,16 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		_vm->setVersion(d.asInt());
 		break;
 	case kTheSelEnd:
-		if (_vm->getCurrentMovie()->_currentEditableTextChannel != 0) {
-			Channel *channel = _vm->getCurrentMovie()->getScore()->getChannelById(_vm->getCurrentMovie()->_currentEditableTextChannel);
+		if (movie->_currentEditableTextChannel != 0) {
+			Channel *channel = score->getChannelById(movie->_currentEditableTextChannel);
 
 			if (channel->_widget)
 				(((Graphics::MacText *)channel->_widget)->setSelection(d.asInt(), false));
 		}
 		break;
 	case kTheSelStart:
-		if (_vm->getCurrentMovie()->_currentEditableTextChannel != 0) {
-			Channel *channel = _vm->getCurrentMovie()->getScore()->getChannelById(_vm->getCurrentMovie()->_currentEditableTextChannel);
+		if (movie->_currentEditableTextChannel != 0) {
+			Channel *channel = score->getChannelById(movie->_currentEditableTextChannel);
 
 			if (channel->_widget)
 				(((Graphics::MacText *)channel->_widget)->setSelection(d.asInt(), true));
@@ -997,8 +1001,8 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		g_director->getCurrentStage()->setStageColor(d.asInt());
 
 		// Queue an immediate update of the stage
-		if (! _vm->getCurrentMovie()->getScore()->getNextFrame())
-			_vm->getCurrentMovie()->getScore()->setCurrentFrame( _vm->getCurrentMovie()->getScore()->getCurrentFrame());
+		if (!score->getNextFrame())
+			score->setCurrentFrame(score->getCurrentFrame());
 		break;
 	case kTheSwitchColorDepth:
 		setTheEntitySTUB(kTheSwitchColorDepth);
@@ -1019,7 +1023,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		setTheEntitySTUB(kTheTimeoutPlay);
 		break;
 	case kTheTimeoutScript:
-		_vm->getCurrentMovie()->setPrimaryEventHandler(kEventTimeout, d.asString());
+		movie->setPrimaryEventHandler(kEventTimeout, d.asString());
 		break;
 	case kTheTimer:
 		setTheEntitySTUB(kTheTimer);
