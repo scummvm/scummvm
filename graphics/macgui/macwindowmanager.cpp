@@ -657,6 +657,9 @@ void MacWindowManager::pushWatchCursor() {
 }
 
 void MacWindowManager::pushCursor(MacCursorType type, Cursor *cursor) {
+	if (_cursorType == kMacCursorOff && type != _cursorType)
+		CursorMan.showMouse(true);
+
 	switch (type) {
 	case kMacCursorOff:
 		CursorMan.showMouse(false);
@@ -689,6 +692,9 @@ void MacWindowManager::pushCursor(MacCursorType type, Cursor *cursor) {
 }
 
 void MacWindowManager::replaceCursor(MacCursorType type, Cursor *cursor) {
+	if (_cursorType == kMacCursorOff && type != _cursorType)
+		CursorMan.showMouse(true);
+
 	switch (type) {
 	case kMacCursorOff:
 		CursorMan.showMouse(false);
