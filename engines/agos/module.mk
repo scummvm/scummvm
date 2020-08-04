@@ -12,7 +12,6 @@ MODULE_OBJS := \
 	cursor.o \
 	debug.o \
 	debugger.o \
-	detection.o \
 	draw.o \
 	event.o \
 	gfx.o \
@@ -21,6 +20,7 @@ MODULE_OBJS := \
 	input_pn.o \
 	items.o \
 	menus.o \
+	metaengine.o \
 	midi.o \
 	midiparser_s1d.o \
 	pn.o \
@@ -69,3 +69,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
