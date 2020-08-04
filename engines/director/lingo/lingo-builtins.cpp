@@ -451,7 +451,7 @@ void LB::b_chars(int nargs) {
 	TYPECHECK2(s, STRING, FIELDREF);
 
 	if (g_director->getVersion() < 4 && (d2.type == FLOAT || d3.type == FLOAT)) {
-		// D3 throws an error when called with a float.
+		warning("LB::b_chars: Called with a float in Director 2 and 3 mode. chars' can't handle floats");
 		g_lingo->push(Datum(0));
 		return;
 	}
