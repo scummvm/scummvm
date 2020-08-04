@@ -311,6 +311,7 @@ private:
 	int _monsterDifficulty;
 	bool _smoothScrollingEnabled;
 	bool _floatingCursorsEnabled;
+	bool _autoSaveNamesEnabled;
 
 	// main loop
 	void runLoop();

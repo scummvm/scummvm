@@ -206,6 +206,9 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraRpgEngine(sy
 	_scriptCharacterCycle = 0;
 	_partyDamageFlags = -1;
 
+	_floatingCursorsEnabled = _autoSaveNamesEnabled = false;
+	_smoothScrollingEnabled = true;
+
 	memset(&_itemScript, 0, sizeof(_itemScript));
 }
 
@@ -897,12 +900,14 @@ void LoLEngine::registerDefaultSettings() {
 	ConfMan.registerDefault("floating_cursors", false);
 	ConfMan.registerDefault("smooth_scrolling", true);
 	ConfMan.registerDefault("monster_difficulty", 1);
+	ConfMan.registerDefault("auto_savenames", false);
 }
 
 void LoLEngine::writeSettings() {
 	ConfMan.setInt("monster_difficulty", _monsterDifficulty);
 	ConfMan.setBool("floating_cursors", _floatingCursorsEnabled);
 	ConfMan.setBool("smooth_scrolling", _smoothScrollingEnabled);
+	ConfMan.setBool("auto_savenames", _autoSaveNamesEnabled);
 
 	switch (_lang) {
 	case 1:
@@ -937,6 +942,7 @@ void LoLEngine::readSettings() {
 	}
 	_smoothScrollingEnabled = ConfMan.getBool("smooth_scrolling");
 	_floatingCursorsEnabled = ConfMan.getBool("floating_cursors");
+	_autoSaveNamesEnabled = ConfMan.getBool("auto_savenames");
 
 	KyraEngine_v1::readSettings();
 }
