@@ -72,7 +72,6 @@
 
 
 #include <nds.h>
-#include <nds/registers_alt.h>
 #include <filesystem.h>
 
 #include <stdlib.h>
@@ -455,12 +454,12 @@ void displayMode8Bit() {
 
 		vramSetBankH(VRAM_H_LCD);
 
-		BG3_CR = BG_BMP16_256x256 | BG_BMP_BASE(8);
+		REG_BG3CNT = BG_BMP16_256x256 | BG_BMP_BASE(8);
 
-		BG3_XDX = 256;
-		BG3_XDY = 0;
-		BG3_YDX = 0;
-		BG3_YDY = (int) ((200.0f / 192.0f) * 256);
+		REG_BG3PA = 256;
+		REG_BG3PB = 0;
+		REG_BG3PC = 0;
+		REG_BG3PD = (int) ((200.0f / 192.0f) * 256);
 
 	} else {
 		videoSetMode(MODE_5_2D | (consoleEnable ? DISPLAY_BG0_ACTIVE : 0) | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
@@ -474,20 +473,20 @@ void displayMode8Bit() {
 
 		vramSetBankH(VRAM_H_LCD);
 
-		BG3_CR = BG_BMP8_512x256 | BG_BMP_BASE(8);
+		REG_BG3CNT = BG_BMP8_512x256 | BG_BMP_BASE(8);
 
-		BG3_XDX = (int) (((float) (gameWidth) / 256.0f) * 256);
-		BG3_XDY = 0;
-		BG3_YDX = 0;
-		BG3_YDY = (int) ((200.0f / 192.0f) * 256);
+		REG_BG3PA = (int) (((float) (gameWidth) / 256.0f) * 256);
+		REG_BG3PB = 0;
+		REG_BG3PC = 0;
+		REG_BG3PD = (int) ((200.0f / 192.0f) * 256);
 	}
 
-	SUB_BG3_CR = BG_BMP8_512x256;
+	REG_BG3CNT_SUB = BG_BMP8_512x256;
 
-	SUB_BG3_XDX = (int) (subScreenWidth / 256.0f * 256);
-	SUB_BG3_XDY = 0;
-	SUB_BG3_YDX = 0;
-	SUB_BG3_YDY = (int) (subScreenHeight / 192.0f * 256);
+	REG_BG3PA_SUB = (int) (subScreenWidth / 256.0f * 256);
+	REG_BG3PB_SUB = 0;
+	REG_BG3PC_SUB = 0;
+	REG_BG3PD_SUB = (int) (subScreenHeight / 192.0f * 256);
 
 
 
@@ -514,9 +513,9 @@ void displayMode8Bit() {
 	#endif
 
 	if (gameScreenSwap) {
-		POWER_CR |= POWER_SWAP_LCDS;
+		lcdMainOnTop();
 	} else {
-		POWER_CR &= ~POWER_SWAP_LCDS;
+		lcdMainOnBottom();
 	}
 
 	uploadSpriteGfx();
@@ -668,7 +667,7 @@ void displayMode16Bit() {
 	vramSetBankD(VRAM_D_MAIN_BG);
 	vramSetBankH(VRAM_H_SUB_BG);
 
-	BG3_CR = BG_BMP16_512x256;
+	REG_BG3CNT = BG_BMP16_512x256;
 	highBuffer = false;
 
 
@@ -678,8 +677,8 @@ void displayMode16Bit() {
 	BG_PALETTE_SUB[255] = RGB15(31,31,31);//by default font will be rendered with color 255
 
 	// Do text stuff
-	SUB_BG0_CR = BG_MAP_BASE(4) | BG_TILE_BASE(0);
-	SUB_BG0_Y0 = 0;
+	REG_BG0CNT_SUB = BG_MAP_BASE(4) | BG_TILE_BASE(0);
+	REG_BG0VOFS_SUB = 0;
 
 	consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 4, 0, false, true);
 
@@ -690,19 +689,19 @@ void displayMode16Bit() {
 	consoleSetWindow(NULL, 0, 0, 32, 24);
 
 	// Show keyboard
-	SUB_BG1_CR = BG_TILE_BASE(1) | BG_MAP_BASE(12);
+	REG_BG1CNT_SUB = BG_TILE_BASE(1) | BG_MAP_BASE(12);
 
-	POWER_CR &= ~POWER_SWAP_LCDS;
+	lcdMainOnBottom();
 
 	displayModeIs8Bit = false;
 
 	// ConsoleInit destroys the hardware palette :-(
 	OSystem_DS::instance()->restoreHardwarePalette();
 
-	BG3_XDX = isCpuScalerEnabled() ? 256 : (int) (1.25f * 256);
-	BG3_XDY = 0;
-	BG3_YDX = 0;
-	BG3_YDY = (int) ((200.0f / 192.0f) * 256);
+	REG_BG3PA = isCpuScalerEnabled() ? 256 : (int) (1.25f * 256);
+	REG_BG3PB = 0;
+	REG_BG3PC = 0;
+	REG_BG3PD = (int) ((200.0f / 192.0f) * 256);
 
 	#ifdef HEAVY_LOGGING
 	printf("done\n");
@@ -728,12 +727,6 @@ void displayMode16BitFlipBuffer() {
 			}
 		}
 	} else if (isCpuScalerEnabled()) {
-		//#define SCALER_PROFILE
-
-		#ifdef SCALER_PROFILE
-		TIMER1_CR = TIMER_ENABLE | TIMER_DIV_1024;
-		u16 t0 = TIMER1_DATA;
-		#endif
 		const u8 *back = (const u8*)get8BitBackBuffer();
 		u16 *base = BG_GFX + 0x10000;
 		Rescale_320x256xPAL8_To_256x256x1555(
@@ -743,20 +736,6 @@ void displayMode16BitFlipBuffer() {
 			get8BitBackBufferStride(),
 			BG_PALETTE,
 			getGameHeight() );
-
-		#ifdef SCALER_PROFILE
-		// 10 pixels : 1ms
-		u16 t1 = TIMER1_DATA;
-		TIMER1_CR &= ~TIMER_ENABLE;
-		u32 dt = t1 - t0;
-		u32 dt_us = (dt * 10240) / 334;
-		u32 dt_10ms = dt_us / 100;
-		int i;
-		for(i=0; i<dt_10ms; ++i)
-			base[i] = ((i/10)&1) ? 0xFFFF : 0x801F;
-		for(; i<256; ++i)
-			base[i] = 0x8000;
-		#endif
 	}
 	#ifdef HEAVY_LOGGING
 	printf("done\n");
@@ -934,18 +913,18 @@ void setKeyboardEnable(bool en) {
 		DS::drawKeyboard(1, 15, backupBank);
 
 
-		SUB_BG1_CR = BG_TILE_BASE(1) | BG_MAP_BASE(15);
+		REG_BG1CNT_SUB = BG_TILE_BASE(1) | BG_MAP_BASE(15);
 
 		if (displayModeIs8Bit) {
-			SUB_DISPLAY_CR |= DISPLAY_BG1_ACTIVE;	// Turn on keyboard layer
-			SUB_DISPLAY_CR &= ~DISPLAY_BG3_ACTIVE;	// Turn off game layer
+			REG_DISPCNT_SUB |= DISPLAY_BG1_ACTIVE;	// Turn on keyboard layer
+			REG_DISPCNT_SUB &= ~DISPLAY_BG3_ACTIVE;	// Turn off game layer
 		} else {
-			SUB_DISPLAY_CR |= DISPLAY_BG1_ACTIVE;	// Turn on keyboard layer
-			SUB_DISPLAY_CR &= ~DISPLAY_BG0_ACTIVE;	// Turn off console layer
+			REG_DISPCNT_SUB |= DISPLAY_BG1_ACTIVE;	// Turn on keyboard layer
+			REG_DISPCNT_SUB &= ~DISPLAY_BG0_ACTIVE;	// Turn off console layer
 		}
 
 		// Ensure the keyboard is on the lower screen
-		POWER_CR |= POWER_SWAP_LCDS;
+		lcdMainOnTop();
 
 
 	} else {
@@ -968,18 +947,18 @@ void setKeyboardEnable(bool en) {
 				}
 			}
 
-			SUB_DISPLAY_CR &= ~DISPLAY_BG1_ACTIVE;	// Turn off keyboard layer
-			SUB_DISPLAY_CR |= DISPLAY_BG3_ACTIVE;	// Turn on game layer
+			REG_DISPCNT_SUB &= ~DISPLAY_BG1_ACTIVE;	// Turn off keyboard layer
+			REG_DISPCNT_SUB |= DISPLAY_BG3_ACTIVE;	// Turn on game layer
 		} else {
-			SUB_DISPLAY_CR &= ~DISPLAY_BG1_ACTIVE;	// Turn off keyboard layer
-			SUB_DISPLAY_CR |= DISPLAY_BG0_ACTIVE;	// Turn on console layer
+			REG_DISPCNT_SUB &= ~DISPLAY_BG1_ACTIVE;	// Turn off keyboard layer
+			REG_DISPCNT_SUB |= DISPLAY_BG0_ACTIVE;	// Turn on console layer
 		}
 
 		// Restore the screens so they're the right way round
 		if (gameScreenSwap) {
-			POWER_CR |= POWER_SWAP_LCDS;
+			lcdMainOnTop();
 		} else {
-			POWER_CR &= ~POWER_SWAP_LCDS;
+			lcdMainOnBottom();
 		}
 	}
 }
@@ -1268,9 +1247,9 @@ void addEventsToQueue() {
 					gameScreenSwap = !gameScreenSwap;
 
 					if (gameScreenSwap) {
-						POWER_CR |= POWER_SWAP_LCDS;
+						lcdMainOnTop();
 					} else {
-						POWER_CR &= ~POWER_SWAP_LCDS;
+						lcdMainOnBottom();
 					}
 
 				}
@@ -1518,8 +1497,8 @@ void updateStatus() {
 }
 
 void setMainScreenScroll(int x, int y) {
-		BG3_CX = x + (((frameCount & 1) == 0)? 64: 0);
-		BG3_CY = y;
+		REG_BG3X = x + (((frameCount & 1) == 0)? 64: 0);
+		REG_BG3Y = y;
 
 		if ((!gameScreenSwap) || (touchPadStyle)) {
 			touchX = x >> 8;
@@ -1529,15 +1508,15 @@ void setMainScreenScroll(int x, int y) {
 
 void setMainScreenScale(int x, int y) {
 		if (isCpuScalerEnabled() && (x==320)) {
-			BG3_XDX = 256;
-			BG3_XDY = 0;
-			BG3_YDX = 0;
-			BG3_YDY = y;
+			REG_BG3PA = 256;
+			REG_BG3PB = 0;
+			REG_BG3PC = 0;
+			REG_BG3PD = y;
 		} else {
-			BG3_XDX = x;
-			BG3_XDY = 0;
-			BG3_YDX = 0;
-			BG3_YDY = y;
+			REG_BG3PA = x;
+			REG_BG3PB = 0;
+			REG_BG3PC = 0;
+			REG_BG3PD = y;
 		}
 
 		if ((!gameScreenSwap) || (touchPadStyle)) {
@@ -1553,8 +1532,8 @@ void setZoomedScreenScroll(int x, int y, bool shake) {
 		}
 
 
-		SUB_BG3_CX = x + ((shake && (frameCount & 1) == 0)? 64: 0);
-		SUB_BG3_CY = y;
+		REG_BG3X_SUB = x + ((shake && (frameCount & 1) == 0)? 64: 0);
+		REG_BG3Y_SUB = y;
 }
 
 void setZoomedScreenScale(int x, int y) {
@@ -1563,10 +1542,10 @@ void setZoomedScreenScale(int x, int y) {
 			touchScY = y;
 		}
 
-		SUB_BG3_XDX = x;
-		SUB_BG3_XDY = 0;
-		SUB_BG3_YDX = 0;
-		SUB_BG3_YDY = y;
+		REG_BG3PA_SUB = x;
+		REG_BG3PB_SUB = 0;
+		REG_BG3PC_SUB = 0;
+		REG_BG3PD_SUB = y;
 }
 
 void VBlankHandler(void) {
@@ -1871,8 +1850,6 @@ void initHardware() {
 	vramSetBankD(VRAM_D_SUB_SPRITE);
 	vramSetBankE(VRAM_E_MAIN_SPRITE);
 
-	currentTimeMillis = 0;
-
 	for (int r = 0; r < 255; r++) {
 		BG_PALETTE[r] = 0;
 	}
@@ -1898,7 +1875,7 @@ void initHardware() {
 	subScTargetX = 0;
 	subScTargetY = 0;
 
-	POWER_CR &= ~POWER_SWAP_LCDS;
+	lcdMainOnBottom();
 
 	frameCount = 0;
 	callback = NULL;
@@ -1907,22 +1884,12 @@ void initHardware() {
 
 	//irqs are nice
 	irqSet(IRQ_VBLANK, VBlankHandler);
-	irqSet(IRQ_TIMER0, timerTickHandler);
-
 	irqEnable(IRQ_VBLANK);
-	irqEnable(IRQ_TIMER0);
 
 	// Set up a millisecond timer
-	#ifdef HEAVY_LOGGING
-	printf("Setting up timer...");
-	#endif
-	TIMER0_CR = 0;
-	TIMER0_DATA = (u32) TIMER_FREQ(1000);
-	TIMER0_CR = TIMER_ENABLE | TIMER_DIV_1 | TIMER_IRQ_REQ;
+	currentTimeMillis = 0;
+	timerStart(0, ClockDivider_1, (u16)TIMER_FREQ(1000), timerTickHandler);
 	REG_IME = 1;
-	#ifdef HEAVY_LOGGING
-	printf("done\n");
-	#endif
 
 	BG_PALETTE[255] = RGB15(0,0,31);
 
@@ -1930,9 +1897,6 @@ void initHardware() {
 
 	// If the software scaler's back buffer has not been allocated, do it now
 	scalerBackBuffer = (u8 *) malloc(320 * 256);
-
-
-	WAIT_CR &= ~(0x0080);
 
 	uploadSpriteGfx();
 
