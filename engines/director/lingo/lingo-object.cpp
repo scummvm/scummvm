@@ -150,7 +150,7 @@ void LM::m_dispose(int nargs) {
 
 /* ScriptContext */
 
-ScriptContext::ScriptContext(Common::String name, LingoArchive *archive, ScriptType type, uint16 id)
+ScriptContext::ScriptContext(Common::String name, LingoArchive *archive, ScriptType type, int id)
 	: Object<ScriptContext>(name), _archive(archive), _scriptType(type), _id(id) {
 	_objType = kScriptObj;
 }

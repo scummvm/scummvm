@@ -921,7 +921,7 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream
 	ScriptType scriptType = kCastScript;
 	Common::String castName;
 	CastMember *member = g_director->getCurrentMovie()->getCastMemberByScriptId(scriptId);
-	uint16 castId;
+	int castId;
 	if (member) {
 		if (member->_type == kCastLingoScript)
 			scriptType = ((ScriptCastMember *)member)->_scriptType;
@@ -931,8 +931,9 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream
 		if (info)
 			castName = info->name;
 	} else {
+		warning("Script %d has no associated cast member", scriptId);
+		scriptType = kNoneScript;
 		castId = -1;
-		warning("Script %d has invalid cast member %d", scriptId, castId);
 	}
 
 	_assemblyArchive = archive;

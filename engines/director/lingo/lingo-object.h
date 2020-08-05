@@ -181,7 +181,7 @@ class ScriptContext : public Object<ScriptContext> {
 public:
 	LingoArchive *_archive;
 	ScriptType _scriptType;
-	uint16 _id;
+	int _id;
 	Common::Array<Common::String> _functionNames; // used by cb_localcall
 	SymbolHash _functionHandlers;
 	Common::HashMap<uint32, Symbol> _eventHandlers;
@@ -190,7 +190,7 @@ public:
 	Common::HashMap<uint32, Datum> _objArray;
 
 public:
-	ScriptContext(Common::String name, LingoArchive *archive = nullptr, ScriptType type = kNoneScript, uint16 id = 0);
+	ScriptContext(Common::String name, LingoArchive *archive = nullptr, ScriptType type = kNoneScript, int id = 0);
 	ScriptContext(const ScriptContext &sc);
 	virtual ~ScriptContext();
 

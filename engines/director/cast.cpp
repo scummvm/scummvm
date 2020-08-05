@@ -983,7 +983,7 @@ void Cast::loadLingoContext(Common::SeekableSubReadStreamEndian &stream) {
 		// actually define scripts
 		for (ScriptContextHash::iterator it = _lingoArchive->lctxContexts.begin(); it != _lingoArchive->lctxContexts.end(); ++it) {
 			ScriptContext *script = it->_value;
-			if (!script->isFactory()) {
+			if (script->_id >= 0 && !script->isFactory()) {
 				if (_lingoArchive->getScriptContext(script->_scriptType, script->_id)) {
 					error("Cast::loadLingoContext: Script already defined for type %s, id %d", scriptType2str(script->_scriptType), script->_id);
 				}
