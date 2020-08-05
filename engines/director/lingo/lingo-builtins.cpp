@@ -1065,11 +1065,22 @@ void LB::b_closeXlib(int nargs) {
 }
 
 void LB::b_getNthFileNameInFolder(int nargs) {
-	g_lingo->printSTUBWithArglist("b_getNthFileNameInFolder", nargs);
+	ARGNUMCHECK(2);
 
-	g_lingo->dropStack(nargs);
+	int fileNum = g_lingo->pop().asInt() - 1;
+	Common::String path = pathMakeRelative(g_lingo->pop().asString(), true, false, true);
+	Common::FSNode d = Common::FSNode(*g_director->getGameDataDir()).getChild(path);
 
-	g_lingo->push(Datum(0));
+	Datum r;
+	if (d.exists()) {
+		Common::FSList f;
+		d.getChildren(f, Common::FSNode::kListAll);
+
+		if ((uint)fileNum < f.size())
+			r = Datum(f.operator[](fileNum).getName());
+	}
+
+	g_lingo->push(r);
 }
 
 void LB::b_open(int nargs) {
