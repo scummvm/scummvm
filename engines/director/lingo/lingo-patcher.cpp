@@ -127,11 +127,11 @@ struct ScriptPatch {
 			5, "end if", ""},
 
 	// Missing '&'
-	{"warlock", "", kPlatformUnknown, "NAV/Shared Cast", kMovieScript, 0,
+	{"warlock", nullptr, kPlatformUnknown, "NAV/Shared Cast", kMovieScript, 0,
 			23, "alert \"Failed Save.\" & return & \"Error message number: \" string ( filer )",
 				"alert \"Failed Save.\" & return & \"Error message number: \" & string ( filer )"},
 
-	{"warlock", "", kPlatformUnknown, "NAV/Shared Cast", kMovieScript, 1,	// For running by the buildbot
+	{"warlock", nullptr, kPlatformUnknown, "NAV/Shared Cast", kMovieScript, 1,	// For running by the buildbot
 			23, "alert \"Failed Save.\" & return & \"Error message number: \" string ( filer )",
 				"alert \"Failed Save.\" & return & \"Error message number: \" & string ( filer )"},
 
@@ -162,6 +162,7 @@ Common::String Lingo::patchLingoCode(Common::String &line, LingoArchive *archive
 		}
 
 		// Now expensive ones
+		warning("EXTRA: %s", _vm->getExtra());
 		if (movie.compareToIgnoreCase(patch->movie) || strcmp(patch->gameId, _vm->getGameId())
 				|| (patch->extra && strcmp(patch->extra, _vm->getExtra()))) {
 			patch++;
