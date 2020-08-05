@@ -1481,8 +1481,11 @@ void LB::b_alert(int nargs) {
 
 	const char *alert = d.asString().c_str();
 	warning("b_alert(%s)", alert);
-	GUI::MessageDialog dialog(alert, "OK");
-	dialog.runModal();
+
+	if (!debugChannelSet(-1, kDebugFewFramesOnly)) {
+		GUI::MessageDialog dialog(alert, "OK");
+		dialog.runModal();
+	}
 }
 
 void LB::b_clearGlobals(int nargs) {
