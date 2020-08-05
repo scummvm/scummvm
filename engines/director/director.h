@@ -25,6 +25,7 @@
 
 #include "common/rect.h"
 #include "common/str-array.h"
+#include "common/file.h"
 
 #include "common/hashmap.h"
 #include "engines/engine.h"
@@ -201,6 +202,7 @@ public:
 
 	const Common::HashMap<int, PaletteV4> &getLoadedPalettes() { return _loadedPalettes; }
 
+	const Common::FSNode *getGameDataDir() const { return &_gameDataDir; }
 	const byte *getPalette() const { return _currentPalette; }
 	uint16 getPaletteColorCount() const { return _currentPaletteLength; }
 
@@ -238,6 +240,7 @@ protected:
 
 private:
 	const DirectorGameDescription *_gameDescription;
+	Common::FSNode _gameDataDir;
 
 	DirectorSound *_soundManager;
 	byte *_currentPalette;

@@ -23,7 +23,6 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/error.h"
-#include "common/file.h"
 
 #include "graphics/macgui/macwindowmanager.h"
 
@@ -91,16 +90,16 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_wm = nullptr;
 	_surface = nullptr;
 
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	_gameDataDir = Common::FSNode(ConfMan.get("path"));
 
 	// Meet Mediaband could have up to 5 levels of directories
-	SearchMan.addDirectory(gameDataDir.getPath(), gameDataDir, 0, 5);
+	SearchMan.addDirectory(_gameDataDir.getPath(), _gameDataDir, 0, 5);
 
-	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "install");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "main");		// Meet Mediaband
-	SearchMan.addSubDirectoryMatching(gameDataDir, "l_zone");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "win_data", 0, 2);	// L-ZONE
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "data");
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "install");
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "main");		// Meet Mediaband
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "l_zone");
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "win_data", 0, 2);	// L-ZONE
 
 	_colorDepth = 8;	// 256-color
 	_machineType = 9; // Macintosh IIci
