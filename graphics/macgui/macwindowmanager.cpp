@@ -41,7 +41,8 @@ static const byte palette[] = {
 	0x80, 0x80, 0x80,  // Gray
 	0xff, 0xff, 0xff,  // White
 	0x00, 0xff, 0x00,  // Green
-	0x00, 0xcf, 0x00   // Green2
+	0x00, 0xcf, 0x00,  // Green2
+	0xee, 0xee, 0xee   // OffWhite
 };
 
 static byte fillPatterns[][8] = { { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }, // kPatternSolid
@@ -174,6 +175,7 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns) {
 
 	_colorBlack = 0;
 	_colorWhite = 2;
+	_colorOffWhite = 5;
 
 	_fullRefresh = true;
 
@@ -766,6 +768,7 @@ void MacWindowManager::passPalette(const byte *pal, uint size) {
 	_colorHash.clear();
 
 	_colorWhite = -1;
+	_colorOffWhite = -1;
 	_colorBlack = -1;
 
 	// Search pure white and black colors
@@ -773,6 +776,8 @@ void MacWindowManager::passPalette(const byte *pal, uint size) {
 		if (_colorWhite == -1 && p[0] == 0xff && p[1] == 0xff && p[2] == 0xff)
 			_colorWhite = i;
 
+		if (_colorOffWhite == -1 && p[0] == 0xee && p[1] == 0xee && p[2] == 0xee)
+			_colorOffWhite = i;
 
 		if (_colorBlack == -1 && p[0] == 0x00 && p[1] == 0x00 && p[2] == 0x00)
 			_colorBlack = i;
@@ -782,7 +787,7 @@ void MacWindowManager::passPalette(const byte *pal, uint size) {
 		_palette[i * 3 + 2] = *p++;
 	}
 
-	if (_colorWhite != -1 && _colorBlack != -1)
+	if (_colorWhite != -1 && _colorOffWhite != -1 && _colorBlack != -1)
 		return;
 
 	// We did not find some color. Let's find closest approximations
@@ -807,6 +812,7 @@ void MacWindowManager::passPalette(const byte *pal, uint size) {
 	}
 
 	_colorWhite = bi;
+	_colorOffWhite = bi;
 	_colorBlack = di;
 }
 

@@ -50,6 +50,7 @@ enum {
 	kColorWhite = 2,
 	kColorGreen = 3,
 	kColorGreen2 = 4,
+	kColorOffWhite = 5,
 	kColorCount
 };
 
@@ -302,7 +303,7 @@ public:
 	bool _menuTimerActive;
 	bool _mouseDown;
 
-	int _colorBlack, _colorWhite;
+	int _colorBlack, _colorWhite, _colorOffWhite;
 
 	MacWidget *_hoveredWidget;
 
