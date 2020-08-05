@@ -1911,7 +1911,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD, GUIO4(GAMEOPTION_HIGH_RESOLUTION_GRAPHICS, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
-	// King's Quest 6 - Windows DOS CD (supplied by trembyle)
+	// King's Quest 6 - English Windows CD (supplied by trembyle)
 	// Executable scanning reports "1.001.069", VERSION file reports "1.000.000"
 	{"kq6", "CD", {
 		{"resource.map", 0, "db35b0094083f81bfb0239a7a5410313", 9215},
