@@ -86,10 +86,10 @@ struct TransParams {
 	}
 };
 
-class Stage : public Graphics::MacWindow, public Object<Stage> {
+class Window : public Graphics::MacWindow, public Object<Window> {
  public:
-	Stage(int id, bool scrollable, bool resizable, bool editable, Graphics::MacWindowManager *wm, DirectorEngine *vm);
-	~Stage();
+	Window(int id, bool scrollable, bool resizable, bool editable, Graphics::MacWindowManager *wm, DirectorEngine *vm);
+	~Window();
 
 	bool render(bool forceRedraw = false, Graphics::ManagedSurface *blitTo = nullptr);
 	void invertChannel(Channel *channel);

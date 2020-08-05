@@ -40,7 +40,7 @@ namespace Common {
 
 namespace Director {
 
-class Stage;
+class Window;
 class Archive;
 class DirectorEngine;
 class DirectorSound;
@@ -148,7 +148,7 @@ private:
 	DirectorEngine *_vm;
 	Lingo *_lingo;
 	Movie *_movie;
-	Stage *_stage;
+	Window *_window;
 
 	uint16 _currentFrame;
 	uint16 _nextFrame;

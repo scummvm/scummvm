@@ -34,7 +34,7 @@
 #include "director/movie.h"
 #include "director/score.h"
 #include "director/sound.h"
-#include "director/stage.h"
+#include "director/window.h"
 #include "director/util.h"
 
 #include "director/lingo/lingo.h"
@@ -190,7 +190,7 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 
 	if (movie.type != VOID) {
 		Common::String movieFilenameRaw = movie.asString();
-		Stage *stage = _vm->getCurrentStage();
+		Window *stage = _vm->getCurrentWindow();
 
 		if (!stage->setNextMovie(movieFilenameRaw))
 			return;
@@ -257,7 +257,7 @@ void Lingo::func_gotoprevious() {
 
 void Lingo::func_play(Datum &frame, Datum &movie) {
 	MovieReference ref;
-	Stage *stage = _vm->getCurrentStage();
+	Window *stage = _vm->getCurrentWindow();
 
 
 	// play #done

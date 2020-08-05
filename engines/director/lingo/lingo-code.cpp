@@ -47,7 +47,7 @@
 #include "director/movie.h"
 #include "director/score.h"
 #include "director/sprite.h"
-#include "director/stage.h"
+#include "director/window.h"
 #include "director/cursor.h"
 #include "director/channel.h"
 #include "director/util.h"
@@ -1406,18 +1406,18 @@ void LC::c_whencode() {
 }
 
 void LC::c_tell() {
-	// swap out current stage
+	// swap out current window
 	Datum window = g_lingo->pop();
-	g_lingo->push(g_director->getCurrentStage());
+	g_lingo->push(g_director->getCurrentWindow());
 	if (window.type != OBJECT || window.u.obj->getObjType() != kWindowObj) {
 		warning("LC::c_tell(): wrong argument type: %s", window.type2str());
 		return;
 	}
-	if (static_cast<Stage *>(window.u.obj)->getCurrentMovie() == nullptr) {
+	if (static_cast<Window *>(window.u.obj)->getCurrentMovie() == nullptr) {
 		warning("LC::c_tell(): window has no movie");
 		return;
 	}
-	g_director->setCurrentStage(static_cast<Stage *>(window.u.obj));
+	g_director->setCurrentWindow(static_cast<Window *>(window.u.obj));
 
 }
 
@@ -1427,7 +1427,7 @@ void LC::c_telldone() {
 		warning("LC::c_telldone(): wrong return window type: %s", returnWindow.type2str());
 		return;
 	}
-	g_director->setCurrentStage(static_cast<Stage *>(returnWindow.u.obj));
+	g_director->setCurrentWindow(static_cast<Window *>(returnWindow.u.obj));
 }
 
 

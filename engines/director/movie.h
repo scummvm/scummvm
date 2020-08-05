@@ -40,7 +40,7 @@ class Lingo;
 struct LingoArchive;
 struct LingoEvent;
 class ScriptContext;
-class Stage;
+class Window;
 struct Symbol;
 
 struct InfoEntry {
@@ -83,7 +83,7 @@ struct InfoEntries {
 
 class Movie {
 public:
-	Movie(Stage *stage);
+	Movie(Window *window);
 	~Movie();
 
 	static Common::Rect readRect(Common::ReadStreamEndian &stream);
@@ -93,7 +93,7 @@ public:
 	void setArchive(Archive *archive);
 	Archive *getArchive() const { return _movieArchive; };
 	Common::String getMacName() const { return _macName; }
-	Stage *getStage() const { return _stage; }
+	Window *getWindow() const { return _window; }
 	DirectorEngine *getVM() const { return _vm; }
 	Cast *getCast() const { return _cast; }
 	Cast *getSharedCast() const { return _sharedCast; }
@@ -152,7 +152,7 @@ public:
 	byte _keyFlags;
 
 private:
-	Stage *_stage;
+	Window *_window;
 	DirectorEngine *_vm;
 	Lingo *_lingo;
 	Cast *_cast;

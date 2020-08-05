@@ -30,15 +30,15 @@
 #include "director/cast.h"
 #include "director/movie.h"
 #include "director/score.h"
-#include "director/stage.h"
+#include "director/window.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
 
 namespace Director {
 
-Movie::Movie(Stage *stage) {
-	_stage = stage;
-	_vm = _stage->getVM();
+Movie::Movie(Window *window) {
+	_window = window;
+	_vm = _window->getVM();
 	_lingo = _vm->getLingo();
 
 	_flags = 0;
@@ -110,11 +110,11 @@ bool Movie::loadArchive() {
 
 	// If the stage dimensions are different, delete it and start again.
 	// Otherwise, do not clear it so there can be a nice transition.
-	if (_stage->getSurface()->w != _movieRect.width() || _stage->getSurface()->h != _movieRect.height()) {
-		_stage->resize(_movieRect.width(), _movieRect.height(), true);
+	if (_window->getSurface()->w != _movieRect.width() || _window->getSurface()->h != _movieRect.height()) {
+		_window->resize(_movieRect.width(), _movieRect.height(), true);
 	}
 	// TODO: Add more options for desktop dimensions
-	if (_stage == _vm->getMainStage()) {
+	if (_window == _vm->getStage()) {
 		uint16 windowWidth = debugChannelSet(-1, kDebugDesktop) ? 1024 : _movieRect.width();
 		uint16 windowHeight = debugChannelSet(-1, kDebugDesktop) ? 768 : _movieRect.height();
 		if (_vm->_surface->w != windowWidth || _vm->_surface->h != windowHeight) {
@@ -124,7 +124,7 @@ bool Movie::loadArchive() {
 		initGraphics(windowWidth, windowHeight);
 	}
 
-	_stage->setStageColor(_stageColor);
+	_window->setStageColor(_stageColor);
 
 	// Score
 	if (!_movieArchive->hasResource(MKTAG('V', 'W', 'S', 'C'), -1)) {

@@ -31,7 +31,7 @@
 #include "director/sound.h"
 #include "director/sprite.h"
 #include "director/score.h"
-#include "director/stage.h"
+#include "director/window.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-code.h"
@@ -566,7 +566,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheMouseCast:
 		{
-			Common::Point pos = g_director->getCurrentStage()->getMousePos();
+			Common::Point pos = g_director->getCurrentWindow()->getMousePos();
 			uint16 spriteId = score->getSpriteIDFromPos(pos);
 			d.type = INT;
 			d.u.i = score->getSpriteById(spriteId)->_castId;
@@ -590,7 +590,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheMouseH:
 		d.type = INT;
-		d.u.i = g_director->getCurrentStage()->getMousePos().x;
+		d.u.i = g_director->getCurrentWindow()->getMousePos().x;
 		break;
 	case kTheMouseItem:
 		getTheEntitySTUB(kTheMouseItem);
@@ -611,7 +611,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheMouseV:
 		d.type = INT;
-		d.u.i = g_director->getCurrentStage()->getMousePos().y;
+		d.u.i = g_director->getCurrentWindow()->getMousePos().y;
 		break;
 	case kTheMouseWord:
 		getTheEntitySTUB(kTheMouseWord);
@@ -743,7 +743,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = getTheSprite(id, field);
 		break;
 	case kTheStage:
-		d = _vm->getMainStage();
+		d = _vm->getStage();
 		break;
 	case kTheStageBottom:
 		d.type = INT;
@@ -998,7 +998,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		setTheEntitySTUB(kTheStage);
 		break;
 	case kTheStageColor:
-		g_director->getCurrentStage()->setStageColor(d.asInt());
+		g_director->getCurrentWindow()->setStageColor(d.asInt());
 
 		// Queue an immediate update of the stage
 		if (!score->getNextFrame())
@@ -1258,7 +1258,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheCastNum:
 		if (d.asInt() != sprite->_castId) {
-			g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
+			g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
 			channel->setCast(d.asInt());
 			channel->_dirty = true;
 		}
@@ -1296,7 +1296,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheHeight:
 		if (d.asInt() != channel->_height) {
-			g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
+			g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
 			channel->setHeight(d.asInt());
 			channel->_dirty = true;
 		}
@@ -1321,14 +1321,14 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheLocH:
 		if (d.asInt() != channel->_currentPoint.x) {
-			g_director->getCurrentMovie()->getStage()->addDirtyRect(channel->getBbox());
+			g_director->getCurrentMovie()->getWindow()->addDirtyRect(channel->getBbox());
 			channel->_currentPoint.x = d.asInt();
 			channel->_dirty = true;
 		}
 		break;
 	case kTheLocV:
 		if (d.asInt() != channel->_currentPoint.y) {
-			g_director->getCurrentMovie()->getStage()->addDirtyRect(channel->getBbox());
+			g_director->getCurrentMovie()->getWindow()->addDirtyRect(channel->getBbox());
 			channel->_currentPoint.y = d.asInt();
 			channel->_dirty = true;
 		}
@@ -1367,7 +1367,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			channel->_dirty = true;
 
 			if (sprite->_stretch) {
-				g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
+				g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
 
 				channel->_width = sprite->_width;
 				channel->_height = sprite->_height;
@@ -1396,7 +1396,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheWidth:
 		if (d.asInt() != channel->_width) {
-			g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
+			g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
 			channel->setWidth(d.asInt());
 			channel->_dirty = true;
 		}
@@ -1406,7 +1406,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	}
 
 	if (channel->_dirty && g_director->getCurrentMovie())
-		g_director->getCurrentMovie()->getStage()->addDirtyRect(channel->getBbox());
+		g_director->getCurrentMovie()->getWindow()->addDirtyRect(channel->getBbox());
 }
 
 Datum Lingo::getTheCast(Datum &id1, int field) {

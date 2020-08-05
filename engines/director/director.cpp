@@ -33,7 +33,7 @@
 #include "director/movie.h"
 #include "director/score.h"
 #include "director/sound.h"
-#include "director/stage.h"
+#include "director/window.h"
 #include "director/lingo/lingo.h"
 
 namespace Director {
@@ -80,11 +80,11 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_soundManager = nullptr;
 	_currentPalette = nullptr;
 	_currentPaletteLength = 0;
-	_mainStage = nullptr;
+	_stage = nullptr;
 	_windowList = new Datum;
 	_windowList->type = ARRAY;
 	_windowList->u.farr = new DatumArray;
-	_currentStage = nullptr;
+	_currentWindow = nullptr;
 	_lingo = nullptr;
 	_version = getDescriptionVersion();
 
@@ -122,14 +122,14 @@ DirectorEngine::~DirectorEngine() {
 	clearPalettes();
 }
 
-Archive *DirectorEngine::getMainArchive() const { return _currentStage->getMainArchive(); }
-Movie *DirectorEngine::getCurrentMovie() const { return _currentStage->getCurrentMovie(); }
-Common::String DirectorEngine::getCurrentPath() const { return _currentStage->getCurrentPath(); }
+Archive *DirectorEngine::getMainArchive() const { return _currentWindow->getMainArchive(); }
+Movie *DirectorEngine::getCurrentMovie() const { return _currentWindow->getCurrentMovie(); }
+Common::String DirectorEngine::getCurrentPath() const { return _currentWindow->getCurrentPath(); }
 
 static void buildbotErrorHandler(const char *msg) { }
 
 void DirectorEngine::setCurrentMovie(Movie *movie) {
-	_currentStage = movie->getStage();
+	_currentWindow = movie->getWindow();
 }
 
 Common::Error DirectorEngine::run() {
@@ -152,30 +152,30 @@ Common::Error DirectorEngine::run() {
 	_wm->setEngine(this);
 
 
-	_mainStage = new Stage(_wm->getNextId(), false, false, false, _wm, this);
-	*_mainStage->_refCount += 1;
+	_stage = new Window(_wm->getNextId(), false, false, false, _wm, this);
+	*_stage->_refCount += 1;
 
 	if (debugChannelSet(-1, kDebugDesktop))
-		_mainStage->setBorderType(3);
+		_stage->setBorderType(3);
 	else
-		_mainStage->disableBorder();
+		_stage->disableBorder();
 
 	_surface = new Graphics::ManagedSurface;
 	_wm->setScreen(_surface);
-	_wm->addWindowInitialized(_mainStage);
-	_wm->setActiveWindow(_mainStage->getId());
+	_wm->addWindowInitialized(_stage);
+	_wm->setActiveWindow(_stage->getId());
 	setPalette(-1);
 
-	_currentStage = _mainStage;
+	_currentWindow = _stage;
 
 	_lingo = new Lingo(this);
 	_soundManager = new DirectorSound(this);
 
 	if (getGameGID() == GID_TEST) {
-		_currentStage->runTests();
+		_currentWindow->runTests();
 		return Common::kNoError;
 	} else if (getGameGID() == GID_TESTALL) {
-		_currentStage->enqueueAllMovies();
+		_currentWindow->enqueueAllMovies();
 	}
 
 	if (getPlatform() == Common::kPlatformWindows)
@@ -195,18 +195,18 @@ Common::Error DirectorEngine::run() {
 		_sharedCastFile = "Shared.dir";
 	}
 
-	Common::Error err = _currentStage->loadInitialMovie();
+	Common::Error err = _currentWindow->loadInitialMovie();
 	if (err.getCode() != Common::kNoError)
 		return err;
 
 	bool loop = true;
 
 	while (loop) {
-		if (_mainStage->getCurrentMovie())
+		if (_stage->getCurrentMovie())
 			processEvents();
 
-		_currentStage = _mainStage;
-		loop = _currentStage->step();
+		_currentWindow = _stage;
+		loop = _currentWindow->step();
 
 		if (loop) {
 			DatumArray *windowList = g_lingo->_windowList.u.farr;
@@ -214,8 +214,8 @@ Common::Error DirectorEngine::run() {
 				if ((*windowList)[i].type != OBJECT || (*windowList)[i].u.obj->getObjType() != kWindowObj)
 					continue;
 
-				_currentStage = static_cast<Stage *>((*windowList)[i].u.obj);
-				_currentStage->step();
+				_currentWindow = static_cast<Window *>((*windowList)[i].u.obj);
+				_currentWindow->step();
 			}
 		}
 

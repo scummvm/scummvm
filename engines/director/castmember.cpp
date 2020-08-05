@@ -27,7 +27,7 @@
 #include "director/director.h"
 #include "director/castmember.h"
 #include "director/movie.h"
-#include "director/stage.h"
+#include "director/window.h"
 #include "director/stxt.h"
 
 namespace Director {
@@ -169,7 +169,7 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox) {
 		return nullptr;
 	}
 
-	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentStage(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
+	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
 	widget->getSurface()->blitFrom(*_img->getSurface());
 	return widget;
 }
@@ -482,7 +482,7 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox) {
 
 	switch (_type) {
 	case kCastText:
-		widget = new Graphics::MacText(g_director->getCurrentStage(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), bbox.width(), getAlignment(), 0, _borderSize, _gutterSize, _boxShadow, _textShadow);
+		widget = new Graphics::MacText(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), bbox.width(), getAlignment(), 0, _borderSize, _gutterSize, _boxShadow, _textShadow);
 		((Graphics::MacText *)widget)->draw();
 		((Graphics::MacText *)widget)->_focusable = _editable;
 		((Graphics::MacText *)widget)->setEditable(_editable);
@@ -492,7 +492,7 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox) {
 	case kCastButton:
 		// note that we use _initialRect for the dimensions of the button;
 		// the values provided in the sprite bounding box are ignored
-		widget = new Graphics::MacButton(Graphics::MacButtonType(_buttonType), getAlignment(), g_director->getCurrentStage(), bbox.left, bbox.top, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, getForeColor(), 0xff);
+		widget = new Graphics::MacButton(Graphics::MacButtonType(_buttonType), getAlignment(), g_director->getCurrentWindow(), bbox.left, bbox.top, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, getForeColor(), 0xff);
 		((Graphics::MacButton *)widget)->draw();
 		widget->_focusable = true;
 

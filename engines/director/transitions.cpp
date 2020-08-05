@@ -28,7 +28,7 @@
 #include "director/director.h"
 #include "director/movie.h"
 #include "director/score.h"
-#include "director/stage.h"
+#include "director/window.h"
 #include "director/util.h"
 #include "director/lingo/lingo.h"
 
@@ -131,12 +131,12 @@ struct {
 	TRANS(kTransDissolveBits,			kTransAlgoDissolve,	kTransDirNone)
 };
 
-void Stage::exitTransition(Graphics::ManagedSurface *nextFrame, Common::Rect clipRect) {
+void Window::exitTransition(Graphics::ManagedSurface *nextFrame, Common::Rect clipRect) {
 	_composeSurface->blitFrom(*nextFrame, clipRect, Common::Point(clipRect.left, clipRect.top));
 	g_system->copyRectToScreen(_composeSurface->getBasePtr(clipRect.left, clipRect.top), _composeSurface->pitch, clipRect.left, clipRect.top, clipRect.width(), clipRect.height());
 }
 
-void Stage::playTransition(uint16 transDuration, uint8 transArea, uint8 transChunkSize, TransitionType transType, uint frame) {
+void Window::playTransition(uint16 transDuration, uint8 transArea, uint8 transChunkSize, TransitionType transType, uint frame) {
 	// Play a transition and return the number of subframes rendered
 	TransParams t;
 
@@ -551,7 +551,7 @@ static uint32 randomSeed[33] = {
 	0x14000000UL, 0x32800000UL, 0x48000000UL, 0xa3000000UL
 };
 
-void Stage::dissolveTrans(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *nextFrame) {
+void Window::dissolveTrans(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *nextFrame) {
 	uint w = clipRect.width();
 	uint h = clipRect.height();
 	uint realw = w, realh = h;
@@ -783,7 +783,7 @@ static byte dissolvePatterns[][8] = {
 	{ 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }
 };
 
-void Stage::dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *nextFrame) {
+void Window::dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *nextFrame) {
 	t.steps = 64;
 	t.stepDuration = t.duration / t.steps;
 
@@ -820,7 +820,7 @@ void Stage::dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect, Graphi
 	}
 }
 
-void Stage::transMultiPass(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *nextFrame) {
+void Window::transMultiPass(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *nextFrame) {
 	Common::Rect rto;
 	uint w = clipRect.width();
 	uint h = clipRect.height();
@@ -996,7 +996,7 @@ void Stage::transMultiPass(TransParams &t, Common::Rect &clipRect, Graphics::Man
 	}
 }
 
-void Stage::transZoom(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *nextFrame) {
+void Window::transZoom(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *nextFrame) {
 	Common::Rect r = clipRect;
 	uint w = clipRect.width();
 	uint h = clipRect.height();
@@ -1045,7 +1045,7 @@ void Stage::transZoom(TransParams &t, Common::Rect &clipRect, Graphics::ManagedS
 	}
 }
 
-void Stage::initTransParams(TransParams &t, Common::Rect &clipRect) {
+void Window::initTransParams(TransParams &t, Common::Rect &clipRect) {
 	int w = clipRect.width();
 	int h = clipRect.height();
 	int m = MIN(w, h);

@@ -41,7 +41,7 @@
 #include "director/cursor.h"
 #include "director/channel.h"
 #include "director/sprite.h"
-#include "director/stage.h"
+#include "director/window.h"
 #include "director/util.h"
 #include "director/lingo/lingo.h"
 
@@ -49,7 +49,7 @@ namespace Director {
 
 Score::Score(Movie *movie) {
 	_movie = movie;
-	_stage = movie->getStage();
+	_window = movie->getWindow();
 	_vm = _movie->getVM();
 	_lingo = _vm->getLingo();
 
@@ -391,9 +391,9 @@ void Score::update() {
 		// TODO: Director 6 step: send prepareFrame event to all sprites and the script channel in upcoming frame
 	}
 
-	// Stage is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell, p.100)
+	// Window is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell, p.100)
 	renderFrame(_currentFrame);
-	_stage->_newMovieStarted = false;
+	_window->_newMovieStarted = false;
 
 	// Enter and exit from previous frame
 	if (!_vm->_playbackPaused) {
@@ -457,7 +457,7 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 		g_director->setPalette(resolvePaletteId(currentPalette));
 	}
 
-	_stage->render();
+	_window->render();
 
 	if (_frames[frameId]->_sound1 || _frames[frameId]->_sound2)
 		playSoundChannel(frameId);
@@ -465,16 +465,16 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 
 bool Score::renderTransition(uint16 frameId) {
 	Frame *currentFrame = _frames[frameId];
-	TransParams *tp = _stage->_puppetTransition;
+	TransParams *tp = _window->_puppetTransition;
 
 	if (tp) {
-		_stage->playTransition(tp->duration, tp->area, tp->chunkSize, tp->type, frameId);
+		_window->playTransition(tp->duration, tp->area, tp->chunkSize, tp->type, frameId);
 
-		delete _stage->_puppetTransition;;
-		_stage->_puppetTransition = nullptr;
+		delete _window->_puppetTransition;;
+		_window->_puppetTransition = nullptr;
 		return true;
 	} else if (currentFrame->_transType) {
-		_stage->playTransition(currentFrame->_transDuration, currentFrame->_transArea, currentFrame->_transChunkSize, currentFrame->_transType, frameId);
+		_window->playTransition(currentFrame->_transDuration, currentFrame->_transArea, currentFrame->_transChunkSize, currentFrame->_transType, frameId);
 		return true;
 	} else {
 		return false;
@@ -482,7 +482,7 @@ bool Score::renderTransition(uint16 frameId) {
 }
 
 void Score::renderSprites(uint16 frameId, RenderMode mode) {
-	if (_stage->_newMovieStarted)
+	if (_window->_newMovieStarted)
 		mode = kRenderForceUpdate;
 
 	for (uint16 i = 0; i < _channels.size(); i++) {
@@ -499,10 +499,10 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 
 		if (channel->isDirty(nextSprite) || widgetRedrawn || mode == kRenderForceUpdate) {
 			if (!currentSprite->_trails)
-				_stage->addDirtyRect(channel->getBbox());
+				_window->addDirtyRect(channel->getBbox());
 
 			channel->setClean(nextSprite, i);
-			_stage->addDirtyRect(channel->getBbox());
+			_window->addDirtyRect(channel->getBbox());
 			debugC(2, kDebugImages, "Score::renderSprites(): CH: %-3d castId: %03d(%s) [ink: %x, puppet: %d, moveable: %d, visible: %d] [bbox: %d,%d,%d,%d] [type: %d fg: %d bg: %d] [script: %d]", i, currentSprite->_castId, numToCastNum(currentSprite->_castId), currentSprite->_ink, currentSprite->_puppet, currentSprite->_moveable, channel->_visible, PRINT_RECT(channel->getBbox()), currentSprite->_spriteType, currentSprite->_foreColor, currentSprite->_backColor, currentSprite->_scriptId);
 		} else {
 			channel->setClean(nextSprite, i, true);
@@ -533,7 +533,7 @@ void Score::renderCursor(uint spriteId) {
 }
 
 void Score::screenShot() {
-	Graphics::Surface rawSurface = _stage->getSurface()->rawSurface();
+	Graphics::Surface rawSurface = _window->getSurface()->rawSurface();
 	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 0, 8, 16, 24);
 	Graphics::Surface *newSurface = rawSurface.convertTo(requiredFormat_4byte, _vm->getPalette());
 	Common::String currentPath = _vm->getCurrentPath().c_str();

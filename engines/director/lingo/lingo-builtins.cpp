@@ -35,7 +35,7 @@
 #include "director/sprite.h"
 #include "director/cursor.h"
 #include "director/channel.h"
-#include "director/stage.h"
+#include "director/window.h"
 #include "director/stxt.h"
 #include "director/util.h"
 #include "director/lingo/lingo.h"
@@ -1053,7 +1053,7 @@ void LB::b_closeDA(int nargs) {
 
 void LB::b_closeResFile(int nargs) {
 	Datum d = g_lingo->pop();
-	Common::String resFileName = g_director->getCurrentStage()->getCurrentPath() + d.asString();
+	Common::String resFileName = g_director->getCurrentWindow()->getCurrentPath() + d.asString();
 
 	g_director->_openResFiles.erase(resFileName);
 }
@@ -1086,7 +1086,7 @@ void LB::b_openDA(int nargs) {
 
 void LB::b_openResFile(int nargs) {
 	Datum d = g_lingo->pop();
-	Common::String resPath = g_director->getCurrentStage()->getCurrentPath() + d.asString();
+	Common::String resPath = g_director->getCurrentWindow()->getCurrentPath() + d.asString();
 
 	if (g_director->getPlatform() == Common::kPlatformWindows) {
 		warning("STUB: BUILDBOT: b_openResFile(%s) on Windows", d.asString().c_str());
@@ -1862,7 +1862,7 @@ void LB::b_puppetTempo(int nargs) {
 
 void LB::b_puppetTransition(int nargs) {
 	// puppetTransition whichTransition [, time] [, chunkSize] [, changeArea]
-	Stage *stage = g_director->getCurrentStage();
+	Window *stage = g_director->getCurrentWindow();
 	uint16 duration = 250, area = 1, chunkSize = 1, type = 0;
 
 	switch (nargs) {
@@ -1918,7 +1918,7 @@ void LB::b_rollOver(int nargs) {
 		return;
 	}
 
-	Common::Point pos = g_director->getCurrentStage()->getMousePos();
+	Common::Point pos = g_director->getCurrentWindow()->getMousePos();
 
 	if (score->checkSpriteIntersection(arg, pos))
 		res.u.i = 1; // TRUE
@@ -1939,7 +1939,7 @@ void LB::b_spriteBox(int nargs) {
 	if (!channel)
 		return;
 
-	g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
+	g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
 	channel->setBbox(l, t, r, b);
 	channel->_dirty = true;
 }
@@ -2035,7 +2035,7 @@ void LB::b_updateStage(int nargs) {
 	}
 
 	Score *score = movie->getScore();
-	if (movie->getStage()->render())
+	if (movie->getWindow()->render())
 		g_director->draw();
 
 	if (debugChannelSet(-1, kDebugFewFramesOnly)) {
@@ -2335,7 +2335,7 @@ void LB::b_window(int nargs) {
 		if ((*windowList)[i].type != OBJECT || (*windowList)[i].u.obj->getObjType() != kWindowObj)
 			continue;
 
-		Stage *window = static_cast<Stage *>((*windowList)[i].u.obj);
+		Window *window = static_cast<Window *>((*windowList)[i].u.obj);
 		if (window->getName().equalsIgnoreCase(windowName)) {
 			g_lingo->push(window);
 			return;
@@ -2343,7 +2343,7 @@ void LB::b_window(int nargs) {
 	}
 
 	Graphics::MacWindowManager *wm = g_director->getMacWindowManager();
-	Stage *window = new Stage(wm->getNextId(), false, false, false, wm, g_director);
+	Window *window = new Window(wm->getNextId(), false, false, false, wm, g_director);
 	window->setName(windowName);
 	window->setTitle(windowName);
 	window->resize(1, 1, true);

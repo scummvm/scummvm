@@ -14,7 +14,6 @@ MODULE_OBJS = \
 	images.o \
 	movie.o \
 	resource.o \
-	stage.o \
 	score.o \
 	sound.o \
 	sprite.o \
@@ -23,6 +22,7 @@ MODULE_OBJS = \
 	transitions.o \
 	util.o \
 	video.o \
+	window.o \
 	lingo/lingo.o \
 	lingo/lingo-builtins.o \
 	lingo/lingo-bytecode.o \

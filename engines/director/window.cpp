@@ -31,7 +31,7 @@
 #include "director/cast.h"
 #include "director/lingo/lingo.h"
 #include "director/movie.h"
-#include "director/stage.h"
+#include "director/window.h"
 #include "director/score.h"
 #include "director/castmember.h"
 #include "director/cursor.h"
@@ -41,8 +41,8 @@
 
 namespace Director {
 
-Stage::Stage(int id, bool scrollable, bool resizable, bool editable, Graphics::MacWindowManager *wm, DirectorEngine *vm)
-	: MacWindow(id, scrollable, resizable, editable, wm), Object<Stage>("Stage") {
+Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics::MacWindowManager *wm, DirectorEngine *vm)
+	: MacWindow(id, scrollable, resizable, editable, wm), Object<Window>("Window") {
 	_vm = vm;
 	_stageColor = 0;
 	_puppetTransition = nullptr;
@@ -57,7 +57,7 @@ Stage::Stage(int id, bool scrollable, bool resizable, bool editable, Graphics::M
 	_startFrame = _vm->getStartMovie().startFrame;
 }
 
-Stage::~Stage() {
+Window::~Window() {
 	delete _currentMovie;
 	if (_macBinary) {
 		delete _macBinary;
@@ -65,7 +65,7 @@ Stage::~Stage() {
 	}
 }
 
-void Stage::invertChannel(Channel *channel) {
+void Window::invertChannel(Channel *channel) {
 	const Graphics::Surface *mask = channel->getMask(true);
 	Common::Rect destRect = channel->getBbox();
 
@@ -79,7 +79,7 @@ void Stage::invertChannel(Channel *channel) {
 	}
 }
 
-bool Stage::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
+bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 	if (!_currentMovie)
 		return false;
 
@@ -113,7 +113,7 @@ bool Stage::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 	return true;
 }
 
-void Stage::setStageColor(uint stageColor) {
+void Window::setStageColor(uint stageColor) {
 	if (stageColor != _stageColor) {
 		_stageColor = stageColor;
 		reset();
@@ -121,12 +121,12 @@ void Stage::setStageColor(uint stageColor) {
 	}
 }
 
-void Stage::reset() {
+void Window::reset() {
 	_composeSurface->clear(_stageColor);
 	_contentIsDirty = true;
 }
 
-void Stage::addDirtyRect(const Common::Rect &r) {
+void Window::addDirtyRect(const Common::Rect &r) {
 	if (!r.isValidRect())
 		return;
 
@@ -137,12 +137,12 @@ void Stage::addDirtyRect(const Common::Rect &r) {
 		_dirtyRects.push_back(bounds);
 }
 
-void Stage::markAllDirty() {
+void Window::markAllDirty() {
 	_dirtyRects.clear();
 	_dirtyRects.push_back(Common::Rect(_composeSurface->w, _composeSurface->h));
 }
 
-void Stage::mergeDirtyRects() {
+void Window::mergeDirtyRects() {
 	Common::List<Common::Rect>::iterator rOuter, rInner;
 
 	// Process the dirty rect list to find any rects to merge
@@ -164,7 +164,7 @@ void Stage::mergeDirtyRects() {
 	}
 }
 
-void Stage::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::ManagedSurface *blitTo) {
+void Window::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::ManagedSurface *blitTo) {
 	Common::Rect srcRect = channel->getBbox();
 	destRect.clip(srcRect);
 
@@ -182,11 +182,11 @@ void Stage::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Manag
 			inkBlitSurface(&pd, srcRect, channel->getMask());
 		}
 	} else {
-		warning("Stage::inkBlitFrom: No source surface");
+		warning("Window::inkBlitFrom: No source surface");
 	}
 }
 
-void Stage::inkBlitShape(DirectorPlotData *pd, Common::Rect &srcRect) {
+void Window::inkBlitShape(DirectorPlotData *pd, Common::Rect &srcRect) {
 	if (!pd->ms)
 		return;
 
@@ -246,11 +246,11 @@ void Stage::inkBlitShape(DirectorPlotData *pd, Common::Rect &srcRect) {
 		Graphics::drawLine(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, pd->ms->foreColor, inkDrawPixel, pd);
 		break;
 	default:
-		warning("Stage::inkBlitFrom: Expected shape type but got type %d", pd->ms->spriteType);
+		warning("Window::inkBlitFrom: Expected shape type but got type %d", pd->ms->spriteType);
 	}
 }
 
-void Stage::inkBlitSurface(DirectorPlotData *pd, Common::Rect &srcRect, const Graphics::Surface *mask) {
+void Window::inkBlitSurface(DirectorPlotData *pd, Common::Rect &srcRect, const Graphics::Surface *mask) {
 	if (!pd->srf)
 		return;
 
@@ -272,7 +272,7 @@ void Stage::inkBlitSurface(DirectorPlotData *pd, Common::Rect &srcRect, const Gr
 	}
 }
 
-void Stage::inkBlitStretchSurface(DirectorPlotData *pd, Common::Rect &srcRect, const Graphics::Surface *mask) {
+void Window::inkBlitStretchSurface(DirectorPlotData *pd, Common::Rect &srcRect, const Graphics::Surface *mask) {
 	if (!pd->srf)
 		return;
 
@@ -298,7 +298,7 @@ void Stage::inkBlitStretchSurface(DirectorPlotData *pd, Common::Rect &srcRect, c
 	}
 }
 
-int Stage::preprocessColor(DirectorPlotData *p, int src) {
+int Window::preprocessColor(DirectorPlotData *p, int src) {
 	// HACK: Right now this method is just used for adjusting the colourization on text
 	// sprites, as it would be costly to colourize the chunks on the fly each
 	// time a section needs drawing. It's ugly but mostly works.
@@ -333,11 +333,11 @@ int Stage::preprocessColor(DirectorPlotData *p, int src) {
 	return src;
 }
 
-Common::Point Stage::getMousePos() {
+Common::Point Window::getMousePos() {
 	return g_system->getEventManager()->getMousePos() - Common::Point(_innerDims.left, _innerDims.top);
 }
 
-void Stage::setVisible(bool visible, bool silent) {
+void Window::setVisible(bool visible, bool silent) {
 	// setting visible triggers movie load
 	if (!_currentMovie && !silent) {
 		Common::String movieName = getName();
@@ -347,7 +347,7 @@ void Stage::setVisible(bool visible, bool silent) {
 	BaseMacWindow::setVisible(visible);
 }
 
-bool Stage::setNextMovie(Common::String &movieFilenameRaw) {
+bool Window::setNextMovie(Common::String &movieFilenameRaw) {
 	Common::String movieFilename = pathMakeRelative(movieFilenameRaw);
 	Common::String cleanedFilename;
 
@@ -378,7 +378,7 @@ bool Stage::setNextMovie(Common::String &movieFilenameRaw) {
 		}
 	}
 
-	debug(1, "Stage::setNextMovie: '%s' -> '%s' -> '%s' -> '%s'", movieFilenameRaw.c_str(), convertPath(movieFilenameRaw).c_str(),
+	debug(1, "Window::setNextMovie: '%s' -> '%s' -> '%s' -> '%s'", movieFilenameRaw.c_str(), convertPath(movieFilenameRaw).c_str(),
 			movieFilename.c_str(), cleanedFilename.c_str());
 
 	if (!fileExists) {
@@ -390,7 +390,7 @@ bool Stage::setNextMovie(Common::String &movieFilenameRaw) {
 	return true;
 }
 
-bool Stage::step() {
+bool Window::step() {
 	// finish last movie
 	if (_currentMovie && _currentMovie->getScore()->_playState == kPlayStopped) {
 		debugC(3, kDebugEvents, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");

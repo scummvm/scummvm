@@ -23,7 +23,7 @@
 #include "common/endian.h"
 
 #include "director/director.h"
-#include "director/stage.h"
+#include "director/window.h"
 #include "director/util.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-code.h"
@@ -89,7 +89,7 @@ void Lingo::initMethods() {
 		sym.u.bltin = mtd->func;
 		_methods[mtd->name] = sym;
 	}
-	Stage::initMethods(windowMethods);
+	Window::initMethods(windowMethods);
 }
 
 static struct XLibProto {
@@ -331,36 +331,36 @@ void LM::m_respondsTo(int nargs) {
 
 // Window
 
-Common::String Stage::asString() {
+Common::String Window::asString() {
 	return "window \"" + getName() + "\"";
 }
 
-bool Stage::hasProp(const Common::String &propName) {
+bool Window::hasProp(const Common::String &propName) {
 	Common::String fieldName = Common::String::format("%d%s", kTheWindow, propName.c_str());
 	return g_lingo->_theEntityFields.contains(fieldName);
 }
 
-Datum Stage::getProp(const Common::String &propName) {
+Datum Window::getProp(const Common::String &propName) {
 	Common::String fieldName = Common::String::format("%d%s", kTheWindow, propName.c_str());
 	if (g_lingo->_theEntityFields.contains(fieldName)) {
 		return getField(g_lingo->_theEntityFields[fieldName]->field);
 	}
 
-	warning("Stage::getProp: unknown property '%s'", propName.c_str());
+	warning("Window::getProp: unknown property '%s'", propName.c_str());
 	return Datum();
 }
 
-bool Stage::setProp(const Common::String &propName, const Datum &value) {
+bool Window::setProp(const Common::String &propName, const Datum &value) {
 	Common::String fieldName = Common::String::format("%d%s", kTheWindow, propName.c_str());
 	if (g_lingo->_theEntityFields.contains(fieldName)) {
 		return setField(g_lingo->_theEntityFields[fieldName]->field, value);
 	}
 
-	warning("Stage::setProp: unknown property '%s'", propName.c_str());
+	warning("Window::setProp: unknown property '%s'", propName.c_str());
 	return false;
 }
 
-Datum Stage::getField(int field) {
+Datum Window::getField(int field) {
 	switch (field) {
 	case kTheTitle:
 		return getTitle();
@@ -369,12 +369,12 @@ Datum Stage::getField(int field) {
 	case kTheVisible:
 		return isVisible();
 	default:
-		warning("Stage::getField: unhandled field '%s'", g_lingo->field2str(field));
+		warning("Window::getField: unhandled field '%s'", g_lingo->field2str(field));
 		return Datum();
 	}
 }
 
-bool Stage::setField(int field, const Datum &value) {
+bool Window::setField(int field, const Datum &value) {
 	switch (field) {
 	case kTheTitle:
 		setTitle(value.asString());
@@ -386,18 +386,18 @@ bool Stage::setField(int field, const Datum &value) {
 		setVisible(value.asInt());
 		return true;
 	default:
-		warning("Stage::setField: unhandled field '%s'", g_lingo->field2str(field));
+		warning("Window::setField: unhandled field '%s'", g_lingo->field2str(field));
 		return false;
 	}
 }
 
 void LM::m_close(int nargs) {
-	Stage *me = static_cast<Stage *>(g_lingo->_currentMe.u.obj);
+	Window *me = static_cast<Window *>(g_lingo->_currentMe.u.obj);
 	me->setVisible(false);
 }
 
 void LM::m_forget(int nargs) {
-	Stage *me = static_cast<Stage *>(g_lingo->_currentMe.u.obj);
+	Window *me = static_cast<Window *>(g_lingo->_currentMe.u.obj);
 	DatumArray *windowList = g_lingo->_windowList.u.farr;
 
 	uint i;
@@ -405,7 +405,7 @@ void LM::m_forget(int nargs) {
 		if ((*windowList)[i].type != OBJECT || (*windowList)[i].u.obj->getObjType() != kWindowObj)
 			continue;
 
-		Stage *window = static_cast<Stage *>((*windowList)[i].u.obj);
+		Window *window = static_cast<Window *>((*windowList)[i].u.obj);
 		if (window == me)
 			break;
 	}
@@ -418,14 +418,14 @@ void LM::m_forget(int nargs) {
 		if (it->_value.type != OBJECT || it->_value.u.obj->getObjType() != kWindowObj)
 			continue;
 
-		Stage *window = static_cast<Stage *>((*windowList)[i].u.obj);
+		Window *window = static_cast<Window *>((*windowList)[i].u.obj);
 		if (window == me)
 			g_lingo->_globalvars[it->_key] = 0;
 	}
 }
 
 void LM::m_open(int nargs) {
-	Stage *me = static_cast<Stage *>(g_lingo->_currentMe.u.obj);
+	Window *me = static_cast<Window *>(g_lingo->_currentMe.u.obj);
 	me->setVisible(true);
 }
 

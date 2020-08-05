@@ -63,7 +63,7 @@ struct DirectorGameDescription;
 class DirectorSound;
 class Lingo;
 class Movie;
-class Stage;
+class Window;
 class Score;
 class Channel;
 class CastMember;
@@ -182,9 +182,9 @@ public:
 	Graphics::MacWindowManager *getMacWindowManager() const { return _wm; }
 	Archive *getMainArchive() const;
 	Lingo *getLingo() const { return _lingo; }
-	Stage *getMainStage() const { return _mainStage; }
-	Stage *getCurrentStage() const { return _currentStage; }
-	void setCurrentStage(Stage *stage) { _currentStage = stage; };
+	Window *getStage() const { return _stage; }
+	Window *getCurrentWindow() const { return _currentWindow; }
+	void setCurrentWindow(Window *window) { _currentWindow = window; };
 	Movie *getCurrentMovie() const;
 	void setCurrentMovie(Movie *movie);
 	Common::String getCurrentPath() const;
@@ -245,9 +245,9 @@ private:
 	Lingo *_lingo;
 	uint16 _version;
 
-	Stage *_mainStage;
+	Window *_stage;
 	Datum *_windowList; // Lingo list
-	Stage *_currentStage;
+	Window *_currentWindow;
 
 	Graphics::MacPatterns _director3Patterns;
 	Graphics::MacPatterns _director3QuickDrawPatterns;
