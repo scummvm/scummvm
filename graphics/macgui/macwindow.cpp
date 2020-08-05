@@ -232,11 +232,42 @@ void MacWindow::drawBorder() {
 	_borderIsDirty = false;
 
 	ManagedSurface *g = &_borderSurface;
+	int width = _borderSurface.w;
+	int titleColor;
+	int titleY;
+	int titleHeight;
+	int sidesWidth;
 
 	if (_macBorder.hasBorder(_active)) {
 		drawBorderFromSurface(g);
+		titleColor = _macBorder.getOffset().dark ? _wm->_colorWhite : _wm->_colorBlack;
+		titleY = _macBorder.getOffset().titleTop;
+		titleHeight = _macBorder.getOffset().top - titleY - _macBorder.getOffset().titleBottom;
+		sidesWidth = _macBorder.getOffset().left + _macBorder.getOffset().right;
 	} else {
 		drawSimpleBorder(g);
+		titleColor = _wm->_colorBlack;
+		titleY = 0;
+		titleHeight = _borderWidth;
+		sidesWidth = _borderWidth * 2;
+	}
+
+	if (_titleVisible && !_title.empty()) {
+		const Graphics::Font *font = getTitleFont();
+		int yOff = _wm->_fontMan->hasBuiltInFonts() ? 3 : 1;
+
+		int w = font->getStringWidth(_title) + 10;
+		int maxWidth = width - sidesWidth * 2 - 7;
+		if (w > maxWidth)
+			w = maxWidth;
+
+		if (_macBorder.hasBorder(_active)) {
+			if (!_macBorder.getOffset().dark)
+				fillRect(g, (width - w) / 2, titleY, w, titleHeight, _wm->_colorOffWhite);
+		} else {
+			drawBox(g, (width - w) / 2, titleY, w, titleHeight);
+		}
+		font->drawString(g, _title, (width - w) / 2 + 5, titleY + yOff, w, titleColor);
 	}
 }
 
@@ -260,8 +291,7 @@ void MacWindow::drawBorderFromSurface(ManagedSurface *g) {
 }
 
 void MacWindow::drawSimpleBorder(ManagedSurface *g) {
-
-	bool active = _active, scrollable = _scrollable, closeable = _active, drawTitle = _titleVisible && !_title.empty();
+	bool active = _active, scrollable = _scrollable, closeable = _active;
 	const int size = kBorderWidth;
 	int x = 0;
 	int y = 0;
@@ -321,18 +351,6 @@ void MacWindow::drawSimpleBorder(ManagedSurface *g) {
 			}
 		}
 	}
-
-	if (drawTitle) {
-		const Graphics::Font *font = getTitleFont();
-		int yOff = _wm->_fontMan->hasBuiltInFonts() ? 3 : 1;
-
-		int w = font->getStringWidth(_title) + 10;
-		int maxWidth = width - size * 2 - 7;
-		if (w > maxWidth)
-			w = maxWidth;
-		drawBox(g, x + (width - w) / 2, y, w, size);
-		font->drawString(g, _title, x + (width - w) / 2 + 5, y + yOff, w, _wm->_colorBlack);
-	}
 }
 
 void MacWindow::drawPattern() {
@@ -366,6 +384,18 @@ void MacWindow::setScroll(float scrollPos, float scrollSize) {
 }
 
 void MacWindow::loadBorder(Common::SeekableReadStream &file, bool active, int lo, int ro, int to, int bo) {
+	BorderOffsets offsets;
+	offsets.left = lo;
+	offsets.right = ro;
+	offsets.top = to;
+	offsets.bottom = bo;
+	offsets.titleTop = -1;
+	offsets.titleBottom = -1;
+	offsets.dark = false;
+	loadBorder(file, active, offsets);
+}
+
+void MacWindow::loadBorder(Common::SeekableReadStream &file, bool active, BorderOffsets offsets) {
 	Image::BitmapDecoder bmpDecoder;
 	Graphics::Surface *source;
 	Graphics::TransparentSurface *surface = new Graphics::TransparentSurface();
@@ -379,10 +409,22 @@ void MacWindow::loadBorder(Common::SeekableReadStream &file, bool active, int lo
 	source->free();
 	delete source;
 
-	setBorder(surface, active, lo, ro, to, bo);
+	setBorder(surface, active, offsets);
 }
 
 void MacWindow::setBorder(Graphics::TransparentSurface *surface, bool active, int lo, int ro, int to, int bo) {
+	BorderOffsets offsets;
+	offsets.left = lo;
+	offsets.right = ro;
+	offsets.top = to;
+	offsets.bottom = bo;
+	offsets.titleTop = -1;
+	offsets.titleBottom = -1;
+	offsets.dark = false;
+	setBorder(surface, active, offsets);
+}
+
+void MacWindow::setBorder(Graphics::TransparentSurface *surface, bool active, BorderOffsets offsets) {
 	surface->applyColorKey(255, 0, 255, false);
 
 	if (active)
@@ -390,8 +432,8 @@ void MacWindow::setBorder(Graphics::TransparentSurface *surface, bool active, in
 	else
 		_macBorder.addInactiveBorder(surface);
 
-	if (lo + ro + to + bo > -4) { // Checking against default -1
-		_macBorder.setOffsets(lo, ro, to, bo);
+	if (offsets.left + offsets.right + offsets.top + offsets.bottom > -4) { // Checking against default -1
+		_macBorder.setOffsets(offsets);
 	}
 
 	updateOuterDims();
@@ -584,17 +626,17 @@ void MacWindow::setBorderType(int borderType) {
 	if (borderType < 0) {
 		disableBorder();
 	} else {
-		Common::Rect offsets = _wm->getBorderOffsets(borderType);
+		BorderOffsets offsets = _wm->getBorderOffsets(borderType);
 	
 		Common::SeekableReadStream *activeFile = _wm->getBorderFile(borderType, true);
 		if (activeFile) {
-			loadBorder(*activeFile, true, offsets.left, offsets.right, offsets.top, offsets.bottom);
+			loadBorder(*activeFile, true, offsets);
 			delete activeFile;
 		}
 
 		Common::SeekableReadStream *inactiveFile = _wm->getBorderFile(borderType, false);
 		if (inactiveFile) {
-			loadBorder(*inactiveFile, false, offsets.left, offsets.right, offsets.top, offsets.bottom);
+			loadBorder(*inactiveFile, false, offsets);
 			delete inactiveFile;
 		}
 	}

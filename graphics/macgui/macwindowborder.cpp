@@ -33,7 +33,13 @@ MacWindowBorder::MacWindowBorder() : _activeInitialized(false), _inactiveInitial
 	_activeBorder = nullptr;
 	_inactiveBorder = nullptr;
 
-	_borderOffsets.right = -1; // make invalid rect
+	_borderOffsets.left = -1;
+	_borderOffsets.right = -1;
+	_borderOffsets.top = -1;
+	_borderOffsets.bottom = -1;
+	_borderOffsets.titleTop = -1;
+	_borderOffsets.titleBottom = -1;
+	_borderOffsets.dark = false;
 }
 
 MacWindowBorder::~MacWindowBorder() {
@@ -78,10 +84,17 @@ void MacWindowBorder::setOffsets(int left, int right, int top, int bottom) {
 }
 
 void MacWindowBorder::setOffsets(Common::Rect &rect) {
-	_borderOffsets = rect;
+	_borderOffsets.left = rect.left;
+	_borderOffsets.right = rect.right;
+	_borderOffsets.top = rect.top;
+	_borderOffsets.bottom = rect.bottom;
 }
 
-Common::Rect &MacWindowBorder::getOffset() {
+void MacWindowBorder::setOffsets(const BorderOffsets &offsets) {
+	_borderOffsets = offsets;
+}
+
+BorderOffsets &MacWindowBorder::getOffset() {
 	return _borderOffsets;
 }
 

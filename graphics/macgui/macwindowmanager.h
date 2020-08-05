@@ -289,7 +289,7 @@ public:
 	void removeMarked();
 
 	void loadDataBundle();
-	Common::Rect getBorderOffsets(byte windowType);
+	BorderOffsets getBorderOffsets(byte windowType);
 	Common::SeekableReadStream *getBorderFile(byte windowType, bool isActive);
 
 public:
