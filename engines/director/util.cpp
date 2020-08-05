@@ -292,7 +292,17 @@ Common::String getPath(Common::String path, Common::String cwd) {
 	return cwd; // The path is not altered
 }
 
-bool testPath(Common::String &path) {
+bool testPath(Common::String &path, bool directory) {
+	if (directory) {
+		// TOOD: This directory-searching branch only works for one level from the
+		// current directory, but it fixes current game loading issues.
+		if (path.contains('/'))
+			return false;
+
+		Common::FSNode d = Common::FSNode(*g_director->getGameDataDir()).getChild(path);
+		return d.exists();
+	}
+
 	Common::File f;
 	if (f.open(path)) {
 		if (f.size())
@@ -302,10 +312,10 @@ bool testPath(Common::String &path) {
 	return false;
 }
 
-Common::String pathMakeRelative(Common::String path, bool recursive, bool addexts) {
+Common::String pathMakeRelative(Common::String path, bool recursive, bool addexts, bool directory) {
 	Common::String initialPath(path);
 
-	if (testPath(initialPath))
+	if (testPath(initialPath, directory))
 		return initialPath;
 
 	if (recursive) // first level
@@ -314,7 +324,6 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 	debug(2, "pathMakeRelative(): s1 %s -> %s", path.c_str(), initialPath.c_str());
 
 	initialPath = Common::normalizePath(g_director->getCurrentPath() + initialPath, '/');
-	Common::File f;
 	Common::String convPath = initialPath;
 
 	debug(2, "pathMakeRelative(): s2 %s", convPath.c_str());
@@ -322,18 +331,19 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 	// Strip the leading whitespace from the path
 	initialPath.trim();
 
-	if (testPath(initialPath))
+	if (testPath(initialPath, directory))
 		return initialPath;
 
 	// Now try to search the file
 	bool opened = false;
+
 	while (convPath.contains('/')) {
 		int pos = convPath.find('/');
 		convPath = Common::String(&convPath.c_str()[pos + 1]);
 
 		debug(2, "pathMakeRelative(): s3 try %s", convPath.c_str());
 
-		if (!f.open(convPath))
+		if (!testPath(convPath, directory))
 			continue;
 
 		debug(2, "pathMakeRelative(): s3 converted %s -> %s", path.c_str(), convPath.c_str());
@@ -349,7 +359,7 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 
 		debug(2, "pathMakeRelative(): s4 %s", convPath.c_str());
 
-		if (testPath(initialPath))
+		if (testPath(initialPath, directory))
 			return initialPath;
 
 		// Now try to search the file
@@ -359,7 +369,7 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 
 			debug(2, "pathMakeRelative(): s5 try %s", convPath.c_str());
 
-			if (!f.open(convPath))
+			if (!testPath(convPath, directory))
 				continue;
 
 			debug(2, "pathMakeRelative(): s5 converted %s -> %s", path.c_str(), convPath.c_str());
@@ -370,9 +380,7 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 		}
 	}
 
-	f.close();
-
-	if (!opened && recursive) {
+	if (!opened && recursive && !directory) {
 		// Hmmm. We couldn't find the path as is.
 		// Let's try to translate file path into 8.3 format
 		Common::String addedexts;
