@@ -144,25 +144,25 @@ bool Material::loadFromX(XFileLexer &lexer, const Common::String &filename) {
 	lexer.advanceToNextToken(); // skip optional name
 	lexer.advanceOnOpenBraces();
 
-	_diffuse.r() = readFloat(lexer);
-	_diffuse.g() = readFloat(lexer);
-	_diffuse.b() = readFloat(lexer);
-	_diffuse.a() = readFloat(lexer);
-	lexer.advanceToNextToken(); // skip semicolon
+	_diffuse.r() = lexer.readFloat();
+	_diffuse.g() = lexer.readFloat();
+	_diffuse.b() = lexer.readFloat();
+	_diffuse.a() = lexer.readFloat();
+	lexer.skipTerminator(); // skip semicolon
 
-	_shininess = readFloat(lexer);
+	_shininess = lexer.readFloat();
 
-	_specular.r() = readFloat(lexer);
-	_specular.g() = readFloat(lexer);
-	_specular.b() = readFloat(lexer);
+	_specular.r() = lexer.readFloat();
+	_specular.g() = lexer.readFloat();
+	_specular.b() = lexer.readFloat();
 	_specular.a() = 1.0f;
-	lexer.advanceToNextToken(); // skip semicolon
+	lexer.skipTerminator(); // skip semicolon
 
-	_emissive.r() = readFloat(lexer);
-	_emissive.g() = readFloat(lexer);
-	_emissive.b() = readFloat(lexer);
+	_emissive.r() = lexer.readFloat();
+	_emissive.g() = lexer.readFloat();
+	_emissive.b() = lexer.readFloat();
 	_emissive.a() = 1.0f;
-	lexer.advanceToNextToken();
+	lexer.skipTerminator();
 
 	while (!lexer.eof()) {
 		// according to assimp sources, we got both possibilities
@@ -172,7 +172,7 @@ bool Material::loadFromX(XFileLexer &lexer, const Common::String &filename) {
 			lexer.advanceToNextToken(); // skip optional name
 			lexer.advanceOnOpenBraces();
 
-			Common::String textureFilename = readString(lexer);
+			Common::String textureFilename = lexer.readString();
 			PathUtil::getDirectoryName(filename);
 			setTexture(PathUtil::getDirectoryName(filename) + textureFilename);
 			lexer.advanceToNextToken(); // skip semicolon

@@ -78,8 +78,8 @@ bool Animation::loadFromX(XFileLexer &lexer, AnimationSet *parentAnimSet) {
 			lexer.advanceToNextToken(); // skip name
 			lexer.advanceOnOpenBraces();
 
-			int keyType = readInt(lexer);
-			int keyCount = readInt(lexer);
+			int keyType = lexer.readInt();
+			int keyCount = lexer.readInt();
 
 			switch (keyType) {
 			case 0:
@@ -105,13 +105,13 @@ bool Animation::loadFromX(XFileLexer &lexer, AnimationSet *parentAnimSet) {
 			lexer.advanceOnOpenBraces();
 
 			// I think we can ignore these for the moment)
-			int openClosed = readInt(lexer);
-			int positionQuality = readInt(lexer);
+			int openClosed = lexer.readInt();
+			int positionQuality = lexer.readInt();
 			lexer.advanceToNextToken(); // skip closed braces
 		} else if (lexer.tokenIsOfType(OPEN_BRACES)) {
 			// this is a reference to a frame/bone, given as an identifier
 			lexer.advanceToNextToken();
-			_targetName = readString(lexer);
+			_targetName = lexer.readString();
 		} else if (lexer.reachedClosedBraces()) {
 			lexer.advanceToNextToken(); // skip closed braces
 			break;
@@ -301,19 +301,19 @@ uint32 Animation::getTotalTime() {
 bool Animation::loadRotationKeyData(XFileLexer &lexer, int count) {
 	for (int keyIndex = 0; keyIndex < count; ++keyIndex) {
 		BoneRotationKey *key = new BoneRotationKey;
-		key->_time = readInt(lexer);
+		key->_time = lexer.readInt();
 
-		int floatCount = readInt(lexer);
+		int floatCount = lexer.readInt();
 		assert(floatCount == 4);
 
 		// .X file format puts the w coordinate first
-		key->_rotation.w() = readFloat(lexer);
-		key->_rotation.x() = readFloat(lexer);
-		key->_rotation.y() = readFloat(lexer);
+		key->_rotation.w() = lexer.readFloat();
+		key->_rotation.x() = lexer.readFloat();
+		key->_rotation.y() = lexer.readFloat();
 		// mirror z component
-		key->_rotation.z() = -readFloat(lexer);
+		key->_rotation.z() = -lexer.readFloat();
 
-		lexer.advanceToNextToken(); // skip semicolon
+		lexer.skipTerminator(); // skip semicolon
 		lexer.advanceToNextToken(); // skip closed braces
 
 		_rotKeys.push_back(key);
@@ -325,16 +325,16 @@ bool Animation::loadRotationKeyData(XFileLexer &lexer, int count) {
 bool Animation::loadScaleKeyData(XFileLexer &lexer, int count) {
 	for (int keyIndex = 0; keyIndex < count; ++keyIndex) {
 		BoneScaleKey *key = new BoneScaleKey;
-		key->_time = readInt(lexer);
+		key->_time = lexer.readInt();
 
-		int floatCount = readInt(lexer);
+		int floatCount = lexer.readInt();
 		assert(floatCount == 3);
 
 		for (int i = 0; i < floatCount; ++i) {
-			key->_scale.getData()[i] = readFloat(lexer);
+			key->_scale.getData()[i] = lexer.readFloat();
 		}
 
-		lexer.advanceToNextToken(); // skip semicolon
+		lexer.skipTerminator(); // skip semicolon
 		lexer.advanceToNextToken(); // skip closed braces
 
 		_scaleKeys.push_back(key);
@@ -346,18 +346,18 @@ bool Animation::loadScaleKeyData(XFileLexer &lexer, int count) {
 bool Animation::loadPositionKeyData(XFileLexer &lexer, int count) {
 	for (int keyIndex = 0; keyIndex < count; ++keyIndex) {
 		BonePositionKey *key = new BonePositionKey;
-		key->_time = readInt(lexer);
+		key->_time = lexer.readInt();
 
-		int floatCount = readInt(lexer);
+		int floatCount = lexer.readInt();
 		assert(floatCount == 3);
 
 		for (int i = 0; i < floatCount; ++i) {
-			key->_pos.getData()[i] = readFloat(lexer);
+			key->_pos.getData()[i] = lexer.readFloat();
 		}
 
 		key->_pos.getData()[2] *= -1.0f;
 
-		lexer.advanceToNextToken(); // skip semicolon
+		lexer.skipTerminator(); // skip semicolon
 		lexer.advanceToNextToken(); // skip closed braces
 
 		_posKeys.push_back(key);
@@ -374,14 +374,13 @@ bool Animation::loadMatrixKeyData(XFileLexer &lexer, int count) {
 		lexer.advanceToNextToken();
 		lexer.advanceToNextToken(); // skip semicolon
 
-		int floatCount = readInt(lexer);
+		int floatCount = lexer.readInt();
 
 		for (int i = 0; i < floatCount; ++i) {
-			lexer.advanceToNextToken(); // matrix entry
-			lexer.advanceToNextToken(); // semicolon
+			lexer.readFloat();
 		}
 
-		lexer.advanceToNextToken(); // skip semicolon
+		lexer.skipTerminator(); // skip semicolon
 		lexer.advanceToNextToken(); // skip closed braces
 
 		// TODO: Also store matrix keys

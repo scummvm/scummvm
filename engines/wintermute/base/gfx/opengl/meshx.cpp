@@ -63,7 +63,7 @@ bool MeshX::loadFromX(const Common::String &filename, XFileLexer &lexer, Common:
 
 	lexer.advanceToNextToken(); // skip the name
 	lexer.advanceOnOpenBraces();
-	_vertexCount = readInt(lexer);
+	_vertexCount = lexer.readInt();
 
 	// vertex format for .X meshes will be position + normals + textures
 	_vertexData = new float[kVertexComponentCount * _vertexCount]();
@@ -71,7 +71,7 @@ bool MeshX::loadFromX(const Common::String &filename, XFileLexer &lexer, Common:
 
 	parsePositionCoords(lexer);
 
-	int faceCount = readInt(lexer);
+	int faceCount = lexer.readInt();
 	// we should be able to assume for now that
 	// we are only dealing with triangles
 	_indexData = new uint16[faceCount * 3]();
@@ -82,15 +82,18 @@ bool MeshX::loadFromX(const Common::String &filename, XFileLexer &lexer, Common:
 	while (!lexer.eof()) {
 		if (lexer.tokenIsIdentifier("MeshTextureCoords")) {
 			lexer.advanceToNextToken();
+			lexer.advanceToNextToken();
 			lexer.advanceOnOpenBraces();
 
 			parseTextureCoords(lexer);
 		} else if (lexer.tokenIsIdentifier("MeshNormals")) {
 			lexer.advanceToNextToken();
+			lexer.advanceToNextToken();
 			lexer.advanceOnOpenBraces();
 
 			parseNormalCoords(lexer);
 		} else if (lexer.tokenIsIdentifier("MeshMaterialList")) {
+			lexer.advanceToNextToken();
 			lexer.advanceToNextToken();
 			lexer.advanceOnOpenBraces();
 
@@ -110,9 +113,9 @@ bool MeshX::loadFromX(const Common::String &filename, XFileLexer &lexer, Common:
 			lexer.advanceOnOpenBraces();
 
 			// if any of this is zero, we should have an unskinned mesh
-			int maxSkinWeightsPerVertex = readInt(lexer);
-			int maxSkinWeightsPerFace = readInt(lexer);
-			int boneCount = readInt(lexer);
+			int maxSkinWeightsPerVertex = lexer.readInt();
+			int maxSkinWeightsPerFace = lexer.readInt();
+			int boneCount = lexer.readInt();
 
 			_skinnedMesh = boneCount > 0;
 
@@ -460,14 +463,14 @@ bool MeshX::restoreDeviceObjects() {
 bool MeshX::parsePositionCoords(XFileLexer &lexer) {
 	for (uint i = 0; i < _vertexCount; ++i) {
 		for (int j = 0; j < 3; ++j) {
-			_vertexPositionData[i * 3 + j] = readFloat(lexer);
+			_vertexPositionData[i * 3 + j] = lexer.readFloat();
 			_vertexData[i * kVertexComponentCount + kPositionOffset + j] = _vertexPositionData[i * 3 + j];
 		}
 
 		_vertexPositionData[i * 3 + 2] *= -1.0f;
 		_vertexData[i * kVertexComponentCount + kPositionOffset + 2] *= -1.0f;
 
-		lexer.advanceToNextToken(); // skip semicolon
+		lexer.skipTerminator(); // skip semicolon
 	}
 
 	return true;
@@ -475,7 +478,7 @@ bool MeshX::parsePositionCoords(XFileLexer &lexer) {
 
 bool MeshX::parseFaces(XFileLexer &lexer, int faceCount) {
 	for (int i = 0; i < faceCount; ++i) {
-		int indexCount = readInt(lexer);
+		int indexCount = lexer.readInt();
 
 		// we can add something to triangulize faces later if the need arises
 		if (indexCount != 3) {
@@ -484,13 +487,13 @@ bool MeshX::parseFaces(XFileLexer &lexer, int faceCount) {
 		}
 
 		for (int j = 0; j < 3; ++j) {
-			_indexData[i * 3 + j] = readInt(lexer);
+			_indexData[i * 3 + j] = lexer.readInt();
 		}
 
 		// swap to change winding and make it consistent with the coordinate mirroring
 		SWAP(_indexData[i * 3 + 0], _indexData[i * 3 + 2]);
 
-		lexer.advanceToNextToken(); // skip semicolon
+		lexer.skipTerminator(); // skip semicolon
 	}
 
 	return true;
@@ -498,12 +501,12 @@ bool MeshX::parseFaces(XFileLexer &lexer, int faceCount) {
 
 bool MeshX::parseTextureCoords(XFileLexer &lexer) {
 	// should be the same as _vertexCount
-	int textureCoordCount = readInt(lexer);
+	int textureCoordCount = lexer.readInt();
 
 	for (int i = 0; i < textureCoordCount; ++i) {
-		_vertexData[i * kVertexComponentCount + kTextureCoordOffset + 0] = readFloat(lexer);
-		_vertexData[i * kVertexComponentCount + kTextureCoordOffset + 1] = readFloat(lexer);
-		lexer.advanceToNextToken(); // skip semicolon
+		_vertexData[i * kVertexComponentCount + kTextureCoordOffset + 0] = lexer.readFloat();
+		_vertexData[i * kVertexComponentCount + kTextureCoordOffset + 1] = lexer.readFloat();
+		lexer.skipTerminator(); // skip semicolon
 	}
 
 	if (lexer.reachedClosedBraces()) {
@@ -517,20 +520,20 @@ bool MeshX::parseTextureCoords(XFileLexer &lexer) {
 
 bool MeshX::parseNormalCoords(XFileLexer &lexer) {
 	// should be the same as _vertex count
-	uint vertexNormalCount = readInt(lexer);
-	assert(vertexNormalCount == _vertexCount);
+	uint vertexNormalCount = lexer.readInt();
+//	assert(vertexNormalCount == _vertexCount);
 
 	_vertexNormalData = new float[3 * _vertexCount]();
 
 	for (uint i = 0; i < vertexNormalCount; ++i) {
-		_vertexData[i * kVertexComponentCount + kNormalOffset] = readFloat(lexer);
+		_vertexData[i * kVertexComponentCount + kNormalOffset] = lexer.readFloat();
 		_vertexNormalData[i * 3 + 0] = _vertexData[i * kVertexComponentCount + kNormalOffset];
-		_vertexData[i * kVertexComponentCount + kNormalOffset + 1] = readFloat(lexer);
+		_vertexData[i * kVertexComponentCount + kNormalOffset + 1] = lexer.readFloat();
 		_vertexNormalData[i * 3 + 1] = _vertexData[i * kVertexComponentCount + kNormalOffset + 1];
 		// mirror z coordinate to change to OpenGL coordinate system
-		_vertexData[i * kVertexComponentCount + kNormalOffset + 2] = -readFloat(lexer);
+		_vertexData[i * kVertexComponentCount + kNormalOffset + 2] = -lexer.readFloat();
 		_vertexNormalData[i * 3 + 2] = _vertexData[i * kVertexComponentCount + kNormalOffset + 2];
-		lexer.advanceToNextToken(); // skip semicolon
+		lexer.skipTerminator(); // skip semicolon
 	}
 
 	// we ignore face normals for now
@@ -546,9 +549,9 @@ bool MeshX::parseNormalCoords(XFileLexer &lexer) {
 bool MeshX::parseMaterials(XFileLexer &lexer, int faceCount, const Common::String &filename, Common::HashMap<Common::String, Material *> materialDefinitions) {
 	// there can be unused materials inside a .X file
 	// so this piece of information is probably useless
-	int materialCount = readInt(lexer);
+	int materialCount = lexer.readInt();
 	// should be the same as faceCount
-	int faceMaterialCount = readInt(lexer);
+	int faceMaterialCount = lexer.readInt();
 	assert(faceMaterialCount = faceCount);
 
 	// from looking at the wme3d sources and MSDN,
@@ -558,10 +561,10 @@ bool MeshX::parseMaterials(XFileLexer &lexer, int faceCount, const Common::Strin
 	// in case this isn't true it might be a good
 	// idea to split the mesh
 	_indexRanges.push_back(0);
-	int currentMaterialIndex = readInt(lexer);
+	int currentMaterialIndex = lexer.readInt();
 
 	for (int i = 1; i < faceMaterialCount; ++i) {
-		int currentMaterialIndexTmp = readInt(lexer);
+		int currentMaterialIndexTmp = lexer.readInt();
 
 		// again, this assumes that face indices are only increasing
 		if (currentMaterialIndex < currentMaterialIndexTmp) {
@@ -609,14 +612,14 @@ bool MeshX::parseSkinWeights(XFileLexer &lexer) {
 	skinWeightsList.resize(skinWeightsList.size() + 1);
 	SkinWeights &currSkinWeights = skinWeightsList.back();
 
-	currSkinWeights._boneName = readString(lexer);
+	currSkinWeights._boneName = lexer.readString();
 
-	int weightCount = readInt(lexer);
+	int weightCount = lexer.readInt();
 	currSkinWeights._vertexIndices.resize(weightCount);
 	currSkinWeights._vertexWeights.resize(weightCount);
 
 	for (int i = 0; i < weightCount; ++i) {
-		currSkinWeights._vertexIndices[i] = readInt(lexer);
+		currSkinWeights._vertexIndices[i] = lexer.readInt();
 	}
 
 	if (weightCount == 0) {
@@ -624,7 +627,7 @@ bool MeshX::parseSkinWeights(XFileLexer &lexer) {
 	}
 
 	for (int i = 0; i < weightCount; ++i) {
-		currSkinWeights._vertexWeights[i] = readFloat(lexer);
+		currSkinWeights._vertexWeights[i] = lexer.readFloat();
 	}
 
 	if (weightCount == 0) {
@@ -633,7 +636,7 @@ bool MeshX::parseSkinWeights(XFileLexer &lexer) {
 
 	for (int r = 0; r < 4; ++r) {
 		for (int c = 0; c < 4; ++c) {
-			currSkinWeights._offsetMatrix(c, r) = readFloat(lexer);
+			currSkinWeights._offsetMatrix(c, r) = lexer.readFloat();
 		}
 	}
 
@@ -648,7 +651,7 @@ bool MeshX::parseSkinWeights(XFileLexer &lexer) {
 	currSkinWeights._offsetMatrix(0, 2) *= -1.0f;
 	currSkinWeights._offsetMatrix(1, 2) *= -1.0f;
 
-	lexer.advanceToNextToken(); // semicolon of matrix
+	lexer.skipTerminator(); // semicolon of matrix
 	lexer.advanceToNextToken(); // closed braces of skin weights object
 
 	return true;

@@ -133,7 +133,7 @@ bool FrameNode::loadFromX(const Common::String &filename, XFileLexer &lexer, Mod
 			// TODO: check if this is the right format
 			for (int r = 0; r < 4; ++r) {
 				for (int c = 0; c < 4; ++c) {
-					_transformationMatrix(c, r) = readFloat(lexer);
+					_transformationMatrix(c, r) = lexer.readFloat();
 				}
 			}
 
@@ -150,7 +150,7 @@ bool FrameNode::loadFromX(const Common::String &filename, XFileLexer &lexer, Mod
 
 			_originalMatrix = _transformationMatrix;
 
-			lexer.advanceToNextToken();
+			lexer.skipTerminator();
 			lexer.advanceToNextToken();
 
 		} else if (lexer.reachedClosedBraces()) {
@@ -194,7 +194,7 @@ bool FrameNode::loadFromXAsRoot(const Common::String &filename, XFileLexer &lexe
 			lexer.advanceToNextToken();
 			lexer.advanceOnOpenBraces();
 
-			model->_ticksPerSecond = readInt(lexer);
+			model->_ticksPerSecond = lexer.readInt();
 			lexer.advanceToNextToken(); // skip closed braces
 		} else if (lexer.tokenIsIdentifier("AnimationSet")) {
 			lexer.advanceToNextToken();

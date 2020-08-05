@@ -53,6 +53,8 @@ enum TokenType {
 struct Token {
 	TokenType _type;
 	Common::String _textVal;
+	int _integerVal;
+	float _floatVal;
 
 	void pushChar(char c);
 };
@@ -62,6 +64,7 @@ public:
 	XFileLexer(byte *buffer, uint32 fileSize, bool isText);
 
 	void advanceToNextToken();
+	void skipTerminator();
 	bool eof();
 	bool tokenIsIdentifier();
 	bool tokenIsIdentifier(const char *val);
@@ -73,16 +76,21 @@ public:
 	double tokenToFloat();
 	Common::String tokenToString();
 
+	float readFloat();
+	int readInt();
+	Common::String readString();
+
 private:
+	void nextTokenBinary();
+
 	Token _tok;
 	Common::MemoryReadStream _buffer;
 	int _lineCount;
 	bool _isText;
+	int _integersToRead;
+	int _floatsToRead;
+	bool _expectsTerminator;
 };
-
-float readFloat(XFileLexer &lexer);
-int readInt(XFileLexer &lexer);
-Common::String readString(XFileLexer &lexer);
 
 } // namespace Wintermute
 

@@ -145,12 +145,163 @@ void nextTokenText(Common::MemoryReadStream &buffer, int &lineCount, Token &tok)
 	}
 }
 
-void nextTokenBinary(Common::MemoryReadStream &buffer, Token &tok) {
-	warning("nextTokenBinary in x_file_lexer.cpp not implemented yet");
+// based on MSDN .X file format documentation
+const uint16 XBIN_TOKEN_NAME         = 1;
+const uint16 XBIN_TOKEN_STRING       = 2;
+const uint16 XBIN_TOKEN_INTEGER      = 3;
+const uint16 XBIN_TOKEN_GUID         = 5;
+const uint16 XBIN_TOKEN_INTEGER_LIST = 6;
+const uint16 XBIN_TOKEN_FLOAT_LIST   = 7;
+
+const uint16 XBIN_TOKEN_OBRACE    = 10;
+const uint16 XBIN_TOKEN_CBRACE    = 11;
+const uint16 XBIN_TOKEN_OPAREN    = 12;
+const uint16 XBIN_TOKEN_CPAREN    = 13;
+const uint16 XBIN_TOKEN_OBRACKET  = 14;
+const uint16 XBIN_TOKEN_CBRACKET  = 15;
+const uint16 XBIN_TOKEN_OANGLE    = 16;
+const uint16 XBIN_TOKEN_CANGLE    = 17;
+const uint16 XBIN_TOKEN_DOT       = 18;
+const uint16 XBIN_TOKEN_COMMA     = 19;
+const uint16 XBIN_TOKEN_SEMICOLON = 20;
+const uint16 XBIN_TOKEN_TEMPLATE  = 31;
+const uint16 XBIN_TOKEN_WORD      = 40;
+const uint16 XBIN_TOKEN_DWORD     = 41;
+const uint16 XBIN_TOKEN_FLOAT     = 42;
+const uint16 XBIN_TOKEN_DOUBLE    = 43;
+const uint16 XBIN_TOKEN_CHAR      = 44;
+const uint16 XBIN_TOKEN_UCHAR     = 45;
+const uint16 XBIN_TOKEN_SWORD     = 46;
+const uint16 XBIN_TOKEN_SDWORD    = 47;
+const uint16 XBIN_TOKEN_VOID      = 48;
+const uint16 XBIN_TOKEN_LPSTR     = 49;
+const uint16 XBIN_TOKEN_UNICODE   = 50;
+const uint16 XBIN_TOKEN_CSTRING   = 51;
+const uint16 XBIN_TOKEN_ARRAY     = 52;
+
+void XFileLexer::nextTokenBinary() {
+	uint16 current = _buffer.readUint16LE();
+	uint32 length = -1;
+
+	switch (current) {
+	case XBIN_TOKEN_NAME:
+		length = _buffer.readUint32LE();
+
+		for (uint32 i = 0; i < length; ++i) {
+			_tok.pushChar(_buffer.readByte());
+		}
+
+		_tok._type = IDENTIFIER;
+		break;
+	case XBIN_TOKEN_STRING:
+		length = _buffer.readUint32LE();
+
+		for (uint32 i = 0; i < length; ++i) {
+			_tok.pushChar(_buffer.readByte());
+		}
+
+		_tok._type = STRING;
+		break;
+	case XBIN_TOKEN_INTEGER:
+		_tok._integerVal = _buffer.readUint32LE();
+		_tok._type = INT;
+		break;
+	case XBIN_TOKEN_GUID:
+		// ignore the UUID value
+		_buffer.readUint32LE();
+		_buffer.readUint16LE();
+		_buffer.readUint16LE();
+
+		for (int i = 0; i < 8; ++i) {
+			_buffer.readByte();
+		}
+
+		_tok._type = UUID;
+		break;
+	case XBIN_TOKEN_INTEGER_LIST:
+		_integersToRead = _buffer.readUint32LE();
+		_tok._type = INT;
+		_expectsTerminator = false;
+		break;
+	case XBIN_TOKEN_FLOAT_LIST:
+		_floatsToRead = _buffer.readUint32LE();
+		_tok._type = FLOAT;
+		_expectsTerminator = false;
+		break;
+	case XBIN_TOKEN_OBRACE:
+		_tok._type = OPEN_BRACES;
+		break;
+	case XBIN_TOKEN_CBRACE:
+		_tok._type = CLOSE_BRACES;
+		break;
+	case XBIN_TOKEN_OPAREN:
+		_tok._type = OPEN_PAREN;
+		break;
+	case XBIN_TOKEN_CPAREN:
+		_tok._type = CLOSE_PAREN;
+		break;
+	case XBIN_TOKEN_OBRACKET:
+		_tok._type = OPEN_BRACKET;
+		break;
+	case XBIN_TOKEN_CBRACKET:
+		_tok._type = CLOSE_BRACKET;
+		break;
+	case XBIN_TOKEN_OANGLE:
+		_tok._type = OPEN_ANGLE;
+		break;
+	case XBIN_TOKEN_CANGLE:
+		_tok._type = CLOSE_ANGLE;
+		break;
+	case XBIN_TOKEN_DOT:
+		_tok._type = DOT;
+		break;
+	case XBIN_TOKEN_COMMA:
+		_tok._type = COMMA;
+		break;
+	case XBIN_TOKEN_SEMICOLON:
+		_tok._type = SEMICOLON;
+		break;
+	case XBIN_TOKEN_TEMPLATE:
+		_tok._textVal = "template";
+		_tok._type = IDENTIFIER;
+		break;
+	case XBIN_TOKEN_WORD:
+		break;
+	case XBIN_TOKEN_DWORD:
+		break;
+	case XBIN_TOKEN_FLOAT:
+		break;
+	case XBIN_TOKEN_DOUBLE:
+		break;
+	case XBIN_TOKEN_CHAR:
+		break;
+	case XBIN_TOKEN_UCHAR:
+		break;
+	case XBIN_TOKEN_SWORD:
+		break;
+	case XBIN_TOKEN_SDWORD:
+		break;
+	case XBIN_TOKEN_VOID:
+		break;
+	case XBIN_TOKEN_LPSTR:
+		break;
+	case XBIN_TOKEN_UNICODE:
+		break;
+	case XBIN_TOKEN_CSTRING:
+		break;
+	case XBIN_TOKEN_ARRAY:
+		break;
+	case 0:
+		_tok._type = NULL_CHAR;
+		break;
+	default:
+		_tok._type = UNKNOWN_TOKEN;
+		warning("XFileLexer::nextBinaryToken: Unknown token encountered");
+	}
 }
 
 XFileLexer::XFileLexer(byte *buffer, uint32 fileSize, bool isText)
-    : _buffer(buffer, fileSize), _lineCount(1), _isText(isText) {
+	: _buffer(buffer, fileSize), _lineCount(1), _isText(isText), _integersToRead(0), _floatsToRead(0), _expectsTerminator(true) {
 }
 
 void XFileLexer::advanceToNextToken() {
@@ -159,8 +310,16 @@ void XFileLexer::advanceToNextToken() {
 	if (_isText) {
 		nextTokenText(_buffer, _lineCount, _tok);
 	} else {
-		nextTokenBinary(_buffer, _tok);
+		nextTokenBinary();
 	}
+}
+
+void XFileLexer::skipTerminator() {
+	if (_expectsTerminator) {
+		advanceToNextToken();
+	}
+
+	_expectsTerminator = (_floatsToRead == 0) && (_integersToRead == 0);
 }
 
 bool XFileLexer::eof() {
@@ -209,24 +368,46 @@ void Token::pushChar(char c) {
 	_textVal.insertChar(c, _textVal.size());
 }
 
-float readFloat(XFileLexer &lexer) {
-	float tmp = lexer.tokenToFloat();
-	lexer.advanceToNextToken();
-	lexer.advanceToNextToken(); // skip comma or semicolon
+float XFileLexer::readFloat() {
+	if (_floatsToRead > 0) {
+		--_floatsToRead;
+		float tmp = _buffer.readFloatLE();
+
+		if (_floatsToRead == 0) {
+			advanceToNextToken();
+		}
+
+		return tmp;
+	}
+
+	float tmp = tokenToFloat();
+	advanceToNextToken();
+	advanceToNextToken(); // skip comma or semicolon
 	return tmp;
 }
 
-int readInt(XFileLexer &lexer) {
-	int tmp = lexer.tokenToInt();
-	lexer.advanceToNextToken();
-	lexer.advanceToNextToken(); // skip comma or semicolon
+int XFileLexer::readInt() {
+	if (_integersToRead > 0) {
+		--_integersToRead;
+		int tmp = _buffer.readUint32LE();
+
+		if (_integersToRead == 0) {
+			advanceToNextToken();
+		}
+
+		return tmp;
+	}
+
+	int tmp = tokenToInt();
+	advanceToNextToken();
+	advanceToNextToken(); // skip comma or semicolon
 	return tmp;
 }
 
-Common::String readString(XFileLexer &lexer) {
-	Common::String tmp = lexer.tokenToString();
-	lexer.advanceToNextToken();
-	lexer.advanceToNextToken(); // skip comma or semicolon
+Common::String XFileLexer::readString() {
+	Common::String tmp = tokenToString();
+	advanceToNextToken();
+	advanceToNextToken(); // skip comma or semicolon
 	return tmp;
 }
 
