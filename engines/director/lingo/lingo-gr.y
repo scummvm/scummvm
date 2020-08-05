@@ -71,7 +71,9 @@ using namespace Director;
 
 static void yyerror(const char *s) {
 	g_lingo->_hadError = true;
-	warning("######################  LINGO: %s at line %d col %d", s, g_lingo->_linenumber, g_lingo->_colnumber);
+	warning("######################  LINGO: %s at line %d col %d in %s id: %d",
+		s, g_lingo->_linenumber, g_lingo->_colnumber, scriptType2str(g_lingo->_assemblyContext->_scriptType),
+		g_lingo->_assemblyContext->_id);
 	if (g_lingo->_lines[2] != g_lingo->_lines[1])
 		warning("# %3d: %s", g_lingo->_linenumber - 2, Common::String(g_lingo->_lines[2], g_lingo->_lines[1] - 1).c_str());
 
