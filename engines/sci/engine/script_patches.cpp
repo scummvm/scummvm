@@ -5118,16 +5118,16 @@ static const uint16 kq6PatchTalkingInventory[] = {
 // Exiting the pawnshop while the Genie's eye is glinting locks up the game.
 //  Unlike the bookstore, the pawnshop script fails to dispose the "eye" object
 //  if it's in the middle of animating, causing the door animation in the next
-//  room to loop forever. Sierra added a simple workaround to the CD version to
+//  room to loop forever. Sierra added a simple workaround in later versions to
 //  prevent this: the eye no longer glints when ego is close the pawnshop exit.
 //  We apply this same workaround to vulnerable versions.
 //
-// Applies to: English, French, and German PC Floppy, English Mac Floppy
+// Applies to: English, French, and German PC Floppy, English Mac Floppy,
+//             English PC CD 1.000.000
 // Responsible method: genieBrowseScr:changeState(3)
 static const uint16 kq6SignaturePawnshopGenieEye[] = {
-	SIG_MAGICDWORD,
-	0x31, 0x37,                         // bnt 37
 	0x39, 0x03,                         // pushi 03
+	SIG_MAGICDWORD,
 	0x7a,                               // push2
 	0x76,                               // push0
 	0x7a,                               // push2
@@ -5141,7 +5141,6 @@ static const uint16 kq6SignaturePawnshopGenieEye[] = {
 };
 
 static const uint16 kq6PatchPawnshopGenieEye[] = {
-	PATCH_ADDTOOFFSET(+2),
 	0x39, 0x43,                         // pushi 43
 	0x78,                               // push1 [ x ]
 	0x76,                               // push0
