@@ -283,6 +283,19 @@ Common::String convertPath(Common::String &path) {
 	return res1;
 }
 
+Common::String unixToMacPath(const Common::String &path) {
+	Common::String res;
+	for (uint32 idx = 0; idx < path.size(); idx++) {
+		if (path[idx] == ':')
+			res += '/';
+		else if (path[idx] == '/')
+			res += ':';
+		else
+			res += path[idx];
+	}
+	return res;
+}
+
 Common::String getPath(Common::String path, Common::String cwd) {
 	const char *s;
 	if ((s = strrchr(path.c_str(), '/'))) {
