@@ -136,6 +136,14 @@ struct ScriptPatch {
 				"alert \"Failed Save.\" & return & \"Error message number: \" & string ( filer )"},
 
 
+	{"lzone", "", kPlatformMacintosh, "DATA/R-E/ZD2-LAS", kScoreScript, 7,
+			4, "go to the frame 0", "go to the frame"},
+	{"lzone", "", kPlatformMacintosh, "DATA/R-E/zd1-con1", kScoreScript, 27,
+			1, "go the frame 0", "go to the frame"},
+	{"lzone", "", kPlatformMacintosh, "DATA/R-E/zd1-con1", kScoreScript, 30,
+			4, "go the frame 0", "go to the frame"},
+
+
 	// Unbalanced 'end if' at the end of the script
 	{"jman", "", kPlatformWindows, "mmm/TSA RR 06", kScoreScript, 26,
 			17, "end if", ""},
