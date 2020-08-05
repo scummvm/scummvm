@@ -1901,8 +1901,27 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::IT_ITA, Common::kPlatformDOS, 0, GUIO_STD16	},
 
-	// King's Quest 6 - English DOS CD (from the King's Quest Collection)
-	// Executable scanning reports "1.cfs.158", VERSION file reports "1.034 9/11/94 - KQ6 version 1.000.00G"
+	// King's Quest 6 - English DOS CD (supplied by trembyle)
+	// Executable scanning reports "1.cfs.158", VERSION file reports "1.000.000"
+	// SCI interpreter version 1.001.054
+	{"kq6", "CD", {
+		{"resource.map", 0, "db35b0094083f81bfb0239a7a5410313", 9215},
+		{"resource.000", 0, "233394a5f33b475ae5975e7e9a420865", 8376008},
+		{"resource.msg", 0, "3cf5de44de36191f109d425b8450efc8", 259510},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD, GUIO4(GAMEOPTION_HIGH_RESOLUTION_GRAPHICS, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
+	// King's Quest 6 - Windows DOS CD (supplied by trembyle)
+	// Executable scanning reports "1.001.069", VERSION file reports "1.000.000"
+	{"kq6", "CD", {
+		{"resource.map", 0, "db35b0094083f81bfb0239a7a5410313", 9215},
+		{"resource.000", 0, "233394a5f33b475ae5975e7e9a420865", 8376008},
+		{"resource.msg", 0, "3cf5de44de36191f109d425b8450efc8", 259510},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD, GUIO6(GUIO_NOASPECT, GAMEOPTION_HIGH_RESOLUTION_GRAPHICS, GAMEOPTION_KQ6_WINDOWS_CURSORS, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
+	// King's Quest 6 - English DOS CD (same version included in King's Quest Collection)
+	// Executable scanning reports "1.cfs.158", VERSION file reports "1.000.00G"
 	// SCI interpreter version 1.001.054
 	{"kq6", "CD", {
 		{"resource.map", 0, "7a550ebfeae2575ca00d47703a6a774c", 9215},
@@ -1910,9 +1929,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD, GUIO4(GAMEOPTION_HIGH_RESOLUTION_GRAPHICS, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
-	// King's Quest 6 - English Windows CD (from the King's Quest Collection)
-	// Executable scanning reports "1.cfs.158", VERSION file reports "1.034 9/11/94 - KQ6 version 1.000.00G"
-	// SCI interpreter version 1.001.054
+	// King's Quest 6 - English Windows CD (same version included in King's Quest Collection)
+	// Executable scanning reports "1.001.069", VERSION file reports "1.000.00G"
 	{"kq6", "CD", {
 		{"resource.map", 0, "7a550ebfeae2575ca00d47703a6a774c", 9215},
 		{"resource.000", 0, "233394a5f33b475ae5975e7e9a420865", 8376352},
