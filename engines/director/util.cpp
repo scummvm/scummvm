@@ -420,7 +420,7 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 }
 
 	Common::String testExtensions(Common::String component, Common::String initialPath, Common::String convPath) {
-	const char *exts[] = { ".MMM", ".DIR", ".Dir", ".DXR", ".Dxr", 0 };
+	const char *exts[] = { ".MMM", ".DIR", ".DXR", 0 };
 	for (int i = 0; exts[i]; ++i) {
 		Common::String newpath = convPath + (strcmp(exts[i], ".MMM") == 0 ?  convertMacFilename(component.c_str()) : component.c_str()) + exts[i];
 
