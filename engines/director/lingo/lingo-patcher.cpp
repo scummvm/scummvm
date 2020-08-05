@@ -162,7 +162,6 @@ Common::String Lingo::patchLingoCode(Common::String &line, LingoArchive *archive
 		}
 
 		// Now expensive ones
-		warning("EXTRA: %s", _vm->getExtra());
 		if (movie.compareToIgnoreCase(patch->movie) || strcmp(patch->gameId, _vm->getGameId())
 				|| (patch->extra && strcmp(patch->extra, _vm->getExtra()))) {
 			patch++;
