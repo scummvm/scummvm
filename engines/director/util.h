@@ -42,6 +42,8 @@ bool testPath(Common::String &path);
 
 Common::String pathMakeRelative(Common::String path, bool recursive = true, bool addexts = true);
 
+	Common::String testExtensions(Common::String component, Common::String initialPath, Common::String convPath);
+
 Common::String getFileName(Common::String path);
 
 Common::String stripMacPath(const char *name);

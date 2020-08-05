@@ -375,6 +375,8 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 	if (!opened && recursive) {
 		// Hmmm. We couldn't find the path as is.
 		// Let's try to translate file path into 8.3 format
+		Common::String addedexts;
+
 		if (g_director->getPlatform() == Common::kPlatformWindows && g_director->getVersion() < 5) {
 			convPath.clear();
 			const char *ptr = initialPath.c_str();
@@ -397,24 +399,15 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 				ptr++;
 			}
 
-			const char *exts[] = { ".MMM", ".DIR", ".DXR", 0 };
-			for (int i = 0; exts[i] && addexts; ++i) {
-				Common::String newpath = convPath +
-					(strcmp(exts[i], ".MMM") == 0 ?  convertMacFilename(component.c_str()) : component.c_str()) + exts[i];
+			if (addexts)
+				addedexts = testExtensions(component, initialPath, convPath);
+		} else {
+			if (addexts)
+				addedexts = testExtensions(initialPath, initialPath, convPath);
+		}
 
-				debug(2, "pathMakeRelative(): s6 %s -> try %s", initialPath.c_str(), newpath.c_str());
-
-				Common::String res = pathMakeRelative(newpath, false, false);
-
-				if (testPath(res))
-					return res;
-			}
-		} else if (g_director->getPlatform() == Common::kPlatformMacintosh && addexts) {
-			// Try adding an extension D4 Mac movies
-			Common::String res = pathMakeRelative(convPath + ".Dir", false, false);
-
-			if (testPath(res))
-				return res;
+		if (!addedexts.empty()) {
+			return addedexts;
 		}
 
 		return initialPath;	// Anyway nothing good is happening
@@ -424,6 +417,21 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 		return convPath;
 	else
 		return initialPath;
+}
+
+	Common::String testExtensions(Common::String component, Common::String initialPath, Common::String convPath) {
+	const char *exts[] = { ".MMM", ".DIR", ".Dir", ".DXR", ".Dxr", 0 };
+	for (int i = 0; exts[i]; ++i) {
+		Common::String newpath = convPath + (strcmp(exts[i], ".MMM") == 0 ?  convertMacFilename(component.c_str()) : component.c_str()) + exts[i];
+
+		debug(2, "pathMakeRelative(): s6 %s -> try %s", initialPath.c_str(), newpath.c_str());
+		Common::String res = pathMakeRelative(newpath, false, false);
+
+		if (testPath(res))
+			return res;
+	}
+
+	return Common::String();
 }
 
 Common::String getFileName(Common::String path) {
