@@ -2677,8 +2677,13 @@ int GUI_LoL::clickedSaveMenu(Button *button) {
 		TimeDate td;
 		g_system->getTimeAndDate(td);
 		// Skip character name for Japanese to prevent garbage rendering (the save description is rendered in the non-SJIS default font).
-		Common::String ts = (_vm->gameFlags().lang != Common::JA_JPN) ? Common::String::format("%-7s / ", _vm->_characters[0].name) : "";
-		ts += Common::String::format("Level %02d / %02d-%02d-%02d - %02d:%02d:%02d", _vm->_currentLevel, td.tm_mday, td.tm_mon + 1, td.tm_year + 1900, td.tm_hour, td.tm_min, td.tm_sec);
+		Common::String ts = (_vm->gameFlags().lang != Common::JA_JPN) ? Common::String::format("%s / ", _vm->_characters[0].name) : "";
+		Common::String lvl1 = Common::String(_vm->_lastBlockDataFile).substr(0, 1);
+		Common::String lvl2 = Common::String(_vm->_lastBlockDataFile).substr(1);
+		lvl1.toUppercase();
+		lvl2.toLowercase();
+		ts = ts + lvl1 + lvl2;
+		ts += Common::String::format(" / %02d-%02d-%02d - %02d:%02d:%02d", td.tm_mday, td.tm_mon + 1, td.tm_year + 1900, td.tm_hour, td.tm_min, td.tm_sec);
 		strcpy(_saveDescription, ts.c_str());
 	}
 
