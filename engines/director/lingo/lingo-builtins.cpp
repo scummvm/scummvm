@@ -22,6 +22,8 @@
 
 #include "common/system.h"
 
+#include "gui/message.h"
+
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macmenu.h"
 
@@ -1474,9 +1476,13 @@ void LB::b_voidP(int nargs) {
 // Misc
 ///////////////////
 void LB::b_alert(int nargs) {
+	ARGNUMCHECK(1);
 	Datum d = g_lingo->pop();
 
-	warning("STUB: b_alert(%s)", d.asString().c_str());
+	const char *alert = d.asString().c_str();
+	warning("b_alert(%s)", alert);
+	GUI::MessageDialog dialog(alert, "OK");
+	dialog.runModal();
 }
 
 void LB::b_clearGlobals(int nargs) {
