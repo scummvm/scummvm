@@ -448,6 +448,7 @@ public:
 	Common::HashMap<int, LingoV4Bytecode *> _lingoV4;
 	Common::HashMap<int, LingoV4TheEntity *> _lingoV4TheEntity;
 
+	uint _globalCounter;
 	uint _pc;
 
 	StackData _stack;

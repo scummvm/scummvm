@@ -150,6 +150,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_assemblyContext = nullptr;
 
 	_currentChannelId = -1;
+	_globalCounter = 0;
 	_pc = 0;
 	_abort = false;
 	_indef = kStateNone;
@@ -560,9 +561,15 @@ Common::String Lingo::decodeInstruction(LingoArchive *archive, ScriptData *sd, u
 }
 
 void Lingo::execute(uint pc) {
-	int counter = 0;
+	uint localCounter = 0;
 
 	for (_pc = pc; !_abort && (*_currentScript)[_pc] != STOP;) {
+		if (_globalCounter > 1000 && debugChannelSet(-1, kDebugFewFramesOnly)) {
+			warning("Lingo::execute(): Stopping due to debug few frames only");
+			_vm->getCurrentMovie()->getScore()->_playState = kPlayStopped;
+			break;
+		}
+	
 		Common::String instr = decodeInstruction(_currentArchive, _currentScript, _pc);
 		uint current = _pc;
 
@@ -594,14 +601,11 @@ void Lingo::execute(uint pc) {
 			break;
 		}
 
-		if (++counter > 1000 && debugChannelSet(-1, kDebugFewFramesOnly)) {
-			warning("Lingo::execute(): Stopping due to debug few frames only");
-			_vm->getCurrentMovie()->getScore()->_playState = kPlayStopped;
-			break;
-		}
+		_globalCounter++;
+		localCounter++;
 
 		// process events every so often
-		if (counter % 100 == 0) {
+		if (localCounter % 100 == 0) {
 			_vm->processEvents();
 			if (_vm->getCurrentMovie()->getScore()->_playState == kPlayStopped)
 				break;
