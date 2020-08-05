@@ -2683,7 +2683,7 @@ int GUI_LoL::clickedSaveMenu(Button *button) {
 		lvl1.toUppercase();
 		lvl2.toLowercase();
 		ts = ts + lvl1 + lvl2;
-		ts += Common::String::format(" / %02d-%02d-%02d - %02d:%02d:%02d", td.tm_mday, td.tm_mon + 1, td.tm_year + 1900, td.tm_hour, td.tm_min, td.tm_sec);
+		ts += Common::String::format(" / %02d-%02d-%02d - %02d:%02d:%02d", td.tm_year + 1900, td.tm_mon + 1, td.tm_mday, td.tm_hour, td.tm_min, td.tm_sec);
 		strcpy(_saveDescription, ts.c_str());
 	}
 
