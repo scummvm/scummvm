@@ -305,6 +305,9 @@ bool testPath(Common::String &path) {
 Common::String pathMakeRelative(Common::String path, bool recursive, bool addexts) {
 	Common::String initialPath(path);
 
+	if (testPath(initialPath))
+		return initialPath;
+
 	if (recursive) // first level
 		initialPath = convertPath(initialPath);
 
