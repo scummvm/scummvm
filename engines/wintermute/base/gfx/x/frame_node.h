@@ -29,6 +29,7 @@
 #ifndef WINTERMUTE_FRAME_NODE_H
 #define WINTERMUTE_FRAME_NODE_H
 
+#include "common/hashmap.h"
 #include "engines/wintermute/base/base_named_object.h"
 #include "engines/wintermute/base/gfx/opengl/meshx.h"
 #include "engines/wintermute/coll_templ.h"
@@ -53,7 +54,7 @@ public:
 	bool render(ModelX *model);
 	bool updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const Math::Vector3d &light, float extrusionDepth);
 
-	bool loadFromX(const Common::String &filename, XFileLexer &lexer, ModelX *model);
+	bool loadFromX(const Common::String &filename, XFileLexer &lexer, ModelX *model, Common::HashMap<Common::String, Material *> materialDefinitions);
 	bool loadFromXAsRoot(const Common::String &filename, XFileLexer &lexer, ModelX *model);
 	bool findBones(FrameNode *rootFrame);
 	FrameNode *findFrame(const char *frameName);

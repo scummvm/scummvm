@@ -29,6 +29,7 @@
 #ifndef WINTERMUTE_MESH_X_H
 #define WINTERMUTE_MESH_X_H
 
+#include "common/hashmap.h"
 #include "engines/wintermute/base/base_named_object.h"
 #include "engines/wintermute/coll_templ.h"
 #include "math/matrix4.h"
@@ -56,7 +57,7 @@ public:
 	MeshX(BaseGame *inGame);
 	virtual ~MeshX();
 
-	virtual bool loadFromX(const Common::String &filename, XFileLexer &lexer);
+	virtual bool loadFromX(const Common::String &filename, XFileLexer &lexer, Common::HashMap<Common::String, Material *> materialDefinitions);
 	bool findBones(FrameNode *rootFrame);
 	virtual bool update(FrameNode *parentFrame);
 	virtual bool render(ModelX *model) = 0;
@@ -86,7 +87,7 @@ protected:
 	bool parseFaces(XFileLexer &lexer, int faceCount);
 	bool parseTextureCoords(XFileLexer &lexer);
 	bool parseNormalCoords(XFileLexer &lexer);
-	bool parseMaterials(XFileLexer &lexer, int faceCount, const Common::String &filename);
+	bool parseMaterials(XFileLexer &lexer, int faceCount, const Common::String &filename, Common::HashMap<Common::String, Wintermute::Material *> materialDefinitions);
 	bool parseSkinWeights(XFileLexer &lexer);
 
 	void updateBoundingBox();

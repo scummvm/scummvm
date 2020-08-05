@@ -58,7 +58,7 @@ MeshX::~MeshX() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool MeshX::loadFromX(const Common::String &filename, XFileLexer &lexer) {
+bool MeshX::loadFromX(const Common::String &filename, XFileLexer &lexer, Common::HashMap<Common::String, Material *> materialDefinitions) {
 	bool res = true;
 
 	lexer.advanceToNextToken(); // skip the name
@@ -94,7 +94,7 @@ bool MeshX::loadFromX(const Common::String &filename, XFileLexer &lexer) {
 			lexer.advanceToNextToken();
 			lexer.advanceOnOpenBraces();
 
-			parseMaterials(lexer, faceCount, filename);
+			parseMaterials(lexer, faceCount, filename, materialDefinitions);
 		} else if (lexer.tokenIsIdentifier("Material")) {
 			lexer.advanceToNextToken();
 			Material *mat = new Material(_gameRef);
@@ -543,7 +543,7 @@ bool MeshX::parseNormalCoords(XFileLexer &lexer) {
 	return true;
 }
 
-bool MeshX::parseMaterials(XFileLexer &lexer, int faceCount, const Common::String &filename) {
+bool MeshX::parseMaterials(XFileLexer &lexer, int faceCount, const Common::String &filename, Common::HashMap<Common::String, Material *> materialDefinitions) {
 	// there can be unused materials inside a .X file
 	// so this piece of information is probably useless
 	int materialCount = readInt(lexer);
@@ -587,6 +587,13 @@ bool MeshX::parseMaterials(XFileLexer &lexer, int faceCount, const Common::Strin
 			lexer.advanceToNextToken(); // skip closed braces
 		} else if (lexer.reachedClosedBraces()) {
 			break;
+		} else if (lexer.tokenIsOfType(OPEN_BRACES)) {
+			lexer.advanceToNextToken();
+			Common::String materialReference = lexer.tokenToString();
+			Material *material = materialDefinitions.getVal(materialReference);
+			_materials.add(material);
+			lexer.advanceToNextToken();
+			lexer.advanceToNextToken();
 		} else {
 			warning("MeshXOpenGL::loadFromX unknown token %i encountered while loading materials", lexer.getTypeOfToken());
 			break;
