@@ -34,6 +34,8 @@
 #include "graphics/macgui/mactextwindow.h"
 #include "graphics/macgui/macmenu.h"
 
+#include "image/bmp.h"
+
 namespace Graphics {
 
 static const byte palette[] = {
@@ -155,6 +157,8 @@ static void menuTimerHandler(void *refCon);
 MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns) {
 	_screen = 0;
 	_screenCopy = nullptr;
+	_desktopBmp = nullptr;
+	_desktop = nullptr;
 	_lastId = 0;
 	_activeWindow = -1;
 	_needsRemoval = false;
@@ -200,6 +204,7 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns) {
 	CursorMan.showMouse(true);
 
 	loadDataBundle();
+	loadDesktop();
 }
 
 MacWindowManager::~MacWindowManager() {
@@ -212,7 +217,24 @@ MacWindowManager::~MacWindowManager() {
 	delete _fontMan;
 	delete _screenCopy;
 
+	delete _desktopBmp;
+	delete _desktop;
+
 	g_system->getTimerManager()->removeTimerProc(&menuTimerHandler);
+}
+
+void MacWindowManager::setScreen(ManagedSurface *screen) {
+	_screen = screen;
+	delete _screenCopy;
+	_screenCopy = nullptr;
+
+	if (_desktop)
+		_desktop->free();
+	else
+		_desktop = new ManagedSurface();
+	
+	_desktop->create(_screen->w, _screen->h, PixelFormat::createFormatCLUT8());
+	drawDesktop();
 }
 
 void MacWindowManager::setMode(uint32 mode) {
@@ -385,14 +407,45 @@ void macDrawPixel(int x, int y, int color, void *data) {
 	}
 }
 
+void MacWindowManager::loadDesktop() {
+	Common::SeekableReadStream *file = getFile("scummvm_background.bmp");
+	if (!file)
+		return;
+
+	Image::BitmapDecoder bmpDecoder;
+	Graphics::Surface *source;
+	_desktopBmp = new Graphics::TransparentSurface();
+
+	bmpDecoder.loadStream(*file);
+	source = bmpDecoder.getSurface()->convertTo(_desktopBmp->getSupportedPixelFormat(), bmpDecoder.getPalette());
+
+	_desktopBmp->create(source->w, source->h, _desktopBmp->getSupportedPixelFormat());
+	_desktopBmp->copyFrom(*source);
+
+	delete file;
+	source->free();
+	delete source;
+}
+
 void MacWindowManager::drawDesktop() {
-	Common::Rect r(_screen->getBounds());
+	if (_desktopBmp) {
+		for (uint i = 0; i < _desktop->w; ++i) {
+			for (uint j = 0; j < _desktop->h; ++j) {
+				uint32 color = *(uint32*)_desktopBmp->getBasePtr(i % _desktopBmp->w, j % _desktopBmp->h);
+				byte r, g, b;
+				_desktopBmp->format.colorToRGB(color, r, g, b);
+				if (color > 0) {
+					*((byte *)_desktop->getBasePtr(i, j)) = findBestColor(r, g, b);
+				}
+			}
+		}
+	} else {
+		Common::Rect r(_desktop->getBounds());
 
-	MacPlotData pd(_screen, nullptr, &_patterns, kPatternCheckers, 0, 0, 1, _colorWhite);
+		MacPlotData pd(_desktop, nullptr, &_patterns, kPatternCheckers, 0, 0, 1, _colorWhite);
 
-	Graphics::drawRoundRect(r, kDesktopArc, _colorBlack, true, macDrawPixel, &pd);
-
-	g_system->copyRectToScreen(_screen->getPixels(), _screen->pitch, 0, 0, _screen->w, _screen->h);
+		Graphics::drawRoundRect(r, kDesktopArc, _colorBlack, true, macDrawPixel, &pd);
+	}
 }
 
 void MacWindowManager::draw() {
@@ -401,8 +454,15 @@ void MacWindowManager::draw() {
 	removeMarked();
 
 	if (_fullRefresh) {
-		if (!(_mode & kWMModeNoDesktop))
-			drawDesktop();
+		if (!(_mode & kWMModeNoDesktop)) {
+			if (_desktop->w != _screen->w || _desktop->h != _screen->h) {
+				_desktop->free();
+				_desktop->create(_screen->w, _screen->h, PixelFormat::createFormatCLUT8());
+				drawDesktop();
+			}
+			_screen->blitFrom(*_desktop, Common::Point(0, 0));
+			g_system->copyRectToScreen(_screen->getPixels(), _screen->pitch, 0, 0, _screen->w, _screen->h);
+		}
 
 		if (_redrawEngineCallback != nullptr)
 			_redrawEngineCallback(_engineR);

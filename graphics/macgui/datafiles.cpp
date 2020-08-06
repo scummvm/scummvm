@@ -106,4 +106,16 @@ Common::SeekableReadStream *MacWindowManager::getBorderFile(byte windowType, boo
 	return _dataBundle->createReadStreamForMember(filename);
 }
 
+Common::SeekableReadStream *MacWindowManager::getFile(const Common::String &filename) {
+	if (!_dataBundle)
+		return NULL;
+
+	if (!_dataBundle->hasFile(filename)) {
+		warning("Missing file '%s' in data bundle", filename.c_str());
+		return NULL;
+	}
+
+	return _dataBundle->createReadStreamForMember(filename);
+}
+
 } // End of namespace Graphics
