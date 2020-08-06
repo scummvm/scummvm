@@ -26,9 +26,13 @@
 
 namespace Dragons {
 
-MidiMusicPlayer::MidiMusicPlayer(VabSound *musicVab): _musicVab(musicVab), _midiDataSize(0) {
+MidiMusicPlayer::MidiMusicPlayer(VabSound *musicVab, Common::SeekableReadStream *soundFont): _musicVab(musicVab), _midiDataSize(0) {
 	_midiData = nullptr;
-	MidiPlayer::createDriver();
+	MidiPlayer::createDriver(MDT_PREFER_FLUID | MDT_MIDI);
+
+	if (_driver->acceptsSoundFontData()) {
+		_driver->setEngineSoundFont(soundFont);
+	}
 
 	int ret = _driver->open();
 	if (ret == 0) {

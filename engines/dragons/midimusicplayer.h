@@ -32,7 +32,7 @@ private:
 	VabSound *_musicVab;
 	uint32 _midiDataSize;
 public:
-	MidiMusicPlayer(VabSound *musicVab);
+	MidiMusicPlayer(VabSound *musicVab, Common::SeekableReadStream *soundFont);
 	~MidiMusicPlayer();
 
 	void setVolume(int volume) override;
