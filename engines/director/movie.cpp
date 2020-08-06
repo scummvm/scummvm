@@ -120,8 +120,9 @@ bool Movie::loadArchive() {
 		if (_vm->_surface->w != windowWidth || _vm->_surface->h != windowHeight) {
 			_vm->_surface->free();
 			_vm->_surface->create(windowWidth, windowHeight, Graphics::PixelFormat::createFormatCLUT8());
+
+			initGraphics(windowWidth, windowHeight);
 		}
-		initGraphics(windowWidth, windowHeight);
 	}
 
 	_window->setStageColor(_stageColor, true);
