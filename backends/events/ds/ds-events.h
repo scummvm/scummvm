@@ -20,18 +20,30 @@
  *
  */
 
-#ifndef _SCUMMHELP_H_
-#define _SCUMMHELP_H_
+#ifndef BACKEND_EVENTS_DS_H
+#define BACKEND_EVENTS_DS_H
 
-#include "common/ustr.h"
-#include "common/platform.h"
+#include "common/events.h"
 
-namespace DS {
+/**
+ * The Nintendo DS event source.
+ */
+class DSEventSource : public Common::EventSource {
+public:
+	DSEventSource() : _firstPoll(true) {}
 
-void updateStrings(byte gameId, byte version, Common::Platform platform,
-			int page, Common::U32String &title, Common::U32String *&key, Common::U32String *&dsc);
+	/**
+	 * Gets and processes events.
+	 */
+	virtual bool pollEvent(Common::Event &event);
 
-} // End of namespace DS
+protected:
+	Common::Queue<Common::Event> _eventQueue;
+	Common::Point _lastTouch;
+	bool _firstPoll;
 
+	void addEventsToQueue();
+	void addJoyButtonEvent(u32 keysPressed, u32 keysReleased, u32 ndsKey, uint8 svmButton);
+};
 
 #endif

@@ -33,6 +33,7 @@
 #include "common/util.h"
 #include "common/rect.h"
 #include "common/savefile.h"
+#include "common/translation.h"
 
 #include "osystem_ds.h"
 #include "nds.h"
@@ -40,23 +41,20 @@
 #include "common/config-manager.h"
 #include "common/str.h"
 #include "graphics/surface.h"
-#include "touchkeyboard.h"
 #include "backends/fs/devoptab/devoptab-fs-factory.h"
+#include "backends/keymapper/hardware-input.h"
 
 #include "backends/audiocd/default/default-audiocd.h"
+#include "backends/events/default/default-events.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
-
-#ifdef ENABLE_AGI
-#include "wordcompletion.h"
-#endif
 
 #include <time.h>
 
 OSystem_DS *OSystem_DS::_instance = NULL;
 
 OSystem_DS::OSystem_DS()
-	: eventNum(0), lastPenFrame(0), queuePos(0), _mixer(NULL), _frameBufferExists(false),
+	: _eventSource(NULL), _mixer(NULL), _frameBufferExists(false),
 	_disableCursorPalette(true), _graphicsEnable(true), _gammaValue(0)
 {
 	_instance = this;
@@ -78,6 +76,9 @@ void OSystem_DS::initBackend() {
 	ConfMan.setInt("autosave_period", 0);
 	ConfMan.setBool("FM_medium_quality", true);
 
+	_eventSource = new DSEventSource();
+	_eventManager = new DefaultEventManager(_eventSource);
+
 	_savefileManager = new DefaultSaveFileManager();
 	_timerManager = new DefaultTimerManager();
     DS::setTimerCallback(&OSystem_DS::timerHandler, 10);
@@ -85,25 +86,21 @@ void OSystem_DS::initBackend() {
 	_mixer = new Audio::MixerImpl(11025);
 	_mixer->setReady(true);
 
-	EventsBaseBackend::initBackend();
+	BaseBackend::initBackend();
 }
 
 bool OSystem_DS::hasFeature(Feature f) {
-	return (f == kFeatureVirtualKeyboard) || (f == kFeatureCursorPalette);
+	return (f == kFeatureCursorPalette);
 }
 
 void OSystem_DS::setFeatureState(Feature f, bool enable) {
-	if (f == kFeatureVirtualKeyboard)
-		DS::setKeyboardIcon(enable);
-	else if (f == kFeatureCursorPalette) {
+	if (f == kFeatureCursorPalette) {
 		_disableCursorPalette = !enable;
 		refreshCursor();
 	}
 }
 
 bool OSystem_DS::getFeatureState(Feature f) {
-	if (f == kFeatureVirtualKeyboard)
-		return DS::getKeyboardIcon();
 	if (f == kFeatureCursorPalette)
 		return !_disableCursorPalette;
 	return false;
@@ -145,10 +142,7 @@ void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
 			if (DS::getIsDisplayMode8Bit()) {
 				int col = applyGamma(paletteValue);
 				BG_PALETTE[r] = col;
-
-				if (!DS::getKeyboardEnable()) {
-					BG_PALETTE_SUB[r] = col;
-				}
+				BG_PALETTE_SUB[r] = col;
 			}
 
 			_palette[r] = paletteValue;
@@ -164,9 +158,7 @@ void OSystem_DS::restoreHardwarePalette() {
 	for (int r = 0; r < 255; r++) {
 		int col = applyGamma(_palette[r]);
 		BG_PALETTE[r] = col;
-		if (!DS::getKeyboardEnable()) {
-			BG_PALETTE_SUB[r] = col;
-		}
+		BG_PALETTE_SUB[r] = col;
 	}
 }
 
@@ -230,115 +222,59 @@ void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int 
 
 		int by = 0;
 
-		if (DS::getKeyboardEnable()) {
-			// When they keyboard is on screen, we don't update the subscreen because
-			// the keyboard image uses the same VRAM addresses.
+		for (int dy = y; dy < y + h; dy++) {
+			u8 *dest = ((u8 *) (bg)) + (dy * stride) + x;
+			u8 *destSub = ((u8 *) (bgSub)) + (dy * 512) + x;
+			const u8 *src = (const u8 *) buf + (pitch * by);
 
-			for (int dy = y; dy < y + h; dy++) {
-				u8 *dest = ((u8 *) (bg)) + (dy * stride) + x;
-				const u8 *src = (const u8 *) buf + (pitch * by);
+			u32 dx;
 
-				u32 dx;
+			u32 pixelsLeft = w;
 
-				u32 pixelsLeft = w;
+			if (MISALIGNED16(dest)) {
+				// Read modify write
 
-				if (MISALIGNED16(dest)) {
-					// Read modify write
+				dest--;
+				u16 mix = *((u16 *) dest);
 
-					dest--;
-					u16 mix = *((u16 *) dest);
+				mix = (mix & 0x00FF) | (*src++ << 8);
 
-					mix = (mix & 0x00FF) | (*src++ << 8);
+				*dest = mix;
+				*destSub = mix;
 
-					*dest = mix;
-
-					dest += 2;
-					pixelsLeft--;
-				}
-
-				// We can now assume dest is aligned
-				u16 *dest16 = (u16 *) dest;
-
-				for (dx = 0; dx < pixelsLeft; dx+=2) {
-					u16 mix;
-
-					mix = *src + (*(src + 1) << 8);
-					*dest16++ = mix;
-					src += 2;
-				}
-
-				pixelsLeft -= dx;
-
-				// At the end we may have one pixel left over
-
-				if (pixelsLeft != 0) {
-					u16 mix = *dest16;
-
-					mix = (mix & 0x00FF) | ((*src++) << 8);
-
-					*dest16 = mix;
-				}
-
-				by++;
+				dest += 2;
+				destSub += 2;
+				pixelsLeft--;
 			}
 
-		} else {
-			// When they keyboard is not on screen, update both vram copies
+			// We can now assume dest is aligned
+			u16 *dest16 = (u16 *) dest;
+			u16 *destSub16 = (u16 *) destSub;
 
-			for (int dy = y; dy < y + h; dy++) {
-				u8 *dest = ((u8 *) (bg)) + (dy * stride) + x;
-				u8 *destSub = ((u8 *) (bgSub)) + (dy * 512) + x;
-				const u8 *src = (const u8 *) buf + (pitch * by);
+			for (dx = 0; dx < pixelsLeft; dx+=2) {
+				u16 mix;
 
-				u32 dx;
-
-				u32 pixelsLeft = w;
-
-				if (MISALIGNED16(dest)) {
-					// Read modify write
-
-					dest--;
-					u16 mix = *((u16 *) dest);
-
-					mix = (mix & 0x00FF) | (*src++ << 8);
-
-					*dest = mix;
-					*destSub = mix;
-
-					dest += 2;
-					destSub += 2;
-					pixelsLeft--;
-				}
-
-				// We can now assume dest is aligned
-				u16 *dest16 = (u16 *) dest;
-				u16 *destSub16 = (u16 *) destSub;
-
-				for (dx = 0; dx < pixelsLeft; dx+=2) {
-					u16 mix;
-
-					mix = *src + (*(src + 1) << 8);
-					*dest16++ = mix;
-					*destSub16++ = mix;
-					src += 2;
-				}
-
-				pixelsLeft -= dx;
-
-				// At the end we may have one pixel left over
-
-				if (pixelsLeft != 0) {
-					u16 mix = *dest16;
-
-					mix = (mix & 0x00FF) | ((*src++) << 8);
-
-					*dest16 = mix;
-					*destSub16 = mix;
-				}
-
-				by++;
-
+				mix = *src + (*(src + 1) << 8);
+				*dest16++ = mix;
+				*destSub16++ = mix;
+				src += 2;
 			}
+
+			pixelsLeft -= dx;
+
+			// At the end we may have one pixel left over
+
+			if (pixelsLeft != 0) {
+				u16 mix = *dest16;
+
+				mix = (mix & 0x00FF) | ((*src++) << 8);
+
+				*dest16 = mix;
+				*destSub16 = mix;
+			}
+
+			by++;
+
 		}
 
 	} else {
@@ -347,39 +283,23 @@ void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int 
 
 		u16 *src = (u16 *) buf;
 
-		if (DS::getKeyboardEnable()) {
+		for (int dy = y; dy < y + h; dy++) {
+			u16 *dest1 = bg + (dy * (stride >> 1)) + (x >> 1);
+			u16 *dest2 = bgSub + (dy << 8) + (x >> 1);
 
-			for (int dy = y; dy < y + h; dy++) {
-				u16 *dest = bg + (dy * (stride >> 1)) + (x >> 1);
+			DC_FlushRange(src, w << 1);
+			DC_FlushRange(dest1, w << 1);
+			DC_FlushRange(dest2, w << 1);
 
-				DC_FlushRange(src, w << 1);
-				DC_FlushRange(dest, w << 1);
-				dmaCopyHalfWords(3, src, dest, w);
+			dmaCopyHalfWords(3, src, dest1, w);
 
-				while (dmaBusy(3));
-
-				src += pitch >> 1;
+			if ((!_frameBufferExists) || (buf == _framebuffer.getPixels())) {
+				dmaCopyHalfWords(2, src, dest2, w);
 			}
 
-		} else {
-			for (int dy = y; dy < y + h; dy++) {
-				u16 *dest1 = bg + (dy * (stride >> 1)) + (x >> 1);
-				u16 *dest2 = bgSub + (dy << 8) + (x >> 1);
+			while (dmaBusy(2) || dmaBusy(3));
 
-				DC_FlushRange(src, w << 1);
-				DC_FlushRange(dest1, w << 1);
-				DC_FlushRange(dest2, w << 1);
-
-				dmaCopyHalfWords(3, src, dest1, w);
-
-				if ((!_frameBufferExists) || (buf == _framebuffer.getPixels())) {
-					dmaCopyHalfWords(2, src, dest2, w);
-				}
-
-				while (dmaBusy(2) || dmaBusy(3));
-
-				src += pitch >> 1;
-			}
+			src += pitch >> 1;
 		}
 	}
 }
@@ -393,13 +313,12 @@ void OSystem_DS::updateScreen() {
 	}
 
 	DS::displayMode16BitFlipBuffer();
-	DS::addEventsToQueue();
 
 	// FIXME: Evil game specific hack.
 	// Force back buffer usage for Nippon Safes, as it doesn't double buffer it's output
-	if (DS::getControlType() == DS::CONT_NIPPON) {
-		lockScreen();
-	}
+	// if (DS::getControlType() == DS::CONT_NIPPON) {
+	//	lockScreen();
+	// }
 }
 
 void OSystem_DS::setShakePos(int shakeXOffset, int shakeYOffset) {
@@ -466,6 +385,7 @@ bool OSystem_DS::showMouse(bool visible) {
 }
 
 void OSystem_DS::warpMouse(int x, int y) {
+	DS::warpMouse(x, y);
 }
 
 void OSystem_DS::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, u32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
@@ -487,45 +407,16 @@ void OSystem_DS::refreshCursor() {
 	DS::setCursorIcon(_cursorImage, _cursorW, _cursorH, _cursorKey, _cursorHotX, _cursorHotY);
 }
 
-void OSystem_DS::addEvent(const Common::Event& e) {
-	eventQueue[queuePos++] = e;
-}
-
-bool OSystem_DS::pollEvent(Common::Event &event) {
-
-	if (lastPenFrame != DS::getMillis()) {
-
-		if (eventNum == queuePos) {
-			eventNum = 0;
-			queuePos = 0;
-			// Bodge - this last event seems to be processed sometimes and not others.
-			// So we make it something harmless which won't cause any adverse effects.
-			event.type = Common::EVENT_KEYUP;
-			event.kbd.ascii = 0;
-			event.kbd.keycode = Common::KEYCODE_INVALID;
-			event.kbd.flags = 0;
-			return false;
-		} else {
-			event = eventQueue[eventNum++];
-			return true;
-		}
-	}
-
-	return false;
-}
-
 uint32 OSystem_DS::getMillis(bool skipRecord) {
 	return DS::getMillis();
 }
 
 void OSystem_DS::delayMillis(uint msecs) {
 	int st = getMillis();
-	DS::addEventsToQueue();
 
 	while (st + msecs >= getMillis());
 
 	DS::doTimerCallback();
-	DS::addEventsToQueue();
 }
 
 
@@ -627,19 +518,6 @@ void OSystem_DS::clearFocusRectangle() {
 
 }
 
-
-void OSystem_DS::addAutoComplete(const char *word) {
-	DS::addAutoComplete(word);
-}
-
-void OSystem_DS::clearAutoComplete() {
-	DS::clearAutoComplete();
-}
-
-void OSystem_DS::setCharactersEntered(int count) {
-	DS::setCharactersEntered(count);
-}
-
 void OSystem_DS::logMessage(LogMessageType::Type type, const char *message) {
 #ifndef DISABLE_TEXT_CONSOLE
 	nocashMessage((char *)message);
@@ -673,11 +551,38 @@ u16 OSystem_DS::applyGamma(u16 color) {
 	return 0x8000 | r | (g << 5) | (b << 10);
 }
 
-void OSystem_DS::engineDone() {
-	DS::exitGame();
+static const Common::HardwareInputTableEntry ndsJoystickButtons[] = {
+    { "JOY_A",              Common::JOYSTICK_BUTTON_A,              _s("A")           },
+    { "JOY_B",              Common::JOYSTICK_BUTTON_B,              _s("B")           },
+    { "JOY_X",              Common::JOYSTICK_BUTTON_X,              _s("X")           },
+    { "JOY_Y",              Common::JOYSTICK_BUTTON_Y,              _s("Y")           },
+    { "JOY_BACK",           Common::JOYSTICK_BUTTON_BACK,           _s("Select")      },
+    { "JOY_START",          Common::JOYSTICK_BUTTON_START,          _s("Start")       },
+    { "JOY_LEFT_SHOULDER",  Common::JOYSTICK_BUTTON_LEFT_SHOULDER,  _s("L")           },
+    { "JOY_RIGHT_SHOULDER", Common::JOYSTICK_BUTTON_RIGHT_SHOULDER, _s("R")           },
+    { "JOY_UP",             Common::JOYSTICK_BUTTON_DPAD_UP,        _s("D-pad Up")    },
+    { "JOY_DOWN",           Common::JOYSTICK_BUTTON_DPAD_DOWN,      _s("D-pad Down")  },
+    { "JOY_LEFT",           Common::JOYSTICK_BUTTON_DPAD_LEFT,      _s("D-pad Left")  },
+    { "JOY_RIGHT",          Common::JOYSTICK_BUTTON_DPAD_RIGHT,     _s("D-pad Right") },
+    { nullptr,              0,                                      nullptr           }
+};
 
-#ifdef ENABLE_AGI
-	DS::clearAutoCompleteWordList();
-#endif
+static const Common::AxisTableEntry ndsJoystickAxes[] = {
+    { nullptr, 0, Common::kAxisTypeFull, nullptr }
+};
 
+const Common::HardwareInputTableEntry ndsMouseButtons[] = {
+    { "MOUSE_LEFT", Common::MOUSE_BUTTON_LEFT, _s("Touch") },
+    { nullptr,      0,                         nullptr     }
+};
+
+Common::HardwareInputSet *OSystem_DS::getHardwareInputSet() {
+	using namespace Common;
+
+	CompositeHardwareInputSet *inputSet = new CompositeHardwareInputSet();
+	// Touch input sends mouse events for now, so we need to declare we have a mouse...
+	inputSet->addHardwareInputSet(new MouseHardwareInputSet(ndsMouseButtons));
+	inputSet->addHardwareInputSet(new JoystickHardwareInputSet(ndsJoystickButtons, ndsJoystickAxes));
+
+	return inputSet;
 }

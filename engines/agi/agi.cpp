@@ -167,14 +167,6 @@ int AgiEngine::agiInit() {
 	if (ec == errOK)
 		ec = _loader->loadResource(RESOURCETYPE_LOGIC, 0);
 
-#ifdef __DS__
-	// Normally, the engine loads the predictive text dictionary when the predictive dialog
-	// is shown.  On the DS version, the word completion feature needs the dictionary too.
-
-	// FIXME - loadDict() no long exists in AGI as this has been moved to within the
-	// GUI Predictive Dialog, but DS Word Completion is probably broken due to this...
-#endif
-
 	_keyHoldMode = false;
 	_keyHoldModeLastKey = Common::KEYCODE_INVALID;
 

@@ -35,10 +35,6 @@
 #include "common/file.h"
 #include "common/savefile.h"
 
-#if defined(__DS__) && defined(ENABLE_AGI)
-#include "backends/platform/ds/arm9/source/wordcompletion.h"
-#endif
-
 namespace GUI {
 
 enum {
@@ -976,10 +972,6 @@ void PredictiveDialog::loadDictionary(Common::SeekableReadStream *in, Dict &dict
 	while ((ptr = strchr(ptr, '\n'))) {
 		*ptr = 0;
 		ptr++;
-#if defined(__DS__) && defined(ENABLE_AGI)
-		// Pass the line on to the DS word list
-		DS::addAutoCompleteLine(dict.dictLine[i - 1]);
-#endif
 		dict.dictLine[i++] = ptr;
 	}
 	if (dict.dictLine[lines - 1][0] == 0)
@@ -989,12 +981,7 @@ void PredictiveDialog::loadDictionary(Common::SeekableReadStream *in, Dict &dict
 	debug(5, "Predictive Dialog: Loaded %d lines", dict.dictLineCount);
 
 	// FIXME: We use binary search on _predictiveDict.dictLine, yet we make no at_tempt
-	// to ever sort this array (except for the DS port). That seems risky, doesn't it?
-
-#if defined(__DS__) && defined(ENABLE_AGI)
-	// Sort the DS word completion list, to allow for a binary chop later (in the ds backend)
-	DS::sortAutoCompleteWordList();
-#endif
+	// to ever sort this array. That seems risky, doesn't it?
 
 	uint32 time3 = g_system->getMillis();
 	debug(5, "Predictive Dialog: Time to parse %s: %d, total: %d", ConfMan.get(dict.nameDict).c_str(), time3 - time2, time3 - time1);

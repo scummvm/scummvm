@@ -30,10 +30,6 @@
 
 #include "graphics/scaler.h"
 
-#ifdef __DS__
-#include "scummhelp.h"
-#endif
-
 #include "gui/gui-manager.h"
 #include "gui/widget.h"
 #include "gui/ThemeEval.h"
@@ -329,12 +325,7 @@ void HelpDialog::reflowLayout() {
 void HelpDialog::displayKeyBindings() {
 	U32String titleStr, *keyStr, *dscStr;
 
-#ifndef __DS__
 	ScummHelp::updateStrings(_game.id, _game.version, _game.platform, _page, titleStr, keyStr, dscStr);
-#else
-	// DS version has a different help screen
-	DS::updateStrings(_game.id, _game.version, _game.platform, _page, titleStr, keyStr, dscStr);
-#endif
 
 	_title->setLabel(titleStr);
 	for (int i = 0; i < _numLines; i++) {

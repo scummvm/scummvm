@@ -29,21 +29,14 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 
 #include "backends/base-backend.h"
-#include "common/events.h"
+#include "backends/events/ds/ds-events.h"
 #include "nds.h"
 #include "audio/mixer_intern.h"
 #include "graphics/surface.h"
 #include "graphics/palette.h"
 
-class OSystem_DS : public EventsBaseBackend, public PaletteManager {
+class OSystem_DS : public BaseBackend, public PaletteManager {
 protected:
-
-	int eventNum;
-	int lastPenFrame;
-
-	Common::Event eventQueue[96];
-	int queuePos;
-
 	Audio::MixerImpl *_mixer;
 	Graphics::Surface _framebuffer;
 	bool _frameBufferExists;
@@ -62,6 +55,7 @@ protected:
 	byte _cursorKey;
 	int _cursorScale;
 
+	DSEventSource *_eventSource;
 
 	Graphics::Surface *createTempFrameBuffer();
 	bool _disableCursorPalette;
@@ -111,10 +105,12 @@ public:
 	virtual void warpMouse(int x, int y);
 	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, u32 keycolor, bool dontScale, const Graphics::PixelFormat *format);
 
-	virtual bool pollEvent(Common::Event &event);
 	virtual uint32 getMillis(bool skipRecord = false);
 	virtual void delayMillis(uint msecs);
 	virtual void getTimeAndDate(TimeDate &t) const;
+
+	virtual Common::EventSource *getDefaultEventSource() { return _eventSource; }
+	virtual Common::HardwareInputSet *getHardwareInputSet();
 
 	virtual MutexRef createMutex(void);
 	virtual void lockMutex(MutexRef mutex);
@@ -122,9 +118,6 @@ public:
 	virtual void deleteMutex(MutexRef mutex);
 
 	virtual void quit();
-
-	void addEvent(const Common::Event& e);
-	bool isEventQueueEmpty() const { return queuePos == 0; }
 
 	virtual void setFocusRectangle(const Common::Rect& rect);
 
@@ -139,11 +132,6 @@ public:
 
 	static int timerHandler(int t);
 
-
-	virtual void addAutoComplete(const char *word);
-	virtual void clearAutoComplete();
-	virtual void setCharactersEntered(int count);
-
 	u16 getDSPaletteEntry(u32 entry) const { return _palette[entry]; }
 	u16 getDSCursorPaletteEntry(u32 entry) const { return !_disableCursorPalette? _cursorPalette[entry]: _palette[entry]; }
 
@@ -155,8 +143,6 @@ public:
 
 	u16 applyGamma(u16 color);
 	void setGammaValue(int gamma) { _gammaValue = gamma; }
-
-	void engineDone();
 };
 
 #endif

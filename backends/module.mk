@@ -284,6 +284,7 @@ endif
 
 ifeq ($(BACKEND),ds)
 MODULE_OBJS += \
+	events/ds/ds-events.o \
 	fs/posix/posix-fs.o \
 	fs/posix/posix-fs-factory.o \
 	fs/posix/posix-iostream.o \
