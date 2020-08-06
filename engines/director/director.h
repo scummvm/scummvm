@@ -36,6 +36,7 @@
 
 #include "director/types.h"
 #include "director/util.h"
+#include "director/detection_enums.h"
 
 namespace Common {
 class MacResManager;
@@ -52,12 +53,6 @@ class ManagedSurface;
 }
 
 namespace Director {
-
-enum DirectorGameGID {
-	GID_GENERIC,
-	GID_TEST,
-	GID_TESTALL
-};
 
 class Archive;
 class Cast;
