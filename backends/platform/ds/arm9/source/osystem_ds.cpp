@@ -27,6 +27,9 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 #define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 
+#include <nds.h>
+#include <filesystem.h>
+
 #include "common/scummsys.h"
 #include "common/system.h"
 
@@ -36,7 +39,6 @@
 #include "common/translation.h"
 
 #include "osystem_ds.h"
-#include "nds.h"
 #include "dsmain.h"
 #include "common/config-manager.h"
 #include "common/str.h"
@@ -58,6 +60,8 @@ OSystem_DS::OSystem_DS()
 	_disableCursorPalette(true), _graphicsEnable(true), _gammaValue(0)
 {
 	_instance = this;
+
+	nitroFSInit(NULL);
 	_fsFactory = new DevoptabFilesystemFactory();
 }
 
@@ -142,23 +146,15 @@ void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
 			if (DS::getIsDisplayMode8Bit()) {
 				int col = applyGamma(paletteValue);
 				BG_PALETTE[r] = col;
+#ifdef DISABLE_TEXT_CONSOLE
 				BG_PALETTE_SUB[r] = col;
+#endif
 			}
 
 			_palette[r] = paletteValue;
 		}
 
 		colors += 3;
-	}
-}
-
-void OSystem_DS::restoreHardwarePalette() {
-	// Set the hardware palette up based on the stored palette
-
-	for (int r = 0; r < 255; r++) {
-		int col = applyGamma(_palette[r]);
-		BG_PALETTE[r] = col;
-		BG_PALETTE_SUB[r] = col;
 	}
 }
 
@@ -202,7 +198,9 @@ void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int 
 
 	u16 *bg;
 	s32 stride;
+#ifdef DISABLE_TEXT_CONSOLE
 	u16 *bgSub = (u16 *)BG_GFX_SUB;
+#endif
 
 	// The DS video RAM doesn't support 8-bit writes because Nintendo wanted
 	// to save a few pennies/euro cents on the hardware.
@@ -224,7 +222,9 @@ void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int 
 
 		for (int dy = y; dy < y + h; dy++) {
 			u8 *dest = ((u8 *) (bg)) + (dy * stride) + x;
+#ifdef DISABLE_TEXT_CONSOLE
 			u8 *destSub = ((u8 *) (bgSub)) + (dy * 512) + x;
+#endif
 			const u8 *src = (const u8 *) buf + (pitch * by);
 
 			u32 dx;
@@ -240,23 +240,32 @@ void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int 
 				mix = (mix & 0x00FF) | (*src++ << 8);
 
 				*dest = mix;
+#ifdef DISABLE_TEXT_CONSOLE
 				*destSub = mix;
+#endif
 
 				dest += 2;
+#ifdef DISABLE_TEXT_CONSOLE
 				destSub += 2;
+#endif
+
 				pixelsLeft--;
 			}
 
 			// We can now assume dest is aligned
 			u16 *dest16 = (u16 *) dest;
+#ifdef DISABLE_TEXT_CONSOLE
 			u16 *destSub16 = (u16 *) destSub;
+#endif
 
 			for (dx = 0; dx < pixelsLeft; dx+=2) {
 				u16 mix;
 
 				mix = *src + (*(src + 1) << 8);
 				*dest16++ = mix;
+#ifdef DISABLE_TEXT_CONSOLE
 				*destSub16++ = mix;
+#endif
 				src += 2;
 			}
 
@@ -270,7 +279,9 @@ void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int 
 				mix = (mix & 0x00FF) | ((*src++) << 8);
 
 				*dest16 = mix;
+#ifdef DISABLE_TEXT_CONSOLE
 				*destSub16 = mix;
+#endif
 			}
 
 			by++;
@@ -285,17 +296,23 @@ void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int 
 
 		for (int dy = y; dy < y + h; dy++) {
 			u16 *dest1 = bg + (dy * (stride >> 1)) + (x >> 1);
+#ifdef DISABLE_TEXT_CONSOLE
 			u16 *dest2 = bgSub + (dy << 8) + (x >> 1);
+#endif
 
 			DC_FlushRange(src, w << 1);
 			DC_FlushRange(dest1, w << 1);
+#ifdef DISABLE_TEXT_CONSOLE
 			DC_FlushRange(dest2, w << 1);
+#endif
 
 			dmaCopyHalfWords(3, src, dest1, w);
 
+#ifdef DISABLE_TEXT_CONSOLE
 			if ((!_frameBufferExists) || (buf == _framebuffer.getPixels())) {
 				dmaCopyHalfWords(2, src, dest2, w);
 			}
+#endif
 
 			while (dmaBusy(2) || dmaBusy(3));
 
@@ -520,9 +537,8 @@ void OSystem_DS::clearFocusRectangle() {
 
 void OSystem_DS::logMessage(LogMessageType::Type type, const char *message) {
 #ifndef DISABLE_TEXT_CONSOLE
-	nocashMessage((char *)message);
-#endif
 	printf("%s", message);
+#endif
 }
 
 u16 OSystem_DS::applyGamma(u16 color) {

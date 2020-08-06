@@ -1881,7 +1881,7 @@ else
 fi
 
 case $_host in
-arm-*riscos | caanoo | gp2x | gp2xwiz | openpandora | psp | psp2 | switch)
+arm-*riscos | caanoo | ds | gp2x | gp2xwiz | openpandora | psp | psp2 | switch)
 	if test "$_debug_build" = auto; then
 		# If you want to debug one of these platforms, use '--disable-optimizations --enable-debug'
 		_debug_build=no
@@ -3401,12 +3401,14 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/dc/dreamcast.mk"
 			;;
 		ds)
+			if test "$_debug_build" != yes; then
+				append_var DEFINES "-DDISABLE_TEXT_CONSOLE"
+			fi
 			append_var DEFINES "-DDISABLE_COMMAND_LINE"
 			append_var DEFINES "-DDISABLE_DOSBOX_OPL"
 			append_var DEFINES "-DDISABLE_FANCY_THEMES"
 			append_var DEFINES "-DDISABLE_SID"
 			append_var DEFINES "-DDISABLE_NES_APU"
-			append_var DEFINES "-DDISABLE_TEXT_CONSOLE"
 			append_var DEFINES "-DREDUCE_MEMORY_USAGE"
 			append_var DEFINES "-DSTREAM_AUDIO_FROM_DISK"
 			append_var DEFINES "-DVECTOR_RENDERER_FORMAT=1555"
