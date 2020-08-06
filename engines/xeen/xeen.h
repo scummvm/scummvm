@@ -47,6 +47,7 @@
 #include "xeen/sound.h"
 #include "xeen/spells.h"
 #include "xeen/window.h"
+#include "xeen/detection_enums.h"
 
 /**
  * This is the namespace of the Xeen engine.
@@ -60,13 +61,6 @@
  * - Might & Magic: Swords of Xeen
  */
 namespace Xeen {
-
-enum {
-	GType_Clouds = 1,
-	GType_DarkSide = 2,
-	GType_WorldOfXeen = 3,
-	GType_Swords = 4
-};
 
 enum XeenDebugChannels {
 	kDebugPath      = 1 << 0,
