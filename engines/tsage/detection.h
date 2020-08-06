@@ -20,39 +20,13 @@
  *
  */
 
-#include "engines/advancedDetector.h"
+namespace TsAGE {
 
-#include "base/plugins.h"
+struct tSageGameDescription {
+	ADGameDescription desc;
 
-#include "tsage/detection.h"
-#include "tsage/detection_enums.h"
-
-static const PlainGameDescriptor tSageGameTitles[] = {
-	{ "ringworld", "Ringworld: Revenge of the Patriarch" },
-	{ "blueforce", "Blue Force" },
-	{ "ringworld2", "Return to Ringworld" },
-	{ "sherlock-logo", "The Lost Files of Sherlock Holmes (Logo)" },
-	{ 0, 0 }
+	int gameID;
+	uint32 features;
 };
 
-#include "engines/tsage/detection_tables.h"
-
-class TSageMetaEngine : public AdvancedMetaEngine {
-public:
-	TSageMetaEngine() : AdvancedMetaEngine(TsAGE::gameDescriptions, sizeof(TsAGE::tSageGameDescription), tSageGameTitles) {
-	}
-
-	const char *getEngineId() const override {
-		return "tsage";
-	}
-
-	const char *getName() const override {
-		return "TsAGE";
-	}
-
-	const char *getOriginalCopyright() const override {
-		return "(C) Tsunami Media";
-	}
-};
-
-REGISTER_PLUGIN_STATIC(TSAGE_DETECTION, PLUGIN_TYPE_METAENGINE, TSageMetaEngine);
+} // End of namespace TsAGE
