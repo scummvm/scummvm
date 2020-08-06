@@ -4,7 +4,6 @@ MODULE_OBJS = \
 	anihandler.o \
 	behavior.o \
 	console.o \
-	detection.o \
 	floaters.o \
 	fullpipe.o \
 	gameloader.o \
@@ -16,6 +15,7 @@ MODULE_OBJS = \
 	lift.o \
 	messagehandlers.o \
 	messages.o \
+	metaengine.o \
 	modal.o \
 	motion.o \
 	ngiarchive.o \
@@ -75,3 +75,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
