@@ -123,10 +123,8 @@ static int subScreenScale = 256;
 static bool highBuffer;
 static bool displayModeIs8Bit = false;
 
-static bool consoleEnable = false;
 static bool gameScreenSwap = false;
 bool isCpuScalerEnabled();
-//#define HEAVY_LOGGING
 
 static int storedMouseX = 0;
 static int storedMouseY = 0;
@@ -155,8 +153,6 @@ static bool twoHundredPercentFixedScale = false;
 static bool cpuScalerEnable = false;
 
 static u8 *scalerBackBuffer = NULL;
-
-static u16 savedPalEntry255 = RGB15(31, 31, 31);
 
 void setIcon(int num, int x, int y, int imageNum, int flags, bool enable);
 void setIconMain(int num, int x, int y, int imageNum, int flags, bool enable);
@@ -251,38 +247,15 @@ void setUnscaledMode(bool enable) {
 }
 
 void displayMode8Bit() {
-
-#ifdef HEAVY_LOGGING
-	printf("displayMode8Bit...");
-#endif
-	u16 buffer[32 * 32];
-
 	setOptions();
-
-	if (!displayModeIs8Bit) {
-		for (int r = 0; r < 32 * 32; r++) {
-			buffer[r] = ((u16 *) SCREEN_BASE_BLOCK_SUB(4))[r];
-		}
-	} else {
-		for (int r = 0; r < 32 * 32; r++) {
-			buffer[r] = ((u16 *) SCREEN_BASE_BLOCK(2))[r];
-		}
-	}
 
 	displayModeIs8Bit = true;
 
+	videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
+	vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
+	vramSetBankB(VRAM_B_MAIN_BG_0x06020000);
+
 	if (isCpuScalerEnabled()) {
-		videoSetMode(MODE_5_2D | (consoleEnable ? DISPLAY_BG0_ACTIVE : 0) | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
-		videoSetModeSub(MODE_3_2D /*| DISPLAY_BG0_ACTIVE*/ | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); //sub bg 0 will be used to print text
-
-		vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
-		vramSetBankB(VRAM_B_MAIN_BG_0x06020000);
-
-		vramSetBankC(VRAM_C_SUB_BG_0x06200000);
-		vramSetBankD(VRAM_D_SUB_SPRITE);
-
-		vramSetBankH(VRAM_H_LCD);
-
 		REG_BG3CNT = BG_BMP16_256x256 | BG_BMP_BASE(8);
 
 		REG_BG3PA = 256;
@@ -291,17 +264,6 @@ void displayMode8Bit() {
 		REG_BG3PD = (int) ((200.0f / 192.0f) * 256);
 
 	} else {
-		videoSetMode(MODE_5_2D | (consoleEnable ? DISPLAY_BG0_ACTIVE : 0) | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
-		videoSetModeSub(MODE_3_2D /*| DISPLAY_BG0_ACTIVE*/ | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); //sub bg 0 will be used to print text
-
-		vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
-		vramSetBankB(VRAM_B_MAIN_BG_0x06020000);
-
-		vramSetBankC(VRAM_C_SUB_BG_0x06200000);
-		vramSetBankD(VRAM_D_SUB_SPRITE);
-
-		vramSetBankH(VRAM_H_LCD);
-
 		REG_BG3CNT = BG_BMP8_512x256 | BG_BMP_BASE(8);
 
 		REG_BG3PA = (int) (((float) (gameWidth) / 256.0f) * 256);
@@ -310,36 +272,17 @@ void displayMode8Bit() {
 		REG_BG3PD = (int) ((200.0f / 192.0f) * 256);
 	}
 
+#ifdef DISABLE_TEXT_CONSOLE
+	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
+	vramSetBankC(VRAM_C_SUB_BG_0x06200000);
+	vramSetBankD(VRAM_D_SUB_SPRITE);
 	REG_BG3CNT_SUB = BG_BMP8_512x256;
 
 	REG_BG3PA_SUB = (int) (subScreenWidth / 256.0f * 256);
 	REG_BG3PB_SUB = 0;
 	REG_BG3PC_SUB = 0;
 	REG_BG3PD_SUB = (int) (subScreenHeight / 192.0f * 256);
-
-
-
-	consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 2, 0, true, true);
-
-	// Set this again because consoleinit resets it
-	videoSetMode(MODE_5_2D | (consoleEnable ? DISPLAY_BG0_ACTIVE : 0) | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
-
-	// Move the cursor to the bottom of the screen using ANSI escape code
-	printf("\033[23;0f");
-
-
-	for (int r = 0; r < 32 * 32; r++) {
-		((u16 *) SCREEN_BASE_BLOCK(2))[r] = buffer[r];
-	}
-
-	// ConsoleInit destroys the hardware palette :-(
-	if (OSystem_DS::instance()) {
-		OSystem_DS::instance()->restoreHardwarePalette();
-	}
-
-	#ifdef HEAVY_LOGGING
-	printf("done\n");
-	#endif
+#endif
 
 	if (gameScreenSwap) {
 		lcdMainOnTop();
@@ -391,79 +334,34 @@ void setCursorIcon(const u8 *icon, uint w, uint h, byte keycolor, int hotspotX, 
 
 
 void displayMode16Bit() {
-	#ifdef HEAVY_LOGGING
-	printf("displayMode16Bit...");
-	#endif
-
-	u16 buffer[32 * 32 * 2];
-
-	if (!displayModeIs8Bit) {
-		for (int r = 0; r < 32 * 32; r++) {
-			buffer[r] = ((u16 *) SCREEN_BASE_BLOCK_SUB(4))[r];
-		}
-	} else {
+	if (displayModeIs8Bit) {
 		saveGameBackBuffer();
-		for (int r = 0; r < 32 * 32; r++) {
-			buffer[r] = ((u16 *) SCREEN_BASE_BLOCK(2))[r];
-		}
 	}
 
-
-	videoSetMode(MODE_5_2D | /*DISPLAY_BG0_ACTIVE |*/ DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
-	videoSetModeSub(MODE_0_2D | DISPLAY_BG0_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); //sub bg 0 will be used to print text
+	videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
 
 	vramSetBankA(VRAM_A_MAIN_BG);
 	vramSetBankB(VRAM_B_MAIN_BG);
 	vramSetBankC(VRAM_C_MAIN_BG);
 	vramSetBankD(VRAM_D_MAIN_BG);
-	vramSetBankH(VRAM_H_SUB_BG);
 
 	REG_BG3CNT = BG_BMP16_512x256;
 	highBuffer = false;
 
-
 	memset(BG_GFX, 0, 512 * 256 * 2);
-
-	savedPalEntry255 = BG_PALETTE_SUB[255];
-	BG_PALETTE_SUB[255] = RGB15(31,31,31);//by default font will be rendered with color 255
-
-	// Do text stuff
-	REG_BG0CNT_SUB = BG_MAP_BASE(4) | BG_TILE_BASE(0);
-	REG_BG0VOFS_SUB = 0;
-
-	consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 4, 0, false, true);
-
-	for (int r = 0; r < 32 * 32; r++) {
-		((u16 *) SCREEN_BASE_BLOCK_SUB(4))[r] = buffer[r];
-	}
-
-	consoleSetWindow(NULL, 0, 0, 32, 24);
 
 	lcdMainOnBottom();
 
 	displayModeIs8Bit = false;
 
-	// ConsoleInit destroys the hardware palette :-(
-	OSystem_DS::instance()->restoreHardwarePalette();
-
 	REG_BG3PA = isCpuScalerEnabled() ? 256 : (int) (1.25f * 256);
 	REG_BG3PB = 0;
 	REG_BG3PC = 0;
 	REG_BG3PD = (int) ((200.0f / 192.0f) * 256);
-
-	#ifdef HEAVY_LOGGING
-	printf("done\n");
-	#endif
-
-	BG_PALETTE_SUB[255] = RGB15(31,31,31);//by default font will be rendered with color 255
-
 }
 
 
 void displayMode16BitFlipBuffer() {
-	#ifdef HEAVY_LOGGING
-	printf("Flip %s...", displayModeIs8Bit ? "8bpp" : "16bpp");
-	#endif
 	if (!displayModeIs8Bit) {
 		u16 *back = get16BitBackBuffer();
 
@@ -485,9 +383,6 @@ void displayMode16BitFlipBuffer() {
 			BG_PALETTE,
 			getGameHeight() );
 	}
-	#ifdef HEAVY_LOGGING
-	printf("done\n");
-	#endif
 }
 
 void setShakePos(int shakeXOffset, int shakeYOffset) {
@@ -604,9 +499,10 @@ void setZoomedScreenScroll(int x, int y, bool shake) {
 			touchY = y >> 8;
 		}
 
-
+#ifdef DISABLE_TEXT_CONSOLE
 		REG_BG3X_SUB = x + ((shake && (frameCount & 1) == 0)? 64: 0);
 		REG_BG3Y_SUB = y;
+#endif
 }
 
 void setZoomedScreenScale(int x, int y) {
@@ -615,10 +511,12 @@ void setZoomedScreenScale(int x, int y) {
 			touchScY = y;
 		}
 
+#ifdef DISABLE_TEXT_CONSOLE
 		REG_BG3PA_SUB = x;
 		REG_BG3PB_SUB = 0;
 		REG_BG3PC_SUB = 0;
 		REG_BG3PD_SUB = y;
+#endif
 }
 
 Common::Point transformPoint(uint16 x, uint16 y) {
@@ -767,21 +665,10 @@ void setTopScreenTarget(int x, int y) {
 
 void initHardware() {
 	powerOn(POWER_ALL);
-	vramSetBankD(VRAM_D_SUB_SPRITE);
-	vramSetBankE(VRAM_E_MAIN_SPRITE);
 
 	for (int r = 0; r < 255; r++) {
 		BG_PALETTE[r] = 0;
 	}
-
-	BG_PALETTE[255] = RGB15(0,31,0);
-
-
-	for (int r = 0; r < 255; r++) {
-		BG_PALETTE_SUB[r] = 0;
-	}
-
-	BG_PALETTE_SUB[255] = RGB15(0,31,0);
 
 	// Allocate save buffer for game screen
 	displayMode16Bit();
@@ -800,8 +687,6 @@ void initHardware() {
 	frameCount = 0;
 	callback = NULL;
 
-	BG_PALETTE[255] = RGB15(31,31,31);//by default font will be rendered with color 255
-
 	//irqs are nice
 	irqSet(IRQ_VBLANK, VBlankHandler);
 	irqEnable(IRQ_VBLANK);
@@ -811,7 +696,16 @@ void initHardware() {
 	timerStart(0, ClockDivider_1, (u16)TIMER_FREQ(1000), timerTickHandler);
 	REG_IME = 1;
 
-	BG_PALETTE[255] = RGB15(0,0,31);
+	videoSetModeSub(MODE_0_2D | DISPLAY_BG0_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
+	vramSetBankD(VRAM_D_SUB_SPRITE);
+	vramSetBankE(VRAM_E_MAIN_SPRITE);
+
+#ifndef DISABLE_TEXT_CONSOLE
+	vramSetBankH(VRAM_H_SUB_BG);
+	consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);
+
+	printf("Testing the console\n");
+#endif
 
 	initSprites();
 
@@ -838,7 +732,7 @@ void *fastRamAlloc(int size) {
 	void *result = (void *) fastRamPointer;
 	fastRamPointer += size;
 	if(fastRamPointer > fastRamData + FAST_RAM_SIZE) {
-		printf("FastRam (ITCM) allocation failed!\n");
+		warning("FastRam (ITCM) allocation failed");
 		return malloc(size);
 	}
 	return result;
@@ -855,19 +749,9 @@ void fastRamReset() {
 /////////////////
 
 int main(int argc, char **argv) {
-#ifndef DISABLE_TEXT_CONSOLE
-	consoleDebugInit(DebugDevice_NOCASH);
-	nocashMessage("startup\n");
-#endif
-
 	DS::initHardware();
 
 	defaultExceptionHandler();
-
-	if (!nitroFSInit(NULL)) {
-		printf("nitroFSInit failure: terminating\n");
-		return(1);
-	}
 
 	g_system = new OSystem_DS();
 	assert(g_system);

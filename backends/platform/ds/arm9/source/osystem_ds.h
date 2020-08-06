@@ -84,8 +84,6 @@ protected:
 	virtual void grabPalette(byte *colors, uint start, uint num) const;
 
 public:
-	void restoreHardwarePalette();
-
 	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h);
 	virtual void updateScreen();
 	virtual void setShakePos(int shakeXOffset, int shakeYOffset);
