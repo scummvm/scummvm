@@ -18,7 +18,6 @@ MODULE_OBJS := \
 	bbdou/scriptopcodes_bbdou.o \
 	camera.o \
 	cursor.o \
-	detection.o \
 	dictionary.o \
 	duckman/duckman_credits.o \
 	duckman/duckman_dialog.o \
@@ -39,6 +38,7 @@ MODULE_OBJS := \
 	graphics.o \
 	illusions.o \
 	input.o \
+	metaengine.o \
 	menusystem.o \
 	pathfinder.o \
 	resources/actorresource.o \
@@ -76,3 +76,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o

@@ -26,6 +26,7 @@
 #include "illusions/graphics.h"
 #include "audio/mixer.h"
 #include "audio/decoders/aiff.h"
+
 #include "common/array.h"
 #include "common/events.h"
 #include "common/file.h"
@@ -34,8 +35,10 @@
 #include "common/str.h"
 #include "common/substream.h"
 #include "common/system.h"
+
 #include "engines/engine.h"
 #include "graphics/surface.h"
+#include "illusions/detection_enums.h"
 
 namespace Illusions {
 
@@ -75,11 +78,6 @@ class ThreadList;
 class UpdateFunctions;
 class GameState;
 class ScreenPaletteBase;
-
-enum {
-	kGameIdBBDOU   = 1,
-	kGameIdDuckman = 2
-};
 
 class IllusionsEngine : public Engine {
 public:
