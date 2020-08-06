@@ -339,9 +339,9 @@ EditGameDialog::EditGameDialog(const String &domain)
 	//
 	// 9) The Achievements tab
 	//
-	if (metaEnginePlugin) {
-		const MetaEngine &metaEngine = metaEnginePlugin->get<MetaEngine>();
-		Common::AchievementsInfo achievementsInfo = metaEngine.getAchievementsInfo(domain);
+	if (enginePlugin) {
+		const MetaEngineConnect &metaEngineConnect = enginePlugin->get<MetaEngineConnect>();
+		Common::AchievementsInfo achievementsInfo = metaEngineConnect.getAchievementsInfo(domain);
 		if (achievementsInfo.descriptions.size() > 0) {
 			tab->addTab(_("Achievements"), "GameOptions_Achievements");
 			addAchievementsControls(tab, "GameOptions_Achievements.", achievementsInfo);
