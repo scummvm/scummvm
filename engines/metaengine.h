@@ -165,19 +165,6 @@ public:
 	 * @param target   name of a config manager target
 	 */
 	virtual GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const;
-
-	/**
-	 * Return a list of achievement descriptions for the specified target.
-	 *
-	 * The default implementation returns an empty list.
-	 *
-	 * @param target    name of a config manager target
-	 * @return          a list of achievement descriptions for an engine plugin
-	 *                  and target
-	 */
-	virtual const Common::AchievementsInfo getAchievementsInfo(const Common::String &target) const {
-		return Common::AchievementsInfo();
-	}
 };
 
 /**
@@ -412,6 +399,19 @@ public:
 	};
 
 	//@}
+
+	/**
+	 * Return a list of achievement descriptions for the specified target.
+	 *
+	 * The default implementation returns an empty list.
+	 *
+	 * @param target    name of a config manager target
+	 * @return          a list of achievement descriptions for an engine plugin
+	 *                  and target
+	 */
+	virtual const Common::AchievementsInfo getAchievementsInfo(const Common::String &target) const {
+		return Common::AchievementsInfo();
+	}
 
 	/**
 	 * Determine whether the engine supports the specified MetaEngine feature.

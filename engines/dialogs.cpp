@@ -331,7 +331,7 @@ ConfigDialog::ConfigDialog() :
 	//
 	// The Achievements tab
 	//
-	Common::AchievementsInfo achievementsInfo = metaEngine.getAchievementsInfo(gameDomain);
+	Common::AchievementsInfo achievementsInfo = metaEngineConnect.getAchievementsInfo(gameDomain);
 	if (achievementsInfo.descriptions.size() > 0) {
 		tab->addTab(_("Achievements"), "GlobalConfig_Achievements");
 		addAchievementsControls(tab, "GlobalConfig_Achievements.", achievementsInfo);
