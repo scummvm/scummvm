@@ -4,10 +4,10 @@ MODULE_OBJS := \
 	animation.o \
 	data.o \
 	debugger.o \
-	detection.o \
 	events.o \
 	files.o \
 	files_threads.o \
+	metaengine.o \
 	screen.o \
 	sound.o \
 	staticres.o \
@@ -21,3 +21,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o

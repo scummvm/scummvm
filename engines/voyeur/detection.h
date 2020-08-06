@@ -20,37 +20,10 @@
  *
  */
 
-#include "base/plugins.h"
+namespace Voyeur {
 
-#include "common/str-array.h"
-#include "common/memstream.h"
-#include "engines/advancedDetector.h"
-#include "voyeur/detection.h"
-
-static const PlainGameDescriptor voyeurGames[] = {
-	{"voyeur", "Voyeur"},
-	{0, 0}
+struct VoyeurGameDescription {
+	ADGameDescription desc;
 };
 
-#include "voyeur/detection_tables.h"
-
-class VoyeurMetaEngine : public AdvancedMetaEngine {
-public:
-	VoyeurMetaEngine() : AdvancedMetaEngine(Voyeur::gameDescriptions, sizeof(Voyeur::VoyeurGameDescription), voyeurGames) {
-		_maxScanDepth = 3;
-	}
-
-	const char *getEngineId() const override {
-		return "voyeur";
-	}
-
-	const char *getName() const override {
-		return "Voyeur";
-	}
-
-	const char *getOriginalCopyright() const override {
-		return "Voyeur (C) Philips P.O.V. Entertainment Group";
-	}
-};
-
-REGISTER_PLUGIN_STATIC(VOYEUR_DETECTION, PLUGIN_TYPE_METAENGINE, VoyeurMetaEngine);
+} // End of namespace Voyeur
