@@ -4,7 +4,6 @@ MODULE_OBJS = \
 	compass.o \
 	console.o \
 	cursor.o \
-	detection.o \
 	elements.o \
 	energymonitor.o \
 	fader.o \
@@ -15,6 +14,7 @@ MODULE_OBJS = \
 	interaction.o \
 	interface.o \
 	menu.o \
+	metaengine.o \
 	movie.o \
 	notification.o \
 	pegasus.o \
@@ -99,3 +99,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
