@@ -44,6 +44,7 @@
 
 #include "composer/resource.h"
 #include "composer/console.h"
+#include "composer/detection_enums.h"
 
 namespace Audio {
 	class QueuingAudioStream;
@@ -52,17 +53,6 @@ namespace Audio {
 namespace Composer {
 
 struct ComposerGameDescription;
-
-enum GameType {
-	GType_ComposerV1,
-	GType_ComposerV2
-};
-
-enum GameFileTypes {
-	GAME_CONFIGFILE     = 1 << 0,    // Game configuration
-	GAME_SCRIPTFILE     = 1 << 1,    // Game script
-	GAME_EXECUTABLE     = 1 << 2     // Game executable
-};
 
 class Archive;
 struct Animation;
