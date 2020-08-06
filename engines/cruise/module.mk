@@ -12,13 +12,13 @@ MODULE_OBJS := \
 	debugger.o \
 	decompiler.o \
 	delphine-unpack.o \
-	detection.o \
 	font.o \
 	function.o \
 	gfxModule.o \
 	linker.o \
 	mainDraw.o \
 	menu.o \
+	metaengine.o \
 	mouse.o \
 	object.o \
 	overlay.o \
@@ -40,3 +40,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
