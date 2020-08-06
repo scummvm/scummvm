@@ -27,7 +27,6 @@ namespace Director {
 
 namespace LC {
 	void c_xpop();
-	void c_printtop();
 
 	Datum mapBinaryOp(Datum (*func)(Datum &, Datum &), Datum &d1, Datum &d2);
 	Datum addData(Datum &d1, Datum &d2);

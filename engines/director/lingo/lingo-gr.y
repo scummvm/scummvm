@@ -678,7 +678,9 @@ reference: 	chunkexpr
 		Common::String window("window");
 		g_lingo->codeFunc(&window, 1); }
 
-proc: tPUT expr					{ g_lingo->code1(LC::c_printtop); }
+proc: tPUT expr					{
+		Common::String put("put");
+		g_lingo->codeCmd(&put, 1); }
 	| gotofunc
 	| playfunc
 	| tEXIT tREPEAT				{

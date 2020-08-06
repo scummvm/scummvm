@@ -115,7 +115,6 @@ static struct FuncDescr {
 	{ LC::c_of,				"c_of",				"" },
 	{ LC::c_or,				"c_or",				"" },
 	{ LC::c_play,			"c_play",			"" },
-	{ LC::c_printtop,		"c_printtop",		""  },
 	{ LC::c_procret,		"c_procret",		"" },
 	{ LC::c_proparraypush,	"c_proparraypush",	"i" },
 	{ LC::c_setImmediate,	"c_setImmediate",	"i" },
@@ -334,52 +333,6 @@ void Lingo::popContext() {
 	}
 
 	delete fp;
-}
-
-void LC::c_printtop(void) {
-	Datum d = g_lingo->pop();
-
-	switch (d.type) {
-	case VOID:
-		warning("Void, came from %s", d.u.s ? d.u.s->c_str() : "<>");
-		break;
-	case INT:
-		warning("%d", d.u.i);
-		break;
-	case FLOAT:
-		warning(g_lingo->_floatPrecisionFormat.c_str(), d.u.f);
-		break;
-	case VAR:
-		if (!d.u.s) {
-			warning("Inconsistent stack: var, val: %d", d.u.i);
-		} else {
-			if (!d.u.s->empty())
-				warning("var: %s", d.u.s->c_str());
-			else
-				warning("Nameless var");
-		}
-		break;
-	case STRING:
-		warning("%s", d.asString(true).c_str());
-		break;
-	case POINT:
-		warning("point(%s, %s)", (*d.u.farr)[0].asString(true).c_str(), (*d.u.farr)[1].asString(true).c_str());
-		break;
-	case SYMBOL:
-		warning("%s", d.type2str(true));
-		break;
-	case OBJECT:
-		warning("#%s", d.asString(true).c_str());
-		break;
-	case ARRAY:
-		warning("%s", d.asString(true).c_str());
-		break;
-	case PARRAY:
-		warning("%s", d.asString(true).c_str());
-		break;
-	default:
-		warning("--unknown--");
-	}
 }
 
 void LC::c_constpush() {
