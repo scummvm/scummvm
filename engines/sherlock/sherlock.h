@@ -31,7 +31,9 @@
 #include "common/random.h"
 #include "common/savefile.h"
 #include "common/util.h"
+
 #include "engines/engine.h"
+
 #include "sherlock/animation.h"
 #include "sherlock/debugger.h"
 #include "sherlock/events.h"
@@ -48,6 +50,7 @@
 #include "sherlock/sound.h"
 #include "sherlock/talk.h"
 #include "sherlock/user_interface.h"
+#include "sherlock/detection_enums.h"
 
 namespace Sherlock {
 
@@ -56,11 +59,6 @@ enum {
 	kDebugLevelAdLibDriver = 2 << 0,
 	kDebugLevelMT32Driver  = 3 << 0,
 	kDebugLevelMusic       = 4 << 0
-};
-
-enum GameType {
-	GType_SerratedScalpel = 0,
-	GType_RoseTattoo = 1
 };
 
 #define SHERLOCK_SCREEN_WIDTH _vm->_screen->width()
