@@ -191,8 +191,10 @@ void Screen::copyRectToSurface8bpp(const void *buffer, const byte* palette, int 
 					// only copy opaque pixels
 					WRITE_LE_UINT16(&dst[j * 2], c & ~0x8000);
 				} else {
-					WRITE_LE_UINT16(&dst[j * 2], alpha == NORMAL ? alphaBlendRGB555(c, READ_LE_INT16(&dst[j * 2]), 128) : alphaBlendAdditiveRGB555(c, READ_LE_INT16(&dst[j * 2])));
 					// semi-transparent pixels.
+					WRITE_LE_UINT16(&dst[j * 2], alpha == NORMAL
+						? alphaBlendRGB555(c & 0x7fff, READ_LE_INT16(&dst[j * 2]) & 0x7fff, 128)
+						: alphaBlendAdditiveRGB555(c & 0x7fff, READ_LE_INT16(&dst[j * 2]) & 0x7fff));
 				}
 			}
 		}
