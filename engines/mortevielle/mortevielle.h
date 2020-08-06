@@ -44,6 +44,7 @@
 #include "mortevielle/saveload.h"
 #include "mortevielle/sound.h"
 #include "mortevielle/outtext.h"
+#include "mortevielle/detection_enums.h"
 
 namespace Mortevielle {
 
@@ -59,11 +60,6 @@ enum {
 	MORTDAT_LANG_FRENCH = 0,
 	MORTDAT_LANG_ENGLISH = 1,
 	MORTDAT_LANG_GERMAN = 2
-};
-
-enum {
-	kUseOriginalData = 0,
-	kUseEngineDataFile = 1
 };
 
 // Static string list

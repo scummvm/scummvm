@@ -3,10 +3,10 @@ MODULE := engines/mortevielle
 MODULE_OBJS := \
 	actions.o \
 	debugger.o \
-	detection.o \
 	dialogs.o \
 	graphics.o \
 	menu.o \
+	metaengine.o \
 	mortevielle.o \
 	mouse.o \
 	outtext.o \
@@ -21,3 +21,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
