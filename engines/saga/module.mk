@@ -6,7 +6,6 @@ MODULE_OBJS := \
 	actor_walk.o \
 	animation.o \
 	console.o \
-	detection.o \
 	events.o \
 	font.o \
 	font_map.o \
@@ -17,6 +16,7 @@ MODULE_OBJS := \
 	introproc_ite.o \
 	isomap.o \
 	itedata.o \
+	metaengine.o \
 	music.o \
 	objectmap.o \
 	palanim.o \
@@ -55,3 +55,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
