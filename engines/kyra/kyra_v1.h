@@ -36,6 +36,7 @@
 
 #include "kyra/script/script.h"
 #include "kyra/engine/item.h"
+#include "kyra/detection_enums.h"
 
 namespace Common {
 class OutSaveFile;
@@ -47,7 +48,7 @@ namespace Graphics {
 struct Surface;
 }
 
-class KyraMetaEngine;
+class KyraMetaEngineConnect;
 
 /**
  * This is the namespace of the Kyra engine.
@@ -107,39 +108,8 @@ class KyraMetaEngine;
  */
 namespace Kyra {
 
-struct GameFlags {
-	Common::Language lang;
-
-	// language overwrites of fan translations (only needed for multilingual games)
-	Common::Language fanLang;
-	Common::Language replacedLang;
-
-	Common::Platform platform;
-
-	bool isDemo               : 1;
-	bool useAltShapeHeader    : 1;    // alternative shape header (uses 2 bytes more, those are unused though)
-	bool isTalkie             : 1;
-	bool isOldFloppy          : 1;
-	bool useHiRes             : 1;
-	bool use16ColorMode       : 1;
-	bool useHiColorMode       : 1;
-	bool useDigSound          : 1;
-	bool useInstallerPackage  : 1;
-
-	byte gameID;
-};
-
 struct KeyCodeHash : public Common::UnaryFunction<Common::KeyCode, uint> {
 	uint operator()(Common::KeyCode val) const { return (uint)val; }
-};
-
-enum {
-	GI_KYRA1 = 0,
-	GI_KYRA2 = 1,
-	GI_KYRA3 = 2,
-	GI_LOL = 4,
-	GI_EOB1 = 5,
-	GI_EOB2 = 6
 };
 
 // TODO: this is just the start of makeing the debug output of the kyra engine a bit more useable
@@ -177,7 +147,7 @@ struct Button;
 
 class KyraEngine_v1 : public Engine {
 friend class Debugger;
-friend class ::KyraMetaEngine;
+friend class ::KyraMetaEngineConnect;
 friend class GUI;
 friend class GUI_v1;
 friend class GUI_EoB;
