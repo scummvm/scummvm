@@ -88,7 +88,7 @@ struct TransParams {
 
 class Window : public Graphics::MacWindow, public Object<Window> {
  public:
-	Window(int id, bool scrollable, bool resizable, bool editable, Graphics::MacWindowManager *wm, DirectorEngine *vm);
+	Window(int id, bool scrollable, bool resizable, bool editable, Graphics::MacWindowManager *wm, DirectorEngine *vm, bool isStage);
 	~Window();
 
 	bool render(bool forceRedraw = false, Graphics::ManagedSurface *blitTo = nullptr);
@@ -168,6 +168,7 @@ private:
 	uint _stageColor;
 
 	DirectorEngine *_vm;
+	bool _isStage;
 	Archive *_mainArchive;
 	Common::MacResManager *_macBinary;
 	Movie *_currentMovie;

@@ -2370,7 +2370,7 @@ void LB::b_window(int nargs) {
 	}
 
 	Graphics::MacWindowManager *wm = g_director->getMacWindowManager();
-	Window *window = new Window(wm->getNextId(), false, false, false, wm, g_director);
+	Window *window = new Window(wm->getNextId(), false, false, false, wm, g_director, false);
 	window->setName(windowName);
 	window->setTitle(windowName);
 	window->resize(1, 1, true);

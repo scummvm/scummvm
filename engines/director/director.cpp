@@ -152,7 +152,7 @@ Common::Error DirectorEngine::run() {
 	_wm->setEngine(this);
 
 
-	_stage = new Window(_wm->getNextId(), false, false, false, _wm, this);
+	_stage = new Window(_wm->getNextId(), false, false, false, _wm, this, true);
 	*_stage->_refCount += 1;
 
 	if (debugChannelSet(-1, kDebugDesktop))

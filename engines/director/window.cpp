@@ -41,9 +41,10 @@
 
 namespace Director {
 
-Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics::MacWindowManager *wm, DirectorEngine *vm)
+Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics::MacWindowManager *wm, DirectorEngine *vm, bool isStage)
 	: MacWindow(id, scrollable, resizable, editable, wm), Object<Window>("Window") {
 	_vm = vm;
+	_isStage = isStage;
 	_stageColor = 0;
 	_puppetTransition = nullptr;
 
