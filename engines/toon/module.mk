@@ -6,11 +6,11 @@ MODULE_OBJS := \
 	character.o \
 	console.o \
 	conversation.o \
-	detection.o \
 	drew.o \
 	flux.o \
 	font.o \
 	hotspot.o \
+	metaengine.o \
 	movie.o \
 	path.o \
 	picture.o \
@@ -30,3 +30,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
