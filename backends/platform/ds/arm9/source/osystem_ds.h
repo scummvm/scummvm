@@ -39,7 +39,6 @@ class OSystem_DS : public BaseBackend, public PaletteManager {
 protected:
 	Audio::MixerImpl *_mixer;
 	Graphics::Surface _framebuffer;
-	bool _frameBufferExists;
 	bool _graphicsEnable;
 
 	static OSystem_DS *_instance;
