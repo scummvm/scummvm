@@ -28,7 +28,6 @@
 #include "gui/widgets/tab.h"
 #include "osystem_ds.h"
 #include "engines/scumm/scumm.h"
-#include "touchkeyboard.h"
 #include "gui/widgets/popup.h"
 
 #include "common/translation.h"
@@ -58,43 +57,9 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 
 	_tab = new GUI::TabWidget(this, 10, 5, 300, 230 - 20 - 40 - 20);
 
-	_tab->addTab(_("Controls"), "");
-
-	_leftHandedCheckbox = new GUI::CheckboxWidget(_tab, 5, 5, 130, 20, _("~L~eft handed mode"));
-	_indyFightCheckbox = new GUI::CheckboxWidget(_tab, 5, 20, 140, 20, _("~I~ndy fight controls"));
-	_showCursorCheckbox = new GUI::CheckboxWidget(_tab, 150, 5, 130, 20, _("Show mouse cursor"), U32String(), 0, 'T');
-	_snapToBorderCheckbox = new GUI::CheckboxWidget(_tab, 150, 20, 130, 20, _("Snap to edges"), U32String(), 0, 'T');
-
-	new GUI::StaticTextWidget(_tab, 20, 35, 100, 15, _("Touch X Offset"), Graphics::kTextAlignLeft);
-	_touchX = new GUI::SliderWidget(_tab, 130, 35, 130, 12, U32String("TODO: Add tooltip"), 1);
-	_touchX->setMinValue(-8);
-	_touchX->setMaxValue(+8);
-	_touchX->setValue(0);
-	_touchX->setFlags(GUI::WIDGET_CLEARBG);
-
-	new GUI::StaticTextWidget(_tab, 20, 50, 100, 15, _("Touch Y Offset"), Graphics::kTextAlignLeft);
-	_touchY = new GUI::SliderWidget(_tab, 130, 50, 130, 12, U32String("TODO: Add tooltip"), 2);
-	_touchY->setMinValue(-8);
-	_touchY->setMaxValue(+8);
-	_touchY->setValue(0);
-	_touchY->setFlags(GUI::WIDGET_CLEARBG);
-
-	new GUI::StaticTextWidget(_tab, 130 + 65 - 10, 65, 20, 15, U32String("0"), Graphics::kTextAlignCenter);
-	new GUI::StaticTextWidget(_tab, 130 + 130 - 10, 65, 20, 15, U32String("8"), Graphics::kTextAlignCenter);
-	new GUI::StaticTextWidget(_tab, 130 - 20, 65, 20, 15, U32String("-8"), Graphics::kTextAlignCenter);
-
-
-	_touchPadStyle = new GUI::CheckboxWidget(_tab, 5, 80, 270, 20, _("Use laptop trackpad-style cursor control"), U32String(), 0x20000001, 'T');
-	_screenTaps = new GUI::CheckboxWidget(_tab, 5, 95, 285, 20, _("Tap for left click, double tap right click"), U32String(), 0x20000002, 'T');
-
-	_sensitivityLabel = new GUI::StaticTextWidget(_tab, 20, 110, 110, 15, _("Sensitivity"), Graphics::kTextAlignLeft);
-	_sensitivity = new GUI::SliderWidget(_tab, 130, 110, 130, 12, U32String("TODO: Add tooltip"), 1);
-	_sensitivity->setMinValue(4);
-	_sensitivity->setMaxValue(16);
-	_sensitivity->setValue(8);
-	_sensitivity->setFlags(GUI::WIDGET_CLEARBG);
-
 	_tab->addTab(_("Graphics"), "");
+
+	_showCursorCheckbox = new GUI::CheckboxWidget(_tab, 150, 5, 130, 20, _("Show mouse cursor"), U32String(), 0, 'T');
 
 	new GUI::StaticTextWidget(_tab, 5, 67, 180, 15, _("Initial top screen scale:"), Graphics::kTextAlignLeft);
 
@@ -115,23 +80,11 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 	_gammaCorrection->setValue(0);
 
 
-
-	_tab->addTab(_("General"), "");
-
-	_disablePowerOff = new GUI::CheckboxWidget(_tab, 5, 20, 200, 20, _("Disable power off"), U32String(), 0, 'T');
-
 	_tab->setActiveTab(0);
 
 	_radioButtonMode = false;
 
-#ifdef DS_BUILD_D
-	_snapToBorderCheckbox->setState(confGetBool("snaptoborder", true));
-#else
-	_snapToBorderCheckbox->setState(confGetBool("snaptoborder", false));
-#endif
-
 	_showCursorCheckbox->setState(confGetBool("showcursor", true));
-	_leftHandedCheckbox->setState(confGetBool("lefthanded", false));
 	_unscaledCheckbox->setState(confGetBool("unscaled", false));
 
 
@@ -171,25 +124,9 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 		_gammaCorrection->setValue(0);
 	}
 
-	_disablePowerOff->setState(confGetBool("disablepoweroff", false));
-
     #ifdef ALLOW_CPU_SCALER
 	_cpuScaler->setState(confGetBool("cpu_scaler", false));
     #endif
-
-	_indyFightCheckbox->setState(DS::getIndyFightState());
-
-	_touchX->setValue(confGetInt("xoffset", 0));
-	_touchY->setValue(confGetInt("yoffset", 0));
-	_sensitivity->setValue(confGetInt("sensitivity", 8));
-
-	_touchPadStyle->setState(confGetBool("touchpad", false));
-	_screenTaps->setState(confGetBool("screentaps", false));
-
-	_screenTaps->setEnabled(!_touchPadStyle->getState());
-	_sensitivity->setEnabled(_touchPadStyle->getState());
-	_sensitivityLabel->setEnabled(_touchPadStyle->getState());
-	_sensitivityLabel->draw();
 
 	if (!_cpuScaler->getState() && !_unscaledCheckbox->getState()) {
 		_hardScaler->setState(true);
@@ -199,27 +136,18 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 }
 
 DSOptionsDialog::~DSOptionsDialog() {
-	DS::setIndyFightState(_indyFightCheckbox->getState());
 	ConfMan.flushToDisk();
 }
 
 void DSOptionsDialog::updateConfigManager() {
-	ConfMan.setBool("lefthanded", _leftHandedCheckbox->getState(), "ds");
 	ConfMan.setBool("unscaled", _unscaledCheckbox->getState(), "ds");
-	ConfMan.setBool("disablepoweroff", _disablePowerOff->getState(), "ds");
 #ifdef ALLOW_CPU_SCALER
 	ConfMan.setBool("cpu_scaler", _cpuScaler->getState(), "ds");
 #endif
-	ConfMan.setInt("xoffset", _touchX->getValue(), "ds");
-	ConfMan.setInt("yoffset", _touchY->getValue(), "ds");
 	ConfMan.setBool("showcursor", _showCursorCheckbox->getState(), "ds");
-	ConfMan.setBool("snaptoborder", _snapToBorderCheckbox->getState(), "ds");
-	ConfMan.setBool("touchpad", _touchPadStyle->getState(), "ds");
-	ConfMan.setBool("screentaps", _screenTaps->getState(), "ds");
-	ConfMan.setInt("sensitivity", _sensitivity->getValue(), "ds");
 	ConfMan.setInt("gamma", _gammaCorrection->getValue(), "ds");
 
-	u32 zoomLevel = 150;
+	int zoomLevel = 150;
 
 	if (_100PercentCheckbox->getState()) {
 		zoomLevel = 100;
@@ -265,39 +193,6 @@ void DSOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint
 
 	}
 
-
-	if ((!guard) && (_radioButtonMode)) {
-		guard = true;
-
-		if ((sender == _touchPadStyle) && (cmd == 0x20000001)) {
-
-			if (_touchPadStyle->getState()) {
-				// Swap screens when turning on trackpad style, it feels
-				// much more natural!
-				DS::setGameScreenSwap(true);
-
-				_screenTaps->setState(true);
-				_screenTaps->setEnabled(false);
-				_screenTaps->draw();
-				_sensitivity->setEnabled(true);
-				_sensitivityLabel->setEnabled(true);
-				_sensitivityLabel->draw();
-				_sensitivity->draw();
-			} else {
-				DS::setGameScreenSwap(false);
-
-				_screenTaps->setEnabled(true);
-				_screenTaps->setState(false);
-				_screenTaps->draw();
-				_sensitivity->setEnabled(false);
-				_sensitivityLabel->setEnabled(false);
-				_sensitivityLabel->draw();
-				_sensitivity->draw();
-			}
-		}
-
-		guard = false;
-	}
 
 	if ((!guard) && (_radioButtonMode)) {
 
@@ -361,14 +256,7 @@ void setOptions() {
 
 	ConfMan.addGameDomain("ds");
 
-	DS::setLeftHanded(confGetBool("lefthanded", false));
 	DS::setMouseCursorVisible(confGetBool("showcursor", true));
-
-#ifdef DS_BUILD_D
-	DS::setSnapToBorder(confGetBool("snaptoborder", true));
-#else
-	DS::setSnapToBorder(confGetBool("snaptoborder", false));
-#endif
 
 	DS::setUnscaledMode(confGetBool("unscaled", false));
 
@@ -384,38 +272,11 @@ void setOptions() {
 		}
 	}
 
-	DS::setTouchXOffset(confGetInt("xoffset", 0));
-	DS::setTouchYOffset(confGetInt("yoffset", 0));
-	DS::setSensitivity(confGetInt("sensitivity", 8));
-
 #ifdef ALLOW_CPU_SCALER
 	DS::setCpuScalerEnable(confGetBool("cpu_scaler", false));
 #endif
 
-	DS::setTapScreenClicksEnable(confGetBool("screentaps", false));
-
 	DS::setGamma(confGetInt("gamma", 0));
-
-
-	if (ConfMan.hasKey("touchpad", "ds")) {
-		bool enable = ConfMan.getBool("touchpad", "ds");
-
-		DS::setTrackPadStyleEnable(enable);
-
-		if (enable && firstLoad) {
-			// If we've just booted up, want to swap screens when trackpad mode is in use
-			// but not every time we enter the options dialog.
-			DS::setGameScreenSwap(true);
-		}
-
-		if (enable) {
-			DS::setTapScreenClicksEnable(true);
-		}
-
-	} else {
-		DS::setTrackPadStyleEnable(false);
-	}
-
 
 	firstLoad = false;
 }

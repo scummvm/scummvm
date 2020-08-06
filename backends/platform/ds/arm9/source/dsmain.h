@@ -30,45 +30,6 @@
 
 namespace DS {
 
-
-enum controlType {
-	CONT_SCUMM_ORIGINAL,
-	CONT_SCUMM_SAMNMAX,
-	CONT_SKY,
-	CONT_SIMON,
-	CONT_FUTURE_WARS,
-	CONT_AGI,
-	CONT_GOBLINS,
-	CONT_NIPPON
-};
-
-struct gameListType {
-	char 			gameId[16];
-	controlType 	control;
-};
-
-// Pen reading functions
-void 	penInit();
-void 	penUpdate();
-bool 	getPenDown();
-bool 	getPenHeld();
-bool 	getPenReleased();
-int 	getPenX();
-int 	getPenY();
-GLvector getPenPos();
-void 	consumePenEvents();
-controlType getControlType();
-
-// Pad reading
-int 	getKeysHeld();
-void 	keysUpdate();
-int 	getKeysDown();
-int 	getKeysReleased();
-void 	consumeKeys();
-int 	leftHandedSwap(int keys);
-void	setGameScreenSwap(bool enable);
-void	setSensitivity(int sensitivity);
-
 // Video
 void 	displayMode8Bit();											// Switch to 8-bit mode5
 void 	displayMode16Bit();										// Switch to 16-bit mode5
@@ -93,40 +54,25 @@ void 	setTimerCallback(OSystem_DS::TimerProc proc, int interval);		// Setup a ca
 int 	getMillis(bool skipRecord = false);								// Return the current runtime in milliseconds
 void 	doTimerCallback();												// Call callback function if required
 
-// Event queue
-void 	addEventsToQueue();
+// Events
 void 	VBlankHandler();
+Common::Point transformPoint(uint16 x, uint16 y);
 
 // Sam and Max Stuff
-void 	setGameID(int id);
 void 	setCursorIcon(const u8 *icon, uint w, uint h, byte keycolor, int hotspotX, int hotspotY);
 void	setShowCursor(bool enable);
 void	setMouseCursorVisible(bool visible);
+void	warpMouse(int penX, int penY);
+void	updateMouse();
 
 // Shake
 void 	setShakePos(int shakeXOffset, int shakeYOffset);
 
-// Reports
-void 	memoryReport();
-
-// Virtual keyboard
-void 	setKeyboardIcon(bool enable);
-bool 	getKeyboardIcon();
-void 	setKeyboardEnable(bool en);
-bool 	getKeyboardEnable();
-
 // Options
-void 	setLeftHanded(bool enable);
-void 	setTouchXOffset(int x);
-void 	setTouchYOffset(int y);
+void	setGameScreenSwap(bool enable);
 void 	setUnscaledMode(bool enable);
-void	setSnapToBorder(bool enable);
-void 	setIndyFightState(bool st);
-bool 	getIndyFightState();
 bool    isCpuScalerEnabled();
 void	setCpuScalerEnable(bool enable);
-void	setTrackPadStyleEnable(bool enable);
-void	setTapScreenClicksEnable(bool enable);
 
 // Display
 bool 	getIsDisplayMode8Bit();
@@ -137,8 +83,6 @@ int		getGameHeight();
 // Fast RAM allocation (ITCM)
 void	fastRamReset();
 void*	fastRamAlloc(int size);
-
-void 	exitGame();
 
 
 } // End of namespace DS

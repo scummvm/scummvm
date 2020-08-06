@@ -28,9 +28,6 @@
 #include "agi/text.h"
 #include "agi/systemui.h"
 #include "agi/words.h"
-#ifdef __DS__
-#include "wordcompletion.h"
-#endif
 
 namespace Agi {
 
@@ -829,9 +826,6 @@ void TextMgr::promptClear() {
 }
 
 void TextMgr::promptRememberForAutoComplete(bool entered) {
-#ifdef __DS__
-	DS::findWordCompletions((char *)_prompt);
-#endif
 }
 
 void TextMgr::promptCommandWindow(bool recallLastCommand, uint16 newKey) {
@@ -1000,9 +994,6 @@ void TextMgr::stringKeyPress(uint16 newKey) {
 }
 
 void TextMgr::stringRememberForAutoComplete(bool entered) {
-#ifdef __DS__
-	DS::findWordCompletions((char *)_inputString);
-#endif
 }
 
 /**
