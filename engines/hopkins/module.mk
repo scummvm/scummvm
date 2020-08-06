@@ -4,7 +4,6 @@ MODULE_OBJS := \
 	anim.o \
 	computer.o \
 	debugger.o \
-	detection.o \
 	dialogs.o \
 	events.o \
 	files.o \
@@ -14,6 +13,7 @@ MODULE_OBJS := \
 	hopkins.o \
 	lines.o \
 	menu.o \
+	metaengine.o \
 	objects.o \
 	saveload.o \
 	script.o \
@@ -27,3 +27,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
