@@ -7,7 +7,6 @@ MODULE_OBJS = \
 	background.o \
 	closing.o \
 	console.o \
-	detection.o \
 	graphics.o \
 	dropdown.o \
 	parser.o \
@@ -15,6 +14,7 @@ MODULE_OBJS = \
 	sequence.o \
 	sound.o \
 	timer.o \
+	metaengine.o \
 	nim.o \
 	clock.o \
 	ghostroom.o \
@@ -30,3 +30,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o

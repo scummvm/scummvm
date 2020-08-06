@@ -26,54 +26,10 @@
  */
 
 
-
-#include "base/plugins.h"
-#include "engines/advancedDetector.h"
-
-#include "avalanche/detection.h"
-
 namespace Avalanche {
 
-static const PlainGameDescriptor avalancheGames[] = {
-	{"avalanche", "Lord Avalot d'Argent"},
-	{0, 0}
-};
-
-static const ADGameDescription gameDescriptions[] = {
-	{
-		"avalanche", 0,
-		{
-			{"avalot.sez", 0, "de10eb353228013da3d3297784f81ff9", 48763},
-			{"mainmenu.avd", 0, "89f31211af579a872045b175cc264298", 18880},
-			AD_LISTEND
-		},
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOMIDI)
-	},
-
-	AD_TABLE_END_MARKER
-};
-
-class AvalancheMetaEngine : public AdvancedMetaEngine {
-public:
-	AvalancheMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(AvalancheGameDescription), avalancheGames) {
-	}
-
-	const char *getEngineId() const override {
-		return "avalanche";
-	}
-
-	const char *getName() const override {
-		return "Avalanche";
-	}
-
-	const char *getOriginalCopyright() const override {
-		return "Avalanche (C) 1994-1995 Mike, Mark and Thomas Thurman.";
-	}
+struct AvalancheGameDescription {
+	ADGameDescription desc;
 };
 
 } // End of namespace Avalanche
-
-REGISTER_PLUGIN_STATIC(AVALANCHE_DETECTION, PLUGIN_TYPE_METAENGINE, Avalanche::AvalancheMetaEngine);
