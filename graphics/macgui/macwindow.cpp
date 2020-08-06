@@ -278,7 +278,7 @@ void MacWindow::drawBorder() {
 			w = maxWidth;
 
 		if (_macBorder.hasBorder(_active)) {
-			if (!_macBorder.getOffset().dark)
+			if (_active && !_macBorder.getOffset().dark)
 				fillRect(g, (width - w) / 2, titleY, w, titleHeight, _wm->_colorOffWhite);
 		} else {
 			drawBox(g, (width - w) / 2, titleY, w, titleHeight);
