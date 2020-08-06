@@ -2,9 +2,9 @@ MODULE := engines/tucker
 
 MODULE_OBJS := \
 	console.o \
-	detection.o \
 	graphics.o \
 	locations.o \
+	metaengine.o \
 	resource.o \
 	saveload.o \
 	sequences.o \
@@ -18,3 +18,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
