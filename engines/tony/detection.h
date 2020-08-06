@@ -20,35 +20,14 @@
  *
  */
 
-#include "base/plugins.h"
+namespace Tony {
 
-#include "engines/advancedDetector.h"
-
-#include "tony/detection.h"
-
-static const PlainGameDescriptor tonyGames[] = {
-	{"tony", "Tony Tough and the Night of Roasted Moths"},
-	{0, 0}
+enum {
+	GF_COMPRESSED = (1 << 0)
 };
 
-#include "tony/detection_tables.h"
-
-class TonyMetaEngine : public AdvancedMetaEngine {
-public:
-	TonyMetaEngine() : AdvancedMetaEngine(Tony::gameDescriptions, sizeof(Tony::TonyGameDescription), tonyGames) {
-	}
-
-	const char *getEngineId() const override {
-		return "tony";
-	}
-
-	const char *getName() const override {
-		return "Tony Tough and the Night of Roasted Moths";
-	}
-
-	const char *getOriginalCopyright() const override {
-		return "Tony Tough and the Night of Roasted Moths (C) Protonic Interactive";
-	}
+struct TonyGameDescription {
+	ADGameDescription desc;
 };
 
-REGISTER_PLUGIN_STATIC(TONY_DETECTION, PLUGIN_TYPE_METAENGINE, TonyMetaEngine);
+} // End of namespace Tony

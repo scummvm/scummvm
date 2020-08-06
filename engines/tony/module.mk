@@ -3,7 +3,6 @@ MODULE := engines/tony
 MODULE_OBJS := \
 	custom.o \
 	debugger.o \
-	detection.o \
 	font.o \
 	game.o \
 	gfxcore.o \
@@ -12,6 +11,7 @@ MODULE_OBJS := \
 	input.o \
 	inventory.o \
 	loc.o \
+	metaengine.o \
 	sound.o \
 	tony.o \
 	tonychar.o \
@@ -31,3 +31,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
