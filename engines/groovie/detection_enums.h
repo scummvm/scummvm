@@ -20,21 +20,11 @@
  *
  */
 
-#ifndef GROOVIE_DETECTION_H
-#define GROOVIE_DETECTION_H
-
-#include "engines/advancedDetector.h"
-#include "groovie/detection_enums.h"	// for EngineVersion
-
 namespace Groovie {
 
-struct GroovieGameDescription {
-	ADGameDescription desc;
-
-	EngineVersion version; // Version of the engine
-	int indexEntry; // The index of the entry in disk.1 for V2 games
+enum EngineVersion {
+	kGroovieT7G,
+	kGroovieV2
 };
 
 } // End of namespace Groovie
-
-#endif
