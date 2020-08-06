@@ -40,6 +40,7 @@
 #include "mads/msurface.h"
 #include "mads/resources.h"
 #include "mads/sound.h"
+#include "mads/detection_enums.h"
 
 /**
  * This is the namespace of the MADS engine.
@@ -59,12 +60,6 @@ enum MADSDebugChannels {
 	kDebugPath      = 1 << 0,
 	kDebugScripts	= 1 << 1,
 	kDebugGraphics	= 1 << 2
-};
-
-enum {
-	GType_RexNebular = 0,
-	GType_Dragonsphere = 1,
-	GType_Phantom = 2
 };
 
 enum ScreenFade {
