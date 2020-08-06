@@ -3,9 +3,9 @@ MODULE := engines/made
 MODULE_OBJS := \
 	console.o \
 	database.o \
-	detection.o \
 	graphics.o \
 	made.o \
+	metaengine.o \
 	music.o \
 	pmvplayer.o \
 	redreader.o \
@@ -24,3 +24,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
