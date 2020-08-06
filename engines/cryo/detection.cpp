@@ -23,18 +23,7 @@
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
-#include "common/file.h"
 
-#include "cryo/cryo.h"
-
-
-namespace Cryo {
-
-const char *CryoEngine::getGameId() const { return _gameDescription->gameId; }
-bool CryoEngine::isDemo() const { return _gameDescription->flags & ADGF_DEMO; }
-Common::Platform CryoEngine::getPlatform() const { return _gameDescription->platform; }
-
-}
 
 static const PlainGameDescriptor cryoGames[] = {
 	{"losteden", "Lost Eden"},
@@ -146,24 +135,6 @@ public:
 	const char *getOriginalCopyright() const override {
 		return "Cryo Engine (C) Cryo Interactive";
 	}
-
-	bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
-bool CryoMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return false;
-}
-
-bool CryoMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc) {
-		*engine = new Cryo::CryoEngine(syst, desc);
-	}
-	return desc != 0;
-}
-
-#if PLUGIN_ENABLED_DYNAMIC(CRYO)
-REGISTER_PLUGIN_DYNAMIC(CRYO, PLUGIN_TYPE_ENGINE, CryoMetaEngine);
-#else
-REGISTER_PLUGIN_STATIC(CRYO, PLUGIN_TYPE_ENGINE, CryoMetaEngine);
-#endif
+REGISTER_PLUGIN_STATIC(CRYO_DETECTION, PLUGIN_TYPE_METAENGINE, CryoMetaEngine);
