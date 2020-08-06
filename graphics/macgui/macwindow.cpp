@@ -132,6 +132,7 @@ void MacWindow::resize(int w, int h, bool inner) {
 
 	_contentIsDirty = true;
 	_borderIsDirty = true;
+	_wm->setFullRefresh(true);
 }
 
 void MacWindow::move(int x, int y) {
@@ -142,6 +143,7 @@ void MacWindow::move(int x, int y) {
 	updateInnerDims();
 
 	_contentIsDirty = true;
+	_wm->setFullRefresh(true);
 }
 
 void MacWindow::setDimensions(const Common::Rect &r) {
@@ -150,6 +152,7 @@ void MacWindow::setDimensions(const Common::Rect &r) {
 	updateInnerDims();
 
 	_contentIsDirty = true;
+	_wm->setFullRefresh(true);
 }
 
 void MacWindow::setBackgroundPattern(int pattern) {
@@ -242,7 +245,6 @@ void MacWindow::updateOuterDims() {
 		_dims = _innerDims;
 		_dims.grow(kBorderWidth);
 	}
-	_borderIsDirty = true;
 }
 
 void MacWindow::drawBorder() {
@@ -454,6 +456,8 @@ void MacWindow::setBorder(Graphics::TransparentSurface *surface, bool active, Bo
 	}
 
 	updateOuterDims();
+	_borderIsDirty = true;
+	_wm->setFullRefresh(true);
 }
 
 void MacWindow::setCloseable(bool closeable) {
