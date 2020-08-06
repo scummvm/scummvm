@@ -20,37 +20,10 @@
  *
  */
 
-#include "base/plugins.h"
-#include "common/str-array.h"
-#include "common/memstream.h"
-#include "engines/advancedDetector.h"
+namespace Titanic {
 
-#include "titanic/detection.h"
-
-static const PlainGameDescriptor TitanicGames[] = {
-	{"titanic", "Starship Titanic"},
-	{0, 0}
+struct TitanicGameDescription {
+	ADGameDescription desc;
 };
 
-#include "titanic/detection_tables.h"
-
-class TitanicMetaEngine : public AdvancedMetaEngine {
-public:
-	TitanicMetaEngine() : AdvancedMetaEngine(Titanic::gameDescriptions, sizeof(Titanic::TitanicGameDescription), TitanicGames) {
-		_maxScanDepth = 3;
-	}
-
-	const char *getEngineId() const override {
-		return "titanic";
-	}
-
-	const char *getName() const override {
-		return "Starship Titanic";
-	}
-
-	const char *getOriginalCopyright() const override {
-		return "Starship Titanic (C) The Digital Village";
-	}
-};
-
-REGISTER_PLUGIN_STATIC(TITANIC_DETECTION, PLUGIN_TYPE_METAENGINE, TitanicMetaEngine);
+} // End of namespace Titanic
