@@ -20,12 +20,11 @@
  *
  */
 
-#include "groovie/groovie.h"
-#include "groovie/detection.h"
-#include "groovie/saveload.h"
-
 #include "common/system.h"
 #include "common/translation.h"
+
+#include "engines/advancedDetector.h"
+#include "groovie/detection.h"
 
 namespace Groovie {
 
@@ -358,62 +357,8 @@ public:
 	const char *getOriginalCopyright() const override {
 		return "Groovie Engine (C) 1990-1996 Trilobyte";
 	}
-
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
-
-	bool hasFeature(MetaEngineFeature f) const override;
-	SaveStateList listSaves(const char *target) const override;
-	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
-
-bool GroovieMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
-	if (gd) {
-		*engine = new GroovieEngine(syst, (const GroovieGameDescription *)gd);
-	}
-	return gd != 0;
-}
-
-bool GroovieMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo);
-}
-
-SaveStateList GroovieMetaEngine::listSaves(const char *target) const {
-	return SaveLoad::listValidSaves(target);
-}
-
-int GroovieMetaEngine::getMaximumSaveSlot() const {
-	return SaveLoad::getMaximumSlot();
-}
-
-void GroovieMetaEngine::removeSaveState(const char *target, int slot) const {
-	if (!SaveLoad::isSlotValid(slot)) {
-		// Invalid slot, do nothing
-		return;
-	}
-
-	Common::String filename = SaveLoad::getSlotSaveName(target, slot);
-	g_system->getSavefileManager()->removeSavefile(filename);
-}
-
-SaveStateDescriptor GroovieMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	SaveStateDescriptor desc;
-
-	Common::InSaveFile *savefile = SaveLoad::openForLoading(target, slot, &desc);
-	delete savefile;
-
-	return desc;
-}
 
 } // End of namespace Groovie
 
-#if PLUGIN_ENABLED_DYNAMIC(GROOVIE)
-	REGISTER_PLUGIN_DYNAMIC(GROOVIE, PLUGIN_TYPE_ENGINE, Groovie::GroovieMetaEngine);
-#else
-	REGISTER_PLUGIN_STATIC(GROOVIE, PLUGIN_TYPE_ENGINE, Groovie::GroovieMetaEngine);
-#endif
+REGISTER_PLUGIN_STATIC(GROOVIE_DETECTION, PLUGIN_TYPE_METAENGINE, Groovie::GroovieMetaEngine);
