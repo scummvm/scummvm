@@ -263,7 +263,7 @@ void AvatarMoverProcess::handleCombatMode() {
 			// want to run while in combat mode?
 			// first sheath weapon
 			nextanim = Animation::readyWeapon;
-		} else if (ABS(direction - mousedir) == 4) {
+		} else if (Direction_Invert(direction) == mousedir) {
 			nextanim = Animation::retreat;
 			nextdir = direction;
 		} else {
@@ -356,7 +356,7 @@ void AvatarMoverProcess::handleCombatMode() {
 			// want to run while in combat mode?
 			// first sheath weapon
 			nextanim = Animation::readyWeapon;
-		} else if (ABS(direction - nextdir) == 4) {
+		} else if (Direction_Invert(direction) == nextdir) {
 			nextanim = Animation::retreat;
 			nextdir = direction;
 		} else {
