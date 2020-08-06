@@ -48,6 +48,7 @@
 #include "startrek/object.h"
 #include "startrek/sound.h"
 #include "startrek/space.h"
+#include "startrek/detection_enums.h"
 
 
 using Common::SharedPtr;
@@ -116,15 +117,7 @@ const int MAX_BUFFERED_WALK_ACTIONS = 32;
 const int MAX_BAN_FILES = 16;
 
 
-enum StarTrekGameType {
-	GType_ST25 = 1,
-	GType_STJR = 2
-};
 
-enum StarTrekGameFeatures {
-	GF_DEMO  = (1 << 0),
-	GF_CDROM = (1 << 1)
-};
 
 enum kDebugLevels {
 	kDebugSound =     1 << 0,
