@@ -6,9 +6,9 @@ MODULE_OBJS := \
 	bg_list.o \
 	console.o \
 	cine.o \
-	detection.o \
 	gfx.o \
 	main_loop.o \
+	metaengine.o \
 	msg.o \
 	object.o \
 	pal.o \
@@ -30,3 +30,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
