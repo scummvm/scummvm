@@ -34,14 +34,8 @@ namespace DS {
 void 	displayMode8Bit();											// Switch to 8-bit mode5
 void 	displayMode16Bit();										// Switch to 16-bit mode5
 
-// Flip double buffer
-void 	displayMode16BitFlipBuffer();
-
 // Get address of current back buffer
 u16 *	get16BitBackBuffer();
-u16 *	get8BitBackBuffer();
-s32 	get8BitBackBufferStride();
-u16*	getScalerBuffer();
 
 void 	setTalkPos(int x, int y);
 void 	setTopScreenTarget(int x, int y);

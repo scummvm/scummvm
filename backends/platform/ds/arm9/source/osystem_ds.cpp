@@ -40,6 +40,7 @@
 
 #include "osystem_ds.h"
 #include "dsmain.h"
+#include "blitters.h"
 #include "common/config-manager.h"
 #include "common/str.h"
 #include "graphics/surface.h"
@@ -56,7 +57,7 @@
 OSystem_DS *OSystem_DS::_instance = NULL;
 
 OSystem_DS::OSystem_DS()
-	: _eventSource(NULL), _mixer(NULL), _frameBufferExists(false),
+	: _eventSource(NULL), _mixer(NULL),
 	_disableCursorPalette(true), _graphicsEnable(true), _gammaValue(0)
 {
 	_instance = this;
@@ -111,6 +112,8 @@ bool OSystem_DS::getFeatureState(Feature f) {
 }
 
 void OSystem_DS::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
+	_framebuffer.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+
 	// For Lost in Time, the title screen is displayed in 640x400.
 	// In order to support this game, the screen mode is set, but
 	// all draw calls are ignored until the game switches to 320x200.
@@ -123,11 +126,11 @@ void OSystem_DS::initSize(uint width, uint height, const Graphics::PixelFormat *
 }
 
 int16 OSystem_DS::getHeight() {
-	return 200;
+	return _framebuffer.h;
 }
 
 int16 OSystem_DS::getWidth() {
-	return 320;
+	return _framebuffer.w;
 }
 
 void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
@@ -187,155 +190,60 @@ void OSystem_DS::grabPalette(unsigned char *colors, uint start, uint num) const 
 	}
 }
 
-
-#define MISALIGNED16(ptr) (((u32) (ptr) & 1) != 0)
-
 void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
-	if (!_graphicsEnable) return;
-	if (w <= 1) return;
-	if (h < 0) return;
-	if (!DS::getIsDisplayMode8Bit()) return;
-
-	u16 *bg;
-	s32 stride;
-#ifdef DISABLE_TEXT_CONSOLE
-	u16 *bgSub = (u16 *)BG_GFX_SUB;
-#endif
-
-	// The DS video RAM doesn't support 8-bit writes because Nintendo wanted
-	// to save a few pennies/euro cents on the hardware.
-
-	if (_frameBufferExists) {
-		bg = (u16 *)_framebuffer.getPixels();
-		stride = _framebuffer.pitch;
-	} else {
-		bg = (u16 *)DS::get8BitBackBuffer();
-		stride = DS::get8BitBackBufferStride();
-	}
-
-
-	if (((pitch & 1) != 0) || ((w & 1) != 0) || (((int) (buf) & 1) != 0)) {
-
-		// Something is misaligned, so we have to use the slow but sure method
-
-		int by = 0;
-
-		for (int dy = y; dy < y + h; dy++) {
-			u8 *dest = ((u8 *) (bg)) + (dy * stride) + x;
-#ifdef DISABLE_TEXT_CONSOLE
-			u8 *destSub = ((u8 *) (bgSub)) + (dy * 512) + x;
-#endif
-			const u8 *src = (const u8 *) buf + (pitch * by);
-
-			u32 dx;
-
-			u32 pixelsLeft = w;
-
-			if (MISALIGNED16(dest)) {
-				// Read modify write
-
-				dest--;
-				u16 mix = *((u16 *) dest);
-
-				mix = (mix & 0x00FF) | (*src++ << 8);
-
-				*dest = mix;
-#ifdef DISABLE_TEXT_CONSOLE
-				*destSub = mix;
-#endif
-
-				dest += 2;
-#ifdef DISABLE_TEXT_CONSOLE
-				destSub += 2;
-#endif
-
-				pixelsLeft--;
-			}
-
-			// We can now assume dest is aligned
-			u16 *dest16 = (u16 *) dest;
-#ifdef DISABLE_TEXT_CONSOLE
-			u16 *destSub16 = (u16 *) destSub;
-#endif
-
-			for (dx = 0; dx < pixelsLeft; dx+=2) {
-				u16 mix;
-
-				mix = *src + (*(src + 1) << 8);
-				*dest16++ = mix;
-#ifdef DISABLE_TEXT_CONSOLE
-				*destSub16++ = mix;
-#endif
-				src += 2;
-			}
-
-			pixelsLeft -= dx;
-
-			// At the end we may have one pixel left over
-
-			if (pixelsLeft != 0) {
-				u16 mix = *dest16;
-
-				mix = (mix & 0x00FF) | ((*src++) << 8);
-
-				*dest16 = mix;
-#ifdef DISABLE_TEXT_CONSOLE
-				*destSub16 = mix;
-#endif
-			}
-
-			by++;
-
-		}
-
-	} else {
-
-		// Stuff is aligned to 16-bit boundaries, so it's safe to do DMA.
-
-		u16 *src = (u16 *) buf;
-
-		for (int dy = y; dy < y + h; dy++) {
-			u16 *dest1 = bg + (dy * (stride >> 1)) + (x >> 1);
-#ifdef DISABLE_TEXT_CONSOLE
-			u16 *dest2 = bgSub + (dy << 8) + (x >> 1);
-#endif
-
-			DC_FlushRange(src, w << 1);
-			DC_FlushRange(dest1, w << 1);
-#ifdef DISABLE_TEXT_CONSOLE
-			DC_FlushRange(dest2, w << 1);
-#endif
-
-			dmaCopyHalfWords(3, src, dest1, w);
-
-#ifdef DISABLE_TEXT_CONSOLE
-			if ((!_frameBufferExists) || (buf == _framebuffer.getPixels())) {
-				dmaCopyHalfWords(2, src, dest2, w);
-			}
-#endif
-
-			while (dmaBusy(2) || dmaBusy(3));
-
-			src += pitch >> 1;
-		}
-	}
+	_framebuffer.copyRectToSurface(buf, pitch, x, y, w, h);
 }
 
 void OSystem_DS::updateScreen() {
-	if ((_frameBufferExists) && (DS::getIsDisplayMode8Bit())) {
-		_frameBufferExists = false;
+	if (!DS::getIsDisplayMode8Bit()) {
+		u16 *back = DS::get16BitBackBuffer();
 
-		// Copy temp framebuffer back to screen
-		copyRectToScreen((byte *)_framebuffer.getPixels(), _framebuffer.pitch, 0, 0, _framebuffer.w, _framebuffer.h);
+		if (DS::isCpuScalerEnabled()) {
+			Rescale_320x256x1555_To_256x256x1555(BG_GFX, back, 512, 512);
+		} else {
+			for (int r = 0; r < 512 * 256; r++) {
+				*(BG_GFX + r) = *(back + r);
+			}
+		}
+	} else if (!_graphicsEnable) {
+		return;
+	} else if (DS::isCpuScalerEnabled()) {
+		u16 *base = BG_GFX + 0x10000;
+		Rescale_320x256xPAL8_To_256x256x1555(
+			base,
+			(const u8 *)_framebuffer.getPixels(),
+			256,
+			_framebuffer.pitch,
+			BG_PALETTE,
+			_framebuffer.h );
+	} else {
+		// The DS video RAM doesn't support 8-bit writes because Nintendo wanted
+		// to save a few pennies/euro cents on the hardware.
+
+		u16 *bg = BG_GFX + 0x10000;
+		s32 stride = 512;
+
+		u16 *src = (u16 *)_framebuffer.getPixels();
+
+		for (int dy = 0; dy < _framebuffer.h; dy++) {
+			DC_FlushRange(src, _framebuffer.w << 1);
+
+			u16 *dest1 = bg + (dy * (stride >> 1));
+			DC_FlushRange(dest1, _framebuffer.w << 1);
+
+#ifdef DISABLE_TEXT_CONSOLE
+			u16 *dest2 = (u16 *)BG_GFX_SUB + (dy << 8);
+			DC_FlushRange(dest2, _framebuffer.w << 1);
+
+			dmaCopyHalfWords(2, src, dest2, _framebuffer.w);
+#endif
+			dmaCopyHalfWords(3, src, dest1, _framebuffer.w);
+
+			while (dmaBusy(2) || dmaBusy(3));
+
+			src += _framebuffer.pitch >> 1;
+		}
 	}
-
-	DS::displayMode16BitFlipBuffer();
-
-	// FIXME: Evil game specific hack.
-	// Force back buffer usage for Nippon Safes, as it doesn't double buffer it's output
-	// if (DS::getControlType() == DS::CONT_NIPPON) {
-	//	lockScreen();
-	// }
 }
 
 void OSystem_DS::setShakePos(int shakeXOffset, int shakeYOffset) {
@@ -470,56 +378,7 @@ void OSystem_DS::deleteMutex(MutexRef mutex) {
 void OSystem_DS::quit() {
 }
 
-Graphics::Surface *OSystem_DS::createTempFrameBuffer() {
-
-	// Ensure we copy using 16 bit quantities due to limitation of VRAM addressing
-
-	// If the scaler is enabled, we can just return the 8 bit back buffer,
-	// since it's in system memory anyway.  Otherwise, we need to copy the back
-	// buffer into the memory normally used by the scaler buffer and then
-	// return it.
-	// We also must ensure that once the frame buffer is created, future calls
-	// to copyRectToScreen() copy to this buffer.
-
-	if (DS::isCpuScalerEnabled()) {
-
-		_framebuffer.init(DS::getGameWidth(), DS::getGameHeight(), DS::getGameWidth(),
-		                  DS::getScalerBuffer(), Graphics::PixelFormat::createFormatCLUT8());
-
-	} else {
-
-		s32 height = DS::getGameHeight();
-		s32 width = DS::getGameWidth();
-		s32 stride = DS::get8BitBackBufferStride();
-
-		u16 *src = DS::get8BitBackBuffer();
-		u16 *dest = DS::getScalerBuffer();
-
-		for (int y = 0; y < height; y++) {
-
-			u16 *destLine = dest + (y * (width / 2));
-			u16 *srcLine = src + (y * (stride / 2));
-
-			DC_FlushRange(srcLine, width);
-
-			dmaCopyHalfWords(3, srcLine, destLine, width);
-		}
-
-		_framebuffer.init(width, height, width, dest, Graphics::PixelFormat::createFormatCLUT8());
-
-	}
-
-	_frameBufferExists = true;
-
-	return &_framebuffer;
-}
-
-
 Graphics::Surface *OSystem_DS::lockScreen() {
-	if (!_frameBufferExists) {
-		createTempFrameBuffer();
-	}
-
 	return &_framebuffer;
 }
 

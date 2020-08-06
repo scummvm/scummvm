@@ -80,7 +80,6 @@
 #include "dsmain.h"
 #include "osystem_ds.h"
 #include "dsoptions.h"
-#include "blitters.h"
 #include "engines/engine.h"
 
 #include "backends/plugins/ds/ds-provider.h"
@@ -120,7 +119,6 @@ static int subScreenScale = 256;
 
 
 // Saved buffers
-static bool highBuffer;
 static bool displayModeIs8Bit = false;
 
 static bool gameScreenSwap = false;
@@ -151,8 +149,6 @@ static int gameHeight = 200;
 // Scale
 static bool twoHundredPercentFixedScale = false;
 static bool cpuScalerEnable = false;
-
-static u8 *scalerBackBuffer = NULL;
 
 void setIcon(int num, int x, int y, int imageNum, int flags, bool enable);
 void setIconMain(int num, int x, int y, int imageNum, int flags, bool enable);
@@ -224,18 +220,6 @@ void initSprites() {
 	}
 
 	updateOAM();
-}
-
-
-void saveGameBackBuffer() {
-
-	// Sometimes the only copy of the game screen is in video memory.
-	// So, I lock the video memory here, as if I'm going to modify it.  This
-	// forces OSystem_DS to create a system memory copy if one doesn't exist.
-	// This will be automatially restored by OSystem_DS::updateScreen().
-
-	OSystem_DS::instance()->lockScreen();
-	OSystem_DS::instance()->unlockScreen();
 }
 
 void set200PercentFixedScale(bool on) {
@@ -334,10 +318,6 @@ void setCursorIcon(const u8 *icon, uint w, uint h, byte keycolor, int hotspotX, 
 
 
 void displayMode16Bit() {
-	if (displayModeIs8Bit) {
-		saveGameBackBuffer();
-	}
-
 	videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
 
 	vramSetBankA(VRAM_A_MAIN_BG);
@@ -346,7 +326,6 @@ void displayMode16Bit() {
 	vramSetBankD(VRAM_D_MAIN_BG);
 
 	REG_BG3CNT = BG_BMP16_512x256;
-	highBuffer = false;
 
 	memset(BG_GFX, 0, 512 * 256 * 2);
 
@@ -361,30 +340,6 @@ void displayMode16Bit() {
 }
 
 
-void displayMode16BitFlipBuffer() {
-	if (!displayModeIs8Bit) {
-		u16 *back = get16BitBackBuffer();
-
-		if (isCpuScalerEnabled()) {
-			Rescale_320x256x1555_To_256x256x1555(BG_GFX, back, 512, 512);
-		} else {
-			for (int r = 0; r < 512 * 256; r++) {
-				*(BG_GFX + r) = *(back + r);
-			}
-		}
-	} else if (isCpuScalerEnabled()) {
-		const u8 *back = (const u8*)get8BitBackBuffer();
-		u16 *base = BG_GFX + 0x10000;
-		Rescale_320x256xPAL8_To_256x256x1555(
-			base,
-			back,
-			256,
-			get8BitBackBufferStride(),
-			BG_PALETTE,
-			getGameHeight() );
-	}
-}
-
 void setShakePos(int shakeXOffset, int shakeYOffset) {
 	s_shakeXOffset = shakeXOffset;
 	s_shakeYOffset = shakeYOffset;
@@ -393,29 +348,6 @@ void setShakePos(int shakeXOffset, int shakeYOffset) {
 
 u16 *get16BitBackBuffer() {
 	return BG_GFX + 0x20000;
-}
-
-s32 get8BitBackBufferStride() {
-	// When the CPU scaler is enabled, the back buffer is in system RAM and is
-	// 320 pixels wide. When the CPU scaler is disabled, the back buffer is in
-	// video memory and therefore must have a 512 pixel stride.
-
-	if (isCpuScalerEnabled()){
-		return 320;
-	} else {
-		return 512;
-	}
-}
-
-u16 *getScalerBuffer() {
-	return (u16 *) scalerBackBuffer;
-}
-
-u16 *get8BitBackBuffer() {
-	if (isCpuScalerEnabled())
-		return (u16 *) scalerBackBuffer;
-	else
-		return BG_GFX + 0x10000;		// 16bit qty!
 }
 
 void doTimerCallback() {
@@ -673,7 +605,6 @@ void initHardware() {
 	// Allocate save buffer for game screen
 	displayMode16Bit();
 
-	memset(BG_GFX, 0, 512 * 256 * 2);
 	scaledMode = true;
 	scX = 0;
 	scY = 0;
@@ -708,9 +639,6 @@ void initHardware() {
 #endif
 
 	initSprites();
-
-	// If the software scaler's back buffer has not been allocated, do it now
-	scalerBackBuffer = (u8 *) malloc(320 * 256);
 
 	// This is a bodge to get around the fact that the cursor is turned on before it's image is set
 	// during startup in Sam & Max.  This bodge moves the cursor offscreen so it is not seen.
