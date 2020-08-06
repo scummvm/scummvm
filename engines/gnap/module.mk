@@ -4,11 +4,11 @@ MODULE_OBJS := \
 	character.o \
 	datarchive.o \
 	debugger.o \
-	detection.o \
 	gamesys.o \
 	gnap.o \
 	grid.o \
 	menu.o \
+	metaengine.o \
 	music.o \
 	resource.o \
 	sound.o \
@@ -30,3 +30,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
