@@ -2,8 +2,8 @@ MODULE := engines/lilliput
 
 MODULE_OBJS = \
 	console.o \
-	detection.o \
 	lilliput.o \
+	metaengine.o \
 	script.o \
 	sound.o \
 	stream.o
@@ -18,3 +18,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
