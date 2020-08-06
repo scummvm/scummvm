@@ -382,7 +382,7 @@ void Pathfinder::newNode(PathNode *oldnode, PathfindingState &state,
 	if (oldnode->depth > 0) {
 		turn = state._direction - oldnode->state._direction;
 		if (turn < 0) turn = -turn;
-		if (turn > 4) turn = 8 - turn;
+		if (turn > 8) turn = 16 - turn;
 	}
 
 	newnode->cost = oldnode->cost + dist + 32 * turn; //!! constant
