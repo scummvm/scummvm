@@ -3,8 +3,8 @@ MODULE := engines/composer
 MODULE_OBJS = \
 	console.o \
 	composer.o \
-	detection.o \
 	graphics.o \
+	metaengine.o \
 	resource.o \
 	saveload.o \
 	scripting.o
@@ -16,3 +16,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
