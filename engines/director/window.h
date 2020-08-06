@@ -122,6 +122,11 @@ class Window : public Graphics::MacWindow, public Object<Window> {
 	virtual void setVisible(bool visible, bool silent = false);
 	bool setNextMovie(Common::String &movieFilenameRaw);
 
+	void setWindowType(int type) { _windowType = type; updateBorderType(); }
+	int getWindowType() const { return _windowType; }
+
+	void updateBorderType();
+
 	bool step();
 
 	// events.cpp
@@ -175,6 +180,8 @@ private:
 	Common::String _currentPath;
 	Common::StringArray _movieQueue;
 	int16 _startFrame;
+
+	int _windowType;
 
 private:
 	int preprocessColor(DirectorPlotData *p, int src);

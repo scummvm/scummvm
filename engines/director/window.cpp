@@ -56,6 +56,8 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 
 	_objType = kWindowObj;
 	_startFrame = _vm->getStartMovie().startFrame;
+
+	setWindowType(0);
 }
 
 Window::~Window() {
@@ -390,6 +392,14 @@ bool Window::setNextMovie(Common::String &movieFilenameRaw) {
 
 	_nextMovie.movie = cleanedFilename;
 	return true;
+}
+
+void Window::updateBorderType() {
+	if (_isStage) {
+		setBorderType(3);
+	} else {
+		setBorderType(MAX(0, MIN(_windowType, 16)));
+	}
 }
 
 bool Window::step() {

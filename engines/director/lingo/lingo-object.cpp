@@ -368,6 +368,8 @@ Datum Window::getField(int field) {
 		return isTitleVisible();
 	case kTheVisible:
 		return isVisible();
+	case kTheWindowType:
+		return getWindowType();
 	default:
 		warning("Window::getField: unhandled field '%s'", g_lingo->field2str(field));
 		return Datum();
@@ -384,6 +386,9 @@ bool Window::setField(int field, const Datum &value) {
 		return true;
 	case kTheVisible:
 		setVisible(value.asInt());
+		return true;
+	case kTheWindowType:
+		setWindowType(value.asInt());
 		return true;
 	default:
 		warning("Window::setField: unhandled field '%s'", g_lingo->field2str(field));
