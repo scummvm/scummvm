@@ -113,8 +113,8 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 	return true;
 }
 
-void Window::setStageColor(uint stageColor) {
-	if (stageColor != _stageColor) {
+void Window::setStageColor(uint stageColor, bool forceReset) {
+	if (stageColor != _stageColor || forceReset) {
 		_stageColor = stageColor;
 		reset();
 		markAllDirty();

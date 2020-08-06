@@ -124,7 +124,7 @@ bool Movie::loadArchive() {
 		initGraphics(windowWidth, windowHeight);
 	}
 
-	_window->setStageColor(_stageColor);
+	_window->setStageColor(_stageColor, true);
 
 	// Score
 	if (!_movieArchive->hasResource(MKTAG('V', 'W', 'S', 'C'), -1)) {

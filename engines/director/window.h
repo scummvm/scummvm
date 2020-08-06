@@ -95,7 +95,7 @@ class Window : public Graphics::MacWindow, public Object<Window> {
 	void invertChannel(Channel *channel);
 
 	bool needsAppliedColor(DirectorPlotData *pd);
-	void setStageColor(uint stageColor);
+	void setStageColor(uint stageColor, bool forceReset = false);
 	int getStageColor() { return _stageColor; }
 
 	void addDirtyRect(const Common::Rect &r);
