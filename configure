@@ -6168,7 +6168,8 @@ declare -a static_detect_engines=("PLUMBERS" "AGI" "SCUMM" "SKY" "DREAMWEB" "DRA
 								  "MORTEVIELLE" "MUTATIONOFJB" "NEVERHOOD" "PARALLACTION" "PEGASUS"
 								  "PETKA" "PINK" "PRINCE" "SHERLOCK" "SLUDGE" "STARTREK" "SUPERNOVA"
 								  "TEENAGENT" "TESTBED" "TINSEL" "TITANIC" "TOLTECS" "TONY" "TOON"
-								  "TOUCHE" "TSAGE" "TUCKER" "VOYEUR" "WAGE" "AVALANCHE" "BBVS")
+								  "TOUCHE" "TSAGE" "TUCKER" "VOYEUR" "WAGE" "AVALANCHE" "BBVS"
+								  "BLADERUNNER")
 detectId="_DETECTION"
 
 echo "Creating engines/plugins_table.h"

@@ -99,12 +99,6 @@ public:
 	const char *getEngineId() const override;
 	const char *getName() const override;
 	const char *getOriginalCopyright() const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-	bool hasFeature(MetaEngineFeature f) const override;
-	SaveStateList listSaves(const char *target) const override;
-	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
 BladeRunnerMetaEngine::BladeRunnerMetaEngine()
@@ -126,42 +120,4 @@ const char *BladeRunnerMetaEngine::getOriginalCopyright() const {
 	return "Blade Runner (C) 1997 Westwood Studios";
 }
 
-bool BladeRunnerMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new BladeRunner::BladeRunnerEngine(syst, desc);
-
-	return true;
-}
-
-bool BladeRunnerMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		f == kSupportsListSaves ||
-		f == kSupportsLoadingDuringStartup ||
-		f == kSupportsDeleteSave ||
-		f == kSavesSupportMetaInfo ||
-		f == kSavesSupportThumbnail ||
-		f == kSavesSupportCreationDate ||
-		f == kSavesSupportPlayTime ||
-		f == kSimpleSavesNames;
-}
-
-SaveStateList BladeRunnerMetaEngine::listSaves(const char *target) const {
-	return BladeRunner::SaveFileManager::list(target);
-}
-
-int BladeRunnerMetaEngine::getMaximumSaveSlot() const {
-	return 999;
-}
-
-void BladeRunnerMetaEngine::removeSaveState(const char *target, int slot) const {
-	BladeRunner::SaveFileManager::remove(target, slot);
-}
-
-SaveStateDescriptor BladeRunnerMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	return BladeRunner::SaveFileManager::queryMetaInfos(target, slot);
-}
-
-#if PLUGIN_ENABLED_DYNAMIC(BLADERUNNER)
-	REGISTER_PLUGIN_DYNAMIC(BLADERUNNER, PLUGIN_TYPE_ENGINE, BladeRunnerMetaEngine);
-#else
-	REGISTER_PLUGIN_STATIC(BLADERUNNER, PLUGIN_TYPE_ENGINE, BladeRunnerMetaEngine);
-#endif
+REGISTER_PLUGIN_STATIC(BLADERUNNER_DETECTION, PLUGIN_TYPE_METAENGINE, BladeRunnerMetaEngine);
