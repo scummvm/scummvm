@@ -222,6 +222,12 @@ public:
 	virtual void blit(ManagedSurface *g, Common::Rect &dest) override;
 
 	/**
+	 * Centers the window using the dimensions of the parent window manager, or undoes this; does
+	 * nothing if WM is null.
+	 */
+	void center(bool toCenter = true);
+
+	/**
 	 * Mutator to change the active state of the window.
 	 * Most often called from the WM.
 	 * @param active Target state.

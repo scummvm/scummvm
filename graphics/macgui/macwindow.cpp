@@ -186,6 +186,22 @@ void MacWindow::blit(ManagedSurface *g, Common::Rect &dest) {
 	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), dest, kColorGreen2);
 }
 
+void MacWindow::center(bool toCenter) {
+	if (!_wm)
+		return;
+
+	Common::Rect screen = _wm->_screen->getBounds();
+	Common::Rect d = getDimensions();
+
+	if (toCenter) {
+		move((screen.width() - _dims.width()) / 2, (screen.height() - _dims.height()) / 2);
+	} else if (_macBorder.hasBorder(_active) && _macBorder.hasOffsets()) {
+		move(_macBorder.getOffset().left, _macBorder.getOffset().top);
+	} else {
+		move(0, 0);
+	}
+}
+
 #define ARROW_W 12
 #define ARROW_H 6
 const int arrowPixels[ARROW_H][ARROW_W] = {
