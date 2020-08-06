@@ -45,7 +45,6 @@ MODULE_OBJS := \
 	assets.o \
 	conversationlinelist.o \
 	debug.o \
-	detection.o \
 	encryptedfile.o \
 	font.o \
 	game.o \
@@ -55,6 +54,7 @@ MODULE_OBJS := \
 	hardcodedstrings.o \
 	inventory.o \
 	inventoryitemdefinitionlist.o \
+	metaengine.o \
 	mutationofjb.o \
 	room.o \
 	script.o \
@@ -68,3 +68,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
