@@ -31,7 +31,6 @@ MODULE := engines/dm
 MODULE_OBJS := \
 	champion.o \
 	console.o \
-	detection.o \
 	dialog.o \
 	dm.o \
 	dmglobals.o \
@@ -43,6 +42,7 @@ MODULE_OBJS := \
 	loadsave.o \
 	lzw.o \
 	menus.o \
+	metaengine.o \
 	movesens.o \
 	objectman.o \
 	projexpl.o \
@@ -61,3 +61,5 @@ endif
 # Include common rules
 include $(srcdir)/rules.mk
 
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
