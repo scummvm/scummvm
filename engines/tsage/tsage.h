@@ -32,23 +32,10 @@
 #include "tsage/events.h"
 #include "tsage/graphics.h"
 #include "tsage/resources.h"
+#include "tsage/detection_enums.h"
 
 
 namespace TsAGE {
-
-enum {
-	GType_Ringworld = 0,
-	GType_BlueForce = 1,
-	GType_Ringworld2 = 2,
-	GType_Sherlock1 = 5
-};
-
-enum {
-	GF_DEMO = 1 << 0,
-	GF_CD = 1 << 1,
-	GF_FLOPPY = 1 << 2,
-	GF_ALT_REGIONS = 1 << 3
-};
 
 enum {
 	kRingDebugScripts = 1 << 0,
