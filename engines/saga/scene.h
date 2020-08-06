@@ -31,6 +31,9 @@
 #include "saga/puzzle.h"
 #include "saga/events.h"
 
+// Some defines used for detection.
+#include "saga/shared_detection_defines.h"
+
 namespace Saga {
 
 //#define SCENE_DEBUG // for scene debugging
@@ -44,12 +47,6 @@ namespace Saga {
 #define ITE_SCENE_LODGE 21
 #define ITE_SCENE_ENDCREDIT1 295
 #define ITE_SCENE_OVERMAP 226
-
-// Default scenes
-#define ITE_DEFAULT_SCENE 32
-#define IHNM_DEFAULT_SCENE 151
-#define ITEDEMO_DEFAULT_SCENE 68
-#define IHNMDEMO_DEFAULT_SCENE 144
 
 class ObjectMap;
 

@@ -22,6 +22,10 @@
 
 // Game detection information and MD5s
 
+// From sage/scene.h, these are some defines that also
+// help with detection.
+#include "saga/shared_detection_defines.h"
+
 namespace Saga {
 
 static const GameResourceDescription ITE_Resources = {
