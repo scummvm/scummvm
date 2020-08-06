@@ -4,9 +4,9 @@ MODULE_OBJS = \
 	chewy.o \
 	cursor.o \
 	console.o \
-	detection.o \
 	events.o \
 	graphics.o \
+	metaengine.o \
 	resource.o \
 	scene.o \
 	sound.o \
@@ -20,3 +20,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
