@@ -581,7 +581,6 @@ void BaseRenderOpenGL3DShader::renderShadowGeometry(BaseArray<AdWalkplane *> &pl
 	for (uint i = 0; i < planes.size(); i++) {
 		if (planes[i]->_active && planes[i]->_receiveShadows) {
 			planes[i]->_mesh->render();
-			//m_Renderer->m_NumPolygons += _planes[i]->m_Mesh->m_NumFaces;
 		}
 	}
 
@@ -589,7 +588,6 @@ void BaseRenderOpenGL3DShader::renderShadowGeometry(BaseArray<AdWalkplane *> &pl
 	for (uint i = 0; i < blocks.size(); i++) {
 		if (blocks[i]->_active && blocks[i]->_receiveShadows) {
 			blocks[i]->_mesh->render();
-			//m_Renderer->m_NumPolygons += _blocks[i]->m_Mesh->m_NumFaces;
 		}
 	}
 
@@ -597,7 +595,6 @@ void BaseRenderOpenGL3DShader::renderShadowGeometry(BaseArray<AdWalkplane *> &pl
 	for (uint i = 0; i < generics.size(); i++) {
 		if (generics[i]->_active && generics[i]->_receiveShadows) {
 			generics[i]->_mesh->render();
-			//m_Renderer->m_NumPolygons += _generics[i]->m_Mesh->m_NumFaces;
 		}
 	}
 

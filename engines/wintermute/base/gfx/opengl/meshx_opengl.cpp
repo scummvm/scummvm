@@ -49,7 +49,6 @@ bool MeshXOpenGL::render(ModelX *model) {
 
 	bool res = false;
 
-	// is this correct?
 	for (uint32 i = 0; i < _numAttrs; i++) {
 		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, _materials[i]->_diffuse.data);
 		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, _materials[i]->_diffuse.data);
@@ -57,15 +56,11 @@ bool MeshXOpenGL::render(ModelX *model) {
 		glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, _materials[i]->_emissive.data);
 		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, _materials[i]->_shininess);
 
-		// set texture (if any)
-
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glEnable(GL_TEXTURE_2D);
 		static_cast<BaseSurfaceOpenGL3D *>(_materials[i]->getSurface())->setTexture();
 		glInterleavedArrays(GL_T2F_N3F_V3F, 0, _vertexData);
 		glDrawElements(GL_TRIANGLES, _indexRanges[i + 1] - _indexRanges[i], GL_UNSIGNED_SHORT, _indexData + _indexRanges[i]);
-
-		// maintain polycount
 	}
 
 	glBindTexture(GL_TEXTURE_2D, 0);

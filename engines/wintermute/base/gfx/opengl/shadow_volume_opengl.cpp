@@ -83,14 +83,14 @@ bool ShadowVolumeOpenGL::renderToStencilBuffer() {
 	glCullFace(GL_FRONT);
 	render();
 
-	//	// Decrement stencil buffer value
+	// Decrement stencil buffer value
 	glStencilOp(GL_KEEP, GL_KEEP, GL_DECR);
 
 	// Draw front-side of shadow volume in stencil/z only
 	glCullFace(GL_BACK);
 	render();
 
-	//	// Restore render states
+	// Restore render states
 	glEnable(GL_LIGHTING);
 	glFrontFace(GL_CCW);
 	glShadeModel(GL_SMOOTH);

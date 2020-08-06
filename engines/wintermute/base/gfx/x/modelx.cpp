@@ -323,11 +323,6 @@ bool ModelX::render() {
 		// render everything
 		bool res = _rootFrame->render(this);
 
-		// remember matrices for object picking purposes
-		//		Rend->m_Device->GetTransform(D3DTS_WORLD,      &lastWorldMat);
-		//		Rend->m_Device->GetTransform(D3DTS_VIEW,       &_lastViewMat);
-		//		Rend->m_Device->GetTransform(D3DTS_PROJECTION, &_lastProjMat);
-
 		// remember scene offset
 		Rect32 rc;
 		_gameRef->getCurrentViewportRect(&rc);
@@ -380,7 +375,6 @@ bool ModelX::isTransparentAt(int x, int y) {
 	Math::Vector3d end = ray.getOrigin() + ray.getDirection();
 	Math::Matrix4 m = _lastWorldMat;
 	m.inverse();
-//	m.transpose();
 	m.transform(&ray.getOrigin(), true);
 	m.transform(&end, true);
 	Math::Vector3d pickRayDirection = end - ray.getOrigin();
