@@ -371,7 +371,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		warning("STUB: Lingo::getTheEntity(): Unprocessed getting field %s of entity %s", field2str(field), entity2str(entity));
 		break;
 	case kTheCenterStage:
-		return g_director->_centerStage;
+		d.type = INT;
+		d.u.i = g_director->_centerStage;
 		break;
 	case kTheCheckBoxAccess:
 		getTheEntitySTUB(kTheCheckBoxAccess);
