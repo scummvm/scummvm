@@ -6,10 +6,10 @@ MODULE_OBJS = \
 	cel_decoder.o \
 	console.o \
 	cursor_mgr.o \
-	detection.o \
 	director.o \
 	file.o \
 	gui.o \
+	metaengine.o \
 	pda_mgr.o \
 	pink.o \
 	resource_mgr.o \
@@ -57,3 +57,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
