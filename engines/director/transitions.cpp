@@ -133,7 +133,12 @@ struct {
 
 void Window::exitTransition(Graphics::ManagedSurface *nextFrame, Common::Rect clipRect) {
 	_composeSurface->blitFrom(*nextFrame, clipRect, Common::Point(clipRect.left, clipRect.top));
-	g_system->copyRectToScreen(_composeSurface->getBasePtr(clipRect.left, clipRect.top), _composeSurface->pitch, clipRect.left, clipRect.top, clipRect.width(), clipRect.height());
+	stepTransition();
+}
+
+void Window::stepTransition() {
+	_contentIsDirty = true;
+	g_director->draw();
 }
 
 void Window::playTransition(uint16 transDuration, uint8 transArea, uint8 transChunkSize, TransitionType transType, uint frame) {
@@ -516,16 +521,14 @@ void Window::playTransition(uint16 transDuration, uint8 transArea, uint8 transCh
 		}
 
 		if (fullredraw) {
-			g_system->copyRectToScreen(_composeSurface->getBasePtr(clipRect.left, clipRect.top), _composeSurface->pitch, _innerDims.left + clipRect.left, _innerDims.top + clipRect.top, w, h);
+			stepTransition();
 		} else {
 			rto.clip(clipRect);
 
-			if (rto.height() > 0 && rto.width() > 0) {
-				g_system->copyRectToScreen(_composeSurface->getBasePtr(rto.left, rto.top), _composeSurface->pitch, _innerDims.left + rto.left, _innerDims.top + rto.top, rto.width(), rto.height());
-			}
+			if (rto.height() > 0 && rto.width() > 0)
+				stepTransition();
 		}
 
-		g_system->updateScreen();
 		g_lingo->executePerFrameHook(t.frame, i);
 	}
 }
@@ -702,8 +705,7 @@ void Window::dissolveTrans(TransParams &t, Common::Rect &clipRect, Graphics::Man
 			}
 		} while (rnd != seed);
 
-		g_system->copyRectToScreen(_composeSurface->getBasePtr(clipRect.left, clipRect.top), _composeSurface->pitch, _innerDims.left + clipRect.left, _innerDims.top + clipRect.top, clipRect.width(), clipRect.height());
-		g_system->updateScreen();
+		stepTransition();
 
 		g_lingo->executePerFrameHook(t.frame, i + 1);
 
@@ -806,8 +808,7 @@ void Window::dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect, Graph
 			}
 		}
 
-		g_system->copyRectToScreen(_composeSurface->getBasePtr(clipRect.left, clipRect.top), _composeSurface->pitch, _innerDims.left + clipRect.left, _innerDims.top + clipRect.top, clipRect.width(), clipRect.height());
-		g_system->updateScreen();
+		stepTransition();
 
 		g_lingo->executePerFrameHook(t.frame, i + 1);
 
@@ -977,12 +978,10 @@ void Window::transMultiPass(TransParams &t, Common::Rect &clipRect, Graphics::Ma
 
 			if (rto.height() > 0 && rto.width() > 0) {
 				_composeSurface->blitFrom(*nextFrame, rto, Common::Point(rto.left, rto.top));
-				g_system->copyRectToScreen(_composeSurface->getBasePtr(rto.left, rto.top), _composeSurface->pitch, _innerDims.left + rto.left, _innerDims.top + rto.top, rto.width(), rto.height());
+				stepTransition();
 			}
 		}
 		rects.clear();
-
-		g_system->updateScreen();
 
 		g_lingo->executePerFrameHook(t.frame, i);
 
@@ -1030,9 +1029,6 @@ void Window::transZoom(TransParams &t, Common::Rect &clipRect, Graphics::Managed
 		r.setHeight(t.yStepSize * i * 2);
 		r.setWidth(t.xStepSize * i * 2);
 		r.moveTo(w / 2 - t.xStepSize * i, h / 2 - t.yStepSize * i);
-
-		g_system->copyRectToScreen(_composeSurface->getPixels(), _composeSurface->pitch, _innerDims.left, _innerDims.top, w, h);
-		g_system->updateScreen();
 
 		g_lingo->executePerFrameHook(t.frame, i);
 

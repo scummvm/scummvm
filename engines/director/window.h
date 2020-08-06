@@ -105,6 +105,7 @@ class Window : public Graphics::MacWindow, public Object<Window> {
 
 	// transitions.cpp
 	void exitTransition(Graphics::ManagedSurface *nextFrame, Common::Rect clipRect);
+	void stepTransition();
 	void playTransition(uint16 transDuration, uint8 transArea, uint8 transChunkSize, TransitionType transType, uint frame);
 	void initTransParams(TransParams &t, Common::Rect &clipRect);
 	void dissolveTrans(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *tmpSurface);
