@@ -231,6 +231,7 @@ public:
 	int _machineType;
 	bool _playbackPaused;
 	bool _skipFrameAdvance;
+	bool _centerStage;
 
 	Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _openResFiles;
 	Common::String _sharedCastFile;

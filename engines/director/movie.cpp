@@ -127,6 +127,9 @@ bool Movie::loadArchive() {
 
 	_window->setStageColor(_stageColor, true);
 
+	if (debugChannelSet(-1, kDebugDesktop))
+		_window->center(g_director->_centerStage);
+
 	// Score
 	if (!_movieArchive->hasResource(MKTAG('V', 'W', 'S', 'C'), -1)) {
 		warning("Movie::loadArchive(): Wrong movie format. VWSC resource missing");
