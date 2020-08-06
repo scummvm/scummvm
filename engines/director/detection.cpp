@@ -25,72 +25,9 @@
 #include "engines/advancedDetector.h"
 
 #include "common/file.h"
-#include "common/config-manager.h"
 
-#include "director/director.h"
-
-namespace Director {
-
-struct DirectorGameDescription {
-	ADGameDescription desc;
-
-	DirectorGameGID gameGID;
-	uint16 version;
-};
-
-DirectorGameGID DirectorEngine::getGameGID() const {
-	return _gameDescription->gameGID;
-}
-
-const char *DirectorEngine::getGameId() const {
-	return _gameDescription->desc.gameId;
-}
-
-Common::Platform DirectorEngine::getPlatform() const {
-	return _gameDescription->desc.platform;
-}
-
-uint16 DirectorEngine::getDescriptionVersion() const {
-	return _gameDescription->version;
-}
-
-Common::Language DirectorEngine::getLanguage() const {
-	return _gameDescription->desc.language;
-}
-
-const char *DirectorEngine::getExtra() {
-	return _gameDescription->desc.extra;
-}
-
-Common::String DirectorEngine::getEXEName() const {
-	StartMovie startMovie = getStartMovie();
-	if (startMovie.startMovie.size() > 0)
-		return startMovie.startMovie;
-
-	return _gameDescription->desc.filesDescriptions[0].fileName;
-}
-
-StartMovie DirectorEngine::getStartMovie() const {
-	StartMovie startMovie;
-	startMovie.startFrame = -1;
-
-	if (ConfMan.hasKey("start_movie")) {
-		Common::String option = ConfMan.get("start_movie");
-		int atPos = option.findLastOf("@");
-		startMovie.startMovie = option.substr(0, atPos);
-		Common::String tail = option.substr(atPos + 1, option.size());
-		if (tail.size() > 0)
-			startMovie.startFrame = atoi(tail.c_str());
-	}
-	return startMovie;
-}
-
-bool DirectorEngine::hasFeature(EngineFeature f) const {
-	return false;
-		//(f == kSupportsReturnToLauncher);
-}
-
-} // End of Namespace Director
+#include "director/detection_enums.h"
+#include "director/detection.h"
 
 static const PlainGameDescriptor directorGames[] = {
 	{ "director",			"Macromedia Director Game" },
@@ -258,17 +195,7 @@ public:
 	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
-
-bool DirectorMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Director::DirectorGameDescription *gd = (const Director::DirectorGameDescription *)desc;
-
-	if (gd)
-		*engine = new Director::DirectorEngine(syst, gd);
-
-	return (gd != 0);
-}
 
 static Director::DirectorGameDescription s_fallbackDesc = {
 	{
@@ -395,8 +322,4 @@ ADDetectedGame DirectorMetaEngine::fallbackDetect(const FileMap &allFiles, const
 	return ADDetectedGame();
 }
 
-#if PLUGIN_ENABLED_DYNAMIC(DIRECTOR)
-	REGISTER_PLUGIN_DYNAMIC(DIRECTOR, PLUGIN_TYPE_ENGINE, DirectorMetaEngine);
-#else
-	REGISTER_PLUGIN_STATIC(DIRECTOR, PLUGIN_TYPE_ENGINE, DirectorMetaEngine);
-#endif
+REGISTER_PLUGIN_STATIC(DIRECTOR_DETECTION, PLUGIN_TYPE_METAENGINE, DirectorMetaEngine);

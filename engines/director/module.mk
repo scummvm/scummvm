@@ -6,12 +6,12 @@ MODULE_OBJS = \
 	castmember.o \
 	channel.o \
 	cursor.o \
-	detection.o \
 	director.o \
 	events.o \
 	frame.o \
 	graphics.o \
 	images.o \
+	metaengine.o \
 	movie.o \
 	resource.o \
 	score.o \
@@ -51,3 +51,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
