@@ -4,10 +4,10 @@ MODULE_OBJS := \
 	combat.o \
 	debugger.o \
 	design.o \
-	detection.o \
 	dialog.o \
 	entities.o \
 	gui.o \
+	metaengine.o \
 	randomhat.o \
 	saveload.o \
 	script.o \
@@ -26,3 +26,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
