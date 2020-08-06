@@ -28,21 +28,7 @@
 #include "common/textconsole.h"
 
 #include "parallaction/parallaction.h"
-
-namespace Parallaction {
-
-struct PARALLACTIONGameDescription {
-	ADGameDescription desc;
-
-	int gameType;
-	uint32 features;
-};
-
-int Parallaction::getGameType() const { return _gameDescription->gameType; }
-uint32 Parallaction::getFeatures() const { return _gameDescription->features; }
-Common::Language Parallaction::getLanguage() const { return _gameDescription->desc.language; }
-Common::Platform Parallaction::getPlatform() const { return _gameDescription->desc.platform; }
-}
+#include "parallaction/detection.h"
 
 static const PlainGameDescriptor parallactionGames[] = {
 	{"nippon", "Nippon Safes Inc."},
@@ -233,81 +219,6 @@ public:
 	const char *getOriginalCopyright() const override {
 		return "Nippon Safes Inc. (C) Dynabyte";
 	}
-
-	bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-	SaveStateList listSaves(const char *target) const override;
-	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
 };
 
-bool ParallactionMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsDeleteSave);
-}
-
-bool Parallaction::Parallaction::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsReturnToLauncher);
-}
-
-bool ParallactionMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Parallaction::PARALLACTIONGameDescription *gd = (const Parallaction::PARALLACTIONGameDescription *)desc;
-	bool res = true;
-
-	switch (gd->gameType) {
-	case Parallaction::GType_Nippon:
-		*engine = new Parallaction::Parallaction_ns(syst, gd);
-		break;
-	case Parallaction::GType_BRA:
-		*engine = new Parallaction::Parallaction_br(syst, gd);
-		break;
-	default:
-		res = false;
-		error("Parallaction engine: unknown gameType");
-	}
-
-	return res;
-}
-
-SaveStateList ParallactionMetaEngine::listSaves(const char *target) const {
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-
-	Common::String pattern(ConfMan.getDomain(target)->getVal("gameid") + ".0##");
-	Common::StringArray filenames = saveFileMan->listSavefiles(pattern);
-
-	SaveStateList saveList;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		// Obtain the last 2 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(file->c_str() + file->size() - 2);
-
-		if (slotNum >= 0 && slotNum <= 99) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
-			if (in) {
-				Common::String saveDesc = in->readLine();
-				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
-				delete in;
-			}
-		}
-	}
-
-	// Sort saves based on slot number.
-	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
-	return saveList;
-}
-
-int ParallactionMetaEngine::getMaximumSaveSlot() const { return 99; }
-
-void ParallactionMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String filename = ConfMan.getDomain(target)->getVal("gameid");
-	filename += Common::String::format(".0%02d", slot);
-
-	g_system->getSavefileManager()->removeSavefile(filename);
-}
-
-#if PLUGIN_ENABLED_DYNAMIC(PARALLACTION)
-	REGISTER_PLUGIN_DYNAMIC(PARALLACTION, PLUGIN_TYPE_ENGINE, ParallactionMetaEngine);
-#else
-	REGISTER_PLUGIN_STATIC(PARALLACTION, PLUGIN_TYPE_ENGINE, ParallactionMetaEngine);
-#endif
+REGISTER_PLUGIN_STATIC(PARALLACTION_DETECTION, PLUGIN_TYPE_METAENGINE, ParallactionMetaEngine);
