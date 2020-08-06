@@ -4,10 +4,10 @@ MODULE_OBJS := \
 	animation.o \
 	barchive.o \
 	console.o \
-	detection.o \
 	draci.o \
 	font.o \
 	game.o \
+	metaengine.o \
 	mouse.o \
 	music.o \
 	saveload.o \
@@ -25,3 +25,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
