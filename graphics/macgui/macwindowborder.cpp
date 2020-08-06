@@ -54,7 +54,9 @@ bool MacWindowBorder::hasBorder(bool active) {
 }
 
 void MacWindowBorder::addActiveBorder(TransparentSurface *source) {
-	assert(!_activeBorder);
+	if (_activeBorder)
+		delete _activeBorder;
+
 	_activeBorder = new NinePatchBitmap(source, true);
 	_activeInitialized = true;
 
@@ -63,7 +65,9 @@ void MacWindowBorder::addActiveBorder(TransparentSurface *source) {
 }
 
 void MacWindowBorder::addInactiveBorder(TransparentSurface *source) {
-	assert(!_inactiveBorder);
+	if (_inactiveBorder)
+		delete _inactiveBorder;
+
 	_inactiveBorder = new NinePatchBitmap(source, true);
 	_inactiveInitialized = true;
 
