@@ -6,13 +6,13 @@ MODULE_OBJS = \
 	cursor.o \
 	debugger.o \
 	decompress.o \
-	detection.o \
 	draw.o \
 	flags.o \
 	font.o \
 	graphics.o \
 	hero.o \
 	inventory.o \
+	metaengine.o \
 	mhwanh.o \
 	music.o \
 	mob.o \
@@ -34,3 +34,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
