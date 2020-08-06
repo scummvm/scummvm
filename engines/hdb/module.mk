@@ -10,7 +10,6 @@ MODULE_OBJS := \
 	ai-player.o \
 	ai-use.o \
 	ai-waypoint.o \
-	detection.o \
 	file-manager.o \
 	gfx.o \
 	hdb.o \
@@ -18,6 +17,7 @@ MODULE_OBJS := \
 	lua-script.o \
 	map.o \
 	menu.o \
+	metaengine.o \
 	sound.o \
 	saveload.o \
 	window.o
@@ -32,3 +32,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
