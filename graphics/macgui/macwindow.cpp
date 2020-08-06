@@ -242,6 +242,7 @@ void MacWindow::updateOuterDims() {
 		_dims = _innerDims;
 		_dims.grow(kBorderWidth);
 	}
+	_borderIsDirty = true;
 }
 
 void MacWindow::drawBorder() {
