@@ -1,7 +1,6 @@
 MODULE := engines/kyra
 
 MODULE_OBJS := \
-	detection.o \
 	engine/items_lok.o \
 	engine/items_v2.o \
 	engine/items_hof.o \
@@ -45,6 +44,7 @@ MODULE_OBJS := \
 	gui/saveload_lok.o \
 	gui/saveload_hof.o \
 	gui/saveload_mr.o \
+	metaengine.o \
 	resource/resource.o \
 	resource/resource_intern.o \
 	resource/staticres.o \
@@ -152,6 +152,9 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
 
 ifeq ($(BACKEND), maemo)
 #ugly workaround, screen.cpp crashes gcc version 3.4.4 (CodeSourcery ARM 2005q3-2) with anything but -O3
