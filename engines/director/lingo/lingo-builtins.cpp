@@ -1054,6 +1054,10 @@ void LB::b_closeDA(int nargs) {
 }
 
 void LB::b_closeResFile(int nargs) {
+	if (nargs == 0) { // Close all res files
+		g_director->_openResFiles.clear();
+		return;
+	}
 	Datum d = g_lingo->pop();
 	Common::String resFileName = g_director->getCurrentWindow()->getCurrentPath() + d.asString();
 
