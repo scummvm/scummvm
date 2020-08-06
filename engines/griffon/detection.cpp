@@ -21,15 +21,7 @@
  */
 
 #include "base/plugins.h"
-#include "common/config-manager.h"
-#include "common/translation.h"
 #include "engines/advancedDetector.h"
-
-#include "backends/keymapper/action.h"
-#include "backends/keymapper/keymap.h"
-#include "backends/keymapper/standard-actions.h"
-
-#include "griffon/griffon.h"
 
 static const PlainGameDescriptor griffonGames[] = {
 	{"griffon", "The Griffon Legend"},
@@ -37,6 +29,7 @@ static const PlainGameDescriptor griffonGames[] = {
 };
 
 namespace Griffon {
+
 static const ADGameDescription gameDescriptions[] = {
 	{
 		"griffon",
@@ -50,6 +43,7 @@ static const ADGameDescription gameDescriptions[] = {
 
 	AD_TABLE_END_MARKER
 };
+
 }
 
 class GriffonMetaEngine: public AdvancedMetaEngine {
@@ -65,116 +59,9 @@ public:
 		return "Griffon Engine";
 	}
 
-	int getMaximumSaveSlot() const override {
-		return ConfMan.getInt("autosave_period") ? 4 : 3;
-	}
-
 	const char *getOriginalCopyright() const override {
 		return "The Griffon Legend (c) 2005 Syn9 (Daniel Kennedy)";
 	}
-
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-
-	virtual int getAutosaveSlot() const override {
-		return 4;
-	}
-	Common::String getSavegameFile(int saveGameIdx, const char *target = nullptr) const override;
-
-	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
-Common::String GriffonMetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
-	if (saveGameIdx == kSavegameFilePattern) {
-		// Pattern requested
-		return Common::String::format("%s.s##", target == nullptr ? getEngineId() : target);
-	} else {
-		// Specific filename requested
-		return Common::String::format("%s.s%02d", target == nullptr ? getEngineId() : target, saveGameIdx);
-	}
-}
-
-bool Griffon::GriffonEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsReturnToLauncher) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
-}
-
-bool GriffonMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc)
-		*engine = new Griffon::GriffonEngine(syst);
-
-	return desc != nullptr;
-}
-
-Common::KeymapArray GriffonMetaEngine::initKeymaps(const char *target) const {
-	using namespace Common;
-
-	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "griffon", "The Griffon Legend");
-
-	Action *act;
-
-	act = new Action(kStandardActionSkip, _("Menu / Skip"));
-	act->setCustomEngineActionEvent(Griffon::kGriffonMenu);
-	act->addDefaultInputMapping("ESCAPE");
-	act->addDefaultInputMapping("JOY_Y");
-	engineKeyMap->addAction(act);
-
-	act = new Action("RETURN", _("Confirm"));
-	act->setCustomEngineActionEvent(Griffon::kGriffonConfirm);
-	act->addDefaultInputMapping("RETURN");
-	act->addDefaultInputMapping("JOY_X");
-	engineKeyMap->addAction(act);
-
-	act = new Action(kStandardActionMoveUp, _("Up"));
-	act->setCustomEngineActionEvent(Griffon::kGriffonUp);
-	act->addDefaultInputMapping("UP");
-	act->addDefaultInputMapping("JOY_UP");
-	engineKeyMap->addAction(act);
-
-	act = new Action(kStandardActionMoveDown, _("Down"));
-	act->setCustomEngineActionEvent(Griffon::kGriffonDown);
-	act->addDefaultInputMapping("DOWN");
-	act->addDefaultInputMapping("JOY_DOWN");
-	engineKeyMap->addAction(act);
-
-	act = new Action(kStandardActionMoveLeft, _("Left"));
-	act->setCustomEngineActionEvent(Griffon::kGriffonLeft);
-	act->addDefaultInputMapping("LEFT");
-	act->addDefaultInputMapping("JOY_LEFT");
-	engineKeyMap->addAction(act);
-
-	act = new Action(kStandardActionMoveRight, _("Right"));
-	act->setCustomEngineActionEvent(Griffon::kGriffonRight);
-	act->addDefaultInputMapping("RIGHT");
-	act->addDefaultInputMapping("JOY_RIGHT");
-	engineKeyMap->addAction(act);
-
-	act = new Action("ATTACK", _("Attack"));
-	act->setCustomEngineActionEvent(Griffon::kGriffonAttack);
-	act->addDefaultInputMapping("LCTRL");
-	act->addDefaultInputMapping("RCTRL");
-	act->addDefaultInputMapping("JOY_A");
-	engineKeyMap->addAction(act);
-
-	act = new Action("INVENTORY", _("Inventory"));
-	act->setCustomEngineActionEvent(Griffon::kGriffonInventory);
-	act->addDefaultInputMapping("LALT");
-	act->addDefaultInputMapping("RALT");
-	act->addDefaultInputMapping("JOY_B");
-	engineKeyMap->addAction(act);
-
-	act = new Action("SPEEDUP", _("Speed Up Cutscene"));
-	act->setCustomEngineActionEvent(Griffon::kGriffonCutsceneSpeedUp);
-	act->addDefaultInputMapping("LSHIFT");
-	act->addDefaultInputMapping("RSHIFT");
-	engineKeyMap->addAction(act);
-
-	return Keymap::arrayOf(engineKeyMap);
-}
-
-#if PLUGIN_ENABLED_DYNAMIC(GRIFFON)
-REGISTER_PLUGIN_DYNAMIC(GRIFFON, PLUGIN_TYPE_ENGINE, GriffonMetaEngine);
-#else
-REGISTER_PLUGIN_STATIC(GRIFFON, PLUGIN_TYPE_ENGINE, GriffonMetaEngine);
-#endif
+REGISTER_PLUGIN_STATIC(GRIFFON_DETECTION, PLUGIN_TYPE_METAENGINE, GriffonMetaEngine);
