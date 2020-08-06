@@ -2,11 +2,11 @@ MODULE := engines/bbvs
 
 MODULE_OBJS := \
 	bbvs.o \
-	detection.o \
 	dialogs.o \
 	gamemodule.o \
 	graphics.o \
 	logic.o \
+	metaengine.o \
 	saveload.o \
 	scene.o \
 	sound.o \
@@ -30,3 +30,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
