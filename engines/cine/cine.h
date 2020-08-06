@@ -48,6 +48,7 @@
 #include "cine/various.h"
 #include "cine/console.h"
 #include "cine/sound.h"
+#include "cine/detection_enums.h"
 
 //#define DUMP_SCRIPTS
 
@@ -80,18 +81,6 @@
  *
  */
 namespace Cine {
-
-enum CineGameType {
-	GType_FW = 1,
-	GType_OS
-};
-
-enum CineGameFeatures {
-	GF_CD =   1 << 0,
-	GF_DEMO = 1 << 1,
-	GF_ALT_FONT = 1 << 2,
-	GF_CRYPTED_BOOT_PRC = 1 << 3
-};
 
 struct CINEGameDescription;
 struct SeqListElement;
