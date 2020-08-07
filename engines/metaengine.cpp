@@ -345,7 +345,16 @@ void MetaEngine::registerDefaultSettings(const Common::String &) const {
 	}
 }
 
-GUI::OptionsContainerWidget *MetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+GUI::OptionsContainerWidget *MetaEngine::buildEngineOptionsWidgetStatic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+	const ExtraGuiOptions engineOptions = getExtraGuiOptions(target);
+	if (engineOptions.empty()) {
+		return nullptr;
+	}
+
+	return new GUI::ExtraGuiOptionsWidget(boss, name, target, engineOptions);
+}
+
+GUI::OptionsContainerWidget *MetaEngineConnect::buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
 	const ExtraGuiOptions engineOptions = getExtraGuiOptions(target);
 	if (engineOptions.empty()) {
 		return nullptr;

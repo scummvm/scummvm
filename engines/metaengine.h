@@ -164,7 +164,7 @@ public:
 	 * @param name     the name the returned widget must use
 	 * @param target   name of a config manager target
 	 */
-	virtual GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const;
+	virtual GUI::OptionsContainerWidget *buildEngineOptionsWidgetStatic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const;
 };
 
 /**
@@ -312,6 +312,28 @@ public:
 	 * Return the keymap used by the target.
 	 */
 	virtual Common::Array<Common::Keymap *> initKeymaps(const char *target) const;
+
+	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const {
+		return ExtraGuiOptions();
+	}
+
+	/**
+	 * Return a GUI widget container for configuring the specified target options.
+	 *
+	 * Engines can build custom options dialogs from here, but by default a simple widget
+	 * allowing to configure the extra GUI options is used.
+	 *
+	 * A engine that builds the "Engines" tab in "Edit Game" uses a MetaEngine.
+	 * A engine that specifies a custom dialog, when a game is running, uses a MetaEngineConnect.
+	 *
+	 * Engines that don't want to have an Engine tab in the edit game dialog
+	 * can return nullptr.
+	 *
+	 * @param boss     the widget / dialog the returned widget is a child of
+	 * @param name     the name the returned widget must use
+	 * @param target   name of a config manager target
+	 */
+	virtual GUI::OptionsContainerWidget *buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const;
 
 	/** @name MetaEngineFeature flags */
 	//@{
