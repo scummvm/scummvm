@@ -57,7 +57,7 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 	_objType = kWindowObj;
 	_startFrame = _vm->getStartMovie().startFrame;
 
-	_windowType = 0;
+	_windowType = -1;
 	_titleVisible = true;
 	updateBorderType();
 }
