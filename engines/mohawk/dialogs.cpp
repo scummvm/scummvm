@@ -38,11 +38,13 @@
 #include "mohawk/myst.h"
 #include "mohawk/myst_actions.h"
 #include "mohawk/myst_scripts.h"
+#include "mohawk/myst_metaengine/metaengine.h"
 #endif
 
 #ifdef ENABLE_RIVEN
 #include "mohawk/riven.h"
 #include "mohawk/riven_graphics.h"
+#include "mohawk/riven_metaengine/metaengine.h"
 #endif
 
 namespace Mohawk {
@@ -140,7 +142,7 @@ MystOptionsWidget::MystOptionsWidget(GuiObject *boss, const Common::String &name
 
 			_languagePopUp = new GUI::PopUpWidget(widgetsBoss(), "MystOptionsDialog.Language");
 
-			const MystLanguage *languages = MohawkEngine_Myst::listLanguages();
+			const MystLanguage *languages = MohawkMetaEngine_Myst::listLanguages();
 			while (languages->language != Common::UNK_LANG) {
 				_languagePopUp->appendEntry(Common::getLanguageDescription(languages->language), languages->language);
 				languages++;
@@ -342,7 +344,7 @@ RivenOptionsWidget::RivenOptionsWidget(GuiObject *boss, const Common::String &na
 		_languagePopUp = new GUI::PopUpWidget(widgetsBoss(), "RivenOptionsDialog.Language");
 		_languagePopUp->setEnabled(canChangeLanguage);
 
-		const RivenLanguage *languages = MohawkEngine_Riven::listLanguages();
+		const RivenLanguage *languages = MohawkMetaEngine_Riven::listLanguages();
 		while (languages->language != Common::UNK_LANG) {
 			_languagePopUp->appendEntry(Common::getLanguageDescription(languages->language), languages->language);
 			languages++;
