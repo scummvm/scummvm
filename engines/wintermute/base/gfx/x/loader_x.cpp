@@ -44,7 +44,7 @@ void nextTokenText(Common::MemoryReadStream &buffer, int &lineCount, Token &tok)
 		tok.pushChar(current);
 		current = buffer.readSByte();
 
-		while (Common::isAlnum(current) || current == '_') {
+		while (Common::isAlnum(current) || current == '_' || current == '-') {
 			tok.pushChar(current);
 			current = buffer.readSByte();
 		}
