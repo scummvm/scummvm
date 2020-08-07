@@ -40,11 +40,12 @@ namespace Graphics {
 
 static const byte palette[] = {
 	0, 0, 0,           // Black
-	0x80, 0x80, 0x80,  // Gray
+	0x80, 0x80, 0x80,  // Gray80
+	0x88, 0x88, 0x88,  // Gray88
+	0xee, 0xee, 0xee,  // GrayEE
 	0xff, 0xff, 0xff,  // White
 	0x00, 0xff, 0x00,  // Green
-	0x00, 0xcf, 0x00,  // Green2
-	0xee, 0xee, 0xee   // OffWhite
+	0x00, 0xcf, 0x00   // Green2
 };
 
 static byte fillPatterns[][8] = { { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }, // kPatternSolid
@@ -178,11 +179,12 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns) {
 	_redrawEngineCallback = nullptr;
 
 	_colorBlack = kColorBlack;
-	_colorGray = kColorGray;
+	_colorGray80 = kColorGray80;
+	_colorGray88 = kColorGray88;
+	_colorGrayEE = kColorGrayEE;
 	_colorWhite = kColorWhite;
 	_colorGreen = kColorGreen;
 	_colorGreen2 = kColorGreen2;
-	_colorOffWhite = kColorOffWhite;
 
 	_fullRefresh = true;
 
@@ -830,11 +832,12 @@ void MacWindowManager::passPalette(const byte *pal, uint size) {
 	_colorHash.clear();
 
 	_colorWhite = findBestColor(palette[kColorWhite * 3], palette[kColorWhite * 3 + 1], palette[kColorWhite * 3 + 2]);
-	_colorGray = findBestColor(palette[kColorGray * 3], palette[kColorGray * 3 + 1], palette[kColorGray * 3 + 2]);
+	_colorGray80 = findBestColor(palette[kColorGray80 * 3], palette[kColorGray80 * 3 + 1], palette[kColorGray80 * 3 + 2]);
+	_colorGray88 = findBestColor(palette[kColorGray88 * 3], palette[kColorGray88 * 3 + 1], palette[kColorGray88 * 3 + 2]);
+	_colorGrayEE = findBestColor(palette[kColorGrayEE * 3], palette[kColorGrayEE * 3 + 1], palette[kColorGrayEE * 3 + 2]);
 	_colorBlack = findBestColor(palette[kColorBlack * 3], palette[kColorBlack * 3 + 1], palette[kColorBlack * 3 + 2]);
 	_colorGreen = findBestColor(palette[kColorGreen * 3], palette[kColorGreen * 3 + 1], palette[kColorGreen * 3 + 2]);
 	_colorGreen2 = findBestColor(palette[kColorGreen2 * 3], palette[kColorGreen2 * 3 + 1], palette[kColorGreen2 * 3 + 2]);
-	_colorOffWhite = findBestColor(palette[kColorOffWhite * 3], palette[kColorOffWhite * 3 + 1], palette[kColorOffWhite * 3 + 2]);
 
 	drawDesktop();
 	setFullRefresh(true);
