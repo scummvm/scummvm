@@ -69,8 +69,6 @@ MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, Mac
 
 	_borderType = -1;
 	_borderWidth = kBorderWidth;
-
-	_titleVisible = true;
 }
 
 static const byte noborderData[3][3] = {
@@ -270,7 +268,7 @@ void MacWindow::drawBorder() {
 		sidesWidth = _borderWidth * 2;
 	}
 
-	if (_titleVisible && !_title.empty()) {
+	if (!_title.empty()) {
 		const Graphics::Font *font = getTitleFont();
 		int yOff = _wm->_fontMan->hasBuiltInFonts() ? 3 : 1;
 

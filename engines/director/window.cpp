@@ -57,7 +57,9 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 	_objType = kWindowObj;
 	_startFrame = _vm->getStartMovie().startFrame;
 
-	setWindowType(0);
+	_windowType = 0;
+	_titleVisible = true;
+	updateBorderType();
 }
 
 Window::~Window() {
@@ -397,6 +399,8 @@ bool Window::setNextMovie(Common::String &movieFilenameRaw) {
 void Window::updateBorderType() {
 	if (_isStage) {
 		setBorderType(3);
+	} else if (!_titleVisible) {
+		setBorderType(2);
 	} else {
 		setBorderType(MAX(0, MIN(_windowType, 16)));
 	}

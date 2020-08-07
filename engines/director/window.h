@@ -124,6 +124,8 @@ class Window : public Graphics::MacWindow, public Object<Window> {
 
 	void setWindowType(int type) { _windowType = type; updateBorderType(); }
 	int getWindowType() const { return _windowType; }
+	void setTitleVisible(bool titleVisible) { _titleVisible = titleVisible; updateBorderType(); };
+	bool isTitleVisible() { return _titleVisible; };
 
 	void updateBorderType();
 
@@ -182,6 +184,7 @@ private:
 	int16 _startFrame;
 
 	int _windowType;
+	bool _titleVisible;
 
 private:
 	int preprocessColor(DirectorPlotData *p, int src);
