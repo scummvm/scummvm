@@ -552,6 +552,10 @@ static const PopUpOptionsMap popUpOptionsList[] = {
 				kMidiModeStandard
 			},
 			{
+				_s("Roland D-110 / D-10 / D-20"),
+				kMidiModeD110
+			},
+			{
 				_s("Yamaha FB-01"),
 				kMidiModeFB01
 			},

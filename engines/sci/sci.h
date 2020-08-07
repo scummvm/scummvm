@@ -250,7 +250,8 @@ enum kLanguage {
 /** MIDI devices */
 enum kMidiMode {
 	kMidiModeStandard,
-	kMidiModeFB01
+	kMidiModeFB01,
+	kMidiModeD110
 };
 
 class SciEngine : public Engine {

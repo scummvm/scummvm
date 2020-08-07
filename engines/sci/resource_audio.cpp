@@ -199,6 +199,48 @@ void ResourceManager::addNewGMPatch(SciGameId gameId) {
 	}
 }
 
+void ResourceManager::addNewD110Patch(SciGameId gameId) {
+	Common::String patchFile;
+
+	switch (gameId) {
+	case GID_CAMELOT:
+		patchFile = "CAMELOT.000";
+		break;
+	case GID_HOYLE1:
+		patchFile = "HOYLE.000";
+		break;
+	case GID_QFG1:
+		patchFile = "HQ1.000";
+		break;
+	case GID_ICEMAN:
+		patchFile = "ICEMAN.000"; // Also ICE.000, but let's go with this one
+		break;
+	case GID_KQ4:
+		patchFile = "KQ4.000";
+		break;
+	case GID_LSL2:
+		patchFile = "LSL2.000";
+		break;
+	case GID_LSL3:
+		patchFile = "LSL3.000";
+		break;
+	case GID_PQ2:
+		patchFile = "PQ2.000";
+		break;
+	case GID_SQ3:
+		patchFile = "SQ3.000";
+		break;
+	default:
+		// There's also a CB.000, but unfortunately that file contains an MT-32 patch
+		break;
+	}
+
+	if (!patchFile.empty() && Common::File::exists(patchFile)) {
+		ResourceSource *psrcPatch = new PatchResourceSource(patchFile);
+		processPatch(psrcPatch, kResourceTypePatch, 0);
+	}
+}
+
 void ResourceManager::processWavePatch(ResourceId resourceId, const Common::String &name) {
 	ResourceSource *resSrc = new WaveResourceSource(name);
 	Common::File file;

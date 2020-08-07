@@ -414,6 +414,7 @@ public:
 	 * applied per game, if applicable.
 	 */
 	void addNewGMPatch(SciGameId gameId);
+	void addNewD110Patch(SciGameId gameId);
 
 #ifdef ENABLE_SCI32
 	/**
