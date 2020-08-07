@@ -248,7 +248,7 @@ void SaveLoadChooserDialog::handleTickle() {
 		Common::Array<Common::String> files = CloudMan.getSyncingFiles();
 		if (!files.empty()) {
 			{
-				SaveLoadCloudSyncProgressDialog dialog(_metaEngine ? _metaEngine->hasFeature(MetaEngine::kSimpleSavesNames) : false);
+				SaveLoadCloudSyncProgressDialog dialog(_metaEngine ? _metaEngine->hasFeature(MetaEngineConnect::kSimpleSavesNames) : false);
 				CloudMan.setSyncTarget(&dialog);
 				int result = dialog.runModal();
 				if (result == kCancelSyncCmd) {
@@ -302,7 +302,7 @@ void SaveLoadChooserDialog::listSaves() {
 
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 	//if there is Cloud support, add currently synced files as "locked" saves in the list
-	if (_metaEngine->hasFeature(MetaEngine::kSimpleSavesNames)) {
+	if (_metaEngine->hasFeature(MetaEngineConnect::kSimpleSavesNames)) {
 		Common::String pattern = _target + ".###";
 		Common::Array<Common::String> files = CloudMan.getSyncingFiles(); //returns empty array if not syncing
 		for (uint32 i = 0; i < files.size(); ++i) {
