@@ -129,6 +129,8 @@ struct Surface : Graphics::Surface {
 
 #define CURSOR_W 7
 #define CURSOR_H 7
+#define CURSOR_PC98_W 16
+#define CURSOR_PC98_H 16
 
 #define CURSOR_ORIGIN_X 4
 #define CURSOR_ORIGIN_Y 4
