@@ -857,7 +857,7 @@ void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int 
 }
 
 bool MacText::draw(bool forceRedraw) {
-	if (!_contentIsDirty && !_cursorDirty && !forceRedraw)
+	if (!needsRedraw() && !forceRedraw)
 		return false;
 
 	if (!_surface) {

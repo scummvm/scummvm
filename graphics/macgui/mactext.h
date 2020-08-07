@@ -146,6 +146,8 @@ public:
 	virtual void resize(int w, int h);
 	virtual bool processEvent(Common::Event &event) override;
 
+	virtual bool needsRedraw() override { return _contentIsDirty || _cursorDirty; }
+
 	void render();
 	void undrawCursor();
 	void draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff);

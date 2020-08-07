@@ -339,13 +339,12 @@ void Channel::replaceWidget() {
 		if (_widget) {
 			_widget->_priority = _priority;
 			_widget->draw();
-			_widget->_contentIsDirty = false;
 		}
 	}
 }
 
 bool Channel::updateWidget() {
-	if (_widget && _widget->_contentIsDirty) {
+	if (_widget && _widget->needsRedraw()) {
 		if (_sprite->_cast) {
 			_sprite->_cast->updateFromWidget(_widget);
 		}

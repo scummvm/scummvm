@@ -62,6 +62,8 @@ public:
 	 */
 	void setDirty(bool dirty) { _contentIsDirty = dirty; }
 
+	virtual bool needsRedraw() { return _contentIsDirty; }
+
 	virtual bool draw(ManagedSurface *g, bool forceRedraw = false);
 	virtual bool draw(bool forceRedraw = false);
 	virtual void blit(ManagedSurface *g, Common::Rect &dest);
@@ -91,9 +93,10 @@ protected:
 
 	Graphics::ManagedSurface *_composeSurface;
 
+	bool _contentIsDirty;
+
 public:
 	bool _focusable;
-	bool _contentIsDirty;
 	bool _active;
 	bool _editable;
 	uint _priority;
