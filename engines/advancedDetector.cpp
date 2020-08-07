@@ -439,6 +439,36 @@ bool AdvancedMetaEngine::getFileProperties(const FileMap &allFiles, const ADGame
 	return true;
 }
 
+bool AdvancedMetaEngineConnect::getFilePropertiesExtern(uint md5Bytes, const Common::FSNode &parent, const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps) const {
+	// FIXME/TODO: We don't handle the case that a file is listed as a regular
+	// file and as one with resource fork.
+
+	if (game.flags & ADGF_MACRESFORK) {
+		Common::MacResManager macResMan;
+
+		if (!macResMan.open(parent, fname))
+			return false;
+
+		fileProps.md5 = macResMan.computeResForkMD5AsString(md5Bytes);
+		fileProps.size = macResMan.getResForkDataSize();
+
+		if (fileProps.size != 0)
+			return true;
+	}
+
+	if (!allFiles.contains(fname))
+		return false;
+
+	Common::File testFile;
+
+	if (!testFile.open(allFiles[fname]))
+		return false;
+
+	fileProps.size = (int32)testFile.size();
+	fileProps.md5 = Common::computeStreamMD5AsString(testFile, md5Bytes);
+	return true;
+}
+
 ADDetectedGames AdvancedMetaEngine::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const {
 	FilePropertiesMap filesProps;
 	ADDetectedGames matched;
