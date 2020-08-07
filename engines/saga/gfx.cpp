@@ -471,7 +471,7 @@ void Gfx::setCursor(CursorType cursorType) {
 		const byte A = kITEColorLightGrey;
 		const byte B = kITEColorWhite;
 
-		const byte cursor_img[CURSOR_W * CURSOR_H] = {
+		const byte cursor_img_default[CURSOR_W * CURSOR_H] = {
 			0, 0, 0, A, 0, 0, 0,
 			0, 0, 0, A, 0, 0, 0,
 			0, 0, 0, A, 0, 0, 0,
@@ -481,7 +481,29 @@ void Gfx::setCursor(CursorType cursorType) {
 			0, 0, 0, A, 0, 0, 0,
 		};
 
-		CursorMan.replaceCursor(cursor_img, CURSOR_W, CURSOR_H, 3, 3, 0);
+		const byte cursor_img_pc98[CURSOR_PC98_W * CURSOR_PC98_H] = {
+			A, A, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			A, B, A, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			A, B, B, A, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			A, B, B, B, A, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			A, B, B, B, B, A, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			A, B, B, B, B, B, A, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			A, B, B, B, B, B, B, A, 0, 0, 0, 0, 0, 0, 0, 0,
+			A, B, B, B, B, B, B, B, A, 0, 0, 0, 0, 0, 0, 0,
+			A, B, B, B, B, B, B, B, B, A, 0, 0, 0, 0, 0, 0,
+			A, B, B, B, B, B, B, B, B, B, A, 0, 0, 0, 0, 0,
+			A, B, B, B, B, B, B, B, B, B, B, A, 0, 0, 0, 0,
+			A, B, B, B, B, B, B, B, B, B, B, B, A, 0, 0, 0,
+			A, B, B, B, B, B, B, B, B, B, B, B, B, A, 0, 0,
+			A, A, A, A, A, A, B, B, B, A, A, A, A, A, A, 0,
+			0, 0, 0, 0, 0, 0, A, B, B, B, A, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, A, A, A, A, A, 0, 0, 0, 0
+		};
+
+		if (_vm->getPlatform() == Common::kPlatformPC98)
+			CursorMan.replaceCursor(cursor_img_pc98, CURSOR_PC98_W, CURSOR_PC98_H, 0, 0, 0);
+		else
+			CursorMan.replaceCursor(cursor_img_default, CURSOR_W, CURSOR_H, 3, 3, 0);
 	} else {
 		uint32 resourceId;
 
