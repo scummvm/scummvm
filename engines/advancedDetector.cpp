@@ -439,14 +439,16 @@ bool AdvancedMetaEngine::getFileProperties(const FileMap &allFiles, const ADGame
 	return true;
 }
 
-bool AdvancedMetaEngineConnect::getFilePropertiesExtern(uint md5Bytes, const Common::FSNode &parent, const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps) const {
+bool AdvancedMetaEngineConnect::getFilePropertiesExtern(uint md5Bytes, const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps) const {
 	// FIXME/TODO: We don't handle the case that a file is listed as a regular
 	// file and as one with resource fork.
 
 	if (game.flags & ADGF_MACRESFORK) {
+		FileMapArchive fileMapArchive(allFiles);
+
 		Common::MacResManager macResMan;
 
-		if (!macResMan.open(parent, fname))
+		if (!macResMan.open(fname, fileMapArchive))
 			return false;
 
 		fileProps.md5 = macResMan.computeResForkMD5AsString(md5Bytes);

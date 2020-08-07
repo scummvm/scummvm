@@ -374,7 +374,7 @@ public:
 	 * Get the properties (size and MD5) of this file.
 	 * Based on MetaEngine::getFileProperties.
 	 */
-	bool getFilePropertiesExtern(uint md5Bytes, const Common::FSNode &parent, const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps) const;
+	bool getFilePropertiesExtern(uint md5Bytes, const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps) const;
 };
 
 #endif

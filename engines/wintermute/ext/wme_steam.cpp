@@ -50,7 +50,7 @@ SXSteamAPI::SXSteamAPI(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame
 
 //////////////////////////////////////////////////////////////////////////
 void SXSteamAPI::init() {
-	MetaEngine &meta = ((WintermuteEngine *)g_engine)->getMetaEngine();
+	const MetaEngineConnect &meta = ((WintermuteEngine *)g_engine)->getMetaEngineConnect();
 	const Common::String target = BaseEngine::instance().getGameTargetName();
 	_achievementsInfo = meta.getAchievementsInfo(target);
 
