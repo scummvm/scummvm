@@ -116,10 +116,10 @@ MODULE_OBJS := \
 	debugger/script_monitor.o \
 	debugger/watch.o \
 	debugger/watch_instance.o \
-	detection.o \
 	math/math_util.o \
 	math/matrix4.o \
 	math/vector2.o \
+	metaengine.o \
 	platform_osystem.o \
 	system/sys_class.o \
 	system/sys_class_registry.o \
@@ -154,3 +154,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
