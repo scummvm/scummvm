@@ -4,7 +4,6 @@ MODULE_OBJS = \
 	bitmap.o \
 	console.o \
 	cursors.o \
-	detection.o \
 	dialogs.o \
 	graphics.o \
 	installer_archive.o \
@@ -12,6 +11,7 @@ MODULE_OBJS = \
 	livingbooks_code.o \
 	livingbooks_graphics.o \
 	livingbooks_lbx.o \
+	metaengine.o \
 	mohawk.o \
 	resource.o \
 	sound.o \
@@ -30,6 +30,7 @@ endif
 
 ifdef ENABLE_MYST
 MODULE_OBJS += \
+	myst_metaengine/metaengine.o \
 	myst.o \
 	myst_areas.o \
 	myst_card.o \
@@ -55,6 +56,7 @@ endif
 
 ifdef ENABLE_RIVEN
 MODULE_OBJS += \
+	riven_metaengine/metaengine.o \
 	riven.o \
 	riven_card.o \
 	riven_graphics.o \
@@ -83,3 +85,21 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
+
+# If we're building a dynamic module, build the relevant
+# submodule. A static part already will have these, so
+# no need to add them again.
+ifeq ($(ENABLE_MOHAWK), DYNAMIC_PLUGIN)
+
+ifdef ENABLE_MYST
+DETECT_OBJS += $(MODULE)/myst_metaengine/metaengine.o
+endif
+
+ifdef ENABLE_RIVEN
+DETECT_OBJS += $(MODULE)/riven_metaengine/metaengine.o
+endif
+
+endif
