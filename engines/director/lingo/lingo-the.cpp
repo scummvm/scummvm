@@ -1940,7 +1940,7 @@ void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
 			PCell cell = PCell(propName, val);
 			obj.u.parr->push_back(cell);
 		}
-	} if (obj.type == CASTREF) {
+	} else if (obj.type == CASTREF) {
 		// WORKAROUND: Until CastMembers are made Lingo objects
 		if (propName.equalsIgnoreCase("palette")) {
 			CastMember *member = _vm->getCurrentMovie()->getCastMember(obj.u.i);
