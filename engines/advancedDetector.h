@@ -350,6 +350,31 @@ public:
 	 * @see MetaEngineConnect::getName().
 	 */
 	virtual const char *getName() const = 0;
+
+public:
+	typedef Common::HashMap<Common::String, Common::FSNode, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
+
+	/**
+	 * An (optional) generic fallback detect function which is invoked
+	 * if the regular MD5 based detection failed to detect anything.
+	 * NOTE: This is only meant to be used if fallback detection is heavily dependant on engine resources.
+	 *
+	 * To use this, implement the intended fallbackDetectExtern inside the relevant MetaEngineConnect class.
+	 * Then, override the method "fallbackDetect" inside your MetaEngine class.
+	 * Finally, provide a "hook" to fetch the relevant MetaEngineConnect class and then use the orignal detection
+	 * method.
+	 *
+	 * An example for the way this is used can be found in the Wintermute Engine.
+	 */
+	virtual ADDetectedGame fallbackDetectExtern(uint md5Bytes, const FileMap &allFiles, const Common::FSList &fslist) const {
+		return ADDetectedGame();
+	}
+
+	/**
+	 * Get the properties (size and MD5) of this file.
+	 * Based on MetaEngine::getFileProperties.
+	 */
+	bool getFilePropertiesExtern(uint md5Bytes, const Common::FSNode &parent, const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps) const;
 };
 
 #endif
