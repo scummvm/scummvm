@@ -175,7 +175,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 
 	Common::String filenameTmp(filename);
 
-	if (!filenameTmp.hasSuffix(".3ds")) {
+	if (!filenameTmp.hasSuffix(".3ds") && !filenameTmp.hasSuffix(".3DS")) {
 		_gameRef->LOG(0, "Error: no suitable loader found for file '%s'", filename);
 		return false;
 	}
