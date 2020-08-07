@@ -452,11 +452,13 @@ void MacWindow::setBorder(Graphics::TransparentSurface *surface, bool active, Bo
 	else
 		_macBorder.addInactiveBorder(surface);
 
-	if (offsets.left + offsets.right + offsets.top + offsets.bottom > -4) { // Checking against default -1
+	if (active && offsets.left + offsets.right + offsets.top + offsets.bottom > -4) { // Checking against default -1
 		_macBorder.setOffsets(offsets);
+		updateOuterDims();
+		_borderSurface.free();
+		_borderSurface.create(_dims.width(), _dims.height(), PixelFormat::createFormatCLUT8());
 	}
 
-	updateOuterDims();
 	_borderIsDirty = true;
 	_wm->setFullRefresh(true);
 }
