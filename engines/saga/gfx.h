@@ -223,9 +223,16 @@ public:
 		return (byte *)_backBuffer.getPixels();
 	}
 
-	// Same as getBackBufferPixels(), but for the hires sjis buffers
+	// Same as getBackBufferPixels(), but for the hires sjis buffer
 	byte *getSJISBackBufferPixels() {
 		return (byte *)_sjisBackBuffer.getPixels();
+	}
+
+	// Expose the sjis buffer directly. One of the two implementations of Graphics::FontSJIS::drawChar()
+	// allows a Common::Surface as a parameter which makes the rendering a bit nicer compared to using
+	// the raw pixel buffer.
+	Surface &getSJISBackBuffer() {
+		return _sjisBackBuffer;
 	}
 
 	uint16 getBackBufferWidth() {
