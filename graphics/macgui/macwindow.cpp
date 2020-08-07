@@ -194,7 +194,6 @@ void MacWindow::center(bool toCenter) {
 		return;
 
 	Common::Rect screen = _wm->_screen->getBounds();
-	Common::Rect d = getDimensions();
 
 	if (toCenter) {
 		move((screen.width() - _dims.width()) / 2, (screen.height() - _dims.height()) / 2);
@@ -648,7 +647,7 @@ void MacWindow::setBorderType(int borderType) {
 		disableBorder();
 	} else {
 		BorderOffsets offsets = _wm->getBorderOffsets(borderType);
-	
+
 		Common::SeekableReadStream *activeFile = _wm->getBorderFile(borderType, true);
 		if (activeFile) {
 			loadBorder(*activeFile, true, offsets);
