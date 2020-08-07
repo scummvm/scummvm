@@ -24,7 +24,6 @@
 #define WINTERMUTE_GAME_DESCRIPTION_H
 
 #include "engines/advancedDetector.h"
-#include "engines/wintermute/base/base_engine.h"
 
 namespace Wintermute {
 
@@ -33,6 +32,6 @@ struct WMEGameDescription {
 	WMETargetExecutable targetExecutable;
 };
 
-}
+} // End of namespace Wintermute
 
 #endif  /* WINTERMUTE_GAME_DESCRIPTION_H_ */
