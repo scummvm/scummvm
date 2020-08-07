@@ -40,6 +40,7 @@ class AdBlock;
 class AdGeneric;
 class AdWalkplane;
 class BaseSurfaceOpenGL3D;
+class Light3D;
 class Mesh3DS;
 class MeshX;
 class ShadowVolume;
@@ -94,8 +95,9 @@ public:
 	virtual bool drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Rect32 &rect, const Vector2 &pos, const Vector2 &rot, const Vector2 &scale,
 	                          float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) = 0;
 
-	virtual void renderSceneGeometry(BaseArray<AdWalkplane *> &planes, BaseArray<AdBlock *> &blocks, BaseArray<AdGeneric *> &generics, Camera3D *camera) = 0;
-	virtual void renderShadowGeometry(BaseArray<AdWalkplane *> &planes, BaseArray<AdBlock *> &blocks, BaseArray<AdGeneric *> &generics, Camera3D *camera) = 0;
+	virtual void renderSceneGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks,
+	                                 const BaseArray<AdGeneric *> &generics, const BaseArray<Light3D *> &lights, Camera3D *camera) = 0;
+	virtual void renderShadowGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks, const BaseArray<AdGeneric *> &generics, Camera3D *camera) = 0;
 
 protected:
 	Math::Matrix4 _lastViewMatrix;

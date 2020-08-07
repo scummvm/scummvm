@@ -402,7 +402,7 @@ bool AdSceneGeometry::render(bool render) {
 	//	store values
 	//	StoreDrawingParams();
 	if (render) {
-		_gameRef->_renderer3D->renderSceneGeometry(_planes, _blocks, _generics, getActiveCamera());
+		_gameRef->_renderer3D->renderSceneGeometry(_planes, _blocks, _generics, _lights, getActiveCamera());
 	}
 
 	return true;

@@ -563,11 +563,12 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wint
 	return true;
 }
 
-void BaseRenderOpenGL3DShader::renderSceneGeometry(BaseArray<AdWalkplane *> &planes, BaseArray<AdBlock *> &blocks, BaseArray<AdGeneric *> &generics, Camera3D *camera) {
+void BaseRenderOpenGL3DShader::renderSceneGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks,
+                                                   const BaseArray<AdGeneric *> &generics, const BaseArray<Light3D *> &lights, Camera3D *camera) {
 	// don't render scene geometry, as OpenGL ES 2 has no wireframe rendering and we don't have a shader alternative yet
 }
 
-void BaseRenderOpenGL3DShader::renderShadowGeometry(BaseArray<AdWalkplane *> &planes, BaseArray<AdBlock *> &blocks, BaseArray<AdGeneric *> &generics, Camera3D *camera) {
+void BaseRenderOpenGL3DShader::renderShadowGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks, const BaseArray<AdGeneric *> &generics, Camera3D *camera) {
 	resetModelViewTransform();
 	setup3D(camera, true);
 

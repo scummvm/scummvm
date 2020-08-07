@@ -27,6 +27,7 @@
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/base_surface_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/camera3d.h"
+#include "engines/wintermute/base/gfx/opengl/light3d.h"
 #include "engines/wintermute/base/gfx/opengl/mesh3ds_opengl.h"
 #include "engines/wintermute/base/gfx/opengl/meshx_opengl.h"
 #include "engines/wintermute/base/gfx/opengl/shadow_volume_opengl.h"
@@ -537,7 +538,8 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute
 	return true;
 }
 
-void BaseRenderOpenGL3D::renderSceneGeometry(BaseArray<AdWalkplane *> &planes, BaseArray<AdBlock *> &blocks, BaseArray<AdGeneric *> &generics, Camera3D *camera) {
+void BaseRenderOpenGL3D::renderSceneGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks,
+                                             const BaseArray<AdGeneric *> &generics, const BaseArray<Light3D *> &lights, Camera3D *camera) {
 	_gameRef->_renderer3D->resetModelViewTransform();
 	_gameRef->_renderer3D->setup3D(camera, true);
 
@@ -580,68 +582,40 @@ void BaseRenderOpenGL3D::renderSceneGeometry(BaseArray<AdWalkplane *> &planes, B
 
 	_gameRef->_renderer3D->resetModelViewTransform();
 
-//	for (i = 0; i < _lights.size(); ++i) {
-//		if (!_lights[i]->_active) {
-//			continue;
-//		}
+	for (uint i = 0; i < lights.size(); ++i) {
+		if (!lights[i]->_active) {
+			continue;
+		}
 
-//		glBegin(GL_LINES);
-//		glColor3f(1.0f, 1.0f, 0.0f);
-//		Math::Vector3d right = _lights[i]->_position + Math::Vector3d(1000.0f, 0.0f, 0.0f);
-//		Math::Vector3d up = _lights[i]->_position + Math::Vector3d(0.0f, 1000.0f, 0.0f);
-//		Math::Vector3d backward = _lights[i]->_position + Math::Vector3d(0.0f, 0.0f, 1000.0f);
-//		Math::Vector3d left = _lights[i]->_position + Math::Vector3d(-1000.0f, 0.0f, 0.0f);
-//		Math::Vector3d down = _lights[i]->_position + Math::Vector3d(0.0f, -1000.0f, 0.0f);
-//		Math::Vector3d forward = _lights[i]->_position + Math::Vector3d(0.0f, 0.0f, -1000.0f);
+		glBegin(GL_LINES);
+		glColor3f(1.0f, 1.0f, 0.0f);
+		Math::Vector3d right = lights[i]->_position + Math::Vector3d(1000.0f, 0.0f, 0.0f);
+		Math::Vector3d up = lights[i]->_position + Math::Vector3d(0.0f, 1000.0f, 0.0f);
+		Math::Vector3d backward = lights[i]->_position + Math::Vector3d(0.0f, 0.0f, 1000.0f);
+		Math::Vector3d left = lights[i]->_position + Math::Vector3d(-1000.0f, 0.0f, 0.0f);
+		Math::Vector3d down = lights[i]->_position + Math::Vector3d(0.0f, -1000.0f, 0.0f);
+		Math::Vector3d forward = lights[i]->_position + Math::Vector3d(0.0f, 0.0f, -1000.0f);
 
-//		glVertex3fv(_lights[i]->_position.getData());
-//		glVertex3fv(right.getData());
-//		glVertex3fv(_lights[i]->_position.getData());
-//		glVertex3fv(up.getData());
-//		glVertex3fv(_lights[i]->_position.getData());
-//		glVertex3fv(backward.getData());
-//		glVertex3fv(_lights[i]->_position.getData());
-//		glVertex3fv(left.getData());
-//		glVertex3fv(_lights[i]->_position.getData());
-//		glVertex3fv(down.getData());
-//		glVertex3fv(_lights[i]->_position.getData());
-//		glVertex3fv(forward.getData());
-//		glEnd();
-//	}
+		glVertex3fv(lights[i]->_position.getData());
+		glVertex3fv(right.getData());
+		glVertex3fv(lights[i]->_position.getData());
+		glVertex3fv(up.getData());
+		glVertex3fv(lights[i]->_position.getData());
+		glVertex3fv(backward.getData());
+		glVertex3fv(lights[i]->_position.getData());
+		glVertex3fv(left.getData());
+		glVertex3fv(lights[i]->_position.getData());
+		glVertex3fv(down.getData());
+		glVertex3fv(lights[i]->_position.getData());
+		glVertex3fv(forward.getData());
+		glEnd();
+	}
 
 	glDisable(GL_COLOR_MATERIAL);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-	//	m_Renderer->m_Device->SetRenderState( D3DRS_FILLMODE, D3DFILL_SOLID );
-
-	//	// render waypoints
-	//	if(m_WptMarker)
-	//	{
-	//		Math::Matrix4 viewMat, projMat, worldMat;
-	//		Math::Vector3d vec2d(0,0,0);
-	//		m_Renderer->m_Device->GetTransform(D3DTS_VIEW, &viewMat);
-	//		m_Renderer->m_Device->GetTransform(D3DTS_PROJECTION, &projMat);
-	//		Math::Matrix4Identity(&worldMat);
-	//		D3DVIEWPORT vport;
-	//		m_Renderer->m_Device->GetViewport(&vport);
-
-	//		m_Renderer->Setup2D();
-
-	//		CAdScene* Scene = ((CAd_gameRef*)_gameRef)->m_Scene;
-
-	//		for(i=0; i<_waypointGroups.size(); i++)
-	//		{
-	//			for(int j=0; j<_waypointGroups[i]->m_Points.size(); j++)
-	//			{
-	//				Math::Vector3d *vect = _waypointGroups[i]->m_Points[j];
-	//				D3DXVec3Project(&vec2d, _waypointGroups[i]->m_Points[j], &vport, &projMat, &viewMat, &worldMat);
-	//				m_WptMarker->Display(vec2d.x + Scene->GetOffsetLeft() - m_Renderer->m_DrawOffsetX, vec2d.y + Scene->GetOffsetTop() - m_Renderer->m_DrawOffsetY);
-	//			}
-	//		}
-	//	}
 }
 
-void BaseRenderOpenGL3D::renderShadowGeometry(BaseArray<AdWalkplane *> &planes, BaseArray<AdBlock *> &blocks, BaseArray<AdGeneric *> &generics, Camera3D *camera) {
+void BaseRenderOpenGL3D::renderShadowGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks, const BaseArray<AdGeneric *> &generics, Camera3D *camera) {
 	resetModelViewTransform();
 	setup3D(camera, true);
 
