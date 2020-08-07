@@ -1,7 +1,7 @@
 MODULE := engines/ultima
 
 MODULE_OBJS := \
-	detection.o \
+	metaengine.o \
 	shared/actions/action.o \
 	shared/actions/huh.o \
 	shared/actions/pass.o \
@@ -590,3 +590,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
