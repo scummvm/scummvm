@@ -164,7 +164,8 @@ type8 Magnetic::init_gfx1(type8 *header) {
 #ifdef SAVEMEM
 	if (!(gfx_data = (type8 *)malloc(128))) {
 #else
-	if (!(gfx_data = (type8 *)malloc(read_l(header + 4) - 8))) {
+	size_t dataSize = read_l(header + 4) - 8;
+	if (!(gfx_data = (type8 *)malloc(dataSize))) {
 #endif
 		free(gfx_buf);
 		delete gfx_fp;
@@ -175,7 +176,7 @@ type8 Magnetic::init_gfx1(type8 *header) {
 #ifdef SAVEMEM
 	if (!fp.read(gfx_data, 128, 1, gfx_fp)) {
 #else
-	if (gfx_fp->read(gfx_data, read_l(header + 4)) != read_l(header + 4)) {
+	if (gfx_fp->read(gfx_data, dataSize) != dataSize) {
 #endif
 		free(gfx_data);
 		free(gfx_buf);

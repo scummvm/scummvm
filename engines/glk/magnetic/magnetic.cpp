@@ -32,7 +32,7 @@ Magnetic *g_vm;
 Magnetic::Magnetic(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
 		gms_gamma_mode(GAMMA_NORMAL), gms_animation_enabled(true),
 		gms_prompt_enabled(true), gms_abbreviations_enabled(true), gms_commands_enabled(true),
-		gms_graphics_enabled(false), GMS_PORT_VERSION(0x00010601),
+		gms_graphics_enabled(true), GMS_PORT_VERSION(0x00010601),
 		gms_main_window(nullptr), gms_status_window(nullptr), gms_graphics_window(nullptr),
 		gms_hint_menu_window(nullptr), gms_hint_text_window(nullptr),
 		gms_transcript_stream(nullptr), gms_readlog_stream(nullptr),
