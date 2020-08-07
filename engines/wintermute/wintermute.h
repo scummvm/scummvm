@@ -26,6 +26,7 @@
 #include "engines/engine.h"
 #include "gui/debugger.h"
 #include "common/fs.h"
+#include "wintermute/detection_enums.h"
 
 namespace Wintermute {
 
@@ -45,14 +46,6 @@ enum {
 	kWintermuteDebugFileAccess = 1 << 3, // the current limitation is 32 debug channels (1 << 31 is the last one)
 	kWintermuteDebugAudio = 1 << 4,
 	kWintermuteDebugGeneral = 1 << 5
-};
-
-enum WintermuteGameFeatures {
- 	/** A game with low-spec resources. */
- 	GF_LOWSPEC_ASSETS       = 1 << 0,
- 	GF_IGNORE_SD_FILES      = 1 << 1,
- 	GF_IGNORE_HD_FILES      = 1 << 2,
- 	GF_3D                   = 1 << 3
 };
 
 class WintermuteEngine : public Engine {
