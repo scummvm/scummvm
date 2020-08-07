@@ -32,6 +32,7 @@
 #include "glk/streams.h"
 #include "glk/pc_speaker.h"
 #include "glk/quetzal.h"
+#include "glk/game_description.h"
 
 namespace Glk {
 
@@ -56,15 +57,6 @@ enum GlkDebugChannels {
 
 
 #define GLK_SAVEGAME_VERSION 1
-
-struct GlkGameDescription {
-	Common::String _gameId;
-	Common::Language _language;
-	Common::Platform _platform;
-	Common::String _filename;
-	Common::String _md5;
-	uint _options;
-};
 
 /**
  * Base class for the different interpreters
