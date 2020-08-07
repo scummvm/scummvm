@@ -185,6 +185,8 @@ private:
 	 */
 	static void saveScreenThumbnail(Common::OutSaveFile *saveFile);
 public:
+	virtual ~MetaEngineConnect() {}
+
 	/**
 	 * Name of the engine plugin.
 	 * Classes inheriting a MetaEngineConnect must provide a engineID here,
