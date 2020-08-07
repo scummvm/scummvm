@@ -117,13 +117,10 @@ void MacWindowBorder::blitBorderInto(ManagedSurface &destination, bool active, M
 	}
 
 	srf.create(destination.w, destination.h, destination.format);
-	srf.fillRect(Common::Rect(srf.w, srf.h), kColorGreen2);
-
-	byte palette[kColorCount * 3];
-	g_system->getPaletteManager()->grabPalette(palette, 0, kColorCount);
+	srf.fillRect(Common::Rect(srf.w, srf.h), wm->_colorGreen2);
 
 	src->blit(srf, 0, 0, srf.w, srf.h, NULL, 0, wm);
-	destination.transBlitFrom(srf, kColorGreen2);
+	destination.transBlitFrom(srf, wm->_colorGreen2);
 	srf.free();
 }
 

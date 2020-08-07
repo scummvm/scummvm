@@ -82,7 +82,7 @@ bool MacWidget::draw(ManagedSurface *g, bool forceRedraw) {
 }
 
 void MacWidget::blit(ManagedSurface *g, Common::Rect &dest) {
-	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), dest, kColorGreen2);
+	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), dest, _wm->_colorGreen2);
 }
 
 void MacWidget::setColors(int fg, int bg) {

@@ -177,9 +177,12 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns) {
 	_engineR = nullptr;
 	_redrawEngineCallback = nullptr;
 
-	_colorBlack = 0;
-	_colorWhite = 2;
-	_colorOffWhite = 5;
+	_colorBlack = kColorBlack;
+	_colorGray = kColorGray;
+	_colorWhite = kColorWhite;
+	_colorGreen = kColorGreen;
+	_colorGreen2 = kColorGreen2;
+	_colorOffWhite = kColorOffWhite;
 
 	_fullRefresh = true;
 
@@ -817,63 +820,24 @@ void MacWindowManager::popCursor() {
 // Palette stuff
 ///////////////////
 void MacWindowManager::passPalette(const byte *pal, uint size) {
-	const byte *p = pal;
-
 	if (_palette)
 		free(_palette);
 
 	_palette = (byte *)malloc(size * 3);
+	memcpy(_palette, pal, size * 3);
 	_paletteSize = size;
 
 	_colorHash.clear();
 
-	_colorWhite = -1;
-	_colorOffWhite = -1;
-	_colorBlack = -1;
+	_colorWhite = findBestColor(palette[kColorWhite * 3], palette[kColorWhite * 3 + 1], palette[kColorWhite * 3 + 2]);
+	_colorGray = findBestColor(palette[kColorGray * 3], palette[kColorGray * 3 + 1], palette[kColorGray * 3 + 2]);
+	_colorBlack = findBestColor(palette[kColorBlack * 3], palette[kColorBlack * 3 + 1], palette[kColorBlack * 3 + 2]);
+	_colorGreen = findBestColor(palette[kColorGreen * 3], palette[kColorGreen * 3 + 1], palette[kColorGreen * 3 + 2]);
+	_colorGreen2 = findBestColor(palette[kColorGreen2 * 3], palette[kColorGreen2 * 3 + 1], palette[kColorGreen2 * 3 + 2]);
+	_colorOffWhite = findBestColor(palette[kColorOffWhite * 3], palette[kColorOffWhite * 3 + 1], palette[kColorOffWhite * 3 + 2]);
 
-	// Search pure white and black colors
-	for (uint i = 0; i < size; i++) {
-		if (_colorWhite == -1 && p[0] == 0xff && p[1] == 0xff && p[2] == 0xff)
-			_colorWhite = i;
-
-		if (_colorOffWhite == -1 && p[0] == 0xee && p[1] == 0xee && p[2] == 0xee)
-			_colorOffWhite = i;
-
-		if (_colorBlack == -1 && p[0] == 0x00 && p[1] == 0x00 && p[2] == 0x00)
-			_colorBlack = i;
-
-		_palette[i * 3 + 0] = *p++;
-		_palette[i * 3 + 1] = *p++;
-		_palette[i * 3 + 2] = *p++;
-	}
-
-	if (_colorWhite != -1 && _colorOffWhite != -1 && _colorBlack != -1)
-		return;
-
-	// We did not find some color. Let's find closest approximations
-	float darkest = 1000.0f, brightest = -1.0f;
-	int di = -1, bi = -1;
-	p = pal;
-
-	for (uint i = 0; i < size; i++) {
-		float gray = p[0] * 0.3f + p[1] * 0.59f + p[2] * 0.11f;
-
-		if (darkest > gray) {
-			darkest = gray;
-			di = i;
-		}
-
-		if (brightest < gray) {
-			brightest = gray;
-			bi = i;
-		}
-
-		p += 3;
-	}
-
-	_colorWhite = bi;
-	_colorOffWhite = bi;
-	_colorBlack = di;
+	drawDesktop();
+	setFullRefresh(true);
 }
 
 uint MacWindowManager::findBestColor(byte cr, byte cg, byte cb) {

@@ -162,7 +162,7 @@ bool MacTextWindow::draw(bool forceRedraw) {
 	if (_selectedText.endY != -1)
 		drawSelection();
 
-	_composeSurface->transBlitFrom(_borderSurface, kColorGreen);
+	_composeSurface->transBlitFrom(_borderSurface, _wm->_colorGreen);
 
 	return true;
 }
@@ -171,13 +171,13 @@ bool MacTextWindow::draw(ManagedSurface *g, bool forceRedraw) {
 	if (!draw(forceRedraw))
 		return false;
 
-	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), Common::Point(_dims.left - 2, _dims.top - 2), kColorGreen2);
+	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), Common::Point(_dims.left - 2, _dims.top - 2), _wm->_colorGreen2);
 
 	return true;
 }
 
 void MacTextWindow::blit(ManagedSurface *g, Common::Rect &dest) {
-	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), dest, kColorGreen2);
+	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), dest, _wm->_colorGreen2);
 }
 
 void MacTextWindow::drawSelection() {

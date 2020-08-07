@@ -177,14 +177,14 @@ bool MacWindow::draw(ManagedSurface *g, bool forceRedraw) {
 		return false;
 
 	g->blitFrom(*_composeSurface, Common::Rect(0, 0, _composeSurface->w, _composeSurface->h), Common::Point(_innerDims.left, _innerDims.top));
-	g->transBlitFrom(_borderSurface, Common::Rect(0, 0, _borderSurface.w, _borderSurface.h), Common::Point(_dims.left, _dims.top), kColorGreen);
+	g->transBlitFrom(_borderSurface, Common::Rect(0, 0, _borderSurface.w, _borderSurface.h), Common::Point(_dims.left, _dims.top), _wm->_colorGreen);
 
 	return true;
 }
 
 void MacWindow::blit(ManagedSurface *g, Common::Rect &dest) {
 	// Only the inner surface is blitted here
-	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), dest, kColorGreen2);
+	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), dest, _wm->_colorGreen2);
 }
 
 void MacWindow::center(bool toCenter) {
@@ -292,20 +292,20 @@ void MacWindow::drawBorder() {
 }
 
 void MacWindow::prepareBorderSurface(ManagedSurface *g) {
-	// We draw rect with outer kColorGreen2 and inner kColorGreen, so on 2 passes we cut out
+	// We draw rect with outer _wm->_colorGreen2 and inner _wm->_colorGreen, so on 2 passes we cut out
 	// scene by external shape of the border
 	int sz = kBorderWidth / 2;
 	int width = g->w;
 	int height = g->h;
-	g->clear(kColorGreen2);
-	g->fillRect(Common::Rect(sz, sz, width - sz, height - sz), kColorGreen);
+	g->clear(_wm->_colorGreen2);
+	g->fillRect(Common::Rect(sz, sz, width - sz, height - sz), _wm->_colorGreen);
 }
 
 void MacWindow::drawBorderFromSurface(ManagedSurface *g) {
-	g->clear(kColorGreen2);
+	g->clear(_wm->_colorGreen2);
 	Common::Rect inside = _innerDims;
 	inside.moveTo(_macBorder.getOffset().left, _macBorder.getOffset().top);
-	g->fillRect(inside, kColorGreen);
+	g->fillRect(inside, _wm->_colorGreen);
 
 	_macBorder.blitBorderInto(*g, _active, _wm);
 }

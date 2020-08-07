@@ -895,7 +895,7 @@ bool MacText::draw(ManagedSurface *g, bool forceRedraw) {
 	if (!draw(forceRedraw))
 		return false;
 
-	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), Common::Point(_dims.left - 2, _dims.top - 2), kColorGreen2);
+	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), Common::Point(_dims.left - 2, _dims.top - 2), _wm->_colorGreen2);
 
 	return true;
 }

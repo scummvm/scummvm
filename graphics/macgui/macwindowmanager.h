@@ -304,7 +304,7 @@ public:
 	bool _menuTimerActive;
 	bool _mouseDown;
 
-	int _colorBlack, _colorWhite, _colorOffWhite;
+	int _colorBlack, _colorGray, _colorWhite, _colorGreen, _colorGreen2, _colorOffWhite;
 
 	MacWidget *_hoveredWidget;
 
