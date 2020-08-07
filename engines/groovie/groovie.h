@@ -28,6 +28,7 @@
 
 #include "engines/engine.h"
 #include "graphics/pixelformat.h"
+#include "groovie/detection_enums.h"
 
 namespace Common {
 class MacResManager;
