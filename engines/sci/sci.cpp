@@ -276,8 +276,9 @@ Common::Error SciEngine::run() {
 	// Reset, so that error()s before SoundCommandParser is initialized wont cause a crash
 	_soundCmd = NULL;
 
-	// Add the after market GM patches for the specified game, if they exist
+	// Add the after market patches for the specified game, if they exist
 	_resMan->addNewGMPatch(_gameId);
+	_resMan->addNewD110Patch(_gameId);
 	_gameObjectAddress = _resMan->findGameObject(true, isBE());
 
 	_scriptPatcher = new ScriptPatcher();
