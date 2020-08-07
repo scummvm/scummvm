@@ -184,12 +184,13 @@ protected:
 
 private:
 	FontId knownFont2FontIdx(KnownFont font);
-	int getHeight(FontId fontId, const char *text, int width, FontEffectFlags flags);
-	void textDrawRect(FontId fontId, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags);
 	void textDraw(FontId fontId, const char *string, const Common::Point &point, int color, int effectColor, FontEffectFlags flags);
 
+	virtual void textDrawRect(FontId fontId, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags) = 0;
 	virtual int translateChar(int charId) = 0;
+	virtual int getStringLength(const char *text) = 0;
 	virtual int getStringWidth(FontId fontId, const char *text, size_t count, FontEffectFlags flags) = 0;
+	virtual int getHeight(FontId fontId, const char *text, int width, FontEffectFlags flags) = 0;
 	virtual int getHeight(FontId fontId) = 0;
 	virtual bool valid(FontId) = 0;
 	virtual void draw(FontId fontId, const char *text, size_t count, const Common::Point &point, int color, int effectColor, FontEffectFlags flags) = 0;
@@ -205,8 +206,14 @@ class DefaultFont : public Font {
 	}
 
  private:
+	 void textDrawRect(FontId fontId, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags) override;
 	 int translateChar(int charId) override;
+	 int getStringLength(const char *text) override {
+		 return strlen(text);
+	 }
+
 	 int getStringWidth(FontId fontId, const char *text, size_t count, FontEffectFlags flags) override;
+	 int getHeight(FontId fontId, const char *text, int width, FontEffectFlags flags) override;
 	 int getHeight(FontId fontId) override {
 		 return getFont(fontId)->normal.header.charHeight;
 	 }
@@ -253,8 +260,11 @@ public:
 	~SJISFont() override;
 
 private:
+	void textDrawRect(FontId fontId, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags) override;
 	int translateChar(int charId) override { return charId; }
+	int getStringLength(const char *text) override;
 	int getStringWidth(FontId fontId, const char *text, size_t count, FontEffectFlags flags) override;
+	int getHeight(FontId fontId, const char *text, int width, FontEffectFlags flags) override;
 	int getHeight(FontId fontId) override;
 	bool valid(FontId fontId) override { return fontId != kBigFont; }
 

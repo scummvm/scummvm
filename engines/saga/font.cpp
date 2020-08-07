@@ -89,87 +89,88 @@ Font::FontId Font::knownFont2FontIdx(KnownFont font) {
 	return fontId;
 }
 
-int Font::getHeight(FontId fontId, const char *text, int width, FontEffectFlags flags) {
+void Font::textDraw(FontId fontId, const char *text, const Common::Point &point, int color, int effectColor, FontEffectFlags flags) {
 	int textWidth;
 	int textLength;
 	int fitWidth;
-	const char *searchPointer;
-	const char *measurePointer;
-	const char *foundPointer;
-	int len;
-	int w;
-	const char *endPointer;
-	int h;
-	int wc;
-	int w_total;
-	int len_total;
-	Common::Point textPoint;
+	Common::Point textPoint(point);
 
-	textLength = strlen(text);
+	textLength = getStringLength(text);
 
-	textWidth = getStringWidth(fontId, text, textLength, flags);
-	h = getHeight(fontId);
-	fitWidth = width;
-
-	textPoint.x = (fitWidth / 2);
-	textPoint.y = 0;
-
-	if (fitWidth >= textWidth) {
-		return h;
+	if (!(flags & kFontCentered)) {
+		// Text is not centered; No formatting required
+		draw(fontId, text, textLength, point, color, effectColor, flags);
+		return;
 	}
 
-	// String won't fit on one line
-	w_total = 0;
-	len_total = 0;
-	wc = 0;
+	// Text is centered... format output
+	// Enforce minimum and maximum center points for centered text
+	if (textPoint.x < TEXT_CENTERLIMIT) {
+		textPoint.x = TEXT_CENTERLIMIT;
+	}
 
-	measurePointer = text;
-	searchPointer = text;
-	endPointer = text + textLength;
+	if (textPoint.x > _vm->_gfx->getBackBufferWidth() - TEXT_CENTERLIMIT) {
+		textPoint.x = _vm->_gfx->getBackBufferWidth() - TEXT_CENTERLIMIT;
+	}
 
-	for (;;) {
-		foundPointer = strchr(searchPointer, ' ');
-		if (foundPointer == NULL) {
-			// Ran to the end of the buffer
-			len = endPointer - measurePointer;
-		} else {
-			len = foundPointer - measurePointer;
-		}
+	if (textPoint.x < (TEXT_MARGIN * 2)) {
+		// Text can't be centered if it's too close to the margin
+		return;
+	}
 
-		w = getStringWidth(fontId, measurePointer, len, flags);
-		measurePointer = foundPointer;
+	textWidth = getStringWidth(fontId, text, textLength, flags);
 
-		if ((w_total + w) > fitWidth) {
-			// This word won't fit
-			if (wc == 0) {
-				// The first word in the line didn't fit. Still print it
-				searchPointer = measurePointer + 1;
-			}
-			// Wrap what we've got and restart
-			textPoint.y += h + TEXT_LINESPACING;
-			if (foundPointer == NULL) {
-				// Since word hit NULL but fit, we are done
-				return textPoint.y + h;
-			}
-			w_total = 0;
-			len_total = 0;
-			wc = 0;
-			measurePointer = searchPointer;
-		} else {
-			// Word will fit ok
-			w_total += w;
-			len_total += len;
-			wc++;
-			if (foundPointer == NULL) {
-				// Since word hit NULL but fit, we are done
-				return textPoint.y + h;
-			}
-			searchPointer = measurePointer + 1;
-		}
+	if (textPoint.x < (_vm->_gfx->getBackBufferWidth() / 2)) {
+		// Fit to right side
+		fitWidth = (textPoint.x - TEXT_MARGIN) * 2;
+	} else {
+		// Fit to left side
+		fitWidth = ((_vm->_gfx->getBackBufferWidth() - TEXT_MARGIN) - textPoint.x) * 2;
+	}
+
+	if (fitWidth < textWidth) {
+		warning("text too long to be displayed in one line");
+		textWidth = fitWidth;
+	}
+	// Entire string fits, draw it
+	textPoint.x = textPoint.x - (textWidth / 2);
+	draw(fontId, text, textLength, textPoint, color, effectColor, flags);
+}
+
+DefaultFont::DefaultFont(SagaEngine *vm) : Font(vm), _fontMapping(0) {
+	int i;
+
+	// Load font module resource context
+
+	assert(_vm->getFontsCount() > 0);
+
+	_fonts.resize(_vm->getFontsCount());
+	for (i = 0; i < _vm->getFontsCount(); i++) {
+#ifdef __DS__
+		_fonts[i].outline.font = NULL;
+		_fonts[i].normal.font = NULL;
+#endif
+		loadFont(&_fonts[i],	_vm->getFontDescription(i)->fontResourceId);
 	}
 }
 
-void Font::textDrawRect(FontId fontId, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags) {
+DefaultFont::~DefaultFont() {
+	debug(8, "DefaultFont::~DefaultFont(): Freeing fonts.");
+
+#ifdef __DS__
+	for (int i = 0; i < _vm->getFontsCount(); i++) {
+		if (_fonts[i].outline.font) {
+			free(_fonts[i].outline.font);
+		}
+
+		if (_fonts[i].normal.font) {
+			free(_fonts[i].normal.font);
+		}
+	}
+#endif
+}
+
+void DefaultFont::textDrawRect(FontId fontId, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags) {
 	int textWidth;
 	int textLength;
 	int fitWidth;
@@ -187,7 +188,7 @@ void Font::textDrawRect(FontId fontId, const char *text, const Common::Rect &rec
 	Common::Point textPoint;
 	Common::Point textPoint2;
 
-	textLength = strlen(text);
+	textLength = getStringLength(text);
 
 	textWidth = getStringWidth(fontId, text, textLength, flags);
 	fitWidth = rect.width();
@@ -279,87 +280,6 @@ void Font::textDrawRect(FontId fontId, const char *text, const Common::Rect &rec
 	}
 }
 
-void Font::textDraw(FontId fontId, const char *text, const Common::Point &point, int color, int effectColor, FontEffectFlags flags) {
-	int textWidth;
-	int textLength;
-	int fitWidth;
-	Common::Point textPoint(point);
-
-	textLength = strlen(text);
-
-	if (!(flags & kFontCentered)) {
-		// Text is not centered; No formatting required
-		draw(fontId, text, textLength, point, color, effectColor, flags);
-		return;
-	}
-
-	// Text is centered... format output
-	// Enforce minimum and maximum center points for centered text
-	if (textPoint.x < TEXT_CENTERLIMIT) {
-		textPoint.x = TEXT_CENTERLIMIT;
-	}
-
-	if (textPoint.x > _vm->_gfx->getBackBufferWidth() - TEXT_CENTERLIMIT) {
-		textPoint.x = _vm->_gfx->getBackBufferWidth() - TEXT_CENTERLIMIT;
-	}
-
-	if (textPoint.x < (TEXT_MARGIN * 2)) {
-		// Text can't be centered if it's too close to the margin
-		return;
-	}
-
-	textWidth = getStringWidth(fontId, text, textLength, flags);
-
-	if (textPoint.x < (_vm->_gfx->getBackBufferWidth() / 2)) {
-		// Fit to right side
-		fitWidth = (textPoint.x - TEXT_MARGIN) * 2;
-	} else {
-		// Fit to left side
-		fitWidth = ((_vm->_gfx->getBackBufferWidth() - TEXT_MARGIN) - textPoint.x) * 2;
-	}
-
-	if (fitWidth < textWidth) {
-		warning("text too long to be displayed in one line");
-		textWidth = fitWidth;
-	}
-	// Entire string fits, draw it
-	textPoint.x = textPoint.x - (textWidth / 2);
-	draw(fontId, text, textLength, textPoint, color, effectColor, flags);
-}
-
-DefaultFont::DefaultFont(SagaEngine *vm) : Font(vm), _fontMapping(0) {
-	int i;
-
-	// Load font module resource context
-
-	assert(_vm->getFontsCount() > 0);
-
-	_fonts.resize(_vm->getFontsCount());
-	for (i = 0; i < _vm->getFontsCount(); i++) {
-#ifdef __DS__
-		_fonts[i].outline.font = NULL;
-		_fonts[i].normal.font = NULL;
-#endif
-		loadFont(&_fonts[i],	_vm->getFontDescription(i)->fontResourceId);
-	}
-}
-
-DefaultFont::~DefaultFont() {
-	debug(8, "DefaultFont::~DefaultFont(): Freeing fonts.");
-
-#ifdef __DS__
-	for (int i = 0; i < _vm->getFontsCount(); i++) {
-		if (_fonts[i].outline.font) {
-			free(_fonts[i].outline.font);
-		}
-
-		if (_fonts[i].normal.font) {
-			free(_fonts[i].normal.font);
-		}
-	}
-#endif
-}
-
 int DefaultFont::translateChar(int charId) {
 	if (charId <= 127 || (_vm->getLanguage() == Common::RU_RUS && charId <= 254))
 		return charId;					// normal character
@@ -392,6 +312,85 @@ int DefaultFont::getStringWidth(FontId fontId, const char *text, size_t count, F
 	}
 
 	return width;
+}
+
+int DefaultFont::getHeight(FontId fontId, const char *text, int width, FontEffectFlags flags) {
+	int textWidth;
+	int textLength;
+	int fitWidth;
+	const char *searchPointer;
+	const char *measurePointer;
+	const char *foundPointer;
+	int len;
+	int w;
+	const char *endPointer;
+	int h;
+	int wc;
+	int w_total;
+	int len_total;
+	Common::Point textPoint;
+
+	textLength = getStringLength(text);
+	textWidth = getStringWidth(fontId, text, textLength, flags);
+	h = getHeight(fontId);
+	fitWidth = width;
+
+	textPoint.x = (fitWidth / 2);
+	textPoint.y = 0;
+
+	if (fitWidth >= textWidth) {
+		return h;
+	}
+
+	// String won't fit on one line
+	w_total = 0;
+	len_total = 0;
+	wc = 0;
+
+	measurePointer = text;
+	searchPointer = text;
+	endPointer = text + textLength;
+
+	for (;;) {
+		foundPointer = strchr(searchPointer, ' ');
+		if (foundPointer == NULL) {
+			// Ran to the end of the buffer
+			len = endPointer - measurePointer;
+		} else {
+			len = foundPointer - measurePointer;
+		}
+
+		w = getStringWidth(fontId, measurePointer, len, flags);
+		measurePointer = foundPointer;
+
+		if ((w_total + w) > fitWidth) {
+			// This word won't fit
+			if (wc == 0) {
+				// The first word in the line didn't fit. Still print it
+				searchPointer = measurePointer + 1;
+			}
+			// Wrap what we've got and restart
+			textPoint.y += h + TEXT_LINESPACING;
+			if (foundPointer == NULL) {
+				// Since word hit NULL but fit, we are done
+				return textPoint.y + h;
+			}
+			w_total = 0;
+			len_total = 0;
+			wc = 0;
+			measurePointer = searchPointer;
+		} else {
+			// Word will fit ok
+			w_total += w;
+			len_total += len;
+			wc++;
+			if (foundPointer == NULL) {
+				// Since word hit NULL but fit, we are done
+				return textPoint.y + h;
+			}
+			searchPointer = measurePointer + 1;
+		}
+	}
 }
 
 void DefaultFont::draw(FontId fontId, const char *text, size_t count, const Common::Point &point,
@@ -706,19 +705,143 @@ SJISFont::~SJISFont() {
 	delete _font;
 }
 
-int SJISFont::getStringWidth(FontId fontId, const char *text, size_t count, FontEffectFlags flags) {
+void SJISFont::textDrawRect(FontId fontId, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags) {
+	Common::Point textPoint(rect.left, rect.top);
+	int curW = 0;
+	int numChar = 0;
+	const char *pos = text;
+	const char *last = 0;
+
+	for (uint16 c = fetchChar(pos); c; c = fetchChar(pos)) {
+		curW += (_font->getCharWidth(c) >> 1);
+		if (curW > rect.width() || c == (uint16)'\r' || c == (uint16)'\n') {
+			draw(fontId, text, numChar, textPoint, color, effectColor, flags);
+			numChar = 0;
+			textPoint.x = rect.left;
+			textPoint.y += (getHeight(fontId));
+			// Abort if there is no more space inside the rect
+			if (textPoint.y + getHeight(fontId) > rect.bottom)
+				return;
+			// Skip linebreak characters
+			if (c == (uint16)'\r' || c == (uint16)'\n')
+				last++;
+			pos = text = last;
+			last = 0;
+			curW = 0;
+		} else {
+			numChar++;
+			last = pos;
+		}
+	}
+
+	// If the whole string fits into one line it gets aligned to the center
+	if (textPoint.y == rect.top)
+		textPoint.x = textPoint.x + rect.width() / 2 - (getStringWidth(fontId, text, 0, flags) / 2);
+
+	draw(fontId, text, numChar, textPoint, color, effectColor, flags);	
+}
+
+int SJISFont::getStringLength(const char *text) {
 	int res = 0;
-	for (uint16 c = fetchChar(text); c; c = fetchChar(text))
-		res += _font->getCharWidth(c);
+	while (fetchChar(text))
+		res++;
+
 	return res;
 }
 
+int SJISFont::getStringWidth(FontId fontId, const char *text, size_t count, FontEffectFlags flags) {
+	// The spacing is always the same regardless of the fontId and font style
+	_font->setDrawingMode(Graphics::FontSJIS::kDefaultMode);
+	int curW = 0;
+	int maxW = 0;
+
+	for (uint16 c = fetchChar(text); c; c = fetchChar(text)) {
+		if (c == (uint16)'\r' || c == (uint16)'\n') {
+			maxW = MAX<int>(curW, maxW);
+#if 1
+			curW = 0;
+			continue;
+#else
+			break;
+#endif
+		}
+		curW += _font->getCharWidth(c);
+		if (!--count)
+			break;
+	}
+
+	return MAX<int>(curW, maxW) >> 1;
+}
+
+int SJISFont::getHeight(FontId fontId, const char *text, int width, FontEffectFlags flags) {
+	Graphics::FontSJIS::DrawingMode mode = Graphics::FontSJIS::kDefaultMode;
+	if (flags & kFontOutline)
+		mode = Graphics::FontSJIS::kOutlineMode;
+	else if (flags & kFontShadow)
+		mode = Graphics::FontSJIS::kShadowRightMode;
+
+	_font->setDrawingMode(mode);
+	int res = _font->getFontHeight();
+	int tmpWidth = 0;
+	for (uint16 c = fetchChar(text); c; c = fetchChar(text)) {
+		// The spacing is always the same (regardless of the fontId and font style) for the char spacing, but not for the line spacing.
+		_font->setDrawingMode(Graphics::FontSJIS::kDefaultMode);
+		tmpWidth += (_font->getCharWidth(c) >> 1);
+		if (tmpWidth > width || c == (uint16)'\r' || c == (uint16)'\n') {
+			tmpWidth = tmpWidth > width ? _font->getCharWidth(c) >> 1 : 0;
+			_font->setDrawingMode(mode);
+			res += _font->getFontHeight();
+		}		
+	}
+
+	return (res + 1) >> 1;
+}
+
 int SJISFont::getHeight(FontId fontId) {
-	return _font->getFontHeight();
+	// The spacing here is always the same regardless of the style
+	_font->setDrawingMode(Graphics::FontSJIS::kDefaultMode);
+	return (_font->getFontHeight() >> 1) + 1;
 }
 
 void SJISFont::draw(FontId fontId, const char *text, size_t count, const Common::Point &point, int color, int effectColor, FontEffectFlags flags) {
+	int16 x = point.x << 1;
+	int16 y = point.y << 1;
 
+	Graphics::FontSJIS::DrawingMode mode = Graphics::FontSJIS::kDefaultMode;
+	if (effectColor != 0x80) {
+		if (flags & kFontOutline)
+			mode = Graphics::FontSJIS::kOutlineMode;
+		else if (flags & kFontShadow)
+			mode = Graphics::FontSJIS::kShadowRightMode;
+	}
+
+	// DEBUG: The Graphics::FontSJIS code currently does not allow glyphs to be outlined and shaded at the same time. I'll implement it if I have to, but currently I don't think that this is the case...
+	assert((flags & 3) != 3);
+	_font->setDrawingMode(mode);
+	Common::Rect dirtyRect((flags & kFontShadow) ? MAX<int16>(point.x - 1, 0) : point.x, point.y, point.x + 1, point.y + (_font->getFontHeight() >> 1));
+
+	while (*text) {
+		uint16 ch = fetchChar(text);
+		_font->setDrawingMode(mode);
+		if (ch == (uint16)'\r' || ch == (uint16)'\n') {
+			dirtyRect.right = MAX<int16>(x >> 1, dirtyRect.right);
+			y += _font->getFontHeight();
+			x = point.x << 1;
+			continue;
+		}
+		_font->drawChar(_vm->_gfx->getSJISBackBuffer(), ch, x, y, color, effectColor);
+		// Reset drawing mode for the shadow mode extra drawing and for the character spacing (not line spacing)
+		_font->setDrawingMode(Graphics::FontSJIS::kDefaultMode);
+		if (flags & kFontShadow)
+			_font->drawChar(_vm->_gfx->getSJISBackBuffer(), ch, MAX<int16>(x - 1, 0), y, color, 0);
+		x += _font->getCharWidth(ch);
+		if (!--count)
+			break;
+	}
+
+	dirtyRect.right = MAX<int16>(x >> 1, dirtyRect.right);
+	dirtyRect.bottom = (y + _font->getFontHeight()) >> 1;
+	_vm->_render->addDirtyRect(dirtyRect);
 }
 
 uint16 SJISFont::fetchChar(const char *&s) const {
