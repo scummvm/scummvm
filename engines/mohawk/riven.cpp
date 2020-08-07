@@ -57,6 +57,9 @@
 #include "mohawk/dialogs.h"
 #include "mohawk/console.h"
 
+// Shared code between detection/engine.
+#include "mohawk/riven_metaengine/metaengine.h"
+
 namespace Mohawk {
 
 MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescription *gamedesc) :
@@ -509,23 +512,8 @@ bool MohawkEngine_Riven::checkDatafiles() {
 	return false;
 }
 
-const RivenLanguage *MohawkEngine_Riven::listLanguages() {
-	static const RivenLanguage languages[] = {
-	    { Common::EN_ANY,   "english"  },
-	    { Common::FR_FRA,   "french"   },
-	    { Common::DE_DEU,   "german"   },
-	    { Common::IT_ITA,   "italian"  },
-	    { Common::JA_JPN,   "japanese" },
-	    { Common::PL_POL,   "polish"   },
-	    { Common::RU_RUS,   "russian"  },
-	    { Common::ES_ESP,   "spanish"  },
-	    { Common::UNK_LANG, nullptr    }
-	};
-	return languages;
-}
-
 const RivenLanguage *MohawkEngine_Riven::getLanguageDesc(Common::Language language) {
-	const RivenLanguage *languages = listLanguages();
+	const RivenLanguage *languages = MohawkMetaEngine_Riven::listLanguages();
 
 	while (languages->language != Common::UNK_LANG) {
 		if (languages->language == language) {
@@ -818,12 +806,6 @@ void MohawkEngine_Riven::applyGameSettings() {
 
 bool MohawkEngine_Riven::isInteractive() const {
 	return !_scriptMan->hasQueuedScripts() && !hasGameEnded();
-}
-
-void MohawkEngine_Riven::registerDefaultSettings() {
-	ConfMan.registerDefault("zip_mode", false);
-	ConfMan.registerDefault("water_effects", true);
-	ConfMan.registerDefault("transition_mode", kRivenTransitionModeFastest);
 }
 
 Common::KeymapArray MohawkEngine_Riven::initKeymaps(const char *target) {
