@@ -19,19 +19,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#include "common/debug.h"
+#include "common/memstream.h"
 #include "common/stream.h"
 #include "audio/midiparser.h"
+#include "audio/soundfont/rawfile.h"
+#include "audio/soundfont/vab/vab.h"
+#include "audio/soundfont/vgmcoll.h"
 #include "midimusicplayer.h"
 
 
 namespace Dragons {
 
-MidiMusicPlayer::MidiMusicPlayer(VabSound *musicVab, Common::SeekableReadStream *soundFont): _musicVab(musicVab), _midiDataSize(0) {
+MidiMusicPlayer::MidiMusicPlayer(BigfileArchive *bigFileArchive, VabSound *musicVab): _musicVab(musicVab), _midiDataSize(0) {
 	_midiData = nullptr;
 	MidiPlayer::createDriver(MDT_PREFER_FLUID | MDT_MIDI);
 
 	if (_driver->acceptsSoundFontData()) {
-		_driver->setEngineSoundFont(soundFont);
+		_driver->setEngineSoundFont(loadSoundFont(bigFileArchive));
 	}
 
 	int ret = _driver->open();
@@ -130,6 +135,35 @@ byte *MidiMusicPlayer::resizeMidiBuffer(uint32 desiredSize) {
 void MidiMusicPlayer::setVolume(int volume) {
 //	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume); TODO do we need this?
 	MidiPlayer::setVolume(volume);
+}
+
+Common::SeekableReadStream *MidiMusicPlayer::loadSoundFont(BigfileArchive *bigFileArchive) {
+	uint32 headSize, bodySize;
+	byte *headData = bigFileArchive->load("musx.vh", headSize);
+	byte *bodyData = bigFileArchive->load("musx.vb", bodySize);
+
+	byte *vabData = (byte *)malloc(headSize + bodySize);
+
+	memcpy(vabData, headData, headSize);
+	memcpy(vabData + headSize, bodyData, bodySize);
+
+	free(headData);
+	free(bodyData);
+
+	MemFile *memFile = new MemFile(vabData, headSize + bodySize);
+	debug("Loading soundfont2 from musx vab file.");
+	Vab *vab = new Vab(memFile, 0);
+	vab->LoadVGMFile();
+	VGMColl vabCollection;
+	SF2File *file = vabCollection.CreateSF2File(vab);
+	const byte *bytes = (const byte *)file->SaveToMem();
+	uint32 size = file->GetSize();
+
+	delete file;
+	delete vab;
+	delete memFile;
+
+	return new Common::MemoryReadStream(bytes, size, DisposeAfterUse::YES);
 }
 
 } // End of namespace Dragons

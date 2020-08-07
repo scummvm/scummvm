@@ -24,6 +24,7 @@
 
 #include "audio/midiplayer.h"
 #include "vabsound.h"
+#include "bigfile.h"
 
 namespace Dragons {
 
@@ -32,7 +33,7 @@ private:
 	VabSound *_musicVab;
 	uint32 _midiDataSize;
 public:
-	MidiMusicPlayer(VabSound *musicVab, Common::SeekableReadStream *soundFont);
+	MidiMusicPlayer(BigfileArchive *bigFileArchive, VabSound *musicVab);
 	~MidiMusicPlayer();
 
 	void setVolume(int volume) override;
@@ -44,6 +45,7 @@ public:
 	uint32 getBaseTempo()	{ return _driver ? (109 * _driver->getBaseTempo()) / 120 : 0; }
 private:
 	byte *resizeMidiBuffer(uint32 desiredSize);
+	Common::SeekableReadStream *loadSoundFont(BigfileArchive *bigFileArchive);
 };
 
 } // End of namespace Dragons

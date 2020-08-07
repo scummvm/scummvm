@@ -294,7 +294,7 @@ SoundManager::SoundManager(DragonsEngine *vm, BigfileArchive *bigFileArchive, Dr
 
 	SomeInitSound_FUN_8003f64c();
 	initVabData();
-	_midiPlayer = new MidiMusicPlayer(_vabMusx, loadSoundFont());
+	_midiPlayer = new MidiMusicPlayer(_bigFileArchive, _vabMusx);
 	_midiPlayer->setVolume(_musicVolume);
 }
 
@@ -526,40 +526,6 @@ void SoundManager::playMusic(int16 song) {
 	Common::MemoryReadStream *seq = new Common::MemoryReadStream(seqData, dataSize, DisposeAfterUse::YES);
 	_midiPlayer->playSong(seq);
 	delete seq;
-}
-
-Common::SeekableReadStream *SoundManager::loadSoundFont() {
-	uint32 headSize, bodySize;
-	byte *headData = _bigFileArchive->load("musx.vh", headSize);
-	byte *bodyData = _bigFileArchive->load("musx.vb", bodySize);
-
-	byte *vabData = (byte *)malloc(headSize + bodySize);
-
-	memcpy(vabData, headData, headSize);
-	memcpy(vabData + headSize, bodyData, bodySize);
-
-	free(headData);
-	free(bodyData);
-
-	MemFile *memFile = new MemFile(vabData, headSize + bodySize);
-	debug("Loaded vab file size: %lu", memFile->size());
-	Vab *vab = new Vab(memFile, 0);
-	vab->LoadVGMFile();
-	VGMColl vabCollection;
-	SF2File *file = vabCollection.CreateSF2File(vab);
-	const byte *bytes = (const byte *)file->SaveToMem();
-	uint32 size = file->GetSize();
-
-	delete file;
-	delete vab;
-	delete memFile;
-	Common::DumpFile *dumpFile = new Common::DumpFile();
-	dumpFile->open("testing.sf2");
-	dumpFile->write(bytes, size);
-	dumpFile->close();
-	delete dumpFile;
-
-	return new Common::MemoryReadStream(bytes, size, DisposeAfterUse::YES);
 }
 
 } // End of namespace Dragons

@@ -90,8 +90,6 @@ private:
 
 	void initVabData();
 
-	Common::SeekableReadStream *loadSoundFont();
-
 	void playSound(uint16 soundId, uint16 i);
 
 	void stopSound(uint16 id, uint16 i);
