@@ -24,7 +24,6 @@
 #define GROOVIE_DETECTION_H
 
 #include "engines/advancedDetector.h"
-#include "groovie/detection_enums.h"	// for EngineVersion
 
 namespace Groovie {
 

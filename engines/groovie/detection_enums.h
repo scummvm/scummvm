@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef GROOVIE_DETECTION_ENUMS_H
+#define GROOVIE_DETECTION_ENUMS_H
+
 namespace Groovie {
 
 enum EngineVersion {
@@ -28,3 +31,5 @@ enum EngineVersion {
 };
 
 } // End of namespace Groovie
+
+#endif // !GROOVIE_DETECTION_ENUMS_H
