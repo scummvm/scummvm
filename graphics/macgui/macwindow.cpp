@@ -256,6 +256,10 @@ void MacWindow::drawBorder() {
 
 	if (_macBorder.hasBorder(_active)) {
 		drawBorderFromSurface(g);
+
+		if (_macBorder.getOffset().titleTop == -1 && _macBorder.getOffset().titleBottom == -1)
+			return;
+
 		titleColor = _macBorder.getOffset().dark ? _wm->_colorWhite : _wm->_colorBlack;
 		titleY = _macBorder.getOffset().titleTop;
 		titleHeight = _macBorder.getOffset().top - titleY - _macBorder.getOffset().titleBottom;
