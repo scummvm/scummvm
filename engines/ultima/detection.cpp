@@ -20,20 +20,9 @@
  *
  */
 
-#include "ultima/detection.h"
 #include "base/plugins.h"
-#include "common/system.h"
-#include "common/config-manager.h"
-#include "common/savefile.h"
-#include "common/str-array.h"
-#include "common/memstream.h"
-#include "ultima/shared/early/ultima_early.h"
-#include "ultima/ultima4/ultima4.h"
-#include "ultima/ultima4/meta_engine.h"
-#include "ultima/nuvie/meta_engine.h"
-#include "ultima/nuvie/nuvie.h"
-#include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/meta_engine.h"
+
+#include "ultima/detection.h"
 
 namespace Ultima {
 
@@ -67,75 +56,4 @@ UltimaMetaEngine::UltimaMetaEngine() : AdvancedMetaEngine(Ultima::GAME_DESCRIPTI
 	_directoryGlobs = DIRECTORY_GLOBS;
 }
 
-bool UltimaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Ultima::UltimaGameDescription *gd = (const Ultima::UltimaGameDescription *)desc;
-	if (gd) {
-		switch (gd->gameId) {
-#ifndef RELEASE_BUILD
-		case Ultima::GAME_ULTIMA1:
-			*engine = new Ultima::Shared::UltimaEarlyEngine(syst, gd);
-			break;
-#endif
-		case Ultima::GAME_ULTIMA4:
-			*engine = new Ultima::Ultima4::Ultima4Engine(syst, gd);
-			break;
-		case Ultima::GAME_ULTIMA6:
-		case Ultima::GAME_MARTIAN_DREAMS:
-		case Ultima::GAME_SAVAGE_EMPIRE:
-			*engine = new Ultima::Nuvie::NuvieEngine(syst, gd);
-			break;
-		case Ultima::GAME_ULTIMA8:
-		case Ultima::GAME_CRUSADER_REG:
-		case Ultima::GAME_CRUSADER_REM:
-			*engine = new Ultima::Ultima8::Ultima8Engine(syst, gd);
-			break;
-
-		default:
-			error("Unsupported ultima engine game specified");
-		}
-	}
-	return gd != 0;
-}
-
-int UltimaMetaEngine::getMaximumSaveSlot() const {
-	return MAX_SAVES;
-}
-
-SaveStateList UltimaMetaEngine::listSaves(const char *target) const {
-	SaveStateList saveList = AdvancedMetaEngine::listSaves(target);
-
-	Common::String gameId = getGameId(target);
-	if (gameId == "ultima6" || gameId == "ultima6_enh")
-		Ultima::Nuvie::MetaEngine::listSaves(saveList);
-
-	return saveList;
-}
-
-Common::KeymapArray UltimaMetaEngine::initKeymaps(const char *target) const {
-	const Common::String gameId = getGameId(target);
-	if (gameId == "ultima4" || gameId == "ultima4_enh")
-		return Ultima::Ultima4::MetaEngine::initKeymaps();
-	if (gameId == "ultima8" || gameId == "remorse" || gameId == "regret")
-		return Ultima::Ultima8::MetaEngine::initKeymaps(gameId);
-
-	return Common::KeymapArray();
-}
-
-Common::String UltimaMetaEngine::getGameId(const char *target) {
-	// Store a copy of the active domain
-	Common::String currDomain = ConfMan.getActiveDomainName();
-
-	// Switch to the given target domain and get it's game Id
-	ConfMan.setActiveDomain(target);
-	Common::String gameId = ConfMan.get("gameid");
-
-	// Switch back to the original domain and return the game Id
-	ConfMan.setActiveDomain(currDomain);
-	return gameId;
-}
-
-#if PLUGIN_ENABLED_DYNAMIC(ULTIMA)
-REGISTER_PLUGIN_DYNAMIC(ULTIMA, PLUGIN_TYPE_ENGINE, UltimaMetaEngine);
-#else
-REGISTER_PLUGIN_STATIC(ULTIMA, PLUGIN_TYPE_ENGINE, UltimaMetaEngine);
-#endif
+REGISTER_PLUGIN_STATIC(ULTIMA_DETECTION, PLUGIN_TYPE_METAENGINE, UltimaMetaEngine);

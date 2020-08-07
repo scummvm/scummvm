@@ -36,7 +36,7 @@ namespace Ultima8 {
 #define SAVEGAME_VERSION 5
 
 SavegameReader::SavegameReader(Common::SeekableReadStream *rs, bool metadataOnly) : _file(rs), _version(0) {
-	if (!MetaEngine::readSavegameHeader(rs, &_header))
+	if (!MetaEngineConnect::readSavegameHeader(rs, &_header))
 		return;
 
 	// Validate the identifier for a valid savegame
