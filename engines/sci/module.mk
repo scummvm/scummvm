@@ -3,8 +3,8 @@ MODULE := engines/sci
 MODULE_OBJS := \
 	console.o \
 	decompressor.o \
-	detection.o \
 	event.o \
+	metaengine.o \
 	resource.o \
 	resource_audio.o \
 	resource_patcher.o \
@@ -113,3 +113,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
