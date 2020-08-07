@@ -201,6 +201,11 @@ ifdef AMIGAOS
 AMIGA_DATE = $(shell gdate '+%d.%m.%Y')
 VERFLAGS += -DAMIGA_DATE=\"$(AMIGA_DATE)\"
 endif
+ifdef MORPHOS
+# MorphOS needs date in specific format for the version cookie
+AMIGA_DATE = $(shell date +"%-d.%-m.%Y")
+VERFLAGS += -DAMIGA_DATE=\"$(AMIGA_DATE)\"
+endif
 
 ######################################################################
 # Get git's working copy information

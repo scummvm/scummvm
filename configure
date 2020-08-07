@@ -2625,6 +2625,9 @@ case $_host_os in
 		_nuked_opl=no
 		;;
 	morphos*)
+		if test "$_debug_build" = no; then
+			_optimization_level=-O2
+		fi
 		append_var LDFLAGS "-Wl,--export-dynamic"
 		append_var LDFLAGS "-L/usr/local/lib"
 		append_var CXXFLAGS "-D__MORPHOS_SHAREDLIBS"
@@ -2635,6 +2638,7 @@ case $_host_os in
 		append_var CXXFLAGS "-Wno-format"
 		add_line_to_config_mk 'MORPHOS = 1'
 		_port_mk="backends/platform/sdl/morphos/morphos.mk"
+		# for use SDL2
 		_sdlconfig=sdl2-config
 		_nuked_opl=no
 		;;
