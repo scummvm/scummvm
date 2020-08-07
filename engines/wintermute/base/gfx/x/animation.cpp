@@ -92,6 +92,7 @@ bool Animation::loadFromX(XFileLexer &lexer, AnimationSet *parentAnimSet) {
 				loadPositionKeyData(lexer, keyCount);
 				break;
 			case 3:
+			case 4:
 				loadMatrixKeyData(lexer, keyCount);
 				break;
 			default:
@@ -367,23 +368,60 @@ bool Animation::loadPositionKeyData(XFileLexer &lexer, int count) {
 }
 
 bool Animation::loadMatrixKeyData(XFileLexer &lexer, int count) {
-	warning("Animation::loadMatrixKeyData not implemented yet");
-
 	for (int keyIndex = 0; keyIndex < count; ++keyIndex) {
-		// this would be the time
-		lexer.advanceToNextToken();
-		lexer.advanceToNextToken(); // skip semicolon
-
+		uint32 time = lexer.readInt();
 		int floatCount = lexer.readInt();
 
-		for (int i = 0; i < floatCount; ++i) {
-			lexer.readFloat();
+		Math::Matrix4 keyData;
+
+		for (int r = 0; r < 4; ++r) {
+			for (int c = 0; c < 4; ++c) {
+				keyData(c, r) = lexer.readFloat();
+			}
 		}
+
+		// mirror at orign
+		keyData(2, 3) *= -1.0f;
+
+		// mirror base vectors
+		keyData(2, 0) *= -1.0f;
+		keyData(2, 1) *= -1.0f;
+
+		// change handedness
+		keyData(0, 2) *= -1.0f;
+		keyData(1, 2) *= -1.0f;
+
+		Math::Vector3d translation = keyData.getPosition();
+
+		Math::Vector3d scale;
+		scale.x() = keyData(0, 0) * keyData(0, 0) + keyData(1, 0) * keyData(1, 0) + keyData(2, 0) * keyData(2, 0);
+		scale.x() = sqrtf(scale.x());
+		scale.y() = keyData(0, 1) * keyData(0, 1) + keyData(1, 1) * keyData(1, 1) + keyData(2, 1) * keyData(2, 1);
+		scale.y() = sqrtf(scale.y());
+		scale.z() = keyData(0, 2) * keyData(0, 2) + keyData(1, 2) * keyData(1, 2) + keyData(2, 2) * keyData(2, 2);
+		scale.z() = sqrtf(scale.z());
+
+		Math::Quaternion rotation;
+		rotation.fromMatrix(keyData.getRotation());
+
+		BonePositionKey *positionKey = new BonePositionKey;
+		BoneScaleKey *scaleKey = new BoneScaleKey;
+		BoneRotationKey *rotationKey = new BoneRotationKey;
+
+		positionKey->_time = time;
+		scaleKey->_time = time;
+		rotationKey->_time = time;
+
+		positionKey->_pos = translation;
+		scaleKey->_scale = scale;
+		rotationKey->_rotation = rotation;
+
+		_posKeys.push_back(positionKey);
+		_scaleKeys.push_back(scaleKey);
+		_rotKeys.push_back(rotationKey);
 
 		lexer.skipTerminator(); // skip semicolon
 		lexer.advanceToNextToken(); // skip closed braces
-
-		// TODO: Also store matrix keys
 	}
 
 	return true;
