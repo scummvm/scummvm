@@ -197,7 +197,7 @@ public:
 	}
 
 	bool hasFeature(EngineFeature f) const override;
-	static void registerDefaultSettings();
+
 	void applyGameSettings() override;
 	static Common::Array<Common::Keymap *> initKeymaps(const char *target);
 
@@ -210,7 +210,6 @@ public:
 	void doAction(MystEventAction action);
 	void scheduleAction(MystEventAction action);
 
-	static const MystLanguage *listLanguages();
 	static const MystLanguage *getLanguageDesc(Common::Language language);
 	Common::Language getLanguage() const override;
 
@@ -245,11 +244,6 @@ private:
 
 	Common::Language _currentLanguage;
 	MystEventAction _scheduledAction;
-};
-
-struct MystLanguage {
-	Common::Language language;
-	const char *archiveSuffix;
 };
 
 } // End of namespace Mohawk
