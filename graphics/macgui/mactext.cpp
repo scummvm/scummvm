@@ -1160,7 +1160,7 @@ bool MacText::processEvent(Common::Event &event) {
 					return true;
 				}
 				_cursorRow--;
-				_cursorCol = getLineCharWidth(_cursorRow) - 1;
+				_cursorCol = getLineCharWidth(_cursorRow);
 			} else {
 				_cursorCol--;
 			}
