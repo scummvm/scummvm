@@ -1055,7 +1055,9 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 					cmd = PARSERR_GENERIC;
 				}
 			} else {
-				warning("AdActor3DX::loadFile merging of .X files is not implemented");
+				if (!_modelX->mergeFromFile((char *)params)) {
+					cmd = PARSERR_GENERIC;
+				}
 			}
 			break;
 
@@ -2321,9 +2323,7 @@ bool AdActor3DX::mergeAnimations(const char *filename) {
 		return false;
 	}
 
-	warning("AdActor3DX::mergeAnimations merging of .X is not implemented");
-
-	bool res = false;
+	bool res = _modelX->mergeFromFile(filename);
 	if (!res) {
 		_gameRef->LOG(res, "Error: MergeAnims failed for file '%s'", filename);
 		return res;

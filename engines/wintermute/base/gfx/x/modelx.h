@@ -135,6 +135,7 @@ public:
 	ModelX *_parentModel;
 
 	bool loadFromFile(const Common::String &filename, ModelX *parentModel = nullptr);
+	bool mergeFromFile(const Common::String &filename);
 
 	bool update() override;
 	bool render();
@@ -181,6 +182,8 @@ public:
 private:
 	void cleanup(bool complete = true);
 	bool findBones(bool animOnly = false, ModelX *parentModel = nullptr);
+
+	void parseFrameDuringMerge(XFileLexer &lexer, const Common::String &filename);
 
 	void updateBoundingRect();
 	void static inline updateRect(Rect32 *rc, int x, int y);

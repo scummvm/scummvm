@@ -138,6 +138,30 @@ bool ModelX::loadFromFile(const Common::String &filename, ModelX *parentModel) {
 	return res;
 }
 
+bool ModelX::mergeFromFile(const Common::String &filename) {
+	uint32 fileSize = 0;
+	byte *buffer = BaseFileManager::getEngineInstance()->getEngineInstance()->readWholeFile(filename, &fileSize);
+
+	byte dataFormatBlock[4];
+	Common::copy(buffer + 8, buffer + 11, dataFormatBlock);
+	dataFormatBlock[3] = '\0';
+
+	bool textMode = (strcmp((char *)dataFormatBlock, "txt") == 0);
+
+	if (strcmp((char *)dataFormatBlock, "bzip") == 0 || strcmp((char *)dataFormatBlock, "tzip") == 0) {
+		warning("ModelX::loadFromFile compressed .X files are not supported yet");
+	}
+
+	XFileLexer lexer(buffer + 16, fileSize - 16, textMode);
+
+	lexer.advanceToNextToken();
+	parseFrameDuringMerge(lexer, filename);
+
+	findBones(false, nullptr);
+
+	return true;
+}
+
 //////////////////////////////////////////////////////////////////////////
 bool ModelX::loadAnimationSet(XFileLexer &lexer, const Common::String &filename) {
 	bool res = true;
@@ -197,6 +221,31 @@ bool ModelX::findBones(bool animOnly, ModelX *parentModel) {
 	}
 
 	return true;
+}
+
+void ModelX::parseFrameDuringMerge(XFileLexer &lexer, const Common::String &filename) {
+	while (!lexer.eof()) {
+		if (lexer.tokenIsIdentifier("Frame")) {
+			lexer.advanceToNextToken();
+			parseFrameDuringMerge(lexer, filename);
+		} else if (lexer.tokenIsIdentifier("AnimationSet")) {
+			lexer.advanceToNextToken();
+			loadAnimationSet(lexer, filename);
+		} else if (lexer.tokenIsOfType(IDENTIFIER)) {
+			// ignore all other data objects and templates
+			while (!lexer.eof()) {
+				if (lexer.reachedClosedBraces()) {
+					break;
+				}
+
+				lexer.advanceToNextToken();
+			}
+
+			lexer.advanceToNextToken();
+		} else {
+			lexer.advanceToNextToken(); // we ignore anything else here
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
