@@ -76,7 +76,7 @@ typedef struct _VAGBlk {
 double LinAmpDecayTimeToLinDBDecayTime(double secondsToFullAtten, int linearVolumeRange);
 
 // InitADSR is shamelessly ripped from P.E.Op.S
-static void InitADSR() {
+static inline void InitADSR() {
 	unsigned long r, rs, rd;
 	int i;
 

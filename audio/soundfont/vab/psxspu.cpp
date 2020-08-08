@@ -148,7 +148,7 @@ bool PSXSampColl::GetSampleInfo() {
 
 			if (isSample) {
 				uint32 extraGunkLength = 0;
-				uint8 filterRangeByte = GetByte(i + 16);
+				//uint8 filterRangeByte = GetByte(i + 16);
 				uint8 keyFlagByte = GetByte(i + 16 + 1);
 				if ((keyFlagByte & 0xF8) != 0)
 					break;
