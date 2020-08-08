@@ -643,7 +643,7 @@ static const SAGAGameDescription gameDescriptions[] = {
  			GUIO0()
  		},
  		GID_ITE,
- 		0,
+		GF_ITE_FLOPPY,	// Even it that game version comes on a CD it behaves like a DOS floppy version
  		ITE_DEFAULT_SCENE,
  		&ITE_Resources,
  		ARRAYSIZE(ITE_GameFonts),
