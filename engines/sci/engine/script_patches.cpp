@@ -17966,7 +17966,8 @@ static const uint16 sq4CDPatchSewerLockup[] = {
 // This wouldn't be a problem except that the code is publicly known due to NRS'
 //  modified version of the game which includes a script 271 that recreates the
 //  room. The code appears in easter egg lists, and players who don't realize it
-//  only applies to a modified version attempt it and crash, so we disable it.
+//  only applies to a modified version attempt it and crash, so we disable it
+//  unless script 271 is present.
 //
 // Applies to: English PC CD
 // Responsible method: timeToTimeWarpS:changeState(1)
@@ -17980,6 +17981,39 @@ static const uint16 sq4CdSignatureRemovedRoomTimepodCode[] = {
 
 static const uint16 sq4CdPatchRemovedRoomTimepodCode[] = {
 	0x35, 0x00,                         // ldi 00
+	PATCH_END
+};
+
+// The NRS modified version of SQ4 contains an impressive script restoration of
+//  the Stuff Taken Out for Legal Reasons easter egg room, but clicking on most
+//  items underflows the stack. The doVerb methods in script 271 jump into the
+//  middle of pod:doVerb to display their messages, but pod:doVerb pushes its
+//  parameter on the stack at the start and tosses it at the end.
+//
+// We fix this by making pod:doVerb safe to jump into by removing the copy of
+//  the parameter that it stores on the stack.
+//
+// Applies to: SQ4 Update by NRS
+// Responsible method: pod:doVerb
+static const uint16 sq4NrsSignatureRemovedRoomItems[] = {
+	0x8f, SIG_MAGICDWORD, 0x01,         // lsp 01
+	0x3c,                               // dup
+	0x35, 0x01,                         // ldi 01
+	SIG_ADDTOOFFSET(+15),
+	0x3c,                               // dup
+	SIG_ADDTOOFFSET(+27),
+	0x3a,                               // toss
+	0x48,                               // ret
+	SIG_END
+};
+
+static const uint16 sq4NrsPatchRemovedRoomItems[] = {
+	0x86, PATCH_UINT16(0x0001),         // lap 0001
+	0x39, 0x01,                         // pushi 01
+	PATCH_ADDTOOFFSET(+15),
+	0x60,                               // pprev
+	PATCH_ADDTOOFFSET(+27),
+	0x48,                               // ret
 	PATCH_END
 };
 
@@ -18064,6 +18098,7 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,    45, "CD: walk in from below for room 45 fix",         1, sq4CdSignatureWalkInFromBelowRoom45,           sq4CdPatchWalkInFromBelowRoom45 },
 	{  true,   105, "Floppy: sewer lockup fix",                       1, sq4FloppySignatureSewerLockup,                 sq4FloppyPatchSewerLockup },
 	{  true,   105, "CD: sewer lockup fix",                           1, sq4CDSignatureSewerLockup,                     sq4CDPatchSewerLockup },
+	{  true,   271, "NRS: removed room items fix",                    1, sq4NrsSignatureRemovedRoomItems,               sq4NrsPatchRemovedRoomItems },
 	{  true,   290, "CD: cedric easter egg fix",                      1, sq4CdSignatureCedricEasterEgg,                 sq4CdPatchCedricEasterEgg },
 	{  true,   290, "CD: cedric lockup fix (1/2)",                    1, sq4CdSignatureCedricLockup1,                   sq4CdPatchCedricLockup1 },
 	{  true,   290, "CD: cedric lockup fix (2/2)",                    1, sq4CdSignatureCedricLockup2,                   sq4CdPatchCedricLockup2 },
