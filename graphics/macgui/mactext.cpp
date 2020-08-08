@@ -37,7 +37,7 @@ namespace Graphics {
 enum {
 	kConScrollStep = 12,
 
-	kCursorHeight = 12
+	kCursorMaxHeight = 100
 };
 
 static void cursorTimerHandler(void *refCon);
@@ -236,11 +236,11 @@ void MacText::init() {
 	_cursorRow = getLineCount() - 1;
 	_cursorCol = getLineCharWidth(_cursorRow);
 
-	_cursorRect = new Common::Rect(0, 0, 1, kCursorHeight);
+	_cursorRect = new Common::Rect(0, 0, 1, 0);
 
-	_cursorSurface = new ManagedSurface(1, kCursorHeight);
+	_cursorSurface = new ManagedSurface(1, kCursorMaxHeight);
 	_cursorSurface->clear(_wm->_colorBlack);
-	_cursorSurface2 = new ManagedSurface(1, kCursorHeight);
+	_cursorSurface2 = new ManagedSurface(1, kCursorMaxHeight);
 	_cursorSurface2->clear(_bgcolor);
 
 	reallocSurface();
@@ -1702,6 +1702,16 @@ void MacText::updateCursorPos() {
 		_cursorY = _textLines[_cursorRow].y + offset.y - 2;
 		_cursorX = getLineWidth(_cursorRow, false, _cursorCol) + alignOffset + offset.x - 1;
 	}
+
+	int cursorHeight = getLineHeight(_cursorRow);
+
+	if (cursorHeight == 0)
+		cursorHeight = 12;
+
+	// Do not exceed max height and widget height
+	cursorHeight = MIN<int>(MIN<int>(cursorHeight, kCursorMaxHeight), _dims.height());
+
+	_cursorRect->setHeight(cursorHeight);
 
 	_cursorDirty = true;
 }
