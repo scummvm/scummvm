@@ -27,8 +27,10 @@
 
 #include "engines/advancedDetector.h"
 
+#include "adl/detection_enums.h"
 #include "adl/detection.h"
 #include "adl/disk.h"
+#include "adl/disk_image_helpers.h"
 
 namespace Adl {
 
@@ -336,20 +338,6 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 	{ AD_TABLE_END_MARKER, GAME_TYPE_NONE, GAME_VER_NONE }
 };
 
-struct DiskImageExt {
-	Common::Platform platform;
-	const char *extension;
-};
-
-const DiskImageExt diskImageExts[] = {
-	{ Common::kPlatformApple2, ".woz" },
-	{ Common::kPlatformApple2, ".nib" },
-	{ Common::kPlatformApple2, ".dsk" },
-	{ Common::kPlatformApple2, ".d13" },
-	{ Common::kPlatformAtari8Bit, ".xfd" },
-	{ Common::kPlatformDOS, ".img" }
-};
-
 class AdlMetaEngine : public AdvancedMetaEngine {
 public:
 	AdlMetaEngine() : AdvancedMetaEngine(gameFileDescriptions, sizeof(AdlGameDescription), adlGames, optionsList) { }
@@ -370,40 +358,6 @@ public:
 
 	bool addFileProps(const FileMap &allFiles, Common::String fname, FilePropertiesMap &filePropsMap) const;
 };
-
-Common::String getDiskImageName(const AdlGameDescription &adlDesc, byte volume) {
-	const ADGameDescription &desc = adlDesc.desc;
-	for (uint i = 0; desc.filesDescriptions[i].fileName; ++i) {
-		const ADGameFileDescription &fDesc = desc.filesDescriptions[i];
-
-		if (fDesc.fileType == volume) {
-			for (uint e = 0; e < ARRAYSIZE(diskImageExts); ++e) {
-				if (diskImageExts[e].platform == desc.platform) {
-					Common::String testFileName(fDesc.fileName);
-					testFileName += diskImageExts[e].extension;
-					if (Common::File::exists(testFileName))
-						return testFileName;
-				}
-			}
-
-			error("Failed to find disk image '%s'", fDesc.fileName);
-		}
-	}
-
-	error("Disk volume %d not found", volume);
-}
-
-GameType getGameType(const AdlGameDescription &adlDesc) {
-	return adlDesc.gameType;
-}
-
-GameVersion getGameVersion(const AdlGameDescription &adlDesc) {
-	return adlDesc.version;
-}
-
-Common::Platform getPlatform(const AdlGameDescription &adlDesc) {
-	return adlDesc.desc.platform;
-}
 
 bool AdlMetaEngine::addFileProps(const FileMap &allFiles, Common::String fname, FilePropertiesMap &filePropsMap) const {
 	if (filePropsMap.contains(fname))
