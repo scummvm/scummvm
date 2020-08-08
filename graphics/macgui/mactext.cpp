@@ -1139,8 +1139,6 @@ bool MacText::processEvent(Common::Event &event) {
 			return false;
 		}
 
-		int ncol;
-
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_BACKSPACE:
 			if (_cursorRow > 0 || _cursorCol > 0) {
@@ -1190,11 +1188,7 @@ bool MacText::processEvent(Common::Event &event) {
 
 			_cursorRow--;
 
-			if (_cursorCol > 0) {
-				getRowCol(_cursorX, _textLines[_cursorRow].y, nullptr, nullptr, nullptr, &ncol);
-				_cursorCol = ncol + 1;
-			}
-
+			getRowCol(_cursorX + 1, _textLines[_cursorRow].y, nullptr, nullptr, &_cursorRow, &_cursorCol);
 			updateCursorPos();
 
 			return true;
@@ -1204,11 +1198,8 @@ bool MacText::processEvent(Common::Event &event) {
 				return true;
 
 			_cursorRow++;
-			if (_cursorCol > 0) {
-				getRowCol(_cursorX, _textLines[_cursorRow].y, nullptr, nullptr, nullptr, &ncol);
-				_cursorCol = ncol + 1;
-			}
 
+			getRowCol(_cursorX + 1, _textLines[_cursorRow].y, nullptr, nullptr, &_cursorRow, &_cursorCol);
 			updateCursorPos();
 
 			return true;
