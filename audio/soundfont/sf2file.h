@@ -267,7 +267,7 @@ struct sfModList {
 	}
 };
 
-typedef struct {
+struct genAmountType {
 	byte data[2];
 
 	void setRangeLo(uint8 lo) { data[0] = lo; }
@@ -279,7 +279,7 @@ typedef struct {
 		writeBytes(&buffer, (byte *)data, 2);
 		return buffer;
 	}
-} genAmountType;
+};
 
 struct sfGenList {
 	SFGenerator sfGenOper;
