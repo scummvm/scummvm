@@ -525,6 +525,7 @@ void MacText::reallocSurface() {
 
 void MacText::render() {
 	if (_fullRefresh) {
+		_surface->clear(_bgcolor);
 		render(0, _textLines.size());
 
 		_fullRefresh = false;
