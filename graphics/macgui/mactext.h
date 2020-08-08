@@ -272,6 +272,7 @@ protected:
 
 private:
 	ManagedSurface *_cursorSurface;
+	ManagedSurface *_cursorSurface2;
 
 	int _editableRow;
 

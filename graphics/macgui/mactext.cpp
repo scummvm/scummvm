@@ -240,6 +240,8 @@ void MacText::init() {
 
 	_cursorSurface = new ManagedSurface(1, kCursorHeight);
 	_cursorSurface->clear(_wm->_colorBlack);
+	_cursorSurface2 = new ManagedSurface(1, kCursorHeight);
+	_cursorSurface2->clear(_bgcolor);
 
 	reallocSurface();
 	setAlignOffset(_textAlignment);
@@ -253,6 +255,7 @@ MacText::~MacText() {
 	delete _cursorRect;
 	delete _surface;
 	delete _cursorSurface;
+	delete _cursorSurface2;
 }
 
 void MacText::setMaxWidth(int maxWidth) {
@@ -871,6 +874,10 @@ bool MacText::draw(bool forceRedraw) {
 	_cursorDirty = false;
 
 	Common::Point offset(calculateOffset());
+
+	if (!_cursorState)
+		_composeSurface->blitFrom(*_cursorSurface2, *_cursorRect, Common::Point(_cursorX, _cursorY + offset.y + 1));
+
 	draw(_composeSurface, 0, _scrollPos, _surface->w, _scrollPos + _surface->h, offset.x, offset.y);
 
 	for (int bb = 0; bb < _shadow; bb ++) {
@@ -1680,6 +1687,8 @@ void MacText::updateCursorPos() {
 	if (_textLines.empty()) {
 		_cursorX = _cursorY = 0;
 	} else {
+		undrawCursor();
+
 		_cursorRow = MIN<int>(_cursorRow, _textLines.size() - 1);
 
 		Common::Point offset(calculateOffset());
@@ -1698,8 +1707,10 @@ void MacText::updateCursorPos() {
 }
 
 void MacText::undrawCursor() {
-	_cursorState = false;
 	_cursorDirty = true;
+
+	Common::Point offset(calculateOffset());
+	_composeSurface->blitFrom(*_cursorSurface2, *_cursorRect, Common::Point(_cursorX, _cursorY + offset.y + 1));
 }
 
 } // End of namespace Graphics
