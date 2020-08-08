@@ -290,7 +290,14 @@ bool MeshX::update(FrameNode *parentFrame) {
 
 //		updateNormals();
 	} else { // update static
-		warning("MeshXOpenGL::update update of static mesh is not implemented yet");
+		for (uint32 i = 0; i < _vertexCount; ++i) {
+			Math::Vector3d pos(_vertexPositionData + 3 * i);
+			parentFrame->getCombinedMatrix()->transform(&pos, true);
+
+			for (uint j = 0; j < 3; ++j) {
+				_vertexData[i * kVertexComponentCount + kPositionOffset + j] = pos.getData()[j];
+			}
+		}
 	}
 
 	updateBoundingBox();
