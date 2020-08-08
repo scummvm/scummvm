@@ -225,7 +225,7 @@ bool AdObject3D::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "RemoveIgnoredLight") == 0) {
 		stack->correctParams(1);
-		char *lightName;
+		char *lightName = nullptr;
 		BaseUtils::setString(&lightName, stack->pop()->getString());
 		stack->pushBool(removeIgnoredLight(lightName));
 		return true;
