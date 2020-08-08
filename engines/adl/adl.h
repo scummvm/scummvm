@@ -34,7 +34,6 @@
 #include "common/scummsys.h"
 
 #include "engines/engine.h"
-#include "engines/advancedDetector.h"
 
 #include "audio/mixer.h"
 #include "audio/softsynth/pcspk.h"
@@ -42,7 +41,7 @@
 #include "adl/console.h"
 #include "adl/disk.h"
 #include "adl/sound.h"
-#include "adl/detection.h"
+#include "adl/detection_enums.h"
 
 namespace Common {
 class ReadStream;

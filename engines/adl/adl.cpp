@@ -38,7 +38,6 @@
 
 #include "adl/adl.h"
 #include "adl/display_a2.h"
-#include "adl/detection.h"
 #include "adl/graphics.h"
 #include "adl/sound.h"
 
