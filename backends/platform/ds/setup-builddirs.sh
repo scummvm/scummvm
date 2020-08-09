@@ -1,7 +1,6 @@
 #!/bin/sh
 
 # TODO: Allow specifying (a list of) build ids (a, b, ...) on the command line.
-# TODO: Allow overriding the LOGO variable
 
 # TODO: Computer srcdir in a better way
 srcdir=../../../`dirname $0`/..
