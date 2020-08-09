@@ -30,6 +30,7 @@ wwwroot.zip            FILE    "dists/networking/wwwroot.zip"
 #ifdef USE_FREETYPE2
 fonts.dat              FILE    "dists/engine-data/fonts.dat"
 #endif
+macgui.zip             FILE    "dists/engine-data/macgui.zip"
 
 #if PLUGIN_ENABLED_STATIC(ACCESS)
 access.dat             FILE    "dists/engine-data/access.dat"
