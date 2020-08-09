@@ -269,23 +269,27 @@ void PluginManager::addPluginProvider(PluginProvider *pp) {
 Plugin *PluginManager::giveEngineFromMetaEngine(const Plugin *plugin) {
 	assert(plugin->getType() == PLUGIN_TYPE_METAENGINE);
 
-	PluginList pl = PluginMan.getPlugins(PLUGIN_TYPE_ENGINE);
 	Plugin *enginePlugin = nullptr;
+	bool found = false;
 
 	// Use the engineID from MetaEngine for comparasion.
 	Common::String metaEnginePluginName = plugin->getEngineId();
+	PluginMan.loadFirstPlugin();
+	do {
+		PluginList pl = PluginMan.getPlugins(PLUGIN_TYPE_ENGINE);
+		// Iterate over all engine plugins.
+		for (PluginList::const_iterator itr = pl.begin(); itr != pl.end(); itr++) {
+			// The getName() provides a name which is similiar to getEngineId.
+			// Because engines are engines themselves, this function is simply named getName.
+			Common::String enginePluginName((*itr)->getName());
 
-	// Iterate over all engine plugins.
-	for (PluginList::const_iterator itr = pl.begin(); itr != pl.end(); itr++) {
-		// The getName() provides a name which is similiar to getEngineId.
-		// Because engines are engines themselves, this function is simply named getName.
-		Common::String enginePluginName((*itr)->getName());
-
-		if (metaEnginePluginName.equalsIgnoreCase(enginePluginName)) {
-			enginePlugin = (*itr);
-			break;
+			if (metaEnginePluginName.equalsIgnoreCase(enginePluginName)) {
+				enginePlugin = (*itr);
+				found = true;
+				break;
+			}
 		}
-	}
+	} while (!found && PluginMan.loadNextPlugin());
 
 	if (enginePlugin) {
 		warning("MetaEngine: %s \t matched to \t Engine: %s", plugin->getName(), enginePlugin->getFileName());
@@ -487,27 +491,16 @@ void PluginManager::unloadAllPlugins() {
 
 void PluginManager::unloadPluginsExcept(PluginType type, const Plugin *plugin, bool deletePlugin /*=true*/) {
 	Plugin *found = NULL;
-
-	// If someone calls this function with a nullptr Plugin, we clear everything, and no need to search
-	// for individual plugin.
-	if (plugin) {
-		if (type != plugin->getType()) {
-			warning("Plugins: unloadPluginExcept: mismatching type of plugins requested to unload. Operation not carried out.");
-			return;
-		}
-
-		for (PluginList::iterator p = _pluginsInMem[type].begin(); p != _pluginsInMem[type].end(); ++p) {
-			if (*p == plugin) {
-				found = *p;
-			} else {
-				(*p)->unloadPlugin();
-				if (deletePlugin) {
-					delete *p;
-				}
+	for (PluginList::iterator p = _pluginsInMem[type].begin(); p != _pluginsInMem[type].end(); ++p) {
+		if (*p == plugin) {
+			found = *p;
+		} else {
+			(*p)->unloadPlugin();
+			if (deletePlugin) {
+				delete *p;
 			}
 		}
 	}
-
 	_pluginsInMem[type].clear();
 	if (found != NULL) {
 		_pluginsInMem[type].push_back(found);
