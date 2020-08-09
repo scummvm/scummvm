@@ -157,7 +157,7 @@ public:
 	SoundDescResource *findSound(uint8 soundNumber);
 	void removeSounds();
 	void restoreSounds();
-	void fadeOut();
+	bool fadeOut();
 	void pause();
 	void resume();
 	bool getPaused() const { return _paused; }
