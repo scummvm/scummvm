@@ -351,8 +351,8 @@ bool PaperdollGump::DraggingItem(Item *item, int mx, int my) {
 			return false;
 		}
 
-		_draggingX = _backpackRect.x + _backpackRect.w / 2;
-		_draggingY = _backpackRect.y + _backpackRect.h / 2;
+		_draggingX = _backpackRect.x + _backpackRect.width() / 2;
+		_draggingY = _backpackRect.y + _backpackRect.height() / 2;
 	}
 
 	return true;

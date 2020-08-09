@@ -59,8 +59,8 @@ U8SaveGump::~U8SaveGump() {
 void U8SaveGump::InitGump(Gump *newparent, bool take_focus) {
 	Gump::InitGump(newparent, take_focus);
 
-	_dims.w = 220;
-	_dims.h = 170;
+	_dims.setWidth(220);
+	_dims.setHeight(170);
 
 	FrameID entry_id(GameData::GUMPS, 46, 0);
 	entry_id = _TL_SHP_(entry_id);
@@ -82,7 +82,7 @@ void U8SaveGump::InitGump(Gump *newparent, bool take_focus) {
 		int xbase = 3;
 		int yi = i;
 		if (i >= 3) {
-			xbase += _dims.w / 2 + 9;
+			xbase += _dims.width() / 2 + 9;
 			yi -= 3;
 		}
 
@@ -180,7 +180,7 @@ void U8SaveGump::onMouseClick(int button, int32 mx, int32 my) {
 	int x_;
 	if (mx >= 3 && mx <= 100)
 		x_ = 0;
-	else if (mx >= _dims.w / 2 + 10)
+	else if (mx >= _dims.width() / 2 + 10)
 		x_ = 1;
 	else
 		return;

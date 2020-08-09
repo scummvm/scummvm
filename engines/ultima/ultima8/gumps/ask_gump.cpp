@@ -70,18 +70,20 @@ void AskGump::InitGump(Gump *newparent, bool take_focus) {
 		Rect cd;
 		child->GetDims(cd);
 		if (i + 1 < _answers->getSize())
-			cd.h += child->getVlead();
+			cd.setHeight(cd.height() + child->getVlead());
 
-		if (px + cd.w > 160 && px != 0) {
-			py = _dims.h;
+		if (px + cd.width() > 160 && px != 0) {
+			py = _dims.height();
 			px = 0;
 			child->Move(px, py);
 		}
 
-		if (cd.w + px > _dims.w) _dims.w = cd.w + px;
-		if (cd.h + py > _dims.h) _dims.h = cd.h + py;
+		if (cd.width() + px > _dims.width())
+			_dims.setWidth(cd.width() + px);
+		if (cd.height() + py > _dims.height())
+			_dims.setHeight(cd.height() + py);
 
-		px += cd.w + 4;
+		px += cd.width() + 4;
 	}
 
 	// Wait with ItemRelativeGump initialization until we calculated our size.
@@ -116,8 +118,8 @@ bool AskGump::loadData(Common::ReadStream *rs, uint32 version) {
 	// HACK ALERT
 	int px = 0, py = 0;
 
-	_dims.w = 0;
-	_dims.h = 0;
+	_dims.setWidth(0);
+	_dims.setHeight(0);
 
 
 	for (unsigned int i = 0; i < _answers->getSize(); ++i) {
@@ -136,16 +138,18 @@ bool AskGump::loadData(Common::ReadStream *rs, uint32 version) {
 		Rect cd;
 		child->GetDims(cd);
 
-		if (px + cd.w > 160 && px != 0) {
-			py = _dims.h;
+		if (px + cd.width() > 160 && px != 0) {
+			py = _dims.height();
 			px = 0;
 		}
 		child->Move(px, py);
 
-		if (cd.w + px > _dims.w) _dims.w = cd.w + px;
-		if (cd.h + py > _dims.h) _dims.h = cd.h + py;
+		if (cd.width() + px > _dims.width())
+			_dims.setWidth(cd.width() + px);
+		if (cd.height() + py > _dims.height())
+			_dims.setHeight(cd.height() + py);
 
-		px += cd.w + 4;
+		px += cd.width() + 4;
 	}
 
 	return true;

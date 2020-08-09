@@ -90,10 +90,10 @@ void Gump::SetShape(FrameID frame, bool adjustsize) {
 void Gump::UpdateDimsFromShape() {
 	const ShapeFrame *sf = _shape->getFrame(_frameNum);
 	assert(sf);
-	_dims.w = sf->_width;
-	_dims.h = sf->_height;
 	_dims.x = -sf->_xoff;
 	_dims.y = -sf->_yoff;
+	_dims.setWidth(sf->_width);
+	_dims.setHeight(sf->_height);
 }
 
 void Gump::CreateNotifier() {
@@ -307,7 +307,7 @@ void Gump::PaintCompositing(RenderSurface *surf, int32 lerp_factor,
 	surf->GetClippingRect(old_rect);
 
 	// Set new clipping rect
-	int32 cx = _dims.x, cy = _dims.y, cw = _dims.w, ch = _dims.h;
+	int32 cx = _dims.x, cy = _dims.y, cw = _dims.width(), ch = _dims.height();
 	GumpRectToScreenSpace(cx, cy, cw, ch, ROUND_OUTSIDE);
 	Rect new_rect(cx, cy, cw, ch);
 	new_rect.Intersect(old_rect);
@@ -372,26 +372,26 @@ void Gump::setRelativePosition(Gump::Position pos, int xoffset, int yoffset) {
 
 		switch (pos) {
 		case CENTER:
-			Move(rect.w / 2 - _dims.w / 2 + xoffset,
-			     rect.h / 2 - _dims.h / 2 + yoffset);
+			Move(rect.width() / 2 - _dims.width() / 2 + xoffset,
+			     rect.height() / 2 - _dims.height() / 2 + yoffset);
 			break;
 		case TOP_LEFT:
 			Move(xoffset, yoffset);
 			break;
 		case TOP_RIGHT:
-			Move(rect.w - _dims.w + xoffset, yoffset);
+			Move(rect.width() - _dims.width() + xoffset, yoffset);
 			break;
 		case BOTTOM_LEFT:
-			Move(xoffset, rect.h - _dims.h + yoffset);
+			Move(xoffset, rect.height() - _dims.height() + yoffset);
 			break;
 		case BOTTOM_RIGHT:
-			Move(rect.w - _dims.w + xoffset, rect.h - _dims.h + yoffset);
+			Move(rect.width() - _dims.width() + xoffset, rect.height() - _dims.height() + yoffset);
 			break;
 		case TOP_CENTER:
-			Move(rect.w / 2 - _dims.w / 2 + xoffset, yoffset);
+			Move(rect.width() / 2 - _dims.width() / 2 + xoffset, yoffset);
 			break;
 		case BOTTOM_CENTER:
-			Move(rect.w / 2 - _dims.w / 2 + xoffset, rect.h - _dims.h + yoffset);
+			Move(rect.width() / 2 - _dims.width() / 2 + xoffset, rect.height() - _dims.height() + yoffset);
 			break;
 		default:
 			break;
@@ -786,8 +786,8 @@ void Gump::saveData(Common::WriteStream *ws) {
 	ws->writeUint32LE(static_cast<uint32>(_y));
 	ws->writeUint32LE(static_cast<uint32>(_dims.x));
 	ws->writeUint32LE(static_cast<uint32>(_dims.y));
-	ws->writeUint32LE(static_cast<uint32>(_dims.w));
-	ws->writeUint32LE(static_cast<uint32>(_dims.h));
+	ws->writeUint32LE(static_cast<uint32>(_dims.width()));
+	ws->writeUint32LE(static_cast<uint32>(_dims.height()));
 	ws->writeUint32LE(_flags);
 	ws->writeUint32LE(static_cast<uint32>(_layer));
 	ws->writeUint32LE(static_cast<uint32>(_index));

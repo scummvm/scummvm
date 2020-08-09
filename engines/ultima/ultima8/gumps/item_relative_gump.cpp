@@ -65,9 +65,9 @@ void ItemRelativeGump::MoveOnScreen() {
 	// get rectangle that gump occupies in scalerGump's coordinate space
 	int32 left, right, top, bottom;
 	left = -_dims.x;
-	right = left + _dims.w;
+	right = left + _dims.width();
 	top = -_dims.y;
-	bottom = top + _dims.h;
+	bottom = top + _dims.height();
 	GumpToParent(left, top);
 	GumpToParent(right, bottom);
 
@@ -75,13 +75,13 @@ void ItemRelativeGump::MoveOnScreen() {
 
 	if (left < -sd.x)
 		movex = -sd.x - left;
-	else if (right > -sd.x + sd.w)
-		movex = -sd.x + sd.w - right;
+	else if (right > -sd.x + sd.width())
+		movex = -sd.x + sd.width() - right;
 
 	if (top < -sd.y)
 		movey = -sd.y - top;
-	else if (bottom > -sd.y + sd.h)
-		movey = -sd.y + sd.h - bottom;
+	else if (bottom > -sd.y + sd.height())
+		movey = -sd.y + sd.height() - bottom;
 
 	Move(left + movex, top + movey);
 }
@@ -155,9 +155,9 @@ void ItemRelativeGump::GetItemLocation(int32 lerp_factor) {
 	if (_parent) _parent->ScreenSpaceToGump(gx, gy);
 
 	// Set x and y, and center us over it
-	_ix = gx - _dims.w / 2;
+	_ix = gx - _dims.width() / 2;
 //	_iy = gy-_dims.h-it->getShapeInfo()->z*8-16;
-	_iy = gy - _dims.h;
+	_iy = gy - _dims.height();
 
 
 	if (_flags & FLAG_KEEP_VISIBLE)

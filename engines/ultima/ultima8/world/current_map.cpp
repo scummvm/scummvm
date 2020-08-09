@@ -412,8 +412,8 @@ static inline void CalcFastAreaLimits(int32 &sx_limit,
 	// By default the fastArea is the screensize plus a border of no more
 	// than 256 pixels wide and 384 pixels high
 	// dims.w and dims.h need to be divided by 2 for crusader
-	sx_limit = dims.w / 256 + 3;
-	sy_limit = dims.h / 128 + 7;
+	sx_limit = dims.width() / 256 + 3;
+	sy_limit = dims.height() / 128 + 7;
 	xy_limit = (sy_limit + sx_limit) / 2;
 }
 
@@ -431,10 +431,10 @@ void CurrentMap::updateFastArea(int32 from_x, int32 from_y, int32 from_z, int32 
 	Rect dims;
 	Ultima8Engine::get_instance()->getGameMapGump()->GetDims(dims);
 
-	int32 sleft  = ((x_min - y_min) / 4)         - (dims.w / 2 + _mapChunkSize / 4);
-	int32 stop   = ((x_min + y_min) / 8 - z_max) - (dims.h / 2 + _mapChunkSize / 8);
-	int32 sright = ((x_max - y_max) / 4)         + (dims.w / 2 + _mapChunkSize / 4);
-	int32 sbot   = ((x_max + y_max) / 8 - z_min) + (dims.h / 2 + _mapChunkSize / 8);
+	int32 sleft  = ((x_min - y_min) / 4)         - (dims.width() / 2 + _mapChunkSize / 4);
+	int32 stop   = ((x_min + y_min) / 8 - z_max) - (dims.height() / 2 + _mapChunkSize / 8);
+	int32 sright = ((x_max - y_max) / 4)         + (dims.width() / 2 + _mapChunkSize / 4);
+	int32 sbot   = ((x_max + y_max) / 8 - z_min) + (dims.height() / 2 + _mapChunkSize / 8);
 
 	// Don't do anything IF the regions are the same
 	if (_fastXMin == sleft && _fastYMin == stop &&

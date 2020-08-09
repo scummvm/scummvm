@@ -63,7 +63,7 @@ void DesktopGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool sca
 			// Background is partially transparent
 			if (_fadedModal && dynamic_cast<ModalGump *>(g) &&
 			        !dynamic_cast<TargetGump *>(g) && !g->IsHidden())
-				surf->FillBlended(0x7F000000, 0, 0, _dims.w, _dims.h);
+				surf->FillBlended(0x7F000000, 0, 0, _dims.width(), _dims.height());
 
 			g->Paint(surf, lerp_factor, scaled);
 		}
@@ -93,8 +93,8 @@ void DesktopGump::RenderSurfaceChanged(RenderSurface *surf) {
 	// Resize the desktop gump to match the RenderSurface
 	Rect new_dims;
 	surf->GetSurfaceDims(new_dims);
-	_dims.w = new_dims.w;
-	_dims.h = new_dims.h;
+	_dims.setWidth(new_dims.width());
+	_dims.setHeight(new_dims.height());
 
 	Gump::RenderSurfaceChanged();
 }
@@ -103,8 +103,8 @@ void DesktopGump::RenderSurfaceChanged() {
 	// Resize the desktop gump to match the parent
 	Rect new_dims;
 	_parent->GetDims(new_dims);
-	_dims.w = new_dims.w;
-	_dims.h = new_dims.h;
+	_dims.setWidth(new_dims.width());
+	_dims.setHeight(new_dims.height());
 
 	Gump::RenderSurfaceChanged();
 }

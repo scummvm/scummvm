@@ -90,8 +90,8 @@ bool EditWidget::textFits(Std::string &t) {
 	unsigned int remaining;
 	int32 width, height;
 
-	int32 max_width = _multiLine ? _dims.w : 0;
-	int32 max_height = _dims.h;
+	int32 max_width = _multiLine ? _dims.width() : 0;
+	int32 max_height = _dims.height();
 	if (_gameFont && font->isHighRes()) {
 		int32 x_ = 0, y_ = 0;
 		GumpRectToScreenSpace(x_, y_, max_width, max_height, ROUND_INSIDE);
@@ -109,7 +109,7 @@ bool EditWidget::textFits(Std::string &t) {
 	if (_multiLine)
 		return (remaining >= t.size());
 	else
-		return (width <= _dims.w);
+		return (width <= _dims.width());
 }
 
 void EditWidget::renderText() {
@@ -132,8 +132,8 @@ void EditWidget::renderText() {
 	if (!_cachedText) {
 		Font *font = getFont();
 
-		int32 max_width = _multiLine ? _dims.w : 0;
-		int32 max_height = _dims.h;
+		int32 max_width = _multiLine ? _dims.width() : 0;
+		int32 max_height = _dims.height();
 		if (_gameFont && font->isHighRes()) {
 			int32 x_ = 0, y_ = 0;
 			GumpRectToScreenSpace(x_, y_, max_width, max_height, ROUND_INSIDE);
@@ -154,7 +154,7 @@ void EditWidget::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) 
 	renderText();
 
 	if (scaled && _gameFont && getFont()->isHighRes()) {
-		surf->FillAlpha(0xFF, _dims.x, _dims.y, _dims.w, _dims.h);
+		surf->FillAlpha(0xFF, _dims.x, _dims.y, _dims.width(), _dims.height());
 		return;
 	}
 
@@ -174,7 +174,7 @@ void EditWidget::PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 s
 
 	x_ = _dims.x;
 	y_ = _dims.y;
-	int32 w = _dims.w, h = _dims.h;
+	int32 w = _dims.width(), h = _dims.height();
 	GumpRectToScreenSpace(x_, y_, w, h, ROUND_OUTSIDE);
 	surf->FillAlpha(0x00, x_, y_, w, h);
 }

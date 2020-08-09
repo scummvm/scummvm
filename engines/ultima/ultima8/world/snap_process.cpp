@@ -138,8 +138,8 @@ void SnapProcess::getSnapEggRange(const Item *item, Rect &rect) const {
 
 	rect.x = x - xrange + xoff;
 	rect.y = y - yrange + yoff;
-	rect.w = xrange * 2;
-	rect.h = yrange * 2;
+	rect.setWidth(xrange * 2);
+	rect.setHeight(yrange * 2);
 }
 
 void SnapProcess::saveData(Common::WriteStream *ws) {

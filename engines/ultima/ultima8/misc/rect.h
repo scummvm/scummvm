@@ -33,6 +33,20 @@ struct Rect {
 	Rect() : x(0), y(0), w(0), h(0) {}
 	Rect(int nx, int ny, int nw, int nh) : x(nx), y(ny), w(nw), h(nh) {}
 
+	bool operator==(const Rect &rhs) const { return equals(rhs); }
+	bool operator!=(const Rect &rhs) const { return !equals(rhs); }
+
+	int32 width() const { return w; }
+	int32 height() const { return h; }
+
+	void setWidth(int32 aWidth) {
+		w = aWidth;
+	}
+
+	void setHeight(int32 aHeight) {
+		h = aHeight;
+	}
+
 	void    Set(int nx, int ny, int nw, int nh) {
 		x = nx;
 		y = ny;
@@ -164,7 +178,7 @@ struct Rect {
 		return (result += o);
 	}
 
-	bool operator == (const Rect &o) const {
+	bool equals(const Rect &o) const {
 		return x == o.x && y == o.y && w == o.w && h == o.h;
 	}
 

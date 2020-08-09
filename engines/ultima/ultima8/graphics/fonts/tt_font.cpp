@@ -256,7 +256,7 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 
 			int w = _ttfFont->getStringWidth(unicodeText);
 
-			for (int y = 0; y < iter->_dims.h; y++) {
+			for (int y = 0; y < iter->_dims.height(); y++) {
 				uint32 *bufrow = texBuf + (iter->_dims.y + y) * resultWidth;
 				bufrow[iter->_dims.x + w + _borderSize] = 0xFF000000;
 //				if (_borderSize > 0)

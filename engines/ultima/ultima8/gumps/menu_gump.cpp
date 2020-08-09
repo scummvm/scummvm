@@ -125,7 +125,7 @@ void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 		settingman->get("endgame", endgame);
 		settingman->get("quotes", quotes);
 
-		int x_ = _dims.w / 2 + 14;
+		int x_ = _dims.width() / 2 + 14;
 		int y_ = 18;
 		for (int i = 0; i < 8; ++i) {
 			if ((quotes || i != 6) && (endgame || i != 7)) {
@@ -151,20 +151,20 @@ void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 			Gump *widget = new TextWidget(0, 0, name, true, 6);
 			widget->InitGump(this, false);
 			widget->GetDims(rect);
-			widget->Move(90 - rect.w / 2, _dims.h - 40);
+			widget->Move(90 - rect.width() / 2, _dims.height() - 40);
 		}
 	} else {
 		Gump *widget;
 		widget = new TextWidget(0, 0, _TL_("Give thy name:"), true, 6); // CONSTANT!
 		widget->InitGump(this, false);
-		widget->Move(_dims.w / 2 + 6, 10);
+		widget->Move(_dims.width() / 2 + 6, 10);
 
 		Rect textdims;
 		widget->GetDims(textdims);
 
 		widget = new EditWidget(0, 0, "", true, 6, 110, 40, 15); // CONSTANTS!
 		widget->InitGump(this, true);
-		widget->Move(_dims.w / 2 + 6, 10 + textdims.h);
+		widget->Move(_dims.width() / 2 + 6, 10 + textdims.height());
 		widget->MakeFocus();
 	}
 }

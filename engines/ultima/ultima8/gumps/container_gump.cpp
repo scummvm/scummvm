@@ -93,8 +93,8 @@ void ContainerGump::getItemCoords(Item *item, int32 &itemx, int32 &itemy) {
 		// randomize position
 		// TODO: maybe try to put it somewhere where it doesn't overlap others?
 
-		itemx = getRandom() % _itemArea.w;
-		itemy = getRandom() % _itemArea.h;
+		itemx = getRandom() % _itemArea.width();
+		itemy = getRandom() % _itemArea.height();
 
 		item->setGumpLocation(itemx, itemy);
 	}
@@ -247,8 +247,8 @@ void ContainerGump::GetItemLocation(int32 lerp_factor) {
 	if (_parent) _parent->ScreenSpaceToGump(gx, gy);
 
 	// Set x and y, and center us over it
-	_ix = gx - _dims.w / 2;
-	_iy = gy - _dims.h;
+	_ix = gx - _dims.width() / 2;
+	_iy = gy - _dims.height();
 }
 
 void ContainerGump::Close(bool no_del) {
@@ -409,9 +409,9 @@ bool ContainerGump::DraggingItem(Item *item, int mx, int my) {
 	assert(fr);
 
 	if (_draggingX - fr->_xoff < 0 ||
-	        _draggingX - fr->_xoff + fr->_width > _itemArea.w ||
+	        _draggingX - fr->_xoff + fr->_width > _itemArea.width() ||
 	        _draggingY - fr->_yoff < 0 ||
-	        _draggingY - fr->_yoff + fr->_height > _itemArea.h) {
+	        _draggingY - fr->_yoff + fr->_height > _itemArea.height()) {
 		_displayDragging = false;
 		return false;
 	}
@@ -539,8 +539,8 @@ void ContainerGump::saveData(Common::WriteStream *ws) {
 
 	ws->writeUint32LE(static_cast<uint32>(_itemArea.x));
 	ws->writeUint32LE(static_cast<uint32>(_itemArea.y));
-	ws->writeUint32LE(static_cast<uint32>(_itemArea.w));
-	ws->writeUint32LE(static_cast<uint32>(_itemArea.h));
+	ws->writeUint32LE(static_cast<uint32>(_itemArea.width()));
+	ws->writeUint32LE(static_cast<uint32>(_itemArea.height()));
 }
 
 bool ContainerGump::loadData(Common::ReadStream *rs, uint32 version) {

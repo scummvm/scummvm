@@ -76,8 +76,8 @@ void TextWidget::InitGump(Gump *newparent, bool take_focus) {
 		// _targetWidth/_targetHeight zero if they already were.
 		GumpRectToScreenSpace(tx_, ty_, _targetWidth, _targetHeight, ROUND_OUTSIDE);
 
-		_dims.w = _targetWidth;
-		_dims.h = _targetHeight;
+		_dims.setWidth(_targetWidth);
+		_dims.setHeight(_targetHeight);
 		x_ = 0;
 		y_ = 0;
 		ScreenSpaceToGumpRect(x_, y_, _dims.w, _dims.h, ROUND_OUTSIDE);
@@ -119,10 +119,10 @@ bool TextWidget::setupNextText() {
 	                  _targetWidth, _targetHeight, _textAlign, true);
 
 
-	_dims.w = _tx;
-	_dims.h = _ty;
 	_dims.y = -font->getBaseline();
 	_dims.x = 0;
+	_dims.setWidth(_tx);
+	_dims.setHeight(_ty);
 	_currentEnd = _currentStart + remaining;
 
 	delete _cachedText;
@@ -169,7 +169,7 @@ void TextWidget::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) 
 	renderText();
 
 	if (scaled && _gameFont && getFont()->isHighRes()) {
-		surf->FillAlpha(0xFF, _dims.x, _dims.y, _dims.w, _dims.h);
+		surf->FillAlpha(0xFF, _dims.x, _dims.y, _dims.width(), _dims.height());
 		return;
 	}
 
@@ -201,7 +201,7 @@ void TextWidget::PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 s
 
 	x = _dims.x;
 	y = _dims.y;
-	int32 w = _dims.w, h = _dims.h;
+	int32 w = _dims.width(), h = _dims.height();
 	GumpRectToScreenSpace(x, y, w, h, ROUND_OUTSIDE);
 	surf->FillAlpha(0x00, x, y, w, h);
 }
@@ -261,8 +261,8 @@ bool TextWidget::loadData(Common::ReadStream *rs, uint32 version) {
 
 	// Y offset is always baseline
 	_dims.y = -font->getBaseline();
-	_dims.w = tx_;
-	_dims.h = ty_;
+	_dims.setWidth(tx_);
+	_dims.setHeight(ty_);
 	_currentEnd = _currentStart + remaining;
 
 	return true;

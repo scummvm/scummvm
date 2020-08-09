@@ -500,7 +500,7 @@ void BaseSoftRenderSurface::SetFlipped(bool wantFlipped) {
 	// We keep the 'origin' in the same position relative to the clipping window
 
 	_oy -= _clipWindow.y;
-	_clipWindow.y = _height - (_clipWindow.y + _clipWindow.h);
+	_clipWindow.setHeight(_height - _clipWindow.y + _clipWindow.height());
 	_oy += _clipWindow.y;
 
 	_pitch = -_pitch;

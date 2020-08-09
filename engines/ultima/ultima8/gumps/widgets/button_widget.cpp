@@ -183,18 +183,18 @@ void ButtonWidget::saveData(Common::WriteStream *ws) {
 	// HACK ALERT
 	int w = 0, h = 0;
 	if (_textWidget != 0) {
-		w = _dims.w;
-		h = _dims.h;
-		_dims.w = _origW;
-		_dims.h = _origH;
+		w = _dims.width();
+		h = _dims.height();
+		_dims.setWidth(_origW);
+		_dims.setHeight(_origH);
 	}
 
 	Gump::saveData(ws);
 
 	// HACK ALERT
 	if (_textWidget != 0) {
-		_dims.w = w;
-		_dims.h = h;
+		_dims.setWidth(w);
+		_dims.setHeight(h);
 	}
 
 	uint16 flex = 0;
