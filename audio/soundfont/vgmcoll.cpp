@@ -36,7 +36,7 @@ double ConvertLogScaleValToAtten(double percent) {
 	if (percent == 0)
 		return 100.0;  // assume 0 is -100.0db attenuation
 	double atten = 20 * log10(percent) * 2;
-	return MIN(-atten, 100.0);
+	return MIN<double>(-atten, 100.0);
 }
 
 // Convert a percent of volume value to it's attenuation in decibels.
@@ -45,7 +45,7 @@ double ConvertPercentAmplitudeToAttenDB_SF2(double percent) {
 	if (percent == 0)
 		return 100.0;  // assume 0 is -100.0db attenuation
 	double atten = 20 * log10(percent);
-	return MIN(-atten, 100.0);
+	return MIN<double>(-atten, 100.0);
 }
 
 void VGMColl::UnpackSampColl(SynthFile &synthfile, VGMSampColl *sampColl,
