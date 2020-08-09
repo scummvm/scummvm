@@ -408,11 +408,19 @@ void Screen::updateDirtyRectsAmiga() {
 	_dirtyRects.clear();
 }
 
+#define mScale2x(dst, dstPitch, src, srcPitch, w, h) \
+	if (!_useHiColorScreen) \
+		scale2x<uint8, uint16>(dst, dstPitch, src, srcPitch, w, h); \
+	else if (_bytesPerPixel == 2) \
+		scale2x<uint16, uint32>(dst, dstPitch, src, srcPitch, w, h); \
+	 else \
+		scale2x<uint8, uint32>(dst, dstPitch, src, srcPitch, w, h)
+
 void Screen::updateDirtyRectsOvl() {
 	if (_forceFullUpdate) {
 		const byte *src = getCPagePtr(0);
 		byte *dst = _sjisOverlayPtrs[0];
-		scale2x(dst, 640, src, SCREEN_W, SCREEN_W, SCREEN_H);
+		mScale2x(dst, 640, src, SCREEN_W, SCREEN_W, SCREEN_H);
 		mergeOverlay(0, 0, 640, 400);
 		_system->copyRectToScreen(dst, _useHiColorScreen ? 1280 : 640, 0, 0, 640, 400);
 	} else {
@@ -424,8 +432,7 @@ void Screen::updateDirtyRectsOvl() {
 		for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
 			byte *dst = ovl0 + it->top * 1280 * dstBpp + (it->left << dstBpp);
 			const byte *src = page0 + it->top * SCREEN_W * _bytesPerPixel + it->left * _bytesPerPixel;
-
-			scale2x(dst, 640, src, SCREEN_W, it->width(), it->height());
+			mScale2x(dst, 640, src, SCREEN_W, it->width(), it->height());
 			mergeOverlay(it->left<<1, it->top<<1, it->width()<<1, it->height()<<1);
 			_system->copyRectToScreen(dst, _useHiColorScreen ? 1280 : 640, it->left << 1, it->top << 1, it->width() << 1, it->height() << 1);
 		}
@@ -435,57 +442,41 @@ void Screen::updateDirtyRectsOvl() {
 	_dirtyRects.clear();
 }
 
-void Screen::scale2x(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h) {
-	int srcBpp = _bytesPerPixel;
-	int dstBpp = _useHiColorScreen ? 2 : 1;
+#undef mScale2x
 
-	byte *dstL1 = dst;
-	byte *dstL2 = dst + dstPitch * dstBpp;
-
-	int dstAdd = (dstPitch * 2 - w * 2) * dstBpp;
-	int srcAdd = (srcPitch - w) * srcBpp;
-	int dstInc = 2 * dstBpp;
+template<typename srcType, typename scaleToType>
+void Screen::scale2x(uint8 *dst, int dstPitch, const uint8 *src, int srcPitch, int w, int h) {
+	int dstAdd = dstPitch - w;
+	int srcAdd = srcPitch - w;
+	scaleToType *dstL1 = (scaleToType*)dst;
+	scaleToType *dstL2 = (scaleToType*)(dst + dstPitch * (sizeof(scaleToType) >> 1));
+	const srcType *src1 = (const srcType*)src;
 
 	while (h--) {
-		for (int x = 0; x < w; x++, src += srcBpp, dstL1 += dstInc, dstL2 += dstInc) {
-			if (dstBpp == 1) {
-				uint16 col = *src;
-				col |= col << 8;
-				*(uint16 *)(dstL1) = *(uint16 *)(dstL2) = col;
-			} else if (dstBpp == srcBpp) {
-				uint32 col = *(const uint16 *)src;
-				col |= col << 16;
-				*(uint32 *)(dstL1) = *(uint32 *)(dstL2) = col;
-			} else if (dstBpp == 2) {
-				uint32 col = _16bitConversionPalette[*src];
-				col |= col << 16;
-				*(uint32 *)(dstL1) = *(uint32 *)(dstL2) = col;
-			}
+		for (int x = 0; x < w; x++) {
+			scaleToType col = (sizeof(srcType) == 1 && sizeof(scaleToType) == 4) ? _16bitConversionPalette[*src1++] : *src1++;
+			*dstL1++ = *dstL2++ = col | (col << (sizeof(scaleToType) << 2));
 		}
 		dstL1 += dstAdd; dstL2 += dstAdd;
-		src += srcAdd;
+		src1 += srcAdd;
 	}
 }
 
-void Screen::mergeOverlay(int x, int y, int w, int h) {
-	int bpp = _useHiColorScreen ? 2 : 1;
-	byte *dst = _sjisOverlayPtrs[0] + y * 640 * bpp + x * bpp;
-	const byte *src = _sjisOverlayPtrs[1] + y * 640 + x;
-	uint16 *p16 = _16bitPalette ? _16bitPalette : (_16bitConversionPalette ? _16bitConversionPalette : 0);
-
+template<typename pixelType>
+void Screen::mergeOverlayImpl(int x, int y, int w, int h) {
+	const uint8 *src = _sjisOverlayPtrs[1] + y * 640 + x;
+	uint16 *p16 = _16bitPalette ? _16bitPalette : _16bitConversionPalette;
+	pixelType *dst = (pixelType*)(_sjisOverlayPtrs[0] + y * 640 * sizeof(pixelType) + x * sizeof(pixelType));
 	int add = 640 - w;
 
 	while (h--) {
-		for (x = 0; x < w; ++x, dst += bpp) {
-			byte col = *src++;
-			if (col != _sjisInvisibleColor) {
-				if (bpp == 2)
-					*(uint16*)dst = p16[col];
-				else
-					*dst = col;
-			}
+		for (x = 0; x < w; ++x) {
+			uint8 col = *src++;
+			if (col != _sjisInvisibleColor)
+				*dst = (sizeof(pixelType) == 2) ? p16[col] : col;
+			dst++;
 		}
-		dst += add * bpp;
+		dst += add;
 		src += add;
 	}
 }
@@ -3067,7 +3058,7 @@ void Screen::setMouseCursor(int x, int y, const byte *shape) {
 
 	if (_vm->gameFlags().useHiRes) {
 		xOffset = mouseWidth;
-		scale2x(getPagePtr(8) + mouseWidth, SCREEN_W, getPagePtr(8), SCREEN_W, mouseWidth, mouseHeight);
+		scale2x<uint8, uint16>(getPagePtr(8) + mouseWidth, SCREEN_W, getPagePtr(8), SCREEN_W, mouseWidth, mouseHeight);
 		postProcessCursor(getPagePtr(8) + mouseWidth, mouseWidth, mouseHeight, SCREEN_W);
 	} else {
 		postProcessCursor(getPagePtr(8), mouseWidth, mouseHeight, SCREEN_W);

@@ -204,8 +204,10 @@ void Screen_EoB::setMouseCursor(int x, int y, const byte *shape, const uint8 *ov
 
 	if (_useHiResEGADithering)
 		ditherRect(getCPagePtr(6), cursor, mouseW * scaleFactor, mouseW, mouseH, colorKey);
+	else if (_useHiColorScreen)
+		scale2x<uint16, uint32>(cursor, mouseW * scaleFactor, getCPagePtr(6), SCREEN_W, mouseW, mouseH);
 	else if (_vm->gameFlags().useHiRes)
-		scale2x(cursor, mouseW * scaleFactor, getCPagePtr(6), SCREEN_W, mouseW, mouseH);
+		scale2x<uint8, uint16>(cursor, mouseW * scaleFactor, getCPagePtr(6), SCREEN_W, mouseW, mouseH);
 	else
 		copyRegionToBuffer(6, 0, 0, mouseW, mouseH, cursor);
 
