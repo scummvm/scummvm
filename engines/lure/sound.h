@@ -32,6 +32,7 @@
 #include "common/ptr.h"
 
 #include "audio/mididrv.h"
+#include "audio/mt32gm.h"
 
 class MidiParser;
 class MidiChannel;
@@ -39,6 +40,7 @@ class MidiChannel;
 namespace Lure {
 
 #define NUM_CHANNELS 16
+#define LURE_MAX_SOURCES 10
 
 struct ChannelEntry {
 	MidiChannel *midiChannel;
@@ -55,6 +57,8 @@ private:
 	uint8 *_soundData;
 	uint8 _soundSize;
 	MidiDriver *_driver;
+	MidiDriver_MT32GM *_mt32Driver;
+	int8 _source;
 	MidiParser *_parser;
 	ChannelEntry *_channels;
 	bool _isMusic;
@@ -68,7 +72,7 @@ private:
 
 public:
 	MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
-		 uint8 channelNum, uint8 soundNum, bool isMus, bool loop, uint8 numChannels, void *soundData, uint32 size);
+		 uint8 channelNum, uint8 soundNum, bool isMus, bool loop, int8 source, uint8 numChannels, void *soundData, uint32 size);
 	~MidiMusic() override;
 	void setVolume(int volume);
 	int getVolume() const { return _volume; }
@@ -83,12 +87,15 @@ public:
 
 	// MidiDriver_BASE interface implementation
 	void send(uint32 b) override;
+	void send(int8 source, uint32 b) override;
 	void metaEvent(byte type, byte *data, uint16 length) override;
+	void metaEvent(int8 source, byte type, byte *data, uint16 length) override;
 
 	void onTimer();
 
 	uint8 channelNumber() const { return _channelNumber; }
 	uint8 soundNumber() const { return _soundNumber; }
+	int8 source() const { return _source; }
 	bool isPlaying() const { return _isPlaying; }
 	bool isMusic() const { return _isMusic; }
 };
@@ -102,6 +109,7 @@ private:
 	int _numDescs;
 	SoundDescResource *soundDescs() { return (SoundDescResource *) _descs->data(); }
 	MidiDriver *_driver;
+	MidiDriver_MT32GM *_mt32Driver;
 	typedef Common::List<Common::SharedPtr<SoundDescResource> > SoundList;
 	typedef SoundList::iterator SoundListIterator;
 	SoundList _activeSounds;
@@ -110,6 +118,7 @@ private:
 	MusicList _playingSounds;
 	ChannelEntry _channelsInner[NUM_CHANNELS];
 	bool _channelsInUse[NUM_CHANNELS];
+	bool _sourcesInUse[LURE_MAX_SOURCES];
 	bool _isPlaying;
 	bool _nativeMT32;
 	bool _isRoland;
@@ -124,7 +133,6 @@ private:
 	void musicInterface_TidySounds();
 	static void onTimer(void *data);
 	void doTimer();
-	void mt32SysEx(const uint32 targetAddress, const byte *dataPtr, uint8 length);
 
 public:
 	SoundManager();
@@ -134,7 +142,7 @@ public:
 	void loadFromStream(Common::ReadStream *stream);
 
 	void loadSection(uint16 sectionId);
-	void initCustomTimbres();
+	bool initCustomTimbres(bool canAbort = false);
 	void killSounds();
 	void addSound(uint8 soundIndex, bool tidyFlag = true);
 	void addSound2(uint8 soundIndex);
@@ -157,7 +165,7 @@ public:
 	uint16 sfxVolume() const { return _sfxVolume; }
 
 	// The following methods implement the external sound player module
-	void musicInterface_Initialize();
+	//void musicInterface_Initialize();
 	void musicInterface_Play(uint8 soundNumber, uint8 channelNumber, bool isMusic = false, uint8 numChannels = 4);
 	void musicInterface_Stop(uint8 soundNumber);
 	bool musicInterface_CheckPlaying(uint8 soundNumber);
