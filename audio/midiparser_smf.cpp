@@ -20,6 +20,7 @@
  *
  */
 
+#include "audio/mididrv.h"
 #include "audio/midiparser.h"
 #include "common/textconsole.h"
 #include "common/util.h"
@@ -31,13 +32,24 @@ class MidiParser_SMF : public MidiParser {
 protected:
 	byte *_buffer;
 	bool _malformedPitchBends;
+	/**
+	 * The source number to use when sending MIDI messages to the driver.
+	 * When using multiple sources, use source 0 and higher. This must be
+	 * used when source volume or channel locking is used.
+	 * By default this is -1, which means the parser is the only source
+	 * of MIDI messages and multiple source functionality is disabled.
+	 */
+	int8 _source;
 
 protected:
 	void compressToType0();
 	void parseNextEvent(EventInfo &info);
 
+	void sendToDriver(uint32 b) override;
+	void sendMetaEventToDriver(byte type, byte *data, uint16 length) override;
+
 public:
-	MidiParser_SMF() : _buffer(0), _malformedPitchBends(false) {}
+	MidiParser_SMF(int8 source = -1) : _buffer(0), _malformedPitchBends(false), _source(source) { }
 	~MidiParser_SMF();
 
 	bool loadMusic(byte *data, uint32 size);
@@ -385,4 +397,20 @@ void MidiParser_SMF::compressToType0() {
 	*output++ = 0x00;
 }
 
-MidiParser *MidiParser::createParser_SMF() { return new MidiParser_SMF; }
+void MidiParser_SMF::sendToDriver(uint32 b) {
+	if (_source < 0) {
+		MidiParser::sendToDriver(b);
+	} else {
+		_driver->send(_source, b);
+	}
+}
+
+void MidiParser_SMF::sendMetaEventToDriver(byte type, byte *data, uint16 length) {
+	if (_source < 0) {
+		MidiParser::sendMetaEventToDriver(type, data, length);
+	} else {
+		_driver->metaEvent(_source, type, data, length);
+	}
+}
+
+MidiParser *MidiParser::createParser_SMF(int8 source) { return new MidiParser_SMF(source); }
