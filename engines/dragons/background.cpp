@@ -91,9 +91,9 @@ Background::Background() : _priorityLayer(0), _points2(0), _data(0) {
 	_layerOffset[0] = Common::Point(0, 0);
 	_layerOffset[1] = Common::Point(0, 0);
 	_layerOffset[2] = Common::Point(0, 0);
-	_layerAlphaMode[0] = NORMAL;
-	_layerAlphaMode[1] = NORMAL;
-	_layerAlphaMode[2] = NORMAL;
+	_layerAlphaMode[0] = NONE;
+	_layerAlphaMode[1] = NONE;
+	_layerAlphaMode[2] = NONE;
 
 	_tileDataOffset = nullptr;
 }
