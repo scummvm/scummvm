@@ -31,7 +31,8 @@ lure.dat:
 TODO
 
 macgui.dat:
-TODO
+The file contains set of offsets for recreation of Classic Mac OS GUI, used
+by Director, MacVenture and WAGE engines.
 
 macventure.dat
 TODO
@@ -45,7 +46,7 @@ neverhood.dat:
 TODO
 
 prince_translation.dat:
-TODO
+The file contains translated game texts for Prince and the Coward game.
 
 queen.tbl:
 'queen.tbl' contains a list of filenames, filesizes and offsets for the
