@@ -275,12 +275,10 @@ public:
 		PointRoundDir r = ROUND_TOPLEFT);
 
 	//! Transform a rectangle to screenspace from gumpspace
-	virtual void GumpRectToScreenSpace(int32 &gx, int32 &gy,
-		int32 &gw, int32 &gh, RectRoundDir r = ROUND_OUTSIDE);
+	virtual void GumpRectToScreenSpace(Rect &gr, RectRoundDir r = ROUND_OUTSIDE);
 
 	//! Transform a rectangle to gumpspace from screenspace
-	virtual void ScreenSpaceToGumpRect(int32 &sx, int32 &sy,
-		int32 &sw, int32 &sh, RectRoundDir r = ROUND_OUTSIDE);
+	virtual void ScreenSpaceToGumpRect(Rect &sr, RectRoundDir r = ROUND_OUTSIDE);
 
 	//! Trace a click, and return ObjId
 	virtual uint16 TraceObjId(int32 mx, int32 my);

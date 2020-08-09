@@ -27,8 +27,8 @@ namespace Ultima {
 namespace Ultima8 {
 
 struct Rect {
-	int32       x, y;
-	int32       w, h;
+	int32 x, y;
+	int32 w, h;
 
 	Rect() : x(0), y(0), w(0), h(0) {}
 	Rect(int nx, int ny, int nw, int nh) : x(nx), y(ny), w(nw), h(nh) {}
@@ -45,6 +45,13 @@ struct Rect {
 
 	void setHeight(int32 aHeight) {
 		h = aHeight;
+	}
+
+	void grow(int16 offset) {
+		x -= offset;
+		y -= offset;
+		w += offset;
+		h += offset;
 	}
 
 	void    Set(int nx, int ny, int nw, int nh) {

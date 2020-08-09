@@ -307,9 +307,8 @@ void Gump::PaintCompositing(RenderSurface *surf, int32 lerp_factor,
 	surf->GetClippingRect(old_rect);
 
 	// Set new clipping rect
-	int32 cx = _dims.x, cy = _dims.y, cw = _dims.width(), ch = _dims.height();
-	GumpRectToScreenSpace(cx, cy, cw, ch, ROUND_OUTSIDE);
-	Rect new_rect(cx, cy, cw, ch);
+	Rect new_rect(_dims);
+	GumpRectToScreenSpace(new_rect, ROUND_OUTSIDE);
 	new_rect.Intersect(old_rect);
 	surf->SetClippingRect(new_rect);
 
@@ -468,35 +467,37 @@ void Gump::GumpToParent(int32 &gx, int32 &gy, PointRoundDir) {
 }
 
 // Transform a rectangle to screenspace from gumpspace
-void Gump::GumpRectToScreenSpace(int32 &gx, int32 &gy, int32 &gw, int32 &gh,
-                                 RectRoundDir r) {
+void Gump::GumpRectToScreenSpace(Rect &gr, RectRoundDir r) {
 	PointRoundDir tl = (r == ROUND_INSIDE ? ROUND_BOTTOMRIGHT : ROUND_TOPLEFT);
 	PointRoundDir br = (r == ROUND_OUTSIDE ? ROUND_BOTTOMRIGHT : ROUND_TOPLEFT);
 
-	int32 x1 = gx, y1 = gy;
-	int32 x2 = gx + gw, y2 = gy + gh;
+	int32 x1 = gr.x, y1 = gr.y;
+	int32 x2 = gr.x + gr.width(), y2 = gr.y + gr.height();
 	GumpToScreenSpace(x1, y1, tl);
 	GumpToScreenSpace(x2, y2, br);
-	gx = x1;
-	gy = y1;
-	if (gw != 0) gw = x2 - x1;
-	if (gh != 0) gh = y2 - y1;
+	gr.x = x1;
+	gr.y = y1;
+	if (gr.width() != 0)
+		gr.setWidth(x2 - x1);
+	if (gr.height() != 0)
+		gr.setHeight(y2 - y1);
 }
 
 // Transform a rectangle to gumpspace from screenspace
-void Gump::ScreenSpaceToGumpRect(int32 &sx, int32 &sy, int32 &sw, int32 &sh,
-                                 RectRoundDir r) {
+void Gump::ScreenSpaceToGumpRect(Rect &sr, RectRoundDir r) {
 	PointRoundDir tl = (r == ROUND_INSIDE ? ROUND_BOTTOMRIGHT : ROUND_TOPLEFT);
 	PointRoundDir br = (r == ROUND_OUTSIDE ? ROUND_BOTTOMRIGHT : ROUND_TOPLEFT);
 
-	int32 x1 = sx, y1 = sy;
-	int32 x2 = sx + sw, y2 = sy + sh;
+	int32 x1 = sr.x, y1 = sr.y;
+	int32 x2 = sr.x + sr.width(), y2 = sr.y + sr.height();
 	ScreenSpaceToGump(x1, y1, tl);
 	ScreenSpaceToGump(x2, y2, br);
-	sx = x1;
-	sy = y1;
-	if (sw != 0) sw = x2 - x1;
-	if (sh != 0) sh = y2 - y1;
+	sr.x = x1;
+	sr.y = y1;
+	if (sr.width() != 0)
+		sr.setWidth(x2 - x1);
+	if (sr.height() != 0)
+		sr.setHeight(y2 - y1);
 }
 
 uint16 Gump::TraceObjId(int32 mx, int32 my) {

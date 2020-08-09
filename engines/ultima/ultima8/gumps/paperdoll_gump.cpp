@@ -397,11 +397,8 @@ void PaperdollGump::ChildNotify(Gump *child, uint32 message) {
 			desktop->GetDims(rect);
 			Rect sr;
 			statsgump->GetDims(sr);
-			sr.x += 2;
-			sr.w -= 4;
-			sr.y += 2;
-			sr.h -= 4;
-			statsgump->GumpRectToScreenSpace(sr.x, sr.y, sr.w, sr.h);
+			sr.grow(-2);
+			statsgump->GumpRectToScreenSpace(sr);
 			if (!sr.Overlaps(rect))
 				statsgump->setRelativePosition(BOTTOM_RIGHT, -5, -5);
 		}
