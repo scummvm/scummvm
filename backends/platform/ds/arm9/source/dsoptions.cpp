@@ -238,17 +238,9 @@ void DSOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint
 
 
 void showOptionsDialog() {
-
-
-	DS::displayMode16Bit();
-
-
 	DSOptionsDialog *d = new DSOptionsDialog();
 	d->runModal();
 	delete d;
-
-	DS::displayMode8Bit();
-
 }
 
 void setOptions() {

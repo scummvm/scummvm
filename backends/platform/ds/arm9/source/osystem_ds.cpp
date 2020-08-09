@@ -57,7 +57,7 @@
 OSystem_DS *OSystem_DS::_instance = NULL;
 
 OSystem_DS::OSystem_DS()
-	: _eventSource(NULL), _mixer(NULL),
+	: _eventSource(NULL), _mixer(NULL), _isOverlayShown(true),
 	_disableCursorPalette(true), _graphicsEnable(true), _gammaValue(0)
 {
 	_instance = this;
@@ -90,6 +90,8 @@ void OSystem_DS::initBackend() {
 
 	_mixer = new Audio::MixerImpl(11025);
 	_mixer->setReady(true);
+
+	_overlay.create(256, 192, Graphics::PixelFormat(2, 5, 5, 5, 1, 0, 5, 10, 15));
 
 	BaseBackend::initBackend();
 }
@@ -146,7 +148,7 @@ void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
 		{
 			u16 paletteValue = red | (green << 5) | (blue << 10);
 
-			if (DS::getIsDisplayMode8Bit()) {
+			if (!_isOverlayShown) {
 				int col = applyGamma(paletteValue);
 				BG_PALETTE[r] = col;
 #ifdef DISABLE_TEXT_CONSOLE
@@ -195,16 +197,9 @@ void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int 
 }
 
 void OSystem_DS::updateScreen() {
-	if (!DS::getIsDisplayMode8Bit()) {
-		u16 *back = DS::get16BitBackBuffer();
-
-		if (DS::isCpuScalerEnabled()) {
-			Rescale_320x256x1555_To_256x256x1555(BG_GFX, back, 512, 512);
-		} else {
-			for (int r = 0; r < 512 * 256; r++) {
-				*(BG_GFX + r) = *(back + r);
-			}
-		}
+	if (_isOverlayShown) {
+		u16 *back = (u16 *)_overlay.getPixels();
+		dmaCopyHalfWords(3, back, BG_GFX, 256 * 192 * 2);
 	} else if (!_graphicsEnable) {
 		return;
 	} else if (DS::isCpuScalerEnabled()) {
@@ -235,9 +230,9 @@ void OSystem_DS::updateScreen() {
 			u16 *dest2 = (u16 *)BG_GFX_SUB + (dy << 8);
 			DC_FlushRange(dest2, _framebuffer.w << 1);
 
-			dmaCopyHalfWords(2, src, dest2, _framebuffer.w);
+			dmaCopyHalfWordsAsynch(2, src, dest2, _framebuffer.w);
 #endif
-			dmaCopyHalfWords(3, src, dest1, _framebuffer.w);
+			dmaCopyHalfWordsAsynch(3, src, dest1, _framebuffer.w);
 
 			while (dmaBusy(2) || dmaBusy(3));
 
@@ -251,58 +246,54 @@ void OSystem_DS::setShakePos(int shakeXOffset, int shakeYOffset) {
 }
 
 void OSystem_DS::showOverlay() {
-	DS::displayMode16Bit();
+	dmaFillHalfWords(0, BG_GFX, 256 * 192 * 2);
+	videoBgEnable(2);
+	lcdMainOnBottom();
+	_isOverlayShown = true;
 }
 
 void OSystem_DS::hideOverlay() {
+	videoBgDisable(2);
 	DS::displayMode8Bit();
+	_isOverlayShown = false;
 }
 
 bool OSystem_DS::isOverlayVisible() const {
-	return !DS::getIsDisplayMode8Bit();
+	return _isOverlayShown;
 }
 
 void OSystem_DS::clearOverlay() {
-	memset((u16 *) DS::get16BitBackBuffer(), 0, 512 * 256 * 2);
+	memset(_overlay.getPixels(), 0, _overlay.pitch * _overlay.h);
 }
 
 void OSystem_DS::grabOverlay(void *buf, int pitch) {
-	u16 *start = DS::get16BitBackBuffer();
+	byte *dst = (byte *)buf;
 
-	for (int y = 0; y < 200; y++) {
-		u16 *src = start + (y * 320);
-		u16 *dest = (u16 *)((u8 *)buf + (y * pitch));
-
-		for (int x = 0; x < 320; x++) {
-			*dest++ =  *src++;
-		}
+	for (int y = 0; y < _overlay.h; ++y) {
+		memcpy(dst, _overlay.getBasePtr(0, y), _overlay.w * _overlay.format.bytesPerPixel);
+		dst += pitch;
 	}
-
 }
 
 void OSystem_DS::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
-	u16 *bg = (u16 *) DS::get16BitBackBuffer();
-	const u8 *source = (const u8 *)buf;
-
-	for (int dy = y; dy < y + h; dy++) {
-		const u16 *src = (const u16 *)source;
-
-		for (int dx = x; dx < x + w; dx++) {
-			*(bg + (dy * 512) + dx) = *src;
-			src++;
-		}
-		source += pitch;
-	}
+	_overlay.copyRectToSurface(buf, pitch, x, y, w, h);
 }
 
 int16 OSystem_DS::getOverlayHeight() {
-	return getHeight();
+	return _overlay.h;
 }
 
 int16 OSystem_DS::getOverlayWidth() {
-	return getWidth();
+	return _overlay.w;
 }
 
+Graphics::PixelFormat OSystem_DS::getOverlayFormat() const {
+	return _overlay.format;
+}
+
+Common::Point OSystem_DS::transformPoint(uint16 x, uint16 y) {
+	return DS::transformPoint(x, y, _isOverlayShown);
+}
 
 bool OSystem_DS::showMouse(bool visible) {
 	DS::setShowCursor(visible);
@@ -310,7 +301,7 @@ bool OSystem_DS::showMouse(bool visible) {
 }
 
 void OSystem_DS::warpMouse(int x, int y) {
-	DS::warpMouse(x, y);
+	DS::warpMouse(x, y, _isOverlayShown);
 }
 
 void OSystem_DS::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, u32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
@@ -392,6 +383,18 @@ void OSystem_DS::setFocusRectangle(const Common::Rect& rect) {
 
 void OSystem_DS::clearFocusRectangle() {
 
+}
+
+void OSystem_DS::engineInit() {
+#ifdef DISABLE_TEXT_CONSOLE
+	videoBgEnableSub(3);
+#endif
+}
+
+void OSystem_DS::engineDone() {
+#ifdef DISABLE_TEXT_CONSOLE
+	videoBgDisableSub(3);
+#endif
 }
 
 void OSystem_DS::logMessage(LogMessageType::Type type, const char *message) {

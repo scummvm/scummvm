@@ -117,10 +117,6 @@ static int subScreenWidth = SCUMM_GAME_WIDTH;
 static int subScreenHeight = SCUMM_GAME_HEIGHT;
 static int subScreenScale = 256;
 
-
-// Saved buffers
-static bool displayModeIs8Bit = false;
-
 static bool gameScreenSwap = false;
 bool isCpuScalerEnabled();
 
@@ -154,7 +150,7 @@ void setIcon(int num, int x, int y, int imageNum, int flags, bool enable);
 void setIconMain(int num, int x, int y, int imageNum, int flags, bool enable);
 
 bool isCpuScalerEnabled() {
-	return cpuScalerEnable || !displayModeIs8Bit;
+	return cpuScalerEnable;
 }
 
 
@@ -231,12 +227,6 @@ void setUnscaledMode(bool enable) {
 }
 
 void displayMode8Bit() {
-	setOptions();
-
-	displayModeIs8Bit = true;
-
-	videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
-	vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
 	vramSetBankB(VRAM_B_MAIN_BG_0x06020000);
 
 	if (isCpuScalerEnabled()) {
@@ -257,9 +247,6 @@ void displayMode8Bit() {
 	}
 
 #ifdef DISABLE_TEXT_CONSOLE
-	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
-	vramSetBankC(VRAM_C_SUB_BG_0x06200000);
-	vramSetBankD(VRAM_D_SUB_SPRITE);
 	REG_BG3CNT_SUB = BG_BMP8_512x256;
 
 	REG_BG3PA_SUB = (int) (subScreenWidth / 256.0f * 256);
@@ -314,40 +301,9 @@ void setCursorIcon(const u8 *icon, uint w, uint h, byte keycolor, int hotspotX, 
 	}
 }
 
-
-
-
-void displayMode16Bit() {
-	videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
-
-	vramSetBankA(VRAM_A_MAIN_BG);
-	vramSetBankB(VRAM_B_MAIN_BG);
-	vramSetBankC(VRAM_C_MAIN_BG);
-	vramSetBankD(VRAM_D_MAIN_BG);
-
-	REG_BG3CNT = BG_BMP16_512x256;
-
-	memset(BG_GFX, 0, 512 * 256 * 2);
-
-	lcdMainOnBottom();
-
-	displayModeIs8Bit = false;
-
-	REG_BG3PA = isCpuScalerEnabled() ? 256 : (int) (1.25f * 256);
-	REG_BG3PB = 0;
-	REG_BG3PC = 0;
-	REG_BG3PD = (int) ((200.0f / 192.0f) * 256);
-}
-
-
 void setShakePos(int shakeXOffset, int shakeYOffset) {
 	s_shakeXOffset = shakeXOffset;
 	s_shakeYOffset = shakeYOffset;
-}
-
-
-u16 *get16BitBackBuffer() {
-	return BG_GFX + 0x20000;
 }
 
 void doTimerCallback() {
@@ -357,10 +313,6 @@ void doTimerCallback() {
 			callback(callbackInterval);
 		}
 	}
-}
-
-bool getIsDisplayMode8Bit() {
-	return displayModeIs8Bit;
 }
 
 void setIcon(int num, int x, int y, int imageNum, int flags, bool enable) {
@@ -390,9 +342,15 @@ void updateMouse() {
 	}
 }
 
-void warpMouse(int penX, int penY) {
-	storedMouseX = ((penX - touchX) << 8) / touchScX;
-	storedMouseY = ((penY - touchY) << 8) / touchScY;
+void warpMouse(int penX, int penY, bool isOverlayShown) {
+	if (!isOverlayShown) {
+		storedMouseX = ((penX - touchX) << 8) / touchScX;
+		storedMouseY = ((penY - touchY) << 8) / touchScY;
+	} else {
+		storedMouseX = penX;
+		storedMouseY = penY;
+	}
+
 	updateMouse();
 }
 
@@ -451,12 +409,14 @@ void setZoomedScreenScale(int x, int y) {
 #endif
 }
 
-Common::Point transformPoint(uint16 x, uint16 y) {
-	x = ((x * touchScX) >> 8) + touchX;
-	x = CLIP<uint16>(x, 0, gameWidth  - 1);
+Common::Point transformPoint(uint16 x, uint16 y, bool isOverlayShown) {
+	if (!isOverlayShown) {
+		x = ((x * touchScX) >> 8) + touchX;
+		x = CLIP<uint16>(x, 0, gameWidth  - 1);
 
-	y = ((y * touchScY) >> 8) + touchY;
-	y = CLIP<uint16>(y, 0, gameHeight - 1);
+		y = ((y * touchScY) >> 8) + touchY;
+		y = CLIP<uint16>(y, 0, gameHeight - 1);
+	}
 
 	return Common::Point(x, y);
 }
@@ -501,55 +461,41 @@ void VBlankHandler(void) {
 	subScX += (subScTargetX - subScX) >> 2;
 	subScY += (subScTargetY - subScY) >> 2;
 
-	if (displayModeIs8Bit) {
-
-		if (!scaledMode) {
-
-			if (scX + 256 > gameWidth - 1) {
-				scX = gameWidth - 1 - 256;
-			}
-
-			if (scX < 0) {
-				scX = 0;
-			}
-
-			if (scY + 192 > gameHeight - 1) {
-				scY = gameHeight - 1 - 192;
-			}
-
-			if (scY < 0) {
-				scY = 0;
-			}
-
-			setZoomedScreenScroll(subScX, subScY, (subScreenWidth != 256) && (subScreenWidth != 128));
-			setZoomedScreenScale(subScreenWidth, ((subScreenHeight * (256 << 8)) / 192) >> 8);
-
-
-			setMainScreenScroll((scX << 8) + (s_shakeXOffset << 8), (scY << 8) + (s_shakeYOffset << 8));
-			setMainScreenScale(256, 256);		// 1:1 scale
-
-		} else {
-
-			if (scY > gameHeight - 192 - 1) {
-				scY = gameHeight - 192 - 1;
-			}
-
-			if (scY < 0) {
-				scY = 0;
-			}
-
-			setZoomedScreenScroll(subScX, subScY, (subScreenWidth != 256) && (subScreenWidth != 128));
-			setZoomedScreenScale(subScreenWidth, ((subScreenHeight * (256 << 8)) / 192) >> 8);
-
-			setMainScreenScroll(64 + (s_shakeXOffset << 8), (scY << 8) + (s_shakeYOffset << 8));
-			setMainScreenScale(320, 256);		// 1:1 scale
-
+	if (!scaledMode) {
+		if (scX + 256 > gameWidth - 1) {
+			scX = gameWidth - 1 - 256;
 		}
-	} else {
-		setZoomedScreenScroll(0, 0, true);
-		setZoomedScreenScale(320, 256);
 
-		setMainScreenScroll(0, 0);
+		if (scX < 0) {
+			scX = 0;
+		}
+
+		if (scY + 192 > gameHeight - 1) {
+			scY = gameHeight - 1 - 192;
+		}
+
+		if (scY < 0) {
+			scY = 0;
+		}
+
+		setZoomedScreenScroll(subScX, subScY, (subScreenWidth != 256) && (subScreenWidth != 128));
+		setZoomedScreenScale(subScreenWidth, ((subScreenHeight * (256 << 8)) / 192) >> 8);
+
+		setMainScreenScroll((scX << 8) + (s_shakeXOffset << 8), (scY << 8) + (s_shakeYOffset << 8));
+		setMainScreenScale(256, 256);		// 1:1 scale
+	} else {
+		if (scY > gameHeight - 192 - 1) {
+			scY = gameHeight - 192 - 1;
+		}
+
+		if (scY < 0) {
+			scY = 0;
+		}
+
+		setZoomedScreenScroll(subScX, subScY, (subScreenWidth != 256) && (subScreenWidth != 128));
+		setZoomedScreenScale(subScreenWidth, ((subScreenHeight * (256 << 8)) / 192) >> 8);
+
+		setMainScreenScroll(64 + (s_shakeXOffset << 8), (scY << 8) + (s_shakeYOffset << 8));
 		setMainScreenScale(320, 256);		// 1:1 scale
 	}
 
@@ -602,8 +548,15 @@ void initHardware() {
 		BG_PALETTE[r] = 0;
 	}
 
-	// Allocate save buffer for game screen
-	displayMode16Bit();
+	videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
+	vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
+	vramSetBankE(VRAM_E_MAIN_SPRITE);
+
+	REG_BG2CNT = BG_BMP16_256x256;
+	REG_BG2PA = 256;
+	REG_BG2PB = 0;
+	REG_BG2PC = 0;
+	REG_BG2PD = 256;
 
 	scaledMode = true;
 	scX = 0;
@@ -627,15 +580,14 @@ void initHardware() {
 	timerStart(0, ClockDivider_1, (u16)TIMER_FREQ(1000), timerTickHandler);
 	REG_IME = 1;
 
-	videoSetModeSub(MODE_0_2D | DISPLAY_BG0_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
-	vramSetBankD(VRAM_D_SUB_SPRITE);
-	vramSetBankE(VRAM_E_MAIN_SPRITE);
-
 #ifndef DISABLE_TEXT_CONSOLE
+	videoSetModeSub(MODE_0_2D | DISPLAY_BG0_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
 	vramSetBankH(VRAM_H_SUB_BG);
 	consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);
-
-	printf("Testing the console\n");
+#else
+	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
+	vramSetBankC(VRAM_C_SUB_BG_0x06200000);
+	vramSetBankI(VRAM_I_SUB_SPRITE);
 #endif
 
 	initSprites();

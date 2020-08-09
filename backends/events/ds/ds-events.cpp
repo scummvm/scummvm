@@ -22,8 +22,8 @@
 
 #include <nds.h>
 
-#include "dsmain.h"
 #include "backends/events/ds/ds-events.h"
+#include "osystem_ds.h"
 
 bool DSEventSource::pollEvent(Common::Event &event) {
 	if (_eventQueue.empty()) {
@@ -69,7 +69,7 @@ void DSEventSource::addEventsToQueue() {
 	if (held & KEY_TOUCH) {
 		touchPosition touchPos;
 		touchRead(&touchPos);
-		event.mouse = DS::transformPoint(touchPos.px, touchPos.py);
+		event.mouse = dynamic_cast<OSystem_DS *>(g_system)->transformPoint(touchPos.px, touchPos.py);
 
 		if (keysPressed & KEY_TOUCH) {
 			event.type = Common::EVENT_LBUTTONDOWN;
