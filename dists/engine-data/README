@@ -1,18 +1,21 @@
 engine-data README
 -------------------------------------------------------------------------------
 
-access.dat
+access.dat:
 TODO
 
-cryo.dat
+cryo.dat:
 This file contains a lot of hardcoded tables used by the Cryo engine.
 
-cryomni3d.dat
+cryomni3d.dat:
 This file contains all strings and some file names depending only on platform/localization.
 Some filenames depend on the edition, these are handled by game flags in engine code.
 Those informations were stored in the original executables.
 
-drascula.dat
+drascula.dat:
+TODO
+
+fonts.dat:
 TODO
 
 hugo.dat:
@@ -24,7 +27,13 @@ The 'kyra.dat' file is created by extracting hardcoded data, like the
 roomtable, inventory names, various strings, tables for shapes and sequence
 scripts, from.
 
-lure.dat
+lure.dat:
+TODO
+
+macgui.dat:
+TODO
+
+macventure.dat
 TODO
 
 mort.dat:
@@ -33,6 +42,9 @@ also contains the French and German translation, as well as a custom-made
 English translation.
 
 neverhood.dat:
+TODO
+
+prince_translation.dat:
 TODO
 
 queen.tbl:
@@ -45,14 +57,14 @@ mp3/ogg/flac encoded need the datafile.
 sky.cpt:
 TODO
 
-supernova.dat
+supernova.dat:
 File created partially by extracting the German text from the original source
 code. It also contains the custom-made English translation.
 
-teenagent.dat
+teenagent.dat:
 TODO
 
-titanic.dat
+titanic.dat:
 TODO
 
 tony.dat:
@@ -61,5 +73,11 @@ This file contains the font table used by the different versions of the game.
 toon.dat:
 This file contains all the strings hardcoded in the original executables.
 
-xeen.ccs
+ultima.dat:
+TODO
+
+wintermute.zip:
+TODO
+
+xeen.ccs:
 This file contains all the various strings and figures needed for the games.
