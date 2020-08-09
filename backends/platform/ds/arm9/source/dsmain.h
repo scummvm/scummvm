@@ -50,13 +50,13 @@ void 	doTimerCallback();												// Call callback function if required
 
 // Events
 void 	VBlankHandler();
-Common::Point transformPoint(uint16 x, uint16 y);
+Common::Point transformPoint(uint16 x, uint16 y, bool isOverlayShown);
 
 // Sam and Max Stuff
 void 	setCursorIcon(const u8 *icon, uint w, uint h, byte keycolor, int hotspotX, int hotspotY);
 void	setShowCursor(bool enable);
 void	setMouseCursorVisible(bool visible);
-void	warpMouse(int penX, int penY);
+void	warpMouse(int penX, int penY, bool isOverlayShown);
 void	updateMouse();
 
 // Shake

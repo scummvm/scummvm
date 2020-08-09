@@ -38,8 +38,8 @@
 class OSystem_DS : public BaseBackend, public PaletteManager {
 protected:
 	Audio::MixerImpl *_mixer;
-	Graphics::Surface _framebuffer;
-	bool _graphicsEnable;
+	Graphics::Surface _framebuffer, _overlay;
+	bool _graphicsEnable, _isOverlayShown;
 
 	static OSystem_DS *_instance;
 
@@ -95,8 +95,9 @@ public:
 	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h);
 	virtual int16 getOverlayHeight();
 	virtual int16 getOverlayWidth();
-	virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::PixelFormat(2, 5, 5, 5, 1, 0, 5, 10, 15); }
+	virtual Graphics::PixelFormat getOverlayFormat() const;
 
+	Common::Point transformPoint(uint16 x, uint16 y);
 	virtual bool showMouse(bool visible);
 
 	virtual void warpMouse(int x, int y);
@@ -117,8 +118,10 @@ public:
 	virtual void quit();
 
 	virtual void setFocusRectangle(const Common::Rect& rect);
-
 	virtual void clearFocusRectangle();
+
+	virtual void engineInit();
+	virtual void engineDone();
 
 	virtual void initBackend();
 
