@@ -22,6 +22,7 @@
 
 #include "lure/sound.h"
 #include "lure/game.h"
+#include "lure/lure.h"
 #include "lure/memory.h"
 #include "lure/res.h"
 #include "lure/room.h"
@@ -54,21 +55,18 @@ SoundManager::SoundManager() {
 	_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
 
 	Common::fill(_channelsInUse, _channelsInUse + NUM_CHANNELS, false);
+	Common::fill(_sourcesInUse, _sourcesInUse + LURE_MAX_SOURCES, false);
 
-	_driver = MidiDriver::createMidi(dev);
-	int statusCode = _driver->open();
-	if (statusCode) {
-		warning("Sound driver returned error code %d", statusCode);
-		_driver = NULL;
-
+	if (_isRoland) {
+		_driver = _mt32Driver = new MidiDriver_MT32GM(MT_MT32);
 	} else {
-		if (_nativeMT32) {
-			_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
-			_driver->sendMT32Reset();
-		} else {
-			_driver->sendGMReset();
-		}
+		_driver = MidiDriver::createMidi(dev);
+	}
+	int statusCode = _driver->open();
+	if (statusCode)
+		error("Sound driver returned error code %d", statusCode);
 
+	if (!_isRoland) {
 		for (index = 0; index < NUM_CHANNELS; ++index) {
 			_channelsInner[index].midiChannel = _driver->allocateChannel();
 			/* 90 is power on default for midi compliant devices */
@@ -144,9 +142,9 @@ void SoundManager::loadSection(uint16 sectionId) {
 	_driver->setTimerCallback(this, &onTimer);
 }
 
-void SoundManager::initCustomTimbres() {
-	if (!_isRoland || !_nativeMT32 || _driver == NULL)
-		return;
+bool SoundManager::initCustomTimbres(bool canAbort) {
+	if (!_isRoland || !_nativeMT32 || _mt32Driver == NULL)
+		return false;
 
 	if (!_soundData)
 		error("SoundManager::initCustomTimbres - sound section has not been specified");
@@ -156,13 +154,13 @@ void SoundManager::initCustomTimbres() {
 	uint16 timbreDataHeaderOffset = _soundsTotal * 4 + 2;
 	if (timbreDataHeaderOffset + 6 > headerSize) {
 		warning("SoundManager::initCustomTimbres - could not find timbre data header");
-		return;
+		return false;
 	}
 
 	uint32 timbreDataOffset = READ_LE_UINT32(_soundData->data() + timbreDataHeaderOffset + 2); // Skip past end of header mark
 	if (timbreDataOffset + 17259 > _soundData->size()) {
 		warning("SoundManager::initCustomTimbres - timbre data smaller than expected");
-		return;
+		return false;
 	}
 	byte *timbreData = _soundData->data() + timbreDataOffset;
 
@@ -175,7 +173,7 @@ void SoundManager::initCustomTimbres() {
 	uint32 address = 0x10 << 14; // 10 00 00
 	static const uint8 systemAreaSysExLengths[5] = { 1, 3, 9, 9, 1 };
 	for (int i = 0; i < 5; ++i) {
-		mt32SysEx(address, timbreData, systemAreaSysExLengths[i]);
+		_mt32Driver->sysExMT32(timbreData, systemAreaSysExLengths[i], address, true);
 		address += systemAreaSysExLengths[i];
 		timbreData += systemAreaSysExLengths[i];
 	}
@@ -183,7 +181,7 @@ void SoundManager::initCustomTimbres() {
 	address = 0x03 << 14; // 03 00 00
 	int sysexLength = 16;
 	for (int i = 0; i < 8; ++i) {
-		mt32SysEx(address, timbreData, sysexLength);
+		_mt32Driver->sysExMT32(timbreData, sysexLength, address, true);
 		address += sysexLength;
 		timbreData += sysexLength;
 	}
@@ -191,7 +189,7 @@ void SoundManager::initCustomTimbres() {
 	address = 0x08 << 14; // 08 00 00
 	sysexLength = 246;
 	for (int i = 0; i < 64; ++i) {
-		mt32SysEx(address, timbreData, sysexLength);
+		_mt32Driver->sysExMT32(timbreData, sysexLength, address, true);
 		address += 256;
 		timbreData += sysexLength;
 	}
@@ -199,7 +197,7 @@ void SoundManager::initCustomTimbres() {
 	address = 0x05 << 14; // 05 00 00
 	sysexLength = 8;
 	for (int i = 0; i < 128; ++i) {
-		mt32SysEx(address, timbreData, sysexLength);
+		_mt32Driver->sysExMT32(timbreData, sysexLength, address, true);
 		address += sysexLength;
 		timbreData += sysexLength;
 	}
@@ -207,63 +205,31 @@ void SoundManager::initCustomTimbres() {
 	address = 0x03 << 14 | 0x01 << 7 | 0x10; // 03 01 10
 	sysexLength = 4;
 	for (int i = 0; i < 85; ++i) {
-		mt32SysEx(address, timbreData, sysexLength);
+		_mt32Driver->sysExMT32(timbreData, sysexLength, address, true);
 		address += sysexLength;
 		timbreData += sysexLength;
 	}
 
+	// Wait until SysExes have been transmitted.
+	bool result = false;
+	while (!_mt32Driver->isReady()) {
+		Events &events = Events::getReference();
+
+		if (events.interruptableDelay(100)) {
+			if (LureEngine::getReference().shouldQuit() ||
+					(canAbort && events.type() == Common::EVENT_KEYDOWN && events.event().kbd.keycode == 27)) {
+				// User has quit the game or pressed Escape.
+				_mt32Driver->clearSysExQueue();
+				result = true;
+				break;
+			}
+		}
+	}
+
 	icon->hide();
 	delete icon;
-}
 
-void SoundManager::mt32SysEx(const uint32 targetAddress, const byte *dataPtr, uint8 length) {
-	byte   sysExMessage[270];
-	uint16 sysExPos = 0;
-	byte   sysExByte;
-	uint16 sysExChecksum = 0;
-
-	memset(&sysExMessage, 0, sizeof(sysExMessage));
-
-	sysExMessage[0] = 0x41; // Roland
-	sysExMessage[1] = 0x10;
-	sysExMessage[2] = 0x16; // Model MT32
-	sysExMessage[3] = 0x12; // Command DT1
-
-	sysExChecksum = 0;
-
-	sysExMessage[4] = (targetAddress >> 14) & 0x7F;
-	sysExMessage[5] = (targetAddress >> 7) & 0x7F;
-	sysExMessage[6] = targetAddress & 0x7F;
-
-	for (byte targetAddressByte = 4; targetAddressByte < 7; targetAddressByte++) {
-		assert(sysExMessage[targetAddressByte] < 0x80); // security check
-		sysExChecksum -= sysExMessage[targetAddressByte];
-	}
-
-	sysExPos = 7;
-	for (int i = 0; i < length; ++i) {
-		sysExByte = *dataPtr++;
-
-		assert(sysExPos < sizeof(sysExMessage));
-		assert(sysExByte < 0x80); // security check
-		sysExMessage[sysExPos++] = sysExByte;
-		sysExChecksum -= sysExByte;
-	}
-
-	// Calculate checksum
-	assert(sysExPos < sizeof(sysExMessage));
-	sysExMessage[sysExPos++] = sysExChecksum & 0x7F;
-
-	_driver->sysEx(sysExMessage, sysExPos);
-
-	// Wait the time it takes to send the SysEx data
-	uint32 delay = (length + 2) * 1000 / 3125;
-
-	// Plus an additional delay for the MT-32 rev00
-	if (_nativeMT32)
-		delay += 40;
-
-	g_system->delayMillis(delay);
+	return result;
 }
 
 void SoundManager::bellsBodge() {
@@ -420,17 +386,21 @@ void SoundManager::syncSounds() {
 	_musicVolume = mute ? 0 : MIN(256, ConfMan.getInt("music_volume"));
 	_sfxVolume = mute ? 0 : MIN(256, ConfMan.getInt("sfx_volume"));
 
-	_soundMutex.lock();
-	MusicListIterator i;
-	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
-		// FIXME This should not override the sound resource volume
-		// on the MidiMusic object.
-		if ((*i)->isMusic())
-			(*i)->setVolume(_musicVolume);
-		else
-			(*i)->setVolume(_sfxVolume);
+	if (_isRoland) {
+		_mt32Driver->syncSoundSettings();
+	} else {
+		_soundMutex.lock();
+		MusicListIterator i;
+		for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
+			// FIXME This should not override the sound resource volume
+			// on the MidiMusic object.
+			if ((*i)->isMusic())
+				(*i)->setVolume(_musicVolume);
+			else
+				(*i)->setVolume(_sfxVolume);
+		}
+		_soundMutex.unlock();
 	}
-	_soundMutex.unlock();
 }
 
 SoundDescResource *SoundManager::findSound(uint8 soundNumber) {
@@ -573,8 +543,25 @@ void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber, b
 	}
 
 	_soundMutex.lock();
+	int8 source = -1;
+	if (_isRoland) {
+		if (isMusic) {
+			source = 0;
+		} else {
+			for (int i = 1; i < LURE_MAX_SOURCES; ++i) {
+				if (!_sourcesInUse[i]) {
+					source = i;
+					break;
+				}
+			}
+		}
+		if (source == -1)
+			warning("Insufficient sources to play sound %i", soundNumber);
+		else
+			_sourcesInUse[source] = true;
+	}
 	MidiMusic *sound = new MidiMusic(_driver, _channelsInner, channelNumber, soundNum,
-		isMusic, loop, numChannels, soundStart, dataSize);
+		isMusic, loop, source, numChannels, soundStart, dataSize);
 	_playingSounds.push_back(MusicList::value_type(sound));
 	_soundMutex.unlock();
 }
@@ -591,6 +578,8 @@ void SoundManager::musicInterface_Stop(uint8 soundNumber) {
 	MusicListIterator i;
 	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
 		if ((*i)->soundNumber() == soundNum) {
+			if ((*i)->source() >= 0)
+				_sourcesInUse[(*i)->source()] = false;
 			_playingSounds.erase(i);
 			break;
 		}
@@ -651,6 +640,7 @@ void SoundManager::musicInterface_KillAll() {
 		(*i)->stopMusic();
 	}
 
+	Common::fill(_sourcesInUse, _sourcesInUse + LURE_MAX_SOURCES, false);
 	_playingSounds.clear();
 	_activeSounds.clear();
 	_soundMutex.unlock();
@@ -712,7 +702,7 @@ void SoundManager::musicInterface_TrashReverb() {
 	if (_isRoland) {
 		// Set reverb parameters to mode Room, time 1, level 0
 		static const byte sysExData[] = { 0x00, 0x00, 0x00 };
-		mt32SysEx(0x10 << 14 | 0x00 << 7 | 0x01, sysExData, 3);
+		_mt32Driver->sysExMT32(sysExData, 3, 0x10 << 14 | 0x00 << 7 | 0x01);
 	}
 	*/
 }
@@ -726,10 +716,13 @@ void SoundManager::musicInterface_TidySounds() {
 	_soundMutex.lock();
 	MusicListIterator i = _playingSounds.begin();
 	while (i != _playingSounds.end()) {
-		if (!(*i)->isPlaying())
+		if (!(*i)->isPlaying()) {
+			if ((*i)->source() >= 0)
+				_sourcesInUse[(*i)->source()] = false;
 			i = _playingSounds.erase(i);
-		else
+		} else {
 			++i;
+		}
 	}
 	_soundMutex.unlock();
 }
@@ -758,9 +751,12 @@ void SoundManager::doTimer() {
 /*------------------------------------------------------------------------*/
 
 MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
-					 uint8 channelNum, uint8 soundNum, bool isMus, bool loop, uint8 numChannels, void *soundData, uint32 size) {
+					 uint8 channelNum, uint8 soundNum, bool isMus, bool loop, int8 source, uint8 numChannels, void *soundData, uint32 size) {
 	_driver = driver;
 	assert(_driver);
+	_mt32Driver = dynamic_cast<MidiDriver_MT32GM *>(_driver);
+	assert(!Sound.isRoland() || _mt32Driver);
+	_source = source;
 	_channels = channels;
 	_soundNumber = soundNum;
 	_channelNumber = channelNum;
@@ -774,7 +770,7 @@ MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
 	// TODO AdLib does not use sound resource volume, so use fixed 240.
 	setVolume(Sound.isRoland() ? 0x80 : 240);
 
-	_parser = MidiParser::createParser_SMF();
+	_parser = MidiParser::createParser_SMF(source);
 	_parser->setMidiDriver(this);
 	_parser->setTimerRate(_driver->getBaseTempo());
 	// All Notes Off on all channels does not work with multiple MIDI sources
@@ -812,6 +808,8 @@ MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
 
 MidiMusic::~MidiMusic() {
 	_parser->unloadMusic();
+	if (Sound.isRoland() && _isPlaying)
+		_mt32Driver->deinitSource(_source);
 	delete _parser;
 	delete _decompressedSound;
 }
@@ -840,15 +838,21 @@ void MidiMusic::setVolume(int volume) {
 
 void MidiMusic::playMusic() {
 	debugC(ERROR_DETAILED, kLureDebugSounds, "MidiMusic::PlayMusic playing sound %d", _soundNumber);
+	if (Sound.isRoland() && !_isMusic)
+		_mt32Driver->allocateSourceChannels(_source, _numChannels);
 	_parser->loadMusic(_soundData, _soundSize);
 	_parser->setTrack(0);
 	_isPlaying = true;
 }
 
 void MidiMusic::send(uint32 b) {
+	send(-1, b);
+}
+
+void MidiMusic::send(int8 source, uint32 b) {
 	byte channel;
-	if (Sound.isRoland() && _isMusic) {
-		// Use the channel as defined in the MIDI data
+	if (Sound.isRoland()) {
+		// Channel mapping is handled by the driver
 		channel = b & 0x0F;
 	} else {
 		// Remap data channel to (one of) the channel(s) assigned to this player
@@ -856,13 +860,7 @@ void MidiMusic::send(uint32 b) {
 		if ((b & 0xF) >= _numChannels) return;
 		channel = _channelNumber + (byte)(b & 0x0F);
 #else
-		if (Sound.isRoland()) {
-			// Roland channels start at 1
-			channel = _channelNumber + (((byte)(b & 0x0F) - 1) % _numChannels);
-		} else {
-			// AdLib channels start at 0
-			channel = _channelNumber + ((byte)(b & 0x0F) % _numChannels);
-		}
+		channel = _channelNumber + ((byte)(b & 0x0F) % _numChannels);
 #endif
 
 		if ((channel >= NUM_CHANNELS) || (_channels[channel].midiChannel == NULL))
@@ -873,21 +871,22 @@ void MidiMusic::send(uint32 b) {
 		// Adjust volume changes by song and master volume
 		byte volume = (byte)((b >> 16) & 0x7F);
 		_channels[channel].volume = volume;
-		uint16 master_volume = _isMusic ? Sound.musicVolume() : Sound.sfxVolume();
-		if (Sound.isRoland()) {
+		if (!Sound.isRoland()) {
+			// Scale volume for AdLib only.
 			// MT-32 sound resource volume is applied to note velocity,
-			// so scale MIDI data volume only with ScummVM master volume.
-			volume = (volume * master_volume) >> 8;
-		} else {
+			// and user volume scaling is handled by the driver.
 			// TODO AdLib might use velocity for sound resource volume
 			// as well.
+			uint16 master_volume = _isMusic ? Sound.musicVolume() : Sound.sfxVolume();
 			volume = volume * _volume * master_volume / 65025;
 		}
 		b = (b & 0xFF00FFFF) | (volume << 16);
-	} else if ((b & 0xF0) == 0xC0) {
-		if (Sound.isRoland() && !Sound.hasNativeMT32() && channel != 9) {
-			b = (b & 0xFFFF00FF) | MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8;
-		}
+	} else if ((b & 0xFFF0) == 0x18B0) {
+		if (Sound.isRoland())
+			// Some tracks use CC 18. This is undefined in the MIDI standard
+			// and does nothing on an MT-32. Not sending this to the device
+			// in case it is a GM device with non-standard behavior for this CC.
+			return;
 	} else if ((b & 0xFFF0) == 0x007BB0) {
 		// No implementation
 	} else if (((b & 0xF0) == 0x90)) {
@@ -907,18 +906,23 @@ void MidiMusic::send(uint32 b) {
 		}
 	}
 
-	if (Sound.isRoland() && _isMusic) {
-		_driver->send(b);
+	if (Sound.isRoland()) {
+		_driver->send(source, b);
 	} else {
 		_channels[channel].midiChannel->send(b);
 	}
 }
 
 void MidiMusic::metaEvent(byte type, byte *data, uint16 length) {
+	metaEvent(-1, type, data, length);
+}
+
+void MidiMusic::metaEvent(int8 source, byte type, byte *data, uint16 length) {
 	//Only thing we care about is End of Track.
 	if (type != 0x2F)
 		return;
 
+	_driver->metaEvent(source, type, data, length);
 	stopMusic();
 }
 
@@ -931,6 +935,8 @@ void MidiMusic::stopMusic() {
 	debugC(ERROR_DETAILED, kLureDebugSounds, "MidiMusic::stopMusic sound %d", _soundNumber);
 	_isPlaying = false;
 	_parser->unloadMusic();
+	if (Sound.isRoland())
+		_mt32Driver->deinitSource(_source);
 }
 
 } // End of namespace Lure
