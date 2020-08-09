@@ -96,7 +96,9 @@ DragonsEngine::DragonsEngine(OSystem *syst, const ADGameDescription *desc) : Eng
 	_leftMouseButtonDown = false;
 	_rightMouseButtonUp = false;
 	_iKeyUp = false;
+	_downKeyDown = false;
 	_downKeyUp = false;
+	_upKeyDown = false;
 	_upKeyUp = false;
 	_enterKeyUp = false;
 	_leftKeyDown = false;
@@ -159,8 +161,10 @@ void DragonsEngine::updateEvents() {
 				_iKeyUp = true;
 			} else if (event.kbd.keycode == Common::KEYCODE_DOWN) {
 				_downKeyUp = true;
+				_downKeyDown = false;
 			} else if (event.kbd.keycode == Common::KEYCODE_UP) {
 				_upKeyUp = true;
+				_upKeyDown = false;
 			} else if (event.kbd.keycode == Common::KEYCODE_RETURN ||
 						event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
 				_enterKeyUp = true;
@@ -189,6 +193,10 @@ void DragonsEngine::updateEvents() {
 				_leftKeyDown = true;
 			} else if (event.kbd.keycode == Common::KEYCODE_RIGHT) {
 				_rightKeyDown = true;
+			} else if (event.kbd.keycode == Common::KEYCODE_UP) {
+				_upKeyDown = true;
+			} else if (event.kbd.keycode == Common::KEYCODE_DOWN) {
+				_downKeyDown = true;
 			} else if (event.kbd.keycode == Common::KEYCODE_w) {
 				_wKeyDown = true;
 			} else if (event.kbd.keycode == Common::KEYCODE_a) {
@@ -1130,11 +1138,11 @@ bool DragonsEngine::isRightKeyPressed() {
 }
 
 bool DragonsEngine::isUpKeyPressed() {
-	return false; // TODO
+	return _upKeyDown;
 }
 
 bool DragonsEngine::isDownKeyPressed() {
-	return false; // TODO
+	return _downKeyDown;
 }
 
 bool DragonsEngine::checkForActionButtonRelease() {

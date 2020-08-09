@@ -198,7 +198,9 @@ private:
 	bool _leftMouseButtonDown;
 	bool _rightMouseButtonUp;
 	bool _iKeyUp;
+	bool _downKeyDown;
 	bool _downKeyUp;
+	bool _upKeyDown;
 	bool _upKeyUp;
 	bool _enterKeyUp;
 
