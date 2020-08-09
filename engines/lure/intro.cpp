@@ -161,14 +161,21 @@ bool Introduction::show() {
 		switch (anim->show()) {
 		case ABORT_NONE:
 			if (curr_anim->endingPause != 0) {
-				if (curr_anim->soundTransitionPause != 0)
+				if (curr_anim->soundTransitionPause != 0) {
+					uint16 pause = curr_anim->soundTransitionPause * 1000 / 50;
+					if (curr_anim->fadeOutSound) {
+						pause -= 3500;
+					}
 					// Wait before transitioning to the next track
-					result = interruptableDelay(curr_anim->soundTransitionPause * 1000 / 50);
-				if (!result) {
-					playMusic(curr_anim->soundNumber2, curr_anim->fadeOutSound);
+					result = interruptableDelay(pause);
+				}
+
+				if (!result)
+					result = playMusic(curr_anim->soundNumber2, curr_anim->fadeOutSound);
+
+				if (!result)
 					// Wait remaining time before the next animation
 					result = interruptableDelay((curr_anim->endingPause - curr_anim->soundTransitionPause) * 1000 / 50);
-				}
 			}
 			break;
 
@@ -224,17 +231,26 @@ bool Introduction::show() {
 	return false;
 }
 
-void Introduction::playMusic(uint8 soundNumber, bool fadeOut) {
+bool Introduction::playMusic(uint8 soundNumber, bool fadeOut) {
+	bool result = false;
+
 	if (soundNumber != 0xFF && _currentSound != soundNumber) {
 		// Stop the previous sound
 		if (fadeOut) {
-			// TODO Implement fade-out
+			result = Sound.fadeOut();
+			if (!result)
+				result = interruptableDelay(500);
+		} else {
+			Sound.musicInterface_KillAll();
 		}
-		Sound.musicInterface_KillAll();
 
-		_currentSound = soundNumber;
-		Sound.musicInterface_Play(_currentSound, 0, true);
+		if (!result) {
+			_currentSound = soundNumber;
+			Sound.musicInterface_Play(_currentSound, 0, true);
+		}
 	}
+
+	return result;
 }
 
 } // End of namespace Lure

@@ -480,33 +480,52 @@ void SoundManager::restoreSounds() {
 	}
 }
 
-void SoundManager::fadeOut() {
+bool SoundManager::fadeOut() {
 	debugC(ERROR_BASIC, kLureDebugSounds, "SoundManager::fadeOut");
+
+	Events &events = Events::getReference();
+	bool result = false;
 
 	// Fade out all the active sounds
 	musicInterface_TidySounds();
 
-	bool inProgress = true;
-	while (inProgress)
-	{
-		inProgress = false;
-
-		_soundMutex.lock();
-		MusicListIterator i;
-		for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
-			MidiMusic &music = **i;
-			if (music.getVolume() > 0) {
-				inProgress = true;
-				music.setVolume(music.getVolume() >= 10 ? music.getVolume() - 10 : 0);
+	if (_isRoland) {
+		_mt32Driver->startFade(3000, 0);
+		while (_mt32Driver->isFading()) {
+			if (events.interruptableDelay(100)) {
+				result = ((events.type() == Common::EVENT_KEYDOWN && events.event().kbd.keycode == 27) ||
+					LureEngine::getReference().shouldQuit());
+				_mt32Driver->abortFade();
+				break;
 			}
 		}
+	} else {
+		bool inProgress = true;
+		while (inProgress) {
+			inProgress = false;
 
-		_soundMutex.unlock();
-		g_system->delayMillis(10);
+			_soundMutex.lock();
+			MusicListIterator i;
+			for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
+				MidiMusic &music = **i;
+				if (music.getVolume() > 0) {
+					inProgress = true;
+					music.setVolume(music.getVolume() >= 10 ? music.getVolume() - 10 : 0);
+				}
+			}
+
+			_soundMutex.unlock();
+			g_system->delayMillis(10);
+		}
 	}
 
 	// Kill all the sounds
 	musicInterface_KillAll();
+
+	if (_isRoland)
+		_mt32Driver->setSourceVolume(MidiDriver_MT32GM::DEFAULT_SOURCE_NEUTRAL_VOLUME);
+
+	return result;
 }
 
 void SoundManager::pause() {
