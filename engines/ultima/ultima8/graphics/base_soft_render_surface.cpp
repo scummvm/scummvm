@@ -421,7 +421,7 @@ void BaseSoftRenderSurface::GetSurfaceDims(Rect &r) const {
 //
 void BaseSoftRenderSurface::SetOrigin(int32 x, int32 y) {
 	// Adjust the clipping window
-	_clipWindow.MoveRel(_ox - x, _oy - y);
+	_clipWindow.translate(_ox - x, _oy - y);
 
 	// Set the origin
 	_ox = x;

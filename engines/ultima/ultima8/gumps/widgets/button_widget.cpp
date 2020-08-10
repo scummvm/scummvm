@@ -105,7 +105,7 @@ bool ButtonWidget::PointOnGump(int mx, int my) {
 	int32 gx = mx, gy = my;
 	ParentToGump(gx, gy);
 
-	return _dims.InRect(gx, gy);
+	return _dims.contains(gx, gy);
 }
 
 Gump *ButtonWidget::onMouseDown(int button, int32 mx, int32 my) {

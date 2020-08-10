@@ -30,8 +30,8 @@ struct Rect {
 	int32 left, top;
 	int32 right, bottom;
 
-	Rect() : left(0), top(0), right(0), bottom(0) {}
-	Rect(int nx, int ny, int nw, int nh) : left(nx), top(ny), right(nx + nw), bottom(ny + nh) {}
+	Rect() : top(0), left(0), bottom(0), right(0) {}
+	Rect(int x1, int y1, int x2, int y2) : top(y1), left(x1), bottom(y2), right(x2) {}
 
 	bool operator==(const Rect &rhs) const { return equals(rhs); }
 	bool operator!=(const Rect &rhs) const { return !equals(rhs); }
@@ -60,9 +60,6 @@ struct Rect {
 		right = nx + nw;
 		bottom = ny + nh;
 	}
-	void    Set(Rect &o) {
-		*this = o;
-	}
 
 	// Check to see if a Rectangle is 'valid'
 	bool    IsValid() const {
@@ -70,30 +67,24 @@ struct Rect {
 	}
 
 	// Check to see if a point is within the Rectangle
-	bool    InRect(int px, int py) const {
-		return px >= left && py >= top && px < right && py < bottom;
+	bool contains(int16 x, int16 y) const {
+		return (left <= x) && (x < right) && (top <= y) && (y < bottom);
 	}
 
 	// Move the Rect (Relative)
-	void    MoveRel(int32 dx, int32 dy) {
+	void translate(int32 dx, int32 dy) {
 		left += dx;
-		top += dy;
 		right += dx;
+		top += dy;
 		bottom += dy;
 	}
 
 	// Move the Rect (Absolute)
-	void    MoveAbs(int32 nx, int32 ny) {
-		right += nx - left;
-		bottom += ny - top;
-		left = nx;
-		top = ny;
-	}
-
-	// Resize the Rect (Relative)
-	void    ResizeRel(int32 dw, int32 dh) {
-		right += dw;
-		bottom += dh;
+	void moveTo(int32 x, int32 y) {
+		bottom += y - top;
+		right += x - left;
+		top = y;
+		left = x;
 	}
 
 	// Resize the Rect (Absolute)
@@ -174,18 +165,6 @@ struct Rect {
 		if (right <= o.left || o.right <= left) return false;
 		if (bottom <= o.top || o.bottom <= top) return false;
 		return true;
-	}
-
-	// Operator +=
-	Rect &operator += (const Rect &o) {
-		Union(o.left, o.top, o.width(), o.height());
-		return *(this);
-	}
-
-	// Operator +
-	Rect &operator + (const Rect &o) const {
-		Rect result(*this);
-		return (result += o);
 	}
 
 	bool equals(const Rect &o) const {

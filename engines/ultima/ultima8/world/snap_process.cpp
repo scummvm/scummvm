@@ -66,7 +66,7 @@ void SnapProcess::updateCurrentEgg() {
 	int32 ax, ay, az, axd, ayd, azd, x, y, z;
 	a->getLocation(ax, ay, az);
 	a->getFootpadWorld(axd, ayd, azd);
-	Rect arect(ax, ay, axd, ayd);
+	Rect arect(ax, ay, ax + axd, ay + ayd);
 
 	for (Std::list<ObjId>::const_iterator iter = _snapEggs.begin();
 		 iter != _snapEggs.end(); iter++) {
@@ -114,7 +114,7 @@ bool SnapProcess::isNpcInRangeOfCurrentEgg() const {
 	a->getFootpadWorld(axd, ayd, azd);
 	currentegg->getLocation(x, y, z);
 
-	Rect arect(ax, ay, axd, ayd);
+	Rect arect(ax, ay, ax + axd, ay + ayd);
 
 	if (!_currentSnapEggRange.Overlaps(arect))
 		return false;

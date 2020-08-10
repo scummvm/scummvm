@@ -82,7 +82,7 @@ static const int statbuttony = 84;
 
 
 PaperdollGump::PaperdollGump() : ContainerGump(), _statButtonId(0),
-		_backpackRect(49, 25, 10, 25) {
+		_backpackRect(49, 25, 59, 50) {
 	Common::fill(_cachedText, _cachedText + 14, (RenderedText *)nullptr);
 	Common::fill(_cachedVal, _cachedVal + 7, 0);
 }
@@ -90,7 +90,7 @@ PaperdollGump::PaperdollGump() : ContainerGump(), _statButtonId(0),
 PaperdollGump::PaperdollGump(Shape *shape_, uint32 frameNum, uint16 owner,
 		uint32 Flags, int32 layer)
 		: ContainerGump(shape_, frameNum, owner, Flags, layer),
-		_statButtonId(0), _backpackRect(49, 25, 10, 25) {
+		_statButtonId(0), _backpackRect(49, 25, 59, 50) {
 	_statButtonId = 0;
 
 	Common::fill(_cachedText, _cachedText + 14, (RenderedText *)nullptr);
@@ -252,7 +252,7 @@ uint16 PaperdollGump::TraceObjId(int32 mx, int32 my) {
 	}
 
 	// try backpack
-	if (_backpackRect.InRect(mx - _itemArea.left, my - _itemArea.top)) {
+	if (_backpackRect.contains(mx - _itemArea.left, my - _itemArea.top)) {
 		if (a->getEquip(7)) // constants
 			return a->getEquip(7);
 	}
@@ -311,7 +311,7 @@ bool PaperdollGump::StartDraggingItem(Item *item, int mx, int my) {
 
 
 bool PaperdollGump::DraggingItem(Item *item, int mx, int my) {
-	if (!_itemArea.InRect(mx, my)) {
+	if (!_itemArea.contains(mx, my)) {
 		_displayDragging = false;
 		return false;
 	}
@@ -322,7 +322,7 @@ bool PaperdollGump::DraggingItem(Item *item, int mx, int my) {
 	bool over_backpack = false;
 	Container *backpack = getContainer(a->getEquip(7)); // constant!
 
-	if (backpack && _backpackRect.InRect(mx - _itemArea.left, my - _itemArea.top)) {
+	if (backpack && _backpackRect.contains(mx - _itemArea.left, my - _itemArea.top)) {
 		over_backpack = true;
 	}
 
@@ -367,7 +367,7 @@ void PaperdollGump::DropItem(Item *item, int mx, int my) {
 	bool over_backpack = false;
 	Container *backpack = getContainer(a->getEquip(7)); // constant!
 
-	if (backpack && _backpackRect.InRect(mx - _itemArea.left, my - _itemArea.top)) {
+	if (backpack && _backpackRect.contains(mx - _itemArea.left, my - _itemArea.top)) {
 		over_backpack = true;
 	}
 

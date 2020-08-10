@@ -345,10 +345,10 @@ Std::list<PositionedText> typesetText(Font *font,
 		case Font::TEXT_LEFT:
 			break;
 		case Font::TEXT_RIGHT:
-			lineiter->_dims.MoveAbs(totalwidth - lineiter->_dims.width(), lineiter->_dims.top);
+			lineiter->_dims.moveTo(totalwidth - lineiter->_dims.width(), lineiter->_dims.top);
 			break;
 		case Font::TEXT_CENTER:
-			lineiter->_dims.MoveAbs((totalwidth - lineiter->_dims.width()) / 2, lineiter->_dims.top);
+			lineiter->_dims.moveTo((totalwidth - lineiter->_dims.width()) / 2, lineiter->_dims.top);
 			break;
 		}
 #if 0

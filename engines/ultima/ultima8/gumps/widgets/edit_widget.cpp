@@ -55,12 +55,12 @@ void EditWidget::InitGump(Gump *newparent, bool take_focus) {
 	Font *font = getFont();
 
 	// Y offset is always baseline
-	_dims.MoveAbs(0 , -font->getBaseline());
+	_dims.moveTo(0, -font->getBaseline());
 
 	if (_gameFont && getFont()->isHighRes()) {
 		Rect rect(0, 0, 0, _dims.top);
 		ScreenSpaceToGumpRect(rect, ROUND_OUTSIDE);
-		_dims.MoveAbs(0, rect.height());
+		_dims.moveTo(0, rect.height());
 	}
 }
 

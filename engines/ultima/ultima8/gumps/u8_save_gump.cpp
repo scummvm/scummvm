@@ -115,7 +115,7 @@ void U8SaveGump::InitGump(Gump *newparent, bool take_focus) {
 			// frame for '10', cutting off the first 6 pixels.
 			Rect rect;
 			gump->GetDims(rect);
-			rect.MoveRel(6, 0);
+			rect.translate(6, 0);
 			gump->SetDims(rect);
 		}
 		gump->InitGump(this, false);

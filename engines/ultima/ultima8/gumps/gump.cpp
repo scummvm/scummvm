@@ -403,7 +403,7 @@ bool Gump::PointOnGump(int mx, int my) {
 	ParentToGump(gx, gy);
 
 	// First check again rectangle
-	if (!_dims.InRect(gx, gy)) {
+	if (!_dims.contains(gx, gy)) {
 		return false;
 	}
 

@@ -523,7 +523,7 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 		check->getFootpadWorld(xd, yd, zd);
 	}
 
-	const Rect searchrange(x - xd - range, y - yd - range, 2 * range + xd, 2 * range + yd);
+	const Rect searchrange(x - xd - range, y - yd - range, x + range, y + range);
 
 	int minx = ((x - xd - range) / _mapChunkSize) - 1;
 	int maxx = ((x + range) / _mapChunkSize) + 1;
@@ -549,7 +549,7 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 				int32 ixd, iyd, izd;
 				item->getFootpadWorld(ixd, iyd, izd);
 
-				const Rect itemrect(ix - ixd, iy - iyd, ixd, iyd);
+				const Rect itemrect(ix - ixd, iy - iyd, ix, iy);
 
 				if (!itemrect.Overlaps(searchrange))
 					continue;
@@ -592,7 +592,7 @@ void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
                                int32 origin[3], int32 dims[3],
                                bool above, bool below, bool recurse) const {
 	const Rect searchrange(origin[0] - dims[0], origin[1] - dims[1],
-	                 dims[0], dims[1]);
+	                       origin[0], origin[1]);
 
 	int minx = ((origin[0] - dims[0]) / _mapChunkSize) - 1;
 	int maxx = ((origin[0]) / _mapChunkSize) + 1;
@@ -619,7 +619,7 @@ void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 				int32 ixd, iyd, izd;
 				item->getFootpadWorld(ixd, iyd, izd);
 
-				const Rect itemrect(ix - ixd, iy - iyd, ixd, iyd);
+				const Rect itemrect(ix - ixd, iy - iyd, ix, iy);
 
 				if (!itemrect.Overlaps(searchrange))
 					continue;

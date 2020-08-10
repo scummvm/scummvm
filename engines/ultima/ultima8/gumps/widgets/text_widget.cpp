@@ -59,12 +59,12 @@ void TextWidget::InitGump(Gump *newparent, bool take_focus) {
 	Font *font = getFont();
 
 	// Y offset is always baseline
-	_dims.MoveAbs(0, -font->getBaseline());
+	_dims.moveTo(0, -font->getBaseline());
 
 	if (_gameFont && getFont()->isHighRes()) {
 		Rect rect(0, 0, 0, _dims.top);
 		ScreenSpaceToGumpRect(rect, ROUND_OUTSIDE);
-		_dims.MoveAbs(0 , rect.height());
+		_dims.moveTo(0, rect.height());
 
 		// Note that GumpRectToScreenSpace is guaranteed to keep
 		// _targetWidth/_targetHeight zero if they already were.
@@ -136,7 +136,7 @@ bool TextWidget::setupNextText() {
 
 			sr.Set(0, 0, 0, _dims.top);
 			ScreenSpaceToGumpRect(sr, ROUND_OUTSIDE);
-			_dims.MoveAbs(_dims.left, sr.height());
+			_dims.moveTo(_dims.left, sr.height());
 		}
 	}
 
