@@ -187,7 +187,7 @@ void Sprite::setCast(uint16 castId) {
 		_width = dims.width();
 		_height = dims.height();
 	} else {
-		warning("Sprite::setCast(): CastMember id %d has null member", castId);
+		warning("Sprite::setCast(): CastMember id %d(%s) has null member", castId, numToCastNum(castId));
 	}
 }
 
