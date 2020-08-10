@@ -104,6 +104,8 @@ bool ModelX::loadFromFile(const Common::String &filename, ModelX *parentModel) {
 	uint32 fileSize = 0;
 	byte *buffer = BaseFileManager::getEngineInstance()->getEngineInstance()->readWholeFile(filename, &fileSize);
 
+	// the header of an .X file consists of 16 bytes
+	// bytes 9 to 12 contain a string which can be 'txt', 'bin', 'bzip, 'tzip', depending on the format
 	byte dataFormatBlock[4];
 	Common::copy(buffer + 8, buffer + 11, dataFormatBlock);
 	dataFormatBlock[3] = '\0';
