@@ -81,6 +81,8 @@ public:
 	void stopSong() { stopMusic(); }
 	void playMusic();
 	void stopMusic();
+	void pauseMusic();
+	void resumeMusic();
 	void queueTuneList(int16 tuneList);
 	bool queueSong(uint16 songNum);
 	void toggleVChange();
@@ -156,8 +158,8 @@ public:
 	void removeSounds();
 	void restoreSounds();
 	void fadeOut();
-	void pause() { _paused = true; }
-	void resume() { _paused = false; }
+	void pause();
+	void resume();
 	bool getPaused() const { return _paused; }
 	bool hasNativeMT32() const { return _nativeMT32; }
 	bool isRoland() const { return _isRoland; }
