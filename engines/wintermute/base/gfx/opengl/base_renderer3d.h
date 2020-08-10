@@ -102,6 +102,7 @@ public:
 protected:
 	Math::Matrix4 _lastViewMatrix;
 	Math::Matrix4 _projectionMatrix3d;
+	Rect32 _viewport3dRect;
 };
 
 } // namespace Wintermute

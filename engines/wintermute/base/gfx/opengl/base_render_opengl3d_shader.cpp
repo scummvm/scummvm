@@ -438,6 +438,9 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 			// TODO: Disable fog in shader
 		}
 
+		glViewport(_viewportRect.left, _height - _viewportRect.bottom, _viewportRect.width(), _viewportRect.height());
+		_viewport3dRect = _viewportRect;
+
 		setProjection();
 	}
 
