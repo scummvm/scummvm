@@ -264,7 +264,7 @@ bool BaseRenderOpenGL3D::setProjection() {
 bool BaseRenderOpenGL3D::setProjection2D() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(0, _viewportRect.width(), 0, _viewportRect.height(), -1.0, 100.0);
+	glOrtho(0, _width, 0, _height, -1.0, 100.0);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	return true;
@@ -354,6 +354,7 @@ bool BaseRenderOpenGL3D::setup2D(bool force) {
 
 		glActiveTexture(GL_TEXTURE0);
 
+		glViewport(0, 0, _width, _height);
 		setProjection2D();
 	}
 
@@ -465,7 +466,7 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute
 	float texRight = (float)rect.right / (float)texWidth;
 	float texBottom = (float)rect.bottom / (float)texHeight;
 
-	float offset = _viewportRect.height() / 2.0f;
+	float offset = _height / 2.0f;
 	float correctedYPos = (pos.y - offset) * -1.0f + offset;
 
 	// to be implemented

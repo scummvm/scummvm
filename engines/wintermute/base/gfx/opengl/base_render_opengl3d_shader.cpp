@@ -249,16 +249,13 @@ bool BaseRenderOpenGL3DShader::setProjection() {
 }
 
 bool BaseRenderOpenGL3DShader::setProjection2D() {
-	float viewportWidth = _viewportRect.right - _viewportRect.left;
-	float viewportHeight = _viewportRect.bottom - _viewportRect.top;
-
 	float nearPlane = -1.0f;
 	float farPlane = 100.0f;
 
 	_projectionMatrix2d.setToIdentity();
 
-	_projectionMatrix2d(0, 0) = 2.0f / viewportWidth;
-	_projectionMatrix2d(1, 1) = 2.0f / viewportHeight;
+	_projectionMatrix2d(0, 0) = 2.0f / _width;
+	_projectionMatrix2d(1, 1) = 2.0f / _height;
 	_projectionMatrix2d(2, 2) = 2.0f / (farPlane - nearPlane);
 
 	_projectionMatrix2d(3, 0) = -1.0f;
@@ -397,6 +394,8 @@ bool BaseRenderOpenGL3DShader::setup2D(bool force) {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+		glViewport(0, 0, _width, _height);
+
 		setProjection2D();
 	}
 
@@ -499,7 +498,7 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wint
 	float texRight = (float)rect.right / (float)texWidth;
 	float texBottom = (float)rect.bottom / (float)texHeight;
 
-	float offset = _viewportRect.height() / 2.0f;
+	float offset = _height / 2.0f;
 	float correctedYPos = (pos.y - offset) * -1.0f + offset;
 
 	// to be implemented
