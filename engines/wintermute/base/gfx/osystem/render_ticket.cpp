@@ -72,13 +72,7 @@ RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *s
 		} else if ((dstRect->width() != srcRect->width() ||
 					dstRect->height() != srcRect->height()) &&
 					_transform._numTimesX * _transform._numTimesY == 1) {
-			Graphics::TransparentSurface src(*_surface, false);
-			Graphics::Surface *temp;
-			if (owner->_gameRef->getBilinearFiltering()) {
-				temp = src.scaleT<Graphics::FILTER_BILINEAR>(dstRect->width(), dstRect->height());
-			} else {
-				temp = src.scaleT<Graphics::FILTER_NEAREST>(dstRect->width(), dstRect->height());
-			}
+			Graphics::Surface *temp = _surface->scale(dstRect->width(), dstRect->height(), owner->_gameRef->getBilinearFiltering());
 			_surface->free();
 			delete _surface;
 			_surface = temp;

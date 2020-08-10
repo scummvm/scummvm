@@ -232,11 +232,6 @@ MODULE_OBJS += \
 	audiocd/linux/linux-audiocd.o
 endif
 
-ifeq ($(BACKEND),tizen)
-MODULE_OBJS += \
-	timer/tizen/timer.o
-endif
-
 ifeq ($(BACKEND),3ds)
 MODULE_OBJS += \
 	plugins/3ds/3ds-provider.o
@@ -281,13 +276,6 @@ MODULE_OBJS += \
 	graphics/openpandora/op-graphics.o
 endif
 
-ifeq ($(BACKEND),ps2)
-MODULE_OBJS += \
-	fs/ps2/ps2-fs.o \
-	fs/ps2/ps2-fs-factory.o \
-	plugins/ps2/ps2-provider.o
-endif
-
 ifeq ($(BACKEND),psp)
 MODULE_OBJS += \
 	fs/psp/psp-fs.o \
@@ -310,11 +298,6 @@ endif
 ifeq ($(BACKEND),samsungtv)
 MODULE_OBJS += \
 	events/samsungtvsdl/samsungtvsdl-events.o
-endif
-
-ifeq ($(BACKEND),webos)
-MODULE_OBJS += \
-	events/webossdl/webossdl-events.o
 endif
 
 ifeq ($(BACKEND),wii)

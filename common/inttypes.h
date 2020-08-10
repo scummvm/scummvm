@@ -23,11 +23,7 @@
 #ifndef COMMON_INTTYPES_H
 #define COMMON_INTTYPES_H
 
-#if defined(__PLAYSTATION2__)
-	typedef uint8 uint8_t;
-	typedef uint16 uint16_t;
-	typedef uint32 uint32_t;
-#elif defined(_MSC_VER) || defined (__SYMBIAN32__)
+#if defined(_MSC_VER) || defined (__SYMBIAN32__)
 	typedef signed char int8_t;
 	typedef signed short int16_t;
 	typedef unsigned char uint8_t;

@@ -39,13 +39,19 @@ SdlWindow::SdlWindow()
 #endif
 	{
 
-#if !SDL_VERSION_ATLEAST(2, 0, 0)
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+#elif SDL_VERSION_ATLEAST(1, 2, 10)
 	// Query the desktop resolution. We simply hope nothing tried to change
 	// the resolution so far.
 	const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
 	if (videoInfo && videoInfo->current_w > 0 && videoInfo->current_h > 0) {
 		_desktopRes = Common::Rect(videoInfo->current_w, videoInfo->current_h);
 	}
+#elif defined(MAEMO)
+	// All supported Maemo devices have a display resolution of 800x480
+	_desktopRes = Common::Rect(800, 480);
+#else
+#error Unable to detect screen resolution
 #endif
 }
 

@@ -29,7 +29,9 @@
 #ifndef WINTERMUTE_MATHUTIL_H
 #define WINTERMUTE_MATHUTIL_H
 
+#ifdef ENABLE_WME3D
 #include "math/vector3d.h"
+#endif
 
 namespace Wintermute {
 

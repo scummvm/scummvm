@@ -24,6 +24,10 @@ TEST_CFLAGS  := $(CFLAGS) -I$(srcdir)/test/cxxtest
 TEST_LDFLAGS := $(LDFLAGS) $(LIBS)
 TEST_CXXFLAGS := $(filter-out -Wglobal-constructors,$(CXXFLAGS))
 
+ifdef WIN32
+TEST_LDFLAGS := $(filter-out -mwindows,$(TEST_LDFLAGS))
+endif
+
 ifdef N64
 TEST_LDFLAGS := $(filter-out -mno-crt0,$(TEST_LDFLAGS))
 endif

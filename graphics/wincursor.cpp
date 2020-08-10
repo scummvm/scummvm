@@ -127,9 +127,9 @@ bool WinCursor::readFromStream(Common::SeekableReadStream &stream) {
 	if (stream.readUint16LE() != 1)
 		return false;
 
-	// Only 1bpp and 8bpp supported
+	// Only 1bpp, 4bpp and 8bpp supported
 	uint16 bitsPerPixel = stream.readUint16LE();
-	if (bitsPerPixel != 1 && bitsPerPixel != 8)
+	if (bitsPerPixel != 1 && bitsPerPixel != 4 && bitsPerPixel != 8)
 		return false;
 
 	// Compression
@@ -179,6 +179,13 @@ bool WinCursor::readFromStream(Common::SeekableReadStream &stream) {
 					else
 						*rowDest = 0;
 				}
+			}
+		} else if (bitsPerPixel == 4) {
+			// 4bpp
+			for (uint16 j = 0; j < (_width / 2); j++) {
+				byte p = src[j];
+				*rowDest++ = p >> 4;
+				*rowDest++ = p & 0x0f;
 			}
 		} else {
 			// 8bpp

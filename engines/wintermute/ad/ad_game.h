@@ -52,6 +52,9 @@ public:
 	bool onMouseRightDown() override;
 	bool onMouseRightUp() override;
 
+	bool handleCustomActionStart(BaseGameCustomAction action) override;
+	bool handleCustomActionEnd(BaseGameCustomAction action) override;
+
 	bool displayDebugInfo() override;
 
 	bool addSpeechDir(const char *dir);

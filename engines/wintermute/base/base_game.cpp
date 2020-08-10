@@ -79,6 +79,9 @@
 
 #if EXTENDED_DEBUGGER_ENABLED
 #include "engines/wintermute/base/scriptables/debuggable/debuggable_script_engine.h"
+#endif
+
+#ifdef ENABLE_WME3D
 #include "graphics/renderer.h"
 #endif
 
@@ -4011,50 +4014,6 @@ bool BaseGame::handleMouseWheel(int32 delta) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::handleCustomActionStart(BaseGameCustomAction action) {
-	if (BaseEngine::instance().getGameId() == "corrosion") {
-		// Keyboard walking is added, for both original game & Enhanced Edition
-
-		// However, Enhanced Edition contain city map screen, which is
-		// mouse controlled and conflicts with those custom actions
-		const char *m = "items\\street_map\\windows\\street_map_window.script";
-		if (_scEngine->isRunningScript(m)) {
-			return false;
-		}
-
-		Point32 p;
-		switch (action) {
-		case kClickAtCenter:
-			p.x = _renderer->getWidth() / 2;
-			p.y = _renderer->getHeight() / 2;
-			break;
-		case kClickAtLeft:
-			p.x = 30;
-			p.y = _renderer->getHeight() / 2;
-			break;
-		case kClickAtRight:
-			p.x = _renderer->getWidth() - 30;
-			p.y = _renderer->getHeight() / 2;
-			break;
-		case kClickAtTop:
-			p.x = _renderer->getWidth() / 2;
-			p.y = 10;
-			break;
-		case kClickAtBottom:
-			p.x = _renderer->getWidth() / 2;
-			p.y = _renderer->getHeight();
-			p.y -= ConfMan.get("extra").contains("Enhanced") ? 35 : 90;
-			break;
-		default:
-			return false;
-		}
-
-		BasePlatform::setCursorPos(p.x, p.y);
-		setActiveObject(_gameRef->_renderer->getObjectAt(p.x, p.y)); 
-		onMouseLeftDown();
-		onMouseLeftUp();
-		return true;
-	}
-
 	return false;
 }
 

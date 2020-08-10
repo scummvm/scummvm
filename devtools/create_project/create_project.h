@@ -23,12 +23,12 @@
 #ifndef TOOLS_CREATE_PROJECT_H
 #define TOOLS_CREATE_PROJECT_H
 
-#ifndef __has_feature       // Optional of course.
-#define __has_feature(x) 0  // Compatibility with non-clang compilers.
+#ifndef __has_feature      // Optional of course.
+#define __has_feature(x) 0 // Compatibility with non-clang compilers.
 #endif
 
-#include <map>
 #include <list>
+#include <map>
 #include <string>
 
 #include <cassert>
@@ -156,12 +156,12 @@ StringList getEngineDefines(const EngineDescList &engines);
  * used to build ScummVM.
  */
 struct Feature {
-	const char *name;        ///< Name of the feature
-	const char *define;      ///< Define of the feature
+	const char *name;   ///< Name of the feature
+	const char *define; ///< Define of the feature
 
-	const char *libraries;   ///< Libraries, which need to be linked, for the feature
+	const char *libraries; ///< Libraries, which need to be linked, for the feature
 
-	bool enable;             ///< Whether the feature is enabled or not
+	bool enable; ///< Whether the feature is enabled or not
 
 	const char *description; ///< Human readable description of the feature
 
@@ -172,8 +172,8 @@ struct Feature {
 typedef std::list<Feature> FeatureList;
 
 struct Tool {
-	const char *name;        ///< Name of the tools
-	bool enable;             ///< Whether the tools is enabled or not
+	const char *name; ///< Name of the tools
+	bool enable;      ///< Whether the tools is enabled or not
 };
 typedef std::list<Tool> ToolList;
 
@@ -199,6 +199,14 @@ StringList getFeatureDefines(const FeatureList &features);
  * @param features List of features for the build (this may contain features, which are *not* enabled!)
  */
 StringList getFeatureLibraries(const FeatureList &features);
+
+/**
+ * Returns a list of all external library files, according to the
+ * feature passed.
+ *
+ * @param features Feature for the build (this may contain features, which are *not* enabled!)
+ */
+StringList getFeatureLibraries(const Feature &feature);
 
 /**
  * Sets the state of a given feature. This can be used to
@@ -228,8 +236,8 @@ bool getFeatureBuildState(const std::string &name, FeatureList &features);
  * It also contains the path to the project source root.
  */
 struct BuildSetup {
-	std::string projectName;         ///< Project name
-	std::string projectDescription;  ///< Project description
+	std::string projectName;        ///< Project name
+	std::string projectDescription; ///< Project description
 
 	std::string srcDir;     ///< Path to the sources.
 	std::string filePrefix; ///< Prefix for the relative path arguments in the project files.
@@ -242,18 +250,20 @@ struct BuildSetup {
 	StringList libraries; ///< List of all external libraries required for the build.
 	StringList testDirs;  ///< List of all folders containing tests
 
-	bool devTools;         ///< Generate project files for the tools
-	bool tests;            ///< Generate project files for the tests
-	bool runBuildEvents;   ///< Run build events as part of the build (generate revision number and copy engine/theme data & needed files to the build folder
-	bool createInstaller;  ///< Create installer after the build
-	bool useSDL2;          ///< Whether to use SDL2 or not.
+	bool devTools;             ///< Generate project files for the tools
+	bool tests;                ///< Generate project files for the tests
+	bool runBuildEvents;       ///< Run build events as part of the build (generate revision number and copy engine/theme data & needed files to the build folder
+	bool createInstaller;      ///< Create installer after the build
+	bool useSDL2;              ///< Whether to use SDL2 or not.
+	bool useCanonicalLibNames; ///< Whether to use canonical libraries names or default ones
 
 	BuildSetup() {
-		devTools        = false;
-		tests           = false;
-		runBuildEvents  = false;
+		devTools = false;
+		tests = false;
+		runBuildEvents = false;
 		createInstaller = false;
-		useSDL2         = true;
+		useSDL2 = true;
+		useCanonicalLibNames = false;
 	}
 };
 
@@ -263,17 +273,17 @@ struct BuildSetup {
  * @param message The error message to print to stderr.
  */
 #if defined(__GNUC__)
-	#define NORETURN_POST __attribute__((__noreturn__))
+#define NORETURN_POST __attribute__((__noreturn__))
 #elif defined(_MSC_VER)
-	#define NORETURN_PRE __declspec(noreturn)
+#define NORETURN_PRE __declspec(noreturn)
 #endif
 
 #ifndef NORETURN_PRE
-#define	NORETURN_PRE
+#define NORETURN_PRE
 #endif
 
 #ifndef NORETURN_POST
-#define	NORETURN_POST
+#define NORETURN_POST
 #endif
 void NORETURN_PRE error(const std::string &message) NORETURN_POST;
 
@@ -293,6 +303,15 @@ struct MSVCVersion {
 	const char *toolsetLLVM;     ///< Toolset version for Clang/LLVM compiler.
 };
 typedef std::list<MSVCVersion> MSVCList;
+
+enum MSVC_Architecture {
+	ARCH_ARM64,
+	ARCH_X86,
+	ARCH_AMD64
+};
+
+std::string getMSVCArchName(MSVC_Architecture arch);
+std::string getMSVCConfigName(MSVC_Architecture arch);
 
 /**
  * Creates a list of all supported versions of Visual Studio.
@@ -315,6 +334,23 @@ const MSVCVersion *getMSVCVersion(int version);
  * @return Version number, or 0 if no installations were found.
  */
 int getInstalledMSVC();
+
+/**
+ * Return a "canonical" library name, so it is easier to integrate other providers of dependencies.
+ *
+ * @param lib The link library as provided by ScummVM libs.
+ * @return Canonical link library.
+ */
+std::string getCanonicalLibName(const std::string &lib);
+
+/**
+ * Removes given feature from setup.
+ *
+ * @param setup The setup to be processed.
+ * @param feature The feature to be removed
+ * @return A copy of setup less feature.
+ */
+BuildSetup removeFeatureFromSetup(BuildSetup setup, const std::string &feature);
 
 namespace CreateProjectTool {
 
@@ -464,11 +500,11 @@ public:
 	static std::string getLastPathComponent(const std::string &path);
 
 protected:
-	const int _version;                                      ///< Target project version
-	StringList &_globalWarnings;                             ///< Global warnings
-	std::map<std::string, StringList> &_projectWarnings;     ///< Per-project warnings
+	const int _version;                                  ///< Target project version
+	StringList &_globalWarnings;                         ///< Global warnings
+	std::map<std::string, StringList> &_projectWarnings; ///< Per-project warnings
 
-	UUIDMap _uuidMap;                                        ///< List of (project name, UUID) pairs
+	UUIDMap _uuidMap; ///< List of (project name, UUID) pairs
 
 	/**
 	 *  Create workspace/solution file
@@ -590,7 +626,6 @@ protected:
 	std::string createUUID(const std::string &name) const;
 
 private:
-
 	/**
 	 * Returns the string representation of an existing UUID.
 	 *
@@ -608,6 +643,6 @@ private:
 	void createEnginePluginsTable(const BuildSetup &setup);
 };
 
-} // End of CreateProjectTool namespace
+} // namespace CreateProjectTool
 
 #endif // TOOLS_CREATE_PROJECT_H

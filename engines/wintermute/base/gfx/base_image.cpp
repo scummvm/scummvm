@@ -28,7 +28,6 @@
 
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/base_file_manager.h"
-#include "graphics/transparent_surface.h"
 #include "graphics/surface.h"
 #include "image/png.h"
 #include "image/jpeg.h"
@@ -112,14 +111,13 @@ bool BaseImage::saveBMPFile(const Common::String &filename) const {
 //////////////////////////////////////////////////////////////////////////
 bool BaseImage::resize(int newWidth, int newHeight) {
 	// WME Lite used FILTER_BILINEAR with FreeImage_Rescale here.
-	Graphics::TransparentSurface temp(*_surface, true);
+	Graphics::Surface *temp = _surface->scale((uint16)newWidth, (uint16)newHeight);
 	if (_deletableSurface) {
 		_deletableSurface->free();
 		delete _deletableSurface;
 		_deletableSurface = nullptr;
 	}
-	_surface = _deletableSurface = temp.scale((uint16)newWidth, (uint16)newHeight);
-	temp.free();
+	_surface = _deletableSurface = temp;
 	return true;
 }
 
@@ -216,13 +214,13 @@ bool BaseImage::writeBMPToStream(Common::WriteStream *stream) const {
 bool BaseImage::copyFrom(BaseImage *origImage, int newWidth, int newHeight) {
 	// WME Lite used FILTER_BILINEAR with FreeImage_Rescale here.
 
-	Graphics::TransparentSurface temp(*origImage->_surface, false);
+	Graphics::Surface *temp = origImage->_surface->scale((uint16)newWidth, (uint16)newHeight);
 	if (_deletableSurface) {
 		_deletableSurface->free();
 		delete _deletableSurface;
 		_deletableSurface = nullptr;
 	}
-	_surface = _deletableSurface = temp.scale((uint16)newWidth, (uint16)newHeight);
+	_surface = _deletableSurface = temp;
 	return true;
 }
 

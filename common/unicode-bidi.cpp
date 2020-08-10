@@ -64,7 +64,7 @@ void UnicodeBiDiText::initWithU32String(const U32String &input) {
 	FriBidiChar *visual_str = new FriBidiChar[buff_length * sizeof(FriBidiChar)];
 	_log_to_vis_index = new uint32[input_size];
 	_vis_to_log_index = new uint32[input_size];
-	FriBidiCharType pbase_dir = FRIBIDI_TYPE_ON;
+	FriBidiParType pbase_dir = FRIBIDI_PAR_ON;
 
 	if (!fribidi_log2vis(
 		/* input */
@@ -89,7 +89,11 @@ void UnicodeBiDiText::initWithU32String(const U32String &input) {
 		delete[] visual_str;
 	}
 #else
-	warning("initWithU32String: Fribidi not available, using input string as fallback");
+	static bool fribidiWarning = true;
+	if (fribidiWarning) {
+		warning("initWithU32String: Fribidi not available, will use input strings as fallback.");
+		fribidiWarning = false;
+	}
 	visual = input;
 #endif
 

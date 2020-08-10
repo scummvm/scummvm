@@ -222,8 +222,8 @@ public:
 
 	bool handleKeypress(Common::Event *event, bool printable = false) override;
 	virtual void handleKeyRelease(Common::Event *event);
-	bool handleCustomActionStart(BaseGameCustomAction action);
-	bool handleCustomActionEnd(BaseGameCustomAction action);
+	virtual bool handleCustomActionStart(BaseGameCustomAction action);
+	virtual bool handleCustomActionEnd(BaseGameCustomAction action);
 
 	bool unfreeze();
 	bool freeze(bool includingMusic = true);

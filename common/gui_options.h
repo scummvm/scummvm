@@ -41,6 +41,7 @@
 #define GUIO_MIDIAPPLEIIGS   "\015"
 #define GUIO_MIDITOWNS       "\016"
 #define GUIO_MIDIPC98        "\017"
+#define GUIO_MIDISEGACD      "\018"
 #define GUIO_MIDIMT32        "\020"
 #define GUIO_MIDIGM          "\021"
 
