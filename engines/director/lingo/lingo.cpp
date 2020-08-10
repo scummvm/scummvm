@@ -856,7 +856,7 @@ int Datum::asInt() const {
 		res = u.i;
 		break;
 	case FLOAT:
-		if (g_director->getVersion() < 4) {
+		if (g_director->getVersion() < 400) {
 			res = round(u.f);
 		} else {
 			res = (int)u.f;
@@ -1153,7 +1153,7 @@ void Lingo::executeImmediateScripts(Frame *frame) {
 		if (_vm->getCurrentMovie()->getScore()->_immediateActions.contains(frame->_sprites[i]->_scriptId)) {
 			// From D5 only explicit event handlers are processed
 			// Before that you could specify commands which will be executed on mouse up
-			if (_vm->getVersion() < 5)
+			if (_vm->getVersion() < 500)
 				g_lingo->processEvent(kEventGeneric, kScoreScript, frame->_sprites[i]->_scriptId, i);
 			else
 				g_lingo->processEvent(kEventMouseUp, kScoreScript, frame->_sprites[i]->_scriptId, i);

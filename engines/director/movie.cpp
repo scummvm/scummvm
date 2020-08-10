@@ -168,7 +168,7 @@ InfoEntries Movie::loadInfoEntries(Common::SeekableSubReadStreamEndian &stream) 
 	res.unk2 = stream.readUint32();
 	res.flags = stream.readUint32();
 
-	if (g_director->getVersion() >= 4)
+	if (g_director->getVersion() >= 400)
 		res.scriptId = stream.readUint32();
 
 	stream.seek(offset);

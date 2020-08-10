@@ -180,7 +180,7 @@ Common::String Cast::getString(Common::String str) {
 	}
 
 	//TODO: check if all versions need to cut off the first character.
-	if (_vm->getVersion() > 3) {
+	if (_vm->getVersion() >= 400) {
 		str.deleteChar(0);
 	}
 
@@ -292,7 +292,7 @@ bool Cast::loadArchive() {
 	}
 
 	// For D4+ we may request to force Lingo scripts and skip precompiled bytecode
-	if (_vm->getVersion() >= 4 && !debugChannelSet(-1, kDebugNoBytecode)) {
+	if (_vm->getVersion() >= 400 && !debugChannelSet(-1, kDebugNoBytecode)) {
 		// Try to load script context
 		Common::Array<uint16> lctx =  _castArchive->getResourceIDList(MKTAG('L','c','t','x'));
 		if (lctx.size() > 0) {
@@ -328,7 +328,7 @@ bool Cast::loadArchive() {
 		delete r;
 
 		// Try to load movie script, it starts with a comment
-		if (_vm->getVersion() <= 3) {
+		if (_vm->getVersion() <= 300) {
 			if (debugChannelSet(-1, kDebugFewFramesOnly))
 				warning("Compiling STXT %d", *iterator);
 
@@ -387,7 +387,7 @@ void Cast::loadConfig(Common::SeekableSubReadStreamEndian &stream) {
 		stream.readByte();
 	}
 
-	if (_vm->getVersion() >= 4) {
+	if (_vm->getVersion() >= 400) {
 		for (int i = 0; i < 0x16; i++)
 			stream.readByte();
 
@@ -411,7 +411,7 @@ void Cast::copyCastStxts() {
 			continue;
 
 		uint stxtid;
-		if (_vm->getVersion() >= 4 && c->_value->_children.size() > 0)
+		if (_vm->getVersion() >= 400 && c->_value->_children.size() > 0)
 			stxtid = c->_value->_children[0].index;
 		else
 			stxtid = c->_key;
@@ -441,9 +441,9 @@ void Cast::loadCastChildren() {
 			PaletteCastMember *member = ((PaletteCastMember *)c->_value);
 
 			// TODO: Verify how palettes work in >D4 versions
-			if (_vm->getVersion() == 4 && member->_children.size() == 1) {
+			if (_vm->getVersion() >= 400 && _vm->getVersion() < 500 && member->_children.size() == 1) {
 				member->_palette = g_director->getPalette(member->_children[0].index);
-			} else if (_vm->getVersion() < 4) {
+			} else if (_vm->getVersion() < 400) {
 				// D3 palettes are always kept in this ascending order
 				member->_palette = g_director->getPalette((++p)->_value.id);
 			} else {
@@ -464,7 +464,7 @@ void Cast::loadCastChildren() {
 		Image::ImageDecoder *img = NULL;
 		Common::SeekableReadStream *pic = NULL;
 
-		if (_vm->getVersion() >= 4 && bitmapCast->_children.size() > 0) {
+		if (_vm->getVersion() >= 400 && bitmapCast->_children.size() > 0) {
 			imgId = bitmapCast->_children[0].index;
 			tag = bitmapCast->_children[0].tag;
 
@@ -502,7 +502,7 @@ void Cast::loadCastChildren() {
 			debugC(2, kDebugLoading, "****** Loading 'BITD' id: %d (%d), %d bytes", imgId, realId, pic->size());
 
 			if (w > 0 && h > 0) {
-				if (_vm->getVersion() < 6) {
+				if (_vm->getVersion() < 600) {
 					img = new BITDDecoder(w, h, bitmapCast->_bitsPerPixel, bitmapCast->_pitch, _vm->getPalette());
 				} else {
 					img = new Image::BitmapDecoder();
@@ -547,7 +547,7 @@ void Cast::loadSoundCasts() {
 		uint32 tag = MKTAG('S', 'N', 'D', ' ');
 		uint16 sndId = (uint16)(c->_key + _castIDoffset);
 
-		if (_vm->getVersion() >= 4 && soundCast->_children.size() > 0) {
+		if (_vm->getVersion() >= 400 && soundCast->_children.size() > 0) {
 			sndId = soundCast->_children[0].index;
 			tag = soundCast->_children[0].tag;
 		}
@@ -599,7 +599,7 @@ void Cast::loadDigitalVideoCasts() {
 		uint32 tag = MKTAG('M', 'o', 'o', 'V');
 		uint16 videoId = (uint16)(c->_key + _castIDoffset);
 
-		if (_vm->getVersion() >= 4 && digitalVideoCast->_children.size() > 0) {
+		if (_vm->getVersion() >= 400 && digitalVideoCast->_children.size() > 0) {
 			videoId = digitalVideoCast->_children[0].index;
 			tag = digitalVideoCast->_children[0].tag;
 		}
@@ -768,7 +768,7 @@ void Cast::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, 
 
 	// D2-3 cast members should be loaded in loadCastDataVWCR
 #if 0
-	if (_vm->getVersion() <= 3) {
+	if (_vm->getVersion() < 400) {
 		size1 = stream.readUint16();
 		sizeToRead = size1 +16; // 16 is for bounding rects
 		size2 = stream.readUint32();
@@ -780,7 +780,7 @@ void Cast::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, 
 	}
 #endif
 
-	if (_vm->getVersion() == 4) {
+	if (_vm->getVersion() >= 400 && _vm->getVersion() < 500) {
 		castSize = stream.readUint16();
 		castSizeToRead = castSize;
 		castInfoSize = stream.readUint32();
@@ -793,7 +793,7 @@ void Cast::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, 
 			flags1 = stream.readByte();
 			castSizeToRead -= 1;
 		}
-	} else if (_vm->getVersion() == 5) {
+	} else if (_vm->getVersion() >= 500 && _vm->getVersion() < 600) {
 		castType = stream.readUint32();
 		size3 = stream.readUint32();
 		castInfoSize = stream.readUint32();
@@ -889,7 +889,7 @@ void Cast::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, 
 
 	// read the cast member info
 
-	if (castInfoSize && _vm->getVersion() < 5) {
+	if (castInfoSize && _vm->getVersion() < 500) {
 		loadCastInfo(stream, id);
 	}
 
@@ -909,7 +909,7 @@ LingoContextEntry::LingoContextEntry(int32 i, int16 n)
 	: index(i), nextUnused(n), unused(false) {}
 
 void Cast::loadLingoContext(Common::SeekableSubReadStreamEndian &stream) {
-	if (_vm->getVersion() >= 4) {
+	if (_vm->getVersion() >= 400) {
 		debugC(1, kDebugCompile, "Add V4 script context");
 
 		if (debugChannelSet(5, kDebugLoading)) {
@@ -1116,7 +1116,7 @@ void Cast::loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id) 
 
 	CastMember *member = _loadedCast->getVal(id);
 	// For D4+ we may force Lingo scripts
-	if (_vm->getVersion() < 4 || debugChannelSet(-1, kDebugNoBytecode)) {
+	if (_vm->getVersion() < 400 || debugChannelSet(-1, kDebugNoBytecode)) {
 		if (!ci->script.empty()) {
 			ScriptType scriptType = kCastScript;
 			// the script type here could be wrong!

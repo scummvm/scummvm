@@ -398,7 +398,7 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 		// Let's try to translate file path into 8.3 format
 		Common::String addedexts;
 
-		if (g_director->getPlatform() == Common::kPlatformWindows && g_director->getVersion() < 5) {
+		if (g_director->getPlatform() == Common::kPlatformWindows && g_director->getVersion() < 500) {
 			convPath.clear();
 			const char *ptr = initialPath.c_str();
 			Common::String component;

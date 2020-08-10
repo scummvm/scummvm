@@ -179,13 +179,13 @@ Common::Error DirectorEngine::run() {
 	if (getPlatform() == Common::kPlatformWindows)
 		_machineType = 256; // IBM PC-type machine
 
-	if (getVersion() < 4) {
+	if (getVersion() < 400) {
 		if (getPlatform() == Common::kPlatformWindows) {
 			_sharedCastFile = "SHARDCST.MMM";
 		} else {
 			_sharedCastFile = "Shared Cast";
 		}
-	} else if (getVersion() == 5) {
+	} else if (getVersion() == 500) {
 		if (getPlatform() == Common::kPlatformWindows) {
 			_sharedCastFile = "SHARED.Cxt";
 		}

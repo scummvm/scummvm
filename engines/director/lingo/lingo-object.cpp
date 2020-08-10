@@ -46,18 +46,18 @@ static struct PredefinedProto {
 	int version;
 } predefinedMethods[] = {
 	// all except window
-	{ "new",					LM::m_new,					-1, 0,	kAllObj, 				2 },	// D2
+	{ "new",					LM::m_new,					-1, 0,	kAllObj, 				200 },	// D2
 
 	// factory and XObject
-	{ "describe",				LM::m_describe,				 0, 0,	kXObj,					2 },	// D2
-	{ "dispose",				LM::m_dispose,				 0, 0,	kFactoryObj | kXObj,	2 },	// D2
-	{ "get",					LM::m_get,					 1, 1,	kFactoryObj,			2 },	// D2
-	{ "instanceRespondsTo",		LM::m_instanceRespondsTo,	 1, 1,	kXObj,					3 },		// D3
-	{ "messageList",			LM::m_messageList,			 0, 0,	kXObj,					3 },		// D3
-	{ "name",					LM::m_name,					 0, 0,	kXObj,					3 },		// D3
-	{ "perform",				LM::m_perform,				-1, 0,	kFactoryObj | kXObj, 	3 },		// D3
-	{ "put",					LM::m_put,					 2, 2,	kFactoryObj,			2 },	// D2
-	{ "respondsTo",				LM::m_respondsTo,			 1, 1,	kXObj,					2 },	// D2
+	{ "describe",				LM::m_describe,				 0, 0,	kXObj,					200 },	// D2
+	{ "dispose",				LM::m_dispose,				 0, 0,	kFactoryObj | kXObj,	200 },	// D2
+	{ "get",					LM::m_get,					 1, 1,	kFactoryObj,			200 },	// D2
+	{ "instanceRespondsTo",		LM::m_instanceRespondsTo,	 1, 1,	kXObj,					300 },		// D3
+	{ "messageList",			LM::m_messageList,			 0, 0,	kXObj,					300 },		// D3
+	{ "name",					LM::m_name,					 0, 0,	kXObj,					300 },		// D3
+	{ "perform",				LM::m_perform,				-1, 0,	kFactoryObj | kXObj, 	300 },		// D3
+	{ "put",					LM::m_put,					 2, 2,	kFactoryObj,			200 },	// D2
+	{ "respondsTo",				LM::m_respondsTo,			 1, 1,	kXObj,					200 },	// D2
 
 	// script object and Xtra
 	{ "birth",					LM::m_new,					-1, 0,	kScriptObj | kXtraObj, 	4 },			// D4
@@ -67,11 +67,11 @@ static struct PredefinedProto {
 
 static MethodProto windowMethods[] = {
 	// window / stage
-	{ "close",					LM::m_close,				 0, 0,	4 },			// D4
-	{ "forget",					LM::m_forget,				 0, 0,	4 },			// D4
-	{ "open",					LM::m_open,					 0, 0,	4 },			// D4
-	{ "moveToBack",				LM::m_moveToBack,			 0, 0,	4 },			// D4
-	{ "moveToFront",			LM::m_moveToFront,			 0, 0,	4 },			// D4
+	{ "close",					LM::m_close,				 0, 0,	400 },			// D4
+	{ "forget",					LM::m_forget,				 0, 0,	400 },			// D4
+	{ "open",					LM::m_open,					 0, 0,	400 },			// D4
+	{ "moveToBack",				LM::m_moveToBack,			 0, 0,	400 },			// D4
+	{ "moveToFront",			LM::m_moveToFront,			 0, 0,	400 },			// D4
 	{ 0, 0, 0, 0, 0 }
 };
 
@@ -98,10 +98,10 @@ static struct XLibProto {
 	int type;
 	int version;
 } xlibs[] = {
-	{ "FileIO",					FileIO::initialize,					kXObj | kFactoryObj,	2 },	// D2
-	{ "FlushXObj",				FlushXObj::initialize,				kXObj,					4 },	// D4
-	{ "PalXObj",				PalXObj:: initialize,				kXObj,					4 }, 	// D4
-	{ "winXObj",				RearWindowXObj::initialize,			kXObj,					4 },	// D4
+	{ "FileIO",					FileIO::initialize,					kXObj | kFactoryObj,	200 },	// D2
+	{ "FlushXObj",				FlushXObj::initialize,				kXObj,					400 },	// D4
+	{ "PalXObj",				PalXObj:: initialize,				kXObj,					400 }, 	// D4
+	{ "winXObj",				RearWindowXObj::initialize,			kXObj,					400 },	// D4
 	{ 0, 0, 0, 0 }
 
 };

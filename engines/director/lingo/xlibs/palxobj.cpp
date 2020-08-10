@@ -49,8 +49,8 @@ namespace Director {
 static const char *xlibName = "FixPalette";
 
 static MethodProto xlibMethods[] = {
-	{ "new",				PalXObj::m_new,				 4, 4,	4 },	// D4
-	{ "PatchIt",			PalXObj::m_patchIt,			 0, 0,  4 },	// D4
+	{ "new",				PalXObj::m_new,				 4, 4,	400 },	// D4
+	{ "PatchIt",			PalXObj::m_patchIt,			 0, 0,  400 },	// D4
 	{ 0, 0, 0, 0, 0 }
 };
 

@@ -41,9 +41,9 @@ namespace Director {
 static const char *xlibName = "RearWindow";
 
 static MethodProto xlibMethods[] = {
-	{ "new",				RearWindowXObj::m_new,				1,	1,	4 },	// D4
-	{ "GetMemoryNeeded",	RearWindowXObj::m_getMemoryNeeded,	0,	0,	4 },	// D4
-	{ "PatToWindow",		RearWindowXObj::m_patToWindow,		1,	1,	4 },	// D4
+	{ "new",				RearWindowXObj::m_new,				1,	1,	400 },	// D4
+	{ "GetMemoryNeeded",	RearWindowXObj::m_getMemoryNeeded,	0,	0,	400 },	// D4
+	{ "PatToWindow",		RearWindowXObj::m_patToWindow,		1,	1,	400 },	// D4
 	{ 0, 0, 0, 0, 0 }
 };
 

@@ -448,7 +448,7 @@ void LC::c_varpush() {
 	}
 
 	// Looking for the cast member constants
-	if (g_director->getVersion() < 4 || g_director->getCurrentMovie()->_allowOutdatedLingo) {
+	if (g_director->getVersion() < 400 || g_director->getCurrentMovie()->_allowOutdatedLingo) {
 		int val = castNumToNum(name.c_str());
 
 		if (val != -1) {
@@ -702,7 +702,7 @@ Datum LC::divData(Datum &d1, Datum &d2) {
 
 	int alignedType = g_lingo->getAlignedType(d1, d2);
 
-	if (g_director->getVersion() < 4)	// pre-D4 is INT-only
+	if (g_director->getVersion() < 400)	// pre-D4 is INT-only
 		alignedType = INT;
 
 	Datum res;

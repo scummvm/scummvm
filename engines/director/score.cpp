@@ -264,7 +264,7 @@ void Score::startPlay() {
 		for (uint i = 0; i < _frames[1]->_sprites.size(); i++)
 			_channels.push_back(new Channel(_frames[1]->_sprites[i], i));
 
-	if (_vm->getVersion() >= 3)
+	if (_vm->getVersion() >= 300)
 		_movie->processEvent(kEventStartMovie);
 }
 
@@ -292,7 +292,7 @@ void Score::step() {
 }
 
 void Score::stopPlay() {
-	if (_vm->getVersion() >= 3)
+	if (_vm->getVersion() >= 300)
 		_movie->processEvent(kEventStopMovie);
 	_lingo->executePerFrameHook(-1, 0);
 }
@@ -336,11 +336,11 @@ void Score::update() {
 		// of _nextFrame so it doesn't get wiped.
 		if (_vm->_skipFrameAdvance) {
 			uint16 nextFrameCache = _nextFrame;
-			if (_vm->getVersion() >= 4)
+			if (_vm->getVersion() >= 400)
 				_movie->processEvent(kEventExitFrame);
 			_nextFrame = nextFrameCache;
 		} else {
-			if (_vm->getVersion() >= 4)
+			if (_vm->getVersion() >= 400)
 				_movie->processEvent(kEventExitFrame);
 		}
 
@@ -384,7 +384,7 @@ void Score::update() {
 
 	_lingo->executeImmediateScripts(_frames[_currentFrame]);
 
-	if (_vm->getVersion() >= 6) {
+	if (_vm->getVersion() >= 600) {
 		// _movie->processEvent(kEventBeginSprite);
 		// TODO Director 6 step: send beginSprite event to any sprites whose span begin in the upcoming frame
 		// _movie->processEvent(kEventPrepareFrame);
@@ -398,7 +398,7 @@ void Score::update() {
 	// Enter and exit from previous frame
 	if (!_vm->_playbackPaused) {
 		_movie->processEvent(kEventEnterFrame); // Triggers the frame script in D2-3, explicit enterFrame handlers in D4+
-		if (_vm->getVersion() == 3) {
+		if (_vm->getVersion() == 300) {
 			// Movie version of enterFrame, for D3 only. The Lingo Dictionary claims
 			// "This handler executes before anything else when the playback head moves."
 			// but this is incorrect. The frame script is executed first.
@@ -632,9 +632,9 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 	uint32 size = stream.readUint32();
 	size -= 4;
 
-	if (_vm->getVersion() < 4) {
+	if (_vm->getVersion() < 400) {
 		_numChannelsDisplayed = 30;
-	} else if (_vm->getVersion() == 4) {
+	} else if (_vm->getVersion() >= 400 && _vm->getVersion() < 500) {
 		uint32 frame1Offset = stream.readUint32();
 		uint32 numFrames = stream.readUint32();
 		uint16 version = stream.readUint16();
@@ -658,7 +658,7 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 		warning("STUB: Score::loadFrames. frame1Offset: %x numFrames: %x version: %x spriteRecordSize: %x numChannels: %x numChannelsDisplayed: %x",
 			frame1Offset, numFrames, version, spriteRecordSize, numChannels, _numChannelsDisplayed);
 		// Unknown, some bytes - constant (refer to contuinity).
-	} else if (_vm->getVersion() > 4) {
+	} else if (_vm->getVersion() >= 500) {
 		//what data is up the top of D5 VWSC?
 		uint32 unk1 = stream.readUint32();
 		uint32 unk2 = stream.readUint32();
@@ -718,7 +718,7 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 
 			while (frameSize != 0) {
 
-				if (_vm->getVersion() < 4) {
+				if (_vm->getVersion() < 400) {
 					channelSize = stream.readByte() * 2;
 					channelOffset = stream.readByte() * 2;
 					frameSize -= channelSize + 2;

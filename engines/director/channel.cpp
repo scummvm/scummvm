@@ -429,7 +429,7 @@ MacShape *Channel::getShape() {
 	shape->lineSize = _sprite->_thickness & 0x3;
 	shape->pattern = _sprite->getPattern();
 
-	if (g_director->getVersion() >= 3 && shape->spriteType == kCastMemberSprite) {
+	if (g_director->getVersion() >= 300 && shape->spriteType == kCastMemberSprite) {
 		if (!_sprite->_cast) {
 			warning("Channel::getShape(): kCastMemberSprite has no cast defined");
 			delete shape;
@@ -454,7 +454,7 @@ MacShape *Channel::getShape() {
 			break;
 		}
 
-		if (g_director->getVersion() > 3) {
+		if (g_director->getVersion() >= 400) {
 			shape->foreColor = sc->getForeColor();
 			shape->backColor = sc->getBackColor();
 			shape->lineSize = sc->_lineThickness;

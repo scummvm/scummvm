@@ -119,7 +119,7 @@ bool Sprite::isActive() {
 
 bool Sprite::shouldHilite() {
 	if ((_cast && _cast->_autoHilite) || (isQDShape() && _ink == kInkTypeMatte))
-		if (g_director->getVersion() < 4 && !_moveable)
+		if (g_director->getVersion() < 400 && !_moveable)
 			if (_movie->getScriptContext(kScoreScript, _scriptId) ||
 					_movie->getScriptContext(kCastScript, _castId))
 				return true;

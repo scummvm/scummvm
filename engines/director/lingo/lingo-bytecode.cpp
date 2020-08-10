@@ -1025,7 +1025,7 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream
 	for (uint16 i = 0; i < constsCount; i++) {
 		Datum constant;
 		uint32 constType = 0;
-		if (_vm->getVersion() >= 5) {
+		if (_vm->getVersion() >= 500) {
 			constType = stream.readUint32();
 		} else {
 			constType = (uint32)stream.readUint16();

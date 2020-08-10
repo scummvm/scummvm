@@ -41,7 +41,7 @@ namespace Director {
 
 DirectorSound::DirectorSound(DirectorEngine *vm) : _vm(vm) {
 	uint numChannels = 2;
-	if (g_director->getVersion() >= 4) {
+	if (g_director->getVersion() >= 400) {
 		numChannels = 4;
 	}
 

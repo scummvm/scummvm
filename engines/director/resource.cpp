@@ -39,12 +39,12 @@ namespace Director {
 
 Archive *DirectorEngine::createArchive() {
 	if (getPlatform() == Common::kPlatformMacintosh) {
-		if (getVersion() < 4)
+		if (getVersion() < 400)
 			return new MacArchive();
 		else
 			return new RIFXArchive();
 	} else {
-		if (getVersion() < 4)
+		if (getVersion() < 400)
 			return new RIFFArchive();
 		else
 			return new RIFXArchive();
@@ -213,21 +213,15 @@ void Window::loadEXE(const Common::String movie) {
 		exeStream->seek(-4, SEEK_END);
 		exeStream->seek(exeStream->readUint32LE());
 
-		switch (g_director->getVersion()) {
-		case 2:
-		case 3:
-			loadEXEv3(exeStream);
-			break;
-		case 4:
-			loadEXEv4(exeStream);
-			break;
-		case 5:
-			loadEXEv5(exeStream);
-			break;
-		case 7:
+		if (g_director->getVersion() >= 700) {
 			loadEXEv7(exeStream);
-			break;
-		default:
+		} else if (g_director->getVersion() >= 500) {
+			loadEXEv5(exeStream);
+		} else if (g_director->getVersion() >= 400) {
+			loadEXEv4(exeStream);
+		} else if (g_director->getVersion() >= 200) {
+			loadEXEv3(exeStream);
+		} else {
 			error("Unhandled Windows EXE version %d", g_director->getVersion());
 		}
 	}
@@ -351,7 +345,7 @@ void Window::loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset) {
 }
 
 void Window::loadMac(const Common::String movie) {
-	if (g_director->getVersion() < 4) {
+	if (g_director->getVersion() < 400) {
 		// The data is part of the resource fork of the executable
 		openMainArchive(movie);
 	} else {

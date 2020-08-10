@@ -307,7 +307,7 @@ the{spc}+[[:alpha:]]+{spc}+of{spc}+{identifier}	{
 			else
 				return THEENTITY;
 		} else {
-			if (g_director->getVersion() >= 4) {
+			if (g_director->getVersion() >= 400) {
 				Common::String key = Common::String::format("%d%s", g_lingo->_objectEntityId, field.c_str());
 
 				yylval.objectprop.obj = new Common::String(ptr);

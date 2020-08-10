@@ -2,7 +2,7 @@ set z = "foo bar baz"
 set z1 = z & " meow"
 set z1 = z1 && "woof"
 scummvmAssert(z1 contains "bar")
-scummvmAssert(z1 contains "MeÍW")
+scummvmAssert(z1 contains "Meï¿½W")
 
 set c = chars("Macromedia", 6, 6)
 scummvmAssertEqual(c, "m")
@@ -11,12 +11,12 @@ scummvmAssertEqual(c, "media")
 set c = chars("Macromedia", -1, 15)
 scummvmAssertEqual(c, "Macromedia")
 set save to the scummvmVersion
-set the scummvmVersion to 3
+set the scummvmVersion to 300
 set c = chars("Macromedia", 1, 1.1)
 scummvmAssertEqual(c, 0)
 set the scummvmVersion to save
 
-scummvmAssert("meow" = "MeÍW")
+scummvmAssert("meow" = "Meï¿½W")
 
 put "That is the last line of the file." & return & "Click Done to exit." && return && "foo"
 
@@ -57,7 +57,7 @@ set res to char 5.5 of string
 scummvmAssertEqual(res, "o")
 -- Test D3, it does a round
 set save to the scummvmVersion
-set the scummvmVersion to 3
+set the scummvmVersion to 300
 set res to char 5.49 of string
 scummvmAssertEqual(res, "o")
 set res to char 5.5 of string

@@ -87,7 +87,7 @@ void Lingo::initEventHandlerTypes() {
 }
 
 ScriptType Lingo::event2script(LEvent ev) {
-	if (_vm->getVersion() < 4) {
+	if (_vm->getVersion() < 400) {
 		switch (ev) {
 		//case kEventStartMovie: // We are precompiling it now
 		//	return kMovieScript;
@@ -241,7 +241,7 @@ void Movie::registerEvent(LEvent event, int targetId) {
 		break;
 	}
 
-	if (_vm->getVersion() <= 3) {
+	if (_vm->getVersion() < 400) {
 		// In D2-3, specific objects handle each event, with no passing
 		switch(event) {
 		case kEventMouseUp:
@@ -318,7 +318,7 @@ void Lingo::processEvents() {
 	Movie *movie = _vm->getCurrentMovie();
 	Score *sc = movie->getScore();
 
-	if (_vm->getVersion() >= 3 && sc->getCurrentFrame() > 0 && sc->_playState != kPlayStopped && movie->_eventQueue.empty())
+	if (_vm->getVersion() >= 300 && sc->getCurrentFrame() > 0 && sc->_playState != kPlayStopped && movie->_eventQueue.empty())
 		movie->registerEvent(kEventIdle);
 
 	while (!movie->_eventQueue.empty()) {

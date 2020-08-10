@@ -35,18 +35,18 @@ namespace Director {
 static const char *xlibName = "FileIO";
 
 static MethodProto xlibMethods[] = {
-	{ "delete",					FileIO::m_delete,			 0, 0,	2 },	// D2
-	{ "fileName",				FileIO::m_fileName,			 0, 0,	2 },	// D2
-	{ "getLength",				FileIO::m_getLength,		 0, 0,	2 },	// D2
-	{ "getPosition",			FileIO::m_getPosition,		 0, 0,	2 },	// D2
-	{ "new",					FileIO::m_new,				 2, 2,	2 },	// D2
-	{ "readChar",				FileIO::m_readChar,			 0, 0,	2 },	// D2
-	{ "readLine",				FileIO::m_readLine,			 0, 0,	2 },	// D2
-	{ "readToken",				FileIO::m_readToken,		 2, 2,	2 },	// D2
-	{ "readWord",				FileIO::m_readWord,			 0, 0,	2 },	// D2
-	{ "setPosition",			FileIO::m_setPosition,		 1, 1,	2 },	// D2
-	{ "writeChar",				FileIO::m_writeChar,		 1, 1,	2 },	// D2
-	{ "writeString",			FileIO::m_writeString,		 1, 1,	2 },	// D2
+	{ "delete",					FileIO::m_delete,			 0, 0,	200 },	// D2
+	{ "fileName",				FileIO::m_fileName,			 0, 0,	200 },	// D2
+	{ "getLength",				FileIO::m_getLength,		 0, 0,	200 },	// D2
+	{ "getPosition",			FileIO::m_getPosition,		 0, 0,	200 },	// D2
+	{ "new",					FileIO::m_new,				 2, 2,	200 },	// D2
+	{ "readChar",				FileIO::m_readChar,			 0, 0,	200 },	// D2
+	{ "readLine",				FileIO::m_readLine,			 0, 0,	200 },	// D2
+	{ "readToken",				FileIO::m_readToken,		 2, 2,	200 },	// D2
+	{ "readWord",				FileIO::m_readWord,			 0, 0,	200 },	// D2
+	{ "setPosition",			FileIO::m_setPosition,		 1, 1,	200 },	// D2
+	{ "writeChar",				FileIO::m_writeChar,		 1, 1,	200 },	// D2
+	{ "writeString",			FileIO::m_writeString,		 1, 1,	200 },	// D2
 	{ 0, 0, 0, 0, 0 }
 };
 
