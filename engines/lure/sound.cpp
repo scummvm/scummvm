@@ -166,6 +166,7 @@ bool SoundManager::initCustomTimbres(bool canAbort) {
 
 	AudioInitIcon *icon = new AudioInitIcon();
 	icon->show();
+	uint32 iconTime = g_system->getMillis();
 
 	// Send SysExes
 
@@ -215,7 +216,7 @@ bool SoundManager::initCustomTimbres(bool canAbort) {
 	while (!_mt32Driver->isReady()) {
 		Events &events = Events::getReference();
 
-		if (events.interruptableDelay(100)) {
+		if (events.interruptableDelay(10)) {
 			if (LureEngine::getReference().shouldQuit() ||
 					(canAbort && events.type() == Common::EVENT_KEYDOWN && events.event().kbd.keycode == 27)) {
 				// User has quit the game or pressed Escape.
@@ -223,6 +224,12 @@ bool SoundManager::initCustomTimbres(bool canAbort) {
 				result = true;
 				break;
 			}
+		}
+
+		// Blink the audio initialization icon every 500 ms
+		if (g_system->getMillis() > iconTime + 500) {
+			icon->toggleVisibility();
+			iconTime = g_system->getMillis();
 		}
 	}
 
