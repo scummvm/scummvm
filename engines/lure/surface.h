@@ -148,10 +148,13 @@ public:
 class AudioInitIcon {
 private:
 	Surface *_iconSurface;
+	bool _visible;
 
 public:
 	AudioInitIcon();
 	~AudioInitIcon();
+
+	void toggleVisibility();
 	void show();
 	void hide();
 };
