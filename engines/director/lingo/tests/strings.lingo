@@ -2,7 +2,6 @@ set z = "foo bar baz"
 set z1 = z & " meow"
 set z1 = z1 && "woof"
 scummvmAssert(z1 contains "bar")
-scummvmAssert(z1 contains "Me�W")
 
 set c = chars("Macromedia", 6, 6)
 scummvmAssertEqual(c, "m")
@@ -15,8 +14,6 @@ set the scummvmVersion to 300
 set c = chars("Macromedia", 1, 1.1)
 scummvmAssertEqual(c, 0)
 set the scummvmVersion to save
-
-scummvmAssert("meow" = "Me�W")
 
 put "That is the last line of the file." & return & "Click Done to exit." && return && "foo"
 
