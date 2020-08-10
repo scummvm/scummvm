@@ -346,6 +346,38 @@ bool Cast::loadArchive() {
 	return true;
 }
 
+uint16 humanVersion(uint16 ver) {
+	if (ver >= 0x79F)
+		return 1201;
+	if (ver >= 0x783)
+		return 1200;
+	if (ver >= 0x782)
+		return 1150;
+	if (ver >= 0x781)
+		return 1100;
+	if (ver >= 0x73B)
+		return 1000;
+	if (ver >= 0x6A4)
+		return 850;
+	if (ver >= 0x582)
+		return 800;
+	if (ver >= 0x4C8)
+		return 700;
+	if (ver >= 0x4C2)
+		return 600;
+	if (ver >= 0x4B1)
+		return 500;
+	if (ver >= 0x45D)
+		return 404;
+	if (ver >= 0x45B)
+		return 400;
+	if (ver >= 0x405)
+		return 310;
+	if (ver >= 0x404)
+		return 300;
+	return 200;
+}
+
 void Cast::loadConfig(Common::SeekableSubReadStreamEndian &stream) {
 	debugC(1, kDebugLoading, "****** Loading Config VWCF");
 
@@ -353,7 +385,8 @@ void Cast::loadConfig(Common::SeekableSubReadStreamEndian &stream) {
 		stream.hexdump(stream.size());
 
 	uint16 len = stream.readUint16();
-	uint16 ver1 = stream.readUint16();
+	uint16 fileVersion = stream.readUint16(); // TODO: very high fileVersion means protected
+	uint16 humanFileVersion = humanVersion(fileVersion);
 	Common::Rect movieRect = Movie::readRect(stream);
 	if (!_isShared)
 		_movie->_movieRect = movieRect;
@@ -378,29 +411,51 @@ void Cast::loadConfig(Common::SeekableSubReadStreamEndian &stream) {
 		_movie->_stageColor = stageColor;
 
 	uint16 bitdepth = stream.readUint16();
-	byte color = stream.readByte();	// boolean, color = 1, B/W = 0
-	uint16 stageColorR = stream.readUint16();
-	uint16 stageColorG = stream.readUint16();
-	uint16 stageColorB = stream.readUint16();
 
-	for (int i = 0; i < 0x0b; i++) {
-		stream.readByte();
+	// byte color = stream.readByte();	// boolean, color = 1, B/W = 0
+	// uint16 stageColorR = stream.readUint16();
+	// uint16 stageColorG = stream.readUint16();
+	// uint16 stageColorB = stream.readUint16();
+
+	uint16 directorVersion = fileVersion;
+	uint16 humanDirectorVersion = humanFileVersion;
+	if (humanFileVersion >= 300) {
+		for (int i = 0; i < 0x06; i++) {
+			stream.readByte();
+		}
+
+		directorVersion = stream.readUint16();
+		humanDirectorVersion = humanVersion(directorVersion);
+
+		for (int i = 0; i < 0x0a; i++) {
+			stream.readByte();
+		}
+
+		if (humanDirectorVersion >= 400) {
+			for (int i = 0; i < 0x16; i++)
+				stream.readByte();
+
+			_defaultPalette = (int16)stream.readUint16();
+
+			for (int i = 0; i < 0x08; i++)
+				stream.readByte();
+		}
 	}
 
-	if (_vm->getVersion() >= 400) {
-		for (int i = 0; i < 0x16; i++)
-			stream.readByte();
-
-		_defaultPalette = (int16)stream.readUint16();
-
-		for (int i = 0; i < 0x08; i++)
-			stream.readByte();
+	if (humanDirectorVersion > _vm->getVersion()) {
+		if (_vm->getVersion() > 0)
+			warning("Movie is from later version v%d", humanDirectorVersion);
+		_vm->setVersion(humanDirectorVersion);
+	} else if (humanDirectorVersion < _vm->getVersion()) {
+		warning("Movie is from earlier version v%d", humanDirectorVersion);
+		// Don't change version in case there are other movies, factories,
+		// etc., which need features from the later version
 	}
 
 	debugC(1, kDebugLoading, "Cast::loadConfig(): len: %d, ver: %d, framerate: %d, light: %d, unk: %d, font: %d, size: %d"
-			", style: %d", len, ver1, currentFrameRate, lightswitch, unk1, commentFont, commentSize, commentStyle);
-	debugC(1, kDebugLoading, "Cast::loadConfig(): stagecolor: %d, depth: %d, color: %d, rgb: 0x%04x 0x%04x 0x%04x",
-			stageColor, bitdepth, color, stageColorR, stageColorG, stageColorB);
+			", style: %d", len, fileVersion, currentFrameRate, lightswitch, unk1, commentFont, commentSize, commentStyle);
+	debugC(1, kDebugLoading, "Cast::loadConfig(): stagecolor: %d, depth: %d, directorVer: %d",
+			stageColor, bitdepth, directorVersion);
 	if (debugChannelSet(1, kDebugLoading))
 		movieRect.debugPrint(1, "Cast::loadConfig(): Movie rect: ");
 }
