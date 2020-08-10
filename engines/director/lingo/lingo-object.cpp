@@ -118,15 +118,26 @@ void Lingo::initXLibs() {
 		sym.maxArgs = 0;
 		sym.targetType = lib->type;
 		sym.u.bltin = lib->initializer;
-		_xlibInitializers[lib->name] = sym;
+		Common::String xlibName = lib->name;
+		xlibName.toLowercase();
+		_xlibInitializers[xlibName] = sym;
 	}
 }
 
 void Lingo::openXLib(Common::String name, ObjectType type) {
-	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
+
+	Common::Platform platform = _vm->getPlatform();
+	if (platform == Common::kPlatformMacintosh) {
 		int pos = name.findLastOf(':');
 		name = name.substr(pos + 1, name.size());
+	} else if (platform == Common::kPlatformWindows) {
+		if (name.hasSuffixIgnoreCase(".dll"))
+			name = name.substr(0, name.size() - 4);
 	}
+
+	// normalize xlib name
+	name.toLowercase();
+	name.trim();
 
 	if (_xlibInitializers.contains(name)) {
 		Symbol sym = _xlibInitializers[name];
