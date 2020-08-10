@@ -244,12 +244,16 @@ public:
 	void printCallStack(uint pc);
 	Common::String decodeInstruction(LingoArchive *archive, ScriptData *sd, uint pc, uint *newPC = NULL);
 
+	void reloadBuiltIns();
 	void initBuiltIns();
-	void cleanupBuiltins();
+	void cleanupBuiltIns();
 	void initFuncs();
+	void cleanupFuncs();
 	void initBytecode();
 	void initMethods();
+	void cleanupMethods();
 	void initXLibs();
+	void cleanupXLibs();
 	void openXLib(Common::String name, ObjectType type);
 
 	void runTests();
@@ -334,6 +338,7 @@ public:
 	// lingo-the.cpp
 public:
 	void initTheEntities();
+	void cleanUpTheEntities();
 	const char *entity2str(int id);
 	const char *field2str(int id);
 

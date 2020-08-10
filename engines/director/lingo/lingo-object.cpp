@@ -92,6 +92,11 @@ void Lingo::initMethods() {
 	Window::initMethods(windowMethods);
 }
 
+void Lingo::cleanupMethods() {
+	_methods.clear();
+	Window::cleanupMethods();
+}
+
 static struct XLibProto {
 	const char *name;
 	void (*initializer)(int);
@@ -122,6 +127,10 @@ void Lingo::initXLibs() {
 		xlibName.toLowercase();
 		_xlibInitializers[xlibName] = sym;
 	}
+}
+
+void Lingo::cleanupXLibs() {
+	_xlibInitializers.clear();
 }
 
 void Lingo::openXLib(Common::String name, ObjectType type) {

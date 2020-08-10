@@ -173,7 +173,7 @@ public:
 	const char *getGameId() const;
 	uint16 getDescriptionVersion() const;
 	uint16 getVersion() const { return _version; }
-	void setVersion(uint16 version) { _version = version; }
+	void setVersion(uint16 version);
 	Common::Platform getPlatform() const;
 	Common::Language getLanguage() const;
 	const char *getExtra();

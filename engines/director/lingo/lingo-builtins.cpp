@@ -297,14 +297,13 @@ void Lingo::initBuiltIns() {
 		default:
 			break;
 		}
-
-		_functions[(void *)sym.u.s] = new FuncDesc(blt->name, "");
 	}
 }
 
-void Lingo::cleanupBuiltins() {
-	for (FuncHash::iterator it = _functions.begin(); it != _functions.end(); ++it)
-		delete it->_value;
+void Lingo::cleanupBuiltIns() {
+	_builtinCmds.clear();
+	_builtinFuncs.clear();
+	_builtinConsts.clear();
 }
 
 void Lingo::printSTUBWithArglist(const char *funcname, int nargs, const char *prefix) {

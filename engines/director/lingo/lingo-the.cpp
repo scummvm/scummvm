@@ -312,6 +312,11 @@ void Lingo::initTheEntities() {
 	}
 }
 
+void Lingo::cleanUpTheEntities() {
+	_entityNames.clear();
+	_fieldNames.clear();
+}
+
 const char *Lingo::entity2str(int id) {
 	static char buf[20];
 

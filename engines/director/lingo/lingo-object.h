@@ -101,6 +101,10 @@ public:
 		}
 	}
 
+	static void cleanupMethods() {
+		_methods->clear();
+	}
+
 	virtual ~Object() {
 		delete _refCount;
 	};

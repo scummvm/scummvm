@@ -176,6 +176,11 @@ void Lingo::initFuncs() {
 	}
 }
 
+void Lingo::cleanupFuncs() {
+	for (FuncHash::iterator it = _functions.begin(); it != _functions.end(); ++it)
+		delete it->_value;
+}
+
 void Lingo::push(Datum d) {
 	_stack.push_back(d);
 }

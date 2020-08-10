@@ -194,7 +194,19 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 
 Lingo::~Lingo() {
 	resetLingo();
-	cleanupBuiltins();
+	cleanupFuncs();
+}
+
+void Lingo::reloadBuiltIns() {
+	debug("Reloading builtins");
+	cleanupBuiltIns();
+	cleanUpTheEntities();
+	cleanupMethods();
+	cleanupXLibs();
+	initBuiltIns();
+	initTheEntities();
+	initMethods();
+	initXLibs();
 }
 
 LingoArchive::~LingoArchive() {

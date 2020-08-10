@@ -132,6 +132,15 @@ void DirectorEngine::setCurrentMovie(Movie *movie) {
 	_currentWindow = movie->getWindow();
 }
 
+void DirectorEngine::setVersion(uint16 version) {
+	if (version == _version)
+		return;
+	
+	debug("Switching to Director v%d", version);
+	_version = version;
+	_lingo->reloadBuiltIns();
+}
+
 Common::Error DirectorEngine::run() {
 	debug("Starting v%d Director game", getVersion());
 
