@@ -92,6 +92,7 @@ SoundManager::~SoundManager() {
 	delete _soundData;
 
 	if (_driver) {
+		_driver->stopAllNotes();
 		_driver->close();
 		delete _driver;
 		_driver = NULL;
@@ -508,6 +509,35 @@ void SoundManager::fadeOut() {
 
 	// Kill all the sounds
 	musicInterface_KillAll();
+}
+
+void SoundManager::pause() {
+	_paused = true;
+
+	_soundMutex.lock();
+
+	MusicListIterator i;
+	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
+		(**i).pauseMusic();
+	}
+
+	_soundMutex.unlock();
+
+	// Terminate any hanging notes, just in case
+	_driver->stopAllNotes();
+}
+
+void SoundManager::resume() {
+	_paused = false;
+
+	_soundMutex.lock();
+
+	MusicListIterator i;
+	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
+		(**i).resumeMusic();
+	}
+
+	_soundMutex.unlock();
 }
 
 /*------------------------------------------------------------------------*/
@@ -944,6 +974,14 @@ void MidiMusic::stopMusic() {
 	_parser->unloadMusic();
 	if (Sound.isRoland())
 		_mt32Driver->deinitSource(_source);
+}
+
+void MidiMusic::pauseMusic() {
+	_parser->pausePlaying();
+}
+
+void MidiMusic::resumeMusic() {
+	_parser->resumePlaying();
 }
 
 } // End of namespace Lure
