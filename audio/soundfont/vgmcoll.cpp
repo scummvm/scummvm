@@ -172,6 +172,7 @@ SynthFile *VGMColl::CreateSynthFile(VGMInstrSet *theInstrSet) {
 				}
 				if (sampCollNum == finalSampColls.size()) {
 					debug("SampColl does not exist");
+					delete synthfile;
 					return nullptr;
 				}
 				//   now we add the number of samples from the preceding SampColls to the value to
