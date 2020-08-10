@@ -69,7 +69,7 @@ DirectorPlotData Channel::getPlotData() {
 	pd.dst = nullptr;
 
 	pd.srf = getSurface();
-	if (!pd.srf) {
+	if (!pd.srf && _sprite->_spriteType != kBitmapSprite) {
 		// Shapes come colourized from macDrawPixel
 		pd.ms = getShape();
 		pd.applyColor = false;
