@@ -1080,10 +1080,12 @@ void LB::b_getNthFileNameInFolder(int nargs) {
 	Datum r;
 	if (d.exists()) {
 		Common::FSList f;
-		d.getChildren(f, Common::FSNode::kListAll);
-
-		if ((uint)fileNum < f.size())
-			r = Datum(f.operator[](fileNum).getName());
+		if (!d.getChildren(f, Common::FSNode::kListAll)) {
+			warning("Cannot acces directory %s", path.c_str());
+		} else {
+			if ((uint)fileNum < f.size())
+				r = Datum(f.operator[](fileNum).getName());
+		}
 	}
 
 	g_lingo->push(r);
