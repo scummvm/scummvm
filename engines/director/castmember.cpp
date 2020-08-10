@@ -244,6 +244,8 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common
 	if (_vflags & 0x0800) {
 		_frameRateType = (FrameRateType)((_vflags & 0x3000) >> 12);
 	}
+	_qtmovie = _vflags & 0x8000;
+	_avimovie = _vflags & 0x4000;
 	_preload = _vflags & 0x0400;
 	_enableVideo = !(_vflags & 0x0200);
 	_pausedAtStart = _vflags & 0x0100;
@@ -264,6 +266,7 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common
 			_frameRateType, _preload, _enableVideo, _pausedAtStart);
 	debugC(2, kDebugLoading, "_showControls: %d, _looping: %d, _enableSound: %d, _crop %d, _center: %d, _directToStage: %d",
 			_showControls, _looping, _enableSound, _crop, _center, _directToStage);
+	debugC(2, kDebugLoading, "_avimovie: %d, _qtmovie: %d", _avimovie, _qtmovie);
 }
 
 DigitalVideoCastMember::~DigitalVideoCastMember() {

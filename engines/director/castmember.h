@@ -132,6 +132,7 @@ public:
 	bool _preload;
 	bool _showControls;
 	bool _directToStage;
+	bool _avimovie, _qtmovie;
 	FrameRateType _frameRateType;
 
 	uint16 _frameRate;
