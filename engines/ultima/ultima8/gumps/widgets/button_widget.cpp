@@ -74,7 +74,7 @@ void ButtonWidget::InitGump(Gump *newparent, bool take_focus) {
 		assert(widget);
 		widget->InitGump(this);
 		widget->GetDims(_dims); // transfer child dimension to self
-		widget->Move(0, _dims.y); // move it to the correct height
+		widget->Move(0, _dims.top); // move it to the correct height
 	} else {
 		assert(_shapeUp != nullptr);
 		assert(_shapeDown != nullptr);
@@ -247,7 +247,7 @@ bool ButtonWidget::loadData(Common::ReadStream *rs, uint32 version) {
 	if (_textWidget != 0) {
 		Gump *widget = getGump(_textWidget);
 		widget->GetDims(_dims); // transfer child dimension to self
-		widget->Move(0, _dims.y); // move it to the correct height
+		widget->Move(0, _dims.top); // move it to the correct height
 	}
 
 	return true;

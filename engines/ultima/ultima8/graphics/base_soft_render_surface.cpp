@@ -499,9 +499,9 @@ void BaseSoftRenderSurface::SetFlipped(bool wantFlipped) {
 	// What we 'need' to do is negate the pitches, and flip the clipping window
 	// We keep the 'origin' in the same position relative to the clipping window
 
-	_oy -= _clipWindow.y;
-	_clipWindow.setHeight(_height - _clipWindow.y + _clipWindow.height());
-	_oy += _clipWindow.y;
+	_oy -= _clipWindow.top;
+	_clipWindow.setHeight(_height - _clipWindow.top + _clipWindow.height());
+	_oy += _clipWindow.top;
 
 	_pitch = -_pitch;
 	_zPitch = -_zPitch;

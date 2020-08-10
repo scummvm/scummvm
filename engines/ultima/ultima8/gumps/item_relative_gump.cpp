@@ -64,24 +64,24 @@ void ItemRelativeGump::MoveOnScreen() {
 
 	// get rectangle that gump occupies in scalerGump's coordinate space
 	int32 left, right, top, bottom;
-	left = -_dims.x;
+	left = -_dims.left;
 	right = left + _dims.width();
-	top = -_dims.y;
+	top = -_dims.top;
 	bottom = top + _dims.height();
 	GumpToParent(left, top);
 	GumpToParent(right, bottom);
 
 	int32 movex = 0, movey = 0;
 
-	if (left < -sd.x)
-		movex = -sd.x - left;
-	else if (right > -sd.x + sd.width())
-		movex = -sd.x + sd.width() - right;
+	if (left < -sd.left)
+		movex = -sd.left - left;
+	else if (right > -sd.left + sd.width())
+		movex = -sd.left + sd.width() - right;
 
-	if (top < -sd.y)
-		movey = -sd.y - top;
-	else if (bottom > -sd.y + sd.height())
-		movey = -sd.y + sd.height() - bottom;
+	if (top < -sd.top)
+		movey = -sd.top - top;
+	else if (bottom > -sd.top + sd.height())
+		movey = -sd.top + sd.height() - bottom;
 
 	Move(left + movex, top + movey);
 }

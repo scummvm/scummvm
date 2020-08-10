@@ -209,8 +209,8 @@ Std::list<PositionedText> typesetText(Font *font,
 			// break here
 			int32 stringwidth = 0, stringheight = 0;
 			font->getStringSize(curline, stringwidth, stringheight);
-			line._dims.x = 0;
-			line._dims.y = totalheight;
+			line._dims.left = 0;
+			line._dims.top = totalheight;
 			line._dims.setWidth(stringwidth);
 			line._dims.setHeight(stringheight);
 			line._text = curline;
@@ -345,10 +345,10 @@ Std::list<PositionedText> typesetText(Font *font,
 		case Font::TEXT_LEFT:
 			break;
 		case Font::TEXT_RIGHT:
-			lineiter->_dims.x = totalwidth - lineiter->_dims.width();
+			lineiter->_dims.MoveAbs(totalwidth - lineiter->_dims.width(), lineiter->_dims.top);
 			break;
 		case Font::TEXT_CENTER:
-			lineiter->_dims.x = (totalwidth - lineiter->_dims.width()) / 2;
+			lineiter->_dims.MoveAbs((totalwidth - lineiter->_dims.width()) / 2, lineiter->_dims.top);
 			break;
 		}
 #if 0

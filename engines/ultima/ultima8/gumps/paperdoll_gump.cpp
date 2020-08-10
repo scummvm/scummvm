@@ -201,8 +201,8 @@ void PaperdollGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 
 		itemx = equipcoords[i].x;
 		itemy = equipcoords[i].y;
-		itemx += _itemArea.x;
-		itemy += _itemArea.y;
+		itemx += _itemArea.left;
+		itemy += _itemArea.top;
 		Shape *s = item->getShapeObject();
 		assert(s);
 		surf->Paint(s, frame, itemx, itemy);
@@ -210,8 +210,8 @@ void PaperdollGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 
 	if (_displayDragging) {
 		int32 itemx, itemy;
-		itemx = _draggingX + _itemArea.x;
-		itemy = _draggingY + _itemArea.y;
+		itemx = _draggingX + _itemArea.left;
+		itemy = _draggingY + _itemArea.top;
 		Shape *s = GameData::get_instance()->getMainShapes()->
 		           getShape(_draggingShape);
 		assert(s);
@@ -239,8 +239,8 @@ uint16 PaperdollGump::TraceObjId(int32 mx, int32 my) {
 
 		itemx = equipcoords[i].x;
 		itemy = equipcoords[i].y;
-		itemx += _itemArea.x;
-		itemy += _itemArea.y;
+		itemx += _itemArea.left;
+		itemy += _itemArea.top;
 		const Shape *s = item->getShapeObject();
 		assert(s);
 		const ShapeFrame *frame = s->getFrame(item->getFrame() + 1);
@@ -252,7 +252,7 @@ uint16 PaperdollGump::TraceObjId(int32 mx, int32 my) {
 	}
 
 	// try backpack
-	if (_backpackRect.InRect(mx - _itemArea.x, my - _itemArea.y)) {
+	if (_backpackRect.InRect(mx - _itemArea.left, my - _itemArea.top)) {
 		if (a->getEquip(7)) // constants
 			return a->getEquip(7);
 	}
@@ -275,16 +275,16 @@ bool PaperdollGump::GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
 	//!!! need to use lerp_factor
 
 	if (item->getShape() == 529) { //!! constant
-		gx = _backpackRect.x;
-		gy = _backpackRect.y;
+		gx = _backpackRect.left;
+		gy = _backpackRect.top;
 	} else {
 		int equiptype = item->getZ();
 		assert(equiptype >= 0 && equiptype <= 6); //!! constants
 		gx = equipcoords[equiptype].x;
 		gy = equipcoords[equiptype].y;
 	}
-	gx += _itemArea.x;
-	gy += _itemArea.y;
+	gx += _itemArea.left;
+	gy += _itemArea.top;
 
 	return true;
 }
@@ -322,7 +322,7 @@ bool PaperdollGump::DraggingItem(Item *item, int mx, int my) {
 	bool over_backpack = false;
 	Container *backpack = getContainer(a->getEquip(7)); // constant!
 
-	if (backpack && _backpackRect.InRect(mx - _itemArea.x, my - _itemArea.y)) {
+	if (backpack && _backpackRect.InRect(mx - _itemArea.left, my - _itemArea.top)) {
 		over_backpack = true;
 	}
 
@@ -351,8 +351,8 @@ bool PaperdollGump::DraggingItem(Item *item, int mx, int my) {
 			return false;
 		}
 
-		_draggingX = _backpackRect.x + _backpackRect.width() / 2;
-		_draggingY = _backpackRect.y + _backpackRect.height() / 2;
+		_draggingX = _backpackRect.left + _backpackRect.width() / 2;
+		_draggingY = _backpackRect.top + _backpackRect.height() / 2;
 	}
 
 	return true;
@@ -367,7 +367,7 @@ void PaperdollGump::DropItem(Item *item, int mx, int my) {
 	bool over_backpack = false;
 	Container *backpack = getContainer(a->getEquip(7)); // constant!
 
-	if (backpack && _backpackRect.InRect(mx - _itemArea.x, my - _itemArea.y)) {
+	if (backpack && _backpackRect.InRect(mx - _itemArea.left, my - _itemArea.top)) {
 		over_backpack = true;
 	}
 

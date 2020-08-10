@@ -99,8 +99,8 @@ void ContainerGump::getItemCoords(Item *item, int32 &itemx, int32 &itemy) {
 		item->setGumpLocation(itemx, itemy);
 	}
 
-	itemx += _itemArea.x;
-	itemy += _itemArea.y;
+	itemx += _itemArea.left;
+	itemy += _itemArea.top;
 }
 
 
@@ -140,8 +140,8 @@ void ContainerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 
 	if (_displayDragging) {
 		int32 itemx, itemy;
-		itemx = _draggingX + _itemArea.x;
-		itemy = _draggingY + _itemArea.y;
+		itemx = _draggingX + _itemArea.left;
+		itemy = _draggingY + _itemArea.top;
 		Shape *s = GameData::get_instance()->getMainShapes()->
 		           getShape(_draggingShape);
 		assert(s);
@@ -400,8 +400,8 @@ bool ContainerGump::DraggingItem(Item *item, int mx, int my) {
 
 	// determine target location and set dragging_x/y
 
-	_draggingX = mx - _itemArea.x - dox;
-	_draggingY = my - _itemArea.y - doy;
+	_draggingX = mx - _itemArea.left - dox;
+	_draggingY = my - _itemArea.top - doy;
 
 	const Shape *sh = item->getShapeObject();
 	assert(sh);
@@ -528,8 +528,8 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 
 		int32 dox, doy;
 		Mouse::get_instance()->getDraggingOffset(dox, doy);
-		_draggingX = mx - _itemArea.x - dox;
-		_draggingY = my - _itemArea.y - doy;
+		_draggingX = mx - _itemArea.left - dox;
+		_draggingY = my - _itemArea.top - doy;
 		item->setGumpLocation(_draggingX, _draggingY);
 	}
 }
@@ -537,8 +537,8 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 void ContainerGump::saveData(Common::WriteStream *ws) {
 	ItemRelativeGump::saveData(ws);
 
-	ws->writeUint32LE(static_cast<uint32>(_itemArea.x));
-	ws->writeUint32LE(static_cast<uint32>(_itemArea.y));
+	ws->writeUint32LE(static_cast<uint32>(_itemArea.left));
+	ws->writeUint32LE(static_cast<uint32>(_itemArea.top));
 	ws->writeUint32LE(static_cast<uint32>(_itemArea.width()));
 	ws->writeUint32LE(static_cast<uint32>(_itemArea.height()));
 }

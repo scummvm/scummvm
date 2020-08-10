@@ -74,8 +74,8 @@ void ComputerGump::InitGump(Gump *newparent, bool take_focus) {
 		return;
 	}
 
-	_dims.x = 0;
-	_dims.y = 0;
+	_dims.left = 0;
+	_dims.top = 0;
 	_dims.setWidth(topFrame->_width);
 	_dims.setHeight(topFrame->_height + botFrame->_height);
 

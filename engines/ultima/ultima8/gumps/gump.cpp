@@ -90,8 +90,8 @@ void Gump::SetShape(FrameID frame, bool adjustsize) {
 void Gump::UpdateDimsFromShape() {
 	const ShapeFrame *sf = _shape->getFrame(_frameNum);
 	assert(sf);
-	_dims.x = -sf->_xoff;
-	_dims.y = -sf->_yoff;
+	_dims.left = -sf->_xoff;
+	_dims.top = -sf->_yoff;
 	_dims.setWidth(sf->_width);
 	_dims.setHeight(sf->_height);
 }
@@ -453,16 +453,16 @@ void Gump::GumpToScreenSpace(int32 &gx, int32 &gy, PointRoundDir r) {
 // Convert a parent relative point to a gump point
 void Gump::ParentToGump(int32 &px, int32 &py, PointRoundDir) {
 	px -= _x;
-	px += _dims.x;
+	px += _dims.left;
 	py -= _y;
-	py += _dims.y;
+	py += _dims.top;
 }
 
 // Convert a gump point to parent relative point
 void Gump::GumpToParent(int32 &gx, int32 &gy, PointRoundDir) {
-	gx -= _dims.x;
+	gx -= _dims.left;
 	gx += _x;
-	gy -= _dims.y;
+	gy -= _dims.top;
 	gy += _y;
 }
 
@@ -471,12 +471,12 @@ void Gump::GumpRectToScreenSpace(Rect &gr, RectRoundDir r) {
 	PointRoundDir tl = (r == ROUND_INSIDE ? ROUND_BOTTOMRIGHT : ROUND_TOPLEFT);
 	PointRoundDir br = (r == ROUND_OUTSIDE ? ROUND_BOTTOMRIGHT : ROUND_TOPLEFT);
 
-	int32 x1 = gr.x, y1 = gr.y;
-	int32 x2 = gr.x + gr.width(), y2 = gr.y + gr.height();
+	int32 x1 = gr.left, y1 = gr.top;
+	int32 x2 = gr.left + gr.width(), y2 = gr.top + gr.height();
 	GumpToScreenSpace(x1, y1, tl);
 	GumpToScreenSpace(x2, y2, br);
-	gr.x = x1;
-	gr.y = y1;
+	gr.left = x1;
+	gr.top = y1;
 	if (gr.width() != 0)
 		gr.setWidth(x2 - x1);
 	if (gr.height() != 0)
@@ -488,12 +488,12 @@ void Gump::ScreenSpaceToGumpRect(Rect &sr, RectRoundDir r) {
 	PointRoundDir tl = (r == ROUND_INSIDE ? ROUND_BOTTOMRIGHT : ROUND_TOPLEFT);
 	PointRoundDir br = (r == ROUND_OUTSIDE ? ROUND_BOTTOMRIGHT : ROUND_TOPLEFT);
 
-	int32 x1 = sr.x, y1 = sr.y;
-	int32 x2 = sr.x + sr.width(), y2 = sr.y + sr.height();
+	int32 x1 = sr.left, y1 = sr.top;
+	int32 x2 = sr.left + sr.width(), y2 = sr.top + sr.height();
 	ScreenSpaceToGump(x1, y1, tl);
 	ScreenSpaceToGump(x2, y2, br);
-	sr.x = x1;
-	sr.y = y1;
+	sr.left = x1;
+	sr.top = y1;
 	if (sr.width() != 0)
 		sr.setWidth(x2 - x1);
 	if (sr.height() != 0)
@@ -785,8 +785,8 @@ void Gump::saveData(Common::WriteStream *ws) {
 	ws->writeUint16LE(_owner);
 	ws->writeUint32LE(static_cast<uint32>(_x));
 	ws->writeUint32LE(static_cast<uint32>(_y));
-	ws->writeUint32LE(static_cast<uint32>(_dims.x));
-	ws->writeUint32LE(static_cast<uint32>(_dims.y));
+	ws->writeUint32LE(static_cast<uint32>(_dims.left));
+	ws->writeUint32LE(static_cast<uint32>(_dims.top));
 	ws->writeUint32LE(static_cast<uint32>(_dims.width()));
 	ws->writeUint32LE(static_cast<uint32>(_dims.height()));
 	ws->writeUint32LE(_flags);

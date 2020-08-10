@@ -136,8 +136,8 @@ void SnapProcess::getSnapEggRange(const Item *item, Rect &rect) const {
 	int32 x, y, z;
 	item->getLocation(x, y, z);
 
-	rect.x = x - xrange + xoff;
-	rect.y = y - yrange + yoff;
+	rect.left = x - xrange + xoff;
+	rect.top = y - yrange + yoff;
 	rect.setWidth(xrange * 2);
 	rect.setHeight(yrange * 2);
 }

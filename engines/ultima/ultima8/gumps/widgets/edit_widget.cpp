@@ -55,15 +55,12 @@ void EditWidget::InitGump(Gump *newparent, bool take_focus) {
 	Font *font = getFont();
 
 	// Y offset is always baseline
-	_dims.y = -font->getBaseline();
-
-	// No X offset
-	_dims.x = 0;
+	_dims.MoveAbs(0 , -font->getBaseline());
 
 	if (_gameFont && getFont()->isHighRes()) {
-		Rect rect(0, 0, 0, _dims.y);
+		Rect rect(0, 0, 0, _dims.top);
 		ScreenSpaceToGumpRect(rect, ROUND_OUTSIDE);
-		_dims.y = rect.height();
+		_dims.MoveAbs(0, rect.height());
 	}
 }
 
@@ -164,7 +161,7 @@ void EditWidget::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) 
 	renderText();
 
 	if (scaled && _gameFont && getFont()->isHighRes()) {
-		surf->FillAlpha(0xFF, _dims.x, _dims.y, _dims.width(), _dims.height());
+		surf->FillAlpha(0xFF, _dims.left, _dims.top, _dims.width(), _dims.height());
 		return;
 	}
 
@@ -184,7 +181,7 @@ void EditWidget::PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 s
 
 	Rect rect(_dims);
 	GumpRectToScreenSpace(rect, ROUND_OUTSIDE);
-	surf->FillAlpha(0x00, rect.x, rect.y, rect.width(), rect.height());
+	surf->FillAlpha(0x00, rect.left, rect.top, rect.width(), rect.height());
 }
 
 // don't handle any mouse motion events, so let parent handle them for us.

@@ -277,13 +277,13 @@ void Mouse::setMouseCoords(int mx, int my) {
 	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 	screen->GetSurfaceDims(dims);
 
-	if (mx < dims.x)
-		mx = dims.x;
+	if (mx < dims.left)
+		mx = dims.left;
 	else if (mx > dims.width())
 		mx = dims.width();
 
-	if (my < dims.y)
-		my = dims.y;
+	if (my < dims.top)
+		my = dims.top;
 	else if (my > dims.height())
 		my = dims.height();
 

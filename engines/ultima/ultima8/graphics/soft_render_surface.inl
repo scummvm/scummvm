@@ -121,9 +121,9 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 #define NOT_CLIPPED_Y (line >= 0 && line < scrn_height)
 #define OFFSET_PIXELS (off_pixels)
 
-	uint8			*off_pixels  = _pixels + _clipWindow.x * sizeof(uintX) + _clipWindow.y * _pitch;
-	x -= _clipWindow.x;
-	y -= _clipWindow.y;
+	uint8			*off_pixels  = _pixels + _clipWindow.left * sizeof(uintX) + _clipWindow.top * _pitch;
+	x -= _clipWindow.left;
+	y -= _clipWindow.top;
 
 #endif
 
