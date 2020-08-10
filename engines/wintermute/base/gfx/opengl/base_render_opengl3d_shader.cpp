@@ -237,9 +237,14 @@ bool BaseRenderOpenGL3DShader::setProjection() {
 	float nearPlane = 90.0f;
 	float farPlane = 10000.0f;
 
+	float scaleMod = float(_height) / float(viewportHeight);
+
 	float top = nearPlane * tanf(verticalViewAngle * 0.5f);
 
 	_projectionMatrix3d = Math::makeFrustumMatrix(-top * aspectRatio, top * aspectRatio, -top, top, nearPlane, farPlane);
+
+	_projectionMatrix3d(0, 0) *= scaleMod;
+	_projectionMatrix3d(1, 1) *= scaleMod;
 	return true;
 }
 

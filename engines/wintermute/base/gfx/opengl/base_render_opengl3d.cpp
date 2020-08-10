@@ -245,10 +245,18 @@ bool BaseRenderOpenGL3D::setProjection() {
 	float farPlane = 10000.0f;
 	float top = nearPlane * tanf(verticalViewAngle * 0.5f);
 
+	float scaleMod = static_cast<float>(_height) / static_cast<float>(viewportHeight);
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glFrustum(-top * aspectRatio, top * aspectRatio, -top, top, nearPlane, farPlane);
 	glGetFloatv(GL_PROJECTION_MATRIX, _projectionMatrix3d.getData());
+
+	_projectionMatrix3d(0, 0) *= scaleMod;
+	_projectionMatrix3d(1, 1) *= scaleMod;
+
+	glLoadMatrixf(_projectionMatrix3d.getData());
+
 	glMatrixMode(GL_MODELVIEW);
 	return true;
 }
