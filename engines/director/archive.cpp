@@ -481,7 +481,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	subStream.readUint32(); // resCount + empty entries
 	uint32 resCount = subStream.readUint32();
 	subStream.skip(8); // all 0xFF
-	subStream.readUint32(); // unknown
+	subStream.readUint32(); // id of the first free resource, -1 if none.
 
 	Common::Array<Resource *> resources;
 	resources.reserve(resCount);
@@ -496,11 +496,10 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		uint32 offset = subStream.readUint32() + moreOffset;
 		uint16 flags = subStream.readUint16();
 		uint16 unk1 = subStream.readUint16();
-		uint32 unk2 = subStream.readUint32();
+		uint32 nextFreeResourceId = subStream.readUint32(); // for free resources, the next id, flag like for imap and mmap resources
 
-		debug(3, "Found RIFX resource index %d: '%s', %d bytes @ 0x%08x (%d), flags: %x unk1: %x unk2: %x",
-			i, tag2str(tag), size, offset, offset, flags, unk1, unk2);
-
+		debug(3, "Found RIFX resource index %d: '%s', %d bytes @ 0x%08x (%d), flags: %x unk1: %x nextFreeResourceId: %d",
+			i, tag2str(tag), size, offset, offset, flags, unk1, nextFreeResourceId);
 		// APPL is a special case; it has an embedded "normal" archive
 		if (rifxType == MKTAG('A', 'P', 'P', 'L') && tag == MKTAG('F', 'i', 'l', 'e'))
 			return openStream(stream, offset);
