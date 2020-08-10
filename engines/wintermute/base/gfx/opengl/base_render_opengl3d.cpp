@@ -219,7 +219,7 @@ bool BaseRenderOpenGL3D::fill(byte r, byte g, byte b, Common::Rect *rect) {
 
 bool BaseRenderOpenGL3D::setViewport(int left, int top, int right, int bottom) {
 	_viewportRect.setRect(left, top, right, bottom);
-	glViewport(left, top, right - left, bottom - top);
+	glViewport(left, _height - bottom, right - left, bottom - top);
 	return true;
 }
 
