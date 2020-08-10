@@ -1435,7 +1435,7 @@ void CopyProtectionDialog::chooseCharacters() {
 	screen.update();
 }
 
-AudioInitIcon::AudioInitIcon() {
+AudioInitIcon::AudioInitIcon() : _visible(false) {
 	if (LureEngine::getReference().isEGA()) {
 		// The icon is not shown on EGA
 		_iconSurface = 0;
@@ -1460,12 +1460,12 @@ AudioInitIcon::~AudioInitIcon() {
 }
 
 void AudioInitIcon::show() {
-	// TODO The icon should blink
 	if (!LureEngine::getReference().isEGA()) {
 		Screen &screen = Screen::getReference();
 
 		_iconSurface->copyTo(&screen.screen(), 0, 185);
 		screen.update();
+		_visible = true;
 	}
 }
 
@@ -1475,6 +1475,15 @@ void AudioInitIcon::hide() {
 
 		screen.screen().fillRect(Common::Rect(0, 185, 14, 199), 0);
 		screen.update();
+		_visible = false;
+	}
+}
+
+void AudioInitIcon::toggleVisibility() {
+	if (_visible) {
+		hide();
+	} else {
+		show();
 	}
 }
 
