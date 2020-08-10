@@ -41,6 +41,23 @@
 
 namespace Wintermute {
 
+XFileLexer createXFileLexer(byte *buffer, uint32 fileSize) {
+	// the header of an .X file consists of 16 bytes
+	// bytes 9 to 12 contain a string which can be 'txt ', 'bin ', 'bzip, 'tzip', depending on the format
+	byte dataFormatBlock[5];
+	Common::copy(buffer + 8, buffer + 12, dataFormatBlock);
+	dataFormatBlock[4] = '\0';
+
+	bool textMode = (strcmp((char *)dataFormatBlock, "txt ") == 0);
+
+	if (strcmp((char *)dataFormatBlock, "bzip") == 0 || strcmp((char *)dataFormatBlock, "tzip") == 0) {
+		warning("ModelX::loadFromFile compressed .X files are not supported yet");
+	}
+
+	// we skip the 16 byte header of the file
+	return XFileLexer(buffer + 16, fileSize - 16, textMode);
+}
+
 IMPLEMENT_PERSISTENT(ModelX, false)
 
 //////////////////////////////////////////////////////////////////////////
@@ -103,20 +120,7 @@ bool ModelX::loadFromFile(const Common::String &filename, ModelX *parentModel) {
 
 	uint32 fileSize = 0;
 	byte *buffer = BaseFileManager::getEngineInstance()->getEngineInstance()->readWholeFile(filename, &fileSize);
-
-	// the header of an .X file consists of 16 bytes
-	// bytes 9 to 12 contain a string which can be 'txt ', 'bin ', 'bzip, 'tzip', depending on the format
-	byte dataFormatBlock[5];
-	Common::copy(buffer + 8, buffer + 11, dataFormatBlock);
-	dataFormatBlock[4] = '\0';
-
-	bool textMode = (strcmp((char *)dataFormatBlock, "txt ") == 0);
-
-	if (strcmp((char *)dataFormatBlock, "bzip") == 0 || strcmp((char *)dataFormatBlock, "tzip") == 0) {
-		warning("ModelX::loadFromFile compressed .X files are not supported yet");
-	}
-
-	XFileLexer lexer(buffer + 16, fileSize - 16, textMode);
+	XFileLexer lexer = createXFileLexer(buffer, fileSize);
 
 	bool res = true;
 
@@ -141,23 +145,14 @@ bool ModelX::loadFromFile(const Common::String &filename, ModelX *parentModel) {
 bool ModelX::mergeFromFile(const Common::String &filename) {
 	uint32 fileSize = 0;
 	byte *buffer = BaseFileManager::getEngineInstance()->getEngineInstance()->readWholeFile(filename, &fileSize);
-
-	byte dataFormatBlock[4];
-	Common::copy(buffer + 8, buffer + 11, dataFormatBlock);
-	dataFormatBlock[3] = '\0';
-
-	bool textMode = (strcmp((char *)dataFormatBlock, "txt") == 0);
-
-	if (strcmp((char *)dataFormatBlock, "bzip") == 0 || strcmp((char *)dataFormatBlock, "tzip") == 0) {
-		warning("ModelX::loadFromFile compressed .X files are not supported yet");
-	}
-
-	XFileLexer lexer(buffer + 16, fileSize - 16, textMode);
+	XFileLexer lexer = createXFileLexer(buffer, fileSize);
 
 	lexer.advanceToNextToken();
 	parseFrameDuringMerge(lexer, filename);
 
 	findBones(false, nullptr);
+
+	delete[] buffer;
 
 	return true;
 }
