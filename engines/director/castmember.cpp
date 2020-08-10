@@ -236,68 +236,34 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common
 	_type = kCastDigitalVideo;
 	_video = nullptr;
 
-	if (version < 4) {
-		warning("STUB: DigitalVideoCastMember: unhandled rect data");
-		if (debugChannelSet(5, kDebugLoading))
-			stream.hexdump(stream.size());
-		for (int i = 0; i < 0x4; i++)
-			stream.readByte(); // 0
+	_initialRect = Movie::readRect(stream);
+	_vflags = stream.readUint32();
+	_frameRate = (_vflags >> 24) & 0xff;
 
-		for (int i = 0; i < 0x4; i++)
-			stream.readByte(); // looks rect like, but as bytes not uint16.
-
-		for ( int i = 0; i < 0x3; i++)
-			stream.readByte(); // 0
-
-		_frameRate = 12;
-		_frameRateType = kFrameRateDefault;
-
-		_preload = false;
-		_enableVideo = false;
-		_pausedAtStart = false;
-
-		byte flag = stream.readByte();
-
-		_showControls = flag & 0x40;
-		_looping = flag & 0x10;
-		_enableSound = flag & 0x08;
-		_crop = !(flag & 0x02);
-		_center = flag & 0x01;
-		_directToStage = flag & 0x20;
-	} else {
-		stream.readByte();
-		_initialRect = Movie::readRect(stream);
-		_frameRate = stream.readByte();
-		stream.readByte();
-
-		byte flags1 = stream.readByte();
-		_frameRateType = kFrameRateDefault;
-		if (flags1 & 0x08) {
-			_frameRateType = (FrameRateType)((flags1 & 0x30) >> 4);
-		}
-		_preload = flags1 & 0x04;
-		_enableVideo = !(flags1 & 0x02);
-		_pausedAtStart = flags1 & 0x01;
-
-		byte flags2 = stream.readByte();
-		_showControls = flags2 & 0x40;
-		_looping = flags2 & 0x10;
-		_enableSound = flags2 & 0x08;
-		_crop = !(flags2 & 0x02);
-		_center = flags2 & 0x01;
-		_directToStage = true;
-		debugC(2, kDebugLoading, "DigitalVideoCastMember(): flags1: (%d 0x%x)", flags1, flags1);
-
-		debugC(2, kDebugLoading, "DigitalVideoCastMember(): flags2: (%d 0x%x)", flags2, flags2);
+	_frameRateType = kFrameRateDefault;
+	if (_vflags & 0x0800) {
+		_frameRateType = (FrameRateType)((_vflags & 0x3000) >> 12);
 	}
-	debugC(2, kDebugLoading, "_frameRate: %d", _frameRateType);
+	_preload = _vflags & 0x0400;
+	_enableVideo = !(_vflags & 0x0200);
+	_pausedAtStart = _vflags & 0x0100;
+	_showControls = _vflags & 0x40;
+	_directToStage = _vflags & 0x20;
+	_looping = _vflags & 0x10;
+	_enableSound = _vflags & 0x08;
+	_crop = !(_vflags & 0x02);
+	_center = _vflags & 0x01;
+
+	if (debugChannelSet(2, kDebugLoading))
+		_initialRect.debugPrint(2, "DigitalVideoCastMember(): rect:");
+
+	debugC(2, kDebugLoading, "DigitalVideoCastMember(): flags: (%d 0x%04x)", _vflags, _vflags);
+
+	debugC(2, kDebugLoading, "_frameRate: %d", _frameRate);
 	debugC(2, kDebugLoading, "_frameRateType: %d, _preload: %d, _enableVideo %d, _pausedAtStart %d",
 			_frameRateType, _preload, _enableVideo, _pausedAtStart);
 	debugC(2, kDebugLoading, "_showControls: %d, _looping: %d, _enableSound: %d, _crop %d, _center: %d, _directToStage: %d",
 			_showControls, _looping, _enableSound, _crop, _center, _directToStage);
-
-	if (debugChannelSet(2, kDebugLoading))
-		_initialRect.debugPrint(2, "DigitalVideoCastMember(): rect:");
 }
 
 DigitalVideoCastMember::~DigitalVideoCastMember() {

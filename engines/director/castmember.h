@@ -122,6 +122,7 @@ public:
 	DigitalVideoCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 	~DigitalVideoCastMember();
 
+	uint32 _vflags;
 	bool _looping;
 	bool _pausedAtStart;
 	bool _enableVideo;
