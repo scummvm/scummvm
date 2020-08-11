@@ -122,6 +122,7 @@ public:
 	DigitalVideoCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 	~DigitalVideoCastMember();
 
+	virtual bool isModified() override;
 	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox) override;
 
 	uint32 _vflags;

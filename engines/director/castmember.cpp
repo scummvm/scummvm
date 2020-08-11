@@ -273,8 +273,18 @@ DigitalVideoCastMember::~DigitalVideoCastMember() {
 	delete _video;
 }
 
+bool DigitalVideoCastMember::isModified() {
+	if (!_video)
+		return false;
+
+	return _video->needsUpdate();
+}
+
 Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox) {
 	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
+
+	widget->getSurface()->blitFrom(*_video->decodeNextFrame());
+
 	return widget;
 }
 
