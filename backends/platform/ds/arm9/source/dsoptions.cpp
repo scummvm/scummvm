@@ -59,8 +59,6 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 
 	_tab->addTab(_("Graphics"), "");
 
-	_showCursorCheckbox = new GUI::CheckboxWidget(_tab, 150, 5, 130, 20, _("Show mouse cursor"), U32String(), 0, 'T');
-
 	new GUI::StaticTextWidget(_tab, 5, 67, 180, 15, _("Initial top screen scale:"), Graphics::kTextAlignLeft);
 
 	_100PercentCheckbox = new GUI::CheckboxWidget(_tab, 5, 82, 80, 20, U32String("100%"), U32String("TODO: Add tooltip"), 0x30000001, 'T');
@@ -84,7 +82,6 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 
 	_radioButtonMode = false;
 
-	_showCursorCheckbox->setState(confGetBool("showcursor", true));
 	_unscaledCheckbox->setState(confGetBool("unscaled", false));
 
 
@@ -144,7 +141,6 @@ void DSOptionsDialog::updateConfigManager() {
 #ifdef ALLOW_CPU_SCALER
 	ConfMan.setBool("cpu_scaler", _cpuScaler->getState(), "ds");
 #endif
-	ConfMan.setBool("showcursor", _showCursorCheckbox->getState(), "ds");
 	ConfMan.setInt("gamma", _gammaCorrection->getValue(), "ds");
 
 	int zoomLevel = 150;
@@ -247,8 +243,6 @@ void setOptions() {
 	static bool firstLoad = true;
 
 	ConfMan.addGameDomain("ds");
-
-	DS::setMouseCursorVisible(confGetBool("showcursor", true));
 
 	DS::setUnscaledMode(confGetBool("unscaled", false));
 

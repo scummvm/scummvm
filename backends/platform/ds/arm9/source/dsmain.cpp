@@ -120,23 +120,12 @@ static int subScreenScale = 256;
 static bool gameScreenSwap = false;
 bool isCpuScalerEnabled();
 
-static int storedMouseX = 0;
-static int storedMouseY = 0;
-
-// Sprites
-static SpriteEntry sprites[128];
-static SpriteEntry spritesMain[128];
-
 // Shake
 static int s_shakeXOffset = 0;
 static int s_shakeYOffset = 0;
 
 // Touch
 static int touchScX, touchScY, touchX, touchY;
-static int mouseHotspotX, mouseHotspotY;
-static bool cursorEnable = false;
-static bool mouseCursorVisible = true;
-static bool touchPadStyle = false;
 
 // 8-bit surface size
 static int gameWidth = 320;
@@ -146,9 +135,6 @@ static int gameHeight = 200;
 static bool twoHundredPercentFixedScale = false;
 static bool cpuScalerEnable = false;
 
-void setIcon(int num, int x, int y, int imageNum, int flags, bool enable);
-void setIconMain(int num, int x, int y, int imageNum, int flags, bool enable);
-
 bool isCpuScalerEnabled() {
 	return cpuScalerEnable;
 }
@@ -156,10 +142,6 @@ bool isCpuScalerEnabled() {
 
 void setCpuScalerEnable(bool enable) {
 	cpuScalerEnable = enable;
-}
-
-void setTrackPadStyleEnable(bool enable) {
-	touchPadStyle = enable;
 }
 
 void setGameScreenSwap(bool enable) {
@@ -175,18 +157,6 @@ void setTopScreenZoom(int percentage) {
 	subScreenScale = (256 * 256) / scale;
 }
 
-void updateOAM() {
-	DC_FlushAll();
-
-	if (gameScreenSwap) {
-		dmaCopy(sprites, OAM, 128 * sizeof(SpriteEntry));
-		dmaCopy(spritesMain, OAM_SUB, 128 * sizeof(SpriteEntry));
-	} else {
-		dmaCopy(sprites, OAM_SUB, 128 * sizeof(SpriteEntry));
-		dmaCopy(spritesMain, OAM, 128 * sizeof(SpriteEntry));
-	}
-}
-
 void setGameSize(int width, int height) {
 	gameWidth = width;
 	gameHeight = height;
@@ -198,24 +168,6 @@ int getGameWidth() {
 
 int getGameHeight() {
 	return gameHeight;
-}
-
-void initSprites() {
-	for (int i = 0; i < 128; i++) {
-		sprites[i].attribute[0] = ATTR0_DISABLED;
-		sprites[i].attribute[1] = 0;
-		sprites[i].attribute[2] = 0;
-		sprites[i].filler = 0;
-	}
-
-	for (int i = 0; i < 128; i++) {
-		spritesMain[i].attribute[0] = ATTR0_DISABLED;
-		spritesMain[i].attribute[1] = 0;
-		spritesMain[i].attribute[2] = 0;
-		spritesMain[i].filler = 0;
-	}
-
-	updateOAM();
 }
 
 void set200PercentFixedScale(bool on) {
@@ -262,45 +214,6 @@ void displayMode8Bit() {
 	}
 }
 
-void setShowCursor(bool enable) {
-	cursorEnable = enable;
-	updateMouse();
-}
-
-void setMouseCursorVisible(bool enable) {
-	mouseCursorVisible = enable;
-	updateMouse();
-}
-
-void setCursorIcon(const u8 *icon, uint w, uint h, byte keycolor, int hotspotX, int hotspotY) {
-
-	int off;
-
-	mouseHotspotX = hotspotX;
-	mouseHotspotY = hotspotY;
-
-	off = 128*64;
-
-
-	memset(SPRITE_GFX + off, 0, 32 * 32 * 2);
-	memset(SPRITE_GFX_SUB + off, 0, 32 * 32 * 2);
-
-
-	for (uint y=0; y<h; y++) {
-		for (uint x=0; x<w; x++) {
-			int color = icon[y*w+x];
-
-			if (color == keycolor) {
-				SPRITE_GFX[off+(y)*32+x] = 0x0000; // black background
-				SPRITE_GFX_SUB[off+(y)*32+x] = 0x0000; // black background
-			} else {
-				SPRITE_GFX[off+(y)*32+x] = OSystem_DS::instance()->getDSCursorPaletteEntry(color) | 0x8000;
-				SPRITE_GFX_SUB[off+(y)*32+x] = OSystem_DS::instance()->getDSCursorPaletteEntry(color) | 0x8000;
-			}
-		}
-	}
-}
-
 void setShakePos(int shakeXOffset, int shakeYOffset) {
 	s_shakeXOffset = shakeXOffset;
 	s_shakeYOffset = shakeYOffset;
@@ -315,34 +228,8 @@ void doTimerCallback() {
 	}
 }
 
-void setIcon(int num, int x, int y, int imageNum, int flags, bool enable) {
-	sprites[num].attribute[0] = ATTR0_BMP | (enable ? (y & 0xFF) : 192) | (!enable ? ATTR0_DISABLED : 0);
-	sprites[num].attribute[1] = ATTR1_SIZE_32 | (x & 0x1FF) | flags;
-	sprites[num].attribute[2] = ATTR2_ALPHA(1)| (imageNum * 16);
-}
-
-void setIconMain(int num, int x, int y, int imageNum, int flags, bool enable) {
-	spritesMain[num].attribute[0] = ATTR0_BMP | (y & 0xFF) | (!enable ? ATTR0_DISABLED : 0);
-	spritesMain[num].attribute[1] = ATTR1_SIZE_32 | (x & 0x1FF) | flags;
-	spritesMain[num].attribute[2] = ATTR2_ALPHA(1)| (imageNum * 16);
-}
-
-void updateMouse() {
-	if ((cursorEnable) && (mouseCursorVisible)) {
-		if (gameScreenSwap && touchPadStyle) {
-			setIcon(3, storedMouseX - mouseHotspotX, storedMouseY - mouseHotspotY, 8, 0, true);
-			setIconMain(3, 0, 0, 0, 0, false);
-		} else {
-			setIconMain(3, storedMouseX - mouseHotspotX, storedMouseY - mouseHotspotY, 8, 0, true);
-			setIcon(3, 0, 0, 0, 0, false);
-		}
-	} else {
-		setIconMain(3, 0, 0, 0, 0, false);
-		setIcon(3, 0, 0, 0, 0, false);
-	}
-}
-
-void warpMouse(int penX, int penY, bool isOverlayShown) {
+Common::Point warpMouse(int penX, int penY, bool isOverlayShown) {
+	int storedMouseX, storedMouseY;
 	if (!isOverlayShown) {
 		storedMouseX = ((penX - touchX) << 8) / touchScX;
 		storedMouseY = ((penY - touchY) << 8) / touchScY;
@@ -351,14 +238,14 @@ void warpMouse(int penX, int penY, bool isOverlayShown) {
 		storedMouseY = penY;
 	}
 
-	updateMouse();
+	return Common::Point(storedMouseX, storedMouseY);
 }
 
 void setMainScreenScroll(int x, int y) {
 		REG_BG3X = x + (((frameCount & 1) == 0)? 64: 0);
 		REG_BG3Y = y;
 
-		if ((!gameScreenSwap) || (touchPadStyle)) {
+		if (!gameScreenSwap) {
 			touchX = x >> 8;
 			touchY = y >> 8;
 		}
@@ -377,14 +264,14 @@ void setMainScreenScale(int x, int y) {
 			REG_BG3PD = y;
 		}
 
-		if ((!gameScreenSwap) || (touchPadStyle)) {
+		if (!gameScreenSwap) {
 			touchScX = x;
 			touchScY = y;
 		}
 }
 
 void setZoomedScreenScroll(int x, int y, bool shake) {
-		if ((gameScreenSwap) && (!touchPadStyle)) {
+		if (gameScreenSwap) {
 			touchX = x >> 8;
 			touchY = y >> 8;
 		}
@@ -396,7 +283,7 @@ void setZoomedScreenScroll(int x, int y, bool shake) {
 }
 
 void setZoomedScreenScale(int x, int y) {
-		if ((gameScreenSwap) && (!touchPadStyle)) {
+		if (gameScreenSwap) {
 			touchScX = x;
 			touchScY = y;
 		}
@@ -498,8 +385,6 @@ void VBlankHandler(void) {
 		setMainScreenScroll(64 + (s_shakeXOffset << 8), (scY << 8) + (s_shakeYOffset << 8));
 		setMainScreenScale(320, 256);		// 1:1 scale
 	}
-
-	updateOAM();
 }
 
 int getMillis(bool skipRecord) {
@@ -548,7 +433,7 @@ void initHardware() {
 		BG_PALETTE[r] = 0;
 	}
 
-	videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
+	videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE);
 	vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
 	vramSetBankE(VRAM_E_MAIN_SPRITE);
 
@@ -581,21 +466,13 @@ void initHardware() {
 	REG_IME = 1;
 
 #ifndef DISABLE_TEXT_CONSOLE
-	videoSetModeSub(MODE_0_2D | DISPLAY_BG0_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
+	videoSetModeSub(MODE_0_2D | DISPLAY_BG0_ACTIVE);
 	vramSetBankH(VRAM_H_SUB_BG);
 	consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);
 #else
-	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
+	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
 	vramSetBankC(VRAM_C_SUB_BG_0x06200000);
-	vramSetBankI(VRAM_I_SUB_SPRITE);
 #endif
-
-	initSprites();
-
-	// This is a bodge to get around the fact that the cursor is turned on before it's image is set
-	// during startup in Sam & Max.  This bodge moves the cursor offscreen so it is not seen.
-	sprites[1].attribute[1] = ATTR1_SIZE_64 | 192;
-
 }
 
 ///////////////////
