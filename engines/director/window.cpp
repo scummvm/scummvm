@@ -351,6 +351,9 @@ void Window::setVisible(bool visible, bool silent) {
 	}
 
 	BaseMacWindow::setVisible(visible);
+
+	if (visible)
+		_wm->setActiveWindow(_id);
 }
 
 bool Window::setNextMovie(Common::String &movieFilenameRaw) {
