@@ -3709,9 +3709,7 @@ case $_backend in
 		_sdl=auto
 		;;
 	ds)
-		append_var INCLUDES '-I$(srcdir)/backends/platform/ds/arm9/source'
-		append_var INCLUDES '-I$(srcdir)/backends/platform/ds/commoninclude'
-		append_var INCLUDES '-Ibackends/platform/ds/arm9/data'
+		append_var INCLUDES '-I$(srcdir)/backends/platform/ds'
 		;;
 	gph)
 		# On the GPH devices we want fancy themes but do not want the load/save thumbnail grid.
