@@ -559,22 +559,17 @@ bool MeshX::parseMaterials(XFileLexer &lexer, int faceCount, const Common::Strin
 	int faceMaterialCount = lexer.readInt();
 	assert(faceMaterialCount = faceCount);
 
-	// from looking at the wme3d sources and MSDN,
-	// I would say that faces using the same material
-	// are layed out as a contiguous block and the
-	// material index is only increasing
-	// in case this isn't true it might be a good
-	// idea to split the mesh
 	_indexRanges.push_back(0);
 	int currentMaterialIndex = lexer.readInt();
+	_materialIndices.push_back(currentMaterialIndex);
 
 	for (int i = 1; i < faceMaterialCount; ++i) {
 		int currentMaterialIndexTmp = lexer.readInt();
 
-		// again, this assumes that face indices are only increasing
-		if (currentMaterialIndex < currentMaterialIndexTmp) {
+		if (currentMaterialIndex != currentMaterialIndexTmp) {
 			currentMaterialIndex = currentMaterialIndexTmp;
 			_indexRanges.push_back(3 * i);
+			_materialIndices.push_back(currentMaterialIndex);
 		}
 	}
 

@@ -109,6 +109,7 @@ protected:
 
 	BaseArray<Material *> _materials;
 	BaseArray<int> _indexRanges;
+	BaseArray<int> _materialIndices;
 	uint32 _numAttrs;
 
 	// Wintermute3D used the ID3DXSKININFO interface
