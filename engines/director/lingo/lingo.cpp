@@ -195,6 +195,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 Lingo::~Lingo() {
 	resetLingo();
 	cleanupFuncs();
+	cleanupMethods();
 }
 
 void Lingo::reloadBuiltIns() {

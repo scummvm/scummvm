@@ -102,7 +102,8 @@ public:
 	}
 
 	static void cleanupMethods() {
-		_methods->clear();
+		delete _methods;
+		_methods = nullptr;
 	}
 
 	virtual ~Object() {
