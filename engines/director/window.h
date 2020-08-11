@@ -98,9 +98,6 @@ class Window : public Graphics::MacWindow, public Object<Window> {
 	void setStageColor(uint stageColor, bool forceReset = false);
 	int getStageColor() { return _stageColor; }
 
-	void addDirtyRect(const Common::Rect &r);
-	void markAllDirty();
-	void mergeDirtyRects();
 	void reset();
 
 	// transitions.cpp
@@ -164,7 +161,6 @@ class Window : public Graphics::MacWindow, public Object<Window> {
 	virtual bool setField(int field, const Datum &value);
 
 public:
-	Common::List<Common::Rect> _dirtyRects;
 	Common::List<Channel *> _dirtyChannels;
 	TransParams *_puppetTransition;
 

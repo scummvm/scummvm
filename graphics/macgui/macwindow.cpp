@@ -669,4 +669,42 @@ void MacWindow::setBorderType(int borderType) {
 	}
 }
 
+void MacWindow::addDirtyRect(const Common::Rect &r) {
+	if (!r.isValidRect())
+		return;
+
+	Common::Rect bounds = r;
+	bounds.clip(Common::Rect(_innerDims.width(), _innerDims.height()));
+
+	if (bounds.width() > 0 && bounds.height() > 0)
+		_dirtyRects.push_back(bounds);
+}
+
+void MacWindow::markAllDirty() {
+	_dirtyRects.clear();
+	_dirtyRects.push_back(Common::Rect(_composeSurface->w, _composeSurface->h));
+}
+
+void MacWindow::mergeDirtyRects() {
+	Common::List<Common::Rect>::iterator rOuter, rInner;
+
+	// Process the dirty rect list to find any rects to merge
+	for (rOuter = _dirtyRects.begin(); rOuter != _dirtyRects.end(); ++rOuter) {
+		rInner = rOuter;
+		while (++rInner != _dirtyRects.end()) {
+
+			if ((*rOuter).intersects(*rInner)) {
+				// These two rectangles overlap, so merge them
+				rOuter->extend(*rInner);
+
+				// remove the inner rect from the list
+				_dirtyRects.erase(rInner);
+
+				// move back to beginning of list
+				rInner = rOuter;
+			}
+		}
+	}
+}
+
 } // End of namespace Graphics

@@ -302,6 +302,11 @@ public:
 	 */
 	int getBorderType() { return _borderType; };
 
+
+	void addDirtyRect(const Common::Rect &r);
+	void markAllDirty();
+	void mergeDirtyRects();
+
 private:
 	void prepareBorderSurface(ManagedSurface *g);
 	void drawSimpleBorder(ManagedSurface *g);
@@ -327,6 +332,8 @@ protected:
 	bool _borderIsDirty;
 	Common::Rect _innerDims;
 
+	Common::List<Common::Rect> _dirtyRects;
+
 private:
 	MacWindowBorder _macBorder;
 
@@ -350,8 +357,6 @@ private:
 
 	int _borderType;
 };
-
-
 
 } // End of namespace Graphics
 
