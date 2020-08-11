@@ -283,7 +283,16 @@ bool DigitalVideoCastMember::isModified() {
 Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox) {
 	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
 
-	widget->getSurface()->blitFrom(*_video->decodeNextFrame());
+	if (!_video || !_video->isVideoLoaded()) {
+		warning("DigitalVideoCastMember::createWidget: No video decoder");
+		return nullptr;
+	}
+
+	const Graphics::Surface *frame = _video->decodeNextFrame();
+	if (frame)
+		widget->getSurface()->blitFrom(*frame);
+
+	delete frame;
 
 	return widget;
 }
