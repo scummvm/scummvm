@@ -288,6 +288,10 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox) {
 		return nullptr;
 	}
 
+	// FIXME: HACK: We need to understand when really start the video
+	if (!_video->isPlaying())
+		_video->start();
+
 	const Graphics::Surface *frame = _video->decodeNextFrame();
 	if (frame) {
 		if (frame->format.bytesPerPixel != 1) {
