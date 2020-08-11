@@ -62,7 +62,7 @@ public:
 	bool hasResource(uint32 tag, int id) const;
 	bool hasResource(uint32 tag, const Common::String &resName) const;
 	virtual Common::SeekableSubReadStreamEndian *getResource(uint32 tag, uint16 id);
-	Common::SeekableSubReadStreamEndian *getFirstResource(uint32 tag);
+	virtual Common::SeekableSubReadStreamEndian *getFirstResource(uint32 tag);
 	virtual Resource getResourceDetail(uint32 tag, uint16 id);
 	uint32 getOffset(uint32 tag, uint16 id) const;
 	uint16 findResourceID(uint32 tag, const Common::String &resName) const;
@@ -111,12 +111,24 @@ public:
 
 class RIFXArchive : public Archive {
 public:
-	RIFXArchive() : Archive(){ _isBigEndian = true; }
-	~RIFXArchive() override {}
+	RIFXArchive();
+	~RIFXArchive() override;
 
 	bool openStream(Common::SeekableReadStream *stream, uint32 startOffset = 0) override;
+	Common::SeekableSubReadStreamEndian *getFirstResource(uint32 tag) override;
+	virtual Common::SeekableSubReadStreamEndian *getFirstResource(uint32 tag, bool fileEndianness);
 	Common::SeekableSubReadStreamEndian *getResource(uint32 tag, uint16 id) override;
+	virtual Common::SeekableSubReadStreamEndian *getResource(uint32 tag, uint16 id, bool fileEndianness);
 	Resource getResourceDetail(uint32 tag, uint16 id) override;
+
+private:
+	bool readMemoryMap(Common::SeekableSubReadStreamEndian &stream, uint32 moreOffset);
+	void readCast(Common::SeekableSubReadStreamEndian &casStream);
+	void readKeyTable(Common::SeekableSubReadStreamEndian &keyStream);
+
+protected:
+	uint32 _rifxType;
+	Common::Array<Resource *> _resources;
 };
 
 } // End of namespace Director

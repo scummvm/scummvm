@@ -390,8 +390,20 @@ Common::SeekableSubReadStreamEndian *RIFFArchive::getResource(uint32 tag, uint16
 }
 
 // RIFX Archive code
+
+RIFXArchive::RIFXArchive() : Archive(){
+	_isBigEndian = true;
+	_rifxType = 0;
+}
+
+RIFXArchive::~RIFXArchive() {
+}
+
 bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOffset) {
-	close();
+	if (stream != _stream) {
+		close();
+		_stream = stream;
+	}
 
 	stream->seek(startOffset);
 
@@ -424,9 +436,10 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		return false;
 	}
 
-	Common::SeekableSubReadStreamEndian subStream(stream, startOffset + 4 + moreOffset, stream->size(), _isBigEndian, DisposeAfterUse::NO);
+	Common::SeekableSubReadStreamEndian endianStream(stream, 0, stream->size(), _isBigEndian, DisposeAfterUse::NO);
+	endianStream.seek(startOffset + moreOffset + 4);
 
-	uint32 sz = subStream.readUint32(); // size
+	uint32 sz = endianStream.readUint32(); // size
 
 	// If it is an embedded file, dump it if requested
 	if (ConfMan.getBool("dump_scripts") && startOffset) {
@@ -452,88 +465,33 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		}
 	}
 
-	uint32 rifxType = subStream.readUint32();
+	_rifxType = endianStream.readUint32();
+	warning("RIFX: type: %s", tag2str(_rifxType));
 
-	if (rifxType != MKTAG('M', 'V', '9', '3') &&
-		rifxType != MKTAG('A', 'P', 'P', 'L') &&
-		rifxType != MKTAG('M', 'C', '9', '5'))
+	if (_rifxType != MKTAG('M', 'V', '9', '3') &&
+		_rifxType != MKTAG('A', 'P', 'P', 'L') &&
+		_rifxType != MKTAG('M', 'C', '9', '5'))
 		return false;
 
-	if (subStream.readUint32() != MKTAG('i', 'm', 'a', 'p'))
+	if (!readMemoryMap(endianStream, moreOffset))
 		return false;
-
-	subStream.readUint32(); // imap length
-	subStream.readUint32(); // unknown
-	uint32 mmapOffset = subStream.readUint32() - startOffset - 4;
-	uint32 version = subStream.readUint32(); // 0 for 4.0, 0x4c1 for 5.0, 0x4c7 for 6.0, 0x708 for 8.5, 0x742 for 10.0
-	warning("RIFX: version: %x type: %s", version, tag2str(rifxType));
-
-	subStream.seek(mmapOffset);
-
-	if (subStream.readUint32() != MKTAG('m', 'm', 'a', 'p')) {
-		warning("RIFXArchive::openStream(): mmap expected but not found");
-		return false;
-	}
-
-	subStream.readUint32(); // mmap length
-	subStream.readUint16(); // unknown
-	subStream.readUint16(); // unknown
-	subStream.readUint32(); // resCount + empty entries
-	uint32 resCount = subStream.readUint32();
-	subStream.skip(8); // all 0xFF
-	subStream.readUint32(); // id of the first free resource, -1 if none.
-
-	Common::Array<Resource *> resources;
-	resources.reserve(resCount);
-
-	// Need to look for these two resources
-	const Resource *keyRes = 0;
-	const Resource *casRes = 0;
-
-	for (uint32 i = 0; i < resCount; i++) {
-		uint32 tag = subStream.readUint32();
-		uint32 size = subStream.readUint32();
-		uint32 offset = subStream.readUint32() + moreOffset;
-		uint16 flags = subStream.readUint16();
-		uint16 unk1 = subStream.readUint16();
-		uint32 nextFreeResourceId = subStream.readUint32(); // for free resources, the next id, flag like for imap and mmap resources
-
-		debug(3, "Found RIFX resource index %d: '%s', %d bytes @ 0x%08x (%d), flags: %x unk1: %x nextFreeResourceId: %d",
-			i, tag2str(tag), size, offset, offset, flags, unk1, nextFreeResourceId);
-		// APPL is a special case; it has an embedded "normal" archive
-		if (rifxType == MKTAG('A', 'P', 'P', 'L') && tag == MKTAG('F', 'i', 'l', 'e'))
-			return openStream(stream, offset);
-
-		Resource &res = _types[tag][i];
-		res.index = i;
-		res.offset = offset;
-		res.size = size;
-		res.tag = tag;
-		resources.push_back(&res);
-
-		// Looking for two types here
-		if (tag == MKTAG('K', 'E', 'Y', '*'))
-			keyRes = &res;
-		else if (tag == MKTAG('C', 'A', 'S', '*'))
-			casRes = &res;
-	}
 
 	if (ConfMan.getBool("dump_scripts")) {
-		debug("RIFXArchive::openStream(): Dumping %d resources", resources.size());
+		debug("RIFXArchive::openStream(): Dumping %d resources", _resources.size());
 
 		byte *data = nullptr;
 		uint dataSize = 0;
 		Common::DumpFile out;
 
-		for (uint i = 0; i < resources.size(); i++) {
-			stream->seek(resources[i]->offset);
+		for (uint i = 0; i < _resources.size(); i++) {
+			stream->seek(_resources[i]->offset);
 
-			uint32 len = resources[i]->size;
+			uint32 len = _resources[i]->size;
 
-			if (dataSize < resources[i]->size) {
+			if (dataSize < _resources[i]->size) {
 				free(data);
-				data = (byte *)malloc(resources[i]->size);
-				dataSize = resources[i]->size;
+				data = (byte *)malloc(_resources[i]->size);
+				dataSize = _resources[i]->size;
 			}
 			Common::String prepend;
 			if (_pathName.size() != 0)
@@ -541,7 +499,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 			else
 				prepend = "stream";
 
-			Common::String filename = Common::String::format("./dumps/%s-%s-%d", prepend.c_str(), tag2str(resources[i]->tag), i);
+			Common::String filename = Common::String::format("./dumps/%s-%s-%d", prepend.c_str(), tag2str(_resources[i]->tag), i);
 			stream->read(data, len);
 
 			if (!out.open(filename, true)) {
@@ -556,45 +514,108 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		}
 	}
 
-
-
-	// We need to have found the 'File' resource already
-	if (rifxType == MKTAG('A', 'P', 'P', 'L')) {
-		warning("No 'File' resource present in APPL archive");
-		return false;
+	Common::SeekableSubReadStreamEndian *casRes = getFirstResource(MKTAG('C', 'A', 'S', '*'));
+	// Parse the CAS*, if present
+	if (casRes) {
+		readCast(*casRes);
+		delete casRes;
 	}
 
+	Common::SeekableSubReadStreamEndian *keyRes = getFirstResource(MKTAG('K', 'E', 'Y', '*'), true);
 	// A KEY* must be present
 	if (!keyRes) {
 		warning("No 'KEY*' resource present");
 		return false;
 	}
+	// Parse the KEY*
+	readKeyTable(*keyRes);
+	delete keyRes;
 
-	uint castTag = MKTAG('C', 'A', 'S', 't');
+	return true;
+}
 
-	// Parse the CAS*, if present
-	if (casRes) {
-		Common::SeekableSubReadStreamEndian casStream(stream, casRes->offset + 8, casRes->offset + 8 + casRes->size, _isBigEndian, DisposeAfterUse::NO);
+bool RIFXArchive::readMemoryMap(Common::SeekableSubReadStreamEndian &stream, uint32 moreOffset) {
+	if (stream.readUint32() != MKTAG('i', 'm', 'a', 'p'))
+		return false;
 
-		uint casSize = casRes->size / 4;
+	stream.readUint32(); // imap length
+	stream.readUint32(); // unknown
+	uint32 mmapOffset = stream.readUint32() + moreOffset;
+	uint32 version = stream.readUint32(); // 0 for 4.0, 0x4c1 for 5.0, 0x4c7 for 6.0, 0x708 for 8.5, 0x742 for 10.0
+	warning("mmap: version: %x", version);
 
-		debugCN(2, kDebugLoading, "CAS*: %d [", casSize);
+	stream.seek(mmapOffset);
 
-		for (uint i = 0; i < casSize; i++) {
-			uint32 castIndex = casStream.readUint32BE();
-			debugCN(2, kDebugLoading, "%d ", castIndex);
-
-			if (castIndex == 0) {
-				continue;
-			}
-			Resource &res = _types[castTag][castIndex];
-			res.castId = i;
-		}
-		debugC(2, kDebugLoading, "]");
+	if (stream.readUint32() != MKTAG('m', 'm', 'a', 'p')) {
+		warning("RIFXArchive::readMemoryMap(): mmap expected but not found");
+		return false;
 	}
 
-	// Parse the KEY*
-	Common::SeekableSubReadStreamEndian keyStream(stream, keyRes->offset + 8, keyRes->offset + 8 + keyRes->size, _isBigEndian, DisposeAfterUse::NO);
+	stream.readUint32(); // mmap length
+	stream.readUint16(); // unknown
+	stream.readUint16(); // unknown
+	stream.readUint32(); // resCount + empty entries
+	uint32 resCount = stream.readUint32();
+	stream.skip(8); // all 0xFF
+	stream.readUint32(); // id of the first free resource, -1 if none.
+
+	if (_rifxType != MKTAG('A', 'P', 'P', 'L'))
+		_resources.reserve(resCount);
+
+	for (uint32 i = 0; i < resCount; i++) {
+		uint32 tag = stream.readUint32();
+		uint32 size = stream.readUint32();
+		uint32 offset = stream.readUint32() + moreOffset;
+		uint16 flags = stream.readUint16();
+		uint16 unk1 = stream.readUint16();
+		uint32 nextFreeResourceId = stream.readUint32(); // for free resources, the next id, flag like for imap and mmap resources
+
+		debug(3, "Found RIFX resource index %d: '%s', %d bytes @ 0x%08x (%d), flags: %x unk1: %x nextFreeResourceId: %d",
+			i, tag2str(tag), size, offset, offset, flags, unk1, nextFreeResourceId);
+		// APPL is a special case; it has an embedded "normal" archive
+		if (_rifxType == MKTAG('A', 'P', 'P', 'L')) {
+			if (tag == MKTAG('F', 'i', 'l', 'e'))
+				return openStream(_stream, offset);
+		} else {
+			Resource &res = _types[tag][i];
+			res.index = i;
+			res.offset = offset;
+			res.size = size;
+			res.tag = tag;
+			_resources.push_back(&res);
+		}
+	}
+
+	// We need to have found the 'File' resource already
+	if (_rifxType == MKTAG('A', 'P', 'P', 'L')) {
+		warning("No 'File' resource present in APPL archive");
+		return false;
+	}
+
+	return true;
+}
+
+void RIFXArchive::readCast(Common::SeekableSubReadStreamEndian &casStream) {
+	uint castTag = MKTAG('C', 'A', 'S', 't');
+
+	uint casSize = casStream.size() / 4;
+
+	debugCN(2, kDebugLoading, "CAS*: %d [", casSize);
+
+	for (uint i = 0; i < casSize; i++) {
+		uint32 castIndex = casStream.readUint32BE();
+		debugCN(2, kDebugLoading, "%d ", castIndex);
+
+		if (castIndex == 0) {
+			continue;
+		}
+		Resource &res = _types[castTag][castIndex];
+		res.castId = i;
+	}
+	debugC(2, kDebugLoading, "]");
+}
+
+void RIFXArchive::readKeyTable(Common::SeekableSubReadStreamEndian &keyStream) {
 	uint16 entrySize = keyStream.readUint16(); // Should always be 12 (3 uint32's)
 	uint16 entrySize2 = keyStream.readUint16();
 	uint32 entryCount = keyStream.readUint32(); // There are more entries than actually used
@@ -608,15 +629,24 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		uint32 childTag = keyStream.readUint32();
 
 		debugC(2, kDebugLoading, "KEY*: childIndex: %d parentIndex: %d childTag: %s", childIndex, parentIndex, tag2str(childTag));
-		if (childIndex < resources.size() && parentIndex < resources.size())
-			resources[parentIndex]->children.push_back(*resources[childIndex]);
+		if (childIndex < _resources.size() && parentIndex < _resources.size())
+			_resources[parentIndex]->children.push_back(*_resources[childIndex]);
 	}
+}
 
-	_stream = stream;
-	return true;
+Common::SeekableSubReadStreamEndian *RIFXArchive::getFirstResource(uint32 tag) {
+	return getResource(tag, getResourceIDList(tag)[0], false);
+}
+
+Common::SeekableSubReadStreamEndian *RIFXArchive::getFirstResource(uint32 tag, bool fileEndianness) {
+	return getResource(tag, getResourceIDList(tag)[0], fileEndianness);
 }
 
 Common::SeekableSubReadStreamEndian *RIFXArchive::getResource(uint32 tag, uint16 id) {
+	return getResource(tag, id, false);
+}
+
+Common::SeekableSubReadStreamEndian *RIFXArchive::getResource(uint32 tag, uint16 id, bool fileEndianness) {
 	if (!_types.contains(tag))
 		error("RIFXArchive::getResource(): Archive does not contain '%s' %d", tag2str(tag), id);
 
@@ -629,8 +659,9 @@ Common::SeekableSubReadStreamEndian *RIFXArchive::getResource(uint32 tag, uint16
 
 	uint32 offset = res.offset + 8;
 	uint32 size = res.size;
+	bool bigEndian = fileEndianness ? _isBigEndian : true;
 
-	return new Common::SeekableSubReadStreamEndian(_stream, offset, offset + size, true, DisposeAfterUse::NO);
+	return new Common::SeekableSubReadStreamEndian(_stream, offset, offset + size, bigEndian, DisposeAfterUse::NO);
 }
 
 Resource RIFXArchive::getResourceDetail(uint32 tag, uint16 id) {
