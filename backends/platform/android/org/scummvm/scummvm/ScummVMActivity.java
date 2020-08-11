@@ -195,6 +195,18 @@ public class ScummVMActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		// TODO setSystemUiVisibility is introduced in API 11 and deprecated in API 30 - When we move to API 30 we will have to replace this code
+		// TODO Code is taken from https://www.techrepublic.com/article/give-android-users-an-immersive-experience-by-using-kitkats-full-screen-decor-flags/
+		//      The code sample in the above url contains code to switch between immersive and default mode by clicking a button.
+		//      We could do something similar by making it a Global UI option.
+		getWindow().getDecorView().setSystemUiVisibility(
+		    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+		    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+		    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+		    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION         // hide nav bar
+		    | View.SYSTEM_UI_FLAG_FULLSCREEN              // hide status bar
+		    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
 		setContentView(R.layout.main);
