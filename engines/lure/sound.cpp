@@ -941,6 +941,14 @@ void MidiMusic::send(int8 source, uint32 b) {
 			// Strip velocity
 			b &= 0xFF00FFFF;
 		}
+	} else if (((b & 0xF0) == 0xD0)) {
+		// Channel aftertouch
+		if (Sound.isRoland()) {
+			// Some tracks contain aftertouch events, but the MT-32 does
+			// not support this and the original interpreter does not send
+			// them to the device.
+			return;
+		}
 	}
 
 	if (Sound.isRoland()) {
