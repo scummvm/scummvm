@@ -56,7 +56,6 @@ protected:
 	GUI::CheckboxWidget *_100PercentCheckbox;
 	GUI::CheckboxWidget *_150PercentCheckbox;
 	GUI::CheckboxWidget *_200PercentCheckbox;
-	GUI::CheckboxWidget *_showCursorCheckbox;
 
 	GUI::CheckboxWidget *_hardScaler;
 	GUI::CheckboxWidget *_cpuScaler;

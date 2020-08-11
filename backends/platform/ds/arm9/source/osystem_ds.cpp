@@ -91,6 +91,9 @@ void OSystem_DS::initBackend() {
 	_mixer = new Audio::MixerImpl(11025);
 	_mixer->setReady(true);
 
+	oamInit(&oamMain, SpriteMapping_Bmp_1D_128, false);
+	_cursorSprite = oamAllocateGfx(&oamMain, SpriteSize_64x64, SpriteColorFormat_Bmp);
+
 	_overlay.create(256, 192, Graphics::PixelFormat(2, 5, 5, 5, 1, 0, 5, 10, 15));
 
 	BaseBackend::initBackend();
@@ -103,7 +106,7 @@ bool OSystem_DS::hasFeature(Feature f) {
 void OSystem_DS::setFeatureState(Feature f, bool enable) {
 	if (f == kFeatureCursorPalette) {
 		_disableCursorPalette = !enable;
-		refreshCursor();
+		refreshCursor(_cursorSprite, _cursor, !_disableCursorPalette ? _cursorPalette : _palette);
 	}
 }
 
@@ -181,7 +184,7 @@ void OSystem_DS::setCursorPalette(const byte *colors, uint start, uint num) {
 	}
 
 	_disableCursorPalette = false;
-	refreshCursor();
+	refreshCursor(_cursorSprite, _cursor, !_disableCursorPalette ? _cursorPalette : _palette);
 }
 
 void OSystem_DS::grabPalette(unsigned char *colors, uint start, uint num) const {
@@ -197,6 +200,10 @@ void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int 
 }
 
 void OSystem_DS::updateScreen() {
+	oamSet(&oamMain, 0, _cursorPos.x - _cursorHotX, _cursorPos.y - _cursorHotY, 0, 15, SpriteSize_64x64,
+	       SpriteColorFormat_Bmp, _cursorSprite, 0, false, !_cursorVisible, false, false, false);
+	oamUpdate(&oamMain);
+
 	if (_isOverlayShown) {
 		u16 *back = (u16 *)_overlay.getPixels();
 		dmaCopyHalfWords(3, back, BG_GFX, 256 * 192 * 2);
@@ -296,31 +303,43 @@ Common::Point OSystem_DS::transformPoint(uint16 x, uint16 y) {
 }
 
 bool OSystem_DS::showMouse(bool visible) {
-	DS::setShowCursor(visible);
-	return true;
+	const bool last = _cursorVisible;
+	_cursorVisible = visible;
+	return last;
 }
 
 void OSystem_DS::warpMouse(int x, int y) {
-	DS::warpMouse(x, y, _isOverlayShown);
+	_cursorPos = DS::warpMouse(x, y, _isOverlayShown);
 }
 
 void OSystem_DS::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, u32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
-	if ((w > 0) && (w < 64) && (h > 0) && (h < 64)) {
-		memcpy(_cursorImage, buf, w * h);
-		_cursorW = w;
-		_cursorH = h;
-		_cursorHotX = hotspotX;
-		_cursorHotY = hotspotY;
-		_cursorKey = keycolor;
-		// TODO: The old target scales was saved, but never used. Should the
-		// new "do not scale" logic be implemented?
-		//_cursorScale = targetCursorScale;
-		refreshCursor();
-	}
+	if (!buf || w == 0 || h == 0 || (format && *format != Graphics::PixelFormat::createFormatCLUT8()))
+		return;
+
+	if (_cursor.w != w || _cursor.h != h)
+		_cursor.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
+	_cursor.copyRectToSurface(buf, w, 0, 0, w, h);
+	_cursorHotX = hotspotX;
+	_cursorHotY = hotspotY;
+	_cursorKey = keycolor;
+	refreshCursor(_cursorSprite, _cursor, !_disableCursorPalette ? _cursorPalette : _palette);
 }
 
-void OSystem_DS::refreshCursor() {
-	DS::setCursorIcon(_cursorImage, _cursorW, _cursorH, _cursorKey, _cursorHotX, _cursorHotY);
+void OSystem_DS::refreshCursor(u16 *dst, const Graphics::Surface &src, const uint16 *palette) {
+	uint w = MIN<uint>(src.w, 64);
+	uint h = MIN<uint>(src.h, 64);
+
+	dmaFillHalfWords(0, dst, 64 * 64 * 2);
+
+	for (uint y = 0; y < h; y++) {
+		const uint8 *row = (const uint8 *)src.getBasePtr(0, y);
+		for (uint x = 0; x < w; x++) {
+			uint8 color = *row++;
+
+			if (color != _cursorKey)
+				dst[y * 64 + x] = palette[color] | 0x8000;
+		}
+	}
 }
 
 uint32 OSystem_DS::getMillis(bool skipRecord) {

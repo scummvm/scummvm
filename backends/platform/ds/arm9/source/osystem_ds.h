@@ -38,7 +38,7 @@
 class OSystem_DS : public BaseBackend, public PaletteManager {
 protected:
 	Audio::MixerImpl *_mixer;
-	Graphics::Surface _framebuffer, _overlay;
+	Graphics::Surface _framebuffer, _overlay, _cursor;
 	bool _graphicsEnable, _isOverlayShown;
 
 	static OSystem_DS *_instance;
@@ -46,13 +46,12 @@ protected:
 	u16 _palette[256];
 	u16 _cursorPalette[256];
 
-	u8 _cursorImage[64 * 64];
-	uint _cursorW;
-	uint _cursorH;
+	u16 *_cursorSprite;
+	Common::Point _cursorPos;
 	int _cursorHotX;
 	int _cursorHotY;
 	byte _cursorKey;
-	int _cursorScale;
+	bool _cursorVisible;
 
 	DSEventSource *_eventSource;
 
@@ -132,12 +131,9 @@ public:
 
 	static int timerHandler(int t);
 
-	u16 getDSPaletteEntry(u32 entry) const { return _palette[entry]; }
-	u16 getDSCursorPaletteEntry(u32 entry) const { return !_disableCursorPalette? _cursorPalette[entry]: _palette[entry]; }
-
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 
-	void refreshCursor();
+	void refreshCursor(u16 *dst, const Graphics::Surface &src, const uint16 *palette);
 
 	virtual void logMessage(LogMessageType::Type type, const char *message);
 
