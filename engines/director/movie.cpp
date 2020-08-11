@@ -25,6 +25,8 @@
 
 #include "engines/util.h"
 
+#include "graphics/macgui/macwindowmanager.h"
+
 #include "director/director.h"
 #include "director/archive.h"
 #include "director/cast.h"
@@ -117,9 +119,8 @@ bool Movie::loadArchive() {
 	if (_window == _vm->getStage()) {
 		uint16 windowWidth = debugChannelSet(-1, kDebugDesktop) ? 1024 : _movieRect.width();
 		uint16 windowHeight = debugChannelSet(-1, kDebugDesktop) ? 768 : _movieRect.height();
-		if (_vm->_surface->w != windowWidth || _vm->_surface->h != windowHeight) {
-			_vm->_surface->free();
-			_vm->_surface->create(windowWidth, windowHeight, Graphics::PixelFormat::createFormatCLUT8());
+		if (_vm->_wm->_screenDims.width() != windowWidth || _vm->_wm->_screenDims.height() != windowHeight) {
+			_vm->_wm->_screenDims = Common::Rect(windowWidth, windowHeight);
 
 			initGraphics(windowWidth, windowHeight);
 		}

@@ -222,7 +222,6 @@ public:
 
 public:
 	RandomState _rnd;
-	Graphics::ManagedSurface *_surface;
 	Graphics::MacWindowManager *_wm;
 
 public:

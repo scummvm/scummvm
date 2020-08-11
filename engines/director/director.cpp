@@ -88,7 +88,6 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_version = getDescriptionVersion();
 
 	_wm = nullptr;
-	_surface = nullptr;
 
 	_gameDataDir = Common::FSNode(ConfMan.get("path"));
 
@@ -113,7 +112,6 @@ DirectorEngine::~DirectorEngine() {
 	delete _soundManager;
 	delete _lingo;
 	delete _wm;
-	delete _surface;
 
 	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _openResFiles.begin(); it != _openResFiles.end(); ++it) {
 		delete it->_value;
@@ -167,8 +165,7 @@ Common::Error DirectorEngine::run() {
 	if (!debugChannelSet(-1, kDebugDesktop))
 		_stage->disableBorder();
 
-	_surface = new Graphics::ManagedSurface;
-	_wm->setScreen(_surface);
+	_wm->setScreen(1, 1);
 	_wm->addWindowInitialized(_stage);
 	_wm->setActiveWindow(_stage->getId());
 	setPalette(-1);
