@@ -52,6 +52,10 @@ public:
 	MacMenu(int id, const Common::Rect &bounds, MacWindowManager *wm);
 	~MacMenu();
 
+	virtual ManagedSurface *getBorderSurface() override { return nullptr; }
+	virtual const Common::Rect &getInnerDimensions() override { return _dims; }
+	virtual bool isDirty() override { return _contentIsDirty || _dimensionsDirty; }
+
 	static Common::StringArray *readMenuFromResource(Common::SeekableReadStream *res);
 	static MacMenu *createMenuFromPEexe(Common::PEResources *exe, MacWindowManager *wm);
 

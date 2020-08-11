@@ -156,7 +156,7 @@ static const byte macCursorCrossBar[] = {
 static void menuTimerHandler(void *refCon);
 
 MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns) {
-	_screen = 0;
+	_screen = nullptr;
 	_screenCopy = nullptr;
 	_desktopBmp = nullptr;
 	_desktop = nullptr;
@@ -243,6 +243,17 @@ void MacWindowManager::setScreen(ManagedSurface *screen) {
 	drawDesktop();
 }
 
+void MacWindowManager::setScreen(int w, int h) {
+	if (_desktop)
+		_desktop->free();
+	else
+		_desktop = new ManagedSurface();
+
+	_screenDims = Common::Rect(w, h);
+	_desktop->create(w, h, PixelFormat::createFormatCLUT8());
+	drawDesktop();
+}
+
 void MacWindowManager::setMode(uint32 mode) {
 	_mode = mode;
 
@@ -300,7 +311,7 @@ MacMenu *MacWindowManager::addMenu() {
 		delete _menu;
 	}
 
-	_menu = new MacMenu(getNextId(), _screen->getBounds(), this);
+	_menu = new MacMenu(getNextId(), getScreenBounds(), this);
 
 	_windows[_menu->getId()] = _menu;
 
@@ -327,6 +338,9 @@ void MacWindowManager::activateMenu() {
 }
 
 void MacWindowManager::activateScreenCopy() {
+	if (!_screen)
+		return;
+
 	if (!_screenCopy)
 		_screenCopy = new ManagedSurface(*_screen);	// Create a copy
 	else
@@ -463,19 +477,22 @@ void MacWindowManager::drawDesktop() {
 }
 
 void MacWindowManager::draw() {
-	assert(_screen);
-
 	removeMarked();
 
 	if (_fullRefresh) {
-		if (!(_mode & kWMModeNoDesktop)) {
-			if (_desktop->w != _screen->w || _desktop->h != _screen->h) {
-				_desktop->free();
-				_desktop->create(_screen->w, _screen->h, PixelFormat::createFormatCLUT8());
-				drawDesktop();
-			}
+		Common::Rect screen = getScreenBounds();
+		if (_desktop->w != screen.width() || _desktop->h != screen.height()) {
+			_desktop->free();
+			_desktop->create(screen.width(), screen.height(), PixelFormat::createFormatCLUT8());
+			drawDesktop();
+		}
+
+		if (_screen) {
 			_screen->blitFrom(*_desktop, Common::Point(0, 0));
 			g_system->copyRectToScreen(_screen->getPixels(), _screen->pitch, 0, 0, _screen->w, _screen->h);
+		} else {
+			_screenCopyPauseToken = new PauseToken(pauseEngine());
+			g_system->copyRectToScreen(_desktop->getPixels(), _desktop->pitch, 0, 0, _desktop->w, _desktop->h);
 		}
 
 		if (_redrawEngineCallback != nullptr)
@@ -489,7 +506,7 @@ void MacWindowManager::draw() {
 			continue;
 
 		Common::Rect clip = w->getDimensions();
-		clip.clip(_screen->getBounds());
+		clip.clip(getScreenBounds());
 		clip.clip(Common::Rect(0, 0, g_system->getWidth() - 1, g_system->getHeight() - 1));
 
 		if (clip.isEmpty())
@@ -505,7 +522,26 @@ void MacWindowManager::draw() {
 			}
 		}
 
-		if (w->draw(_screen, forceRedraw)) {
+		if (!_screen) {
+			if (w->isDirty() || forceRedraw) {
+				w->draw(forceRedraw);
+
+				Common::Rect dims = w->getDimensions();
+				Common::Rect innerDims = w->getInnerDimensions();
+
+				g_system->copyRectToScreen(w->getBorderSurface()->getBasePtr(0, 0), w->getBorderSurface()->pitch, clip.left, clip.top, dims.width(), dims.height());
+
+				g_system->copyRectToScreen(w->getWindowSurface()->getBasePtr(MAX(clip.left - innerDims.left, 0), MAX(clip.top - innerDims.top, 0)), w->getWindowSurface()->pitch, clip.left + (-dims.left + innerDims.left), clip.top + (-dims.top + innerDims.top), innerDims.width(), innerDims.height());
+
+				dirtyRects.push_back(clip);
+			}
+
+			if (_screenCopyPauseToken) {
+				_screenCopyPauseToken->clear();
+				delete _screenCopyPauseToken;
+				_screenCopyPauseToken = nullptr;
+			}
+		} else if (w->draw(_screen, forceRedraw)) {
 			w->setDirty(false);
 			g_system->copyRectToScreen(_screen->getBasePtr(clip.left, clip.top), _screen->pitch, clip.left, clip.top, clip.width(), clip.height());
 			dirtyRects.push_back(clip);
@@ -513,8 +549,13 @@ void MacWindowManager::draw() {
 	}
 
 	// Menu is drawn on top of everything and always
-	if (_menu && !(_mode & kWMModeFullscreen))
-		_menu->draw(_screen, _fullRefresh);
+	if (_menu && !(_mode & kWMModeFullscreen)) {
+		if (_screen) {
+			_menu->draw(_screen, _fullRefresh);
+		} else {
+			g_system->copyRectToScreen(_menu->getWindowSurface()->getBasePtr(_menu->_dims.left, _menu->_dims.top), _menu->getWindowSurface()->pitch, _menu->_dims.left, _menu->_dims.top, _menu->_dims.width(), _menu->_dims.height());
+		}
+	}
 
 	_fullRefresh = false;
 }

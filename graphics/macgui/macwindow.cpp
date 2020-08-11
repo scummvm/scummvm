@@ -191,7 +191,7 @@ void MacWindow::center(bool toCenter) {
 	if (!_wm)
 		return;
 
-	Common::Rect screen = _wm->_screen->getBounds();
+	Common::Rect screen = _wm->getScreenBounds();
 
 	if (toCenter) {
 		move((screen.width() - _dims.width()) / 2, (screen.height() - _dims.height()) / 2);

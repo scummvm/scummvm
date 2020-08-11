@@ -147,6 +147,14 @@ public:
 	 * @param screen Surface on which the desktop will be drawn.
 	 */
 	void setScreen(ManagedSurface *screen);
+
+	/**
+	 * Mutator to indicate the dimensions of the desktop, when a backing surface is not used.
+	 * Note that this method should be called as soon as the WM is created.
+	 * @param screen Surface on which the desktop will be drawn.
+	 */
+	void setScreen(int w, int h);
+
 	/**
 	 * Create a window with the given parameters.
 	 * Note that this method allocates the necessary memory for the window.
@@ -258,6 +266,8 @@ public:
 
 	MacWidget *getActiveWidget() { return _activeWidget; }
 
+	Common::Rect getScreenBounds() { return _screen ? _screen->getBounds() : _screenDims; }
+
 	void clearWidgetRefs(MacWidget *widget);
 
 	void pushCursor(MacCursorType type, Cursor *cursor = nullptr);
@@ -325,6 +335,7 @@ public:
 
 	ManagedSurface *_screen;
 	ManagedSurface *_screenCopy;
+	Common::Rect _screenDims;
 
 private:
 	Common::List<BaseMacWindow *> _windowStack;
