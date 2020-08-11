@@ -283,14 +283,6 @@ void LauncherDialog::updateListing() {
 	// Turn it into a list of pointers
 	Common::List<LauncherEntry> domainList;
 	for (ConfigManager::DomainMap::const_iterator iter = domains.begin(); iter != domains.end(); ++iter) {
-#ifdef __DS__
-		// DS port uses an extra section called 'ds'.  This prevents the section from being
-		// detected as a game.
-		if (iter->_key == "ds") {
-			continue;
-		}
-#endif
-
 		String description(iter->_value.getVal("description"));
 
 		if (description.empty()) {

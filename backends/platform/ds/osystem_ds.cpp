@@ -58,7 +58,8 @@ OSystem_DS *OSystem_DS::_instance = NULL;
 
 OSystem_DS::OSystem_DS()
 	: _eventSource(NULL), _mixer(NULL), _isOverlayShown(true),
-	_disableCursorPalette(true), _graphicsEnable(true), _gammaValue(0)
+	_graphicsMode(GFX_HWSCALE), _stretchMode(100),
+	_disableCursorPalette(true), _graphicsEnable(true)
 {
 	_instance = this;
 
@@ -78,6 +79,10 @@ int OSystem_DS::timerHandler(int t) {
 }
 
 void OSystem_DS::initBackend() {
+	DS::initHardware();
+
+	defaultExceptionHandler();
+
 	ConfMan.setInt("autosave_period", 0);
 	ConfMan.setBool("FM_medium_quality", true);
 
@@ -100,7 +105,7 @@ void OSystem_DS::initBackend() {
 }
 
 bool OSystem_DS::hasFeature(Feature f) {
-	return (f == kFeatureCursorPalette);
+	return (f == kFeatureCursorPalette) || (f == kFeatureStretchMode);
 }
 
 void OSystem_DS::setFeatureState(Feature f, bool enable) {
@@ -114,6 +119,62 @@ bool OSystem_DS::getFeatureState(Feature f) {
 	if (f == kFeatureCursorPalette)
 		return !_disableCursorPalette;
 	return false;
+}
+
+static const OSystem::GraphicsMode graphicsModes[] = {
+	{ "NONE",  _s("Unscaled"),                                  GFX_NOSCALE },
+	{ "HW",    _s("Hardware scale (fast, but low quality)"),    GFX_HWSCALE },
+	{ "SW",    _s("Software scale (good quality, but slower)"), GFX_SWSCALE },
+	{ nullptr, nullptr,                                         0           }
+};
+
+const OSystem::GraphicsMode *OSystem_DS::getSupportedGraphicsModes() const {
+	return graphicsModes;
+}
+
+int OSystem_DS::getDefaultGraphicsMode() const {
+	return GFX_HWSCALE;
+}
+
+bool OSystem_DS::setGraphicsMode(int mode) {
+	switch (mode) {
+	case GFX_NOSCALE:
+	case GFX_HWSCALE:
+	case GFX_SWSCALE:
+		_graphicsMode = mode;
+		return true;
+	default:
+		return false;
+	}
+}
+
+int OSystem_DS::getGraphicsMode() const {
+	return _graphicsMode;
+}
+
+static const OSystem::GraphicsMode stretchModes[] = {
+	{ "100",   "100%",  100 },
+	{ "150",   "150%",  150 },
+	{ "200",   "200%",  200 },
+	{ nullptr, nullptr, 0   }
+};
+
+const OSystem::GraphicsMode *OSystem_DS::getSupportedStretchModes() const {
+	return stretchModes;
+}
+
+int OSystem_DS::getDefaultStretchMode() const {
+	return 100;
+}
+
+bool OSystem_DS::setStretchMode(int mode) {
+	_stretchMode = mode;
+	DS::setTopScreenZoom(mode);
+	return true;
+}
+
+int OSystem_DS::getStretchMode() const {
+	return _stretchMode;
 }
 
 void OSystem_DS::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
@@ -152,10 +213,9 @@ void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
 			u16 paletteValue = red | (green << 5) | (blue << 10);
 
 			if (!_isOverlayShown) {
-				int col = applyGamma(paletteValue);
-				BG_PALETTE[r] = col;
+				BG_PALETTE[r] = paletteValue;
 #ifdef DISABLE_TEXT_CONSOLE
-				BG_PALETTE_SUB[r] = col;
+				BG_PALETTE_SUB[r] = paletteValue;
 #endif
 			}
 
@@ -209,7 +269,7 @@ void OSystem_DS::updateScreen() {
 		dmaCopyHalfWords(3, back, BG_GFX, 256 * 192 * 2);
 	} else if (!_graphicsEnable) {
 		return;
-	} else if (DS::isCpuScalerEnabled()) {
+	} else if (_graphicsMode == GFX_SWSCALE) {
 		u16 *base = BG_GFX + 0x10000;
 		Rescale_320x256xPAL8_To_256x256x1555(
 			base,
@@ -420,32 +480,6 @@ void OSystem_DS::logMessage(LogMessageType::Type type, const char *message) {
 #ifndef DISABLE_TEXT_CONSOLE
 	printf("%s", message);
 #endif
-}
-
-u16 OSystem_DS::applyGamma(u16 color) {
-	// Attempt to do gamma correction (or something like it) to palette entries
-	// to improve the contrast of the image on the original DS screen.
-
-	// Split the color into it's component channels
-	int r = color & 0x001F;
-	int g = (color & 0x03E0) >> 5;
-	int b = (color & 0x7C00) >> 10;
-
-	// Caluclate the scaling factor for this color based on it's brightness
-	int scale = ((23 - ((r + g + b) >> 2)) * _gammaValue) >> 3;
-
-	// Scale the three components by the scaling factor, with clamping
-	r = r + ((r * scale) >> 4);
-	if (r > 31) r = 31;
-
-	g = g + ((g * scale) >> 4);
-	if (g > 31) g = 31;
-
-	b = b + ((b * scale) >> 4);
-	if (b > 31) b = 31;
-
-	// Stick them back together into a 555 color value
-	return 0x8000 | r | (g << 5) | (b << 10);
 }
 
 static const Common::HardwareInputTableEntry ndsJoystickButtons[] = {

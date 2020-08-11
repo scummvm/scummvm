@@ -39,9 +39,7 @@ u16 *	get16BitBackBuffer();
 
 void 	setTalkPos(int x, int y);
 void 	setTopScreenTarget(int x, int y);
-void	set200PercentFixedScale(bool on);
 void	setTopScreenZoom(int percentage);
-void	setGamma(int gamma);
 
 // Timers
 void 	setTimerCallback(OSystem_DS::TimerProc proc, int interval);		// Setup a callback function at a regular interval
@@ -58,15 +56,13 @@ void 	setShakePos(int shakeXOffset, int shakeYOffset);
 
 // Options
 void	setGameScreenSwap(bool enable);
-void 	setUnscaledMode(bool enable);
-bool    isCpuScalerEnabled();
-void	setCpuScalerEnable(bool enable);
 
 // Display
 bool 	getIsDisplayMode8Bit();
 void 	setGameSize(int width, int height);
 int		getGameWidth();
 int		getGameHeight();
+void 	initHardware();
 
 // Fast RAM allocation (ITCM)
 void	fastRamReset();

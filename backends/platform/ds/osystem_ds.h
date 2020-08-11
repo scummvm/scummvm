@@ -35,11 +35,18 @@
 #include "graphics/surface.h"
 #include "graphics/palette.h"
 
+enum {
+	GFX_NOSCALE = 0,
+	GFX_HWSCALE = 1,
+	GFX_SWSCALE = 2
+};
+
 class OSystem_DS : public BaseBackend, public PaletteManager {
 protected:
 	Audio::MixerImpl *_mixer;
 	Graphics::Surface _framebuffer, _overlay, _cursor;
 	bool _graphicsEnable, _isOverlayShown;
+	int _graphicsMode, _stretchMode;
 
 	static OSystem_DS *_instance;
 
@@ -58,8 +65,6 @@ protected:
 	Graphics::Surface *createTempFrameBuffer();
 	bool _disableCursorPalette;
 
-	int _gammaValue;
-
 public:
 	typedef int  (*TimerProc)(int interval);
 
@@ -71,6 +76,17 @@ public:
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
 	virtual bool getFeatureState(Feature f);
+
+	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
+	virtual int getDefaultGraphicsMode() const;
+	virtual bool setGraphicsMode(int mode);
+	virtual int getGraphicsMode() const;
+
+	virtual const GraphicsMode *getSupportedStretchModes() const;
+	virtual int getDefaultStretchMode() const;
+	virtual bool setStretchMode(int mode);
+	virtual int getStretchMode() const;
+
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format);
 	virtual int16 getHeight();
 	virtual int16 getWidth();
@@ -136,9 +152,6 @@ public:
 	void refreshCursor(u16 *dst, const Graphics::Surface &src, const uint16 *palette);
 
 	virtual void logMessage(LogMessageType::Type type, const char *message);
-
-	u16 applyGamma(u16 color);
-	void setGammaValue(int gamma) { _gammaValue = gamma; }
 };
 
 #endif
