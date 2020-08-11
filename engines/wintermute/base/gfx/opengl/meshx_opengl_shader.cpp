@@ -66,8 +66,6 @@ bool MeshXOpenGLShader::render(ModelX *model) {
 		return false;
 	}
 
-	bool res = false;
-
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
 
 	_shader->enableVertexAttribute("position", _vertexBuffer, 3, GL_FLOAT, false, 4 * kVertexComponentCount, 4 * kPositionOffset);
@@ -95,7 +93,7 @@ bool MeshXOpenGLShader::render(ModelX *model) {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	return res;
+	return true;
 }
 
 bool MeshXOpenGLShader::update(FrameNode *parentFrame) {

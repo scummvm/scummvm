@@ -47,8 +47,6 @@ bool MeshXOpenGL::render(ModelX *model) {
 		return false;
 	}
 
-	bool res = false;
-
 	for (uint32 i = 0; i < _numAttrs; i++) {
 		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, _materials[i]->_diffuse.data);
 		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, _materials[i]->_diffuse.data);
@@ -66,7 +64,7 @@ bool MeshXOpenGL::render(ModelX *model) {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
 
-	return res;
+	return true;
 }
 
 } // namespace Wintermute

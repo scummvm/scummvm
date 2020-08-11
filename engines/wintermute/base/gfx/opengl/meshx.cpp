@@ -223,8 +223,6 @@ bool MeshX::update(FrameNode *parentFrame) {
 		return false;
 	}
 
-	bool res = false;
-
 	// update skinned mesh
 	if (_skinnedMesh) {
 		BaseArray<Math::Matrix4> finalBoneMatrices;
@@ -302,7 +300,7 @@ bool MeshX::update(FrameNode *parentFrame) {
 
 	updateBoundingBox();
 
-	return res;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
