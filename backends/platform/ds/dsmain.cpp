@@ -79,7 +79,6 @@
 
 #include "dsmain.h"
 #include "osystem_ds.h"
-#include "dsoptions.h"
 #include "engines/engine.h"
 
 #include "backends/plugins/ds/ds-provider.h"
@@ -105,7 +104,6 @@ static int callbackTimer;
 static OSystem_DS::TimerProc callback;
 
 // Scaled
-static bool scaledMode;
 static int scX;
 static int scY;
 
@@ -118,7 +116,6 @@ static int subScreenHeight = SCUMM_GAME_HEIGHT;
 static int subScreenScale = 256;
 
 static bool gameScreenSwap = false;
-bool isCpuScalerEnabled();
 
 // Shake
 static int s_shakeXOffset = 0;
@@ -131,25 +128,8 @@ static int touchScX, touchScY, touchX, touchY;
 static int gameWidth = 320;
 static int gameHeight = 200;
 
-// Scale
-static bool twoHundredPercentFixedScale = false;
-static bool cpuScalerEnable = false;
-
-bool isCpuScalerEnabled() {
-	return cpuScalerEnable;
-}
-
-
-void setCpuScalerEnable(bool enable) {
-	cpuScalerEnable = enable;
-}
-
 void setGameScreenSwap(bool enable) {
 	gameScreenSwap = enable;
-}
-
-void setGamma(int gamma) {
-	OSystem_DS::instance()->setGammaValue(gamma);
 }
 
 void setTopScreenZoom(int percentage) {
@@ -170,18 +150,10 @@ int getGameHeight() {
 	return gameHeight;
 }
 
-void set200PercentFixedScale(bool on) {
-	twoHundredPercentFixedScale = on;
-}
-
-void setUnscaledMode(bool enable) {
-	scaledMode = !enable;
-}
-
 void displayMode8Bit() {
 	vramSetBankB(VRAM_B_MAIN_BG_0x06020000);
 
-	if (isCpuScalerEnabled()) {
+	if (g_system->getGraphicsMode() == GFX_SWSCALE) {
 		REG_BG3CNT = BG_BMP16_256x256 | BG_BMP_BASE(8);
 
 		REG_BG3PA = 256;
@@ -252,7 +224,7 @@ void setMainScreenScroll(int x, int y) {
 }
 
 void setMainScreenScale(int x, int y) {
-		if (isCpuScalerEnabled() && (x==320)) {
+		if ((g_system->getGraphicsMode() == GFX_SWSCALE) && (x==320)) {
 			REG_BG3PA = 256;
 			REG_BG3PB = 0;
 			REG_BG3PC = 0;
@@ -318,26 +290,19 @@ void VBlankHandler(void) {
 	int xCenter = subScTargetX + ((subScreenWidth >> 1) << 8);
 	int yCenter = subScTargetY + ((subScreenHeight >> 1) << 8);
 
+	subScreenWidth = (256 * subScreenScale) >> 8;
+	subScreenHeight = (192 * subScreenScale) >> 8;
 
-	if (twoHundredPercentFixedScale) {
-		subScreenWidth = 256 >> 1;
-		subScreenHeight = 192 >> 1;
-	} else {
-		subScreenWidth = (256 * subScreenScale) >> 8;
-		subScreenHeight = (192 * subScreenScale) >> 8;
-
-		if ( ((subScreenWidth) > 256 - 8) && ((subScreenWidth) < 256 + 8) ) {
-			subScreenWidth = 256;
-			subScreenHeight = 192;
-		} else if ( ((subScreenWidth) > 128 - 8) && ((subScreenWidth) < 128 + 8) ) {
-			subScreenWidth = 128;
-			subScreenHeight = 96;
-		} else if (subScreenWidth > 256) {
-			subScreenWidth = 320;
-			subScreenHeight = 200;
-		}
+	if ( ((subScreenWidth) > 256 - 8) && ((subScreenWidth) < 256 + 8) ) {
+		subScreenWidth = 256;
+		subScreenHeight = 192;
+	} else if ( ((subScreenWidth) > 128 - 8) && ((subScreenWidth) < 128 + 8) ) {
+		subScreenWidth = 128;
+		subScreenHeight = 96;
+	} else if (subScreenWidth > 256) {
+		subScreenWidth = 320;
+		subScreenHeight = 200;
 	}
-
 
 	subScTargetX = xCenter - ((subScreenWidth  >> 1) << 8);
 	subScTargetY = yCenter - ((subScreenHeight >> 1) << 8);
@@ -348,7 +313,7 @@ void VBlankHandler(void) {
 	subScX += (subScTargetX - subScX) >> 2;
 	subScY += (subScTargetY - subScY) >> 2;
 
-	if (!scaledMode) {
+	if (g_system->getGraphicsMode() == GFX_NOSCALE) {
 		if (scX + 256 > gameWidth - 1) {
 			scX = gameWidth - 1 - 256;
 		}
@@ -443,7 +408,6 @@ void initHardware() {
 	REG_BG2PC = 0;
 	REG_BG2PD = 256;
 
-	scaledMode = true;
 	scX = 0;
 	scY = 0;
 	subScX = 0;
@@ -506,10 +470,6 @@ void fastRamReset() {
 /////////////////
 
 int main(int argc, char **argv) {
-	DS::initHardware();
-
-	defaultExceptionHandler();
-
 	g_system = new OSystem_DS();
 	assert(g_system);
 

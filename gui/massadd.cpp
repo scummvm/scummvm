@@ -95,15 +95,6 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 	const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
 	Common::ConfigManager::DomainMap::const_iterator iter;
 	for (iter = domains.begin(); iter != domains.end(); ++iter) {
-
-#ifdef __DS__
-		// DS port uses an extra section called 'ds'.  This prevents the section from being
-		// detected as a game.
-		if (iter->_key == "ds") {
-			continue;
-		}
-#endif
-
 		Common::String path(iter->_value.getVal("path"));
 		// Remove trailing slash, so that "/foo" and "/foo/" match.
 		// This works around a bug in the POSIX FS code (and others?)
