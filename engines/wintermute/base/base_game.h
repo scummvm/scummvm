@@ -70,7 +70,7 @@ class SaveThumbHelper;
 
 #ifdef ENABLE_WME3D
 class BaseRenderer3D;
-class FogParameters;
+struct FogParameters;
 #endif
 
 class BaseGame: public BaseObject {
