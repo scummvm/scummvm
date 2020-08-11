@@ -41,9 +41,9 @@ CXXFLAGS += $(OPT_SIZE)
 # TODO: Several of these files probably should not be optimized for speed, but for now
 # we replicate the *precise* list from the old DS makefile, to ensure full compatibility.
 # Eventually, we should tune this list.
-$(ndsdir)/arm9/source/blitters.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-$(ndsdir)/arm9/source/dsmain.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-$(ndsdir)/arm9/source/osystem_ds.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
+$(ndsdir)/blitters.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
+$(ndsdir)/dsmain.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
+$(ndsdir)/osystem_ds.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
 base/main.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
 sound/rate.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
 sound/softsynth/opl/mame.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
