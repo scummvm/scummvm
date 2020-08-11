@@ -177,7 +177,6 @@ public:
 	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox) override;
 	virtual Common::Rect getWidgetRect() override;
 
-	virtual bool isModified() override;
 	virtual bool isEditable() override;
 	virtual void setEditable(bool editable) override;
 	virtual void updateFromWidget(Graphics::MacWidget *widget) override;

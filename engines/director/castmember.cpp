@@ -512,10 +512,6 @@ Common::String TextCastMember::getText() {
 	return _ptext;
 }
 
-bool TextCastMember::isModified() {
-	return _modified;
-}
-
 bool TextCastMember::isEditable() {
 	return _editable;
 }
