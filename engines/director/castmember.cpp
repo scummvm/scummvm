@@ -289,10 +289,13 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox) {
 	}
 
 	const Graphics::Surface *frame = _video->decodeNextFrame();
-	if (frame)
-		widget->getSurface()->blitFrom(*frame);
-
-	delete frame;
+	if (frame) {
+		if (frame->format.bytesPerPixel != 1) {
+			warning("STUB: video >8bpp");
+		} else {
+			widget->getSurface()->blitFrom(*frame);
+		}
+	}
 
 	return widget;
 }
