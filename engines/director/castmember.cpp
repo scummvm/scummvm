@@ -270,7 +270,12 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common
 }
 
 DigitalVideoCastMember::~DigitalVideoCastMember() {
+	delete _video;
+}
 
+Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox) {
+	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
+	return widget;
 }
 
 SoundCastMember::SoundCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
