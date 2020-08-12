@@ -391,7 +391,7 @@ Common::SeekableSubReadStreamEndian *RIFFArchive::getResource(uint32 tag, uint16
 
 // RIFX Archive code
 
-RIFXArchive::RIFXArchive() : Archive(){
+RIFXArchive::RIFXArchive() : Archive() {
 	_isBigEndian = true;
 	_rifxType = 0;
 }
@@ -642,7 +642,7 @@ bool RIFXArchive::readAfterburnerMap(Common::SeekableSubReadStreamEndian &stream
 	uint32 abmpUncompLength = readVarInt(stream);
 	debug(3, "ABMP: length: %d compressionType: %d uncompressedLength: %d",
 		abmpLength, abmpCompressionType, abmpUncompLength);
-	
+
 	Common::SeekableReadStreamEndian *abmpStream = readZlibData(stream, abmpLength, abmpUncompLength, _isBigEndian);
 	if (!abmpStream) {
 		warning("RIFXArchive::readAfterburnerMap(): Could not uncompress ABMP");
@@ -687,7 +687,7 @@ bool RIFXArchive::readAfterburnerMap(Common::SeekableSubReadStreamEndian &stream
 
 		debug(3, "Found RIFX resource index %d: '%s', %d bytes (%d uncompressed) @ pos 0x%08x (%d), compressionType: %d",
 			resId, tag2str(tag), compSize, uncompSize, offset, offset, compressionType);
-		
+
 		Resource &res = _types[tag][resId];
 		res.index = resId;
 		res.offset = offset;
