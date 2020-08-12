@@ -132,6 +132,7 @@ private:
 protected:
 	uint32 _rifxType;
 	Common::Array<Resource *> _resources;
+	Common::HashMap<uint32, byte *> _ilsData;
 };
 
 } // End of namespace Director

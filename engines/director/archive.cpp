@@ -397,6 +397,8 @@ RIFXArchive::RIFXArchive() : Archive() {
 }
 
 RIFXArchive::~RIFXArchive() {
+	for (Common::HashMap<uint32, byte *>::iterator it = _ilsData.begin(); it != _ilsData.end(); it++)
+		free(it->_value);
 }
 
 bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOffset) {
@@ -683,6 +685,7 @@ bool RIFXArchive::readAfterburnerMap(Common::SeekableSubReadStreamEndian &stream
 	debug(3, "ABMP: unk1: %d unk2: %d resCount: %d",
 		abmpUnk1, abmpUnk2, resCount);
 
+	Common::HashMap<uint32, Resource *> resourceMap;
 	for (uint32 i = 0; i < resCount; i++) {
 		uint32 resId = readVarInt(*abmpStream);
 		int32 offset = readVarInt(*abmpStream);
@@ -704,14 +707,49 @@ bool RIFXArchive::readAfterburnerMap(Common::SeekableSubReadStreamEndian &stream
 		res.compressionType = compressionType;
 		res.tag = tag;
 		_resources.push_back(&res);
+		resourceMap[resId] = &res;
 	}
 
 	delete abmpStream;
 
-	// TODO: read ILS
+	// Initial load segment
+	if (!resourceMap.contains(2)) {
+		warning("RIFXArchive::readAfterburnerMap(): Map has no entry for ILS");
+		return false;
+	}
+	if (stream.readUint32() != MKTAG('F', 'G', 'E', 'I')) {
+		warning("RIFXArchive::readAfterburnerMap(): FGEI expected but not found");
+		return false;
+	}
 
-	// FIXME: return true when done
-	return false;
+	Resource *ilsRes = resourceMap[2];
+	uint32 ilsUnk1 = readVarInt(stream);
+	debug(3, "ILS: length: %d unk1: %d", ilsRes->size, ilsUnk1);
+	uint32 ilsLength = ilsRes->size;
+	unsigned long ilsActualUncompLength = ilsRes->uncompSize;
+	Common::SeekableReadStreamEndian *ilsStream = readZlibData(stream, ilsLength, &ilsActualUncompLength, _isBigEndian);
+	if (!ilsStream) {
+		warning("RIFXArchive::readAfterburnerMap(): Could not uncompress FGEI");
+		return false;
+	}
+	if (ilsRes->uncompSize != ilsActualUncompLength) {
+		warning("ILS: Expected uncompressed length %d but got length %lu", ilsRes->uncompSize, ilsActualUncompLength);
+	}
+
+	while (ilsStream->pos() < ilsStream->size()) {
+		uint32 resId = readVarInt(*ilsStream);
+		Resource *res = resourceMap[resId];
+
+		debug(3, "Loading ILS resource %d: '%s', %d bytes", resId, tag2str(res->tag), res->size);
+
+		byte *data = (byte *)malloc(res->size);
+		ilsStream->read(data, res->size);
+		_ilsData[resId] = data;
+	}
+
+	delete ilsStream;
+
+	return true;
 }
 
 void RIFXArchive::readCast(Common::SeekableSubReadStreamEndian &casStream) {
