@@ -1962,12 +1962,12 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	else if (strcmp(name, "EnableLight") == 0) {
 		stack->correctParams(1);
 
-		const char *name = stack->pop()->getString();
+		const char *lightName = stack->pop()->getString();
 
 		if (!_sceneGeometry) {
 			stack->pushBool(false);
 		} else {
-			bool res = _sceneGeometry->enableLight(name);
+			bool res = _sceneGeometry->enableLight(lightName);
 			stack->pushBool(res);
 		}
 
@@ -1980,12 +1980,12 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	else if (strcmp(name, "DisableLight") == 0) {
 		stack->correctParams(1);
 
-		const char *name = stack->pop()->getString();
+		const char *lightName = stack->pop()->getString();
 
 		if (!_sceneGeometry) {
 			stack->pushBool(false);
 		} else {
-			bool res = _sceneGeometry->enableLight(name, false);
+			bool res = _sceneGeometry->enableLight(lightName, false);
 			stack->pushBool(res);
 		}
 
@@ -1998,10 +1998,10 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	else if (strcmp(name, "IsLightEnabled") == 0) {
 		stack->correctParams(1);
 
-		const char *name = stack->pop()->getString();
+		const char *lightName = stack->pop()->getString();
 
 		if (_sceneGeometry) {
-			bool res = _sceneGeometry->isLightEnabled(name);
+			bool res = _sceneGeometry->isLightEnabled(lightName);
 			stack->pushBool(res);
 		} else {
 			stack->pushBool(false);
@@ -2033,13 +2033,13 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	else if (strcmp(name, "SetLightColor") == 0) {
 		stack->correctParams(2);
 
-		const char *name = stack->pop()->getString();
+		const char *lightName = stack->pop()->getString();
 		uint32 color = static_cast<uint32>(stack->pop()->getInt());
 
 		if (!_sceneGeometry) {
 			stack->pushBool(false);
 		} else {
-			bool ret = _sceneGeometry->setLightColor(name, color);
+			bool ret = _sceneGeometry->setLightColor(lightName, color);
 			stack->pushBool(ret);
 		}
 
@@ -2051,10 +2051,10 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetLightColor") == 0) {
 		stack->correctParams(1);
-		const char *name = stack->pop()->getString();
+		const char *lightName = stack->pop()->getString();
 
 		if (_sceneGeometry) {
-			stack->pushInt(_sceneGeometry->getLightColor(name));
+			stack->pushInt(_sceneGeometry->getLightColor(lightName));
 		} else {
 			stack->pushInt(0);
 		}
@@ -2067,12 +2067,12 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetLightPosition") == 0) {
 		stack->correctParams(1);
-		const char *name = stack->pop()->getString();
+		const char *lightName = stack->pop()->getString();
 
 		if (!_sceneGeometry) {
 			stack->pushInt(0);
 		} else {
-			Math::Vector3d pos = _sceneGeometry->getLightPos(name);
+			Math::Vector3d pos = _sceneGeometry->getLightPos(lightName);
 			ScValue *val = stack->getPushValue();
 
 			if (val) {
