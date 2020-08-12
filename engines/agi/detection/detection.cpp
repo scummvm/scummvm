@@ -29,8 +29,8 @@
 #include "engines/advancedDetector.h"
 
 #include "agi/detection_enums.h"
-#include "agi/detection.h"
-#include "agi/wagparser.h" // for fallback detection
+#include "agi/detection/detection.h"
+#include "agi/detection/wagparser.h" // for fallback detection
 
 static const PlainGameDescriptor agiGames[] = {
 	{"agi", "Sierra AGI game"},
@@ -64,7 +64,7 @@ static const PlainGameDescriptor agiGames[] = {
 	{0, 0}
 };
 
-#include "agi/detection_tables.h"
+#include "agi/detection/detection_tables.h"
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
