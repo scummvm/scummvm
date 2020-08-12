@@ -90,7 +90,7 @@ private:
 };
 
 template <typename T>
-Mixer_Mac<T>::Mixer_Mac(Mixer_Mac::Mode mode) :
+Mixer_Mac<T>::Mixer_Mac(Mode mode) :
 	_nextTick(0),
 	_samplesPerTick(0),
 	_mode(mode),
