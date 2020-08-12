@@ -37,7 +37,7 @@ Detection::Detection() {
 			extern PluginObject *g_##ID##_getObject(); \
 			_pl.push_back(new StaticPlugin(g_##ID##_getObject(), g_##ID##_type));
 
-    #include "engines/detection_table.h"
+    #include "detection/detection_table.h"
 }
 
 Detection::~Detection() {
