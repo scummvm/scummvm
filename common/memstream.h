@@ -80,8 +80,8 @@ public:
  */
 class MemoryReadStreamEndian : public MemoryReadStream, public SeekableReadStreamEndian {
 public:
-	MemoryReadStreamEndian(const byte *buf, uint32 len, bool bigEndian)
-		: MemoryReadStream(buf, len), SeekableReadStreamEndian(bigEndian), ReadStreamEndian(bigEndian) {}
+	MemoryReadStreamEndian(const byte *buf, uint32 len, bool bigEndian, DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO)
+		: MemoryReadStream(buf, len, disposeMemory), SeekableReadStreamEndian(bigEndian), ReadStreamEndian(bigEndian) {}
 
 	int32 pos() const { return MemoryReadStream::pos(); }
 	int32 size() const { return MemoryReadStream::size(); }
