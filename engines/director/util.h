@@ -78,7 +78,7 @@ private:
 
 uint32 readVarInt(Common::SeekableReadStream &stream);
 
-Common::SeekableReadStreamEndian *readZlibData(Common::SeekableReadStream &stream, unsigned long len, unsigned long outLen, bool bigEndian);
+Common::SeekableReadStreamEndian *readZlibData(Common::SeekableReadStream &stream, unsigned long len, unsigned long *outLen, bool bigEndian);
 
 } // End of namespace Director
 

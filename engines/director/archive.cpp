@@ -640,14 +640,18 @@ bool RIFXArchive::readAfterburnerMap(Common::SeekableSubReadStreamEndian &stream
 	}
 	uint32 abmpLength = readVarInt(stream);
 	uint32 abmpCompressionType = readVarInt(stream);
-	uint32 abmpUncompLength = readVarInt(stream);
-	debug(3, "ABMP: length: %d compressionType: %d uncompressedLength: %d",
+	unsigned long abmpUncompLength = readVarInt(stream);
+	unsigned long abmpActualUncompLength = abmpUncompLength;
+	debug(3, "ABMP: length: %d compressionType: %d uncompressedLength: %lu",
 		abmpLength, abmpCompressionType, abmpUncompLength);
 
-	Common::SeekableReadStreamEndian *abmpStream = readZlibData(stream, abmpLength, abmpUncompLength, _isBigEndian);
+	Common::SeekableReadStreamEndian *abmpStream = readZlibData(stream, abmpLength, &abmpActualUncompLength, _isBigEndian);
 	if (!abmpStream) {
 		warning("RIFXArchive::readAfterburnerMap(): Could not uncompress ABMP");
 		return false;
+	}
+	if (abmpUncompLength != abmpActualUncompLength) {
+		warning("ABMP: Expected uncompressed length %lu but got length %lu", abmpUncompLength, abmpActualUncompLength);
 	}
 
 	if (ConfMan.getBool("dump_scripts")) {

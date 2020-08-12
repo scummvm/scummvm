@@ -671,20 +671,20 @@ uint32 readVarInt(Common::SeekableReadStream &stream) {
 	return val;
 }
 
-Common::SeekableReadStreamEndian *readZlibData(Common::SeekableReadStream &stream, unsigned long len, unsigned long outLen, bool bigEndian) {
+Common::SeekableReadStreamEndian *readZlibData(Common::SeekableReadStream &stream, unsigned long len, unsigned long *outLen, bool bigEndian) {
 #ifdef USE_ZLIB
 	byte *in = (byte *)malloc(len);
-	byte *out = (byte *)malloc(outLen);
+	byte *out = (byte *)malloc(*outLen);
 	stream.read(in, len);
 
-	if (!Common::uncompress(out, &outLen, in, len)) {
+	if (!Common::uncompress(out, outLen, in, len)) {
 		free(in);
 		free(out);
 		return nullptr;
 	}
 
 	free(in);
-	return new Common::MemoryReadStreamEndian(out, outLen, bigEndian);
+	return new Common::MemoryReadStreamEndian(out, *outLen, bigEndian);
 # else
 	return nullptr;
 # endif
