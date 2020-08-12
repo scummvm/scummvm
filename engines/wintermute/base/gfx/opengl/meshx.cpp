@@ -537,9 +537,14 @@ bool MeshX::parseNormalCoords(XFileLexer &lexer) {
 		lexer.skipTerminator(); // skip semicolon
 	}
 
-	// we ignore face normals for now
-	while (!lexer.reachedClosedBraces()) {
-		lexer.advanceToNextToken();
+	uint faceNormalCount = lexer.readInt();
+
+	for (uint i = 0; i < faceNormalCount; ++i) {
+		lexer.readInt();
+		lexer.readInt();
+		lexer.readInt();
+		lexer.readInt();
+		lexer.skipTerminator();
 	}
 
 	lexer.advanceToNextToken(); // skip closed braces
