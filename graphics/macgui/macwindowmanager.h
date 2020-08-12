@@ -355,7 +355,7 @@ private:
 
 	MacWidget *_activeWidget;
 
-	PauseToken _screenCopyPauseToken;
+	PauseToken *_screenCopyPauseToken;
 
 	Common::Array<ZoomBox *> _zoomBoxes;
 	Common::HashMap<uint32, uint> _colorHash;

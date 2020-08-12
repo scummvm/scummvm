@@ -177,6 +177,7 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns) {
 	_engineP = nullptr;
 	_engineR = nullptr;
 	_redrawEngineCallback = nullptr;
+	_screenCopyPauseToken = nullptr;
 
 	_colorBlack = kColorBlack;
 	_colorGray80 = kColorGray80;
@@ -237,7 +238,7 @@ void MacWindowManager::setScreen(ManagedSurface *screen) {
 		_desktop->free();
 	else
 		_desktop = new ManagedSurface();
-	
+
 	_desktop->create(_screen->w, _screen->h, PixelFormat::createFormatCLUT8());
 	drawDesktop();
 }
@@ -331,11 +332,19 @@ void MacWindowManager::activateScreenCopy() {
 	else
 		*_screenCopy = *_screen;
 
-	_screenCopyPauseToken = pauseEngine();
+	_screenCopyPauseToken = new PauseToken(pauseEngine());
 }
 
 void MacWindowManager::disableScreenCopy() {
-	_screenCopyPauseToken.clear();
+	if (!_screen)
+		return;
+
+	if (_screenCopyPauseToken) {
+		_screenCopyPauseToken->clear();
+		delete _screenCopyPauseToken;
+		_screenCopyPauseToken = nullptr;
+	}
+
 	*_screen = *_screenCopy; // restore screen
 	g_system->copyRectToScreen(_screenCopy->getBasePtr(0, 0), _screenCopy->pitch, 0, 0, _screenCopy->w, _screenCopy->h);
 }
