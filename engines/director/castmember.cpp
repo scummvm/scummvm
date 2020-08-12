@@ -348,7 +348,11 @@ void DigitalVideoCastMember::setStopTime(int stamp) {
 	if (!_video)
 		return;
 
-	warning("STUB: DigitalVideoCastMember::setStopTime(%d)", stamp);
+	_channel->_stopTime = stamp;
+
+	Audio::Timestamp dur = _video->getDuration();
+
+	_video->setEndTime(Audio::Timestamp(_channel->_stopTime * 1000 / 60, dur.framerate()));
 }
 
 void DigitalVideoCastMember::setMovieRate(int rate) {

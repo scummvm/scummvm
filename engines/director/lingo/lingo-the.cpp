@@ -1700,7 +1700,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	case kTheFrameRate:
 		if (castType == kCastDigitalVideo) {
 			((DigitalVideoCastMember *)member)->_frameRate = d.asInt();
-			//((DigitalVideoCastMember *)sprite->_cast)->setFrameRate(d.asInt());
+			((DigitalVideoCastMember *)member)->setFrameRate(d.asInt());
 		} else {
 			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
 		}
