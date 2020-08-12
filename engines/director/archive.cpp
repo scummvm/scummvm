@@ -468,13 +468,21 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	_rifxType = endianStream.readUint32();
 	warning("RIFX: type: %s", tag2str(_rifxType));
 
-	if (_rifxType != MKTAG('M', 'V', '9', '3') &&
-		_rifxType != MKTAG('A', 'P', 'P', 'L') &&
-		_rifxType != MKTAG('M', 'C', '9', '5'))
+	switch (_rifxType) {
+	case MKTAG('M', 'V', '9', '3'):
+	case MKTAG('M', 'C', '9', '5'):
+	case MKTAG('A', 'P', 'P', 'L'):
+		if (!readMemoryMap(endianStream, moreOffset))
+			return false;
+		break;
+	case MKTAG('F', 'G', 'D', 'M'):
+	case MKTAG('F', 'G', 'D', 'C'):
+		if (!readAfterburnerMap(endianStream, moreOffset))
+			return false;
+		break;
+	default:
 		return false;
-
-	if (!readMemoryMap(endianStream, moreOffset))
-		return false;
+	}
 
 	if (ConfMan.getBool("dump_scripts")) {
 		debug("RIFXArchive::openStream(): Dumping %d resources", _resources.size());
@@ -593,6 +601,109 @@ bool RIFXArchive::readMemoryMap(Common::SeekableSubReadStreamEndian &stream, uin
 	}
 
 	return true;
+}
+
+bool RIFXArchive::readAfterburnerMap(Common::SeekableSubReadStreamEndian &stream, uint32 moreOffset) {
+	uint32 start, end;
+
+	// File version
+	if (stream.readUint32() != MKTAG('F', 'v', 'e', 'r')) {
+		warning("RIFXArchive::readAfterburnerMap(): Fver expected but not found");
+		return false;
+	}
+
+	uint32 fverLength = readVarInt(stream);
+	start = stream.pos();
+	uint32 version = readVarInt(stream);
+	debug(3, "Fver: version: %x", version);
+	end = stream.pos();
+
+	if (end - start != fverLength) {
+		warning("RIFXArchive::readAfterburnerMap(): Expected Fver of length %d but read %d bytes", fverLength, end - start);
+		stream.seek(start + fverLength);
+	}
+
+	// Compression types
+	if (stream.readUint32() != MKTAG('F', 'c', 'd', 'r')) {
+		warning("RIFXArchive::readAfterburnerMap(): Fcdr expected but not found");
+		return false;
+	}
+
+	uint32 fcdrLength = readVarInt(stream);
+	stream.skip(fcdrLength);
+
+	// Afterburner map
+	if (stream.readUint32() != MKTAG('A', 'B', 'M', 'P')) {
+		warning("RIFXArchive::readAfterburnerMap(): ABMP expected but not found");
+		return false;
+	}
+	uint32 abmpLength = readVarInt(stream);
+	uint32 abmpCompressionType = readVarInt(stream);
+	uint32 abmpUncompLength = readVarInt(stream);
+	debug(3, "ABMP: length: %d compressionType: %d uncompressedLength: %d",
+		abmpLength, abmpCompressionType, abmpUncompLength);
+	
+	Common::SeekableReadStreamEndian *abmpStream = readZlibData(stream, abmpLength, abmpUncompLength, _isBigEndian);
+	if (!abmpStream) {
+		warning("RIFXArchive::readAfterburnerMap(): Could not uncompress ABMP");
+		return false;
+	}
+
+	if (ConfMan.getBool("dump_scripts")) {
+		Common::DumpFile out;
+
+		char buf[256];
+		sprintf(buf, "./dumps/%s-%s", g_director->getEXEName().c_str(), "ABMP");
+
+		if (out.open(buf, true)) {
+			byte *data = (byte *)malloc(abmpStream->size());
+
+			abmpStream->read(data, abmpStream->size());
+			out.write(data, abmpStream->size());
+			out.flush();
+			out.close();
+
+			free(data);
+
+			abmpStream->seek(0);
+		} else {
+			warning("RIFXArchive::readAfterburnerMap(): Can not open dump file %s", buf);
+		}
+	}
+
+	uint32 abmpUnk1 = readVarInt(*abmpStream);
+	uint32 abmpUnk2 = readVarInt(*abmpStream);
+	uint32 resCount = readVarInt(*abmpStream);
+	debug(3, "ABMP: unk1: %d unk2: %d resCount: %d",
+		abmpUnk1, abmpUnk2, resCount);
+
+	for (uint32 i = 0; i < resCount; i++) {
+		uint32 resId = readVarInt(*abmpStream);
+		uint32 offset = readVarInt(*abmpStream);
+		uint32 compSize = readVarInt(*abmpStream);
+		uint32 uncompSize = readVarInt(*abmpStream);
+		uint32 compressionType = readVarInt(*abmpStream);
+		uint32 tag = abmpStream->readUint32();
+
+		debug(3, "Found RIFX resource index %d: '%s', %d bytes (%d uncompressed) @ pos 0x%08x (%d), compressionType: %d",
+			resId, tag2str(tag), compSize, uncompSize, offset, offset, compressionType);
+		
+		Resource &res = _types[tag][resId];
+		res.index = resId;
+		res.offset = offset;
+		res.size = compSize;
+		res.uncompSize = uncompSize;
+		res.compressionType = compressionType;
+		res.tag = tag;
+		_resources.push_back(&res);
+	}
+
+	delete abmpStream;
+
+	// TODO: read ILS
+
+	// FIXME: return true when done
+	return false;
 }
 
 void RIFXArchive::readCast(Common::SeekableSubReadStreamEndian &casStream) {

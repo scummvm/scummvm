@@ -37,6 +37,8 @@ struct Resource {
 	uint32 index;
 	uint32 offset;
 	uint32 size;
+	uint32 uncompSize;
+	uint32 compressionType;
 	uint32 castId;
 	uint32 tag;
 	Common::String name;
@@ -123,6 +125,7 @@ public:
 
 private:
 	bool readMemoryMap(Common::SeekableSubReadStreamEndian &stream, uint32 moreOffset);
+	bool readAfterburnerMap(Common::SeekableSubReadStreamEndian &stream, uint32 moreOffset);
 	void readCast(Common::SeekableSubReadStreamEndian &casStream);
 	void readKeyTable(Common::SeekableSubReadStreamEndian &keyStream);
 
