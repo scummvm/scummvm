@@ -471,10 +471,11 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	switch (_rifxType) {
 	case MKTAG('M', 'V', '9', '3'):
 	case MKTAG('M', 'C', '9', '5'):
-	case MKTAG('A', 'P', 'P', 'L'):
 		if (!readMemoryMap(endianStream, moreOffset))
 			return false;
 		break;
+	case MKTAG('A', 'P', 'P', 'L'):
+		return readMemoryMap(endianStream, moreOffset);
 	case MKTAG('F', 'G', 'D', 'M'):
 	case MKTAG('F', 'G', 'D', 'C'):
 		if (!readAfterburnerMap(endianStream, moreOffset))
