@@ -113,6 +113,9 @@ bool Animation::loadFromX(XFileLexer &lexer, AnimationSet *parentAnimSet) {
 			// this is a reference to a frame/bone, given as an identifier
 			lexer.advanceToNextToken();
 			_targetName = lexer.readString();
+		} else if (lexer.tokenIsIdentifier("Animation")) {
+			// pass it up
+			break;
 		} else if (lexer.reachedClosedBraces()) {
 			lexer.advanceToNextToken(); // skip closed braces
 			break;
@@ -421,7 +424,10 @@ bool Animation::loadMatrixKeyData(XFileLexer &lexer, int count) {
 		_rotKeys.push_back(rotationKey);
 
 		lexer.skipTerminator(); // skip semicolon
-		lexer.advanceToNextToken(); // skip closed braces
+
+		if (lexer.reachedClosedBraces()) {
+			lexer.advanceToNextToken(); // skip closed braces
+		}
 	}
 
 	return true;
