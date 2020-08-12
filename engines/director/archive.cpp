@@ -24,6 +24,7 @@
 #include "common/file.h"
 #include "common/substream.h"
 #include "common/macresman.h"
+#include "common/memstream.h"
 
 #include "director/director.h"
 #include "director/archive.h"
@@ -813,10 +814,29 @@ Common::SeekableReadStreamEndian *RIFXArchive::getResource(uint32 tag, uint16 id
 		error("RIFXArchive::getResource(): Archive does not contain '%s' %d", tag2str(tag), id);
 
 	const Resource &res = resMap[id];
+	bool bigEndian = fileEndianness ? _isBigEndian : true;
+
+	if (_rifxType == MKTAG('F', 'G', 'D', 'M') || _rifxType == MKTAG('F', 'G', 'D', 'C')) {
+		if (res.offset == -1) {
+			return new Common::MemoryReadStreamEndian(_ilsData[id], res.uncompSize, bigEndian, DisposeAfterUse::NO);
+		} else {
+			_stream->seek(res.offset + 5);
+			unsigned long actualUncompLength = res.uncompSize;
+			Common::SeekableReadStreamEndian *stream = readZlibData(*_stream, res.size, &actualUncompLength, _isBigEndian);
+			if (!stream) {
+				warning("RIFXArchive::getResource(): Could not uncompress '%s' %d", tag2str(tag), id);
+				return nullptr;
+			}
+			if (res.uncompSize != actualUncompLength) {
+				warning("RIFXArchive::getResource(): For '%s' %d expected uncompressed length %d but got length %lu",
+					tag2str(tag), id, res.uncompSize, actualUncompLength);
+			}
+			return stream;
+		}
+	}
 
 	uint32 offset = res.offset + 8;
 	uint32 size = res.size;
-	bool bigEndian = fileEndianness ? _isBigEndian : true;
 
 	return new Common::SeekableSubReadStreamEndian(_stream, offset, offset + size, bigEndian, DisposeAfterUse::NO);
 }
