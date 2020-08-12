@@ -69,7 +69,6 @@ bool DreamWeb::DreamWebEngine::hasFeature(EngineFeature f) const {
 	default:
 		return false;
 	}
-	return false;
 }
 
 bool DreamWebMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
