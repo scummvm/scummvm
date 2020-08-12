@@ -519,14 +519,16 @@ void Cast::loadCastChildren() {
 		Image::ImageDecoder *img = NULL;
 		Common::SeekableReadStream *pic = NULL;
 
-		if (_vm->getVersion() >= 400 && bitmapCast->_children.size() > 0) {
-			imgId = bitmapCast->_children[0].index;
-			tag = bitmapCast->_children[0].tag;
+		if (_vm->getVersion() >= 400) {
+			if (bitmapCast->_children.size() > 0) {
+				imgId = bitmapCast->_children[0].index;
+				tag = bitmapCast->_children[0].tag;
 
-			if (_castArchive->hasResource(tag, imgId))
-				pic = _castArchive->getResource(tag, imgId);
-			else if (sharedCast && sharedCast->getArchive()->hasResource(tag, imgId))
-				pic = sharedCast->getArchive()->getResource(tag, imgId);
+				if (_castArchive->hasResource(tag, imgId))
+					pic = _castArchive->getResource(tag, imgId);
+				else if (sharedCast && sharedCast->getArchive()->hasResource(tag, imgId))
+					pic = sharedCast->getArchive()->getResource(tag, imgId);
+			}
 		} else {
 			if (_loadedCast->contains(imgId)) {
 				bitmapCast->_tag = tag = ((BitmapCastMember *)_loadedCast->getVal(imgId))->_tag;
