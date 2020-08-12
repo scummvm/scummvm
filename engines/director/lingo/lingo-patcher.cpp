@@ -136,6 +136,11 @@ struct ScriptPatch {
 				"alert \"Failed Save.\" & return & \"Error message number: \" & string ( filer )"},
 
 
+	// Patching dead loop which was fixed in v2
+	{"lzone", "", kPlatformMacintosh, "DATA/R-A/Ami-00", kScoreScript, 3,
+			2, "continue", "go \"OUT\""},
+
+	// Garbage at end of statements
 	{"lzone", "", kPlatformMacintosh, "DATA/R-E/ZD2-LAS", kScoreScript, 7,
 			4, "go to the frame 0", "go to the frame"},
 	{"lzone", "", kPlatformMacintosh, "DATA/R-E/zd1-con1", kScoreScript, 27,
