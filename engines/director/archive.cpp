@@ -781,14 +781,19 @@ void RIFXArchive::readKeyTable(Common::SeekableReadStreamEndian &keyStream) {
 
 	debugC(2, kDebugLoading, "KEY*: entrySize: %d entrySize2: %d entryCount: %d usedCount: %d", entrySize, entrySize2, entryCount, usedCount);
 
+	ResourceMap &castResMap = _types[MKTAG('C', 'A', 'S', 't')];
+
 	for (uint16 i = 0; i < usedCount; i++) {
 		uint32 childIndex = keyStream.readUint32();
 		uint32 parentIndex = keyStream.readUint32();
 		uint32 childTag = keyStream.readUint32();
 
 		debugC(2, kDebugLoading, "KEY*: childIndex: %d parentIndex: %d childTag: %s", childIndex, parentIndex, tag2str(childTag));
-		if (childIndex < _resources.size() && parentIndex < _resources.size())
-			_resources[parentIndex]->children.push_back(*_resources[childIndex]);
+		if (castResMap.contains(parentIndex)) {
+			castResMap[parentIndex].children.push_back(_types[childTag][childIndex]);
+		} else if (castResMap.contains(childIndex)) { // sometimes parent and child index are reversed...
+			castResMap[childIndex].children.push_back(_types[childTag][parentIndex]);
+		}
 	}
 }
 
