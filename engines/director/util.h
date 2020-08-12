@@ -76,6 +76,8 @@ private:
     int32 perlin(int32 val);
 };
 
+uint32 readVarInt(Common::SeekableReadStream &stream);
+
 } // End of namespace Director
 
 #endif

@@ -658,4 +658,15 @@ int32 RandomState::perlin(int32 val) {
 	return res;
 }
 
+uint32 readVarInt(Common::SeekableReadStream &stream) {
+	// Shockwave variable-length integer
+	uint32 val = 0;
+	byte b;
+	do {
+		b = stream.readByte();
+		val = (val << 7) | (b & 0x7f); // The 7 least significant bits are appended to the result
+	} while (b >> 7); // If the most significant bit is 1, there's another byte after
+	return val;
+}
+
 } // End of namespace Director
