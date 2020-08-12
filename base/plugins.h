@@ -215,6 +215,15 @@ public:
 	virtual const char *getFileName() const { return 0; }
 };
 
+class StaticPlugin : public Plugin {
+public:
+	StaticPlugin(PluginObject *pluginobject, PluginType type);
+	~StaticPlugin();
+	virtual bool loadPlugin();
+	virtual void unloadPlugin();
+};
+
+
 /** List of Plugin instances. */
 typedef Common::Array<Plugin *> PluginList;
 
