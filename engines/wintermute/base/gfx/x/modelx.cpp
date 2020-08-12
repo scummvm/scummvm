@@ -227,16 +227,7 @@ void ModelX::parseFrameDuringMerge(XFileLexer &lexer, const Common::String &file
 			lexer.advanceToNextToken();
 			loadAnimationSet(lexer, filename);
 		} else if (lexer.tokenIsOfType(IDENTIFIER)) {
-			// ignore all other data objects and templates
-			while (!lexer.eof()) {
-				if (lexer.reachedClosedBraces()) {
-					break;
-				}
-
-				lexer.advanceToNextToken();
-			}
-
-			lexer.advanceToNextToken();
+			lexer.skipObject();
 		} else {
 			lexer.advanceToNextToken(); // we ignore anything else here
 		}

@@ -128,11 +128,7 @@ bool MeshX::loadFromX(const Common::String &filename, XFileLexer &lexer, Common:
 
 			parseSkinWeights(lexer);
 		} else if (lexer.tokenIsIdentifier()) {
-			while (!lexer.reachedClosedBraces()) {
-				lexer.advanceToNextToken();
-			}
-
-			lexer.advanceToNextToken(); // skip closed braces
+			lexer.skipObject();
 		} else if (lexer.reachedClosedBraces()) {
 			lexer.advanceToNextToken(); // skip closed braces
 
