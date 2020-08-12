@@ -26,7 +26,7 @@
 namespace Common {
 struct Event;
 class ReadStreamEndian;
-class SeekableSubReadStreamEndian;
+class SeekableReadStreamEndian;
 }
 
 namespace Director {
@@ -87,7 +87,7 @@ public:
 	~Movie();
 
 	static Common::Rect readRect(Common::ReadStreamEndian &stream);
-	static InfoEntries loadInfoEntries(Common::SeekableSubReadStreamEndian &stream);
+	static InfoEntries loadInfoEntries(Common::SeekableReadStreamEndian &stream);
 
 	bool loadArchive();
 	void setArchive(Archive *archive);
@@ -123,7 +123,7 @@ public:
 	void registerEvent(LEvent event, int targetId = 0);
 
 private:
-	void loadFileInfo(Common::SeekableSubReadStreamEndian &stream);
+	void loadFileInfo(Common::SeekableReadStreamEndian &stream);
 
 	void queueSpriteEvent(LEvent event, int eventId, int spriteId);
 	void queueFrameEvent(LEvent event, int eventId);

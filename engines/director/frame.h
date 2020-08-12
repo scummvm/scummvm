@@ -85,17 +85,17 @@ public:
 	Score *getScore() const { return _score; }
 
 	void readChannels(Common::ReadStreamEndian *stream);
-	void readChannel(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
+	void readChannel(Common::SeekableReadStreamEndian &stream, uint16 offset, uint16 size);
 
 	void executeImmediateScripts();
 
 private:
 
-	void readPaletteInfo(Common::SeekableSubReadStreamEndian &stream);
-	void readSprite(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
-	void readMainChannels(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
+	void readPaletteInfo(Common::SeekableReadStreamEndian &stream);
+	void readSprite(Common::SeekableReadStreamEndian &stream, uint16 offset, uint16 size);
+	void readMainChannels(Common::SeekableReadStreamEndian &stream, uint16 offset, uint16 size);
 	Image::ImageDecoder *getImageFrom(uint16 spriteId);
-	Common::String readTextStream(Common::SeekableSubReadStreamEndian *textStream, TextCastMember *textCast);
+	Common::String readTextStream(Common::SeekableReadStreamEndian *textStream, TextCastMember *textCast);
 
 
 public:

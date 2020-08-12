@@ -90,14 +90,14 @@ void Movie::setArchive(Archive *archive) {
 
 	// Frame Labels
 	if (archive->hasResource(MKTAG('V', 'W', 'L', 'B'), -1)) {
-		Common::SeekableSubReadStreamEndian *r;
+		Common::SeekableReadStreamEndian *r;
 		_score->loadLabels(*(r = archive->getFirstResource(MKTAG('V', 'W', 'L', 'B'))));
 		delete r;
 	}
 }
 
 bool Movie::loadArchive() {
-	Common::SeekableSubReadStreamEndian *r = nullptr;
+	Common::SeekableReadStreamEndian *r = nullptr;
 
 	// File Info
 	if (_movieArchive->hasResource(MKTAG('V', 'W', 'F', 'I'), -1)) {
@@ -160,7 +160,7 @@ Common::Rect Movie::readRect(Common::ReadStreamEndian &stream) {
 	return rect;
 }
 
-InfoEntries Movie::loadInfoEntries(Common::SeekableSubReadStreamEndian &stream) {
+InfoEntries Movie::loadInfoEntries(Common::SeekableReadStreamEndian &stream) {
 	uint32 offset = stream.pos();
 	offset += stream.readUint32();
 
@@ -200,7 +200,7 @@ InfoEntries Movie::loadInfoEntries(Common::SeekableSubReadStreamEndian &stream) 
 	return res;
 }
 
-void Movie::loadFileInfo(Common::SeekableSubReadStreamEndian &stream) {
+void Movie::loadFileInfo(Common::SeekableReadStreamEndian &stream) {
 	debugC(2, kDebugLoading, "****** Loading FileInfo VWFI");
 
 	InfoEntries fileInfo = Movie::loadInfoEntries(stream);

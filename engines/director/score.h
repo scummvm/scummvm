@@ -35,7 +35,7 @@ namespace Graphics {
 
 namespace Common {
 	class ReadStreamEndian;
-	class SeekableSubReadStreamEndian;
+	class SeekableReadStreamEndian;
 }
 
 namespace Director {
@@ -67,9 +67,9 @@ public:
 
 	Movie *getMovie() const { return _movie; }
 
-	void loadFrames(Common::SeekableSubReadStreamEndian &stream);
-	void loadLabels(Common::SeekableSubReadStreamEndian &stream);
-	void loadActions(Common::SeekableSubReadStreamEndian &stream);
+	void loadFrames(Common::SeekableReadStreamEndian &stream);
+	void loadLabels(Common::SeekableReadStreamEndian &stream);
+	void loadActions(Common::SeekableReadStreamEndian &stream);
 
 	static int compareLabels(const void *a, const void *b);
 	uint16 getLabel(Common::String &label);

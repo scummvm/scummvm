@@ -39,7 +39,7 @@
 namespace Common {
 class MacResManager;
 class SeekableReadStream;
-class SeekableSubReadStreamEndian;
+class SeekableReadStreamEndian;
 }
 
 namespace Graphics {

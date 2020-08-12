@@ -624,7 +624,7 @@ void Score::playSoundChannel(uint16 frameId) {
 	sound->playCastMember(frame->_sound2, 2, false);
 }
 
-void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
+void Score::loadFrames(Common::SeekableReadStreamEndian &stream) {
 	debugC(1, kDebugLoading, "****** Loading frames VWSC");
 
 	//stream.hexdump(stream.size());
@@ -758,7 +758,7 @@ void Score::setSpriteCasts() {
 	}
 }
 
-void Score::loadLabels(Common::SeekableSubReadStreamEndian &stream) {
+void Score::loadLabels(Common::SeekableReadStreamEndian &stream) {
 	if (debugChannelSet(5, kDebugLoading)) {
 		debug("Score::loadLabels()");
 		stream.hexdump(stream.size());
@@ -802,7 +802,7 @@ int Score::compareLabels(const void *a, const void *b) {
 	return ((const Label *)a)->number - ((const Label *)b)->number;
 }
 
-void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
+void Score::loadActions(Common::SeekableReadStreamEndian &stream) {
 	debugC(2, kDebugLoading, "****** Loading Actions VWAC");
 
 	uint16 count = stream.readUint16() + 1;

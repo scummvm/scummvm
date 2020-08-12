@@ -208,7 +208,7 @@ bool Cast::loadArchive() {
 		debugC(2, kDebugLoading, "CLUT resource not found, using default Mac palette");
 	} else {
 		for (uint i = 0; i < clutList.size(); i++) {
-			Common::SeekableSubReadStreamEndian *pal = _castArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[i]);
+			Common::SeekableReadStreamEndian *pal = _castArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[i]);
 
 			debugC(2, kDebugLoading, "****** Loading Palette CLUT, #%d", clutList[i]);
 			PaletteV4 p = loadPalette(*pal);
@@ -218,7 +218,7 @@ bool Cast::loadArchive() {
 	}
 
 	// Configuration Information
-	Common::SeekableSubReadStreamEndian *r = nullptr;
+	Common::SeekableReadStreamEndian *r = nullptr;
 	if (_castArchive->hasResource(MKTAG('V', 'W', 'C', 'F'), -1)) {
 		loadConfig(*(r = _castArchive->getFirstResource(MKTAG('V', 'W', 'C', 'F'))));
 		delete r;
@@ -284,7 +284,7 @@ bool Cast::loadArchive() {
 		debugC(2, kDebugLoading, "****** Loading %d CASt resources", cast.size());
 
 		for (Common::Array<uint16>::iterator iterator = cast.begin(); iterator != cast.end(); ++iterator) {
-			Common::SeekableSubReadStreamEndian *stream = _castArchive->getResource(MKTAG('C', 'A', 'S', 't'), *iterator);
+			Common::SeekableReadStreamEndian *stream = _castArchive->getResource(MKTAG('C', 'A', 'S', 't'), *iterator);
 			Resource res = _castArchive->getResourceDetail(MKTAG('C', 'A', 'S', 't'), *iterator);
 			loadCastData(*stream, res.castId, &res);
 			delete stream;
@@ -378,7 +378,7 @@ uint16 humanVersion(uint16 ver) {
 	return 200;
 }
 
-void Cast::loadConfig(Common::SeekableSubReadStreamEndian &stream) {
+void Cast::loadConfig(Common::SeekableReadStreamEndian &stream) {
 	debugC(1, kDebugLoading, "****** Loading Config VWCF");
 
 	if (debugChannelSet(5, kDebugLoading))
@@ -607,7 +607,7 @@ void Cast::loadSoundCasts() {
 			tag = soundCast->_children[0].tag;
 		}
 
-		Common::SeekableSubReadStreamEndian *sndData = NULL;
+		Common::SeekableReadStreamEndian *sndData = NULL;
 
 		switch (tag) {
 		case MKTAG('S', 'N', 'D', ' '):
@@ -659,7 +659,7 @@ void Cast::loadDigitalVideoCasts() {
 			tag = digitalVideoCast->_children[0].tag;
 		}
 
-		Common::SeekableSubReadStreamEndian *videoData = NULL;
+		Common::SeekableReadStreamEndian *videoData = NULL;
 
 		switch (tag) {
 		case MKTAG('M', 'o', 'o', 'V'):
@@ -690,7 +690,7 @@ void Cast::loadDigitalVideoCasts() {
 
 }
 
-PaletteV4 Cast::loadPalette(Common::SeekableSubReadStreamEndian &stream) {
+PaletteV4 Cast::loadPalette(Common::SeekableReadStreamEndian &stream) {
 	uint16 steps = stream.size() / 6;
 	uint16 index = (steps * 3) - 1;
 	byte *_palette = new byte[index + 1];
@@ -717,7 +717,7 @@ PaletteV4 Cast::loadPalette(Common::SeekableSubReadStreamEndian &stream) {
 	return PaletteV4(0, _palette, steps);
 }
 
-void Cast::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
+void Cast::loadCastDataVWCR(Common::SeekableReadStreamEndian &stream) {
 	debugC(1, kDebugLoading, "****** Loading CastMember rects VWCR. start: %d, end: %d", _castArrayStart, _castArrayEnd);
 
 	_loadedCast = new Common::HashMap<int, CastMember *>();
@@ -798,7 +798,7 @@ static void readEditInfo(EditInfo *info, Common::ReadStreamEndian *stream) {
 	}
 }
 
-void Cast::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, Resource *res) {
+void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Resource *res) {
 	// IDs are stored as relative to the start of the cast array.
 	id += _castArrayStart;
 
@@ -963,7 +963,7 @@ struct LingoContextEntry {
 LingoContextEntry::LingoContextEntry(int32 i, int16 n)
 	: index(i), nextUnused(n), unused(false) {}
 
-void Cast::loadLingoContext(Common::SeekableSubReadStreamEndian &stream) {
+void Cast::loadLingoContext(Common::SeekableReadStreamEndian &stream) {
 	if (_vm->getVersion() >= 400) {
 		debugC(1, kDebugCompile, "Add V4 script context");
 
@@ -988,7 +988,7 @@ void Cast::loadLingoContext(Common::SeekableSubReadStreamEndian &stream) {
 		/* uint16 flags = */ stream.readUint16();
 		int16 firstUnused = stream.readSint16();
 
-		Common::SeekableSubReadStreamEndian *r;
+		Common::SeekableReadStreamEndian *r;
 		debugC(2, kDebugLoading, "****** Loading Lnam resource (%d)", nameTableId);
 		_lingoArchive->addNamesV4(*(r = _castArchive->getResource(MKTAG('L','n','a','m'), nameTableId)));
 		delete r;
@@ -1050,7 +1050,7 @@ void Cast::loadLingoContext(Common::SeekableSubReadStreamEndian &stream) {
 	}
 }
 
-void Cast::loadScriptText(Common::SeekableSubReadStreamEndian &stream) {
+void Cast::loadScriptText(Common::SeekableReadStreamEndian &stream) {
 	/*uint32 unk1 = */ stream.readUint32();
 	uint32 strLen = stream.readUint32();
 	/*uin32 dataLen = */ stream.readUint32();
@@ -1097,7 +1097,7 @@ void Cast::dumpScript(const char *script, ScriptType type, uint16 id) {
 	out.close();
 }
 
-void Cast::loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id) {
+void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 	if (!_loadedCast->contains(id))
 		return;
 
@@ -1193,7 +1193,7 @@ void Cast::loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id) 
 	_castsInfo[id] = ci;
 }
 
-void Cast::loadFontMap(Common::SeekableSubReadStreamEndian &stream) {
+void Cast::loadFontMap(Common::SeekableReadStreamEndian &stream) {
 	if (stream.size() == 0)
 		return;
 

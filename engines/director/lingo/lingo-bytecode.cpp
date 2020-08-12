@@ -836,7 +836,7 @@ void LC::cb_zeropush() {
 	g_lingo->push(d);
 }
 
-ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream, LingoArchive *archive, const Common::String &archName) {
+ScriptContext *Lingo::compileLingoV4(Common::SeekableReadStreamEndian &stream, LingoArchive *archive, const Common::String &archName) {
 	if (stream.size() < 0x5c) {
 		warning("Lscr header too small");
 		return nullptr;
@@ -1480,7 +1480,7 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream
 	return sc;
 }
 
-void LingoArchive::addCodeV4(Common::SeekableSubReadStreamEndian &stream, uint16 lctxIndex, const Common::String &archName) {
+void LingoArchive::addCodeV4(Common::SeekableReadStreamEndian &stream, uint16 lctxIndex, const Common::String &archName) {
 	ScriptContext *ctx = g_lingo->compileLingoV4(stream, this, archName);
 	if (ctx) {
 		lctxContexts[lctxIndex] = ctx;
@@ -1488,7 +1488,7 @@ void LingoArchive::addCodeV4(Common::SeekableSubReadStreamEndian &stream, uint16
 	}
 }
 
-void LingoArchive::addNamesV4(Common::SeekableSubReadStreamEndian &stream) {
+void LingoArchive::addNamesV4(Common::SeekableReadStreamEndian &stream) {
 	debugC(1, kDebugCompile, "Add V4 script name index");
 
 	if (stream.size() < 0x14) {

@@ -103,11 +103,11 @@ bool Archive::hasResource(uint32 tag, const Common::String &resName) const {
 	return false;
 }
 
-Common::SeekableSubReadStreamEndian *Archive::getFirstResource(uint32 tag) {
+Common::SeekableReadStreamEndian *Archive::getFirstResource(uint32 tag) {
 	return getResource(tag, getResourceIDList(tag)[0]);
 }
 
-Common::SeekableSubReadStreamEndian *Archive::getResource(uint32 tag, uint16 id) {
+Common::SeekableReadStreamEndian *Archive::getResource(uint32 tag, uint16 id) {
 	if (!_types.contains(tag))
 		error("Archive::getResource(): Archive does not contain '%s' %d", tag2str(tag), id);
 
@@ -279,7 +279,7 @@ void MacArchive::readTags() {
 	}
 }
 
-Common::SeekableSubReadStreamEndian *MacArchive::getResource(uint32 tag, uint16 id) {
+Common::SeekableReadStreamEndian *MacArchive::getResource(uint32 tag, uint16 id) {
 	assert(_resFork);
 	Common::SeekableReadStream *stream = _resFork->getResource(tag, id);
 
@@ -359,7 +359,7 @@ bool RIFFArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	return true;
 }
 
-Common::SeekableSubReadStreamEndian *RIFFArchive::getResource(uint32 tag, uint16 id) {
+Common::SeekableReadStreamEndian *RIFFArchive::getResource(uint32 tag, uint16 id) {
 	if (!_types.contains(tag))
 		error("RIFFArchive::getResource(): Archive does not contain '%s' %d", tag2str(tag), id);
 
@@ -527,7 +527,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 
 	// Parse the CAS*, if present
 	if (hasResource(MKTAG('C', 'A', 'S', '*'), -1)) {
-		Common::SeekableSubReadStreamEndian *casStream = getFirstResource(MKTAG('C', 'A', 'S', '*'));
+		Common::SeekableReadStreamEndian *casStream = getFirstResource(MKTAG('C', 'A', 'S', '*'));
 		readCast(*casStream);
 		delete casStream;
 	}
@@ -538,14 +538,14 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		return false;
 	}
 	// Parse the KEY*
-	Common::SeekableSubReadStreamEndian *keyStream = getFirstResource(MKTAG('K', 'E', 'Y', '*'), true);
+	Common::SeekableReadStreamEndian *keyStream = getFirstResource(MKTAG('K', 'E', 'Y', '*'), true);
 	readKeyTable(*keyStream);
 	delete keyStream;
 
 	return true;
 }
 
-bool RIFXArchive::readMemoryMap(Common::SeekableSubReadStreamEndian &stream, uint32 moreOffset) {
+bool RIFXArchive::readMemoryMap(Common::SeekableReadStreamEndian &stream, uint32 moreOffset) {
 	if (stream.readUint32() != MKTAG('i', 'm', 'a', 'p'))
 		return false;
 
@@ -606,7 +606,7 @@ bool RIFXArchive::readMemoryMap(Common::SeekableSubReadStreamEndian &stream, uin
 	return true;
 }
 
-bool RIFXArchive::readAfterburnerMap(Common::SeekableSubReadStreamEndian &stream, uint32 moreOffset) {
+bool RIFXArchive::readAfterburnerMap(Common::SeekableReadStreamEndian &stream, uint32 moreOffset) {
 	uint32 start, end;
 
 	// File version
@@ -752,7 +752,7 @@ bool RIFXArchive::readAfterburnerMap(Common::SeekableSubReadStreamEndian &stream
 	return true;
 }
 
-void RIFXArchive::readCast(Common::SeekableSubReadStreamEndian &casStream) {
+void RIFXArchive::readCast(Common::SeekableReadStreamEndian &casStream) {
 	uint castTag = MKTAG('C', 'A', 'S', 't');
 
 	uint casSize = casStream.size() / 4;
@@ -772,7 +772,7 @@ void RIFXArchive::readCast(Common::SeekableSubReadStreamEndian &casStream) {
 	debugC(2, kDebugLoading, "]");
 }
 
-void RIFXArchive::readKeyTable(Common::SeekableSubReadStreamEndian &keyStream) {
+void RIFXArchive::readKeyTable(Common::SeekableReadStreamEndian &keyStream) {
 	uint16 entrySize = keyStream.readUint16(); // Should always be 12 (3 uint32's)
 	uint16 entrySize2 = keyStream.readUint16();
 	uint32 entryCount = keyStream.readUint32(); // There are more entries than actually used
@@ -791,19 +791,19 @@ void RIFXArchive::readKeyTable(Common::SeekableSubReadStreamEndian &keyStream) {
 	}
 }
 
-Common::SeekableSubReadStreamEndian *RIFXArchive::getFirstResource(uint32 tag) {
+Common::SeekableReadStreamEndian *RIFXArchive::getFirstResource(uint32 tag) {
 	return getResource(tag, getResourceIDList(tag)[0], false);
 }
 
-Common::SeekableSubReadStreamEndian *RIFXArchive::getFirstResource(uint32 tag, bool fileEndianness) {
+Common::SeekableReadStreamEndian *RIFXArchive::getFirstResource(uint32 tag, bool fileEndianness) {
 	return getResource(tag, getResourceIDList(tag)[0], fileEndianness);
 }
 
-Common::SeekableSubReadStreamEndian *RIFXArchive::getResource(uint32 tag, uint16 id) {
+Common::SeekableReadStreamEndian *RIFXArchive::getResource(uint32 tag, uint16 id) {
 	return getResource(tag, id, false);
 }
 
-Common::SeekableSubReadStreamEndian *RIFXArchive::getResource(uint32 tag, uint16 id, bool fileEndianness) {
+Common::SeekableReadStreamEndian *RIFXArchive::getResource(uint32 tag, uint16 id, bool fileEndianness) {
 	if (!_types.contains(tag))
 		error("RIFXArchive::getResource(): Archive does not contain '%s' %d", tag2str(tag), id);
 

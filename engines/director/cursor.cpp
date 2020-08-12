@@ -132,7 +132,7 @@ void Cursor::readFromResource(int resourceId) {
 		_keyColor = 0xff;
 
 		for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); ++it) {
-			Common::SeekableSubReadStreamEndian *cursorStream;
+			Common::SeekableReadStreamEndian *cursorStream;
 
 			cursorStream = ((MacArchive *)it->_value)->getResource(MKTAG('C', 'U', 'R', 'S'), resourceId);
 			if (!cursorStream)

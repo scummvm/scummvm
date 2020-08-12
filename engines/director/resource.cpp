@@ -97,7 +97,7 @@ void Window::probeProjector(const Common::String &movie) {
 		if (archive->hasResource(MKTAG('v', 'e', 'r', 's'), -1)) {
 			Common::Array<uint16> vers = archive->getResourceIDList(MKTAG('v', 'e', 'r', 's'));
 			for (Common::Array<uint16>::iterator iterator = vers.begin(); iterator != vers.end(); ++iterator) {
-				Common::SeekableSubReadStreamEndian *vvers = archive->getResource(MKTAG('v', 'e', 'r', 's'), *iterator);
+				Common::SeekableReadStreamEndian *vvers = archive->getResource(MKTAG('v', 'e', 'r', 's'), *iterator);
 				Common::MacResManager::MacVers *v = Common::MacResManager::parseVers(vvers);
 
 				debug(0, "Detected vers %d.%d %s.%d region %d '%s' '%s'", v->majorVer, v->minorVer, v->devStr.c_str(),
@@ -120,7 +120,7 @@ void Window::probeProjector(const Common::String &movie) {
 			if (_currentMovie)
 				_currentMovie->setArchive(archive);
 
-			Common::SeekableSubReadStreamEndian *name = archive->getResource(MKTAG('S', 'T', 'R', '#'), 0);
+			Common::SeekableReadStreamEndian *name = archive->getResource(MKTAG('S', 'T', 'R', '#'), 0);
 			int num = name->readUint16();
 			if (num != 1) {
 				warning("Incorrect number of strings in Projector file");

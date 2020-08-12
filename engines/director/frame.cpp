@@ -105,7 +105,7 @@ Frame::~Frame() {
 		delete _sprites[i];
 }
 
-void Frame::readChannel(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size) {
+void Frame::readChannel(Common::SeekableReadStreamEndian &stream, uint16 offset, uint16 size) {
 	if (offset >= 32) {
 		if (size <= 16)
 			readSprite(stream, offset, size);
@@ -381,7 +381,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 	}
 }
 
-void Frame::readMainChannels(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size) {
+void Frame::readMainChannels(Common::SeekableReadStreamEndian &stream, uint16 offset, uint16 size) {
 	uint16 finishPosition = offset + size;
 
 	while (offset < finishPosition) {
@@ -452,7 +452,7 @@ void Frame::readMainChannels(Common::SeekableSubReadStreamEndian &stream, uint16
 	debugC(1, kDebugLoading, "Frame::readChannels(): %d %d %d %d %d %d %d %d %d %d %d", _actionId, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1, _skipFrameFlag, _blend, _sound2, _soundType2);
 }
 
-void Frame::readPaletteInfo(Common::SeekableSubReadStreamEndian &stream) {
+void Frame::readPaletteInfo(Common::SeekableReadStreamEndian &stream) {
 	_palette.firstColor = stream.readByte();
 	_palette.lastColor = stream.readByte();
 	_palette.flags = stream.readByte();
@@ -461,7 +461,7 @@ void Frame::readPaletteInfo(Common::SeekableSubReadStreamEndian &stream) {
 	stream.skip(8); // unknown
 }
 
-void Frame::readSprite(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size) {
+void Frame::readSprite(Common::SeekableReadStreamEndian &stream, uint16 offset, uint16 size) {
 	uint16 spritePosition = (offset - 32) / 16;
 	uint16 spriteStart = spritePosition * 16 + 32;
 
