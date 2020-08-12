@@ -58,23 +58,19 @@ const char *Plugin::getEngineId() const {
 	return nullptr;
 }
 
-class StaticPlugin : public Plugin {
-public:
-	StaticPlugin(PluginObject *pluginobject, PluginType type) {
-		assert(pluginobject);
-		assert(type < PLUGIN_TYPE_MAX);
-		_pluginObject = pluginobject;
-		_type = type;
-	}
+StaticPlugin::StaticPlugin(PluginObject *pluginobject, PluginType type) {
+	assert(pluginobject);
+	assert(type < PLUGIN_TYPE_MAX);
+	_pluginObject = pluginobject;
+	_type = type;
+}
 
-	~StaticPlugin() {
-		delete _pluginObject;
-	}
+StaticPlugin::~StaticPlugin() {
+	delete _pluginObject;
+}
 
-	virtual bool loadPlugin()		{ return true; }
-	virtual void unloadPlugin()		{}
-};
-
+bool StaticPlugin::loadPlugin()		{ return true; }
+void StaticPlugin::unloadPlugin()	{}
 class StaticPluginProvider : public PluginProvider {
 public:
 	StaticPluginProvider() {
