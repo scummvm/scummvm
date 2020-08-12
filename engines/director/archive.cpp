@@ -496,14 +496,19 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		Common::DumpFile out;
 
 		for (uint i = 0; i < _resources.size(); i++) {
-			stream->seek(_resources[i]->offset);
+			if ((_rifxType == MKTAG('F', 'G', 'D', 'M') || _rifxType == MKTAG('F', 'G', 'D', 'C')) && _resources[i]->index < 3) {
+				// This is in the initial load segment and can't be read like a normal chunk.
+				continue;
+			}
+
+			Common::SeekableReadStreamEndian *resStream = getResource(_resources[i]->tag, _resources[i]->index);
 
 			uint32 len = _resources[i]->size;
 
 			if (dataSize < _resources[i]->size) {
 				free(data);
-				data = (byte *)malloc(_resources[i]->size);
-				dataSize = _resources[i]->size;
+				data = (byte *)malloc(resStream->size());
+				dataSize = resStream->size();
 			}
 			Common::String prepend;
 			if (_pathName.size() != 0)
@@ -511,8 +516,8 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 			else
 				prepend = "stream";
 
-			Common::String filename = Common::String::format("./dumps/%s-%s-%d", prepend.c_str(), tag2str(_resources[i]->tag), i);
-			stream->read(data, len);
+			Common::String filename = Common::String::format("./dumps/%s-%s-%d", prepend.c_str(), tag2str(_resources[i]->tag), _resources[i]->index);
+			resStream->read(data, len);
 
 			if (!out.open(filename, true)) {
 				warning("RIFXArchive::openStream(): Can not open dump file %s", filename.c_str());
@@ -523,6 +528,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 
 			out.flush();
 			out.close();
+			delete resStream;
 		}
 	}
 
