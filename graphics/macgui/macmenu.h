@@ -77,11 +77,11 @@ public:
 
 	MacMenuSubMenu *getSubmenu(MacMenuSubMenu *submenu, int index);
 
-	virtual bool draw(ManagedSurface *g, bool forceRedraw = false);
-	virtual bool draw(bool forceRedraw = false) { return false; }
-	virtual void blit(ManagedSurface *g, Common::Rect &dest) {}
+	virtual bool draw(ManagedSurface *g, bool forceRedraw = false) override;
+	virtual bool draw(bool forceRedraw = false) override { return false; }
+	virtual void blit(ManagedSurface *g, Common::Rect &dest) override {}
 
-	bool processEvent(Common::Event &event);
+	bool processEvent(Common::Event &event) override;
 
 	void enableCommand(int menunum, int action, bool state);
 	void enableCommand(const char *menuitem, const char *menuaction, bool state);
@@ -89,7 +89,7 @@ public:
 	void disableAllMenus();
 
 	bool isVisible() { return _isVisible; }
-	void setVisible(bool visible, bool silent = false) { _isVisible = visible; _contentIsDirty = true; }
+	void setVisible(bool visible, bool silent = false) override { _isVisible = visible; _contentIsDirty = true; }
 
 	void printMenu(int level = 0, MacMenuSubMenu *submenu = nullptr);
 
