@@ -318,7 +318,10 @@ bool Animation::loadRotationKeyData(XFileLexer &lexer, int count) {
 		key->_rotation.z() = -lexer.readFloat();
 
 		lexer.skipTerminator(); // skip semicolon
-		lexer.advanceToNextToken(); // skip closed braces
+
+		if (lexer.tokenIsOfType(SEMICOLON) || lexer.tokenIsOfType(COMMA)) {
+			lexer.advanceToNextToken(); // skip closed braces
+		}
 
 		_rotKeys.push_back(key);
 	}
@@ -339,7 +342,10 @@ bool Animation::loadScaleKeyData(XFileLexer &lexer, int count) {
 		}
 
 		lexer.skipTerminator(); // skip semicolon
-		lexer.advanceToNextToken(); // skip closed braces
+
+		if (lexer.tokenIsOfType(SEMICOLON) || lexer.tokenIsOfType(COMMA)) {
+			lexer.advanceToNextToken(); // skip closed braces
+		}
 
 		_scaleKeys.push_back(key);
 	}
@@ -362,7 +368,10 @@ bool Animation::loadPositionKeyData(XFileLexer &lexer, int count) {
 		key->_pos.getData()[2] *= -1.0f;
 
 		lexer.skipTerminator(); // skip semicolon
-		lexer.advanceToNextToken(); // skip closed braces
+
+		if (lexer.tokenIsOfType(SEMICOLON) || lexer.tokenIsOfType(COMMA)) {
+			lexer.advanceToNextToken(); // skip closed braces
+		}
 
 		_posKeys.push_back(key);
 	}
@@ -425,7 +434,7 @@ bool Animation::loadMatrixKeyData(XFileLexer &lexer, int count) {
 
 		lexer.skipTerminator(); // skip semicolon
 
-		if (lexer.reachedClosedBraces()) {
+		if (lexer.tokenIsOfType(SEMICOLON) || lexer.tokenIsOfType(COMMA)) {
 			lexer.advanceToNextToken(); // skip closed braces
 		}
 	}
