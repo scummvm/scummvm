@@ -524,27 +524,43 @@ bool MeshX::parseNormalCoords(XFileLexer &lexer) {
 	uint vertexNormalCount = lexer.readInt();
 //	assert(vertexNormalCount == _vertexCount);
 
+	Common::Array<float> vertexNormalData;
+	vertexNormalData.resize(3 * vertexNormalCount);
 	_vertexNormalData = new float[3 * _vertexCount]();
 
 	for (uint i = 0; i < vertexNormalCount; ++i) {
-		_vertexData[i * kVertexComponentCount + kNormalOffset] = lexer.readFloat();
-		_vertexNormalData[i * 3 + 0] = _vertexData[i * kVertexComponentCount + kNormalOffset];
-		_vertexData[i * kVertexComponentCount + kNormalOffset + 1] = lexer.readFloat();
-		_vertexNormalData[i * 3 + 1] = _vertexData[i * kVertexComponentCount + kNormalOffset + 1];
+		vertexNormalData[i * 3 + 0] = lexer.readFloat();
+		vertexNormalData[i * 3 + 1] = lexer.readFloat();
 		// mirror z coordinate to change to OpenGL coordinate system
-		_vertexData[i * kVertexComponentCount + kNormalOffset + 2] = -lexer.readFloat();
-		_vertexNormalData[i * 3 + 2] = _vertexData[i * kVertexComponentCount + kNormalOffset + 2];
+		vertexNormalData[i * 3 + 2] = -lexer.readFloat();
 		lexer.skipTerminator(); // skip semicolon
 	}
 
 	uint faceNormalCount = lexer.readInt();
+	Common::Array<int> faceNormals;
 
 	for (uint i = 0; i < faceNormalCount; ++i) {
 		lexer.readInt();
-		lexer.readInt();
-		lexer.readInt();
-		lexer.readInt();
+		int n1 = lexer.readInt();
+		int n2 = lexer.readInt();
+		int n3 = lexer.readInt();
 		lexer.skipTerminator();
+
+		faceNormals.push_back(n3);
+		faceNormals.push_back(n2);
+		faceNormals.push_back(n1);
+	}
+
+	assert(3 * faceNormalCount == _indexCount);
+
+	for (uint i = 0; i < 3 * faceNormalCount; ++i) {
+		uint16 vertexIndex = _indexData[i];
+		int normalIndex = faceNormals[i];
+
+		for (int j = 0; j < 3; ++j) {
+			_vertexData[vertexIndex * kVertexComponentCount + kNormalOffset + j] = vertexNormalData[3 * normalIndex + j];
+			_vertexNormalData[3 * vertexIndex + j] = vertexNormalData[3 * normalIndex + j];
+		}
 	}
 
 	lexer.advanceToNextToken(); // skip closed braces
