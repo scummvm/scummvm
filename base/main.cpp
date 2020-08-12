@@ -153,6 +153,8 @@ void saveLastLaunchedTarget(const Common::String &target) {
 
 // TODO: specify the possible return values here
 static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common::String &edebuglevels) {
+	assert(plugin);
+
 	// Determine the game data path, for validation and error messages
 	Common::FSNode dir(ConfMan.get("path"));
 	Common::String target = ConfMan.getActiveDomainName();
@@ -436,6 +438,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 	PluginManager::instance().init();
  	PluginManager::instance().loadAllPlugins(); // load plugins for cached plugin manager
+	PluginManager::instance().loadDetectionPlugin(); // load detection plugin for uncached plugin manager
 
 	// If we received an invalid music parameter via command line we check this here.
 	// We can't check this before loading the music plugins.
@@ -552,6 +555,12 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			// Then, pass in the pointer to enginePlugin, with the matching type, so our function behaves as-is.
 			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE, enginePlugin);
 
+#if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES)
+			// Unload all MetaEngines not needed for the current engine, if we're using uncached plugins
+			// to save extra memory.
+			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_METAENGINE, plugin);
+#endif
+
 #ifdef ENABLE_EVENTRECORDER
 			Common::String recordMode = ConfMan.get("record_mode");
 			Common::String recordFileName = ConfMan.get("record_file_name");
@@ -591,6 +600,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 #if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES)
 			// do our best to prevent fragmentation by unloading as soon as we can
 			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);
+			PluginManager::instance().unloadDetectionPlugin();
 			// reallocate the config manager to get rid of any fragmentation
 			ConfMan.defragment();
 			// The keymapper keeps pointers to the configuration domains. It needs to be reinitialized.
@@ -646,6 +656,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			}
 
 			PluginManager::instance().loadAllPluginsOfType(PLUGIN_TYPE_ENGINE); // only for cached manager
+			PluginManager::instance().loadDetectionPlugin(); // only for uncached manager
 		} else {
 			GUI::displayErrorDialog(_("Could not find any engine capable of running the selected game"));
 
@@ -669,6 +680,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	Cloud::CloudManager::destroy();
 #endif
 #endif
+	PluginManager::instance().unloadDetectionPlugin();
 	PluginManager::instance().unloadAllPlugins();
 	PluginManager::destroy();
 	GUI::GuiManager::destroy();
