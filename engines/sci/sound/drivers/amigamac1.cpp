@@ -308,7 +308,7 @@ const MidiPlayer_AmigaMac1::Wave *MidiPlayer_AmigaMac1::loadWave(Common::Seekabl
 	const uint32 freqTableOffset = stream.readUint32BE();
 
 	// Sanity checks of segment offsets
-	if (wave->phase2End > wave->phase1End || wave->phase1Start > wave->phase1End || wave->phase2Start > wave->phase2End)
+	if ((wave->phase2End & ~1) > wave->phase1End || wave->phase1Start > wave->phase1End || wave->phase2Start > wave->phase2End)
 		error("MidiPlayer_AmigaMac1: Invalid segment offsets found for wave '%s'", wave->name);
 
 	// On Mac, 1480 additional samples are present, rounded up to the next word boundary
