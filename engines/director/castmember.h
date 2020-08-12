@@ -52,9 +52,10 @@ class VideoDecoder;
 
 namespace Director {
 
-class Stxt;
 class AudioDecoder;
+class Channel;
 struct Resource;
+class Stxt;
 
 class CastMember {
 public:
@@ -67,7 +68,7 @@ public:
 	virtual bool isEditable() { return false; }
 	virtual void setEditable(bool editable) {}
 	virtual bool isModified() { return _modified; }
-	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox) { return nullptr; }
+	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel) { return nullptr; }
 	virtual void updateFromWidget(Graphics::MacWidget *widget) {}
 	virtual Common::Rect getWidgetRect() { return _initialRect; }
 
@@ -96,7 +97,7 @@ class BitmapCastMember : public CastMember {
 public:
 	BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint32 castTag, uint16 version, uint8 flags1 = 0);
 	~BitmapCastMember();
-	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox) override;
+	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel) override;
 
 	void createMatte();
 	Graphics::Surface *getMatte();
@@ -123,7 +124,13 @@ public:
 	~DigitalVideoCastMember();
 
 	virtual bool isModified() override;
-	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox) override;
+	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel) override;
+	uint getMovieCurrentTime();
+	uint getMovieTotalTime();
+	void seekMovie(int stamp);
+	void setStopTime(int stamp);
+	void setMovieRate(int rate);
+	void setFrameRate(int rate);
 
 	uint32 _vflags;
 	bool _looping;
@@ -141,6 +148,8 @@ public:
 	uint16 _frameRate;
 
 	Video::VideoDecoder *_video;
+
+	Channel *_channel;
 };
 
 class SoundCastMember : public CastMember {
@@ -175,7 +184,7 @@ public:
 	virtual void setColors(int *fgcolor, int *bgcolor) override;
 
 	void setText(const char *text);
-	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox) override;
+	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel) override;
 	virtual Common::Rect getWidgetRect() override;
 
 	virtual bool isEditable() override;

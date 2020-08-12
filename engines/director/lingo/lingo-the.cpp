@@ -1344,9 +1344,17 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheMovieRate:
 		channel->_movieRate = d.asInt();
+		if (sprite->_cast->_type == kCastDigitalVideo)
+			((DigitalVideoCastMember *)sprite->_cast)->setMovieRate(channel->_movieRate);
+		else
+			warning("Setting movieTime for non-digital video");
 		break;
 	case kTheMovieTime:
 		channel->_movieTime = d.asInt();
+		if (sprite->_cast->_type == kCastDigitalVideo)
+			((DigitalVideoCastMember *)sprite->_cast)->seekMovie(channel->_movieTime);
+		else
+			warning("Setting movieTime for non-digital video");
 		break;
 	case kThePattern:
 		if (d.asInt() != sprite->getPattern()){
@@ -1363,9 +1371,17 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheStartTime:
 		channel->_startTime = d.asInt();
+		if (sprite->_cast->_type == kCastDigitalVideo)
+			((DigitalVideoCastMember *)sprite->_cast)->seekMovie(channel->_startTime);
+		else
+			warning("Setting startTime for non-digital video");
 		break;
 	case kTheStopTime:
 		channel->_stopTime = d.asInt();
+		if (sprite->_cast->_type == kCastDigitalVideo)
+			((DigitalVideoCastMember *)sprite->_cast)->setStopTime(channel->_stopTime);
+		else
+			warning("Setting stopTime for non-digital video");
 		break;
 	case kTheStretch:
 		if (d.asInt() != sprite->_stretch) {
@@ -1684,6 +1700,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	case kTheFrameRate:
 		if (castType == kCastDigitalVideo) {
 			((DigitalVideoCastMember *)member)->_frameRate = d.asInt();
+			//((DigitalVideoCastMember *)sprite->_cast)->setFrameRate(d.asInt());
 		} else {
 			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
 		}

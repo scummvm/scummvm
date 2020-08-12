@@ -26,6 +26,8 @@
 
 #include "director/director.h"
 #include "director/castmember.h"
+#include "director/cursor.h"
+#include "director/channel.h"
 #include "director/movie.h"
 #include "director/window.h"
 #include "director/stxt.h"
@@ -163,7 +165,7 @@ BitmapCastMember::~BitmapCastMember() {
 		delete _matte;
 }
 
-Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox) {
+Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel *channel) {
 	if (!_img) {
 		warning("BitmapCastMember::createWidget: No image decoder");
 		return nullptr;
@@ -280,8 +282,10 @@ bool DigitalVideoCastMember::isModified() {
 	return _video->needsUpdate();
 }
 
-Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox) {
+Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Channel *channel) {
 	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
+
+	_channel = channel;
 
 	if (!_video || !_video->isVideoLoaded()) {
 		warning("DigitalVideoCastMember::createWidget: No video decoder");
@@ -289,10 +293,17 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox) {
 	}
 
 	// FIXME: HACK: We need to understand when really start the video
-	if (!_video->isPlaying())
+	if (!_video->isPlaying()) {
 		_video->start();
 
+		if (_channel->_stopTime == 0)
+			_channel->_stopTime = getMovieTotalTime();
+	}
+
 	const Graphics::Surface *frame = _video->decodeNextFrame();
+
+	_channel->_movieTime = getMovieCurrentTime();
+
 	if (frame) {
 		if (frame->format.bytesPerPixel != 1) {
 			warning("STUB: video >8bpp");
@@ -303,6 +314,57 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox) {
 
 	return widget;
 }
+
+uint DigitalVideoCastMember::getMovieCurrentTime() {
+	if (!_video)
+		return 0;
+
+	int stamp = MIN<int>(_video->getTime() * 60 / 1000, getMovieTotalTime());
+
+	return stamp;
+}
+
+uint DigitalVideoCastMember::getMovieTotalTime() {
+	if (!_video)
+		return 0;
+
+	int stamp = _video->getDuration().msecs() * 60 / 1000;
+
+	return stamp;
+}
+
+void DigitalVideoCastMember::seekMovie(int stamp) {
+	if (!_video)
+		return;
+
+	_channel->_startTime = stamp;
+
+	Audio::Timestamp dur = _video->getDuration();
+
+	_video->seek(Audio::Timestamp(_channel->_startTime * 1000 / 60, dur.framerate()));
+}
+
+void DigitalVideoCastMember::setStopTime(int stamp) {
+	if (!_video)
+		return;
+
+	warning("STUB: DigitalVideoCastMember::setStopTime(%d)", stamp);
+}
+
+void DigitalVideoCastMember::setMovieRate(int rate) {
+	if (!_video)
+		return;
+
+	warning("STUB: DigitalVideoCastMember::setMovieRate(%d)", rate);
+}
+
+void DigitalVideoCastMember::setFrameRate(int rate) {
+	if (!_video)
+		return;
+
+	warning("STUB: DigitalVideoCastMember::setFrameRate(%d)", rate);
+}
+
 
 SoundCastMember::SoundCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
 		: CastMember(cast, castId, stream) {
@@ -476,7 +538,7 @@ void TextCastMember::importStxt(const Stxt *stxt) {
 	_ptext = stxt->_ptext;
 }
 
-Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox) {
+Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *channel) {
 	Graphics::MacFont *macFont = new Graphics::MacFont(_fontId, _fontSize, _textSlant);
 	Graphics::MacWidget *widget = nullptr;
 
@@ -508,7 +570,7 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox) {
 }
 
 Common::Rect TextCastMember::getWidgetRect() {
-	Graphics::MacWidget *widget = createWidget(_initialRect);
+	Graphics::MacWidget *widget = createWidget(_initialRect, nullptr);
 	Common::Rect result = _initialRect;
 	if (widget) {
 		result = widget->_dims;
