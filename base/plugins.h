@@ -367,6 +367,8 @@ public:
 	virtual bool loadNextPlugin() { return false; }
 	virtual bool loadPluginFromEngineId(const Common::String &engineId) { return false; }
 	virtual void updateConfigWithFileName(const Common::String &engineId) {}
+	virtual void loadDetectionPlugin() {}
+	virtual void unloadDetectionPlugin() {}
 
 	// Functions used only by the cached PluginManager
 	virtual void loadAllPlugins();
@@ -386,9 +388,12 @@ class PluginManagerUncached : public PluginManager {
 protected:
 	friend class PluginManager;
 	PluginList _allEnginePlugins;
+	Plugin  *_detectionPlugin;
 	PluginList::iterator _currentPlugin;
 
-	PluginManagerUncached() {}
+	bool _isDetectionLoaded;
+
+	PluginManagerUncached() : _isDetectionLoaded(false) {}
 	bool loadPluginByFileName(const Common::String &filename);
 
 public:
@@ -397,6 +402,8 @@ public:
 	virtual bool loadNextPlugin();
 	virtual bool loadPluginFromEngineId(const Common::String &engineId);
 	virtual void updateConfigWithFileName(const Common::String &engineId);
+	virtual void loadDetectionPlugin() override;
+	virtual void unloadDetectionPlugin() override;
 
 	virtual void loadAllPlugins() {} 	// we don't allow these
 	virtual void loadAllPluginsOfType(PluginType type) {}
