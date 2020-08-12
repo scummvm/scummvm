@@ -30,6 +30,8 @@
 #include "common/fs.h"
 #endif
 
+#include "detection/detection.h"
+
 // Plugin versioning
 
 int pluginTypeVersions[PLUGIN_TYPE_MAX] = {
@@ -71,6 +73,7 @@ StaticPlugin::~StaticPlugin() {
 
 bool StaticPlugin::loadPlugin()		{ return true; }
 void StaticPlugin::unloadPlugin()	{}
+
 class StaticPluginProvider : public PluginProvider {
 public:
 	StaticPluginProvider() {
@@ -335,6 +338,11 @@ void PluginManagerUncached::init() {
 
 	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false); // empty the engine plugins
 
+	Common::String detectPluginName = "detection";
+	detectPluginName += PLUGIN_SUFFIX;
+
+	bool foundDetectPlugin = false;
+
 	for (ProviderList::iterator pp = _providers.begin();
 	                            pp != _providers.end();
 	                            ++pp) {
@@ -345,6 +353,15 @@ void PluginManagerUncached::init() {
 			// file plugins. Currently this is the case. If it changes, we
 			// should find a fast way of detecting whether a plugin is a
 			// music or an engine plugin.
+			if (!foundDetectPlugin && (*pp)->isFilePluginProvider()) {
+				Common::String pName = (*p)->getFileName();
+				if (pName.hasSuffix(detectPluginName)) {
+					_detectionPlugin = (*p);
+					foundDetectPlugin = true;
+					continue;
+				}
+			}
+
 			if ((*pp)->isFilePluginProvider()) {
 				_allEnginePlugins.push_back(*p);
 			} else if ((*p)->loadPlugin()) { // and this is the proper method
@@ -414,6 +431,47 @@ void PluginManagerUncached::updateConfigWithFileName(const Common::String &engin
 		(*domain)[engineId] = (*_currentPlugin)->getFileName();
 
 		ConfMan.flushToDisk();
+	}
+}
+
+void PluginManagerUncached::loadDetectionPlugin() {
+	bool linkMetaEngines = false;
+
+	if (_isDetectionLoaded) {
+		warning("Detection plugin is already loaded. Adding each available engines to the memory.");
+		linkMetaEngines = true;
+	} else {
+		if (_detectionPlugin) {
+			if (_detectionPlugin->loadPlugin()) {
+				assert((_detectionPlugin)->getType() == PLUGIN_TYPE_DETECTION);
+
+				linkMetaEngines = true;
+				_isDetectionLoaded = true;
+			} else {
+				warning("Detection plugin was not loaded correctly.");
+				return;
+			}
+		} else {
+			warning("Detection plugin not found.");
+			return;
+		}
+	}
+
+	if (linkMetaEngines) {
+		_pluginsInMem[PLUGIN_TYPE_METAENGINE].clear();
+		PluginList &pl = (_detectionPlugin)->get<Detection>()._pl;
+		Common::for_each(pl.begin(), pl.end(), Common::bind1st(Common::mem_fun(&PluginManagerUncached::tryLoadPlugin), this));
+	}
+
+}
+
+void PluginManagerUncached::unloadDetectionPlugin() {
+	if (_isDetectionLoaded) {
+		_pluginsInMem[PLUGIN_TYPE_METAENGINE].clear();
+		_detectionPlugin->unloadPlugin();
+		_isDetectionLoaded = false;
+	} else {
+		warning("Detection plugin is already unloaded.");
 	}
 }
 
