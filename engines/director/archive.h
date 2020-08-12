@@ -35,7 +35,7 @@ namespace Director {
 
 struct Resource {
 	uint32 index;
-	uint32 offset;
+	int32 offset;
 	uint32 size;
 	uint32 uncompSize;
 	uint32 compressionType;

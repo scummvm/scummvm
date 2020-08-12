@@ -574,7 +574,7 @@ bool RIFXArchive::readMemoryMap(Common::SeekableSubReadStreamEndian &stream, uin
 	for (uint32 i = 0; i < resCount; i++) {
 		uint32 tag = stream.readUint32();
 		uint32 size = stream.readUint32();
-		uint32 offset = stream.readUint32() + moreOffset;
+		int32 offset = stream.readUint32() + moreOffset;
 		uint16 flags = stream.readUint16();
 		uint16 unk1 = stream.readUint16();
 		uint32 nextFreeResourceId = stream.readUint32(); // for free resources, the next id, flag like for imap and mmap resources
@@ -685,7 +685,9 @@ bool RIFXArchive::readAfterburnerMap(Common::SeekableSubReadStreamEndian &stream
 
 	for (uint32 i = 0; i < resCount; i++) {
 		uint32 resId = readVarInt(*abmpStream);
-		uint32 offset = readVarInt(*abmpStream);
+		int32 offset = readVarInt(*abmpStream);
+		if (offset >= 0)
+			offset += moreOffset + abmpEnd;
 		uint32 compSize = readVarInt(*abmpStream);
 		uint32 uncompSize = readVarInt(*abmpStream);
 		uint32 compressionType = readVarInt(*abmpStream);
