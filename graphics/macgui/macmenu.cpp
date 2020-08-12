@@ -824,7 +824,7 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 		}
 	}
 
-	if (_wm->_mode & kWMModalMenuMode)
+	if ((_wm->_mode & kWMModalMenuMode) | !_wm->_screen)
 		g_system->copyRectToScreen(_screen.getBasePtr(_bbox.left, _bbox.top), _screen.pitch, _bbox.left, _bbox.top, _bbox.width(), _bbox.height());
 
 
@@ -832,9 +832,10 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 		renderSubmenu(_menustack[i], (i == _menustack.size() - 1));
 	}
 
-	g->transBlitFrom(_screen, _wm->_colorGreen);
+	if (g)
+		g->transBlitFrom(_screen, _wm->_colorGreen);
 
-	if (!(_wm->_mode & kWMModalMenuMode))
+	if (!(_wm->_mode & kWMModalMenuMode) && g)
 		g_system->copyRectToScreen(g->getPixels(), g->pitch, 0, 0, g->w, g->h);
 
 	return true;

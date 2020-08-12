@@ -550,11 +550,7 @@ void MacWindowManager::draw() {
 
 	// Menu is drawn on top of everything and always
 	if (_menu && !(_mode & kWMModeFullscreen)) {
-		if (_screen) {
-			_menu->draw(_screen, _fullRefresh);
-		} else {
-			g_system->copyRectToScreen(_menu->getWindowSurface()->getBasePtr(_menu->_dims.left, _menu->_dims.top), _menu->getWindowSurface()->pitch, _menu->_dims.left, _menu->_dims.top, _menu->_dims.width(), _menu->_dims.height());
-		}
+		_menu->draw(_screen, _fullRefresh);
 	}
 
 	_fullRefresh = false;
