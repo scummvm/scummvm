@@ -26,7 +26,7 @@
 #include "common/debug.h"
 #include "common/textconsole.h"
 
-#include "agi/wagparser.h"
+#include "agi/detection/wagparser.h"
 
 namespace Agi {
 

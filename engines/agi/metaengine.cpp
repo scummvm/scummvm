@@ -38,7 +38,7 @@
 #include "agi/preagi_troll.h"
 #include "agi/preagi_winnie.h"
 
-#include "agi/detection.h"
+#include "agi/detection/detection.h"
 
 namespace Agi {
 
