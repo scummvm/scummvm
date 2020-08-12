@@ -684,7 +684,7 @@ Common::SeekableReadStreamEndian *readZlibData(Common::SeekableReadStream &strea
 	}
 
 	free(in);
-	return new Common::MemoryReadStreamEndian(out, *outLen, bigEndian);
+	return new Common::MemoryReadStreamEndian(out, *outLen, bigEndian, DisposeAfterUse::YES);
 # else
 	return nullptr;
 # endif
