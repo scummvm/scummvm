@@ -523,22 +523,22 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		}
 	}
 
-	Common::SeekableSubReadStreamEndian *casRes = getFirstResource(MKTAG('C', 'A', 'S', '*'));
 	// Parse the CAS*, if present
-	if (casRes) {
-		readCast(*casRes);
-		delete casRes;
+	if (hasResource(MKTAG('C', 'A', 'S', '*'), -1)) {
+		Common::SeekableSubReadStreamEndian *casStream = getFirstResource(MKTAG('C', 'A', 'S', '*'));
+		readCast(*casStream);
+		delete casStream;
 	}
 
-	Common::SeekableSubReadStreamEndian *keyRes = getFirstResource(MKTAG('K', 'E', 'Y', '*'), true);
 	// A KEY* must be present
-	if (!keyRes) {
+	if (!hasResource(MKTAG('K', 'E', 'Y', '*'), -1)) {
 		warning("No 'KEY*' resource present");
 		return false;
 	}
 	// Parse the KEY*
-	readKeyTable(*keyRes);
-	delete keyRes;
+	Common::SeekableSubReadStreamEndian *keyStream = getFirstResource(MKTAG('K', 'E', 'Y', '*'), true);
+	readKeyTable(*keyStream);
+	delete keyStream;
 
 	return true;
 }
