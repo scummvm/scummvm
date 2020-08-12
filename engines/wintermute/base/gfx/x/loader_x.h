@@ -76,6 +76,8 @@ public:
 	double tokenToFloat();
 	Common::String tokenToString();
 
+	void skipObject();
+
 	float readFloat();
 	int readInt();
 	Common::String readString();

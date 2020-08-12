@@ -364,6 +364,37 @@ Common::String XFileLexer::tokenToString() {
 	return _tok._textVal;
 }
 
+void XFileLexer::skipObject() {
+	advanceToNextToken(); // optional name
+	advanceToNextToken();
+	advanceOnOpenBraces();
+
+	// we have one open braces right now, once the counter reaches zero, we're done
+	int closedBracesCount = 1;
+
+	while (closedBracesCount > 0) {
+		while (_integersToRead > 0 || _floatsToRead > 0) {
+			if (_integersToRead > 0) {
+				readInt();
+			}
+
+			if (_floatsToRead > 0) {
+				readFloat();
+			}
+		}
+
+		if (_tok._type == OPEN_BRACES) {
+			++closedBracesCount;
+		}
+
+		if (_tok._type == CLOSE_BRACES) {
+			--closedBracesCount;
+		}
+
+		advanceToNextToken();
+	}
+}
+
 void Token::pushChar(char c) {
 	_textVal.insertChar(c, _textVal.size());
 }
