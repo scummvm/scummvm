@@ -479,6 +479,8 @@ void MacWindowManager::drawDesktop() {
 void MacWindowManager::draw() {
 	removeMarked();
 
+	Common::Rect bounds = getScreenBounds();
+
 	if (_fullRefresh) {
 		Common::Rect screen = getScreenBounds();
 		if (_desktop->w != screen.width() || _desktop->h != screen.height()) {
@@ -505,9 +507,14 @@ void MacWindowManager::draw() {
 		if (!w->isVisible())
 			continue;
 
-		Common::Rect clip = w->getDimensions();
-		clip.clip(getScreenBounds());
-		clip.clip(Common::Rect(0, 0, g_system->getWidth() - 1, g_system->getHeight() - 1));
+		Common::Rect clip = w->getInnerDimensions();
+		clip.clip(bounds);
+
+		if (clip.isEmpty())
+			continue;
+
+		clip = w->getDimensions();
+		clip.clip(bounds);
 
 		if (clip.isEmpty())
 			continue;
@@ -526,12 +533,15 @@ void MacWindowManager::draw() {
 			if (w->isDirty() || forceRedraw) {
 				w->draw(forceRedraw);
 
-				Common::Rect dims = w->getDimensions();
+				Common::Rect outerDims = w->getDimensions();
 				Common::Rect innerDims = w->getInnerDimensions();
+				int adjWidth, adjHeight;
 
-				g_system->copyRectToScreen(w->getBorderSurface()->getBasePtr(0, 0), w->getBorderSurface()->pitch, clip.left, clip.top, dims.width(), dims.height());
+				adjustDimensions(clip, outerDims, adjWidth, adjHeight);
+				g_system->copyRectToScreen(w->getBorderSurface()->getBasePtr(MAX(clip.left - outerDims.left, 0), MAX(clip.top - outerDims.top, 0)), w->getBorderSurface()->pitch, clip.left, clip.top, adjWidth, adjHeight);
 
-				g_system->copyRectToScreen(w->getWindowSurface()->getBasePtr(MAX(clip.left - innerDims.left, 0), MAX(clip.top - innerDims.top, 0)), w->getWindowSurface()->pitch, clip.left + (-dims.left + innerDims.left), clip.top + (-dims.top + innerDims.top), innerDims.width(), innerDims.height());
+				adjustDimensions(clip, innerDims, adjWidth, adjHeight);
+				g_system->copyRectToScreen(w->getWindowSurface()->getBasePtr(MAX(clip.left - innerDims.left, 0), MAX(clip.top - innerDims.top, 0)), w->getWindowSurface()->pitch,MAX(innerDims.left, (int16)0), MAX(innerDims.top, (int16)0), adjWidth, adjHeight);
 
 				dirtyRects.push_back(clip);
 			}
@@ -628,6 +638,26 @@ bool MacWindowManager::processEvent(Common::Event &event) {
 	}
 
 	return false;
+}
+
+void MacWindowManager::adjustDimensions(const Common::Rect &clip, const Common::Rect &dims, int &adjWidth, int &adjHeight) {
+	int wOffset, hOffset;
+
+	wOffset = clip.left - dims.left;
+	adjWidth = dims.width();
+	if (wOffset > 0) {
+		adjWidth -= wOffset;
+	} else if (dims.right > getScreenBounds().right) {
+		adjWidth -= (dims.right - getScreenBounds().right);
+	}
+
+	hOffset = clip.top - dims.top;
+	adjHeight = dims.height();
+	if (hOffset > 0) {
+		adjHeight -= hOffset;
+	} else if (dims.bottom > getScreenBounds().bottom) {
+		adjHeight -= (dims.bottom - getScreenBounds().bottom);
+	}
 }
 
 void MacWindowManager::removeMarked() {

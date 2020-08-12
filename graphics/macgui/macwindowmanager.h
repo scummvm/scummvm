@@ -329,6 +329,8 @@ private:
 	void zoomBoxInner(Common::Rect &r, Graphics::MacPlotData &pd);
 	bool haveZoomBox() { return !_zoomBoxes.empty(); }
 
+	void adjustDimensions(const Common::Rect &clip, const Common::Rect &dims, int &adjWidth, int &adjHeight);
+
 public:
 	TransparentSurface *_desktopBmp;
 	ManagedSurface *_desktop;
