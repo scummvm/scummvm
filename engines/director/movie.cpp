@@ -110,29 +110,33 @@ bool Movie::loadArchive() {
 
 	// _movieRect and _stageColor are in VWCF, which the cast handles
 
+	bool recenter = false;
 	// If the stage dimensions are different, delete it and start again.
 	// Otherwise, do not clear it so there can be a nice transition.
 	if (_window->getSurface()->w != _movieRect.width() || _window->getSurface()->h != _movieRect.height()) {
 		_window->resize(_movieRect.width(), _movieRect.height(), true);
+		recenter = true;
 	}
+
 	// TODO: Add more options for desktop dimensions
 	if (_window == _vm->getStage()) {
 		uint16 windowWidth = debugChannelSet(-1, kDebugDesktop) ? 1024 : _movieRect.width();
 		uint16 windowHeight = debugChannelSet(-1, kDebugDesktop) ? 768 : _movieRect.height();
 		if (_vm->_wm->_screenDims.width() != windowWidth || _vm->_wm->_screenDims.height() != windowHeight) {
 			_vm->_wm->_screenDims = Common::Rect(windowWidth, windowHeight);
+			recenter = true;
 
-		if (debugChannelSet(-1, kDebug32bpp))
-			initGraphics(windowWidth, windowHeight, new Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-		else
-			initGraphics(windowWidth, windowHeight);
+			if (debugChannelSet(-1, kDebug32bpp))
+				initGraphics(windowWidth, windowHeight, new Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+			else
+				initGraphics(windowWidth, windowHeight);
 		}
 	}
 
-	_window->setStageColor(_stageColor, true);
-
-	if (debugChannelSet(-1, kDebugDesktop))
+	if (recenter && debugChannelSet(-1, kDebugDesktop))
 		_window->center(g_director->_centerStage);
+
+	_window->setStageColor(_stageColor, true);
 
 	// Score
 	if (!_movieArchive->hasResource(MKTAG('V', 'W', 'S', 'C'), -1)) {
