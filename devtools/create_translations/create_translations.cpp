@@ -124,7 +124,7 @@ int main(int argc, char *argv[]) {
 
 	for (int i = 0; i < numLangs; i++) {
 		if (!translations[i]->useUTF8()) {
-			fprintf(stderr, "ERROR: Po Language file for: \"%s\", named as \"%s\" is not encoded in UTF-8", translations[i]->languageName(), translations[i]->language());
+			fprintf(stderr, "ERROR: Po Language file for: \"%s\", named as \"%s\" is not encoded in UTF-8\n", translations[i]->languageName(), translations[i]->language());
 			for (size_t j = 0; j < translations.size(); ++j)
 				delete translations[j];
 
