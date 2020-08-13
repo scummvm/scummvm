@@ -320,7 +320,7 @@ void Score::update() {
 			}
 			return;
 		}
-		
+
 		if (g_system->getMillis() < _nextFrameTime && !_nextFrame)
 			return;
 	}
@@ -866,7 +866,17 @@ void Score::loadActions(Common::SeekableReadStreamEndian &stream) {
 
 	for (j = _actions.begin(); j != _actions.end(); ++j) {
 		if (!scriptRefs[j->_key]) {
-			warning("Action id %d is not referenced, the code is:\n-----\n%s\n------", j->_key, j->_value.c_str());
+			// Check if it is empty
+			bool empty = true;
+			for (const char *ptr = j->_value.c_str(); *ptr; ptr++)
+				if (*ptr != ' ' || *ptr != '\t' || *ptr != '\n' || *ptr != '\xc2' || *ptr != '-') {
+					empty = false;
+					break;
+				}
+
+			if (!empty)
+				warning("Action id %d is not referenced, the code is:\n-----\n%s\n------", j->_key, j->_value.c_str());
+
 			continue;
 		}
 		if (!j->_value.empty()) {
