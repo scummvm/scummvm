@@ -542,8 +542,23 @@ void MacWindowManager::draw() {
 				Common::Rect innerDims = w->getInnerDimensions();
 				int adjWidth, adjHeight;
 
-				adjustDimensions(clip, outerDims, adjWidth, adjHeight);
-				g_system->copyRectToScreen(w->getBorderSurface()->getBasePtr(MAX(clip.left - outerDims.left, 0), MAX(clip.top - outerDims.top, 0)), w->getBorderSurface()->pitch, clip.left, clip.top, adjWidth, adjHeight);
+				if (w->isDirty() || forceRedraw) {
+					w->draw(forceRedraw);
+
+					Surface *surface = g_system->lockScreen();
+					ManagedSurface *border = w->getBorderSurface();
+
+					adjustDimensions(clip, outerDims, adjWidth, adjHeight);
+					for (int y = 0; y < adjHeight; y++) {
+						const byte *src = (const byte *)border->getBasePtr(clip.left - outerDims.left, y);
+						byte *dst = (byte *)surface->getBasePtr(clip.left, y + clip.top);
+						for (int x = 0; x < adjWidth; x++, src++, dst++)
+								if (*src != _colorGreen2 && *src != _colorGreen)
+									*dst = *src;
+					}
+
+					g_system->unlockScreen();
+				}
 
 				adjustDimensions(clip, innerDims, adjWidth, adjHeight);
 				g_system->copyRectToScreen(w->getWindowSurface()->getBasePtr(MAX(clip.left - innerDims.left, 0), MAX(clip.top - innerDims.top, 0)), w->getWindowSurface()->pitch,MAX(innerDims.left, (int16)0), MAX(innerDims.top, (int16)0), adjWidth, adjHeight);
