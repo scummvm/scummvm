@@ -124,6 +124,8 @@ public:
 	virtual Common::EventSource *getDefaultEventSource() { return _eventSource; }
 	virtual Common::HardwareInputSet *getHardwareInputSet();
 
+	virtual Common::String getSystemLanguage() const;
+
 	virtual MutexRef createMutex(void);
 	virtual void lockMutex(MutexRef mutex);
 	virtual void unlockMutex(MutexRef mutex);

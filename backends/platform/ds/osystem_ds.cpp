@@ -523,3 +523,16 @@ Common::HardwareInputSet *OSystem_DS::getHardwareInputSet() {
 
 	return inputSet;
 }
+
+Common::String OSystem_DS::getSystemLanguage() const {
+	switch (PersonalData->language) {
+		case 0: return "ja_JP";
+		case 1: return "en_US";
+		case 2: return "fr_FR";
+		case 3: return "de_DE";
+		case 4: return "it_IT";
+		case 5: return "es_ES";
+		case 6: return "zh_CN";
+		default: return "en_US";
+	}
+}
