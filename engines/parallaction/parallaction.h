@@ -37,6 +37,7 @@
 #include "parallaction/inventory.h"
 #include "parallaction/objects.h"
 #include "parallaction/disk.h"
+#include "parallaction/detection/detection_enums.h"
 
 #define PATH_LEN	200
 
@@ -65,16 +66,6 @@ enum {
 	kDebugInventory = 1 << 9
 };
 
-enum {
-	GF_DEMO = 1 << 0,
-	GF_LANG_EN = 1 << 1,
-	GF_LANG_FR = 1 << 2,
-	GF_LANG_DE = 1 << 3,
-	GF_LANG_IT = 1 << 4,
-	GF_LANG_MULT = 1 << 5
-};
-
-
 enum EngineFlags {
 	kEnginePauseJobs	= (1 << 1),
 	kEngineWalking		= (1 << 3),
@@ -92,11 +83,6 @@ enum {
 	kEvSaveGame		= 2000,
 	kEvLoadGame		= 4000,
 	kEvIngameMenu   = 8000
-};
-
-enum ParallactionGameType {
-	GType_Nippon = 1,
-	GType_BRA
 };
 
 struct PARALLACTIONGameDescription;

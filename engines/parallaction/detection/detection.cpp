@@ -27,8 +27,8 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 
-#include "parallaction/parallaction.h"
-#include "parallaction/detection.h"
+#include "parallaction/detection/detection_enums.h"
+#include "parallaction/detection/detection.h"
 
 static const PlainGameDescriptor parallactionGames[] = {
 	{"nippon", "Nippon Safes Inc."},

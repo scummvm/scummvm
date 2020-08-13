@@ -28,7 +28,7 @@
 #include "common/textconsole.h"
 
 #include "parallaction/parallaction.h"
-#include "parallaction/detection.h"
+#include "parallaction/detection/detection.h"
 
 namespace Parallaction {
 
