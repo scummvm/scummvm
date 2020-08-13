@@ -41,11 +41,6 @@ void 	setTalkPos(int x, int y);
 void 	setTopScreenTarget(int x, int y);
 void	setTopScreenZoom(int percentage);
 
-// Timers
-void 	setTimerCallback(OSystem_DS::TimerProc proc, int interval);		// Setup a callback function at a regular interval
-int 	getMillis(bool skipRecord = false);								// Return the current runtime in milliseconds
-void 	doTimerCallback();												// Call callback function if required
-
 // Events
 void 	VBlankHandler();
 Common::Point transformPoint(uint16 x, uint16 y, bool isOverlayShown);
