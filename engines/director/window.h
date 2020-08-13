@@ -157,6 +157,7 @@ class Window : public Graphics::MacWindow, public Object<Window> {
 	bool hasProp(const Common::String &propName) override;
 	Datum getProp(const Common::String &propName) override;
 	bool setProp(const Common::String &propName, const Datum &value) override;
+	bool hasField(int field) override;
 	Datum getField(int field) override;
 	bool setField(int field, const Datum &value) override;
 

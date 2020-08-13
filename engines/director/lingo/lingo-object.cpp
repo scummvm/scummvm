@@ -357,7 +357,7 @@ Common::String Window::asString() {
 
 bool Window::hasProp(const Common::String &propName) {
 	Common::String fieldName = Common::String::format("%d%s", kTheWindow, propName.c_str());
-	return g_lingo->_theEntityFields.contains(fieldName);
+	return g_lingo->_theEntityFields.contains(fieldName) && hasField(g_lingo->_theEntityFields[fieldName]->field);
 }
 
 Datum Window::getProp(const Common::String &propName) {
@@ -377,6 +377,23 @@ bool Window::setProp(const Common::String &propName, const Datum &value) {
 	}
 
 	warning("Window::setProp: unknown property '%s'", propName.c_str());
+	return false;
+}
+
+bool Window::hasField(int field) {
+	switch (field) {
+	case kTheDrawRect:
+	case kTheFileName:
+	case kTheModal:
+	case kTheSourceRect:
+	case kTheTitle:
+	case kTheTitleVisible:
+	case kTheVisible:
+	case kTheWindowType:
+		return true;
+	default:
+		break;
+	}
 	return false;
 }
 

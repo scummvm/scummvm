@@ -56,6 +56,7 @@ public:
 	virtual bool hasProp(const Common::String &propName) = 0;
 	virtual Datum getProp(const Common::String &propName) = 0;
 	virtual bool setProp(const Common::String &propName, const Datum &value) = 0;
+	virtual bool hasField(int field) = 0;
 	virtual Datum getField(int field) = 0;
 	virtual bool setField(int field, const Datum &value) = 0;
 };
@@ -162,6 +163,9 @@ public:
 		return Datum();
 	};
 	bool setProp(const Common::String &propName, const Datum &value) override {
+		return false;
+	};
+	bool hasField(int field) override {
 		return false;
 	};
 	Datum getField(int field) override {
