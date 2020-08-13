@@ -142,7 +142,7 @@ void PoMessageEntryList::addMessageEntry(const char *translation, const char *me
 			_langNameAlt = str;
 		}
 		str = parseLine(translation, "charset=");
-		if (str[0] != 'U' || str[1] != 'T' || str[2] != 'F' || str[3] != '-' || str[4] != '8') {
+		if (strcmp(str, "utf-8") != 0 && strcmp(str, "UTF-8") != 0) {
 			_useUTF8 = false;
 		}
 		return;
