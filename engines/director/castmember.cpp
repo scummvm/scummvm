@@ -47,6 +47,11 @@ CastMember::CastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndi
 	_modified = true;
 }
 
+
+/////////////////////////////////////
+// Bitmap
+/////////////////////////////////////
+
 BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint32 castTag, uint16 version, uint8 flags1)
 		: CastMember(cast, castId, stream) {
 	_type = kCastBitmap;
@@ -233,6 +238,11 @@ Graphics::Surface *BitmapCastMember::getMatte() {
 	return _matte ? _matte->getMask() : nullptr;
 }
 
+
+/////////////////////////////////////
+// DigitalVideo
+/////////////////////////////////////
+
 DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
 		: CastMember(cast, castId, stream) {
 	_type = kCastDigitalVideo;
@@ -370,12 +380,21 @@ void DigitalVideoCastMember::setFrameRate(int rate) {
 }
 
 
+/////////////////////////////////////
+// Sound
+/////////////////////////////////////
+
 SoundCastMember::SoundCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
 		: CastMember(cast, castId, stream) {
 	_type = kCastSound;
 	_audio = nullptr;
 	_looping = 0;
 }
+
+
+/////////////////////////////////////
+// Text
+/////////////////////////////////////
 
 TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version, uint8 flags1, bool asButton)
 		: CastMember(cast, castId, stream) {
@@ -618,6 +637,11 @@ void TextCastMember::updateFromWidget(Graphics::MacWidget *widget) {
 	}
 }
 
+
+/////////////////////////////////////
+// Shape
+/////////////////////////////////////
+
 ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
 		: CastMember(cast, castId, stream) {
 	_type = kCastShape;
@@ -672,6 +696,11 @@ ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 		_initialRect.debugPrint(0, "ShapeCastMember: rect:");
 }
 
+
+/////////////////////////////////////
+// Script
+/////////////////////////////////////
+
 ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
 		: CastMember(cast, castId, stream) {
 	_type = kCastLingoScript;
@@ -708,6 +737,11 @@ ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 	}
 }
 
+
+/////////////////////////////////////
+// RTE
+/////////////////////////////////////
+
 RTECastMember::RTECastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
 		: TextCastMember(cast, castId, stream, version) {
 
@@ -727,6 +761,11 @@ void RTECastMember::loadChunks() {
 	delete rte1;
 #endif
 }
+
+
+/////////////////////////////////////
+// Palette
+/////////////////////////////////////
 
 PaletteCastMember::PaletteCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
 	: CastMember(cast, castId, stream) {
