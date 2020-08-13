@@ -197,7 +197,7 @@ Common::String Lingo::patchLingoCode(Common::String &line, LingoArchive *archive
 		}
 
 		// Now everything matched
-		debugC(1, kDebugParse | kDebugPreprocess, "Lingo::patchLingoCode(): Applied a patch for '%s', '%s' %s:%d @ %d. \"%s\" -> \"%s\"",
+		warning("Lingo::patchLingoCode(): Applied a patch for '%s', '%s' %s:%d @ %d. \"%s\" -> \"%s\"",
 				patch->gameId, patch->movie, scriptType2str(type), id, linenum,
 				patch->orig, patch->replace);
 		return patch->replace;
