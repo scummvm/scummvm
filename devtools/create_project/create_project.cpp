@@ -2138,3 +2138,16 @@ void error(const std::string &message) {
 	std::cerr << "ERROR: " << message << "!" << std::endl;
 	std::exit(-1);
 }
+
+bool BuildSetup::featureEnabled(std::string feature) const {
+	return getFeature(feature).enable;
+}
+
+Feature BuildSetup::getFeature(std::string feature) const {
+	for (FeatureList::const_iterator itr = features.begin(); itr != features.end(); ++itr) {
+		if (itr->name != feature)
+			continue;
+		return *itr;
+	}
+	error("invalid feature request: " + feature);
+}
