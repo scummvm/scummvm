@@ -383,8 +383,12 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	           << "\t\t\t<AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>\n"
 	           << "\t\t</ClCompile>\n"
 	           << "\t\t<Link>\n"
-	           << "\t\t\t<IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>\n"
-	           << "\t\t\t<SubSystem>Console</SubSystem>\n";
+	           << "\t\t\t<IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>\n";
+	if (!setup.featureEnabled("text-console")) {
+		properties << "\t\t\t<SubSystem>Windows</SubSystem>\n";
+	} else {
+		properties << "\t\t\t<SubSystem>Console</SubSystem>\n";
+	}
 
 	if (!setup.devTools && !setup.tests)
 		properties << "\t\t\t<EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>\n";
