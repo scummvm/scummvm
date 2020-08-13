@@ -96,6 +96,11 @@ public:
 		// Engine plugins
 		#include "engines/plugins_table.h"
 
+		#ifndef UNCACHED_PLUGINS
+		// Engine-detection plugins are included if we don't use uncached plugins.
+		#include "detection/detection_table.h"
+		#endif
+
 		// Music plugins
 		// TODO: Use defines to disable or enable each MIDI driver as a
 		// static/dynamic plugin, like it's done for the engines
