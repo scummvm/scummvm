@@ -27,7 +27,7 @@
 
 // This include is here temporarily while the engine is being refactored.
 #include "hugo/game.h"
-#include "hugo/detection_enums.h"
+#include "hugo/detection/detection_enums.h"
 
 #define HUGO_DAT_VER_MAJ 0                          // 1 byte
 #define HUGO_DAT_VER_MIN 42                         // 1 byte

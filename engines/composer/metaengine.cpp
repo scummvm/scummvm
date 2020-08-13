@@ -27,7 +27,7 @@
 #include "engines/advancedDetector.h"
 
 #include "composer/composer.h"
-#include "composer/detection.h"
+#include "composer/detection/detection.h"
 
 namespace Composer {
 

@@ -28,7 +28,7 @@
 #include "graphics/surface.h"
 
 #include "hugo/hugo.h"
-#include "hugo/detection.h"
+#include "hugo/detection/detection.h"
 
 namespace Hugo {
 

@@ -48,7 +48,7 @@
 #include "cine/various.h"
 #include "cine/console.h"
 #include "cine/sound.h"
-#include "cine/detection_enums.h"
+#include "cine/detection/detection_enums.h"
 
 //#define DUMP_SCRIPTS
 

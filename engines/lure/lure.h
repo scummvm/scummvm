@@ -40,7 +40,7 @@
 #include "lure/strings.h"
 #include "lure/room.h"
 #include "lure/fights.h"
-#include "lure/detection_enums.h"
+#include "lure/detection/detection_enums.h"
 
 /**
  * This is the namespace of the Lure engine.

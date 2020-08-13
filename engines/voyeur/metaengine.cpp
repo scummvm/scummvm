@@ -29,7 +29,7 @@
 
 #include "graphics/surface.h"
 
-#include "voyeur/detection.h"
+#include "voyeur/detection/detection.h"
 
 #define MAX_SAVES 99
 

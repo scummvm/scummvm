@@ -22,7 +22,6 @@
 
 
 #include "bladerunner/bladerunner.h"
-#include "bladerunner/detection_tables.h"
 #include "bladerunner/savefile.h"
 
 #include "common/config-manager.h"

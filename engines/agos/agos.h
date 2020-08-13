@@ -35,7 +35,7 @@
 #include "audio/mixer.h"
 
 #include "agos/vga.h"
-#include "agos/detection_enums.h"
+#include "agos/detection/detection_enums.h"
 
 /**
  * This is the namespace of the AGOS engine.

@@ -25,7 +25,7 @@
 
 #include "mortevielle/mortevielle.h"
 #include "mortevielle/saveload.h"
-#include "mortevielle/detection.h"
+#include "mortevielle/detection/detection.h"
 
 namespace Mortevielle {
 

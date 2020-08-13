@@ -31,7 +31,7 @@
 #include "common/textconsole.h"
 
 #include "saga/gfx.h"
-#include "saga/detection_enums.h"
+#include "saga/detection/detection_enums.h"
 
 struct ADGameFileDescription;
 

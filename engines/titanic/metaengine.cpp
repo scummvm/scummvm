@@ -31,7 +31,7 @@
 #include "engines/advancedDetector.h"
 #include "common/system.h"
 #include "graphics/surface.h"
-#include "titanic/detection.h"
+#include "titanic/detection/detection.h"
 
 namespace Titanic {
 

@@ -1,0 +1,4 @@
+MODULE := engines/saga/detection
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o

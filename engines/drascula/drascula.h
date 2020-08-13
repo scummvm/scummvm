@@ -39,7 +39,7 @@
 #include "engines/savestate.h"
 
 #include "drascula/console.h"
-#include "drascula/detection_enums.h"
+#include "drascula/detection/detection_enums.h"
 
 #include "audio/mixer.h"
 

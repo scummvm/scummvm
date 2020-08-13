@@ -27,7 +27,7 @@
 
 #include "queen/queen.h"
 #include "queen/resource.h"
-#include "queen/detection.h"
+#include "queen/detection/detection.h"
 
 class QueenMetaEngineConnect : public AdvancedMetaEngineConnect {
 public:

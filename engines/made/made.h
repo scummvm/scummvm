@@ -24,7 +24,7 @@
 #define MADE_MADE_H
 
 #include "made/sound.h"
-#include "made/detection_enums.h"
+#include "made/detection/detection_enums.h"
 
 #include "engines/engine.h"
 

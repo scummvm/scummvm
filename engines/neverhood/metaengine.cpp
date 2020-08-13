@@ -27,7 +27,7 @@
 #include "common/translation.h"
 
 #include "neverhood/neverhood.h"
-#include "neverhood/detection.h"
+#include "neverhood/detection/detection.h"
 
 enum NeverhoodGameFeatures {
 	GF_BIG_DEMO = (1 << 0)

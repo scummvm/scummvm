@@ -29,7 +29,7 @@
 #include "common/translation.h"
 #include "engines/advancedDetector.h"
 
-#include "sherlock/detection.h"
+#include "sherlock/detection/detection.h"
 
 namespace Sherlock {
 

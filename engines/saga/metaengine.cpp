@@ -37,7 +37,7 @@
 #include "saga/resource.h"
 #include "saga/interface.h"
 #include "saga/scene.h"
-#include "saga/detection.h"
+#include "saga/detection/detection.h"
 
 namespace Saga {
 
