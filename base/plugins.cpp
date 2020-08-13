@@ -344,7 +344,9 @@ void PluginManagerUncached::init() {
 	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false); // empty the engine plugins
 
 	Common::String detectPluginName = "detection";
+#ifdef PLUGIN_SUFFIX
 	detectPluginName += PLUGIN_SUFFIX;
+#endif
 
 	bool foundDetectPlugin = false;
 
