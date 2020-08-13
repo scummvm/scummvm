@@ -59,7 +59,8 @@ OSystem_DS *OSystem_DS::_instance = NULL;
 OSystem_DS::OSystem_DS()
 	: _eventSource(NULL), _mixer(NULL), _isOverlayShown(true),
 	_graphicsMode(GFX_HWSCALE), _stretchMode(100),
-	_disableCursorPalette(true), _graphicsEnable(true)
+	_disableCursorPalette(true), _graphicsEnable(true),
+	_callbackTimer(10), _currentTimeMillis(0)
 {
 	_instance = this;
 
@@ -72,10 +73,12 @@ OSystem_DS::~OSystem_DS() {
 	_mixer = 0;
 }
 
-int OSystem_DS::timerHandler(int t) {
-	DefaultTimerManager *tm = (DefaultTimerManager *)g_system->getTimerManager();
-	tm->handler();
-	return t;
+void timerTickHandler() {
+	OSystem_DS *system = OSystem_DS::instance();
+	if (system->_callbackTimer > 0) {
+		system->_callbackTimer--;
+	}
+	system->_currentTimeMillis++;
 }
 
 void OSystem_DS::initBackend() {
@@ -91,7 +94,8 @@ void OSystem_DS::initBackend() {
 
 	_savefileManager = new DefaultSaveFileManager();
 	_timerManager = new DefaultTimerManager();
-    DS::setTimerCallback(&OSystem_DS::timerHandler, 10);
+	timerStart(0, ClockDivider_1, (u16)TIMER_FREQ(1000), timerTickHandler);
+	REG_IME = 1;
 
 	_mixer = new Audio::MixerImpl(11025);
 	_mixer->setReady(true);
@@ -403,7 +407,7 @@ void OSystem_DS::refreshCursor(u16 *dst, const Graphics::Surface &src, const uin
 }
 
 uint32 OSystem_DS::getMillis(bool skipRecord) {
-	return DS::getMillis();
+	return _currentTimeMillis;
 }
 
 void OSystem_DS::delayMillis(uint msecs) {
@@ -411,17 +415,19 @@ void OSystem_DS::delayMillis(uint msecs) {
 
 	while (st + msecs >= getMillis());
 
-	DS::doTimerCallback();
+	doTimerCallback();
 }
 
+void OSystem_DS::doTimerCallback(int interval) {
+	DefaultTimerManager *tm = (DefaultTimerManager *)getTimerManager();
+	if (_callbackTimer <= 0) {
+		_callbackTimer += interval;
+		tm->handler();
+	}
+}
 
 void OSystem_DS::getTimeAndDate(TimeDate &td) const {
-	time_t curTime;
-#if 0
-	curTime = time(0);
-#else
-	curTime = 0xABCD1234 + DS::getMillis() / 1000;
-#endif
+	time_t curTime = time(0);
 	struct tm t = *localtime(&curTime);
 	td.tm_sec = t.tm_sec;
 	td.tm_min = t.tm_min;

@@ -66,8 +66,6 @@ protected:
 	bool _disableCursorPalette;
 
 public:
-	typedef int  (*TimerProc)(int interval);
-
 	OSystem_DS();
 	virtual ~OSystem_DS();
 
@@ -121,6 +119,7 @@ public:
 	virtual uint32 getMillis(bool skipRecord = false);
 	virtual void delayMillis(uint msecs);
 	virtual void getTimeAndDate(TimeDate &t) const;
+	void doTimerCallback(int interval = 10);
 
 	virtual Common::EventSource *getDefaultEventSource() { return _eventSource; }
 	virtual Common::HardwareInputSet *getHardwareInputSet();
@@ -145,13 +144,13 @@ public:
 
 	virtual Audio::Mixer *getMixer() { return _mixer; }
 
-	static int timerHandler(int t);
-
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 
 	void refreshCursor(u16 *dst, const Graphics::Surface &src, const uint16 *palette);
 
 	virtual void logMessage(LogMessageType::Type type, const char *message);
+
+	int _currentTimeMillis, _callbackTimer;
 };
 
 #endif

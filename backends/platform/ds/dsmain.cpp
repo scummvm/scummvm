@@ -91,17 +91,8 @@ namespace DS {
 // From console.c in NDSLib
 
 // Defines
-#define FRAME_TIME 17
 #define SCUMM_GAME_HEIGHT 142
 #define SCUMM_GAME_WIDTH 227
-
-static int frameCount;
-static int currentTimeMillis;
-
-// Timer Callback
-static int callbackInterval;
-static int callbackTimer;
-static OSystem_DS::TimerProc callback;
 
 // Scaled
 static int scX;
@@ -191,15 +182,6 @@ void setShakePos(int shakeXOffset, int shakeYOffset) {
 	s_shakeYOffset = shakeYOffset;
 }
 
-void doTimerCallback() {
-	if (callback) {
-		if (callbackTimer <= 0) {
-			callbackTimer += callbackInterval;
-			callback(callbackInterval);
-		}
-	}
-}
-
 Common::Point warpMouse(int penX, int penY, bool isOverlayShown) {
 	int storedMouseX, storedMouseY;
 	if (!isOverlayShown) {
@@ -214,7 +196,7 @@ Common::Point warpMouse(int penX, int penY, bool isOverlayShown) {
 }
 
 void setMainScreenScroll(int x, int y) {
-		REG_BG3X = x + (((frameCount & 1) == 0)? 64: 0);
+		REG_BG3X = x;
 		REG_BG3Y = y;
 
 		if (!gameScreenSwap) {
@@ -249,7 +231,7 @@ void setZoomedScreenScroll(int x, int y, bool shake) {
 		}
 
 #ifdef DISABLE_TEXT_CONSOLE
-		REG_BG3X_SUB = x + ((shake && (frameCount & 1) == 0)? 64: 0);
+		REG_BG3X_SUB = x;
 		REG_BG3Y_SUB = y;
 #endif
 }
@@ -281,12 +263,6 @@ Common::Point transformPoint(uint16 x, uint16 y, bool isOverlayShown) {
 }
 
 void VBlankHandler(void) {
-	frameCount++;
-
-	if (callback) {
-		callbackTimer -= FRAME_TIME;
-	}
-
 	int xCenter = subScTargetX + ((subScreenWidth >> 1) << 8);
 	int yCenter = subScTargetY + ((subScreenHeight >> 1) << 8);
 
@@ -352,27 +328,6 @@ void VBlankHandler(void) {
 	}
 }
 
-int getMillis(bool skipRecord) {
-	return currentTimeMillis;
-}
-
-void setTimerCallback(OSystem_DS::TimerProc proc, int interval) {
-	callback = proc;
-	callbackInterval = interval;
-	callbackTimer = interval;
-}
-
-void timerTickHandler() {
-	if ((callback) && (callbackTimer > 0)) {
-		callbackTimer--;
-	}
-	currentTimeMillis++;
-}
-
-
-
-
-
 void setTalkPos(int x, int y) {
 	setTopScreenTarget(x, y);
 }
@@ -417,17 +372,9 @@ void initHardware() {
 
 	lcdMainOnBottom();
 
-	frameCount = 0;
-	callback = NULL;
-
 	//irqs are nice
 	irqSet(IRQ_VBLANK, VBlankHandler);
 	irqEnable(IRQ_VBLANK);
-
-	// Set up a millisecond timer
-	currentTimeMillis = 0;
-	timerStart(0, ClockDivider_1, (u16)TIMER_FREQ(1000), timerTickHandler);
-	REG_IME = 1;
 
 #ifndef DISABLE_TEXT_CONSOLE
 	videoSetModeSub(MODE_0_2D | DISPLAY_BG0_ACTIVE);
