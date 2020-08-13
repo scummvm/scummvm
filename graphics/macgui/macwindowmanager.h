@@ -65,13 +65,13 @@ enum {
 };
 
 enum MacCursorType {
- kMacCursorArrow,
- kMacCursorBeam,
- kMacCursorCrossHair,
- kMacCursorCrossBar,
- kMacCursorWatch,
- kMacCursorCustom,
- kMacCursorOff
+	kMacCursorArrow,
+	kMacCursorBeam,
+	kMacCursorCrossHair,
+	kMacCursorCrossBar,
+	kMacCursorWatch,
+	kMacCursorCustom,
+	kMacCursorOff
 };
 
 enum {
