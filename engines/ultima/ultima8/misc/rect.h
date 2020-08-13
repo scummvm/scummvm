@@ -93,52 +93,18 @@ struct Rect {
 		bottom = top + nh;
 	}
 
-	// Intersect/Clip this rect with another
-	void    Intersect(int ox, int oy, int ow, int oh) {
-		int x2 = right,     y2 = bottom;
-		int ox2 = ox + ow,  oy2 = oy + oh;
+	void clip(const Rect &r) {
+		if (top < r.top) top = r.top;
+		else if (top > r.bottom) top = r.bottom;
 
-		if (left < ox) left = ox;
-		else if (left > ox2) left = ox2;
+		if (left < r.left) left = r.left;
+		else if (left > r.right) left = r.right;
 
-		if (x2 < ox) x2 = ox;
-		else if (x2 > ox2) x2 = ox2;
+		if (bottom < r.top) bottom = r.bottom;
+		else if (bottom > r.bottom) bottom = r.bottom;
 
-		if (top < oy) top = oy;
-		else if (top > oy2) top = oy2;
-
-		if (y2 < oy) y2 = oy;
-		else if (y2 > oy2) y2 = oy2;
-
-		right = x2;
-		bottom = y2;
-	}
-
-	// Intersect/Clip this another with this
-	template<typename T>
-	void IntersectOther(T &ox, T &oy, T &ow, T &oh) const {
-		int x2 = right,     y2 = bottom;
-		int ox2 = ox + ow,  oy2 = oy + oh;
-
-		if (ox < left) ox = left;
-		else if (ox > x2) ox = x2;
-
-		if (ox2 < left) ox2 = left;
-		else if (ox2 > x2) ox2 = x2;
-
-		if (oy < top) oy = top;
-		else if (oy > y2) oy = y2;
-
-		if (oy2 < top) oy2 = top;
-		else if (oy2 > y2) oy2 = y2;
-
-		ow = ox2 - ox;
-		oh = oy2 - oy;
-	}
-
-	// Intersect/Clip this rect with another
-	void    Intersect(const Rect &o) {
-		Intersect(o.left, o.top, o.width(), o.height());
+		if (right < r.left) right = r.left;
+		else if (right > r.right) right = r.right;
 	}
 
 	// Union/Add this rect with another

@@ -461,7 +461,7 @@ void BaseSoftRenderSurface::GetClippingRect(Rect &r) const {
 void BaseSoftRenderSurface::SetClippingRect(const Rect &r) {
 	// What we need to do is to clip the clipping rect to the phyiscal screen
 	_clipWindow = r;
-	_clipWindow.Intersect(-_ox, -_oy, _width, _height);
+	_clipWindow.clip(Rect(-_ox, -_oy, -_ox + _width, -_oy + _height));
 }
 
 //
@@ -474,7 +474,7 @@ void BaseSoftRenderSurface::SetClippingRect(const Rect &r) {
 //
 int16 BaseSoftRenderSurface::CheckClipped(const Rect &c) const {
 	Rect r = c;
-	r.Intersect(_clipWindow);
+	r.clip(_clipWindow);
 
 	// Clipped away to the void
 	if (!r.IsValid()) return -1;

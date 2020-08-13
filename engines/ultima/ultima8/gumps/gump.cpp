@@ -237,7 +237,7 @@ void Gump::Paint(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 
 	// Set new clipping rect
 	Rect new_rect = _dims;
-	new_rect.Intersect(old_rect);
+	new_rect.clip(old_rect);
 	surf->SetClippingRect(new_rect);
 
 	// Paint This
@@ -309,7 +309,7 @@ void Gump::PaintCompositing(RenderSurface *surf, int32 lerp_factor,
 	// Set new clipping rect
 	Rect new_rect(_dims);
 	GumpRectToScreenSpace(new_rect, ROUND_OUTSIDE);
-	new_rect.Intersect(old_rect);
+	new_rect.clip(old_rect);
 	surf->SetClippingRect(new_rect);
 
 	// Iterate all children
