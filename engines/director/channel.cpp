@@ -356,16 +356,27 @@ bool Channel::updateWidget() {
 }
 
 void Channel::addRegistrationOffset(Common::Point &pos, bool subtract) {
-	if (_sprite->_cast && _sprite->_cast->_type == kCastBitmap) {
-		BitmapCastMember *bc = (BitmapCastMember *)(_sprite->_cast);
+	if (!_sprite->_cast)
+		return;
 
-		if (subtract) {
-			pos -= Common::Point(bc->_initialRect.left - bc->_regX,
-													 bc->_initialRect.top - bc->_regY);
-		} else {
-			pos += Common::Point(bc->_initialRect.left - bc->_regX,
-													 bc->_initialRect.top - bc->_regY);
+	switch (_sprite->_cast->_type) {
+	case kCastBitmap:
+		{
+			BitmapCastMember *bc = (BitmapCastMember *)(_sprite->_cast);
+
+			if (subtract)
+				pos -= Common::Point(bc->_initialRect.left - bc->_regX,
+															bc->_initialRect.top - bc->_regY);
+			else
+				pos += Common::Point(bc->_initialRect.left - bc->_regX,
+															bc->_initialRect.top - bc->_regY);
 		}
+		break;
+	case kCastDigitalVideo:
+		pos -= Common::Point(_sprite->_cast->_initialRect.width() >> 1, _sprite->_cast->_initialRect.height() >> 1);
+		break;
+	default:
+		break;
 	}
 }
 
