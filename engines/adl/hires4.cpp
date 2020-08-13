@@ -29,7 +29,7 @@
 #include "common/memstream.h"
 
 #include "adl/adl_v3.h"
-#include "adl/detection_enums.h"
+#include "adl/detection/detection_enums.h"
 #include "adl/display_a2.h"
 #include "adl/graphics.h"
 #include "adl/disk.h"

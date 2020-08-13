@@ -26,7 +26,7 @@
 #include "common/file.h"
 #include "common/stream.h"
 
-#include "scumm/detection.h"
+#include "scumm/detection/detection.h"
 
 namespace Scumm {
 

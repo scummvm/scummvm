@@ -30,7 +30,7 @@
 
 #include "agos/intern.h"
 #include "agos/agos.h"
-#include "agos/detection.h"
+#include "agos/detection/detection.h"
 #include "agos/obsolete.h"
 
 class AgosMetaEngineConnect : public AdvancedMetaEngineConnect {

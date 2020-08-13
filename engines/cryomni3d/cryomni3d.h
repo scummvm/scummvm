@@ -38,7 +38,7 @@
 #include "cryomni3d/font_manager.h"
 #include "cryomni3d/objects.h"
 #include "cryomni3d/sprites.h"
-#include "cryomni3d/detection_enums.h"
+#include "cryomni3d/detection/detection_enums.h"
 
 class OSystem;
 

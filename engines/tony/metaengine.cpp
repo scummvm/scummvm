@@ -29,7 +29,7 @@
 
 #include "tony/tony.h"
 #include "tony/game.h"
-#include "tony/detection.h"
+#include "tony/detection/detection.h"
 
 namespace Tony {
 

@@ -36,7 +36,7 @@
 
 #include "director/types.h"
 #include "director/util.h"
-#include "director/detection_enums.h"
+#include "director/detection/detection_enums.h"
 
 namespace Common {
 class MacResManager;

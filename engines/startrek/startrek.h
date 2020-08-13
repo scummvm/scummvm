@@ -48,7 +48,7 @@
 #include "startrek/object.h"
 #include "startrek/sound.h"
 #include "startrek/space.h"
-#include "startrek/detection_enums.h"
+#include "startrek/detection/detection_enums.h"
 
 
 using Common::SharedPtr;

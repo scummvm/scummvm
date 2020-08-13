@@ -27,7 +27,7 @@
 #include "engines/advancedDetector.h"
 
 #include "dreamweb/dreamweb.h"
-#include "dreamweb/detection.h"
+#include "dreamweb/detection/detection.h"
 
 class DreamWebMetaEngineConnect : public AdvancedMetaEngineConnect {
 public:

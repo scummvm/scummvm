@@ -31,14 +31,3 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
-
-# Detection objecs
-DETECT_OBJS += $(MODULE)/detection.o
-
-# Only include if building as a dynamic module.
-# Static module already has the contents.
-ifeq ($(ENABLE_QUEEN), DYNAMIC_PLUGIN)
-# External dependencies for detection.
-DETECT_OBJS += $(MODULE)/resource.o
-DETECT_OBJS += $(MODULE)/restables.o
-endif

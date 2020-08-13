@@ -168,15 +168,3 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
-
-# Detection objects
-DETECT_OBJS += $(MODULE)/detection.o
-
-# If this module is being built as a dynamic plugin,
-# add the additional dependencies of detection.
-# Otherwise, these are not added because they're already
-# present in the module objects.
-ifeq ($(ENABLE_SCUMM), DYNAMIC_PLUGIN)
-DETECT_OBJS += $(MODULE)/file.o
-DETECT_OBJS += $(MODULE)/file_nes.o
-endif

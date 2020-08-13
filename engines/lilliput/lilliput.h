@@ -27,7 +27,7 @@
 #include "lilliput/script.h"
 #include "lilliput/sound.h"
 #include "lilliput/stream.h"
-#include "lilliput/detection_enums.h"
+#include "lilliput/detection/detection_enums.h"
 
 #include "common/file.h"
 #include "common/rect.h"

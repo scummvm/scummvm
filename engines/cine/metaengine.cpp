@@ -32,7 +32,7 @@
 #include "cine/cine.h"
 #include "cine/various.h"
 
-#include "cine/detection.h"
+#include "cine/detection/detection.h"
 
 namespace Cine {
 

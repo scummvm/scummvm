@@ -26,7 +26,7 @@
 #include "adl/adl_v2.h"
 #include "adl/display.h"
 #include "adl/graphics.h"
-#include "adl/detection_enums.h"
+#include "adl/detection/detection_enums.h"
 
 namespace Adl {
 

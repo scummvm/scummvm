@@ -34,7 +34,7 @@
 
 #include "sword2/sword2.h"
 #include "sword2/saveload.h"
-#include "sword2/detection_internal.h"
+#include "sword2/detection/detection_internal.h"
 
 class Sword2MetaEngineConnect : public MetaEngineConnect {
 public:

@@ -30,8 +30,8 @@
 
 // Detection related files.
 #include "wintermute/base/base_detection_enums.h"
-#include "wintermute/detection.h"
-#include "engines/wintermute/detection_tables.h"
+#include "wintermute/detection/detection.h"
+#include "wintermute/detection/detection_tables.h"
 
 namespace Wintermute {
 

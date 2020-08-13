@@ -29,7 +29,6 @@ MODULE_OBJS := \
 	window_text_buffer.o \
 	window_text_grid.o \
 	adrift/adrift.o \
-	adrift/detection.o \
 	adrift/os_glk.o \
 	adrift/scdebug.o \
 	adrift/scevents.o \
@@ -57,7 +56,6 @@ MODULE_OBJS := \
 	adrift/sxglob.o \
 	adrift/sxutils.o \
 	advsys/advsys.o \
-	advsys/detection.o \
 	advsys/game.o \
 	advsys/glk_interface.o \
 	advsys/vm.o \
@@ -67,7 +65,6 @@ MODULE_OBJS := \
 	agt/agxfile.o \
 	agt/auxfile.o \
 	agt/debugcmd.o \
-	agt/detection.o \
 	agt/disassemble.o \
 	agt/exec.o \
 	agt/filename.o \
@@ -83,7 +80,6 @@ MODULE_OBJS := \
 	agt/util.o \
 	agt/vars.o \
 	alan2/alan2.o \
-	alan2/detection.o \
 	alan2/alan_version.o \
 	alan2/args.o \
 	alan2/debug.o \
@@ -113,7 +109,6 @@ MODULE_OBJS := \
 	alan3/current.o \
 	alan3/debug.o \
 	alan3/decode.o \
-	alan3/detection.o \
 	alan3/dictionary.o \
 	alan3/event.o \
 	alan3/exe.o \
@@ -150,7 +145,6 @@ MODULE_OBJS := \
 	archetype/archetype.o \
 	archetype/array.o \
 	archetype/crypt.o \
-	archetype/detection.o \
 	archetype/error.o \
 	archetype/expression.o \
 	archetype/game_stat.o \
@@ -171,7 +165,6 @@ MODULE_OBJS := \
 	comprehend/comprehend.o \
 	comprehend/debugger.o \
 	comprehend/debugger_dumper.o \
-	comprehend/detection.o \
 	comprehend/dictionary.o \
 	comprehend/draw_surface.o \
 	comprehend/file_buf.o \
@@ -184,7 +177,6 @@ MODULE_OBJS := \
 	comprehend/opcode_map.o \
 	comprehend/pics.o \
 	glulx/accel.o \
-	glulx/detection.o \
 	glulx/exec.o \
 	glulx/float.o \
 	glulx/funcs.o \
@@ -197,7 +189,6 @@ MODULE_OBJS := \
 	glulx/serial.o \
 	glulx/string.o \
 	glulx/vm.o \
-	hugo/detection.o \
 	hugo/heexpr.o \
 	hugo/heglk.o \
 	hugo/hemedia.o \
@@ -211,7 +202,6 @@ MODULE_OBJS := \
 	hugo/hugo.o \
 	hugo/resource_archive.o \
 	hugo/stringfn.o \
-	jacl/detection.o \
 	jacl/display.o \
 	jacl/encapsulate.o \
 	jacl/errors.o \
@@ -228,15 +218,12 @@ MODULE_OBJS := \
 	jacl/resolvers.o \
 	jacl/utils.o \
 	level9/bitmap.o \
-	level9/detection.o \
 	level9/level9.o \
 	level9/level9_main.o \
 	level9/os_glk.o \
-	magnetic/detection.o \
 	magnetic/emu.o \
 	magnetic/glk.o \
 	magnetic/magnetic.o \
-	quest/detection.o \
 	quest/geas_file.o \
 	quest/geas_glk.o \
 	quest/geas_runner.o \
@@ -246,9 +233,7 @@ MODULE_OBJS := \
 	quest/read_file.o \
 	quest/string.o \
 	quest/streams.o \
-	scott/detection.o \
 	scott/scott.o \
-	tads/detection.o \
 	tads/os_banners.o \
 	tads/os_buffer.o \
 	tads/os_glk.o \
@@ -291,7 +276,6 @@ MODULE_OBJS := \
 	tads/tads3/tads3.o \
 	zcode/bitmap_font.o \
 	zcode/config.o \
-	zcode/detection.o \
 	zcode/zcode.o \
 	zcode/glk_interface.o \
 	zcode/mem.o \
@@ -321,33 +305,3 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
-
-# Detection objects
-DETECT_OBJS += $(MODULE)/detection.o
-
-# If building as static, skip the below, as
-# they're already in the executable.
-
-ifeq ($(ENABLE_GLK), DYNAMIC_PLUGIN)
-# Sub-engine detection objects
-DETECT_OBJS += $(MODULE)/adrift/detection.o
-DETECT_OBJS += $(MODULE)/advsys/detection.o
-DETECT_OBJS += $(MODULE)/agt/detection.o
-DETECT_OBJS += $(MODULE)/alan2/detection.o
-DETECT_OBJS += $(MODULE)/alan3/detection.o
-DETECT_OBJS += $(MODULE)/archetype/detection.o
-DETECT_OBJS += $(MODULE)/comprehend/detection.o
-DETECT_OBJS += $(MODULE)/glulx/detection.o
-DETECT_OBJS += $(MODULE)/hugo/detection.o
-DETECT_OBJS += $(MODULE)/jacl/detection.o
-DETECT_OBJS += $(MODULE)/level9/detection.o
-DETECT_OBJS += $(MODULE)/magnetic/detection.o
-DETECT_OBJS += $(MODULE)/quest/detection.o
-DETECT_OBJS += $(MODULE)/scott/detection.o
-DETECT_OBJS += $(MODULE)/tads/detection.o
-DETECT_OBJS += $(MODULE)/zcode/detection.o
-
-# Dependencies of detection objects
-DETECT_OBJS += $(MODULE)/blorb.o
-DETECT_OBJS += $(MODULE)/advsys/game.o
-endif

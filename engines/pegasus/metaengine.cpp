@@ -28,7 +28,8 @@
 #include "common/savefile.h"
 
 #include "pegasus/pegasus.h"
-#include "pegasus/detection.h"
+#include "pegasus/detection/detection_enums.h"
+#include "pegasus/detection/detection.h"
 
 namespace Pegasus {
 

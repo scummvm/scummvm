@@ -133,13 +133,3 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
-
-# Detection objects
-DETECT_OBJS += $(MODULE)/detection/detection.o
-
-# Only include if building as a dynamic module.
-# Static module already has the contents.
-ifeq ($(ENABLE_GOB), DYNAMIC_PLUGIN)
-# External dependencies for detection.
-DETECT_OBJS += $(MODULE)/dataio.o
-endif

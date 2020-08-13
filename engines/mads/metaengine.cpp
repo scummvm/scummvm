@@ -35,7 +35,7 @@
 
 #include "mads/events.h"
 #include "mads/game.h"
-#include "mads/detection.h"
+#include "mads/detection/detection.h"
 
 #define MAX_SAVES 99
 

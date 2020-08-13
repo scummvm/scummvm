@@ -1,7 +1,5 @@
 MODULE := engines/agi/detection
 
-MODULE_OBJS :=
-
 # Detection objects
 DETECT_OBJS += $(MODULE)/detection.o
 

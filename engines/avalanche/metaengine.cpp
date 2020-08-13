@@ -33,7 +33,7 @@
 #include "engines/advancedDetector.h"
 #include "graphics/thumbnail.h"
 
-#include "avalanche/detection.h"
+#include "avalanche/detection/detection.h"
 
 
 namespace Avalanche {

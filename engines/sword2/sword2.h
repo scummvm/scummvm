@@ -39,7 +39,7 @@
 #include "common/events.h"
 #include "common/util.h"
 #include "common/random.h"
-#include "sword2/detection_enums.h"
+#include "sword2/detection/detection_enums.h"
 
 #define	MAX_starts	100
 #define	MAX_description	100

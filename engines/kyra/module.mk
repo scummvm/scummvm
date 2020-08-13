@@ -153,9 +153,6 @@ endif
 # Include common rules
 include $(srcdir)/rules.mk
 
-# Detection objects
-DETECT_OBJS += $(MODULE)/detection.o
-
 ifeq ($(BACKEND), maemo)
 #ugly workaround, screen.cpp crashes gcc version 3.4.4 (CodeSourcery ARM 2005q3-2) with anything but -O3
 $(MODULE)/graphics/screen.o: $(MODULE)/graphics/screen.cpp

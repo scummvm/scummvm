@@ -36,7 +36,7 @@
 
 #include "base/plugins.h"
 
-#include "kyra/detection.h"
+#include "kyra/detection/detection.h"
 
 class KyraMetaEngineConnect : public AdvancedMetaEngineConnect {
 public:

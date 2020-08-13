@@ -32,7 +32,7 @@
 
 #include "startrek/startrek.h"
 
-#include "startrek/detection.h"
+#include "startrek/detection/detection.h"
 
 namespace StarTrek {
 

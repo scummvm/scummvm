@@ -26,7 +26,7 @@
 #include "engines/advancedDetector.h"
 
 #include "lure/lure.h"
-#include "lure/detection.h"
+#include "lure/detection/detection.h"
 
 namespace Lure {
 

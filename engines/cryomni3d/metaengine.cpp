@@ -36,7 +36,7 @@
 #include "cryomni3d/versailles/engine.h"
 #endif
 
-#include "cryomni3d/detection.h"
+#include "cryomni3d/detection/detection.h"
 
 namespace CryOmni3D {
 

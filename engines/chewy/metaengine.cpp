@@ -27,7 +27,7 @@
 #include "engines/advancedDetector.h"
 
 #include "chewy/chewy.h"
-#include "chewy/detection.h"
+#include "chewy/detection/detection.h"
 
 namespace Chewy {
 

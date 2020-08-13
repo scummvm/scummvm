@@ -29,7 +29,7 @@
 #include "tinsel/tinsel.h"
 #include "tinsel/savescn.h"	// needed by TinselMetaEngine::
 
-#include "tinsel/detection.h"
+#include "tinsel/detection/detection.h"
 
 namespace Tinsel {
 

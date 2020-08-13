@@ -39,8 +39,8 @@
 #include "advancedDetector.h"
 
 #include "dm/console.h"
-#include "dm/detection_enums.h"
-#include "dm/detection.h"
+#include "dm/detection/detection_enums.h"
+#include "dm/detection/detection.h"
 
 struct ADGameDescription;
 

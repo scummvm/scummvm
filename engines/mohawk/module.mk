@@ -85,21 +85,3 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
-
-# Detection objects
-DETECT_OBJS += $(MODULE)/detection.o
-
-# If we're building a dynamic module, build the relevant
-# submodule. A static part already will have these, so
-# no need to add them again.
-ifeq ($(ENABLE_MOHAWK), DYNAMIC_PLUGIN)
-
-ifdef ENABLE_MYST
-DETECT_OBJS += $(MODULE)/myst_metaengine/metaengine.o
-endif
-
-ifdef ENABLE_RIVEN
-DETECT_OBJS += $(MODULE)/riven_metaengine/metaengine.o
-endif
-
-endif
