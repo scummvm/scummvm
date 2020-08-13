@@ -1357,7 +1357,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			warning("Setting movieTime for non-digital video");
 		break;
 	case kThePattern:
-		if (d.asInt() != sprite->getPattern()){
+		if (d.asInt() != sprite->getPattern()) {
 			sprite->setPattern(d.asInt());
 			channel->_dirty = true;
 		}
