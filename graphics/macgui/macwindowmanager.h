@@ -83,7 +83,8 @@ enum {
 	kWMModeUnicode			= (1 << 4),
 	kWMModeManualDrawWidgets= (1 << 5),
 	kWMModeFullscreen       = (1 << 6),
-	kWMModeButtonDialogStyle= (1 << 7)
+	kWMModeButtonDialogStyle= (1 << 7),
+	kWMMode32bpp			= (1 << 8)
 };
 
 }
@@ -334,6 +335,7 @@ private:
 public:
 	TransparentSurface *_desktopBmp;
 	ManagedSurface *_desktop;
+	PixelFormat _pixelformat;
 
 	ManagedSurface *_screen;
 	ManagedSurface *_screenCopy;

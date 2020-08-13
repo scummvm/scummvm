@@ -120,13 +120,13 @@ void MacWindow::resize(int w, int h, bool inner) {
 	}
 
 	_composeSurface->free();
-	_composeSurface->create(_innerDims.width(), _innerDims.height(), PixelFormat::createFormatCLUT8());
+	_composeSurface->create(_innerDims.width(), _innerDims.height(), _wm->_pixelformat);
 
 	if (_hasPattern)
 		drawPattern();
 
 	_borderSurface.free();
-	_borderSurface.create(_dims.width(), _dims.height(), PixelFormat::createFormatCLUT8());
+	_borderSurface.create(_dims.width(), _dims.height(), _wm->_pixelformat);
 
 	_contentIsDirty = true;
 	_borderIsDirty = true;
@@ -426,7 +426,7 @@ void MacWindow::loadBorder(Common::SeekableReadStream &file, bool active, Border
 	bmpDecoder.loadStream(file);
 	source = bmpDecoder.getSurface()->convertTo(surface->getSupportedPixelFormat(), bmpDecoder.getPalette());
 
-	surface->create(source->w, source->h, surface->getSupportedPixelFormat());
+	surface->create(source->w, source->h, _wm->_pixelformat);
 	surface->copyFrom(*source);
 
 	source->free();
@@ -459,7 +459,7 @@ void MacWindow::setBorder(Graphics::TransparentSurface *surface, bool active, Bo
 		_macBorder.setOffsets(offsets);
 		updateOuterDims();
 		_borderSurface.free();
-		_borderSurface.create(_dims.width(), _dims.height(), PixelFormat::createFormatCLUT8());
+		_borderSurface.create(_dims.width(), _dims.height(), _wm->_pixelformat);
 	}
 
 	_borderIsDirty = true;

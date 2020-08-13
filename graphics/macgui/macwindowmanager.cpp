@@ -192,6 +192,11 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns) {
 	_palette = nullptr;
 	_paletteSize = 0;
 
+	if (mode & kWMMode32bpp)
+		_pixelformat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	else
+		_pixelformat = PixelFormat::createFormatCLUT8();
+
 	if (patterns) {
 		_patterns = *patterns;
 	} else {
@@ -239,7 +244,7 @@ void MacWindowManager::setScreen(ManagedSurface *screen) {
 	else
 		_desktop = new ManagedSurface();
 
-	_desktop->create(_screen->w, _screen->h, PixelFormat::createFormatCLUT8());
+	_desktop->create(_screen->w, _screen->h, _pixelformat);
 	drawDesktop();
 }
 
@@ -250,7 +255,7 @@ void MacWindowManager::setScreen(int w, int h) {
 		_desktop = new ManagedSurface();
 
 	_screenDims = Common::Rect(w, h);
-	_desktop->create(w, h, PixelFormat::createFormatCLUT8());
+	_desktop->create(w, h, _pixelformat);
 	drawDesktop();
 }
 
@@ -485,7 +490,7 @@ void MacWindowManager::draw() {
 		Common::Rect screen = getScreenBounds();
 		if (_desktop->w != screen.width() || _desktop->h != screen.height()) {
 			_desktop->free();
-			_desktop->create(screen.width(), screen.height(), PixelFormat::createFormatCLUT8());
+			_desktop->create(screen.width(), screen.height(), _pixelformat);
 			drawDesktop();
 		}
 
