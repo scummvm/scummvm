@@ -61,6 +61,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	DebugMan.addDebugChannel(kDebugPreprocess, "preprocess", "Lingo preprocessing");
 	DebugMan.addDebugChannel(kDebugScreenshot, "screenshot", "screenshot each frame");
 	DebugMan.addDebugChannel(kDebugDesktop, "desktop", "Show the Classic Mac desktop");
+	DebugMan.addDebugChannel(kDebug32bpp, "32bpp", "Work in 32bpp mode");
 
 	g_director = this;
 
@@ -133,7 +134,7 @@ void DirectorEngine::setCurrentMovie(Movie *movie) {
 void DirectorEngine::setVersion(uint16 version) {
 	if (version == _version)
 		return;
-	
+
 	debug("Switching to Director v%d", version);
 	_version = version;
 	_lingo->reloadBuiltIns();
@@ -155,6 +156,10 @@ Common::Error DirectorEngine::run() {
 	_soundManager = nullptr;
 
 	wmMode = debugChannelSet(-1, kDebugDesktop) ? wmModeDesktop : wmModeFullscreen;
+
+	if (debugChannelSet(-1, kDebug32bpp))
+		wmMode |= Graphics::kWMMode32bpp;
+
 	_wm = new Graphics::MacWindowManager(wmMode, &_director3QuickDrawPatterns);
 	_wm->setEngine(this);
 
