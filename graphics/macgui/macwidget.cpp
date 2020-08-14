@@ -43,7 +43,7 @@ MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, MacWindowMan
 	if (parent)
 		parent->_children.push_back(this);
 
-	_composeSurface = new ManagedSurface(_dims.width(), _dims.height());
+	_composeSurface = new ManagedSurface(_dims.width(), _dims.height(), _wm->_pixelformat);
 	_composeSurface->clear(_bgcolor);
 
 	_active = false;
