@@ -42,6 +42,9 @@ BaseRenderer3D *makeOpenGL3DRenderer(BaseGame *inGame) {
 BaseRenderOpenGL3D::BaseRenderOpenGL3D(BaseGame *inGame)
 	: BaseRenderer3D(inGame), _spriteBatchMode(false)  {
 	setDefaultAmbientLightColor();
+
+	_lightPositions.resize(maximumLightsCount());
+	_lightDirections.resize(maximumLightsCount());
 }
 
 BaseRenderOpenGL3D::~BaseRenderOpenGL3D() {
@@ -106,16 +109,19 @@ void BaseRenderOpenGL3D::disableLight(int index) {
 }
 
 void BaseRenderOpenGL3D::setLightParameters(int index, const Math::Vector3d &position, const Math::Vector3d &direction, const Math::Vector4d &diffuse, bool spotlight) {
-	resetModelViewTransform();
-
 	float zero[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 	glLightfv(GL_LIGHT0 + index, GL_DIFFUSE, diffuse.getData());
 	glLightfv(GL_LIGHT0 + index, GL_AMBIENT, zero);
 	glLightfv(GL_LIGHT0 + index, GL_SPECULAR, zero);
-	glLightfv(GL_LIGHT0 + index, GL_POSITION, position.getData());
+
+	_lightPositions[index].x() = position.x();
+	_lightPositions[index].y() = position.y();
+	_lightPositions[index].z() = position.z();
+	_lightPositions[index].w() = 1.0f;
 
 	if (spotlight) {
+		_lightDirections[index] = direction;
 		glLightfv(GL_LIGHT0 + index, GL_SPOT_DIRECTION, direction.getData());
 
 		glLightf(GL_LIGHT0 + index, GL_SPOT_EXPONENT, 1.0f);
@@ -384,6 +390,11 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D *camera, bool force) {
 			glGetFloatv(GL_MODELVIEW_MATRIX, _lastViewMatrix.getData());
 		}
 
+		for (int i = 0; i < maximumLightsCount(); ++i) {
+			glLightfv(GL_LIGHT0 + i, GL_POSITION, _lightPositions[i].getData());
+			glLightfv(GL_LIGHT0 + i, GL_SPOT_DIRECTION, _lightDirections[i].getData());
+		}
+
 		FogParameters fogParameters;
 		_gameRef->getFogParams(fogParameters);
 
@@ -590,8 +601,6 @@ void BaseRenderOpenGL3D::renderSceneGeometry(const BaseArray<AdWalkplane *> &pla
 
 		generics[i]->_mesh->render();
 	}
-
-	_gameRef->_renderer3D->resetModelViewTransform();
 
 	for (uint i = 0; i < lights.size(); ++i) {
 		if (!lights[i]->_active) {

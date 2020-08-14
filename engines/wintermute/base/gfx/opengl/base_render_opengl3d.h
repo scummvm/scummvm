@@ -121,6 +121,8 @@ public:
 	ShadowVolume *createShadowVolume() override;
 
 private:
+	Common::Array<Math::Vector4d> _lightPositions;
+	Common::Array<Math::Vector3d> _lightDirections;
 	float _fov;
 	bool _spriteBatchMode;
 	bool _state3D;
