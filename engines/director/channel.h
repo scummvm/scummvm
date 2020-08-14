@@ -56,6 +56,7 @@ public:
 	void setBbox(int l, int t, int r, int b);
 	void setCast(uint16 castId);
 	void setClean(Sprite *nextSprite, int spriteId, bool partial = false);
+	void setEditable(bool editable);
 	void replaceSprite(Sprite *nextSprite);
 	void replaceWidget();
 	bool updateWidget();

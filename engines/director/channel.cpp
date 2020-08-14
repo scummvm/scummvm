@@ -280,7 +280,21 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 		_sprite->updateCast();
 		replaceWidget();
 	}
+
+	setEditable(_sprite->_editable);
+
 	_dirty = false;
+}
+
+void Channel::setEditable(bool editable) {
+	if (_sprite->_cast && _sprite->_cast->_type == kCastText) {
+		_sprite->_cast->setEditable(editable);
+
+		if (_widget) {
+			_widget->_editable = editable;
+			g_director->_wm->setActiveWidget(_widget);
+		}
+	}
 }
 
 void Channel::replaceSprite(Sprite *nextSprite) {
