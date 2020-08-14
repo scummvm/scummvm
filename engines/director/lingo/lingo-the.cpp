@@ -190,8 +190,10 @@ TheEntityField fields[] = {
 	{ kTheSprite,	"width",		kTheWidth,		200 },// D2 p
 
 	// Common cast fields
+	{ kTheCast,		"backColor",	kTheBackColor,	400 },//				D4 p
 	{ kTheCast,		"castType",		kTheCastType,	400 },//				D4 p
 	{ kTheCast,		"filename",		kTheFileName,	400 },//				D4 p
+	{ kTheCast,		"foreColor",	kTheForeColor,	400 },//				D4 p
 	{ kTheCast,		"height",		kTheHeight,		400 },//				D4 p
 	{ kTheCast,		"loaded",		kTheLoaded,		400 },//				D4 p
 	{ kTheCast,		"modified",		kTheModified,	400 },//				D4 p
@@ -200,11 +202,8 @@ TheEntityField fields[] = {
 	{ kTheCast,		"rect",			kTheRect,		400 },//				D4 p
 	{ kTheCast,		"purgePriority",kThePurgePriority,400 },//				D4 p // 0 Never purge, 1 Purge Last, 2 Purge next, 2 Purge normal
 	{ kTheCast,		"scriptText",	kTheScriptText,	400 },//				D4 p
+	{ kTheCast,		"size",			kTheSize,		300 },//		D3.1 p
 	{ kTheCast,		"width",		kTheWidth,		400 },//				D4 p
-
-	// Shape fields
-	{ kTheCast,		"backColor",	kTheBackColor,	400 },//				D4 p
-	{ kTheCast,		"foreColor",	kTheForeColor,	400 },//				D4 p
 
 	// Digital video fields
 	{ kTheCast,		"center",		kTheCenter,		400 },//				D4 p
@@ -232,11 +231,18 @@ TheEntityField fields[] = {
 
 	// TextCastMember fields
 	{ kTheCast,		"hilite",		kTheHilite,		200 },// D2 p
-	{ kTheCast,		"size",			kTheSize,		300 },//		D3.1 p
 	{ kTheCast,		"text",			kTheText,		200 },// D2 p
+	{ kTheCast,		"textAlign",	kTheTextAlign,	300 },//		D3 p
+	{ kTheCast,		"textFont",		kTheTextFont,	300 },//		D3 p
+	{ kTheCast,		"textHeight",	kTheTextHeight,	300 },//		D3 p
+	{ kTheCast,		"textSize",		kTheTextSize,	300 },//		D3 p
+	{ kTheCast,		"textStyle",	kTheTextStyle,	300 },//		D3 p
 
 	// Field fields
-	{ kTheField,	"text",			kTheText,		300 },// 		D3 p undocumented
+	{ kTheField,	"foreColor",	kTheForeColor,	400 },//				D4 p
+	{ kTheField,	"hilite",		kTheHilite,		200 },// D2 p
+	{ kTheField,	"name",			kTheName,		300 },//		D3 p
+	{ kTheField,	"text",			kTheText,		200 },// D2 p
 	{ kTheField,	"textAlign",	kTheTextAlign,	300 },//		D3 p
 	{ kTheField,	"textFont",		kTheTextFont,	300 },//		D3 p
 	{ kTheField,	"textHeight",	kTheTextHeight,	300 },//		D3 p
