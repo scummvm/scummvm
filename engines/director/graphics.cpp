@@ -788,7 +788,10 @@ bool DirectorEngine::setPalette(int id) {
 }
 
 void DirectorEngine::setPalette(byte *palette, uint16 count) {
-	_system->getPaletteManager()->setPalette(palette, 0, count);
+	// Pass the palette to OSystem only for 8bpp mode
+	if (_pixelformat.bytesPerPixel == 1)
+		_system->getPaletteManager()->setPalette(palette, 0, count);
+
 	_currentPalette = palette;
 	_currentPaletteLength = count;
 
