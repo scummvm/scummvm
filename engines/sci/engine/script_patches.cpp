@@ -4301,6 +4301,45 @@ static const SciScriptPatcherEntry islandBrainSignatures[] = {
 };
 
 // ===========================================================================
+// In KQ4 1.000.111, falling down the lower stairs in room 90 sends a message to
+//  a non-object, which also crashes the original. It appears that the fragment
+//  of code which instantiated the Sound object was accidentally deleted from
+//  the script. This line was intact in the previous version and in later
+//  versions it was rewritten to use a new local Sound object. We fix this by
+//  jumping from the broken code into the sound code in fallingToDeath, which
+//  correctly plays the same sound.
+//
+// Applies to: PC 1.000.111
+// Responsible method: fallingDown:changeState(0)
+static const uint16 kq4SignatureFallDownStairs[] = {
+	SIG_MAGICDWORD,
+	0x83, 0x01,                      // lal 01  [ not set, zero ]
+	0x4a, 0x10,                      // send 10 [ local1 number: 51 loop: 1 play: ]
+	SIG_ADDTOOFFSET(+0x0108),
+	0x38, SIG_SELECTOR16(new),       // pushi new
+	0x76,                            // push0
+	0x51, 0x31,                      // push Sound
+	0x4a, 0x04,                      // send 04  [ Sound new: ]
+	0x4a, 0x10,                      // send 10  [ sound number: 51 loop: 1 play: ]
+	0x32, SIG_UINT16(0x0040),        // jmp 0040 [ end of method ]
+	SIG_END
+};
+
+static const uint16 kq4PatchFallDownStairs[] = {
+	0x32, PATCH_UINT16(0x0109),      // jmp 0109
+	PATCH_ADDTOOFFSET(+0x0111),
+	0xa2, PATCH_UINT16(0x0001),      // sal 0001 [ local1 = the new sound ]
+	0x4a, 0x10,                      // send 10  [ local1 number: 51 loop: 1 play: ]
+	PATCH_END
+};
+
+//          script, description,                                      signature                                 patch
+static const SciScriptPatcherEntry kq4Signatures[] = {
+	{  true,    90, "fall down stairs",                            1, kq4SignatureFallDownStairs,               kq4PatchFallDownStairs },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
 // At least during the harpy scene, export 29 of script 0 is called and has an
 //  issue where temp[3] won't get inititialized, but is later used to set
 //  master volume. This makes SSCI set the volume to max. We fix the procedure,
@@ -19865,6 +19904,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 		break;
 	case GID_ISLANDBRAIN:
 		signatureTable = islandBrainSignatures;
+		break;
+	case GID_KQ4:
+		signatureTable = kq4Signatures;
 		break;
 	case GID_KQ5:
 		signatureTable = kq5Signatures;
