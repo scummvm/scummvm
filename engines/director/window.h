@@ -117,7 +117,7 @@ class Window : public Graphics::MacWindow, public Object<Window> {
 	Movie *getCurrentMovie() const { return _currentMovie; }
 	Common::String getCurrentPath() const { return _currentPath; }
 
-	virtual void setVisible(bool visible, bool silent = false);
+	virtual void setVisible(bool visible, bool silent = false) override;
 	bool setNextMovie(Common::String &movieFilenameRaw);
 
 	void setWindowType(int type) { _windowType = type; updateBorderType(); }
@@ -130,7 +130,7 @@ class Window : public Graphics::MacWindow, public Object<Window> {
 	bool step();
 
 	// events.cpp
-	virtual bool processEvent(Common::Event &event);
+	virtual bool processEvent(Common::Event &event) override;
 
 	// tests.cpp
 	Common::HashMap<Common::String, Movie *> *scanMovies(const Common::String &folder);
