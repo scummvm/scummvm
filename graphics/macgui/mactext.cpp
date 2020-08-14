@@ -238,9 +238,9 @@ void MacText::init() {
 
 	_cursorRect = new Common::Rect(0, 0, 1, 0);
 
-	_cursorSurface = new ManagedSurface(1, kCursorMaxHeight);
+	_cursorSurface = new ManagedSurface(1, kCursorMaxHeight, _wm->_pixelformat);
 	_cursorSurface->clear(_wm->_colorBlack);
-	_cursorSurface2 = new ManagedSurface(1, kCursorMaxHeight);
+	_cursorSurface2 = new ManagedSurface(1, kCursorMaxHeight, _wm->_pixelformat);
 	_cursorSurface2->clear(_bgcolor);
 
 	reallocSurface();
@@ -510,14 +510,14 @@ void MacText::reallocSurface() {
 	//int requiredH = (_text.size() + (_text.size() * 10 + 9) / 10) * lineH
 
 	if (!_surface) {
-		_surface = new ManagedSurface(_textMaxWidth, _textMaxHeight);
+		_surface = new ManagedSurface(_textMaxWidth, _textMaxHeight, _wm->_pixelformat);
 
 		return;
 	}
 
 	if (_surface->w < _textMaxWidth || _surface->h < _textMaxHeight) {
 		// realloc surface and copy old content
-		ManagedSurface *n = new ManagedSurface(_textMaxWidth, _textMaxHeight);
+		ManagedSurface *n = new ManagedSurface(_textMaxWidth, _textMaxHeight, _wm->_pixelformat);
 		n->clear(_bgcolor);
 		n->blitFrom(*_surface, Common::Point(0, 0));
 
