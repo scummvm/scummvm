@@ -1433,491 +1433,119 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 
 Datum Lingo::getTheCast(Datum &id1, int field) {
 	Datum d;
-	int id = g_lingo->castIdFetch(id1);
 
 	Movie *movie = _vm->getCurrentMovie();
-	// Setting default type
-	d.type = INT;
-
 	if (!movie) {
 		warning("Lingo::getTheCast(): No movie loaded");
 		return d;
 	}
 
-	CastMember *member = _vm->getCurrentMovie()->getCastMember(id);
+	int id = g_lingo->castIdFetch(id1);
+
+	CastMember *member = movie->getCastMember(id);
 	if (!member) {
 		if (field == kTheLoaded) {
-			d.u.i = 0;
+			d = 0;
 		} else {
-			warning("Lingo::getTheCast(): CastMember %d not found", id);
+			warning("Lingo::getTheCast(): CastMember %s not found", id1.asString().c_str());
 		}
 		return d;
 	}
-	Cast *cast = member->getCast();
 
-	CastType castType = member->_type;
-	CastMemberInfo *castInfo = cast->getCastMemberInfo(id);
-	if (!castInfo)
-		warning("Lingo::getTheCast(): CastMember info for %d not found", id);
-
-	switch (field) {
-	case kTheBackColor:
-		d.u.i = member->getBackColor();
-		break;
-	case kTheCastType:
-		d.u.i = castType;
-		break;
-	case kTheCenter:
-		if (castType == kCastDigitalVideo) {
-			d.u.i = ((DigitalVideoCastMember *)member)->_center ? 1 : 0;
-		} else {
-			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheController:
-		if (castType == kCastDigitalVideo) {
-			d.u.i = ((DigitalVideoCastMember *)member)->_showControls ? 1 : 0;
-		} else {
-			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheCrop:
-		if (castType == kCastDigitalVideo) {
-			d.u.i = ((DigitalVideoCastMember *)member)->_crop ? 1 : 0;
-		} else {
-			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheDepth:
-		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
-		break;
-	case kTheDirectToStage:
-		if (castType == kCastDigitalVideo) {
-			d.u.i = ((DigitalVideoCastMember *)member)->_directToStage ? 1 : 0;
-		} else {
-			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheDuration:
-		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
-		break;
-	case kTheFileName:
-		if (castInfo)
-			d = Datum(castInfo->fileName);
-		break;
-	case kTheForeColor:
-		d.u.i = member->getForeColor();
-		break;
-	case kTheFrameRate:
-		if (castType == kCastDigitalVideo) {
-			d.u.i = ((DigitalVideoCastMember *)member)->_frameRate;
-		} else {
-			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheHeight:
-		d.u.i = cast->getCastMemberInitialRect(id).height();
-		break;
-	case kTheHilite:
-		d.u.i = member->_hilite;
-		break;
-	case kTheLoaded:
-		d.u.i = 1; //Not loaded handled above
-		break;
-	case kTheLoop:
-		if (castType == kCastDigitalVideo) {
-			d.u.i = ((DigitalVideoCastMember *)member)->_looping ? 1 : 0;
-		} else {
-			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheModified:
-		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
-		break;
-	case kTheName:
-		if (castInfo)
-			d = Datum(castInfo->name);
-		break;
-	case kTheNumber:
-		d.u.i = id;
-		break;
-	case kThePausedAtStart:
-		if (castType == kCastDigitalVideo) {
-			d.u.i = ((DigitalVideoCastMember *)member)->_pausedAtStart ? 1 : 0;
-		} else {
-			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kThePreLoad:
-		if (castType == kCastDigitalVideo) {
-			d.u.i = ((DigitalVideoCastMember *)member)->_preload ? 1 : 0;
-		} else {
-			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheRect:
-		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
-		break;
-	case kTheRegPoint:
-		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
-		break;
-	case kThePalette:
-		if (member->_type == kCastBitmap)
-			d.u.i = ((BitmapCastMember *)member)->_clut;
-		break;
-	case kThePicture:
-		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
-		break;
-	case kThePurgePriority:
-		d.u.i = member->_purgePriority;
-		break;
-	case kTheScriptText:
-		if (castInfo)
-			d = Datum(castInfo->script);
-		break;
-	case kTheSize:
-		d.u.i = member->_size;
-		break;
-	case kTheSound:
-		if (castType == kCastDigitalVideo) {
-			d.u.i = ((DigitalVideoCastMember *)member)->_enableSound ? 1 : 0;
-		} else {
-			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheText:
-		{
-			Common::String text;
-			if (castType == kCastText) {
-				if (member && member->_type == kCastText) {
-					text = ((TextCastMember *)member)->getText();
-				} else {
-					warning("Lingo::getTheCast(): Unknown STXT cast id %d", id);
-				}
-			} else {
-				warning("Lingo::getTheCast(): Unprocessed getting text of cast %d type %d", id, castType);
-			}
-			d = Datum(text);
-		}
-		break;
-	case kTheVideo:
-		if (castType == kCastDigitalVideo) {
-			d.u.i = ((DigitalVideoCastMember *)member)->_enableVideo ? 1 : 0;
-		} else {
-			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheWidth:
-		d.u.i = cast->getCastMemberInitialRect(id).width();
-		break;
-	default:
-		warning("Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
-		d.type = VOID;
-	//TODO find out about String fields
+	if (!member->hasField(field)) {
+		warning("Lingo::getTheCast(): CastMember %d has no property '%s'", id, field2str(field));
+		return d;
 	}
+
+	d = member->getField(field);
 
 	return d;
 }
 
 void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
-	int id = 0;
-
-	if (id1.type == INT) {
-		id = id1.u.i;
-	} else if (id1.type == STRING) {
-		id = g_lingo->castIdFetch(id1);
-	} else {
-		warning("Lingo::setTheCast(): Unknown the cast id type: %s", id1.type2str());
+	Movie *movie = _vm->getCurrentMovie();
+	if (!movie) {
+		warning("Lingo::setTheCast(): No movie loaded");
 		return;
 	}
 
-	CastMember *member = _vm->getCurrentMovie()->getCastMember(id);
+	int id = g_lingo->castIdFetch(id1);
+
+	CastMember *member = movie->getCastMember(id);
 	if (!member) {
-		warning("Lingo::setTheCast(): CastMember id %d doesn't exist", id);
+		warning("Lingo::setTheCast(): CastMember %d not found", id);
 		return;
 	}
-	Cast *cast = member->getCast();
-	CastType castType = member->_type;
-	CastMemberInfo *castInfo = cast->getCastMemberInfo(id);
 
-	switch (field) {
-	case kTheBackColor:
-		if (castType == kCastText) {
-			int color = _vm->transformColor(d.asInt());
-			member->setColors(nullptr, &color);
-		}
-		break;
-	case kTheCastType:
-		warning("Lingo::setTheCast(): Attempt to set read-only field %s of cast %d", entity2str(field), id);
-		break;
-	case kTheCenter:
-		if (castType == kCastDigitalVideo) {
-			((DigitalVideoCastMember *)member)->_center = (bool)d.asInt();
-		} else {
-			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheController:
-		if (castType == kCastDigitalVideo) {
-			((DigitalVideoCastMember *)member)->_showControls = (bool)d.asInt();
-		} else {
-			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheCrop:
-		if (castType == kCastDigitalVideo) {
-			((DigitalVideoCastMember *)member)->_crop = (bool)d.asInt();
-		} else {
-			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheDepth:
-		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
-		break;
-	case kTheDirectToStage:
-		if (castType == kCastDigitalVideo) {
-			((DigitalVideoCastMember *)member)->_directToStage = (bool)d.asInt();
-		} else {
-			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheDuration:
-		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
-		break;
-	case kTheFileName:
-		if (!castInfo) {
-			warning("Lingo::setTheCast(): The cast %d not found. type: %d", id, castType);
-			return;
-		}
-		castInfo->fileName = d.asString();
-		break;
-	case kTheForeColor:
-		if (castType == kCastText) {
-			int color = _vm->transformColor(d.asInt());
-			member->setColors(&color, nullptr);
-		}
-		break;
-	case kTheFrameRate:
-		if (castType == kCastDigitalVideo) {
-			((DigitalVideoCastMember *)member)->_frameRate = d.asInt();
-			((DigitalVideoCastMember *)member)->setFrameRate(d.asInt());
-		} else {
-			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheHeight:
-		warning("Lingo::setTheCast(): Attempt to set read-only field \"%s\" of cast %d", field2str(field), id);
-		break;
-	case kTheHilite:
-		// TODO: Understand how texts can be selected programmatically as well.
-		if (member->_type == kCastButton) {
-			TextCastMember *button = (TextCastMember *)member;
-			if ((bool)d.asInt() !=  member->_hilite) {
-				button->_hilite = !!d.asInt();
-			}
-		} else {
-			warning("Lingo::setTheCast: Attempted to set hilite of unsupported cast type");
-		}
-		break;
-	case kTheLoop:
-		if (castType == kCastDigitalVideo) {
-			((DigitalVideoCastMember *)member)->_looping = (bool)d.asInt();
-		} else {
-			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheName:
-		if (!castInfo) {
-			warning("Lingo::setTheCast(): The cast %d not found. type: %d", id, castType);
-			return;
-		}
-		castInfo->name = d.asString();
-		break;
-	case kThePausedAtStart:
-		if (castType == kCastDigitalVideo) {
-			((DigitalVideoCastMember *)member)->_pausedAtStart = (bool)d.asInt();
-		} else {
-			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kThePreLoad:
-		if (castType == kCastDigitalVideo) {
-			((DigitalVideoCastMember *)member)->_preload = (bool)d.asInt();
-		} else {
-			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheRect:
-		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
-		break;
-	case kTheRegPoint:
-		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
-		break;
-	case kThePalette:
-		if (member->_type == kCastBitmap)
-			((BitmapCastMember *)member)->_clut = d.asInt();
-		break;
-	case kThePicture:
-		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
-		break;
-	case kThePurgePriority:
-		member->_purgePriority = CLIP<int>(d.asInt(), 0, 3);
-		break;
-	case kTheScriptText:
-		if (!castInfo) {
-			warning("Lingo::setTheCast(): The cast %d not found. type: %d", id, castType);
-			return;
-		}
-		cast->_lingoArchive->addCode(d.u.s->c_str(), kCastScript, id);
-		castInfo->script = d.asString();
-		break;
-	case kTheSound:
-		if (castType == kCastDigitalVideo) {
-			((DigitalVideoCastMember *)member)->_enableSound = (bool)d.asInt();
-		} else {
-			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheText:
-		if (castType == kCastText) {
-			if (member->_type == kCastText) {
-				((TextCastMember *)member)->setText(d.asString().c_str());
-			} else {
-				warning("Lingo::setTheCast(): Unknown STXT cast id %d", id);
-				return;
-			}
-		} else {
-			warning("Lingo::setTheCast(): Unprocessed setting text of cast %d type %d", id, castType);
-		}
-		break;
-	case kTheVideo:
-		if (castType == kCastDigitalVideo) {
-			((DigitalVideoCastMember *)member)->_enableVideo = (bool)d.asInt();
-		} else {
-			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheWidth:
-		warning("Lingo::setTheCast(): Attempt to set read-only field \"%s\" of cast %d", field2str(field), id);
-		break;
-	default:
-		warning("Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
+	if (!member->hasField(field)) {
+		warning("Lingo::setTheCast(): CastMember %d has no property '%s'", id, field2str(field));
+		return;
 	}
+
+	member->setField(field, d);
 }
 
 Datum Lingo::getTheField(Datum &id1, int field) {
 	Datum d;
+
+	Movie *movie = _vm->getCurrentMovie();
+	if (!movie) {
+		warning("Lingo::getTheField(): No movie loaded");
+		return d;
+	}
+
 	int id = g_lingo->castIdFetch(id1);
 
-	CastMember *member = _vm->getCurrentMovie()->getCastMember(id);
+	CastMember *member = movie->getCastMember(id);
 	if (!member) {
-		warning("Lingo::getTheField(): CastMember id %d doesn't exist", id);
+		if (field == kTheLoaded) {
+			d = 0;
+		} else {
+			warning("Lingo::getTheField(): CastMember %d not found", id);
+		}
 		return d;
-	} else if (member->_type != kCastText) {
-		warning("Lingo::getTheField(): CastMember id %d is not a field", id);
+	}
+	if (member->_type != kCastText) {
+		warning("Lingo::getTheField(): CastMember %d is not a field", id);
 		return d;
 	}
 
-	switch (field) {
-	case kTheText:
-		warning("Lingo::getTheField(): Unprocessed getting field \"%s\" of field %d", field2str(field), id);
-		break;
-	case kTheTextAlign:
-		d.type = STRING;
-		switch (((TextCastMember *)member)->_textAlign) {
-		case kTextAlignLeft:
-			d.u.s = new Common::String("left");
-			break;
-		case kTextAlignCenter:
-			d.u.s = new Common::String("center");
-			break;
-		case kTextAlignRight:
-			d.u.s = new Common::String("right");
-			break;
-		default:
-			warning("Lingo::getTheField: Invalid text align spec");
-			break;
-		}
-		break;
-	case kTheTextFont:
-		warning("Lingo::getTheField(): Unprocessed getting field \"%s\" of field %d", field2str(field), id);
-		break;
-	case kTheTextHeight:
-		warning("Lingo::getTheField(): Unprocessed getting field \"%s\" of field %d", field2str(field), id);
-		break;
-	case kTheTextSize:
-		warning("Lingo::getTheField(): Unprocessed getting field \"%s\" of field %d", field2str(field), id);
-		break;
-	case kTheTextStyle:
-		warning("Lingo::getTheField(): Unprocessed getting field \"%s\" of field %d", field2str(field), id);
-		break;
-	default:
-		warning("Lingo::getTheField(): Unprocessed getting field \"%s\" of field %d", field2str(field), id);
+
+	if (!member->hasField(field)) {
+		warning("Lingo::getTheField(): CastMember %d has no property '%s'", id, field2str(field));
+		return d;
 	}
+
+	d = member->getField(field);
 
 	return d;
 }
 
 void Lingo::setTheField(Datum &id1, int field, Datum &d) {
-	int id = 0;
-
-	if (id1.type == INT) {
-		id = id1.u.i;
-	} else if (id1.type == STRING) {
-		id = g_lingo->castIdFetch(id1);
-	} else {
-		warning("Lingo::setTheField(): Unknown the cast id type: %s", id1.type2str());
+	Movie *movie = _vm->getCurrentMovie();
+	if (!movie) {
+		warning("Lingo::setTheField(): No movie loaded");
 		return;
 	}
 
-	CastMember *member = _vm->getCurrentMovie()->getCastMember(id);
+	int id = g_lingo->castIdFetch(id1);
+
+	CastMember *member = movie->getCastMember(id);
 	if (!member) {
-		warning("Lingo::setTheField(): CastMember id %d doesn't exist", id);
+		warning("Lingo::setTheField(): CastMember %d not found", id);
 		return;
-	} else if (member->_type != kCastText) {
-		warning("Lingo::setTheField(): CastMember id %d is not a field", id);
+	}
+	if (member->_type != kCastText) {
+		warning("Lingo::setTheField(): CastMember %d is not a field", id);
+		return;
 	}
 
-	switch (field) {
-	case kTheText:
-		warning("Lingo::setTheField(): Unprocessed setting field \"%s\" of field %d", field2str(field), id);
-		break;
-	case kTheTextAlign:
-		{
-			Common::String select = d.asString(true);
-			select.toLowercase();
-
-			TextAlignType align;
-			if (select == "\"left\"") {
-				align = kTextAlignLeft;
-			} else if (select == "\"center\"") {
-				align = kTextAlignCenter;
-			} else if (select == "\"right\"") {
-				align = kTextAlignRight;
-			} else {
-				warning("Lingo::setTheField: Unknown text align spec: %s", d.asString(true).c_str());
-				break;
-			}
-
-			((TextCastMember *)member)->_textAlign = align;
-			member->_modified = true;
-			break;
-		}
-	case kTheTextFont:
-		warning("Lingo::setTheField(): Unprocessed setting field \"%s\" of field %d", field2str(field), id);
-		break;
-	case kTheTextHeight:
-		warning("Lingo::setTheField(): Unprocessed setting field \"%s\" of field %d", field2str(field), id);
-		break;
-	case kTheTextSize:
-		warning("Lingo::setTheField(): Unprocessed setting field \"%s\" of field %d", field2str(field), id);
-		break;
-	case kTheTextStyle:
-		warning("Lingo::setTheField(): Unprocessed setting field \"%s\" of field %d", field2str(field), id);
-		break;
-	default:
-		warning("Lingo::setTheField(): Unprocessed setting field \"%s\" of field %d", field2str(field), id);
+	if (!member->hasField(field)) {
+		warning("Lingo::setTheField(): CastMember %d has no property '%s'", id, field2str(field));
+		return;
 	}
+
+	member->setField(field, d);
 }
 
 Datum Lingo::getObjectProp(Datum &obj, Common::String &propName) {

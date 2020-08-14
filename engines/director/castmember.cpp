@@ -34,7 +34,7 @@
 
 namespace Director {
 
-CastMember::CastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream) {
+CastMember::CastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream) : Object<CastMember>("CastMember") {
 	_type = kCastTypeNull;
 	_cast = cast;
 	_castId = castId;
@@ -45,6 +45,8 @@ CastMember::CastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndi
 	_flags1 = 0;
 
 	_modified = true;
+
+	_objType = kCastMemberObj;
 }
 
 

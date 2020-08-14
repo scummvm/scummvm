@@ -28,6 +28,8 @@
 #include "director/archive.h"
 #include "director/stxt.h"
 
+#include "director/lingo/lingo-object.h"
+
 namespace Graphics {
 struct Surface;
 class FloodFill;
@@ -57,7 +59,7 @@ class Channel;
 struct Resource;
 class Stxt;
 
-class CastMember {
+class CastMember : public Object<CastMember> {
 public:
 	CastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream);
 	virtual ~CastMember() {}
@@ -76,6 +78,13 @@ public:
 	virtual uint getForeColor() { return 0; }
 	virtual uint getBackColor() { return 0; }
 
+	bool hasProp(const Common::String &propName) override;
+	Datum getProp(const Common::String &propName) override;
+	bool setProp(const Common::String &propName, const Datum &value) override;
+	bool hasField(int field) override;
+	Datum getField(int field) override;
+	bool setField(int field, const Datum &value) override;
+
 	CastType _type;
 	Common::Rect _initialRect;
 	Common::Rect _boundingRect;
@@ -88,7 +97,7 @@ public:
 	uint32 _size;
 	uint8 _flags1;
 
-private:
+protected:
 	Cast *_cast;
 	uint16 _castId;
 };
@@ -101,6 +110,10 @@ public:
 
 	void createMatte();
 	Graphics::Surface *getMatte();
+
+	bool hasField(int field) override;
+	Datum getField(int field) override;
+	bool setField(int field, const Datum &value) override;
 
 	Image::ImageDecoder *_img;
 	Graphics::FloodFill *_matte;
@@ -131,6 +144,10 @@ public:
 	void setStopTime(int stamp);
 	void setMovieRate(int rate);
 	void setFrameRate(int rate);
+
+	bool hasField(int field) override;
+	Datum getField(int field) override;
+	bool setField(int field, const Datum &value) override;
 
 	uint32 _vflags;
 	bool _looping;
@@ -194,6 +211,10 @@ public:
 
 	virtual uint getBackColor() override { return _bgcolor; }
 	virtual uint getForeColor() override { return _fgcolor; }
+
+	bool hasField(int field) override;
+	Datum getField(int field) override;
+	bool setField(int field, const Datum &value) override;
 
 	SizeType _borderSize;
 	SizeType _gutterSize;
