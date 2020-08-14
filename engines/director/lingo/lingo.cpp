@@ -1289,10 +1289,10 @@ void Lingo::varAssign(Datum &var, Datum &value, bool global, DatumHash *localvar
 			warning("varAssign: Assigning to a reference to an empty movie");
 			return;
 		}
-		int referenceId = castIdFetch(var);
-		CastMember *member = g_director->getCurrentMovie()->getCastMember(referenceId);
+		int castId = castIdFetch(var);
+		CastMember *member = movie->getCastMember(castId);
 		if (!member) {
-			warning("varAssign: Unknown cast id %d", referenceId);
+			warning("varAssign: Unknown cast id %d", castId);
 			return;
 		}
 		switch (member->_type) {
@@ -1300,7 +1300,7 @@ void Lingo::varAssign(Datum &var, Datum &value, bool global, DatumHash *localvar
 			((TextCastMember *)member)->setText(value.asString().c_str());
 			break;
 		default:
-			warning("varAssign: Unhandled cast type %s", tag2str(member->_type));
+			warning("varAssign: Unhandled cast type %d", member->_type);
 			break;
 		}
 	}
@@ -1347,22 +1347,27 @@ Datum Lingo::varFetch(Datum &var, bool global, DatumHash *localvars, bool silent
 		if (!silent)
 			warning("varFetch: variable %s not found", name.c_str());
 		return result;
-	} else if (var.type == FIELDNAME || var.type == FIELDNUM) {
-		CastMember *cast = _vm->getCurrentMovie()->getCastMember(var.u.i);
-		if (cast) {
-			switch (cast->_type) {
-			case kCastText:
-				result.type = STRING;
-				result.u.s = new Common::String(((TextCastMember *)cast)->getText());
-				break;
-			default:
-				warning("varFetch: Unhandled cast type %s", tag2str(cast->_type));
-				break;
-			}
-		} else {
-			warning("varFetch: Unknown cast id %d", var.u.i);
+	} else if (var.type == FIELDNAME || var.type == FIELDNUM || var.type == CASTNAME || var.type == CASTNUM) {
+		Movie *movie = g_director->getCurrentMovie();
+		if (!movie) {
+			warning("varFetch: Assigning to a reference to an empty movie");
+			return result;
 		}
-
+		int castId = castIdFetch(var);
+		CastMember *member = movie->getCastMember(castId);
+		if (!member) {
+			warning("varFetch: Unknown cast id %d", castId);
+			return result;
+		}
+		switch (member->_type) {
+		case kCastText:
+			result.type = STRING;
+			result.u.s = new Common::String(((TextCastMember *)member)->getText());
+			break;
+		default:
+			warning("varFetch: Unhandled cast type %d", member->_type);
+			break;
+		}
 	}
 
 	return result;
