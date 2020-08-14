@@ -1567,14 +1567,29 @@ Datum Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 			d = obj.u.parr->operator[](index - 1).v;
 		}
 		return d;
-	} else if (obj.type == CASTREF) {
-		// WORKAROUND: Until CastMembers are made Lingo objects
-		if (propName.equalsIgnoreCase("palette")) {
-			d.type = INT;
-			CastMember *member = _vm->getCurrentMovie()->getCastMember(obj.u.i);
+	} else if (obj.type == CASTREF || obj.type == FIELDREF) {
+		Movie *movie = _vm->getCurrentMovie();
+		if (!movie) {
+			warning("Lingo::getObjectProp(): No movie loaded");
+			return d;
+		}
 
-			if (member && member->_type == kCastBitmap)
-				d.u.i = ((BitmapCastMember *)member)->_clut + 1;
+		int id = g_lingo->castIdFetch(obj);
+
+		CastMember *member = movie->getCastMember(id);
+		if (!member) {
+			warning("Lingo::getObjectProp(): CastMember %d not found", id);
+			return d;
+		}
+		if (obj.type == FIELDREF && member->_type != kCastText) {
+			warning("Lingo::getObjectProp(): CastMember %d is not a field", id);
+			return d;
+		}
+
+		if (member->hasProp(propName)) {
+			return member->getProp(propName);
+		} else {
+			warning("Lingo::getObjectProp(): CastMember %d has no property '%s'", id, propName.c_str());
 		}
 	} else {
 		warning("Lingo::getObjectProp: Invalid object: %s", obj.asString(true).c_str());
@@ -1597,13 +1612,29 @@ void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
 			PCell cell = PCell(propName, val);
 			obj.u.parr->push_back(cell);
 		}
-	} else if (obj.type == CASTREF) {
-		// WORKAROUND: Until CastMembers are made Lingo objects
-		if (propName.equalsIgnoreCase("palette")) {
-			CastMember *member = _vm->getCurrentMovie()->getCastMember(obj.u.i);
+	} else if (obj.type == CASTREF || obj.type == FIELDREF) {
+		Movie *movie = _vm->getCurrentMovie();
+		if (!movie) {
+			warning("Lingo::setObjectProp(): No movie loaded");
+			return;
+		}
 
-			if (member && member->_type == kCastBitmap)
-				((BitmapCastMember *)member)->_clut = val.asInt();
+		int id = g_lingo->castIdFetch(obj);
+
+		CastMember *member = movie->getCastMember(id);
+		if (!member) {
+			warning("Lingo::setObjectProp(): CastMember %d not found", id);
+			return;
+		}
+		if (obj.type == FIELDREF && member->_type != kCastText) {
+			warning("Lingo::setObjectProp(): CastMember %d is not a field", id);
+			return;
+		}
+
+		if (member->hasProp(propName)) {
+			member->setProp(propName, val);
+		} else {
+			warning("Lingo::setObjectProp(): CastMember %d has no property '%s'", id, propName.c_str());
 		}
 	} else {
 		warning("Lingo::setObjectProp: Invalid object: %s", obj.asString(true).c_str());
