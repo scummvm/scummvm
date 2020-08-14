@@ -320,7 +320,13 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 		if (frame->format.bytesPerPixel != 1) {
 			warning("STUB: video >8bpp");
 		} else {
-			widget->getSurface()->blitFrom(*frame);
+			if (g_director->_pixelformat.bytesPerPixel == 1) {
+				widget->getSurface()->blitFrom(*frame);
+			} else {
+				const Graphics::Surface *surf = frame->convertTo(g_director->_pixelformat, g_director->getPalette());
+				widget->getSurface()->blitFrom(*surf);
+				delete surf;
+			}
 		}
 	}
 
