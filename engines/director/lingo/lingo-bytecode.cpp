@@ -257,14 +257,19 @@ static LingoV4TheEntity lingoV4TheEntity[] = {
 	{ 0x09, 0x11, kTheCast,				kTheForeColor,		true, kTEAItemId },
 	{ 0x09, 0x12, kTheCast,				kTheBackColor,		true, kTEAItemId },
 
+	{ 0x09, 0x01, kTheField,			kTheName,			true, kTEAItemId },
+	{ 0x09, 0x02, kTheField,			kTheText,			true, kTEAItemId },
+	{ 0x09, 0x09, kTheField,			kTheHilite,			true, kTEAItemId },
 	{ 0x0b, 0x03, kTheField,			kTheTextStyle,		true, kTEAItemId },
 	{ 0x0b, 0x04, kTheField,			kTheTextFont,		true, kTEAItemId },
 	{ 0x0b, 0x05, kTheField,			kTheTextHeight,		true, kTEAItemId },
 	{ 0x0b, 0x06, kTheField,			kTheTextAlign,		true, kTEAItemId },
 	{ 0x0b, 0x07, kTheField,			kTheTextSize,		true, kTEAItemId },
+	{ 0x09, 0x11, kTheCast,				kTheForeColor,		true, kTEAItemId },
 
 	{ 0x0d, 0x0c, kTheCast,				kTheLoop,			true, kTEAItemId },
 	{ 0x0d, 0x0d, kTheCast,				kTheDuration,		true, kTEAItemId },
+	{ 0x0d, 0x0e, kTheCast,				kTheController,		true, kTEAItemId },
 	{ 0x0d, 0x0f, kTheCast,				kTheDirectToStage,	true, kTEAItemId },
 	{ 0x0d, 0x10, kTheCast,				kTheSound,			true, kTEAItemId },
 
