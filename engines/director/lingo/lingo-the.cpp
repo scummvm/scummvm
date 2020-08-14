@@ -428,6 +428,9 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheExitLock:
 		getTheEntitySTUB(kTheExitLock);
 		break;
+	case kTheField:
+		d = getTheField(id, field);
+		break;
 	case kTheFixStageSize:
 		getTheEntitySTUB(kTheFixStageSize);
 		break;
