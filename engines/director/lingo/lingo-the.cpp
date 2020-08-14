@@ -1516,7 +1516,6 @@ Datum Lingo::getTheField(Datum &id1, int field) {
 		return d;
 	}
 
-
 	if (!member->hasField(field)) {
 		warning("Lingo::getTheField(): CastMember %d has no property '%s'", id, field2str(field));
 		return d;
