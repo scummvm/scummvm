@@ -1466,6 +1466,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
+	// King's Quest 4 - English DOS (original boxed release, 3 1/2" disks)
+	// Executable scanning reports "0.000.253"
+	// K4091988.QA file reports "SCI Version 0.000.247 (2nd rev)"
+	// Game version "1.000.106" according to K4091988.QA and scripts
+	{"kq4sci", "SCI", {
+		{"resource.map", 0, "1f253c0d649fb1da1eb8784b2df34284", 7416},
+		{"resource.001", 0, "0c8566848a76eea19a6d6220914030a7", 495006},
+		{"resource.002", 0, "0c8566848a76eea19a6d6220914030a7", 681749},
+		{"resource.003", 0, "0c8566848a76eea19a6d6220914030a7", 686821},
+		{"resource.004", 0, "0c8566848a76eea19a6d6220914030a7", 652398},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
 	// King's Quest 4 - English DOS (from the King's Quest Collection)
 	// Executable scanning reports "0.000.502"
 	// SCI interpreter version 0.000.502
