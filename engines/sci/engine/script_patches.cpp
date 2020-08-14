@@ -4931,6 +4931,28 @@ static const uint16 kq6PatchCliffStepFloatFix[] = {
 	PATCH_END
 };
 
+// Similar to the patched bug above, clicking an item on the beach in room 300
+//  while wobbling on the bottom step causes Alexander to float around the room.
+//  The doVerb methods for the flower and the feather incorrectly test ego:y
+//  using a less than comparison instead of less than or equals to, which is
+//  what the rest of the methods in this script do.
+//
+// Applies to: All versions
+// Responsible methods: stench:doVerb, feather:doVerb
+static const uint16 kq6SignatureCliffItemFloatFix[] = {
+	SIG_MAGICDWORD,
+	0x36,                               // push
+	0x35, 0x69,                         // ldi 69
+	0x22,                               // lt?
+	SIG_END
+};
+
+static const uint16 kq6PatchCliffItemFloatFix[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x24,                               // le?
+	PATCH_END
+};
+
 // After casting the Make Rain spell, collecting the baby's tears a second time
 //  awards a duplicate point. The script getBabyTears is missing a flag check to
 //  prevent this. The falling water from Beast's fountain doesn't have this bug
@@ -5711,6 +5733,7 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	{ false,    87, "Mac: Drink Me pic",                              1, kq6SignatureMacDrinkMePic,                kq6PatchMacDrinkMePic },
 	{  true,   281, "fix pawnshop genie eye",                         1, kq6SignaturePawnshopGenieEye,             kq6PatchPawnshopGenieEye },
 	{  true,   300, "fix floating off steps",                         2, kq6SignatureCliffStepFloatFix,            kq6PatchCliffStepFloatFix },
+	{  true,   300, "fix floating off steps",                         2, kq6SignatureCliffItemFloatFix,            kq6PatchCliffItemFloatFix },
 	{  true,   405, "fix catacombs room message",                     1, kq6SignatureRoom405LookMessage,           kq6PatchRoom405LookMessage },
 	{  true,   407, "fix catacombs room message",                     1, kq6SignatureRoom407LookMessage,           kq6PatchRoom407LookMessage },
 	{  true,   480, "CD: fix wallflower dance",                       1, kq6CDSignatureWallFlowerDanceFix,         kq6CDPatchWallFlowerDanceFix },
