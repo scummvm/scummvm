@@ -126,7 +126,7 @@ bool Movie::loadArchive() {
 			_vm->_wm->_screenDims = Common::Rect(windowWidth, windowHeight);
 			recenter = true;
 
-			initGraphics(windowWidth, windowHeight, &_vm->_wm->_pixelformat);
+			initGraphics(windowWidth, windowHeight, &_vm->_pixelformat);
 		}
 	}
 

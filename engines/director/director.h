@@ -23,15 +23,15 @@
 #ifndef DIRECTOR_DIRECTOR_H
 #define DIRECTOR_DIRECTOR_H
 
-#include "common/rect.h"
-#include "common/str-array.h"
 #include "common/file.h"
-
 #include "common/hashmap.h"
-#include "engines/engine.h"
-
 #include "common/hash-ptr.h"
 #include "common/hash-str.h"
+#include "common/rect.h"
+#include "common/str-array.h"
+
+#include "engines/engine.h"
+#include "graphics/pixelformat.h"
 
 #include "director/types.h"
 #include "director/util.h"
@@ -224,6 +224,7 @@ public:
 public:
 	RandomState _rnd;
 	Graphics::MacWindowManager *_wm;
+	Graphics::PixelFormat _pixelformat;
 
 public:
 	int _colorDepth;

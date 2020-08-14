@@ -163,6 +163,7 @@ Common::Error DirectorEngine::run() {
 	_wm = new Graphics::MacWindowManager(wmMode, &_director3QuickDrawPatterns);
 	_wm->setEngine(this);
 
+	_pixelformat = _wm->_pixelformat;
 
 	_stage = new Window(_wm->getNextId(), false, false, false, _wm, this, true);
 	*_stage->_refCount += 1;

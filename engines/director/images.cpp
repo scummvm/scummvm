@@ -112,25 +112,8 @@ BITDDecoder::BITDDecoder(int w, int h, uint16 bitsPerPixel, uint16 pitch, const 
 		pitch = w;
 	}
 
-	Graphics::PixelFormat pf = Graphics::PixelFormat::createFormatCLUT8();
-	switch (bitsPerPixel) {
-	case 2:
-		break;
-	case 4:
-		break;
-	case 8:
-		break;
-	case 16:
-		break;
-	case 32:
-		//pf = Graphics::PixelFormat::PixelFormat(bitsPerPixel / 8, 8, 8, 8, 8, 24, 16, 8, 0);
-		break;
-	default:
-		break;
-	}
-
 	// HACK: Create a padded surface by adjusting w after create()
-	_surface->create(pitch, h, pf);
+	_surface->create(pitch, h, g_director->_pixelformat);
 	_surface->w = w;
 
 	_palette = palette;

@@ -156,11 +156,11 @@ void Window::playTransition(uint16 transDuration, uint8 transArea, uint8 transCh
 		t.duration = 250;
 
 	// Cache a copy of the frame before the transition.
-	Graphics::ManagedSurface currentFrame(Graphics::ManagedSurface(_composeSurface->w, _composeSurface->h, _wm->_pixelformat));
+	Graphics::ManagedSurface currentFrame(Graphics::ManagedSurface(_composeSurface->w, _composeSurface->h, g_director->_pixelformat));
 	currentFrame.copyFrom(*_composeSurface);
 
 	// If a transition is being played, render the frame after the transition.
-	Graphics::ManagedSurface nextFrame(Graphics::ManagedSurface(_composeSurface->w, _composeSurface->h, _wm->_pixelformat));
+	Graphics::ManagedSurface nextFrame(Graphics::ManagedSurface(_composeSurface->w, _composeSurface->h, g_director->_pixelformat));
 
 	Common::Rect clipRect;
 	if (t.area) {
