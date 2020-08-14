@@ -318,7 +318,10 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 
 	if (frame) {
 		if (frame->format.bytesPerPixel != 1) {
-			warning("STUB: video >8bpp");
+			if (g_director->_pixelformat.bytesPerPixel == 1)
+				warning("STUB: video >8bpp");
+			else
+				widget->getSurface()->blitFrom(*frame);
 		} else {
 			if (g_director->_pixelformat.bytesPerPixel == 1) {
 				widget->getSurface()->blitFrom(*frame);
