@@ -105,15 +105,16 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 BITDDecoder::BITDDecoder(int w, int h, uint16 bitsPerPixel, uint16 pitch, const byte *palette) {
 	_surface = new Graphics::Surface();
+	_pitch = pitch;
 
-	if (pitch < w) {
-		warning("BITDDecoder: pitch is too small: %d < %d", pitch, w);
+	if (_pitch < w) {
+		warning("BITDDecoder: pitch is too small: %d < %d", _pitch, w);
 
-		pitch = w;
+		_pitch = w;
 	}
 
 	// HACK: Create a padded surface by adjusting w after create()
-	_surface->create(pitch, h, g_director->_pixelformat);
+	_surface->create(_pitch, h, g_director->_pixelformat);
 	_surface->w = w;
 
 	_palette = palette;
@@ -180,7 +181,7 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 	Common::Array<int> pixels;
 	// If the stream has exactly the required number of bits for this image,
 	// we assume it is uncompressed.
-	if (stream.size() == _surface->pitch * _surface->h * _bitsPerPixel / 8) {
+	if (stream.size() == _pitch * _surface->h * _bitsPerPixel / 8) {
 		debugC(6, kDebugImages, "Skipping compression");
 		for (int i = 0; i < stream.size(); i++) {
 			pixels.push_back((int)stream.readByte());
@@ -227,13 +228,21 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 	if (_surface->w < (pixels.size() / _surface->h))
 		offset = (pixels.size() / _surface->h) - _surface->w;
 
+	uint32 color;
+	bool paletted = (g_director->_pixelformat.bytesPerPixel == 1);
+
 	if (pixels.size() > 0) {
 		for (y = 0; y < _surface->h; y++) {
 			for (x = 0; x < _surface->w;) {
 				switch (_bitsPerPixel) {
 				case 1:
 					for (int c = 0; c < 8 && x < _surface->w; c++, x++) {
-						*((byte *)_surface->getBasePtr(x, y)) = (pixels[(((y * _surface->pitch) + x) / 8)] & (1 << (7 - c))) ? 0 : 0xff;
+						color = (pixels[(((y * _pitch) + x) / 8)] & (1 << (7 - c))) ? 0 : 0xff;
+						if (paletted) {
+							*((byte *)_surface->getBasePtr(x, y)) = color;
+						} else {
+							*((uint32 *)_surface->getBasePtr(x, y)) = color ? 0xffffff : 0;
+						}
 					}
 					break;
 
