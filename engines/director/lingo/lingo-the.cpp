@@ -1279,17 +1279,25 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		}
 		break;
 	case kTheConstraint:
-		if (d.asInt() != (int)channel->_constraint) {
-			if (d.type == CASTREF) {
+		{
+			int channelId;
+			if (d.type == CASTNAME || d.type == CASTNUM) {
 				// Reference: CastMember ID
 				// Find the first channel that uses this cast.
-				for (uint i = 0; i < score->_channels.size(); i++)
-					if (score->_channels[i]->_sprite->_castId == d.u.i)
-						d.u.i = i;
+				int castId = castIdFetch(d);
+				for (uint i = 0; i < score->_channels.size(); i++) {
+					if (score->_channels[i]->_sprite->_castId == castId) {
+						channelId = i;
+						break;
+					}
+				}
+			} else {
+				channelId = d.asInt();
 			}
-
-			channel->_constraint = d.u.i;
-			channel->_dirty = true;
+			if (channelId != (int)channel->_constraint) {
+				channel->_constraint = d.u.i;
+				channel->_dirty = true;
+			}
 		}
 		break;
 	case kTheCursor:
@@ -1569,7 +1577,7 @@ Datum Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 			d = obj.u.parr->operator[](index - 1).v;
 		}
 		return d;
-	} else if (obj.type == CASTREF || obj.type == FIELDREF) {
+	} else if (obj.type == CASTNAME || obj.type == CASTNUM || obj.type == FIELDNAME || obj.type == FIELDNUM) {
 		Movie *movie = _vm->getCurrentMovie();
 		if (!movie) {
 			warning("Lingo::getObjectProp(): No movie loaded");
@@ -1583,7 +1591,7 @@ Datum Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 			warning("Lingo::getObjectProp(): CastMember %d not found", id);
 			return d;
 		}
-		if (obj.type == FIELDREF && member->_type != kCastText) {
+		if ((obj.type == FIELDNAME || obj.type == FIELDNUM) && member->_type != kCastText) {
 			warning("Lingo::getObjectProp(): CastMember %d is not a field", id);
 			return d;
 		}
@@ -1614,7 +1622,7 @@ void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
 			PCell cell = PCell(propName, val);
 			obj.u.parr->push_back(cell);
 		}
-	} else if (obj.type == CASTREF || obj.type == FIELDREF) {
+	} else if (obj.type == CASTNAME || obj.type == CASTNUM || obj.type == FIELDNAME || obj.type == FIELDNUM) {
 		Movie *movie = _vm->getCurrentMovie();
 		if (!movie) {
 			warning("Lingo::setObjectProp(): No movie loaded");
@@ -1628,7 +1636,7 @@ void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
 			warning("Lingo::setObjectProp(): CastMember %d not found", id);
 			return;
 		}
-		if (obj.type == FIELDREF && member->_type != kCastText) {
+		if ((obj.type == FIELDNAME || obj.type == FIELDNUM) && member->_type != kCastText) {
 			warning("Lingo::setObjectProp(): CastMember %d is not a field", id);
 			return;
 		}

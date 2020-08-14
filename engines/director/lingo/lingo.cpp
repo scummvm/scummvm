@@ -689,7 +689,7 @@ int Lingo::getAlignedType(const Datum &d1, const Datum &d2) {
 	int d1Type = d1.type;
 	int d2Type = d2.type;
 
-	if (d1Type == STRING || d1Type == FIELDREF) {
+	if (d1Type == STRING || d1Type == FIELDNAME || d1Type == FIELDNUM) {
 		Common::String src = d1.asString();
 		if (!src.empty()) {
 			char *endPtr = 0;
@@ -699,7 +699,7 @@ int Lingo::getAlignedType(const Datum &d1, const Datum &d2) {
 			}
 		}
 	}
-	if (d2Type == STRING || d2Type == FIELDREF) {
+	if (d2Type == STRING || d2Type == FIELDNAME || d2Type == FIELDNUM) {
 		Common::String src = d2.asString();
 		if (!src.empty()) {
 			char *endPtr = 0;
@@ -718,7 +718,8 @@ int Lingo::getAlignedType(const Datum &d1, const Datum &d2) {
 
 	if (d1Type == FLOAT || d2Type == FLOAT) {
 		opType = FLOAT;
-	} else if ((d1Type == INT || d1Type == CASTREF) && (d2Type == INT || d2Type == CASTREF)) {
+	} else if ((d1Type == INT || d1Type == CASTNAME || d1Type == CASTNUM)
+			&& (d2Type == INT || d2Type == CASTNAME || d2Type == CASTNUM)) {
 		opType = INT;
 	}
 
@@ -795,6 +796,8 @@ void Datum::reset() {
 #ifndef __COVERITY__
 	if (*refCount <= 0) {
 		switch (type) {
+		case CASTNAME:
+		case FIELDNAME:
 		case VAR:
 		case STRING:
 			delete u.s;
@@ -839,7 +842,8 @@ int Datum::asInt() const {
 
 	switch (type) {
 	case STRING:
-	case FIELDREF:
+	case FIELDNAME:
+	case FIELDNUM:
 		{
 			Common::String src = asString();
 			char *endPtr = 0;
@@ -855,7 +859,6 @@ int Datum::asInt() const {
 		// no-op
 		break;
 	case INT:
-	case CASTREF:
 		res = u.i;
 		break;
 	case FLOAT:
@@ -877,7 +880,8 @@ double Datum::asFloat() const {
 
 	switch (type) {
 	case STRING:
-	case FIELDREF:
+	case FIELDNAME:
+	case FIELDNUM:
 		{
 			Common::String src = asString();
 			char *endPtr = 0;
@@ -893,7 +897,6 @@ double Datum::asFloat() const {
 		// no-op
 		break;
 	case INT:
-	case CASTREF:
 		res = (double)u.i;
 		break;
 	case FLOAT:
@@ -950,10 +953,16 @@ Common::String Datum::asString(bool printonly) const {
 	case VAR:
 		s = Common::String::format("var: #%s", u.s->c_str());
 		break;
-	case CASTREF:
-	case FIELDREF:
+	case CASTNAME:
+		s = Common::String::format("cast \"%s\"", u.s->c_str());
+		break;
+	case CASTNUM:
+		s = Common::String::format("cast %d", u.i);
+		break;
+	case FIELDNAME:
+	case FIELDNUM:
 		{
-			int idx = u.i;
+			int idx = g_lingo->castIdFetch(*this);
 			CastMember *member = g_director->getCurrentMovie()->getCastMember(idx);
 			if (!member) {
 				warning("asString(): Unknown cast id %d", idx);
@@ -961,14 +970,10 @@ Common::String Datum::asString(bool printonly) const {
 				break;
 			}
 
-			if (type == FIELDREF) {
-				if (!printonly) {
-					s = ((TextCastMember *)member)->getText();
-				} else {
-					s = Common::String::format("reference: \"%s\"", ((TextCastMember *)member)->getText().c_str());
-				}
+			if (!printonly) {
+				s = ((TextCastMember *)member)->getText();
 			} else {
-				s = Common::String::format("cast %d", idx);
+				s = Common::String::format("field: \"%s\"", ((TextCastMember *)member)->getText().c_str());
 			}
 		}
 		break;
@@ -1022,8 +1027,10 @@ const char *Datum::type2str(bool isk) const {
 		return isk ? "#float" : "FLOAT";
 	case STRING:
 		return isk ? "#string" : "STRING";
-	case CASTREF:
-		return "CASTREF";
+	case CASTNAME:
+		return "CASTNAME";
+	case CASTNUM:
+		return "CASTNUM";
 	case VOID:
 		return isk ? "#void" : "VOID";
 	case POINT:
@@ -1032,8 +1039,10 @@ const char *Datum::type2str(bool isk) const {
 		return isk ? "#symbol" : "SYMBOL";
 	case OBJECT:
 		return isk ? "#object" : "OBJECT";
-	case FIELDREF:
-		return "FIELDREF";
+	case FIELDNAME:
+		return "FIELDNAME";
+	case FIELDNUM:
+		return "FIELDNUM";
 	case VAR:
 		return isk ? "#var" : "VAR";
 	default:
@@ -1208,34 +1217,37 @@ int Lingo::getInt(uint pc) {
 	return (int)READ_UINT32(&((*_currentScript)[pc]));
 }
 
-int Lingo::castIdFetch(Datum &var) {
+int Lingo::castIdFetch(const Datum &var) {
 	Movie *movie = _vm->getCurrentMovie();
 	if (!movie) {
 		warning("castIdFetch: No movie");
 		return 0;
 	}
 
-	int id = 0;
-	if (var.type == STRING) {
-		CastMember *member = movie->getCastMemberByName(var.asString());
+	if (var.type == STRING || var.type == CASTNAME || var.type == FIELDNAME) {
+		CastMember *member = movie->getCastMemberByName(*var.u.s);
 		if (member)
-			id = member->getID();
-		else
-			warning("castIdFetch: reference to non-existent cast member: %s", var.u.s->c_str());
-	} else if (var.type == INT || var.type == FLOAT || var.type == CASTREF || var.type == FIELDREF) {
-		int castId = var.asInt();
-		if (!_vm->getCurrentMovie()->getCastMember(castId))
-			warning("castIdFetch: reference to non-existent cast ID: %d", castId);
-		else
-			id = castId;
+			return member->getID();
+		
+		warning("castIdFetch: reference to non-existent cast member: %s", var.u.s->c_str());
+		return 0;
+	}
+
+	int castId = 0;
+	if (var.type == INT || var.type == CASTNUM || var.type == FIELDNUM) {
+		castId = var.u.i;
+	} else if (var.type == FLOAT) {
+		castId = var.u.f;
 	} else if (var.type == VOID) {
 		warning("castIdFetch: reference to VOID cast ID");
-		return 0;
 	} else {
 		error("castIdFetch: was expecting STRING or INT, got %s", var.type2str());
 	}
 
-	return id;
+	if (!_vm->getCurrentMovie()->getCastMember(castId))
+		warning("castIdFetch: reference to non-existent cast ID: %d", castId);
+
+	return castId;
 }
 
 void Lingo::varAssign(Datum &var, Datum &value, bool global, DatumHash *localvars) {
@@ -1243,7 +1255,7 @@ void Lingo::varAssign(Datum &var, Datum &value, bool global, DatumHash *localvar
 		localvars = _localvars;
 	}
 
-	if (var.type != VAR && var.type != FIELDREF) {
+	if (var.type != VAR && var.type != FIELDNAME && var.type != FIELDNUM) {
 		warning("varAssign: assignment to non-variable");
 		return;
 	}
@@ -1271,13 +1283,13 @@ void Lingo::varAssign(Datum &var, Datum &value, bool global, DatumHash *localvar
 		}
 
 		warning("varAssign: variable %s not defined", name.c_str());
-	} else if (var.type == FIELDREF || var.type == CASTREF) {
+	} else if (var.type == FIELDNAME || var.type == FIELDNUM || var.type == CASTNAME || var.type == CASTNUM) {
 		Movie *movie = g_director->getCurrentMovie();
 		if (!movie) {
 			warning("varAssign: Assigning to a reference to an empty movie");
 			return;
 		}
-		int referenceId = var.u.i;
+		int referenceId = castIdFetch(var);
 		CastMember *member = g_director->getCurrentMovie()->getCastMember(referenceId);
 		if (!member) {
 			warning("varAssign: Unknown cast id %d", referenceId);
@@ -1301,7 +1313,7 @@ Datum Lingo::varFetch(Datum &var, bool global, DatumHash *localvars, bool silent
 
 	Datum result;
 	result.type = VOID;
-	if (var.type != VAR && var.type != FIELDREF) {
+	if (var.type != VAR && var.type != FIELDNAME && var.type != FIELDNUM) {
 		warning("varFetch: fetch from non-variable");
 		return result;
 	}
@@ -1335,7 +1347,7 @@ Datum Lingo::varFetch(Datum &var, bool global, DatumHash *localvars, bool silent
 		if (!silent)
 			warning("varFetch: variable %s not found", name.c_str());
 		return result;
-	} else if (var.type == FIELDREF) {
+	} else if (var.type == FIELDNAME || var.type == FIELDNUM) {
 		CastMember *cast = _vm->getCurrentMovie()->getCastMember(var.u.i);
 		if (cast) {
 			switch (cast->_type) {

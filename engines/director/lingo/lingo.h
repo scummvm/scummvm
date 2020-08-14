@@ -285,7 +285,7 @@ public:
 	void pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal);
 	void popContext();
 	void cleanLocalVars();
-	int castIdFetch(Datum &var);
+	int castIdFetch(const Datum &var);
 	void varAssign(Datum &var, Datum &value, bool global = false, DatumHash *localvars = nullptr);
 	Datum varFetch(Datum &var, bool global = false, DatumHash *localvars = nullptr, bool silent = false);
 

@@ -67,6 +67,12 @@ namespace Director {
 		return; \
 	}
 
+#define TYPECHECK3(datum, t1, t2, t3)	\
+	if ((datum).type != (t1) && (datum).type != (t2) && (datum).type != (t3)) { \
+		warning("%s: %s arg should be of type %s, %s, or %s, not %s", __FUNCTION__, #datum, #t1, #t2, #t3, (datum).type2str()); \
+		return; \
+	}
+
 #define ARRBOUNDSCHECK(idx,array) \
 	if ((idx)-1 < 0 || (idx) > (int)(array).u.farr->size()) { \
 		warning("%s: index out of bounds (%d of %d)", __FUNCTION__, (idx), (array).u.farr->size()); \
@@ -449,7 +455,7 @@ void LB::b_chars(int nargs) {
 	Datum d3 = g_lingo->pop();
 	Datum d2 = g_lingo->pop();
 	Datum s = g_lingo->pop();
-	TYPECHECK2(s, STRING, FIELDREF);
+	TYPECHECK3(s, STRING, FIELDNAME, FIELDNUM);
 
 	if (g_director->getVersion() < 400 && (d2.type == FLOAT || d3.type == FLOAT)) {
 		warning("LB::b_chars: Called with a float in Director 2 and 3 mode. chars' can't handle floats");
@@ -510,7 +516,7 @@ void LB::b_hilite(int nargs) {
 
 void LB::b_length(int nargs) {
 	Datum d = g_lingo->pop();
-	TYPECHECK2(d, STRING, FIELDREF);
+	TYPECHECK3(d, STRING, FIELDNAME, FIELDNUM);
 
 	int len = strlen(d.asString().c_str());
 
@@ -597,7 +603,7 @@ void LB::b_addProp(int nargs) {
 	Datum list = g_lingo->pop();
 
 	TYPECHECK(list, PARRAY);
-	if (prop.type == FIELDREF)
+	if (prop.type == FIELDNAME || prop.type == FIELDNUM)
 		prop = g_lingo->varFetch(prop);
 
 	PCell cell = PCell(prop, value);
@@ -1028,7 +1034,7 @@ void LB::b_setProp(int nargs) {
 	Datum prop = g_lingo->pop();
 	Datum list = g_lingo->pop();
 	TYPECHECK(list, PARRAY);
-	if (prop.type == FIELDREF)
+	if (prop.type == FIELDNAME || prop.type == FIELDNUM)
 		prop = g_lingo->varFetch(prop);
 
 	int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
@@ -2315,16 +2321,28 @@ void LB::b_version(int nargs) {
 void LB::b_cast(int nargs) {
 	Datum d = g_lingo->pop();
 
-	Datum res(g_lingo->castIdFetch(d));
-	res.type = CASTREF;
+	Datum res;
+	if (d.type == STRING) {
+		res = d;
+		res.type = CASTNAME;
+	} else {
+		res = d.asInt();
+		res.type = CASTNUM;
+	}
 	g_lingo->push(res);
 }
 
 void LB::b_field(int nargs) {
 	Datum d = g_lingo->pop();
 
-	Datum res(g_lingo->castIdFetch(d));
-	res.type = FIELDREF;
+	Datum res;
+	if (d.type == STRING) {
+		res = d;
+		res.type = FIELDNAME;
+	} else {
+		res = d.asInt();
+		res.type = FIELDNUM;
+	}
 	g_lingo->push(res);
 }
 
