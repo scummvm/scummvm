@@ -399,7 +399,7 @@ void PaperdollGump::ChildNotify(Gump *child, uint32 message) {
 			statsgump->GetDims(sr);
 			sr.grow(-2);
 			statsgump->GumpRectToScreenSpace(sr);
-			if (!sr.Overlaps(rect))
+			if (!sr.intersects(rect))
 				statsgump->setRelativePosition(BOTTOM_RIGHT, -5, -5);
 		}
 	}

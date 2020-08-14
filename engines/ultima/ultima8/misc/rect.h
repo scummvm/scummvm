@@ -26,6 +26,10 @@
 namespace Ultima {
 namespace Ultima8 {
 
+// TODO: Replace Ultima8::Rect with Common::Rect
+// The key difference between Ultima8::Rect and Common::Rect is the use of int32 for variables.
+// Attempts to change this may cause the game to be unstable.
+
 struct Rect {
 	int32 left, top;
 	int32 right, bottom;
@@ -54,16 +58,9 @@ struct Rect {
 		bottom += offset;
 	}
 
-	void    Set(int nx, int ny, int nw, int nh) {
-		left = nx;
-		top = ny;
-		right = nx + nw;
-		bottom = ny + nh;
-	}
-
 	// Check to see if a Rectangle is 'valid'
-	bool    IsValid() const {
-		return right > left && bottom > top;
+	bool isValidRect() const {
+		return (left <= right && top <= bottom);
 	}
 
 	// Check to see if a point is within the Rectangle
@@ -87,12 +84,6 @@ struct Rect {
 		left = x;
 	}
 
-	// Resize the Rect (Absolute)
-	void    ResizeAbs(int32 nw, int32 nh) {
-		right = left + nw;
-		bottom = top + nh;
-	}
-
 	void clip(const Rect &r) {
 		if (top < r.top) top = r.top;
 		else if (top > r.bottom) top = r.bottom;
@@ -107,30 +98,8 @@ struct Rect {
 		else if (right > r.right) right = r.right;
 	}
 
-	// Union/Add this rect with another
-	void    Union(int ox, int oy, int ow, int oh) {
-		int x2 = right,     y2 = bottom;
-		int ox2 = ox + ow,  oy2 = oy + oh;
-
-		if (ox < left) left = ox;
-		else if (ox2 > x2) x2 = ox2;
-
-		if (oy < top) top = ox;
-		else if (oy2 > y2) y2 = ox2;
-
-		right = x2;
-		bottom = y2;
-	}
-
-	// Union/Add this rect with another
-	void    Union(const Rect &o) {
-		Union(o.left, o.top, o.width(), o.height());
-	}
-
-	bool    Overlaps(const Rect &o) const {
-		if (right <= o.left || o.right <= left) return false;
-		if (bottom <= o.top || o.bottom <= top) return false;
-		return true;
+	bool intersects(const Rect &r) const {
+		return (left < r.right) && (r.left < right) && (top < r.bottom) && (r.top < bottom);
 	}
 
 	bool equals(const Rect &o) const {

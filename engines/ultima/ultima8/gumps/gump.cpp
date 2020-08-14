@@ -836,7 +836,9 @@ bool Gump::loadData(Common::ReadStream *rs, uint32 version) {
 	int dy = static_cast<int32>(rs->readUint32LE());
 	int dw = static_cast<int32>(rs->readUint32LE());
 	int dh = static_cast<int32>(rs->readUint32LE());
-	_dims.Set(dx, dy, dw, dh);
+	_dims.moveTo(dx, dy);
+	_dims.setWidth(dw);
+	_dims.setHeight(dh);
 
 	_flags = rs->readUint32LE();
 	_layer = static_cast<int32>(rs->readUint32LE());

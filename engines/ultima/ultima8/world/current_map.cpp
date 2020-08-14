@@ -551,7 +551,7 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 
 				const Rect itemrect(ix - ixd, iy - iyd, ix, iy);
 
-				if (!itemrect.Overlaps(searchrange))
+				if (!itemrect.intersects(searchrange))
 					continue;
 
 				// check item against loopscript
@@ -621,7 +621,7 @@ void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 
 				const Rect itemrect(ix - ixd, iy - iyd, ix, iy);
 
-				if (!itemrect.Overlaps(searchrange))
+				if (!itemrect.intersects(searchrange))
 					continue;
 
 				bool ok = false;

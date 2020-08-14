@@ -46,7 +46,8 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(Graphics::ManagedSurface *s) :
 	_ox(0), _oy(0), _width(0), _height(0), _pitch(0), _zPitch(0),
 	_flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0),
 	_surface(s), _rttTex(nullptr) {
-	_clipWindow.ResizeAbs(_width = _surface->w, _height = _surface->h);
+	_clipWindow.setWidth(_width = _surface->w);
+	_clipWindow.setHeight(_height = _surface->h);
 	_pitch = _surface->pitch;
 	_bitsPerPixel = _surface->format.bpp();
 	_bytesPerPixel = _surface->format.bytesPerPixel;
@@ -122,7 +123,8 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h, int bpp,
 	_ox(0), _oy(0), _width(0), _height(0), _pitch(0), _zPitch(0),
 	_flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0), _surface(nullptr),
 	_rttTex(nullptr) {
-	_clipWindow.ResizeAbs(_width = w, _height = h);
+	_clipWindow.setWidth(_width = w);
+	_clipWindow.setHeight(_height = h);
 
 	switch (bpp) {
 	case 15:
@@ -184,7 +186,8 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h, uint8 *buf) :
 	_ox(0), _oy(0), _width(0), _height(0), _pitch(0), _zPitch(0),
 	_flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0),
 	_surface(nullptr), _rttTex(nullptr) {
-	_clipWindow.ResizeAbs(_width = w, _height = h);
+	_clipWindow.setWidth(_width = w);
+	_clipWindow.setHeight(_height = h);
 
 	int bpp = RenderSurface::_format.bpp();
 
@@ -207,7 +210,8 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h) :
 	_ox(0), _oy(0), _width(0), _height(0), _pitch(0), _zPitch(0),
 	_flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0), _surface(nullptr),
 	_rttTex(nullptr) {
-	_clipWindow.ResizeAbs(_width = w, _height = h);
+	_clipWindow.setWidth(_width = w);
+	_clipWindow.setHeight(_height = h);
 
 	int bpp = RenderSurface::_format.bpp();
 
@@ -411,7 +415,9 @@ void BaseSoftRenderSurface::CreateNativePalette(Palette *palette, int maxindex) 
 // r: Rect object to fill
 //
 void BaseSoftRenderSurface::GetSurfaceDims(Rect &r) const {
-	r.Set(_ox, _oy, _width, _height);
+	r.moveTo(_ox, _oy);
+	r.setWidth(_width);
+	r.setHeight(_height);
 }
 
 //
@@ -477,7 +483,8 @@ int16 BaseSoftRenderSurface::CheckClipped(const Rect &c) const {
 	r.clip(_clipWindow);
 
 	// Clipped away to the void
-	if (!r.IsValid()) return -1;
+	if (!r.isValidRect())
+		return -1;
 	else if (r == c) return 0;
 	else return 1;
 }

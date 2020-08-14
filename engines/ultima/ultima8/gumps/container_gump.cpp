@@ -550,7 +550,9 @@ bool ContainerGump::loadData(Common::ReadStream *rs, uint32 version) {
 	int32 iay = static_cast<int32>(rs->readUint32LE());
 	int32 iaw = static_cast<int32>(rs->readUint32LE());
 	int32 iah = static_cast<int32>(rs->readUint32LE());
-	_itemArea.Set(iax, iay, iaw, iah);
+	_itemArea.moveTo(iax, iay);
+	_itemArea.setWidth(iaw);
+	_itemArea.setHeight(iah);
 
 	return true;
 }

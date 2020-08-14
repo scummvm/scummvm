@@ -134,7 +134,7 @@ bool TextWidget::setupNextText() {
 			_dims.setWidth(sr.width());
 			_dims.setHeight(sr.height());
 
-			sr.Set(0, 0, 0, _dims.top);
+			sr = Rect(0, 0, 0, _dims.top);
 			ScreenSpaceToGumpRect(sr, ROUND_OUTSIDE);
 			_dims.moveTo(_dims.left, sr.height());
 		}
