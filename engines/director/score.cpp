@@ -329,19 +329,9 @@ void Score::update() {
 	if (_currentFrame > 0 && !_vm->_playbackPaused) {
 		// When Lingo::func_goto* is called, _nextFrame is set
 		// and _skipFrameAdvance is set to true.
-		// However, the exitFrame event can overwrite the value
-		// for _nextFrame before it can be used.
-		// Because we still want to call exitFrame, we check if
-		// a goto call has been made and if so, cache the value
-		// of _nextFrame so it doesn't get wiped.
-		if (_vm->_skipFrameAdvance) {
-			uint16 nextFrameCache = _nextFrame;
-			if (_vm->getVersion() >= 400)
-				_movie->processEvent(kEventExitFrame);
-			_nextFrame = nextFrameCache;
-		} else {
-			if (_vm->getVersion() >= 400)
-				_movie->processEvent(kEventExitFrame);
+		// exitFrame is not called in this case.
+		if (!_vm->_skipFrameAdvance && _vm->getVersion() >= 400) {
+			_movie->processEvent(kEventExitFrame);
 		}
 
 		// If there is a transition, the perFrameHook is called
