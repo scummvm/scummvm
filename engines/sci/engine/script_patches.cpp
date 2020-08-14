@@ -4318,7 +4318,7 @@ static const uint16 kq4SignatureFallDownStairs[] = {
 	SIG_ADDTOOFFSET(+0x0108),
 	0x38, SIG_SELECTOR16(new),       // pushi new
 	0x76,                            // push0
-	0x51, 0x31,                      // push Sound
+	0x51, 0x31,                      // class Sound
 	0x4a, 0x04,                      // send 04  [ Sound new: ]
 	0x4a, 0x10,                      // send 10  [ sound number: 51 loop: 1 play: ]
 	0x32, SIG_UINT16(0x0040),        // jmp 0040 [ end of method ]
