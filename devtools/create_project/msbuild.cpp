@@ -303,10 +303,14 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 
 	// Link configuration for main project
 	if (name == setup.projectName || setup.devTools || setup.tests) {
-		std::string libraries;
+		std::string libraries = outputLibraryDependencies(setup, isRelease);
 
-		for (StringList::const_iterator i = setup.libraries.begin(); i != setup.libraries.end(); ++i)
-			libraries += *i + ".lib;";
+		// MSBuild uses ; for separators instead of spaces
+		for (std::string::iterator i = libraries.begin(); i != libraries.end(); ++i) {
+			if (*i == ' ') {
+				*i = ';';
+			}
+		}
 
 		project << "\t\t<Link>\n"
 		        << "\t\t\t<OutputFile>$(OutDir)" << ((setup.devTools || setup.tests) ? name : setup.projectName) << ".exe</OutputFile>\n"
