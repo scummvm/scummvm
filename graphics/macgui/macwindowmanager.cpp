@@ -464,11 +464,15 @@ void MacWindowManager::drawDesktop() {
 	if (_desktopBmp) {
 		for (uint i = 0; i < _desktop->w; ++i) {
 			for (uint j = 0; j < _desktop->h; ++j) {
-				uint32 color = *(uint32*)_desktopBmp->getBasePtr(i % _desktopBmp->w, j % _desktopBmp->h);
-				byte r, g, b;
-				_desktopBmp->format.colorToRGB(color, r, g, b);
-				if (color > 0) {
-					*((byte *)_desktop->getBasePtr(i, j)) = findBestColor(r, g, b);
+				uint32 color = *(uint32 *)_desktopBmp->getBasePtr(i % _desktopBmp->w, j % _desktopBmp->h);
+				if (_pixelformat.bytesPerPixel == 1) {
+					byte r, g, b;
+					_desktopBmp->format.colorToRGB(color, r, g, b);
+					if (color > 0) {
+						*((byte *)_desktop->getBasePtr(i, j)) = findBestColor(r, g, b);
+					}
+				} else {
+					*((uint32 *)_desktop->getBasePtr(i, j)) = color;
 				}
 			}
 		}

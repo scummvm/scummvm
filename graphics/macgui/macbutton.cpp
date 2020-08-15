@@ -55,7 +55,7 @@ MacButton::MacButton(MacButtonType buttonType, TextAlign textAlignment, MacWidge
 		break;
 	}
 
-	_composeSurface->create(_dims.width(), _dims.height());
+	_composeSurface->create(_dims.width(), _dims.height(), _wm->_pixelformat);
 	_composeSurface->clear(_bgcolor);
 }
 
