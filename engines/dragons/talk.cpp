@@ -86,7 +86,7 @@ void Talk::printWideText(byte *text) {
 		}
 		text += 2;
 	}
-	buf[MAX(i, 1999)] = 0;
+	buf[MIN(i, 1999)] = 0;
 	debug("TEXT: %s", buf);
 }
 
@@ -667,6 +667,8 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 
 	talkDialogEntry = nullptr;
 
+	_vm->_fontManager->clearText();
+
 	uVar8 = 0;
 	local_60 = 0;
 	local_58 = 0;
@@ -842,6 +844,7 @@ void Talk::exitTalkMenu(bool isFlag8Set, bool isFlag100Set, Common::Array<TalkDi
 		delete *it;
 	}
 	dialogEntries.clear();
+	_vm->_fontManager->clearText();
 }
 
 uint Talk::somethingTextAndSpeechAndAnimRelated(Actor *actor, int16 sequenceId1, int16 sequenceId2, uint32 textIndex,
@@ -1106,8 +1109,9 @@ void Talk::clearDialogEntries() {
 }
 
 void Talk::FUN_8001a7c4_clearDialogBoxMaybe() {
-	_vm->_fontManager->clearTextDialog((uint) _dat_8008e7e8_dialogBox_x1, (uint) _dat_8008e844_dialogBox_y1,
-					(uint) _dat_8008e848_dialogBox_x2, (uint) _dat_8008e874_dialogBox_y2);
+	_vm->_fontManager->clearText();
+//	_vm->_fontManager->clearTextDialog((uint) _dat_8008e7e8_dialogBox_x1, (uint) _dat_8008e844_dialogBox_y1,
+//					(uint) _dat_8008e848_dialogBox_x2, (uint) _dat_8008e874_dialogBox_y2);
 }
 
 void Talk::playDialogAudioDontWait(uint32 textIndex) {
