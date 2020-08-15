@@ -24,12 +24,15 @@
 #include "base/plugins.h"
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/hashmap.h"
 #include "common/ptr.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/translation.h"
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
+#include "gui/ThemeEval.h"
+#include "gui/widget.h"
 
 #include "sci/sci.h"
 #include "sci/engine/kernel.h"
@@ -556,6 +559,55 @@ static const char *directoryGlobs[] = {
 	0
 };
 
+class OptionsWidget : public GUI::OptionsContainerWidget {
+public:
+	explicit OptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain);
+
+	// OptionsContainerWidget API
+	void load() override;
+	bool save() override;
+
+private:
+	// OptionsContainerWidget API
+	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
+
+	Common::String _guiOptions;
+	Common::HashMap<Common::String, GUI::CheckboxWidget *> _checkboxes;
+};
+
+OptionsWidget::OptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
+		OptionsContainerWidget(boss, name, "SciOptionsDialog", false, domain) {
+	_guiOptions = ConfMan.get("guioptions", domain);
+
+	for (const ADExtraGuiOptionsMap *entry = optionsList; entry->guioFlag; ++entry)
+		if (checkGameGUIOption(entry->guioFlag, _guiOptions))
+			_checkboxes[entry->option.configOption] = new GUI::CheckboxWidget(widgetsBoss(), _dialogLayout + "." + entry->option.configOption, entry->option.label, entry->option.tooltip);
+}
+
+void OptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
+	layouts.addDialog(layoutName, overlayedLayout);
+	layouts.addLayout(GUI::ThemeLayout::kLayoutVertical).addPadding(16, 16, 16, 16);
+
+	for (const ADExtraGuiOptionsMap *entry = optionsList; entry->guioFlag; ++entry)
+		layouts.addWidget(entry->option.configOption, "Checkbox");
+
+	layouts.closeLayout().closeDialog();
+}
+
+void OptionsWidget::load() {
+	for (const ADExtraGuiOptionsMap *entry = optionsList; entry->guioFlag; ++entry)
+		if (checkGameGUIOption(entry->guioFlag, _guiOptions))
+			_checkboxes[entry->option.configOption]->setState(ConfMan.getBool(entry->option.configOption, _domain));
+}
+
+bool OptionsWidget::save() {
+	for (const ADExtraGuiOptionsMap *entry = optionsList; entry->guioFlag; ++entry)
+		if (checkGameGUIOption(entry->guioFlag, _guiOptions))
+			ConfMan.setBool(entry->option.configOption, _checkboxes[entry->option.configOption]->getState(), _domain);
+
+	return true;
+}
+
 class SciMetaEngine : public AdvancedMetaEngine {
 public:
 	SciMetaEngine() : AdvancedMetaEngine(Sci::SciGameDescriptions, sizeof(ADGameDescription), s_sciGameTitles, optionsList) {
@@ -589,7 +641,12 @@ public:
 	int getMaximumSaveSlot() const override;
 	void removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 };
+
+GUI::OptionsContainerWidget *SciMetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+	return new OptionsWidget(boss, name, target);
+}
 
 Common::Language charToScummVMLanguage(const char c) {
 	switch (c) {
