@@ -545,7 +545,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 	_modified = true;
 }
 
-void TextCastMember::setColors(int *fgcolor, int *bgcolor) {
+void TextCastMember::setColors(uint32 *fgcolor, uint32 *bgcolor) {
 	if (fgcolor)
 		_fgcolor = *fgcolor;
 

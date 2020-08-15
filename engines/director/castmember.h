@@ -74,9 +74,9 @@ public:
 	virtual void updateFromWidget(Graphics::MacWidget *widget) {}
 	virtual Common::Rect getWidgetRect() { return _initialRect; }
 
-	virtual void setColors(int *fgcolor, int *bgcolor) { return; }
-	virtual uint getForeColor() { return 0; }
-	virtual uint getBackColor() { return 0; }
+	virtual void setColors(uint32 *fgcolor, uint32 *bgcolor) { return; }
+	virtual uint32 getForeColor() { return 0; }
+	virtual uint32 getBackColor() { return 0; }
 
 	bool hasProp(const Common::String &propName) override;
 	Datum getProp(const Common::String &propName) override;
@@ -180,8 +180,8 @@ public:
 class ShapeCastMember : public CastMember {
 public:
 	ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
-	virtual uint getForeColor() override { return _fgCol; }
-	virtual uint getBackColor() override { return _bgCol; }
+	virtual uint32 getForeColor() override { return _fgCol; }
+	virtual uint32 getBackColor() override { return _bgCol; }
 
 	ShapeType _shapeType;
 	uint16 _pattern;
@@ -191,14 +191,14 @@ public:
 	InkType _ink;
 
 private:
-	byte _fgCol;
-	byte _bgCol;
+	uint32 _fgCol;
+	uint32 _bgCol;
 };
 
 class TextCastMember : public CastMember {
 public:
 	TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version, uint8 flags1 = 0, bool asButton = false);
-	virtual void setColors(int *fgcolor, int *bgcolor) override;
+	virtual void setColors(uint32 *fgcolor, uint32 *bgcolor) override;
 
 	void setText(const char *text);
 	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel) override;
@@ -243,8 +243,8 @@ public:
 	Common::String getText();
 
 private:
-	uint _bgcolor;
-	uint _fgcolor;
+	uint32 _bgcolor;
+	uint32 _fgcolor;
 };
 
 class ScriptCastMember : public CastMember {

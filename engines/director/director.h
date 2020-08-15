@@ -117,8 +117,8 @@ struct PaletteV4 {
 struct MacShape {
 	InkType ink;
 	byte spriteType;
-	byte foreColor;
-	byte backColor;
+	uint32 foreColor;
+	uint32 backColor;
 	int lineSize;
 	uint pattern;
 

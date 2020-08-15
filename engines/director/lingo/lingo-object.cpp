@@ -881,13 +881,13 @@ bool TextCastMember::setField(int field, const Datum &d) {
 	switch (field) {
 	case kTheBackColor:
 		{
-			int color = g_director->transformColor(d.asInt());
+			uint32 color = g_director->transformColor(d.asInt());
 			setColors(nullptr, &color);
 		}
 		return true;
 	case kTheForeColor:
 		{
-			int color = g_director->transformColor(d.asInt());
+			uint32 color = g_director->transformColor(d.asInt());
 			setColors(&color, nullptr);
 		}
 		return true;
