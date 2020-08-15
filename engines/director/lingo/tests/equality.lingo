@@ -1,0 +1,11 @@
+scummvmAssert(1 = 1)
+scummvmAssert(1 = "1")
+scummvmAssert(1 = 1.0)
+scummvmAssert(cast 1  = cast 1)
+scummvmAssert("test" = "test")
+scummvmAssert(#test = #test)
+set string = the text of field 1
+scummvmAssert(field 1 = string)
+scummvmAssert(0 <> "")
+scummvmAssert(1 <> cast 1)
+scummvmAssert("test" <> #test)
