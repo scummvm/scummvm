@@ -53,6 +53,94 @@ MSVCProvider::MSVCProvider(StringList &global_warnings, std::map<std::string, St
 	_arch_disabled_features[ARCH_ARM64] = arm64_disabled_features;
 }
 
+std::string MSVCProvider::getLibraryFromFeature(const char *feature, const BuildSetup &setup, bool isRelease) const {
+	static const MSVCLibrary s_libraries[] = {
+		// Libraries
+		{       "sdl", "SDL.lib",                   "SDLd.lib",      "winmm.lib imm32.lib version.lib setupapi.lib",    0 },
+		{      "sdl2", "SDL2.lib",                  "SDL2d.lib",     "winmm.lib imm32.lib version.lib setupapi.lib",    0 },
+		{      "libz", "zlib.lib",                  "zlibd.lib",     0,                                                 0 },
+		{       "mad", "mad.lib",                   0,               0,                                                 "libmad.lib" },
+		{   "fribidi", "libfribidi.lib",            0,               0,                                                 0 },
+		{       "ogg", "ogg.lib",                   0,               0,                                                 "libogg_static.lib" },
+		{    "vorbis", "vorbis.lib vorbisfile.lib", 0,               0,                                                 "libvorbisfile_static.lib libvorbis_static.lib" },
+		{      "flac", "FLAC.lib",                  0,               0,                                                 "libFLAC_static.lib win_utf8_io_static.lib" },
+		{       "png", "libpng16.lib",              "libpng16d.lib", 0,                                                 0 },
+		{      "faad", "faad.lib",                  0,               0,                                                 "libfaad.lib" },
+		{     "mpeg2", "mpeg2.lib",                 0,               0,                                                 "libmpeg2.lib" },
+		{    "theora", "theora.lib",                0,               0,                                                 "libtheora_static.lib" },
+		{  "freetype", "freetype.lib",              "freetyped.lib", 0,                                                 0 },
+		{      "jpeg", "jpeg.lib",                  "jpegd.lib",     0,                                                 "jpeg-static.lib" },
+		{"fluidsynth", "fluidsynth.lib",            0,               0,                                                 "libfluidsynth.lib" },
+		{   "libcurl", "libcurl.lib",               "libcurl-d.lib", "ws2_32.lib wldap32.lib crypt32.lib normaliz.lib", 0 },
+		{    "sdlnet", "SDL_net.lib",               0,               "iphlpapi.lib",                                    0 },
+		{   "sdl2net", "SDL2_net.lib",              0,               "iphlpapi.lib",                                    "SDL_net.lib" },
+		// Feature flags with library dependencies
+		{   "updates", "winsparkle.lib",            0,               0,                                                 0 },
+		{       "tts", 0,                           0,               "sapi.lib",                                        0 }
+	};
+
+	// HACK for switching SDL_net to SDL2_net
+	const char *sdl2net = "sdl2net";
+	if (std::strcmp(feature, "sdlnet") == 0 && setup.useSDL2) {
+		feature = sdl2net;
+	}
+
+	const MSVCLibrary *library = 0;
+	for (unsigned int i = 0; i < sizeof(s_libraries) / sizeof(s_libraries[0]); i++) {
+		if (std::strcmp(feature, s_libraries[i].feature) == 0) {
+			library = &s_libraries[i];
+			break;
+		}
+	}
+
+	std::string libs;
+	if (library) {
+		// Dependencies come first
+		if (library->depends) {
+			libs += library->depends;
+			libs += " ";
+		}
+
+		const char *basename = library->release;
+		if (setup.useCanonicalLibNames) {
+			// Debug name takes priority
+			if (!isRelease && library->debug) {
+				basename = library->debug;
+			}
+		} else {
+			// Legacy name ignores configuration
+			if (library->legacy) {
+				basename = library->legacy;
+			}
+		}
+		if (basename) {
+			libs += basename;
+		}
+	}
+	
+	return libs;
+}
+
+std::string MSVCProvider::outputLibraryDependencies(const BuildSetup &setup, bool isRelease) const {
+	std::string libs;
+
+	if (setup.useSDL2) {
+		libs += getLibraryFromFeature("sdl2", setup, isRelease);
+	} else {
+		libs += getLibraryFromFeature("sdl", setup, isRelease);
+	}
+	libs += " ";
+	for (FeatureList::const_iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
+		if (i->enable) {
+			std::string lib = getLibraryFromFeature(i->name, setup, isRelease);
+			if (!lib.empty())
+				libs += lib + " ";
+		}
+	}
+
+	return libs;
+}
+
 void MSVCProvider::createWorkspace(const BuildSetup &setup) {
 	UUIDMap::const_iterator svmUUID = _uuidMap.find(setup.projectName);
 	if (svmUUID == _uuidMap.end())
