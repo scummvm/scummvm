@@ -921,6 +921,8 @@ void MacWindowManager::popCursor() {
 ///////////////////
 // Palette stuff
 ///////////////////
+#define LOOKUPCOLOR(x) _color ## x = findBestColor(palette[kColor ## x * 3], palette[kColor ## x  * 3 + 1], palette[kColor ## x * 3 + 2]);
+
 void MacWindowManager::passPalette(const byte *pal, uint size) {
 	if (_palette)
 		free(_palette);
@@ -931,24 +933,24 @@ void MacWindowManager::passPalette(const byte *pal, uint size) {
 
 	_colorHash.clear();
 
-	_colorWhite = findBestColor(palette[kColorWhite * 3], palette[kColorWhite * 3 + 1], palette[kColorWhite * 3 + 2]);
-	_colorGray80 = findBestColor(palette[kColorGray80 * 3], palette[kColorGray80 * 3 + 1], palette[kColorGray80 * 3 + 2]);
-	_colorGray88 = findBestColor(palette[kColorGray88 * 3], palette[kColorGray88 * 3 + 1], palette[kColorGray88 * 3 + 2]);
-	_colorGrayEE = findBestColor(palette[kColorGrayEE * 3], palette[kColorGrayEE * 3 + 1], palette[kColorGrayEE * 3 + 2]);
-	_colorBlack = findBestColor(palette[kColorBlack * 3], palette[kColorBlack * 3 + 1], palette[kColorBlack * 3 + 2]);
-	_colorGreen = findBestColor(palette[kColorGreen * 3], palette[kColorGreen * 3 + 1], palette[kColorGreen * 3 + 2]);
-	_colorGreen2 = findBestColor(palette[kColorGreen2 * 3], palette[kColorGreen2 * 3 + 1], palette[kColorGreen2 * 3 + 2]);
+	LOOKUPCOLOR(White);
+	LOOKUPCOLOR(Gray80);
+	LOOKUPCOLOR(Gray88);
+	LOOKUPCOLOR(GrayEE);
+	LOOKUPCOLOR(Black);
+	LOOKUPCOLOR(Green);
+	LOOKUPCOLOR(Green2);
 
 	drawDesktop();
 	setFullRefresh(true);
 }
 
 uint MacWindowManager::findBestColor(byte cr, byte cg, byte cb) {
-	uint bestColor = 0;
-	double min = 0xFFFFFFFF;
-
 	if (_pixelformat.bytesPerPixel == 4)
 		return cr << 24 | cg << 16 | cb << 8 | 0xff;
+
+	uint bestColor = 0;
+	double min = 0xFFFFFFFF;
 
 	uint32 color = cr << 16 | cg << 8 | cb;
 
