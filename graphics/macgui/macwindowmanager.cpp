@@ -943,7 +943,7 @@ uint MacWindowManager::findBestColor(byte cr, byte cg, byte cb) {
 	uint bestColor = 0;
 	double min = 0xFFFFFFFF;
 
-	if (_pixelformat.bytesPerPixel == 24)
+	if (_pixelformat.bytesPerPixel == 4)
 		return cr << 24 | cg << 16 | cb << 8 | 0xff;
 
 	uint32 color = cr << 16 | cg << 8 | cb;
