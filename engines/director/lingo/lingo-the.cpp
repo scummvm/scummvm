@@ -1281,10 +1281,10 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	case kTheConstraint:
 		{
 			int channelId = -1;
-			if (d.type == CASTNAME || d.type == CASTNUM) {
+			if (d.type == CASTREF) {
 				// Reference: CastMember ID
 				// Find the first channel that uses this cast.
-				int castId = castIdFetch(d);
+				int castId = d.u.i;
 				for (uint i = 0; i < score->_channels.size(); i++) {
 					if (score->_channels[i]->_sprite->_castId == castId) {
 						channelId = i;
@@ -1577,21 +1577,20 @@ Datum Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 			d = obj.u.parr->operator[](index - 1).v;
 		}
 		return d;
-	} else if (obj.type == CASTNAME || obj.type == CASTNUM || obj.type == FIELDNAME || obj.type == FIELDNUM) {
+	} else if (obj.type == CASTREF || obj.type == FIELDREF) {
 		Movie *movie = _vm->getCurrentMovie();
 		if (!movie) {
 			warning("Lingo::getObjectProp(): No movie loaded");
 			return d;
 		}
 
-		int id = g_lingo->castIdFetch(obj);
-
+		int id = obj.u.i;
 		CastMember *member = movie->getCastMember(id);
 		if (!member) {
 			warning("Lingo::getObjectProp(): CastMember %d not found", id);
 			return d;
 		}
-		if ((obj.type == FIELDNAME || obj.type == FIELDNUM) && member->_type != kCastText) {
+		if (obj.type == FIELDREF && member->_type != kCastText) {
 			warning("Lingo::getObjectProp(): CastMember %d is not a field", id);
 			return d;
 		}
@@ -1622,21 +1621,20 @@ void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
 			PCell cell = PCell(propName, val);
 			obj.u.parr->push_back(cell);
 		}
-	} else if (obj.type == CASTNAME || obj.type == CASTNUM || obj.type == FIELDNAME || obj.type == FIELDNUM) {
+	} else if (obj.type == CASTREF || obj.type == FIELDREF) {
 		Movie *movie = _vm->getCurrentMovie();
 		if (!movie) {
 			warning("Lingo::setObjectProp(): No movie loaded");
 			return;
 		}
 
-		int id = g_lingo->castIdFetch(obj);
-
+		int id = obj.u.i;
 		CastMember *member = movie->getCastMember(id);
 		if (!member) {
 			warning("Lingo::setObjectProp(): CastMember %d not found", id);
 			return;
 		}
-		if ((obj.type == FIELDNAME || obj.type == FIELDNUM) && member->_type != kCastText) {
+		if ((obj.type == FIELDREF) && member->_type != kCastText) {
 			warning("Lingo::setObjectProp(): CastMember %d is not a field", id);
 			return;
 		}

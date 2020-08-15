@@ -455,7 +455,7 @@ void LB::b_chars(int nargs) {
 	Datum d3 = g_lingo->pop();
 	Datum d2 = g_lingo->pop();
 	Datum s = g_lingo->pop();
-	TYPECHECK3(s, STRING, FIELDNAME, FIELDNUM);
+	TYPECHECK2(s, STRING, FIELDREF);
 
 	if (g_director->getVersion() < 400 && (d2.type == FLOAT || d3.type == FLOAT)) {
 		warning("LB::b_chars: Called with a float in Director 2 and 3 mode. chars' can't handle floats");
@@ -516,7 +516,7 @@ void LB::b_hilite(int nargs) {
 
 void LB::b_length(int nargs) {
 	Datum d = g_lingo->pop();
-	TYPECHECK3(d, STRING, FIELDNAME, FIELDNUM);
+	TYPECHECK2(d, STRING, FIELDREF);
 
 	int len = strlen(d.asString().c_str());
 
@@ -603,7 +603,7 @@ void LB::b_addProp(int nargs) {
 	Datum list = g_lingo->pop();
 
 	TYPECHECK(list, PARRAY);
-	if (prop.type == FIELDNAME || prop.type == FIELDNUM)
+	if (prop.type == FIELDREF)
 		prop = g_lingo->varFetch(prop);
 
 	PCell cell = PCell(prop, value);
@@ -1034,7 +1034,7 @@ void LB::b_setProp(int nargs) {
 	Datum prop = g_lingo->pop();
 	Datum list = g_lingo->pop();
 	TYPECHECK(list, PARRAY);
-	if (prop.type == FIELDNAME || prop.type == FIELDNUM)
+	if (prop.type == FIELDREF)
 		prop = g_lingo->varFetch(prop);
 
 	int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
@@ -2320,29 +2320,23 @@ void LB::b_version(int nargs) {
 ///////////////////
 void LB::b_cast(int nargs) {
 	Datum d = g_lingo->pop();
-
-	Datum res;
 	if (d.type == STRING) {
-		res = d;
-		res.type = CASTNAME;
-	} else {
-		res = d.asInt();
-		res.type = CASTNUM;
+		d = g_lingo->castIdFetch(d);
 	}
+
+	Datum res = d.asInt();
+	res.type = CASTREF;
 	g_lingo->push(res);
 }
 
 void LB::b_field(int nargs) {
 	Datum d = g_lingo->pop();
-
-	Datum res;
 	if (d.type == STRING) {
-		res = d;
-		res.type = FIELDNAME;
-	} else {
-		res = d.asInt();
-		res.type = FIELDNUM;
+		d = g_lingo->castIdFetch(d);
 	}
+
+	Datum res = d.asInt();
+	res.type = FIELDREF;
 	g_lingo->push(res);
 }
 
