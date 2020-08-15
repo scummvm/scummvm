@@ -1587,7 +1587,11 @@ Datum Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 		int id = obj.u.i;
 		CastMember *member = movie->getCastMember(id);
 		if (!member) {
-			warning("Lingo::getObjectProp(): CastMember %d not found", id);
+			if (propName.equalsIgnoreCase("loaded")) {
+				d = 0;
+			} else {
+				warning("Lingo::getObjectProp(): CastMember %d not found", id);
+			}
 			return d;
 		}
 		if (obj.type == FIELDREF && member->_type != kCastText) {
