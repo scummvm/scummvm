@@ -407,7 +407,11 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 	reg_t avoider = argv[0];
 	int16 timesStep = argc > 1 ? argv[1].toUint16() : 1;
 
-	if (!s->_segMan->isHeapObject(avoider)) {
+	// Note: the avoider must be an object but it may already have been freed.
+	//  Avoid:doit calls kDoAvoider multiple times and any of these calls might
+	//  result in the avoider being disposed when invoking mover:doit.
+	//  This can happen in kq4 early when captured by a witch in room 57.
+	if (!s->_segMan->isObject(avoider)) {
 		error("DoAvoider() where avoider %04x:%04x is not an object", PRINT_REG(avoider));
 		return SIGNAL_REG;
 	}
