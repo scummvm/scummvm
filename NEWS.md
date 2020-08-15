@@ -56,6 +56,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Sword1:
    - Added support for localized menus in Novy Disk Russian Trilogy release.
 
+ Titanic:
+   - Fixed Barbot crash after asking what else he needs.
+
  Wintermute:
    - Added subsystem for tracking achievements, implemented for 10+ games.
 
