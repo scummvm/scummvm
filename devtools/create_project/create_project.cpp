@@ -551,6 +551,9 @@ int main(int argc, char *argv[]) {
 		//
 		// 4577 ('noexcept' used with no exception handling mode specified)
 		//
+		// 4589 (Constructor of abstract class 'type' ignores initializer for virtual base class 'type')
+		//   caused by Common::Stream virtual inheritance, should be harmless
+		//
 		// 4702 (unreachable code)
 		//   mostly thrown after error() calls (marked as NORETURN)
 		//
@@ -599,6 +602,7 @@ int main(int argc, char *argv[]) {
 		globalWarnings.push_back("4345");
 		globalWarnings.push_back("4351");
 		globalWarnings.push_back("4512");
+		globalWarnings.push_back("4589");
 		globalWarnings.push_back("4702");
 		globalWarnings.push_back("4706");
 		globalWarnings.push_back("4800");
