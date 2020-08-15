@@ -847,7 +847,7 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 		// Get the pixel that macDrawPixel will give us, but store it to apply the
 		// ink later.
 		tmpDst = *dst;
-		Graphics::macDrawPixel(x, y, src, p->ms->pd);
+		(p->_wm->getDrawPixel())(x, y, src, p->ms->pd);
 		src = *dst;
 
 		*dst = tmpDst;

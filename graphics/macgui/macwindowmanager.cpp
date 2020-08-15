@@ -401,6 +401,7 @@ void MacWindowManager::removeWindow(MacWindow *target) {
 		_activeWindow = -1;
 }
 
+template<typename T>
 void macDrawPixel(int x, int y, int color, void *data) {
 	MacPlotData *p = (MacPlotData *)data;
 
@@ -414,11 +415,11 @@ void macDrawPixel(int x, int y, int color, void *data) {
 			uint xu = (uint)x; // for letting compiler optimize it
 			uint yu = (uint)y;
 
-			*((byte *)p->surface->getBasePtr(xu, yu)) = p->invert ? ~(*((byte *)p->surface->getBasePtr(xu, yu))) :
+			*((T)p->surface->getBasePtr(xu, yu)) = p->invert ? ~(*((T)p->surface->getBasePtr(xu, yu))) :
 				(pat[(yu - p->fillOriginY) % 8] & (1 << (7 - (xu - p->fillOriginX) % 8))) ? color : p->bgColor;
 
 			if (p->mask)
-				*((byte *)p->mask->getBasePtr(xu, yu)) = 0xff;
+				*((T)p->mask->getBasePtr(xu, yu)) = 0xff;
 		}
 	} else {
 		int x1 = x;
@@ -431,13 +432,20 @@ void macDrawPixel(int x, int y, int color, void *data) {
 				if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h) {
 					uint xu = (uint)x; // for letting compiler optimize it
 					uint yu = (uint)y;
-					*((byte *)p->surface->getBasePtr(xu, yu)) = p->invert ? ~(*((byte *)p->surface->getBasePtr(xu, yu))) :
+					*((T)p->surface->getBasePtr(xu, yu)) = p->invert ? ~(*((T)p->surface->getBasePtr(xu, yu))) :
 						(pat[(yu - p->fillOriginY) % 8] & (1 << (7 - (xu - p->fillOriginX) % 8))) ? color : p->bgColor;
 
 					if (p->mask)
-						*((byte *)p->mask->getBasePtr(xu, yu)) = 0xff;
+						*((T)p->mask->getBasePtr(xu, yu)) = 0xff;
 				}
 	}
+}
+
+MacWindowManager::DrawPixPtr MacWindowManager::getDrawPixel() {
+	if (_pixelformat.bytesPerPixel == 1)
+		return &macDrawPixel<byte *>;
+	else
+		return &macDrawPixel<uint32 *>;
 }
 
 void MacWindowManager::loadDesktop() {
@@ -481,7 +489,7 @@ void MacWindowManager::drawDesktop() {
 
 		MacPlotData pd(_desktop, nullptr, &_patterns, kPatternCheckers, 0, 0, 1, _colorWhite);
 
-		Graphics::drawRoundRect(r, kDesktopArc, _colorBlack, true, macDrawPixel, &pd);
+		Graphics::drawRoundRect(r, kDesktopArc, _colorBlack, true, getDrawPixel(), &pd);
 	}
 }
 
@@ -549,19 +557,24 @@ void MacWindowManager::draw() {
 				if (w->isDirty() || forceRedraw) {
 					w->draw(forceRedraw);
 
-					Surface *surface = g_system->lockScreen();
-					ManagedSurface *border = w->getBorderSurface();
-
 					adjustDimensions(clip, outerDims, adjWidth, adjHeight);
-					for (int y = 0; y < adjHeight; y++) {
-						const byte *src = (const byte *)border->getBasePtr(clip.left - outerDims.left, y);
-						byte *dst = (byte *)surface->getBasePtr(clip.left, y + clip.top);
-						for (int x = 0; x < adjWidth; x++, src++, dst++)
-								if (*src != _colorGreen2 && *src != _colorGreen)
-									*dst = *src;
-					}
 
-					g_system->unlockScreen();
+					if (_pixelformat.bytesPerPixel == 1) {
+						Surface *surface = g_system->lockScreen();
+						ManagedSurface *border = w->getBorderSurface();
+
+						for (int y = 0; y < adjHeight; y++) {
+							const byte *src = (const byte *)border->getBasePtr(clip.left - outerDims.left, y);
+							byte *dst = (byte *)surface->getBasePtr(clip.left, y + clip.top);
+							for (int x = 0; x < adjWidth; x++, src++, dst++)
+									if (*src != _colorGreen2 && *src != _colorGreen)
+										*dst = *src;
+						}
+
+						g_system->unlockScreen();
+					} else {
+						g_system->copyRectToScreen(w->getBorderSurface()->getBasePtr(MAX(clip.left - outerDims.left, 0), MAX(clip.top - outerDims.top, 0)), w->getBorderSurface()->pitch, clip.left, clip.top, adjWidth, adjHeight);
+					}
 				}
 
 				adjustDimensions(clip, innerDims, adjWidth, adjHeight);
@@ -789,10 +802,10 @@ void MacWindowManager::renderZoomBox(bool redraw) {
 }
 
 void MacWindowManager::zoomBoxInner(Common::Rect &r, Graphics::MacPlotData &pd) {
-	Graphics::drawLine(r.left,  r.top,    r.right, r.top,    0xff, Graphics::macDrawPixel, &pd);
-	Graphics::drawLine(r.right, r.top,    r.right, r.bottom, 0xff, Graphics::macDrawPixel, &pd);
-	Graphics::drawLine(r.left,  r.bottom, r.right, r.bottom, 0xff, Graphics::macDrawPixel, &pd);
-	Graphics::drawLine(r.left,  r.top,    r.left,  r.bottom, 0xff, Graphics::macDrawPixel, &pd);
+	Graphics::drawLine(r.left,  r.top,    r.right, r.top,    0xff, getDrawPixel(), &pd);
+	Graphics::drawLine(r.right, r.top,    r.right, r.bottom, 0xff, getDrawPixel(), &pd);
+	Graphics::drawLine(r.left,  r.bottom, r.right, r.bottom, 0xff, getDrawPixel(), &pd);
+	Graphics::drawLine(r.left,  r.top,    r.left,  r.bottom, 0xff, getDrawPixel(), &pd);
 }
 
 /////////////////

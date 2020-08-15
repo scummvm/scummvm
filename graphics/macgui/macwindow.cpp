@@ -374,7 +374,7 @@ void MacWindow::drawSimpleBorder(ManagedSurface *g) {
 				Common::Rect rr(rx1, ry1, rx2, ry2);
 
 				MacPlotData pd(g, nullptr,  &_wm->getPatterns(), 1, 0, 0, 1, _wm->_colorBlack, true);
-				Graphics::drawFilledRect(rr, _wm->_colorBlack, Graphics::macDrawPixel, &pd);
+				Graphics::drawFilledRect(rr, _wm->_colorBlack, _wm->getDrawPixel(), &pd);
 			}
 		}
 		if (closeable) {

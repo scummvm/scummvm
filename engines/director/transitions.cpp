@@ -1020,10 +1020,10 @@ void Window::transZoom(TransParams &t, Common::Rect &clipRect, Graphics::Managed
 				r.moveTo(t.xStepSize * (i - s), t.yStepSize * (i - s));
 			}
 
-			Graphics::drawLine(r.left,  r.top,    r.right, r.top,    0xffff, Graphics::macDrawPixel, &pd);
-			Graphics::drawLine(r.right, r.top,    r.right, r.bottom, 0xffff, Graphics::macDrawPixel, &pd);
-			Graphics::drawLine(r.left,  r.bottom, r.right, r.bottom, 0xffff, Graphics::macDrawPixel, &pd);
-			Graphics::drawLine(r.left,  r.top,    r.left,  r.bottom, 0xffff, Graphics::macDrawPixel, &pd);
+			Graphics::drawLine(r.left,  r.top,    r.right, r.top,    0xffff, _wm->getDrawPixel(), &pd);
+			Graphics::drawLine(r.right, r.top,    r.right, r.bottom, 0xffff, _wm->getDrawPixel(), &pd);
+			Graphics::drawLine(r.left,  r.bottom, r.right, r.bottom, 0xffff, _wm->getDrawPixel(), &pd);
+			Graphics::drawLine(r.left,  r.top,    r.left,  r.bottom, 0xffff, _wm->getDrawPixel(), &pd);
 		}
 
 		r.setHeight(t.yStepSize * i * 2);

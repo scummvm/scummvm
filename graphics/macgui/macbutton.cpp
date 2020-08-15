@@ -74,14 +74,14 @@ void MacButton::invertOuter() {
 	switch (_buttonType) {
 	case kCheckBox: {
 		Common::Rect c = Common::Rect(r.left + 1, r.top + 3, r.left + 9, r.top + 11);
-		Graphics::drawRect(c, 0, Graphics::macDrawPixel, &_pd);
+		Graphics::drawRect(c, 0, _wm->getDrawPixel(), &_pd);
 	}
 		break;
 	case kRound:
-		Graphics::drawRoundRect(r, 4, 0, true, Graphics::macDrawPixel, &_pd);
+		Graphics::drawRoundRect(r, 4, 0, true, _wm->getDrawPixel(), &_pd);
 		break;
 	case kRadio:
-		Graphics::drawEllipse(r.left + 1, r.top + 3, r.left + 10, r.top + 12, 0, false, Graphics::macDrawPixel, &_pd);
+		Graphics::drawEllipse(r.left + 1, r.top + 3, r.left + 10, r.top + 12, 0, false, _wm->getDrawPixel(), &_pd);
 		break;
 	}
 
@@ -93,14 +93,14 @@ void MacButton::invertInner() {
 
 	switch (_buttonType) {
 	case kCheckBox:
-		Graphics::drawLine(r.left + 1, r.top + 3, r.left + 9, r.top + 11, 0, Graphics::macDrawPixel, &_pd);
-		Graphics::drawLine(r.left + 1, r.top + 11, r.left + 9, r.top + 3, 0, Graphics::macDrawPixel, &_pd);
-		Graphics::macDrawPixel(5, 7, 0, &_pd);
+		Graphics::drawLine(r.left + 1, r.top + 3, r.left + 9, r.top + 11, 0, _wm->getDrawPixel(), &_pd);
+		Graphics::drawLine(r.left + 1, r.top + 11, r.left + 9, r.top + 3, 0, _wm->getDrawPixel(), &_pd);
+		(_wm->getDrawPixel())(5, 7, 0, &_pd);
 		break;
 	case kRound:
 		break;
 	case kRadio:
-		Graphics::drawEllipse(r.left + 3, r.top + 5, r.left + 8, r.top + 10, 0, true, Graphics::macDrawPixel, &_pd);
+		Graphics::drawEllipse(r.left + 3, r.top + 5, r.left + 8, r.top + 10, 0, true, _wm->getDrawPixel(), &_pd);
 		break;
 	}
 
@@ -119,14 +119,14 @@ bool MacButton::draw(bool forceRedraw) {
 	switch (_buttonType) {
 	case kCheckBox: {
 		Common::Rect c = Common::Rect(r.left, r.top + 2, r.left + 10, r.top + 2 + 10);
-		Graphics::drawRect(c, 0, Graphics::macDrawPixel, &pd);
+		Graphics::drawRect(c, 0, _wm->getDrawPixel(), &pd);
 		break;
 	}
 	case kRound:
-		Graphics::drawRoundRect(r, 4, 0, _active, Graphics::macDrawPixel, &pd);
+		Graphics::drawRoundRect(r, 4, 0, _active, _wm->getDrawPixel(), &pd);
 		break;
 	case kRadio:
-		Graphics::drawEllipse(r.left, r.top + 2, r.left + 11, r.top + 13, 0, false, Graphics::macDrawPixel, &pd);
+		Graphics::drawEllipse(r.left, r.top + 2, r.left + 11, r.top + 13, 0, false, _wm->getDrawPixel(), &pd);
 		break;
 	}
 

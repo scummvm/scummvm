@@ -131,8 +131,6 @@ struct ZoomBox {
 	uint32 nextTime;
 };
 
-void macDrawPixel(int x, int y, int color, void *data);
-
 /**
  * A manager class to handle window creation, destruction,
  * drawing, moving and event handling.
@@ -141,6 +139,9 @@ class MacWindowManager {
 public:
 	MacWindowManager(uint32 mode = 0, MacPatterns *patterns = nullptr);
 	~MacWindowManager();
+
+	typedef void (* DrawPixPtr)(int, int, int, void *);
+	DrawPixPtr getDrawPixel();
 
 	/**
 	 * Mutator to indicate the surface onto which the desktop will be drawn.
