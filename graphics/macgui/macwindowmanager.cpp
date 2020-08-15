@@ -441,7 +441,7 @@ void macDrawPixel(int x, int y, int color, void *data) {
 	}
 }
 
-MacWindowManager::DrawPixPtr MacWindowManager::getDrawPixel() {
+MacDrawPixPtr MacWindowManager::getDrawPixel() {
 	if (_pixelformat.bytesPerPixel == 1)
 		return &macDrawPixel<byte *>;
 	else
