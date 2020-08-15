@@ -725,7 +725,12 @@ static const byte mouseDown[] = {
  * All other color ids can be converted with: 255 - colorId.
  **/
 uint32 DirectorEngine::transformColor(uint32 color) {
-	return 255 - color;
+	if (_pixelformat.bytesPerPixel == 1)
+		return 255 - color;
+
+	color = 255 - color;
+
+	return _wm->findBestColor(_currentPalette[color * 3], _currentPalette[color * 3 + 1], _currentPalette[color * 3 + 2]);
 }
 
 void DirectorEngine::loadPatterns() {

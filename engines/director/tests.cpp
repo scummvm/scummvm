@@ -54,8 +54,8 @@ void Window::testFontScaling() {
 
 	Graphics::ManagedSurface surface;
 
-	surface.create(w, h);
-	surface.clear(255);
+	surface.create(w, h, _wm->_pixelformat);
+	surface.clear(_wm->_colorWhite);
 
 	Graphics::MacFont origFont(Graphics::kMacFontNewYork, 18);
 
@@ -93,7 +93,10 @@ void Window::testFontScaling() {
 
 			for (x = x1; x < x1 + 6; x++)
 				for (y = y1; y < y1 + 6; y++)
-					*((byte *)surface.getBasePtr(x, y)) = _vm->transformColor(i * 16 + j);
+					if (_wm->_pixelformat.bytesPerPixel == 1)
+						*((byte *)surface.getBasePtr(x, y)) = _vm->transformColor(i * 16 + j);
+					else
+						*((uint32 *)surface.getBasePtr(x, y)) = _vm->transformColor(i * 16 + j);
 		}
 	}
 
