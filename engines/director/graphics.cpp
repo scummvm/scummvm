@@ -832,16 +832,17 @@ void DirectorEngine::draw() {
 	g_system->updateScreen();
 }
 
+template <typename T>
 void inkDrawPixel(int x, int y, int src, void *data) {
 	DirectorPlotData *p = (DirectorPlotData *)data;
 
 	if (!p->destRect.contains(x, y))
 		return;
 
-	byte *dst;
-	byte tmpDst;
+	T dst;
+	uint32 tmpDst;
 
-	dst = (byte *)p->dst->getBasePtr(x, y);
+	dst = (T)p->dst->getBasePtr(x, y);
 
 	if (p->ms) {
 		// Get the pixel that macDrawPixel will give us, but store it to apply the
@@ -972,6 +973,13 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 		}
 	}
 	}
+}
+
+Graphics::MacDrawPixPtr DirectorEngine::getInkDrawPixel() {
+	if (_pixelformat.bytesPerPixel == 1)
+		return &inkDrawPixel<byte *>;
+	else
+		return &inkDrawPixel<uint32 *>;
 }
 
 void DirectorPlotData::setApplyColor() {

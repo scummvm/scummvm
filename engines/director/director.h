@@ -32,6 +32,7 @@
 
 #include "engines/engine.h"
 #include "graphics/pixelformat.h"
+#include "graphics/macgui/macwindowmanager.h"
 
 #include "director/types.h"
 #include "director/util.h"
@@ -162,8 +163,6 @@ struct DirectorPlotData {
 	}
 };
 
-void inkDrawPixel(int x, int y, int color, void *data);
-
 class DirectorEngine : public ::Engine {
 public:
 	DirectorEngine(OSystem *syst, const DirectorGameDescription *gameDesc);
@@ -213,6 +212,8 @@ public:
 	Graphics::MacPatterns &getPatterns();
 	void setCursor(int type);
 	void draw();
+
+	Graphics::MacDrawPixPtr getInkDrawPixel();
 
 	void loadKeyCodes();
 

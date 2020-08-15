@@ -183,35 +183,35 @@ void Window::inkBlitShape(DirectorPlotData *pd, Common::Rect &srcRect) {
 	switch (pd->ms->spriteType) {
 	case kRectangleSprite:
 		pd->ms->pd = &plotFill;
-		Graphics::drawFilledRect(fillRect, pd->ms->foreColor, inkDrawPixel, pd);
+		Graphics::drawFilledRect(fillRect, pd->ms->foreColor, g_director->getInkDrawPixel(), pd);
 		// fall through
 	case kOutlinedRectangleSprite:
 		pd->ms->pd = &plotStroke;
-		Graphics::drawRect(strokeRect, pd->ms->foreColor, inkDrawPixel, pd);
+		Graphics::drawRect(strokeRect, pd->ms->foreColor, g_director->getInkDrawPixel(), pd);
 		break;
 	case kRoundedRectangleSprite:
 		pd->ms->pd = &plotFill;
-		Graphics::drawRoundRect(fillRect, 12, pd->ms->foreColor, true, inkDrawPixel, pd);
+		Graphics::drawRoundRect(fillRect, 12, pd->ms->foreColor, true, g_director->getInkDrawPixel(), pd);
 		// fall through
 	case kOutlinedRoundedRectangleSprite:
 		pd->ms->pd = &plotStroke;
-		Graphics::drawRoundRect(strokeRect, 12, pd->ms->foreColor, false, inkDrawPixel, pd);
+		Graphics::drawRoundRect(strokeRect, 12, pd->ms->foreColor, false, g_director->getInkDrawPixel(), pd);
 		break;
 	case kOvalSprite:
 		pd->ms->pd = &plotFill;
-		Graphics::drawEllipse(fillRect.left, fillRect.top, fillRect.right, fillRect.bottom, pd->ms->foreColor, true, inkDrawPixel, pd);
+		Graphics::drawEllipse(fillRect.left, fillRect.top, fillRect.right, fillRect.bottom, pd->ms->foreColor, true, g_director->getInkDrawPixel(), pd);
 		// fall through
 	case kOutlinedOvalSprite:
 		pd->ms->pd = &plotStroke;
-		Graphics::drawEllipse(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, pd->ms->foreColor, false, inkDrawPixel, pd);
+		Graphics::drawEllipse(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, pd->ms->foreColor, false, g_director->getInkDrawPixel(), pd);
 		break;
 	case kLineTopBottomSprite:
 		pd->ms->pd = &plotStroke;
-		Graphics::drawLine(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, pd->ms->foreColor, inkDrawPixel, pd);
+		Graphics::drawLine(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, pd->ms->foreColor, g_director->getInkDrawPixel(), pd);
 		break;
 	case kLineBottomTopSprite:
 		pd->ms->pd = &plotStroke;
-		Graphics::drawLine(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, pd->ms->foreColor, inkDrawPixel, pd);
+		Graphics::drawLine(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, pd->ms->foreColor, g_director->getInkDrawPixel(), pd);
 		break;
 	default:
 		warning("Window::inkBlitFrom: Expected shape type but got type %d", pd->ms->spriteType);
@@ -233,7 +233,7 @@ void Window::inkBlitSurface(DirectorPlotData *pd, Common::Rect &srcRect, const G
 
 		for (int j = 0; j < pd->destRect.width(); j++, pd->srcPoint.x++) {
 			if (!mask || (msk && (pd->ink == kInkTypeMask ? *msk++ : !(*msk++)))) {
-				inkDrawPixel(pd->destRect.left + j, pd->destRect.top + i,
+				(g_director->getInkDrawPixel())(pd->destRect.left + j, pd->destRect.top + i,
 										 preprocessColor(pd, *((byte *)pd->srf->getBasePtr(pd->srcPoint.x, pd->srcPoint.y))), pd);
 			}
 		}
@@ -259,7 +259,7 @@ void Window::inkBlitStretchSurface(DirectorPlotData *pd, Common::Rect &srcRect, 
 
 		for (int xCtr = 0, scaleXCtr = 0; xCtr < pd->destRect.width(); xCtr++, scaleXCtr += scaleX, pd->srcPoint.x++) {
 			if (!mask || (msk && (pd->ink == kInkTypeMask ? *msk++ : !(*msk++)))) {
-			inkDrawPixel(pd->destRect.left + xCtr, pd->destRect.top + i,
+			(g_director->getInkDrawPixel())(pd->destRect.left + xCtr, pd->destRect.top + i,
 									 preprocessColor(pd, *((byte *)pd->srf->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD))), pd);
 			}
 		}
