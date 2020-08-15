@@ -380,11 +380,19 @@ void MacWindow::drawPattern() {
 	byte *pat = _wm->getPatterns()[_pattern - 1];
 	for (int y = 0; y < _composeSurface->h; y++) {
 		for (int x = 0; x < _composeSurface->w; x++) {
-			byte *dst = (byte *)_composeSurface->getBasePtr(x, y);
-			if (pat[y % 8] & (1 << (7 - (x % 8))))
-				*dst = _wm->_colorBlack;
-			else
-				*dst = _wm->_colorWhite;
+			if (_wm->_pixelformat.bytesPerPixel == 1) {
+				byte *dst = (byte *)_composeSurface->getBasePtr(x, y);
+				if (pat[y % 8] & (1 << (7 - (x % 8))))
+					*dst = _wm->_colorBlack;
+				else
+					*dst = _wm->_colorWhite;
+			} else {
+				uint32 *dst = (uint32 *)_composeSurface->getBasePtr(x, y);
+				if (pat[y % 8] & (1 << (7 - (x % 8))))
+					*dst = _wm->_colorBlack;
+				else
+					*dst = _wm->_colorWhite;
+			}
 		}
 	}
 }
