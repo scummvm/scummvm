@@ -187,23 +187,27 @@ void BitmapCastMember::createMatte() {
 	// Like background trans, but all white pixels NOT ENCLOSED by coloured pixels
 	// are transparent
 	Graphics::Surface tmp;
-	tmp.create(_initialRect.width(), _initialRect.height(), Graphics::PixelFormat::createFormatCLUT8());
+	tmp.create(_initialRect.width(), _initialRect.height(), g_director->_pixelformat);
 	tmp.copyFrom(*_img->getSurface());
 
 	// Searching white color in the corners
 	int whiteColor = -1;
 
-	for (int y = 0; y < tmp.h; y++) {
-		for (int x = 0; x < tmp.w; x++) {
-			byte color = *(byte *)tmp.getBasePtr(x, y);
+	if (g_director->_pixelformat.bytesPerPixel == 1) {
+		for (int y = 0; y < tmp.h; y++) {
+			for (int x = 0; x < tmp.w; x++) {
+				byte color = *(byte *)tmp.getBasePtr(x, y);
 
-			if (g_director->getPalette()[color * 3 + 0] == 0xff &&
-					g_director->getPalette()[color * 3 + 1] == 0xff &&
-					g_director->getPalette()[color * 3 + 2] == 0xff) {
-				whiteColor = color;
-				break;
+				if (g_director->getPalette()[color * 3 + 0] == 0xff &&
+						g_director->getPalette()[color * 3 + 1] == 0xff &&
+						g_director->getPalette()[color * 3 + 2] == 0xff) {
+					whiteColor = color;
+					break;
+				}
 			}
 		}
+	} else {
+		whiteColor = g_director->_wm->findBestColor(0xff, 0xff, 0xff);
 	}
 
 	if (whiteColor == -1) {
