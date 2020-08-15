@@ -140,7 +140,7 @@ public:
 	Common::Point _lastClickPos;
 	uint32 _lastKeyTime;
 	uint32 _lastTimerReset;
-	uint16 _stageColor;
+	uint32 _stageColor;
 	Cast *_sharedCast;
 	bool _allowOutdatedLingo;
 

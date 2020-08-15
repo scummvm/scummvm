@@ -95,8 +95,8 @@ class Window : public Graphics::MacWindow, public Object<Window> {
 	void invertChannel(Channel *channel);
 
 	bool needsAppliedColor(DirectorPlotData *pd);
-	void setStageColor(uint stageColor, bool forceReset = false);
-	int getStageColor() { return _stageColor; }
+	void setStageColor(uint32 stageColor, bool forceReset = false);
+	uint32 getStageColor() { return _stageColor; }
 
 	void reset();
 
@@ -170,7 +170,7 @@ public:
 	bool _newMovieStarted;
 
 private:
-	uint _stageColor;
+	uint32 _stageColor;
 
 	DirectorEngine *_vm;
 	bool _isStage;
@@ -185,7 +185,7 @@ private:
 	bool _titleVisible;
 
 private:
-	int preprocessColor(DirectorPlotData *p, int src);
+	int preprocessColor(DirectorPlotData *p, uint32 src);
 
 	void inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::ManagedSurface *blitTo = nullptr);
 	void inkBlitShape(DirectorPlotData *pd, Common::Rect &srcRect);

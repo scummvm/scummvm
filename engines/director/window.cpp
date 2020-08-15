@@ -75,12 +75,21 @@ void Window::invertChannel(Channel *channel) {
 	Common::Rect destRect = channel->getBbox();
 
 	for (int i = 0; i < destRect.height(); i++) {
-		byte *src = (byte *)_composeSurface->getBasePtr(destRect.left, destRect.top + i);
-		const byte *msk = mask ? (const byte *)mask->getBasePtr(0, i) : nullptr;
+		if (_wm->_pixelformat.bytesPerPixel == 1) {
+			byte *src = (byte *)_composeSurface->getBasePtr(destRect.left, destRect.top + i);
+			const byte *msk = mask ? (const byte *)mask->getBasePtr(0, i) : nullptr;
 
-		for (int j = 0; j < destRect.width(); j++, src++)
-			if (!mask || (msk && !(*msk++)))
-				*src = ~(*src);
+			for (int j = 0; j < destRect.width(); j++, src++)
+				if (!mask || (msk && !(*msk++)))
+					*src = ~(*src);
+		} else {
+			uint32 *src = (uint32 *)_composeSurface->getBasePtr(destRect.left, destRect.top + i);
+			const uint32 *msk = mask ? (const uint32 *)mask->getBasePtr(0, i) : nullptr;
+
+			for (int j = 0; j < destRect.width(); j++, src++)
+				if (!mask || (msk && !(*msk++)))
+					*src = ~(*src);
+		}
 	}
 }
 
@@ -118,7 +127,7 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 	return true;
 }
 
-void Window::setStageColor(uint stageColor, bool forceReset) {
+void Window::setStageColor(uint32 stageColor, bool forceReset) {
 	if (stageColor != _stageColor || forceReset) {
 		_stageColor = stageColor;
 		reset();
@@ -228,13 +237,25 @@ void Window::inkBlitSurface(DirectorPlotData *pd, Common::Rect &srcRect, const G
 
 	pd->srcPoint.y = abs(srcRect.top - pd->destRect.top);
 	for (int i = 0; i < pd->destRect.height(); i++, pd->srcPoint.y++) {
-		pd->srcPoint.x = abs(srcRect.left - pd->destRect.left);
-		const byte *msk = mask ? (const byte *)mask->getBasePtr(pd->srcPoint.x, pd->srcPoint.y) : nullptr;
+		if (_wm->_pixelformat.bytesPerPixel == 1) {
+			pd->srcPoint.x = abs(srcRect.left - pd->destRect.left);
+			const byte *msk = mask ? (const byte *)mask->getBasePtr(pd->srcPoint.x, pd->srcPoint.y) : nullptr;
 
-		for (int j = 0; j < pd->destRect.width(); j++, pd->srcPoint.x++) {
-			if (!mask || (msk && (pd->ink == kInkTypeMask ? *msk++ : !(*msk++)))) {
-				(g_director->getInkDrawPixel())(pd->destRect.left + j, pd->destRect.top + i,
-										 preprocessColor(pd, *((byte *)pd->srf->getBasePtr(pd->srcPoint.x, pd->srcPoint.y))), pd);
+			for (int j = 0; j < pd->destRect.width(); j++, pd->srcPoint.x++) {
+				if (!mask || (msk && (pd->ink == kInkTypeMask ? *msk++ : !(*msk++)))) {
+					(g_director->getInkDrawPixel())(pd->destRect.left + j, pd->destRect.top + i,
+											preprocessColor(pd, *((byte *)pd->srf->getBasePtr(pd->srcPoint.x, pd->srcPoint.y))), pd);
+				}
+			}
+		} else {
+			pd->srcPoint.x = abs(srcRect.left - pd->destRect.left);
+			const uint32 *msk = mask ? (const uint32 *)mask->getBasePtr(pd->srcPoint.x, pd->srcPoint.y) : nullptr;
+
+			for (int j = 0; j < pd->destRect.width(); j++, pd->srcPoint.x++) {
+				if (!mask || (msk && (pd->ink == kInkTypeMask ? *msk++ : !(*msk++)))) {
+					(g_director->getInkDrawPixel())(pd->destRect.left + j, pd->destRect.top + i,
+											preprocessColor(pd, *((uint32 *)pd->srf->getBasePtr(pd->srcPoint.x, pd->srcPoint.y))), pd);
+				}
 			}
 		}
 	}
@@ -254,19 +275,31 @@ void Window::inkBlitStretchSurface(DirectorPlotData *pd, Common::Rect &srcRect, 
 	pd->srcPoint.y = abs(srcRect.top - pd->destRect.top);
 
 	for (int i = 0, scaleYCtr = 0; i < pd->destRect.height(); i++, scaleYCtr += scaleY, pd->srcPoint.y++) {
-		pd->srcPoint.x = abs(srcRect.left - pd->destRect.left);
-		const byte *msk = mask ? (const byte *)mask->getBasePtr(pd->srcPoint.x, pd->srcPoint.y) : nullptr;
+		if (_wm->_pixelformat.bytesPerPixel == 1) {
+			pd->srcPoint.x = abs(srcRect.left - pd->destRect.left);
+			const byte *msk = mask ? (const byte *)mask->getBasePtr(pd->srcPoint.x, pd->srcPoint.y) : nullptr;
 
-		for (int xCtr = 0, scaleXCtr = 0; xCtr < pd->destRect.width(); xCtr++, scaleXCtr += scaleX, pd->srcPoint.x++) {
-			if (!mask || (msk && (pd->ink == kInkTypeMask ? *msk++ : !(*msk++)))) {
-			(g_director->getInkDrawPixel())(pd->destRect.left + xCtr, pd->destRect.top + i,
-									 preprocessColor(pd, *((byte *)pd->srf->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD))), pd);
+			for (int xCtr = 0, scaleXCtr = 0; xCtr < pd->destRect.width(); xCtr++, scaleXCtr += scaleX, pd->srcPoint.x++) {
+				if (!mask || (msk && (pd->ink == kInkTypeMask ? *msk++ : !(*msk++)))) {
+				(g_director->getInkDrawPixel())(pd->destRect.left + xCtr, pd->destRect.top + i,
+										preprocessColor(pd, *((byte *)pd->srf->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD))), pd);
+				}
+			}
+		} else {
+			pd->srcPoint.x = abs(srcRect.left - pd->destRect.left);
+			const uint32 *msk = mask ? (const uint32 *)mask->getBasePtr(pd->srcPoint.x, pd->srcPoint.y) : nullptr;
+
+			for (int xCtr = 0, scaleXCtr = 0; xCtr < pd->destRect.width(); xCtr++, scaleXCtr += scaleX, pd->srcPoint.x++) {
+				if (!mask || (msk && (pd->ink == kInkTypeMask ? *msk++ : !(*msk++)))) {
+				(g_director->getInkDrawPixel())(pd->destRect.left + xCtr, pd->destRect.top + i,
+										preprocessColor(pd, *((uint32 *)pd->srf->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD))), pd);
+				}
 			}
 		}
 	}
 }
 
-int Window::preprocessColor(DirectorPlotData *p, int src) {
+int Window::preprocessColor(DirectorPlotData *p, uint32 src) {
 	// HACK: Right now this method is just used for adjusting the colourization on text
 	// sprites, as it would be costly to colourize the chunks on the fly each
 	// time a section needs drawing. It's ugly but mostly works.
