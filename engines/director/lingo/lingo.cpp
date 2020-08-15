@@ -841,6 +841,16 @@ int Datum::asInt() const {
 	int res = 0;
 
 	switch (type) {
+	case CASTNAME:
+		{
+			Movie *movie = g_director->getCurrentMovie();
+			CastMember *member = movie->getCastMemberByName(*u.s);
+			if (member)
+				res =  member->getID();
+			else
+				warning("castIdFetch: reference to non-existent cast member: %s", u.s->c_str());
+		}
+		break;
 	case STRING:
 	case FIELDNAME:
 	case FIELDNUM:
