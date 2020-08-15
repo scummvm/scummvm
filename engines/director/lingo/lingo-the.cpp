@@ -1274,10 +1274,13 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		}
 		break;
 	case kTheCastNum:
-		if (d.asInt() != sprite->_castId) {
-			g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
-			channel->setCast(d.asInt());
-			channel->_dirty = true;
+		{
+			int castId = castIdFetch(d);
+			if (castId != sprite->_castId) {
+				g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
+				channel->setCast(castId);
+				channel->_dirty = true;
+			}
 		}
 		break;
 	case kTheConstraint:
@@ -1306,7 +1309,9 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		if (d.type == INT) {
 			channel->_cursor.readFromResource(d.asInt());
 		} else if (d.type == ARRAY && d.u.farr->size() == 2) {
-			channel->_cursor.readFromCast(d.u.farr->operator[](0).asInt(), d.u.farr->operator[](1).asInt());
+			uint cursorId =	castIdFetch(d.u.farr->operator[](0));
+			uint maskId = castIdFetch(d.u.farr->operator[](1));
+			channel->_cursor.readFromCast(cursorId, maskId);
 		}
 		break;
 	case kTheEditableText:
