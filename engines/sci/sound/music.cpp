@@ -138,7 +138,8 @@ void SciMusic::init() {
 		_pMidiDrv = MidiPlayer_PC9801_create(_soundVersion);
 		break;
 	default:
-		if (ConfMan.getBool("native_fb01"))
+		if (ConfMan.getInt("midi_mode") == kMidiModeFB01
+		    || (ConfMan.hasKey("native_fb01") && ConfMan.getBool("native_fb01")))
 			_pMidiDrv = MidiPlayer_Fb01_create(_soundVersion);
 		else
 			_pMidiDrv = MidiPlayer_Midi_create(_soundVersion);
