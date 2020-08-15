@@ -960,7 +960,7 @@ void MacWindowManager::passPalette(const byte *pal, uint size) {
 
 uint MacWindowManager::findBestColor(byte cr, byte cg, byte cb) {
 	if (_pixelformat.bytesPerPixel == 4)
-		return cr << 24 | cg << 16 | cb << 8 | 0xff;
+		return _pixelformat.RGBToColor(cr, cg, cb);
 
 	uint bestColor = 0;
 	double min = 0xFFFFFFFF;
