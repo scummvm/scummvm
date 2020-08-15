@@ -98,7 +98,7 @@ void FrameNode::setTransformation(int slot, Math::Vector3d pos, Math::Vector3d s
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool FrameNode::loadFromX(const Common::String &filename, XFileLexer &lexer, ModelX *model, Common::HashMap<Common::String, Material *> materialDefinitions) {
+bool FrameNode::loadFromX(const Common::String &filename, XFileLexer &lexer, ModelX *model, Common::Array<MaterialReference> &materialReferences) {
 	_gameRef->miniUpdate();
 
 	bool ret = true;
@@ -111,7 +111,7 @@ bool FrameNode::loadFromX(const Common::String &filename, XFileLexer &lexer, Mod
 		if (lexer.tokenIsIdentifier("Frame")) {
 			lexer.advanceToNextToken();
 			FrameNode *child = new FrameNode(_gameRef);
-			if (child->loadFromX(filename, lexer, model, materialDefinitions)) {
+			if (child->loadFromX(filename, lexer, model, materialReferences)) {
 				_frames.add(child);
 			} else {
 				delete child;
@@ -120,7 +120,7 @@ bool FrameNode::loadFromX(const Common::String &filename, XFileLexer &lexer, Mod
 			lexer.advanceToNextToken();
 			MeshX *mesh = _gameRef->_renderer3D->createMeshX();
 
-			if (mesh->loadFromX(filename, lexer, materialDefinitions)) {
+			if (mesh->loadFromX(filename, lexer, materialReferences)) {
 				_meshes.add(mesh);
 			} else {
 				delete mesh;
@@ -166,8 +166,7 @@ bool FrameNode::loadFromX(const Common::String &filename, XFileLexer &lexer, Mod
 	return ret;
 }
 
-bool FrameNode::loadFromXAsRoot(const Common::String &filename, XFileLexer &lexer, ModelX *model) {
-	Common::HashMap<Common::String, Material *> materialDefinitions;
+bool FrameNode::loadFromXAsRoot(const Common::String &filename, XFileLexer &lexer, ModelX *model, Common::Array<MaterialReference> &materialReferences) {
 	// technically, there is no root node in a .X file
 	// so we just start parsing it here
 	lexer.advanceToNextToken();
@@ -176,7 +175,7 @@ bool FrameNode::loadFromXAsRoot(const Common::String &filename, XFileLexer &lexe
 		if (lexer.tokenIsIdentifier("Frame")) {
 			lexer.advanceToNextToken();
 			FrameNode *child = new FrameNode(_gameRef);
-			if (child->loadFromX(filename, lexer, model, materialDefinitions)) {
+			if (child->loadFromX(filename, lexer, model, materialReferences)) {
 				_frames.add(child);
 			} else {
 				delete child;
@@ -185,7 +184,7 @@ bool FrameNode::loadFromXAsRoot(const Common::String &filename, XFileLexer &lexe
 			lexer.advanceToNextToken();
 			MeshX *mesh = _gameRef->_renderer3D->createMeshX();
 
-			if (mesh->loadFromX(filename, lexer, materialDefinitions)) {
+			if (mesh->loadFromX(filename, lexer, materialReferences)) {
 				_meshes.add(mesh);
 			} else {
 				delete mesh;
@@ -212,10 +211,13 @@ bool FrameNode::loadFromXAsRoot(const Common::String &filename, XFileLexer &lexe
 			lexer.advanceToNextToken();
 		} else if(lexer.tokenIsIdentifier("Material")) {
 			lexer.advanceToNextToken();
-			Common::String materialName = lexer.tokenToString();
-			Material *mat = new Material(_gameRef);
-			mat->loadFromX(lexer, filename);
-			materialDefinitions.setVal(materialName, mat);
+			MaterialReference materialReference;
+
+			materialReference._name = lexer.tokenToString();
+			materialReference._material = new Material(_gameRef);
+			materialReference._material->loadFromX(lexer, filename);
+
+			materialReferences.push_back(materialReference);
 		} else if (lexer.tokenIsOfType(NULL_CHAR)) {
 			// prevents some unnecessary warnings
 			lexer.advanceToNextToken();

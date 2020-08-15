@@ -46,8 +46,8 @@ MeshXOpenGLShader::~MeshXOpenGLShader() {
 	glDeleteBuffers(1, &_indexBuffer);
 }
 
-bool MeshXOpenGLShader::loadFromX(const Common::String &filename, XFileLexer &lexer, Common::HashMap<Common::String, Material *> materialDefinitions) {
-	if (MeshX::loadFromX(filename, lexer, materialDefinitions)) {
+bool MeshXOpenGLShader::loadFromX(const Common::String &filename, XFileLexer &lexer, Common::Array<MaterialReference> &materialReferences) {
+	if (MeshX::loadFromX(filename, lexer, materialReferences)) {
 		glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
 		glBufferData(GL_ARRAY_BUFFER, 4 * kVertexComponentCount * _vertexCount, _vertexData, GL_DYNAMIC_DRAW);
 

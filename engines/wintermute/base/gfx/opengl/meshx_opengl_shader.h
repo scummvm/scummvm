@@ -39,7 +39,7 @@ public:
 	MeshXOpenGLShader(BaseGame *inGame, OpenGL::Shader *shader);
 	~MeshXOpenGLShader() override;
 
-	bool loadFromX(const Common::String &filename, XFileLexer &lexer, Common::HashMap<Common::String, Material *> materialDefinitions) override;
+	bool loadFromX(const Common::String &filename, XFileLexer &lexer, Common::Array<MaterialReference> &materialReferences) override;
 	bool render(ModelX *model) override;
 	bool update(FrameNode *parentFrame) override;
 

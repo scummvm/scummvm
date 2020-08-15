@@ -31,6 +31,10 @@
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
+#include "engines/wintermute/base/gfx/opengl/material.h"
+#include "engines/wintermute/base/gfx/x/active_animation.h"
+#include "engines/wintermute/base/gfx/x/animation_channel.h"
+#include "engines/wintermute/base/gfx/x/animation_set.h"
 #include "engines/wintermute/base/gfx/x/frame_node.h"
 #include "engines/wintermute/base/gfx/x/modelx.h"
 #include "engines/wintermute/base/gfx/x/loader_x.h"
@@ -105,6 +109,12 @@ void ModelX::cleanup(bool complete) {
 
 	_matSprites.clear();
 
+	for (uint i = 0; i < _materialReferences.size(); ++i) {
+		delete _materialReferences[i]._material;
+	}
+
+	_materialReferences.clear();
+
 	// remove root frame
 	delete _rootFrame;
 	_rootFrame = nullptr;
@@ -126,7 +136,7 @@ bool ModelX::loadFromFile(const Common::String &filename, ModelX *parentModel) {
 
 	_parentModel = parentModel;
 	_rootFrame = new FrameNode(_gameRef);
-	res = _rootFrame->loadFromXAsRoot(filename, lexer, this);
+	res = _rootFrame->loadFromXAsRoot(filename, lexer, this, _materialReferences);
 	setFilename(filename.c_str());
 
 	for (int i = 0; i < X_NUM_ANIMATION_CHANNELS; ++i) {

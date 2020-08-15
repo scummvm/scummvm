@@ -50,15 +50,11 @@ MeshX::~MeshX() {
 	delete[] _vertexPositionData;
 	delete[] _indexData;
 
-	for (uint32 i = 0; i < _materials.size(); i++) {
-		delete _materials[i];
-	}
-
 	_materials.clear();
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool MeshX::loadFromX(const Common::String &filename, XFileLexer &lexer, Common::HashMap<Common::String, Material *> materialDefinitions) {
+bool MeshX::loadFromX(const Common::String &filename, XFileLexer &lexer, Common::Array<MaterialReference> &materialReferences) {
 	bool res = true;
 
 	lexer.advanceToNextToken(); // skip the name
@@ -97,7 +93,7 @@ bool MeshX::loadFromX(const Common::String &filename, XFileLexer &lexer, Common:
 			lexer.advanceToNextToken();
 			lexer.advanceOnOpenBraces();
 
-			parseMaterials(lexer, faceCount, filename, materialDefinitions);
+			parseMaterials(lexer, faceCount, filename, materialReferences);
 		} else if (lexer.tokenIsIdentifier("Material")) {
 			lexer.advanceToNextToken();
 			Material *mat = new Material(_gameRef);
@@ -568,7 +564,7 @@ bool MeshX::parseNormalCoords(XFileLexer &lexer) {
 	return true;
 }
 
-bool MeshX::parseMaterials(XFileLexer &lexer, int faceCount, const Common::String &filename, Common::HashMap<Common::String, Material *> materialDefinitions) {
+bool MeshX::parseMaterials(XFileLexer &lexer, int faceCount, const Common::String &filename, Common::Array<MaterialReference> &materialReferences) {
 	// there can be unused materials inside a .X file
 	// so this piece of information is probably useless
 	int materialCount = lexer.readInt();
@@ -599,6 +595,10 @@ bool MeshX::parseMaterials(XFileLexer &lexer, int faceCount, const Common::Strin
 			Material *mat = new Material(_gameRef);
 			mat->loadFromX(lexer, filename);
 			_materials.add(mat);
+
+			MaterialReference materialReference;
+			materialReference._material = mat;
+			materialReferences.push_back(materialReference);
 		} else if (lexer.tokenIsIdentifier()) {
 			while (!lexer.reachedClosedBraces()) {
 				lexer.advanceToNextToken();
@@ -610,8 +610,14 @@ bool MeshX::parseMaterials(XFileLexer &lexer, int faceCount, const Common::Strin
 		} else if (lexer.tokenIsOfType(OPEN_BRACES)) {
 			lexer.advanceToNextToken();
 			Common::String materialReference = lexer.tokenToString();
-			Material *material = materialDefinitions.getVal(materialReference);
-			_materials.add(material);
+
+			for (uint i = 0; i < materialReferences.size(); ++i) {
+				if (materialReferences[i]._name == materialReference) {
+					_materials.add(materialReferences[i]._material);
+					break;
+				}
+			}
+
 			lexer.advanceToNextToken();
 			lexer.advanceToNextToken();
 		} else {
