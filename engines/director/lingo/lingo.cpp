@@ -718,8 +718,7 @@ int Lingo::getAlignedType(const Datum &d1, const Datum &d2) {
 
 	if (d1Type == FLOAT || d2Type == FLOAT) {
 		opType = FLOAT;
-	} else if ((d1Type == INT || d1Type == CASTNAME || d1Type == CASTNUM)
-			&& (d2Type == INT || d2Type == CASTNAME || d2Type == CASTNUM)) {
+	} else if (d1Type == INT && d2Type == INT) {
 		opType = INT;
 	}
 
@@ -841,16 +840,6 @@ int Datum::asInt() const {
 	int res = 0;
 
 	switch (type) {
-	case CASTNAME:
-		{
-			Movie *movie = g_director->getCurrentMovie();
-			CastMember *member = movie->getCastMemberByName(*u.s);
-			if (member)
-				res =  member->getID();
-			else
-				warning("castIdFetch: reference to non-existent cast member: %s", u.s->c_str());
-		}
-		break;
 	case STRING:
 	case FIELDNAME:
 	case FIELDNUM:
