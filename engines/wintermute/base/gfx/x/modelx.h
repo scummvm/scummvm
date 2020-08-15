@@ -88,8 +88,8 @@ private:
 
 		~ModelXMatSprite() {
 			delete[] _matName;
-			delete[] _sprite;
-			delete[] _theora;
+			delete _sprite;
+			delete _theora;
 		}
 
 		bool setSprite(BaseSprite *sprite) {
