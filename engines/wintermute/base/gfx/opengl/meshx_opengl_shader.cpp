@@ -75,13 +75,16 @@ bool MeshXOpenGLShader::render(ModelX *model) {
 	_shader->use(true);
 
 	for (uint32 i = 0; i < _numAttrs; i++) {
-		int materialIndix = _materialIndices[i];
+		int materialIndex = _materialIndices[i];
 
 		glEnable(GL_TEXTURE_2D);
-		static_cast<BaseSurfaceOpenGL3D *>(_materials[materialIndix]->getSurface())->setTexture();
+
+		if (_materials[materialIndex]->getSurface()) {
+			static_cast<BaseSurfaceOpenGL3D *>(_materials[materialIndex]->getSurface())->setTexture();
+		}
 
 		// wme does not seem to care about specular or emissive light values
-		Math::Vector4d diffuse(_materials[materialIndix]->_diffuse.data);
+		Math::Vector4d diffuse(_materials[materialIndex]->_diffuse.data);
 		_shader->setUniform("diffuse", diffuse);
 		_shader->setUniform("ambient", diffuse);
 

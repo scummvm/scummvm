@@ -57,7 +57,11 @@ bool MeshXOpenGL::render(ModelX *model) {
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glEnable(GL_TEXTURE_2D);
-		static_cast<BaseSurfaceOpenGL3D *>(_materials[materialIndex]->getSurface())->setTexture();
+
+		if (_materials[materialIndex]->getSurface()) {
+			static_cast<BaseSurfaceOpenGL3D *>(_materials[materialIndex]->getSurface())->setTexture();
+		}
+
 		glInterleavedArrays(GL_T2F_N3F_V3F, 0, _vertexData);
 		glDrawElements(GL_TRIANGLES, _indexRanges[i + 1] - _indexRanges[i], GL_UNSIGNED_SHORT, _indexData + _indexRanges[i]);
 	}
