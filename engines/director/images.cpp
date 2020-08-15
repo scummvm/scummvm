@@ -21,6 +21,7 @@
  */
 
 #include "common/substream.h"
+#include "graphics/macgui/macwindowmanager.h"
 #include "image/codecs/bmp_raw.h"
 
 #include "director/director.h"
@@ -241,14 +242,18 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 						if (paletted) {
 							*((byte *)_surface->getBasePtr(x, y)) = color;
 						} else {
-							*((uint32 *)_surface->getBasePtr(x, y)) = color ? 0xffffff : 0;
+							*((uint32 *)_surface->getBasePtr(x, y)) = color ? g_director->_wm->_colorWhite : g_director->_wm->_colorBlack;
 						}
 					}
 					break;
 
 				case 8:
 					// this calculation is wrong.. need a demo with colours.
-					*((byte *)_surface->getBasePtr(x, y)) = g_director->transformColor(pixels[(y * _surface->w) + x + (y * offset)]);
+					if (paletted) {
+						*((byte *)_surface->getBasePtr(x, y)) = g_director->transformColor(pixels[(y * _surface->w) + x + (y * offset)]);
+					} else {
+						*((uint32 *)_surface->getBasePtr(x, y)) = g_director->transformColor(pixels[(y * _surface->w) + x + (y * offset)]);
+					}
 					x++;
 					break;
 
