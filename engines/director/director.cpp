@@ -62,6 +62,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	DebugMan.addDebugChannel(kDebugScreenshot, "screenshot", "screenshot each frame");
 	DebugMan.addDebugChannel(kDebugDesktop, "desktop", "Show the Classic Mac desktop");
 	DebugMan.addDebugChannel(kDebug32bpp, "32bpp", "Work in 32bpp mode");
+	DebugMan.addDebugChannel(kDebugEndVideo, "endvideo", "Fake that the end of video is reached setting");
 
 	g_director = this;
 

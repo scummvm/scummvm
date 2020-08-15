@@ -1173,6 +1173,8 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		break;
 	case kTheMovieRate:
 		d.u.i = channel->_movieRate;
+		if (debugChannelSet(-1, kDebugEndVideo))
+			d.u.i = 0;
 		break;
 	case kTheMovieTime:
 		d.u.i = channel->_movieTime;

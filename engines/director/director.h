@@ -87,7 +87,8 @@ enum {
 	kDebugPreprocess	= 1 << 13,
 	kDebugScreenshot	= 1 << 14,
 	kDebugDesktop		= 1 << 15,
-	kDebug32bpp			= 1 << 16
+	kDebug32bpp			= 1 << 16,
+	kDebugEndVideo		= 1 << 17,
 };
 
 struct MovieReference {
