@@ -1049,21 +1049,26 @@ const char *Datum::type2str(bool isk) const {
 int Datum::equalTo(Datum &d, bool ignoreCase) const {
 	int alignType = g_lingo->getAlignedType(*this, d, false);
 
-	if (alignType == FLOAT) {
+	switch (alignType) {
+	case FLOAT:
 		return asFloat() == d.asFloat();
-	} else if (alignType == INT) {
+	case INT:
 		return asInt() == d.asInt();
-	} else if (alignType == STRING || alignType == SYMBOL) {
+	case STRING:
+	case SYMBOL:
 		if (ignoreCase) {
 			return toLowercaseMac(asString()).equals(toLowercaseMac(d.asString()));
 		} else {
 			return asString().equals(d.asString());
 		}
-	} else if (alignType == OBJECT) {
+	case OBJECT:
 		return u.obj == d.u.obj;
-	} else {
-		return 0;
+	case CASTREF:
+		return u.i == d.u.i;
+	default:
+		break;
 	}
+	return 0;
 }
 
 int Datum::compareTo(Datum &d, bool ignoreCase) const {
