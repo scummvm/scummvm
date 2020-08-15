@@ -168,7 +168,7 @@ void PSXConvADSR(T *realADSR, uint8 Am, uint8 Ar, uint8 Dr, uint8 Sl, uint8 Sm,
 		samples = ceil(0x7FFFFFFF / (double) rate);
 	} else if (Am == 1) {
 		rate = RateTable[RoundToZero((Ar ^ 0x7F) - 0x10) + 32];
-		samples = 0x60000000 / rate;
+		samples = (unsigned long)(0x60000000 / rate);
 		remainder = 0x60000000 % rate;
 		rate = RateTable[RoundToZero((Ar ^ 0x7F) - 0x18) + 32];
 		samples += ceil(fmax(0, 0x1FFFFFFF - (long) remainder) / (double) rate);
@@ -182,7 +182,7 @@ void PSXConvADSR(T *realADSR, uint8 Am, uint8 Ar, uint8 Dr, uint8 Sl, uint8 Sm,
 	envelope_level = 0x7FFFFFFF;
 
 	bool bSustainLevFound = false;
-	uint32 realSustainLevel;
+	uint32 realSustainLevel = 0x7FFFFFFF;
 	// DLS decay rate value is to -96db (silence) not the sustain level
 	for (l = 0; envelope_level > 0; l++) {
 		if (4 * (Dr ^ 0x1F) < 0x18)

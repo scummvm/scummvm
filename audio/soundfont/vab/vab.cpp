@@ -189,9 +189,9 @@ bool Vab::GetInstrPointers() {
 
 VabInstr::VabInstr(VGMInstrSet *instrSet, uint32 offset, uint32 length, uint32 theBank,
 				   uint32 theInstrNum, const Common::String &name)
-		: VGMInstr(instrSet, offset, length, theBank, theInstrNum, name), _masterVol(127) {}
+		: VGMInstr(instrSet, offset, length, theBank, theInstrNum, name), _tones(0), _masterVol(127) {}
 
-VabInstr::~VabInstr(void) {}
+VabInstr::~VabInstr() {}
 
 bool VabInstr::LoadInstr() {
 	int8 numRgns = _tones;
@@ -210,7 +210,7 @@ bool VabInstr::LoadInstr() {
 // VabRgn
 // ******
 
-VabRgn::VabRgn(VabInstr *instr, uint32 offset) : VGMRgn(instr, offset) {}
+VabRgn::VabRgn(VabInstr *instr, uint32 offset) : _ADSR1(0), _ADSR2(0), VGMRgn(instr, offset) {}
 
 bool VabRgn::LoadRgn() {
 	VabInstr *instr = (VabInstr *) _parInstr;

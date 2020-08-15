@@ -118,7 +118,9 @@ public:
 
 class SynthArt {
 public:
-	SynthArt() {}
+	SynthArt() : _pan(0.0), _attack_time(0.0), _decay_time(0.0),
+		_sustain_lev(0.0), _sustain_time(0.0), _release_time(0.0),
+		_attack_transform(no_transform), _release_transform(no_transform) {}
 	~SynthArt();
 
 	void AddADSR(double attack, Transform atk_transform, double decay, double sustain_lev,
@@ -143,7 +145,8 @@ private:
 
 class SynthSampInfo {
 public:
-	SynthSampInfo() {}
+	SynthSampInfo() : _usUnityNote(0), _sFineTune(0), _attenuation(0.0),
+		_cSampleLoops(0), _ulLoopStart(0), _ulLoopLength(0) {}
 	~SynthSampInfo() {}
 
 	void SetLoopInfo(Loop &loop, VGMSamp *samp);
@@ -155,7 +158,6 @@ public:
 	double _attenuation;  // in decibels.
 	int8 _cSampleLoops;
 
-	uint32 _ulLoopType;
 	uint32 _ulLoopStart;
 	uint32 _ulLoopLength;
 };

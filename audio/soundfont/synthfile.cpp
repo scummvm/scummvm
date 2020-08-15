@@ -148,7 +148,6 @@ void SynthSampInfo::SetLoopInfo(Loop &loop, VGMSamp *samp) {
 		loop.loopLength = samp->_dataLength - loop.loopStart;
 
 	_cSampleLoops = loop.loopStatus;
-	_ulLoopType = loop.loopType;
 	_ulLoopStart = (loop.loopStartMeasure == LM_BYTES)
 				  ? (uint32) ((loop.loopStart * compressionRatio) / origFormatBytesPerSamp)
 				  : loop.loopStart;

@@ -49,7 +49,7 @@ class VabInstr : public VGMInstr {
 public:
 	VabInstr(VGMInstrSet *instrSet, uint32 offset, uint32 length, uint32 theBank,
 			 uint32 theInstrNum, const Common::String &name = "Instrument");
-	virtual ~VabInstr(void);
+	virtual ~VabInstr();
 
 	virtual bool LoadInstr();
 
