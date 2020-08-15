@@ -1280,7 +1280,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheConstraint:
 		{
-			int channelId;
+			int channelId = -1;
 			if (d.type == CASTNAME || d.type == CASTNUM) {
 				// Reference: CastMember ID
 				// Find the first channel that uses this cast.
@@ -1294,7 +1294,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			} else {
 				channelId = d.asInt();
 			}
-			if (channelId != (int)channel->_constraint) {
+			if (channelId != -1 && channelId != (int)channel->_constraint) {
 				channel->_constraint = d.u.i;
 				channel->_dirty = true;
 			}
