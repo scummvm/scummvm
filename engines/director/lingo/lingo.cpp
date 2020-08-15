@@ -683,13 +683,21 @@ void Lingo::resetLingo() {
 	// timeoutScript is not reset
 }
 
-int Lingo::getAlignedType(const Datum &d1, const Datum &d2) {
+int Lingo::getAlignedType(const Datum &d1, const Datum &d2, bool numsOnly) {
 	int opType = VOID;
 
 	int d1Type = d1.type;
 	int d2Type = d2.type;
 
-	if (d1Type == STRING || d1Type == FIELDREF) {
+	if (d1Type == FIELDREF)
+		d1Type = STRING;
+	if (d2Type == FIELDREF)
+		d2Type = STRING;
+
+	if (d1Type == d2Type && (!numsOnly || d1Type == INT || d1Type == FLOAT))
+		return d1Type;
+
+	if (d1Type == STRING) {
 		Common::String src = d1.asString();
 		if (!src.empty()) {
 			char *endPtr = 0;
@@ -699,7 +707,7 @@ int Lingo::getAlignedType(const Datum &d1, const Datum &d2) {
 			}
 		}
 	}
-	if (d2Type == STRING || d2Type == FIELDREF) {
+	if (d2Type == STRING) {
 		Common::String src = d2.asString();
 		if (!src.empty()) {
 			char *endPtr = 0;
@@ -1039,19 +1047,19 @@ const char *Datum::type2str(bool isk) const {
 }
 
 int Datum::equalTo(Datum &d, bool ignoreCase) const {
-	int alignType = g_lingo->getAlignedType(*this, d);
+	int alignType = g_lingo->getAlignedType(*this, d, false);
 
 	if (alignType == FLOAT) {
 		return asFloat() == d.asFloat();
 	} else if (alignType == INT) {
 		return asInt() == d.asInt();
-	} else if ((type == STRING && d.type == STRING) || (type == SYMBOL && d.type == SYMBOL)) {
+	} else if (alignType == STRING || alignType == SYMBOL) {
 		if (ignoreCase) {
 			return toLowercaseMac(asString()).equals(toLowercaseMac(d.asString()));
 		} else {
 			return asString().equals(d.asString());
 		}
-	} else if (type == OBJECT && d.type == OBJECT) {
+	} else if (alignType == OBJECT) {
 		return u.obj == d.u.obj;
 	} else {
 		return 0;
@@ -1059,7 +1067,7 @@ int Datum::equalTo(Datum &d, bool ignoreCase) const {
 }
 
 int Datum::compareTo(Datum &d, bool ignoreCase) const {
-	int alignType = g_lingo->getAlignedType(*this, d);
+	int alignType = g_lingo->getAlignedType(*this, d, false);
 
 	if (alignType == FLOAT) {
 		double f1 = asFloat();
@@ -1081,7 +1089,7 @@ int Datum::compareTo(Datum &d, bool ignoreCase) const {
 		} else {
 			return 1;
 		}
-	} else if ((type == STRING && d.type == STRING) || (type == SYMBOL && d.type == SYMBOL)) {
+	} else if (alignType == STRING) {
 		if (ignoreCase) {
 			return toLowercaseMac(asString()).compareTo(toLowercaseMac(d.asString()));
 		} else {
