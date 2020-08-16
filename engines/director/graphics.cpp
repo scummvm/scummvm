@@ -950,10 +950,10 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 					*dst = p->_wm->findBestColor((rSrc + rDst) / 2, (gSrc + gDst) / 2, (bSrc + bDst) / 2);
 				break;
 			case kInkTypeAddPin:
-					*dst = p->_wm->findBestColor(MIN((rSrc + rDst), p->colorWhite), MIN((gSrc + gDst), p->colorWhite), MIN((bSrc + bDst), p->colorWhite));
+					*dst = p->_wm->findBestColor(MIN((rSrc + rDst), 0xff), MIN((gSrc + gDst), 0xff), MIN((bSrc + bDst), 0xff));
 				break;
 			case kInkTypeAdd:
-					*dst = p->_wm->findBestColor(abs(rSrc + rDst) % p->colorWhite + 1, abs(gSrc + gDst) % p->colorWhite + 1, abs(bSrc + bDst) % p->colorWhite + 1);
+					*dst = p->_wm->findBestColor(abs(rSrc + rDst) % 0xff + 1, abs(gSrc + gDst) % 0xff + 1, abs(bSrc + bDst) % 0xff + 1);
 				break;
 			case kInkTypeSubPin:
 					*dst = p->_wm->findBestColor(MAX(rSrc - rDst, 0), MAX(gSrc - gDst, 0), MAX(bSrc - bDst, 0));
@@ -962,7 +962,7 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 					*dst = p->_wm->findBestColor(MAX(rSrc, rDst), MAX(gSrc, gDst), MAX(bSrc, bDst));
 				break;
 			case kInkTypeSub:
-					*dst = p->_wm->findBestColor(abs(rSrc - rDst) % p->colorWhite + 1, abs(gSrc - gDst) % p->colorWhite + 1, abs(bSrc - bDst) % p->colorWhite + 1);
+					*dst = p->_wm->findBestColor(abs(rSrc - rDst) % 0xff + 1, abs(gSrc - gDst) % 0xff + 1, abs(bSrc - bDst) % 0xff + 1);
 				break;
 			case kInkTypeDark:
 					*dst = p->_wm->findBestColor(MIN(rSrc, rDst), MIN(gSrc, gDst), MIN(bSrc, bDst));

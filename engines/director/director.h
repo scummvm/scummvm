@@ -139,22 +139,22 @@ struct DirectorPlotData {
 
 	SpriteType sprite;
 	InkType ink;
-	int colorWhite;
-	int colorBlack;
+	uint32 colorWhite;
+	uint32 colorBlack;
 	int alpha;
 
-	int backColor;
-	int foreColor;
+	uint32 backColor;
+	uint32 foreColor;
 	bool applyColor;
 
 	void setApplyColor(); // graphics.cpp
 
-	DirectorPlotData(Graphics::MacWindowManager *w, SpriteType s, InkType i, int a, uint b, uint f) : _wm(w), sprite(s), ink(i), alpha(a), backColor(b), foreColor(f) {
+	DirectorPlotData(Graphics::MacWindowManager *w, SpriteType s, InkType i, int a, uint32 b, uint32 f) : _wm(w), sprite(s), ink(i), alpha(a), backColor(b), foreColor(f) {
 		srf = nullptr;
 		ms = nullptr;
 		dst = nullptr;
-		colorWhite = 255;
-		colorBlack = 0;
+		colorWhite = w->_colorWhite;
+		colorBlack = w->_colorBlack;
 		applyColor = false;
 	}
 

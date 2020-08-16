@@ -45,7 +45,7 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 	: MacWindow(id, scrollable, resizable, editable, wm), Object<Window>("Window") {
 	_vm = vm;
 	_isStage = isStage;
-	_stageColor = 0;
+	_stageColor = _wm->_colorBlack;
 	_puppetTransition = nullptr;
 
 	_currentMovie = nullptr;

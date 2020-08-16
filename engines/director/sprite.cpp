@@ -63,8 +63,8 @@ Sprite::Sprite(Frame *frame) {
 	_editable = false;
 	_puppet = false;
 	_immediate = false;
-	_backColor = 255;
-	_foreColor = 0;
+	_backColor = g_director->_wm->_colorWhite;
+	_foreColor = g_director->_wm->_colorBlack;
 
 	_blend = 0;
 

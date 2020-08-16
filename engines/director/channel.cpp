@@ -493,7 +493,7 @@ MacShape *Channel::getShape() {
 	return shape;
 }
 
-uint Channel::getBackColor() {
+uint32 Channel::getBackColor() {
 	if (!_sprite->_cast)
 		return _sprite->_backColor;
 
@@ -508,7 +508,7 @@ uint Channel::getBackColor() {
 	}
 }
 
-uint Channel::getForeColor() {
+uint32 Channel::getForeColor() {
 	if (!_sprite->_cast)
 		return _sprite->_foreColor;
 

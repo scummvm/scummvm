@@ -44,7 +44,7 @@ Movie::Movie(Window *window) {
 	_lingo = _vm->getLingo();
 
 	_flags = 0;
-	_stageColor = 0xFF;
+	_stageColor = _window->_wm->_colorWhite;
 
 	_currentClickOnSpriteId = 0;
 	_currentEditableTextChannel = 0;

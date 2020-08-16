@@ -89,8 +89,8 @@ private:
 	Graphics::ManagedSurface *getSurface();
 	MacShape *getShape();
 	Common::Point getPosition();
-	uint getForeColor();
-	uint getBackColor();
+	uint32 getForeColor();
+	uint32 getBackColor();
 
 	void addRegistrationOffset(Common::Point &pos, bool subtract = false);
 };

@@ -106,8 +106,8 @@ public:
 	bool _editable;
 	bool _puppet;
 	bool _immediate;
-	byte _backColor;
-	byte _foreColor;
+	uint32 _backColor;
+	uint32 _foreColor;
 
 	byte _blend;
 
