@@ -382,8 +382,7 @@ bool AdActor3DX::display() {
 	if (ShadowType == SHADOW_STENCIL) {
 		displayShadowVolume();
 	} else if  (ShadowType > SHADOW_NONE) {
-		warning("AdActor3DX::display simple or flat shadows are not implemented yet");
-		//m_Renderer->DisplayShadow(this, Math::Vector3d(_shadowLightPos.x() * _scale3D, _shadowLightPos.y() * _scale3D, _shadowLightPos.z() * _scale3D), NULL, true);
+		_gameRef->_renderer3D->displayShadow(this, Math::Vector3d(_shadowLightPos.x() * _scale3D, _shadowLightPos.y() * _scale3D, _shadowLightPos.z() * _scale3D), true);
 	}
 
 	_gameRef->_renderer3D->setSpriteBlendMode(_blendMode);

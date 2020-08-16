@@ -66,6 +66,7 @@ public:
 
 	virtual bool enableShadows() = 0;
 	virtual bool disableShadows() = 0;
+	virtual void displayShadow(BaseObject *object, const Math::Vector3d &light, bool lightPosRelative) = 0;
 	virtual bool stencilSupported() = 0;
 
 	Rect32 getViewPort() override;

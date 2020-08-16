@@ -143,6 +143,53 @@ bool BaseRenderOpenGL3D::disableShadows() {
 	return true;
 }
 
+void BaseRenderOpenGL3D::displayShadow(BaseObject *object, const Math::Vector3d &lightPos, bool lightPosRelative) {
+	BaseSurface *shadowImage = _gameRef->_shadowImage;
+
+	if (object->_shadowImage) {
+		shadowImage = object->_shadowImage;
+	}
+
+	if (!shadowImage) {
+		return;
+	}
+
+	Math::Matrix4 scale;
+	scale.setToIdentity();
+	scale(0, 0) = object->_shadowSize * object->_scale3D;
+	scale(1, 1) = 1.0f;
+	scale(2, 2) = object->_shadowSize * object->_scale3D;
+
+	float sinOfAngle = object->_angle.getSine();
+	float cosOfAngle = object->_angle.getCosine();
+	Math::Matrix4 rotation;
+	rotation.setToIdentity();
+	rotation(0, 0) = cosOfAngle;
+	rotation(0, 2) = sinOfAngle;
+	rotation(2, 0) = -sinOfAngle;
+	rotation(2, 2) = cosOfAngle;
+	Math::Matrix4 translation;
+	translation.setToIdentity();
+	translation.setPosition(object->_posVector);
+
+	Math::Matrix4 worldTransformation = translation * rotation * scale;
+	worldTransformation.transpose();
+	worldTransformation = worldTransformation * _lastViewMatrix;
+
+	glLoadMatrixf(worldTransformation.getData());
+
+	glDepthMask(false);
+	glEnable(GL_TEXTURE_2D);
+	static_cast<BaseSurfaceOpenGL3D *>(shadowImage)->setTexture();
+
+	glInterleavedArrays(GL_T2F_N3F_V3F, 0, _simpleShadow);
+
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+	glDepthMask(true);
+	glLoadMatrixf(_lastViewMatrix.getData());
+}
+
 bool BaseRenderOpenGL3D::stencilSupported() {
 	// assume that we have a stencil buffer
 	return true;
@@ -307,6 +354,43 @@ bool BaseRenderOpenGL3D::initRenderer(int width, int height, bool windowed) {
 	_active = true;
 	// setup a proper state
 	setup2D(true);
+
+	_simpleShadow[0].x = -1.0f;
+	_simpleShadow[0].y = 0.0f;
+	_simpleShadow[0].z = -1.0f;
+	_simpleShadow[0].nx = 0.0f;
+	_simpleShadow[0].ny = 1.0f;
+	_simpleShadow[0].nz = 0.0f;
+	_simpleShadow[0].u = 0.0f;
+	_simpleShadow[0].v = 1.0f;
+
+	_simpleShadow[1].x = -1.0f;
+	_simpleShadow[1].y = 0.0f;
+	_simpleShadow[1].z = 1.0f;
+	_simpleShadow[1].nx = 0.0f;
+	_simpleShadow[1].ny = 1.0f;
+	_simpleShadow[1].nz = 0.0f;
+	_simpleShadow[1].u = 1.0f;
+	_simpleShadow[1].v = 1.0f;
+
+	_simpleShadow[2].x = 1.0f;
+	_simpleShadow[2].y = 0.0f;
+	_simpleShadow[2].z = -1.0f;
+	_simpleShadow[2].nx = 0.0f;
+	_simpleShadow[2].ny = 1.0f;
+	_simpleShadow[2].nz = 0.0f;
+	_simpleShadow[2].u = 0.0f;
+	_simpleShadow[2].v = 0.0f;
+
+	_simpleShadow[3].x = 1.0f;
+	_simpleShadow[3].y = 0.0f;
+	_simpleShadow[3].z = 1.0f;
+	_simpleShadow[3].nx = 0.0f;
+	_simpleShadow[3].ny = 1.0f;
+	_simpleShadow[3].nz = 0.0f;
+	_simpleShadow[3].u = 1.0f;
+	_simpleShadow[3].v = 0.0f;
+
 	return true;
 }
 

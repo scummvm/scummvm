@@ -161,6 +161,10 @@ bool BaseRenderOpenGL3DShader::disableShadows() {
 	return true;
 }
 
+void BaseRenderOpenGL3DShader::displayShadow(BaseObject *object, const Math::Vector3d &lightPos, bool lightPosRelative) {
+	warning("BaseRenderOpenGL3DShader::displayShadow not implemented yet");
+}
+
 bool BaseRenderOpenGL3DShader::stencilSupported() {
 	// assume that we have a stencil buffer
 	return true;

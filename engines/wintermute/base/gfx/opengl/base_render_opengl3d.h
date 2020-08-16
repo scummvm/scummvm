@@ -37,6 +37,21 @@ namespace Wintermute {
 
 class BaseSurfaceOpenGL3D;
 
+#include "common/pack-start.h"
+
+struct SimpleShadowVertex {
+	float u;
+	float v;
+	float nx;
+	float ny;
+	float nz;
+	float x;
+	float y;
+	float z;
+} PACKED_STRUCT;
+
+#include "common/pack-end.h"
+
 class BaseRenderOpenGL3D : public BaseRenderer3D {
 public:
 	BaseRenderOpenGL3D(BaseGame *inGame = nullptr);
@@ -53,6 +68,7 @@ public:
 
 	bool enableShadows() override;
 	bool disableShadows() override;
+	void displayShadow(BaseObject *object, const Math::Vector3d &lightPos, bool lightPosRelative) override;
 	bool stencilSupported() override;
 
 	void dumpData(const char *filename) override {}
@@ -121,6 +137,7 @@ public:
 	ShadowVolume *createShadowVolume() override;
 
 private:
+	SimpleShadowVertex _simpleShadow[4];
 	Common::Array<Math::Vector4d> _lightPositions;
 	Common::Array<Math::Vector3d> _lightDirections;
 	float _fov;
