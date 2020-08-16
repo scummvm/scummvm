@@ -209,8 +209,8 @@ public:
 	virtual void updateFromWidget(Graphics::MacWidget *widget) override;
 	Graphics::TextAlign getAlignment();
 
-	virtual uint getBackColor() override { return _bgcolor; }
-	virtual uint getForeColor() override { return _fgcolor; }
+	virtual uint32 getBackColor() override { return _bgcolor; }
+	virtual uint32 getForeColor() override { return _fgcolor; }
 
 	bool hasField(int field) override;
 	Datum getField(int field) override;
