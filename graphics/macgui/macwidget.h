@@ -71,7 +71,7 @@ public:
 	virtual bool hasAllFocus() { return _active; }
 	virtual bool isEditable() { return _editable; }
 
-	virtual void setColors(int fg, int bg);
+	virtual void setColors(uint32 fg, uint32 bg);
 
 	virtual void setDimensions(const Common::Rect &r) {
 		_dims = r;
@@ -89,7 +89,7 @@ protected:
 	uint16 _gutter;
 	uint16 _shadow;
 
-	int _fgcolor, _bgcolor;
+	uint32 _fgcolor, _bgcolor;
 
 	Graphics::ManagedSurface *_composeSurface;
 
