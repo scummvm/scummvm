@@ -462,6 +462,10 @@ void Screen::scale2x(uint8 *dst, int dstPitch, const uint8 *src, int srcPitch, i
 	}
 }
 
+template void Screen::scale2x<uint8, uint16>(uint8 *dst, int dstPitch, const uint8 *src, int srcPitch, int w, int h);
+template void Screen::scale2x<uint16, uint32>(uint8 *dst, int dstPitch, const uint8 *src, int srcPitch, int w, int h);
+template void Screen::scale2x<uint8, uint32>(uint8 *dst, int dstPitch, const uint8 *src, int srcPitch, int w, int h);
+
 template<typename pixelType>
 void Screen::mergeOverlayImpl(int x, int y, int w, int h) {
 	const uint8 *src = _sjisOverlayPtrs[1] + y * 640 + x;
@@ -480,6 +484,9 @@ void Screen::mergeOverlayImpl(int x, int y, int w, int h) {
 		src += add;
 	}
 }
+
+template void Screen::mergeOverlayImpl<uint8>(int x, int y, int w, int h);
+template void Screen::mergeOverlayImpl<uint16>(int x, int y, int w, int h);
 
 const ScreenDim *Screen::getScreenDim(int dim) const {
 	assert(dim < _dimTableCount);
