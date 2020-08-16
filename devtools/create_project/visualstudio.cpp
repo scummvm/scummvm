@@ -231,8 +231,12 @@ void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::of
 	           << "\t/>\n"
 	           << "\t<Tool\n"
 	           << "\t\tName=\"VCLinkerTool\"\n"
-	           << "\t\tIgnoreDefaultLibraryNames=\"\"\n"
-	           << "\t\tSubSystem=\"1\"\n";
+	           << "\t\tIgnoreDefaultLibraryNames=\"\"\n";
+	if (setup.featureEnabled("text-console")) {
+		properties << "\t\tSubSystem=\"1\"\n";
+	} else {
+		properties << "\t\tSubSystem=\"2\"\n";
+	}
 
 	if (!setup.devTools && !setup.tests)
 		properties << "\t\tEntryPointSymbol=\"WinMainCRTStartup\"\n";
