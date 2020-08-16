@@ -207,7 +207,7 @@ void BitmapCastMember::createMatte() {
 			}
 		}
 	} else {
-		whiteColor = g_director->_wm->findBestColor(0xff, 0xff, 0xff);
+		whiteColor = g_director->_wm->_colorWhite;
 	}
 
 	if (whiteColor == -1) {
