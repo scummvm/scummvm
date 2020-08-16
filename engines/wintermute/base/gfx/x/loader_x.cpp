@@ -323,7 +323,7 @@ void XFileLexer::skipTerminator() {
 }
 
 bool XFileLexer::eof() {
-	return _buffer.eos();
+	return _buffer.pos() == _buffer.size();
 }
 
 bool XFileLexer::tokenIsIdentifier() {
