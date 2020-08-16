@@ -174,8 +174,10 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 	if (param_5 != 0) {
 		_vm->clearFlags(ENGINE_FLAG_8);
 	}
+
+	//Remove '\' chars from dialogText
 	tmpTextPtr = findCharInU16Str(dialogText, 0x5c);
-	if (tmpTextPtr != nullptr) {
+	while (tmpTextPtr != nullptr) {
 		sVar3 = tmpTextPtr[1];
 		*tmpTextPtr = sVar3;
 		while (sVar3 != 0) {
@@ -183,6 +185,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 			tmpTextPtr[1] = sVar3;
 			tmpTextPtr = tmpTextPtr + 1;
 		}
+		tmpTextPtr = findCharInU16Str(dialogText, 0x5c);
 	}
 	iVar5 = (uint)x << 0x10;
 	if ((short)x < 0xf) {
@@ -686,8 +689,8 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 				if (*local_386 == 0x20) {
 					_dat_80083104 = &local_386[1];
 				}
-				uVar3 = FindLastPositionOf5cChar(_dat_80083104);
-				sVar2 = FUN_80031c28(_dat_80083104, asStack512, uVar3 & 0xffff, 0x20);
+				uVar3 = findLastPositionOf5cChar(_dat_80083104);
+				sVar2 = truncateDialogText(_dat_80083104, asStack512, uVar3 & 0xffff, 0x20);
 				talkDialogEntry->xPosMaybe = (uint8)local_58;
 				local_58 = local_58 + sVar2;
 				talkDialogEntry->yPosMaybe = talkDialogEntry->yPosMaybe + (char)sVar2;
@@ -776,8 +779,8 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 					if (local_386[0] == 0x20) {
 						_dat_80083104 = &local_386[1];
 					}
-					uVar4 = FindLastPositionOf5cChar(_dat_80083104);
-					uVar4 = FUN_80031c28(_dat_80083104, local_40, uVar4 & 0xffff, 0x20);
+					uVar4 = findLastPositionOf5cChar(_dat_80083104);
+					uVar4 = truncateDialogText(_dat_80083104, local_40, uVar4 & 0xffff, 0x20);
 					_dat_80083104 = local_40;
 					if (sVar2 == uVar8) {
 						uVar7 = 0;
@@ -1039,7 +1042,7 @@ uint16 *Talk::UTF16ToUTF16Z(uint16 *dest, uint16 *src) {
 	return dest;
 }
 
-uint16 Talk::FindLastPositionOf5cChar(uint16 *text) {
+uint16 Talk::findLastPositionOf5cChar(uint16 *text) {
 	uint16 len = strlenUTF16(text);
 	for (int i = len - 1; i >= 0; i--) {
 		if (text[i] == 0x5c) {
@@ -1049,7 +1052,7 @@ uint16 Talk::FindLastPositionOf5cChar(uint16 *text) {
 	return len;
 }
 
-uint32 Talk::FUN_80031c28(uint16 *srcText, uint16 *destText, uint32 cutLength, uint16 param_4) {
+uint32 Talk::truncateDialogText(uint16 *srcText, uint16 *destText, uint32 srcLength, uint16 destLength) {
 	uint16 destCurIndex;
 	uint16 uVar1;
 	uint16 uVar2;
@@ -1066,38 +1069,39 @@ uint32 Talk::FUN_80031c28(uint16 *srcText, uint16 *destText, uint32 cutLength, u
 	destCurIndex = 0;
 	uVar4 = 1;
 	do {
-		if ((cutLength & 0xffff) <= (srcCurIndex & 0xffff)) break;
-		chr = srcText[srcCurIndex & 0xffff];
-		destText[(uint)destCurIndex] = chr;
+		if (srcLength <= srcCurIndex) break;
+		chr = srcText[srcCurIndex];
+		destText[destCurIndex] = chr;
 		uVar2 = uVar2 + 1;
 		if ((chr == 0x5c) || (chr == 0)) {
 			finished = true;
 			uVar1 = destCurIndex;
-			if ((srcText + (srcCurIndex & 0xffff))[1] == 0x5c) {
+			if (srcText[srcCurIndex + 1] == 0x5c) {
 				uVar1 = destCurIndex + 3;
-				destText[(uint)destCurIndex] = 0x2e;
-				destText[(uint)(uint16)(destCurIndex + 1)] = 0x2e;
-				destText[(uint)(uint16)(destCurIndex + 2)] = 0x2e;
+				destText[destCurIndex] = 0x2e;
+				destText[destCurIndex + 1] = 0x2e;
+				destText[destCurIndex + 2] = 0x2e;
 			}
 			destCurIndex = uVar1 - 1;
 			uVar1 = uVar3;
-			LAB_80031d3c:
 			uVar3 = uVar1;
 		} else {
 			if (((((chr != 0x20) && (chr != 0x2e)) && (chr != 0x3f)) &&
 				 ((chr != 0x21 && (uVar1 = uVar3, chr != 0x2d)))) ||
-				((uVar1 = uVar3, srcText[(srcCurIndex & 0xffff) + 1] == 0 ||
-								 (uVar1 = destCurIndex, srcText[(srcCurIndex & 0xffff) + 1] != 0x5c)))) goto LAB_80031d3c;
+				((uVar1 = uVar3, srcText[srcCurIndex + 1] == 0 ||
+								 (uVar1 = destCurIndex, srcText[srcCurIndex + 1] != 0x5c)))) {
+				uVar3 = uVar1;
+			}
 		}
 		srcCurIndex = srcCurIndex + 1;
-		if ((param_4 < uVar2) && (!finished)) {
+		if ((destLength < uVar2) && (!finished)) {
 			destText[uVar3] = 0;
 			uVar2 = destCurIndex - uVar3;
 			uVar4 = uVar4 + 1;
 		}
 		destCurIndex = destCurIndex + 1;
 	} while (!finished);
-	destText[(uint)destCurIndex] = 0;
+	destText[destCurIndex] = 0;
 	return uVar4 & 0xffff;
 }
 
