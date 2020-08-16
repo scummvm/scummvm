@@ -190,8 +190,11 @@ void BitmapCastMember::createMatte() {
 	tmp.create(_initialRect.width(), _initialRect.height(), g_director->_pixelformat);
 	tmp.copyFrom(*_img->getSurface());
 
+	_noMatte = true;
+
 	// Searching white color in the corners
-	int whiteColor = -1;
+	uint32 whiteColor = 0;
+	bool colorFound = false;
 
 	if (g_director->_pixelformat.bytesPerPixel == 1) {
 		for (int y = 0; y < tmp.h; y++) {
@@ -202,17 +205,18 @@ void BitmapCastMember::createMatte() {
 						g_director->getPalette()[color * 3 + 1] == 0xff &&
 						g_director->getPalette()[color * 3 + 2] == 0xff) {
 					whiteColor = color;
+					colorFound = true;
 					break;
 				}
 			}
 		}
 	} else {
 		whiteColor = g_director->_wm->_colorWhite;
+		colorFound = true;
 	}
 
-	if (whiteColor == -1) {
+	if (!colorFound) {
 		debugC(1, kDebugImages, "BitmapCastMember::createMatte(): No white color for matte image");
-		_noMatte = true;
 	} else {
 		delete _matte;
 
