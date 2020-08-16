@@ -254,7 +254,7 @@ void Window::inkBlitSurface(DirectorPlotData *pd, Common::Rect &srcRect, const G
 			for (int j = 0; j < pd->destRect.width(); j++, pd->srcPoint.x++) {
 				if (!mask || (msk && (pd->ink == kInkTypeMask ? *msk++ : !(*msk++)))) {
 					(g_director->getInkDrawPixel())(pd->destRect.left + j, pd->destRect.top + i,
-											preprocessColor(pd, *((uint32 *)pd->srf->getBasePtr(pd->srcPoint.x, pd->srcPoint.y))), pd);
+											preprocessColor(pd, *((int *)pd->srf->getBasePtr(pd->srcPoint.x, pd->srcPoint.y))), pd);
 				}
 			}
 		}
@@ -292,14 +292,14 @@ void Window::inkBlitStretchSurface(DirectorPlotData *pd, Common::Rect &srcRect, 
 			for (int xCtr = 0, scaleXCtr = 0; xCtr < pd->destRect.width(); xCtr++, scaleXCtr += scaleX, pd->srcPoint.x++) {
 				if (!mask || (msk && (pd->ink == kInkTypeMask ? *msk++ : !(*msk++)))) {
 				(g_director->getInkDrawPixel())(pd->destRect.left + xCtr, pd->destRect.top + i,
-										preprocessColor(pd, *((uint32 *)pd->srf->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD))), pd);
+										preprocessColor(pd, *((int *)pd->srf->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD))), pd);
 				}
 			}
 		}
 	}
 }
 
-int Window::preprocessColor(DirectorPlotData *p, uint32 src) {
+int Window::preprocessColor(DirectorPlotData *p, int src) {
 	// HACK: Right now this method is just used for adjusting the colourization on text
 	// sprites, as it would be costly to colourize the chunks on the fly each
 	// time a section needs drawing. It's ugly but mostly works.

@@ -1517,7 +1517,7 @@ void LingoArchive::addNamesV4(Common::SeekableReadStreamEndian &stream) {
 	uint16 offset = stream.readUint16();
 	uint16 count = stream.readUint16();
 
-	if (stream.size() != size) {
+	if ((uint32)stream.size() != size) {
 		warning("Lnam content missing");
 		return;
 	}
@@ -1526,7 +1526,7 @@ void LingoArchive::addNamesV4(Common::SeekableReadStreamEndian &stream) {
 
 	names.clear();
 
-	for (uint32 i = 0; i < count; i++) {
+	for (uint16 i = 0; i < count; i++) {
 		Common::String name = stream.readPascalString();
 
 		names.push_back(name);

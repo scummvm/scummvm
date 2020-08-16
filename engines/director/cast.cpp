@@ -1136,7 +1136,7 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 
 			int16 count = entryStream->readUint16();
 
-			for (uint i = 0; i < count; i++)
+			for (int16 i = 0; i < count; i++)
 				ci->scriptStyle.read(*entryStream);
 			delete entryStream;
 		}
