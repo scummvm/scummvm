@@ -184,7 +184,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 		_vm->getINI(1)->y = _camera.y;
 	}
 
-	debug("Flicker: (%X, %X)", _camera.x, _camera.y);
+	debug(3, "Flicker: (%X, %X)", _camera.x, _camera.y);
 
 	if (_camera.x > 160) {
 		_camera.x -= 160;
@@ -206,7 +206,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 		_camera.y = _stage->getHeight() - 200;
 	}
 
-	debug("Camera: (%d, %d)", _camera.x, _camera.y);
+	debug(3, "Camera: (%d, %d)", _camera.x, _camera.y);
 
 	// 0x8002ff80
 	_vm->fadeToBlack();

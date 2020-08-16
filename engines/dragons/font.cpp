@@ -235,7 +235,7 @@ void FontManager::drawTextDialogBox(uint32 x1, uint32 y1, uint32 x2, uint32 y2) 
 }
 
 void FontManager::clearTextDialog(uint32 x1, uint32 y1, uint32 x2, uint32 y2) {
-	debug("Clear text (%d,%d) -> (%d,%d)", x1, y1, x2, y2);
+	debug(3, "Clear text (%d,%d) -> (%d,%d)", x1, y1, x2, y2);
 //	assert(x1 > 0);
 //	assert(y1 > 0);
 	_surface->fillRect(Common::Rect((x1-1) * 8, (y1-1) * 8, (x2 + 1) * 8 + 1, (y2 + 1) * 8 + 1), 0);

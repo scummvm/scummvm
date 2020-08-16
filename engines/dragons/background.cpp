@@ -133,7 +133,7 @@ bool Background::load(byte *dataStart, uint32 size) {
 		_tileMap[i].size = stream.readUint32LE();
 		_tileMap[i].map = dataStart + tilemapOffset;
 		_tileMap[i].tileIndexOffset = tileindexOffset;
-		debug("Tilemap (%d, %d) map: %X", _tileMap[i].w, _tileMap[i].h, tilemapOffset);
+		debug(3, "Tilemap (%d, %d) map: %X", _tileMap[i].w, _tileMap[i].h, tilemapOffset);
 
 		tilemapOffset += _tileMap[i].size;
 	}
@@ -155,8 +155,8 @@ bool Background::load(byte *dataStart, uint32 size) {
 	_priorityLayer = new PriorityLayer();
 	_priorityLayer->load(priorityTilemap, _tileDataOffset);
 
-	debug("Tiles: %X", tilesOffset);
-	debug("tileIndexOffset: %d", _tileMap[0].tileIndexOffset);
+	debug(3, "Tiles: %X", tilesOffset);
+	debug(3, "tileIndexOffset: %d", _tileMap[0].tileIndexOffset);
 
 	for (int i = 0; i < 3; i++) {
 		_layerSurface[i] = initGfxLayer(_tileMap[i]);
@@ -311,7 +311,7 @@ Background *BackgroundResourceLoader::load(uint32 sceneId) {
 }
 
 Background *BackgroundResourceLoader::load(const char *filename) {
-	debug("Loading %s", filename);
+	debug(1, "Loading %s", filename);
 	uint32 size;
 	byte *scrData = _bigFileArchive->load(filename, size);
 	Background *bg = new Background();

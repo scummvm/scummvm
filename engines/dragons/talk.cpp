@@ -62,7 +62,7 @@ bool Talk::loadText(uint32 textIndex, uint16 *textBuffer, uint16 bufferLength) {
 	sprintf(filename, "drag%04d.txt", fileNo);
 	uint32 size;
 	byte *data = _bigfileArchive->load(filename, size);
-	debug("DIALOG: %s, %s, %d", filename, data, fileOffset);
+	debug(1, "DIALOG: %s, %s, %d", filename, data, fileOffset);
 	printWideText(data + 10 + fileOffset);
 
 	copyTextToBuffer(textBuffer, data + 10 + fileOffset, bufferLength);
@@ -87,7 +87,7 @@ void Talk::printWideText(byte *text) {
 		text += 2;
 	}
 	buf[MIN(i, 1999)] = 0;
-	debug("TEXT: %s", buf);
+	debug(1, "TEXT: %s", buf);
 }
 
 void
@@ -867,7 +867,7 @@ uint Talk::somethingTextAndSpeechAndAnimRelated(Actor *actor, int16 sequenceId1,
 }
 
 void Talk::talkFromIni(uint32 iniId, uint32 textIndex) {
-	debug("Main actor talk: 0x%04x and text 0x%04x", iniId, textIndex);
+	debug(3, "Main actor talk: 0x%04x and text 0x%04x", iniId, textIndex);
 
 	if (textIndex == 0) {
 		return;
@@ -1011,7 +1011,7 @@ uint32 Talk::strlenUTF16(uint16 *text) {
 }
 
 void Talk::drawDialogBox(uint32 x1, uint32 y1, uint32 x2, uint32 y2, uint16 unk) {
-	debug("drawTextDialogBox(%d, %d, %d, %d, %d)", x1, y1, x2, y2, unk);
+	debug(3, "drawTextDialogBox(%d, %d, %d, %d, %d)", x1, y1, x2, y2, unk);
 	_vm->_fontManager->drawTextDialogBox(x1, y1, x2, y2);
 }
 

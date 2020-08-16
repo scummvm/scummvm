@@ -110,7 +110,7 @@ Audio::AudioStream *VabSound::getAudioStream(uint16 program, uint16 key) {
 			vagID = _toneAttrs[i].vag - 1;
 		}
 	}
-	debug("Playing program %d, numTones: %d, key %d vagID %d, vagOffset: %x, size: %x", program, _programAttrs[program].tones, key, vagID, _vagOffsets[vagID], _vagSizes[vagID]);
+	debug(3, "Playing program %d, numTones: %d, key %d vagID %d, vagOffset: %x, size: %x", program, _programAttrs[program].tones, key, vagID, _vagOffsets[vagID], _vagSizes[vagID]);
 	Audio::AudioStream *str = Audio::makeXAStream(
 			new Common::MemoryReadStream(&_vbData[_vagOffsets[vagID]], _vagSizes[vagID], DisposeAfterUse::NO),
 			11025,

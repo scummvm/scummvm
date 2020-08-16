@@ -973,7 +973,7 @@ void DragonsEngine::waitForFramesAllowSkip(uint16 numFrames) {
 }
 
 void DragonsEngine::playOrStopSound(uint16 soundId) {
-	debug("play sound 0x%x", soundId);
+	debug(1, "play sound 0x%x", soundId);
 
 	this->_sound->playOrStopSound(soundId);
 }

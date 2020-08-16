@@ -90,7 +90,7 @@ ScriptOpcodes::~ScriptOpcodes() {
 void ScriptOpcodes::execOpcode(ScriptOpCall &scriptOpCall) {
 	if (!_opcodes[scriptOpCall._op])
 		error("ScriptOpcodes::execOpcode() Unimplemented opcode %d (0x%X)", scriptOpCall._op, scriptOpCall._op);
-	debug("execScriptOpcode(0x%X) @%lX  %s", scriptOpCall._op, scriptOpCall._code - scriptOpCall._base, _opcodeNames[scriptOpCall._op].c_str());
+	debug(1, "execScriptOpcode(0x%X) @%lX  %s", scriptOpCall._op, scriptOpCall._code - scriptOpCall._base, _opcodeNames[scriptOpCall._op].c_str());
 	(*_opcodes[scriptOpCall._op])(scriptOpCall);
 }
 
@@ -659,7 +659,7 @@ void ScriptOpcodes::opRunSpecialOpCode(ScriptOpCall &scriptOpCall) {
 		error("Invalid Special OpCode %d", specialOpCode);
 	}
 
-	debug("Special opCode %X", specialOpCode);
+	debug(1, "Special opCode %X", specialOpCode);
 	_specialOpCodes->run(specialOpCode);
 }
 

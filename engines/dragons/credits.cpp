@@ -81,7 +81,7 @@ void Credits::update() {
 		if (_yOffset % 8 == 0) {
 			if (_curPosition <= _dataLength) {
 				uint32 length = strlen(_curPtr);
-				debug("Credit line: %s", _curPtr);
+				debug(3, "Credit line: %s", _curPtr);
 				convertToWideChar(line, (byte *)_curPtr, 40);
 				_curPtr += length + 1;
 				_curPosition += length + 1;

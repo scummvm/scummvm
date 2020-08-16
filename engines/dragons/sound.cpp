@@ -71,7 +71,7 @@ void CdIntToPos_0(uint32 param_1) { //, byte *param_2)
 						   (uint)(second >> 4) * 10 + ((uint)second & 0xf)) * 0x4b +
 						  (uint)(sector >> 4) * 10 + ((uint)sector & 0xf) + -0x96;
 
-	debug("Seek Audio %2X:%2X:%2X  in: %d out %d", minute, second, sector, param_1, out);
+	debug(3, "Seek Audio %2X:%2X:%2X  in: %d out %d", minute, second, sector, param_1, out);
 
 	return;
 }
@@ -127,7 +127,7 @@ bool SoundManager::getSpeechLocation(uint32 talkId, struct SpeechLocation *locat
 			location->startOffset = startOffset;
 			location->sectorEnd = end;
 			foundId = true;
-			debug("sectors [%d-%d] unk byte = %d", start * 32, end * 32, startOffset);
+			debug(3, "sectors [%d-%d] unk byte = %d", start * 32, end * 32, startOffset);
 			break;
 		}
 	}
@@ -519,7 +519,7 @@ void SoundManager::playMusic(int16 song) {
 
 	memcpy(sceneName, _vm->_dragonRMS->getSceneName(_vm->getCurrentSceneId()), 4);
 	snprintf(filename, 12, "%sz%02d.msq", sceneName, song);
-	debug("Load music file %s", filename);
+	debug(1, "Load music file %s", filename);
 
 	uint32 dataSize;
 	byte *seqData = _bigFileArchive->load(filename, dataSize);

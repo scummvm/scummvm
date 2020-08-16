@@ -48,7 +48,7 @@ Actor *ActorManager::loadActor(uint32 resourceId, uint32 sequenceId, int16 x, in
 }
 
 Actor *ActorManager::loadActor(uint32 resourceId, uint32 sequenceId, int16 x, int16 y) {
-	debug("Load actor: resourceId: %d, SequenceId: %d, position: (%d,%d)", resourceId, sequenceId, x, y);
+	debug(1, "Load actor: resourceId: %d, SequenceId: %d, position: (%d,%d)", resourceId, sequenceId, x, y);
 	ActorResource *resource = _actorResourceLoader->load(resourceId);
 	//Actor *actor = new Actor(_actorResourceLoader->load(resourceId), x, y, sequenceId);
 	Actor *actor = findFreeActor((int16)resourceId);
@@ -250,7 +250,7 @@ bool Actor::startWalk(int16 destX, int16 destY, uint16 flags) {
 		0, 0, 1, -1, 1, 1, -1, -1
 	};
 
-	debug("startWalk(%d, %d, %d)", _actorID, destX, destY);
+	debug(1, "startWalk(%d, %d, %d)", _actorID, destX, destY);
 	bool wasAlreadyWalking = isFlagSet(ACTOR_FLAG_10);
 
 	clearFlag(ACTOR_FLAG_10);
