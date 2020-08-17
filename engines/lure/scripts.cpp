@@ -95,7 +95,7 @@ void Script::setHotspotFlagMask(uint16 maskVal, uint16 v2, uint16 v3) {
 // Clears the sequence delay list
 
 void Script::clearSequenceDelayList(uint16 v1, uint16 scriptIndex, uint16 v3) {
-	Resources::getReference().delayList().clear();
+	Resources::getReference().delayList().clear(true);
 }
 
 // Deactivates a set of predefined of hotspots in a given list index
