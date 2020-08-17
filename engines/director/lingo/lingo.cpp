@@ -938,9 +938,9 @@ Common::String Datum::asString(bool printonly) const {
 		break;
 	case SYMBOL:
 		if (!printonly) {
-			s = Common::String::format("#%s", u.s->c_str());
+			s = *u.s;
 		} else {
-			s = Common::String::format("symbol: #%s", u.s->c_str());
+			s = Common::String::format("#%s", u.s->c_str());
 		}
 		break;
 	case OBJECT:
