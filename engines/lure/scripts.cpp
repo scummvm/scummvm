@@ -46,9 +46,9 @@ static const uint16 *hotspot_dealloc_set[4] = {&dealloc_list_1[0], &dealloc_list
 
 // Details used for co-ordination of sounds during the endgame sequence
 static const AnimSoundSequence soundList[] = {
-	{9, 0x45, 2, 0, true}, {27, 0x48, 5, 0, false}, {24, 0x46, 3, 0, false}, {24, 0x37, 1, 0, false}, {3, 0x37, 1, 1, false},
-	{3, 0x37, 1, 2, false}, {3, 0x37, 1, 3, false}, {3, 0x37, 1, 4, false}, {4, 0x37, 1, 5, false}, {7, 0x47, 4, 6, false},
-	{31, 0x00, 6, 0, true}, {0, 0, 0, 0, false}
+	{9, 0xFF, 0xFF, 0, false}, {27, 0x45, 2, 0, true}, {24, 0x48, 5, 0, false}, {24, 0x46, 3, 2, false}, {3, 0x37, 1, 0, true},
+	{3, 0x37, 1, 1, true}, {3, 0x37, 1, 2, true}, {3, 0x37, 1, 3, true}, {4, 0x37, 1, 4, true}, {7, 0x37, 1, 5, true},
+	{31, 0x47, 4, 6, false}, {0, 0, 0, 0, false}
 };
 
 /*------------------------------------------------------------------------*/
@@ -194,38 +194,58 @@ void Script::endgameSequence(uint16 v1, uint16 v2, uint16 v3) {
 	Events &events = Events::getReference();
 	AnimationSequence *anim;
 
-	screen.paletteFadeOut();
+	if (!engine.isEGA())
+		screen.paletteFadeOut();
 	mouse.cursorOff();
 
 	Sound.killSounds();
 	if (Sound.isRoland())
+		// MT-32 has the sound effects for the endgame animation
+		// defined in a separate sound resource. AdLib only has
+		// the music defined in its endgame resource, so it uses
+		// sounds from the main sound resource.
 		Sound.loadSection(ROLAND_ENDGAME_SOUND_RESOURCE_ID);
 
 	Palette p(ENDGAME_PALETTE_ID);
 	anim = new AnimationSequence(ENDGAME_ANIM_ID, p, true, 9, soundList);
-	anim->show();
-	delete anim;
+	AnimAbortType animResult = anim->show();
 
 	Sound.killSounds();
-	Sound.musicInterface_Play(6, 0, true);
-
-	anim = new AnimationSequence(ENDGAME_ANIM_ID + 2, p, false);
-	anim->show();
-	events.interruptableDelay(13000);
-	delete anim;
-
-	anim = new AnimationSequence(ENDGAME_ANIM_ID + 4, p, false);
-	anim->show();
-	if (!events.interruptableDelay(30000)) {
-		// No key yet pressed, so keep waiting
-		while (Sound.musicInterface_CheckPlaying(6) && !engine.shouldQuit()) {
-			if (events.interruptableDelay(20))
-				break;
-		}
+	if (animResult == ABORT_NONE) {
+		Sound.musicInterface_Play(Sound.isRoland() ? 0 : 0x28, 0, false);
+		events.interruptableDelay(5500);
 	}
 	delete anim;
 
-	screen.paletteFadeOut();
+	Sound.killSounds();
+
+	if (engine.shouldQuit())
+		return;
+
+	if (!Sound.isRoland())
+		Sound.loadSection(ADLIB_ENDGAME_SOUND_RESOURCE_ID);
+	Sound.musicInterface_Play(Sound.isRoland() ? 6 : 0, 0, true);
+
+	anim = new AnimationSequence(ENDGAME_ANIM_ID + 2, p, false);
+	anim->show();
+	events.interruptableDelay(30500);
+	delete anim;
+
+	if (engine.shouldQuit())
+		return;
+
+	anim = new AnimationSequence(ENDGAME_ANIM_ID + 4, p, false);
+	anim->show();
+	// Wait until a key is pressed
+	while (!engine.shouldQuit()) {
+		if (events.interruptableDelay(20))
+			break;
+	}
+	delete anim;
+
+	if (!engine.shouldQuit() && !engine.isEGA())
+		screen.paletteFadeOut();
+
 	engine.quitGame();
 }
 
