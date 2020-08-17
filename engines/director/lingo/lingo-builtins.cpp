@@ -1512,7 +1512,7 @@ void LB::b_cursor(int nargs) {
 		Datum sprite = d.u.farr->operator[](0);
 		Datum mask = d.u.farr->operator[](1);
 
-		g_lingo->func_cursor(sprite.asInt(), mask.asInt());
+		g_lingo->func_cursor(sprite.asCastId(), mask.asCastId());
 	} else {
 		g_lingo->func_cursor(d.asInt(), -1);
 	}
