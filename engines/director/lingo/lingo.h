@@ -139,6 +139,7 @@ struct Datum {	/* interpreter stack type */
 	double asFloat() const;
 	int asInt() const;
 	Common::String asString(bool printonly = false) const;
+	int asCastId() const;
 
 	const char *type2str(bool isk = false) const;
 
@@ -285,7 +286,6 @@ public:
 	void pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal);
 	void popContext();
 	void cleanLocalVars();
-	int castIdFetch(const Datum &var);
 	void varAssign(Datum &var, Datum &value, bool global = false, DatumHash *localvars = nullptr);
 	Datum varFetch(Datum &var, bool global = false, DatumHash *localvars = nullptr, bool silent = false);
 

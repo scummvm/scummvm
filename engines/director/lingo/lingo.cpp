@@ -1016,6 +1016,46 @@ Common::String Datum::asString(bool printonly) const {
 	return s;
 }
 
+int Datum::asCastId() const {
+	Movie *movie = g_director->getCurrentMovie();
+	if (!movie) {
+		warning("Datum::asCastId: No movie");
+		return 0;
+	}
+
+	int castId = 0;
+	switch (type) {
+	case STRING:
+		{
+			CastMember *member = movie->getCastMemberByName(asString());
+			if (member)
+				return member->getID();
+			
+			warning("Datum::asCastId: reference to non-existent cast member: %s", asString().c_str());
+			return 0;
+		}
+		break;
+	case INT:
+	case CASTREF:
+	case FIELDREF:
+		castId = u.i;
+		break;
+	case FLOAT:
+		castId = u.f;
+		break;
+	case VOID:
+		warning("Datum::asCastId: reference to VOID cast ID");
+		break;
+	default:
+		error("Datum::asCastId: unsupported cast ID type %s", type2str());
+	}
+
+	if (!g_director->getCurrentMovie()->getCastMember(castId))
+		warning("Datum::asCastId: reference to non-existent cast ID: %d", castId);
+
+	return castId;
+}
+
 const char *Datum::type2str(bool isk) const {
 	static char res[20];
 
@@ -1215,39 +1255,6 @@ void Lingo::printAllVars() {
 
 int Lingo::getInt(uint pc) {
 	return (int)READ_UINT32(&((*_currentScript)[pc]));
-}
-
-int Lingo::castIdFetch(const Datum &var) {
-	Movie *movie = _vm->getCurrentMovie();
-	if (!movie) {
-		warning("castIdFetch: No movie");
-		return 0;
-	}
-
-	if (var.type == STRING) {
-		CastMember *member = movie->getCastMemberByName(*var.u.s);
-		if (member)
-			return member->getID();
-		
-		warning("castIdFetch: reference to non-existent cast member: %s", var.u.s->c_str());
-		return 0;
-	}
-
-	int castId = 0;
-	if (var.type == INT || var.type == CASTREF || var.type == FIELDREF) {
-		castId = var.u.i;
-	} else if (var.type == FLOAT) {
-		castId = var.u.f;
-	} else if (var.type == VOID) {
-		warning("castIdFetch: reference to VOID cast ID");
-	} else {
-		error("castIdFetch: was expecting STRING or INT, got %s", var.type2str());
-	}
-
-	if (!_vm->getCurrentMovie()->getCastMember(castId))
-		warning("castIdFetch: reference to non-existent cast ID: %d", castId);
-
-	return castId;
 }
 
 void Lingo::varAssign(Datum &var, Datum &value, bool global, DatumHash *localvars) {

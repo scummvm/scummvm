@@ -1275,7 +1275,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheCastNum:
 		{
-			int castId = castIdFetch(d);
+			int castId = d.asCastId();
 			if (castId != sprite->_castId) {
 				g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
 				channel->setCast(castId);
@@ -1309,8 +1309,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		if (d.type == INT) {
 			channel->_cursor.readFromResource(d.asInt());
 		} else if (d.type == ARRAY && d.u.farr->size() == 2) {
-			uint cursorId =	castIdFetch(d.u.farr->operator[](0));
-			uint maskId = castIdFetch(d.u.farr->operator[](1));
+			uint cursorId =	d.u.farr->operator[](0).asCastId();
+			uint maskId = d.u.farr->operator[](1).asCastId();
 			channel->_cursor.readFromCast(cursorId, maskId);
 		}
 		break;
@@ -1463,7 +1463,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		return d;
 	}
 
-	int id = g_lingo->castIdFetch(id1);
+	int id = id1.asCastId();
 
 	CastMember *member = movie->getCastMember(id);
 	if (!member) {
@@ -1492,7 +1492,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		return;
 	}
 
-	int id = g_lingo->castIdFetch(id1);
+	int id = id1.asCastId();
 
 	CastMember *member = movie->getCastMember(id);
 	if (!member) {
@@ -1517,7 +1517,7 @@ Datum Lingo::getTheField(Datum &id1, int field) {
 		return d;
 	}
 
-	int id = g_lingo->castIdFetch(id1);
+	int id = id1.asCastId();
 
 	CastMember *member = movie->getCastMember(id);
 	if (!member) {
@@ -1550,7 +1550,7 @@ void Lingo::setTheField(Datum &id1, int field, Datum &d) {
 		return;
 	}
 
-	int id = g_lingo->castIdFetch(id1);
+	int id = id1.asCastId();
 
 	CastMember *member = movie->getCastMember(id);
 	if (!member) {

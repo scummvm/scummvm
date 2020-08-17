@@ -1845,7 +1845,7 @@ void LB::b_puppetSound(int nargs) {
 		return;
 	}
 
-	int castId = g_lingo->castIdFetch(castMember);
+	int castId = castMember.asCastId();
 	sound->playCastMember(castId, 1);
 }
 
@@ -2321,7 +2321,7 @@ void LB::b_version(int nargs) {
 void LB::b_cast(int nargs) {
 	Datum d = g_lingo->pop();
 	if (d.type == STRING) {
-		d = g_lingo->castIdFetch(d);
+		d = d.asCastId();
 	}
 
 	Datum res = d.asInt();
@@ -2332,7 +2332,7 @@ void LB::b_cast(int nargs) {
 void LB::b_field(int nargs) {
 	Datum d = g_lingo->pop();
 	if (d.type == STRING) {
-		d = g_lingo->castIdFetch(d);
+		d = d.asCastId();
 	}
 
 	Datum res = d.asInt();
@@ -2342,7 +2342,7 @@ void LB::b_field(int nargs) {
 
 void LB::b_script(int nargs) {
 	Datum d = g_lingo->pop();
-	int castId = g_lingo->castIdFetch(d);
+	int castId = d.asCastId();
 	CastMember *cast = g_director->getCurrentMovie()->getCastMember(castId);
 
 	if (cast) {
