@@ -110,6 +110,8 @@ void AdScene::setDefaults() {
 	_fogParameters._color = 0x00FFFFFF;
 	_fogParameters._start = 0.0f;
 	_fogParameters._end = 0.0f;
+
+	_2DPathfinding = false;
 #endif
 
 	_pfPointsNum = 0;
@@ -851,6 +853,10 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 		case TOKEN_AMBIENT_LIGHT_COLOR:
 			parser.scanStr(params, "%d,%d,%d", &ar, &ag, &ab);
 			_ambientLightColor = BYTETORGBA(ar, ag, ab, 255);
+			break;
+
+		case TOKEN_2D_PATHFINDING:
+			parser.scanStr(params, "%b", &_2DPathfinding);
 			break;
 #endif
 		case TOKEN_CAMERA:
