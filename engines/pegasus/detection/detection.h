@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef PEGASUS_DETECTION_H
+#define PEGASUS_DETECTION_H
+
 namespace Pegasus {
 
 struct PegasusGameDescription {
@@ -27,3 +30,5 @@ struct PegasusGameDescription {
 };
 
 } // End of namespace Pegasus
+
+#endif // PEGASUS_DETECTION_H

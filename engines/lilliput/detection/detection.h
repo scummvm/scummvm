@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef LILLIPUT_DETECTION_H
+#define LILLIPUT_DETECTION_H
+
 namespace Lilliput {
 
 struct LilliputGameDescription {
@@ -29,3 +32,4 @@ struct LilliputGameDescription {
 
 } // End of namespace Lilliput
 
+#endif // LILLIPUT_DETECTION_H

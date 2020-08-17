@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef PARALLACTION_DETECTION_H
+#define PARALLACTION_DETECTION_H
+
 namespace Parallaction {
 
 struct PARALLACTIONGameDescription {
@@ -30,3 +33,5 @@ struct PARALLACTIONGameDescription {
 };
 
 } // End of namespace Parallaction
+
+#endif // PARALLACTION_DETECTION_H

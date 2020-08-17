@@ -21,6 +21,8 @@
  *
  */
 
+#ifndef MADS_DETECTION_H
+#define MADS_DETECTION_H
 
 namespace MADS {
 
@@ -32,3 +34,5 @@ struct MADSGameDescription {
 };
 
 } // End of namespace MADS
+
+#endif // MADS_DETECTION_H

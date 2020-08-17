@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef XEEN_DETECTION_H
+#define XEEN_DETECTION_H
+
 namespace Xeen {
 
 struct XeenGameDescription {
@@ -30,3 +33,5 @@ struct XeenGameDescription {
 };
 
 } // End of namespace Xeen
+
+#endif // XEEN_DETECTION_H

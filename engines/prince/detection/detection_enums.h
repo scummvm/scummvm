@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef PRINCE_DETECTION_ENUMS_H
+#define PRINCE_DETECTION_ENUMS_H
+
 namespace Prince {
 
 enum PrinceGameType {
@@ -35,3 +38,5 @@ enum {
 };
 
 } // End of namespace Prince
+
+#endif // PRINCE_DETECTION_ENUMS_H

@@ -37,7 +37,11 @@ static const PlainGameDescriptor cryomni3DGames[] = {
 	{0, 0}
 };
 
+} // End of namespace CryOmni3D
+
 #include "cryomni3d/detection/detection_tables.h"
+
+namespace CryOmni3D {
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR

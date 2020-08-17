@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef STARTTREK_DETECTION_ENUMS_H
+#define STARTTREK_DETECTION_ENUMS_H
+
 namespace StarTrek {
 
 enum StarTrekGameType {
@@ -33,3 +36,5 @@ enum StarTrekGameFeatures {
 };
 
 } // End of namespace StarTrek
+
+#endif // STARTTREK_DETECTION_ENUMS_H

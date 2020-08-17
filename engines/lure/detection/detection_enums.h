@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef LURE_DETECTION_ENUMS_H
+#define LURE_DETECTION_ENUMS_H
+
 namespace Lure {
 
 enum {
@@ -29,3 +32,5 @@ enum {
 };
 
 } // End of namespace Lure
+
+#endif // LURE_DETECTION_ENUMS_H

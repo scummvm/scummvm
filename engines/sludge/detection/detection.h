@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef SLUDGE_DETECTION_H
+#define SLUDGE_DETECTION_H
+
 namespace Sludge {
 
 struct SludgeGameDescription {
@@ -28,3 +31,5 @@ struct SludgeGameDescription {
 };
 
 } // End of namespace Sludge
+
+#endif // SLUDGE_DETECTION_H

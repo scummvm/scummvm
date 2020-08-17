@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef CINE_DETECTION_ENUMS_H
+#define CINE_DETECTION_ENUMS_H
+
 namespace Cine {
 
 enum CineGameType {
@@ -35,3 +38,5 @@ enum CineGameFeatures {
 };
 
 } // End of namespace Cine
+
+#endif // CINE_DETECTION_ENUMS_H

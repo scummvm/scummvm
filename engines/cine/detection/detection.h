@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef CINE_DETECTION_H
+#define CINE_DETECTION_H
+
 namespace Cine {
 
 struct CINEGameDescription {
@@ -30,3 +33,5 @@ struct CINEGameDescription {
 };
 
 } // End of namespace Cine
+
+#endif // CINE_DETECTION_H

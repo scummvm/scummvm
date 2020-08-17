@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef DRAGONS_DETECTION_ENUMS_H
+#define DRAGONS_DETECTION_ENUMS_H
+
 namespace Dragons {
 
 enum {
@@ -28,3 +31,5 @@ enum {
 };
 
 } // End of namespace Dragons
+
+#endif // DRAGONS_DETECTION_ENUMS_H

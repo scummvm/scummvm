@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef XEEN_DETECTION_ENUMS_H
+#define XEEN_DETECTION_ENUMS_H
+
 namespace Xeen {
 
 enum {
@@ -30,3 +33,5 @@ enum {
 };
 
 } // End of namespace Xeen
+
+#endif // XEEN_DETECTION_ENUMS_H

@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef PRINCE_DETECTION_H
+#define PRINCE_DETECTION_H
+
 namespace Prince {
 
 struct PrinceGameDescription {
@@ -28,3 +31,5 @@ struct PrinceGameDescription {
 };
 
 } // End of namespace Prince
+
+#endif // PRINCE_DETECTION_H

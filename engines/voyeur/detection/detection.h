@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef VOYEUR_DETECTION_H
+#define VOYEUR_DETECTION_H
+
 namespace Voyeur {
 
 struct VoyeurGameDescription {
@@ -27,3 +30,5 @@ struct VoyeurGameDescription {
 };
 
 } // End of namespace Voyeur
+
+#endif // VOYEUR_DETECTION_H

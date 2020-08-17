@@ -21,6 +21,9 @@
  *
  */
 
+#ifndef ZVISION_DETECTION_ENUMS_H
+#define ZVISION_DETECTION_ENUMS_H
+
 namespace ZVision {
 
 enum ZVisionGameId {
@@ -34,3 +37,5 @@ enum ZVisionFeatures {
 };
 
 } // End of namespace ZVision
+
+#endif // ZVISION_DETECTION_ENUMS_H

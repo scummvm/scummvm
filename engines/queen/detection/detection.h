@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef QUEEN_DETECTION_H
+#define QUEEN_DETECTION_H
+
 namespace Queen {
 
 struct QueenGameDescription {
@@ -27,3 +30,5 @@ struct QueenGameDescription {
 };
 
 } // End of namespace Queen
+
+#endif // QUEEN_DETECTION_H

@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef AGOS_DETECTION_H
+#define AGOS_DETECTION_H
+
 namespace AGOS {
 
 struct AGOSGameDescription {
@@ -31,3 +34,5 @@ struct AGOSGameDescription {
 };
 
 } // End of namespace AGOS
+
+#endif // AGOS_DETECTION_H

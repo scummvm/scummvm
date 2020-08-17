@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef HUGO_DETECTION_H
+#define HUGO_DETECTION_H
+
 namespace Hugo {
 
 struct HugoGameDescription {
@@ -28,3 +31,5 @@ struct HugoGameDescription {
 };
 
 } // End of namespace Hugo
+
+#endif // HUGO_DETECTION_H

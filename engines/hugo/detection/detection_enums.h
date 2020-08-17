@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef HUGO_DETECTION_ENUMS_H
+#define HUGO_DETECTION_ENUMS_H
+
 namespace Hugo {
 
 enum HugoGameFeatures {
@@ -44,3 +47,5 @@ enum GameVariant {
 };
 
 } // End of namespace Hugo
+
+#endif // HUGO_DETECTION_ENUMS_H

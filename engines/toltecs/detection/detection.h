@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef TOLTECS_DETECTION_H
+#define TOLTECS_DETECTION_H
+
 namespace Toltecs {
 
 struct ToltecsGameDescription {
@@ -27,3 +30,5 @@ struct ToltecsGameDescription {
 };
 
 } // End of namespace Toltecs
+
+#endif // TOLTECS_DETECTION_H

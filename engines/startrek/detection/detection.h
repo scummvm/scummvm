@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef STARTTREK_DETECTION_H
+#define STARTTREK_DETECTION_H
+
 namespace StarTrek {
 
 struct StarTrekGameDescription {
@@ -30,3 +33,5 @@ struct StarTrekGameDescription {
 };
 
 } // End of Namespace StarTrek
+
+#endif // STARTTREK_DETECTION_H

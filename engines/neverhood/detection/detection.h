@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef NEVERHOOD_DETECTION_H
+#define NEVERHOOD_DETECTION_H
+
 namespace Neverhood {
 
 struct NeverhoodGameDescription {
@@ -32,3 +35,5 @@ struct NeverhoodGameDescription {
 };
 
 } // End of namespace Neverhood
+
+#endif // NEVERHOOD_DETECTION_H

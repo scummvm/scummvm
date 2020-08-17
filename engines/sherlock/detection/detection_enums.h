@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef SHERLOCK_DETECTION_ENUMS_H
+#define SHERLOCK_DETECTION_ENUMS_H
+
 namespace Sherlock {
 
 enum GameType {
@@ -28,3 +31,5 @@ enum GameType {
 };
 
 } // End of namespace Sherlock
+
+#endif // SHERLOCK_DETECTION_ENUMS_H

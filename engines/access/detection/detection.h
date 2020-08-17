@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef ACCESS_DETECTION_H
+#define ACCESS_DETECTION_H
+
 namespace Access {
 
 struct AccessGameDescription {
@@ -30,3 +33,5 @@ struct AccessGameDescription {
 };
 
 } // End of namespace Access
+
+#endif // ACCESS_DETECTION_H

@@ -20,6 +20,8 @@
  *
  */
 
+#ifndef SWORD25_DETECTION_ENUMS_H
+#define SWORD25_DETECTION_ENUMS_H
 
 namespace Sword25 {
 
@@ -28,3 +30,5 @@ enum GameFlags {
 };
 
 } // End of namespace Sword25
+
+#endif // SWORD25_DETECTION_ENUMS_H

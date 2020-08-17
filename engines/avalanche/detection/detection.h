@@ -25,6 +25,8 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
+#ifndef AVALANCHE_DETECTION_H
+#define AVALANCHE_DETECTION_H
 
 namespace Avalanche {
 
@@ -33,3 +35,5 @@ struct AvalancheGameDescription {
 };
 
 } // End of namespace Avalanche
+
+#endif // AVALANCHE_DETECTION_H

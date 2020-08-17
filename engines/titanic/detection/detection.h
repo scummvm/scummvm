@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef TITANIC_DETECTION_H
+#define TITANIC_DETECTION_H
+
 namespace Titanic {
 
 struct TitanicGameDescription {
@@ -27,3 +30,5 @@ struct TitanicGameDescription {
 };
 
 } // End of namespace Titanic
+
+#endif // TITANIC_DETECTION_H

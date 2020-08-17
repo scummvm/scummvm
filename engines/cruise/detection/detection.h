@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef CRUISE_DETECTION_H
+#define CRUISE_DETECTION_H
+
 namespace Cruise {
 
 struct CRUISEGameDescription {
@@ -27,3 +30,5 @@ struct CRUISEGameDescription {
 };
 
 } // End of namespace Cruise
+
+#endif // CRUISE_DETECTION_H

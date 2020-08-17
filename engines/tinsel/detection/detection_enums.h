@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef TINSEL_DETECTION_ENUMS_H
+#define TINSEL_DETECTION_ENUMS_H
+
 namespace Tinsel {
 
 enum TinselGameID {
@@ -58,3 +61,5 @@ enum TinselEngineVersion {
 };
 
 } // End of namespace Tinsel
+
+#endif // TINSEL_DETECTION_ENUMS_H

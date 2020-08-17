@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef BBVS_DETECTION_ENUMS_H
+#define BBVS_DETECTION_ENUMS_H
+
 namespace Bbvs {
 
 enum {
@@ -27,3 +30,5 @@ enum {
 };
 
 } // End of namespace Bbvs
+
+#endif // BBVS_DETECTION_ENUMS_H

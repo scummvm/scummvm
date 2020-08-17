@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef KYRA_DETECTION_H
+#define KYRA_DETECTION_H
+
 namespace {
 
 struct KYRAGameDescription {
@@ -29,3 +32,5 @@ struct KYRAGameDescription {
 };
 
 } // End of anonymous namespace
+
+#endif // KYRA_DETECTION_H

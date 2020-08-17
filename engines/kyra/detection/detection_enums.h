@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef KYRA_DETECTION_ENUMS_H
+#define KYRA_DETECTION_ENUMS_H
+
 namespace Kyra {
 
 enum {
@@ -54,3 +57,5 @@ struct GameFlags {
 };
 
 } // End of namespace Kyra
+
+#endif // KYRA_DETECTION_ENUMS_H

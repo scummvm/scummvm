@@ -25,6 +25,9 @@
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
+#ifndef DM_DETECTION_ENUMS_H
+#define DM_DETECTION_ENUMS_H
+
 namespace DM {
 
 enum OriginalSaveFormat {
@@ -64,3 +67,5 @@ enum SaveTarget {
 };
 
 } // End of namespace DM
+
+#endif // DM_DETECTION_ENUMS_H

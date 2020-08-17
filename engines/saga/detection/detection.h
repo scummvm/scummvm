@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef SAGA_DETECTION_H
+#define SAGA_DETECTION_H
+
 namespace Saga {
 
 struct SAGAGameDescription {
@@ -35,3 +38,5 @@ struct SAGAGameDescription {
 };
 
 } // End of namespace Saga
+
+#endif // SAGA_DETECTION_H

@@ -20,6 +20,8 @@
  *
  */
 
+#ifndef LAB_DETECTION_ENUMS_H
+#define LAB_DETECTION_ENUMS_H
 
 namespace Lab {
 
@@ -29,3 +31,5 @@ enum GameFeatures {
 };
 
 } // End of namespace Lab
+
+#endif // LAB_DETECTION_ENUMS_H

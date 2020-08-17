@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef ILLUSIONS_DETECTION_H
+#define ILLUSIONS_DETECTION_H
+
 namespace Illusions {
 
 struct IllusionsGameDescription {
@@ -29,3 +32,4 @@ struct IllusionsGameDescription {
 
 } // End of namespace Illusions
 
+#endif // ILLUSIONS_DETECTION_H

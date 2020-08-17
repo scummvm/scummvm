@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef LURE_DETECTION_H
+#define LURE_DETECTION_H
+
 namespace Lure {
 
 struct LureGameDescription {
@@ -29,3 +32,5 @@ struct LureGameDescription {
 };
 
 } // End of namespace Lure
+
+#endif // LURE_DETECTION_H

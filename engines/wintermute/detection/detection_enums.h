@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef WINTERMUTE_DETECTION_ENUMS_H
+#define WINTERMUTE_DETECTION_ENUMS_H
+
 namespace Wintermute {
 
 enum WintermuteGameFeatures {
@@ -31,3 +34,5 @@ enum WintermuteGameFeatures {
 };
 
 } // End of namespace Wintermute
+
+#endif // WINTERMUTE_DETECTION_ENUMS_H

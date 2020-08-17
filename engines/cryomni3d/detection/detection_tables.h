@@ -20,7 +20,7 @@
  *
  */
 
-// This file is included in CryOmni3D namespace
+namespace CryOmni3D {
 
 #define GUI_OPTIONS_VERSAILLES                   GUIO3(GUIO_NOMIDI, GUIO_NOSFX, GUIO_NOASPECT)
 
@@ -579,3 +579,5 @@ static const ADFileBasedFallback fileBased[] = {
 	{ &fallbackDescs[0].desc,  { "11D_LEB1.HNM", "COFBOUM.HNM", "Versailles", 0 } },
 	{ 0, { 0 } }
 };
+
+} // End of namespace CryOmni3D
