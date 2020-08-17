@@ -244,7 +244,7 @@ static LingoV4TheEntity lingoV4TheEntity[] = {
 	{ 0x07, 0x22, kTheTimer,			kTheNOField,		true, kTEANOArgs },
 	{ 0x07, 0x23, kThePreLoadRAM,		kTheNOField,		true, kTEANOArgs },
 
-	{ 0x08, 0x01, kThePerFrameHook,		kTheNOField,		false, kTEANOArgs },
+	{ 0x08, 0x01, kThePerFrameHook,		kTheNOField,		true, kTEANOArgs },
 	{ 0x08, 0x02, kTheCastMembers,		kTheNumber,			false, kTEANOArgs },
 	{ 0x08, 0x03, kTheMenus,			kTheNumber,			false, kTEANOArgs },
 
