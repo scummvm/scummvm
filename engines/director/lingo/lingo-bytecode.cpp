@@ -1456,11 +1456,20 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableReadStreamEndian &stream, L
 		}
 
 		if (!skipdump && ConfMan.getBool("dump_scripts")) {
-			if (0 <= nameIndex && nameIndex < (int16)archive->names.size())
-				out.writeString(Common::String::format("function %s, %d args\n", archive->names[nameIndex].c_str(), argCount));
-			else
+			if (0 <= nameIndex && nameIndex < (int16)archive->names.size()) {
+				Common::String res = Common::String::format("function %s, %d args", archive->names[nameIndex].c_str(), argCount);
+				if (argCount != 0)
+					res += ": ";
+				for (int argIndex = 0;  argIndex < argCount; argIndex++) {
+					res += (*argNames)[argIndex].c_str();
+					if (argIndex < (argCount - 1))
+						res += ", ";
+				}
+				res += "\n";
+				out.writeString(res.c_str());
+			} else {
 				out.writeString(Common::String::format("<noname>, %d args\n", argCount));
-
+			}
 			uint pc = 0;
 			while (pc < _currentAssembly->size()) {
 				uint spc = pc;
