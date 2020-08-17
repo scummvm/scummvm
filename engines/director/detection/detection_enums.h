@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef DIRECTOR_DETECTION_ENUMS_H
+#define DIRECTOR_DETECTION_ENUMS_H
+
 namespace Director {
 
 enum DirectorGameGID {
@@ -29,3 +32,5 @@ enum DirectorGameGID {
 };
 
 } // End of namespace Director
+
+#endif // DIRECTOR_DETECTION_ENUMS_H

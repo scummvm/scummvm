@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef CRYOMNI3D_DETECTION_ENUMS_H
+#define CRYOMNI3D_DETECTION_ENUMS_H
+
 namespace CryOmni3D {
 
 enum CryOmni3DGameType {
@@ -41,3 +44,5 @@ enum CryOmni3DGameFeatures {
 };
 
 } // End of namespace CryOmni3D
+
+#endif // CRYOMNI3D_DETECTION_ENUMS_H

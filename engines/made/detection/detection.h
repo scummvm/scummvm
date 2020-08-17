@@ -20,6 +20,8 @@
  *
  */
 
+#ifndef MADE_DETECTION_H
+#define MADE_DETECTION_H
 
 namespace Made {
 
@@ -34,3 +36,4 @@ struct MadeGameDescription {
 
 } // End of namespace Made
 
+#endif // MADE_DETECTION_H

@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef MADS_DETECTION_ENUMS_H
+#define MADS_DETECTION_ENUMS_H
+
 namespace MADS {
 
 enum {
@@ -29,3 +32,5 @@ enum {
 };
 
 } // End of namespace MADS
+
+#endif // MADS_DETECTION_ENUMS_H

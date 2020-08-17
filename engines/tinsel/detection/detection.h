@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef TINSEL_DETECTION_H
+#define TINSEL_DETECTION_H
+
 namespace Tinsel {
 
 struct TinselGameDescription {
@@ -32,3 +35,5 @@ struct TinselGameDescription {
 };
 
 } // End of namespace Tinsel
+
+#endif // TINSEL_DETECTION_H

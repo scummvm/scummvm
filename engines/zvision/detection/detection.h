@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef ZVISION_DETECTION_H
+#define ZVISION_DETECTION_H
+
 namespace ZVision {
 
 struct ZVisionGameDescription {
@@ -28,3 +31,5 @@ struct ZVisionGameDescription {
 };
 
 } // End of namespace ZVision
+
+#endif // ZVISION_DETECTION_H

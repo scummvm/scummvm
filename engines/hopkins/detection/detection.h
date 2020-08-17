@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef HOPKINS_DETECTION_H
+#define HOPKINS_DETECTION_H
+
 namespace Hopkins {
 
 struct HopkinsGameDescription {
@@ -27,3 +30,5 @@ struct HopkinsGameDescription {
 };
 
 } // End of namespace Hopkins
+
+#endif // HOPKINS_DETECTION_H

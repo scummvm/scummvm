@@ -25,6 +25,9 @@
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
+#ifndef DM_DETECTION_H
+#define DM_DETECTION_H
+
 namespace DM {
 
 struct DMADGameDescription {
@@ -40,3 +43,5 @@ struct DMADGameDescription {
 };
 
 } // End of namespace DM
+
+#endif // DM_DETECTION_H

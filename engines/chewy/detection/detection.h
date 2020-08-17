@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef CHEWY_DETECTION_H
+#define CHEWY_DETECTION_H
+
 namespace Chewy {
 
 struct ChewyGameDescription {
@@ -27,3 +30,5 @@ struct ChewyGameDescription {
 };
 
 } // End of namespace Chewy
+
+#endif // CHEWY_DETECTION_H

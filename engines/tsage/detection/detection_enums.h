@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef TSAGE_DETECTION_ENUMS_H
+#define TSAGE_DETECTION_ENUMS_H
+
 namespace TsAGE {
 
 enum {
@@ -37,3 +40,5 @@ enum {
 };
 
 } // End of namespace TsAGE
+
+#endif // TSAGE_DETECTION_ENUMS_H

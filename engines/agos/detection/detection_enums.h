@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef AGOS_DETECTION_ENUMS_H
+#define AGOS_DETECTION_ENUMS_H
+
 namespace AGOS {
 
 // Enums related to detection, from the main agos/agos.h file.
@@ -35,3 +38,5 @@ enum SIMONGameType {
 };
 
 } // End of namespace AGOS
+
+#endif // AGOS_DETECTION_ENUMS_H

@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef SAGA_DETECTION_ENUMS_H
+#define SAGA_DETECTION_ENUMS_H
+
 namespace Saga {
 
 struct GameResourceDescription {
@@ -88,3 +91,5 @@ enum GameFileTypes {
 };
 
 } // End of namespace Saga
+
+#endif // SAGA_DETECTION_ENUMS_H

@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef MADE_DETECTION_ENUMS_H
+#define MADE_DETECTION_ENUMS_H
+
 namespace Made {
 
 enum MadeGameID {
@@ -37,3 +40,5 @@ enum MadeGameFeatures {
 };
 
 } // End of namespace Made
+
+#endif // MADE_DETECTION_ENUMS_H

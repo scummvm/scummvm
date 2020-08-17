@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef TSAGE_DETECTION_H
+#define TSAGE_DETECTION_H
+
 namespace TsAGE {
 
 struct tSageGameDescription {
@@ -30,3 +33,5 @@ struct tSageGameDescription {
 };
 
 } // End of namespace TsAGE
+
+#endif // TSAGE_DETECTION_H

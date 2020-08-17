@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef SHERLOCK_DETECTION_H
+#define SHERLOCK_DETECTION_H
+
 namespace Sherlock {
 
 struct SherlockGameDescription {
@@ -29,3 +32,5 @@ struct SherlockGameDescription {
 };
 
 } // End of namespace Sherlock
+
+#endif // SHERLOCK_DETECTION_H

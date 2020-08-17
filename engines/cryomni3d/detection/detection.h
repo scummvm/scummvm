@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef CRYOMNI3D_DETECTION_H
+#define CRYOMNI3D_DETECTION_H
+
 namespace CryOmni3D {
 
 struct CryOmni3DGameDescription {
@@ -30,3 +33,5 @@ struct CryOmni3DGameDescription {
 };
 
 } // End of namespace CryOmni3D
+
+#endif // CRYOMNI3D_DETECTION_H

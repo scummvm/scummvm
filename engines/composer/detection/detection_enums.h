@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef COMPOSER_DETECTION_ENUMS_H
+#define COMPOSER_DETECTION_ENUMS_H
+
 namespace Composer {
 
 enum GameType {
@@ -34,3 +37,5 @@ enum GameFileTypes {
 };
 
 } // End of namespace Composer
+
+#endif // COMPOSER_DETECTION_ENUMS_H

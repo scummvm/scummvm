@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef ACCESS_DETECTION_ENUMS_H
+#define ACCESS_DETECTION_ENUMS_H
+
 namespace Access {
 
 enum {
@@ -29,3 +32,5 @@ enum {
 };
 
 } // End of namespace Access
+
+#endif // ACCESS_DETECTION_ENUMS_H

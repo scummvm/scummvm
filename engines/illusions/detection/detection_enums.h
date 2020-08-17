@@ -20,6 +20,8 @@
  *
  */
 
+#ifndef ILLUSIONS_DETECTION_ENUMS_H
+#define ILLUSIONS_DETECTION_ENUMS_H
 
 namespace Illusions {
 
@@ -29,3 +31,5 @@ enum {
 };
 
 } // End of namespace Illusions
+
+#endif // ILLUSIONS_DETECTION_ENUMS_H

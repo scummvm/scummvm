@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef DIRECTOR_DETECTION_H
+#define DIRECTOR_DETECTION_H
+
 namespace Director {
 
 struct DirectorGameDescription {
@@ -30,3 +33,5 @@ struct DirectorGameDescription {
 };
 
 } // End of namespace Director
+
+#endif // DIRECTOR_DETECTION_H

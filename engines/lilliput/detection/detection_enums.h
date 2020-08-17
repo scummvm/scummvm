@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef LILLIPUT_DETECTION_ENUMS_H
+#define LILLIPUT_DETECTION_ENUMS_H
+
 namespace Lilliput {
 
 enum GameType {
@@ -29,3 +32,5 @@ enum GameType {
 };
 
 } // End of namespace Lilliput
+
+#endif // LILLIPUT_DETECTION_ENUMS_H

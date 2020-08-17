@@ -20,8 +20,9 @@
  *
  */
 
+#ifndef GOB_DETECTION_ENUMS_H
+#define GOB_DETECTION_ENUMS_H
 
-// Taken from gob/gob.h
 namespace Gob {
 
 // WARNING: Reordering these will invalidate save games!
@@ -67,3 +68,5 @@ enum Features {
 };
 
 } // End of namespace Gob
+
+#endif // GOB_DETECTION_ENUMS_H

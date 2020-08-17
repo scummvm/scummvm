@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef COMPOSER_DETECTION_H
+#define COMPOSER_DETECTION_H
+
 namespace Composer {
 
 struct ComposerGameDescription {
@@ -29,3 +32,5 @@ struct ComposerGameDescription {
 };
 
 } // End of namespace Composer
+
+#endif // COMPOSER_DETECTION_H

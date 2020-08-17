@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef DRAGONS_DETECTION_H
+#define DRAGONS_DETECTION_H
+
 namespace Dragons {
 
 struct DragonsGameDescription {
@@ -28,3 +31,5 @@ struct DragonsGameDescription {
 };
 
 } // End of namespace Dragons
+
+#endif // DRAGONS_DETECTION_H

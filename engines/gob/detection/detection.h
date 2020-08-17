@@ -20,6 +20,8 @@
  *
  */
 
+#ifndef GOB_DETECTION_H
+#define GOB_DETECTION_H
 
 namespace Gob {
 
@@ -34,3 +36,5 @@ struct GOBGameDescription {
 };
 
 } // End of namespace Gob
+
+#endif // GOB_DETECTION_H

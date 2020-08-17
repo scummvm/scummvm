@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef MORTEVIELLE_DETECTION_H
+#define MORTEVIELLE_DETECTION_H
+
 namespace Mortevielle {
 
 struct MortevielleGameDescription {
@@ -29,3 +32,5 @@ struct MortevielleGameDescription {
 };
 
 } // End of namespace Mortevielle
+
+#endif // MORTEVIELLE_DETECTION_H

@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef HDB_DETECTION_H
+#define HDB_DETECTION_H
+
 namespace HDB {
 
 enum HDBGameFeatures {
@@ -27,3 +30,5 @@ enum HDBGameFeatures {
 };
 
 } // End of namespace HDB
+
+#endif // HDB_DETECTION_H

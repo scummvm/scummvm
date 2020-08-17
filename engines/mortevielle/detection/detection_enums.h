@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef MORTEVIELLE_DETECTION_ENUMS_H
+#define MORTEVIELLE_DETECTION_ENUMS_H
+
 namespace Mortevielle {
 
 enum {
@@ -28,3 +31,5 @@ enum {
 };
 
 } // End of namespace Mortevielle
+
+#endif // MORTEVIELLE_DETECTION_ENUMS_H

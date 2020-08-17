@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef TUCKER_DETECTION_ENUMS_H
+#define TUCKER_DETECTION_ENUMS_H
+
 namespace Tucker {
 
 enum GameFlag {
@@ -30,3 +33,5 @@ enum GameFlag {
 };
 
 } // End of namespace Tucker
+
+#endif // TUCKER_DETECTION_ENUMS_H
