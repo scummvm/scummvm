@@ -859,7 +859,7 @@ void Score::loadActions(Common::SeekableReadStreamEndian &stream) {
 			// Check if it is empty
 			bool empty = true;
 			for (const char *ptr = j->_value.c_str(); *ptr; ptr++)
-				if (*ptr != ' ' || *ptr != '\t' || *ptr != '\n' || *ptr != '\r' || *ptr != '\xc2' || *ptr != '-') {
+				if (!(*ptr == ' ' || *ptr == '-' || *ptr == '\n' || *ptr == '\r' || *ptr == '\t' || *ptr == '\xc2')) {
 					empty = false;
 					break;
 				}
