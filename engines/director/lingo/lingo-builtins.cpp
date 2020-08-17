@@ -1522,7 +1522,7 @@ void LB::b_put(int nargs) {
 	// Prints a statement to the Message window
 	Common::String output;
 	for (int i = nargs - 1; i >= 0; i--) {
-		output += g_lingo->peek(i).asString();
+		output += g_lingo->peek(i).asString(true);
 		if (i > 0)
 			output += " ";
 	}
