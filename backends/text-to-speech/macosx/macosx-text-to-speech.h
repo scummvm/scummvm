@@ -36,8 +36,7 @@ public:
 	MacOSXTextToSpeechManager();
 	virtual ~MacOSXTextToSpeechManager() override;
 
-	virtual bool say(const Common::U32String &str, Action action, Common::String charset = "") override;
-	virtual bool say(const Common::String &str, Action action, Common::String charset = "") override;
+	virtual bool say(const Common::U32String &str, Action action) override;
 
 	virtual bool stop() override;
 	virtual bool pause() override;
@@ -66,12 +65,7 @@ public:
 private:
 	virtual void updateVoices() override;
 
-	struct SpeechText {
-		Common::String text;
-		Common::String encoding;
-		SpeechText(const Common::String &txt, const Common::String &enc) : text(txt), encoding(enc) {}
-	};
-	Common::Queue<SpeechText> _messageQueue;
+	Common::Queue<Common::String> _messageQueue;
 	Common::String _currentSpeech;
 	bool _paused;
 };
