@@ -123,6 +123,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// almost all folders and file names use Japanese encoding, including executable
 	MACGAME_l("easternmind", "", "Tong Nou", "276bee761e48a6fd709df77d5c2f60dd", 395037, Common::JA_JPN, 300),
 
+	MACGAME("encarta95", "", "Encarta Projector", "7f443f2e63fd497a9ad85b10dc880a91", 385985, 313),
+
 	MACGAME("freakshow", "D3", "Freak Show Projector", "bb61dd0cc8356e51fe54c1a00f979b8f", 439483, 300),
 
 	{
@@ -137,7 +139,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NOASPECT)
 		},
 		GID_GENERIC,
-		3
+		300
 	},
 
 	MACGAME("ironhelix", "", "Iron Helix Minimum", "1ae45c23586b41997ba52e2e7c771c4c", 1652052, 300),
@@ -323,11 +325,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME("alice", "", "Alice", "3b61149c922f0fd815ca29686e4f554a", 304714, 400),
 	WINGAME("alice", "", "ALICE.EXE", "c67ece9b657ee80355520ac37a25fe55", 684733, 400),
 
-	WINGAME_l("ankh1", "", "ANKH.EXE", "12345", 12345, Common::JA_JPN, 400),
+	WINGAME_l("ankh1", "", "ANKH.EXE", "ca3b036aed6f38beb3ee762e171b663e", 746959, Common::JA_JPN, 404),
 
 	MACGAME("arcofdoom", "", "Arc Player (4mb)", "ea553e3f3fa123ad38fa5249621e8c8b", 295426, 400),
 	MACDEMO("arcofdoom", "Demo", "ArcDemo", "cdb27c916044ae4dceb4b7326063fa03", 301925, 400),
 	WINGAME("arcofdoom", "", "ARC.EXE", "fd3e9ad004597b01656b28c348a2ae7f", 687973, 400),
+
+	MACGAME("artrageous", "", "Artrageous!", "17efee018a660458fae80de4364021ac", 483746, 404),
+	WINGAME("artrageous", "", "ART.EXE", "926ca15bcb7bdccc8f9b14b052d05f83", 696827, 404),
 
 	WINDEMO("ataripack", "Demo", "ACTDEMO.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 400), // full game is not Director
 
@@ -366,6 +371,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME("easternmind", "", "Eastern Mind", "78138a77207907642744d0960c14d9e5", 483746, 400),
 	WINGAME("easternmind", "", "ESTRNMND.EXE", "2597cfb5466d193b5a18fc7b0e3a3fa5", 685789, 400),
+
+	MACGAME("frankenstein", "", "Frankenstein", "01be45e7241194dad07938e7059b88e3", 483771, 403),
+	WINGAME("frankenstein", "", "FRANKIE.EXE", "a9a4e3a07f3ecda7e59215aabb844532", 2229509, 404),
+	WINDEMO("frankenstein", "Demo", "FRNKDEMO.EXE", "ed00aa67138b715a8bee6f41756852c5", 7365699, 400),
+	WINGAME_l("frankenstein", "", "FRANKIE.EXE", "98beeaa18c58708b0ce82de320e3bdf7", 2196911, Common::DE_DEU, 404),
 
 	MACGAME("freakshow", "D4", "FreakShow Projector", "dc5a87dda7a0daf46604515f7d2cca66", 300644, 400),
 	WINGAME("freakshow", "", "FREAKS.EXE", "b2e1c5abc0e3c31ddd2089a55a27a0a5", 695893, 400),
@@ -641,6 +651,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME("mylk", "", "mylk.exe", "032b0860a694ece5f64f37cfe1ebdfa0", 904859, 400),
 
+	MACGAME("mysteriousegypt", "", "Mysterious Egypt", "32cb3a881f2d47a7e525370b198b2c5c", 483746, 404),
+
 	MACGAME("necrobius", "", "NCROBIUS.PPC", "ab6ba48edb4a93ca034c63905f615865", 605874, 400),
 	WINGAME("necrobius", "", "N_BIUS.EXE", "d82ac6034122e1314157931f9df613f9", 692919, 400),
 	WINDEMO("necrobius", "Demo", "N_BIUS.EXE", "d17330706956c2fda3ee482b39b0609f", 705049, 400),
@@ -695,10 +707,18 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME("planetarizona", "", "ARIZONA.EXE", "a23462ec87eff973d2cdb2ddfd4a59fa", 698651, 400),
 
 	// original file name is Paradise*Rescue
-	MACGAME_l("prescue", "", "ParadiseRescue", "0c7bbb4b24823e5ab871cb4c1d6f3710", 488433, Common::JA_JPN, 400),
-	WINGAME_l("prescue", "", "P_RESCUE.EXE", "a23462ec87eff973d2cdb2ddfd4a59fa", 698651, Common::JA_JPN, 400),
+	MACGAME_l("prescue", "", "ParadiseRescue", "bcd3c718db258701496b3c5bcb827ef2", 502965, Common::JA_JPN, 404),
+	WINGAME_l("prescue", "", "P_RESCUE.EXE", "c66e73719aff15a2ba4f33cf2e21581a", 813265, Common::JA_JPN, 404),
+
+	// original file name is Japanese characters
+	MACGAME_l("sakin2", "", "STARTCD", "67f572196550aedb1f9523d782022be0", 484351, Common::JA_JPN, 404),
+	WINGAME_l("sakin2", "", "STARTCD.EXE", "0c8a44b04aa6e8f1483b05f6b567fa3c", 749233, Common::JA_JPN, 404),
 
 	WINDEMO("santafe1", "Demo", "ELKMOON.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 400), // full game is not Director
+
+	MACGAME("sciencesmart", "", "Science Smart", "e020c33ab426b167647fed5e7aea6659", 295454, 403),
+	WINGAME("sciencesmart", "", "SCIENCE.EXE", "23e748085b255870650ae18b15dd986b", 759951, 404),
+
 	WINDEMO("shanghai", "Demo", "SHGMDEMO.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 400), // full game is not Director
 
 	MACGAME("skyborg", "", "SkyBorg 1.0", "bcd3c718db258701496b3c5bcb827ef2", 486954, 400),
@@ -719,8 +739,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME("teamxtreme2", "", "TX2.EXE", "50c80bd2add25e574494838772973beb", 2585471, 400),
 
 	// original name is TD MAC/PPC
-	MACGAME("totaldistortion", "", "TD MACPPC", "12345", 12345, 400),
-	WINGAME("totaldistortion", "", "TOTAL_DN", "12345", 12345, 400),
+	MACGAME("totaldistortion", "", "TD MACPPC", "17efee018a660458fae80de4364021ac", 486074, 404),
+	WINGAME("totaldistortion", "", "TOTAL_DN.EXE", "461b407c321e80487ae4882056310f9f", 700747, 404),
 
 	MACGAME("trekborg", "", "Picard Dossier", "e1dc28c1dd8409c2d2e0d5d269df5ffc", 520069, 400),
 	WINGAME("trekborg", "", "OMNIBORG.EXE", "1580ebad7599fb6c18815e244b0bfda3", 811363, 400),
@@ -739,6 +759,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME("trekomni", "Premier Edition", "ST_OMNI.EXE", "1a648d47632561f10a98782f1dde5738", 811827, 400),
 	WINGAME("trekomni", "v1.1.2 Upgrade", "ST_OMNI2.EXE", "1d60aad73cc9c69776a878aa59e65230", 809781, 400),
 
+	MACGAME("trektech", "", "STNG Technical Manual (PowerPC)", "a9bd9f3a82fcde6e4d151868e256aec7", 525946, 400),
+	WINGAME("trektech", "", "NCC1701D.EXE", "02aec408cee26413a096aec9b1cb1878", 720249, 400),
+
+	// original file names are Japanese characters
+	MACGAME_l("twistynight1", "", "Twisty Night 1", "8ea9e9a699c61edddffd79ddd0c994d7", 290682, Common::JA_JPN, 402),
+	MACGAME_l("twistynight2", "", "Twisty Night 2", "8ea9e9a699c61edddffd79ddd0c994d7", 290682, Common::JA_JPN, 402),
+	MACGAME_l("twistynight3", "", "Twisty Night 3", "8ea9e9a699c61edddffd79ddd0c994d7", 290682, Common::JA_JPN, 402),
+
 	MACGAME_l("ybr2", "", "YBR2", "b797956eb3a4dabcc15bfadf6fc66591", 504153, Common::JA_JPN, 400),
 	WINGAME_l("ybr2", "", "YBR2.EXE", "dbe273c1df60305be98a1a582ddd2c3b", 860579, Common::JA_JPN, 400),
 	WINDEMO_l("ybr2", "Demo", "YBR2DEMO.EXE", "25ecc053e02a0ef537d34d615119c814", 900973, Common::JA_JPN, 400),
@@ -754,8 +782,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME("amber", "", "amber_jb.exe", "1a7acbba10a7246ba58c1d53fc7203f5", -1, 500),
 
 	// original file names are ' ANKH2 ' and ' ANKH3 '
-	MACGAME_l("ankh2", "", "ANKH2", "12345", 12345, Common::JA_JPN, 500),
-	MACGAME_l("ankh3", "", "ANKH3", "12345", 12345, Common::JA_JPN, 500),
+	MACGAME_l("ankh2", "", "ANKH2", "779a44f65837ded641cc3fbbebe5ace1", 721432, Common::JA_JPN, 501),
+	MACGAME_l("ankh3", "", "ANKH3", "f715a3036c1b54ab1121e90388948018", 720456, Common::JA_JPN, 501),
 
 	WINGAME_l("ernie", "", "Ernie.exe", "1a7acbba10a7246ba58c1d53fc7203f5", 1417481, Common::SE_SWE, 500),
 	WINDEMO_l("ernie", "Demo", "ERNIE.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1417371, Common::SE_SWE, 500),
@@ -856,6 +884,16 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME_l("murderbrett", "", "BRAD.EXE", "e1c3cb4df694b887f3708f9ebb72302f", 934342, Common::FR_FRA, 500),
 
 	WINGAME("noir", "", "NOIR.EXE", "2e62abdad839e42068afdcd0644d7dcf", 1020879, 500),
+
+	MACGAME("staytooned", "", "Power Mac Stay Tooned!", "d692140f81aaf86096538f66d6477404", 94301, 500),
+	WINGAME("staytooned", "", "START32.EXE", "3460ad87d2ba57104e2810a77b53c220", 1394421, 500),
+
+	MACGAME_l("teddybear", "", "Teddy Bear", "f117b8395c4859d11b9c02c741e22cea", 704793, Common::FR_FRA, 500),
+	WINGAME_l("teddybear", "", "BEAR95.EXE", "3460ad87d2ba57104e2810a77b53c220", 1394051, Common::FR_FRA, 500),
+
+	// Both Mac and Windows require HD install
+	MACGAME("wishbone", "", "Odyssey", "15a4144726d15488814dab951ec7c3ff", 94329, 500),
+	WINGAME("wishbone", "", "ODYSSEY.EXE", "2e62abdad839e42068afdcd0644d7dcf", 1026617, 500),
 
 	MACGAME_l("ybr3", "", "YBRH", "4c38a51a21a1ad231f218c4786ff771d", 105855, Common::JA_JPN, 500),
 	MACGAME_l("ybr3", "Single Version", "YBR_Single", "6e7e31d05709e1d38d63f4df6a59eec0", 722547, Common::JA_JPN, 500),
