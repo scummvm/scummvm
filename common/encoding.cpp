@@ -235,7 +235,7 @@ char *Encoding::convertIconv(const char *to, const char *from, const char *strin
 				}
 				dst = buffer + (dst - oldString);
 				outSize = stringSize - (dst - buffer);
-				memset(dst, 0, stringSize / 2);
+				memset(dst, 0, outSize);
 			} else {
 				error = true;
 				break;
