@@ -68,8 +68,12 @@ bool Animation::findBone(FrameNode *rootFrame) {
 
 //////////////////////////////////////////////////////////////////////////
 bool Animation::loadFromX(XFileLexer &lexer, AnimationSet *parentAnimSet) {
-	lexer.advanceToNextToken(); // skip name
-	lexer.advanceOnOpenBraces();
+	if (lexer.tokenIsIdentifier()) {
+		lexer.advanceToNextToken(); // skip name
+		lexer.advanceOnOpenBraces();
+	} else {
+		lexer.advanceOnOpenBraces();
+	}
 
 	bool ret = true;
 
