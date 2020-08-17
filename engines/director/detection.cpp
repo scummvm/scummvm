@@ -314,13 +314,13 @@ ADDetectedGame DirectorMetaEngine::fallbackDetect(const FileMap &allFiles, const
 		switch (tag) {
 		case MKTAG('P', 'J', '9', '3'):
 		case MKTAG('3', '9', 'J', 'P'):
-			desc->version = 4;
+			desc->version = 400;
 			break;
 		case MKTAG('P', 'J', '9', '5'):
-			desc->version = 5;
+			desc->version = 500;
 			break;
 		case MKTAG('P', 'J', '0', '0'):
-			desc->version = 7;
+			desc->version = 700;
 			break;
 		default:
 			// Prior to version 4, there was no tag here. So we'll use a bit of a
@@ -353,7 +353,7 @@ ADDetectedGame DirectorMetaEngine::fallbackDetect(const FileMap &allFiles, const
 				continue;
 
 			// Assume v3 at this point (for now at least)
-			desc->version = 3;
+			desc->version = 300;
 		}
 
 		strncpy(s_fallbackFileNameBuffer, fileName.c_str(), 50);
