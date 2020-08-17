@@ -568,13 +568,12 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute
 	float offset = _height / 2.0f;
 	float correctedYPos = (pos.y - offset) * -1.0f + offset;
 
-	// to be implemented
 	if (mirrorX) {
-		warning("BaseRenderOpenGL3D::SpriteEx x mirroring is not yet implemented");
+		SWAP(texLeft, texRight);
 	}
 
 	if (mirrorY) {
-		warning("BaseRenderOpenGL3D::SpriteEx y mirroring is not yet implemented");
+		SWAP(texTop, texBottom);
 	}
 
 	SpriteVertex vertices[4] = {};
