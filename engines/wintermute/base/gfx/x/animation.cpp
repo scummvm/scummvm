@@ -75,6 +75,7 @@ bool Animation::loadFromX(XFileLexer &lexer, AnimationSet *parentAnimSet) {
 
 	while (!lexer.eof()) {
 		if (lexer.tokenIsIdentifier("AnimationKey")) {
+			lexer.advanceToNextToken();
 			lexer.advanceToNextToken(); // skip name
 			lexer.advanceOnOpenBraces();
 
@@ -102,6 +103,7 @@ bool Animation::loadFromX(XFileLexer &lexer, AnimationSet *parentAnimSet) {
 			lexer.advanceToNextToken(); // skip closed braces
 
 		} else if (lexer.tokenIsIdentifier("AnimationOptions")) {
+			lexer.advanceToNextToken();
 			lexer.advanceToNextToken();
 			lexer.advanceOnOpenBraces();
 
