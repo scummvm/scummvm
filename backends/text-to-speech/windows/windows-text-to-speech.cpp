@@ -174,7 +174,7 @@ DWORD WINAPI startSpeech(LPVOID parameters) {
 	return 0;
 }
 
-bool WindowsTextToSpeechManager::say(const Common::U32String &str, Action action, Common::String charset) {
+bool WindowsTextToSpeechManager::say(const Common::U32String &str, Action action) {
 	if (_speechState == BROKEN || _speechState == NO_VOICE) {
 		warning("The text to speech cannot speak in this state");
 		return true;
@@ -183,15 +183,8 @@ bool WindowsTextToSpeechManager::say(const Common::U32String &str, Action action
 	if (isSpeaking() && action == DROP)
 		return true;
 
-	if (charset.empty()) {
-#ifdef USE_TRANSLATION
-		charset = TransMan.getCurrentCharset();
-#else
-		charset = "ASCII";
-#endif
-	}
-
 	Common::String strToSpeak = str.encode();
+	Common::String charset = "UTF-8";
 
 	// We have to set the pitch by prepending xml code at the start of the said string;
 	Common::String pitch = Common::String::format("<pitch absmiddle=\"%d\">", _ttsState->_pitch / 10);
@@ -244,10 +237,6 @@ bool WindowsTextToSpeechManager::say(const Common::U32String &str, Action action
 		}
 	}
 	return false;
-}
-
-bool WindowsTextToSpeechManager::say(const Common::String &str, Action action, Common::String charset) {
-	return say(Common::U32String(str), action, charset);
 }
 
 bool WindowsTextToSpeechManager::stop() {
