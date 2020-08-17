@@ -388,7 +388,9 @@ void LC::c_symbolpush() {
 void LC::c_namepush() {
 	Datum d;
 	int i = g_lingo->readInt();
-	g_lingo->push(Datum(Common::String(g_lingo->_currentArchive->getName(i))));
+	d.type = SYMBOL;
+	d.u.s = new Common::String(g_lingo->_currentArchive->getName(i));
+	g_lingo->push(d);
 }
 
 void LC::c_argcpush() {
