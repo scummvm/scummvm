@@ -56,7 +56,7 @@ Common::U32String getTextFromClipboardMacOSX() {
 #endif
 	NSUInteger textLength = [str length];
 	uint32 *text = new uint32[textLength];
-	if (![str getBytes:text maxLength:4*textLength usedLength:NULL encoding: stringEncoding options:0 range:NSMakeRange(0, textLength-1) remainingRange:NULL]) {
+	if (![str getBytes:text maxLength:4*textLength usedLength:NULL encoding: stringEncoding options:0 range:NSMakeRange(0, textLength) remainingRange:NULL]) {
 		delete[] text;
 		return Common::U32String();
 	}
