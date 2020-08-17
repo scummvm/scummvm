@@ -20,14 +20,15 @@
  *
  */
 
-namespace Tony {
+#ifndef TONY_DETECTION_H
+#define TONY_DETECTION_H
 
-enum {
-	GF_COMPRESSED = (1 << 0)
-};
+namespace Tony {
 
 struct TonyGameDescription {
 	ADGameDescription desc;
 };
 
 } // End of namespace Tony
+
+#endif // TONY_DETECTION_H
