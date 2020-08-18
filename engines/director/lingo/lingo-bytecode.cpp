@@ -412,6 +412,17 @@ void LC::cb_v4assign() {
 			LC::c_assign();
 		}
 		break;
+	case 0x22:
+		// put value after chunkExpression
+		{
+			Datum chunkExpr = g_lingo->pop();
+			if (chunkExpr.type == SYMBOL) {
+				chunkExpr.type = VAR;
+			}
+			g_lingo->push(chunkExpr);
+			LC::c_putafter();
+		}
+		break;
 	case 0x26:
 		// put value after field textVar
 		{
