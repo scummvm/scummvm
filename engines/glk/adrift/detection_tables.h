@@ -43,7 +43,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "caveofwonders", "Cave of Wondors" },
 	{ "circusmenagerie", "Menagerie!" },
 	{ "cityInfear", "City In Fear" },
-	{ "coloromcadrift", "Color of Milk COffee" },
+	{ "coloromcadrift", "Color of Milk Coffee" },
 	{ "compendiumendgame", "The Woodfish Compendium: The Game to End All Games" },
 	{ "compendiumforum", "The Woodfish Compendium: Forum" },
 	{ "compendiumforum2", "The Woodfish Compendium: Forum2" },
