@@ -929,7 +929,7 @@ void GfxPalette::palVaryProcess(int signal, bool setPalette) {
 	// Calculate inbetween palette
 	Color inbetween;
 	int16 color;
-	for (int colorNr = 1; colorNr < 255; colorNr++) {
+	for (int colorNr = 0; colorNr < 256; colorNr++) {
 		inbetween.used = _sysPalette.colors[colorNr].used;
 		color = _palVaryTargetPalette.colors[colorNr].r - _palVaryOriginPalette.colors[colorNr].r;
 		inbetween.r = ((color * _palVaryStep) / 64) + _palVaryOriginPalette.colors[colorNr].r;
