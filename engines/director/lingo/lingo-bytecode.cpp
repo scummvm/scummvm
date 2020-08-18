@@ -386,12 +386,12 @@ void LC::cb_objectcall() {
 		return;
 	}
 
-	for (int i = 0; i < nargs.u.i; i++) {
-		Datum &arg = g_lingo->_stack[g_lingo->_stack.size() - nargs.u.i + i];
-		// symbols that are sent to here are actually variable names
-		if (arg.type == SYMBOL) {
-			arg.type = VAR;
-			arg.lazy = true; // var will be evaluated on pop
+	if (nargs.u.i > 0) {
+		Datum &firstArg = g_lingo->_stack[g_lingo->_stack.size() - nargs.u.i];
+		// The first arg could be either a method name or a variable name
+		if (firstArg.type == SYMBOL) {
+			firstArg.type = VAR;
+			firstArg.lazy = true; // var will be evaluated on pop
 		}
 	}
 
