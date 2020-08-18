@@ -66,7 +66,7 @@ void BaseRenderOpenGL3D::setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode
 		break;
 
 	default:
-		error("BaseRenderOpenGL3DShader::setSpriteBlendMode unsupported blend mode %i", blendMode);
+		warning("BaseRenderOpenGL3D::setSpriteBlendMode unsupported blend mode %i", blendMode);
 	}
 }
 
