@@ -94,6 +94,12 @@ enum UnkFlags {
 	ENGINE_UNK1_FLAG_80 = 0x80
 };
 
+enum MouseWheel {
+	MOUSE_WHEEL_NO_EVENT,
+	MOUSE_WHEEL_DOWN,
+	MOUSE_WHEEL_UP
+};
+
 struct PaletteCyclingInstruction {
 	int16 paletteType;
 	int16 startOffset;
@@ -214,6 +220,7 @@ private:
 	bool _dKeyDown;
 	bool _oKeyDown;
 	bool _pKeyDown;
+	MouseWheel _mouseWheel;
 
 	bool _debugMode;
 	bool _isGamePaused;
@@ -304,6 +311,8 @@ public:
 	bool checkForActionButtonRelease();
 	bool checkForDownKeyRelease();
 	bool checkForUpKeyRelease();
+	bool checkForWheelUp();
+	bool checkForWheelDown();
 
 	bool isDebugMode();
 

@@ -111,6 +111,7 @@ DragonsEngine::DragonsEngine(OSystem *syst, const ADGameDescription *desc) : Eng
 	_dKeyDown = false;
 	_oKeyDown = false;
 	_pKeyDown = false;
+	_mouseWheel = MOUSE_WHEEL_NO_EVENT;
 
 	_debugMode = false;
 	_isGamePaused = false;
@@ -137,6 +138,7 @@ void DragonsEngine::updateEvents() {
 	_enterKeyUp = false;
 	_leftKeyUp = false;
 	_rightKeyUp = false;
+	_mouseWheel = MOUSE_WHEEL_NO_EVENT;
 	while (_eventMan->pollEvent(event)) {
 //		_input->processEvent(event);
 		switch (event.type) {
@@ -155,6 +157,12 @@ void DragonsEngine::updateEvents() {
 			break;
 		case Common::EVENT_RBUTTONUP:
 			_rightMouseButtonUp = true;
+			break;
+		case Common::EVENT_WHEELDOWN:
+			_mouseWheel = MOUSE_WHEEL_DOWN;
+			break;
+		case Common::EVENT_WHEELUP:
+			_mouseWheel = MOUSE_WHEEL_UP;
 			break;
 		case Common::EVENT_KEYUP:
 			if (event.kbd.keycode == Common::KEYCODE_i) {
@@ -1620,7 +1628,7 @@ void DragonsEngine::mainMenu() {
 				_fontManager->addAsciiText((i == 0 ? 17 : 16) * 8, (0x12 + i) * 8, &menuItems[i][0],
 										   strlen(menuItems[i]), i == curMenuItem ? 0 : 1);
 			}
-			if (checkForDownKeyRelease()) {
+			if (checkForDownKeyRelease() || checkForWheelDown()) {
 				if (curMenuItem < 2) {
 					curMenuItem++;
 				} else {
@@ -1629,7 +1637,7 @@ void DragonsEngine::mainMenu() {
 				playOrStopSound(0x8009);
 			}
 
-			if (checkForUpKeyRelease()) {
+			if (checkForUpKeyRelease() || checkForWheelUp()) {
 				if (curMenuItem > 0) {
 					curMenuItem--;
 				} else {
@@ -1767,6 +1775,14 @@ bool DragonsEngine::validateAVFile(const char *filename) {
 		GUIErrorMessage(Common::String::format(_("Error: The file '%s' hasn't been extracted properly.\nPlease refer to the wiki page\nhttps://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos for details on how to properly extract the DTSPEECH.XA and *.STR files from your game disc."), filename));
 	}
 	return fileValid;
+}
+
+bool DragonsEngine::checkForWheelUp() {
+	return _mouseWheel == MOUSE_WHEEL_UP;
+}
+
+bool DragonsEngine::checkForWheelDown() {
+	return _mouseWheel == MOUSE_WHEEL_DOWN;
 }
 
 void (*DragonsEngine::getSceneUpdateFunction())() {

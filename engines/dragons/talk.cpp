@@ -654,13 +654,13 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 	uint16 x;
 	uint uVar6;
 	uint uVar7;
-	uint16 uVar8;
+	uint16 selectedTextLine;
 	TalkDialogEntry *talkDialogEntry;
 	//uint16 local_390[5];
 	uint16 local_386 [195];
 	uint16 asStack512 [200];
 	uint16 numEntries;
-	uint16 local_60;
+	uint16 totalNumEntries;
 	uint16 local_58;
 	int16 local_50;
 	uint16 *local_40;
@@ -672,8 +672,8 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 
 	_vm->_fontManager->clearText();
 
-	uVar8 = 0;
-	local_60 = 0;
+	selectedTextLine = 0;
+	totalNumEntries = 0;
 	local_58 = 0;
 	numEntries = dialogEntries.size();
 	if (numEntries != 0) {
@@ -681,7 +681,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 		do {
 			talkDialogEntry =  dialogEntries[uVar3];
 			if ((talkDialogEntry->flags & 1) == 0) {
-				local_60 = local_60 + 1;
+				totalNumEntries = totalNumEntries + 1;
 				talkDialogEntry->yPosMaybe = '\0';
 				//strcpy((char *)&local_390, (char *)talkDialogEntry->dialogText);
 				UTF16ToUTF16Z(local_386, (uint16 *)(&talkDialogEntry->dialogText[10]));
@@ -695,18 +695,19 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 				local_58 = local_58 + sVar2;
 				talkDialogEntry->yPosMaybe = talkDialogEntry->yPosMaybe + (char)sVar2;
 			}
-			uVar8 = uVar8 + 1;
-			uVar3 = (uint)uVar8;
-		} while (uVar8 < numEntries);
+			selectedTextLine = selectedTextLine + 1;
+			uVar3 = (uint)selectedTextLine;
+		} while (selectedTextLine < numEntries);
 	}
 	drawDialogBox(1, (0x17 - (uint) local_58) & 0xffff, 0x26, 0x18, 1);
-	uVar8 = 0;
+	selectedTextLine = 0;
 	_vm->_cursor->updateSequenceID(3);
 	local_50 = -2;
 	local_38 = (uint)numEntries;
 	_dat_800633f8_talkDialogFlag = 1;
 	hasDialogEntries = (numEntries != 0);
 	local_40 = asStack512;
+
 	LAB_800317a4:
 //		CheckIfCdShellIsOpen();
 	_vm->waitForFrames(1);
@@ -716,7 +717,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 		uVar3 = 0;
 		do {
 			talkDialogEntry = dialogEntries[uVar3];
-			if (((talkDialogEntry->flags & 1) == 0) && (bVar1 = y == uVar8, y = y + 1, bVar1)) break;
+			if (((talkDialogEntry->flags & 1) == 0) && (bVar1 = y == selectedTextLine, y = y + 1, bVar1)) break;
 			x = x + 1;
 			uVar3 = (uint)x;
 		} while (x < numEntries);
@@ -741,93 +742,89 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 					talkDialogEntry = dialogEntries[uVar3];
 					y = y + 1;
 					if ((talkDialogEntry->flags & 1) == 0) {
-						if (uVar8 == 0) {
+						if (selectedTextLine == 0) {
 							_dat_800633f8_talkDialogFlag = 0;
 							return talkDialogEntry;
 						}
-						uVar8--;
+						selectedTextLine--;
 					}
 					uVar3 = (uint)y;
 				} while (y < numEntries);
 			}
 		}
-		if ((uVar8 == 0) || !_vm->checkForUpKeyRelease()) goto LAB_80031970;
-		uVar8--;
-		goto LAB_800319a0;
+		if ((selectedTextLine < totalNumEntries - 1) &&
+			(_vm->checkForDownKeyRelease() || _vm->checkForWheelDown())) {
+			selectedTextLine++;
+			_vm->playOrStopSound(0x8009);
+		} else if (selectedTextLine > 0 && (_vm->checkForUpKeyRelease() || _vm->checkForWheelUp())) {
+			selectedTextLine--;
+			_vm->playOrStopSound(0x8009);
+		}
 	}
-	goto LAB_800319a8;
-	LAB_80031970:
-	if (((int)(uint)uVar8 < (int)((uint)local_60 - 1)) &&
-		_vm->checkForDownKeyRelease()) {
-		uVar8 = uVar8 + 1;
-		LAB_800319a0:
-		_vm->playOrStopSound(0x8009);
-		LAB_800319a8:
-		y = 0x18 - local_58;
-		local_50 = -1;
-		uVar3 = 0;
-		if (hasDialogEntries) {
-			uVar6 = 0;
-			do {
-				talkDialogEntry = dialogEntries[uVar6];
-				uVar6 = (uint)talkDialogEntry->flags & 1;
-				if ((talkDialogEntry->flags & 1) == 0) {
-					sVar2 = local_50 + 1;
-					local_50 = sVar2;
-					UTF16ToUTF16Z(local_386, (uint16 *)(&talkDialogEntry->dialogText[10]));
-					_dat_80083104 = local_386;
-					if (local_386[0] == 0x20) {
-						_dat_80083104 = &local_386[1];
+	y = 0x18 - local_58;
+	local_50 = -1;
+	uVar3 = 0;
+	if (hasDialogEntries) {
+		uVar6 = 0;
+		do {
+			talkDialogEntry = dialogEntries[uVar6];
+			uVar6 = (uint)talkDialogEntry->flags & 1;
+			if ((talkDialogEntry->flags & 1) == 0) {
+				sVar2 = local_50 + 1;
+				local_50 = sVar2;
+				UTF16ToUTF16Z(local_386, (uint16 *)(&talkDialogEntry->dialogText[10]));
+				_dat_80083104 = local_386;
+				if (local_386[0] == 0x20) {
+					_dat_80083104 = &local_386[1];
+				}
+				uVar4 = findLastPositionOf5cChar(_dat_80083104);
+				uVar4 = truncateDialogText(_dat_80083104, local_40, uVar4 & 0xffff, 0x20);
+				_dat_80083104 = local_40;
+				if (sVar2 == selectedTextLine) {
+					uVar7 = 0;
+					if (uVar6 < (uVar4 & 0xffff)) {
+						do {
+							x = 5;
+							if ((uVar7 & 0xffff) == 0) {
+								x = 4;
+							}
+							//TODO ProbablyShowUTF16Msg(_dat_80083104, x, y, 0, -1);
+							_vm->_fontManager->addText(x * 8, y * 8, _dat_80083104, wideStrLen(_dat_80083104), 0);
+							sVar2 = *_dat_80083104;
+							while (sVar2 != 0) {
+								sVar2 = _dat_80083104[1];
+								_dat_80083104 = _dat_80083104 + 1;
+							}
+							uVar7 = uVar7 + 1;
+							_dat_80083104 = _dat_80083104 + 1;
+							y = y + 1;
+						} while ((uVar7 & 0xffff) < (uVar4 & 0xffff));
 					}
-					uVar4 = findLastPositionOf5cChar(_dat_80083104);
-					uVar4 = truncateDialogText(_dat_80083104, local_40, uVar4 & 0xffff, 0x20);
-					_dat_80083104 = local_40;
-					if (sVar2 == uVar8) {
-						uVar7 = 0;
-						if (uVar6 < (uVar4 & 0xffff)) {
-							do {
-								x = 5;
-								if ((uVar7 & 0xffff) == 0) {
-									x = 4;
-								}
-								//TODO ProbablyShowUTF16Msg(_dat_80083104, x, y, 0, -1);
-								_vm->_fontManager->addText(x * 8, y * 8, _dat_80083104, wideStrLen(_dat_80083104), 0);
-								sVar2 = *_dat_80083104;
-								while (sVar2 != 0) {
-									sVar2 = _dat_80083104[1];
-									_dat_80083104 = _dat_80083104 + 1;
-								}
-								uVar7 = uVar7 + 1;
+				} else {
+					uVar7 = 0;
+					if (uVar6 < (uVar4 & 0xffff)) {
+						do {
+							x = 5;
+							if ((uVar7 & 0xffff) == 0) {
+								x = 4;
+							}
+							//TODO ProbablyShowUTF16Msg2(_dat_80083104, x, (uint)y, 0x401, 0xffffffff);
+							_vm->_fontManager->addText(x * 8, y * 8, _dat_80083104, wideStrLen(_dat_80083104), 1);
+							sVar2 = *_dat_80083104;
+							while (sVar2 != 0) {
+								sVar2 = _dat_80083104[1];
 								_dat_80083104 = _dat_80083104 + 1;
-								y = y + 1;
-							} while ((uVar7 & 0xffff) < (uVar4 & 0xffff));
-						}
-					} else {
-						uVar7 = 0;
-						if (uVar6 < (uVar4 & 0xffff)) {
-							do {
-								x = 5;
-								if ((uVar7 & 0xffff) == 0) {
-									x = 4;
-								}
-								//TODO ProbablyShowUTF16Msg2(_dat_80083104, x, (uint)y, 0x401, 0xffffffff);
-								_vm->_fontManager->addText(x * 8, y * 8, _dat_80083104, wideStrLen(_dat_80083104), 1);
-								sVar2 = *_dat_80083104;
-								while (sVar2 != 0) {
-									sVar2 = _dat_80083104[1];
-									_dat_80083104 = _dat_80083104 + 1;
-								}
-								uVar7 = uVar7 + 1;
-								_dat_80083104 = _dat_80083104 + 1;
-								y = y + 1;
-							} while ((uVar7 & 0xffff) < (uVar4 & 0xffff));
-						}
+							}
+							uVar7 = uVar7 + 1;
+							_dat_80083104 = _dat_80083104 + 1;
+							y = y + 1;
+						} while ((uVar7 & 0xffff) < (uVar4 & 0xffff));
 					}
 				}
-				uVar3 = uVar3 + 1;
-				uVar6 = uVar3 & 0xffff;
-			} while ((uVar3 & 0xffff) < local_38);
-		}
+			}
+			uVar3 = uVar3 + 1;
+			uVar6 = uVar3 & 0xffff;
+		} while ((uVar3 & 0xffff) < local_38);
 	}
 	goto LAB_800317a4;
 }
