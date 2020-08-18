@@ -169,7 +169,7 @@ public:
 	bool say(const String &str, String charset = "UTF-8") {
 		Encoding speakWithCustomCharset("UTF-32", charset);
 		char *res = speakWithCustomCharset.convert(str.c_str(), str.size());
-		U32String textToSpeak(res);
+		U32String textToSpeak(reinterpret_cast<uint32*>(res));
 		free(res);
 
 		return say(textToSpeak, INTERRUPT_NO_REPEAT);
