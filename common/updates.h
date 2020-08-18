@@ -114,9 +114,9 @@ public:
 	 * Returns string representation of a given interval.
 	 *
 	 * @param  interval    The interval.
-	 * @return  pointer to localized string of given interval.
+	 * @return Localized string of given interval as a U32String.
 	 */
-	static const char *updateIntervalToString(int interval);
+	static Common::U32String updateIntervalToString(int interval);
 
 	/**
 	 * Rounds up the given interval to acceptable value.
