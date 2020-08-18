@@ -125,7 +125,9 @@ String::String(char c)
 	_size = (c == 0) ? 0 : 1;
 }
 
-String::String(const U32String &str) {
+String::String(const U32String &str)
+	: _size(0), _str(_storage) {
+	_storage[0] = 0;
 	*this = String(str.encode());
 }
 
