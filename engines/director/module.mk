@@ -21,7 +21,6 @@ MODULE_OBJS = \
 	tests.o \
 	transitions.o \
 	util.o \
-	video.o \
 	window.o \
 	lingo/lingo.o \
 	lingo/lingo-builtins.o \
