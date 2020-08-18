@@ -185,13 +185,13 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "amcdiarystrip", "Diary of a Stripper" },
 
 	// ADRIFT One-Hour Game Competition 1
-	{ "1hgamonkeytoomany", "" },
-	{ "1hgprincess1", "The Green Princess" },
-	{ "1hg1hrgame", "TODO" },
+	{ "1hgamonkeytoomany", "A Monkey too many" }, // ADRIFT 5 game
+	{ "1hgprincess1", "The Princess In The Tower" },
+	{ "1hg1hrgame", "A Masochist's Heaven" },
 	{ "1hgendgame", "The Game To End All Games" },
 	{ "1hgchicken", "The Evil Chicken of Doom!" },
 	{ "1hghauntedhouse", "The Haunted House of Hideous Horror" },
-	{ "1hgfrog", "TODO" },
+	{ "1hgfrog", "The Green Princess" },
 	{ "1hgmicrobewillie", "Microbe Willie vs. The Rat" },
 	{ "1hgjasonvssalm", "Jason vs. Salm" },
 
@@ -207,13 +207,13 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "1hgdemonhunter", "Apprentice of the Demonhunter" },
 	{ "1hgcbn1", "The Revenge of Clueless Bob Newbie!" },
 	{ "1hgcbn2", "The Revenge of Clueless Bob Newbie Part 2: This Time it's Personal" },
-	{ "1hgticktick", "TODO" },
-	{ "1hgpyramid", " The Pyramid of Hamaratum" },
+	{ "1hgticktick", "Doom Cat!!!" },
+	{ "1hgpyramid", "The Pyramid of Hamaratum" },
 	{ "1hgquesti", "Quest for Flesh" },
 	{ "1hgshore", "The Farthest Shore" },
 	{ "1hgsaffire", "Saffire" },
-	{ "1hgecod2", " The Curse of the Revenge of the Ghost of the Evil Chicken of Doom... Returns!" },
-	{ "1hgimagination", " Just My Imagination-Musings of a Child" },
+	{ "1hgecod2", "The Curse of the Revenge of the Ghost of the Evil Chicken of Doom... Returns!" },
+	{ "1hgimagination", "Just My Imagination-Musings of a Child" },
 
 	// ADRIFT One-Hour Game Competition 4
 	{ "1hgcah", "Cruel and Hilarious Punishment!" },
