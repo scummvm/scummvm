@@ -58,7 +58,7 @@ if ($mode eq "") {
 $Text::Wrap::unexpand = 0;
 if ($mode eq "TEXT") {
 	$Text::Wrap::columns = 78;
-	$max_name_width = 29; # The maximal width of a name.
+	$max_name_width = 30; # The maximal width of a name.
 } elsif ($mode eq "CPP") {
 	$Text::Wrap::columns = 48;	# Approx.
 }
@@ -68,6 +68,7 @@ sub html_entities_to_ascii {
 	my $text = shift;
 
 	# For now we hardcode these mappings
+	# &Aacute;  -> A
 	# &aacute;  -> a
 	# &eacute;  -> e
 	# &iacute;  -> i
@@ -88,6 +89,7 @@ sub html_entities_to_ascii {
 	# &Scaron;  -> S
 	# &Lcaron;  -> L
 	# &ntilde;  -> n
+	$text =~ s/&Aacute;/A/g;
 	$text =~ s/&aacute;/a/g;
 	$text =~ s/&eacute;/e/g;
 	$text =~ s/&iacute;/i/g;
@@ -120,6 +122,7 @@ sub html_entities_to_ascii {
 sub html_entities_to_iso8859_1 {
 	my $text = shift;
 
+	$text =~ s/&Aacute;/\xC1/g;
 	$text =~ s/&aacute;/\xE1/g;
 	$text =~ s/&eacute;/\xE9/g;
 	$text =~ s/&iacute;/\xED/g;
@@ -151,6 +154,7 @@ sub html_entities_to_cpp {
 	my $text = shift;
 
 	# The numerical values are octal!
+	$text =~ s/&Aacute;/\\301/g;
 	$text =~ s/&aacute;/\\341/g;
 	$text =~ s/&eacute;/\\351/g;
 	$text =~ s/&iacute;/\\355/g;
@@ -182,6 +186,7 @@ sub html_entities_to_cpp {
 sub html_entities_to_rtf {
 	my $text = shift;
 
+	$text =~ s/&Aacute;/\\'c1/g;
 	$text =~ s/&aacute;/\\'87/g;
 	$text =~ s/&eacute;/\\'8e/g;
 	$text =~ s/&iacute;/\\'92/g;
@@ -743,6 +748,12 @@ begin_credits("Credits");
 			begin_section("Draci");
 				add_person("Denis Kasak", "dkasak13", "");
 				add_person("Robert &Scaron;palek", "spalek", "");
+			end_section();
+
+			begin_section("Dragons");
+				add_person("Eric Fry", "yuv422", "");
+				add_person("Benjamin Haisch", "john_doe", "Actor pathfinding");
+				add_person("&Aacute;ngel Eduardo Garc&iacute;a Hern&aacute;ndez", "arcnor", "Help with reverse engineering");
 			end_section();
 
 			begin_section("Drascula");
