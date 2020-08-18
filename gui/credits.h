@@ -154,7 +154,7 @@ static const char *credits[] = {
 "C1""Dragons",
 "C0""Eric Fry",
 "C0""Benjamin Haisch",
-"C2""Help with reverse engineering",
+"C2""Actor pathfinding",
 "A0""Angel Eduardo Garcia Hernandez",
 "C0""\301ngel Eduardo Garc\355a Hern\341ndez",
 "C2""Help with reverse engineering",
