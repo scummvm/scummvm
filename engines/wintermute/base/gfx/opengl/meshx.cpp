@@ -41,13 +41,14 @@ const uint32 MeshX::kNullIndex;
 
 MeshX::MeshX(Wintermute::BaseGame *inGame) : BaseNamedObject(inGame),
 	_BBoxStart(0.0f, 0.0f, 0.0f), _BBoxEnd(0.0f, 0.0f, 0.0f),
-	_vertexData(nullptr), _vertexPositionData(nullptr),
+	_vertexData(nullptr), _vertexPositionData(nullptr), _vertexNormalData(nullptr),
 	_vertexCount(0), _indexData(nullptr), _indexCount(0), _numAttrs(0), _skinnedMesh(false) {
 }
 
 MeshX::~MeshX() {
 	delete[] _vertexData;
 	delete[] _vertexPositionData;
+	delete[] _vertexNormalData;
 	delete[] _indexData;
 
 	_materials.clear();
@@ -64,6 +65,9 @@ bool MeshX::loadFromX(const Common::String &filename, XFileLexer &lexer, Common:
 	// vertex format for .X meshes will be position + normals + textures
 	_vertexData = new float[kVertexComponentCount * _vertexCount]();
 	_vertexPositionData = new float[3 * _vertexCount]();
+	// we already know how big this is supposed to be
+	// TODO: might have to generate normals if file does not contain any
+	_vertexNormalData = new float[3 * _vertexCount]();
 
 	parsePositionCoords(lexer);
 
@@ -522,7 +526,6 @@ bool MeshX::parseNormalCoords(XFileLexer &lexer) {
 
 	Common::Array<float> vertexNormalData;
 	vertexNormalData.resize(3 * vertexNormalCount);
-	_vertexNormalData = new float[3 * _vertexCount]();
 
 	for (uint i = 0; i < vertexNormalCount; ++i) {
 		vertexNormalData[i * 3 + 0] = lexer.readFloat();
