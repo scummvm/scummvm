@@ -786,10 +786,16 @@ Datum::Datum(const Common::String &val) {
 
 Datum::Datum(AbstractObject *val) {
 	u.obj = val;
-	type = OBJECT;
 	lazy = false;
-	refCount = val->getRefCount();
-	*refCount += 1;
+	if (val) {
+		type = OBJECT;
+		refCount = val->getRefCount();
+		*refCount += 1;
+	} else {
+		type = VOID;
+		refCount = new int;
+		*refCount = 1;
+	}
 }
 
 void Datum::reset() {
