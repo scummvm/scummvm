@@ -1469,10 +1469,11 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 					target = target->clone();
 				}
 				funcSym = target->getMethod(*firstArg.u.s);
-				// Set first arg to target
-				g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.target;
-				call(funcSym, nargs, allowRetVal);
-				return;
+				if (funcSym.type != VOIDSYM) {
+					g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.target; // Set first arg to target
+					call(funcSym, nargs, allowRetVal);
+					return;
+				}
 			}
 			firstArg = firstArg.eval();
 		}
@@ -1486,8 +1487,7 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 			}
 			funcSym = target->getMethod(name);
 			if (funcSym.type != VOIDSYM) {
-				// Set first arg to target
-				g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.target;
+				g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.target; // Set first arg to target
 				call(funcSym, nargs, allowRetVal);
 				return;
 			}
