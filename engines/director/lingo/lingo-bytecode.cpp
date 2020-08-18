@@ -361,8 +361,6 @@ void LC::cb_objectcall() {
 	Datum d = g_lingo->pop();
 	Datum nargs = g_lingo->pop();
 
-	AbstractObject *target = nullptr;
-
 	if (d.type == INT) {
 		if (g_lingo->_callstack.empty()) {
 			warning("cb_objectcall: no call frame");
@@ -383,82 +381,23 @@ void LC::cb_objectcall() {
 		return;
 	}
 
-	// try to fetch target
-	d.type = VAR;
-	Datum val = g_lingo->varFetch(d);
-	if (val.type == OBJECT) {
-		target = val.u.obj;
-	} else {
-		warning("cb_objectcall: target is not an object");
-	}
+	Common::String name = d.asString();
 
 	if ((nargs.type != ARGC) && (nargs.type != ARGCNORET)) {
 		warning("cb_objectcall: second arg should be of type ARGC or ARGCNORET, not %s", nargs.type2str());
 		return;
 	}
 
-	StackData args;
-	if (target) {
-		// last arg on the stack is the method name
-		nargs.u.i -= 1;
-	}
-
 	for (int i = 0; i < nargs.u.i; i++) {
-		Datum arg = g_lingo->pop();
-		// for some reason, strings that are sent to here are actually variable names???
-		// other constants (e.g. ints) are fine.
-		if (arg.type == STRING) {
-			Datum varTest(arg);
-			varTest.type = VAR;
-			varTest = g_lingo->varFetch(varTest);
-			if (varTest.type != VOID)
-				arg = varTest;
+		Datum &arg = g_lingo->_stack[g_lingo->_stack.size() - nargs.u.i + i];
+		// symbols that are sent to here are actually variable names
+		if (arg.type == SYMBOL) {
+			arg.type = VAR;
+			arg.lazy = true; // var will be evaluated on pop
 		}
-		args.push_back(arg);
 	}
 
-	Datum methodName;
-	if (target) {
-		methodName = g_lingo->pop();
-		if (methodName.u.s->equalsIgnoreCase("mNew")) {
-			target = target->clone();
-		}
-		Symbol method = target->getMethod(methodName.asString());
-		if (method.type != VOIDSYM) {
-			if (target->getObjType() == kFactoryObj && method.type == HANDLER) {
-				// For kFactoryObj handlers the target is the first argument
-				g_lingo->push(method.target);
-				nargs.u.i += 1;
-			}
-			while (args.size()) {
-				g_lingo->push(args.back());
-				args.pop_back();
-			}
-			LC::call(method, nargs.u.i, nargs.type == ARGC);
-			return;
-		}
-
-		warning("cb_objectcall: target has no method named %s", methodName.asString().c_str());
-	}
-
-	// if there's nothing, try calling a function with that name
-	Symbol func = g_lingo->getHandler(*d.u.s);
-	if (func.type != VOIDSYM) {
-		if (target) {
-			g_lingo->push(methodName);
-		}
-		while (args.size()) {
-			g_lingo->push(args.back());
-			args.pop_back();
-		}
-
-		LC::call(func, nargs.u.i, nargs.type == ARGC);
-	} else {
-		warning("cb_objectcall: could not find object or function with name %s", d.u.s->c_str());
-		// Push a VOID to the stack if function is supposed to return
-		if (nargs.type == ARGC)
-			g_lingo->push(Datum());
-	}
+	LC::call(name, nargs.u.i, nargs.type == ARGC);
 }
 
 
