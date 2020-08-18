@@ -153,29 +153,6 @@ public:
 	virtual ~TextToSpeechManager() {}
 
 	/**
-	 * Interrupts what's being said and says the given string
-	 *
-	 * @param str The string to say
-	 */
-	bool say(const U32String &str) { return say(str, INTERRUPT_NO_REPEAT); }
-
-	/**
-	 * Interrupts what's being said and says the given string
-	 *
-	 * @param str The string to say
-	 * @param charset The encoding of the string. It will be converted to UTF-32.
-	 *	              It will use UTF-8 by default.
-	 */
-	bool say(const String &str, String charset = "UTF-8") {
-		Encoding speakWithCustomCharset("UTF-32", charset);
-		char *res = speakWithCustomCharset.convert(str.c_str(), str.size());
-		U32String textToSpeak(reinterpret_cast<uint32*>(res));
-		free(res);
-
-		return say(textToSpeak, INTERRUPT_NO_REPEAT);
-	}
-
-	/**
 	 * Says the given string
 	 *
 	 * @param str The string to say
@@ -200,10 +177,28 @@ public:
 	bool say(const String &str, Action action, String charset = "UTF-8") {
 		Encoding speakWithCustomCharset("UTF-32", charset);
 		char *res = speakWithCustomCharset.convert(str.c_str(), str.size());
-		U32String textToSpeak(res);
+		U32String textToSpeak(reinterpret_cast<uint32*>(res));
 		free(res);
 
 		return say(textToSpeak, action);
+	}
+
+	/**
+	 * Interrupts what's being said and says the given string
+	 *
+	 * @param str The string to say
+	 */
+	bool say(const U32String &str) { return say(str, INTERRUPT_NO_REPEAT); }
+
+	/**
+	 * Interrupts what's being said and says the given string
+	 *
+	 * @param str The string to say
+	 * @param charset The encoding of the string. It will be converted to UTF-32.
+	 *	              It will use UTF-8 by default.
+	 */
+	bool say(const String &str, String charset = "UTF-8") {
+		return say(str, INTERRUPT_NO_REPEAT, charset);
 	}
 
 	/**
