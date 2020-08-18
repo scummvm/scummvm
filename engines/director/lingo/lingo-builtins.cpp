@@ -1629,7 +1629,7 @@ void LB::b_installMenu(int nargs) {
 	// installMenu castNum
 	Datum d = g_lingo->pop();
 
-	int castId = d.asInt();
+	int castId = d.asCastId();
 
 	const Stxt *stxt = g_director->getCurrentMovie()->getStxt(castId);
 
