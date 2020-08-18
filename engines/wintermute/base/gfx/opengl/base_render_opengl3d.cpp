@@ -621,7 +621,18 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute
 		vertices[i].a = a;
 	}
 
-	// transform vertices here if necessary, add offset
+	if (angle != 0) {
+		Vector2 correctedRot(rot.x, (rot.y - offset) * -1.0f + offset);
+		Math::Matrix3 transform = build2dTransformation(correctedRot, angle);
+
+		for (int i = 0; i < 4; ++i) {
+			Math::Vector3d vertexPostion(vertices[i].x, vertices[i].y, 1.0f);
+			transform.transformVector(&vertexPostion);
+
+			vertices[i].x = vertexPostion.x();
+			vertices[i].y = vertexPostion.y();
+		}
+	}
 
 	if (alphaDisable) {
 		glDisable(GL_ALPHA_TEST);

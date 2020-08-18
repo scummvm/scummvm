@@ -120,7 +120,15 @@ bool BaseSurfaceOpenGL3D::display(int x, int y, Rect32 rect, Graphics::TSpriteBl
 }
 
 bool BaseSurfaceOpenGL3D::displayTransform(int x, int y, Rect32 rect, Rect32 newRect, const Graphics::TransformStruct &transform) {
-	warning("BaseSurfaceOpenGL3D::displayTransform not yet implemented");
+	prepareToDraw();
+
+	Vector2 position(x, y);
+	Vector2 rotation;
+	rotation.x = x + transform._hotspot.x * (transform._zoom.x / 100.0f);
+	rotation.y = y + transform._hotspot.y * (transform._zoom.y / 100.0f);
+	Vector2 scale(transform._zoom.x / 100.0f, transform._zoom.y / 100.0f);
+
+	_renderer->drawSpriteEx(*this, rect, position, rotation, scale, transform._angle, transform._rgbaMod, transform._alphaDisable, transform._blendMode, transform.getMirrorX(), transform.getMirrorY());
 	return true;
 }
 

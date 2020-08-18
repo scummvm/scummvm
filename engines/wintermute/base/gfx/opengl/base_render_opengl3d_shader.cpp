@@ -557,11 +557,18 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wint
 		vertices[i].a = a / 255.0f;
 	}
 
-	// transform vertices here if necessary, add offset
+	Math::Matrix3 transform;
+	transform.setToIdentity();
+
+	if (angle != 0) {
+		Vector2 correctedRot(rot.x, (rot.y - offset) * -1.0f + offset);
+		transform = build2dTransformation(correctedRot, angle);
+	}
 
 	_spriteShader->use();
 	_spriteShader->setUniform("alphaTest", !alphaDisable);
 	_spriteShader->setUniform("projMatrix", _projectionMatrix2d);
+	_spriteShader->setUniform("transform", transform);
 
 	glBindBuffer(GL_ARRAY_BUFFER, _spriteVBO);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * sizeof(SpriteVertexShader), vertices);

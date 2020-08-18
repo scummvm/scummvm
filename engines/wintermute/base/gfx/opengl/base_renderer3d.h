@@ -100,6 +100,8 @@ public:
 	                                 const BaseArray<AdGeneric *> &generics, const BaseArray<Light3D *> &lights, Camera3D *camera) = 0;
 	virtual void renderShadowGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks, const BaseArray<AdGeneric *> &generics, Camera3D *camera) = 0;
 
+	Math::Matrix3 build2dTransformation(const Vector2 &center, float angle);
+
 protected:
 	Math::Matrix4 _lastViewMatrix;
 	Math::Matrix4 _projectionMatrix3d;
