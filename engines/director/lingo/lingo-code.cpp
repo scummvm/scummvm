@@ -192,23 +192,23 @@ void Lingo::pushVoid() {
 	push(d);
 }
 
-Datum Lingo::pop(void) {
+Datum Lingo::pop(bool eval) {
 	assert (_stack.size() != 0);
 
 	Datum ret = _stack.back();
 	_stack.pop_back();
-	if (ret.lazy) {
+	if (eval && ret.lazy) {
 		ret = ret.eval();
 	}
 
 	return ret;
 }
 
-Datum Lingo::peek(uint offset) {
+Datum Lingo::peek(uint offset, bool eval) {
 	assert (_stack.size() > offset);
 
 	Datum ret = _stack[_stack.size() - 1 - offset];
-	if (ret.lazy) {
+	if (eval && ret.lazy) {
 		ret = ret.eval();
 	}
 	return ret;
