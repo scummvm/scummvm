@@ -313,7 +313,7 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 	}
 
 	// FIXME: HACK: We need to understand when really start the video
-	if (!_video->isPlaying()) {
+	if (!_video->isPlaying() && _channel->_movieRate != 0.0) {
 		_video->start();
 		debugC(2, kDebugImages, "STARTING VIDEO");
 
@@ -339,6 +339,9 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 			delete surf;
 		}
 	}
+
+	if (_video->endOfVideo())
+		_channel->_movieRate = 0.0;
 
 	return widget;
 }

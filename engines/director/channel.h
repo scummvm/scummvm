@@ -81,7 +81,7 @@ public:
 	int _height;
 
 	// Using in digital movie sprites
-	byte _movieRate;
+	double _movieRate;
 	uint16 _movieTime;
 	uint16 _startTime;
 	uint16 _stopTime;

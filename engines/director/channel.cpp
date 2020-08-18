@@ -44,7 +44,7 @@ Channel::Channel(Sprite *sp, int priority) {
 	_width = _sprite->_width;
 	_height = _sprite->_height;
 
-	_movieRate = 0;
+	_movieRate = 0.0;
 	_movieTime = 0;
 	_startTime = 0;
 	_stopTime = 0;
