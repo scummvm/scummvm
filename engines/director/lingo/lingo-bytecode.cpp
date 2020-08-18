@@ -542,7 +542,6 @@ void LC::cb_objectpush() {
 	Common::String name = g_lingo->_currentArchive->getName(nameId);
 	Datum result(name);
 	result.type = VAR;
-	result.lazy = true;
 	g_lingo->push(result);
 }
 
