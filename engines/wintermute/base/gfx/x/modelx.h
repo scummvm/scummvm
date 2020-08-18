@@ -204,6 +204,7 @@ private:
 	Common::Array<MaterialReference> _materialReferences;
 
 protected:
+	BaseArray<const char*> _mergedModels;
 	AnimationChannel *_channels[X_NUM_ANIMATION_CHANNELS];
 
 	FrameNode *_rootFrame;

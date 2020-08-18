@@ -102,6 +102,14 @@ void ModelX::cleanup(bool complete) {
 
 	_animationSets.clear();
 
+	if (complete) {
+		for (uint i = 0; i < _mergedModels.size(); ++i) {
+			delete[] _mergedModels[i];
+		}
+
+		_mergedModels.clear();
+	}
+
 	for (uint32 i = 0; i < _matSprites.size(); i++) {
 		delete _matSprites[i];
 		_matSprites[i] = nullptr;
@@ -161,6 +169,21 @@ bool ModelX::mergeFromFile(const Common::String &filename) {
 	parseFrameDuringMerge(lexer, filename);
 
 	findBones(false, nullptr);
+
+	bool found = false;
+
+	for (uint i = 0; i < _mergedModels.size(); ++i) {
+		if (scumm_stricmp(_mergedModels[i], filename.c_str()) == 0) {
+			found = true;
+			break;
+		}
+	}
+
+	if (!found) {
+		char *path = new char[filename.size() + 1];
+		strcpy(path, filename.c_str());
+		_mergedModels.add(path);
+	}
 
 	delete[] buffer;
 
@@ -728,6 +751,7 @@ bool ModelX::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferMatrix4(TMEMBER(_lastWorldMat));
 
 	persistMgr->transferPtr(TMEMBER(_owner));
+	_mergedModels.persist(persistMgr);
 
 	// load model
 	if (!persistMgr->getIsSaving()) {
@@ -739,6 +763,10 @@ bool ModelX::persist(BasePersistenceManager *persistMgr) {
 
 		if (getFilename()) {
 			loadFromFile(getFilename());
+		}
+
+		for (uint i = 0; i < _mergedModels.size(); ++i) {
+			mergeFromFile(_mergedModels[i]);
 		}
 	}
 
