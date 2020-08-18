@@ -358,9 +358,10 @@ void LC::cb_localcall() {
 
 void LC::cb_objectcall() {
 	g_lingo->readInt();
-	Datum d = g_lingo->pop();
+	Datum d = g_lingo->pop(false);
 	Datum nargs = g_lingo->pop();
 
+	Common::String name;
 	if (d.type == INT) {
 		if (g_lingo->_callstack.empty()) {
 			warning("cb_objectcall: no call frame");
@@ -368,20 +369,17 @@ void LC::cb_objectcall() {
 		}
 		Common::Array<Common::String> *varNames = g_lingo->_callstack.back()->sp.varNames;
 		if ((d.asInt() % 6 == 0) && varNames && (d.asInt() / 6 < (int)varNames->size())) {
-			d = (*varNames)[d.asInt() / 6];
-			d.type = SYMBOL;
+			name = (*varNames)[d.asInt() / 6];
 		} else {
 			warning("cb_objectcall: invalid variable ID %d", d.asInt());
 			return;
 		}
-	}
-
-	if (d.type != SYMBOL) {
-		warning("cb_objectcall: first arg should be of type SYMBOL or INT, not %s", d.type2str());
+	} else if (d.type == VAR) {
+		name = *d.u.s;
+	} else {
+		warning("cb_objectcall: first arg should be of type VAR or INT, not %s", d.type2str());
 		return;
 	}
-
-	Common::String name = d.asString();
 
 	if ((nargs.type != ARGC) && (nargs.type != ARGCNORET)) {
 		warning("cb_objectcall: second arg should be of type ARGC or ARGCNORET, not %s", nargs.type2str());
@@ -416,9 +414,6 @@ void LC::cb_v4assign() {
 		// put value after chunkExpression
 		{
 			Datum chunkExpr = g_lingo->pop();
-			if (chunkExpr.type == SYMBOL) {
-				chunkExpr.type = VAR;
-			}
 			g_lingo->push(chunkExpr);
 			LC::c_putafter();
 		}
@@ -546,7 +541,8 @@ void LC::cb_objectpush() {
 	int nameId = g_lingo->readInt();
 	Common::String name = g_lingo->_currentArchive->getName(nameId);
 	Datum result(name);
-	result.type = SYMBOL;
+	result.type = VAR;
+	result.lazy = true;
 	g_lingo->push(result);
 }
 
