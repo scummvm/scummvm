@@ -1269,11 +1269,6 @@ void Lingo::varAssign(Datum &var, Datum &value, bool global, DatumHash *localvar
 		localvars = _localvars;
 	}
 
-	if (var.type != VAR && var.type != FIELDREF) {
-		warning("varAssign: assignment to non-variable");
-		return;
-	}
-
 	if (var.type == VAR) {
 		Common::String name = *var.u.s;
 
@@ -1317,6 +1312,8 @@ void Lingo::varAssign(Datum &var, Datum &value, bool global, DatumHash *localvar
 			warning("varAssign: Unhandled cast type %d", member->_type);
 			break;
 		}
+	} else {
+		warning("varAssign: assignment to non-variable");
 	}
 }
 
@@ -1326,11 +1323,6 @@ Datum Lingo::varFetch(Datum &var, bool global, DatumHash *localvars, bool silent
 	}
 
 	Datum result;
-	result.type = VOID;
-	if (var.type != VAR && var.type != FIELDREF) {
-		warning("varFetch: fetch from non-variable");
-		return result;
-	}
 
 	if (var.type == VAR) {
 		Datum d;
@@ -1376,6 +1368,8 @@ Datum Lingo::varFetch(Datum &var, bool global, DatumHash *localvars, bool silent
 			warning("varFetch: Unhandled cast type %d", member->_type);
 			break;
 		}
+	} else {
+		warning("varFetch: fetch from non-variable");
 	}
 
 	return result;
