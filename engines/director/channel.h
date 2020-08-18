@@ -50,6 +50,7 @@ public:
 	bool isMouseIn(const Common::Point &pos);
 	bool isMatteIntersect(Channel *channel);
 	bool isMatteWithin(Channel *channel);
+	bool isActiveVideo();
 
 	void setWidth(int w);
 	void setHeight(int h);

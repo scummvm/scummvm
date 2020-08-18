@@ -55,6 +55,8 @@ Movie::Movie(Window *window) {
 	_lastTimerReset = _lastEventTime;
 	_nextEventId = 0;
 
+	_videoPlayback = false;
+
 	_key = 0;
 	_keyCode = 0;
 	_keyFlags = 0;

@@ -303,6 +303,10 @@ void Score::update() {
 			_activeFade = 0;
 	}
 
+	if (_movie->_videoPlayback) {
+		renderFrame(_currentFrame);
+	}
+
 	if (!debugChannelSet(-1, kDebugFast)) {
 		if (_waitForChannel) {
 			if (_soundManager->isChannelActive(_waitForChannel))
@@ -475,6 +479,8 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 	if (_window->_newMovieStarted)
 		mode = kRenderForceUpdate;
 
+	_movie->_videoPlayback = false;
+
 	for (uint16 i = 0; i < _channels.size(); i++) {
 		Channel *channel = _channels[i];
 		Sprite *currentSprite = channel->_sprite;
@@ -486,6 +492,9 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 
 		if (channel->isActiveText())
 			_movie->_currentEditableTextChannel = i;
+
+		if (channel->isActiveVideo())
+			_movie->_videoPlayback = true;
 
 		if (channel->isDirty(nextSprite) || widgetRedrawn || mode == kRenderForceUpdate) {
 			if (!currentSprite->_trails)

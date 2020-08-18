@@ -315,6 +315,7 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 	// FIXME: HACK: We need to understand when really start the video
 	if (!_video->isPlaying()) {
 		_video->start();
+		debugC(2, kDebugImages, "STARTING VIDEO");
 
 		if (_channel->_stopTime == 0)
 			_channel->_stopTime = getMovieTotalTime();
@@ -323,6 +324,7 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 	const Graphics::Surface *frame = _video->decodeNextFrame();
 
 	_channel->_movieTime = getMovieCurrentTime();
+	debugC(2, kDebugImages, "Video time: %d", _channel->_movieTime);
 
 	if (frame) {
 		if (g_director->_pixelformat.bytesPerPixel == 1) {

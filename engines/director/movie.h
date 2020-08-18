@@ -144,6 +144,8 @@ public:
 	Cast *_sharedCast;
 	bool _allowOutdatedLingo;
 
+	bool _videoPlayback;
+
 	int _nextEventId;
 	Common::Queue<LingoEvent> _eventQueue;
 

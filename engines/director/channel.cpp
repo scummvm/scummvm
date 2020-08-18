@@ -243,6 +243,15 @@ bool Channel::isMatteWithin(Channel *channel) {
 	return false;
 }
 
+bool Channel::isActiveVideo() {
+	if (!_sprite->_cast || _sprite->_cast->_type != kCastDigitalVideo)
+		return false;
+
+	// TODO: Check that the video is not paused
+
+	return true;
+}
+
 Common::Rect Channel::getBbox(bool unstretched) {
 	Common::Rect result(unstretched ? _sprite->_width : _width,
 											unstretched ? _sprite->_height : _height);
