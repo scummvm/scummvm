@@ -563,6 +563,7 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wint
 	if (angle != 0) {
 		Vector2 correctedRot(rot.x, (rot.y - offset) * -1.0f + offset);
 		transform = build2dTransformation(correctedRot, angle);
+		transform.transpose();
 	}
 
 	_spriteShader->use();
