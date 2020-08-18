@@ -76,7 +76,7 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x43, LC::c_argcpush,		"b" },
 	// 0x44, push a constant
 	{ 0x45, LC::c_namepush,		"b" },
-	{ 0x46, LC::cb_objectpush,  "b" },
+	{ 0x46, LC::cb_varrefpush,  "b" },
 	{ 0x48, LC::cb_globalpush,	"b" }, // used in event scripts
 	{ 0x49, LC::cb_globalpush,	"b" },
 	{ 0x4a, LC::cb_thepush,		"b" },
@@ -111,7 +111,7 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x83, LC::c_argcpush,		"w" },
 	// 0x84, push a constant
 	{ 0x85, LC::c_namepush,		"w" },
-	{ 0x86, LC::cb_objectpush,  "w" },
+	{ 0x86, LC::cb_varrefpush,  "w" },
 	{ 0x88, LC::cb_globalpush,	"w" }, // used in event scripts
 	{ 0x89, LC::cb_globalpush,	"w" },
 	{ 0x8a, LC::cb_thepush,		"w" },
@@ -537,7 +537,7 @@ void LC::cb_objectfieldpush() {
 	g_lingo->push(g_lingo->getObjectProp(object, fieldName));
 }
 
-void LC::cb_objectpush() {
+void LC::cb_varrefpush() {
 	int nameId = g_lingo->readInt();
 	Common::String name = g_lingo->_currentArchive->getName(nameId);
 	Datum result(name);

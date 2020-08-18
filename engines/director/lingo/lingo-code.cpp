@@ -147,7 +147,7 @@ static struct FuncDescr {
 	{ LC::cb_objectcall,	"cb_objectcall",	"i" },
 	{ LC::cb_objectfieldassign, "cb_objectfieldassign", "N" },
 	{ LC::cb_objectfieldpush, "cb_objectfieldpush", "N" },
-	{ LC::cb_objectpush,	"cb_objectpush",	"N" },
+	{ LC::cb_varrefpush,	"cb_varrefpush",	"N" },
 	{ LC::cb_theassign,		"cb_theassign",		"N" },
 	{ LC::cb_theassign2,	"cb_theassign2",	"N" },
 	{ LC::cb_thepush,		"cb_thepush",		"N" },
