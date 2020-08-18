@@ -819,12 +819,16 @@ defn: tMACRO { startDef(); } ID
 		endDef();
 		delete $ID; }
 	| tFACTORY ID	{ g_lingo->codeFactory(*$ID); delete $ID; }
-	| tMETHOD { startDef(); (*g_lingo->_methodVars)["me"] = kVarArgument; }
-			lbl argdef '\n' argstore stmtlist 		{
-		g_lingo->code1(LC::c_procret);
-		g_lingo->codeDefine(*$tMETHOD, $lbl, $argdef + 1);
-		endDef();
-		delete $tMETHOD; }
+	| tMETHOD {
+			startDef();
+			Common::String me("me");
+			g_lingo->codeArg(&me);
+			mVar(&me, kVarArgument);
+		} lbl argdef '\n' argstore stmtlist {
+			g_lingo->code1(LC::c_procret);
+			g_lingo->codeDefine(*$tMETHOD, $lbl, $argdef + 1);
+			endDef();
+			delete $tMETHOD; }
 	| on lbl argdef '\n' argstore stmtlist ENDCLAUSE endargdef {	// D3
 		g_lingo->code1(LC::c_procret);
 		g_lingo->codeDefine(*$on, $lbl, $argdef);

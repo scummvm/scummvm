@@ -1224,9 +1224,10 @@ void Lingo::executePerFrameHook(int frame, int subframe) {
 		Symbol method = _perFrameHook.u.obj->getMethod("mAtFrame");
 		if (method.type != VOIDSYM) {
 			debugC(1, kDebugLingoExec, "Executing perFrameHook : <%s>(mAtFrame, %d, %d)", _perFrameHook.asString(true).c_str(), frame, subframe);
-			push(Datum(frame));
-			push(Datum(subframe));
-			LC::call(method, 2, false);
+			push(_perFrameHook);
+			push(frame);
+			push(subframe);
+			LC::call(method, 3, false);
 			execute(_pc);
 		}
 	}
@@ -1335,12 +1336,6 @@ Datum Lingo::varFetch(Datum &var, bool global, DatumHash *localvars, bool silent
 		Datum d;
 		Common::String name = *var.u.s;
 
-		// For kScriptObj handlers the target is an argument
-		// (and can be renamed from 'me)
-		if (_currentMe.type == OBJECT && _currentMe.u.obj->getObjType() != kScriptObj && name.equalsIgnoreCase("me")) {
-			result = _currentMe;
-			return result;
-		}
 		if (localvars && localvars->contains(name)) {
 			if (global)
 				warning("varFetch: variable %s is local, not global", name.c_str());

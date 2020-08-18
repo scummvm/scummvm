@@ -1469,14 +1469,8 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 					target = target->clone();
 				}
 				funcSym = target->getMethod(*firstArg.u.s);
-				if (target->getObjType() == kScriptObj && funcSym.type == HANDLER) {
-					// For kFactoryObj handlers the target is the first argument
-					g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.target;
-				} else {
-					// Otherwise, take the method name out of the stack
-					g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs);
-					nargs -= 1;
-				}
+				// Set first arg to target
+				g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.target;
 				call(funcSym, nargs, allowRetVal);
 				return;
 			}
@@ -1492,14 +1486,8 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 			}
 			funcSym = target->getMethod(name);
 			if (funcSym.type != VOIDSYM) {
-				if (target->getObjType() == kScriptObj && funcSym.type == HANDLER) {
-					// For kScriptObj handlers the target is the first argument
-					g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.target;
-				} else {
-					// Otherwise, take the target object out of the stack
-					g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs);
-					nargs -= 1;
-				}
+				// Set first arg to target
+				g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.target;
 				call(funcSym, nargs, allowRetVal);
 				return;
 			}
@@ -1524,6 +1512,8 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 }
 
 void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
+	Datum target = funcSym.target;
+
 	if (funcSym.type == VOIDSYM) {
 		warning("Call to undefined handler. Dropping %d stack items", nargs);
 
@@ -1535,6 +1525,12 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 			g_lingo->pushVoid();
 
 		return;
+	}
+
+	if (funcSym.type != HANDLER && target.type != VOID) {
+		// Drop the target argument (only needed for user-defined methods)
+		g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs);
+		nargs--;
 	}
 
 	if (funcSym.nargs != -1) {
@@ -1576,11 +1572,11 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 	if (funcSym.type != HANDLER) {
 		uint stackSizeBefore = g_lingo->_stack.size() - nargs;
 
-		if (funcSym.target) {
+		if (target.type != VOID) {
 			// Only need to update the me obj
 			// Pushing an entire stack frame is not necessary
 			Datum retMe = g_lingo->_currentMe;
-			g_lingo->_currentMe = funcSym.target;
+			g_lingo->_currentMe = target;
 			(*funcSym.u.bltin)(nargs);
 			g_lingo->_currentMe = retMe;
 		} else {
