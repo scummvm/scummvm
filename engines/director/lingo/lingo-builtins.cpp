@@ -1209,7 +1209,7 @@ void LB::b_go(int nargs) {
 		nargs -= 1;
 		bool callSpecial = false;
 
-		if (firstArg.type == STRING) {
+		if (firstArg.type == SYMBOL) {
 			if (*firstArg.u.s == "loop") {
 				g_lingo->func_gotoloop();
 				callSpecial = true;
