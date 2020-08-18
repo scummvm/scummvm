@@ -39,7 +39,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "bariscebik", "Bariscebik" },
 	{ "barneysproblem", "Barney's Problem" },
 	{ "beanstalk", "Beanstalk the and Jack" },
-	{ "beerisntenough", "WHen Beer Isn't Enough" },
+	{ "beerisntenough", "When Beer Isn't Enough" },
 	{ "caveofwonders", "Cave of Wondors" },
 	{ "circusmenagerie", "Menagerie!" },
 	{ "cityInfear", "City In Fear" },
