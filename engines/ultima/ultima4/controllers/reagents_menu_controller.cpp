@@ -37,33 +37,14 @@ bool ReagentsMenuController::keyPressed(int key) {
 	case 'f':
 	case 'g':
 	case 'h': {
-		/* select the corresponding reagent (if visible) */
+		// Select the corresponding reagent (if visible)
 		Menu::MenuItemList::iterator mi = _menu->getById(key - 'a');
 		if ((*mi)->isVisible()) {
 			_menu->setCurrent(_menu->getById(key - 'a'));
 			keyPressed(Common::KEYCODE_SPACE);
 		}
+		break;
 	}
-	break;
-	case Common::KEYCODE_LEFT:
-	case Common::KEYCODE_RIGHT:
-	case Common::KEYCODE_SPACE:
-		if (_menu->isVisible()) {
-			MenuItem *item = *_menu->getCurrent();
-
-			/* change whether or not it's selected */
-			item->setSelected(!item->isSelected());
-
-			if (item->isSelected())
-				_ingredients->addReagent((Reagent)item->getId());
-			else
-				_ingredients->removeReagent((Reagent)item->getId());
-		}
-		break;
-
-	case Common::KEYCODE_RETURN:
-		eventHandler->setControllerDone();
-		break;
 
 	default:
 		return MenuController::keyPressed(key);
@@ -73,9 +54,41 @@ bool ReagentsMenuController::keyPressed(int key) {
 }
 
 void ReagentsMenuController::keybinder(KeybindingAction action) {
-	if (action == KEYBIND_ESCAPE) {
+	switch (action) {
+	case KEYBIND_ESCAPE:
 		_ingredients->revert();
 		eventHandler->setControllerDone();
+		break;
+
+	case KEYBIND_UP:
+		_menu->prev();
+		break;
+
+	case KEYBIND_DOWN:
+		_menu->next();
+		break;
+
+	case KEYBIND_LEFT:
+	case KEYBIND_RIGHT:
+		if (_menu->isVisible()) {
+			MenuItem *item = *_menu->getCurrent();
+
+			// change whether or not it's selected
+			item->setSelected(!item->isSelected());
+
+			if (item->isSelected())
+				_ingredients->addReagent((Reagent)item->getId());
+			else
+				_ingredients->removeReagent((Reagent)item->getId());
+		}
+		break;
+
+	case KEYBIND_INTERACT:
+		eventHandler->setControllerDone();
+		break;
+
+	default:
+		break;
 	}
 }
 
