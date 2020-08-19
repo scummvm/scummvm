@@ -2417,9 +2417,10 @@ bool CryOmni3DEngine_Versailles::handleEpigraph(ZonFixedImage *fimg) {
 				if (password.size() >= kEpigraphMaxLetters) {
 					continue;
 				}
+				char keyCodeCheck = keyCode - Common::KEYCODE_a + 'A';
 				if (keyCode >= Common::KEYCODE_a &&
 				        keyCode <= Common::KEYCODE_z &&
-				        _epigraphContent.contains(keyCode - Common::KEYCODE_a + 'A')) {
+				        _epigraphContent.contains(keyCodeCheck)) {
 					password += keyCode - Common::KEYCODE_a + 'A';
 				} else {
 					continue;
