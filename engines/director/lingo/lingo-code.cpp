@@ -1472,8 +1472,10 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 				if (funcSym.type != VOIDSYM) {
 					g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.target; // Set first arg to target
 					call(funcSym, nargs, allowRetVal);
-					return;
+				} else {
+					warning("Object <%s> has no method '%s'", obj.asString(true).c_str(), firstArg.u.s->c_str());
 				}
+				return;
 			}
 			firstArg = firstArg.eval();
 		}
