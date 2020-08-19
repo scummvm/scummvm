@@ -260,8 +260,8 @@ PoMessageEntryList *parsePoFile(const char *file, PoMessageList& messages) {
 	if (!inFile)
 		return NULL;
 
-	char msgidBuf[1024], msgctxtBuf[1024], msgstrBuf[1024];
-	char line[1024], *currentBuf = msgstrBuf;
+	char msgidBuf[2048], msgctxtBuf[2048], msgstrBuf[2048];
+	char line[2048], *currentBuf = msgstrBuf;
 
 	// Get language from file name and create PoMessageEntryList
 	int index = 0, start_index = strlen(file) - 1;
