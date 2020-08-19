@@ -343,28 +343,35 @@ void MacWindowManager::activateMenu() {
 }
 
 void MacWindowManager::activateScreenCopy() {
-	if (!_screen)
-		return;
+	if (_screen) {
+		if (!_screenCopy)
+			_screenCopy = new ManagedSurface(*_screen);	// Create a copy
+		else
+			*_screenCopy = *_screen;
+	} else {
+		Surface *surface = g_system->lockScreen();
 
-	if (!_screenCopy)
-		_screenCopy = new ManagedSurface(*_screen);	// Create a copy
-	else
-		*_screenCopy = *_screen;
+		if (!_screenCopy) {
+			_screenCopy = new ManagedSurface(_screenDims.width(), _screenDims.height());
+		}
+
+		_screenCopy->blitFrom(*surface);
+		g_system->unlockScreen();
+	}
 
 	_screenCopyPauseToken = new PauseToken(pauseEngine());
 }
 
 void MacWindowManager::disableScreenCopy() {
-	if (!_screen)
-		return;
-
 	if (_screenCopyPauseToken) {
 		_screenCopyPauseToken->clear();
 		delete _screenCopyPauseToken;
 		_screenCopyPauseToken = nullptr;
 	}
 
-	*_screen = *_screenCopy; // restore screen
+	if (_screen)
+		*_screen = *_screenCopy; // restore screen
+
 	g_system->copyRectToScreen(_screenCopy->getBasePtr(0, 0), _screenCopy->pitch, 0, 0, _screenCopy->w, _screenCopy->h);
 }
 
