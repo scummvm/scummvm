@@ -31,6 +31,7 @@
 #include "common/fs.h"
 #include "common/archive.h"
 #include "common/array.h"
+#include "common/ustr.h"
 #include "engines/engine.h"
 
 class OSystem_Android;
@@ -62,8 +63,8 @@ public:
 	static void displayMessageOnOSD(const Common::String &msg);
 	static bool openUrl(const Common::String &url);
 	static bool hasTextInClipboard();
-	static Common::String getTextFromClipboard();
-	static bool setTextInClipboard(const Common::String &text);
+	static Common::U32String getTextFromClipboard();
+	static bool setTextInClipboard(const Common::U32String &text);
 	static bool isConnectionLimited();
 	static void showVirtualKeyboard(bool enable);
 	static void showKeyboardControl(bool enable);
