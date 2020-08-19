@@ -5612,8 +5612,8 @@ echo "$_enable_asan"
 echo_n "Enabling Thread Sanitizer... "
 
 if test "$_enable_tsan" = yes ; then
-	append_var CXXFLAGS "-fsanitize=thread -O2"
-	append_var LDFLAGS "-fsanitize=thread -O2"
+	append_var CXXFLAGS "-fsanitize=thread"
+	append_var LDFLAGS "-fsanitize=thread"
 fi
 echo "$_enable_tsan"
 
