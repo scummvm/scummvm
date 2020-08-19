@@ -110,6 +110,7 @@ void Cursor::readFromResource(int resourceId) {
 
 	switch(resourceId) {
 	case -1:
+	case 0:
 		resetCursor(Graphics::kMacCursorArrow, true, resourceId);
 		break;
 	case 1:
