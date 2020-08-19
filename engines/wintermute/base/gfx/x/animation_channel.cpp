@@ -78,6 +78,7 @@ bool AnimationChannel::playAnim(AnimationSet *animSet, uint32 transitionTime, ui
 		} else {
 			_anim[0] = anim;
 			delete _anim[1];
+			_anim[1] = nullptr;
 			_transitioning = false;
 		}
 	}
@@ -213,10 +214,12 @@ bool AnimationChannel::persist(BasePersistenceManager *persistMgr) {
 bool AnimationChannel::unloadAnim(AnimationSet *animSet) {
 	if (_anim[0] && _anim[0]->getAnimSet() == animSet) {
 		delete _anim[0];
+		_anim[0] = nullptr;
 	}
 
 	if (_anim[1] && _anim[1]->getAnimSet() == animSet) {
 		delete _anim[1];
+		_anim[1] = nullptr;
 	}
 
 	return true;
