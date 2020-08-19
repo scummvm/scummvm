@@ -509,7 +509,13 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 	}
 }
 
-void Score::renderCursor(uint spriteId) {
+void Score::renderCursor(Common::Point pos) {
+	uint spriteId = 0;
+
+	for (int i = _channels.size() - 1; i >=0; i--)
+		if (_channels[i]->isMouseIn(pos) && !_channels[i]->_cursor.isEmpty())
+			spriteId = i;
+
 	if (_channels[spriteId]->_cursor.isEmpty()) {
 		if (_currentCursor) {
 			_vm->_wm->popCursor();

@@ -108,7 +108,7 @@ public:
 	bool renderTransition(uint16 frameId);
 	void renderFrame(uint16 frameId, RenderMode mode = kRenderModeNormal);
 	void renderSprites(uint16 frameId, RenderMode mode = kRenderModeNormal);
-	void renderCursor(uint spriteId);
+	void renderCursor(Common::Point pos);
 
 private:
 	void update();

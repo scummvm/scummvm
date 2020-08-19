@@ -112,7 +112,7 @@ bool Movie::processEvent(Common::Event &event) {
 		_lastEventTime = g_director->getMacTicks();
 		_lastRollTime =	 _lastEventTime;
 
-		sc->renderCursor(sc->getSpriteIDFromPos(pos));
+		sc->renderCursor(pos);
 
 		if (_currentDraggedChannel) {
 			if (_currentDraggedChannel->_sprite->_moveable) {
@@ -176,7 +176,7 @@ bool Movie::processEvent(Common::Event &event) {
 		}
 
 		registerEvent(kEventMouseUp, spriteId);
-		sc->renderCursor(sc->getSpriteIDFromPos(pos));
+		sc->renderCursor(pos);
 		return true;
 
 	case Common::EVENT_KEYDOWN:
