@@ -27,24 +27,6 @@ namespace AGT {
 
 #ifdef force16
 #undef int
-#endif
-
-#ifdef UNIX_IO
-#include <fcntl.h>
-#include <sys/stat.h>  /* Needed only for file permission bits */
-
-#ifdef __STRICT_ANSI__
-int fileno(FILE *f);
-FILE *popen(char *s, char *how);
-int pclose(FILE *p);
-#endif
-
-#ifdef MSDOS16
-#include <io.h>
-#endif
-#endif /* UNIX_IO */
-
-#ifdef force16
 #define int short
 #endif
 
@@ -196,23 +178,7 @@ static int search_for_ext(const char *name, filetype base_ft,
 				return xlen;
 			}
 		}
-#ifdef UNIX_IO
-	/* This is code to make the Unix/etc ports easier to use under
-	   tab-completing shells (which often complete "gamename._" or
-	   "gamename.ag_" since there are other files in the directory
-	   with the same root.) */
-	assert(*pft == fNONE);
-	if (name[len - 1] == '.') return 1;
-	if (fnamecmp(name + len - 3, ".ag") == 0) {
-		if (base_ft == fDA1 || base_ft == fAGX) *pft = fAGX;
-		if (base_ft == fAGT) *pft = fAGT;
-	}
-	if (fnamecmp(name + len - 3, ".da") == 0) {
-		if (base_ft == fDA1 || base_ft == fAGX) *pft = fDA1;
-		if (base_ft == fAGT) *pft = fAGT;
-	}
-	if (*pft != fNONE) return 3;
-#endif
+
 	return 0;
 }
 
@@ -323,26 +289,7 @@ fc_type init_file_context(const char *name, filetype ft) {
 	fc = (file_context_rec *)rmalloc(sizeof(file_context_rec));
 	fc->special = 0;
 
-#ifdef UNIX
-	if (name[0] == '|') { /* Output pipe */
-		name++;
-		fc->special = 1;
-	}
-#endif
-
 	fc->gamename = rstrdup(name);
-
-#ifdef UNIX
-	x = strlen(fc->gamename);
-	if (fc->gamename[x - 1] == '|') { /* Input pipe */
-		fc->gamename[x - 1] = 0;
-		fc->special |= 2;
-	}
-	if (fc->special) {
-		fc->path = fc->shortname = fc->ext = NULL;
-		return fc;
-	}
-#endif
 
 	p = find_path_sep(fc->gamename);
 	if (p < 0)
@@ -426,27 +373,6 @@ void release_file_context(fc_type *pfc) {
 /*   Routines for Finding Files                                         */
 /*----------------------------------------------------------------------*/
 
-#ifdef UNIX
-/* This requires that no two sav/scr/log files be open at the same time. */
-static int pipecnt = 0;
-static FILE *pipelist[6];
-
-static genfile try_open_pipe(fc_type fc, filetype ft, rbool rw) {
-	FILE *f;
-
-	errno = 0;
-	if (ft != fSAV && ft != fSCR && ft != fLOG) return NULL;
-	if (rw && fc->special != 1) return NULL;
-	if (!rw && fc->special != 2) return NULL;
-	if (pipecnt >= 6) return NULL;
-
-	f = popen(fc->gamename, rw ? "w" : "r"); /* Need to indicate this is a pipe */
-	pipelist[pipecnt++] = f;
-	return f;
-}
-#endif
-
-
 static genfile try_open_file(const char *path, const char *root,
                              const char *ext, const char *how,
                              rbool nofix) {
@@ -463,12 +389,6 @@ static genfile findread(file_context_rec *fc, filetype ft) {
 
 	f = NULL;
 
-#ifdef UNIX
-	if (fc->special) {  /* It's a pipe */
-		f = try_open_pipe(fc, ft, 0);
-		return f;
-	}
-#endif
 	if (ft == fAGT_STD) {
 		f = try_open_file(fc->path, AGTpSTD, "", filetype_info(ft, 0), 0);
 		return f;
@@ -517,17 +437,6 @@ genfile writeopen(fc_type fc, filetype ft,
 	*errstr = NULL;
 	name = NULL;
 
-#ifdef UNIX
-	if (fc->special) {  /* It's a pipe */
-		f = try_open_pipe(fc, ft, 1);
-		if (f == NULL && errno == 0) {
-			*errstr = rstrdup("Invalid pipe request.");
-			return f;
-		}
-		if (f == NULL) /* For error messages */
-			name = rstrdup(fc->gamename);
-	} else
-#endif
 	{
 		name = assemble_filename(FC(fc)->path, FC(fc)->shortname, extname[ft]);
 		f = fopen(name, filetype_info(ft, 1));
@@ -563,24 +472,12 @@ long varread(genfile f, void *buff, long recsize, long recnum, const char **errs
 
 	*errstr = NULL;
 	assert(f != NULL);
-#ifdef UNIX_IO
-#ifdef MSDOS16
-	num = (unsigned int)read(fileno(f), buff, recsize * recnum);
-	if (num == (unsigned int) - 1)
-#else
-	num = read(fileno(f), buff, recsize * recnum);
-	if (num == -1)
-#endif
-	{
-		*errstr = rstrdup(strerror(errno));
-		return 0;
-	}
-#else
+
 	num = fread(buff, recsize, recnum, f);
 	if (num != recnum)
 		*errstr = "varread";
 	num = num * recsize;
-#endif
+
 	return num;
 }
 
@@ -596,47 +493,24 @@ rbool binread(genfile f, void *buff, long recsize, long recnum, const char **err
 
 rbool binwrite(genfile f, void *buff, long recsize, long recnum, rbool ferr) {
 	assert(f != NULL);
-#ifdef UNIX_IO
-	if (write(fileno(f), buff, recsize * recnum) == -1)
-#else
-	if (fwrite(buff, recsize, recnum, f) != (size_t)recnum)
-#endif
-	{
+
+	if (fwrite(buff, recsize, recnum, f) != (size_t)recnum) {
 		if (ferr) fatal("binwrite");
 		return 0;
 	}
 	return 1;
 }
 
-#ifdef UNIX
-static rbool closepipe(genfile f) {
-	int i;
-	for (i = 0; i < pipecnt; i++)
-		if (pipelist[i] == f) {
-			pclose(f);
-			for (; i < pipecnt - 1; i++)
-				pipelist[i] = pipelist[i + 1];
-			pipecnt--;
-			return 1;
-		}
-	return 0;
-}
-#endif
-
 void readclose(genfile f) {
 	assert(f != NULL);
-#ifdef UNIX
-	if (closepipe(f)) return;
-#endif
+
 	fclose(f);
 }
 
 void writeclose(genfile f, file_id_type fileid) {
 	assert(f != NULL);
 	rfree(fileid);
-#ifdef UNIX
-	if (closepipe(f)) return;
-#endif
+
 	fclose(f);
 }
 
@@ -654,21 +528,12 @@ long binsize(genfile f)
 	long pos, leng;
 
 	assert(f != NULL);
-#ifdef UNIX_IO
-	{
-		long fd;
 
-		fd = fileno(f);
-		pos = lseek(fd, 0, SEEK_CUR);
-		leng = lseek(fd, 0, SEEK_END);
-		lseek(fd, pos, SEEK_SET);
-	}
-#else
 	pos = ftell(f);
 	fseek(f, 0, SEEK_END);
 	leng = ftell(f);
 	fseek(f, pos, SEEK_SET);
-#endif
+
 	return leng;
 }
 
