@@ -89,7 +89,7 @@ public:
 	static SegaAudioInterfaceInternal *addNewRef(Audio::Mixer *mixer, SegaAudioInterface *owner, SegaAudioPluginDriver *driver);
 	static void releaseRef(SegaAudioInterface *owner);
 
-	bool init();
+	bool init() override;
 
 	void loadPCMData(uint16 address, const uint8 *data, uint16 dataLen);
 	void playPCMChannel(uint8 channel, uint8 dataStart, uint16 loopStart, uint16 pitch, uint8 pan, uint8 vol);
@@ -112,8 +112,8 @@ private:
 
 	void nextTickEx(int32 *buffer, uint32 bufferSize) override;
 
-	void timerCallbackA();
-	void timerCallbackB();
+	void timerCallbackA() override;
+	void timerCallbackB() override;
 
 	uint16 pcmCountSamples(uint16 address) const;
 
@@ -201,13 +201,13 @@ bool SegaAudioInterfaceInternal::init() {
 	}
 
 	reset();
-	
+
 	writeReg(0, 0x26, 0xC6);
 	writeReg(0, 0x25, 0x62);
-	writeReg(0, 0x24, 0x00);	
+	writeReg(0, 0x24, 0x00);
 	writeReg(0, 0x27, 0x30);
 
-	// Declare FM channels as music channels and PCM channels as sound effect channels. 
+	// Declare FM channels as music channels and PCM channels as sound effect channels.
 	setSoundEffectChanMask(~0x1FF);
 
 	_ready = true;
