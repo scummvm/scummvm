@@ -148,22 +148,22 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	// Three Hour Games Competition: July 2004
 	{ "3hgjailbreakbob", "Jailbreak Bob" },
 	{ "3hgbriefcase", "Briefcase" },
-	{ "3hgtheannihilationofthink", " Annihilation of Think.com" },
+	{ "3hgtheannihilationofthink", "Annihilation of Think.com" },
 	{ "3hgshadricktravels", "Shadrick's Travels" },
 	{ "3hglostsouls", "Lost Souls" },
 	{ "3hgtheamulet", "Amulet" },
 	{ "3hgzombiecow", "Zombie Cow" },
 
 	// Three Hour Games Competition: November 2004
-	{ "3hgsandl", " Snakes and Ladders" },
+	{ "3hgsandl", "Snakes and Ladders" },
 	{ "3hgconfession", "The Murder of Jack Morely" },
-	{ "3hgveteran", " Veteran Experience" },
-	{ "3hgburiedalive", " Buried Alive" },
+	{ "3hgveteran", "Veteran Experience" },
+	{ "3hgburiedalive", "Buried Alive" },
 	{ "3hgzac", "Zombies are Cool" },
 	{ "3hgtogetyou", "We are coming to get you!" },
 
 	// Game of the Year Competition: December 2004
-	{ "goyshardsofmemory", " Shards of Memory" },
+	{ "goyshardsofmemory", "Shards of Memory" },
 	{ "goypaint", "Paint!!!" },
 	{ "goydragonshrine", "The Curse of DragonShrine" },
 	{ "goydarkness", "Darkness" },
@@ -175,7 +175,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "aicescape", "Must Escape!" },
 	{ "aicfinalquestion", "The Final Question" },
 	{ "aicrift", "Rift" },
-	{ "aicp2p", " Point 2 Point" },
+	{ "aicp2p", "Point 2 Point" },
 	{ "aiczacksmackfoot", "Zack Smackfoot" },
 
 	// ADRIFT Mini-Competition Summer 2003
@@ -221,7 +221,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "1hgshreddem", "Shred 'em" },
 	{ "1hgagent4f", "Agent 4-F From Mars" },
 	{ "1hgecod3", "An Evening with the Evil Chicken of Doom" },
-	{ "1hgtrabula", " Get Treasure for Trabula" },
+	{ "1hgtrabula", "Get Treasure for Trabula" },
 	{ "1hgwoof", "Woof" },
 	{ "1hgundefined", "Undefined" },
 	{ "1hgadriftmaze", "Adrift Maze" },
