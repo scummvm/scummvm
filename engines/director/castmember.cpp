@@ -295,6 +295,18 @@ DigitalVideoCastMember::~DigitalVideoCastMember() {
 	delete _video;
 }
 
+bool DigitalVideoCastMember::loadVideo(Common::String path) {
+	// TODO: detect file type (AVI, QuickTime, FLIC) based on magic number,
+	// insert the right video decoder
+
+	_filename = path;
+	_video = new Video::QuickTimeDecoder();
+
+	debugC(2, kDebugLoading | kDebugImages, "Loading video %s", path.c_str());
+
+	return _video->loadFile(path);
+}
+
 bool DigitalVideoCastMember::isModified() {
 	if (!_video)
 		return false;
@@ -315,7 +327,7 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 	// FIXME: HACK: We need to understand when really start the video
 	if (!_video->isPlaying() && _channel->_movieRate != 0.0) {
 		_video->start();
-		debugC(2, kDebugImages, "STARTING VIDEO");
+		debugC(2, kDebugImages, "STARTING VIDEO %s", _filename.c_str());
 
 		if (_channel->_stopTime == 0)
 			_channel->_stopTime = getMovieTotalTime();

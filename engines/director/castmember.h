@@ -138,6 +138,9 @@ public:
 
 	virtual bool isModified() override;
 	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel) override;
+
+	bool loadVideo(Common::String path);
+
 	uint getMovieCurrentTime();
 	uint getMovieTotalTime();
 	void seekMovie(int stamp);
@@ -148,6 +151,8 @@ public:
 	bool hasField(int field) override;
 	Datum getField(int field) override;
 	bool setField(int field, const Datum &value) override;
+
+	Common::String _filename;
 
 	uint32 _vflags;
 	bool _looping;

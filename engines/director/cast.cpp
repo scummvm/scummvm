@@ -28,7 +28,6 @@
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "image/bmp.h"
-#include "video/qt_decoder.h"
 
 #include "director/director.h"
 #include "director/cast.h"
@@ -675,12 +674,9 @@ void Cast::loadDigitalVideoCasts() {
 		if (videoData == NULL || videoData->size() == 0) {
 			// video file is linked, load from the filesystem
 
-			// TODO: detect file type (AVI, QuickTime, FLIC) based on magic number,
-			// insert the right video decoder
-			digitalVideoCast->_video = new Video::QuickTimeDecoder();
 			Common::String filename = _castsInfo[c->_key]->fileName;
 			Common::String directory = _castsInfo[c->_key]->directory;
-			if (!digitalVideoCast->_video->loadFile(pathMakeRelative(directory + "\\" + filename))) {
+			if (!digitalVideoCast->loadVideo(pathMakeRelative(directory + "\\" + filename))) {
 				warning("Cast::loadDigitalVideoCasts: failed to load QuickTime file for cast member %d", videoId);
 			}
 		} else {
