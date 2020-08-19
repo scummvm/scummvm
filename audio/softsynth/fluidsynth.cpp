@@ -72,7 +72,13 @@ public:
 	MidiChannel *getPercussionChannel() override;
 
 	void setEngineSoundFont(Common::SeekableReadStream *soundFontData) override;
-	bool acceptsSoundFontData() override { return true; }
+	bool acceptsSoundFontData() override {
+#if defined(FLUIDSYNTH_VERSION_MAJOR) && FLUIDSYNTH_VERSION_MAJOR > 1
+		return true;
+#else
+		return false;
+#endif
+	}
 
 	// AudioStream API
 	bool isStereo() const override { return true; }
