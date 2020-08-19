@@ -368,7 +368,7 @@ void LC::cb_objectcall() {
 			return;
 		}
 		if (d.asInt() % 6 != 0) {
-			warning("cb_objectcall: invalid var ID %d for var type %d (not divisible by 6)", d.asInt(), varType);
+			warning("BUILDBOT: cb_objectcall: invalid var ID %d for var type %d (not divisible by 6)", d.asInt(), varType);
 			return;
 		}
 		int varIndex = d.asInt() / 6;
@@ -382,13 +382,13 @@ void LC::cb_objectcall() {
 			break;
 		default:
 			// everything else should be passed as a VAR
-			warning("cb_objectcall: received var index %d for unhandled var type %d", varIndex, varType);
+			warning("BUILDBOT: cb_objectcall: received var index %d for unhandled var type %d", varIndex, varType);
 			return;
 		}
 		if (varIndex < (int)varNames->size()) {
 			name = (*varNames)[d.asInt() / 6];
 		} else {
-			warning("cb_objectcall: invalid var ID %d for var type %d (too high)", d.asInt(), varType);
+			warning("BUILDBOT: cb_objectcall: invalid var ID %d for var type %d (too high)", d.asInt(), varType);
 			return;
 		}
 	} else if (d.type == VAR) {
