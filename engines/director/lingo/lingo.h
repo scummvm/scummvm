@@ -288,6 +288,7 @@ public:
 	void cleanLocalVars();
 	void varAssign(Datum &var, Datum &value, bool global = false, DatumHash *localvars = nullptr);
 	Datum varFetch(Datum &var, bool global = false, DatumHash *localvars = nullptr, bool silent = false);
+	Datum findVarV4(int varType, const Datum &id);
 
 	int getAlignedType(const Datum &d1, const Datum &d2, bool numsOnly);
 

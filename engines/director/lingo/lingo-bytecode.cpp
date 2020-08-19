@@ -306,6 +306,53 @@ void Lingo::initBytecode() {
 	}
 }
 
+Datum Lingo::findVarV4(int varType, const Datum &id) {
+	Datum res;
+	switch (varType) {
+	case 1: // global
+	case 2: // global
+	case 3: // property/instance
+		if (id.type == VAR) {
+			res = id;
+		} else {
+			warning("BUILDBOT: findVarV4: expected ID for var type %d to be VAR, got %s", varType, id.type2str());
+		}
+		break;
+	case 4: // arg
+	case 5: // local
+		{
+			if (g_lingo->_callstack.empty()) {
+				warning("BUILDBOT: findVarV4: no call frame");
+				return res;
+			}
+			if (id.asInt() % 6 != 0) {
+				warning("BUILDBOT: findVarV4: invalid var ID %d for var type %d (not divisible by 6)", id.asInt(), varType);
+				return res;
+			}
+			int varIndex = id.asInt() / 6;
+			Common::Array<Common::String> *varNames = (varType == 4)
+				? _callstack.back()->sp.argNames
+				: _callstack.back()->sp.varNames;
+
+			if (varIndex < (int)varNames->size()) {
+				res = (*varNames)[varIndex];
+				res.type = VAR;
+			} else {
+				warning("BUILDBOT: findVarV4: invalid var ID %d for var type %d (too high)", id.asInt(), varType);
+			}
+		}
+		break;
+	case 6: // field
+		res = id.asCastId();
+		res.type = FIELDREF;
+		break;
+	default:
+		warning("BUILDBOT: findVarV4: unhandled var type %d", varType);
+		break;
+	}
+	return res;
+}
+
 void LC::cb_unk() {
 	uint opcode = g_lingo->readInt();
 	warning("STUB: opcode 0x%02x", opcode);
@@ -358,43 +405,12 @@ void LC::cb_localcall() {
 
 void LC::cb_objectcall() {
 	int varType = g_lingo->readInt();
-	Datum d = g_lingo->pop();
+	Datum varId = g_lingo->pop();
 	Datum nargs = g_lingo->pop();
 
-	Common::String name;
-	if (d.type == INT) {
-		if (g_lingo->_callstack.empty()) {
-			warning("cb_objectcall: no call frame");
-			return;
-		}
-		if (d.asInt() % 6 != 0) {
-			warning("BUILDBOT: cb_objectcall: invalid var ID %d for var type %d (not divisible by 6)", d.asInt(), varType);
-			return;
-		}
-		int varIndex = d.asInt() / 6;
-		Common::Array<Common::String> *varNames;
-		switch (varType) {
-		case 4: // arg
-			varNames = g_lingo->_callstack.back()->sp.argNames;
-			break;
-		case 5: // local
-			varNames = g_lingo->_callstack.back()->sp.varNames;
-			break;
-		default:
-			// everything else should be passed as a VAR
-			warning("BUILDBOT: cb_objectcall: received var index %d for unhandled var type %d", varIndex, varType);
-			return;
-		}
-		if (varIndex < (int)varNames->size()) {
-			name = (*varNames)[d.asInt() / 6];
-		} else {
-			warning("BUILDBOT: cb_objectcall: invalid var ID %d for var type %d (too high)", d.asInt(), varType);
-			return;
-		}
-	} else if (d.type == VAR) {
-		name = *d.u.s;
-	} else {
-		warning("cb_objectcall: first arg should be of type VAR or INT, not %s", d.type2str());
+	Datum var = g_lingo->findVarV4(varType, varId);
+	if (var.type != VAR) {
+		warning("cb_objectcall: first arg did not resolve to variable");
 		return;
 	}
 
@@ -412,7 +428,7 @@ void LC::cb_objectcall() {
 		}
 	}
 
-	LC::call(name, nargs.u.i, nargs.type == ARGC);
+	LC::call(*var.u.s, nargs.u.i, nargs.type == ARGC);
 }
 
 
