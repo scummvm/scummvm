@@ -53,6 +53,8 @@ SdlTimerManager::~SdlTimerManager() {
 
 	// Removes the timer callback
 	SDL_RemoveTimer(_timerID);
+
+	SDL_QuitSubSystem(SDL_INIT_TIMER);
 }
 
 #endif

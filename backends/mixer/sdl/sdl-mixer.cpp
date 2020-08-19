@@ -50,6 +50,8 @@ SdlMixerManager::~SdlMixerManager() {
 
 	SDL_CloseAudio();
 
+	SDL_QuitSubSystem(SDL_INIT_AUDIO);
+
 	delete _mixer;
 }
 
