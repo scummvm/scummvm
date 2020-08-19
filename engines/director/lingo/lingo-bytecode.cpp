@@ -357,7 +357,7 @@ void LC::cb_localcall() {
 
 
 void LC::cb_objectcall() {
-	g_lingo->readInt();
+	int varType = g_lingo->readInt();
 	Datum d = g_lingo->pop();
 	Datum nargs = g_lingo->pop();
 
@@ -367,11 +367,28 @@ void LC::cb_objectcall() {
 			warning("cb_objectcall: no call frame");
 			return;
 		}
-		Common::Array<Common::String> *varNames = g_lingo->_callstack.back()->sp.varNames;
-		if ((d.asInt() % 6 == 0) && varNames && (d.asInt() / 6 < (int)varNames->size())) {
+		if (d.asInt() % 6 != 0) {
+			warning("cb_objectcall: invalid var ID %d for var type %d (not divisible by 6)", d.asInt(), varType);
+			return;
+		}
+		int varIndex = d.asInt() / 6;
+		Common::Array<Common::String> *varNames;
+		switch (varType) {
+		case 4: // arg
+			varNames = g_lingo->_callstack.back()->sp.argNames;
+			break;
+		case 5: // local
+			varNames = g_lingo->_callstack.back()->sp.varNames;
+			break;
+		default:
+			// everything else should be passed as a VAR
+			warning("cb_objectcall: received var index %d for unhandled var type %d", varIndex, varType);
+			return;
+		}
+		if (varIndex < (int)varNames->size()) {
 			name = (*varNames)[d.asInt() / 6];
 		} else {
-			warning("cb_objectcall: invalid variable ID %d", d.asInt());
+			warning("cb_objectcall: invalid var ID %d for var type %d (too high)", d.asInt(), varType);
 			return;
 		}
 	} else if (d.type == VAR) {
