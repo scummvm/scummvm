@@ -537,11 +537,11 @@ bool OSystem_Android::hasTextInClipboard() {
 	return JNI::hasTextInClipboard();
 }
 
-Common::String OSystem_Android::getTextFromClipboard() {
+Common::U32String OSystem_Android::getTextFromClipboard() {
 	return JNI::getTextFromClipboard();
 }
 
-bool OSystem_Android::setTextInClipboard(const Common::String &text) {
+bool OSystem_Android::setTextInClipboard(const Common::U32String &text) {
 	return JNI::setTextInClipboard(text);
 }
 

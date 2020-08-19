@@ -283,7 +283,7 @@ bool JNI::hasTextInClipboard() {
 	return hasText;
 }
 
-Common::String JNI::getTextFromClipboard() {
+Common::U32String JNI::getTextFromClipboard() {
 	JNIEnv *env = JNI::getEnv();
 
 	jstring javaText = (jstring)env->CallObjectMethod(_jobj, _MID_getTextFromClipboard);
@@ -294,18 +294,22 @@ Common::String JNI::getTextFromClipboard() {
 		env->ExceptionDescribe();
 		env->ExceptionClear();
 
-		return Common::String();
+		return Common::U32String();
 	}
 
-	Common::String text = convertFromJString(env, javaText, getCurrentCharset());
+	Common::String text = convertFromJString(env, javaText, "UTF-8");
 	env->DeleteLocalRef(javaText);
 
-	return text;
+	if (getCurrentCharset() == "UTF-32") {
+		return text.decode();
+	}
+
+	return Common::U32String(text);
 }
 
-bool JNI::setTextInClipboard(const Common::String &text) {
+bool JNI::setTextInClipboard(const Common::U32String &text) {
 	JNIEnv *env = JNI::getEnv();
-	jstring javaText = convertToJString(env, text, getCurrentCharset());
+	jstring javaText = convertToJString(env, text.encode(), "UTF-8");
 
 	bool success = env->CallBooleanMethod(_jobj, _MID_setTextInClipboard, javaText);
 

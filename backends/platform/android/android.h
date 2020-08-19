@@ -29,6 +29,7 @@
 #include "common/fs.h"
 #include "common/archive.h"
 #include "common/mutex.h"
+#include "common/ustr.h"
 #include "audio/mixer_intern.h"
 #include "backends/modular-backend.h"
 #include "backends/plugins/posix/posix-provider.h"
@@ -133,8 +134,8 @@ public:
 											int priority = 0);
 	virtual bool openUrl(const Common::String &url);
 	virtual bool hasTextInClipboard();
-	virtual Common::String getTextFromClipboard();
-	virtual bool setTextInClipboard(const Common::String &text);
+	virtual Common::U32String getTextFromClipboard();
+	virtual bool setTextInClipboard(const Common::U32String &text);
 	virtual bool isConnectionLimited();
 	virtual Common::String getSystemLanguage() const;
 	virtual char *convertEncoding(const char *to, const char *from, const char *string, size_t length);
