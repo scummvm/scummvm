@@ -420,6 +420,15 @@ void Game::displayChuteAnimation() {
 	Sound.killSounds();
 	mouse.cursorOn();
 	fields.setField(AREA_FLAG, 1);
+
+	// WORKAROUND When outside in the town, the game plays an ambient sound
+	// of twittering birds. When first entering town after falling through
+	// the chute, this sound does not play; it starts playing after you
+	// enter and exit a building. Calling removeSounds here triggers the
+	// function which manages the ambient sounds in town, so the bird
+	// sounds start playing. Because all other sounds have already been
+	// removed, this has no side effects.
+	Sound.removeSounds();
 }
 
 void Game::displayBarrelAnimation() {
