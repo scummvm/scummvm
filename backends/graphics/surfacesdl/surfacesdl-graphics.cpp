@@ -2465,7 +2465,8 @@ void SurfaceSdlGraphicsManager::handleScalerHotkeys(int scalefactor, int scalerT
 		}
 		if (newScalerName) {
 			const Common::U32String message = Common::U32String::format(
-				_("Active graphics filter:") + Common::U32String("%s\n%d x %d -> %d x %d"),
+				Common::U32String("%S %s\n%d x %d -> %d x %d"),
+				_("Active graphics filter:").c_str(),
 				newScalerName,
 				_videoMode.screenWidth, _videoMode.screenHeight,
 				_hwScreen->w, _hwScreen->h);
@@ -2498,12 +2499,14 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 #ifdef USE_OSD
 		Common::U32String message;
 		if (_videoMode.aspectRatioCorrection)
-			message = Common::U32String::format(_("Enabled aspect ratio correction") + Common::U32String("\n%d x %d -> %d x %d"),
+			message = Common::U32String::format(Common::U32String("%S\n%d x %d -> %d x %d"),
+											 _("Enabled aspect ratio correction").c_str(),
 			                                 _videoMode.screenWidth, _videoMode.screenHeight,
 			                                 _hwScreen->w, _hwScreen->h
 			);
 		else
-			message = Common::U32String::format(_("Disabled aspect ratio correction") + Common::U32String("\n%d x %d -> %d x %d"),
+			message = Common::U32String::format(Common::U32String("%S\n%d x %d -> %d x %d"),
+											 _("Disabled aspect ratio correction").c_str(),
 			                                 _videoMode.screenWidth, _videoMode.screenHeight,
 			                                 _hwScreen->w, _hwScreen->h
 			);
@@ -2549,7 +2552,10 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		endGFXTransaction();
 
 #ifdef USE_OSD
-		Common::U32String message = _("Stretch mode") + Common::U32String(": ") + _(s_supportedStretchModes[index].description);
+		Common::U32String message = Common::U32String::format(Common::U32String("%S: %S"),
+														_("Stretch mode").c_str(),
+														_(s_supportedStretchModes[index].description).c_str()
+									);
 		displayMessageOnOSD(message);
 #endif
 		_forceRedraw = true;
