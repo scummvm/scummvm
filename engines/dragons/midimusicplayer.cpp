@@ -37,6 +37,10 @@ MidiMusicPlayer::MidiMusicPlayer(BigfileArchive *bigFileArchive, VabSound *music
 
 	if (_driver->acceptsSoundFontData()) {
 		_driver->setEngineSoundFont(loadSoundFont(bigFileArchive));
+	} else {
+		//If the selected driver doesn't support loading soundfont we should assume we got a fluid Synth V1 and reload
+		delete _driver;
+		MidiPlayer::createDriver();
 	}
 
 	int ret = _driver->open();
