@@ -32,8 +32,16 @@
 static volatile bool timerInstalled = false;
 
 static Uint32 timer_handler(Uint32 interval, void *param) {
-	if (!timerInstalled)
+	if (!timerInstalled) {
+#ifdef DIRECTORBUILDBOT
+		warning("timer_handler: timer is not installed");
+#endif
 		return interval;
+	}
+
+#ifdef DIRECTORBUILDBOT
+	warning("timer_handler: called");
+#endif
 
 	((DefaultTimerManager *)param)->handler();
 	return interval;
@@ -52,9 +60,16 @@ SdlTimerManager::SdlTimerManager() {
 }
 
 SdlTimerManager::~SdlTimerManager() {
+#ifdef DIRECTORBUILDBOT
+	warning("~SdlTimerManager");
+#endif
 	timerInstalled = false;
 	// Removes the timer callback
 	SDL_RemoveTimer(_timerID);
+
+#ifdef DIRECTORBUILDBOT
+	warning("~SdlTimerManager: SDL timer removed");
+#endif
 }
 
 #endif

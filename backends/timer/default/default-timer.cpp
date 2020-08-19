@@ -69,7 +69,14 @@ DefaultTimerManager::DefaultTimerManager() :
 }
 
 DefaultTimerManager::~DefaultTimerManager() {
+#ifdef DIRECTORBUILDBOT
+	warning("~DefaultTimerManager");
+#endif
 	Common::StackLock lock(_mutex);
+
+#ifdef DIRECTORBUILDBOT
+	warning("~DefaultTimerManager: locked");
+#endif
 
 	TimerSlot *slot = _head;
 	while (slot) {
@@ -78,10 +85,20 @@ DefaultTimerManager::~DefaultTimerManager() {
 		slot = next;
 	}
 	_head = 0;
+
+#ifdef DIRECTORBUILDBOT
+	warning("~DefaultTimerManager: completed");
+#endif
 }
 
 void DefaultTimerManager::handler() {
+#ifdef DIRECTORBUILDBOT
+	warning("DefaultTimerManager::handler(): locking");
+#endif
 	Common::StackLock lock(_mutex);
+#ifdef DIRECTORBUILDBOT
+	warning("DefaultTimerManager::handler(): locked");
+#endif
 
 	uint32 curTime = g_system->getMillis(true);
 
