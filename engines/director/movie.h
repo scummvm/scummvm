@@ -49,8 +49,15 @@ struct InfoEntry {
 
 	InfoEntry() { len = 0; data = nullptr; }
 
+	InfoEntry(const InfoEntry &old) {
+		len = old.len;
+		data = (byte *)malloc(len);
+		memcpy(data, old.data, len);
+	}
+
 	~InfoEntry() {
 		free(data);
+		data = nullptr;
 	}
 
 	Common::String readString(bool pascal = true) {
