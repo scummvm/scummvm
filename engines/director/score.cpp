@@ -68,6 +68,7 @@ Score::Score(Movie *movie) {
 	_currentLabel = 0;
 	_nextFrameTime = 0;
 	_waitForChannel = 0;
+	_cursorDirty = false;
 	_waitForClick = false;
 	_waitForClickCursor = false;
 	_activeFade = 0;
@@ -455,6 +456,11 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 
 	if (_frames[frameId]->_sound1 || _frames[frameId]->_sound2)
 		playSoundChannel(frameId);
+
+	if (_cursorDirty) {
+		renderCursor(_movie->getWindow()->getMousePos());
+		_cursorDirty = false;
+	}
 }
 
 bool Score::renderTransition(uint16 frameId) {

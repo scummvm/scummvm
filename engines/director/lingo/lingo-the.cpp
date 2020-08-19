@@ -1306,12 +1306,19 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		}
 		break;
 	case kTheCursor:
-		if (d.type == INT) {
+		if (d.type == INT && channel->_cursor._cursorResId != d.asInt()) {
 			channel->_cursor.readFromResource(d.asInt());
+			score->_cursorDirty = true;
 		} else if (d.type == ARRAY && d.u.farr->size() == 2) {
 			uint cursorId =	d.u.farr->operator[](0).asCastId();
 			uint maskId = d.u.farr->operator[](1).asCastId();
+
+			if (cursorId == channel->_cursor._cursorCastId &&
+					maskId == channel->_cursor._cursorMaskId)
+				return;
+
 			channel->_cursor.readFromCast(cursorId, maskId);
+			score->_cursorDirty = true;
 		}
 		break;
 	case kTheEditableText:

@@ -137,6 +137,7 @@ public:
 	int _waitForChannel;
 	bool _waitForClick;
 	bool _waitForClickCursor;
+	bool _cursorDirty;
 	int _activeFade;
 	Cursor *_currentCursor;
 
