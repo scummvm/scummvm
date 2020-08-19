@@ -212,14 +212,14 @@ Common::U32String DownloadDialog::getSizeLabelText() {
 	Common::String downloaded, downloadedUnits, total, totalUnits;
 	downloaded = getHumanReadableBytes(CloudMan.getDownloadBytesNumber(), downloadedUnits);
 	total = getHumanReadableBytes(CloudMan.getDownloadTotalBytesNumber(), totalUnits);
-	return Common::U32String::format(_("Downloaded %s %s / %s %s"), downloaded.c_str(), _(downloadedUnits.c_str()).encode().c_str(), total.c_str(), _(totalUnits.c_str()).encode().c_str());
+	return Common::U32String::format(_("Downloaded %s %S / %s %S"), downloaded.c_str(), _(downloadedUnits).c_str(), total.c_str(), _(totalUnits).c_str());
 }
 
 Common::U32String DownloadDialog::getSpeedLabelText() {
 	Common::String speed, speedUnits;
 	speed = getHumanReadableBytes(CloudMan.getDownloadSpeed(), speedUnits);
 	speedUnits += "/s";
-	return Common::U32String::format(_("Download speed: %s %s"), speed.c_str(), _(speedUnits).encode().c_str());
+	return Common::U32String::format(_("Download speed: %s %S"), speed.c_str(), _(speedUnits).c_str());
 }
 
 void DownloadDialog::refreshWidgets() {
