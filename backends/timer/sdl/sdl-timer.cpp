@@ -29,19 +29,10 @@
 
 #include "common/textconsole.h"
 
-static volatile bool timerInstalled = false;
+OSystem::MutexRef timerMutex;
 
 static Uint32 timer_handler(Uint32 interval, void *param) {
-	if (!timerInstalled) {
-#ifdef DIRECTORBUILDBOT
-		warning("timer_handler: timer is not installed");
-#endif
-		return interval;
-	}
-
-#ifdef DIRECTORBUILDBOT
-	warning("timer_handler: called");
-#endif
+	Common::StackLock lock(timerMutex);
 
 	((DefaultTimerManager *)param)->handler();
 	return interval;
@@ -53,23 +44,15 @@ SdlTimerManager::SdlTimerManager() {
 		error("Could not initialize SDL: %s", SDL_GetError());
 	}
 
-	timerInstalled = true;
-
 	// Creates the timer callback
 	_timerID = SDL_AddTimer(10, &timer_handler, this);
 }
 
 SdlTimerManager::~SdlTimerManager() {
-#ifdef DIRECTORBUILDBOT
-	warning("~SdlTimerManager");
-#endif
-	timerInstalled = false;
+	Common::StackLock lock(timerMutex);
+
 	// Removes the timer callback
 	SDL_RemoveTimer(_timerID);
-
-#ifdef DIRECTORBUILDBOT
-	warning("~SdlTimerManager: SDL timer removed");
-#endif
 }
 
 #endif

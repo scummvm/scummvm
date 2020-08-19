@@ -784,4 +784,3 @@ char *OSystem_SDL::convertEncoding(const char *to, const char *from, const char 
 	return ModularBackend::convertEncoding(to, from, string, length);
 #endif // SDL_VERSION_ATLEAST(1, 2, 10)
 }
-
