@@ -28,6 +28,7 @@
 #include "backends/base-backend.h"
 #include "common/events.h"
 #include "common/str.h"
+#include "common/ustr.h"
 #include "audio/mixer_intern.h"
 #include "backends/fs/posix/posix-fs-factory.h"
 #include "graphics/colormasks.h"
@@ -207,8 +208,8 @@ public:
 	virtual void fatalError() override;
 
 	virtual bool hasTextInClipboard();
-	virtual Common::String getTextFromClipboard();
-	virtual bool setTextInClipboard(const Common::String &text);
+	virtual Common::U32String getTextFromClipboard();
+	virtual bool setTextInClipboard(const Common::U32String &text);
 
 	virtual bool openUrl(const Common::String &url);
 
