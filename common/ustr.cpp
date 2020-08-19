@@ -234,7 +234,7 @@ bool U32String::contains(const U32String &otherString) const {
 		return false;
 	}
 
-	int size = 0;
+	uint32 size = 0;
 	U32String::const_iterator itr = otherString.begin();
 
 	for (U32String::const_iterator itr2 = begin(); itr != otherString.end() && itr2 != end(); itr2++) {
@@ -265,6 +265,12 @@ void U32String::insertChar(value_type c, uint32 p) {
 void U32String::insertString(String s, uint32 p) {
 	for (String::iterator i = s.begin(); i != s.end(); i++) {
 		U32String::insertChar(*i, p++);
+	}
+}
+
+void U32String::insertString(uint *s, uint32 p) {
+	while (*s != '\0') {
+		U32String::insertChar(*s++, p++);
 	}
 }
 
@@ -605,9 +611,11 @@ int U32String::vformat(U32String::const_iterator fmt, const U32String::const_ite
 	char *string_temp;
 
 	value_type ch;
+	value_type *u32string_temp;
 	int length = 0;
 	int len = 0;
 	int pos = 0;
+	int tempPos = 0;
 
 	char buffer[512];
 
@@ -615,6 +623,16 @@ int U32String::vformat(U32String::const_iterator fmt, const U32String::const_ite
 		ch = *fmt++;
 		if (ch == '%') {
 			switch (ch = *fmt++) {
+			case 'S':
+				u32string_temp = va_arg(args, uint *);
+
+				tempPos = output.size();
+				output.insertString(u32string_temp, pos);
+				len = output.size() - tempPos;
+				length += len;
+
+				pos += len - 1;
+				break;
 			case 's':
 				string_temp = va_arg(args, char *);
 				len = strlen(string_temp);
