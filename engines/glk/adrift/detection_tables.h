@@ -185,7 +185,6 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "amcdiarystrip", "Diary of a Stripper" },
 
 	// ADRIFT One-Hour Game Competition 1
-	{ "1hgamonkeytoomany", "A Monkey too many" }, // ADRIFT 5 game
 	{ "1hgprincess1", "The Princess In The Tower" },
 	{ "1hg1hrgame", "A Masochist's Heaven" },
 	{ "1hgendgame", "The Game To End All Games" },
@@ -252,6 +251,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 };
 
 const PlainGameDescriptor ADRIFT5_GAME_LIST[] = {
+	{ "1hgamonkeytoomany", "A Monkey too many" },
 	{ "axeofkolt", "The Axe of Kolt" },
 	{ "castlecoris", "The Spectre of Castle Coris" },
 	{ "fistoffire", "Die Feuerfaust - The Fist of Fire" },
@@ -391,6 +391,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 
 #ifndef RELEASE_BUILD
 	// Unsupported English ADRIFT 5 games
+	DT_ENTRY0("1hgamonkeytoomany", "c9d719261d0f760f95685899aa80bbf5", 5016),
 	DT_ENTRY0("axeofkolt", "353a29250cc5e463876350e3d232fd22", 931390),
 	DT_ENTRY0("castlecoris", "15f21891cf889e24d21f644b07d249ce", 573856),
 	DT_ENTRY0("fistoffire", "3b76af72ce4876dfea4da23ab0b7f641", 567450),
@@ -445,7 +446,6 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY0("amcdiarystrip", "0e04238a2b49220c284ce9c8723abd77", 43334),
 
 	// ADRIFT One-Hour Game Competition 1
-	DT_ENTRY0("1hgamonkeytoomany", "c9d719261d0f760f95685899aa80bbf5", 5016),
 	DT_ENTRY0("1hgprincess1", "d745a3f2c4dc40fb10f25d1539a2a1e7", 7181),
 	DT_ENTRY0("1hg1hrgame", "63e9594bf2b4e7cf5bf75dd9cc1353dc", 2978),
 	DT_ENTRY0("1hgendgame", "6036e5654786f841ca59f8f7e95276be", 4063),
