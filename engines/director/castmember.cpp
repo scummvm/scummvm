@@ -308,7 +308,7 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 }
 
 bool DigitalVideoCastMember::isModified() {
-	if (!_video)
+	if (!_video || !_video->isVideoLoaded())
 		return false;
 
 	return _video->needsUpdate();
@@ -333,10 +333,10 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 			_channel->_stopTime = getMovieTotalTime();
 	}
 
+	debugC(2, kDebugImages, "Video time: %d  rate: %f", _channel->_movieTime, _channel->_movieRate);
 	const Graphics::Surface *frame = _video->decodeNextFrame();
 
 	_channel->_movieTime = getMovieCurrentTime();
-	debugC(2, kDebugImages, "Video time: %d", _channel->_movieTime);
 
 	if (frame) {
 		if (g_director->_pixelformat.bytesPerPixel == 1) {
