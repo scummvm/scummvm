@@ -89,7 +89,10 @@ bool AchievementsManager::setAchievement(const String &id, const String &display
 
 	if (!displayedMessage.empty() && g_system) {
 		U32String msg;
-		msg = _("Achievement unlocked!") + Common::U32String("\n") + Common::U32String(displayedMessage);
+		msg = Common::U32String::format(Common::U32String("%S\n%S"),
+			_("Achievement unlocked!").c_str(),
+			Common::U32String(displayedMessage).c_str()
+		);
 		g_system->displayMessageOnOSD(msg);
 	}
 
