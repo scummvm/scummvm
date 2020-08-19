@@ -134,7 +134,7 @@ void AGOSEngine::quickLoadOrSave() {
 	if ((getGameType() == GType_SIMON2 && _boxStarHeight == 200) ||
 		(getGameType() == GType_SIMON1 && (getFeatures() & GF_DEMO)) ||
 		_mouseHideCount || _showPreposition) {
-		buf = Common::U32String::format(_("Quick load or save game isn't supported in this location"));
+		buf = _("Quick load or save game isn't supported in this location");
 		GUI::MessageDialog dialog(buf);
 		dialog.runModal();
 		return;
