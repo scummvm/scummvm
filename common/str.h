@@ -177,6 +177,7 @@ public:
 	bool contains(const String &x) const;
 	bool contains(const char *x) const;
 	bool contains(char x) const;
+	bool contains(uint32 x) const;
 
 	/** Return uint64 corrensponding to String's contents. */
 	uint64 asUint64() const;
