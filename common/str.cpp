@@ -428,6 +428,15 @@ bool String::contains(char x) const {
 	return strchr(c_str(), x) != nullptr;
 }
 
+bool String::contains(uint32 x) const {
+	for (String::const_iterator itr = begin(); itr != end(); itr++) {
+		if (uint32(*itr) == x) {
+			return true;
+		}
+	}
+	return false;
+}
+
 uint64 String::asUint64() const {
 	uint64 result = 0;
 	for (uint32 i = 0; i < _size; ++i) {
