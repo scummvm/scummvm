@@ -60,6 +60,14 @@ struct InfoEntry {
 		data = nullptr;
 	}
 
+	InfoEntry &operator=(const InfoEntry &old) {
+		free(data);
+		len = old.len;
+		data = (byte *)malloc(len);
+		memcpy(data, old.data, len);
+		return *this;
+	}
+
 	Common::String readString(bool pascal = true) {
 		Common::String res;
 
