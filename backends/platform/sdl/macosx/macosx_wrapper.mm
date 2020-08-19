@@ -75,7 +75,10 @@ bool setTextInClipboardMacOSX(const Common::U32String &text) {
 #else
 	NSStringEncoding stringEncoding = NSUTF32BigEndianStringEncoding;
 #endif
-	return [pb setString:[[NSString alloc] initWithBytes:text.c_str() length:4*text.size() encoding: stringEncoding] forType:NSStringPboardType];
+	NSString *nsstring = [[NSString alloc] initWithBytes:text.c_str() length:4*text.size() encoding: stringEncoding];
+	bool status =  [pb setString:nsstring forType:NSStringPboardType];
+	[nsstring release];
+	return status;
 }
 
 Common::String getDesktopPathMacOSX() {
