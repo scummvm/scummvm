@@ -308,7 +308,7 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 }
 
 bool DigitalVideoCastMember::isModified() {
-	if (!_video || !_video->isVideoLoaded())
+	if (!_video || !_video->isVideoLoaded() || _channel->_movieRate == 0.0)
 		return false;
 
 	return _video->needsUpdate();
@@ -319,13 +319,17 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 
 	_channel = channel;
 
+	// Do not render stopped videos
+	if (_channel->_movieRate == 0.0)
+		return nullptr;
+
 	if (!_video || !_video->isVideoLoaded()) {
 		warning("DigitalVideoCastMember::createWidget: No video decoder");
 		return nullptr;
 	}
 
 	// FIXME: HACK: We need to understand when really start the video
-	if (!_video->isPlaying() && _channel->_movieRate != 0.0) {
+	if (!_video->isPlaying()) {
 		_video->start();
 		debugC(2, kDebugImages, "STARTING VIDEO %s", _filename.c_str());
 
