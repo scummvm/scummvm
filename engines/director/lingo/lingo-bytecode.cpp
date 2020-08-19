@@ -433,44 +433,30 @@ void LC::cb_objectcall() {
 
 
 void LC::cb_v4assign() {
-	int op = g_lingo->readInt();
+	int arg = g_lingo->readInt();
+	int op = (arg >> 4) & 0xF;
+	int varType = arg & 0xF;
+	Datum varId = g_lingo->pop();
+
+	Datum var = g_lingo->findVarV4(varType, varId);
+	g_lingo->push(var);
 
 	switch (op) {
-	case 0x16:
-		// put value into field textVar
-		{
-			LB::b_field(1);
-			LC::c_assign();
-		}
+	case 1:
+		// put value into var
+		LC::c_assign();
 		break;
-	case 0x22:
-		// put value after chunkExpression
-		{
-			Datum chunkExpr = g_lingo->pop();
-			g_lingo->push(chunkExpr);
-			LC::c_putafter();
-		}
+	case 2:
+		// put value after var
+		LC::c_putafter();
 		break;
-	case 0x26:
-		// put value after field textVar
-		{
-			LB::b_field(1);
-			Datum field = g_lingo->pop();
-			g_lingo->push(field);
-			LC::c_putafter();
-		}
-		break;
-	case 0x36:
-		// put value before field textVar
-		{
-			LB::b_field(1);
-			Datum field = g_lingo->pop();
-			g_lingo->push(field);
-			LC::c_putbefore();
-		}
+	case 3:
+		// put value before var
+		LC::c_putbefore();
 		break;
 	default:
 		warning("cb_v4assign: unknown operator %d", op);
+		g_lingo->pop();
 		break;
 	}
 }
