@@ -1120,7 +1120,7 @@ void LB::b_openResFile(int nargs) {
 	if (!g_director->_openResFiles.contains(resPath)) {
 		MacArchive *resFile = new MacArchive();
 
-		if (resFile->openFile(resPath)) {
+		if (resFile->openFile(pathMakeRelative(resPath))) {
 			g_director->_openResFiles.setVal(resPath, resFile);
 		}
 	}
