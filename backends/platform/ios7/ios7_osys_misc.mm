@@ -86,7 +86,10 @@ bool OSystem_iOS7::setTextInClipboard(const Common::U32String &text) {
 	NSStringEncoding stringEncoding = NSUTF32BigEndianStringEncoding;
 #endif
 	UIPasteboard *pb = [UIPasteboard generalPasteboard];
-	return [pb setString:[[NSString alloc] initWithBytes:text.c_str() length:4*text.size() encoding: stringEncoding] forType:NSStringPboardType];
+	NSString *nsstring = [[NSString alloc] initWithBytes:text.c_str() length:4*text.size() encoding: stringEncoding];
+	[pb setString:nsstring];
+	[nsstring release];
+	return true;
 }
 
 bool OSystem_iOS7::openUrl(const Common::String &url) {
