@@ -2503,7 +2503,7 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			                                 _hwScreen->w, _hwScreen->h
 			);
 		else
-			message = Common::U32String::format(_("Disabled aspect ratio correction") + Common::U32String("%s\n%d x %d -> %d x %d"),
+			message = Common::U32String::format(_("Disabled aspect ratio correction") + Common::U32String("\n%d x %d -> %d x %d"),
 			                                 _videoMode.screenWidth, _videoMode.screenHeight,
 			                                 _hwScreen->w, _hwScreen->h
 			);
