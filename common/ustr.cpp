@@ -604,7 +604,7 @@ int U32String::vformat(U32String::const_iterator fmt, const U32String::const_ite
 	int int_temp;
 	char *string_temp;
 
-	char ch;
+	value_type ch;
 	int length = 0;
 	int len = 0;
 	int pos = 0;
