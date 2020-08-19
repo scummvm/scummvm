@@ -60,7 +60,7 @@ public:
 
 	static void setWindowCaption(const Common::String &caption);
 	static void getDPI(float *values);
-	static void displayMessageOnOSD(const Common::String &msg);
+	static void displayMessageOnOSD(const Common::U32String &msg);
 	static bool openUrl(const Common::String &url);
 	static bool hasTextInClipboard();
 	static Common::U32String getTextFromClipboard();

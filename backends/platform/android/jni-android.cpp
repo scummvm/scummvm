@@ -226,11 +226,11 @@ void JNI::getDPI(float *values) {
 	env->DeleteLocalRef(array);
 }
 
-void JNI::displayMessageOnOSD(const Common::String &msg) {
+void JNI::displayMessageOnOSD(const Common::U32String &msg) {
 	// called from common/osd_message_queue, method: OSDMessageQueue::pollEvent()
 	JNIEnv *env = JNI::getEnv();
 
-	jstring java_msg = convertToJString(env, msg, getCurrentCharset());
+	jstring java_msg = convertToJString(env, msg.encode(), "UTF-8");
 	if (java_msg == nullptr) {
 		// Show a placeholder indicative of the translation error instead of silent failing
 		java_msg = env->NewStringUTF("?");
