@@ -35,3 +35,16 @@ unload ab
 unload ab, bc
 
 put framesToHMS(integer(field 3),30,false,false) into field 5
+
+set save to the scummvmVersion
+
+set the scummvmVersion to 300
+scummvmAssert(version = "3.0")
+set the scummvmVersion to 310
+scummvmAssert(version = "3.1")
+set the scummvmVersion to 404
+scummvmAssert(version = "4.0.4")
+set the scummvmVersion to 1201
+scummvmAssert(version = "12.0.1")
+
+set the scummvmVersion to save

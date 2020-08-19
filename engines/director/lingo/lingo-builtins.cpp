@@ -2302,17 +2302,16 @@ void LB::b_true(int nargs) {
 }
 
 void LB::b_version(int nargs) {
-	switch (g_director->getVersion()) {
-	case 3:
-		g_lingo->push(Datum(Common::String("3.1.1"))); // Mac
-		break;
-	case 4:
-		g_lingo->push(Datum(Common::String("4.0"))); // Mac
-		break;
-	default:
-		error("Unsupported Director for 'version'");
-		break;
+	int major = g_director->getVersion() / 100;
+	int minor = (g_director->getVersion() / 10) % 10;
+	int patch = g_director->getVersion() % 10;
+	Common::String res;
+	if (patch) {
+		res = Common::String::format("%d.%d.%d", major, minor, patch);
+	} else {
+		res = Common::String::format("%d.%d", major, minor);
 	}
+	g_lingo->push(res);
 }
 
 ///////////////////
