@@ -1315,7 +1315,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 
 			if (cursorId == channel->_cursor._cursorCastId &&
 					maskId == channel->_cursor._cursorMaskId)
-				return;
+				break;
 
 			channel->_cursor.readFromCast(cursorId, maskId);
 			score->_cursorDirty = true;
