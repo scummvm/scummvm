@@ -358,7 +358,7 @@ void LC::cb_localcall() {
 
 void LC::cb_objectcall() {
 	g_lingo->readInt();
-	Datum d = g_lingo->pop(false);
+	Datum d = g_lingo->pop();
 	Datum nargs = g_lingo->pop();
 
 	Common::String name;
