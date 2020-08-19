@@ -1490,11 +1490,11 @@ void LB::b_alert(int nargs) {
 	ARGNUMCHECK(1);
 	Datum d = g_lingo->pop();
 
-	const char *alert = d.asString().c_str();
-	warning("b_alert(%s)", alert);
+	Common::String alert = d.asString();
+	warning("b_alert(%s)", alert.c_str());
 
 	if (!debugChannelSet(-1, kDebugFewFramesOnly)) {
-		GUI::MessageDialog dialog(alert, "OK");
+		GUI::MessageDialog dialog(alert.c_str(), "OK");
 		dialog.runModal();
 	}
 }
