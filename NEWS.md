@@ -16,6 +16,9 @@ For a more comprehensive changelog of the latest experimental code, see:
      Currently, more than 1600 games are detected and supported.
    - Added support for Blaze Dragons.
 
+  New ports:
+   - MorphOS port got a major rewrite.
+
  General:
    - Autosaves are now supported for all the engines.
    - Errors are more likely to open the debugger, and be displayed, than just crash ScummVM.
