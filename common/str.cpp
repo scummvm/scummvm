@@ -30,7 +30,7 @@
 namespace Common {
 
 MemoryPool *g_refCountPool = nullptr; // FIXME: This is never freed right now
-MutexRef g_refCountPoolMutex = nullptr;
+Mutex *g_refCountPoolMutex = nullptr;
 
 void lockMemoryPoolMutex() {
 	// The Mutex class can only be used once g_system is set and initialized,
@@ -40,18 +40,18 @@ void lockMemoryPoolMutex() {
 	if (!g_system || !g_system->backendInitialized())
 		return;
 	if (!g_refCountPoolMutex)
-		g_refCountPoolMutex = g_system->createMutex();
-	g_system->lockMutex(g_refCountPoolMutex);
+		g_refCountPoolMutex = new Mutex();
+	g_refCountPoolMutex->lock();
 }
 
 void unlockMemoryPoolMutex() {
 	if (g_refCountPoolMutex)
-		g_system->unlockMutex(g_refCountPoolMutex);
+		g_refCountPoolMutex->unlock();
 }
 
 void String::releaseMemoryPoolMutex() {
 	if (g_refCountPoolMutex){
-		g_system->deleteMutex(g_refCountPoolMutex);
+		delete g_refCountPoolMutex;
 		g_refCountPoolMutex = nullptr;
 	}
 }

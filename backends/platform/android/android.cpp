@@ -140,7 +140,7 @@ OSystem_Android::~OSystem_Android() {
 	delete _timerManager;
 	_timerManager = 0;
 
-	deleteMutex(_event_queue_lock);
+	delete _event_queue_lock;
 
 	delete _savefileManager;
 	_savefileManager = 0;
@@ -347,7 +347,7 @@ void OSystem_Android::initBackend() {
 	_mutexManager = new PthreadMutexManager();
 	_timerManager = new DefaultTimerManager();
 
-	_event_queue_lock = createMutex();
+	_event_queue_lock = new Common::Mutex();
 
 	gettimeofday(&_startTime, 0);
 

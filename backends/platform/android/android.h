@@ -28,6 +28,7 @@
 #include "backends/platform/android/portdefs.h"
 #include "common/fs.h"
 #include "common/archive.h"
+#include "common/mutex.h"
 #include "audio/mixer_intern.h"
 #include "backends/modular-backend.h"
 #include "backends/plugins/posix/posix-provider.h"
@@ -100,7 +101,7 @@ private:
 	Common::Queue<Common::Event> _event_queue;
 	Common::Event _queuedEvent;
 	uint32 _queuedEventTime;
-	MutexRef _event_queue_lock;
+	Common::Mutex *_event_queue_lock;
 
 	Common::Point _touch_pt_down, _touch_pt_scroll, _touch_pt_dt;
 	int _eventScaleX;
