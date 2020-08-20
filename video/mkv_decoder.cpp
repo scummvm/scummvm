@@ -132,12 +132,12 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	long long ret = mkvparser::Segment::CreateInstance(_reader, pos, pSegment);
 	if (ret) {
-		error("MKVDecoder::loadStream(): Segment::CreateInstance() failed (%ld).", ret);
+		error("MKVDecoder::loadStream(): Segment::CreateInstance() failed (%lld).", ret);
 	}
 
 	ret = pSegment->Load();
 	if (ret < 0) {
-		error("MKVDecoder::loadStream(): Segment::Load() failed (%ld).", ret);
+		error("MKVDecoder::loadStream(): Segment::Load() failed (%lld).", ret);
 	}
 
 	const mkvparser::Tracks *pTracks = pSegment->GetTracks();
@@ -159,10 +159,10 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 #if 0
 	while (i != j) {
-		const Track *const pTrack = pTracks->GetTrackByIndex(i++);
+		const mkvparser::Track *const pTrack = pTracks->GetTrackByIndex(i++);
 
 		if (pTrack == NULL)
-		continue;
+			continue;
 
 		const long long trackType = pTrack->GetType();
 		//const unsigned long long trackUid = pTrack->GetUid();
@@ -170,8 +170,7 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 		if (trackType == VIDEO_TRACK && videoTrack < 0) {
 			videoTrack = pTrack->GetNumber();
-			const VideoTrack *const pVideoTrack =
-			static_cast<const VideoTrack *>(pTrack);
+			const VideoTrack *const pVideoTrack = static_cast<const VideoTrack *>(pTrack);
 
 			const long long width = pVideoTrack->GetWidth();
 			const long long height = pVideoTrack->GetHeight();
@@ -186,8 +185,7 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 		if (trackType == AUDIO_TRACK && audioTrack < 0) {
 			audioTrack = pTrack->GetNumber();
-			const AudioTrack *const pAudioTrack =
-			static_cast<const AudioTrack *>(pTrack);
+			const AudioTrack *const pAudioTrack = static_cast<const AudioTrack *>(pTrack);
 
 			audioChannels = pAudioTrack->GetChannels();
 			audioBitDepth = pAudioTrack->GetBitDepth();
@@ -211,16 +209,16 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 				continue;
 			}
 
-			uint64_t sizes[3], total;
+			uint64 sizes[3], total;
 
-			int i = 0;
+			int l = 0;
 			total = 0;
 			while (--count) {
-				sizes[i] = xiph_lace_value(&p);
+				sizes[l] = xiph_lace_value(&p);
 				total += sizes[i];
-				i += 1;
+				l += 1;
 			}
-			sizes[i] = audioHeaderSize - total - (p - audioHeader);
+			sizes[l] = audioHeaderSize - total - (p - audioHeader);
 
 			// initialize vorbis
 			vorbis_info_init(&vorbisInfo);
@@ -232,28 +230,28 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 			oggPacket.granulepos = 0;
 			oggPacket.packetno = 0;
 			int r;
-			for (int i = 0; i < 3; i++) {
+			for (int s = 0; s < 3; s++) {
 				oggPacket.packet = p;
-				oggPacket.bytes = sizes[i];
+				oggPacket.bytes = sizes[s];
 				oggPacket.b_o_s = oggPacket.packetno == 0;
 				r = vorbis_synthesis_headerin(&vorbisInfo, &vorbisComment, &oggPacket);
 				if (r)
-				fprintf(stderr, "vorbis_synthesis_headerin failed, error: %d", r);
+					warning("vorbis_synthesis_headerin failed, error: %d", r);
 				oggPacket.packetno++;
-				p += sizes[i];
+				p += sizes[s];
 			}
 
 			r = vorbis_synthesis_init(&vorbisDspState, &vorbisInfo);
 			if (r)
-			fprintf(stderr, "vorbis_synthesis_init failed, error: %d", r);
+				warning("vorbis_synthesis_init failed, error: %d", r);
 			r = vorbis_block_init(&vorbisDspState, &vorbisBlock);
 			if (r)
-			fprintf(stderr, "vorbis_block_init failed, error: %d", r);
+				warning("vorbis_block_init failed, error: %d", r);
 
 			ALenum audioFormat = alureGetSampleFormat(audioChannels, 16, 0);
 			movieAudioIndex = initMovieSound(fileNumber, audioFormat, audioChannels, (ALuint) audioSampleRate, feedAudio);
 
-			fprintf(stderr, "Movie sound inited.\n");
+			debug(1, "Movie sound inited.");
 			audio_queue_init(&audioQ);
 			audioNsPerByte = (1000000000 / audioSampleRate) / (audioChannels * 2);
 			audioNsBuffered = 0;
@@ -262,10 +260,10 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 	}
 
 	if (videoTrack < 0)
-	fatal("Movie error: No video in movie file.");
+		error("Movie error: No video in movie file.");
 
 	if (audioTrack < 0)
-	fatal("Movie error: No sound found.");
+		error("Movie error: No sound found.");
 
 	video_queue_init(&videoQ);
 
@@ -277,14 +275,13 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	/* Initialize video codec */
 	if (vpx_codec_dec_init(&codec, interface, NULL, 0))
-	die_codec(&codec, "Failed to initialize decoder for movie.");
+		die_codec(&codec, "Failed to initialize decoder for movie.");
 
 	byte *frame = new byte[256 * 1024];
-	if (! checkNew(frame)) return false;
+	if (!checkNew(frame))
+		return false;
 
 	const mkvparser::Cluster *pCluster = pSegment->GetFirst();
-
-	setMovieViewport();
 
 	movieIsPlaying = playing;
 	movieIsEnding = 0;
