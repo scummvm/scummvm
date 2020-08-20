@@ -277,8 +277,8 @@ const PlainGameDescriptor ADRIFT5_GAME_LIST[] = {
 	{ "mystman", "Mystman" },
 	{ "starshipquest", "Starship Quest" },
 	{ "sixsilverbullets", "Six Silver Bullets" },
-	{ "tcom", "TCOM" },
-	{ "tcom2", "TCOM2" },
+	{ "tcom1", "The Cave of Morpheus 1" },
+	{ "tcom2", "The Cave of Morpheus 2" },
 	{ "thetest", "The Test" },
 	{ "tingalan", "Tingalan" },
 	// ADRIFT One-Hour Game Competition 1
