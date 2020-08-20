@@ -1968,8 +1968,8 @@ void GlobalOptionsDialog::addPathsControls(GuiObject *boss, const Common::String
 	_pluginsPath = new StaticTextWidget(boss, prefix + "PluginsPath", _c("None", "path"));
 
 	_pluginsPathClearButton = addClearButton(boss, "GlobalOptions_Paths.PluginsPathClearButton", kPluginsPathClearCmd);
-#endif
-#endif
+#endif // DYNAMIC_MODULES
+#endif // !defined(__DC__)
 }
 
 void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String &prefix, bool lowres) {
@@ -2067,7 +2067,7 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 	_updatesPopUp->setSelectedTag(Common::UpdateManager::normalizeInterval(ConfMan.getInt("updates_check")));
 
 	new ButtonWidget(boss, prefix + "UpdatesCheckManuallyButton", _("Check now"), Common::U32String(""), kUpdatesCheckCmd);
-#endif
+#endif // USE_UPDATES
 }
 
 #ifdef USE_CLOUD
@@ -2193,7 +2193,7 @@ void GlobalOptionsDialog::addAccessibilityControls(GuiObject *boss, const Common
 	else
 		_ttsVoiceSelectionPopUp->setSelected(0);
 }
-#endif
+#endif // USE_TTS
 
 void GlobalOptionsDialog::apply() {
 	OptionsDialog::apply();
@@ -2224,7 +2224,7 @@ void GlobalOptionsDialog::apply() {
 		ConfMan.set("pluginspath", pluginsPath.encode(), _domain);
 	else
 		ConfMan.removeKey("pluginspath", _domain);
-#endif
+#endif // DYNAMIC_MODULES
 
 #ifdef USE_CLOUD
 #ifdef USE_SDL_NET
@@ -2233,8 +2233,8 @@ void GlobalOptionsDialog::apply() {
 		ConfMan.set("rootpath", rootPath.encode(), "cloud");
 	else
 		ConfMan.removeKey("rootpath", "cloud");
-#endif
-#endif
+#endif // USE_SDL_NET
+#endif // USE_CLOUD
 
 	ConfMan.setInt("autosave_period", _autosavePeriodPopUp->getSelectedTag(), _domain);
 
@@ -2249,7 +2249,7 @@ void GlobalOptionsDialog::apply() {
 			g_system->getUpdateManager()->setUpdateCheckInterval(_updatesPopUp->getSelectedTag());
 		}
 	}
-#endif
+#endif // USE_UPDATES
 
 #ifdef USE_CLOUD
 #ifdef USE_LIBCURL
@@ -2302,7 +2302,7 @@ void GlobalOptionsDialog::apply() {
 
 	bool guiUseGameLanguage = _guiLanguageUseGameLanguageCheckbox->getState();
 	ConfMan.setBool("gui_use_game_language", guiUseGameLanguage, _domain);
-#endif
+#endif // USE_TRANSLATION
 
 	if (_useSystemDialogsCheckbox) {
 		ConfMan.setBool("gui_browser_native", _useSystemDialogsCheckbox->getState(), _domain);
@@ -2337,7 +2337,7 @@ void GlobalOptionsDialog::apply() {
 		if (!isCharsetEqual)
 			errorMessage = _("Theme does not support selected language!");
 		else
-#endif
+#endif // USE_TRANSLATION
 			errorMessage = _("Theme cannot be loaded!");
 
 		g_gui.loadNewTheme(_newTheme, gfxMode, true);
@@ -2348,14 +2348,19 @@ void GlobalOptionsDialog::apply() {
 #ifdef USE_TTS
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	if (ttsMan) {
+#ifdef USE_TRANSLATION
 		if (newLang != oldLang) {
 			if (newLang == "C")
 				ttsMan->setLanguage("en");
 			else {
 				ttsMan->setLanguage(newLang);
 			}
-			_ttsVoiceSelectionPopUp->setSelected(0);
 		}
+#else
+		ttsMan->setLanguage("en");
+#endif // USE_TRANSLATION
+
+		_ttsVoiceSelectionPopUp->setSelected(0);
 		int volume = (ConfMan.getInt("speech_volume", "scummvm") * 100) / 256;
 		if (ConfMan.hasKey("mute", "scummvm") && ConfMan.getBool("mute", "scummvm"))
 			volume = 0;
@@ -2367,7 +2372,7 @@ void GlobalOptionsDialog::apply() {
 			selectedVoice = ttsMan->getDefaultVoice();
 		ttsMan->setVoice(selectedVoice);
 	}
-#endif
+#endif // USE_TTS
 
 	if (isRebuildNeeded) {
 		g_gui.setLanguageRTL();
