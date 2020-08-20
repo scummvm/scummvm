@@ -132,6 +132,11 @@ public:
 	void print(const char *fmt, ...);
 
 	/**
+	 * Print unicode-string to the buffer window
+	*/
+	void print(const Common::U32String fmt, ...);
+
+	/**
 	 * Read an input line
 	 */
 	void readLine(char *buffer, size_t maxLen);
