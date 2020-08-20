@@ -44,8 +44,8 @@ WiiOptionsDialog::WiiOptionsDialog(bool doubleStrike) :
 		_strUnderscanY = "wii_video_default_underscan_y";
 	}
 
-	new ButtonWidget(this, _w - 108 - 16, _h - 24 - 16, 108, 24, _("OK"), 0, 'k');
-	new ButtonWidget(this, _w - 216 - 32, _h - 24 - 16, 108, 24, _("Cancel"), 0, 'c');
+	new ButtonWidget(this, _w - 108 - 16, _h - 24 - 16, 108, 24, _("OK"), U32String(""), 'k');
+	new ButtonWidget(this, _w - 216 - 32, _h - 24 - 16, 108, 24, _("Cancel"), U32String(""), 'c');
 	_tab = new TabWidget(this, 0, 0, _w, _h - 54);
 
 	_tabVideo = _tab->addTab(_("Video"), "");
@@ -58,13 +58,13 @@ WiiOptionsDialog::WiiOptionsDialog(bool doubleStrike) :
 
 	new StaticTextWidget(_tab, 16, 48, 128, 16,
 						 _("Horizontal underscan:"), Graphics::kTextAlignRight);
-	_sliderUnderscanX = new SliderWidget(_tab, 160, 47, 128, 18, 0, 'x');
+	_sliderUnderscanX = new SliderWidget(_tab, 160, 47, 128, 18, U32String(""), 'x');
 	_sliderUnderscanX->setMinValue(0);
 	_sliderUnderscanX->setMaxValue(32);
 
 	new StaticTextWidget(_tab, 16, 80, 128, 16,
 						 _("Vertical underscan:"), Graphics::kTextAlignRight);
-	_sliderUnderscanY = new SliderWidget(_tab, 160, 79, 128, 18, 0, 'y');
+	_sliderUnderscanY = new SliderWidget(_tab, 160, 79, 128, 18, U32String(""), 'y');
 	_sliderUnderscanY->setMinValue(0);
 	_sliderUnderscanY->setMaxValue(32);
 
@@ -72,13 +72,13 @@ WiiOptionsDialog::WiiOptionsDialog(bool doubleStrike) :
 
 	new StaticTextWidget(_tab, 16, 16, 128, 16,
 						 _("GC Pad sensitivity:"), Graphics::kTextAlignRight);
-	_sliderPadSensitivity = new SliderWidget(_tab, 160, 15, 128, 18, 0, 'x');
+	_sliderPadSensitivity = new SliderWidget(_tab, 160, 15, 128, 18, U32String(""), 'x');
 	_sliderPadSensitivity->setMinValue(0);
 	_sliderPadSensitivity->setMaxValue(64);
 
 	new StaticTextWidget(_tab, 16, 44, 128, 16,
 						 _("GC Pad acceleration:"), Graphics::kTextAlignRight);
-	_sliderPadAcceleration = new SliderWidget(_tab, 160, 43, 128, 18, 0, 'y');
+	_sliderPadAcceleration = new SliderWidget(_tab, 160, 43, 128, 18, U32String(""), 'y');
 	_sliderPadAcceleration->setMinValue(0);
 	_sliderPadAcceleration->setMaxValue(8);
 
@@ -90,8 +90,8 @@ WiiOptionsDialog::WiiOptionsDialog(bool doubleStrike) :
 	_textDVDStatus = new StaticTextWidget(_tab, 96, 16, 272, 16, _("Unknown"),
 											Graphics::kTextAlignLeft);
 
-	new ButtonWidget(_tab, 16, 48, 108, 24, _("Mount DVD"), 0, 'mdvd');
-	new ButtonWidget(_tab, 140, 48, 108, 24, _("Unmount DVD"), 0, 'udvd');
+	new ButtonWidget(_tab, 16, 48, 108, 24, _("Mount DVD"), U32String(""), 'mdvd');
+	new ButtonWidget(_tab, 140, 48, 108, 24, _("Unmount DVD"), U32String(""), 'udvd');
 #endif
 
 #ifdef USE_WII_SMB
@@ -104,24 +104,24 @@ WiiOptionsDialog::WiiOptionsDialog(bool doubleStrike) :
 
 	new StaticTextWidget(_tab, 16, 52, 64, 16,
 						 _("Server:"), Graphics::kTextAlignRight);
-	_editSMBServer = new EditTextWidget(_tab, 96, 48, _w - 96 - 32, 24, "");
+	_editSMBServer = new EditTextWidget(_tab, 96, 48, _w - 96 - 32, 24, U32String(""));
 
 	new StaticTextWidget(_tab, 16, 92, 64, 16,
 						 _("Share:"), Graphics::kTextAlignRight);
-	_editSMBShare = new EditTextWidget(_tab, 96, 88, _w - 96 - 32, 24, "");
+	_editSMBShare = new EditTextWidget(_tab, 96, 88, _w - 96 - 32, 24, U32String(""));
 
 	new StaticTextWidget(_tab, 16, 132, 64, 16,
 						 _("Username:"), Graphics::kTextAlignRight);
-	_editSMBUsername = new EditTextWidget(_tab, 96, 128, _w - 96 - 32, 24, "");
+	_editSMBUsername = new EditTextWidget(_tab, 96, 128, _w - 96 - 32, 24, U32String(""));
 
 	new StaticTextWidget(_tab, 16, 172, 64, 16,
 						 _("Password:"), Graphics::kTextAlignRight);
-	_editSMBPassword = new EditTextWidget(_tab, 96, 168, _w - 96 - 32, 24, "");
+	_editSMBPassword = new EditTextWidget(_tab, 96, 168, _w - 96 - 32, 24, U32String(""));
 
-	new ButtonWidget(_tab, 16, 208, 108, 24, _("Init network"), 0, 'net');
+	new ButtonWidget(_tab, 16, 208, 108, 24, _("Init network"), U32String(""), 'net');
 
-	new ButtonWidget(_tab, 140, 208, 108, 24, _("Mount SMB"), 0, 'msmb');
-	new ButtonWidget(_tab, 264, 208, 108, 24, _("Unmount SMB"), 0, 'usmb');
+	new ButtonWidget(_tab, 140, 208, 108, 24, _("Mount SMB"), U32String(""), 'msmb');
+	new ButtonWidget(_tab, 264, 208, 108, 24, _("Unmount SMB"), U32String(""), 'usmb');
 #endif
 
 	_tab->setActiveTab(_tabVideo);
@@ -153,7 +153,7 @@ void WiiOptionsDialog::handleTickle() {
 #ifdef USE_WII_SMB
 	if (tab == _tabSMB) {
 		s32 status = net_get_status();
-		String label;
+		U32String label;
 
 		switch (status) {
 		case 0:
@@ -183,7 +183,7 @@ void WiiOptionsDialog::handleTickle() {
 			break;
 
 		default:
-			label = String::format(_("Network not initialized (%d)"), status);
+			label = U32String::format(_("Network not initialized (%d)"), status);
 			break;
 		}
 
