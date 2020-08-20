@@ -28,7 +28,7 @@
 #include "graphics/pixelformat.h"
 #include "graphics/scaler.h"
 #include "common/events.h"
-#include "common/system.h"
+#include "common/mutex.h"
 
 #include "backends/events/sdl/sdl-events.h"
 
@@ -397,7 +397,7 @@ protected:
 	 * Mutex which prevents multiple threads from interfering with each other
 	 * when accessing the screen.
 	 */
-	OSystem::MutexRef _graphicsMutex;
+	Common::Mutex _graphicsMutex;
 
 #ifdef USE_SDL_DEBUG_FOCUSRECT
 	bool _enableFocusRectDebugCode;

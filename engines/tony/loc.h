@@ -30,7 +30,7 @@
 #define TONY_LOC_H
 
 #include "common/scummsys.h"
-#include "common/system.h"
+#include "common/mutex.h"
 #include "common/file.h"
 #include "tony/sound.h"
 #include "tony/utils.h"
@@ -384,7 +384,7 @@ private:
 	int _curSpeed;
 	bool _bEndOfPath;
 	uint32 _hEndOfPath;
-	OSystem::MutexRef _csMove;
+	Common::Mutex _csMove;
 	int _curLocation;
 	bool _bRemoveFromOT;
 	bool _bMovingWithoutMinpath;

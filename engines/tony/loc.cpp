@@ -891,10 +891,10 @@ bool RMCharacter::findPath(short source, short destination) {
 	bool error = false;
 	RMBoxLoc *cur;
 
-	g_system->lockMutex(_csMove);
+	_csMove.lock();
 
 	if (source == -1 || destination == -1) {
-		g_system->unlockMutex(_csMove);
+		_csMove.unlock();
 		return 0;
 	}
 
@@ -973,7 +973,7 @@ bool RMCharacter::findPath(short source, short destination) {
 		_pathLength++;
 	}
 
-	g_system->unlockMutex(_csMove);
+	_csMove.unlock();
 
 	return !error;
 }
@@ -1327,7 +1327,7 @@ void RMCharacter::doFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int loc) {
 	_bEndOfPath = false;
 	_bDrawNow = (_curLocation == loc);
 
-	g_system->lockMutex(_csMove);
+	_csMove.lock();
 
 	// If we're walking..
 	if (_status != STAND) {
@@ -1422,7 +1422,7 @@ void RMCharacter::doFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int loc) {
 		}
 	}
 
-	g_system->unlockMutex(_csMove);
+	_csMove.unlock();
 
 	// Invoke the DoFrame of the item
 	RMItem::doFrame(bigBuf);
@@ -1616,7 +1616,6 @@ void RMCharacter::removeThis(CORO_PARAM, bool &result) {
 }
 
 RMCharacter::RMCharacter() {
-	_csMove = g_system->createMutex();
 	_hEndOfPath = CoroScheduler.createEvent(false, false);
 	_minPath = 0;
 	_curSpeed = 3;
@@ -1644,7 +1643,6 @@ RMCharacter::RMCharacter() {
 }
 
 RMCharacter::~RMCharacter() {
-	g_system->deleteMutex(_csMove);
 	CoroScheduler.closeEvent(_hEndOfPath);
 }
 

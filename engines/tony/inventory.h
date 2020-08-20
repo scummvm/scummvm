@@ -30,7 +30,7 @@
 #define TONY_INVENTORY_H
 
 #include "common/scummsys.h"
-#include "common/system.h"
+#include "common/mutex.h"
 #include "tony/font.h"
 #include "tony/game.h"
 #include "tony/gfxcore.h"
@@ -76,7 +76,7 @@ protected:
 	RMItem _miniInterface;
 	RMText _hints[3];
 
-	OSystem::MutexRef _csModifyInterface;
+	Common::Mutex _csModifyInterface;
 
 protected:
 	/**

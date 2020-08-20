@@ -452,7 +452,7 @@ private:
 	void mergeDirtyRects();
 
 private:
-	//OSystem::MutexRef csModifyingOT;
+	//Common::Mutex csModifyingOT;
 
 protected:
 	OTList *_otlist;
