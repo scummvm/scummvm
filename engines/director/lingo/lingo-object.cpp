@@ -602,7 +602,7 @@ bool CastMember::setField(int field, const Datum &d) {
 		warning("STUB: CastMember::setField(): Unprocessed setting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
 		return false;
 	case kTheCastType:
-		warning("Lingo::setTheCast(): Attempt to set read-only field %s of cast %d", g_lingo->entity2str(field), _castId);
+		warning("CastMember::setField(): Attempt to set read-only field %s of cast %d", g_lingo->entity2str(field), _castId);
 		return false;
 	case kTheFileName:
 		if (!castInfo) {
@@ -688,7 +688,7 @@ Datum DigitalVideoCastMember::getField(int field) {
 		d = _directToStage;
 		break;
 	case kTheDuration:
-		warning("STUB: DigitalVideoCastMember::getField(): Unprocessed getting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
+		d = _duration;
 		break;
 	case kTheFrameRate:
 		d = _frameRate;
@@ -730,7 +730,7 @@ bool DigitalVideoCastMember::setField(int field, const Datum &d) {
 		_directToStage = (bool)d.asInt();
 		return true;
 	case kTheDuration:
-		warning("STUB: DigitalVideoCastMember::setField(): Unprocessed setting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
+		warning("DigitalVideoCastMember::setField(): Attempt to set read-only field %s of cast %d", g_lingo->entity2str(field), _castId);
 		return false;
 	case kTheFrameRate:
 		_frameRate = d.asInt();

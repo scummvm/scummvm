@@ -259,6 +259,7 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common
 	_video = nullptr;
 
 	_getFirstFrame = false;
+	_duration = 0;
 
 	_initialRect = Movie::readRect(stream);
 	_vflags = stream.readUint32();
@@ -335,6 +336,8 @@ void DigitalVideoCastMember::startVideo(Channel *channel) {
 
 	if (_channel->_stopTime == 0)
 		_channel->_stopTime = getMovieTotalTime();
+
+	_duration = getMovieTotalTime();
 }
 
 Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Channel *channel) {

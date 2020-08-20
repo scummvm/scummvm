@@ -170,6 +170,7 @@ public:
 
 	uint16 _frameRate;
 	bool _getFirstFrame;
+	int _duration;
 
 	Video::VideoDecoder *_video;
 
