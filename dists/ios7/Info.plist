@@ -37,6 +37,8 @@
 	<true/>
 	<key>UILaunchImages</key>
 	<array/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen_ios</string>
 	<key>UIPrerenderedIcon</key>
 	<true/>
 	<key>UIRequiresFullScreen</key>
