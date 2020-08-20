@@ -405,7 +405,7 @@ void LC::cb_localcall() {
 
 void LC::cb_objectcall() {
 	int varType = g_lingo->readInt();
-	Datum varId = g_lingo->pop();
+	Datum varId = g_lingo->pop(false);
 	Datum nargs = g_lingo->pop();
 
 	Datum var = g_lingo->findVarV4(varType, varId);
@@ -424,7 +424,6 @@ void LC::cb_objectcall() {
 		// The first arg could be either a method name or a variable name
 		if (firstArg.type == SYMBOL) {
 			firstArg.type = VAR;
-			firstArg.lazy = true; // var will be evaluated on pop
 		}
 	}
 
@@ -436,7 +435,7 @@ void LC::cb_v4assign() {
 	int arg = g_lingo->readInt();
 	int op = (arg >> 4) & 0xF;
 	int varType = arg & 0xF;
-	Datum varId = g_lingo->pop();
+	Datum varId = g_lingo->pop(false);
 
 	Datum var = g_lingo->findVarV4(varType, varId);
 	g_lingo->push(var);

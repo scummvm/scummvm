@@ -736,14 +736,12 @@ int Lingo::getAlignedType(const Datum &d1, const Datum &d2, bool numsOnly) {
 Datum::Datum() {
 	u.s = nullptr;
 	type = VOID;
-	lazy = false;
 	refCount = new int;
 	*refCount = 1;
 }
 
 Datum::Datum(const Datum &d) {
 	type = d.type;
-	lazy = d.lazy;
 	u = d.u;
 	refCount = d.refCount;
 	*refCount += 1;
@@ -763,7 +761,6 @@ Datum& Datum::operator=(const Datum &d) {
 Datum::Datum(int val) {
 	u.i = val;
 	type = INT;
-	lazy = false;
 	refCount = new int;
 	*refCount = 1;
 }
@@ -771,7 +768,6 @@ Datum::Datum(int val) {
 Datum::Datum(double val) {
 	u.f = val;
 	type = FLOAT;
-	lazy = false;
 	refCount = new int;
 	*refCount = 1;
 }
@@ -779,14 +775,12 @@ Datum::Datum(double val) {
 Datum::Datum(const Common::String &val) {
 	u.s = new Common::String(val);
 	type = STRING;
-	lazy = false;
 	refCount = new int;
 	*refCount = 1;
 }
 
 Datum::Datum(AbstractObject *val) {
 	u.obj = val;
-	lazy = false;
 	if (val) {
 		type = OBJECT;
 		refCount = val->getRefCount();
@@ -841,7 +835,6 @@ void Datum::reset() {
 
 Datum Datum::eval() {
 	if (type != VAR) { // It could be cast ref
-		lazy = false;
 		return *this;
 	}
 
@@ -1013,10 +1006,6 @@ Common::String Datum::asString(bool printonly) const {
 		break;
 	default:
 		warning("Incorrect operation asString() for type: %s", type2str());
-	}
-
-	if (printonly && lazy) {
-		s += " (lazy)";
 	}
 
 	return s;

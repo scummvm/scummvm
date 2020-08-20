@@ -109,7 +109,6 @@ struct Symbol {	/* symbol table entry */
 
 struct Datum {	/* interpreter stack type */
 	int type;
-	bool lazy; // evaluate when popped off stack
 
 	union {
 		int	i;				/* INT, ARGC, ARGCNORET */

@@ -197,7 +197,7 @@ Datum Lingo::pop(bool eval) {
 
 	Datum ret = _stack.back();
 	_stack.pop_back();
-	if (eval && ret.lazy) {
+	if (eval && ret.type == VAR) {
 		ret = ret.eval();
 	}
 
@@ -208,9 +208,10 @@ Datum Lingo::peek(uint offset, bool eval) {
 	assert (_stack.size() > offset);
 
 	Datum ret = _stack[_stack.size() - 1 - offset];
-	if (eval && ret.lazy) {
+	if (eval && ret.type == VAR) {
 		ret = ret.eval();
 	}
+
 	return ret;
 }
 
@@ -489,7 +490,7 @@ void LC::c_setImmediate() {
 
 void LC::c_assign() {
 	Datum d1, d2;
-	d1 = g_lingo->pop();
+	d1 = g_lingo->pop(false);
 	d2 = g_lingo->pop();
 
 	g_lingo->varAssign(d1, d2);
@@ -516,7 +517,6 @@ void LC::c_lazyeval() {
 
 	Datum d;
 	d = g_lingo->pop();
-	d.lazy = true;
 	g_lingo->push(d);
 }
 
@@ -790,7 +790,7 @@ void LC::c_ampersand() {
 }
 
 void LC::c_putbefore() {
-	Datum var = g_lingo->pop();
+	Datum var = g_lingo->pop(false);
 	Datum a = g_lingo->pop();
 	Datum b = g_lingo->varFetch(var);
 
@@ -799,7 +799,7 @@ void LC::c_putbefore() {
 }
 
 void LC::c_putafter() {
-	Datum var = g_lingo->pop();
+	Datum var = g_lingo->pop(false);
 	Datum a = g_lingo->pop();
 	Datum b = g_lingo->varFetch(var);
 
@@ -1458,7 +1458,7 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 		Datum firstArg = g_lingo->_stack[g_lingo->_stack.size() - nargs];
 
 		// Factory/XObject method call
-		if (firstArg.lazy) { // first arg could be method name
+		if (firstArg.type == VAR) { // first arg could be method name
 			Datum objName(name);
 			objName.type = VAR;
 			Datum obj = g_lingo->varFetch(objName, false, nullptr, true);
