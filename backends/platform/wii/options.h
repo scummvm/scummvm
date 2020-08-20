@@ -24,6 +24,7 @@
 #define _WII_OPTIONS_H_
 
 #include "common/str.h"
+#include "common/ustr.h"
 #include "gui/dialog.h"
 #include "gui/widgets/tab.h"
 #include "gui/widgets/edittext.h"
@@ -32,6 +33,7 @@ using namespace GUI;
 
 class WiiOptionsDialog: public GUI::Dialog {
 	typedef Common::String String;
+	typedef Common::U32String U32String;
 
 public:
 	WiiOptionsDialog(bool doubleStrike);
