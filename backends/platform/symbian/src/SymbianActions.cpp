@@ -74,7 +74,7 @@ void SymbianActions::init() {
 }
 
 
-Common::String SymbianActions::actionName(ActionType action) {
+Common::U32String SymbianActions::actionName(ActionType action) {
 	return _(actionNames[action]);
 }
 
