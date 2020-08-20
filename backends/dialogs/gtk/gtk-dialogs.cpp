@@ -41,13 +41,14 @@ Common::DialogManager::DialogResult GtkDialogManager::showFileBrowser(const Comm
 
 	DialogResult result = kDialogCancel;
 
-	Common::U32String choose = _("Choose");
-	Common::U32String cancel = _("Cancel");
-
 	// Convert labels to UTF-8
-	char *utf8Title = (char *)title.encode().c_str();
-	char *utf8Choose = (char *)choose.encode().c_str();
-	char* utf8Cancel = (char *)cancel.encode().c_str();
+	Common::String titleStr = title.encode();
+	Common::String choose = _("Choose").encode();
+	Common::String cancel = _("Cancel").encode();
+
+	char *utf8Title = (char *)(titleStr.c_str());
+	char *utf8Choose = (char *)(choose.c_str());
+	char *utf8Cancel = (char *)(cancel.c_str());
 
 	GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
 	if (isDirBrowser) {
@@ -60,9 +61,6 @@ Common::DialogManager::DialogResult GtkDialogManager::showFileBrowser(const Comm
 	GtkWidget *dialog = gtk_file_chooser_dialog_new(utf8Title, NULL, action, utf8Choose, GTK_RESPONSE_ACCEPT, utf8Cancel, GTK_RESPONSE_CANCEL, NULL);
 	GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
 #endif
-	free(utf8Cancel);
-	free(utf8Choose);
-	free(utf8Title);
 
 	// Customize dialog
 	gtk_file_chooser_set_show_hidden(chooser, ConfMan.getBool("gui_browser_show_hidden", Common::ConfigManager::kApplicationDomain));
