@@ -14,6 +14,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      Hugo, JACL, Level 9, Magnetic Scrolls, Quest, Scott Adams,
      ZCode (all ZCode games except the Infocom graphical version 6 games).
      Currently, more than 1600 games are detected and supported.
+   - Added support for Blaze Dragons.
 
  General:
    - Autosaves are now supported for all the engines.
