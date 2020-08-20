@@ -24,6 +24,7 @@
 #include "glk/quetzal.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
+#include "common/ustr.h"
 
 namespace Glk {
 namespace Scott {
@@ -164,6 +165,18 @@ void Scott::display(winid_t w, const char *fmt, ...) {
 	va_end(ap);
 
 	glk_put_string_stream(glk_window_get_stream(w), msg.c_str());
+}
+
+void Scott::display(winid_t w, const Common::U32String fmt, ...) {
+	Common::U32String msg;
+
+	va_list ap;
+
+	va_start(ap, fmt);
+	Common::U32String::vformat(fmt.begin(), fmt.end(), msg, ap);
+	va_end(ap);
+
+	glk_put_string_stream_uni(glk_window_get_stream(w), msg.c_str());
 }
 
 void Scott::delay(int seconds) {
@@ -385,13 +398,18 @@ void Scott::output(const Common::String &a) {
 		display(_bottomWindow, "%s", a.c_str());
 }
 
+void Scott::output(const Common::U32String &a) {
+	if (_saveSlot == -1)
+		display(_bottomWindow, Common::U32String("%S"), a.c_str());
+}
+
 void Scott::outputNumber(int a) {
 	display(_bottomWindow, "%d", a);
 }
 
 void Scott::look(void) {
-	const char *const ExitNames[6] = {
-		_("North").encode().c_str(), _("South").encode().c_str(), _("East").encode().c_str(), _("West").encode().c_str(), _("Up").encode().c_str(), _("Down").encode().c_str()
+	const uint32 *const ExitNames[6] = {
+		_("North").c_str(), _("South").c_str(), _("East").c_str(), _("West").c_str(), _("Up").c_str(), _("Down").c_str()
 	};
 	Room *r;
 	int ct, f;
@@ -403,9 +421,9 @@ void Scott::look(void) {
 	if ((_bitFlags & (1 << DARKBIT)) && _items[LIGHT_SOURCE]._location != CARRIED
 			&& _items[LIGHT_SOURCE]._location != MY_LOC) {
 		if (_options & YOUARE)
-			display(_topWindow, _("You can't see. It is too dark!\n").encode().c_str());
+			display(_topWindow, _("You can't see. It is too dark!\n"));
 		else
-			display(_topWindow, _("I can't see. It is too dark!\n").encode().c_str());
+			display(_topWindow, _("I can't see. It is too dark!\n"));
 		if (_options & TRS80_STYLE)
 			display(_topWindow, TRS80_LINE);
 		return;
@@ -415,27 +433,27 @@ void Scott::look(void) {
 		display(_topWindow, "%s\n", r->_text.c_str() + 1);
 	else {
 		if (_options & YOUARE)
-			display(_topWindow, _("You are in a %s\n").encode().c_str(), r->_text.c_str());
+			display(_topWindow, _("You are in a %s\n"), r->_text.c_str());
 		else
-			display(_topWindow, _("I'm in a %s\n").encode().c_str(), r->_text.c_str());
+			display(_topWindow, _("I'm in a %s\n"), r->_text.c_str());
 	}
 
 	ct = 0;
 	f = 0;
-	display(_topWindow, _("\nObvious exits: ").encode().c_str());
+	display(_topWindow, _("\nObvious exits: "));
 	while (ct < 6) {
 		if (r->_exits[ct] != 0) {
 			if (f == 0)
 				f = 1;
 			else
 				display(_topWindow, ", ");
-			display(_topWindow, "%s", ExitNames[ct]);
+			display(_topWindow, Common::U32String("%S"), ExitNames[ct]);
 		}
 		ct++;
 	}
 
 	if (f == 0)
-		display(_topWindow, _("none").encode().c_str());
+		display(_topWindow, _("none"));
 	display(_topWindow, ".\n");
 	ct = 0;
 	f = 0;
@@ -444,10 +462,10 @@ void Scott::look(void) {
 		if (_items[ct]._location == MY_LOC) {
 			if (f == 0) {
 				if (_options & YOUARE) {
-					display(_topWindow, _("\nYou can also see: ").encode().c_str());
+					display(_topWindow, _("\nYou can also see: "));
 					pos = 18;
 				} else {
-					display(_topWindow, _("\nI can also see: ").encode().c_str());
+					display(_topWindow, _("\nI can also see: "));
 					pos = 16;
 				}
 				f++;
