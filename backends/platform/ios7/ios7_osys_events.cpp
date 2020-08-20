@@ -309,7 +309,7 @@ bool OSystem_iOS7::handleEvent_mouseSecondDragged(Common::Event &event, int x, i
 		if (absX < kMaxDeviation && -vecY >= kNeededLength) {
 			// Swipe up
 			_mouseClickAndDragEnabled = !_mouseClickAndDragEnabled;
-			const char *dialogMsg;
+			Common::U32String dialogMsg;
 			if (_mouseClickAndDragEnabled) {
 				_touchpadModeEnabled = false;
 				dialogMsg = _("Mouse-click-and-drag mode enabled.");
@@ -323,7 +323,7 @@ bool OSystem_iOS7::handleEvent_mouseSecondDragged(Common::Event &event, int x, i
 		if (absY < kMaxDeviation && vecX >= kNeededLength) {
 			// Swipe right
 			_touchpadModeEnabled = !_touchpadModeEnabled;
-			const char *dialogMsg;
+			Common::U32String dialogMsg;
 			if (_touchpadModeEnabled)
 				dialogMsg = _("Touchpad mode enabled.");
 			else
@@ -437,7 +437,7 @@ bool OSystem_iOS7::handleEvent_swipe(Common::Event &event, int direction, int to
 		switch ((UIViewSwipeDirection)direction) {
 		case kUIViewSwipeUp: {
 			_mouseClickAndDragEnabled = !_mouseClickAndDragEnabled;
-			const char *dialogMsg;
+			Common::U32String dialogMsg;
 			if (_mouseClickAndDragEnabled) {
 				_touchpadModeEnabled = false;
 				dialogMsg = _("Mouse-click-and-drag mode enabled.");
@@ -459,7 +459,7 @@ bool OSystem_iOS7::handleEvent_swipe(Common::Event &event, int direction, int to
 		case kUIViewSwipeRight: {
 			// Swipe right
 			_touchpadModeEnabled = !_touchpadModeEnabled;
-			const char *dialogMsg;
+			Common::U32String dialogMsg;
 			if (_touchpadModeEnabled)
 				dialogMsg = _("Touchpad mode enabled.");
 			else
