@@ -6014,6 +6014,35 @@ static const uint16 kq7SnakeOilSalesmanPatch[] = {
 	PATCH_END
 };
 
+// In KQ7 1.65c, when Chicken Petite appears in room 5300 after leaving the
+//  china shop, the script sends a message to a non-object. Several script and
+//  export numbers changed from the previous version, but chickenCartoon2 wasn't
+//  updated to call ScriptID with the new values. Instead, the stale values
+//  return a procedure address instead of the chickenTimerScript object.
+//
+// We fix this by using chickenTimerScript's correct script and export numbers.
+//
+// Applies to: English PC 1.65c, French PC 1.65c, probably German 1.65c
+// Responsible method: chickenCartoon2:changeState(9)
+// Fixes bug: #11575
+static const uint16 kq7ChickenCartoonSignature[] = {
+	0x38, SIG_MAGICDWORD, SIG_UINT16(0x14b4), // pushi 14b4
+	0x39, 0x03,                               // pushi 03
+	0x43, 0x02, SIG_UINT16(0x0004),           // callk ScriptID [ ScriptID 5300 3 ]
+	SIG_ADDTOOFFSET(+0x037b),
+	// this part of the signature matches 1.65c while excluding earlier versions
+	0x38, SIG_UINT16(0x14b5),                 // pushi 14b5
+	0x39, 0x03,                               // pushi 03
+	0x43, 0x02, SIG_UINT16(0x0004),           // callk ScriptID [ ScriptID 5301 3 ]
+	SIG_END
+};
+
+static const uint16 kq7ChickenCartoonPatch[] = {
+	0x38, PATCH_UINT16(0x14b6),               // pushi 14b6 [ script 5302 ]
+	0x39, 0x16,                               // pushi 16   [ export 22   ]
+	PATCH_END
+};
+
 // KQ7 allows a maximum of 10 save games but English version 2.00 introduced a
 //  script bug which removed the check that enforces this. We add the missing
 //  check so that the game doesn't break. Sierra later released English version
@@ -6044,6 +6073,7 @@ static const SciScriptPatcherEntry kq7Signatures[] = {
 	{  true,     0, "remove hardcoded spin loop",                  1, kq7PragmaFailSpinSignature,               kq7PragmaFailSpinPatch },
 	{  true,    30, "fix allowing too many saves",                 1, kq7TooManySavesSignature,                 kq7TooManySavesPatch },
 	{  true,  5300, "fix snake oil salesman disposal",             1, kq7SnakeOilSalesmanSignature,             kq7SnakeOilSalesmanPatch },
+	{  true,  5301, "fix chicken cartoon",                         1, kq7ChickenCartoonSignature,               kq7ChickenCartoonPatch },
 	{  true,  6100, "fix extra ambrosia",                          1, kq7ExtraAmbrosiaSignature,                kq7ExtraAmbrosiaPatch },
 	{  true,    31, "enable subtitles (1/3)",                      1, kq7SubtitleFixSignature1,                 kq7SubtitleFixPatch1 },
 	{  true, 64928, "enable subtitles (2/3)",                      1, kq7SubtitleFixSignature2,                 kq7SubtitleFixPatch2 },
