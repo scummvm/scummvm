@@ -408,8 +408,8 @@ void Scott::outputNumber(int a) {
 }
 
 void Scott::look(void) {
-	const uint32 *const ExitNames[6] = {
-		_("North").c_str(), _("South").c_str(), _("East").c_str(), _("West").c_str(), _("Up").c_str(), _("Down").c_str()
+	const Common::U32String ExitNames[6] = {
+		_("North"), _("South"), _("East"), _("West"), _("Up"), _("Down")
 	};
 	Room *r;
 	int ct, f;
@@ -447,7 +447,7 @@ void Scott::look(void) {
 				f = 1;
 			else
 				display(_topWindow, ", ");
-			display(_topWindow, Common::U32String("%S"), ExitNames[ct]);
+			display(_topWindow, Common::U32String("%S"), ExitNames[ct].c_str());
 		}
 		ct++;
 	}
