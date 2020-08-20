@@ -247,38 +247,39 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 		break;
 		// Arithmetic ink types
 	default: {
-		if (src != p->colorWhite) {
-			byte rSrc, gSrc, bSrc;
-			byte rDst, gDst, bDst;
+		if (src == p->colorWhite)
+			break;
 
-			g_director->_wm->decomposeColor(src, rSrc, gSrc, bSrc);
-			g_director->_wm->decomposeColor(*dst, rDst, gDst, bDst);
+		byte rSrc, gSrc, bSrc;
+		byte rDst, gDst, bDst;
 
-			switch (p->ink) {
-			case kInkTypeBlend:
-					*dst = p->_wm->findBestColor((rSrc + rDst) / 2, (gSrc + gDst) / 2, (bSrc + bDst) / 2);
-				break;
-			case kInkTypeAddPin:
-					*dst = p->_wm->findBestColor(MIN((rSrc + rDst), 0xff), MIN((gSrc + gDst), 0xff), MIN((bSrc + bDst), 0xff));
-				break;
-			case kInkTypeAdd:
-					*dst = p->_wm->findBestColor(abs(rSrc + rDst) % 0xff + 1, abs(gSrc + gDst) % 0xff + 1, abs(bSrc + bDst) % 0xff + 1);
-				break;
-			case kInkTypeSubPin:
-					*dst = p->_wm->findBestColor(MAX(rSrc - rDst, 0), MAX(gSrc - gDst, 0), MAX(bSrc - bDst, 0));
-				break;
-			case kInkTypeLight:
-					*dst = p->_wm->findBestColor(MAX(rSrc, rDst), MAX(gSrc, gDst), MAX(bSrc, bDst));
-				break;
-			case kInkTypeSub:
-					*dst = p->_wm->findBestColor(abs(rSrc - rDst) % 0xff + 1, abs(gSrc - gDst) % 0xff + 1, abs(bSrc - bDst) % 0xff + 1);
-				break;
-			case kInkTypeDark:
-					*dst = p->_wm->findBestColor(MIN(rSrc, rDst), MIN(gSrc, gDst), MIN(bSrc, bDst));
-				break;
-			default:
-				break;
-			}
+		g_director->_wm->decomposeColor(src, rSrc, gSrc, bSrc);
+		g_director->_wm->decomposeColor(*dst, rDst, gDst, bDst);
+
+		switch (p->ink) {
+		case kInkTypeBlend:
+				*dst = p->_wm->findBestColor((rSrc + rDst) / 2, (gSrc + gDst) / 2, (bSrc + bDst) / 2);
+			break;
+		case kInkTypeAddPin:
+				*dst = p->_wm->findBestColor(MIN((rSrc + rDst), 0xff), MIN((gSrc + gDst), 0xff), MIN((bSrc + bDst), 0xff));
+			break;
+		case kInkTypeAdd:
+				*dst = p->_wm->findBestColor(abs(rSrc + rDst) % 0xff + 1, abs(gSrc + gDst) % 0xff + 1, abs(bSrc + bDst) % 0xff + 1);
+			break;
+		case kInkTypeSubPin:
+				*dst = p->_wm->findBestColor(MAX(rSrc - rDst, 0), MAX(gSrc - gDst, 0), MAX(bSrc - bDst, 0));
+			break;
+		case kInkTypeLight:
+				*dst = p->_wm->findBestColor(MAX(rSrc, rDst), MAX(gSrc, gDst), MAX(bSrc, bDst));
+			break;
+		case kInkTypeSub:
+				*dst = p->_wm->findBestColor(abs(rSrc - rDst) % 0xff + 1, abs(gSrc - gDst) % 0xff + 1, abs(bSrc - bDst) % 0xff + 1);
+			break;
+		case kInkTypeDark:
+				*dst = p->_wm->findBestColor(MIN(rSrc, rDst), MIN(gSrc, gDst), MIN(bSrc, bDst));
+			break;
+		default:
+			break;
 		}
 	}
 	}
@@ -323,6 +324,5 @@ void DirectorPlotData::setApplyColor() {
 			applyColor = true;
 	}
 }
-
 
 }
