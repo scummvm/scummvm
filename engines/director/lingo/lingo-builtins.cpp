@@ -1015,8 +1015,10 @@ void LB::b_setAt(int nargs) {
 		if ((uint)index <= list.u.farr->size()) {
 			list.u.farr->operator[](index - 1) = value;
 		} else {
-			// TODO: Extend the list if we request an index beyond it
-			ARRBOUNDSCHECK(index, list);
+			int inserts = index - list.u.farr->size();
+			while (--inserts)
+				list.u.farr->push_back(Datum(0));
+			list.u.farr->push_back(value);
 		}
 		break;
 	case PARRAY:
