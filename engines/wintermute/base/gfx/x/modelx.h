@@ -77,8 +77,9 @@ private:
 			_theora = nullptr;
 			_matName = nullptr;
 			uint32 size = strlen(matName);
-			_matName = new char[size];
+			_matName = new char[size + 1];
 			Common::copy(matName, matName + size, _matName);
+			_matName[size] = 0;
 			_sprite = sprite;
 		}
 
@@ -86,8 +87,9 @@ private:
 			_sprite = nullptr;
 			_matName = nullptr;
 			uint32 size = strlen(matName);
-			_matName = new char[size];
+			_matName = new char[size + 1];
 			Common::copy(matName, matName + size, _matName);
+			_matName[size] = 0;
 			_theora = theora;
 		}
 
