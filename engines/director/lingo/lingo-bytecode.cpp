@@ -1504,4 +1504,4 @@ void LingoArchive::addNamesV4(Common::SeekableReadStreamEndian &stream) {
 
 }
 
-}
+} // end of namespace Director
