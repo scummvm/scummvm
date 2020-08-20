@@ -274,6 +274,11 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 	bool replace = isDirty(nextSprite);
 
 	if (nextSprite) {
+		if (_sprite->_castId != nextSprite->_castId && nextSprite->_cast) {
+			if (nextSprite->_cast->_type == kCastDigitalVideo)
+				((DigitalVideoCastMember *)nextSprite->_cast)->startVideo(this);
+		}
+
 		if (_sprite->_puppet || partial) {
 			// Updating scripts, etc. does not require a full re-render
 			_sprite->_scriptId = nextSprite->_scriptId;

@@ -140,6 +140,7 @@ public:
 	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel) override;
 
 	bool loadVideo(Common::String path);
+	void startVideo(Channel *channel);
 
 	uint getMovieCurrentTime();
 	uint getMovieTotalTime();
@@ -168,6 +169,7 @@ public:
 	FrameRateType _frameRateType;
 
 	uint16 _frameRate;
+	bool _getFirstFrame;
 
 	Video::VideoDecoder *_video;
 

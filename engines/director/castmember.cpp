@@ -258,6 +258,8 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common
 	_type = kCastDigitalVideo;
 	_video = nullptr;
 
+	_getFirstFrame = false;
+
 	_initialRect = Movie::readRect(stream);
 	_vflags = stream.readUint32();
 	_frameRate = (_vflags >> 24) & 0xff;
@@ -314,6 +316,27 @@ bool DigitalVideoCastMember::isModified() {
 	return _video->needsUpdate();
 }
 
+void DigitalVideoCastMember::startVideo(Channel *channel) {
+	_channel = channel;
+
+	if (_pausedAtStart) {
+		_getFirstFrame = true;
+	} else {
+		if (_channel->_movieRate == 0.0)
+			_channel->_movieRate = 1.0;
+	}
+
+	if (_video->isPlaying())
+		_video->rewind();
+	else
+		_video->start();
+
+	debugC(2, kDebugImages, "STARTING VIDEO %s", _filename.c_str());
+
+	if (_channel->_stopTime == 0)
+		_channel->_stopTime = getMovieTotalTime();
+}
+
 Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Channel *channel) {
 	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
 
@@ -326,15 +349,6 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 	if (!_video || !_video->isVideoLoaded()) {
 		warning("DigitalVideoCastMember::createWidget: No video decoder");
 		return nullptr;
-	}
-
-	// FIXME: HACK: We need to understand when really start the video
-	if (!_video->isPlaying()) {
-		_video->start();
-		debugC(2, kDebugImages, "STARTING VIDEO %s", _filename.c_str());
-
-		if (_channel->_stopTime == 0)
-			_channel->_stopTime = getMovieTotalTime();
 	}
 
 	debugC(2, kDebugImages, "Video time: %d  rate: %f", _channel->_movieTime, _channel->_movieRate);
@@ -354,6 +368,11 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 			widget->getSurface()->blitFrom(*surf);
 			delete surf;
 		}
+	}
+
+	if (_getFirstFrame) {
+		_video->stop();
+		_getFirstFrame = false;
 	}
 
 	if (_video->endOfVideo())
