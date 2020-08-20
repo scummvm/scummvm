@@ -56,15 +56,15 @@ void TopMenu::init() {
 	int x = kMenuX;
 	int y = kMenuY;
 
-	_whatButton =		new GUI::PicButtonWidget(this,	x, y, kButtonWidth, kButtonHeight,	Common::U32String("What is it?"),				kCmdWhat);
-	_musicButton =		new GUI::PicButtonWidget(this,	x, y, kButtonWidth, kButtonHeight,	Common::U32String("Music"),						kCmdMusic);
-	_soundFXButton =	new GUI::PicButtonWidget(this,	x, y, kButtonWidth, kButtonHeight,	Common::U32String("Sound FX"),					kCmdSoundFX);
-	_saveButton =		new GUI::PicButtonWidget(this,	x, y, kButtonWidth, kButtonHeight,	Common::U32String("Save game"),					kCmdSave);
-	_loadButton =		new GUI::PicButtonWidget(this,	x, y, kButtonWidth, kButtonHeight,	Common::U32String("Load game"),					kCmdLoad);
-	_recallButton =		new GUI::PicButtonWidget(this,	x, y, kButtonWidth, kButtonHeight,	Common::U32String("Recall last command"),		kCmdRecall);
-	_turboButton =		new GUI::PicButtonWidget(this,	x, y, kButtonWidth, kButtonHeight,	Common::U32String("Turbo"),						kCmdTurbo);
-	_lookButton =		new GUI::PicButtonWidget(this,	x, y, kButtonWidth, kButtonHeight,	Common::U32String("Description of the scene"),	kCmdLook);
-	_inventButton =		new GUI::PicButtonWidget(this,	x, y, kButtonWidth, kButtonHeight,	Common::U32String("Inventory"),					kCmdInvent);
+	_whatButton    =  new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight,	Common::U32String("What is it?"),              kCmdWhat);
+	_musicButton   =  new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight,	Common::U32String("Music"),                    kCmdMusic);
+	_soundFXButton =  new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight,	Common::U32String("Sound FX"),                 kCmdSoundFX);
+	_saveButton    =  new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight,	Common::U32String("Save game"),                kCmdSave);
+	_loadButton    =  new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight,	Common::U32String("Load game"),                kCmdLoad);
+	_recallButton  =  new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight,	Common::U32String("Recall last command"),      kCmdRecall);
+	_turboButton   =  new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight,	Common::U32String("Turbo"),                    kCmdTurbo);
+	_lookButton    =  new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight,	Common::U32String("Description of the scene"), kCmdLook);
+	_inventButton  =  new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight,	Common::U32String("Inventory"),                kCmdInvent);
 }
 
 void TopMenu::reflowLayout() {
