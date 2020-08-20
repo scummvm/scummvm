@@ -343,7 +343,7 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 	_channel = channel;
 
 	// Do not render stopped videos
-	if (_channel->_movieRate == 0.0)
+	if (_channel->_movieRate == 0.0 && !_pausedAtStart)
 		return nullptr;
 
 	if (!_video || !_video->isVideoLoaded()) {
@@ -421,11 +421,14 @@ void DigitalVideoCastMember::setStopTime(int stamp) {
 	_video->setEndTime(Audio::Timestamp(_channel->_stopTime * 1000 / 60, dur.framerate()));
 }
 
-void DigitalVideoCastMember::setMovieRate(int rate) {
+void DigitalVideoCastMember::setMovieRate(double rate) {
 	if (!_video)
 		return;
 
-	warning("STUB: DigitalVideoCastMember::setMovieRate(%d)", rate);
+	if (rate < 0.0)
+		warning("STUB: DigitalVideoCastMember::setMovieRate(%g)", rate);
+	else
+		_video->setRate(Common::Rational((int)(rate * 100.0), 100));
 }
 
 void DigitalVideoCastMember::setFrameRate(int rate) {

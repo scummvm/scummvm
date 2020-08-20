@@ -146,7 +146,7 @@ public:
 	uint getMovieTotalTime();
 	void seekMovie(int stamp);
 	void setStopTime(int stamp);
-	void setMovieRate(int rate);
+	void setMovieRate(double rate);
 	void setFrameRate(int rate);
 
 	bool hasField(int field) override;

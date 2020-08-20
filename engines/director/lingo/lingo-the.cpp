@@ -1172,9 +1172,10 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.i = sprite->_moveable;
 		break;
 	case kTheMovieRate:
-		d.u.i = channel->_movieRate;
+		d.type = FLOAT;
+		d.u.f = channel->_movieRate;
 		if (debugChannelSet(-1, kDebugEndVideo))
-			d.u.i = 0;
+			d.u.f = 0.0;
 		break;
 	case kTheMovieTime:
 		d.u.i = channel->_movieTime;
@@ -1373,7 +1374,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->_moveable = d.asInt();
 		break;
 	case kTheMovieRate:
-		channel->_movieRate = d.asInt();
+		channel->_movieRate = d.asFloat();
 		if (sprite->_cast->_type == kCastDigitalVideo)
 			((DigitalVideoCastMember *)sprite->_cast)->setMovieRate(channel->_movieRate);
 		else
