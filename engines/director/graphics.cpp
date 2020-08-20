@@ -325,4 +325,4 @@ void DirectorPlotData::setApplyColor() {
 	}
 }
 
-}
+} // End of namespace Director

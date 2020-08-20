@@ -941,6 +941,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 };
 
-} // End of Namespace Director
+} // End of namespace Director
 
 #endif

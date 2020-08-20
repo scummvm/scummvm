@@ -61,6 +61,6 @@ private:
 	byte _keyColor;
 };
 
-} // end of namespace Director
+} // End of namespace Director
 
 #endif

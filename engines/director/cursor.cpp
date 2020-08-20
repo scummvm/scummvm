@@ -164,4 +164,4 @@ void Cursor::resetCursor(Graphics::MacCursorType type, bool shouldClear, int res
 	_hotspotY = 0;
 }
 
-} // end of namespace Director
+} // End of namespace Director

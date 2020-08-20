@@ -216,24 +216,25 @@ public:
 };
 
 namespace LM {
-	// predefined methods
-	void m_describe(int nargs);
-	void m_dispose(int nargs);
-	void m_get(int nargs);
-	void m_instanceRespondsTo(int nargs);
-	void m_messageList(int nargs);
-	void m_name(int nargs);
-	void m_new(int nargs);
-	void m_perform(int nargs);
-	void m_put(int nargs);
-	void m_respondsTo(int nargs);
 
-	// window
-	void m_close(int nargs);
-	void m_forget(int nargs);
-	void m_moveToBack(int nargs);
-	void m_moveToFront(int nargs);
-	void m_open(int nargs);
+// predefined methods
+void m_describe(int nargs);
+void m_dispose(int nargs);
+void m_get(int nargs);
+void m_instanceRespondsTo(int nargs);
+void m_messageList(int nargs);
+void m_name(int nargs);
+void m_new(int nargs);
+void m_perform(int nargs);
+void m_put(int nargs);
+void m_respondsTo(int nargs);
+
+// window
+void m_close(int nargs);
+void m_forget(int nargs);
+void m_moveToBack(int nargs);
+void m_moveToFront(int nargs);
+void m_open(int nargs);
 
 } // End of namespace LM
 

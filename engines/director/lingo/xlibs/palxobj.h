@@ -34,10 +34,12 @@ public:
 };
 
 namespace PalXObj {
-	void initialize(int type);
 
-	void m_new(int nargs);
-	void m_patchIt(int nargs);
+void initialize(int type);
+
+void m_new(int nargs);
+void m_patchIt(int nargs);
+
 } // End of namespace PalXObj
 
 } // End of namespace Director

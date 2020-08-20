@@ -194,6 +194,6 @@ private:
 	void inkBlitStretchSurface(DirectorPlotData *pd, Common::Rect &srcRect, const Graphics::Surface *mask);
 };
 
-} // end of namespace Director
+} // End of namespace Director
 
 #endif

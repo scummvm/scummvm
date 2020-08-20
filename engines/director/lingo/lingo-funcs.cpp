@@ -360,4 +360,4 @@ uint16 Lingo::func_label(Datum &label) {
 	return res;
 }
 
-} // end of namespace Director
+} // End of namespace Director

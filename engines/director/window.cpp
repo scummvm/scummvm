@@ -517,4 +517,4 @@ bool Window::step() {
 	return false;
 }
 
-} // end of namespace Director
+} // End of namespace Director

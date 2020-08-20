@@ -839,4 +839,4 @@ PaletteCastMember::PaletteCastMember(Cast *cast, uint16 castId, Common::Seekable
 	_palette = nullptr;
 }
 
-} // end of namespace Director
+} // End of namespace Director

@@ -864,5 +864,4 @@ Resource RIFXArchive::getResourceDetail(uint32 tag, uint16 id) {
 	return resMap[id];
 }
 
-
 } // End of namespace Director

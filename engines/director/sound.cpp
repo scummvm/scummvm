@@ -409,6 +409,4 @@ Audio::RewindableAudioStream *AudioFileDecoder::getAudioStream(DisposeAfterUse::
 	return nullptr;
 }
 
-
-
 } // End of namespace Director
