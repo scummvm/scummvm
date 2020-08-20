@@ -689,11 +689,6 @@ int Lingo::getAlignedType(const Datum &d1, const Datum &d2, bool numsOnly) {
 	int d1Type = d1.type;
 	int d2Type = d2.type;
 
-	if (d1Type == FIELDREF)
-		d1Type = STRING;
-	if (d2Type == FIELDREF)
-		d2Type = STRING;
-
 	if (d1Type == d2Type && (!numsOnly || d1Type == INT || d1Type == FLOAT))
 		return d1Type;
 
@@ -834,11 +829,11 @@ void Datum::reset() {
 }
 
 Datum Datum::eval() {
-	if (type != VAR) { // It could be cast ref
-		return *this;
+	if (type == VAR || type == FIELDREF) {
+		return g_lingo->varFetch(*this);
 	}
 
-	return g_lingo->varFetch(*this);
+	return *this;
 }
 
 int Datum::asInt() const {
@@ -846,7 +841,6 @@ int Datum::asInt() const {
 
 	switch (type) {
 	case STRING:
-	case FIELDREF:
 		{
 			Common::String src = asString();
 			char *endPtr = 0;
@@ -882,9 +876,7 @@ double Datum::asFloat() const {
 	double res = 0.0;
 
 	switch (type) {
-	case STRING:
-	case FIELDREF:
-		{
+	case STRING:		{
 			Common::String src = asString();
 			char *endPtr = 0;
 			double result = strtod(src.c_str(), &endPtr);
@@ -968,11 +960,7 @@ Common::String Datum::asString(bool printonly) const {
 				break;
 			}
 
-			if (!printonly) {
-				s = ((TextCastMember *)member)->getText();
-			} else {
-				s = Common::String::format("field: \"%s\"", ((TextCastMember *)member)->getText().c_str());
-			}
+			s = Common::String::format("field: \"%s\"", ((TextCastMember *)member)->getText().c_str());
 		}
 		break;
 	case POINT:
@@ -1032,7 +1020,6 @@ int Datum::asCastId() const {
 		break;
 	case INT:
 	case CASTREF:
-	case FIELDREF:
 		castId = u.i;
 		break;
 	case FLOAT:

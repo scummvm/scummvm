@@ -197,7 +197,7 @@ Datum Lingo::pop(bool eval) {
 
 	Datum ret = _stack.back();
 	_stack.pop_back();
-	if (eval && ret.type == VAR) {
+	if (eval) {
 		ret = ret.eval();
 	}
 
@@ -208,7 +208,7 @@ Datum Lingo::peek(uint offset, bool eval) {
 	assert (_stack.size() > offset);
 
 	Datum ret = _stack[_stack.size() - 1 - offset];
-	if (eval && ret.type == VAR) {
+	if (eval) {
 		ret = ret.eval();
 	}
 

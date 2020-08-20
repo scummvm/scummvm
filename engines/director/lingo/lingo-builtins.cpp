@@ -455,7 +455,7 @@ void LB::b_chars(int nargs) {
 	Datum d3 = g_lingo->pop();
 	Datum d2 = g_lingo->pop();
 	Datum s = g_lingo->pop();
-	TYPECHECK2(s, STRING, FIELDREF);
+	TYPECHECK(s, STRING);
 
 	if (g_director->getVersion() < 400 && (d2.type == FLOAT || d3.type == FLOAT)) {
 		warning("LB::b_chars: Called with a float in Director 2 and 3 mode. chars' can't handle floats");
@@ -516,7 +516,7 @@ void LB::b_hilite(int nargs) {
 
 void LB::b_length(int nargs) {
 	Datum d = g_lingo->pop();
-	TYPECHECK2(d, STRING, FIELDREF);
+	TYPECHECK(d, STRING);
 
 	int len = strlen(d.asString().c_str());
 
@@ -603,8 +603,6 @@ void LB::b_addProp(int nargs) {
 	Datum list = g_lingo->pop();
 
 	TYPECHECK(list, PARRAY);
-	if (prop.type == FIELDREF)
-		prop = g_lingo->varFetch(prop);
 
 	PCell cell = PCell(prop, value);
 	list.u.parr->push_back(cell);
@@ -1036,8 +1034,6 @@ void LB::b_setProp(int nargs) {
 	Datum prop = g_lingo->pop();
 	Datum list = g_lingo->pop();
 	TYPECHECK(list, PARRAY);
-	if (prop.type == FIELDREF)
-		prop = g_lingo->varFetch(prop);
 
 	int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
 	if (index > 0) {

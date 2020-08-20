@@ -379,9 +379,6 @@ void LC::cb_delete() {
 
 void LC::cb_field() {
 	LB::b_field(1);
-	Datum field = g_lingo->pop();
-	Datum result = g_lingo->varFetch(field);
-	g_lingo->push(result);
 }
 
 
