@@ -226,8 +226,8 @@ private:
 
 #else // !USE_TRANSLATION
 
-#define _(str) str
-#define _c(str, context) str
+#define _(str) Common::U32String(str)
+#define _c(str, context) Common::U32String(str)
 
 #endif // USE_TRANSLATION
 
