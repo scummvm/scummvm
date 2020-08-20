@@ -609,7 +609,7 @@ void SubtitleSettingsDialog::cycleValue() {
 		_value = 0;
 
 	if (_value == 1 && g_system->getOverlayWidth() <= 320)
-		setInfoText(Common::U32String(_sc("Speech & Subs", "lowres")));
+		setInfoText(_c("Speech & Subs", "lowres"));
 	else
 		setInfoText(_(subtitleDesc[_value]));
 
