@@ -183,9 +183,13 @@ void Sprite::setCast(uint16 castId) {
 			((TextCastMember *)_cast)->_buttonType = (ButtonType)(_spriteType - 8);
 		}
 
-		Common::Rect dims = _cast->getInitialRect();
-		_width = dims.width();
-		_height = dims.height();
+		// TODO: Respect sprite width/height settings. Need to determine how to read
+		// them properly.
+		if (_cast->_type != kCastShape) {
+			Common::Rect dims = _cast->getInitialRect();
+			_width = dims.width();
+			_height = dims.height();
+		}
 	} else {
 		warning("Sprite::setCast(): CastMember id %d(%s) has null member", castId, numToCastNum(castId));
 	}
