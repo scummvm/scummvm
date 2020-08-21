@@ -904,7 +904,7 @@ private:
 
 MidiPlayer_Mac1::MidiPlayer_Mac1(SciVersion version, Audio::Mixer *mixer, Mixer_Mac<MidiPlayer_Mac1>::Mode mode) :
 	MidiPlayer_AmigaMac1(version, mixer, 1480, false),
-	Mixer_Mac(mode) {}
+	Mixer_Mac<MidiPlayer_Mac1>(mode) {}
 
 int MidiPlayer_Mac1::open(ResourceManager *resMan) {
 	if (_isOpen)

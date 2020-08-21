@@ -388,7 +388,7 @@ private:
 
 MidiPlayer_Mac0::MidiPlayer_Mac0(SciVersion version, Audio::Mixer *mixer, Mixer_Mac<MidiPlayer_Mac0>::Mode mode) :
 	MidiPlayer_AmigaMac0(version, mixer),
-	Mixer_Mac(mode) {
+	Mixer_Mac<MidiPlayer_Mac0>(mode) {
 
 	for (uint i = 0; i < kStepTableSize; ++i)
 		_stepTable[i] = round(0x2000 * pow(2.0, i / 12.0));
