@@ -240,7 +240,7 @@ void AboutDialog::drawDialog(DrawLayer layerToDraw) {
 		U32String renderStr(strLineItrBegin, strLineItrEnd);
 		if (!renderStr.empty())
 			g_gui.theme()->drawText(Common::Rect(_x + _xOff, y, _x + _w - _xOff, y + g_gui.theme()->getFontHeight()),
-									renderStr, state, align, ThemeEngine::kTextInversionNone, 0, false,
+			                        renderStr, state, align, ThemeEngine::kTextInversionNone, 0, false,
 			                        ThemeEngine::kFontStyleBold, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
 		y += _lineHeight;
 	}
