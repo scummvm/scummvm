@@ -109,7 +109,7 @@ wchar_t *UTF8ToUnicode(const char *s) {
 	DWORD size = MultiByteToWideChar(CP_UTF8, 0, s, -1, NULL, 0);
 
 	if (size > 0) {
-		LPWSTR result = new WCHAR[size];
+		LPWSTR result = (LPWSTR)calloc(size, sizeof(WCHAR));
 		if (MultiByteToWideChar(CP_UTF8, 0, s, -1, result, size) != 0)
 			return result;
 	}
