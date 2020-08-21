@@ -2679,7 +2679,7 @@ yyreduce:
   case 83: /* simpleexprnoparens: ID '(' ID ')'  */
 #line 614 "engines/director/lingo/lingo-gr.y"
                                       {
-			g_lingo->code1(LC::c_lazyeval);
+			g_lingo->code1(LC::c_varpush);
 			g_lingo->codeString((yyvsp[-1].s)->c_str());
 			g_lingo->codeFunc((yyvsp[-3].s), 1);
 			delete (yyvsp[-3].s);
@@ -2689,7 +2689,7 @@ yyreduce:
 
   case 84: /* $@10: %empty  */
 #line 620 "engines/director/lingo/lingo-gr.y"
-                                      { g_lingo->code1(LC::c_lazyeval); g_lingo->codeString((yyvsp[-1].s)->c_str()); }
+                                      { g_lingo->code1(LC::c_varpush); g_lingo->codeString((yyvsp[-1].s)->c_str()); }
 #line 2694 "engines/director/lingo/lingo-gr.cpp"
     break;
 
@@ -2999,7 +2999,7 @@ yyreduce:
   case 134: /* proc: ID '(' ID ')'  */
 #line 705 "engines/director/lingo/lingo-gr.y"
                                       {
-			g_lingo->code1(LC::c_lazyeval);
+			g_lingo->code1(LC::c_varpush);
 			g_lingo->codeString((yyvsp[-1].s)->c_str());
 			g_lingo->codeCmd((yyvsp[-3].s), 1);
 			delete (yyvsp[-3].s);
@@ -3009,7 +3009,7 @@ yyreduce:
 
   case 135: /* $@14: %empty  */
 #line 711 "engines/director/lingo/lingo-gr.y"
-                                      { g_lingo->code1(LC::c_lazyeval); g_lingo->codeString((yyvsp[-1].s)->c_str()); }
+                                      { g_lingo->code1(LC::c_varpush); g_lingo->codeString((yyvsp[-1].s)->c_str()); }
 #line 3014 "engines/director/lingo/lingo-gr.cpp"
     break;
 

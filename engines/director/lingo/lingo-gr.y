@@ -612,12 +612,12 @@ simpleexprnoparens: INT		{
     | tSPRITE expr tWITHIN simpleexpr		{ g_lingo->code1(LC::c_within); }
 	| list
 	| ID[func] '(' ID[method] ')' {
-			g_lingo->code1(LC::c_lazyeval);
+			g_lingo->code1(LC::c_varpush);
 			g_lingo->codeString($method->c_str());
 			g_lingo->codeFunc($func, 1);
 			delete $func;
 			delete $method; }
-	| ID[func] '(' ID[method] ',' { g_lingo->code1(LC::c_lazyeval); g_lingo->codeString($method->c_str()); }
+	| ID[func] '(' ID[method] ',' { g_lingo->code1(LC::c_varpush); g_lingo->codeString($method->c_str()); }
 				nonemptyarglist ')' {
 			g_lingo->codeFunc($func, $nonemptyarglist + 1);
 			delete $func;
@@ -703,12 +703,12 @@ proc: tPUT expr					{
 		Common::String open("open");
 		g_lingo->codeCmd(&open, 1); }
 	| ID[func] '(' ID[method] ')' {
-			g_lingo->code1(LC::c_lazyeval);
+			g_lingo->code1(LC::c_varpush);
 			g_lingo->codeString($method->c_str());
 			g_lingo->codeCmd($func, 1);
 			delete $func;
 			delete $method; }
-	| ID[func] '(' ID[method] ',' { g_lingo->code1(LC::c_lazyeval); g_lingo->codeString($method->c_str()); }
+	| ID[func] '(' ID[method] ',' { g_lingo->code1(LC::c_varpush); g_lingo->codeString($method->c_str()); }
 				nonemptyarglist ')' {
 			g_lingo->codeCmd($func, $nonemptyarglist + 1);
 			delete $func;

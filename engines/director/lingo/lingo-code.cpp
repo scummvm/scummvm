@@ -99,7 +99,6 @@ static struct FuncDescr {
 	{ LC::c_itemToOf,		"c_itemToOf",		"" },	// D3
 	{ LC::c_jump,			"c_jump",			"o" },
 	{ LC::c_jumpifz,		"c_jumpifz",		"o" },
-	{ LC::c_lazyeval,		"c_lazyeval",			"s" },
 	{ LC::c_le,				"c_le",				"" },
 	{ LC::c_lineOf,			"c_lineOf",			"" },	// D3
 	{ LC::c_lineToOf,		"c_lineToOf",		"" },	// D3
@@ -509,14 +508,6 @@ void LC::c_eval() {
 
 	d = g_lingo->varFetch(d);
 
-	g_lingo->push(d);
-}
-
-void LC::c_lazyeval() {
-	LC::c_varpush();
-
-	Datum d;
-	d = g_lingo->pop();
 	g_lingo->push(d);
 }
 

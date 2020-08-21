@@ -83,7 +83,6 @@ void c_stackdrop();
 void c_assign();
 bool verify(const Symbol &s);
 void c_eval();
-void c_lazyeval();
 void c_setImmediate();
 
 void c_swap();
