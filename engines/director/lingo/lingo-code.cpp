@@ -66,6 +66,8 @@ static struct FuncDescr {
 	const char *args;
 } funcDescr[] = {
 	{ 0,					"STOP",				""  },
+	{ LC::c_asserterror,	"c_asserterror",	"" },
+	{ LC::c_asserterrordone,"c_asserterrordone","" },
 	{ LC::c_add,			"c_add",			"" },
 	{ LC::c_putafter,		"c_putafter",		"" },	// D3
 	{ LC::c_ampersand,		"c_ampersand",		"" },
@@ -1637,6 +1639,18 @@ void LC::c_hilite() {
 		first_char.u.i, last_char.u.i, first_word.u.i, last_word.u.i,
 		first_item.u.i, last_item.u.i, first_line.u.i, last_line.u.i,
 		cast_id.u.i);
+}
+
+void LC::c_asserterror() {
+	g_lingo->_expectError = true;
+	g_lingo->_caughtError = false;
+}
+
+void LC::c_asserterrordone() {
+	if (!g_lingo->_caughtError) {
+		warning("BUILDBOT: c_asserterrordone: did not catch error");
+	}
+	g_lingo->_expectError = false;
 }
 
 } // End of namespace Director

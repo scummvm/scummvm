@@ -132,6 +132,10 @@ void c_play();
 void c_open();
 void c_hilite();
 
+// custom instructions for testing
+void c_asserterror();
+void c_asserterrordone();
+
 // stubs for unknown instructions
 void cb_unk();
 void cb_unk1();

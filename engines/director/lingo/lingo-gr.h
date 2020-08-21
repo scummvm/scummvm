@@ -138,7 +138,8 @@ extern int yydebug;
     tON = 339,                     /* tON  */
     tENDIF = 340,                  /* tENDIF  */
     tENDREPEAT = 341,              /* tENDREPEAT  */
-    tENDTELL = 342                 /* tENDTELL  */
+    tENDTELL = 342,                /* tENDTELL  */
+    tASSERTERROR = 343             /* tASSERTERROR  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -162,7 +163,7 @@ union YYSTYPE
 		Common::String *prop;
 	} objectprop;
 
-#line 166 "engines/director/lingo/lingo-gr.h"
+#line 167 "engines/director/lingo/lingo-gr.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

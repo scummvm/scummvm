@@ -320,6 +320,8 @@ public:
 	void dropStack(int nargs);
 	void drop(uint num);
 
+	void lingoError(const char *s, ...);
+
 	void func_mci(const Common::String &name);
 	void func_mciwait(const Common::String &name);
 	void func_beep(int repeats);
@@ -408,6 +410,8 @@ public:
 
 	bool _abort;
 	bool _immediateMode;
+	bool _expectError;
+	bool _caughtError;
 
 	Common::Array<CFrame *> _callstack;
 	TheEntityHash _theEntities;

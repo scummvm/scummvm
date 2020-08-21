@@ -398,6 +398,7 @@ the{spc}+[[:alpha:]]+		{
 	}
 then			{ count(); return tTHEN; }
 to				{ count(); return varCheck(tTO, "to"); }
+scummvmAssertError	{ count(); return varCheck(tASSERTERROR, "scummvmAssertError"); }
 sprite			{ count(); return varCheck(tSPRITE, "sprite"); }
 with			{ count(); return varCheck(tWITH, "with"); }
 within			{ count(); return varCheck(tWITHIN, "within"); }

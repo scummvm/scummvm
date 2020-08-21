@@ -213,6 +213,7 @@ static void mVar(Common::String *s, VarType type) {
 %token tAFTER tBEFORE tCONCAT tCONTAINS tSTARTS tCHAR tITEM tLINE tWORD
 %token tSPRITE tINTERSECTS tWITHIN tTELL tPROPERTY
 %token tON tENDIF tENDREPEAT tENDTELL
+%token tASSERTERROR
 
 %type<code> asgn lbl expr if chunkexpr simpleexprnoparens
 %type<code> tellstart reference simpleexpr list valuelist
@@ -511,11 +512,14 @@ stmt: stmtoneliner
 		g_lingo->codeString($ID->c_str()); }
 	| tTELL expr '\n' tellstart stmtlist lbl tENDTELL { g_lingo->code1(LC::c_telldone); }
 	| tTELL expr tTO tellstart stmtoneliner lbl { g_lingo->code1(LC::c_telldone); }
+	| tASSERTERROR asserterrorstart stmtoneliner { g_lingo->code1(LC::c_asserterrordone); }
 	| error	'\n'			{ yyerrok; }
 
 startrepeat:	/* nothing */	{ startRepeat(); }
 
 tellstart:	  /* empty */	{ g_lingo->code1(LC::c_tell); }
+
+asserterrorstart:	/* empty */	{ g_lingo->code1(LC::c_asserterror); }
 
 ifstmt: if expr jumpifz[then] tTHEN stmtlist jump[else1] elseifstmtlist lbl[end3] tENDIF {
 		inst else1 = 0, end3 = 0;

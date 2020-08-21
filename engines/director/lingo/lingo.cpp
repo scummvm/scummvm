@@ -156,6 +156,8 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_indef = kStateNone;
 	_indef = kStateNone;
 	_immediateMode = false;
+	_expectError = false;
+	_caughtError = false;
 
 	_linenumber = _colnumber = _bytenumber = 0;
 	_lines[0] = _lines[1] = _lines[2] = nullptr;
@@ -659,6 +661,23 @@ void Lingo::executeHandler(const Common::String &name) {
 	Symbol sym = getHandler(name);
 	LC::call(sym, 0, false);
 	execute(_pc);
+}
+
+void Lingo::lingoError(const char *s, ...) {
+	char buf[1024];
+	va_list va;
+
+	va_start(va, s);
+	vsnprintf(buf, 1024, s, va);
+	va_end(va);
+
+	if (_expectError) {
+		warning("Caught Lingo error: %s", buf);
+		_caughtError = true;
+	} else {
+		warning("BUILDBOT: Uncaught Lingo error: %s", buf);
+		_abort = true;
+	}
 }
 
 void Lingo::resetLingo() {
