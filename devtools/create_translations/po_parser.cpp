@@ -240,7 +240,7 @@ const char *PoMessageEntryList::languageName() const {
 	return _langName ? _langName : _langNameAlt;
 }
 
-const bool PoMessageEntryList::useUTF8() const {
+bool PoMessageEntryList::useUTF8() const {
 	return _useUTF8;
 }
 
