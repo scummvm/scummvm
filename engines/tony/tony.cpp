@@ -186,16 +186,17 @@ Common::ErrorCode TonyEngine::init() {
 }
 
 bool TonyEngine::loadTonyDat() {
-	Common::U32String msg;
+	Common::U32String errorMessage;
 	Common::File in;
 	Common::String filename = "tony.dat";
 
 	in.open(filename.c_str());
 
 	if (!in.isOpen()) {
-		msg = Common::U32String::format(_("Unable to locate the '%s' engine data file."), filename.c_str());
-		GUIErrorMessage(msg);
-		warning("Unable to locate the '%s' engine data file.", filename.c_str());
+		const char *msg = _s("Unable to locate the '%s' engine data file.");
+		errorMessage = Common::U32String::format(_(msg), filename.c_str());
+		GUIErrorMessage(errorMessage);
+		warning(msg, filename.c_str());
 		return false;
 	}
 
@@ -205,9 +206,10 @@ bool TonyEngine::loadTonyDat() {
 	buf[4] = '\0';
 
 	if (strcmp(buf, "TONY")) {
-		msg = Common::U32String::format(_("The '%s' engine data file is corrupt."), filename.c_str());
-		GUIErrorMessage(msg);
-		warning("The '%s' engine data file is corrupt.", filename.c_str());
+		const char *msg = _s("The '%s' engine data file is corrupt.");
+		errorMessage = Common::U32String::format(_(msg), filename.c_str());
+		GUIErrorMessage(errorMessage);
+		warning(msg, filename.c_str());
 		return false;
 	}
 
@@ -215,12 +217,10 @@ bool TonyEngine::loadTonyDat() {
 	int minVer = in.readByte();
 
 	if ((majVer != TONY_DAT_VER_MAJ) || (minVer != TONY_DAT_VER_MIN)) {
-		msg = Common::U32String::format(
-			_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d."),
-			filename.c_str(), TONY_DAT_VER_MAJ, TONY_DAT_VER_MIN, majVer, minVer);
-		GUIErrorMessage(msg);
-		warning("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d.",
-			filename.c_str(), TONY_DAT_VER_MAJ, TONY_DAT_VER_MIN, majVer, minVer);
+		const char *msg = _s("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d.");
+		errorMessage = Common::U32String::format(_(msg), filename.c_str(), TONY_DAT_VER_MAJ, TONY_DAT_VER_MIN, majVer, minVer);
+		GUIErrorMessage(errorMessage);
+		warning(msg, filename.c_str(), TONY_DAT_VER_MAJ, TONY_DAT_VER_MIN, majVer, minVer);
 
 		return false;
 	}
@@ -254,9 +254,10 @@ bool TonyEngine::loadTonyDat() {
 
 	int numVariant = in.readUint16BE();
 	if (expectedLangVariant > numVariant - 1) {
-		msg = Common::U32String::format(_("Font variant not present in '%s' engine data file."), filename.c_str());
-		GUIErrorMessage(msg);
-		warning("Font variant not present in '%s' engine data file.", filename.c_str());
+		const char *msg = _s("Font variant not present in '%s' engine data file.");
+		errorMessage = Common::U32String::format(_(msg), filename.c_str());
+		GUIErrorMessage(errorMessage);
+		warning(msg, filename.c_str());
 
 		return false;
 	}
