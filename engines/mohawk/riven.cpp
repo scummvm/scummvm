@@ -166,9 +166,10 @@ Common::Error MohawkEngine_Riven::run() {
 
 	// We need extras.mhk for inventory images, marble images, and credits images
 	if (!_extrasFile->openFile("extras.mhk")) {
-		Common::U32String message = _("You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also works.");
+		const char *msg = _s("You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also works.");
+		Common::U32String message = _(msg);
 		GUIErrorMessage(message);
-		warning("You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also works.");
+		warning(msg);
 		return Common::kNoGameDataFoundError;
 	}
 
@@ -499,8 +500,10 @@ bool MohawkEngine_Riven::checkDatafiles() {
 		return true;
 	}
 
-	Common::U32String message = _("You are missing the following required Riven data files:\n") + Common::U32String(missingFiles);
-	warning("You are missing the following required Riven data files:\n%s", missingFiles.c_str());
+	const char *msg = _s("You are missing the following required Riven data files:\n");
+	Common::U32String message = _(msg) + Common::U32String(missingFiles);
+
+	warning("%s%s", msg, missingFiles.c_str());
 	GUIErrorMessage(message);
 
 	return false;
