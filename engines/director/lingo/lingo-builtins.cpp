@@ -1634,12 +1634,18 @@ void LB::b_installMenu(int nargs) {
 		return;
 	}
 
-	if (!stxt) {
+	CastMember *member = g_director->getCurrentMovie()->getCastMember(castId);
+	if (!member) {
 		g_lingo->lingoError("installMenu: Unknown cast number #%d", castId);
 		return;
 	}
+	if (member->_type != kCastText) {
+		g_lingo->lingoError("installMenu: Cast member %d is not a field", castId);
+		return;
+	}
+	TextCastMember *field = static_cast<TextCastMember *>(member);
 
-	Common::String menuStxt = g_lingo->codePreprocessor(stxt->_ptext.c_str(), stxt->_cast->_lingoArchive, kNoneScript, castId, true);
+	Common::String menuStxt = g_lingo->codePreprocessor(field->getText().c_str(), field->getCast()->_lingoArchive, kNoneScript, castId, true);
 	Common::String line;
 	int linenum = -1; // We increment it before processing
 
