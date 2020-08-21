@@ -378,8 +378,13 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 		_getFirstFrame = false;
 	}
 
-	if (_video->endOfVideo())
-		_channel->_movieRate = 0.0;
+	if (_video->endOfVideo()) {
+		if (_looping) {
+			_video->rewind();
+		} else {
+			_channel->_movieRate = 0.0;
+		}
+	}
 
 	return widget;
 }
