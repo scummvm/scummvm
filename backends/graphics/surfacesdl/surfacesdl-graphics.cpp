@@ -2500,16 +2500,16 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		Common::U32String message;
 		if (_videoMode.aspectRatioCorrection)
 			message = Common::U32String::format(Common::U32String("%S\n%d x %d -> %d x %d"),
-											 _("Enabled aspect ratio correction").c_str(),
-			                                 _videoMode.screenWidth, _videoMode.screenHeight,
-			                                 _hwScreen->w, _hwScreen->h
-			);
+			                                    _("Enabled aspect ratio correction").c_str(),
+			                                    _videoMode.screenWidth, _videoMode.screenHeight,
+			                                    _hwScreen->w, _hwScreen->h
+			          );
 		else
 			message = Common::U32String::format(Common::U32String("%S\n%d x %d -> %d x %d"),
-											 _("Disabled aspect ratio correction").c_str(),
-			                                 _videoMode.screenWidth, _videoMode.screenHeight,
-			                                 _hwScreen->w, _hwScreen->h
-			);
+			                                    _("Disabled aspect ratio correction").c_str(),
+			                                    _videoMode.screenWidth, _videoMode.screenHeight,
+			                                    _hwScreen->w, _hwScreen->h
+			          );
 		displayMessageOnOSD(message);
 #endif
 		internUpdateScreen();
@@ -2553,9 +2553,9 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 
 #ifdef USE_OSD
 		Common::U32String message = Common::U32String::format(Common::U32String("%S: %S"),
-														_("Stretch mode").c_str(),
-														_(s_supportedStretchModes[index].description).c_str()
-									);
+		                                                      _("Stretch mode").c_str(),
+		                                                      _(s_supportedStretchModes[index].description).c_str()
+		                            );
 		displayMessageOnOSD(message);
 #endif
 		_forceRedraw = true;
