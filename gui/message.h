@@ -42,12 +42,12 @@ enum {
 class MessageDialog : public Dialog {
 public:
 	MessageDialog(const Common::U32String &message, const Common::U32String &defaultButton = Common::U32String("OK"), const Common::U32String &altButton = Common::U32String(""), Graphics::TextAlign alignment = Graphics::kTextAlignCenter, const char *url = nullptr);
-	MessageDialog(const char *message, const char *defaultButton = "OK", const char *altButton = "", Graphics::TextAlign alignment = Graphics::kTextAlignCenter, const char *url = nullptr);
+	MessageDialog(const Common::String &message, const Common::String &defaultButton = "OK", const Common::String &altButton = "", Graphics::TextAlign alignment = Graphics::kTextAlignCenter, const char *url = nullptr);
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
-
 private:
 	const char *_url;
+	void init(const Common::U32String &message, const Common::U32String &defaultButton, const Common::U32String &altButton, Graphics::TextAlign alignment);
 };
 
 /**

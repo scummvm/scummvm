@@ -44,8 +44,15 @@ Keymap::Keymap(KeymapType type, const String &id, const U32String &description) 
 
 }
 
-Keymap::Keymap(KeymapType type, const String &id, const String &description) {
-	Keymap(type, id, U32String(description));
+Keymap::Keymap(KeymapType type, const String &id, const String &description) :
+		_type(type),
+		_id(id),
+		_description(U32String(description)),
+		_enabled(true),
+		_configDomain(nullptr),
+		_hardwareInputSet(nullptr),
+		_backendDefaultBindings(nullptr) {
+
 }
 
 Keymap::~Keymap() {
