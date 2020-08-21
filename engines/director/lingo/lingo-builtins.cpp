@@ -1879,7 +1879,7 @@ void LB::b_puppetSprite(int nargs) {
 				channel->_dirty = true;
 			}
 
-			sc->getSpriteById(sprite.asInt())->_puppet = state.asInt();
+			sc->getSpriteById(sprite.asInt())->_puppet = (bool)state.asInt();
 		} else {
 			warning("b_puppetSprite: sprite index out of bounds");
 		}

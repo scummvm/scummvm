@@ -1339,7 +1339,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		}
 		break;
 	case kTheImmediate:
-		sprite->_immediate = d.asInt();
+		sprite->_immediate = (bool)d.asInt();
 		break;
 	case kTheInk:
 		if (d.asInt() != sprite->_ink) {
@@ -1371,7 +1371,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		}
 		break;
 	case kTheMoveableSprite:
-		sprite->_moveable = d.asInt();
+		sprite->_moveable = (bool)d.asInt();
 		break;
 	case kTheMovieRate:
 		channel->_movieRate = d.asFloat();
@@ -1394,7 +1394,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		}
 		break;
 	case kThePuppet:
-		sprite->_puppet = d.asInt();
+		sprite->_puppet = (bool)d.asInt();
 		if (!d.asInt()) {
 			// TODO: Properly reset sprite properties after puppet disabled.
 			sprite->_moveable = false;
@@ -1439,7 +1439,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	case kTheVisibility:
 	case kTheVisible:
 		if ((bool)d.asInt() != channel->_visible) {
-			channel->_visible = d.asInt();
+			channel->_visible = (bool)d.asInt();
 			channel->_dirty = true;
 		}
 		break;
