@@ -112,7 +112,7 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 
 	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
 		outputConfigurationType(setup, project, name, "Release|" + getMSVCConfigName(*arch), _msvcVersion.toolsetMSVC);
-		outputConfigurationType(setup, project, name, "Analysis" + getMSVCConfigName(*arch), _msvcVersion.toolsetMSVC);
+		outputConfigurationType(setup, project, name, "Analysis|" + getMSVCConfigName(*arch), _msvcVersion.toolsetMSVC);
 		outputConfigurationType(setup, project, name, "LLVM|" + getMSVCConfigName(*arch), _msvcVersion.toolsetLLVM);
 		outputConfigurationType(setup, project, name, "Debug|" + getMSVCConfigName(*arch), _msvcVersion.toolsetMSVC);
 	}
@@ -447,7 +447,7 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, M
 		           << "\t\t\t<FunctionLevelLinking>true</FunctionLevelLinking>\n"
 		           << "\t\t\t<TreatWarningAsError>false</TreatWarningAsError>\n";
 		if (_version >= 14) {
-			// Since<<SVC 2015 Edit and Continue is supported for x86 and x86-64, but not for ARM.
+			// Since MSVC 2015 Edit and Continue is supported for x86 and x86-64, but not for ARM.
 			properties << "\t\t\t<DebugInformationFormat>" << (arch != ARCH_ARM64 ? "EditAndContinue" : "ProgramDatabase") << "</DebugInformationFormat>\n";
 		} else {
 			// Older MSVC versions did not support Edit and Continue for x64, thus we do not use it.
@@ -456,10 +456,7 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, M
 		properties << "\t\t\t<EnablePREfast>" << (configuration == "Analysis" ? "true" : "false") << "</EnablePREfast>\n";
 
 		if (configuration == "LLVM") {
-			// FIXME The LLVM cl wrapper does not seem to work properly with the $(TargetDir) path so we hard-code the build folder until the issue is resolved
-			const std::string outputBitness = (arch == ARCH_X86 ? "32" : "64");
-			properties << "\t\t\t<AdditionalIncludeDirectories>" << configuration << outputBitness << ";%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
-			           << "\t\t\t<AdditionalOptions>-Wno-microsoft -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder -Wpointer-arith -Wcast-qual -Wshadow -Wnon-virtual-dtor -Wwrite-strings -Wno-conversion -Wno-shorten-64-to-32 -Wno-sign-compare -Wno-four-char-constants -Wno-nested-anon-types -Qunused-arguments %(AdditionalOptions)</AdditionalOptions>\n";
+			properties << "\t\t\t<AdditionalOptions>-Wno-microsoft -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder -Wpointer-arith -Wcast-qual -Wshadow -Wnon-virtual-dtor -Wwrite-strings -Wno-conversion -Wno-shorten-64-to-32 -Wno-sign-compare -Wno-four-char-constants -Wno-nested-anon-types -Qunused-arguments %(AdditionalOptions)</AdditionalOptions>\n";
 		}
 
 		properties << "\t\t</ClCompile>\n"
