@@ -300,11 +300,7 @@ Common::U32String JNI::getTextFromClipboard() {
 	Common::String text = convertFromJString(env, javaText, "UTF-8");
 	env->DeleteLocalRef(javaText);
 
-	if (getCurrentCharset() == "UTF-32") {
-		return text.decode();
-	}
-
-	return Common::U32String(text);
+	return text.decode();
 }
 
 bool JNI::setTextInClipboard(const Common::U32String &text) {
