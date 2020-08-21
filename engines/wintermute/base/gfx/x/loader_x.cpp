@@ -32,12 +32,26 @@ namespace Wintermute {
 void nextTokenText(Common::MemoryReadStream &buffer, int &lineCount, Token &tok) {
 	char current = buffer.readSByte();
 
-	while (Common::isSpace(current)) {
-		if (current == '\n') {
-			++lineCount;
-		}
+	while (true) {
+		if (Common::isSpace(current)) {
+			if (current == '\n') {
+				++lineCount;
+			}
 
-		current = buffer.readSByte();
+			current = buffer.readSByte();
+		} else if (current == '/' || current == '#') {
+			// single slashes do not seem to be used in .X files,
+			// so checking for one should be enough
+
+			while (current != '\n') {
+				current = buffer.readSByte();
+			}
+
+			current = buffer.readSByte();
+			++lineCount;
+		} else {
+			break;
+		}
 	}
 
 	if (Common::isAlpha(current) || current == '_') {
