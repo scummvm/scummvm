@@ -2444,7 +2444,7 @@ void ScummEngine::scummLoop_updateScummVars() {
 void ScummEngine::scummLoop_handleSaveLoad() {
 	if (_saveLoadFlag) {
 		bool success;
-		const char *errMsg = 0;
+		Common::U32String errMsg;
 
 		if (_game.version == 8 && _saveTemporaryState)
 			VAR(VAR_GAME_LOADED) = 0;
@@ -2453,7 +2453,7 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 		if (_saveLoadFlag == 1) {
 			success = saveState(_saveLoadSlot, _saveTemporaryState, filename);
 			if (!success)
-				errMsg = "Failed to save game to file:\n\n%s";
+				errMsg = _("Failed to save game to file:\n\n%s");
 
 			if (success && _saveTemporaryState && VAR_GAME_LOADED != 0xFF && _game.version <= 7)
 				VAR(VAR_GAME_LOADED) = 201;
@@ -2463,14 +2463,17 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 		} else {
 			success = loadState(_saveLoadSlot, _saveTemporaryState, filename);
 			if (!success)
-				errMsg = "Failed to load saved game from file:\n\n%s";
+				errMsg = _("Failed to load saved game from file:\n\n%s");
 
 			if (success && _saveTemporaryState && VAR_GAME_LOADED != 0xFF)
 				VAR(VAR_GAME_LOADED) = (_game.version == 8) ? 1 : 203;
 		}
 
 		if (!success) {
-			displayMessage(0, errMsg, filename.c_str());
+			Common::U32String buf = Common::U32String::format(errMsg, filename.c_str());
+
+			GUI::MessageDialog dialog(buf);
+			runDialog(dialog);
 		} else if (_saveLoadFlag == 1 && _saveLoadSlot != 0 && !_saveTemporaryState) {
 			// Display "Save successful" message, except for auto saves
 			Common::U32String buf = Common::U32String::format(_("Successfully saved game in file:\n\n%s"), filename.c_str());
@@ -2758,10 +2761,9 @@ bool ScummEngine::startManiac() {
 		eventMan->pushEvent(event);
 		return true;
 	} else {
-		Common::U32String buf = Common::U32String::format(
-			_("Usually, Maniac Mansion would start now. But for that to work, the game files for Maniac Mansion have to be in the 'Maniac' directory \
-			inside the Tentacle game directory, and the game has to be added to ScummVM."));
+		Common::U32String buf = _("Usually, Maniac Mansion would start now. But for that to work, the game files for Maniac Mansion have to be in the 'Maniac' directory inside the Tentacle game directory, and the game has to be added to ScummVM.");
 		GUI::MessageDialog dialog(buf);
+		runDialog(dialog);
 		return false;
 	}
 }
