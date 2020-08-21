@@ -320,8 +320,6 @@ public:
 	void dropStack(int nargs);
 	void drop(uint num);
 
-	void factoryCall(const Common::String &name, int nargs);
-
 	void func_mci(const Common::String &name);
 	void func_mciwait(const Common::String &name);
 	void func_beep(int repeats);
