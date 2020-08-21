@@ -42,14 +42,13 @@ const uint32 MeshX::kNullIndex;
 MeshX::MeshX(Wintermute::BaseGame *inGame) : BaseNamedObject(inGame),
 	_BBoxStart(0.0f, 0.0f, 0.0f), _BBoxEnd(0.0f, 0.0f, 0.0f),
 	_vertexData(nullptr), _vertexPositionData(nullptr), _vertexNormalData(nullptr),
-	_vertexCount(0), _indexData(nullptr), _indexCount(0), _numAttrs(0), _skinnedMesh(false) {
+	_vertexCount(0), _numAttrs(0), _skinnedMesh(false) {
 }
 
 MeshX::~MeshX() {
 	delete[] _vertexData;
 	delete[] _vertexPositionData;
 	delete[] _vertexNormalData;
-	delete[] _indexData;
 
 	_materials.clear();
 }
@@ -72,12 +71,10 @@ bool MeshX::loadFromX(const Common::String &filename, XFileLexer &lexer, Common:
 	parsePositionCoords(lexer);
 
 	int faceCount = lexer.readInt();
-	// we should be able to assume for now that
-	// we are only dealing with triangles
-	_indexData = new uint16[faceCount * 3]();
-	_indexCount = faceCount * 3;
 
-	parseFaces(lexer, faceCount);
+	Common::Array<int> indexCountPerFace;
+
+	parseFaces(lexer, faceCount, indexCountPerFace);
 
 	while (!lexer.eof()) {
 		if (lexer.tokenIsIdentifier("MeshTextureCoords")) {
@@ -97,7 +94,7 @@ bool MeshX::loadFromX(const Common::String &filename, XFileLexer &lexer, Common:
 			lexer.advanceToNextToken();
 			lexer.advanceOnOpenBraces();
 
-			parseMaterials(lexer, faceCount, filename, materialReferences);
+			parseMaterials(lexer, faceCount, filename, materialReferences, indexCountPerFace);
 		} else if (lexer.tokenIsIdentifier("Material")) {
 			lexer.advanceToNextToken();
 			Material *mat = new Material(_gameRef);
@@ -107,7 +104,7 @@ bool MeshX::loadFromX(const Common::String &filename, XFileLexer &lexer, Common:
 			// one material = one index range
 			_numAttrs = 1;
 			_indexRanges.push_back(0);
-			_indexRanges.push_back(_indexCount);
+			_indexRanges.push_back(_indexData.size());
 		} else if (lexer.tokenIsIdentifier("XSkinMeshHeader")) {
 			lexer.advanceToNextToken();
 			lexer.advanceOnOpenBraces();
@@ -148,10 +145,10 @@ bool MeshX::loadFromX(const Common::String &filename, XFileLexer &lexer, Common:
 
 //////////////////////////////////////////////////////////////////////////
 bool MeshX::generateAdjacency() {
-	_adjacency = Common::Array<uint32>(_indexCount, kNullIndex);
+	_adjacency = Common::Array<uint32>(_indexData.size(), kNullIndex);
 
-	for (uint32 i = 0; i < _indexCount / 3; ++i) {
-		for (uint32 j = i + 1; j < _indexCount / 3; ++j) {
+	for (uint32 i = 0; i < _indexData.size() / 3; ++i) {
+		for (uint32 j = i + 1; j < _indexData.size() / 3; ++j) {
 			for (int edge1 = 0; edge1 < 3; ++edge1) {
 				uint16 index1 = _indexData[i * 3 + edge1];
 				uint16 index2 = _indexData[i * 3 + (edge1 + 1) % 3];
@@ -312,10 +309,10 @@ bool MeshX::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const
 
 	uint32 numEdges = 0;
 
-	Common::Array<bool> isFront(_indexCount / 3, false);
+	Common::Array<bool> isFront(_indexData.size() / 3, false);
 
 	// First pass : for each face, record if it is front or back facing the light
-	for (uint32 i = 0; i < _indexCount / 3; i++) {
+	for (uint32 i = 0; i < _indexData.size() / 3; i++) {
 		uint16 index0 = _indexData[3 * i + 0];
 		uint16 index1 = _indexData[3 * i + 1];
 		uint16 index2 = _indexData[3 * i + 2];
@@ -335,10 +332,10 @@ bool MeshX::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const
 	}
 
 	// Allocate a temporary edge list
-	Common::Array<uint16> edges(_indexCount * 2, 0);
+	Common::Array<uint16> edges(_indexData.size() * 2, 0);
 
 	// First pass : for each face, record if it is front or back facing the light
-	for (uint32 i = 0; i < _indexCount / 3; i++) {
+	for (uint32 i = 0; i < _indexData.size() / 3; i++) {
 		if (isFront[i]) {
 			uint16 wFace0 = _indexData[3 * i + 0];
 			uint16 wFace1 = _indexData[3 * i + 1];
@@ -395,7 +392,7 @@ bool MeshX::pickPoly(Math::Vector3d *pickRayOrig, Math::Vector3d *pickRayDir) {
 
 	bool res = false;
 
-	for (uint16 i = 0; i < _indexCount; i += 3) {
+	for (uint16 i = 0; i < _indexData.size(); i += 3) {
 		uint16 index1 = _indexData[i + 0];
 		uint16 index2 = _indexData[i + 1];
 		uint16 index3 = _indexData[i + 2];
@@ -477,24 +474,43 @@ bool MeshX::parsePositionCoords(XFileLexer &lexer) {
 	return true;
 }
 
-bool MeshX::parseFaces(XFileLexer &lexer, int faceCount) {
+bool MeshX::parseFaces(XFileLexer &lexer, int faceCount, Common::Array<int>& indexCountPerFace) {
 	for (int i = 0; i < faceCount; ++i) {
 		int indexCount = lexer.readInt();
 
-		// we can add something to triangulize faces later if the need arises
-		if (indexCount != 3) {
-			warning("MeshXOpenGL::loadFromX non triangle faces are not supported yet");
+		if (indexCount == 3) {
+			uint16 index1 = lexer.readInt();
+			uint16 index2 = lexer.readInt();
+			uint16 index3 = lexer.readInt();
+
+			_indexData.push_back(index3);
+			_indexData.push_back(index2);
+			_indexData.push_back(index1);
+
+			lexer.skipTerminator(); // skip semicolon
+
+			indexCountPerFace.push_back(3);
+		} else if (indexCount == 4) {
+			uint16 index1 = lexer.readInt();
+			uint16 index2 = lexer.readInt();
+			uint16 index3 = lexer.readInt();
+			uint16 index4 = lexer.readInt();
+
+			_indexData.push_back(index3);
+			_indexData.push_back(index2);
+			_indexData.push_back(index1);
+
+			_indexData.push_back(index4);
+			_indexData.push_back(index3);
+			_indexData.push_back(index1);
+
+			lexer.skipTerminator(); // skip semicolon
+
+			indexCountPerFace.push_back(6);
+		} else {
+			warning("MeshXOpenGL::loadFromX faces with more than four vertices are not supported");
 			return false;
 		}
-
-		for (int j = 0; j < 3; ++j) {
-			_indexData[i * 3 + j] = lexer.readInt();
-		}
-
-		// swap to change winding and make it consistent with the coordinate mirroring
-		SWAP(_indexData[i * 3 + 0], _indexData[i * 3 + 2]);
-
-		lexer.skipTerminator(); // skip semicolon
 	}
 
 	return true;
@@ -539,20 +555,42 @@ bool MeshX::parseNormalCoords(XFileLexer &lexer) {
 	Common::Array<int> faceNormals;
 
 	for (uint i = 0; i < faceNormalCount; ++i) {
-		lexer.readInt();
-		int n1 = lexer.readInt();
-		int n2 = lexer.readInt();
-		int n3 = lexer.readInt();
-		lexer.skipTerminator();
+		int indexCount = lexer.readInt();
 
-		faceNormals.push_back(n3);
-		faceNormals.push_back(n2);
-		faceNormals.push_back(n1);
+		if (indexCount == 3) {
+			uint16 index1 = lexer.readInt();
+			uint16 index2 = lexer.readInt();
+			uint16 index3 = lexer.readInt();
+
+			faceNormals.push_back(index3);
+			faceNormals.push_back(index2);
+			faceNormals.push_back(index1);
+
+			lexer.skipTerminator(); // skip semicolon
+		} else if (indexCount == 4) {
+			uint16 index1 = lexer.readInt();
+			uint16 index2 = lexer.readInt();
+			uint16 index3 = lexer.readInt();
+			uint16 index4 = lexer.readInt();
+
+			faceNormals.push_back(index3);
+			faceNormals.push_back(index2);
+			faceNormals.push_back(index1);
+
+			faceNormals.push_back(index4);
+			faceNormals.push_back(index3);
+			faceNormals.push_back(index1);
+
+			lexer.skipTerminator(); // skip semicolon
+		} else {
+			warning("MeshXOpenGL::loadFromX faces with more than four vertices are not supported");
+			return false;
+		}
 	}
 
-	assert(3 * faceNormalCount == _indexCount);
+	assert(_indexData.size() == faceNormals.size());
 
-	for (uint i = 0; i < 3 * faceNormalCount; ++i) {
+	for (uint i = 0; i < faceNormals.size(); ++i) {
 		uint16 vertexIndex = _indexData[i];
 		int normalIndex = faceNormals[i];
 
@@ -567,7 +605,7 @@ bool MeshX::parseNormalCoords(XFileLexer &lexer) {
 	return true;
 }
 
-bool MeshX::parseMaterials(XFileLexer &lexer, int faceCount, const Common::String &filename, Common::Array<MaterialReference> &materialReferences) {
+bool MeshX::parseMaterials(XFileLexer &lexer, int faceCount, const Common::String &filename, Common::Array<MaterialReference> &materialReferences, const Common::Array<int> &indexCountPerFace) {
 	// there can be unused materials inside a .X file
 	// so this piece of information is probably useless
 	int materialCount = lexer.readInt();
@@ -579,17 +617,21 @@ bool MeshX::parseMaterials(XFileLexer &lexer, int faceCount, const Common::Strin
 	int currentMaterialIndex = lexer.readInt();
 	_materialIndices.push_back(currentMaterialIndex);
 
+	int currentIndex = indexCountPerFace[0];
+
 	for (int i = 1; i < faceMaterialCount; ++i) {
 		int currentMaterialIndexTmp = lexer.readInt();
 
 		if (currentMaterialIndex != currentMaterialIndexTmp) {
 			currentMaterialIndex = currentMaterialIndexTmp;
-			_indexRanges.push_back(3 * i);
+			_indexRanges.push_back(currentIndex);
 			_materialIndices.push_back(currentMaterialIndex);
 		}
+
+		currentIndex += indexCountPerFace[i];
 	}
 
-	_indexRanges.push_back(3 * faceCount);
+	_indexRanges.push_back(currentIndex);
 	_numAttrs = _indexRanges.size() - 1;
 
 	while (!lexer.eof()) {

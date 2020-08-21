@@ -84,10 +84,10 @@ protected:
 	static const uint32 kNullIndex = 0xFFFFFFFF;
 
 	bool parsePositionCoords(XFileLexer &lexer);
-	bool parseFaces(XFileLexer &lexer, int faceCount);
+	bool parseFaces(XFileLexer &lexer, int faceCount, Common::Array<int> &indexCountPerFace);
 	bool parseTextureCoords(XFileLexer &lexer);
 	bool parseNormalCoords(XFileLexer &lexer);
-	bool parseMaterials(XFileLexer &lexer, int faceCount, const Common::String &filename, Common::Array<MaterialReference> &materialReferences);
+	bool parseMaterials(XFileLexer &lexer, int faceCount, const Common::String &filename, Common::Array<MaterialReference> &materialReferences, const Common::Array<int> &indexCountPerFace);
 	bool parseSkinWeights(XFileLexer &lexer);
 
 	void updateBoundingBox();
@@ -99,8 +99,7 @@ protected:
 	float *_vertexPositionData;
 	float *_vertexNormalData;
 	uint32 _vertexCount;
-	uint16 *_indexData;
-	uint32 _indexCount;
+	Common::Array<uint16> _indexData;
 
 	BaseArray<Math::Matrix4 *> _boneMatrices;
 	BaseArray<SkinWeights> skinWeightsList;

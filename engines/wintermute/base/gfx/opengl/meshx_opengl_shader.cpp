@@ -52,7 +52,7 @@ bool MeshXOpenGLShader::loadFromX(const Common::String &filename, XFileLexer &le
 		glBufferData(GL_ARRAY_BUFFER, 4 * kVertexComponentCount * _vertexCount, _vertexData, GL_DYNAMIC_DRAW);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2 * _indexCount, _indexData, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2 * _indexData.size(), _indexData.data(), GL_STATIC_DRAW);
 
 		return true;
 	}
