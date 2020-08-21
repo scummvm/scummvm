@@ -39,9 +39,7 @@ enum {
 
 // TODO: The default button should be visibly distinct from the alternate button
 
-MessageDialog::MessageDialog(const Common::U32String &message, const Common::U32String &defaultButton, const Common::U32String &altButton, Graphics::TextAlign alignment, const char *url)
-	: Dialog(30, 20, 260, 124) {
-
+void MessageDialog::init(const Common::U32String &message, const Common::U32String &defaultButton, const Common::U32String &altButton, Graphics::TextAlign alignment, const char *url) {
 	_url = url;
 
 	const int screenW = g_system->getOverlayWidth();
@@ -82,8 +80,7 @@ MessageDialog::MessageDialog(const Common::U32String &message, const Common::U32
 
 	// Each line is represented by one static text item.
 	for (int i = 0; i < lineCount; i++) {
-		new StaticTextWidget(this, 10, 10 + i * kLineHeight, maxlineWidth, kLineHeight,
-								lines[i], alignment);
+		new StaticTextWidget(this, 10, 10 + i * kLineHeight, maxlineWidth, kLineHeight, lines[i], alignment);
 	}
 
 	if (!defaultButton.empty() && !altButton.empty()) {
@@ -104,10 +101,16 @@ MessageDialog::MessageDialog(const Common::U32String &message, const Common::U32
 	}
 }
 
-MessageDialog::MessageDialog(const char *message, const char *defaultButton, const char *altButton, Graphics::TextAlign alignment)
+MessageDialog::MessageDialog(const Common::U32String &message, const Common::U32String &defaultButton, const Common::U32String &altButton, Graphics::TextAlign alignment, const char *url)
 	: Dialog(30, 20, 260, 124) {
 
-	MessageDialog(Common::U32String(message), Common::U32String(defaultButton), Common::U32String(altButton), alignment);
+	init(message, defaultButton, altButton, alignment, url);
+}
+
+MessageDialog::MessageDialog(const Common::String &message, const Common::String &defaultButton, const Common::String &altButton, Graphics::TextAlign alignment, const char *url)
+	: Dialog(30, 20, 260, 124) {
+
+	init(Common::U32String(message), Common::U32String(defaultButton), Common::U32String(altButton), alignment, url);
 }
 
 void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
