@@ -64,7 +64,6 @@ public:
 
 	void loadCastChildren();
 	void loadSoundCasts();
-	void loadDigitalVideoCasts();
 
 	void copyCastStxts();
 	Common::Rect getCastMemberInitialRect(int castId);
@@ -74,6 +73,7 @@ public:
 	CastMember *getCastMemberByScriptId(int scriptId);
 	CastMemberInfo *getCastMemberInfo(int castId);
 	const Stxt *getStxt(int castId);
+	Common::String getVideoPath(int castId);
 
 	void dumpScript(const char *script, ScriptType type, uint16 id);
 

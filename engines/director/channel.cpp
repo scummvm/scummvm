@@ -24,6 +24,7 @@
 #include "director/movie.h"
 #include "director/score.h"
 #include "director/cursor.h"
+#include "director/cast.h"
 #include "director/channel.h"
 #include "director/sprite.h"
 #include "director/castmember.h"
@@ -275,8 +276,14 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 
 	if (nextSprite) {
 		if (_sprite->_castId != nextSprite->_castId && nextSprite->_cast) {
-			if (nextSprite->_cast->_type == kCastDigitalVideo)
-				((DigitalVideoCastMember *)nextSprite->_cast)->startVideo(this);
+			if (nextSprite->_cast->_type == kCastDigitalVideo) {
+				Common::String path = nextSprite->_cast->getCast()->getVideoPath(nextSprite->_castId);
+
+				if (!path.empty()) {
+					((DigitalVideoCastMember *)nextSprite->_cast)->loadVideo(pathMakeRelative(path));
+					((DigitalVideoCastMember *)nextSprite->_cast)->startVideo(this);
+				}
+			}
 		}
 
 		if (_sprite->_puppet || partial) {

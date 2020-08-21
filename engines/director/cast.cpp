@@ -340,7 +340,6 @@ bool Cast::loadArchive() {
 
 	loadCastChildren();
 	loadSoundCasts();
-	loadDigitalVideoCasts();
 
 	return true;
 }
@@ -641,51 +640,47 @@ void Cast::loadSoundCasts() {
 	}
 }
 
-void Cast::loadDigitalVideoCasts() {
-	debugC(1, kDebugLoading, "****** Preloading digital video casts");
+Common::String Cast::getVideoPath(int castId) {
+	Common::String res;
+	CastMember *cast = _loadedCast->getVal(castId);
 
-	for (Common::HashMap<int, CastMember *>::iterator c = _loadedCast->begin(); c != _loadedCast->end(); ++c) {
-		if (!c->_value)
-			continue;
+	if (cast->_type != kCastDigitalVideo)
+		return res;
 
-		if (c->_value->_type != kCastDigitalVideo)
-			continue;
+	DigitalVideoCastMember *digitalVideoCast = (DigitalVideoCastMember *)cast;
+	uint32 tag = MKTAG('M', 'o', 'o', 'V');
+	uint16 videoId = (uint16)(castId + _castIDoffset);
 
-		DigitalVideoCastMember *digitalVideoCast = (DigitalVideoCastMember *)c->_value;
-		uint32 tag = MKTAG('M', 'o', 'o', 'V');
-		uint16 videoId = (uint16)(c->_key + _castIDoffset);
-
-		if (_vm->getVersion() >= 400 && digitalVideoCast->_children.size() > 0) {
-			videoId = digitalVideoCast->_children[0].index;
-			tag = digitalVideoCast->_children[0].tag;
-		}
-
-		Common::SeekableReadStreamEndian *videoData = NULL;
-
-		switch (tag) {
-		case MKTAG('M', 'o', 'o', 'V'):
-			if (_castArchive->hasResource(MKTAG('M', 'o', 'o', 'V'), videoId)) {
-				debugC(2, kDebugLoading, "****** Loading 'MooV' id: %d", videoId);
-				videoData = _castArchive->getResource(MKTAG('M', 'o', 'o', 'V'), videoId);
-			}
-			break;
-		}
-
-		if (videoData == NULL || videoData->size() == 0) {
-			// video file is linked, load from the filesystem
-
-			Common::String filename = _castsInfo[c->_key]->fileName;
-			Common::String directory = _castsInfo[c->_key]->directory;
-			if (!digitalVideoCast->loadVideo(pathMakeRelative(directory + "\\" + filename))) {
-				warning("Cast::loadDigitalVideoCasts: failed to load QuickTime file for cast member %d", videoId);
-			}
-		} else {
-			warning("STUB: Cast::loadDigitalVideoCasts: unsupported non-zero MooV block");
-		}
-		if (videoData)
-			delete videoData;
+	if (_vm->getVersion() >= 400 && digitalVideoCast->_children.size() > 0) {
+		videoId = digitalVideoCast->_children[0].index;
+		tag = digitalVideoCast->_children[0].tag;
 	}
 
+	Common::SeekableReadStreamEndian *videoData = NULL;
+
+	switch (tag) {
+	case MKTAG('M', 'o', 'o', 'V'):
+		if (_castArchive->hasResource(MKTAG('M', 'o', 'o', 'V'), videoId)) {
+			debugC(2, kDebugLoading, "****** Loading 'MooV' id: %d", videoId);
+			videoData = _castArchive->getResource(MKTAG('M', 'o', 'o', 'V'), videoId);
+		}
+		break;
+	}
+
+	if (videoData == NULL || videoData->size() == 0) {
+		// video file is linked, load from the filesystem
+
+		Common::String filename = _castsInfo[castId]->fileName;
+		Common::String directory = _castsInfo[castId]->directory;
+
+		res = directory + "\\" + filename;
+	} else {
+		warning("STUB: Cast::getVideoPath(%d): unsupported non-zero MooV block", castId);
+	}
+	if (videoData)
+		delete videoData;
+
+	return res;
 }
 
 PaletteV4 Cast::loadPalette(Common::SeekableReadStreamEndian &stream) {
