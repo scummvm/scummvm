@@ -38,6 +38,8 @@ const PlainGameDescriptor ALAN3_GAME_LIST[] = {
 	{ "hwmurders", "Hollywood Murders" },
 	{ "misguided", "Mis/Guided" },
 	{ "room206", "Room 206" },
+	{ "tedpaladin", "Ted Paladin And The Case Of The Abandoned House" },
+	{ "thesealedroom", "The Sealed Room" },
 	{ "waldospie", "Waldo's Pie" },
 
 	{ nullptr, nullptr }
@@ -52,6 +54,8 @@ const GlkDetectionEntry ALAN3_GAMES[] = {
 	DT_ENTRY0("hwmurders", "abadbb15faf7f0b7324222fdea6bd495", 213539),
 	DT_ENTRY0("misguided", "cc2c6e724d599e731efa9b7a34ae4f51", 672613),
 	DT_ENTRY0("room206", "eb5711ecfad102ee4d9fda7fcb3ddf78", 364156),
+	DT_ENTRY0("tedpaladin", "6132d401ea7c05b474e598a37b642bd9", 292486),
+	DT_ENTRY0("thesealedroom", "06a81cb30efff9c63e7f7d3aff554d3d", 306937),
 	DT_ENTRY0("waldospie", "fcd53ac4669f85845c1cbbaad6082724", 511956),
 	DT_END_MARKER
 };
