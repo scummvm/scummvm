@@ -374,6 +374,15 @@ void Channel::replaceWidget() {
 		if (_widget) {
 			_widget->_priority = _priority;
 			_widget->draw();
+
+			// HACK: Account for the added dimensions for borders, etc.
+			if (_sprite->_cast->_type == kCastText || _sprite->_cast->_type == kCastButton) {
+				_sprite->_width = _widget->_dims.width();
+				_sprite->_height = _widget->_dims.height();
+
+				_width = _sprite->_width;
+				_height = _sprite->_height;
+			}
 		}
 	}
 }

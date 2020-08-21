@@ -183,7 +183,7 @@ void Sprite::setCast(uint16 castId) {
 			((TextCastMember *)_cast)->_buttonType = (ButtonType)(_spriteType - 8);
 		}
 
-		Common::Rect dims = _cast->getWidgetRect();
+		Common::Rect dims = _cast->getInitialRect();
 		_width = dims.width();
 		_height = dims.height();
 	} else {
