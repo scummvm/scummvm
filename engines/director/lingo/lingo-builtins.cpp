@@ -1629,7 +1629,10 @@ void LB::b_installMenu(int nargs) {
 
 	int castId = d.asCastId();
 
-	const Stxt *stxt = g_director->getCurrentMovie()->getStxt(castId);
+	if (castId == 0) {
+		g_director->_wm->removeMenu();
+		return;
+	}
 
 	if (!stxt) {
 		g_lingo->lingoError("installMenu: Unknown cast number #%d", castId);
