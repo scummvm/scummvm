@@ -1438,7 +1438,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheVisibility:
 	case kTheVisible:
-		if (d.asInt() != channel->_visible) {
+		if ((bool)d.asInt() != channel->_visible) {
 			channel->_visible = d.asInt();
 			channel->_dirty = true;
 		}
