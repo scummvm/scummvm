@@ -1033,10 +1033,10 @@ void LC::c_charToOf() {
 
 	Datum res;
 	// The if order is important. It mimicks the checks, i.e. bugs, of Director 4.
-	if (indexFrom < 0)
+	if (indexFrom < 1)
 		res = Datum(chunkExpr);
-	else if (indexTo < 0)
-		res = Datum(Common::String(chunkExpr[indexTo - 1])); // treat as charOf
+	else if (indexTo < 1)
+		res = Datum(Common::String(chunkExpr[indexFrom - 1])); // treat as charOf
 	else if (indexFrom > indexTo)
 		res = Datum("");
 	else if (uint(indexFrom) > chunkExpr.size())
