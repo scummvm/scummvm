@@ -501,11 +501,7 @@ sub add_person {
 
 		# Print desc wrapped
 		if (length $desc > 0) {
-			my $ascii_desc = html_entities_to_ascii($desc);
 			$desc = html_entities_to_cpp($desc);
-			if ($ascii_desc ne $desc) {
-				print '"A2""'.$ascii_desc.'",' . "\n";
-			}
 			print '"C2""'.$desc.'",' . "\n";
 		}
 	} elsif ($mode eq "XML-DOC") {
