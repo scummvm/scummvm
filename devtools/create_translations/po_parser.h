@@ -87,7 +87,7 @@ public:
 
 	const char *language() const;
 	const char *languageName() const;
-	const bool useUTF8() const;
+	bool useUTF8() const;
 
 	int size() const;
 	const PoMessageEntry *entry(int) const;
