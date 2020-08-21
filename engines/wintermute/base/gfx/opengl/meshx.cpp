@@ -634,6 +634,11 @@ bool MeshX::parseMaterials(XFileLexer &lexer, int faceCount, const Common::Strin
 	_indexRanges.push_back(currentIndex);
 	_numAttrs = _indexRanges.size() - 1;
 
+	// Strange Change has an extra semicolon here
+	if (lexer.tokenIsOfType(SEMICOLON)) {
+		lexer.advanceToNextToken();
+	}
+
 	while (!lexer.eof()) {
 		if (lexer.tokenIsIdentifier("Material")) {
 			lexer.advanceToNextToken();
@@ -690,7 +695,7 @@ bool MeshX::parseSkinWeights(XFileLexer &lexer) {
 		currSkinWeights._vertexIndices[i] = lexer.readInt();
 	}
 
-	if (weightCount == 0) {
+	if (weightCount == 0 && lexer.tokenIsOfType(SEMICOLON)) {
 		lexer.advanceToNextToken();
 	}
 
@@ -698,7 +703,7 @@ bool MeshX::parseSkinWeights(XFileLexer &lexer) {
 		currSkinWeights._vertexWeights[i] = lexer.readFloat();
 	}
 
-	if (weightCount == 0) {
+	if (weightCount == 0 && lexer.tokenIsOfType(SEMICOLON)) {
 		lexer.advanceToNextToken();
 	}
 
