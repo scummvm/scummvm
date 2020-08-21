@@ -27,8 +27,8 @@ scummvmAssert(not the loaded of cast 500)
 set test to cast 500
 scummvmAssert(not the loaded of test)
 
-put the loaded of cast "fake" -- should error
-set test to cast "fake" -- should error
+scummvmAssertError put the loaded of cast "fake"
+scummvmAssertError set test to cast "fake"
 
 -- user-defined handlers/factories w/ reference name
 -- (mainly to test grammar, so no factory definition)
