@@ -1478,7 +1478,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		if (field == kTheLoaded) {
 			d = 0;
 		} else {
-			warning("Lingo::getTheCast(): CastMember %s not found", id1.asString().c_str());
+			g_lingo->lingoError("Lingo::getTheCast(): CastMember %s not found", id1.asString().c_str());
 		}
 		return d;
 	}
@@ -1504,7 +1504,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 
 	CastMember *member = movie->getCastMember(id);
 	if (!member) {
-		warning("Lingo::setTheCast(): CastMember %d not found", id);
+		g_lingo->lingoError("Lingo::setTheCast(): CastMember %d not found", id);
 		return;
 	}
 
@@ -1532,12 +1532,12 @@ Datum Lingo::getTheField(Datum &id1, int field) {
 		if (field == kTheLoaded) {
 			d = 0;
 		} else {
-			warning("Lingo::getTheField(): CastMember %d not found", id);
+			g_lingo->lingoError("Lingo::getTheField(): CastMember %d not found", id);
 		}
 		return d;
 	}
 	if (member->_type != kCastText) {
-		warning("Lingo::getTheField(): CastMember %d is not a field", id);
+		g_lingo->lingoError("Lingo::getTheField(): CastMember %d is not a field", id);
 		return d;
 	}
 
@@ -1562,11 +1562,11 @@ void Lingo::setTheField(Datum &id1, int field, Datum &d) {
 
 	CastMember *member = movie->getCastMember(id);
 	if (!member) {
-		warning("Lingo::setTheField(): CastMember %d not found", id);
+		g_lingo->lingoError("Lingo::setTheField(): CastMember %d not found", id);
 		return;
 	}
 	if (member->_type != kCastText) {
-		warning("Lingo::setTheField(): CastMember %d is not a field", id);
+		g_lingo->lingoError("Lingo::setTheField(): CastMember %d is not a field", id);
 		return;
 	}
 

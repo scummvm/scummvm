@@ -1033,7 +1033,7 @@ int Datum::asCastId() const {
 			if (member)
 				return member->getID();
 			
-			warning("Datum::asCastId: reference to non-existent cast member: %s", asString().c_str());
+			g_lingo->lingoError("Datum::asCastId: reference to non-existent cast member: %s", asString().c_str());
 			return 0;
 		}
 		break;
@@ -1050,9 +1050,6 @@ int Datum::asCastId() const {
 	default:
 		error("Datum::asCastId: unsupported cast ID type %s", type2str());
 	}
-
-	if (!g_director->getCurrentMovie()->getCastMember(castId))
-		warning("Datum::asCastId: reference to non-existent cast ID: %d", castId);
 
 	return castId;
 }

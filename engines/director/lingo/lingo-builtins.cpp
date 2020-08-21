@@ -1632,7 +1632,7 @@ void LB::b_installMenu(int nargs) {
 	const Stxt *stxt = g_director->getCurrentMovie()->getStxt(castId);
 
 	if (!stxt) {
-		warning("installMenu: Unknown cast number #%d", castId);
+		g_lingo->lingoError("installMenu: Unknown cast number #%d", castId);
 		return;
 	}
 
@@ -2317,22 +2317,14 @@ void LB::b_version(int nargs) {
 ///////////////////
 void LB::b_cast(int nargs) {
 	Datum d = g_lingo->pop();
-	if (d.type == STRING) {
-		d = d.asCastId();
-	}
-
-	Datum res = d.asInt();
+	Datum res = d.asCastId();
 	res.type = CASTREF;
 	g_lingo->push(res);
 }
 
 void LB::b_field(int nargs) {
 	Datum d = g_lingo->pop();
-	if (d.type == STRING) {
-		d = d.asCastId();
-	}
-
-	Datum res = d.asInt();
+	Datum res = d.asCastId();
 	res.type = FIELDREF;
 	g_lingo->push(res);
 }
