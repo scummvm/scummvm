@@ -421,10 +421,10 @@ bool Window::setField(int field, const Datum &value) {
 		setTitle(value.asString());
 		return true;
 	case kTheTitleVisible:
-		setTitleVisible(value.asInt());
+		setTitleVisible((bool)value.asInt());
 		return true;
 	case kTheVisible:
-		setVisible(value.asInt());
+		setVisible((bool)value.asInt());
 		return true;
 	case kTheWindowType:
 		setWindowType(value.asInt());
