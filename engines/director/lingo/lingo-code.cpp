@@ -500,7 +500,7 @@ void LC::c_eval() {
 	LC::c_varpush();
 
 	Datum d;
-	d = g_lingo->pop();
+	d = g_lingo->pop(false);
 
 	if (d.type != VAR) { // It could be cast ref
 		g_lingo->push(d);
