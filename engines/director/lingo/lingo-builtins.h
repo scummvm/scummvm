@@ -202,6 +202,9 @@ void b_lastwordof(int nargs);
 void b_scummvmassert(int nargs);
 void b_scummvmassertequal(int nargs);
 
+// XCOD/XFCN (HyperCard), normally exposed
+void b_getVolumes(int nargs);
+
 } // End of namespace LB
 
 } // End of namespace Director

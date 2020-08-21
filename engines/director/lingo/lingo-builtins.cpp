@@ -269,6 +269,8 @@ static struct BuiltinProto {
 	{ "scummvmAssert",	LB::b_scummvmassert,1, 2, true,  200, HBLTIN },
 	{ "scummvmAssertEqual",	LB::b_scummvmassertequal,2,3,true,200,HBLTIN },
 
+	// XCOD/XFCN (HyperCard), normally exposed
+	{ "GetVolumes", LB::b_getVolumes, 0, 0, true, 400, FBLTIN },
 
 	{ 0, 0, 0, 0, false, 0, VOIDSYM }
 };
@@ -2521,6 +2523,19 @@ void LB::b_scummvmassertequal(int nargs) {
 		warning("LB::b_scummvmassertequals: %s is not equal %s at line %d", d1.asString().c_str(), d2.asString().c_str(), line.asInt());
 	}
 	assert(result == 1);
+}
+
+void LB::b_getVolumes(int nargs) {
+	ARGNUMCHECK(0);
+
+	// Right now, only "Journeyman Project 2: Buried in Time" is known to check
+	// for its volume name.
+	Datum d;
+	d.type = ARRAY;
+	d.u.farr = new DatumArray;
+	d.u.farr->push_back(Datum("Buried in Time\252 1"));
+
+	g_lingo->push(d);
 }
 
 } // End of namespace Director
