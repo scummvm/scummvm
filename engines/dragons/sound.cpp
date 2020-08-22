@@ -437,9 +437,12 @@ void SoundManager::playSound(uint16 soundId, uint16 volumeId) {
 		stopVoicePlaying(soundId);
 	}
 
-	Audio::SoundHandle *handle = getVoiceHandle(soundId);
-	if (handle) {
-		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, handle, vabSound->getAudioStream(program, key), -1, _sfxVolume);
+	int16 vagID = vabSound->getVagID(program, key);
+	if (vagID >= 0) {
+		Audio::SoundHandle *handle = getVoiceHandle(soundId);
+		if (handle) {
+			_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, handle, vabSound->getAudioStream(program, vagID), -1, _sfxVolume);
+		}
 	}
 }
 
@@ -459,6 +462,8 @@ uint16 SoundManager::getVabFromSoundId(uint16 soundId) {
 void SoundManager::loadMsf(uint32 sceneId) {
 	char msfFileName[] = "XXXX.MSF";
 	memcpy(msfFileName, _dragonRMS->getSceneName(sceneId), 4);
+
+	debug(3, "Loading SFX file %s", msfFileName);
 
 	if (_bigFileArchive->doesFileExist(msfFileName)) {
 		uint32 msfSize;

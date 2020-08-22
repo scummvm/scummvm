@@ -101,16 +101,8 @@ VabSound::~VabSound() {
 	delete _vbData;
 }
 
-Audio::AudioStream *VabSound::getAudioStream(uint16 program, uint16 key) {
-	assert(program < _header.numVAG);
-	// TODO
-	uint16 vagID = 0;
-	for (int i = 0; i < _programAttrs[program].tones; i++) {
-		if (_toneAttrs[i].prog == program && _toneAttrs[i].min == key && _toneAttrs[i].max == key) {
-			vagID = _toneAttrs[i].vag - 1;
-		}
-	}
-	debug(3, "Playing program %d, numTones: %d, key %d vagID %d, vagOffset: %x, size: %x", program, _programAttrs[program].tones, key, vagID, _vagOffsets[vagID], _vagSizes[vagID]);
+Audio::AudioStream *VabSound::getAudioStream(uint16 program, int16 vagID) {
+	debug(3, "Playing program %d, numTones: %d, vagID %d, vagOffset: %x, size: %x", program, _programAttrs[program].tones, vagID, _vagOffsets[vagID], _vagSizes[vagID]);
 	Audio::AudioStream *str = Audio::makeXAStream(
 			new Common::MemoryReadStream(&_vbData[_vagOffsets[vagID]], _vagSizes[vagID], DisposeAfterUse::NO),
 			11025,
@@ -161,6 +153,17 @@ void VabSound::loadToneAttributes(Common::SeekableReadStream *vhData) {
 			pVabToneAttr->reserved[j] = vhData->readSint16LE();
 		}
 	}
+}
+
+int16 VabSound::getVagID(uint16 program, uint16 key) {
+	assert(program < _header.numVAG);
+
+	for (int i = 0; i < _programAttrs[program].tones; i++) {
+		if (_toneAttrs[i].prog == program && _toneAttrs[i].min == key && _toneAttrs[i].max == key) {
+			return _toneAttrs[i].vag - 1;
+		}
+	}
+	return -1;
 }
 
 } // End of namespace Dragons

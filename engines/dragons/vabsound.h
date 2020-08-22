@@ -112,7 +112,8 @@ public:
 
 	~VabSound();
 
-	Audio::AudioStream *getAudioStream(uint16 program, uint16 key);
+	int16 getVagID(uint16 program, uint16 key);
+	Audio::AudioStream *getAudioStream(uint16 program, int16 vagID);
 
 private:
 	byte *_vbData;
