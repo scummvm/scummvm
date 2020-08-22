@@ -509,14 +509,8 @@ Common::U32String OSystem_SDL::getTextFromClipboard() {
 
 bool OSystem_SDL::setTextInClipboard(const Common::U32String &text) {
 	// The encoding we need to use is UTF-8.
-	Common::String textStr = text.encode();
-	char *utf8_text = (char *)textStr.c_str();
-
-	if (utf8_text) {
-		int status = SDL_SetClipboardText(utf8_text);
-		return status == 0;
-	}
-	return SDL_SetClipboardText(textStr.c_str()) == 0;
+	Common::String utf8Text = text.encode();
+	return SDL_SetClipboardText(utf8Text.c_str()) == 0;
 }
 #endif
 
