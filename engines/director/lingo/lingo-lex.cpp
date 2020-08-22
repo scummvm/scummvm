@@ -431,7 +431,7 @@ static const YY_CHAR yy_ec[256] =
 
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+        1,    1,    1,    1,    1,    2,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1
@@ -771,7 +771,7 @@ static const char *inputbuffer;
 static uint inputlen;
 
 // Push lines in stack
-static void pushLine(int num) {
+static void pushLine(uint num) {
 	if (num > inputlen)
 		return;
 

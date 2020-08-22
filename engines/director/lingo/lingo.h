@@ -400,9 +400,9 @@ public:
 	ScriptData *_currentAssembly;
 	LexerDefineState _indef;
 	LexerDefineState _indefStore;
-	int _linenumber;
-	int _colnumber;
-	int _bytenumber;
+	uint _linenumber;
+	uint _colnumber;
+	uint _bytenumber;
 	const char *_lines[3];
 	bool _inFactory;
 	Common::Array<RepeatBlock *> _repeatStack;

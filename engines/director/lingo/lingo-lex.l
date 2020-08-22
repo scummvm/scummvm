@@ -46,7 +46,7 @@ static const char *inputbuffer;
 static uint inputlen;
 
 // Push lines in stack
-static void pushLine(int num) {
+static void pushLine(uint num) {
 	if (num > inputlen)
 		return;
 
