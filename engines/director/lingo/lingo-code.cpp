@@ -875,266 +875,226 @@ void LC::c_within() {
 	}
 }
 
+Datum LC::chunkRef(ChunkType type, int startChunk, int endChunk, const Datum &src) {
+	// A chunk expression is made up of 0 or more chunks within a source text.
+	// These chunks are called chars, words, items, or lines, but it's easier to think of them
+	// as a substring between 0 or more skip characters and a break character (or the end of the string).
+	// This function returns a reference to the source text, the start index of the first chunk,
+	// and the end index of the last chunk in the chunk expression.
+
+	if (startChunk < 1 || (0 > endChunk && endChunk < startChunk))
+		return src;
+
+	if (endChunk < 1)
+		endChunk = startChunk;
+
+	Common::String skipChars;
+	Common::String breakChars;
+
+	switch (type) {
+	case kChunkChar:
+		skipChars = "";
+		breakChars = "";
+		break;
+	case kChunkWord:
+		skipChars = "\t\n\r ";
+		breakChars = "\t\n\r ";
+		break;
+	case kChunkItem:
+		skipChars = "";
+		breakChars = Common::String::format("%c", g_lingo->_itemDelimiter);
+		break;
+	case kChunkLine:
+		skipChars = "";
+		breakChars = "\n\r";
+		break;
+	}
+
+	Common::String str = src.asString();
+	int idx = 0;
+	int chunkNum = 0;
+
+	int startIdx = -1;
+	int endIdx = -1;
+
+	while (true) {
+		// each iteration processes one chunk
+
+		// find the start of the chunk
+		while (idx < (int)str.size() && skipChars.contains(str[idx])) {
+			idx++;
+		}
+		chunkNum++;
+		if (chunkNum == startChunk) {
+			startIdx = idx; // found start of chunk expression
+		}
+
+		// find the end of the chunk
+		if (!breakChars.empty()) {
+			while (idx < (int)str.size() && !breakChars.contains(str[idx])) {
+				idx++;
+			}
+		} else if (idx < (int)str.size()) {
+			idx++;
+		}
+		if (chunkNum == endChunk || idx == (int)str.size()) {
+			endIdx = idx; // found end of chunk expression
+			break;
+		}
+
+		if (!breakChars.empty())
+			idx++; // skip break char
+	}
+
+	if (startIdx < 0)
+		startIdx = endIdx;
+
+	Datum res;
+	res.u.cref = new ChunkReference(src, startIdx, endIdx);
+	res.type = CHUNKREF;
+	return res;
+}
+
 void LC::c_of() {
 	// put char 5 of word 1 of line 2 into field "thing"
-	Datum target = g_lingo->pop();
-	Datum last_line = g_lingo->pop();
-	Datum first_line = g_lingo->pop();
-	Datum last_item = g_lingo->pop();
-	Datum first_item = g_lingo->pop();
-	Datum last_word = g_lingo->pop();
-	Datum first_word = g_lingo->pop();
-	Datum last_char = g_lingo->pop();
-	Datum first_char = g_lingo->pop();
+	Datum src = g_lingo->pop();
+	Datum lastLine = g_lingo->pop();
+	Datum firstLine = g_lingo->pop();
+	Datum lastItem = g_lingo->pop();
+	Datum firstItem = g_lingo->pop();
+	Datum lastWord = g_lingo->pop();
+	Datum firstWord = g_lingo->pop();
+	Datum lastChar = g_lingo->pop();
+	Datum firstChar = g_lingo->pop();
 
-	Common::String result = target.asString();
+	Datum res = src;
 
-	if (first_line.u.i > 0) {
-		Common::String newline("\r");
-		int first = first_line.u.i;
-		int last = first;
-		if (last_line.u.i > 0) {
-			if ((first_item.u.i > 0) || (first_word.u.i > 0) || (first_char.u.i > 0)) {
-				warning("LC::c_of(): last_line defined but unused");
-			} else if (last_line.u.i < first_line.u.i) {
-				warning("LC::c_of(): last_line before first_line, ignoring");
-			} else {
-				last = last_line.u.i;
-			}
-		}
-		uint32 pointer = 0;
-		int curLine = 0;
-		int firstIndex = -1;
-		int lastIndex = -1;
-		while (pointer < result.size()) {
-			curLine += 1;
-			if (curLine == first) {
-				firstIndex = pointer;
-			}
-			pointer = result.find(newline, pointer);
-			if (curLine == last) {
-				lastIndex = pointer;
-				break;
-			}
-		}
-		if (firstIndex < 0 || lastIndex < 0) {
-			warning("LC::c_of(): first_line or last_line out of range");
-			result = "";
-		} else {
-			result = result.substr(firstIndex, lastIndex);
-		}
-	}
+	if (firstChar.asInt() > 0)
+		res = LC::chunkRef(kChunkChar, firstChar.asInt(), lastChar.asInt(), src);
+	else if (firstWord.asInt() > 0)
+		res = LC::chunkRef(kChunkWord, firstWord.asInt(), lastWord.asInt(), src);
+	else if (firstItem.asInt() > 0)
+		res = LC::chunkRef(kChunkItem, firstItem.asInt(), lastItem.asInt(), src);
+	else if (lastLine.asInt() > 0)
+		res = LC::chunkRef(kChunkLine, firstLine.asInt(), lastLine.asInt(), src);
 
-	if (first_item.u.i > 0 || last_item.u.i > 0) {
-		warning("STUB: LC::c_of() item indexing");
-	}
-
-	if (first_word.u.i > 0) {
-		int first = first_word.u.i;
-		int last = first;
-		if (last_word.u.i > 0) {
-			if (first_char.u.i > 0) {
-				warning("LC::c_of(): last_word defined but unused");
-			} else if (last_word.u.i < first_word.u.i) {
-				warning("LC::c_of(): last_word before first_word, ignoring");
-			} else {
-				last = last_word.u.i;
-			}
-		}
-		uint32 pointer = 0;
-		int curWord = 0;
-		int firstIndex = -1;
-		int lastIndex = -1;
-		bool inWord = false;
-		while (pointer < result.size()) {
-			if ((result[pointer] == '\r') || (result[pointer] == '\t') ||
-				(result[pointer] == '\n') || (result[pointer] == ' ')) {
-				if (inWord) {
-					inWord = false;
-					if (last == curWord) {
-						break;
-					}
-				}
-			} else {
-				if (!inWord) {
-					inWord = true;
-					curWord += 1;
-					if (first == curWord) {
-						firstIndex = pointer;
-					}
-				}
-			}
-			pointer += 1;
-		}
-		lastIndex = pointer;
-		if (firstIndex < 0) {
-			warning("LC::c_of(): first_word out of range");
-			result = "";
-		} else {
-			result = result.substr(firstIndex, lastIndex - firstIndex);
-		}
-	}
-
-	if (first_char.u.i > 0) {
-		int first = first_char.u.i;
-		int last = first;
-		if (last_char.u.i > 0) {
-			if (last_char.u.i < first_char.u.i) {
-				warning("LC::c_of(): last_char before first_char, ignoring");
-			} else {
-				last = last_char.u.i;
-			}
-		}
-		result = result.substr(first - 1, last - first);
-	}
-
-	target = Datum(result);
-
-	g_lingo->push(target);
+	g_lingo->push(res);
 }
 
 void LC::c_charOf() {
-	Datum d2 = g_lingo->pop(); // string
-	Datum d1 = g_lingo->pop(); // index
+	Datum src = g_lingo->pop(false);
+	Datum index = g_lingo->pop();
 
-    if ((d1.type != INT && d1.type != FLOAT) || d2.type != STRING) {
-		warning("LC::c_charOf(): Called with wrong data types: %s and %s", d1.type2str(), d2.type2str());
+    if ((index.type != INT && index.type != FLOAT)
+			|| (src.type != STRING && src.type != VAR && src.type != FIELDREF && src.type != CHUNKREF && src.type != CASTREF)) {
+		g_lingo->lingoError("LC::c_charOf(): Called with wrong data types: %s and %s", index.type2str(), src.type2str());
 		g_lingo->push(Datum(""));
 		return;
 	}
 
-	Datum res;
-	int index = d1.asInt();
-	Common::String chunkExpr = *d2.u.s;
-
-	if (index < 1)
-		res = Datum(chunkExpr);
-	else if (uint(index) > chunkExpr.size())
-		res = Datum("");
-	else
-		res = Datum(Common::String(chunkExpr[index - 1]));
-	g_lingo->push(res);
+	g_lingo->push(LC::chunkRef(kChunkChar, index.asInt(), 0, src));
 }
 
 void LC::c_charToOf() {
-	Datum d3 = g_lingo->pop(); // string
-	Datum d2 = g_lingo->pop(); // indexFrom
-	Datum d1 = g_lingo->pop(); // indexTo
+	Datum src = g_lingo->pop(false);
+	Datum indexTo = g_lingo->pop();
+	Datum indexFrom = g_lingo->pop();
 
-	if ((d1.type != INT && d1.type != FLOAT) || (d2.type != INT && d2.type != FLOAT) || d3.type != STRING) {
-		warning("LC::c_charToOf(): Called with wrong data types: %s, %s and %s", d1.type2str(), d2.type2str(), d3.type2str());
+	if ((indexTo.type != INT && indexTo.type != FLOAT) || (indexFrom.type != INT && indexFrom.type != FLOAT)
+			|| (src.type != STRING && src.type != VAR && src.type != FIELDREF && src.type != CHUNKREF && src.type != CASTREF)) {
+		warning("LC::c_charToOf(): Called with wrong data types: %s, %s and %s", indexTo.type2str(), indexFrom.type2str(), src.type2str());
 		g_lingo->push(Datum(""));
 		return;
 	}
 
-	int indexFrom = d1.asInt();
-	int indexTo = d2.asInt();
-	Common::String chunkExpr = *d3.u.s;
-
-	Datum res;
-	// The if order is important. It mimicks the checks, i.e. bugs, of Director 4.
-	if (indexFrom < 1)
-		res = Datum(chunkExpr);
-	else if (indexTo < 1)
-		res = Datum(Common::String(chunkExpr[indexFrom - 1])); // treat as charOf
-	else if (indexFrom > indexTo)
-		res = Datum("");
-	else if (uint(indexFrom) > chunkExpr.size())
-		res = Datum("");
-	else
-		res = Datum(chunkExpr.substr(indexFrom - 1, indexTo - indexFrom + 1));
-	g_lingo->push(res);
+	g_lingo->push(LC::chunkRef(kChunkChar, indexFrom.asInt(), indexTo.asInt(), src));
 }
 
 void LC::c_itemOf() {
+	Datum src = g_lingo->pop(false);
+	Datum index = g_lingo->pop();
 
-	Datum d2 = g_lingo->pop(); // chunkExpression
-	Datum d1 = g_lingo->pop(); // index
-
-	char delimiter = g_lingo->_itemDelimiter;
-
-	if ((d1.type != INT && d1.type != FLOAT) ||  d2.type != STRING) {
-		warning("LC::c_itemOf(): Called with wrong data types: %s and %s", d1.type2str(), d2.type2str());
+	if ((index.type != INT && index.type != FLOAT)
+			|| (src.type != STRING && src.type != VAR && src.type != FIELDREF && src.type != CHUNKREF && src.type != CASTREF)) {
+		warning("LC::c_itemOf(): Called with wrong data types: %s and %s", index.type2str(), src.type2str());
 		g_lingo->push(Datum(""));
 		return;
 	}
 
-	int index = d1.asInt();
-
-	if (index < 1) {
-		// returns the input string
-		g_lingo->push(d2);
-		return;
-	}
-	Common::String chunkExpr = *d2.u.s;
-	uint startPos = 0;
-
-	while (index-- > 1) {
-		startPos = chunkExpr.find(delimiter, startPos);
-		if (startPos == Common::String::npos)
-			break;
-		startPos++;  // skipping comma
-	}
-
-	Datum res;
-	if (startPos == Common::String::npos) {
-		res = Datum("");
-	} else {
-		uint endPos = chunkExpr.find(delimiter, startPos);
-		if (endPos == Common::String::npos)
-			endPos = chunkExpr.size();
-		res = Datum(chunkExpr.substr(startPos, endPos - startPos));
-	}
-
-	g_lingo->push(res);
+	g_lingo->push(LC::chunkRef(kChunkItem, index.asInt(), 0, src));
 }
 
 void LC::c_itemToOf() {
-	Datum d3 = g_lingo->pop();
-	Datum d2 = g_lingo->pop();
-	Datum d1 = g_lingo->pop();
+	Datum src = g_lingo->pop(false);
+	Datum indexTo = g_lingo->pop();
+	Datum indexFrom = g_lingo->pop();
 
-	warning("STUB: LC::c_itemToOf(): %d %d %d", d1.u.i, d2.u.i, d3.u.i);
+	if ((indexTo.type != INT && indexTo.type != FLOAT) || (indexFrom.type != INT && indexFrom.type != FLOAT)
+			|| (src.type != STRING && src.type != VAR && src.type != FIELDREF && src.type != CHUNKREF && src.type != CASTREF)) {
+		warning("LC::c_itemToOf(): Called with wrong data types: %s, %s and %s", indexTo.type2str(), indexFrom.type2str(), src.type2str());
+		g_lingo->push(Datum(""));
+		return;
+	}
 
-	g_lingo->push(d1);
+	g_lingo->push(LC::chunkRef(kChunkItem, indexFrom.asInt(), indexTo.asInt(), src));
 }
 
 void LC::c_lineOf() {
-	Datum d2 = g_lingo->pop();
-	Datum d1 = g_lingo->pop();
+	Datum src = g_lingo->pop(false);
+	Datum index = g_lingo->pop();
 
-	warning("STUB: LC::c_lineOf(): %d %d", d1.u.i, d2.u.i);
+	if ((index.type != INT && index.type != FLOAT)
+			|| (src.type != STRING && src.type != VAR && src.type != FIELDREF && src.type != CHUNKREF && src.type != CASTREF)) {
+		warning("LC::c_lineOf(): Called with wrong data types: %s and %s", index.type2str(), src.type2str());
+		g_lingo->push(Datum(""));
+		return;
+	}
 
-	g_lingo->push(d1);
+	g_lingo->push(LC::chunkRef(kChunkLine, index.asInt(), 0, src));
 }
 
 void LC::c_lineToOf() {
-	Datum d3 = g_lingo->pop();
-	Datum d2 = g_lingo->pop();
-	Datum d1 = g_lingo->pop();
+	Datum src = g_lingo->pop(false);
+	Datum indexTo = g_lingo->pop();
+	Datum indexFrom = g_lingo->pop();
 
-	warning("STUB: LC::c_lineToOf(): %d %d %d", d1.u.i, d2.u.i, d3.u.i);
+	if ((indexTo.type != INT && indexTo.type != FLOAT) || (indexFrom.type != INT && indexFrom.type != FLOAT)
+			|| (src.type != STRING && src.type != VAR && src.type != FIELDREF && src.type != CHUNKREF && src.type != CASTREF)) {
+		warning("LC::c_lineToOf(): Called with wrong data types: %s, %s and %s", indexTo.type2str(), indexFrom.type2str(), src.type2str());
+		g_lingo->push(Datum(""));
+		return;
+	}
 
-	g_lingo->push(d1);
+	g_lingo->push(LC::chunkRef(kChunkLine, indexFrom.asInt(), indexTo.asInt(), src));
 }
 
 void LC::c_wordOf() {
-	Datum d2 = g_lingo->pop();
-	Datum d1 = g_lingo->pop();
+	Datum src = g_lingo->pop(false);
+	Datum index = g_lingo->pop();
 
-	warning("STUB: LC::c_wordOf(): %d %d", d1.u.i, d2.u.i);
+	if ((index.type != INT && index.type != FLOAT)
+			|| (src.type != STRING && src.type != VAR && src.type != FIELDREF && src.type != CHUNKREF && src.type != CASTREF)) {
+		warning("LC::c_wordOf(): Called with wrong data types: %s and %s", index.type2str(), src.type2str());
+		g_lingo->push(Datum(""));
+		return;
+	}
 
-	g_lingo->push(d1);
+	g_lingo->push(LC::chunkRef(kChunkWord, index.asInt(), 0, src));
 }
 
 void LC::c_wordToOf() {
-	Datum d3 = g_lingo->pop();
-	Datum d2 = g_lingo->pop();
-	Datum d1 = g_lingo->pop();
+	Datum src = g_lingo->pop(false);
+	Datum indexTo = g_lingo->pop();
+	Datum indexFrom = g_lingo->pop();
 
-	warning("STUB: LC::c_wordToOf(): %d %d %d", d1.u.i, d2.u.i, d3.u.i);
+	if ((indexTo.type != INT && indexTo.type != FLOAT) || (indexFrom.type != INT && indexFrom.type != FLOAT)
+			|| (src.type != STRING && src.type != VAR && src.type != FIELDREF && src.type != CHUNKREF && src.type != CASTREF)) {
+		warning("LC::c_wordToOf(): Called with wrong data types: %s, %s and %s", indexTo.type2str(), indexFrom.type2str(), src.type2str());
+		g_lingo->push(Datum(""));
+		return;
+	}
 
-	g_lingo->push(d1);
+	g_lingo->push(LC::chunkRef(kChunkWord, indexFrom.asInt(), indexTo.asInt(), src));
 }
 
 void LC::c_and() {

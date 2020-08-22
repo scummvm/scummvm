@@ -307,6 +307,13 @@ enum SymbolType {
 	HANDLER	// user-defined handler
 };
 
+enum ChunkType {
+	kChunkChar,
+	kChunkWord,
+	kChunkItem,
+	kChunkLine
+};
+
 struct Datum;
 struct PCell;
 typedef Common::Array<Datum> DatumArray;

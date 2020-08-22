@@ -838,6 +838,9 @@ void Datum::reset() {
 				delete u.obj;
 			}
 			break;
+		case CHUNKREF:
+			delete u.cref;
+			break;
 		default:
 			break;
 		}
@@ -848,7 +851,7 @@ void Datum::reset() {
 }
 
 Datum Datum::eval() {
-	if (type == VAR || type == FIELDREF) {
+	if (type == VAR || type == FIELDREF || type == CHUNKREF) {
 		return g_lingo->varFetch(*this);
 	}
 
@@ -982,6 +985,12 @@ Common::String Datum::asString(bool printonly) const {
 			s = Common::String::format("field: \"%s\"", ((TextCastMember *)member)->getText().c_str());
 		}
 		break;
+	case CHUNKREF:
+		{
+			Common::String src = u.cref->source.asString(true);
+			s = Common::String::format("chunk: char %d to %d of %s", u.cref->start, u.cref->end, src.c_str());
+		}
+		break;
 	case POINT:
 		s = "point:";
 		// fallthrough
@@ -1076,6 +1085,8 @@ const char *Datum::type2str(bool isk) const {
 		return isk ? "#object" : "OBJECT";
 	case FIELDREF:
 		return "FIELDREF";
+	case CHUNKREF:
+		return "CHUNKREF";
 	case VAR:
 		return isk ? "#var" : "VAR";
 	default:
@@ -1360,6 +1371,10 @@ Datum Lingo::varFetch(Datum &var, bool global, DatumHash *localvars, bool silent
 			warning("varFetch: Unhandled cast type %d", member->_type);
 			break;
 		}
+	} else if (var.type == CHUNKREF) {
+		Common::String src = var.u.cref->source.eval().asString();
+		result.type = STRING;
+		result.u.s = new Common::String(src.substr(var.u.cref->start, var.u.cref->end - var.u.cref->start));
 	} else {
 		warning("varFetch: fetch from non-variable");
 	}

@@ -37,6 +37,7 @@ class SeekableReadStreamEndian;
 
 namespace Director {
 
+struct ChunkReference;
 struct TheEntity;
 struct TheEntityField;
 struct LingoArchive;
@@ -116,7 +117,8 @@ struct Datum {	/* interpreter stack type */
 		Common::String *s;	/* STRING, VAR, OBJECT */
 		DatumArray *farr;	/* ARRAY, POINT, RECT */
 		PropertyArray *parr; /* PARRAY */
-		AbstractObject *obj;
+		AbstractObject *obj; /* OBJECT */
+		ChunkReference *cref; /* CHUNKREF */
 	} u;
 
 	int *refCount;
@@ -144,6 +146,14 @@ struct Datum {	/* interpreter stack type */
 
 	int equalTo(Datum &d, bool ignoreCase = false) const;
 	int compareTo(Datum &d, bool ignoreCase = false) const;
+};
+
+struct ChunkReference {
+	Datum source;
+	int start;
+	int end;
+
+	ChunkReference(const Datum &src, uint s, uint e) : source(src), start(s), end(e) {}
 };
 
 struct PCell {
