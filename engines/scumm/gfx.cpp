@@ -348,8 +348,7 @@ void ScummEngine::initScreens(int b, int h) {
 			// Initialize these like the previous version screens for DoTT.
 			initVirtScreen(kTextVirtScreen, adj, _screenWidth, b, false, false);
 			initVirtScreen(kVerbVirtScreen, h + adj, _screenWidth, _screenHeight - h - adj, false, false);
-		}
-		else if (_game.version >= 7) {
+		} else if (_game.version >= 7) {
 			// V7+ games only used the main virtual screen, so let's repurpose these
 			// three "unused" screens as blast text and verb coin layers.
 			initVirtScreen(kTextVirtScreen, adj, _screenWidth, _screenHeight, false, false);
@@ -357,8 +356,7 @@ void ScummEngine::initScreens(int b, int h) {
 			_virtscr[kTextVirtScreen].fillRect(clear_rect, CHARSET_MASK_TRANSPARENCY);
 			_virtscr[kVerbVirtScreen].fillRect(clear_rect, CHARSET_MASK_TRANSPARENCY);
 		}
-	}
-	else {
+	} else {
 		if (!_virtscr[kUnkVirtScreen].getBasePtr(0,0)) {
 			// Since the size of screen 3 is fixed, there is no need to reallocate
 			// it if its size changed.
@@ -440,7 +438,7 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int top, int width, int 
 
 	// No need to reallocate the memory if the allocated screen is the same
 	// size in bytes as before.
-	if (size != vs->byte_size) {
+	if (size != vs->bufferSize) {
 		if (vs->getBasePtr(0,0))
 			free(vs->getBasePtr(0,0));
 		byte *ptr = (byte *)malloc(size);
@@ -454,7 +452,7 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int top, int width, int 
 		else
 			vs->backBuf = NULL;
 
-		vs->byte_size = size;
+		vs->bufferSize = size;
 	}
 
 	if (_game.platform == Common::kPlatformNES)
@@ -583,8 +581,7 @@ void ScummEngine_v6::drawDirtyScreenParts() {
 		_layers[0] = (!_blastObjectQueuePos) ? NULL : &_virtscr[kUnkVirtScreen];
 		_layers[1] = NULL;
 		_layers[3] = (!_blastTextQueuePos) ? NULL : &_virtscr[kTextVirtScreen];
-	}
-	else {
+	} else {
 		updateDirtyScreen(kVerbVirtScreen);
 		updateDirtyScreen(kTextVirtScreen);
 	}
@@ -1174,7 +1171,6 @@ void ScummEngine::restoreCharsetBg() {
 		_charset->_left = -1;
 
 		int i;
-		int w = 8;
 		int start = 0;
 
 		// Clear out any dirty rects that have been marked on the text surface.
@@ -1183,6 +1179,7 @@ void ScummEngine::restoreCharsetBg() {
 			return;
 
 		for (i = 0; i < _gdi->_numStrips; i++) {
+			static int w = 8;
 			if (vs->bdirty[i]) {
 				const int top = vs->tdirty[i];
 				const int bottom = vs->bdirty[i];
@@ -1192,7 +1189,6 @@ void ScummEngine::restoreCharsetBg() {
 					w += 8;
 					continue;
 				}
-				debug(9, "Restore charset BG rect: %d,%d-%d,%d", start * 8, top, (start * 8) + w, bottom);
 				Common::Rect r(start * 8, top, (start * 8) + w, bottom);
 				vs->fillRect(r, CHARSET_MASK_TRANSPARENCY);
 				markRectAsDirty(kMainVirtScreen, r, USAGE_BIT_RESTORED);

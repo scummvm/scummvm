@@ -69,12 +69,12 @@ struct CameraData {
 
 /** Virtual screen identifiers */
 enum VirtScreenNumber {
-	kMainVirtScreen,	// The 'stage'
-	kTextVirtScreen,	// In V0-V3 games: the area where text is printed
-	kVerbVirtScreen,	// The verb area
-	kUnkVirtScreen,		// ?? Not sure what this one is good for...
-	kNumVirtScreens,
-	kTextSurface		// The text surface exists outside the main virtscreen index
+	kMainVirtScreen = 0,	// The 'stage'
+	kTextVirtScreen = 1,	// In V0-V3 games: the area where text is printed
+	kVerbVirtScreen = 2,	// The verb area
+	kUnkVirtScreen  = 3,	// ?? Not sure what this one is good for...
+	kNumVirtScreens = 4,
+	kTextSurface    = 5		// The text surface exists outside the main virtscreen index
 };
 
 /**
@@ -162,7 +162,7 @@ struct VirtScreen : Graphics::Surface {
 	 * The size of the allocated memory area in bytes.
 	 * Mostly useful to avoid unnecessary re-allocations of the buffer.
 	 */
-	int byte_size;
+	int bufferSize;
 
 	/**
 	 * Convenience method to set the whole tdirty and bdirty arrays to one

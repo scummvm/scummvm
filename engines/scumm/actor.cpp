@@ -2210,11 +2210,10 @@ void ScummEngine_v90he::processActors() {
 // Used in Scumm v8, to allow the verb coin to be drawn over the inventory
 // chest. I'm assuming that draw order won't matter here.
 int ScummEngine::processUpperActors() {
-	int i;
 	_upperActorQueuePos = 0;
 
 	_processing_upper_actors = true;
-	for (i = 1; i < _numActors; i++) {
+	for (int i = 1; i < _numActors; i++) {
 		if (_actors[i]->isInCurrentRoom() && _actors[i]->_costume && _actors[i]->_layer < 0) {
 			_actors[i]->drawActorCostume(false, &_virtscr[kVerbVirtScreen]);
 			_actors[i]->animateCostume();
@@ -2228,8 +2227,7 @@ int ScummEngine::processUpperActors() {
 void ScummEngine::removeUpperActors() {
 	int i;
 
-	for (i = 0; i < _upperActorQueuePos; i++) {
-		//restoreBackground(_blastTextQueue[i].rect);
+	for (int i = 0; i < _upperActorQueuePos; i++) {
 		_virtscr[kVerbVirtScreen].fillRect(_upperActorQueue[i], CHARSET_MASK_TRANSPARENCY);
 		markRectAsDirty(kMainVirtScreen, _upperActorQueue[i]);
 	}
