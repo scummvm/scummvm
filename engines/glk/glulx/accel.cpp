@@ -20,10 +20,10 @@
  *
  */
 
-#include "glk/glulxe/glulxe.h"
+#include "glk/glulx/glulx.h"
 
 namespace Glk {
-namespace Glulxe {
+namespace Glulx {
 
 /**
  * Git passes along function arguments in reverse order. To make our lives more interesting
@@ -40,41 +40,41 @@ namespace Glulxe {
  */
 #define ARG_IF_GIVEN(argv, argc, ix)  ((argc > ix) ? (ARG(argv, argc, ix)) : 0)
 
-acceleration_func Glulxe::accel_find_func(uint index) {
+acceleration_func Glulx::accel_find_func(uint index) {
 	switch (index) {
 	case 0:
 		return nullptr;     // 0 always means no acceleration
 	case 1:
-		return &Glulxe::func_1_z__region;
+		return &Glulx::func_1_z__region;
 	case 2:
-		return &Glulxe::func_2_cp__tab;
+		return &Glulx::func_2_cp__tab;
 	case 3:
-		return &Glulxe::func_3_ra__pr;
+		return &Glulx::func_3_ra__pr;
 	case 4:
-		return &Glulxe::func_4_rl__pr;
+		return &Glulx::func_4_rl__pr;
 	case 5:
-		return &Glulxe::func_5_oc__cl;
+		return &Glulx::func_5_oc__cl;
 	case 6:
-		return &Glulxe::func_6_rv__pr;
+		return &Glulx::func_6_rv__pr;
 	case 7:
-		return &Glulxe::func_7_op__pr;
+		return &Glulx::func_7_op__pr;
 	case 8:
-		return &Glulxe::func_8_cp__tab;
+		return &Glulx::func_8_cp__tab;
 	case 9:
-		return &Glulxe::func_9_ra__pr;
+		return &Glulx::func_9_ra__pr;
 	case 10:
-		return &Glulxe::func_10_rl__pr;
+		return &Glulx::func_10_rl__pr;
 	case 11:
-		return &Glulxe::func_11_oc__cl;
+		return &Glulx::func_11_oc__cl;
 	case 12:
-		return &Glulxe::func_12_rv__pr;
+		return &Glulx::func_12_rv__pr;
 	case 13:
-		return &Glulxe::func_13_op__pr;
+		return &Glulx::func_13_op__pr;
 	}
 	return nullptr;
 }
 
-acceleration_func Glulxe::accel_get_func(uint addr) {
+acceleration_func Glulx::accel_get_func(uint addr) {
 	int bucknum;
 	accelentry_t *ptr;
 
@@ -89,7 +89,7 @@ acceleration_func Glulxe::accel_get_func(uint addr) {
 	return nullptr;
 }
 
-void Glulxe::accel_iterate_funcs(void (*func)(uint index, uint addr)) {
+void Glulx::accel_iterate_funcs(void (*func)(uint index, uint addr)) {
 	int bucknum;
 	accelentry_t *ptr;
 
@@ -105,7 +105,7 @@ void Glulxe::accel_iterate_funcs(void (*func)(uint index, uint addr)) {
 	}
 }
 
-void Glulxe::accel_set_func(uint index, uint addr) {
+void Glulx::accel_set_func(uint index, uint addr) {
 	int bucknum;
 	accelentry_t *ptr;
 	int functype;
@@ -152,7 +152,7 @@ void Glulxe::accel_set_func(uint index, uint addr) {
 	ptr->func = new_func;
 }
 
-void Glulxe::accel_set_param(uint index, uint val) {
+void Glulx::accel_set_param(uint index, uint val) {
 	switch (index) {
 	case 0:
 		classes_table = val;
@@ -184,11 +184,11 @@ void Glulxe::accel_set_param(uint index, uint val) {
 	}
 }
 
-uint Glulxe::accel_get_param_count() const {
+uint Glulx::accel_get_param_count() const {
 	return 9;
 }
 
-uint Glulxe::accel_get_param(uint index) const {
+uint Glulx::accel_get_param(uint index) const {
 	switch (index) {
 	case 0:
 		return classes_table;
@@ -213,18 +213,18 @@ uint Glulxe::accel_get_param(uint index) const {
 	}
 }
 
-void Glulxe::accel_error(const char *msg) {
+void Glulx::accel_error(const char *msg) {
 	glk_put_char('\n');
 	glk_put_string(msg);
 	glk_put_char('\n');
 }
 
-int Glulxe::obj_in_class(uint obj) {
+int Glulx::obj_in_class(uint obj) {
 	// This checks whether obj is contained in Class, not whether it is a member of Class
 	return (Mem4(obj + 13 + num_attr_bytes) == class_metaclass);
 }
 
-uint Glulxe::get_prop(uint obj, uint id) {
+uint Glulx::get_prop(uint obj, uint id) {
 	uint cla = 0;
 	uint prop;
 	uint call_argv[2];
@@ -258,7 +258,7 @@ uint Glulxe::get_prop(uint obj, uint id) {
 	return prop;
 }
 
-uint Glulxe::get_prop_new(uint obj, uint id) {
+uint Glulx::get_prop_new(uint obj, uint id) {
 	uint cla = 0;
 	uint prop;
 	uint call_argv[2];
@@ -292,7 +292,7 @@ uint Glulxe::get_prop_new(uint obj, uint id) {
 	return prop;
 }
 
-uint Glulxe::func_1_z__region(uint argc, uint *argv) {
+uint Glulx::func_1_z__region(uint argc, uint *argv) {
 	uint addr;
 	uint tb;
 
@@ -318,7 +318,7 @@ uint Glulxe::func_1_z__region(uint argc, uint *argv) {
 	return 0;
 }
 
-uint Glulxe::func_2_cp__tab(uint argc, uint *argv) {
+uint Glulx::func_2_cp__tab(uint argc, uint *argv) {
 	uint obj;
 	uint id;
 	uint otab, max;
@@ -341,7 +341,7 @@ uint Glulxe::func_2_cp__tab(uint argc, uint *argv) {
 	return binary_search(id, 2, otab, 10, max, 0, 0);
 }
 
-uint Glulxe::func_3_ra__pr(uint argc, uint *argv) {
+uint Glulx::func_3_ra__pr(uint argc, uint *argv) {
 	uint obj;
 	uint id;
 	uint prop;
@@ -356,7 +356,7 @@ uint Glulxe::func_3_ra__pr(uint argc, uint *argv) {
 	return Mem4(prop + 4);
 }
 
-uint Glulxe::func_4_rl__pr(uint argc, uint *argv) {
+uint Glulx::func_4_rl__pr(uint argc, uint *argv) {
 	uint obj;
 	uint id;
 	uint prop;
@@ -371,7 +371,7 @@ uint Glulxe::func_4_rl__pr(uint argc, uint *argv) {
 	return 4 * Mem2(prop + 2);
 }
 
-uint Glulxe::func_5_oc__cl(uint argc, uint *argv) {
+uint Glulx::func_5_oc__cl(uint argc, uint *argv) {
 	uint obj;
 	uint cla;
 	uint zr, prop, inlist, inlistlen, jx;
@@ -437,7 +437,7 @@ uint Glulxe::func_5_oc__cl(uint argc, uint *argv) {
 	return 0;
 }
 
-uint Glulxe::func_6_rv__pr(uint argc, uint *argv) {
+uint Glulx::func_6_rv__pr(uint argc, uint *argv) {
 	uint id;
 	uint addr;
 
@@ -456,7 +456,7 @@ uint Glulxe::func_6_rv__pr(uint argc, uint *argv) {
 	return Mem4(addr);
 }
 
-uint Glulxe::func_7_op__pr(uint argc, uint *argv) {
+uint Glulx::func_7_op__pr(uint argc, uint *argv) {
 	uint obj;
 	uint id;
 	uint zr;
@@ -489,7 +489,7 @@ uint Glulxe::func_7_op__pr(uint argc, uint *argv) {
 	return ((func_3_ra__pr(argc, argv)) ? 1 : 0);
 }
 
-uint Glulxe::func_8_cp__tab(uint argc, uint *argv) {
+uint Glulx::func_8_cp__tab(uint argc, uint *argv) {
 	uint obj;
 	uint id;
 	uint otab, max;
@@ -512,7 +512,7 @@ uint Glulxe::func_8_cp__tab(uint argc, uint *argv) {
 	return binary_search(id, 2, otab, 10, max, 0, 0);
 }
 
-uint Glulxe::func_9_ra__pr(uint argc, uint *argv) {
+uint Glulx::func_9_ra__pr(uint argc, uint *argv) {
 	uint obj;
 	uint id;
 	uint prop;
@@ -527,7 +527,7 @@ uint Glulxe::func_9_ra__pr(uint argc, uint *argv) {
 	return Mem4(prop + 4);
 }
 
-uint Glulxe::func_10_rl__pr(uint argc, uint *argv) {
+uint Glulx::func_10_rl__pr(uint argc, uint *argv) {
 	uint obj;
 	uint id;
 	uint prop;
@@ -542,7 +542,7 @@ uint Glulxe::func_10_rl__pr(uint argc, uint *argv) {
 	return 4 * Mem2(prop + 2);
 }
 
-uint Glulxe::func_11_oc__cl(uint argc, uint *argv) {
+uint Glulx::func_11_oc__cl(uint argc, uint *argv) {
 	uint obj;
 	uint cla;
 	uint zr, prop, inlist, inlistlen, jx;
@@ -608,7 +608,7 @@ uint Glulxe::func_11_oc__cl(uint argc, uint *argv) {
 	return 0;
 }
 
-uint Glulxe::func_12_rv__pr(uint argc, uint *argv) {
+uint Glulx::func_12_rv__pr(uint argc, uint *argv) {
 	uint id;
 	uint addr;
 
@@ -627,7 +627,7 @@ uint Glulxe::func_12_rv__pr(uint argc, uint *argv) {
 	return Mem4(addr);
 }
 
-uint Glulxe::func_13_op__pr(uint argc, uint *argv) {
+uint Glulx::func_13_op__pr(uint argc, uint *argv) {
 	uint obj;
 	uint id;
 	uint zr;
@@ -660,5 +660,5 @@ uint Glulxe::func_13_op__pr(uint argc, uint *argv) {
 	return ((func_9_ra__pr(argc, argv)) ? 1 : 0);
 }
 
-} // End of namespace Glulxe
+} // End of namespace Glulx
 } // End of namespace Glk

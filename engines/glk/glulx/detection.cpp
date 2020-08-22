@@ -20,8 +20,8 @@
  *
  */
 
-#include "glk/glulxe/detection.h"
-#include "glk/glulxe/detection_tables.h"
+#include "glk/glulx/detection.h"
+#include "glk/glulx/detection_tables.h"
 #include "glk/blorb.h"
 #include "common/debug.h"
 #include "common/file.h"
@@ -29,15 +29,15 @@
 #include "engines/game.h"
 
 namespace Glk {
-namespace Glulxe {
+namespace Glulx {
 
-void GlulxeMetaEngine::getSupportedGames(PlainGameList &games) {
+void GlulxMetaEngine::getSupportedGames(PlainGameList &games) {
 	for (const PlainGameDescriptor *pd = GLULXE_GAME_LIST; pd->gameId; ++pd) {
 		games.push_back(*pd);
 	}
 }
 
-GameDescriptor GlulxeMetaEngine::findGame(const char *gameId) {
+GameDescriptor GlulxMetaEngine::findGame(const char *gameId) {
 	for (const PlainGameDescriptor *pd = GLULXE_GAME_LIST; pd->gameId; ++pd) {
 		if (!strcmp(gameId, pd->gameId)) {
 			GameDescriptor gd = *pd;
@@ -49,7 +49,7 @@ GameDescriptor GlulxeMetaEngine::findGame(const char *gameId) {
 	return GameDescriptor::empty();
 }
 
-bool GlulxeMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
+bool GlulxMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
 	const char *const EXTENSIONS[] = { ".ulx", nullptr };
 
 	// Loop through the files of the folder
@@ -94,7 +94,7 @@ bool GlulxeMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &
 	return !gameList.empty();
 }
 
-void GlulxeMetaEngine::detectClashes(Common::StringMap &map) {
+void GlulxMetaEngine::detectClashes(Common::StringMap &map) {
 	for (const PlainGameDescriptor *pd = GLULXE_GAME_LIST; pd->gameId; ++pd) {
 		if (map.contains(pd->gameId))
 			error("Duplicate game Id found - %s", pd->gameId);
@@ -102,5 +102,5 @@ void GlulxeMetaEngine::detectClashes(Common::StringMap &map) {
 	}
 }
 
-} // End of namespace Glulxe
+} // End of namespace Glulx
 } // End of namespace Glk

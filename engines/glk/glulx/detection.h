@@ -29,12 +29,12 @@
 #include "glk/detection.h"
 
 namespace Glk {
-namespace Glulxe {
+namespace Glulx {
 
 /**
- * Meta engine for Glulxe interpreter
+ * Meta engine for Glulx interpreter
  */
-class GlulxeMetaEngine {
+class GlulxMetaEngine {
 public:
 	/**
 	 * Get a list of supported games
@@ -57,7 +57,7 @@ public:
 	static void detectClashes(Common::StringMap &map);
 };
 
-} // End of namespace Glulxe
+} // End of namespace Glulx
 } // End of namespace Glk
 
 #endif

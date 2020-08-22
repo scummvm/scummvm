@@ -20,19 +20,19 @@
  *
  */
 
-#include "glk/glulxe/glulxe.h"
+#include "glk/glulx/glulx.h"
 
 namespace Glk {
-namespace Glulxe {
+namespace Glulx {
 
-uint Glulxe::do_gestalt(uint val, uint val2) {
+uint Glulx::do_gestalt(uint val, uint val2) {
 	switch (val) {
 
 	case gestulx_GlulxVersion:
 		return 0x00030102; /* Glulx spec version 3.1.2 */
 
 	case gestulx_TerpVersion:
-		return 0x00000504; /* Glulxe version 0.5.4 */
+		return 0x00000504; /* Glulx version 0.5.4 */
 
 	case gestulx_ResizeMem:
 #ifdef FIXED_MEMSIZE
@@ -97,5 +97,5 @@ uint Glulxe::do_gestalt(uint val, uint val2) {
 	}
 }
 
-} // End of namespace Glulxe
+} // End of namespace Glulx
 } // End of namespace Glk

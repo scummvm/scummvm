@@ -20,12 +20,12 @@
  *
  */
 
-#include "glk/glulxe/glulxe.h"
+#include "glk/glulx/glulx.h"
 
 namespace Glk {
-namespace Glulxe {
+namespace Glulx {
 
-uint Glulxe::encode_float(gfloat32 val) {
+uint Glulx::encode_float(gfloat32 val) {
 	gfloat32 absval;
 	uint sign;
 	int expo;
@@ -85,7 +85,7 @@ uint Glulxe::encode_float(gfloat32 val) {
 	return (sign) | ((uint)(expo << 23)) | (fbits);
 }
 
-gfloat32 Glulxe::decode_float(uint val) {
+gfloat32 Glulx::decode_float(uint val) {
 	int sign;
 	int expo;
 	uint mant;
@@ -119,5 +119,5 @@ gfloat32 Glulxe::decode_float(uint val) {
 	return (sign ? (-res) : (res));
 }
 
-} // End of namespace Glulxe
+} // End of namespace Glulx
 } // End of namespace Glk

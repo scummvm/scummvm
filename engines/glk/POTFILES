@@ -7,6 +7,6 @@ engines/glk/advsys/vm.cpp
 engines/glk/alan2/alan2.cpp
 engines/glk/zcode/detection.cpp
 engines/glk/zcode/zcode.cpp
-engines/glk/glulxe/glulxe.cpp
+engines/glk/glulx/glulx.cpp
 engines/glk/magnetic/magnetic.cpp
 engines/glk/scott/scott.cpp

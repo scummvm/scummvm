@@ -20,16 +20,16 @@
  *
  */
 
-#include "glk/glulxe/glulxe.h"
+#include "glk/glulx/glulx.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
 
 namespace Glk {
-namespace Glulxe {
+namespace Glulx {
 
-Glulxe *g_vm;
+Glulx *g_vm;
 
-Glulxe::Glulxe(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
+Glulx::Glulx(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
 		vm_exited_cleanly(false), gamefile_start(0), gamefile_len(0), memmap(nullptr), stack(nullptr),
 		ramstart(0), endgamefile(0), origendmem(0),  stacksize(0), startfuncaddr(0), checksum(0),
 		stackptr(0), frameptr(0), pc(0), prevpc(0), origstringtable(0), stringtable(0), valstackbase(0),
@@ -52,7 +52,7 @@ Glulxe::Glulxe(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst,
 	glkopInit();
 }
 
-void Glulxe::runGame() {
+void Glulx::runGame() {
 	if (!is_gamefile_valid())
 		return;
 
@@ -74,7 +74,7 @@ void Glulxe::runGame() {
 	profile_quit();
 }
 
-bool Glulxe::is_gamefile_valid() {
+bool Glulx::is_gamefile_valid() {
 	if (_gameFile.size() < 8) {
 		GUIErrorMessage(_("This is too short to be a valid Glulx file."));
 		return false;
@@ -99,8 +99,8 @@ bool Glulxe::is_gamefile_valid() {
 	return true;
 }
 
-void Glulxe::fatal_error_handler(const char *str, const char *arg, bool useVal, int val) {
-	Common::String msg = Common::String::format("Glulxe fatal error: %s", str);
+void Glulx::fatal_error_handler(const char *str, const char *arg, bool useVal, int val) {
+	Common::String msg = Common::String::format("Glulx fatal error: %s", str);
 
 	if (arg || useVal) {
 		msg += " (";
@@ -118,8 +118,8 @@ void Glulxe::fatal_error_handler(const char *str, const char *arg, bool useVal, 
 	error("%s", msg.c_str());
 }
 
-void Glulxe::nonfatal_warning_handler(const char *str, const char *arg, bool useVal, int val) {
-	Common::String msg = Common::String::format("Glulxe warning: %s", str);
+void Glulx::nonfatal_warning_handler(const char *str, const char *arg, bool useVal, int val) {
+	Common::String msg = Common::String::format("Glulx warning: %s", str);
 
 	if (arg || useVal) {
 		msg += " (";
@@ -137,9 +137,9 @@ void Glulxe::nonfatal_warning_handler(const char *str, const char *arg, bool use
 	warning("%s", msg.c_str());
 }
 
-void Glulxe::glulx_sort(void *addr, int count, int size, int(*comparefunc)(const void *p1, const void *p2)) {
+void Glulx::glulx_sort(void *addr, int count, int size, int(*comparefunc)(const void *p1, const void *p2)) {
 	qsort(addr, count, size, comparefunc);
 }
 
-} // End of namespace Glulxe
+} // End of namespace Glulx
 } // End of namespace Glk

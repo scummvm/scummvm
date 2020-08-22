@@ -20,12 +20,12 @@
  *
  */
 
-#include "glk/glulxe/glulxe.h"
+#include "glk/glulx/glulx.h"
 
 namespace Glk {
-namespace Glulxe {
+namespace Glulx {
 
-void Glulxe::heap_clear() {
+void Glulx::heap_clear() {
 	while (heap_head) {
 		heapblock_t *blo = heap_head;
 		heap_head = blo->next;
@@ -47,15 +47,15 @@ void Glulxe::heap_clear() {
 	/* heap_sanity_check(); */
 }
 
-int Glulxe::heap_is_active() const {
+int Glulx::heap_is_active() const {
 	return (heap_start != 0);
 }
 
-uint Glulxe::heap_get_start() const {
+uint Glulx::heap_get_start() const {
 	return heap_start;
 }
 
-uint Glulxe::heap_alloc(uint len) {
+uint Glulx::heap_alloc(uint len) {
 	heapblock_t *blo, *newblo;
 
 #ifdef FIXED_MEMSIZE
@@ -190,7 +190,7 @@ uint Glulxe::heap_alloc(uint len) {
 #endif /* FIXED_MEMSIZE */
 }
 
-void Glulxe::heap_free(uint addr) {
+void Glulx::heap_free(uint addr) {
 	heapblock_t *blo;
 
 	for (blo = heap_head; blo; blo = blo->next) {
@@ -209,7 +209,7 @@ void Glulxe::heap_free(uint addr) {
 	/* heap_sanity_check(); */
 }
 
-int Glulxe::heap_get_summary(uint *valcount, uint **summary) {
+int Glulx::heap_get_summary(uint *valcount, uint **summary) {
 	uint *arr, len, pos;
 	heapblock_t *blo;
 
@@ -243,7 +243,7 @@ int Glulxe::heap_get_summary(uint *valcount, uint **summary) {
 	return 0;
 }
 
-int Glulxe::heap_apply_summary(uint valcount, uint *summary) {
+int Glulx::heap_apply_summary(uint valcount, uint *summary) {
 	uint lx, jx, lastend;
 
 	if (heap_start)
@@ -313,5 +313,5 @@ int Glulxe::heap_apply_summary(uint valcount, uint *summary) {
 #endif /* FIXED_MEMSIZE */
 }
 
-} // End of namespace Glulxe
+} // End of namespace Glulx
 } // End of namespace Glk

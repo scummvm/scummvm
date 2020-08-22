@@ -27,10 +27,10 @@
 #include "glk/glk_api.h"
 
 namespace Glk {
-namespace Glulxe {
+namespace Glulx {
 
 
-} // End of namespace Glulxe
+} // End of namespace Glulx
 } // End of namespace Glk
 
 #endif

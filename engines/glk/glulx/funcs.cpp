@@ -20,12 +20,12 @@
  *
  */
 
-#include "glk/glulxe/glulxe.h"
+#include "glk/glulx/glulx.h"
 
 namespace Glk {
-namespace Glulxe {
+namespace Glulx {
 
-void Glulxe::enter_function(uint funcaddr, uint argc, uint *argv) {
+void Glulx::enter_function(uint funcaddr, uint argc, uint *argv) {
 	uint ix, jx;
 	acceleration_func accelFunc;
 	int locallen;
@@ -196,12 +196,12 @@ void Glulxe::enter_function(uint funcaddr, uint argc, uint *argv) {
 	debugger_check_func_breakpoint(funcaddr);
 }
 
-void Glulxe::leave_function() {
+void Glulx::leave_function() {
 	profile_out(stackptr);
 	stackptr = frameptr;
 }
 
-void Glulxe::push_callstub(uint desttype, uint destaddr) {
+void Glulx::push_callstub(uint desttype, uint destaddr) {
 	if (stackptr + 16 > stacksize)
 		fatal_error("Stack overflow in callstub.");
 	StkW4(stackptr + 0, desttype);
@@ -211,7 +211,7 @@ void Glulxe::push_callstub(uint desttype, uint destaddr) {
 	stackptr += 16;
 }
 
-void Glulxe::pop_callstub(uint returnvalue) {
+void Glulx::pop_callstub(uint returnvalue) {
 	uint desttype, destaddr;
 	uint newpc, newframeptr;
 
@@ -270,7 +270,7 @@ void Glulxe::pop_callstub(uint returnvalue) {
 	}
 }
 
-uint Glulxe::pop_callstub_string(int *bitnum) {
+uint Glulx::pop_callstub_string(int *bitnum) {
 	uint desttype, destaddr, newpc;
 
 	if (stackptr < 16)
@@ -295,5 +295,5 @@ uint Glulxe::pop_callstub_string(int *bitnum) {
 	return 0;
 }
 
-} // End of namespace Glulxe
+} // End of namespace Glulx
 } // End of namespace Glk

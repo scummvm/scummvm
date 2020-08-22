@@ -26,9 +26,9 @@
 #include "common/scummsys.h"
 
 namespace Glk {
-namespace Glulxe {
+namespace Glulx {
 
-class Glulxe;
+class Glulx;
 
 /**
  * Comment this definition to turn off memory-address checking. With verification on,
@@ -352,7 +352,7 @@ typedef oparg_struct oparg_t;
 
 #define MAX_OPERANDS (8)
 
-typedef uint(Glulxe::*acceleration_func)(uint argc, uint *argv);
+typedef uint(Glulx::*acceleration_func)(uint argc, uint *argv);
 
 struct accelentry_struct {
 	uint addr;
@@ -418,7 +418,7 @@ struct cacheblock_struct {
 };
 typedef cacheblock_struct cacheblock_t;
 
-} // End of namespace Glulxe
+} // End of namespace Glulx
 } // End of namespace Glk
 
 #endif

@@ -20,23 +20,23 @@
  *
  */
 
-#include "glk/glulxe/glulxe.h"
+#include "glk/glulx/glulx.h"
 
 namespace Glk {
-namespace Glulxe {
+namespace Glulx {
 
-void Glulxe::stream_get_iosys(uint *mode, uint *rock) {
+void Glulx::stream_get_iosys(uint *mode, uint *rock) {
 	*mode = iosys_mode;
 	*rock = iosys_rock;
 }
 
-void Glulxe::stream_setup_unichar() {
+void Glulx::stream_setup_unichar() {
 #ifdef GLK_MODULE_UNICODE
 
 	if (glk_gestalt(gestalt_Unicode, 0))
-		glkio_unichar_han_ptr = &Glulxe::glk_put_char_uni;
+		glkio_unichar_han_ptr = &Glulx::glk_put_char_uni;
 	else
-		glkio_unichar_han_ptr = &Glulxe::glkio_unichar_nouni_han;
+		glkio_unichar_han_ptr = &Glulx::glkio_unichar_nouni_han;
 
 #else /* GLK_MODULE_UNICODE */
 
@@ -45,25 +45,25 @@ void Glulxe::stream_setup_unichar() {
 #endif /* GLK_MODULE_UNICODE */
 }
 
-void Glulxe::stream_set_iosys(uint mode, uint rock) {
+void Glulx::stream_set_iosys(uint mode, uint rock) {
 	switch (mode) {
 	default:
 		mode = 0;
 		// fall through
 	case iosys_None:
 		rock = 0;
-		stream_char_handler = &Glulxe::nopio_char_han;
-		stream_unichar_handler = &Glulxe::nopio_unichar_han;
+		stream_char_handler = &Glulx::nopio_char_han;
+		stream_unichar_handler = &Glulx::nopio_unichar_han;
 		break;
 	case iosys_Filter:
-		stream_char_handler = &Glulxe::filio_char_han;
-		stream_unichar_handler = &Glulxe::filio_unichar_han;
+		stream_char_handler = &Glulx::filio_char_han;
+		stream_unichar_handler = &Glulx::filio_unichar_han;
 		break;
 	case iosys_Glk:
 		if (!glkio_unichar_han_ptr)
 			stream_setup_unichar();
 		rock = 0;
-		stream_char_handler = &Glulxe::glk_put_char;
+		stream_char_handler = &Glulx::glk_put_char;
 		stream_unichar_handler = glkio_unichar_han_ptr;
 		break;
 	}
@@ -72,32 +72,32 @@ void Glulxe::stream_set_iosys(uint mode, uint rock) {
 	iosys_rock = rock;
 }
 
-void Glulxe::nopio_char_han(unsigned char ch) {
+void Glulx::nopio_char_han(unsigned char ch) {
 }
 
-void Glulxe::nopio_unichar_han(uint32 ch) {
+void Glulx::nopio_unichar_han(uint32 ch) {
 }
 
-void Glulxe::filio_char_han(unsigned char ch) {
+void Glulx::filio_char_han(unsigned char ch) {
 	uint val = ch;
 	push_callstub(0, 0);
 	enter_function(iosys_rock, 1, &val);
 }
 
-void Glulxe::filio_unichar_han(uint32 val) {
+void Glulx::filio_unichar_han(uint32 val) {
 	uint v = val;
 	push_callstub(0, 0);
 	enter_function(iosys_rock, 1, &v);
 }
 
-void Glulxe::glkio_unichar_nouni_han(uint32 val) {
+void Glulx::glkio_unichar_nouni_han(uint32 val) {
 	/* Only used if the Glk library has no Unicode functions */
 	if (val > 0xFF)
 		val = '?';
 	glk_put_char(val);
 }
 
-void Glulxe::stream_num(int val, int inmiddle, int charnum) {
+void Glulx::stream_num(int val, int inmiddle, int charnum) {
 	int ix = 0;
 	int res, jx;
 	char buf[16];
@@ -160,7 +160,7 @@ void Glulxe::stream_num(int val, int inmiddle, int charnum) {
 	}
 }
 
-void Glulxe::stream_string(uint addr, int inmiddle, int bitnum) {
+void Glulx::stream_string(uint addr, int inmiddle, int bitnum) {
 	int ch;
 	int type;
 	int alldone = false;
@@ -611,11 +611,11 @@ void Glulxe::stream_string(uint addr, int inmiddle, int bitnum) {
 	}
 }
 
-uint Glulxe::stream_get_table() {
+uint Glulx::stream_get_table() {
 	return stringtable;
 }
 
-void Glulxe::stream_set_table(uint addr) {
+void Glulx::stream_set_table(uint addr) {
 	if (stringtable == addr)
 		return;
 
@@ -644,7 +644,7 @@ void Glulxe::stream_set_table(uint addr) {
 	}
 }
 
-void Glulxe::buildcache(cacheblock_t *cablist, uint nodeaddr, int depth, int mask) {
+void Glulx::buildcache(cacheblock_t *cablist, uint nodeaddr, int depth, int mask) {
 	int ix, type;
 
 	type = Mem1(nodeaddr);
@@ -697,7 +697,7 @@ void Glulxe::buildcache(cacheblock_t *cablist, uint nodeaddr, int depth, int mas
 
 #if 0
 #include <stdio.h>
-void Glulxe::dumpcache(cacheblock_t *cablist, int count, int indent) {
+void Glulx::dumpcache(cacheblock_t *cablist, int count, int indent) {
 	int ix, jx;
 
 	for (ix = 0; ix < count; ix++) {
@@ -728,7 +728,7 @@ void Glulxe::dumpcache(cacheblock_t *cablist, int count, int indent) {
 }
 #endif /* 0 */
 
-void Glulxe::dropcache(cacheblock_t *cablist) {
+void Glulx::dropcache(cacheblock_t *cablist) {
 	int ix;
 	for (ix = 0; ix < CACHESIZE; ix++) {
 		cacheblock_t *cab = &(cablist[ix]);
@@ -740,7 +740,7 @@ void Glulxe::dropcache(cacheblock_t *cablist) {
 	glulx_free(cablist);
 }
 
-char *Glulxe::make_temp_string(uint addr) {
+char *Glulx::make_temp_string(uint addr) {
 	int ix, len;
 	uint addr2;
 	char *res;
@@ -767,7 +767,7 @@ char *Glulxe::make_temp_string(uint addr) {
 	return res;
 }
 
-uint32 *Glulxe::make_temp_ustring(uint addr) {
+uint32 *Glulx::make_temp_ustring(uint addr) {
 	int ix, len;
 	uint addr2;
 	uint32 *res;
@@ -794,15 +794,15 @@ uint32 *Glulxe::make_temp_ustring(uint addr) {
 	return res;
 }
 
-void Glulxe::free_temp_string(char *str) {
+void Glulx::free_temp_string(char *str) {
 	if (str && str != temp_buf)
 		glulx_free(str);
 }
 
-void Glulxe::free_temp_ustring(uint32 *str) {
+void Glulx::free_temp_ustring(uint32 *str) {
 	if (str && str != (uint32 *)temp_buf)
 		glulx_free(str);
 }
 
-} // End of namespace Glulxe
+} // End of namespace Glulx
 } // End of namespace Glk

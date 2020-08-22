@@ -20,12 +20,12 @@
  *
  */
 
-#include "glk/glulxe/glulxe.h"
+#include "glk/glulx/glulx.h"
 
 namespace Glk {
-namespace Glulxe {
+namespace Glulx {
 
-void Glulxe::setup_vm() {
+void Glulx::setup_vm() {
 	byte buf[4 * 7];
 
 	pc = 0;           // Clear this, so that error messages are cleaner.
@@ -104,7 +104,7 @@ void Glulxe::setup_vm() {
 	debugger_setup_start_state();
 }
 
-void Glulxe::finalize_vm() {
+void Glulx::finalize_vm() {
 	stream_set_table(0);
 
 	if (memmap) {
@@ -119,7 +119,7 @@ void Glulxe::finalize_vm() {
 	final_serial();
 }
 
-void Glulxe::vm_restart() {
+void Glulx::vm_restart() {
 	uint lx;
 	int res;
 	int bufpos;
@@ -174,7 +174,7 @@ void Glulxe::vm_restart() {
 	/* We're now ready to execute. */
 }
 
-uint Glulxe::change_memsize(uint newlen, bool internal) {
+uint Glulx::change_memsize(uint newlen, bool internal) {
 	uint lx;
 	unsigned char *newmemmap;
 
@@ -214,7 +214,7 @@ uint Glulxe::change_memsize(uint newlen, bool internal) {
 #endif /* FIXED_MEMSIZE */
 }
 
-uint *Glulxe::pop_arguments(uint count, uint addr) {
+uint *Glulx::pop_arguments(uint count, uint addr) {
 	uint ix;
 	uint argptr;
 	uint *array;
@@ -269,7 +269,7 @@ uint *Glulxe::pop_arguments(uint count, uint addr) {
 	return array;
 }
 
-void Glulxe::verify_address(uint addr, uint count) {
+void Glulx::verify_address(uint addr, uint count) {
 	if (addr >= endmem)
 		fatal_error_i("Memory access out of range", addr);
 	if (count > 1) {
@@ -279,7 +279,7 @@ void Glulxe::verify_address(uint addr, uint count) {
 	}
 }
 
-void Glulxe::verify_address_write(uint addr, uint count) {
+void Glulx::verify_address_write(uint addr, uint count) {
 	if (addr < ramstart)
 		fatal_error_i("Memory write to read-only address", addr);
 	if (addr >= endmem)
@@ -291,7 +291,7 @@ void Glulxe::verify_address_write(uint addr, uint count) {
 	}
 }
 
-void Glulxe::verify_array_addresses(uint addr, uint count, uint size) {
+void Glulx::verify_array_addresses(uint addr, uint count, uint size) {
 	uint bytecount;
 	if (addr >= endmem)
 		fatal_error_i("Memory access out of range", addr);
@@ -313,5 +313,5 @@ void Glulxe::verify_array_addresses(uint addr, uint count, uint size) {
 		fatal_error_i("Memory access too long", addr);
 }
 
-} // End of namespace Glulxe
+} // End of namespace Glulx
 } // End of namespace Glk

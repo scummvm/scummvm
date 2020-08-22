@@ -20,10 +20,10 @@
  *
  */
 
-#include "glk/glulxe/glulxe.h"
+#include "glk/glulx/glulx.h"
 
 namespace Glk {
-namespace Glulxe {
+namespace Glulx {
 
 /**
  * The actual immutable structures which lookup_operandlist() returns.
@@ -64,12 +64,12 @@ static const operandlist_t list_SS = { 2, 4, &array_SS[0] };
 static const int array_LLSS[4] = { modeform_Load, modeform_Load, modeform_Store, modeform_Store };
 static const operandlist_t list_LLSS = { 4, 4, &array_LLSS[0] };
 
-void Glulxe::init_operands() {
+void Glulx::init_operands() {
 	for (int ix = 0; ix < 0x80; ix++)
 		fast_operandlist[ix] = lookup_operandlist(ix);
 }
 
-const operandlist_t *Glulxe::lookup_operandlist(uint opcode) {
+const operandlist_t *Glulx::lookup_operandlist(uint opcode) {
 	switch (opcode) {
 	case op_nop:
 		return &list_none;
@@ -280,7 +280,7 @@ const operandlist_t *Glulxe::lookup_operandlist(uint opcode) {
 	}
 }
 
-void Glulxe::parse_operands(oparg_t *args, const operandlist_t *oplist) {
+void Glulx::parse_operands(oparg_t *args, const operandlist_t *oplist) {
 	int ix;
 	oparg_t *curarg;
 	int numops = oplist->num_ops;
@@ -517,7 +517,7 @@ WrLocalsAddr:
 	}
 }
 
-void Glulxe::store_operand(uint desttype, uint destaddr, uint storeval) {
+void Glulx::store_operand(uint desttype, uint destaddr, uint storeval) {
 	switch (desttype) {
 
 	case 0: /* do nothing; discard the value. */
@@ -546,7 +546,7 @@ void Glulxe::store_operand(uint desttype, uint destaddr, uint storeval) {
 	}
 }
 
-void Glulxe::store_operand_s(uint desttype, uint destaddr, uint storeval) {
+void Glulx::store_operand_s(uint desttype, uint destaddr, uint storeval) {
 	storeval &= 0xFFFF;
 
 	switch (desttype) {
@@ -577,7 +577,7 @@ void Glulxe::store_operand_s(uint desttype, uint destaddr, uint storeval) {
 	}
 }
 
-void Glulxe::store_operand_b(uint desttype, uint destaddr, uint storeval) {
+void Glulx::store_operand_b(uint desttype, uint destaddr, uint storeval) {
 	storeval &= 0xFF;
 
 	switch (desttype) {
@@ -608,5 +608,5 @@ void Glulxe::store_operand_b(uint desttype, uint destaddr, uint storeval) {
 	}
 }
 
-} // End of namespace Glulxe
+} // End of namespace Glulx
 } // End of namespace Glk

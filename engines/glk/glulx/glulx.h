@@ -20,7 +20,7 @@
  *
  */
 
-/* Based on Glulxe intrepreter version 0.5.4 */
+/* Based on Glulx intrepreter version 0.5.4 */
 
 #ifndef GLK_GLULXE
 #define GLK_GLULXE
@@ -28,19 +28,19 @@
 #include "common/scummsys.h"
 #include "common/random.h"
 #include "glk/glk_api.h"
-#include "glk/glulxe/glulxe_types.h"
+#include "glk/glulx/glulx_types.h"
 
 namespace Glk {
-namespace Glulxe {
+namespace Glulx {
 
-class Glulxe;
-typedef void (Glulxe::*CharHandler)(unsigned char);
-typedef void (Glulxe::*UnicharHandler)(uint32);
+class Glulx;
+typedef void (Glulx::*CharHandler)(unsigned char);
+typedef void (Glulx::*UnicharHandler)(uint32);
 
 /**
- * Glulxe game interpreter
+ * Glulx game interpreter
  */
-class Glulxe : public GlkAPI {
+class Glulx : public GlkAPI {
 private:
 	/**
 	 * \defgroup vm fields
@@ -396,7 +396,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Glulxe(OSystem *syst, const GlkGameDescription &gameDesc);
+	Glulx(OSystem *syst, const GlkGameDescription &gameDesc);
 
 	/**
 	 * Run the game
@@ -898,9 +898,9 @@ public:
 #ifdef FLOAT_SUPPORT
 
 	/* Uncomment this definition if your gfloat32 type is not a standard
-	   IEEE-754 single-precision (32-bit) format. Normally, Glulxe assumes
+	   IEEE-754 single-precision (32-bit) format. Normally, Glulx assumes
 	   that it can reinterpret-cast IEEE-754 int values into gfloat32
-	   values. If you uncomment this, Glulxe switches to lengthier
+	   values. If you uncomment this, Glulx switches to lengthier
 	   (but safer) encoding and decoding functions. */
 	/* #define FLOAT_NOT_NATIVE (1) */
 
@@ -999,7 +999,7 @@ public:
 	/**@}*/
 };
 
-extern Glulxe *g_vm;
+extern Glulx *g_vm;
 
 #define fatal_error(s)  (fatal_error_handler((s), nullptr, false, 0))
 #define fatal_error_2(s1, s2)  (fatal_error_handler((s1), (s2), false, 0))
@@ -1008,7 +1008,7 @@ extern Glulxe *g_vm;
 #define nonfatal_warning_2(s1, s2) (nonfatal_warning_handler((s1), (s2), false, 0))
 #define nonfatal_warning_i(s, v) (nonfatal_warning_handler((s), nullptr, true, (v)))
 
-} // End of namespace Glulxe
+} // End of namespace Glulx
 } // End of namespace Glk
 
 #endif

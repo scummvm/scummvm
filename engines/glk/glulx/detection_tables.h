@@ -25,7 +25,7 @@
 #include "common/language.h"
 
 namespace Glk {
-namespace Glulxe {
+namespace Glulx {
 
 const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "glulx", "Glulx Game" },
@@ -606,5 +606,5 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_END_MARKER
 };
 
-} // End of namespace Glulxe
+} // End of namespace Glulx
 } // End of namespace Glk

@@ -20,14 +20,14 @@
  *
  */
 
-#include "glk/glulxe/glulxe.h"
+#include "glk/glulx/glulx.h"
 
 namespace Glk {
-namespace Glulxe {
+namespace Glulx {
 
 #define IFFID(c1, c2, c3, c4) MKTAG(c1, c2, c3, c4)
 
-bool Glulxe::init_serial() {
+bool Glulx::init_serial() {
 	undo_chain_num = 0;
 	undo_chain_size = max_undo_level;
 	undo_chain = (unsigned char **)glulx_malloc(sizeof(unsigned char *) * undo_chain_size);
@@ -52,7 +52,7 @@ bool Glulxe::init_serial() {
 	return true;
 }
 
-void Glulxe::final_serial() {
+void Glulx::final_serial() {
 	if (undo_chain) {
 		int ix;
 		for (ix = 0; ix < undo_chain_num; ix++) {
@@ -72,7 +72,7 @@ void Glulxe::final_serial() {
 #endif /* SERIALIZE_CACHE_RAM */
 }
 
-uint Glulxe::perform_saveundo() {
+uint Glulx::perform_saveundo() {
 	dest_t dest;
 	uint res;
 	uint memstart = 0, memlen = 0, heapstart = 0, heaplen = 0;
@@ -164,7 +164,7 @@ uint Glulxe::perform_saveundo() {
 	return res;
 }
 
-uint Glulxe::perform_restoreundo() {
+uint Glulx::perform_restoreundo() {
 	dest_t dest;
 	uint res, val = 0;
 	uint heapsumlen = 0;
@@ -225,7 +225,7 @@ uint Glulxe::perform_restoreundo() {
 	return res;
 }
 
-Common::Error Glulxe::loadGameChunks(QuetzalReader &quetzal) {
+Common::Error Glulx::loadGameChunks(QuetzalReader &quetzal) {
 	uint res = 0;
 	uint heapsumlen = 0;
 	uint *heapsumarr = nullptr;
@@ -277,7 +277,7 @@ Common::Error Glulxe::loadGameChunks(QuetzalReader &quetzal) {
 	return res ? Common::kReadingFailed : Common::kNoError;
 }
 
-Common::Error Glulxe::saveGameChunks(QuetzalWriter &quetzal) {
+Common::Error Glulx::saveGameChunks(QuetzalWriter &quetzal) {
 	uint res = 0;
 
 	// IFHd
@@ -315,7 +315,7 @@ Common::Error Glulxe::saveGameChunks(QuetzalWriter &quetzal) {
 	return res ? Common::kUnknownError : Common::kNoError;
 }
 
-int Glulxe::reposition_write(dest_t *dest, uint pos) {
+int Glulx::reposition_write(dest_t *dest, uint pos) {
 	if (dest->_isMem) {
 		dest->_pos = pos;
 	} else {
@@ -325,7 +325,7 @@ int Glulxe::reposition_write(dest_t *dest, uint pos) {
 	return 0;
 }
 
-int Glulxe::write_buffer(dest_t *dest, const byte *ptr, uint len) {
+int Glulx::write_buffer(dest_t *dest, const byte *ptr, uint len) {
 	if (dest->_isMem) {
 		if (dest->_pos + len > dest->_size) {
 			dest->_size = dest->_pos + len + 1024;
@@ -347,7 +347,7 @@ int Glulxe::write_buffer(dest_t *dest, const byte *ptr, uint len) {
 	return 0;
 }
 
-int Glulxe::read_buffer(dest_t *dest, byte *ptr, uint len) {
+int Glulx::read_buffer(dest_t *dest, byte *ptr, uint len) {
 	uint newlen;
 
 	if (dest->_isMem) {
@@ -363,23 +363,23 @@ int Glulxe::read_buffer(dest_t *dest, byte *ptr, uint len) {
 	return 0;
 }
 
-int Glulxe::write_long(dest_t *dest, uint val) {
+int Glulx::write_long(dest_t *dest, uint val) {
 	unsigned char buf[4];
 	Write4(buf, val);
 	return write_buffer(dest, buf, 4);
 }
 
-int Glulxe::write_short(dest_t *dest, uint16 val) {
+int Glulx::write_short(dest_t *dest, uint16 val) {
 	unsigned char buf[2];
 	Write2(buf, val);
 	return write_buffer(dest, buf, 2);
 }
 
-int Glulxe::write_byte(dest_t *dest, byte val) {
+int Glulx::write_byte(dest_t *dest, byte val) {
 	return write_buffer(dest, &val, 1);
 }
 
-int Glulxe::read_long(dest_t *dest, uint *val) {
+int Glulx::read_long(dest_t *dest, uint *val) {
 	unsigned char buf[4];
 	int res = read_buffer(dest, buf, 4);
 	if (res)
@@ -388,7 +388,7 @@ int Glulxe::read_long(dest_t *dest, uint *val) {
 	return 0;
 }
 
-int Glulxe::read_short(dest_t *dest, uint16 *val) {
+int Glulx::read_short(dest_t *dest, uint16 *val) {
 	unsigned char buf[2];
 	int res = read_buffer(dest, buf, 2);
 	if (res)
@@ -397,11 +397,11 @@ int Glulxe::read_short(dest_t *dest, uint16 *val) {
 	return 0;
 }
 
-int Glulxe::read_byte(dest_t *dest, byte *val) {
+int Glulx::read_byte(dest_t *dest, byte *val) {
 	return read_buffer(dest, val, 1);
 }
 
-uint Glulxe::write_memstate(dest_t *dest) {
+uint Glulx::write_memstate(dest_t *dest) {
 	uint res, pos;
 	int val;
 	int runlen;
@@ -464,7 +464,7 @@ uint Glulxe::write_memstate(dest_t *dest) {
 	return 0;
 }
 
-uint Glulxe::read_memstate(dest_t *dest, uint chunklen) {
+uint Glulx::read_memstate(dest_t *dest, uint chunklen) {
 	uint chunkend = dest->_pos + chunklen;
 	uint newlen;
 	uint res, pos;
@@ -536,7 +536,7 @@ uint Glulxe::read_memstate(dest_t *dest, uint chunklen) {
 	return 0;
 }
 
-uint Glulxe::write_heapstate(dest_t *dest, int portable) {
+uint Glulx::write_heapstate(dest_t *dest, int portable) {
 	uint res;
 	uint sumlen;
 	uint *sumarray;
@@ -554,7 +554,7 @@ uint Glulxe::write_heapstate(dest_t *dest, int portable) {
 	return res;
 }
 
-uint Glulxe::write_heapstate_sub(uint sumlen, uint *sumarray, dest_t *dest, int portable)  {
+uint Glulx::write_heapstate_sub(uint sumlen, uint *sumarray, dest_t *dest, int portable)  {
 	uint res, lx;
 
 	/* If we're storing for the purpose of undo, we don't need to do any
@@ -575,7 +575,7 @@ uint Glulxe::write_heapstate_sub(uint sumlen, uint *sumarray, dest_t *dest, int 
 	return 0;
 }
 
-int Glulxe::sort_heap_summary(const void *p1, const void *p2) {
+int Glulx::sort_heap_summary(const void *p1, const void *p2) {
 	uint v1 = *(const uint *)p1;
 	uint v2 = *(const uint *)p2;
 
@@ -586,7 +586,7 @@ int Glulxe::sort_heap_summary(const void *p1, const void *p2) {
 	return 0;
 }
 
-uint Glulxe::read_heapstate(dest_t *dest, uint chunklen, int portable, uint *sumlen, uint **summary) {
+uint Glulx::read_heapstate(dest_t *dest, uint chunklen, int portable, uint *sumlen, uint **summary) {
 	uint res, count, lx;
 	uint *arr;
 
@@ -631,7 +631,7 @@ uint Glulxe::read_heapstate(dest_t *dest, uint chunklen, int portable, uint *sum
 	return 0;
 }
 
-uint Glulxe::write_stackstate(dest_t *dest, int portable) {
+uint Glulx::write_stackstate(dest_t *dest, int portable) {
 	uint res;
 	uint lx;
 	uint lastframe;
@@ -789,7 +789,7 @@ uint Glulxe::write_stackstate(dest_t *dest, int portable) {
 	return 0;
 }
 
-uint Glulxe::read_stackstate(dest_t *dest, uint chunklen, int portable) {
+uint Glulx::read_stackstate(dest_t *dest, uint chunklen, int portable) {
 	uint res;
 	uint frameend, frm, frm2, frm3, locpos, frlen, numlocals;
 
@@ -920,7 +920,7 @@ uint Glulxe::read_stackstate(dest_t *dest, uint chunklen, int portable) {
 	return 0;
 }
 
-uint Glulxe::perform_verify() {
+uint Glulx::perform_verify() {
 	uint len, chksum = 0, newlen;
 	unsigned char buf[4];
 	uint val, newsum, ix;
@@ -964,5 +964,5 @@ uint Glulxe::perform_verify() {
 	return 0;
 }
 
-} // End of namespace Glulxe
+} // End of namespace Glulx
 } // End of namespace Glk

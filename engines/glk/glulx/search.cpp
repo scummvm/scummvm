@@ -20,10 +20,10 @@
  *
  */
 
-#include "glk/glulxe/glulxe.h"
+#include "glk/glulx/glulx.h"
 
 namespace Glk {
-namespace Glulxe {
+namespace Glulx {
 
 enum serop {
 	serop_KeyIndirect       = 0x01,
@@ -31,7 +31,7 @@ enum serop {
 	serop_ReturnIndex       = 0x04
 };
 
-uint Glulxe::linear_search(uint key, uint keysize,  uint start, uint structsize, uint numstructs,
+uint Glulx::linear_search(uint key, uint keysize,  uint start, uint structsize, uint numstructs,
                            uint keyoffset, uint options) {
 	unsigned char keybuf[4];
 	uint count;
@@ -81,7 +81,7 @@ uint Glulxe::linear_search(uint key, uint keysize,  uint start, uint structsize,
 }
 
 
-uint Glulxe::binary_search(uint key, uint keysize,  uint start, uint structsize, uint numstructs,
+uint Glulx::binary_search(uint key, uint keysize,  uint start, uint structsize, uint numstructs,
                            uint keyoffset, uint options) {
 	byte keybuf[4];
 	byte byte1, byte2;
@@ -138,7 +138,7 @@ uint Glulxe::binary_search(uint key, uint keysize,  uint start, uint structsize,
 		return 0;
 }
 
-uint Glulxe::linked_search(uint key, uint keysize,  uint start, uint keyoffset, uint nextoffset, uint options) {
+uint Glulx::linked_search(uint key, uint keysize,  uint start, uint keyoffset, uint nextoffset, uint options) {
 	unsigned char keybuf[4];
 	uint ix;
 	uint val;
@@ -182,7 +182,7 @@ uint Glulxe::linked_search(uint key, uint keysize,  uint start, uint keyoffset, 
 	return 0;
 }
 
-void Glulxe::fetchkey(unsigned char *keybuf, uint key, uint keysize,  uint options) {
+void Glulx::fetchkey(unsigned char *keybuf, uint key, uint keysize,  uint options) {
 	uint ix;
 
 	if (options & serop_KeyIndirect) {
@@ -207,5 +207,5 @@ void Glulxe::fetchkey(unsigned char *keybuf, uint key, uint keysize,  uint optio
 	}
 }
 
-} // End of namespace Glulxe
+} // End of namespace Glulx
 } // End of namespace Glk

@@ -20,12 +20,12 @@
  *
  */
 
-#include "glk/glulxe/glulxe.h"
+#include "glk/glulx/glulx.h"
 
 namespace Glk {
-namespace Glulxe {
+namespace Glulx {
 
-void Glulxe::execute_loop() {
+void Glulx::execute_loop() {
 	bool done_executing = false;
 	int ix;
 	uint opcode;
@@ -1055,5 +1055,5 @@ PerformJump: /* goto label for successful jumping... ironic, no? */
 #endif /* VM_DEBUGGER */
 }
 
-} // End of namespace Glulxe
+} // End of namespace Glulx
 } // End of namespace Glk

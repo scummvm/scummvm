@@ -39,8 +39,8 @@
 #include "glk/comprehend/detection.h"
 #include "glk/zcode/detection.h"
 #include "glk/zcode/zcode.h"
-#include "glk/glulxe/detection.h"
-#include "glk/glulxe/glulxe.h"
+#include "glk/glulx/detection.h"
+#include "glk/glulx/glulx.h"
 #include "glk/hugo/detection.h"
 #include "glk/hugo/hugo.h"
 #include "glk/jacl/detection.h"
@@ -209,7 +209,7 @@ Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 	else if ((create<Glk::Alan3::Alan3MetaEngine, Glk::Alan3::Alan3>(syst, gameDesc, *engine))) {}
 	else if ((create<Glk::Archetype::ArchetypeMetaEngine, Glk::Archetype::Archetype>(syst, gameDesc, *engine))) {}
 	else if ((create<Glk::Comprehend::ComprehendMetaEngine, Glk::Comprehend::Comprehend>(syst, gameDesc, *engine))) {}
-	else if ((create<Glk::Glulxe::GlulxeMetaEngine, Glk::Glulxe::Glulxe>(syst, gameDesc, *engine))) {}
+	else if ((create<Glk::Glulx::GlulxMetaEngine, Glk::Glulx::Glulx>(syst, gameDesc, *engine))) {}
 	else if ((create<Glk::Hugo::HugoMetaEngine, Glk::Hugo::Hugo>(syst, gameDesc, *engine))) {}
 	else if ((create<Glk::JACL::JACLMetaEngine, Glk::JACL::JACL>(syst, gameDesc, *engine))) {}
 	else if ((create<Glk::Level9::Level9MetaEngine, Glk::Level9::Level9>(syst, gameDesc, *engine))) {}
@@ -262,7 +262,7 @@ PlainGameList GlkMetaEngine::getSupportedGames() const {
 	Glk::Alan3::Alan3MetaEngine::getSupportedGames(list);
 	Glk::Archetype::ArchetypeMetaEngine::getSupportedGames(list);
 	Glk::Comprehend::ComprehendMetaEngine::getSupportedGames(list);
-	Glk::Glulxe::GlulxeMetaEngine::getSupportedGames(list);
+	Glk::Glulx::GlulxMetaEngine::getSupportedGames(list);
 	Glk::Hugo::HugoMetaEngine::getSupportedGames(list);
 	Glk::JACL::JACLMetaEngine::getSupportedGames(list);
 	Glk::Level9::Level9MetaEngine::getSupportedGames(list);
@@ -287,7 +287,7 @@ PlainGameDescriptor GlkMetaEngine::findGame(const char *gameId) const {
 	FIND_GAME(Alan3);
 	FIND_GAME(Archetype);
 	FIND_GAME(Comprehend);
-	FIND_GAME(Glulxe);
+	FIND_GAME(Glulx);
 	FIND_GAME(Hugo);
 	FIND_GAME(JACL);
 	FIND_GAME(Level9);
@@ -314,7 +314,7 @@ DetectedGames GlkMetaEngine::detectGames(const Common::FSList &fslist) const {
 	Glk::Alan3::Alan3MetaEngine::detectGames(fslist, detectedGames);
 	Glk::Archetype::ArchetypeMetaEngine::detectGames(fslist, detectedGames);
 	Glk::Comprehend::ComprehendMetaEngine::detectGames(fslist, detectedGames);
-	Glk::Glulxe::GlulxeMetaEngine::detectGames(fslist, detectedGames);
+	Glk::Glulx::GlulxMetaEngine::detectGames(fslist, detectedGames);
 	Glk::Hugo::HugoMetaEngine::detectGames(fslist, detectedGames);
 	Glk::JACL::JACLMetaEngine::detectGames(fslist, detectedGames);
 	Glk::Level9::Level9MetaEngine::detectGames(fslist, detectedGames);
@@ -336,7 +336,7 @@ void GlkMetaEngine::detectClashes() const {
 	Glk::Alan3::Alan3MetaEngine::detectClashes(map);
 	Glk::Archetype::ArchetypeMetaEngine::detectClashes(map);
 	Glk::Comprehend::ComprehendMetaEngine::detectClashes(map);
-	Glk::Glulxe::GlulxeMetaEngine::detectClashes(map);
+	Glk::Glulx::GlulxMetaEngine::detectClashes(map);
 	Glk::Hugo::HugoMetaEngine::detectClashes(map);
 	Glk::JACL::JACLMetaEngine::detectClashes(map);
 	Glk::Level9::Level9MetaEngine::detectClashes(map);

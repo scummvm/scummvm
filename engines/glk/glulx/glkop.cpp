@@ -20,13 +20,13 @@
  *
  */
 
-#include "glk/glulxe/glulxe.h"
+#include "glk/glulx/glulx.h"
 
 namespace Glk {
-namespace Glulxe {
+namespace Glulx {
 
 /* This code is actually very general; it could work for almost any
-   32-bit VM which remotely resembles Glulxe or the Z-machine in design.
+   32-bit VM which remotely resembles Glulx or the Z-machine in design.
 
    To be precise, we make the following assumptions:
 
@@ -81,14 +81,14 @@ static void retained_unregister(void *array, uint len, const char *typecode, gid
 	g_vm->glulxe_retained_unregister(array, len, typecode, objrock);
 }
 
-void Glulxe::glkopInit() {
+void Glulx::glkopInit() {
 	library_select_hook = nullptr;
 	arrays = nullptr;
 	num_classes = 0;
 	classes = nullptr;
 }
 
-bool Glulxe::init_dispatch() {
+bool Glulx::init_dispatch() {
 	int ix;
 
 	/* Set up the game-ID hook. (This is ifdeffed because not all Glk
@@ -122,7 +122,7 @@ bool Glulxe::init_dispatch() {
 	return true;
 }
 
-uint Glulxe::perform_glk(uint funcnum, uint numargs, uint *arglist) {
+uint Glulx::perform_glk(uint funcnum, uint numargs, uint *arglist) {
 	uint retval = 0;
 
 	switch (funcnum) {
@@ -200,7 +200,7 @@ FullDispatcher:
 
 		/* The work goes in four phases. First, we figure out how many
 		   arguments we want, and allocate space for the Glk argument
-		   list. Then we go through the Glulxe arguments and load them
+		   list. Then we go through the Glulx arguments and load them
 		   into the Glk list. Then we call. Then we go through the
 		   arguments again, unloading the data back into Glulx memory. */
 
@@ -229,7 +229,7 @@ FullDispatcher:
 	return retval;
 }
 
-const char *Glulxe::read_prefix(const char *cx, int *isref, int *isarray, int *passin, int *passout,
+const char *Glulx::read_prefix(const char *cx, int *isref, int *isarray, int *passin, int *passout,
                                 int *nullok, int *isretained,  int *isreturn) {
 	*isref = false;
 	*passin = false;
@@ -268,7 +268,7 @@ const char *Glulxe::read_prefix(const char *cx, int *isref, int *isarray, int *p
 	return cx;
 }
 
-void Glulxe::prepare_glk_args(const char *proto, dispatch_splot_t *splot) {
+void Glulx::prepare_glk_args(const char *proto, dispatch_splot_t *splot) {
 	static gluniversal_t *garglist = nullptr;
 	static int garglist_size = 0;
 
@@ -356,7 +356,7 @@ void Glulxe::prepare_glk_args(const char *proto, dispatch_splot_t *splot) {
 	splot->garglist = garglist;
 }
 
-void Glulxe::parse_glk_args(dispatch_splot_t *splot, const char **proto, int depth, int *argnumptr,
+void Glulx::parse_glk_args(dispatch_splot_t *splot, const char **proto, int depth, int *argnumptr,
                             uint subaddress, int subpassin) {
 	const char *cx;
 	int ix, argx;
@@ -571,7 +571,7 @@ void Glulxe::parse_glk_args(dispatch_splot_t *splot, const char **proto, int dep
 	*argnumptr = gargnum;
 }
 
-void Glulxe::unparse_glk_args(dispatch_splot_t *splot, const char **proto, int depth,
+void Glulx::unparse_glk_args(dispatch_splot_t *splot, const char **proto, int depth,
                               int *argnumptr, uint subaddress, int subpassout) {
 	const char *cx;
 	int ix, argx;
@@ -768,7 +768,7 @@ void Glulxe::unparse_glk_args(dispatch_splot_t *splot, const char **proto, int d
 	*argnumptr = gargnum;
 }
 
-strid_t Glulxe::find_stream_by_id(uint objid) {
+strid_t Glulx::find_stream_by_id(uint objid) {
 	if (!objid)
 		return nullptr;
 
@@ -776,7 +776,7 @@ strid_t Glulxe::find_stream_by_id(uint objid) {
 	return (strid_t)classes_get(gidisp_Class_Stream, objid);
 }
 
-uint Glulxe::find_id_for_window(winid_t win) {
+uint Glulx::find_id_for_window(winid_t win) {
 	gidispatch_rock_t objrock;
 
 	if (!win)
@@ -788,7 +788,7 @@ uint Glulxe::find_id_for_window(winid_t win) {
 	return ((classref_t *)objrock.ptr)->id;
 }
 
-uint Glulxe::find_id_for_stream(strid_t str) {
+uint Glulx::find_id_for_stream(strid_t str) {
 	gidispatch_rock_t objrock;
 
 	if (!str)
@@ -800,7 +800,7 @@ uint Glulxe::find_id_for_stream(strid_t str) {
 	return ((classref_t *)objrock.ptr)->id;
 }
 
-uint Glulxe::find_id_for_fileref(frefid_t fref) {
+uint Glulx::find_id_for_fileref(frefid_t fref) {
 	gidispatch_rock_t objrock;
 
 	if (!fref)
@@ -812,7 +812,7 @@ uint Glulxe::find_id_for_fileref(frefid_t fref) {
 	return ((classref_t *)objrock.ptr)->id;
 }
 
-uint Glulxe::find_id_for_schannel(schanid_t schan) {
+uint Glulx::find_id_for_schannel(schanid_t schan) {
 	gidispatch_rock_t objrock;
 
 	if (!schan)
@@ -824,7 +824,7 @@ uint Glulxe::find_id_for_schannel(schanid_t schan) {
 	return ((classref_t *)objrock.ptr)->id;
 }
 
-classtable_t *Glulxe::new_classtable(uint firstid) {
+classtable_t *Glulx::new_classtable(uint firstid) {
 	int ix;
 	classtable_t *ctab = (classtable_t *)glulx_malloc(sizeof(classtable_t));
 	if (!ctab)
@@ -838,7 +838,7 @@ classtable_t *Glulxe::new_classtable(uint firstid) {
 	return ctab;
 }
 
-void *Glulxe::classes_get(int classid, uint objid) {
+void *Glulx::classes_get(int classid, uint objid) {
 	classtable_t *ctab;
 	classref_t *cref;
 	if (classid < 0 || classid >= num_classes)
@@ -852,7 +852,7 @@ void *Glulxe::classes_get(int classid, uint objid) {
 	return nullptr;
 }
 
-classref_t *Glulxe::classes_put(int classid, void *obj, uint origid) {
+classref_t *Glulx::classes_put(int classid, void *obj, uint origid) {
 	int bucknum;
 	classtable_t *ctab;
 	classref_t *cref;
@@ -878,7 +878,7 @@ classref_t *Glulxe::classes_put(int classid, void *obj, uint origid) {
 	return cref;
 }
 
-void Glulxe::classes_remove(int classid, void *obj) {
+void Glulx::classes_remove(int classid, void *obj) {
 	classtable_t *ctab;
 	classref_t *cref;
 	classref_t **crefp;
@@ -907,7 +907,7 @@ void Glulxe::classes_remove(int classid, void *obj) {
 	return;
 }
 
-gidispatch_rock_t Glulxe::glulxe_classtable_register(void *obj,  uint objclass) {
+gidispatch_rock_t Glulx::glulxe_classtable_register(void *obj,  uint objclass) {
 	classref_t *cref;
 	gidispatch_rock_t objrock;
 	cref = classes_put(objclass, obj, 0);
@@ -915,12 +915,12 @@ gidispatch_rock_t Glulxe::glulxe_classtable_register(void *obj,  uint objclass) 
 	return objrock;
 }
 
-void Glulxe::glulxe_classtable_unregister(void *obj, uint objclass,
+void Glulx::glulxe_classtable_unregister(void *obj, uint objclass,
         gidispatch_rock_t objrock) {
 	classes_remove(objclass, obj);
 }
 
-gidispatch_rock_t Glulxe::glulxe_classtable_register_existing(void *obj, uint objclass, uint dispid) {
+gidispatch_rock_t Glulx::glulxe_classtable_register_existing(void *obj, uint objclass, uint dispid) {
 	classref_t *cref;
 	gidispatch_rock_t objrock;
 	cref = classes_put(objclass, obj, dispid);
@@ -928,7 +928,7 @@ gidispatch_rock_t Glulxe::glulxe_classtable_register_existing(void *obj, uint ob
 	return objrock;
 }
 
-char *Glulxe::grab_temp_c_array(uint addr, uint len, int passin) {
+char *Glulx::grab_temp_c_array(uint addr, uint len, int passin) {
 	arrayref_t *arref = nullptr;
 	char *arr = nullptr;
 	uint ix, addr2;
@@ -957,7 +957,7 @@ char *Glulxe::grab_temp_c_array(uint addr, uint len, int passin) {
 	return arr;
 }
 
-void Glulxe::release_temp_c_array(char *arr, uint addr, uint len, int passout) {
+void Glulx::release_temp_c_array(char *arr, uint addr, uint len, int passout) {
 	arrayref_t *arref = nullptr;
 	arrayref_t **aptr;
 	uint ix, val, addr2;
@@ -991,7 +991,7 @@ void Glulxe::release_temp_c_array(char *arr, uint addr, uint len, int passout) {
 	}
 }
 
-uint *Glulxe::grab_temp_i_array(uint addr, uint len, int passin) {
+uint *Glulx::grab_temp_i_array(uint addr, uint len, int passin) {
 	arrayref_t *arref = nullptr;
 	uint *arr = nullptr;
 	uint ix, addr2;
@@ -1020,7 +1020,7 @@ uint *Glulxe::grab_temp_i_array(uint addr, uint len, int passin) {
 	return arr;
 }
 
-void Glulxe::release_temp_i_array(uint *arr, uint addr, uint len, int passout) {
+void Glulx::release_temp_i_array(uint *arr, uint addr, uint len, int passout) {
 	arrayref_t *arref = nullptr;
 	arrayref_t **aptr;
 	uint ix, val, addr2;
@@ -1054,7 +1054,7 @@ void Glulxe::release_temp_i_array(uint *arr, uint addr, uint len, int passout) {
 	}
 }
 
-void **Glulxe::grab_temp_ptr_array(uint addr, uint len, int objclass, int passin) {
+void **Glulx::grab_temp_ptr_array(uint addr, uint len, int objclass, int passin) {
 	arrayref_t *arref = nullptr;
 	void **arr = nullptr;
 	uint ix, addr2;
@@ -1087,7 +1087,7 @@ void **Glulxe::grab_temp_ptr_array(uint addr, uint len, int objclass, int passin
 	return arr;
 }
 
-void Glulxe::release_temp_ptr_array(void **arr, uint addr, uint len, int objclass, int passout) {
+void Glulx::release_temp_ptr_array(void **arr, uint addr, uint len, int objclass, int passout) {
 	arrayref_t *arref = nullptr;
 	arrayref_t **aptr;
 	uint ix, val, addr2;
@@ -1128,7 +1128,7 @@ void Glulxe::release_temp_ptr_array(void **arr, uint addr, uint len, int objclas
 	}
 }
 
-gidispatch_rock_t Glulxe::glulxe_retained_register(void *array, uint len, const char *typecode) {
+gidispatch_rock_t Glulx::glulxe_retained_register(void *array, uint len, const char *typecode) {
 	gidispatch_rock_t rock;
 	arrayref_t *arref = nullptr;
 	arrayref_t **aptr;
@@ -1160,7 +1160,7 @@ gidispatch_rock_t Glulxe::glulxe_retained_register(void *array, uint len, const 
 	return rock;
 }
 
-void Glulxe::glulxe_retained_unregister(void *array, uint len, const  char *typecode, gidispatch_rock_t objrock) {
+void Glulx::glulxe_retained_unregister(void *array, uint len, const  char *typecode, gidispatch_rock_t objrock) {
 	arrayref_t *arref = nullptr;
 	arrayref_t **aptr;
 	uint ix, addr2, val;
@@ -1212,7 +1212,7 @@ void Glulxe::glulxe_retained_unregister(void *array, uint len, const  char *type
 	glulx_free(arref);
 }
 
-long Glulxe::glulxe_array_locate(void *array, uint len, char *typecode, gidispatch_rock_t objrock, int *elemsizeref) {
+long Glulx::glulxe_array_locate(void *array, uint len, char *typecode, gidispatch_rock_t objrock, int *elemsizeref) {
 	arrayref_t *arref = nullptr;
 	arrayref_t **aptr;
 	uint elemsize = 0;
@@ -1245,7 +1245,7 @@ long Glulxe::glulxe_array_locate(void *array, uint len, char *typecode, gidispat
 	return arref->addr;
 }
 
-gidispatch_rock_t Glulxe::glulxe_array_restore(long bufkey, uint len, char *typecode, void **arrayref) {
+gidispatch_rock_t Glulx::glulxe_array_restore(long bufkey, uint len, char *typecode, void **arrayref) {
 	gidispatch_rock_t rock;
 	int elemsize = 0;
 
@@ -1273,11 +1273,11 @@ gidispatch_rock_t Glulxe::glulxe_array_restore(long bufkey, uint len, char *type
 	return rock;
 }
 
-void Glulxe::set_library_select_hook(void (*func)(uint)) {
+void Glulx::set_library_select_hook(void (*func)(uint)) {
 	library_select_hook = func;
 }
 
-char *Glulxe::get_game_id() {
+char *Glulx::get_game_id() {
 	/* This buffer gets rewritten on every call, but that's okay -- the caller
 	   is supposed to copy out the result. */
 	static char buf[2 * 64 + 2];
@@ -1298,7 +1298,7 @@ char *Glulxe::get_game_id() {
 	return buf;
 }
 
-uint Glulxe::ReadMemory(uint addr) {
+uint Glulx::ReadMemory(uint addr) {
 	if (addr == 0xffffffff) {
 		stackptr -= 4;
 		return Stk4(stackptr);
@@ -1307,7 +1307,7 @@ uint Glulxe::ReadMemory(uint addr) {
 	}
 }
 
-void Glulxe::WriteMemory(uint addr, uint val) {
+void Glulx::WriteMemory(uint addr, uint val) {
 	if (addr == 0xffffffff) {
 		StkW4(stackptr, (val));
 		stackptr += 4;
@@ -1316,31 +1316,31 @@ void Glulxe::WriteMemory(uint addr, uint val) {
 	}
 }
 
-char *Glulxe::CaptureCArray(uint addr, uint len, int passin) {
+char *Glulx::CaptureCArray(uint addr, uint len, int passin) {
 	return grab_temp_c_array(addr, len, passin);
 }
 
-void Glulxe::ReleaseCArray(char *ptr, uint addr, uint len, int passout) {
+void Glulx::ReleaseCArray(char *ptr, uint addr, uint len, int passout) {
 	release_temp_c_array(ptr, addr, len, passout);
 }
 
-uint *Glulxe::CaptureIArray(uint addr, uint len, int passin) {
+uint *Glulx::CaptureIArray(uint addr, uint len, int passin) {
 	return grab_temp_i_array(addr, len, passin);
 }
 
-void Glulxe::ReleaseIArray(uint *ptr, uint addr, uint len, int passout) {
+void Glulx::ReleaseIArray(uint *ptr, uint addr, uint len, int passout) {
 	release_temp_i_array(ptr, addr, len, passout);
 }
 
-void **Glulxe::CapturePtrArray(uint addr, uint len, int objclass, int passin) {
+void **Glulx::CapturePtrArray(uint addr, uint len, int objclass, int passin) {
 	return grab_temp_ptr_array(addr, len, objclass, passin);
 }
 
-void Glulxe::ReleasePtrArray(void **ptr, uint addr, uint len, int objclass, int passout) {
+void Glulx::ReleasePtrArray(void **ptr, uint addr, uint len, int objclass, int passout) {
 	return release_temp_ptr_array(ptr, addr, len, objclass, passout);
 }
 
-uint Glulxe::ReadStructField(uint addr, uint fieldnum) {
+uint Glulx::ReadStructField(uint addr, uint fieldnum) {
 	if (addr == 0xffffffff) {
 		stackptr -= 4;
 		return Stk4(stackptr);
@@ -1349,7 +1349,7 @@ uint Glulxe::ReadStructField(uint addr, uint fieldnum) {
 	}
 }
 
-void Glulxe::WriteStructField(uint addr, uint fieldnum, uint val) {
+void Glulx::WriteStructField(uint addr, uint fieldnum, uint val) {
 	if (addr == 0xffffffff) {
 		StkW4(stackptr, val);
 		stackptr += 4;
@@ -1358,21 +1358,21 @@ void Glulxe::WriteStructField(uint addr, uint fieldnum, uint val) {
 	}
 }
 
-char *Glulxe::DecodeVMString(uint addr) {
+char *Glulx::DecodeVMString(uint addr) {
 	return make_temp_string(addr);
 }
 
-void Glulxe::ReleaseVMString(char *ptr) {
+void Glulx::ReleaseVMString(char *ptr) {
 	free_temp_string(ptr);
 }
 
-uint32 *Glulxe::DecodeVMUstring(uint addr) {
+uint32 *Glulx::DecodeVMUstring(uint addr) {
 	return make_temp_ustring(addr);
 }
 
-void Glulxe::ReleaseVMUstring(uint32 *ptr) {
+void Glulx::ReleaseVMUstring(uint32 *ptr) {
 	free_temp_ustring(ptr);
 }
 
-} // End of namespace Glulxe
+} // End of namespace Glulx
 } // End of namespace Glk
