@@ -141,6 +141,8 @@ private:
 	Common::Array<Math::Vector4d> _lightPositions;
 	Common::Array<Math::Vector3d> _lightDirections;
 	float _fov;
+	float _nearPlane;
+	float _farPlane;
 	bool _spriteBatchMode;
 	bool _state3D;
 };

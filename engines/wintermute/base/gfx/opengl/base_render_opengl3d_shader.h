@@ -127,6 +127,8 @@ private:
 	Common::Array<Math::Matrix4> _transformStack;
 
 	float _fov;
+	float _nearPlane;
+	float _farPlane;
 	bool _spriteBatchMode;
 	bool _state3D;
 

@@ -237,15 +237,12 @@ bool BaseRenderOpenGL3DShader::setProjection() {
 
 	float verticalViewAngle = _fov;
 	float aspectRatio = float(viewportWidth) / float(viewportHeight);
-	// same defaults as wme
-	float nearPlane = 90.0f;
-	float farPlane = 10000.0f;
 
 	float scaleMod = float(_height) / float(viewportHeight);
 
-	float top = nearPlane * tanf(verticalViewAngle * 0.5f);
+	float top = _nearPlane * tanf(verticalViewAngle * 0.5f);
 
-	_projectionMatrix3d = Math::makeFrustumMatrix(-top * aspectRatio, top * aspectRatio, -top, top, nearPlane, farPlane);
+	_projectionMatrix3d = Math::makeFrustumMatrix(-top * aspectRatio, top * aspectRatio, -top, top, _nearPlane, _farPlane);
 
 	_projectionMatrix3d(0, 0) *= scaleMod;
 	_projectionMatrix3d(1, 1) *= scaleMod;
@@ -415,8 +412,19 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 
 		setAmbientLight();
 
+		_nearPlane = 90.0f;
+		_farPlane = 10000.0f;
+
 		if (camera) {
 			_fov = camera->_fov;
+
+			if (camera->_nearClipPlane >= 0.0f) {
+				_nearPlane = camera->_nearClipPlane;
+			}
+
+			if (camera->_farClipPlane >= 0.0f) {
+				_farPlane = camera->_farClipPlane;
+			}
 
 			Math::Matrix4 viewMatrix;
 			camera->getViewMatrix(&viewMatrix);

@@ -293,16 +293,13 @@ bool BaseRenderOpenGL3D::setProjection() {
 
 	float verticalViewAngle = _fov;
 	float aspectRatio = float(viewportWidth) / float(viewportHeight);
-	// same defaults as wme
-	float nearPlane = 90.0f;
-	float farPlane = 10000.0f;
-	float top = nearPlane * tanf(verticalViewAngle * 0.5f);
+	float top = _nearPlane * tanf(verticalViewAngle * 0.5f);
 
 	float scaleMod = static_cast<float>(_height) / static_cast<float>(viewportHeight);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glFrustum(-top * aspectRatio, top * aspectRatio, -top, top, nearPlane, farPlane);
+	glFrustum(-top * aspectRatio, top * aspectRatio, -top, top, _nearPlane, _farPlane);
 	glGetFloatv(GL_PROJECTION_MATRIX, _projectionMatrix3d.getData());
 
 	_projectionMatrix3d(0, 0) *= scaleMod;
@@ -466,8 +463,19 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D *camera, bool force) {
 
 		glEnable(GL_NORMALIZE);
 
+		_nearPlane = 90.0f;
+		_farPlane = 10000.0f;
+
 		if (camera) {
 			_fov = camera->_fov;
+
+			if (camera->_nearClipPlane >= 0.0f) {
+				_nearPlane = camera->_nearClipPlane;
+			}
+
+			if (camera->_farClipPlane >= 0.0f) {
+				_farPlane = camera->_farClipPlane;
+			}
 
 			Math::Matrix4 viewMatrix;
 			camera->getViewMatrix(&viewMatrix);
