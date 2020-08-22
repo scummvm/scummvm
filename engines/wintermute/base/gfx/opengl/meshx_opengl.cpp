@@ -56,10 +56,13 @@ bool MeshXOpenGL::render(ModelX *model) {
 		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, _materials[materialIndex]->_shininess);
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glEnable(GL_TEXTURE_2D);
 
 		if (_materials[materialIndex]->getSurface()) {
+			glEnable(GL_TEXTURE_2D);
 			static_cast<BaseSurfaceOpenGL3D *>(_materials[materialIndex]->getSurface())->setTexture();
+		} else {
+			glDisable(GL_TEXTURE_2D);
+			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 
 		glInterleavedArrays(GL_T2F_N3F_V3F, 0, _vertexData);

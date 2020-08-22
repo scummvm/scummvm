@@ -77,10 +77,12 @@ bool MeshXOpenGLShader::render(ModelX *model) {
 	for (uint32 i = 0; i < _numAttrs; i++) {
 		int materialIndex = _materialIndices[i];
 
-		glEnable(GL_TEXTURE_2D);
-
 		if (_materials[materialIndex]->getSurface()) {
+			glEnable(GL_TEXTURE_2D);
 			static_cast<BaseSurfaceOpenGL3D *>(_materials[materialIndex]->getSurface())->setTexture();
+		} else {
+			glDisable(GL_TEXTURE_2D);
+			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 
 		// wme does not seem to care about specular or emissive light values
