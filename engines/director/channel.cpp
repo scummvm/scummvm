@@ -275,7 +275,7 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 	bool replace = isDirty(nextSprite);
 
 	if (nextSprite) {
-		if (_sprite->_castId != nextSprite->_castId && nextSprite->_cast) {
+		if (nextSprite->_cast && (_dirty || _sprite->_castId != nextSprite->_castId)) {
 			if (nextSprite->_cast->_type == kCastDigitalVideo) {
 				Common::String path = nextSprite->_cast->getCast()->getVideoPath(nextSprite->_castId);
 

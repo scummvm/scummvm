@@ -502,7 +502,7 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 		if (channel->isActiveVideo())
 			_movie->_videoPlayback = true;
 
-		if (channel->isDirty(nextSprite) || widgetRedrawn || mode == kRenderForceUpdate) {
+		if (channel->isDirty(nextSprite) || channel->isActiveVideo() || widgetRedrawn || mode == kRenderForceUpdate) {
 			if (!currentSprite->_trails)
 				_window->addDirtyRect(channel->getBbox());
 

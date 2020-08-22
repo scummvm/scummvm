@@ -311,7 +311,13 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 }
 
 bool DigitalVideoCastMember::isModified() {
-	if (!_video || !_video->isVideoLoaded() || _channel->_movieRate == 0.0)
+	if (!_video || !_video->isVideoLoaded())
+		return true;
+
+	if (_getFirstFrame)
+		return true;
+
+	if (_channel->_movieRate == 0.0)
 		return false;
 
 	return _video->needsUpdate();
@@ -346,7 +352,7 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 	_channel = channel;
 
 	// Do not render stopped videos
-	if (_channel->_movieRate == 0.0 && !_pausedAtStart)
+	if (_channel->_movieRate == 0.0 && !_getFirstFrame)
 		return nullptr;
 
 	if (!_video || !_video->isVideoLoaded()) {
