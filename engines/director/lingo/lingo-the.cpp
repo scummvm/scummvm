@@ -1263,7 +1263,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 
 	switch (field) {
 	case kTheBackColor:
-		if (d.asInt() != sprite->_backColor) {
+		if ((uint32)d.asInt() != sprite->_backColor) {
 			sprite->_backColor = d.asInt();
 			channel->_dirty = true;
 		}
@@ -1333,7 +1333,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		channel->setEditable(d.asInt());
 		break;
 	case kTheForeColor:
-		if (d.asInt() != sprite->_foreColor) {
+		if ((uint32)d.asInt() != sprite->_foreColor) {
 			sprite->_foreColor = d.asInt();
 			channel->_dirty = true;
 		}
