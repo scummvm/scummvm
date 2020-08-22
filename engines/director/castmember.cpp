@@ -355,8 +355,6 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 
 	_channel = channel;
 
-	warning("creating");
-
 	if (!_video || !_video->isVideoLoaded()) {
 		warning("DigitalVideoCastMember::createWidget: No video decoder");
 		delete widget;
@@ -453,10 +451,15 @@ void DigitalVideoCastMember::setMovieRate(double rate) {
 	if (!_video)
 		return;
 
+	_channel->_movieRate = rate;
+
 	if (rate < 0.0)
 		warning("STUB: DigitalVideoCastMember::setMovieRate(%g)", rate);
 	else
 		_video->setRate(Common::Rational((int)(rate * 100.0), 100));
+
+	if (_video->endOfVideo())
+		_video->rewind();
 }
 
 void DigitalVideoCastMember::setFrameRate(int rate) {

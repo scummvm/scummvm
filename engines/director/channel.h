@@ -23,6 +23,8 @@
 #ifndef DIRECTOR_CHANNEL_H
 #define DIRECTOR_CHANNEL_H
 
+#include "director/cursor.h"
+
 namespace Graphics {
 	struct Surface;
 	class ManagedSurface;

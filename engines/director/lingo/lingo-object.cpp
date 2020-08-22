@@ -24,6 +24,7 @@
 
 #include "director/director.h"
 #include "director/cast.h"
+#include "director/channel.h"
 #include "director/castmember.h"
 #include "director/window.h"
 #include "director/util.h"
@@ -738,6 +739,9 @@ bool DigitalVideoCastMember::setField(int field, const Datum &d) {
 		return true;
 	case kTheLoop:
 		_looping = (bool)d.asInt();
+		if (_looping && _channel && _channel->_movieRate == 0.0) {
+			setMovieRate(1.0);
+		}
 		return true;
 	case kThePausedAtStart:
 		_pausedAtStart = (bool)d.asInt();
