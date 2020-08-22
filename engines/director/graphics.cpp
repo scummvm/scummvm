@@ -180,7 +180,7 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 
  	switch (p->ink) {
 	case kInkTypeBackgndTrans:
-		if (src == p->backColor)
+		if ((uint32)src == p->backColor)
 			break;
 		// fall through
 	case kInkTypeMatte:
@@ -247,7 +247,7 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 		break;
 		// Arithmetic ink types
 	default: {
-		if (src == p->colorWhite)
+		if ((uint32)src == p->colorWhite)
 			break;
 
 		byte rSrc, gSrc, bSrc;

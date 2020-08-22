@@ -185,7 +185,7 @@ private:
 	bool _titleVisible;
 
 private:
-	int preprocessColor(DirectorPlotData *p, int src);
+	int preprocessColor(DirectorPlotData *p, uint32 src);
 
 	void inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::ManagedSurface *blitTo = nullptr);
 	void inkBlitShape(DirectorPlotData *pd, Common::Rect &srcRect);

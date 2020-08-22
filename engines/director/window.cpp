@@ -303,7 +303,7 @@ void Window::inkBlitStretchSurface(DirectorPlotData *pd, Common::Rect &srcRect, 
 	}
 }
 
-int Window::preprocessColor(DirectorPlotData *p, int src) {
+int Window::preprocessColor(DirectorPlotData *p, uint32 src) {
 	// HACK: Right now this method is just used for adjusting the colourization on text
 	// sprites, as it would be costly to colourize the chunks on the fly each
 	// time a section needs drawing. It's ugly but mostly works.
