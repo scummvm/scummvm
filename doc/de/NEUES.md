@@ -15,13 +15,17 @@ Programmcodes finden Sie auf Englisch unter:
      Hugo, JACL, Level 9, Magnetic Scrolls, Quest, Scott Adams,
      ZCode (alle ZCode-Spiele, außer Infocom graphical version 6).
      Aktuell werden mehr als 1600 Spiele erkannt und unterstützt.
+   - Unterstützung für Blazing Dragons hinzugefügt.
+
+ Neue Portierungen:
+   - Die Version für MorphOS wurde zu großen Teilen neu geschrieben.
 
  Allgemein:
    - Alle Engines unterstützen nun automatisch gespeicherte Spielstände.
    - Fehler werden nun im Debugger angezeigt, anstatt ScummVM einfach abstürzen zu lassen.
    - Artikel werden bei der Sortierung der Spiele im Launcher nicht mehr berücksichtigt.
    - Hebräisch wird nun korrekt in der Benutzeroberfläche dargestellt (benötigt die FriBiDi-Bibliothek).
-  - Code der Roland MT-32-Emulation auf Munt 2.4.0 aktualisiert.
+   - Code der Roland MT-32-Emulation auf Munt 2.4.0 aktualisiert.
 
  Dreamweb:
    - Unterstützung für russische Fan-Übersetzung hinzugefügt.
@@ -43,6 +47,9 @@ Programmcodes finden Sie auf Englisch unter:
  Queen:
    - Fehler beim Laden von Spielständen aus dem Launcher heraus korrigiert.
 
+ SCI:
+   - Deutliche Verbesserung der Amiga- und Mac-Audiotreiber.
+
  SCUMM:
    - Fehlerhafte Farbpalette korrigiert, die zu falscher Darstellung in der NES-Version von Maniac Mansion führt.
    - Darstellung der Taschenlampe in der NES-Version von Maniac Mansion entspricht nun dem Original.
@@ -56,6 +63,9 @@ Programmcodes finden Sie auf Englisch unter:
 
  Sword1:
    - Unterstützung für lokalisierte Menüs in der russischen Version der Novy Disk Trilogy hinzugefügt.
+
+ Titanic:
+   - Das Spiel stürzt nur nicht mehr ab, wenn man sich nach den Bedürfnissen des Barbot erkundigt.
 
  Wintermute:
    - System zur Verfolgung von Errungenschaften hinzugefügt, für mehr als 10 Spiele verfügbar.
