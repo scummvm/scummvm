@@ -270,8 +270,8 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 
 	// German games
 	{ "dergarten", "Der onirische Garten" },
-	{ "deronirischegarten", "Der unsägliche und vermeidbare Tod des Matthias Claudius" },
-	{ "matthiasclaudius", "Der Garten: Der Aufenthalt in einem traumhaften Garten" },
+	{ "deronirischegarten", "Der Garten: Der Aufenthalt in einem traumhaften Garten" },
+	{ "matthiasclaudius", "Der unsägliche und vermeidbare Tod des Matthias Claudius" },
 	{ "morgenwirdklausur", "Morgen wird Klausur geschrieben" },
 	{ "patanoirde", "PataNoir - Ein unvergleichlicher Kriminalfall" },
 
