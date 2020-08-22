@@ -162,7 +162,7 @@ static struct BuiltinProto {
 	{ "nothing",		LB::b_nothing,		0, 0, false, 200, CBLTIN },	// D2 c
 	{ "pass",			LB::b_pass,			0, 0, false, 400, CBLTIN },	//			D4 c
 	{ "pause",			LB::b_pause,		0, 0, false, 200, CBLTIN },	// D2 c
-	{ "play",			LB::b_play,			1, 2, false, 200, CBLTIN },	// D2 c
+	{ "play",			LB::b_play,			0, 2, false, 200, CBLTIN },	// D2 c
 	{ "playAccel",		LB::b_playAccel,	-1,0, false, 200, CBLTIN },	// D2
 		// play done													// D2
 	{ "preLoad",		LB::b_preLoad,		-1,0, false, 300, CBLTIN },	//		D3.1 c
@@ -1277,28 +1277,30 @@ void LB::b_play(int nargs) {
 	// (STRING|INT) frame
 	// STRING movie, (STRING|INT) frame
 
-	if (nargs >= 1 && nargs <= 2) {
-		Datum movie;
-		Datum frame;
+	Datum movie;
+	Datum frame;
 
-		Datum firstArg = g_lingo->pop();
-		if (nargs == 2) {
-			movie = firstArg;
-			frame = g_lingo->pop();
-		} else {
-			if (firstArg.asInt() == 0) {
-				frame.type = SYMBOL;
-				frame.u.s = new Common::String("done");
-			} else {
-				frame = firstArg;
-			}
-		}
-
-		g_lingo->func_play(frame, movie);
-	} else {
-		warning("b_play: expected 1 or 2 args, not %d", nargs);
+	switch (nargs) {
+	case 2:
+		movie = g_lingo->pop();
+		// fall though
+	case 1:
+		frame = g_lingo->pop();
+		if (!(frame.type == INT && frame.u.i == 0) && nargs == 1)
+			break;
+		// fall though
+	case 0:
+		frame.type = SYMBOL;
+		frame.u.s = new Common::String("done");
+		break;
+	default:
+		warning("b_play: expected 0, 1 or 2 args, not %d", nargs);
 		g_lingo->dropStack(nargs);
+
+		return;
 	}
+
+	g_lingo->func_play(frame, movie);
 }
 
 void LB::b_playAccel(int nargs) {
