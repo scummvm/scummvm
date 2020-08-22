@@ -173,6 +173,7 @@ public:
 	int _duration;
 
 	Video::VideoDecoder *_video;
+	const Graphics::Surface *_lastFrame;
 
 	Channel *_channel;
 };

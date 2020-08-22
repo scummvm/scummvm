@@ -257,6 +257,7 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common
 		: CastMember(cast, castId, stream) {
 	_type = kCastDigitalVideo;
 	_video = nullptr;
+	_lastFrame = nullptr;
 
 	_getFirstFrame = false;
 	_duration = 0;
@@ -296,6 +297,9 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common
 
 DigitalVideoCastMember::~DigitalVideoCastMember() {
 	delete _video;
+
+	if (g_director->_pixelformat.bytesPerPixel != 1)
+		delete _lastFrame;
 }
 
 bool DigitalVideoCastMember::loadVideo(Common::String path) {
@@ -351,16 +355,23 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 
 	_channel = channel;
 
-	// Do not render stopped videos
-	if (_channel->_movieRate == 0.0 && !_getFirstFrame)
-		return nullptr;
+	warning("creating");
 
 	if (!_video || !_video->isVideoLoaded()) {
 		warning("DigitalVideoCastMember::createWidget: No video decoder");
+		delete widget;
+
 		return nullptr;
 	}
 
-	debugC(2, kDebugImages, "Video time: %d  rate: %f", _channel->_movieTime, _channel->_movieRate);
+	// Do not render stopped videos
+	if (_channel->_movieRate == 0.0 && !_getFirstFrame) {
+		widget->getSurface()->blitFrom(*_lastFrame);
+
+		return widget;
+	}
+
+	debugC(1, kDebugImages, "Video time: %d  rate: %f", _channel->_movieTime, _channel->_movieRate);
 	const Graphics::Surface *frame = _video->decodeNextFrame();
 
 	_channel->_movieTime = getMovieCurrentTime();
@@ -370,13 +381,16 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 			if (frame->format.bytesPerPixel != 1) {
 				warning("STUB: video >8bpp");
 			} else {
+				_lastFrame = frame;
 				widget->getSurface()->blitFrom(*frame);
 			}
 		} else {
-			const Graphics::Surface *surf = frame->convertTo(g_director->_pixelformat, g_director->getPalette());
-			widget->getSurface()->blitFrom(*surf);
-			delete surf;
+			delete _lastFrame;
+			_lastFrame = frame->convertTo(g_director->_pixelformat, g_director->getPalette());
+			widget->getSurface()->blitFrom(*_lastFrame);
 		}
+	} else {
+		widget->getSurface()->blitFrom(*_lastFrame);
 	}
 
 	if (_getFirstFrame) {
