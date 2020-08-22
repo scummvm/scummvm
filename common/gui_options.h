@@ -41,11 +41,11 @@
 #define GUIO_MIDIAPPLEIIGS   "\015"
 #define GUIO_MIDITOWNS       "\016"
 #define GUIO_MIDIPC98        "\017"
-#define GUIO_MIDISEGACD      "\018"
-#define GUIO_MIDIMT32        "\020"
-#define GUIO_MIDIGM          "\021"
+#define GUIO_MIDISEGACD      "\020"
+#define GUIO_MIDIMT32        "\021"
+#define GUIO_MIDIGM          "\022"
 
-#define GUIO_NOASPECT        "\022"
+#define GUIO_NOASPECT        "\023"
 
 #define GUIO_RENDERHERCGREEN "\030"
 #define GUIO_RENDERHERCAMBER "\031"
