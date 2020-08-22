@@ -902,7 +902,7 @@ Datum LC::chunkRef(ChunkType type, int startChunk, int endChunk, const Datum &sr
 		break;
 	case kChunkItem:
 		skipChars = "";
-		breakChars = Common::String::format("%c", g_lingo->_itemDelimiter);
+		breakChars = g_lingo->_itemDelimiter;
 		break;
 	case kChunkLine:
 		skipChars = "";
