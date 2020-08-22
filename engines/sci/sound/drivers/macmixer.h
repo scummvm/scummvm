@@ -23,6 +23,7 @@
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "common/frac.h"
+#include "common/mutex.h"
 #include "common/system.h"
 
 #ifndef SCI_SOUND_DRIVERS_MACMIXER_H
@@ -66,6 +67,8 @@ public:
 	int getRate() const override { return (_mode == kModeAuthentic ? 11127 : g_system->getMixer()->getOutputRate()); }
 	int readBuffer(int16 *data, const int numSamples) override;
 	bool endOfData() const override { return false; }
+
+	Common::Mutex _mutex;
 
 private:
 	template <Mode mode>
@@ -204,6 +207,9 @@ void Mixer_Mac<T>::generateSamples(int16 *data, int len) {
 
 template <typename T>
 int Mixer_Mac<T>::readBuffer(int16 *data, const int numSamples) {
+	// Would probably be better inside generateSamples, but let's follow Audio::Paula
+	Common::StackLock lock(_mutex);
+
 	if (!_isPlaying) {
 		memset(data, 0, numSamples * 2);
 		return numSamples;

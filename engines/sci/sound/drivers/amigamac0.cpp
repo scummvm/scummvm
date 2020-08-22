@@ -37,6 +37,7 @@
 
 #include "common/file.h"
 #include "common/memstream.h"
+#include "common/mutex.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/util.h"
@@ -51,7 +52,7 @@ public:
 		kBaseFreq = 60
 	};
 
-	MidiPlayer_AmigaMac0(SciVersion version, Audio::Mixer *mixer);
+	MidiPlayer_AmigaMac0(SciVersion version, Audio::Mixer *mixer, Common::Mutex &mutex);
 	virtual ~MidiPlayer_AmigaMac0();
 
 	// MidiPlayer
@@ -62,9 +63,9 @@ public:
 	byte getPlayId() const override { return 0x40; }
 	int getPolyphony() const override { return kVoices; }
 	bool hasRhythmChannel() const override { return false; }
-	void setVolume(byte volume) override { _masterVolume = CLIP<byte>(volume, 0, 15); }
-	int getVolume() override { return _masterVolume; }
-	void playSwitch(bool play) override { _playSwitch = play; }
+	void setVolume(byte volume) override;
+	int getVolume() override;
+	void playSwitch(bool play) override;
 	void initTrack(SciSpan<const byte> &trackData) override;
 
 protected:
@@ -160,9 +161,12 @@ protected:
 	typedef Common::Array<Voice *>::const_iterator VoiceIt;
 
 	Voice *_channels[MIDI_CHANNELS];
+
+	Common::Mutex &_mixMutex;
+	Common::Mutex _timerMutex;
 };
 
-MidiPlayer_AmigaMac0::MidiPlayer_AmigaMac0(SciVersion version, Audio::Mixer *mixer) :
+MidiPlayer_AmigaMac0::MidiPlayer_AmigaMac0(SciVersion version, Audio::Mixer *mixer, Common::Mutex &mutex) :
 	MidiPlayer(version),
 	_playSwitch(true),
 	_masterVolume(15),
@@ -171,7 +175,8 @@ MidiPlayer_AmigaMac0::MidiPlayer_AmigaMac0(SciVersion version, Audio::Mixer *mix
 	_timerProc(),
 	_timerParam(nullptr),
 	_isOpen(false),
-	_channels() {}
+	_channels(),
+	_mixMutex(mutex) {}
 
 MidiPlayer_AmigaMac0::~MidiPlayer_AmigaMac0() {
 	close();
@@ -195,6 +200,21 @@ void MidiPlayer_AmigaMac0::close() {
 	_isOpen = false;
 }
 
+void MidiPlayer_AmigaMac0::setVolume(byte volume) {
+	Common::StackLock lock(_mixMutex);
+	_masterVolume = CLIP<byte>(volume, 0, 15);
+}
+
+int MidiPlayer_AmigaMac0::getVolume() {
+	Common::StackLock lock(_mixMutex);
+	return _masterVolume;
+}
+
+void MidiPlayer_AmigaMac0::playSwitch(bool play) {
+	Common::StackLock lock(_mixMutex);
+	_playSwitch = play;
+}
+
 void MidiPlayer_AmigaMac0::initTrack(SciSpan<const byte>& header) {
 	if (!_isOpen)
 		return;
@@ -206,6 +226,8 @@ void MidiPlayer_AmigaMac0::initTrack(SciSpan<const byte>& header) {
 	// handled by the generic sample code
 	if (caps != 0)
 		return;
+
+	Common::StackLock lock(_mixMutex);
 
 	uint vi = 0;
 
@@ -238,19 +260,28 @@ void MidiPlayer_AmigaMac0::freeInstruments() {
 }
 
 void MidiPlayer_AmigaMac0::onTimer() {
+	_mixMutex.unlock();
+	_timerMutex.lock();
+
 	if (_timerProc)
 		(*_timerProc)(_timerParam);
+
+	_timerMutex.unlock();
+	_mixMutex.lock();
 
 	for (VoiceIt it = _voices.begin(); it != _voices.end(); ++it)
 		(*it)->processEnvelope();
 }
 
 void MidiPlayer_AmigaMac0::setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) {
+	Common::StackLock lock(_timerMutex);
 	_timerProc = timerProc;
 	_timerParam = timerParam;
 }
 
 void MidiPlayer_AmigaMac0::send(uint32 b) {
+	Common::StackLock lock(_mixMutex);
+
 	byte command = b & 0xf0;
 	byte channel = b & 0xf;
 	byte op1 = (b >> 8) & 0xff;
@@ -331,7 +362,7 @@ void MidiPlayer_AmigaMac0::Voice::processEnvelope() {
 	--_envCntDown;
 }
 
-class MidiPlayer_Mac0 : public MidiPlayer_AmigaMac0, public Mixer_Mac<MidiPlayer_Mac0> {
+class MidiPlayer_Mac0 : public Mixer_Mac<MidiPlayer_Mac0>, public MidiPlayer_AmigaMac0 {
 public:
 	MidiPlayer_Mac0(SciVersion version, Audio::Mixer *mixer, Mode mode);
 
@@ -387,8 +418,8 @@ private:
 };
 
 MidiPlayer_Mac0::MidiPlayer_Mac0(SciVersion version, Audio::Mixer *mixer, Mixer_Mac<MidiPlayer_Mac0>::Mode mode) :
-	MidiPlayer_AmigaMac0(version, mixer),
-	Mixer_Mac<MidiPlayer_Mac0>(mode) {
+	Mixer_Mac<MidiPlayer_Mac0>(mode),
+	MidiPlayer_AmigaMac0(version, mixer, _mutex) {
 
 	for (uint i = 0; i < kStepTableSize; ++i)
 		_stepTable[i] = round(0x2000 * pow(2.0, i / 12.0));
@@ -600,7 +631,7 @@ bool MidiPlayer_Mac0::loadInstruments(Common::SeekableReadStream &patch) {
 	return true;
 }
 
-class MidiPlayer_Amiga0 : public MidiPlayer_AmigaMac0, public Audio::Paula {
+class MidiPlayer_Amiga0 : public Audio::Paula, public MidiPlayer_AmigaMac0 {
 public:
 	MidiPlayer_Amiga0(SciVersion version, Audio::Mixer *mixer);
 
@@ -654,8 +685,8 @@ private:
 };
 
 MidiPlayer_Amiga0::MidiPlayer_Amiga0(SciVersion version, Audio::Mixer *mixer) :
-	MidiPlayer_AmigaMac0(version, mixer),
 	Audio::Paula(true, mixer->getOutputRate(), mixer->getOutputRate() / kBaseFreq),
+	MidiPlayer_AmigaMac0(version, mixer, _mutex),
 	_defaultInstrument(0),
 	_isEarlyDriver(false) {
 
