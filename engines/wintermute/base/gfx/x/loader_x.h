@@ -75,12 +75,14 @@ public:
 	int tokenToInt();
 	double tokenToFloat();
 	Common::String tokenToString();
+	uint32 tokenToUint32();
 
 	void skipObject();
 
 	float readFloat();
 	int readInt();
 	Common::String readString();
+	uint32 readUint32();
 
 private:
 	void nextTokenBinary();

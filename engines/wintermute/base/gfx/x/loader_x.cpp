@@ -378,6 +378,12 @@ Common::String XFileLexer::tokenToString() {
 	return _tok._textVal;
 }
 
+uint32 XFileLexer::tokenToUint32() {
+	// All integer values in a .X file are unsigned and at most 32 bit
+	// so parsing to unsigned long and then converting down should be fine
+	return strtoul(_tok._textVal.c_str(), nullptr, 10);
+}
+
 void XFileLexer::skipObject() {
 	advanceToNextToken(); // optional name
 	advanceToNextToken();
@@ -451,6 +457,24 @@ int XFileLexer::readInt() {
 
 Common::String XFileLexer::readString() {
 	Common::String tmp = tokenToString();
+	advanceToNextToken();
+	advanceToNextToken(); // skip comma or semicolon
+	return tmp;
+}
+
+uint32 XFileLexer::readUint32() {
+	if (_integersToRead > 0) {
+		--_integersToRead;
+		uint32 tmp = _buffer.readUint32LE();
+
+		if (_integersToRead == 0) {
+			advanceToNextToken();
+		}
+
+		return tmp;
+	}
+
+	uint32 tmp = tokenToUint32();
 	advanceToNextToken();
 	advanceToNextToken(); // skip comma or semicolon
 	return tmp;
