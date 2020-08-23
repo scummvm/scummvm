@@ -866,14 +866,13 @@ bool AvatarMoverProcess::checkTurn(Direction direction, bool moving) {
 
 	// Note: don't need to turn if moving backward in combat stance
 	// CHECKME: currently, first turn in the right direction
-	if (direction != curdir && !(
-	            combat && ABS(direction - curdir) == 8)) {
+	if (direction != curdir && !(combat && Direction_Invert(direction) == curdir)) {
 		Animation::Sequence lastanim = avatar->getLastAnim();
 
 		if (moving &&
 		        (lastanim == Animation::walk || lastanim == Animation::run ||
 		         lastanim == Animation::combatStand) &&
-		        (ABS(direction - curdir) + 2 % 16 <= 4)) {
+		        (ABS(direction - curdir) + 2) % 16 <= 4) {
 			// don't need to explicitly do a turn animation
 			return false;
 		}
