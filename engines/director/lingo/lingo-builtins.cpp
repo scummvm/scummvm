@@ -1283,12 +1283,12 @@ void LB::b_play(int nargs) {
 	switch (nargs) {
 	case 2:
 		movie = g_lingo->pop();
-		// fall though
+		// fall through
 	case 1:
 		frame = g_lingo->pop();
 		if (!(frame.type == INT && frame.u.i == 0) && nargs == 1)
 			break;
-		// fall though
+		// fall through
 	case 0:
 		frame.type = SYMBOL;
 		frame.u.s = new Common::String("done");
