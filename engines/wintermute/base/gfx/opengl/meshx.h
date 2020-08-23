@@ -89,6 +89,7 @@ protected:
 	bool parseNormalCoords(XFileLexer &lexer);
 	bool parseMaterials(XFileLexer &lexer, int faceCount, const Common::String &filename, Common::Array<MaterialReference> &materialReferences, const Common::Array<int> &indexCountPerFace);
 	bool parseSkinWeights(XFileLexer &lexer);
+	bool parseVertexDeclaration(XFileLexer &lexer);
 
 	void updateBoundingBox();
 

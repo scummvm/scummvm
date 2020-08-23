@@ -124,6 +124,12 @@ bool MeshX::loadFromX(const Common::String &filename, XFileLexer &lexer, Common:
 			lexer.advanceOnOpenBraces();
 
 			parseSkinWeights(lexer);
+		} else if (lexer.tokenIsIdentifier("DeclData")) {
+			lexer.advanceToNextToken();
+			lexer.advanceToNextToken();
+			lexer.advanceOnOpenBraces();
+
+			parseVertexDeclaration(lexer);
 		} else if (lexer.tokenIsIdentifier()) {
 			lexer.skipObject();
 		} else if (lexer.reachedClosedBraces()) {
@@ -726,6 +732,105 @@ bool MeshX::parseSkinWeights(XFileLexer &lexer) {
 
 	lexer.skipTerminator(); // semicolon of matrix
 	lexer.advanceToNextToken(); // closed braces of skin weights object
+
+	return true;
+}
+
+bool MeshX::parseVertexDeclaration(XFileLexer &lexer) {
+	int vertexElementCount = lexer.readInt();
+
+	// size of a vertex measured in four byte blocks
+	int vertexSize = 0;
+	int normalOffset = -1;
+	int textureOffset = -1;
+
+	debug("Start parsing vertex declaration..");
+
+	for (int i = 0; i < vertexElementCount; ++i) {
+		int type = lexer.readInt();
+		int method = lexer.readInt();
+		int usage = lexer.readInt();
+		int usageIndex = lexer.readInt();
+		lexer.skipTerminator();
+
+		debug("Vertex Element: Type: %i, Method: %i, Usage: %i, Usage index: %i", type, method, usage, usageIndex);
+
+		// we only care about normal vectors and texture coords
+		switch (usage) {
+		case 3:
+			normalOffset = vertexSize;
+			break;
+		case 5:
+			textureOffset = vertexSize;
+			break;
+		}
+
+		// This is a first guess, based on
+		// https://docs.microsoft.com/en-us/windows/win32/direct3d9/vertexelement
+		switch (type) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+		case 6:
+		case 7:
+		case 9:
+		case 10:
+		case 11:
+		case 12:
+		case 13:
+		case 14:
+		case 15:
+		case 16:
+			vertexSize += 4;
+			break;
+		case 4:
+		case 5:
+		case 8:
+			vertexSize += 1;
+			break;
+		default:
+			break;
+		}
+	}
+
+	if (lexer.tokenIsOfType(SEMICOLON)) {
+		lexer.advanceToNextToken();
+	}
+
+	int dataSize = lexer.readInt();
+	Common::Array<uint32> data;
+	data.reserve(dataSize);
+
+	for (int i = 0; i < dataSize; ++i) {
+		data.push_back(lexer.readUint32());
+	}
+
+	if (lexer.tokenIsOfType(SEMICOLON)) {
+		lexer.advanceToNextToken();
+	}
+
+	debug("Data block contains %i DWORDs", dataSize);
+
+	assert(dataSize % vertexSize == 0);
+
+	for (int i = 0; i < dataSize; ++i) {
+		if (normalOffset != -1) {
+			float *vertexNormalData = reinterpret_cast<float *>(data.data() + vertexSize * i + normalOffset);
+
+			for (int j = 0; j < 3; ++j) {
+				_vertexNormalData[3 * i + j] = vertexNormalData[j];
+				_vertexData[kVertexComponentCount * i + kNormalOffset + j] = vertexNormalData[j];
+			}
+		}
+
+		if (textureOffset != -1) {
+			float *vertexTextureCoordsData = reinterpret_cast<float *>(data.data() + vertexSize * i + textureOffset);
+
+			_vertexData[kVertexComponentCount * i + kTextureCoordOffset + 0] = vertexTextureCoordsData[0];
+			_vertexData[kVertexComponentCount * i + kTextureCoordOffset + 1] = vertexTextureCoordsData[1];
+		}
+	}
 
 	return true;
 }
