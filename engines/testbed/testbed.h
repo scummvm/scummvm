@@ -61,6 +61,8 @@ public:
 
 private:
 	void checkForAllAchievements();
+	void videoTest();
+
 	Common::Array<Testsuite *> _testsuiteList;
 };
 

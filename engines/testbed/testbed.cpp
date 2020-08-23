@@ -215,6 +215,11 @@ void TestbedEngine::checkForAllAchievements() {
 }
 
 Common::Error TestbedEngine::run() {
+	if (ConfMan.hasKey("start_movie")) {
+		videoTest();
+		return Common::kNoError;
+	}
+
 	// Initialize graphics using following:
 	initGraphics(320, 200);
 
