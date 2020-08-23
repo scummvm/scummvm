@@ -253,6 +253,13 @@ bool Channel::isActiveVideo() {
 	return true;
 }
 
+bool Channel::isVideoDirectToStage() {
+	if (!_sprite->_cast || _sprite->_cast->_type != kCastDigitalVideo)
+		return false;
+
+	return ((DigitalVideoCastMember *)_sprite->_cast)->_directToStage;
+}
+
 Common::Rect Channel::getBbox(bool unstretched) {
 	Common::Rect result(unstretched ? _sprite->_width : _width,
 											unstretched ? _sprite->_height : _height);

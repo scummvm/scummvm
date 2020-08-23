@@ -53,6 +53,7 @@ public:
 	bool isMatteIntersect(Channel *channel);
 	bool isMatteWithin(Channel *channel);
 	bool isActiveVideo();
+	bool isVideoDirectToStage();
 
 	void setWidth(int w);
 	void setHeight(int h);
