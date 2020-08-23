@@ -15,6 +15,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      ZCode (all ZCode games except the Infocom graphical version 6 games).
      Currently, more than 1600 games are detected and supported.
    - Added support for Blazing Dragons.
+   - Added support for Operation Stealth.
 
   New ports:
    - MorphOS port got a major rewrite.
