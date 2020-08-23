@@ -57,7 +57,7 @@
 OSystem_DS *OSystem_DS::_instance = NULL;
 
 OSystem_DS::OSystem_DS()
-	: _eventSource(NULL), _mixer(NULL), _isOverlayShown(true),
+	: _eventSource(NULL), _mixerManager(NULL), _isOverlayShown(true),
 	_graphicsMode(GFX_HWSCALE), _stretchMode(100),
 	_disableCursorPalette(true), _graphicsEnable(true),
 	_callbackTimer(10), _currentTimeMillis(0)
@@ -69,8 +69,8 @@ OSystem_DS::OSystem_DS()
 }
 
 OSystem_DS::~OSystem_DS() {
-	delete _mixer;
-	_mixer = 0;
+	delete _mixerManager;
+	_mixerManager = 0;
 }
 
 void timerTickHandler() {
@@ -95,10 +95,9 @@ void OSystem_DS::initBackend() {
 	_savefileManager = new DefaultSaveFileManager();
 	_timerManager = new DefaultTimerManager();
 	timerStart(0, ClockDivider_1, (u16)TIMER_FREQ(1000), timerTickHandler);
-	REG_IME = 1;
 
-	_mixer = new Audio::MixerImpl(11025);
-	_mixer->setReady(true);
+	_mixerManager = new MaxModMixerManager(11025, 4096);
+	_mixerManager->init();
 
 	oamInit(&oamMain, SpriteMapping_Bmp_1D_128, false);
 	_cursorSprite = oamAllocateGfx(&oamMain, SpriteSize_64x64, SpriteColorFormat_Bmp);

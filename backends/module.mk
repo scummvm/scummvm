@@ -290,6 +290,7 @@ MODULE_OBJS += \
 	fs/posix-drives/posix-drives-fs.o \
 	fs/posix-drives/posix-drives-fs-factory.o \
 	fs/devoptab/devoptab-fs-factory.o \
+	mixer/maxmod/maxmod-mixer.o \
 	plugins/ds/ds-provider.o
 endif
 

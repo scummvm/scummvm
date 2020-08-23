@@ -3016,6 +3016,7 @@ EOF
 		append_var LIBS "-specs=ds_arm9.specs"
 		append_var LIBS "-lfilesystem"
 		append_var LIBS "-lfat"
+		append_var LIBS "-lmm9"
 		append_var LIBS "-lnds9"
 		;;
 	freebsd* | openbsd*)

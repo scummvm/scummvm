@@ -24,14 +24,9 @@
 #ifndef _OSYSTEM_DS_H_
 #define _OSYSTEM_DS_H_
 
-// Allow use of stuff in <nds.h>
-#define FORBIDDEN_SYMBOL_EXCEPTION_printf
-#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
-
 #include "backends/base-backend.h"
 #include "backends/events/ds/ds-events.h"
-#include "nds.h"
-#include "audio/mixer_intern.h"
+#include "backends/mixer/maxmod/maxmod-mixer.h"
 #include "graphics/surface.h"
 #include "graphics/palette.h"
 
@@ -43,7 +38,7 @@ enum {
 
 class OSystem_DS : public BaseBackend, public PaletteManager {
 protected:
-	Audio::MixerImpl *_mixer;
+	MaxModMixerManager *_mixerManager;
 	Graphics::Surface _framebuffer, _overlay, _cursor;
 	bool _graphicsEnable, _isOverlayShown;
 	int _graphicsMode, _stretchMode;
@@ -144,7 +139,7 @@ public:
 	virtual Graphics::Surface *lockScreen();
 	virtual void unlockScreen();
 
-	virtual Audio::Mixer *getMixer() { return _mixer; }
+	virtual Audio::Mixer *getMixer() { return _mixerManager->getMixer(); }
 
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 
