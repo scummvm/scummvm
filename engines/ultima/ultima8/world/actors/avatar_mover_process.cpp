@@ -690,6 +690,18 @@ void AvatarMoverProcess::handleNormalMode() {
 	if (Kernel::get_instance()->getNumProcesses(1, ActorAnimProcess::ACTOR_ANIM_PROC_TYPE))
 		return;
 
+	// if we were running, slow to a walk before stopping
+	if (lastanim == Animation::run) {
+		waitFor(avatar->doAnim(Animation::walk, direction));
+		return;
+	}
+
+	// not doing anything in particular? stand
+	if (lastanim != Animation::stand && currentIdleTime == 0) {
+		waitFor(avatar->doAnim(Animation::stand, direction));
+		return;
+	}
+
 	// idle
 	_idleTime = currentIdleTime + 1;
 
@@ -698,7 +710,7 @@ void AvatarMoverProcess::handleNormalMode() {
 		if ((getRandom() % 1500) + 30 < _idleTime) {
 			_lastHeadShakeAnim = lastanim;
 			waitFor(avatar->doAnim(Animation::stand, direction));
-			_idleTime = 0;
+			_idleTime = 1;
 			return;
 		}
 	} else {
@@ -710,19 +722,9 @@ void AvatarMoverProcess::handleNormalMode() {
 			else
 				nextanim = Animation::lookLeft;
 			waitFor(avatar->doAnim(nextanim, direction));
-			_idleTime = 0;
+			_idleTime = 1;
 			return;
 		}
-	}
-
-	// if we were running, slow to a walk before stopping
-	if (lastanim == Animation::run) {
-		waitFor(avatar->doAnim(Animation::walk, direction));
-	}
-
-	// not doing anything in particular? stand
-	if (lastanim != Animation::stand) {
-		waitFor(avatar->doAnim(Animation::stand, direction));
 	}
 }
 
