@@ -119,9 +119,19 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 		blitTo->fillRect(r, _stageColor);
 
 		_dirtyChannels = _currentMovie->getScore()->getSpriteIntersections(r);
-		for (Common::List<Channel *>::iterator j = _dirtyChannels.begin(); j != _dirtyChannels.end(); j++) {
-			if ((*j)->_visible)
-				inkBlitFrom(*j, r, blitTo);
+		for (int pass = 0; pass < 2; pass++) {
+			for (Common::List<Channel *>::iterator j = _dirtyChannels.begin(); j != _dirtyChannels.end(); j++) {
+				if ((*j)->isActiveVideo() && (*j)->isVideoDirectToStage()) {
+					if (pass == 0)
+						continue;
+				} else {
+					if (pass == 1)
+						continue;
+				}
+
+				if ((*j)->_visible)
+					inkBlitFrom(*j, r, blitTo);
+			}
 		}
 	}
 

@@ -487,40 +487,30 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 
 	_movie->_videoPlayback = false;
 
-	for (int pass = 0; pass < 2; pass++) {
-		for (uint16 i = 0; i < _channels.size(); i++) {
-			Channel *channel = _channels[i];
-			Sprite *currentSprite = channel->_sprite;
-			Sprite *nextSprite = _frames[frameId]->_sprites[i];
+	for (uint16 i = 0; i < _channels.size(); i++) {
+		Channel *channel = _channels[i];
+		Sprite *currentSprite = channel->_sprite;
+		Sprite *nextSprite = _frames[frameId]->_sprites[i];
 
-			if (channel->isActiveVideo() && channel->isVideoDirectToStage()) {
-				if (pass == 0)
-					continue;
-			} else {
-				if (pass == 1)
-					continue;
-			}
+		// widget content has changed and needs a redraw.
+		// this doesn't include changes in dimension or position!
+		bool widgetRedrawn = channel->updateWidget();
 
-			// widget content has changed and needs a redraw.
-			// this doesn't include changes in dimension or position!
-			bool widgetRedrawn = channel->updateWidget();
+		if (channel->isActiveText())
+			_movie->_currentEditableTextChannel = i;
 
-			if (channel->isActiveText())
-				_movie->_currentEditableTextChannel = i;
+		if (channel->isActiveVideo())
+			_movie->_videoPlayback = true;
 
-			if (channel->isActiveVideo())
-				_movie->_videoPlayback = true;
-
-			if (channel->isDirty(nextSprite) || channel->isActiveVideo() || widgetRedrawn || mode == kRenderForceUpdate) {
-				if (!currentSprite->_trails)
-					_window->addDirtyRect(channel->getBbox());
-
-				channel->setClean(nextSprite, i);
+		if (channel->isDirty(nextSprite) || channel->isActiveVideo() || widgetRedrawn || mode == kRenderForceUpdate) {
+			if (!currentSprite->_trails)
 				_window->addDirtyRect(channel->getBbox());
-				debugC(2, kDebugImages, "Score::renderSprites(): CH: %-3d castId: %03d(%s) [ink: %d, puppet: %d, moveable: %d, visible: %d] [bbox: %d,%d,%d,%d] [type: %d fg: %d bg: %d] [script: %d]", i, currentSprite->_castId, numToCastNum(currentSprite->_castId), currentSprite->_ink, currentSprite->_puppet, currentSprite->_moveable, channel->_visible, PRINT_RECT(channel->getBbox()), currentSprite->_spriteType, currentSprite->_foreColor, currentSprite->_backColor, currentSprite->_scriptId);
-			} else {
-				channel->setClean(nextSprite, i, true);
-			}
+
+			channel->setClean(nextSprite, i);
+			_window->addDirtyRect(channel->getBbox());
+			debugC(2, kDebugImages, "Score::renderSprites(): CH: %-3d castId: %03d(%s) [ink: %d, puppet: %d, moveable: %d, visible: %d] [bbox: %d,%d,%d,%d] [type: %d fg: %d bg: %d] [script: %d]", i, currentSprite->_castId, numToCastNum(currentSprite->_castId), currentSprite->_ink, currentSprite->_puppet, currentSprite->_moveable, channel->_visible, PRINT_RECT(channel->getBbox()), currentSprite->_spriteType, currentSprite->_foreColor, currentSprite->_backColor, currentSprite->_scriptId);
+		} else {
+			channel->setClean(nextSprite, i, true);
 		}
 	}
 }
