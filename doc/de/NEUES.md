@@ -16,6 +16,7 @@ Programmcodes finden Sie auf Englisch unter:
      ZCode (alle ZCode-Spiele, außer Infocom graphical version 6).
      Aktuell werden mehr als 1600 Spiele erkannt und unterstützt.
    - Unterstützung für Blazing Dragons hinzugefügt.
+   - Unterstützung für Operation Stealth hinzugefügt.
 
  Neue Portierungen:
    - Die Version für MorphOS wurde zu großen Teilen neu geschrieben.
