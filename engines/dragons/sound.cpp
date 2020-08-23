@@ -526,6 +526,11 @@ void SoundManager::playMusic(int16 song) {
 	snprintf(filename, 12, "%sz%02d.msq", sceneName, song);
 	debug(1, "Load music file %s", filename);
 
+	if (!_bigFileArchive->doesFileExist(filename)) {
+		warning("Could not find music file %s", filename);
+		return;
+	}
+
 	uint32 dataSize;
 	byte *seqData = _bigFileArchive->load(filename, dataSize);
 	Common::MemoryReadStream *seq = new Common::MemoryReadStream(seqData, dataSize, DisposeAfterUse::YES);
