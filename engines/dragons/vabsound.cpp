@@ -156,13 +156,16 @@ void VabSound::loadToneAttributes(Common::SeekableReadStream *vhData) {
 }
 
 int16 VabSound::getVagID(uint16 program, uint16 key) {
-	assert(program < _header.numVAG);
-
-	for (int i = 0; i < _programAttrs[program].tones; i++) {
-		if (_toneAttrs[i].prog == program && _toneAttrs[i].min == key && _toneAttrs[i].max == key) {
-			return _toneAttrs[i].vag - 1;
+	if (program < _header.numVAG) {
+		for (int i = 0; i < _programAttrs[program].tones; i++) {
+			if (_toneAttrs[i].prog == program && _toneAttrs[i].min == key && _toneAttrs[i].max == key) {
+				return _toneAttrs[i].vag - 1;
+			}
 		}
+	} else {
+		warning("program >= _header.numVAG %d %d", program, _header.numVAG);
 	}
+
 	return -1;
 }
 
