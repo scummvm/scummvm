@@ -44,7 +44,7 @@ lib*.a
 /*.dat
 
 /README
-/README.html
+/README.html*
 /NEWS
 /NEWS.html
 
