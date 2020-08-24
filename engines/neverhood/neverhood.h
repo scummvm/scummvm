@@ -38,6 +38,7 @@
 namespace Neverhood {
 
 enum NeverhoodGameFeatures {
+	GF_BIG_DEMO = (1 << 0)
 };
 
 struct NeverhoodGameDescription;
@@ -69,8 +70,6 @@ public:
 	// Detection related functions
 	const NeverhoodGameDescription *_gameDescription;
 	const char *getGameId() const;
-	uint32 getFeatures() const;
-	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
 	Common::Language getLanguage() const;
 	bool hasFeature(EngineFeature f) const override;
