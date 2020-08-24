@@ -127,7 +127,7 @@ void Module2300::updateScene() {
 		case 1:
 			if (_moduleResult == 1)
 				createScene(0, 0);
-			else if (_vm->isDemo())
+			else if (_vm->isDemo() && !(_vm->isBigDemo() && _moduleResult == 4))
 				createScene(9999, 0);
 			else if (_moduleResult == 2)
 				createScene(2, 1);
