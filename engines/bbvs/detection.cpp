@@ -34,7 +34,15 @@ static const PlainGameDescriptor bbvsGames[] = {
 	{ 0, 0 }
 };
 
+enum BBVSGameFeatures {
+	GF_LOOGIE_DEMO = (1 << 0)
+};
+
 namespace Bbvs {
+
+bool BbvsEngine::isLoogieDemo() const {
+	return _gameDescription->flags & GF_LOOGIE_DEMO;
+}
 
 static const ADGameDescription gameDescriptions[] = {
 	{
@@ -46,6 +54,7 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NOMIDI)
 	},
+
 	{
 		"bbvs",
 		"Demo",
@@ -55,6 +64,17 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_DEMO | ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NOMIDI)
 	},
+
+	{
+		"bbvs",
+		"Loogie Demo",
+		AD_ENTRY1s("BBLOOGIE.000", "607d3bf55ec6458dce484473b1eecb4d", 324416),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		GF_LOOGIE_DEMO | ADGF_DEMO | ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NOMIDI)
+	},
+
 	{
 		"bbvs",
 		0,

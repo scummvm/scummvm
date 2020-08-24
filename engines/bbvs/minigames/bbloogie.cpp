@@ -1310,6 +1310,12 @@ void MinigameBbLoogie::playRndSound() {
 
 bool MinigameBbLoogie::run(bool fromMainGame) {
 
+	if (!_vm->isLoogieDemo()) {
+		Common::strlcpy(_prefix, "bbloogie/", 20);
+	} else {
+		_prefix[0] = 0;
+	}
+
 	memset(_objects, 0, sizeof(_objects));
 
 	_numbersAnim = getAnimation(9);
@@ -1336,7 +1342,7 @@ bool MinigameBbLoogie::run(bool fromMainGame) {
 	initVars();
 
 	_spriteModule = new SpriteModule();
-	_spriteModule->load("bbloogie/bbloogie.000");
+	_spriteModule->load(Common::String::format("%sbbloogie.000", _prefix).c_str());
 
 	Palette palette = _spriteModule->getPalette();
 	_vm->_screen->setPalette(palette);
@@ -1399,12 +1405,12 @@ void MinigameBbLoogie::update() {
 void MinigameBbLoogie::loadSounds() {
 	if (_vm->_gameDescription->flags & ADGF_DEMO) {
 		for (uint i = 0; i < kDemoSoundFilenamesCount; ++i) {
-			Common::String filename = Common::String::format("bbloogie/%s", kDemoSoundFilenames[i]);
+			Common::String filename = Common::String::format("%s%s", _prefix, kDemoSoundFilenames[i]);
 			_vm->_sound->loadSound(filename.c_str());
 		}
 	} else {
 		for (uint i = 0; i < kSoundFilenamesCount; ++i) {
-			Common::String filename = Common::String::format("bbloogie/%s", kSoundFilenames[i]);
+			Common::String filename = Common::String::format("%s%s", _prefix, kSoundFilenames[i]);
 			_vm->_sound->loadSound(filename.c_str());
 		}
 	}
