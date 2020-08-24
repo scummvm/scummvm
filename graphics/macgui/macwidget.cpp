@@ -74,10 +74,14 @@ void MacWidget::setActive(bool active) {
 }
 
 bool MacWidget::draw(bool forceRedraw) {
+	_contentIsDirty = false;
+
 	return false;
 }
 
 bool MacWidget::draw(ManagedSurface *g, bool forceRedraw) {
+	_contentIsDirty = false;
+
 	return false;
 }
 

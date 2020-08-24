@@ -858,6 +858,9 @@ void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int 
 
 	if (x + w < _surface->w || y + h < _surface->h)
 		g->fillRect(Common::Rect(x, y, x + w, y + w), _bgcolor);
+
+	_contentIsDirty = false;
+	_cursorDirty = false;
 }
 
 bool MacText::draw(bool forceRedraw) {
