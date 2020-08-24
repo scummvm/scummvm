@@ -96,7 +96,7 @@ void Module1000::updateScene() {
 			if (_moduleResult == 1)
 				leaveModule(0);
 			else if (_moduleResult == 2) {
-				if (_vm->isDemo())
+				if (_vm->isDemo() && !_vm->isBigDemo())
 					// Demo version returns to the same scene
 					createScene(1, 2);
 				else
