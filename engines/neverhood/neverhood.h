@@ -75,6 +75,7 @@ public:
 	Common::Language getLanguage() const;
 	bool hasFeature(EngineFeature f) const override;
 	bool isDemo() const;
+	bool isBigDemo() const;
 	bool applyResourceFixes() const;
 	Common::String getTargetName() { return _targetName; };
 
