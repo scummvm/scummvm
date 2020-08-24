@@ -74,7 +74,7 @@ char *debugW2I(uint16 *wstr) {
 	return buf;
 }
 
-void swapBytesInWideString(byte * wstr) {
+void swapBytesInWideString(byte *wstr) {
 #if defined(SCUMM_BIG_ENDIAN)
 	for (byte *ptr = wstr; *ptr != 0; ptr += 2) {
 		WRITE_UINT16(ptr, SWAP_BYTES_16(READ_UINT16(ptr)));
