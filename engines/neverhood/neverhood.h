@@ -35,13 +35,9 @@
 #include "neverhood/console.h"
 #include "neverhood/messages.h"
 
+struct ADGameDescription;
+
 namespace Neverhood {
-
-enum NeverhoodGameFeatures {
-	GF_BIG_DEMO = (1 << 0)
-};
-
-struct NeverhoodGameDescription;
 
 class GameModule;
 class GameVars;
@@ -64,11 +60,11 @@ protected:
 	void mainLoop();
 
 public:
-	NeverhoodEngine(OSystem *syst, const NeverhoodGameDescription *gameDesc);
+	NeverhoodEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~NeverhoodEngine() override;
 
 	// Detection related functions
-	const NeverhoodGameDescription *_gameDescription;
+	const ADGameDescription *_gameDescription;
 	const char *getGameId() const;
 	Common::Platform getPlatform() const;
 	Common::Language getLanguage() const;
