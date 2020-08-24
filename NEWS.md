@@ -29,6 +29,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  BBVS:
    - Added support for the demo, available from our website.
+   - Added support for the Loogie minigame demo.
 
  Dreamweb:
    - Added support for Russian fan-translation.
