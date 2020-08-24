@@ -34,18 +34,11 @@ namespace Neverhood {
 struct NeverhoodGameDescription {
 	ADGameDescription desc;
 
-	int gameID;
-	int gameType;
 	uint32 features;
-	uint16 version;
 };
 
 const char *NeverhoodEngine::getGameId() const {
 	return _gameDescription->desc.gameId;
-}
-
-uint32 NeverhoodEngine::getFeatures() const {
-	return _gameDescription->features;
 }
 
 Common::Platform NeverhoodEngine::getPlatform() const {
@@ -56,17 +49,12 @@ Common::Language NeverhoodEngine::getLanguage() const {
 	return _gameDescription->desc.language;
 }
 
-uint16 NeverhoodEngine::getVersion() const {
-	return _gameDescription->version;
-}
-
 bool NeverhoodEngine::isDemo() const {
 	return _gameDescription->desc.flags & ADGF_DEMO;
 }
 
 bool NeverhoodEngine::isBigDemo() const {
-	//HACK: this is just a stup to allow testing
-	return true;
+	return _gameDescription->features & GF_BIG_DEMO;
 }
 
 bool NeverhoodEngine::applyResourceFixes() const {
@@ -95,10 +83,7 @@ static const NeverhoodGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NONE)
 		},
-		0,
-		0,
-		0,
-		0,
+		0
 	},
 
 	{
@@ -112,10 +97,7 @@ static const NeverhoodGameDescription gameDescriptions[] = {
 			ADGF_DEMO,
 			GUIO1(GUIO_NONE)
 		},
-		0,
-		0,
-		0,
-		0,
+		GF_BIG_DEMO
 	},
 
     {
@@ -127,11 +109,9 @@ static const NeverhoodGameDescription gameDescriptions[] = {
             Common::EN_ANY,
             Common::kPlatformWindows,
             ADGF_DEMO,
-            GUIO1(GUIO_NONE)},
-        0,
-        0,
-        0,
-        0,
+            GUIO1(GUIO_NONE)
+		},
+        0
     },
 
 	{
@@ -145,10 +125,7 @@ static const NeverhoodGameDescription gameDescriptions[] = {
 			ADGF_DEMO,
 			GUIO1(GUIO_NONE)
 		},
-		0,
-		0,
-		0,
-		0,
+		0
 	},
 
 	{
@@ -162,10 +139,7 @@ static const NeverhoodGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NONE)
 		},
-		0,
-		0,
-		0,
-		0,
+		0
 	},
 
 // FIXME: Disabled for now, as it has broken resources that corrupt the heap
@@ -189,7 +163,7 @@ static const NeverhoodGameDescription gameDescriptions[] = {
 	},
 #endif
 
-	{ AD_TABLE_END_MARKER, 0, 0, 0, 0 }
+	{ AD_TABLE_END_MARKER, 0 }
 };
 
 } // End of namespace Neverhood
