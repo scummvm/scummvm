@@ -60,6 +60,8 @@ void TestbedEngine::videoTest() {
 					y = (g_system->getHeight() - conv->h) >> 1;
 				}
 				g_system->copyRectToScreen(conv->getPixels(), conv->pitch, x, y, MIN<uint16>(conv->w, 640), MIN<uint16>(conv->h, 480));
+
+				delete conv;
 			}
 
 			Common::Event event;
