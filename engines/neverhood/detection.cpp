@@ -64,6 +64,11 @@ bool NeverhoodEngine::isDemo() const {
 	return _gameDescription->desc.flags & ADGF_DEMO;
 }
 
+bool NeverhoodEngine::isBigDemo() const {
+	//HACK: this is just a stup to allow testing
+	return true;
+}
+
 bool NeverhoodEngine::applyResourceFixes() const {
 	return getLanguage() == Common::RU_RUS;
 }
