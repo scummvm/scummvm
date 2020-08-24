@@ -97,11 +97,11 @@ static const NeverhoodGameDescription gameDescriptions[] = {
 	},
 
 	{
-		// Neverhood English demo version
+		// Neverhood English big demo version
 		{
 			"neverhood",
-			"Demo",
-			AD_ENTRY1s("nevdemo.blb", "05b735cfb1086892bec79b54dca5545b", 22564568),
+			"Big Demo",
+            AD_ENTRY1s("nevdemo.blb", "e637221d296f9a25ff22eaed96b07519", 117274189),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
@@ -112,6 +112,22 @@ static const NeverhoodGameDescription gameDescriptions[] = {
 		0,
 		0,
 	},
+
+    {
+        // Neverhood English demo version
+        {
+            "neverhood",
+            "Demo",
+            AD_ENTRY1s("nevdemo.blb", "05b735cfb1086892bec79b54dca5545b", 22564568),
+            Common::EN_ANY,
+            Common::kPlatformWindows,
+            ADGF_DEMO,
+            GUIO1(GUIO_NONE)},
+        0,
+        0,
+        0,
+        0,
+    },
 
 	{
 		// Neverhood earlier English demo version
