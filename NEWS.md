@@ -27,6 +27,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Now Hebrew is displayed correctly in GUI (requires FriBiDi library).
    - Updated the Roland MT-32 emulation code to Munt 2.4.0.
 
+ BBVS:
+   - Added support for the demo, available from our website.
+
  Dreamweb:
    - Added support for Russian fan-translation.
    - Fixed animation speed.
