@@ -856,6 +856,8 @@ bool MeshX::parseVertexDeclaration(XFileLexer &lexer) {
 		lexer.advanceToNextToken();
 	}
 
+	lexer.advanceToNextToken(); // skip closed braces
+
 	debug("Data block contains %i DWORDs", dataSize);
 
 	assert(dataSize % vertexSize == 0);
