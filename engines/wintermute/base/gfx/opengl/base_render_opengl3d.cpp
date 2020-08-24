@@ -346,6 +346,9 @@ bool BaseRenderOpenGL3D::initRenderer(int width, int height, bool windowed) {
 	_width = width;
 	_height = height;
 
+	_nearPlane = 90.0f;
+	_farPlane = 10000.0f;
+
 	setViewport(0, 0, width, height);
 
 	_active = true;
@@ -462,9 +465,6 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D *camera, bool force) {
 		setAmbientLight();
 
 		glEnable(GL_NORMALIZE);
-
-		_nearPlane = 90.0f;
-		_farPlane = 10000.0f;
 
 		if (camera) {
 			_fov = camera->_fov;

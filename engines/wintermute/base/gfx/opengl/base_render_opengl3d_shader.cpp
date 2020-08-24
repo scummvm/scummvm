@@ -337,6 +337,9 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 	_width = width;
 	_height = height;
 
+	_nearPlane = 90.0f;
+	_farPlane = 10000.0f;
+
 	setViewport(0, 0, width, height);
 
 	float fadeVertexCoords[8];
@@ -411,9 +414,6 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 		glEnable(GL_BLEND);
 
 		setAmbientLight();
-
-		_nearPlane = 90.0f;
-		_farPlane = 10000.0f;
 
 		if (camera) {
 			_fov = camera->_fov;
