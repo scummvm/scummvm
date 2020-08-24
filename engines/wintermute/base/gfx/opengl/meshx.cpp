@@ -744,8 +744,6 @@ bool MeshX::parseVertexDeclaration(XFileLexer &lexer) {
 	int normalOffset = -1;
 	int textureOffset = -1;
 
-	debug("Start parsing vertex declaration..");
-
 	for (int i = 0; i < vertexElementCount; ++i) {
 		int type = lexer.readInt();
 		int method = lexer.readInt();
@@ -857,8 +855,6 @@ bool MeshX::parseVertexDeclaration(XFileLexer &lexer) {
 	}
 
 	lexer.advanceToNextToken(); // skip closed braces
-
-	debug("Data block contains %i DWORDs", dataSize);
 
 	assert(dataSize % vertexSize == 0);
 	assert(dataSize / vertexSize == static_cast<int>(_vertexCount));
