@@ -859,8 +859,9 @@ bool MeshX::parseVertexDeclaration(XFileLexer &lexer) {
 	debug("Data block contains %i DWORDs", dataSize);
 
 	assert(dataSize % vertexSize == 0);
+	assert(dataSize / vertexSize == static_cast<int>(_vertexCount));
 
-	for (int i = 0; i < dataSize; ++i) {
+	for (uint i = 0; i < _vertexCount; ++i) {
 		if (normalOffset != -1) {
 			float *vertexNormalData = reinterpret_cast<float *>(data.data() + vertexSize * i + normalOffset);
 
