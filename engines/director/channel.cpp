@@ -248,8 +248,6 @@ bool Channel::isActiveVideo() {
 	if (!_sprite->_cast || _sprite->_cast->_type != kCastDigitalVideo)
 		return false;
 
-	// TODO: Check that the video is not paused
-
 	return true;
 }
 
