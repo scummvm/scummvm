@@ -715,7 +715,7 @@ void GameModule::updateModule() {
 			createModule(2600, 1);
 			break;
 		case 2600:
-			if (_vm->isDemo())
+			if (_vm->isDemo() && !_vm->isBigDemo())
 				createModule(9999, -1);
 			else if (_moduleResult == 1)
 				createModule(2500, 0);
