@@ -40,6 +40,9 @@ For a more comprehensive changelog of the latest experimental code, see:
      CD-ROM fan translation). Fix Spanish Lands of Lore support (floppy version and
      CD-ROM fan translation).
 
+ Neverhood:
+   - Added support for bigger demo, available from our website.
+
  Prince:
    - Fixed inventory item descriptions display.
    - Added English translation.
