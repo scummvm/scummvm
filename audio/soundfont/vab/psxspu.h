@@ -238,10 +238,11 @@ void PSXConvADSR(T *realADSR, uint8 Am, uint8 Ar, uint8 Dr, uint8 Sl, uint8 Sm,
 				samples = ceil(0x7FFFFFFF / (double) rate);
 			} else {
 				l = 0;
+				long envelope_level_diff = 0;
+				long envelope_level_target = 0;
+
 				// DLS decay rate value is to -96db (silence) not the sustain level
 				while (envelope_level > 0) {
-					long envelope_level_diff;
-					long envelope_level_target;
 
 					switch ((envelope_level >> 28) & 0x7) {
 					case 0:
