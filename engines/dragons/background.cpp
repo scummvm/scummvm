@@ -223,13 +223,13 @@ Common::Point Background::getPoint2(uint32 pointIndex) {
 }
 
 uint16 Background::getWidth() {
-	assert (_layerSurface[0]);
-	return _layerSurface[0]->w;
+	assert (_layerSurface[1]);
+	return _layerSurface[1]->w;
 }
 
 uint16 Background::getHeight() {
-	assert (_layerSurface[0]);
-	return _layerSurface[0]->h;
+	assert (_layerSurface[1]);
+	return _layerSurface[1]->h;
 }
 
 int16 Background::getPriorityAtPoint(Common::Point pos) {
