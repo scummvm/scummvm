@@ -17,7 +17,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Blazing Dragons.
    - Added support for Operation Stealth.
 
-  New ports:
+ New ports:
    - MorphOS port got a major rewrite.
 
  General:
@@ -76,6 +76,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix crash loading some savegames directly from the launcher.
    - Fix curing the well in Nightshadow.
    - Fix loading of wall items from savegames.
+
+ ZVision:
+   - Fixed getting perfect score in Zork: Grand Inquisitor
 
  Linux port:
    - Added option to use the system file browser instead of the ScummVM file browser.
