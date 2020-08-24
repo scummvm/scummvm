@@ -1233,12 +1233,8 @@ bool Debugger::cmdStartJump(int argc, const char **argv) {
 
 bool Debugger::cmdStopJump(int argc, const char **argv) {
 	Ultima8Engine *engine = Ultima8Engine::get_instance();
-	if (engine->isAvatarInStasis()) {
-		debugPrintf("Can't jump: avatarInStasis\n");
-		return false;
-	}
-	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
 
+	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
 	if (proc) {
 		proc->clearMovementFlag(AvatarMoverProcess::MOVE_JUMP);
 	}
@@ -1368,12 +1364,8 @@ bool Debugger::cmdStartMoveDown(int argc, const char **argv) {
 bool Debugger::cmdStopTurnLeft(int argc, const char **argv) {
 	Ultima8Engine *engine = Ultima8Engine::get_instance();
 	engine->moveKeyEvent();
-	if (engine->isAvatarInStasis()) {
-		debugPrintf("Can't turn left: avatarInStasis\n");
-		return false;
-	}
-	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
 
+	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
 	if (proc) {
 		proc->clearMovementFlag(AvatarMoverProcess::MOVE_TURN_LEFT);
 	}
@@ -1383,12 +1375,8 @@ bool Debugger::cmdStopTurnLeft(int argc, const char **argv) {
 bool Debugger::cmdStopTurnRight(int argc, const char **argv) {
 	Ultima8Engine *engine = Ultima8Engine::get_instance();
 	engine->moveKeyEvent();
-	if (engine->isAvatarInStasis()) {
-		debugPrintf("Can't turn right: avatarInStasis\n");
-		return false;
-	}
-	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
 
+	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
 	if (proc) {
 		proc->clearMovementFlag(AvatarMoverProcess::MOVE_TURN_RIGHT);
 	}
@@ -1398,12 +1386,8 @@ bool Debugger::cmdStopTurnRight(int argc, const char **argv) {
 bool Debugger::cmdStopMoveForward(int argc, const char **argv) {
 	Ultima8Engine *engine = Ultima8Engine::get_instance();
 	engine->moveKeyEvent();
-	if (engine->isAvatarInStasis()) {
-		debugPrintf("Can't move forward: avatarInStasis\n");
-		return false;
-	}
-	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
 
+	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
 	if (proc) {
 		proc->clearMovementFlag(AvatarMoverProcess::MOVE_FORWARD);
 	}
@@ -1413,12 +1397,8 @@ bool Debugger::cmdStopMoveForward(int argc, const char **argv) {
 bool Debugger::cmdStopMoveBack(int argc, const char **argv) {
 	Ultima8Engine *engine = Ultima8Engine::get_instance();
 	engine->moveKeyEvent();
-	if (engine->isAvatarInStasis()) {
-		debugPrintf("Can't move back: avatarInStasis\n");
-		return false;
-	}
-	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
 
+	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
 	if (proc) {
 		// Clear both back and forward as avatar turns then moves forward when not in combat 
 		proc->clearMovementFlag(AvatarMoverProcess::MOVE_BACK | AvatarMoverProcess::MOVE_FORWARD);
@@ -1429,12 +1409,8 @@ bool Debugger::cmdStopMoveBack(int argc, const char **argv) {
 bool Debugger::cmdStopMoveLeft(int argc, const char **argv) {
 	Ultima8Engine *engine = Ultima8Engine::get_instance();
 	engine->moveKeyEvent();
-	if (engine->isAvatarInStasis()) {
-		debugPrintf("Can't move left: avatarInStasis\n");
-		return false;
-	}
-	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
 
+	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
 	if (proc) {
 		proc->clearMovementFlag(AvatarMoverProcess::MOVE_LEFT);
 	}
@@ -1444,12 +1420,8 @@ bool Debugger::cmdStopMoveLeft(int argc, const char **argv) {
 bool Debugger::cmdStopMoveRight(int argc, const char **argv) {
 	Ultima8Engine *engine = Ultima8Engine::get_instance();
 	engine->moveKeyEvent();
-	if (engine->isAvatarInStasis()) {
-		debugPrintf("Can't move right: avatarInStasis\n");
-		return false;
-	}
-	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
 
+	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
 	if (proc) {
 		proc->clearMovementFlag(AvatarMoverProcess::MOVE_RIGHT);
 	}
@@ -1459,12 +1431,8 @@ bool Debugger::cmdStopMoveRight(int argc, const char **argv) {
 bool Debugger::cmdStopMoveUp(int argc, const char **argv) {
 	Ultima8Engine *engine = Ultima8Engine::get_instance();
 	engine->moveKeyEvent();
-	if (engine->isAvatarInStasis()) {
-		debugPrintf("Can't move up: avatarInStasis\n");
-		return false;
-	}
-	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
 
+	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
 	if (proc) {
 		proc->clearMovementFlag(AvatarMoverProcess::MOVE_UP);
 	}
@@ -1474,12 +1442,8 @@ bool Debugger::cmdStopMoveUp(int argc, const char **argv) {
 bool Debugger::cmdStopMoveDown(int argc, const char **argv) {
 	Ultima8Engine *engine = Ultima8Engine::get_instance();
 	engine->moveKeyEvent();
-	if (engine->isAvatarInStasis()) {
-		debugPrintf("Can't move down: avatarInStasis\n");
-		return false;
-	}
-	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
 
+	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
 	if (proc) {
 		proc->clearMovementFlag(AvatarMoverProcess::MOVE_DOWN);
 	}
@@ -1504,12 +1468,8 @@ bool Debugger::cmdStartMoveRun(int argc, const char **argv) {
 bool Debugger::cmdStopMoveRun(int argc, const char **argv) {
 	Ultima8Engine *engine = Ultima8Engine::get_instance();
 	engine->moveKeyEvent();
-	if (engine->isAvatarInStasis()) {
-		debugPrintf("Can't run: avatarInStasis\n");
-		return false;
-	}
-	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
 
+	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
 	if (proc) {
 		proc->clearMovementFlag(AvatarMoverProcess::MOVE_RUN);
 	}
@@ -1534,12 +1494,8 @@ bool Debugger::cmdStartMoveStep(int argc, const char **argv) {
 bool Debugger::cmdStopMoveStep(int argc, const char **argv) {
 	Ultima8Engine *engine = Ultima8Engine::get_instance();
 	engine->moveKeyEvent();
-	if (engine->isAvatarInStasis()) {
-		debugPrintf("Can't step: avatarInStasis\n");
-		return false;
-	}
-	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
 
+	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
 	if (proc) {
 		proc->clearMovementFlag(AvatarMoverProcess::MOVE_STEP);
 	}
