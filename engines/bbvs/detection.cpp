@@ -43,16 +43,16 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("vspr0001.vnm", "7ffe9b9e7ca322db1d48e86f5130578e", 1166628),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
 		"bbvs",
-		0,
+		"Demo",
 		AD_ENTRY1s("vspr0007.vnm", "5db44940fa93fdd5becb5c2a5ded7478", 242376),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_DEMO,
+		ADGF_DEMO | ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -61,7 +61,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("vspr0001.vnm", "91c76b1048f93208cd7b1a05ebccb408", 1176976),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
-		GF_GUILANGSWITCH | ADGF_NO_FLAGS,
+		GF_GUILANGSWITCH | ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NOMIDI)
 	},
 
