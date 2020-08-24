@@ -769,27 +769,73 @@ bool MeshX::parseVertexDeclaration(XFileLexer &lexer) {
 		// https://docs.microsoft.com/en-us/windows/win32/direct3d9/vertexelement
 		switch (type) {
 		case 0:
+			vertexSize += 1;
+			warning("D3DDECLTYPE_FLOAT1 encountered in .X model");
+			break;
 		case 1:
+			vertexSize += 2;
+			break;
 		case 2:
+			vertexSize += 3;
+			break;
 		case 3:
-		case 6:
-		case 7:
-		case 9:
-		case 10:
-		case 11:
-		case 12:
-		case 13:
-		case 14:
-		case 15:
-		case 16:
 			vertexSize += 4;
+			warning("D3DDECLTYPE_FLOAT4 encountered in .X model");
 			break;
 		case 4:
+			vertexSize += 1;
+			warning("D3DDECLTYPE_D3DCOLOR encountered in .X model");
+			break;
 		case 5:
+			vertexSize += 1;
+			warning("D3DDECLTYPE_UBYTE4 encountered in .X model");
+			break;
+		case 6:
+			vertexSize += 2;
+			warning("D3DDECLTYPE_SHORT2 encountered in .X model");
+			break;
+		case 7:
+			vertexSize += 4;
+			warning("D3DDECLTYPE_SHORT4 encountered in .X model");
+			break;
 		case 8:
 			vertexSize += 1;
+			warning("D3DDECLTYPE_UBYTE4N encountered in .X model");
+			break;
+		case 9:
+			vertexSize += 2;
+			warning("D3DDECLTYPE_SHORT2N encountered in .X model");
+			break;
+		case 10:
+			vertexSize += 4;
+			warning("D3DDECLTYPE_SHORT4N encountered in .X model");
+			break;
+		case 11:
+			vertexSize += 2;
+			warning("D3DDECLTYPE_USHORT2N encountered in .X model");
+			break;
+		case 12:
+			vertexSize += 4;
+			warning("D3DDECLTYPE_USHORT4N encountered in .X model");
+			break;
+		case 13:
+			vertexSize += 3;
+			warning("D3DDECLTYPE_UDEC3 encountered in .X model");
+			break;
+		case 14:
+			vertexSize += 3;
+			warning("D3DDECLTYPE_DEC3N encountered in .X model");
+			break;
+		case 15:
+			vertexSize += 2;
+			warning("D3DDECLTYPE_FLOAT16_2 encountered in .X model");
+			break;
+		case 16:
+			vertexSize += 4;
+			warning("D3DDECLTYPE_FLOAT16_4 encountered in .X model");
 			break;
 		default:
+			warning("Unknown type in vertex declaration encountered");
 			break;
 		}
 	}
