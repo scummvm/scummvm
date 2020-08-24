@@ -80,7 +80,7 @@ static const NeverhoodGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("hd.blb", "22958d968458c9ff221aee38577bb2b2", 4279716),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NONE)
 		},
 		0
@@ -94,7 +94,7 @@ static const NeverhoodGameDescription gameDescriptions[] = {
             AD_ENTRY1s("nevdemo.blb", "e637221d296f9a25ff22eaed96b07519", 117274189),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DEMO,
+			ADGF_DEMO | ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NONE)
 		},
 		GF_BIG_DEMO
@@ -108,7 +108,7 @@ static const NeverhoodGameDescription gameDescriptions[] = {
             AD_ENTRY1s("nevdemo.blb", "05b735cfb1086892bec79b54dca5545b", 22564568),
             Common::EN_ANY,
             Common::kPlatformWindows,
-            ADGF_DEMO,
+            ADGF_DEMO | ADGF_DROPPLATFORM,
             GUIO1(GUIO_NONE)
 		},
         0
@@ -122,7 +122,7 @@ static const NeverhoodGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("nevdemo.blb", "9cbc33bc8ebacacfc8071f3e26a9c85f", 22357020),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DEMO,
+			ADGF_DEMO | ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NONE)
 		},
 		0
@@ -136,15 +136,12 @@ static const NeverhoodGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("hd.blb", "787951bf094aad9962291e69a707bdde", 4248635),
 			Common::RU_RUS,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NONE)
 		},
 		0
 	},
 
-// FIXME: Disabled for now, as it has broken resources that corrupt the heap
-// (e.g. the menu header).
-#if 0
 	{
 		// Neverhood Russian version. Fargus
 		{
@@ -153,15 +150,11 @@ static const NeverhoodGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("hd.blb", "c87c69db423f560d3708e9de78751a7f", 4425816),
 			Common::RU_RUS,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NONE)
 		},
 		0,
-		0,
-		0,
-		0,
 	},
-#endif
 
 	{ AD_TABLE_END_MARKER, 0 }
 };
