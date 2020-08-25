@@ -121,7 +121,7 @@ project.xcworkspace
 
 /plugins
 
-/detection/detection_table.h
+/engines/detection_table.h
 /engines/plugins_table.h
 /engines/engines.mk
 
