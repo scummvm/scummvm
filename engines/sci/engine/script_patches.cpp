@@ -18718,11 +18718,39 @@ static const uint16 sq5PatchTransporterRoomSpeedFix[] = {
 	PATCH_END
 };
 
+// When the elevator doors close in room 250, sElevatorDoors makes an extra
+//  call to handsOn which allows ego to walk around and interact with the room
+//  during room transitions, and this can lock up the game by running unexpected
+//  scripts such as the chicken closet. We patch out this code since all of
+//  sElevatorDoors' callers either call handsOn afterwards or change rooms.
+//
+// Applies to: All versions
+// Responsible method: sElevatorDoors:changeState(2)
+// Fixes bug: #11605
+static const uint16 sq5SignatureElevatorHandsOn[] = {
+	0x67, 0x12,                     // pTos client
+	0x72, SIG_ADDTOOFFSET(+2),      // lofsa sOpenElev
+	SIG_MAGICDWORD,
+	0x1c,                           // ne?
+	0x31, 0x08,                     // bnt 08
+	0x38, SIG_SELECTOR16(handsOn),  // pushi handsOn
+	0x76,                           // push0
+	0x81, 0x01,                     // lag 01
+	0x4a, 0x04,                     // send 04 [ SQ5 handsOn: ]
+	SIG_END
+};
+
+static const uint16 sq5PatchElevatorHandsOn[] = {
+	0x33, 0x0e,                     // jmp 0e [ skip SQ5 handsOn: ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                             patch
 static const SciScriptPatcherEntry sq5Signatures[] = {
 	{  true,   200, "captain chair lockup fix",                    1, sq5SignatureCaptainChairFix,          sq5PatchCaptainChairFix },
 	{  true,   226, "toolbox fix",                                 1, sq5SignatureToolboxFix,               sq5PatchToolboxFix },
 	{  true,   243, "transporter room speed fix",                  3, sq5SignatureTransporterRoomSpeedFix,  sq5PatchTransporterRoomSpeedFix },
+	{  true,   250, "elevator handsOn fix",                        1, sq5SignatureElevatorHandsOn,          sq5PatchElevatorHandsOn },
 	{  true,   305, "wd40 fruit fix",                              1, sq5SignatureWd40FruitFix,             sq5PatchWd40FruitFix },
 	{  true,   335, "wd40 alarm countdown fix",                    1, sq5SignatureWd40AlarmCountdownFix,    sq5PatchWd40AlarmCountdownFix },
 	{  true,    30, "ChoiceTalker lockup fix",                     1, sciNarratorLockupSignature,           sciNarratorLockupPatch },
