@@ -16,6 +16,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      Currently, more than 1600 games are detected and supported.
    - Added support for Blazing Dragons.
    - Added support for Operation Stealth.
+   - Added support for Griffon Legend.
 
  New ports:
    - MorphOS port got a major rewrite.
