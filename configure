@@ -242,7 +242,7 @@ _pandocpath="$PATH"
 _pandocformat="default"
 _pandocext="default"
 # Detection features to be linked into executable or not
-_detection_features_static="true"
+_detection_features_static=yes
 # The following variables are automatically detected, and should not
 # be modified otherwise. Consider them read-only.
 _posix=no
@@ -1225,8 +1225,8 @@ for ac_option in $@; do
 	--enable-dependency-tracking)                        ;;
 	# End of ignored options.
 	--enable-static)              _static_build=yes      ;;
-	--enable-detection-static)    _detection_features_static="true";;
-	--enable-detection-dynamic)   _detection_features_static="false";;
+	--enable-detection-static)    _detection_features_static=yes;;
+	--enable-detection-dynamic)   _detection_features_static=no;;
 	--disable-16bit)              _16bit=no              ;;
 	--enable-highres)             _highres=yes           ;;
 	--disable-highres)            _highres=no            ;;
@@ -4187,6 +4187,12 @@ if test "$_dynamic_modules" = yes ; then
 	add_line_to_config_mk "PLUGIN_SUFFIX := $_plugin_suffix"
 fi
 
+#
+# Set up a define for detection to be used as static or not
+#
+define_in_config_if_yes "$_detection_features_static" "DETECTION_STATIC"
+echo_n "Checking if detection features building statically... "
+echo "$_detection_features_static"
 
 #
 # Check whether integrated MT-32 emulator support is requested
