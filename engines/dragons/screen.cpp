@@ -205,6 +205,8 @@ void Screen::copyRectToSurface8bpp(const void *buffer, const byte* palette, int 
 
 void Screen::drawScaledSprite(Graphics::Surface *destSurface, const byte *source, int sourceWidth, int sourceHeight,
 		int destX, int destY, int destWidth, int destHeight, const byte *palette, bool flipX, uint8 alpha) {
+	//TODO this logic is pretty messy. It should probably be re-written. It is trying to scale, clip, flip and blend at once.
+
 	// Based on the GNAP engine scaling code
 	if (destWidth == 0 || destHeight == 0) {
 		return;
@@ -218,9 +220,7 @@ void Screen::drawScaledSprite(Graphics::Surface *destSurface, const byte *source
 		destX = 0;
 		destWidth -= clipX;
 	}
-	if (destX + destWidth >= destSurface->w) {
-		destWidth = destSurface->w - destX;
-	}
+
 	if (destY < 0) {
 		clipY = -destY;
 		destY = 0;
@@ -236,20 +236,24 @@ void Screen::drawScaledSprite(Graphics::Surface *destSurface, const byte *source
 	const byte *hsrc = source + sourceWidth * ((yi + 0x8000) >> 16);
 	for (int yc = 0; yc < destHeight; ++yc) {
 		byte *wdst = flipX ? dst + (destWidth - 1) * 2 : dst;
+		int16 currX = flipX ? destX + (destWidth - 1) : destX;
 		int xi = flipX ? xs : xs * clipX;
 		const byte *wsrc = hsrc + ((xi + 0x8000) >> 16);
 		for (int xc = 0; xc < destWidth; ++xc) {
-			byte colorIndex = *wsrc;
-			uint16 c = READ_LE_UINT16(&palette[colorIndex * 2]);
-			if (c != 0) {
-				if (!(c & 0x8000) || alpha == 255) {
-					// only copy opaque pixels
-					WRITE_LE_UINT16(wdst, c & ~0x8000);
-				} else {
-					WRITE_LE_UINT16(wdst, alphaBlendRGB555(c, READ_LE_INT16(wdst), alpha));
-					// semi-transparent pixels.
+			if (currX >= 0 && currX < destSurface->w) {
+				byte colorIndex = *wsrc;
+				uint16 c = READ_LE_UINT16(&palette[colorIndex * 2]);
+				if (c != 0) {
+					if (!(c & 0x8000) || alpha == 255) {
+						// only copy opaque pixels
+						WRITE_LE_UINT16(wdst, c & ~0x8000);
+					} else {
+						WRITE_LE_UINT16(wdst, alphaBlendRGB555(c, READ_LE_INT16(wdst), alpha));
+						// semi-transparent pixels.
+					}
 				}
 			}
+			currX += (flipX ? -1 : 1);
 			wdst += (flipX ? -2 : 2);
 			xi += xs;
 			wsrc = hsrc + ((xi + 0x8000) >> 16);
