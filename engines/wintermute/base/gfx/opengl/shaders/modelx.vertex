@@ -43,12 +43,14 @@ void main()
 		}
 
 		float intensity = 1.0;
-		vec3 vertexToLight = lights[i]._position.xyz - viewCoords.xyz;
+		vec4 lightPosition = viewMatrix * lights[i]._position;
+		vec3 vertexToLight = lightPosition.xyz - viewCoords.xyz;
 		float dist = length(vertexToLight);
 
 		if (lights[i]._direction.w < 0) { // Spotlight
+			vec4 lightDirection = viewMatrix * vec4(lights[i]._direction.xyz, 0.0f);
 			// See DirectX spotlight documentation
-			float cosAngle = -dot(normalize(vertexToLight), normalize(lights[i]._direction.xyz)); // rho
+			float cosAngle = -dot(normalize(vertexToLight), normalize(lightDirection.xyz)); // rho
 			float cosPenumbra = 0.968912; // cos(1 / 4)
 			float cosUmbra = 0.877582; // cos(1 / 2)
 
