@@ -34,7 +34,7 @@
 
 #include "hdb/hdb.h"
 #include "hdb/input.h"
-#include "hdb/detection/detection_enums.h"
+#include "hdb/detection_enums.h"
 
 namespace HDB {
 

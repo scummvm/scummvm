@@ -37,7 +37,7 @@
 #include "parallaction/inventory.h"
 #include "parallaction/objects.h"
 #include "parallaction/disk.h"
-#include "parallaction/detection/detection_enums.h"
+#include "parallaction/detection_enums.h"
 
 #define PATH_LEN	200
 

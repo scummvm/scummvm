@@ -29,8 +29,8 @@
 
 #include "tony/tony.h"
 #include "tony/game.h"
-#include "tony/detection/detection.h"
-#include "tony/detection/detection_enums.h"
+#include "tony/detection.h"
+#include "tony/detection_enums.h"
 
 namespace Tony {
 

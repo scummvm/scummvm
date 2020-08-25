@@ -26,7 +26,7 @@
 #include "graphics/thumbnail.h"
 
 #include "drascula/drascula.h"
-#include "drascula/detection/detection.h"
+#include "drascula/detection.h"
 
 namespace Drascula {
 

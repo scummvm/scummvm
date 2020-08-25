@@ -47,7 +47,7 @@
 #include "xeen/sound.h"
 #include "xeen/spells.h"
 #include "xeen/window.h"
-#include "xeen/detection/detection_enums.h"
+#include "xeen/detection_enums.h"
 
 /**
  * This is the namespace of the Xeen engine.

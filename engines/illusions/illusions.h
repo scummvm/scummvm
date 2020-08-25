@@ -38,7 +38,7 @@
 
 #include "engines/engine.h"
 #include "graphics/surface.h"
-#include "illusions/detection/detection_enums.h"
+#include "illusions/detection_enums.h"
 
 namespace Illusions {
 

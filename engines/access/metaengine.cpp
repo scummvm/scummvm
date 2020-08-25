@@ -32,7 +32,7 @@
 #include "access/amazon/amazon_game.h"
 #include "access/martian/martian_game.h"
 
-#include "access/detection/detection.h"
+#include "access/detection.h"
 
 #define MAX_SAVES 99
 

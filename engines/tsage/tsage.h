@@ -32,7 +32,7 @@
 #include "tsage/events.h"
 #include "tsage/graphics.h"
 #include "tsage/resources.h"
-#include "tsage/detection/detection_enums.h"
+#include "tsage/detection_enums.h"
 
 
 namespace TsAGE {

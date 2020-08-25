@@ -28,7 +28,7 @@
 #include "graphics/surface.h"
 
 #include "lilliput/lilliput.h"
-#include "lilliput/detection/detection.h"
+#include "lilliput/detection.h"
 
 namespace Lilliput {
 

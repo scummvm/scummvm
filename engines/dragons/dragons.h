@@ -25,8 +25,8 @@
 #include "gui/EventRecorder.h"
 #include "engines/engine.h"
 #include "dragons/specialopcodes.h"
-#include "dragons/detection/detection_enums.h"
-#include "dragons/detection/detection.h"
+#include "dragons/detection_enums.h"
+#include "dragons/detection.h"
 
 namespace Dragons {
 

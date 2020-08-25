@@ -27,7 +27,7 @@
 #include "zvision/zvision.h"
 #include "zvision/file/save_manager.h"
 #include "zvision/scripting/script_manager.h"
-#include "zvision/detection/detection.h"
+#include "zvision/detection.h"
 
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"

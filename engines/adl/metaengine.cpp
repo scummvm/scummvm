@@ -28,8 +28,8 @@
 
 #include "graphics/thumbnail.h"
 
-#include "adl/detection/detection_enums.h"
-#include "adl/detection/detection.h"
+#include "adl/detection_enums.h"
+#include "adl/detection.h"
 #include "adl/disk_image_helpers.h"
 
 namespace Adl {

@@ -40,7 +40,7 @@
 #include "graphics/sjis.h"
 
 #include "scumm/gfx.h"
-#include "scumm/detection/detection.h"
+#include "scumm/detection.h"
 #include "scumm/script.h"
 
 #ifdef __DS__

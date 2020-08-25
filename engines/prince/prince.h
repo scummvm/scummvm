@@ -48,7 +48,7 @@
 #include "prince/mob.h"
 #include "prince/object.h"
 #include "prince/pscr.h"
-#include "prince/detection/detection_enums.h"
+#include "prince/detection_enums.h"
 
 namespace Prince {
 

@@ -37,8 +37,8 @@
 
 // Files related for detection.
 #include "scumm/metaengine.h"
-#include "scumm/detection/detection.h"
-#include "scumm/detection/detection_tables.h"
+#include "scumm/detection.h"
+#include "scumm/detection_tables.h"
 #include "scumm/file.h"
 #include "scumm/file_nes.h"
 
@@ -206,7 +206,7 @@ bool ScummEngine::isMacM68kIMuse() const {
 
 
 // Various methods to help in core detection.
-#include "scumm/detection/detection_internal.h"
+#include "scumm/detection_internal.h"
 
 
 #pragma mark -

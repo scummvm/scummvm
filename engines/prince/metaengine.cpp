@@ -22,7 +22,7 @@
 
 #include "engines/advancedDetector.h"
 #include "prince/prince.h"
-#include "prince/detection/detection.h"
+#include "prince/detection.h"
 
 namespace Prince {
 

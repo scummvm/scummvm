@@ -31,7 +31,7 @@
 #include "base/plugins.h"
 #include "graphics/thumbnail.h"
 
-#include "illusions/detection/detection.h"
+#include "illusions/detection.h"
 
 namespace Illusions {
 

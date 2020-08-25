@@ -41,7 +41,7 @@
 #include "adl/console.h"
 #include "adl/disk.h"
 #include "adl/sound.h"
-#include "adl/detection/detection_enums.h"
+#include "adl/detection_enums.h"
 
 namespace Common {
 class ReadStream;

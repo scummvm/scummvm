@@ -52,7 +52,7 @@
 #include "mohawk/riven_saveload.h"
 #endif
 
-#include "mohawk/detection/detection.h"
+#include "mohawk/detection.h"
 
 namespace Mohawk {
 

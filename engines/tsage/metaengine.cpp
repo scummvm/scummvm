@@ -29,7 +29,7 @@
 #include "base/plugins.h"
 
 #include "tsage/tsage.h"
-#include "tsage/detection/detection.h"
+#include "tsage/detection.h"
 
 namespace TsAGE {
 

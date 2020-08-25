@@ -50,7 +50,7 @@
 #include "sherlock/sound.h"
 #include "sherlock/talk.h"
 #include "sherlock/user_interface.h"
-#include "sherlock/detection/detection_enums.h"
+#include "sherlock/detection_enums.h"
 
 namespace Sherlock {
 

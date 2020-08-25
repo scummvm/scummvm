@@ -22,7 +22,7 @@
 
 #include "engines/advancedDetector.h"
 #include "made/made.h"
-#include "made/detection/detection.h"
+#include "made/detection.h"
 
 
 namespace Made {
