@@ -443,7 +443,7 @@ find_sdlconfig() {
 				echo $_sdlconfig
 				# Save the prefix
 				_sdlpath=$path_dir
-				if test `basename $path_dir` = bin ; then
+				if test `basename $path_dir` = bin || test `basename $path_dir` = sbin ; then
 					_sdlpath=`dirname $path_dir`
 				fi
 				# break at first sdl-config found in path
