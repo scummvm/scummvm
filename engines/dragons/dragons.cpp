@@ -1480,6 +1480,13 @@ uint32 DragonsEngine::getSpeechTblOffsetFromDragonEXE() {
 	}
 }
 
+uint16 DragonsEngine::getBigFileTotalRecords() {
+	if (_language == Common::EN_USA || _language == Common::EN_GRB) {
+		return 576;
+	}
+	return 588;
+}
+
 uint32 DragonsEngine::getBigFileInfoTblFromDragonEXE() {
 	switch (_language) {
 	case Common::EN_USA : return 0x4a238;

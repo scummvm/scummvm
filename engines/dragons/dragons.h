@@ -327,6 +327,7 @@ public:
 	void clearAllText();
 
 	//TODO this logic should probably go in its own class.
+	uint16 getBigFileTotalRecords();
 	uint32 getBigFileInfoTblFromDragonEXE();
 	uint32 getFontOffsetFromDragonEXE();
 	uint32 getSpeechTblOffsetFromDragonEXE();
