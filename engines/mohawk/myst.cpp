@@ -63,7 +63,7 @@
 #include "mohawk/myst_stacks/stoneship.h"
 
 // Common files for detection & engines
-#include "mohawk/myst_metaengine/metaengine.h"
+#include "mohawk/myst_metaengine.h"
 
 namespace Mohawk {
 

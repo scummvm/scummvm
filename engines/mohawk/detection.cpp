@@ -30,8 +30,8 @@
 #include "mohawk/detection.h"
 #include "mohawk/detection_enums.h"
 
-#include "mohawk/riven_metaengine/metaengine.h"
-#include "mohawk/myst_metaengine/metaengine.h"
+#include "mohawk/riven_metaengine.h"
+#include "mohawk/myst_metaengine.h"
 
 
 static const PlainGameDescriptor mohawkGames[] = {

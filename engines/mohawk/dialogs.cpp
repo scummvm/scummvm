@@ -38,13 +38,13 @@
 #include "mohawk/myst.h"
 #include "mohawk/myst_actions.h"
 #include "mohawk/myst_scripts.h"
-#include "mohawk/myst_metaengine/metaengine.h"
+#include "mohawk/myst_metaengine.h"
 #endif
 
 #ifdef ENABLE_RIVEN
 #include "mohawk/riven.h"
 #include "mohawk/riven_graphics.h"
-#include "mohawk/riven_metaengine/metaengine.h"
+#include "mohawk/riven_metaengine.h"
 #endif
 
 namespace Mohawk {

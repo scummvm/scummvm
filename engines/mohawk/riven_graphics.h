@@ -24,7 +24,7 @@
 #define MOHAWK_RIVEN_GRAPHICS_H
 
 #include "mohawk/graphics.h"
-#include "mohawk/riven_metaengine/graphics_detection_enums.h"
+#include "mohawk/riven_graphics_detection_enums.h"
 
 #include "common/ustr.h"
 
