@@ -52,6 +52,32 @@ CPPFLAGS := $(DEFINES) $(INCLUDES)
 # Include the build instructions for all modules
 -include $(addprefix $(srcdir)/, $(addsuffix /module.mk,$(MODULES)))
 
+# Store original info
+MODULES_ORIG:= $(MODULES)
+MODULE_DIRS_ORIG := $(MODULE_DIRS)
+KYRARPG_COMMON_OBJ_ORIG := $(KYRARPG_COMMON_OBJ)
+
+# Skip rules for these files, by resetting the use_rules
+USE_RULES :=
+
+# Reset detection objects, which uptill now are filled with only
+# enabled engines.
+DETECT_OBJS :=
+
+# Include all engine's module files, which populate DETECT_OBJS
+-include $(srcdir)/engines/*/module.mk
+
+# Reset stuff
+MODULES := $(MODULES_ORIG)
+MODULE :=
+MODULE_OBJS :=
+MODULE_DIRS := $(MODULE_DIRS_ORIG)
+PLUGIN :=
+KYRARPG_COMMON_OBJ := $(KYRARPG_COMMON_OBJ_ORIG)
+
+# Enable-rules again
+USE_RULES := 1
+
 # Depdir information
 DEPDIRS = $(addsuffix $(DEPDIR),$(MODULE_DIRS))
 DEPFILES =
