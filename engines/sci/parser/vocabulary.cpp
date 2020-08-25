@@ -532,6 +532,17 @@ void Vocabulary::lookupWordPrefix(ResultWordListList &parent_retval, ResultWordL
 		if (lookupVerbPrefix(parent_retval, retval, modified_word, modified_word.size(), ""))
 			return;
 	}
+
+	// e.g. 'enter' : 'He  Yud Kaf Nun Sameh' try to match 'He  Kaf Nun Sameh'
+	// e.g. 'enter' : 'Taf Yud Kaf Nun Sameh' try to match 'Taf Kaf Nun Sameh'
+	if ((word[0] == '\xe4' || word[0] == '\xfa') && word[1] == '\xe9') {       // first letters are 'He Yud' or 'Taf Yud'
+		Common::String modified_word = word;
+		modified_word.setChar('\xe4', 0);							// replace the initial Taf with He; or keep the initial He
+		modified_word.deleteChar(1);								// delete the second letter (=Yud)
+
+		if (lookupVerbPrefix(parent_retval, retval, modified_word, modified_word.size(), ""))
+			return;
+	}
 }
 
 bool Vocabulary::lookupSpecificPrefixWithMeaning(ResultWordListList &parent_retval, ResultWordList &retval, const char *word, int word_len, unsigned char prefix, const char *meaning) {
