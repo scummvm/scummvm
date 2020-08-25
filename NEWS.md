@@ -51,6 +51,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  Prince:
    - Fixed inventory item descriptions display.
    - Added English translation.
+   - Fixed bug with infinite loop when looking at some objects.
 
  Queen:
    - Fixed loading a save game from the launcher.
