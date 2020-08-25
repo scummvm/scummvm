@@ -42,23 +42,19 @@ Common::DialogManager::DialogResult GtkDialogManager::showFileBrowser(const Comm
 	DialogResult result = kDialogCancel;
 
 	// Convert labels to UTF-8
-	Common::String titleStr = title.encode();
-	Common::String choose = _("Choose").encode();
-	Common::String cancel = _("Cancel").encode();
-
-	char *utf8Title = (char *)(titleStr.c_str());
-	char *utf8Choose = (char *)(choose.c_str());
-	char *utf8Cancel = (char *)(cancel.c_str());
+	Common::String utf8Title = title.encode();
+	Common::String utf8Choose = _("Choose").encode();
+	Common::String utf8Cancel = _("Cancel").encode();
 
 	GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
 	if (isDirBrowser) {
 		action = GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER;
 	}
 #if GTK_CHECK_VERSION(3,20,0)
-	GtkFileChooserNative *native = gtk_file_chooser_native_new(utf8Title, NULL, action, utf8Choose, utf8Cancel);
+	GtkFileChooserNative *native = gtk_file_chooser_native_new(utf8Title.c_str(), NULL, action, utf8Choose.c_str(), utf8Cancel.c_str());
 	GtkFileChooser *chooser = GTK_FILE_CHOOSER(native);
 #else
-	GtkWidget *dialog = gtk_file_chooser_dialog_new(utf8Title, NULL, action, utf8Choose, GTK_RESPONSE_ACCEPT, utf8Cancel, GTK_RESPONSE_CANCEL, NULL);
+	GtkWidget *dialog = gtk_file_chooser_dialog_new(utf8Title.c_str(), NULL, action, utf8Choose.c_str(), GTK_RESPONSE_ACCEPT, utf8Cancel.c_str(), GTK_RESPONSE_CANCEL, NULL);
 	GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
 #endif
 
