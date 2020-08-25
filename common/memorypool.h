@@ -26,6 +26,10 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 
+#ifdef VERIFY_POOL
+#define VERIFY_POOL_LEAKS
+#define VERIFY_POOL_FREES
+#endif
 
 namespace Common {
 
@@ -57,6 +61,7 @@ protected:
 	void	allocPage();
 	void	addPageToPool(const Page &page);
 	bool	isPointerInPage(void *ptr, const Page &page);
+	bool	isPointerInAnyPage(void *ptr);
 
 public:
 	/**

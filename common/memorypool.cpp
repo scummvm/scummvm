@@ -49,7 +49,7 @@ MemoryPool::MemoryPool(size_t chunkSize)
 }
 
 MemoryPool::~MemoryPool() {
-#if 0
+#ifdef VERIFY_POOL_LEAKS
 	freeUnusedPages();
 	if (!_pages.empty())
 		warning("Memory leak found in pool");
@@ -108,8 +108,24 @@ void *MemoryPool::allocChunk() {
 
 void MemoryPool::freeChunk(void *ptr) {
 	// Add the chunk back to (the start of) the list of free chunks
+
+	#ifdef VERIFY_POOL_FREES
+	if (!isPointerInAnyPage(ptr)) {
+		error("Attempted to free a pointer not in the pool!");
+	}
+	#endif
+
 	*(void **)ptr = _next;
 	_next = ptr;
+}
+
+bool MemoryPool::isPointerInAnyPage(void *ptr) {
+	for (size_t i = 0; i < _pages.size(); ++i) {
+		if (isPointerInPage(ptr, _pages[i])) {
+			return true;
+		}
+	}
+	return false;
 }
 
 // Technically not compliant C++ to compare unrelated pointers. In practice...
