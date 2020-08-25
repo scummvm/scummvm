@@ -2032,8 +2032,8 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 #endif // USE_DETECTLANG
 
 	_guiLanguageUseGameLanguageCheckbox = new CheckboxWidget(boss, prefix + "GuiLanguageUseGameLanguage",
-			_("Switch the GUI language to the game language"),
-			_("When starting a game, change the GUI language to the game language. "
+			_("Switch the ScummVM GUI language to the game language"),
+			_("When starting a game, change the ScummVM GUI language to the game language. "
 			"That way, if a game uses the ScummVM save and load dialogs, they are "
 			"in the same language as the game.")
 	);
