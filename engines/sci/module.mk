@@ -50,7 +50,6 @@ MODULE_OBJS := \
 	graphics/controls16.o \
 	graphics/coordadjuster.o \
 	graphics/cursor.o \
-	graphics/font.o \
 	graphics/fontsjis.o \
 	graphics/maciconbar.o \
 	graphics/menu.o \
@@ -60,6 +59,7 @@ MODULE_OBJS := \
 	graphics/portrait.o \
 	graphics/ports.o \
 	graphics/remap.o \
+	graphics/scifont.o \
 	graphics/screen.o \
 	graphics/text16.o \
 	graphics/transitions.o \

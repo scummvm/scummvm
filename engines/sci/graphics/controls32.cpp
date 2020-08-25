@@ -32,7 +32,7 @@
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
 #include "sci/graphics/controls32.h"
-#include "sci/graphics/font.h"
+#include "sci/graphics/scifont.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/text32.h"
 
