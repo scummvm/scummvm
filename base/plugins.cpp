@@ -98,7 +98,7 @@ public:
 
 		#ifndef UNCACHED_PLUGINS
 		// Engine-detection plugins are included if we don't use uncached plugins.
-		#include "detection/detection_table.h"
+		#include "engines/detection_table.h"
 		#endif
 
 		// Music plugins
