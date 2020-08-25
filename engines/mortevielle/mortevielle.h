@@ -44,7 +44,7 @@
 #include "mortevielle/saveload.h"
 #include "mortevielle/sound.h"
 #include "mortevielle/outtext.h"
-#include "mortevielle/detection/detection_enums.h"
+#include "mortevielle/detection_enums.h"
 
 namespace Mortevielle {
 

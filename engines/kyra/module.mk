@@ -159,3 +159,6 @@ $(MODULE)/graphics/screen.o: $(MODULE)/graphics/screen.cpp
 	$(MKDIR) $(*D)/$(DEPDIR)
 	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) -O3 $(CPPFLAGS) -c $(<) -o $*.o
 endif
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o

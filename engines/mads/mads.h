@@ -40,7 +40,7 @@
 #include "mads/msurface.h"
 #include "mads/resources.h"
 #include "mads/sound.h"
-#include "mads/detection/detection_enums.h"
+#include "mads/detection_enums.h"
 
 /**
  * This is the namespace of the MADS engine.

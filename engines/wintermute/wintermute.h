@@ -26,7 +26,7 @@
 #include "engines/engine.h"
 #include "gui/debugger.h"
 #include "common/fs.h"
-#include "wintermute/detection/detection_enums.h"
+#include "wintermute/detection_enums.h"
 
 namespace Wintermute {
 

@@ -28,7 +28,7 @@
 
 #include "engines/engine.h"
 
-#include "mohawk/detection/detection_enums.h"
+#include "mohawk/detection_enums.h"
 
 class OSystem;
 

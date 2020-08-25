@@ -26,7 +26,7 @@
 #include "engines/advancedDetector.h"
 
 #include "sludge/sludge.h"
-#include "sludge/detection/detection.h"
+#include "sludge/detection.h"
 
 namespace Sludge {
 

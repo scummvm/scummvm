@@ -50,7 +50,7 @@
 #include "access/scripts.h"
 #include "access/sound.h"
 #include "access/video.h"
-#include "access/detection/detection_enums.h"
+#include "access/detection_enums.h"
 
 /**
  * This is the namespace of the Access engine.

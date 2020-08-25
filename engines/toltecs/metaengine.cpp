@@ -30,7 +30,7 @@
 #include "common/system.h"
 
 #include "toltecs/toltecs.h"
-#include "toltecs/detection/detection.h"
+#include "toltecs/detection.h"
 
 namespace Toltecs {
 

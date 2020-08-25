@@ -27,7 +27,7 @@
 
 #include "cruise/cruise.h"
 #include "cruise/saveload.h"
-#include "cruise/detection/detection.h"
+#include "cruise/detection.h"
 
 namespace Cruise {
 

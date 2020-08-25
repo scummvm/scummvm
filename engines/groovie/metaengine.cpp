@@ -27,7 +27,7 @@
 #include "common/translation.h"
 
 #include "engines/advancedDetector.h"
-#include "groovie/detection/detection.h"
+#include "groovie/detection.h"
 
 namespace Groovie {
 

@@ -22,7 +22,7 @@
 
 #include "groovie/groovie.h"
 #include "groovie/cursor.h"
-#include "groovie/detection/detection.h"
+#include "groovie/detection.h"
 #include "groovie/graphics.h"
 #include "groovie/script.h"
 #include "groovie/music.h"

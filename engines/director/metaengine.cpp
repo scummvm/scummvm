@@ -28,7 +28,7 @@
 #include "common/config-manager.h"
 
 #include "director/director.h"
-#include "director/detection/detection.h"
+#include "director/detection.h"
 
 namespace Director {
 

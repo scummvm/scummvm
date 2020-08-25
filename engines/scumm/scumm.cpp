@@ -80,7 +80,7 @@
 #include "scumm/imuse/drivers/mac_m68k.h"
 #include "scumm/imuse/drivers/amiga.h"
 #include "scumm/imuse/drivers/fmtowns.h"
-#include "scumm/detection/detection_steam.h"
+#include "scumm/detection_steam.h"
 
 #include "backends/audiocd/audiocd.h"
 

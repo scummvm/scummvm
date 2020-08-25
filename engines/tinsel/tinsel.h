@@ -38,7 +38,7 @@
 #include "tinsel/graphics.h"
 #include "tinsel/sound.h"
 #include "tinsel/dw.h"
-#include "tinsel/detection/detection_enums.h"
+#include "tinsel/detection_enums.h"
 
 /**
  * This is the namespace of the Tinsel engine.

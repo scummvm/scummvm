@@ -31,7 +31,7 @@
 #include "common/translation.h"
 #include "graphics/surface.h"
 
-#include "hopkins/detection/detection.h"
+#include "hopkins/detection.h"
 
 #define MAX_SAVES 99
 
