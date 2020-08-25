@@ -40,9 +40,12 @@ MODULE_OBJS = \
 	lingo/xlibs/palxobj.o \
 	lingo/xlibs/winxobj.o
 
+# HACK: Skip this when including the file for detection objects.
+ifeq "$(USE_RULES)" "1"
 director-grammar:
 	`brew --prefix flex`/bin/flex engines/director/lingo/lingo-lex.l
 	`brew --prefix bison`/bin/bison -dv engines/director/lingo/lingo-gr.y
+endif
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_DIRECTOR), DYNAMIC_PLUGIN)
