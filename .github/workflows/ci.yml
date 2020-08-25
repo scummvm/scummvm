@@ -70,7 +70,7 @@ jobs:
         run: |
           cd build-scummvm
           ls
-          msbuild scummvm.sln /m /p:BuildInParallel=true /p:Configuration=Release /p:Platform=${{ matrix.platform }}
+          msbuild scummvm.sln /m /p:BuildInParallel=true /p:Configuration=Release /p:PreferredToolArchitecture=x64 /p:Platform=${{ matrix.platform }}
       - name: Upload scummvm
         uses: actions/upload-artifact@v2
         with:
