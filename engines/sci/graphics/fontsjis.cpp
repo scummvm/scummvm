@@ -23,7 +23,7 @@
 #include "sci/sci.h"
 #include "sci/engine/state.h"
 #include "sci/graphics/screen.h"
-#include "sci/graphics/font.h"
+#include "sci/graphics/scifont.h"
 #include "sci/graphics/fontsjis.h"
 
 namespace Sci {

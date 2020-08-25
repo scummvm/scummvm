@@ -50,7 +50,7 @@
 #include "sci/graphics/cursor32.h"
 #include "sci/graphics/celobj32.h"
 #include "sci/graphics/controls32.h"
-#include "sci/graphics/font.h"	// TODO: remove once kBitmap is moved in a separate class
+#include "sci/graphics/scifont.h"	// TODO: remove once kBitmap is moved in a separate class
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/paint32.h"
 #include "sci/graphics/palette32.h"

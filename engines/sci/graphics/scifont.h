@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SCI_GRAPHICS_FONT_H
-#define SCI_GRAPHICS_FONT_H
+#ifndef SCI_GRAPHICS_SCIFONT_H
+#define SCI_GRAPHICS_SCIFONT_H
 
 #include "sci/graphics/helpers.h"
 #include "sci/util.h"
