@@ -475,10 +475,11 @@ void Gump::GumpRectToScreenSpace(Rect &gr, RectRoundDir r) {
 	int32 x2 = gr.right, y2 = gr.bottom;
 	GumpToScreenSpace(x1, y1, tl);
 	GumpToScreenSpace(x2, y2, br);
-	gr.left = x1;
-	gr.top = y1;
-	gr.right = x2;
-	gr.bottom = y2;
+	gr.moveTo(x1, y1);
+	if (gr.width() != 0)
+		gr.setWidth(x2 - x1);
+	if (gr.height() != 0)
+		gr.setHeight(y2 - y1);
 }
 
 // Transform a rectangle to gumpspace from screenspace
@@ -490,10 +491,11 @@ void Gump::ScreenSpaceToGumpRect(Rect &sr, RectRoundDir r) {
 	int32 x2 = sr.right, y2 = sr.bottom;
 	ScreenSpaceToGump(x1, y1, tl);
 	ScreenSpaceToGump(x2, y2, br);
-	sr.left = x1;
-	sr.top = y1;
-	sr.right = x2;
-	sr.bottom = y2;
+	sr.moveTo(x1, y1);
+	if (sr.width() != 0)
+		sr.setWidth(x2 - x1);
+	if (sr.height() != 0)
+		sr.setHeight(y2 - y1);
 }
 
 uint16 Gump::TraceObjId(int32 mx, int32 my) {
