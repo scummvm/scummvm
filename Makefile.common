@@ -78,6 +78,10 @@ KYRARPG_COMMON_OBJ := $(KYRARPG_COMMON_OBJ_ORIG)
 # Enable-rules again
 USE_RULES := 1
 
+ifneq "$(DETECTION_STATIC)" "1"
+-include $(srcdir)/engines/detect_modules.mk
+endif
+
 # Depdir information
 DEPDIRS = $(addsuffix $(DEPDIR),$(MODULE_DIRS))
 DEPFILES =
