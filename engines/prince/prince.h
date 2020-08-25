@@ -316,6 +316,8 @@ public:
 	uint32 _mobTranslationSize;
 	byte *_mobTranslationData;
 
+	bool _missingVoice;
+
 	bool loadLocation(uint16 locationNr);
 	bool loadAnim(uint16 animNr, bool loop);
 	bool loadVoice(uint32 textSlot, uint32 sampleSlot, const Common::String &name);
