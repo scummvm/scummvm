@@ -30,6 +30,7 @@
 class DSPluginProvider : public ELFPluginProvider {
 public:
 	Plugin *createPlugin(const Common::FSNode &node) const;
+	void addCustomDirectories(Common::FSList &dirs) const;
 };
 
 #endif // BACKENDS_PLUGINS_DS_PROVIDER_H

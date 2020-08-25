@@ -1724,12 +1724,6 @@ ds)
 	_host_os=ds
 	_host_cpu=arm
 	_host_alias=arm-none-eabi
-
-	test "x$prefix" = xNONE && prefix=nitro:
-
-	datarootdir='${prefix}'
-	datadir='${datarootdir}'
-	docdir='${prefix}/doc'
 	;;
 gamecube)
 	_host_os=gamecube
@@ -5872,7 +5866,7 @@ test "x$prefix" = xNONE && prefix=/usr/local
 test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
 
 case $_host_os in
-	mingw*)
+	ds | mingw*)
 		# Windows stores all the external data files in executable file.
 		;;
 	*)
@@ -5881,8 +5875,10 @@ case $_host_os in
 esac
 
 case $_backend in
-	3ds | ds)
+	3ds)
 		append_var DEFINES "-DPLUGIN_DIRECTORY=\\\"$datadir/plugins\\\""
+		;;
+	ds)
 		;;
 	openpandora)
 		# Add ../plugins as a path so plugins can be found when running from a .PND.
