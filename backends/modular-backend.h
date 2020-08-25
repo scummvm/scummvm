@@ -119,7 +119,7 @@ public:
 	/** @name Miscellaneous */
 	//@{
 
-	virtual void displayMessageOnOSD(const char *msg) override final;
+	virtual void displayMessageOnOSD(const Common::U32String &msg) override final;
 	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon) override final;
 
 	//@}
