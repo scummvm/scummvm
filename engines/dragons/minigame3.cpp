@@ -22,6 +22,7 @@
 #include "common/scummsys.h"
 #include "common/rect.h"
 #include "dragons/actor.h"
+#include "dragons/font.h"
 #include "dragons/minigame3.h"
 #include "dragons/dragonini.h"
 #include "dragons/inventory.h"
@@ -124,7 +125,7 @@ void Minigame3::run() {
 
 	Common::File *fd = new Common::File();
 	if (!fd->open("arc3.bin")) {
-		error("Failed to open arc1.bin");
+		error("Failed to open arc3.bin");
 	}
 
 	for (int i = 0; i < 21; i++) {

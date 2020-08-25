@@ -734,6 +734,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 		_vm->setAllFlags((origEngineFlags & 0xfefdffff) | (_vm->getAllFlags() & 0x1000000) | 0x40);
 		_vm->fadeFromBlack();
 	}
+	_vm->_fontManager->clearText();
 }
 
 void Minigame2::fun_80093aec_dialog(uint32 textId, int16 x, int16 y) {

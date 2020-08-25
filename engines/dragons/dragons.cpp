@@ -1785,6 +1785,10 @@ bool DragonsEngine::checkForWheelDown() {
 	return _mouseWheel == MOUSE_WHEEL_DOWN;
 }
 
+void DragonsEngine::clearAllText() {
+	_fontManager->clearText();
+}
+
 void (*DragonsEngine::getSceneUpdateFunction())() {
 	return _sceneUpdateFunction;
 }

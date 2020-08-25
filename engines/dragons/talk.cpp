@@ -574,7 +574,7 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 
 	_vm->setFlags(ENGINE_FLAG_100);
 	do {
-		callMaybeResetData();
+		_vm->clearAllText();
 		int numActiveDialogEntries = 0;
 		for (Common::Array<TalkDialogEntry*>::iterator it = dialogEntries.begin(); it != dialogEntries.end(); it++) {
 			if (!((*it)->flags & 1)) {
@@ -589,7 +589,7 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 
 		selectedDialogText = displayTalkDialogMenu(dialogEntries);
 		if (selectedDialogText == nullptr) {
-			callMaybeResetData();
+			_vm->clearAllText();
 			exitTalkMenu(isFlag8Set, isFlag100Set, dialogEntries);
 			return true;
 		}
@@ -611,7 +611,7 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 		if ((selectedDialogText->flags & 2) == 0) {
 			selectedDialogText->flags = selectedDialogText->flags | 1;
 		}
-		callMaybeResetData();
+		_vm->clearAllText();
 		if (loadText(selectedDialogText->textIndex1, local_800, 1000)) {
 			if (selectedDialogText->field_26c == -1) {
 				displayDialogAroundINI(_vm->_cursor->_iniUnderCursor, local_800, selectedDialogText->textIndex1);
@@ -735,7 +735,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 
 			_vm->clearFlags(ENGINE_FLAG_8);
 			y = 0;
-			callMaybeResetData();
+			_vm->clearAllText();
 			if (hasDialogEntries) {
 				uVar3 = 0;
 				do {

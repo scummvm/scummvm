@@ -374,7 +374,7 @@ void Minigame5::run() {
 					_vm->waitForFrames(0x12);
 					_vm->_talk->loadText(DAT_80063e38, auStack2120, 1000);
 					_vm->_talk->displayDialogAroundPoint(auStack2120, 0xf, 2, 0x501, 0, DAT_80063e38);
-//						TODO	callMaybeResetData();
+					_vm->clearAllText();
 					_vm->_dragonINIResource->getRecord(DAT_80063bd0 + -1)->actor->updateSequence(3);
 					_vm->_dragonINIResource->getRecord(DAT_80063bd0 + -1)->actor->waitUntilFlag8And4AreSet();
 					pusherActor->updateSequence(7);
@@ -485,7 +485,7 @@ void Minigame5::run() {
 			_vm->waitForFrames(0x1e);
 			_vm->_dragonINIResource->getRecord(DAT_80063a40 + -1)->actor->clearFlag(ACTOR_FLAG_100);
 			LAB_8009157c:
-//			callMaybeResetData();
+			_vm->clearAllText();
 			flickerActor->updateSequence(0x15);
 			local_46 = 0;
 			//local_44 = 0;

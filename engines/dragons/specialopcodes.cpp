@@ -204,7 +204,7 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x7f, spcFlickerPutOnStGeorgeArmor);
 	OPCODE(0x80, spcUnk80FlickerArmorOn);
 	OPCODE(0x81, spcShakeScreenSceneLogic);
-	OPCODE(0x82, spc82CallResetDataMaybe);
+	OPCODE(0x82, spcClearTextFromScreen);
 	OPCODE(0x83, spcStopScreenShakeUpdater);
 	OPCODE(0x84, spcInsideBlackDragonScreenShake);
 	OPCODE(0x85, spc85SetScene1To0x35);
@@ -1038,8 +1038,8 @@ void SpecialOpcodes::spcFlickerPutOnStGeorgeArmor() {
 	actor->_priorityLayer = 1;
 }
 
-void SpecialOpcodes::spc82CallResetDataMaybe() {
-	//TODO callMaybeResetData(); LOOKS like it clears text from the screen.
+void SpecialOpcodes::spcClearTextFromScreen() {
+	_vm->clearAllText();
 }
 
 void SpecialOpcodes::spcStopScreenShakeUpdater() {

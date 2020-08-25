@@ -127,7 +127,7 @@ void CutScene::scene1() {
 		if (fun_8003dab8(0x52d6, 0, 0, 0x701, 1) == 2)
 			break;
 
-		// TODO callMaybeResetData();
+		_vm->clearAllText();
 		//playSoundFromTxtIndex(0x530c);
 
 		if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec, 2, 0, 0x530c, 0x3c01) == 2)
