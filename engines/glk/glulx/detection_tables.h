@@ -129,7 +129,6 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "hardpuzzle2", "Hard Puzzle 2: The Cow" },
 	{ "hardpuzzle3", "Hard Puzzle 3: Origins" },
 	{ "haroldnight2003", "Harold Night 2003" },
-	{ "kerkerkruip", "Kerkerkruip" },
 	{ "killerheadache", "A Killer Headache" },
 	{ "herecomestreble", "Here Comes Treble" },
 	{ "hobbitglulx", "The Hobbit - The True Story" },
