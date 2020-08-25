@@ -795,6 +795,10 @@ begin_credits("Credits");
 				add_person("Eugene Sandulenko", "sev", "");
 			end_section();
 
+			begin_section("Griffon");
+				add_person("Eugene Sandulenko", "sev", "");
+			end_section();
+
 			begin_section("Groovie");
 				add_person("Henry Bush", "spookypeanut", "");
 				add_person("Scott Thomas", "ST", "");
