@@ -30,7 +30,7 @@
 #include "common/fs.h"
 #endif
 
-#include "detection/detection.h"
+#include "engines/detection.h"
 
 // Plugin versioning
 
@@ -96,7 +96,7 @@ public:
 		// Engine plugins
 		#include "engines/plugins_table.h"
 
-		#ifndef UNCACHED_PLUGINS
+		#ifdef DETECTION_STATIC
 		// Engine-detection plugins are included if we don't use uncached plugins.
 		#include "engines/detection_table.h"
 		#endif
