@@ -225,7 +225,7 @@ Common::Error KyraRpgEngine::init() {
 	return Common::kNoError;
 }
 
-void KyraRpgEngine::addKeymapAction(Common::Keymap *const keyMap, const char *actionId, const Common::String &actionDesc, const Common::Functor0Mem<void, Common::Action>::FuncType setEventProc, const Common::String &mapping1, const Common::String &mapping2) {
+void KyraRpgEngine::addKeymapAction(Common::Keymap *const keyMap, const char *actionId, const Common::U32String &actionDesc, const Common::Functor0Mem<void, Common::Action>::FuncType setEventProc, const Common::String &mapping1, const Common::String &mapping2) {
 	Common::Action *act = new Common::Action(actionId, actionDesc);
 	Common::Functor0Mem<void, Common::Action>(act, setEventProc)();
 	act->addDefaultInputMapping(mapping1);
@@ -233,7 +233,7 @@ void KyraRpgEngine::addKeymapAction(Common::Keymap *const keyMap, const char *ac
 	keyMap->addAction(act);
 }
 
-void KyraRpgEngine::addKeymapAction(Common::Keymap *const keyMap, const char *actionId, const Common::String &actionDesc, Common::KeyState eventKeyState, const Common::String &mapping1, const Common::String &mapping2) {
+void KyraRpgEngine::addKeymapAction(Common::Keymap *const keyMap, const char *actionId, const Common::U32String &actionDesc, Common::KeyState eventKeyState, const Common::String &mapping1, const Common::String &mapping2) {
 	Common::Action *act = new Common::Action(actionId, actionDesc);
 	act->setKeyEvent(eventKeyState);
 	act->addDefaultInputMapping(mapping1);
