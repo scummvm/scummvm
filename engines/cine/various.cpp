@@ -878,6 +878,8 @@ int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, 
 				case Common::KEYCODE_DOWN:
 					selectionValueDiff++;
 					break;
+				default:
+					break;
 				}
 				g_cine->_keyInputList.pop_back();
 			}
@@ -896,7 +898,7 @@ int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, 
 				}
 
 				currentSelection = CLIP<int16>(currentSelection + selectionValueDiff, 0, height - 1);
-				
+
 				if (currentSelection != oldSelection) {
 					Common::Point currentSelectionCenter(X + width / 2, (currentSelection * 9) + Y + 8);
 					g_system->warpMouse(currentSelectionCenter.x, currentSelectionCenter.y);
@@ -1846,12 +1848,12 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 		ch[1] = 0;
 
 		Common::KeyState keyState = Common::KeyState();
-			
+
 		if (!g_cine->_keyInputList.empty()) {
 			keyState = g_cine->_keyInputList.back();
 			g_cine->_keyInputList.pop_back();
 		}
-		
+
 		int keycode = keyState.keycode;
 		uint16 ascii = keyState.ascii;
 		uint16 mouseButton, mouseX, mouseY;

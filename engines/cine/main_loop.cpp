@@ -287,12 +287,14 @@ void manageEvents(CallSource callSource, EventTarget eventTarget, bool useMaxMou
 			case UNTIL_MOUSE_BUTTON_DOWN_OR_KEY_INPUT:
 				foundTarget = mouseButtonDown || keysPressed < g_cine->_keyInputList.size();
 				break;
+			default:
+				break;
 			}
 
 			uint32 now = g_system->getMillis();
 			frameEnded = (now >= frameEnd);
 			waitEnded = (now >= waitEnd);
-			
+
 			if (foundTarget) {
 				switch (eventTarget) {
 				case UNTIL_MOUSE_BUTTON_UP_DOWN_UP:
@@ -311,6 +313,8 @@ void manageEvents(CallSource callSource, EventTarget eventTarget, bool useMaxMou
 					eventTarget = UNTIL_WAIT_ENDED;
 					checkWaitEnd = true;
 					foundTarget = false;
+					break;
+				default:
 					break;
 				}
 			}
@@ -343,7 +347,7 @@ void manageEvents(CallSource callSource, EventTarget eventTarget, bool useMaxMou
 			eventMan->pushEvent(Common::Event());
 			continue;
 		}
-		
+
 		updateScreen = updateAudio = (foundTarget || frameEnded);
 
 		if (updateScreen) {
