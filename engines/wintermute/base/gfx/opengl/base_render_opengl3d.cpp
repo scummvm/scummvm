@@ -479,9 +479,11 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D *camera, bool force) {
 
 			Math::Matrix4 viewMatrix;
 			camera->getViewMatrix(&viewMatrix);
-			glMultMatrixf(viewMatrix.getData());
+			glLoadMatrixf(viewMatrix.getData());
 			glTranslatef(-camera->_position.x(), -camera->_position.y(), -camera->_position.z());
 			glGetFloatv(GL_MODELVIEW_MATRIX, _lastViewMatrix.getData());
+		} else {
+			glLoadMatrixf(_lastViewMatrix.getData());
 		}
 
 		for (int i = 0; i < maximumLightsCount(); ++i) {
