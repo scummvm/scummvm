@@ -1231,11 +1231,12 @@ void DragonsEngine::reset_screen_maybe() {
 }
 
 bool DragonsEngine::canLoadGameStateCurrently() {
-	return isInputEnabled();
+	//player has control and not currently talking to anyone.
+	return isInputEnabled() && isFlagSet(ENGINE_FLAG_8) && !isFlagSet(Dragons::ENGINE_FLAG_100);
 }
 
 bool DragonsEngine::canSaveGameStateCurrently() {
-	return isInputEnabled() && !_inventory->isOpen();
+	return isInputEnabled() && !_inventory->isOpen() && isFlagSet(ENGINE_FLAG_8) && !isFlagSet(Dragons::ENGINE_FLAG_100);
 }
 
 bool DragonsEngine::hasFeature(Engine::EngineFeature f) const {
