@@ -243,7 +243,7 @@ void ModularGraphicsBackend::setCursorPalette(const byte *colors, uint start, ui
 	_graphicsManager->setCursorPalette(colors, start, num);
 }
 
-void ModularGraphicsBackend::displayMessageOnOSD(const char *msg) {
+void ModularGraphicsBackend::displayMessageOnOSD(const Common::U32String &msg) {
 	_graphicsManager->displayMessageOnOSD(msg);
 }
 
