@@ -20,10 +20,10 @@
  *
  */
 
-#ifdef USE_DISCORD
-
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 #include "backends/presence/discord/discord.h"
+
+#ifdef USE_DISCORD
 #include "common/encoding.h"
 #include "common/translation.h"
 

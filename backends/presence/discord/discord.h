@@ -23,9 +23,9 @@
 #ifndef BACKENDS_DISCORD_H
 #define BACKENDS_DISCORD_H
 
-#ifdef USE_DISCORD
-
 #include "common/scummsys.h"
+
+#ifdef USE_DISCORD
 #include "common/str.h"
 
 /**
