@@ -12,6 +12,8 @@ MODULE_OBJS = \
 	livingbooks_graphics.o \
 	livingbooks_lbx.o \
 	metaengine.o \
+	riven_metaengine.o \
+	myst_metaengine.o \
 	mohawk.o \
 	resource.o \
 	sound.o \
@@ -30,7 +32,6 @@ endif
 
 ifdef ENABLE_MYST
 MODULE_OBJS += \
-	myst_metaengine/metaengine.o \
 	myst.o \
 	myst_areas.o \
 	myst_card.o \
@@ -56,7 +57,6 @@ endif
 
 ifdef ENABLE_RIVEN
 MODULE_OBJS += \
-	riven_metaengine/metaengine.o \
 	riven.o \
 	riven_card.o \
 	riven_graphics.o \
@@ -92,6 +92,6 @@ DETECT_OBJS += $(MODULE)/detection.o
 # Skip building the following objects if a static
 # module is enabled, because it already has the contents.
 ifneq ($(ENABLE_MOHAWK), STATIC_PLUGIN)
-DETECT_OBJS += $(MODULE)/myst_metaengine/metaengine.o
-DETECT_OBJS += $(MODULE)/riven_metaengine/metaengine.o
+DETECT_OBJS += $(MODULE)/myst_metaengine.o
+DETECT_OBJS += $(MODULE)/riven_metaengine.o
 endif

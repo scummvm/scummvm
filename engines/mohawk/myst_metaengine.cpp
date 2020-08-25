@@ -20,24 +20,20 @@
  *
  */
 
-#include "mohawk/riven_metaengine/metaengine.h"
-#include "mohawk/riven_metaengine/graphics_detection_enums.h"
+#include "mohawk/myst_metaengine.h"
 
-void Mohawk::MohawkMetaEngine_Riven::registerDefaultSettings() {
+void Mohawk::MohawkMetaEngine_Myst::registerDefaultSettings() {
+	ConfMan.registerDefault("playmystflyby", false);
 	ConfMan.registerDefault("zip_mode", false);
-	ConfMan.registerDefault("water_effects", true);
-	ConfMan.registerDefault("transition_mode", kRivenTransitionModeFastest);
+	ConfMan.registerDefault("transition_mode", false);
 }
 
-const Mohawk::RivenLanguage *Mohawk::MohawkMetaEngine_Riven::listLanguages() {
-	static const RivenLanguage languages[] = {
+const Mohawk::MystLanguage *Mohawk::MohawkMetaEngine_Myst::listLanguages() {
+	static const MystLanguage languages[] = {
 	    { Common::EN_ANY,   "english"  },
 	    { Common::FR_FRA,   "french"   },
 	    { Common::DE_DEU,   "german"   },
-	    { Common::IT_ITA,   "italian"  },
-	    { Common::JA_JPN,   "japanese" },
 	    { Common::PL_POL,   "polish"   },
-	    { Common::RU_RUS,   "russian"  },
 	    { Common::ES_ESP,   "spanish"  },
 	    { Common::UNK_LANG, nullptr    }
 	};

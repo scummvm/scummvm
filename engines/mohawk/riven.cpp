@@ -58,7 +58,7 @@
 #include "mohawk/console.h"
 
 // Shared code between detection/engine.
-#include "mohawk/riven_metaengine/metaengine.h"
+#include "mohawk/riven_metaengine.h"
 
 namespace Mohawk {
 
