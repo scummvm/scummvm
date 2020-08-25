@@ -405,6 +405,10 @@ void OSystem_DS::refreshCursor(u16 *dst, const Graphics::Surface &src, const uin
 	}
 }
 
+void OSystem_DS::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
+	s.add("nitro:/", new Common::FSDirectory("nitro:/"), priority);
+}
+
 uint32 OSystem_DS::getMillis(bool skipRecord) {
 	return _currentTimeMillis;
 }

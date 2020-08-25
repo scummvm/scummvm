@@ -46,4 +46,8 @@ Plugin *DSPluginProvider::createPlugin(const Common::FSNode &node) const {
 	return new TemplatedELFPlugin<DSDLObject>(node.getPath());
 }
 
+void DSPluginProvider::addCustomDirectories(Common::FSList &dirs) const {
+	dirs.push_back(Common::FSNode("nitro:/plugins"));
+}
+
 #endif // defined(DYNAMIC_MODULES) && defined(__DS__)
