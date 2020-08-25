@@ -1811,7 +1811,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.007", 0, "431def14ca29cdb5e6a5e84d3f38f679", 1240176},
 		{"text.000",     0, "601aa35a3ddeb558e1280e0963e955a2", 1517},
 		AD_LISTEND},
-		Common::PL_POL, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16	},
+		Common::PL_POL, Common::kPlatformDOS, 0, GUIO_STD16	},
 
 	// King's Quest 5 - Russian translation, based on English DOS version (bug report #11361)
 	// SCI interpreter version 1.000.060
