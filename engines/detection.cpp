@@ -24,7 +24,7 @@
 #include "base/plugins.h"
 #include "engines/metaengine.h"
 #include "engines/advanceddetector.h"
-#include "detection/detection.h"
+#include "engines/detection.h"
 
 const char *Detection::getName() const {
     return "detection";
@@ -37,11 +37,11 @@ Detection::Detection() {
 			extern PluginObject *g_##ID##_getObject(); \
 			_pl.push_back(new StaticPlugin(g_##ID##_getObject(), g_##ID##_type));
 
-    #include "detection/detection_table.h"
+    #include "engines/detection_table.h"
 }
 
 Detection::~Detection() {
 }
 
-REGISTER_PLUGIN_DYNAMIC(DETECTION, PLUGIN_TYPE_DETECTION, Detection);
+REGISTER_PLUGIN_DYNAMIC(DETECTION_DYNAMIC, PLUGIN_TYPE_DETECTION, Detection);
 
