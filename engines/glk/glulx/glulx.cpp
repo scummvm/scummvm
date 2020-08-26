@@ -56,7 +56,10 @@ void Glulx::runGame() {
 	if (!is_gamefile_valid())
 		return;
 
+	gamefile_start = 0;
+	gamefile_len = _gameFile.size();
 	setup_vm();
+
 	if (!init_dispatch())
 		return;
 

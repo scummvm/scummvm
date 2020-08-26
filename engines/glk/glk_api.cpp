@@ -377,7 +377,11 @@ strid_t GlkAPI::glk_stream_get_current(void) {
 }
 
 void GlkAPI::glk_put_char(unsigned char ch) {
-	_streams->getCurrent()->putChar(ch);
+	Stream *str = _streams->getCurrent();
+	if (str)
+		str->putChar(ch);
+	else
+		warning("glk_put_char: no stream set");
 }
 
 void GlkAPI::glk_put_char_stream(strid_t str, unsigned char ch) {
@@ -783,7 +787,11 @@ uint GlkAPI::glk_buffer_to_title_case_uni(uint32 *buf, uint len,
 }
 
 void GlkAPI::glk_put_char_uni(uint32 ch) {
-	_streams->getCurrent()->putCharUni(ch);
+	Stream *str = _streams->getCurrent();
+	if (str)
+		str->putCharUni(ch);
+	else
+		warning("glk_put_char_uni: no stream set");
 }
 
 void GlkAPI::glk_put_string_uni(const uint32 *s) {
