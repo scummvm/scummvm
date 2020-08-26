@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-27 00:53+0200\n"
-"PO-Revision-Date: 2020-08-26 22:40+0000\n"
+"POT-Creation-Date: 2020-06-07 14:22+0200\n"
+"PO-Revision-Date: 2020-08-26 22:54+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -2652,9 +2652,8 @@ msgid "X1 Mouse Button"
 msgstr "Кнопка мыши X1"
 
 #: backends/keymapper/hardware-input.cpp:251
-#, fuzzy
 msgid "X2 Mouse Button"
-msgstr "Эмуляция нажатия левой клавиши мыши"
+msgstr "Кнопка мыши X2"
 
 #: backends/keymapper/hardware-input.cpp:256
 msgid "Joy A"
@@ -2763,25 +2762,23 @@ msgstr "Очистить раскладку"
 
 #: backends/keymapper/virtual-mouse.cpp:154
 msgid "Virtual mouse up"
-msgstr ""
+msgstr "Виртуальная мышь вверх"
 
 #: backends/keymapper/virtual-mouse.cpp:159
-#, fuzzy
 msgid "Virtual mouse down"
-msgstr "Прервать загрузку"
+msgstr "Виртуальная мышь вниз"
 
 #: backends/keymapper/virtual-mouse.cpp:164
 msgid "Virtual mouse left"
-msgstr ""
+msgstr "Виртуальная мышь влево"
 
 #: backends/keymapper/virtual-mouse.cpp:169
-#, fuzzy
 msgid "Virtual mouse right"
-msgstr "Идти вправо"
+msgstr "Виртуальная мышь вправо"
 
 #: backends/keymapper/virtual-mouse.cpp:174
 msgid "Slow down virtual mouse"
-msgstr ""
+msgstr "Замедлить виртуальную мышь"
 
 #: backends/midi/windows.cpp:167
 msgid "Windows MIDI"
@@ -2981,19 +2978,16 @@ msgid "Use Screen:"
 msgstr "Исп. экран:"
 
 #: backends/platform/3ds/options-dialog.cpp:58
-#, fuzzy
 msgctxt "3ds-screen"
 msgid "Top"
 msgstr "Верхний"
 
 #: backends/platform/3ds/options-dialog.cpp:59
-#, fuzzy
 msgctxt "3ds-screen"
 msgid "Bottom"
 msgstr "Нижний"
 
 #: backends/platform/3ds/options-dialog.cpp:60
-#, fuzzy
 msgctxt "3ds-screen"
 msgid "Both"
 msgstr "Оба"
@@ -3016,15 +3010,13 @@ msgstr "Y"
 
 #: backends/platform/3ds/osystem-events.cpp:52
 #: backends/platform/sdl/ps3/ps3.cpp:45
-#, fuzzy
 msgid "Select"
-msgstr "Действие/Выбор"
+msgstr "Выбор"
 
 #: backends/platform/3ds/osystem-events.cpp:53
 #: backends/platform/sdl/ps3/ps3.cpp:47
-#, fuzzy
 msgid "Start"
-msgstr "П~у~ск"
+msgstr "Пуск"
 
 #: backends/platform/3ds/osystem-events.cpp:54
 msgid "ZL"
@@ -3297,43 +3289,43 @@ msgstr "Лицензия BSD"
 
 #: backends/platform/sdl/ps3/ps3.cpp:41
 msgid "Cross"
-msgstr ""
+msgstr "Крест"
 
 #: backends/platform/sdl/ps3/ps3.cpp:42
 msgid "Circle"
-msgstr ""
+msgstr "Круг"
 
 #: backends/platform/sdl/ps3/ps3.cpp:43
 msgid "Square"
-msgstr ""
+msgstr "Квадрат"
 
 #: backends/platform/sdl/ps3/ps3.cpp:46
 msgid "PS"
-msgstr ""
+msgstr "PS"
 
 #: backends/platform/sdl/ps3/ps3.cpp:48
 msgid "L3"
-msgstr ""
+msgstr "L3"
 
 #: backends/platform/sdl/ps3/ps3.cpp:49
 msgid "R3"
-msgstr ""
+msgstr "R3"
 
 #: backends/platform/sdl/ps3/ps3.cpp:50
 msgid "L1"
-msgstr ""
+msgstr "L1"
 
 #: backends/platform/sdl/ps3/ps3.cpp:51
 msgid "R1"
-msgstr ""
+msgstr "R1"
 
 #: backends/platform/sdl/ps3/ps3.cpp:60
 msgid "L2"
-msgstr ""
+msgstr "L2"
 
 #: backends/platform/sdl/ps3/ps3.cpp:61
 msgid "R2"
-msgstr ""
+msgstr "R2"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:47
 #: engines/mohawk/myst.cpp:579 engines/mohawk/riven.cpp:848
