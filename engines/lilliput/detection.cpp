@@ -24,7 +24,6 @@
 #include "engines/advancedDetector.h"
 #include "common/textconsole.h"
 
-#include "lilliput/detection_enums.h"
 #include "lilliput/detection.h"
 
 namespace Lilliput {

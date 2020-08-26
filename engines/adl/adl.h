@@ -41,7 +41,7 @@
 #include "adl/console.h"
 #include "adl/disk.h"
 #include "adl/sound.h"
-#include "adl/detection_enums.h"
+#include "adl/detection.h"
 
 namespace Common {
 class ReadStream;
@@ -62,7 +62,6 @@ Common::Platform getPlatform(const AdlGameDescription &desc);
 class Console;
 class Display;
 class GraphicsMan;
-struct AdlGameDescription;
 class ScriptEnv;
 
 enum kDebugChannels {

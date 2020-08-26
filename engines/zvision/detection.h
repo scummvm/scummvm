@@ -23,7 +23,19 @@
 #ifndef ZVISION_DETECTION_H
 #define ZVISION_DETECTION_H
 
+#include "engines/advancedDetector.h"
+
 namespace ZVision {
+
+enum ZVisionGameId {
+	GID_NONE = 0,
+	GID_NEMESIS = 1,
+	GID_GRANDINQUISITOR = 2
+};
+
+enum ZVisionFeatures {
+	GF_DVD = (1 << 0) // ZGI DVD version
+};
 
 struct ZVisionGameDescription {
 	ADGameDescription desc;

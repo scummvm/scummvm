@@ -23,7 +23,21 @@
 #ifndef PRINCE_DETECTION_H
 #define PRINCE_DETECTION_H
 
+#include "engines/advancedDetector.h"
+
 namespace Prince {
+
+enum PrinceGameType {
+	kPrinceDataUNK,
+	kPrinceDataDE,
+	kPrinceDataPL
+};
+
+enum {
+	GF_TRANSLATED = 1 << 0,
+	GF_EXTRACTED  = 1 << 1,
+	GF_NOVOICES   = 1 << 2
+};
 
 struct PrinceGameDescription {
 	ADGameDescription desc;

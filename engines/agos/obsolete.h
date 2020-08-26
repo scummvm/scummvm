@@ -20,6 +20,8 @@
  *
  */
 
+#ifndef AGOS_OBSOLETE_H
+#define AGOS_OBSOLETE_H
 
 static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
 	{"simon1acorn", "simon1", Common::kPlatformAcorn},
@@ -35,3 +37,5 @@ static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
 	{"simon2win", "simon2", Common::kPlatformWindows},
 	{0, 0, Common::kPlatformUnknown}
 };
+
+#endif // AGOS_OBSOLETE_H

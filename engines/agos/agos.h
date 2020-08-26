@@ -35,7 +35,7 @@
 #include "audio/mixer.h"
 
 #include "agos/vga.h"
-#include "agos/detection_enums.h"
+#include "agos/detection.h"
 
 /**
  * This is the namespace of the AGOS engine.
@@ -183,8 +183,6 @@ enum EventType {
 	PLAYER_DAMAGE_EVENT = 1 << 4,
 	MONSTER_DAMAGE_EVENT = 1 << 5
 };
-
-struct AGOSGameDescription;
 
 struct GameSpecificSettings;
 

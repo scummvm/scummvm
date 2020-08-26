@@ -44,15 +44,13 @@
 
 #include "composer/resource.h"
 #include "composer/console.h"
-#include "composer/detection_enums.h"
+#include "composer/detection.h"
 
 namespace Audio {
 	class QueuingAudioStream;
 }
 
 namespace Composer {
-
-struct ComposerGameDescription;
 
 class Archive;
 struct Animation;

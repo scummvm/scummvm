@@ -23,7 +23,6 @@
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
 
-#include "hugo/detection_enums.h"
 #include "hugo/detection.h"
 
 namespace Hugo {

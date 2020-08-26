@@ -30,8 +30,6 @@
 
 #include "engines/metaengine.h"
 
-#include "wintermute/base/base_detection_enums.h"
-#include "wintermute/detection_enums.h"
 #include "wintermute/detection.h"
 #include "wintermute/detection_tables.h"
 

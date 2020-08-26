@@ -27,7 +27,7 @@
 #include "common/stream.h"
 
 #include "adl/adl_v4.h"
-#include "adl/detection_enums.h"
+#include "adl/detection.h"
 #include "adl/display_a2.h"
 #include "adl/graphics.h"
 #include "adl/disk.h"

@@ -27,7 +27,7 @@
 
 #include "engines/metaengine.h"
 #include "common/gui_options.h"
-#include "sword2/detection_enums.h"
+#include "sword2/detection.h"
 
 /**
  * The contents of this file are helpful in detecting games, 

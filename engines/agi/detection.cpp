@@ -28,7 +28,6 @@
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
 
-#include "agi/detection_enums.h"
 #include "agi/detection.h"
 #include "agi/wagparser.h" // for fallback detection
 

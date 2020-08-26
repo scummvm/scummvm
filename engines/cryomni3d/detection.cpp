@@ -28,7 +28,6 @@
 #include "common/md5.h"
 
 #include "cryomni3d/detection.h"
-#include "cryomni3d/detection_enums.h"
 
 namespace CryOmni3D {
 

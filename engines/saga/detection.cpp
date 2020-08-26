@@ -25,7 +25,6 @@
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
 
-#include "saga/detection_enums.h"
 #include "saga/detection.h"
 
 static const PlainGameDescriptor sagaGames[] = {

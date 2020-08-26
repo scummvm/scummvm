@@ -25,6 +25,10 @@
 
 namespace Tony {
 
+enum {
+	GF_COMPRESSED = (1 << 0)
+};
+
 struct TonyGameDescription {
 	ADGameDescription desc;
 };

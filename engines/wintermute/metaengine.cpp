@@ -29,7 +29,6 @@
 #include "engines/wintermute/achievements_tables.h"
 
 // Detection related files.
-#include "wintermute/base/base_detection_enums.h"
 #include "wintermute/detection.h"
 #include "wintermute/detection_tables.h"
 

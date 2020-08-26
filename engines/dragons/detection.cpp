@@ -22,7 +22,6 @@
 
 #include "engines/advancedDetector.h"
 #include "base/plugins.h"
-#include "dragons/detection_enums.h"
 #include "dragons/detection.h"
 
 static const PlainGameDescriptor dragonsGames[] = {

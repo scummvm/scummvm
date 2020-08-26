@@ -26,7 +26,6 @@
 
 #include "common/file.h"
 
-#include "director/detection_enums.h"
 #include "director/detection.h"
 
 static const PlainGameDescriptor directorGames[] = {

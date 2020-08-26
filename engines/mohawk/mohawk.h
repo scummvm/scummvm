@@ -28,7 +28,7 @@
 
 #include "engines/engine.h"
 
-#include "mohawk/detection_enums.h"
+#include "mohawk/detection.h"
 
 class OSystem;
 
@@ -47,7 +47,6 @@ class SeekableReadStream;
  */
 namespace Mohawk {
 
-struct MohawkGameDescription;
 class Sound;
 class PauseDialog;
 class Archive;

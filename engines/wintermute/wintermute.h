@@ -26,7 +26,7 @@
 #include "engines/engine.h"
 #include "gui/debugger.h"
 #include "common/fs.h"
-#include "wintermute/detection_enums.h"
+#include "wintermute/detection.h"
 
 namespace Wintermute {
 
@@ -34,7 +34,6 @@ class Console;
 class BaseGame;
 class SystemClassRegistry;
 class DebuggerController;
-struct WMEGameDescription;
 
 const int INT_MAX_VALUE = 0x7fffffff;
 

@@ -25,7 +25,6 @@
 #include "engines/advancedDetector.h"
 
 #include "tony/detection.h"
-#include "tony/detection_enums.h"
 
 static const PlainGameDescriptor tonyGames[] = {
 	{"tony", "Tony Tough and the Night of Roasted Moths"},

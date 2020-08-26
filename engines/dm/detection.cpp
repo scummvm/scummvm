@@ -29,7 +29,6 @@
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
 
-#include "dm/detection_enums.h"
 #include "dm/detection.h"
 
 namespace DM {

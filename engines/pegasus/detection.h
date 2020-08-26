@@ -23,7 +23,13 @@
 #ifndef PEGASUS_DETECTION_H
 #define PEGASUS_DETECTION_H
 
+#include "engines/advancedDetector.h"
+
 namespace Pegasus {
+
+enum {
+	GF_DVD = (1 << 1)
+};
 
 struct PegasusGameDescription {
 	ADGameDescription desc;

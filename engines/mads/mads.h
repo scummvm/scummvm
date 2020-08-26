@@ -40,7 +40,7 @@
 #include "mads/msurface.h"
 #include "mads/resources.h"
 #include "mads/sound.h"
-#include "mads/detection_enums.h"
+#include "mads/detection.h"
 
 /**
  * This is the namespace of the MADS engine.
@@ -67,8 +67,6 @@ enum ScreenFade {
 	SCREEN_FADE_MEDIUM = 1,
 	SCREEN_FADE_FAST = 2
 };
-
-struct MADSGameDescription;
 
 
 class MADSEngine : public Engine {

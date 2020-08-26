@@ -34,7 +34,7 @@
 #include "common/random.h"
 #include "common/language.h"
 
-#include "engines/wintermute/base/base_detection_enums.h"
+#include "engines/wintermute/detection.h"
 
 namespace Wintermute {
 

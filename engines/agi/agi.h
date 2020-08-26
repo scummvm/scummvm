@@ -44,7 +44,7 @@
 #include "agi/picture.h"
 #include "agi/logic.h"
 #include "agi/sound.h"
-#include "agi/detection_enums.h"
+#include "agi/detection.h"
 
 namespace Common {
 class RandomSource;
@@ -104,8 +104,6 @@ typedef signed int Err;
 #define ADD_VIEW 2
 
 #define CMD_BSIZE 12
-
-struct AGIGameDescription;
 
 enum {
 	NO_GAMEDIR = 0,

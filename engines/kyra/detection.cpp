@@ -24,7 +24,6 @@
 #include "engines/advancedDetector.h"
 #include "base/plugins.h"
 
-#include "kyra/detection_enums.h"
 #include "kyra/detection.h"
 #include "kyra/detection_tables.h"
 

@@ -26,7 +26,6 @@
 
 #include "engines/advancedDetector.h"
 
-#include "drascula/detection_enums.h"
 #include "drascula/detection.h"
 
 static const PlainGameDescriptor drasculaGames[] = {

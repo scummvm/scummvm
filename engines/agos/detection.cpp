@@ -30,7 +30,6 @@
 #include "common/installshield_cab.h"
 
 #include "agos/detection.h"
-#include "agos/detection_enums.h"
 #include "agos/intern_detection.h"
 #include "agos/obsolete.h" // Obsolete ID table.
 

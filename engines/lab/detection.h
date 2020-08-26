@@ -20,23 +20,16 @@
  *
  */
 
-#ifndef CINE_DETECTION_ENUMS_H
-#define CINE_DETECTION_ENUMS_H
+#ifndef LAB_DETECTION_H
+#define LAB_DETECTION_H
 
-namespace Cine {
+namespace Lab {
 
-enum CineGameType {
-	GType_FW = 1,
-	GType_OS
+enum GameFeatures {
+	GF_LOWRES = 1 << 0,
+	GF_WINDOWS_TRIAL = 1 << 1
 };
 
-enum CineGameFeatures {
-	GF_CD =   1 << 0,
-	GF_DEMO = 1 << 1,
-	GF_ALT_FONT = 1 << 2,
-	GF_CRYPTED_BOOT_PRC = 1 << 3
-};
+} // End of namespace Lab
 
-} // End of namespace Cine
-
-#endif // CINE_DETECTION_ENUMS_H
+#endif // LAB_DETECTION_H

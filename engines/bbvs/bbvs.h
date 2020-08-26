@@ -36,7 +36,7 @@
 
 #include "engines/engine.h"
 
-#include "bbvs/detection_enums.h"
+#include "bbvs/detection.h"
 
 struct ADGameDescription;
 

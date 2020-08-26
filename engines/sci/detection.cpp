@@ -31,8 +31,7 @@
 #include "gui/widget.h"
 #include "gui/widgets/popup.h"
 
-#include "sci/detection_enums.h"
-#include "sci/detection_defines.h"
+#include "sci/detection.h"
 #include "sci/graphics/helpers_detection_enums.h"
 
 namespace Sci {

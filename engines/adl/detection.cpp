@@ -27,7 +27,6 @@
 
 #include "engines/advancedDetector.h"
 
-#include "adl/detection_enums.h"
 #include "adl/detection.h"
 #include "adl/disk.h"
 #include "adl/disk_image_helpers.h"

@@ -48,7 +48,7 @@
 #include "startrek/object.h"
 #include "startrek/sound.h"
 #include "startrek/space.h"
-#include "startrek/detection_enums.h"
+#include "startrek/detection.h"
 
 
 using Common::SharedPtr;
@@ -212,7 +212,6 @@ struct TrekEvent {
 };
 
 
-struct StarTrekGameDescription;
 class Graphics;
 class IWFile;
 class Sound;

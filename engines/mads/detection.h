@@ -24,7 +24,15 @@
 #ifndef MADS_DETECTION_H
 #define MADS_DETECTION_H
 
+#include "engines/advancedDetector.h"
+
 namespace MADS {
+
+enum {
+	GType_RexNebular = 0,
+	GType_Dragonsphere = 1,
+	GType_Phantom = 2
+};
 
 struct MADSGameDescription {
 	ADGameDescription desc;

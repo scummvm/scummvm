@@ -23,7 +23,7 @@
 #include "common/config-manager.h"
 #include "engines/advancedDetector.h"
 #include "base/plugins.h"
-#include "tucker/detection_enums.h"
+#include "tucker/detection.h"
 
 static const PlainGameDescriptor tuckerGames[] = {
 	{ "tucker", "Bud Tucker in Double Trouble" },

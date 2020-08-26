@@ -20,19 +20,18 @@
  *
  */
 
-#ifndef WINTERMUTE_DETECTION_ENUMS_H
-#define WINTERMUTE_DETECTION_ENUMS_H
+#ifndef TUCKER_DETECTION_H
+#define TUCKER_DETECTION_H
 
-namespace Wintermute {
+namespace Tucker {
 
-enum WintermuteGameFeatures {
-	/** A game with low-spec resources. */
-	GF_LOWSPEC_ASSETS       = 1 << 0,
-	GF_IGNORE_SD_FILES      = 1 << 1,
-	GF_IGNORE_HD_FILES      = 1 << 2,
-	GF_3D                   = 1 << 3
+enum GameFlag {
+	kGameFlagDemo = 1 << 0,
+	kGameFlagEncodedData = 1 << 1,
+	kGameFlagNoSubtitles = 1 << 2,
+	kGameFlagIntroOnly = 1 << 3
 };
 
-} // End of namespace Wintermute
+} // End of namespace Tucker
 
-#endif // WINTERMUTE_DETECTION_ENUMS_H
+#endif // TUCKER_DETECTION_H

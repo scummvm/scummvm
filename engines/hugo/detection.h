@@ -23,7 +23,30 @@
 #ifndef HUGO_DETECTION_H
 #define HUGO_DETECTION_H
 
+#include "engines/advancedDetector.h"
+
 namespace Hugo {
+
+enum HugoGameFeatures {
+	GF_PACKED = (1 << 0) // Database
+};
+
+enum GameType {
+	kGameTypeNone  = 0,
+	kGameTypeHugo1,
+	kGameTypeHugo2,
+	kGameTypeHugo3
+};
+
+enum GameVariant {
+	kGameVariantH1Win = 0,
+	kGameVariantH2Win,
+	kGameVariantH3Win,
+	kGameVariantH1Dos,
+	kGameVariantH2Dos,
+	kGameVariantH3Dos,
+	kGameVariantNone
+};
 
 struct HugoGameDescription {
 	ADGameDescription desc;

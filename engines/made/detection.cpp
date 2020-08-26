@@ -23,7 +23,6 @@
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
 
-#include "made/detection_enums.h"
 #include "made/detection.h"
 
 static const PlainGameDescriptor madeGames[] = {

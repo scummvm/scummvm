@@ -23,7 +23,14 @@
 #ifndef MORTEVIELLE_DETECTION_H
 #define MORTEVIELLE_DETECTION_H
 
+#include "engines/advancedDetector.h"
+
 namespace Mortevielle {
+
+enum {
+	kUseOriginalData = 0,
+	kUseEngineDataFile = 1
+};
 
 struct MortevielleGameDescription {
 	ADGameDescription desc;

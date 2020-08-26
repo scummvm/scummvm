@@ -50,7 +50,7 @@
 #include "access/scripts.h"
 #include "access/sound.h"
 #include "access/video.h"
-#include "access/detection_enums.h"
+#include "access/detection.h"
 
 /**
  * This is the namespace of the Access engine.
@@ -68,8 +68,6 @@ enum AccessDebugChannels {
 	kDebugGraphics	= 1 << 2,
 	kDebugSound     = 1 << 3
 };
-
-struct AccessGameDescription;
 
 extern const char *const _estTable[];
 

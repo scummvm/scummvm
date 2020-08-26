@@ -41,7 +41,7 @@
 #include "lab/console.h"
 #include "lab/image.h"
 #include "lab/labsets.h"
-#include "lab/detection_enums.h"
+#include "lab/detection.h"
 
 struct ADGameDescription;
 

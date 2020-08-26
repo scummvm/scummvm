@@ -29,7 +29,7 @@
  */
 
 #include "engines/advancedDetector.h"
-#include "lab/detection_enums.h"
+#include "lab/detection.h"
 
 static const PlainGameDescriptor lab_setting[] = {
 	{ "lab", "Labyrinth of Time" },

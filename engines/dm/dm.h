@@ -39,10 +39,7 @@
 #include "advancedDetector.h"
 
 #include "dm/console.h"
-#include "dm/detection_enums.h"
 #include "dm/detection.h"
-
-struct ADGameDescription;
 
 namespace DM {
 

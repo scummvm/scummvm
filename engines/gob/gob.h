@@ -31,7 +31,7 @@
 #include "engines/engine.h"
 
 #include "gob/console.h"
-#include "gob/detection/detection_enums.h"
+#include "gob/detection/detection.h"
 
 /**
  * This is the namespace of the Gob engine.
@@ -125,8 +125,6 @@ enum {
 	kDebugHotspots   = 1 << 10,
 	kDebugDemo       = 1 << 11
 };
-
-struct GOBGameDescription;
 
 class GobEngine : public Engine {
 private:

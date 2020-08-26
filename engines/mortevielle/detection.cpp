@@ -24,7 +24,6 @@
 #include "engines/advancedDetector.h"
 
 #include "mortevielle/detection.h"
-#include "mortevielle/detection_enums.h"
 
 static const PlainGameDescriptor MortevielleGame[] = {
 	{"mortevielle", "Mortville Manor"},

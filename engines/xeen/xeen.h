@@ -47,7 +47,7 @@
 #include "xeen/sound.h"
 #include "xeen/spells.h"
 #include "xeen/window.h"
-#include "xeen/detection_enums.h"
+#include "xeen/detection.h"
 
 /**
  * This is the namespace of the Xeen engine.
@@ -95,8 +95,6 @@ enum GameMode {
 	GMODE_PLAY_GAME = 3,
 	GMODE_QUIT = 4
 };
-
-struct XeenGameDescription;
 
 #define XEEN_SAVEGAME_VERSION 2
 

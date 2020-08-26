@@ -23,7 +23,51 @@
 #ifndef GOB_DETECTION_H
 #define GOB_DETECTION_H
 
+#include "engines/advancedDetector.h"
+
 namespace Gob {
+
+// WARNING: Reordering these will invalidate save games!
+//          Add new games to the bottom of the list.
+enum GameType {
+	kGameTypeNone = 0,
+	kGameTypeGob1,
+	kGameTypeGob2,
+	kGameTypeGob3,
+	kGameTypeWoodruff,
+	kGameTypeBargon,
+	kGameTypeWeen,
+	kGameTypeLostInTime,
+	kGameTypeInca2,
+	kGameTypeDynasty,
+	kGameTypeUrban,
+	kGameTypePlaytoons,
+	kGameTypeBambou,
+	kGameTypeFascination,
+	kGameTypeGeisha,
+	kGameTypeAdi2,
+	kGameTypeAdi4,
+	kGameTypeAdibou2,
+	kGameTypeAdibou1,
+	kGameTypeAbracadabra,
+	kGameTypeBabaYaga,
+	kGameTypeLittleRed,
+	kGameTypeOnceUponATime, // Need more inspection to see if Baba Yaga or Abracadabra
+	kGameTypeAJWorld,
+	kGameTypeCrousti
+};
+
+enum Features {
+	kFeaturesNone      =      0,
+	kFeaturesCD        = 1 << 0,
+	kFeaturesEGA       = 1 << 1,
+	kFeaturesAdLib     = 1 << 2,
+	kFeaturesSCNDemo   = 1 << 3,
+	kFeaturesBATDemo   = 1 << 4,
+	kFeatures640x480   = 1 << 5,
+	kFeatures800x600   = 1 << 6,
+	kFeaturesTrueColor = 1 << 7
+};
 
 struct GOBGameDescription {
 	ADGameDescription desc;

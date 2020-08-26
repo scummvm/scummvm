@@ -24,7 +24,6 @@
 
 #include "base/plugins.h"
 
-#include "illusions/detection_enums.h"
 #include "illusions/detection.h"
 
 static const PlainGameDescriptor illusionsGames[] = {
