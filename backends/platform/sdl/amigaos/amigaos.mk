@@ -5,21 +5,21 @@ amigaosdist: $(EXECUTABLE) $(PLUGINS)
 	mkdir -p $(AMIGAOSPATH)/extras
 	cp ${srcdir}/dists/amiga/scummvm_drawer.info $(AMIGAOSPATH).info
 	cp ${srcdir}/dists/amiga/scummvm.info $(AMIGAOSPATH)/$(EXECUTABLE).info
-# Copy mandatory installation files.
+ifdef DIST_FILES_DOCS
+	mkdir -p $(AMIGAOSPATH)/doc
+	cp -r $(srcdir)/doc/ $(AMIGAOSPATH)
+	cp $(DIST_FILES_DOCS) $(AMIGAOSPATH)/doc/
 # Prepare README.md for AmigaGuide conversion.
 	cat ${srcdir}/README.md | sed -f ${srcdir}/dists/amiga/convertRM.sed > README.conv
 # AmigaOS AREXX has a problem when ${srcdir} is '.'.
 # It will break with a "Program not found" error.
 # Copy the script to cwd and, once it has finished, remove it.
 	cp ${srcdir}/dists/amiga/RM2AG.rexx .
-	rx RM2AG.rexx README.conv $(AMIGAOSPATH)
+	rx RM2AG.rexx README.conv $(AMIGAOSPATH)/doc/
 	rm README.conv
 	rm RM2AG.rexx
-ifdef DIST_FILES_DOCS
-	mkdir -p $(AMIGAOSPATH)/doc
-	cp -r $(srcdir)/doc/ $(AMIGAOSPATH)
-	cp $(DIST_FILES_DOCS) $(AMIGAOSPATH)/doc/
 endif
+# Copy mandatory installation files.
 ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) $(AMIGAOSPATH)/extras/
 endif
