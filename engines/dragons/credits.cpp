@@ -79,7 +79,7 @@ void Credits::update() {
 		_updateCounter = 2;
 		_yOffset = (_yOffset + 1) % 208;
 		if (_yOffset % 8 == 0) {
-			if (_curPosition <= _dataLength) {
+			if (_curPosition < _dataLength) {
 				uint32 length = strlen(_curPtr);
 				debug(3, "Credit line: %s", _curPtr);
 				convertToWideChar(line, (byte *)_curPtr, 40);

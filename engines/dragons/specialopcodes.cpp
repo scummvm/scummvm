@@ -1179,7 +1179,10 @@ void SpecialOpcodes::spcEndCreditsAndRestartGame() {
 	}
 //	ReloadGameFlag = 2;
 //	Exec_FMV_RELOADTT();
-//TODO need to return to main menu here.
+
+	_vm->waitForFrames(100);
+
+	Dragons::DragonsEngine::quitGame();
 }
 
 void SpecialOpcodes::spcLoadLadyOfTheLakeActor() {
