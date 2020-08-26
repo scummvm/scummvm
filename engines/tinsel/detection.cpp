@@ -27,7 +27,6 @@
 #include "common/md5.h"
 
 #include "tinsel/detection.h"
-#include "tinsel/detection_enums.h"
 
 static const PlainGameDescriptor tinselGames[] = {
 	{"dw", "Discworld"},

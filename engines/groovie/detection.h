@@ -27,6 +27,11 @@
 
 namespace Groovie {
 
+enum EngineVersion {
+	kGroovieT7G,
+	kGroovieV2
+};
+
 struct GroovieGameDescription {
 	ADGameDescription desc;
 

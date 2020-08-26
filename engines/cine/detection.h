@@ -23,7 +23,21 @@
 #ifndef CINE_DETECTION_H
 #define CINE_DETECTION_H
 
+#include "engines/advancedDetector.h"
+
 namespace Cine {
+
+enum CineGameType {
+	GType_FW = 1,
+	GType_OS
+};
+
+enum CineGameFeatures {
+	GF_CD =   1 << 0,
+	GF_DEMO = 1 << 1,
+	GF_ALT_FONT = 1 << 2,
+	GF_CRYPTED_BOOT_PRC = 1 << 3
+};
 
 struct CINEGameDescription {
 	ADGameDescription desc;

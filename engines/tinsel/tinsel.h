@@ -38,7 +38,7 @@
 #include "tinsel/graphics.h"
 #include "tinsel/sound.h"
 #include "tinsel/dw.h"
-#include "tinsel/detection_enums.h"
+#include "tinsel/detection.h"
 
 /**
  * This is the namespace of the Tinsel engine.
@@ -74,8 +74,6 @@ enum {
 #define DEBUG_BASIC 1
 #define DEBUG_INTERMEDIATE 2
 #define DEBUG_DETAILED 3
-
-struct TinselGameDescription;
 
 enum TinselKeyDirection {
 	MSK_LEFT = 1, MSK_RIGHT = 2, MSK_UP = 4, MSK_DOWN = 8,

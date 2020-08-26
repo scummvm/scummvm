@@ -27,7 +27,7 @@
 
 // This include is here temporarily while the engine is being refactored.
 #include "hugo/game.h"
-#include "hugo/detection_enums.h"
+#include "hugo/detection.h"
 
 #define HUGO_DAT_VER_MAJ 0                          // 1 byte
 #define HUGO_DAT_VER_MIN 42                         // 1 byte
@@ -145,8 +145,6 @@ enum Priority {kSoundPriorityLow, kSoundPriorityMedium, kSoundPriorityHigh};
 enum seqTextEngine {
 	kEsAdvertise = 0
 };
-
-struct HugoGameDescription;
 
 struct Status {                                     // Game status (not saved)
 	bool     _storyModeFl;                          // Game is telling story - no commands

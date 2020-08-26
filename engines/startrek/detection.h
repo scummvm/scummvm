@@ -23,7 +23,19 @@
 #ifndef STARTTREK_DETECTION_H
 #define STARTTREK_DETECTION_H
 
+#include "engines/advancedDetector.h"
+
 namespace StarTrek {
+
+enum StarTrekGameType {
+	GType_ST25 = 1,
+	GType_STJR = 2
+};
+
+enum StarTrekGameFeatures {
+	GF_DEMO  = (1 << 0),
+	GF_CDROM = (1 << 1)
+};
 
 struct StarTrekGameDescription {
 	ADGameDescription desc;

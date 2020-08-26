@@ -27,7 +27,6 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 
-#include "parallaction/detection_enums.h"
 #include "parallaction/detection.h"
 
 static const PlainGameDescriptor parallactionGames[] = {

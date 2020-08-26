@@ -48,7 +48,7 @@
 #include "cine/various.h"
 #include "cine/console.h"
 #include "cine/sound.h"
-#include "cine/detection_enums.h"
+#include "cine/detection.h"
 
 //#define DUMP_SCRIPTS
 
@@ -82,7 +82,6 @@
  */
 namespace Cine {
 
-struct CINEGameDescription;
 struct SeqListElement;
 
 struct VolumeResource {

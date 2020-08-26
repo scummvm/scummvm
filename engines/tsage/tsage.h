@@ -32,7 +32,7 @@
 #include "tsage/events.h"
 #include "tsage/graphics.h"
 #include "tsage/resources.h"
-#include "tsage/detection_enums.h"
+#include "tsage/detection.h"
 
 
 namespace TsAGE {
@@ -43,8 +43,6 @@ enum {
 	ktSageCore = 1 << 2,
 	ktSageDebugGraphics = 1 << 3
 };
-
-struct tSageGameDescription;
 
 class TSageEngine : public Engine {
 private:

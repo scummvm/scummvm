@@ -28,7 +28,6 @@
 #include "common/file.h"
 
 #include "startrek/detection.h"
-#include "startrek/detection_enums.h"
 
 static const PlainGameDescriptor starTrekGames[] = {
 	{"st25", "Star Trek: 25th Anniversary"},

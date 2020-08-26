@@ -36,7 +36,7 @@
 
 #include "director/types.h"
 #include "director/util.h"
-#include "director/detection_enums.h"
+#include "director/detection.h"
 
 namespace Common {
 class MacResManager;
@@ -56,7 +56,6 @@ namespace Director {
 
 class Archive;
 class Cast;
-struct DirectorGameDescription;
 class DirectorSound;
 class Lingo;
 class Movie;

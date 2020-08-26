@@ -23,7 +23,20 @@
 #ifndef COMPOSER_DETECTION_H
 #define COMPOSER_DETECTION_H
 
+#include "engines/advancedDetector.h"
+
 namespace Composer {
+
+enum GameType {
+	GType_ComposerV1,
+	GType_ComposerV2
+};
+
+enum GameFileTypes {
+	GAME_CONFIGFILE     = 1 << 0,    // Game configuration
+	GAME_SCRIPTFILE     = 1 << 1,    // Game script
+	GAME_EXECUTABLE     = 1 << 2     // Game executable
+};
 
 struct ComposerGameDescription {
 	ADGameDescription desc;

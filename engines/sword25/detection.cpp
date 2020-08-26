@@ -24,7 +24,7 @@
 #include "common/translation.h"
 #include "engines/advancedDetector.h"
 
-#include "sword25/detection_enums.h"
+#include "sword25/detection.h"
 #include "sword25/detection_tables.h"
 
 static const PlainGameDescriptor sword25Game[] = {

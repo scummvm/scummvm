@@ -22,7 +22,6 @@
 
 #include "engines/advancedDetector.h"
 
-#include "prince/detection_enums.h"
 #include "prince/detection.h"
 
 static const PlainGameDescriptor princeGames[] = {

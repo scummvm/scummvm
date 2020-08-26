@@ -4,6 +4,9 @@
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
+ * Additional copyright for this file:
+ * Copyright (C) 1994-1998 Revolution Software Ltd.
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,45 +20,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
  */
 
-#ifndef KYRA_DETECTION_ENUMS_H
-#define KYRA_DETECTION_ENUMS_H
+#ifndef SWORD2_DETECTION_H
+#define SWORD2_DETECTION_H
 
-namespace Kyra {
+namespace Sword2 {
 
 enum {
-	GI_KYRA1 = 0,
-	GI_KYRA2 = 1,
-	GI_KYRA3 = 2,
-	GI_LOL = 4,
-	GI_EOB1 = 5,
-	GI_EOB2 = 6
+	GF_DEMO	       = 1 << 0,
+	GF_SPANISHDEMO = 1 << 1
 };
 
-struct GameFlags {
-	Common::Language lang;
+} // End of namespace Sword2
 
-	// language overwrites of fan translations (only needed for multilingual games)
-	Common::Language fanLang;
-	Common::Language replacedLang;
-
-	Common::Platform platform;
-
-	bool isDemo               : 1;
-	bool useAltShapeHeader    : 1;    // alternative shape header (uses 2 bytes more, those are unused though)
-	bool isTalkie             : 1;
-	bool isOldFloppy          : 1;
-	bool useHiRes             : 1;
-	bool use16ColorMode       : 1;
-	bool useHiColorMode       : 1;
-	bool useDigSound          : 1;
-	bool useInstallerPackage  : 1;
-
-	byte gameID;
-};
-
-} // End of namespace Kyra
-
-#endif // KYRA_DETECTION_ENUMS_H
+#endif // SWORD2_DETECTION_H

@@ -23,7 +23,6 @@
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
 #include "access/detection.h"
-#include "access/detection_enums.h"
 
 static const PlainGameDescriptor AccessGames[] = {
 	{"amazon", "Amazon: Guardians of Eden"},

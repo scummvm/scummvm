@@ -26,7 +26,6 @@
 
 #include "common/translation.h"
 
-#include "lure/detection_enums.h"
 #include "lure/detection.h"
 
 static const PlainGameDescriptor lureGames[] = {

@@ -26,7 +26,7 @@
 
 #include "zvision/core/clock.h"
 #include "zvision/file/search_manager.h"
-#include "zvision/detection_enums.h"
+#include "zvision/detection.h"
 
 #include "common/random.h"
 #include "common/events.h"
@@ -57,7 +57,6 @@ class VideoDecoder;
  */
 namespace ZVision {
 
-struct ZVisionGameDescription;
 class Console;
 class ScriptManager;
 class RenderManager;

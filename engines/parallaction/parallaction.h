@@ -37,7 +37,7 @@
 #include "parallaction/inventory.h"
 #include "parallaction/objects.h"
 #include "parallaction/disk.h"
-#include "parallaction/detection_enums.h"
+#include "parallaction/detection.h"
 
 #define PATH_LEN	200
 
@@ -85,7 +85,6 @@ enum {
 	kEvIngameMenu   = 8000
 };
 
-struct PARALLACTIONGameDescription;
 
 
 

@@ -20,10 +20,21 @@
  *
  */
 
+#ifndef DRASCULA_DETECTION_H
+#define DRASCULA_DETECTION_H
+
+#include "engines/advancedDetector.h"
+
 namespace Drascula {
+
+enum DrasculaGameFeatures {
+	GF_PACKED = (1 << 0)
+};
 
 struct DrasculaGameDescription {
 	ADGameDescription desc;
 };
 
 } // End of namespace Drascula
+
+#endif // DRASCULA_DETECTION_H

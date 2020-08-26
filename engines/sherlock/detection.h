@@ -23,7 +23,14 @@
 #ifndef SHERLOCK_DETECTION_H
 #define SHERLOCK_DETECTION_H
 
+#include "engines/advancedDetector.h"
+
 namespace Sherlock {
+
+enum GameType {
+	GType_SerratedScalpel = 0,
+	GType_RoseTattoo = 1
+};
 
 struct SherlockGameDescription {
 	ADGameDescription desc;

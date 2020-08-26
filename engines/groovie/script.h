@@ -24,7 +24,6 @@
 #define GROOVIE_SCRIPT_H
 
 #include "groovie/groovie.h"
-#include "groovie/detection_enums.h"
 
 #include "common/random.h"
 #include "common/rect.h"

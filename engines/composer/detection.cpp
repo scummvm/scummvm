@@ -23,7 +23,6 @@
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
 
-#include "composer/detection_enums.h"
 #include "composer/detection.h"
 
 static const PlainGameDescriptor composerGames[] = {

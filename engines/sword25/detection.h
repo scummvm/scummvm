@@ -20,17 +20,15 @@
  *
  */
 
-#ifndef DIRECTOR_DETECTION_ENUMS_H
-#define DIRECTOR_DETECTION_ENUMS_H
+#ifndef SWORD25_DETECTION_H
+#define SWORD25_DETECTION_H
 
-namespace Director {
+namespace Sword25 {
 
-enum DirectorGameGID {
-	GID_GENERIC,
-	GID_TEST,
-	GID_TESTALL
+enum GameFlags {
+	GF_EXTRACTED = 1 << 0
 };
 
-} // End of namespace Director
+} // End of namespace Sword25
 
-#endif // DIRECTOR_DETECTION_ENUMS_H
+#endif // SWORD25_DETECTION_H

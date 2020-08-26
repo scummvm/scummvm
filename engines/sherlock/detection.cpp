@@ -23,7 +23,6 @@
 #include "common/translation.h"
 #include "engines/advancedDetector.h"
 
-#include "sherlock/detection_enums.h"
 #include "sherlock/detection.h"
 
 static const PlainGameDescriptor sherlockGames[] = {

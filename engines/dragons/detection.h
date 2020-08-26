@@ -23,7 +23,14 @@
 #ifndef DRAGONS_DETECTION_H
 #define DRAGONS_DETECTION_H
 
+#include "engines/advancedDetector.h"
+
 namespace Dragons {
+
+enum {
+	kGameIdDragons = 1,
+	kGameIdDragonsBadExtraction = 2
+};
 
 struct DragonsGameDescription {
 	ADGameDescription desc;

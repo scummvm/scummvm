@@ -23,7 +23,16 @@
 #ifndef XEEN_DETECTION_H
 #define XEEN_DETECTION_H
 
+#include "engines/advancedDetector.h"
+
 namespace Xeen {
+
+enum {
+	GType_Clouds = 1,
+	GType_DarkSide = 2,
+	GType_WorldOfXeen = 3,
+	GType_Swords = 4
+};
 
 struct XeenGameDescription {
 	ADGameDescription desc;

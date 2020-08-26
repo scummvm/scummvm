@@ -24,7 +24,7 @@
 #include "engines/advancedDetector.h"
 
 #include "gob/dataio.h"
-#include "gob/detection/detection_enums.h"
+#include "gob/detection/detection.h"
 #include "gob/detection/tables.h"
 
 class GobMetaEngine : public AdvancedMetaEngine {

@@ -25,7 +25,6 @@
 #include "base/plugins.h"
 
 #include "tsage/detection.h"
-#include "tsage/detection_enums.h"
 
 static const PlainGameDescriptor tSageGameTitles[] = {
 	{ "ringworld", "Ringworld: Revenge of the Patriarch" },

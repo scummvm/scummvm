@@ -36,7 +36,7 @@
 
 #include "kyra/script/script.h"
 #include "kyra/engine/item.h"
-#include "kyra/detection_enums.h"
+#include "kyra/detection.h"
 
 namespace Common {
 class OutSaveFile;

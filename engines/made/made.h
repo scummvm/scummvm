@@ -24,7 +24,7 @@
 #define MADE_MADE_H
 
 #include "made/sound.h"
-#include "made/detection_enums.h"
+#include "made/detection.h"
 
 #include "engines/engine.h"
 
@@ -44,8 +44,6 @@
 namespace Made {
 
 const uint32 kTimerResolution = 40;
-
-struct MadeGameDescription;
 
 class ResourceReader;
 class PmvPlayer;

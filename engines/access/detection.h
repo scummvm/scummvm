@@ -23,7 +23,15 @@
 #ifndef ACCESS_DETECTION_H
 #define ACCESS_DETECTION_H
 
+#include "engines/advancedDetector.h"
+
 namespace Access {
+
+enum {
+	GType_Amazon = 1,
+	GType_MartianMemorandum = 2,
+	GType_Noctropolis = 3
+};
 
 struct AccessGameDescription {
 	ADGameDescription desc;

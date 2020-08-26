@@ -26,7 +26,6 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 
-#include "pegasus/detection_enums.h"
 #include "pegasus/detection.h"
 
 static const PlainGameDescriptor pegasusGames[] = {

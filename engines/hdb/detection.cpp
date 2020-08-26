@@ -24,7 +24,7 @@
 #include "common/translation.h"
 #include "engines/advancedDetector.h"
 
-#include "hdb/detection_enums.h"
+#include "hdb/detection.h"
 
 static const PlainGameDescriptor hdbGames[] = {
 	{"hdb", "Hyperspace Delivery Boy!"},

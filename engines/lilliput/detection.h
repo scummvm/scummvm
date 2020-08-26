@@ -23,7 +23,15 @@
 #ifndef LILLIPUT_DETECTION_H
 #define LILLIPUT_DETECTION_H
 
+#include "engines/advancedDetector.h"
+
 namespace Lilliput {
+
+enum GameType {
+	kGameTypeNone  = 0,
+	kGameTypeRobin,
+	kGameTypeRome
+};
 
 struct LilliputGameDescription {
 	ADGameDescription desc;

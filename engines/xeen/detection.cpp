@@ -25,7 +25,6 @@
 #include "common/translation.h"
 
 #include "xeen/detection.h"
-#include "xeen/detection_enums.h"
 
 static const PlainGameDescriptor XeenGames[] = {
 	{ "cloudsofxeen", "Might and Magic IV: Clouds of Xeen" },

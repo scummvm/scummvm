@@ -23,7 +23,14 @@
 #ifndef ILLUSIONS_DETECTION_H
 #define ILLUSIONS_DETECTION_H
 
+#include "engines/advancedDetector.h"
+
 namespace Illusions {
+
+enum {
+	kGameIdBBDOU   = 1,
+	kGameIdDuckman = 2
+};
 
 struct IllusionsGameDescription {
 	ADGameDescription desc;

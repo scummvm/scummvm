@@ -23,7 +23,20 @@
 #ifndef AGOS_DETECTION_H
 #define AGOS_DETECTION_H
 
+#include "engines/advancedDetector.h"
+
 namespace AGOS {
+
+enum SIMONGameType {
+	GType_PN = 0,
+	GType_ELVIRA1 = 1,
+	GType_ELVIRA2 = 2,
+	GType_WW = 3,
+	GType_SIMON1 = 4,
+	GType_SIMON2 = 5,
+	GType_FF = 6,
+	GType_PP = 7
+};
 
 struct AGOSGameDescription {
 	ADGameDescription desc;

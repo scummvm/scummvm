@@ -29,8 +29,7 @@
 #include "common/random.h"
 #include "sci/engine/vm_types.h"	// for Selector
 #include "sci/debug.h"	// for DebugState
-#include "sci/detection_enums.h" // for shared enums between detection/engine
-#include "sci/detection_defines.h" // for shared defines between detection/engine
+#include "sci/detection.h" // Shared code between detection and engine
 
 struct ADGameDescription;
 

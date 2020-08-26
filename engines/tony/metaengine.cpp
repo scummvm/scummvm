@@ -30,7 +30,6 @@
 #include "tony/tony.h"
 #include "tony/game.h"
 #include "tony/detection.h"
-#include "tony/detection_enums.h"
 
 namespace Tony {
 

@@ -23,7 +23,15 @@
 #ifndef LURE_DETECTION_H
 #define LURE_DETECTION_H
 
+#include "engines/advancedDetector.h"
+
 namespace Lure {
+
+enum {
+	GF_FLOPPY	= 1 <<  0,
+	GF_EGA		= 1 <<  1,
+	GF_LNGUNK	= 1 << 15
+};
 
 struct LureGameDescription {
 	ADGameDescription desc;

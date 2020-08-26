@@ -38,7 +38,7 @@
 #include "engines/engine.h"
 
 #include "tucker/console.h"
-#include "tucker/detection_enums.h"
+#include "tucker/detection.h"
 
 namespace Audio {
 class RewindableAudioStream;

@@ -27,7 +27,6 @@
 #include "common/system.h"
 #include "common/translation.h"
 
-#include "mads/detection_enums.h"
 #include "mads/detection.h"
 
 static const PlainGameDescriptor MADSGames[] = {

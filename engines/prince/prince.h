@@ -48,14 +48,13 @@
 #include "prince/mob.h"
 #include "prince/object.h"
 #include "prince/pscr.h"
-#include "prince/detection_enums.h"
+#include "prince/detection.h"
 
 namespace Prince {
 
 struct SavegameHeader;
 
 class PrinceEngine;
-struct PrinceGameDescription;
 class GraphicsMan;
 class Script;
 class Interpreter;

@@ -23,7 +23,15 @@
 #ifndef DIRECTOR_DETECTION_H
 #define DIRECTOR_DETECTION_H
 
+#include "engines/advancedDetector.h"
+
 namespace Director {
+
+enum DirectorGameGID {
+	GID_GENERIC,
+	GID_TEST,
+	GID_TESTALL
+};
 
 struct DirectorGameDescription {
 	ADGameDescription desc;

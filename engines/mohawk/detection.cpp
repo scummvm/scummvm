@@ -28,7 +28,6 @@
 #include "common/translation.h"
 
 #include "mohawk/detection.h"
-#include "mohawk/detection_enums.h"
 
 #include "mohawk/riven_metaengine.h"
 #include "mohawk/myst_metaengine.h"

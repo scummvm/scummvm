@@ -27,7 +27,7 @@
 #include "engines/engine.h"
 
 #include "sword25/console.h"
-#include "sword25/detection_enums.h"
+#include "sword25/detection.h"
 
 namespace Common {
 class Error;

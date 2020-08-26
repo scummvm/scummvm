@@ -23,7 +23,23 @@
 #ifndef PARALLACTION_DETECTION_H
 #define PARALLACTION_DETECTION_H
 
+#include "engines/advancedDetector.h"
+
 namespace Parallaction {
+
+enum {
+	GF_DEMO = 1 << 0,
+	GF_LANG_EN = 1 << 1,
+	GF_LANG_FR = 1 << 2,
+	GF_LANG_DE = 1 << 3,
+	GF_LANG_IT = 1 << 4,
+	GF_LANG_MULT = 1 << 5
+};
+
+enum ParallactionGameType {
+	GType_Nippon = 1,
+	GType_BRA
+};
 
 struct PARALLACTIONGameDescription {
 	ADGameDescription desc;

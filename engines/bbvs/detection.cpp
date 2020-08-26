@@ -23,7 +23,7 @@
 #include "engines/advancedDetector.h"
 #include "base/plugins.h"
 
-#include "bbvs/detection_enums.h"
+#include "bbvs/detection.h"
 
 static const PlainGameDescriptor bbvsGames[] = {
 	{ "bbvs", "Beavis and Butt-head in Virtual Stupidity" },

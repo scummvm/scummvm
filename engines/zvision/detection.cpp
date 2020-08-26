@@ -29,7 +29,6 @@
 #include "common/translation.h"
 #include "common/str-array.h"
 
-#include "zvision/detection_enums.h"
 #include "zvision/detection.h"
 #include "zvision/detection_tables.h"
 

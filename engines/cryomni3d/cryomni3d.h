@@ -38,7 +38,7 @@
 #include "cryomni3d/font_manager.h"
 #include "cryomni3d/objects.h"
 #include "cryomni3d/sprites.h"
-#include "cryomni3d/detection_enums.h"
+#include "cryomni3d/detection.h"
 
 class OSystem;
 
@@ -63,8 +63,6 @@ class ImageDecoder;
 namespace CryOmni3D {
 
 class DATSeekableStream;
-
-struct CryOmni3DGameDescription;
 
 // Engine Debug Flags
 enum {

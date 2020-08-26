@@ -31,7 +31,7 @@
 #include "common/textconsole.h"
 
 #include "saga/gfx.h"
-#include "saga/detection_enums.h"
+#include "saga/detection.h"
 
 struct ADGameFileDescription;
 
@@ -235,8 +235,6 @@ enum TextStringIds {
 };
 
 struct GameDisplayInfo;
-
-struct SAGAGameDescription;
 
 enum GameObjectTypes {
 	kGameObjectNone = 0,

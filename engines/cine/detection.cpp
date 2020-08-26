@@ -27,7 +27,6 @@
 #include "common/translation.h"
 
 #include "cine/detection.h"
-#include "cine/detection_enums.h"
 
 static const PlainGameDescriptor cineGames[] = {
 	{"fw", "Future Wars"},

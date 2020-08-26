@@ -26,7 +26,7 @@
 
 #include "engines/metaengine.h"
 
-#include "sword2/detection_enums.h"
+#include "sword2/detection.h"
 #include "sword2/detection_internal.h"
 
 static const ExtraGuiOption sword2ExtraGuiOption = {
