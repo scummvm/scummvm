@@ -30,7 +30,8 @@
 namespace Dragons {
 
 Screen::Screen() {
-	_pixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15);
+	//TODO add support for more video modes like RGB565 and RGBA555
+	_pixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 	initGraphics(320, 200, &_pixelFormat);
 	_backSurface = new Graphics::Surface();
 	_backSurface->create(320, 200, _pixelFormat);
