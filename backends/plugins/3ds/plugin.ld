@@ -12,7 +12,10 @@ SECTIONS
 {
 	/* =========== CODE section =========== */
 
-	. = 0;
+	/* Start the output high in memory so PC-relative jumps from the plugin
+	    to the main binary cannot reach, to force the linker to generate
+	    veneers converting the relative jumps to absolute jumps */
+	. = 0x8000000;
 
 	.text ALIGN(0x1000) :
 	{
