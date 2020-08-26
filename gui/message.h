@@ -41,9 +41,12 @@ enum {
  */
 class MessageDialog : public Dialog {
 public:
-	MessageDialog(const Common::String &message, const char *defaultButton = "OK", const char *altButton = nullptr, Graphics::TextAlign alignment = Graphics::kTextAlignCenter);
+	MessageDialog(const Common::String &message, const char *defaultButton = "OK", const char *altButton = nullptr, Graphics::TextAlign alignment = Graphics::kTextAlignCenter, const char *url = nullptr);
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+
+private:
+	const char *_url;
 };
 
 /**
@@ -58,6 +61,16 @@ public:
 protected:
 	uint32 _timer;
 };
+
+/**
+ * Message dialog with button to open a specified URL
+ */
+class MessageDialogWithURL : public MessageDialog {
+public:
+	MessageDialogWithURL(const Common::String &message, const char *url, const char *defaultButton = "OK", Graphics::TextAlign alignment = Graphics::kTextAlignCenter);
+};
+
+
 
 } // End of namespace GUI
 

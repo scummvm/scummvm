@@ -22,6 +22,7 @@
 
 #include "common/str.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "gui/message.h"
 #include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
@@ -38,8 +39,10 @@ enum {
 
 // TODO: The default button should be visibly distinct from the alternate button
 
-MessageDialog::MessageDialog(const Common::String &message, const char *defaultButton, const char *altButton, Graphics::TextAlign alignment)
+MessageDialog::MessageDialog(const Common::String &message, const char *defaultButton, const char *altButton, Graphics::TextAlign alignment, const char *url)
 	: Dialog(30, 20, 260, 124) {
+
+	_url = url;
 
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
@@ -103,7 +106,14 @@ void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		setResult(kMessageOK);
 		close();
 	} else if (cmd == kCancelCmd) {
-		setResult(kMessageCancel);
+		if (_url) {
+			if (g_system->hasFeature(OSystem::kFeatureOpenUrl))
+				g_system->openUrl(_url);
+
+			setResult(kMessageOK);
+		} else {
+			setResult(kMessageCancel);
+		}
 		close();
 	} else {
 		Dialog::handleCommand(sender, cmd, data);
@@ -120,5 +130,10 @@ void TimedMessageDialog::handleTickle() {
 	if (g_system->getMillis() > _timer)
 		close();
 }
+
+MessageDialogWithURL::MessageDialogWithURL(const Common::String &message, const char *url, const char *defaultButton, Graphics::TextAlign alignment)
+		: MessageDialog(message, defaultButton, _s("Open URL"), alignment, url) {
+}
+
 
 } // End of namespace GUI
