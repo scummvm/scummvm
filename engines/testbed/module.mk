@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	graphics.o \
 	midi.o \
 	misc.o \
+	networking.o \
 	savegame.o \
 	sound.o \
 	encoding.o \
