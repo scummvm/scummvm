@@ -31,4 +31,8 @@ enum {
 
 } // End of namespace Bbvs
 
+enum BBVSGameFeatures {
+	GF_LOOGIE_DEMO = (1 << 0)
+};
+
 #endif // BBVS_DETECTION_H

@@ -29,6 +29,14 @@
 #include "base/plugins.h"
 #include "graphics/thumbnail.h"
 
+namespace Bbvs {
+
+bool BbvsEngine::isLoogieDemo() const {
+	return _gameDescription->flags & GF_LOOGIE_DEMO;
+}
+
+} // End of namespace Bbvs
+
 class BbvsMetaEngineConnect : public AdvancedMetaEngineConnect {
 public:
 	const char *getName() const override {
