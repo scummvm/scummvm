@@ -30,15 +30,7 @@ static const PlainGameDescriptor bbvsGames[] = {
 	{ 0, 0 }
 };
 
-enum BBVSGameFeatures {
-	GF_LOOGIE_DEMO = (1 << 0)
-};
-
 namespace Bbvs {
-
-bool BbvsEngine::isLoogieDemo() const {
-	return _gameDescription->flags & GF_LOOGIE_DEMO;
-}
 
 static const ADGameDescription gameDescriptions[] = {
 	{
