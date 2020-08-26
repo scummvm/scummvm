@@ -69,4 +69,8 @@ void main()
 
 	Color.rgba *= vec4(light.rgb, 1.0);
 	Color.rgba += vec4(ambient.rgb * ambientLight.rgb, 1.0);
+
+	Color.r = min(Color.r, 1.0);
+	Color.g = min(Color.g, 1.0);
+	Color.b = min(Color.b, 1.0);
 }
