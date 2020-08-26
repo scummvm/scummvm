@@ -59,6 +59,7 @@ public:
 	void playSpeech(uint32 textIndex);
 	bool isSpeechPlaying();
 	void resumeMusic();
+	void syncSoundSettings();
 
 public:
 	uint16 _dat_8006bb60_sound_related;

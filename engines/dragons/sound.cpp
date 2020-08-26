@@ -538,4 +538,12 @@ void SoundManager::playMusic(int16 song) {
 	delete seq;
 }
 
+void SoundManager::syncSoundSettings() {
+	_musicVolume = CLIP<int>(ConfMan.getInt("music_volume"), 0, 255);
+	_sfxVolume = CLIP<int>(ConfMan.getInt("sfx_volume"), 0, 255);
+	_speechVolume = CLIP<int>(ConfMan.getInt("speech_volume"), 0, 255);
+
+	_midiPlayer->setVolume(_musicVolume);
+}
+
 } // End of namespace Dragons

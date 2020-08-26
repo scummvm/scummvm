@@ -1797,6 +1797,11 @@ void DragonsEngine::clearAllText() {
 	_fontManager->clearText();
 }
 
+void DragonsEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+	_sound->syncSoundSettings();
+}
+
 void (*DragonsEngine::getSceneUpdateFunction())() {
 	return _sceneUpdateFunction;
 }

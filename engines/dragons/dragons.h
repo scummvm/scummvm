@@ -245,6 +245,7 @@ public:
 	bool canLoadGameStateCurrently() override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
 	bool canSaveGameStateCurrently() override;
+	void syncSoundSettings() override;
 
 	void updateActorSequences();
 	void setFlags(uint32 flags);
