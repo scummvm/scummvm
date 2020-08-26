@@ -25,13 +25,8 @@
 
 namespace Neverhood {
 
-struct NeverhoodGameDescription {
-	ADGameDescription desc;
-
-	int gameID;
-	int gameType;
-	uint32 features;
-	uint16 version;
+enum NeverhoodGameFeatures {
+	GF_BIG_DEMO = (1 << 0)
 };
 
 } // End of namespace Neverhood

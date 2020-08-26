@@ -29,10 +29,6 @@
 #include "neverhood/neverhood.h"
 #include "neverhood/detection.h"
 
-enum NeverhoodGameFeatures {
-	GF_BIG_DEMO = (1 << 0)
-};
-
 namespace Neverhood {
 
 const char *NeverhoodEngine::getGameId() const {
