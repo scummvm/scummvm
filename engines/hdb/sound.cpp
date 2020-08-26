@@ -1889,7 +1889,7 @@ void Song::update() {
 
 Sound::~Sound() {
 	for (int i = 0; i < kMaxSounds; i++) {
-		freeSound(i);
+		free(_soundCache[i].data);
 	}
 }
 
@@ -1930,8 +1930,6 @@ void Sound::freeSound(int index) {
 	if (_soundCache[index].loaded == SNDMEM_LOADED) {
 		_soundCache[index].loaded = SNDMEM_NOTCACHED;
 		_soundCache[index].ext = SNDTYPE_NONE;
-		free(_soundCache[index].data);
-		_soundCache[index].data = nullptr;
 	}
 }
 
