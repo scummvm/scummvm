@@ -1887,6 +1887,12 @@ void Song::update() {
 	}
 }
 
+Sound::~Sound() {
+	for (int i = 0; i < kMaxSounds; i++) {
+		freeSound(i);
+	}
+}
+
 void Sound::updateMusic() {
 	if (_song1.isPlaying()) {
 		_song1.update();
@@ -1924,6 +1930,8 @@ void Sound::freeSound(int index) {
 	if (_soundCache[index].loaded == SNDMEM_LOADED) {
 		_soundCache[index].loaded = SNDMEM_NOTCACHED;
 		_soundCache[index].ext = SNDTYPE_NONE;
+		free(_soundCache[index].data);
+		_soundCache[index].data = nullptr;
 	}
 }
 
