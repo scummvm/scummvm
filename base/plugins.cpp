@@ -361,7 +361,7 @@ void PluginManagerUncached::loadFirstPlugin() {
 bool PluginManagerUncached::loadNextPlugin() {
 	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);
 
-	if (!_currentPlugin)
+	if (!_currentPlugin || _currentPlugin == _allEnginePlugins.end())
 		return false;
 
 	for (++_currentPlugin; _currentPlugin != _allEnginePlugins.end(); ++_currentPlugin) {
