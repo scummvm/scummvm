@@ -37,6 +37,7 @@
 #include "testbed/graphics.h"
 #include "testbed/midi.h"
 #include "testbed/misc.h"
+#include "testbed/networking.h"
 #include "testbed/savegame.h"
 #include "testbed/sound.h"
 #include "testbed/encoding.h"
@@ -149,6 +150,9 @@ void TestbedEngine::pushTestsuites(Common::Array<Testsuite *> &testsuiteList) {
 	testsuiteList.push_back(ts);
 	// Midi
 	ts = new MidiTestSuite();
+	testsuiteList.push_back(ts);
+	// Networking
+	ts = new NetworkingTestSuite();
 	testsuiteList.push_back(ts);
 #ifdef USE_TTS
 	 // TextToSpeech
