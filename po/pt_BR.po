@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-27 12:24+0200\n"
-"PO-Revision-Date: 2020-08-27 00:25+0000\n"
+"PO-Revision-Date: 2020-08-27 16:03+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -392,18 +392,18 @@ msgstr "Extras:"
 
 #: gui/editgamedialog.cpp:326 gui/options.cpp:1940
 msgid "Save Path:"
-msgstr "Salvar Progresso:"
+msgstr "Progresso:"
 
 #: gui/editgamedialog.cpp:326 gui/editgamedialog.cpp:328
 #: gui/editgamedialog.cpp:329 gui/options.cpp:1940 gui/options.cpp:1942
 #: gui/options.cpp:1943
 msgid "Specifies where your saved games are put"
-msgstr "Especifique onde guardar seus jogos salvos"
+msgstr "Especifica onde guardar seus jogos salvos"
 
 #: gui/editgamedialog.cpp:328 gui/options.cpp:1942
 msgctxt "lowres"
 msgid "Save Path:"
-msgstr "Salvar Progresso:"
+msgstr "Progresso:"
 
 #: gui/editgamedialog.cpp:340 engines/dialogs.cpp:335
 msgid "Achievements"
@@ -501,7 +501,7 @@ msgstr "Nível:"
 
 #: gui/fluidsynth-dialog.cpp:101
 msgid "Chorus"
-msgstr "Chorus"
+msgstr "Coro"
 
 #: gui/fluidsynth-dialog.cpp:105
 msgid "N:"
@@ -554,7 +554,7 @@ msgstr "Sétima ordem"
 #. I18N: Button to reset keymap mappings to defaults
 #: gui/fluidsynth-dialog.cpp:151 backends/keymapper/remap-widget.cpp:310
 msgid "Reset"
-msgstr "Reset"
+msgstr "Restaurar"
 
 #: gui/fluidsynth-dialog.cpp:151
 msgid "Reset all FluidSynth settings to their default values."
@@ -667,7 +667,7 @@ msgstr "~O~pções..."
 
 #: gui/launcher.cpp:142
 msgid "Change global ScummVM options"
-msgstr "Alterar opções globais do ScummVM"
+msgstr "Altera opções globais do ScummVM"
 
 #: gui/launcher.cpp:144
 msgid "~S~tart"
@@ -675,7 +675,7 @@ msgstr "~I~niciar"
 
 #: gui/launcher.cpp:144
 msgid "Start selected game"
-msgstr "Iniciar jogo selecionado"
+msgstr "Inicia jogo selecionado"
 
 #: gui/launcher.cpp:147
 msgid "~L~oad..."
@@ -683,7 +683,7 @@ msgstr "~C~arregar..."
 
 #: gui/launcher.cpp:147
 msgid "Load saved game for selected game"
-msgstr "Carregar jogo salvo do jogo selecionado"
+msgstr "Carrega jogo salvo do jogo selecionado"
 
 #: gui/launcher.cpp:149
 msgid "Record..."
@@ -695,11 +695,11 @@ msgstr "~A~dicionar Jogo..."
 
 #: gui/launcher.cpp:156 gui/launcher.cpp:166
 msgid "Add games to the list"
-msgstr "Adicionar jogos à lista"
+msgstr "Adiciona jogos à lista"
 
 #: gui/launcher.cpp:157
 msgid "Mass Add..."
-msgstr "Adição em Massa..."
+msgstr "Multi-Adição..."
 
 #: gui/launcher.cpp:161
 msgid "~E~dit Game..."
@@ -725,7 +725,7 @@ msgstr "~A~dicionar Jogo..."
 #: gui/launcher.cpp:167
 msgctxt "lowres"
 msgid "Mass Add..."
-msgstr "Adição em Massa..."
+msgstr "Multi-Adição..."
 
 #: gui/launcher.cpp:171
 msgctxt "lowres"
@@ -827,7 +827,7 @@ msgstr ""
 
 #: gui/message.cpp:135 gui/options.cpp:2121
 msgid "Open URL"
-msgstr "Abrir URL"
+msgstr "Abre URL"
 
 #: gui/onscreendialog.cpp:101 gui/onscreendialog.cpp:103
 msgid "Stop"
@@ -975,7 +975,7 @@ msgstr "Modos especiais de pontilhado suportados por alguns jogos"
 
 #: gui/options.cpp:1247
 msgid "Stretch mode:"
-msgstr "Redimensionamento:"
+msgstr "Redimensionar:"
 
 #: gui/options.cpp:1258 backends/graphics/sdl/sdl-graphics.cpp:356
 msgid "Fullscreen mode"
@@ -1066,7 +1066,7 @@ msgstr "Modo de AdLib/MIDI mixado"
 
 #: gui/options.cpp:1357
 msgid "Use both MIDI and AdLib sound generation"
-msgstr "Usar MIDI e AdLib juntos na geração de som"
+msgstr "Utiliza tanto MIDI quanto AdLib para gerar som"
 
 #: gui/options.cpp:1360
 msgid "MIDI gain:"
@@ -1243,12 +1243,12 @@ msgstr "Configurações do FluidSynth"
 
 #: gui/options.cpp:1948
 msgid "Theme Path:"
-msgstr "Caminho de Temas:"
+msgstr "Temas:"
 
 #: gui/options.cpp:1950
 msgctxt "lowres"
 msgid "Theme Path:"
-msgstr "Caminho de Temas:"
+msgstr "Temas:"
 
 #: gui/options.cpp:1956 gui/options.cpp:1958 gui/options.cpp:1959
 msgid "Specifies path to additional data used by all games or ScummVM"
@@ -1271,16 +1271,16 @@ msgstr "Tema:"
 
 #: gui/options.cpp:1980
 msgid "GUI renderer:"
-msgstr "Render. de Interface:"
+msgstr "Render. Interface:"
 
 #: gui/options.cpp:1992
 msgid "Autosave:"
-msgstr "Salvar Autom.:"
+msgstr "Salvar Automat.:"
 
 #: gui/options.cpp:1994
 msgctxt "lowres"
 msgid "Autosave:"
-msgstr "Salvar Autom.:"
+msgstr "Salvar Automat.:"
 
 #: gui/options.cpp:2002
 msgid "Keys"
@@ -1482,11 +1482,11 @@ msgstr "Colar"
 
 #: gui/options.cpp:2127
 msgid "Paste code from clipboard"
-msgstr "Colar código da área de transferência"
+msgstr "Cola código a partir da área de transferência"
 
 #: gui/options.cpp:2128
 msgid "3. Connect"
-msgstr "3. Conecte"
+msgstr "3. Conectar"
 
 #: gui/options.cpp:2128
 msgid "Connect your cloud storage account"
@@ -4191,24 +4191,20 @@ msgid "Debug info and level selection becomes available"
 msgstr "Informação de depuração e seleção de nível ficam disponíveis"
 
 #: engines/hdb/detection.cpp:309
-#, fuzzy
 msgid "Move up"
-msgstr "Mover para Trás"
+msgstr "Mover para cima"
 
 #: engines/hdb/detection.cpp:315
-#, fuzzy
 msgid "Move down"
-msgstr "Movimento de dança para baixo"
+msgstr "Mover para baixo"
 
 #: engines/hdb/detection.cpp:321
-#, fuzzy
 msgid "Move left"
-msgstr "Mover para Esquerda"
+msgstr "Mover para esquerda"
 
 #: engines/hdb/detection.cpp:327
-#, fuzzy
 msgid "Move right"
-msgstr "Mover para Direita"
+msgstr "Mover para direita"
 
 #: engines/hdb/detection.cpp:333 engines/scumm/help.cpp:129
 #: engines/scumm/help.cpp:153 engines/scumm/help.cpp:171
@@ -4219,9 +4215,8 @@ msgid "Use"
 msgstr "Usar"
 
 #: engines/hdb/detection.cpp:340
-#, fuzzy
 msgid "Clear waypoints"
-msgstr "Limpar mapeamento"
+msgstr "Limpar checkpoints"
 
 #: engines/hdb/detection.cpp:347 engines/scumm/help.cpp:226
 #: engines/scumm/help.cpp:235 engines/scumm/help.cpp:242
@@ -4234,7 +4229,6 @@ msgid "Menu"
 msgstr "Menu"
 
 #: engines/hdb/detection.cpp:366
-#, fuzzy
 msgid "Debug"
 msgstr "Depurador"
 
