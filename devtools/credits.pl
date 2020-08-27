@@ -1281,7 +1281,7 @@ begin_credits("Credits");
 		begin_section("Packages", "packages");
 			begin_section("AmigaOS 4");
 				add_person("Hans-J&ouml;rg Frieden", "", "(retired)");
-				add_person("Hubert Maier", "Raziel_AOne", "");
+				add_person("Hubert Maier", "raziel-", "");
 				add_person("Juha Niemim&auml;ki", "", "(retired)");
 			end_section();
 
