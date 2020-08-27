@@ -8,7 +8,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-27 12:24+0200\n"
 "PO-Revision-Date: 2020-08-27 11:56+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
 "Language: hu_HU\n"
@@ -6563,15 +6563,15 @@ msgstr "7. Hangjegy: B"
 
 #: engines/wintermute/keymapper_tables.h:801
 msgid "Ability: Telekinesis"
-msgstr "Képesség: Telekinézis"
+msgstr "Képesség: Telekinesis"
 
 #: engines/wintermute/keymapper_tables.h:806
 msgid "Ability: Push"
-msgstr "Képesség: Nyom"
+msgstr "Képesség: Tol"
 
 #: engines/wintermute/keymapper_tables.h:811
 msgid "Ability: Lightning"
-msgstr "Képesség: Villámlás"
+msgstr "Képesség: Villám"
 
 #: engines/wintermute/keymapper_tables.h:816
 msgid "Ability: Light"
@@ -6587,15 +6587,15 @@ msgstr "Képesség: Hang"
 
 #: engines/wintermute/keymapper_tables.h:831
 msgid "Ability: Esence"
-msgstr "Képesség: Lényeg"
+msgstr "Képesség: Esence"
 
 #: engines/wintermute/keymapper_tables.h:836
 msgid "Ability: Exorcist"
-msgstr "Képesség: Ördögûzõ"
+msgstr "Képesség: Exorcist"
 
 #: engines/wintermute/keymapper_tables.h:841
 msgid "Skip minigame"
-msgstr "Minijáték átugrása"
+msgstr "Minijáték átugrás"
 
 #: engines/wintermute/keymapper_tables.h:949
 msgid "Show hints / Dance move"
@@ -6603,19 +6603,19 @@ msgstr "Tippek megjelenítése / Tánc lépés"
 
 #: engines/wintermute/keymapper_tables.h:956
 msgid "Dance move up"
-msgstr "Tánc felfelé"
+msgstr "Tánc mozgás fel"
 
 #: engines/wintermute/keymapper_tables.h:962
 msgid "Dance move down"
-msgstr "Tánc lefelé"
+msgstr "Tánc mozgás le"
 
 #: engines/wintermute/keymapper_tables.h:968
 msgid "Dance move left"
-msgstr "Tánc lépés balra"
+msgstr "Tánc lépés bal"
 
 #: engines/wintermute/keymapper_tables.h:974
 msgid "Dance move right"
-msgstr "Tánc lépés jobbra"
+msgstr "Tánc lépés jobb"
 
 #: engines/wintermute/keymapper_tables.h:1004
 msgid "Cancel input"
