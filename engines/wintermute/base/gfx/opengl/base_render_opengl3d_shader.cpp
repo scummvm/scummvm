@@ -386,7 +386,7 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 	glBufferData(GL_ARRAY_BUFFER, 4 * 8, fadeVertexCoords, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	static const char *fadeAttributes[] = { "position" };
+	static const char *fadeAttributes[] = { "position", nullptr };
 	_fadeShader = OpenGL::Shader::fromFiles("fade", fadeAttributes);
 
 	_fadeShader->enableVertexAttribute("position", _fadeVBO, 2, GL_FLOAT, false, 8, 0);
