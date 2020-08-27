@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-27 12:24+0200\n"
-"PO-Revision-Date: 2020-08-26 23:14+0000\n"
+"PO-Revision-Date: 2020-08-27 16:03+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -17,8 +17,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Ukrainian\n"
 
@@ -4183,22 +4183,18 @@ msgid "Debug info and level selection becomes available"
 msgstr "Інформація про налагодження та вибір рівня стають доступними"
 
 #: engines/hdb/detection.cpp:309
-#, fuzzy
 msgid "Move up"
-msgstr "Рухатись назад"
+msgstr "Рухатись уверх"
 
 #: engines/hdb/detection.cpp:315
-#, fuzzy
 msgid "Move down"
-msgstr "Рух танцю вниз"
+msgstr "Рухатись вниз"
 
 #: engines/hdb/detection.cpp:321
-#, fuzzy
 msgid "Move left"
 msgstr "Рухатись наліво"
 
 #: engines/hdb/detection.cpp:327
-#, fuzzy
 msgid "Move right"
 msgstr "Рухатись направо"
 
@@ -4211,9 +4207,8 @@ msgid "Use"
 msgstr "Використати"
 
 #: engines/hdb/detection.cpp:340
-#, fuzzy
 msgid "Clear waypoints"
-msgstr "Очистити призначення клавіш"
+msgstr "Очистити точки шляху"
 
 #: engines/hdb/detection.cpp:347 engines/scumm/help.cpp:226
 #: engines/scumm/help.cpp:235 engines/scumm/help.cpp:242
@@ -4226,7 +4221,6 @@ msgid "Menu"
 msgstr "Меню"
 
 #: engines/hdb/detection.cpp:366
-#, fuzzy
 msgid "Debug"
 msgstr "Відладчик"
 
