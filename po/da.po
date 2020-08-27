@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-27 00:53+0200\n"
+"POT-Creation-Date: 2020-08-27 12:24+0200\n"
 "PO-Revision-Date: 2020-07-27 06:43+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -2392,7 +2392,7 @@ msgstr "Vil du virkelig afslutte?"
 #: backends/events/default/default-events.cpp:199
 #: backends/events/default/default-events.cpp:315
 #: backends/platform/symbian/src/SymbianActions.cpp:54
-#: engines/mohawk/myst_stacks/menu.cpp:318
+#: engines/hdb/detection.cpp:371 engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:184
 #: engines/scumm/help.cpp:83 engines/scumm/help.cpp:85
 msgid "Quit"
@@ -3229,7 +3229,7 @@ msgstr "Kliktilstand"
 
 #: backends/platform/maemo/maemo.cpp:174
 #: backends/platform/symbian/src/SymbianActions.cpp:44
-#: engines/wintermute/keymapper_tables.h:43
+#: engines/hdb/detection.cpp:303 engines/wintermute/keymapper_tables.h:43
 msgid "Left Click"
 msgstr "Venstreklik"
 
@@ -3373,8 +3373,9 @@ msgid "Skip text"
 msgstr "Spring tekst over"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:52
-#: engines/mohawk/myst.cpp:608 engines/mohawk/riven.cpp:877
-#: engines/sky/detection.cpp:253 engines/wintermute/keymapper_tables.h:1190
+#: engines/hdb/detection.cpp:354 engines/mohawk/myst.cpp:608
+#: engines/mohawk/riven.cpp:877 engines/sky/detection.cpp:253
+#: engines/wintermute/keymapper_tables.h:1190
 msgid "Pause"
 msgstr "Pause"
 
@@ -4189,13 +4190,60 @@ msgstr "Afspil film med forhøjet hastighed"
 msgid "Failed to save game"
 msgstr "Kunne ikke gemme spil"
 
-#: engines/hdb/detection.cpp:157
+#: engines/hdb/detection.cpp:162
 msgid "Enable cheat mode"
 msgstr "Aktivér snydetilstand"
 
-#: engines/hdb/detection.cpp:158
+#: engines/hdb/detection.cpp:163
 msgid "Debug info and level selection becomes available"
 msgstr "Fejlretningsinformation og valg af bane bliver tilgængeligt"
+
+#: engines/hdb/detection.cpp:309
+#, fuzzy
+msgid "Move up"
+msgstr "Flyt bagud"
+
+#: engines/hdb/detection.cpp:315
+#, fuzzy
+msgid "Move down"
+msgstr "Annuller download"
+
+#: engines/hdb/detection.cpp:321
+#, fuzzy
+msgid "Move left"
+msgstr "Flyt til venstre"
+
+#: engines/hdb/detection.cpp:327
+#, fuzzy
+msgid "Move right"
+msgstr "Flyt til højre"
+
+#: engines/hdb/detection.cpp:333 engines/scumm/help.cpp:129
+#: engines/scumm/help.cpp:153 engines/scumm/help.cpp:171
+#: engines/scumm/help.cpp:199 engines/scumm/help.cpp:214
+#: engines/scumm/help.cpp:225 engines/scumm/help.cpp:251
+#: engines/sky/detection.cpp:222 engines/wintermute/keymapper_tables.h:138
+msgid "Use"
+msgstr "Brug"
+
+#: engines/hdb/detection.cpp:340
+msgid "Clear waypoints"
+msgstr ""
+
+#: engines/hdb/detection.cpp:347 engines/scumm/help.cpp:226
+#: engines/scumm/help.cpp:235 engines/scumm/help.cpp:242
+#: engines/scumm/help.cpp:250
+msgid "Inventory"
+msgstr "Inventar"
+
+#: engines/hdb/detection.cpp:360
+msgid "Menu"
+msgstr "Menu"
+
+#: engines/hdb/detection.cpp:366
+#, fuzzy
+msgid "Debug"
+msgstr "Fejlsøger"
 
 #: engines/hopkins/detection.cpp:75 engines/hopkins/detection.cpp:85
 msgid "Gore Mode"
@@ -4283,14 +4331,18 @@ msgstr "Byt om på H/V kampknap"
 msgid "Left button to attack, right button to pick up items"
 msgstr "Venstre knap angriber, højre knap samler ting op"
 
-#: engines/kyra/engine/eobcommon.cpp:366
+#: engines/kyra/engine/eobcommon.cpp:366 engines/kyra/engine/lol.cpp:469
+#: engines/ultima/ultima4/meta_engine.cpp:232
+#: engines/ultima/ultima8/meta_engine.cpp:129
 #, fuzzy
-msgid "Interact via Left Click)"
+msgid "Interact via Left Click"
 msgstr "Venstreklik"
 
-#: engines/kyra/engine/eobcommon.cpp:367
+#: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:470
+#: engines/ultima/ultima4/meta_engine.cpp:238
+#: engines/ultima/ultima8/meta_engine.cpp:135
 #, fuzzy
-msgid "Interact via Right Click)"
+msgid "Interact via Right Click"
 msgstr "Højreklik"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:475
@@ -4358,18 +4410,6 @@ msgstr "Maginiveau 5"
 #: engines/kyra/engine/eobcommon.cpp:386
 msgid "Spell Level 6"
 msgstr "Maginiveau 6"
-
-#: engines/kyra/engine/lol.cpp:469 engines/ultima/ultima4/meta_engine.cpp:232
-#: engines/ultima/ultima8/meta_engine.cpp:129
-#, fuzzy
-msgid "Interact via Left Click"
-msgstr "Venstreklik"
-
-#: engines/kyra/engine/lol.cpp:470 engines/ultima/ultima4/meta_engine.cpp:238
-#: engines/ultima/ultima8/meta_engine.cpp:135
-#, fuzzy
-msgid "Interact via Right Click"
-msgstr "Højreklik"
 
 #: engines/kyra/engine/lol.cpp:471
 msgid "Attack 1"
@@ -5499,14 +5539,6 @@ msgstr "Gå til"
 msgid "Get"
 msgstr "Tag"
 
-#: engines/scumm/help.cpp:129 engines/scumm/help.cpp:153
-#: engines/scumm/help.cpp:171 engines/scumm/help.cpp:199
-#: engines/scumm/help.cpp:214 engines/scumm/help.cpp:225
-#: engines/scumm/help.cpp:251 engines/sky/detection.cpp:222
-#: engines/wintermute/keymapper_tables.h:138
-msgid "Use"
-msgstr "Brug"
-
 #: engines/scumm/help.cpp:130 engines/scumm/help.cpp:142
 msgid "Read"
 msgstr "Læs"
@@ -5653,11 +5685,6 @@ msgstr "Fremhæv næste dialog"
 #: engines/scumm/help.cpp:223
 msgid "Walk"
 msgstr "Gå"
-
-#: engines/scumm/help.cpp:226 engines/scumm/help.cpp:235
-#: engines/scumm/help.cpp:242 engines/scumm/help.cpp:250
-msgid "Inventory"
-msgstr "Inventar"
 
 #: engines/scumm/help.cpp:227
 msgid "Object"
@@ -6893,6 +6920,14 @@ msgstr ""
 "version %d. Du skal bruge en opdateret version af motoren for at bruge det "
 "gemte spil."
 
+#, fuzzy
+#~ msgid "Interact via Left Click)"
+#~ msgstr "Venstreklik"
+
+#, fuzzy
+#~ msgid "Interact via Right Click)"
+#~ msgstr "Højreklik"
+
 #~ msgid "Trackpad mode is now"
 #~ msgstr "Pegepladetilstand er nu"
 
@@ -6962,9 +6997,6 @@ msgstr ""
 
 #~ msgid "Remap keys"
 #~ msgstr "Kortlæg taster"
-
-#~ msgid "Menu"
-#~ msgstr "Menu"
 
 #~ msgid " (Effective)"
 #~ msgstr " (Aktiv)"

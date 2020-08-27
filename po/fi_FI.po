@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-27 00:53+0200\n"
+"POT-Creation-Date: 2020-08-27 12:24+0200\n"
 "PO-Revision-Date: 2020-06-07 23:42+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -2393,7 +2393,7 @@ msgstr "Haluatko varmasti lopettaa?"
 #: backends/events/default/default-events.cpp:199
 #: backends/events/default/default-events.cpp:315
 #: backends/platform/symbian/src/SymbianActions.cpp:54
-#: engines/mohawk/myst_stacks/menu.cpp:318
+#: engines/hdb/detection.cpp:371 engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:184
 #: engines/scumm/help.cpp:83 engines/scumm/help.cpp:85
 msgid "Quit"
@@ -3199,7 +3199,7 @@ msgstr "Klikkaus moodi"
 
 #: backends/platform/maemo/maemo.cpp:174
 #: backends/platform/symbian/src/SymbianActions.cpp:44
-#: engines/wintermute/keymapper_tables.h:43
+#: engines/hdb/detection.cpp:303 engines/wintermute/keymapper_tables.h:43
 msgid "Left Click"
 msgstr "Vasen klikkaus"
 
@@ -3343,8 +3343,9 @@ msgid "Skip text"
 msgstr "Ohita teksti"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:52
-#: engines/mohawk/myst.cpp:608 engines/mohawk/riven.cpp:877
-#: engines/sky/detection.cpp:253 engines/wintermute/keymapper_tables.h:1190
+#: engines/hdb/detection.cpp:354 engines/mohawk/myst.cpp:608
+#: engines/mohawk/riven.cpp:877 engines/sky/detection.cpp:253
+#: engines/wintermute/keymapper_tables.h:1190
 msgid "Pause"
 msgstr "Tauko"
 
@@ -4163,13 +4164,61 @@ msgstr "Toista videot nopeampana"
 msgid "Failed to save game"
 msgstr "Pelitilan tallentaminen epäonnistui"
 
-#: engines/hdb/detection.cpp:157
+#: engines/hdb/detection.cpp:162
 msgid "Enable cheat mode"
 msgstr "Salli huijaustila"
 
-#: engines/hdb/detection.cpp:158
+#: engines/hdb/detection.cpp:163
 msgid "Debug info and level selection becomes available"
 msgstr "Debuggaustiedot ja tason valinta tulevat saataville"
+
+#: engines/hdb/detection.cpp:309
+#, fuzzy
+msgid "Move up"
+msgstr "Liiku taaksepäin"
+
+#: engines/hdb/detection.cpp:315
+#, fuzzy
+msgid "Move down"
+msgstr "Tanssiliike alas"
+
+#: engines/hdb/detection.cpp:321
+#, fuzzy
+msgid "Move left"
+msgstr "Liiku vasemmalle"
+
+#: engines/hdb/detection.cpp:327
+#, fuzzy
+msgid "Move right"
+msgstr "Liiku oikealle"
+
+#: engines/hdb/detection.cpp:333 engines/scumm/help.cpp:129
+#: engines/scumm/help.cpp:153 engines/scumm/help.cpp:171
+#: engines/scumm/help.cpp:199 engines/scumm/help.cpp:214
+#: engines/scumm/help.cpp:225 engines/scumm/help.cpp:251
+#: engines/sky/detection.cpp:222 engines/wintermute/keymapper_tables.h:138
+msgid "Use"
+msgstr "Käytä"
+
+#: engines/hdb/detection.cpp:340
+#, fuzzy
+msgid "Clear waypoints"
+msgstr "Tyhjennä valinnat"
+
+#: engines/hdb/detection.cpp:347 engines/scumm/help.cpp:226
+#: engines/scumm/help.cpp:235 engines/scumm/help.cpp:242
+#: engines/scumm/help.cpp:250
+msgid "Inventory"
+msgstr "Tavarat"
+
+#: engines/hdb/detection.cpp:360
+msgid "Menu"
+msgstr "Valikko"
+
+#: engines/hdb/detection.cpp:366
+#, fuzzy
+msgid "Debug"
+msgstr "Debuggeri"
 
 #: engines/hopkins/detection.cpp:75 engines/hopkins/detection.cpp:85
 msgid "Gore Mode"
@@ -4257,14 +4306,16 @@ msgstr "Taistelupainikkeen vaihto"
 msgid "Left button to attack, right button to pick up items"
 msgstr "Vasen painike hyökkää, oikea painike poimii esineitä"
 
-#: engines/kyra/engine/eobcommon.cpp:366
-#, fuzzy
-msgid "Interact via Left Click)"
+#: engines/kyra/engine/eobcommon.cpp:366 engines/kyra/engine/lol.cpp:469
+#: engines/ultima/ultima4/meta_engine.cpp:232
+#: engines/ultima/ultima8/meta_engine.cpp:129
+msgid "Interact via Left Click"
 msgstr "Interaktio vasemmalla hiirennapilla"
 
-#: engines/kyra/engine/eobcommon.cpp:367
-#, fuzzy
-msgid "Interact via Right Click)"
+#: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:470
+#: engines/ultima/ultima4/meta_engine.cpp:238
+#: engines/ultima/ultima8/meta_engine.cpp:135
+msgid "Interact via Right Click"
 msgstr "Interaktio oikealla hiirennapilla"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:475
@@ -4332,16 +4383,6 @@ msgstr "Loitsutaso 5"
 #: engines/kyra/engine/eobcommon.cpp:386
 msgid "Spell Level 6"
 msgstr "Loitsutaso 6"
-
-#: engines/kyra/engine/lol.cpp:469 engines/ultima/ultima4/meta_engine.cpp:232
-#: engines/ultima/ultima8/meta_engine.cpp:129
-msgid "Interact via Left Click"
-msgstr "Interaktio vasemmalla hiirennapilla"
-
-#: engines/kyra/engine/lol.cpp:470 engines/ultima/ultima4/meta_engine.cpp:238
-#: engines/ultima/ultima8/meta_engine.cpp:135
-msgid "Interact via Right Click"
-msgstr "Interaktio oikealla hiirennapilla"
 
 #: engines/kyra/engine/lol.cpp:471
 msgid "Attack 1"
@@ -5455,14 +5496,6 @@ msgstr "Mene"
 msgid "Get"
 msgstr "Ota"
 
-#: engines/scumm/help.cpp:129 engines/scumm/help.cpp:153
-#: engines/scumm/help.cpp:171 engines/scumm/help.cpp:199
-#: engines/scumm/help.cpp:214 engines/scumm/help.cpp:225
-#: engines/scumm/help.cpp:251 engines/sky/detection.cpp:222
-#: engines/wintermute/keymapper_tables.h:138
-msgid "Use"
-msgstr "Käytä"
-
 #: engines/scumm/help.cpp:130 engines/scumm/help.cpp:142
 msgid "Read"
 msgstr "Lue"
@@ -5609,11 +5642,6 @@ msgstr "Korosta seuraavaa dialogia"
 #: engines/scumm/help.cpp:223
 msgid "Walk"
 msgstr "Kävele"
-
-#: engines/scumm/help.cpp:226 engines/scumm/help.cpp:235
-#: engines/scumm/help.cpp:242 engines/scumm/help.cpp:250
-msgid "Inventory"
-msgstr "Tavarat"
 
 #: engines/scumm/help.cpp:227
 msgid "Object"
@@ -6798,6 +6826,14 @@ msgstr ""
 "vain versioon %d asti. Tarvitset päivitetyn version tästä pelimoottorista "
 "käyttääksesi tätä pelitallennusta."
 
+#, fuzzy
+#~ msgid "Interact via Left Click)"
+#~ msgstr "Interaktio vasemmalla hiirennapilla"
+
+#, fuzzy
+#~ msgid "Interact via Right Click)"
+#~ msgstr "Interaktio oikealla hiirennapilla"
+
 #~ msgid "Trackpad mode is now"
 #~ msgstr "Trackpad tila on nyt"
 
@@ -6865,9 +6901,6 @@ msgstr ""
 
 #~ msgid "Remap keys"
 #~ msgstr "Määritä näppäimet uudelleen"
-
-#~ msgid "Menu"
-#~ msgstr "Valikko"
 
 #~ msgid " (Effective)"
 #~ msgstr " (Efektiivinen)"

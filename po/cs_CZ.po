@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-27 00:53+0200\n"
+"POT-Creation-Date: 2020-08-27 12:24+0200\n"
 "PO-Revision-Date: 2020-07-23 21:43+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -2389,7 +2389,7 @@ msgstr "Opravdu chcete skonèit?"
 #: backends/events/default/default-events.cpp:199
 #: backends/events/default/default-events.cpp:315
 #: backends/platform/symbian/src/SymbianActions.cpp:54
-#: engines/mohawk/myst_stacks/menu.cpp:318
+#: engines/hdb/detection.cpp:371 engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:184
 #: engines/scumm/help.cpp:83 engines/scumm/help.cpp:85
 msgid "Quit"
@@ -3232,7 +3232,7 @@ msgstr "Re¾im kliknutí"
 
 #: backends/platform/maemo/maemo.cpp:174
 #: backends/platform/symbian/src/SymbianActions.cpp:44
-#: engines/wintermute/keymapper_tables.h:43
+#: engines/hdb/detection.cpp:303 engines/wintermute/keymapper_tables.h:43
 msgid "Left Click"
 msgstr "Levé Kliknutí"
 
@@ -3377,8 +3377,9 @@ msgid "Skip text"
 msgstr "Pøeskoèit text"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:52
-#: engines/mohawk/myst.cpp:608 engines/mohawk/riven.cpp:877
-#: engines/sky/detection.cpp:253 engines/wintermute/keymapper_tables.h:1190
+#: engines/hdb/detection.cpp:354 engines/mohawk/myst.cpp:608
+#: engines/mohawk/riven.cpp:877 engines/sky/detection.cpp:253
+#: engines/wintermute/keymapper_tables.h:1190
 msgid "Pause"
 msgstr "Pauza"
 
@@ -4193,14 +4194,61 @@ msgstr "Pøehrát videa se zvý¹enou rychlostí"
 msgid "Failed to save game"
 msgstr "Nelze ulo¾it hru"
 
-#: engines/hdb/detection.cpp:157
+#: engines/hdb/detection.cpp:162
 #, fuzzy
 msgid "Enable cheat mode"
 msgstr "Zapnout héliový re¾im"
 
-#: engines/hdb/detection.cpp:158
+#: engines/hdb/detection.cpp:163
 msgid "Debug info and level selection becomes available"
 msgstr ""
+
+#: engines/hdb/detection.cpp:309
+#, fuzzy
+msgid "Move up"
+msgstr "Vzad"
+
+#: engines/hdb/detection.cpp:315
+#, fuzzy
+msgid "Move down"
+msgstr "Zru¹it stahování"
+
+#: engines/hdb/detection.cpp:321
+#, fuzzy
+msgid "Move left"
+msgstr "Pøesunout se doleva"
+
+#: engines/hdb/detection.cpp:327
+#, fuzzy
+msgid "Move right"
+msgstr "Pøesunout se doprava"
+
+#: engines/hdb/detection.cpp:333 engines/scumm/help.cpp:129
+#: engines/scumm/help.cpp:153 engines/scumm/help.cpp:171
+#: engines/scumm/help.cpp:199 engines/scumm/help.cpp:214
+#: engines/scumm/help.cpp:225 engines/scumm/help.cpp:251
+#: engines/sky/detection.cpp:222 engines/wintermute/keymapper_tables.h:138
+msgid "Use"
+msgstr "Pou¾ít"
+
+#: engines/hdb/detection.cpp:340
+msgid "Clear waypoints"
+msgstr ""
+
+#: engines/hdb/detection.cpp:347 engines/scumm/help.cpp:226
+#: engines/scumm/help.cpp:235 engines/scumm/help.cpp:242
+#: engines/scumm/help.cpp:250
+msgid "Inventory"
+msgstr "Inventáø"
+
+#: engines/hdb/detection.cpp:360
+msgid "Menu"
+msgstr "Menu"
+
+#: engines/hdb/detection.cpp:366
+#, fuzzy
+msgid "Debug"
+msgstr "Ladící program"
 
 #: engines/hopkins/detection.cpp:75 engines/hopkins/detection.cpp:85
 msgid "Gore Mode"
@@ -4288,14 +4336,18 @@ msgstr ""
 msgid "Left button to attack, right button to pick up items"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:366
+#: engines/kyra/engine/eobcommon.cpp:366 engines/kyra/engine/lol.cpp:469
+#: engines/ultima/ultima4/meta_engine.cpp:232
+#: engines/ultima/ultima8/meta_engine.cpp:129
 #, fuzzy
-msgid "Interact via Left Click)"
+msgid "Interact via Left Click"
 msgstr "Levé Kliknutí"
 
-#: engines/kyra/engine/eobcommon.cpp:367
+#: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:470
+#: engines/ultima/ultima4/meta_engine.cpp:238
+#: engines/ultima/ultima8/meta_engine.cpp:135
 #, fuzzy
-msgid "Interact via Right Click)"
+msgid "Interact via Right Click"
 msgstr "Pravé kliknutí"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:475
@@ -4363,18 +4415,6 @@ msgstr "Kouzlo úrovnì 5"
 #: engines/kyra/engine/eobcommon.cpp:386
 msgid "Spell Level 6"
 msgstr "Kouzlo úrovnì 6"
-
-#: engines/kyra/engine/lol.cpp:469 engines/ultima/ultima4/meta_engine.cpp:232
-#: engines/ultima/ultima8/meta_engine.cpp:129
-#, fuzzy
-msgid "Interact via Left Click"
-msgstr "Levé Kliknutí"
-
-#: engines/kyra/engine/lol.cpp:470 engines/ultima/ultima4/meta_engine.cpp:238
-#: engines/ultima/ultima8/meta_engine.cpp:135
-#, fuzzy
-msgid "Interact via Right Click"
-msgstr "Pravé kliknutí"
 
 #: engines/kyra/engine/lol.cpp:471
 msgid "Attack 1"
@@ -5447,14 +5487,6 @@ msgstr "Jít do"
 msgid "Get"
 msgstr "Vzít"
 
-#: engines/scumm/help.cpp:129 engines/scumm/help.cpp:153
-#: engines/scumm/help.cpp:171 engines/scumm/help.cpp:199
-#: engines/scumm/help.cpp:214 engines/scumm/help.cpp:225
-#: engines/scumm/help.cpp:251 engines/sky/detection.cpp:222
-#: engines/wintermute/keymapper_tables.h:138
-msgid "Use"
-msgstr "Pou¾ít"
-
 #: engines/scumm/help.cpp:130 engines/scumm/help.cpp:142
 msgid "Read"
 msgstr "Pøeèíst"
@@ -5601,11 +5633,6 @@ msgstr "Zvýraznit následující dialog"
 #: engines/scumm/help.cpp:223
 msgid "Walk"
 msgstr "Jít"
-
-#: engines/scumm/help.cpp:226 engines/scumm/help.cpp:235
-#: engines/scumm/help.cpp:242 engines/scumm/help.cpp:250
-msgid "Inventory"
-msgstr "Inventáø"
 
 #: engines/scumm/help.cpp:227
 msgid "Object"
@@ -6806,6 +6833,14 @@ msgstr ""
 "Tato ulo¾ená hra je z verze %u, ale nejvy¹¹í verze, které toto jádro "
 "podporuje, je %d. Abyste tuto hru naèetli, musíte získat novìj¹í verzi jádra."
 
+#, fuzzy
+#~ msgid "Interact via Left Click)"
+#~ msgstr "Levé Kliknutí"
+
+#, fuzzy
+#~ msgid "Interact via Right Click)"
+#~ msgstr "Pravé kliknutí"
+
 #~ msgid "Trackpad mode is now"
 #~ msgstr "Re¾im trackpadu je nyní"
 
@@ -6870,9 +6905,6 @@ msgstr ""
 
 #~ msgid "Remap keys"
 #~ msgstr "Pøemapovat klávesy"
-
-#~ msgid "Menu"
-#~ msgstr "Menu"
 
 #~ msgid " (Effective)"
 #~ msgstr " (Aktivní)"

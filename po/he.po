@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-27 00:53+0200\n"
+"POT-Creation-Date: 2020-08-27 12:24+0200\n"
 "PO-Revision-Date: 2020-07-23 21:43+0000\n"
 "Last-Translator: Zvika <haramaty.zvika@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -2356,7 +2356,7 @@ msgstr "האם אתה באמת רוצה לעזוב?"
 #: backends/events/default/default-events.cpp:199
 #: backends/events/default/default-events.cpp:315
 #: backends/platform/symbian/src/SymbianActions.cpp:54
-#: engines/mohawk/myst_stacks/menu.cpp:318
+#: engines/hdb/detection.cpp:371 engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:184
 #: engines/scumm/help.cpp:83 engines/scumm/help.cpp:85
 msgid "Quit"
@@ -3191,7 +3191,7 @@ msgstr "מצב לחיצה"
 
 #: backends/platform/maemo/maemo.cpp:174
 #: backends/platform/symbian/src/SymbianActions.cpp:44
-#: engines/wintermute/keymapper_tables.h:43
+#: engines/hdb/detection.cpp:303 engines/wintermute/keymapper_tables.h:43
 msgid "Left Click"
 msgstr "לחיצה שמאלית"
 
@@ -3335,8 +3335,9 @@ msgid "Skip text"
 msgstr "דלג על טקסט"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:52
-#: engines/mohawk/myst.cpp:608 engines/mohawk/riven.cpp:877
-#: engines/sky/detection.cpp:253 engines/wintermute/keymapper_tables.h:1190
+#: engines/hdb/detection.cpp:354 engines/mohawk/myst.cpp:608
+#: engines/mohawk/riven.cpp:877 engines/sky/detection.cpp:253
+#: engines/wintermute/keymapper_tables.h:1190
 msgid "Pause"
 msgstr "הפסקה"
 
@@ -4137,13 +4138,60 @@ msgstr "שחק סרטים במהירות מוגברת"
 msgid "Failed to save game"
 msgstr "שמירת המשחק נכשלה"
 
-#: engines/hdb/detection.cpp:157
+#: engines/hdb/detection.cpp:162
 msgid "Enable cheat mode"
 msgstr "אפשר מצב רמאות"
 
-#: engines/hdb/detection.cpp:158
+#: engines/hdb/detection.cpp:163
 msgid "Debug info and level selection becomes available"
 msgstr "מידע על ניפוי באגים ובחירת הרמה הופך לזמין"
+
+#: engines/hdb/detection.cpp:309
+#, fuzzy
+msgid "Move up"
+msgstr "לחזור"
+
+#: engines/hdb/detection.cpp:315
+#, fuzzy
+msgid "Move down"
+msgstr "ביטול הורדה"
+
+#: engines/hdb/detection.cpp:321
+#, fuzzy
+msgid "Move left"
+msgstr "זוז שמאלה"
+
+#: engines/hdb/detection.cpp:327
+#, fuzzy
+msgid "Move right"
+msgstr "זוז ימינה"
+
+#: engines/hdb/detection.cpp:333 engines/scumm/help.cpp:129
+#: engines/scumm/help.cpp:153 engines/scumm/help.cpp:171
+#: engines/scumm/help.cpp:199 engines/scumm/help.cpp:214
+#: engines/scumm/help.cpp:225 engines/scumm/help.cpp:251
+#: engines/sky/detection.cpp:222 engines/wintermute/keymapper_tables.h:138
+msgid "Use"
+msgstr "להשתמש"
+
+#: engines/hdb/detection.cpp:340
+msgid "Clear waypoints"
+msgstr ""
+
+#: engines/hdb/detection.cpp:347 engines/scumm/help.cpp:226
+#: engines/scumm/help.cpp:235 engines/scumm/help.cpp:242
+#: engines/scumm/help.cpp:250
+msgid "Inventory"
+msgstr "מלאי"
+
+#: engines/hdb/detection.cpp:360
+msgid "Menu"
+msgstr "תפריט"
+
+#: engines/hdb/detection.cpp:366
+#, fuzzy
+msgid "Debug"
+msgstr "מאתר הבאגים"
 
 #: engines/hopkins/detection.cpp:75 engines/hopkins/detection.cpp:85
 msgid "Gore Mode"
@@ -4231,14 +4279,18 @@ msgstr "החלפת כפתור קרב L / R"
 msgid "Left button to attack, right button to pick up items"
 msgstr "כפתור שמאלי לתקוף, כפתור ימין לאיסוף פריטים"
 
-#: engines/kyra/engine/eobcommon.cpp:366
+#: engines/kyra/engine/eobcommon.cpp:366 engines/kyra/engine/lol.cpp:469
+#: engines/ultima/ultima4/meta_engine.cpp:232
+#: engines/ultima/ultima8/meta_engine.cpp:129
 #, fuzzy
-msgid "Interact via Left Click)"
+msgid "Interact via Left Click"
 msgstr "לחיצה שמאלית"
 
-#: engines/kyra/engine/eobcommon.cpp:367
+#: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:470
+#: engines/ultima/ultima4/meta_engine.cpp:238
+#: engines/ultima/ultima8/meta_engine.cpp:135
 #, fuzzy
-msgid "Interact via Right Click)"
+msgid "Interact via Right Click"
 msgstr "לחיצה ימנית"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:475
@@ -4306,18 +4358,6 @@ msgstr "איות ברמה 5"
 #: engines/kyra/engine/eobcommon.cpp:386
 msgid "Spell Level 6"
 msgstr "איות ברמה 6"
-
-#: engines/kyra/engine/lol.cpp:469 engines/ultima/ultima4/meta_engine.cpp:232
-#: engines/ultima/ultima8/meta_engine.cpp:129
-#, fuzzy
-msgid "Interact via Left Click"
-msgstr "לחיצה שמאלית"
-
-#: engines/kyra/engine/lol.cpp:470 engines/ultima/ultima4/meta_engine.cpp:238
-#: engines/ultima/ultima8/meta_engine.cpp:135
-#, fuzzy
-msgid "Interact via Right Click"
-msgstr "לחיצה ימנית"
 
 #: engines/kyra/engine/lol.cpp:471
 msgid "Attack 1"
@@ -5417,14 +5457,6 @@ msgstr "לך ל"
 msgid "Get"
 msgstr "לקבל"
 
-#: engines/scumm/help.cpp:129 engines/scumm/help.cpp:153
-#: engines/scumm/help.cpp:171 engines/scumm/help.cpp:199
-#: engines/scumm/help.cpp:214 engines/scumm/help.cpp:225
-#: engines/scumm/help.cpp:251 engines/sky/detection.cpp:222
-#: engines/wintermute/keymapper_tables.h:138
-msgid "Use"
-msgstr "להשתמש"
-
 #: engines/scumm/help.cpp:130 engines/scumm/help.cpp:142
 msgid "Read"
 msgstr "לקרוא"
@@ -5571,11 +5603,6 @@ msgstr "הדגש את הדיאלוג הבא"
 #: engines/scumm/help.cpp:223
 msgid "Walk"
 msgstr "ללכת"
-
-#: engines/scumm/help.cpp:226 engines/scumm/help.cpp:235
-#: engines/scumm/help.cpp:242 engines/scumm/help.cpp:250
-msgid "Inventory"
-msgstr "מלאי"
 
 #: engines/scumm/help.cpp:227
 msgid "Object"
@@ -6787,6 +6814,14 @@ msgstr ""
 "משחק שמור זה משתמש בגרסה% u, אך מנוע זה תומך רק עד לגרסה% d. תצטרך גרסה "
 "מעודכנת של המנוע כדי להשתמש במשחק שנשמר זה."
 
+#, fuzzy
+#~ msgid "Interact via Left Click)"
+#~ msgstr "לחיצה שמאלית"
+
+#, fuzzy
+#~ msgid "Interact via Right Click)"
+#~ msgstr "לחיצה ימנית"
+
 #~ msgid "Trackpad mode is now"
 #~ msgstr "מצב משטח המעקב כעת"
 
@@ -6855,9 +6890,6 @@ msgstr ""
 
 #~ msgid "Remap keys"
 #~ msgstr "מפה מחדש מקשים"
-
-#~ msgid "Menu"
-#~ msgstr "תפריט"
 
 #~ msgid " (Effective)"
 #~ msgstr " (יעיל)"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-27 00:53+0200\n"
+"POT-Creation-Date: 2020-08-27 12:24+0200\n"
 "PO-Revision-Date: 2018-08-06 21:35+0000\n"
 "Last-Translator: Fiodar <fedor_qd@mail.ru>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -2426,7 +2426,7 @@ msgstr "Вы сапраўды жадаеце выйсці?"
 #: backends/events/default/default-events.cpp:199
 #: backends/events/default/default-events.cpp:315
 #: backends/platform/symbian/src/SymbianActions.cpp:54
-#: engines/mohawk/myst_stacks/menu.cpp:318
+#: engines/hdb/detection.cpp:371 engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:184
 #: engines/scumm/help.cpp:83 engines/scumm/help.cpp:85
 msgid "Quit"
@@ -3277,7 +3277,7 @@ msgstr "Рэжым пстрычкі"
 
 #: backends/platform/maemo/maemo.cpp:174
 #: backends/platform/symbian/src/SymbianActions.cpp:44
-#: engines/wintermute/keymapper_tables.h:43
+#: engines/hdb/detection.cpp:303 engines/wintermute/keymapper_tables.h:43
 msgid "Left Click"
 msgstr "Левая пстрычка"
 
@@ -3422,8 +3422,9 @@ msgid "Skip text"
 msgstr "Прапусціць тэкст"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:52
-#: engines/mohawk/myst.cpp:608 engines/mohawk/riven.cpp:877
-#: engines/sky/detection.cpp:253 engines/wintermute/keymapper_tables.h:1190
+#: engines/hdb/detection.cpp:354 engines/mohawk/myst.cpp:608
+#: engines/mohawk/riven.cpp:877 engines/sky/detection.cpp:253
+#: engines/wintermute/keymapper_tables.h:1190
 msgid "Pause"
 msgstr "Паўза"
 
@@ -4240,14 +4241,61 @@ msgstr "Прайгравае відэа на павялічанай хуткасці"
 msgid "Failed to save game"
 msgstr "Не атрымалася захаваць гульню"
 
-#: engines/hdb/detection.cpp:157
+#: engines/hdb/detection.cpp:162
 #, fuzzy
 msgid "Enable cheat mode"
 msgstr "Уключыць рэжым гелія"
 
-#: engines/hdb/detection.cpp:158
+#: engines/hdb/detection.cpp:163
 msgid "Debug info and level selection becomes available"
 msgstr ""
+
+#: engines/hdb/detection.cpp:309
+#, fuzzy
+msgid "Move up"
+msgstr "Ісці назад"
+
+#: engines/hdb/detection.cpp:315
+#, fuzzy
+msgid "Move down"
+msgstr "Адмяніць загрузку"
+
+#: engines/hdb/detection.cpp:321
+#, fuzzy
+msgid "Move left"
+msgstr "Ісці налева"
+
+#: engines/hdb/detection.cpp:327
+#, fuzzy
+msgid "Move right"
+msgstr "Ісці направа"
+
+#: engines/hdb/detection.cpp:333 engines/scumm/help.cpp:129
+#: engines/scumm/help.cpp:153 engines/scumm/help.cpp:171
+#: engines/scumm/help.cpp:199 engines/scumm/help.cpp:214
+#: engines/scumm/help.cpp:225 engines/scumm/help.cpp:251
+#: engines/sky/detection.cpp:222 engines/wintermute/keymapper_tables.h:138
+msgid "Use"
+msgstr "Выкарыстаць"
+
+#: engines/hdb/detection.cpp:340
+msgid "Clear waypoints"
+msgstr ""
+
+#: engines/hdb/detection.cpp:347 engines/scumm/help.cpp:226
+#: engines/scumm/help.cpp:235 engines/scumm/help.cpp:242
+#: engines/scumm/help.cpp:250
+msgid "Inventory"
+msgstr "Інвентар"
+
+#: engines/hdb/detection.cpp:360
+msgid "Menu"
+msgstr "Меню"
+
+#: engines/hdb/detection.cpp:366
+#, fuzzy
+msgid "Debug"
+msgstr "Адладчык"
 
 #: engines/hopkins/detection.cpp:75 engines/hopkins/detection.cpp:85
 msgid "Gore Mode"
@@ -4335,14 +4383,18 @@ msgstr ""
 msgid "Left button to attack, right button to pick up items"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:366
+#: engines/kyra/engine/eobcommon.cpp:366 engines/kyra/engine/lol.cpp:469
+#: engines/ultima/ultima4/meta_engine.cpp:232
+#: engines/ultima/ultima8/meta_engine.cpp:129
 #, fuzzy
-msgid "Interact via Left Click)"
+msgid "Interact via Left Click"
 msgstr "Левая пстрычка"
 
-#: engines/kyra/engine/eobcommon.cpp:367
+#: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:470
+#: engines/ultima/ultima4/meta_engine.cpp:238
+#: engines/ultima/ultima8/meta_engine.cpp:135
 #, fuzzy
-msgid "Interact via Right Click)"
+msgid "Interact via Right Click"
 msgstr "Правая пстрычка"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:475
@@ -4410,18 +4462,6 @@ msgstr "Загавор 5-га ўзроўню"
 #: engines/kyra/engine/eobcommon.cpp:386
 msgid "Spell Level 6"
 msgstr "Загавор 6-га ўзроўню"
-
-#: engines/kyra/engine/lol.cpp:469 engines/ultima/ultima4/meta_engine.cpp:232
-#: engines/ultima/ultima8/meta_engine.cpp:129
-#, fuzzy
-msgid "Interact via Left Click"
-msgstr "Левая пстрычка"
-
-#: engines/kyra/engine/lol.cpp:470 engines/ultima/ultima4/meta_engine.cpp:238
-#: engines/ultima/ultima8/meta_engine.cpp:135
-#, fuzzy
-msgid "Interact via Right Click"
-msgstr "Правая пстрычка"
 
 #: engines/kyra/engine/lol.cpp:471
 msgid "Attack 1"
@@ -5506,14 +5546,6 @@ msgstr "Ісці"
 msgid "Get"
 msgstr "Узяць"
 
-#: engines/scumm/help.cpp:129 engines/scumm/help.cpp:153
-#: engines/scumm/help.cpp:171 engines/scumm/help.cpp:199
-#: engines/scumm/help.cpp:214 engines/scumm/help.cpp:225
-#: engines/scumm/help.cpp:251 engines/sky/detection.cpp:222
-#: engines/wintermute/keymapper_tables.h:138
-msgid "Use"
-msgstr "Выкарыстаць"
-
 #: engines/scumm/help.cpp:130 engines/scumm/help.cpp:142
 msgid "Read"
 msgstr "Чытаць"
@@ -5660,11 +5692,6 @@ msgstr "Падсвятліць наступны дыялог"
 #: engines/scumm/help.cpp:223
 msgid "Walk"
 msgstr "Ісці"
-
-#: engines/scumm/help.cpp:226 engines/scumm/help.cpp:235
-#: engines/scumm/help.cpp:242 engines/scumm/help.cpp:250
-msgid "Inventory"
-msgstr "Інвентар"
 
 #: engines/scumm/help.cpp:227
 msgid "Object"
@@ -6885,6 +6912,14 @@ msgstr ""
 "Гэты файл захаванай гульні мае версію %u, але рухавічок падтрымвае версіі да "
 "%d. Вам патрэбна новая версія ScummVM для карыстання гэтым файлам."
 
+#, fuzzy
+#~ msgid "Interact via Left Click)"
+#~ msgstr "Левая пстрычка"
+
+#, fuzzy
+#~ msgid "Interact via Right Click)"
+#~ msgstr "Правая пстрычка"
+
 #~ msgid "Trackpad mode is now"
 #~ msgstr "Рэжым трэкпада зараз"
 
@@ -6949,9 +6984,6 @@ msgstr ""
 
 #~ msgid "Remap keys"
 #~ msgstr "Перапрызначыць клавішы"
-
-#~ msgid "Menu"
-#~ msgstr "Меню"
 
 #~ msgid " (Effective)"
 #~ msgstr " (Дзейсная)"

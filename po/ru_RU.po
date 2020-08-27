@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-06-07 14:22+0200\n"
+"POT-Creation-Date: 2020-08-27 12:24+0200\n"
 "PO-Revision-Date: 2020-08-26 22:54+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -2402,7 +2402,7 @@ msgstr "Вы действительно хотите выйти?"
 #: backends/events/default/default-events.cpp:199
 #: backends/events/default/default-events.cpp:315
 #: backends/platform/symbian/src/SymbianActions.cpp:54
-#: engines/mohawk/myst_stacks/menu.cpp:318
+#: engines/hdb/detection.cpp:371 engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:184
 #: engines/scumm/help.cpp:83 engines/scumm/help.cpp:85
 msgid "Quit"
@@ -3210,7 +3210,7 @@ msgstr "Режим щелчка"
 
 #: backends/platform/maemo/maemo.cpp:174
 #: backends/platform/symbian/src/SymbianActions.cpp:44
-#: engines/wintermute/keymapper_tables.h:43
+#: engines/hdb/detection.cpp:303 engines/wintermute/keymapper_tables.h:43
 msgid "Left Click"
 msgstr "Левый щелчок"
 
@@ -3354,8 +3354,9 @@ msgid "Skip text"
 msgstr "Пропустить текст"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:52
-#: engines/mohawk/myst.cpp:608 engines/mohawk/riven.cpp:877
-#: engines/sky/detection.cpp:253 engines/wintermute/keymapper_tables.h:1190
+#: engines/hdb/detection.cpp:354 engines/mohawk/myst.cpp:608
+#: engines/mohawk/riven.cpp:877 engines/sky/detection.cpp:253
+#: engines/wintermute/keymapper_tables.h:1190
 msgid "Pause"
 msgstr "Пауза"
 
@@ -4172,13 +4173,61 @@ msgstr "Воспроизводит видеоролики с увеличенной скоростью"
 msgid "Failed to save game"
 msgstr "Не удалось сохранить игру"
 
-#: engines/hdb/detection.cpp:157
+#: engines/hdb/detection.cpp:162
 msgid "Enable cheat mode"
 msgstr "Включить чит-режим"
 
-#: engines/hdb/detection.cpp:158
+#: engines/hdb/detection.cpp:163
 msgid "Debug info and level selection becomes available"
 msgstr "Отладочная информация и выбор уровня становятся доступными"
+
+#: engines/hdb/detection.cpp:309
+#, fuzzy
+msgid "Move up"
+msgstr "Идти назад"
+
+#: engines/hdb/detection.cpp:315
+#, fuzzy
+msgid "Move down"
+msgstr "Прервать загрузку"
+
+#: engines/hdb/detection.cpp:321
+#, fuzzy
+msgid "Move left"
+msgstr "Идти влево"
+
+#: engines/hdb/detection.cpp:327
+#, fuzzy
+msgid "Move right"
+msgstr "Идти вправо"
+
+#: engines/hdb/detection.cpp:333 engines/scumm/help.cpp:129
+#: engines/scumm/help.cpp:153 engines/scumm/help.cpp:171
+#: engines/scumm/help.cpp:199 engines/scumm/help.cpp:214
+#: engines/scumm/help.cpp:225 engines/scumm/help.cpp:251
+#: engines/sky/detection.cpp:222 engines/wintermute/keymapper_tables.h:138
+msgid "Use"
+msgstr "Использовать"
+
+#: engines/hdb/detection.cpp:340
+#, fuzzy
+msgid "Clear waypoints"
+msgstr "Очистить раскладку"
+
+#: engines/hdb/detection.cpp:347 engines/scumm/help.cpp:226
+#: engines/scumm/help.cpp:235 engines/scumm/help.cpp:242
+#: engines/scumm/help.cpp:250
+msgid "Inventory"
+msgstr "Инвентарь"
+
+#: engines/hdb/detection.cpp:360
+msgid "Menu"
+msgstr "Меню"
+
+#: engines/hdb/detection.cpp:366
+#, fuzzy
+msgid "Debug"
+msgstr "Отладчик"
 
 #: engines/hopkins/detection.cpp:75 engines/hopkins/detection.cpp:85
 msgid "Gore Mode"
@@ -4266,14 +4315,18 @@ msgstr "Fight Button L / R Swap"
 msgid "Left button to attack, right button to pick up items"
 msgstr "Левая кнопка для атаки, правая кнопка для выбора предметов"
 
-#: engines/kyra/engine/eobcommon.cpp:366
+#: engines/kyra/engine/eobcommon.cpp:366 engines/kyra/engine/lol.cpp:469
+#: engines/ultima/ultima4/meta_engine.cpp:232
+#: engines/ultima/ultima8/meta_engine.cpp:129
 #, fuzzy
-msgid "Interact via Left Click)"
+msgid "Interact via Left Click"
 msgstr "Левый щелчок"
 
-#: engines/kyra/engine/eobcommon.cpp:367
+#: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:470
+#: engines/ultima/ultima4/meta_engine.cpp:238
+#: engines/ultima/ultima8/meta_engine.cpp:135
 #, fuzzy
-msgid "Interact via Right Click)"
+msgid "Interact via Right Click"
 msgstr "Правый щелчок"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:475
@@ -4341,18 +4394,6 @@ msgstr "Заклинание 5-го уровня"
 #: engines/kyra/engine/eobcommon.cpp:386
 msgid "Spell Level 6"
 msgstr "Заклинание 6-го уровня"
-
-#: engines/kyra/engine/lol.cpp:469 engines/ultima/ultima4/meta_engine.cpp:232
-#: engines/ultima/ultima8/meta_engine.cpp:129
-#, fuzzy
-msgid "Interact via Left Click"
-msgstr "Левый щелчок"
-
-#: engines/kyra/engine/lol.cpp:470 engines/ultima/ultima4/meta_engine.cpp:238
-#: engines/ultima/ultima8/meta_engine.cpp:135
-#, fuzzy
-msgid "Interact via Right Click"
-msgstr "Правый щелчок"
 
 #: engines/kyra/engine/lol.cpp:471
 msgid "Attack 1"
@@ -5484,14 +5525,6 @@ msgstr "Идти"
 msgid "Get"
 msgstr "Взять"
 
-#: engines/scumm/help.cpp:129 engines/scumm/help.cpp:153
-#: engines/scumm/help.cpp:171 engines/scumm/help.cpp:199
-#: engines/scumm/help.cpp:214 engines/scumm/help.cpp:225
-#: engines/scumm/help.cpp:251 engines/sky/detection.cpp:222
-#: engines/wintermute/keymapper_tables.h:138
-msgid "Use"
-msgstr "Использовать"
-
 #: engines/scumm/help.cpp:130 engines/scumm/help.cpp:142
 msgid "Read"
 msgstr "Читать"
@@ -5638,11 +5671,6 @@ msgstr "Подсветить следующий диалог"
 #: engines/scumm/help.cpp:223
 msgid "Walk"
 msgstr "Идти"
-
-#: engines/scumm/help.cpp:226 engines/scumm/help.cpp:235
-#: engines/scumm/help.cpp:242 engines/scumm/help.cpp:250
-msgid "Inventory"
-msgstr "Инвентарь"
 
 #: engines/scumm/help.cpp:227
 msgid "Object"
@@ -6867,6 +6895,14 @@ msgstr ""
 "версии не выше %d. Для использования этого файла необходима свежая версия "
 "движка."
 
+#, fuzzy
+#~ msgid "Interact via Left Click)"
+#~ msgstr "Левый щелчок"
+
+#, fuzzy
+#~ msgid "Interact via Right Click)"
+#~ msgstr "Правый щелчок"
+
 #~ msgid "Trackpad mode is now"
 #~ msgstr "Режим трекпада сейчас"
 
@@ -6935,9 +6971,6 @@ msgstr ""
 
 #~ msgid "Remap keys"
 #~ msgstr "Переназначить клавиши"
-
-#~ msgid "Menu"
-#~ msgstr "Меню"
 
 #~ msgid " (Effective)"
 #~ msgstr " (Действующая)"

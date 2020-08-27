@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-27 00:53+0200\n"
+"POT-Creation-Date: 2020-08-27 12:24+0200\n"
 "PO-Revision-Date: 2020-08-12 19:18+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -2413,7 +2413,7 @@ msgstr "Möchten Sie wirklich beenden?"
 #: backends/events/default/default-events.cpp:199
 #: backends/events/default/default-events.cpp:315
 #: backends/platform/symbian/src/SymbianActions.cpp:54
-#: engines/mohawk/myst_stacks/menu.cpp:318
+#: engines/hdb/detection.cpp:371 engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:184
 #: engines/scumm/help.cpp:83 engines/scumm/help.cpp:85
 msgid "Quit"
@@ -3220,7 +3220,7 @@ msgstr "Klickmodus"
 
 #: backends/platform/maemo/maemo.cpp:174
 #: backends/platform/symbian/src/SymbianActions.cpp:44
-#: engines/wintermute/keymapper_tables.h:43
+#: engines/hdb/detection.cpp:303 engines/wintermute/keymapper_tables.h:43
 msgid "Left Click"
 msgstr "Linksklick"
 
@@ -3364,8 +3364,9 @@ msgid "Skip text"
 msgstr "Text überspringen"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:52
-#: engines/mohawk/myst.cpp:608 engines/mohawk/riven.cpp:877
-#: engines/sky/detection.cpp:253 engines/wintermute/keymapper_tables.h:1190
+#: engines/hdb/detection.cpp:354 engines/mohawk/myst.cpp:608
+#: engines/mohawk/riven.cpp:877 engines/sky/detection.cpp:253
+#: engines/wintermute/keymapper_tables.h:1190
 msgid "Pause"
 msgstr "Pause"
 
@@ -4196,13 +4197,61 @@ msgstr "Spielt Filme mit erhöhter Geschwindigkeit ab"
 msgid "Failed to save game"
 msgstr "Konnte Spielstand nicht speichern"
 
-#: engines/hdb/detection.cpp:157
+#: engines/hdb/detection.cpp:162
 msgid "Enable cheat mode"
 msgstr "Cheat-Modus aktivieren"
 
-#: engines/hdb/detection.cpp:158
+#: engines/hdb/detection.cpp:163
 msgid "Debug info and level selection becomes available"
 msgstr "Aktiviert Debug-Informationen und erlaubt die direkte Level-Auswahl"
+
+#: engines/hdb/detection.cpp:309
+#, fuzzy
+msgid "Move up"
+msgstr "Nach hinten bewegen"
+
+#: engines/hdb/detection.cpp:315
+#, fuzzy
+msgid "Move down"
+msgstr "Tanzbewegung nach unten"
+
+#: engines/hdb/detection.cpp:321
+#, fuzzy
+msgid "Move left"
+msgstr "Nach links gehen"
+
+#: engines/hdb/detection.cpp:327
+#, fuzzy
+msgid "Move right"
+msgstr "Nach rechts gehen"
+
+#: engines/hdb/detection.cpp:333 engines/scumm/help.cpp:129
+#: engines/scumm/help.cpp:153 engines/scumm/help.cpp:171
+#: engines/scumm/help.cpp:199 engines/scumm/help.cpp:214
+#: engines/scumm/help.cpp:225 engines/scumm/help.cpp:251
+#: engines/sky/detection.cpp:222 engines/wintermute/keymapper_tables.h:138
+msgid "Use"
+msgstr "Benutze"
+
+#: engines/hdb/detection.cpp:340
+#, fuzzy
+msgid "Clear waypoints"
+msgstr "Belegung löschen"
+
+#: engines/hdb/detection.cpp:347 engines/scumm/help.cpp:226
+#: engines/scumm/help.cpp:235 engines/scumm/help.cpp:242
+#: engines/scumm/help.cpp:250
+msgid "Inventory"
+msgstr "Inventar"
+
+#: engines/hdb/detection.cpp:360
+msgid "Menu"
+msgstr "Menü"
+
+#: engines/hdb/detection.cpp:366
+#, fuzzy
+msgid "Debug"
+msgstr "Debugger"
 
 #: engines/hopkins/detection.cpp:75 engines/hopkins/detection.cpp:85
 msgid "Gore Mode"
@@ -4290,14 +4339,16 @@ msgstr "Tastenbelegung (Links/Rechts) vertauschen"
 msgid "Left button to attack, right button to pick up items"
 msgstr "Linker Button um anzugreifen, rechter Button, um Items aufzuheben"
 
-#: engines/kyra/engine/eobcommon.cpp:366
-#, fuzzy
-msgid "Interact via Left Click)"
+#: engines/kyra/engine/eobcommon.cpp:366 engines/kyra/engine/lol.cpp:469
+#: engines/ultima/ultima4/meta_engine.cpp:232
+#: engines/ultima/ultima8/meta_engine.cpp:129
+msgid "Interact via Left Click"
 msgstr "Interaktion via Linksklick"
 
-#: engines/kyra/engine/eobcommon.cpp:367
-#, fuzzy
-msgid "Interact via Right Click)"
+#: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:470
+#: engines/ultima/ultima4/meta_engine.cpp:238
+#: engines/ultima/ultima8/meta_engine.cpp:135
+msgid "Interact via Right Click"
 msgstr "Interaktion via Rechtsklick"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:475
@@ -4365,16 +4416,6 @@ msgstr "Zauberspruch Stufe 5"
 #: engines/kyra/engine/eobcommon.cpp:386
 msgid "Spell Level 6"
 msgstr "Zauberspruch Stufe 6"
-
-#: engines/kyra/engine/lol.cpp:469 engines/ultima/ultima4/meta_engine.cpp:232
-#: engines/ultima/ultima8/meta_engine.cpp:129
-msgid "Interact via Left Click"
-msgstr "Interaktion via Linksklick"
-
-#: engines/kyra/engine/lol.cpp:470 engines/ultima/ultima4/meta_engine.cpp:238
-#: engines/ultima/ultima8/meta_engine.cpp:135
-msgid "Interact via Right Click"
-msgstr "Interaktion via Rechtsklick"
 
 #: engines/kyra/engine/lol.cpp:471
 msgid "Attack 1"
@@ -5523,14 +5564,6 @@ msgstr "Gehe zu"
 msgid "Get"
 msgstr "Nimm"
 
-#: engines/scumm/help.cpp:129 engines/scumm/help.cpp:153
-#: engines/scumm/help.cpp:171 engines/scumm/help.cpp:199
-#: engines/scumm/help.cpp:214 engines/scumm/help.cpp:225
-#: engines/scumm/help.cpp:251 engines/sky/detection.cpp:222
-#: engines/wintermute/keymapper_tables.h:138
-msgid "Use"
-msgstr "Benutze"
-
 #: engines/scumm/help.cpp:130 engines/scumm/help.cpp:142
 msgid "Read"
 msgstr "Lies"
@@ -5677,11 +5710,6 @@ msgstr "Nächste Dialogwahl markieren"
 #: engines/scumm/help.cpp:223
 msgid "Walk"
 msgstr "Gehe"
-
-#: engines/scumm/help.cpp:226 engines/scumm/help.cpp:235
-#: engines/scumm/help.cpp:242 engines/scumm/help.cpp:250
-msgid "Inventory"
-msgstr "Inventar"
 
 #: engines/scumm/help.cpp:227
 msgid "Object"
@@ -6871,6 +6899,14 @@ msgstr ""
 "Spielstände bis zu Version %d. Sie benötigen eine aktualisierte Version der "
 "Engine, um diesen Spielstand zu verwenden."
 
+#, fuzzy
+#~ msgid "Interact via Left Click)"
+#~ msgstr "Interaktion via Linksklick"
+
+#, fuzzy
+#~ msgid "Interact via Right Click)"
+#~ msgstr "Interaktion via Rechtsklick"
+
 #~ msgid "Trackpad mode is now"
 #~ msgstr "Trackpad-Modus ist jetzt"
 
@@ -6939,9 +6975,6 @@ msgstr ""
 
 #~ msgid "Remap keys"
 #~ msgstr "Tasten neu zuweisen"
-
-#~ msgid "Menu"
-#~ msgstr "Menü"
 
 #~ msgid " (Effective)"
 #~ msgstr " (Aktuell)"
