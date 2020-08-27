@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-27 12:24+0200\n"
-"PO-Revision-Date: 2020-07-23 21:43+0000\n"
-"Last-Translator: Andrea G <andreagswaterloo@gmail.com>\n"
+"PO-Revision-Date: 2020-08-27 11:56+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
 "Language: ca_ES\n"
@@ -1335,7 +1335,6 @@ msgid "Active storage:"
 msgstr "Activar salvar al núvol"
 
 #: gui/options.cpp:2076
-#, fuzzy
 msgid "Active cloud storage"
 msgstr "Activar salvar al núvol"
 
@@ -6132,9 +6131,9 @@ msgid "Could not quick load the saved game #%d"
 msgstr "Voleu carregar o desar el joc?"
 
 #: engines/toon/toon.cpp:1527
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to locate the '%s' data file."
-msgstr "No s'ha pogut esborrar el fitxer."
+msgstr ""
 
 #: engines/ultima/shared/engine/data_archive.cpp:81
 #, fuzzy, c-format
