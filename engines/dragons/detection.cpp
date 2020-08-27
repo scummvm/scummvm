@@ -24,6 +24,7 @@
 #include "engines/advancedDetector.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "base/plugins.h"
 #include "graphics/thumbnail.h"
 
@@ -82,6 +83,20 @@ static const DragonsGameDescription gameDescriptions[] = {
 					GUIO0()
 			},
 			kGameIdDragons
+	},
+
+	// BAD EXTRACTIONS
+	{
+			{
+					"dragons",
+					0,
+					AD_ENTRY1s("bigfile.dat", "92b938703611789e1a007d6dfac7ef7e", 51668736),
+					Common::EN_USA,
+					Common::kPlatformPSX,
+					ADGF_DROPPLATFORM,
+					GUIO0()
+			},
+			kGameIdDragonsBadExtraction
 	},
 
 	{ AD_TABLE_END_MARKER, 0 }
@@ -194,6 +209,10 @@ bool DragonsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADG
 		switch (gd->gameId) {
 		case Dragons::kGameIdDragons:
 			*engine = new Dragons::DragonsEngine(syst, desc);
+			break;
+		case Dragons::kGameIdDragonsBadExtraction:
+			GUIErrorMessageWithURL(_("Error: It appears that the game data files were extracted incorrectly.\n\nYou should only extract STR and XA files using the special method. The rest should be copied normally from your game CD.\n\n See https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"),
+								   "https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons");
 			break;
 		default:
 			error("Unknown game id");

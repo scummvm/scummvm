@@ -29,7 +29,8 @@
 namespace Dragons {
 
 enum {
-	kGameIdDragons = 1
+	kGameIdDragons = 1,
+	kGameIdDragonsBadExtraction = 2
 };
 
 struct DragonsGameDescription {
