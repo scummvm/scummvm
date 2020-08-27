@@ -21,9 +21,12 @@
  */
 
 #include "common/config-manager.h"
+#include "common/translation.h"
 
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macmenu.h"
+
+#include "gui/message.h"
 
 #include "pink/pink.h"
 #include "pink/director.h"
@@ -213,7 +216,11 @@ void PinkEngine::executeMenuCommand(uint id) {
 		break;
 
 	default:
-		warning("Unprocessed command id %d", id);
+		{
+			GUI::MessageDialog dialog(_("This menu item is not yet implemented"));
+			dialog.runModal();
+			warning("Unprocessed command id %d", id);
+		}
 		break;
 	}
 }
