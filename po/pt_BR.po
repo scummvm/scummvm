@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-27 20:27+0200\n"
-"PO-Revision-Date: 2020-08-27 18:26+0000\n"
+"PO-Revision-Date: 2020-08-27 18:47+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -1909,9 +1909,8 @@ msgstr ""
 "Não foi possível encontrar nenhuma engine capaz de rodar o jogo selecionado"
 
 #: common/achievements.cpp:92
-#, fuzzy
 msgid "Achievement unlocked!"
-msgstr "Conquistas alcançadas: %d/%d"
+msgstr "Conquista desbloqueada!"
 
 #: common/error.cpp:38
 msgid "No error"
@@ -2250,7 +2249,7 @@ msgstr "IDs de jogos correspondentes para a engine %s:"
 
 #: engines/metaengine.cpp:59
 msgid "Default game keymap"
-msgstr ""
+msgstr "Mapeamento de tecla padrão do jogo"
 
 #: engines/metaengine.cpp:63 backends/platform/maemo/maemo.cpp:174
 #: backends/platform/symbian/src/SymbianActions.cpp:44
@@ -2281,9 +2280,8 @@ msgid "Pause"
 msgstr "Pausar"
 
 #: engines/metaengine.cpp:85
-#, fuzzy
 msgid "Game menu"
-msgstr "Menu do Jogo"
+msgstr "Menu do jogo"
 
 #: engines/metaengine.cpp:91
 #: backends/platform/symbian/src/SymbianActions.cpp:47
@@ -2302,7 +2300,7 @@ msgstr "Pula linha"
 
 #: engines/metaengine.cpp:103
 msgid "Predictive input dialog"
-msgstr ""
+msgstr "Caixa de diálogo de entrada preditivo"
 
 #: engines/metaengine.cpp:107 engines/sky/detection.cpp:228
 #: engines/wintermute/keymapper_tables.h:55
@@ -3412,11 +3410,11 @@ msgstr "R2"
 
 #: backends/platform/sdl/switch/switch.cpp:40
 msgid "Minus"
-msgstr ""
+msgstr "Menos"
 
 #: backends/platform/sdl/switch/switch.cpp:41
 msgid "Plus"
-msgstr ""
+msgstr "Mais"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:48
 msgid "Zone"
