@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-27 20:27+0200\n"
-"PO-Revision-Date: 2020-08-27 18:47+0000\n"
+"PO-Revision-Date: 2020-08-27 23:09+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -3717,6 +3717,10 @@ msgid ""
 "If you have such file in other AGI (Sierra) game, you can copy it to the "
 "game directory"
 msgstr ""
+"Não foi possível abrir/utilizar o arquivo 'hgc_font' para a fonte Hercules "
+"hires.\n"
+"Se você tiver esse arquivo em outro jogo AGI (Sierra), você pode copiá-lo "
+"para o diretório do jogo"
 
 #: engines/agi/saveload.cpp:772 engines/avalanche/parser.cpp:1907
 #: engines/cine/various.cpp:354 engines/dm/dm.cpp:276
@@ -3861,8 +3865,8 @@ msgid ""
 "This mode targets a maximum of 120 fps. When disabled, the game targets 60 "
 "fps"
 msgstr ""
-"Este modo busca alcançar um máximo de 120 qps. Quando desabilitado, o jogo "
-"alcança 60 qps"
+"Este modo busca alcançar um máximo de 120 fps. Quando desabilitado, o jogo "
+"alcança 60 fps"
 
 #: engines/bladerunner/detection.cpp:84
 msgid "Disable McCoy's quick stamina drain"
@@ -3877,13 +3881,12 @@ msgstr ""
 "parar de clicar o mouse"
 
 #: engines/cge/detection.cpp:115 engines/cge2/detection.cpp:111
-#, fuzzy
 msgid "Color Blind Mode"
-msgstr "Modo de Clique"
+msgstr "Modo Daltônico"
 
 #: engines/cge/detection.cpp:116 engines/cge2/detection.cpp:112
 msgid "Enable Color Blind Mode by default"
-msgstr ""
+msgstr "Habilita o Modo Daltônico por padrão"
 
 #: engines/cine/detection.cpp:77
 msgid "Use transparent dialog boxes in 16 color scenes"
@@ -3915,11 +3918,14 @@ msgid ""
 "Things will be broken. Please consider starting Operation Stealth from "
 "beginning using new savegames."
 msgstr ""
+"AVISO: O jogo salvo que você está carregando está utilizando um formato "
+"temporariamente não funcional. As coisas não funcionarão corretamente. Por "
+"favor, considere iniciar Operation Stealth do começo, usando um novo jogo "
+"salvo."
 
 #: engines/cine/saveload.cpp:864
-#, fuzzy
 msgid "Load anyway"
-msgstr "Adicionar mesmo assim"
+msgstr "Carregar mesmo assim"
 
 #: engines/dragons/detection.cpp:214
 msgid ""
@@ -3930,6 +3936,13 @@ msgid ""
 "\n"
 " See https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
 msgstr ""
+"Erro: Parece que os arquivos de dados do jogo foram extraídos incorretamente."
+"\n"
+"\n"
+"Você só deve extrair arquivos STR e XA usando um método especial. O restante "
+"deve ser copiado normalmente do CD do jogo.\n"
+"\n"
+" Veja em https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
 
 #: engines/dragons/dragons.cpp:1783
 #, c-format
@@ -3997,9 +4010,8 @@ msgid "Untitled Savegame"
 msgstr "Jogo Salvo sem Título"
 
 #: engines/glk/adrift/os_glk.cpp:2814
-#, fuzzy
 msgid "Loading game...\n"
-msgstr "Carregando jogo..."
+msgstr "Carregando jogo...\n"
 
 #: engines/glk/advsys/advsys.cpp:35
 msgid "Could not start AdvSys game"
@@ -4035,13 +4047,12 @@ msgid "This is not a valid Alan2 file."
 msgstr "Isto não é um arquivo Alan2 válido."
 
 #: engines/glk/comprehend/game.cpp:337
-#, fuzzy
 msgid "Savegame"
-msgstr "Salvar jogo"
+msgstr "Jogo salvo"
 
 #: engines/glk/comprehend/game.cpp:1333
 msgid "Picture window toggled\n"
-msgstr ""
+msgstr "Janela de imagem alternada\n"
 
 #: engines/glk/glulx/glulx.cpp:82
 msgid "This is too short to be a valid Glulx file."
@@ -4060,9 +4071,8 @@ msgid "This Glulx file is too new a version to execute."
 msgstr "Este arquivo Glulx é uma versão nova demais para ser executada."
 
 #: engines/glk/quest/quest.cpp:45
-#, fuzzy
 msgid "Could not start Quest game"
-msgstr "Não foi possível iniciar jogo AdvSys"
+msgstr "Não foi possível iniciar o jogo Quest"
 
 #: engines/glk/scott/scott.cpp:99
 msgid "I don't understand your command. "
@@ -4672,7 +4682,6 @@ msgstr ""
 "\n"
 
 #: engines/kyra/sound/sound_pc_midi.cpp:76
-#, fuzzy
 msgid ""
 "You appear to be using a General MIDI device,\n"
 "but your game only supports Roland MT32 MIDI.\n"
@@ -4681,15 +4690,14 @@ msgid ""
 "some tracks sound incorrect."
 msgstr ""
 "Você parece estar usando um dispositivo General MIDI,\n"
-"mas, o jogo só suporta Roland MT32 MIDI.\n"
+"mas seu jogo suporta apenas Roland MT32 MIDI.\n"
 "Tentamos mapear os instrumentos Roland MT32 para\n"
-"o modelo General MIDI. Talvez possa acontecer\n"
-"que algumas faixas não sejam corretamente tocadas."
+"os General MIDI. Ainda é possível que\n"
+"algumas faixas soem incorretamente."
 
 #: engines/lab/savegame.cpp:238
-#, fuzzy
 msgid "Would you like to save or restore a game?"
-msgstr "Você deseja carregar ou salvar o jogo?"
+msgstr "Você gostaria de salvar ou restaurar um jogo?"
 
 #: engines/lure/detection.cpp:73 engines/mads/detection.cpp:144
 #: engines/sherlock/detection.cpp:136
@@ -4937,9 +4945,9 @@ msgstr ""
 "o site já não existe mais."
 
 #: engines/mutationofjb/util.cpp:33
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to locate the '%s' engine data file"
-msgstr "Não foi possível localizar arquivo de dados '%s' da engine."
+msgstr "Não foi possível localizar o arquivo de dados da engine '%s'"
 
 #: engines/neverhood/detection.cpp:151
 msgid "Skip the Hall of Records storyboard scenes"
@@ -5237,6 +5245,8 @@ msgstr ""
 msgid ""
 "Cannot play back %dbpp video on a system with maximum color depth of 8bpp"
 msgstr ""
+"Não é possível reproduzir vídeo de %dbpp em um sistema com profundidade de "
+"cor máxima de 8bpp"
 
 #: engines/sci/resource.cpp:836
 msgid ""
@@ -6378,7 +6388,7 @@ msgstr "Não foi possível localizar o arquivo de dados '%s'."
 
 #: engines/ultima/shared/early/ultima_early.cpp:67
 msgid "Could not find correct ultima.dat datafile"
-msgstr ""
+msgstr "Não foi possível encontrar o arquivo de dados ultima.dat correto"
 
 #: engines/ultima/shared/engine/data_archive.cpp:81
 #, c-format
@@ -6393,31 +6403,33 @@ msgstr ""
 "%d"
 
 #: engines/ultima/nuvie/nuvie.cpp:324
-#, fuzzy
 msgid ""
 "\n"
 "Game Saved\n"
 "\n"
-msgstr "Salvo.\n"
+msgstr ""
+"\n"
+"Jogo Salvo.\n"
+"\n"
 
 #: engines/ultima/nuvie/nuvie.cpp:373
-#, fuzzy, c-format
+#, c-format
 msgid "loading quick save %d"
-msgstr "Não foi possível utilizar salvamento rápido no slot #%d"
+msgstr "carregando salvamento rápido %d"
 
 #: engines/ultima/nuvie/nuvie.cpp:378
-#, fuzzy, c-format
+#, c-format
 msgid "saving quick save %d"
-msgstr "Salvamento rápido"
+msgstr "salvamento rápido %d"
 
 #: engines/ultima/nuvie/nuvie.cpp:392
-#, fuzzy, c-format
+#, c-format
 msgid "Quicksave %03d"
-msgstr "Salvamento rápido"
+msgstr "Salvamento rápido %03d"
 
 #: engines/ultima/nuvie/meta_engine.cpp:39
 msgid "Original Save"
-msgstr ""
+msgstr "Salvamento Original"
 
 #: engines/ultima/nuvie/save/save_game.cpp:212
 msgid "Transfer Character"
@@ -6453,7 +6465,7 @@ msgstr "[moderno demais]"
 
 #: engines/wintermute/detection.cpp:62
 msgid "Show FPS-counter"
-msgstr "Exibir contador de QPS"
+msgstr "Exibir contador de FPS"
 
 #: engines/wintermute/detection.cpp:63
 msgid "Show the current number of frames per second in the upper left corner"
@@ -6983,7 +6995,7 @@ msgstr "Jogador 2: Direita"
 
 #: engines/wintermute/keymapper_tables.h:1517
 msgid "Debug FPS"
-msgstr "Depurar QPS"
+msgstr "Depurar FPS"
 
 #: engines/wintermute/keymapper_tables.h:1614
 msgid "F1"
@@ -7016,17 +7028,16 @@ msgstr ""
 "meramente -10HP"
 
 #: engines/xeen/saves.cpp:291
-#, fuzzy
 msgid "Failed to autosave"
-msgstr "Falha ao salvar o jogo"
+msgstr "Falha ao salvar automaticamente"
 
 #: engines/zvision/detection_tables.h:60
 msgid "Double FPS"
-msgstr "Dobrar QPS"
+msgstr "FPS em Dobro"
 
 #: engines/zvision/detection_tables.h:61
 msgid "Increase framerate from 30 to 60 FPS"
-msgstr "Aumenta a taxa de quadros de 30 para 60 QPS"
+msgstr "Aumenta a taxa de quadros de 30 para 60 FPS"
 
 #: engines/zvision/detection_tables.h:70
 msgid "Enable Venus"
@@ -7053,40 +7064,36 @@ msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
 msgstr "Usar vídeo MPEG da versão em DVD em vez do AVI de resolução mais baixa"
 
 #: engines/zvision/detection.cpp:150
-#, fuzzy
 msgid "Look Up"
-msgstr "Olhar para cima"
+msgstr "Olhar para Cima"
 
 #: engines/zvision/detection.cpp:156
-#, fuzzy
 msgid "Look Down"
-msgstr "Olhar para baixo"
+msgstr "Olhar para Baixo"
 
 #: engines/zvision/detection.cpp:174
-#, fuzzy
 msgid "Show FPS"
-msgstr "Exibir contador de QPS"
+msgstr "Exibir FPS"
 
 #: engines/zvision/detection.cpp:191
 msgid "Spellbook"
-msgstr ""
+msgstr "Livro de Feitiços"
 
 #: engines/zvision/detection.cpp:197
 msgid "Score"
-msgstr ""
+msgstr "Placar"
 
 #: engines/zvision/detection.cpp:203
 msgid "Put away object"
-msgstr ""
+msgstr "Deixar objeto de lado"
 
 #: engines/zvision/detection.cpp:209
 msgid "Extract coin"
-msgstr ""
+msgstr "Extrair moeda"
 
 #: engines/zvision/detection.cpp:230
-#, fuzzy
 msgid "Preferences"
-msgstr "Dispositivo pref.:"
+msgstr "Preferências"
 
 #: engines/zvision/file/save_manager.cpp:222
 #, c-format
