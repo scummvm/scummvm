@@ -56,6 +56,7 @@
 #include "common/config-manager.h"
 
 #include "backends/audiocd/default/default-audiocd.h"
+#include "backends/events/default/default-events.h"
 #include "backends/mutex/pthread/pthread-mutex.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
@@ -367,6 +368,9 @@ void OSystem_Android::initBackend() {
 		warning("couldn't renice the main thread");
 
 	JNI::setReadyForEvents(true);
+
+	_eventManager = new DefaultEventManager(this);
+	_audiocdManager = new DefaultAudioCDManager();
 
 	BaseBackend::initBackend();
 }
