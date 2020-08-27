@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-27 20:27+0200\n"
-"PO-Revision-Date: 2020-08-27 16:14+0000\n"
+"PO-Revision-Date: 2020-08-27 18:47+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -17,8 +17,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Ukrainian\n"
 
@@ -1907,9 +1907,8 @@ msgid "Could not find any engine capable of running the selected game"
 msgstr "Не можу знайти движок для запуску вибраної гри"
 
 #: common/achievements.cpp:92
-#, fuzzy
 msgid "Achievement unlocked!"
-msgstr "Відкритих досягнень: %d/%d"
+msgstr "Досягнення є!"
 
 #: common/error.cpp:38
 msgid "No error"
@@ -2247,7 +2246,7 @@ msgstr "Можливі ідентифікатори гри для движка %s:"
 
 #: engines/metaengine.cpp:59
 msgid "Default game keymap"
-msgstr ""
+msgstr "Мапа клавіш за замовчунням"
 
 #: engines/metaengine.cpp:63 backends/platform/maemo/maemo.cpp:174
 #: backends/platform/symbian/src/SymbianActions.cpp:44
@@ -2278,7 +2277,6 @@ msgid "Pause"
 msgstr "Пауза"
 
 #: engines/metaengine.cpp:85
-#, fuzzy
 msgid "Game menu"
 msgstr "Меню гри"
 
@@ -2299,7 +2297,7 @@ msgstr "Пропустити рядок"
 
 #: engines/metaengine.cpp:103
 msgid "Predictive input dialog"
-msgstr ""
+msgstr "Діалог предиктивного вводу"
 
 #: engines/metaengine.cpp:107 engines/sky/detection.cpp:228
 #: engines/wintermute/keymapper_tables.h:55
@@ -3408,11 +3406,11 @@ msgstr "R2"
 
 #: backends/platform/sdl/switch/switch.cpp:40
 msgid "Minus"
-msgstr ""
+msgstr "Мінус"
 
 #: backends/platform/sdl/switch/switch.cpp:41
 msgid "Plus"
-msgstr ""
+msgstr "Плюс"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:48
 msgid "Zone"
@@ -3715,6 +3713,9 @@ msgid ""
 "If you have such file in other AGI (Sierra) game, you can copy it to the "
 "game directory"
 msgstr ""
+"Не можу відкрити або вжити файл 'hgc_font' для шрифтів Hercules.\n"
+"Якщо у вас є цей файл ві іншої гри AGI (Sierra), ви можете скопіювати його "
+"до папки з цією ігрою"
 
 #: engines/agi/saveload.cpp:772 engines/avalanche/parser.cpp:1907
 #: engines/cine/various.cpp:354 engines/dm/dm.cpp:276
@@ -3909,11 +3910,13 @@ msgid ""
 "Things will be broken. Please consider starting Operation Stealth from "
 "beginning using new savegames."
 msgstr ""
+"ПОПЕРЕДЖЕННЯ: Збережена гра, яку ви намагаєтесь зчитати, є у поганому стані. "
+"Гра не буде працювати добре. Будь-ласка, спробуйте розпочати гру Operation "
+"Stealth з самого початку, використовуючи нові збережені ігри."
 
 #: engines/cine/saveload.cpp:864
-#, fuzzy
 msgid "Load anyway"
-msgstr "Все одно додати"
+msgstr "Все одно зчитати"
 
 #: engines/dragons/detection.cpp:214
 msgid ""
@@ -3924,6 +3927,12 @@ msgid ""
 "\n"
 " See https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
 msgstr ""
+"Помилка: Виглядає, що файли гри було неправильно переписано з диску\n"
+"\n"
+"Вам потрібно переписувати спеціальним чином тільки файли STR та XA. Решта "
+"мусить бути скопійовано звичайним чином з вашого CD.\n"
+"\n"
+"Дивіться https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
 
 #: engines/dragons/dragons.cpp:1783
 #, c-format
@@ -3990,9 +3999,8 @@ msgid "Untitled Savegame"
 msgstr "Збережена гра без назви"
 
 #: engines/glk/adrift/os_glk.cpp:2814
-#, fuzzy
 msgid "Loading game...\n"
-msgstr "Завантажую гру..."
+msgstr "Завантажую гру...\n"
 
 #: engines/glk/advsys/advsys.cpp:35
 msgid "Could not start AdvSys game"
@@ -4028,13 +4036,12 @@ msgid "This is not a valid Alan2 file."
 msgstr "Це недійсний файл Alan2."
 
 #: engines/glk/comprehend/game.cpp:337
-#, fuzzy
 msgid "Savegame"
-msgstr "Зберегти гру"
+msgstr "Збережена гра"
 
 #: engines/glk/comprehend/game.cpp:1333
 msgid "Picture window toggled\n"
-msgstr ""
+msgstr "Вікно з ілюстрацією перемкнено\n"
 
 #: engines/glk/glulx/glulx.cpp:82
 msgid "This is too short to be a valid Glulx file."
@@ -4053,9 +4060,8 @@ msgid "This Glulx file is too new a version to execute."
 msgstr "Цей файл Glulx є занадто новою версією для виконання."
 
 #: engines/glk/quest/quest.cpp:45
-#, fuzzy
 msgid "Could not start Quest game"
-msgstr "Не вдалося запустити гру AdvSys"
+msgstr "Не вдалося запустити гру Quest"
 
 #: engines/glk/scott/scott.cpp:99
 msgid "I don't understand your command. "
@@ -4675,9 +4681,8 @@ msgstr ""
 "статися, що деякі треки будуть грати неправильно."
 
 #: engines/lab/savegame.cpp:238
-#, fuzzy
 msgid "Would you like to save or restore a game?"
-msgstr "Ви хочете завантажити або зберегти гру?"
+msgstr "Чи ви хочете зберегти або завантажити гру?"
 
 #: engines/lure/detection.cpp:73 engines/mads/detection.cpp:144
 #: engines/sherlock/detection.cpp:136
@@ -4921,9 +4926,9 @@ msgstr ""
 "окрім того, цей магазин більше не працює."
 
 #: engines/mutationofjb/util.cpp:33
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to locate the '%s' engine data file"
-msgstr "Не вдалося знайти файл даних движка %s."
+msgstr "Не вдалося знайти файл даних движка '%s'"
 
 #: engines/neverhood/detection.cpp:151
 msgid "Skip the Hall of Records storyboard scenes"
@@ -5219,7 +5224,7 @@ msgstr ""
 #, c-format
 msgid ""
 "Cannot play back %dbpp video on a system with maximum color depth of 8bpp"
-msgstr ""
+msgstr "Не можу програти %dbpp відео на системі з кольоровою роздільністю 8bpp"
 
 #: engines/sci/resource.cpp:836
 msgid ""
@@ -6341,7 +6346,7 @@ msgstr "Не вдалося знайти файл даних '%s'."
 
 #: engines/ultima/shared/early/ultima_early.cpp:67
 msgid "Could not find correct ultima.dat datafile"
-msgstr ""
+msgstr "Не можу знайти коректний файл ultima.dat"
 
 #: engines/ultima/shared/engine/data_archive.cpp:81
 #, c-format
@@ -6355,31 +6360,33 @@ msgstr ""
 "Знайдено невірну версію даних движка. Очікувана %d.%d, але знайдено %d.%d"
 
 #: engines/ultima/nuvie/nuvie.cpp:324
-#, fuzzy
 msgid ""
 "\n"
 "Game Saved\n"
 "\n"
-msgstr "Записано.\n"
+msgstr ""
+"\n"
+"Гру збережено\n"
+"\n"
 
 #: engines/ultima/nuvie/nuvie.cpp:373
-#, fuzzy, c-format
+#, c-format
 msgid "loading quick save %d"
-msgstr "Не вдалося швидко зберегти гру у слот №%d"
+msgstr "читаю швидко збережену гру %d"
 
 #: engines/ultima/nuvie/nuvie.cpp:378
-#, fuzzy, c-format
+#, c-format
 msgid "saving quick save %d"
-msgstr "Швидке збереження"
+msgstr "записую швидке збереження %d"
 
 #: engines/ultima/nuvie/nuvie.cpp:392
-#, fuzzy, c-format
+#, c-format
 msgid "Quicksave %03d"
-msgstr "Швидке збереження"
+msgstr "Швидке збереження %03d"
 
 #: engines/ultima/nuvie/meta_engine.cpp:39
 msgid "Original Save"
-msgstr ""
+msgstr "Оригінальне збереження"
 
 #: engines/ultima/nuvie/save/save_game.cpp:212
 msgid "Transfer Character"
@@ -6976,9 +6983,8 @@ msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
 msgstr "Броня не зламається, поки персонаж не досягне -80HP, а не лише -10HP"
 
 #: engines/xeen/saves.cpp:291
-#, fuzzy
 msgid "Failed to autosave"
-msgstr "Не вдалося записати гру"
+msgstr "Не вдалося зберегти гру автоматично"
 
 #: engines/zvision/detection_tables.h:60
 msgid "Double FPS"
@@ -7015,40 +7021,36 @@ msgstr ""
 "роздільною здатністю"
 
 #: engines/zvision/detection.cpp:150
-#, fuzzy
 msgid "Look Up"
 msgstr "Глянути догори"
 
 #: engines/zvision/detection.cpp:156
-#, fuzzy
 msgid "Look Down"
 msgstr "Глянути донизу"
 
 #: engines/zvision/detection.cpp:174
-#, fuzzy
 msgid "Show FPS"
 msgstr "Показати лічильник кадрів"
 
 #: engines/zvision/detection.cpp:191
 msgid "Spellbook"
-msgstr ""
+msgstr "Книга заклять"
 
 #: engines/zvision/detection.cpp:197
 msgid "Score"
-msgstr ""
+msgstr "Рахунок"
 
 #: engines/zvision/detection.cpp:203
 msgid "Put away object"
-msgstr ""
+msgstr "Відкласти об'єкт"
 
 #: engines/zvision/detection.cpp:209
 msgid "Extract coin"
-msgstr ""
+msgstr "Дістати монету"
 
 #: engines/zvision/detection.cpp:230
-#, fuzzy
 msgid "Preferences"
-msgstr "Уподобаний пристрій:"
+msgstr "Уподобання"
 
 #: engines/zvision/file/save_manager.cpp:222
 #, c-format
