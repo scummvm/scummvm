@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-27 20:27+0200\n"
-"PO-Revision-Date: 2020-08-27 18:47+0000\n"
+"PO-Revision-Date: 2020-08-27 23:09+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -6679,7 +6679,7 @@ msgstr "Вихід"
 
 #: engines/wintermute/keymapper_tables.h:505
 msgid "Light helper window"
-msgstr "Вікно для помічника підсвітлювання"
+msgstr "Вікно для управління підсвітлюванням"
 
 #: engines/wintermute/keymapper_tables.h:530
 msgid "Run forward"
