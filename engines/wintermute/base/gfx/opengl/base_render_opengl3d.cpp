@@ -277,7 +277,17 @@ bool BaseRenderOpenGL3D::setViewport(int left, int top, int right, int bottom) {
 }
 
 bool BaseRenderOpenGL3D::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
-	warning("BaseRenderOpenGL3D::drawLine not yet implemented");
+	byte a = RGBCOLGetA(color);
+	byte r = RGBCOLGetR(color);
+	byte g = RGBCOLGetG(color);
+	byte b = RGBCOLGetB(color);
+
+	glBegin(GL_LINES);
+	glColor4b(r, g, b, a);
+	glVertex3f(x1, y1, 0.9f);
+	glVertex3f(x2, y2, 0.9f);
+	glEnd();
+
 	return true;
 }
 
@@ -516,7 +526,16 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D *camera, bool force) {
 }
 
 bool BaseRenderOpenGL3D::setupLines() {
-	warning("BaseRenderOpenGL3D::setupLines not yet implemented");
+	if (_renderState != RSTATE_LINES) {
+		_renderState = RSTATE_LINES;
+
+		glDisable(GL_LIGHTING);
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glEnable(GL_ALPHA_TEST);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
 	return true;
 }
 

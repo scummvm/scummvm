@@ -221,7 +221,35 @@ bool BaseRenderOpenGL3DShader::setViewport(int left, int top, int right, int bot
 }
 
 bool BaseRenderOpenGL3DShader::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
-	warning("BaseRenderOpenGL3DShader::drawLine not yet implemented");
+	glBindBuffer(GL_ARRAY_BUFFER, _lineVBO);
+
+	float lineCoords[4];
+
+	lineCoords[0] = x1;
+	lineCoords[1] = y1;
+	lineCoords[2] = x2;
+	lineCoords[3] = y2;
+
+	glBufferSubData(GL_ARRAY_BUFFER, 0, 2 * 8, lineCoords);
+
+	byte a = RGBCOLGetA(color);
+	byte r = RGBCOLGetR(color);
+	byte g = RGBCOLGetG(color);
+	byte b = RGBCOLGetB(color);
+
+	Math::Vector4d colorValue;
+	colorValue.x() = r / 255.0f;
+	colorValue.y() = g / 255.0f;
+	colorValue.z() = b / 255.0f;
+	colorValue.w() = a / 255.0f;
+
+	_lineShader->use();
+	_lineShader->setUniform("color", colorValue);
+	_fadeShader->setUniform("projMatrix", _projectionMatrix2d);
+
+	glDrawArrays(GL_LINES, 0, 2);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	return true;
 }
 
@@ -363,6 +391,15 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 
 	_fadeShader->enableVertexAttribute("position", _fadeVBO, 2, GL_FLOAT, false, 8, 0);
 
+	glGenBuffers(1, &_lineVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _lineVBO);
+	glBufferData(GL_ARRAY_BUFFER, 2 * 8, nullptr, GL_DYNAMIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	static const char *lineAttributes[] = { "position", nullptr };
+	_lineShader = OpenGL::Shader::fromFiles("line", lineAttributes);
+	_lineShader->enableVertexAttribute("position", _lineVBO, 2, GL_FLOAT, false, 8, 0);
+
 	_active = true;
 	// setup a proper state
 	setup2D(true);
@@ -474,7 +511,14 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 }
 
 bool BaseRenderOpenGL3DShader::setupLines() {
-	warning("BaseRenderOpenGL3DShader::setupLines not yet implemented");
+	if (_renderState != RSTATE_LINES) {
+		_renderState = RSTATE_LINES;
+
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
 	return true;
 }
 
