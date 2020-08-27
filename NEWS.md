@@ -73,6 +73,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed QFG3 auto-saves.
    - Fixed QFG4 and Shivers save game thumbnails being obscured by control panels.
    - Fixed a random crash in the Windows version when exiting a game.
+   - Added support for Roland D-110 sound driver.
 
  SCUMM:
    - Fixed palette issues leading to incorrect colors in MM NES intro and dark rooms.
