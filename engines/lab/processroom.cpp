@@ -28,6 +28,7 @@
  *
  */
 
+#include "common/translation.h"
 #include "gui/message.h"
 
 #include "lab/lab.h"
@@ -326,7 +327,7 @@ void LabEngine::doActions(const ActionList &actionList) {
 				// This is a Wyrmkeep Windows trial version, thus stop at this
 				// point, since we can't check for game payment status
 				_graphics->readPict(getPictName(true));
-				GUI::MessageDialog trialMessage("This is the end of the trial version. You can play the full game using the original interpreter from Wyrmkeep");
+				GUI::MessageDialog trialMessage(_("This is the end of the trial version. You can play the full game using the original interpreter from Wyrmkeep"));
 				trialMessage.runModal();
 				break;
 			}
