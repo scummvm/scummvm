@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-27 12:24+0200\n"
-"PO-Revision-Date: 2020-07-23 21:43+0000\n"
-"Last-Translator: Zvika <haramaty.zvika@gmail.com>\n"
+"PO-Revision-Date: 2020-08-27 11:56+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/he/>\n"
 "Language: he\n"
@@ -283,9 +283,8 @@ msgid "Shader"
 msgstr "שיידר"
 
 #: gui/editgamedialog.cpp:217
-#, fuzzy
 msgid "Override global shader settings"
-msgstr "בטל הגדרות שמע גלובליות"
+msgstr "דרוס הגדרות shader גלובליות"
 
 #: gui/editgamedialog.cpp:219
 #, fuzzy
@@ -294,9 +293,8 @@ msgid "Override global shader settings"
 msgstr "בטל הגדרות שמע גלובליות"
 
 #: gui/editgamedialog.cpp:233 gui/options.cpp:1743 engines/dialogs.cpp:326
-#, fuzzy
 msgid "Keymaps"
-msgstr "מפתחות:"
+msgstr "מיפוי מקשים"
 
 #: gui/editgamedialog.cpp:240 gui/options.cpp:1750 engines/dialogs.cpp:301
 msgid "Audio"
@@ -563,13 +561,12 @@ msgstr "האם באמת לאתחל מחדש את הגדרות FluidSynth למצבם המקורי?"
 
 #: gui/gui-manager.cpp:122
 msgid "GUI"
-msgstr ""
+msgstr "ממשק משתמש"
 
 #: gui/gui-manager.cpp:126 engines/mohawk/myst.cpp:585
 #: engines/mohawk/riven.cpp:854
-#, fuzzy
 msgid "Interact"
-msgstr "אינטרפולציה:"
+msgstr "אינטראקציה"
 
 #: gui/gui-manager.cpp:131 gui/unknown-game-dialog.cpp:54
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
@@ -924,12 +921,12 @@ msgstr "שטח מת בג'ויסטיק:"
 #: gui/options.cpp:1173
 #, c-format
 msgid "%d hidden achievements remaining"
-msgstr ""
+msgstr "%d הישגים נסתרים שנותרו"
 
 #: gui/options.cpp:1178
 #, c-format
 msgid "Achievements unlocked: %d/%d"
-msgstr ""
+msgstr "הישגים שנפתחו: %d/%d"
 
 #: gui/options.cpp:1197
 msgid "HW Shader:"
@@ -1520,9 +1517,8 @@ msgid "Will read text in gui on mouse over."
 msgstr "יקרא טקסט בגוי על העכבר מעל."
 
 #: gui/options.cpp:2184
-#, fuzzy
 msgid "None"
-msgstr "לא נבחר"
+msgstr "ללא"
 
 #: gui/options.cpp:2259
 msgid "Failed to change cloud storage!"
@@ -1762,7 +1758,7 @@ msgstr "שם:"
 #: gui/saveload-dialog.cpp:1185
 #, c-format
 msgid "Enter a description for slot %d:"
-msgstr "הזן תיאור עבור משבצת% d:"
+msgstr "הזן תיאור עבור משבצת %d:"
 
 #: gui/themebrowser.cpp:45
 msgid "Select a Theme"
@@ -1853,7 +1849,7 @@ msgstr "ערך ברור"
 #: base/main.cpp:263
 #, c-format
 msgid "Engine does not support debug level '%s'"
-msgstr "המנוע אינו תומך ברמת ניפוי באגים '% s'"
+msgstr "המנוע אינו תומך ברמת ניפוי באגים '%s'"
 
 #: base/main.cpp:587
 msgid "Error running game:"
@@ -2060,7 +2056,7 @@ msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"שמירת המשחק (% s) נכשלה! אנא עיין ב- README למידע בסיסי ולקבל הוראות כיצד "
+"שמירת המשחק (%s) נכשלה! אנא עיין ב- README למידע בסיסי ולקבל הוראות כיצד "
 "לקבל סיוע נוסף."
 
 #: engines/dialogs.cpp:346
@@ -2078,7 +2074,7 @@ msgstr "~ K ~ eys"
 #: engines/engine.cpp:318
 #, c-format
 msgid "Could not switch to resolution '%dx%d'."
-msgstr "לא ניתן היה לעבור לרזולוציה '% dx% d'."
+msgstr "לא ניתן היה לעבור לרזולוציה '%dx%d'."
 
 #: engines/engine.cpp:327
 msgid "Could not initialize color format."
@@ -2087,12 +2083,12 @@ msgstr "לא ניתן לאתחל את פורמט הצבעים."
 #: engines/engine.cpp:336
 #, c-format
 msgid "Could not switch to video mode '%s'."
-msgstr "לא ניתן היה לעבור למצב הווידאו '% s'."
+msgstr "לא ניתן היה לעבור למצב הווידאו '%s'."
 
 #: engines/engine.cpp:344
 #, c-format
 msgid "Could not switch to stretch mode '%s'."
-msgstr "לא ניתן היה לעבור למצב מתיחה '% s'."
+msgstr "לא ניתן היה לעבור למצב מתיחה '%s'."
 
 #: engines/engine.cpp:351
 msgid "Could not apply aspect ratio setting."
@@ -2135,14 +2131,12 @@ msgstr ""
 "לפרטים, עיין בקובץ README."
 
 #: engines/engine.cpp:519 engines/sky/detection.cpp:316
-#, fuzzy
 msgid "Autosave"
-msgstr "שמירה אוטומטית:"
+msgstr "שמירה אוטומטית"
 
 #: engines/engine.cpp:521
-#, fuzzy
 msgid "Error occurred making autosave"
-msgstr "שגיאה בקריאת שמירת הקובץ"
+msgstr "אירעה שגיאה ביצירת שמירה אוטומטית"
 
 #: engines/engine.cpp:593
 #, c-format
@@ -2150,7 +2144,7 @@ msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
 "information, and for instructions on how to obtain further assistance."
 msgstr ""
-"טעינת המשחק השמורה (% s) נכשלה! אנא עיין ב- README למידע בסיסי ולקבל הוראות "
+"טעינת המשחק השמורה (%s) נכשלה! אנא עיין ב- README למידע בסיסי ולקבל הוראות "
 "כיצד לקבל סיוע נוסף."
 
 #: engines/engine.cpp:612
@@ -2169,11 +2163,11 @@ msgstr "התחל בכל מקרה"
 
 #: engines/engine.cpp:754
 msgid "Loading game is currently unavailable"
-msgstr ""
+msgstr "טעינת משחק לא אפשרית כרגע"
 
 #: engines/engine.cpp:783
 msgid "Saving game is currently unavailable"
-msgstr ""
+msgstr "שמירת משחק לא אפשרית כרגע"
 
 #: engines/game.cpp:171
 #, c-format
@@ -2183,15 +2177,15 @@ msgid ""
 "Please report the following data to the ScummVM team at %s along with the "
 "name of the game you tried to add and its version, language, etc.:"
 msgstr ""
-"נראה כי המשחק ב-% s הוא גרסת משחק לא ידועה.\n"
+"נראה כי המשחק ב-%s הוא גרסת משחק לא ידועה.\n"
 "\n"
-"אנא דווח על הנתונים הבאים לצוות ScummVM ב-% s יחד עם שם המשחק שניסית להוסיף "
+"אנא דווח על הנתונים הבאים לצוות ScummVM ב-%s יחד עם שם המשחק שניסית להוסיף "
 "והגרסה שלו, השפה וכו ':"
 
 #: engines/game.cpp:175
 #, c-format
 msgid "Matched game IDs for the %s engine:"
-msgstr "מזהי משחק תואמים למנוע% s:"
+msgstr "מזהי משחק תואמים למנוע %s:"
 
 #: audio/adlib.cpp:2293
 msgid "AdLib emulator"
@@ -2226,7 +2220,7 @@ msgstr "OPL3LPT"
 msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
-msgstr "מכשיר האודיו שנבחר '% s' לא נמצא (למשל יכול להיות כבוי או מנותק)."
+msgstr "מכשיר האודיו שנבחר '%s' לא נמצא (למשל יכול להיות כבוי או מנותק)."
 
 #: audio/mididrv.cpp:258 audio/mididrv.cpp:270 audio/mididrv.cpp:306
 #: audio/mididrv.cpp:321
@@ -2238,25 +2232,25 @@ msgstr "מנסה לחזור למכשיר הזמין הבא ..."
 msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
 "information."
-msgstr "לא ניתן להשתמש במכשיר השמע שנבחר '% s'. ראה קובץ יומן למידע נוסף."
+msgstr "לא ניתן להשתמש במכשיר השמע שנבחר '%s'. ראה קובץ יומן למידע נוסף."
 
 #: audio/mididrv.cpp:306
 #, c-format
 msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
-msgstr "מכשיר השמע המועדף '% s' לא נמצא (למשל, ייתכן שהוא כבוי או מנותק)."
+msgstr "מכשיר השמע המועדף '%s' לא נמצא (למשל, ייתכן שהוא כבוי או מנותק)."
 
 #: audio/mididrv.cpp:321
 #, c-format
 msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
 "information."
-msgstr "לא ניתן להשתמש במכשיר השמע המועדף '% s'. ראה קובץ יומן למידע נוסף."
+msgstr "לא ניתן להשתמש במכשיר השמע המועדף '%s'. ראה קובץ יומן למידע נוסף."
 
 #: audio/mididrv.cpp:717
 msgid "Starting MIDI dump"
-msgstr ""
+msgstr "מתחיל בשמירת MIDI"
 
 #: audio/mods/paula.cpp:303
 msgid "Amiga Audio emulator"
@@ -2330,7 +2324,7 @@ msgid ""
 "Failed to download %u files."
 msgstr ""
 "ההורדה הושלמה.\n"
-"הורדת קבצי% u נכשלה."
+"הורדת קבצי %u נכשלה."
 
 #: backends/cloud/storage.cpp:350
 msgid "Download complete."
@@ -2363,23 +2357,20 @@ msgid "Quit"
 msgstr "צא"
 
 #: backends/events/default/default-events.cpp:293
-#, fuzzy
 msgid "Global"
-msgstr " (גלובלי)"
+msgstr "גלובלי"
 
 #: backends/events/default/default-events.cpp:296
-#, fuzzy
 msgid "Global Main Menu"
-msgstr "תפריט כללי"
+msgstr "תפריט ראשי כללי"
 
 #: backends/events/default/default-events.cpp:303
 msgid "Display keyboard"
 msgstr "הצגת מקלדת"
 
 #: backends/events/default/default-events.cpp:310
-#, fuzzy
 msgid "Toggle mute"
-msgstr "החלף לכידת עכבר"
+msgstr "הפעל או בטל השתקה"
 
 #: backends/events/default/default-events.cpp:336
 #, fuzzy
@@ -2468,7 +2459,7 @@ msgstr "מתאים לחלון (4: 3)"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:586
 #, c-format
 msgid "Resolution: %dx%d"
-msgstr "רזולוציה:% dx% d"
+msgstr "רזולוציה: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:609
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2501
@@ -2531,12 +2522,11 @@ msgstr "החלף לכידת עכבר"
 #: engines/wintermute/keymapper_tables.h:1326
 #: engines/wintermute/keymapper_tables.h:1357
 msgid "Save screenshot"
-msgstr ""
+msgstr "שמור צילום מסך"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:387
-#, fuzzy
 msgid "Toggle aspect ratio correction"
-msgstr "החלף את יחס יחס הגובה-רוחב"
+msgstr "החלף בין מצבי יחס גובה-רוחב"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:394
 #, fuzzy
@@ -3484,7 +3474,7 @@ msgstr "פסק זמן בזמן אתחול הרשת"
 #: backends/platform/wii/options.cpp:186
 #, c-format
 msgid "Network not initialized (%d)"
-msgstr "הרשת לא אותחלה (% d)"
+msgstr "הרשת לא אותחלה (%d)"
 
 #: backends/updates/macosx/macosx-updates.mm:79
 msgid "Check for Updates..."
@@ -3497,7 +3487,7 @@ msgstr "בדוק עדכונים..."
 #: engines/tony/tony.cpp:196 engines/toon/toon.cpp:4952
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
-msgstr "לא ניתן לאתר את קובץ נתוני המנוע '% s'."
+msgstr "לא ניתן לאתר את קובץ נתוני המנוע '%s'."
 
 #: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:945
 #: engines/hugo/hugo.cpp:447 engines/lure/lure.cpp:73
@@ -3505,7 +3495,7 @@ msgstr "לא ניתן לאתר את קובץ נתוני המנוע '% s'."
 #: engines/tony/tony.cpp:208 engines/toon/toon.cpp:4964
 #, c-format
 msgid "The '%s' engine data file is corrupt."
-msgstr "קובץ נתוני המנוע '% s' פגום."
+msgstr "קובץ נתוני המנוע '%s' פגום."
 
 #: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:956
 #: engines/hugo/hugo.cpp:457 engines/lure/lure.cpp:76
@@ -3515,7 +3505,7 @@ msgstr "קובץ נתוני המנוע '% s' פגום."
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
 "%d.%d."
-msgstr "נמצאה גרסה שגויה של קובץ נתוני המנוע '% s'. צפה% d.% D אך קיבל% d.% D."
+msgstr "נמצאה גרסה שגויה של קובץ נתוני המנוע '%s'. צפה %d.%d אך קיבל %d.%d."
 
 #: engines/adl/detection.cpp:51
 msgid "TV emulation"
@@ -3649,7 +3639,7 @@ msgid ""
 msgstr ""
 "טעינת המשחק השמורה נכשלה מהקובץ:\n"
 "\n"
-"% s"
+"%s"
 
 #: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2456
 #, c-format
@@ -3660,7 +3650,7 @@ msgid ""
 msgstr ""
 "שמירת המשחק לקובץ נכשלה:\n"
 "\n"
-"% s"
+"%s"
 
 #: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2477
 #, c-format
@@ -3671,12 +3661,12 @@ msgid ""
 msgstr ""
 "המשחק נשמר בהצלחה בקובץ:\n"
 "\n"
-"% s"
+"%s"
 
 #: engines/agos/animation.cpp:558
 #, c-format
 msgid "Cutscene file '%s' not found!"
-msgstr "קובץ חיתוך '% s' לא נמצא!"
+msgstr "קובץ חיתוך '%s' לא נמצא!"
 
 #: engines/bladerunner/bladerunner.cpp:359
 msgid "Failed to initialize resources"
@@ -3859,7 +3849,7 @@ msgstr "דבר! אני לא שומע אותך!\n"
 #: engines/glk/advsys/vm.cpp:596
 #, c-format
 msgid "I don't know the word \"%s\".\n"
-msgstr "אני לא יודע את המילה \"% s\".\n"
+msgstr "אני לא יודע את המילה \"%s\".\n"
 
 #: engines/glk/advsys/vm.cpp:682
 msgid "I don't understand.\n"
@@ -3952,12 +3942,12 @@ msgstr "אני לא יכול לראות. חשוך מדי!\n"
 #: engines/glk/scott/scott.cpp:418
 #, c-format
 msgid "You are in a %s\n"
-msgstr "אתה בעוד% s\n"
+msgstr "אתה בעוד %s\n"
 
 #: engines/glk/scott/scott.cpp:420
 #, c-format
 msgid "I'm in a %s\n"
-msgstr "אני בעוד% s\n"
+msgstr "אני בעוד %s\n"
 
 #: engines/glk/scott/scott.cpp:425
 msgid ""
@@ -4408,7 +4398,7 @@ msgid ""
 msgstr ""
 "קובץ המשחק המקורי שנשמר הבא נמצא בנתיב המשחק שלך:\n"
 "\n"
-"% s% s\n"
+"%s %s\n"
 "\n"
 "האם ברצונך להשתמש בקובץ המשחק השמור הזה עם ScummVM?\n"
 "\n"
@@ -4419,7 +4409,7 @@ msgid ""
 "A saved game file was found in the specified slot %d. Overwrite?\n"
 "\n"
 msgstr ""
-"קובץ משחק שמור נמצא בחריץ שצוין% d. להחליף?\n"
+"קובץ משחק שמור נמצא בחריץ שצוין %d. להחליף?\n"
 "\n"
 
 #: engines/kyra/gui/saveload_eob.cpp:663
@@ -4431,7 +4421,7 @@ msgid ""
 "'import_savefile'.\n"
 "\n"
 msgstr ""
-"% d המשחקים השמורים המקוריים יובאו בהצלחה לתוך\n"
+"%d המשחקים השמורים המקוריים יובאו בהצלחה לתוך\n"
 "ScummVM. אם ברצונך לייבא ידנית משחק שנשמר במקור בהמשך, תעשה זאת\n"
 "צריך לפתוח את קונסולת הבאגים של ScummVM ולהשתמש בפקודה 'import_savefile'.\n"
 "\n"
@@ -4764,7 +4754,7 @@ msgid ""
 "Can't save game in slot %i\n"
 "\n"
 msgstr ""
-"לא ניתן לשמור משחק בחריץ% i\n"
+"לא ניתן לשמור משחק בחריץ %i\n"
 "\n"
 
 #: engines/parallaction/saveload.cpp:194
@@ -4989,7 +4979,7 @@ msgstr "(שמירה אוטומטית)"
 #: engines/sci/engine/kgraphics32.cpp:358
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
-msgstr "אנא השתמש במציג חיצוני כדי לפתוח את קובץ העזרה של המשחק:% s"
+msgstr "אנא השתמש במציג חיצוני כדי לפתוח את קובץ העזרה של המשחק: %s"
 
 #: engines/sci/engine/savegame.cpp:1407
 msgid "The format of this saved game is obsolete, unable to load it"
@@ -4998,7 +4988,7 @@ msgstr "הפורמט של המשחק שנשמר זה מיושן, לא מצליח לטעון אותו"
 #: engines/sci/engine/savegame.cpp:1409
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
-msgstr "גרסת Savegame היא% d, המרבי הנתמך הוא% 0d"
+msgstr "גרסת Savegame היא %d, המרבי הנתמך הוא %0d"
 
 #: engines/sci/engine/savegame.cpp:1420
 msgid ""
@@ -5180,17 +5170,17 @@ msgstr ""
 #: engines/scumm/dialogs.cpp:168
 #, c-format
 msgid "Insert Disk %c and Press Button to Continue."
-msgstr "הכנס דיסק% c ולחץ על לחצן כדי להמשיך."
+msgstr "הכנס דיסק %c ולחץ על לחצן כדי להמשיך."
 
 #: engines/scumm/dialogs.cpp:169
 #, c-format
 msgid "Unable to Find %s, (%c%d) Press Button."
-msgstr "לא ניתן למצוא% s, (% c% d) לחץ על לחצן."
+msgstr "לא ניתן למצוא %s, (%c%d) לחץ על לחצן."
 
 #: engines/scumm/dialogs.cpp:170
 #, c-format
 msgid "Error reading disk %c, (%c%d) Press Button."
-msgstr "שגיאה בקריאת דיסק% c, (% c% d) לחץ על לחצן."
+msgstr "שגיאה בקריאת דיסק %c, (%c%d) לחץ על לחצן."
 
 #: engines/scumm/dialogs.cpp:171
 msgid "Game Paused.  Press SPACE to Continue."
@@ -5231,12 +5221,12 @@ msgstr "המשחק לא היה טעון"
 #: engines/scumm/dialogs.cpp:190
 #, c-format
 msgid "Saving '%s'"
-msgstr "שומר '% s'"
+msgstr "שומר '%s'"
 
 #: engines/scumm/dialogs.cpp:191
 #, c-format
 msgid "Loading '%s'"
-msgstr "טוען '% s'"
+msgstr "טוען '%s'"
 
 #: engines/scumm/dialogs.cpp:192
 msgid "Name your SAVE game"
@@ -5833,7 +5823,7 @@ msgid ""
 "but %s is missing. Using AdLib instead."
 msgstr ""
 "תמיכת MIDI מקומית דורשת את שדרוג הרולנד מ- LucasArts,\n"
-"אבל% s חסר. במקום זאת משתמשים ב- AdLib."
+"אבל %s חסר. במקום זאת משתמשים ב- AdLib."
 
 #: engines/scumm/scumm.cpp:2762
 msgid ""
@@ -5967,23 +5957,23 @@ msgstr "הפעל במצב מהיר ממש (*)"
 #: engines/supernova/supernova.cpp:187
 #, c-format
 msgid "Unable to locate the text for %s language in engine data file."
-msgstr "לא ניתן לאתר את הטקסט לשפת% s בקובץ נתוני המנוע."
+msgstr "לא ניתן לאתר את הטקסט לשפת %s בקובץ נתוני המנוע."
 
 #: engines/supernova/supernova.cpp:470
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
-msgstr "נמצאה גרסה שגויה של קובץ נתוני המנוע '% s'. צפה% d אך קיבל% d."
+msgstr "נמצאה גרסה שגויה של קובץ נתוני המנוע '%s'. צפה %d אך קיבל %d."
 
 #: engines/supernova/supernova.cpp:480
 #, c-format
 msgid "Unable to find block for part %d"
-msgstr "לא ניתן למצוא חסימת חלק% d"
+msgstr "לא ניתן למצוא חסימת חלק %d"
 
 #: engines/supernova/supernova.cpp:523
 #, c-format
 msgid "Unable to find '%s' in game folder or the engine data file."
-msgstr "לא ניתן למצוא '% s' בתיקיית המשחק או בקובץ נתוני המנוע."
+msgstr "לא ניתן למצוא '%s' בתיקיית המשחק או בקובץ נתוני המנוע."
 
 #: engines/supernova/detection.cpp:40
 msgid "Improved mode"
@@ -5997,7 +5987,7 @@ msgstr "מסיר כמה פעולות שחוזרות על עצמן, מוסיף אפשרות לשנות פעלים לפי מקלדת"
 #: engines/sword1/animation.cpp:532
 #, c-format
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
-msgstr "אין אפשרות לנגן זרם PSX '% s' במצב לוח-לוח"
+msgstr "אין אפשרות לנגן זרם PSX '%s' במצב לוח-לוח"
 
 #: engines/sword1/animation.cpp:553 engines/sword2/animation.cpp:449
 msgid "DXA cutscenes found but ScummVM has been built without zlib"
@@ -6011,7 +6001,7 @@ msgstr "חיתוכי MPEG-2 נמצאו אך ScummVM נבנה ללא תמיכה ב- MPEG-2"
 #: engines/sword1/animation.cpp:576 engines/sword2/animation.cpp:474
 #, c-format
 msgid "Cutscene '%s' not found"
-msgstr "Cutscene '% s' לא נמצא"
+msgstr "Cutscene '%s' לא נמצא"
 
 #: engines/sword1/control.cpp:887
 msgid ""
@@ -6036,7 +6026,7 @@ msgid ""
 "Would you like to keep the old saved game (%s) or the new one (%s)?\n"
 msgstr ""
 "יעד משחק שנשמר חדש קיים כבר!\n"
-"האם תרצה לשמור על המשחק השמור הישן (% s) או על המשחק החדש (% s)?\n"
+"האם תרצה לשמור על המשחק השמור הישן (%s) או על המשחק החדש (%s)?\n"
 
 #: engines/sword1/control.cpp:1264
 msgid "Keep the old one"
@@ -6081,42 +6071,42 @@ msgstr "הקובץ teenagent.dat דחוס ו- zlib לא נכלל בהפעלה זו. אנא פרקו אותו"
 #: engines/tony/tony.cpp:256
 #, c-format
 msgid "Font variant not present in '%s' engine data file."
-msgstr "גרסת גופן לא קיימת בקובץ נתוני המנוע של '% s'."
+msgstr "גרסת גופן לא קיימת בקובץ נתוני המנוע של '%s'."
 
 #: engines/toon/toon.cpp:225
 #, c-format
 msgid "Saved game in slot #%d "
-msgstr "משחק שמור בחריץ #% d"
+msgstr "משחק שמור בחריץ #%d "
 
 #: engines/toon/toon.cpp:229
 #, c-format
 msgid "Could not quick save into slot #%d"
-msgstr "לא ניתן היה לשמור במהירות בחריץ #% d"
+msgstr "לא ניתן היה לשמור במהירות בחריץ #%d"
 
 #: engines/toon/toon.cpp:242
 #, c-format
 msgid "Saved game #%d quick loaded"
-msgstr "משחק שמור #% d טעון מהיר"
+msgstr "משחק שמור #%d טעון מהיר"
 
 #: engines/toon/toon.cpp:246
 #, c-format
 msgid "Could not quick load the saved game #%d"
-msgstr "לא ניתן היה לטעון במהירות את המשחק השמור #% d"
+msgstr "לא ניתן היה לטעון במהירות את המשחק השמור #%d"
 
 #: engines/toon/toon.cpp:1527
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to locate the '%s' data file."
-msgstr "לא ניתן לאתר את קובץ נתוני המנוע '% s'."
+msgstr "לא ניתן לאתר את קובץ נתוני המנוע '%s'."
 
 #: engines/ultima/shared/engine/data_archive.cpp:81
-#, fuzzy, c-format
+#, c-format
 msgid "Could not locate engine data %s"
-msgstr "לא ניתן לאתר את קובץ נתוני המנוע '% s'."
+msgstr "לא ניתן לאתר את קובץ נתוני המנוע '%s'."
 
 #: engines/ultima/shared/engine/data_archive.cpp:99
-#, fuzzy, c-format
+#, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
-msgstr "נמצאה גרסה שגויה של קובץ נתוני המנוע '% s'. צפה% d.% D אך קיבל% d.% D."
+msgstr "נמצאה גרסה שגויה של קובץ נתוני המנוע. צפה %d.%d אך קיבל %d.%d."
 
 #: engines/ultima/nuvie/save/save_game.cpp:212
 #, fuzzy
@@ -6811,7 +6801,7 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
-"משחק שמור זה משתמש בגרסה% u, אך מנוע זה תומך רק עד לגרסה% d. תצטרך גרסה "
+"משחק שמור זה משתמש בגרסה %u, אך מנוע זה תומך רק עד לגרסה %d. תצטרך גרסה "
 "מעודכנת של המנוע כדי להשתמש במשחק שנשמר זה."
 
 #, fuzzy
