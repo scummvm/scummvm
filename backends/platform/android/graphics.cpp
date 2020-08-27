@@ -58,6 +58,7 @@ AndroidGraphicsManager::AndroidGraphicsManager() :
 	_force_redraw(false),
 	_game_texture(0),
 	_game_pbuf(),
+	_frame_buffer(0),
 	_cursorX(0),
 	_cursorY(0),
 	_overlay_texture(0),
