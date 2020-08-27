@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-27 18:09+0200\n"
-"PO-Revision-Date: 2020-08-27 16:07+0000\n"
+"PO-Revision-Date: 2020-08-27 18:26+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -4917,7 +4917,7 @@ msgstr "Carregar Jogo"
 
 #: engines/pink/gui.cpp:220
 msgid "This menu item is not yet implemented"
-msgstr ""
+msgstr "Este item do menu ainda não foi implementado"
 
 #: engines/queen/detection.cpp:56
 msgid "Alternative intro"
@@ -5023,27 +5023,28 @@ msgid "Upscale videos to double their size"
 msgstr "Redimensiona vídeos para o dobro de seu tamanho"
 
 #: engines/sci/detection.cpp:545
-#, fuzzy
 msgid "MIDI mode:"
-msgstr "Ganho de MIDI:"
+msgstr "Modo de MIDI:"
 
 #: engines/sci/detection.cpp:546
 msgid ""
 "When using external MIDI devices (e.g. through USB-MIDI), select your device "
 "here"
 msgstr ""
+"Quando utilizar dispositivos MIDI externos (ex: por interface USB-MIDI), "
+"selecione seu dispositivo aqui"
 
 #: engines/sci/detection.cpp:551
 msgid "Standard (GM / MT-32)"
-msgstr ""
+msgstr "Padrão (GM / MT-32)"
 
 #: engines/sci/detection.cpp:555
 msgid "Roland D-110 / D-10 / D-20"
-msgstr ""
+msgstr "Roland D-110 / D-10 / D-20"
 
 #: engines/sci/detection.cpp:559
 msgid "Yamaha FB-01"
-msgstr ""
+msgstr "Yamaha FB-01"
 
 #: engines/sci/detection.cpp:989 engines/sci/engine/kfile.cpp:484
 msgid "(Autosave)"
