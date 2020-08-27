@@ -390,8 +390,6 @@ void Ultima8Engine::shutdownGame(bool reloading) {
 
 	// Save config here....
 
-	if (!_textModes.empty())
-		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 	_textModes.clear();
 
 	// reset mouse cursor
@@ -738,8 +736,6 @@ bool Ultima8Engine::LoadConsoleFont(Std::string confontini) {
 }
 
 void Ultima8Engine::enterTextMode(Gump *gump) {
-	if (_textModes.empty())
-		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	if (!_textModes.empty()) {
 		_textModes.remove(gump->getObjId());
 	}
@@ -749,8 +745,6 @@ void Ultima8Engine::enterTextMode(Gump *gump) {
 void Ultima8Engine::leaveTextMode(Gump *gump) {
 	if (!_textModes.empty())
 		_textModes.remove(gump->getObjId());
-	if (_textModes.empty())
-		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 
 void Ultima8Engine::handleEvent(const Common::Event &event) {
@@ -1049,8 +1043,6 @@ void Ultima8Engine::resetEngine() {
 	_scalerGump = nullptr;
 	_inverterGump = nullptr;
 
-	if (!_textModes.empty())
-		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 	_textModes.clear();
 
 	// reset mouse cursor

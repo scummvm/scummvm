@@ -258,5 +258,9 @@ bool EditWidget::OnTextInput(int unicode) {
 	return true;
 }
 
+void EditWidget::OnFocus(bool gain) {
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, gain);
+}
+
 } // End of namespace Ultima8
 } // End of namespace Ultima
