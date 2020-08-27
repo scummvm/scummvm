@@ -52,7 +52,7 @@ uint32 QuetzalBase::getInterpreterTag(InterpreterType interpType) {
 		return MKTAG('C', 'O', 'M', 'P');
 	case INTERPRETER_GEAS:
 		return MKTAG('G', 'E', 'A', 'S');
-	case INTERPRETER_GLULXE:
+	case INTERPRETER_GLULX:
 		return MKTAG('G', 'L', 'U', 'L');
 	case INTERPRETER_HUGO:
 		return MKTAG('H', 'U', 'G', 'O');

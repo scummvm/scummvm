@@ -407,7 +407,7 @@ public:
 	 * Returns the running interpreter type
 	 */
 	InterpreterType getInterpreterType() const override {
-		return INTERPRETER_GLULXE;
+		return INTERPRETER_GLULX;
 	}
 
 	/**
