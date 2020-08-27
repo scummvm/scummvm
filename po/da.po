@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-27 18:09+0200\n"
+"POT-Creation-Date: 2020-08-27 20:27+0200\n"
 "PO-Revision-Date: 2020-08-27 11:56+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -66,8 +66,8 @@ msgstr "Gå op"
 #: engines/engine.cpp:615 backends/dialogs/gtk/gtk-dialogs.cpp:55
 #: backends/events/default/default-events.cpp:176
 #: backends/events/default/default-events.cpp:199
-#: backends/platform/wii/options.cpp:48 engines/drascula/saveload.cpp:49
-#: engines/mohawk/myst_stacks/menu.cpp:284
+#: backends/platform/wii/options.cpp:48 engines/cine/saveload.cpp:864
+#: engines/drascula/saveload.cpp:49 engines/mohawk/myst_stacks/menu.cpp:284
 #: engines/mohawk/myst_stacks/menu.cpp:301
 #: engines/mohawk/myst_stacks/menu.cpp:319
 #: engines/mohawk/riven_stacks/aspit.cpp:350
@@ -525,6 +525,7 @@ msgid "Sine"
 msgstr "Sinus"
 
 #: gui/fluidsynth-dialog.cpp:137 backends/platform/sdl/ps3/ps3.cpp:44
+#: backends/platform/sdl/psp2/psp2.cpp:48
 msgid "Triangle"
 msgstr "Triangulær"
 
@@ -585,7 +586,8 @@ msgstr "Interpolation:"
 msgid "Close"
 msgstr "Luk"
 
-#: gui/gui-manager.cpp:137 backends/platform/symbian/src/SymbianActions.cpp:40
+#: gui/gui-manager.cpp:137 engines/metaengine.cpp:112
+#: backends/platform/symbian/src/SymbianActions.cpp:40
 #: engines/glk/scott/scott.cpp:394 engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
 #: engines/wintermute/keymapper_tables.h:1381
@@ -593,7 +595,8 @@ msgstr "Luk"
 msgid "Up"
 msgstr "Op"
 
-#: gui/gui-manager.cpp:142 backends/platform/symbian/src/SymbianActions.cpp:41
+#: gui/gui-manager.cpp:142 engines/metaengine.cpp:117
+#: backends/platform/symbian/src/SymbianActions.cpp:41
 #: engines/glk/scott/scott.cpp:394 engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
 #: engines/wintermute/keymapper_tables.h:1387
@@ -601,7 +604,8 @@ msgstr "Op"
 msgid "Down"
 msgstr "Ned"
 
-#: gui/gui-manager.cpp:147 backends/platform/symbian/src/SymbianActions.cpp:42
+#: gui/gui-manager.cpp:147 engines/metaengine.cpp:122
+#: backends/platform/symbian/src/SymbianActions.cpp:42
 #: engines/wintermute/keymapper_tables.h:1023
 #: engines/wintermute/keymapper_tables.h:1369
 #: engines/wintermute/keymapper_tables.h:1453
@@ -609,7 +613,8 @@ msgstr "Ned"
 msgid "Left"
 msgstr "Venstre"
 
-#: gui/gui-manager.cpp:152 backends/platform/symbian/src/SymbianActions.cpp:43
+#: gui/gui-manager.cpp:152 engines/metaengine.cpp:127
+#: backends/platform/symbian/src/SymbianActions.cpp:43
 #: engines/wintermute/keymapper_tables.h:1029
 #: engines/wintermute/keymapper_tables.h:1375
 #: engines/wintermute/keymapper_tables.h:1461
@@ -748,14 +753,14 @@ msgstr "Søg:"
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:758
 #: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
-#: engines/wage/saveload.cpp:742
+#: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "Indlæs spil:"
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:758
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
 #: engines/scumm/dialogs.cpp:181 engines/tsage/scenes.cpp:601
-#: engines/wage/saveload.cpp:742
+#: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load"
 msgstr "Indlæs"
 
@@ -1891,6 +1896,10 @@ msgstr "Fejl ved kørsel af spil:"
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Kunne ikke finde nogen motor istand til at afvikle det valgte spil"
 
+#: common/achievements.cpp:92
+msgid "Achievement unlocked!"
+msgstr ""
+
 #: common/error.cpp:38
 msgid "No error"
 msgstr "Ingen fejl"
@@ -2044,14 +2053,15 @@ msgstr "~R~etur til oversigt"
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
 #: engines/dreamweb/saveload.cpp:262 engines/glk/streams.cpp:1427
 #: engines/gnap/menu.cpp:466 engines/hugo/file.cpp:298
-#: engines/mads/nebular/dialogs_nebular.cpp:350
+#: engines/illusions/menusystem.cpp:703 engines/kingdom/kingdom.cpp:739
+#: engines/lab/savegame.cpp:243 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/neverhood/menumodule.cpp:890 engines/pegasus/pegasus.cpp:374
-#: engines/sci/engine/guest_additions.cpp:698 engines/sci/engine/kfile.cpp:1074
-#: engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/prince/saveload.cpp:55 engines/sci/engine/guest_additions.cpp:698
+#: engines/sci/engine/kfile.cpp:1074 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:42
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3358
 #: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
-#: engines/zvision/file/save_manager.cpp:49
+#: engines/xeen/saves.cpp:277 engines/zvision/file/save_manager.cpp:49
 msgid "Save game:"
 msgstr "Gemt spil:"
 
@@ -2061,14 +2071,17 @@ msgstr "Gemt spil:"
 #: engines/cine/various.cpp:343 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
 #: engines/glk/streams.cpp:1427 engines/gnap/menu.cpp:466
-#: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
+#: engines/hugo/file.cpp:298 engines/illusions/menusystem.cpp:703
+#: engines/kingdom/kingdom.cpp:739 engines/lab/savegame.cpp:238
+#: engines/lab/savegame.cpp:243 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/neverhood/menumodule.cpp:890 engines/parallaction/saveload.cpp:209
-#: engines/pegasus/pegasus.cpp:374 engines/sci/engine/guest_additions.cpp:699
-#: engines/sci/engine/kfile.cpp:1074 engines/scumm/dialogs.cpp:180
-#: engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/pegasus/pegasus.cpp:374 engines/prince/saveload.cpp:55
+#: engines/sci/engine/guest_additions.cpp:699 engines/sci/engine/kfile.cpp:1074
+#: engines/scumm/dialogs.cpp:180 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:42
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3358
 #: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
+#: engines/xeen/saves.cpp:277 engines/zvision/detection.cpp:215
 #: engines/zvision/file/save_manager.cpp:49
 msgid "Save"
 msgstr "Gem"
@@ -2163,7 +2176,8 @@ msgstr ""
 "for at lytte til spillets musik.\n"
 "Se README fil for detaljer."
 
-#: engines/engine.cpp:519 engines/sky/detection.cpp:316
+#: engines/engine.cpp:519 engines/metaengine.cpp:331 engines/savestate.cpp:75
+#: engines/sky/detection.cpp:316 engines/xeen/saves.cpp:290
 #, fuzzy
 msgid "Autosave"
 msgstr "Autogem:"
@@ -2221,6 +2235,67 @@ msgstr ""
 #, c-format
 msgid "Matched game IDs for the %s engine:"
 msgstr "Matchede spil-id'er til %s-motoren:"
+
+#: engines/metaengine.cpp:59
+msgid "Default game keymap"
+msgstr ""
+
+#: engines/metaengine.cpp:63 backends/platform/maemo/maemo.cpp:174
+#: backends/platform/symbian/src/SymbianActions.cpp:44
+#: engines/hdb/detection.cpp:303 engines/wintermute/keymapper_tables.h:43
+#: engines/zvision/detection.cpp:136
+msgid "Left Click"
+msgstr "Venstreklik"
+
+#: engines/metaengine.cpp:69 backends/platform/maemo/maemo.cpp:178
+#: engines/wintermute/keymapper_tables.h:249
+#: engines/wintermute/keymapper_tables.h:293
+#: engines/wintermute/keymapper_tables.h:1599
+msgid "Middle Click"
+msgstr "Midterklik"
+
+#: engines/metaengine.cpp:74 backends/platform/maemo/maemo.cpp:182
+#: backends/platform/symbian/src/SymbianActions.cpp:45
+#: engines/wintermute/keymapper_tables.h:49 engines/zvision/detection.cpp:142
+msgid "Right Click"
+msgstr "Højreklik"
+
+#: engines/metaengine.cpp:80
+#: backends/platform/symbian/src/SymbianActions.cpp:52
+#: engines/hdb/detection.cpp:354 engines/mohawk/myst.cpp:608
+#: engines/mohawk/riven.cpp:877 engines/sky/detection.cpp:253
+#: engines/wintermute/keymapper_tables.h:1190
+msgid "Pause"
+msgstr "Pause"
+
+#: engines/metaengine.cpp:85
+#, fuzzy
+msgid "Game menu"
+msgstr "Spilmenu"
+
+#: engines/metaengine.cpp:91
+#: backends/platform/symbian/src/SymbianActions.cpp:47
+#: engines/mohawk/myst.cpp:579 engines/mohawk/riven.cpp:848
+#: engines/wintermute/keymapper_tables.h:217
+#: engines/wintermute/keymapper_tables.h:997
+#: engines/wintermute/keymapper_tables.h:1183
+#: engines/wintermute/keymapper_tables.h:1296
+#: engines/wintermute/keymapper_tables.h:1543
+msgid "Skip"
+msgstr "Spring over"
+
+#: engines/metaengine.cpp:97 engines/sky/detection.cpp:248
+msgid "Skip line"
+msgstr "Spring linje over"
+
+#: engines/metaengine.cpp:103
+msgid "Predictive input dialog"
+msgstr ""
+
+#: engines/metaengine.cpp:107 engines/sky/detection.cpp:228
+#: engines/wintermute/keymapper_tables.h:55
+msgid "Confirm"
+msgstr ""
 
 #: audio/adlib.cpp:2293
 msgid "AdLib emulator"
@@ -2395,6 +2470,7 @@ msgstr "Vil du virkelig afslutte?"
 #: engines/hdb/detection.cpp:371 engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:184
 #: engines/scumm/help.cpp:83 engines/scumm/help.cpp:85
+#: engines/zvision/detection.cpp:225 engines/zvision/detection.cpp:243
 msgid "Quit"
 msgstr "Afslut"
 
@@ -2707,26 +2783,30 @@ msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:267
 #: backends/platform/3ds/osystem-events.cpp:58
-#: backends/platform/sdl/ps3/ps3.cpp:52
+#: backends/platform/sdl/ps3/ps3.cpp:52 backends/platform/sdl/psp2/psp2.cpp:53
+#: backends/platform/sdl/switch/switch.cpp:46
 msgid "D-pad Up"
 msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:268
 #: backends/platform/3ds/osystem-events.cpp:59
-#: backends/platform/sdl/ps3/ps3.cpp:53
+#: backends/platform/sdl/ps3/ps3.cpp:53 backends/platform/sdl/psp2/psp2.cpp:54
+#: backends/platform/sdl/switch/switch.cpp:47
 msgid "D-pad Down"
 msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:269
 #: backends/platform/3ds/osystem-events.cpp:60
-#: backends/platform/sdl/ps3/ps3.cpp:54
+#: backends/platform/sdl/ps3/ps3.cpp:54 backends/platform/sdl/psp2/psp2.cpp:55
+#: backends/platform/sdl/switch/switch.cpp:48
 #, fuzzy
 msgid "D-pad Left"
 msgstr "Flyt til venstre"
 
 #: backends/keymapper/hardware-input.cpp:270
 #: backends/platform/3ds/osystem-events.cpp:61
-#: backends/platform/sdl/ps3/ps3.cpp:55
+#: backends/platform/sdl/ps3/ps3.cpp:55 backends/platform/sdl/psp2/psp2.cpp:56
+#: backends/platform/sdl/switch/switch.cpp:49
 #, fuzzy
 msgid "D-pad Right"
 msgstr "Flyt til højre"
@@ -2740,25 +2820,29 @@ msgid "Right Trigger"
 msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:277
-#: backends/platform/sdl/ps3/ps3.cpp:62
+#: backends/platform/sdl/ps3/ps3.cpp:62 backends/platform/sdl/psp2/psp2.cpp:61
+#: backends/platform/sdl/switch/switch.cpp:56
 #, fuzzy
 msgid "Left Stick X"
 msgstr "Venstreklik"
 
 #: backends/keymapper/hardware-input.cpp:278
-#: backends/platform/sdl/ps3/ps3.cpp:63
+#: backends/platform/sdl/ps3/ps3.cpp:63 backends/platform/sdl/psp2/psp2.cpp:62
+#: backends/platform/sdl/switch/switch.cpp:57
 #, fuzzy
 msgid "Left Stick Y"
 msgstr "Venstreklik"
 
 #: backends/keymapper/hardware-input.cpp:279
-#: backends/platform/sdl/ps3/ps3.cpp:64
+#: backends/platform/sdl/ps3/ps3.cpp:64 backends/platform/sdl/psp2/psp2.cpp:63
+#: backends/platform/sdl/switch/switch.cpp:58
 #, fuzzy
 msgid "Right Stick X"
 msgstr "Højreklik"
 
 #: backends/keymapper/hardware-input.cpp:280
-#: backends/platform/sdl/ps3/ps3.cpp:65
+#: backends/platform/sdl/ps3/ps3.cpp:65 backends/platform/sdl/psp2/psp2.cpp:64
+#: backends/platform/sdl/switch/switch.cpp:59
 #, fuzzy
 msgid "Right Stick Y"
 msgstr "Højreklik"
@@ -2902,14 +2986,17 @@ msgid "Error occurred"
 msgstr "Der opstod en fejl"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:81
+#: backends/networking/sdl_net/handlers/listajaxhandler.cpp:45
 msgid "File system root"
 msgstr "Filsystemets rod"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:82
+#: backends/networking/sdl_net/handlers/listajaxhandler.cpp:46
 msgid "Saved games"
 msgstr "Gemte spil"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:119
+#: backends/networking/sdl_net/handlers/listajaxhandler.cpp:84
 msgid "Parent directory"
 msgstr "Forældermappe"
 
@@ -3009,46 +3096,56 @@ msgid "Both"
 msgstr "Begge"
 
 #: backends/platform/3ds/osystem-events.cpp:48
+#: backends/platform/sdl/switch/switch.cpp:37
 msgid "A"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:49
+#: backends/platform/sdl/switch/switch.cpp:36
 msgid "B"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:50
+#: backends/platform/sdl/switch/switch.cpp:39
 msgid "X"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:51
+#: backends/platform/sdl/switch/switch.cpp:38
 msgid "Y"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:52
-#: backends/platform/sdl/ps3/ps3.cpp:45
+#: backends/platform/sdl/ps3/ps3.cpp:45 backends/platform/sdl/psp2/psp2.cpp:49
 #, fuzzy
 msgid "Select"
 msgstr "Handling/vælg"
 
 #: backends/platform/3ds/osystem-events.cpp:53
-#: backends/platform/sdl/ps3/ps3.cpp:47
+#: backends/platform/sdl/ps3/ps3.cpp:47 backends/platform/sdl/psp2/psp2.cpp:50
 #, fuzzy
 msgid "Start"
 msgstr "~S~tart"
 
 #: backends/platform/3ds/osystem-events.cpp:54
+#: backends/platform/sdl/switch/switch.cpp:54
 msgid "ZL"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:55
+#: backends/platform/sdl/switch/switch.cpp:55
 msgid "ZR"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:56
+#: backends/platform/sdl/psp2/psp2.cpp:51
+#: backends/platform/sdl/switch/switch.cpp:44
 msgid "L"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:57
+#: backends/platform/sdl/psp2/psp2.cpp:52
+#: backends/platform/sdl/switch/switch.cpp:45
 msgid "R"
 msgstr ""
 
@@ -3227,25 +3324,6 @@ msgstr "Pegepladetilstand deaktiveret."
 msgid "Click Mode"
 msgstr "Kliktilstand"
 
-#: backends/platform/maemo/maemo.cpp:174
-#: backends/platform/symbian/src/SymbianActions.cpp:44
-#: engines/hdb/detection.cpp:303 engines/wintermute/keymapper_tables.h:43
-msgid "Left Click"
-msgstr "Venstreklik"
-
-#: backends/platform/maemo/maemo.cpp:178
-#: engines/wintermute/keymapper_tables.h:249
-#: engines/wintermute/keymapper_tables.h:293
-#: engines/wintermute/keymapper_tables.h:1599
-msgid "Middle Click"
-msgstr "Midterklik"
-
-#: backends/platform/maemo/maemo.cpp:182
-#: backends/platform/symbian/src/SymbianActions.cpp:45
-#: engines/wintermute/keymapper_tables.h:49
-msgid "Right Click"
-msgstr "Højreklik"
-
 #: backends/platform/sdl/macosx/appmenu_osx.mm:206
 msgid "Hide ScummVM"
 msgstr "Skjul ScummVM"
@@ -3267,6 +3345,7 @@ msgid "Minimize"
 msgstr "Minimer"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:218
+#: engines/zvision/detection.cpp:179
 msgid "Help"
 msgstr "Hjælp"
 
@@ -3306,15 +3385,15 @@ msgstr "OFL-licens"
 msgid "BSD License"
 msgstr "BSD-licens"
 
-#: backends/platform/sdl/ps3/ps3.cpp:41
+#: backends/platform/sdl/ps3/ps3.cpp:41 backends/platform/sdl/psp2/psp2.cpp:45
 msgid "Cross"
 msgstr ""
 
-#: backends/platform/sdl/ps3/ps3.cpp:42
+#: backends/platform/sdl/ps3/ps3.cpp:42 backends/platform/sdl/psp2/psp2.cpp:46
 msgid "Circle"
 msgstr ""
 
-#: backends/platform/sdl/ps3/ps3.cpp:43
+#: backends/platform/sdl/ps3/ps3.cpp:43 backends/platform/sdl/psp2/psp2.cpp:47
 msgid "Square"
 msgstr ""
 
@@ -3323,10 +3402,12 @@ msgid "PS"
 msgstr ""
 
 #: backends/platform/sdl/ps3/ps3.cpp:48
+#: backends/platform/sdl/switch/switch.cpp:42
 msgid "L3"
 msgstr ""
 
 #: backends/platform/sdl/ps3/ps3.cpp:49
+#: backends/platform/sdl/switch/switch.cpp:43
 msgid "R3"
 msgstr ""
 
@@ -3346,15 +3427,13 @@ msgstr ""
 msgid "R2"
 msgstr ""
 
-#: backends/platform/symbian/src/SymbianActions.cpp:47
-#: engines/mohawk/myst.cpp:579 engines/mohawk/riven.cpp:848
-#: engines/wintermute/keymapper_tables.h:217
-#: engines/wintermute/keymapper_tables.h:997
-#: engines/wintermute/keymapper_tables.h:1183
-#: engines/wintermute/keymapper_tables.h:1296
-#: engines/wintermute/keymapper_tables.h:1543
-msgid "Skip"
-msgstr "Spring over"
+#: backends/platform/sdl/switch/switch.cpp:40
+msgid "Minus"
+msgstr ""
+
+#: backends/platform/sdl/switch/switch.cpp:41
+msgid "Plus"
+msgstr ""
 
 #: backends/platform/symbian/src/SymbianActions.cpp:48
 msgid "Zone"
@@ -3371,13 +3450,6 @@ msgstr "Skift karakter"
 #: backends/platform/symbian/src/SymbianActions.cpp:51
 msgid "Skip text"
 msgstr "Spring tekst over"
-
-#: backends/platform/symbian/src/SymbianActions.cpp:52
-#: engines/hdb/detection.cpp:354 engines/mohawk/myst.cpp:608
-#: engines/mohawk/riven.cpp:877 engines/sky/detection.cpp:253
-#: engines/wintermute/keymapper_tables.h:1190
-msgid "Pause"
-msgstr "Pause"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:53
 msgid "Fast mode"
@@ -3656,13 +3728,21 @@ msgstr ""
 msgid "Add game speed menu (similar to PC version)"
 msgstr ""
 
+#: engines/agi/font.cpp:1298
+msgid ""
+"Could not open/use file 'hgc_font' for Hercules hires font.\n"
+"If you have such file in other AGI (Sierra) game, you can copy it to the "
+"game directory"
+msgstr ""
+
 #: engines/agi/saveload.cpp:772 engines/avalanche/parser.cpp:1907
 #: engines/cine/various.cpp:354 engines/dm/dm.cpp:276
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
 #: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1436
 #: engines/gnap/menu.cpp:475 engines/hugo/file.cpp:400
-#: engines/mads/nebular/dialogs_nebular.cpp:377
-#: engines/neverhood/menumodule.cpp:903
+#: engines/illusions/menusystem.cpp:680 engines/kingdom/kingdom.cpp:749
+#: engines/lab/savegame.cpp:258 engines/mads/nebular/dialogs_nebular.cpp:377
+#: engines/neverhood/menumodule.cpp:903 engines/prince/saveload.cpp:64
 #: engines/sci/engine/guest_additions.cpp:701 engines/sci/engine/kfile.cpp:1186
 #: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:67
@@ -3676,13 +3756,15 @@ msgstr "Gendan spil:"
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
 #: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1436
 #: engines/gnap/menu.cpp:475 engines/hugo/file.cpp:400
+#: engines/illusions/menusystem.cpp:680 engines/kingdom/kingdom.cpp:749
+#: engines/lab/savegame.cpp:238 engines/lab/savegame.cpp:258
 #: engines/mads/nebular/dialogs_nebular.cpp:377
-#: engines/neverhood/menumodule.cpp:903
+#: engines/neverhood/menumodule.cpp:903 engines/prince/saveload.cpp:64
 #: engines/sci/engine/guest_additions.cpp:702 engines/sci/engine/kfile.cpp:1186
 #: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:67
 #: engines/toltecs/menu.cpp:267 engines/toon/toon.cpp:3452
-#: engines/zvision/file/save_manager.cpp:62
+#: engines/zvision/detection.cpp:220 engines/zvision/file/save_manager.cpp:62
 msgid "Restore"
 msgstr "Gendan"
 
@@ -3806,6 +3888,14 @@ msgid ""
 "clicking the mouse"
 msgstr ""
 
+#: engines/cge/detection.cpp:115 engines/cge2/detection.cpp:111
+msgid "Color Blind Mode"
+msgstr "Farveblind-tilstand"
+
+#: engines/cge/detection.cpp:116 engines/cge2/detection.cpp:112
+msgid "Enable Color Blind Mode by default"
+msgstr "Aktivér farveblind-tilstand som standard"
+
 #: engines/cine/detection.cpp:77
 msgid "Use transparent dialog boxes in 16 color scenes"
 msgstr ""
@@ -3829,6 +3919,28 @@ msgstr "Unavngivet savegame"
 #, fuzzy
 msgid "Empty autosave"
 msgstr "Autogem:"
+
+#: engines/cine/saveload.cpp:861
+msgid ""
+"WARNING: The savegame you are loading is using a temporary broken format. "
+"Things will be broken. Please consider starting Operation Stealth from "
+"beginning using new savegames."
+msgstr ""
+
+#: engines/cine/saveload.cpp:864
+#, fuzzy
+msgid "Load anyway"
+msgstr "Tilføj alligevel"
+
+#: engines/dragons/detection.cpp:214
+msgid ""
+"Error: It appears that the game data files were extracted incorrectly.\n"
+"\n"
+"You should only extract STR and XA files using the special method. The rest "
+"should be copied normally from your game CD.\n"
+"\n"
+" See https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
+msgstr ""
 
 #: engines/dragons/dragons.cpp:1783
 #, c-format
@@ -3892,6 +4004,11 @@ msgstr "[ tryk på en tast for at fortsætte ]"
 msgid "Untitled Savegame"
 msgstr "Unavngivet savegame"
 
+#: engines/glk/adrift/os_glk.cpp:2814
+#, fuzzy
+msgid "Loading game...\n"
+msgstr "Indlæser spil ..."
+
 #: engines/glk/advsys/advsys.cpp:35
 msgid "Could not start AdvSys game"
 msgstr "Kunne ikke starte AdvSys-spil"
@@ -3925,13 +4042,14 @@ msgstr "Det er for kort til at være en gyldig Alan2-fil."
 msgid "This is not a valid Alan2 file."
 msgstr "Det er ikke en gyldig Alan2-fil."
 
-#: engines/glk/zcode/zcode.cpp:126
-msgid "Error reading save file"
-msgstr "Fejl ved læsning af gemt fil"
+#: engines/glk/comprehend/game.cpp:337
+#, fuzzy
+msgid "Savegame"
+msgstr "Gemt spil:"
 
-#: engines/glk/zcode/zcode.cpp:144
-msgid "Error writing save file\n"
-msgstr "Fejl ved skrivning af gemt fil\n"
+#: engines/glk/comprehend/game.cpp:1333
+msgid "Picture window toggled\n"
+msgstr ""
 
 #: engines/glk/glulx/glulx.cpp:82
 msgid "This is too short to be a valid Glulx file."
@@ -3948,6 +4066,11 @@ msgstr "Glulx-filen er for gammel en version til at blive udført."
 #: engines/glk/glulx/glulx.cpp:98
 msgid "This Glulx file is too new a version to execute."
 msgstr "Glulx-filen er for ny en version til at blive udført."
+
+#: engines/glk/quest/quest.cpp:45
+#, fuzzy
+msgid "Could not start Quest game"
+msgstr "Kunne ikke starte AdvSys-spil"
 
 #: engines/glk/scott/scott.cpp:99
 msgid "I don't understand your command. "
@@ -4164,6 +4287,14 @@ msgstr "Det er ikke i din magt at gøre det.\n"
 msgid "It's beyond my power to do that.\n"
 msgstr "Det er ikke i min magt at gøre det.\n"
 
+#: engines/glk/zcode/zcode.cpp:126
+msgid "Error reading save file"
+msgstr "Fejl ved læsning af gemt fil"
+
+#: engines/glk/zcode/zcode.cpp:144
+msgid "Error writing save file\n"
+msgstr "Fejl ved skrivning af gemt fil\n"
+
 #: engines/gob/inter_playtoons.cpp:258 engines/gob/inter_v2.cpp:1479
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:538
 msgid "Failed to load saved game from file."
@@ -4232,7 +4363,7 @@ msgstr ""
 
 #: engines/hdb/detection.cpp:347 engines/scumm/help.cpp:226
 #: engines/scumm/help.cpp:235 engines/scumm/help.cpp:242
-#: engines/scumm/help.cpp:250
+#: engines/scumm/help.cpp:250 engines/zvision/detection.cpp:185
 msgid "Inventory"
 msgstr "Inventar"
 
@@ -4362,12 +4493,12 @@ msgid "Move Right"
 msgstr "Flyt til højre"
 
 #: engines/kyra/engine/eobcommon.cpp:372 engines/kyra/engine/lol.cpp:479
-#: engines/pegasus/pegasus.cpp:2497
+#: engines/pegasus/pegasus.cpp:2497 engines/zvision/detection.cpp:162
 msgid "Turn Left"
 msgstr "Drej til venstre"
 
 #: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:480
-#: engines/pegasus/pegasus.cpp:2504
+#: engines/pegasus/pegasus.cpp:2504 engines/zvision/detection.cpp:168
 msgid "Turn Right"
 msgstr "Drej til højre"
 
@@ -4553,6 +4684,35 @@ msgstr ""
 "Kopiér venligst de korrekte skrifttypefiler ind i din EOB II-spildatamappe.\n"
 "\n"
 
+#: engines/kyra/sound/sound_pc_midi.cpp:76
+msgid ""
+"You appear to be using a General MIDI device,\n"
+"but your game only supports Roland MT32 MIDI.\n"
+"We try to map the Roland MT32 instruments to\n"
+"General MIDI ones. It is still possible that\n"
+"some tracks sound incorrect."
+msgstr ""
+"Det lader til at du bruger en generel MIDI-enhed,\n"
+"men dit spil kun understøtter Roland MT32 MIDI.\n"
+"Vi forsøger at kortlægge Roland MT32 instrumenterne til\n"
+"dem i generel MIDI. Trods det kan det ske\n"
+"at nogle stykker ikke lyder korrekt."
+
+#: engines/lab/savegame.cpp:238
+#, fuzzy
+msgid "Would you like to save or restore a game?"
+msgstr "Vil du indlæse eller gemme spillet?"
+
+#: engines/lure/detection.cpp:73 engines/mads/detection.cpp:144
+#: engines/sherlock/detection.cpp:136
+msgid "TTS Narrator"
+msgstr ""
+
+#: engines/lure/detection.cpp:74 engines/mads/detection.cpp:145
+#: engines/sherlock/detection.cpp:137
+msgid "Use TTS to read the descriptions (if TTS is available)"
+msgstr ""
+
 #: engines/mads/detection.cpp:93
 msgid "Easy mouse interface"
 msgstr "Nem musebrugerflade"
@@ -4572,14 +4732,6 @@ msgstr "Animeret spilbrugerflade"
 #: engines/mads/detection.cpp:123 engines/mads/detection.cpp:124
 msgid "Naughty game mode"
 msgstr "Uhyggelig spiltilstand"
-
-#: engines/mads/detection.cpp:144 engines/sherlock/detection.cpp:136
-msgid "TTS Narrator"
-msgstr ""
-
-#: engines/mads/detection.cpp:145 engines/sherlock/detection.cpp:137
-msgid "Use TTS to read the descriptions (if TTS is available)"
-msgstr ""
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:110 engines/mohawk/dialogs.cpp:319
@@ -4806,6 +4958,11 @@ msgstr ""
 "for at bringe dig til Red Orb-butikken, for at købe\n"
 "spillet. ScummVM kan ikke gøre det, og\n"
 "hjemmesiden findes ikke længere."
+
+#: engines/mutationofjb/util.cpp:33
+#, fuzzy, c-format
+msgid "Unable to locate the '%s' engine data file"
+msgstr "Kan ikke finde '%s'-motorens datafil."
 
 #: engines/neverhood/detection.cpp:151
 msgid "Skip the Hall of Records storyboard scenes"
@@ -5097,6 +5254,12 @@ msgid ""
 msgstr ""
 "Det gemte spil blev oprettet med en anden version af spillet, kunne ikke "
 "indlæse det"
+
+#: engines/sci/graphics/video32.cpp:69
+#, c-format
+msgid ""
+"Cannot play back %dbpp video on a system with maximum color depth of 8bpp"
+msgstr ""
 
 #: engines/sci/resource.cpp:836
 msgid ""
@@ -5406,7 +5569,7 @@ msgstr "Spring tekstlinje over"
 msgid "Esc"
 msgstr "Esc"
 
-#: engines/scumm/help.cpp:78
+#: engines/scumm/help.cpp:78 engines/zvision/detection.cpp:237
 msgid "Skip cutscene"
 msgstr "Spring mellemscene over"
 
@@ -6036,10 +6199,6 @@ msgstr "Brug diskette versionens intro (kun CD-version)"
 msgid "Walk / Look / Talk"
 msgstr ""
 
-#: engines/sky/detection.cpp:228 engines/wintermute/keymapper_tables.h:55
-msgid "Confirm"
-msgstr ""
-
 #: engines/sky/detection.cpp:234
 #, fuzzy
 msgid "Skip / Close"
@@ -6048,10 +6207,6 @@ msgstr "Spring linje over"
 #: engines/sky/detection.cpp:242
 msgid "Open control panel"
 msgstr ""
-
-#: engines/sky/detection.cpp:248
-msgid "Skip line"
-msgstr "Spring linje over"
 
 #: engines/sky/detection.cpp:258
 #, fuzzy
@@ -6218,6 +6373,10 @@ msgstr "Kunne ikke hurtig-indlæse det gemte spil #%d"
 msgid "Unable to locate the '%s' data file."
 msgstr "Kan ikke finde '%s'-motorens datafil."
 
+#: engines/ultima/shared/early/ultima_early.cpp:67
+msgid "Could not find correct ultima.dat datafile"
+msgstr ""
+
 #: engines/ultima/shared/engine/data_archive.cpp:81
 #, fuzzy, c-format
 msgid "Could not locate engine data %s"
@@ -6229,6 +6388,33 @@ msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr ""
 "Ukorrekt version af motorens datafil fundet. Forventet %d.%d, men fandt %d."
 "%d."
+
+#: engines/ultima/nuvie/nuvie.cpp:324
+#, fuzzy
+msgid ""
+"\n"
+"Game Saved\n"
+"\n"
+msgstr "Gemt.\n"
+
+#: engines/ultima/nuvie/nuvie.cpp:373
+#, fuzzy, c-format
+msgid "loading quick save %d"
+msgstr "Kunne ikke hurtig-gemme på plads #%d"
+
+#: engines/ultima/nuvie/nuvie.cpp:378
+#, fuzzy, c-format
+msgid "saving quick save %d"
+msgstr "Kliktilstand"
+
+#: engines/ultima/nuvie/nuvie.cpp:392
+#, fuzzy, c-format
+msgid "Quicksave %03d"
+msgstr "Kliktilstand"
+
+#: engines/ultima/nuvie/meta_engine.cpp:39
+msgid "Original Save"
+msgstr ""
 
 #: engines/ultima/nuvie/save/save_game.cpp:212
 #, fuzzy
@@ -6893,6 +7079,11 @@ msgstr ""
 "Rustningen går ikke i stykker før karakteren er på -80HP, i stedet for blot "
 "-10HP"
 
+#: engines/xeen/saves.cpp:291
+#, fuzzy
+msgid "Failed to autosave"
+msgstr "Kunne ikke gemme spil"
+
 #: engines/zvision/detection_tables.h:60
 msgid "Double FPS"
 msgstr "Dobbelt FPS"
@@ -6924,6 +7115,42 @@ msgstr "Brug høj opløsning MPEG-video"
 #: engines/zvision/detection_tables.h:91
 msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
 msgstr "Brug MPEG-video fra DVD-versionen, i stedet for lavere opløsning AVI"
+
+#: engines/zvision/detection.cpp:150
+#, fuzzy
+msgid "Look Up"
+msgstr "Se"
+
+#: engines/zvision/detection.cpp:156
+#, fuzzy
+msgid "Look Down"
+msgstr "Forstør"
+
+#: engines/zvision/detection.cpp:174
+#, fuzzy
+msgid "Show FPS"
+msgstr "Vis FPS-tæller"
+
+#: engines/zvision/detection.cpp:191
+msgid "Spellbook"
+msgstr ""
+
+#: engines/zvision/detection.cpp:197
+msgid "Score"
+msgstr ""
+
+#: engines/zvision/detection.cpp:203
+msgid "Put away object"
+msgstr ""
+
+#: engines/zvision/detection.cpp:209
+msgid "Extract coin"
+msgstr ""
+
+#: engines/zvision/detection.cpp:230
+#, fuzzy
+msgid "Preferences"
+msgstr "Foretrukne enhed:"
 
 #: engines/zvision/file/save_manager.cpp:222
 #, c-format
@@ -6980,9 +7207,6 @@ msgstr ""
 #~ msgid "Escape Key"
 #~ msgstr "Escape-tast"
 
-#~ msgid "Game Menu"
-#~ msgstr "Spilmenu"
-
 #~ msgid "Show Keypad"
 #~ msgstr "Vis tastatur"
 
@@ -7035,25 +7259,6 @@ msgstr ""
 #~ msgid " (Game)"
 #~ msgstr " (Spil)"
 
-#~ msgid "Color Blind Mode"
-#~ msgstr "Farveblind-tilstand"
-
-#~ msgid "Enable Color Blind Mode by default"
-#~ msgstr "Aktivér farveblind-tilstand som standard"
-
-#~ msgid ""
-#~ "You appear to be using a General MIDI device,\n"
-#~ "but your game only supports Roland MT32 MIDI.\n"
-#~ "We try to map the Roland MT32 instruments to\n"
-#~ "General MIDI ones. It is still possible that\n"
-#~ "some tracks sound incorrect."
-#~ msgstr ""
-#~ "Det lader til at du bruger en generel MIDI-enhed,\n"
-#~ "men dit spil kun understøtter Roland MT32 MIDI.\n"
-#~ "Vi forsøger at kortlægge Roland MT32 instrumenterne til\n"
-#~ "dem i generel MIDI. Trods det kan det ske\n"
-#~ "at nogle stykker ikke lyder korrekt."
-
 #~ msgid "Hold Shift for Mass Add"
 #~ msgstr "Hold Skift for at tilføje flere"
 
@@ -7089,9 +7294,6 @@ msgstr ""
 
 #~ msgid "Cursor Right"
 #~ msgstr "Pil til højre"
-
-#~ msgid "Do you want to load or save the game?"
-#~ msgstr "Vil du indlæse eller gemme spillet?"
 
 #~ msgid "   Are you sure you want to quit ?   "
 #~ msgstr "   Er du sikker på, at du vil afslutte?   "

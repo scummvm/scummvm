@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-27 18:09+0200\n"
+"POT-Creation-Date: 2020-08-27 20:27+0200\n"
 "PO-Revision-Date: 2020-08-27 11:56+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -66,8 +66,8 @@ msgstr "Feljebb"
 #: engines/engine.cpp:615 backends/dialogs/gtk/gtk-dialogs.cpp:55
 #: backends/events/default/default-events.cpp:176
 #: backends/events/default/default-events.cpp:199
-#: backends/platform/wii/options.cpp:48 engines/drascula/saveload.cpp:49
-#: engines/mohawk/myst_stacks/menu.cpp:284
+#: backends/platform/wii/options.cpp:48 engines/cine/saveload.cpp:864
+#: engines/drascula/saveload.cpp:49 engines/mohawk/myst_stacks/menu.cpp:284
 #: engines/mohawk/myst_stacks/menu.cpp:301
 #: engines/mohawk/myst_stacks/menu.cpp:319
 #: engines/mohawk/riven_stacks/aspit.cpp:350
@@ -521,6 +521,7 @@ msgid "Sine"
 msgstr "Színusz"
 
 #: gui/fluidsynth-dialog.cpp:137 backends/platform/sdl/ps3/ps3.cpp:44
+#: backends/platform/sdl/psp2/psp2.cpp:48
 msgid "Triangle"
 msgstr "Háromszög"
 
@@ -579,7 +580,8 @@ msgstr "Interakció"
 msgid "Close"
 msgstr "Bezár"
 
-#: gui/gui-manager.cpp:137 backends/platform/symbian/src/SymbianActions.cpp:40
+#: gui/gui-manager.cpp:137 engines/metaengine.cpp:112
+#: backends/platform/symbian/src/SymbianActions.cpp:40
 #: engines/glk/scott/scott.cpp:394 engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
 #: engines/wintermute/keymapper_tables.h:1381
@@ -587,7 +589,8 @@ msgstr "Bezár"
 msgid "Up"
 msgstr "Fel"
 
-#: gui/gui-manager.cpp:142 backends/platform/symbian/src/SymbianActions.cpp:41
+#: gui/gui-manager.cpp:142 engines/metaengine.cpp:117
+#: backends/platform/symbian/src/SymbianActions.cpp:41
 #: engines/glk/scott/scott.cpp:394 engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
 #: engines/wintermute/keymapper_tables.h:1387
@@ -595,7 +598,8 @@ msgstr "Fel"
 msgid "Down"
 msgstr "Le"
 
-#: gui/gui-manager.cpp:147 backends/platform/symbian/src/SymbianActions.cpp:42
+#: gui/gui-manager.cpp:147 engines/metaengine.cpp:122
+#: backends/platform/symbian/src/SymbianActions.cpp:42
 #: engines/wintermute/keymapper_tables.h:1023
 #: engines/wintermute/keymapper_tables.h:1369
 #: engines/wintermute/keymapper_tables.h:1453
@@ -603,7 +607,8 @@ msgstr "Le"
 msgid "Left"
 msgstr "Bal"
 
-#: gui/gui-manager.cpp:152 backends/platform/symbian/src/SymbianActions.cpp:43
+#: gui/gui-manager.cpp:152 engines/metaengine.cpp:127
+#: backends/platform/symbian/src/SymbianActions.cpp:43
 #: engines/wintermute/keymapper_tables.h:1029
 #: engines/wintermute/keymapper_tables.h:1375
 #: engines/wintermute/keymapper_tables.h:1461
@@ -742,14 +747,14 @@ msgstr "Keresés:"
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:758
 #: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
-#: engines/wage/saveload.cpp:742
+#: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "Játék betöltése:"
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:758
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
 #: engines/scumm/dialogs.cpp:181 engines/tsage/scenes.cpp:601
-#: engines/wage/saveload.cpp:742
+#: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load"
 msgstr "Betöltés"
 
@@ -1883,6 +1888,11 @@ msgstr "Hiba a játék futtatásakor:"
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Nem található olyan játékmotor ami a választott játékot támogatja"
 
+#: common/achievements.cpp:92
+#, fuzzy
+msgid "Achievement unlocked!"
+msgstr "Feloldott teljesítmény: %d/%d"
+
 #: common/error.cpp:38
 msgid "No error"
 msgstr "Nincs hiba"
@@ -2037,14 +2047,15 @@ msgstr "Visszatérés az indítóba"
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
 #: engines/dreamweb/saveload.cpp:262 engines/glk/streams.cpp:1427
 #: engines/gnap/menu.cpp:466 engines/hugo/file.cpp:298
-#: engines/mads/nebular/dialogs_nebular.cpp:350
+#: engines/illusions/menusystem.cpp:703 engines/kingdom/kingdom.cpp:739
+#: engines/lab/savegame.cpp:243 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/neverhood/menumodule.cpp:890 engines/pegasus/pegasus.cpp:374
-#: engines/sci/engine/guest_additions.cpp:698 engines/sci/engine/kfile.cpp:1074
-#: engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/prince/saveload.cpp:55 engines/sci/engine/guest_additions.cpp:698
+#: engines/sci/engine/kfile.cpp:1074 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:42
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3358
 #: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
-#: engines/zvision/file/save_manager.cpp:49
+#: engines/xeen/saves.cpp:277 engines/zvision/file/save_manager.cpp:49
 msgid "Save game:"
 msgstr "Játék mentése:"
 
@@ -2054,14 +2065,17 @@ msgstr "Játék mentése:"
 #: engines/cine/various.cpp:343 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
 #: engines/glk/streams.cpp:1427 engines/gnap/menu.cpp:466
-#: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
+#: engines/hugo/file.cpp:298 engines/illusions/menusystem.cpp:703
+#: engines/kingdom/kingdom.cpp:739 engines/lab/savegame.cpp:238
+#: engines/lab/savegame.cpp:243 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/neverhood/menumodule.cpp:890 engines/parallaction/saveload.cpp:209
-#: engines/pegasus/pegasus.cpp:374 engines/sci/engine/guest_additions.cpp:699
-#: engines/sci/engine/kfile.cpp:1074 engines/scumm/dialogs.cpp:180
-#: engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/pegasus/pegasus.cpp:374 engines/prince/saveload.cpp:55
+#: engines/sci/engine/guest_additions.cpp:699 engines/sci/engine/kfile.cpp:1074
+#: engines/scumm/dialogs.cpp:180 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:42
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3358
 #: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
+#: engines/xeen/saves.cpp:277 engines/zvision/detection.cpp:215
 #: engines/zvision/file/save_manager.cpp:49
 msgid "Save"
 msgstr "Mentés"
@@ -2155,7 +2169,8 @@ msgstr ""
 "hogy a játék zenéje hallható legyen.\n"
 "Nézd meg a README fájlt a részletekért."
 
-#: engines/engine.cpp:519 engines/sky/detection.cpp:316
+#: engines/engine.cpp:519 engines/metaengine.cpp:331 engines/savestate.cpp:75
+#: engines/sky/detection.cpp:316 engines/xeen/saves.cpp:290
 msgid "Autosave"
 msgstr "Automentés"
 
@@ -2212,6 +2227,67 @@ msgstr ""
 #, c-format
 msgid "Matched game IDs for the %s engine:"
 msgstr "Megfelelõ játékazonosítók a %s motorhoz:"
+
+#: engines/metaengine.cpp:59
+msgid "Default game keymap"
+msgstr ""
+
+#: engines/metaengine.cpp:63 backends/platform/maemo/maemo.cpp:174
+#: backends/platform/symbian/src/SymbianActions.cpp:44
+#: engines/hdb/detection.cpp:303 engines/wintermute/keymapper_tables.h:43
+#: engines/zvision/detection.cpp:136
+msgid "Left Click"
+msgstr "Bal katt"
+
+#: engines/metaengine.cpp:69 backends/platform/maemo/maemo.cpp:178
+#: engines/wintermute/keymapper_tables.h:249
+#: engines/wintermute/keymapper_tables.h:293
+#: engines/wintermute/keymapper_tables.h:1599
+msgid "Middle Click"
+msgstr "Középsõ katt"
+
+#: engines/metaengine.cpp:74 backends/platform/maemo/maemo.cpp:182
+#: backends/platform/symbian/src/SymbianActions.cpp:45
+#: engines/wintermute/keymapper_tables.h:49 engines/zvision/detection.cpp:142
+msgid "Right Click"
+msgstr "Jobb katt"
+
+#: engines/metaengine.cpp:80
+#: backends/platform/symbian/src/SymbianActions.cpp:52
+#: engines/hdb/detection.cpp:354 engines/mohawk/myst.cpp:608
+#: engines/mohawk/riven.cpp:877 engines/sky/detection.cpp:253
+#: engines/wintermute/keymapper_tables.h:1190
+msgid "Pause"
+msgstr "Szünet"
+
+#: engines/metaengine.cpp:85
+#, fuzzy
+msgid "Game menu"
+msgstr "Játék Menü"
+
+#: engines/metaengine.cpp:91
+#: backends/platform/symbian/src/SymbianActions.cpp:47
+#: engines/mohawk/myst.cpp:579 engines/mohawk/riven.cpp:848
+#: engines/wintermute/keymapper_tables.h:217
+#: engines/wintermute/keymapper_tables.h:997
+#: engines/wintermute/keymapper_tables.h:1183
+#: engines/wintermute/keymapper_tables.h:1296
+#: engines/wintermute/keymapper_tables.h:1543
+msgid "Skip"
+msgstr "Tovább"
+
+#: engines/metaengine.cpp:97 engines/sky/detection.cpp:248
+msgid "Skip line"
+msgstr "Sor átlépése"
+
+#: engines/metaengine.cpp:103
+msgid "Predictive input dialog"
+msgstr ""
+
+#: engines/metaengine.cpp:107 engines/sky/detection.cpp:228
+#: engines/wintermute/keymapper_tables.h:55
+msgid "Confirm"
+msgstr "Megerõsítés"
 
 #: audio/adlib.cpp:2293
 msgid "AdLib emulator"
@@ -2384,6 +2460,7 @@ msgstr "Biztos hogy ki akarsz lépni ?"
 #: engines/hdb/detection.cpp:371 engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:184
 #: engines/scumm/help.cpp:83 engines/scumm/help.cpp:85
+#: engines/zvision/detection.cpp:225 engines/zvision/detection.cpp:243
 msgid "Quit"
 msgstr "Kilépés"
 
@@ -2680,25 +2757,29 @@ msgstr "Jobb Shoulder"
 
 #: backends/keymapper/hardware-input.cpp:267
 #: backends/platform/3ds/osystem-events.cpp:58
-#: backends/platform/sdl/ps3/ps3.cpp:52
+#: backends/platform/sdl/ps3/ps3.cpp:52 backends/platform/sdl/psp2/psp2.cpp:53
+#: backends/platform/sdl/switch/switch.cpp:46
 msgid "D-pad Up"
 msgstr "D-pad Fel"
 
 #: backends/keymapper/hardware-input.cpp:268
 #: backends/platform/3ds/osystem-events.cpp:59
-#: backends/platform/sdl/ps3/ps3.cpp:53
+#: backends/platform/sdl/ps3/ps3.cpp:53 backends/platform/sdl/psp2/psp2.cpp:54
+#: backends/platform/sdl/switch/switch.cpp:47
 msgid "D-pad Down"
 msgstr "D-pad Le"
 
 #: backends/keymapper/hardware-input.cpp:269
 #: backends/platform/3ds/osystem-events.cpp:60
-#: backends/platform/sdl/ps3/ps3.cpp:54
+#: backends/platform/sdl/ps3/ps3.cpp:54 backends/platform/sdl/psp2/psp2.cpp:55
+#: backends/platform/sdl/switch/switch.cpp:48
 msgid "D-pad Left"
 msgstr "D-pad Bal"
 
 #: backends/keymapper/hardware-input.cpp:270
 #: backends/platform/3ds/osystem-events.cpp:61
-#: backends/platform/sdl/ps3/ps3.cpp:55
+#: backends/platform/sdl/ps3/ps3.cpp:55 backends/platform/sdl/psp2/psp2.cpp:56
+#: backends/platform/sdl/switch/switch.cpp:49
 msgid "D-pad Right"
 msgstr "D-pad Jobb"
 
@@ -2711,22 +2792,26 @@ msgid "Right Trigger"
 msgstr "Jobb Indító"
 
 #: backends/keymapper/hardware-input.cpp:277
-#: backends/platform/sdl/ps3/ps3.cpp:62
+#: backends/platform/sdl/ps3/ps3.cpp:62 backends/platform/sdl/psp2/psp2.cpp:61
+#: backends/platform/sdl/switch/switch.cpp:56
 msgid "Left Stick X"
 msgstr "Bal Kar X"
 
 #: backends/keymapper/hardware-input.cpp:278
-#: backends/platform/sdl/ps3/ps3.cpp:63
+#: backends/platform/sdl/ps3/ps3.cpp:63 backends/platform/sdl/psp2/psp2.cpp:62
+#: backends/platform/sdl/switch/switch.cpp:57
 msgid "Left Stick Y"
 msgstr "Bal Kar Y"
 
 #: backends/keymapper/hardware-input.cpp:279
-#: backends/platform/sdl/ps3/ps3.cpp:64
+#: backends/platform/sdl/ps3/ps3.cpp:64 backends/platform/sdl/psp2/psp2.cpp:63
+#: backends/platform/sdl/switch/switch.cpp:58
 msgid "Right Stick X"
 msgstr "Jobb Kar X"
 
 #: backends/keymapper/hardware-input.cpp:280
-#: backends/platform/sdl/ps3/ps3.cpp:65
+#: backends/platform/sdl/ps3/ps3.cpp:65 backends/platform/sdl/psp2/psp2.cpp:64
+#: backends/platform/sdl/switch/switch.cpp:59
 msgid "Right Stick Y"
 msgstr "Jobb Kar Y"
 
@@ -2867,14 +2952,17 @@ msgid "Error occurred"
 msgstr "Hiba történt"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:81
+#: backends/networking/sdl_net/handlers/listajaxhandler.cpp:45
 msgid "File system root"
 msgstr "Fájlrendszer gyökér"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:82
+#: backends/networking/sdl_net/handlers/listajaxhandler.cpp:46
 msgid "Saved games"
 msgstr "Mentett játékok"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:119
+#: backends/networking/sdl_net/handlers/listajaxhandler.cpp:84
 msgid "Parent directory"
 msgstr "Szülõ könyvtár"
 
@@ -2972,44 +3060,54 @@ msgid "Both"
 msgstr "Mind"
 
 #: backends/platform/3ds/osystem-events.cpp:48
+#: backends/platform/sdl/switch/switch.cpp:37
 msgid "A"
 msgstr "A"
 
 #: backends/platform/3ds/osystem-events.cpp:49
+#: backends/platform/sdl/switch/switch.cpp:36
 msgid "B"
 msgstr "B"
 
 #: backends/platform/3ds/osystem-events.cpp:50
+#: backends/platform/sdl/switch/switch.cpp:39
 msgid "X"
 msgstr "X"
 
 #: backends/platform/3ds/osystem-events.cpp:51
+#: backends/platform/sdl/switch/switch.cpp:38
 msgid "Y"
 msgstr "Y"
 
 #: backends/platform/3ds/osystem-events.cpp:52
-#: backends/platform/sdl/ps3/ps3.cpp:45
+#: backends/platform/sdl/ps3/ps3.cpp:45 backends/platform/sdl/psp2/psp2.cpp:49
 msgid "Select"
 msgstr "Választ"
 
 #: backends/platform/3ds/osystem-events.cpp:53
-#: backends/platform/sdl/ps3/ps3.cpp:47
+#: backends/platform/sdl/ps3/ps3.cpp:47 backends/platform/sdl/psp2/psp2.cpp:50
 msgid "Start"
 msgstr "Start"
 
 #: backends/platform/3ds/osystem-events.cpp:54
+#: backends/platform/sdl/switch/switch.cpp:54
 msgid "ZL"
 msgstr "ZL"
 
 #: backends/platform/3ds/osystem-events.cpp:55
+#: backends/platform/sdl/switch/switch.cpp:55
 msgid "ZR"
 msgstr "ZR"
 
 #: backends/platform/3ds/osystem-events.cpp:56
+#: backends/platform/sdl/psp2/psp2.cpp:51
+#: backends/platform/sdl/switch/switch.cpp:44
 msgid "L"
 msgstr "L"
 
 #: backends/platform/3ds/osystem-events.cpp:57
+#: backends/platform/sdl/psp2/psp2.cpp:52
+#: backends/platform/sdl/switch/switch.cpp:45
 msgid "R"
 msgstr "R"
 
@@ -3185,25 +3283,6 @@ msgstr "Touchpad mód letiltva."
 msgid "Click Mode"
 msgstr "Kattintás Mód"
 
-#: backends/platform/maemo/maemo.cpp:174
-#: backends/platform/symbian/src/SymbianActions.cpp:44
-#: engines/hdb/detection.cpp:303 engines/wintermute/keymapper_tables.h:43
-msgid "Left Click"
-msgstr "Bal katt"
-
-#: backends/platform/maemo/maemo.cpp:178
-#: engines/wintermute/keymapper_tables.h:249
-#: engines/wintermute/keymapper_tables.h:293
-#: engines/wintermute/keymapper_tables.h:1599
-msgid "Middle Click"
-msgstr "Középsõ katt"
-
-#: backends/platform/maemo/maemo.cpp:182
-#: backends/platform/symbian/src/SymbianActions.cpp:45
-#: engines/wintermute/keymapper_tables.h:49
-msgid "Right Click"
-msgstr "Jobb katt"
-
 #: backends/platform/sdl/macosx/appmenu_osx.mm:206
 msgid "Hide ScummVM"
 msgstr "ScummVM elrejtése"
@@ -3225,6 +3304,7 @@ msgid "Minimize"
 msgstr "Kis méret"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:218
+#: engines/zvision/detection.cpp:179
 msgid "Help"
 msgstr "Súgó"
 
@@ -3264,15 +3344,15 @@ msgstr "OFL Licensz"
 msgid "BSD License"
 msgstr "BSD Licensz"
 
-#: backends/platform/sdl/ps3/ps3.cpp:41
+#: backends/platform/sdl/ps3/ps3.cpp:41 backends/platform/sdl/psp2/psp2.cpp:45
 msgid "Cross"
 msgstr "Kereszt"
 
-#: backends/platform/sdl/ps3/ps3.cpp:42
+#: backends/platform/sdl/ps3/ps3.cpp:42 backends/platform/sdl/psp2/psp2.cpp:46
 msgid "Circle"
 msgstr "Kör"
 
-#: backends/platform/sdl/ps3/ps3.cpp:43
+#: backends/platform/sdl/ps3/ps3.cpp:43 backends/platform/sdl/psp2/psp2.cpp:47
 msgid "Square"
 msgstr "Négyzet"
 
@@ -3281,10 +3361,12 @@ msgid "PS"
 msgstr "PS"
 
 #: backends/platform/sdl/ps3/ps3.cpp:48
+#: backends/platform/sdl/switch/switch.cpp:42
 msgid "L3"
 msgstr "L3"
 
 #: backends/platform/sdl/ps3/ps3.cpp:49
+#: backends/platform/sdl/switch/switch.cpp:43
 msgid "R3"
 msgstr "R3"
 
@@ -3304,15 +3386,13 @@ msgstr "L2"
 msgid "R2"
 msgstr "R2"
 
-#: backends/platform/symbian/src/SymbianActions.cpp:47
-#: engines/mohawk/myst.cpp:579 engines/mohawk/riven.cpp:848
-#: engines/wintermute/keymapper_tables.h:217
-#: engines/wintermute/keymapper_tables.h:997
-#: engines/wintermute/keymapper_tables.h:1183
-#: engines/wintermute/keymapper_tables.h:1296
-#: engines/wintermute/keymapper_tables.h:1543
-msgid "Skip"
-msgstr "Tovább"
+#: backends/platform/sdl/switch/switch.cpp:40
+msgid "Minus"
+msgstr ""
+
+#: backends/platform/sdl/switch/switch.cpp:41
+msgid "Plus"
+msgstr ""
 
 #: backends/platform/symbian/src/SymbianActions.cpp:48
 msgid "Zone"
@@ -3329,13 +3409,6 @@ msgstr "Karakter csere"
 #: backends/platform/symbian/src/SymbianActions.cpp:51
 msgid "Skip text"
 msgstr "Szöveg átugrása"
-
-#: backends/platform/symbian/src/SymbianActions.cpp:52
-#: engines/hdb/detection.cpp:354 engines/mohawk/myst.cpp:608
-#: engines/mohawk/riven.cpp:877 engines/sky/detection.cpp:253
-#: engines/wintermute/keymapper_tables.h:1190
-msgid "Pause"
-msgstr "Szünet"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:53
 msgid "Fast mode"
@@ -3614,13 +3687,21 @@ msgstr "Sebesség menü hozzáadás"
 msgid "Add game speed menu (similar to PC version)"
 msgstr "Játéksebesség-menü hozzáadása (hasonlóan a PC verzióhoz)"
 
+#: engines/agi/font.cpp:1298
+msgid ""
+"Could not open/use file 'hgc_font' for Hercules hires font.\n"
+"If you have such file in other AGI (Sierra) game, you can copy it to the "
+"game directory"
+msgstr ""
+
 #: engines/agi/saveload.cpp:772 engines/avalanche/parser.cpp:1907
 #: engines/cine/various.cpp:354 engines/dm/dm.cpp:276
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
 #: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1436
 #: engines/gnap/menu.cpp:475 engines/hugo/file.cpp:400
-#: engines/mads/nebular/dialogs_nebular.cpp:377
-#: engines/neverhood/menumodule.cpp:903
+#: engines/illusions/menusystem.cpp:680 engines/kingdom/kingdom.cpp:749
+#: engines/lab/savegame.cpp:258 engines/mads/nebular/dialogs_nebular.cpp:377
+#: engines/neverhood/menumodule.cpp:903 engines/prince/saveload.cpp:64
 #: engines/sci/engine/guest_additions.cpp:701 engines/sci/engine/kfile.cpp:1186
 #: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:67
@@ -3634,13 +3715,15 @@ msgstr "Játékmenet visszaállítása:"
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
 #: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1436
 #: engines/gnap/menu.cpp:475 engines/hugo/file.cpp:400
+#: engines/illusions/menusystem.cpp:680 engines/kingdom/kingdom.cpp:749
+#: engines/lab/savegame.cpp:238 engines/lab/savegame.cpp:258
 #: engines/mads/nebular/dialogs_nebular.cpp:377
-#: engines/neverhood/menumodule.cpp:903
+#: engines/neverhood/menumodule.cpp:903 engines/prince/saveload.cpp:64
 #: engines/sci/engine/guest_additions.cpp:702 engines/sci/engine/kfile.cpp:1186
 #: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:67
 #: engines/toltecs/menu.cpp:267 engines/toon/toon.cpp:3452
-#: engines/zvision/file/save_manager.cpp:62
+#: engines/zvision/detection.cpp:220 engines/zvision/file/save_manager.cpp:62
 msgid "Restore"
 msgstr "Visszaállítás"
 
@@ -3766,6 +3849,14 @@ msgstr ""
 "Futás közben a McCoy nem kezd lelassulni, amíg a játékos abbahagyja az egér "
 "kattintást"
 
+#: engines/cge/detection.cpp:115 engines/cge2/detection.cpp:111
+msgid "Color Blind Mode"
+msgstr "Színvak Mód"
+
+#: engines/cge/detection.cpp:116 engines/cge2/detection.cpp:112
+msgid "Enable Color Blind Mode by default"
+msgstr "Szinvak mód engedélyezve alapértelmezett"
+
 #: engines/cine/detection.cpp:77
 msgid "Use transparent dialog boxes in 16 color scenes"
 msgstr "Használj átlátszó párbeszédpaneleket a 16 színû helyszíneken"
@@ -3789,6 +3880,28 @@ msgstr "Névtelen játékmentés"
 #: engines/cine/detection.cpp:210 engines/cine/detection.cpp:284
 msgid "Empty autosave"
 msgstr "Üres autómentés"
+
+#: engines/cine/saveload.cpp:861
+msgid ""
+"WARNING: The savegame you are loading is using a temporary broken format. "
+"Things will be broken. Please consider starting Operation Stealth from "
+"beginning using new savegames."
+msgstr ""
+
+#: engines/cine/saveload.cpp:864
+#, fuzzy
+msgid "Load anyway"
+msgstr "Add hozzá így is"
+
+#: engines/dragons/detection.cpp:214
+msgid ""
+"Error: It appears that the game data files were extracted incorrectly.\n"
+"\n"
+"You should only extract STR and XA files using the special method. The rest "
+"should be copied normally from your game CD.\n"
+"\n"
+" See https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
+msgstr ""
 
 #: engines/dragons/dragons.cpp:1783
 #, c-format
@@ -3854,6 +3967,11 @@ msgstr "[ nyomd meg bármely gombot a kilépéshez ]"
 msgid "Untitled Savegame"
 msgstr "Névtelen Játékmentés"
 
+#: engines/glk/adrift/os_glk.cpp:2814
+#, fuzzy
+msgid "Loading game...\n"
+msgstr "Játék betöltés..."
+
 #: engines/glk/advsys/advsys.cpp:35
 msgid "Could not start AdvSys game"
 msgstr "Nem sikerült elindítani az AdvSys játékot"
@@ -3887,13 +4005,14 @@ msgstr "Ez túl rövid érvényes Alan2 fájlnak."
 msgid "This is not a valid Alan2 file."
 msgstr "Ez nem egy valós Alan2 fájl."
 
-#: engines/glk/zcode/zcode.cpp:126
-msgid "Error reading save file"
-msgstr "Hiba a mentésfájl olvasásakor"
+#: engines/glk/comprehend/game.cpp:337
+#, fuzzy
+msgid "Savegame"
+msgstr "Játék mentés"
 
-#: engines/glk/zcode/zcode.cpp:144
-msgid "Error writing save file\n"
-msgstr "Hiba a mentésfájl írásakor\n"
+#: engines/glk/comprehend/game.cpp:1333
+msgid "Picture window toggled\n"
+msgstr ""
 
 #: engines/glk/glulx/glulx.cpp:82
 msgid "This is too short to be a valid Glulx file."
@@ -3910,6 +4029,11 @@ msgstr "Ez a Glulx fájl túl régi verziójú a végrehajtáshoz."
 #: engines/glk/glulx/glulx.cpp:98
 msgid "This Glulx file is too new a version to execute."
 msgstr "Ez a Glulx fájl túl új verziójú a végrehajtáshoz."
+
+#: engines/glk/quest/quest.cpp:45
+#, fuzzy
+msgid "Could not start Quest game"
+msgstr "Nem sikerült elindítani az AdvSys játékot"
 
 #: engines/glk/scott/scott.cpp:99
 msgid "I don't understand your command. "
@@ -4126,6 +4250,14 @@ msgstr "Ez kívül esik a lehetõségeiden.\n"
 msgid "It's beyond my power to do that.\n"
 msgstr "Ez kívül esik a lehetõségeimtõl.\n"
 
+#: engines/glk/zcode/zcode.cpp:126
+msgid "Error reading save file"
+msgstr "Hiba a mentésfájl olvasásakor"
+
+#: engines/glk/zcode/zcode.cpp:144
+msgid "Error writing save file\n"
+msgstr "Hiba a mentésfájl írásakor\n"
+
 #: engines/gob/inter_playtoons.cpp:258 engines/gob/inter_v2.cpp:1479
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:538
 msgid "Failed to load saved game from file."
@@ -4195,7 +4327,7 @@ msgstr "Mapping törlése"
 
 #: engines/hdb/detection.cpp:347 engines/scumm/help.cpp:226
 #: engines/scumm/help.cpp:235 engines/scumm/help.cpp:242
-#: engines/scumm/help.cpp:250
+#: engines/scumm/help.cpp:250 engines/zvision/detection.cpp:185
 msgid "Inventory"
 msgstr "Tárgylista"
 
@@ -4322,12 +4454,12 @@ msgid "Move Right"
 msgstr "Mozgás jobbra"
 
 #: engines/kyra/engine/eobcommon.cpp:372 engines/kyra/engine/lol.cpp:479
-#: engines/pegasus/pegasus.cpp:2497
+#: engines/pegasus/pegasus.cpp:2497 engines/zvision/detection.cpp:162
 msgid "Turn Left"
 msgstr "Balra fordul"
 
 #: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:480
-#: engines/pegasus/pegasus.cpp:2504
+#: engines/pegasus/pegasus.cpp:2504 engines/zvision/detection.cpp:168
 msgid "Turn Right"
 msgstr "Jobbra fordul"
 
@@ -4511,6 +4643,35 @@ msgstr ""
 "Kérjük, másold át a helyes fontfájlokat az EOB II játék mappájába.\n"
 "\n"
 
+#: engines/kyra/sound/sound_pc_midi.cpp:76
+msgid ""
+"You appear to be using a General MIDI device,\n"
+"but your game only supports Roland MT32 MIDI.\n"
+"We try to map the Roland MT32 instruments to\n"
+"General MIDI ones. It is still possible that\n"
+"some tracks sound incorrect."
+msgstr ""
+"Úgy tûnik, egy General MIDI eszközt használsz,\n"
+"de a játék csak Roland MT32 MIDI eszközt támogat.\n"
+"Megpróbáljuk lecserélni a Roland MT32 hangszereket\n"
+"General MIDIre. Továbbra is lehetséges hogy\n"
+"néhány hangsáv helytelenül hangzik."
+
+#: engines/lab/savegame.cpp:238
+#, fuzzy
+msgid "Would you like to save or restore a game?"
+msgstr "Játékállás betöltése vagy mentése?"
+
+#: engines/lure/detection.cpp:73 engines/mads/detection.cpp:144
+#: engines/sherlock/detection.cpp:136
+msgid "TTS Narrator"
+msgstr "TTS Narrátor"
+
+#: engines/lure/detection.cpp:74 engines/mads/detection.cpp:145
+#: engines/sherlock/detection.cpp:137
+msgid "Use TTS to read the descriptions (if TTS is available)"
+msgstr "Használja a TTS-t a leírás olvasásához (ha a TTS elérhetõ)"
+
 #: engines/mads/detection.cpp:93
 msgid "Easy mouse interface"
 msgstr "Egyszerû egér interfész"
@@ -4530,14 +4691,6 @@ msgstr "Animált játék felület"
 #: engines/mads/detection.cpp:123 engines/mads/detection.cpp:124
 msgid "Naughty game mode"
 msgstr "Pajkos játékmód"
-
-#: engines/mads/detection.cpp:144 engines/sherlock/detection.cpp:136
-msgid "TTS Narrator"
-msgstr "TTS Narrátor"
-
-#: engines/mads/detection.cpp:145 engines/sherlock/detection.cpp:137
-msgid "Use TTS to read the descriptions (if TTS is available)"
-msgstr "Használja a TTS-t a leírás olvasásához (ha a TTS elérhetõ)"
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:110 engines/mohawk/dialogs.cpp:319
@@ -4750,6 +4903,11 @@ msgstr ""
 "a Red Orb áruházát, hogy megvásárold\n"
 "a játékot. A ScummVM nem teszi ezt\n"
 "az oldal többé nem elérhetõ."
+
+#: engines/mutationofjb/util.cpp:33
+#, fuzzy, c-format
+msgid "Unable to locate the '%s' engine data file"
+msgstr "Nem található a(z) '%s' motorhoz adat fájl."
 
 #: engines/neverhood/detection.cpp:151
 msgid "Skip the Hall of Records storyboard scenes"
@@ -5035,6 +5193,12 @@ msgid ""
 msgstr ""
 "Ez a mentett játék a játék másik verziójával jött létre, és nem lehet "
 "betölteni"
+
+#: engines/sci/graphics/video32.cpp:69
+#, c-format
+msgid ""
+"Cannot play back %dbpp video on a system with maximum color depth of 8bpp"
+msgstr ""
 
 #: engines/sci/resource.cpp:836
 msgid ""
@@ -5350,7 +5514,7 @@ msgstr "Szövegsor átugrása"
 msgid "Esc"
 msgstr "Esc"
 
-#: engines/scumm/help.cpp:78
+#: engines/scumm/help.cpp:78 engines/zvision/detection.cpp:237
 msgid "Skip cutscene"
 msgstr "Bevezetõ átugrása"
 
@@ -5981,10 +6145,6 @@ msgstr "A floppy verzió intro használata (csak CD verziónál)"
 msgid "Walk / Look / Talk"
 msgstr "Séta / Nézd / Beszélj"
 
-#: engines/sky/detection.cpp:228 engines/wintermute/keymapper_tables.h:55
-msgid "Confirm"
-msgstr "Megerõsítés"
-
 #: engines/sky/detection.cpp:234
 msgid "Skip / Close"
 msgstr "Átugrik / Bezár"
@@ -5992,10 +6152,6 @@ msgstr "Átugrik / Bezár"
 #: engines/sky/detection.cpp:242
 msgid "Open control panel"
 msgstr "Kezelõpult megnyitás"
-
-#: engines/sky/detection.cpp:248
-msgid "Skip line"
-msgstr "Sor átlépése"
 
 #: engines/sky/detection.cpp:258
 msgid "Toggle fast mode"
@@ -6162,6 +6318,10 @@ msgstr "Nem történt meg a #%d mentett játék gyors betöltése"
 msgid "Unable to locate the '%s' data file."
 msgstr "Nem található a '%s' adatfájl."
 
+#: engines/ultima/shared/early/ultima_early.cpp:67
+msgid "Could not find correct ultima.dat datafile"
+msgstr ""
+
 #: engines/ultima/shared/engine/data_archive.cpp:81
 #, c-format
 msgid "Could not locate engine data %s"
@@ -6171,6 +6331,33 @@ msgstr "Nem találhatók %s motor adatok"
 #, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr "Elavult motorinformációk. Elvárt %d.%d, helyett %d.%d létezik"
+
+#: engines/ultima/nuvie/nuvie.cpp:324
+#, fuzzy
+msgid ""
+"\n"
+"Game Saved\n"
+"\n"
+msgstr "Mentett.\n"
+
+#: engines/ultima/nuvie/nuvie.cpp:373
+#, fuzzy, c-format
+msgid "loading quick save %d"
+msgstr "Gyorsmentés nem sikerült a #%d helyre"
+
+#: engines/ultima/nuvie/nuvie.cpp:378
+#, fuzzy, c-format
+msgid "saving quick save %d"
+msgstr "Gyorsmentés"
+
+#: engines/ultima/nuvie/nuvie.cpp:392
+#, fuzzy, c-format
+msgid "Quicksave %03d"
+msgstr "Gyorsmentés"
+
+#: engines/ultima/nuvie/meta_engine.cpp:39
+msgid "Original Save"
+msgstr ""
 
 #: engines/ultima/nuvie/save/save_game.cpp:212
 msgid "Transfer Character"
@@ -6776,6 +6963,11 @@ msgstr "Tartósabb páncél"
 msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
 msgstr "A páncél nem szakad el, karakter -80 HP-nál, hanem csak -10 HP-nál"
 
+#: engines/xeen/saves.cpp:291
+#, fuzzy
+msgid "Failed to autosave"
+msgstr "Játék mentés nem sikerült"
+
 #: engines/zvision/detection_tables.h:60
 msgid "Double FPS"
 msgstr "Dupla FPS"
@@ -6808,6 +7000,42 @@ msgstr "Nagyfelbontású MPEG videó használat"
 msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
 msgstr ""
 "A DVD verzió MPEG videójának használata, a kisebb felbontású AVI helyett"
+
+#: engines/zvision/detection.cpp:150
+#, fuzzy
+msgid "Look Up"
+msgstr "Nézz fel"
+
+#: engines/zvision/detection.cpp:156
+#, fuzzy
+msgid "Look Down"
+msgstr "Nézz le"
+
+#: engines/zvision/detection.cpp:174
+#, fuzzy
+msgid "Show FPS"
+msgstr "FPS számláló látszik"
+
+#: engines/zvision/detection.cpp:191
+msgid "Spellbook"
+msgstr ""
+
+#: engines/zvision/detection.cpp:197
+msgid "Score"
+msgstr ""
+
+#: engines/zvision/detection.cpp:203
+msgid "Put away object"
+msgstr ""
+
+#: engines/zvision/detection.cpp:209
+msgid "Extract coin"
+msgstr ""
+
+#: engines/zvision/detection.cpp:230
+#, fuzzy
+msgid "Preferences"
+msgstr "Preferált eszköz:"
 
 #: engines/zvision/file/save_manager.cpp:222
 #, c-format
@@ -6864,9 +7092,6 @@ msgstr ""
 #~ msgid "Escape Key"
 #~ msgstr "Escape gomb"
 
-#~ msgid "Game Menu"
-#~ msgstr "Játék Menü"
-
 #~ msgid "Show Keypad"
 #~ msgstr "Kézi billentyûzet"
 
@@ -6918,25 +7143,6 @@ msgstr ""
 #~ msgid " (Game)"
 #~ msgstr " (Játék)"
 
-#~ msgid "Color Blind Mode"
-#~ msgstr "Színvak Mód"
-
-#~ msgid "Enable Color Blind Mode by default"
-#~ msgstr "Szinvak mód engedélyezve alapértelmezett"
-
-#~ msgid ""
-#~ "You appear to be using a General MIDI device,\n"
-#~ "but your game only supports Roland MT32 MIDI.\n"
-#~ "We try to map the Roland MT32 instruments to\n"
-#~ "General MIDI ones. It is still possible that\n"
-#~ "some tracks sound incorrect."
-#~ msgstr ""
-#~ "Úgy tûnik, egy General MIDI eszközt használsz,\n"
-#~ "de a játék csak Roland MT32 MIDI eszközt támogat.\n"
-#~ "Megpróbáljuk lecserélni a Roland MT32 hangszereket\n"
-#~ "General MIDIre. Továbbra is lehetséges hogy\n"
-#~ "néhány hangsáv helytelenül hangzik."
-
 #~ msgid "Hold Shift for Mass Add"
 #~ msgstr "Tratsd lenyomva a Shift-et a Masszív módhoz"
 
@@ -6972,9 +7178,6 @@ msgstr ""
 
 #~ msgid "Cursor Right"
 #~ msgstr "Kurzor Jobb"
-
-#~ msgid "Do you want to load or save the game?"
-#~ msgstr "Játékállás betöltése vagy mentése?"
 
 #~ msgid "   Are you sure you want to quit ?   "
 #~ msgstr "   Biztos hogy ki akarsz lépni ?   "
