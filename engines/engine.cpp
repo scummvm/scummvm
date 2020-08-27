@@ -581,7 +581,14 @@ void Engine::openMainMenuDialog() {
 
 	setGameToLoadSlot(-1);
 
+	bool hasVKeyb = g_system->getFeatureState(OSystem::kFeatureVirtualKeyboard);
+	if (hasVKeyb)
+		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+
 	runDialog(*_mainMenuDialog);
+
+	if (hasVKeyb)
+		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 
 	// Load savegame after main menu execution
 	// (not from inside the menu loop to avoid
