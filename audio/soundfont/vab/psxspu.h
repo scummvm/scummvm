@@ -245,6 +245,7 @@ void PSXConvADSR(T *realADSR, uint8 Am, uint8 Ar, uint8 Dr, uint8 Sl, uint8 Sm,
 
 					switch ((envelope_level >> 28) & 0x7) {
 					case 0:
+					default:
 						envelope_level_target = 0x00000000;
 						envelope_level_diff =
 								RateTable[RoundToZero((Sr ^ 0x7F) - 0x1B + 0) + 32];
