@@ -42,6 +42,7 @@ void StrPlayer::playVideo(const Common::String &filename) {
 		if (_decoder->needsUpdate()) {
 			const Graphics::Surface *frame = _decoder->decodeNextFrame();
 			if (frame) {
+				_screen->clearScreen();
 				_screen->copyRectToSurface(*frame, 0, 0, Common::Rect(frame->w, frame->h));
 				_screen->updateScreen();
 			}
