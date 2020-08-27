@@ -27,6 +27,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Games are sorted in GUI ignoring the articles.
    - Now Hebrew is displayed correctly in GUI (requires FriBiDi library).
    - Updated the Roland MT-32 emulation code to Munt 2.4.0.
+   - Added option to select the default voice for ports that support Text-to-Speech.
 
  BBVS:
    - Added support for the demo, available from our website.
@@ -55,6 +56,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Queen:
    - Fixed loading a save game from the launcher.
+   - Fixed random long delays when starting a game.
 
  SCI:
    - Major improvements to Amiga and Mac sound drivers.
@@ -89,9 +91,17 @@ For a more comprehensive changelog of the latest experimental code, see:
  ZVision:
    - Fixed getting perfect score in Zork: Grand Inquisitor
 
+ iOS port:
+   - Fixed unsupported graphic mode for some games (such as SCI games with high
+     quality video scaling enabled).
+   - Removed Quit button to follow the iOS design guidelines.
+
  Linux port:
    - Added option to use the system file browser instead of the ScummVM file browser.
 
+ MacOS X port:
+   - Fixed blurry on Retina screens. Unfortunately this required dropping support
+     for the dark theme for window decorations.
 
 #### 2.1.2 "Fixing Powerful Windows" (2020-03-31)
 
