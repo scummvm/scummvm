@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-27 12:24+0200\n"
+"POT-Creation-Date: 2020-08-27 18:09+0200\n"
 "PO-Revision-Date: 2020-08-27 11:56+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
-"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Russian\n"
 
@@ -3568,7 +3568,7 @@ msgstr "Не эмулируйте артефакты NTSC для текста"
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:68
 #: engines/drascula/detection.cpp:331 engines/dreamweb/detection.cpp:48
-#: engines/neverhood/detection.cpp:144 engines/sci/detection.cpp:457
+#: engines/neverhood/detection.cpp:144 engines/sci/detection.cpp:461
 #: engines/sherlock/detection.cpp:75 engines/toltecs/detection.cpp:228
 #: engines/zvision/detection_tables.h:50
 msgid "Use original save/load screens"
@@ -3576,7 +3576,7 @@ msgstr "Использовать оригинальные экраны записи/чтения игры"
 
 #: engines/agi/detection.cpp:148 engines/cine/detection.cpp:69
 #: engines/drascula/detection.cpp:332 engines/dreamweb/detection.cpp:49
-#: engines/neverhood/detection.cpp:145 engines/sci/detection.cpp:458
+#: engines/neverhood/detection.cpp:145 engines/sci/detection.cpp:462
 #: engines/sherlock/detection.cpp:76 engines/toltecs/detection.cpp:229
 #: engines/zvision/detection_tables.h:51
 msgid "Use the original save/load screens instead of the ScummVM ones"
@@ -4914,6 +4914,10 @@ msgstr "Сохранить игру"
 msgid "Load Game"
 msgstr "Загрузить игру"
 
+#: engines/pink/gui.cpp:220
+msgid "This menu item is not yet implemented"
+msgstr ""
+
 #: engines/queen/detection.cpp:56
 msgid "Alternative intro"
 msgstr "Альтернативное вступление"
@@ -4922,121 +4926,132 @@ msgstr "Альтернативное вступление"
 msgid "Use an alternative game intro (CD version only)"
 msgstr "Использовать альтернативное вступление (только для CD-версии игры)"
 
-#: engines/sci/detection.cpp:395
+#: engines/sci/detection.cpp:399
 msgid "Skip EGA dithering pass (full color backgrounds)"
 msgstr "Не делать аппроксимацию цветов EGA (полноцветные фоны)"
 
-#: engines/sci/detection.cpp:396
+#: engines/sci/detection.cpp:400
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
 "Пропускает проход аппроксимации цветов EGA, графика будет показана со всеми "
 "цветами"
 
-#: engines/sci/detection.cpp:405
+#: engines/sci/detection.cpp:409
 msgid "Enable high resolution graphics"
 msgstr "Включить отображение графики высокого разрешения"
 
-#: engines/sci/detection.cpp:406
+#: engines/sci/detection.cpp:410
 msgid "Enable high resolution graphics/content"
 msgstr "Включить графику и контент высокого рарешения"
 
-#: engines/sci/detection.cpp:415
+#: engines/sci/detection.cpp:419
 msgid "Enable black-lined video"
 msgstr "Включить видео с линиями"
 
-#: engines/sci/detection.cpp:416
+#: engines/sci/detection.cpp:420
 msgid "Draw black lines over videos to increase their apparent sharpness"
 msgstr ""
 "Рисует чёрные линии поверх видео, увеличивая таким образом видимую чёткость"
 
-#: engines/sci/detection.cpp:426
+#: engines/sci/detection.cpp:430
 msgid "Use high-quality video scaling"
 msgstr "Использовать качественное масштабирование видео"
 
-#: engines/sci/detection.cpp:427
+#: engines/sci/detection.cpp:431
 msgid "Use linear interpolation when upscaling videos, where possible"
 msgstr ""
 "По возможности использует линейную интерполяцию при масштабировании видео"
 
-#: engines/sci/detection.cpp:437
+#: engines/sci/detection.cpp:441
 msgid "Use high-quality \"LarryScale\" cel scaling"
 msgstr "Использовать \"LarryScale\" алгоритм масштабировании"
 
-#: engines/sci/detection.cpp:438
+#: engines/sci/detection.cpp:442
 msgid "Use special cartoon scaler for drawing character sprites"
 msgstr ""
 "Использовать специальный \"мультяшный\" алгоритм масштабирования для "
 "отрисовки спрайтов персонажей"
 
-#: engines/sci/detection.cpp:447
+#: engines/sci/detection.cpp:451
 msgid "Prefer digital sound effects"
 msgstr "Предпочитать цифровые звуковые эффекты"
 
-#: engines/sci/detection.cpp:448
+#: engines/sci/detection.cpp:452
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr ""
 "Отдавать предпочтение цифровым звуковым эффектам вместо синтезированных"
 
-#: engines/sci/detection.cpp:467
-msgid "Use IMF/Yamaha FB-01 for MIDI output"
-msgstr "Использовать IMF/Yamaha FB-01 для вывода MIDI"
-
-#: engines/sci/detection.cpp:468
-msgid ""
-"Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
-"output"
-msgstr ""
-"Использовать звуковую карту IBM Music Feature или модуль синтеза Yamaha "
-"FB-01 FM для MIDI"
-
-#: engines/sci/detection.cpp:478
+#: engines/sci/detection.cpp:471
 msgid "Use CD audio"
 msgstr "Использовать CD-аудио"
 
-#: engines/sci/detection.cpp:479
+#: engines/sci/detection.cpp:472
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr ""
 "Использовать звуковые дорожки с CD вместо музыки из файлов игры (если "
 "доступно)"
 
-#: engines/sci/detection.cpp:489
+#: engines/sci/detection.cpp:482
 msgid "Use Windows cursors"
 msgstr "Использовать курсоры Windows"
 
-#: engines/sci/detection.cpp:490
+#: engines/sci/detection.cpp:483
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr ""
 "Использовать курсоры Windows (меньшие по размеру и одноцветные) вместо "
 "курсоров DOS"
 
-#: engines/sci/detection.cpp:500
+#: engines/sci/detection.cpp:493
 msgid "Use silver cursors"
 msgstr "Использовать серебряные курсоры"
 
-#: engines/sci/detection.cpp:501
+#: engines/sci/detection.cpp:494
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr ""
 "Использовать альтернативный набор серебряных курсоров вместо обычных золотых"
 
-#: engines/sci/detection.cpp:511
+#: engines/sci/detection.cpp:504
 msgid "Enable content censoring"
 msgstr "Включить цензуру содержимого"
 
-#: engines/sci/detection.cpp:512
+#: engines/sci/detection.cpp:505
 msgid "Enable the game's built-in optional content censoring"
 msgstr "Включить встроенное необязательное цензурирование содержимого"
 
-#: engines/sci/detection.cpp:522
+#: engines/sci/detection.cpp:515
 msgid "Upscale videos"
 msgstr "Масштабировать видеоролики"
 
-#: engines/sci/detection.cpp:523
+#: engines/sci/detection.cpp:516
 msgid "Upscale videos to double their size"
 msgstr "Увеличивать масштаб видеороликов вдвое"
 
-#: engines/sci/detection.cpp:857 engines/sci/engine/kfile.cpp:484
+#: engines/sci/detection.cpp:545
+#, fuzzy
+msgid "MIDI mode:"
+msgstr "Усиление MIDI:"
+
+#: engines/sci/detection.cpp:546
+msgid ""
+"When using external MIDI devices (e.g. through USB-MIDI), select your device "
+"here"
+msgstr ""
+
+#: engines/sci/detection.cpp:551
+msgid "Standard (GM / MT-32)"
+msgstr ""
+
+#: engines/sci/detection.cpp:555
+msgid "Roland D-110 / D-10 / D-20"
+msgstr ""
+
+#: engines/sci/detection.cpp:559
+msgid "Yamaha FB-01"
+msgstr ""
+
+#: engines/sci/detection.cpp:989 engines/sci/engine/kfile.cpp:484
 msgid "(Autosave)"
 msgstr "(Автосохранение)"
 
@@ -5073,7 +5088,7 @@ msgstr ""
 "игры могут работать неправильно. Обратитесь к консоли за подробностями, а "
 "также проверьте, что файлы игры корректны."
 
-#: engines/sci/sci.cpp:388
+#: engines/sci/sci.cpp:389
 msgid ""
 "Subtitles are enabled, but subtitling in King's Quest 7 was unfinished and "
 "disabled in the release version of the game. ScummVM allows the subtitles to "
@@ -5087,7 +5102,7 @@ msgstr ""
 "будут верно отображаться и соответствовать речи персонажей. Это проблема "
 "игровых файлов, а не ScummVM."
 
-#: engines/sci/sci.cpp:412
+#: engines/sci/sci.cpp:413
 msgid ""
 "You have selected General MIDI as a sound device. Sierra has provided after-"
 "market support for General MIDI for this game in their \"General MIDI Utility"
@@ -5108,7 +5123,7 @@ msgstr ""
 "соответствующий файл *.PAT в папку с игрой, переименовав его в 4.PAT. Без "
 "данного патча музыка General MIDI будет сильно искажена."
 
-#: engines/sci/sci.cpp:431
+#: engines/sci/sci.cpp:432
 msgid ""
 "Your game is patched with a fan made script patch. Such patches have been "
 "reported to cause issues, as they modify game scripts extensively. The "
@@ -5121,18 +5136,18 @@ msgstr ""
 "ошибки в ScummVM не возникают, поэтому рекомендуется удалить их из папки с "
 "игрой, чтобы предотвратить непредвиденные проблемы в дальнейшем."
 
-#: engines/sci/sci.cpp:517
+#: engines/sci/sci.cpp:518
 #, fuzzy
 msgid "Download patch"
 msgstr "Загрузить"
 
-#: engines/sci/sci.cpp:518
+#: engines/sci/sci.cpp:519
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
 msgstr ""
 
-#: engines/sci/sci.cpp:525
+#: engines/sci/sci.cpp:526
 msgid ""
 "GK2 has a fan made subtitles, available thanks to the good persons at "
 "SierraHelp.\n"
@@ -5142,7 +5157,7 @@ msgid ""
 "GK2Subtitles.zip\n"
 msgstr ""
 
-#: engines/sci/sci.cpp:883
+#: engines/sci/sci.cpp:884
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "
@@ -5156,7 +5171,7 @@ msgstr ""
 "игры Quest for Glory 1, 'qfg2-' - для Quest for Glory 2. Пример: 'qfg2-thief."
 "sav' (вор)."
 
-#: engines/sci/sound/music.cpp:160
+#: engines/sci/sound/music.cpp:161
 msgid ""
 "The selected audio driver requires the following file(s):\n"
 "\n"
@@ -5164,7 +5179,7 @@ msgstr ""
 "Для выбранного аудиодрайвера требуются следующие файлы:\n"
 "\n"
 
-#: engines/sci/sound/music.cpp:163
+#: engines/sci/sound/music.cpp:164
 msgid ""
 "\n"
 "\n"
@@ -6886,6 +6901,16 @@ msgstr ""
 "Этот файл сохранённой игры имеет версию %u, но движок поддерживает только "
 "версии не выше %d. Для использования этого файла необходима свежая версия "
 "движка."
+
+#~ msgid "Use IMF/Yamaha FB-01 for MIDI output"
+#~ msgstr "Использовать IMF/Yamaha FB-01 для вывода MIDI"
+
+#~ msgid ""
+#~ "Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
+#~ "output"
+#~ msgstr ""
+#~ "Использовать звуковую карту IBM Music Feature или модуль синтеза Yamaha "
+#~ "FB-01 FM для MIDI"
 
 #, fuzzy
 #~ msgid "Interact via Left Click)"
