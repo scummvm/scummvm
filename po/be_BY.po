@@ -7,17 +7,17 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-27 12:24+0200\n"
-"PO-Revision-Date: 2018-08-06 21:35+0000\n"
-"Last-Translator: Fiodar <fedor_qd@mail.ru>\n"
+"PO-Revision-Date: 2020-08-27 11:56+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/be/>\n"
 "Language: be_BY\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 2.9\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Belarusian\n"
 
 #: gui/about.cpp:102
@@ -6213,10 +6213,10 @@ msgid "Could not locate engine data %s"
 msgstr "Не атрымалася знайсці файл рухавічка %s."
 
 #: engines/ultima/shared/engine/data_archive.cpp:99
-#, fuzzy, c-format
+#, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr ""
-"Няправільная версія файла рухавічка %s. Чакалася %d.%d, але знойдзена %d.%d."
+"Няправільная версія файла рухавічка. Чакалася %d.%d, але знойдзена %d.%d."
 
 #: engines/ultima/nuvie/save/save_game.cpp:212
 #, fuzzy
