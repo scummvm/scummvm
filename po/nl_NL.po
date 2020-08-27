@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-27 18:09+0200\n"
-"PO-Revision-Date: 2020-06-24 11:43+0000\n"
+"PO-Revision-Date: 2020-08-27 17:59+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -3636,11 +3636,11 @@ msgstr ""
 
 #: engines/agi/detection.cpp:197
 msgid "Add speed menu"
-msgstr ""
+msgstr "Voeg snelheid menu toe"
 
 #: engines/agi/detection.cpp:198
 msgid "Add game speed menu (similar to PC version)"
-msgstr ""
+msgstr "Voeg spelsnelheid menu toe (net als PC versie)"
 
 #: engines/agi/saveload.cpp:772 engines/avalanche/parser.cpp:1907
 #: engines/cine/various.cpp:354 engines/dm/dm.cpp:276
@@ -3796,13 +3796,15 @@ msgstr ""
 
 #: engines/cine/detection.cpp:77
 msgid "Use transparent dialog boxes in 16 color scenes"
-msgstr ""
+msgstr "Gebruik doorzichtige dialoog venster in 16 kleuren scenes"
 
 #: engines/cine/detection.cpp:78
 msgid ""
 "Use transparent dialog boxes in 16 color scenes even if the original game "
 "version did not support them"
 msgstr ""
+"Gebruik doorzichtige dialoog venster in 16 kleuren scenes zelf als het "
+"originele spel ze niet ondersteunde"
 
 #: engines/cine/detection.cpp:190
 #, fuzzy
@@ -3866,13 +3868,12 @@ msgid "Enable Text to Speech"
 msgstr "Gebruik Tekst naar spraak"
 
 #: engines/glk/detection.cpp:355
-#, fuzzy
 msgid "Use TTS to read the text"
-msgstr "Bestand lezen niet gelukt!"
+msgstr "Gebruik TTS om de tekst te lezen"
 
 #: engines/glk/detection.cpp:360
 msgid "Also read input text"
-msgstr ""
+msgstr "Lees ook de ingevoerde tekst"
 
 #: engines/glk/detection.cpp:361
 msgid "Use TTS to read the input text"
