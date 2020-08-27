@@ -28,7 +28,6 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/textconsole.h"
-#include "common/translation.h"
 
 #include "cryomni3d/cryomni3d.h"
 

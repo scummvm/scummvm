@@ -22,7 +22,6 @@
 
 #include "base/plugins.h"
 
-#include "common/translation.h"
 #include "common/func.h"
 #include "common/debug.h"
 #include "common/config-manager.h"
