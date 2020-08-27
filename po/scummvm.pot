@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.2.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-27 20:27+0200\n"
+"POT-Creation-Date: 2020-08-28 01:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4457,8 +4457,24 @@ msgid ""
 "some tracks sound incorrect."
 msgstr ""
 
+#: engines/lab/engine.cpp:125
+msgid ""
+"This is a trial Windows version of the game. To play the full version, you "
+"will need to use the original interpreter and purchase a key from Wyrmkeep"
+msgstr ""
+
+#: engines/lab/processroom.cpp:330
+msgid ""
+"This is the end of the trial version. You can play the full game using the "
+"original interpreter from Wyrmkeep"
+msgstr ""
+
 #: engines/lab/savegame.cpp:238
 msgid "Would you like to save or restore a game?"
+msgstr ""
+
+#: engines/lab/speciallocks.cpp:149
+msgid "This puzzle is not available in the trial version of the game"
 msgstr ""
 
 #: engines/lure/detection.cpp:73 engines/mads/detection.cpp:144

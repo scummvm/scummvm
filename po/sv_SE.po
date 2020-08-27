@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-27 20:27+0200\n"
+"POT-Creation-Date: 2020-08-28 01:09+0200\n"
 "PO-Revision-Date: 2020-08-27 11:56+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -4699,10 +4699,27 @@ msgstr ""
 "General MIDI-instrument. Det kan trots allt hända\n"
 "att ett fåtal ljudspår inte spelas korrekt."
 
+#: engines/lab/engine.cpp:125
+msgid ""
+"This is a trial Windows version of the game. To play the full version, you "
+"will need to use the original interpreter and purchase a key from Wyrmkeep"
+msgstr ""
+
+#: engines/lab/processroom.cpp:330
+msgid ""
+"This is the end of the trial version. You can play the full game using the "
+"original interpreter from Wyrmkeep"
+msgstr ""
+
 #: engines/lab/savegame.cpp:238
 #, fuzzy
 msgid "Would you like to save or restore a game?"
 msgstr "Vill du ladda eller spara spelet?"
+
+#: engines/lab/speciallocks.cpp:149
+#, fuzzy
+msgid "This puzzle is not available in the trial version of the game"
+msgstr "För fortsatt utforskande krävs den fullständiga versionen av spelet."
 
 #: engines/lure/detection.cpp:73 engines/mads/detection.cpp:144
 #: engines/sherlock/detection.cpp:136

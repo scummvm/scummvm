@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-27 20:27+0200\n"
+"POT-Creation-Date: 2020-08-28 01:09+0200\n"
 "PO-Revision-Date: 2020-07-23 21:43+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -4750,10 +4750,29 @@ msgstr ""
 "Roland MT32 σε αυτά του General MIDI. Είναι πιθανό ότι\n"
 "ορισμένα κομμάτια θα ακούγονται εσφαλμένα."
 
+#: engines/lab/engine.cpp:125
+msgid ""
+"This is a trial Windows version of the game. To play the full version, you "
+"will need to use the original interpreter and purchase a key from Wyrmkeep"
+msgstr ""
+
+#: engines/lab/processroom.cpp:330
+msgid ""
+"This is the end of the trial version. You can play the full game using the "
+"original interpreter from Wyrmkeep"
+msgstr ""
+
 #: engines/lab/savegame.cpp:238
 #, fuzzy
 msgid "Would you like to save or restore a game?"
 msgstr "Θέλετε να φορτώσετε ή να αποθηκεύσετε το παιχνίδι;"
+
+#: engines/lab/speciallocks.cpp:149
+#, fuzzy
+msgid "This puzzle is not available in the trial version of the game"
+msgstr ""
+"Η εξερεύνηση πέρα από αυτό το σημείο είναι διαθέσιμη μόνο μέσω της\n"
+"πλήρους έκδοσης του παιχνιδιού."
 
 #: engines/lure/detection.cpp:73 engines/mads/detection.cpp:144
 #: engines/sherlock/detection.cpp:136

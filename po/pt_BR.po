@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-27 20:27+0200\n"
+"POT-Creation-Date: 2020-08-28 01:09+0200\n"
 "PO-Revision-Date: 2020-08-27 23:09+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -3936,8 +3936,8 @@ msgid ""
 "\n"
 " See https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
 msgstr ""
-"Erro: Parece que os arquivos de dados do jogo foram extraídos incorretamente."
-"\n"
+"Erro: Parece que os arquivos de dados do jogo foram extraídos "
+"incorretamente.\n"
 "\n"
 "Você só deve extrair arquivos STR e XA usando um método especial. O restante "
 "deve ser copiado normalmente do CD do jogo.\n"
@@ -4695,9 +4695,29 @@ msgstr ""
 "os General MIDI. Ainda é possível que\n"
 "algumas faixas soem incorretamente."
 
+#: engines/lab/engine.cpp:125
+msgid ""
+"This is a trial Windows version of the game. To play the full version, you "
+"will need to use the original interpreter and purchase a key from Wyrmkeep"
+msgstr ""
+
+#: engines/lab/processroom.cpp:330
+msgid ""
+"This is the end of the trial version. You can play the full game using the "
+"original interpreter from Wyrmkeep"
+msgstr ""
+
 #: engines/lab/savegame.cpp:238
 msgid "Would you like to save or restore a game?"
 msgstr "Você gostaria de salvar ou restaurar um jogo?"
+
+#: engines/lab/speciallocks.cpp:149
+#, fuzzy
+msgid "This puzzle is not available in the trial version of the game"
+msgstr ""
+"Exploração além deste ponto somente está disponível dentro da versão "
+"completa\n"
+"do jogo."
 
 #: engines/lure/detection.cpp:73 engines/mads/detection.cpp:144
 #: engines/sherlock/detection.cpp:136
