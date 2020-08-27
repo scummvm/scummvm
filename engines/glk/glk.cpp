@@ -154,7 +154,9 @@ Common::Error GlkEngine::run() {
 	initialize();
 
 	// Play the game
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	runGame();
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 
 	return Common::kNoError;
 }
