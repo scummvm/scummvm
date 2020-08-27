@@ -129,8 +129,8 @@ private:
 	float _fov;
 	float _nearPlane;
 	float _farPlane;
+	TRendererState _renderState;
 	bool _spriteBatchMode;
-	bool _state3D;
 
 	GLuint _spriteVBO;
 	GLuint _fadeVBO;

@@ -385,8 +385,8 @@ bool BaseRenderOpenGL3DShader::forcedFlip() {
 }
 
 bool BaseRenderOpenGL3DShader::setup2D(bool force) {
-	if (_state3D || force) {
-		_state3D = false;
+	if (_renderState != RSTATE_2D || force) {
+		_renderState = RSTATE_2D;
 
 		// some states are still missing here
 
@@ -407,8 +407,8 @@ bool BaseRenderOpenGL3DShader::setup2D(bool force) {
 }
 
 bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
-	if (!_state3D || force) {
-		_state3D = true;
+	if (_renderState != RSTATE_3D || force) {
+		_renderState = RSTATE_3D;
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
