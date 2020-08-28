@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-28 01:09+0200\n"
 "PO-Revision-Date: 2020-08-28 15:28+0000\n"
-"Last-Translator: jepael <kermespersialainen@gmail.com>\n"
+"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -3702,7 +3702,7 @@ msgstr ""
 "Tiedostoa 'hgc_font' ei voitu avata/k‰ytt‰‰ korkearesoluutioisena Hercules "
 "fonttina.\n"
 "Jos t‰m‰ tiedosto on muissa Sierra AGI -peleiss‰, voit kopioida sen pelin "
-"kansioon."
+"kansioon"
 
 #: engines/agi/saveload.cpp:772 engines/avalanche/parser.cpp:1907
 #: engines/cine/various.cpp:354 engines/dm/dm.cpp:276
@@ -4671,21 +4671,24 @@ msgid ""
 "This is a trial Windows version of the game. To play the full version, you "
 "will need to use the original interpreter and purchase a key from Wyrmkeep"
 msgstr ""
+"T‰m‰ on pelin Windows-kokeiluversio. Pelataksesi t‰ytt‰ versiota, sinun "
+"t‰ytyy k‰ytt‰‰ alkuper‰ist‰ moottoria ja ostaa avain Wyrmkeep:ilt‰"
 
 #: engines/lab/processroom.cpp:330
 msgid ""
 "This is the end of the trial version. You can play the full game using the "
 "original interpreter from Wyrmkeep"
 msgstr ""
+"T‰m‰ on kokeiluversion loppu. Voit pelata pelin t‰ytt‰ versiota Wyrmkeep:in "
+"alkuper‰isell‰ moottorilla"
 
 #: engines/lab/savegame.cpp:238
 msgid "Would you like to save or restore a game?"
 msgstr "Haluatko tallentaa vai ladata pelin?"
 
 #: engines/lab/speciallocks.cpp:149
-#, fuzzy
 msgid "This puzzle is not available in the trial version of the game"
-msgstr "Tutkiminen t‰t‰ pidemm‰lle on mahdollista vain pelin t‰ysversiossa."
+msgstr "Tutkiminen t‰t‰ pidemm‰lle on mahdollista vain pelin t‰ysversiossa"
 
 #: engines/lure/detection.cpp:73 engines/mads/detection.cpp:144
 #: engines/sherlock/detection.cpp:136
