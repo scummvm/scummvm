@@ -281,6 +281,20 @@ static const SherlockGameDescription gameDescriptions[] = {
 		GType_RoseTattoo,
 	},
 
+	{
+		// Case of the Rose Tattoo - Chinese CD
+		{
+			"rosetattoo",
+			"CD",
+			AD_ENTRY1s("talk.lib", "dfd699efdce02a045f46d15da2d44b76", 582381),
+			Common::ZH_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO3(GAMEOPTION_ORIGINAL_SAVES, GAMEOPTION_HELP_STYLE, GAMEOPTION_TRANSPARENT_WINDOWS)
+		},
+		GType_RoseTattoo,
+	},
+
 	{ AD_TABLE_END_MARKER, (GameType)0 }
 };
 
