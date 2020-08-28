@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-28 01:09+0200\n"
-"PO-Revision-Date: 2020-08-28 13:57+0000\n"
-"Last-Translator: jepael <kermespersialainen@gmail.com>\n"
+"PO-Revision-Date: 2020-08-28 13:58+0000\n"
+"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -4930,7 +4930,7 @@ msgstr ""
 #: engines/mutationofjb/util.cpp:33
 #, c-format
 msgid "Unable to locate the '%s' engine data file"
-msgstr "\"%s\" pelimoottorin datatiedostoa ei löydetty"
+msgstr "Pelimoottorin datatiedostoa \"%s\" ei löydetty"
 
 #: engines/neverhood/detection.cpp:151
 msgid "Skip the Hall of Records storyboard scenes"
