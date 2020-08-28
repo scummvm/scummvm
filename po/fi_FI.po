@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-28 17:29+0200\n"
-"PO-Revision-Date: 2020-08-28 15:28+0000\n"
-"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
+"PO-Revision-Date: 2020-08-29 12:13+0000\n"
+"Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -3929,14 +3929,12 @@ msgstr ""
 "title=Datafiles#Blazing_Dragons"
 
 #: engines/dragons/detection.cpp:236
-#, fuzzy
 msgid "Action"
-msgstr "Aktiivinen"
+msgstr "Toiminta"
 
 #: engines/dragons/detection.cpp:242
-#, fuzzy
 msgid "Change Command"
-msgstr "Muuta fontin kokoa"
+msgstr "Vaihda komento"
 
 #: engines/dragons/detection.cpp:248 engines/hdb/detection.cpp:347
 #: engines/scumm/help.cpp:226 engines/scumm/help.cpp:235
@@ -3951,14 +3949,12 @@ msgid "Enter"
 msgstr "Enter"
 
 #: engines/dragons/detection.cpp:319
-#, fuzzy
 msgid "Debug Graphics"
-msgstr "Grafiikka"
+msgstr "Grafiikan debuggaus"
 
 #: engines/dragons/detection.cpp:324
-#, fuzzy
 msgid "Quit Game"
-msgstr " (Peli)"
+msgstr "Lopeta peli"
 
 #: engines/dragons/dragons.cpp:1781
 #, c-format
