@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-28 01:09+0200\n"
 "PO-Revision-Date: 2020-08-28 13:59+0000\n"
-"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
+"Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -6352,7 +6352,7 @@ msgstr "Datatiedostoa \"%s\" ei löydetty."
 
 #: engines/ultima/shared/early/ultima_early.cpp:67
 msgid "Could not find correct ultima.dat datafile"
-msgstr ""
+msgstr "Oikeanlaista ultima.dat datatiedostoa ei löydetty"
 
 #: engines/ultima/shared/engine/data_archive.cpp:81
 #, c-format
@@ -6367,12 +6367,13 @@ msgstr ""
 "löytynyt versio %d.%d"
 
 #: engines/ultima/nuvie/nuvie.cpp:324
-#, fuzzy
 msgid ""
 "\n"
 "Game Saved\n"
 "\n"
-msgstr "Tallennettu.\n"
+msgstr ""
+"\n"
+"Peli tallennettu.\n"
 
 #: engines/ultima/nuvie/nuvie.cpp:373
 #, fuzzy, c-format
