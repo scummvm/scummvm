@@ -18745,6 +18745,42 @@ static const uint16 sq5PatchElevatorHandsOn[] = {
 	PATCH_END
 };
 
+// When walking to Genetix room 730 from the bridge in room 760, clicking Walk
+//  while ego enters the room interrupts the room script, breaks the exits, and
+//  prevents WD-40 from returning the communicator. This can make it impossible
+//  to leave. The script sHuman760 is missing a call to handsOff which the other
+//  entrance scripts have. We fix this by calling handsOff before starting
+//  sHuman760. We make room for this by overwriting a redundant handsOn call.
+//
+// Applies to: All versions
+// Responsible method: rm730:init
+// Fixes bug: #11620
+static const uint16 sq5SignatureGenetixBridgeHandsOn[] = {
+	0x31, 0x16,                       // bnt 16 [ skip fly code if human ]
+	0x7a,                             // push2
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x00e6),         // pushi 00e6
+	0x38, SIG_UINT16(0x0096),         // pushi 0096
+	0x47, 0x1f, 0x01, 0x04,           // calle proc31_1 [ fly to 230, 150 ]
+	0x38, SIG_SELECTOR16(handsOn),    // pushi handsOn
+	0x76,                             // push0
+	0x81, 0x01,                       // lag 01
+	0x4a, 0x04,                       // send 04 [ SQ5 handsOn: (redundant) ]
+	0x32, SIG_UINT16(0x00b1),         // jmp 00b1 [ end of method ]
+	SIG_END
+};
+
+static const uint16 sq5PatchGenetixBridgeHandsOn[] = {
+	0x31, 0x0e,                       // bnt 0e [ skip fly code if human ]
+	PATCH_ADDTOOFFSET(+0x0b),
+	0x32, PATCH_UINT16(0x00b9),       // jmp 00b9 [ end of method ]
+	0x38, PATCH_SELECTOR16(handsOff), // pushi handsOff
+	0x76,                             // push0
+	0x81, 0x01,                       // lag 01
+	0x4a, 0x04,                       // send 04 [ SQ5 handsOff: ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                             patch
 static const SciScriptPatcherEntry sq5Signatures[] = {
 	{  true,   200, "captain chair lockup fix",                    1, sq5SignatureCaptainChairFix,          sq5PatchCaptainChairFix },
@@ -18753,6 +18789,7 @@ static const SciScriptPatcherEntry sq5Signatures[] = {
 	{  true,   250, "elevator handsOn fix",                        1, sq5SignatureElevatorHandsOn,          sq5PatchElevatorHandsOn },
 	{  true,   305, "wd40 fruit fix",                              1, sq5SignatureWd40FruitFix,             sq5PatchWd40FruitFix },
 	{  true,   335, "wd40 alarm countdown fix",                    1, sq5SignatureWd40AlarmCountdownFix,    sq5PatchWd40AlarmCountdownFix },
+	{  true,   730, "genetix bridge handsOn fix",                  1, sq5SignatureGenetixBridgeHandsOn,     sq5PatchGenetixBridgeHandsOn },
 	{  true,    30, "ChoiceTalker lockup fix",                     1, sciNarratorLockupSignature,           sciNarratorLockupPatch },
 	{  true,   928, "Narrator lockup fix",                         1, sciNarratorLockupSignature,           sciNarratorLockupPatch },
 	{  true,  1000, "drive bay pathfinding fix",                   1, sq5SignatureDriveBayPathfindingFix,   sq5PatchDriveBayPathfindingFix },
