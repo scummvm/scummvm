@@ -1284,7 +1284,7 @@ bool AdScene::updateFreeObjects() {
 			Camera3D* activeCamera = _sceneGeometry->getActiveCamera();
 
 			if (activeCamera != nullptr) {
-				_gameRef->_renderer->setup3D(activeCamera);
+				_gameRef->_renderer->setup3D(activeCamera, !is3DSet);
 				is3DSet = true;
 			}
 		}
@@ -1303,7 +1303,7 @@ bool AdScene::updateFreeObjects() {
 			Camera3D* activeCamera = _sceneGeometry->getActiveCamera();
 
 			if (activeCamera != nullptr) {
-				_gameRef->_renderer->setup3D(activeCamera);
+				_gameRef->_renderer->setup3D(activeCamera, !is3DSet);
 				is3DSet = true;
 			}
 		}
