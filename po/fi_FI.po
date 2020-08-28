@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-28 01:09+0200\n"
 "PO-Revision-Date: 2020-08-28 14:00+0000\n"
-"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
+"Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -6377,14 +6377,14 @@ msgstr ""
 "\n"
 
 #: engines/ultima/nuvie/nuvie.cpp:373
-#, fuzzy, c-format
+#, c-format
 msgid "loading quick save %d"
-msgstr "Pikapelitallennus kohtaan %d epäonnistui"
+msgstr "Ladataan pikapelitallennusta %d"
 
 #: engines/ultima/nuvie/nuvie.cpp:378
-#, fuzzy, c-format
+#, c-format
 msgid "saving quick save %d"
-msgstr "Pelin pikatallennus"
+msgstr "Tallennetaan pikatallennusta %d"
 
 #: engines/ultima/nuvie/nuvie.cpp:392
 #, fuzzy, c-format
