@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-28 01:09+0200\n"
+"POT-Creation-Date: 2020-08-28 17:29+0200\n"
 "PO-Revision-Date: 2020-08-27 17:59+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -522,7 +522,7 @@ msgid "Sine"
 msgstr "Sinus"
 
 #: gui/fluidsynth-dialog.cpp:137 backends/platform/sdl/ps3/ps3.cpp:44
-#: backends/platform/sdl/psp2/psp2.cpp:48
+#: backends/platform/sdl/psp2/psp2.cpp:48 engines/dragons/detection.cpp:289
 msgid "Triangle"
 msgstr "Driehoek"
 
@@ -584,7 +584,8 @@ msgstr "Sluiten"
 
 #: gui/gui-manager.cpp:137 engines/metaengine.cpp:112
 #: backends/platform/symbian/src/SymbianActions.cpp:40
-#: engines/glk/scott/scott.cpp:394 engines/wintermute/keymapper_tables.h:1011
+#: engines/dragons/detection.cpp:259 engines/glk/scott/scott.cpp:394
+#: engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
 #: engines/wintermute/keymapper_tables.h:1381
 #: engines/wintermute/keymapper_tables.h:1587
@@ -593,7 +594,8 @@ msgstr "Omhoog"
 
 #: gui/gui-manager.cpp:142 engines/metaengine.cpp:117
 #: backends/platform/symbian/src/SymbianActions.cpp:41
-#: engines/glk/scott/scott.cpp:394 engines/wintermute/keymapper_tables.h:1017
+#: engines/dragons/detection.cpp:265 engines/glk/scott/scott.cpp:394
+#: engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
 #: engines/wintermute/keymapper_tables.h:1387
 #: engines/wintermute/keymapper_tables.h:1593
@@ -602,7 +604,7 @@ msgstr "Omlaag"
 
 #: gui/gui-manager.cpp:147 engines/metaengine.cpp:122
 #: backends/platform/symbian/src/SymbianActions.cpp:42
-#: engines/wintermute/keymapper_tables.h:1023
+#: engines/dragons/detection.cpp:271 engines/wintermute/keymapper_tables.h:1023
 #: engines/wintermute/keymapper_tables.h:1369
 #: engines/wintermute/keymapper_tables.h:1453
 #: engines/wintermute/keymapper_tables.h:1575
@@ -611,7 +613,7 @@ msgstr "Links"
 
 #: gui/gui-manager.cpp:152 engines/metaengine.cpp:127
 #: backends/platform/symbian/src/SymbianActions.cpp:43
-#: engines/wintermute/keymapper_tables.h:1029
+#: engines/dragons/detection.cpp:277 engines/wintermute/keymapper_tables.h:1029
 #: engines/wintermute/keymapper_tables.h:1375
 #: engines/wintermute/keymapper_tables.h:1461
 #: engines/wintermute/keymapper_tables.h:1581
@@ -2770,11 +2772,11 @@ msgstr "Linker Stick"
 msgid "Right Stick"
 msgstr "Rechter Stick"
 
-#: backends/keymapper/hardware-input.cpp:265
+#: backends/keymapper/hardware-input.cpp:265 engines/dragons/detection.cpp:307
 msgid "Left Shoulder"
 msgstr "Linker Schouder"
 
-#: backends/keymapper/hardware-input.cpp:266
+#: backends/keymapper/hardware-input.cpp:266 engines/dragons/detection.cpp:313
 msgid "Right Shoulder"
 msgstr "Rechter Schouder"
 
@@ -3369,14 +3371,17 @@ msgid "BSD License"
 msgstr "BSD Licentie"
 
 #: backends/platform/sdl/ps3/ps3.cpp:41 backends/platform/sdl/psp2/psp2.cpp:45
+#: engines/dragons/detection.cpp:301
 msgid "Cross"
 msgstr "Kruis"
 
 #: backends/platform/sdl/ps3/ps3.cpp:42 backends/platform/sdl/psp2/psp2.cpp:46
+#: engines/dragons/detection.cpp:295
 msgid "Circle"
 msgstr "Cirkel"
 
 #: backends/platform/sdl/ps3/ps3.cpp:43 backends/platform/sdl/psp2/psp2.cpp:47
+#: engines/dragons/detection.cpp:283
 msgid "Square"
 msgstr "Vierkant"
 
@@ -3924,7 +3929,7 @@ msgstr ""
 msgid "Load anyway"
 msgstr "Evengoed toevoegen"
 
-#: engines/dragons/detection.cpp:214
+#: engines/dragons/detection.cpp:218
 msgid ""
 "Error: It appears that the game data files were extracted incorrectly.\n"
 "\n"
@@ -3934,7 +3939,39 @@ msgid ""
 " See https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
 msgstr ""
 
-#: engines/dragons/dragons.cpp:1783
+#: engines/dragons/detection.cpp:236
+#, fuzzy
+msgid "Action"
+msgstr "Actief"
+
+#: engines/dragons/detection.cpp:242
+#, fuzzy
+msgid "Change Command"
+msgstr "Verander fontgrootte"
+
+#: engines/dragons/detection.cpp:248 engines/hdb/detection.cpp:347
+#: engines/scumm/help.cpp:226 engines/scumm/help.cpp:235
+#: engines/scumm/help.cpp:242 engines/scumm/help.cpp:250
+#: engines/zvision/detection.cpp:185
+msgid "Inventory"
+msgstr "Inventaris"
+
+#: engines/dragons/detection.cpp:253 engines/scumm/help.cpp:87
+#: engines/scumm/help.cpp:90
+msgid "Enter"
+msgstr "Enter"
+
+#: engines/dragons/detection.cpp:319
+#, fuzzy
+msgid "Debug Graphics"
+msgstr "Beeld"
+
+#: engines/dragons/detection.cpp:324
+#, fuzzy
+msgid "Quit Game"
+msgstr " (Spel)"
+
+#: engines/dragons/dragons.cpp:1781
 #, c-format
 msgid ""
 "Error: The file '%s' hasn't been extracted properly.\n"
@@ -4361,12 +4398,6 @@ msgstr "Gebruik"
 #, fuzzy
 msgid "Clear waypoints"
 msgstr "Mapping wissen"
-
-#: engines/hdb/detection.cpp:347 engines/scumm/help.cpp:226
-#: engines/scumm/help.cpp:235 engines/scumm/help.cpp:242
-#: engines/scumm/help.cpp:250 engines/zvision/detection.cpp:185
-msgid "Inventory"
-msgstr "Inventaris"
 
 #: engines/hdb/detection.cpp:360
 msgid "Menu"
@@ -5623,10 +5654,6 @@ msgstr "Alt"
 #: engines/scumm/help.cpp:81
 msgid "Save game 1-10"
 msgstr "Spel opslaan 1-10"
-
-#: engines/scumm/help.cpp:87 engines/scumm/help.cpp:90
-msgid "Enter"
-msgstr "Enter"
 
 #: engines/scumm/help.cpp:88
 msgid "Music volume up / down"
@@ -7215,9 +7242,6 @@ msgstr ""
 
 #~ msgid " (Blocked)"
 #~ msgstr " (Geblokkeerd)"
-
-#~ msgid " (Game)"
-#~ msgstr " (Spel)"
 
 #~ msgid "Hold Shift for Mass Add"
 #~ msgstr ""
