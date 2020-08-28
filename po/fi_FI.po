@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-28 01:09+0200\n"
 "PO-Revision-Date: 2020-08-28 13:54+0000\n"
-"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
+"Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -3904,9 +3904,8 @@ msgstr ""
 "Stealth alusta k‰ytt‰en uusia pelitallennuksia."
 
 #: engines/cine/saveload.cpp:864
-#, fuzzy
 msgid "Load anyway"
-msgstr "Lis‰‰ silti"
+msgstr "Lataa silti"
 
 #: engines/dragons/detection.cpp:214
 msgid ""
@@ -3917,6 +3916,13 @@ msgid ""
 "\n"
 " See https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
 msgstr ""
+"Virhe: N‰ytt‰‰ silt‰ ett‰ pelin datatiedostot ovat purettu v‰‰rin.\n"
+"\n"
+"Vain STR ja XA tiedostot tulee purkaa erikoismenetelm‰ll‰. Muut tulee "
+"kopioida sellaisenaan pelin CD-levylt‰.\n"
+"\n"
+"Lis‰tietoja https://wiki.scummvm.org/"
+"index.php?title=Datafiles#Blazing_Dragons"
 
 #: engines/dragons/dragons.cpp:1783
 #, c-format
@@ -3981,7 +3987,6 @@ msgid "Untitled Savegame"
 msgstr "Nimetˆn pelitallennus"
 
 #: engines/glk/adrift/os_glk.cpp:2814
-#, fuzzy
 msgid "Loading game...\n"
 msgstr "Ladataan peli‰..."
 
