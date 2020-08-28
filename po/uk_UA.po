@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-28 17:29+0200\n"
-"PO-Revision-Date: 2020-08-28 15:28+0000\n"
+"PO-Revision-Date: 2020-08-28 15:34+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -17,8 +17,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Ukrainian\n"
 
@@ -3940,14 +3940,12 @@ msgstr ""
 "Дивіться https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
 
 #: engines/dragons/detection.cpp:236
-#, fuzzy
 msgid "Action"
-msgstr "Активне"
+msgstr "Дія"
 
 #: engines/dragons/detection.cpp:242
-#, fuzzy
 msgid "Change Command"
-msgstr "Змінити розмір шрифта"
+msgstr "Змінити команду"
 
 #: engines/dragons/detection.cpp:248 engines/hdb/detection.cpp:347
 #: engines/scumm/help.cpp:226 engines/scumm/help.cpp:235
@@ -3962,14 +3960,12 @@ msgid "Enter"
 msgstr "Enter"
 
 #: engines/dragons/detection.cpp:319
-#, fuzzy
 msgid "Debug Graphics"
-msgstr "Графіка"
+msgstr "Відладка графіки"
 
 #: engines/dragons/detection.cpp:324
-#, fuzzy
 msgid "Quit Game"
-msgstr " (Ігри)"
+msgstr "Вийти з ігри"
 
 #: engines/dragons/dragons.cpp:1781
 #, c-format
