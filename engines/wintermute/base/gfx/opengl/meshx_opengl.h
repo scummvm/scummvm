@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_MESH_X_OPENGL_H
 #define WINTERMUTE_MESH_X_OPENGL_H
 
-#include "engines/wintermute/base/gfx/opengl/meshx.h"
+#include "engines/wintermute/base/gfx/x/meshx.h"
 
 namespace Wintermute {
 

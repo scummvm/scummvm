@@ -20,7 +20,7 @@
  *
  */
 
-#include "engines/wintermute/base/gfx/opengl/base_renderer3d.h"
+#include "engines/wintermute/base/gfx/base_renderer3d.h"
 #include "math/glmath.h"
 
 namespace Wintermute {

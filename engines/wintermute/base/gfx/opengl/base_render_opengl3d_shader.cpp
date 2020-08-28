@@ -26,10 +26,10 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d_shader.h"
 #include "engines/wintermute/base/gfx/opengl/base_surface_opengl3d.h"
-#include "engines/wintermute/base/gfx/opengl/camera3d.h"
 #include "engines/wintermute/base/gfx/opengl/mesh3ds_opengl_shader.h"
 #include "engines/wintermute/base/gfx/opengl/meshx_opengl_shader.h"
 #include "engines/wintermute/base/gfx/opengl/shadow_volume_opengl_shader.h"
+#include "engines/wintermute/base/gfx/3ds/camera3d.h"
 #include "graphics/opengl/system_headers.h"
 #include "math/glmath.h"
 

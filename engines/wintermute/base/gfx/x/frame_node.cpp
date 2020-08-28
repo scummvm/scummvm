@@ -27,8 +27,8 @@
  */
 
 #include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/gfx/opengl/base_renderer3d.h"
-#include "engines/wintermute/base/gfx/opengl/material.h"
+#include "engines/wintermute/base/gfx/base_renderer3d.h"
+#include "engines/wintermute/base/gfx/x/material.h"
 #include "engines/wintermute/base/gfx/x/frame_node.h"
 #include "engines/wintermute/base/gfx/x/modelx.h"
 #include "engines/wintermute/base/gfx/x/loader_x.h"

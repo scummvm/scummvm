@@ -27,8 +27,8 @@
  */
 
 #include "engines/wintermute/base/gfx/opengl/base_surface_opengl3d.h"
-#include "engines/wintermute/base/gfx/opengl/material.h"
 #include "engines/wintermute/base/gfx/opengl/meshx_opengl.h"
+#include "engines/wintermute/base/gfx/x/material.h"
 #include "graphics/opengl/system_headers.h"
 
 namespace Wintermute {

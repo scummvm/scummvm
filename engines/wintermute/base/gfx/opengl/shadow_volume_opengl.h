@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_SHADOW_VOLUME_OPENGL_H
 #define WINTERMUTE_SHADOW_VOLUME_OPENGL_H
 
-#include "engines/wintermute/base/gfx/opengl/shadow_volume.h"
+#include "engines/wintermute/base/gfx/shadow_volume.h"
 
 namespace Wintermute {
 

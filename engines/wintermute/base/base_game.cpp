@@ -37,7 +37,7 @@
 #include "engines/wintermute/base/font/base_font_storage.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #ifdef ENABLE_WME3D
-#include "engines/wintermute/base/gfx/opengl/base_renderer3d.h"
+#include "engines/wintermute/base/gfx/base_renderer3d.h"
 #endif
 #include "engines/wintermute/base/base_keyboard_state.h"
 #include "engines/wintermute/base/base_parser.h"

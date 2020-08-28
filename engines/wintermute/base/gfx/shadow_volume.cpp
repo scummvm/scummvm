@@ -28,7 +28,7 @@
 
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
-#include "engines/wintermute/base/gfx/opengl/shadow_volume.h"
+#include "engines/wintermute/base/gfx/shadow_volume.h"
 #include "engines/wintermute/dcgf.h"
 #include "graphics/opengl/system_headers.h"
 

@@ -28,7 +28,7 @@
 
 #include "engines/wintermute/ad/ad_walkplane.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
-#include "engines/wintermute/base/gfx/opengl/mesh3ds.h"
+#include "engines/wintermute/base/gfx/3ds/mesh3ds.h"
 
 namespace Wintermute {
 
