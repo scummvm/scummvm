@@ -157,7 +157,7 @@ bool BaseRenderOpenGL3DShader::enableShadows() {
 }
 
 bool BaseRenderOpenGL3DShader::disableShadows() {
-	warning("BaseRenderOpenGL3DShader::disableDhadows not implemented yet");
+	warning("BaseRenderOpenGL3DShader::disableShadows not implemented yet");
 	return true;
 }
 
