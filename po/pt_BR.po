@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-28 17:29+0200\n"
-"PO-Revision-Date: 2020-08-28 15:28+0000\n"
+"PO-Revision-Date: 2020-08-29 12:13+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -2568,7 +2568,7 @@ msgstr "Centralizado"
 #: backends/graphics/opengl/opengl-graphics.cpp:238
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:84
 msgid "Pixel-perfect scaling"
-msgstr "Redimensionamento perfeito de pixel"
+msgstr "Redimensionamento de pixel perfeito"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:239
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:85
@@ -2663,7 +2663,7 @@ msgstr "Alternar redimensionamento linear filtrado"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:401
 msgid "Cycle through stretch modes"
-msgstr "Percorrer entre os modos de preenchimento"
+msgstr "Percorrer entre os modos de redimensionamento"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:407
 msgid "Increase the scale factor"
@@ -3950,14 +3950,12 @@ msgstr ""
 " Veja em https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
 
 #: engines/dragons/detection.cpp:236
-#, fuzzy
 msgid "Action"
-msgstr "Ativo"
+msgstr "Ação"
 
 #: engines/dragons/detection.cpp:242
-#, fuzzy
 msgid "Change Command"
-msgstr "Mudar tamanho da fonte"
+msgstr "Alterar Comando"
 
 #: engines/dragons/detection.cpp:248 engines/hdb/detection.cpp:347
 #: engines/scumm/help.cpp:226 engines/scumm/help.cpp:235
@@ -3972,14 +3970,12 @@ msgid "Enter"
 msgstr "Enter"
 
 #: engines/dragons/detection.cpp:319
-#, fuzzy
 msgid "Debug Graphics"
-msgstr "Gráficos"
+msgstr "Depurar Gráficos"
 
 #: engines/dragons/detection.cpp:324
-#, fuzzy
 msgid "Quit Game"
-msgstr " (Jogo)"
+msgstr "Sair do Jogo"
 
 #: engines/dragons/dragons.cpp:1781
 #, c-format
