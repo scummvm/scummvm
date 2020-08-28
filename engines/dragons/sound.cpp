@@ -267,6 +267,9 @@ Audio::QueuingAudioStream *SoundManager::PSXAudioTrack::createNewAudioStream(Com
 
 SoundManager::SoundManager(DragonsEngine *vm, BigfileArchive *bigFileArchive, DragonRMS *dragonRMS)
 		: _vm(vm),
+		  _sfxVolume(0),
+		  _musicVolume(0),
+		  _speechVolume(0),
 		  _bigFileArchive(bigFileArchive),
 		  _dragonRMS(dragonRMS) {
 	_dat_8006bb60_sound_related = 0;
@@ -276,9 +279,6 @@ SoundManager::SoundManager(DragonsEngine *vm, BigfileArchive *bigFileArchive, Dr
 	if (ConfMan.hasKey("mute")) {
 		allSoundIsMuted = ConfMan.getBool("mute");
 	}
-	_speechVolume = ConfMan.getInt("speech_volume");
-	_sfxVolume = ConfMan.getInt("sfx_volume");
-	_musicVolume = ConfMan.getInt("music_volume");
 
 	if (ConfMan.hasKey("speech_mute") && !allSoundIsMuted) {
 		_vm->_mixer->muteSoundType(_vm->_mixer->kSpeechSoundType, ConfMan.getBool("speech_mute"));
@@ -295,7 +295,8 @@ SoundManager::SoundManager(DragonsEngine *vm, BigfileArchive *bigFileArchive, Dr
 	SomeInitSound_FUN_8003f64c();
 	initVabData();
 	_midiPlayer = new MidiMusicPlayer(_bigFileArchive, _vabMusx);
-	_midiPlayer->setVolume(_musicVolume);
+
+	syncSoundSettings();
 }
 
 SoundManager::~SoundManager() {
