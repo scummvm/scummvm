@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-28 01:09+0200\n"
-"PO-Revision-Date: 2020-08-27 16:03+0000\n"
-"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
+"PO-Revision-Date: 2020-08-28 13:52+0000\n"
+"Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -2237,7 +2237,7 @@ msgstr "Täsmäävät tunnisteet pelimoottorille %s:"
 
 #: engines/metaengine.cpp:59
 msgid "Default game keymap"
-msgstr ""
+msgstr "Oletusnäppäinasetukset"
 
 #: engines/metaengine.cpp:63 backends/platform/maemo/maemo.cpp:174
 #: backends/platform/symbian/src/SymbianActions.cpp:44
@@ -2268,7 +2268,6 @@ msgid "Pause"
 msgstr "Tauko"
 
 #: engines/metaengine.cpp:85
-#, fuzzy
 msgid "Game menu"
 msgstr "Pelivalikko"
 
@@ -2289,7 +2288,7 @@ msgstr "Ohita rivi"
 
 #: engines/metaengine.cpp:103
 msgid "Predictive input dialog"
-msgstr ""
+msgstr "Ennustava tekstinsyöttö"
 
 #: engines/metaengine.cpp:107 engines/sky/detection.cpp:228
 #: engines/wintermute/keymapper_tables.h:55
@@ -3397,11 +3396,11 @@ msgstr "R2"
 
 #: backends/platform/sdl/switch/switch.cpp:40
 msgid "Minus"
-msgstr ""
+msgstr "Miinus"
 
 #: backends/platform/sdl/switch/switch.cpp:41
 msgid "Plus"
-msgstr ""
+msgstr "Plus"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:48
 msgid "Zone"
@@ -3701,6 +3700,10 @@ msgid ""
 "If you have such file in other AGI (Sierra) game, you can copy it to the "
 "game directory"
 msgstr ""
+"Tiedostoa 'hgc_font' ei voitu avata/käyttää korkearesoluutioisena Hercules "
+"fonttina.\n"
+"Jos tämä tiedosto on muissa  Sierra AGI -peleissä, voit kopioida sen pelin "
+"kansioon."
 
 #: engines/agi/saveload.cpp:772 engines/avalanche/parser.cpp:1907
 #: engines/cine/various.cpp:354 engines/dm/dm.cpp:276
