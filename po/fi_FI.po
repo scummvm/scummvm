@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-28 01:09+0200\n"
 "PO-Revision-Date: 2020-08-28 13:53+0000\n"
-"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
+"Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -3899,6 +3899,9 @@ msgid ""
 "Things will be broken. Please consider starting Operation Stealth from "
 "beginning using new savegames."
 msgstr ""
+"Varoitus: Pelitallennus jota lataat k‰ytt‰‰ v‰liaikaista rikkin‰ist‰ "
+"tiedostomuotoa. T‰m‰ ei tule toimimaan. Harkitse aloittavasi Operation "
+"Stealth alusta k‰ytt‰en uusia pelitallennuksia."
 
 #: engines/cine/saveload.cpp:864
 #, fuzzy
