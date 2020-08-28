@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-28 01:09+0200\n"
-"PO-Revision-Date: 2020-08-28 13:55+0000\n"
-"Last-Translator: jepael <kermespersialainen@gmail.com>\n"
+"PO-Revision-Date: 2020-08-28 13:57+0000\n"
+"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -4029,7 +4029,7 @@ msgstr "Pelitallennus"
 
 #: engines/glk/comprehend/game.cpp:1333
 msgid "Picture window toggled\n"
-msgstr "Kuvaikkuna vaihdettu"
+msgstr "Kuvaikkuna vaihdettu\n"
 
 #: engines/glk/glulx/glulx.cpp:82
 msgid "This is too short to be a valid Glulx file."
