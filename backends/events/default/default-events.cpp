@@ -312,26 +312,28 @@ Common::Keymap *DefaultEventManager::getGlobalKeymap() {
 	act->setEvent(EVENT_MUTE);
 	globalKeymap->addAction(act);
 
-	act = new Action("QUIT", _("Quit"));
-	act->setEvent(EVENT_QUIT);
+	if (!g_system->hasFeature(OSystem::kFeatureNoQuit)) {
+		act = new Action("QUIT", _("Quit"));
+		act->setEvent(EVENT_QUIT);
 
 #if defined(MACOSX)
-	// On Macintosh, Cmd-Q quits
-	act->addDefaultInputMapping("M+q");
+		// On Macintosh, Cmd-Q quits
+		act->addDefaultInputMapping("M+q");
 #elif defined(POSIX)
-	// On other *nix systems, Control-Q quits
-	act->addDefaultInputMapping("C+q");
+		// On other *nix systems, Control-Q quits
+		act->addDefaultInputMapping("C+q");
 #else
-	// Ctrl-z quits
-	act->addDefaultInputMapping("C+z");
+		// Ctrl-z quits
+		act->addDefaultInputMapping("C+z");
 
 #ifdef WIN32
-	// On Windows, also use the default Alt-F4 quit combination
-	act->addDefaultInputMapping("A+F4");
+		// On Windows, also use the default Alt-F4 quit combination
+		act->addDefaultInputMapping("A+F4");
 #endif
 #endif
 
-	globalKeymap->addAction(act);
+		globalKeymap->addAction(act);
+	}
 
 	act = new Action("DEBUGGER", _("Open Debugger"));
 	act->addDefaultInputMapping("C+A+d");
