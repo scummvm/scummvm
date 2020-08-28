@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-28 17:29+0200\n"
-"PO-Revision-Date: 2020-08-28 15:28+0000\n"
+"PO-Revision-Date: 2020-08-29 12:13+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -3956,14 +3956,12 @@ msgstr ""
 "title=Datafiles#Blazing_Dragons"
 
 #: engines/dragons/detection.cpp:236
-#, fuzzy
 msgid "Action"
-msgstr "Activa"
+msgstr "Acción"
 
 #: engines/dragons/detection.cpp:242
-#, fuzzy
 msgid "Change Command"
-msgstr "Cambiar tamaño de fuente"
+msgstr "Cambiar orden"
 
 #: engines/dragons/detection.cpp:248 engines/hdb/detection.cpp:347
 #: engines/scumm/help.cpp:226 engines/scumm/help.cpp:235
@@ -3978,14 +3976,12 @@ msgid "Enter"
 msgstr "Enter"
 
 #: engines/dragons/detection.cpp:319
-#, fuzzy
 msgid "Debug Graphics"
-msgstr "Gráficos"
+msgstr "Depurar gráficos"
 
 #: engines/dragons/detection.cpp:324
-#, fuzzy
 msgid "Quit Game"
-msgstr " (Juego)"
+msgstr "Salir del juego"
 
 #: engines/dragons/dragons.cpp:1781
 #, c-format
@@ -7134,7 +7130,7 @@ msgstr "Libro de hechizos"
 
 #: engines/zvision/detection.cpp:197
 msgid "Score"
-msgstr ""
+msgstr "Puntos"
 
 #: engines/zvision/detection.cpp:203
 msgid "Put away object"
