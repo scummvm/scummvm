@@ -25,6 +25,9 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/translation.h"
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
 #include "base/plugins.h"
 #include "graphics/thumbnail.h"
 
@@ -134,6 +137,7 @@ public:
 	virtual SaveStateList listSaves(const char *target) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 	virtual void removeSaveState(const char *target, int slot) const;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool DragonsMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -220,6 +224,109 @@ bool DragonsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADG
 		}
 	}
 	return desc != 0;
+}
+
+Common::KeymapArray DragonsMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "dragons", "Blazing Dragons");
+
+	Action *act;
+
+	act = new Action("LCLK", _("Action"));
+	act->setCustomEngineActionEvent(Dragons::kDragonsActionSelect);
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action("CHANGECOMMAND", _("Change Command"));
+	act->setCustomEngineActionEvent(Dragons::kDragonsActionChangeCommand);
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Action("INVENTORY", _("Inventory"));
+	act->setCustomEngineActionEvent(Dragons::kDragonsActionInventory);
+	act->addDefaultInputMapping("i");
+	engineKeyMap->addAction(act);
+
+	act = new Action("ENTER", _("Enter"));
+	act->setCustomEngineActionEvent(Dragons::kDragonsActionEnter);
+	act->addDefaultInputMapping("RETURN");
+	act->addDefaultInputMapping("KP_ENTER");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveUp, _("Up"));
+	act->setCustomEngineActionEvent(Dragons::kDragonsActionUp);
+	act->addDefaultInputMapping("UP");
+	act->addDefaultInputMapping("JOY_UP");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveDown, _("Down"));
+	act->setCustomEngineActionEvent(Dragons::kDragonsActionDown);
+	act->addDefaultInputMapping("DOWN");
+	act->addDefaultInputMapping("JOY_DOWN");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveLeft, _("Left"));
+	act->setCustomEngineActionEvent(Dragons::kDragonsActionLeft);
+	act->addDefaultInputMapping("LEFT");
+	act->addDefaultInputMapping("JOY_LEFT");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveRight, _("Right"));
+	act->setCustomEngineActionEvent(Dragons::kDragonsActionRight);
+	act->addDefaultInputMapping("RIGHT");
+	act->addDefaultInputMapping("JOY_RIGHT");
+	engineKeyMap->addAction(act);
+
+	act = new Action("SQUARE", _("Square"));
+	act->setCustomEngineActionEvent(Dragons::kDragonsActionSquare);
+	act->addDefaultInputMapping("a");
+	act->addDefaultInputMapping("JOY_X");
+	engineKeyMap->addAction(act);
+
+	act = new Action("TRIANGLE", _("Triangle"));
+	act->setCustomEngineActionEvent(Dragons::kDragonsActionTriangle);
+	act->addDefaultInputMapping("w");
+	act->addDefaultInputMapping("JOY_Y");
+	engineKeyMap->addAction(act);
+
+	act = new Action("CIRCLE", _("Circle"));
+	act->setCustomEngineActionEvent(Dragons::kDragonsActionCircle);
+	act->addDefaultInputMapping("d");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Action("s", _("Cross"));
+	act->setCustomEngineActionEvent(Dragons::kDragonsActionCross);
+	act->addDefaultInputMapping("s");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action("L1", _("Left Shoulder"));
+	act->setCustomEngineActionEvent(Dragons::kDragonsActionL1);
+	act->addDefaultInputMapping("o");
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	engineKeyMap->addAction(act);
+
+	act = new Action("R1", _("Right Shoulder"));
+	act->setCustomEngineActionEvent(Dragons::kDragonsActionR1);
+	act->addDefaultInputMapping("p");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	engineKeyMap->addAction(act);
+
+	act = new Action("DEBUGGFX", _("Debug Graphics"));
+	act->setCustomEngineActionEvent(Dragons::kDragonsActionDebugGfx);
+	act->addDefaultInputMapping("TAB");
+	engineKeyMap->addAction(act);
+
+	act = new Action("QUIT", _("Quit Game"));
+	act->setCustomEngineActionEvent(Dragons::kDragonsActionQuit);
+	act->addDefaultInputMapping("C+q");
+	engineKeyMap->addAction(act);
+
+	return Keymap::arrayOf(engineKeyMap);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(DRAGONS)

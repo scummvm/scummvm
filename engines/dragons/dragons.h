@@ -109,6 +109,29 @@ struct PaletteCyclingInstruction {
 	int16 updateCounter;
 };
 
+enum DragonsAction {
+	kDragonsActionNone,
+	kDragonsActionUp,
+	kDragonsActionDown,
+	kDragonsActionLeft,
+	kDragonsActionRight,
+	kDragonsActionSquare,
+	kDragonsActionTriangle,
+	kDragonsActionCircle,
+	kDragonsActionCross,
+	kDragonsActionL1,
+	kDragonsActionR1,
+	kDragonsActionSelect,
+	kDragonsActionChangeCommand,
+	kDragonsActionInventory,
+	kDragonsActionEnter,
+	kDragonsActionMenu,
+	kDragonsActionPause,
+	kDragonsActionDebug,
+	kDragonsActionDebugGfx,
+	kDragonsActionQuit
+};
+
 class BigfileArchive;
 class BackgroundResourceLoader;
 class Cursor;

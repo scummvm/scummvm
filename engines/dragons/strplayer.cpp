@@ -50,7 +50,8 @@ void StrPlayer::playVideo(const Common::String &filename) {
 
 		Common::Event event;
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
-			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP) {
+			if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END
+				&& (event.customType == Dragons::kDragonsActionSelect || event.customType == Dragons::kDragonsActionEnter)) {
 				skipped = true;
 			}
 		}

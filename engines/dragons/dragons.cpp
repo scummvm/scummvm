@@ -148,77 +148,75 @@ void DragonsEngine::updateEvents() {
 		case Common::EVENT_MOUSEMOVE:
 			_cursor->updatePosition(event.mouse.x, event.mouse.y);
 			break;
-		case Common::EVENT_LBUTTONUP:
-			_leftMouseButtonUp = true;
-			_leftMouseButtonDown = false;
-			break;
-		case Common::EVENT_LBUTTONDOWN:
-			_leftMouseButtonDown = true;
-			break;
-		case Common::EVENT_RBUTTONUP:
-			_rightMouseButtonUp = true;
-			break;
 		case Common::EVENT_WHEELDOWN:
 			_mouseWheel = MOUSE_WHEEL_DOWN;
 			break;
 		case Common::EVENT_WHEELUP:
 			_mouseWheel = MOUSE_WHEEL_UP;
 			break;
-		case Common::EVENT_KEYUP:
-			if (event.kbd.keycode == Common::KEYCODE_i) {
-				_iKeyUp = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_DOWN) {
-				_downKeyUp = true;
-				_downKeyDown = false;
-			} else if (event.kbd.keycode == Common::KEYCODE_UP) {
-				_upKeyUp = true;
-				_upKeyDown = false;
-			} else if (event.kbd.keycode == Common::KEYCODE_RETURN ||
-						event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
-				_enterKeyUp = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_LEFT) {
-				_leftKeyUp = true;
-				_leftKeyDown = false;
-			} else if (event.kbd.keycode == Common::KEYCODE_RIGHT) {
-				_rightKeyUp = true;
-				_rightKeyDown = false;
-			} else if (event.kbd.keycode == Common::KEYCODE_w) {
-				_wKeyDown = false;
-			} else if (event.kbd.keycode == Common::KEYCODE_a) {
-				_aKeyDown = false;
-			} else if (event.kbd.keycode == Common::KEYCODE_s) {
-				_sKeyDown = false;
-			} else if (event.kbd.keycode == Common::KEYCODE_d) {
-				_dKeyDown = false;
-			} else if (event.kbd.keycode == Common::KEYCODE_o) {
-				_oKeyDown = false;
-			} else if (event.kbd.keycode == Common::KEYCODE_p) {
-				_pKeyDown = false;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			if (event.customType == Dragons::kDragonsActionLeft) {
+				_leftKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionRight) {
+				_rightKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionUp) {
+				_upKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionDown) {
+				_downKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionSquare) {
+				_aKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionTriangle) {
+				_wKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionCircle) {
+				_dKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionCross) {
+				_sKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionL1) {
+				_oKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionR1) {
+				_pKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionSelect) {
+				_leftMouseButtonDown = true;
+			} else if (event.customType == Dragons::kDragonsActionDebugGfx) {
+				_debugMode = !_debugMode;
 			}
 			break;
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_LEFT) {
-				_leftKeyDown = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_RIGHT) {
-				_rightKeyDown = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_UP) {
-				_upKeyDown = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_DOWN) {
-				_downKeyDown = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_w) {
-				_wKeyDown = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_a) {
-				_aKeyDown = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_s) {
-				_sKeyDown = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_d) {
-				_dKeyDown = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_o) {
-				_oKeyDown = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_p) {
-				_pKeyDown = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_TAB) {
-				_debugMode = !_debugMode;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+			if (event.customType == Dragons::kDragonsActionLeft) {
+				_leftKeyUp = true;
+				_leftKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionRight) {
+				_rightKeyUp = true;
+				_rightKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionUp) {
+				_upKeyUp = true;
+				_upKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionDown) {
+				_downKeyUp = true;
+				_downKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionSquare) {
+				_aKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionTriangle) {
+				_wKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionCircle) {
+				_dKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionCross) {
+				_sKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionL1) {
+				_oKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionR1) {
+				_pKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionSelect) {
+				_leftMouseButtonUp = true;
+				_leftMouseButtonDown = false;
+			} else if (event.customType == Dragons::kDragonsActionChangeCommand) {
+				_rightMouseButtonUp = true;
+			} else if (event.customType == Dragons::kDragonsActionInventory) {
+				_iKeyUp = true;
+			} else if (event.customType == Dragons::kDragonsActionEnter) {
+				_enterKeyUp = true;
+			} else if (event.customType == Dragons::kDragonsActionQuit) {
+				quitGame();
 			}
 			break;
 		default:
