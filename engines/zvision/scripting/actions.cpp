@@ -1000,7 +1000,27 @@ bool ActionStreamVideo::execute() {
 		_engine->getRenderManager()->initSubArea(HIRES_WINDOW_WIDTH, HIRES_WINDOW_HEIGHT, workingWindow);
 	}
 
+	// WORKAROUND for what appears to be a script bug. When riding with
+	// Charon in one direction, the game issues a command to kill the
+	// universe_hades_sound_task. When going in the other direction (either
+	// as yourself or as the two-headed beast) it does not. Since the
+	// cutscene plays music, there may be two pieces of music playing
+	// simultaneously during the ride.
+	//
+	// Rather than mucking about with killing and restarting the sound,
+	// simply pause the ScummVM mixer during the ride.
+
+	bool pauseBackgroundMusic = _engine->getGameId() == GID_GRANDINQUISITOR && (_fileName == "hp3ea021.avi" || _fileName == "hp4ea051.avi");
+
+	if (pauseBackgroundMusic) {
+		_engine->_mixer->pauseAll(true);
+	}
+
 	_engine->playVideo(*decoder, destRect, _skippable, sub);
+
+	if (pauseBackgroundMusic) {
+		_engine->_mixer->pauseAll(false);
+	}
 
 	if (switchToHires) {
 		_engine->initScreen();
