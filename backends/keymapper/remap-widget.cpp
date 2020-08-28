@@ -222,9 +222,13 @@ void RemapWidget::startRemapping(uint actionIndex) {
 	_actions[actionIndex].keyButton->setLabel("...");
 	_actions[actionIndex].keyButton->setTooltip("");
 	_actions[actionIndex].keyButton->markAsDirty();
+
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 }
 
 void RemapWidget::stopRemapping() {
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+
 	_remapKeymap = nullptr;
 	_remapAction = nullptr;
 
