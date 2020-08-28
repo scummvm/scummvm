@@ -702,58 +702,50 @@ void BaseRenderOpenGL3D::renderSceneGeometry(const BaseArray<AdWalkplane *> &pla
 
 	// render walk planes
 	for (uint i = 0; i < planes.size(); i++) {
-		if (!planes[i]->_active) {
-			continue;
+		if (planes[i]->_active) {
+			planes[i]->_mesh->render();
 		}
-
-		planes[i]->_mesh->render();
 	}
 
 	// render blocks
 	for (uint i = 0; i < blocks.size(); i++) {
-		if (!blocks[i]->_active) {
-			continue;
+		if (blocks[i]->_active) {
+			blocks[i]->_mesh->render();
 		}
-
-		blocks[i]->_mesh->render();
 	}
 
 	// render generic objects
 	for (uint i = 0; i < generics.size(); i++) {
-		if (!generics[i]->_active) {
-			continue;
+		if (generics[i]->_active) {
+			generics[i]->_mesh->render();
 		}
-
-		generics[i]->_mesh->render();
 	}
 
 	for (uint i = 0; i < lights.size(); ++i) {
-		if (!lights[i]->_active) {
-			continue;
+		if (lights[i]->_active) {
+			glBegin(GL_LINES);
+			glColor3f(1.0f, 1.0f, 0.0f);
+			Math::Vector3d right = lights[i]->_position + Math::Vector3d(1000.0f, 0.0f, 0.0f);
+			Math::Vector3d up = lights[i]->_position + Math::Vector3d(0.0f, 1000.0f, 0.0f);
+			Math::Vector3d backward = lights[i]->_position + Math::Vector3d(0.0f, 0.0f, 1000.0f);
+			Math::Vector3d left = lights[i]->_position + Math::Vector3d(-1000.0f, 0.0f, 0.0f);
+			Math::Vector3d down = lights[i]->_position + Math::Vector3d(0.0f, -1000.0f, 0.0f);
+			Math::Vector3d forward = lights[i]->_position + Math::Vector3d(0.0f, 0.0f, -1000.0f);
+
+			glVertex3fv(lights[i]->_position.getData());
+			glVertex3fv(right.getData());
+			glVertex3fv(lights[i]->_position.getData());
+			glVertex3fv(up.getData());
+			glVertex3fv(lights[i]->_position.getData());
+			glVertex3fv(backward.getData());
+			glVertex3fv(lights[i]->_position.getData());
+			glVertex3fv(left.getData());
+			glVertex3fv(lights[i]->_position.getData());
+			glVertex3fv(down.getData());
+			glVertex3fv(lights[i]->_position.getData());
+			glVertex3fv(forward.getData());
+			glEnd();
 		}
-
-		glBegin(GL_LINES);
-		glColor3f(1.0f, 1.0f, 0.0f);
-		Math::Vector3d right = lights[i]->_position + Math::Vector3d(1000.0f, 0.0f, 0.0f);
-		Math::Vector3d up = lights[i]->_position + Math::Vector3d(0.0f, 1000.0f, 0.0f);
-		Math::Vector3d backward = lights[i]->_position + Math::Vector3d(0.0f, 0.0f, 1000.0f);
-		Math::Vector3d left = lights[i]->_position + Math::Vector3d(-1000.0f, 0.0f, 0.0f);
-		Math::Vector3d down = lights[i]->_position + Math::Vector3d(0.0f, -1000.0f, 0.0f);
-		Math::Vector3d forward = lights[i]->_position + Math::Vector3d(0.0f, 0.0f, -1000.0f);
-
-		glVertex3fv(lights[i]->_position.getData());
-		glVertex3fv(right.getData());
-		glVertex3fv(lights[i]->_position.getData());
-		glVertex3fv(up.getData());
-		glVertex3fv(lights[i]->_position.getData());
-		glVertex3fv(backward.getData());
-		glVertex3fv(lights[i]->_position.getData());
-		glVertex3fv(left.getData());
-		glVertex3fv(lights[i]->_position.getData());
-		glVertex3fv(down.getData());
-		glVertex3fv(lights[i]->_position.getData());
-		glVertex3fv(forward.getData());
-		glEnd();
 	}
 
 	glDisable(GL_COLOR_MATERIAL);
