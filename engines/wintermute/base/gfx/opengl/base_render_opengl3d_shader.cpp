@@ -151,6 +151,14 @@ void BaseRenderOpenGL3DShader::setLightParameters(int index, const Math::Vector3
 	_modelXShader->setUniform(uniform.c_str(), diffuse);
 }
 
+void BaseRenderOpenGL3DShader::enableCulling() {
+	glEnable(GL_CULL_FACE);
+}
+
+void BaseRenderOpenGL3DShader::disableCulling() {
+	glDisable(GL_CULL_FACE);
+}
+
 bool BaseRenderOpenGL3DShader::enableShadows() {
 	warning("BaseRenderOpenGL3DShader::enableShadows not implemented yet");
 	return true;

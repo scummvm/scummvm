@@ -384,13 +384,11 @@ bool ModelX::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, cons
 bool ModelX::render() {
 	if (_rootFrame) {
 		// set culling
-		//		if(m_Owner && !m_Owner->m_DrawBackfaces)
-		//			Rend->m_Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-		//		else
-		//			Rend->m_Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-
-		//		// gameSpace stores colors in vertices, disable for now
-		//		Rend->m_Device->SetRenderState(D3DRS_COLORVERTEX, FALSE);
+		if(_owner && !_owner->_drawBackfaces) {
+			_gameRef->_renderer3D->enableCulling();
+		} else {
+			_gameRef->_renderer3D->disableCulling();
+		}
 
 		// render everything
 		bool res = _rootFrame->render(this);

@@ -64,6 +64,9 @@ public:
 
 	virtual void setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode) = 0;
 
+	virtual void enableCulling() = 0;
+	virtual void disableCulling() = 0;
+
 	virtual bool enableShadows() = 0;
 	virtual bool disableShadows() = 0;
 	virtual void displayShadow(BaseObject *object, const Math::Vector3d &light, bool lightPosRelative) = 0;

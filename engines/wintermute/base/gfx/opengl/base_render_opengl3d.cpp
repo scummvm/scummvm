@@ -133,6 +133,14 @@ void BaseRenderOpenGL3D::setLightParameters(int index, const Math::Vector3d &pos
 	}
 }
 
+void BaseRenderOpenGL3D::enableCulling() {
+	glEnable(GL_CULL_FACE);
+}
+
+void BaseRenderOpenGL3D::disableCulling() {
+	glDisable(GL_CULL_FACE);
+}
+
 bool BaseRenderOpenGL3D::enableShadows() {
 	warning("BaseRenderOpenGL3D::enableShadows not implemented yet");
 	return true;

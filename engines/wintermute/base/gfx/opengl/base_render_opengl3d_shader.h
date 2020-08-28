@@ -52,6 +52,9 @@ public:
 	void disableLight(int index) override;
 	void setLightParameters(int index, const Math::Vector3d &position, const Math::Vector3d &direction, const Math::Vector4d &diffuse, bool spotlight) override;
 
+	void enableCulling() override;
+	void disableCulling() override;
+
 	bool enableShadows() override;
 	bool disableShadows() override;
 	void displayShadow(BaseObject *object, const Math::Vector3d &lightPos, bool lightPosRelative) override;
