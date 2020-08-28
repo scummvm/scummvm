@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-28 01:09+0200\n"
 "PO-Revision-Date: 2020-08-28 13:57+0000\n"
-"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
+"Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -4048,9 +4048,8 @@ msgid "This Glulx file is too new a version to execute."
 msgstr "Tämä Glulx-tiedosto on versioltaan liian uusi ajettavaksi."
 
 #: engines/glk/quest/quest.cpp:45
-#, fuzzy
 msgid "Could not start Quest game"
-msgstr "AdvSys-pelin käynnistys epäonnistui"
+msgstr "Quest-pelin käynnistys epäonnistui"
 
 #: engines/glk/scott/scott.cpp:99
 msgid "I don't understand your command. "
@@ -4681,7 +4680,6 @@ msgid ""
 msgstr ""
 
 #: engines/lab/savegame.cpp:238
-#, fuzzy
 msgid "Would you like to save or restore a game?"
 msgstr "Haluatko tallentaa vai ladata pelin?"
 
@@ -4930,9 +4928,9 @@ msgstr ""
 "olemassa."
 
 #: engines/mutationofjb/util.cpp:33
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to locate the '%s' engine data file"
-msgstr "\"%s\" pelimoottorin datatiedostoa ei löydetty."
+msgstr "\"%s\" pelimoottorin datatiedostoa ei löydetty"
 
 #: engines/neverhood/detection.cpp:151
 msgid "Skip the Hall of Records storyboard scenes"
