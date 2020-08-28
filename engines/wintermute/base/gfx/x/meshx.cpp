@@ -110,8 +110,8 @@ bool MeshX::loadFromX(const Common::String &filename, XFileLexer &lexer, Common:
 			lexer.advanceOnOpenBraces();
 
 			// if any of this is zero, we should have an unskinned mesh
-			int maxSkinWeightsPerVertex = lexer.readInt();
-			int maxSkinWeightsPerFace = lexer.readInt();
+			lexer.readInt(); // max skin weights per vertex
+			lexer.readInt(); // max skin weights per face
 			int boneCount = lexer.readInt();
 
 			_skinnedMesh = boneCount > 0;
@@ -614,7 +614,7 @@ bool MeshX::parseNormalCoords(XFileLexer &lexer) {
 bool MeshX::parseMaterials(XFileLexer &lexer, int faceCount, const Common::String &filename, Common::Array<MaterialReference> &materialReferences, const Common::Array<int> &indexCountPerFace) {
 	// there can be unused materials inside a .X file
 	// so this piece of information is probably useless
-	int materialCount = lexer.readInt();
+	lexer.readInt(); // material count
 	// should be the same as faceCount
 	int faceMaterialCount = lexer.readInt();
 	assert(faceMaterialCount = faceCount);

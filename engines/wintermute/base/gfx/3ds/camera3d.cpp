@@ -76,7 +76,7 @@ bool Camera3D::loadFrom3DS(Common::MemoryReadStream &fileStream) {
 
 	// discard all subchunks
 	while (fileStream.pos() < end) {
-		uint16 chunkId = fileStream.readUint16LE();
+		fileStream.readUint16LE(); // chunk id
 		uint32 chunkSize = fileStream.readUint32LE();
 
 		fileStream.seek(chunkSize - 6, SEEK_CUR);

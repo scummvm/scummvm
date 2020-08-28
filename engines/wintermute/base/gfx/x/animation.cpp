@@ -112,8 +112,8 @@ bool Animation::loadFromX(XFileLexer &lexer, AnimationSet *parentAnimSet) {
 			lexer.advanceOnOpenBraces();
 
 			// I think we can ignore these for the moment)
-			int openClosed = lexer.readInt();
-			int positionQuality = lexer.readInt();
+			lexer.readInt(); // whether animation is open or closed
+			lexer.readInt(); // position quality
 			lexer.advanceToNextToken(); // skip closed braces
 		} else if (lexer.tokenIsOfType(OPEN_BRACES)) {
 			// this is a reference to a frame/bone, given as an identifier
@@ -389,6 +389,7 @@ bool Animation::loadMatrixKeyData(XFileLexer &lexer, int count) {
 	for (int keyIndex = 0; keyIndex < count; ++keyIndex) {
 		uint32 time = lexer.readInt();
 		int floatCount = lexer.readInt();
+		assert(floatCount == 16);
 
 		Math::Matrix4 keyData;
 
