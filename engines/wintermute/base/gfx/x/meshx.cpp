@@ -617,7 +617,7 @@ bool MeshX::parseMaterials(XFileLexer &lexer, int faceCount, const Common::Strin
 	lexer.readInt(); // material count
 	// should be the same as faceCount
 	int faceMaterialCount = lexer.readInt();
-	assert(faceMaterialCount = faceCount);
+	assert(faceMaterialCount == faceCount);
 
 	_indexRanges.push_back(0);
 	int currentMaterialIndex = lexer.readInt();
