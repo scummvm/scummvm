@@ -134,10 +134,7 @@ bool MeshX::loadFromX(const Common::String &filename, XFileLexer &lexer, Common:
 			lexer.skipObject();
 		} else if (lexer.reachedClosedBraces()) {
 			lexer.advanceToNextToken(); // skip closed braces
-
-			generateAdjacency();
-
-			return true;
+			break;
 		} else {
 			warning("MeshX::loadFromX unknown token %i encountered", lexer.getTypeOfToken());
 			lexer.advanceToNextToken();
