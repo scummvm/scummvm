@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-28 01:09+0200\n"
-"PO-Revision-Date: 2020-08-28 14:00+0000\n"
+"PO-Revision-Date: 2020-08-28 15:28+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -1899,9 +1899,8 @@ msgid "Could not find any engine capable of running the selected game"
 msgstr "Pelimoottoria joka tukisi valittua peliä ei löytynyt"
 
 #: common/achievements.cpp:92
-#, fuzzy
 msgid "Achievement unlocked!"
-msgstr "Saavutuksia avattu: %d/%d"
+msgstr "Saavutus avattu!"
 
 #: common/error.cpp:38
 msgid "No error"
@@ -6393,7 +6392,7 @@ msgstr "Pikatallennus %03d"
 
 #: engines/ultima/nuvie/meta_engine.cpp:39
 msgid "Original Save"
-msgstr ""
+msgstr "Alkuperäinen tallennus"
 
 #: engines/ultima/nuvie/save/save_game.cpp:212
 msgid "Transfer Character"
@@ -6995,9 +6994,8 @@ msgstr ""
 "Suojavaruste hajoaa vasta hahmon ollessa -80HP:ssä normaalin -10HP sijasta"
 
 #: engines/xeen/saves.cpp:291
-#, fuzzy
 msgid "Failed to autosave"
-msgstr "Pelitilan tallentaminen epäonnistui"
+msgstr "Pelin automaattinen tallennus epäonnistui"
 
 #: engines/zvision/detection_tables.h:60
 msgid "Double FPS"
@@ -7034,40 +7032,36 @@ msgstr ""
 "sijaan"
 
 #: engines/zvision/detection.cpp:150
-#, fuzzy
 msgid "Look Up"
 msgstr "Katso ylös"
 
 #: engines/zvision/detection.cpp:156
-#, fuzzy
 msgid "Look Down"
 msgstr "Katso alas"
 
 #: engines/zvision/detection.cpp:174
-#, fuzzy
 msgid "Show FPS"
 msgstr "Näytä FPS-laskuri"
 
 #: engines/zvision/detection.cpp:191
 msgid "Spellbook"
-msgstr ""
+msgstr "Loitsukirja"
 
 #: engines/zvision/detection.cpp:197
 msgid "Score"
-msgstr ""
+msgstr "Pisteet"
 
 #: engines/zvision/detection.cpp:203
 msgid "Put away object"
-msgstr ""
+msgstr "Laita pois esine"
 
 #: engines/zvision/detection.cpp:209
 msgid "Extract coin"
-msgstr ""
+msgstr "Poista kolikko"
 
 #: engines/zvision/detection.cpp:230
-#, fuzzy
 msgid "Preferences"
-msgstr "Ensisijainen laite:"
+msgstr "Asetukset"
 
 #: engines/zvision/file/save_manager.cpp:222
 #, c-format
