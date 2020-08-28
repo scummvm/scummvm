@@ -619,6 +619,12 @@ begin_credits("Credits");
 		add_person("Joni V&auml;h&auml;m&auml;ki", "Akz", "EMI developer (retired)");
 	    end_section();
 
+	    begin_section("ICB Team");
+		add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "Porting from original codebase");
+		add_person("Joost Peters", "joostp", "Porting from original codebase");
+		add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "Porting from original codebase");
+	    end_section();
+
 	    begin_section("Myst 3 Team");
 		add_person("Bastien Bouclet", "bgK", "Core developer");
 	    end_section();
@@ -627,6 +633,10 @@ begin_credits("Credits");
 		add_person("Bastien Bouclet", "bgK", "Core developer");
 		add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "Core developer (retired)");
 		add_person("Liu Zhaosong", "Douglas", "Core developer");
+	    end_section();
+
+	    begin_section("Wintermute 3D Team");
+		add_person("Gunnar Birke", "Fury", "Porting from original Wintermute 3D codebase");
 	    end_section();
 	end_section();
 
