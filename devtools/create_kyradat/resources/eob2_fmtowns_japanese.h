@@ -10,7 +10,7 @@ static const char *const kEoB2ChargenStrings1FMTownsJapanese[9] = {
 	"\x83""L""\x83\x83\x83\x89\x83""N""\x83""^""\x81""[""\x82\xF0\x8D\xEC\x82\xE9\x82\xBD\x82\xDF\x82\xCC""\r""\x83""{""\x83""b""\x83""N""\x83""X""\x82\xF0\x8E""w""\x92\xE8\x82\xB5\x82\xC4\x82\xAD\x82\xBE\x82\xB3\x82\xA2\x81""B"
 };
 
-static const StringListProvider kEoB2ChargenStrings1FMTownsJapaneseProvider = { ARRAYSIZE(kEoB2ChargenStrings1FMTownsJapanese), kEoB2ChargenStrings1FMTownsJapanese }; 
+static const StringListProvider kEoB2ChargenStrings1FMTownsJapaneseProvider = { ARRAYSIZE(kEoB2ChargenStrings1FMTownsJapanese), kEoB2ChargenStrings1FMTownsJapanese };
 
 static const char *const kEoB2ChargenStrings2FMTownsJapanese[12] = {
 	"%s",
