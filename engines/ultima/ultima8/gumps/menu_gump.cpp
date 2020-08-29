@@ -103,6 +103,17 @@ static const int gumpShape = 35;
 static const int paganShape = 32;
 static const int menuEntryShape = 37;
 
+static const char *MENU_TXT[] = {
+	"1.Intro",
+	"2.Read Diary",
+	"3.Write Diary",
+	"4.Options",
+	"5.Credits",
+	"6.Quit",
+	"7.Quotes",
+	"8.End Game"
+};
+
 void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
@@ -133,7 +144,13 @@ void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 				FrameID frame_down(GameData::GUMPS, menuEntryShape, i * 2 + 1);
 				frame_up = _TL_SHP_(frame_up);
 				frame_down = _TL_SHP_(frame_down);
-				Gump *widget = new ButtonWidget(x_, y_, frame_up, frame_down, true);
+				Gump *widget;
+				if (frame_up._shapeNum) {
+					widget = new ButtonWidget(x_, y_, frame_up, frame_down, true);
+				} else {
+					// JA U8 has text labels
+					widget = new ButtonWidget(x_, y_, _TL_(MENU_TXT[i]), true, 0);
+				}
 				widget->InitGump(this, false);
 				widget->SetIndex(i + 1);
 			}
