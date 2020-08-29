@@ -55,8 +55,6 @@ MeshX::~MeshX() {
 
 //////////////////////////////////////////////////////////////////////////
 bool MeshX::loadFromX(const Common::String &filename, XFileLexer &lexer, Common::Array<MaterialReference> &materialReferences) {
-	bool res = true;
-
 	lexer.advanceToNextToken(); // skip the name
 	lexer.advanceOnOpenBraces();
 	_vertexCount = lexer.readInt();

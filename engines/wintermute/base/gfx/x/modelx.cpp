@@ -203,7 +203,7 @@ bool ModelX::loadAnimationSet(XFileLexer &lexer, const Common::String &filename)
 		res = false;
 	}
 
-	return true;
+	return res;
 }
 
 //////////////////////////////////////////////////////////////////////////
