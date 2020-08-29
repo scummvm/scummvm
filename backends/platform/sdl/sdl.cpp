@@ -302,7 +302,7 @@ void OSystem_SDL::engineInit() {
 #endif
 #ifdef USE_DISCORD
 	// Set the presence status to the current running engine
-	_presence->updateStatus(ConfMan.getActiveDomainName(), ConfMan.get("description"));
+	_presence->updateStatus(ConfMan.get("gameid"), ConfMan.get("description"));
 #endif
 
 	_eventSource->setEngineRunning(true);
