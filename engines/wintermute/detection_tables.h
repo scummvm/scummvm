@@ -127,6 +127,8 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"shinestar",       "The Shine of a Star"},
 	{"spaceinvaders",   "Space Invaders"},
 	{"spacemadness",    "Space Madness"},
+	{"sof1",            "Stroke of Fate: Operation Valkyrie"},
+	{"sof2",            "Stroke of Fate: Operation Bunker"},
 	{"sofiasdebt",      "Sofia's Debt"},
 	{"sotv1",           "Shadows on the Vatican - Act I: Greed"},
 	{"sotv2",           "Shadows on the Vatican - Act II: Wrath"},
@@ -3842,6 +3844,30 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("shaban", "Demo",
 		WME_ENTRY2s("data.dcp", "044d4ad8b9a079a99892fd7f7673076c", 181051276,
 					"localization.txt", "e69948ef75907fa591f4062b05470012", 5919), Common::PT_BRA, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_2),
+
+	// Stroke of Fate: Operation Valkyrie (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sof1", "",
+		WME_ENTRY2s("data.dcp", "6f96e541de77de1999feabb2ec6ac877", 952625188,
+					"local.dcp", "d130c371faaf3f6767a7dd230650130d", 201155672), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_8_10),
+
+	// Stroke of Fate: Operation Valkyrie (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sof1", "",
+		WME_ENTRY2s("data.dcp", "ae4ba7a60da6c706b2f914f8b173295e", 930410566,
+					"local.dcp", "3f846bb0673dc92512dea526ce01a4fb", 431994000), Common::RU_RUS, ADGF_UNSTABLE | GF_3D, WME_1_8_10),
+
+	// Stroke of Fate: Operation Valkyrie (Spanish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sof1", "",
+		WME_ENTRY2s("data.dcp", "e5032a792e63bb8210f3eab96402614d", 951892593,
+					"local.dcp", "2d8af7da80c91ef8bfa594b5f50693ab", 201101595), Common::ES_ESP, ADGF_UNSTABLE | GF_3D, WME_1_8_10),
+
+	// Stroke of Fate: Operation Bunker (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sof2", "",
+		WME_ENTRY2s("data.dcp", "9f4de2a53ef396cc70786a1dc0ab191d", 828351641,
+					"local.dcp", "a78f5353c6539b4ff9c39223202ba8d0", 433003083), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_8_9),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Jul 2014) (German)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
