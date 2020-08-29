@@ -416,7 +416,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 					goto LAB_80032e18;
 				}
 				uVar10 = 0; //TODO PressedThisFrameStart(0);
-			} while ((uVar10 & 0xffff) == 0);
+			} while (!Engine::shouldQuit() && (uVar10 & 0xffff) == 0);
 			returnStatus = 2;
 			curDialogTextPtr = puVar18;
 			LAB_80032e18:
@@ -425,7 +425,8 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 				_vm->_fontManager->clearTextDialog((uint) _dat_8008e7e8_dialogBox_x1, (uint) _dat_8008e844_dialogBox_y1,
 								(uint) _dat_8008e848_dialogBox_x2, (uint) _dat_8008e874_dialogBox_y2);
 			}
-		} while (!_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1) &&
+		} while (!Engine::shouldQuit() &&
+				 !_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1) &&
 				 (((!_vm->isFlagSet(ENGINE_FLAG_1000_SUBTITLES_DISABLED) || (param_7 != 0)) && (*curDialogTextPtr != 0))));
 	}
 	if (param_5 != 0) {

@@ -262,10 +262,12 @@ Common::Error DragonsEngine::run() {
 		loadScene(0);
 	}
 
-	_scene->draw();
-	_screen->updateScreen();
+	if (!shouldQuit()) {
+		_scene->draw();
+		_screen->updateScreen();
 
-	gameLoop();
+		gameLoop();
+	}
 
 	delete _scene;
 	delete _actorManager;
@@ -958,7 +960,7 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 }
 
 void DragonsEngine::waitForFrames(uint16 numFrames) {
-	for (uint16 i = 0; i < numFrames; i++) {
+	for (uint16 i = 0; i < numFrames && !Engine::shouldQuit(); i++) {
 		wait();
 		updateHandler();
 
@@ -1654,14 +1656,16 @@ void DragonsEngine::mainMenu() {
 			waitForFrames(1);
 		} while (!checkForActionButtonRelease() && !shouldQuit());
 
-		if (curMenuItem == 0) {
-			_screen->clearScreen();
-			loadingScreen();
-			startGame = true;
-		} else if (curMenuItem == 1) {
-			//TODO options menu
-		} else if (curMenuItem == 2) {
-			_strPlayer->playVideo("previews.str");
+		if (!shouldQuit()) {
+			if (curMenuItem == 0) {
+				_screen->clearScreen();
+				loadingScreen();
+				startGame = true;
+			} else if (curMenuItem == 1) {
+				//TODO options menu
+			} else if (curMenuItem == 2) {
+				_strPlayer->playVideo("previews.str");
+			}
 		}
 	} while (!shouldQuit() && !startGame);
 

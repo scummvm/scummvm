@@ -201,7 +201,7 @@ void ScriptOpcodes::executeScriptLoop(ScriptOpCall &scriptOpCall) {
 //		execOpcode(scriptOpCall);
 //	}
 //
-	while (scriptOpCall._code < scriptOpCall._codeEnd && !(scriptOpCall._result & 1)) {
+	while (scriptOpCall._code < scriptOpCall._codeEnd && !(scriptOpCall._result & 1) && !_vm->shouldQuit()) {
 
 		if (_vm->isFlagSet(ENGINE_FLAG_100000)) {
 			return;
