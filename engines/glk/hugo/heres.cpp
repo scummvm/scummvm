@@ -26,35 +26,22 @@ namespace Glk {
 namespace Hugo {
 
 void Hugo::DisplayPicture() {
-	char filename[MAX_RES_PATH], resname[MAX_RES_PATH];
-	long reslength;
-
-	GetResourceParameters(filename, resname, PICTURE_T);
-	
-	if (!hugo_hasgraphics())
-	{
+	if (!hugo_hasgraphics()) {
 		var[system_status] = STAT_UNAVAILABLE;
 		return;
 	}
 
-	/* If filename is empty, no resource file was specified and
-	   the line[] array simply holds the path of the file to be loaded
-	   as a resource
-	*/
-	if (!(reslength = FindResource(filename, resname)))
-		return;
+	char filename[MAX_RES_PATH], resname[MAX_RES_PATH];
+	g_vm->GetResourceParameters(filename, resname, PICTURE_T);
+	Common::String picName = Common::String::format("%s,%s",
+		filename, resname);
 
-	/* Find out what type of image resource this is */
-	resource_type = (char)((hugo_fgetc(resource_file)==0xff) ? JPEG_R : UNKNOWN_R);
-	hugo_fseek(resource_file, -1, SEEK_CUR);
-
-	/* If FindResource() is successful, the resource file is already
-	   open and positioned; hugo_displaypicture() is responsible for
-	   closing resource_file before returning regardless of success
-	   or failure
-	*/
-	if (!hugo_displaypicture(resource_file, reslength))
+	// Draw game's picture then move cursor down to the next line
+	if (glk_image_draw(mainwin, picName, imagealign_InlineUp, 0)) {
+		glk_put_char('\n');
+	} else {
 		var[system_status] = STAT_LOADERROR;
+	}
 }
 
 void Hugo::PlayMusic() {
@@ -253,7 +240,7 @@ Identified:
 #endif
 }
 
-long Hugo::FindResource(char *filename, char *resname) {
+long Hugo::FindResource(const char *filename, const char *resname) {
 	char resource_in_file[MAX_RES_PATH];
 	int i, len;
 	int rescount;
@@ -281,7 +268,7 @@ long Hugo::FindResource(char *filename, char *resname) {
 
 
 	/* Open the resourcefile */
-	strupr(filename);
+	//strupr(filename);
 
 #if !defined (GLK)
 	/* stdio implementation */

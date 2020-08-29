@@ -21,10 +21,13 @@
  */
 
 #include "glk/hugo/hugo.h"
+#include "glk/hugo/resource_archive.h"
 #include "common/config-manager.h"
 
 namespace Glk {
 namespace Hugo {
+
+Hugo *g_vm;
 
 Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
 		mainwin(nullptr), currentwin(nullptr), secondwin(nullptr), auxwin(nullptr), 
@@ -79,6 +82,7 @@ Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 		active_screen(0), step_nest(0), history_last(0)
 #endif
 		{
+	g_vm = this;
 	strcpy(gamefile, "");
 
 	// heexpr
@@ -133,6 +137,10 @@ Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 #endif
 }
 
+Hugo::~Hugo() {
+	g_vm = nullptr;
+}
+
 void Hugo::runGame() {
 	hugo_init_screen();
 
@@ -140,6 +148,9 @@ void Hugo::runGame() {
 
 	strcpy(gamefile, getFilename().c_str());
 	strcpy(pbuffer, "");
+
+	ResourceArchive *res = new ResourceArchive();
+	SearchMan.add("Resouces", res);
 
 	gameseg = 0;
 

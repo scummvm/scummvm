@@ -209,6 +209,7 @@ MODULE_OBJS := \
 	hugo/heset.o \
 	hugo/htokens.o \
 	hugo/hugo.o \
+	hugo/resource_archive.o \
 	hugo/stringfn.o \
 	jacl/detection.o \
 	jacl/display.o \

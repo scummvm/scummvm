@@ -542,6 +542,7 @@ public:
 	virtual void redraw();
 
 	bool imageDraw(uint image, uint align, int val1, int val2);
+	bool imageDraw(const Common::String &image, uint align, int val1, int val2);
 
 	int acceptScroll(uint arg);
 

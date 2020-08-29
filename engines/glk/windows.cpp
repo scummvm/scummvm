@@ -708,6 +708,11 @@ bool Window::checkTerminators(uint32 ch) {
 }
 
 bool Window::imageDraw(uint image, uint align, int val1, int val2) {
+	return imageDraw(Common::String::format("%u", image),
+		align, val1, val2);
+}
+
+bool Window::imageDraw(const Common::String & image, uint align, int val1, int val2) {
 	if (!g_conf->_graphics)
 		return false;
 
