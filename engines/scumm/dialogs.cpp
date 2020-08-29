@@ -419,7 +419,7 @@ void InfoDialog::reflowLayout() {
 	_text->setSize(_w, _h);
 }
 
-const Common::String InfoDialog::queryResString(int stringno) {
+const Common::U32String InfoDialog::queryResString(int stringno) {
 	byte buf[256];
 	const byte *result;
 
