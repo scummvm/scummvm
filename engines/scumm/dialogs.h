@@ -95,7 +95,7 @@ public:
 protected:
 
 	// Query a string from the resources
-	const String queryResString(int stringno);
+	const U32String queryResString(int stringno);
 };
 
 /**
