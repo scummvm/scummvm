@@ -220,8 +220,6 @@ mcsseg mcsout(mcscxdef *ctx, uint objid, uchar *ptr, ushort siz,
 		}
 
 		min = ctx->mcscxmsg;
-		if ((min >> 8) >= MCSPAGETAB) /* exceeded pages in page table? */
-			errsig(ctx->mcscxerr, ERR_SWAPPG);
 
 		if (!ctx->mcscxtab[min >> 8]) /* haven't allocate page yet? */
 		{
