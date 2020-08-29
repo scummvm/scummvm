@@ -37,9 +37,11 @@
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 #include "audio/musicplugin.h"
 #include "audio/mpu401.h"
 #include "audio/softsynth/emumidi.h"
+#include "gui/message.h"
 #if defined(IPHONE_IOS7) && defined(IPHONE_SANDBOXED)
 #include "backends/platform/ios7/ios7_common.h"
 #endif
@@ -170,9 +172,11 @@ int MidiDriver_FluidSynth::open() {
 	bool isUsingInMemorySoundFontData = false;
 #endif
 
-	if (!isUsingInMemorySoundFontData && !ConfMan.hasKey("soundfont"))
-		error("FluidSynth requires a 'soundfont' setting");
-
+	if (!isUsingInMemorySoundFontData && !ConfMan.hasKey("soundfont")) {
+		GUI::MessageDialog dialog(_("FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI on MIDI tab. Music is off"));
+		dialog.runModal();
+		return MERR_DEVICE_NOT_AVAILABLE;
+	}
 
 	_settings = new_fluid_settings();
 
@@ -269,12 +273,16 @@ int MidiDriver_FluidSynth::open() {
 	_soundFont = fluid_synth_sfload(_synth, soundfont, 1);
 #endif
 
-	if (_soundFont == -1)
-		error("Failed loading custom sound font '%s'", soundfont);
+	if (_soundFont == -1) {
+		GUI::MessageDialog dialog(_("FluidSynth: Failed loading custom sound font '%s'. Music is off"), soundfont);
+		dialog.runModal();
+		return MERR_DEVICE_NOT_AVAILABLE;
+	}
 
 	MidiDriver_Emulated::open();
 
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+
 	return 0;
 }
 
@@ -293,6 +301,9 @@ void MidiDriver_FluidSynth::close() {
 }
 
 void MidiDriver_FluidSynth::send(uint32 b) {
+	if (!_isOpen)
+		return;
+
 	midiDriverCommonSend(b);
 
 	//byte param3 = (byte) ((b >> 24) & 0xFF);
