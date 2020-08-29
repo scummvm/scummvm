@@ -1468,6 +1468,30 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("DOWN"); // extra keyboard
 		act->addDefaultInputMapping("JOY_DOWN"); // extra joy
 		gameKeyMap->addAction(act);
+	} else if (gameId == "wayoflove") {
+		act = new Action("HINT", _("Show hints"));
+		act->setKeyEvent(KeyState(KEYCODE_SPACE, ASCII_SPACE));
+		act->addDefaultInputMapping("SPACE"); // original keyboard
+		act->addDefaultInputMapping("MOUSE_MIDDLE"); // extra mouse
+		act->addDefaultInputMapping("JOY_Y"); // extra joy
+		gameKeyMap->addAction(act);
+
+		act = new Action("GUIA", _("GUI variant A"));
+		act->setKeyEvent(KEYCODE_F10);
+		act->addDefaultInputMapping("F10"); // original keyboard
+		act->addDefaultInputMapping("MOUSE_WHEEL_DOWN"); // extra mouse
+		gameKeyMap->addAction(act);
+
+		act = new Action("GUIB", _("GUI variant B"));
+		act->setKeyEvent(KEYCODE_F11);
+		act->addDefaultInputMapping("F11"); // original keyboard
+		act->addDefaultInputMapping("MOUSE_WHEEL_UP"); // extra mouse
+		gameKeyMap->addAction(act);
+
+		act = new Action("WTF", _("???"));
+		act->setKeyEvent(KEYCODE_HOME);
+		act->addDefaultInputMapping("HOME"); // original keyboard
+		gameKeyMap->addAction(act);
 	} else if (gameId == "wtetris") {
 		act = new Action("ROTATE", _("Rotate"));
 		act->setKeyEvent(KEYCODE_UP);
