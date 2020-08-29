@@ -45,8 +45,8 @@ private:
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 	void reflowLayout() override;
 
-	Common::U32String generateBugtrackerURL();
-	static Common::U32String encodeUrlString(const Common::U32String &string);
+	Common::String generateBugtrackerURL();
+	static Common::String encodeUrlString(const Common::String &string);
 
 	const DetectedGame &_detectedGame;
 	ScrollContainerWidget *_textContainer;

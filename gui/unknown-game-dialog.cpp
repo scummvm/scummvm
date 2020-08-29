@@ -119,10 +119,10 @@ void UnknownGameDialog::rebuild() {
 	}
 }
 
-Common::U32String UnknownGameDialog::encodeUrlString(const Common::U32String &string) {
-	Common::U32String encoded;
+Common::String UnknownGameDialog::encodeUrlString(const Common::String &string) {
+	Common::String encoded;
 	for (uint i = 0 ; i < string.size() ; ++i) {
-		uint32 c = string[i];
+		char c = string[i];
 		if ((c >= 'a' && c <= 'z') || (c >= 'A'  && c <= 'Z') || (c >= '0' && c <= '9') ||
 			c == '~' || c == '-' || c == '.' || c == '_')
 			encoded += c;
@@ -132,21 +132,18 @@ Common::U32String UnknownGameDialog::encodeUrlString(const Common::U32String &st
 	return encoded;
 }
 
-Common::U32String UnknownGameDialog::generateBugtrackerURL() {
-	Common::U32String report = generateUnknownGameReport(_detectedGame, false, false);
+Common::String UnknownGameDialog::generateBugtrackerURL() {
+	Common::String report = generateUnknownGameReport(_detectedGame, false, false);
 	report = encodeUrlString(report);
 
 	Common::String engineId = encodeUrlString(_detectedGame.engineId);
 
-	Common::String preFinalReport = Common::String::format(
+	return Common::String::format(
 		"https://www.scummvm.org/unknowngame?"
-		"engine=%s",
-		engineId.c_str());
-
-	Common::U32String repDesc("&description=");
-	repDesc += report;
-
-	return Common::U32String(preFinalReport) + repDesc;
+		"engine=%s"
+		"&description=%s",
+		engineId.c_str(),
+		report.c_str());
 }
 
 void UnknownGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
