@@ -68,8 +68,8 @@ public:
 	/**
 	 * @param desc A human readable description of the save state.
 	 */
+	void setDescription(const Common::String &desc) { _description = desc.decode(); }
 	void setDescription(const Common::U32String &desc) { _description = desc; }
-	void setDescription(const Common::String &desc) { _description = Common::U32String(desc); }
 
 	/**
 	 * @return A human readable description of the save state.
@@ -184,7 +184,7 @@ public:
 	 *
 	 * This will return an empty string in case the value is not set.
 	 */
-	const Common::U32String &getPlayTime() const { return _playTime; }
+	const Common::String &getPlayTime() const { return _playTime; }
 
 	/**
 	 * Returns the time the game was played before the save state was created
@@ -243,7 +243,7 @@ private:
 	 * Human readable description of the time the game was played till the
 	 * save state was created.
 	 */
-	Common::U32String _playTime;
+	Common::String _playTime;
 
 	/**
 	 * The time the game was played before the save state was created

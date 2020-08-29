@@ -206,13 +206,13 @@ void MainMenuDialog::save() {
 	int slot = _saveDialog->runModalWithCurrentTarget();
 
 	if (slot >= 0) {
-		Common::U32String result(_saveDialog->getResultString());
+		Common::String result(_saveDialog->getResultString());
 		if (result.empty()) {
 			// If the user was lazy and entered no save name, come up with a default name.
 			result = _saveDialog->createDefaultSaveDescription(slot);
 		}
 
-		Common::Error status = _engine->saveGameState(slot, Common::convertFromU32String(result));
+		Common::Error status = _engine->saveGameState(slot, result);
 		if (status.getCode() != Common::kNoError) {
 			Common::U32String failMessage = Common::U32String::format(_("Failed to save game (%s)! "
 				  "Please consult the README for basic information, and for "

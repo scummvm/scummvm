@@ -752,7 +752,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 
 int AgiEngine::scummVMSaveLoadDialog(bool isSave) {
 	GUI::SaveLoadChooser *dialog;
-	Common::U32String desc;
+	Common::String desc;
 	int slot;
 
 	if (isSave) {
@@ -767,7 +767,7 @@ int AgiEngine::scummVMSaveLoadDialog(bool isSave) {
 		}
 
 		if (desc.size() > 28)
-			desc = Common::U32String(desc.begin(), desc.begin() + 28);
+			desc = Common::String(desc.c_str(), 28);
 	} else {
 		dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 		slot = dialog->runModalWithCurrentTarget();
@@ -779,7 +779,7 @@ int AgiEngine::scummVMSaveLoadDialog(bool isSave) {
 		return true;
 
 	if (isSave)
-		return doSave(slot, Common::convertFromU32String(desc));
+		return doSave(slot, desc);
 	else
 		return doLoad(slot, false);
 }
