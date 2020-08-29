@@ -118,14 +118,15 @@ int Hugo::hugo_waitforkey() {
 		/* Grab an event */
 		glk_select(&ev);
 
-		switch (ev.type)
-		{
+		switch (ev.type) {
 		case evtype_CharInput:
 			/* (Will always be mainwin, but anyway) */
 			if (ev.window == currentwin) {
 				gotchar = true;
 			}
 			break;
+		case evtype_Quit:
+			return 0;
 		default:
 			break;
 		}

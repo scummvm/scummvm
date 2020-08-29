@@ -192,6 +192,9 @@ Start:
 
 	do
 	{
+		if (shouldQuit())
+			return;
+
 		if (xverb==0)
 		{
 			undorecord = true;
@@ -1343,7 +1346,8 @@ ContinueRunning:
 
 	while (MEM(codeptr) != CLOSE_BRACE_T)   /* until "}" */
 	{
-
+		if (shouldQuit())
+			return;
 #if defined (DEBUGGER)
 		/* Check if we're stepping over, and if we've returned to
 		   the original level of nesting:
