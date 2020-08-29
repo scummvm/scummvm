@@ -144,8 +144,12 @@ void TimedMessageDialog::handleTickle() {
 		close();
 }
 
+MessageDialogWithURL::MessageDialogWithURL(const Common::U32String &message, const char *url, const Common::U32String &defaultButton, Graphics::TextAlign alignment)
+	: MessageDialog(message, defaultButton, _("Open URL"), alignment, url) {
+}
+
 MessageDialogWithURL::MessageDialogWithURL(const Common::String &message, const char *url, const char *defaultButton, Graphics::TextAlign alignment)
-		: MessageDialog(message, defaultButton, _s("Open URL"), alignment, url) {
+		: MessageDialog(Common::U32String(message), Common::U32String(defaultButton), _("Open URL"), alignment, url) {
 }
 
 
