@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-29 17:57+0200\n"
-"PO-Revision-Date: 2020-08-29 15:55+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2020-08-29 16:30+0000\n"
+"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -2419,11 +2419,14 @@ msgid ""
 "FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI "
 "on MIDI tab. Music is off"
 msgstr ""
+"Une banque de sons est nécessaire pour utiliser Fluidsynth. Veuillez en "
+"spécifier une dans le tab MIDI des options ScummVM. Musique désactivée"
 
 #: audio/softsynth/fluidsynth.cpp:277
 #, c-format
 msgid "FluidSynth: Failed loading custom sound font '%s'. Music is off"
 msgstr ""
+"Fluidsynth : échec du chargement de la banque de son '%s'. Musique désactivée"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:32
 msgid "FM-Towns Audio"
