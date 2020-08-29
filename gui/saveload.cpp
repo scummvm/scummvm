@@ -63,7 +63,7 @@ void SaveLoadChooser::selectChooser(const MetaEngine &engine) {
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
 }
 
-Common::U32String SaveLoadChooser::createDefaultSaveDescription(const int slot) const {
+Common::String SaveLoadChooser::createDefaultSaveDescription(const int slot) const {
 #if defined(USE_SAVEGAME_TIMESTAMP)
 	TimeDate curTime;
 	g_system->getTimeAndDate(curTime);
