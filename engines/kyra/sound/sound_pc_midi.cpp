@@ -298,7 +298,7 @@ void SoundMidiPC::playTrack(uint8 track) {
 
 	Common::StackLock lock(_mutex);
 	_fadeMusicOut = false;
-	
+
 	_output->setSourceVolume(0, _musicVolume);
 
 	if (_music->setTrack(track))

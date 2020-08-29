@@ -43,7 +43,7 @@ void Screen_EoB::selectPC98Palette(int palID, Palette &dest, int brightness, boo
 	for (int i = 0; i < 48; ++i)
 		pal[i] = CLIP<int>(pal16c[palID * 48 + i] + brightness, 0, 15);
 	loadPalette(pal, dest, 48);
-	
+
 	if (set)
 		setScreenPalette(dest);
 }

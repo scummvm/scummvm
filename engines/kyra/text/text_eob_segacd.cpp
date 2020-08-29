@@ -155,12 +155,12 @@ void TextDisplayer_SegaCD::displayText(char *str, ...) {
 					_curPosY -= _screen->getFontHeight();
 					linefeed();
 				}
-			}			
+			}
 
 			printShadedText(tmp, _curPosX, _curPosY, _textColor);
 			_curPosX += _screen->getTextWidth(tmp);
 			updated = true;
-		}		
+		}
 	}
 
 	if (!updated)
@@ -182,7 +182,7 @@ uint8 TextDisplayer_SegaCD::fetchCharacter(char *dest, const char *&src) {
 		dest[0] = '\0';
 		return c;
 	}
-		
+
 	dest[0] = (char)c;
 	dest[1] = (c <= 0x7F || (c >= 0xA1 && c <= 0xDF)) ? '\0' : *src++;
 

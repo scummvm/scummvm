@@ -333,7 +333,7 @@ void SegaSequencePlayer::updateSpeechAnimGraphics(int animDrawOp) {
 		_renderer->loadToVRAM(d->tileData, (d->width * d->height) << 5, (d->nTblVal & 0x7FF) << 5);
 	else
 		_renderer->fillRectWithTiles(d->addr, d->x, d->y, d->width, d->height, d->nTblVal, true);
-		
+
 }
 
 #define ARG(x) READ_BE_UINT16(pos + x)

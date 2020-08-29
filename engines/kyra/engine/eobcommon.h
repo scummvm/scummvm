@@ -1176,7 +1176,7 @@ protected:
 	const char *const *_clericSpellList;
 	const char *const *_spellNames;
 	const char *const *_mageSpellList2;
-	const char *const *_clericSpellList2;	
+	const char *const *_clericSpellList2;
 	const char *const *_magicStrings1;
 	const char *const *_magicStrings2;
 	const char *const *_magicStrings3;

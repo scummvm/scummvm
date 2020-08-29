@@ -376,7 +376,7 @@ private:
 	void writeDevice(uint8 reg, uint8 val) override;
 
 	void op_writeDevice(uint8 *&data) override;
-	
+
 	uint8 _specialModeModifier[4];
 	bool _specialMode;
 	bool _isFinished;
@@ -621,7 +621,7 @@ void SoundChannel::op_jumpToSubroutine(uint8 *&data) {
 	else
 		warning("SoundChannel::op_jumpToSubroutine(): invalid offset");
 	data = _buffer + offset;
-#else	
+#else
 	// This is a very ugly opcode which reads and sets an absolute 16 bit offset
 	// inside the music driver segment. Thus, the ip can jump anywhere, not only
 	// from one track or channel to another or from the music buffer to the sfx
@@ -934,7 +934,7 @@ void MusicChannelFM::noteOn(uint8 note) {
 
 	if (_note == note && !(_flags2 & kNoSustain))
 		return;
-	
+
 	_note = note;
 
 	if ((note & 0x0F) >= 12)
@@ -1154,7 +1154,7 @@ void MusicChannelSSG::parse() {
 					_flags2 &= ~kNoSustain;
 				else
 					noteOff();
-			} 
+			}
 		}
 
 		if (_volume & kUpdate) {
@@ -1163,8 +1163,8 @@ void MusicChannelSSG::parse() {
 		}
 		return;
 	}
-	
-	uint8 *pos = _dataPtr;	
+
+	uint8 *pos = _dataPtr;
 	if (pos && pos < _dataEnd) {
 		if (*pos == 0xFD) {
 			_flags2 &= ~kNoSustain;
@@ -1215,7 +1215,7 @@ void MusicChannelSSG::noteOff() {
 			writeDevice(_regOffsetAttn, _globalBlock ? 0 : val);
 		}
 		return;
-	} 
+	}
 
 	if (_volume & kUpdate) {
 		_volume &= ~(kAttack | kDecay | kSustain);
@@ -1230,7 +1230,7 @@ void MusicChannelSSG::noteOn(uint8 note) {
 	static uint16 freqTableSSG[12] = {
 		0x0EE8, 0x0E12, 0x0D48, 0x0C89, 0x0BD5, 0x0B2B, 0x0A8A, 0x09F3, 0x0964, 0x08DD, 0x085E, 0x07E6
 	};
-	
+
 	if (_note == note && !(_flags2 & kNoSustain))
 		return;
 
@@ -1248,7 +1248,7 @@ void MusicChannelSSG::noteOn(uint8 note) {
 	if (_flags2 & kNoSustain) {
 		if (_flags & kEnvelope) {
 			writeDevice(_regOffsetAttn, 0x10);
-			writeDevice(0x0D, _flags & kInternalMask);	
+			writeDevice(0x0D, _flags & kInternalMask);
 		} else {
 			_volume = (kUpdate | kAttack) | (_volume & 0x0F);
 			_envCurLvl = _envStartLvl;
@@ -1458,7 +1458,7 @@ void MusicChannelEXT::noteOn(uint8 note) {
 	static uint16 freqTableEXT[12] = {
 		0x4A82, 0x4EE4, 0x5389, 0x5875, 0x5DAC, 0x6332, 0x690C, 0x6F3F, 0x75D1, 0x7C76, 0x8426, 0x8BF5
 	};
-	
+
 	if (!(_flags2 & kNoSustain) && _note == note)
 		return;
 
@@ -1472,7 +1472,7 @@ void MusicChannelEXT::noteOn(uint8 note) {
 	if (!(_flags2 & kNoSustain))
 		vbrResetDelay();
 	vbrReset();
-	
+
 	if (_globalBlock)
 		return;
 
@@ -1534,7 +1534,7 @@ void MusicChannelEXT::op_setVolume(uint8 *&data) {
 		_volume2 = *data;
 	else
 		_volume = *data;
-	data++;	
+	data++;
 }
 
 void MusicChannelEXT::op_setPanPos(uint8 *&data) {
@@ -1641,7 +1641,7 @@ MLALF98Internal::MLALF98Internal(Audio::Mixer *mixer, EmuType emuType) : PC98Aud
 		_musicChannels.push_back(new MusicChannelFM(_pc98a, 0, i));
 	for (int i = 3; i < 6; ++i)
 		_musicChannels.push_back(new MusicChannelSSG(_pc98a, 0, (i - 3) << 1));
-	
+
 	if (_type86) {
 		_musicChannels.push_back(new MusicChannelRHY(_pc98a, 0, 0));
 		for (int i = 7; i < 10; ++i)
@@ -1659,7 +1659,7 @@ MLALF98Internal::MLALF98Internal(Audio::Mixer *mixer, EmuType emuType) : PC98Aud
 
 MLALF98Internal::~MLALF98Internal() {
 	_ready = false;
-	
+
 	delete _pc98a;
 
 	iterateChannels(_musicChannels)
@@ -1757,7 +1757,7 @@ void MLALF98Internal::startMusic(int track) {
 	_pc98a->writeReg(0, 0x10, 0x00);
 	_pc98a->writeReg(0, 0x24, 0x18);
 	_pc98a->writeReg(0, 0x25, 0x02);
-	
+
 	iterateChannels(_sfxChannels)
 		(*i)->setData(0, 0, 0, 0);
 
@@ -1779,13 +1779,13 @@ void MLALF98Internal::startMusic(int track) {
 		header += 2;
 		(*i)->setData(_musicBuffer + 5 + offset1, offset2 ? _musicBuffer + 5 + offset2 : 0, _musicBuffer + _musicBufferSize, _musicBuffer + 1);
 	}
-	
+
 	debugC(3, kDebugLevelSound, "\nStarting music. Track: %03d", track);
 
 	_pc98a->writeReg(0, 0x29, 0x83);
 	for (int i = 0; i < 6; ++i)
 		_pc98a->writeReg(0, i, 0);
-	_pc98a->writeReg(0, 0x07, 0x38);	
+	_pc98a->writeReg(0, 0x07, 0x38);
 	_pc98a->writeReg(0, 0x26, tempo);
 
 	for (int i = 0; i < 2; ++i) {

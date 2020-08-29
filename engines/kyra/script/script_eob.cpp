@@ -565,7 +565,7 @@ int EoBInfProcessor::oeob_printMessage_v1(int8 *data) {
 }
 
 int EoBInfProcessor::oeob_printMessage_v2(int8 *data) {
-	
+
 	int8 *pos = data;
 	uint16 str = READ_LE_UINT16(pos);
 	pos += 2;
@@ -578,7 +578,7 @@ int EoBInfProcessor::oeob_printMessage_v2(int8 *data) {
 		assert(col < 16);
 		col = _amigaColorMap[col];
 	}
-	
+
 	if (_activeCharacter == -1) {
 		c = _vm->rollDice(1, 6, -1);
 		while (!_vm->testCharacter(c, 3))

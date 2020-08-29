@@ -219,7 +219,7 @@ Common::Point KyraEngine_v1::getMousePos() {
 	if (_flags.useHiRes) {
 		mouse.x >>= 1;
 		mouse.y >>= 1;
-	}	
+	}
 
 	return mouse;
 }
@@ -287,7 +287,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 						keys |= 0x100;
 				} else {
 					keys = 0;
-				}				
+				}
 
 				// When we got an keypress, which we might need to handle,
 				// break the event loop and pass it to GUI code.
@@ -437,7 +437,7 @@ void KyraEngine_v1::setupKeyMap() {
 	// If we have an engine that wants ASCII codes instead of key codes, we can skip the setup of the key map.
 	// In that case we simply return the ASCII codes from the event manager. At least until I know better I
 	// trust that the ASCII codes we get from our event manager are the same identical codes. If that assumption
-	// turns out to be wrong I can still implement the original conversion method... 
+	// turns out to be wrong I can still implement the original conversion method...
 	if (_asciiCodeEvents)
 		return;
 

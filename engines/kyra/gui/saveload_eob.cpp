@@ -675,7 +675,7 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 		return desc;
 
 	Common::SeekableSubReadStream test(fs, 0, fs->size(), DisposeAfterUse::NO);
-	
+
 	// detect source platform (PC98 has the exact same file layout as DOS)
 	Common::Platform sourcePlatform = Common::kPlatformDOS;
 	test.seek(32);
@@ -689,12 +689,12 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 	test.seek(_flags.gameID == GI_EOB1 ? 61 : 27);
 	bool padding = !test.readByte();
 	test.seek(0);
-		
+
 	if (testStr >= 0 && testStr <= 25 && testChr >= 0 && testChr <= 25) {
 		if (testSJIS >= 0xE0 || (testSJIS > 0x80 && testSJIS < 0xA0))
 			sourcePlatform = Common::kPlatformFMTowns;
 	}
-	
+
 	if (sourcePlatform == Common::kPlatformDOS && padding && (exp & 0xFF000000))
 		sourcePlatform = Common::kPlatformAmiga;
 
@@ -730,7 +730,7 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 		c->constitutionCur = in.readSByte();
 		c->constitutionMax = in.readSByte();
 		c->charismaCur = in.readSByte();
-		c->charismaMax = in.readSByte();		
+		c->charismaMax = in.readSByte();
 		if (_flags.gameID == GI_EOB2 && sourcePlatform == Common::kPlatformAmiga)
 			in.skip(1);
 		c->hitPointsCur = (_flags.gameID == GI_EOB1) ? in.readSByte() : in.readSint16();
@@ -810,7 +810,7 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 	}
 	if (_flags.gameID == GI_EOB2)
 		in.skip(1);
-	
+
 	_inf->loadState(in, true);
 
 	loadItemDefs();
@@ -1244,7 +1244,7 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 
 	if (_flags.gameID == GI_EOB2)
 		out->writeByte(0);
-	
+
 	_inf->saveState(out, true);
 
 	int numItems = (_flags.gameID == GI_EOB1) ? 500 : 600;
@@ -1273,7 +1273,7 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 
 	int numParts = (_flags.gameID == GI_EOB1) ? 12 : 17;
 	int partSize = (_flags.platform == Common::kPlatformFMTowns) ? 5030 :(_flags.gameID == GI_EOB1) ? 2040 : 2130;
-	
+
 	uint8 *tempData = new uint8[5030];
 	uint8 *cmpData = new uint8[1200];
 

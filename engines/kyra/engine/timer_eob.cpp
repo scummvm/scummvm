@@ -214,7 +214,7 @@ void EoBCoreEngine::advanceTimers(uint32 millis) {
 			} else if (_scriptTimers[i].next) {
                 _scriptTimers[i].next = 1;
 				debugC(3, kDebugLevelTimer, "EoBCoreEngine::advanceTimers()      - CTIME: %08d   SCRIPT TIMER[%02d].NEXT: %08d", ct, i, _scriptTimers[i].next);
-            }			
+            }
 		}
 	}
 

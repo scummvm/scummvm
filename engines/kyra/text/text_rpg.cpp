@@ -787,7 +787,7 @@ void TextDisplayer_rpg::convertString(char *str) {
 			if ((*str) == c[0])
 				*str = c[1];
 		}
-	}	
+	}
 }
 
 } // End of namespace Kyra
