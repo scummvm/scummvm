@@ -818,7 +818,7 @@ bool Engine::saveGameDialog() {
 		slotNum = dialog->runModalWithCurrentTarget();
 	}
 
-	Common::U32String desc = dialog->getResultString();
+	Common::String desc = dialog->getResultString();
 	if (desc.empty())
 		desc = dialog->createDefaultSaveDescription(slotNum);
 
@@ -827,7 +827,7 @@ bool Engine::saveGameDialog() {
 	if (slotNum < 0)
 		return false;
 
-	Common::Error saveError = saveGameState(slotNum, Common::convertFromU32String(desc));
+	Common::Error saveError = saveGameState(slotNum, desc);
 	if (saveError.getCode() != Common::kNoError) {
 		GUI::MessageDialog errorDialog(saveError.getDesc());
 		errorDialog.runModal();
