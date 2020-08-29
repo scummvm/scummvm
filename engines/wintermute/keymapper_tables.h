@@ -1305,6 +1305,34 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("MOUSE_MIDDLE"); // extra mouse
 		act->addDefaultInputMapping("JOY_Y"); // extra joy
 		gameKeyMap->addAction(act);
+	} else if (gameId == "sof1" ||
+		gameId == "sof2"
+	) {
+		act = new Action("ZOOMOT", _("Zoom out"));
+		act->setMouseWheelUpEvent();
+		act->addDefaultInputMapping("MOUSE_WHEEL_UP"); // original mouse
+		act->addDefaultInputMapping("PAGEUP"); // extra keyboard
+		act->addDefaultInputMapping("JOY_UP"); // extra joy
+		gameKeyMap->addAction(act);
+
+		act = new Action("ZOOMIN", _("Zoom in"));
+		act->setMouseWheelDownEvent();
+		act->addDefaultInputMapping("MOUSE_WHEEL_DOWN"); // original mouse
+		act->addDefaultInputMapping("PAGEDOWN"); // extra keyboard
+		act->addDefaultInputMapping("JOY_DOWN"); // extra joy
+		gameKeyMap->addAction(act);
+
+		act = new Action("MAP", _("Show map"));
+		act->setKeyEvent(KeyState(KEYCODE_m, 'm'));
+		act->addDefaultInputMapping("m"); // original keyboard
+		act->addDefaultInputMapping("JOY_LEFT"); // extra joy
+		gameKeyMap->addAction(act);
+
+		act = new Action("JRNL", _("Show journal"));
+		act->setKeyEvent(KeyState(KEYCODE_n, 'n'));
+		act->addDefaultInputMapping("n"); // original keyboard
+		act->addDefaultInputMapping("JOY_RIGHT"); // extra joy
+		gameKeyMap->addAction(act);
 	} else if (gameId == "tib") {
 		act = new Action("SCRS", _("Save screenshot"));
 		act->setKeyEvent(KEYCODE_F9);
