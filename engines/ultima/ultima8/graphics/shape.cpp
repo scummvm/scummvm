@@ -101,8 +101,7 @@ Common::Array<RawShapeFrame *> Shape::loadU8Format(const uint8 *data, uint32 siz
 	Common::Array<RawShapeFrame *> frames;
 
 	if (framecount == 0) {
-		loadGenericFormat(data, size, format);
-		return frames;
+		return loadGenericFormat(data, size, format);
 	}
 
 	frames.reserve(framecount);
@@ -125,8 +124,7 @@ Common::Array<RawShapeFrame *> Shape::loadPentagramFormat(const uint8 *data, uin
 	Common::Array<RawShapeFrame *> frames;
 
 	if (framecount == 0) {
-		loadGenericFormat(data, size, format);
-		return frames;
+		return loadGenericFormat(data, size, format);
 	}
 
 	frames.reserve(framecount);
