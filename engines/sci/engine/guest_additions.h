@@ -271,7 +271,7 @@ public:
 	 * id to this value.
 	 */
 	int runSaveRestore(const bool isSave, const reg_t outDescription, const int forcedSaveId = -1) const;
-	int runSaveRestore(const bool isSave, Common::U32String &outDescription, const int forcedSaveId = -1) const;
+	int runSaveRestore(const bool isSave, Common::String &outDescription, const int forcedSaveId = -1) const;
 #endif
 
 #pragma mark -
