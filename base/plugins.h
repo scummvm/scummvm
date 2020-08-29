@@ -397,16 +397,16 @@ protected:
 	bool loadPluginByFileName(const Common::String &filename);
 
 public:
-	virtual void init();
-	virtual void loadFirstPlugin();
-	virtual bool loadNextPlugin();
-	virtual bool loadPluginFromEngineId(const Common::String &engineId);
-	virtual void updateConfigWithFileName(const Common::String &engineId);
+	virtual void init() override;
+	virtual void loadFirstPlugin() override;
+	virtual bool loadNextPlugin() override;
+	virtual bool loadPluginFromEngineId(const Common::String &engineId) override;
+	virtual void updateConfigWithFileName(const Common::String &engineId) override;
 	virtual void loadDetectionPlugin() override;
 	virtual void unloadDetectionPlugin() override;
 
-	virtual void loadAllPlugins() {} 	// we don't allow these
-	virtual void loadAllPluginsOfType(PluginType type) {}
+	virtual void loadAllPlugins() override {} 	// we don't allow these
+	virtual void loadAllPluginsOfType(PluginType type) override {}
 };
 
 #endif
