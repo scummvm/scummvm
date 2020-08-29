@@ -349,7 +349,7 @@ public:
 	 *
 	 * @see MetaEngineConnect::getName().
 	 */
-	virtual const char *getName() const = 0;
+	virtual const char *getName() const override = 0;
 
 public:
 	typedef Common::HashMap<Common::String, Common::FSNode, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
