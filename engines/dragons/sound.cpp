@@ -78,8 +78,7 @@ void CdIntToPos_0(uint32 param_1) { //, byte *param_2)
 
 void SoundManager::playSpeech(uint32 textIndex) {
 	if (isSpeechPlaying()) {
-//		_vm->_mixer->stopHandle(_speechHandle);
-		return;
+		_vm->_mixer->stopHandle(_speechHandle);
 	}
 
 	// Reduce music volume while playing dialog.
