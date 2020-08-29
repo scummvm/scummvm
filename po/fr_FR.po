@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-28 17:29+0200\n"
 "PO-Revision-Date: 2020-08-29 14:53+0000\n"
-"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
+"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -2266,7 +2266,6 @@ msgid "Matched game IDs for the %s engine:"
 msgstr "Jeux possibles pour le moteur %s :"
 
 #: engines/metaengine.cpp:59
-#, fuzzy
 msgid "Default game keymap"
 msgstr "Contrôles par défaut du jeu"
 
@@ -2299,7 +2298,6 @@ msgid "Pause"
 msgstr "Mettre en pause"
 
 #: engines/metaengine.cpp:85
-#, fuzzy
 msgid "Game menu"
 msgstr "Menu du Jeu"
 
@@ -2319,9 +2317,8 @@ msgid "Skip line"
 msgstr "Passer la phrase"
 
 #: engines/metaengine.cpp:103
-#, fuzzy
 msgid "Predictive input dialog"
-msgstr "Dialogue en saisie prédictive"
+msgstr "Dialogue de saisie prédictive"
 
 #: engines/metaengine.cpp:107 engines/sky/detection.cpp:228
 #: engines/wintermute/keymapper_tables.h:55
@@ -3934,23 +3931,21 @@ msgid "Empty autosave"
 msgstr "Sauvegarde auto vide"
 
 #: engines/cine/saveload.cpp:861
-#, fuzzy
 msgid ""
 "WARNING: The savegame you are loading is using a temporary broken format. "
 "Things will be broken. Please consider starting Operation Stealth from "
 "beginning using new savegames."
 msgstr ""
 "ATTENTION : La sauvegarde que vous chargez utilise un format temporaire "
-"défectueux. Certaines choses ne fonctionneront pas. Il conviendrait de "
-"démarrer Operation Stealth depuis le début en utilisant une nouvelle "
-"sauvegarde."
+"défectueux. Certaines choses ne fonctionneront pas. Veuillez envisager de "
+"démarrer Operation Stealth depuis le début en utilisant de nouvelles "
+"sauvegardes."
 
 #: engines/cine/saveload.cpp:864
 msgid "Load anyway"
 msgstr "Charger quand même"
 
 #: engines/dragons/detection.cpp:218
-#, fuzzy
 msgid ""
 "Error: It appears that the game data files were extracted incorrectly.\n"
 "\n"
@@ -3959,11 +3954,12 @@ msgid ""
 "\n"
 " See https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
 msgstr ""
-"Erreur : il semblerait que les fichiers de données du jeu aient été extraits "
-"de manière incorrecte.\n"
+"Erreur : il semble que les fichiers de données du jeu ont été extraits de "
+"manière incorrecte.\n"
 "\n"
 "Seuls les fichiers STR et XA sont à extraire en utilisant la méthode "
-"spéciale. Le reste doit être copié normalement depuis le CD du jeu.\n"
+"spéciale. Les autres fichiers doivent être copiés normalement depuis le CD "
+"du jeu.\n"
 "\n"
 "Voir https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
 
@@ -3972,7 +3968,6 @@ msgid "Action"
 msgstr "Action"
 
 #: engines/dragons/detection.cpp:242
-#, fuzzy
 msgid "Change Command"
 msgstr "Changer de commande"
 
@@ -3989,9 +3984,8 @@ msgid "Enter"
 msgstr "Entrer"
 
 #: engines/dragons/detection.cpp:319
-#, fuzzy
 msgid "Debug Graphics"
-msgstr "Debug Graphismes"
+msgstr "Deboguer les Graphiques"
 
 #: engines/dragons/detection.cpp:324
 msgid "Quit Game"
@@ -4100,12 +4094,10 @@ msgid "This is not a valid Alan2 file."
 msgstr "Ce n'est pas un fichier Alan2 valide."
 
 #: engines/glk/comprehend/game.cpp:337
-#, fuzzy
 msgid "Savegame"
 msgstr "Sauvegarde"
 
 #: engines/glk/comprehend/game.cpp:1333
-#, fuzzy
 msgid "Picture window toggled\n"
 msgstr "Fenêtre d'image basculée\n"
 
@@ -4413,7 +4405,6 @@ msgid "Use"
 msgstr "Utiliser"
 
 #: engines/hdb/detection.cpp:340
-#, fuzzy
 msgid "Clear waypoints"
 msgstr "Effacer les points de passage"
 
@@ -4422,9 +4413,8 @@ msgid "Menu"
 msgstr "Menu"
 
 #: engines/hdb/detection.cpp:366
-#, fuzzy
 msgid "Debug"
-msgstr "Débugger"
+msgstr "Déboguer"
 
 #: engines/hopkins/detection.cpp:75 engines/hopkins/detection.cpp:85
 msgid "Gore Mode"
@@ -4749,17 +4739,15 @@ msgstr ""
 " pas jouées correctement."
 
 #: engines/lab/engine.cpp:125
-#, fuzzy
 msgid ""
 "This is a trial Windows version of the game. To play the full version, you "
 "will need to use the original interpreter and purchase a key from Wyrmkeep"
 msgstr ""
-"Ce jeu est une version d'essai sous Windows. Pour jouer à la version "
-"complète, il est nécessaire d'utiliser l’interpréteur original ainsi que d’"
-"acquérir une clé auprès de Wyrmkeep"
+"Ce jeu est une version d'essai Windows. Pour jouer à la version complète il "
+"est nécessaire d'utiliser l’interpréteur original ainsi que d’acquérir une "
+"clé auprès de Wyrmkeep"
 
 #: engines/lab/processroom.cpp:330
-#, fuzzy
 msgid ""
 "This is the end of the trial version. You can play the full game using the "
 "original interpreter from Wyrmkeep"
@@ -4768,12 +4756,10 @@ msgstr ""
 "procurant l'interpréteur original auprès de Wyrmkeep"
 
 #: engines/lab/savegame.cpp:238
-#, fuzzy
 msgid "Would you like to save or restore a game?"
 msgstr "Voulez-vous sauver ou restaurer une partie ?"
 
 #: engines/lab/speciallocks.cpp:149
-#, fuzzy
 msgid "This puzzle is not available in the trial version of the game"
 msgstr "Cette énigme n'est pas disponible dans la version d'essai"
 
@@ -5022,7 +5008,7 @@ msgstr ""
 "et le site web n'existe plus."
 
 #: engines/mutationofjb/util.cpp:33
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to locate the '%s' engine data file"
 msgstr "Impossible de trouver le fichier de données du moteur '%s'"
 
@@ -5159,9 +5145,8 @@ msgid "Load Game"
 msgstr "Charger"
 
 #: engines/pink/gui.cpp:220
-#, fuzzy
 msgid "This menu item is not yet implemented"
-msgstr "Cette fonction du menu n'est pas encore implémenté"
+msgstr "Cette fonction du menu n'est pas encore implémentée"
 
 #: engines/queen/detection.cpp:56
 msgid "Alternative intro"
@@ -5276,7 +5261,6 @@ msgid "MIDI mode:"
 msgstr "Mode MIDI :"
 
 #: engines/sci/detection.cpp:546
-#, fuzzy
 msgid ""
 "When using external MIDI devices (e.g. through USB-MIDI), select your device "
 "here"
@@ -5329,7 +5313,7 @@ msgstr ""
 "être chargée"
 
 #: engines/sci/graphics/video32.cpp:69
-#, c-format, fuzzy
+#, c-format
 msgid ""
 "Cannot play back %dbpp video on a system with maximum color depth of 8bpp"
 msgstr ""
@@ -6476,9 +6460,8 @@ msgid "Unable to locate the '%s' data file."
 msgstr "Le fichier de données '%s' n'a pu être trouvé."
 
 #: engines/ultima/shared/early/ultima_early.cpp:67
-#, fuzzy
 msgid "Could not find correct ultima.dat datafile"
-msgstr "Le bon fichier de données ultima.dat n'a pas été trouvé"
+msgstr "Le fichier de données ultima.dat correct n'a pas été trouvé"
 
 #: engines/ultima/shared/engine/data_archive.cpp:81
 #, c-format
@@ -6492,7 +6475,6 @@ msgstr ""
 "Données du moteur périmées. Version attendue: %d.%d ; version trouvée: %d.%d"
 
 #: engines/ultima/nuvie/nuvie.cpp:324
-#, fuzzy
 msgid ""
 "\n"
 "Game Saved\n"
@@ -6503,22 +6485,21 @@ msgstr ""
 "\n"
 
 #: engines/ultima/nuvie/nuvie.cpp:373
-#, fuzzy, c-format
+#, c-format
 msgid "loading quick save %d"
 msgstr "chargement de la sauvegarde rapide %d"
 
 #: engines/ultima/nuvie/nuvie.cpp:378
-#, fuzzy, c-format
+#, c-format
 msgid "saving quick save %d"
 msgstr "sauvegarde rapide %d en cours"
 
 #: engines/ultima/nuvie/nuvie.cpp:392
-#, fuzzy, c-format
+#, c-format
 msgid "Quicksave %03d"
 msgstr "Sauvegarde rapide %03d"
 
 #: engines/ultima/nuvie/meta_engine.cpp:39
-#, fuzzy
 msgid "Original Save"
 msgstr "Sauvegarde Originale"
 
@@ -7125,9 +7106,8 @@ msgstr ""
 "de seulement -10HP"
 
 #: engines/xeen/saves.cpp:291
-#, fuzzy
 msgid "Failed to autosave"
-msgstr "Échec lors de la sauvegarde auto"
+msgstr "Échec lors de la sauvegarde automatique"
 
 #: engines/zvision/detection_tables.h:60
 msgid "Double FPS"
@@ -7164,42 +7144,34 @@ msgstr ""
 "résolution"
 
 #: engines/zvision/detection.cpp:150
-#, fuzzy
 msgid "Look Up"
 msgstr "Regarder en haut"
 
 #: engines/zvision/detection.cpp:156
-#, fuzzy
 msgid "Look Down"
 msgstr "Regarder en bas"
 
 #: engines/zvision/detection.cpp:174
-#, fuzzy
 msgid "Show FPS"
 msgstr "Afficher les FPS"
 
 #: engines/zvision/detection.cpp:191
-#, fuzzy
 msgid "Spellbook"
 msgstr "Livre de sorts"
 
 #: engines/zvision/detection.cpp:197
-#, fuzzy
 msgid "Score"
 msgstr "Score"
 
 #: engines/zvision/detection.cpp:203
-#, fuzzy
 msgid "Put away object"
 msgstr "Ranger l'objet"
 
 #: engines/zvision/detection.cpp:209
-#, fuzzy
 msgid "Extract coin"
-msgstr "Extraire la pièce"
+msgstr "Extraire une pièce"
 
 #: engines/zvision/detection.cpp:230
-#, fuzzy
 msgid "Preferences"
 msgstr "Préférences"
 
