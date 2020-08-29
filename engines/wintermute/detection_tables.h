@@ -148,6 +148,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"twc",             "The White Chamber"},
 	{"war",             "War"},
 	{"vsevolod",        "Vsevolod"},
+	{"wayoflove",       "The Way Of Love: Sub Zero"},
 	{"wintermute",      "Wintermute engine game"},
 	{"wmedemo",         "Wintermute Engine Technology Demo"},
 	{"wmedemo3d",       "Wintermute 3D Characters Technology Demo"},
@@ -5254,6 +5255,12 @@ static const WMEGameDescription gameDescriptions[] = {
 	// War
 	WME_WINENTRY("war", "",
 		WME_ENTRY1s("data.dcp", "003e317cda6d0137bbd5e5d7f089ee4d", 32591890), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+
+	// The Way Of Love: Sub Zero (Engligh)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("wayoflove", "",
+		WME_ENTRY2s("data.dcp", "201d74cce6b89ce6d5b61a24b5e88809", 1224687223,
+					"language.dcp", "97ae6c028be982ca419416fab77efc76", 663912), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
 
 	// Wintermute Engine Technology Demo (1.2)
 	WME_WINENTRY("wmedemo", "1.2",
