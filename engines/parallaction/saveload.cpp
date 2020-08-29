@@ -176,7 +176,7 @@ void SaveLoad_ns::doSaveGame(uint16 slot, const char* name) {
 	delete f;
 }
 
-int SaveLoad::selectSaveFile(Common::String &selectedName, bool saveMode, const Common::String &caption, const Common::String &button) {
+int SaveLoad::selectSaveFile(Common::String &selectedName, bool saveMode, const Common::U32String &caption, const Common::U32String &button) {
 	GUI::SaveLoadChooser slc(caption, button, saveMode);
 
 	selectedName.clear();
@@ -311,7 +311,7 @@ void SaveLoad_ns::renameOldSavefiles() {
 		return;
 	}
 
-	Common::String msg;
+	Common::U32String msg;
 	if (success == numOldSaves) {
 		msg = _("ScummVM successfully converted all your saved games.");
 	} else {
