@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-28 17:29+0200\n"
-"PO-Revision-Date: 2020-08-28 20:01+0000\n"
+"PO-Revision-Date: 2020-08-29 06:00+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -7157,7 +7157,7 @@ msgstr "Objekt ablegen"
 
 #: engines/zvision/detection.cpp:209
 msgid "Extract coin"
-msgstr ""
+msgstr "Münze entnehmen"
 
 #: engines/zvision/detection.cpp:230
 msgid "Preferences"
