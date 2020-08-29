@@ -137,7 +137,6 @@ public:
 	String &operator=(const char *str);
 	String &operator=(const String &str);
 	String &operator=(char c);
-	String &operator=(const U32String &str);
 	String &operator+=(const char *str);
 	String &operator+=(const String &str);
 	String &operator+=(char c);

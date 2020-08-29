@@ -289,11 +289,6 @@ String &String::operator=(char c) {
 	return *this;
 }
 
-String &String::operator=(const U32String &str) {
-	String internString = str.encode();
-	return String::operator=(internString);
-}
-
 String &String::operator+=(const char *str) {
 	if (pointerInOwnBuffer(str))
 		return operator+=(String(str));
