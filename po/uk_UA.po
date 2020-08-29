@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-28 17:29+0200\n"
+"POT-Creation-Date: 2020-08-29 17:57+0200\n"
 "PO-Revision-Date: 2020-08-29 12:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -17,8 +17,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
-"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Ukrainian\n"
 
@@ -65,7 +65,7 @@ msgstr "Вгору"
 #: gui/saveload-dialog.cpp:393 gui/saveload-dialog.cpp:465
 #: gui/saveload-dialog.cpp:767 gui/saveload-dialog.cpp:1165
 #: gui/themebrowser.cpp:55 gui/unknown-game-dialog.cpp:54
-#: engines/engine.cpp:615 backends/dialogs/gtk/gtk-dialogs.cpp:55
+#: engines/engine.cpp:622 backends/dialogs/gtk/gtk-dialogs.cpp:55
 #: backends/events/default/default-events.cpp:176
 #: backends/events/default/default-events.cpp:199
 #: backends/platform/wii/options.cpp:48 engines/cine/saveload.cpp:864
@@ -555,7 +555,7 @@ msgid "Seventh-order"
 msgstr "Сьомого порядку"
 
 #. I18N: Button to reset keymap mappings to defaults
-#: gui/fluidsynth-dialog.cpp:151 backends/keymapper/remap-widget.cpp:310
+#: gui/fluidsynth-dialog.cpp:151 backends/keymapper/remap-widget.cpp:314
 msgid "Reset"
 msgstr "Скинути"
 
@@ -753,13 +753,13 @@ msgstr "Пошук у списку ігор"
 msgid "Search:"
 msgstr "Пошук:"
 
-#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:758
+#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:765
 #: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "Завантажити гру:"
 
-#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:758
+#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:765
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
 #: engines/scumm/dialogs.cpp:181 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
@@ -2060,7 +2060,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "~П~овер.в головне меню"
 
-#: engines/dialogs.cpp:103 engines/engine.cpp:787 engines/agi/saveload.cpp:759
+#: engines/dialogs.cpp:103 engines/engine.cpp:794 engines/agi/saveload.cpp:759
 #: engines/avalanche/parser.cpp:1919 engines/cine/various.cpp:343
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
 #: engines/dreamweb/saveload.cpp:262 engines/glk/streams.cpp:1427
@@ -2077,7 +2077,7 @@ msgstr "~П~овер.в головне меню"
 msgid "Save game:"
 msgstr "Зберегти гру:"
 
-#: engines/dialogs.cpp:103 engines/engine.cpp:787
+#: engines/dialogs.cpp:103 engines/engine.cpp:794
 #: backends/platform/symbian/src/SymbianActions.cpp:46
 #: engines/agi/saveload.cpp:759 engines/avalanche/parser.cpp:1919
 #: engines/cine/various.cpp:343 engines/dm/loadsave.cpp:199
@@ -2197,7 +2197,7 @@ msgstr "Автозбереження"
 msgid "Error occurred making autosave"
 msgstr "Помилка створення автозбереження"
 
-#: engines/engine.cpp:593
+#: engines/engine.cpp:600
 #, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
@@ -2206,7 +2206,7 @@ msgstr ""
 "Не вдалося завантажити гру (%s)! . Будь-ласка, дивіться файл README для "
 "основної інформації, а також інструкцій, як отримати подальшу допомогу."
 
-#: engines/engine.cpp:612
+#: engines/engine.cpp:619
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -2216,15 +2216,15 @@ msgstr ""
 "ScummVM. Скорше за все вона не буде працювати стабільно, і збережені ігри, "
 "які ви зробите, можуть не працювати у подальших версіях ScummVM."
 
-#: engines/engine.cpp:615 engines/wintermute/wintermute.cpp:199
+#: engines/engine.cpp:622 engines/wintermute/wintermute.cpp:199
 msgid "Start anyway"
 msgstr "Все одно запустити"
 
-#: engines/engine.cpp:754
+#: engines/engine.cpp:761
 msgid "Loading game is currently unavailable"
 msgstr "Заватнаження гри наразі неможливе"
 
-#: engines/engine.cpp:783
+#: engines/engine.cpp:790
 msgid "Saving game is currently unavailable"
 msgstr "Збереження гри наразі неможливе"
 
@@ -2395,6 +2395,17 @@ msgstr "Apple II GS Емулятор (НЕ РЕАЛІЗОВАНО)"
 msgid "Creative Music System emulator"
 msgstr "Емулятор Creative Music System"
 
+#: audio/softsynth/fluidsynth.cpp:176
+msgid ""
+"FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI "
+"on MIDI tab. Music is off"
+msgstr ""
+
+#: audio/softsynth/fluidsynth.cpp:277
+#, c-format
+msgid "FluidSynth: Failed loading custom sound font '%s'. Music is off"
+msgstr ""
+
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:32
 msgid "FM-Towns Audio"
 msgstr "Аудіо FM-Towns"
@@ -2474,7 +2485,7 @@ msgid "Do you really want to quit?"
 msgstr "Ви дійсно хочете вийти?"
 
 #: backends/events/default/default-events.cpp:199
-#: backends/events/default/default-events.cpp:315
+#: backends/events/default/default-events.cpp:316
 #: backends/platform/symbian/src/SymbianActions.cpp:54
 #: engines/hdb/detection.cpp:371 engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:184
@@ -2499,7 +2510,7 @@ msgstr "Показати клавіатуру"
 msgid "Toggle mute"
 msgstr "Перемкнути звук"
 
-#: backends/events/default/default-events.cpp:336
+#: backends/events/default/default-events.cpp:338
 msgid "Open Debugger"
 msgstr "Відкрити відладчик"
 
@@ -2834,12 +2845,12 @@ msgstr "Правий стік вісь X"
 msgid "Right Stick Y"
 msgstr "Правий стік вісь Y"
 
-#: backends/keymapper/remap-widget.cpp:281
-#: backends/keymapper/remap-widget.cpp:311
+#: backends/keymapper/remap-widget.cpp:285
+#: backends/keymapper/remap-widget.cpp:315
 msgid "Reset to defaults"
 msgstr "Повернутись до початкових значень"
 
-#: backends/keymapper/remap-widget.cpp:282
+#: backends/keymapper/remap-widget.cpp:286
 msgid "Clear mapping"
 msgstr "Очистити призначення клавіш"
 
@@ -3967,7 +3978,7 @@ msgstr "Відладка графіки"
 msgid "Quit Game"
 msgstr "Вийти з ігри"
 
-#: engines/dragons/dragons.cpp:1781
+#: engines/dragons/dragons.cpp:1785
 #, c-format
 msgid ""
 "Error: The file '%s' hasn't been extracted properly.\n"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-28 17:29+0200\n"
+"POT-Creation-Date: 2020-08-29 17:57+0200\n"
 "PO-Revision-Date: 2020-08-29 12:13+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -63,7 +63,7 @@ msgstr "Siirry ylös"
 #: gui/saveload-dialog.cpp:393 gui/saveload-dialog.cpp:465
 #: gui/saveload-dialog.cpp:767 gui/saveload-dialog.cpp:1165
 #: gui/themebrowser.cpp:55 gui/unknown-game-dialog.cpp:54
-#: engines/engine.cpp:615 backends/dialogs/gtk/gtk-dialogs.cpp:55
+#: engines/engine.cpp:622 backends/dialogs/gtk/gtk-dialogs.cpp:55
 #: backends/events/default/default-events.cpp:176
 #: backends/events/default/default-events.cpp:199
 #: backends/platform/wii/options.cpp:48 engines/cine/saveload.cpp:864
@@ -551,7 +551,7 @@ msgid "Seventh-order"
 msgstr "Seitsemännen asteen"
 
 #. I18N: Button to reset keymap mappings to defaults
-#: gui/fluidsynth-dialog.cpp:151 backends/keymapper/remap-widget.cpp:310
+#: gui/fluidsynth-dialog.cpp:151 backends/keymapper/remap-widget.cpp:314
 msgid "Reset"
 msgstr "Tyhjää valinnat"
 
@@ -747,13 +747,13 @@ msgstr "Etsi peliä listasta"
 msgid "Search:"
 msgstr "Etsi:"
 
-#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:758
+#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:765
 #: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "Lataa peli:"
 
-#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:758
+#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:765
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
 #: engines/scumm/dialogs.cpp:181 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
@@ -2053,7 +2053,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "Palaa p~e~livalitsimeen"
 
-#: engines/dialogs.cpp:103 engines/engine.cpp:787 engines/agi/saveload.cpp:759
+#: engines/dialogs.cpp:103 engines/engine.cpp:794 engines/agi/saveload.cpp:759
 #: engines/avalanche/parser.cpp:1919 engines/cine/various.cpp:343
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
 #: engines/dreamweb/saveload.cpp:262 engines/glk/streams.cpp:1427
@@ -2070,7 +2070,7 @@ msgstr "Palaa p~e~livalitsimeen"
 msgid "Save game:"
 msgstr "Tallenna peli:"
 
-#: engines/dialogs.cpp:103 engines/engine.cpp:787
+#: engines/dialogs.cpp:103 engines/engine.cpp:794
 #: backends/platform/symbian/src/SymbianActions.cpp:46
 #: engines/agi/saveload.cpp:759 engines/avalanche/parser.cpp:1919
 #: engines/cine/various.cpp:343 engines/dm/loadsave.cpp:199
@@ -2187,7 +2187,7 @@ msgstr "Autom. tallennus"
 msgid "Error occurred making autosave"
 msgstr "Automaattista pelitallennusta luodessa tapahtui virhe"
 
-#: engines/engine.cpp:593
+#: engines/engine.cpp:600
 #, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
@@ -2196,7 +2196,7 @@ msgstr ""
 "Pelitallennuksen lataus epäonnistui (%s)! Konsultoi README-tiedostoa "
 "saadaksesi lisätietoa ja ohjeita avun hankkimiseen."
 
-#: engines/engine.cpp:612
+#: engines/engine.cpp:619
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -2206,15 +2206,15 @@ msgstr ""
 "epävakaa, eivätkä pelitallennukset välttämättä toimi tulevissa ScummVM:n "
 "versioissa."
 
-#: engines/engine.cpp:615 engines/wintermute/wintermute.cpp:199
+#: engines/engine.cpp:622 engines/wintermute/wintermute.cpp:199
 msgid "Start anyway"
 msgstr "Pelaa silti"
 
-#: engines/engine.cpp:754
+#: engines/engine.cpp:761
 msgid "Loading game is currently unavailable"
 msgstr "Pelin lataaminen ei ole tällä hetkellä mahdollista"
 
-#: engines/engine.cpp:783
+#: engines/engine.cpp:790
 msgid "Saving game is currently unavailable"
 msgstr "Pelin tallentaminen ei ole tällä hetkellä mahdollista"
 
@@ -2385,6 +2385,17 @@ msgstr "Apple II GS emulaattori (EI TOTEUTETTU)"
 msgid "Creative Music System emulator"
 msgstr "Creative Music System emulaattori"
 
+#: audio/softsynth/fluidsynth.cpp:176
+msgid ""
+"FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI "
+"on MIDI tab. Music is off"
+msgstr ""
+
+#: audio/softsynth/fluidsynth.cpp:277
+#, c-format
+msgid "FluidSynth: Failed loading custom sound font '%s'. Music is off"
+msgstr ""
+
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:32
 msgid "FM-Towns Audio"
 msgstr "FM-Towns Ääni"
@@ -2464,7 +2475,7 @@ msgid "Do you really want to quit?"
 msgstr "Haluatko varmasti lopettaa?"
 
 #: backends/events/default/default-events.cpp:199
-#: backends/events/default/default-events.cpp:315
+#: backends/events/default/default-events.cpp:316
 #: backends/platform/symbian/src/SymbianActions.cpp:54
 #: engines/hdb/detection.cpp:371 engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:184
@@ -2489,7 +2500,7 @@ msgstr "Näytä näppäimistö"
 msgid "Toggle mute"
 msgstr "Äänien mykistys päälle / pois"
 
-#: backends/events/default/default-events.cpp:336
+#: backends/events/default/default-events.cpp:338
 msgid "Open Debugger"
 msgstr "Avaa debuggeri"
 
@@ -2824,12 +2835,12 @@ msgstr "Oikean hatun X"
 msgid "Right Stick Y"
 msgstr "Oikean hatun Y"
 
-#: backends/keymapper/remap-widget.cpp:281
-#: backends/keymapper/remap-widget.cpp:311
+#: backends/keymapper/remap-widget.cpp:285
+#: backends/keymapper/remap-widget.cpp:315
 msgid "Reset to defaults"
 msgstr "Palauta vakioasetukset"
 
-#: backends/keymapper/remap-widget.cpp:282
+#: backends/keymapper/remap-widget.cpp:286
 msgid "Clear mapping"
 msgstr "Tyhjennä valinnat"
 
@@ -3956,7 +3967,7 @@ msgstr "Grafiikan debuggaus"
 msgid "Quit Game"
 msgstr "Lopeta peli"
 
-#: engines/dragons/dragons.cpp:1781
+#: engines/dragons/dragons.cpp:1785
 #, c-format
 msgid ""
 "Error: The file '%s' hasn't been extracted properly.\n"

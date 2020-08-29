@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-28 17:29+0200\n"
+"POT-Creation-Date: 2020-08-29 17:57+0200\n"
 "PO-Revision-Date: 2020-07-23 21:43+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -62,7 +62,7 @@ msgstr "Μετάβαση πάνω"
 #: gui/saveload-dialog.cpp:393 gui/saveload-dialog.cpp:465
 #: gui/saveload-dialog.cpp:767 gui/saveload-dialog.cpp:1165
 #: gui/themebrowser.cpp:55 gui/unknown-game-dialog.cpp:54
-#: engines/engine.cpp:615 backends/dialogs/gtk/gtk-dialogs.cpp:55
+#: engines/engine.cpp:622 backends/dialogs/gtk/gtk-dialogs.cpp:55
 #: backends/events/default/default-events.cpp:176
 #: backends/events/default/default-events.cpp:199
 #: backends/platform/wii/options.cpp:48 engines/cine/saveload.cpp:864
@@ -556,7 +556,7 @@ msgid "Seventh-order"
 msgstr "Έβδομης-τάξης"
 
 #. I18N: Button to reset keymap mappings to defaults
-#: gui/fluidsynth-dialog.cpp:151 backends/keymapper/remap-widget.cpp:310
+#: gui/fluidsynth-dialog.cpp:151 backends/keymapper/remap-widget.cpp:314
 msgid "Reset"
 msgstr "Επαναφορά"
 
@@ -757,13 +757,13 @@ msgstr "Αναζήτηση στη λίστα παιχνιδιών"
 msgid "Search:"
 msgstr "Αναζήτηση:"
 
-#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:758
+#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:765
 #: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "Φόρτωση παιχνιδιού:"
 
-#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:758
+#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:765
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
 #: engines/scumm/dialogs.cpp:181 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
@@ -2100,7 +2100,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "Επισ~τ~ρ. στο Launcher"
 
-#: engines/dialogs.cpp:103 engines/engine.cpp:787 engines/agi/saveload.cpp:759
+#: engines/dialogs.cpp:103 engines/engine.cpp:794 engines/agi/saveload.cpp:759
 #: engines/avalanche/parser.cpp:1919 engines/cine/various.cpp:343
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
 #: engines/dreamweb/saveload.cpp:262 engines/glk/streams.cpp:1427
@@ -2117,7 +2117,7 @@ msgstr "Επισ~τ~ρ. στο Launcher"
 msgid "Save game:"
 msgstr "Αποθήκευση παιχνιδιού:"
 
-#: engines/dialogs.cpp:103 engines/engine.cpp:787
+#: engines/dialogs.cpp:103 engines/engine.cpp:794
 #: backends/platform/symbian/src/SymbianActions.cpp:46
 #: engines/agi/saveload.cpp:759 engines/avalanche/parser.cpp:1919
 #: engines/cine/various.cpp:343 engines/dm/loadsave.cpp:199
@@ -2239,7 +2239,7 @@ msgstr "Αυτόματη αποθήκευση"
 msgid "Error occurred making autosave"
 msgstr "Σφάλμα κατά την αυτόματη αποθήκευση"
 
-#: engines/engine.cpp:593
+#: engines/engine.cpp:600
 #, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
@@ -2249,7 +2249,7 @@ msgstr ""
 "το αρχείο README για βασικές πληροφορίες, καθώς και για οδηγίες σχετικά με "
 "το πώς να λάβετε περαιτέρω βοήθεια."
 
-#: engines/engine.cpp:612
+#: engines/engine.cpp:619
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -2260,15 +2260,15 @@ msgstr ""
 "παιχνίδι που κάνετε μπορεί να μη λειτουργεί σε μελλοντικές εκδόσεις του "
 "ScummVM."
 
-#: engines/engine.cpp:615 engines/wintermute/wintermute.cpp:199
+#: engines/engine.cpp:622 engines/wintermute/wintermute.cpp:199
 msgid "Start anyway"
 msgstr "Εκκίνηση παρά ταύτα"
 
-#: engines/engine.cpp:754
+#: engines/engine.cpp:761
 msgid "Loading game is currently unavailable"
 msgstr "Η φόρτωση παιχνιδιού είναι προσωρινά μη διαθέσιμη"
 
-#: engines/engine.cpp:783
+#: engines/engine.cpp:790
 msgid "Saving game is currently unavailable"
 msgstr "Η αποθήκευση παιχνιδιού είναι προσωρινά μη διαθέσιμη"
 
@@ -2441,6 +2441,17 @@ msgstr "Εξομοιωτής Apple II GS (ΔΕΝ ΕΧΕΙ ΥΛΟΠΟΙΗΘΕΙ)"
 msgid "Creative Music System emulator"
 msgstr "Εξομοιωτής Creative Music System"
 
+#: audio/softsynth/fluidsynth.cpp:176
+msgid ""
+"FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI "
+"on MIDI tab. Music is off"
+msgstr ""
+
+#: audio/softsynth/fluidsynth.cpp:277
+#, c-format
+msgid "FluidSynth: Failed loading custom sound font '%s'. Music is off"
+msgstr ""
+
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:32
 msgid "FM-Towns Audio"
 msgstr "Ήχος FM-Towns"
@@ -2522,7 +2533,7 @@ msgid "Do you really want to quit?"
 msgstr "Θέλετε σίγουρα να βγείτε από το πρόγραμμα;"
 
 #: backends/events/default/default-events.cpp:199
-#: backends/events/default/default-events.cpp:315
+#: backends/events/default/default-events.cpp:316
 #: backends/platform/symbian/src/SymbianActions.cpp:54
 #: engines/hdb/detection.cpp:371 engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:184
@@ -2547,7 +2558,7 @@ msgstr "Προβολή πληκτρολογίου"
 msgid "Toggle mute"
 msgstr "Εναλλαγή σίγασης"
 
-#: backends/events/default/default-events.cpp:336
+#: backends/events/default/default-events.cpp:338
 msgid "Open Debugger"
 msgstr "¶νοιγμα αποσφαλμάτωσης"
 
@@ -2882,12 +2893,12 @@ msgstr "X άξονας Δεξιού Μοχλού"
 msgid "Right Stick Y"
 msgstr "Υ άξονας Δεξιού Μοχλού"
 
-#: backends/keymapper/remap-widget.cpp:281
-#: backends/keymapper/remap-widget.cpp:311
+#: backends/keymapper/remap-widget.cpp:285
+#: backends/keymapper/remap-widget.cpp:315
 msgid "Reset to defaults"
 msgstr "Επαναφορά αρχικών ρυθμίσεων"
 
-#: backends/keymapper/remap-widget.cpp:282
+#: backends/keymapper/remap-widget.cpp:286
 msgid "Clear mapping"
 msgstr "Διαγραφή αντιστοίχισης"
 
@@ -4021,7 +4032,7 @@ msgstr "Γραφικά"
 msgid "Quit Game"
 msgstr " (Παιχνίδι)"
 
-#: engines/dragons/dragons.cpp:1781
+#: engines/dragons/dragons.cpp:1785
 #, c-format
 msgid ""
 "Error: The file '%s' hasn't been extracted properly.\n"
