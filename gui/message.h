@@ -47,7 +47,7 @@ public:
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 private:
 	const char *_url;
-	void init(const Common::U32String &message, const Common::U32String &defaultButton, const Common::U32String &altButton, Graphics::TextAlign alignment);
+	void init(const Common::U32String &message, const Common::U32String &defaultButton, const Common::U32String &altButton, Graphics::TextAlign alignment, const char *url);
 };
 
 /**
