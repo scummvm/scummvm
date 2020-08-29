@@ -102,14 +102,23 @@ void QuitGump::InitGump(Gump *newparent, bool take_focus) {
 		FrameID askshape(GameData::GUMPS, _askShape, 0);
 		askshape = _TL_SHP_(askshape);
 
-		Shape *askShape = GameData::get_instance()->getShape(askshape);
-		const ShapeFrame *sf = askShape->getFrame(askshape._frameNum);
-		assert(sf);
+		if (askshape._shapeNum == 0) {
+			// In JP U8, the ask gump is replaced with text
+			// confirming quit
+			Std::string askstr = _TL_("Quit the game?");
+			Gump *widget = new TextWidget(0, 0, askstr, true, 6); // CONSTANT!
+			widget->InitGump(this, false);
+			widget->setRelativePosition(TOP_CENTER, 0, 13);
+		} else {
+			Shape *askShape = GameData::get_instance()->getShape(askshape);
+			const ShapeFrame *sf = askShape->getFrame(askshape._frameNum);
+			assert(sf);
 
-		Gump *ask = new Gump(0, 0, sf->_width, sf->_height);
-		ask->SetShape(askShape, askshape._frameNum);
-		ask->InitGump(this);
-		ask->setRelativePosition(TOP_CENTER, 0, 5);
+			Gump *ask = new Gump(0, 0, sf->_width, sf->_height);
+			ask->SetShape(askShape, askshape._frameNum);
+			ask->InitGump(this);
+			ask->setRelativePosition(TOP_CENTER, 0, 5);
+		}
 	}
 
 	FrameID yesbutton_up(GameData::GUMPS, _yesShape, 0);
