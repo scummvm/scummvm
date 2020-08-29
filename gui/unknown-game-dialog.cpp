@@ -122,7 +122,7 @@ void UnknownGameDialog::rebuild() {
 Common::U32String UnknownGameDialog::encodeUrlString(const Common::U32String &string) {
 	Common::U32String encoded;
 	for (uint i = 0 ; i < string.size() ; ++i) {
-		char c = string[i];
+		uint32 c = string[i];
 		if ((c >= 'a' && c <= 'z') || (c >= 'A'  && c <= 'Z') || (c >= '0' && c <= '9') ||
 			c == '~' || c == '-' || c == '.' || c == '_')
 			encoded += c;
