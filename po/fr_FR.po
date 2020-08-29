@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-28 17:29+0200\n"
-"PO-Revision-Date: 2020-08-29 14:53+0000\n"
-"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
+"PO-Revision-Date: 2020-08-29 15:52+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -1926,7 +1926,7 @@ msgstr "Impossible de trouver un moteur pour exécuter le jeu sélectionné"
 
 #: common/achievements.cpp:92
 msgid "Achievement unlocked!"
-msgstr "Trophée débloqué  !"
+msgstr "Trophée débloqué !"
 
 #: common/error.cpp:38
 msgid "No error"
