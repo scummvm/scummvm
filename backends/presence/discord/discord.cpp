@@ -24,7 +24,6 @@
 #include "backends/presence/discord/discord.h"
 
 #ifdef USE_DISCORD
-#include "common/encoding.h"
 #include "common/translation.h"
 
 #include <discord_rpc.h>
@@ -44,27 +43,17 @@ DiscordPresence::~DiscordPresence() {
 
 void DiscordPresence::updateStatus(const Common::String &name, const Common::String &description) {
 	Common::String gameName = name.empty() ? "scummvm" : name;
-	Common::String gameDesc = description.empty() ? _("Launcher") : description;
+	Common::String gameDesc = description.empty() ? _("Launcher").encode() : description;
 
 	DiscordRichPresence presence;
 	memset(&presence, 0, sizeof(presence));
 	presence.largeImageKey = gameName.c_str();
-#ifdef USE_TRANSLATION
-	char *gameDescUtf8 = Common::Encoding::convert("utf-8", TransMan.getCurrentCharset(), gameDesc.c_str(), gameDesc.size());
-	presence.largeImageText = gameDescUtf8;
-	presence.details = gameDescUtf8;
-#else
 	presence.largeImageText = gameDesc.c_str();
 	presence.details = gameDesc.c_str();
-#endif
 	presence.smallImageKey = "scummvm";
 	presence.smallImageText = "ScummVM";
 	presence.startTimestamp = time(0);
 	Discord_UpdatePresence(&presence);
-
-#ifdef USE_TRANSLATION
-	free(gameDescUtf8);
-#endif
 }
 
 #endif
