@@ -158,7 +158,11 @@ void VabSound::loadToneAttributes(Common::SeekableReadStream *vhData) {
 int16 VabSound::getVagID(uint16 program, uint16 key) {
 	if (program < _header.numVAG) {
 		for (int i = 0; i < _programAttrs[program].tones; i++) {
-			if (_toneAttrs[i].prog == program && _toneAttrs[i].min == key && _toneAttrs[i].max == key) {
+			if (_toneAttrs[i].prog == program && _toneAttrs[i].min <= key && _toneAttrs[i].max >= key) {
+				if (key != _toneAttrs[i].min) {
+					warning("Sfx key requested doesn't exactly match vab tone. TODO we need to change the playback pitch. key requested: %d tone match (min,max) (%d, %d)",
+						key, _toneAttrs[i].min, _toneAttrs[i].max);
+				}
 				return _toneAttrs[i].vag - 1;
 			}
 		}

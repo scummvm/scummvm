@@ -441,8 +441,12 @@ void SoundManager::playSound(uint16 soundId, uint16 volumeId) {
 	if (vagID >= 0) {
 		Audio::SoundHandle *handle = getVoiceHandle(soundId);
 		if (handle) {
+			//TODO need to handle sfx where the requested key doesn't match the vag tone.
+			// We need to change pitch in this case.
 			_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, handle, vabSound->getAudioStream(program, vagID), -1, _sfxVolume);
 		}
+	} else {
+		warning("Sound not found Program: %d, key %d", program, key);
 	}
 }
 
