@@ -42,6 +42,16 @@
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
 typedef unsigned long NSUInteger;
+
+// Those are not defined in the 10.4 SDK, but they are defined when targetting
+// Mac OS X 10.4 or above in the 10.5 SDK. So hopfully that means it works with 10.4 as well.
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+enum {
+	NSUTF32StringEncoding = 0x8c000100,
+	NSUTF32BigEndianStringEncoding = 0x98000100,
+	NSUTF32LittleEndianStringEncoding = 0x9c000100
+}
+#endif
 #endif
 
 // Apple added setAppleMenu in 10.5 and removed it in 10.6.
