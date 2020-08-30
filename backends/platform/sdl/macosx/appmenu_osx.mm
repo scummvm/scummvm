@@ -50,7 +50,7 @@ enum {
 	NSUTF32StringEncoding = 0x8c000100,
 	NSUTF32BigEndianStringEncoding = 0x98000100,
 	NSUTF32LittleEndianStringEncoding = 0x9c000100
-}
+};
 #endif
 #endif
 
