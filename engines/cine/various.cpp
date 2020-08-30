@@ -130,6 +130,7 @@ uint16 yMoveKeyb = kKeybMoveCenterY;
 SelectedObjStruct currentSelectedObject;
 
 CommandeType currentSaveName[kMaxSavegames];
+static const CommandeType saveChoices[] = {"0-19", "20-39", "40-59", "60-79", "80-99"};
 
 static const int16 choiceResultTable[] = { 1, 1, 1, 2, 1, 1, 1 };
 static const int16 subObjectUseTable[] = { 3, 3, 3, 3, 3, 0, 0 };
@@ -444,7 +445,18 @@ void CineEngine::makeSystemMenu() {
 				}
 
 				getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
-				selectedSave = makeMenuChoice(currentSaveName, kMaxSavegames, mouseX, mouseY + 8, 180);
+
+				// Choose savegame range first (0-19, 20-39, 40-59, 60-79, 80-99) and then save slot
+				int start = makeMenuChoice(saveChoices, ARRAYSIZE(saveChoices), mouseX, mouseY + 8, 9 * 5);
+				if (start >= 0) {
+					start *= kMaxOrigUiSavegames;
+					selectedSave = makeMenuChoice(&currentSaveName[start], kMaxOrigUiSavegames, mouseX, mouseY + 8, 180);
+					if (selectedSave >= 0) {
+						selectedSave += start;
+					}
+				} else {
+					selectedSave = -1;
+				}
 
 				if (selectedSave >= 0) {
 					getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
@@ -481,7 +493,18 @@ void CineEngine::makeSystemMenu() {
 				return;
 			}
 
-			selectedSave = makeMenuChoice(currentSaveName, kMaxSavegames, mouseX, mouseY + 8, 180, g_cine->getAutosaveSlot() + 1);
+			// Choose savegame range first (0-19, 20-39, 40-59, 60-79, 80-99) and then save slot
+			int start = makeMenuChoice(saveChoices, ARRAYSIZE(saveChoices), mouseX, mouseY + 8, 9 * 5);
+			if (start >= 0) {
+				start *= kMaxOrigUiSavegames;
+				int minY = ((start == 0) ? g_cine->getAutosaveSlot() + 1 : 0); // Don't allow saving over autosave slot
+				selectedSave = makeMenuChoice(&currentSaveName[start], kMaxOrigUiSavegames, mouseX, mouseY + 8, 180, minY);
+				if (selectedSave >= 0) {
+					selectedSave += start;
+				}
+			} else {
+				selectedSave = -1;
+			}
 
 			if (selectedSave >= 0) {
 				CommandeType saveName;
