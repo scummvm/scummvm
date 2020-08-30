@@ -42,11 +42,11 @@ enum TranslationIDs {
 };
 
 struct TLanguage {
-	const char *name;
+	U32String name;
 	int id;
 
-	TLanguage() : name(nullptr), id(0) {}
-	TLanguage(const char *n, int i) : name(n), id(i) {}
+	TLanguage() : id(0) {}
+	TLanguage(const U32String &n, int i) : name(n), id(i) {}
 };
 
 bool operator<(const TLanguage &l, const TLanguage &r);
@@ -209,7 +209,7 @@ private:
 	bool checkHeader(File &in);
 
 	StringArray _langs;
-	StringArray _langNames;
+	U32StringArray _langNames;
 
 	StringArray _messageIds;
 	Array<PoMessageEntry> _currentTranslationMessages;

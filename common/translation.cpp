@@ -42,7 +42,7 @@ namespace Common {
 DECLARE_SINGLETON(TranslationManager);
 
 bool operator<(const TLanguage &l, const TLanguage &r) {
-	return strcmp(l.name, r.name) < 0;
+	return l.name < r.name;
 }
 
 TranslationManager::TranslationManager() : _currentLang(-1) {
@@ -188,7 +188,7 @@ const TLangArray TranslationManager::getSupportedLanguageNames() const {
 	TLangArray languages;
 
 	for (unsigned int i = 0; i < _langNames.size(); i++) {
-		TLanguage lng(_langNames[i].c_str(), i + 1);
+		TLanguage lng(_langNames[i], i + 1);
 		languages.push_back(lng);
 	}
 
@@ -306,7 +306,7 @@ void TranslationManager::loadTranslationsInfoDat() {
 		_langs[i] = String(buf, len - 1);
 		len = in.readUint16BE();
 		in.read(buf, len);
-		_langNames[i] = String(buf, len - 1);
+		_langNames[i] = String(buf, len - 1).decode();
 	}
 
 	// Read messages
