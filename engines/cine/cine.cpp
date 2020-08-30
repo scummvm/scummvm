@@ -193,6 +193,8 @@ void CineEngine::initialize() {
 	reloadBgPalOnNextFlip = 0;
 	gfxFadeOutCompleted = 0;
 	gfxFadeInRequested = 0;
+	safeControlsLastAccessedMs = 0;
+	lastSafeControlObjIdx = -1;
 	currentDisk = 1;
 
 	collisionPage = new byte[320 * 200];

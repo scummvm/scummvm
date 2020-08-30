@@ -447,6 +447,8 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 		forbidBgPalReload = 0;
 		gfxFadeOutCompleted = 0;
 		gfxFadeInRequested = 0;
+		safeControlsLastAccessedMs = 0;
+		lastSafeControlObjIdx = -1;
 		isDrawCommandEnabled = 0;
 		waitForPlayerClick = 0;
 		menuCommandLen = 0;
