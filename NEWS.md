@@ -109,7 +109,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed unsupported graphic mode for some games (such as SCI games with high
      quality video scaling enabled).
    - Removed Quit button to follow the iOS design guidelines.
-   - Removed virtual keyboard input assistant bar. In particular this means than we
+   - Removed virtual keyboard input assistant bar. In particular this means that we
      no longer see a bar at the bottom of the screen when using an external keyboard.
 
  Linux port:
