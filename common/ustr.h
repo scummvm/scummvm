@@ -173,7 +173,7 @@ public:
 	/** Insert character c before position p. */
 	void insertChar(value_type c, uint32 p);
 	void insertString(String s, uint32 p);
-	void insertString(uint *s, uint32 p);
+	void insertString(value_type *s, uint32 p);
 
 	/**
 	 * Removes the value at position p from the string.

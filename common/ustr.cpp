@@ -268,7 +268,7 @@ void U32String::insertString(String s, uint32 p) {
 	}
 }
 
-void U32String::insertString(uint *s, uint32 p) {
+void U32String::insertString(value_type *s, uint32 p) {
 	while (*s != '\0') {
 		U32String::insertChar(*s++, p++);
 	}
@@ -584,7 +584,7 @@ void U32String::trim() {
 	_str[_size] = 0;
 
 	// Trim leading whitespace
-	uint *t = _str;
+	value_type *t = _str;
 	while (isSpace(*t))
 		t++;
 
@@ -624,7 +624,7 @@ int U32String::vformat(U32String::const_iterator fmt, const U32String::const_ite
 		if (ch == '%') {
 			switch (ch = *fmt++) {
 			case 'S':
-				u32string_temp = va_arg(args, uint *);
+				u32string_temp = va_arg(args, value_type *);
 
 				tempPos = output.size();
 				output.insertString(u32string_temp, pos);
