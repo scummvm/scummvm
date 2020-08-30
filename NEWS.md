@@ -13,6 +13,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      ZCode (all ZCode games except the Infocom graphical version 6 games).
      Currently, more than 1600 games are detected and supported.
    - Added support for Operation Stealth.
+   - Added support for Police Quest: SWAT.
    - Added support for English translation of Prince and the Coward.
    - Added support for Ultima IV - Quest of the Avatar.
    - Added support for Ultima VI - The False Prophet.
