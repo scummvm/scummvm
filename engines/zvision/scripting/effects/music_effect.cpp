@@ -36,7 +36,9 @@
 
 namespace ZVision {
 
-static const uint8 dbMapLinear[256] =
+// FIXME: This is wrong, and not what the original is doing.
+// Using actual linear volume values fixes bug #7176.
+/*static const uint8 dbMapLinear[256] =
 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -52,7 +54,7 @@ static const uint8 dbMapLinear[256] =
 26, 27, 28, 29, 30, 31, 32, 33, 34, 36, 37, 38, 40, 41, 43, 45,
 46, 48, 50, 52, 53, 55, 57, 60, 62, 64, 67, 69, 72, 74, 77, 80,
 83, 86, 89, 92, 96, 99, 103, 107, 111, 115, 119, 123, 128, 133, 137, 143,
-148, 153, 159, 165, 171, 177, 184, 191, 198, 205, 212, 220, 228, 237, 245, 255};
+148, 153, 159, 165, 171, 177, 184, 191, 198, 205, 212, 220, 228, 237, 245, 255};*/
 
 MusicNode::MusicNode(ZVision *engine, uint32 key, Common::String &filename, bool loop, uint8 volume)
 	: MusicNodeBASE(engine, key, SCRIPTING_EFFECT_AUDIO) {
@@ -83,9 +85,9 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::String &filename, bool
 
 		if (_loop) {
 			Audio::LoopingAudioStream *loopingAudioStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
-			_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, loopingAudioStream, -1, dbMapLinear[_volume]);
+			_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, loopingAudioStream, -1, _volume /*dbMapLinear[_volume]*/);
 		} else {
-			_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, audioStream, -1, dbMapLinear[_volume]);
+			_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, audioStream, -1, _volume /*dbMapLinear[_volume]*/);
 		}
 
 		if (_key != StateKey_NotSet)
@@ -166,7 +168,7 @@ void MusicNode::setVolume(uint8 newVolume) {
 	if (_deltaVolume >= _volume)
 		_engine->_mixer->setChannelVolume(_handle, 0);
 	else
-		_engine->_mixer->setChannelVolume(_handle, dbMapLinear[_volume - _deltaVolume]);
+		_engine->_mixer->setChannelVolume(_handle, _volume - _deltaVolume /*dbMapLinear[_volume - _deltaVolume]*/);
 }
 
 uint8 MusicNode::getVolume() {
