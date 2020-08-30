@@ -4,19 +4,19 @@ For a more comprehensive changelog of the latest experimental code, see:
 #### 2.2.0 (2020-09-XX)
 
  New games:
-   - Added support for English translation of Prince and the Coward.
-   - Added support for Ultima IV - Quest of the Avatar.
-   - Added support for Ultima VI - The False Prophet.
-   - Added support for Ultima VIII - Pagan.
+   - Added support for Blazing Dragons.
+   - Added support for Griffon Legend.
    - Added support for Interactive Fiction games based on the following engines:
      ADRIFT (except for version 5), AdvSys, AGT, Alan 2 & 3,
      Archetype (newly reimplemented for Glk from the original Pascal sources),
      Hugo, JACL, Level 9, Magnetic Scrolls, Quest, Scott Adams,
      ZCode (all ZCode games except the Infocom graphical version 6 games).
      Currently, more than 1600 games are detected and supported.
-   - Added support for Blazing Dragons.
    - Added support for Operation Stealth.
-   - Added support for Griffon Legend.
+   - Added support for English translation of Prince and the Coward.
+   - Added support for Ultima IV - Quest of the Avatar.
+   - Added support for Ultima VI - The False Prophet.
+   - Added support for Ultima VIII - Pagan.
 
  New ports:
    - MorphOS port got a major rewrite.
