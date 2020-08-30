@@ -21,7 +21,7 @@ msgstr ""
 "X-Poedit-Language: Portuguese\n"
 "X-Poedit-Country: BRAZIL\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
-"X-Language-name: Portugues (Brasil)\n"
+"X-Language-name: Português (Brasil)\n"
 
 #: gui/about.cpp:102
 #, c-format

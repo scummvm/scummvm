@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.0.4\n"
-"X-Language-name: Portugues (Portugal)\n"
+"X-Language-name: Português (Portugal)\n"
 
 #: gui/about.cpp:102
 #, c-format
