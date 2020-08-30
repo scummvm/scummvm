@@ -58,6 +58,8 @@ uint16 reloadBgPalOnNextFlip;
 uint16 forbidBgPalReload;
 uint16 gfxFadeOutCompleted;
 uint16 gfxFadeInRequested;
+uint32 safeControlsLastAccessedMs;
+int16 lastSafeControlObjIdx;
 
 int16 buildObjectListCommand(int16 param);
 int16 canUseOnObject = 0;
@@ -167,6 +169,10 @@ void stopMusicAfterFadeOut() {
 //	if (g_sfxPlayer->_fadeOutCounter != 0 && g_sfxPlayer->_fadeOutCounter < 100) {
 //		g_sfxPlayer->stop();
 //	}
+}
+
+uint safeControlAccessMinMs() {
+	return 250;
 }
 
 void runObjectScript(int16 entryIdx) {
@@ -1106,7 +1112,31 @@ void noPlayerCommandMouseLeft(uint16 &mouseX, uint16 &mouseY) {
 		relEntry = getRelEntryForObject(6, 1, &currentSelectedObject);
 
 		if (relEntry != -1) {
-			runObjectScript(relEntry);
+			bool skipSafeControlAccess = false;
+
+			// HACK: Throttle speed of otherwise overly sensitive safe controls (Bug #11621)
+			if (hacksEnabled && g_cine->getGameType() == Cine::GType_OS &&
+				scumm_stricmp(renderer->getBgName(), "COFFRE.PI1") == 0 &&
+				scumm_stricmp(currentPrcName, "PALAIS1.PRC") == 0) {
+				uint32 now = g_system->getMillis();
+
+				// Throttle access to the same safe control repeatedly in succession.
+				if (safeControlsLastAccessedMs != 0 &&
+					(now - safeControlsLastAccessedMs) < safeControlAccessMinMs() &&
+					objIdx == lastSafeControlObjIdx) {
+					skipSafeControlAccess = true;
+					warning("Skipping safe control access (Time since last called = %d ms < throttling value of %d ms)",
+						now - safeControlsLastAccessedMs, safeControlAccessMinMs());
+				} else {
+					safeControlsLastAccessedMs = now;
+				}
+
+				lastSafeControlObjIdx = objIdx;
+			}
+
+			if (!skipSafeControlAccess) {
+				runObjectScript(relEntry);
+			}
 		}
 	}
 }

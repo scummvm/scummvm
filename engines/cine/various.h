@@ -77,6 +77,8 @@ extern uint16 reloadBgPalOnNextFlip;
 extern uint16 forbidBgPalReload;
 extern uint16 gfxFadeOutCompleted;
 extern uint16 gfxFadeInRequested;
+extern uint32 safeControlsLastAccessedMs; ///< Time in milliseconds when safe controls were last accessed.
+extern int16 lastSafeControlObjIdx; ///< Object index of the last safe control accessed.
 extern int16 commandVar1;
 extern int16 commandVar2;
 extern int16 commandVar3[4];
