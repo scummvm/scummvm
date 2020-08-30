@@ -64,8 +64,10 @@ For a more comprehensive changelog of the latest experimental code, see:
  SCI:
    - Major improvements to Amiga and Mac sound drivers.
    - Improved MIDI playback and fixed many audio issues.
-   - Fixed 30 original script bugs in ECO2, GK1, KQ4, KQ5, KQ6, KQ7, LB1, LONGBOW, PHANT2, QFG1, QFG3, QFG4, SQ5 and SQ6.
-   - Fixed a script bug responsible for rare and random lockups in most Sierra games between 1992-1996.
+   - Fixed 30 original script bugs in ECO2, GK1, KQ4, KQ5, KQ6, KQ7, LB1, LONGBOW,
+     PHANT2, QFG1, QFG3, QFG4, SQ5 and SQ6.
+   - Fixed a script bug responsible for rare and random lockups in most Sierra
+     games between 1992-1996.
    - Added support for Inside the Chest / Behind the Developer's Shield.
    - Added support for German LSL6-Floppy.
    - Added support for Hebrew Torin's Passage.
