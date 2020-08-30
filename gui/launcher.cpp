@@ -134,7 +134,7 @@ void LauncherDialog::build() {
 		new StaticTextWidget(this, "Launcher.Version", Common::U32String(gScummVMFullVersion));
 #else
 	// Show ScummVM version
-	new StaticTextWidget(this, "Launcher.Version", gScummVMFullVersion);
+	new StaticTextWidget(this, "Launcher.Version", Common::U32String(gScummVMFullVersion));
 #endif
 	if (!g_system->hasFeature(OSystem::kFeatureNoQuit))
 		new ButtonWidget(this, "Launcher.QuitButton", _("~Q~uit"), _("Quit ScummVM"), kQuitCmd);
