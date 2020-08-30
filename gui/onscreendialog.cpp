@@ -98,21 +98,21 @@ OnScreenDialog::OnScreenDialog(bool isRecord) : Dialog("OnScreenDialog") {
 #endif
 	{
 		if (g_system->getOverlayWidth() > 320)
-			new ButtonWidget(this, "OnScreenDialog.StopButton", "[ ]", _("Stop"), kStopCmd);
+			new ButtonWidget(this, "OnScreenDialog.StopButton", Common::U32String("[ ]"), _("Stop"), kStopCmd);
 		else
-			new ButtonWidget(this, "OnScreenDialog.StopButton", "[]", _("Stop"), kStopCmd);
+			new ButtonWidget(this, "OnScreenDialog.StopButton", Common::U32String("[]"), _("Stop"), kStopCmd);
 
 		if (isRecord) {
-			new ButtonWidget(this, "OnScreenDialog.EditButton", "E", _("Edit record description"), kEditCmd);
+			new ButtonWidget(this, "OnScreenDialog.EditButton", Common::U32String("E"), _("Edit record description"), kEditCmd);
 		} else {
-			new ButtonWidget(this, "OnScreenDialog.SwitchModeButton", "G", _("Switch to Game"), kSwitchModeCmd);
+			new ButtonWidget(this, "OnScreenDialog.SwitchModeButton", Common::U32String("G"), _("Switch to Game"), kSwitchModeCmd);
 
-			new ButtonWidget(this, "OnScreenDialog.FastReplayButton", ">>", _("Fast replay"), kFastModeCmd);
+			new ButtonWidget(this, "OnScreenDialog.FastReplayButton", Common::U32String(">>"), _("Fast replay"), kFastModeCmd);
 		}
 	}
 
 
-	_text = new GUI::StaticTextWidget(this, "OnScreenDialog.TimeLabel", "00:00:00");
+	_text = new GUI::StaticTextWidget(this, "OnScreenDialog.TimeLabel", Common::U32String("00:00:00"));
 	_enableDrag = false;
 	_mouseOver = false;
 	_editDlgShown = false;

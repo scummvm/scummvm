@@ -200,7 +200,7 @@ void RecorderDialog::updateList() {
 	Common::String pattern(_target + ".r??");
 	Common::StringArray files = saveFileMan->listSavefiles(pattern);
 	Common::PlaybackFile file;
-	Common::StringArray namesList;
+	Common::U32StringArray namesList;
 	_fileHeaders.clear();
 	for (Common::StringArray::iterator i = files.begin(); i != files.end(); ++i) {
 		if (file.openRead(*i)) {
