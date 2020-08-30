@@ -104,7 +104,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix loading of wall items from savegames.
 
  ZVision:
-   - Fixed getting perfect score in Zork: Grand Inquisitor
+   - Fixed regression in the safe puzzle in Zork Nemesis: The Forbidden Lands.
+   - Fixed getting perfect score in Zork: Grand Inquisitor.
 
  iOS port:
    - Fixed unsupported graphic mode for some games (such as SCI games with high
