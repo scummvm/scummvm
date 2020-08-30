@@ -1,7 +1,7 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.2.0 (XXXX-XX-XX)
+#### 2.2.0 (2020-09-XX)
 
  New games:
    - Added support for English translation of Prince and the Coward.
