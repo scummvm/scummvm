@@ -388,6 +388,20 @@ static const CINEGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	{ // Submitted by laenion in #11466 (German Atari ST version)
+		{
+			"os",
+			"",
+			AD_ENTRY1s("procs1", "b67af92a92ac5fd4add55893c15df76e", 63402),
+			Common::DE_DEU,
+			Common::kPlatformAtariST,
+			ADGF_TESTING,
+			GUIO0()
+		},
+		GType_OS,
+		0,
+	},
+
 	{
 		{
 			"os",
