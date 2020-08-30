@@ -2,21 +2,23 @@ Umfangreichere Informationen über die Änderungen des aktuellen experimentellen
 Programmcodes finden Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.2.0 (DD.MM.YYYY)
+#### 2.2.0 (DD.09.2020)
 
  Neue Spiele:
-   - Unterstützung für die englische Übersetzung von "Prince and the Coward" hinzugefügt.
-   - Unterstützung für Ultima IV - Quest of the Avatar hinzugefügt.
-   - Unterstützung für Ultima VI - The False Prophet hinzugefügt.
-   - Unterstützung für Ultima VIII - Pagan hinzugefügt.
+   - Unterstützung für Blazing Dragons hinzugefügt.
+   - Unterstützung für Griffon Legend hinzugefügt.
    - Unterstützung für Spiele von Interactive Fiction hinzugefügt, basierend auf folgenden Engines:
      ADRIFT (außer Version 5), AdvSys, AGT, Alan 2 & 3
      Archetype (neu implementiert für Glk, basierend auf dem originalen Pascal-Quellcode)
      Hugo, JACL, Level 9, Magnetic Scrolls, Quest, Scott Adams,
      ZCode (alle ZCode-Spiele, außer Infocom graphical version 6).
      Aktuell werden mehr als 1600 Spiele erkannt und unterstützt.
-   - Unterstützung für Blazing Dragons hinzugefügt.
    - Unterstützung für Operation Stealth hinzugefügt.
+   - Unterstützung für Police Quest: SWAT hinzugefügt.
+   - Unterstützung für die englische Übersetzung von "Prince and the Coward" hinzugefügt.
+   - Unterstützung für Ultima IV - Quest of the Avatar hinzugefügt.
+   - Unterstützung für Ultima VI - The False Prophet hinzugefügt.
+   - Unterstützung für Ultima VIII - Pagan hinzugefügt.
 
  Neue Portierungen:
    - Die Version für MorphOS wurde zu großen Teilen neu geschrieben.
@@ -27,6 +29,11 @@ Programmcodes finden Sie auf Englisch unter:
    - Artikel werden bei der Sortierung der Spiele im Launcher nicht mehr berücksichtigt.
    - Hebräisch wird nun korrekt in der Benutzeroberfläche dargestellt (benötigt die FriBiDi-Bibliothek).
    - Code der Roland MT-32-Emulation auf Munt 2.4.0 aktualisiert.
+   - Die Standard-Stimme der Sprachausgabe kann auf unterstützten Ports nun angepasst werden.
+
+ BBVS:
+   - Unterstützung für die Demo-Version hinzugefügt. Die Demo-Version ist auf unserer Website verfügbar.
+   - Unterstützung für die Demo-Version des Loogie-Minigames hinzugefügt.
 
  Dreamweb:
    - Unterstützung für russische Fan-Übersetzung hinzugefügt.
@@ -41,15 +48,38 @@ Programmcodes finden Sie auf Englisch unter:
      auf CD-ROM hinzugefügt. Unterstützung für die spanische Version von Lands of Lore (Disketten-Version
      und Fan-Übersetzung auf CD-ROM) korrigiert.
 
+ Lab:
+   - Fehler behoben, der in einigen Räumen zu einem Audio-Loop geführt hat.
+
+ Neverhood:
+   - Unterstützung für eine umfangreichere Demo-Version hinzugefügt. Die Demo-Version ist auf unserer Website verfügbar.
+
  Prince:
    - Fehlerhafte Anzeige der Item-Beschreibungen im Inventar korrigiert.
    - Englischsprachige Übersetzung hinzugefügt.
+   - Fehler behoben, der bei der Betrachtung bestimmter Gegenstände zu einer Endlosschleife geführt hat.
 
  Queen:
    - Fehler beim Laden von Spielständen aus dem Launcher heraus korrigiert.
+   - Fehler behoben, der zu Spielbeginn zu einer zufälligen Verzögerung geführt hat.
 
  SCI:
    - Deutliche Verbesserung der Amiga- und Mac-Audiotreiber.
+   - Verbesserung der MIDI-Wiedergabe und Korrektur zahlreicher Audio-Probleme.
+   - Korrektur von 30 Skript-Fehler in ECO2, GK1, KQ4, KQ5, KQ6, KQ7, LB1, LONGBOW, PHANT2, QFG1, QFG3, QFG4, SQ5 und SQ6.
+   - Korrektur eines Skript-Fehlers, der zu seltenen und zufälligen Abstürzen in den meisten Sierra-Spielen zwischen 1992 und 1996 geführt hat.
+   - Unterstützung für Inside the Chest / Behind the Developer's Shield hinzugefügt.
+   - Unterstützung für die deutsche Disketten-Version von Leisure Suit Larry 6 hinzugefügt.
+   - Unterstützung für die hebräische Version von Torin's Passage hinzugefügt.
+   - Unterstützung für die italienische Version von Lighthouse hinzugefügt.
+   - Unterstützung für die polnische Version von KQ5, LSL2, LSL3, LSL5 und der Disketten-Version von LSL6 hinzugefügt.
+   - Fehler in der russischen Version von LSL1 korrigiert.
+   - Fehler in Phantasmagoria 2 korrigiert, der beim Aufruf eines Easter Eggs auftritt.
+   - Automatisch erzeugte Spielstände in QFG3 repariert.
+   - Spielstand-Vorschaubilder für QFG4 und Shivers werden nun nicht mehr durch Bedienelemente verdeckt.
+   - Zufällige Abstürze in der Windows-Version behoben, die auftreten, wenn ein Spiel beendet wird.
+   - Unterstützung für den Roland D-110-Audiotreiber hinzugefügt.
+   - Die Option "Digitale Geräusch-Effekte bevorzugen" wird nun auch für SCI01/SCI1-Spiele berücksichtigt.
 
  SCUMM:
    - Fehlerhafte Farbpalette korrigiert, die zu falscher Darstellung in der NES-Version von Maniac Mansion führt.
@@ -78,8 +108,22 @@ Programmcodes finden Sie auf Englisch unter:
    - Die Quelle in Nightshadow kann nun geheilt werden.
    - Fehler beim Laden einiger Items behoben.
 
+ ZVision:
+   - Korrektur eines neu aufgetrenenen Fehlers im Zusammenhang mit dem Tresor-Puzzle von Zork Nemesis: The Forbidden Lands.
+   - In Zork: Grad Inquisitor kann nun ein perfekter Punkte-Stand erzielt werden.
+
+ iOS-Portierung:
+   - Erweiterung der Grafik-Unterstützung für einige Spiele (zum Beispiel SCI-Spiele mit hochauflösenden Videos).
+   - "Beenden"-Button entfernt, um den iOS-Design-Richtlinien zu entsprehcne.
+   - Eingabehilfen für die virtuelle Tastatur entfernt. Dies bedeutet, dass bei der Verwendung einer
+     externen Tastatur keine zusätzliche Leiste im unteren Bereich des Bildschirms mehr angezeigt wird.
+
  Linux-Portierung:
    - Anstelle des Datei-Browsers von ScummVM kann nun der Datei-Browser des Betriebssystems verwendet werden.
+
+ MacOS X-Portierung:
+   - Unscharfe Darstellung bei der Verwendung von Retina-Displays behoben. Leider musste hierzu die Unterstützung
+     für das Dark-Theme für Fenster-Dekorationen entfernt werden.
 
 
 #### 2.1.2 "Fixing Powerful Windows" (31.03.2020)
