@@ -951,7 +951,13 @@ void Hugo::RunPrint() {
 			{
 				codeptr++;
 
-#if !defined (ACTUAL_LINELENGTH)
+#ifdef GLK
+				// WORKAROUND: Glk uses a non-fixed width font for displaying
+				// text, so get the length, but don't allow long runs of spaces
+				if ((a = GetValue()) > 20)
+					a = 0;
+
+#elif !defined (ACTUAL_LINELENGTH)`
 				if ((a = GetValue()) > physical_windowwidth/FIXEDCHARWIDTH)
 					a = physical_windowwidth/FIXEDCHARWIDTH;
 #else
