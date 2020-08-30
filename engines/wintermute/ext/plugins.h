@@ -39,6 +39,7 @@ namespace Wintermute {
 BaseScriptable *makeSXSteamAPI(BaseGame *inGame, ScStack *stack);
 BaseScriptable *makeSXWMEGalaxyAPI(BaseGame *inGame, ScStack *stack);
 BaseScriptable *makeSX3fStatistics(BaseGame *inGame, ScStack *stack);
+BaseScriptable *makeSXCommandLineHelper(BaseGame *inGame, ScStack *stack);
 
 bool EmulatePluginCall(BaseGame *inGame, ScStack *stack, ScStack *thisStack, char *name) {
 	ScValue *thisObj;
@@ -74,6 +75,18 @@ bool EmulatePluginCall(BaseGame *inGame, ScStack *stack, ScStack *thisStack, cha
 		thisObj = thisStack->getTop();
 
 		thisObj->setNative(makeSX3fStatistics(inGame,  stack));
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Commandline helper (from wme_commandlinehelper.dll)
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "CommandLineHelper") == 0) {
+		thisObj = thisStack->getTop();
+
+		thisObj->setNative(makeSXCommandLineHelper(inGame, stack));
 
 		stack->pushNULL();
 		return STATUS_OK;
