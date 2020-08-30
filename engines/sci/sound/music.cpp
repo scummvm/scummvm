@@ -393,7 +393,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 				}
 			}
 		} else
-			playSample = (track->digitalChannelNr != -1);
+			playSample = (track->digitalChannelNr != -1 && (_useDigitalSFX || track->channelCount == 1));
 
 		// Play digital sample
 		if (playSample) {
