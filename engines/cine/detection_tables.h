@@ -374,11 +374,11 @@ static const CINEGameDescription gameDescriptions[] = {
 		0,
 	},
 
-	{ // Submitted by Kurufinwe21 in #11617
+	{ // Submitted by Kurufinwe21 in #11617 (16 color French floppy version)
 		{
 			"os",
 			"",
-			AD_ENTRY1s("procs01", "3f9edde60ccb380f716942c5b059d1d5", 14116),
+			AD_ENTRY1s("procs1", "3f9edde60ccb380f716942c5b059d1d5", 14116),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_TESTING,
