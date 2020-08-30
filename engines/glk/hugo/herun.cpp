@@ -957,7 +957,7 @@ void Hugo::RunPrint() {
 				if ((a = GetValue()) > 20)
 					a = 0;
 
-#elif !defined (ACTUAL_LINELENGTH)`
+#elif !defined (ACTUAL_LINELENGTH)
 				if ((a = GetValue()) > physical_windowwidth/FIXEDCHARWIDTH)
 					a = physical_windowwidth/FIXEDCHARWIDTH;
 #else
