@@ -1,7 +1,7 @@
 # Norwegian (Nynorsk) translation for ScummVM.
 # Copyright (C) 2010-2017 The ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
-# Einar Johan T. Sømåen <einarjohants@gmail.com>, 2010.
+# Einar Johan T. SÃ¸mÃ¥en <einarjohants@gmail.com>, 2010.
 #
 msgid ""
 msgstr ""
@@ -14,7 +14,7 @@ msgstr ""
 "scummvm/scummvm/nn/>\n"
 "Language: nn_NO\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.0.4\n"
@@ -44,12 +44,12 @@ msgstr "Syn filer markert med skjult-attributten"
 
 #: gui/browser.cpp:79 gui/remotebrowser.cpp:57
 msgid "Go up"
-msgstr "Opp eit nivå"
+msgstr "Opp eit nivÃ¥"
 
 #: gui/browser.cpp:79 gui/browser.cpp:81 gui/remotebrowser.cpp:57
 #: gui/remotebrowser.cpp:59
 msgid "Go to previous directory level"
-msgstr "Gå til forrige mappenivå"
+msgstr "GÃ¥ til forrige mappenivÃ¥"
 
 #: gui/browser.cpp:81 gui/remotebrowser.cpp:59
 msgctxt "lowres"
@@ -98,7 +98,7 @@ msgstr "Vel mappe med speldata"
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:227
 msgid "From: "
-msgstr "Frå: "
+msgstr "FrÃ¥: "
 
 #: gui/downloaddialog.cpp:53 gui/downloaddialog.cpp:228
 msgid "To: "
@@ -145,7 +145,7 @@ msgstr "Nei"
 
 #: gui/downloaddialog.cpp:137 gui/launcher.cpp:537
 msgid "ScummVM couldn't open the specified directory!"
-msgstr "ScummVM kunne ikkje åpne den velde mappa!"
+msgstr "ScummVM kunne ikkje Ã¥pne den velde mappa!"
 
 #: gui/downloaddialog.cpp:147
 msgid ""
@@ -187,7 +187,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:222
 #, fuzzy, c-format
 msgid "Download speed: %s %s"
-msgstr "Søk fullført!"
+msgstr "SÃ¸k fullfÃ¸rt!"
 
 #: gui/editgamedialog.cpp:135 engines/dialogs.cpp:285
 msgid "Game"
@@ -203,8 +203,8 @@ msgid ""
 "Short game identifier used for referring to saved games and running the game "
 "from the command line"
 msgstr ""
-"Kort spelidentifikator nytta for å referere til lagra spel, og å køyre "
-"spelet frå kommandolinja"
+"Kort spelidentifikator nytta for Ã¥ referere til lagra spel, og Ã¥ kÃ¸yre "
+"spelet frÃ¥ kommandolinja"
 
 #: gui/editgamedialog.cpp:141
 msgctxt "lowres"
@@ -228,14 +228,14 @@ msgstr "Namn:"
 #: gui/editgamedialog.cpp:152 engines/mohawk/dialogs.cpp:138
 #: engines/mohawk/dialogs.cpp:339
 msgid "Language:"
-msgstr "Språk:"
+msgstr "SprÃ¥k:"
 
 #: gui/editgamedialog.cpp:152 gui/editgamedialog.cpp:153
 msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
 msgstr ""
-"Spelets språk. Dette vil ikkje gjere den spanske versjonen av spelet til ein "
+"Spelets sprÃ¥k. Dette vil ikkje gjere den spanske versjonen av spelet til ein "
 "engelsk versjon"
 
 #: gui/editgamedialog.cpp:154 gui/editgamedialog.cpp:168 gui/options.cpp:1203
@@ -445,7 +445,7 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:593
 msgid "This game ID is already taken. Please choose another one."
-msgstr "Denne spel-IDen er allerede teken. Vær vennleg og vel ein anna."
+msgstr "Denne spel-IDen er allerede teken. VÃ¦r vennleg og vel ein anna."
 
 #: gui/editrecorddialog.cpp:58
 msgid "Author:"
@@ -493,7 +493,7 @@ msgstr "Bredde:"
 
 #: gui/fluidsynth-dialog.cpp:94 gui/fluidsynth-dialog.cpp:112
 msgid "Level:"
-msgstr "Nivå:"
+msgstr "NivÃ¥:"
 
 #: gui/fluidsynth-dialog.cpp:101
 msgid "Chorus"
@@ -538,7 +538,7 @@ msgstr "Ingen (raskast)"
 
 #: gui/fluidsynth-dialog.cpp:145
 msgid "Linear"
-msgstr "Linjær"
+msgstr "LinjÃ¦r"
 
 #: gui/fluidsynth-dialog.cpp:146
 msgid "Fourth-order"
@@ -616,7 +616,7 @@ msgstr "Venstre"
 #: engines/wintermute/keymapper_tables.h:1461
 #: engines/wintermute/keymapper_tables.h:1581
 msgid "Right"
-msgstr "Høgre"
+msgstr "HÃ¸gre"
 
 #: gui/KeysDialog.cpp:42
 msgid "Map"
@@ -681,11 +681,11 @@ msgstr "Start det velde spelet"
 
 #: gui/launcher.cpp:147
 msgid "~L~oad..."
-msgstr "~Å~pne..."
+msgstr "~Ã…~pne..."
 
 #: gui/launcher.cpp:147
 msgid "Load saved game for selected game"
-msgstr "Åpne eit lagra spel for the velde spelet"
+msgstr "Ã…pne eit lagra spel for the velde spelet"
 
 #: gui/launcher.cpp:149
 msgid "Record..."
@@ -717,7 +717,7 @@ msgstr "~F~jern spel"
 
 #: gui/launcher.cpp:163 gui/launcher.cpp:173
 msgid "Remove game from the list. The game data files stay intact"
-msgstr "Fjern spel frå lista. Speldataene forblir intakte"
+msgstr "Fjern spel frÃ¥ lista. Speldataene forblir intakte"
 
 #: gui/launcher.cpp:166
 msgctxt "lowres"
@@ -741,24 +741,24 @@ msgstr "~F~jern spel"
 
 #: gui/launcher.cpp:181
 msgid "Search in game list"
-msgstr "Søk i spelliste"
+msgstr "SÃ¸k i spelliste"
 
 #: gui/launcher.cpp:185 gui/launcher.cpp:756
 msgid "Search:"
-msgstr "Søk:"
+msgstr "SÃ¸k:"
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:765
 #: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load game:"
-msgstr "Åpne spel:"
+msgstr "Ã…pne spel:"
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:765
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
 #: engines/scumm/dialogs.cpp:181 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load"
-msgstr "Åpne"
+msgstr "Ã…pne"
 
 #: gui/launcher.cpp:362
 msgid "This directory cannot be used yet, it is being downloaded into!"
@@ -780,12 +780,12 @@ msgstr "Vil du laste det lagra spelet?"
 
 #: gui/launcher.cpp:487
 msgid "This game does not support loading games from the launcher."
-msgstr "Dette spelet støttar ikkje åpning av lagra spel frå oppstartaren."
+msgstr "Dette spelet stÃ¸ttar ikkje Ã¥pning av lagra spel frÃ¥ oppstartaren."
 
 #: gui/launcher.cpp:491
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
-"ScummVM kunne ikkje finne nokon motor som var i stand til å køyre det velde "
+"ScummVM kunne ikkje finne nokon motor som var i stand til Ã¥ kÃ¸yre det velde "
 "spelet!"
 
 #: gui/launcher.cpp:556
@@ -807,7 +807,7 @@ msgstr "... fremdrift ..."
 
 #: gui/massadd.cpp:266
 msgid "Scan complete!"
-msgstr "Søk fullført!"
+msgstr "SÃ¸k fullfÃ¸rt!"
 
 #: gui/massadd.cpp:269
 #, c-format
@@ -817,7 +817,7 @@ msgstr ""
 #: gui/massadd.cpp:273
 #, c-format
 msgid "Scanned %d directories ..."
-msgstr "Søkt i %d mappar ..."
+msgstr "SÃ¸kt i %d mappar ..."
 
 #: gui/massadd.cpp:276
 #, c-format
@@ -878,7 +878,7 @@ msgstr "Ingen"
 
 #: gui/options.cpp:613
 msgid "Failed to apply some of the graphic options changes:"
-msgstr "Klarte ikkje å aktivere nokre av grafikkvalendringane:"
+msgstr "Klarte ikkje Ã¥ aktivere nokre av grafikkvalendringane:"
 
 #: gui/options.cpp:625
 #, fuzzy
@@ -910,7 +910,7 @@ msgstr ""
 #: gui/options.cpp:1075
 #, fuzzy
 msgid "Touchpad mouse mode"
-msgstr "Touchpadmodus avslått."
+msgstr "Touchpadmodus avslÃ¥tt."
 
 #: gui/options.cpp:1079
 msgid "Swap Menu and Back buttons"
@@ -981,7 +981,7 @@ msgstr "Teiknemodus:"
 
 #: gui/options.cpp:1234 gui/options.cpp:1235
 msgid "Special dithering modes supported by some games"
-msgstr "Spesielle dithering-modus som støttast av nokre spel"
+msgstr "Spesielle dithering-modus som stÃ¸ttast av nokre spel"
 
 #: gui/options.cpp:1247
 msgid "Stretch mode:"
@@ -1011,7 +1011,7 @@ msgstr "Rett opp aspekt for 320x200 spel"
 #: gui/options.cpp:1272
 #, fuzzy
 msgid "Preferred device:"
-msgstr "Føretrukken eining:"
+msgstr "FÃ¸retrukken eining:"
 
 #: gui/options.cpp:1272
 #, fuzzy
@@ -1030,7 +1030,7 @@ msgstr ""
 #, fuzzy
 msgctxt "lowres"
 msgid "Preferred dev.:"
-msgstr "Føretrukken eining:"
+msgstr "FÃ¸retrukken eining:"
 
 #: gui/options.cpp:1274
 #, fuzzy
@@ -1061,7 +1061,7 @@ msgstr "Ikkje nytt General MIDI musikk"
 
 #: gui/options.cpp:1337 gui/options.cpp:1399
 msgid "Use first available device"
-msgstr "Nytt første tilgjengelege eining"
+msgstr "Nytt fÃ¸rste tilgjengelege eining"
 
 #: gui/options.cpp:1349
 msgid "SoundFont:"
@@ -1069,7 +1069,7 @@ msgstr "SoundFont:"
 
 #: gui/options.cpp:1349 gui/options.cpp:1351 gui/options.cpp:1352
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
-msgstr "SoundFont støttast av enkelte lydkort, FluidSynth og Timidity"
+msgstr "SoundFont stÃ¸ttast av enkelte lydkort, FluidSynth og Timidity"
 
 #: gui/options.cpp:1351
 msgctxt "lowres"
@@ -1082,7 +1082,7 @@ msgstr "Blanda AdLib/MIDI-modus"
 
 #: gui/options.cpp:1357
 msgid "Use both MIDI and AdLib sound generation"
-msgstr "Nytt båe MIDI og AdLib lydskaping"
+msgstr "Nytt bÃ¥e MIDI og AdLib lydskaping"
 
 #: gui/options.cpp:1360
 msgid "MIDI gain:"
@@ -1165,7 +1165,7 @@ msgstr "Tekst"
 #: gui/options.cpp:1432
 msgctxt "lowres"
 msgid "Both"
-msgstr "Båe"
+msgstr "BÃ¥e"
 
 #: gui/options.cpp:1432
 msgid "Show subtitles and play speech"
@@ -1303,11 +1303,11 @@ msgstr "Tastar"
 #: gui/options.cpp:2009
 #, fuzzy
 msgid "GUI language:"
-msgstr "GUI-språk:"
+msgstr "GUI-sprÃ¥k:"
 
 #: gui/options.cpp:2009
 msgid "Language of ScummVM GUI"
-msgstr "Språk i ScummVM-GUIet"
+msgstr "SprÃ¥k i ScummVM-GUIet"
 
 #: gui/options.cpp:2035
 msgid "Switch the ScummVM GUI language to the game language"
@@ -1505,7 +1505,7 @@ msgstr ""
 #: gui/options.cpp:2138 gui/options.cpp:2937
 #, fuzzy
 msgid "Not running"
-msgstr "Feil under køyring av spel:"
+msgstr "Feil under kÃ¸yring av spel:"
 
 #: gui/options.cpp:2142
 #, fuzzy
@@ -1576,7 +1576,7 @@ msgstr ""
 #: gui/options.cpp:2338
 #, fuzzy
 msgid "Theme does not support selected language!"
-msgstr "Spelmotor-plugin støttar ikkje lagra tilstandar."
+msgstr "Spelmotor-plugin stÃ¸ttar ikkje lagra tilstandar."
 
 #: gui/options.cpp:2341
 #, fuzzy
@@ -1739,7 +1739,7 @@ msgstr "Ukjend Forfattar"
 #: gui/remotebrowser.cpp:129
 #, fuzzy
 msgid "ScummVM could not access the directory!"
-msgstr "ScummVM kunne ikkje åpne den velde mappa!"
+msgstr "ScummVM kunne ikkje Ã¥pne den velde mappa!"
 
 #: gui/saveload-dialog.cpp:343
 msgid "List view"
@@ -1890,20 +1890,20 @@ msgstr ""
 
 #: gui/widget.cpp:399 gui/widget.cpp:401 gui/widget.cpp:407 gui/widget.cpp:409
 msgid "Clear value"
-msgstr "Tøm verdi"
+msgstr "TÃ¸m verdi"
 
 #: base/main.cpp:263
 #, c-format
 msgid "Engine does not support debug level '%s'"
-msgstr "Motoren støttar ikkje debug-nivå '%s'"
+msgstr "Motoren stÃ¸ttar ikkje debug-nivÃ¥ '%s'"
 
 #: base/main.cpp:587
 msgid "Error running game:"
-msgstr "Feil under køyring av spel:"
+msgstr "Feil under kÃ¸yring av spel:"
 
 #: base/main.cpp:634
 msgid "Could not find any engine capable of running the selected game"
-msgstr "Kunne ikkje finne nokon motor som kunne køyre det velde spelet"
+msgstr "Kunne ikkje finne nokon motor som kunne kÃ¸yre det velde spelet"
 
 #: common/achievements.cpp:92
 msgid "Achievement unlocked!"
@@ -1919,11 +1919,11 @@ msgstr "Fant ikkje speldata"
 
 #: common/error.cpp:42
 msgid "Game id not supported"
-msgstr "Spel ID ikkje støtta"
+msgstr "Spel ID ikkje stÃ¸tta"
 
 #: common/error.cpp:44
 msgid "Unsupported color mode"
-msgstr "Ustøtta fargemodus"
+msgstr "UstÃ¸tta fargemodus"
 
 #: common/error.cpp:46
 msgid "Audio device initialization failed"
@@ -1968,7 +1968,7 @@ msgstr "Kunne ikkje finne ein passande spelmotor-plugin"
 #: common/error.cpp:70
 #, fuzzy
 msgid "Engine plugin does not support saved games"
-msgstr "Spelmotor-plugin støttar ikkje lagra tilstandar."
+msgstr "Spelmotor-plugin stÃ¸ttar ikkje lagra tilstandar."
 
 #: common/error.cpp:73
 msgid "User canceled"
@@ -1981,7 +1981,7 @@ msgstr "Ukjend feil"
 #. I18N: Hercules is graphics card name
 #: common/rendermode.cpp:35
 msgid "Hercules Green"
-msgstr "Hercules Grønn"
+msgstr "Hercules GrÃ¸nn"
 
 #: common/rendermode.cpp:36
 msgid "Hercules Amber"
@@ -1998,7 +1998,7 @@ msgstr "PC-9801 (16 Fargar)"
 #: common/rendermode.cpp:73
 msgctxt "lowres"
 msgid "Hercules Green"
-msgstr "Hercules Grønn"
+msgstr "Hercules GrÃ¸nn"
 
 #: common/rendermode.cpp:74
 msgctxt "lowres"
@@ -2020,7 +2020,7 @@ msgstr ""
 #: common/updates.cpp:64
 #, fuzzy
 msgid "<Bad value>"
-msgstr "Tøm verdi"
+msgstr "TÃ¸m verdi"
 
 #: engines/advancedDetector.cpp:139
 msgid "Illegitimate game copy detected. We provide no support in such cases"
@@ -2032,7 +2032,7 @@ msgstr "~F~ortsett"
 
 #: engines/dialogs.cpp:75
 msgid "~L~oad"
-msgstr "~Å~pne"
+msgstr "~Ã…~pne"
 
 #: engines/dialogs.cpp:79 backends/platform/3ds/options-dialog.cpp:45
 msgid "~S~ave"
@@ -2103,9 +2103,9 @@ msgid ""
 "the README for basic information, and for instructions on how to obtain "
 "further assistance."
 msgstr ""
-"Orsak, men denne spelmotoren støtter for augeblikket ikkje hjelp i spelet. "
+"Orsak, men denne spelmotoren stÃ¸tter for augeblikket ikkje hjelp i spelet. "
 "Vennlegst se i README-fila for grunnlegjande informasjon, og for "
-"instruksjonar om korleis du kan få ytterlegare hjelp."
+"instruksjonar om korleis du kan fÃ¥ ytterlegare hjelp."
 
 #: engines/dialogs.cpp:217 engines/pegasus/pegasus.cpp:385
 #, fuzzy, c-format
@@ -2113,8 +2113,8 @@ msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"Speltilstandslagring feila (%s)!. Vennligst sjå i README-fila for "
-"grunnlegjande informasjon, og for instruskjonar om korleis du kan få "
+"Speltilstandslagring feila (%s)!. Vennligst sjÃ¥ i README-fila for "
+"grunnlegjande informasjon, og for instruskjonar om korleis du kan fÃ¥ "
 "ytterlegare hjelp."
 
 #: engines/dialogs.cpp:346
@@ -2136,7 +2136,7 @@ msgstr "Kunne ikkje veksle til videomodus: '"
 
 #: engines/engine.cpp:327
 msgid "Could not initialize color format."
-msgstr "Høgkvalitetslyd (treigare) (omstart)."
+msgstr "HÃ¸gkvalitetslyd (treigare) (omstart)."
 
 #: engines/engine.cpp:336
 #, fuzzy, c-format
@@ -2150,7 +2150,7 @@ msgstr "Kunne ikkje veksle til videomodus: '"
 
 #: engines/engine.cpp:351
 msgid "Could not apply aspect ratio setting."
-msgstr "Kunne ikkje slå på aspekt-korrigering."
+msgstr "Kunne ikkje slÃ¥ pÃ¥ aspekt-korrigering."
 
 #: engines/engine.cpp:356
 msgid "Could not apply fullscreen setting."
@@ -2169,11 +2169,11 @@ msgid ""
 "the data files to your hard disk instead.\n"
 "See the README file for details."
 msgstr ""
-"Det ser ut til at du speler dette spelet rett frå\n"
-"CD. Dette er kjend for å skape problemar,\n"
-"og det er derfor tilråda at du kopierar\n"
+"Det ser ut til at du speler dette spelet rett frÃ¥\n"
+"CD. Dette er kjend for Ã¥ skape problemar,\n"
+"og det er derfor tilrÃ¥da at du kopierar\n"
 "datafilane til harddisken din istaden. \n"
-"Sjå README-fila for detaljar."
+"SjÃ¥ README-fila for detaljar."
 
 #: engines/engine.cpp:489
 msgid ""
@@ -2193,7 +2193,7 @@ msgstr "Autolagre:"
 #: engines/engine.cpp:521
 #, fuzzy
 msgid "Error occurred making autosave"
-msgstr "Feil under køyring av spel:"
+msgstr "Feil under kÃ¸yring av spel:"
 
 #: engines/engine.cpp:600
 #, fuzzy, c-format
@@ -2201,8 +2201,8 @@ msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
 "information, and for instructions on how to obtain further assistance."
 msgstr ""
-"Speltilstandslasting feila (%s)!. Vennligst sjå i README-fila for "
-"grunnlegjande informasjon, og for instruskjonar om korleis du kan få "
+"Speltilstandslasting feila (%s)!. Vennligst sjÃ¥ i README-fila for "
+"grunnlegjande informasjon, og for instruskjonar om korleis du kan fÃ¥ "
 "ytterlegare hjelp."
 
 #: engines/engine.cpp:619
@@ -2211,8 +2211,8 @@ msgid ""
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
 "might not work in future versions of ScummVM."
 msgstr ""
-"ÅTVARING: Spelet du forsøker å starte er ikkje fullt ut støtta av ScummVM "
-"ennå. Derfor er det sannsynleg at det er ustabilt, og det er mogleg at lagra "
+"Ã…TVARING: Spelet du forsÃ¸ker Ã¥ starte er ikkje fullt ut stÃ¸tta av ScummVM "
+"ennÃ¥. Derfor er det sannsynleg at det er ustabilt, og det er mogleg at lagra "
 "spel ikkje vil fungere med fremtidige versjonar av ScummVM."
 
 #: engines/engine.cpp:622 engines/wintermute/wintermute.cpp:199
@@ -2263,7 +2263,7 @@ msgstr "Midtklikk"
 #: backends/platform/symbian/src/SymbianActions.cpp:45
 #: engines/wintermute/keymapper_tables.h:49 engines/zvision/detection.cpp:142
 msgid "Right Click"
-msgstr "Høgreklikk"
+msgstr "HÃ¸greklikk"
 
 #: engines/metaengine.cpp:80
 #: backends/platform/symbian/src/SymbianActions.cpp:52
@@ -2337,13 +2337,13 @@ msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr ""
-"Den valde lydeininga '%s' vart ikkje funne (t.d. kan den vere avslått eller "
-"fråkopla)."
+"Den valde lydeininga '%s' vart ikkje funne (t.d. kan den vere avslÃ¥tt eller "
+"frÃ¥kopla)."
 
 #: audio/mididrv.cpp:258 audio/mididrv.cpp:270 audio/mididrv.cpp:306
 #: audio/mididrv.cpp:321
 msgid "Attempting to fall back to the next available device..."
-msgstr "Prøver å nytte den neste tilgjengelege eininga..."
+msgstr "PrÃ¸ver Ã¥ nytte den neste tilgjengelege eininga..."
 
 #: audio/mididrv.cpp:270
 #, c-format
@@ -2351,7 +2351,7 @@ msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr ""
-"Den foretrukne lydeininga '%s' kan ikkje nyttast. Sjå loggfila for meir "
+"Den foretrukne lydeininga '%s' kan ikkje nyttast. SjÃ¥ loggfila for meir "
 "informasjon."
 
 #: audio/mididrv.cpp:306
@@ -2360,8 +2360,8 @@ msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr ""
-"Den foretrukne lydeininga '%s' vart ikkje funne (t.d. kan den vere avslått "
-"eller fråkopla)."
+"Den foretrukne lydeininga '%s' vart ikkje funne (t.d. kan den vere avslÃ¥tt "
+"eller frÃ¥kopla)."
 
 #: audio/mididrv.cpp:321
 #, c-format
@@ -2369,7 +2369,7 @@ msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr ""
-"Den foretrukne lydeininga '%s' kan ikkje nyttast. Sjå loggfila for meir "
+"Den foretrukne lydeininga '%s' kan ikkje nyttast. SjÃ¥ loggfila for meir "
 "informasjon."
 
 #: audio/mididrv.cpp:717
@@ -2467,7 +2467,7 @@ msgstr ""
 #: backends/cloud/storage.cpp:350
 #, fuzzy
 msgid "Download complete."
-msgstr "Søk fullført!"
+msgstr "SÃ¸k fullfÃ¸rt!"
 
 #: backends/cloud/storage.cpp:360
 #, fuzzy
@@ -2476,7 +2476,7 @@ msgstr "Last fil:"
 
 #: backends/events/default/default-events.cpp:176
 msgid "Do you really want to return to the Launcher?"
-msgstr "Vil du verkeleg gå tilbake til oppstartaren?"
+msgstr "Vil du verkeleg gÃ¥ tilbake til oppstartaren?"
 
 #: backends/events/default/default-events.cpp:176
 #: backends/presence/discord/discord.cpp:47
@@ -2514,7 +2514,7 @@ msgstr "Syn Tastatur"
 #: backends/events/default/default-events.cpp:310
 #, fuzzy
 msgid "Toggle mute"
-msgstr "Veksle muslåsing"
+msgstr "Veksle muslÃ¥sing"
 
 #: backends/events/default/default-events.cpp:338
 #, fuzzy
@@ -2531,7 +2531,7 @@ msgstr "Touchscreen 'Tap Mode' - Venstreklikk"
 #: backends/events/gph/gph-events.cpp:468
 #: backends/events/openpandora/op-events.cpp:167
 msgid "Touchscreen 'Tap Mode' - Right Click"
-msgstr "Touchscreen 'Tap Mode' - Høgreklikk"
+msgstr "Touchscreen 'Tap Mode' - HÃ¸greklikk"
 
 #: backends/events/gph/gph-events.cpp:427
 #: backends/events/gph/gph-events.cpp:470
@@ -2657,7 +2657,7 @@ msgstr "Veksle fullskjerm"
 #: backends/graphics/sdl/sdl-graphics.cpp:376 engines/scumm/help.cpp:100
 #: engines/wintermute/keymapper_tables.h:710
 msgid "Toggle mouse capture"
-msgstr "Veksle muslåsing"
+msgstr "Veksle muslÃ¥sing"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:381
 #: engines/wintermute/keymapper_tables.h:478
@@ -2688,12 +2688,12 @@ msgstr "Kunne ikkje veksle til videomodus: '"
 #: backends/graphics/sdl/sdl-graphics.cpp:407
 #, fuzzy
 msgid "Increase the scale factor"
-msgstr "Øk/Minsk skaleringsfaktor"
+msgstr "Ã˜k/Minsk skaleringsfaktor"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:413
 #, fuzzy
 msgid "Decrease the scale factor"
-msgstr "Øk/Minsk skaleringsfaktor"
+msgstr "Ã˜k/Minsk skaleringsfaktor"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:425
 msgid "Switch to nearest neighbour scaling"
@@ -2735,7 +2735,7 @@ msgstr "Simuler venstre musknapp"
 #: backends/keymapper/hardware-input.cpp:246
 #, fuzzy
 msgid "Right Mouse Button"
-msgstr "Simuler høgre musknapp"
+msgstr "Simuler hÃ¸gre musknapp"
 
 #: backends/keymapper/hardware-input.cpp:247
 #, fuzzy
@@ -2798,7 +2798,7 @@ msgstr "Venstreklikk"
 #: backends/keymapper/hardware-input.cpp:264
 #, fuzzy
 msgid "Right Stick"
-msgstr "Høgreklikk"
+msgstr "HÃ¸greklikk"
 
 #: backends/keymapper/hardware-input.cpp:265 engines/dragons/detection.cpp:307
 msgid "Left Shoulder"
@@ -2836,7 +2836,7 @@ msgstr "Skli til Venstre"
 #: backends/platform/sdl/switch/switch.cpp:49
 #, fuzzy
 msgid "D-pad Right"
-msgstr "Skli til Høyre"
+msgstr "Skli til HÃ¸yre"
 
 #: backends/keymapper/hardware-input.cpp:275
 msgid "Left Trigger"
@@ -2865,14 +2865,14 @@ msgstr "Venstreklikk"
 #: backends/platform/sdl/switch/switch.cpp:58
 #, fuzzy
 msgid "Right Stick X"
-msgstr "Høgreklikk"
+msgstr "HÃ¸greklikk"
 
 #: backends/keymapper/hardware-input.cpp:280
 #: backends/platform/sdl/ps3/ps3.cpp:65 backends/platform/sdl/psp2/psp2.cpp:64
 #: backends/platform/sdl/switch/switch.cpp:59
 #, fuzzy
 msgid "Right Stick Y"
-msgstr "Høgreklikk"
+msgstr "HÃ¸greklikk"
 
 #: backends/keymapper/remap-widget.cpp:285
 #: backends/keymapper/remap-widget.cpp:315
@@ -2898,7 +2898,7 @@ msgstr ""
 #: backends/keymapper/virtual-mouse.cpp:169
 #, fuzzy
 msgid "Virtual mouse right"
-msgstr "Skli til Høyre"
+msgstr "Skli til HÃ¸yre"
 
 #: backends/keymapper/virtual-mouse.cpp:174
 msgid "Slow down virtual mouse"
@@ -2952,7 +2952,7 @@ msgstr "Klarte ikkje slette fil."
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:120
 #, fuzzy
 msgid "Directory created successfully!"
-msgstr "DVD-montering fullført"
+msgstr "DVD-montering fullfÃ¸rt"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:122
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:204
@@ -3042,7 +3042,7 @@ msgstr "Stien er ikkje ei mappe"
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:218
 #, fuzzy
 msgid "ScummVM couldn't list the directory you specified."
-msgstr "ScummVM kunne ikkje åpne den velde mappa!"
+msgstr "ScummVM kunne ikkje Ã¥pne den velde mappa!"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
 msgid "Index of"
@@ -3092,7 +3092,7 @@ msgstr ""
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:202
 #, fuzzy
 msgid "Uploaded successfully!"
-msgstr "DVD-montering fullført"
+msgstr "DVD-montering fullfÃ¸rt"
 
 #: backends/platform/3ds/options-dialog.cpp:44
 #: backends/platform/ds/arm9/source/dsoptions.cpp:56
@@ -3204,7 +3204,7 @@ msgstr ""
 #: backends/platform/3ds/osystem-events.cpp:312
 #, fuzzy
 msgid "Toggle Drag Mode"
-msgstr "Gørrmodus"
+msgstr "GÃ¸rrmodus"
 
 #: backends/platform/3ds/osystem-events.cpp:317
 msgid "Toggle Magnify Mode"
@@ -3227,12 +3227,12 @@ msgstr ""
 #: backends/platform/3ds/osystem-events.cpp:396
 #, fuzzy
 msgid "Hover Mode"
-msgstr "Gørrmodus"
+msgstr "GÃ¸rrmodus"
 
 #: backends/platform/3ds/osystem-events.cpp:400
 #, fuzzy
 msgid "Drag Mode"
-msgstr "Gørrmodus"
+msgstr "GÃ¸rrmodus"
 
 #: backends/platform/3ds/osystem-events.cpp:402
 msgid "Cannot Switch to Drag Mode while Magnify Mode is On"
@@ -3282,11 +3282,11 @@ msgstr "~I~ndy-kampkontrollar"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:68
 msgid "Touch X Offset"
-msgstr "Gå til X-posisjon"
+msgstr "GÃ¥ til X-posisjon"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:75
 msgid "Touch Y Offset"
-msgstr "Gå til Y-posisjon"
+msgstr "GÃ¥ til Y-posisjon"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:87
 msgid "Use laptop trackpad-style cursor control"
@@ -3294,7 +3294,7 @@ msgstr ""
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:88
 msgid "Tap for left click, double tap right click"
-msgstr "Tap for venstre-klikk, dobbelt-tap for høgre-klikk"
+msgstr "Tap for venstre-klikk, dobbelt-tap for hÃ¸gre-klikk"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:90
 msgid "Sensitivity"
@@ -3318,7 +3318,7 @@ msgstr "Programvareskalering (god kvalitet, men treigare)"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:109
 msgid "Unscaled (you must scroll left and right)"
-msgstr "Uskalert (du må scrolle til venstre og høgre)"
+msgstr "Uskalert (du mÃ¥ scrolle til venstre og hÃ¸gre)"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:111
 msgid "Brightness:"
@@ -3330,7 +3330,7 @@ msgstr ""
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:122
 msgid "Disable power off"
-msgstr "Deaktiver strømsparing"
+msgstr "Deaktiver strÃ¸msparing"
 
 #: backends/platform/ios7/ios7_osys_events.cpp:315
 #: backends/platform/ios7/ios7_osys_events.cpp:443
@@ -3348,13 +3348,13 @@ msgstr ""
 #: backends/platform/ios7/ios7_osys_events.cpp:464
 #: backends/platform/iphone/osys_events.cpp:313
 msgid "Touchpad mode enabled."
-msgstr "Touchpadmodus påslått."
+msgstr "Touchpadmodus pÃ¥slÃ¥tt."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:330
 #: backends/platform/ios7/ios7_osys_events.cpp:466
 #: backends/platform/iphone/osys_events.cpp:315
 msgid "Touchpad mode disabled."
-msgstr "Touchpadmodus avslått."
+msgstr "Touchpadmodus avslÃ¥tt."
 
 #: backends/platform/maemo/maemo.cpp:170
 msgid "Click Mode"
@@ -3561,7 +3561,7 @@ msgstr "Monter DVD"
 
 #: backends/platform/wii/options.cpp:94
 msgid "Unmount DVD"
-msgstr "Løs ut DVD"
+msgstr "LÃ¸s ut DVD"
 
 #: backends/platform/wii/options.cpp:98
 msgid "SMB"
@@ -3593,7 +3593,7 @@ msgstr "Avmonter SMB"
 
 #: backends/platform/wii/options.cpp:143
 msgid "DVD Mounted successfully"
-msgstr "DVD-montering fullført"
+msgstr "DVD-montering fullfÃ¸rt"
 
 #: backends/platform/wii/options.cpp:146
 msgid "Error while mounting the DVD"
@@ -3638,7 +3638,7 @@ msgstr "Nettverk ikkje initialisert (%d)"
 
 #: backends/updates/macosx/macosx-updates.mm:79
 msgid "Check for Updates..."
-msgstr "SJå etter oppdateringar..."
+msgstr "SJÃ¥ etter oppdateringar..."
 
 #: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:931
 #: engines/hugo/hugo.cpp:436 engines/lure/lure.cpp:64
@@ -3733,7 +3733,7 @@ msgstr ""
 
 #: engines/agi/detection.cpp:167
 msgid "Mouse support"
-msgstr "Musstøtte"
+msgstr "MusstÃ¸tte"
 
 #: engines/agi/detection.cpp:168
 msgid ""
@@ -3743,7 +3743,7 @@ msgstr ""
 #: engines/agi/detection.cpp:177
 #, fuzzy
 msgid "Use Hercules hires font"
-msgstr "Hercules Grønn"
+msgstr "Hercules GrÃ¸nn"
 
 #: engines/agi/detection.cpp:178
 msgid "Uses Hercules hires font, when font file is available."
@@ -3813,7 +3813,7 @@ msgid ""
 "Failed to load saved game from file:\n"
 "\n"
 "%s"
-msgstr "Kunne ikkje laste lagra spel frå fil."
+msgstr "Kunne ikkje laste lagra spel frÃ¥ fil."
 
 #: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2456
 #, fuzzy, c-format
@@ -3916,7 +3916,7 @@ msgstr "Fargeblindmodus"
 
 #: engines/cge/detection.cpp:116 engines/cge2/detection.cpp:112
 msgid "Enable Color Blind Mode by default"
-msgstr "Slå på fargeblindmodus som standard"
+msgstr "SlÃ¥ pÃ¥ fargeblindmodus som standard"
 
 #: engines/cine/detection.cpp:77
 msgid "Use transparent dialog boxes in 16 color scenes"
@@ -4019,10 +4019,10 @@ msgid ""
 msgstr ""
 "ScummVM oppdaga at du har gamle spellagringar for Drascula som vi kan "
 "konvertere.\n"
-"Det gamle spellagringsformatet er ikkje lenger støtta, så du vil ikkje vere "
-"i stand til å laste dei om du ikkje konverterar dei\n"
+"Det gamle spellagringsformatet er ikkje lenger stÃ¸tta, sÃ¥ du vil ikkje vere "
+"i stand til Ã¥ laste dei om du ikkje konverterar dei\n"
 "\n"
-"Trykk OK for å konvertere dei no, ellers kjem du til å verte spurt neste "
+"Trykk OK for Ã¥ konvertere dei no, ellers kjem du til Ã¥ verte spurt neste "
 "gong du startar spelet.\n"
 
 #: engines/dreamweb/detection.cpp:58
@@ -4153,7 +4153,7 @@ msgstr ""
 #: engines/glk/scott/scott.cpp:131
 #, fuzzy
 msgid " turns. "
-msgstr "Slå på"
+msgstr "SlÃ¥ pÃ¥"
 
 #: engines/glk/scott/scott.cpp:134
 msgid "Your light is growing dim. "
@@ -4347,18 +4347,18 @@ msgstr ""
 #: engines/glk/zcode/zcode.cpp:126
 #, fuzzy
 msgid "Error reading save file"
-msgstr "Feil under køyring av spel:"
+msgstr "Feil under kÃ¸yring av spel:"
 
 #: engines/glk/zcode/zcode.cpp:144
 #, fuzzy
 msgid "Error writing save file\n"
-msgstr "Feil under køyring av spel:"
+msgstr "Feil under kÃ¸yring av spel:"
 
 #: engines/gob/inter_playtoons.cpp:258 engines/gob/inter_v2.cpp:1479
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:538
 #, fuzzy
 msgid "Failed to load saved game from file."
-msgstr "Kunne ikkje laste lagra spel frå fil."
+msgstr "Kunne ikkje laste lagra spel frÃ¥ fil."
 
 #: engines/gob/inter_v2.cpp:1549 engines/gob/inter_geisha.cpp:263
 #: engines/tinsel/saveload.cpp:551
@@ -4385,7 +4385,7 @@ msgstr "Klarte ikkje lagre spel"
 #: engines/hdb/detection.cpp:162
 #, fuzzy
 msgid "Enable cheat mode"
-msgstr "Slå på heliummodus"
+msgstr "SlÃ¥ pÃ¥ heliummodus"
 
 #: engines/hdb/detection.cpp:163
 msgid "Debug info and level selection becomes available"
@@ -4399,7 +4399,7 @@ msgstr "Beveg Bakover"
 #: engines/hdb/detection.cpp:315
 #, fuzzy
 msgid "Move down"
-msgstr "Skli til Høyre"
+msgstr "Skli til HÃ¸yre"
 
 #: engines/hdb/detection.cpp:321
 #, fuzzy
@@ -4409,7 +4409,7 @@ msgstr "Skli til Venstre"
 #: engines/hdb/detection.cpp:327
 #, fuzzy
 msgid "Move right"
-msgstr "Skli til Høyre"
+msgstr "Skli til HÃ¸yre"
 
 #: engines/hdb/detection.cpp:333 engines/scumm/help.cpp:129
 #: engines/scumm/help.cpp:153 engines/scumm/help.cpp:171
@@ -4434,11 +4434,11 @@ msgstr "Debugger"
 
 #: engines/hopkins/detection.cpp:75 engines/hopkins/detection.cpp:85
 msgid "Gore Mode"
-msgstr "Gørrmodus"
+msgstr "GÃ¸rrmodus"
 
 #: engines/hopkins/detection.cpp:76 engines/hopkins/detection.cpp:86
 msgid "Enable Gore Mode when available"
-msgstr "Slå på gørrmodus når tilgjengeleg"
+msgstr "SlÃ¥ pÃ¥ gÃ¸rrmodus nÃ¥r tilgjengeleg"
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
@@ -4453,11 +4453,11 @@ msgstr "Aktiver studiopublikum"
 #. I18N: This option allows the user to skip text and cutscenes.
 #: engines/kyra/detection.cpp:73
 msgid "Skip support"
-msgstr "Hopp over-støtte"
+msgstr "Hopp over-stÃ¸tte"
 
 #: engines/kyra/detection.cpp:74
 msgid "Allow text and cutscenes to be skipped"
-msgstr "Tillat å hoppe over tekst og cutscenes"
+msgstr "Tillat Ã¥ hoppe over tekst og cutscenes"
 
 #. I18N: Helium mode makes people sound like they've inhaled Helium.
 #: engines/kyra/detection.cpp:84
@@ -4466,7 +4466,7 @@ msgstr "Heliummodus"
 
 #: engines/kyra/detection.cpp:85
 msgid "Enable helium mode"
-msgstr "Slå på heliummodus"
+msgstr "SlÃ¥ pÃ¥ heliummodus"
 
 #. I18N: When enabled, this option makes scrolling smoother when
 #. changing from one screen to another.
@@ -4476,7 +4476,7 @@ msgstr "Mjuk rulling"
 
 #: engines/kyra/detection.cpp:100
 msgid "Enable smooth scrolling when walking"
-msgstr "Slå på mjuk rulling under gåing"
+msgstr "SlÃ¥ pÃ¥ mjuk rulling under gÃ¥ing"
 
 #. I18N: When enabled, this option changes the cursor when it floats to the
 #. edge of the screen to a directional arrow. The player can then click to
@@ -4487,7 +4487,7 @@ msgstr "Flytande peikarar"
 
 #: engines/kyra/detection.cpp:113
 msgid "Enable floating cursors"
-msgstr "Slå på flytande peikarar"
+msgstr "SlÃ¥ pÃ¥ flytande peikarar"
 
 #. I18N: When enabled, this option will fill in an autogenerated savegame
 #. description into the input prompt where.
@@ -4530,7 +4530,7 @@ msgstr "Venstreklikk"
 #: engines/ultima/ultima8/meta_engine.cpp:135
 #, fuzzy
 msgid "Interact via Right Click"
-msgstr "Høgreklikk"
+msgstr "HÃ¸greklikk"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:475
 msgid "Move Forward"
@@ -4548,7 +4548,7 @@ msgstr "Skli til Venstre"
 #: engines/kyra/engine/eobcommon.cpp:371
 #, fuzzy
 msgid "Move Right"
-msgstr "Skli til Høyre"
+msgstr "Skli til HÃ¸yre"
 
 #: engines/kyra/engine/eobcommon.cpp:372 engines/kyra/engine/lol.cpp:479
 #: engines/pegasus/pegasus.cpp:2497 engines/zvision/detection.cpp:162
@@ -4558,7 +4558,7 @@ msgstr "Snu til Venstre"
 #: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:480
 #: engines/pegasus/pegasus.cpp:2504 engines/zvision/detection.cpp:168
 msgid "Turn Right"
-msgstr "Snu til Høyre"
+msgstr "Snu til HÃ¸yre"
 
 #: engines/kyra/engine/eobcommon.cpp:374
 #, fuzzy
@@ -4603,15 +4603,15 @@ msgstr ""
 
 #: engines/kyra/engine/lol.cpp:471
 msgid "Attack 1"
-msgstr "Åtak 1"
+msgstr "Ã…tak 1"
 
 #: engines/kyra/engine/lol.cpp:472
 msgid "Attack 2"
-msgstr "Åtak 2"
+msgstr "Ã…tak 2"
 
 #: engines/kyra/engine/lol.cpp:473
 msgid "Attack 3"
-msgstr "Åtak 3"
+msgstr "Ã…tak 3"
 
 #: engines/kyra/engine/lol.cpp:474
 #, fuzzy
@@ -4624,7 +4624,7 @@ msgstr "Skli til Venstre"
 
 #: engines/kyra/engine/lol.cpp:478
 msgid "Slide Right"
-msgstr "Skli til Høyre"
+msgstr "Skli til HÃ¸yre"
 
 #: engines/kyra/engine/lol.cpp:481
 msgid "Rest"
@@ -4726,7 +4726,7 @@ msgstr ""
 #: engines/lab/savegame.cpp:238
 #, fuzzy
 msgid "Would you like to save or restore a game?"
-msgstr "Vil du åpne eller lagre spelet?"
+msgstr "Vil du Ã¥pne eller lagre spelet?"
 
 #: engines/lab/speciallocks.cpp:149
 msgid "This puzzle is not available in the trial version of the game"
@@ -4749,7 +4749,7 @@ msgstr ""
 #: engines/mads/detection.cpp:94
 #, fuzzy
 msgid "Shows object names when hovering the mouse over them"
-msgstr "Syn merkelappar for objekt når musa er over dei"
+msgstr "Syn merkelappar for objekt nÃ¥r musa er over dei"
 
 #: engines/mads/detection.cpp:103 engines/mads/detection.cpp:104
 msgid "Animated inventory items"
@@ -4830,7 +4830,7 @@ msgstr ""
 #: engines/mohawk/mohawk.cpp:52
 #, fuzzy
 msgid "The game is paused. Press any key to continue."
-msgstr "Spelet er pausa. Trykk MELLOMROM for å fortsette."
+msgstr "Spelet er pausa. Trykk MELLOMROM for Ã¥ fortsette."
 
 #: engines/mohawk/myst.cpp:567 engines/mohawk/riven.cpp:836
 msgid "Open main menu"
@@ -4839,7 +4839,7 @@ msgstr ""
 #: engines/mohawk/myst.cpp:591 engines/mohawk/riven.cpp:860
 #, fuzzy
 msgid "Load game state"
-msgstr "Åpne spel:"
+msgstr "Ã…pne spel:"
 
 #: engines/mohawk/myst.cpp:596 engines/mohawk/riven.cpp:865
 #, fuzzy
@@ -4873,7 +4873,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:675
 #, fuzzy
 msgid "Load game"
-msgstr "Åpne spel:"
+msgstr "Ã…pne spel:"
 
 #: engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/riven_stacks/aspit.cpp:371
@@ -4891,7 +4891,7 @@ msgstr "Ny Lagring"
 #: engines/mohawk/riven_stacks/aspit.cpp:455
 #, fuzzy
 msgid "Are you sure you want to quit? All unsaved progress will be lost."
-msgstr "   Er du sikker på at du vil avslutte?   "
+msgstr "   Er du sikker pÃ¥ at du vil avslutte?   "
 
 #: engines/mohawk/riven.cpp:156
 msgid ""
@@ -4949,7 +4949,7 @@ msgstr "Snu til Venstre"
 #: engines/wintermute/keymapper_tables.h:1665
 #, fuzzy
 msgid "Turn right"
-msgstr "Snu til Høyre"
+msgstr "Snu til HÃ¸yre"
 
 #: engines/mohawk/riven.cpp:914
 #, fuzzy
@@ -5038,10 +5038,10 @@ msgid ""
 msgstr ""
 "ScummVM oppdaga at du har gamle spellagringar for Drascula som vi kan "
 "konvertere.\n"
-"Det gamle spellagringsformatet er ikkje lenger støtta, så du vil ikkje vere "
-"i stand til å laste dei om du ikkje konverterar dei\n"
+"Det gamle spellagringsformatet er ikkje lenger stÃ¸tta, sÃ¥ du vil ikkje vere "
+"i stand til Ã¥ laste dei om du ikkje konverterar dei\n"
 "\n"
-"Trykk OK for å konvertere dei no, ellers kjem du til å verte spurt neste "
+"Trykk OK for Ã¥ konvertere dei no, ellers kjem du til Ã¥ verte spurt neste "
 "gong du startar spelet.\n"
 
 #: engines/parallaction/saveload.cpp:316
@@ -5114,7 +5114,7 @@ msgstr "Lagra spel:"
 #: engines/pegasus/pegasus.cpp:2583
 #, fuzzy
 msgid "Load Game"
-msgstr "Åpne spel:"
+msgstr "Ã…pne spel:"
 
 #: engines/pink/gui.cpp:220
 msgid "This menu item is not yet implemented"
@@ -5126,7 +5126,7 @@ msgstr "Alternativ intro"
 
 #: engines/queen/detection.cpp:57
 msgid "Use an alternative game intro (CD version only)"
-msgstr "Nytt alternativ spillåpning (Kun CD-versjon)"
+msgstr "Nytt alternativ spillÃ¥pning (Kun CD-versjon)"
 
 #: engines/sci/detection.cpp:399
 msgid "Skip EGA dithering pass (full color backgrounds)"
@@ -5138,11 +5138,11 @@ msgstr ""
 
 #: engines/sci/detection.cpp:409
 msgid "Enable high resolution graphics"
-msgstr "Nytt høgoppløyseleg grafikk"
+msgstr "Nytt hÃ¸gopplÃ¸yseleg grafikk"
 
 #: engines/sci/detection.cpp:410
 msgid "Enable high resolution graphics/content"
-msgstr "Nytt høgoppløyseleg grafikk/innhald"
+msgstr "Nytt hÃ¸gopplÃ¸yseleg grafikk/innhald"
 
 #: engines/sci/detection.cpp:419
 #, fuzzy
@@ -5196,18 +5196,18 @@ msgstr "Nytt windowspeikarane (mindre og monokrome) istaden for DOS-peikarane"
 
 #: engines/sci/detection.cpp:493
 msgid "Use silver cursors"
-msgstr "Nytt sølvpeikarar"
+msgstr "Nytt sÃ¸lvpeikarar"
 
 #: engines/sci/detection.cpp:494
 #, fuzzy
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
-msgstr "Nytt det alternative settet med sølvpeikarar, istaden for dei gylne"
+msgstr "Nytt det alternative settet med sÃ¸lvpeikarar, istaden for dei gylne"
 
 #: engines/sci/detection.cpp:504
 #, fuzzy
 msgid "Enable content censoring"
-msgstr "Slå på flytande peikarar"
+msgstr "SlÃ¥ pÃ¥ flytande peikarar"
 
 #: engines/sci/detection.cpp:505
 msgid "Enable the game's built-in optional content censoring"
@@ -5408,7 +5408,7 @@ msgstr ""
 #: engines/scumm/dialogs.cpp:168
 #, c-format
 msgid "Insert Disk %c and Press Button to Continue."
-msgstr "Sett inn disk %c og trykk på knappen for å fortsette."
+msgstr "Sett inn disk %c og trykk pÃ¥ knappen for Ã¥ fortsette."
 
 #: engines/scumm/dialogs.cpp:169
 #, c-format
@@ -5422,19 +5422,19 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:171
 msgid "Game Paused.  Press SPACE to Continue."
-msgstr "Spelet er pausa. Trykk MELLOMROM for å fortsette."
+msgstr "Spelet er pausa. Trykk MELLOMROM for Ã¥ fortsette."
 
 #. I18N: You may specify 'Yes' symbol at the end of the line, like this:
 #. "Moechten Sie wirklich neu starten?  (J/N)J"
 #. Will react to J as 'Yes'
 #: engines/scumm/dialogs.cpp:175
 msgid "Are you sure you want to restart?  (Y/N)Y"
-msgstr "Er du sikker på at du vil starte på nytt (J/N)J"
+msgstr "Er du sikker pÃ¥ at du vil starte pÃ¥ nytt (J/N)J"
 
 #. I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
 #: engines/scumm/dialogs.cpp:177
 msgid "Are you sure you want to quit?  (Y/N)Y"
-msgstr "Er du sikker på at du vil avslutte (J/N)J"
+msgstr "Er du sikker pÃ¥ at du vil avslutte (J/N)J"
 
 #: engines/scumm/dialogs.cpp:182
 msgid "Play"
@@ -5446,7 +5446,7 @@ msgstr "Sett in lagre/laste speldisk"
 
 #: engines/scumm/dialogs.cpp:187
 msgid "You must enter a name"
-msgstr "Du må skrive eit namn"
+msgstr "Du mÃ¥ skrive eit namn"
 
 #: engines/scumm/dialogs.cpp:188
 msgid "The game was NOT saved (disk full?)"
@@ -5511,11 +5511,11 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:656
 msgid "Refer to your Loom(TM) manual for help."
-msgstr "Sjå i Loom(TM)-manualen for hjelp."
+msgstr "SjÃ¥ i Loom(TM)-manualen for hjelp."
 
 #: engines/scumm/dialogs.cpp:660
 msgid "Practice"
-msgstr "Øving"
+msgstr "Ã˜ving"
 
 #: engines/scumm/dialogs.cpp:661
 msgid "Expert"
@@ -5527,7 +5527,7 @@ msgstr "Vanlege tastaturkommandoar:"
 
 #: engines/scumm/help.cpp:75
 msgid "Save / Load dialog"
-msgstr "Åpne- / Lagre-dialog"
+msgstr "Ã…pne- / Lagre-dialog"
 
 #: engines/scumm/help.cpp:77
 msgid "Skip line of text"
@@ -5560,7 +5560,7 @@ msgstr "Ctrl"
 #: engines/scumm/help.cpp:80
 #, fuzzy
 msgid "Load saved game 1-10"
-msgstr "Åpne speltilstand 1-10"
+msgstr "Ã…pne speltilstand 1-10"
 
 #: engines/scumm/help.cpp:81 engines/scumm/help.cpp:85
 #: engines/scumm/help.cpp:87 engines/scumm/help.cpp:101
@@ -5591,7 +5591,7 @@ msgstr "Tab"
 
 #: engines/scumm/help.cpp:91
 msgid "Simulate right mouse button"
-msgstr "Simuler høgre musknapp"
+msgstr "Simuler hÃ¸gre musknapp"
 
 #: engines/scumm/help.cpp:94
 msgid "Special keyboard commands:"
@@ -5611,11 +5611,11 @@ msgstr "Vis minneforbruk"
 
 #: engines/scumm/help.cpp:98
 msgid "Run in fast mode (*)"
-msgstr "Køyr i rask modus (*)"
+msgstr "KÃ¸yr i rask modus (*)"
 
 #: engines/scumm/help.cpp:99
 msgid "Run in really fast mode (*)"
-msgstr "Køyr i verkeleg rask modus (*)"
+msgstr "KÃ¸yr i verkeleg rask modus (*)"
 
 #: engines/scumm/help.cpp:101
 msgid "Switch between graphics filters"
@@ -5623,7 +5623,7 @@ msgstr "Veksle grafikkfiltre"
 
 #: engines/scumm/help.cpp:102
 msgid "Increase / Decrease scale factor"
-msgstr "Øk/Minsk skaleringsfaktor"
+msgstr "Ã˜k/Minsk skaleringsfaktor"
 
 #: engines/scumm/help.cpp:103
 msgid "Toggle aspect-ratio correction"
@@ -5631,23 +5631,23 @@ msgstr "Veksle aspekt-korrigering"
 
 #: engines/scumm/help.cpp:108
 msgid "* Note that using ctrl-f and"
-msgstr "* Merk at å bruke ctrl-f og"
+msgstr "* Merk at Ã¥ bruke ctrl-f og"
 
 #: engines/scumm/help.cpp:109
 msgid "  ctrl-g are not recommended"
-msgstr "  ctrl-g er ikkje anbefalt då"
+msgstr "  ctrl-g er ikkje anbefalt dÃ¥"
 
 #: engines/scumm/help.cpp:110
 msgid "  since they may cause crashes"
-msgstr "  dei kan forårsake kræsj og"
+msgstr "  dei kan forÃ¥rsake krÃ¦sj og"
 
 #: engines/scumm/help.cpp:111
 msgid "  or incorrect game behavior."
-msgstr "  eller feilaktig speloppførsel."
+msgstr "  eller feilaktig speloppfÃ¸rsel."
 
 #: engines/scumm/help.cpp:115
 msgid "Spinning drafts on the keyboard:"
-msgstr "Spinne drafts på tastaturet:"
+msgstr "Spinne drafts pÃ¥ tastaturet:"
 
 #: engines/scumm/help.cpp:117
 msgid "Main game controls:"
@@ -5673,15 +5673,15 @@ msgstr "Gi"
 #: engines/scumm/help.cpp:165 engines/scumm/help.cpp:191
 #: engines/scumm/help.cpp:209
 msgid "Open"
-msgstr "Åpne"
+msgstr "Ã…pne"
 
 #: engines/scumm/help.cpp:127
 msgid "Go to"
-msgstr "Gå til"
+msgstr "GÃ¥ til"
 
 #: engines/scumm/help.cpp:128
 msgid "Get"
-msgstr "Få"
+msgstr "FÃ¥"
 
 #: engines/scumm/help.cpp:130 engines/scumm/help.cpp:142
 msgid "Read"
@@ -5694,17 +5694,17 @@ msgstr "Bytt unge"
 #: engines/scumm/help.cpp:132 engines/scumm/help.cpp:154
 #: engines/scumm/help.cpp:172
 msgid "Turn on"
-msgstr "Slå på"
+msgstr "SlÃ¥ pÃ¥"
 
 #: engines/scumm/help.cpp:133 engines/scumm/help.cpp:155
 #: engines/scumm/help.cpp:173
 msgid "Turn off"
-msgstr "Slå av"
+msgstr "SlÃ¥ av"
 
 #: engines/scumm/help.cpp:143 engines/scumm/help.cpp:168
 #: engines/scumm/help.cpp:195
 msgid "Walk to"
-msgstr "Gå til"
+msgstr "GÃ¥ til"
 
 #: engines/scumm/help.cpp:144 engines/scumm/help.cpp:169
 #: engines/scumm/help.cpp:196 engines/scumm/help.cpp:211
@@ -5718,11 +5718,11 @@ msgstr "Kva er"
 
 #: engines/scumm/help.cpp:147
 msgid "Unlock"
-msgstr "Lås opp"
+msgstr "LÃ¥s opp"
 
 #: engines/scumm/help.cpp:150
 msgid "Put on"
-msgstr "Ta på (klede)"
+msgstr "Ta pÃ¥ (klede)"
 
 #: engines/scumm/help.cpp:151
 msgid "Take off"
@@ -5755,35 +5755,35 @@ msgstr "Til Henry / Til Indy"
 #. I18N: These are different musical notes
 #: engines/scumm/help.cpp:180
 msgid "play C minor on distaff"
-msgstr "spel C moll på distaffen"
+msgstr "spel C moll pÃ¥ distaffen"
 
 #: engines/scumm/help.cpp:181
 msgid "play D on distaff"
-msgstr "spel D på distaffen"
+msgstr "spel D pÃ¥ distaffen"
 
 #: engines/scumm/help.cpp:182
 msgid "play E on distaff"
-msgstr "spel E på distaffen"
+msgstr "spel E pÃ¥ distaffen"
 
 #: engines/scumm/help.cpp:183
 msgid "play F on distaff"
-msgstr "spel F på distaffen"
+msgstr "spel F pÃ¥ distaffen"
 
 #: engines/scumm/help.cpp:184
 msgid "play G on distaff"
-msgstr "spel G på distaffen"
+msgstr "spel G pÃ¥ distaffen"
 
 #: engines/scumm/help.cpp:185
 msgid "play A on distaff"
-msgstr "spel A på distaffen"
+msgstr "spel A pÃ¥ distaffen"
 
 #: engines/scumm/help.cpp:186
 msgid "play B on distaff"
-msgstr "spel H på distaffen"
+msgstr "spel H pÃ¥ distaffen"
 
 #: engines/scumm/help.cpp:187
 msgid "play C major on distaff"
-msgstr "spel C dur på distaffen"
+msgstr "spel C dur pÃ¥ distaffen"
 
 #: engines/scumm/help.cpp:193 engines/scumm/help.cpp:215
 msgid "puSh"
@@ -5800,15 +5800,15 @@ msgstr "Snakk til"
 
 #: engines/scumm/help.cpp:200 engines/scumm/help.cpp:212
 msgid "Look at"
-msgstr "Se på"
+msgstr "Se pÃ¥"
 
 #: engines/scumm/help.cpp:201
 msgid "turn oN"
-msgstr "Slå på"
+msgstr "SlÃ¥ pÃ¥"
 
 #: engines/scumm/help.cpp:202
 msgid "turn oFf"
-msgstr "Slå av"
+msgstr "SlÃ¥ av"
 
 #: engines/scumm/help.cpp:218
 msgid "KeyUp"
@@ -5828,7 +5828,7 @@ msgstr "Merk neste dialog"
 
 #: engines/scumm/help.cpp:223
 msgid "Walk"
-msgstr "Gå"
+msgstr "GÃ¥"
 
 #: engines/scumm/help.cpp:227
 msgid "Object"
@@ -5848,7 +5848,7 @@ msgstr "Tunge"
 
 #: engines/scumm/help.cpp:236
 msgid "Punch"
-msgstr "Slå"
+msgstr "SlÃ¥"
 
 #: engines/scumm/help.cpp:237
 msgid "Kick"
@@ -5856,7 +5856,7 @@ msgstr "Spark"
 
 #: engines/scumm/help.cpp:240 engines/scumm/help.cpp:248
 msgid "Examine"
-msgstr "Undersøk"
+msgstr "UndersÃ¸k"
 
 #: engines/scumm/help.cpp:241
 msgid "Regular cursor"
@@ -5869,7 +5869,7 @@ msgstr "Comm"
 
 #: engines/scumm/help.cpp:247
 msgid "Save / Load / Options"
-msgstr "Åpne / Lagre / Val"
+msgstr "Ã…pne / Lagre / Val"
 
 #: engines/scumm/help.cpp:258
 msgid "Other game controls:"
@@ -5889,7 +5889,7 @@ msgstr "Bla liste ned"
 
 #: engines/scumm/help.cpp:263 engines/scumm/help.cpp:271
 msgid "Upper left item"
-msgstr "Øvre venstre gjenstand"
+msgstr "Ã˜vre venstre gjenstand"
 
 #: engines/scumm/help.cpp:264 engines/scumm/help.cpp:273
 msgid "Lower left item"
@@ -5897,11 +5897,11 @@ msgstr "Nedre venstre gjenstand"
 
 #: engines/scumm/help.cpp:265 engines/scumm/help.cpp:274
 msgid "Upper right item"
-msgstr "Øvre høgre gjenstand"
+msgstr "Ã˜vre hÃ¸gre gjenstand"
 
 #: engines/scumm/help.cpp:266 engines/scumm/help.cpp:276
 msgid "Lower right item"
-msgstr "Nedre høgre gjenstand"
+msgstr "Nedre hÃ¸gre gjenstand"
 
 #: engines/scumm/help.cpp:272
 msgid "Middle left item"
@@ -5909,7 +5909,7 @@ msgstr "Midtre venstre gjenstand"
 
 #: engines/scumm/help.cpp:275
 msgid "Middle right item"
-msgstr "Midtre høgre gjenstand"
+msgstr "Midtre hÃ¸gre gjenstand"
 
 #: engines/scumm/help.cpp:282 engines/scumm/help.cpp:287
 msgid "Switching characters:"
@@ -5954,7 +5954,7 @@ msgstr "Bakoversteg"
 
 #: engines/scumm/help.cpp:310
 msgid "Block high"
-msgstr "Høg blokk"
+msgstr "HÃ¸g blokk"
 
 #: engines/scumm/help.cpp:311
 msgid "Block middle"
@@ -5966,7 +5966,7 @@ msgstr "Lav blokk"
 
 #: engines/scumm/help.cpp:313
 msgid "Punch high"
-msgstr "Høgt slag"
+msgstr "HÃ¸gt slag"
 
 #: engines/scumm/help.cpp:314
 msgid "Punch middle"
@@ -5982,11 +5982,11 @@ msgstr ""
 
 #: engines/scumm/help.cpp:320
 msgid "These are for Indy on left."
-msgstr "Gjeld Indy på Venstre side."
+msgstr "Gjeld Indy pÃ¥ Venstre side."
 
 #: engines/scumm/help.cpp:321
 msgid "When Indy is on the right,"
-msgstr "Med Indy på høgre side,"
+msgstr "Med Indy pÃ¥ hÃ¸gre side,"
 
 #: engines/scumm/help.cpp:322
 msgid "7, 4, and 1 are switched with"
@@ -6002,7 +6002,7 @@ msgstr "Flykontrollar (taltastatur):"
 
 #: engines/scumm/help.cpp:333
 msgid "Fly to upper left"
-msgstr "Fly til øvre venstre"
+msgstr "Fly til Ã¸vre venstre"
 
 #: engines/scumm/help.cpp:334
 msgid "Fly to left"
@@ -6026,15 +6026,15 @@ msgstr "Fly ned"
 
 #: engines/scumm/help.cpp:339
 msgid "Fly to upper right"
-msgstr "Fly til øvre høgre"
+msgstr "Fly til Ã¸vre hÃ¸gre"
 
 #: engines/scumm/help.cpp:340
 msgid "Fly to right"
-msgstr "Fly til høgre"
+msgstr "Fly til hÃ¸gre"
 
 #: engines/scumm/help.cpp:341
 msgid "Fly to lower right"
-msgstr "Fly til nedre høgre"
+msgstr "Fly til nedre hÃ¸gre"
 
 #: engines/scumm/input.cpp:563
 msgid "Snap scroll on"
@@ -6066,24 +6066,24 @@ msgid ""
 "Tentacle game directory, and the game has to be added to ScummVM."
 msgstr ""
 "Opprinneleg, skulle Maniac Mansion ha starta no. Men for at det skal virke "
-"må du ha datafilane til Maniac Mansion i «Maniac»-mappa inni «Tentacle»-"
-"spelmappa, og spelet må vere lagt til i ScummVM."
+"mÃ¥ du ha datafilane til Maniac Mansion i Â«ManiacÂ»-mappa inni Â«TentacleÂ»-"
+"spelmappa, og spelet mÃ¥ vere lagt til i ScummVM."
 
 #: engines/scumm/players/player_v3m.cpp:129
 msgid ""
 "Could not find the 'Loom' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
-"Kunne ikkje finne Macintosh-binærfila «Loom» for å lese\n"
-"instrumenter frå den. Musikk vert deaktivert."
+"Kunne ikkje finne Macintosh-binÃ¦rfila Â«LoomÂ» for Ã¥ lese\n"
+"instrumenter frÃ¥ den. Musikk vert deaktivert."
 
 #: engines/scumm/players/player_v5m.cpp:107
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
-"Kunne ikkje finne Macintosh-binærfila «Monkey Island» for å lese\n"
-"instrumentar frå den. Musikk vert deaktivert."
+"Kunne ikkje finne Macintosh-binÃ¦rfila Â«Monkey IslandÂ» for Ã¥ lese\n"
+"instrumentar frÃ¥ den. Musikk vert deaktivert."
 
 #: engines/scumm/imuse/drivers/amiga.cpp:654
 msgid ""
@@ -6150,7 +6150,7 @@ msgstr "Diskettintro"
 
 #: engines/sky/detection.cpp:48
 msgid "Use the floppy version's intro (CD version only)"
-msgstr "Nytt diskettversjonens åpning (Kun CD-versjon)"
+msgstr "Nytt diskettversjonens Ã¥pning (Kun CD-versjon)"
 
 #: engines/sky/detection.cpp:216
 msgid "Walk / Look / Talk"
@@ -6173,7 +6173,7 @@ msgstr "Rask modus"
 #: engines/sky/detection.cpp:263
 #, fuzzy
 msgid "Toggle really fast mode"
-msgstr "Køyr i verkeleg rask modus (*)"
+msgstr "KÃ¸yr i verkeleg rask modus (*)"
 
 #: engines/supernova/supernova.cpp:187
 #, c-format
@@ -6209,7 +6209,7 @@ msgstr ""
 #: engines/sword1/animation.cpp:532
 #, c-format
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
-msgstr "PSX strømme cutscene '%s' kan ikkje avspelast i pallettmodus"
+msgstr "PSX strÃ¸mme cutscene '%s' kan ikkje avspelast i pallettmodus"
 
 #: engines/sword1/animation.cpp:553 engines/sword2/animation.cpp:449
 msgid "DXA cutscenes found but ScummVM has been built without zlib"
@@ -6218,7 +6218,7 @@ msgstr "DXA cutscenar funne, men ScummVM vart bygd utan zlib"
 #: engines/sword1/animation.cpp:569 engines/sword2/animation.cpp:465
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
-msgstr "MPEG-2 cutscenar funne, men ScummVM er bygd utan MPEG-2 støtte"
+msgstr "MPEG-2 cutscenar funne, men ScummVM er bygd utan MPEG-2 stÃ¸tte"
 
 #: engines/sword1/animation.cpp:576 engines/sword2/animation.cpp:474
 #, c-format
@@ -6238,10 +6238,10 @@ msgid ""
 msgstr ""
 "ScummVM oppdaga at du har gamle lagra speltilstandar for Broken Sword 1 som "
 "vi kan konvertere.\n"
-"Det gamle formatet for lagra speltilstandar støttast ikkje lengre, så du vil "
-"ikkje kunne laste dei utan å konvertere dei.\n"
+"Det gamle formatet for lagra speltilstandar stÃ¸ttast ikkje lengre, sÃ¥ du vil "
+"ikkje kunne laste dei utan Ã¥ konvertere dei.\n"
 "\n"
-"Trykk OK for å konvertere dei no, ellers vil du bli spurt igjen neste gong "
+"Trykk OK for Ã¥ konvertere dei no, ellers vil du bli spurt igjen neste gong "
 "du starter spelet.\n"
 
 #: engines/sword1/control.cpp:1261
@@ -6250,26 +6250,26 @@ msgid ""
 "Target new saved game already exists!\n"
 "Would you like to keep the old saved game (%s) or the new one (%s)?\n"
 msgstr ""
-"Målet for den lagrede speltilstanden finst!\n"
-"Vil du ta vare på den gamle tilstanden (%s) eller den nye (%s)?\n"
+"MÃ¥let for den lagrede speltilstanden finst!\n"
+"Vil du ta vare pÃ¥ den gamle tilstanden (%s) eller den nye (%s)?\n"
 " \n"
 
 #: engines/sword1/control.cpp:1264
 msgid "Keep the old one"
-msgstr "Ta vare på den gamle"
+msgstr "Ta vare pÃ¥ den gamle"
 
 #: engines/sword1/control.cpp:1264
 msgid "Keep the new one"
-msgstr "Ta vare på den nye"
+msgstr "Ta vare pÃ¥ den nye"
 
 #: engines/sword1/logic.cpp:1635
 msgid "This is the end of the Broken Sword 1 Demo"
-msgstr "Dette er slutten på Broken Sword 1-demoen"
+msgstr "Dette er slutten pÃ¥ Broken Sword 1-demoen"
 
 #: engines/sword2/animation.cpp:429
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
-msgstr "PSX cutscenar vart funne, men ScummVM er bygd utan RGB fargestøtte"
+msgstr "PSX cutscenar vart funne, men ScummVM er bygd utan RGB fargestÃ¸tte"
 
 #: engines/sword2/sword2.cpp:79
 msgid "Show object labels"
@@ -6277,7 +6277,7 @@ msgstr "Syn objektmerkelappar"
 
 #: engines/sword2/sword2.cpp:80
 msgid "Show labels for objects on mouse hover"
-msgstr "Syn merkelappar for objekt når musa er over dei"
+msgstr "Syn merkelappar for objekt nÃ¥r musa er over dei"
 
 #: engines/sword25/detection.cpp:46
 msgid "Use English speech"
@@ -6293,7 +6293,7 @@ msgid ""
 "The teenagent.dat file is compressed and zlib hasn't been included in this "
 "executable. Please decompress it"
 msgstr ""
-"Fila teenagent.dat er komprimert og zlib er ikkje inkludert i binærfila, "
+"Fila teenagent.dat er komprimert og zlib er ikkje inkludert i binÃ¦rfila, "
 "vennlegs dekomprimer den"
 
 #: engines/tony/tony.cpp:256
@@ -6412,7 +6412,7 @@ msgstr "Syn FPS-teller"
 #: engines/wintermute/detection.cpp:63
 msgid "Show the current number of frames per second in the upper left corner"
 msgstr ""
-"Vis det gjeldande antall bilete per sekund i øvre venstre hjørne av skjermen"
+"Vis det gjeldande antall bilete per sekund i Ã¸vre venstre hjÃ¸rne av skjermen"
 
 #: engines/wintermute/detection.cpp:72
 msgid "Sprite bilinear filtering (SLOW)"
@@ -6448,7 +6448,7 @@ msgstr "Escape Tast"
 #: engines/wintermute/keymapper_tables.h:120
 #, fuzzy
 msgid "Look At"
-msgstr "Se på"
+msgstr "Se pÃ¥"
 
 #: engines/wintermute/keymapper_tables.h:147
 #: engines/wintermute/keymapper_tables.h:510
@@ -6456,14 +6456,14 @@ msgstr "Se på"
 #: engines/wintermute/keymapper_tables.h:1644
 #, fuzzy
 msgid "Walk forward"
-msgstr "Gå til"
+msgstr "GÃ¥ til"
 
 #: engines/wintermute/keymapper_tables.h:153
 #: engines/wintermute/keymapper_tables.h:515
 #: engines/wintermute/keymapper_tables.h:1651
 #, fuzzy
 msgid "Walk backward"
-msgstr "Gå til"
+msgstr "GÃ¥ til"
 
 #: engines/wintermute/keymapper_tables.h:171
 #: engines/wintermute/keymapper_tables.h:468
@@ -6700,7 +6700,7 @@ msgstr "Snu til Venstre"
 #: engines/wintermute/keymapper_tables.h:545
 #, fuzzy
 msgid "Turn right fast"
-msgstr "Snu til Høyre"
+msgstr "Snu til HÃ¸yre"
 
 #: engines/wintermute/keymapper_tables.h:550
 #, fuzzy
@@ -6857,22 +6857,22 @@ msgstr "Vis skjulte filer"
 #: engines/wintermute/keymapper_tables.h:956
 #, fuzzy
 msgid "Dance move up"
-msgstr "Skli til Høyre"
+msgstr "Skli til HÃ¸yre"
 
 #: engines/wintermute/keymapper_tables.h:962
 #, fuzzy
 msgid "Dance move down"
-msgstr "Skli til Høyre"
+msgstr "Skli til HÃ¸yre"
 
 #: engines/wintermute/keymapper_tables.h:968
 #, fuzzy
 msgid "Dance move left"
-msgstr "Skli til Høyre"
+msgstr "Skli til HÃ¸yre"
 
 #: engines/wintermute/keymapper_tables.h:974
 #, fuzzy
 msgid "Dance move right"
-msgstr "Skli til Høyre"
+msgstr "Skli til HÃ¸yre"
 
 #: engines/wintermute/keymapper_tables.h:1004
 #, fuzzy
@@ -6990,7 +6990,7 @@ msgstr "Speletid: "
 #: engines/wintermute/keymapper_tables.h:1512
 #, fuzzy
 msgid "Player 2: Right"
-msgstr "Skli til Høyre"
+msgstr "Skli til HÃ¸yre"
 
 #: engines/wintermute/keymapper_tables.h:1517
 #, fuzzy
@@ -7034,34 +7034,34 @@ msgstr "Dobbel FPS"
 
 #: engines/zvision/detection_tables.h:61
 msgid "Increase framerate from 30 to 60 FPS"
-msgstr "Auk bilderate frå 30 til 60 FPS"
+msgstr "Auk bilderate frÃ¥ 30 til 60 FPS"
 
 #: engines/zvision/detection_tables.h:70
 msgid "Enable Venus"
-msgstr "Slå på Venus"
+msgstr "SlÃ¥ pÃ¥ Venus"
 
 #: engines/zvision/detection_tables.h:71
 msgid "Enable the Venus help system"
-msgstr "Slå på Venus-hjelpesystemet"
+msgstr "SlÃ¥ pÃ¥ Venus-hjelpesystemet"
 
 #: engines/zvision/detection_tables.h:80
 msgid "Disable animation while turning"
-msgstr "Slå av animasjonar under snuing"
+msgstr "SlÃ¥ av animasjonar under snuing"
 
 #: engines/zvision/detection_tables.h:81
 msgid "Disable animation while turning in panorama mode"
-msgstr "Slå av animasjonar under snuing i panoramamodus"
+msgstr "SlÃ¥ av animasjonar under snuing i panoramamodus"
 
 #: engines/zvision/detection_tables.h:90
 msgid "Use high resolution MPEG video"
-msgstr "Nytt høgoppløyseleg MPEG-video"
+msgstr "Nytt hÃ¸gopplÃ¸yseleg MPEG-video"
 
 #: engines/zvision/detection_tables.h:91
 #, fuzzy
 msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
 msgstr ""
-"Nytt MPEG video frå DVD-versjonen, framfor AVI-versjonen med lågare "
-"oppløysning"
+"Nytt MPEG video frÃ¥ DVD-versjonen, framfor AVI-versjonen med lÃ¥gare "
+"opplÃ¸ysning"
 
 #: engines/zvision/detection.cpp:150
 #, fuzzy
@@ -7097,7 +7097,7 @@ msgstr ""
 #: engines/zvision/detection.cpp:230
 #, fuzzy
 msgid "Preferences"
-msgstr "Føretrukken eining:"
+msgstr "FÃ¸retrukken eining:"
 
 #: engines/zvision/file/save_manager.cpp:222
 #, c-format
@@ -7122,22 +7122,22 @@ msgstr ""
 
 #, fuzzy
 #~ msgid "Interact via Right Click)"
-#~ msgstr "Høgreklikk"
+#~ msgstr "HÃ¸greklikk"
 
 #~ msgid "Trackpad mode is now"
 #~ msgstr "Trackpadmodus er no"
 
 #~ msgid "ON"
-#~ msgstr "PÅ"
+#~ msgstr "PÃ…"
 
 #~ msgid "OFF"
 #~ msgstr "AV"
 
 #~ msgid "Swipe three fingers to the right to toggle."
-#~ msgstr "Sveip tre fingre til høgre for å veksle."
+#~ msgstr "Sveip tre fingre til hÃ¸gre for Ã¥ veksle."
 
 #~ msgid "Right Click Once"
-#~ msgstr "Høgreklikk ein gong"
+#~ msgstr "HÃ¸greklikk ein gong"
 
 #~ msgid "Escape Key"
 #~ msgstr "Escape Tast"
@@ -7181,19 +7181,19 @@ msgstr ""
 #~ msgstr " (Blokkert)"
 
 #~ msgid "Hold Shift for Mass Add"
-#~ msgstr "Hold Shift nede for å legge til fleire"
+#~ msgstr "Hold Shift nede for Ã¥ legge til fleire"
 
 #~ msgid "Hide Toolbar"
-#~ msgstr "Skjul verktøylinje"
+#~ msgstr "Skjul verktÃ¸ylinje"
 
 #~ msgid "Show Keyboard"
 #~ msgstr "Syn tastatur"
 
 #~ msgid "Sound on/off"
-#~ msgstr "Lyd av/på"
+#~ msgstr "Lyd av/pÃ¥"
 
 #~ msgid "Right click"
-#~ msgstr "Høgreklikk"
+#~ msgstr "HÃ¸greklikk"
 
 #~ msgid "Free look"
 #~ msgstr "Frikikking"
@@ -7214,10 +7214,10 @@ msgstr ""
 #~ msgstr "Peikar venstre"
 
 #~ msgid "Cursor Right"
-#~ msgstr "Peikar høgre"
+#~ msgstr "Peikar hÃ¸gre"
 
 #~ msgid "   Are you sure you want to quit ?   "
-#~ msgstr "   Er du sikker på at du vil avslutte?   "
+#~ msgstr "   Er du sikker pÃ¥ at du vil avslutte?   "
 
 #~ msgid "Keyboard"
 #~ msgstr "Tastatur"
@@ -7229,21 +7229,21 @@ msgstr ""
 #~ msgstr "Skjerm "
 
 #~ msgid "Do you want to perform an automatic scan ?"
-#~ msgstr "Vil du utføre eit automatisk søk?"
+#~ msgstr "Vil du utfÃ¸re eit automatisk sÃ¸k?"
 
 #~ msgid "Map right click action"
-#~ msgstr "Kople høgreklikkshandling"
+#~ msgstr "Kople hÃ¸greklikkshandling"
 
 #~ msgid "You must map a key to the 'Right Click' action to play this game"
 #~ msgstr ""
-#~ "Du må kople ein tast til 'Høgreklikk'-handlinga for å spele dette spelet"
+#~ "Du mÃ¥ kople ein tast til 'HÃ¸greklikk'-handlinga for Ã¥ spele dette spelet"
 
 #~ msgid "Map hide toolbar action"
-#~ msgstr "Kople skjul-verktøylinje-handlinga"
+#~ msgstr "Kople skjul-verktÃ¸ylinje-handlinga"
 
 #~ msgid "You must map a key to the 'Hide toolbar' action to play this game"
 #~ msgstr ""
-#~ "Du må kople ein tast til 'Skjul verktøylinje' for å spele dette spelet"
+#~ "Du mÃ¥ kople ein tast til 'Skjul verktÃ¸ylinje' for Ã¥ spele dette spelet"
 
 #~ msgid "Map Zoom Up action (optional)"
 #~ msgstr "Kople Zoom Opp-handling (valfri)"
@@ -7255,12 +7255,12 @@ msgstr ""
 #~ "Don't forget to map a key to 'Hide Toolbar' action to see the whole "
 #~ "inventory"
 #~ msgstr ""
-#~ "Ikkje gløym å kople ein tast til 'Skjul verktøylinje' for å se heile "
+#~ "Ikkje glÃ¸ym Ã¥ kople ein tast til 'Skjul verktÃ¸ylinje' for Ã¥ se heile "
 #~ "inventaret"
 
 #, fuzzy
 #~ msgid "Saved games sync complete."
-#~ msgstr "Søk fullført!"
+#~ msgstr "SÃ¸k fullfÃ¸rt!"
 
 #, fuzzy
 #~ msgid "Loading..."
@@ -7284,7 +7284,7 @@ msgstr ""
 
 #, fuzzy
 #~ msgid "Check for updates automatically"
-#~ msgstr "SJå etter oppdateringar..."
+#~ msgstr "SJÃ¥ etter oppdateringar..."
 
 #~ msgid "8 kHz"
 #~ msgstr "8 kHz"
@@ -7305,15 +7305,15 @@ msgstr ""
 #~ "Higher value specifies better sound quality but may be not supported by "
 #~ "your soundcard"
 #~ msgstr ""
-#~ "Høgare verdier gir betre lydkvalitet, men støttast kanskje ikkje av "
+#~ "HÃ¸gare verdier gir betre lydkvalitet, men stÃ¸ttast kanskje ikkje av "
 #~ "lydkortet ditt"
 
 #~ msgid ""
 #~ "The theme you selected does not support your current language. If you "
 #~ "want to use this theme you need to switch to another language first."
 #~ msgstr ""
-#~ "Temaet du har valt støttar ikkje det aktive språket. Om du vil nytte "
-#~ "dette temaet må du bytte til eit anna språk først."
+#~ "Temaet du har valt stÃ¸ttar ikkje det aktive sprÃ¥ket. Om du vil nytte "
+#~ "dette temaet mÃ¥ du bytte til eit anna sprÃ¥k fÃ¸rst."
 
 #, fuzzy
 #~ msgid "Speed multiplier for mouse emulation"
@@ -7324,19 +7324,19 @@ msgstr ""
 #~ "Please download it from www.scummvm.org"
 #~ msgstr ""
 #~ "Kunne ikkje finne fila \"sky.cpt\"!\n"
-#~ "Venlegst last den ned frå www.scummvm.org"
+#~ "Venlegst last den ned frÃ¥ www.scummvm.org"
 
 #~ msgid ""
 #~ "You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
-#~ msgstr "Du mangler fila 'teenagent.dat'. Skaff den frå ScummVM-heimesida"
+#~ msgstr "Du mangler fila 'teenagent.dat'. Skaff den frÃ¥ ScummVM-heimesida"
 
 #, fuzzy
 #~ msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
-#~ msgstr "Du mangler fila 'teenagent.dat'. Skaff den frå ScummVM-heimesida"
+#~ msgstr "Du mangler fila 'teenagent.dat'. Skaff den frÃ¥ ScummVM-heimesida"
 
 #, fuzzy
 #~ msgid "File 'toon.dat' is corrupt. Get it from the ScummVM website"
-#~ msgstr "Du mangler fila 'teenagent.dat'. Skaff den frå ScummVM-heimesida"
+#~ msgstr "Du mangler fila 'teenagent.dat'. Skaff den frÃ¥ ScummVM-heimesida"
 
 #~ msgid "Invalid save file name"
 #~ msgstr "Ugyldig namn for lagra spel"
@@ -7345,18 +7345,18 @@ msgstr ""
 #~ msgstr "Nytt opprinnelege skjerm for lagring/lasting"
 
 #~ msgid "The game in '%s' seems to be unknown."
-#~ msgstr "Spelet i '%s' ser ut til å vere ukjend."
+#~ msgstr "Spelet i '%s' ser ut til Ã¥ vere ukjend."
 
 #~ msgid ""
 #~ "Please, report the following data to the ScummVM team along with name"
 #~ msgstr ""
-#~ "Vennlegst rapporter følgjande data til ScummVM-teamet, saman med namnet"
+#~ "Vennlegst rapporter fÃ¸lgjande data til ScummVM-teamet, saman med namnet"
 
 #~ msgid "of the game you tried to add and its version/language/etc.:"
-#~ msgstr "på spelet du prøvde å leggje til, samt versjon/språk/etc.:"
+#~ msgstr "pÃ¥ spelet du prÃ¸vde Ã¥ leggje til, samt versjon/sprÃ¥k/etc.:"
 
 #~ msgid "You have to restart ScummVM before your changes will take effect."
-#~ msgstr "Du må starte ScummVM på nytt for at endringane skal tre i kraft."
+#~ msgstr "Du mÃ¥ starte ScummVM pÃ¥ nytt for at endringane skal tre i kraft."
 
 #~ msgid "OpenGL (No filtering)"
 #~ msgstr "OpenGL (Ingen filtrering)"
@@ -7367,7 +7367,7 @@ msgstr ""
 
 #~ msgid ""
 #~ "Turns off General MIDI mapping for games with Roland MT-32 soundtrack"
-#~ msgstr "Slår av General MIDI-kopling for spel med Roland MT-32 lydspor"
+#~ msgstr "SlÃ¥r av General MIDI-kopling for spel med Roland MT-32 lydspor"
 
 #~ msgid "Standard (16bpp)"
 #~ msgstr "Standard (16bpp)"
