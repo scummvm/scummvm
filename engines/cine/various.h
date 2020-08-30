@@ -31,7 +31,8 @@
 
 namespace Cine {
 
-#define kMaxSavegames 20 // 20 fit on screen using original save/load interface
+#define kMaxSavegames 100
+#define kMaxOrigUiSavegames 20 // 20 fit on screen using original save/load interface
 
 // Maximum size of the command buffer including the trailing zero
 #define kMaxCommandBufferSize 80
