@@ -3,6 +3,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2.3.0 (XXXX-XX-XX)
 
+ General:
+   - Switched ScummVM GUI output to UTF-32.
+
 
 #### 2.2.0 (2020-09-XX)
 
