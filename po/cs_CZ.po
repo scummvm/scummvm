@@ -20,7 +20,7 @@ msgstr ""
 "X-Generator: Weblate 4.0.4\n"
 "X-Poedit-SourceCharset: iso-8859-2\n"
 "X-Poedit-Basepath: ..\n"
-"X-Language-name: Cesky\n"
+"X-Language-name: Český\n"
 
 #: gui/about.cpp:102
 #, c-format

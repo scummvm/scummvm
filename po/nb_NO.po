@@ -19,7 +19,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.0.4\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
-"X-Language-name: Norsk (bokmaal)\n"
+"X-Language-name: Norsk (bokmål)\n"
 
 #: gui/about.cpp:102
 #, c-format
