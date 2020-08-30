@@ -290,7 +290,7 @@ void Room::loadOtherRoomMessages() {
 
 	while (offset < endOffset) {
 		uint16 nextOffset = readRdfWord(offset + 4);
-		if (nextOffset >= endOffset)
+		if (nextOffset >= endOffset || offset >= nextOffset)
 			break;
 		
 		while (offset < nextOffset) {
