@@ -198,6 +198,34 @@ bool U32String::operator!=(const char *x) const {
 	return !equals(x);
 }
 
+bool U32String::operator<(const String &x) const {
+	for (int i = 0 ; i < _size && i < x.size() ; ++i) {
+		if (_str[i] < x[i])
+			return true;
+		else if (_str[i] > x[i])
+			return false;
+	}
+	return (_size < x.size());
+}
+
+bool U32String::operator<=(const String &x) const {
+	return !operator>(x);
+}
+
+bool U32String::operator>(const String &x) const {
+	for (int i = 0 ; i < _size && i < x.size() ; ++i) {
+		if (_str[i] > x[i])
+			return true;
+		else if (_str[i] < x[i])
+			return false;
+	}
+	return (_size > x.size());
+}
+
+bool U32String::operator>=(const String &x) const {
+	return !operator<(x);
+}
+
 bool U32String::equals(const U32String &x) const {
 	if (this == &x || _str == x._str) {
 		return true;
