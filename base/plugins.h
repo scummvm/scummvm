@@ -128,7 +128,6 @@ extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
 		PLUGIN_DYNAMIC_DSO_HANDLE \
 		PLUGIN_DYNAMIC_BUILD_DATE \
 		PLUGIN_EXPORT int32 PLUGIN_getVersion() { return PLUGIN_VERSION; } \
-		PLUGIN_EXPORT int32 PLUGIN_getType() { return TYPE; } \
 		PLUGIN_EXPORT int32 PLUGIN_getTypeVersion() { return TYPE##_VERSION; } \
 		PLUGIN_EXPORT PluginObject *PLUGIN_getObject() { \
 			return new PLUGINCLASS(); \
@@ -177,14 +176,14 @@ public:
 class Plugin {
 protected:
 	PluginObject *_pluginObject;
-	PluginType _type;
+	const PluginType _type;
 	
 	virtual bool loadPlugin() = 0;   // TODO: Rename to load() ?
 	virtual void unloadPlugin() = 0; // TODO: Rename to unload() ?
 
 
 public:
-	Plugin() : _pluginObject(0), _type(PLUGIN_TYPE_MAX) {}
+	Plugin(PluginType type) : _pluginObject(0), _type(type) {}
 	virtual ~Plugin() {
 		//if (isLoaded())
 			//unloadPlugin();

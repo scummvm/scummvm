@@ -40,8 +40,8 @@ protected:
 	bool _isLoaded;
 
 public:
-	DynamicPlugin(const Common::String &filename) :
-		_filename(filename), _isLoaded(false) {}
+	DynamicPlugin(const Common::String &filename, PluginType type = PLUGIN_TYPE_ENGINE) :
+		_filename(filename), _isLoaded(false), Plugin(type) {}
 
 	virtual bool loadPlugin() {
 		// Validate the plugin API version
@@ -52,19 +52,6 @@ public:
 		}
 		if (verFunc() != PLUGIN_VERSION) {
 			warning("Plugin uses a different API version (you have: '%d', needed is: '%d')", verFunc(), PLUGIN_VERSION);
-			unloadPlugin();
-			return false;
-		}
-
-		// Get the type of the plugin
-		IntFunc typeFunc = (IntFunc)findSymbol("PLUGIN_getType");
-		if (!typeFunc) {
-			unloadPlugin();
-			return false;
-		}
-		_type = (PluginType)typeFunc();
-		if (_type >= PLUGIN_TYPE_MAX) {
-			warning("Plugin type unknown: %d", _type);
 			unloadPlugin();
 			return false;
 		}

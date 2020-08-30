@@ -52,6 +52,14 @@ const char *Plugin::getName() const {
 	return _pluginObject->getName();
 }
 
+class StaticPlugin : public Plugin {
+public:
+	StaticPlugin(PluginObject *pluginobject, PluginType type) : Plugin(type) {
+		assert(pluginobject);
+		assert(type < PLUGIN_TYPE_MAX);
+		_pluginObject = pluginobject;
+	}
+
 const char *Plugin::getEngineId() const {
 	if (_type == PLUGIN_TYPE_ENGINE_DETECTION) {
 		return _pluginObject->getEngineId();
@@ -59,13 +67,6 @@ const char *Plugin::getEngineId() const {
 
 	return nullptr;
 }
-
-StaticPlugin::StaticPlugin(PluginObject *pluginobject, PluginType type) {
-		assert(pluginobject);
-		assert(type < PLUGIN_TYPE_MAX);
-		_pluginObject = pluginobject;
-		_type = type;
-	}
 
 StaticPlugin::~StaticPlugin() {
 		delete _pluginObject;

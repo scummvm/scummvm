@@ -58,8 +58,8 @@ protected:
 	}
 
 public:
-	Win32Plugin(const Common::String &filename)
-		: DynamicPlugin(filename), _dlHandle(0) {}
+	Win32Plugin(const Common::String &filename, PluginType type = PLUGIN_TYPE_ENGINE)
+		: DynamicPlugin(filename, type), _dlHandle(0) {}
 
 	bool loadPlugin() {
 		assert(!_dlHandle);
