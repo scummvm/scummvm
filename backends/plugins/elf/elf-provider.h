@@ -50,8 +50,8 @@ protected:
 	virtual VoidFunc findSymbol(const char *symbol);
 
 public:
-	ELFPlugin(const Common::String &filename) :
-		DynamicPlugin(filename),
+	ELFPlugin(const Common::String &filename, PluginType type = PLUGIN_TYPE_ENGINE) :
+		DynamicPlugin(filename, type),
 		_dlHandle(0),
 		_dso_handle(0) {
 	}
@@ -71,8 +71,8 @@ public:
 template<class T>
 class TemplatedELFPlugin : public ELFPlugin {
 public:
-	TemplatedELFPlugin(const Common::String &filename) :
-		ELFPlugin(filename) {
+	TemplatedELFPlugin(const Common::String &filename, PluginType type = PLUGIN_TYPE_ENGINE) :
+		ELFPlugin(filename, type) {
 	}
 
 	virtual DLObject *makeDLObject() {
