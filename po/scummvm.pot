@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-30 13:57+0100\n"
+"POT-Creation-Date: 2020-08-31 13:11+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -573,8 +573,8 @@ msgstr ""
 #: engines/dragons/detection.cpp:259 engines/glk/scott/scott.cpp:412
 #: engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
-#: engines/wintermute/keymapper_tables.h:1381
-#: engines/wintermute/keymapper_tables.h:1587
+#: engines/wintermute/keymapper_tables.h:1409
+#: engines/wintermute/keymapper_tables.h:1639
 msgid "Up"
 msgstr ""
 
@@ -583,8 +583,8 @@ msgstr ""
 #: engines/dragons/detection.cpp:265 engines/glk/scott/scott.cpp:412
 #: engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
-#: engines/wintermute/keymapper_tables.h:1387
-#: engines/wintermute/keymapper_tables.h:1593
+#: engines/wintermute/keymapper_tables.h:1415
+#: engines/wintermute/keymapper_tables.h:1645
 msgid "Down"
 msgstr ""
 
@@ -592,9 +592,9 @@ msgstr ""
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: engines/dragons/detection.cpp:271
 #: engines/wintermute/keymapper_tables.h:1023
-#: engines/wintermute/keymapper_tables.h:1369
-#: engines/wintermute/keymapper_tables.h:1453
-#: engines/wintermute/keymapper_tables.h:1575
+#: engines/wintermute/keymapper_tables.h:1397
+#: engines/wintermute/keymapper_tables.h:1505
+#: engines/wintermute/keymapper_tables.h:1627
 msgid "Left"
 msgstr ""
 
@@ -602,9 +602,9 @@ msgstr ""
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: engines/dragons/detection.cpp:277
 #: engines/wintermute/keymapper_tables.h:1029
-#: engines/wintermute/keymapper_tables.h:1375
-#: engines/wintermute/keymapper_tables.h:1461
-#: engines/wintermute/keymapper_tables.h:1581
+#: engines/wintermute/keymapper_tables.h:1403
+#: engines/wintermute/keymapper_tables.h:1513
+#: engines/wintermute/keymapper_tables.h:1633
 msgid "Right"
 msgstr ""
 
@@ -641,7 +641,7 @@ msgstr ""
 msgid "~Q~uit"
 msgstr ""
 
-#: gui/launcher.cpp:140 backends/platform/sdl/macosx/appmenu_osx.mm:206
+#: gui/launcher.cpp:140 backends/platform/sdl/macosx/appmenu_osx.mm:216
 msgid "Quit ScummVM"
 msgstr ""
 
@@ -649,7 +649,7 @@ msgstr ""
 msgid "A~b~out..."
 msgstr ""
 
-#: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:200
+#: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:210
 msgid "About ScummVM"
 msgstr ""
 
@@ -1999,9 +1999,9 @@ msgid "~R~eturn to Launcher"
 msgstr ""
 
 #: engines/dialogs.cpp:103 engines/engine.cpp:814 engines/agi/saveload.cpp:759
-#: engines/avalanche/parser.cpp:1919 engines/cine/various.cpp:343
+#: engines/avalanche/parser.cpp:1919 engines/cine/various.cpp:350
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
-#: engines/dreamweb/saveload.cpp:262 engines/glk/streams.cpp:1427
+#: engines/dreamweb/saveload.cpp:262 engines/glk/streams.cpp:1433
 #: engines/gnap/menu.cpp:466 engines/hugo/file.cpp:298
 #: engines/illusions/menusystem.cpp:703 engines/kingdom/kingdom.cpp:739
 #: engines/lab/savegame.cpp:243 engines/mads/nebular/dialogs_nebular.cpp:350
@@ -2019,9 +2019,9 @@ msgstr ""
 #: engines/dialogs.cpp:103 engines/engine.cpp:814
 #: backends/platform/symbian/src/SymbianActions.cpp:46
 #: engines/agi/saveload.cpp:759 engines/avalanche/parser.cpp:1919
-#: engines/cine/various.cpp:343 engines/dm/loadsave.cpp:199
+#: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
-#: engines/glk/streams.cpp:1427 engines/gnap/menu.cpp:466
+#: engines/glk/streams.cpp:1433 engines/gnap/menu.cpp:466
 #: engines/hugo/file.cpp:298 engines/illusions/menusystem.cpp:703
 #: engines/kingdom/kingdom.cpp:739 engines/lab/savegame.cpp:238
 #: engines/lab/savegame.cpp:243 engines/mads/nebular/dialogs_nebular.cpp:350
@@ -2176,7 +2176,7 @@ msgstr ""
 #: engines/metaengine.cpp:69 backends/platform/maemo/maemo.cpp:178
 #: engines/wintermute/keymapper_tables.h:249
 #: engines/wintermute/keymapper_tables.h:293
-#: engines/wintermute/keymapper_tables.h:1599
+#: engines/wintermute/keymapper_tables.h:1651
 msgid "Middle Click"
 msgstr ""
 
@@ -2205,7 +2205,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:997
 #: engines/wintermute/keymapper_tables.h:1183
 #: engines/wintermute/keymapper_tables.h:1296
-#: engines/wintermute/keymapper_tables.h:1543
+#: engines/wintermute/keymapper_tables.h:1595
 msgid "Skip"
 msgstr ""
 
@@ -2559,9 +2559,9 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1061
 #: engines/wintermute/keymapper_tables.h:1129
 #: engines/wintermute/keymapper_tables.h:1221
-#: engines/wintermute/keymapper_tables.h:1309
-#: engines/wintermute/keymapper_tables.h:1326
-#: engines/wintermute/keymapper_tables.h:1357
+#: engines/wintermute/keymapper_tables.h:1337
+#: engines/wintermute/keymapper_tables.h:1354
+#: engines/wintermute/keymapper_tables.h:1385
 msgid "Save screenshot"
 msgstr ""
 
@@ -3009,11 +3009,15 @@ msgid "Y"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:52
+#: backends/platform/ds/arm9/source/scummhelp.cpp:47
+#: backends/platform/ds/arm9/source/scummhelp.cpp:64
 #: backends/platform/sdl/ps3/ps3.cpp:45 backends/platform/sdl/psp2/psp2.cpp:49
 msgid "Select"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:53
+#: backends/platform/ds/arm9/source/scummhelp.cpp:46
+#: backends/platform/ds/arm9/source/scummhelp.cpp:63
 #: backends/platform/sdl/ps3/ps3.cpp:47 backends/platform/sdl/psp2/psp2.cpp:50
 msgid "Start"
 msgstr ""
@@ -3188,6 +3192,142 @@ msgstr ""
 msgid "Disable power off"
 msgstr ""
 
+#: backends/platform/ds/arm9/source/scummhelp.cpp:41
+msgid "DS Controls (right handed):"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/scummhelp.cpp:42
+#: backends/platform/ds/arm9/source/scummhelp.cpp:67
+#: backends/platform/ds/arm9/source/scummhelp.cpp:76
+msgid "Pad Left"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/scummhelp.cpp:42
+#: backends/platform/ds/arm9/source/scummhelp.cpp:59
+msgid "Left mouse button"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/scummhelp.cpp:43
+#: backends/platform/ds/arm9/source/scummhelp.cpp:68
+#: backends/platform/ds/arm9/source/scummhelp.cpp:77
+msgid "Pad Right"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/scummhelp.cpp:43
+#: backends/platform/ds/arm9/source/scummhelp.cpp:60
+msgid "Right mouse button"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/scummhelp.cpp:44
+#: backends/platform/ds/arm9/source/scummhelp.cpp:66
+#: backends/platform/ds/arm9/source/scummhelp.cpp:78
+msgid "Pad Up"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/scummhelp.cpp:44
+#: backends/platform/ds/arm9/source/scummhelp.cpp:61
+msgid "Mouse hover mode (no click)"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/scummhelp.cpp:45
+#: backends/platform/ds/arm9/source/scummhelp.cpp:65
+#: backends/platform/ds/arm9/source/scummhelp.cpp:79
+msgid "Pad Down"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/scummhelp.cpp:45
+#: backends/platform/ds/arm9/source/scummhelp.cpp:62
+msgid "Skip dialog line (some games)"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/scummhelp.cpp:46
+#: backends/platform/ds/arm9/source/scummhelp.cpp:63
+msgid "Pause/Game menu"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/scummhelp.cpp:47
+#: backends/platform/ds/arm9/source/scummhelp.cpp:64
+msgid "DS Options menu"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/scummhelp.cpp:48
+#: backends/platform/ds/arm9/source/scummhelp.cpp:65
+msgid "Skip cutscenes"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/scummhelp.cpp:49
+msgid "Switch screens"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/scummhelp.cpp:50
+#: backends/platform/ds/arm9/source/scummhelp.cpp:67
+msgid "Show/hide debug console"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/scummhelp.cpp:51
+#: backends/platform/ds/arm9/source/scummhelp.cpp:66
+msgid "Show/hide keyboard"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/scummhelp.cpp:52
+#: backends/platform/ds/arm9/source/scummhelp.cpp:69
+msgid "Scroll current touch screen view"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/scummhelp.cpp:53
+#: backends/platform/ds/arm9/source/scummhelp.cpp:70
+msgid "Zoom in/out"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/scummhelp.cpp:58
+msgid "DS Controls (left handed):"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/scummhelp.cpp:68
+msgid "Swap screens"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/scummhelp.cpp:75
+msgid "Indiana Jones Fight controls:"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/scummhelp.cpp:76
+#: engines/hdb/detection.cpp:321
+msgid "Move left"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/scummhelp.cpp:77
+#: engines/hdb/detection.cpp:327
+msgid "Move right"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/scummhelp.cpp:78
+msgid "High guard"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/scummhelp.cpp:79
+msgid "Guard down"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/scummhelp.cpp:80
+msgid "Guard middle"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/scummhelp.cpp:81
+#: engines/scumm/help.cpp:312
+msgid "Punch high"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/scummhelp.cpp:82
+#: engines/scumm/help.cpp:313
+msgid "Punch middle"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/scummhelp.cpp:83
+#: engines/scumm/help.cpp:314
+msgid "Punch low"
+msgstr ""
+
 #: backends/platform/ios7/ios7_osys_events.cpp:315
 #: backends/platform/ios7/ios7_osys_events.cpp:443
 #: backends/platform/iphone/osys_events.cpp:300
@@ -3216,64 +3356,64 @@ msgstr ""
 msgid "Click Mode"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:202
+#: backends/platform/sdl/macosx/appmenu_osx.mm:212
 msgid "Hide ScummVM"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:203
+#: backends/platform/sdl/macosx/appmenu_osx.mm:213
 msgid "Hide Others"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:204
+#: backends/platform/sdl/macosx/appmenu_osx.mm:214
 msgid "Show All"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:209
+#: backends/platform/sdl/macosx/appmenu_osx.mm:219
 msgid "Window"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:211
+#: backends/platform/sdl/macosx/appmenu_osx.mm:221
 msgid "Minimize"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:214
+#: backends/platform/sdl/macosx/appmenu_osx.mm:224
 #: engines/zvision/detection.cpp:179
 msgid "Help"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:219
+#: backends/platform/sdl/macosx/appmenu_osx.mm:229
 msgid "User Manual"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:221
+#: backends/platform/sdl/macosx/appmenu_osx.mm:231
 msgid "General Information"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:222
+#: backends/platform/sdl/macosx/appmenu_osx.mm:232
 msgid "What's New in ScummVM"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:224
+#: backends/platform/sdl/macosx/appmenu_osx.mm:234
 msgid "Credits"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:225
+#: backends/platform/sdl/macosx/appmenu_osx.mm:235
 msgid "GPL License"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:226
+#: backends/platform/sdl/macosx/appmenu_osx.mm:236
 msgid "LGPL License"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:227
+#: backends/platform/sdl/macosx/appmenu_osx.mm:237
 msgid "Freefont License"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:228
+#: backends/platform/sdl/macosx/appmenu_osx.mm:238
 msgid "OFL License"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:229
+#: backends/platform/sdl/macosx/appmenu_osx.mm:239
 msgid "BSD License"
 msgstr ""
 
@@ -3623,9 +3763,9 @@ msgid ""
 msgstr ""
 
 #: engines/agi/saveload.cpp:772 engines/avalanche/parser.cpp:1907
-#: engines/cine/various.cpp:354 engines/dm/dm.cpp:276
+#: engines/cine/various.cpp:361 engines/dm/dm.cpp:276
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
-#: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1436
+#: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1442
 #: engines/gnap/menu.cpp:475 engines/hugo/file.cpp:400
 #: engines/illusions/menusystem.cpp:680 engines/kingdom/kingdom.cpp:749
 #: engines/lab/savegame.cpp:258 engines/mads/nebular/dialogs_nebular.cpp:377
@@ -3639,9 +3779,9 @@ msgid "Restore game:"
 msgstr ""
 
 #: engines/agi/saveload.cpp:772 engines/avalanche/parser.cpp:1907
-#: engines/cine/various.cpp:354 engines/dm/dm.cpp:276
+#: engines/cine/various.cpp:361 engines/dm/dm.cpp:276
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
-#: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1436
+#: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1442
 #: engines/gnap/menu.cpp:475 engines/hugo/file.cpp:400
 #: engines/illusions/menusystem.cpp:680 engines/kingdom/kingdom.cpp:749
 #: engines/lab/savegame.cpp:238 engines/lab/savegame.cpp:258
@@ -4230,14 +4370,6 @@ msgstr ""
 msgid "Move down"
 msgstr ""
 
-#: engines/hdb/detection.cpp:321
-msgid "Move left"
-msgstr ""
-
-#: engines/hdb/detection.cpp:327
-msgid "Move right"
-msgstr ""
-
 #: engines/hdb/detection.cpp:333 engines/scumm/help.cpp:128
 #: engines/scumm/help.cpp:152 engines/scumm/help.cpp:170
 #: engines/scumm/help.cpp:198 engines/scumm/help.cpp:213
@@ -4655,6 +4787,7 @@ msgstr ""
 
 #: engines/mohawk/myst.cpp:619 engines/wintermute/keymapper_tables.h:1253
 #: engines/wintermute/keymapper_tables.h:1302
+#: engines/wintermute/keymapper_tables.h:1325
 msgid "Show map"
 msgstr ""
 
@@ -4731,15 +4864,15 @@ msgstr ""
 
 #: engines/mohawk/riven.cpp:906 engines/wintermute/keymapper_tables.h:159
 #: engines/wintermute/keymapper_tables.h:520
-#: engines/wintermute/keymapper_tables.h:1555
-#: engines/wintermute/keymapper_tables.h:1658
+#: engines/wintermute/keymapper_tables.h:1607
+#: engines/wintermute/keymapper_tables.h:1710
 msgid "Turn left"
 msgstr ""
 
 #: engines/mohawk/riven.cpp:912 engines/wintermute/keymapper_tables.h:165
 #: engines/wintermute/keymapper_tables.h:525
-#: engines/wintermute/keymapper_tables.h:1561
-#: engines/wintermute/keymapper_tables.h:1665
+#: engines/wintermute/keymapper_tables.h:1613
+#: engines/wintermute/keymapper_tables.h:1717
 msgid "Turn right"
 msgstr ""
 
@@ -4880,8 +5013,9 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:735
 #: engines/wintermute/keymapper_tables.h:943
 #: engines/wintermute/keymapper_tables.h:990
-#: engines/wintermute/keymapper_tables.h:1351
-#: engines/wintermute/keymapper_tables.h:1405
+#: engines/wintermute/keymapper_tables.h:1379
+#: engines/wintermute/keymapper_tables.h:1433
+#: engines/wintermute/keymapper_tables.h:1491
 msgid "???"
 msgstr ""
 
@@ -5312,7 +5446,7 @@ msgstr ""
 msgid "Skip cutscene"
 msgstr ""
 
-#: engines/scumm/help.cpp:78 engines/wintermute/keymapper_tables.h:1569
+#: engines/scumm/help.cpp:78 engines/wintermute/keymapper_tables.h:1621
 msgid "Space"
 msgstr ""
 
@@ -5354,7 +5488,7 @@ msgstr ""
 msgid "Simulate left mouse button"
 msgstr ""
 
-#: engines/scumm/help.cpp:90 engines/wintermute/keymapper_tables.h:1624
+#: engines/scumm/help.cpp:90 engines/wintermute/keymapper_tables.h:1676
 msgid "Tab"
 msgstr ""
 
@@ -5731,18 +5865,6 @@ msgstr ""
 
 #: engines/scumm/help.cpp:311
 msgid "Block low"
-msgstr ""
-
-#: engines/scumm/help.cpp:312
-msgid "Punch high"
-msgstr ""
-
-#: engines/scumm/help.cpp:313
-msgid "Punch middle"
-msgstr ""
-
-#: engines/scumm/help.cpp:314
-msgid "Punch low"
 msgstr ""
 
 #: engines/scumm/help.cpp:316
@@ -6185,20 +6307,20 @@ msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:147
 #: engines/wintermute/keymapper_tables.h:510
-#: engines/wintermute/keymapper_tables.h:1549
-#: engines/wintermute/keymapper_tables.h:1644
+#: engines/wintermute/keymapper_tables.h:1601
+#: engines/wintermute/keymapper_tables.h:1696
 msgid "Walk forward"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:153
 #: engines/wintermute/keymapper_tables.h:515
-#: engines/wintermute/keymapper_tables.h:1651
+#: engines/wintermute/keymapper_tables.h:1703
 msgid "Walk backward"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:171
 #: engines/wintermute/keymapper_tables.h:468
-#: engines/wintermute/keymapper_tables.h:1319
+#: engines/wintermute/keymapper_tables.h:1347
 msgid "Show scene geometry"
 msgstr ""
 
@@ -6234,7 +6356,8 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1148
 #: engines/wintermute/keymapper_tables.h:1240
 #: engines/wintermute/keymapper_tables.h:1289
-#: engines/wintermute/keymapper_tables.h:1536
+#: engines/wintermute/keymapper_tables.h:1472
+#: engines/wintermute/keymapper_tables.h:1588
 msgid "Show hints"
 msgstr ""
 
@@ -6245,21 +6368,23 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1247
 #: engines/wintermute/keymapper_tables.h:1259
 #: engines/wintermute/keymapper_tables.h:1268
-#: engines/wintermute/keymapper_tables.h:1411
+#: engines/wintermute/keymapper_tables.h:1439
 msgid "Show inventory"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:262
 #: engines/wintermute/keymapper_tables.h:311
 #: engines/wintermute/keymapper_tables.h:338
-#: engines/wintermute/keymapper_tables.h:1393
+#: engines/wintermute/keymapper_tables.h:1421
+#: engines/wintermute/keymapper_tables.h:1479
 msgid "GUI variant A"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:269
 #: engines/wintermute/keymapper_tables.h:318
 #: engines/wintermute/keymapper_tables.h:345
-#: engines/wintermute/keymapper_tables.h:1399
+#: engines/wintermute/keymapper_tables.h:1427
+#: engines/wintermute/keymapper_tables.h:1485
 msgid "GUI variant B"
 msgstr ""
 
@@ -6354,8 +6479,8 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1134
 #: engines/wintermute/keymapper_tables.h:1155
 #: engines/wintermute/keymapper_tables.h:1275
-#: engines/wintermute/keymapper_tables.h:1430
-#: engines/wintermute/keymapper_tables.h:1604
+#: engines/wintermute/keymapper_tables.h:1458
+#: engines/wintermute/keymapper_tables.h:1656
 msgid "Scroll up"
 msgstr ""
 
@@ -6367,8 +6492,8 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1141
 #: engines/wintermute/keymapper_tables.h:1162
 #: engines/wintermute/keymapper_tables.h:1282
-#: engines/wintermute/keymapper_tables.h:1437
-#: engines/wintermute/keymapper_tables.h:1609
+#: engines/wintermute/keymapper_tables.h:1465
+#: engines/wintermute/keymapper_tables.h:1661
 msgid "Scroll down"
 msgstr ""
 
@@ -6387,12 +6512,12 @@ msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:495
 #: engines/wintermute/keymapper_tables.h:603
-#: engines/wintermute/keymapper_tables.h:1341
+#: engines/wintermute/keymapper_tables.h:1369
 msgid "Debug print"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:500
-#: engines/wintermute/keymapper_tables.h:1314
+#: engines/wintermute/keymapper_tables.h:1342
 msgid "Exit"
 msgstr ""
 
@@ -6454,7 +6579,7 @@ msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:705
 #: engines/wintermute/keymapper_tables.h:1035
-#: engines/wintermute/keymapper_tables.h:1336
+#: engines/wintermute/keymapper_tables.h:1364
 msgid "Cancel waiting"
 msgstr ""
 
@@ -6575,17 +6700,17 @@ msgid "Shift"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:1169
-#: engines/wintermute/keymapper_tables.h:1522
+#: engines/wintermute/keymapper_tables.h:1574
 msgid "Next action"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:1177
-#: engines/wintermute/keymapper_tables.h:1530
+#: engines/wintermute/keymapper_tables.h:1582
 msgid "Previous action"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:1196
-#: engines/wintermute/keymapper_tables.h:1331
+#: engines/wintermute/keymapper_tables.h:1359
 msgid "Settings"
 msgstr ""
 
@@ -6613,71 +6738,80 @@ msgstr ""
 msgid "Spin faster"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1346
-msgid "Bezier window"
+#: engines/wintermute/keymapper_tables.h:1311
+msgid "Zoom out"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1362
-msgid "Droid action"
+#: engines/wintermute/keymapper_tables.h:1318
+msgid "Zoom in"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1418
+#: engines/wintermute/keymapper_tables.h:1331
+#: engines/wintermute/keymapper_tables.h:1446
 msgid "Show journal"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1424
+#: engines/wintermute/keymapper_tables.h:1374
+msgid "Bezier window"
+msgstr ""
+
+#: engines/wintermute/keymapper_tables.h:1390
+msgid "Droid action"
+msgstr ""
+
+#: engines/wintermute/keymapper_tables.h:1452
 msgid "Music menu"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1444
+#: engines/wintermute/keymapper_tables.h:1496
 msgid "Rotate"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1469
+#: engines/wintermute/keymapper_tables.h:1521
 msgid "Drop"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1477
+#: engines/wintermute/keymapper_tables.h:1529
 msgid "Player 1: Up"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1482
+#: engines/wintermute/keymapper_tables.h:1534
 msgid "Player 1: Left"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1487
+#: engines/wintermute/keymapper_tables.h:1539
 msgid "Player 1: Down"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1492
+#: engines/wintermute/keymapper_tables.h:1544
 msgid "Player 1: Right"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1497
+#: engines/wintermute/keymapper_tables.h:1549
 msgid "Player 2: Up"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1502
+#: engines/wintermute/keymapper_tables.h:1554
 msgid "Player 2: Left"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1507
+#: engines/wintermute/keymapper_tables.h:1559
 msgid "Player 2: Down"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1512
+#: engines/wintermute/keymapper_tables.h:1564
 msgid "Player 2: Right"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1517
+#: engines/wintermute/keymapper_tables.h:1569
 msgid "Debug FPS"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1614
+#: engines/wintermute/keymapper_tables.h:1666
 msgid "F1"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1619
+#: engines/wintermute/keymapper_tables.h:1671
 msgid "Key i"
 msgstr ""
 
