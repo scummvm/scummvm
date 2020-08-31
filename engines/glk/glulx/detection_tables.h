@@ -304,7 +304,7 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 const GlkDetectionEntry GLULXE_GAMES[] = {
 	// English games
 	DT_ENTRY0("aafn", "98c22f842ffadfb08a8e2a93d32c7495", 163328),
-	DT_ENTRY0("aafn", "07d590dc62f0be38f6f879763b6eb12c", 163072),
+	DT_ENTRY1("aafn", "Corrupt", "07d590dc62f0be38f6f879763b6eb12c", 163072),
 	DT_ENTRY1("acg", "070501", "1a3eb782d28dd8ae8da40f21adb174f0", 817408),
 	DT_ENTRY1("adventglulx", "961209", "e1939485dc2d4aab637144fc842b479d", 195406),
 	DT_ENTRY1("adventglulx", "961209", "cf232df2a3364a6f0821a8ef631c81a1", 167424),
