@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-31 12:18+0200\n"
-"PO-Revision-Date: 2020-08-29 18:39+0000\n"
+"PO-Revision-Date: 2020-08-31 10:47+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -2406,19 +2406,18 @@ msgid "Creative Music System emulator"
 msgstr "Creative Music System-Emulator"
 
 #: audio/softsynth/fluidsynth.cpp:176
-#, fuzzy
 msgid ""
 "FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI "
 "on MIDI tab. Music is off."
 msgstr ""
 "FluidSynth kann nicht ohne SoundFonts genutzt werden. Bitte in der ScummVM-"
-"Oberfläche unter \"MIDI\" auswählen. Musik wird deaktiviert"
+"Oberfläche unter \"MIDI\" auswählen. Musik wird deaktiviert."
 
 #: audio/softsynth/fluidsynth.cpp:277
-#, fuzzy, c-format
+#, c-format
 msgid "FluidSynth: Failed loading custom sound font '%s'. Music is off."
 msgstr ""
-"FluidSynth: Fehler beim Laden des SoundFonts '%s'. Musik wird deaktiviert"
+"FluidSynth: Fehler beim Laden des SoundFonts '%s'. Musik wird deaktiviert."
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:32
 msgid "FM-Towns Audio"
@@ -7024,14 +7023,12 @@ msgid "Spin faster"
 msgstr "Schneller drehen"
 
 #: engines/wintermute/keymapper_tables.h:1311
-#, fuzzy
 msgid "Zoom out"
 msgstr "Herauszoomen"
 
 #: engines/wintermute/keymapper_tables.h:1318
-#, fuzzy
 msgid "Zoom in"
-msgstr "Herauszoomen"
+msgstr "Hereinzoomen"
 
 #: engines/wintermute/keymapper_tables.h:1331
 #: engines/wintermute/keymapper_tables.h:1446
