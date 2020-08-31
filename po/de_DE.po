@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-31 12:18+0200\n"
+"POT-Creation-Date: 2020-08-31 15:11+0000\n"
 "PO-Revision-Date: 2020-08-31 10:47+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -2414,8 +2414,8 @@ msgstr ""
 "Oberfläche unter \"MIDI\" auswählen. Musik wird deaktiviert."
 
 #: audio/softsynth/fluidsynth.cpp:277
-#, c-format
-msgid "FluidSynth: Failed loading custom sound font '%s'. Music is off."
+#, fuzzy, c-format
+msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
 msgstr ""
 "FluidSynth: Fehler beim Laden des SoundFonts '%s'. Musik wird deaktiviert."
 
@@ -3907,11 +3907,11 @@ msgstr ""
 "Wenn McCoy läuft, wird er nicht langsamer laufen, sobald der Spieler "
 "aufhört, mit der Maus zu klicken"
 
-#: engines/cge/detection.cpp:115 engines/cge2/detection.cpp:111
+#: engines/cge/detection.cpp:115
 msgid "Color Blind Mode"
 msgstr "Modus für Farbenblinde"
 
-#: engines/cge/detection.cpp:116 engines/cge2/detection.cpp:112
+#: engines/cge/detection.cpp:116
 msgid "Enable Color Blind Mode by default"
 msgstr "Modus für Farbenblinde standardmäßig einschalten"
 

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-31 12:18+0200\n"
+"POT-Creation-Date: 2020-08-31 15:11+0000\n"
 "PO-Revision-Date: 2020-08-31 12:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -2445,7 +2445,7 @@ msgstr ""
 
 #: audio/softsynth/fluidsynth.cpp:277
 #, c-format
-msgid "FluidSynth: Failed loading custom sound font '%s'. Music is off."
+msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
 msgstr ""
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:32
@@ -3945,11 +3945,11 @@ msgstr ""
 "Όταν τρέχει, ο McCoy δεν θα αρχίσει να επιβραδύνει αμέσως μόλις ο παίκτης "
 "σταματήσει να κάνει κλικ με το ποντίκι"
 
-#: engines/cge/detection.cpp:115 engines/cge2/detection.cpp:111
+#: engines/cge/detection.cpp:115
 msgid "Color Blind Mode"
 msgstr "Λειτουργία για ¶τομα με Αχρωματοψία"
 
-#: engines/cge/detection.cpp:116 engines/cge2/detection.cpp:112
+#: engines/cge/detection.cpp:116
 msgid "Enable Color Blind Mode by default"
 msgstr "Ενεργοποίηση λειτουργίας για ¶τομα με Αχρωματοψία εξ'ορισμού"
 
@@ -4006,8 +4006,8 @@ msgstr ""
 "Χρειάζεται να εξάγετε με την ειδική μέθοδο μόνο τα αρχεία STR και XA. Τα "
 "υπόλοιπα αντιγράψτε τα κανονικά από το CD του παιχνιδιού.\n"
 "\n"
-" Δείτε και εδώ https://wiki.scummvm.org/"
-"index.php?title=Datafiles#Blazing_Dragons"
+" Δείτε και εδώ https://wiki.scummvm.org/index.php?"
+"title=Datafiles#Blazing_Dragons"
 
 #: engines/dragons/detection.cpp:236
 msgid "Action"
