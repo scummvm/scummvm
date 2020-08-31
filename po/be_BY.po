@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-31 12:18+0200\n"
-"PO-Revision-Date: 2020-08-27 11:56+0000\n"
+"PO-Revision-Date: 2020-08-31 12:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/be/>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Belarusian\n"
 
@@ -6465,14 +6465,14 @@ msgid "loading quick save %d"
 msgstr "Не атрымалася хутка захаваць гульню ў слот %d"
 
 #: engines/ultima/nuvie/nuvie.cpp:378
-#, fuzzy, c-format
+#, c-format
 msgid "saving quick save %d"
-msgstr "Рэжым пстрычкі"
+msgstr ""
 
 #: engines/ultima/nuvie/nuvie.cpp:392
-#, fuzzy, c-format
+#, c-format
 msgid "Quicksave %03d"
-msgstr "Рэжым пстрычкі"
+msgstr ""
 
 #: engines/ultima/nuvie/meta_engine.cpp:39
 msgid "Original Save"
