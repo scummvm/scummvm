@@ -101,6 +101,7 @@ MODULE_OBJS := \
 	ext/dll_shell32.o \
 	ext/dll_tools.o \
 	ext/wme_3fstatistics.o \
+	ext/wme_commandlinehelper.o \
 	ext/wme_galaxy.o \
 	ext/wme_steam.o \
 	debugger/breakpoint.o \
