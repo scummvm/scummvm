@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-31 15:11+0000\n"
-"PO-Revision-Date: 2020-08-31 17:54+0000\n"
+"PO-Revision-Date: 2020-08-31 18:14+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -1300,12 +1300,10 @@ msgid "Language of ScummVM GUI"
 msgstr "Taal van de ScummVM GUI"
 
 #: gui/options.cpp:2035
-#, fuzzy
 msgid "Switch the ScummVM GUI language to the game language"
-msgstr "Schakel de taal van de GUI naar de taal van het spel"
+msgstr "Schakel de taal van de GUI om naar de taal van het spel"
 
 #: gui/options.cpp:2036
-#, fuzzy
 msgid ""
 "When starting a game, change the ScummVM GUI language to the game language. "
 "That way, if a game uses the ScummVM save and load dialogs, they are in the "
@@ -2281,9 +2279,8 @@ msgid "Pause"
 msgstr "Pauze"
 
 #: engines/metaengine.cpp:85
-#, fuzzy
 msgid "Game menu"
-msgstr "Spel Menu"
+msgstr "Spelmenu"
 
 #: engines/metaengine.cpp:91
 #: backends/platform/symbian/src/SymbianActions.cpp:47
@@ -2420,9 +2417,8 @@ msgid "PC-98 Audio"
 msgstr "PC-98 Geluid"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:82
-#, fuzzy
 msgid "SegaCD Audio"
-msgstr "Gebruik CD audio"
+msgstr "SegaCD Audio"
 
 #: audio/softsynth/mt32.cpp:175
 msgid "Initializing MT-32 Emulator"
@@ -3918,19 +3914,16 @@ msgstr ""
 "originele spel ze niet ondersteunde"
 
 #: engines/cine/detection.cpp:190
-#, fuzzy
 msgid "Unnamed autosave"
-msgstr "Naamloos opgeslagen spel"
+msgstr "Naamloos auto-opgeslagen spel"
 
 #: engines/cine/detection.cpp:192 engines/cine/detection.cpp:271
-#, fuzzy
 msgid "Unnamed savegame"
 msgstr "Naamloos opgeslagen spel"
 
 #: engines/cine/detection.cpp:210 engines/cine/detection.cpp:284
-#, fuzzy
 msgid "Empty autosave"
-msgstr "Automatisch opslaan"
+msgstr "Lege auto-opgeslagen spel"
 
 #: engines/cine/saveload.cpp:861
 msgid ""
@@ -3943,9 +3936,8 @@ msgstr ""
 "Stealth opnieuw te beginnen met nieuwe opgeslagen spellen."
 
 #: engines/cine/saveload.cpp:864
-#, fuzzy
 msgid "Load anyway"
-msgstr "Evengoed toevoegen"
+msgstr "Evengoed laden"
 
 #: engines/dragons/detection.cpp:218
 msgid ""
@@ -3965,14 +3957,12 @@ msgstr ""
 "Zie https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
 
 #: engines/dragons/detection.cpp:236
-#, fuzzy
 msgid "Action"
-msgstr "Actief"
+msgstr "Actie"
 
 #: engines/dragons/detection.cpp:242
-#, fuzzy
 msgid "Change Command"
-msgstr "Verander fontgrootte"
+msgstr "Verander Commando"
 
 #: engines/dragons/detection.cpp:248 engines/hdb/detection.cpp:347
 #: engines/scumm/help.cpp:226 engines/scumm/help.cpp:235
@@ -3987,9 +3977,8 @@ msgid "Enter"
 msgstr "Enter"
 
 #: engines/dragons/detection.cpp:319
-#, fuzzy
 msgid "Debug Graphics"
-msgstr "Beeld"
+msgstr "Fouten opsporen in Graphics"
 
 #: engines/dragons/detection.cpp:324
 msgid "Quit Game"
@@ -4037,9 +4026,8 @@ msgid "Display graphics using the game's bright palette"
 msgstr "Gebruik het heldere palet van het spel voor grafische zaken"
 
 #: engines/glk/detection.cpp:354
-#, fuzzy
 msgid "Enable Text to Speech"
-msgstr "Gebruik Tekst naar spraak"
+msgstr "Gebruik Tekst naar Spraak"
 
 #: engines/glk/detection.cpp:355
 msgid "Use TTS to read the text"
@@ -4100,9 +4088,8 @@ msgid "This is not a valid Alan2 file."
 msgstr "Dit is geen geldig Alan2 bestand."
 
 #: engines/glk/comprehend/game.cpp:337
-#, fuzzy
 msgid "Savegame"
-msgstr "Spel opslaan"
+msgstr "opgeslagen spel"
 
 #: engines/glk/comprehend/game.cpp:1333
 msgid "Picture window toggled\n"
@@ -4128,9 +4115,8 @@ msgstr ""
 
 # can this be changed into "Could not switch to video mode '%s'"?
 #: engines/glk/quest/quest.cpp:45
-#, fuzzy
 msgid "Could not start Quest game"
-msgstr "Kon AdvSys spel niet starten"
+msgstr "Kon Quest spel niet starten"
 
 #: engines/glk/scott/scott.cpp:99
 msgid "I don't understand your command. "
@@ -4390,24 +4376,20 @@ msgid "Debug info and level selection becomes available"
 msgstr "Debug info en level selectie komen beschikbaar"
 
 #: engines/hdb/detection.cpp:309
-#, fuzzy
 msgid "Move up"
-msgstr "Beweeg Terug"
+msgstr "Beweeg omhoog"
 
 #: engines/hdb/detection.cpp:315
-#, fuzzy
 msgid "Move down"
-msgstr "Dansbeweging omlaag"
+msgstr "Beweeg omlaag"
 
 #: engines/hdb/detection.cpp:321
-#, fuzzy
 msgid "Move left"
-msgstr "Verplaats naar links"
+msgstr "Beweeg naar links"
 
 #: engines/hdb/detection.cpp:327
-#, fuzzy
 msgid "Move right"
-msgstr "Verplaats naar rechts"
+msgstr "Beweeg naar rechts"
 
 #: engines/hdb/detection.cpp:333 engines/scumm/help.cpp:129
 #: engines/scumm/help.cpp:153 engines/scumm/help.cpp:171
@@ -4418,18 +4400,16 @@ msgid "Use"
 msgstr "Gebruik"
 
 #: engines/hdb/detection.cpp:340
-#, fuzzy
 msgid "Clear waypoints"
-msgstr "Mapping wissen"
+msgstr "Tussenstops wissen"
 
 #: engines/hdb/detection.cpp:360
 msgid "Menu"
 msgstr "Menu"
 
 #: engines/hdb/detection.cpp:366
-#, fuzzy
 msgid "Debug"
-msgstr "Debugger"
+msgstr "Debug"
 
 #: engines/hopkins/detection.cpp:75 engines/hopkins/detection.cpp:85
 msgid "Gore Mode"
@@ -4491,9 +4471,8 @@ msgstr "Zwevende wijzers inschakelen"
 #. I18N: When enabled, this option will fill in an autogenerated savegame
 #. description into the input prompt where.
 #: engines/kyra/detection.cpp:124
-#, fuzzy
 msgid "Suggest save names"
-msgstr "Opgeslagen spellen"
+msgstr "Geef naamsuggesties voor opgeslagen spellen"
 
 #: engines/kyra/detection.cpp:125
 msgid "Autogenerated naming suggestions for savegames"
@@ -4608,7 +4587,6 @@ msgid "Attack 3"
 msgstr "Aanval 3"
 
 #: engines/kyra/engine/lol.cpp:474
-#, fuzzy
 msgid "Show Map"
 msgstr "~T~oon Map"
 
@@ -4766,17 +4744,16 @@ msgid ""
 "This is the end of the trial version. You can play the full game using the "
 "original interpreter from Wyrmkeep"
 msgstr ""
-"Dit is het einde van de proef versie. U kunt het volledige spel spelen met "
+"Dit is het einde van de probeer versie. U kunt het volledige spel spelen met "
 "de originele interpreter van Wyrmkeep"
 
 #: engines/lab/savegame.cpp:238
-#, fuzzy
 msgid "Would you like to save or restore a game?"
-msgstr "Wilt u het spel laden of opslaan?"
+msgstr "Wilt u een spel laden of opslaan?"
 
 #: engines/lab/speciallocks.cpp:149
 msgid "This puzzle is not available in the trial version of the game"
-msgstr "Deze puzzel is alleen beschikbaar in de volledige versie van het spel"
+msgstr "Deze puzzel is niet beschikbaar in de probeer versie van het spel"
 
 #: engines/lure/detection.cpp:73 engines/mads/detection.cpp:144
 #: engines/sherlock/detection.cpp:136
@@ -5274,9 +5251,8 @@ msgid "Upscale videos to double their size"
 msgstr "Schaal videos op naar dubbele grootte"
 
 #: engines/sci/detection.cpp:545
-#, fuzzy
 msgid "MIDI mode:"
-msgstr "MIDI versterking:"
+msgstr "MIDI modus:"
 
 #: engines/sci/detection.cpp:546
 msgid ""
@@ -6479,9 +6455,9 @@ msgstr ""
 "\n"
 
 #: engines/ultima/nuvie/nuvie.cpp:373
-#, fuzzy, c-format
+#, c-format
 msgid "loading quick save %d"
-msgstr "Snel opslaan in slot #%d mislukt"
+msgstr "Laden snel opslaan %d"
 
 #: engines/ultima/nuvie/nuvie.cpp:378
 #, c-format
@@ -7007,14 +6983,12 @@ msgid "Spin faster"
 msgstr "Sneller draaien"
 
 #: engines/wintermute/keymapper_tables.h:1311
-#, fuzzy
 msgid "Zoom out"
-msgstr "Zoom omhoog"
+msgstr "Zoom uit"
 
 #: engines/wintermute/keymapper_tables.h:1318
-#, fuzzy
 msgid "Zoom in"
-msgstr "Zoom omhoog"
+msgstr "Zoom in"
 
 #: engines/wintermute/keymapper_tables.h:1331
 #: engines/wintermute/keymapper_tables.h:1446
@@ -7042,49 +7016,40 @@ msgid "Drop"
 msgstr "Laat vallen"
 
 #: engines/wintermute/keymapper_tables.h:1529
-#, fuzzy
 msgid "Player 1: Up"
-msgstr "Speel noot 1: A"
+msgstr "Speler 1: Omhoog"
 
 #: engines/wintermute/keymapper_tables.h:1534
-#, fuzzy
 msgid "Player 1: Left"
-msgstr "Speel noot 1: A"
+msgstr "Speler 1: Links"
 
 #: engines/wintermute/keymapper_tables.h:1539
-#, fuzzy
 msgid "Player 1: Down"
-msgstr "Speel noot 1: A"
+msgstr "Speler 1: Omlaag"
 
 #: engines/wintermute/keymapper_tables.h:1544
-#, fuzzy
 msgid "Player 1: Right"
-msgstr "Speel noot 1: A"
+msgstr "Speler 1: Rechts"
 
 #: engines/wintermute/keymapper_tables.h:1549
-#, fuzzy
 msgid "Player 2: Up"
-msgstr "Speel noot 2: F#"
+msgstr "Speler 2: Omhoog"
 
 #: engines/wintermute/keymapper_tables.h:1554
-#, fuzzy
 msgid "Player 2: Left"
-msgstr "Speel noot 2: F#"
+msgstr "Speler 2: Links"
 
 #: engines/wintermute/keymapper_tables.h:1559
-#, fuzzy
 msgid "Player 2: Down"
-msgstr "Speel noot 2: F#"
+msgstr "Speler 2: Omlaag"
 
 #: engines/wintermute/keymapper_tables.h:1564
-#, fuzzy
 msgid "Player 2: Right"
-msgstr "Schuif Rechts"
+msgstr "Speler 2: Rechts"
 
 #: engines/wintermute/keymapper_tables.h:1569
-#, fuzzy
 msgid "Debug FPS"
-msgstr "Dubbele FPS"
+msgstr "Debug FPS"
 
 #: engines/wintermute/keymapper_tables.h:1666
 msgid "F1"
@@ -7117,9 +7082,8 @@ msgstr ""
 "slechts -10HP"
 
 #: engines/xeen/saves.cpp:291
-#, fuzzy
 msgid "Failed to autosave"
-msgstr "Opslaan van spel mislukt"
+msgstr "Snel opslaan mislukt"
 
 #: engines/zvision/detection_tables.h:60
 msgid "Double FPS"
@@ -7155,19 +7119,16 @@ msgstr ""
 "Gebruik de MPEG video van de DVD versie in plaats van de lagere resolutie AVI"
 
 #: engines/zvision/detection.cpp:150
-#, fuzzy
 msgid "Look Up"
-msgstr "Kijk omhoog"
+msgstr "Kijk Omhoog"
 
 #: engines/zvision/detection.cpp:156
-#, fuzzy
 msgid "Look Down"
-msgstr "Kijk omlaag"
+msgstr "Kijk Omlaag"
 
 #: engines/zvision/detection.cpp:174
-#, fuzzy
 msgid "Show FPS"
-msgstr "Toon FPS-teller"
+msgstr "Toon FPS"
 
 #: engines/zvision/detection.cpp:191
 msgid "Spellbook"
