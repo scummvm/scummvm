@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-31 15:11+0000\n"
-"PO-Revision-Date: 2020-08-31 12:24+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2020-08-31 17:25+0000\n"
+"Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
 "Language: nl_NL\n"
@@ -1904,9 +1904,8 @@ msgstr ""
 "Kon geen engine vinden die in staat was het geselecteerde spel te spelen"
 
 #: common/achievements.cpp:92
-#, fuzzy
 msgid "Achievement unlocked!"
-msgstr "Prestaties behaald : %d/%d"
+msgstr "Prestatie behaald!"
 
 #: common/error.cpp:38
 msgid "No error"
@@ -2251,7 +2250,7 @@ msgstr "Matchende game IDs voor de %s engine:"
 
 #: engines/metaengine.cpp:59
 msgid "Default game keymap"
-msgstr ""
+msgstr "Standaard speltoetsenkoppelingen"
 
 #: engines/metaengine.cpp:63 backends/platform/maemo/maemo.cpp:174
 #: backends/platform/symbian/src/SymbianActions.cpp:44
@@ -2303,7 +2302,7 @@ msgstr "Regel overslaan"
 
 #: engines/metaengine.cpp:103
 msgid "Predictive input dialog"
-msgstr ""
+msgstr "Voorspellende invoer dialoog"
 
 #: engines/metaengine.cpp:107 engines/sky/detection.cpp:228
 #: engines/wintermute/keymapper_tables.h:55
@@ -2404,11 +2403,13 @@ msgid ""
 "FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI "
 "on MIDI tab. Music is off."
 msgstr ""
+"FluidSynth heeft een 'soundfont' instelling nodig. Specificeer deze in de "
+"ScummVM GUI MIDI tab. Muziek staat uit."
 
 #: audio/softsynth/fluidsynth.cpp:277
 #, c-format
 msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
-msgstr ""
+msgstr "FluidSynth: Laden van eigen SoundFont '%s' mislukt. Muziek staat uit."
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:32
 msgid "FM-Towns Audio"
@@ -3428,11 +3429,11 @@ msgstr "R2"
 
 #: backends/platform/sdl/switch/switch.cpp:40
 msgid "Minus"
-msgstr ""
+msgstr "Min"
 
 #: backends/platform/sdl/switch/switch.cpp:41
 msgid "Plus"
-msgstr ""
+msgstr "Plus"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:48
 msgid "Zone"
@@ -3737,6 +3738,9 @@ msgid ""
 "If you have such file in other AGI (Sierra) game, you can copy it to the "
 "game directory"
 msgstr ""
+"Kon de hires Hercules font 'hgc_font' niet openen/gebruiken.\n"
+"Als u een dergelijke file van een ander AGI (Sierra) spel heeft, kunt u het "
+"kopiëren naar de spel folder"
 
 #: engines/agi/saveload.cpp:772 engines/avalanche/parser.cpp:1907
 #: engines/cine/various.cpp:361 engines/dm/dm.cpp:276
@@ -3934,6 +3938,9 @@ msgid ""
 "Things will be broken. Please consider starting Operation Stealth from "
 "beginning using new savegames."
 msgstr ""
+"LET OP: Het opgeslagen spel dat u gaat laden gebruikt een tijdelijk "
+"onvolledig formaat. Er zullen zaken fout gaan. Overweeg a.u.b. om Operation "
+"Stealth opnieuw te beginnen met nieuwe opgeslagen spellen."
 
 #: engines/cine/saveload.cpp:864
 #, fuzzy
@@ -3978,9 +3985,8 @@ msgid "Debug Graphics"
 msgstr "Beeld"
 
 #: engines/dragons/detection.cpp:324
-#, fuzzy
 msgid "Quit Game"
-msgstr " (Spel)"
+msgstr "Spel Verlaten"
 
 #: engines/dragons/dragons.cpp:1785
 #, c-format
@@ -4049,9 +4055,8 @@ msgid "Untitled Savegame"
 msgstr "Naamloos opgeslagen spel"
 
 #: engines/glk/adrift/os_glk.cpp:2814
-#, fuzzy
 msgid "Loading game...\n"
-msgstr "Spel laden..."
+msgstr "Spel laden...\n"
 
 # can this be changed into "Could not switch to video mode '%s'"?
 #: engines/glk/advsys/advsys.cpp:35
@@ -4736,8 +4741,9 @@ msgid ""
 msgstr ""
 "Het lijkt erop dat u een General MIDI apparaat gebruikt,\n"
 "maar het spel ondersteunt alleen Roland MT32 MIDI.\n"
-"We zullen proberen te Roland MT32 instrumenten te vertalen naar General MIDI "
-"instrumenten. Het is mogelijk dat sommige tracks niet goed klinken."
+"We zullen proberen te Roland MT32 instrumenten te\n"
+"vertalen naar General MIDI instrumenten. Het is mogelijk\n"
+"dat sommige tracks niet goed klinken."
 
 #: engines/lab/engine.cpp:125
 msgid ""
@@ -4757,10 +4763,8 @@ msgid "Would you like to save or restore a game?"
 msgstr "Wilt u het spel laden of opslaan?"
 
 #: engines/lab/speciallocks.cpp:149
-#, fuzzy
 msgid "This puzzle is not available in the trial version of the game"
-msgstr ""
-"Verder ontdekken is alleen mogelijk met de volledige versie van het spel."
+msgstr "Deze puzzel is alleen beschikbaar in de volledige versie van het spel"
 
 #: engines/lure/detection.cpp:73 engines/mads/detection.cpp:144
 #: engines/sherlock/detection.cpp:136
@@ -5007,9 +5011,9 @@ msgstr ""
 "bestaat niet meer."
 
 #: engines/mutationofjb/util.cpp:33
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to locate the '%s' engine data file"
-msgstr "Kon de '%s' engine data file niet vinden."
+msgstr "Kon de '%s' engine data file niet vinden"
 
 #: engines/neverhood/detection.cpp:151
 msgid "Skip the Hall of Records storyboard scenes"
@@ -6447,12 +6451,14 @@ msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr "Verouderde versie engine data. Verwacht werd %d.%d maar vond %d.%d"
 
 #: engines/ultima/nuvie/nuvie.cpp:324
-#, fuzzy
 msgid ""
 "\n"
 "Game Saved\n"
 "\n"
-msgstr "Opgeslagen.\n"
+msgstr ""
+"\n"
+"Spel Opgeslagen\n"
+"\n"
 
 #: engines/ultima/nuvie/nuvie.cpp:373
 #, fuzzy, c-format
@@ -7162,9 +7168,8 @@ msgid "Extract coin"
 msgstr ""
 
 #: engines/zvision/detection.cpp:230
-#, fuzzy
 msgid "Preferences"
-msgstr "Voorkeursapparaat:"
+msgstr "Voorkeuren"
 
 #: engines/zvision/file/save_manager.cpp:222
 #, c-format
