@@ -23,13 +23,13 @@
 #ifndef _SCUMMHELP_H_
 #define _SCUMMHELP_H_
 
-#include "common/str.h"
+#include "common/ustr.h"
 #include "common/platform.h"
 
 namespace DS {
 
 void updateStrings(byte gameId, byte version, Common::Platform platform,
-			int page, Common::String &title, Common::String *&key, Common::String *&dsc);
+			int page, Common::U32String &title, Common::U32String *&key, Common::U32String *&dsc);
 
 } // End of namespace DS
 
