@@ -215,7 +215,14 @@ void SmushFont::drawString(const char *str, byte *buffer, int dst_width, int dst
 
 	while (str) {
 		char line[256];
-		const char *pos = strchr(str, '\n');
+		char separators[] = "\n ";
+
+		if (_vm->_language == Common::ZH_TWN)
+			separators[1] = '!';
+		else
+			separators[1] = '\0';
+
+		const char *pos = strpbrk(str, separators);
 		if (pos) {
 			memcpy(line, str, pos - str - 1);
 			line[pos - str - 1] = 0;
@@ -236,12 +243,18 @@ void SmushFont::drawStringWrap(const char *str, byte *buffer, int dst_width, int
 	Common::String s(str);
 	char *words[MAX_WORDS];
 	int word_count = 0;
+	char separators[] = " \t\r\n ";
+
+	if (_vm->_language == Common::ZH_TWN)
+		separators[4] = '!';
+	else
+		separators[4] = '\0';
 
 	Common::String::iterator tmp = s.begin();
 	while (tmp) {
 		assert(word_count < MAX_WORDS);
 		words[word_count++] = tmp;
-		tmp = strpbrk(tmp, " \t\r\n");
+		tmp = strpbrk(tmp, separators);
 		if (tmp == 0)
 			break;
 		*tmp++ = 0;
