@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-31 15:11+0000\n"
 "PO-Revision-Date: 2020-09-01 06:43+0000\n"
-"Last-Translator: Accorsi66 <regianeaccorsi@gmail.com>\n"
+"Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
 "Language: pt_BR\n"
@@ -2399,20 +2399,19 @@ msgid "Creative Music System emulator"
 msgstr "Emulador do Sistema de Música Creative"
 
 #: audio/softsynth/fluidsynth.cpp:176
-#, fuzzy
 msgid ""
 "FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI "
 "on MIDI tab. Music is off."
 msgstr ""
 "FluidSynth requer uma configuração de 'fonte de som'. Por favor, especifique-"
-"a na interface do ScummVM na guia MIDI. Música desligada"
+"a na interface do ScummVM na aba MIDI. Música desligada."
 
 #: audio/softsynth/fluidsynth.cpp:277
-#, fuzzy, c-format
+#, c-format
 msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
 msgstr ""
-"FluidSynth: Falha ao carregar a fonte de som personalizada '%s'. Música "
-"desligada"
+"FluidSynth: Falha ao carregar fonte de som personalizada '%s'. Música "
+"desligada."
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:32
 msgid "FM-Towns Audio"
