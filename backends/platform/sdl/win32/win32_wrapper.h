@@ -72,8 +72,6 @@ char *unicodeToAnsi(const wchar_t *s, uint codePage = CP_ACP);
  */
 wchar_t *UTF8ToUnicode(const char *s);
 
-uint getCurrentCharset();
-
 }
 
 #endif

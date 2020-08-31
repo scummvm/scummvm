@@ -728,15 +728,6 @@ void JNI::setPause(JNIEnv *env, jobject self, jboolean value) {
 	}
 }
 
-Common::String JNI::getCurrentCharset() {
-#ifdef USE_TRANSLATION
-	if (TransMan.getCurrentCharset() != "ASCII") {
-		return TransMan.getCurrentCharset();
-	}
-#endif
-	return "ISO-8859-1";
-}
-
 jstring JNI::convertToJString(JNIEnv *env, const Common::String &str, const Common::String &from) {
 	Common::Encoding converter("UTF-8", from.c_str());
 	char *utf8Str = converter.convert(str.c_str(), converter.stringLength(str.c_str(), from));

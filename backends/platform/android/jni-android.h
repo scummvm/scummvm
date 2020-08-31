@@ -142,8 +142,6 @@ private:
 							int arg2, int arg3, int arg4, int arg5, int arg6);
 	static void setPause(JNIEnv *env, jobject self, jboolean value);
 
-	static Common::String getCurrentCharset();
-
 	static jstring convertToJString(JNIEnv *env, const Common::String &str, const Common::String &from);
 	static Common::String convertFromJString(JNIEnv *env, const jstring &jstr, const Common::String &to);
 

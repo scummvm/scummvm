@@ -117,19 +117,4 @@ wchar_t *UTF8ToUnicode(const char *s) {
 	return NULL;
 }
 
-uint getCurrentCharset() {
-#ifdef USE_TRANSLATION
-	Common::String charset = TransMan.getCurrentCharset();
-	if (charset == "iso-8859-2")
-		return 28592;
-	if (charset == "iso-8859-5")
-		return 28595;
-	if (charset == "iso-8859-7")
-		return 28597;
-	if (charset == "iso-8859-8")
-		return 28598;
-#endif
-	return 28591;
-}
-
 }
