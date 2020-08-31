@@ -25,6 +25,7 @@
 #include "audio/mods/module.h"
 
 #include "common/textconsole.h"
+#include "common/util.h"
 
 namespace Modules {
 
@@ -169,7 +170,7 @@ ProtrackerStream::ProtrackerStream(Common::SeekableReadStream *stream, int offs,
 
 	_patternDelay = 0;
 
-	memset(_track, 0, sizeof(_track));
+	ARRAYCLEAR(_track);
 
 	startPaula();
 }

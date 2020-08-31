@@ -166,7 +166,7 @@ bool OPL::init() {
 	free();
 
 	memset(&_reg, 0, sizeof(_reg));
-	memset(_chip, 0, sizeof(_chip));
+	ARRAYCLEAR(_chip);
 
 	_emulator = new DBOPL::Chip();
 	if (!_emulator)

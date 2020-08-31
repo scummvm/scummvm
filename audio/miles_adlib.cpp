@@ -25,6 +25,7 @@
 #include "common/file.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 
 #include "audio/fmopl.h"
 
@@ -343,9 +344,9 @@ void MidiDriver_Miles_AdLib::onTimer() {
 }
 
 void MidiDriver_Miles_AdLib::resetData() {
-	memset(_midiChannels, 0, sizeof(_midiChannels));
-	memset(_virtualFmVoices, 0, sizeof(_virtualFmVoices));
-	memset(_physicalFmVoices, 0, sizeof(_physicalFmVoices));
+	ARRAYCLEAR(_midiChannels);
+	ARRAYCLEAR(_virtualFmVoices);
+	ARRAYCLEAR(_physicalFmVoices);
 
 	for (byte midiChannel = 0; midiChannel < MILES_MIDI_CHANNEL_COUNT; midiChannel++) {
 		// defaults, were sent to driver during driver initialization
@@ -575,7 +576,7 @@ void MidiDriver_Miles_AdLib::prioritySort() {
 	uint16 virtualFmVoicesCount = 0;
 	byte   midiChannel = 0;
 
-	memset(&virtualPriorities, 0, sizeof(virtualPriorities));
+	ARRAYCLEAR(virtualPriorities);
 
 	//warning("prioritysort");
 
