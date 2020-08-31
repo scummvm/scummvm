@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-29 17:57+0200\n"
+"POT-Creation-Date: 2020-08-31 12:18+0200\n"
 "PO-Revision-Date: 2020-08-30 00:43+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -17,8 +17,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
-"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Ukrainian\n"
 
@@ -591,8 +591,8 @@ msgstr "Закрити"
 #: engines/dragons/detection.cpp:259 engines/glk/scott/scott.cpp:394
 #: engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
-#: engines/wintermute/keymapper_tables.h:1381
-#: engines/wintermute/keymapper_tables.h:1587
+#: engines/wintermute/keymapper_tables.h:1409
+#: engines/wintermute/keymapper_tables.h:1639
 msgid "Up"
 msgstr "Догори"
 
@@ -601,26 +601,26 @@ msgstr "Догори"
 #: engines/dragons/detection.cpp:265 engines/glk/scott/scott.cpp:394
 #: engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
-#: engines/wintermute/keymapper_tables.h:1387
-#: engines/wintermute/keymapper_tables.h:1593
+#: engines/wintermute/keymapper_tables.h:1415
+#: engines/wintermute/keymapper_tables.h:1645
 msgid "Down"
 msgstr "Донизу"
 
 #: gui/gui-manager.cpp:147 engines/metaengine.cpp:122
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: engines/dragons/detection.cpp:271 engines/wintermute/keymapper_tables.h:1023
-#: engines/wintermute/keymapper_tables.h:1369
-#: engines/wintermute/keymapper_tables.h:1453
-#: engines/wintermute/keymapper_tables.h:1575
+#: engines/wintermute/keymapper_tables.h:1397
+#: engines/wintermute/keymapper_tables.h:1505
+#: engines/wintermute/keymapper_tables.h:1627
 msgid "Left"
 msgstr "Наліво"
 
 #: gui/gui-manager.cpp:152 engines/metaengine.cpp:127
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: engines/dragons/detection.cpp:277 engines/wintermute/keymapper_tables.h:1029
-#: engines/wintermute/keymapper_tables.h:1375
-#: engines/wintermute/keymapper_tables.h:1461
-#: engines/wintermute/keymapper_tables.h:1581
+#: engines/wintermute/keymapper_tables.h:1403
+#: engines/wintermute/keymapper_tables.h:1513
+#: engines/wintermute/keymapper_tables.h:1633
 msgid "Right"
 msgstr "Направо"
 
@@ -2061,7 +2061,7 @@ msgid "~R~eturn to Launcher"
 msgstr "~П~овер.в головне меню"
 
 #: engines/dialogs.cpp:103 engines/engine.cpp:794 engines/agi/saveload.cpp:759
-#: engines/avalanche/parser.cpp:1919 engines/cine/various.cpp:343
+#: engines/avalanche/parser.cpp:1919 engines/cine/various.cpp:350
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
 #: engines/dreamweb/saveload.cpp:262 engines/glk/streams.cpp:1427
 #: engines/gnap/menu.cpp:466 engines/hugo/file.cpp:298
@@ -2080,7 +2080,7 @@ msgstr "Зберегти гру:"
 #: engines/dialogs.cpp:103 engines/engine.cpp:794
 #: backends/platform/symbian/src/SymbianActions.cpp:46
 #: engines/agi/saveload.cpp:759 engines/avalanche/parser.cpp:1919
-#: engines/cine/various.cpp:343 engines/dm/loadsave.cpp:199
+#: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
 #: engines/glk/streams.cpp:1427 engines/gnap/menu.cpp:466
 #: engines/hugo/file.cpp:298 engines/illusions/menusystem.cpp:703
@@ -2260,7 +2260,7 @@ msgstr "Лівий клік"
 #: engines/metaengine.cpp:69 backends/platform/maemo/maemo.cpp:178
 #: engines/wintermute/keymapper_tables.h:249
 #: engines/wintermute/keymapper_tables.h:293
-#: engines/wintermute/keymapper_tables.h:1599
+#: engines/wintermute/keymapper_tables.h:1651
 msgid "Middle Click"
 msgstr "Середній клік"
 
@@ -2289,7 +2289,7 @@ msgstr "Меню гри"
 #: engines/wintermute/keymapper_tables.h:997
 #: engines/wintermute/keymapper_tables.h:1183
 #: engines/wintermute/keymapper_tables.h:1296
-#: engines/wintermute/keymapper_tables.h:1543
+#: engines/wintermute/keymapper_tables.h:1595
 msgid "Skip"
 msgstr "Пропустити"
 
@@ -2396,16 +2396,17 @@ msgid "Creative Music System emulator"
 msgstr "Емулятор Creative Music System"
 
 #: audio/softsynth/fluidsynth.cpp:176
+#, fuzzy
 msgid ""
 "FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI "
-"on MIDI tab. Music is off"
+"on MIDI tab. Music is off."
 msgstr ""
 "FluidSynth вимагає налаштування 'soundfont'. Будь-ласка, вкажіть її у "
 "ScummVM GUI на вкладці MIDI. Музику виключено"
 
 #: audio/softsynth/fluidsynth.cpp:277
-#, c-format
-msgid "FluidSynth: Failed loading custom sound font '%s'. Music is off"
+#, fuzzy, c-format
+msgid "FluidSynth: Failed loading custom sound font '%s'. Music is off."
 msgstr "FluidSynth: Не вдалося завантажити sound font '%s'. Музику виключено"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:32
@@ -2657,9 +2658,9 @@ msgstr "Перемикання захоплення миші"
 #: engines/wintermute/keymapper_tables.h:1061
 #: engines/wintermute/keymapper_tables.h:1129
 #: engines/wintermute/keymapper_tables.h:1221
-#: engines/wintermute/keymapper_tables.h:1309
-#: engines/wintermute/keymapper_tables.h:1326
-#: engines/wintermute/keymapper_tables.h:1357
+#: engines/wintermute/keymapper_tables.h:1337
+#: engines/wintermute/keymapper_tables.h:1354
+#: engines/wintermute/keymapper_tables.h:1385
 msgid "Save screenshot"
 msgstr "Зберегти екран"
 
@@ -3736,7 +3737,7 @@ msgstr ""
 "до папки з цією ігрою"
 
 #: engines/agi/saveload.cpp:772 engines/avalanche/parser.cpp:1907
-#: engines/cine/various.cpp:354 engines/dm/dm.cpp:276
+#: engines/cine/various.cpp:361 engines/dm/dm.cpp:276
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
 #: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1436
 #: engines/gnap/menu.cpp:475 engines/hugo/file.cpp:400
@@ -3752,7 +3753,7 @@ msgid "Restore game:"
 msgstr "Відновити гру:"
 
 #: engines/agi/saveload.cpp:772 engines/avalanche/parser.cpp:1907
-#: engines/cine/various.cpp:354 engines/dm/dm.cpp:276
+#: engines/cine/various.cpp:361 engines/dm/dm.cpp:276
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
 #: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1436
 #: engines/gnap/menu.cpp:475 engines/hugo/file.cpp:400
@@ -4858,6 +4859,7 @@ msgstr "Викинути сторінку"
 
 #: engines/mohawk/myst.cpp:619 engines/wintermute/keymapper_tables.h:1253
 #: engines/wintermute/keymapper_tables.h:1302
+#: engines/wintermute/keymapper_tables.h:1325
 msgid "Show map"
 msgstr "Показати мапу"
 
@@ -4941,15 +4943,15 @@ msgstr "Рухатись назад"
 
 #: engines/mohawk/riven.cpp:902 engines/wintermute/keymapper_tables.h:159
 #: engines/wintermute/keymapper_tables.h:520
-#: engines/wintermute/keymapper_tables.h:1555
-#: engines/wintermute/keymapper_tables.h:1658
+#: engines/wintermute/keymapper_tables.h:1607
+#: engines/wintermute/keymapper_tables.h:1710
 msgid "Turn left"
 msgstr "Повернутися вліво"
 
 #: engines/mohawk/riven.cpp:908 engines/wintermute/keymapper_tables.h:165
 #: engines/wintermute/keymapper_tables.h:525
-#: engines/wintermute/keymapper_tables.h:1561
-#: engines/wintermute/keymapper_tables.h:1665
+#: engines/wintermute/keymapper_tables.h:1613
+#: engines/wintermute/keymapper_tables.h:1717
 msgid "Turn right"
 msgstr "Повернутися вправо"
 
@@ -5107,8 +5109,9 @@ msgstr "Показувати/Сховати меню паузи"
 #: engines/wintermute/keymapper_tables.h:735
 #: engines/wintermute/keymapper_tables.h:943
 #: engines/wintermute/keymapper_tables.h:990
-#: engines/wintermute/keymapper_tables.h:1351
-#: engines/wintermute/keymapper_tables.h:1405
+#: engines/wintermute/keymapper_tables.h:1379
+#: engines/wintermute/keymapper_tables.h:1433
+#: engines/wintermute/keymapper_tables.h:1491
 msgid "???"
 msgstr "???"
 
@@ -5607,7 +5610,7 @@ msgstr "Esc"
 msgid "Skip cutscene"
 msgstr "Пропустити ролік"
 
-#: engines/scumm/help.cpp:79 engines/wintermute/keymapper_tables.h:1569
+#: engines/scumm/help.cpp:79 engines/wintermute/keymapper_tables.h:1621
 msgid "Space"
 msgstr "Space"
 
@@ -5649,7 +5652,7 @@ msgstr "Швидкість тексту повільніше / швидше"
 msgid "Simulate left mouse button"
 msgstr "Симулювати лівий клік миші"
 
-#: engines/scumm/help.cpp:91 engines/wintermute/keymapper_tables.h:1624
+#: engines/scumm/help.cpp:91 engines/wintermute/keymapper_tables.h:1676
 msgid "Tab"
 msgstr "Tab"
 
@@ -6521,20 +6524,20 @@ msgstr "Глянути на"
 
 #: engines/wintermute/keymapper_tables.h:147
 #: engines/wintermute/keymapper_tables.h:510
-#: engines/wintermute/keymapper_tables.h:1549
-#: engines/wintermute/keymapper_tables.h:1644
+#: engines/wintermute/keymapper_tables.h:1601
+#: engines/wintermute/keymapper_tables.h:1696
 msgid "Walk forward"
 msgstr "Іти вперед"
 
 #: engines/wintermute/keymapper_tables.h:153
 #: engines/wintermute/keymapper_tables.h:515
-#: engines/wintermute/keymapper_tables.h:1651
+#: engines/wintermute/keymapper_tables.h:1703
 msgid "Walk backward"
 msgstr "Іти назад"
 
 #: engines/wintermute/keymapper_tables.h:171
 #: engines/wintermute/keymapper_tables.h:468
-#: engines/wintermute/keymapper_tables.h:1319
+#: engines/wintermute/keymapper_tables.h:1347
 msgid "Show scene geometry"
 msgstr "Показувати геометрію сцени"
 
@@ -6570,7 +6573,8 @@ msgstr "Наступна сторінка"
 #: engines/wintermute/keymapper_tables.h:1148
 #: engines/wintermute/keymapper_tables.h:1240
 #: engines/wintermute/keymapper_tables.h:1289
-#: engines/wintermute/keymapper_tables.h:1536
+#: engines/wintermute/keymapper_tables.h:1472
+#: engines/wintermute/keymapper_tables.h:1588
 msgid "Show hints"
 msgstr "Показувати підказки"
 
@@ -6581,21 +6585,23 @@ msgstr "Показувати підказки"
 #: engines/wintermute/keymapper_tables.h:1247
 #: engines/wintermute/keymapper_tables.h:1259
 #: engines/wintermute/keymapper_tables.h:1268
-#: engines/wintermute/keymapper_tables.h:1411
+#: engines/wintermute/keymapper_tables.h:1439
 msgid "Show inventory"
 msgstr "Показати інвентар"
 
 #: engines/wintermute/keymapper_tables.h:262
 #: engines/wintermute/keymapper_tables.h:311
 #: engines/wintermute/keymapper_tables.h:338
-#: engines/wintermute/keymapper_tables.h:1393
+#: engines/wintermute/keymapper_tables.h:1421
+#: engines/wintermute/keymapper_tables.h:1479
 msgid "GUI variant A"
 msgstr "GUI варіант A"
 
 #: engines/wintermute/keymapper_tables.h:269
 #: engines/wintermute/keymapper_tables.h:318
 #: engines/wintermute/keymapper_tables.h:345
-#: engines/wintermute/keymapper_tables.h:1399
+#: engines/wintermute/keymapper_tables.h:1427
+#: engines/wintermute/keymapper_tables.h:1485
 msgid "GUI variant B"
 msgstr "GUI варіант B"
 
@@ -6690,8 +6696,8 @@ msgstr "Показати допомогу"
 #: engines/wintermute/keymapper_tables.h:1134
 #: engines/wintermute/keymapper_tables.h:1155
 #: engines/wintermute/keymapper_tables.h:1275
-#: engines/wintermute/keymapper_tables.h:1430
-#: engines/wintermute/keymapper_tables.h:1604
+#: engines/wintermute/keymapper_tables.h:1458
+#: engines/wintermute/keymapper_tables.h:1656
 msgid "Scroll up"
 msgstr "Прокручення догори"
 
@@ -6703,8 +6709,8 @@ msgstr "Прокручення догори"
 #: engines/wintermute/keymapper_tables.h:1141
 #: engines/wintermute/keymapper_tables.h:1162
 #: engines/wintermute/keymapper_tables.h:1282
-#: engines/wintermute/keymapper_tables.h:1437
-#: engines/wintermute/keymapper_tables.h:1609
+#: engines/wintermute/keymapper_tables.h:1465
+#: engines/wintermute/keymapper_tables.h:1661
 msgid "Scroll down"
 msgstr "Прокручення донизу"
 
@@ -6723,12 +6729,12 @@ msgstr "Показати відладочний парсер"
 
 #: engines/wintermute/keymapper_tables.h:495
 #: engines/wintermute/keymapper_tables.h:603
-#: engines/wintermute/keymapper_tables.h:1341
+#: engines/wintermute/keymapper_tables.h:1369
 msgid "Debug print"
 msgstr "Відладочний друк"
 
 #: engines/wintermute/keymapper_tables.h:500
-#: engines/wintermute/keymapper_tables.h:1314
+#: engines/wintermute/keymapper_tables.h:1342
 msgid "Exit"
 msgstr "Вихід"
 
@@ -6790,7 +6796,7 @@ msgstr "Швидке завантаження"
 
 #: engines/wintermute/keymapper_tables.h:705
 #: engines/wintermute/keymapper_tables.h:1035
-#: engines/wintermute/keymapper_tables.h:1336
+#: engines/wintermute/keymapper_tables.h:1364
 msgid "Cancel waiting"
 msgstr "Припинити очікування"
 
@@ -6911,17 +6917,17 @@ msgid "Shift"
 msgstr "Shift"
 
 #: engines/wintermute/keymapper_tables.h:1169
-#: engines/wintermute/keymapper_tables.h:1522
+#: engines/wintermute/keymapper_tables.h:1574
 msgid "Next action"
 msgstr "Наступна дія"
 
 #: engines/wintermute/keymapper_tables.h:1177
-#: engines/wintermute/keymapper_tables.h:1530
+#: engines/wintermute/keymapper_tables.h:1582
 msgid "Previous action"
 msgstr "Попередня дія"
 
 #: engines/wintermute/keymapper_tables.h:1196
-#: engines/wintermute/keymapper_tables.h:1331
+#: engines/wintermute/keymapper_tables.h:1359
 msgid "Settings"
 msgstr "Налаштування"
 
@@ -6949,71 +6955,82 @@ msgstr "Крутитися повільніше"
 msgid "Spin faster"
 msgstr "Крутитися швидше"
 
-#: engines/wintermute/keymapper_tables.h:1346
-msgid "Bezier window"
-msgstr "Вікно Безьє"
+#: engines/wintermute/keymapper_tables.h:1311
+#, fuzzy
+msgid "Zoom out"
+msgstr "Збіл. масштаб"
 
-#: engines/wintermute/keymapper_tables.h:1362
-msgid "Droid action"
-msgstr "Дія дроїда"
+#: engines/wintermute/keymapper_tables.h:1318
+#, fuzzy
+msgid "Zoom in"
+msgstr "Збіл. масштаб"
 
-#: engines/wintermute/keymapper_tables.h:1418
+#: engines/wintermute/keymapper_tables.h:1331
+#: engines/wintermute/keymapper_tables.h:1446
 msgid "Show journal"
 msgstr "Показати журнал"
 
-#: engines/wintermute/keymapper_tables.h:1424
+#: engines/wintermute/keymapper_tables.h:1374
+msgid "Bezier window"
+msgstr "Вікно Безьє"
+
+#: engines/wintermute/keymapper_tables.h:1390
+msgid "Droid action"
+msgstr "Дія дроїда"
+
+#: engines/wintermute/keymapper_tables.h:1452
 msgid "Music menu"
 msgstr "Меню музики"
 
-#: engines/wintermute/keymapper_tables.h:1444
+#: engines/wintermute/keymapper_tables.h:1496
 msgid "Rotate"
 msgstr "Повернути"
 
-#: engines/wintermute/keymapper_tables.h:1469
+#: engines/wintermute/keymapper_tables.h:1521
 msgid "Drop"
 msgstr "Викинути"
 
-#: engines/wintermute/keymapper_tables.h:1477
+#: engines/wintermute/keymapper_tables.h:1529
 msgid "Player 1: Up"
 msgstr "Гравець 1: Уверх"
 
-#: engines/wintermute/keymapper_tables.h:1482
+#: engines/wintermute/keymapper_tables.h:1534
 msgid "Player 1: Left"
 msgstr "Гравець 1: Наліво"
 
-#: engines/wintermute/keymapper_tables.h:1487
+#: engines/wintermute/keymapper_tables.h:1539
 msgid "Player 1: Down"
 msgstr "Гравець 1: Вниз"
 
-#: engines/wintermute/keymapper_tables.h:1492
+#: engines/wintermute/keymapper_tables.h:1544
 msgid "Player 1: Right"
 msgstr "Гравець 1: Направо"
 
-#: engines/wintermute/keymapper_tables.h:1497
+#: engines/wintermute/keymapper_tables.h:1549
 msgid "Player 2: Up"
 msgstr "Гравець 2: Уверх"
 
-#: engines/wintermute/keymapper_tables.h:1502
+#: engines/wintermute/keymapper_tables.h:1554
 msgid "Player 2: Left"
 msgstr "Гравець 2: Наліво"
 
-#: engines/wintermute/keymapper_tables.h:1507
+#: engines/wintermute/keymapper_tables.h:1559
 msgid "Player 2: Down"
 msgstr "Гравець 2: Вниз"
 
-#: engines/wintermute/keymapper_tables.h:1512
+#: engines/wintermute/keymapper_tables.h:1564
 msgid "Player 2: Right"
 msgstr "Гравець 2: Направо"
 
-#: engines/wintermute/keymapper_tables.h:1517
+#: engines/wintermute/keymapper_tables.h:1569
 msgid "Debug FPS"
 msgstr "Відладочна FPS"
 
-#: engines/wintermute/keymapper_tables.h:1614
+#: engines/wintermute/keymapper_tables.h:1666
 msgid "F1"
 msgstr "F1"
 
-#: engines/wintermute/keymapper_tables.h:1619
+#: engines/wintermute/keymapper_tables.h:1671
 msgid "Key i"
 msgstr "Кнопка i"
 
@@ -7226,9 +7243,6 @@ msgstr ""
 
 #~ msgid "Free look"
 #~ msgstr "Вільний огляд"
-
-#~ msgid "Zoom up"
-#~ msgstr "Збіл. масштаб"
 
 #~ msgid "Bind Keys"
 #~ msgstr "Призначити клавіші"

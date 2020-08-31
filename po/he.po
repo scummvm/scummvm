@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-29 17:57+0200\n"
+"POT-Creation-Date: 2020-08-31 12:18+0200\n"
 "PO-Revision-Date: 2020-08-27 11:56+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -581,8 +581,8 @@ msgstr "סגירה"
 #: engines/dragons/detection.cpp:259 engines/glk/scott/scott.cpp:394
 #: engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
-#: engines/wintermute/keymapper_tables.h:1381
-#: engines/wintermute/keymapper_tables.h:1587
+#: engines/wintermute/keymapper_tables.h:1409
+#: engines/wintermute/keymapper_tables.h:1639
 msgid "Up"
 msgstr "למעלה"
 
@@ -591,26 +591,26 @@ msgstr "למעלה"
 #: engines/dragons/detection.cpp:265 engines/glk/scott/scott.cpp:394
 #: engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
-#: engines/wintermute/keymapper_tables.h:1387
-#: engines/wintermute/keymapper_tables.h:1593
+#: engines/wintermute/keymapper_tables.h:1415
+#: engines/wintermute/keymapper_tables.h:1645
 msgid "Down"
 msgstr "למטה"
 
 #: gui/gui-manager.cpp:147 engines/metaengine.cpp:122
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: engines/dragons/detection.cpp:271 engines/wintermute/keymapper_tables.h:1023
-#: engines/wintermute/keymapper_tables.h:1369
-#: engines/wintermute/keymapper_tables.h:1453
-#: engines/wintermute/keymapper_tables.h:1575
+#: engines/wintermute/keymapper_tables.h:1397
+#: engines/wintermute/keymapper_tables.h:1505
+#: engines/wintermute/keymapper_tables.h:1627
 msgid "Left"
 msgstr "שמאלה"
 
 #: gui/gui-manager.cpp:152 engines/metaengine.cpp:127
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: engines/dragons/detection.cpp:277 engines/wintermute/keymapper_tables.h:1029
-#: engines/wintermute/keymapper_tables.h:1375
-#: engines/wintermute/keymapper_tables.h:1461
-#: engines/wintermute/keymapper_tables.h:1581
+#: engines/wintermute/keymapper_tables.h:1403
+#: engines/wintermute/keymapper_tables.h:1513
+#: engines/wintermute/keymapper_tables.h:1633
 msgid "Right"
 msgstr "ימינה"
 
@@ -2020,7 +2020,7 @@ msgid "~R~eturn to Launcher"
 msgstr "~ח~זור אל משגר"
 
 #: engines/dialogs.cpp:103 engines/engine.cpp:794 engines/agi/saveload.cpp:759
-#: engines/avalanche/parser.cpp:1919 engines/cine/various.cpp:343
+#: engines/avalanche/parser.cpp:1919 engines/cine/various.cpp:350
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
 #: engines/dreamweb/saveload.cpp:262 engines/glk/streams.cpp:1427
 #: engines/gnap/menu.cpp:466 engines/hugo/file.cpp:298
@@ -2039,7 +2039,7 @@ msgstr "שמור משחק:"
 #: engines/dialogs.cpp:103 engines/engine.cpp:794
 #: backends/platform/symbian/src/SymbianActions.cpp:46
 #: engines/agi/saveload.cpp:759 engines/avalanche/parser.cpp:1919
-#: engines/cine/various.cpp:343 engines/dm/loadsave.cpp:199
+#: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
 #: engines/glk/streams.cpp:1427 engines/gnap/menu.cpp:466
 #: engines/hugo/file.cpp:298 engines/illusions/menusystem.cpp:703
@@ -2218,7 +2218,7 @@ msgstr "לחיצה שמאלית"
 #: engines/metaengine.cpp:69 backends/platform/maemo/maemo.cpp:178
 #: engines/wintermute/keymapper_tables.h:249
 #: engines/wintermute/keymapper_tables.h:293
-#: engines/wintermute/keymapper_tables.h:1599
+#: engines/wintermute/keymapper_tables.h:1651
 msgid "Middle Click"
 msgstr "לחיצה אמצעית"
 
@@ -2248,7 +2248,7 @@ msgstr "תפריט משחק"
 #: engines/wintermute/keymapper_tables.h:997
 #: engines/wintermute/keymapper_tables.h:1183
 #: engines/wintermute/keymapper_tables.h:1296
-#: engines/wintermute/keymapper_tables.h:1543
+#: engines/wintermute/keymapper_tables.h:1595
 msgid "Skip"
 msgstr "לדלג"
 
@@ -2349,12 +2349,12 @@ msgstr "אמולטור מערכת מוסיקה יצירתית"
 #: audio/softsynth/fluidsynth.cpp:176
 msgid ""
 "FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI "
-"on MIDI tab. Music is off"
+"on MIDI tab. Music is off."
 msgstr ""
 
 #: audio/softsynth/fluidsynth.cpp:277
 #, c-format
-msgid "FluidSynth: Failed loading custom sound font '%s'. Music is off"
+msgid "FluidSynth: Failed loading custom sound font '%s'. Music is off."
 msgstr ""
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:32
@@ -2608,9 +2608,9 @@ msgstr "החלף לכידת עכבר"
 #: engines/wintermute/keymapper_tables.h:1061
 #: engines/wintermute/keymapper_tables.h:1129
 #: engines/wintermute/keymapper_tables.h:1221
-#: engines/wintermute/keymapper_tables.h:1309
-#: engines/wintermute/keymapper_tables.h:1326
-#: engines/wintermute/keymapper_tables.h:1357
+#: engines/wintermute/keymapper_tables.h:1337
+#: engines/wintermute/keymapper_tables.h:1354
+#: engines/wintermute/keymapper_tables.h:1385
 msgid "Save screenshot"
 msgstr "שמור צילום מסך"
 
@@ -3697,7 +3697,7 @@ msgid ""
 msgstr ""
 
 #: engines/agi/saveload.cpp:772 engines/avalanche/parser.cpp:1907
-#: engines/cine/various.cpp:354 engines/dm/dm.cpp:276
+#: engines/cine/various.cpp:361 engines/dm/dm.cpp:276
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
 #: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1436
 #: engines/gnap/menu.cpp:475 engines/hugo/file.cpp:400
@@ -3713,7 +3713,7 @@ msgid "Restore game:"
 msgstr "שחזר משחק:"
 
 #: engines/agi/saveload.cpp:772 engines/avalanche/parser.cpp:1907
-#: engines/cine/various.cpp:354 engines/dm/dm.cpp:276
+#: engines/cine/various.cpp:361 engines/dm/dm.cpp:276
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
 #: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1436
 #: engines/gnap/menu.cpp:475 engines/hugo/file.cpp:400
@@ -4815,6 +4815,7 @@ msgstr "~ דף ~ חבל"
 
 #: engines/mohawk/myst.cpp:619 engines/wintermute/keymapper_tables.h:1253
 #: engines/wintermute/keymapper_tables.h:1302
+#: engines/wintermute/keymapper_tables.h:1325
 #, fuzzy
 msgid "Show map"
 msgstr "הצג ~ M ~ ap"
@@ -4895,16 +4896,16 @@ msgstr "לחזור"
 
 #: engines/mohawk/riven.cpp:902 engines/wintermute/keymapper_tables.h:159
 #: engines/wintermute/keymapper_tables.h:520
-#: engines/wintermute/keymapper_tables.h:1555
-#: engines/wintermute/keymapper_tables.h:1658
+#: engines/wintermute/keymapper_tables.h:1607
+#: engines/wintermute/keymapper_tables.h:1710
 #, fuzzy
 msgid "Turn left"
 msgstr "פונה שמאלה"
 
 #: engines/mohawk/riven.cpp:908 engines/wintermute/keymapper_tables.h:165
 #: engines/wintermute/keymapper_tables.h:525
-#: engines/wintermute/keymapper_tables.h:1561
-#: engines/wintermute/keymapper_tables.h:1665
+#: engines/wintermute/keymapper_tables.h:1613
+#: engines/wintermute/keymapper_tables.h:1717
 #, fuzzy
 msgid "Turn right"
 msgstr "פנה ימינה"
@@ -5066,8 +5067,9 @@ msgstr "תצוגה / הסתר תפריט השהיה"
 #: engines/wintermute/keymapper_tables.h:735
 #: engines/wintermute/keymapper_tables.h:943
 #: engines/wintermute/keymapper_tables.h:990
-#: engines/wintermute/keymapper_tables.h:1351
-#: engines/wintermute/keymapper_tables.h:1405
+#: engines/wintermute/keymapper_tables.h:1379
+#: engines/wintermute/keymapper_tables.h:1433
+#: engines/wintermute/keymapper_tables.h:1491
 msgid "???"
 msgstr ""
 
@@ -5543,7 +5545,7 @@ msgstr "יציאה"
 msgid "Skip cutscene"
 msgstr "דלג על חתכים"
 
-#: engines/scumm/help.cpp:79 engines/wintermute/keymapper_tables.h:1569
+#: engines/scumm/help.cpp:79 engines/wintermute/keymapper_tables.h:1621
 msgid "Space"
 msgstr "שטח"
 
@@ -5585,7 +5587,7 @@ msgstr "מהירות הטקסט איטית / מהירה יותר"
 msgid "Simulate left mouse button"
 msgstr "הדמו את לחצן העכבר השמאלי"
 
-#: engines/scumm/help.cpp:91 engines/wintermute/keymapper_tables.h:1624
+#: engines/scumm/help.cpp:91 engines/wintermute/keymapper_tables.h:1676
 msgid "Tab"
 msgstr "כרטיסייה"
 
@@ -6449,22 +6451,22 @@ msgstr "להסתכל על"
 
 #: engines/wintermute/keymapper_tables.h:147
 #: engines/wintermute/keymapper_tables.h:510
-#: engines/wintermute/keymapper_tables.h:1549
-#: engines/wintermute/keymapper_tables.h:1644
+#: engines/wintermute/keymapper_tables.h:1601
+#: engines/wintermute/keymapper_tables.h:1696
 #, fuzzy
 msgid "Walk forward"
 msgstr "הולך ל"
 
 #: engines/wintermute/keymapper_tables.h:153
 #: engines/wintermute/keymapper_tables.h:515
-#: engines/wintermute/keymapper_tables.h:1651
+#: engines/wintermute/keymapper_tables.h:1703
 #, fuzzy
 msgid "Walk backward"
 msgstr "הולך ל"
 
 #: engines/wintermute/keymapper_tables.h:171
 #: engines/wintermute/keymapper_tables.h:468
-#: engines/wintermute/keymapper_tables.h:1319
+#: engines/wintermute/keymapper_tables.h:1347
 #, fuzzy
 msgid "Show scene geometry"
 msgstr "הצג שליטה על המסך"
@@ -6503,7 +6505,8 @@ msgstr "הבא"
 #: engines/wintermute/keymapper_tables.h:1148
 #: engines/wintermute/keymapper_tables.h:1240
 #: engines/wintermute/keymapper_tables.h:1289
-#: engines/wintermute/keymapper_tables.h:1536
+#: engines/wintermute/keymapper_tables.h:1472
+#: engines/wintermute/keymapper_tables.h:1588
 #, fuzzy
 msgid "Show hints"
 msgstr "הצגת קבצים נסתרים"
@@ -6515,7 +6518,7 @@ msgstr "הצגת קבצים נסתרים"
 #: engines/wintermute/keymapper_tables.h:1247
 #: engines/wintermute/keymapper_tables.h:1259
 #: engines/wintermute/keymapper_tables.h:1268
-#: engines/wintermute/keymapper_tables.h:1411
+#: engines/wintermute/keymapper_tables.h:1439
 #, fuzzy
 msgid "Show inventory"
 msgstr "מלאי"
@@ -6523,7 +6526,8 @@ msgstr "מלאי"
 #: engines/wintermute/keymapper_tables.h:262
 #: engines/wintermute/keymapper_tables.h:311
 #: engines/wintermute/keymapper_tables.h:338
-#: engines/wintermute/keymapper_tables.h:1393
+#: engines/wintermute/keymapper_tables.h:1421
+#: engines/wintermute/keymapper_tables.h:1479
 #, fuzzy
 msgid "GUI variant A"
 msgstr "גרסה לא ידועה"
@@ -6531,7 +6535,8 @@ msgstr "גרסה לא ידועה"
 #: engines/wintermute/keymapper_tables.h:269
 #: engines/wintermute/keymapper_tables.h:318
 #: engines/wintermute/keymapper_tables.h:345
-#: engines/wintermute/keymapper_tables.h:1399
+#: engines/wintermute/keymapper_tables.h:1427
+#: engines/wintermute/keymapper_tables.h:1485
 #, fuzzy
 msgid "GUI variant B"
 msgstr "גרסה לא ידועה"
@@ -6628,8 +6633,8 @@ msgstr "הצג הכל"
 #: engines/wintermute/keymapper_tables.h:1134
 #: engines/wintermute/keymapper_tables.h:1155
 #: engines/wintermute/keymapper_tables.h:1275
-#: engines/wintermute/keymapper_tables.h:1430
-#: engines/wintermute/keymapper_tables.h:1604
+#: engines/wintermute/keymapper_tables.h:1458
+#: engines/wintermute/keymapper_tables.h:1656
 #, fuzzy
 msgid "Scroll up"
 msgstr "גלול רשימה למעלה"
@@ -6642,8 +6647,8 @@ msgstr "גלול רשימה למעלה"
 #: engines/wintermute/keymapper_tables.h:1141
 #: engines/wintermute/keymapper_tables.h:1162
 #: engines/wintermute/keymapper_tables.h:1282
-#: engines/wintermute/keymapper_tables.h:1437
-#: engines/wintermute/keymapper_tables.h:1609
+#: engines/wintermute/keymapper_tables.h:1465
+#: engines/wintermute/keymapper_tables.h:1661
 #, fuzzy
 msgid "Scroll down"
 msgstr "גלול רשימה למטה"
@@ -6665,13 +6670,13 @@ msgstr "הצג / הסתר את הסמן"
 
 #: engines/wintermute/keymapper_tables.h:495
 #: engines/wintermute/keymapper_tables.h:603
-#: engines/wintermute/keymapper_tables.h:1341
+#: engines/wintermute/keymapper_tables.h:1369
 #, fuzzy
 msgid "Debug print"
 msgstr "מאתר הבאגים"
 
 #: engines/wintermute/keymapper_tables.h:500
-#: engines/wintermute/keymapper_tables.h:1314
+#: engines/wintermute/keymapper_tables.h:1342
 msgid "Exit"
 msgstr ""
 
@@ -6743,7 +6748,7 @@ msgstr "מצב לחיצה"
 
 #: engines/wintermute/keymapper_tables.h:705
 #: engines/wintermute/keymapper_tables.h:1035
-#: engines/wintermute/keymapper_tables.h:1336
+#: engines/wintermute/keymapper_tables.h:1364
 #, fuzzy
 msgid "Cancel waiting"
 msgstr "ביטול הורדה"
@@ -6882,19 +6887,19 @@ msgid "Shift"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:1169
-#: engines/wintermute/keymapper_tables.h:1522
+#: engines/wintermute/keymapper_tables.h:1574
 #, fuzzy
 msgid "Next action"
 msgstr "~ P ~ נלהב"
 
 #: engines/wintermute/keymapper_tables.h:1177
-#: engines/wintermute/keymapper_tables.h:1530
+#: engines/wintermute/keymapper_tables.h:1582
 #, fuzzy
 msgid "Previous action"
 msgstr "~ P ~ נלהב"
 
 #: engines/wintermute/keymapper_tables.h:1196
-#: engines/wintermute/keymapper_tables.h:1331
+#: engines/wintermute/keymapper_tables.h:1359
 msgid "Settings"
 msgstr ""
 
@@ -6922,85 +6927,96 @@ msgstr ""
 msgid "Spin faster"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1346
+#: engines/wintermute/keymapper_tables.h:1311
 #, fuzzy
-msgid "Bezier window"
-msgstr "התאם לחלון"
+msgid "Zoom out"
+msgstr "התקרב"
 
-#: engines/wintermute/keymapper_tables.h:1362
+#: engines/wintermute/keymapper_tables.h:1318
 #, fuzzy
-msgid "Droid action"
-msgstr "~ P ~ נלהב"
+msgid "Zoom in"
+msgstr "התקרב"
 
-#: engines/wintermute/keymapper_tables.h:1418
+#: engines/wintermute/keymapper_tables.h:1331
+#: engines/wintermute/keymapper_tables.h:1446
 #, fuzzy
 msgid "Show journal"
 msgstr "הצג הכל"
 
-#: engines/wintermute/keymapper_tables.h:1424
+#: engines/wintermute/keymapper_tables.h:1374
+#, fuzzy
+msgid "Bezier window"
+msgstr "התאם לחלון"
+
+#: engines/wintermute/keymapper_tables.h:1390
+#, fuzzy
+msgid "Droid action"
+msgstr "~ P ~ נלהב"
+
+#: engines/wintermute/keymapper_tables.h:1452
 #, fuzzy
 msgid "Music menu"
 msgstr "עוצמת מוזיקה:"
 
-#: engines/wintermute/keymapper_tables.h:1444
+#: engines/wintermute/keymapper_tables.h:1496
 msgid "Rotate"
 msgstr "סובב"
 
-#: engines/wintermute/keymapper_tables.h:1469
+#: engines/wintermute/keymapper_tables.h:1521
 #, fuzzy
 msgid "Drop"
 msgstr "~ דף ~ חבל"
 
-#: engines/wintermute/keymapper_tables.h:1477
+#: engines/wintermute/keymapper_tables.h:1529
 #, fuzzy
 msgid "Player 1: Up"
 msgstr "זמן משחק:"
 
-#: engines/wintermute/keymapper_tables.h:1482
+#: engines/wintermute/keymapper_tables.h:1534
 #, fuzzy
 msgid "Player 1: Left"
 msgstr "זמן משחק:"
 
-#: engines/wintermute/keymapper_tables.h:1487
+#: engines/wintermute/keymapper_tables.h:1539
 #, fuzzy
 msgid "Player 1: Down"
 msgstr "זמן משחק:"
 
-#: engines/wintermute/keymapper_tables.h:1492
+#: engines/wintermute/keymapper_tables.h:1544
 #, fuzzy
 msgid "Player 1: Right"
 msgstr "זמן משחק:"
 
-#: engines/wintermute/keymapper_tables.h:1497
+#: engines/wintermute/keymapper_tables.h:1549
 #, fuzzy
 msgid "Player 2: Up"
 msgstr "זמן משחק:"
 
-#: engines/wintermute/keymapper_tables.h:1502
+#: engines/wintermute/keymapper_tables.h:1554
 #, fuzzy
 msgid "Player 2: Left"
 msgstr "זמן משחק:"
 
-#: engines/wintermute/keymapper_tables.h:1507
+#: engines/wintermute/keymapper_tables.h:1559
 #, fuzzy
 msgid "Player 2: Down"
 msgstr "זמן משחק:"
 
-#: engines/wintermute/keymapper_tables.h:1512
+#: engines/wintermute/keymapper_tables.h:1564
 #, fuzzy
 msgid "Player 2: Right"
 msgstr "החלק ימינה"
 
-#: engines/wintermute/keymapper_tables.h:1517
+#: engines/wintermute/keymapper_tables.h:1569
 #, fuzzy
 msgid "Debug FPS"
 msgstr "FPS כפול"
 
-#: engines/wintermute/keymapper_tables.h:1614
+#: engines/wintermute/keymapper_tables.h:1666
 msgid "F1"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1619
+#: engines/wintermute/keymapper_tables.h:1671
 msgid "Key i"
 msgstr ""
 
@@ -7214,9 +7230,6 @@ msgstr ""
 
 #~ msgid "Free look"
 #~ msgstr "מבט חופשי"
-
-#~ msgid "Zoom up"
-#~ msgstr "התקרב"
 
 #~ msgid "Bind Keys"
 #~ msgstr "מפתחות לאגד"
