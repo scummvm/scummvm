@@ -173,7 +173,7 @@ int MidiDriver_FluidSynth::open() {
 #endif
 
 	if (!isUsingInMemorySoundFontData && !ConfMan.hasKey("soundfont")) {
-		GUI::MessageDialog dialog(_("FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI on MIDI tab. Music is off"));
+		GUI::MessageDialog dialog(_("FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI on MIDI tab. Music is off."));
 		dialog.runModal();
 		return MERR_DEVICE_NOT_AVAILABLE;
 	}
@@ -274,7 +274,7 @@ int MidiDriver_FluidSynth::open() {
 #endif
 
 	if (_soundFont == -1) {
-		GUI::MessageDialog dialog(_("FluidSynth: Failed loading custom sound font '%s'. Music is off"), soundfont);
+		GUI::MessageDialog dialog(_("FluidSynth: Failed loading custom sound font '%s'. Music is off."), soundfont);
 		dialog.runModal();
 		return MERR_DEVICE_NOT_AVAILABLE;
 	}
