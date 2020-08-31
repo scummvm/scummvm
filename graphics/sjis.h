@@ -208,6 +208,9 @@ public:
 	 * Loads the ROM data from "FMT_FNT.ROM".
 	 */
 	bool loadData();
+
+	static int getCharFMTChunk(uint16 ch);
+
 private:
 	enum {
 		kFont16x16Chars = 7808,
