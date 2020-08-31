@@ -155,6 +155,90 @@ void ScummEngine::loadCJKFont() {
 	}
 }
 
+static int SJIStoFMTChunk(int f, int s) { //converts sjis code to fmt font offset
+	enum {
+		KANA = 0,
+		KANJI = 1,
+		EKANJI = 2
+	};
+	int base = s - ((s + 1) % 32);
+	int c = 0, p = 0, chunk_f = 0, chunk = 0, cr = 0, kanjiType = KANA;
+
+	if (f >= 0x81 && f <= 0x84) kanjiType = KANA;
+	if (f >= 0x88 && f <= 0x9f) kanjiType = KANJI;
+	if (f >= 0xe0 && f <= 0xea) kanjiType = EKANJI;
+
+	if ((f > 0xe8 || (f == 0xe8 && base >= 0x9f)) || (f > 0x90 || (f == 0x90 && base >= 0x9f))) {
+		c = 48; //correction
+		p = -8; //correction
+	}
+
+	if (kanjiType == KANA) {//Kana
+		chunk_f = (f - 0x81) * 2;
+	} else if (kanjiType == KANJI) {//Standard Kanji
+		p += f - 0x88;
+		chunk_f = c + 2 * p;
+	} else if (kanjiType == EKANJI) {//Enhanced Kanji
+		p += f - 0xe0;
+		chunk_f = c + 2 * p;
+	}
+
+	// Base corrections
+	if (base == 0x7f && s == 0x7f)
+		base -= 0x20;
+	if (base == 0x9f && s == 0xbe)
+		base += 0x20;
+	if (base == 0xbf && s == 0xde)
+		base += 0x20;
+	//if (base == 0x7f && s == 0x9e)
+	//	base += 0x20;
+
+	switch (base) {
+	case 0x3f:
+		cr = 0; //3f
+		if (kanjiType == KANA) chunk = 1;
+		else if (kanjiType == KANJI) chunk = 31;
+		else if (kanjiType == EKANJI) chunk = 111;
+		break;
+	case 0x5f:
+		cr = 0; //5f
+		if (kanjiType == KANA) chunk = 17;
+		else if (kanjiType == KANJI) chunk = 47;
+		else if (kanjiType == EKANJI) chunk = 127;
+		break;
+	case 0x7f:
+		cr = -1; //80
+		if (kanjiType == KANA) chunk = 9;
+		else if (kanjiType == KANJI) chunk = 63;
+		else if (kanjiType == EKANJI) chunk = 143;
+		break;
+	case 0x9f:
+		cr = 1; //9e
+		if (kanjiType == KANA) chunk = 2;
+		else if (kanjiType == KANJI) chunk = 32;
+		else if (kanjiType == EKANJI) chunk = 112;
+		break;
+	case 0xbf:
+		cr = 1; //be
+		if (kanjiType == KANA) chunk = 18;
+		else if (kanjiType == KANJI) chunk = 48;
+		else if (kanjiType == EKANJI) chunk = 128;
+		break;
+	case 0xdf:
+		cr = 1; //de
+		if (kanjiType == KANA) chunk = 10;
+		else if (kanjiType == KANJI) chunk = 64;
+		else if (kanjiType == EKANJI) chunk = 144;
+		break;
+	default:
+		debug(4, "Invalid Char! f %x s %x base %x c %d p %d", f, s, base, c, p);
+		return 0;
+	}
+
+	debug(6, "Kanji: %c%c f 0x%x s 0x%x base 0x%x c %d p %d chunk %d cr %d index %d", f, s, f, s, base, c, p, chunk, cr, ((chunk_f + chunk) * 32 + (s - base)) + cr);
+	return ((chunk_f + chunk) * 32 + (s - base)) + cr;
+}
+
 byte *ScummEngine::get2byteCharPtr(int idx) {
 	if (_game.platform == Common::kPlatformFMTowns || _game.platform == Common::kPlatformPCEngine)
 		return 0;
@@ -176,6 +260,8 @@ byte *ScummEngine::get2byteCharPtr(int idx) {
 			}
 
 			idx = (SWAP_CONSTANT_16(idx) & 0x7fff) - 1;
+		} else {
+			idx = SJIStoFMTChunk((idx % 256), (idx / 256));
 		}
 
 		break;
