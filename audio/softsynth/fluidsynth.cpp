@@ -274,7 +274,7 @@ int MidiDriver_FluidSynth::open() {
 #endif
 
 	if (_soundFont == -1) {
-		GUI::MessageDialog dialog(_("FluidSynth: Failed loading custom sound font '%s'. Music is off."), soundfont);
+		GUI::MessageDialog dialog(_("FluidSynth: Failed loading custom SoundFont '%s'. Music is off."), soundfont);
 		dialog.runModal();
 		return MERR_DEVICE_NOT_AVAILABLE;
 	}
