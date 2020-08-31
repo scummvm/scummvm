@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-31 15:11+0000\n"
-"PO-Revision-Date: 2020-08-31 15:26+0000\n"
-"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
+"PO-Revision-Date: 2020-08-31 15:28+0000\n"
+"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -2423,7 +2423,7 @@ msgstr ""
 "spécifier une dans le tab MIDI des options ScummVM. Musique désactivée."
 
 #: audio/softsynth/fluidsynth.cpp:277
-#, fuzzy, c-format
+#, c-format
 msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
 msgstr ""
 "FluidSynth : Impossible de charger la banque de son personnalisée '%s'. "
