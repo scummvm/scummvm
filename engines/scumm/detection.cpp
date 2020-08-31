@@ -443,6 +443,15 @@ static Common::Language detectLanguage(const Common::FSList &fslist, byte id) {
 			&& searchFSNode(tmpList, filename, langFile)) {
 			tmp.open(langFile);
 		}
+		// The Chinese version of Dig has the LANGUAGE.BND in the VIDEO sub dir.
+		if (!tmp.isOpen()
+			&& id == GID_DIG
+			&& searchFSNode(fslist, "VIDEO", resDir)
+			&& resDir.isDirectory()
+			&& resDir.getChildren(tmpList, Common::FSNode::kListFilesOnly)
+			&& searchFSNode(tmpList, filename, langFile)) {
+			tmp.open(langFile);
+		}
 	}
 	if (tmp.isOpen()) {
 		uint size = tmp.size();
