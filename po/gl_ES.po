@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-31 12:18+0200\n"
-"PO-Revision-Date: 2020-08-27 11:56+0000\n"
+"PO-Revision-Date: 2020-08-31 12:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/gl/>\n"
@@ -6469,14 +6469,14 @@ msgid "loading quick save %d"
 msgstr "Erro ao gardar rápido no espazo %d"
 
 #: engines/ultima/nuvie/nuvie.cpp:378
-#, fuzzy, c-format
+#, c-format
 msgid "saving quick save %d"
-msgstr "Modo Rato"
+msgstr ""
 
 #: engines/ultima/nuvie/nuvie.cpp:392
-#, fuzzy, c-format
+#, c-format
 msgid "Quicksave %03d"
-msgstr "Modo Rato"
+msgstr ""
 
 #: engines/ultima/nuvie/meta_engine.cpp:39
 msgid "Original Save"
