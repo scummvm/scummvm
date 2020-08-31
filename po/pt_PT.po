@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-31 12:18+0200\n"
-"PO-Revision-Date: 2020-08-27 11:56+0000\n"
+"PO-Revision-Date: 2020-08-31 12:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_PT/>\n"
@@ -289,20 +289,17 @@ msgid "Shader"
 msgstr "Shader"
 
 #: gui/editgamedialog.cpp:217
-#, fuzzy
 msgid "Override global shader settings"
-msgstr "Substituir configurações gerais de áudio"
+msgstr "Substituir configurações gerais de shaders"
 
 #: gui/editgamedialog.cpp:219
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global shader settings"
-msgstr "Substituir configurações gerais de áudio"
+msgstr "Sobrepor configurações globais de shaders"
 
 #: gui/editgamedialog.cpp:233 gui/options.cpp:1743 engines/dialogs.cpp:326
-#, fuzzy
 msgid "Keymaps"
-msgstr "Mapa de teclas:"
+msgstr "Atalhos"
 
 #: gui/editgamedialog.cpp:240 gui/options.cpp:1750 engines/dialogs.cpp:301
 msgid "Audio"
@@ -410,7 +407,7 @@ msgstr "J. Guardados:"
 
 #: gui/editgamedialog.cpp:340 engines/dialogs.cpp:335
 msgid "Achievements"
-msgstr ""
+msgstr "Proezas"
 
 #: gui/editgamedialog.cpp:364 gui/editgamedialog.cpp:454
 #: gui/editgamedialog.cpp:516 gui/editgamedialog.cpp:577 gui/options.cpp:1865
@@ -570,13 +567,12 @@ msgstr ""
 
 #: gui/gui-manager.cpp:122
 msgid "GUI"
-msgstr ""
+msgstr "Interface"
 
 #: gui/gui-manager.cpp:126 engines/mohawk/myst.cpp:585
 #: engines/mohawk/riven.cpp:854
-#, fuzzy
 msgid "Interact"
-msgstr "Interpolação:"
+msgstr "Interagir"
 
 #: gui/gui-manager.cpp:131 gui/unknown-game-dialog.cpp:54
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
@@ -731,10 +727,9 @@ msgid "~A~dd Game..."
 msgstr "~A~dicionar Jogo..."
 
 #: gui/launcher.cpp:167
-#, fuzzy
 msgctxt "lowres"
 msgid "Mass Add..."
-msgstr "Adição em Massa..."
+msgstr "Vários..."
 
 #: gui/launcher.cpp:171
 msgctxt "lowres"
@@ -949,12 +944,12 @@ msgstr "Ponto morto:"
 #: gui/options.cpp:1173
 #, c-format
 msgid "%d hidden achievements remaining"
-msgstr ""
+msgstr "%d proezas ocultas restantes"
 
 #: gui/options.cpp:1178
 #, c-format
 msgid "Achievements unlocked: %d/%d"
-msgstr ""
+msgstr "Proezas alcançadas: %d/%d"
 
 #: gui/options.cpp:1197
 msgid "HW Shader:"
@@ -1229,12 +1224,12 @@ msgstr "Nuvem"
 
 #: gui/options.cpp:1817
 msgid "LAN"
-msgstr ""
+msgstr "Rede local"
 
 #: gui/options.cpp:1819
 msgctxt "lowres"
 msgid "LAN"
-msgstr ""
+msgstr "Rede"
 
 #: gui/options.cpp:1827
 msgid "Accessibility"
@@ -1306,20 +1301,18 @@ msgid "Language of ScummVM GUI"
 msgstr "Idioma da interface ScummVM"
 
 #: gui/options.cpp:2035
-#, fuzzy
 msgid "Switch the ScummVM GUI language to the game language"
-msgstr "Usar o idioma do jogo para a interface"
+msgstr "Alterar o idioma da interface ScummVM de acordo com o jogo"
 
 #: gui/options.cpp:2036
-#, fuzzy
 msgid ""
 "When starting a game, change the ScummVM GUI language to the game language. "
 "That way, if a game uses the ScummVM save and load dialogs, they are in the "
 "same language as the game."
 msgstr ""
-"Durante um jogo, o idioma da interface é alterado para o idioma do jogo. "
-"Desta forma, se um jogo utilizar a interface do ScummVM, será consistente "
-"com o jogo."
+"Ao iniciar um jogo, o idioma da interface ScummVM é alterado para o idioma "
+"do jogo. Desta forma, se um jogo utilizar caixas de diálogo do ScummVM, "
+"serão consistentes com o jogo."
 
 #: gui/options.cpp:2049
 msgid "Use native system file browser"
@@ -1367,9 +1360,8 @@ msgid ""
 msgstr ""
 
 #: gui/options.cpp:2088
-#, fuzzy
 msgid "Enable storage"
-msgstr "Ativa risos como se houvesse um público"
+msgstr "Ativar armazenamento"
 
 #: gui/options.cpp:2088
 msgid "Confirm you want to use this account for this storage"
@@ -1396,12 +1388,10 @@ msgid "Space used by ScummVM's saved games on this storage"
 msgstr "Espaço consumido por jogos guardados do ScummVM neste armazenamento"
 
 #: gui/options.cpp:2096
-#, fuzzy
 msgid "Last sync:"
 msgstr "Última sincronização:"
 
 #: gui/options.cpp:2096
-#, fuzzy
 msgid "When was the last time saved games were synced with this storage"
 msgstr ""
 "Quando foram sincronizados os jogos guardados neste armazenamento pela "
@@ -1422,12 +1412,11 @@ msgstr ""
 
 #: gui/options.cpp:2102
 msgid "Sync now"
-msgstr ""
+msgstr "Sincronizar agora"
 
 #: gui/options.cpp:2102
-#, fuzzy
 msgid "Start saved games sync"
-msgstr "Iniciar jogo seleccionado"
+msgstr "Iniciar sincronização de jogos guardados"
 
 #: gui/options.cpp:2105
 msgctxt "lowres"
@@ -1439,9 +1428,8 @@ msgid "You can download game files from your cloud ScummVM folder:"
 msgstr ""
 
 #: gui/options.cpp:2108
-#, fuzzy
 msgid "Download game files"
-msgstr "Transferência falhou."
+msgstr "Transferir ficheiros do jogo"
 
 #: gui/options.cpp:2108
 msgid "Open downloads manager dialog"
@@ -1457,9 +1445,8 @@ msgid "To change account for this storage, disconnect and connect again:"
 msgstr ""
 
 #: gui/options.cpp:2114
-#, fuzzy
 msgid "Disconnect"
-msgstr "Ligar"
+msgstr "Desligar"
 
 #: gui/options.cpp:2114
 msgid "Stop using this storage on this device"
@@ -1476,35 +1463,32 @@ msgstr ""
 
 #: gui/options.cpp:2120
 msgid "1. Open this link:"
-msgstr ""
+msgstr "1. Abra este link:"
 
 #: gui/options.cpp:2123
 msgctxt "lowres"
 msgid "2. Get the code and enter it here:"
-msgstr ""
+msgstr "2. Obtenha o código e introduza aqui:"
 
 #: gui/options.cpp:2125
 msgid "2. Get the code and enter it here:"
-msgstr ""
+msgstr "2. Obtenha o código e introduza aqui:"
 
 #: gui/options.cpp:2127
 msgid "Paste"
 msgstr "Colar"
 
 #: gui/options.cpp:2127
-#, fuzzy
 msgid "Paste code from clipboard"
-msgstr "Copiar para a área de transferência"
+msgstr "Colar código da área de transferência"
 
 #: gui/options.cpp:2128
-#, fuzzy
 msgid "3. Connect"
-msgstr "Ligar"
+msgstr "3. Ligar"
 
 #: gui/options.cpp:2128
-#, fuzzy
 msgid "Connect your cloud storage account"
-msgstr "Abrir o assistente para ligar-se à sua conta de armazenamento"
+msgstr "Ligue a sua conta de armazenamento em nuvem"
 
 #: gui/options.cpp:2137
 msgid "Run server"
@@ -1524,9 +1508,8 @@ msgid "/root/ Path:"
 msgstr "/raiz/:"
 
 #: gui/options.cpp:2142 gui/options.cpp:2144 gui/options.cpp:2145
-#, fuzzy
 msgid "Select which directory will be shown as /root/ in the Files Manager"
-msgstr "Especifica a pasta que o gestor de ficheiros pode aceder"
+msgstr "Selecione a pasta /raiz/ no Gestor de Ficheiros"
 
 #: gui/options.cpp:2144
 msgid "/root/ Path:"
@@ -1538,7 +1521,7 @@ msgstr "Porta do servidor:"
 
 #: gui/options.cpp:2150
 msgid "Port for server to use"
-msgstr ""
+msgstr "Porta utilizada pelo servidor"
 
 #: gui/options.cpp:2155
 msgctxt "lowres"
@@ -1560,14 +1543,13 @@ msgstr ""
 
 #: gui/options.cpp:2171
 msgid "Use Text to speech"
-msgstr "Use Texto para voz:"
+msgstr "Use Texto para voz"
 
 #: gui/options.cpp:2171
 msgid "Will read text in gui on mouse over."
 msgstr "Irá ler o texto da interface gráfica ao sobrepor o cursor."
 
 #: gui/options.cpp:2184
-#, fuzzy
 msgid "None"
 msgstr "Nenhum"
 
@@ -1624,23 +1606,20 @@ msgstr ""
 "Por favor aceda a esta página manualmente."
 
 #: gui/options.cpp:2584
-#, fuzzy
 msgid "Another Storage is working now. Do you want to interrupt it?"
-msgstr "Já existe um armazenamento ativo. Deseja pará-lo?"
+msgstr "Outro armazenamento está ocupado. Deseja interrompê-lo?"
 
 #: gui/options.cpp:2593 gui/options.cpp:2631
 msgid "Wait until current Storage finishes up and try again."
 msgstr "Aguarde até o armazenamento atual acabar e tente de novo."
 
 #: gui/options.cpp:2606
-#, fuzzy
 msgid "Connecting..."
-msgstr "Ligar"
+msgstr "A ligar..."
 
 #: gui/options.cpp:2622
-#, fuzzy
 msgid "This Storage is working now. Do you want to interrupt it?"
-msgstr "Já existe um armazenamento ativo. Deseja pará-lo?"
+msgstr "Este armazenamento está ocupado. Deseja interrompê-lo?"
 
 #: gui/options.cpp:2820 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
@@ -1655,19 +1634,16 @@ msgid "Stop local webserver"
 msgstr "Pára o servidor local"
 
 #: gui/options.cpp:2982
-#, fuzzy
 msgid "Storage connected."
-msgstr "Assistente de ligação ao armazenamento %s"
+msgstr "Armazenamento ligado."
 
 #: gui/options.cpp:2984
-#, fuzzy
 msgid "Failed to connect storage."
-msgstr "Não foi possível alterar o armazenamento!"
+msgstr "Não foi possível ligar ao armazenamento."
 
 #: gui/options.cpp:2986
-#, fuzzy
 msgid "Failed to connect storage: "
-msgstr "Não foi possível alterar o armazenamento!"
+msgstr "Não foi possível ligar o armazenamento: "
 
 #: gui/options.cpp:3006
 msgid ""
@@ -1922,7 +1898,7 @@ msgstr "Não foi encontrado nenhum motor capaz de executar o jogo selecionado"
 
 #: common/achievements.cpp:92
 msgid "Achievement unlocked!"
-msgstr ""
+msgstr "Proeza desbloqueada!"
 
 #: common/error.cpp:38
 msgid "No error"
@@ -2141,23 +2117,23 @@ msgid "~K~eys"
 msgstr "~T~eclas"
 
 #: engines/engine.cpp:318
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to resolution '%dx%d'."
-msgstr "Não foi possível aplicar o modo de redimensionamento: '"
+msgstr "Não foi possível alterar a resolução para '%dx%d'."
 
 #: engines/engine.cpp:327
 msgid "Could not initialize color format."
 msgstr "Não foi possível inicializar o formato de cores."
 
 #: engines/engine.cpp:336
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to video mode '%s'."
-msgstr "Não foi possível aplicar o modo de vídeo: '"
+msgstr "Não foi possível aplicar o modo de vídeo '%s'."
 
 #: engines/engine.cpp:344
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to stretch mode '%s'."
-msgstr "Não foi possível aplicar o modo de redimensionamento: '"
+msgstr "Não foi possível aplicar o modo de redimensionamento '%s'."
 
 #: engines/engine.cpp:351
 msgid "Could not apply aspect ratio setting."
@@ -2200,14 +2176,12 @@ msgstr ""
 
 #: engines/engine.cpp:519 engines/metaengine.cpp:331 engines/savestate.cpp:75
 #: engines/sky/detection.cpp:316 engines/xeen/saves.cpp:290
-#, fuzzy
 msgid "Autosave"
-msgstr "Guardar automático:"
+msgstr "Auto-guardado"
 
 #: engines/engine.cpp:521
-#, fuzzy
 msgid "Error occurred making autosave"
-msgstr "Erro a abrir o jogo gravado"
+msgstr "Erro a guardar o jogo automaticamente"
 
 #: engines/engine.cpp:600
 #, c-format
@@ -2260,7 +2234,7 @@ msgstr "IDs de jogos correspondidos para o motor %s:"
 
 #: engines/metaengine.cpp:59
 msgid "Default game keymap"
-msgstr ""
+msgstr "Mapeamento padrão"
 
 #: engines/metaengine.cpp:63 backends/platform/maemo/maemo.cpp:174
 #: backends/platform/symbian/src/SymbianActions.cpp:44
@@ -2291,7 +2265,6 @@ msgid "Pause"
 msgstr "Pausa"
 
 #: engines/metaengine.cpp:85
-#, fuzzy
 msgid "Game menu"
 msgstr "Menu do jogo"
 
@@ -2317,7 +2290,7 @@ msgstr ""
 #: engines/metaengine.cpp:107 engines/sky/detection.cpp:228
 #: engines/wintermute/keymapper_tables.h:55
 msgid "Confirm"
-msgstr ""
+msgstr "Confirmar"
 
 #: audio/adlib.cpp:2293
 msgid "AdLib emulator"
@@ -2345,7 +2318,7 @@ msgstr "OPL2LPT"
 
 #: audio/fmopl.cpp:84
 msgid "OPL3LPT"
-msgstr ""
+msgstr "OPL3LPT"
 
 #: audio/mididrv.cpp:258
 #, c-format
@@ -2390,7 +2363,7 @@ msgstr ""
 
 #: audio/mididrv.cpp:717
 msgid "Starting MIDI dump"
-msgstr ""
+msgstr "Iniciando despejo de MIDI"
 
 #: audio/mods/paula.cpp:303
 msgid "Amiga Audio emulator"
@@ -2428,9 +2401,8 @@ msgid "PC-98 Audio"
 msgstr "PC-98 Audio"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:82
-#, fuzzy
 msgid "SegaCD Audio"
-msgstr "Usar CD áudio"
+msgstr "Áudio SegaCD"
 
 #: audio/softsynth/mt32.cpp:175
 msgid "Initializing MT-32 Emulator"
@@ -2453,9 +2425,8 @@ msgid "C64 Audio emulator"
 msgstr "Emulador C64 Audio"
 
 #: backends/cloud/cloudmanager.cpp:156
-#, fuzzy
 msgid "<syncing...>"
-msgstr "Ligar"
+msgstr "<a sincronizar...>"
 
 #: backends/cloud/storage.cpp:242
 msgid "Saved games sync was cancelled."
@@ -2510,28 +2481,24 @@ msgid "Quit"
 msgstr "Sair"
 
 #: backends/events/default/default-events.cpp:293
-#, fuzzy
 msgid "Global"
-msgstr " (Global)"
+msgstr "Global"
 
 #: backends/events/default/default-events.cpp:296
-#, fuzzy
 msgid "Global Main Menu"
-msgstr "Menu global"
+msgstr "Menu Global"
 
 #: backends/events/default/default-events.cpp:303
 msgid "Display keyboard"
 msgstr "Mostrar teclado"
 
 #: backends/events/default/default-events.cpp:310
-#, fuzzy
 msgid "Toggle mute"
-msgstr "Mudar para ecrã inteiro"
+msgstr "Ativar/desativar som"
 
 #: backends/events/default/default-events.cpp:338
-#, fuzzy
 msgid "Open Debugger"
-msgstr "Depurador"
+msgstr "Abrir Depurador"
 
 #: backends/events/gph/gph-events.cpp:423
 #: backends/events/gph/gph-events.cpp:466
@@ -2609,9 +2576,8 @@ msgstr "Esticar à janela"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:241
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:87
-#, fuzzy
 msgid "Fit to window (4:3)"
-msgstr "Ajustar à janela"
+msgstr "Ajustar à janela (4:3)"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:586
 #, c-format
@@ -2667,7 +2633,7 @@ msgstr "Mudar para ecrã inteiro"
 #: backends/graphics/sdl/sdl-graphics.cpp:376 engines/scumm/help.cpp:100
 #: engines/wintermute/keymapper_tables.h:710
 msgid "Toggle mouse capture"
-msgstr ""
+msgstr "Alternar captura do rato"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:381
 #: engines/wintermute/keymapper_tables.h:478
@@ -2679,30 +2645,27 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1354
 #: engines/wintermute/keymapper_tables.h:1385
 msgid "Save screenshot"
-msgstr ""
+msgstr "Capturar ecrã"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:387
-#, fuzzy
 msgid "Toggle aspect ratio correction"
-msgstr "Correção da taxa de proporção ativada"
+msgstr "Alternar correção da taxa de proporção"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:394
-#, fuzzy
 msgid "Toggle linear filtered scaling"
-msgstr "Usar filtragem linear ao redimensionar gráficos"
+msgstr "Alternar filtragem linear no redimensionamento"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:401
-#, fuzzy
 msgid "Cycle through stretch modes"
-msgstr "Não foi possível aplicar o modo de redimensionamento: '"
+msgstr "Percorrer modos de redimensionamento"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:407
 msgid "Increase the scale factor"
-msgstr ""
+msgstr "Aumentar a escala"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:413
 msgid "Decrease the scale factor"
-msgstr ""
+msgstr "Diminuir a escala"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:425
 msgid "Switch to nearest neighbour scaling"
@@ -2738,188 +2701,172 @@ msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:245
 msgid "Left Mouse Button"
-msgstr ""
+msgstr "Botão Esquerdo do Rato"
 
 #: backends/keymapper/hardware-input.cpp:246
-#, fuzzy
 msgid "Right Mouse Button"
-msgstr "A luz irá apagar-se em "
+msgstr "Botão Direito do Rato"
 
 #: backends/keymapper/hardware-input.cpp:247
 msgid "Middle Mouse Button"
-msgstr ""
+msgstr "Botão do Meio do Rato"
 
 #: backends/keymapper/hardware-input.cpp:248
 msgid "Mouse Wheel Up"
-msgstr ""
+msgstr "Roda do Rato para Cima"
 
 #: backends/keymapper/hardware-input.cpp:249
 msgid "Mouse Wheel Down"
-msgstr ""
+msgstr "Roda do Rato para Baixo"
 
 #: backends/keymapper/hardware-input.cpp:250
-#, fuzzy
 msgid "X1 Mouse Button"
-msgstr "A luz irá apagar-se em "
+msgstr "Botão X1 do Rato"
 
 #: backends/keymapper/hardware-input.cpp:251
-#, fuzzy
 msgid "X2 Mouse Button"
-msgstr "A luz irá apagar-se em "
+msgstr "Botão X2 do Rato"
 
 #: backends/keymapper/hardware-input.cpp:256
 msgid "Joy A"
-msgstr ""
+msgstr "Joy A"
 
 #: backends/keymapper/hardware-input.cpp:257
 msgid "Joy B"
-msgstr ""
+msgstr "Joy B"
 
 #: backends/keymapper/hardware-input.cpp:258
 msgid "Joy X"
-msgstr ""
+msgstr "Joy X"
 
 #: backends/keymapper/hardware-input.cpp:259
 msgid "Joy Y"
-msgstr ""
+msgstr "Joy Y"
 
 #: backends/keymapper/hardware-input.cpp:260
-#, fuzzy
 msgid "Joy Back"
-msgstr "Retroceder"
+msgstr "Joy Voltar"
 
 #: backends/keymapper/hardware-input.cpp:261
 msgid "Joy Guide"
-msgstr ""
+msgstr "Joy Guia"
 
 #: backends/keymapper/hardware-input.cpp:262
-#, fuzzy
 msgid "Joy Start"
-msgstr "~I~niciar"
+msgstr "Joy Iniciar"
 
 #: backends/keymapper/hardware-input.cpp:263
-#, fuzzy
 msgid "Left Stick"
-msgstr "Clique esquerdo"
+msgstr "Analógico Esquerdo"
 
 #: backends/keymapper/hardware-input.cpp:264
-#, fuzzy
 msgid "Right Stick"
-msgstr "Clique direito"
+msgstr "Analógico Direito"
 
 #: backends/keymapper/hardware-input.cpp:265 engines/dragons/detection.cpp:307
 msgid "Left Shoulder"
-msgstr ""
+msgstr "Botão Superior Esquerdo"
 
 #: backends/keymapper/hardware-input.cpp:266 engines/dragons/detection.cpp:313
 msgid "Right Shoulder"
-msgstr ""
+msgstr "Botão Superior Direito"
 
 #: backends/keymapper/hardware-input.cpp:267
 #: backends/platform/3ds/osystem-events.cpp:58
 #: backends/platform/sdl/ps3/ps3.cpp:52 backends/platform/sdl/psp2/psp2.cpp:53
 #: backends/platform/sdl/switch/switch.cpp:46
 msgid "D-pad Up"
-msgstr ""
+msgstr "D-pad Cima"
 
 #: backends/keymapper/hardware-input.cpp:268
 #: backends/platform/3ds/osystem-events.cpp:59
 #: backends/platform/sdl/ps3/ps3.cpp:53 backends/platform/sdl/psp2/psp2.cpp:54
 #: backends/platform/sdl/switch/switch.cpp:47
 msgid "D-pad Down"
-msgstr ""
+msgstr "D-pad Baixo"
 
 #: backends/keymapper/hardware-input.cpp:269
 #: backends/platform/3ds/osystem-events.cpp:60
 #: backends/platform/sdl/ps3/ps3.cpp:54 backends/platform/sdl/psp2/psp2.cpp:55
 #: backends/platform/sdl/switch/switch.cpp:48
-#, fuzzy
 msgid "D-pad Left"
-msgstr "Deslizar à esquerda"
+msgstr "D-pad Esquerda"
 
 #: backends/keymapper/hardware-input.cpp:270
 #: backends/platform/3ds/osystem-events.cpp:61
 #: backends/platform/sdl/ps3/ps3.cpp:55 backends/platform/sdl/psp2/psp2.cpp:56
 #: backends/platform/sdl/switch/switch.cpp:49
-#, fuzzy
 msgid "D-pad Right"
-msgstr "Deslizar à direita"
+msgstr "D-pad Direita"
 
 #: backends/keymapper/hardware-input.cpp:275
 msgid "Left Trigger"
-msgstr ""
+msgstr "Gatilho Esquerdo"
 
 #: backends/keymapper/hardware-input.cpp:276
 msgid "Right Trigger"
-msgstr ""
+msgstr "Gatilho Direito"
 
 #: backends/keymapper/hardware-input.cpp:277
 #: backends/platform/sdl/ps3/ps3.cpp:62 backends/platform/sdl/psp2/psp2.cpp:61
 #: backends/platform/sdl/switch/switch.cpp:56
-#, fuzzy
 msgid "Left Stick X"
-msgstr "Clique esquerdo"
+msgstr "Analógico Esquerdo X"
 
 #: backends/keymapper/hardware-input.cpp:278
 #: backends/platform/sdl/ps3/ps3.cpp:63 backends/platform/sdl/psp2/psp2.cpp:62
 #: backends/platform/sdl/switch/switch.cpp:57
-#, fuzzy
 msgid "Left Stick Y"
-msgstr "Clique esquerdo"
+msgstr "Analógico Esquerdo Y"
 
 #: backends/keymapper/hardware-input.cpp:279
 #: backends/platform/sdl/ps3/ps3.cpp:64 backends/platform/sdl/psp2/psp2.cpp:63
 #: backends/platform/sdl/switch/switch.cpp:58
-#, fuzzy
 msgid "Right Stick X"
-msgstr "Clique direito"
+msgstr "Analógico Direito X"
 
 #: backends/keymapper/hardware-input.cpp:280
 #: backends/platform/sdl/ps3/ps3.cpp:65 backends/platform/sdl/psp2/psp2.cpp:64
 #: backends/platform/sdl/switch/switch.cpp:59
-#, fuzzy
 msgid "Right Stick Y"
-msgstr "Clique direito"
+msgstr "Analógico Direito Y"
 
 #: backends/keymapper/remap-widget.cpp:285
 #: backends/keymapper/remap-widget.cpp:315
 msgid "Reset to defaults"
-msgstr ""
+msgstr "Restaurar padrões"
 
 #: backends/keymapper/remap-widget.cpp:286
 msgid "Clear mapping"
-msgstr ""
+msgstr "Limpar mapeamentos"
 
 #: backends/keymapper/virtual-mouse.cpp:154
 msgid "Virtual mouse up"
-msgstr ""
+msgstr "Rato virtual cima"
 
 #: backends/keymapper/virtual-mouse.cpp:159
-#, fuzzy
 msgid "Virtual mouse down"
-msgstr "Cancelar transferência"
+msgstr "Rato virtual baixo"
 
 #: backends/keymapper/virtual-mouse.cpp:164
 msgid "Virtual mouse left"
-msgstr ""
+msgstr "Rato virtual esquerda"
 
 #: backends/keymapper/virtual-mouse.cpp:169
-#, fuzzy
 msgid "Virtual mouse right"
-msgstr "Mover à direita"
+msgstr "Rato virtual direita"
 
 #: backends/keymapper/virtual-mouse.cpp:174
 msgid "Slow down virtual mouse"
-msgstr ""
+msgstr "Rato virtual lento"
 
 #: backends/midi/windows.cpp:167
 msgid "Windows MIDI"
 msgstr "MIDI do Windows"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:60
-#, fuzzy
 msgid "Can't create directory here!"
-msgstr "O caminho não é uma pasta"
+msgstr "Não é possível criar uma pasta aqui!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:66
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:73
@@ -2933,55 +2880,47 @@ msgstr "O caminho não é uma pasta"
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:56
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:63
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:137
-#, fuzzy
 msgid "Invalid path!"
-msgstr "Código inválido"
+msgstr "Caminho inválido!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:84
-#, fuzzy
 msgid "Parent directory doesn't exists!"
-msgstr "O caminho não existe"
+msgstr "A pasta de origem não existe!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:88
 msgid "Can't create a directory within a file!"
-msgstr ""
+msgstr "Não é possível criar uma pasta dentro dum ficheiro!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:98
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:141
 msgid "There is a file with that name in the parent directory!"
-msgstr ""
+msgstr "Já existe um ficheiro com o mesmo nome!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:104
-#, fuzzy
 msgid "Failed to create the directory!"
-msgstr "Falha a eliminar o ficheiro."
+msgstr "Falha a criar a pasta!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:111
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:120
-#, fuzzy
 msgid "Directory created successfully!"
-msgstr "DVD carregado com sucesso"
+msgstr "Pasta criada com sucesso!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:122
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:204
-#, fuzzy
 msgid "Back to parent directory"
-msgstr "O caminho não é uma pasta"
+msgstr "Voltar à pasta de origem"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:67
-#, fuzzy
 msgid "The file doesn't exist!"
-msgstr "O caminho não existe"
+msgstr "O ficheiro não existe!"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:71
-#, fuzzy
 msgid "Can't download a directory!"
-msgstr "O caminho não é uma pasta"
+msgstr "Não é possível transferir uma pasta!"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:76
-#, fuzzy
 msgid "Failed to read the file!"
-msgstr "Falha a eliminar o ficheiro."
+msgstr "Falha a le o ficheiro!"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:59
 msgid ""
@@ -2993,89 +2932,81 @@ msgstr ""
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:68
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:223
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:224
-#, fuzzy
 msgid "Create directory"
-msgstr "O caminho não é uma pasta"
+msgstr "Criar pasta"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:69
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:70
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:227
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:228
-#, fuzzy
 msgid "Upload files"
-msgstr "Carregar ficheiro"
+msgstr "Carregar ficheiros"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:71
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:229
 msgid "Type new directory name:"
-msgstr ""
+msgstr "Introduza o novo nome da pasta:"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:72
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:230
 msgid "Select a file to upload:"
-msgstr ""
+msgstr "Selecione um ficheiro para carregar:"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:73
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:231
-#, fuzzy
 msgid "Or select a directory (works in Chrome only):"
-msgstr "Selecione a pasta de temas da interface"
+msgstr "Ou selecione uma pasta (apenas funciona no Chrome):"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:74
 msgid "Index of "
-msgstr ""
+msgstr "Listagem de "
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:76
 msgid "Error occurred"
-msgstr ""
+msgstr "Ocorreu um erro"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:81
 #: backends/networking/sdl_net/handlers/listajaxhandler.cpp:45
 msgid "File system root"
-msgstr ""
+msgstr "Raiz do sistema de ficheiros"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:82
 #: backends/networking/sdl_net/handlers/listajaxhandler.cpp:46
-#, fuzzy
 msgid "Saved games"
-msgstr "Guardar jogo:"
+msgstr "Jogos guardados"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:119
 #: backends/networking/sdl_net/handlers/listajaxhandler.cpp:84
-#, fuzzy
 msgid "Parent directory"
-msgstr "O caminho não é uma pasta"
+msgstr "Pasta de origem"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:218
-#, fuzzy
 msgid "ScummVM couldn't list the directory you specified."
-msgstr "O ScummVM não pôde aceder a esta pasta!"
+msgstr "O ScummVM não conseguiu listar a pasta especificada."
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
 msgid "Index of"
-msgstr ""
+msgstr "Listagem de"
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
 msgid "This is a local webserver index page."
 msgstr ""
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:43
-#, fuzzy
 msgid "Open Files manager"
-msgstr "Abrir o gestor de transferências"
+msgstr "Abrir o gestor de ficheiros"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:67
 msgid "The parent directory doesn't exist!"
-msgstr ""
+msgstr "A pasta de origem não existe!"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:71
-#, fuzzy
 msgid "Can't upload into a file!"
-msgstr "O caminho não é um ficheiro"
+msgstr "Não é possível carregar para dentro dum ficheiro!"
 
 #: backends/networking/sdl_net/handlerutils.cpp:213
 msgid "Back to the files manager"
-msgstr ""
+msgstr "Voltar ao gestor de ficheiros"
 
 #: backends/networking/sdl_net/localwebserver.cpp:123
 msgid ""
@@ -3086,21 +3017,19 @@ msgstr ""
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:69
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:111
 msgid "Invalid request: headers are too long!"
-msgstr ""
+msgstr "Pedido inválido: cabeçalhos demasiado grandes!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:155
-#, fuzzy
 msgid "Failed to upload the file!"
-msgstr "Falha a eliminar o ficheiro."
+msgstr "Falha a carregar o ficheiro!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:184
 msgid "No file was passed!"
-msgstr ""
+msgstr "Nenhum ficheiro especificado!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:202
-#, fuzzy
 msgid "Uploaded successfully!"
-msgstr "DVD carregado com sucesso"
+msgstr "Carregado com sucesso!"
 
 #: backends/platform/3ds/options-dialog.cpp:44
 #: backends/platform/ds/arm9/source/dsoptions.cpp:56
@@ -3119,27 +3048,24 @@ msgid "Snap to edges"
 msgstr "Ajustar às margens"
 
 #: backends/platform/3ds/options-dialog.cpp:53
-#, fuzzy
 msgid "Stretch to fit"
-msgstr "Esticar à janela"
+msgstr "Preencher até caber"
 
 #: backends/platform/3ds/options-dialog.cpp:56
-#, fuzzy
 msgid "Use Screen:"
-msgstr "Velocidade:"
+msgstr "Usar Ecrã:"
 
 #: backends/platform/3ds/options-dialog.cpp:58
 msgctxt "3ds-screen"
 msgid "Top"
-msgstr ""
+msgstr "Superior"
 
 #: backends/platform/3ds/options-dialog.cpp:59
 msgctxt "3ds-screen"
 msgid "Bottom"
-msgstr ""
+msgstr "Inferior"
 
 #: backends/platform/3ds/options-dialog.cpp:60
-#, fuzzy
 msgctxt "3ds-screen"
 msgid "Both"
 msgstr "Ambos"
@@ -3147,77 +3073,74 @@ msgstr "Ambos"
 #: backends/platform/3ds/osystem-events.cpp:48
 #: backends/platform/sdl/switch/switch.cpp:37
 msgid "A"
-msgstr ""
+msgstr "A"
 
 #: backends/platform/3ds/osystem-events.cpp:49
 #: backends/platform/sdl/switch/switch.cpp:36
 msgid "B"
-msgstr ""
+msgstr "B"
 
 #: backends/platform/3ds/osystem-events.cpp:50
 #: backends/platform/sdl/switch/switch.cpp:39
 msgid "X"
-msgstr ""
+msgstr "X"
 
 #: backends/platform/3ds/osystem-events.cpp:51
 #: backends/platform/sdl/switch/switch.cpp:38
 msgid "Y"
-msgstr ""
+msgstr "Y"
 
 #: backends/platform/3ds/osystem-events.cpp:52
 #: backends/platform/sdl/ps3/ps3.cpp:45 backends/platform/sdl/psp2/psp2.cpp:49
-#, fuzzy
 msgid "Select"
-msgstr "Acção/Seleccionar"
+msgstr "Selecionar"
 
 #: backends/platform/3ds/osystem-events.cpp:53
 #: backends/platform/sdl/ps3/ps3.cpp:47 backends/platform/sdl/psp2/psp2.cpp:50
-#, fuzzy
 msgid "Start"
-msgstr "~I~niciar"
+msgstr "Iniciar"
 
 #: backends/platform/3ds/osystem-events.cpp:54
 #: backends/platform/sdl/switch/switch.cpp:54
 msgid "ZL"
-msgstr ""
+msgstr "ZL"
 
 #: backends/platform/3ds/osystem-events.cpp:55
 #: backends/platform/sdl/switch/switch.cpp:55
 msgid "ZR"
-msgstr ""
+msgstr "ZR"
 
 #: backends/platform/3ds/osystem-events.cpp:56
 #: backends/platform/sdl/psp2/psp2.cpp:51
 #: backends/platform/sdl/switch/switch.cpp:44
 msgid "L"
-msgstr ""
+msgstr "L"
 
 #: backends/platform/3ds/osystem-events.cpp:57
 #: backends/platform/sdl/psp2/psp2.cpp:52
 #: backends/platform/sdl/switch/switch.cpp:45
 msgid "R"
-msgstr ""
+msgstr "R"
 
 #: backends/platform/3ds/osystem-events.cpp:66
 msgid "C-Pad X"
-msgstr ""
+msgstr "C-Pad X"
 
 #: backends/platform/3ds/osystem-events.cpp:67
 msgid "C-Pad Y"
-msgstr ""
+msgstr "C-Pad Y"
 
 #: backends/platform/3ds/osystem-events.cpp:72
 msgid "Touch"
-msgstr ""
+msgstr "Toque"
 
 #: backends/platform/3ds/osystem-events.cpp:312
-#, fuzzy
 msgid "Toggle Drag Mode"
-msgstr "Modo com sangue"
+msgstr "Alternar Modo de Arrastar"
 
 #: backends/platform/3ds/osystem-events.cpp:317
 msgid "Toggle Magnify Mode"
-msgstr ""
+msgstr "Alternar Modo de Ampliação"
 
 #: backends/platform/3ds/osystem-events.cpp:322
 msgid "Open 3DS Settings"
@@ -3234,14 +3157,12 @@ msgid "Magnify Mode Off. Returning to Launcher..."
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:396
-#, fuzzy
 msgid "Hover Mode"
-msgstr "Modo com sangue"
+msgstr "Modo de Flutuar"
 
 #: backends/platform/3ds/osystem-events.cpp:400
-#, fuzzy
 msgid "Drag Mode"
-msgstr "Modo com sangue"
+msgstr "Modo de Arrastar"
 
 #: backends/platform/3ds/osystem-events.cpp:402
 msgid "Cannot Switch to Drag Mode while Magnify Mode is On"
@@ -3433,55 +3354,55 @@ msgstr "Licença BSD"
 #: backends/platform/sdl/ps3/ps3.cpp:41 backends/platform/sdl/psp2/psp2.cpp:45
 #: engines/dragons/detection.cpp:301
 msgid "Cross"
-msgstr ""
+msgstr "Cruz"
 
 #: backends/platform/sdl/ps3/ps3.cpp:42 backends/platform/sdl/psp2/psp2.cpp:46
 #: engines/dragons/detection.cpp:295
 msgid "Circle"
-msgstr ""
+msgstr "Círculo"
 
 #: backends/platform/sdl/ps3/ps3.cpp:43 backends/platform/sdl/psp2/psp2.cpp:47
 #: engines/dragons/detection.cpp:283
 msgid "Square"
-msgstr ""
+msgstr "Quadrado"
 
 #: backends/platform/sdl/ps3/ps3.cpp:46
 msgid "PS"
-msgstr ""
+msgstr "PS"
 
 #: backends/platform/sdl/ps3/ps3.cpp:48
 #: backends/platform/sdl/switch/switch.cpp:42
 msgid "L3"
-msgstr ""
+msgstr "L3"
 
 #: backends/platform/sdl/ps3/ps3.cpp:49
 #: backends/platform/sdl/switch/switch.cpp:43
 msgid "R3"
-msgstr ""
+msgstr "R3"
 
 #: backends/platform/sdl/ps3/ps3.cpp:50
 msgid "L1"
-msgstr ""
+msgstr "L1"
 
 #: backends/platform/sdl/ps3/ps3.cpp:51
 msgid "R1"
-msgstr ""
+msgstr "R1"
 
 #: backends/platform/sdl/ps3/ps3.cpp:60
 msgid "L2"
-msgstr ""
+msgstr "L2"
 
 #: backends/platform/sdl/ps3/ps3.cpp:61
 msgid "R2"
-msgstr ""
+msgstr "R2"
 
 #: backends/platform/sdl/switch/switch.cpp:40
 msgid "Minus"
-msgstr ""
+msgstr "Menos"
 
 #: backends/platform/sdl/switch/switch.cpp:41
 msgid "Plus"
-msgstr ""
+msgstr "Mais"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:48
 msgid "Zone"
@@ -3676,23 +3597,20 @@ msgid ""
 msgstr ""
 
 #: engines/adl/detection.cpp:51
-#, fuzzy
 msgid "TV emulation"
-msgstr "Emulador MT-32"
+msgstr "Emulação de TV"
 
 #: engines/adl/detection.cpp:52
 msgid "Emulate composite output to an NTSC TV"
 msgstr ""
 
 #: engines/adl/detection.cpp:61 engines/adl/detection.cpp:71
-#, fuzzy
 msgid "Color graphics"
-msgstr "Usar gráficos a cor"
+msgstr "Gráficos a cores"
 
 #: engines/adl/detection.cpp:62 engines/adl/detection.cpp:72
-#, fuzzy
 msgid "Use color graphics instead of monochrome"
-msgstr "Usar gráficos a cor"
+msgstr "Usar gráficos a cores em vez de preto e branco"
 
 #: engines/adl/detection.cpp:81
 msgid "Show scanlines"
@@ -3883,18 +3801,16 @@ msgid "Continue"
 msgstr "Continuar"
 
 #: engines/bladerunner/detection.cpp:48
-#, fuzzy
 msgid "Sitcom mode"
-msgstr "Redimensionamento"
+msgstr "Modo novela"
 
 #: engines/bladerunner/detection.cpp:49
 msgid "Game will add laughter after actor's line or narration"
 msgstr ""
 
 #: engines/bladerunner/detection.cpp:57
-#, fuzzy
 msgid "Shorty mode"
-msgstr "Redimensionamento"
+msgstr "Modo anão"
 
 #: engines/bladerunner/detection.cpp:58
 msgid "Game will shrink the actors and make their voices high pitched"
@@ -3949,18 +3865,16 @@ msgid ""
 msgstr ""
 
 #: engines/cine/detection.cpp:190
-#, fuzzy
 msgid "Unnamed autosave"
-msgstr "Jogo guardado sem nome"
+msgstr "Auto-guardado sem nome"
 
 #: engines/cine/detection.cpp:192 engines/cine/detection.cpp:271
 msgid "Unnamed savegame"
 msgstr "Jogo guardado sem nome"
 
 #: engines/cine/detection.cpp:210 engines/cine/detection.cpp:284
-#, fuzzy
 msgid "Empty autosave"
-msgstr "Guardar automático:"
+msgstr "Auto-guardado vazio"
 
 #: engines/cine/saveload.cpp:861
 msgid ""
@@ -3970,9 +3884,8 @@ msgid ""
 msgstr ""
 
 #: engines/cine/saveload.cpp:864
-#, fuzzy
 msgid "Load anyway"
-msgstr "Adicionar na mesma"
+msgstr "Carregar na mesma"
 
 #: engines/dragons/detection.cpp:218
 msgid ""
@@ -3985,9 +3898,8 @@ msgid ""
 msgstr ""
 
 #: engines/dragons/detection.cpp:236
-#, fuzzy
 msgid "Action"
-msgstr "Activo"
+msgstr "Ação"
 
 #: engines/dragons/detection.cpp:242
 msgid "Change Command"
@@ -4006,14 +3918,12 @@ msgid "Enter"
 msgstr ""
 
 #: engines/dragons/detection.cpp:319
-#, fuzzy
 msgid "Debug Graphics"
-msgstr "Gráficos"
+msgstr "Depurar Gráficos"
 
 #: engines/dragons/detection.cpp:324
-#, fuzzy
 msgid "Quit Game"
-msgstr " (Jogo)"
+msgstr "Sair do Jogo"
 
 #: engines/dragons/dragons.cpp:1785
 #, c-format
@@ -4052,14 +3962,12 @@ msgid "Display graphics using the game's bright palette"
 msgstr ""
 
 #: engines/glk/detection.cpp:354
-#, fuzzy
 msgid "Enable Text to Speech"
-msgstr "Use Texto para voz:"
+msgstr "Ativar Texto para Voz"
 
 #: engines/glk/detection.cpp:355
-#, fuzzy
 msgid "Use TTS to read the text"
-msgstr "Falha a eliminar o ficheiro."
+msgstr "Usar Narrador para ler o texto"
 
 #: engines/glk/detection.cpp:360
 msgid "Also read input text"
@@ -4074,19 +3982,16 @@ msgid "[ press any key to exit ]"
 msgstr ""
 
 #: engines/glk/quetzal.cpp:148 engines/glk/quetzal.cpp:157
-#, fuzzy
 msgid "Untitled Savegame"
-msgstr "Jogo sem título"
+msgstr "Jogo sem nome"
 
 #: engines/glk/adrift/os_glk.cpp:2814
-#, fuzzy
 msgid "Loading game...\n"
-msgstr "Jogo a carregar..."
+msgstr "A carregar jogo...\n"
 
 #: engines/glk/advsys/advsys.cpp:35
-#, fuzzy
 msgid "Could not start AdvSys game"
-msgstr "Não foi possível aplicar o modo de vídeo: '"
+msgstr "Não foi possível iniciar o jogo AdvSys"
 
 #: engines/glk/advsys/advsys.cpp:48 engines/glk/advsys/vm.cpp:319
 msgid "Sorry, the savegame couldn't be restored"
@@ -4118,9 +4023,8 @@ msgid "This is not a valid Alan2 file."
 msgstr "Isto não é um ficheiro Alan2 válido."
 
 #: engines/glk/comprehend/game.cpp:337
-#, fuzzy
 msgid "Savegame"
-msgstr "Guardar jogo:"
+msgstr "Jogo guardado"
 
 #: engines/glk/comprehend/game.cpp:1333
 msgid "Picture window toggled\n"
@@ -4143,9 +4047,8 @@ msgid "This Glulx file is too new a version to execute."
 msgstr "Versão de ficheiro Glulx demasiado recente para executar."
 
 #: engines/glk/quest/quest.cpp:45
-#, fuzzy
 msgid "Could not start Quest game"
-msgstr "Não foi possível aplicar o modo de vídeo: '"
+msgstr "Não foi possível iniciar o jogo Quest"
 
 #: engines/glk/scott/scott.cpp:99
 msgid "I don't understand your command. "
@@ -4397,33 +4300,28 @@ msgid "Failed to save game"
 msgstr "Falha a guardar o jogo"
 
 #: engines/hdb/detection.cpp:162
-#, fuzzy
 msgid "Enable cheat mode"
-msgstr "Ativa vozes com hélio"
+msgstr "Ativa batotas"
 
 #: engines/hdb/detection.cpp:163
 msgid "Debug info and level selection becomes available"
 msgstr ""
 
 #: engines/hdb/detection.cpp:309
-#, fuzzy
 msgid "Move up"
-msgstr "Retroceder"
+msgstr "Mover para cima"
 
 #: engines/hdb/detection.cpp:315
-#, fuzzy
 msgid "Move down"
-msgstr "Cancelar transferência"
+msgstr "Mover para baixo"
 
 #: engines/hdb/detection.cpp:321
-#, fuzzy
 msgid "Move left"
-msgstr "Mover à esquerda"
+msgstr "Mover para a esquerda"
 
 #: engines/hdb/detection.cpp:327
-#, fuzzy
 msgid "Move right"
-msgstr "Mover à direita"
+msgstr "Mover para a direita"
 
 #: engines/hdb/detection.cpp:333 engines/scumm/help.cpp:129
 #: engines/scumm/help.cpp:153 engines/scumm/help.cpp:171
@@ -4442,9 +4340,8 @@ msgid "Menu"
 msgstr "Menu"
 
 #: engines/hdb/detection.cpp:366
-#, fuzzy
 msgid "Debug"
-msgstr "Depurador"
+msgstr "Depurar"
 
 #: engines/hopkins/detection.cpp:75 engines/hopkins/detection.cpp:85
 msgid "Gore Mode"
@@ -4506,9 +4403,8 @@ msgstr "Ativa cursores flutuantes"
 #. I18N: When enabled, this option will fill in an autogenerated savegame
 #. description into the input prompt where.
 #: engines/kyra/detection.cpp:124
-#, fuzzy
 msgid "Suggest save names"
-msgstr "Guardar jogo:"
+msgstr "Sugerir nomes ao guardar"
 
 #: engines/kyra/detection.cpp:125
 msgid "Autogenerated naming suggestions for savegames"
@@ -4535,16 +4431,14 @@ msgstr "Botão esquerdo para atacar, botão direito para apanhar itens"
 #: engines/kyra/engine/eobcommon.cpp:366 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/meta_engine.cpp:232
 #: engines/ultima/ultima8/meta_engine.cpp:129
-#, fuzzy
 msgid "Interact via Left Click"
-msgstr "Clique esquerdo"
+msgstr "Interagir via Clique Esquerdo"
 
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:470
 #: engines/ultima/ultima4/meta_engine.cpp:238
 #: engines/ultima/ultima8/meta_engine.cpp:135
-#, fuzzy
 msgid "Interact via Right Click"
-msgstr "Clique direito"
+msgstr "Interagir via Clique Direito"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:475
 msgid "Move Forward"
@@ -4625,9 +4519,8 @@ msgid "Attack 3"
 msgstr "Ataque 3"
 
 #: engines/kyra/engine/lol.cpp:474
-#, fuzzy
 msgid "Show Map"
-msgstr "Mostrar teclado numérico"
+msgstr "Mostrar Mapa"
 
 #: engines/kyra/engine/lol.cpp:477
 msgid "Slide Left"
@@ -4750,16 +4643,12 @@ msgid ""
 msgstr ""
 
 #: engines/lab/savegame.cpp:238
-#, fuzzy
 msgid "Would you like to save or restore a game?"
-msgstr "Deseja carregar ou guardar o jogo?"
+msgstr "Deseja guardar ou carregar um jogo?"
 
 #: engines/lab/speciallocks.cpp:149
-#, fuzzy
 msgid "This puzzle is not available in the trial version of the game"
-msgstr ""
-"Exploração para além deste ponto apenas está disponível na versão completa\n"
-"do jogo."
+msgstr "Este puzzle não está disponível na demonstração do jogo"
 
 #: engines/lure/detection.cpp:73 engines/mads/detection.cpp:144
 #: engines/sherlock/detection.cpp:136
@@ -4823,7 +4712,7 @@ msgstr ""
 
 #: engines/mohawk/dialogs.cpp:248
 msgid "The new language will be applied after restarting the game."
-msgstr ""
+msgstr "O novo idioma será aplicado após reiniciar o jogo."
 
 #: engines/mohawk/dialogs.cpp:320
 msgid "~W~ater Effect Enabled"
@@ -4858,14 +4747,12 @@ msgid "Open main menu"
 msgstr ""
 
 #: engines/mohawk/myst.cpp:591 engines/mohawk/riven.cpp:860
-#, fuzzy
 msgid "Load game state"
-msgstr "Carregar jogo"
+msgstr "Carregar estado do jogo"
 
 #: engines/mohawk/myst.cpp:596 engines/mohawk/riven.cpp:865
-#, fuzzy
 msgid "Save game state"
-msgstr "Guardar jogo:"
+msgstr "Guardar estado do jogo"
 
 #: engines/mohawk/myst.cpp:601 engines/mohawk/riven.cpp:870
 msgid "Show options menu"
@@ -4878,9 +4765,8 @@ msgstr ""
 #: engines/mohawk/myst.cpp:619 engines/wintermute/keymapper_tables.h:1253
 #: engines/wintermute/keymapper_tables.h:1302
 #: engines/wintermute/keymapper_tables.h:1325
-#, fuzzy
 msgid "Show map"
-msgstr "Mostrar teclado numérico"
+msgstr "Mostrar mapa"
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349
@@ -4945,22 +4831,18 @@ msgid "You are missing the following required Riven data files:\n"
 msgstr "Estão em falta os seguintes ficheiros necessários Riven:\n"
 
 #: engines/mohawk/riven.cpp:882
-#, fuzzy
 msgid "Move forward"
 msgstr "Avançar"
 
 #: engines/mohawk/riven.cpp:888
-#, fuzzy
 msgid "Move forward left"
-msgstr "Avançar"
+msgstr "Avançar para a esquerda"
 
 #: engines/mohawk/riven.cpp:892
-#, fuzzy
 msgid "Move forward right"
-msgstr "Avançar"
+msgstr "Avançar para a direita"
 
 #: engines/mohawk/riven.cpp:896
-#, fuzzy
 msgid "Move backwards"
 msgstr "Retroceder"
 
@@ -4968,26 +4850,23 @@ msgstr "Retroceder"
 #: engines/wintermute/keymapper_tables.h:520
 #: engines/wintermute/keymapper_tables.h:1607
 #: engines/wintermute/keymapper_tables.h:1710
-#, fuzzy
 msgid "Turn left"
-msgstr "Girar à esquerda"
+msgstr "Virar à esquerda"
 
 #: engines/mohawk/riven.cpp:908 engines/wintermute/keymapper_tables.h:165
 #: engines/wintermute/keymapper_tables.h:525
 #: engines/wintermute/keymapper_tables.h:1613
 #: engines/wintermute/keymapper_tables.h:1717
-#, fuzzy
 msgid "Turn right"
-msgstr "Girar à direita"
+msgstr "Virar à direita"
 
 #: engines/mohawk/riven.cpp:914
 msgid "Look up"
 msgstr ""
 
 #: engines/mohawk/riven.cpp:919
-#, fuzzy
 msgid "Look down"
-msgstr "Reduzir"
+msgstr "Olhar para baixo"
 
 #: engines/mohawk/riven.cpp:925
 msgid "Play intro videos"
@@ -5139,14 +5018,12 @@ msgid "???"
 msgstr ""
 
 #: engines/pegasus/pegasus.cpp:2577
-#, fuzzy
 msgid "Save Game"
-msgstr "Guardar jogo:"
+msgstr "Guardar Jogo"
 
 #: engines/pegasus/pegasus.cpp:2583
-#, fuzzy
 msgid "Load Game"
-msgstr "Carregar jogo"
+msgstr "Carregar Jogo"
 
 #: engines/pink/gui.cpp:220
 msgid "This menu item is not yet implemented"
@@ -5251,9 +5128,8 @@ msgid "Upscale videos to double their size"
 msgstr ""
 
 #: engines/sci/detection.cpp:545
-#, fuzzy
 msgid "MIDI mode:"
-msgstr "Ganho MIDI:"
+msgstr "Modo MIDI:"
 
 #: engines/sci/detection.cpp:546
 msgid ""
@@ -5342,9 +5218,8 @@ msgid ""
 msgstr ""
 
 #: engines/sci/sci.cpp:518
-#, fuzzy
 msgid "Download patch"
-msgstr "Transferir"
+msgstr "Transferir correção"
 
 #: engines/sci/sci.cpp:519
 msgid ""
@@ -5424,9 +5299,8 @@ msgid "Show the names of objects at the bottom of the screen"
 msgstr ""
 
 #: engines/scumm/detection.cpp:1382
-#, fuzzy
 msgid "Use NES Classic Palette"
-msgstr "Usar uma palete de cores alternativa"
+msgstr "Usar a Paleta Clássica NES"
 
 #: engines/scumm/detection.cpp:1383
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
@@ -5652,7 +5526,7 @@ msgstr ""
 
 #: engines/scumm/help.cpp:103
 msgid "Toggle aspect-ratio correction"
-msgstr ""
+msgstr "Alternar correção da taxa de proporção"
 
 #: engines/scumm/help.cpp:108
 msgid "* Note that using ctrl-f and"
@@ -6175,22 +6049,20 @@ msgid "Walk / Look / Talk"
 msgstr ""
 
 #: engines/sky/detection.cpp:234
-#, fuzzy
 msgid "Skip / Close"
-msgstr "Ignorar linha"
+msgstr "Ignorar / Fechar"
 
 #: engines/sky/detection.cpp:242
 msgid "Open control panel"
 msgstr ""
 
 #: engines/sky/detection.cpp:258
-#, fuzzy
 msgid "Toggle fast mode"
-msgstr "Modo rápido"
+msgstr "Alternar modo rápido"
 
 #: engines/sky/detection.cpp:263
 msgid "Toggle really fast mode"
-msgstr ""
+msgstr "Alternar modo muito rápido"
 
 #: engines/supernova/supernova.cpp:187
 #, c-format
@@ -6214,9 +6086,8 @@ msgid "Unable to find '%s' in game folder or the engine data file."
 msgstr ""
 
 #: engines/supernova/detection.cpp:40
-#, fuzzy
 msgid "Improved mode"
-msgstr "Modo janela"
+msgstr "Modo melhorado"
 
 #: engines/supernova/detection.cpp:41
 msgid ""
@@ -6345,36 +6216,37 @@ msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr ""
 
 #: engines/ultima/nuvie/nuvie.cpp:324
-#, fuzzy
 msgid ""
 "\n"
 "Game Saved\n"
 "\n"
-msgstr "Gravado.\n"
+msgstr ""
+"\n"
+"Jogo Guardado\n"
+"\n"
 
 #: engines/ultima/nuvie/nuvie.cpp:373
-#, fuzzy, c-format
+#, c-format
 msgid "loading quick save %d"
-msgstr "Não foi possível guardar o jogo na posição #%d"
+msgstr "a carregar rápido jogo %d"
 
 #: engines/ultima/nuvie/nuvie.cpp:378
-#, fuzzy, c-format
+#, c-format
 msgid "saving quick save %d"
-msgstr "Modo clique"
+msgstr "a guardar rápido jogo %d"
 
 #: engines/ultima/nuvie/nuvie.cpp:392
-#, fuzzy, c-format
+#, c-format
 msgid "Quicksave %03d"
-msgstr "Modo clique"
+msgstr "Rápido-guardado %03d"
 
 #: engines/ultima/nuvie/meta_engine.cpp:39
 msgid "Original Save"
 msgstr ""
 
 #: engines/ultima/nuvie/save/save_game.cpp:212
-#, fuzzy
 msgid "Transfer Character"
-msgstr "Trocar caracter"
+msgstr "Transferir Personagem"
 
 #: engines/ultima/ultima8/meta_engine.cpp:122
 msgid "Ultima VIII"
@@ -6401,9 +6273,8 @@ msgid "[outdated]"
 msgstr ""
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:305
-#, fuzzy
 msgid "[too modern]"
-msgstr "Modo de cores"
+msgstr "[demasiado moderno]"
 
 #: engines/wintermute/detection.cpp:62
 msgid "Show FPS-counter"
@@ -6440,36 +6311,31 @@ msgid ""
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:61
-#, fuzzy
 msgid "Escape"
-msgstr "Tecla Escape"
+msgstr "Cancelar"
 
 #: engines/wintermute/keymapper_tables.h:120
-#, fuzzy
 msgid "Look At"
-msgstr "Reduzir"
+msgstr "Examinar"
 
 #: engines/wintermute/keymapper_tables.h:147
 #: engines/wintermute/keymapper_tables.h:510
 #: engines/wintermute/keymapper_tables.h:1601
 #: engines/wintermute/keymapper_tables.h:1696
-#, fuzzy
 msgid "Walk forward"
 msgstr "Avançar"
 
 #: engines/wintermute/keymapper_tables.h:153
 #: engines/wintermute/keymapper_tables.h:515
 #: engines/wintermute/keymapper_tables.h:1703
-#, fuzzy
 msgid "Walk backward"
 msgstr "Retroceder"
 
 #: engines/wintermute/keymapper_tables.h:171
 #: engines/wintermute/keymapper_tables.h:468
 #: engines/wintermute/keymapper_tables.h:1347
-#, fuzzy
 msgid "Show scene geometry"
-msgstr "Mostrar controlo no ecrã"
+msgstr "Mostrar geometria da cena"
 
 #: engines/wintermute/keymapper_tables.h:180
 #: engines/wintermute/keymapper_tables.h:196
@@ -6484,9 +6350,8 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:663
 #: engines/wintermute/keymapper_tables.h:859
 #: engines/wintermute/keymapper_tables.h:985
-#, fuzzy
 msgid "Next page"
-msgstr "Seguinte"
+msgstr "Página seguinte"
 
 #: engines/wintermute/keymapper_tables.h:232
 #: engines/wintermute/keymapper_tables.h:255
@@ -6506,9 +6371,8 @@ msgstr "Seguinte"
 #: engines/wintermute/keymapper_tables.h:1289
 #: engines/wintermute/keymapper_tables.h:1472
 #: engines/wintermute/keymapper_tables.h:1588
-#, fuzzy
 msgid "Show hints"
-msgstr "Mostrar ficheiros ocultos"
+msgstr "Mostrar dicas"
 
 #: engines/wintermute/keymapper_tables.h:242
 #: engines/wintermute/keymapper_tables.h:442
@@ -6518,27 +6382,24 @@ msgstr "Mostrar ficheiros ocultos"
 #: engines/wintermute/keymapper_tables.h:1259
 #: engines/wintermute/keymapper_tables.h:1268
 #: engines/wintermute/keymapper_tables.h:1439
-#, fuzzy
 msgid "Show inventory"
-msgstr "Mostrar ficheiros ocultos"
+msgstr "Mostrar inventário"
 
 #: engines/wintermute/keymapper_tables.h:262
 #: engines/wintermute/keymapper_tables.h:311
 #: engines/wintermute/keymapper_tables.h:338
 #: engines/wintermute/keymapper_tables.h:1421
 #: engines/wintermute/keymapper_tables.h:1479
-#, fuzzy
 msgid "GUI variant A"
-msgstr "Versão desconhecida"
+msgstr "Variante da Interface A"
 
 #: engines/wintermute/keymapper_tables.h:269
 #: engines/wintermute/keymapper_tables.h:318
 #: engines/wintermute/keymapper_tables.h:345
 #: engines/wintermute/keymapper_tables.h:1427
 #: engines/wintermute/keymapper_tables.h:1485
-#, fuzzy
 msgid "GUI variant B"
-msgstr "Versão desconhecida"
+msgstr "Variante da Interface B"
 
 #: engines/wintermute/keymapper_tables.h:276
 #: engines/wintermute/keymapper_tables.h:352
@@ -6620,9 +6481,8 @@ msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:448
 #: engines/wintermute/keymapper_tables.h:1073
-#, fuzzy
 msgid "Show help"
-msgstr "Mostrar tudo"
+msgstr "Mostrar ajuda"
 
 #: engines/wintermute/keymapper_tables.h:454
 #: engines/wintermute/keymapper_tables.h:621
@@ -6634,9 +6494,8 @@ msgstr "Mostrar tudo"
 #: engines/wintermute/keymapper_tables.h:1275
 #: engines/wintermute/keymapper_tables.h:1458
 #: engines/wintermute/keymapper_tables.h:1656
-#, fuzzy
 msgid "Scroll up"
-msgstr "Reduzir"
+msgstr "Deslizar para cima"
 
 #: engines/wintermute/keymapper_tables.h:461
 #: engines/wintermute/keymapper_tables.h:628
@@ -6648,9 +6507,8 @@ msgstr "Reduzir"
 #: engines/wintermute/keymapper_tables.h:1282
 #: engines/wintermute/keymapper_tables.h:1465
 #: engines/wintermute/keymapper_tables.h:1661
-#, fuzzy
 msgid "Scroll down"
-msgstr "Reduzir"
+msgstr "Deslizar para baixo"
 
 #: engines/wintermute/keymapper_tables.h:473
 msgid "Change shadow type"
@@ -6658,21 +6516,18 @@ msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:483
 #: engines/wintermute/keymapper_tables.h:570
-#, fuzzy
 msgid "Volume max"
-msgstr "Volume"
+msgstr "Volume máximo"
 
 #: engines/wintermute/keymapper_tables.h:488
-#, fuzzy
 msgid "Show debug parser"
-msgstr "Mostrar/ocultar cursor"
+msgstr "Mostrar analisador de depuração"
 
 #: engines/wintermute/keymapper_tables.h:495
 #: engines/wintermute/keymapper_tables.h:603
 #: engines/wintermute/keymapper_tables.h:1369
-#, fuzzy
 msgid "Debug print"
-msgstr "Depurador"
+msgstr "Saída do depurador"
 
 #: engines/wintermute/keymapper_tables.h:500
 #: engines/wintermute/keymapper_tables.h:1342
@@ -6680,53 +6535,44 @@ msgid "Exit"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:505
-#, fuzzy
 msgid "Light helper window"
-msgstr "Ajustar à janela"
+msgstr "Janela de assistente leve"
 
 #: engines/wintermute/keymapper_tables.h:530
-#, fuzzy
 msgid "Run forward"
-msgstr "Avançar"
+msgstr "Correr para a frente"
 
 #: engines/wintermute/keymapper_tables.h:535
-#, fuzzy
 msgid "Run backward"
-msgstr "Avançar"
+msgstr "Correr para trás"
 
 #: engines/wintermute/keymapper_tables.h:540
-#, fuzzy
 msgid "Turn left fast"
-msgstr "Girar à esquerda"
+msgstr "Virar à esquerda depressa"
 
 #: engines/wintermute/keymapper_tables.h:545
-#, fuzzy
 msgid "Turn right fast"
-msgstr "Girar à direita"
+msgstr "Virar à direita depressa"
 
 #: engines/wintermute/keymapper_tables.h:550
-#, fuzzy
 msgid "Show blueprint"
-msgstr "Mostrar ficheiros ocultos"
+msgstr "Mostrar modelo"
 
 #: engines/wintermute/keymapper_tables.h:577
-#, fuzzy
 msgid "Volume off"
-msgstr "Volume"
+msgstr "Volume desligado"
 
 #: engines/wintermute/keymapper_tables.h:591
 msgid "Change font size"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:670
-#, fuzzy
 msgid "Save game"
-msgstr "Guardar jogo:"
+msgstr "Guardar jogo"
 
 #: engines/wintermute/keymapper_tables.h:680
-#, fuzzy
 msgid "Quick save"
-msgstr "Modo clique"
+msgstr "Guardar rápido"
 
 #: engines/wintermute/keymapper_tables.h:685
 msgid "Walking speed: Low"
@@ -6741,35 +6587,30 @@ msgid "Walking speed: High"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:700
-#, fuzzy
 msgid "Quick load"
-msgstr "Modo clique"
+msgstr "Carregar rápido"
 
 #: engines/wintermute/keymapper_tables.h:705
 #: engines/wintermute/keymapper_tables.h:1035
 #: engines/wintermute/keymapper_tables.h:1364
-#, fuzzy
 msgid "Cancel waiting"
-msgstr "Cancelar transferência"
+msgstr "Cancelar espera"
 
 #: engines/wintermute/keymapper_tables.h:715
-#, fuzzy
 msgid "First page"
-msgstr "Lançar feitiço"
+msgstr "Primeira página"
 
 #: engines/wintermute/keymapper_tables.h:720
-#, fuzzy
 msgid "Last page"
-msgstr "Lançar feitiço"
+msgstr "Última página"
 
 #: engines/wintermute/keymapper_tables.h:727
 msgid "Walking speed: Ultra Super Mega Fast"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:743
-#, fuzzy
 msgid "Show game credits"
-msgstr "Mostrar cursor do rato"
+msgstr "Mostrar créditos do jogo"
 
 #: engines/wintermute/keymapper_tables.h:748
 msgid "Play selected music record"
@@ -6780,39 +6621,32 @@ msgid "Select next music record"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:758
-#, fuzzy
 msgid "Play note 1: A"
-msgstr "Duração: "
+msgstr "Tocar nota 1: A"
 
 #: engines/wintermute/keymapper_tables.h:763
-#, fuzzy
 msgid "Play note 2: F#"
-msgstr "Duração: "
+msgstr "Tocar nota 2: F#"
 
 #: engines/wintermute/keymapper_tables.h:768
-#, fuzzy
 msgid "Play note 3: D#"
-msgstr "Duração: "
+msgstr "Tocar nota 3: D#"
 
 #: engines/wintermute/keymapper_tables.h:773
-#, fuzzy
 msgid "Play note 4: C#"
-msgstr "Duração: "
+msgstr "Tocar nota 4: C#"
 
 #: engines/wintermute/keymapper_tables.h:778
-#, fuzzy
 msgid "Play note 5: E"
-msgstr "Duração: "
+msgstr "Tocar nota 5: E"
 
 #: engines/wintermute/keymapper_tables.h:783
-#, fuzzy
 msgid "Play note 6: G#"
-msgstr "Duração: "
+msgstr "Tocar nota 6: G#"
 
 #: engines/wintermute/keymapper_tables.h:788
-#, fuzzy
 msgid "Play note 7: B"
-msgstr "Duração: "
+msgstr "Tocar nota 7: B"
 
 #: engines/wintermute/keymapper_tables.h:801
 msgid "Ability: Telekinesis"
@@ -6847,39 +6681,32 @@ msgid "Ability: Exorcist"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:841
-#, fuzzy
 msgid "Skip minigame"
-msgstr "Ignorar linha"
+msgstr "Ignorar minijogo"
 
 #: engines/wintermute/keymapper_tables.h:949
-#, fuzzy
 msgid "Show hints / Dance move"
-msgstr "Mostrar ficheiros ocultos"
+msgstr "Mostrar dicas / Movimento dança"
 
 #: engines/wintermute/keymapper_tables.h:956
-#, fuzzy
 msgid "Dance move up"
-msgstr "Cancelar transferência"
+msgstr "Dançar para cima"
 
 #: engines/wintermute/keymapper_tables.h:962
-#, fuzzy
 msgid "Dance move down"
-msgstr "Cancelar transferência"
+msgstr "Dançar para baixo"
 
 #: engines/wintermute/keymapper_tables.h:968
-#, fuzzy
 msgid "Dance move left"
-msgstr "Mover à direita"
+msgstr "Dançar à esquerda"
 
 #: engines/wintermute/keymapper_tables.h:974
-#, fuzzy
 msgid "Dance move right"
-msgstr "Mover à direita"
+msgstr "Dançar à direita"
 
 #: engines/wintermute/keymapper_tables.h:1004
-#, fuzzy
 msgid "Cancel input"
-msgstr "Cancelar"
+msgstr "Cancelar introdução"
 
 #: engines/wintermute/keymapper_tables.h:1114
 msgid "Shift"
@@ -6887,9 +6714,8 @@ msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:1169
 #: engines/wintermute/keymapper_tables.h:1574
-#, fuzzy
 msgid "Next action"
-msgstr "Seguinte"
+msgstr "Ação seguinte"
 
 #: engines/wintermute/keymapper_tables.h:1177
 #: engines/wintermute/keymapper_tables.h:1582
@@ -6937,23 +6763,20 @@ msgstr "Ampliar"
 
 #: engines/wintermute/keymapper_tables.h:1331
 #: engines/wintermute/keymapper_tables.h:1446
-#, fuzzy
 msgid "Show journal"
-msgstr "Mostrar tudo"
+msgstr "Mostrar diário"
 
 #: engines/wintermute/keymapper_tables.h:1374
-#, fuzzy
 msgid "Bezier window"
-msgstr "Ajustar à janela"
+msgstr "Janela Bézier"
 
 #: engines/wintermute/keymapper_tables.h:1390
 msgid "Droid action"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:1452
-#, fuzzy
 msgid "Music menu"
-msgstr "Música:"
+msgstr "Menu de música"
 
 #: engines/wintermute/keymapper_tables.h:1496
 msgid "Rotate"
@@ -6964,49 +6787,40 @@ msgid "Drop"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:1529
-#, fuzzy
 msgid "Player 1: Up"
-msgstr "Duração: "
+msgstr "Jogador 1: Cima"
 
 #: engines/wintermute/keymapper_tables.h:1534
-#, fuzzy
 msgid "Player 1: Left"
-msgstr "Duração: "
+msgstr "Jogador 1: Esquerda"
 
 #: engines/wintermute/keymapper_tables.h:1539
-#, fuzzy
 msgid "Player 1: Down"
-msgstr "Duração: "
+msgstr "Jogador 1: Baixo"
 
 #: engines/wintermute/keymapper_tables.h:1544
-#, fuzzy
 msgid "Player 1: Right"
-msgstr "Duração: "
+msgstr "Jogador 1: Direita"
 
 #: engines/wintermute/keymapper_tables.h:1549
-#, fuzzy
 msgid "Player 2: Up"
-msgstr "Duração: "
+msgstr "Jogador 2: Cima"
 
 #: engines/wintermute/keymapper_tables.h:1554
-#, fuzzy
 msgid "Player 2: Left"
-msgstr "Duração: "
+msgstr "Jogador 2: Esquerda"
 
 #: engines/wintermute/keymapper_tables.h:1559
-#, fuzzy
 msgid "Player 2: Down"
-msgstr "Duração: "
+msgstr "Jogador 2: Baixo"
 
 #: engines/wintermute/keymapper_tables.h:1564
-#, fuzzy
 msgid "Player 2: Right"
-msgstr "Deslizar à direita"
+msgstr "Jogador 2: Direita"
 
 #: engines/wintermute/keymapper_tables.h:1569
-#, fuzzy
 msgid "Debug FPS"
-msgstr "Duplicar FPS"
+msgstr "Depurar FPS"
 
 #: engines/wintermute/keymapper_tables.h:1666
 msgid "F1"
@@ -7035,9 +6849,8 @@ msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
 msgstr ""
 
 #: engines/xeen/saves.cpp:291
-#, fuzzy
 msgid "Failed to autosave"
-msgstr "Falha a guardar o jogo"
+msgstr "Falha a guardar o jogo automaticamente"
 
 #: engines/zvision/detection_tables.h:60
 msgid "Double FPS"
@@ -7072,19 +6885,16 @@ msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
 msgstr "Usa vídeos MPEG da versão em DVD em vez de AVI com resolução inferior"
 
 #: engines/zvision/detection.cpp:150
-#, fuzzy
 msgid "Look Up"
-msgstr "Reduzir"
+msgstr "Olhar para Cima"
 
 #: engines/zvision/detection.cpp:156
-#, fuzzy
 msgid "Look Down"
-msgstr "Reduzir"
+msgstr "Olhar para Baixo"
 
 #: engines/zvision/detection.cpp:174
-#, fuzzy
 msgid "Show FPS"
-msgstr "Mostrar contador de FPS"
+msgstr "Mostrar FPS"
 
 #: engines/zvision/detection.cpp:191
 msgid "Spellbook"
@@ -7103,9 +6913,8 @@ msgid "Extract coin"
 msgstr ""
 
 #: engines/zvision/detection.cpp:230
-#, fuzzy
 msgid "Preferences"
-msgstr "Disp. preferido:"
+msgstr "Preferências"
 
 #: engines/zvision/file/save_manager.cpp:222
 #, c-format
