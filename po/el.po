@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-31 15:11+0000\n"
-"PO-Revision-Date: 2020-08-31 12:24+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2020-09-01 06:43+0000\n"
+"Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
 "Language: el\n"
@@ -2442,11 +2442,16 @@ msgid ""
 "FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI "
 "on MIDI tab. Music is off."
 msgstr ""
+"Το FluidSynth απαιτεί μια ρύθμιση για 'soundfont'. Παρακαλούμε να "
+"προσδιορίσετε ένα από το περιβάλλον διεπαφής (GUI) του ScummVM στο tab \""
+"MIDI\". Η μουσική θα απενεργοποιηθεί."
 
 #: audio/softsynth/fluidsynth.cpp:277
 #, c-format
 msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
 msgstr ""
+"FluidSynth: Αποτυχία φόρτωσης του SoundFont '%s' που υποδείξατε. Η μουσική "
+"θα απενεργοποιηθεί."
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:32
 msgid "FM-Towns Audio"
@@ -7075,14 +7080,12 @@ msgid "Spin faster"
 msgstr "Πιο γρήγορη περιστροφή"
 
 #: engines/wintermute/keymapper_tables.h:1311
-#, fuzzy
 msgid "Zoom out"
-msgstr "Μεγέθυνση πάνω"
+msgstr "Μεγέθυνση"
 
 #: engines/wintermute/keymapper_tables.h:1318
-#, fuzzy
 msgid "Zoom in"
-msgstr "Μεγέθυνση πάνω"
+msgstr "Σμίκρυνση"
 
 #: engines/wintermute/keymapper_tables.h:1331
 #: engines/wintermute/keymapper_tables.h:1446
