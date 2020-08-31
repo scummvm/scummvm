@@ -446,10 +446,8 @@ private:
 			result = this->_comparator(key, this->_storage[mid]);
 			if (result < 0)
 				end_ = mid;
-			else if (result > 0)
-				start_ = mid + 1;
 			else
-				return &this->_storage[mid];
+				start_ = mid + 1;
 		}
 
 		return &this->_storage[start_];
