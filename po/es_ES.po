@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-31 15:11+0000\n"
-"PO-Revision-Date: 2020-08-30 00:43+0000\n"
+"PO-Revision-Date: 2020-09-01 06:43+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -2410,21 +2410,20 @@ msgid "Creative Music System emulator"
 msgstr "Emulación de Creative Music System"
 
 #: audio/softsynth/fluidsynth.cpp:176
-#, fuzzy
 msgid ""
 "FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI "
 "on MIDI tab. Music is off."
 msgstr ""
-"FluidSynth requiere que se configure un 'soundfont' (fuente de sonido). Por "
-"favor, especifica una en la pestaña MIDI de la interfaz de ScummVM. La "
-"música ha sido desactivada."
+"FluidSynth requiere que se configure una SoundFont. Por favor, especifica "
+"una en la pestaña MIDI de la interfaz de ScummVM. La música ha sido "
+"desactivada."
 
 #: audio/softsynth/fluidsynth.cpp:277
-#, fuzzy, c-format
+#, c-format
 msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
 msgstr ""
-"FluidSynthi: Error al cargar la fuente de sonido personalizada '%s'. La "
-"música ha sido desactivada."
+"FluidSynthi: Error al cargar la SoundFont personalizada '%s'. La música ha "
+"sido desactivada."
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:32
 msgid "FM-Towns Audio"
@@ -7007,12 +7006,10 @@ msgid "Spin faster"
 msgstr "Girar más deprisa"
 
 #: engines/wintermute/keymapper_tables.h:1311
-#, fuzzy
 msgid "Zoom out"
-msgstr "Aumentar zoom"
+msgstr "Reducir zoom"
 
 #: engines/wintermute/keymapper_tables.h:1318
-#, fuzzy
 msgid "Zoom in"
 msgstr "Aumentar zoom"
 
