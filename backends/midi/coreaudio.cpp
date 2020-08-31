@@ -265,7 +265,7 @@ void MidiDriver_CORE::loadSoundFont(const char *soundfont) {
 #endif // USE_DEPRECATED_COREAUDIO_API
 
 	if (err != noErr)
-		error("Failed loading custom sound font '%s' (error %ld)", soundfont, (long)err);
+		error("Failed loading custom SoundFont '%s' (error %ld)", soundfont, (long)err);
 }
 
 void MidiDriver_CORE::close() {
