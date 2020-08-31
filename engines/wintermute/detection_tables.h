@@ -127,6 +127,8 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"shinestar",       "The Shine of a Star"},
 	{"spaceinvaders",   "Space Invaders"},
 	{"spacemadness",    "Space Madness"},
+	{"sof1",            "Stroke of Fate: Operation Valkyrie"},
+	{"sof2",            "Stroke of Fate: Operation Bunker"},
 	{"sofiasdebt",      "Sofia's Debt"},
 	{"sotv1",           "Shadows on the Vatican - Act I: Greed"},
 	{"sotv2",           "Shadows on the Vatican - Act II: Wrath"},
@@ -146,6 +148,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"twc",             "The White Chamber"},
 	{"war",             "War"},
 	{"vsevolod",        "Vsevolod"},
+	{"wayoflove",       "The Way Of Love: Sub Zero"},
 	{"wintermute",      "Wintermute engine game"},
 	{"wmedemo",         "Wintermute Engine Technology Demo"},
 	{"wmedemo3d",       "Wintermute 3D Characters Technology Demo"},
@@ -3425,6 +3428,181 @@ static const WMEGameDescription gameDescriptions[] = {
 					"xlanguage_zh_t.dcp", "c3cf601669aee770a40f7a995fe2b7fa", 8464532,
 					"Mac.dcp", "0b8d95dcb1f7e8c7c2c49e58db2764b6", 1728476), Common::ZH_TWN, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
 
+	// Reversion: The Meeting (Steam, March 2020) (Spanish)
+	WME_PLATENTRY("reversion2", "",
+		WME_ENTRY3s("data.dcp", "90d95f3415e1c33ea76de75c329f14ca", 272228827,
+					"data.dcp", "90d95f3415e1c33ea76de75c329f14ca", 272228827,
+					"Linux.dcp", "16c3a8627216aab5b31c43186e0dfa70", 984535), Common::ES_ESP, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Meeting (Steam, March 2020) (German)
+	WME_PLATENTRY("reversion2", "",
+		WME_ENTRY3s("data.dcp", "90d95f3415e1c33ea76de75c329f14ca", 272228827,
+					"xlanguage_de.dcp", "eb52d971ce0ba4b64663aee4506123ca", 8716897,
+					"Linux.dcp", "16c3a8627216aab5b31c43186e0dfa70", 984535), Common::DE_DEU, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Meeting (Steam, March 2020) (English)
+	WME_PLATENTRY("reversion2", "",
+		WME_ENTRY3s("data.dcp", "90d95f3415e1c33ea76de75c329f14ca", 272228827,
+					"xlanguage_en.dcp", "f41a6e220823ac08643e3731151a666b", 8534328,
+					"Linux.dcp", "16c3a8627216aab5b31c43186e0dfa70", 984535), Common::EN_ANY, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Meeting (Steam, March 2020) (French)
+	WME_PLATENTRY("reversion2", "",
+		WME_ENTRY3s("data.dcp", "90d95f3415e1c33ea76de75c329f14ca", 272228827,
+					"xlanguage_fr.dcp", "beded9d13ef3f805c23091fc87aa4a5d", 8844755,
+					"Linux.dcp", "16c3a8627216aab5b31c43186e0dfa70", 984535), Common::FR_FRA, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Meeting (Steam, March 2020) (Italian)
+	WME_PLATENTRY("reversion2", "",
+		WME_ENTRY3s("data.dcp", "90d95f3415e1c33ea76de75c329f14ca", 272228827,
+					"xlanguage_it.dcp", "f3743347c7f6a99a0e0c476146bc778b", 11495758,
+					"Linux.dcp", "16c3a8627216aab5b31c43186e0dfa70", 984535), Common::IT_ITA, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Meeting (Steam, March 2020) (Portuguese)
+	WME_PLATENTRY("reversion2", "",
+		WME_ENTRY3s("data.dcp", "90d95f3415e1c33ea76de75c329f14ca", 272228827,
+					"xlanguage_pt.dcp", "a3eae825285e0887bfa014325c11df88", 8449389,
+					"Linux.dcp", "16c3a8627216aab5b31c43186e0dfa70", 984535), Common::PT_BRA, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Meeting (Steam, March 2020) (Russian)
+	WME_PLATENTRY("reversion2", "",
+		WME_ENTRY3s("data.dcp", "90d95f3415e1c33ea76de75c329f14ca", 272228827,
+					"xlanguage_ru.dcp", "d516386f8dc79106402fd06834ea5520", 17534860,
+					"Linux.dcp", "16c3a8627216aab5b31c43186e0dfa70", 984535), Common::RU_RUS, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Meeting (Steam, March 2020) (Chinese)
+	WME_PLATENTRY("reversion2", "",
+		WME_ENTRY3s("data.dcp", "90d95f3415e1c33ea76de75c329f14ca", 272228827,
+					"xlanguage_nz.dcp", "fcceb1300b9819abaee6832b7aef7f90", 10757594,
+					"Linux.dcp", "16c3a8627216aab5b31c43186e0dfa70", 984535), Common::ZH_ANY, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Meeting (Steam, March 2020) (Simplified Chinese)
+	WME_PLATENTRY("reversion2", "",
+		WME_ENTRY3s("data.dcp", "90d95f3415e1c33ea76de75c329f14ca", 272228827,
+					"xlanguage_zh_s.dcp", "63f3e7f876252fc36b30995d3c9afdf6", 10407767,
+					"Linux.dcp", "16c3a8627216aab5b31c43186e0dfa70", 984535), Common::ZH_CNA, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Meeting (Steam, March 2020) (Traditional Chinese)
+	WME_PLATENTRY("reversion2", "",
+		WME_ENTRY3s("data.dcp", "90d95f3415e1c33ea76de75c329f14ca", 272228827,
+					"xlanguage_zh_t.dcp", "f61a540bf516b1725ef2ed2b7fbf303a", 10374190,
+					"Linux.dcp", "16c3a8627216aab5b31c43186e0dfa70", 984535), Common::ZH_TWN, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Meeting (Steam, March 2020) (Spanish)
+	WME_PLATENTRY("reversion2", "",
+		WME_ENTRY3s("data.dcp", "e8140afacd9ae3e2e0b2c2a42a8d4cd3", 272228827,
+					"data.dcp", "e8140afacd9ae3e2e0b2c2a42a8d4cd3", 272228827,
+					"Mac.dcp", "0b8d95dcb1f7e8c7c2c49e58db2764b6", 1728476), Common::ES_ESP, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Meeting (Steam, March 2020) (German)
+	WME_PLATENTRY("reversion2", "",
+		WME_ENTRY3s("data.dcp", "e8140afacd9ae3e2e0b2c2a42a8d4cd3", 272228827,
+					"xlanguage_de.dcp", "c6c8afe3d3f3225727ec84f06ecebe5c", 8716897,
+					"Mac.dcp", "0b8d95dcb1f7e8c7c2c49e58db2764b6", 1728476), Common::DE_DEU, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Meeting (Steam, March 2020) (English)
+	WME_PLATENTRY("reversion2", "",
+		WME_ENTRY3s("data.dcp", "e8140afacd9ae3e2e0b2c2a42a8d4cd3", 272228827,
+					"xlanguage_en.dcp", "dc0b4f477b64b1d1446550e2aa5c52c5", 8534328,
+					"Mac.dcp", "0b8d95dcb1f7e8c7c2c49e58db2764b6", 1728476), Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Meeting (Steam, March 2020) (French)
+	WME_PLATENTRY("reversion2", "",
+		WME_ENTRY3s("data.dcp", "e8140afacd9ae3e2e0b2c2a42a8d4cd3", 272228827,
+					"xlanguage_fr.dcp", "8299790f346f4a598d5eb283632185b8", 8844755,
+					"Mac.dcp", "0b8d95dcb1f7e8c7c2c49e58db2764b6", 1728476), Common::FR_FRA, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Meeting (Steam, March 2020) (Italian)
+	WME_PLATENTRY("reversion2", "",
+		WME_ENTRY3s("data.dcp", "e8140afacd9ae3e2e0b2c2a42a8d4cd3", 272228827,
+					"xlanguage_it.dcp", "8f84605a6d58cf118a441e64a8fd0992", 11495758,
+					"Mac.dcp", "0b8d95dcb1f7e8c7c2c49e58db2764b6", 1728476), Common::IT_ITA, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Meeting (Steam, March 2020) (Portuguese)
+	WME_PLATENTRY("reversion2", "",
+		WME_ENTRY3s("data.dcp", "e8140afacd9ae3e2e0b2c2a42a8d4cd3", 272228827,
+					"xlanguage_pt.dcp", "364ef02c5a4cbc4eeecdcf84c3a672e0", 8449389,
+					"Mac.dcp", "0b8d95dcb1f7e8c7c2c49e58db2764b6", 1728476), Common::PT_BRA, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Meeting (Steam, March 2020) (Russian)
+	WME_PLATENTRY("reversion2", "",
+		WME_ENTRY3s("data.dcp", "e8140afacd9ae3e2e0b2c2a42a8d4cd3", 272228827,
+					"xlanguage_ru.dcp", "13d22dbb39b1964fa978e225e04b5f46", 17534860,
+					"Mac.dcp", "0b8d95dcb1f7e8c7c2c49e58db2764b6", 1728476), Common::RU_RUS, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Meeting (Steam, March 2020) (Chinese)
+	WME_PLATENTRY("reversion2", "",
+		WME_ENTRY3s("data.dcp", "e8140afacd9ae3e2e0b2c2a42a8d4cd3", 272228827,
+					"xlanguage_nz.dcp", "fcceb1300b9819abaee6832b7aef7f90", 10757594,
+					"Mac.dcp", "0b8d95dcb1f7e8c7c2c49e58db2764b6", 1728476), Common::ZH_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Meeting (Steam, March 2020) (Simplified Chinese)
+	WME_PLATENTRY("reversion2", "",
+		WME_ENTRY3s("data.dcp", "e8140afacd9ae3e2e0b2c2a42a8d4cd3", 272228827,
+					"xlanguage_zh_s.dcp", "39aedb26886f354f214ea4f91c919731", 8498109,
+					"Mac.dcp", "0b8d95dcb1f7e8c7c2c49e58db2764b6", 1728476), Common::ZH_CNA, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Meeting (Steam, March 2020) (Traditional Chinese)
+	WME_PLATENTRY("reversion2", "",
+		WME_ENTRY3s("data.dcp", "e8140afacd9ae3e2e0b2c2a42a8d4cd3", 272228827,
+					"xlanguage_zh_t.dcp", "c3cf601669aee770a40f7a995fe2b7fa", 8464532,
+					"Mac.dcp", "0b8d95dcb1f7e8c7c2c49e58db2764b6", 1728476), Common::ZH_TWN, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
+
+	// Reversion: The Meeting (Steam, May 2020) (Spanish)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "a59f2f4fe04478a3a078f8b84651ab27", 272211206,
+					"data.dcp", "a59f2f4fe04478a3a078f8b84651ab27", 272211206), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Meeting (Steam, May 2020) (German)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "a59f2f4fe04478a3a078f8b84651ab27", 272211206,
+					"xlanguage_de.dcp", "7a5628acf0fc95596b93120d0adb16d2", 8716897), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+	
+	// Reversion: The Meeting (Steam, May 2020) (English)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "a59f2f4fe04478a3a078f8b84651ab27", 272211206,
+					"xlanguage_en.dcp", "a9a84556bd629fe28244b8dd3dc79d84", 8534328), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+	
+	// Reversion: The Meeting (Steam, May 2020) (French)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "a59f2f4fe04478a3a078f8b84651ab27", 272211206,
+					"xlanguage_fr.dcp", "05ff17668f416fa4b27caf5157cd0ffe", 8844755), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+	
+	// Reversion: The Meeting (Steam, May 2020) (Italian)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "a59f2f4fe04478a3a078f8b84651ab27", 272211206,
+					"xlanguage_it.dcp", "052f8874eddde7d0a107216a36016e79", 11495758), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Meeting (Steam, May 2020) (Chinese)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "a59f2f4fe04478a3a078f8b84651ab27", 272211206,
+					"xlanguage_nz.dcp", "45f52816d5ec5f8e0c1bd70a7aa17f7c", 8847936), Common::ZH_ANY, ADGF_UNSTABLE, WME_1_9_3),
+	
+	// Reversion: The Meeting (Steam, May 2020) (Portuguese)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "a59f2f4fe04478a3a078f8b84651ab27", 272211206,
+					"xlanguage_pt.dcp", "7718ef7709044bf85941eec4f2703664", 8449389), Common::PT_BRA, ADGF_UNSTABLE, WME_1_9_3),
+	
+	// Reversion: The Meeting (Steam, May 2020) (Russian)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "a59f2f4fe04478a3a078f8b84651ab27", 272211206,
+					"xlanguage_ru.dcp", "212e5c6d93e4ecc57694a25e0c5c10bc", 17512467), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+	
+	// Reversion: The Meeting (Steam, May 2020) (Serbian)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "a59f2f4fe04478a3a078f8b84651ab27", 272211206,
+					"xlanguage_sr.dcp", "71f1fc086026bb76137cc9b91c642eff", 8541059), Common::SR_SER, ADGF_UNSTABLE, WME_1_9_3),
+	
+	// Reversion: The Meeting (Steam, May 2020) (Simplified Chinese)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "a59f2f4fe04478a3a078f8b84651ab27", 272211206,
+					"xlanguage_zh_s.dcp", "7a46d2c1bb6a6ed07583e347d4e13d9c", 8498688), Common::ZH_CNA, ADGF_UNSTABLE, WME_1_9_3),
+	
+	// Reversion: The Meeting (Steam, May 2020) (Traditional Chinese)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "a59f2f4fe04478a3a078f8b84651ab27", 272211206,
+					"xlanguage_zh_t.dcp", "33f7ed1b38cbb94cfcfff06ce94be1f4", 8465111), Common::ZH_TWN, ADGF_UNSTABLE, WME_1_9_3),
+
 	// Reversion: The Return (Steam, February 2020) (Spanish)
 	WME_WINENTRY("reversion3", "",
 		WME_ENTRY2s("data.dcp", "326b44d1edfe2cba6e4135bb2dec801f", 1806938525,
@@ -3524,6 +3702,46 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("reversion3", "",
 		WME_ENTRY2s("data.dcp", "d868bcc82a3c4d7b17f24b8f7cabcc78", 1806937960,
 					"xlanguage_zh_s.dcp", "d059c8c11e39e063a60c602a0127d244", 10146103), Common::ZH_CNA, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, May 2020) (Spanish)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "5df2540652f0b77d8bb48e7454840c5e", 1806937960,
+					"data.dcp", "5df2540652f0b77d8bb48e7454840c5e", 1806937960), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, May 2020) (German)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "5df2540652f0b77d8bb48e7454840c5e", 1806937960,
+					"xlanguage_de.dcp", "cb3c666a014148529321cf30dc81d6c6", 10318916), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, May 2020) (English)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "5df2540652f0b77d8bb48e7454840c5e", 1806937960,
+					"xlanguage_en.dcp", "de87f56e65ac48010bab0dac8decb7e6", 10107964), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, May 2020) (Italian)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "5df2540652f0b77d8bb48e7454840c5e", 1806937960,
+					"xlanguage_it.dcp", "dec219bf9289af361a40efeb0a59ab37", 10307721), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, May 2020) (Portuguese)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "5df2540652f0b77d8bb48e7454840c5e", 1806937960,
+					"xlanguage_pt.dcp", "71df5ba5b0b37b5df60bc114d16f37da", 10204094), Common::PT_BRA, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, May 2020) (Russian)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "5df2540652f0b77d8bb48e7454840c5e", 1806937960,
+					"xlanguage_ru.dcp", "3112bec9708620107c1a459e890d1320", 19607612), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, May 2020) (Simplified Chinese)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "5df2540652f0b77d8bb48e7454840c5e", 1806937960,
+					"xlanguage_zh_s.dcp", "d82a5708af24a879cbeaf7338ea89ab4", 10233899), Common::ZH_CNA, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, May 2020) (Traditional Chinese)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "5df2540652f0b77d8bb48e7454840c5e", 1806937960,
+					"xlanguage_zh_t.dcp", "6ca6a83edad54ec1c384fbcea2989ee4", 10170999), Common::ZH_TWN, ADGF_UNSTABLE, WME_1_9_2),
 
 	// Rhiannon: Curse of the four Branches
 	WME_WINENTRY("rhiannon", "",
@@ -3627,6 +3845,30 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("shaban", "Demo",
 		WME_ENTRY2s("data.dcp", "044d4ad8b9a079a99892fd7f7673076c", 181051276,
 					"localization.txt", "e69948ef75907fa591f4062b05470012", 5919), Common::PT_BRA, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_2),
+
+	// Stroke of Fate: Operation Valkyrie (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sof1", "",
+		WME_ENTRY2s("data.dcp", "6f96e541de77de1999feabb2ec6ac877", 952625188,
+					"local.dcp", "d130c371faaf3f6767a7dd230650130d", 201155672), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_8_10),
+
+	// Stroke of Fate: Operation Valkyrie (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sof1", "",
+		WME_ENTRY2s("data.dcp", "ae4ba7a60da6c706b2f914f8b173295e", 930410566,
+					"local.dcp", "3f846bb0673dc92512dea526ce01a4fb", 431994000), Common::RU_RUS, ADGF_UNSTABLE | GF_3D, WME_1_8_10),
+
+	// Stroke of Fate: Operation Valkyrie (Spanish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sof1", "",
+		WME_ENTRY2s("data.dcp", "e5032a792e63bb8210f3eab96402614d", 951892593,
+					"local.dcp", "2d8af7da80c91ef8bfa594b5f50693ab", 201101595), Common::ES_ESP, ADGF_UNSTABLE | GF_3D, WME_1_8_10),
+
+	// Stroke of Fate: Operation Bunker (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sof2", "",
+		WME_ENTRY2s("data.dcp", "9f4de2a53ef396cc70786a1dc0ab191d", 828351641,
+					"local.dcp", "a78f5353c6539b4ff9c39223202ba8d0", 433003083), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_8_9),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Jul 2014) (German)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
@@ -5013,6 +5255,12 @@ static const WMEGameDescription gameDescriptions[] = {
 	// War
 	WME_WINENTRY("war", "",
 		WME_ENTRY1s("data.dcp", "003e317cda6d0137bbd5e5d7f089ee4d", 32591890), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+
+	// The Way Of Love: Sub Zero (Engligh)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("wayoflove", "",
+		WME_ENTRY2s("data.dcp", "201d74cce6b89ce6d5b61a24b5e88809", 1224687223,
+					"language.dcp", "97ae6c028be982ca419416fab77efc76", 663912), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
 
 	// Wintermute Engine Technology Demo (1.2)
 	WME_WINENTRY("wmedemo", "1.2",
