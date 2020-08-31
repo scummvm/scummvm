@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-31 15:11+0000\n"
-"PO-Revision-Date: 2020-08-31 10:47+0000\n"
+"PO-Revision-Date: 2020-08-31 15:26+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -2414,7 +2414,7 @@ msgstr ""
 "Oberfläche unter \"MIDI\" auswählen. Musik wird deaktiviert."
 
 #: audio/softsynth/fluidsynth.cpp:277
-#, fuzzy, c-format
+#, c-format
 msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
 msgstr ""
 "FluidSynth: Fehler beim Laden des SoundFonts '%s'. Musik wird deaktiviert."
