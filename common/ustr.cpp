@@ -126,6 +126,7 @@ U32String &U32String::operator=(const U32String &str) {
 }
 
 U32String &U32String::operator=(const String &str) {
+	clear();
 	initWithCStr(str.c_str(), str.size());
 	return *this;
 }
@@ -135,6 +136,7 @@ U32String &U32String::operator=(const value_type *str) {
 }
 
 U32String &U32String::operator=(const char *str) {
+	clear();
 	initWithCStr(str, strlen(str));
 	return *this;
 }
