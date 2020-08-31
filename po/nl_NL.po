@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-08-31 12:18+0200\n"
-"PO-Revision-Date: 2020-08-27 17:59+0000\n"
-"Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
+"PO-Revision-Date: 2020-08-31 12:24+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
 "Language: nl_NL\n"
@@ -6460,14 +6460,14 @@ msgid "loading quick save %d"
 msgstr "Snel opslaan in slot #%d mislukt"
 
 #: engines/ultima/nuvie/nuvie.cpp:378
-#, fuzzy, c-format
+#, c-format
 msgid "saving quick save %d"
-msgstr "Snel bewaren"
+msgstr ""
 
 #: engines/ultima/nuvie/nuvie.cpp:392
-#, fuzzy, c-format
+#, c-format
 msgid "Quicksave %03d"
-msgstr "Snel bewaren"
+msgstr ""
 
 #: engines/ultima/nuvie/meta_engine.cpp:39
 msgid "Original Save"
