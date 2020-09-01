@@ -28,11 +28,11 @@
 namespace AGDS {
 
 int Screen::ObjectZCompare(const ObjectPtr & a, const ObjectPtr & b) {
-	return a->z() - b->z();
+	return b->z() - a->z();
 }
 
 int Screen::AnimationZCompare(const Animation *a, const Animation *b) {
-	return a->z() - b->z();
+	return b->z() - a->z();
 }
 
 Screen::Screen(ObjectPtr object, const MouseMap &mouseMap) :
@@ -123,18 +123,18 @@ void Screen::paint(AGDSEngine & engine, Graphics::Surface & backbuffer) {
 #else
 	ChildrenType::iterator i;
 	for(i = _children.begin(); i != _children.end(); ++i) {
-			ObjectPtr object = *i;
-			if (object->z() > 10)
-					break;
-			object->paint(engine, backbuffer);
+		ObjectPtr object = *i;
+		if (object->z() < 1000)
+				break;
+		object->paint(engine, backbuffer);
 	}
 	for(AnimationsType::iterator j = _animations.begin(); j != _animations.end(); ++j) {
-			Animation * animation = *j;
-			animation->paint(engine, backbuffer, Common::Point());
+		Animation * animation = *j;
+		animation->paint(engine, backbuffer, Common::Point());
 	}
 	for(; i != _children.end(); ++i) {
-			ObjectPtr object = *i;
-			object->paint(engine, backbuffer);
+		ObjectPtr object = *i;
+		object->paint(engine, backbuffer);
 	}
 #endif
 }
