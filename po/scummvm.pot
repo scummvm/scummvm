@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.2.0pre\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-31 15:11+0000\n"
+"POT-Creation-Date: 2020-09-01 13:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3818,7 +3818,7 @@ msgstr ""
 msgid "Quit Game"
 msgstr ""
 
-#: engines/dragons/dragons.cpp:1785
+#: engines/dragons/dragons.cpp:1796
 #, c-format
 msgid ""
 "Error: The file '%s' hasn't been extracted properly.\n"

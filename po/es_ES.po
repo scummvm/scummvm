@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-31 15:11+0000\n"
+"POT-Creation-Date: 2020-09-01 13:51+0000\n"
 "PO-Revision-Date: 2020-09-01 06:43+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -3999,7 +3999,7 @@ msgstr "Depurar gráficos"
 msgid "Quit Game"
 msgstr "Salir del juego"
 
-#: engines/dragons/dragons.cpp:1785
+#: engines/dragons/dragons.cpp:1796
 #, c-format
 msgid ""
 "Error: The file '%s' hasn't been extracted properly.\n"

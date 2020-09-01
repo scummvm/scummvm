@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-31 15:11+0000\n"
+"POT-Creation-Date: 2020-09-01 13:51+0000\n"
 "PO-Revision-Date: 2020-09-01 06:43+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -3980,7 +3980,7 @@ msgstr "Відладка графіки"
 msgid "Quit Game"
 msgstr "Вийти з ігри"
 
-#: engines/dragons/dragons.cpp:1785
+#: engines/dragons/dragons.cpp:1796
 #, c-format
 msgid ""
 "Error: The file '%s' hasn't been extracted properly.\n"

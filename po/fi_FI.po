@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-31 15:11+0000\n"
+"POT-Creation-Date: 2020-09-01 13:51+0000\n"
 "PO-Revision-Date: 2020-08-29 12:13+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -3967,7 +3967,7 @@ msgstr "Grafiikan debuggaus"
 msgid "Quit Game"
 msgstr "Lopeta peli"
 
-#: engines/dragons/dragons.cpp:1785
+#: engines/dragons/dragons.cpp:1796
 #, c-format
 msgid ""
 "Error: The file '%s' hasn't been extracted properly.\n"
