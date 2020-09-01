@@ -289,7 +289,7 @@ const CdFile SwordEngine::_pcCdFileList[] = {
 	{ "scripts.clu", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
 	{ "swordres.rif", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
 	{ "text.clu", FLAG_CD1 | FLAG_DEMO },
-	{ "cows.mad", FLAG_DEMO },
+	{ "1m14a.wav", FLAG_DEMO },
 	{ "speech1.clu", FLAG_SPEECH1 },
 	{ "speech2.clu", FLAG_SPEECH2 }
 #ifdef USE_FLAC
