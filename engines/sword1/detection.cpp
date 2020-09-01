@@ -49,7 +49,7 @@ static const PlainGameDescriptor sword1PSXDemoSettings =
 
 
 // check these subdirectories (if present)
-static const char *const g_dirNames[] = { "clusters", "speech", "english", "italian"};
+static const char *const g_dirNames[] = { "clusters", "music", "speech", "english", "italian"};
 
 #define NUM_COMMON_FILES_TO_CHECK 1
 #define NUM_PC_FILES_TO_CHECK 3
@@ -69,7 +69,7 @@ static const char *const g_filesToCheck[NUM_FILES_TO_CHECK] = { // these files h
 	"compacts.clm", // Mac version only
 	"scripts.clm", // Mac version only
 	"paris2.clm", // Mac version (full game only)
-	"cows.mad", // this one should only exist in the demo version
+	"1m14a.wav", // this one should only exist in the demo version
 	"scripts.clm", // Mac version both demo and full game
 	"train.plx", // PSX version only
 	"speech.dat", // PSX version only
