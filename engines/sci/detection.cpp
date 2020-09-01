@@ -450,10 +450,10 @@ ADDetectedGame SciMetaEngine::fallbackDetect(const FileMap &allFiles, const Comm
 	 * Fallback detection for Sci heavily depends on engine resources, so it's not possible
 	 * to use them without the engine present in a clean way.
 	 */
-	static const Plugin *metaEnginePlugin = EngineMan.findPlugin(getEngineId());
+	const Plugin *metaEnginePlugin = EngineMan.findPlugin(getEngineId());
 
 	if (metaEnginePlugin) {
-		static const Plugin *enginePlugin = PluginMan.giveEngineFromMetaEngine(metaEnginePlugin);
+		const Plugin *enginePlugin = PluginMan.giveEngineFromMetaEngine(metaEnginePlugin);
 		if (enginePlugin) {
 			return enginePlugin->get<AdvancedMetaEngineConnect>().fallbackDetectExtern(_md5Bytes, allFiles, fslist);
 		} else {
