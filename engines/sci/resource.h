@@ -616,6 +616,13 @@ protected:
 	void processWavePatch(ResourceId resourceId, const Common::String &name);
 
 	/**
+	 * Process AIFF files as patches for Audio resources.
+	 */
+#ifdef ENABLE_SCI32
+	void readAIFFAudioPatches();
+#endif
+
+	/**
 	 * Applies to all versions before 0.000.395 (i.e. KQ4 old, XMAS 1988 and LSL2).
 	 * Old SCI versions used two word header for script blocks (first word equal
 	 * to 0x82, meaning of the second one unknown). New SCI versions used one

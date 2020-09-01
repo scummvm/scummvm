@@ -848,6 +848,9 @@ void DirectoryResourceSource::scanSource(ResourceManager *resMan) {
 		resMan->readResourcePatchesBase36();
 
 	resMan->readWaveAudioPatches();
+#ifdef ENABLE_SCI32
+	resMan->readAIFFAudioPatches();
+#endif
 }
 
 void ExtMapResourceSource::scanSource(ResourceManager *resMan) {

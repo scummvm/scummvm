@@ -265,6 +265,26 @@ void ResourceManager::readWaveAudioPatches() {
 	}
 }
 
+#ifdef ENABLE_SCI32
+void ResourceManager::readAIFFAudioPatches() {
+	// LSL6 hires Mac is the only game that has AIFF audio patch files,
+	//  which it plays with special overloads of kDoAudio. Restrict this
+	//  scan to just this game since the filenames are so generic.
+	if (!(g_sci->getGameId() == GID_LSL6HIRES && _isSci2Mac)) {
+		return;
+	}
+
+	Common::ArchiveMemberList files;
+	SearchMan.listMatchingMembers(files, "####");
+
+	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
+		Common::String name = (*x)->getName();
+
+		processWavePatch(ResourceId(kResourceTypeAudio, atoi(name.c_str())), name);
+	}
+}
+#endif
+
 void ResourceManager::removeAudioResource(ResourceId resId) {
 	// Remove resource, unless it was loaded from a patch
 	if (_resMap.contains(resId)) {
