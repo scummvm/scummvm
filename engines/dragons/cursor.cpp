@@ -41,6 +41,7 @@ Cursor::Cursor(DragonsEngine *vm): _vm(vm), _actor(0), _x(0), _y(0) {
 	_objectInHandSequenceID = 0;
 	_cursorActivationSeqOffset = 0;
 	_iniItemInHand = 0;
+	_handPointerSequenceID = _vm->getCursorHandPointerSequenceID();
 }
 
 void Cursor::init(ActorManager *actorManager, DragonINIResource *dragonINIResource) {
@@ -84,22 +85,22 @@ void Cursor::update() {
 	if (_iniUnderCursor != 0
 			&& ((_iniUnderCursor & 0x8000 && _vm->_inventory->isOpen())
 			||(!(_iniUnderCursor & 0x8000) && _vm->getINI(_iniUnderCursor - 1)->flags & 0x80))) {
-		if (_actor->_sequenceID != 0x84) {
-			_actor->updateSequence(0x84);
+		if (_actor->_sequenceID != _handPointerSequenceID) {
+			_actor->updateSequence(_handPointerSequenceID);
 		}
 		return;
 	}
 	int32 inventorySequenceID = _vm->_inventory->getSequenceId();
 	if ((_iniUnderCursor == 0x8001) && (inventorySequenceID == 1)) {
-		if (_actor->_sequenceID != 0x84) {
-			_actor->updateSequence(0x84);
+		if (_actor->_sequenceID != _handPointerSequenceID) {
+			_actor->updateSequence(_handPointerSequenceID);
 		}
 		return;
 	}
 
 	if (_iniUnderCursor == 0x8002 && inventorySequenceID == 4) {//goto LAB_80028204;
-		if (_actor->_sequenceID != 0x84) {
-			_actor->updateSequence(0x84);
+		if (_actor->_sequenceID != _handPointerSequenceID) {
+			_actor->updateSequence(_handPointerSequenceID);
 		}
 		return;
 	}
@@ -125,8 +126,8 @@ void Cursor::update() {
 	}
 
 	if (_iniItemInHand == 0) {
-		if (_actor->_sequenceID != 0x84) {
-			_actor->updateSequence(0x84);
+		if (_actor->_sequenceID != _handPointerSequenceID) {
+			_actor->updateSequence(_handPointerSequenceID);
 		}
 		return;
 	} else {

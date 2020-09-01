@@ -358,6 +358,7 @@ public:
 	uint32 getSpeechTblOffsetFromDragonEXE();
 	uint32 getCutscenePaletteOffsetFromDragonEXE();
 	uint32 defaultResponseOffsetFromDragonEXE();
+	uint16 getCursorHandPointerSequenceID();
 private:
 	bool savegame(const char *filename, const char *description);
 	bool loadgame(const char *filename);

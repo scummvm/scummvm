@@ -43,6 +43,7 @@ public:
 	int16 _objectInHandSequenceID;
 	int16 _cursorActivationSeqOffset;
 	uint16 _iniItemInHand;
+	uint16 _handPointerSequenceID;
 
 private:
 	DragonsEngine *_vm;

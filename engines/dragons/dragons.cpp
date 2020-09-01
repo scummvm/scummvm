@@ -1805,6 +1805,10 @@ void DragonsEngine::syncSoundSettings() {
 	_sound->syncSoundSettings();
 }
 
+uint16 DragonsEngine::getCursorHandPointerSequenceID() {
+	return _language == Common::DE_DEU || _language == Common::FR_FRA ? 0x86 : 0x84;
+}
+
 void (*DragonsEngine::getSceneUpdateFunction())() {
 	return _sceneUpdateFunction;
 }
