@@ -466,7 +466,8 @@ void PluginManagerUncached::loadDetectionPlugin() {
 
 	if (linkMetaEngines) {
 		_pluginsInMem[PLUGIN_TYPE_METAENGINE].clear();
-		PluginList &pl = (_detectionPlugin)->get<Detection>()._pl;
+		const Detection &detectionConnect = _detectionPlugin->get<Detection>();
+		const PluginList &pl = detectionConnect.getPlugins();
 		Common::for_each(pl.begin(), pl.end(), Common::bind1st(Common::mem_fun(&PluginManagerUncached::tryLoadPlugin), this));
 	}
 

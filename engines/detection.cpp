@@ -26,22 +26,29 @@
 #include "engines/advanceddetector.h"
 #include "engines/detection.h"
 
-const char *Detection::getName() const {
-    return "detection";
-}
 
-Detection::Detection() {
+class DetectionConnect : public Detection {
+public:
+    DetectionConnect() {}
+    ~DetectionConnect() {}
 
-    #define LINK_PLUGIN(ID) \
+    const char *getName() const override {
+        return "detection";
+    }
+
+    PluginList getPlugins() const override {
+        PluginList pl;
+
+        #define LINK_PLUGIN(ID) \
 			extern PluginType g_##ID##_type; \
 			extern PluginObject *g_##ID##_getObject(); \
-			_pl.push_back(new StaticPlugin(g_##ID##_getObject(), g_##ID##_type));
+			pl.push_back(new StaticPlugin(g_##ID##_getObject(), g_##ID##_type));
 
-    #include "engines/detection_table.h"
-}
+        #include "engines/detection_table.h"
 
-Detection::~Detection() {
-}
+        return pl;
+    }
+};
 
-REGISTER_PLUGIN_DYNAMIC(DETECTION_DYNAMIC, PLUGIN_TYPE_DETECTION, Detection);
+REGISTER_PLUGIN_DYNAMIC(DETECTION_DYNAMIC, PLUGIN_TYPE_DETECTION, DetectionConnect);
 
