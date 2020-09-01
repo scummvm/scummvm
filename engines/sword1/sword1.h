@@ -74,6 +74,7 @@ struct SystemVars {
 	bool   showText;
 	uint8   language;
 	bool    isDemo;
+	bool    isSpanishDemo;
 	Common::Platform platform;
 	Common::Language realLanguage;
 };
