@@ -2443,8 +2443,8 @@ msgid ""
 "on MIDI tab. Music is off."
 msgstr ""
 "Το FluidSynth απαιτεί μια ρύθμιση για 'soundfont'. Παρακαλούμε να "
-"προσδιορίσετε ένα από το περιβάλλον διεπαφής (GUI) του ScummVM στο tab \""
-"MIDI\". Η μουσική θα απενεργοποιηθεί."
+"προσδιορίσετε ένα από το περιβάλλον διεπαφής (GUI) του ScummVM στο tab \"MIDI"
+"\". Η μουσική θα απενεργοποιηθεί."
 
 #: audio/softsynth/fluidsynth.cpp:277
 #, c-format
