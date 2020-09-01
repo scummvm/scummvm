@@ -1,5 +1,7 @@
 name: CI
-on: [push, pull_request]
+on:
+  schedule:
+    - cron: '0 0-23/4 * * *'
 jobs:
   windows:
     name: Windows
