@@ -352,7 +352,7 @@ bool SciEngine::hasFeature(EngineFeature f) const {
 		//  and some other times it won't work.
 }
 
-SaveStateList SciMetaEngine::listSaves(const char *target) const {
+SaveStateList SciMetaEngineConnect::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String pattern = target;
