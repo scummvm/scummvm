@@ -689,7 +689,7 @@ void DragonsEngine::updateHandler() {
 				int16 priority = _scene->getPriorityAtPosition(Common::Point(actor->_x_pos, actor->_y_pos));
 				DragonINI *flicker = _dragonINIResource->getFlickerRecord();
 				if (flicker && _scene->contains(flicker) && flicker->actor->_actorID == i) {
-					if (priority < 8 || priority == 0x10) {
+					if ((priority >= 0 && priority < 8) || priority == 0x10) {
 						actor->_priorityLayer = priority;
 					}
 				} else {
