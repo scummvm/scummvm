@@ -431,7 +431,7 @@ public:
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
 	void registerDefaultSettings(const Common::String &target) const override;
-	GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
+	GUI::OptionsContainerWidget *buildEngineOptionsWidgetStatic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 };
 
 void SciMetaEngine::registerDefaultSettings(const Common::String &target) const {
@@ -441,7 +441,7 @@ void SciMetaEngine::registerDefaultSettings(const Common::String &target) const 
 		ConfMan.registerDefault(entry->configOption, entry->defaultState);
 }
 
-GUI::OptionsContainerWidget *SciMetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+GUI::OptionsContainerWidget *SciMetaEngine::buildEngineOptionsWidgetStatic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
 	return new OptionsWidget(boss, name, target);
 }
 
