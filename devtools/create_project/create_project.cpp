@@ -103,7 +103,7 @@ enum ProjectType {
 	kProjectXcode
 };
 
-std::unordered_map<std::string, bool> isEngineEnabled;
+std::map<std::string, bool> isEngineEnabled;
 
 int main(int argc, char *argv[]) {
 #ifndef USE_WIN32_API
