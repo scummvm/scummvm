@@ -140,7 +140,8 @@ enum fileTypes {
 	TYPE_DEMO,
 	TYPE_IMMED,
 	TYPE_SPEECH1,
-	TYPE_SPEECH2
+	TYPE_SPEECH2,
+	TYPE_SPEECH
 };
 
 enum fileFlags {
@@ -149,7 +150,8 @@ enum fileFlags {
 	FLAG_DEMO    = (1 << TYPE_DEMO),        // file for the demo version
 	FLAG_IMMED   = (1 << TYPE_IMMED),       // this file is needed immediately, game won't start without it
 	FLAG_SPEECH1 = (1 << TYPE_SPEECH1),
-	FLAG_SPEECH2 = (1 << TYPE_SPEECH2)
+	FLAG_SPEECH2 = (1 << TYPE_SPEECH2),
+	FLAG_SPEECH  = (1 << TYPE_SPEECH)
 };
 
 struct CdFile {
