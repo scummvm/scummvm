@@ -127,6 +127,103 @@ struct DetectorResult {
 	const char *extra;
 };
 
+/**
+ * SCUMM feature flags define for every game which specific set of engine
+ * features are used by that game.
+ * Note that some of them could be replaced by checks for the SCUMM version.
+ */
+enum GameFeatures {
+	/** A demo, not a full blown game. */
+	GF_DEMO = 1 << 0,
+
+	/** Games with the AKOS costume system (ScummEngine_v7 and subclasses, HE games). */
+	GF_NEW_COSTUMES = 1 << 2,
+
+	/** Games using XOR encrypted data files. */
+	GF_USE_KEY = 1 << 4,
+
+	/** Small header games (ScummEngine_v4 and subclasses). */
+	GF_SMALL_HEADER = 1 << 5,
+
+	/** Old bundle games (ScummEngine_v3old and subclasses). */
+	GF_OLD_BUNDLE = 1 << 6,
+
+	/** EGA games. */
+	GF_16COLOR = 1 << 7,
+
+	/** VGA versions of V3 games.  Equivalent to (version == 3 && not GF_16COLOR) */
+	GF_OLD256 = 1 << 8,
+
+	/** Games which have Audio CD tracks. */
+	GF_AUDIOTRACKS = 1 << 9,
+
+	/**
+	 * Games using only very few local variables in scripts.
+	 * Apparently that is only the case for 256 color version of Indy3.
+	 */
+	GF_FEW_LOCALS = 1 << 11,
+
+	/** HE games for which localized versions exist */
+	GF_HE_LOCALIZED = 1 << 13,
+
+	/**
+	 *  HE games with more global scripts and different sprite handling
+	 *  i.e. read it as HE version 9.85. Used for HE98 only.
+	 */
+	GF_HE_985 = 1 << 14,
+
+	/** HE games with 16 bit color */
+	GF_16BIT_COLOR = 1 << 15,
+
+	/**
+	 * SCUMM v5-v7 Mac games stored in a container file
+	 * Used to differentiate between m68k and PPC versions of Indy4
+	 */
+	GF_MAC_CONTAINER = 1 << 16
+};
+
+enum ScummGameId {
+	GID_CMI,
+	GID_DIG,
+	GID_FT,
+	GID_INDY3,
+	GID_INDY4,
+	GID_LOOM,
+	GID_MANIAC,
+	GID_MONKEY_EGA,
+	GID_MONKEY_VGA,
+	GID_MONKEY,
+	GID_MONKEY2,
+	GID_PASS,
+	GID_SAMNMAX,
+	GID_TENTACLE,
+	GID_ZAK,
+
+	GID_HEGAME,      // Generic name for all HE games with default behavior
+	GID_PUTTDEMO,
+	GID_FBEAR,
+	GID_PUTTMOON,
+	GID_FUNPACK,
+	GID_PUTTZOO,
+	GID_FREDDI3,
+	GID_BIRTHDAYRED,
+	GID_BIRTHDAYYELLOW,
+	GID_TREASUREHUNT,
+	GID_PUTTRACE,
+	GID_FUNSHOP,	// Used for all three funshops
+	GID_FOOTBALL,
+	GID_FOOTBALL2002,
+	GID_SOCCER,
+	GID_SOCCERMLS,
+	GID_SOCCER2004,
+	GID_BASEBALL2001,
+	GID_BASEBALL2003,
+	GID_BASKETBALL,
+	GID_MOONBASE,
+	GID_PJGAMES,
+	GID_HECUP		// CUP demos
+};
+
 } // End of namespace Scumm
 
 
