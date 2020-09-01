@@ -1,7 +1,7 @@
 name: CI
-on:
-  schedule:
-    - cron: '0 0-23/4 * * *'
+on: [push, pull_request]
+#  schedule:
+#    - cron: '0 0-23/4 * * *'
 jobs:
   windows:
     name: Windows
@@ -73,23 +73,23 @@ jobs:
           cd build-scummvm
           ls
           msbuild scummvm.sln /m /p:BuildInParallel=true /p:Configuration=Release /p:PreferredToolArchitecture=x64 /p:Platform=${{ matrix.platform }}
-      - name: Upload scummvm
-        uses: actions/upload-artifact@v2
-        with:
-          name: scummvm-${{ matrix.arch }}
-          path: build-scummvm/Release${{ matrix.arch }}/*.exe
-      - name: Upload scummvm libs
-        uses: actions/upload-artifact@v2
-        with:
-          name: scummvm-${{ matrix.arch }}
-          path: ${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}\\installed\\${{ matrix.triplet }}\\bin\\*.dll
-      - name: Upload scummvm symbols
-        uses: actions/upload-artifact@v2
-        with:
-          name: symbols-${{ matrix.arch }}
-          path: build-scummvm/Release${{ matrix.arch }}/*.pdb
-      - name: Upload scummvm libs symbols
-        uses: actions/upload-artifact@v2
-        with:
-          name: symbols-${{ matrix.arch }}
-          path: ${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}\\installed\\${{ matrix.triplet }}\\bin\\*.pdb
+#      - name: Upload scummvm
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: scummvm-${{ matrix.arch }}
+#          path: build-scummvm/Release${{ matrix.arch }}/*.exe
+#      - name: Upload scummvm libs
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: scummvm-${{ matrix.arch }}
+#          path: ${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}\\installed\\${{ matrix.triplet }}\\bin\\*.dll
+#      - name: Upload scummvm symbols
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: symbols-${{ matrix.arch }}
+#          path: build-scummvm/Release${{ matrix.arch }}/*.pdb
+#      - name: Upload scummvm libs symbols
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: symbols-${{ matrix.arch }}
+#          path: ${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}\\installed\\${{ matrix.triplet }}\\bin\\*.pdb
