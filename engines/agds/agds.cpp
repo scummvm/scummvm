@@ -594,7 +594,7 @@ void AGDSEngine::initSystemVariables() {
 	_systemVars["inventory_scr"]	= new StringSystemVariable();
 	_systemVars["escape_scr"]		= new StringSystemVariable("none");
 	_systemVars["load_scr"]			= new StringSystemVariable();
-	_systemVars["load_scr"]			= new StringSystemVariable();
+	_systemVars["save_scr"]			= new StringSystemVariable();
 
 	_systemVars["gfx_bright"]		= new IntegerSystemVariable(50);
 	_systemVars["gfx_contrast"]		= new IntegerSystemVariable(50);
