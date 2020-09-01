@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-01 13:51+0000\n"
 "PO-Revision-Date: 2020-09-01 13:55+0000\n"
-"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -2396,7 +2396,7 @@ msgstr ""
 #: audio/softsynth/fluidsynth.cpp:277
 #, c-format
 msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
-msgstr ""
+msgstr "FluidSynth: Virhe lataamisessa custom SoundFont '%s'. Musiiikki off."
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:32
 msgid "FM-Towns Audio"
