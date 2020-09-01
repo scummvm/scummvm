@@ -89,6 +89,13 @@ private:
 	void tick();
 
 public:
+
+	bool hasFeature(EngineFeature f) const;
+	Common::Error loadGameStream(Common::SeekableReadStream *file);
+	Common::Error saveGameStream(Common::WriteStream *file, bool isAutosave);
+	bool canLoadGameStateCurrently() override { return true; }
+	bool canSaveGameStateCurrently() override { return _userEnabled; }
+
 	ObjectPtr loadObject(const Common::String & name, const Common::String & prototype = Common::String());
 	void runObject(ObjectPtr object);
 	void runObject(const Common::String & name, const Common::String &prototype = Common::String());
