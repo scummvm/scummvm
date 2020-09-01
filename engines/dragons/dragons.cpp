@@ -1695,6 +1695,17 @@ void DragonsEngine::loadingScreen() {
 	actor->setFlag(ACTOR_FLAG_200);
 	actor->setFlag(ACTOR_FLAG_80);
 
+	if (_language == Common::DE_DEU || _language == Common::FR_FRA) {
+		actor = _actorManager->loadActor(0,0x84,0,0,6);
+		actor->setFlag(ACTOR_FLAG_100);
+		actor->setFlag(ACTOR_FLAG_200);
+		actor->setFlag(ACTOR_FLAG_80);
+		actor = _actorManager->loadActor(0,0x85,0,0,6);
+		actor->setFlag(ACTOR_FLAG_100);
+		actor->setFlag(ACTOR_FLAG_200);
+		actor->setFlag(ACTOR_FLAG_80);
+	}
+
 	for (int i = 0; i < 10; i++) {
 		actor = _actorManager->loadActor(0,flamesActorOffset[(i % 4)] + 0x7e,i * 0x20 + 0x10,0xbe,6);
 		actor->setFlag(ACTOR_FLAG_100);
