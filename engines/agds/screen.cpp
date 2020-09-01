@@ -51,8 +51,10 @@ void Screen::add(ObjectPtr object) {
 		return;
 	}
 	for(ChildrenType::iterator i = _children.begin(); i != _children.end(); ++i) {
-		if (*i == object)
+		if (*i == object) {
+			warning("double adding object %s", (*i)->getName().c_str());
 			return;
+		}
 	}
 	_children.insert(object);
 }
