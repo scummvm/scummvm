@@ -200,7 +200,9 @@ void AGDSEngine::resetCurrentScreen()
 void AGDSEngine::runProcess(ProcessListType::iterator &it) {
 	Process & process = *it;
 	if (process.parentScreenName() != _currentScreenName) {
-		++it;
+		if (process.active())
+			process.activate(false);
+		it = _processes.erase(it);
 		return;
 	}
 
