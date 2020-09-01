@@ -777,6 +777,24 @@ bool AGDSEngine::tickDialog() {
 	return true;
 }
 
+bool AGDSEngine::hasFeature(EngineFeature f) const
+{
+	switch(f)
+	{
+		case kSupportsSubtitleOptions:
+		case kSupportsReturnToLauncher:
+		case kSupportsLoadingDuringRuntime:
+		case kSupportsSavingDuringRuntime:
+			return true;
+		default:
+			return false;
+	}
+}
 
+Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file)
+{ return Common::Error(Common::kNoError); }
+
+Common::Error AGDSEngine::saveGameStream(Common::WriteStream *file, bool isAutosave)
+{ return Common::Error(Common::kNoError); }
 
 } // End of namespace AGDS

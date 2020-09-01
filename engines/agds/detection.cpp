@@ -50,6 +50,24 @@ public:
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	virtual bool hasFeature(MetaEngineFeature f) const
+	{
+		switch(f) {
+			case kSavesSupportThumbnail:
+			case kSavesUseExtendedFormat:
+			case kSimpleSavesNames:
+			case kSupportsDeleteSave:
+			case kSupportsListSaves:
+				return true;
+			default:
+				return false;
+		}
+	}
+
+	int getMaximumSaveSlot() const {
+		return 99;
+	}
+
 };
 
 bool AGDSMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
