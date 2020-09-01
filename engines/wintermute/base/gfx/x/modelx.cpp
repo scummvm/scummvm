@@ -52,7 +52,7 @@ XFileLexer createXFileLexer(byte *buffer, uint32 fileSize) {
 	Common::copy(buffer + 8, buffer + 12, dataFormatBlock);
 	dataFormatBlock[4] = '\0';
 
-	bool textMode = (strcmp((char *)dataFormatBlock, "txt ") == 0);
+	bool textMode = (strcmp((char *)dataFormatBlock, "txt ") == 0 || strcmp((char *)dataFormatBlock, "tzip") == 0);
 
 	if (strcmp((char *)dataFormatBlock, "bzip") == 0 || strcmp((char *)dataFormatBlock, "tzip") == 0) {
 		warning("ModelX::loadFromFile compressed .X files are not supported yet");
