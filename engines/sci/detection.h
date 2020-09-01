@@ -142,6 +142,13 @@ enum SciVersion {
 	SCI_VERSION_3 // LSL7, Lighthouse, RAMA, Phantasmagoria 2
 };
 
+/** MIDI devices */
+enum kMidiMode {
+	kMidiModeStandard,
+	kMidiModeFB01,
+	kMidiModeD110
+};
+
 } // End of namespace Sci
 
 #endif // SCI_DETECTION_H

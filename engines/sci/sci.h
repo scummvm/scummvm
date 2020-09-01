@@ -132,13 +132,6 @@ enum kLanguage {
 	K_LANG_PORTUGUESE = 351
 };
 
-/** MIDI devices */
-enum kMidiMode {
-	kMidiModeStandard,
-	kMidiModeFB01,
-	kMidiModeD110
-};
-
 class SciEngine : public Engine {
 	friend class Console;
 public:
