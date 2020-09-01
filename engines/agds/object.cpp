@@ -37,12 +37,11 @@ Object::Object(const Common::String &name, Common::SeekableReadStream * stream) 
 	_name(name), _stringTableLoaded(false),
 	_picture(), _region(),
 	_animation(), _mouseCursor(),
-	_pos(), _z(0),
+	_pos(), _z(10),
 	_clickHandler(0), _examineHandler(0),
 	_alpha(255), _active(false) {
-	byte id = stream->readByte();
-	byte flag = stream->readByte();
-	debug("id: 0x%02x %u, flag: %u", id, id, flag);
+	byte id = stream->readUint16LE();
+	debug("id: 0x%02x %u", id, id);
 
 	uint16 dataSize = stream->readUint16LE();
 	if (dataSize != 0)

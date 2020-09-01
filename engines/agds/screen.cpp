@@ -124,7 +124,7 @@ void Screen::paint(AGDSEngine & engine, Graphics::Surface & backbuffer) {
 	ChildrenType::iterator i;
 	for(i = _children.begin(); i != _children.end(); ++i) {
 			ObjectPtr object = *i;
-			if (object->z() > 0)
+			if (object->z() > 10)
 					break;
 			object->paint(engine, backbuffer);
 	}
