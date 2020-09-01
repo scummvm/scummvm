@@ -29,7 +29,6 @@
 #include "common/util.h"
 
 #include "scumm/detection.h"
-#include "scumm/scumm.h"
 
 #include "scumm/scumm-md5.h"
 
