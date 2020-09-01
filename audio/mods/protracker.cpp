@@ -58,7 +58,7 @@ private:
 
 	static const int16 sinetable[];
 
-	struct {
+	struct Track {
 		byte sample;
 		byte lastSample;
 		uint16 period;
