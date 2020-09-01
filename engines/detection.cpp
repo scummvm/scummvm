@@ -20,6 +20,7 @@
  *
  */
 
+#ifndef DETECTION_STATIC
 
 #include "base/plugins.h"
 #include "engines/metaengine.h"
@@ -52,3 +53,4 @@ public:
 
 REGISTER_PLUGIN_DYNAMIC(DETECTION_DYNAMIC, PLUGIN_TYPE_DETECTION, DetectionConnect);
 
+#endif // !DETECTION_STATIC
