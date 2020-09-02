@@ -173,7 +173,7 @@ enum Opcode {
 	kStub153						= 153,
 	kStub154						= 154,
 	kStub155						= 155,
-	kStub156						= 156,
+	kLoadGame						= 156,
 	kStub157						= 157,
 	kQuit							= 158,
 	kExitProcessCreatePatch			= 159,

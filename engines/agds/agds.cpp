@@ -257,6 +257,9 @@ void AGDSEngine::runProcess(ProcessListType::iterator &it) {
 		_inventory.clear();
 		runObject(process.getExitArg2());
 		break;
+	case kExitCodeLoadSaveGame:
+		loadGameState(process.getExitIntArg1());
+		break;
 	default:
 		error("unknown process exit code %d", code);
 	}
