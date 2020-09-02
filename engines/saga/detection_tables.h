@@ -929,6 +929,35 @@ static const SAGAGameDescription gameDescriptions[] = {
 		NULL,
 	},
 
+	// I Have No Mouth And I Must Scream - Korean CD version
+	{
+		{
+			"ihnm",
+			_s("Missing game code"), // Reason for being unsupported
+			{
+				{"musicfm.res",	GAME_MUSICFILE_FM,					"0439083e3dfdc51b486071d45872ae52", -1},
+				{"musicgm.res",	GAME_MUSICFILE_GM,					"80f875a1fb384160d1f4b27166eef583", -1},
+				{"scream.res",	GAME_RESOURCEFILE,					"46bbdc65d164ba7e89836a0935eec8e6", 79211140},
+				{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", -1},
+				{"scripts.res",	GAME_SCRIPTFILE,					"be38bbc5a26be809dbf39f13befebd01", -1},
+				{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", -1},
+				{"sbh1616.fnt",	0,									"ec047bbe048ed9465def705b5bd74d99", -1},
+				AD_LISTEND
+			},
+			Common::KO_KOR,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_IHNM,
+		GF_IHNM_COLOR_FIX,
+		IHNM_DEFAULT_SCENE,
+		&IHNM_Resources,
+		ARRAYSIZE(IHNMCD_GameFonts),
+		IHNMCD_GameFonts,
+		NULL,
+	},
+
 	// I Have No Mouth And I Must Scream - Fr CD version
 	// Censored CD version (without Nimdok)
 	{
