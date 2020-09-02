@@ -177,7 +177,7 @@ enum Opcode {
 	kStub157						= 157,
 	kQuit							= 158,
 	kExitProcessCreatePatch			= 159,
-	kStub160						= 160,
+	kLoadSaveSlotNamePicture		= 160,
 	kStub161						= 161,
 	kDisableInventory				= 162,
 	kEnableInventory				= 163,

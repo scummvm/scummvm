@@ -237,7 +237,7 @@ private:
 	void stub153();
 	void stub154();
 	void stub155();
-	void stub160();
+	void loadSaveSlotNamePicture();
 	void stub166();
 	void stub172();
 	void stub173();
