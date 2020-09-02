@@ -44,6 +44,7 @@ struct Region {
 	bool pointIn(Common::Point point) const;
 	Common::String toString() const;
 	void move(Common::Point rel);
+	Common::Point topLeft() const;
 };
 
 

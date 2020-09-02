@@ -115,6 +115,32 @@ void Object::setPicture(Graphics::TransparentSurface *picture) {
 	_picture = picture;
 }
 
+void Object::region(RegionPtr region) {
+	_region = region;
+	_pos = region->topLeft();
+}
+
+void Object::moveTo(Common::Point pos)
+{
+	Common::Point delta = pos - _pos;
+	debug("moving object %+d,%+d", delta.x, delta.y);
+	if (_region)
+		_region->move(delta);
+	_pos = pos;
+}
+
+void Object::generateRegion() {
+	if (!_picture) {
+		warning("generateRegion called on null picture");
+		return;
+	}
+
+	Common::Rect rect = _picture->getRect();
+	rect.moveTo(_pos.x, _pos.y);
+	_region = RegionPtr(new Region(rect));
+	debug("%s: generated region: %s", _name.c_str(), _region->toString().c_str());
+}
+
 void Object::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 	if (_picture) {
 		Common::Point dst = _pos;

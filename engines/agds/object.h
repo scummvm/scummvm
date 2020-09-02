@@ -112,9 +112,12 @@ public:
 	}
 
 	void setPicture(Graphics::TransparentSurface *);
+
 	Graphics::TransparentSurface *getPicture() const {
 		return _picture;
 	}
+
+	void generateRegion();
 
 	void setAlpha(int alpha) {
 		if (alpha < 0)
@@ -124,9 +127,7 @@ public:
 		_alpha = (100 - alpha) * 255 / 100;
 	}
 
-	void region(RegionPtr region) {
-		_region = region;
-	}
+	void region(RegionPtr region);
 
 	RegionPtr region() const {
 		return _region;
@@ -154,9 +155,7 @@ public:
 
 	void paint(AGDSEngine &engine, Graphics::Surface &backbuffer);
 
-	void moveTo(Common::Point pos) {
-		_pos = pos;
-	}
+	void moveTo(Common::Point pos);
 
 	void z(int z) {
 		_z = z;
