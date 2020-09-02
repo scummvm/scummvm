@@ -25,7 +25,7 @@
 
 namespace AGDS {
 
-MJPGPlayer::MJPGPlayer(Common::SeekableReadStream * stream): _stream(stream), _firstFramePos(_stream->pos()) {
+MJPGPlayer::MJPGPlayer(Common::SeekableReadStream *stream) : _stream(stream), _firstFramePos(_stream->pos()) {
 }
 
 MJPGPlayer::~MJPGPlayer() {
@@ -52,5 +52,4 @@ const Graphics::Surface *MJPGPlayer::decodeFrame() {
 	return surface;
 }
 
-
-}
+} // namespace AGDS

@@ -26,36 +26,36 @@
 
 namespace AGDS {
 
-	const Common::String & IntegerSystemVariable::getString() const {
-		error("invalid type");
-	}
-
-	int IntegerSystemVariable::getInteger() const {
-		return _value;
-	}
-
-	void IntegerSystemVariable::setString(const Common::String &value) {
-		error("invalid type");
-	}
-
-	void IntegerSystemVariable::setInteger(int value) {
-		_value = value;
-	}
-
-	const Common::String & StringSystemVariable::getString() const {
-		return _value;
-	}
-
-	int StringSystemVariable::getInteger() const {
-		error("invalid type");
-	}
-
-	void StringSystemVariable::setString(const Common::String &value) {
-		_value = value;
-	}
-
-	void StringSystemVariable::setInteger(int value) {
-		error("invalid type");
-	}
-
+const Common::String &IntegerSystemVariable::getString() const {
+	error("invalid type");
 }
+
+int IntegerSystemVariable::getInteger() const {
+	return _value;
+}
+
+void IntegerSystemVariable::setString(const Common::String &value) {
+	error("invalid type");
+}
+
+void IntegerSystemVariable::setInteger(int value) {
+	_value = value;
+}
+
+const Common::String &StringSystemVariable::getString() const {
+	return _value;
+}
+
+int StringSystemVariable::getInteger() const {
+	error("invalid type");
+}
+
+void StringSystemVariable::setString(const Common::String &value) {
+	_value = value;
+}
+
+void StringSystemVariable::setInteger(int value) {
+	error("invalid type");
+}
+
+} // namespace AGDS

@@ -21,14 +21,14 @@
  */
 
 #include "agds/region.h"
-#include "common/debug.h"
-#include "common/textconsole.h"
 #include "common/algorithm.h"
+#include "common/debug.h"
 #include "common/endian.h"
+#include "common/textconsole.h"
 
 namespace AGDS {
 
-Region::Region(const Common::String &resourceName, Common::SeekableReadStream * stream) {
+Region::Region(const Common::String &resourceName, Common::SeekableReadStream *stream) {
 	static const int kRegionHeaderSize = 0x26;
 	static const int kRegionHeaderWidthOffset = 0x20;
 	static const int kRegionHeaderHeightOffset = 0x22;
@@ -39,16 +39,16 @@ Region::Region(const Common::String &resourceName, Common::SeekableReadStream * 
 	byte header[kRegionHeaderSize];
 	if (stream->read(header, kRegionHeaderSize) != kRegionHeaderSize)
 		error("invalid region %s", resourceName.c_str());
-	byte * nameEnd = Common::find(header, header + 0x20, 0);
-	name		= Common::String(reinterpret_cast<char *>(header), nameEnd - header);
-	center.x	= READ_UINT16(header + kRegionHeaderWidthOffset);
-	center.y	= READ_UINT16(header + kRegionHeaderHeightOffset);
-	flags		= READ_UINT16(header + kRegionHeaderFlagsOffset);
+	byte *nameEnd = Common::find(header, header + 0x20, 0);
+	name = Common::String(reinterpret_cast<char *>(header), nameEnd - header);
+	center.x = READ_UINT16(header + kRegionHeaderWidthOffset);
+	center.y = READ_UINT16(header + kRegionHeaderHeightOffset);
+	flags = READ_UINT16(header + kRegionHeaderFlagsOffset);
 	debug("region %s at (%d,%d) %04x", name.c_str(), center.x, center.y, flags);
 	if (size > kRegionHeaderSize) {
-		uint16 ext	= stream->readUint16LE();
+		uint16 ext = stream->readUint16LE();
 		//debug("extended entries %u", ext);
-		while(ext--) {
+		while (ext--) {
 			int16 a = stream->readSint16LE();
 			int16 b = stream->readSint16LE();
 			int16 c = stream->readUint16LE();
@@ -63,7 +63,7 @@ Region::Region(const Common::String &resourceName, Common::SeekableReadStream * 
 	}
 }
 
-Region::Region(const Common::Rect rect): flags(0) {
+Region::Region(const Common::Rect rect) : flags(0) {
 	points.push_back(Common::Point(rect.left, rect.top));
 	points.push_back(Common::Point(rect.right, rect.top));
 	points.push_back(Common::Point(rect.right, rect.bottom));
@@ -74,7 +74,7 @@ Region::Region(const Common::Rect rect): flags(0) {
 
 Common::String Region::toString() const {
 	Common::String str = Common::String::format("region(%d, %d, [", center.x, center.y);
-	for(size_t i = 0; i < points.size(); ++i) {
+	for (size_t i = 0; i < points.size(); ++i) {
 		if (i != 0)
 			str += ", ";
 		str += Common::String::format("(%d, %d)", points[i].x, points[i].y);
@@ -88,10 +88,9 @@ void Region::move(Common::Point rel) {
 		return;
 
 	center += rel;
-	for(uint i = 0; i < points.size(); ++i)
+	for (uint i = 0; i < points.size(); ++i)
 		points[i] += rel;
 }
-
 
 //FIXME: copied from wintermute/base_region.cpp
 
@@ -141,4 +140,4 @@ bool Region::pointIn(Common::Point point) const {
 	}
 }
 
-}
+} // namespace AGDS
