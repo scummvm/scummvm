@@ -199,10 +199,12 @@ bool U32String::operator!=(const char *x) const {
 }
 
 bool U32String::operator<(const String &x) const {
-	for (int i = 0 ; i < _size && i < x.size() ; ++i) {
-		if (_str[i] < x[i])
+	for (uint32 i = 0, n = x.size(); i < _size && i < n; ++i) {
+		uint32 sc = _str[i];
+		uint8 xc = x[i];
+		if (sc < xc)
 			return true;
-		else if (_str[i] > x[i])
+		else if (sc > xc)
 			return false;
 	}
 	return (_size < x.size());
@@ -213,10 +215,12 @@ bool U32String::operator<=(const String &x) const {
 }
 
 bool U32String::operator>(const String &x) const {
-	for (int i = 0 ; i < _size && i < x.size() ; ++i) {
-		if (_str[i] > x[i])
+	for (uint i = 0, n = x.size(); i < _size && i < n; ++i) {
+		uint32 sc = _str[i];
+		uint8 xc = x[i];
+		if (sc > xc)
 			return true;
-		else if (_str[i] < x[i])
+		else if (sc < xc)
 			return false;
 	}
 	return (_size > x.size());
@@ -242,8 +246,8 @@ bool U32String::equals(const String &x) const {
 	if (x.size() != _size)
 		return false;
 
-	for (size_t idx = 0; idx < _size; ++idx)
-		if (_str[idx] != (value_type)x[idx])
+	for (uint32 idx = 0; idx < _size; ++idx)
+		if (_str[idx] != static_cast<value_type>(x[idx]))
 			return false;
 
 	return true;
@@ -626,11 +630,10 @@ void U32String::trim() {
 
 U32String U32String::format(U32String fmt, ...) {
 	U32String output;
-	int len;
 
 	va_list va;
 	va_start(va, fmt);
-	len = U32String::vformat(fmt.begin(), fmt.end(), output, va);
+	U32String::vformat(fmt.begin(), fmt.end(), output, va);
 	va_end(va);
 
 	return output;
