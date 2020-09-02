@@ -19152,6 +19152,37 @@ static const uint16 sq6RestoreErrorDialogPatch[] = {
 	PATCH_END
 };
 
+// When the save/restore dialog is in save-mode, it hides the restore message
+//  by setting its priority to zero, but this is the same priority as the dialog
+//  view which contains the save message. This is another instance of a priority
+//  conflict that happens to work in SSCI due to its last ditch sorting which
+//  uses internal memory ID values. In our interpreter the restore message is
+//  always drawn on top of the dialog and always hides the save message.
+//
+// As with similar priority conflicts, we work around this by adjusting the
+//  restore message's "hidden" priority, and lower it from zero to negative two.
+//  Negative one is a reserved sentinel value in View:setPri.
+//
+// Applies to: All versions
+// Responsible method: SRDialog:update
+static const uint16 sq6SaveDialogMessageSignature[] = {
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(setPri),        // pushi setPri
+	0x78,                               // push1
+	0x8b, 0x04,                         // lsl 04
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq? 
+	0x31, 0x04,                         // bnt 04 [ skip if not saving ]
+	0x35, 0x00,                         // ldi 00 [ message priority: 0 ]
+	SIG_END
+};
+
+static const uint16 sq6SaveDialogMessagePatch[] = {
+	PATCH_ADDTOOFFSET(+10),
+	0x35, 0xfe,                         // ldi fe [ new priority: -2 ]
+	PATCH_END
+};
+
 // The scripts that manage the music volume on Polysorbate LX have conflicts
 //  which can set the volume too low outside and in the arcade and club.
 //
@@ -19265,6 +19296,7 @@ static const SciScriptPatcherEntry sq6Signatures[] = {
 	{  true, 64928, "Narrator lockup fix",                         1, sciNarratorLockupLineSignature,  sciNarratorLockupLinePatch },
 	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,          sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,          sci2NumSavesPatch2 },
+	{  true, 64990, "fix save game dialog message",                1, sq6SaveDialogMessageSignature,   sq6SaveDialogMessagePatch },
 	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,          sci2ChangeDirPatch },
 	{  true, 64994, "fix restore-error dialog",                    1, sq6RestoreErrorDialogSignature,  sq6RestoreErrorDialogPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
