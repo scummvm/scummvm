@@ -167,7 +167,9 @@ int MidiDriver_FluidSynth::open() {
 		return MERR_ALREADY_OPEN;
 
 #if defined(FLUIDSYNTH_VERSION_MAJOR) && FLUIDSYNTH_VERSION_MAJOR > 1
-	bool isUsingInMemorySoundFontData = _engineSoundFontData && !ConfMan.hasKey("soundfont");
+	// When provided with in-memory SoundFont data, only use the configured
+	// SoundFont instead if it's explicitly configured on the current game.
+	bool isUsingInMemorySoundFontData = _engineSoundFontData && !ConfMan.getActiveDomain()->contains("soundfont");
 #else
 	bool isUsingInMemorySoundFontData = false;
 #endif
@@ -241,7 +243,7 @@ int MidiDriver_FluidSynth::open() {
 
 	fluid_synth_set_interp_method(_synth, -1, interpMethod);
 
-	const char *soundfont = ConfMan.hasKey("soundfont") ?
+	const char *soundfont = !isUsingInMemorySoundFontData ?
 			ConfMan.get("soundfont").c_str() : Common::String::format("&%p", (void *)_engineSoundFontData).c_str();
 
 #if defined(FLUIDSYNTH_VERSION_MAJOR) && FLUIDSYNTH_VERSION_MAJOR > 1
