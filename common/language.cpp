@@ -92,6 +92,16 @@ const LanguageDescription g_languages[] = {
 	{ nullptr, nullptr, nullptr, UNK_LANG }
 };
 
+const LanguageDescription g_obsoleteLanguages[] = {
+	{	 "gr", "el_GR", "Greek", EL_GRC },
+	{	 "hb", "he_IL", "Hebrew", HE_ISR },
+	{	 "jp", "ja_JP", "Japanese", JA_JPN },
+	{	 "kr", "ko_KR", "Korean", KO_KOR },
+	{	 "nz",    "zh", "Chinese", ZH_ANY },
+	{ "zh-cn", "zh_CN", "Chinese (Simplified)", ZH_CHN },
+	{ nullptr, nullptr, nullptr, UNK_LANG }
+};
+
 Language parseLanguage(const String &str) {
 	if (str.empty())
 		return UNK_LANG;
@@ -100,6 +110,12 @@ Language parseLanguage(const String &str) {
 	for (; l->code; ++l) {
 		if (str.equalsIgnoreCase(l->code))
 			return l->id;
+	}
+
+	const LanguageDescription *ol = g_obsoleteLanguages;
+	for (; ol->code; ++ol) {
+		if (str.equalsIgnoreCase(ol->code))
+			return ol->id;
 	}
 
 	return UNK_LANG;
