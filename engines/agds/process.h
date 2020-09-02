@@ -237,6 +237,7 @@ private:
 	void stub153();
 	void stub154();
 	void stub155();
+	void loadGame();
 	void loadSaveSlotNamePicture();
 	void stub166();
 	void stub172();

@@ -601,6 +601,12 @@ void Process::stub155() {
 	push(0);
 }
 
+void Process::loadGame() {
+	int saveSlot = pop();
+	debug("loadGame %d", saveSlot);
+	suspend(kExitCodeLoadSaveGame, saveSlot);
+}
+
 void Process::loadSaveSlotNamePicture() {
 	int saveSlot = pop();
 	debug("loadSaveSlotNamePicture: %d", saveSlot);
@@ -1448,6 +1454,7 @@ ProcessExitCode Process::execute() {
 			OP(kStub153, stub153);
 			OP(kStub154, stub154);
 			OP(kStub155, stub155);
+			OP(kLoadGame, loadGame);
 			OP(kLoadSaveSlotNamePicture, loadSaveSlotNamePicture);
 			OP(kStub166, stub166);
 			OP(kSetDelay, setDelay);
