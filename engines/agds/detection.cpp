@@ -37,19 +37,19 @@ public:
 		_maxScanDepth = 3;
 	}
 
-	const char *getEngineId() const {
+	const char *getEngineId() const override {
 		return "agds";
 	}
 
-	const char *getName() const {
+	const char *getName() const override {
 		return "AGDS Engine";
 	}
 
-	const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override{
 		return "AGDS (C) Future Games";
 	}
 
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	bool hasFeature(MetaEngineFeature f) const override {
 		switch (f) {
 		case kSavesSupportMetaInfo:
@@ -64,12 +64,12 @@ public:
 		}
 	}
 
-	int getMaximumSaveSlot() const {
+	int getMaximumSaveSlot() const override {
 		return 99;
 	}
 };
 
-bool AGDSMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool AGDSMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
 	if (desc) {
 		*engine = new AGDS::AGDSEngine(syst, desc);
 	}
