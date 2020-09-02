@@ -7,6 +7,7 @@ Programmcodes finden Sie auf Englisch unter:
  Allgemein:
    - Die ScummVM-Benutzeroberfläche unterstützt nun UTF-32.
 
+
 #### 2.2.0 (DD.09.2020)
 
  Neue Spiele:
