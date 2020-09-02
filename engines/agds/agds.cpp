@@ -575,6 +575,12 @@ Font *AGDSEngine::getFont(int id) const {
 	return i->_value;
 }
 
+Graphics::Surface *AGDSEngine::createSurface(int w, int h) {
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->create(w, h, _pixelFormat);
+	return surface;
+}
+
 Graphics::TransparentSurface *AGDSEngine::convertToTransparent(Graphics::Surface *surface) {
 	if (!surface)
 		return NULL;

@@ -92,6 +92,21 @@ void Region::move(Common::Point rel) {
 		points[i] += rel;
 }
 
+Common::Point Region::topLeft() const {
+	if (points.empty())
+		return Common::Point();
+
+	Common::Point p = points[0];
+	for(uint i = 1; i < points.size(); ++i) {
+		Common::Point point = points[i];
+		if (point.x < p.x)
+			p.x = point.x;
+		if (point.y < p.y)
+			p.y = point.y;
+	}
+	return p;
+}
+
 //FIXME: copied from wintermute/base_region.cpp
 
 typedef struct {
