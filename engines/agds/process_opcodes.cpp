@@ -23,12 +23,14 @@
 #include "agds/agds.h"
 #include "agds/animation.h"
 #include "agds/character.h"
+#include "agds/font.h"
 #include "agds/opcode.h"
 #include "agds/process.h"
 #include "agds/region.h"
 #include "agds/screen.h"
 #include "agds/systemVariable.h"
 #include "common/debug.h"
+#include "common/savefile.h"
 #include "graphics/transparent_surface.h"
 
 namespace AGDS {
@@ -599,9 +601,35 @@ void Process::stub155() {
 	push(0);
 }
 
-void Process::stub160() {
-	int arg = pop();
-	debug("stub160: %d", arg);
+void Process::loadSaveSlotNamePicture() {
+	int saveSlot = pop();
+	debug("loadSaveSlotNamePicture: %d", saveSlot);
+
+	Common::String saveSlotName = _engine->getSaveStateName(saveSlot);
+	Common::SaveFileManager * saveMan = _engine->getSaveFileManager();
+	Common::InSaveFile * save = saveMan->openForLoading(saveSlotName);
+	if (!save) {
+		debug("no save in slot %d", saveSlot);
+		return;
+	}
+
+	debug("save state name: %s", saveSlotName.c_str());
+	int fontId = _engine->getSystemVariable("edit_font")->getInteger();
+
+	debug("font id = %d", fontId);
+	Font * font = _engine->getFont(fontId);
+	int h = font->getFontHeight();
+	static const int w = 400;
+
+	Graphics::Surface * label = _engine->createSurface(w, h);
+	uint32 color = _engine->pixelFormat().RGBToColor(255, 0, 255);
+	label->fillRect(label->getRect(), color);
+	font->drawString(label, saveSlotName, 0, 0, w, color);
+	Graphics::TransparentSurface *transparentLabel = _engine->convertToTransparent(label);
+	_object->setPicture(transparentLabel);
+	_object->generateRegion();
+
+	delete save;
 }
 
 void Process::stub166() {
@@ -1420,7 +1448,7 @@ ProcessExitCode Process::execute() {
 			OP(kStub153, stub153);
 			OP(kStub154, stub154);
 			OP(kStub155, stub155);
-			OP(kStub160, stub160);
+			OP(kLoadSaveSlotNamePicture, loadSaveSlotNamePicture);
 			OP(kStub166, stub166);
 			OP(kSetDelay, setDelay);
 			OP(kStub172, stub172);
