@@ -91,7 +91,7 @@ struct LanguageDescription {
 };
 
 extern const LanguageDescription g_languages[];
-
+extern const LanguageDescription g_obsoleteLanguages[];
 
 /** Convert a string containing a language name into a Language enum value. */
 extern Language parseLanguage(const String &str);
