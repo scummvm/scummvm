@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-09-01 17:27+0000\n"
+"POT-Creation-Date: 2020-09-02 04:00+0000\n"
 "PO-Revision-Date: 2020-08-31 12:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -6380,7 +6380,7 @@ msgstr ""
 "Znaleziono nieaktualn± wersjê silnika.Oczekiwano%dI.%d ale otrzymano wersjê"
 "%d.%d"
 
-#: engines/ultima/nuvie/nuvie.cpp:324
+#: engines/ultima/nuvie/nuvie.cpp:313
 #, fuzzy
 msgid ""
 "\n"
@@ -6388,17 +6388,17 @@ msgid ""
 "\n"
 msgstr "Zapisano.\n"
 
-#: engines/ultima/nuvie/nuvie.cpp:373
+#: engines/ultima/nuvie/nuvie.cpp:362
 #, fuzzy, c-format
 msgid "loading quick save %d"
 msgstr "Szybki zapis w slocie #%d nie powiód³ siê"
 
-#: engines/ultima/nuvie/nuvie.cpp:378
+#: engines/ultima/nuvie/nuvie.cpp:367
 #, c-format
 msgid "saving quick save %d"
 msgstr ""
 
-#: engines/ultima/nuvie/nuvie.cpp:392
+#: engines/ultima/nuvie/nuvie.cpp:381
 #, c-format
 msgid "Quicksave %03d"
 msgstr ""

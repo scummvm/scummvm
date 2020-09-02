@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-09-01 17:27+0000\n"
+"POT-Creation-Date: 2020-09-02 04:00+0000\n"
 "PO-Revision-Date: 2020-08-31 12:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -6451,7 +6451,7 @@ msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr ""
 "Няправільная версія файла рухавічка. Чакалася %d.%d, але знойдзена %d.%d."
 
-#: engines/ultima/nuvie/nuvie.cpp:324
+#: engines/ultima/nuvie/nuvie.cpp:313
 #, fuzzy
 msgid ""
 "\n"
@@ -6459,17 +6459,17 @@ msgid ""
 "\n"
 msgstr "Захаваць"
 
-#: engines/ultima/nuvie/nuvie.cpp:373
+#: engines/ultima/nuvie/nuvie.cpp:362
 #, fuzzy, c-format
 msgid "loading quick save %d"
 msgstr "Не атрымалася хутка захаваць гульню ў слот %d"
 
-#: engines/ultima/nuvie/nuvie.cpp:378
+#: engines/ultima/nuvie/nuvie.cpp:367
 #, c-format
 msgid "saving quick save %d"
 msgstr ""
 
-#: engines/ultima/nuvie/nuvie.cpp:392
+#: engines/ultima/nuvie/nuvie.cpp:381
 #, c-format
 msgid "Quicksave %03d"
 msgstr ""

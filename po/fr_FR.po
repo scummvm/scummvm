@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-09-01 17:27+0000\n"
+"POT-Creation-Date: 2020-09-02 04:00+0000\n"
 "PO-Revision-Date: 2020-09-01 00:23+0000\n"
 "Last-Translator: Donovan Watteau <contrib@dwatteau.fr>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -6491,7 +6491,7 @@ msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr ""
 "Données du moteur périmées. Version attendue: %d.%d ; version trouvée: %d.%d"
 
-#: engines/ultima/nuvie/nuvie.cpp:324
+#: engines/ultima/nuvie/nuvie.cpp:313
 msgid ""
 "\n"
 "Game Saved\n"
@@ -6501,17 +6501,17 @@ msgstr ""
 "Partie sauvegardée\n"
 "\n"
 
-#: engines/ultima/nuvie/nuvie.cpp:373
+#: engines/ultima/nuvie/nuvie.cpp:362
 #, c-format
 msgid "loading quick save %d"
 msgstr "chargement de la sauvegarde rapide %d"
 
-#: engines/ultima/nuvie/nuvie.cpp:378
+#: engines/ultima/nuvie/nuvie.cpp:367
 #, c-format
 msgid "saving quick save %d"
 msgstr "sauvegarde rapide %d en cours"
 
-#: engines/ultima/nuvie/nuvie.cpp:392
+#: engines/ultima/nuvie/nuvie.cpp:381
 #, c-format
 msgid "Quicksave %03d"
 msgstr "Sauvegarde rapide %03d"

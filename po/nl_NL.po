@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-09-01 17:27+0000\n"
+"POT-Creation-Date: 2020-09-02 04:00+0000\n"
 "PO-Revision-Date: 2020-08-31 18:14+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -6444,7 +6444,7 @@ msgstr "Kan de '%s' engine data file niet vinden"
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr "Verouderde versie engine data. Verwacht werd %d.%d maar vond %d.%d"
 
-#: engines/ultima/nuvie/nuvie.cpp:324
+#: engines/ultima/nuvie/nuvie.cpp:313
 msgid ""
 "\n"
 "Game Saved\n"
@@ -6454,17 +6454,17 @@ msgstr ""
 "Spel Opgeslagen\n"
 "\n"
 
-#: engines/ultima/nuvie/nuvie.cpp:373
+#: engines/ultima/nuvie/nuvie.cpp:362
 #, c-format
 msgid "loading quick save %d"
 msgstr "Laden snel opslaan %d"
 
-#: engines/ultima/nuvie/nuvie.cpp:378
+#: engines/ultima/nuvie/nuvie.cpp:367
 #, c-format
 msgid "saving quick save %d"
 msgstr "snel opslaan spel %d opgeslagen"
 
-#: engines/ultima/nuvie/nuvie.cpp:392
+#: engines/ultima/nuvie/nuvie.cpp:381
 #, c-format
 msgid "Quicksave %03d"
 msgstr "Snel opslaan %03d"
