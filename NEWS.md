@@ -101,6 +101,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Sword1:
    - Added support for localized menus in Novy Disk Russian Trilogy release.
+   - Added support for Spanish playable Demo available from our website.
 
  Titanic:
    - Fixed Barbot crash after asking what else he needs.
