@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.2.0pre\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-09-02 08:02+0000\n"
+"POT-Creation-Date: 2020-09-02 12:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -5988,11 +5988,11 @@ msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
 msgstr ""
 
-#: engines/sword2/sword2.cpp:79
+#: engines/sword2/sword2.cpp:80
 msgid "Show object labels"
 msgstr ""
 
-#: engines/sword2/sword2.cpp:80
+#: engines/sword2/sword2.cpp:81
 msgid "Show labels for objects on mouse hover"
 msgstr ""
 

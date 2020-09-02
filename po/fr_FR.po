@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-09-02 08:02+0000\n"
+"POT-Creation-Date: 2020-09-02 12:43+0000\n"
 "PO-Revision-Date: 2020-09-01 00:23+0000\n"
 "Last-Translator: Donovan Watteau <contrib@dwatteau.fr>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -6418,11 +6418,11 @@ msgstr ""
 "Scènes cinématiques PSX détectées mais ScummVM a été compilé sans le support "
 "des couleurs RGB et ne peut donc les afficher"
 
-#: engines/sword2/sword2.cpp:79
+#: engines/sword2/sword2.cpp:80
 msgid "Show object labels"
 msgstr "Afficher la description des objets"
 
-#: engines/sword2/sword2.cpp:80
+#: engines/sword2/sword2.cpp:81
 msgid "Show labels for objects on mouse hover"
 msgstr "Afficher la description des objets lors de passage du pointeur"
 

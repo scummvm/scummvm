@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-09-02 08:02+0000\n"
+"POT-Creation-Date: 2020-09-02 12:43+0000\n"
 "PO-Revision-Date: 2020-08-31 12:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -6304,11 +6304,11 @@ msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
 msgstr "PSX Guochang zhaodao Danshi ScmummVM Meiyou Zhichi RGB Secai Bianyi"
 
-#: engines/sword2/sword2.cpp:79
+#: engines/sword2/sword2.cpp:80
 msgid "Show object labels"
 msgstr "Xianshi Wuti Biaoqian"
 
-#: engines/sword2/sword2.cpp:80
+#: engines/sword2/sword2.cpp:81
 msgid "Show labels for objects on mouse hover"
 msgstr "Dang Shubiao Yishang Shi Xianshi Wuti Biaoqian"
 

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-09-02 08:02+0000\n"
+"POT-Creation-Date: 2020-09-02 12:43+0000\n"
 "PO-Revision-Date: 2020-09-01 06:43+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -6353,11 +6353,11 @@ msgstr ""
 "Найдены заставки в формате PSX, но ScummVM был собран без поддержки RGB-"
 "цветов"
 
-#: engines/sword2/sword2.cpp:79
+#: engines/sword2/sword2.cpp:80
 msgid "Show object labels"
 msgstr "Показывать названия объектов"
 
-#: engines/sword2/sword2.cpp:80
+#: engines/sword2/sword2.cpp:81
 msgid "Show labels for objects on mouse hover"
 msgstr "Показывает названия объектов при наведении курсора мыши"
 
