@@ -776,9 +776,10 @@ bool AGDSEngine::hasFeature(EngineFeature f) const {
 	case kSupportsReturnToLauncher:
 	case kSupportsLoadingDuringRuntime:
 	case kSupportsSavingDuringRuntime:
+	case kSupportsChangingOptionsDuringRuntime:
 		return true;
 	default:
-		return false;
+		return Engine::hasFeature(f);
 	}
 }
 
