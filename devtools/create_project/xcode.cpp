@@ -446,6 +446,7 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	DEF_SYSFRAMEWORK("CoreFoundation");
 	DEF_SYSFRAMEWORK("Foundation");
 	DEF_SYSFRAMEWORK("IOKit");
+	DEF_SYSFRAMEWORK("OpenGL"); // ResidualVM specific
 	DEF_SYSFRAMEWORK("OpenGLES");
 	DEF_SYSFRAMEWORK("QuartzCore");
 	DEF_SYSFRAMEWORK("UIKit");
@@ -493,6 +494,12 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_THEORADEC")) {
 		DEF_LOCALLIB_STATIC("libtheoradec");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_GLEW")) { // ResidualVM specific
+		DEF_LOCALLIB_STATIC("libGLEW");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_MPEG2")) { // ResidualVM specific
+		DEF_LOCALLIB_STATIC("libmpeg2");
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_ZLIB")) {
 		DEF_SYSTBD("libz");
@@ -632,6 +639,7 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	frameworks_osx.push_back("ApplicationServices.framework");
 	frameworks_osx.push_back("IOKit.framework");
 	frameworks_osx.push_back("Cocoa.framework");
+	frameworks_osx.push_back("OpenGL.framework"); // ResidualVM specific
 	frameworks_osx.push_back("AudioUnit.framework");
 
 	if (CONTAINS_DEFINE(setup.defines, "USE_FLAC")) {
@@ -672,6 +680,12 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_THEORADEC")) {
 		frameworks_osx.push_back("libtheoradec.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_GLEW")) { // ResidualVM specific
+		frameworks_osx.push_back("libGLEW.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_MPEG2")) { // ResidualVM specific
+		frameworks_osx.push_back("libmpeg2.a");
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_ZLIB")) {
 		frameworks_osx.push_back("libz.tbd");
@@ -781,16 +795,20 @@ void XcodeProvider::setupProject() {
 XcodeProvider::ValueList& XcodeProvider::getResourceFiles() const {
 	static ValueList files;
 	if (files.empty()) {
-		files.push_back("gui/themes/scummclassic.zip");
-		files.push_back("gui/themes/scummmodern.zip");
-		files.push_back("gui/themes/scummremastered.zip");
+//		files.push_back("gui/themes/scummclassic.zip"); // ResidualVM specific
+//		files.push_back("gui/themes/scummmodern.zip"); // ResidualVM specific
+//		files.push_back("gui/themes/scummremastered.zip"); // ResidualVM specific
+		files.push_back("gui/themes/modern.zip"); // ResidualVM specific
 		files.push_back("gui/themes/translations.dat");
-		files.push_back("dists/engine-data/access.dat");
+/*		files.push_back("dists/engine-data/access.dat"); // ResidualVM specific
 		files.push_back("dists/engine-data/cryo.dat");
 		files.push_back("dists/engine-data/cryomni3d.dat");
-		files.push_back("dists/engine-data/drascula.dat");
+		files.push_back("dists/engine-data/drascula.dat");*/
 		files.push_back("dists/engine-data/fonts.dat");
-		files.push_back("dists/engine-data/hugo.dat");
+		files.push_back("dists/engine-data/myst3.dat");
+		files.push_back("dists/engine-data/residualvm-emi-patch.m4b");
+		files.push_back("dists/engine-data/residualvm-grim-patch.lab");
+/*		files.push_back("dists/engine-data/hugo.dat"); // ResidualVM specific
 		files.push_back("dists/engine-data/kyra.dat");
 		files.push_back("dists/engine-data/lure.dat");
 		files.push_back("dists/engine-data/mort.dat");
@@ -802,12 +820,12 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles() const {
 		files.push_back("dists/engine-data/titanic.dat");
 		files.push_back("dists/engine-data/tony.dat");
 		files.push_back("dists/engine-data/toon.dat");
-		files.push_back("dists/engine-data/ultima.dat");
+		files.push_back("dists/engine-data/ultima.dat");*/
 		files.push_back("dists/engine-data/wintermute.zip");
-		files.push_back("dists/engine-data/macventure.dat");
+/*		files.push_back("dists/engine-data/macventure.dat"); // ResidualVM specific
 		files.push_back("dists/engine-data/xeen.ccs");
 		files.push_back("dists/pred.dic");
-		files.push_back("dists/networking/wwwroot.zip");
+		files.push_back("dists/networking/wwwroot.zip");*/
 		files.push_back("icons/residualvm.icns");
 		files.push_back("AUTHORS");
 		files.push_back("COPYING");
@@ -1088,11 +1106,15 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ValueList scummvmOSX_HeaderPaths;
 	if (setup.useSDL2) {
 		scummvmOSX_HeaderPaths.push_back("/usr/local/include/SDL2");
+		scummvmOSX_HeaderPaths.push_back("/opt/local/include/SDL2"); // ResidualVM specific
 	} else {
 		scummvmOSX_HeaderPaths.push_back("/usr/local/include/SDL");
+		scummvmOSX_HeaderPaths.push_back("/opt/local/include/SDL"); // ResidualVM specific
 	}
 	scummvmOSX_HeaderPaths.push_back("/usr/local/include");
+	scummvmOSX_HeaderPaths.push_back("/opt/local/include"); // ResidualVM specific
 	scummvmOSX_HeaderPaths.push_back("/usr/local/include/freetype2");
+	scummvmOSX_HeaderPaths.push_back("/opt/local/include/freetype2"); // ResidualVM specific
 	scummvmOSX_HeaderPaths.push_back("include/");
 	scummvmOSX_HeaderPaths.push_back("$(SRCROOT)/engines/");
 	scummvmOSX_HeaderPaths.push_back("$(SRCROOT)");
@@ -1100,6 +1122,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "INFOPLIST_FILE", "$(SRCROOT)/dists/macosx/Info.plist");
 	ValueList scummvmOSX_LibPaths;
 	scummvmOSX_LibPaths.push_back("/usr/local/lib");
+	scummvmOSX_LibPaths.push_back("/opt/local/lib"); // ResidualVM specific
 	scummvmOSX_LibPaths.push_back("\"$(inherited)\"");
 	scummvmOSX_LibPaths.push_back("\"\\\"$(SRCROOT)/lib\\\"\"");
 	ADD_SETTING_LIST(scummvmOSX_Debug, "LIBRARY_SEARCH_PATHS", scummvmOSX_LibPaths, kSettingsNoQuote | kSettingsAsList, 5);
