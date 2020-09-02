@@ -94,6 +94,7 @@ Programmcodes finden Sie auf Englisch unter:
 
  Sword1:
    - Unterstützung für lokalisierte Menüs in der russischen Version der Novy Disk Trilogy hinzugefügt.
+   - Unterstützung für eine spanische Demoversion hinzugefügt (auf unserer Website verfügbar).
 
  Titanic:
    - Das Spiel stürzt nur nicht mehr ab, wenn man sich nach den Bedürfnissen des Barbot erkundigt.
