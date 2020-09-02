@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-31 12:17+0200\n"
+"POT-Creation-Date: 2020-09-02 12:38+0200\n"
 "PO-Revision-Date: 2020-08-29 16:30+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -2421,7 +2421,7 @@ msgstr "Émulateur Apple II GS (PAS IMPLÉMENTÉ)"
 msgid "Creative Music System emulator"
 msgstr "Émulateur Creative Music System"
 
-#: audio/softsynth/fluidsynth.cpp:176
+#: audio/softsynth/fluidsynth.cpp:178
 #, fuzzy
 msgid ""
 "FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI "
@@ -2430,9 +2430,9 @@ msgstr ""
 "Une banque de sons est nécessaire pour utiliser Fluidsynth. Veuillez en "
 "spécifier une dans le tab MIDI des options ScummVM. Musique désactivée"
 
-#: audio/softsynth/fluidsynth.cpp:277
+#: audio/softsynth/fluidsynth.cpp:279
 #, fuzzy, c-format
-msgid "FluidSynth: Failed loading custom sound font '%s'. Music is off."
+msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
 msgstr ""
 "Fluidsynth : échec du chargement de la banque de son '%s'. Musique désactivée"
 
@@ -4026,7 +4026,7 @@ msgstr "Échec de l'initialisation des ressources"
 msgid "A required game resource was not found"
 msgstr "Une ressource de jeu nécessaire n'a pas été trouvée"
 
-#: engines/bladerunner/bladerunner.cpp:2243
+#: engines/bladerunner/bladerunner.cpp:2265
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -4036,7 +4036,7 @@ msgstr ""
 "vous jouez en mode Contenu Original. Le mode sera réglé sur Contenu Montage "
 "Restauré pour cette session jusqu'à ce que vous quittiez complètement le jeu."
 
-#: engines/bladerunner/bladerunner.cpp:2245
+#: engines/bladerunner/bladerunner.cpp:2267
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -4046,7 +4046,7 @@ msgstr ""
 "jouez en mode Contenu Montage Restauré. Le mode sera ajusté au mode Contenu "
 "Original pour cette session jusqu'à ce que vous quittiez complètement le jeu."
 
-#: engines/bladerunner/bladerunner.cpp:2247
+#: engines/bladerunner/bladerunner.cpp:2269
 msgid "Continue"
 msgstr "Continuer"
 
@@ -4193,7 +4193,7 @@ msgstr "Deboguer les Graphiques"
 msgid "Quit Game"
 msgstr "Quitter le jeu"
 
-#: engines/dragons/dragons.cpp:1785
+#: engines/dragons/dragons.cpp:1796
 #, c-format
 msgid ""
 "Error: The file '%s' hasn't been extracted properly.\n"
@@ -5666,7 +5666,7 @@ msgstr ""
 "Sierra original.\n"
 "\n"
 
-#: engines/scumm/detection.cpp:1157
+#: engines/scumm/detection.cpp:1166
 msgid ""
 "The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
 "piracy.\n"
@@ -5676,7 +5676,7 @@ msgstr ""
 "éviter le piratage.\n"
 "La version complète peut-être achetée sur l'iTunes Store."
 
-#: engines/scumm/detection.cpp:1165
+#: engines/scumm/detection.cpp:1174
 msgid ""
 "The Russian version of Pajama Sam 2 is not supported yet due to incomplete "
 "code."
@@ -5684,19 +5684,19 @@ msgstr ""
 "La version russe de Pajama Sam 2 n'est pas encore supportée en raison d'un "
 "code incomplet."
 
-#: engines/scumm/detection.cpp:1375
+#: engines/scumm/detection.cpp:1384
 msgid "Show Object Line"
 msgstr "Afficher la barre d'objets"
 
-#: engines/scumm/detection.cpp:1376
+#: engines/scumm/detection.cpp:1385
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "Afficher le nom des objets en bas de l'écran"
 
-#: engines/scumm/detection.cpp:1382
+#: engines/scumm/detection.cpp:1391
 msgid "Use NES Classic Palette"
 msgstr "Utiliser la palette NES Classique"
 
-#: engines/scumm/detection.cpp:1383
+#: engines/scumm/detection.cpp:1392
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr ""
 "Utilise une palette de couleurs plus neutre qui reproduit au plus près la "
@@ -6661,12 +6661,12 @@ msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr ""
 "Données du moteur périmées. Version attendue: %d.%d ; version trouvée: %d.%d"
 
-#: engines/ultima/nuvie/nuvie.cpp:373
+#: engines/ultima/nuvie/nuvie.cpp:362
 #, c-format
 msgid "loading quick save %d"
 msgstr "chargement de la sauvegarde rapide %d"
 
-#: engines/ultima/nuvie/nuvie.cpp:378
+#: engines/ultima/nuvie/nuvie.cpp:367
 #, c-format
 msgid "saving quick save %d"
 msgstr "sauvegarde rapide %d en cours"

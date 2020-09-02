@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-31 12:17+0200\n"
+"POT-Creation-Date: 2020-09-02 12:38+0200\n"
 "PO-Revision-Date: 2020-08-30 00:43+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -2416,7 +2416,7 @@ msgstr "Emulación de Apple II GS (NO IMPLEMENTADO)"
 msgid "Creative Music System emulator"
 msgstr "Emulación de Creative Music System"
 
-#: audio/softsynth/fluidsynth.cpp:176
+#: audio/softsynth/fluidsynth.cpp:178
 #, fuzzy
 msgid ""
 "FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI "
@@ -2426,9 +2426,9 @@ msgstr ""
 "favor, especifica una en la pestaña MIDI de la interfaz de ScummVM. La "
 "música ha sido desactivada."
 
-#: audio/softsynth/fluidsynth.cpp:277
+#: audio/softsynth/fluidsynth.cpp:279
 #, fuzzy, c-format
-msgid "FluidSynth: Failed loading custom sound font '%s'. Music is off."
+msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
 msgstr ""
 "FluidSynthi: Error al cargar la fuente de sonido personalizada '%s'. La "
 "música ha sido desactivada."
@@ -4020,7 +4020,7 @@ msgstr "No se han podido iniciar los recursos"
 msgid "A required game resource was not found"
 msgstr "No se ha encontrado un recurso necesario del juego"
 
-#: engines/bladerunner/bladerunner.cpp:2243
+#: engines/bladerunner/bladerunner.cpp:2265
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -4030,7 +4030,7 @@ msgstr ""
 "pero estás jugando en el modo Contenidos originales. Se ajustará el modo a "
 "Contenidos restaurados durante esta sesión y hasta que salgas del juego."
 
-#: engines/bladerunner/bladerunner.cpp:2245
+#: engines/bladerunner/bladerunner.cpp:2267
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -4040,7 +4040,7 @@ msgstr ""
 "estás jugando en el modo Contenidos restaurados. Se ajustará el modo a "
 "Contenidos originales durante esta sesión y hasta que salgas del juego."
 
-#: engines/bladerunner/bladerunner.cpp:2247
+#: engines/bladerunner/bladerunner.cpp:2269
 msgid "Continue"
 msgstr "Continuar"
 
@@ -4187,7 +4187,7 @@ msgstr "Depurar gráficos"
 msgid "Quit Game"
 msgstr "Salir del juego"
 
-#: engines/dragons/dragons.cpp:1785
+#: engines/dragons/dragons.cpp:1796
 #, c-format
 msgid ""
 "Error: The file '%s' hasn't been extracted properly.\n"
@@ -5649,7 +5649,7 @@ msgstr ""
 "En tal caso se deberá aplicar el parche original de Sierra.\n"
 "\n"
 
-#: engines/scumm/detection.cpp:1157
+#: engines/scumm/detection.cpp:1166
 msgid ""
 "The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
 "piracy.\n"
@@ -5659,7 +5659,7 @@ msgstr ""
 "para prevenir la piratería.\n"
 "Puedes comprar la versión completa en la tienda de iTunes."
 
-#: engines/scumm/detection.cpp:1165
+#: engines/scumm/detection.cpp:1174
 msgid ""
 "The Russian version of Pajama Sam 2 is not supported yet due to incomplete "
 "code."
@@ -5667,19 +5667,19 @@ msgstr ""
 "La versión rusa de Pajama Sam 2 aún no es compatible, ya que el código no "
 "está acabado."
 
-#: engines/scumm/detection.cpp:1375
+#: engines/scumm/detection.cpp:1384
 msgid "Show Object Line"
 msgstr "Mostrar etiquetas de objetos"
 
-#: engines/scumm/detection.cpp:1376
+#: engines/scumm/detection.cpp:1385
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "Muestra los nombres de los objetos en la parte inferior de la pantalla"
 
-#: engines/scumm/detection.cpp:1382
+#: engines/scumm/detection.cpp:1391
 msgid "Use NES Classic Palette"
 msgstr "Usar paleta de NES Classic"
 
-#: engines/scumm/detection.cpp:1383
+#: engines/scumm/detection.cpp:1392
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr ""
 "Utiliza una paleta de colores más neutral y fiel a la del sistema NES Classic"
@@ -6633,12 +6633,12 @@ msgstr "No se pudo localizar el archivo de datos del motor «%s»"
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr "Datos del motor obsoletos. Se esperaba %d.%d, pero se encontró %d.%d"
 
-#: engines/ultima/nuvie/nuvie.cpp:373
+#: engines/ultima/nuvie/nuvie.cpp:362
 #, c-format
 msgid "loading quick save %d"
 msgstr "cargando guardado rápido n.º %d"
 
-#: engines/ultima/nuvie/nuvie.cpp:378
+#: engines/ultima/nuvie/nuvie.cpp:367
 #, c-format
 msgid "saving quick save %d"
 msgstr "creando guardado rápido n.º %d"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-08-31 12:17+0200\n"
+"POT-Creation-Date: 2020-09-02 12:38+0200\n"
 "PO-Revision-Date: 2020-08-27 11:56+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -2353,15 +2353,15 @@ msgstr "Apple II GS אמולטור (לא מיושם)"
 msgid "Creative Music System emulator"
 msgstr "אמולטור מערכת מוסיקה יצירתית"
 
-#: audio/softsynth/fluidsynth.cpp:176
+#: audio/softsynth/fluidsynth.cpp:178
 msgid ""
 "FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI "
 "on MIDI tab. Music is off."
 msgstr ""
 
-#: audio/softsynth/fluidsynth.cpp:277
+#: audio/softsynth/fluidsynth.cpp:279
 #, c-format
-msgid "FluidSynth: Failed loading custom sound font '%s'. Music is off."
+msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
 msgstr ""
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:32
@@ -3963,7 +3963,7 @@ msgstr "אתחול המשאבים נכשל"
 msgid "A required game resource was not found"
 msgstr "משאב משחק חובה לא נמצא"
 
-#: engines/bladerunner/bladerunner.cpp:2243
+#: engines/bladerunner/bladerunner.cpp:2265
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -3972,7 +3972,7 @@ msgstr ""
 "אזהרה: משחק זה נשמר במצב שחזור תוכן חתוך, אך אתה משחק במצב תוכן מקורי. המצב "
 "יותאם לתוכן חתוך משוחזר להפעלה זו עד שתעזוב את המשחק לחלוטין."
 
-#: engines/bladerunner/bladerunner.cpp:2245
+#: engines/bladerunner/bladerunner.cpp:2267
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -3981,7 +3981,7 @@ msgstr ""
 "אזהרה: משחק זה נשמר במצב תוכן מקורי, אך אתה משחק במצב Restored Cut Content. "
 "המצב יותאם למצב תוכן מקורי להפעלה זו עד שתעזוב לחלוטין את המשחק."
 
-#: engines/bladerunner/bladerunner.cpp:2247
+#: engines/bladerunner/bladerunner.cpp:2269
 msgid "Continue"
 msgstr "המשך"
 
@@ -4118,7 +4118,7 @@ msgstr "תצוגה"
 msgid "Quit Game"
 msgstr " (משחק)"
 
-#: engines/dragons/dragons.cpp:1785
+#: engines/dragons/dragons.cpp:1796
 #, c-format
 msgid ""
 "Error: The file '%s' hasn't been extracted properly.\n"
@@ -5547,7 +5547,7 @@ msgstr ""
 "במקרה כזה יתכן שתצטרך להחיל את תיקון הסיירה המקורי.\n"
 "\n"
 
-#: engines/scumm/detection.cpp:1157
+#: engines/scumm/detection.cpp:1166
 msgid ""
 "The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
 "piracy.\n"
@@ -5557,26 +5557,26 @@ msgstr ""
 "פיראטיות.\n"
 "הגרסה המלאה זמינה לרכישה מחנות iTunes."
 
-#: engines/scumm/detection.cpp:1165
+#: engines/scumm/detection.cpp:1174
 msgid ""
 "The Russian version of Pajama Sam 2 is not supported yet due to incomplete "
 "code."
 msgstr ""
 
-#: engines/scumm/detection.cpp:1375
+#: engines/scumm/detection.cpp:1384
 msgid "Show Object Line"
 msgstr "הצג קו אובייקט"
 
-#: engines/scumm/detection.cpp:1376
+#: engines/scumm/detection.cpp:1385
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "הצגת שמות של אובייקטים בתחתית המסך"
 
-#: engines/scumm/detection.cpp:1382
+#: engines/scumm/detection.cpp:1391
 #, fuzzy
 msgid "Use NES Classic Palette"
 msgstr "השתמש בפלטה חלופית"
 
-#: engines/scumm/detection.cpp:1383
+#: engines/scumm/detection.cpp:1392
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr ""
 
@@ -6512,12 +6512,12 @@ msgstr "לא ניתן לאתר את קובץ נתוני המנוע '%s'."
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr "נמצאה גרסה שגויה של קובץ נתוני המנוע. צפה %d.%d אך קיבל %d.%d."
 
-#: engines/ultima/nuvie/nuvie.cpp:373
+#: engines/ultima/nuvie/nuvie.cpp:362
 #, fuzzy, c-format
 msgid "loading quick save %d"
 msgstr "לא ניתן היה לשמור במהירות בחריץ #%d"
 
-#: engines/ultima/nuvie/nuvie.cpp:378
+#: engines/ultima/nuvie/nuvie.cpp:367
 #, fuzzy, c-format
 msgid "saving quick save %d"
 msgstr "מצב לחיצה"
