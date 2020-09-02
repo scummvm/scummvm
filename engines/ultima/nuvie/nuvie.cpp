@@ -184,18 +184,7 @@ Common::Error NuvieEngine::run() {
 
 void NuvieEngine::initConfig() {
 	_config = new Configuration();
-
-	// nuvie.cfg in the game folder can supercede any ScummVM settings
-	if (Common::File::exists("nuvie.cfg"))
-		(void)_config->readConfigFile("nuvie.cfg", "config");
-
-	if (!_config->isDefaultsSet()) {
-		if (isEnhanced())
-			_config->setEnhancedDefaults(_gameDescription->gameId);
-		else
-			_config->setUnenhancedDefaults(_gameDescription->gameId);
-	}
-
+	_config->load(_gameDescription->gameId, isEnhanced());
 }
 
 void NuvieEngine::assignGameConfigValues(uint8 gameType) {
