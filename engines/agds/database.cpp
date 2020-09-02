@@ -28,21 +28,26 @@
 namespace AGDS {
 
 bool Database::open(const Common::String &filename) {
-	static const uint32 kMagic = 666;
-
-	_filename = filename;
 	Common::File file;
 	if (!file.open(filename))
 		return false;
-	uint32 magic = file.readUint32LE();
+
+	return open(filename, &file);
+}
+
+bool Database::open(const Common::String &filename, Common::SeekableReadStream *stream) {
+	static const uint32 kMagic = 666;
+
+	_filename = filename;
+	uint32 magic = stream->readUint32LE();
 	if (magic != kMagic) {
-		debug("invalid magic for database %s", filename.c_str());
+		debug("invalid magic for database %s", _filename.c_str());
 		return false;
 	}
-	_writeable = file.readUint32LE();
-	_totalEntries = file.readUint32LE();
-	_usedEntries = file.readUint32LE();
-	_maxNameSize = file.readUint32LE();
+	_writeable = stream->readUint32LE();
+	_totalEntries = stream->readUint32LE();
+	_usedEntries = stream->readUint32LE();
+	_maxNameSize = stream->readUint32LE();
 	if (_maxNameSize == 0) {
 		debug("invalid max name record size");
 		return false;
@@ -54,11 +59,11 @@ bool Database::open(const Common::String &filename) {
 	uint32 dataOffset = kHeaderSize + (_maxNameSize + kHeaderFieldSize) * _totalEntries;
 	Common::Array<char> nameBuffer(_maxNameSize + 1);
 	for (uint32 i = 0; i < _usedEntries; ++i) {
-		uint32 offset = file.readUint32LE();
-		file.read(nameBuffer.data(), nameBuffer.size());
+		uint32 offset = stream->readUint32LE();
+		stream->read(nameBuffer.data(), nameBuffer.size());
 		char *z = Common::find(nameBuffer.begin(), nameBuffer.end(), 0);
 		Common::String name(nameBuffer.data(), z - nameBuffer.begin());
-		uint32 size = file.readUint32LE();
+		uint32 size = stream->readUint32LE();
 		//debug("adb entry: %s, offset %08x, size: %u", name.c_str(), offset, size);
 		_entries.setVal(name, Entry(dataOffset + offset, size));
 	}
@@ -67,17 +72,22 @@ bool Database::open(const Common::String &filename) {
 }
 
 Common::SeekableReadStream *Database::getEntry(const Common::String &name) const {
-	EntriesType::const_iterator i = _entries.find(name);
-	if (i == _entries.end())
-		return NULL;
-
 	Common::File file;
 	if (!file.open(_filename)) {
 		error("could not open database file %s", _filename.c_str()); //previously available, but now disappeared or no fd, error
 		return NULL;
 	}
+
+	return getEntry(&file, name);
+}
+
+Common::SeekableReadStream *Database::getEntry(Common::SeekableReadStream *parent, const Common::String &name) const {
+	EntriesType::const_iterator i = _entries.find(name);
+	if (i == _entries.end())
+		return NULL;
+
 	const Entry &entry = i->_value;
-	file.seek(entry.offset);
-	return file.readStream(entry.size);
+	parent->seek(entry.offset);
+	return parent->readStream(entry.size);
 }
 } // namespace AGDS
