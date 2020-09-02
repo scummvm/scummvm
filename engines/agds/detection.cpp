@@ -36,21 +36,23 @@ public:
 	AGDSMetaEngine() : AdvancedMetaEngine(AGDS::gameDescriptions, sizeof(ADGameDescription), agdsGames) {
 		_maxScanDepth = 3;
 	}
-	virtual const char *getEngineId() const {
+
+	const char *getEngineId() const {
 		return "agds";
 	}
 
-	virtual const char *getName() const {
+	const char *getName() const {
 		return "AGDS Engine";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const {
 		return "AGDS (C) Future Games";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual bool hasFeature(MetaEngineFeature f) const {
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	bool hasFeature(MetaEngineFeature f) const override {
 		switch (f) {
+		case kSavesSupportMetaInfo:
 		case kSavesSupportThumbnail:
 		case kSavesUseExtendedFormat:
 		case kSimpleSavesNames:
@@ -58,7 +60,7 @@ public:
 		case kSupportsListSaves:
 			return true;
 		default:
-			return false;
+			return AdvancedMetaEngine::hasFeature(f);
 		}
 	}
 
