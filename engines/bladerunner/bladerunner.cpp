@@ -232,6 +232,10 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 
 	_actorUpdateCounter  = 0;
 	_actorUpdateTimeLast = 0;
+
+	_currentKeyDown.keycode = Common::KEYCODE_INVALID;
+	_keyRepeatTimeLast = 0;
+	_keyRepeatTimeDelay = 0;
 }
 
 BladeRunnerEngine::~BladeRunnerEngine() {
@@ -1300,7 +1304,8 @@ void BladeRunnerEngine::handleEvents() {
 				// First hit (fire) has a bigger delay (kKeyRepeatInitialDelay) before repeated events are fired from the same key
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE || event.kbd.keycode == Common::KEYCODE_RETURN) {
 					_currentKeyDown = event.kbd.keycode;
-					_keyRepeatTime = timeNow + kKeyRepeatInitialDelay;
+					_keyRepeatTimeLast = timeNow;
+					_keyRepeatTimeDelay = kKeyRepeatInitialDelay;
 				}
 				handleKeyDown(event);
 			}
@@ -1339,13 +1344,14 @@ void BladeRunnerEngine::handleEvents() {
 		}
 	}
 
-	if ((_currentKeyDown == Common::KEYCODE_ESCAPE || _currentKeyDown == Common::KEYCODE_RETURN) && _keyRepeatTime <= timeNow) {
+	if ((_currentKeyDown == Common::KEYCODE_ESCAPE || _currentKeyDown == Common::KEYCODE_RETURN) && (timeNow - _keyRepeatTimeLast >= _keyRepeatTimeDelay)) {
 		// create a "new" keydown event
 		event.type = Common::EVENT_KEYDOWN;
 		// kbdRepeat field will be unused here since we emulate the kbd repeat behavior anyway, but it's good to set it for consistency
 		event.kbdRepeat = true;
 		event.kbd = _currentKeyDown;
-		_keyRepeatTime = timeNow + kKeyRepeatSustainDelay;
+		_keyRepeatTimeLast = timeNow;
+		_keyRepeatTimeDelay = kKeyRepeatSustainDelay;
 		handleKeyDown(event);
 	}
 }
