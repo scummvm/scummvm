@@ -263,7 +263,8 @@ public:
 	};
 
 	Common::KeyState _currentKeyDown;
-	uint32 _keyRepeatTime;
+	uint32 _keyRepeatTimeLast;
+	uint32 _keyRepeatTimeDelay;
 
 private:
 	MIXArchive _archives[kArchiveCount];
