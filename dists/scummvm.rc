@@ -53,6 +53,9 @@ kyra.dat               FILE    "dists/engine-data/kyra.dat"
 #if PLUGIN_ENABLED_STATIC(LURE)
 lure.dat               FILE    "dists/engine-data/lure.dat"
 #endif
+#if PLUGIN_ENABLED_STATIC(MACVENTURE)
+macventure.dat         FILE    "dists/engine-data/macventure.dat"
+#endif
 #if PLUGIN_ENABLED_STATIC(MORTEVIELLE)
 mort.dat               FILE    "dists/engine-data/mort.dat"
 #endif
