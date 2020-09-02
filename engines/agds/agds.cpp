@@ -23,6 +23,7 @@
 #include "agds/agds.h"
 #include "agds/animation.h"
 #include "agds/character.h"
+#include "agds/database.h"
 #include "agds/font.h"
 #include "agds/mjpgPlayer.h"
 #include "agds/object.h"
@@ -792,7 +793,83 @@ bool AGDSEngine::hasFeature(EngineFeature f) const {
 	}
 }
 
-Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) { return Common::Error(Common::kNoError); }
+Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
+	Database db;
+	if (!db.open("savefile", file))
+		return Common::kReadingFailed;
+
+	{
+		// Compiled version (should be 2)
+		Common::ScopedPtr<Common::SeekableReadStream> agds_ver(db.getEntry(file, "__agds_ver"));
+		int version = agds_ver->readUint32LE();
+		debug("version: %d", version);
+		if (version != 2) {
+			warning("wrong engine version (%d)", version);
+			return Common::kReadingFailed;
+		}
+	}
+
+	{
+		// Global vars
+		_globals.clear();
+		Common::ScopedPtr<Common::SeekableReadStream> agds_v(db.getEntry(file, "__agds_v"));
+		uint32 n = agds_v->readUint32LE();
+		debug("reading %u vars...", n);
+		Common::Array<char> name(33);
+		while(n--) {
+			agds_v->read(name.data(), 32);
+			int value = agds_v->readSint32LE();
+			debug("setting var %s to %d", name.data(), value);
+			setGlobal(name.data(), value);
+		}
+	}
+	{
+		// Current character
+		Common::ScopedPtr<Common::SeekableReadStream> agds_c(db.getEntry(file, "__agds_c"));
+		Common::Array<char> data(0x61);
+		agds_c->read(data.data(), 0x60);
+		Common::String object(data.data());
+		Common::String name(data.data() + 0x20);
+		Common::String id(data.data() + 0x40);
+		debug("savegame character %s %s %s", object.c_str(), name.c_str(), id.c_str());
+		//loadCharacter(id, name, object);
+		int x = agds_c->readUint16LE();
+		int y = agds_c->readUint16LE();
+		debug("character at %d, %d", x, y);
+		int n = 3;
+		while(n--) {
+			int v = agds_c->readUint16LE();
+			debug("savegame character leftover: %d", v);
+		}
+	}
+
+	{
+		// Inventory
+		_inventory.clear();
+		Common::ScopedPtr<Common::SeekableReadStream> agds_i(db.getEntry(file, "__agds_i"));
+		int n = 34;
+		Common::Array<char> name(33);
+		while(n--) {
+			agds_i->read(name.data(), 32);
+			int unk = agds_i->readUint32LE();
+			int present = agds_i->readUint32LE();
+			debug("inventory: %s %d %d", name.data(), unk, present);
+			if (!name.empty() && present) {
+				_inventory.add(loadObject(name.data()));
+			}
+		}
+	}
+
+	{
+		// Screenshot and screen name
+		Common::ScopedPtr<Common::SeekableReadStream> agds_s(db.getEntry(file, "__agds_s"));
+		Common::Array<char> screenName(33);
+		agds_s->read(screenName.data(), 32);
+		loadScreen(Common::String(screenName.data()));
+	}
+
+	return Common::kNoError;
+}
 
 Common::Error AGDSEngine::saveGameStream(Common::WriteStream *file, bool isAutosave) { return Common::Error(Common::kNoError); }
 
