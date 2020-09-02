@@ -72,7 +72,7 @@ public:
 	AGDSEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~AGDSEngine();
 
-	Common::Error run();
+	Common::Error run() override;
 
 	void setGlobal(const Common::String &name, int value) {
 		_globals.setVal(name, value);
