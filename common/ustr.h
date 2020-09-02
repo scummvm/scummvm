@@ -136,10 +136,10 @@ public:
 	bool operator!=(const value_type *x) const;
 	bool operator!=(const char *x) const;
 
-	bool operator<(const String &x) const;
-	bool operator<=(const String &x) const;
-	bool operator>(const String &x) const;
-	bool operator>=(const String &x) const;
+	bool operator<(const U32String &x) const;
+	bool operator<=(const U32String &x) const;
+	bool operator>(const U32String &x) const;
+	bool operator>=(const U32String &x) const;
 
 	/**
 	 * Compares whether two U32String are the same based on memory comparison.

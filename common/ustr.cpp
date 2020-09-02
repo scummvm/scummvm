@@ -198,10 +198,10 @@ bool U32String::operator!=(const char *x) const {
 	return !equals(x);
 }
 
-bool U32String::operator<(const String &x) const {
+bool U32String::operator<(const U32String &x) const {
 	for (uint32 i = 0, n = x.size(); i < _size && i < n; ++i) {
 		uint32 sc = _str[i];
-		uint8 xc = x[i];
+		uint32 xc = x[i];
 		if (sc < xc)
 			return true;
 		else if (sc > xc)
@@ -210,14 +210,14 @@ bool U32String::operator<(const String &x) const {
 	return (_size < x.size());
 }
 
-bool U32String::operator<=(const String &x) const {
+bool U32String::operator<=(const U32String &x) const {
 	return !operator>(x);
 }
 
-bool U32String::operator>(const String &x) const {
+bool U32String::operator>(const U32String &x) const {
 	for (uint i = 0, n = x.size(); i < _size && i < n; ++i) {
 		uint32 sc = _str[i];
-		uint8 xc = x[i];
+		uint32 xc = x[i];
 		if (sc > xc)
 			return true;
 		else if (sc < xc)
@@ -226,7 +226,7 @@ bool U32String::operator>(const String &x) const {
 	return (_size > x.size());
 }
 
-bool U32String::operator>=(const String &x) const {
+bool U32String::operator>=(const U32String &x) const {
 	return !operator<(x);
 }
 
