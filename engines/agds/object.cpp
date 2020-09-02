@@ -21,8 +21,8 @@
  */
 
 #include "agds/object.h"
-#include "agds/animation.h"
 #include "agds/agds.h"
+#include "agds/animation.h"
 #include "agds/font.h"
 #include "agds/region.h"
 #include "common/debug.h"
@@ -33,13 +33,12 @@
 
 namespace AGDS {
 
-Object::Object(const Common::String &name, Common::SeekableReadStream * stream) :
-	_name(name), _stringTableLoaded(false),
-	_picture(), _region(),
-	_animation(), _mouseCursor(),
-	_pos(), _z(1000),
-	_clickHandler(0), _examineHandler(0),
-	_alpha(255), _active(false) {
+Object::Object(const Common::String &name, Common::SeekableReadStream *stream) : _name(name), _stringTableLoaded(false),
+                                                                                 _picture(), _region(),
+                                                                                 _animation(), _mouseCursor(),
+                                                                                 _pos(), _z(1000),
+                                                                                 _clickHandler(0), _examineHandler(0),
+                                                                                 _alpha(255), _active(false) {
 	byte id = stream->readUint16LE();
 	debug("id: 0x%02x %u", id, id);
 
@@ -63,7 +62,6 @@ Object::~Object() {
 	}
 }
 
-
 void Object::readStringTable(unsigned resOffset, uint16 resCount) {
 	if (_stringTableLoaded)
 		return;
@@ -75,7 +73,7 @@ void Object::readStringTable(unsigned resOffset, uint16 resCount) {
 	//debug("resource table at %08x", resOffset);
 	Common::MemoryReadStream stream(_code.data() + resOffset, _code.size() - resOffset);
 	_stringTable.resize(resCount);
-	for(uint16 i = 0; i < resCount; ++i) {
+	for (uint16 i = 0; i < resCount; ++i) {
 		uint16 offset = stream.readUint16LE();
 		uint16 flags = stream.readUint16LE();
 
@@ -83,9 +81,9 @@ void Object::readStringTable(unsigned resOffset, uint16 resCount) {
 		if (nameOffset > _code.size())
 			error("invalid resource name offset");
 
-		const char * nameBegin = reinterpret_cast<const char *>(_code.data() + nameOffset);
-		const char * codeEnd = reinterpret_cast<const char *>(_code.data() + _code.size());
-		const char * nameEnd = Common::find(nameBegin, codeEnd, 0);
+		const char *nameBegin = reinterpret_cast<const char *>(_code.data() + nameOffset);
+		const char *codeEnd = reinterpret_cast<const char *>(_code.data() + _code.size());
+		const char *nameEnd = Common::find(nameBegin, codeEnd, 0);
 
 		Common::String name(nameBegin, nameEnd - nameBegin);
 
@@ -96,7 +94,7 @@ void Object::readStringTable(unsigned resOffset, uint16 resCount) {
 	_stringTableLoaded = true;
 }
 
-const Object::StringEntry & Object::getString(uint16 index) const {
+const Object::StringEntry &Object::getString(uint16 index) const {
 	if (!_stringTableLoaded)
 		error("no string table loaded");
 
@@ -129,11 +127,10 @@ void Object::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 		_animation->paint(engine, backbuffer, _animationPos);
 	}
 	if (!_text.empty()) {
-		Common::Point pos = _region? _region->center: _pos;
+		Common::Point pos = _region ? _region->center : _pos;
 		int w = backbuffer.w - pos.x;
 		engine.getFont(1)->drawString(&backbuffer, _text, pos.x, pos.y, w, 0);
 	}
 }
 
-
-}
+} // namespace AGDS

@@ -30,11 +30,11 @@
 #include "agds/region.h"
 #include "agds/screen.h"
 #include "agds/systemVariable.h"
+#include "common/debug.h"
 #include "common/error.h"
 #include "common/events.h"
-#include "common/ini-file.h"
 #include "common/file.h"
-#include "common/debug.h"
+#include "common/ini-file.h"
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/transparent_surface.h"
@@ -42,21 +42,21 @@
 namespace AGDS {
 
 AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Engine(system),
-		_gameDescription(gameDesc), _pictureCacheId(1), _sharedStorageIndex(-2),
-		_mjpgPlayer(), _currentScreen(), _previousScreen(),
-		_defaultMouseCursor(),
-		_mouse(400, 300), _userEnabled(false), _currentRegion(),
-		_random("agds"),
-		_inventoryRegion(),
-		_soundManager(this, system->getMixer()),
-		_fastMode(false),
-		_dialogScriptPos(0) {
+                                                                             _gameDescription(gameDesc), _pictureCacheId(1), _sharedStorageIndex(-2),
+                                                                             _mjpgPlayer(), _currentScreen(), _previousScreen(),
+                                                                             _defaultMouseCursor(),
+                                                                             _mouse(400, 300), _userEnabled(false), _currentRegion(),
+                                                                             _random("agds"),
+                                                                             _inventoryRegion(),
+                                                                             _soundManager(this, system->getMixer()),
+                                                                             _fastMode(false),
+                                                                             _dialogScriptPos(0) {
 }
 
 AGDSEngine::~AGDSEngine() {
 	delete _currentScreen;
 	delete _previousScreen;
-	for(PictureCacheType::iterator i = _pictureCache.begin(); i != _pictureCache.end(); ++i) {
+	for (PictureCacheType::iterator i = _pictureCache.begin(); i != _pictureCache.end(); ++i) {
 		i->_value->free();
 		delete i->_value;
 	}
@@ -67,8 +67,8 @@ bool AGDSEngine::initGraphics() {
 	typedef Common::List<Graphics::PixelFormat> FormatsType;
 	FormatsType formats = _system->getSupportedFormats();
 
-	for(FormatsType::iterator fi = formats.begin(); fi != formats.end(); ++fi) {
-		const Graphics::PixelFormat & format = *fi;
+	for (FormatsType::iterator fi = formats.begin(); fi != formats.end(); ++fi) {
+		const Graphics::PixelFormat &format = *fi;
 		if (fi->bytesPerPixel == 4 && format == Graphics::TransparentSurface::getSupportedPixelFormat()) {
 			debug("found mode %s", format.toString().c_str());
 			_pixelFormat = format;
@@ -95,7 +95,7 @@ bool AGDSEngine::load() {
 		error("no video mode found");
 
 	Common::INIFile::SectionKeyList values = config.getKeys("core");
-	for(Common::INIFile::SectionKeyList::iterator i = values.begin(); i != values.end(); ++i) {
+	for (Common::INIFile::SectionKeyList::iterator i = values.begin(); i != values.end(); ++i) {
 		if (i->key == "path")
 			if (!_resourceManager.addPath(i->value))
 				return false;
@@ -113,7 +113,7 @@ bool AGDSEngine::load() {
 
 RegionPtr AGDSEngine::loadRegion(const Common::String &name) {
 	debug("loading region %s", name.c_str());
-	Common::SeekableReadStream * stream = _data.getEntry(name);
+	Common::SeekableReadStream *stream = _data.getEntry(name);
 	if (!stream)
 		error("no database entry for %s\n", name.c_str());
 
@@ -127,10 +127,10 @@ Common::String AGDSEngine::loadText(const Common::String &entryName) {
 	return ResourceManager::loadText(_data.getEntry(entryName));
 }
 
-ObjectPtr AGDSEngine::loadObject(const Common::String & name, const Common::String &prototype) {
+ObjectPtr AGDSEngine::loadObject(const Common::String &name, const Common::String &prototype) {
 	debug("loadObject %s %s", name.c_str(), prototype.c_str());
-	Common::String clone = prototype.empty()? name: prototype;
-	Common::SeekableReadStream * stream = _data.getEntry(clone);
+	Common::String clone = prototype.empty() ? name : prototype;
+	Common::SeekableReadStream *stream = _data.getEntry(clone);
 	if (!stream)
 		error("no database entry for %s\n", clone.c_str());
 
@@ -147,22 +147,21 @@ void AGDSEngine::runObject(ObjectPtr object) {
 	runProcess(object);
 }
 
-void AGDSEngine::runProcess(ObjectPtr object, uint ip, Process * caller) {
+void AGDSEngine::runProcess(ObjectPtr object, uint ip, Process *caller) {
 	object->activate(true);
 	_processes.push_front(Process(this, object, ip, caller));
 	ProcessListType::iterator it = _processes.begin();
 	runProcess(it);
 }
 
-void AGDSEngine::runObject(const Common::String & name, const Common::String &prototype)
-{
+void AGDSEngine::runObject(const Common::String &name, const Common::String &prototype) {
 	ObjectPtr object = getCurrentScreenObject(name);
 	if (!object)
 		object = loadObject(name, prototype);
 	runObject(object);
 }
 
-void AGDSEngine::loadScreen(const Common::String & name) {
+void AGDSEngine::loadScreen(const Common::String &name) {
 	debug("loadScreen %s", name.c_str());
 	resetCurrentScreen();
 	_soundManager.stopAll();
@@ -183,8 +182,7 @@ void AGDSEngine::setCurrentScreen(Screen *screen) {
 	_previousScreen = NULL;
 }
 
-void AGDSEngine::resetCurrentScreen()
-{
+void AGDSEngine::resetCurrentScreen() {
 	if (_currentRegion) {
 		if (_currentRegion->currentlyIn)
 			runObject(_currentRegion->onLeave);
@@ -196,9 +194,8 @@ void AGDSEngine::resetCurrentScreen()
 	_currentScreen = NULL;
 }
 
-
 void AGDSEngine::runProcess(ProcessListType::iterator &it) {
-	Process & process = *it;
+	Process &process = *it;
 	if (process.parentScreenName() != _currentScreenName) {
 		if (process.active())
 			process.activate(false);
@@ -221,7 +218,7 @@ void AGDSEngine::runProcess(ProcessListType::iterator &it) {
 	process.activate(true);
 	ProcessExitCode code = process.execute();
 	bool destroy = false;
-	switch(code) {
+	switch (code) {
 	case kExitCodeDestroy:
 		destroy = true;
 		break;
@@ -275,12 +272,12 @@ void AGDSEngine::tick() {
 	if (tickDialog())
 		return;
 	tickInventory();
-	for(ProcessListType::iterator p = _processes.begin(); active() && p != _processes.end(); ) {
+	for (ProcessListType::iterator p = _processes.begin(); active() && p != _processes.end();) {
 		runProcess(p);
 	}
 }
 
-Animation * AGDSEngine::loadMouseCursor(const Common::String &name) {
+Animation *AGDSEngine::loadMouseCursor(const Common::String &name) {
 	Animation *animation = loadAnimation(name);
 	animation->loop(true);
 	animation->phaseVar(Common::String());
@@ -292,24 +289,24 @@ void AGDSEngine::changeMouseArea(int id, int enabled) {
 	if (id < 0)
 		return;
 
-	MouseRegion * mouseArea = _mouseMap.find(id);
+	MouseRegion *mouseArea = _mouseMap.find(id);
 	if (mouseArea) {
-		switch(enabled) {
-			case 1:
-				debug("enabling mouse area %d", id);
-				mouseArea->enable();
-				break;
-			case 0:
-				debug("disabling mouse area %d", id);
-				if (mouseArea->currentlyIn) {
-					runObject(mouseArea->onLeave);
-				}
-				mouseArea->disable();
-				break;
-			case -1:
-				debug("removing mouse area %d", id);
-				_mouseMap.remove(id);
-				break;
+		switch (enabled) {
+		case 1:
+			debug("enabling mouse area %d", id);
+			mouseArea->enable();
+			break;
+		case 0:
+			debug("disabling mouse area %d", id);
+			if (mouseArea->currentlyIn) {
+				runObject(mouseArea->onLeave);
+			}
+			mouseArea->disable();
+			break;
+		case -1:
+			debug("removing mouse area %d", id);
+			_mouseMap.remove(id);
+			break;
 		}
 	} else
 		warning("mouse area %d could not be found", id);
@@ -321,88 +318,86 @@ Common::Error AGDSEngine::run() {
 
 	Common::EventManager *eventManager = _system->getEventManager();
 
-	while(!shouldQuit()) {
+	while (!shouldQuit()) {
 		uint32 frameStarted = _system->getMillis();
 
 		Common::Event event;
-		while(eventManager->pollEvent(event)) {
+		while (eventManager->pollEvent(event)) {
 			if (!_currentScreen)
 				continue;
 
-			switch(event.type) {
-				case Common::EVENT_KEYDOWN:
-					{
-						Common::String key;
+			switch (event.type) {
+			case Common::EVENT_KEYDOWN: {
+				Common::String key;
 
-						switch(event.kbd.keycode) {
-							case Common::KEYCODE_SPACE:
-								skipFilm();
-								key = "space";
-								break;
-							case Common::KEYCODE_ESCAPE:
-								skipFilm();
-								key = "escape";
-								break;
-							case Common::KEYCODE_TAB:
-								key = "tab";
-								break;
-							case Common::KEYCODE_f:
-								if (event.kbd.flags & Common::KBD_CTRL) {
-									_fastMode = !_fastMode;
-								}
-								break;
-							default:
-								if (event.kbd.ascii)
-									key = Common::String(static_cast<char>(event.kbd.ascii));
-						};
-						if (_userEnabled && !key.empty()) {
-							Screen::KeyHandler handler = _currentScreen->findKeyHandler(key);
-							if (handler.object) {
-								debug("found handler for key %s: %s %08x", key.c_str(), handler.object->getName().c_str(), handler.ip + 7);
-								runProcess(handler.object, handler.ip);
-							}
-						}
-					}
+				switch (event.kbd.keycode) {
+				case Common::KEYCODE_SPACE:
+					skipFilm();
+					key = "space";
 					break;
-				case Common::EVENT_MOUSEMOVE:
-					_mouse = event.mouse;
-					if (_userEnabled) {
-						MouseMap &mouseMap = _currentScreen->mouseMap();
-						MouseRegion *region = mouseMap.find(_mouse);
-						if (region != _currentRegion) {
-							if (_currentRegion) {
-								MouseRegion *currentRegion = _currentRegion;
-								_currentRegion = NULL;
-								currentRegion->currentlyIn = false;
-								runObject(currentRegion->onLeave);
-							}
-							if (region) {
-								_currentRegion = region;
-								_currentRegion->currentlyIn = true;
-								runObject(region->onEnter);
-							}
-						}
-						_inventory.enable(_inventoryRegion? !mouseMap.disabled() && _inventoryRegion->pointIn(_mouse): false);
-					}
+				case Common::KEYCODE_ESCAPE:
+					skipFilm();
+					key = "escape";
 					break;
-				case Common::EVENT_LBUTTONDOWN:
-				case Common::EVENT_RBUTTONDOWN:
-					_mouse = event.mouse;
-					if (_userEnabled) {
-						bool lclick = event.type == Common::EVENT_LBUTTONDOWN;
-						debug("%s %d, %d", lclick? "lclick": "rclick", _mouse.x, _mouse.y);
-						ObjectPtr object = _currentScreen->find(_mouse);
-						if (object) {
-							uint ip = lclick? object->getClickHandler(): object->getExamineHandler();
-							if (ip) {
-								debug("found handler: %s %08x", object->getName().c_str(), ip + 7);
-								runProcess(object, ip);
-							}
-						}
+				case Common::KEYCODE_TAB:
+					key = "tab";
+					break;
+				case Common::KEYCODE_f:
+					if (event.kbd.flags & Common::KBD_CTRL) {
+						_fastMode = !_fastMode;
 					}
 					break;
 				default:
-					break;
+					if (event.kbd.ascii)
+						key = Common::String(static_cast<char>(event.kbd.ascii));
+				};
+				if (_userEnabled && !key.empty()) {
+					Screen::KeyHandler handler = _currentScreen->findKeyHandler(key);
+					if (handler.object) {
+						debug("found handler for key %s: %s %08x", key.c_str(), handler.object->getName().c_str(), handler.ip + 7);
+						runProcess(handler.object, handler.ip);
+					}
+				}
+			} break;
+			case Common::EVENT_MOUSEMOVE:
+				_mouse = event.mouse;
+				if (_userEnabled) {
+					MouseMap &mouseMap = _currentScreen->mouseMap();
+					MouseRegion *region = mouseMap.find(_mouse);
+					if (region != _currentRegion) {
+						if (_currentRegion) {
+							MouseRegion *currentRegion = _currentRegion;
+							_currentRegion = NULL;
+							currentRegion->currentlyIn = false;
+							runObject(currentRegion->onLeave);
+						}
+						if (region) {
+							_currentRegion = region;
+							_currentRegion->currentlyIn = true;
+							runObject(region->onEnter);
+						}
+					}
+					_inventory.enable(_inventoryRegion ? !mouseMap.disabled() && _inventoryRegion->pointIn(_mouse) : false);
+				}
+				break;
+			case Common::EVENT_LBUTTONDOWN:
+			case Common::EVENT_RBUTTONDOWN:
+				_mouse = event.mouse;
+				if (_userEnabled) {
+					bool lclick = event.type == Common::EVENT_LBUTTONDOWN;
+					debug("%s %d, %d", lclick ? "lclick" : "rclick", _mouse.x, _mouse.y);
+					ObjectPtr object = _currentScreen->find(_mouse);
+					if (object) {
+						uint ip = lclick ? object->getClickHandler() : object->getExamineHandler();
+						if (ip) {
+							debug("found handler: %s %08x", object->getName().c_str(), ip + 7);
+							runProcess(object, ip);
+						}
+					}
+				}
+				break;
+			default:
+				break;
 			}
 		}
 
@@ -410,7 +405,7 @@ Common::Error AGDSEngine::run() {
 
 		if (_userEnabled && _currentScreen) {
 			ObjectPtr object = _currentScreen->find(_mouse);
-			Animation *cursor = object? object->getMouseCursor(): NULL;
+			Animation *cursor = object ? object->getMouseCursor() : NULL;
 			if (cursor)
 				mouseCursor = cursor;
 		}
@@ -426,7 +421,7 @@ Common::Error AGDSEngine::run() {
 			const Graphics::Surface *surface = _mjpgPlayer->decodeFrame();
 
 			if (surface) {
-				Graphics::Surface * converted = surface->convertTo(_pixelFormat);
+				Graphics::Surface *converted = surface->convertTo(_pixelFormat);
 				Common::Point dst((backbuffer->w - converted->w) / 2, (backbuffer->h - converted->h) / 2);
 				Common::Rect srcRect(converted->getRect());
 				if (Common::Rect::getBlitRect(dst, srcRect, backbuffer->getRect()))
@@ -450,7 +445,7 @@ Common::Error AGDSEngine::run() {
 			mouseCursor->paint(*this, *backbuffer, _mouse);
 		}
 
-		for(CharactersType::iterator i = _characters.begin(); i != _characters.end(); ++i)
+		for (CharactersType::iterator i = _characters.begin(); i != _characters.end(); ++i)
 			i->_value->paint(*this, *backbuffer);
 
 		_system->unlockScreen();
@@ -487,7 +482,7 @@ int AGDSEngine::appendToSharedStorage(const Common::String &value) {
 	return index;
 }
 
-const Common::String & AGDSEngine::getSharedStorage(int id) const {
+const Common::String &AGDSEngine::getSharedStorage(int id) const {
 	int index = -2 - id;
 	if (index < 0 || index >= 10)
 		error("shared storage id is out of range");
@@ -504,7 +499,7 @@ int AGDSEngine::getGlobal(const Common::String &name) const {
 	}
 }
 
-Animation * AGDSEngine::loadAnimation(const Common::String &name) {
+Animation *AGDSEngine::loadAnimation(const Common::String &name) {
 	AnimationsType::iterator i = _animations.find(name);
 	if (i != _animations.end())
 		return i->_value;
@@ -520,17 +515,16 @@ Animation * AGDSEngine::loadAnimation(const Common::String &name) {
 	return animation;
 }
 
-Animation * AGDSEngine::findAnimationByPhaseVar(const Common::String &phaseVar) {
-	for(AnimationsType::iterator i = _animations.begin(); i != _animations.end(); ++i) {
-		Animation * animation = i->_value;
+Animation *AGDSEngine::findAnimationByPhaseVar(const Common::String &phaseVar) {
+	for (AnimationsType::iterator i = _animations.begin(); i != _animations.end(); ++i) {
+		Animation *animation = i->_value;
 		if (animation->phaseVar() == phaseVar)
 			return animation;
 	}
 	return NULL;
 }
 
-
-Character * AGDSEngine::loadCharacter(const Common::String &id, const Common::String &name, const Common::String &object) {
+Character *AGDSEngine::loadCharacter(const Common::String &id, const Common::String &name, const Common::String &object) {
 	CharactersType::iterator i = _characters.find(id);
 	if (i != _characters.end())
 		return i->_value;
@@ -540,20 +534,19 @@ Character * AGDSEngine::loadCharacter(const Common::String &id, const Common::St
 	return character;
 }
 
-Character * AGDSEngine::getCharacter(const Common::String &name) const {
+Character *AGDSEngine::getCharacter(const Common::String &name) const {
 	CharactersType::const_iterator i = _characters.find(name);
-	return i != _characters.end() ? i->_value: NULL;
+	return i != _characters.end() ? i->_value : NULL;
 }
 
-Graphics::TransparentSurface * AGDSEngine::loadPicture(const Common::String &name)
-{ return convertToTransparent(_resourceManager.loadPicture(name, _pixelFormat)); }
+Graphics::TransparentSurface *AGDSEngine::loadPicture(const Common::String &name) { return convertToTransparent(_resourceManager.loadPicture(name, _pixelFormat)); }
 
-int AGDSEngine::loadFromCache(const Common::String & name) const {
+int AGDSEngine::loadFromCache(const Common::String &name) const {
 	PictureCacheLookup::const_iterator i = _pictureCacheLookup.find(name);
-	return i != _pictureCacheLookup.end()? i->_value: -1;
+	return i != _pictureCacheLookup.end() ? i->_value : -1;
 }
 
-int AGDSEngine::saveToCache(const Common::String & name, Graphics::TransparentSurface *surface) {
+int AGDSEngine::saveToCache(const Common::String &name, Graphics::TransparentSurface *surface) {
 	if (!surface)
 		return -1;
 	int id = _pictureCacheId++;
@@ -564,13 +557,13 @@ int AGDSEngine::saveToCache(const Common::String & name, Graphics::TransparentSu
 
 Graphics::TransparentSurface *AGDSEngine::loadFromCache(int id) const {
 	PictureCacheType::const_iterator i = _pictureCache.find(id);
-	return (i != _pictureCache.end())? i->_value: NULL;
+	return (i != _pictureCache.end()) ? i->_value : NULL;
 }
 
 void AGDSEngine::loadFont(int id, const Common::String &name, int gw, int gh) {
 	debug("loadFont %d %s %d %d", id, name.c_str(), gw, gh);
 	Graphics::TransparentSurface *surface = loadPicture(name);
-	Font * & font = _fonts[id];
+	Font *&font = _fonts[id];
 	delete font;
 	font = new Font(surface, gw, gh);
 }
@@ -585,7 +578,7 @@ Font *AGDSEngine::getFont(int id) const {
 Graphics::TransparentSurface *AGDSEngine::convertToTransparent(Graphics::Surface *surface) {
 	if (!surface)
 		return NULL;
-	Graphics::TransparentSurface * t = new Graphics::TransparentSurface(*surface, true);
+	Graphics::TransparentSurface *t = new Graphics::TransparentSurface(*surface, true);
 	t->applyColorKey(0xff, 0, 0xff);
 	surface->free();
 	delete surface;
@@ -593,62 +586,62 @@ Graphics::TransparentSurface *AGDSEngine::convertToTransparent(Graphics::Surface
 }
 
 void AGDSEngine::initSystemVariables() {
-	_systemVars["inventory_scr"]	= new StringSystemVariable();
-	_systemVars["escape_scr"]		= new StringSystemVariable("none");
-	_systemVars["load_scr"]			= new StringSystemVariable();
-	_systemVars["save_scr"]			= new StringSystemVariable();
+	_systemVars["inventory_scr"] = new StringSystemVariable();
+	_systemVars["escape_scr"] = new StringSystemVariable("none");
+	_systemVars["load_scr"] = new StringSystemVariable();
+	_systemVars["save_scr"] = new StringSystemVariable();
 
-	_systemVars["gfx_bright"]		= new IntegerSystemVariable(50);
-	_systemVars["gfx_contrast"]		= new IntegerSystemVariable(50);
+	_systemVars["gfx_bright"] = new IntegerSystemVariable(50);
+	_systemVars["gfx_contrast"] = new IntegerSystemVariable(50);
 
-	_systemVars["sound_volume"]		= new IntegerSystemVariable(100);
-	_systemVars["music_volume"]		= new IntegerSystemVariable(80);
-	_systemVars["tell_volume"]		= new IntegerSystemVariable(100);
+	_systemVars["sound_volume"] = new IntegerSystemVariable(100);
+	_systemVars["music_volume"] = new IntegerSystemVariable(80);
+	_systemVars["tell_volume"] = new IntegerSystemVariable(100);
 
-	_systemVars["text_speed"]		= new IntegerSystemVariable(70);
-	_systemVars["tell_mode"]		= new IntegerSystemVariable(3);
-	_systemVars["version"]			= new IntegerSystemVariable(1);
+	_systemVars["text_speed"] = new IntegerSystemVariable(70);
+	_systemVars["tell_mode"] = new IntegerSystemVariable(3);
+	_systemVars["version"] = new IntegerSystemVariable(1);
 
-	_systemVars["objtext_x"]		= new IntegerSystemVariable(-1);
-	_systemVars["objtext_y"]		= new IntegerSystemVariable(-1);
-	_systemVars["objtext_mode"]		= new IntegerSystemVariable(-1);
-	_systemVars["objtext_font"]		= new IntegerSystemVariable(-1);
+	_systemVars["objtext_x"] = new IntegerSystemVariable(-1);
+	_systemVars["objtext_y"] = new IntegerSystemVariable(-1);
+	_systemVars["objtext_mode"] = new IntegerSystemVariable(-1);
+	_systemVars["objtext_font"] = new IntegerSystemVariable(-1);
 
-	_systemVars["inv_open"]			= new StringSystemVariable();
-	_systemVars["inv_close"]		= new StringSystemVariable();
-	_systemVars["inv_region"]		= new StringSystemVariable();
+	_systemVars["inv_open"] = new StringSystemVariable();
+	_systemVars["inv_close"] = new StringSystemVariable();
+	_systemVars["inv_region"] = new StringSystemVariable();
 
-	_systemVars["anim_zoom"]		= new IntegerSystemVariable(1);
+	_systemVars["anim_zoom"] = new IntegerSystemVariable(1);
 
-	_systemVars["screen_curtain"]	= new IntegerSystemVariable(1);
-	_systemVars["music_curtain"]	= new IntegerSystemVariable(1);
-	_systemVars["sound_curtain"]	= new IntegerSystemVariable(1);
+	_systemVars["screen_curtain"] = new IntegerSystemVariable(1);
+	_systemVars["music_curtain"] = new IntegerSystemVariable(1);
+	_systemVars["sound_curtain"] = new IntegerSystemVariable(1);
 
-	_systemVars["old_music_volume"]	= new IntegerSystemVariable();
-	_systemVars["old_sound_volume"]	= new IntegerSystemVariable();
-	_systemVars["old_screen_fade"]	= new IntegerSystemVariable();
+	_systemVars["old_music_volume"] = new IntegerSystemVariable();
+	_systemVars["old_sound_volume"] = new IntegerSystemVariable();
+	_systemVars["old_screen_fade"] = new IntegerSystemVariable();
 
-	_systemVars["subtitle_x"]		= new IntegerSystemVariable();
-	_systemVars["subtitle_y"]		= new IntegerSystemVariable();
-	_systemVars["subtitle_type"]	= new IntegerSystemVariable(3);
-	_systemVars["subtitles"]		= new IntegerSystemVariable();
+	_systemVars["subtitle_x"] = new IntegerSystemVariable();
+	_systemVars["subtitle_y"] = new IntegerSystemVariable();
+	_systemVars["subtitle_type"] = new IntegerSystemVariable(3);
+	_systemVars["subtitles"] = new IntegerSystemVariable();
 
-	_systemVars["tell_font"]		= new IntegerSystemVariable();
-	_systemVars["npc_tell_font"]	= new IntegerSystemVariable();
-	_systemVars["edit_font"]		= new IntegerSystemVariable();
-	_systemVars["delay_after_tell"]	= new IntegerSystemVariable();
+	_systemVars["tell_font"] = new IntegerSystemVariable();
+	_systemVars["npc_tell_font"] = new IntegerSystemVariable();
+	_systemVars["edit_font"] = new IntegerSystemVariable();
+	_systemVars["delay_after_tell"] = new IntegerSystemVariable();
 
-	_systemVars["scroll_factor"]	= new IntegerSystemVariable(30);
+	_systemVars["scroll_factor"] = new IntegerSystemVariable(30);
 
-	_systemVars["dialog_var"]		= new IntegerSystemVariable();
-	_systemVars["subtitle_width"]	= new IntegerSystemVariable(-1);
-	_systemVars["flash_mouse"]		= new IntegerSystemVariable();
-	_systemVars["scale_char"]		= new IntegerSystemVariable();
+	_systemVars["dialog_var"] = new IntegerSystemVariable();
+	_systemVars["subtitle_width"] = new IntegerSystemVariable(-1);
+	_systemVars["flash_mouse"] = new IntegerSystemVariable();
+	_systemVars["scale_char"] = new IntegerSystemVariable();
 
-	_systemVars["init_resources"]	= new StringSystemVariable();
-	_systemVars["done_resources"]	= new StringSystemVariable();
-	_systemVars["tell_close_inv"]	= new IntegerSystemVariable(1);
-	_systemVars["gamma"]			= new IntegerSystemVariable();
+	_systemVars["init_resources"] = new StringSystemVariable();
+	_systemVars["done_resources"] = new StringSystemVariable();
+	_systemVars["tell_close_inv"] = new IntegerSystemVariable(1);
+	_systemVars["gamma"] = new IntegerSystemVariable();
 }
 
 SystemVariable *AGDSEngine::getSystemVariable(const Common::String &name) {
@@ -659,7 +652,7 @@ SystemVariable *AGDSEngine::getSystemVariable(const Common::String &name) {
 	error("no system variable %s", name.c_str());
 }
 
-void AGDSEngine::runDialog(const Common::String &dialogScript, const Common::String & defs) {
+void AGDSEngine::runDialog(const Common::String &dialogScript, const Common::String &defs) {
 	parseDialogDefs(defs);
 	_dialogScript = dialogScript;
 	_dialogScriptPos = 0;
@@ -669,7 +662,7 @@ void AGDSEngine::runDialog(const Common::String &dialogScript, const Common::Str
 void AGDSEngine::parseDialogDefs(const Common::String &defs) {
 	Common::String name, value;
 	bool readName = true;
-	for(uint32 p = 0, size = defs.size(); p < size; ++p) {
+	for (uint32 p = 0, size = defs.size(); p < size; ++p) {
 		char ch = defs[p];
 		if (ch == ' ') {
 			continue;
@@ -712,7 +705,7 @@ void AGDSEngine::tickInventory() {
 		_inventory.visible(true);
 	}
 
-	const Common::String & inv_region_name = getSystemVariable("inv_region")->getString();
+	const Common::String &inv_region_name = getSystemVariable("inv_region")->getString();
 	if (inv_region_name.empty())
 		return;
 
@@ -737,7 +730,7 @@ bool AGDSEngine::tickDialog() {
 		return false;
 
 	Common::String line;
-	while(_dialogScriptPos < n && _dialogScript[_dialogScriptPos] != '\n' && _dialogScript[_dialogScriptPos] != '\r') {
+	while (_dialogScriptPos < n && _dialogScript[_dialogScriptPos] != '\n' && _dialogScript[_dialogScriptPos] != '\r') {
 		line += _dialogScript[_dialogScriptPos++];
 	}
 	++_dialogScriptPos;
@@ -777,24 +770,20 @@ bool AGDSEngine::tickDialog() {
 	return true;
 }
 
-bool AGDSEngine::hasFeature(EngineFeature f) const
-{
-	switch(f)
-	{
-		case kSupportsSubtitleOptions:
-		case kSupportsReturnToLauncher:
-		case kSupportsLoadingDuringRuntime:
-		case kSupportsSavingDuringRuntime:
-			return true;
-		default:
-			return false;
+bool AGDSEngine::hasFeature(EngineFeature f) const {
+	switch (f) {
+	case kSupportsSubtitleOptions:
+	case kSupportsReturnToLauncher:
+	case kSupportsLoadingDuringRuntime:
+	case kSupportsSavingDuringRuntime:
+		return true;
+	default:
+		return false;
 	}
 }
 
-Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file)
-{ return Common::Error(Common::kNoError); }
+Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) { return Common::Error(Common::kNoError); }
 
-Common::Error AGDSEngine::saveGameStream(Common::WriteStream *file, bool isAutosave)
-{ return Common::Error(Common::kNoError); }
+Common::Error AGDSEngine::saveGameStream(Common::WriteStream *file, bool isAutosave) { return Common::Error(Common::kNoError); }
 
 } // End of namespace AGDS

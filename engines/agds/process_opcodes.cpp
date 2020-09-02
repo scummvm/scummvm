@@ -20,30 +20,31 @@
  *
  */
 
-#include "agds/process.h"
 #include "agds/agds.h"
 #include "agds/animation.h"
 #include "agds/character.h"
 #include "agds/opcode.h"
+#include "agds/process.h"
 #include "agds/region.h"
 #include "agds/screen.h"
 #include "agds/systemVariable.h"
-#include "graphics/transparent_surface.h"
 #include "common/debug.h"
+#include "graphics/transparent_surface.h"
 
 namespace AGDS {
 
 void Process::enter(uint16 magic, uint16 size) {
 	if (magic != 0xdead || size != 0x0c)
 		error("invalid enter() magic: 0x%04x or size: %u", magic, size);
-	uint16 unk1			= next16();
-	uint16 unk2			= next16();
-	uint16 unk3			= next16();
-	unsigned resOffset	= next16();
-	uint16 resCount		= next16();
-	uint16 unk4			= next16();
+	uint16 unk1 = next16();
+	uint16 unk2 = next16();
+	uint16 unk3 = next16();
+	unsigned resOffset = next16();
+	uint16 resCount = next16();
+	uint16 unk4 = next16();
 	debug("resource block %04x %04x %04x %04x,"
-		" resources table with %u entries", unk1, unk2, unk3, unk4, resCount);
+	      " resources table with %u entries",
+	      unk1, unk2, unk3, unk4, resCount);
 
 	_object->readStringTable(resOffset, resCount);
 }
@@ -96,7 +97,7 @@ void Process::getObjectId() {
 	const Common::String &name = _object->getName();
 	//no rfind :(((
 	Common::String::const_iterator dotpos = 0;
-	for(Common::String::const_iterator i = name.begin(); i != name.end(); ++i)
+	for (Common::String::const_iterator i = name.begin(); i != name.end(); ++i)
 		if (*i == '.')
 			dotpos = i + 1;
 	Common::String id(dotpos, name.end());
@@ -180,10 +181,10 @@ void Process::updatePhaseVarOr4() {
 void Process::loadScreenObject() {
 	Common::String name = popString();
 	debug("loadScreenObject: %s", name.c_str());
-	Screen * screen = _engine->getCurrentScreen();
+	Screen *screen = _engine->getCurrentScreen();
 	if (!screen->find(name)) {
 		screen->add(_engine->loadObject(name));
-	} else{
+	} else {
 		warning("loadScreenObject: object %s already loaded", name.c_str());
 	}
 	suspend(kExitCodeLoadScreenObject, name);
@@ -229,7 +230,7 @@ void Process::loadMouse() {
 
 void Process::getRandomNumber() {
 	int max = pop();
-	int value = max > 0? _engine->_random.getRandomNumber(max - 1): 0;
+	int value = max > 0 ? _engine->_random.getRandomNumber(max - 1) : 0;
 	debug("random %d -> %d", max, value);
 	push(value);
 }
@@ -249,7 +250,7 @@ void Process::setPhaseVar() {
 }
 
 void Process::getGlobal(unsigned index) {
-	const Common::String & name = _object->getString(index).string;
+	const Common::String &name = _object->getString(index).string;
 	int value = _engine->getGlobal(name);
 	debug("get global %u %s -> %d", index, name.c_str(), value);
 	push(value);
@@ -257,7 +258,7 @@ void Process::getGlobal(unsigned index) {
 
 void Process::hasGlobal() {
 	Common::String name = popString();
-	int result = _engine->hasGlobal(name)? 1: 0;
+	int result = _engine->hasGlobal(name) ? 1 : 0;
 	debug("hasGlobal %s %d", name.c_str(), result);
 	push(result);
 }
@@ -369,23 +370,23 @@ void Process::appendNameToSharedStorage() {
 	push(index);
 }
 
-Common::String Process::getCloneVarName(const Common::String & arg1, const Common::String & arg2) {
+Common::String Process::getCloneVarName(const Common::String &arg1, const Common::String &arg2) {
 	bool isNumeric = false;
 	size_t prefixLength;
 	{
 		const char *begin = arg1.c_str();
 		const char *ptr = begin + arg1.size() - 1;
-		while(*ptr >= '0' && *ptr <= '9' && ptr > begin)
+		while (*ptr >= '0' && *ptr <= '9' && ptr > begin)
 			--ptr;
 		isNumeric = *ptr == '.';
-		prefixLength = isNumeric? ptr - begin: 0;
+		prefixLength = isNumeric ? ptr - begin : 0;
 	}
 
 	Common::String name;
 	if (isNumeric) {
 		//no substr :(((
 		name = Common::String(arg1.c_str(), arg1.c_str() + prefixLength) +
-			"." + arg2 + Common::String(arg1.c_str() + prefixLength);
+		       "." + arg2 + Common::String(arg1.c_str() + prefixLength);
 	} else {
 		name = arg1 + "." + arg2;
 	}
@@ -436,9 +437,9 @@ void Process::changeScreenPatch() {
 	Common::String screenName = popString();
 	Common::String inventoryScr = _engine->getSystemVariable("inventory_scr")->getString();
 	debug("changeScreenPatch: screen: %s, object: %s, inventory: %s",
-		screenName.empty()? "none": screenName.c_str(), objectName.c_str(), inventoryScr.empty()? "none": inventoryScr.c_str());
+	      screenName.empty() ? "none" : screenName.c_str(), objectName.c_str(), inventoryScr.empty() ? "none" : inventoryScr.c_str());
 
-	Screen * screen = _engine->getCurrentScreen();
+	Screen *screen = _engine->getCurrentScreen();
 	if (!screen) {
 		error("no current screen");
 		return;
@@ -703,13 +704,12 @@ void Process::stub217() {
 void Process::playAnimationWithPhaseVar() {
 	Common::String phaseVar = popString();
 	debug("playAnimationWithPhaseVar %s", phaseVar.c_str());
-	Animation * animation = _engine->findAnimationByPhaseVar(phaseVar);
+	Animation *animation = _engine->findAnimationByPhaseVar(phaseVar);
 	if (animation) {
 		animation->phaseVar(phaseVar);
 		animation->play();
 		_engine->setGlobal(phaseVar, 0);
-	}
-	else
+	} else
 		warning("no animation with phase var %s found", phaseVar.c_str());
 }
 
@@ -762,7 +762,7 @@ void Process::setObjectTile() {
 		warning("invalid tile size");
 		return;
 	}
-	Graphics::TransparentSurface * surface = _engine->loadFromCache(_tileResource);
+	Graphics::TransparentSurface *surface = _engine->loadFromCache(_tileResource);
 	if (!surface) {
 		warning("picture %d was not loaded", _tileResource);
 		return;
@@ -773,7 +773,7 @@ void Process::setObjectTile() {
 	int x = _tileIndex % tw;
 	debug("tile coordinate %dx%d", x, y);
 
-	Graphics::TransparentSurface * tile = new Graphics::TransparentSurface();
+	Graphics::TransparentSurface *tile = new Graphics::TransparentSurface();
 	tile->create(_tileWidth, _tileHeight, surface->format);
 	tile->applyColorKey(0xff, 0, 0xff);
 	Common::Rect srcRect(_tileWidth, _tileHeight);
@@ -794,7 +794,6 @@ void Process::setObjectText() {
 		warning("setObjectText: object %s not found", name.c_str());
 }
 
-
 void Process::exitProcess() {
 	debug("exitProcess");
 	_status = kStatusDone;
@@ -802,12 +801,12 @@ void Process::exitProcess() {
 }
 
 void Process::exitProcessCreatePatch() {
-	SystemVariable * initVar = _engine->getSystemVariable("init_resources");
+	SystemVariable *initVar = _engine->getSystemVariable("init_resources");
 	if (!initVar)
 		error("no init_resources declared");
 	Common::String init = initVar->getString();
 
-	SystemVariable * doneVar = _engine->getSystemVariable("done_resources");
+	SystemVariable *doneVar = _engine->getSystemVariable("done_resources");
 	if (!doneVar)
 		error("no done_resources declared");
 	Common::String done = doneVar->getString();
@@ -872,14 +871,13 @@ void Process::runDialog() {
 	suspend(kExitCodeRunDialog, arg1);
 }
 
-
 void Process::getObjectPictureWidth() {
 	Common::String name = popString();
 	debug("getObjectPictureWidth %s", name.c_str());
 	ObjectPtr object = _engine->getCurrentScreenObject(name);
 	if (object) {
 		const Graphics::Surface *picture = object->getPicture();
-		int value = picture? picture->w: 0;
+		int value = picture ? picture->w : 0;
 		debug("\t->%d", value);
 		push(value);
 	} else {
@@ -894,7 +892,7 @@ void Process::getObjectPictureHeight() {
 	ObjectPtr object = _engine->getCurrentScreenObject(name);
 	if (object) {
 		const Graphics::Surface *picture = object->getPicture();
-		int value = picture? picture->h: 0;
+		int value = picture ? picture->h : 0;
 		debug("\t->%d", value);
 		push(value);
 	} else {
@@ -957,7 +955,7 @@ void Process::appendInventoryObjectNameToSharedSpace() {
 	int index = pop();
 	debug("appendInventoryObjectNameToSharedSpace %d", index);
 	ObjectPtr object = _engine->inventory().get(index);
-	push(_engine->appendToSharedStorage(object? object->getName(): Common::String()));
+	push(_engine->appendToSharedStorage(object ? object->getName() : Common::String()));
 }
 
 void Process::setNextScreen() {
@@ -1140,7 +1138,7 @@ void Process::getCharacterAnimationPhase() {
 	Common::String name = popString();
 	debug("getCharacterAnimationPhase: %s", name.c_str());
 	Character *character = _engine->getCharacter(name);
-	int phase = character? character->getPhase(): -1;
+	int phase = character ? character->getPhase() : -1;
 	debug("animation phase = %d", phase);
 	push(phase);
 }
@@ -1149,7 +1147,7 @@ void Process::stopCharacter() {
 	int arg = pop();
 	Common::String name = popString();
 	debug("stopCharacter: stub %s %d", name.c_str(), arg);
-	Character * character = _engine->getCharacter(name);
+	Character *character = _engine->getCharacter(name);
 	if (character)
 		character->stop();
 	else
@@ -1173,7 +1171,6 @@ void Process::loadRegionFromObject() {
 	_object->region(region);
 }
 
-
 void Process::loadPictureFromObject() {
 	Common::String name = popText();
 	debug("loadPictureFromObject %s", name.c_str());
@@ -1186,7 +1183,7 @@ void Process::loadAnimationFromObject() {
 	if (!_phaseVar.empty()) {
 		_engine->setGlobal(_phaseVar, -2);
 	}
-	Animation * animation = _engine->loadAnimation(name);
+	Animation *animation = _engine->loadAnimation(name);
 	if (animation) {
 		animation->phaseVar(_phaseVar);
 		animation->loop(_animationLoop);
@@ -1245,31 +1242,54 @@ void Process::stub244() {
 	_engine->getSystemVariable("dialog_var")->setInteger(1);
 }
 
-
 //fixme: add trace here
 #define OP(NAME, METHOD) \
-	case NAME: METHOD (); break
+	case NAME:           \
+		METHOD();        \
+		break
 
 #define OP_I(NAME, METHOD, IMM) \
-	case NAME: { METHOD (IMM); } break
+	case NAME: {                \
+		METHOD(IMM);            \
+	} break
 
 #define OP_C(NAME, METHOD) \
-	case NAME: { int8 arg = next(); METHOD (arg); } break
+	case NAME: {           \
+		int8 arg = next(); \
+		METHOD(arg);       \
+	} break
 
-#define OP_B(NAME, METHOD) \
-	case NAME: { uint8 arg = next(); METHOD (arg); } break
+#define OP_B(NAME, METHOD)  \
+	case NAME: {            \
+		uint8 arg = next(); \
+		METHOD(arg);        \
+	} break
 
-#define OP_W(NAME, METHOD) \
-	case NAME: { int16 arg = next16(); METHOD (arg); } break
+#define OP_W(NAME, METHOD)    \
+	case NAME: {              \
+		int16 arg = next16(); \
+		METHOD(arg);          \
+	} break
 
-#define OP_U(NAME, METHOD) \
-	case NAME: { uint16 arg = next16(); METHOD (arg); } break
+#define OP_U(NAME, METHOD)     \
+	case NAME: {               \
+		uint16 arg = next16(); \
+		METHOD(arg);           \
+	} break
 
-#define OP_UU(NAME, METHOD) \
-	case NAME: { uint16 arg1 = next16(); uint16 arg2 = next16(); METHOD (arg1, arg2); } break
+#define OP_UU(NAME, METHOD)     \
+	case NAME: {                \
+		uint16 arg1 = next16(); \
+		uint16 arg2 = next16(); \
+		METHOD(arg1, arg2);     \
+	} break
 
-#define OP_D(NAME, METHOD) \
-	case NAME: { uint16 arg1 = next16(); uint32 arg2 = next16(); METHOD (arg1 | (arg2 << 16)); } break
+#define OP_D(NAME, METHOD)           \
+	case NAME: {                     \
+		uint16 arg1 = next16();      \
+		uint32 arg2 = next16();      \
+		METHOD(arg1 | (arg2 << 16)); \
+	} break
 
 ProcessExitCode Process::execute() {
 	if (_waitForCall) {
@@ -1279,187 +1299,187 @@ ProcessExitCode Process::execute() {
 	_exitCode = kExitCodeDestroy;
 
 	const Object::CodeType &code = _object->getCode();
-	while(_status == kStatusActive && _ip < code.size()) {
+	while (_status == kStatusActive && _ip < code.size()) {
 		_lastIp = _ip;
 		uint8 op = next();
-		switch(op) {
-			OP_UU	(kEnter, enter);
-			OP_W	(kJumpZImm16, jumpz);
-			OP_W	(kJumpImm16, jump);
-			OP		(kPop, pop);
-			OP		(kDup, dup);
-			OP		(kExitProcess, exitProcess);
-			OP		(kSuspendProcess, suspend);
-			OP_D	(kPushImm32, push);
-			OP_C	(kPushImm8, push);
-			OP_W	(kPushImm16, push);
-			OP_C	(kPushImm8_2, push);
-			OP_W	(kPushImm16_2, push);
-			OP_B	(kGetGlobalImm8, getGlobal);
-			OP		(kPostIncrementGlobal, postIncrementGlobal);
-			OP		(kPostDecrementGlobal, postDecrementGlobal);
-			OP		(kIncrementGlobalByTop, incrementGlobalByTop);
-			OP		(kDecrementGlobalByTop, decrementGlobalByTop);
-			OP		(kMultiplyGlobalByTop, multiplyGlobalByTop);
-			OP		(kDivideGlobalByTop, divideGlobalByTop);
-			OP		(kModGlobalByTop, modGlobalByTop);
-			OP		(kShlGlobalByTop, shlGlobalByTop);
-			OP		(kShrGlobalByTop, shrGlobalByTop);
-			OP		(kAndGlobalByTop, andGlobalByTop);
-			OP		(kOrGlobalByTop, orGlobalByTop);
-			OP		(kXorGlobalByTop, xorGlobalByTop);
-			OP		(kEquals, equals);
-			OP		(kNotEquals, notEquals);
-			OP		(kGreater, greater);
-			OP		(kLess, less);
-			OP		(kGreaterOrEquals, greaterOrEquals);
-			OP		(kLessOrEquals, lessOrEquals);
-			OP		(kAdd, add);
-			OP		(kSub, sub);
-			OP		(kMul, mul);
-			OP		(kDiv, div);
-			OP		(kSetGlobal, setGlobal);
-			OP		(kBoolOr, boolOr);
-			OP		(kBoolAnd, boolAnd);
-			OP		(kAnd, bitAnd);
-			OP		(kOr, bitOr);
-			OP		(kXor, bitXor);
-			OP		(kNot, bitNot);
-			OP		(kBoolNot, boolNot);
-			OP		(kNegate, negate);
-			OP_U	(kCallImm16, call);
-			OP_U	(kObjectRegisterLookHandler, onLook);
-			OP_U	(kObjectRegisterUseHandler, onUse);
-			OP_U	(kObjectRegisterHandlerC1, onObjectC1);
-			OP_U	(kScreenRegisterHandlerBD, onScreenBD);
-			OP		(kLoadMouseCursorFromObject, loadMouseCursorFromObject);
-			OP		(kLoadRegionFromObject, loadRegionFromObject);
-			OP		(kLoadPictureFromObject, loadPictureFromObject);
-			OP		(kLoadAnimationFromObject, loadAnimationFromObject);
-			OP		(kShowCharacter, showCharacter);
-			OP		(kEnableCharacter, enableCharacter);
-			OP_I	(kMoveCharacterUserMove, moveCharacter, true);
-			OP		(kLeaveCharacter, leaveCharacter);
-			OP		(kSetCharacter, setCharacter);
-			OP		(kPointCharacter, pointCharacter);
-			OP		(kDisableUser, disableUser);
-			OP		(kEnableUser, enableUser);
-			OP		(kUpdatePhaseVarOr2, updatePhaseVarOr2);
-			OP		(kUpdatePhaseVarOr4, updatePhaseVarOr4);
-			OP		(kStub102, stub102);
-			OP		(kClearScreen, clearScreen);
-			OP		(kInventoryClear, inventoryClear);
-			OP		(kLoadMouse, loadMouse);
-			OP		(kInventoryAddObject, inventoryAddObject);
-			OP		(kSetNextScreenSaveInHistory, setNextScreenSaveInHistory);
-			OP_U	(kObjectRegisterUseObjectHandler, onObjectUse);
-			OP		(kStub82, stub82);
-			OP		(kStub83, stub83);
-			OP		(kAnimateCharacter, animateCharacter);
-			OP		(kLoadCharacter, loadCharacter);
-			OP		(kSetObjectZ, setObjectZ);
-			OP		(kUpdateScreenHeightToDisplay, updateScreenHeightToDisplay);
-			OP		(kLoadTextFromObject, loadTextFromObject);
-			OP		(kScreenSetHeight, setScreenHeight);
-			OP		(kScreenLoadObject, loadScreenObject);
-			OP		(kScreenLoadRegion, loadScreenRegion);
-			OP		(kScreenCloneObject, cloneObject);
-			OP		(kSetNextScreen, setNextScreen);
-			OP		(kScreenRemoveObject, removeScreenObject);
-			OP		(kLoadAnimation, loadAnimation);
-			OP		(kLoadSample, loadSample);
-			OP		(kSetAnimationPaused, setAnimationPaused);
-			OP		(kPlayerSay, playerSay);
-			OP		(kNPCSay, npcSay);
-			OP		(kSetTimer, setTimer);
-			OP		(kProcessResetState, resetState);
-			OP		(kSetAnimationZ, setAnimationZ);
-			OP		(kSetCycles, setCycles);
-			OP		(kSetRandom, setRandom);
-			OP		(kStub133, stub133);
-			OP		(kSetAnimationPosition, setAnimationPosition);
-			OP		(kSetPhaseVar, setPhaseVar);
-			OP		(kSetAnimationLoop, setAnimationLoop);
-			OP		(kSetAnimationSpeed, setAnimationSpeed);
-			OP		(kStub138, stub138);
-			OP		(kScreenChangeScreenPatch, changeScreenPatch);
-			OP		(kGetFreeInventorySpace, getInventoryFreeSpace);
-			OP		(kSetStringSystemVariable, setStringSystemVariable);
-			OP		(kSetSystemIntegerVariable, setIntegerSystemVariable);
-			OP		(kGetRegionCenterX, getRegionCenterX);
-			OP		(kGetRegionCenterY, getRegionCenterY);
-			OP		(kGetCharacterAnimationPhase, getCharacterAnimationPhase);
-			OP		(kGetIntegerSystemVariable, getIntegerSystemVariable);
-			OP		(kGetRandomNumber, getRandomNumber);
-			OP		(kAppendToSharedStorage, appendToSharedStorage);
-			OP		(kAppendNameToSharedStorage, appendNameToSharedStorage);
-			OP		(kCloneName, cloneName);
-			OP		(kGetCloneVar, getCloneVar);
-			OP		(kSetCloneVar, setCloneVar);
-			OP		(kStub152, stub152);
-			OP		(kStub153, stub153);
-			OP		(kStub154, stub154);
-			OP		(kStub155, stub155);
-			OP		(kStub160, stub160);
-			OP		(kStub166, stub166);
-			OP		(kSetDelay, setDelay);
-			OP		(kStub172, stub172);
-			OP		(kStub173, stub173);
-			OP		(kStub174, stub174);
-			OP		(kStub192, stub192);
-			OP		(kQuit, quit);
-			OP		(kExitProcessCreatePatch, exitProcessCreatePatch);
-			OP		(kDisableInventory, disableInventory);
-			OP		(kEnableInventory, enableInventory);
-			OP		(kLoadPreviousScreen, loadPreviousScreen);
-			OP		(kMoveScreenObject, moveScreenObject);
-			OP		(kGetObjectId, getObjectId);
-			OP		(kSetTileSize, setTileSize);
-			OP		(kGenerateRegion, generateRegion);
-			OP		(kGetMaxInventorySize, getMaxInventorySize);
-			OP		(kAppendInventoryObjectNameToSharedSpace, appendInventoryObjectNameToSharedSpace);
-			OP		(kSetObjectTile, setObjectTile);
-			OP		(kInventoryHasObject, inventoryHasObject);
-			OP		(kSetObjectText, setObjectText);
-			OP		(kSetObjectScale, setObjectScale);
-			OP		(kStub191, disableMouseAreas);
-			OP		(kStub193, stub193);
-			OP		(kStub194, stub194);
-			OP		(kGetObjectPictureWidth, getObjectPictureWidth);
-			OP		(kGetObjectPictureHeight, getObjectPictureHeight);
-			OP		(kLoadPicture, loadPicture);
-			OP		(kStub199, stub199);
-			OP		(kSetSampleVolumeAndPan, setSampleVolumeAndPan);
-			OP		(kPlaySound, playSound);
-			OP		(kStub215, stub215);
-			OP		(kStub216, stub216);
-			OP		(kStub217, stub217);
-			OP		(kStopCharacter, stopCharacter);
-			OP		(kPlayAnimationWithPhaseVar, playAnimationWithPhaseVar);
-			OP		(kStub223, stub223);
-			OP		(kStub225, stub225);
-			OP		(kFadeObject, fadeObject);
-			OP		(kLoadFont, loadFont);
-			OP_U	(kStub201Handler, stub201);
-			OP_U	(kStub202ScreenHandler, stub202);
-			OP		(kPlayFilm, playFilm);
-			OP		(kAddMouseArea, addMouseArea);
-			OP		(kFogOnCharacter, fogOnCharacter);
-			OP		(kSetTileIndex, setTileIndex);
-			OP		(kModifyMouseArea, modifyMouseArea);
-			OP_U	(kStub209, stub209);
-			OP_I	(kMoveCharacterNoUserMove, moveCharacter, false);
-			OP_U	(kOnKey, onKey);
-			OP		(kGetSampleVolume, getSampleVolume);
-			OP		(kStub231, stub231);
-			OP		(kStub233, stub233);
-			OP		(kStub235, stub235);
-			OP		(kUserEnabled, userEnabled);
-			OP		(kStub244, stub244);
-			OP		(kInventoryFindObjectByName, inventoryFindObjectByName);
-			OP		(kRunDialog, runDialog);
-			OP		(kHasGlobal, hasGlobal);
-			OP		(kSetDialogForNextFilm, setDialogForNextFilm);
+		switch (op) {
+			OP_UU(kEnter, enter);
+			OP_W(kJumpZImm16, jumpz);
+			OP_W(kJumpImm16, jump);
+			OP(kPop, pop);
+			OP(kDup, dup);
+			OP(kExitProcess, exitProcess);
+			OP(kSuspendProcess, suspend);
+			OP_D(kPushImm32, push);
+			OP_C(kPushImm8, push);
+			OP_W(kPushImm16, push);
+			OP_C(kPushImm8_2, push);
+			OP_W(kPushImm16_2, push);
+			OP_B(kGetGlobalImm8, getGlobal);
+			OP(kPostIncrementGlobal, postIncrementGlobal);
+			OP(kPostDecrementGlobal, postDecrementGlobal);
+			OP(kIncrementGlobalByTop, incrementGlobalByTop);
+			OP(kDecrementGlobalByTop, decrementGlobalByTop);
+			OP(kMultiplyGlobalByTop, multiplyGlobalByTop);
+			OP(kDivideGlobalByTop, divideGlobalByTop);
+			OP(kModGlobalByTop, modGlobalByTop);
+			OP(kShlGlobalByTop, shlGlobalByTop);
+			OP(kShrGlobalByTop, shrGlobalByTop);
+			OP(kAndGlobalByTop, andGlobalByTop);
+			OP(kOrGlobalByTop, orGlobalByTop);
+			OP(kXorGlobalByTop, xorGlobalByTop);
+			OP(kEquals, equals);
+			OP(kNotEquals, notEquals);
+			OP(kGreater, greater);
+			OP(kLess, less);
+			OP(kGreaterOrEquals, greaterOrEquals);
+			OP(kLessOrEquals, lessOrEquals);
+			OP(kAdd, add);
+			OP(kSub, sub);
+			OP(kMul, mul);
+			OP(kDiv, div);
+			OP(kSetGlobal, setGlobal);
+			OP(kBoolOr, boolOr);
+			OP(kBoolAnd, boolAnd);
+			OP(kAnd, bitAnd);
+			OP(kOr, bitOr);
+			OP(kXor, bitXor);
+			OP(kNot, bitNot);
+			OP(kBoolNot, boolNot);
+			OP(kNegate, negate);
+			OP_U(kCallImm16, call);
+			OP_U(kObjectRegisterLookHandler, onLook);
+			OP_U(kObjectRegisterUseHandler, onUse);
+			OP_U(kObjectRegisterHandlerC1, onObjectC1);
+			OP_U(kScreenRegisterHandlerBD, onScreenBD);
+			OP(kLoadMouseCursorFromObject, loadMouseCursorFromObject);
+			OP(kLoadRegionFromObject, loadRegionFromObject);
+			OP(kLoadPictureFromObject, loadPictureFromObject);
+			OP(kLoadAnimationFromObject, loadAnimationFromObject);
+			OP(kShowCharacter, showCharacter);
+			OP(kEnableCharacter, enableCharacter);
+			OP_I(kMoveCharacterUserMove, moveCharacter, true);
+			OP(kLeaveCharacter, leaveCharacter);
+			OP(kSetCharacter, setCharacter);
+			OP(kPointCharacter, pointCharacter);
+			OP(kDisableUser, disableUser);
+			OP(kEnableUser, enableUser);
+			OP(kUpdatePhaseVarOr2, updatePhaseVarOr2);
+			OP(kUpdatePhaseVarOr4, updatePhaseVarOr4);
+			OP(kStub102, stub102);
+			OP(kClearScreen, clearScreen);
+			OP(kInventoryClear, inventoryClear);
+			OP(kLoadMouse, loadMouse);
+			OP(kInventoryAddObject, inventoryAddObject);
+			OP(kSetNextScreenSaveInHistory, setNextScreenSaveInHistory);
+			OP_U(kObjectRegisterUseObjectHandler, onObjectUse);
+			OP(kStub82, stub82);
+			OP(kStub83, stub83);
+			OP(kAnimateCharacter, animateCharacter);
+			OP(kLoadCharacter, loadCharacter);
+			OP(kSetObjectZ, setObjectZ);
+			OP(kUpdateScreenHeightToDisplay, updateScreenHeightToDisplay);
+			OP(kLoadTextFromObject, loadTextFromObject);
+			OP(kScreenSetHeight, setScreenHeight);
+			OP(kScreenLoadObject, loadScreenObject);
+			OP(kScreenLoadRegion, loadScreenRegion);
+			OP(kScreenCloneObject, cloneObject);
+			OP(kSetNextScreen, setNextScreen);
+			OP(kScreenRemoveObject, removeScreenObject);
+			OP(kLoadAnimation, loadAnimation);
+			OP(kLoadSample, loadSample);
+			OP(kSetAnimationPaused, setAnimationPaused);
+			OP(kPlayerSay, playerSay);
+			OP(kNPCSay, npcSay);
+			OP(kSetTimer, setTimer);
+			OP(kProcessResetState, resetState);
+			OP(kSetAnimationZ, setAnimationZ);
+			OP(kSetCycles, setCycles);
+			OP(kSetRandom, setRandom);
+			OP(kStub133, stub133);
+			OP(kSetAnimationPosition, setAnimationPosition);
+			OP(kSetPhaseVar, setPhaseVar);
+			OP(kSetAnimationLoop, setAnimationLoop);
+			OP(kSetAnimationSpeed, setAnimationSpeed);
+			OP(kStub138, stub138);
+			OP(kScreenChangeScreenPatch, changeScreenPatch);
+			OP(kGetFreeInventorySpace, getInventoryFreeSpace);
+			OP(kSetStringSystemVariable, setStringSystemVariable);
+			OP(kSetSystemIntegerVariable, setIntegerSystemVariable);
+			OP(kGetRegionCenterX, getRegionCenterX);
+			OP(kGetRegionCenterY, getRegionCenterY);
+			OP(kGetCharacterAnimationPhase, getCharacterAnimationPhase);
+			OP(kGetIntegerSystemVariable, getIntegerSystemVariable);
+			OP(kGetRandomNumber, getRandomNumber);
+			OP(kAppendToSharedStorage, appendToSharedStorage);
+			OP(kAppendNameToSharedStorage, appendNameToSharedStorage);
+			OP(kCloneName, cloneName);
+			OP(kGetCloneVar, getCloneVar);
+			OP(kSetCloneVar, setCloneVar);
+			OP(kStub152, stub152);
+			OP(kStub153, stub153);
+			OP(kStub154, stub154);
+			OP(kStub155, stub155);
+			OP(kStub160, stub160);
+			OP(kStub166, stub166);
+			OP(kSetDelay, setDelay);
+			OP(kStub172, stub172);
+			OP(kStub173, stub173);
+			OP(kStub174, stub174);
+			OP(kStub192, stub192);
+			OP(kQuit, quit);
+			OP(kExitProcessCreatePatch, exitProcessCreatePatch);
+			OP(kDisableInventory, disableInventory);
+			OP(kEnableInventory, enableInventory);
+			OP(kLoadPreviousScreen, loadPreviousScreen);
+			OP(kMoveScreenObject, moveScreenObject);
+			OP(kGetObjectId, getObjectId);
+			OP(kSetTileSize, setTileSize);
+			OP(kGenerateRegion, generateRegion);
+			OP(kGetMaxInventorySize, getMaxInventorySize);
+			OP(kAppendInventoryObjectNameToSharedSpace, appendInventoryObjectNameToSharedSpace);
+			OP(kSetObjectTile, setObjectTile);
+			OP(kInventoryHasObject, inventoryHasObject);
+			OP(kSetObjectText, setObjectText);
+			OP(kSetObjectScale, setObjectScale);
+			OP(kStub191, disableMouseAreas);
+			OP(kStub193, stub193);
+			OP(kStub194, stub194);
+			OP(kGetObjectPictureWidth, getObjectPictureWidth);
+			OP(kGetObjectPictureHeight, getObjectPictureHeight);
+			OP(kLoadPicture, loadPicture);
+			OP(kStub199, stub199);
+			OP(kSetSampleVolumeAndPan, setSampleVolumeAndPan);
+			OP(kPlaySound, playSound);
+			OP(kStub215, stub215);
+			OP(kStub216, stub216);
+			OP(kStub217, stub217);
+			OP(kStopCharacter, stopCharacter);
+			OP(kPlayAnimationWithPhaseVar, playAnimationWithPhaseVar);
+			OP(kStub223, stub223);
+			OP(kStub225, stub225);
+			OP(kFadeObject, fadeObject);
+			OP(kLoadFont, loadFont);
+			OP_U(kStub201Handler, stub201);
+			OP_U(kStub202ScreenHandler, stub202);
+			OP(kPlayFilm, playFilm);
+			OP(kAddMouseArea, addMouseArea);
+			OP(kFogOnCharacter, fogOnCharacter);
+			OP(kSetTileIndex, setTileIndex);
+			OP(kModifyMouseArea, modifyMouseArea);
+			OP_U(kStub209, stub209);
+			OP_I(kMoveCharacterNoUserMove, moveCharacter, false);
+			OP_U(kOnKey, onKey);
+			OP(kGetSampleVolume, getSampleVolume);
+			OP(kStub231, stub231);
+			OP(kStub233, stub233);
+			OP(kStub235, stub235);
+			OP(kUserEnabled, userEnabled);
+			OP(kStub244, stub244);
+			OP(kInventoryFindObjectByName, inventoryFindObjectByName);
+			OP(kRunDialog, runDialog);
+			OP(kHasGlobal, hasGlobal);
+			OP(kSetDialogForNextFilm, setDialogForNextFilm);
 		default:
 			error("%s: %08x: unknown opcode 0x%02x (%u)", _object->getName().c_str(), _ip - 1, (unsigned)op, (unsigned)op);
 			_status = kStatusError;
@@ -1474,4 +1494,4 @@ ProcessExitCode Process::execute() {
 	return _exitCode;
 }
 
-}
+} // namespace AGDS

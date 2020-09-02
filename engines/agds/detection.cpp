@@ -26,9 +26,8 @@
 #include "engines/advancedDetector.h"
 
 static const PlainGameDescriptor agdsGames[] = {
-	{ "black-mirror", "Black Mirror" },
-	{ 0, 0 }
-};
+    {"black-mirror", "Black Mirror"},
+    {0, 0}};
 
 #include "agds/detection_tables.h"
 
@@ -50,24 +49,22 @@ public:
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual bool hasFeature(MetaEngineFeature f) const
-	{
-		switch(f) {
-			case kSavesSupportThumbnail:
-			case kSavesUseExtendedFormat:
-			case kSimpleSavesNames:
-			case kSupportsDeleteSave:
-			case kSupportsListSaves:
-				return true;
-			default:
-				return false;
+	virtual bool hasFeature(MetaEngineFeature f) const {
+		switch (f) {
+		case kSavesSupportThumbnail:
+		case kSavesUseExtendedFormat:
+		case kSimpleSavesNames:
+		case kSupportsDeleteSave:
+		case kSupportsListSaves:
+			return true;
+		default:
+			return false;
 		}
 	}
 
 	int getMaximumSaveSlot() const {
 		return 99;
 	}
-
 };
 
 bool AGDSMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -78,7 +75,7 @@ bool AGDSMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(AGDS)
-	REGISTER_PLUGIN_DYNAMIC(AGDS, PLUGIN_TYPE_ENGINE, AGDSMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(AGDS, PLUGIN_TYPE_ENGINE, AGDSMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(AGDS, PLUGIN_TYPE_ENGINE, AGDSMetaEngine);
+REGISTER_PLUGIN_STATIC(AGDS, PLUGIN_TYPE_ENGINE, AGDSMetaEngine);
 #endif

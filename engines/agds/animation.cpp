@@ -30,16 +30,15 @@
 
 namespace AGDS {
 
-Animation::Animation():
-	_flic(), _frames(0), _loop(false), _cycles(1), _phase(0), _paused(true), _speed(100), _z(0) {
+Animation::Animation() : _flic(), _frames(0), _loop(false), _cycles(1), _phase(0), _paused(true), _speed(100), _z(0) {
 }
 
 Animation::~Animation() {
 	delete _flic;
 }
 
-bool Animation::load(Common::SeekableReadStream* stream) {
-	Video::FlicDecoder * flic = new Video::FlicDecoder;
+bool Animation::load(Common::SeekableReadStream *stream) {
+	Video::FlicDecoder *flic = new Video::FlicDecoder;
 	if (flic->loadStream(stream)) {
 		_frames = flic->getFrameCount();
 		delete _flic;
@@ -52,17 +51,17 @@ bool Animation::load(Common::SeekableReadStream* stream) {
 	}
 }
 
-void Animation::updatePhaseVar(AGDSEngine & engine) {
+void Animation::updatePhaseVar(AGDSEngine &engine) {
 	if (!_phaseVar.empty())
 		engine.setGlobal(_phaseVar, _phase);
 }
 
-void Animation::paint(AGDSEngine & engine, Graphics::Surface & backbuffer, Common::Point dst) {
+void Animation::paint(AGDSEngine &engine, Graphics::Surface &backbuffer, Common::Point dst) {
 	if (_paused || _phase == -1) {
 		return;
 	}
 
-	const Graphics::Surface * frame = _flic->decodeNextFrame();
+	const Graphics::Surface *frame = _flic->decodeNextFrame();
 	if (!frame) {
 		if (!_loop && _phase >= _cycles * _frames) {
 			_phase = -1; //end of animation
@@ -78,7 +77,7 @@ void Animation::paint(AGDSEngine & engine, Graphics::Surface & backbuffer, Commo
 	++_phase;
 	updatePhaseVar(engine);
 
-	Graphics::TransparentSurface * c = engine.convertToTransparent(frame->convertTo(engine.pixelFormat(), _flic->getPalette()));
+	Graphics::TransparentSurface *c = engine.convertToTransparent(frame->convertTo(engine.pixelFormat(), _flic->getPalette()));
 	dst += _position;
 	Common::Rect srcRect = c->getRect();
 	if (Common::Rect::getBlitRect(dst, srcRect, backbuffer.getRect()))
@@ -88,12 +87,10 @@ void Animation::paint(AGDSEngine & engine, Graphics::Surface & backbuffer, Commo
 }
 
 int Animation::width() const {
-	return _flic? _flic->getWidth(): 0;
+	return _flic ? _flic->getWidth() : 0;
 }
 int Animation::height() const {
-	return _flic? _flic->getHeight(): 0;
+	return _flic ? _flic->getHeight() : 0;
 }
 
-
-
-}
+} // namespace AGDS

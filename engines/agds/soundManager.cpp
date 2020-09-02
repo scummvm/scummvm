@@ -23,63 +23,62 @@
 #include "agds/soundManager.h"
 #include "agds/agds.h"
 #include "agds/object.h"
-#include "common/debug.h"
-#include "common/file.h"
-#include "common/textconsole.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/vorbis.h"
 #include "audio/decoders/wave.h"
+#include "common/debug.h"
+#include "common/file.h"
+#include "common/textconsole.h"
 
 namespace AGDS {
 
-	void SoundManager::tick() {
-		for(SoundList::iterator i = _sounds.begin(); i != _sounds.end(); ) {
-			Sound & sound = *i;
-			if (!_mixer->isSoundHandleActive(sound.handle)) {
-				//FIXME: re-enable me later
-				// if (!sound.phaseVar.empty())
-				// 	_engine->setGlobal(sound.phaseVar, -1);
-				i = _sounds.erase(i);
-			} else {
-				// if (!sound.phaseVar.empty())
-				// 	_engine->setGlobal(sound.phaseVar, _engine->getGlobal(sound.phaseVar) + 1);
-				++i;
-			}
+void SoundManager::tick() {
+	for (SoundList::iterator i = _sounds.begin(); i != _sounds.end();) {
+		Sound &sound = *i;
+		if (!_mixer->isSoundHandleActive(sound.handle)) {
+			//FIXME: re-enable me later
+			// if (!sound.phaseVar.empty())
+			// 	_engine->setGlobal(sound.phaseVar, -1);
+			i = _sounds.erase(i);
+		} else {
+			// if (!sound.phaseVar.empty())
+			// 	_engine->setGlobal(sound.phaseVar, _engine->getGlobal(sound.phaseVar) + 1);
+			++i;
 		}
 	}
-
-	void SoundManager::stopAll() {
-		_mixer->stopAll();
-		for(SoundList::iterator i = _sounds.begin(); i != _sounds.end(); ++i) {
-			Sound & sound = *i;
-			_engine->setGlobal(sound.phaseVar, 0);
-		}
-	}
-
-
-	void SoundManager::play(const Common::String &resource, const Common::String &phaseVar) {
-		Common::File *file = new Common::File();
-		if (!file->open(resource))
-			error("no sound %s", resource.c_str());
-
-		Common::String lname(resource);
-		lname.toLowercase();
-
-		Audio::SeekableAudioStream *stream = NULL;
-		if (lname.hasSuffix(".ogg")) {
-			stream = Audio::makeVorbisStream(file, DisposeAfterUse::YES);
-		} else if (lname.hasSuffix(".wav")) {
-			stream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
-		}
-		if (!stream) {
-			warning("could not play sound %s", resource.c_str());
-			delete file;
-			return;
-		}
-		Audio::SoundHandle handle;
-		_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, stream);
-
-		_sounds.push_back(Sound(resource, phaseVar, handle));
-	}
-
 }
+
+void SoundManager::stopAll() {
+	_mixer->stopAll();
+	for (SoundList::iterator i = _sounds.begin(); i != _sounds.end(); ++i) {
+		Sound &sound = *i;
+		_engine->setGlobal(sound.phaseVar, 0);
+	}
+}
+
+void SoundManager::play(const Common::String &resource, const Common::String &phaseVar) {
+	Common::File *file = new Common::File();
+	if (!file->open(resource))
+		error("no sound %s", resource.c_str());
+
+	Common::String lname(resource);
+	lname.toLowercase();
+
+	Audio::SeekableAudioStream *stream = NULL;
+	if (lname.hasSuffix(".ogg")) {
+		stream = Audio::makeVorbisStream(file, DisposeAfterUse::YES);
+	} else if (lname.hasSuffix(".wav")) {
+		stream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
+	}
+	if (!stream) {
+		warning("could not play sound %s", resource.c_str());
+		delete file;
+		return;
+	}
+	Audio::SoundHandle handle;
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, stream);
+
+	_sounds.push_back(Sound(resource, phaseVar, handle));
+}
+
+} // namespace AGDS

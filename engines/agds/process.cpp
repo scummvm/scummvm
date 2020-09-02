@@ -27,13 +27,12 @@
 
 namespace AGDS {
 
-Process::Process(AGDSEngine *engine, ObjectPtr object, unsigned ip, Process * caller) :
-	_engine(engine), _parentScreen(engine->getCurrentScreenName()), _object(object), _ip(ip), 
-	_status(kStatusActive), _caller(caller), _exitCode(kExitCodeDestroy),
-	_tileWidth(16), _tileHeight(16), _tileResource(0), _tileIndex(0),
-	_timer(0),
-	_animationCycles(1), _animationLoop(false), _animationZ(0), _animationPaused(false), _animationSpeed(100),
-	_waitForCall(false) {
+Process::Process(AGDSEngine *engine, ObjectPtr object, unsigned ip, Process *caller) : _engine(engine), _parentScreen(engine->getCurrentScreenName()), _object(object), _ip(ip),
+                                                                                       _status(kStatusActive), _caller(caller), _exitCode(kExitCodeDestroy),
+                                                                                       _tileWidth(16), _tileHeight(16), _tileResource(0), _tileIndex(0),
+                                                                                       _timer(0),
+                                                                                       _animationCycles(1), _animationLoop(false), _animationZ(0), _animationPaused(false), _animationSpeed(100),
+                                                                                       _waitForCall(false) {
 }
 
 void Process::debug(const char *str, ...) {
@@ -104,16 +103,15 @@ Common::String Process::popText() {
 void Process::activate(bool active) {
 	if (active) {
 		_object->activate(active);
-		switch(_status)
-		{
-			case kStatusActive:
-				break;
-			case kStatusPassive:
-				_status = kStatusActive;
-				break;
-			default:
-				error("process in invalid state %d", _status);
-				_status = kStatusError;
+		switch (_status) {
+		case kStatusActive:
+			break;
+		case kStatusPassive:
+			_status = kStatusActive;
+			break;
+		default:
+			error("process in invalid state %d", _status);
+			_status = kStatusError;
 		}
 	} else {
 		if (_caller) {
@@ -125,4 +123,4 @@ void Process::activate(bool active) {
 	}
 }
 
-}
+} // namespace AGDS

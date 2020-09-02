@@ -27,19 +27,19 @@
 
 namespace AGDS {
 
-Inventory::Inventory(): _entries(kMaxSize), _enabled(false) { }
-Inventory::~Inventory() { }
+Inventory::Inventory() : _entries(kMaxSize), _enabled(false) {}
+Inventory::~Inventory() {}
 
 int Inventory::free() const {
 	int free = 0;
-	for(uint i = 0; i < _entries.size(); ++i)
+	for (uint i = 0; i < _entries.size(); ++i)
 		if (!_entries[i])
 			++free;
 	return free;
 }
 
 int Inventory::add(ObjectPtr object) {
-	for(uint i = 0; i < _entries.size(); ++i) {
+	for (uint i = 0; i < _entries.size(); ++i) {
 		if (!_entries[i]) {
 			_entries[i] = object;
 			return i;
@@ -49,17 +49,16 @@ int Inventory::add(ObjectPtr object) {
 }
 
 int Inventory::find(const Common::String &name) const {
-	for(uint i = 0; i < _entries.size(); ++i)
+	for (uint i = 0; i < _entries.size(); ++i)
 		if (_entries[i] && _entries[i]->getName() == name)
 			return i;
 	return -1;
 }
 
 void Inventory::clear() {
-	for(uint i = 0; i < _entries.size(); ++i) {
+	for (uint i = 0; i < _entries.size(); ++i) {
 		_entries[i].reset();
 	}
 }
 
-
-}
+} // namespace AGDS
