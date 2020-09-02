@@ -96,6 +96,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved colors in Apple //gs Maniac Mansion.
    - Fixed crash when entering garage in Apple //gs Maniac Mansion.
 
+ Supernova:
+   - Improved English translation.
+
  Sky:
    - Fixed syncing of music volume between native settings panel and ScummVM configuration.
 
