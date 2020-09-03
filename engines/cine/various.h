@@ -49,7 +49,7 @@ void setTextWindow(uint16 param1, uint16 param2, uint16 param3, uint16 param4);
 
 extern int16 disableSystemMenu;
 extern bool inMenu;
-extern bool runOnlyUntilCopyProtectionCheck;
+extern bool runOnlyUntilFreePartRangeFirst200;
 
 extern CommandeType currentSaveName[kMaxSavegames];
 
