@@ -7,16 +7,16 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-03 01:28+0000\n"
-"PO-Revision-Date: 2020-09-01 06:43+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2020-09-03 17:43+0000\n"
+"Last-Translator: Ivan Lukyanov <greencis@mail.ru>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
 "Language: ru_RU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Russian\n"
 
@@ -96,11 +96,11 @@ msgstr "Выберите директорию с файлами игры"
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:227
 msgid "From: "
-msgstr "От: "
+msgstr "Из: "
 
 #: gui/downloaddialog.cpp:53 gui/downloaddialog.cpp:228
 msgid "To: "
-msgstr "К: "
+msgstr "В: "
 
 #: gui/downloaddialog.cpp:64
 msgid "Cancel download"
@@ -152,8 +152,8 @@ msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
 msgstr ""
-"Не удалось создать директорию для загрузки: указанная директория уже "
-"содержит файл с таким же именем."
+"Не могу создать каталог для загрузки: в указанном каталоге уже есть файл с "
+"таким же именем."
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:351
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:43 gui/launcher.cpp:487
@@ -186,7 +186,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:215
 #, c-format
 msgid "Downloaded %s %s / %s %s"
-msgstr "Загружено %s %s / %s %s"
+msgstr "Загружено %s %s из %s %s"
 
 #: gui/downloaddialog.cpp:222
 #, c-format
@@ -207,7 +207,7 @@ msgid ""
 "Short game identifier used for referring to saved games and running the game "
 "from the command line"
 msgstr ""
-"Короткий идентификатор, используемый для имён сохранений игр и для запуска "
+"Короткий идентификатор, используемый в именах сохранённых игр и для запуска "
 "из командной строки"
 
 #: gui/editgamedialog.cpp:141
@@ -227,7 +227,7 @@ msgstr "Полное название игры"
 #: gui/editgamedialog.cpp:148
 msgctxt "lowres"
 msgid "Name:"
-msgstr "Назв:"
+msgstr "Назв.:"
 
 #: gui/editgamedialog.cpp:152 engines/mohawk/dialogs.cpp:138
 #: engines/mohawk/dialogs.cpp:339
@@ -239,7 +239,7 @@ msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
 msgstr ""
-"Язык игры. Изменение этой настройки не превратит игру на английском в русскую"
+"Язык игры. Эта настройка не превратит игру на английском языке в русскую"
 
 #: gui/editgamedialog.cpp:154 gui/editgamedialog.cpp:168 gui/options.cpp:1203
 #: gui/options.cpp:1223 gui/options.cpp:1236 gui/options.cpp:1250
@@ -397,7 +397,7 @@ msgstr "Сохранения игр:"
 #: gui/editgamedialog.cpp:329 gui/options.cpp:1940 gui/options.cpp:1942
 #: gui/options.cpp:1943
 msgid "Specifies where your saved games are put"
-msgstr "Указывает путь к сохранениям игры"
+msgstr "Указывает путь к сохранённым играм"
 
 #: gui/editgamedialog.cpp:328 gui/options.cpp:1942
 msgctxt "lowres"
@@ -431,20 +431,20 @@ msgstr "Выберите SoundFont"
 
 #: gui/editgamedialog.cpp:548
 msgid "Select additional game directory"
-msgstr "Выберите дополнительную директорию игры"
+msgstr "Выберите дополнительный каталог игры"
 
 #: gui/editgamedialog.cpp:561 gui/options.cpp:2397
 msgid "Select directory for saved games"
-msgstr "Выберите директорию для сохранений"
+msgstr "Выберите каталог для сохранённых игр"
 
 #: gui/editgamedialog.cpp:567
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
 msgstr ""
-"Синхронизация сохранений игр не работает с директориями не по умолчанию. "
-"Если вы хотите, чтобы ваши сохранения игр синхронизировались, используйте "
-"директорию по умолчанию."
+"Синхронизация сохранённых игр не работает с каталогом не по умолчанию. Если "
+"вы хотите, чтобы ваши сохранённые игры синхронизировались, используйте "
+"каталог по умолчанию."
 
 #: gui/editgamedialog.cpp:593
 msgid "This game ID is already taken. Please choose another one."
@@ -456,7 +456,7 @@ msgstr "Автор:"
 
 #: gui/editrecorddialog.cpp:60
 msgid "Notes:"
-msgstr "Заметки:"
+msgstr "Примечания:"
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:74
 msgid "Ok"
@@ -500,7 +500,7 @@ msgstr "Уровень:"
 
 #: gui/fluidsynth-dialog.cpp:101
 msgid "Chorus"
-msgstr "Хор"
+msgstr "Хорус"
 
 #: gui/fluidsynth-dialog.cpp:105
 msgid "N:"
@@ -764,7 +764,7 @@ msgstr "Загрузить"
 #: gui/launcher.cpp:362
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr ""
-"Эта директория пока не может быть использована. В неё сейчас загружаются "
+"Этот каталог пока не может быть использован, в него сейчас загружаются "
 "данные!"
 
 #: gui/launcher.cpp:373
@@ -772,7 +772,7 @@ msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
 msgstr ""
-"Вы действительно хотите запустить детектор всех игр? Это потенциально может "
+"Вы действительно хотите запустить поиск всех игр? Это потенциально может "
 "добавить большое количество игр."
 
 #: gui/launcher.cpp:395
@@ -785,15 +785,15 @@ msgstr "Вы хотите загрузить игру?"
 
 #: gui/launcher.cpp:487
 msgid "This game does not support loading games from the launcher."
-msgstr "Эта игра не поддерживает загрузку сохранений через главное меню."
+msgstr "Эта игра не поддерживает загрузку сохранённых игр через главное меню."
 
 #: gui/launcher.cpp:491
 msgid "ScummVM could not find any engine capable of running the selected game!"
-msgstr "ScummVM не может найти движок для запуска выбранной игры!"
+msgstr "ScummVM не смог найти движок для запуска выбранной игры!"
 
 #: gui/launcher.cpp:556
 msgid "ScummVM could not find any game in the specified directory!"
-msgstr "ScummVM не может найти игру в указанной директории!"
+msgstr "ScummVM не смог найти игру в указанном каталоге!"
 
 #: gui/launcher.cpp:571
 msgid "Unknown variant"
@@ -805,7 +805,7 @@ msgstr "Выберите игру:"
 
 #: gui/massadd.cpp:76 gui/massadd.cpp:79
 msgid "... progress ..."
-msgstr "... ищу ..."
+msgstr "... поиск ..."
 
 #: gui/massadd.cpp:266
 msgid "Scan complete!"
@@ -814,17 +814,17 @@ msgstr "Поиск закончен!"
 #: gui/massadd.cpp:269
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games."
-msgstr "Найдено %d новых игр, пропущено %d ранее добавленных игр."
+msgstr "Найдено новых игр: %d, пропущено ранее добавленных игр: %d."
 
 #: gui/massadd.cpp:273
 #, c-format
 msgid "Scanned %d directories ..."
-msgstr "Просмотрено %d директорий ..."
+msgstr "Просмотрено каталогов: %d..."
 
 #: gui/massadd.cpp:276
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games ..."
-msgstr "Найдено %d новых игр, пропущено %d ранее добавленных игр ..."
+msgstr "Найдено новых игр: %d, пропущено ранее добавленных игр: %d..."
 
 #: gui/message.cpp:135 gui/options.cpp:2121
 msgid "Open URL"
@@ -890,7 +890,7 @@ msgstr "режим корректировки соотношения сторон не может быть изменён"
 
 #: gui/options.cpp:650
 msgid "the fullscreen setting could not be changed"
-msgstr "полноэкранный режим не может быть изменён"
+msgstr "не удалось изменить полноэкранный режим"
 
 #: gui/options.cpp:656
 msgid "the filtering setting could not be changed"
@@ -898,7 +898,7 @@ msgstr "режим фильтрации не может быть изменён"
 
 #: gui/options.cpp:1071
 msgid "Show On-screen control"
-msgstr "Показать управление экраном"
+msgstr "Показать экранное управление"
 
 #: gui/options.cpp:1075
 msgid "Touchpad mouse mode"
@@ -959,7 +959,7 @@ msgstr "Аппаратный шейдер:"
 
 #: gui/options.cpp:1200
 msgid "Different shaders give different visual effects"
-msgstr "Различные шейдеры дают различные эффекты"
+msgstr "Различные шейдеры дают различные зрительные эффекты"
 
 #: gui/options.cpp:1220
 msgid "Graphics mode:"
@@ -987,7 +987,7 @@ msgstr "Фильтрование графики"
 
 #: gui/options.cpp:1261
 msgid "Use linear filtering when scaling graphics"
-msgstr "Использовать линейную фильтрацию для увеличения разрешения"
+msgstr "Использовать линейную фильтрацию для увеличения графики"
 
 #: gui/options.cpp:1264
 msgid "Aspect ratio correction"
@@ -1030,7 +1030,7 @@ msgstr "Эмулятор AdLib:"
 
 #: gui/options.cpp:1301 gui/options.cpp:1302
 msgid "AdLib is used for music in many games"
-msgstr "Звуковая карта AdLib используется многими играми"
+msgstr "Звуковая карта AdLib используется многими играми для музыки"
 
 #: gui/options.cpp:1315
 msgid "GM device:"
@@ -1038,11 +1038,11 @@ msgstr "Устройство GM:"
 
 #: gui/options.cpp:1315
 msgid "Specifies default sound device for General MIDI output"
-msgstr "Указывает выходное звуковое устройство для MIDI"
+msgstr "Указывает выходное звуковое устройство для General MIDI по умолчанию"
 
 #: gui/options.cpp:1326
 msgid "Don't use General MIDI music"
-msgstr "Не использовать музыку для General MIDI"
+msgstr "Не использовать музыку General MIDI"
 
 #: gui/options.cpp:1337 gui/options.cpp:1399
 msgid "Use first available device"
@@ -1086,15 +1086,15 @@ msgstr ""
 
 #: gui/options.cpp:1375
 msgid "True Roland MT-32 (disable GM emulation)"
-msgstr "Настоящий Roland MT-32 (запретить эмуляцию GM)"
+msgstr "Настоящий Roland MT-32 (выключить эмуляцию GM)"
 
 #: gui/options.cpp:1375 gui/options.cpp:1377
 msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
 msgstr ""
-"Отметьте, если у вас подключено Roland-совместимое звуковое устройство и вы "
-"хотите его использовать"
+"Отметьте, если у вас подключено совместимое с Roland звуковое устройство и "
+"вы хотите его использовать"
 
 #: gui/options.cpp:1377
 msgctxt "lowres"
@@ -1103,7 +1103,7 @@ msgstr "Настоящий Roland MT-32 (без эмуляции GM)"
 
 #: gui/options.cpp:1380
 msgid "Roland GS device (enable MT-32 mappings)"
-msgstr "Устройство Roland GS (разрешить маппинг MT-32)"
+msgstr "Устройство Roland GS (включить маппинг MT-32)"
 
 #: gui/options.cpp:1380
 msgid ""
@@ -1115,7 +1115,7 @@ msgstr ""
 
 #: gui/options.cpp:1389
 msgid "Don't use Roland MT-32 music"
-msgstr "Не использовать музыку для MT-32"
+msgstr "Не использовать музыку Roland MT-32"
 
 #: gui/options.cpp:1416
 msgid "Text and speech:"
@@ -1135,7 +1135,7 @@ msgstr "Оба"
 
 #: gui/options.cpp:1424
 msgid "Subtitle speed:"
-msgstr "Скорость титров:"
+msgstr "Скорость субтитров:"
 
 #: gui/options.cpp:1426
 msgctxt "lowres"
@@ -1166,7 +1166,7 @@ msgstr "Скорость титров:"
 
 #: gui/options.cpp:1450
 msgid "Music volume:"
-msgstr "Громк. музыки:"
+msgstr "Громкость музыки:"
 
 #: gui/options.cpp:1452
 msgctxt "lowres"
@@ -1175,7 +1175,7 @@ msgstr "Громк. музыки:"
 
 #: gui/options.cpp:1459
 msgid "Mute all"
-msgstr "Выкл. всё"
+msgstr "Выключить всё"
 
 #: gui/options.cpp:1462
 msgid "SFX volume:"
@@ -1228,12 +1228,12 @@ msgstr "ЛВС"
 
 #: gui/options.cpp:1827
 msgid "Accessibility"
-msgstr "доступность"
+msgstr "Доступность"
 
 #: gui/options.cpp:1829
 msgctxt "lowres"
 msgid "Accessibility"
-msgstr "доступность"
+msgstr "Доступность"
 
 #: gui/options.cpp:1839
 msgid "Apply"
@@ -1348,14 +1348,14 @@ msgctxt "lowres"
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
-"4. Хранилище еще не включено. Проверьте правильность имени пользователя и "
+"4. Хранилище ещё не включено. Проверьте правильность имени пользователя и "
 "включите его:"
 
 #: gui/options.cpp:2087
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
-"4. Хранилище еще не включено. Проверьте правильность имени пользователя и "
+"4. Хранилище ещё не включено. Проверьте правильность имени пользователя и "
 "включите его:"
 
 #: gui/options.cpp:2088
@@ -1365,7 +1365,7 @@ msgstr "Включить хранилище"
 #: gui/options.cpp:2088
 msgid "Confirm you want to use this account for this storage"
 msgstr ""
-"Подтвердите, что вы хотите использовать эту учетную запись для этого "
+"Подтвердите, что вы хотите использовать эту учётную запись для данного "
 "хранилища"
 
 #: gui/options.cpp:2090 backends/platform/wii/options.cpp:114
@@ -1395,7 +1395,7 @@ msgstr "Последняя синхронизация:"
 #: gui/options.cpp:2096
 msgid "When was the last time saved games were synced with this storage"
 msgstr ""
-"Когда в последний раз сохраненные игры синхронизировались с этим хранилищем"
+"Когда в последний раз сохранённые игры синхронизировались с этим хранилищем"
 
 #: gui/options.cpp:2097 gui/options.cpp:2822
 msgid "<never>"
@@ -1405,13 +1405,13 @@ msgstr "<никогда>"
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
-"Сохраненные игры синхронизируются автоматически при запуске, после "
+"Сохранённые игры синхронизируются автоматически при запуске, после "
 "сохранения и при загрузке."
 
 #: gui/options.cpp:2101
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
-"Сохраненные игры синхронизируются автоматически при запуске, после "
+"Сохранённые игры синхронизируются автоматически при запуске, после "
 "сохранения и при загрузке."
 
 #: gui/options.cpp:2102
@@ -1420,7 +1420,7 @@ msgstr "Синхронизировать сейчас"
 
 #: gui/options.cpp:2102
 msgid "Start saved games sync"
-msgstr "Запустите синхронизацию сохраненных игр"
+msgstr "Запустить синхронизацию сохранённых игр"
 
 #: gui/options.cpp:2105
 msgctxt "lowres"
@@ -1443,18 +1443,18 @@ msgstr "Открывает менеджер загрузок"
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr ""
-"Чтобы изменить учетную запись для этого хранилища, отключите и подключитесь "
-"снова:"
+"Чтобы изменить учётную запись для этого хранилища, отключитесь и "
+"подключитесь снова:"
 
 #: gui/options.cpp:2113
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr ""
-"Чтобы изменить учетную запись для этого хранилища, отключите и подключитесь "
-"снова:"
+"Чтобы изменить учётную запись для этого хранилища, отключитесь и "
+"подключитесь снова:"
 
 #: gui/options.cpp:2114
 msgid "Disconnect"
-msgstr "Отключить"
+msgstr "Отключиться"
 
 #: gui/options.cpp:2114
 msgid "Stop using this storage on this device"
