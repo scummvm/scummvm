@@ -1330,7 +1330,7 @@ void ComprehendGame::read_input() {
 
 		// Empty line, so toggle picture window visibility
 		g_comprehend->toggleGraphics();
-		g_comprehend->print(_("Picture window toggled\n"));
+		g_comprehend->print("Picture window toggled\n");
 
 		_updateFlags |= UPDATE_GRAPHICS;
 		update_graphics();

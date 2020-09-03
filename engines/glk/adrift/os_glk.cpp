@@ -2811,7 +2811,7 @@ static int gsc_startup_code(Common::SeekableReadStream *game_stream, int restore
 		 * Display a brief loading game message; here we have to use a timeout
 		 * to ensure that the text is flushed to Glk.
 		 */
-		g_vm->glk_put_string(_("Loading game...\n"));
+		g_vm->glk_put_string("Loading game...\n");
 		if (g_vm->glk_gestalt(gestalt_Timer, 0)) {
 			event_t event;
 
