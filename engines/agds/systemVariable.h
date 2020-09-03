@@ -26,6 +26,11 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 
+namespace Common {
+	class ReadStream;
+	class WriteStream;
+}
+
 namespace AGDS {
 
 class SystemVariable {
@@ -37,6 +42,8 @@ public:
 	virtual void setString(const Common::String &value) = 0;
 	virtual void setInteger(int value) = 0;
 	virtual void reset() = 0;
+	virtual void read(Common::ReadStream * stream) = 0;
+	virtual void write(Common::WriteStream * stream) const = 0;
 };
 
 class IntegerSystemVariable : public SystemVariable {
@@ -55,6 +62,8 @@ public:
 	virtual void reset() {
 		_value = _defaultValue;
 	}
+	virtual void read(Common::ReadStream * stream);
+	virtual void write(Common::WriteStream * stream) const;
 };
 
 class StringSystemVariable : public SystemVariable {
@@ -72,6 +81,8 @@ public:
 	virtual void reset() {
 		_value = _defaultValue;
 	}
+	virtual void read(Common::ReadStream * stream);
+	virtual void write(Common::WriteStream * stream) const;
 };
 
 } // End of namespace AGDS

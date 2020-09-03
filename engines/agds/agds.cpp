@@ -601,63 +601,56 @@ Graphics::TransparentSurface *AGDSEngine::convertToTransparent(Graphics::Surface
 	return t;
 }
 
+void AGDSEngine::addSystemVar(const Common::String &name, SystemVariable *var) {
+	_systemVarList.push_back(name);
+	_systemVars[name] = var;
+}
+
+
 void AGDSEngine::initSystemVariables() {
-	_systemVars["inventory_scr"] = new StringSystemVariable();
-	_systemVars["escape_scr"] = new StringSystemVariable("none");
-	_systemVars["load_scr"] = new StringSystemVariable();
-	_systemVars["save_scr"] = new StringSystemVariable();
-
-	_systemVars["gfx_bright"] = new IntegerSystemVariable(50);
-	_systemVars["gfx_contrast"] = new IntegerSystemVariable(50);
-
-	_systemVars["sound_volume"] = new IntegerSystemVariable(100);
-	_systemVars["music_volume"] = new IntegerSystemVariable(80);
-	_systemVars["tell_volume"] = new IntegerSystemVariable(100);
-
-	_systemVars["text_speed"] = new IntegerSystemVariable(70);
-	_systemVars["tell_mode"] = new IntegerSystemVariable(3);
-	_systemVars["version"] = new IntegerSystemVariable(1);
-
-	_systemVars["objtext_x"] = new IntegerSystemVariable(-1);
-	_systemVars["objtext_y"] = new IntegerSystemVariable(-1);
-	_systemVars["objtext_mode"] = new IntegerSystemVariable(-1);
-	_systemVars["objtext_font"] = new IntegerSystemVariable(-1);
-
-	_systemVars["inv_open"] = new StringSystemVariable();
-	_systemVars["inv_close"] = new StringSystemVariable();
-	_systemVars["inv_region"] = new StringSystemVariable();
-
-	_systemVars["anim_zoom"] = new IntegerSystemVariable(1);
-
-	_systemVars["screen_curtain"] = new IntegerSystemVariable(1);
-	_systemVars["music_curtain"] = new IntegerSystemVariable(1);
-	_systemVars["sound_curtain"] = new IntegerSystemVariable(1);
-
-	_systemVars["old_music_volume"] = new IntegerSystemVariable();
-	_systemVars["old_sound_volume"] = new IntegerSystemVariable();
-	_systemVars["old_screen_fade"] = new IntegerSystemVariable();
-
-	_systemVars["subtitle_x"] = new IntegerSystemVariable();
-	_systemVars["subtitle_y"] = new IntegerSystemVariable();
-	_systemVars["subtitle_type"] = new IntegerSystemVariable(3);
-	_systemVars["subtitles"] = new IntegerSystemVariable();
-
-	_systemVars["tell_font"] = new IntegerSystemVariable();
-	_systemVars["npc_tell_font"] = new IntegerSystemVariable();
-	_systemVars["edit_font"] = new IntegerSystemVariable();
-	_systemVars["delay_after_tell"] = new IntegerSystemVariable();
-
-	_systemVars["scroll_factor"] = new IntegerSystemVariable(30);
-
-	_systemVars["dialog_var"] = new IntegerSystemVariable();
-	_systemVars["subtitle_width"] = new IntegerSystemVariable(-1);
-	_systemVars["flash_mouse"] = new IntegerSystemVariable();
-	_systemVars["scale_char"] = new IntegerSystemVariable();
-
-	_systemVars["init_resources"] = new StringSystemVariable();
-	_systemVars["done_resources"] = new StringSystemVariable();
-	_systemVars["tell_close_inv"] = new IntegerSystemVariable(1);
-	_systemVars["gamma"] = new IntegerSystemVariable();
+	addSystemVar("inventory_scr", new StringSystemVariable());
+	addSystemVar("escape_scr", new StringSystemVariable("none"));
+	addSystemVar("load_scr", new StringSystemVariable());
+	addSystemVar("save_scr", new StringSystemVariable());
+	addSystemVar("gfx_bright", new IntegerSystemVariable(50));
+	addSystemVar("gfx_contrast", new IntegerSystemVariable(50));
+	addSystemVar("sound_volume", new IntegerSystemVariable(100));
+	addSystemVar("music_volume", new IntegerSystemVariable(80));
+	addSystemVar("tell_volume", new IntegerSystemVariable(100));
+	addSystemVar("text_speed", new IntegerSystemVariable(70));
+	addSystemVar("tell_mode", new IntegerSystemVariable(3));
+	addSystemVar("version", new IntegerSystemVariable(1));
+	addSystemVar("objtext_x", new IntegerSystemVariable(-1));
+	addSystemVar("objtext_y", new IntegerSystemVariable(-1));
+	addSystemVar("objtext_mode", new IntegerSystemVariable(-1));
+	addSystemVar("objtext_font", new IntegerSystemVariable(-1));
+	addSystemVar("inv_open", new StringSystemVariable());
+	addSystemVar("inv_close", new StringSystemVariable());
+	addSystemVar("inv_region", new StringSystemVariable());
+	addSystemVar("anim_zoom", new IntegerSystemVariable(1));
+	addSystemVar("screen_curtain", new IntegerSystemVariable(1));
+	addSystemVar("music_curtain", new IntegerSystemVariable(1));
+	addSystemVar("sound_curtain", new IntegerSystemVariable(1));
+	addSystemVar("old_music_volume", new IntegerSystemVariable());
+	addSystemVar("old_sound_volume", new IntegerSystemVariable());
+	addSystemVar("old_screen_fade", new IntegerSystemVariable());
+	addSystemVar("subtitle_x", new IntegerSystemVariable());
+	addSystemVar("subtitle_y", new IntegerSystemVariable());
+	addSystemVar("subtitle_type", new IntegerSystemVariable(3));
+	addSystemVar("subtitles", new IntegerSystemVariable());
+	addSystemVar("tell_font", new IntegerSystemVariable());
+	addSystemVar("npc_tell_font", new IntegerSystemVariable());
+	addSystemVar("edit_font", new IntegerSystemVariable());
+	addSystemVar("delay_after_tell", new IntegerSystemVariable());
+	addSystemVar("scroll_factor", new IntegerSystemVariable(30));
+	addSystemVar("dialog_var", new IntegerSystemVariable());
+	addSystemVar("subtitle_width", new IntegerSystemVariable(-1));
+	addSystemVar("flash_mouse", new IntegerSystemVariable());
+	addSystemVar("scale_char", new IntegerSystemVariable());
+	addSystemVar("init_resources", new StringSystemVariable());
+	addSystemVar("done_resources", new StringSystemVariable());
+	addSystemVar("tell_close_inv", new IntegerSystemVariable(1));
+	addSystemVar("gamma", new IntegerSystemVariable());
 }
 
 SystemVariable *AGDSEngine::getSystemVariable(const Common::String &name) {
@@ -816,6 +809,15 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 	}
 
 	{
+		// System vars
+		Common::ScopedPtr<Common::SeekableReadStream> agds_d(db.getEntry(file, "__agds_d"));
+		for(uint i = 0, n = _systemVarList.size(); i < n; ++i) {
+			Common::String & name = _systemVarList[i];
+			_systemVars[name]->read(agds_d.get());
+		}
+	}
+
+	{
 		// Global vars
 		_globals.clear();
 		Common::ScopedPtr<Common::SeekableReadStream> agds_v(db.getEntry(file, "__agds_v"));
@@ -859,8 +861,8 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 			agds_i->read(name.data(), 32);
 			int unk = agds_i->readUint32LE();
 			int present = agds_i->readUint32LE();
-			debug("inventory: %s %d %d", name.data(), unk, present);
 			if (!name.empty() && present) {
+				debug("inventory: %s %d %d", name.data(), unk, present);
 				_inventory.add(loadObject(name.data()));
 			}
 		}
