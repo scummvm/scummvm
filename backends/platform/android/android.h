@@ -28,6 +28,8 @@
 #include "backends/platform/android/portdefs.h"
 #include "common/fs.h"
 #include "common/archive.h"
+#include "common/mutex.h"
+#include "common/ustr.h"
 #include "audio/mixer_intern.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
@@ -100,7 +102,7 @@ extern void checkGlError(const char *expr, const char *file, int line);
 #define GLTHREADCHECK do {  } while (false)
 #endif
 
-class OSystem_Android : public ModularBackend, Common::EventSource {
+class OSystem_Android : public ModularMutexBackend, public ModularGraphicsBackend, Common::EventSource {
 private:
 	// passed from the dark side
 	int _audio_sample_rate;
@@ -127,9 +129,6 @@ private:
 
 	void setupKeymapper();
 
-protected:
-	virtual Common::EventSource *getDefaultEventSource() { return this; }
-
 public:
 	OSystem_Android(int audio_sample_rate, int audio_buffer_size);
 	virtual ~OSystem_Android();
@@ -140,10 +139,6 @@ public:
 	virtual void setFeatureState(OSystem::Feature f, bool enable);
 	virtual bool getFeatureState(OSystem::Feature f);
 
-	virtual PaletteManager *getPaletteManager() override {
-		return dynamic_cast<AndroidGraphicsManager *>(_graphicsManager);
-	}
-
 public:
 	void pushEvent(int type, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6);
 	bool shouldGenerateMouseEvents();
@@ -152,7 +147,7 @@ private:
 	Common::Queue<Common::Event> _event_queue;
 	Common::Event _queuedEvent;
 	uint32 _queuedEventTime;
-	MutexRef _event_queue_lock;
+	Common::Mutex *_event_queue_lock;
 
 	Common::Point _touch_pt_down, _touch_pt_scroll, _touch_pt_dt;
 	int _eventScaleX;
@@ -174,6 +169,8 @@ public:
 	virtual void pushEvent(const Common::Event &event);
 	virtual void pushKeyPressEvent(Common::Event &event);
 	virtual bool pollEvent(Common::Event &event);
+	virtual Common::KeymapperDefaultBindings *getKeymapperDefaultBindings();
+
 	virtual uint32 getMillis(bool skipRecord = false);
 	virtual void delayMillis(uint msecs);
 
@@ -189,10 +186,11 @@ public:
 											int priority = 0);
 	virtual bool openUrl(const Common::String &url);
 	virtual bool hasTextInClipboard();
-	virtual Common::String getTextFromClipboard();
-	virtual bool setTextInClipboard(const Common::String &text);
+	virtual Common::U32String getTextFromClipboard();
+	virtual bool setTextInClipboard(const Common::U32String &text);
 	virtual bool isConnectionLimited();
 	virtual Common::String getSystemLanguage() const;
+	virtual char *convertEncoding(const char *to, const char *from, const char *string, size_t length);
 
 	// ResidualVM specific method
 	virtual void launcherInitSize(uint w, uint h);

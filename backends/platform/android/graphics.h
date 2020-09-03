@@ -36,7 +36,7 @@ public:
 
 	void updateScreen() override;
 
-	void displayMessageOnOSD(const char *msg);
+	void displayMessageOnOSD(const Common::U32String &msg);
 
 	bool notifyMousePosition(Common::Point &mouse);
 	Common::Point getMousePosition() { return Common::Point(_cursorX, _cursorY); }

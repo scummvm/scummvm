@@ -71,6 +71,9 @@ AssetInputStream::AssetInputStream(AAssetManager *as, const Common::String &path
 }
 
 AssetInputStream::~AssetInputStream() {
+	if (_asset != NULL) {
+		AAsset_close(_asset);
+	}
 }
 
 void AssetInputStream::close() {
@@ -134,7 +137,7 @@ int AndroidAssetArchive::listMembers(Common::ArchiveMemberList &member_list) con
 	dirs.push_back("shaders");
 	int count = 0;
 	for (const auto& currentDir : dirs) {
-		AAssetDir *dir = AAssetManager_openDir(_am, currentDir.c_str());
+		AAssetDir *dir = AAssetManager_openDir(_am, "");
 		const char *file = AAssetDir_getNextFileName(dir);
 
 		while (file) {
