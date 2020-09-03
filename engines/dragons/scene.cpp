@@ -115,7 +115,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 	}
 
 	_actorManager->clearActorFlags(2);
-	//TODO sub_8003fadc(); might be fade related
+	//TODO stopAndCloseSceneVab()
 
 	_vm->_cursor->setActorFlag400();
 	_vm->_inventory->setActorFlag400();
