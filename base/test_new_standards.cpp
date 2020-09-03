@@ -52,6 +52,11 @@
 #include "common/hash-str.h"
 #include "common/rect.h"
 
+#ifndef DONT_TEST_UNICODE_STRING_LITERAL
+const char16_t *u16str = u"\u00DAnicode string";
+const char32_t *u32str = U"\u00DAnicode string";
+#endif
+
 #ifndef DONT_TEST_INITIALIZIER_LIST1
 #ifndef USE_INITIALIZIER_LIST_REPLACEMENT
 #include <initializer_list>

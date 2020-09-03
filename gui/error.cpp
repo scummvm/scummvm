@@ -28,14 +28,14 @@
 
 namespace GUI {
 
-void displayErrorDialog(const char *text) {
+void displayErrorDialog(const Common::U32String &text) {
 	GUI::MessageDialog alert(text);
 	alert.runModal();
 }
 
-void displayErrorDialog(const Common::Error &error, const char *extraText) {
-	Common::String errorText(extraText);
-	errorText += " ";
+void displayErrorDialog(const Common::Error &error, const Common::U32String &extraText) {
+	Common::U32String errorText(extraText);
+	errorText += Common::U32String(" ");
 	errorText += _(error.getDesc());
 	GUI::MessageDialog alert(errorText);
 	alert.runModal();

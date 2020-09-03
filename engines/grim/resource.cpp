@@ -91,15 +91,15 @@ ResourceLoader::ResourceLoader() {
 
 		// Check if the update has been correctly loaded
 		if (!SearchMan.hasArchive("update")) {
-			const char *errorMessage = nullptr;
+			Common::U32String errorMessage;
 			if (g_grim->getGameType() == GType_GRIM) {
 				errorMessage = _("The original patch of Grim Fandango\n"
 								"is missing. Please download it from\n"
-								"http://www.residualvm.org/downloads/\n"
+								"https://www.residualvm.org/downloads/\n"
 								"and put it in the game data files directory");
 			} else if (g_grim->getGameType() == GType_MONKEY4) {
 				errorMessage = _("The original patch of Escape from Monkey Island is missing. \n"
-								"Please download it from http://www.residualvm.org/downloads/\n"
+								"Please download it from https://www.residualvm.org/downloads/\n"
 								"and put it in the game data files directory.\n"
 								"Pay attention to download the correct version according to the game's language");
 			}
@@ -118,7 +118,7 @@ ResourceLoader::ResourceLoader() {
 			SearchMan.listMatchingMembers(files, "voice001.lab");
 		} else {
 			if (!SearchMan.hasFile("residualvm-grim-patch.lab"))
-				error("%s", _("residualvm-grim-patch.lab not found"));
+				error("%s", "residualvm-grim-patch.lab not found");
 
 			SearchMan.listMatchingMembers(files, "residualvm-grim-patch.lab");
 			SearchMan.listMatchingMembers(files, "data005.lab");
@@ -140,14 +140,14 @@ ResourceLoader::ResourceLoader() {
 			//In this case put it in the top of the list
 			const char *datausr_name = "datausr.lab";
 			if (SearchMan.hasFile(datausr_name) && ConfMan.getBool("datausr_load")) {
-				warning("%s", _("Loading datausr.lab. Please note that the ResidualVM-team doesn't provide support for using such patches"));
+				warning("%s", "Loading datausr.lab. Please note that the ResidualVM-team doesn't provide support for using such patches");
 				files.push_front(SearchMan.getMember(datausr_name));
 			}
 		}
 	} else if (g_grim->getGameType() == GType_MONKEY4) {
 		const char *emi_patches_filename = "residualvm-emi-patch.m4b";
 		if (!SearchMan.hasFile(emi_patches_filename))
-			error(_("%s not found"), emi_patches_filename);
+			error("%s not found", emi_patches_filename);
 
 		SearchMan.listMatchingMembers(files, emi_patches_filename);
 
@@ -178,14 +178,14 @@ ResourceLoader::ResourceLoader() {
 			//In this case put it in the top of the list
 			const char *datausr_name = "datausr.m4b";
 			if (SearchMan.hasFile(datausr_name) && ConfMan.getBool("datausr_load")) {
-				warning("%s", _("Loading datausr.m4b. Please note that the ResidualVM-team doesn't provide support for using such patches"));
+				warning("%s", "Loading datausr.m4b. Please note that the ResidualVM-team doesn't provide support for using such patches");
 				files.push_front(SearchMan.getMember(datausr_name));
 			}
 		}
 	}
 
 	if (files.empty())
-		error("%s", _("Cannot find game data - check configuration file"));
+		error("%s", "Cannot find game data - check configuration file");
 
 	//load labs
 	int priority = files.size();

@@ -93,30 +93,30 @@ AboutDialog::AboutDialog()
 	int i;
 
 	for (i = 0; i < 1; i++)
-		_lines.push_back("");
+		_lines.push_back(U32String(""));
 
 	Common::String version("C0""ResidualVM ");
 	version += gScummVMVersion;
 	_lines.push_back(version);
 
-	Common::String date = Common::String::format(_("(built on %s)"), gScummVMBuildDate);
-	_lines.push_back("C2" + date);
+	Common::U32String date = Common::U32String::format(_("(built on %s)"), gScummVMBuildDate);
+	_lines.push_back(U32String("C2") + date);
 
 	for (i = 0; i < ARRAYSIZE(copyright_text); i++)
-		addLine(copyright_text[i]);
+		addLine(U32String(copyright_text[i]));
 
-	Common::String features("C1");
+	Common::U32String features("C1");
 	features += _("Features compiled in:");
-	addLine(features.c_str());
+	addLine(features);
 	Common::String featureList("C0");
 	featureList += gScummVMFeatures;
-	addLine(featureList.c_str());
+	addLine(featureList);
 
-	_lines.push_back("");
+	_lines.push_back(U32String(""));
 
-	Common::String engines("C1");
+	Common::U32String engines("C1");
 	engines += _("Available engines:");
-	addLine(engines.c_str());
+	addLine(engines);
 
 	const PluginList &plugins = EngineMan.getPlugins();
 	PluginList::const_iterator iter = plugins.begin();
@@ -124,52 +124,37 @@ AboutDialog::AboutDialog()
 		Common::String str;
 		str = "C0";
 		str += (*iter)->getName();
-		addLine(str.c_str());
+		addLine(str);
 
 		str = "C2";
 		str += (*iter)->get<MetaEngine>().getOriginalCopyright();
-		addLine(str.c_str());
+		addLine(str);
 
 		//addLine("");
 	}
 
 	for (i = 0; i < ARRAYSIZE(gpl_text); i++)
-		addLine(gpl_text[i]);
+		addLine(U32String(gpl_text[i]));
 
-	_lines.push_back("");
+	_lines.push_back(U32String(""));
 
 	for (i = 0; i < ARRAYSIZE(credits); i++)
-		addLine(credits[i]);
+		addLine(U32String(credits[i]));
 }
 
-void AboutDialog::addLine(const char *str) {
-	if (*str == 0) {
-		_lines.push_back("");
+void AboutDialog::addLine(const U32String &str) {
+	U32String::const_iterator strBeginItr = str.begin();
+	if (*strBeginItr == 0) {
+		_lines.push_back(U32String(""));
 	} else {
-		Common::String format(str, 2);
-		str += 2;
+		Common::U32String format(str.begin(), str.begin() + 2);
+		strBeginItr += 2;
+		U32String renderStr(strBeginItr, str.end());
 
-		static Common::String asciiStr;
-		if (format[0] == 'A') {
-			bool useAscii = false;
-#ifdef USE_TRANSLATION
-			// We could use TransMan.getCurrentCharset() but rather than compare strings
-			// it is easier to use TransMan.getCharsetMapping() (non null in case of non
-			// ISO-8859-1 mapping)
-			useAscii = (TransMan.getCharsetMapping() != nullptr);
-#endif
-			if (useAscii)
-				asciiStr = str;
-			return;
-		}
-		StringArray wrappedLines;
-		if (!asciiStr.empty()) {
-			g_gui.getFont().wordWrapText(asciiStr, _w - 2 * _xOff, wrappedLines);
-			asciiStr.clear();
-		} else
-			g_gui.getFont().wordWrapText(str, _w - 2 * _xOff, wrappedLines);
+		U32StringArray wrappedLines;
+		g_gui.getFont().wordWrapText(renderStr, _w - 2 * _xOff, wrappedLines);
 
-		for (StringArray::const_iterator i = wrappedLines.begin(); i != wrappedLines.end(); ++i) {
+		for (U32StringArray::const_iterator i = wrappedLines.begin(); i != wrappedLines.end(); ++i) {
 			_lines.push_back(format + *i);
 		}
 	}
@@ -203,11 +188,14 @@ void AboutDialog::drawDialog(DrawLayer layerToDraw) {
 	int y = _y + _yOff - (_scrollPos % _lineHeight);
 
 	for (int line = firstLine; line < lastLine; line++) {
-		const char *str = _lines[line].c_str();
+		U32String str = _lines[line];
+		U32String::const_iterator strLineItrBegin = _lines[line].begin();
+		U32String::const_iterator strLineItrEnd = _lines[line].end();
+
 		Graphics::TextAlign align = Graphics::kTextAlignCenter;
 		ThemeEngine::WidgetStateInfo state = ThemeEngine::kStateEnabled;
-		if (*str) {
-			switch (str[0]) {
+		if (strLineItrBegin != strLineItrEnd) {
+			switch (*strLineItrBegin) {
 			case 'C':
 				align = Graphics::kTextAlignCenter;
 				break;
@@ -221,7 +209,7 @@ void AboutDialog::drawDialog(DrawLayer layerToDraw) {
 				error("Unknown scroller opcode '%c'", str[0]);
 				break;
 			}
-			switch (str[1]) {
+			switch (*(strLineItrBegin + 1)) {
 			case '0':
 				state = ThemeEngine::kStateEnabled;
 				break;
@@ -242,16 +230,17 @@ void AboutDialog::drawDialog(DrawLayer layerToDraw) {
 			default:
 				error("Unknown color type '%c'", str[1]);
 			}
-			str += 2;
+			strLineItrBegin += 2;
 		}
 		// Trim leading whitespaces if center mode is on
 		if (align == Graphics::kTextAlignCenter)
-			while (*str && *str == ' ')
-				str++;
+			while (strLineItrBegin != strLineItrEnd && *strLineItrBegin == ' ')
+				strLineItrBegin++;
 
-		if (*str)
+		U32String renderStr(strLineItrBegin, strLineItrEnd);
+		if (!renderStr.empty())
 			g_gui.theme()->drawText(Common::Rect(_x + _xOff, y, _x + _w - _xOff, y + g_gui.theme()->getFontHeight()),
-			                        str, state, align, ThemeEngine::kTextInversionNone, 0, false,
+			                        renderStr, state, align, ThemeEngine::kTextInversionNone, 0, false,
 			                        ThemeEngine::kFontStyleBold, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
 		y += _lineHeight;
 	}

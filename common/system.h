@@ -27,6 +27,7 @@
 #include "common/noncopyable.h"
 #include "common/array.h" // For OSystem::getGlobalKeymaps()
 #include "common/list.h" // For OSystem::getSupportedFormats()
+#include "common/ustr.h"
 #include "graphics/pixelformat.h"
 #include "graphics/mode.h"
 
@@ -151,7 +152,7 @@ protected:
 
 	/**
 	 * No default value is provided for _eventManager by OSystem.
-	 * However, BaseBackend::initBackend() does set a default value
+	 * However, EventsBaseBackend::initBackend() does set a default value
 	 * if none has been set before.
 	 *
 	 * @note _eventManager is deleted by the OSystem destructor.
@@ -223,7 +224,7 @@ protected:
 	 * Used by the default clipboard implementation, for backends that don't
 	 * implement clipboard support.
 	 */
-	Common::String _clipboard;
+	Common::U32String _clipboard;
 
 	// WORKAROUND. The 014bef9eab9fb409cfb3ec66830e033e4aaa29a9 triggered a bug
 	// in the osx_intel toolchain. Adding this variable fixes it.
@@ -244,6 +245,11 @@ public:
 	 * Destoy this OSystem instance.
 	 */
 	void destroy();
+
+	/**
+	 * The following method should be called once, after g_system is created.
+	 */
+	virtual void init() {}
 
 	/**
 	 * The following method is called once, from main.cpp, after all
@@ -1448,7 +1454,7 @@ public:
 	 *
 	 * @param msg	the message to display on screen
 	 */
-	virtual void displayMessageOnOSD(const char *msg) = 0;
+	virtual void displayMessageOnOSD(const Common::U32String &msg) = 0;
 
 	/**
 	 * Display an icon indicating background activity
@@ -1625,7 +1631,7 @@ public:
 	 *
 	 * @return clipboard contents ("" if hasTextInClipboard() == false)
 	 */
-	virtual Common::String getTextFromClipboard() { return _clipboard; }
+	virtual Common::U32String getTextFromClipboard() { return _clipboard; }
 
 	/**
 	 * Set the content of the clipboard to the given string.
@@ -1636,7 +1642,7 @@ public:
 	 *
 	 * @return true if the text was properly set in the clipboard, false otherwise
 	 */
-	virtual bool setTextInClipboard(const Common::String &text) { _clipboard = text; return true; }
+	virtual bool setTextInClipboard(const Common::U32String &text) { _clipboard = text; return true; }
 
 	/**
 	 * Open the given Url in the default browser (if available on the target

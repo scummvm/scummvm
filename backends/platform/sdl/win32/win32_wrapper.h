@@ -43,6 +43,7 @@ bool confirmWindowsVersion(int majorVersion, int minorVersion);
  * Used to interact with Win32 Unicode APIs with no ANSI fallback.
  *
  * @param s Source string
+ * @param c Code Page, by default is CP_ACP (default Windows ANSI code page)
  * @return Converted string
  *
  * @note Return value must be freed by the caller.
@@ -53,13 +54,23 @@ wchar_t *ansiToUnicode(const char *s, uint codePage = CP_ACP);
  * Used to interact with Win32 Unicode APIs with no ANSI fallback.
  *
  * @param s Source string
+ * @param c Code Page, by default is CP_ACP (default Windows ANSI code page)
  * @return Converted string
  *
  * @note Return value must be freed by the caller.
  */
 char *unicodeToAnsi(const wchar_t *s, uint codePage = CP_ACP);
 
-uint getCurrentCharset();
+/**
+ * Converts a C string encoded in UTF8-multibyte char into a Windows wide-character string.
+ * Used to interact with Win32 Unicode APIs with no ANSI fallback.
+ *
+ * @param s Source string, encoded in UTF8
+ * @return Converted string
+ *
+ * @note Return value must be freed by the caller.
+ */
+wchar_t *UTF8ToUnicode(const char *s);
 
 }
 

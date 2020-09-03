@@ -135,7 +135,7 @@ done
 #
 #ResidualVM defaults: sdlnet=no libcurl=no flac=no seq_midi=no sndio=no timidity=no
 # a52=no faad=no fluidsynth=no mt32emu=no lua=no build_scalers=no
-# build_hq_scalers=no nuked_opl=no tts=no osxdockplugin=no
+# build_hq_scalers=no nuked_opl=no tts=no osxdockplugin=no discord=no
 #
 # Default lib behavior yes/no/auto
 _sdl=no
@@ -178,6 +178,7 @@ _iconv=auto
 _tts=no
 _gtk=auto
 _fribidi=auto
+_discord=no
 _test_cxx11=no
 # Default option behavior yes/no
 _debug_build=auto
@@ -192,6 +193,7 @@ _build_scalers=no
 _build_hq_scalers=no
 _enable_prof=no
 _enable_asan=no
+_enable_tsan=no
 _global_constructors=no
 _no_undefined_var_template=no
 _no_pragma_pack=no
@@ -227,6 +229,7 @@ _windres=windres
 _stagingpath="staging"
 _win32path="c:/residualvm"
 _amigaospath="Games:ResidualVM"
+_morphospath="PROGDIR:"
 _staticlibpath=
 _xcodetoolspath=
 _sparklepath=
@@ -450,7 +453,7 @@ find_sdlconfig() {
 				echo $_sdlconfig
 				# Save the prefix
 				_sdlpath=$path_dir
-				if test `basename $path_dir` = bin ; then
+				if test `basename $path_dir` = bin || test `basename $path_dir` = sbin ; then
 					_sdlpath=`dirname $path_dir`
 				fi
 				# break at first sdl-config found in path
@@ -1010,6 +1013,7 @@ Optional Features:
   --enable-release-mode    enable building in release mode (without optimizations)
   --enable-optimizations   enable optimizations
   --enable-asan            enable Address Sanitizer for memory-related debugging
+  --enable-tsan            enable Thread Sanitizer for thread-related debugging
   --enable-profiling       enable profiling
   --enable-plugins         enable the support for dynamic plugins
   --default-dynamic        make plugins dynamic by default
@@ -1127,6 +1131,9 @@ Optional Libraries:
 
   --with-iconv-prefix=DIR    prefix where libiconv is installed (optional)
   --disable-iconv        disable libiconv encoding conversion library [autodetect]
+
+  --with-discord-prefix=DIR   prefix where discord-rpc is installed (optional)
+  --disable-discord       disable Discord rich presence integration [autodetect]
 
 Some influential environment variables:
   AR                 archiver command
@@ -1414,6 +1421,11 @@ for ac_option in $@; do
 		ICONV_CFLAGS="-I$arg/include"
 		ICONV_LIBS="-L$arg/lib"
 		;;
+	--with-discord-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		DISCORD_CFLAGS="-I$arg/include"
+		DISCORD_LIBS="-L$arg/lib"
+		;;
 	--backend=*)
 		_backend=`echo $ac_option | cut -d '=' -f 2`
 		;;
@@ -1458,6 +1470,9 @@ for ac_option in $@; do
 		;;
 	--enable-asan)
 		_enable_asan=yes
+		;;
+	--enable-tsan)
+		_enable_tsan=yes
 		;;
 	--with-sdl-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -1714,6 +1729,11 @@ openpandora)
 	;;
 ppc-amigaos)
 	_host_os=amigaos
+	_host_cpu=powerpc
+	_host_alias=$_host
+	;;
+ppc-morphos)
+	_host_os=morphos
 	_host_cpu=powerpc
 	_host_alias=$_host
 	;;
@@ -2146,7 +2166,7 @@ if test "$have_gcc" = yes ; then
 		case $_host_os in
 		# newlib-based system include files suppress non-C89 function
 		# declarations under __STRICT_ANSI__, undefine it
-		3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | mint* | n64 | psp | ps2 | ps3 | psp2 | switch | tizen | wii )
+		3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | mint* | n64 | psp | ps3 | psp2 | switch | wii )
 			append_var CXXFLAGS "-U__STRICT_ANSI__"
 			;;
 		*)
@@ -2536,6 +2556,24 @@ case $_host_os in
 		append_var CXXFLAGS "-Wno-format"
 		add_line_to_config_mk 'AMIGAOS = 1'
 		_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
+		_nuked_opl=no
+		;;
+	morphos*)
+		if test "$_debug_build" = no; then
+			_optimization_level=-O2
+		fi
+		append_var LDFLAGS "-Wl,--export-dynamic"
+		append_var LDFLAGS "-L/usr/local/lib"
+		append_var CXXFLAGS "-D__MORPHOS_SHAREDLIBS"
+		# We have to use 'long' for our 4 byte typedef because MorphOS already typedefs (u)int32
+		# as (unsigned) long, and consequently we'd get a compiler error otherwise.
+		type_4_byte='long'
+		# Supress format warnings as the long 4 byte causes noisy warnings.
+		append_var CXXFLAGS "-Wno-format"
+		add_line_to_config_mk 'MORPHOS = 1'
+		_port_mk="backends/platform/sdl/morphos/morphos.mk"
+		# for use SDL2
+		_sdlconfig=sdl2-config
 		_nuked_opl=no
 		;;
 	android)
@@ -3353,6 +3391,16 @@ if test -n "$_host"; then
 
 			_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
 			;;
+		ppc-morphos)
+			# PPC Linker requires this to fix relocation errors
+			append_var CXXFLAGS "-mlongcall"
+
+			# Only static builds link successfully on buildbot
+			LDFLAGS=`echo $LDFLAGS | sed 's/-use-dynld//'`
+			append_var LDFLAGS "-static"
+
+			_port_mk="backends/platform/sdl/morphos/morphos.mk"
+			;;
 		ps3)
 			_timidity=no
 			_vkeybd=yes
@@ -3766,7 +3814,7 @@ esac
 #
 echo_n "Checking if host is POSIX compliant... "
 case $_host_os in
-	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps3 | psp2 | psp | riscos | wii)
+	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | morphos | n64 | ps3 | psp2 | psp | riscos | wii)
 		_posix=no
 		;;
 	3ds | android | androidsdl | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | switch | uclinux*)
@@ -3849,7 +3897,7 @@ _mak_plugins='
 PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/3ds/plugin.ld -march=armv6k -mfloat-abi=hard
 '
 		;;
-	amigaos)
+	amigaos | morphos)
 		_plugin_prefix="lib"
 		_plugin_suffix=".so"
 		append_var CXXFLAGS "-fPIC"
@@ -4617,7 +4665,7 @@ if test "$_libcurl" != "no"; then
 		LIBCURL_CFLAGS=`$_libcurlconfig --cflags`
 
 		case $_host_os in
-			amigaos*)
+			amigaos* | morphos*)
 				append_var LIBCURL_LIBS "-lpthread"
 			;;
 			# macOS does not allow static libs, overriding
@@ -5426,6 +5474,25 @@ if test "$_pandocext" = "default"; then
 fi
 
 #
+# Check for Discord
+#
+echocheck "Discord RPC"
+if test "$_discord" = auto ; then
+	_discord=no
+	cat > $TMPC << EOF
+#include <discord_rpc.h>
+int main(void) { Discord_Shutdown(); return 0; }
+EOF
+	cc_check $DISCORD_CFLAGS $DISCORD_LIBS -ldiscord-rpc && _discord=yes
+fi
+if test "$_discord" = yes ; then
+	append_var LIBS "$DISCORD_LIBS -ldiscord-rpc"
+	append_var INCLUDES "$DISCORD_CFLAGS"
+fi
+define_in_config_if_yes "$_discord" 'USE_DISCORD'
+echo "$_discord"
+
+#
 # Enable vkeybd / event recorder
 #
 define_in_config_if_yes $_vkeybd 'ENABLE_VKEYBD'
@@ -5630,10 +5697,23 @@ fi
 echo_n "Enabling Address Sanitizer... "
 
 if test "$_enable_asan" = yes ; then
-	append_var CXXFLAGS "-fsanitize=address -fno-omit-frame-pointer"
-	append_var LDFLAGS "-fsanitize=address -fno-omit-frame-pointer"
+	if test "$_enable_tsan" = yes ; then
+		echo_n "conflicting with tsan, disabling... "
+		_enable_asan=no
+	else
+		append_var CXXFLAGS "-fsanitize=address -fno-omit-frame-pointer"
+		append_var LDFLAGS "-fsanitize=address -fno-omit-frame-pointer"
+	fi
 fi
 echo "$_enable_asan"
+
+echo_n "Enabling Thread Sanitizer... "
+
+if test "$_enable_tsan" = yes ; then
+	append_var CXXFLAGS "-fsanitize=thread"
+	append_var LDFLAGS "-fsanitize=thread"
+fi
+echo "$_enable_tsan"
 
 echo_n "Backend... "
 echo_n "$_backend"
@@ -5957,6 +6037,7 @@ WINDRESFLAGS := $WINDRESFLAGS
 STAGINGPATH=$_stagingpath
 WIN32PATH=$_win32path
 AMIGAOSPATH=$_amigaospath
+MORPHOSPATH=$_morphospath
 STATICLIBPATH=$_staticlibpath
 XCODETOOLSPATH=$_xcodetoolspath
 SPARKLEPATH=$_sparklepath

@@ -64,12 +64,12 @@ RecorderDialog::RecorderDialog() : Dialog("RecorderDialog"), _list(nullptr), _cu
 	_list = new GUI::ListWidget(this, "RecorderDialog.List");
 	_list->setNumberingMode(GUI::kListNumberingOff);
 
-	_deleteButton = new GUI::ButtonWidget(this, "RecorderDialog.Delete", _("Delete"), nullptr, kDeleteCmd);
-	new GUI::ButtonWidget(this, "RecorderDialog.Cancel", _("Cancel"), nullptr, kCloseCmd);
-	new GUI::ButtonWidget(this, "RecorderDialog.Record", _("Record"), nullptr, kRecordCmd);
-	_playbackButton = new GUI::ButtonWidget(this, "RecorderDialog.Playback", _("Playback"), nullptr, kPlaybackCmd);
+	_deleteButton = new GUI::ButtonWidget(this, "RecorderDialog.Delete", _("Delete"), Common::U32String(""), kDeleteCmd);
+	new GUI::ButtonWidget(this, "RecorderDialog.Cancel", _("Cancel"), Common::U32String(""), kCloseCmd);
+	new GUI::ButtonWidget(this, "RecorderDialog.Record", _("Record"), Common::U32String(""), kRecordCmd);
+	_playbackButton = new GUI::ButtonWidget(this, "RecorderDialog.Playback", _("Playback"), Common::U32String(""), kPlaybackCmd);
 
-	_editButton = new GUI::ButtonWidget(this, "RecorderDialog.Edit", _("Edit"), nullptr, kEditRecordCmd);
+	_editButton = new GUI::ButtonWidget(this, "RecorderDialog.Edit", _("Edit"), Common::U32String(""), kEditRecordCmd);
 
 	_editButton->setEnabled(false);
 	_deleteButton->setEnabled(false);
@@ -78,9 +78,9 @@ RecorderDialog::RecorderDialog() : Dialog("RecorderDialog"), _list(nullptr), _cu
 	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
 	_container = new GUI::ContainerWidget(this, "RecorderDialog.Thumbnail");
 	if (g_gui.xmlEval()->getVar("Globals.RecorderDialog.ExtInfo.Visible") == 1) {
-		new GUI::ButtonWidget(this,"RecorderDialog.NextScreenShotButton", "<", nullptr, kPrevScreenshotCmd);
-		new GUI::ButtonWidget(this, "RecorderDialog.PreviousScreenShotButton", ">", nullptr, kNextScreenshotCmd);
-		_currentScreenshotText = new StaticTextWidget(this, "RecorderDialog.currentScreenshot", "0/0");
+		new GUI::ButtonWidget(this,"RecorderDialog.NextScreenShotButton", Common::U32String("<"), Common::U32String(""), kPrevScreenshotCmd);
+		new GUI::ButtonWidget(this, "RecorderDialog.PreviousScreenShotButton", Common::U32String(">"), Common::U32String(""), kNextScreenshotCmd);
+		_currentScreenshotText = new StaticTextWidget(this, "RecorderDialog.currentScreenshot", Common::U32String("0/0"));
 		_authorText = new StaticTextWidget(this, "RecorderDialog.Author", _("Author: "));
 		_notesText = new StaticTextWidget(this, "RecorderDialog.Notes", _("Notes: "));
 	}
@@ -197,10 +197,10 @@ void RecorderDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 void RecorderDialog::updateList() {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::String pattern(_target+".r??");
+	Common::String pattern(_target + ".r??");
 	Common::StringArray files = saveFileMan->listSavefiles(pattern);
 	Common::PlaybackFile file;
-	Common::StringArray namesList;
+	Common::U32StringArray namesList;
 	_fileHeaders.clear();
 	for (Common::StringArray::iterator i = files.begin(); i != files.end(); ++i) {
 		if (file.openRead(*i)) {
@@ -237,8 +237,8 @@ void RecorderDialog::updateSelection(bool redraw) {
 	_currentScreenshot = 0;
 	updateScreenShotsText();
 	if (_list->getSelected() >= 0) {
-		_authorText->setLabel(_("Author: ") + _fileHeaders[_list->getSelected()].author);
-		_notesText->setLabel(_("Notes: ") + _fileHeaders[_list->getSelected()].notes);
+		_authorText->setLabel(_("Author: ") + Common::U32String(_fileHeaders[_list->getSelected()].author));
+		_notesText->setLabel(_("Notes: ") + Common::U32String(_fileHeaders[_list->getSelected()].notes));
 
 		_firstScreenshotUpdate = true;
 		updateScreenshot();

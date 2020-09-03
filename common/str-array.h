@@ -25,13 +25,15 @@
 
 #include "common/array.h"
 #include "common/str.h"
+#include "common/ustr.h"
 
 namespace Common {
 
 /**
  * An array of of strings.
  */
-typedef Array<String> StringArray;
+typedef Array<String>		StringArray;
+typedef Array<U32String>	U32StringArray;
 
 
 } // End of namespace Common

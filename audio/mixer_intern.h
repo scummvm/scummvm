@@ -76,7 +76,7 @@ public:
 	MixerImpl(uint sampleRate);
 	~MixerImpl();
 
-	virtual bool isReady() const { return _mixerReady; }
+	virtual bool isReady() const { Common::StackLock lock(_mutex); return _mixerReady; }
 
 	virtual void playStream(
 		SoundType type,

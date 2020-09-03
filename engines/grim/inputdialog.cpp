@@ -76,23 +76,16 @@ InputDialog::InputDialog(const Common::String &message, const Common::String &st
 	}
 	height += 10;
 	if (_hasTextField) {
-		m_text = new GUI::EditTextWidget(this, 10, height, _w - 20, kLineHeight, string, "input");
+		m_text = new GUI::EditTextWidget(this, 10, height, _w - 20, kLineHeight, Common::U32String(string), Common::U32String("input"));
 		height += kLineHeight + 10;
 	}
 
-	new GUI::ButtonWidget(this, 10, height, buttonWidth, buttonHeight, "Ok", nullptr, GUI::kOKCmd, Common::ASCII_RETURN); // Confirm dialog
-	new GUI::ButtonWidget(this, _w - buttonWidth - 10, height, buttonWidth, buttonHeight, "Cancel", nullptr, GUI::kCloseCmd, Common::ASCII_ESCAPE);   // Cancel dialog
+	new GUI::ButtonWidget(this, 10, height, buttonWidth, buttonHeight, Common::U32String("Ok"), Common::U32String(""), GUI::kOKCmd, Common::ASCII_RETURN); // Confirm dialog
+	new GUI::ButtonWidget(this, _w - buttonWidth - 10, height, buttonWidth, buttonHeight, Common::U32String("Cancel"), Common::U32String(""), GUI::kCloseCmd, Common::ASCII_ESCAPE);   // Cancel dialog
 }
 
-const Common::String &InputDialog::getString() const {
-	if (_hasTextField) {
-		return m_text->getEditString();
-	} else {
-		// TextBox-less dialogs shouldn't need any getString, but
-		// this is needed for safety and to avoid warnings.
-		return _name;
-	}
-
+Common::String InputDialog::getString() {
+	return m_text->getEditString();
 }
 
 void InputDialog::handleKeyDown(Common::KeyState state) {

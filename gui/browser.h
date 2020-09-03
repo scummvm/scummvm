@@ -36,7 +36,7 @@ class CommandSender;
 
 class BrowserDialog : public Dialog {
 public:
-	BrowserDialog(const char *title, bool dirBrowser);
+	BrowserDialog(const Common::U32String &title, bool dirBrowser);
 
 	int runModal() override;
 	void open() override;
@@ -53,9 +53,9 @@ protected:
 	bool _showHidden;
 	CheckboxWidget *_showHiddenWidget;
 
-	Common::FSNode	_choice;
-	Common::String	_title;
-	bool			_isDirBrowser;
+	Common::FSNode		_choice;
+	Common::U32String	_title;
+	bool				_isDirBrowser;
 
 	void updateListing();
 };

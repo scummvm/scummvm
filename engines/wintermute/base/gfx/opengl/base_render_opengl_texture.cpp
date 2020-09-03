@@ -553,7 +553,7 @@ BaseImage *BaseRenderOpenGLTexture::takeScreenshot() {
 
 //////////////////////////////////////////////////////////////////////////
 Common::String BaseRenderOpenGLTexture::getName() const {
-	return "ScummVM-OSystem-renderer";
+	return "ResidualVM-OSystem-renderer";
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -37,14 +37,14 @@ private:
 	EditTextWidget *_authorEdit;
 	EditRecordDialog() : Dialog("EditRecordDialog") {};
 public:
-	EditRecordDialog(const Common::String author, const Common::String name, const Common::String notes);
+	EditRecordDialog(const Common::U32String author, const Common::String name, const Common::String notes);
 	~EditRecordDialog() override;
 
-	const Common::String getAuthor();
+	const Common::U32String getAuthor();
 	const Common::String getNotes();
 	const Common::String getName();
 
-	void setAuthor(const Common::String &author);
+	void setAuthor(const Common::U32String &author);
 	void setNotes(const Common::String &desc);
 	void setName(const Common::String &name);
 

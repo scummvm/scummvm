@@ -25,8 +25,8 @@
 #include "common/translation.h"
 
 MusicDevice::MusicDevice(MusicPluginObject const *musicPlugin, Common::String name, MusicType mt) :
-	_musicDriverName(_(musicPlugin->getName())), _musicDriverId(musicPlugin->getId()),
-	_name(_(name)), _type(mt) {
+	_musicDriverName(musicPlugin->getName()), _musicDriverId(musicPlugin->getId()),
+	_name(name), _type(mt) {
 }
 
 Common::String MusicDevice::getCompleteName() {
@@ -57,5 +57,5 @@ Common::String MusicDevice::getCompleteId() {
 }
 
 MidiDriver::DeviceHandle MusicDevice::getHandle() {
-	return (MidiDriver::DeviceHandle)Common::hashit(getCompleteId().c_str());
+	return (MidiDriver::DeviceHandle)Common::hashit(getCompleteId());
 }

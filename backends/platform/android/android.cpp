@@ -22,6 +22,8 @@
 
 #if defined(__ANDROID__)
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_getenv(a)
+
 // Allow use of stuff in <time.h>
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
@@ -53,10 +55,15 @@
 #include "common/events.h"
 #include "common/config-manager.h"
 
-#include "backends/keymapper/keymapper.h"
+#include "backends/audiocd/default/default-audiocd.h"
+#include "backends/events/default/default-events.h"
 #include "backends/mutex/pthread/pthread-mutex.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
+
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/keymapper-defaults.h"
+#include "backends/keymapper/standard-actions.h"
 
 #include "backends/platform/android/jni-android.h"
 #include "backends/platform/android/android.h"
@@ -153,10 +160,10 @@ OSystem_Android::~OSystem_Android() {
 	delete _timerManager;
 	_timerManager = 0;
 
-	deleteMutex(_event_queue_lock);
+	delete _event_queue_lock;
 
-	delete _mutexManager;
-	_mutexManager = 0;
+	delete _savefileManager;
+	_savefileManager = 0;
 }
 
 void *OSystem_Android::timerThreadFunc(void *arg) {

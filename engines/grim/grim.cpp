@@ -309,11 +309,11 @@ Common::Error GrimEngine::run() {
 	if (ConfMan.getBool("check_gamedata")) {
 		MD5CheckDialog d;
 		if (!d.runModal()) {
-			Common::String confirmString = Common::String::format(_(
+			Common::U32String confirmString = Common::U32String::format(_(
 				"ResidualVM found some problems with your game data files.\n"
 				"Running ResidualVM nevertheless may cause game bugs or even crashes.\n"
 				"Do you still want to run %s?"),
-			GType_MONKEY4 == getGameType() ? _("Escape From Monkey Island") : _("Grim Fandango")
+			GType_MONKEY4 == getGameType() ? "Escape From Monkey Island" : "Grim Fandango"
 			 );
 			GUI::MessageDialog msg(confirmString, _("Yes"), _("No"));
 			if (!msg.runModal()) {
@@ -1100,7 +1100,7 @@ void GrimEngine::savegameSave() {
 	_savedState = SaveGame::openForSaving(filename);
 	if (!_savedState) {
 		//TODO: Translate this!
-		GUI::displayErrorDialog("Error: the game could not be saved.");
+		GUI::displayErrorDialog(_("Error: the game could not be saved."));
 		return;
 	}
 

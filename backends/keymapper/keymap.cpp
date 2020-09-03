@@ -33,10 +33,21 @@
 
 namespace Common {
 
-Keymap::Keymap(KeymapType type, const String &id, const String &description) :
+Keymap::Keymap(KeymapType type, const String &id, const U32String &description) :
 		_type(type),
 		_id(id),
 		_description(description),
+		_enabled(true),
+		_configDomain(nullptr),
+		_hardwareInputSet(nullptr),
+		_backendDefaultBindings(nullptr) {
+
+}
+
+Keymap::Keymap(KeymapType type, const String &id, const String &description) :
+		_type(type),
+		_id(id),
+		_description(U32String(description)),
 		_enabled(true),
 		_configDomain(nullptr),
 		_hardwareInputSet(nullptr),

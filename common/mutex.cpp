@@ -47,7 +47,7 @@ void Mutex::unlock() {
 #pragma mark -
 
 
-StackLock::StackLock(MutexRef mutex, const char *mutexName)
+StackLock::StackLock(OSystem::MutexRef mutex, const char *mutexName)
 	: _mutex(mutex), _mutexName(mutexName) {
 	lock();
 }

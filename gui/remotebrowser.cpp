@@ -41,13 +41,13 @@ enum {
 	kGoUpCmd = 'GoUp'
 };
 
-RemoteBrowserDialog::RemoteBrowserDialog(const char *title):
+RemoteBrowserDialog::RemoteBrowserDialog(const Common::U32String &title):
 	Dialog("Browser"), _navigationLocked(false), _updateList(false), _showError(false),
 	_workingRequest(nullptr), _ignoreCallback(false) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
 	new StaticTextWidget(this, "Browser.Headline", title);
-	_currentPath = new StaticTextWidget(this, "Browser.Path", "DUMMY");
+	_currentPath = new StaticTextWidget(this, "Browser.Path", Common::U32String("DUMMY"));
 
 	_fileList = new ListWidget(this, "Browser.List");
 	_fileList->setNumberingMode(kListNumberingOff);
@@ -57,8 +57,8 @@ RemoteBrowserDialog::RemoteBrowserDialog(const char *title):
 		new ButtonWidget(this, "Browser.Up", _("Go up"), _("Go to previous directory level"), kGoUpCmd);
 	else
 		new ButtonWidget(this, "Browser.Up", _c("Go up", "lowres"), _("Go to previous directory level"), kGoUpCmd);
-	new ButtonWidget(this, "Browser.Cancel", _("Cancel"), nullptr, kCloseCmd);
-	new ButtonWidget(this, "Browser.Choose", _("Choose"), nullptr, kChooseCmd);
+	new ButtonWidget(this, "Browser.Cancel", _("Cancel"), Common::U32String(""), kCloseCmd);
+	new ButtonWidget(this, "Browser.Choose", _("Choose"), Common::U32String(""), kChooseCmd);
 }
 
 RemoteBrowserDialog::~RemoteBrowserDialog() {
@@ -144,7 +144,7 @@ void RemoteBrowserDialog::updateListing() {
 
 	if (!_navigationLocked) {
 		// Populate the ListWidget
-		ListWidget::StringArray list;
+		ListWidget::U32StringArray list;
 		ListWidget::ColorList colors;
 		for (Common::Array<Cloud::StorageFile>::iterator i = _nodeContent.begin(); i != _nodeContent.end(); ++i) {
 			if (i->isDirectory()) {

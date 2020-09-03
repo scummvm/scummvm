@@ -389,6 +389,8 @@ public:
 
 	int getStringWidth(const Common::String &str, FontStyle font = kFontStyleBold) const;
 
+	int getStringWidth(const Common::U32String &str, FontStyle font = kFontStyleBold) const;
+
 	int getCharWidth(byte c, FontStyle font = kFontStyleBold) const;
 
 	int getKerningOffset(byte left, byte right, FontStyle font = kFontStyleBold) const;
@@ -416,28 +418,28 @@ public:
 
 	void drawWidgetBackground(const Common::Rect &r, WidgetBackground background);
 
-	void drawButton(const Common::Rect &r, const Common::String &str, WidgetStateInfo state = kStateEnabled,
+	void drawButton(const Common::Rect &r, const Common::U32String &str, WidgetStateInfo state = kStateEnabled,
 	                uint16 hints = 0);
 
-	void drawDropDownButton(const Common::Rect &r, uint32 dropdownWidth, const Common::String &str,
+	void drawDropDownButton(const Common::Rect &r, uint32 dropdownWidth, const Common::U32String &str,
 	                        WidgetStateInfo buttonState, bool inButton, bool inDropdown, bool rtl = false);
 
 	void drawSurface(const Common::Point &p, const Graphics::Surface &surface, bool themeTrans = false);
 
 	void drawSlider(const Common::Rect &r, int width, WidgetStateInfo state = kStateEnabled, bool rtl = false);
 
-	void drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked,
+	void drawCheckbox(const Common::Rect &r, const Common::U32String &str, bool checked,
 	                  WidgetStateInfo state = kStateEnabled, bool rtl = false);
 
-	void drawRadiobutton(const Common::Rect &r, const Common::String &str, bool checked,
+	void drawRadiobutton(const Common::Rect &r, const Common::U32String &str, bool checked,
 	                     WidgetStateInfo state = kStateEnabled, bool rtl = false);
 
 	void drawTab(const Common::Rect &r, int tabHeight, const Common::Array<int> &tabWidths,
-	             const Common::Array<Common::String> &tabs, int active, bool rtl = false);
+	             const Common::Array<Common::U32String> &tabs, int active, bool rtl = false);
 
 	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState scrollState);
 
-	void drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax,
+	void drawPopUpWidget(const Common::Rect &r, const Common::U32String &sel, int deltax,
 	                     WidgetStateInfo state = kStateEnabled, bool rtl = false);
 
 	void drawCaret(const Common::Rect &r, bool erase);
@@ -446,7 +448,7 @@ public:
 
 	void drawDialogBackground(const Common::Rect &r, DialogBackground type);
 
-	void drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state = kStateEnabled,
+	void drawText(const Common::Rect &r, const Common::U32String &str, WidgetStateInfo state = kStateEnabled,
 	              Graphics::TextAlign align = Graphics::kTextAlignCenter,
 	              TextInversionState inverted = kTextInversionNone, int deltax = 0, bool useEllipsis = true,
 	              FontStyle font = kFontStyleBold, FontColor color = kFontColorNormal, bool restore = true,
@@ -657,6 +659,10 @@ protected:
 	 */
 	void drawDD(DrawData type, const Common::Rect &r, uint32 dynamic = 0, bool forceRestore = false);
 	void drawDDText(TextData type, TextColor color, const Common::Rect &r, const Common::String &text, bool restoreBg,
+	                bool elipsis, Graphics::TextAlign alignH = Graphics::kTextAlignLeft,
+	                TextAlignVertical alignV = kTextAlignVTop, int deltax = 0,
+	                const Common::Rect &drawableTextArea = Common::Rect(0, 0, 0, 0));
+	void drawDDText(TextData type, TextColor color, const Common::Rect &r, const Common::U32String &text, bool restoreBg,
 	                bool elipsis, Graphics::TextAlign alignH = Graphics::kTextAlignLeft,
 	                TextAlignVertical alignV = kTextAlignVTop, int deltax = 0,
 	                const Common::Rect &drawableTextArea = Common::Rect(0, 0, 0, 0));

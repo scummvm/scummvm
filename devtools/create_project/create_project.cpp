@@ -352,7 +352,6 @@ int main(int argc, char *argv[]) {
 
 	// Setup defines and libraries
 	setup.defines = getEngineDefines(setup.engines);
-	setup.libraries = getFeatureLibraries(setup.features);
 
 	// Add features
 	StringList featureDefines = getFeatureDefines(setup.features);
@@ -382,68 +381,25 @@ int main(int argc, char *argv[]) {
 #endif
 	}
 
-	bool updatesEnabled = false, curlEnabled = false, sdlnetEnabled = false, ttsEnabled = false;
 	for (FeatureList::const_iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
 		if (i->enable) {
-			if (!updatesEnabled && !strcmp(i->name, "updates"))
-				updatesEnabled = true;
-			else if (!curlEnabled && !strcmp(i->name, "libcurl"))
-				curlEnabled = true;
-			else if (!sdlnetEnabled && !strcmp(i->name, "sdlnet"))
-				sdlnetEnabled = true;
-			else if (!ttsEnabled && !strcmp(i->name, "tts"))
-				ttsEnabled = true;
+			if (!strcmp(i->name, "updates"))
+				setup.defines.push_back("USE_SPARKLE");
+			else if (backendWin32 && !strcmp(i->name, "libcurl"))
+				setup.defines.push_back("CURL_STATICLIB");
 		}
-	}
-
-	if (updatesEnabled) {
-		setup.defines.push_back("USE_SPARKLE");
-		if (backendWin32)
-			setup.libraries.push_back("winsparkle");
-		else
-			setup.libraries.push_back("sparkle");
-	}
-
-	if (backendWin32) {
-		if (curlEnabled) {
-			setup.defines.push_back("CURL_STATICLIB");
-			setup.libraries.push_back("ws2_32");
-			setup.libraries.push_back("wldap32");
-			setup.libraries.push_back("crypt32");
-			setup.libraries.push_back("normaliz");
-		}
-		if (sdlnetEnabled) {
-			setup.libraries.push_back("iphlpapi");
-		}
-		if (ttsEnabled) {
-			setup.libraries.push_back("sapi");
-		}
-		setup.libraries.push_back("winmm");
 	}
 
 	setup.defines.push_back("SDL_BACKEND");
 	if (!setup.useSDL2) {
 		cout << "\nBuilding against SDL 1.2\n\n";
-		setup.libraries.push_back("sdl");
 	} else {
 		cout << "\nBuilding against SDL 2.0\n\n";
 		// TODO: This also defines USE_SDL2 in the preprocessor, we don't do
 		// this in our configure/make based build system. Adapt create_project
 		// to replicate this behavior.
 		setup.defines.push_back("USE_SDL2");
-		setup.libraries.push_back("sdl2");
 	}
-
-	if (setup.useCanonicalLibNames) {
-		for (StringList::iterator lib = setup.libraries.begin(); lib != setup.libraries.end(); ++lib) {
-			*lib = getCanonicalLibName(*lib);
-		}
-	}
-
-	// Add additional project-specific library
-#ifdef ADDITIONAL_LIBRARY
-	setup.libraries.push_back(ADDITIONAL_LIBRARY);
-#endif
 
 	// List of global warnings and map of project-specific warnings
 	// FIXME: As shown below these two structures have different behavior for
@@ -483,10 +439,6 @@ int main(int argc, char *argv[]) {
 		addGCCWarnings(globalWarnings);
 
 		provider = new CreateProjectTool::CodeBlocksProvider(globalWarnings, projectWarnings);
-
-		// Those libraries are automatically added by MSVC, but we need to add them manually with mingw
-		setup.libraries.push_back("ole32");
-		setup.libraries.push_back("uuid");
 
 		break;
 
@@ -551,6 +503,9 @@ int main(int argc, char *argv[]) {
 		//
 		// 4577 ('noexcept' used with no exception handling mode specified)
 		//
+		// 4589 (Constructor of abstract class 'type' ignores initializer for virtual base class 'type')
+		//   caused by Common::Stream virtual inheritance, should be harmless
+		//
 		// 4702 (unreachable code)
 		//   mostly thrown after error() calls (marked as NORETURN)
 		//
@@ -599,6 +554,7 @@ int main(int argc, char *argv[]) {
 		globalWarnings.push_back("4345");
 		globalWarnings.push_back("4351");
 		globalWarnings.push_back("4512");
+		globalWarnings.push_back("4589");
 		globalWarnings.push_back("4702");
 		globalWarnings.push_back("4706");
 		globalWarnings.push_back("4800");
@@ -1059,48 +1015,49 @@ TokenList tokenize(const std::string &input, char separator) {
 namespace {
 // clang-format off
 const Feature s_features[] = {
-	// Libraries
-	{      "libz",        "USE_ZLIB", "zlib",             true,  "zlib (compression) support" },
-	{       "mad",         "USE_MAD", "libmad",           true,  "libmad (MP3) support" },
-	{   "fribidi",     "USE_FRIBIDI", "fribidi",          true,  "BiDi support" },
-	{       "ogg",         "USE_OGG", "libogg_static",    true,  "Ogg support" },
-	{    "vorbis",      "USE_VORBIS", "libvorbisfile_static libvorbis_static", true, "Vorbis support" },
-	{    "tremor",      "USE_TREMOR", "libtremor", false, "Tremor support" },
-	{      "flac",        "USE_FLAC", "libFLAC_static win_utf8_io_static",   false, "FLAC support" }, // ResidualVM change
-	{       "png",         "USE_PNG", "libpng16",         true,  "libpng support" },
-	{      "faad",        "USE_FAAD", "libfaad",          false, "AAC support" },
-	{     "mpeg2",       "USE_MPEG2", "libmpeg2",         true, "MPEG-2 support" }, // ResidualVM change
-	{    "theora",   "USE_THEORADEC", "libtheora_static", false, "Theora decoding support" }, // ResidualVM change
-	{  "freetype",   "USE_FREETYPE2", "freetype",         true, "FreeType support" },
-	{      "jpeg",        "USE_JPEG", "jpeg-static",      true, "libjpeg support" },
-	{"fluidsynth",  "USE_FLUIDSYNTH", "libfluidsynth",    false, "FluidSynth support" }, // ResidualVM change
-	{   "libcurl",     "USE_LIBCURL", "libcurl",          false, "libcurl support" }, // ResidualVM change
-	{    "sdlnet",     "USE_SDL_NET", "SDL_net",          false, "SDL_net support" }, // ResidualVM change
-	{      "glew",        "USE_GLEW", "GLEW",             true,  "GLEW support" }, // ResidualVM specific
+	// Libraries (must be added in generators)
+	{      "libz",        "USE_ZLIB", true, true,  "zlib (compression) support" },
+	{       "mad",         "USE_MAD", true, true,  "libmad (MP3) support" },
+	{   "fribidi",     "USE_FRIBIDI", true, true,  "BiDi support" },
+	{       "ogg",         "USE_OGG", true, true,  "Ogg support" },
+	{    "vorbis",      "USE_VORBIS", true, true,  "Vorbis support" },
+	{    "tremor",      "USE_TREMOR", true, false, "Tremor support" },
+	{      "flac",        "USE_FLAC", true, false, "FLAC support" }, // ResidualVM change
+	{       "png",         "USE_PNG", true, true,  "libpng support" },
+	{      "faad",        "USE_FAAD", true, false, "AAC support" },
+	{     "mpeg2",       "USE_MPEG2", true, true,  "MPEG-2 support" }, // ResidualVM change
+	{    "theora",   "USE_THEORADEC", true, true,  "Theora decoding support" },
+	{  "freetype",   "USE_FREETYPE2", true, true,  "FreeType support" },
+	{      "jpeg",        "USE_JPEG", true, true,  "libjpeg support" },
+	{"fluidsynth",  "USE_FLUIDSYNTH", true, false, "FluidSynth support" }, // ResidualVM change
+	{   "libcurl",     "USE_LIBCURL", true, false, "libcurl support" }, // ResidualVM change
+	{    "sdlnet",     "USE_SDL_NET", true, false, "SDL_net support" }, // ResidualVM change
+	{   "discord",     "USE_DISCORD", true, false, "Discord support" },
+	{      "glew",        "USE_GLEW", true, true,  "GLEW support" }, // ResidualVM specific
 
 	// Feature flags
-	{            "bink",                      "USE_BINK",  "", true,  "Bink video support" },
-	{         "scalers",                   "USE_SCALERS",  "", true,  "Scalers" },
-	{       "hqscalers",                "USE_HQ_SCALERS",  "", true,  "HQ scalers" },
-	{           "16bit",                 "USE_RGB_COLOR",  "", true,  "16bit color support" },
-	{         "highres",                   "USE_HIGHRES",  "", true,  "high resolution" },
-//	{         "mt32emu",                   "USE_MT32EMU",  "", true,  "integrated MT-32 emulator" }, // ResidualVM change
-//	{             "lua",                       "USE_LUA",  "", true,  "lua" },
-	{            "nasm",                      "USE_NASM",  "", true,  "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
-	{          "opengl",                    "USE_OPENGL",  "", true,  "OpenGL support" },
-	{   "openglshaders",            "USE_OPENGL_SHADERS",  "", true,  "OpenGL support (shaders)" }, // ResidualVM specific
-	{        "opengles",                      "USE_GLES",  "", true,  "forced OpenGL ES mode" },
-	{         "taskbar",                   "USE_TASKBAR",  "", true,  "Taskbar integration support" },
-	{           "cloud",                     "USE_CLOUD",  "", true,  "Cloud integration support" },
-	{     "translation",               "USE_TRANSLATION",  "", true,  "Translation support" },
-	{          "vkeybd",                 "ENABLE_VKEYBD",  "", false, "Virtual keyboard support"},
-	{   "eventrecorder",          "ENABLE_EVENTRECORDER",  "", false, "Event recorder support"},
-	{         "updates",                   "USE_UPDATES",  "", false, "Updates support"},
-	{         "dialogs",                "USE_SYSDIALOGS",  "", true,  "System dialogs support"},
-	{      "langdetect",                "USE_DETECTLANG",  "", true,  "System language detection support" }, // This feature actually depends on "translation", there
-	                                                                                                         // is just no current way of properly detecting this...
-	{    "text-console", "USE_TEXT_CONSOLE_FOR_DEBUGGER",  "", false, "Text console debugger" }, // This feature is always applied in xcode projects
-//	{             "tts",                       "USE_TTS",  "", true,  "Text to speech support"} // ResidualVM change
+	{            "bink",                      "USE_BINK", false, true,  "Bink video support" },
+	{         "scalers",                   "USE_SCALERS", false, true,  "Scalers" },
+	{       "hqscalers",                "USE_HQ_SCALERS", false, true,  "HQ scalers" },
+	{           "16bit",                 "USE_RGB_COLOR", false, true,  "16bit color support" },
+	{         "highres",                   "USE_HIGHRES", false, true,  "high resolution" },
+//	{         "mt32emu",                   "USE_MT32EMU", false, true,  "integrated MT-32 emulator" },
+//	{             "lua",                       "USE_LUA", false, true,  "lua" },
+	{            "nasm",                      "USE_NASM", false, true,  "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
+	{          "opengl",                    "USE_OPENGL", false, true,  "OpenGL support" },
+	{   "openglshaders",            "USE_OPENGL_SHADERS", false, true,  "OpenGL support (shaders)" }, // ResidualVM specific
+	{        "opengles",                      "USE_GLES", false, true,  "forced OpenGL ES mode" },
+	{         "taskbar",                   "USE_TASKBAR", false, true,  "Taskbar integration support" },
+	{           "cloud",                     "USE_CLOUD", false, true,  "Cloud integration support" },
+	{     "translation",               "USE_TRANSLATION", false, true,  "Translation support" },
+	{          "vkeybd",                 "ENABLE_VKEYBD", false, false, "Virtual keyboard support"},
+	{   "eventrecorder",          "ENABLE_EVENTRECORDER", false, false, "Event recorder support"},
+	{         "updates",                   "USE_UPDATES", false, false, "Updates support"},
+	{         "dialogs",                "USE_SYSDIALOGS", false, true,  "System dialogs support"},
+	{      "langdetect",                "USE_DETECTLANG", false, true,  "System language detection support" }, // This feature actually depends on "translation", there
+	                                                                                                           // is just no current way of properly detecting this...
+	{    "text-console", "USE_TEXT_CONSOLE_FOR_DEBUGGER", false, false, "Text console debugger" }, // This feature is always applied in xcode projects
+//	{             "tts",                       "USE_TTS", false, true,  "Text to speech support"}
 };
 
 const Tool s_tools[] = {
@@ -1118,21 +1075,6 @@ const MSVCVersion s_msvc[] = {
 	{ 16,    "Visual Studio 2019",    "12.00",    "Version 16",    "16.0",    "v142",    "llvm"        }
 };
 
-const std::pair<std::string, std::string> s_canonical_lib_name_map[] = {
-	std::make_pair("jpeg-static", "jpeg"),
-	std::make_pair("libfaad", "faad"),
-	std::make_pair("libFLAC_static", "FLAC"),
-	std::make_pair("libfluidsynth", "fluidsynth"),
-	std::make_pair("libmad", "mad"),
-	std::make_pair("libmpeg2", "mpeg2"),
-	std::make_pair("libogg_static", "ogg"),
-	std::make_pair("libtheora_static", "theora"),
-	std::make_pair("libvorbis_static", "vorbis"),
-	std::make_pair("libvorbisfile_static", "vorbisfile"),
-	std::make_pair("SDL_net", "SDL2_net"), // Only support SDL2
-	std::make_pair("win_utf8_io_static", "FLAC") // This is some FLAC-specific library not needed with vcpkg, but as there's '.lib' appended to each library, we can't set it to empty, so set it to FLAC again instead
-};
-
 const char *s_msvc_arch_names[] = {"arm64", "x86", "x64"};
 const char *s_msvc_config_names[] = {"arm64", "Win32", "x64"};
 // clang-format on
@@ -1144,17 +1086,6 @@ std::string getMSVCArchName(MSVC_Architecture arch) {
 
 std::string getMSVCConfigName(MSVC_Architecture arch) {
 	return s_msvc_config_names[arch];
-}
-
-std::string getCanonicalLibName(const std::string &lib) {
-	const size_t libCount = sizeof(s_canonical_lib_name_map) / sizeof(s_canonical_lib_name_map[0]);
-
-	for (size_t i = 0; i < libCount; ++i) {
-		if (s_canonical_lib_name_map[i].first == lib) {
-			return s_canonical_lib_name_map[i].second;
-		}
-	}
-	return lib;
 }
 
 FeatureList getAllFeatures() {
@@ -1178,34 +1109,6 @@ StringList getFeatureDefines(const FeatureList &features) {
 	return defines;
 }
 
-StringList getFeatureLibraries(const Feature &feature) {
-	StringList libraries;
-
-	if (feature.enable && feature.libraries && feature.libraries[0]) {
-		StringList fLibraries = tokenize(feature.libraries);
-		libraries.splice(libraries.end(), fLibraries);
-	}
-	// The libraries get sorted as they can get used in algorithms where ordering is a
-	// precondition, e.g. merge()
-	libraries.sort();
-
-	return libraries;
-}
-
-StringList getFeatureLibraries(const FeatureList &features) {
-	StringList libraries;
-
-	for (FeatureList::const_iterator i = features.begin(); i != features.end(); ++i) {
-		StringList fl = getFeatureLibraries(*i);
-		for (StringList::const_iterator flit = fl.begin(); flit != fl.end(); ++flit) {
-			libraries.push_back(*flit);
-		}
-	}
-	libraries.sort();
-
-	return libraries;
-}
-
 bool setFeatureBuildState(const std::string &name, FeatureList &features, bool enable) {
 	FeatureList::iterator i = std::find(features.begin(), features.end(), name);
 	if (i != features.end()) {
@@ -1226,16 +1129,9 @@ bool getFeatureBuildState(const std::string &name, FeatureList &features) {
 }
 
 BuildSetup removeFeatureFromSetup(BuildSetup setup, const std::string &feature) {
-	// TODO: use const_iterator in C++11
+	// TODO: disable feature instead of removing from setup
 	for (FeatureList::iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
 		if (i->enable && feature == i->name) {
-			StringList feature_libs = getFeatureLibraries(*i);
-			for (StringList::iterator lib = feature_libs.begin(); lib != feature_libs.end(); ++lib) {
-				if (setup.useCanonicalLibNames) {
-					*lib = getCanonicalLibName(*lib);
-				}
-				setup.libraries.remove(*lib);
-			}
 			if (i->define && i->define[0]) {
 				setup.defines.remove(i->define);
 			}

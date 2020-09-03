@@ -71,7 +71,7 @@ protected:
 	int _maxWidth;
 	int _xdelta, _ydelta;
 
-	Common::StringArray _wrappedLines;
+	Common::U32StringArray _wrappedLines;
 };
 
 } // End of namespace GUI

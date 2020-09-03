@@ -18,37 +18,50 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * This is a utility for create the translations.dat file from all the po files.
- * The generated files is used by ScummVM to propose translation of its GUI.
  */
 
-#ifndef CP_PARSER_H
-#define CP_PARSER_H
+#ifndef BACKENDS_MIXER_ABSTRACT_H
+#define BACKENDS_MIXER_ABSTRACT_H
 
-#include "create_translations.h"
-
-#include <string>
+#include "audio/mixer_intern.h"
 
 /**
- * Codepage description.
- *
- * This includes a name, and the codepage -> unicode mapping.
+ * Abstract class for mixer manager. Subclasses
+ * implement the real functionality.
  */
-class Codepage {
+class MixerManager {
 public:
-	Codepage(const std::string &name, const uint32 *mapping);
+	MixerManager() : _mixer(0), _audioSuspended(false) {}
+	virtual ~MixerManager() { delete _mixer; }
 
-	const std::string &getName() const { return _name; }
+	/**
+	 * Initialize and setups the mixer
+	 */
+	virtual void init() = 0;
 
-	uint32 getMapping(unsigned char src) const { return _mapping[src]; }
-private:
-	std::string _name;
-	uint32 _mapping[256];
+	/**
+	 * Get the audio mixer implementation
+	 */
+	Audio::Mixer *getMixer() { return (Audio::Mixer *)_mixer; }
+
+	// Used by LinuxMoto Port
+
+	/**
+	 * Pauses the audio system
+	 */
+	virtual void suspendAudio() = 0;
+
+	/**
+	 * Resumes the audio system
+	 */
+	virtual int resumeAudio() = 0;
+
+protected:
+	/** The mixer implementation */
+	Audio::MixerImpl *_mixer;
+
+	/** State of the audio system */
+	bool _audioSuspended;
 };
-
-/**
- * Parse the codepage file and create a codepage.
- */
-Codepage *parseCodepageMapping(const std::string &filename);
 
 #endif

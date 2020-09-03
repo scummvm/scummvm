@@ -344,100 +344,104 @@ bool FontTowns::loadData() {
 	return retValue;
 }
 
-const uint8 *FontTowns::getCharData(uint16 ch) const {
-	if (ch < kFont8x16Chars) {
-		return _fontData8x16 + ch * 16;
-	} else {
-		uint8 f = ch & 0xFF;
-		uint8 s = ch >> 8;
+int FontTowns::getCharFMTChunk(uint16 ch) {
+	uint8 f = ch & 0xFF;
+	uint8 s = ch >> 8;
 
-		// moved from scumm\charset.cpp
-		enum {
-			KANA = 0,
-			KANJI = 1,
-			EKANJI = 2
-		};
+	// moved from scumm\charset.cpp
+	enum {
+		KANA = 0,
+		KANJI = 1,
+		EKANJI = 2
+	};
 
-		int base = s - ((s + 1) % 32);
-		int c = 0, p = 0, chunk_f = 0, chunk = 0, cr = 0, kanjiType = KANA;
+	int base = s - ((s + 1) % 32);
+	int c = 0, p = 0, chunk_f = 0, chunk = 0, cr = 0, kanjiType = KANA;
 
-		if (f >= 0x81 && f <= 0x84) kanjiType = KANA;
-		if (f >= 0x88 && f <= 0x9f) kanjiType = KANJI;
-		if (f >= 0xe0 && f <= 0xea) kanjiType = EKANJI;
+	if (f >= 0x81 && f <= 0x84) kanjiType = KANA;
+	if (f >= 0x88 && f <= 0x9f) kanjiType = KANJI;
+	if (f >= 0xe0 && f <= 0xea) kanjiType = EKANJI;
 
-		if ((f > 0xe8 || (f == 0xe8 && base >= 0x9f)) || (f > 0x90 || (f == 0x90 && base >= 0x9f))) {
-			c = 48; // correction
-			p = -8; // correction
-		}
-
-		if (kanjiType == KANA) {
-			chunk_f = (f - 0x81) * 2;
-		} else if (kanjiType == KANJI) { // Standard Kanji
-			p += f - 0x88;
-			chunk_f = c + 2 * p;
-		} else if (kanjiType == EKANJI) { // Enhanced Kanji
-			p += f - 0xe0;
-			chunk_f = c + 2 * p;
-		}
-
-		// Base corrections
-		if (base == 0x7f && s == 0x7f)
-			base -= 0x20;
-		if (base == 0x9f && s == 0xbe)
-			base += 0x20;
-		if (base == 0xbf && s == 0xde)
-			base += 0x20;
-		//if (base == 0x7f && s == 0x9e)
-		//	base += 0x20;
-
-		switch (base) {
-		case 0x3f:
-			cr = 0; // 3f
-			if (kanjiType == KANA) chunk = 1;
-			else if (kanjiType == KANJI) chunk = 31;
-			else if (kanjiType == EKANJI) chunk = 111;
-			break;
-		case 0x5f:
-			cr = 0; // 5f
-			if (kanjiType == KANA) chunk = 17;
-			else if (kanjiType == KANJI) chunk = 47;
-			else if (kanjiType == EKANJI) chunk = 127;
-			break;
-		case 0x7f:
-			cr = -1; // 80
-			if (kanjiType == KANA) chunk = 9;
-			else if (kanjiType == KANJI) chunk = 63;
-			else if (kanjiType == EKANJI) chunk = 143;
-			break;
-		case 0x9f:
-			cr = 1; // 9e
-			if (kanjiType == KANA) chunk = 2;
-			else if (kanjiType == KANJI) chunk = 32;
-			else if (kanjiType == EKANJI) chunk = 112;
-			break;
-		case 0xbf:
-			cr = 1; // be
-			if (kanjiType == KANA) chunk = 18;
-			else if (kanjiType == KANJI) chunk = 48;
-			else if (kanjiType == EKANJI) chunk = 128;
-			break;
-		case 0xdf:
-			cr = 1; // de
-			if (kanjiType == KANA) chunk = 10;
-			else if (kanjiType == KANJI) chunk = 64;
-			else if (kanjiType == EKANJI) chunk = 144;
-			break;
-		default:
-			debug(4, "Invalid Char! f %x s %x base %x c %d p %d", f, s, base, c, p);
-		}
-
-		debug(6, "Kanji: %c%c f 0x%x s 0x%x base 0x%x c %d p %d chunk %d cr %d index %d", f, s, f, s, base, c, p, chunk, cr, ((chunk_f + chunk) * 32 + (s - base)) + cr);
-		const int chunkNum = (((chunk_f + chunk) * 32 + (s - base)) + cr);
-		if (chunkNum < 0 || chunkNum >= kFont16x16Chars)
-			return 0;
-		else
-			return _fontData16x16 + chunkNum * 32;
+	if ((f > 0xe8 || (f == 0xe8 && base >= 0x9f)) || (f > 0x90 || (f == 0x90 && base >= 0x9f))) {
+		c = 48; // correction
+		p = -8; // correction
 	}
+
+	if (kanjiType == KANA) {
+		chunk_f = (f - 0x81) * 2;
+	} else if (kanjiType == KANJI) { // Standard Kanji
+		p += f - 0x88;
+		chunk_f = c + 2 * p;
+	} else if (kanjiType == EKANJI) { // Enhanced Kanji
+		p += f - 0xe0;
+		chunk_f = c + 2 * p;
+	}
+
+	// Base corrections
+	if (base == 0x7f && s == 0x7f)
+		base -= 0x20;
+	if (base == 0x9f && s == 0xbe)
+		base += 0x20;
+	if (base == 0xbf && s == 0xde)
+		base += 0x20;
+	//if (base == 0x7f && s == 0x9e)
+	//	base += 0x20;
+
+	switch (base) {
+	case 0x3f:
+		cr = 0; // 3f
+		if (kanjiType == KANA) chunk = 1;
+		else if (kanjiType == KANJI) chunk = 31;
+		else if (kanjiType == EKANJI) chunk = 111;
+		break;
+	case 0x5f:
+		cr = 0; // 5f
+		if (kanjiType == KANA) chunk = 17;
+		else if (kanjiType == KANJI) chunk = 47;
+		else if (kanjiType == EKANJI) chunk = 127;
+		break;
+	case 0x7f:
+		cr = -1; // 80
+		if (kanjiType == KANA) chunk = 9;
+		else if (kanjiType == KANJI) chunk = 63;
+		else if (kanjiType == EKANJI) chunk = 143;
+		break;
+	case 0x9f:
+		cr = 1; // 9e
+		if (kanjiType == KANA) chunk = 2;
+		else if (kanjiType == KANJI) chunk = 32;
+		else if (kanjiType == EKANJI) chunk = 112;
+		break;
+	case 0xbf:
+		cr = 1; // be
+		if (kanjiType == KANA) chunk = 18;
+		else if (kanjiType == KANJI) chunk = 48;
+		else if (kanjiType == EKANJI) chunk = 128;
+		break;
+	case 0xdf:
+		cr = 1; // de
+		if (kanjiType == KANA) chunk = 10;
+		else if (kanjiType == KANJI) chunk = 64;
+		else if (kanjiType == EKANJI) chunk = 144;
+		break;
+	default:
+		debug(4, "Invalid Char! f %x s %x base %x c %d p %d", f, s, base, c, p);
+	}
+
+	debug(6, "Kanji: %c%c f 0x%x s 0x%x base 0x%x c %d p %d chunk %d cr %d index %d", f, s, f, s, base, c, p, chunk, cr, ((chunk_f + chunk) * 32 + (s - base)) + cr);
+	return (((chunk_f + chunk) * 32 + (s - base)) + cr);
+}
+
+const uint8 *FontTowns::getCharData(uint16 ch) const {
+	if (ch < kFont8x16Chars)
+		return _fontData8x16 + ch * 16;
+
+	int chunkNum = getCharFMTChunk(ch);
+
+	if (chunkNum < 0 || chunkNum >= kFont16x16Chars)
+		return 0;
+	else
+		return _fontData16x16 + chunkNum * 32;
 }
 
 bool FontTowns::hasFeature(int feat) const {

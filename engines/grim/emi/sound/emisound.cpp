@@ -25,6 +25,7 @@
 #include "common/stream.h"
 #include "common/mutex.h"
 #include "common/timer.h"
+#include "common/translation.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "audio/mixer.h"
@@ -646,15 +647,14 @@ void EMISound::initMusicTableRetail(MusicEntry *musicTable, const Common::String
 }
 
 void tableLoadErrorDialog() {
-	const char *errorMessage = nullptr;
-	errorMessage =  "ERROR: Not enough music tracks found!\n"
+	Common::U32String errorMessage = _("ERROR: Not enough music tracks found!\n"
 	"Escape from Monkey Island has two versions of FullMonkeyMap.imt,\n"
 	"you need to copy both files from both CDs to Textures/, and rename\n"
 	"them as follows to get music-support in-game: \n"
 	"CD 1: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap1.imt\"\n"
 	"CD 2: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap2.imt\"\n"
 	"\n"
-	"Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.int";
+	"Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.int");
 	GUI::displayErrorDialog(errorMessage);
 }
 

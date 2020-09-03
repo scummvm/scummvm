@@ -392,13 +392,14 @@ protected:
 /**
  * Double linked list with sorted nodes.
  */
-template<class T>
+template<class T, typename CompareArgType = const void *>
 class SortedArray : public Array<T> {
 public:
+	typedef int (*Comparator)(CompareArgType, CompareArgType);
 	typedef T *iterator;
 	typedef uint size_type;
 
-	SortedArray(int (*comparator)(const void *, const void *)) {
+	SortedArray(Comparator comparator) {
 		_comparator = comparator;
 	}
 
@@ -435,7 +436,7 @@ private:
 	// Based on code Copyright (C) 2008-2009 Ksplice, Inc.
 	// Author: Tim Abbott <tabbott@ksplice.com>
 	// Licensed under GPLv2+
-	T *bsearchMin(void *key) {
+	T *bsearchMin(CompareArgType key) {
 		uint start_ = 0, end_ = this->_size;
 		int result;
 
@@ -445,16 +446,14 @@ private:
 			result = this->_comparator(key, this->_storage[mid]);
 			if (result < 0)
 				end_ = mid;
-			else if (result > 0)
-				start_ = mid + 1;
 			else
-				return &this->_storage[mid];
+				start_ = mid + 1;
 		}
 
 		return &this->_storage[start_];
 	}
 
-	int (*_comparator)(const void *, const void *);
+	Comparator _comparator;
 };
 
 } // End of namespace Common

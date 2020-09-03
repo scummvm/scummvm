@@ -32,9 +32,15 @@ SaveStateDescriptor::SaveStateDescriptor()
 	_thumbnail(), _saveType(kSaveTypeUndetermined) {
 }
 
-SaveStateDescriptor::SaveStateDescriptor(int s, const Common::String &d)
+SaveStateDescriptor::SaveStateDescriptor(int s, const Common::U32String &d)
 	: _slot(s), _description(d), _isDeletable(true), _isWriteProtected(false),
 	  _isLocked(false), _saveDate(), _saveTime(), _playTime(), _playTimeMSecs(0),
+	_thumbnail(), _saveType(kSaveTypeUndetermined) {
+}
+
+SaveStateDescriptor::SaveStateDescriptor(int s, const Common::String &d)
+	: _slot(s), _description(Common::U32String(d)), _isDeletable(true), _isWriteProtected(false),
+	_isLocked(false), _saveDate(), _saveTime(), _playTime(), _playTimeMSecs(0),
 	_thumbnail(), _saveType(kSaveTypeUndetermined) {
 }
 

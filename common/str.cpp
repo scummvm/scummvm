@@ -30,7 +30,7 @@
 namespace Common {
 
 MemoryPool *g_refCountPool = nullptr; // FIXME: This is never freed right now
-MutexRef g_refCountPoolMutex = nullptr;
+Mutex *g_refCountPoolMutex = nullptr;
 
 void lockMemoryPoolMutex() {
 	// The Mutex class can only be used once g_system is set and initialized,
@@ -40,18 +40,18 @@ void lockMemoryPoolMutex() {
 	if (!g_system || !g_system->backendInitialized())
 		return;
 	if (!g_refCountPoolMutex)
-		g_refCountPoolMutex = g_system->createMutex();
-	g_system->lockMutex(g_refCountPoolMutex);
+		g_refCountPoolMutex = new Mutex();
+	g_refCountPoolMutex->lock();
 }
 
 void unlockMemoryPoolMutex() {
 	if (g_refCountPoolMutex)
-		g_system->unlockMutex(g_refCountPoolMutex);
+		g_refCountPoolMutex->unlock();
 }
 
 void String::releaseMemoryPoolMutex() {
 	if (g_refCountPoolMutex){
-		g_system->deleteMutex(g_refCountPoolMutex);
+		delete g_refCountPoolMutex;
 		g_refCountPoolMutex = nullptr;
 	}
 }
@@ -123,6 +123,12 @@ String::String(char c)
 	_storage[1] = 0;
 
 	_size = (c == 0) ? 0 : 1;
+}
+
+String::String(const U32String &str)
+	: _size(0), _str(_storage) {
+	_storage[0] = 0;
+	*this = String(str.encode());
 }
 
 String::~String() {
@@ -415,6 +421,15 @@ bool String::contains(const char *x) const {
 
 bool String::contains(char x) const {
 	return strchr(c_str(), x) != nullptr;
+}
+
+bool String::contains(uint32 x) const {
+	for (String::const_iterator itr = begin(); itr != end(); itr++) {
+		if (uint32(*itr) == x) {
+			return true;
+		}
+	}
+	return false;
 }
 
 uint64 String::asUint64() const {

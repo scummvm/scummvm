@@ -36,14 +36,14 @@
 #include "common/mutex.h"
 #include "common/array.h"
 #include "common/memstream.h"
-#include "backends/mixer/sdl/sdl-mixer.h"
+#include "backends/mixer/mixer.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "backends/timer/sdl/sdl-timer.h"
 #include "common/config-manager.h"
 #include "common/recorderfile.h"
 #include "backends/saves/recorder/recorder-saves.h"
-#include "backends/mixer/nullmixer/nullsdl-mixer.h"
+#include "backends/mixer/null/null-mixer.h"
 #include "backends/saves/default/default-saves.h"
 
 
@@ -142,10 +142,10 @@ public:
 		_needRedraw = redraw;
 	}
 
-	void registerMixerManager(SdlMixerManager *mixerManager);
+	void registerMixerManager(MixerManager *mixerManager);
 	void registerTimerManager(DefaultTimerManager *timerManager);
 
-	SdlMixerManager *getMixerManager();
+	MixerManager *getMixerManager();
 	DefaultTimerManager *getTimerManager();
 
 	void deleteRecord(const Common::String& fileName);
@@ -187,10 +187,10 @@ private:
 	Common::String _name;
 
 	Common::SaveFileManager *_realSaveManager;
-	SdlMixerManager *_realMixerManager;
+	MixerManager *_realMixerManager;
 	DefaultTimerManager *_timerManager;
 	RecorderSaveFileManager _fakeSaveManager;
-	NullSdlMixerManager *_fakeMixerManager;
+	NullMixerManager *_fakeMixerManager;
 	GUI::OnScreenDialog *_controlPanel;
 	Common::RecorderEvent _nextEvent;
 

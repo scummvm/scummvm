@@ -30,7 +30,7 @@
 
 namespace GUI {
 
-SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode)
+SaveLoadChooser::SaveLoadChooser(const U32String &title, const U32String &buttonLabel, bool saveMode)
 	: _impl(nullptr), _title(title), _buttonLabel(buttonLabel), _saveMode(saveMode) {
 }
 
@@ -113,7 +113,7 @@ int SaveLoadChooser::runModalWithPluginAndTarget(const Plugin *plugin, const Str
 	return ret;
 }
 
-const Common::String &SaveLoadChooser::getResultString() const {
+const Common::U32String &SaveLoadChooser::getResultString() const {
 	assert(_impl);
 	return _impl->getResultString();
 }

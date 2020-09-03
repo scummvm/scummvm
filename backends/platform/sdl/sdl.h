@@ -30,18 +30,22 @@
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/log/log.h"
 #include "backends/platform/sdl/sdl-window.h"
+
+#include "common/array.h"
+
+#ifdef USE_DISCORD
+class DiscordPresence;
+#endif
 // ResidualVM - Start
 #ifdef USE_OPENGL
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
 #endif
 // ResidualVM - End
 
-#include "common/array.h"
-
 /**
  * Base OSystem class for all SDL ports.
  */
-class OSystem_SDL : public ModularBackend {
+class OSystem_SDL : public ModularMutexBackend, public ModularMixerBackend, public ModularGraphicsBackend {
 public:
 	OSystem_SDL();
 	virtual ~OSystem_SDL();
@@ -51,14 +55,7 @@ public:
 	 * instantiating the backend. Early needed managers are
 	 * created here.
 	 */
-	virtual void init();
-
-	/**
-	 * Get the Mixer Manager instance. Not to confuse with getMixer(),
-	 * that returns Audio::Mixer. The Mixer Manager is a SDL wrapper class
-	 * for the Audio::Mixer. Used by other managers.
-	 */
-	virtual SdlMixerManager *getMixerManager();
+	virtual void init() override;
 
 	virtual bool hasFeature(Feature f) override;
 
@@ -79,8 +76,8 @@ public:
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	// Clipboard
 	virtual bool hasTextInClipboard() override;
-	virtual Common::String getTextFromClipboard() override;
-	virtual bool setTextInClipboard(const Common::String &text) override;
+	virtual Common::U32String getTextFromClipboard() override;
+	virtual bool setTextInClipboard(const Common::U32String &text) override;
 #endif
 
 	virtual void setWindowCaption(const char *caption) override;
@@ -88,7 +85,7 @@ public:
 	virtual uint32 getMillis(bool skipRecord = false) override;
 	virtual void delayMillis(uint msecs) override;
 	virtual void getTimeAndDate(TimeDate &td) const override;
-	virtual Audio::Mixer *getMixer() override;
+	virtual MixerManager *getMixerManager() override;
 	virtual Common::TimerManager *getTimerManager() override;
 	virtual Common::SaveFileManager *getSavefileManager() override;
 
@@ -110,6 +107,10 @@ protected:
 	bool _initedSDLnet;
 #endif
 
+#ifdef USE_DISCORD
+	DiscordPresence *_presence;
+#endif
+
 	/**
 	 * The path of the currently open log file, if any.
 	 *
@@ -119,12 +120,6 @@ protected:
 	 * editor; for that, we need it only as a string anyway.
 	 */
 	Common::String _logFilePath;
-
-	/**
-	 * Mixer manager that configures and setups SDL for
-	 * the wrapped Audio::Mixer, the true mixer.
-	 */
-	SdlMixerManager *_mixerManager;
 
 	/**
 	 * The event source we use for obtaining SDL events.
@@ -146,7 +141,6 @@ protected:
 #endif
 	// End of ResidualVM specific code
 
-	virtual Common::EventSource *getDefaultEventSource() override { return _eventSource; }
 
 	/**
 	 * Initialze the SDL library.

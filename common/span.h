@@ -433,7 +433,7 @@ public:
 
 	inline MemoryReadStream toStream(const index_type index = 0, size_type numEntries = kSpanMaxSize) const {
 		if (numEntries == kSpanMaxSize) {
-			numEntries = impl().size();
+			numEntries = impl().size() - index;
 		}
 
 		impl().validate(index, numEntries * sizeof(value_type));

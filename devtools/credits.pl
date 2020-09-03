@@ -58,7 +58,7 @@ if ($mode eq "") {
 $Text::Wrap::unexpand = 0;
 if ($mode eq "TEXT") {
 	$Text::Wrap::columns = 78;
-	$max_name_width = 29; # The maximal width of a name.
+	$max_name_width = 30; # The maximal width of a name.
 } elsif ($mode eq "CPP") {
 	$Text::Wrap::columns = 48;	# Approx.
 }
@@ -68,6 +68,7 @@ sub html_entities_to_ascii {
 	my $text = shift;
 
 	# For now we hardcode these mappings
+	# &Aacute;  -> A
 	# &aacute;  -> a
 	# &eacute;  -> e
 	# &iacute;  -> i
@@ -88,6 +89,7 @@ sub html_entities_to_ascii {
 	# &Scaron;  -> S
 	# &Lcaron;  -> L
 	# &ntilde;  -> n
+	$text =~ s/&Aacute;/A/g;
 	$text =~ s/&aacute;/a/g;
 	$text =~ s/&eacute;/e/g;
 	$text =~ s/&iacute;/i/g;
@@ -120,6 +122,7 @@ sub html_entities_to_ascii {
 sub html_entities_to_iso8859_1 {
 	my $text = shift;
 
+	$text =~ s/&Aacute;/\xC1/g;
 	$text =~ s/&aacute;/\xE1/g;
 	$text =~ s/&eacute;/\xE9/g;
 	$text =~ s/&iacute;/\xED/g;
@@ -151,6 +154,7 @@ sub html_entities_to_cpp {
 	my $text = shift;
 
 	# The numerical values are octal!
+	$text =~ s/&Aacute;/\\301/g;
 	$text =~ s/&aacute;/\\341/g;
 	$text =~ s/&eacute;/\\351/g;
 	$text =~ s/&iacute;/\\355/g;
@@ -182,6 +186,7 @@ sub html_entities_to_cpp {
 sub html_entities_to_rtf {
 	my $text = shift;
 
+	$text =~ s/&Aacute;/\\'c1/g;
 	$text =~ s/&aacute;/\\'87/g;
 	$text =~ s/&eacute;/\\'8e/g;
 	$text =~ s/&iacute;/\\'92/g;
@@ -324,19 +329,11 @@ sub begin_section {
 		if ($section_level eq 0) {
 			# TODO: Would be nice to have a 'fat' or 'large' mode for
 			# headlines...
-			my $ascii_title = html_entities_to_ascii($title);
 			$title = html_entities_to_cpp($title);
-			if ($ascii_title ne $title) {
-				print '"A1""'.$ascii_title.'",' . "\n";
-			}
 			print '"C1""'.$title.'",' . "\n";
 			print '"",' . "\n";
 		} else {
-			my $ascii_title = html_entities_to_ascii($title);
 			$title = html_entities_to_cpp($title);
-			if ($ascii_title ne $title) {
-				print '"A1""'.$ascii_title.'",' . "\n";
-			}
 			print '"C1""'.$title.'",' . "\n";
 		}
 	} elsif ($mode eq "XML-DOC") {
@@ -499,21 +496,12 @@ sub add_person {
 		}
 	} elsif ($mode eq "CPP") {
 		$name = $nick if $name eq "";
-		my $ascii_name = html_entities_to_ascii($name);
 		$name = html_entities_to_cpp($name);
-
-		if ($ascii_name ne $name) {
-			print '"A0""'.$ascii_name.'",' . "\n";
-		}
 		print '"C0""'.$name.'",' . "\n";
 
 		# Print desc wrapped
 		if (length $desc > 0) {
-			my $ascii_desc = html_entities_to_ascii($desc);
 			$desc = html_entities_to_cpp($desc);
-			if ($ascii_desc ne $desc) {
-				print '"A2""'.$ascii_desc.'",' . "\n";
-			}
 			print '"C2""'.$desc.'",' . "\n";
 		}
 	} elsif ($mode eq "XML-DOC") {

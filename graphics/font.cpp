@@ -312,6 +312,84 @@ int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Comm
 	return wrapper.actualMaxLineWidth;
 }
 
+template<typename StringType>
+StringType handleEllipsis(const Font &font, const StringType &input, int w) {
+	StringType s = input;
+	int width = font.getStringWidth(s);
+	bool hasEllipsisAtEnd = false;
+
+	if (s.size() > 3 && s[s.size() - 1] == '.' && s[s.size() - 2] == '.' && s[s.size() - 3] == '.') {
+		hasEllipsisAtEnd = true;
+	}
+
+	if (width > w && hasEllipsisAtEnd) {
+		// String is too wide. Check whether it ends in an ellipsis
+		// ("..."). If so, remove that and try again!
+		s.deleteLastChar();
+		s.deleteLastChar();
+		s.deleteLastChar();
+		width = font.getStringWidth(s);
+	}
+
+	if (width > w) {
+		StringType str;
+		StringType ellipsis("...");
+
+		// String is too wide. So we shorten it "intelligently" by
+		// replacing parts of the string by an ellipsis. There are
+		// three possibilities for this: replace the start, the end, or
+		// the middle of the string. What is best really depends on the
+		// context; but unless we want to make this configurable,
+		// replacing the middle seems to be a good compromise.
+
+		const int ellipsisWidth = font.getStringWidth(ellipsis);
+
+		// SLOW algorithm to remove enough of the middle. But it is good enough
+		// for now.
+		const int halfWidth = (w - ellipsisWidth) / 2;
+		int w2 = 0;
+		typename StringType::unsigned_type last = 0;
+		uint i = 0;
+
+		for (; i < s.size(); ++i) {
+			const typename StringType::unsigned_type cur = s[i];
+			int charWidth = font.getCharWidth(cur) + font.getKerningOffset(last, cur);
+			if (w2 + charWidth > halfWidth)
+				break;
+			last = cur;
+			w2 += charWidth;
+			str += cur;
+		}
+
+		// At this point we know that the first 'i' chars are together 'w2'
+		// pixels wide. We took the first i-1, and add "..." to them.
+		str += ellipsis;
+		last = '.';
+
+		// The original string is width wide. Of those we already skipped past
+		// w2 pixels, which means (width - w2) remain.
+		// The new str is (w2+ellipsisWidth) wide, so we can accommodate about
+		// (w - (w2+ellipsisWidth)) more pixels.
+		// Thus we skip ((width - w2) - (w - (w2+ellipsisWidth))) =
+		// (width + ellipsisWidth - w)
+		int skip = width + ellipsisWidth - w;
+		for (; i < s.size() && skip > 0; ++i) {
+			const typename StringType::unsigned_type cur = s[i];
+			skip -= font.getCharWidth(cur) + font.getKerningOffset(last, cur);
+			last = cur;
+		}
+
+		// Append the remaining chars, if any
+		for (; i < s.size(); ++i) {
+			str += s[i];
+		}
+
+		return str;
+	}
+
+	return s;
+}
+
 } // End of anonymous namespace
 
 Common::Rect Font::getBoundingBox(const Common::String &input, int x, int y, const int w, TextAlign align, int deltax, bool useEllipsis) const {
@@ -330,21 +408,27 @@ Common::Rect Font::getBoundingBox(const Common::String &input, int x, int y, con
 		align = kTextAlignLeft;
 	}
 
-	const Common::String str = useEllipsis ? handleEllipsis(input, w) : input;
+	const Common::String str = useEllipsis ? handleEllipsis(*this, input, w) : input;
 	return getBoundingBoxImpl(*this, str, x, y, w, align, deltax);
 }
 
-Common::Rect Font::getBoundingBox(const Common::U32String &str, int x, int y, const int w, TextAlign align) const {
+Common::Rect Font::getBoundingBox(const Common::U32String &input, int x, int y, const int w, TextAlign align, int deltax, bool useEllipsis) const {
 	// In case no width was given we cannot any alignment apart from left
 	// alignment.
 	if (w == 0) {
+		if (useEllipsis) {
+			warning("Font::getBoundingBox: Requested ellipsis when no width was specified");
+		}
+
 		if (align != kTextAlignLeft) {
 			warning("Font::getBoundingBox: Requested text alignment when no width was specified");
 		}
 
+		useEllipsis = false;
 		align = kTextAlignLeft;
 	}
 
+	const Common::U32String str = useEllipsis ? handleEllipsis(*this, input, w) : input;
 	return getBoundingBoxImpl(*this, str, x, y, w, align, 0);
 }
 
@@ -365,12 +449,13 @@ void Font::drawChar(ManagedSurface *dst, uint32 chr, int x, int y, uint32 color)
 }
 
 void Font::drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis) const {
-	Common::String renderStr = useEllipsis ? handleEllipsis(str, w) : str;
+	Common::String renderStr = useEllipsis ? handleEllipsis(*this, str, w) : str;
 	drawStringImpl(*this, dst, renderStr, x, y, w, color, align, deltax);
 }
 
-void Font::drawString(Surface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax) const {
-	drawStringImpl(*this, dst, str, x, y, w, color, align, deltax);
+void Font::drawString(Surface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis) const {
+	Common::U32String renderStr = useEllipsis ? handleEllipsis(*this, str, w) : str;
+	drawStringImpl(*this, dst, renderStr, x, y, w, color, align, deltax);
 }
 
 void Font::drawString(ManagedSurface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis) const {
@@ -380,10 +465,10 @@ void Font::drawString(ManagedSurface *dst, const Common::String &str, int x, int
 	}
 }
 
-void Font::drawString(ManagedSurface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax) const {
-	drawString(&dst->_innerSurface, str, x, y, w, color, align, deltax);
+void Font::drawString(ManagedSurface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis) const {
+	drawString(&dst->_innerSurface, str, x, y, w, color, align, deltax, useEllipsis);
 	if (w != 0) {
-		dst->addDirtyRect(getBoundingBox(str, x, y, w, align));
+		dst->addDirtyRect(getBoundingBox(str, x, y, w, align, useEllipsis));
 	}
 }
 
@@ -393,77 +478,6 @@ int Font::wordWrapText(const Common::String &str, int maxWidth, Common::Array<Co
 
 int Font::wordWrapText(const Common::U32String &str, int maxWidth, Common::Array<Common::U32String> &lines, int initWidth, bool evenWidthLinesModeEnabled, bool wrapOnExplicitNewLines) const {
 	return wordWrapTextImpl(*this, str, maxWidth, lines, initWidth, evenWidthLinesModeEnabled, wrapOnExplicitNewLines);
-}
-
-Common::String Font::handleEllipsis(const Common::String &input, int w) const {
-	Common::String s = input;
-	int width = getStringWidth(s);
-
-	if (width > w && s.hasSuffix("...")) {
-		// String is too wide. Check whether it ends in an ellipsis
-		// ("..."). If so, remove that and try again!
-		s.deleteLastChar();
-		s.deleteLastChar();
-		s.deleteLastChar();
-		width = getStringWidth(s);
-	}
-
-	if (width > w) {
-		Common::String str;
-
-		// String is too wide. So we shorten it "intelligently" by
-		// replacing parts of the string by an ellipsis. There are
-		// three possibilities for this: replace the start, the end, or
-		// the middle of the string. What is best really depends on the
-		// context; but unless we want to make this configurable,
-		// replacing the middle seems to be a good compromise.
-
-		const int ellipsisWidth = getStringWidth("...");
-
-		// SLOW algorithm to remove enough of the middle. But it is good enough
-		// for now.
-		const int halfWidth = (w - ellipsisWidth) / 2;
-		int w2 = 0;
-		Common::String::unsigned_type last = 0;
-		uint i = 0;
-
-		for (; i < s.size(); ++i) {
-			const Common::String::unsigned_type cur = s[i];
-			int charWidth = getCharWidth(cur) + getKerningOffset(last, cur);
-			if (w2 + charWidth > halfWidth)
-				break;
-			last = cur;
-			w2 += charWidth;
-			str += cur;
-		}
-
-		// At this point we know that the first 'i' chars are together 'w2'
-		// pixels wide. We took the first i-1, and add "..." to them.
-		str += "...";
-		last = '.';
-
-		// The original string is width wide. Of those we already skipped past
-		// w2 pixels, which means (width - w2) remain.
-		// The new str is (w2+ellipsisWidth) wide, so we can accommodate about
-		// (w - (w2+ellipsisWidth)) more pixels.
-		// Thus we skip ((width - w2) - (w - (w2+ellipsisWidth))) =
-		// (width + ellipsisWidth - w)
-		int skip = width + ellipsisWidth - w;
-		for (; i < s.size() && skip > 0; ++i) {
-			const Common::String::unsigned_type cur = s[i];
-			skip -= getCharWidth(cur) + getKerningOffset(last, cur);
-			last = cur;
-		}
-
-		// Append the remaining chars, if any
-		for (; i < s.size(); ++i) {
-			str += s[i];
-		}
-
-		return str;
-	} else {
-		return s;
-	}
 }
 
 TextAlign convertTextAlignH(TextAlign alignH, bool rtl) {

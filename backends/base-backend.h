@@ -27,20 +27,17 @@
 #include "common/events.h"
 
 class BaseBackend : public OSystem {
-protected:
-	virtual Common::EventSource *getDefaultEventSource() = 0;
 public:
 	virtual void initBackend();
 
-	virtual void displayMessageOnOSD(const char *msg);
+	virtual void displayMessageOnOSD(const Common::U32String &msg);
 	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon) {}
 	virtual void fillScreen(uint32 col);
 };
 
-class EventsBaseBackend : public BaseBackend, Common::EventSource {
-protected:
-	virtual Common::EventSource *getDefaultEventSource() { return this; }
+class EventsBaseBackend : virtual public BaseBackend, Common::EventSource {
 public:
+	virtual void initBackend();
 };
 
 

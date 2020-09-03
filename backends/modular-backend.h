@@ -27,15 +27,16 @@
 
 class GraphicsManager;
 class ResVmGraphicsManager; // ResidualVM specific
+class MixerManager;
 class MutexManager;
 
 /**
- * Base class for modular backends.
+ * Base classes for modular backends.
  *
- * It wraps most functions to their manager equivalent, but not
+ * They wrap most functions to their manager equivalent, but not
  * all OSystem functions are implemented here.
  *
- * A backend derivated from this class, will need to implement
+ * A backend derivated from these classes, will need to implement
  * these functions on its own:
  *   OSystem::pollEvent()
  *   OSystem::getMillis()
@@ -46,10 +47,10 @@ class MutexManager;
  * And, it should also initialize all the managers variables
  * declared in this class, or override their related functions.
  */
-class ModularBackend : public BaseBackend {
+class ModularGraphicsBackend : virtual public BaseBackend {
 public:
-	ModularBackend();
-	virtual ~ModularBackend();
+	ModularGraphicsBackend();
+	virtual ~ModularGraphicsBackend();
 
 	/** @name Features */
 	//@{
@@ -120,6 +121,50 @@ public:
 
 	//@}
 
+	/** @name Miscellaneous */
+	//@{
+
+	virtual void displayMessageOnOSD(const Common::U32String &msg) override final;
+	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon) override final;
+
+	//@}
+
+protected:
+	/** @name Managers variables */
+	//@{
+
+	ResVmGraphicsManager *_graphicsManager; // ResidualVM: was GraphicsManager
+
+	//@}
+};
+
+class ModularMixerBackend : virtual public BaseBackend {
+public:
+	ModularMixerBackend();
+	virtual ~ModularMixerBackend();
+
+	/** @name Sound */
+	//@{
+
+	virtual MixerManager *getMixerManager();
+	virtual Audio::Mixer *getMixer() override final;
+
+	//@}
+
+protected:
+	/** @name Managers variables */
+	//@{
+
+	MixerManager *_mixerManager;
+
+	//@}
+};
+
+class ModularMutexBackend : virtual public BaseBackend {
+public:
+	ModularMutexBackend();
+	virtual ~ModularMutexBackend();
+
 	/** @name Mutex handling */
 	//@{
 
@@ -130,28 +175,11 @@ public:
 
 	//@}
 
-	/** @name Sound */
-	//@{
-
-	virtual Audio::Mixer *getMixer() override;
-
-	//@}
-
-	/** @name Miscellaneous */
-	//@{
-
-	virtual void displayMessageOnOSD(const char *msg) override final;
-	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon) override final;
-
-	//@}
-
 protected:
 	/** @name Managers variables */
 	//@{
 
 	MutexManager *_mutexManager;
-	ResVmGraphicsManager *_graphicsManager; // ResidualVM: was GraphicsManager
-	Audio::Mixer *_mixer;
 
 	//@}
 };

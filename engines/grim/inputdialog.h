@@ -36,7 +36,7 @@ class InputDialog : public GUI::Dialog {
 public:
 	InputDialog(const Common::String &message, const Common::String &string, bool hasTextField = true);
 
-	const Common::String &getString() const;
+	Common::String getString();
 
 protected:
 	virtual void handleKeyDown(Common::KeyState state) override;

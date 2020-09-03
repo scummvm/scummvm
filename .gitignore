@@ -47,6 +47,8 @@ lib*.a
 /README.html*
 /NEWS
 /NEWS.html
+/CONTRIBUTING
+/CONTRIBUTING.html
 
 /build*
 /staging
