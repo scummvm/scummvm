@@ -31,6 +31,7 @@
 #include "agds/region.h"
 #include "agds/screen.h"
 #include "agds/systemVariable.h"
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/error.h"
 #include "common/events.h"
@@ -319,6 +320,10 @@ void AGDSEngine::changeMouseArea(int id, int enabled) {
 Common::Error AGDSEngine::run() {
 	if (!load())
 		return Common::kNoGameDataFoundError;
+
+	int loadSlot = ConfMan.getInt("save_slot");
+	if (loadSlot >= 0)
+		loadGameState(loadSlot);
 
 	Common::EventManager *eventManager = _system->getEventManager();
 
