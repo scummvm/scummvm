@@ -26,6 +26,10 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 
+#ifndef NDEBUG
+#define VERIFY_POOL
+#endif
+
 #ifdef VERIFY_POOL
 #define VERIFY_POOL_LEAKS
 #define VERIFY_POOL_FREES
