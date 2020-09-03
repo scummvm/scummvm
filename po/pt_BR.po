@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-03 01:28+0000\n"
-"PO-Revision-Date: 2020-09-01 06:43+0000\n"
+"PO-Revision-Date: 2020-09-04 01:43+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -6896,11 +6896,11 @@ msgstr "Livro de Feitiços"
 
 #: engines/zvision/detection.cpp:197
 msgid "Score"
-msgstr "Placar"
+msgstr "Pontuação"
 
 #: engines/zvision/detection.cpp:203
 msgid "Put away object"
-msgstr "Deixar objeto de lado"
+msgstr "Deixar objeto"
 
 #: engines/zvision/detection.cpp:209
 msgid "Extract coin"
@@ -6916,7 +6916,7 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
-"Este jogo salvo utiliza versão %u, mas esta engine somente suporta até a "
+"Este jogo salvo utiliza a versão %u, mas esta engine suporta somente até a "
 "versão %d. Você precisará de uma versão atualizada da engine para utilizar "
 "este jogo salvo."
 
