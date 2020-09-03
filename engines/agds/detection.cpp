@@ -52,12 +52,12 @@ public:
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	bool hasFeature(MetaEngineFeature f) const override {
 		switch (f) {
+		case kSupportsListSaves:
+		case kSupportsLoadingDuringStartup:
+		case kSupportsDeleteSave:
 		case kSavesSupportMetaInfo:
 		case kSavesSupportThumbnail:
-		case kSavesUseExtendedFormat:
 		case kSimpleSavesNames:
-		case kSupportsDeleteSave:
-		case kSupportsListSaves:
 			return true;
 		default:
 			return AdvancedMetaEngine::hasFeature(f);
