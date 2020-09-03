@@ -94,6 +94,7 @@ void
 Talk::FUN_8003239c(uint16 *dialog, int16 x, int16 y, int32 param_4, uint16 param_5, Actor *actor, uint16 startSequenceId,
 				   uint16 endSequenceId, uint32 textId) {
 	//TODO 0x800323a4
+	uint16 stubDialog[] = {'1', '2', '3', 0};
 
 	//TODO dragon_text_related(textId);
 	_vm->_isLoadingDialogAudio = true;
@@ -101,7 +102,7 @@ Talk::FUN_8003239c(uint16 *dialog, int16 x, int16 y, int32 param_4, uint16 param
 
 	actor->updateSequence(startSequenceId);
 	_vm->_sound->playSpeech(textId);
-	conversation_related_maybe(dialog, (int)x, (int)y, param_4 & 0xffff, (uint)param_5, textId, uVar4 & 0xffff);
+	conversation_related_maybe((*dialog != 0) ? dialog : &stubDialog[0], (int)x, (int)y, param_4 & 0xffff, (uint)param_5, textId, uVar4 & 0xffff);
 
 	actor->updateSequence(endSequenceId);
 }
