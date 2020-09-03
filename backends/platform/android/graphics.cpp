@@ -223,8 +223,8 @@ void AndroidGraphicsManager::updateScreen() {
 		_frame_buffer->attach();
 }
 
-void AndroidGraphicsManager::displayMessageOnOSD(const char *msg) {
-	ENTER("%s", msg);
+void AndroidGraphicsManager::displayMessageOnOSD(const Common::U32String &msg) {
+	ENTER("%s", msg.encode().c_str());
 
 	JNI::displayMessageOnOSD(msg);
 }
