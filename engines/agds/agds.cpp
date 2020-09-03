@@ -528,12 +528,13 @@ Animation *AGDSEngine::findAnimationByPhaseVar(const Common::String &phaseVar) {
 	return NULL;
 }
 
-Character *AGDSEngine::loadCharacter(const Common::String &id, const Common::String &name, const Common::String &object) {
+Character *AGDSEngine::loadCharacter(const Common::String &id, const Common::String &filename, const Common::String &object) {
 	CharactersType::iterator i = _characters.find(id);
 	if (i != _characters.end())
 		return i->_value;
 
-	Character *character = new Character(name, object);
+	Character *character = new Character(id, object);
+	character->load(_resourceManager.getResource(filename));
 	_characters[id] = character;
 	return character;
 }

@@ -3,6 +3,7 @@ MODULE := engines/agds
 MODULE_OBJS := \
 	agds.o \
 	animation.o \
+	character.o \
 	database.o \
 	detection.o \
 	font.o \

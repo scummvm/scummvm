@@ -1100,10 +1100,10 @@ void Process::addMouseArea() {
 
 void Process::loadCharacter() {
 	Common::String object = popString();
-	Common::String name = popText();
+	Common::String chrFilename = popText();
 	Common::String id = popString();
-	debug("loadCharacter %s %s %s", id.c_str(), name.c_str(), object.c_str());
-	_engine->loadCharacter(id, name, object);
+	debug("loadCharacter %s %s %s", id.c_str(), chrFilename.c_str(), object.c_str());
+	_engine->loadCharacter(id, chrFilename, object);
 }
 
 void Process::enableCharacter() {
