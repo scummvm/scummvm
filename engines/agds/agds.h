@@ -83,6 +83,7 @@ public:
 	int getGlobal(const Common::String &name) const;
 
 private:
+	void addSystemVar(const Common::String &name, SystemVariable *var);
 	bool initGraphics();
 	bool load();
 	void runProcess(ProcessListType::iterator &it);
@@ -190,6 +191,7 @@ private:
 	typedef Common::HashMap<int, Graphics::TransparentSurface *> PictureCacheType;
 	typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> PictureCacheLookup;
 	typedef Common::HashMap<Common::String, Object *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ObjectsType;
+	typedef Common::Array<Common::String> SystemVariablesListType;
 	typedef Common::HashMap<Common::String, SystemVariable *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SystemVariablesType;
 	typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> GlobalsType;
 	typedef Common::HashMap<Common::String, Animation *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> AnimationsType;
@@ -211,6 +213,7 @@ private:
 	int							_sharedStorageIndex;
 	Common::String				_sharedStorage[10];
 	GlobalsType					_globals;
+	SystemVariablesListType		_systemVarList;
 	SystemVariablesType			_systemVars;
 	Graphics::PixelFormat		_pixelFormat;
 	MJPGPlayer *				_mjpgPlayer;
