@@ -24,6 +24,7 @@
 #define AGDS_CHARACTER_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 #include "common/rect.h"
 
 namespace Common	{ class SeekableReadStream; }
@@ -42,9 +43,20 @@ class Character {
 	int _phase;
 	int _frames;
 
+	struct AnimationDescription {
+		struct Frame {
+			int x, y;
+			int w, h;
+		};
+
+		Common::String 			filename;
+		Common::Array<Frame> 	frames;
+	};
+	Common::Array<AnimationDescription> _animations;
+
 public:
 	Character(const Common::String & name, const Common::String & object):
-		_enabled(true), _phase(0), _frames(0), _name(name), _object(object) {
+		_name(name), _object(object), _enabled(true), _phase(0), _frames(0) {
 	}
 
 	const Common::String & name() const {
@@ -55,9 +67,7 @@ public:
 		return _object;
 	}
 
-	bool load(Common::SeekableReadStream* stream) {
-		return true;
-	}
+	void load(Common::SeekableReadStream* stream);
 
 	void enable(bool enabled = true) {
 		_enabled = enabled;
