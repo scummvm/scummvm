@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-09-02 20:30+0000\n"
+"POT-Creation-Date: 2020-09-03 01:28+0000\n"
 "PO-Revision-Date: 2020-09-01 00:23+0000\n"
 "Last-Translator: Donovan Watteau <contrib@dwatteau.fr>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -587,8 +587,7 @@ msgstr "Fermer"
 
 #: gui/gui-manager.cpp:137 engines/metaengine.cpp:112
 #: backends/platform/symbian/src/SymbianActions.cpp:40
-#: engines/dragons/detection.cpp:259 engines/glk/scott/scott.cpp:394
-#: engines/wintermute/keymapper_tables.h:1011
+#: engines/dragons/detection.cpp:259 engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
 #: engines/wintermute/keymapper_tables.h:1409
 #: engines/wintermute/keymapper_tables.h:1639
@@ -597,8 +596,7 @@ msgstr "Haut"
 
 #: gui/gui-manager.cpp:142 engines/metaengine.cpp:117
 #: backends/platform/symbian/src/SymbianActions.cpp:41
-#: engines/dragons/detection.cpp:265 engines/glk/scott/scott.cpp:394
-#: engines/wintermute/keymapper_tables.h:1017
+#: engines/dragons/detection.cpp:265 engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
 #: engines/wintermute/keymapper_tables.h:1415
 #: engines/wintermute/keymapper_tables.h:1645
@@ -4063,42 +4061,13 @@ msgstr "Lire également le texte de saisie"
 msgid "Use TTS to read the input text"
 msgstr "Utilise le synthétiseur vocal pour lire le texte de saisie"
 
-#: engines/glk/glk_api.cpp:63
-msgid "[ press any key to exit ]"
-msgstr "[ appuyez sur une touche pour sortir ]"
-
 #: engines/glk/quetzal.cpp:148 engines/glk/quetzal.cpp:157
 msgid "Untitled Savegame"
 msgstr "Sauvegarde sans nom"
 
-#: engines/glk/adrift/os_glk.cpp:2814
-msgid "Loading game...\n"
-msgstr "Chargement en cours...\n"
-
 #: engines/glk/advsys/advsys.cpp:35
 msgid "Could not start AdvSys game"
 msgstr "Impossible de lancer le jeu AdvSys"
-
-#: engines/glk/advsys/advsys.cpp:48 engines/glk/advsys/vm.cpp:319
-msgid "Sorry, the savegame couldn't be restored"
-msgstr "Désolé, la sauvegarde n'a pas pu être restaurée"
-
-#: engines/glk/advsys/vm.cpp:314
-msgid "Sorry, the savegame couldn't be created"
-msgstr "Désolé, la sauvegarde n'a pas pu être créée"
-
-#: engines/glk/advsys/vm.cpp:560
-msgid "Speak up! I can't hear you!\n"
-msgstr "Plus fort! Je ne vous entends pas!\n"
-
-#: engines/glk/advsys/vm.cpp:596
-#, c-format
-msgid "I don't know the word \"%s\".\n"
-msgstr "Je ne connais pas le mot \"%s\".\n"
-
-#: engines/glk/advsys/vm.cpp:682
-msgid "I don't understand.\n"
-msgstr "Je ne comprends pas.\n"
 
 #: engines/glk/alan2/alan2.cpp:76
 msgid "This is too short to be a valid Alan2 file."
@@ -4111,10 +4080,6 @@ msgstr "Ce n'est pas un fichier Alan2 valide."
 #: engines/glk/comprehend/game.cpp:337
 msgid "Savegame"
 msgstr "Sauvegarde"
-
-#: engines/glk/comprehend/game.cpp:1333
-msgid "Picture window toggled\n"
-msgstr "Fenêtre d'image basculée\n"
 
 #: engines/glk/glulx/glulx.cpp:82
 msgid "This is too short to be a valid Glulx file."
@@ -4135,229 +4100,6 @@ msgstr "Ce fichier Glulx est une version trop récente pour être exécutée."
 #: engines/glk/quest/quest.cpp:45
 msgid "Could not start Quest game"
 msgstr "Impossible de lancer le jeu Quest"
-
-#: engines/glk/scott/scott.cpp:99
-msgid "I don't understand your command. "
-msgstr "Je ne comprends pas votre ordre. "
-
-#: engines/glk/scott/scott.cpp:102
-msgid "I can't do that yet. "
-msgstr "Je ne peux pas encore faire ça. "
-
-#: engines/glk/scott/scott.cpp:118
-msgid "Light has run out! "
-msgstr "Il n'y a plus de lumière ! "
-
-#: engines/glk/scott/scott.cpp:120
-msgid "Your light has run out. "
-msgstr "Votre lumière s'est éteinte. "
-
-#: engines/glk/scott/scott.cpp:129
-msgid "Light runs out in "
-msgstr "La lumière s'éteint dans "
-
-#: engines/glk/scott/scott.cpp:131
-msgid " turns. "
-msgstr " tours. "
-
-#: engines/glk/scott/scott.cpp:134
-msgid "Your light is growing dim. "
-msgstr "Votre lumière s'assombrit. "
-
-#: engines/glk/scott/scott.cpp:394
-msgid "North"
-msgstr "Nord"
-
-#: engines/glk/scott/scott.cpp:394
-msgid "South"
-msgstr "Sud"
-
-#: engines/glk/scott/scott.cpp:394
-msgid "East"
-msgstr "Est"
-
-#: engines/glk/scott/scott.cpp:394
-msgid "West"
-msgstr "Ouest"
-
-#: engines/glk/scott/scott.cpp:406
-msgid "You can't see. It is too dark!\n"
-msgstr "Vous ne pouvez pas voir. Il fait trop sombre !\n"
-
-#: engines/glk/scott/scott.cpp:408
-msgid "I can't see. It is too dark!\n"
-msgstr "Je ne peux pas voir. Il fait trop sombre !\n"
-
-#: engines/glk/scott/scott.cpp:418
-#, c-format
-msgid "You are in a %s\n"
-msgstr "Vous êtes dans un %s\n"
-
-#: engines/glk/scott/scott.cpp:420
-#, c-format
-msgid "I'm in a %s\n"
-msgstr "Je suis dans un %s\n"
-
-#: engines/glk/scott/scott.cpp:425
-msgid ""
-"\n"
-"Obvious exits: "
-msgstr ""
-"\n"
-"Sorties évidentes : "
-
-#: engines/glk/scott/scott.cpp:438
-msgid "none"
-msgstr "aucun"
-
-#: engines/glk/scott/scott.cpp:447
-msgid ""
-"\n"
-"You can also see: "
-msgstr ""
-"\n"
-"Vous pouvez aussi voir : "
-
-#: engines/glk/scott/scott.cpp:450
-msgid ""
-"\n"
-"I can also see: "
-msgstr ""
-"\n"
-"Je peux aussi voir : "
-
-#: engines/glk/scott/scott.cpp:533
-msgid "Saved.\n"
-msgstr "Sauvegarder.\n"
-
-#: engines/glk/scott/scott.cpp:626
-msgid "You use word(s) I don't know! "
-msgstr "Vous utilisez des mots que je ne connais pas ! "
-
-#: engines/glk/scott/scott.cpp:756 engines/glk/scott/scott.cpp:1079
-#: engines/glk/scott/scott.cpp:1101
-msgid "You are carrying too much. "
-msgstr "Vous portez trop de choses. "
-
-#: engines/glk/scott/scott.cpp:758
-msgid "I've too much to carry! "
-msgstr "J'ai trop de choses à porter ! "
-
-#: engines/glk/scott/scott.cpp:789
-msgid "You are dead.\n"
-msgstr "Vous êtes mort.\n"
-
-#: engines/glk/scott/scott.cpp:791
-msgid "I am dead.\n"
-msgstr "Je suis mort.\n"
-
-#: engines/glk/scott/scott.cpp:803
-msgid "The game is now over.\n"
-msgstr "Le jeu est maintenant terminé.\n"
-
-#: engines/glk/scott/scott.cpp:818
-msgid "You have stored "
-msgstr "Vous avez conservé "
-
-#: engines/glk/scott/scott.cpp:820
-msgid "I've stored "
-msgstr "J'ai conservé "
-
-#: engines/glk/scott/scott.cpp:822
-msgid " treasures.  On a scale of 0 to 100, that rates "
-msgstr " trésors.  Sur une échelle de 0 à 100 cela donne "
-
-#: engines/glk/scott/scott.cpp:826
-msgid "Well done.\n"
-msgstr "Bien joué.\n"
-
-#: engines/glk/scott/scott.cpp:835
-msgid "You are carrying:\n"
-msgstr "Vous transportez :\n"
-
-#: engines/glk/scott/scott.cpp:837
-msgid "I'm carrying:\n"
-msgstr "Je transporte :\n"
-
-#: engines/glk/scott/scott.cpp:852
-msgid "Nothing"
-msgstr "Rien"
-
-#: engines/glk/scott/scott.cpp:981
-msgid "Give me a direction too."
-msgstr "Donnez-moi aussi une direction."
-
-#: engines/glk/scott/scott.cpp:990
-msgid "Dangerous to move in the dark! "
-msgstr "Dangereux de se déplacer dans le noir ! "
-
-#: engines/glk/scott/scott.cpp:998
-msgid "You fell down and broke your neck. "
-msgstr "Vous êtes tombé et vous vous êtes cassé le cou. "
-
-#: engines/glk/scott/scott.cpp:1000
-msgid "I fell down and broke my neck. "
-msgstr "Je suis tombé et je me suis cassé le cou. "
-
-#: engines/glk/scott/scott.cpp:1005
-msgid "You can't go in that direction. "
-msgstr "Vous ne pouvez pas aller dans cette direction. "
-
-#: engines/glk/scott/scott.cpp:1007
-msgid "I can't go in that direction. "
-msgstr "Je ne peux pas aller dans cette direction. "
-
-#: engines/glk/scott/scott.cpp:1065
-msgid "It is dark.\n"
-msgstr "Il fait noir.\n"
-
-#: engines/glk/scott/scott.cpp:1081 engines/glk/scott/scott.cpp:1103
-msgid "I've too much to carry. "
-msgstr "J'ai trop de choses à porter. "
-
-#: engines/glk/scott/scott.cpp:1086 engines/glk/scott/scott.cpp:1134
-msgid ": O.K.\n"
-msgstr ": O.K.\n"
-
-#: engines/glk/scott/scott.cpp:1092
-msgid "Nothing taken."
-msgstr "Rien n'a été pris."
-
-#: engines/glk/scott/scott.cpp:1096 engines/glk/scott/scott.cpp:1144
-msgid "What ? "
-msgstr "Quoi ? "
-
-#: engines/glk/scott/scott.cpp:1109
-msgid "It is beyond your power to do that. "
-msgstr "Vous n'avez pas le pouvoir de le faire. "
-
-#: engines/glk/scott/scott.cpp:1111
-msgid "It's beyond my power to do that. "
-msgstr "Je n'ai pas le pouvoir de faire ça. "
-
-#: engines/glk/scott/scott.cpp:1115
-msgid "O.K. "
-msgstr "O.K. "
-
-#: engines/glk/scott/scott.cpp:1140
-msgid "Nothing dropped.\n"
-msgstr "Rien de déposé.\n"
-
-#: engines/glk/scott/scott.cpp:1150
-msgid "It's beyond your power to do that.\n"
-msgstr "Vous n'avez pas le pouvoir de faire ça.\n"
-
-#: engines/glk/scott/scott.cpp:1152
-msgid "It's beyond my power to do that.\n"
-msgstr "Je n'ai pas le pouvoir de faire ça.\n"
-
-#: engines/glk/zcode/zcode.cpp:126
-msgid "Error reading save file"
-msgstr "Erreur lors de la lecture de la sauvegarde"
-
-#: engines/glk/zcode/zcode.cpp:144
-msgid "Error writing save file\n"
-msgstr "Erreur lors de l'écriture de la sauvegarde\n"
 
 #: engines/gob/inter_playtoons.cpp:258 engines/gob/inter_v2.cpp:1479
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:538
@@ -7213,6 +6955,198 @@ msgstr ""
 "Ce fichier de sauvegarde est en version %u, mais ce moteur ne supporte que "
 "les versions %d ou inférieures. Vous devez utiliser une version plus récente "
 "de ScummVM pour pouvoir charger cette sauvegarde."
+
+#~ msgid "[ press any key to exit ]"
+#~ msgstr "[ appuyez sur une touche pour sortir ]"
+
+#~ msgid "Loading game...\n"
+#~ msgstr "Chargement en cours...\n"
+
+#~ msgid "Sorry, the savegame couldn't be restored"
+#~ msgstr "Désolé, la sauvegarde n'a pas pu être restaurée"
+
+#~ msgid "Sorry, the savegame couldn't be created"
+#~ msgstr "Désolé, la sauvegarde n'a pas pu être créée"
+
+#~ msgid "Speak up! I can't hear you!\n"
+#~ msgstr "Plus fort! Je ne vous entends pas!\n"
+
+#~ msgid "I don't know the word \"%s\".\n"
+#~ msgstr "Je ne connais pas le mot \"%s\".\n"
+
+#~ msgid "I don't understand.\n"
+#~ msgstr "Je ne comprends pas.\n"
+
+#~ msgid "Picture window toggled\n"
+#~ msgstr "Fenêtre d'image basculée\n"
+
+#~ msgid "I don't understand your command. "
+#~ msgstr "Je ne comprends pas votre ordre. "
+
+#~ msgid "I can't do that yet. "
+#~ msgstr "Je ne peux pas encore faire ça. "
+
+#~ msgid "Light has run out! "
+#~ msgstr "Il n'y a plus de lumière ! "
+
+#~ msgid "Your light has run out. "
+#~ msgstr "Votre lumière s'est éteinte. "
+
+#~ msgid "Light runs out in "
+#~ msgstr "La lumière s'éteint dans "
+
+#~ msgid " turns. "
+#~ msgstr " tours. "
+
+#~ msgid "Your light is growing dim. "
+#~ msgstr "Votre lumière s'assombrit. "
+
+#~ msgid "North"
+#~ msgstr "Nord"
+
+#~ msgid "South"
+#~ msgstr "Sud"
+
+#~ msgid "East"
+#~ msgstr "Est"
+
+#~ msgid "West"
+#~ msgstr "Ouest"
+
+#~ msgid "You can't see. It is too dark!\n"
+#~ msgstr "Vous ne pouvez pas voir. Il fait trop sombre !\n"
+
+#~ msgid "I can't see. It is too dark!\n"
+#~ msgstr "Je ne peux pas voir. Il fait trop sombre !\n"
+
+#~ msgid "You are in a %s\n"
+#~ msgstr "Vous êtes dans un %s\n"
+
+#~ msgid "I'm in a %s\n"
+#~ msgstr "Je suis dans un %s\n"
+
+#~ msgid ""
+#~ "\n"
+#~ "Obvious exits: "
+#~ msgstr ""
+#~ "\n"
+#~ "Sorties évidentes : "
+
+#~ msgid "none"
+#~ msgstr "aucun"
+
+#~ msgid ""
+#~ "\n"
+#~ "You can also see: "
+#~ msgstr ""
+#~ "\n"
+#~ "Vous pouvez aussi voir : "
+
+#~ msgid ""
+#~ "\n"
+#~ "I can also see: "
+#~ msgstr ""
+#~ "\n"
+#~ "Je peux aussi voir : "
+
+#~ msgid "Saved.\n"
+#~ msgstr "Sauvegarder.\n"
+
+#~ msgid "You use word(s) I don't know! "
+#~ msgstr "Vous utilisez des mots que je ne connais pas ! "
+
+#~ msgid "You are carrying too much. "
+#~ msgstr "Vous portez trop de choses. "
+
+#~ msgid "I've too much to carry! "
+#~ msgstr "J'ai trop de choses à porter ! "
+
+#~ msgid "You are dead.\n"
+#~ msgstr "Vous êtes mort.\n"
+
+#~ msgid "I am dead.\n"
+#~ msgstr "Je suis mort.\n"
+
+#~ msgid "The game is now over.\n"
+#~ msgstr "Le jeu est maintenant terminé.\n"
+
+#~ msgid "You have stored "
+#~ msgstr "Vous avez conservé "
+
+#~ msgid "I've stored "
+#~ msgstr "J'ai conservé "
+
+#~ msgid " treasures.  On a scale of 0 to 100, that rates "
+#~ msgstr " trésors.  Sur une échelle de 0 à 100 cela donne "
+
+#~ msgid "Well done.\n"
+#~ msgstr "Bien joué.\n"
+
+#~ msgid "You are carrying:\n"
+#~ msgstr "Vous transportez :\n"
+
+#~ msgid "I'm carrying:\n"
+#~ msgstr "Je transporte :\n"
+
+#~ msgid "Nothing"
+#~ msgstr "Rien"
+
+#~ msgid "Give me a direction too."
+#~ msgstr "Donnez-moi aussi une direction."
+
+#~ msgid "Dangerous to move in the dark! "
+#~ msgstr "Dangereux de se déplacer dans le noir ! "
+
+#~ msgid "You fell down and broke your neck. "
+#~ msgstr "Vous êtes tombé et vous vous êtes cassé le cou. "
+
+#~ msgid "I fell down and broke my neck. "
+#~ msgstr "Je suis tombé et je me suis cassé le cou. "
+
+#~ msgid "You can't go in that direction. "
+#~ msgstr "Vous ne pouvez pas aller dans cette direction. "
+
+#~ msgid "I can't go in that direction. "
+#~ msgstr "Je ne peux pas aller dans cette direction. "
+
+#~ msgid "It is dark.\n"
+#~ msgstr "Il fait noir.\n"
+
+#~ msgid "I've too much to carry. "
+#~ msgstr "J'ai trop de choses à porter. "
+
+#~ msgid ": O.K.\n"
+#~ msgstr ": O.K.\n"
+
+#~ msgid "Nothing taken."
+#~ msgstr "Rien n'a été pris."
+
+#~ msgid "What ? "
+#~ msgstr "Quoi ? "
+
+#~ msgid "It is beyond your power to do that. "
+#~ msgstr "Vous n'avez pas le pouvoir de le faire. "
+
+#~ msgid "It's beyond my power to do that. "
+#~ msgstr "Je n'ai pas le pouvoir de faire ça. "
+
+#~ msgid "O.K. "
+#~ msgstr "O.K. "
+
+#~ msgid "Nothing dropped.\n"
+#~ msgstr "Rien de déposé.\n"
+
+#~ msgid "It's beyond your power to do that.\n"
+#~ msgstr "Vous n'avez pas le pouvoir de faire ça.\n"
+
+#~ msgid "It's beyond my power to do that.\n"
+#~ msgstr "Je n'ai pas le pouvoir de faire ça.\n"
+
+#~ msgid "Error reading save file"
+#~ msgstr "Erreur lors de la lecture de la sauvegarde"
+
+#~ msgid "Error writing save file\n"
+#~ msgstr "Erreur lors de l'écriture de la sauvegarde\n"
 
 #~ msgid "Use IMF/Yamaha FB-01 for MIDI output"
 #~ msgstr "Utiliser IMF/Yamaha FB-01 pour la sortie MIDI"

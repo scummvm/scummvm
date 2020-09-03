@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-09-02 20:30+0000\n"
+"POT-Creation-Date: 2020-09-03 01:28+0000\n"
 "PO-Revision-Date: 2020-08-31 12:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -578,8 +578,7 @@ msgstr "Itxi"
 
 #: gui/gui-manager.cpp:137 engines/metaengine.cpp:112
 #: backends/platform/symbian/src/SymbianActions.cpp:40
-#: engines/dragons/detection.cpp:259 engines/glk/scott/scott.cpp:394
-#: engines/wintermute/keymapper_tables.h:1011
+#: engines/dragons/detection.cpp:259 engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
 #: engines/wintermute/keymapper_tables.h:1409
 #: engines/wintermute/keymapper_tables.h:1639
@@ -588,8 +587,7 @@ msgstr "Gora"
 
 #: gui/gui-manager.cpp:142 engines/metaengine.cpp:117
 #: backends/platform/symbian/src/SymbianActions.cpp:41
-#: engines/dragons/detection.cpp:265 engines/glk/scott/scott.cpp:394
-#: engines/wintermute/keymapper_tables.h:1017
+#: engines/dragons/detection.cpp:265 engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
 #: engines/wintermute/keymapper_tables.h:1415
 #: engines/wintermute/keymapper_tables.h:1645
@@ -4072,46 +4070,15 @@ msgstr ""
 msgid "Use TTS to read the input text"
 msgstr ""
 
-#: engines/glk/glk_api.cpp:63
-msgid "[ press any key to exit ]"
-msgstr ""
-
 #: engines/glk/quetzal.cpp:148 engines/glk/quetzal.cpp:157
 #, fuzzy
 msgid "Untitled Savegame"
 msgstr "Titulurik gabeko joko gordea"
 
-#: engines/glk/adrift/os_glk.cpp:2814
-#, fuzzy
-msgid "Loading game...\n"
-msgstr "Jokoa kargatzen..."
-
 #: engines/glk/advsys/advsys.cpp:35
 #, fuzzy
 msgid "Could not start AdvSys game"
 msgstr "Ezin izan da aldatu bideo modura : '"
-
-#: engines/glk/advsys/advsys.cpp:48 engines/glk/advsys/vm.cpp:319
-msgid "Sorry, the savegame couldn't be restored"
-msgstr ""
-
-#: engines/glk/advsys/vm.cpp:314
-#, fuzzy
-msgid "Sorry, the savegame couldn't be created"
-msgstr "ezin izan da bideo-modua aldatu."
-
-#: engines/glk/advsys/vm.cpp:560
-msgid "Speak up! I can't hear you!\n"
-msgstr ""
-
-#: engines/glk/advsys/vm.cpp:596
-#, c-format
-msgid "I don't know the word \"%s\".\n"
-msgstr ""
-
-#: engines/glk/advsys/vm.cpp:682
-msgid "I don't understand.\n"
-msgstr ""
 
 #: engines/glk/alan2/alan2.cpp:76
 msgid "This is too short to be a valid Alan2 file."
@@ -4125,10 +4092,6 @@ msgstr ""
 #, fuzzy
 msgid "Savegame"
 msgstr "Gorde jokoa:"
-
-#: engines/glk/comprehend/game.cpp:1333
-msgid "Picture window toggled\n"
-msgstr ""
 
 #: engines/glk/glulx/glulx.cpp:82
 msgid "This is too short to be a valid Glulx file."
@@ -4150,230 +4113,6 @@ msgstr ""
 #, fuzzy
 msgid "Could not start Quest game"
 msgstr "Ezin izan da aldatu bideo modura : '"
-
-#: engines/glk/scott/scott.cpp:99
-msgid "I don't understand your command. "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:102
-msgid "I can't do that yet. "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:118
-msgid "Light has run out! "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:120
-msgid "Your light has run out. "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:129
-msgid "Light runs out in "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:131
-#, fuzzy
-msgid " turns. "
-msgstr "Piztu"
-
-#: engines/glk/scott/scott.cpp:134
-msgid "Your light is growing dim. "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:394
-msgid "North"
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:394
-msgid "South"
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:394
-msgid "East"
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:394
-msgid "West"
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:406
-msgid "You can't see. It is too dark!\n"
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:408
-msgid "I can't see. It is too dark!\n"
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:418
-#, c-format
-msgid "You are in a %s\n"
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:420
-#, c-format
-msgid "I'm in a %s\n"
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:425
-msgid ""
-"\n"
-"Obvious exits: "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:438
-msgid "none"
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:447
-msgid ""
-"\n"
-"You can also see: "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:450
-msgid ""
-"\n"
-"I can also see: "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:533
-#, fuzzy
-msgid "Saved.\n"
-msgstr "Gorde"
-
-#: engines/glk/scott/scott.cpp:626
-msgid "You use word(s) I don't know! "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:756 engines/glk/scott/scott.cpp:1079
-#: engines/glk/scott/scott.cpp:1101
-msgid "You are carrying too much. "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:758
-msgid "I've too much to carry! "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:789
-msgid "You are dead.\n"
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:791
-msgid "I am dead.\n"
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:803
-#, fuzzy
-msgid "The game is now over.\n"
-msgstr "Jokoa EZ da kargatu"
-
-#: engines/glk/scott/scott.cpp:818
-msgid "You have stored "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:820
-#, fuzzy
-msgid "I've stored "
-msgstr "Kargatu"
-
-#: engines/glk/scott/scott.cpp:822
-msgid " treasures.  On a scale of 0 to 100, that rates "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:826
-msgid "Well done.\n"
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:835
-msgid "You are carrying:\n"
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:837
-msgid "I'm carrying:\n"
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:852
-msgid "Nothing"
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:981
-msgid "Give me a direction too."
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:990
-msgid "Dangerous to move in the dark! "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:998
-msgid "You fell down and broke your neck. "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:1000
-msgid "I fell down and broke my neck. "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:1005
-msgid "You can't go in that direction. "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:1007
-msgid "I can't go in that direction. "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:1065
-msgid "It is dark.\n"
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:1081 engines/glk/scott/scott.cpp:1103
-msgid "I've too much to carry. "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:1086 engines/glk/scott/scott.cpp:1134
-msgid ": O.K.\n"
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:1092
-msgid "Nothing taken."
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:1096 engines/glk/scott/scott.cpp:1144
-#, fuzzy
-msgid "What ? "
-msgstr "Zer da"
-
-#: engines/glk/scott/scott.cpp:1109
-msgid "It is beyond your power to do that. "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:1111
-msgid "It's beyond my power to do that. "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:1115
-msgid "O.K. "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:1140
-msgid "Nothing dropped.\n"
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:1150
-msgid "It's beyond your power to do that.\n"
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:1152
-msgid "It's beyond my power to do that.\n"
-msgstr ""
-
-#: engines/glk/zcode/zcode.cpp:126
-#, fuzzy
-msgid "Error reading save file"
-msgstr "Jokoa exekutatzean errorea:"
-
-#: engines/glk/zcode/zcode.cpp:144
-#, fuzzy
-msgid "Error writing save file\n"
-msgstr "Jokoa exekutatzean errorea:"
 
 #: engines/gob/inter_playtoons.cpp:258 engines/gob/inter_v2.cpp:1479
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:538
@@ -7177,6 +6916,42 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Loading game...\n"
+#~ msgstr "Jokoa kargatzen..."
+
+#, fuzzy
+#~ msgid "Sorry, the savegame couldn't be created"
+#~ msgstr "ezin izan da bideo-modua aldatu."
+
+#, fuzzy
+#~ msgid " turns. "
+#~ msgstr "Piztu"
+
+#, fuzzy
+#~ msgid "Saved.\n"
+#~ msgstr "Gorde"
+
+#, fuzzy
+#~ msgid "The game is now over.\n"
+#~ msgstr "Jokoa EZ da kargatu"
+
+#, fuzzy
+#~ msgid "I've stored "
+#~ msgstr "Kargatu"
+
+#, fuzzy
+#~ msgid "What ? "
+#~ msgstr "Zer da"
+
+#, fuzzy
+#~ msgid "Error reading save file"
+#~ msgstr "Jokoa exekutatzean errorea:"
+
+#, fuzzy
+#~ msgid "Error writing save file\n"
+#~ msgstr "Jokoa exekutatzean errorea:"
 
 #~ msgid "Use IMF/Yamaha FB-01 for MIDI output"
 #~ msgstr "Erabili IMF/Yamaha FB-01 MIDI irteerarako"

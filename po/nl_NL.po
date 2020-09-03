@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-09-02 20:30+0000\n"
+"POT-Creation-Date: 2020-09-03 01:28+0000\n"
 "PO-Revision-Date: 2020-08-31 18:14+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -584,8 +584,7 @@ msgstr "Sluiten"
 
 #: gui/gui-manager.cpp:137 engines/metaengine.cpp:112
 #: backends/platform/symbian/src/SymbianActions.cpp:40
-#: engines/dragons/detection.cpp:259 engines/glk/scott/scott.cpp:394
-#: engines/wintermute/keymapper_tables.h:1011
+#: engines/dragons/detection.cpp:259 engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
 #: engines/wintermute/keymapper_tables.h:1409
 #: engines/wintermute/keymapper_tables.h:1639
@@ -594,8 +593,7 @@ msgstr "Omhoog"
 
 #: gui/gui-manager.cpp:142 engines/metaengine.cpp:117
 #: backends/platform/symbian/src/SymbianActions.cpp:41
-#: engines/dragons/detection.cpp:265 engines/glk/scott/scott.cpp:394
-#: engines/wintermute/keymapper_tables.h:1017
+#: engines/dragons/detection.cpp:265 engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
 #: engines/wintermute/keymapper_tables.h:1415
 #: engines/wintermute/keymapper_tables.h:1645
@@ -4041,43 +4039,14 @@ msgstr "Lees ook de ingevoerde tekst"
 msgid "Use TTS to read the input text"
 msgstr "Gebruik TTS om de tekst invoer te lezen"
 
-#: engines/glk/glk_api.cpp:63
-msgid "[ press any key to exit ]"
-msgstr "[ druk op een toets om te stoppen ]"
-
 #: engines/glk/quetzal.cpp:148 engines/glk/quetzal.cpp:157
 msgid "Untitled Savegame"
 msgstr "Naamloos opgeslagen spel"
-
-#: engines/glk/adrift/os_glk.cpp:2814
-msgid "Loading game...\n"
-msgstr "Spel laden...\n"
 
 # can this be changed into "Could not switch to video mode '%s'"?
 #: engines/glk/advsys/advsys.cpp:35
 msgid "Could not start AdvSys game"
 msgstr "Kon AdvSys spel niet starten"
-
-#: engines/glk/advsys/advsys.cpp:48 engines/glk/advsys/vm.cpp:319
-msgid "Sorry, the savegame couldn't be restored"
-msgstr "Helaas, het opgeslagen spel kon niet hersteld worden"
-
-#: engines/glk/advsys/vm.cpp:314
-msgid "Sorry, the savegame couldn't be created"
-msgstr "Helaas, creëren van een opgeslagen spel is niet gelukt"
-
-#: engines/glk/advsys/vm.cpp:560
-msgid "Speak up! I can't hear you!\n"
-msgstr "Spreek luider! Ik kan je niet horen!\n"
-
-#: engines/glk/advsys/vm.cpp:596
-#, c-format
-msgid "I don't know the word \"%s\".\n"
-msgstr "Ik ken het woord \"%s\" niet.\n"
-
-#: engines/glk/advsys/vm.cpp:682
-msgid "I don't understand.\n"
-msgstr "Ik begrijp het niet.\n"
 
 #: engines/glk/alan2/alan2.cpp:76
 msgid "This is too short to be a valid Alan2 file."
@@ -4090,10 +4059,6 @@ msgstr "Dit is geen geldig Alan2 bestand."
 #: engines/glk/comprehend/game.cpp:337
 msgid "Savegame"
 msgstr "opgeslagen spel"
-
-#: engines/glk/comprehend/game.cpp:1333
-msgid "Picture window toggled\n"
-msgstr "Foto window geschakeld\n"
 
 #: engines/glk/glulx/glulx.cpp:82
 msgid "This is too short to be a valid Glulx file."
@@ -4117,229 +4082,6 @@ msgstr ""
 #: engines/glk/quest/quest.cpp:45
 msgid "Could not start Quest game"
 msgstr "Kon Quest spel niet starten"
-
-#: engines/glk/scott/scott.cpp:99
-msgid "I don't understand your command. "
-msgstr "Ik begrijp je opdracht niet. "
-
-#: engines/glk/scott/scott.cpp:102
-msgid "I can't do that yet. "
-msgstr "Dat kan ik nog niet doen. "
-
-#: engines/glk/scott/scott.cpp:118
-msgid "Light has run out! "
-msgstr "Lamp is op! "
-
-#: engines/glk/scott/scott.cpp:120
-msgid "Your light has run out. "
-msgstr "Uw lamp is opgeraakt. "
-
-#: engines/glk/scott/scott.cpp:129
-msgid "Light runs out in "
-msgstr "Lamp raakt op in "
-
-#: engines/glk/scott/scott.cpp:131
-msgid " turns. "
-msgstr " beurten. "
-
-#: engines/glk/scott/scott.cpp:134
-msgid "Your light is growing dim. "
-msgstr "Uw lamp wordt zwakker. "
-
-#: engines/glk/scott/scott.cpp:394
-msgid "North"
-msgstr "Noord"
-
-#: engines/glk/scott/scott.cpp:394
-msgid "South"
-msgstr "Zuid"
-
-#: engines/glk/scott/scott.cpp:394
-msgid "East"
-msgstr "Oost"
-
-#: engines/glk/scott/scott.cpp:394
-msgid "West"
-msgstr "West"
-
-#: engines/glk/scott/scott.cpp:406
-msgid "You can't see. It is too dark!\n"
-msgstr "U ziet niets. Het is te donker!\n"
-
-#: engines/glk/scott/scott.cpp:408
-msgid "I can't see. It is too dark!\n"
-msgstr "ik zie niets. Het is te donker!\n"
-
-#: engines/glk/scott/scott.cpp:418
-#, c-format
-msgid "You are in a %s\n"
-msgstr "U bent in een %s\n"
-
-#: engines/glk/scott/scott.cpp:420
-#, c-format
-msgid "I'm in a %s\n"
-msgstr "Ik ben in een %s\n"
-
-#: engines/glk/scott/scott.cpp:425
-msgid ""
-"\n"
-"Obvious exits: "
-msgstr ""
-"\n"
-"Duidelijke uitgangen: "
-
-#: engines/glk/scott/scott.cpp:438
-msgid "none"
-msgstr "geen"
-
-#: engines/glk/scott/scott.cpp:447
-msgid ""
-"\n"
-"You can also see: "
-msgstr ""
-"\n"
-"U kunt ook zien: "
-
-#: engines/glk/scott/scott.cpp:450
-msgid ""
-"\n"
-"I can also see: "
-msgstr ""
-"\n"
-"Ik kan ook zien: "
-
-#: engines/glk/scott/scott.cpp:533
-msgid "Saved.\n"
-msgstr "Opgeslagen.\n"
-
-#: engines/glk/scott/scott.cpp:626
-msgid "You use word(s) I don't know! "
-msgstr "U gebruikt woord(en) die ik niet ken! "
-
-#: engines/glk/scott/scott.cpp:756 engines/glk/scott/scott.cpp:1079
-#: engines/glk/scott/scott.cpp:1101
-msgid "You are carrying too much. "
-msgstr "U draagt te veel. "
-
-#: engines/glk/scott/scott.cpp:758
-msgid "I've too much to carry! "
-msgstr "Ik draag te veel! "
-
-#: engines/glk/scott/scott.cpp:789
-msgid "You are dead.\n"
-msgstr "U bent dood.\n"
-
-#: engines/glk/scott/scott.cpp:791
-msgid "I am dead.\n"
-msgstr "Ik ben dood.\n"
-
-#: engines/glk/scott/scott.cpp:803
-msgid "The game is now over.\n"
-msgstr "Het spel is nu over.\n"
-
-#: engines/glk/scott/scott.cpp:818
-msgid "You have stored "
-msgstr "U heeft opgeslagen "
-
-#: engines/glk/scott/scott.cpp:820
-msgid "I've stored "
-msgstr "Ik heb opgeslagen "
-
-#: engines/glk/scott/scott.cpp:822
-msgid " treasures.  On a scale of 0 to 100, that rates "
-msgstr " schatten.  Op een schaal van 0 tot 100, komt dat op "
-
-#: engines/glk/scott/scott.cpp:826
-msgid "Well done.\n"
-msgstr "Goed gedaan.\n"
-
-#: engines/glk/scott/scott.cpp:835
-msgid "You are carrying:\n"
-msgstr "U draagt:\n"
-
-#: engines/glk/scott/scott.cpp:837
-msgid "I'm carrying:\n"
-msgstr "Ik draag:\n"
-
-#: engines/glk/scott/scott.cpp:852
-msgid "Nothing"
-msgstr "Niets"
-
-#: engines/glk/scott/scott.cpp:981
-msgid "Give me a direction too."
-msgstr "Geef me ook een richting."
-
-#: engines/glk/scott/scott.cpp:990
-msgid "Dangerous to move in the dark! "
-msgstr "Gevaarlijk om in het donker te bewegen! "
-
-#: engines/glk/scott/scott.cpp:998
-msgid "You fell down and broke your neck. "
-msgstr "U viel naar beneden en brak uw nek. "
-
-#: engines/glk/scott/scott.cpp:1000
-msgid "I fell down and broke my neck. "
-msgstr "Ik viel naar beneden en brak mijn nek. "
-
-#: engines/glk/scott/scott.cpp:1005
-msgid "You can't go in that direction. "
-msgstr "U kunt die richting niet opgaan. "
-
-#: engines/glk/scott/scott.cpp:1007
-msgid "I can't go in that direction. "
-msgstr "Ik kan die richting niet opgaan. "
-
-#: engines/glk/scott/scott.cpp:1065
-msgid "It is dark.\n"
-msgstr "Het is donker.\n"
-
-#: engines/glk/scott/scott.cpp:1081 engines/glk/scott/scott.cpp:1103
-msgid "I've too much to carry. "
-msgstr "Ik heb te veel om te dragen. "
-
-#: engines/glk/scott/scott.cpp:1086 engines/glk/scott/scott.cpp:1134
-msgid ": O.K.\n"
-msgstr ": O.K.\n"
-
-#: engines/glk/scott/scott.cpp:1092
-msgid "Nothing taken."
-msgstr "Niets gepakt."
-
-#: engines/glk/scott/scott.cpp:1096 engines/glk/scott/scott.cpp:1144
-msgid "What ? "
-msgstr "Wat ? "
-
-#: engines/glk/scott/scott.cpp:1109
-msgid "It is beyond your power to do that. "
-msgstr "Dat valt buiten uw mogelijkheden. "
-
-#: engines/glk/scott/scott.cpp:1111
-msgid "It's beyond my power to do that. "
-msgstr "Dat valt buiten mijn mogelijkheden. "
-
-#: engines/glk/scott/scott.cpp:1115
-msgid "O.K. "
-msgstr "O.K. "
-
-#: engines/glk/scott/scott.cpp:1140
-msgid "Nothing dropped.\n"
-msgstr "Niets laten vallen.\n"
-
-#: engines/glk/scott/scott.cpp:1150
-msgid "It's beyond your power to do that.\n"
-msgstr "Dat valt buiten uw mogelijkheden.\n"
-
-#: engines/glk/scott/scott.cpp:1152
-msgid "It's beyond my power to do that.\n"
-msgstr "Dat valt buiten mijn mogelijkheden.\n"
-
-#: engines/glk/zcode/zcode.cpp:126
-msgid "Error reading save file"
-msgstr "Fout tijdens het inladen van het opgeslagen spel"
-
-#: engines/glk/zcode/zcode.cpp:144
-msgid "Error writing save file\n"
-msgstr "Fout tijdens het opslaan van het spel\n"
 
 #: engines/gob/inter_playtoons.cpp:258 engines/gob/inter_v2.cpp:1479
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:538
@@ -7159,6 +6901,198 @@ msgstr ""
 "Dit opgeslagen spel gebruikt versie %u, maar deze engine ondersteund alleen "
 "tot versie %d. U heeft een nieuwere versie van deze engine nodig om dit "
 "opgeslagen te gebruiken."
+
+#~ msgid "[ press any key to exit ]"
+#~ msgstr "[ druk op een toets om te stoppen ]"
+
+#~ msgid "Loading game...\n"
+#~ msgstr "Spel laden...\n"
+
+#~ msgid "Sorry, the savegame couldn't be restored"
+#~ msgstr "Helaas, het opgeslagen spel kon niet hersteld worden"
+
+#~ msgid "Sorry, the savegame couldn't be created"
+#~ msgstr "Helaas, creëren van een opgeslagen spel is niet gelukt"
+
+#~ msgid "Speak up! I can't hear you!\n"
+#~ msgstr "Spreek luider! Ik kan je niet horen!\n"
+
+#~ msgid "I don't know the word \"%s\".\n"
+#~ msgstr "Ik ken het woord \"%s\" niet.\n"
+
+#~ msgid "I don't understand.\n"
+#~ msgstr "Ik begrijp het niet.\n"
+
+#~ msgid "Picture window toggled\n"
+#~ msgstr "Foto window geschakeld\n"
+
+#~ msgid "I don't understand your command. "
+#~ msgstr "Ik begrijp je opdracht niet. "
+
+#~ msgid "I can't do that yet. "
+#~ msgstr "Dat kan ik nog niet doen. "
+
+#~ msgid "Light has run out! "
+#~ msgstr "Lamp is op! "
+
+#~ msgid "Your light has run out. "
+#~ msgstr "Uw lamp is opgeraakt. "
+
+#~ msgid "Light runs out in "
+#~ msgstr "Lamp raakt op in "
+
+#~ msgid " turns. "
+#~ msgstr " beurten. "
+
+#~ msgid "Your light is growing dim. "
+#~ msgstr "Uw lamp wordt zwakker. "
+
+#~ msgid "North"
+#~ msgstr "Noord"
+
+#~ msgid "South"
+#~ msgstr "Zuid"
+
+#~ msgid "East"
+#~ msgstr "Oost"
+
+#~ msgid "West"
+#~ msgstr "West"
+
+#~ msgid "You can't see. It is too dark!\n"
+#~ msgstr "U ziet niets. Het is te donker!\n"
+
+#~ msgid "I can't see. It is too dark!\n"
+#~ msgstr "ik zie niets. Het is te donker!\n"
+
+#~ msgid "You are in a %s\n"
+#~ msgstr "U bent in een %s\n"
+
+#~ msgid "I'm in a %s\n"
+#~ msgstr "Ik ben in een %s\n"
+
+#~ msgid ""
+#~ "\n"
+#~ "Obvious exits: "
+#~ msgstr ""
+#~ "\n"
+#~ "Duidelijke uitgangen: "
+
+#~ msgid "none"
+#~ msgstr "geen"
+
+#~ msgid ""
+#~ "\n"
+#~ "You can also see: "
+#~ msgstr ""
+#~ "\n"
+#~ "U kunt ook zien: "
+
+#~ msgid ""
+#~ "\n"
+#~ "I can also see: "
+#~ msgstr ""
+#~ "\n"
+#~ "Ik kan ook zien: "
+
+#~ msgid "Saved.\n"
+#~ msgstr "Opgeslagen.\n"
+
+#~ msgid "You use word(s) I don't know! "
+#~ msgstr "U gebruikt woord(en) die ik niet ken! "
+
+#~ msgid "You are carrying too much. "
+#~ msgstr "U draagt te veel. "
+
+#~ msgid "I've too much to carry! "
+#~ msgstr "Ik draag te veel! "
+
+#~ msgid "You are dead.\n"
+#~ msgstr "U bent dood.\n"
+
+#~ msgid "I am dead.\n"
+#~ msgstr "Ik ben dood.\n"
+
+#~ msgid "The game is now over.\n"
+#~ msgstr "Het spel is nu over.\n"
+
+#~ msgid "You have stored "
+#~ msgstr "U heeft opgeslagen "
+
+#~ msgid "I've stored "
+#~ msgstr "Ik heb opgeslagen "
+
+#~ msgid " treasures.  On a scale of 0 to 100, that rates "
+#~ msgstr " schatten.  Op een schaal van 0 tot 100, komt dat op "
+
+#~ msgid "Well done.\n"
+#~ msgstr "Goed gedaan.\n"
+
+#~ msgid "You are carrying:\n"
+#~ msgstr "U draagt:\n"
+
+#~ msgid "I'm carrying:\n"
+#~ msgstr "Ik draag:\n"
+
+#~ msgid "Nothing"
+#~ msgstr "Niets"
+
+#~ msgid "Give me a direction too."
+#~ msgstr "Geef me ook een richting."
+
+#~ msgid "Dangerous to move in the dark! "
+#~ msgstr "Gevaarlijk om in het donker te bewegen! "
+
+#~ msgid "You fell down and broke your neck. "
+#~ msgstr "U viel naar beneden en brak uw nek. "
+
+#~ msgid "I fell down and broke my neck. "
+#~ msgstr "Ik viel naar beneden en brak mijn nek. "
+
+#~ msgid "You can't go in that direction. "
+#~ msgstr "U kunt die richting niet opgaan. "
+
+#~ msgid "I can't go in that direction. "
+#~ msgstr "Ik kan die richting niet opgaan. "
+
+#~ msgid "It is dark.\n"
+#~ msgstr "Het is donker.\n"
+
+#~ msgid "I've too much to carry. "
+#~ msgstr "Ik heb te veel om te dragen. "
+
+#~ msgid ": O.K.\n"
+#~ msgstr ": O.K.\n"
+
+#~ msgid "Nothing taken."
+#~ msgstr "Niets gepakt."
+
+#~ msgid "What ? "
+#~ msgstr "Wat ? "
+
+#~ msgid "It is beyond your power to do that. "
+#~ msgstr "Dat valt buiten uw mogelijkheden. "
+
+#~ msgid "It's beyond my power to do that. "
+#~ msgstr "Dat valt buiten mijn mogelijkheden. "
+
+#~ msgid "O.K. "
+#~ msgstr "O.K. "
+
+#~ msgid "Nothing dropped.\n"
+#~ msgstr "Niets laten vallen.\n"
+
+#~ msgid "It's beyond your power to do that.\n"
+#~ msgstr "Dat valt buiten uw mogelijkheden.\n"
+
+#~ msgid "It's beyond my power to do that.\n"
+#~ msgstr "Dat valt buiten mijn mogelijkheden.\n"
+
+#~ msgid "Error reading save file"
+#~ msgstr "Fout tijdens het inladen van het opgeslagen spel"
+
+#~ msgid "Error writing save file\n"
+#~ msgstr "Fout tijdens het opslaan van het spel\n"
 
 #~ msgid "Use IMF/Yamaha FB-01 for MIDI output"
 #~ msgstr "Gebruik IMF/Yamaha FB-01 voor MIDI"
