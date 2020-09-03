@@ -48,7 +48,6 @@ private:
 	int scaler_index;  // Index of Current Scaler
 	int scale_factor;  // Scale factor
 
-	bool fullscreen;
 	bool doubleBuffer;
 	bool is_no_darkness;
 	bool non_square_pixels;
@@ -68,9 +67,7 @@ public:
 
 	bool init();
 
-	bool is_fullscreen() {
-		return fullscreen;
-	}
+	bool is_fullscreen() const;
 	bool is_non_square_pixels() {
 		return non_square_pixels;
 	}
@@ -82,6 +79,7 @@ public:
 	}
 	bool toggle_darkness_cheat();
 	bool toggle_fullscreen();
+	bool set_fullscreen(bool value);
 	bool set_palette(uint8 *palette);
 	bool set_palette_entry(uint8 idx, uint8 r, uint8 g, uint8 b);
 	bool rotate_palette(uint8 pos, uint8 length);
@@ -191,7 +189,6 @@ private:
 	int get_screen_bpp();
 
 	bool sdl1_toggle_fullscreen();
-	bool set_fullscreen(bool value);
 };
 
 } // End of namespace Nuvie
