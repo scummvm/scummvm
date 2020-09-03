@@ -256,15 +256,19 @@ void CineEngine::initialize() {
 	// Used for making sound effects work using Roland MT-32 and AdLib in
 	// Operation Stealth after loading a savegame. The sound effects are loaded
 	// in AUTO00.PRC using a combination of o2_loadAbs and o2_playSample(1, ...)
-	// before checking if _globalVars[255] == 0. In the original game AUTO00.PRC
+	// before o1_freePartRange(0, 200). In the original game AUTO00.PRC
 	// was run when starting or restarting the game and one could not load a savegame
 	// before passing the copy protection. Thus, we try to emulate that behaviour by
 	// running at least part of AUTO00.PRC before loading a savegame.
-	if (getGameType() == Cine::GType_OS && !(getFeatures() & GF_DEMO)) {
+	//
+	// Confirmed that DOS and Atari ST versions do have these commands in their AUTO00.PRC files.
+	// Confirmed that Amiga and demo versions do not have these commands in their AUTO00.PRC files.
+	if (getGameType() == Cine::GType_OS && !(getFeatures() & GF_DEMO) &&
+		(getPlatform() == Common::kPlatformDOS || getPlatform() == Common::kPlatformAtariST)) {
 		loadPrc(BOOT_PRC_NAME);
 		strcpy(currentPrcName, BOOT_PRC_NAME);
 		addScriptToGlobalScripts(BOOT_SCRIPT_INDEX);
-		runOnlyUntilCopyProtectionCheck = true;
+		runOnlyUntilFreePartRangeFirst200 = true;
 		executeGlobalScripts();
 	}
 
