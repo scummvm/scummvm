@@ -19,6 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#include <cmath>
 #include "common/textconsole.h"
 #include "common/debug.h"
 #include "audio/decoders/xa.h"
@@ -101,11 +102,15 @@ VabSound::~VabSound() {
 	delete _vbData;
 }
 
-Audio::AudioStream *VabSound::getAudioStream(uint16 program, int16 vagID) {
-	debug(3, "Playing program %d, numTones: %d, vagID %d, vagOffset: %x, size: %x", program, _programAttrs[program].tones, vagID, _vagOffsets[vagID], _vagSizes[vagID]);
+Audio::AudioStream *VabSound::getAudioStream(uint16 program, uint16 key) {
+	int16 vagID = getVagID(program, key);
+	int16 baseKey = getBaseToneKey(program, key);
+	int sampleRate = getAdjustedSampleRate(key, baseKey);
+	debug(3, "Playing program %d, Key %d, numTones: %d, vagID %d, vagOffset: %x, size: %x adjustedSampleRate: %d",
+	   program, key, _programAttrs[program].tones, vagID, _vagOffsets[vagID], _vagSizes[vagID], sampleRate);
 	Audio::AudioStream *str = Audio::makeXAStream(
 			new Common::MemoryReadStream(&_vbData[_vagOffsets[vagID]], _vagSizes[vagID], DisposeAfterUse::NO),
-			11025,
+			sampleRate,
 			DisposeAfterUse::YES);
 	return str;
 }
@@ -159,10 +164,6 @@ int16 VabSound::getVagID(uint16 program, uint16 key) {
 	if (program < _header.numVAG) {
 		for (int i = 0; i < _programAttrs[program].tones; i++) {
 			if (_toneAttrs[i].prog == program && _toneAttrs[i].min <= key && _toneAttrs[i].max >= key) {
-				if (key != _toneAttrs[i].min) {
-					warning("Sfx key requested doesn't exactly match vab tone. TODO we need to change the playback pitch. key requested: %d tone match (min,max) (%d, %d)",
-						key, _toneAttrs[i].min, _toneAttrs[i].max);
-				}
 				return _toneAttrs[i].vag - 1;
 			}
 		}
@@ -171,6 +172,32 @@ int16 VabSound::getVagID(uint16 program, uint16 key) {
 	}
 
 	return -1;
+}
+
+int16 VabSound::getBaseToneKey(uint16 program, uint16 key) {
+	if (program < _header.numVAG) {
+		for (int i = 0; i < _programAttrs[program].tones; i++) {
+			if (_toneAttrs[i].prog == program && _toneAttrs[i].min <= key && _toneAttrs[i].max >= key) {
+				debug("tone key %d center %d mode %d shift %d min %d, max %d adsr 1 %d adsr 2 %d pbmin %d pbmax %d",
+		  			key, _toneAttrs[i].center, _toneAttrs[i].mode, _toneAttrs[i].shift, _toneAttrs[i].min, _toneAttrs[i].max,
+					  _toneAttrs[i].adsr1, _toneAttrs[i].adsr2, _toneAttrs[i].pbmin, _toneAttrs[i].pbmax);
+				return _toneAttrs[i].center;
+			}
+		}
+	}
+	return -1;
+}
+
+bool VabSound::hasSound(uint16 program, uint16 key) {
+	return getVagID(program, key) != -1;
+}
+
+int VabSound::getAdjustedSampleRate(int16 desiredKey, int16 baseToneKey) {
+	if (desiredKey == baseToneKey) {
+		return 44100;
+	}
+	float diff = pow(2, (float)(desiredKey - baseToneKey) / 12);
+	return (int)((float)44100 * diff);
 }
 
 } // End of namespace Dragons
