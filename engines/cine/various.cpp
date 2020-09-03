@@ -42,7 +42,7 @@ namespace Cine {
 
 int16 disableSystemMenu = 0;
 bool inMenu;
-bool runOnlyUntilCopyProtectionCheck = false;
+bool runOnlyUntilFreePartRangeFirst200 = false;
 
 int16 commandVar3[4];
 int16 commandVar1;
