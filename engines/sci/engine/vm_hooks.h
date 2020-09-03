@@ -52,6 +52,7 @@ struct HookEntry {
 	Common::String selector;
 	int exportId;
 	const char *opcodeName;
+	int applyCount;
 
 	/** If all the previous match, patch */
 	const byte *patch;

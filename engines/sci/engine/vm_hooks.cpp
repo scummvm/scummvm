@@ -142,13 +142,15 @@ const byte sq4_puker_stop_sound[] = {
  *  - objName and selector	(and then externID is -1)
  *  - external function ID  (and then selector is "")
  *		= in that case, if objName == "" it will be ignored, otherwise, it will be also used to match
+ *
+ *  The patch will be applied `applyCount` times; -1 = apply infinite times
  */
 
 static const GeneralHookEntry allGamesHooks[] = {
-	// GID, script, lang,        PC.offset, objName,  selector,  externID, opcode,  hook array
-	{GID_QFG1, Common::UNK_LANG, {58,  0x144d}, {"egoRuns", "changeState",   -1 , "push0", HOOKARRAY(qfg1_die_after_running_on_ice)}},
-	{GID_SQ3,  Common::HE_ISR,   {255, 0x1103}, {"User",    "",              -1 , "pushi", HOOKARRAY(sci0_hebrew_input_prompt)}},
-	{GID_SQ4 , Common::UNK_LANG, {15, 0x07d7},  {"barScript", "changeState", -1 , "pushi", HOOKARRAY(sq4_puker_stop_sound)} }
+	// GID,    lang,          script, PC.offset, objName,  selector,    externID, opcode, applyCount, hook array
+	{GID_QFG1, Common::UNK_LANG, {58,  0x144d}, {"egoRuns", "changeState",   -1 , "push0",  1, HOOKARRAY(qfg1_die_after_running_on_ice)}},
+	{GID_SQ3,  Common::HE_ISR,   {255, 0x1103}, {"User",    "",              -1 , "pushi", -1, HOOKARRAY(sci0_hebrew_input_prompt)}},
+	{GID_SQ4 , Common::UNK_LANG, {15, 0x07d7},  {"barScript", "changeState", -1 , "pushi",  1, HOOKARRAY(sq4_puker_stop_sound)} }
 };
 
 
@@ -191,7 +193,7 @@ bool hook_exec_match(Sci::EngineState *s, HookEntry entry) {
 	else
 		objMatch = strcmp(objName, entry.objName) == 0;
 
-	return objMatch && selector == entry.selector &&
+	return objMatch && selector == entry.selector && entry.applyCount &&
 		s->xs->debugExportId == entry.exportId && strcmp(entry.opcodeName, opcodeNames[opcode]) == 0;
 }
 
@@ -209,6 +211,8 @@ void VmHooks::vm_hook_before_exec(Sci::EngineState *s) {
 		HookEntry entry = _hooksMap[key];
 		if (hook_exec_match(s, entry)) {
 			debugC(kDebugLevelPatcher, "vm_hook: patching script: %d, PC: %04x:%04x, obj: %s, selector: %s, extern: %d, opcode: %s", scriptNumber, PRINT_REG(s->xs->addr.pc), entry.objName, entry.selector.c_str(), entry.exportId, entry.opcodeName);
+			if (entry.applyCount != -1)
+				_hooksMap[key].applyCount--;
 			Common::Array<byte> buffer(entry.patch, entry.patchSize);
 
 			_hookScriptData = buffer;
