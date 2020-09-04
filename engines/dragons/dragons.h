@@ -359,6 +359,9 @@ public:
 	uint32 getCutscenePaletteOffsetFromDragonEXE();
 	uint32 defaultResponseOffsetFromDragonEXE();
 	uint16 getCursorHandPointerSequenceID();
+	uint32 getMiniGame3StartingDialog();
+	uint32 getMiniGame3PickAHatDialog();
+	uint32 getMiniGame3DataOffset();
 private:
 	bool savegame(const char *filename, const char *description);
 	bool loadgame(const char *filename);
