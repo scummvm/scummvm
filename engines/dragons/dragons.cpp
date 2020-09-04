@@ -1820,6 +1820,31 @@ uint16 DragonsEngine::getCursorHandPointerSequenceID() {
 	return _language == Common::DE_DEU || _language == Common::FR_FRA ? 0x86 : 0x84;
 }
 
+uint32 DragonsEngine::getMiniGame3StartingDialog() {
+	switch (_language) {
+	case Common::DE_DEU : return 0x5456;
+	case Common::FR_FRA : return 0x509C;
+	default : break;
+	}
+	return 0x479A;
+}
+
+uint32 DragonsEngine::getMiniGame3PickAHatDialog() {
+	switch (_language) {
+	case Common::DE_DEU : return 0x2E32E;
+	case Common::FR_FRA : return 0x2F180;
+	default : break;
+	}
+	return 0x2958A;
+}
+
+uint32 DragonsEngine::getMiniGame3DataOffset() {
+	if (_language == Common::DE_DEU || _language == Common::FR_FRA) {
+		return 0x265c;
+	}
+	return 0x4914;
+}
+
 void (*DragonsEngine::getSceneUpdateFunction())() {
 	return _sceneUpdateFunction;
 }

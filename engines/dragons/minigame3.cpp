@@ -149,7 +149,7 @@ void Minigame3::run() {
 		handPositionsTbl[i].y = fd->readUint16LE();
 	}
 
-	fd->seek(0x4914);
+	fd->seek(_vm->getMiniGame3DataOffset());
 
 	for (int i = 0; i < 4; i++) {
 		UnkStruct_ARRAY_800931a0[i].position1 = fd->readUint16LE();
@@ -294,7 +294,7 @@ void Minigame3::run() {
 	updateBackgroundLayerOffset(0, 0, 0);
 	_vm->fadeFromBlack();
 	_vm->waitForFrames(0xf);
-	_vm->_talk->loadAndDisplayDialogAroundPoint(0x479A, 0x14, 3, 0x1e01, 0);
+	_vm->_talk->loadAndDisplayDialogAroundPoint(_vm->getMiniGame3StartingDialog(), 0x14, 3, 0x1e01, 0);
 	_vm->waitForFrames(0x1e);
 	// TODO clearTextDialog((uint)DAT_8008e7e8, (uint)DAT_8008e844, (uint)DAT_8008e848, (uint)DAT_8008e874);
 	i = 0;
@@ -679,7 +679,8 @@ void Minigame3::run() {
 	handActorId->_y_pos = handPositionsTbl[local_224].y;
 	handActorId->_priorityLayer = 2;
 	bVar1 = false;
-	_vm->_talk->loadAndDisplayDialogAroundPoint(0x2958A, 0x14, 3, 0x1e01, 0);
+	//pick a hat flicker.
+	_vm->_talk->loadAndDisplayDialogAroundPoint(_vm->getMiniGame3PickAHatDialog(), 0x14, 3, 0x1e01, 0);
 	while (_vm->isFlagSet(ENGINE_FLAG_8000)) {
 		_vm->waitForFrames(1);
 	}
