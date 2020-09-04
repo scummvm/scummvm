@@ -114,7 +114,6 @@ void Minigame3::run() {
 	uint16 local_1e = 0;
 	uint16 local_1c = 0;
 	uint16 local_1a = 0;
-	int16 local_16;
 	int16 local_14;
 	InventoryState origInventoryType;
 	int16 local_10;
@@ -280,8 +279,8 @@ void Minigame3::run() {
 		goodRabbitPositionTbl[(int16)i] = 0;
 		i = i + 1;
 	}
-	local_16 = _vm->getRand(4);
-	goodRabbitPositionTbl[(int16)local_16] = 1;
+	int16 goodRabbitStartingPosition = _vm->getRand(4);
+	goodRabbitPositionTbl[goodRabbitStartingPosition] = 1;
 	i = 0;
 	while ((int16)i < 4) {
 		bunnyPositionTbl[(int16)i] = i;
@@ -302,23 +301,14 @@ void Minigame3::run() {
 	while ((int16)i < 4) {
 		if (goodRabbitPositionTbl[(int16)i] == 0) {
 			bunnyActorTbl[(int16)i]->updateSequence(1);
-		} else {
-			local_16 = i;
 		}
 		i = i + 1;
 	}
-//TODO why doesn't this work?
-//	do {
-//		iVar3 = (int)(int16)local_16 + 1;
-//		iVar4 = iVar3;
-//		if (iVar3 < 0) {
-//			iVar4 = (int)(int16)local_16 + 4;
-//		}
-//	} while (!bunnyActorTbl[iVar3 + (iVar4 >> 2) * -4]->isFlagSet(ACTOR_FLAG_4));
-	bunnyActorTbl[local_16]->waitUntilFlag4IsSet();
 
-	bunnyActorTbl[(int16)local_16]->updateSequence(0);
-	bunnyActorTbl[(int16)local_16]->waitUntilFlag4IsSet();
+	bunnyActorTbl[(goodRabbitStartingPosition + 1) % 4]->waitUntilFlag4IsSet(); // wait for a rabid rabbit to complete its display sequence.
+
+	bunnyActorTbl[goodRabbitStartingPosition]->updateSequence(0);
+	bunnyActorTbl[goodRabbitStartingPosition]->waitUntilFlag4IsSet();
 	i = 0;
 	while ((int16)i < 4) {
 		bunnyActorTbl[(int16)i]->updateSequence(4);
@@ -650,9 +640,9 @@ void Minigame3::run() {
 	_vm->waitForFrames(1);
 	i = 0;
 	while ((int16)i < 3) {
-		local_16 = 0;
-		while ((int16)local_16 < 3) {
-			updateBackgroundLayerOffset(2, ((int) (int16) local_16 * 0x140 + 0x640) * 0x10000 >> 0x10, 0);
+		int16 local_16 = 0;
+		while (local_16 < 3) {
+			updateBackgroundLayerOffset(2, ((int) local_16 * 0x140 + 0x640) * 0x10000 >> 0x10, 0);
 			_vm->waitForFrames(5);
 			local_16 = local_16 + 1;
 		}
@@ -671,8 +661,8 @@ void Minigame3::run() {
 		}
 		_vm->waitForFrames(0xf);
 		local_16 = 1;
-		while (-1 < (int16)local_16) {
-			updateBackgroundLayerOffset(2, ((int) (int16) local_16 * 0x140 + 0x640) * 0x10000 >> 0x10, 0);
+		while (-1 < local_16) {
+			updateBackgroundLayerOffset(2, ((int) local_16 * 0x140 + 0x640) * 0x10000 >> 0x10, 0);
 			_vm->waitForFrames(5);
 			local_16 = local_16 + -1;
 		}
