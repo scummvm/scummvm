@@ -208,6 +208,11 @@ Common::Error IllusionsEngine_Duckman::run() {
 
 	unloadSpecialCode(0);
 
+	_resSys->unloadResourceById(0x120001);
+	_resSys->unloadResourceById(0x120002);
+	_resSys->unloadResourceById(0x120003);
+	_resSys->unloadResourceById(0x000D0001);
+
 	delete _stack;
 	delete _scriptOpcodes;
 
