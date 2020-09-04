@@ -810,29 +810,6 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 	}
 
 	{
-		// System vars
-		Common::ScopedPtr<Common::SeekableReadStream> agds_d(db.getEntry(file, "__agds_d"));
-		for(uint i = 0, n = _systemVarList.size(); i < n; ++i) {
-			Common::String & name = _systemVarList[i];
-			_systemVars[name]->read(agds_d.get());
-		}
-	}
-
-	{
-		// Global vars
-		_globals.clear();
-		Common::ScopedPtr<Common::SeekableReadStream> agds_v(db.getEntry(file, "__agds_v"));
-		uint32 n = agds_v->readUint32LE();
-		debug("reading %u vars...", n);
-		Common::Array<char> name(33);
-		while(n--) {
-			agds_v->read(name.data(), 32);
-			int value = agds_v->readSint32LE();
-			debug("setting var %s to %d", name.data(), value);
-			setGlobal(name.data(), value);
-		}
-	}
-	{
 		// Current character
 		Common::ScopedPtr<Common::SeekableReadStream> agds_c(db.getEntry(file, "__agds_c"));
 		Common::Array<char> data(0x61);
@@ -850,6 +827,46 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 		while(n--) {
 			int v = agds_c->readUint16LE();
 			debug("savegame character leftover: %d", v);
+		}
+	}
+
+	Common::String screenName;
+	{
+		// Screenshot and screen name
+		Common::ScopedPtr<Common::SeekableReadStream> agds_s(db.getEntry(file, "__agds_s"));
+		Common::Array<char> screenNameData(33);
+		agds_s->read(screenNameData.data(), 32);
+		screenName = Common::String(screenNameData.data());
+	}
+
+	{
+		// Global vars
+		_globals.clear();
+		Common::ScopedPtr<Common::SeekableReadStream> agds_v(db.getEntry(file, "__agds_v"));
+		uint32 n = agds_v->readUint32LE();
+		debug("reading %u vars...", n);
+		Common::Array<char> name(33);
+		while(n--) {
+			agds_v->read(name.data(), 32);
+			int value = agds_v->readSint32LE();
+			debug("setting var %s to %d", name.data(), value);
+			setGlobal(name.data(), value);
+		}
+	}
+
+	{
+		// Audio samples
+		Common::ScopedPtr<Common::SeekableReadStream> agds_a(db.getEntry(file, "__agds_a"));
+		char buffer[0x48] = {};
+		agds_a->read(buffer, sizeof(buffer));
+	}
+
+	{
+		// System vars
+		Common::ScopedPtr<Common::SeekableReadStream> agds_d(db.getEntry(file, "__agds_d"));
+		for(uint i = 0, n = _systemVarList.size(); i < n; ++i) {
+			Common::String & name = _systemVarList[i];
+			_systemVars[name]->read(agds_d.get());
 		}
 	}
 
@@ -872,13 +889,7 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 		}
 	}
 
-	{
-		// Screenshot and screen name
-		Common::ScopedPtr<Common::SeekableReadStream> agds_s(db.getEntry(file, "__agds_s"));
-		Common::Array<char> screenName(33);
-		agds_s->read(screenName.data(), 32);
-		loadScreen(Common::String(screenName.data()));
-	}
+	loadScreen(screenName);
 
 	return Common::kNoError;
 }
