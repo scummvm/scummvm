@@ -350,7 +350,6 @@ void ScriptBase::Actor_Says_With_Pause(int actorId, int sentenceId, float pause,
 	if (pause > 0.0f && !_vm->_actorSpeakStopIsRequested) {
 		Delay(pause * 1000u);
 	}
-
 	Player_Gains_Control();
 }
 
@@ -965,6 +964,11 @@ void ScriptBase::Delay(uint32 miliseconds) {
 		_vm->gameTick();
 	}
 	Player_Gains_Control();
+}
+
+bool ScriptBase::Player_Has_Control() {
+	debugC(kDebugScript, "Player_Has_Control()");
+	return _vm->playerHasControl();
 }
 
 void ScriptBase::Player_Loses_Control() {

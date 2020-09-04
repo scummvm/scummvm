@@ -124,7 +124,7 @@ void AIScriptGordo::CompletedMovementTrack() {
 #if !BLADERUNNER_ORIGINAL_BUGS
 		    // prevent this dialogue scene if McCoy is climbing the stairs up-again
 		    // to avoid a game freeze bug
-		    && _vm->playerHasControl()
+		    && Player_Has_Control()
 #endif
 		) {
 			Actor_Force_Stop_Walking(kActorMcCoy);
