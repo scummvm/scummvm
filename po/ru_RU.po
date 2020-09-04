@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-03 01:28+0000\n"
-"PO-Revision-Date: 2020-09-03 17:43+0000\n"
+"PO-Revision-Date: 2020-09-04 12:21+0000\n"
 "Last-Translator: Ivan Lukyanov <greencis@mail.ru>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Russian\n"
 
@@ -48,7 +48,7 @@ msgstr "Вверх"
 #: gui/browser.cpp:79 gui/browser.cpp:81 gui/remotebrowser.cpp:57
 #: gui/remotebrowser.cpp:59
 msgid "Go to previous directory level"
-msgstr "Перейти на директорию уровнем выше"
+msgstr "Перейти в каталог уровнем выше"
 
 #: gui/browser.cpp:81 gui/remotebrowser.cpp:59
 msgctxt "lowres"
@@ -88,11 +88,11 @@ msgstr "Выбрать"
 
 #: gui/downloaddialog.cpp:49
 msgid "Select directory where to download game data"
-msgstr "Выберите директорию для скачивания данных игры"
+msgstr "Выберите каталог для скачивания данных игры"
 
 #: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:529 gui/launcher.cpp:207
 msgid "Select directory with game data"
-msgstr "Выберите директорию с файлами игры"
+msgstr "Выберите каталог с файлами игры"
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:227
 msgid "From: "
@@ -145,7 +145,7 @@ msgstr "Нет"
 
 #: gui/downloaddialog.cpp:137 gui/launcher.cpp:537
 msgid "ScummVM couldn't open the specified directory!"
-msgstr "ScummVM не смог открыть указанную директорию!"
+msgstr "ScummVM не смог открыть указанный каталог!"
 
 #: gui/downloaddialog.cpp:147
 msgid ""
@@ -180,8 +180,8 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
-"\"%s\" уже существует в указанной директории.\n"
-"Вы действительно хотите загрузить файлы в эту директорию?"
+"\"%s\" уже существует в указанном каталоге.\n"
+"Вы действительно хотите загрузить файлы в этот каталог?"
 
 #: gui/downloaddialog.cpp:215
 #, c-format
@@ -1320,8 +1320,8 @@ msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
 msgstr ""
-"Использовать системный браузер файлов для выбора файлов или папок вместо "
-"браузера файлов ScummVM."
+"Использовать системный браузер для выбора файлов и каталогов вместо браузера "
+"файлов ScummVM."
 
 #: gui/options.cpp:2057 gui/updates-dialog.cpp:86
 msgid "Update check:"
@@ -1458,16 +1458,16 @@ msgstr "Отключиться"
 
 #: gui/options.cpp:2114
 msgid "Stop using this storage on this device"
-msgstr "Прекратить использование этого хранилища на этом устройстве"
+msgstr "Прекратить использование этого хранилища на данном устройстве"
 
 #: gui/options.cpp:2117
 msgctxt "lowres"
 msgid "This storage is not connected yet! To connect,"
-msgstr "Это хранилище еще не подключено! Подключить,"
+msgstr "Это хранилище ещё не подключено! Чтобы подключить,"
 
 #: gui/options.cpp:2119
 msgid "This storage is not connected yet! To connect,"
-msgstr "Это хранилище еще не подключено! Подключить,"
+msgstr "Это хранилище ещё не подключено! Чтобы подключить,"
 
 #: gui/options.cpp:2120
 msgid "1. Open this link:"
@@ -1476,11 +1476,11 @@ msgstr "1. Откройте эту ссылку:"
 #: gui/options.cpp:2123
 msgctxt "lowres"
 msgid "2. Get the code and enter it here:"
-msgstr "2. Получить код и ввести его здесь:"
+msgstr "2. Получите код и введите его здесь:"
 
 #: gui/options.cpp:2125
 msgid "2. Get the code and enter it here:"
-msgstr "2. Получить код и ввести его здесь:"
+msgstr "2. Получите код и введите его здесь:"
 
 #: gui/options.cpp:2127
 msgid "Paste"
@@ -1492,11 +1492,11 @@ msgstr "Вставить код из буфера обмена"
 
 #: gui/options.cpp:2128
 msgid "3. Connect"
-msgstr "3. Подключить"
+msgstr "3. Подключитесь"
 
 #: gui/options.cpp:2128
 msgid "Connect your cloud storage account"
-msgstr "Подключите свою учетную запись облачного хранилища"
+msgstr "Подключить вашу учётную запись в облачном хранилище"
 
 #: gui/options.cpp:2137
 msgid "Run server"
@@ -1517,12 +1517,11 @@ msgstr "Корень:"
 
 #: gui/options.cpp:2142 gui/options.cpp:2144 gui/options.cpp:2145
 msgid "Select which directory will be shown as /root/ in the Files Manager"
-msgstr ""
-"Выберите, какой каталог будет отображаться как / root / в Диспетчере файлов"
+msgstr "Выберите, какой каталог отображать как /root/ в Диспетчере файлов"
 
 #: gui/options.cpp:2144
 msgid "/root/ Path:"
-msgstr "Корневая директория:"
+msgstr "Путь к корню:"
 
 #: gui/options.cpp:2150
 msgid "Server's port:"
@@ -1535,8 +1534,7 @@ msgstr "Порт для использования сервером"
 #: gui/options.cpp:2155
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
-msgstr ""
-"Запустите сервер для управления файлами с помощью браузера (в той же сети)."
+msgstr "Запустите сервер, чтобы управлять файлами через браузер (в одной сети)."
 
 #: gui/options.cpp:2156
 msgctxt "lowres"
@@ -1545,8 +1543,7 @@ msgstr "Закрытие диалогового окна параметров остановит сервер."
 
 #: gui/options.cpp:2158
 msgid "Run server to manage files with browser (in the same network)."
-msgstr ""
-"Запустите сервер для управления файлами с помощью браузера (в той же сети)."
+msgstr "Запустите сервер, чтобы управлять файлами через браузер (в одной сети)."
 
 #: gui/options.cpp:2159
 msgid "Closing options dialog will stop the server."
@@ -1554,19 +1551,19 @@ msgstr "Закрытие диалогового окна параметров остановит сервер."
 
 #: gui/options.cpp:2171
 msgid "Use Text to speech"
-msgstr "Используйте текст в речь"
+msgstr "Использовать генератор речи"
 
 #: gui/options.cpp:2171
 msgid "Will read text in gui on mouse over."
-msgstr "Будет читать текст в GUI при наведении мыши."
+msgstr "Прочитает текст в интерфейсе при наведении мыши."
 
 #: gui/options.cpp:2184
 msgid "None"
-msgstr "Не задан"
+msgstr "Нет"
 
 #: gui/options.cpp:2259
 msgid "Failed to change cloud storage!"
-msgstr "Не удалось сменить облако!"
+msgstr "Не удалось сменить облачное хранилище!"
 
 #: gui/options.cpp:2262
 msgid "Another cloud storage is already active."
@@ -1586,27 +1583,27 @@ msgid ""
 "Misc settings will be restored."
 msgstr ""
 "\n"
-"Настройки на закладке Разное будут восстановлены."
+"Настройки на вкладке \"Разное\" будут восстановлены."
 
 #: gui/options.cpp:2404
 msgid "The chosen directory cannot be written to. Please select another one."
-msgstr "Не могу писать в выбранную директорию. Пожалуйста, укажите другую."
+msgstr "Не могу писать в выбранный каталог. Пожалуйста, укажите другой."
 
 #: gui/options.cpp:2413
 msgid "Select directory for GUI themes"
-msgstr "Выберите директорию для тем GUI"
+msgstr "Выберите каталог для тем интерфейса"
 
 #: gui/options.cpp:2423
 msgid "Select directory for extra files"
-msgstr "Выберите директорию с дополнительными файлами"
+msgstr "Выберите каталог для дополнительных файлов"
 
 #: gui/options.cpp:2434
 msgid "Select directory for plugins"
-msgstr "Выберите директорию с плагинами"
+msgstr "Выберите каталог с плагинами"
 
 #: gui/options.cpp:2447
 msgid "Select directory for Files Manager /root/"
-msgstr "Выберите директорию для корня в менеджере файлов"
+msgstr "Выберите корневой каталог для менеджера файлов"
 
 #: gui/options.cpp:2559
 msgid ""
@@ -1614,23 +1611,23 @@ msgid ""
 "Please navigate to this page manually."
 msgstr ""
 "Не удалось открыть URL!\n"
-"Пожалуйста, перейдите вручную по указанному URL."
+"Пожалуйста, перейдите на указанную страницу вручную."
 
 #: gui/options.cpp:2584
 msgid "Another Storage is working now. Do you want to interrupt it?"
-msgstr "Еще одно хранилище работает сейчас. Вы хотите прервать это?"
+msgstr "Сейчас работает ещё одно хранилище. Вы хотите остановить его?"
 
 #: gui/options.cpp:2593 gui/options.cpp:2631
 msgid "Wait until current Storage finishes up and try again."
-msgstr "Подождите, пока текущее облако завершит работу, и попробуйте снова."
+msgstr "Подождите, пока текущее хранилище завершит работу, и попробуйте снова."
 
 #: gui/options.cpp:2606
 msgid "Connecting..."
-msgstr "Подключение ..."
+msgstr "Подключение..."
 
 #: gui/options.cpp:2622
 msgid "This Storage is working now. Do you want to interrupt it?"
-msgstr "Это хранилище работает сейчас. Вы хотите прервать это?"
+msgstr "Это хранилище сейчас работает. Вы хотите остановить его?"
 
 #: gui/options.cpp:2820 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
@@ -1642,11 +1639,11 @@ msgstr "Остановить сервер"
 
 #: gui/options.cpp:2930
 msgid "Stop local webserver"
-msgstr "Останавливает локальный веб-сервер"
+msgstr "Остановить локальный веб-сервер"
 
 #: gui/options.cpp:2982
 msgid "Storage connected."
-msgstr "Хранение подключено."
+msgstr "Хранилище подключено."
 
 #: gui/options.cpp:2984
 msgid "Failed to connect storage."
@@ -1684,7 +1681,7 @@ msgstr "<"
 #. I18N: Pre means 'Predictive', leave '*' as is
 #: gui/predictivedialog.cpp:119 gui/predictivedialog.cpp:606
 msgid "*  Pre"
-msgstr "*  Pre"
+msgstr "*  Пре"
 
 #. I18N: 'Num' means Numbers
 #: gui/predictivedialog.cpp:609
@@ -1725,7 +1722,7 @@ msgstr "Автор: "
 #: gui/recorderdialog.cpp:85 gui/recorderdialog.cpp:241
 #: gui/recorderdialog.cpp:251
 msgid "Notes: "
-msgstr "Заметки: "
+msgstr "Примечания: "
 
 #: gui/recorderdialog.cpp:154
 msgid "Do you really want to delete this record?"
@@ -1737,7 +1734,7 @@ msgstr "Неизвестный автор"
 
 #: gui/remotebrowser.cpp:129
 msgid "ScummVM could not access the directory!"
-msgstr "ScummVM не имеет доступа к указанной директории!"
+msgstr "ScummVM не имеет доступа к указанному каталогу!"
 
 #: gui/saveload-dialog.cpp:343
 msgid "List view"
@@ -1761,7 +1758,7 @@ msgstr "Время игры не записано"
 
 #: gui/saveload-dialog.cpp:464
 msgid "Do you really want to delete this saved game?"
-msgstr "Вы действительно хотите удалить это сохранение?"
+msgstr "Вы действительно хотите удалить эту сохранённую игру?"
 
 #: gui/saveload-dialog.cpp:594 gui/saveload-dialog.cpp:1114
 msgid "Date: "
@@ -1789,7 +1786,7 @@ msgstr "Предыдущий"
 
 #: gui/saveload-dialog.cpp:978
 msgid "New Save"
-msgstr "Новое сохранение"
+msgstr "Новая запись"
 
 #: gui/saveload-dialog.cpp:978
 msgid "Create a new saved game"
@@ -1835,11 +1832,11 @@ msgstr "Со сглаживанием"
 
 #: gui/unknown-game-dialog.cpp:49
 msgid "Add anyway"
-msgstr "Добавить в любом случае"
+msgstr "Всё равно добавить"
 
 #: gui/unknown-game-dialog.cpp:58
 msgid "Copy to clipboard"
-msgstr "Cкопировать в буфер обмена"
+msgstr "Скопировать в буфер обмена"
 
 #: gui/unknown-game-dialog.cpp:64
 msgid "Report game"
@@ -1850,17 +1847,18 @@ msgid ""
 "Use the button below to copy the required game information into your "
 "clipboard."
 msgstr ""
-"Используйте кнопку ниже, чтобы скопировать необходимую информацию об игре в "
-"буфер обмена."
+"Используйте кнопку ниже, чтобы скопировать в буфер обмена необходимую "
+"информацию об игре."
 
 #: gui/unknown-game-dialog.cpp:106
 msgid "You can also directly report your game to the Bug Tracker."
-msgstr "Вы также можете сообщить об игре напрямую в багтрекер."
+msgstr ""
+"Вы также можете сообщить об игре напрямую в систему отслеживания ошибок."
 
 #: gui/unknown-game-dialog.cpp:156
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
-msgstr "Вся необходимая информация об игре была скопирована в буфер обмена"
+msgstr "Вся необходимая информация об игре скопирована в буфер обмена"
 
 #: gui/unknown-game-dialog.cpp:158
 msgid "Copying the game information to the clipboard has failed!"
@@ -1873,7 +1871,7 @@ msgid ""
 "like to enable this feature?"
 msgstr ""
 "ScummVM поддерживает автоматическую проверку\n"
-"обновлений, которая требует доступа в Интернет.\n"
+"обновлений, требующую доступ в Интернет.\n"
 "Вы хотите включить эту опцию?"
 
 #: gui/updates-dialog.cpp:52
@@ -1881,7 +1879,7 @@ msgid ""
 "You can change this setting later in the Misc tab\n"
 "in the Options dialog."
 msgstr ""
-"Вы можете изменить этот параметр\n"
+"Вы можете изменить эту настройку\n"
 "во вкладке \"Разное\" в окне \"Настройки\"."
 
 #: gui/updates-dialog.cpp:116
@@ -1943,7 +1941,7 @@ msgstr "Путь не найден"
 
 #: common/error.cpp:56
 msgid "Path not a directory"
-msgstr "Путь не является директорией"
+msgstr "Путь не является каталогом"
 
 #: common/error.cpp:58
 msgid "Path not a file"
@@ -2922,7 +2920,7 @@ msgstr "Каталог успешно создан!"
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:122
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:204
 msgid "Back to parent directory"
-msgstr "Вернуться в родительский каталог"
+msgstr "Назад в родительский каталог"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:67
 msgid "The file doesn't exist!"
@@ -2998,7 +2996,7 @@ msgstr "Родительский каталог"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:218
 msgid "ScummVM couldn't list the directory you specified."
-msgstr "ScummVM не может перечислить каталог, который вы указали."
+msgstr "ScummVM не смог перечислить указанный вами каталог."
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
 msgid "Index of"
@@ -3728,9 +3726,9 @@ msgid ""
 "If you have such file in other AGI (Sierra) game, you can copy it to the "
 "game directory"
 msgstr ""
-"Не могу открыть/использовать файл hgc_font для шрифтов Hercules.\n"
-"Если у вас есть такой файл от другой AGI (Sierra) игры, вы можете "
-"скопировать его в директорию с игрой"
+"Не удалось открыть/использовать файл hgc_font для шрифта Hercules.\n"
+"Если у вас есть такой файл от другой игры AGI (Sierra), вы можете "
+"скопировать его в каталог с игрой"
 
 #: engines/agi/saveload.cpp:772 engines/avalanche/parser.cpp:1907
 #: engines/cine/various.cpp:361 engines/dm/dm.cpp:276
@@ -4399,16 +4397,16 @@ msgid ""
 "should be located in the AmigaDOS system 'Fonts/' folder.\n"
 "Please copy them into the EOB game data directory.\n"
 msgstr ""
-"Для этой версии AMIGA требуются следующие файлы шрифтов:\n"
+"Для данной версии AMIGA нужны следующие файлы шрифтов:\n"
 "\n"
 "EOBF6.FONT\n"
-"EOBF6 / 6\n"
+"EOBF6/6\n"
 "EOBF8.FONT\n"
-"EOBF8 / 8\n"
+"EOBF8/8\n"
 "\n"
-"Если вы использовали оригинальный установщик для установки этих файлов\n"
-"должен находиться в папке 'Fonts/' системы AmigaDOS.\n"
-"Пожалуйста, скопируйте их в каталог игровых данных EOB.\n"
+"Если вы использовали оригинальный установщик, эти файлы\n"
+"должны находиться в папке 'Fonts/' системы AmigaDOS.\n"
+"Пожалуйста, скопируйте их в каталог с игрой EOB.\n"
 
 #: engines/kyra/graphics/screen_eob_amiga.cpp:288
 msgid ""
