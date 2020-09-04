@@ -865,7 +865,9 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 			int present = agds_i->readUint32LE();
 			if (!name.empty() && present) {
 				debug("inventory: %s %d %d", name.data(), unk, present);
-				_inventory.add(loadObject(name.data()));
+				ObjectPtr object = loadObject(name.data());
+				runObject(name.data());
+				_inventory.add(object);
 			}
 		}
 	}
