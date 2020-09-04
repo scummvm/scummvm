@@ -196,6 +196,8 @@ static const char *const selectorNameTable[] = {
 	"setLooper",    // QFG4
 	"useStamina",   // QFG4
 	"value",        // QFG4
+	"enable",       // SQ6
+	"setupExit",    // SQ6
 	"vol",          // SQ6
 #endif
 	NULL
@@ -317,6 +319,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_setLooper,
 	SELECTOR_useStamina,
 	SELECTOR_value,
+	SELECTOR_enable,
+	SELECTOR_setupExit,
 	SELECTOR_vol
 #endif
 };
@@ -19225,6 +19229,54 @@ static const uint16 sq6PolysorbateVolumePatch[] = {
 	PATCH_END
 };
 
+// The shuttle's cockpit initializes the control panel incorrectly if the cursor
+//  is Walk. If the game is saved in this state then it won't load because
+//  walkIcon0's screen item was deleted even though it's the current icon.
+//
+// We fix this as Sierra did in later versions by setting the current icon to Do
+//  when initializing the control panel in room 490.
+//
+// Applies to: English PC 1.0 (TODO: develop a Mac patch)
+// Responsible method: localproc_5c38 in script 490
+// Fixes bug: #11673
+static const uint16 sq6CockpitIconBarSignature[] = {
+	0x7e, SIG_ADDTOOFFSET(+2),          // line
+	0x38, SIG_SELECTOR16(setupExit),    // pushi setupExit
+	0x78,                               // push1
+	0x78,                               // push1
+	0x81, 0x45,                         // lag 45
+	0x4a, SIG_UINT16(0x0006),           // send 06 [ SQIconBar setupExit: 1 ]
+	0x7e, SIG_ADDTOOFFSET(+2),          // line
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(enable),       // pushi enable
+	0x78,                               // push1
+	0x76,                               // push0
+	0x81, 0x45,                         // lag 45
+	0x4a, SIG_UINT16(0x0006),           // send 06 [ SQIconBar enable: 0 ]
+	0x7e, SIG_ADDTOOFFSET(+2),          // line
+	SIG_END
+};
+
+static const uint16 sq6CockpitIconBarPatch[] = {
+	0x38, PATCH_SELECTOR16(curIcon),    // pushi curIcon
+	0x78,                               // push1
+	0x39, PATCH_SELECTOR8(at),          // pushi at
+	0x78,                               // push1
+	0x7a,                               // push2
+	0x81, 0x45,                         // lag 45
+	0x4a, PATCH_UINT16(0x0006),         // send 06 [ SQIconBar at: 2 ]
+	0x36,                               // push
+	0x38, PATCH_SELECTOR16(setupExit),  // pushi setupExit
+	0x78,                               // push1
+	0x78,                               // push1
+	0x38, PATCH_SELECTOR16(enable),     // pushi enable
+	0x78,                               // push1
+	0x76,                               // push0
+	0x81, 0x45,                         // lag 45
+	0x4a, PATCH_UINT16(0x0012),         // send 12 [ SQIconBar curIcon: doIcon2, setupExit: 1, enable: 0 ]
+	PATCH_END
+};
+
 // Narrator lockup fix for SQ6's SQNarrator:sayForReal in versions compiled
 //  without debug line number instructions, see sciNarratorLockupSignature.
 //  SQ6 also uses the regular Narrator:say which the generic patches handle.
@@ -19287,6 +19339,7 @@ static const SciScriptPatcherEntry sq6Signatures[] = {
 	{  true,   330, "fix polysorbate lx music volume",             1, sq6PolysorbateVolumeSignature,   sq6PolysorbateVolumePatch },
 	{  true,   410, "fix slow transitions",                        1, sq6SlowTransitionSignature2,     sq6SlowTransitionPatch2 },
 	{  true,   460, "fix invalid array construction",              1, sci21IntArraySignature,          sci21IntArrayPatch },
+	{  true,   490, "fix invalid cockpit icon bar",                1, sq6CockpitIconBarSignature,      sq6CockpitIconBarPatch },
 	{  true,   500, "fix slow transitions",                        1, sq6SlowTransitionSignature1,     sq6SlowTransitionPatch1 },
 	{  true,   510, "fix invalid array construction",              1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true,   690, "fix duplicate points",                        1, sq6DuplicatePointsSignature,     sq6DuplicatePointsPatch },
