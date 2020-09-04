@@ -62,9 +62,11 @@ DetectionResults EngineManager::detectGames(const Common::FSList &fslist) const 
 		DetectedGames engineCandidates = metaEngine.detectGames(fslist);
 
 		for (uint i = 0; i < engineCandidates.size(); i++) {
-			engineCandidates[i].path = fslist.begin()->getParent().getPath();
-			engineCandidates[i].shortPath = fslist.begin()->getParent().getDisplayName();
-			candidates.push_back(engineCandidates[i]);
+			DetectedGame &candidate = engineCandidates[i];
+			Common::FSNode folderNode = fslist.begin()->getParent();
+			candidate.path = folderNode.getPath();
+			candidate.shortPath = folderNode.getDisplayName();
+			candidates.push_back(candidate);
 		}
 	}
 
