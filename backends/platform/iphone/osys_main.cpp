@@ -24,7 +24,6 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include <unistd.h>
-#include <pthread.h>
 
 #include <sys/time.h>
 
@@ -38,6 +37,7 @@
 
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
+#include "backends/mutex/pthread/pthread-mutex.h"
 #include "audio/mixer.h"
 #include "audio/mixer_intern.h"
 
@@ -84,6 +84,8 @@ int OSystem_IPHONE::timerHandler(int t) {
 }
 
 void OSystem_IPHONE::initBackend() {
+	_mutexManager = new PthreadMutexManager();
+
 #ifdef IPHONE_SANDBOXED
 	_savefileManager = new DefaultSaveFileManager(iPhone_getDocumentsDir());
 #else
@@ -179,41 +181,6 @@ uint32 OSystem_IPHONE::getMillis(bool skipRecord) {
 void OSystem_IPHONE::delayMillis(uint msecs) {
 	//printf("delayMillis(%d)\n", msecs);
 	usleep(msecs * 1000);
-}
-
-OSystem::MutexRef OSystem_IPHONE::createMutex(void) {
-	pthread_mutexattr_t attr;
-	pthread_mutexattr_init(&attr);
-	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-
-	pthread_mutex_t *mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
-	if (pthread_mutex_init(mutex, &attr) != 0) {
-		printf("pthread_mutex_init() failed!\n");
-		free(mutex);
-		return NULL;
-	}
-
-	return (MutexRef)mutex;
-}
-
-void OSystem_IPHONE::lockMutex(MutexRef mutex) {
-	if (pthread_mutex_lock((pthread_mutex_t *) mutex) != 0) {
-		printf("pthread_mutex_lock() failed!\n");
-	}
-}
-
-void OSystem_IPHONE::unlockMutex(MutexRef mutex) {
-	if (pthread_mutex_unlock((pthread_mutex_t *) mutex) != 0) {
-		printf("pthread_mutex_unlock() failed!\n");
-	}
-}
-
-void OSystem_IPHONE::deleteMutex(MutexRef mutex) {
-	if (pthread_mutex_destroy((pthread_mutex_t *) mutex) != 0) {
-		printf("pthread_mutex_destroy() failed!\n");
-	} else {
-		free(mutex);
-	}
 }
 
 
