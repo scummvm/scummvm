@@ -534,6 +534,7 @@ Animation *AGDSEngine::findAnimationByPhaseVar(const Common::String &phaseVar) {
 }
 
 Character *AGDSEngine::loadCharacter(const Common::String &id, const Common::String &filename, const Common::String &object) {
+	debug("loadCharacter %s %s %s", id.c_str(), filename.c_str(), object.c_str());
 	CharactersType::iterator i = _characters.find(id);
 	if (i != _characters.end())
 		return i->_value;
@@ -839,8 +840,9 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 		Common::String object(data.data());
 		Common::String name(data.data() + 0x20);
 		Common::String id(data.data() + 0x40);
-		debug("savegame character %s %s %s", object.c_str(), name.c_str(), id.c_str());
-		//loadCharacter(id, name, object);
+		Common::String filename = loadText(name);
+		debug("savegame character %s %s -> %s %s", object.c_str(), name.c_str(), filename.c_str(), id.c_str());
+		loadCharacter(id, filename, object);
 		int x = agds_c->readUint16LE();
 		int y = agds_c->readUint16LE();
 		debug("character at %d, %d", x, y);
