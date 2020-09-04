@@ -2288,8 +2288,11 @@ void Debugger::drawSceneObjects() {
 				) {
 					color = _vm->_surfaceFront.format.RGBToColor(255, 0, 0);
 					drawBBox(a, b, _vm->_view, &_vm->_surfaceFront, color);
+					Actor *actor = _vm->_actors[sceneObject->id - kSceneObjectOffsetActors];
+					//const Common::Rect &screenRect = actor->getScreenRectangle();
+					//_vm->_surfaceFront.frameRect(screenRect, color);
 					_vm->_surfaceFront.frameRect(sceneObject->screenRectangle, color);
-					_vm->_mainFont->drawString(&_vm->_surfaceFront, _vm->_textActorNames->getText(sceneObject->id - kSceneObjectOffsetActors), pos.x, pos.y, _vm->_surfaceFront.w, color);
+					_vm->_mainFont->drawString(&_vm->_surfaceFront, _vm->_textActorNames->getText(actor->getId()), pos.x, pos.y, _vm->_surfaceFront.w, color);
 				}
 				break;
 			case kSceneObjectTypeItem:

@@ -169,6 +169,8 @@ public:
 	void tickCombat();
 	bool draw(Common::Rect *screenRect);
 
+	void resetScreenRectangleAndBbox();
+
 	int getSetId()  const;
 	void setSetId(int setId);
 	const BoundingBox &getBoundingBox() const { return _bbox; }
