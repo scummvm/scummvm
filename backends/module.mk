@@ -305,6 +305,11 @@ MODULE_OBJS += \
 	mutex/pthread/pthread-mutex.o
 endif
 
+ifeq ($(BACKEND),ios7)
+MODULE_OBJS += \
+	mutex/pthread/pthread-mutex.o
+endif
+
 ifeq ($(BACKEND),maemo)
 MODULE_OBJS += \
 	events/maemosdl/maemosdl-events.o \
