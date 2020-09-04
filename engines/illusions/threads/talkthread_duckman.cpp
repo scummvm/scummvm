@@ -307,7 +307,7 @@ int TalkThread_Duckman::insertText() {
 	Common::Point pt;
 	_vm->getDefaultTextPosition(pt);
 	_vm->_screenText->updateTextInfoPosition(pt);
-	int charCount = (_entryText - _currEntryText) / 2;
+	int charCount = _entryText - _currEntryText;
 	return charCount;
 }
 
