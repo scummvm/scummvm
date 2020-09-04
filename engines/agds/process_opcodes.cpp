@@ -587,18 +587,20 @@ void Process::stub153() {
 	push(0);
 }
 
-void Process::stub154() {
+void Process::getObjectSurfaceX() {
 	Common::String name = popString();
-	debug("stub154(getSomeX): %s", name.c_str());
-	ObjectPtr object = _engine->getCurrentScreenObject(name);
-	push(0);
+	debug("getObjectSurfaceX: %s", name.c_str());
+	int x = _engine->getCurrentScreenObject(name)->getPosition().x;
+	debug("\t%d", x);
+	push(x);
 }
 
-void Process::stub155() {
+void Process::getObjectSurfaceY() {
 	Common::String name = popString();
-	debug("stub155(getSomeY): %s", name.c_str());
-	ObjectPtr object = _engine->getCurrentScreenObject(name);
-	push(0);
+	debug("getObjectSurfaceY: %s", name.c_str());
+	int y = _engine->getCurrentScreenObject(name)->getPosition().y;
+	debug("\t%d", y);
+	push(y);
 }
 
 void Process::loadGame() {
@@ -1446,8 +1448,8 @@ ProcessExitCode Process::execute() {
 			OP(kSetCloneVar, setCloneVar);
 			OP(kStub152, stub152);
 			OP(kStub153, stub153);
-			OP(kStub154, stub154);
-			OP(kStub155, stub155);
+			OP(kGetObjectSurfaceX, getObjectSurfaceX);
+			OP(kGetObjectSurfaceY, getObjectSurfaceX);
 			OP(kLoadGame, loadGame);
 			OP(kLoadSaveSlotNamePicture, loadSaveSlotNamePicture);
 			OP(kStub166, stub166);

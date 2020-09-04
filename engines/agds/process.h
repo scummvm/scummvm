@@ -235,8 +235,8 @@ private:
 	void stub138();
 	void stub152();
 	void stub153();
-	void stub154();
-	void stub155();
+	void getObjectSurfaceX();
+	void getObjectSurfaceY();
 	void loadGame();
 	void loadSaveSlotNamePicture();
 	void stub166();
