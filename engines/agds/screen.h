@@ -148,6 +148,13 @@ public:
 	void add(Animation * animation) {
 		_animations.insert(animation);
 	}
+
+	void update(const ObjectPtr &object) {
+		bool found = remove(object);
+		if (found)
+			add(object);
+	}
+
 	bool remove(const Common::String & name);
 	bool remove(const ObjectPtr & object);
 	void paint(AGDSEngine & engine, Graphics::Surface & backbuffer);

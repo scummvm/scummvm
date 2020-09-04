@@ -91,7 +91,6 @@ bool Screen::remove(const Common::String &name) {
 }
 
 void Screen::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
-#if 0
 	ChildrenType::iterator child = _children.begin();
 	AnimationsType::iterator animation = _animations.begin();
 	int idx = 0;
@@ -99,12 +98,12 @@ void Screen::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 		bool child_valid = child != _children.end();
 		bool animation_valid = animation != _animations.end();
 		if (child_valid && animation_valid) {
-			if ((*child)->z() < (*animation)->z()) {
+			if ((*child)->z() > (*animation)->z()) {
 				debug("object %d, z: %d", idx++, (*child)->z());
 				(*child)->paint(engine, backbuffer);
 				++child;
 			} else {
-				debug("animatin %d, z: %d", idx++, (*animation)->z());
+				debug("animation %d, z: %d", idx++, (*animation)->z());
 				(*animation)->paint(engine, backbuffer, Common::Point());
 				++animation;
 			}
@@ -113,28 +112,11 @@ void Screen::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 			(*child)->paint(engine, backbuffer);
 			++child;
 		} else {
-			debug("animatin %d, z: %d", idx++, (*animation)->z());
+			debug("animation %d, z: %d", idx++, (*animation)->z());
 			(*animation)->paint(engine, backbuffer, Common::Point());
 			++animation;
 		}
 	}
-#else
-	ChildrenType::iterator i;
-	for (i = _children.begin(); i != _children.end(); ++i) {
-		ObjectPtr object = *i;
-		if (object->z() < 1000)
-			break;
-		object->paint(engine, backbuffer);
-	}
-	for (AnimationsType::iterator j = _animations.begin(); j != _animations.end(); ++j) {
-		Animation *animation = *j;
-		animation->paint(engine, backbuffer, Common::Point());
-	}
-	for (; i != _children.end(); ++i) {
-		ObjectPtr object = *i;
-		object->paint(engine, backbuffer);
-	}
-#endif
 }
 
 ObjectPtr Screen::find(Common::Point pos) const {
