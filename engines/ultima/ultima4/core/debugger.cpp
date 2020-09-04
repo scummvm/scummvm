@@ -804,7 +804,7 @@ bool Debugger::cmdMixReagents(int argc, const char **argv) {
 			g_context->_stats->setView(STATS_MIXTURES);
 
 			int choice = ReadChoiceController::get("abcdefghijklmnopqrstuvwxyz \033\n\r");
-			if (choice == ' ' || choice == '\033' || choice == '\n' || choice == '\r')
+			if (choice == -1 || choice == ' ' || choice == '\033' || choice == '\n' || choice == '\r')
 				break;
 
 			int spell = choice - 'a';

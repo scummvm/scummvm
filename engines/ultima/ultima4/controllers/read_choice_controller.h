@@ -36,6 +36,7 @@ class ReadChoiceController : public WaitableController<int> {
 public:
 	ReadChoiceController(const Common::String &choices);
 	bool keyPressed(int key) override;
+	void keybinder(KeybindingAction action) override;
 
 	static char get(const Common::String &choices, EventHandler *eh = nullptr);
 

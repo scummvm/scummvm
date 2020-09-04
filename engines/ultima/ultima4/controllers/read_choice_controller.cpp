@@ -50,6 +50,16 @@ bool ReadChoiceController::keyPressed(int key) {
 	return false;
 }
 
+void ReadChoiceController::keybinder(KeybindingAction action) {
+	if (action == KEYBIND_ESCAPE && _choices.contains('\x1B')) {
+		_value = 27;
+		doneWaiting();
+	} else {
+		WaitableController<int>::keybinder(action);
+	}
+}
+
+
 char ReadChoiceController::get(const Common::String &choices, EventHandler *eh) {
 	if (!eh)
 		eh = eventHandler;
