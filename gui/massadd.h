@@ -36,6 +36,7 @@ class StaticTextWidget;
 
 class MassAddDialog : public Dialog {
 	typedef Common::Array<Common::String> StringArray;
+	typedef Common::Array<Common::U32String> U32StringArray;
 public:
 	MassAddDialog(const Common::FSNode &startDir);
 

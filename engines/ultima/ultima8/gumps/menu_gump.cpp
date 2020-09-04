@@ -103,6 +103,17 @@ static const int gumpShape = 35;
 static const int paganShape = 32;
 static const int menuEntryShape = 37;
 
+static const char *MENU_TXT[] = {
+	"1.Intro",
+	"2.Read Diary",
+	"3.Write Diary",
+	"4.Options",
+	"5.Credits",
+	"6.Quit",
+	"7.Quotes",
+	"8.End Game"
+};
+
 void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
@@ -125,7 +136,7 @@ void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 		settingman->get("endgame", endgame);
 		settingman->get("quotes", quotes);
 
-		int x_ = _dims.w / 2 + 14;
+		int x_ = _dims.width() / 2 + 14;
 		int y_ = 18;
 		for (int i = 0; i < 8; ++i) {
 			if ((quotes || i != 6) && (endgame || i != 7)) {
@@ -133,7 +144,13 @@ void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 				FrameID frame_down(GameData::GUMPS, menuEntryShape, i * 2 + 1);
 				frame_up = _TL_SHP_(frame_up);
 				frame_down = _TL_SHP_(frame_down);
-				Gump *widget = new ButtonWidget(x_, y_, frame_up, frame_down, true);
+				Gump *widget;
+				if (frame_up._shapeNum) {
+					widget = new ButtonWidget(x_, y_, frame_up, frame_down, true);
+				} else {
+					// JA U8 has text labels
+					widget = new ButtonWidget(x_, y_, _TL_(MENU_TXT[i]), true, 0);
+				}
 				widget->InitGump(this, false);
 				widget->SetIndex(i + 1);
 			}
@@ -151,20 +168,20 @@ void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 			Gump *widget = new TextWidget(0, 0, name, true, 6);
 			widget->InitGump(this, false);
 			widget->GetDims(rect);
-			widget->Move(90 - rect.w / 2, _dims.h - 40);
+			widget->Move(90 - rect.width() / 2, _dims.height() - 40);
 		}
 	} else {
 		Gump *widget;
 		widget = new TextWidget(0, 0, _TL_("Give thy name:"), true, 6); // CONSTANT!
 		widget->InitGump(this, false);
-		widget->Move(_dims.w / 2 + 6, 10);
+		widget->Move(_dims.width() / 2 + 6, 10);
 
 		Rect textdims;
 		widget->GetDims(textdims);
 
 		widget = new EditWidget(0, 0, "", true, 6, 110, 40, 15); // CONSTANTS!
 		widget->InitGump(this, true);
-		widget->Move(_dims.w / 2 + 6, 10 + textdims.h);
+		widget->Move(_dims.width() / 2 + 6, 10 + textdims.height());
 		widget->MakeFocus();
 	}
 }

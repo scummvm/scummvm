@@ -65,11 +65,19 @@ private:
 	Std::vector<Shared::XMLTree*> _trees;
     Common::HashMap<Common::String, Common::String, Common::IgnoreCase_Hash,
         Common::IgnoreCase_EqualTo> _localKeys;
+	Common::HashMap<Common::String, Common::String, Common::IgnoreCase_Hash,
+		Common::IgnoreCase_EqualTo> _settings;
 	Std::string _configFilename;
     bool _configChanged;
 
     // Sets default configurations common to both enhanced and unhenaced
     void setCommonDefaults(GameId gameType);
+
+	// sets up unenhanced version defaults
+	void setUnenhancedDefaults(GameId gameType);
+
+	// sets up enhanced version defaults
+	void setEnhancedDefaults(GameId gameType);
 public:
 	Configuration();
 	~Configuration();
@@ -80,14 +88,12 @@ public:
     // Returns true if default settings for game have previously been set
     bool isDefaultsSet() const;
 
-    // sets up unenhanced version defaults
-    void setUnenhancedDefaults(GameId gameType);
-
-    // sets up enhanced version defaults
-    void setEnhancedDefaults(GameId gameType);
+	// Loads up the configuration settings
+	void load(GameId gameId, bool isEnhanced);
 
 	// write all (writable) config files
 	void write();
+
 	// clear everything
 	void clear();
 

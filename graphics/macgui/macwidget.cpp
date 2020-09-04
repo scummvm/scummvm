@@ -43,7 +43,7 @@ MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, MacWindowMan
 	if (parent)
 		parent->_children.push_back(this);
 
-	_composeSurface = new ManagedSurface(_dims.width(), _dims.height());
+	_composeSurface = new ManagedSurface(_dims.width(), _dims.height(), _wm->_pixelformat);
 	_composeSurface->clear(_bgcolor);
 
 	_active = false;
@@ -74,18 +74,22 @@ void MacWidget::setActive(bool active) {
 }
 
 bool MacWidget::draw(bool forceRedraw) {
+	_contentIsDirty = false;
+
 	return false;
 }
 
 bool MacWidget::draw(ManagedSurface *g, bool forceRedraw) {
+	_contentIsDirty = false;
+
 	return false;
 }
 
 void MacWidget::blit(ManagedSurface *g, Common::Rect &dest) {
-	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), dest, kColorGreen2);
+	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), dest, _wm->_colorGreen2);
 }
 
-void MacWidget::setColors(int fg, int bg) {
+void MacWidget::setColors(uint32 fg, uint32 bg) {
 	_fgcolor = fg;
 	_bgcolor = bg;
 

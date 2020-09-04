@@ -35,12 +35,9 @@
 #include "neverhood/console.h"
 #include "neverhood/messages.h"
 
+struct ADGameDescription;
+
 namespace Neverhood {
-
-enum NeverhoodGameFeatures {
-};
-
-struct NeverhoodGameDescription;
 
 class GameModule;
 class GameVars;
@@ -63,18 +60,17 @@ protected:
 	void mainLoop();
 
 public:
-	NeverhoodEngine(OSystem *syst, const NeverhoodGameDescription *gameDesc);
+	NeverhoodEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~NeverhoodEngine() override;
 
 	// Detection related functions
-	const NeverhoodGameDescription *_gameDescription;
+	const ADGameDescription *_gameDescription;
 	const char *getGameId() const;
-	uint32 getFeatures() const;
-	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
 	Common::Language getLanguage() const;
 	bool hasFeature(EngineFeature f) const override;
 	bool isDemo() const;
+	bool isBigDemo() const;
 	bool applyResourceFixes() const;
 	Common::String getTargetName() { return _targetName; };
 

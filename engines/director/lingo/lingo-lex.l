@@ -46,7 +46,7 @@ static const char *inputbuffer;
 static uint inputlen;
 
 // Push lines in stack
-static void pushLine(int num) {
+static void pushLine(uint num) {
 	if (num > inputlen)
 		return;
 
@@ -307,7 +307,7 @@ the{spc}+[[:alpha:]]+{spc}+of{spc}+{identifier}	{
 			else
 				return THEENTITY;
 		} else {
-			if (g_director->getVersion() >= 4) {
+			if (g_director->getVersion() >= 400) {
 				Common::String key = Common::String::format("%d%s", g_lingo->_objectEntityId, field.c_str());
 
 				yylval.objectprop.obj = new Common::String(ptr);
@@ -398,6 +398,7 @@ the{spc}+[[:alpha:]]+		{
 	}
 then			{ count(); return tTHEN; }
 to				{ count(); return varCheck(tTO, "to"); }
+scummvmAssertError	{ count(); return varCheck(tASSERTERROR, "scummvmAssertError"); }
 sprite			{ count(); return varCheck(tSPRITE, "sprite"); }
 with			{ count(); return varCheck(tWITH, "with"); }
 within			{ count(); return varCheck(tWITHIN, "within"); }

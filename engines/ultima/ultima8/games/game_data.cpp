@@ -204,7 +204,7 @@ FrameID GameData::translate(FrameID f) {
 	istring key = "language/";
 	switch (f._flexId) {
 	case GUMPS:
-		key += "_gumps/";
+		key += "gumps/";
 		break;
 	default:
 		return f;

@@ -87,6 +87,8 @@ void EggHatcherProcess::run() {
 			if (tegg && av->hasJustTeleported()) continue;
 
 			egg->hatch();
+		} else {
+			egg->unhatch();
 		}
 	}
 

@@ -29,6 +29,7 @@
  */
 
 #include "common/file.h"
+#include "common/translation.h"
 
 #include "gui/message.h"
 
@@ -145,7 +146,7 @@ void SpecialLocks::changeTile(uint16 col, uint16 row) {
 
 	if (scrolltype != -1) {
 		if (_vm->getFeatures() & GF_WINDOWS_TRIAL) {
-			GUI::MessageDialog trialMessage("This puzzle is not available in the trial version of the game");
+			GUI::MessageDialog trialMessage(_("This puzzle is not available in the trial version of the game"));
 			trialMessage.runModal();
 			return;
 		}

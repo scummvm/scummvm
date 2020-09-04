@@ -81,6 +81,15 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
  */
 #define ARRAYEND(x) ((x) + ARRAYSIZE((x)))
 
+/*
+ * Clear array using default or provided value
+ */
+template<typename T, size_t N> inline void ARRAYCLEAR(T (&array) [N], const T &value = T()) {
+	T * ptr = array;
+	size_t n = N;
+	while(n--)
+		*ptr++ = value;
+}
 
 /**
  * @def SCUMMVM_CURRENT_FUNCTION

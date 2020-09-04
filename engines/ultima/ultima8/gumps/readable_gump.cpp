@@ -78,7 +78,7 @@ void ReadableGump::InitGump(Gump *newparent, bool take_focus) {
 		}
 	}
 
-	Gump *widget = new TextWidget(0, 0, _text, true, _fontNum, _dims.w - 16, 0, Font::TEXT_CENTER);
+	Gump *widget = new TextWidget(0, 0, _text, true, _fontNum, _dims.width() - 16, 0, Font::TEXT_CENTER);
 	widget->InitGump(this);
 	widget->setRelativePosition(CENTER);
 }

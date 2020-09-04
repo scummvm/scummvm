@@ -55,6 +55,9 @@ public:
 	//! hatch the egg
 	virtual uint16 hatch();
 
+	//! unhatch the egg (for Crusader only)
+	virtual uint16 unhatch();
+
 	//! The item has left the fast area
 	void leaveFastArea() override;
 

@@ -293,7 +293,7 @@ void CharacterGenerator::init(bool defaultParty) {
 		_screen->sega_getRenderer()->loadToVRAM(&cgb[0], 0x1900, 0x8220);
 		_screen->sega_getRenderer()->loadToVRAM(&cgb[0x1900], 0x8E0, 0xB080);
 		delete[] cgb;
-		
+
 		_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 40, 28, 0);
 		_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 40, 28, 0);
 		_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 40, 26, 1, true);
@@ -476,7 +476,7 @@ void CharacterGenerator::checkForCompleteParty() {
 		_screen->sega_getRenderer()->fillRectWithTiles(0, 18, 8, 20, 16, 0);
 		cs = _screen->setFontStyles(_screen->_currentFont, _vm->gameFlags().lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat);
 		_vm->_txt->printShadedText(_chargenStrings1[8], 0, 0, -1, 0x99);
-	} else {		
+	} else {
 		_screen->printShadedText(_chargenStrings1[8], x, 16, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 		_screen->copyRegion(160, 0, 144, 64, 160, 128, 2, 0, Screen::CR_NO_P_CHECK);
 	}
@@ -1153,7 +1153,7 @@ void CharacterGenerator::printStats(int index, int mode) {
 			_screen->printShadedText(_chargenStatStrings[i], 163, (i + 8) << 3, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 
 		_screen->printShadedText(_chargenStrings1[2], 248, 64, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
-		_screen->printShadedText(str1.c_str(), 192, 64, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);		
+		_screen->printShadedText(str1.c_str(), 192, 64, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 		_screen->printShadedText(str2.c_str(), 280, 64, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 		_screen->printShadedText(str3.c_str(), 280, 80, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 	}

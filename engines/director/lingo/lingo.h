@@ -32,11 +32,12 @@ namespace Audio {
 class AudioStream;
 }
 namespace Common {
-class SeekableSubReadStreamEndian;
+class SeekableReadStreamEndian;
 }
 
 namespace Director {
 
+struct ChunkReference;
 struct TheEntity;
 struct TheEntityField;
 struct LingoArchive;
@@ -109,7 +110,6 @@ struct Symbol {	/* symbol table entry */
 
 struct Datum {	/* interpreter stack type */
 	int type;
-	bool lazy; // evaluate when popped off stack
 
 	union {
 		int	i;				/* INT, ARGC, ARGCNORET */
@@ -117,7 +117,8 @@ struct Datum {	/* interpreter stack type */
 		Common::String *s;	/* STRING, VAR, OBJECT */
 		DatumArray *farr;	/* ARRAY, POINT, RECT */
 		PropertyArray *parr; /* PARRAY */
-		AbstractObject *obj;
+		AbstractObject *obj; /* OBJECT */
+		ChunkReference *cref; /* CHUNKREF */
 	} u;
 
 	int *refCount;
@@ -139,11 +140,20 @@ struct Datum {	/* interpreter stack type */
 	double asFloat() const;
 	int asInt() const;
 	Common::String asString(bool printonly = false) const;
+	int asCastId() const;
 
 	const char *type2str(bool isk = false) const;
 
 	int equalTo(Datum &d, bool ignoreCase = false) const;
 	int compareTo(Datum &d, bool ignoreCase = false) const;
+};
+
+struct ChunkReference {
+	Datum source;
+	int start;
+	int end;
+
+	ChunkReference(const Datum &src, uint s, uint e) : source(src), start(s), end(e) {}
 };
 
 struct PCell {
@@ -218,8 +228,8 @@ struct LingoArchive {
 	Common::String getName(uint16 id);
 
 	void addCode(const char *code, ScriptType type, uint16 id, const char *scriptName = nullptr);
-	void addCodeV4(Common::SeekableSubReadStreamEndian &stream, uint16 lctxIndex, const Common::String &archName);
-	void addNamesV4(Common::SeekableSubReadStreamEndian &stream);
+	void addCodeV4(Common::SeekableReadStreamEndian &stream, uint16 lctxIndex, const Common::String &archName);
+	void addNamesV4(Common::SeekableReadStreamEndian &stream);
 };
 
 struct RepeatBlock {
@@ -237,19 +247,23 @@ public:
 
 	ScriptContext *compileAnonymous(const char *code);
 	ScriptContext *compileLingo(const char *code, LingoArchive *archive, ScriptType type, uint16 id, const Common::String &scriptName, bool anonyomous = false);
-	ScriptContext *compileLingoV4(Common::SeekableSubReadStreamEndian &stream, LingoArchive *archive, const Common::String &archName);
+	ScriptContext *compileLingoV4(Common::SeekableReadStreamEndian &stream, LingoArchive *archive, const Common::String &archName);
 	void executeHandler(const Common::String &name);
 	void executeScript(ScriptType type, uint16 id);
 	void printStack(const char *s, uint pc);
 	void printCallStack(uint pc);
 	Common::String decodeInstruction(LingoArchive *archive, ScriptData *sd, uint pc, uint *newPC = NULL);
 
+	void reloadBuiltIns();
 	void initBuiltIns();
-	void cleanupBuiltins();
+	void cleanupBuiltIns();
 	void initFuncs();
+	void cleanupFuncs();
 	void initBytecode();
 	void initMethods();
+	void cleanupMethods();
 	void initXLibs();
+	void cleanupXLibs();
 	void openXLib(Common::String name, ObjectType type);
 
 	void runTests();
@@ -281,11 +295,11 @@ public:
 	void pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal);
 	void popContext();
 	void cleanLocalVars();
-	int castIdFetch(Datum &var);
 	void varAssign(Datum &var, Datum &value, bool global = false, DatumHash *localvars = nullptr);
 	Datum varFetch(Datum &var, bool global = false, DatumHash *localvars = nullptr, bool silent = false);
+	Datum findVarV4(int varType, const Datum &id);
 
-	int getAlignedType(const Datum &d1, const Datum &d2);
+	int getAlignedType(const Datum &d1, const Datum &d2, bool numsOnly);
 
 	void printAllVars();
 
@@ -316,7 +330,7 @@ public:
 	void dropStack(int nargs);
 	void drop(uint num);
 
-	void factoryCall(const Common::String &name, int nargs);
+	void lingoError(const char *s, ...);
 
 	void func_mci(const Common::String &name);
 	void func_mciwait(const Common::String &name);
@@ -334,6 +348,7 @@ public:
 	// lingo-the.cpp
 public:
 	void initTheEntities();
+	void cleanUpTheEntities();
 	const char *entity2str(int id);
 	const char *field2str(int id);
 
@@ -385,9 +400,9 @@ public:
 	ScriptData *_currentAssembly;
 	LexerDefineState _indef;
 	LexerDefineState _indefStore;
-	int _linenumber;
-	int _colnumber;
-	int _bytenumber;
+	uint _linenumber;
+	uint _colnumber;
+	uint _bytenumber;
 	const char *_lines[3];
 	bool _inFactory;
 	Common::Array<RepeatBlock *> _repeatStack;
@@ -405,6 +420,8 @@ public:
 
 	bool _abort;
 	bool _immediateMode;
+	bool _expectError;
+	bool _caughtError;
 
 	Common::Array<CFrame *> _callstack;
 	TheEntityHash _theEntities;
@@ -432,8 +449,8 @@ private:
 
 public:
 	void push(Datum d);
-	Datum pop(void);
-	Datum peek(uint offset);
+	Datum pop(bool eval = true);
+	Datum peek(uint offset, bool eval = true);
 
 public:
 	Common::HashMap<uint32, const char *> _eventHandlerTypes;
@@ -448,6 +465,7 @@ public:
 	Common::HashMap<int, LingoV4Bytecode *> _lingoV4;
 	Common::HashMap<int, LingoV4TheEntity *> _lingoV4TheEntity;
 
+	uint _globalCounter;
 	uint _pc;
 
 	StackData _stack;

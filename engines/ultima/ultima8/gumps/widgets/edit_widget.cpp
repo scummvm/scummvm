@@ -55,14 +55,12 @@ void EditWidget::InitGump(Gump *newparent, bool take_focus) {
 	Font *font = getFont();
 
 	// Y offset is always baseline
-	_dims.y = -font->getBaseline();
-
-	// No X offset
-	_dims.x = 0;
+	_dims.moveTo(0, -font->getBaseline());
 
 	if (_gameFont && getFont()->isHighRes()) {
-		int32 x_ = 0, y_ = 0, w = 0;
-		ScreenSpaceToGumpRect(x_, y_, w, _dims.y, ROUND_OUTSIDE);
+		Rect rect(_dims);
+		ScreenSpaceToGumpRect(rect, ROUND_OUTSIDE);
+		_dims.moveTo(0, rect.top);
 	}
 }
 
@@ -90,11 +88,14 @@ bool EditWidget::textFits(Std::string &t) {
 	unsigned int remaining;
 	int32 width, height;
 
-	int32 max_width = _multiLine ? _dims.w : 0;
-	int32 max_height = _dims.h;
+	int32 max_width = _multiLine ? _dims.width() : 0;
+	int32 max_height = _dims.height();
 	if (_gameFont && font->isHighRes()) {
-		int32 x_ = 0, y_ = 0;
-		GumpRectToScreenSpace(x_, y_, max_width, max_height, ROUND_INSIDE);
+		Rect rect(0, 0, max_width, max_height);
+		GumpRectToScreenSpace(rect, ROUND_INSIDE);
+
+		max_width = rect.width();
+		max_height = rect.height();
 	}
 
 	font->getTextSize(t, width, height, remaining,
@@ -102,14 +103,17 @@ bool EditWidget::textFits(Std::string &t) {
 	                  Font::TEXT_LEFT, false);
 
 	if (_gameFont && font->isHighRes()) {
-		int32 x_ = 0, y_ = 0;
-		ScreenSpaceToGumpRect(x_, y_, width, height, ROUND_OUTSIDE);
+		Rect rect(0, 0, width, height);
+		ScreenSpaceToGumpRect(rect, ROUND_OUTSIDE);
+
+		width = rect.width();
+		height = rect.height();
 	}
 
 	if (_multiLine)
 		return (remaining >= t.size());
 	else
-		return (width <= _dims.w);
+		return (width <= _dims.width());
 }
 
 void EditWidget::renderText() {
@@ -132,11 +136,14 @@ void EditWidget::renderText() {
 	if (!_cachedText) {
 		Font *font = getFont();
 
-		int32 max_width = _multiLine ? _dims.w : 0;
-		int32 max_height = _dims.h;
+		int32 max_width = _multiLine ? _dims.width() : 0;
+		int32 max_height = _dims.height();
 		if (_gameFont && font->isHighRes()) {
-			int32 x_ = 0, y_ = 0;
-			GumpRectToScreenSpace(x_, y_, max_width, max_height, ROUND_INSIDE);
+			Rect rect(0, 0, max_width, max_height);
+			GumpRectToScreenSpace(rect, ROUND_INSIDE);
+
+			max_width = rect.width();
+			max_height = rect.height();
 		}
 
 		unsigned int remaining;
@@ -154,7 +161,7 @@ void EditWidget::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) 
 	renderText();
 
 	if (scaled && _gameFont && getFont()->isHighRes()) {
-		surf->FillAlpha(0xFF, _dims.x, _dims.y, _dims.w, _dims.h);
+		surf->FillAlpha(0xFF, _dims.left, _dims.top, _dims.width(), _dims.height());
 		return;
 	}
 
@@ -172,11 +179,9 @@ void EditWidget::PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 s
 
 	_cachedText->draw(surf, x_, y_, true);
 
-	x_ = _dims.x;
-	y_ = _dims.y;
-	int32 w = _dims.w, h = _dims.h;
-	GumpRectToScreenSpace(x_, y_, w, h, ROUND_OUTSIDE);
-	surf->FillAlpha(0x00, x_, y_, w, h);
+	Rect rect(_dims);
+	GumpRectToScreenSpace(rect, ROUND_OUTSIDE);
+	surf->FillAlpha(0x00, rect.left, rect.top, rect.width(), rect.height());
 }
 
 // don't handle any mouse motion events, so let parent handle them for us.
@@ -251,6 +256,10 @@ bool EditWidget::OnTextInput(int unicode) {
 	}
 
 	return true;
+}
+
+void EditWidget::OnFocus(bool gain) {
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, gain);
 }
 
 } // End of namespace Ultima8

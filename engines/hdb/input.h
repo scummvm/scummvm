@@ -39,6 +39,21 @@ enum Button {
 	kButtonExit		= 2 << 8
 };
 
+enum HDBAction {
+	kHDBActionNone,
+	kHDBActionUp,
+	kHDBActionDown,
+	kHDBActionLeft,
+	kHDBActionRight,
+	kHDBActionUse,
+	kHDBActionClearWaypoints,
+	kHDBActionInventory,
+	kHDBActionMenu,
+	kHDBActionPause,
+	kHDBActionDebug,
+	kHDBActionQuit
+};
+
 class Input {
 public:
 
@@ -51,8 +66,8 @@ public:
 	void stylusMove(int x, int y);
 
 	void updateMouse(int newX, int newY);
-	void updateMouseButtons(int l, int m, int r);
-	void updateKeys(Common::Event event, bool keyDown);
+	void updateMouseButtons(bool isDown);
+	void updateActions(Common::Event event, bool keyDown, bool fromMouse);
 
 	int getMouseX() {
 		return _mouseX;
@@ -61,29 +76,11 @@ public:
 		return _mouseY;
 	}
 
-	void assignKey(int whichKey, Common::KeyCode keyPressed) {
-		switch (whichKey) {
-		case 0: _keyUp = keyPressed; return;
-		case 1: _keyDown = keyPressed; return;
-		case 2: _keyLeft = keyPressed; return;
-		case 3: _keyRight = keyPressed; return;
-		case 4: _keyUse = keyPressed; return;
-		default: break;
-		}
-	}
-
 private:
 
 	uint16 _buttons;	// Flags for buttons
 	bool _stylusDown;
-	int _stylusDownX, _stylusDownY;
 	int _mouseX, _mouseY;
-	int _mouseLButton, _mouseMButton, _mouseRButton;
-
-	// Definable Keys
-	Common::KeyCode _keyUp, _keyDown, _keyLeft, _keyRight;
-	Common::KeyCode _keyInv, _keyUse, _keyMenu, _keyDebug;
-	Common::KeyCode _keyQuit;
 };
 
 } // End of Namespace

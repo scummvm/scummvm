@@ -275,12 +275,12 @@ bool TextBufferWindow::putPicture(Picture *pic, uint align, uint linkval) {
 	return true;
 }
 
-uint TextBufferWindow::drawPicture(uint image, uint align, uint scaled, uint width, uint height) {
+uint TextBufferWindow::drawPicture(const Common::String &name, uint align, uint scaled, uint width, uint height) {
 	Picture *pic;
 	uint hyperlink;
 	int error;
 
-	pic = g_vm->_pictures->load(image);
+	pic = g_vm->_pictures->load(name);
 
 	if (!pic)
 		return false;

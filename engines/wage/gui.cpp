@@ -402,7 +402,7 @@ void Gui::actionCut() {
 
 	Common::String input = Common::convertFromU32String(_consoleWindow->getInput());
 
-	g_system->setTextInClipboard(Common::convertFromU32String(_consoleWindow->cutSelection()));
+	g_system->setTextInClipboard(_consoleWindow->cutSelection());
 
 	_undobuffer = input;
 

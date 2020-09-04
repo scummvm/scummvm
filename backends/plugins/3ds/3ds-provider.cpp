@@ -39,12 +39,6 @@ static uint32 alignUp(uint32 ptr, uint32 align) {
 }
 
 class CTRDLObject : public ARMDLObject {
-public:
-	CTRDLObject():
-			ARMDLObject(),
-			_segmentHeapAddress(0) {
-	}
-
 protected:
 	static const uint32 kPageSize = 0x1000;
 
@@ -70,54 +64,6 @@ protected:
 		svcControlProcessMemory(currentHandle, (uint32)ptr, 0, len, MEMOP_PROT, ctrFlags);
 		svcCloseHandle(currentHandle);
 	}
-
-	void *allocateMemory(uint32 align, uint32 size) override {
-		assert(!_segmentHeapAddress); // At the moment we can only load a single segment
-
-		_segmentHeapAddress = (uint32)ARMDLObject::allocateMemory(align, size);
-		if (!_segmentHeapAddress) {
-			return nullptr;
-		}
-
-		size = alignUp(size, kPageSize);
-
-		// The plugin needs to be loaded near the main executable for PC-relative calls
-		// to resolve. The segment is allocated on the heap which not in the +/-32 MB
-		// range of the main executable. So here we map the segment address in the heap
-		// to a virtual address just after the main executable.
-		uint32 segmentNearAddress = alignUp((uint32)&__end__, kPageSize) + kPageSize;
-
-		Handle currentHandle;
-		svcDuplicateHandle(&currentHandle, CUR_PROCESS_HANDLE);
-		Result mapResult = svcControlProcessMemory(currentHandle, segmentNearAddress, _segmentHeapAddress, size, MEMOP_MAP, MemPerm(MEMPERM_READ | MEMPERM_WRITE));
-		svcCloseHandle(currentHandle);
-
-		if (mapResult != 0) {
-			warning("elfloader: unable to map segment memory (%x) near the excutable (%x)", _segmentHeapAddress, segmentNearAddress);
-
-			ARMDLObject::deallocateMemory((void *)_segmentHeapAddress, size);
-			_segmentHeapAddress = 0;
-			return nullptr;
-		}
-
-		return (void *)segmentNearAddress;
-	}
-
-	void deallocateMemory(void *ptr, uint32 size) override {
-		assert(_segmentHeapAddress);
-
-		uint32 alignedSize = alignUp(size, kPageSize);
-
-		Handle currentHandle;
-		svcDuplicateHandle(&currentHandle, CUR_PROCESS_HANDLE);
-		svcControlProcessMemory(currentHandle, (uint32)ptr, _segmentHeapAddress, alignedSize, MEMOP_UNMAP, MemPerm(MEMPERM_READ | MEMPERM_WRITE));
-		svcCloseHandle(currentHandle);
-
-		ARMDLObject::deallocateMemory((void *)_segmentHeapAddress, size);
-
-		_segmentHeapAddress = 0;
-	}
-
 };
 
 Plugin *CTRPluginProvider::createPlugin(const Common::FSNode &node) const {

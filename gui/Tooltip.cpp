@@ -80,7 +80,7 @@ void Tooltip::drawDialog(DrawLayer layerToDraw) {
 
 	Graphics::TextAlign textAlignment = g_gui.useRTL() ? Graphics::kTextAlignRight : Graphics::kTextAlignLeft;
 
-	for (Common::StringArray::const_iterator i = _wrappedLines.begin(); i != _wrappedLines.end(); ++i, ++num) {
+	for (Common::U32StringArray::const_iterator i = _wrappedLines.begin(); i != _wrappedLines.end(); ++i, ++num) {
 		g_gui.theme()->drawText(
 			Common::Rect(textX, textY + num * h, textX + _w, textY + (num + 1) * h),
 			*i,

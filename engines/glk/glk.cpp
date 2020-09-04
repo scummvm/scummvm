@@ -66,7 +66,6 @@ GlkEngine::GlkEngine(OSystem *syst, const GlkGameDescription &gameDesc) :
 GlkEngine::~GlkEngine() {
 	delete _blorb;
 	delete _clipboard;
-	delete _conf;
 	delete _events;
 	delete _pcSpeaker;
 	delete _pictures;
@@ -75,6 +74,7 @@ GlkEngine::~GlkEngine() {
 	delete _sounds;
 	delete _streams;
 	delete _windows;
+	delete _conf;
 
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
@@ -154,7 +154,9 @@ Common::Error GlkEngine::run() {
 	initialize();
 
 	// Play the game
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	runGame();
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 
 	return Common::kNoError;
 }

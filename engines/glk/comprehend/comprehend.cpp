@@ -33,6 +33,7 @@
 #include "glk/quetzal.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
+#include "common/ustr.h"
 #include "engines/util.h"
 
 namespace Glk {
@@ -127,6 +128,18 @@ void Comprehend::print(const char *fmt, ...) {
 
 	glk_put_string_stream(glk_window_get_stream(_bottomWindow),
 	                      msg.c_str());
+}
+
+void Comprehend::print(const Common::U32String fmt, ...) {
+	Common::U32String outputMsg;
+
+	va_list argp;
+	va_start(argp, fmt);
+	Common::U32String::vformat(fmt.begin(), fmt.end(), outputMsg, argp);
+	va_end(argp);
+
+	glk_put_string_stream_uni(glk_window_get_stream(_bottomWindow),
+	                          outputMsg.c_str());
 }
 
 void Comprehend::readLine(char *buffer, size_t maxLen) {

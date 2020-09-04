@@ -24,8 +24,6 @@
 #   DEFAULT_CONFIG_FILE).
 #   There are a few game specific hacks which are currently controlled by this,
 #   too; we need to investigate those.
-# * It does not currently adjust the logo. Ideally, if we ever get real plugin
-#   support, that should be necessary anymore anyway.
 # * No support for USE_DEBUGGER and USE_PROFILER yet. I envision that we would
 #  integrate them with the --enable-debug and --enable-profiling configure options,
 #  I simply haven't gotten around to do that yet.
@@ -33,10 +31,6 @@
 
 # Set location of ndsdir so that we can easily refer to files in it
 ndsdir = backends/platform/ds
-
-
-# Until we fix logo support, always use the A logo
-LOGO = logoa.bmp
 
 # Uncomment the following line to enable support for the
 # ace DS Debugger (remembering to make the same change in the arm7 makefile):
@@ -147,7 +141,7 @@ dsclean:
 # TODO: Add a 'dsdist' target ?
 
 %.nds: %.elf $(ndsdir)/arm7/arm7.elf
-	ndstool -c $@ -9 $< -7 $(ndsdir)/arm7/arm7.elf -b $(srcdir)/$(ndsdir)/$(LOGO) "$(@F);ScummVM $(VERSION);DS Port"
+	ndstool -c $@ -9 $< -7 $(ndsdir)/arm7/arm7.elf -b $(srcdir)/$(ndsdir)/logo.bmp "$(@F);ScummVM $(VERSION);DS Port"
 
 %.ds.gba: %.nds
 	dsbuild $< -o $@ -l $(srcdir)/$(ndsdir)/arm9/ndsloader.bin

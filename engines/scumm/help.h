@@ -24,6 +24,7 @@
 #define SCUMM_HELP_H
 
 #include "common/str.h"
+#include "common/ustr.h"
 #include "common/platform.h"
 
 namespace Scumm {
@@ -33,11 +34,12 @@ namespace Scumm {
 class ScummHelp {
 protected:
 	typedef Common::String String;
+	typedef Common::U32String U32String;
 
 public:
 	static int numPages(byte gameId);
 	static void updateStrings(byte gameId, byte version, Common::Platform platform,
-			int page, String &title, String *&key, String *&dsc);
+			int page, U32String &title, U32String *&key, U32String *&dsc);
 };
 
 } // End of namespace Scumm

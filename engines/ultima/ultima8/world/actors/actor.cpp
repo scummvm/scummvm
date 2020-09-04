@@ -584,6 +584,7 @@ uint16 Actor::turnTowardDir(Direction targetdir) {
 		standanim = Animation::surrenderStand;
 	}
 
+	ProcId animpid = 0;
 	ProcId prevpid = 0;
 
 	// Create a sequence of turn animations from
@@ -600,26 +601,20 @@ uint16 Actor::turnTowardDir(Direction targetdir) {
 
 	bool done = false;
 	for (Direction dir = curdir; !done; dir = Direction_TurnByDelta(dir, stepDelta, mode)) {
-		ProcId animpid = doAnim(turnanim, dir);
+		Animation::Sequence nextanim = turnanim;
+		if (dir == targetdir) {
+			nextanim = standanim;
+			done = true;
+		}
 
+		animpid = doAnim(nextanim, dir);
 		if (prevpid) {
 			Process *proc = Kernel::get_instance()->getProcess(animpid);
 			assert(proc);
 			proc->waitFor(prevpid);
 		}
 
-		done = (dir == targetdir);
 		prevpid = animpid;
-	}
-
-	ProcId animpid = prevpid;
-	if (turnanim != standanim) {
-		animpid = doAnim(standanim, targetdir);
-		if (prevpid) {
-			Process *proc = Kernel::get_instance()->getProcess(animpid);
-			assert(proc);
-			proc->waitFor(prevpid);
-		}
 	}
 
 	return animpid;

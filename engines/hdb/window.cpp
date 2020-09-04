@@ -1925,6 +1925,7 @@ void Window::drawTextOut() {
 		g_hdb->_gfx->drawText(t->text);
 
 		if (t->timer < time) {
+			delete _textOutList[i];
 			_textOutList.remove_at(i);
 			i--;
 		}

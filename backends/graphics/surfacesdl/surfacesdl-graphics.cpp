@@ -162,7 +162,6 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_currentShakeXOffset(0), _currentShakeYOffset(0),
 	_paletteDirtyStart(0), _paletteDirtyEnd(0),
 	_screenIsLocked(false),
-	_graphicsMutex(0),
 	_displayDisabled(false),
 #ifdef USE_SDL_DEBUG_FOCUSRECT
 	_enableFocusRectDebugCode(false), _enableFocusRect(false), _focusRect(),
@@ -174,8 +173,6 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_cursorPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
 
 	_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
-
-	_graphicsMutex = g_system->createMutex();
 
 #ifdef USE_SDL_DEBUG_FOCUSRECT
 	if (ConfMan.hasKey("use_sdl_debug_focusrect"))
@@ -214,7 +211,6 @@ SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
 	if (_mouseSurface) {
 		SDL_FreeSurface(_mouseSurface);
 	}
-	g_system->deleteMutex(_graphicsMutex);
 	free(_currentPalette);
 	free(_cursorPalette);
 	delete[] _mouseData;
@@ -1518,7 +1514,7 @@ Graphics::Surface *SurfaceSdlGraphicsManager::lockScreen() {
 	assert(_transactionMode == kTransactionNone);
 
 	// Lock the graphics mutex
-	g_system->lockMutex(_graphicsMutex);
+	_graphicsMutex.lock();
 
 	// paranoia check
 	assert(!_screenIsLocked);
@@ -1547,7 +1543,7 @@ void SurfaceSdlGraphicsManager::unlockScreen() {
 	_forceRedraw = true;
 
 	// Finally unlock the graphics mutex
-	g_system->unlockMutex(_graphicsMutex);
+	_graphicsMutex.unlock();
 }
 
 void SurfaceSdlGraphicsManager::fillScreen(uint32 col) {
@@ -2225,11 +2221,11 @@ void SurfaceSdlGraphicsManager::drawMouse() {
 #pragma mark -
 
 #ifdef USE_OSD
-void SurfaceSdlGraphicsManager::displayMessageOnOSD(const char *msg) {
+void SurfaceSdlGraphicsManager::displayMessageOnOSD(const Common::U32String &msg) {
 	assert(_transactionMode == kTransactionNone);
-	assert(msg);
+	assert(!msg.empty());
 #ifdef USE_TTS
-	Common::String textToSay = msg;
+	Common::U32String textToSay = msg;
 #endif // USE_TTS
 
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
@@ -2240,15 +2236,17 @@ void SurfaceSdlGraphicsManager::displayMessageOnOSD(const char *msg) {
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kLocalizedFont);
 
 	// Split the message into separate lines.
-	Common::Array<Common::String> lines;
-	const char *ptr;
-	for (ptr = msg; *ptr; ++ptr) {
-		if (*ptr == '\n') {
-			lines.push_back(Common::String(msg, ptr - msg));
-			msg = ptr + 1;
+	Common::Array<Common::U32String> lines;
+	Common::U32String::const_iterator strLineItrBegin = msg.begin();
+
+	for (Common::U32String::const_iterator itr = msg.begin(); itr != msg.end(); itr++) {
+		if (*itr == '\n') {
+			lines.push_back(Common::U32String(strLineItrBegin, itr));
+			strLineItrBegin = itr + 1;
 		}
 	}
-	lines.push_back(Common::String(msg, ptr - msg));
+	if (strLineItrBegin != msg.end())
+		lines.push_back(Common::U32String(strLineItrBegin, msg.end()));
 
 	// Determine a rect which would contain the message string (clipped to the
 	// screen dimensions).
@@ -2466,13 +2464,13 @@ void SurfaceSdlGraphicsManager::handleScalerHotkeys(int scalefactor, int scalerT
 			g++;
 		}
 		if (newScalerName) {
-			const Common::String message = Common::String::format(
-				"%s %s\n%d x %d -> %d x %d",
-				_("Active graphics filter:"),
+			const Common::U32String message = Common::U32String::format(
+				Common::U32String("%S %s\n%d x %d -> %d x %d"),
+				_("Active graphics filter:").c_str(),
 				newScalerName,
 				_videoMode.screenWidth, _videoMode.screenHeight,
 				_hwScreen->w, _hwScreen->h);
-			displayMessageOnOSD(message.c_str());
+			displayMessageOnOSD(message);
 		}
 #endif
 
@@ -2499,20 +2497,20 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			setFeatureState(OSystem::kFeatureAspectRatioCorrection, !_videoMode.aspectRatioCorrection);
 		endGFXTransaction();
 #ifdef USE_OSD
-		Common::String message;
+		Common::U32String message;
 		if (_videoMode.aspectRatioCorrection)
-			message = Common::String::format("%s\n%d x %d -> %d x %d",
-			                                 _("Enabled aspect ratio correction"),
-			                                 _videoMode.screenWidth, _videoMode.screenHeight,
-			                                 _hwScreen->w, _hwScreen->h
-			);
+			message = Common::U32String::format(Common::U32String("%S\n%d x %d -> %d x %d"),
+			                                    _("Enabled aspect ratio correction").c_str(),
+			                                    _videoMode.screenWidth, _videoMode.screenHeight,
+			                                    _hwScreen->w, _hwScreen->h
+			          );
 		else
-			message = Common::String::format("%s\n%d x %d -> %d x %d",
-			                                 _("Disabled aspect ratio correction"),
-			                                 _videoMode.screenWidth, _videoMode.screenHeight,
-			                                 _hwScreen->w, _hwScreen->h
-			);
-		displayMessageOnOSD(message.c_str());
+			message = Common::U32String::format(Common::U32String("%S\n%d x %d -> %d x %d"),
+			                                    _("Disabled aspect ratio correction").c_str(),
+			                                    _videoMode.screenWidth, _videoMode.screenHeight,
+			                                    _hwScreen->w, _hwScreen->h
+			          );
+		displayMessageOnOSD(message);
 #endif
 		internUpdateScreen();
 		return true;
@@ -2554,11 +2552,11 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		endGFXTransaction();
 
 #ifdef USE_OSD
-		Common::String message = Common::String::format("%s: %s",
-		                                                _("Stretch mode"),
-		                                                _(s_supportedStretchModes[index].description)
-		);
-		displayMessageOnOSD(message.c_str());
+		Common::U32String message = Common::U32String::format(Common::U32String("%S: %S"),
+		                                                      _("Stretch mode").c_str(),
+		                                                      _(s_supportedStretchModes[index].description).c_str()
+		                            );
+		displayMessageOnOSD(message);
 #endif
 		_forceRedraw = true;
 		internUpdateScreen();

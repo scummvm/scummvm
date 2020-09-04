@@ -1887,6 +1887,12 @@ void Song::update() {
 	}
 }
 
+Sound::~Sound() {
+	for (int i = 0; i < kMaxSounds; i++) {
+		free(_soundCache[i].data);
+	}
+}
+
 void Sound::updateMusic() {
 	if (_song1.isPlaying()) {
 		_song1.update();

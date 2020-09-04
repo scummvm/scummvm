@@ -783,7 +783,13 @@ bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFor
 	loadOverlayList(in);
 	loadBgIncrustFromSave(in);
 
-	disableSystemMenu = ((version >= 4) ? in.readUint16BE() : 0);
+	if (version >= 4) {
+		// Skip the saved value of disableSystemMenu because using its value
+		// sometimes disabled the action menu (i.e. EXAMINE, TAKE, INVENTORY, ...)
+		// when it wasn't supposed to be disabled when loading from the launcher
+		// or command line.
+		in.readUint16BE();
+	}
 
 	if (strlen(currentMsgName)) {
 		loadMsg(currentMsgName);
@@ -1020,7 +1026,7 @@ void CineEngine::makeSave(const Common::String &saveFileName, uint32 playtime,
 	}
 
 	renderer->saveBackBuffer(BEFORE_TAKING_THUMBNAIL);
-	if (renderer->hasSavedBackBuffer(BEFORE_OPENING_MENU)) {
+	if (!isAutosave && renderer->hasSavedBackBuffer(BEFORE_OPENING_MENU)) {
 		renderer->popSavedBackBuffer(BEFORE_OPENING_MENU);
 	}
 

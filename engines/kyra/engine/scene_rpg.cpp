@@ -347,7 +347,7 @@ uint16 KyraRpgEngine::calcNewBlockPosition(uint16 curBlock, uint16 direction) {
 void KyraRpgEngine::drawVcnBlocks() {
 	uint8 *d = _sceneWindowBuffer;
 	uint16 *bdb = _blockDrawingBuffer;
-	
+
 	for (int y = 0; y < 15; y++) {
 		for (int x = 0; x < 22; x++) {
 			bool horizontalFlip = false;
@@ -428,7 +428,7 @@ void KyraRpgEngine::vcnDraw_fw_4bit(uint8 *&dst, const uint8 *&src) {
 		uint8 bl = *src++;
 		*dst++ = _vcnColTable[((bl >> 4) + _wllVcnOffset2) | _vcnShiftVal];
 		*dst++ = _vcnColTable[((bl & 0x0F) + _wllVcnOffset2) | _vcnShiftVal];
-	}		
+	}
 }
 
 void KyraRpgEngine::vcnDraw_bw_4bit(uint8 *&dst, const uint8 *&src) {

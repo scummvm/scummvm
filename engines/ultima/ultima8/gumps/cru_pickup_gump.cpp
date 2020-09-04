@@ -107,8 +107,8 @@ void CruPickupGump::InitGump(Gump *newparent, bool take_focus) {
 		gump->SetShape(bfgrameid, false);
 		gump->InitGump(this, false);
 	}
-	_dims.w = bgframe->_width * 5;
-	_dims.h = bgframe->_height;
+	_dims.setWidth(bgframe->_width * 5);
+	_dims.setHeight(bgframe->_height);
 
 	// Paint the item name text
 	TextWidget *text = new TextWidget(ITEM_AREA_WIDTH, bgframe->_height / 2 - 5, _itemName, true, ITEM_TEXT_FONT);
@@ -117,17 +117,17 @@ void CruPickupGump::InitGump(Gump *newparent, bool take_focus) {
 	// Paint the count if needed
 	if (_q > 1) {
 		Std::string qstr = Std::string::format("%d", _q);
-		TextWidget *count = new TextWidget(ITEM_AREA_WIDTH / 2 + 22, _dims.h / 2 + 3, qstr, true, COUNT_TEXT_FONT);
+		TextWidget *count = new TextWidget(ITEM_AREA_WIDTH / 2 + 22, _dims.height() / 2 + 3, qstr, true, COUNT_TEXT_FONT);
 		count->InitGump(this, false);
 	}
 
 	// Paint the item in the mid-left item area.
 	const ShapeFrame *itemframe = itemshape->getFrame(_gumpFrameNo);
-	Gump *itemgump = new Gump(0, _dims.h / 2 - itemframe->_height / 2, itemframe->_width, itemframe->_height, 0, 0, LAYER_ABOVE_NORMAL);
+	Gump *itemgump = new Gump(0, _dims.height() / 2 - itemframe->_height / 2, itemframe->_width, itemframe->_height, 0, 0, LAYER_ABOVE_NORMAL);
 	itemgump->SetShape(itemshape, _gumpFrameNo);
 	itemgump->InitGump(this, false);
 	itemgump->UpdateDimsFromShape();
-	itemgump->Move(ITEM_AREA_WIDTH / 2 - itemframe->_width / 2, _dims.h / 2 - itemframe->_height / 2);
+	itemgump->Move(ITEM_AREA_WIDTH / 2 - itemframe->_width / 2, _dims.height() / 2 - itemframe->_height / 2);
 }
 
 void CruPickupGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {

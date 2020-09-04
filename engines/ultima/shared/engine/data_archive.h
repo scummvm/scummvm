@@ -61,7 +61,7 @@ public:
 	 * Otherwise, returns an error message in the errorMsg field
 	 */
     static bool load(const Common::String &subfolder,
-		int reqMajorVersion, int reqMinorVersion, Common::String &errorMsg);
+		int reqMajorVersion, int reqMinorVersion, Common::U32String &errorMsg);
 public:
 	~UltimaDataArchive() override {
 		delete _zip;

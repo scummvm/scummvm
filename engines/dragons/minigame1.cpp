@@ -843,7 +843,7 @@ void Minigame1::run() {
 		}
 	} while (true);
 
-	//TODO callMaybeResetData();
+	_vm->clearAllText();
 	flickerActor->updateSequence(0x15);
 	// DisableVSyncEvent();
 	catActor->reset_maybe();

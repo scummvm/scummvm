@@ -125,7 +125,7 @@ void AGOSEngine_Feeble::quickLoadOrSave() {
 // was disabled
 void AGOSEngine::quickLoadOrSave() {
 	bool success;
-	Common::String buf;
+	Common::U32String buf;
 
 	// Disable loading and saving when it was not possible in the original:
 	// In overhead maps areas in Simon the Sorcerer 2
@@ -134,8 +134,8 @@ void AGOSEngine::quickLoadOrSave() {
 	if ((getGameType() == GType_SIMON2 && _boxStarHeight == 200) ||
 		(getGameType() == GType_SIMON1 && (getFeatures() & GF_DEMO)) ||
 		_mouseHideCount || _showPreposition) {
-		buf = Common::String::format("Quick load or save game isn't supported in this location");
-		GUI::MessageDialog dialog(buf, "OK");
+		buf = _("Quick load or save game isn't supported in this location");
+		GUI::MessageDialog dialog(buf);
 		dialog.runModal();
 		return;
 	}
@@ -156,7 +156,7 @@ void AGOSEngine::quickLoadOrSave() {
 		Subroutine *sub;
 		success = loadGame(genSaveName(_saveLoadSlot));
 		if (!success) {
-			buf = Common::String::format(_("Failed to load saved game from file:\n\n%s"), filename.c_str());
+			buf = Common::U32String::format(_("Failed to load saved game from file:\n\n%s"), filename.c_str());
 		} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 			drawIconArray(2, me(), 0, 0);
 			setBitFlag(97, true);
@@ -191,15 +191,15 @@ void AGOSEngine::quickLoadOrSave() {
 	} else {
 		success = saveGame(_saveLoadSlot, _saveLoadName);
 		if (!success)
-			buf = Common::String::format(_("Failed to save game to file:\n\n%s"), filename.c_str());
+			buf = Common::U32String::format(_("Failed to save game to file:\n\n%s"), filename.c_str());
 	}
 
 	if (!success) {
-		GUI::MessageDialog dialog(buf, "OK");
+		GUI::MessageDialog dialog(buf);
 		dialog.runModal();
 
 	} else if (_saveLoadType == 1) {
-		buf = Common::String::format(_("Successfully saved game in file:\n\n%s"), filename.c_str());
+		buf = Common::U32String::format(_("Successfully saved game in file:\n\n%s"), filename.c_str());
 		GUI::TimedMessageDialog dialog(buf, 1500);
 		dialog.runModal();
 

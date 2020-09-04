@@ -35,25 +35,6 @@ namespace AGT {
 /* --Some lower level file stuff */
 /* --main() and command line parseing stuff */
 
-#ifdef _DOS
-#ifdef UNIX_IO
-#undef UNIX_IO
-#endif
-#endif
-
-#ifndef REPLACE_GETFILE
-#ifdef UNIX_IO
-#include <dirent.h>
-#endif
-#endif
-
-
-#ifdef UNIX
-/* Needed because we are compiling with ANSI set */
-FILE *popen(const char *, const char *);
-int pclose(FILE *);
-#endif
-
 #ifndef REPLACE_BNW
 
 /* #define DEBUG_BELLS_AND_WHISTLES */
@@ -169,12 +150,6 @@ static int lp;  /* Line pointer */
 static rbool savenl = 0;
 static rbool needfill; /* Used for paragraph filling */
 static rbool quotemode = 0;
-
-#ifdef UNIX
-static rbool ispipe[3] = {0, 0, 0}; /* script, log_in, log_out */
-#endif
-
-
 
 void debugout(const char *s) {
 	int i;
@@ -720,97 +695,18 @@ void set_test_mode(fc_type fc) {
 
 #ifndef REPLACE_GETFILE
 
-
-#ifdef UNIX_IO
-
-extern const char *extname[]; /* From filename.c */
-
-static rbool check_fname(char *name, filetype ext) {
-	return 0 == strcmp(name + strlen(name) - strlen(extname[ext]), extname[ext]);
-}
-
-
-static void list_files(char *type, filetype ext) {
-	DIR *currdir;
-	struct dirent *entry;
-	char **filelist;
-	int filecnt, listsize;
-	int maxleng; /* Longest filename; used for formatting */
-	int i, j;
-	int numcols, height;
-
-	filelist = NULL;
-	filecnt = listsize = 0;
-	maxleng = 0;
-	currdir = opendir(".");
-	if (currdir == NULL) return; /* Nothing we can do except give up */
-	do {
-		entry = readdir(currdir);
-		if (entry != NULL && check_fname(entry->d_name, ext)) {
-			/* It has the right extension; add it to our list of files */
-			if (filecnt >= listsize) {
-				listsize += 5;
-				filelist = rrealloc(filelist, listsize * sizeof(char *));
-			}
-			filelist[filecnt] = rstrdup(entry->d_name);
-			i = strlen(entry->d_name);
-			if (i > screen_width - 1) {
-				filelist[filecnt][screen_width - 1] = 0;
-				i = screen_width - 1;
-			}
-			if (i > maxleng) maxleng = i;
-			filecnt++;
-		}
-	} while (entry != NULL);
-	closedir(currdir);
-	if (filecnt == 0) return; /* No files */
-
-	numcols = (screen_width - 1) / (maxleng + 2); /* Two spaces between columns */
-	if (numcols < 1)
-		numcols = 1;
-	height = (filecnt + numcols - 1) / numcols; /* Height, rounded up. */
-
-	writeln("");
-	writestr("Existing ");
-	writestr(type);
-	writestr("files:");
-	for (i = 0; i < height; i++) {
-		writeln("");
-		for (j = 0; j < numcols; j++)
-			if (i + j * height < filecnt) {
-				if (maxleng + 2 <= screen_width - 1) writestr("  ");
-				writestr(filelist[i + j * height]);
-				padout(maxleng - strlen(filelist[i + j * height]));
-				rfree(filelist[i + j * height]);
-			}
-	}
-	writeln("");
-	rfree(filelist);
-}
-#endif /* UNIX_IO */
-
-
-
-
 /* This opens the file refered to by fname and returns it */
 static genfile uf_open(fc_type fc, filetype ext, rbool rw) {
 	char *errstr;
 	genfile f;
 
 	if (rw) { /* Check to see if we are overwriting... */
-#ifdef UNIX
-		if (fc->special)
-			f = writeopen(fc, ext, NULL, &errstr);
-		else
-#endif
-		{
-			if (fileexist(fc, ext) && ext != fSCR) {
-				if (!yesno("This file already exists; overwrite?"))
-					/* That is, DON'T overwrite */
-					return badfile(ext);
-			}
-			f = writeopen(fc, ext, NULL, &errstr);
+		if (fileexist(fc, ext) && ext != fSCR) {
+			if (!yesno("This file already exists; overwrite?"))
+				/* That is, DON'T overwrite */
+				return badfile(ext);
 		}
+		f = writeopen(fc, ext, NULL, &errstr);
 	} else
 		f = readopen(fc, ext, &errstr);
 	if (errstr != NULL) writeln(errstr);
@@ -871,15 +767,9 @@ genfile get_user_file(int ft)
 		writeln("<INTERNAL ERROR: invalid file type>");
 		return badfile(fSAV);
 	}
-#ifdef UNIX_IO
-	if (!rw) { /* List available files. */
-		list_files(ftype, ext);
-		ftype = NULL;
-	} else
-#else
+
 	writestr(" ");
-#endif
-		writestr("Enter ");
+	writestr("Enter ");
 	if (ftype != NULL) writestr(ftype);
 	writestr("file name");
 	if (def_fc != NULL) {
@@ -1076,11 +966,7 @@ static rbool setarg(char **optptr) {
 }
 #endif
 
-#ifdef UNIX
-#define fixcase(c) (c)
-#else
 #define fixcase(c) tolower(c)
-#endif
 
 #if 0
 void parse_options(char *opt, char *next) {
@@ -1116,17 +1002,9 @@ void parse_options(char *opt, char *next) {
 
 #ifndef REPLACE_MAIN
 
-#ifdef MSDOS
-extern rbool use_bios;
-#endif
-
-
 int main(int argc, char *argv[]) {
 	int i;
 	char *gamefile;
-#ifdef MSDOS
-	rbool biosvar = 0;
-#endif
 
 	set_default_options();
 	end_cmd_options = 0;
@@ -1134,11 +1012,6 @@ int main(int argc, char *argv[]) {
 	for (i = 1; i < argc; i++)
 		if (argv[i][0] == '-' && !end_cmd_options)
 			parse_options(argv[i] + 1, argv[i + 1]);
-#ifdef MSDOS  /* For backward compatibility w/ original AGT interpreters */
-		else if (argv[i][0] == '/' && tolower(argv[i][1]) == 'b'
-		         && argv[i][2] == 0)
-			biosvar = 1;
-#endif
 		else if (gamefile == NULL)
 			gamefile = argv[i];
 		else fatal("Please specify only one game\n");
@@ -1151,9 +1024,7 @@ int main(int argc, char *argv[]) {
 	/* From this point on, MUST use writestr/writeln or may
 	   cause problems w/ the interfaces on some platforms
 	   that have to keep track of cursor position */
-#ifdef MSDOS
-	use_bios = biosvar;
-#endif
+
 	run_game(init_file_context(gamefile, fDA1));
 	return EXIT_SUCCESS;
 }

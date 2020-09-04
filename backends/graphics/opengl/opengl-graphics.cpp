@@ -785,7 +785,7 @@ void OpenGLGraphicsManager::setCursorPalette(const byte *colors, uint start, uin
 	updateCursorPalette();
 }
 
-void OpenGLGraphicsManager::displayMessageOnOSD(const char *msg) {
+void OpenGLGraphicsManager::displayMessageOnOSD(const Common::U32String &msg) {
 #ifdef USE_OSD
 	_osdMessageChangeRequest = true;
 
@@ -796,8 +796,8 @@ void OpenGLGraphicsManager::displayMessageOnOSD(const char *msg) {
 #ifdef USE_OSD
 void OpenGLGraphicsManager::osdMessageUpdateSurface() {
 	// Split up the lines.
-	Common::Array<Common::String> osdLines;
-	Common::StringTokenizer tokenizer(_osdMessageNextData, "\n");
+	Common::Array<Common::U32String> osdLines;
+	Common::U32StringTokenizer tokenizer(_osdMessageNextData, "\n");
 	while (!tokenizer.empty()) {
 		osdLines.push_back(tokenizer.nextToken());
 	}

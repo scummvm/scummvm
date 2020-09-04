@@ -60,7 +60,7 @@ GlkAPI::GlkAPI(OSystem *syst, const GlkGameDescription &gameDesc) :
 }
 
 void GlkAPI::glk_exit(void) {
-	glk_put_string(_("[ press any key to exit ]"));
+	glk_put_string_uni(_("[ press any key to exit ]").c_str());
 	_events->waitForPress();
 
 	// Trigger a ScumMVM shutdown of game
@@ -377,7 +377,11 @@ strid_t GlkAPI::glk_stream_get_current(void) {
 }
 
 void GlkAPI::glk_put_char(unsigned char ch) {
-	_streams->getCurrent()->putChar(ch);
+	Stream *str = _streams->getCurrent();
+	if (str)
+		str->putChar(ch);
+	else
+		warning("glk_put_char: no stream set");
 }
 
 void GlkAPI::glk_put_char_stream(strid_t str, unsigned char ch) {
@@ -783,7 +787,11 @@ uint GlkAPI::glk_buffer_to_title_case_uni(uint32 *buf, uint len,
 }
 
 void GlkAPI::glk_put_char_uni(uint32 ch) {
-	_streams->getCurrent()->putCharUni(ch);
+	Stream *str = _streams->getCurrent();
+	if (str)
+		str->putCharUni(ch);
+	else
+		warning("glk_put_char_uni: no stream set");
 }
 
 void GlkAPI::glk_put_string_uni(const uint32 *s) {
@@ -885,36 +893,14 @@ uint GlkAPI::glk_buffer_canon_normalize_uni(uint32 *buf, uint len, uint numchars
 }
 
 bool GlkAPI::glk_image_draw(winid_t win, uint image, int val1, int val2) {
-	if (!win) {
-		warning("image_draw: invalid ref");
-	} else if (g_conf->_graphics) {
-		TextBufferWindow *textWin = dynamic_cast<TextBufferWindow *>(win);
-		GraphicsWindow *gfxWin = dynamic_cast<GraphicsWindow *>(win);
-
-		if (textWin)
-			return textWin->drawPicture(image, val1, false, 0, 0);
-		else if (gfxWin)
-			return gfxWin->drawPicture(image, val1, val2, false, 0, 0);
-	}
-
-	return false;
+	return glk_image_draw(win, Common::String::format("%d", image),
+		val1, val2);
 }
 
 bool GlkAPI::glk_image_draw_scaled(winid_t win, uint image, int val1, int val2,
                                   uint width, uint height) {
-	if (!win) {
-		warning("image_draw_scaled: invalid ref");
-	} else if (g_conf->_graphics) {
-		TextBufferWindow *textWin = dynamic_cast<TextBufferWindow *>(win);
-		GraphicsWindow *gfxWin = dynamic_cast<GraphicsWindow *>(win);
-
-		if (textWin)
-			return textWin->drawPicture(image, val1, true, width, height);
-		else if (gfxWin)
-			return gfxWin->drawPicture(image, val1, val2, true, width, height);
-	}
-
-	return false;
+	return glk_image_draw_scaled(win, Common::String::format("%d", image),
+		val1, val2, width, height);
 }
 
 bool GlkAPI::glk_image_draw(winid_t win, const Graphics::Surface &image, uint transColor,
@@ -954,11 +940,49 @@ bool GlkAPI::glk_image_draw_scaled(winid_t win, const Graphics::Surface &image, 
 	return true;
 }
 
+bool GlkAPI::glk_image_draw(winid_t win, const Common::String &image, int val1, int val2) {
+	if (!win) {
+		warning("image_draw: invalid ref");
+	} else if (g_conf->_graphics) {
+		TextBufferWindow *textWin = dynamic_cast<TextBufferWindow *>(win);
+		GraphicsWindow *gfxWin = dynamic_cast<GraphicsWindow *>(win);
+
+		if (textWin)
+			return textWin->drawPicture(image, val1, false, 0, 0);
+		else if (gfxWin)
+			return gfxWin->drawPicture(image, val1, val2, false, 0, 0);
+	}
+
+	return false;
+}
+
+bool GlkAPI::glk_image_draw_scaled(winid_t win, const Common::String &image,
+		int val1, int val2, uint width, uint height) {
+	if (!win) {
+		warning("image_draw_scaled: invalid ref");
+	} else if (g_conf->_graphics) {
+		TextBufferWindow *textWin = dynamic_cast<TextBufferWindow *>(win);
+		GraphicsWindow *gfxWin = dynamic_cast<GraphicsWindow *>(win);
+
+		if (textWin)
+			return textWin->drawPicture(image, val1, true, width, height);
+		else if (gfxWin)
+			return gfxWin->drawPicture(image, val1, val2, true, width, height);
+	}
+
+	return false;
+}
+
 bool GlkAPI::glk_image_get_info(uint image, uint *width, uint *height) {
+	return glk_image_get_info(Common::String::format("%u", image),
+		width, height);
+}
+
+bool GlkAPI::glk_image_get_info(const Common::String &name, uint *width, uint *height) {
 	if (!g_conf->_graphics)
 		return false;
 
-	Picture *pic = g_vm->_pictures->load(image);
+	Picture *pic = g_vm->_pictures->load(name);
 	if (!pic)
 		return false;
 

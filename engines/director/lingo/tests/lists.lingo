@@ -46,3 +46,41 @@ set res to a = machinery
 set res to a >= machinery
 set res to machinery = a
 set res to machinery >= a
+
+-- itemOf
+set string_array to "one,, three, four"
+set res to item 2 of string_array
+scummvmAssert(res="")
+set res to item 3 of string_array
+scummvmAssert(res=" three")
+set res to item 4 of string_array
+scummvmAssert(res=" four")
+
+-- itemOf check for float
+set res to item 3.4 of string_array
+scummvmAssert(res=" three")
+
+-- itemOf out of bounds checks
+set res to item 5 of string_array
+scummvmAssert(res="")
+
+set res to item -1 of string_array
+scummvmAssert(res=string_array)
+
+-- itemOf: test delimiter
+set save = the itemDelimiter
+set the itemDelimiter = ":"
+set delim_array to "one: two: three: four"
+set res to item 3 of delim_array
+scummvmAssert(res=" three")
+set the itemDelimiter = save
+
+-- setAt
+set lst to []
+setAt lst,1,5
+scummvmAssert(lst = [5])
+set lst to []
+setAt lst,3,5
+scummvmAssert(lst = [0,0,5])
+setAt lst,2,5
+scummvmAssert(lst = [0,5,5])

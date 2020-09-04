@@ -31,7 +31,7 @@ DECLARE_SINGLETON(GUI::EventRecorder);
 
 #include "common/debug-channels.h"
 #include "backends/timer/sdl/sdl-timer.h"
-#include "backends/mixer/sdl/sdl-mixer.h"
+#include "backends/mixer/mixer.h"
 #include "common/config-manager.h"
 #include "common/md5.h"
 #include "gui/gui-manager.h"
@@ -260,7 +260,7 @@ Common::String EventRecorder::generateRecordFileName(const Common::String &targe
 
 
 void EventRecorder::init(Common::String recordFileName, RecordMode mode) {
-	_fakeMixerManager = new NullSdlMixerManager();
+	_fakeMixerManager = new NullMixerManager();
 	_fakeMixerManager->init();
 	_fakeMixerManager->suspendAudio();
 	_fakeTimer = 0;
@@ -334,6 +334,9 @@ bool EventRecorder::checkGameHash(const ADGameDescription *gameDesc) {
 		return false;
 	}
 	for (const ADGameFileDescription *fileDesc = gameDesc->filesDescriptions; fileDesc->fileName; fileDesc++) {
+		if (fileDesc->md5 == nullptr)
+			continue;
+
 		if (_playbackFile->getHeader().hashRecords.find(fileDesc->fileName) == _playbackFile->getHeader().hashRecords.end()) {
 			warning("MD5 hash for file %s not found in record file", fileDesc->fileName);
 			debugC(1, kDebugLevelEventRec, "playback:action=\"Check game hash\" filename=%s filehash=%s storedhash=\"\" result=different", fileDesc->fileName, fileDesc->md5);
@@ -349,7 +352,7 @@ bool EventRecorder::checkGameHash(const ADGameDescription *gameDesc) {
 	return true;
 }
 
-void EventRecorder::registerMixerManager(SdlMixerManager *mixerManager) {
+void EventRecorder::registerMixerManager(MixerManager *mixerManager) {
 	_realMixerManager = mixerManager;
 }
 
@@ -362,7 +365,7 @@ void EventRecorder::switchMixer() {
 	}
 }
 
-SdlMixerManager *EventRecorder::getMixerManager() {
+MixerManager *EventRecorder::getMixerManager() {
 	if (_recordMode == kPassthrough) {
 		return _realMixerManager;
 	} else {

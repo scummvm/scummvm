@@ -38,12 +38,12 @@ void GumpShapeArchive::loadGumpage(Common::SeekableReadStream *rs) {
 	unsigned int total = rs->size() / 8;
 	_gumpItemArea.resize(total + 1);
 	for (unsigned int i = 1; i <= total; ++i) {
-		int x, y, w, h;
-		x = static_cast<int16>(rs->readUint16LE());
-		y = static_cast<int16>(rs->readUint16LE());
-		w = static_cast<int16>(rs->readUint16LE()) - x;
-		h = static_cast<int16>(rs->readUint16LE()) - y;
-		_gumpItemArea[i] = new Rect(x, y, w, h);
+		int x1, y1, x2, y2;
+		x1 = static_cast<int16>(rs->readUint16LE());
+		y1 = static_cast<int16>(rs->readUint16LE());
+		x2 = static_cast<int16>(rs->readUint16LE());
+		y2 = static_cast<int16>(rs->readUint16LE());
+		_gumpItemArea[i] = new Rect(x1, y1, x2, y2);
 	}
 }
 

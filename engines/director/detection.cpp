@@ -50,12 +50,16 @@ Common::Platform DirectorEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
 }
 
-uint16 DirectorEngine::getVersion() const {
+uint16 DirectorEngine::getDescriptionVersion() const {
 	return _gameDescription->version;
 }
 
 Common::Language DirectorEngine::getLanguage() const {
 	return _gameDescription->desc.language;
+}
+
+const char *DirectorEngine::getExtra() {
+	return _gameDescription->desc.extra;
 }
 
 Common::String DirectorEngine::getEXEName() const {
@@ -103,9 +107,11 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "ankh2",				"Ankh 2: Mystery of Tutankhamen"},
 	{ "ankh3",				"Ankh 3"},
 	{ "arcofdoom",			"Arc of Doom"},
+	{ "artrageous",			"ArtRageous!"},
 	{ "ataripack",			"Activision's Atari 2600 Action Pack"},
 	{ "badday",				"Bad Day on the Midway"},
 	{ "beyondthewall",		"Beyond the Wall of Stars"},
+	{ "bookshelf94",		"Microsoft Bookshelf '94"},
 	{ "bowie",				"JUMP: The David Bowie Interactive CD-ROM"},
 	{ "chaos",				"The C.H.A.O.S. Continuum"},
 	{ "chopsuey",   		"Chop Suey" },
@@ -117,6 +123,8 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "earthtia",			"Earthtia Saga: Larthur's Legend"},
 	{ "easternmind",		"Eastern Mind: The Lost Souls of Tong Nou"},
 	{ "earthwormjim",		"Earthworm Jim"},
+	{ "encarta94",			"Microsoft Encarta '94"},
+	{ "encarta95",			"Microsoft Encarta '95"},
 	{ "ernie",				"Ernie"},
 	{ "frankenstein",		"Frankenstein: Through the Eyes of the Monster"},
 	{ "freakshow",			"Freak Show"},
@@ -145,6 +153,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "jewels",				"Jewels of the Oracle" },
 	{ "jman",				"The Journeyman Project" },
 	{ "jman2",				"The Journeyman Project 2: Buried in Time" },
+	{ "jmmd",       "Just Me & My Dad" },
 	{ "karma",				"Karma: Curse of the 12 Caves" },
 	{ "kyoto",				"Cosmology of Kyoto" },
 	{ "lion",				"Lion" },
@@ -165,6 +174,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "murdersam",			"Who Killed Sam Rupert?"},
 	{ "murdertaylor",		"Who Killed Taylor French? The Case of the Undressed Reporter"},
 	{ "mylk",				"Mylk"},
+	{ "mysteriousegypt",	"Mysterious Egypt"},
 	{ "necrobius",			"Necrobius"},
 	{ "nile",				"Nile: Passage to Egypt"},
 	{ "noir",				"Noir: A Shadowy Thriller"},
@@ -177,16 +187,20 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "refixion2",			"Refixion II: Museum or Hospital"},
 	{ "refixion3",			"Refixion III: The Reindeer Story"},
 	{ "rodney",				"Rodney's Funscreen"},
+	{ "sakin2",				"Sakin II"},
 	{ "santafe1",			"Santa Fe Mysteries: The Elk Moon Murder"},
+	{ "sciencesmart",		"Science Smart"},
 	{ "screamingmetal",		"Screaming Metal"},
 	{ "shanghai",			"Shanghai: Great Moments"},
 	{ "skyborg",			"SkyBorg: Into the Vortex"},
 	{ "snh",				"A Silly Noisy House"},
 	{ "spyclub",			"Spy Club" },
 	{ "spycraft",			"Spycraft: The Great Game" },
+	{ "staytooned",			"Stay Tooned!" },
 	{ "superspy",			"SuperSpy 1" },
 	{ "teamxtreme1",		"Operation: Weather Disaster" },
 	{ "teamxtreme2",		"Operation: Eco-Nightmare" },
+	{ "teddybear",			"Operation Teddy Bear" },
 	{ "the7colors",			"The Seven Colors: Legend of PSY-S City"},
 	{ "totaldistortion",	"Total Distortion"},
 	{ "trekborg",			"Star Trek: Borg"},
@@ -195,12 +209,17 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "trekklingon",		"Star Trek: Klingon"},
 	{ "trekomni",			"Star Trek Omnipedia"},
 	{ "trekpedia98",		"Star Trek Encyclopedia 1998"},
+	{ "trektech",			"Star Trek: The Next Generation Interactive Technical Manual"},
 	{ "tri3dtrial",			"Tri-3D-Trial"},
+	{ "twistynight1",		"Twisty Night #1"},
+	{ "twistynight2",		"Twisty Night #2"},
+	{ "twistynight3",		"Twisty Night #3"},
 	{ "vvcyber",			"Victor Vector & Yondo: The Cyberplasm Formula"},
 	{ "vvdinosaur",			"Victor Vector & Yondo: The Last Dinosaur Egg"},
 	{ "vvharp",				"Victor Vector & Yondo: The Hypnotic Harp"},
 	{ "vvvampire",			"Victor Vector & Yondo: The Vampire's Coffin"},
 	{ "warlock", 			"Spaceship Warlock"},
+	{ "wishbone", 			"Wishbone and the Amazing Odyssey"},
 	{ "wrath",				"Wrath of the Gods"},
 	{ "xanthus",			"Xanthus"},
 	{ "ybr1",				"Yellow Brick Road"},
@@ -309,13 +328,13 @@ ADDetectedGame DirectorMetaEngine::fallbackDetect(const FileMap &allFiles, const
 		switch (tag) {
 		case MKTAG('P', 'J', '9', '3'):
 		case MKTAG('3', '9', 'J', 'P'):
-			desc->version = 4;
+			desc->version = 400;
 			break;
 		case MKTAG('P', 'J', '9', '5'):
-			desc->version = 5;
+			desc->version = 500;
 			break;
 		case MKTAG('P', 'J', '0', '0'):
-			desc->version = 7;
+			desc->version = 700;
 			break;
 		default:
 			// Prior to version 4, there was no tag here. So we'll use a bit of a
@@ -348,7 +367,7 @@ ADDetectedGame DirectorMetaEngine::fallbackDetect(const FileMap &allFiles, const
 				continue;
 
 			// Assume v3 at this point (for now at least)
-			desc->version = 3;
+			desc->version = 300;
 		}
 
 		strncpy(s_fallbackFileNameBuffer, fileName.c_str(), 50);

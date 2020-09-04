@@ -60,10 +60,9 @@ GuiResourceId GfxPicture::getResourceId() {
 // differentiation between various picture formats can NOT get done using sci-version checks.
 //  Games like PQ1 use the "old" vector data picture format, but are actually SCI1.1
 //  We should leave this that way to decide the format on-the-fly instead of hardcoding it in any way
-void GfxPicture::draw(int16 animationNr, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {
+void GfxPicture::draw(bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {
 	uint16 headerSize;
 
-	_animationNr = animationNr;
 	_mirroredFlag = mirroredFlag;
 	_addToFlag = addToFlag;
 	_EGApaletteNo = EGApaletteNo;
@@ -127,7 +126,7 @@ void GfxPicture::drawSci11Vga() {
 	if (has_cel) {
 		// Create palette and set it
 		_palette->createFromData(inbuffer.subspan(palette_data_ptr), &palette);
-		_palette->set(&palette, true, false, true);
+		_palette->set(&palette, true);
 
 		drawCelData(inbuffer, cel_headerPos, cel_RlePos, cel_LiteralPos, 0, 0, 0, 0, false);
 	}

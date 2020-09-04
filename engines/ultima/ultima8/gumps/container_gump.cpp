@@ -93,14 +93,14 @@ void ContainerGump::getItemCoords(Item *item, int32 &itemx, int32 &itemy) {
 		// randomize position
 		// TODO: maybe try to put it somewhere where it doesn't overlap others?
 
-		itemx = getRandom() % _itemArea.w;
-		itemy = getRandom() % _itemArea.h;
+		itemx = getRandom() % _itemArea.width();
+		itemy = getRandom() % _itemArea.height();
 
 		item->setGumpLocation(itemx, itemy);
 	}
 
-	itemx += _itemArea.x;
-	itemy += _itemArea.y;
+	itemx += _itemArea.left;
+	itemy += _itemArea.top;
 }
 
 
@@ -140,8 +140,8 @@ void ContainerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 
 	if (_displayDragging) {
 		int32 itemx, itemy;
-		itemx = _draggingX + _itemArea.x;
-		itemy = _draggingY + _itemArea.y;
+		itemx = _draggingX + _itemArea.left;
+		itemy = _draggingY + _itemArea.top;
 		Shape *s = GameData::get_instance()->getMainShapes()->
 		           getShape(_draggingShape);
 		assert(s);
@@ -247,8 +247,8 @@ void ContainerGump::GetItemLocation(int32 lerp_factor) {
 	if (_parent) _parent->ScreenSpaceToGump(gx, gy);
 
 	// Set x and y, and center us over it
-	_ix = gx - _dims.w / 2;
-	_iy = gy - _dims.h;
+	_ix = gx - _dims.width() / 2;
+	_iy = gy - _dims.height();
 }
 
 void ContainerGump::Close(bool no_del) {
@@ -400,8 +400,8 @@ bool ContainerGump::DraggingItem(Item *item, int mx, int my) {
 
 	// determine target location and set dragging_x/y
 
-	_draggingX = mx - _itemArea.x - dox;
-	_draggingY = my - _itemArea.y - doy;
+	_draggingX = mx - _itemArea.left - dox;
+	_draggingY = my - _itemArea.top - doy;
 
 	const Shape *sh = item->getShapeObject();
 	assert(sh);
@@ -409,9 +409,9 @@ bool ContainerGump::DraggingItem(Item *item, int mx, int my) {
 	assert(fr);
 
 	if (_draggingX - fr->_xoff < 0 ||
-	        _draggingX - fr->_xoff + fr->_width > _itemArea.w ||
+	        _draggingX - fr->_xoff + fr->_width > _itemArea.width() ||
 	        _draggingY - fr->_yoff < 0 ||
-	        _draggingY - fr->_yoff + fr->_height > _itemArea.h) {
+	        _draggingY - fr->_yoff + fr->_height > _itemArea.height()) {
 		_displayDragging = false;
 		return false;
 	}
@@ -528,8 +528,8 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 
 		int32 dox, doy;
 		Mouse::get_instance()->getDraggingOffset(dox, doy);
-		_draggingX = mx - _itemArea.x - dox;
-		_draggingY = my - _itemArea.y - doy;
+		_draggingX = mx - _itemArea.left - dox;
+		_draggingY = my - _itemArea.top - doy;
 		item->setGumpLocation(_draggingX, _draggingY);
 	}
 }
@@ -537,10 +537,10 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 void ContainerGump::saveData(Common::WriteStream *ws) {
 	ItemRelativeGump::saveData(ws);
 
-	ws->writeUint32LE(static_cast<uint32>(_itemArea.x));
-	ws->writeUint32LE(static_cast<uint32>(_itemArea.y));
-	ws->writeUint32LE(static_cast<uint32>(_itemArea.w));
-	ws->writeUint32LE(static_cast<uint32>(_itemArea.h));
+	ws->writeUint32LE(static_cast<uint32>(_itemArea.left));
+	ws->writeUint32LE(static_cast<uint32>(_itemArea.top));
+	ws->writeUint32LE(static_cast<uint32>(_itemArea.width()));
+	ws->writeUint32LE(static_cast<uint32>(_itemArea.height()));
 }
 
 bool ContainerGump::loadData(Common::ReadStream *rs, uint32 version) {
@@ -550,7 +550,9 @@ bool ContainerGump::loadData(Common::ReadStream *rs, uint32 version) {
 	int32 iay = static_cast<int32>(rs->readUint32LE());
 	int32 iaw = static_cast<int32>(rs->readUint32LE());
 	int32 iah = static_cast<int32>(rs->readUint32LE());
-	_itemArea.Set(iax, iay, iaw, iah);
+	_itemArea.moveTo(iax, iay);
+	_itemArea.setWidth(iaw);
+	_itemArea.setHeight(iah);
 
 	return true;
 }

@@ -215,12 +215,12 @@ void PCSpeakerDriver::update() {
 					uint16 ts = _channels[i]->timerScale + *pos++;
 					_channels[i]->timerScale = (uint8)MIN<uint16>(ts, 0xFF);
 				} break;
-				
+
 				case -24: {
 					int16 ts = _channels[i]->timerScale - *pos++;
 					_channels[i]->timerScale = (uint8)MAX<int16>(ts, 1);
 				} break;
-				
+
 				case -26: {
 					uint16 prd = _clock / READ_LE_UINT16(pos);
 					if (_pcJR && prd >= 0x400)
@@ -230,7 +230,7 @@ void PCSpeakerDriver::update() {
 					uint8 nextTimer = 1 + *pos++;
 					_channels[i]->timer = _channels[i]->timerScale * nextTimer;
 				} break;
-				
+
 				case -30: {
 					_channels[i]->timerScale = *pos++;
 					if (!_channels[i]->timerScale)
@@ -300,7 +300,7 @@ int PCSpeakerDriver::readBuffer(int16 *buffer, const int numSamples) {
 		generateSamples(buffer, render);
 		buffer += render;
 	}
-	
+
 	return numSamples;
 }
 

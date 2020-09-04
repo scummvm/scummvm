@@ -58,6 +58,7 @@ void MusicPlayer::playSong(uint32 fileref) {
 	// Set the volumes
 	_fadingEndVolume = 100;
 	_gameVolume = 100;
+	updateVolume();
 
 	// Play the referenced file once
 	play(fileref, false);
@@ -184,6 +185,11 @@ bool MusicPlayer::play(uint32 fileref, bool loop) {
 	return load(fileref, loop);
 }
 
+void MusicPlayer::stop() {
+	_backgroundFileRef = 0;
+	unload();
+}
+
 void MusicPlayer::applyFading() {
 	debugC(6, kDebugMIDI, "Groovie::Music: applyFading() _fadingStartTime = %d, _fadingDuration = %d, _fadingStartVolume = %d, _fadingEndVolume = %d", _fadingStartTime, _fadingDuration, _fadingStartVolume, _fadingEndVolume);
 	Common::StackLock lock(_mutex);
@@ -203,7 +209,15 @@ void MusicPlayer::applyFading() {
 		// If we were fading to 0, stop the playback and restore the volume
 		if (_fadingEndVolume == 0) {
 			debugC(1, kDebugMIDI, "Groovie::Music: Faded to zero: end of song. _fadingEndVolume set to 100");
-			unload();
+			// WORKAROUND The original interpreter would keep playing a track
+			// at volume 0 after it has faded out. When a new track was
+			// started, it would restore the volume first and a short part of
+			// the old track would be heard before the new track would start.
+			// To prevent this, playback is actually stopped after fading out,
+			// but _isPlaying remains true. This keeps the original
+			// interpreter behavior of not starting the background music, but 
+			// it prevents the issue when starting playback of a new track.
+			unload(false);
 		}
 	}
 
@@ -222,15 +236,20 @@ void MusicPlayer::onTimer(void *refCon) {
 		music->applyFading();
 	}
 
+	// If the game is accepting user input, start the background music if necessary
+	if (music->_vm->isWaitingForInput())
+		music->startBackground();
+
 	// Handle internal timed events
 	music->onTimerInternal();
 }
 
-void MusicPlayer::unload() {
+void MusicPlayer::unload(bool updateState) {
 	debugC(1, kDebugMIDI, "Groovie::Music: Stopping the playback");
 
-	// Set the new state
-	_isPlaying = false;
+	if (updateState)
+		// Set the new state
+		_isPlaying = false;
 }
 
 void MusicPlayer::playCreditsIOS() {
@@ -357,8 +376,8 @@ void MusicPlayerMidi::updateVolume() {
 	}
 }
 
-void MusicPlayerMidi::unload() {
-	MusicPlayer::unload();
+void MusicPlayerMidi::unload(bool updateState) {
+	MusicPlayer::unload(updateState);
 
 	// Unload the parser data
 	if (_midiParser)
@@ -503,8 +522,8 @@ bool MusicPlayerXMI::load(uint32 fileref, bool loop) {
 	return loadParser(file, loop);
 }
 
-void MusicPlayerXMI::unload() {
-	MusicPlayerMidi::unload();
+void MusicPlayerXMI::unload(bool updateState) {
+	MusicPlayerMidi::unload(updateState);
 	if (_milesMidiDriver) {
 		_milesMidiDriver->deinitSource(0);
 	}
@@ -659,8 +678,8 @@ void MusicPlayerIOS::updateVolume() {
 	_vm->_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _userVolume * _gameVolume / 100);
 }
 
-void MusicPlayerIOS::unload() {
-	MusicPlayer::unload();
+void MusicPlayerIOS::unload(bool updateState) {
+	MusicPlayer::unload(updateState);
 
 	_vm->_system->getMixer()->stopHandle(_handle);
 }

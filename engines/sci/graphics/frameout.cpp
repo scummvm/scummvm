@@ -44,7 +44,7 @@
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
 #include "sci/graphics/cursor32.h"
-#include "sci/graphics/font.h"
+#include "sci/graphics/scifont.h"
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/helpers.h"
 #include "sci/graphics/paint32.h"

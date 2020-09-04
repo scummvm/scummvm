@@ -1212,7 +1212,7 @@ bool EoBEngine::checkPartyStatusExtra() {
 		}
 		_screen->copyPage(Screen_EoB::kDefeatMsgBackupPage, 0);
 	}
-	
+
 	_eventList.clear();
 	_screen->setScreenDim(cd);
 	_txt->removePageBreakFlag();

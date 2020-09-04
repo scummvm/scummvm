@@ -79,6 +79,8 @@ NGIArchive::NGIArchive(const Common::String &filename) : _ngiFilename(filename) 
 		header.pos = READ_LE_UINT32(&fat[i * 32 + 24]);
 		header.size = READ_LE_UINT32(&fat[i * 32 + 28]);
 
+		debug(5, "file: %s  flags: %x  extVal: %d  pos: %d  size: %d", header.filename, header.flags, header.extVal, header.pos, header.size);
+
 		if (header.flags & 0x1e0) {
 			warning("File has flags: %.8x\n", header.flags & 0x1e0);
 		}
@@ -90,7 +92,7 @@ NGIArchive::NGIArchive(const Common::String &filename) : _ngiFilename(filename) 
 
 	g_fp->_currArchive = this;
 
-	debugC(0, kDebugLoading, "NGIArchive::NGIArchive(%s): Located %d files", filename.c_str(), _headers.size());
+	debug(4, "NGIArchive::NGIArchive(%s): Located %d files", filename.c_str(), _headers.size());
 }
 
 NGIArchive::~NGIArchive() {

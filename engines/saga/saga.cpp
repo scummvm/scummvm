@@ -25,6 +25,7 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "common/events.h"
+#include "common/translation.h"
 
 #include "audio/mixer.h"
 
@@ -243,7 +244,7 @@ Common::Error SagaEngine::run() {
 
 	// Detect game and open resource files
 	if (!initGame()) {
-		GUIErrorMessage("Error loading game resources.");
+		GUIErrorMessage(_("Error loading game resources."));
 		return Common::kUnknownError;
 	}
 

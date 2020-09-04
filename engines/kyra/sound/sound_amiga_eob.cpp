@@ -89,7 +89,7 @@ void SoundAmiga_EoB::loadSoundFile(Common::String file) {
 	// This value can deviate up to 5 bytes from the real size in EOB II Amiga.
 	// The original simply tries to read 64000 bytes from the file (ignoring this
 	// value). We do the same.
-	// EOB I strangely always seems to have correct values. 
+	// EOB I strangely always seems to have correct values.
 	uint16 readSize = in->readUint16LE() - 10;
 	uint8 cmp = in->readByte();
 	in->seek(1, SEEK_CUR);
@@ -106,7 +106,7 @@ void SoundAmiga_EoB::loadSoundFile(Common::String file) {
 
 	if (cmp == 0) {
 		memcpy(buf, _fileBuffer, outSize);
-	} else if (cmp == 3) {			
+	} else if (cmp == 3) {
 		Screen::decodeFrame3(_fileBuffer, buf, outSize, true);
 	} else if (cmp == 4) {
 		Screen::decodeFrame4(_fileBuffer, buf, outSize);
@@ -213,7 +213,7 @@ void SoundAmiga_EoB::playSoundEffect(uint16 track, uint8 volume) {
 }
 
 void SoundAmiga_EoB::beginFadeOut(int delay) {
-	_driver->fadeOut(delay);	
+	_driver->fadeOut(delay);
 	while (_driver->isFading() && !_vm->shouldQuit())
 		_vm->delay(5);
 	haltTrack();

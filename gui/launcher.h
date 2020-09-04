@@ -41,6 +41,9 @@ class SaveLoadChooser;
 class LauncherDialog : public Dialog {
 	typedef Common::String String;
 	typedef Common::Array<Common::String> StringArray;
+
+	typedef Common::U32String U32String;
+	typedef Common::Array<Common::U32String> U32StringArray;
 public:
 	LauncherDialog();
 	~LauncherDialog() override;

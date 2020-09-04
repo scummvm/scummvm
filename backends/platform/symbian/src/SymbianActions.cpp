@@ -22,6 +22,8 @@
 
 #include "backends/platform/symbian/src/SymbianActions.h"
 
+#ifdef GUI_ENABLE_KEYSDIALOG
+
 #include "gui/message.h"
 #include "scumm/scumm.h"
 #include "common/config-manager.h"
@@ -72,7 +74,7 @@ void SymbianActions::init() {
 }
 
 
-Common::String SymbianActions::actionName(ActionType action) {
+Common::U32String SymbianActions::actionName(ActionType action) {
 	return _(actionNames[action]);
 }
 
@@ -257,3 +259,5 @@ bool SymbianActions::perform(ActionType /*action*/, bool /*pushed*/) {
 }
 
 } // namespace GUI
+
+#endif

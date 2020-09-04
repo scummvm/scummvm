@@ -733,6 +733,7 @@ Common::Error AdlEngine::run() {
 	setupOpcodeTables();
 
 	init();
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot >= 0) {
@@ -750,6 +751,8 @@ Common::Error AdlEngine::run() {
 
 	while (!(_isQuitting || shouldQuit()))
 		gameLoop();
+
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 
 	return Common::kNoError;
 }

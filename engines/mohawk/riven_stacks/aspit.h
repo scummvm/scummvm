@@ -89,7 +89,7 @@ private:
 
 	void cathBookDrawPage(uint32 page);
 
-	bool showConfirmationDialog(const char *message, const char *confirmButton, const char *cancelButton);
+	bool showConfirmationDialog(const Common::U32String &message, const Common::U32String &confirmButton, const Common::U32String &cancelButton);
 };
 
 } // End of namespace RivenStacks

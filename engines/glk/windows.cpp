@@ -108,17 +108,10 @@ Window *Windows::windowOpen(Window *splitwin, uint method, uint size,
 			return nullptr;
 		}
 
-		if (splitwin->_type == wintype_Pair) {
-			if ((method & winmethod_DirMask) != winmethod_Arbitrary) {
-				warning("window_open: Can only add windows to a Pair window in arbitrary mode");
-				return nullptr;
-			}
-		} else {
-			oldparent = splitwin->_parent;
-			if (oldparent && oldparent->_type != wintype_Pair) {
-				warning("window_open: parent window is not Pair");
-				return nullptr;
-			}
+		oldparent = splitwin->_parent;
+		if (oldparent && oldparent->_type != wintype_Pair) {
+			warning("window_open: parent window is not Pair");
+			return nullptr;
 		}
 	}
 
@@ -715,6 +708,11 @@ bool Window::checkTerminators(uint32 ch) {
 }
 
 bool Window::imageDraw(uint image, uint align, int val1, int val2) {
+	return imageDraw(Common::String::format("%u", image),
+		align, val1, val2);
+}
+
+bool Window::imageDraw(const Common::String & image, uint align, int val1, int val2) {
 	if (!g_conf->_graphics)
 		return false;
 

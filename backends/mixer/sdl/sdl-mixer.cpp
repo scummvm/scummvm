@@ -38,19 +38,12 @@
 #define SAMPLES_PER_SEC 44100
 #endif
 
-SdlMixerManager::SdlMixerManager()
-	:
-	_mixer(0),
-	_audioSuspended(false) {
-
-}
-
 SdlMixerManager::~SdlMixerManager() {
 	_mixer->setReady(false);
 
 	SDL_CloseAudio();
 
-	delete _mixer;
+	SDL_QuitSubSystem(SDL_INIT_AUDIO);
 }
 
 void SdlMixerManager::init() {

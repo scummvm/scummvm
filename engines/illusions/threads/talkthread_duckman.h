@@ -66,8 +66,8 @@ public:
 	uint32 _namedPointId1;
 	uint32 _namedPointId2;
 	byte *_entryTblPtr;
-	byte *_entryText;
-	byte *_currEntryText;
+	uint16 *_entryText;
+	uint16 *_currEntryText;
 	//field30 dd
 	uint32 _voiceStartTime;
 	uint32 _voiceEndTime;

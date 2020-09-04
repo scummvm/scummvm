@@ -820,7 +820,7 @@ void Gui::updateWindow(WindowReference winID, bool containerOpen) {
 			drawMainGameWindow();
 		} else {
 			Graphics::MacWindow *winRef = findWindow(winID);
-			winRef->getWindowSurface()->fillRect(data.bounds, kColorGray);
+			winRef->getWindowSurface()->fillRect(data.bounds, kColorGray80);
 		}
 		if (data.type == kZoomDoc && data.updateScroll) {
 			warning("Unimplemented: update scroll");
@@ -1245,7 +1245,7 @@ void Gui::invertWindowColors(WindowReference winID) {
 		for (uint x = 0; x < srf->w; x++) {
 			byte p = *(byte *)srf->getBasePtr(x, y);
 			*(byte *)srf->getBasePtr(x, y) =
-				(p == kColorWhite) ? kColorBlack : kColorGray;
+				(p == kColorWhite) ? kColorBlack : kColorGray80;
 		}
 	}
 }

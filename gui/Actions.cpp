@@ -21,12 +21,17 @@
  */
 
 #include "gui/Actions.h"
+
+#ifdef GUI_ENABLE_KEYSDIALOG
+
 #include "gui/message.h"
 #include "common/config-manager.h"
 
 #ifdef __SYMBIAN32__
 	#include "backends/platform/symbian/src/SymbianActions.h"
 #endif
+
+#warning The actions system is deprecated. Please use the keymapper instead.
 
 namespace GUI {
 
@@ -150,3 +155,5 @@ Actions *Actions::_instance = NULL;
 
 
 } // namespace GUI
+
+#endif

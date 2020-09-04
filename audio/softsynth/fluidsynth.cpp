@@ -37,9 +37,11 @@
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 #include "audio/musicplugin.h"
 #include "audio/mpu401.h"
 #include "audio/softsynth/emumidi.h"
+#include "gui/message.h"
 #if defined(IPHONE_IOS7) && defined(IPHONE_SANDBOXED)
 #include "backends/platform/ios7/ios7_common.h"
 #endif
@@ -72,7 +74,13 @@ public:
 	MidiChannel *getPercussionChannel() override;
 
 	void setEngineSoundFont(Common::SeekableReadStream *soundFontData) override;
-	bool acceptsSoundFontData() override { return true; }
+	bool acceptsSoundFontData() override {
+#if defined(FLUIDSYNTH_VERSION_MAJOR) && FLUIDSYNTH_VERSION_MAJOR > 1
+		return true;
+#else
+		return false;
+#endif
+	}
 
 	// AudioStream API
 	bool isStereo() const override { return true; }
@@ -126,6 +134,7 @@ void MidiDriver_FluidSynth::setStr(const char *name, const char *val) {
 
 // Soundfont memory loader callback functions.
 
+#if defined(FLUIDSYNTH_VERSION_MAJOR) && FLUIDSYNTH_VERSION_MAJOR > 1
 static void *SoundFontMemLoader_open(const char *filename) {
 	void *p;
 	if (filename[0] != '&') {
@@ -151,20 +160,25 @@ static int SoundFontMemLoader_close(void *handle) {
 static long SoundFontMemLoader_tell(void *handle) {
 	return ((Common::SeekableReadStream *) handle)->pos();
 }
+#endif
 
 int MidiDriver_FluidSynth::open() {
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
 
 #if defined(FLUIDSYNTH_VERSION_MAJOR) && FLUIDSYNTH_VERSION_MAJOR > 1
-	bool isUsingInMemorySoundFontData = _engineSoundFontData && !ConfMan.hasKey("soundfont");
+	// When provided with in-memory SoundFont data, only use the configured
+	// SoundFont instead if it's explicitly configured on the current game.
+	bool isUsingInMemorySoundFontData = _engineSoundFontData && !ConfMan.getActiveDomain()->contains("soundfont");
 #else
 	bool isUsingInMemorySoundFontData = false;
 #endif
 
-	if (!isUsingInMemorySoundFontData && !ConfMan.hasKey("soundfont"))
-		error("FluidSynth requires a 'soundfont' setting");
-
+	if (!isUsingInMemorySoundFontData && !ConfMan.hasKey("soundfont")) {
+		GUI::MessageDialog dialog(_("FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI on MIDI tab. Music is off."));
+		dialog.runModal();
+		return MERR_DEVICE_NOT_AVAILABLE;
+	}
 
 	_settings = new_fluid_settings();
 
@@ -229,7 +243,7 @@ int MidiDriver_FluidSynth::open() {
 
 	fluid_synth_set_interp_method(_synth, -1, interpMethod);
 
-	const char *soundfont = ConfMan.hasKey("soundfont") ?
+	const char *soundfont = !isUsingInMemorySoundFontData ?
 			ConfMan.get("soundfont").c_str() : Common::String::format("&%p", (void *)_engineSoundFontData).c_str();
 
 #if defined(FLUIDSYNTH_VERSION_MAJOR) && FLUIDSYNTH_VERSION_MAJOR > 1
@@ -261,12 +275,16 @@ int MidiDriver_FluidSynth::open() {
 	_soundFont = fluid_synth_sfload(_synth, soundfont, 1);
 #endif
 
-	if (_soundFont == -1)
-		error("Failed loading custom sound font '%s'", soundfont);
+	if (_soundFont == -1) {
+		GUI::MessageDialog dialog(_("FluidSynth: Failed loading custom SoundFont '%s'. Music is off."), soundfont);
+		dialog.runModal();
+		return MERR_DEVICE_NOT_AVAILABLE;
+	}
 
 	MidiDriver_Emulated::open();
 
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+
 	return 0;
 }
 
@@ -285,6 +303,9 @@ void MidiDriver_FluidSynth::close() {
 }
 
 void MidiDriver_FluidSynth::send(uint32 b) {
+	if (!_isOpen)
+		return;
+
 	midiDriverCommonSend(b);
 
 	//byte param3 = (byte) ((b >> 24) & 0xFF);

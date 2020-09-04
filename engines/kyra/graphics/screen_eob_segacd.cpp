@@ -342,7 +342,7 @@ void Screen_EoB::sega_encodeShapesFromSprites(const uint8 **dst, const uint8 *sr
 			if (((++s) % 80) == 0)
 				break;
 		}
-		
+
 		_segaAnimator->update();
 		_segaRenderer->render(Screen_EoB::kSegaInitShapesPage, -1, -1, -1, -1, true);
 
@@ -677,7 +677,7 @@ void SegaRenderer::render(int destPageNum, int renderBlockX, int renderBlockY, i
 		/*if ((x >> 3) < renderBlockX) {
 			bW = MIN<int>(0, (int)bW - (renderBlockX - (x >> 3)));
 			x = (renderBlockX << 3);
-			
+
 		}
 
 		if ((y >> 3) < renderBlockY) {

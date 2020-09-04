@@ -23,6 +23,8 @@
 #ifndef DIRECTOR_CHANNEL_H
 #define DIRECTOR_CHANNEL_H
 
+#include "director/cursor.h"
+
 namespace Graphics {
 	struct Surface;
 	class ManagedSurface;
@@ -50,12 +52,15 @@ public:
 	bool isMouseIn(const Common::Point &pos);
 	bool isMatteIntersect(Channel *channel);
 	bool isMatteWithin(Channel *channel);
+	bool isActiveVideo();
+	bool isVideoDirectToStage();
 
 	void setWidth(int w);
 	void setHeight(int h);
 	void setBbox(int l, int t, int r, int b);
 	void setCast(uint16 castId);
 	void setClean(Sprite *nextSprite, int spriteId, bool partial = false);
+	void setEditable(bool editable);
 	void replaceSprite(Sprite *nextSprite);
 	void replaceWidget();
 	bool updateWidget();
@@ -79,7 +84,7 @@ public:
 	int _height;
 
 	// Using in digital movie sprites
-	byte _movieRate;
+	double _movieRate;
 	uint16 _movieTime;
 	uint16 _startTime;
 	uint16 _stopTime;
@@ -88,8 +93,8 @@ private:
 	Graphics::ManagedSurface *getSurface();
 	MacShape *getShape();
 	Common::Point getPosition();
-	uint getForeColor();
-	uint getBackColor();
+	uint32 getForeColor();
+	uint32 getBackColor();
 
 	void addRegistrationOffset(Common::Point &pos, bool subtract = false);
 };

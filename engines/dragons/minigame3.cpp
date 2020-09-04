@@ -22,6 +22,7 @@
 #include "common/scummsys.h"
 #include "common/rect.h"
 #include "dragons/actor.h"
+#include "dragons/font.h"
 #include "dragons/minigame3.h"
 #include "dragons/dragonini.h"
 #include "dragons/inventory.h"
@@ -113,7 +114,6 @@ void Minigame3::run() {
 	uint16 local_1e = 0;
 	uint16 local_1c = 0;
 	uint16 local_1a = 0;
-	int16 local_16;
 	int16 local_14;
 	InventoryState origInventoryType;
 	int16 local_10;
@@ -124,7 +124,7 @@ void Minigame3::run() {
 
 	Common::File *fd = new Common::File();
 	if (!fd->open("arc3.bin")) {
-		error("Failed to open arc1.bin");
+		error("Failed to open arc3.bin");
 	}
 
 	for (int i = 0; i < 21; i++) {
@@ -149,7 +149,7 @@ void Minigame3::run() {
 		handPositionsTbl[i].y = fd->readUint16LE();
 	}
 
-	fd->seek(0x4914);
+	fd->seek(_vm->getMiniGame3DataOffset());
 
 	for (int i = 0; i < 4; i++) {
 		UnkStruct_ARRAY_800931a0[i].position1 = fd->readUint16LE();
@@ -279,8 +279,8 @@ void Minigame3::run() {
 		goodRabbitPositionTbl[(int16)i] = 0;
 		i = i + 1;
 	}
-	local_16 = _vm->getRand(4);
-	goodRabbitPositionTbl[(int16)local_16] = 1;
+	int16 goodRabbitStartingPosition = _vm->getRand(4);
+	goodRabbitPositionTbl[goodRabbitStartingPosition] = 1;
 	i = 0;
 	while ((int16)i < 4) {
 		bunnyPositionTbl[(int16)i] = i;
@@ -294,30 +294,21 @@ void Minigame3::run() {
 	updateBackgroundLayerOffset(0, 0, 0);
 	_vm->fadeFromBlack();
 	_vm->waitForFrames(0xf);
-	_vm->_talk->loadAndDisplayDialogAroundPoint(0x479A, 0x14, 3, 0x1e01, 0);
+	_vm->_talk->loadAndDisplayDialogAroundPoint(_vm->getMiniGame3StartingDialog(), 0x14, 3, 0x1e01, 0);
 	_vm->waitForFrames(0x1e);
 	// TODO clearTextDialog((uint)DAT_8008e7e8, (uint)DAT_8008e844, (uint)DAT_8008e848, (uint)DAT_8008e874);
 	i = 0;
 	while ((int16)i < 4) {
 		if (goodRabbitPositionTbl[(int16)i] == 0) {
 			bunnyActorTbl[(int16)i]->updateSequence(1);
-		} else {
-			local_16 = i;
 		}
 		i = i + 1;
 	}
-//TODO why doesn't this work?
-//	do {
-//		iVar3 = (int)(int16)local_16 + 1;
-//		iVar4 = iVar3;
-//		if (iVar3 < 0) {
-//			iVar4 = (int)(int16)local_16 + 4;
-//		}
-//	} while (!bunnyActorTbl[iVar3 + (iVar4 >> 2) * -4]->isFlagSet(ACTOR_FLAG_4));
-	bunnyActorTbl[local_16]->waitUntilFlag4IsSet();
 
-	bunnyActorTbl[(int16)local_16]->updateSequence(0);
-	bunnyActorTbl[(int16)local_16]->waitUntilFlag4IsSet();
+	bunnyActorTbl[(goodRabbitStartingPosition + 1) % 4]->waitUntilFlag4IsSet(); // wait for a rabid rabbit to complete its display sequence.
+
+	bunnyActorTbl[goodRabbitStartingPosition]->updateSequence(0);
+	bunnyActorTbl[goodRabbitStartingPosition]->waitUntilFlag4IsSet();
 	i = 0;
 	while ((int16)i < 4) {
 		bunnyActorTbl[(int16)i]->updateSequence(4);
@@ -649,9 +640,9 @@ void Minigame3::run() {
 	_vm->waitForFrames(1);
 	i = 0;
 	while ((int16)i < 3) {
-		local_16 = 0;
-		while ((int16)local_16 < 3) {
-			updateBackgroundLayerOffset(2, ((int) (int16) local_16 * 0x140 + 0x640) * 0x10000 >> 0x10, 0);
+		int16 local_16 = 0;
+		while (local_16 < 3) {
+			updateBackgroundLayerOffset(2, ((int) local_16 * 0x140 + 0x640) * 0x10000 >> 0x10, 0);
 			_vm->waitForFrames(5);
 			local_16 = local_16 + 1;
 		}
@@ -670,8 +661,8 @@ void Minigame3::run() {
 		}
 		_vm->waitForFrames(0xf);
 		local_16 = 1;
-		while (-1 < (int16)local_16) {
-			updateBackgroundLayerOffset(2, ((int) (int16) local_16 * 0x140 + 0x640) * 0x10000 >> 0x10, 0);
+		while (-1 < local_16) {
+			updateBackgroundLayerOffset(2, ((int) local_16 * 0x140 + 0x640) * 0x10000 >> 0x10, 0);
 			_vm->waitForFrames(5);
 			local_16 = local_16 + -1;
 		}
@@ -688,7 +679,8 @@ void Minigame3::run() {
 	handActorId->_y_pos = handPositionsTbl[local_224].y;
 	handActorId->_priorityLayer = 2;
 	bVar1 = false;
-	_vm->_talk->loadAndDisplayDialogAroundPoint(0x2958A, 0x14, 3, 0x1e01, 0);
+	//pick a hat flicker.
+	_vm->_talk->loadAndDisplayDialogAroundPoint(_vm->getMiniGame3PickAHatDialog(), 0x14, 3, 0x1e01, 0);
 	while (_vm->isFlagSet(ENGINE_FLAG_8000)) {
 		_vm->waitForFrames(1);
 	}

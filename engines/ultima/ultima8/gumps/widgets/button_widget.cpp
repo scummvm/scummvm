@@ -74,7 +74,7 @@ void ButtonWidget::InitGump(Gump *newparent, bool take_focus) {
 		assert(widget);
 		widget->InitGump(this);
 		widget->GetDims(_dims); // transfer child dimension to self
-		widget->Move(0, _dims.y); // move it to the correct height
+		widget->Move(0, _dims.top); // move it to the correct height
 	} else {
 		assert(_shapeUp != nullptr);
 		assert(_shapeDown != nullptr);
@@ -105,7 +105,7 @@ bool ButtonWidget::PointOnGump(int mx, int my) {
 	int32 gx = mx, gy = my;
 	ParentToGump(gx, gy);
 
-	return _dims.InRect(gx, gy);
+	return _dims.contains(gx, gy);
 }
 
 Gump *ButtonWidget::onMouseDown(int button, int32 mx, int32 my) {
@@ -183,18 +183,18 @@ void ButtonWidget::saveData(Common::WriteStream *ws) {
 	// HACK ALERT
 	int w = 0, h = 0;
 	if (_textWidget != 0) {
-		w = _dims.w;
-		h = _dims.h;
-		_dims.w = _origW;
-		_dims.h = _origH;
+		w = _dims.width();
+		h = _dims.height();
+		_dims.setWidth(_origW);
+		_dims.setHeight(_origH);
 	}
 
 	Gump::saveData(ws);
 
 	// HACK ALERT
 	if (_textWidget != 0) {
-		_dims.w = w;
-		_dims.h = h;
+		_dims.setWidth(w);
+		_dims.setHeight(h);
 	}
 
 	uint16 flex = 0;
@@ -247,7 +247,7 @@ bool ButtonWidget::loadData(Common::ReadStream *rs, uint32 version) {
 	if (_textWidget != 0) {
 		Gump *widget = getGump(_textWidget);
 		widget->GetDims(_dims); // transfer child dimension to self
-		widget->Move(0, _dims.y); // move it to the correct height
+		widget->Move(0, _dims.top); // move it to the correct height
 	}
 
 	return true;

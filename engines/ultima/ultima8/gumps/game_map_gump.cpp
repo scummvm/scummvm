@@ -69,8 +69,7 @@ GameMapGump::GameMapGump(int x, int y, int width, int height) :
 		_displayList(0), _displayDragging(false), _draggingShape(0), _draggingFrame(0),
 		_draggingFlags(0) {
 	// Offset the gump. We want 0,0 to be the centre
-	_dims.x -= _dims.w / 2;
-	_dims.y -= _dims.h / 2;
+	_dims.moveTo(-_dims.width() / 2, -_dims.height() / 2);
 
 	pout << "Create _displayList ItemSorter object" << Std::endl;
 	_displayList = new ItemSorter();
@@ -567,17 +566,14 @@ void GameMapGump::DropItem(Item *item, int mx, int my) {
 }
 
 void GameMapGump::RenderSurfaceChanged() {
-	_dims.x += _dims.w / 2;
-	_dims.y += _dims.h / 2;
-
 	// Resize the desktop gump to match the parent
 	Rect new_dims;
 	_parent->GetDims(new_dims);
-	_dims.w = new_dims.w;
-	_dims.h = new_dims.h;
+	_dims.setWidth(new_dims.width());
+	_dims.setHeight(new_dims.height());
 
-	_dims.x -= _dims.w / 2;
-	_dims.y -= _dims.h / 2;
+	// Offset the gump. We want 0,0 to be the centre
+	_dims.moveTo(-_dims.width() / 2, -_dims.height() / 2);
 
 	Gump::RenderSurfaceChanged();
 }

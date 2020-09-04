@@ -24,7 +24,7 @@
 #include "backends/timer/default/default-timer.h"
 
 void checkTimers(void) {
-	OSystem_N64 *osys = (OSystem_N64 *)g_system;
+	OSystem_N64 *osys = dynamic_cast<OSystem_N64 *>(g_system);
 
 	uint32 curTime = osys->getMillis();
 
@@ -46,7 +46,7 @@ void disableAudioPlayback(void) {
 void enableAudioPlayback(void) {
 	static bool _firstRun = true;
 
-	OSystem_N64 *osys = (OSystem_N64 *)g_system;
+	OSystem_N64 *osys = dynamic_cast<OSystem_N64 *>(g_system);
 	Audio::MixerImpl *localmixer = (Audio::MixerImpl *)osys->getMixer();
 
 	uint32 sampleBufferSize = 3072;
@@ -83,7 +83,7 @@ void vblCallback(void) {
 		sndCallback();
 	}
 
-	((OSystem_N64 *)g_system)->readControllerAnalogInput();
+	dynamic_cast<OSystem_N64 *>(g_system)->readControllerAnalogInput();
 }
 
 void sndCallback() {
@@ -95,7 +95,7 @@ void sndCallback() {
 void refillAudioBuffers(void) {
 	if (!_audioEnabled) return;
 
-	OSystem_N64 *osys = (OSystem_N64 *)g_system;
+	OSystem_N64 *osys = dynamic_cast<OSystem_N64 *>(g_system);
 	byte *sndBuf;
 	Audio::MixerImpl *localmixer = (Audio::MixerImpl *)osys->getMixer();
 

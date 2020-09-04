@@ -92,7 +92,7 @@ void Properties::print(char *prefix) {
 		str[i] = get(i) ? '1' : '0';
 	}
 	str[i] = 0;
-	debug("%s: props = %s", prefix, str);
+	debug(3, "%s: props = %s", prefix, str);
 
 	delete[] str;
 }

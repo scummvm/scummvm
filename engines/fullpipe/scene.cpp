@@ -204,9 +204,10 @@ bool Scene::load(MfcArchive &file) {
 			assert(col->getDataSize() == 256 * sizeof(uint32));
 			const byte *data = col->getData();
 			for (int i = 0; i < 256; ++i) {
-				_palette.push_back(READ_LE_UINT32(data));
+				_palette.pal[i] = READ_LE_UINT32(data);
 				data += sizeof(uint32);
 			}
+			_palette.size = 256;
 		}
 	}
 
@@ -660,7 +661,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 	if (!_picObjList.size() && !_bigPictureXDim)
 		return;
 
-	if (_palette.size()) {
+	if (_palette.size) {
 		g_fp->_globalPalette = &_palette;
 	}
 

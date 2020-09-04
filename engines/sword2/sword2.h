@@ -56,7 +56,8 @@ class OSystem;
 namespace Sword2 {
 
 enum {
-	GF_DEMO	= 1 << 0
+	GF_DEMO	       = 1 << 0,
+	GF_SPANISHDEMO = 1 << 1
 };
 
 class MemoryManager;

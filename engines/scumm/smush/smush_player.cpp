@@ -774,6 +774,11 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 		if (_codec47)
 			_codec47->decode(_dst, src);
 		break;
+	case 20:
+		// Used by Full Throttle Classic (from Remastered)
+		warning("Codec 20 is not yet implemented");
+		memset(_dst, 0, _width * _height);
+		break;
 	default:
 		error("Invalid codec for frame object : %d", codec);
 	}

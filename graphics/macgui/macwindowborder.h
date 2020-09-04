@@ -32,6 +32,16 @@
 
 namespace Graphics {
 
+struct BorderOffsets {
+	int left;
+	int right;
+	int top;
+	int bottom;
+	int titleTop;
+	int titleBottom;
+	bool dark;
+};
+
 /**
  * A representation of a custom border, which allows for arbitrary border offsets
  * and nine-patch resizable displays for both active and inactive states.
@@ -83,6 +93,7 @@ public:
 	 */
 	void setOffsets(int left, int right, int top, int bottom);
 	void setOffsets(Common::Rect &rect);
+	void setOffsets(const BorderOffsets &offsets);
 
 	/**
 	 * Accessor method to retrieve a given border.
@@ -91,7 +102,7 @@ public:
 	 * @param offset The identifier of the offset wanted.
 	 * @return The desired offset in pixels.
 	 */
-	Common::Rect &getOffset();
+	BorderOffsets &getOffset();
 
 	/**
 	 * Blit the desired border (active or inactive) into a destination surface.
@@ -110,7 +121,7 @@ private:
 	bool _activeInitialized;
 	bool _inactiveInitialized;
 
-	Common::Rect _borderOffsets;
+	BorderOffsets _borderOffsets;
 
 };
 

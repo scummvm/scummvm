@@ -24,6 +24,7 @@
 #include "codeblocks.h"
 
 #include <fstream>
+#include <cstring>
 
 namespace CreateProjectTool {
 
@@ -55,25 +56,46 @@ void CodeBlocksProvider::createWorkspace(const BuildSetup &setup) {
 	             "</CodeBlocks_workspace_file>";
 }
 
-// HACK We need to pre-process library names
-//      since the MSVC and mingw precompiled
-//      libraries have different names :(
-std::string processLibraryName(std::string name) {
-	// Remove "_static" in lib name
-	size_t pos = name.find("_static");
-	if (pos != std::string::npos)
-		return name.replace(pos, 7, "");
+StringList getFeatureLibraries(const BuildSetup &setup) {
+	StringList libraries;
 
-	// Remove "-static" in lib name
-	pos = name.find("-static");
-	if (pos != std::string::npos)
-		return name.replace(pos, 7, "");
+	for (FeatureList::const_iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
+		if (i->enable && i->library) {
+			std::string libname;
+			if (!std::strcmp(i->name, "libz") || !std::strcmp(i->name, "libcurl")) {
+				libname = i->name;
+			} else if (!std::strcmp(i->name, "vorbis")) {
+				libname = "libvorbis";
+				libraries.push_back("libvorbisfile");
+			} else if (!std::strcmp(i->name, "png")) {
+				libname = "libpng16";
+			} else if (!std::strcmp(i->name, "sdlnet")) {
+				if (setup.useSDL2) {
+					libname = "libSDL2_net";
+				} else {
+					libname = "libSDL_net";
+				}
+				libraries.push_back("iphlpapi");
+			} else {
+				libname = "lib";
+				libname += i->name;
+			}
+			libraries.push_back(libname);
+		}
+	}
 
-	// Replace "zlib" by "libz"
-	if (name == "zlib")
-		return "libz";
+	if (setup.useSDL2) {
+		libraries.push_back("libSDL2");
+	} else {
+		libraries.push_back("libSDL");
+	}
 
-	return name;
+	// Win32 libraries
+	libraries.push_back("ole32");
+	libraries.push_back("uuid");
+	libraries.push_back("winmm");
+
+	return libraries;
 }
 
 void CodeBlocksProvider::createProjectFile(const std::string &name, const std::string &, const BuildSetup &setup, const std::string &moduleDir,
@@ -94,15 +116,16 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 	           "\t\t<Build>\n";
 
 	if (name == setup.projectName) {
-		std::string libraries;
+		StringList libraries = getFeatureLibraries(setup);
 
-		for (StringList::const_iterator i = setup.libraries.begin(); i != setup.libraries.end(); ++i)
-			libraries += processLibraryName(*i) + ".a;";
+		std::string deps;
+		for (StringList::const_iterator i = libraries.begin(); i != libraries.end(); ++i)
+			deps += (*i) + ".a;";
 
 		project << "\t\t\t<Target title=\"default\">\n"
 		           "\t\t\t\t<Option output=\"" << setup.projectName << "\\" << setup.projectName << "\" prefix_auto=\"1\" extension_auto=\"1\" />\n"
 		           "\t\t\t\t<Option object_output=\"" << setup.projectName << "\" />\n"
-		           "\t\t\t\t<Option external_deps=\"" << libraries /* + list of engines engines\name\name.a */ << "\" />\n"
+		           "\t\t\t\t<Option external_deps=\"" << deps /* + list of engines engines\name\name.a */ << "\" />\n"
 		           "\t\t\t\t<Option type=\"1\" />\n"
 		           "\t\t\t\t<Option compiler=\"gcc\" />\n"
 		           "\t\t\t\t<Option parameters=\"-d 8 --debugflags=parser\" />\n"
@@ -127,8 +150,8 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 		// Linker
 		project << "\t\t\t\t<Linker>\n";
 
-		for (StringList::const_iterator i = setup.libraries.begin(); i != setup.libraries.end(); ++i)
-			project << "\t\t\t\t\t<Add library=\"" << processLibraryName(*i) << "\" />\n";
+		for (StringList::const_iterator i = libraries.begin(); i != libraries.end(); ++i)
+			project << "\t\t\t\t\t<Add library=\"" << (*i) << "\" />\n";
 
 		for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
 			if (i->first == setup.projectName)

@@ -72,15 +72,15 @@ public:
 	TestbedListWidget(GUI::Dialog *boss, const Common::String &name, Common::Array<Testsuite *> tsArray) : GUI::ListWidget(boss, name), _testSuiteArray(tsArray) {}
 
 	void markAsSelected(int i) {
-		if (!_list[i].contains("selected")) {
-			_list[i] += " (selected)";
+		if (!_list[i].encode().contains("selected")) {
+			_list[i] += Common::U32String(" (selected)");
 		}
 		_listColors[i] = GUI::ThemeEngine::kFontColorNormal;
 		draw();
 	}
 
 	void markAsDeselected(int i) {
-		if (_list[i].contains("selected")) {
+		if (_list[i].encode().contains("selected")) {
 			_list[i] = _testSuiteArray[i]->getDescription();
 		}
 		_listColors[i] = GUI::ThemeEngine::kFontColorAlternate;
@@ -107,7 +107,7 @@ private:
 	GUI::ListWidget::ColorList _colors;
 	GUI::ButtonWidget	*_selectButton;
 	Common::Array<Testsuite *> _testSuiteArray;
-	Common::StringArray _testSuiteDescArray;
+	Common::U32StringArray _testSuiteDescArray;
 	TestbedListWidget *_testListDisplay;
 	TestbedConfigManager *_testbedConfMan;
 };
@@ -120,7 +120,7 @@ public:
 	void addButton(uint w, uint h, const Common::String name, uint32 cmd, uint xOffset = 0, uint yPadding = 8);
 	void addButtonXY(uint x, uint y, uint w, uint h, const Common::String name, uint32 cmd);
 	void addText(uint w, uint h, const Common::String text, Graphics::TextAlign textAlign, uint xOffset, uint yPadding = 8);
-	void addList(uint x, uint y, uint w, uint h, const Common::Array<Common::String> &strArray, GUI::ListWidget::ColorList *colors = 0, uint yPadding = 8);
+	void addList(uint x, uint y, uint w, uint h, const Common::Array<Common::U32String> &strArray, GUI::ListWidget::ColorList *colors = 0, uint yPadding = 8);
 protected:
 	Common::Array<GUI::ButtonWidget *> _buttonArray;
 	uint _xOffset;

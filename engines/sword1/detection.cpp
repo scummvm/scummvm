@@ -49,15 +49,15 @@ static const PlainGameDescriptor sword1PSXDemoSettings =
 
 
 // check these subdirectories (if present)
-static const char *const g_dirNames[] = { "clusters", "speech", "english", "italian"};
+static const char *const g_dirNames[] = { "clusters", "music", "speech", "english", "italian"};
 
 #define NUM_COMMON_FILES_TO_CHECK 1
 #define NUM_PC_FILES_TO_CHECK 3
 #define NUM_MAC_FILES_TO_CHECK 4
-#define NUM_PSX_FILES_TO_CHECK 1
-#define NUM_PSX_DEMO_FILES_TO_CHECK 2
 #define NUM_DEMO_FILES_TO_CHECK 1
 #define NUM_MAC_DEMO_FILES_TO_CHECK 1
+#define NUM_PSX_FILES_TO_CHECK 1
+#define NUM_PSX_DEMO_FILES_TO_CHECK 2
 
 #define NUM_FILES_TO_CHECK NUM_COMMON_FILES_TO_CHECK + NUM_PC_FILES_TO_CHECK + NUM_MAC_FILES_TO_CHECK + NUM_PSX_FILES_TO_CHECK + NUM_DEMO_FILES_TO_CHECK + NUM_MAC_DEMO_FILES_TO_CHECK + NUM_PSX_DEMO_FILES_TO_CHECK
 static const char *const g_filesToCheck[NUM_FILES_TO_CHECK] = { // these files have to be found
@@ -69,7 +69,7 @@ static const char *const g_filesToCheck[NUM_FILES_TO_CHECK] = { // these files h
 	"compacts.clm", // Mac version only
 	"scripts.clm", // Mac version only
 	"paris2.clm", // Mac version (full game only)
-	"cows.mad", // this one should only exist in the demo version
+	"1m14a.wav", // this one should only exist in the demo version
 	"scripts.clm", // Mac version both demo and full game
 	"train.plx", // PSX version only
 	"speech.dat", // PSX version only
@@ -206,7 +206,7 @@ DetectedGames SwordMetaEngine::detectGames(const Common::FSList &fslist) const {
 	for (j = 0; j < NUM_DEMO_FILES_TO_CHECK; i++, j++)
 		if (!filesFound[i])
 			demoFilesFound = false;
-	for (j = 0; j < NUM_DEMO_FILES_TO_CHECK; i++, j++)
+	for (j = 0; j < NUM_MAC_DEMO_FILES_TO_CHECK; i++, j++)
 		if (!filesFound[i])
 			macDemoFilesFound = false;
 	for (j = 0; j < NUM_PSX_FILES_TO_CHECK; i++, j++)

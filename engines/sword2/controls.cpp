@@ -905,10 +905,10 @@ OptionsDialog::OptionsDialog(Sword2Engine *vm) : Dialog(vm) {
 	_mixer = _vm->_mixer;
 
 	_panel = new Widget(this, 1);
-	_panel->createSurfaceImages(3405, 0, 40);
+	_panel->createSurfaceImages(3405, (_vm->_features & GF_SPANISHDEMO) ? 45 : 0, 40);
 
 	_objectLabelsSwitch = new Switch(this, 304, 100, 53, 32);
-	_objectLabelsSwitch->createSurfaceImages(3687, 304, 100);
+	_objectLabelsSwitch->createSurfaceImages((_vm->_features & GF_SPANISHDEMO) ? 901 : 3687, 304, 100);
 
 	_subtitlesSwitch = new Switch(this, 510, 100, 53, 32);
 	_subtitlesSwitch->linkSurfaceImages(_objectLabelsSwitch, 510, 100);
@@ -1179,7 +1179,7 @@ SaveRestoreDialog::SaveRestoreDialog(Sword2Engine *vm, int mode) : Dialog(vm) {
 	_fr2 = new FontRendererGui(_vm, _vm->_redFontId);
 
 	_panel = new Widget(this, 1);
-	_panel->createSurfaceImages(2016, 0, 40);
+	_panel->createSurfaceImages(2016, (_vm->_features & GF_SPANISHDEMO) ? 84 : 0, 40);
 
 	for (i = 0; i < 4; i++) {
 		_slotButton[i] = new Slot(this, 114, 0, 384, 36);

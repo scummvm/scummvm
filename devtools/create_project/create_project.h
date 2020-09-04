@@ -158,8 +158,7 @@ StringList getEngineDefines(const EngineDescList &engines);
 struct Feature {
 	const char *name;   ///< Name of the feature
 	const char *define; ///< Define of the feature
-
-	const char *libraries; ///< Libraries, which need to be linked, for the feature
+	bool library; ///< Whether this feature needs to be linked to a library
 
 	bool enable; ///< Whether the feature is enabled or not
 
@@ -191,22 +190,6 @@ FeatureList getAllFeatures();
  * @param features List of features for the build (this may contain features, which are *not* enabled!)
  */
 StringList getFeatureDefines(const FeatureList &features);
-
-/**
- * Returns a list of all external library files, according to the
- * feature set passed.
- *
- * @param features List of features for the build (this may contain features, which are *not* enabled!)
- */
-StringList getFeatureLibraries(const FeatureList &features);
-
-/**
- * Returns a list of all external library files, according to the
- * feature passed.
- *
- * @param features Feature for the build (this may contain features, which are *not* enabled!)
- */
-StringList getFeatureLibraries(const Feature &feature);
 
 /**
  * Sets the state of a given feature. This can be used to
@@ -247,7 +230,6 @@ struct BuildSetup {
 	FeatureList features;   ///< Feature list for the build (this may contain features, which are *not* enabled!).
 
 	StringList defines;   ///< List of all defines for the build.
-	StringList libraries; ///< List of all external libraries required for the build.
 	StringList testDirs;  ///< List of all folders containing tests
 
 	bool devTools;             ///< Generate project files for the tools
@@ -334,14 +316,6 @@ const MSVCVersion *getMSVCVersion(int version);
  * @return Version number, or 0 if no installations were found.
  */
 int getInstalledMSVC();
-
-/**
- * Return a "canonical" library name, so it is easier to integrate other providers of dependencies.
- *
- * @param lib The link library as provided by ScummVM libs.
- * @return Canonical link library.
- */
-std::string getCanonicalLibName(const std::string &lib);
 
 /**
  * Removes given feature from setup.

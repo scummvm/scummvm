@@ -54,8 +54,10 @@ namespace Hugo {
 #define MAX_DEBUG_LINE 256
 #define MAX_OBJECT 999
 #define MAX_PROPERTY 999
-#define MAX_MOBJ 16     /* maximum number of matchable object words */
-#define MAXBUFFER 255
+// maximum number of matchable object words
+#define MAX_MOBJ 16
+// Larger than normal since Glk doesn't break up paragraphs (1024+256)
+#define MAXBUFFER 1280
 #define MAXUNDO 1024
 #define MAXCALLS 99
 #define MAXBREAKPOINTS 99

@@ -214,6 +214,14 @@ int Lingo::codeSetImmediate(bool state) {
 }
 
 int Lingo::codeCmd(Common::String *s, int numpar) {
+	// Insert current line number to our asserts
+	if (s->equalsIgnoreCase("scummvmAssert") || s->equalsIgnoreCase("scummvmAssertEqual")) {
+		g_lingo->code1(LC::c_intpush);
+		g_lingo->codeInt(g_lingo->_linenumber);
+
+		numpar++;
+	}
+
 	int ret = g_lingo->code1(LC::c_callcmd);
 
 	g_lingo->codeString(s->c_str());
@@ -308,4 +316,4 @@ void Lingo::codeFactory(Common::String &name) {
 	}
 }
 
-}
+} // End of namespace Director

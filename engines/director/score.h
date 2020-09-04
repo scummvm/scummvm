@@ -35,12 +35,12 @@ namespace Graphics {
 
 namespace Common {
 	class ReadStreamEndian;
-	class SeekableSubReadStreamEndian;
+	class SeekableReadStreamEndian;
 }
 
 namespace Director {
 
-class Stage;
+class Window;
 class Archive;
 class DirectorEngine;
 class DirectorSound;
@@ -57,7 +57,8 @@ enum RenderMode {
 	kRenderModeNormal,
 	kRenderForceUpdate,
 	kRenderUpdateStageOnly,
-	kRenderNoUnrender
+	kRenderNoUnrender,
+	kRenderNoWindowRender
 };
 
 class Score {
@@ -67,13 +68,14 @@ public:
 
 	Movie *getMovie() const { return _movie; }
 
-	void loadFrames(Common::SeekableSubReadStreamEndian &stream);
-	void loadLabels(Common::SeekableSubReadStreamEndian &stream);
-	void loadActions(Common::SeekableSubReadStreamEndian &stream);
+	void loadFrames(Common::SeekableReadStreamEndian &stream);
+	void loadLabels(Common::SeekableReadStreamEndian &stream);
+	void loadActions(Common::SeekableReadStreamEndian &stream);
 
 	static int compareLabels(const void *a, const void *b);
 	uint16 getLabel(Common::String &label);
 	Common::String *getLabelList();
+	Common::String *getFrameLabel(uint id);
 	void setStartToLabel(Common::String &label);
 	void gotoLoop();
 	void gotoNext();
@@ -107,7 +109,7 @@ public:
 	bool renderTransition(uint16 frameId);
 	void renderFrame(uint16 frameId, RenderMode mode = kRenderModeNormal);
 	void renderSprites(uint16 frameId, RenderMode mode = kRenderModeNormal);
-	void renderCursor(uint spriteId);
+	void renderCursor(Common::Point pos);
 
 private:
 	void update();
@@ -134,6 +136,9 @@ public:
 	PlayState _playState;
 	uint32 _nextFrameTime;
 	int _waitForChannel;
+	bool _waitForClick;
+	bool _waitForClickCursor;
+	bool _cursorDirty;
 	int _activeFade;
 	Cursor *_currentCursor;
 
@@ -145,7 +150,7 @@ private:
 	DirectorEngine *_vm;
 	Lingo *_lingo;
 	Movie *_movie;
-	Stage *_stage;
+	Window *_window;
 
 	uint16 _currentFrame;
 	uint16 _nextFrame;

@@ -189,7 +189,7 @@ void Screen_EoB::setMouseCursor(int x, int y, const byte *shape, const uint8 *ov
 	int bpp = _useHiColorScreen ? 2 : 1;
 
 	uint8 *cursor = new uint8[mouseW * scaleFactor * bpp * mouseH * scaleFactor];
-	
+
 	if (_bytesPerPixel == 2) {
 		for (int s = mouseW * scaleFactor * bpp * mouseH * scaleFactor; s; s -= 2)
 			*(uint16*)(cursor + s - 2) = colorKey;
@@ -204,12 +204,14 @@ void Screen_EoB::setMouseCursor(int x, int y, const byte *shape, const uint8 *ov
 
 	if (_useHiResEGADithering)
 		ditherRect(getCPagePtr(6), cursor, mouseW * scaleFactor, mouseW, mouseH, colorKey);
+	else if (_useHiColorScreen)
+		scale2x<uint16, uint32>(cursor, mouseW * scaleFactor, getCPagePtr(6), SCREEN_W, mouseW, mouseH);
 	else if (_vm->gameFlags().useHiRes)
-		scale2x(cursor, mouseW * scaleFactor, getCPagePtr(6), SCREEN_W, mouseW, mouseH);
+		scale2x<uint8, uint16>(cursor, mouseW * scaleFactor, getCPagePtr(6), SCREEN_W, mouseW, mouseH);
 	else
 		copyRegionToBuffer(6, 0, 0, mouseW, mouseH, cursor);
 
-	// Mouse cursor post processing for EOB II Amiga	
+	// Mouse cursor post processing for EOB II Amiga
 	if (_dualPaletteModeSplitY) {
 		int len = mouseW * mouseH;
 		while (--len > -1)
@@ -238,7 +240,7 @@ void Screen_EoB::setMouseCursor(int x, int y, const byte *shape, const uint8 *ov
 			}
 		}
 	}
-	
+
 	// Convert color key to 16 bit after drawing the mouse cursor.
 	// The cursor has been converted to 16 bit in scale2x().
 	colorKey = _16bitConversionPalette ? _16bitConversionPalette[colorKey] : colorKey;
@@ -327,7 +329,7 @@ void Screen_EoB::loadBitmap(const char *filename, int tempPage, int dstPage, Pal
 
 		Screen::convertAmigaGfx(getPagePtr(dstPage), 320, 200);
 		delete str;
-	}	
+	}
 }
 
 void Screen_EoB::loadEoBBitmap(const char *file, const uint8 *cgaMapping, int tempPage, int destPage, int convertToPage) {
@@ -337,13 +339,13 @@ void Screen_EoB::loadEoBBitmap(const char *file, const uint8 *cgaMapping, int te
 
 	if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
 		if (!s)
-			error("Screen_EoB::loadEoBBitmap(): Failed to load file '%s'", file);	
+			error("Screen_EoB::loadEoBBitmap(): Failed to load file '%s'", file);
 		s->read(_shpBuffer, s->size());
 		decodeSHP(_shpBuffer, destPage);
 
 	} else if (s) {
 		// This additional check is necessary since some localized versions of EOB II seem to contain invalid (size zero) cps files
-		if (s->size() == 0) {			
+		if (s->size() == 0) {
 			loadAlternative = true;
 
 		// This check is due to EOB II Amiga German. That version simply checks
@@ -354,7 +356,7 @@ void Screen_EoB::loadEoBBitmap(const char *file, const uint8 *cgaMapping, int te
 			// Tolerance for size mismatches up to 2 bytes is needed in some cases
 			if ((((s->readUint16LE()) + 5) & ~3) != (((s->size()) + 3) & ~3))
 				loadAlternative = true;
-		} 
+		}
 
 		if (!loadAlternative)
 			loadBitmap(tmp.c_str(), tempPage, destPage, _vm->gameFlags().platform == Common::kPlatformAmiga ? _palettes[0] : 0);
@@ -685,7 +687,7 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 	int16 dX = x - (_dsX1 << 3);
 	int16 dY = y;
 	int16 dW = _dsX2 - _dsX1;
-	
+
 	uint8 pixelsPerByte = *src++;
 	uint16 dH = *src++;
 	uint16 width = (*src++) << 3;

@@ -658,7 +658,7 @@ int TTparser::loadRequests(TTword *word) {
 		if (_sentence->checkCategory()) {
 			_sentenceConcept->_field1C = 1;
 			_sentenceConcept = _sentenceConcept->addSibling();
-			delete this;
+			clear();
 		} else {
 			addNode(WORD_TYPE_IS_SENTENCE_TYPE);
 		}

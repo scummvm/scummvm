@@ -84,6 +84,7 @@ namespace std
 #undef remove
 #endif
 
+// TODO: Replace this with the keymapper
 #define GUI_ENABLE_KEYSDIALOG
 
 #define DISABLE_COMMAND_LINE

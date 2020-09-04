@@ -47,7 +47,7 @@
 
 namespace Neverhood {
 
-NeverhoodEngine::NeverhoodEngine(OSystem *syst, const NeverhoodGameDescription *gameDesc) :
+NeverhoodEngine::NeverhoodEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		Engine(syst), _gameDescription(gameDesc) {
 	// Setup mixer
 	if (!_mixer->isReady()) {
@@ -111,7 +111,7 @@ Common::Error NeverhoodEngine::run() {
 	_updateSound = true;
 	_enableMusic = !_mixer->isSoundTypeMuted(Audio::Mixer::kMusicSoundType);
 
-	if (isDemo()) {
+	if (isDemo() && !isBigDemo()) {
 		// Adjust this navigation list for the demo version
 		NavigationList *navigationList = _staticData->getNavigationList(0x004B67E8);
 		(*navigationList)[0].middleSmackerFileHash = 0;

@@ -63,8 +63,8 @@ Sprite::Sprite(Frame *frame) {
 	_editable = false;
 	_puppet = false;
 	_immediate = false;
-	_backColor = 255;
-	_foreColor = 0;
+	_backColor = g_director->_wm->_colorWhite;
+	_foreColor = g_director->_wm->_colorBlack;
 
 	_blend = 0;
 
@@ -119,7 +119,7 @@ bool Sprite::isActive() {
 
 bool Sprite::shouldHilite() {
 	if ((_cast && _cast->_autoHilite) || (isQDShape() && _ink == kInkTypeMatte))
-		if (g_director->getVersion() < 4 && !_moveable)
+		if (g_director->getVersion() < 400 && !_moveable)
 			if (_movie->getScriptContext(kScoreScript, _scriptId) ||
 					_movie->getScriptContext(kCastScript, _castId))
 				return true;
@@ -183,11 +183,15 @@ void Sprite::setCast(uint16 castId) {
 			((TextCastMember *)_cast)->_buttonType = (ButtonType)(_spriteType - 8);
 		}
 
-		Common::Rect dims = _cast->getWidgetRect();
-		_width = dims.width();
-		_height = dims.height();
+		// TODO: Respect sprite width/height settings. Need to determine how to read
+		// them properly.
+		if (_cast->_type != kCastShape) {
+			Common::Rect dims = _cast->getInitialRect();
+			_width = dims.width();
+			_height = dims.height();
+		}
 	} else {
-		warning("Sprite::setCast(): CastMember id %d has null member", castId);
+		warning("Sprite::setCast(): CastMember id %d(%s) has null member", castId, numToCastNum(castId));
 	}
 }
 

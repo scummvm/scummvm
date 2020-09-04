@@ -145,8 +145,8 @@ int Mouse::getMouseLength(int mx, int my) {
 	screen->GetSurfaceDims(dims);
 
 	// For now, reference point is (near) the center of the screen
-	int dx = abs(mx - dims.w / 2);
-	int dy = abs((dims.h / 2 + (dims.h * 14 / 200)) - my); //! constant
+	int dx = abs(mx - dims.width() / 2);
+	int dy = abs((dims.height() / 2 + (dims.height() * 14 / 200)) - my); //! constant
 
 	//
 	// The original game switches cursors from small -> medium -> large on
@@ -156,10 +156,10 @@ int Mouse::getMouseLength(int mx, int my) {
 	// Modern players may be in a window so give them a little bit more
 	// space to make the large cursor without having to hit the edge.
 	//
-	int xshort = (dims.w * 30 / 320);
-	int xmed = (dims.w * 100 / 320);
-	int yshort = (dims.h * 30 / 320);
-	int ymed = (dims.h * 100 / 320);
+	int xshort = (dims.width() * 30 / 320);
+	int xmed = (dims.width() * 100 / 320);
+	int yshort = (dims.height() * 30 / 320);
+	int ymed = (dims.height() * 100 / 320);
 
 	// determine length of arrow
 	if (dx > xmed || dy > ymed) {
@@ -177,8 +177,8 @@ Direction Mouse::getMouseDirectionWorld(int mx, int my) {
 	screen->GetSurfaceDims(dims);
 
 	// For now, reference point is (near) the center of the screen
-	int dx = mx - dims.w / 2;
-	int dy = (dims.h / 2 + (dims.h * 14 / 200)) - my; //! constant
+	int dx = mx - dims.width() / 2;
+	int dy = (dims.height() / 2 + (dims.height() * 14 / 200)) - my; //! constant
 
 	return Direction_Get(dy * 2, dx, dirmode_8dirs);
 }
@@ -277,15 +277,15 @@ void Mouse::setMouseCoords(int mx, int my) {
 	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 	screen->GetSurfaceDims(dims);
 
-	if (mx < dims.x)
-		mx = dims.x;
-	else if (mx > dims.w)
-		mx = dims.w;
+	if (mx < dims.left)
+		mx = dims.left;
+	else if (mx > dims.width())
+		mx = dims.width();
 
-	if (my < dims.y)
-		my = dims.y;
-	else if (my > dims.h)
-		my = dims.h;
+	if (my < dims.top)
+		my = dims.top;
+	else if (my > dims.height())
+		my = dims.height();
 
 	_mousePos.x = mx;
 	_mousePos.y = my;

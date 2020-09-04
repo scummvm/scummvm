@@ -55,7 +55,7 @@ enum ScriptType {
 };
 
 enum ScriptFlag {
-	kScriptFlagUnk0			= (1 << 0x0),
+	kScriptFlagUnused		= (1 << 0x0),
 	kScriptFlagFuncsGlobal	= (1 << 0x1),
 	kScriptFlagVarsGlobal	= (1 << 0x2),	// Occurs in event scripts (which have no local vars). Correlated with use of alternate global var opcodes.
 	kScriptFlagUnk3			= (1 << 0x3),
@@ -80,7 +80,8 @@ enum ObjectType {
 	kScriptObj = 1 << 2,
 	kXtraObj = 1 << 3,
 	kAllObj = kFactoryObj | kXObj | kScriptObj | kXtraObj,
-	kWindowObj = 1 << 4
+	kWindowObj = 1 << 4,
+	kCastMemberObj = 1 << 5
 };
 
 enum ShapeType {
@@ -274,14 +275,14 @@ enum TransitionType {
 
 // TODO: Can there be any more built-in palette types?
 enum PaletteType {
- kClutSystemMac = -1,
- kClutRainbow = -2,
- kClutGrayscale = -3,
- kClutPastels = -4,
- kClutVivid = -5,
- kClutNTSC = -6,
- kClutMetallic = -7,
- kClutSystemWin = -101
+	kClutSystemMac = -1,
+	kClutRainbow = -2,
+	kClutGrayscale = -3,
+	kClutPastels = -4,
+	kClutVivid = -5,
+	kClutNTSC = -6,
+	kClutMetallic = -7,
+	kClutSystemWin = -101
 };
 
 enum {
@@ -304,6 +305,13 @@ enum SymbolType {
 	HBLTIN,	// builtin handler (can be called as either command or func)
 	KBLTIN,	// builtin constant
 	HANDLER	// user-defined handler
+};
+
+enum ChunkType {
+	kChunkChar,
+	kChunkWord,
+	kChunkItem,
+	kChunkLine
 };
 
 struct Datum;

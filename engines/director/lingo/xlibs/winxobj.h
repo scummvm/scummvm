@@ -32,11 +32,12 @@ public:
 };
 
 namespace RearWindowXObj {
-	void initialize(int type);
 
-	void m_new(int nargs);
-	void m_getMemoryNeeded(int nargs);
-	void m_patToWindow(int nargs);
+void initialize(int type);
+
+void m_new(int nargs);
+void m_getMemoryNeeded(int nargs);
+void m_patToWindow(int nargs);
 
 } // End of namespace RearWindowXObj
 

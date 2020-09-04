@@ -103,7 +103,7 @@ public:
 
 	vector() : Common::Array<T>() {}
 	vector(size_t newSize) : Common::Array<T>() {
-		Common::Array<T>::reserve(newSize);
+		Common::Array<T>::resize(newSize);
 	}
 	vector(size_t newSize, const T elem) {
 		resize(newSize, elem);

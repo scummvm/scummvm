@@ -50,7 +50,7 @@
 #include "sci/graphics/cursor32.h"
 #include "sci/graphics/celobj32.h"
 #include "sci/graphics/controls32.h"
-#include "sci/graphics/font.h"	// TODO: remove once kBitmap is moved in a separate class
+#include "sci/graphics/scifont.h"	// TODO: remove once kBitmap is moved in a separate class
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/paint32.h"
 #include "sci/graphics/palette32.h"
@@ -62,7 +62,7 @@
 namespace Sci {
 #ifdef ENABLE_SCI32
 
-extern int showScummVMDialog(const Common::String& message, const char* altButton = nullptr, bool alignCenter = true);
+extern int showScummVMDialog(const Common::U32String &message, const Common::U32String &altButton = Common::U32String(""), bool alignCenter = true);
 
 reg_t kBaseSetter32(EngineState *s, int argc, reg_t *argv) {
 	reg_t object = argv[0];
@@ -355,7 +355,7 @@ reg_t kWinHelp(EngineState *s, int argc, reg_t *argv) {
 	case 1:
 		// Load a help file
 		// Maybe in the future we can implement this, but for now this message should suffice
-		showScummVMDialog(Common::String::format(_("Please use an external viewer to open the game's help file: %s"), s->_segMan->getString(argv[1]).c_str()));
+		showScummVMDialog(Common::U32String::format(_("Please use an external viewer to open the game's help file: %s"), s->_segMan->getString(argv[1]).c_str()));
 		break;
 	case 2:
 		// Looks like some init function

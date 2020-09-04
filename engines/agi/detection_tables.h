@@ -224,7 +224,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// Black Cauldron (Apple IIgs) 1.0O 2/24/89 (CE)
 	// Menus not tested
-	GAME3_P("bc", "1.0O 1989-02-24 (CE)", "bcdir", "dc09d30b147242692f4f85b9811962db", 0x3149, 0, GID_BC, Common::kPlatformApple2GS),
+	GAME3_PO("bc", "1.0O 1989-02-24 (CE)", "bcdir", "dc09d30b147242692f4f85b9811962db", 0x3149, 0, GID_BC, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
 
 	// Black Cauldron (PC) 2.00 6/14/87 [AGI 2.439]
 	GAME("bc", "2.00 1987-06-14", "7f598d4712319b09d7bd5b3be10a2e4a", 0x2440, GID_BC),
@@ -264,7 +264,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// Gold Rush! (Apple IIgs) 1.0M 2/28/89 (CE) aka 2.01 12/22/88
 	// Menus not tested
-	GAME3_P("goldrush", "1.0M 1989-02-28 (CE) aka 2.01 1988-12-22", "grdir", "3f7b9ce62631434389f85371b11921d6", 0x3149, GF_2GSOLDSOUND, GID_GOLDRUSH, Common::kPlatformApple2GS),
+	GAME3_PO("goldrush", "1.0M 1989-02-28 (CE) aka 2.01 1988-12-22", "grdir", "3f7b9ce62631434389f85371b11921d6", 0x3149, GF_2GSOLDSOUND, GID_GOLDRUSH, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
 
 	// Gold Rush! (ST) 1.01 1/13/89 aka 2.01 12/22/88
 	GAME3_P("goldrush", "1.01 1989-01-13 aka 2.01 1988-12-22", "grdir", "4dd4d50480a3d6c206fa227ce8142735", 0x3149, 0, GID_GOLDRUSH, Common::kPlatformAtariST),
@@ -319,7 +319,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// King's Quest 1 (IIgs) 1.0S-88223
 	// Menus not tested
-	GAME_P("kq1", "1.0S 1988-02-23", "f4277aa34b43d37382bc424c81627617", 0x2272, GID_KQ1, Common::kPlatformApple2GS),
+	GAME_PO("kq1", "1.0S 1988-02-23", "f4277aa34b43d37382bc424c81627617", 0x2272, GID_KQ1, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
 
 	// King's Quest 1 (Mac) 2.0C
 	GAME_P("kq1", "2.0C 1987-03-26", "d4c4739d4ac63f7dbd29255425077d48", 0x2440, GID_KQ1, Common::kPlatformMacintosh),
@@ -337,7 +337,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME_PS("kq1", "updated", "94087178c78933a4af3cd24d1c8dd7b2", 315, 0x2440, GID_KQ1, Common::kPlatformCoCo3),
 
 	// King's Quest 2 (IIgs) 2.0A 6/16/88 (CE)
-	GAME_P("kq2", "2.0A 1988-06-16 (CE)", "5203c8b95250a2ecfee93ddb99414753", 0x2917, GID_KQ2, Common::kPlatformApple2GS),
+	GAME_PO("kq2", "2.0A 1988-06-16 (CE)", "5203c8b95250a2ecfee93ddb99414753", 0x2917, GID_KQ2, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
 
 	// King's Quest 2 (Amiga) 2.0J
 	GAME_PO("kq2", "2.0J 1987-01-29", "b866f0fab2fad91433a637a828cfa410", 0x2440, GID_KQ2, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
@@ -376,7 +376,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME_P("kq3", "2.14 1988-03-15", "7639c0da5ce94848227d409351fabda2", 0x2440, GID_KQ3, Common::kPlatformMacintosh),
 
 	// King's Quest 3 (IIgs) 2.0A 8/28/88 (CE)
-	GAME_P("kq3", "2.0A 1988-08-28 (CE)", "ac30b7ca5a089b5e642fbcdcbe872c12", 0x2917, GID_KQ3, Common::kPlatformApple2GS),
+	GAME_PO("kq3", "2.0A 1988-08-28 (CE)", "ac30b7ca5a089b5e642fbcdcbe872c12", 0x2917, GID_KQ3, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
 
 	// King's Quest 3 (Amiga) 2.15 11/15/89 # 2.333
 	// Original pauses with ESC, has menus accessible with mouse.
@@ -450,7 +450,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME_PO("lsl1", "1.05 1987-06-26", "3f5d26d8834ca49c147fb60936869d56", 0x2440, GID_LSL1, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
 	// Leisure Suit Larry 1 (IIgs) 1.0E
-	GAME_P("lsl1", "1.0E 1987", "5f9e1dd68d626c6d303131c119582ad4", 0x2440, GID_LSL1, Common::kPlatformApple2GS),
+	GAME_PO("lsl1", "1.0E 1987", "5f9e1dd68d626c6d303131c119582ad4", 0x2440, GID_LSL1, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
 
 	// Leisure Suit Larry 1 (Mac) 1.05 6/26/87
 	GAME_P("lsl1", "1.05 1987-06-26", "8a0076429890531832f0dc113285e31e", 0x2440, GID_LSL1, Common::kPlatformMacintosh),
@@ -510,7 +510,7 @@ static const AGIGameDescription gameDescriptions[] = {
 #endif
 
 	// Mixed Up Mother Goose (IIgs)
-	GAME_P("mixedup", "1987", "3541954a7303467c6df87665312ffb6a", 0x2917, GID_MIXEDUP, Common::kPlatformApple2GS),
+	GAME_PO("mixedup", "1987", "3541954a7303467c6df87665312ffb6a", 0x2917, GID_MIXEDUP, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
 
 	// Mixed-Up Mother Goose (PC) [AGI 2.915]
 	GAME("mixedup", "1987-11-10", "e524655abf9b96a3b179ffcd1d0f79af", 0x2917, GID_MIXEDUP),
@@ -572,7 +572,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME_P("sq1", "1.5D 1987-04-02", "ce88419aadd073d1c6682d859b3d8aa2", 0x2440, GID_SQ1, Common::kPlatformMacintosh),
 
 	// Space Quest 1 (IIgs) 2.2
-	GAME_P("sq1", "2.2 1987", "64b9b3d04c1066d36e6a6e56187a83f7", 0x2917, GID_SQ1, Common::kPlatformApple2GS),
+	GAME_PO("sq1", "2.2 1987", "64b9b3d04c1066d36e6a6e56187a83f7", 0x2917, GID_SQ1, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
 
 	// Space Quest 1 (PC) 1.0X [AGI 2.089]
 	// Does not have menus, crashes if menus are enforced. Therefore, ESC pauses the game
@@ -670,8 +670,8 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Winnie the Pooh in the Hundred Acre Wood (C64)
 	GAMEpre_P("winnie", "", "title.pic", "d4eb97cffc866110f71e1ec9f84fe643", 0x0000, GID_WINNIE, Common::kPlatformC64),
 
-	// Winnie the Pooh in the Hundred Acre Wood (Apple //gs)
-	GAMEpre_P("winnie", "", "title.pic", "45e06010a3c61d78f4661103c901ae11", 0x0000, GID_WINNIE, Common::kPlatformApple2GS),
+	// Winnie the Pooh in the Hundred Acre Wood (Apple ][)
+	GAMEpre_P("winnie", "", "title.pic", "45e06010a3c61d78f4661103c901ae11", 0x0000, GID_WINNIE, Common::kPlatformApple2),
 
 	// Xmas Card 1986 (PC) [AGI 2.272]
 	GAME("xmascard", "1986-11-13 [version 1]", "3067b8d5957e2861e069c3c0011bd43d", 0x2272, GID_XMASCARD),

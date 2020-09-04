@@ -204,7 +204,7 @@ bool Palette::ensureContrast(byte &minBrightnessColorIndex) {
 	minBrightnessColorIndex = findMinBrightnessColorIndex();
 	if (_colors.size() >= 3 && isEqual(2, minBrightnessColorIndex)) {
 		Color black = {0, 0, 0};
-		Color white = {_format.rMax(), _format.gMax(), _format.bMax()};
+		Color white = {static_cast<uint8>(_format.rMax()), static_cast<uint8>(_format.gMax()), static_cast<uint8>(_format.bMax())};
 
 		_colors[2] = white;
 		if (isEqual(2, minBrightnessColorIndex)) {
@@ -242,7 +242,7 @@ void Palette::setGlobalOSystemPalette() const {
 	if (g_cine->mayHave256Colors()) {
 		memset(buf, 0, sizeof(buf)); // Clear whole palette
 	}
-	
+
 	// The color format used by OSystem's setPalette-function:
 	save(buf, sizeof(buf), Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0), CINE_LITTLE_ENDIAN);
 

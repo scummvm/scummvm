@@ -268,6 +268,8 @@ void SuperSpriteProcess::run() {
 
 void SuperSpriteProcess::makeBulletSplash(const Point3 &pt) {
 	const FireType *firetypedat = GameData::get_instance()->getFireType(_fireType);
+	if (!firetypedat)
+		return;
 
 	if (firetypedat->getRange()) {
 		Item *item = getItem(_item0x77);

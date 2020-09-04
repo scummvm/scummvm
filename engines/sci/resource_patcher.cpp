@@ -415,6 +415,63 @@ static const byte pq4EnhancedAudioToggleView[] = {
 };
 
 #pragma mark -
+#pragma mark Quest For Glory 1 VGA
+
+// The QFG1VGA character stat sheet (pic 904) is drawn at night with unintended
+//  palette colors. The Mac version fixed this, but did so by reworking the
+//  day/night transitions. We fix this here by patching pic 904's alternate
+//  palette to use the same colors as those in the embedded palette. Pic 904
+//  is now drawn consistently and without interfering with any existing PalVary
+//  that might be occurring. Fixes bug #10295
+static const byte qfg1vgaPalette904[] = {
+	SKIP(254),                   // color 54
+	REPLACE_NUMBER(uint8, 0x8b), // r
+	REPLACE_NUMBER(uint8, 0x1f), // g
+	REPLACE_NUMBER(uint8, 0x0f), // b
+	SKIP(9),                     // color 57
+	REPLACE_NUMBER(uint8, 0xe3), // r
+	REPLACE_NUMBER(uint8, 0x7b), // g
+	REPLACE_NUMBER(uint8, 0x6b), // b
+	SKIP(1),                     // color 58
+	REPLACE_NUMBER(uint8, 0xfb), // r
+	REPLACE_NUMBER(uint8, 0xab), // g
+	REPLACE_NUMBER(uint8, 0x93), // b
+	SKIP(13),                    // color 62
+	REPLACE_NUMBER(uint8, 0xbb), // r
+	REPLACE_NUMBER(uint8, 0x6b), // g
+	REPLACE_NUMBER(uint8, 0x23), // b
+	SKIP(1),                     // color 63
+	REPLACE_NUMBER(uint8, 0xdb), // r
+	REPLACE_NUMBER(uint8, 0x7b), // g
+	REPLACE_NUMBER(uint8, 0x23), // b
+	SKIP(9),                     // color 66
+	REPLACE_NUMBER(uint8, 0x5b), // r
+	REPLACE_NUMBER(uint8, 0x33), // g
+	REPLACE_NUMBER(uint8, 0x0f), // b
+	SKIP(1),                     // color 67
+	REPLACE_NUMBER(uint8, 0x7b), // r
+	REPLACE_NUMBER(uint8, 0x53), // g
+	REPLACE_NUMBER(uint8, 0x2b), // b
+	SKIP(1),                     // color 68
+	REPLACE_NUMBER(uint8, 0x9b), // r
+	REPLACE_NUMBER(uint8, 0x6b), // g
+	REPLACE_NUMBER(uint8, 0x3b), // b
+	SKIP(1),                     // color 69
+	REPLACE_NUMBER(uint8, 0xbb), // r
+	REPLACE_NUMBER(uint8, 0x8b), // g
+	REPLACE_NUMBER(uint8, 0x5b), // b
+	SKIP(1),                     // color 70
+	REPLACE_NUMBER(uint8, 0xdb), // r
+	REPLACE_NUMBER(uint8, 0xb3), // g
+	REPLACE_NUMBER(uint8, 0x7b), // b
+	SKIP(1),                     // color 71
+	REPLACE_NUMBER(uint8, 0xfb), // r
+	REPLACE_NUMBER(uint8, 0xdb), // g
+	REPLACE_NUMBER(uint8, 0xa3), // b
+	END
+};
+
+#pragma mark -
 #pragma mark Patch table
 
 static const GameResourcePatch resourcePatches[] = {
@@ -424,7 +481,8 @@ static const GameResourcePatch resourcePatches[] = {
 	{ GID_LSL3,           Common::PL_POL,   ResourceId(kResourceTypeFont,      1), lsl2Lsl3PolishFont,         false },
 	{ GID_LSL3,           Common::PL_POL,   ResourceId(kResourceTypeFont,      9), lsl2Lsl3PolishFont,         false },
 	{ GID_PHANTASMAGORIA, Common::UNK_LANG, ResourceId(kResourceTypeView,  64001), phant1View64001Palette,     false },
-	{ GID_PQ4,            Common::EN_ANY,   ResourceId(kResourceTypeView,  10988), pq4EnhancedAudioToggleView, true }
+	{ GID_PQ4,            Common::EN_ANY,   ResourceId(kResourceTypeView,  10988), pq4EnhancedAudioToggleView, true  },
+	{ GID_QFG1VGA,        Common::UNK_LANG, ResourceId(kResourceTypePalette, 904), qfg1vgaPalette904,          false }
 };
 
 #pragma mark -

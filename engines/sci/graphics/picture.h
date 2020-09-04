@@ -54,7 +54,7 @@ public:
 	~GfxPicture();
 
 	GuiResourceId getResourceId();
-	void draw(int16 animationNr, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo);
+	void draw(bool mirroredFlag, bool addToFlag, int16 EGApaletteNo);
 
 private:
 	void initData(GuiResourceId resourceId);
@@ -85,7 +85,6 @@ private:
 	Resource *_resource;
 	int _resourceType;
 
-	int16 _animationNr;
 	bool _mirroredFlag;
 	bool _addToFlag;
 	int16 _EGApaletteNo;

@@ -587,7 +587,7 @@ bool Item::isCentreOn(const Item &item2) const {
 
 	if (x1c <= x2a || x2b <= x1c) return false;
 	if (y1c <= y2a || y2b <= y1c) return false;
-	if (z2b == z1c) return true;
+	if (z2b == getZ()) return true;
 	return false;
 }
 
@@ -606,8 +606,8 @@ bool Item::isOnScreen() const {
 	int32 xd, yd, zd;
 	getFootpadWorld(xd, yd, zd);
 
-	if (game_map_dims.InRect(screenx, screeny) &&
-		game_map_dims.InRect(screenx + xd, screeny + yd)) {
+	if (game_map_dims.contains(screenx, screeny) &&
+	    game_map_dims.contains(screenx + xd, screeny + yd)) {
 		return true;
 	}
 
@@ -1432,6 +1432,10 @@ uint32 Item::callUsecodeEvent_guardianBark(int16 unk) {         // event 15
 	DynamicUCStack  arg_stack(2);
 	arg_stack.push2(unk);
 	return callUsecodeEvent(0x15, arg_stack.access(), 2); // CONSTANT 0x15
+}
+
+uint32 Item::callUsecodeEvent_unhatch() {                     // event 15
+	return callUsecodeEvent(0x15);  // CONSTANT
 }
 
 uint32 Item::use() {

@@ -87,8 +87,22 @@ class SoundList;
 class StaticANIObject;
 class Vars;
 typedef Common::Array<int16> MovTable;
-typedef Common::Array<int32> Palette;
 typedef Common::Array<Common::Point> PointList;
+
+struct Palette {
+	uint32 pal[256];
+	uint size;
+
+	Palette() {
+		size = 0;
+		memset(pal, 0, 256 * 4);
+	}
+
+	void copy(const Palette &src) {
+		size = src.size;
+		memcpy(pal, src.pal, 256 * 4);
+	}
+};
 
 typedef Common::HashMap<uint16, Common::String> GameObjHMap;
 

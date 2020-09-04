@@ -435,7 +435,8 @@ public:
 	uint32 callUsecodeEvent_cast(uint16 unk);                   // event 11
 	uint32 callUsecodeEvent_justMoved();                        // event 12
 	uint32 callUsecodeEvent_AvatarStoleSomething(uint16 unk);   // event 14
-	uint32 callUsecodeEvent_guardianBark(int16 unk);            // event 15
+	uint32 callUsecodeEvent_guardianBark(int16 unk);            // event 15 (Ultima)
+	uint32 callUsecodeEvent_unhatch();							// event 15 (Crusader)
 
 	uint32 use();
 

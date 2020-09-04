@@ -30,7 +30,7 @@
 #include "sci/graphics/ports.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/animate.h"
-#include "sci/graphics/font.h"
+#include "sci/graphics/scifont.h"
 #include "sci/graphics/picture.h"
 #include "sci/graphics/view.h"
 #include "sci/graphics/screen.h"
@@ -63,14 +63,14 @@ void GfxPaint16::debugSetEGAdrawingVisualize(bool state) {
 	_EGAdrawingVisualize = state;
 }
 
-void GfxPaint16::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, GuiResourceId paletteId) {
+void GfxPaint16::drawPicture(GuiResourceId pictureId, bool mirroredFlag, bool addToFlag, GuiResourceId paletteId) {
 	GfxPicture *picture = new GfxPicture(_resMan, _coordAdjuster, _ports, _screen, _palette, pictureId, _EGAdrawingVisualize);
 
 	// do we add to a picture? if not -> clear screen with white
 	if (!addToFlag)
 		clearScreen(_screen->getColorWhite());
 
-	picture->draw(animationNr, mirroredFlag, addToFlag, paletteId);
+	picture->draw(mirroredFlag, addToFlag, paletteId);
 	delete picture;
 
 	// We make a call to SciPalette here, for increasing sys timestamp and also loading targetpalette, if palvary active
@@ -376,7 +376,7 @@ void GfxPaint16::kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, b
 
 	if (_ports->isFrontWindow(_ports->_picWind)) {
 		_screen->_picNotValid = 1;
-		drawPicture(pictureId, animationNr, mirroredFlag, addToFlag, EGApaletteNo);
+		drawPicture(pictureId, mirroredFlag, addToFlag, EGApaletteNo);
 		_transitions->setup(animationNr, animationBlackoutFlag);
 	} else {
 		// We need to set it for SCI1EARLY+ (sierra sci also did so), otherwise we get at least the following issues:
@@ -388,7 +388,7 @@ void GfxPaint16::kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, b
 		if (getSciVersion() >= SCI_VERSION_1_EARLY)
 			_screen->_picNotValid = 1;
 		_ports->beginUpdate(_ports->_picWind);
-		drawPicture(pictureId, animationNr, mirroredFlag, addToFlag, EGApaletteNo);
+		drawPicture(pictureId, mirroredFlag, addToFlag, EGApaletteNo);
 		_ports->endUpdate(_ports->_picWind);
 	}
 	_ports->setPort(oldPort);

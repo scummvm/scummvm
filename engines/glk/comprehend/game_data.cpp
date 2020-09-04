@@ -558,13 +558,8 @@ void GameData::parse_header(FileBuffer *fb) {
 	*
 	* Layout depends on the comprehend version.
 	*/
-	if (_comprehendVersion == 1) {
-		for (int idx = 0; idx < 7; ++idx)
-			parse_header_le16(fb, &header->addr_actions[idx]);
-	}
-	if (_comprehendVersion >= 2) {
-		error("TODO: loading action tables offsets");
-	}
+	for (int idx = 0; idx < (_comprehendVersion == 1 ? 7 : 5); ++idx)
+		parse_header_le16(fb, &header->addr_actions[idx]);
 
 	parse_header_le16(fb, &header->addr_vm);
 	parse_header_le16(fb, &header->addr_dictionary);

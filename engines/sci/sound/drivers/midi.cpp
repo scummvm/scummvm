@@ -137,7 +137,8 @@ public:
 	enum Mt32Type {
 		kMt32TypeNone,
 		kMt32TypeReal,
-		kMt32TypeEmulated
+		kMt32TypeEmulated,
+		kMt32TypeD110
 	};
 
 	MidiPlayer_Midi(SciVersion version);
@@ -162,12 +163,15 @@ public:
 	void setReverb(int8 reverb) override;
 	void playSwitch(bool play) override;
 	void initTrack(SciSpan<const byte> &) override;
+	const char *reportMissingFiles() override { return _missingFiles; }
 
 private:
 	bool isMt32GmPatch(const SciSpan<const byte> &data);
 	void readMt32GmPatch(const SciSpan<const byte> &data);
 	void readMt32Patch(const SciSpan<const byte> &data);
 	void readMt32DrvData();
+	bool readD110DrvData();
+	bool readD110SysEx();
 
 	void mapMt32ToGm(const SciSpan<const byte> &data);
 	uint8 lookupGmInstrument(const char *iname);
@@ -199,6 +203,7 @@ private:
 	};
 
 	Mt32Type _mt32Type;
+	uint _mt32LCDSize;
 	bool _useMT32Track;
 	bool _hasReverb;
 	bool _playSwitch;
@@ -218,15 +223,20 @@ private:
 	uint8 _pitchBendRange[128];
 	uint8 _percussionVelocityScale[128];
 
-	byte _goodbyeMsg[20];
+	byte _goodbyeMsg[32];
 	byte _sysExBuf[kMaxSysExSize];
+
+	const char *_missingFiles;
 };
 
-MidiPlayer_Midi::MidiPlayer_Midi(SciVersion version) : MidiPlayer(version), _playSwitch(true), _masterVolume(15), _mt32Type(kMt32TypeNone), _hasReverb(false), _defaultReverb(-1), _useMT32Track(true) {
+MidiPlayer_Midi::MidiPlayer_Midi(SciVersion version) : MidiPlayer(version), _playSwitch(true), _masterVolume(15), _mt32Type(kMt32TypeNone), _mt32LCDSize(20), _hasReverb(false), _defaultReverb(-1), _useMT32Track(true), _missingFiles(nullptr) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI);
 	_driver = MidiDriver::createMidi(dev);
 
-	if (MidiDriver::getMusicType(dev) == MT_MT32 || ConfMan.getBool("native_mt32")) {
+	if (ConfMan.getInt("midi_mode") == kMidiModeD110) {
+		_mt32Type = kMt32TypeD110;
+		_mt32LCDSize = 32;
+	} else if (MidiDriver::getMusicType(dev) == MT_MT32 || ConfMan.getBool("native_mt32")) {
 		if (MidiDriver::getDeviceString(dev, MidiDriver::kDriverId) == "mt32") {
 			_mt32Type = kMt32TypeEmulated;
 		} else {
@@ -674,12 +684,12 @@ void MidiPlayer_Midi::readMt32Patch(const SciSpan<const byte> &data) {
 	Common::MemoryReadStream stream(data.toStream());
 
 	// Send before-SysEx text
-	stream.seek(20);
-	sendMt32SysEx(0x200000, stream, 20);
+	stream.seek(_mt32LCDSize);
+	sendMt32SysEx(0x200000, stream, _mt32LCDSize);
 
 	// Save goodbye message
-	assert(sizeof(_goodbyeMsg) == 20);
-	stream.read(_goodbyeMsg, 20);
+	assert(sizeof(_goodbyeMsg) >= _mt32LCDSize);
+	stream.read(_goodbyeMsg, _mt32LCDSize);
 
 	const uint8 volume = MIN<uint16>(stream.readUint16LE(), 100);
 	setMt32Volume(volume);
@@ -726,11 +736,13 @@ void MidiPlayer_Midi::readMt32Patch(const SciSpan<const byte> &data) {
 
 	// Send after-SysEx text
 	stream.seek(0);
-	sendMt32SysEx(0x200000, stream, 20);
+	sendMt32SysEx(0x200000, stream, _mt32LCDSize);
 
-	// Send the mystery SysEx
-	Common::MemoryReadStream mystery((const byte *)"\x16\x16\x16\x16\x16\x16", 6);
-	sendMt32SysEx(0x52000a, mystery, 6);
+	if (_mt32Type != kMt32TypeD110) {
+		// Send the mystery SysEx
+		Common::MemoryReadStream mystery((const byte *)"\x16\x16\x16\x16\x16\x16", 6);
+		sendMt32SysEx(0x52000a, mystery, 6);
+	}
 }
 
 void MidiPlayer_Midi::readMt32GmPatch(const SciSpan<const byte> &data) {
@@ -896,6 +908,142 @@ void MidiPlayer_Midi::readMt32DrvData() {
 	} else {
 		error("Failed to open MT32.DRV");
 	}
+}
+
+bool MidiPlayer_Midi::readD110DrvData() {
+	const char *fileName;
+
+	// Only one driver is known to exist
+	switch (g_sci->getGameId()) {
+	case GID_KQ4:
+		fileName = "DKQ4.DRV";
+		break;
+	default:
+		error("No D-110 driver is known to exist for this game");
+	}
+
+	Common::File f;
+	if (!f.open(fileName)) {
+		_missingFiles = fileName;
+		return false;
+	}
+
+	if (f.size() != 3500)
+		error("Unknown '%s' size (%d)", fileName, f.size());
+
+	f.seek(42);
+
+	// Send before-SysEx text
+	sendMt32SysEx(0x200000, f, 32);
+
+	// Timbres
+	f.seek(2761);
+	sendMt32SysEx(0x50000, f, 256);
+	sendMt32SysEx(0x50200, f, 128);
+
+	// Rhythm
+	sendMt32SysEx(0x30110, f, 256);
+	sendMt32SysEx(0x30310, f, 84);
+
+	f.seek(75);
+
+	// Send after-SysEx text
+	sendMt32SysEx(0x200000, f, 32);
+
+	f.read(_goodbyeMsg, 32);
+
+	byte reverbSysEx[13];
+	f.read(reverbSysEx, 13);
+	sysEx(reverbSysEx + 1, 11);
+
+	_hasReverb = false;
+
+	if (f.err() || f.eos())
+		error("Error reading '%s'", fileName);
+
+	f.close();
+
+	return true;
+}
+
+bool MidiPlayer_Midi::readD110SysEx() {
+	// These patches contain SysEx messages that were meant to be sent to the
+	// device with a 3rd party tool before starting the game with MT-32 music.
+	// In order to prevent the MT-32 patches from interfering with the
+	// D-110/D-10/D-20 patches, these SysEx use unit #18. The user would be
+	// required to change the unit number on their device. Since we can avoid
+	// sending the MT-32 patch, we override the unit number back to 17 here.
+
+	// The D-110 versions of these patches use Patch Memory at 0x060000,
+	// which is not available on the D-10/D-20. Additionally, this method
+	// requires user interaction on the device between SysEx upload and
+	// starting the game. We therefore use the D-20 patches instead.
+
+	// Patches for later games (using patch 4 format with GENMIDI.DRV) appear
+	// to have been distributed on the Sierra BBS in file GEND110.EXE. So far
+	// this file has not been recovered.
+
+	// Note: there was also aftermarket support for E-mu Proteus 1/2, but those
+	// files appear to have been lost in the mists of time as well.
+
+	const char *fileName;
+
+	switch (g_sci->getGameId()) {
+	case GID_KQ5:
+		fileName = "KQ5D20";
+		break;
+	case GID_QFG2:
+		fileName = "QFG2D20";
+		break;
+	default:
+		error("No aftermarket D-110 patch is known to exist for this game");
+	}
+
+	Common::File sysExFile;
+
+	if (!sysExFile.open(fileName)) {
+		_missingFiles = fileName;
+		return false;
+	}
+
+	byte sysExBuf[kMaxSysExSize + 2];
+
+	while (true) {
+		byte b = sysExFile.readByte();
+
+		if (sysExFile.err())
+			error("Error reading '%s'", fileName);
+
+		if (sysExFile.eos())
+			break;
+
+		if (b != 0xf0)
+			error("Unexpected data found in SysEx file '%s'", fileName);
+
+		uint sysExLen = 0;
+		sysExBuf[sysExLen++] = b;
+
+		while (sysExLen < ARRAYSIZE(sysExBuf) && b != 0xf7) {
+			b = sysExFile.readByte();
+			sysExBuf[sysExLen++] = b;
+		}
+
+		if (b != 0xf7 || sysExLen < 10)
+			error("SysEx has invalid size in SysEx file '%s'", fileName);
+
+		// Use unit #17
+		sysExBuf[2] = 0x10;
+		sysEx(sysExBuf + 1, sysExLen - 2);
+	}
+
+	// The D-10/D-20 have fixed MIDI channel assignments, so we need to set the D-110
+	// manually here
+	Common::MemoryReadStream s((const byte *)"\x01\x02\x03\x04\x05\x06\x07\x08\x09", 9);
+	sendMt32SysEx(0x10000d, s, 9);
+
+	memcpy(_goodbyeMsg, "    ScummVM                     ", 32);
+
+	return true;
 }
 
 byte MidiPlayer_Midi::lookupGmInstrument(const char *iname) {
@@ -1120,7 +1268,30 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 		}
 	}
 
-	if (_mt32Type != kMt32TypeNone) {
+	if (_mt32Type == kMt32TypeD110) {
+		// D-110, no reset SysEx exists
+		for (uint i = 0; i < MIDI_CHANNELS; ++i) {
+			_driver->send(0xb0 | i, 0x7b, 0); // All notes off
+			_driver->send(0xb0 | i, 0x79, 0); // Reset all controllers
+		}
+
+		if (getSciVersion() == SCI_VERSION_0_EARLY) {
+			if (!readD110DrvData())
+				return MidiDriver::MERR_DEVICE_NOT_AVAILABLE;
+		} else if (getSciVersion() == SCI_VERSION_0_LATE) {
+			res = resMan->findResource(ResourceId(kResourceTypePatch, 0), false);
+
+			if (!res) {
+				_missingFiles = "PATCH.000";
+				return MidiDriver::MERR_DEVICE_NOT_AVAILABLE;
+			}
+
+			readMt32Patch(*res);
+		} else {
+			if (!readD110SysEx())
+				return MidiDriver::MERR_DEVICE_NOT_AVAILABLE;
+		}
+	} else if (_mt32Type != kMt32TypeNone) {
 		// MT-32
 		resetMt32();
 
@@ -1229,7 +1400,7 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 void MidiPlayer_Midi::close() {
 	if (_mt32Type != kMt32TypeNone) {
 		// Send goodbye message
-		sendMt32SysEx(0x200000, SciSpan<const byte>(_goodbyeMsg, 20), true);
+		sendMt32SysEx(0x200000, SciSpan<const byte>(_goodbyeMsg, _mt32LCDSize), true);
 	}
 
 	_driver->setTimerCallback(NULL, NULL);

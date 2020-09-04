@@ -1894,7 +1894,7 @@ void ScummEngine::setupMusic(int midi) {
 
 		if (missingFile) {
 			GUI::MessageDialog dialog(
-				Common::String::format(
+				Common::U32String::format(
 					_("Native MIDI support requires the Roland Upgrade from LucasArts,\n"
 					"but %s is missing. Using AdLib instead."), fileName.c_str()),
 				_("OK"));
@@ -2444,7 +2444,7 @@ void ScummEngine::scummLoop_updateScummVars() {
 void ScummEngine::scummLoop_handleSaveLoad() {
 	if (_saveLoadFlag) {
 		bool success;
-		const char *errMsg = 0;
+		Common::U32String errMsg;
 
 		if (_game.version == 8 && _saveTemporaryState)
 			VAR(VAR_GAME_LOADED) = 0;
@@ -2470,11 +2470,13 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 		}
 
 		if (!success) {
-			displayMessage(0, errMsg, filename.c_str());
+			Common::U32String buf = Common::U32String::format(errMsg, filename.c_str());
+
+			GUI::MessageDialog dialog(buf);
+			runDialog(dialog);
 		} else if (_saveLoadFlag == 1 && _saveLoadSlot != 0 && !_saveTemporaryState) {
 			// Display "Save successful" message, except for auto saves
-			char buf[256];
-			snprintf(buf, sizeof(buf), _("Successfully saved game in file:\n\n%s"), filename.c_str());
+			Common::U32String buf = Common::U32String::format(_("Successfully saved game in file:\n\n%s"), filename.c_str());
 
 			GUI::TimedMessageDialog dialog(buf, 1500);
 			runDialog(dialog);
@@ -2759,7 +2761,9 @@ bool ScummEngine::startManiac() {
 		eventMan->pushEvent(event);
 		return true;
 	} else {
-		displayMessage(0, "%s", _("Usually, Maniac Mansion would start now. But for that to work, the game files for Maniac Mansion have to be in the 'Maniac' directory inside the Tentacle game directory, and the game has to be added to ScummVM."));
+		Common::U32String buf = _("Usually, Maniac Mansion would start now. But for that to work, the game files for Maniac Mansion have to be in the 'Maniac' directory inside the Tentacle game directory, and the game has to be added to ScummVM.");
+		GUI::MessageDialog dialog(buf);
+		runDialog(dialog);
 		return false;
 	}
 }
@@ -2802,7 +2806,7 @@ void ScummEngine_v7::pauseEngineIntern(bool pause) {
 }
 #endif
 
-void ScummEngine::messageDialog(const char *message) {
+void ScummEngine::messageDialog(const Common::U32String &message) {
 	if (!_messageDialog)
 		_messageDialog = new InfoDialog(this, message);
 	((InfoDialog *)_messageDialog)->setInfoText(message);

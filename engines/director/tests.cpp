@@ -36,7 +36,7 @@
 #include "director/director.h"
 #include "director/archive.h"
 #include "director/movie.h"
-#include "director/stage.h"
+#include "director/window.h"
 #include "director/lingo/lingo.h"
 
 namespace Director {
@@ -44,7 +44,7 @@ namespace Director {
 //////////////////////
 // Graphics tests
 //////////////////////
-void Stage::testFontScaling() {
+void Window::testFontScaling() {
 	int x = 10;
 	int y = 10;
 	int w = g_system->getWidth();
@@ -54,8 +54,8 @@ void Stage::testFontScaling() {
 
 	Graphics::ManagedSurface surface;
 
-	surface.create(w, h);
-	surface.clear(255);
+	surface.create(w, h, _wm->_pixelformat);
+	surface.clear(_wm->_colorWhite);
 
 	Graphics::MacFont origFont(Graphics::kMacFontNewYork, 18);
 
@@ -93,7 +93,10 @@ void Stage::testFontScaling() {
 
 			for (x = x1; x < x1 + 6; x++)
 				for (y = y1; y < y1 + 6; y++)
-					*((byte *)surface.getBasePtr(x, y)) = _vm->transformColor(i * 16 + j);
+					if (_wm->_pixelformat.bytesPerPixel == 1)
+						*((byte *)surface.getBasePtr(x, y)) = _vm->transformColor(i * 16 + j);
+					else
+						*((uint32 *)surface.getBasePtr(x, y)) = _vm->transformColor(i * 16 + j);
 		}
 	}
 
@@ -111,7 +114,7 @@ void Stage::testFontScaling() {
 	}
 }
 
-void Stage::testFonts() {
+void Window::testFonts() {
 	Common::String fontName("Helvetica");
 
 	Common::MacResManager *fontFile = new Common::MacResManager();
@@ -137,7 +140,7 @@ void Stage::testFonts() {
 //////////////////////
 // Movie iteration
 //////////////////////
-Common::HashMap<Common::String, Movie *> *Stage::scanMovies(const Common::String &folder) {
+Common::HashMap<Common::String, Movie *> *Window::scanMovies(const Common::String &folder) {
 	Common::FSNode directory(folder);
 	Common::FSList movies;
 	const char *sharedMMMname;
@@ -178,7 +181,7 @@ Common::HashMap<Common::String, Movie *> *Stage::scanMovies(const Common::String
 	return nameMap;
 }
 
-void Stage::enqueueAllMovies() {
+void Window::enqueueAllMovies() {
 	Common::FSNode dir(ConfMan.get("path"));
 	Common::FSList files;
 	if (!dir.getChildren(files, Common::FSNode::kListFilesOnly)) {
@@ -194,7 +197,7 @@ void Stage::enqueueAllMovies() {
 	debug(1, "=========> Enqueued %d movies", _movieQueue.size());
 }
 
-MovieReference Stage::getNextMovieFromQueue() {
+MovieReference Window::getNextMovieFromQueue() {
 	MovieReference res;
 
 	if (_movieQueue.empty())
@@ -272,7 +275,7 @@ const byte testMovie[] = {
 	0x00, 0x00
 };
 
-void Stage::runTests() {
+void Window::runTests() {
 	Common::MemoryReadStream *movie = new Common::MemoryReadStream(testMovie, ARRAYSIZE(testMovie));
 	Common::SeekableReadStream *stream = Common::wrapCompressedReadStream(movie);
 

@@ -208,7 +208,7 @@ protected:
 	void spcFlickerPutOnStGeorgeArmor(); //0x7f
 	void spcUnk80FlickerArmorOn(); //0x80
 	void spcShakeScreenSceneLogic(); //0x81
-	void spc82CallResetDataMaybe(); // 0x82
+	void spcClearTextFromScreen(); // 0x82
 	void spcStopScreenShakeUpdater(); // 0x83
 	void spcInsideBlackDragonScreenShake(); // 0x84
 	void spc85SetScene1To0x35(); //0x85

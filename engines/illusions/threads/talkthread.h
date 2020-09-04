@@ -64,8 +64,8 @@ public:
 	uint32 _sequenceId1;
 	uint32 _sequenceId2;
 	byte *_entryTblPtr;
-	byte *_entryText;
-	byte *_currEntryText;
+	uint16 *_entryText;
+	uint16 *_currEntryText;
 	//field30 dd
 	uint32 _namedPointId;
 	uint32 _voiceStartTime;

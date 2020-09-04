@@ -98,7 +98,13 @@ template<class uintX> void SoftRenderSurface<uintX>::Fill8(uint8 /*index*/, int3
 //
 
 template<class uintX> void SoftRenderSurface<uintX>::Fill32(uint32 rgb, int32 sx, int32 sy, int32 w, int32 h) {
-	_clipWindow.IntersectOther(sx, sy, w, h);
+	Rect rect(sx, sy, sx + w, sy + h);
+	rect.clip(_clipWindow);
+	sx = rect.left;
+	sy = rect.top;
+	w = rect.width();
+	h = rect.height();
+
 	if (!w || !h) return;
 
 	// An optimization.
@@ -128,7 +134,13 @@ template<class uintX> void SoftRenderSurface<uintX>::Fill32(uint32 rgb, int32 sx
 
 // 16 bit version
 template<> void SoftRenderSurface<uint16>::Fill32(uint32 rgb, int32 sx, int32 sy, int32 w, int32 h) {
-	_clipWindow.IntersectOther(sx, sy, w, h);
+	Rect rect(sx, sy, sx + w, sy + h);
+	rect.clip(_clipWindow);
+	sx = rect.left;
+	sy = rect.top;
+	w = rect.width();
+	h = rect.height();
+
 	if (!w || !h) return;
 
 	// An optimization.
@@ -150,7 +162,13 @@ template<> void SoftRenderSurface<uint16>::Fill32(uint32 rgb, int32 sx, int32 sy
 
 // 32 bit version
 template<> void SoftRenderSurface<uint32>::Fill32(uint32 rgb, int32 sx, int32 sy, int32 w, int32 h) {
-	_clipWindow.IntersectOther(sx, sy, w, h);
+	Rect rect(sx, sy, sx + w, sy + h);
+	rect.clip(_clipWindow);
+	sx = rect.left;
+	sy = rect.top;
+	w = rect.width();
+	h = rect.height();
+
 	if (!w || !h) return;
 
 	// An optimization.
@@ -180,7 +198,13 @@ template<> void SoftRenderSurface<uint32>::Fill32(uint32 rgb, int32 sx, int32 sy
 //#define CHECK_ALPHA_FILLS
 
 template<class uintX> void SoftRenderSurface<uintX>::FillAlpha(uint8 alpha, int32 sx, int32 sy, int32 w, int32 h) {
-	_clipWindow.IntersectOther(sx, sy, w, h);
+	Rect rect(sx, sy, sx + w, sy + h);
+	rect.clip(_clipWindow);
+	sx = rect.left;
+	sy = rect.top;
+	w = rect.width();
+	h = rect.height();
+
 	if (!w || !h || !RenderSurface::_format.aMask) return;
 
 	// An optimization.
@@ -232,7 +256,13 @@ template<class uintX> void SoftRenderSurface<uintX>::FillBlended(uint32 rgba, in
 		return;
 	}
 
-	_clipWindow.IntersectOther(sx, sy, w, h);
+	Rect rect(sx, sy, sx + w, sy + h);
+	rect.clip(_clipWindow);
+	sx = rect.left;
+	sy = rect.top;
+	w = rect.width();
+	h = rect.height();
+
 	if (!w || !h) return;
 
 	// An optimization.
@@ -348,7 +378,13 @@ template<class uintX> void SoftRenderSurface<uintX>::Blit(Texture *_tex, int32 s
 
 	// Clip to window
 	int px = dx, py = dy;
-	_clipWindow.IntersectOther(dx, dy, w, h);
+	Rect rect(dx, dy, dx + w, dy + h);
+	rect.clip(_clipWindow);
+	dx = rect.left;
+	dy = rect.top;
+	w = rect.width();
+	h = rect.height();
+
 	if (!w || !h) return;
 
 	// Adjust source x and y
@@ -428,7 +464,14 @@ template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(Texture *_tex, in
 
 	// Clip to window
 	int px = dx, py = dy;
-	_clipWindow.IntersectOther(dx, dy, w, h);
+
+	Rect rect(dx, dy, dx + w, dy + h);
+	rect.clip(_clipWindow);
+	dx = rect.left;
+	dy = rect.top;
+	w = rect.width();
+	h = rect.height();
+
 	if (!w || !h) return;
 
 	// Adjust source x and y
@@ -538,7 +581,14 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(Texture *_tex, i
 
 	// Clip to window
 	int px = dx, py = dy;
-	_clipWindow.IntersectOther(dx, dy, w, h);
+
+	Rect rect(dx, dy, dx + w, dy + h);
+	rect.clip(_clipWindow);
+	dx = rect.left;
+	dy = rect.top;
+	w = rect.width();
+	h = rect.height();
+
 	if (!w || !h)
 		return;
 

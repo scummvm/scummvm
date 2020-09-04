@@ -277,7 +277,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 				up = Common::EVENT_LBUTTONUP;
 			}
 
-			lockMutex(_event_queue_lock);
+			_event_queue_lock->lock();
 
 			if (_queuedEventTime)
 				_event_queue.push(_queuedEvent);
@@ -292,7 +292,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			_queuedEvent = e;
 			_queuedEventTime = getMillis() + kQueuedInputEventDelay;
 
-			unlockMutex(_event_queue_lock);
+			_event_queue_lock->unlock();
 		}
 
 		return;
@@ -341,11 +341,11 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 				return;
 			}
 
-			lockMutex(_event_queue_lock);
+			_event_queue_lock->lock();
 			_event_queue.push(e);
 			e.type = dptype;
 			_event_queue.push(e);
-			unlockMutex(_event_queue_lock);
+			_event_queue_lock->unlock();
 		}
 
 		return;
@@ -381,7 +381,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 				e.mouse = dynamic_cast<AndroidGraphicsManager *>(_graphicsManager)->getMousePosition();
 
-				lockMutex(_event_queue_lock);
+				_event_queue_lock->lock();
 
 				if (_queuedEventTime)
 					_event_queue.push(_queuedEvent);
@@ -392,7 +392,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 				_queuedEvent = e;
 				_queuedEventTime = getMillis() + kQueuedInputEventDelay;
 
-				unlockMutex(_event_queue_lock);
+				_event_queue_lock->unlock();
 				return;
 
 			default:
@@ -643,21 +643,21 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 		}
 	}
 
-	lockMutex(_event_queue_lock);
+	_event_queue_lock->lock();
 
 	if (_queuedEventTime && (getMillis() > _queuedEventTime)) {
 		event = _queuedEvent;
 		_queuedEventTime = 0;
-		// unlockMutex(_event_queue_lock);
+		// _event_queue_lock->unlock();
 		// return true;
 	} else if (_event_queue.empty()) {
-		unlockMutex(_event_queue_lock);
+		_event_queue_lock->unlock();
 		return false;
 	} else {
 		event = _event_queue.pop();
 	}
 
-	unlockMutex(_event_queue_lock);
+	_event_queue_lock->unlock();
 
 	if (Common::isMouseEvent(event)) {
 		if (_graphicsManager)
@@ -668,9 +668,9 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 }
 
 void OSystem_Android::pushEvent(const Common::Event &event) {
-	lockMutex(_event_queue_lock);
+	_event_queue_lock->lock();
 	_event_queue.push(event);
-	unlockMutex(_event_queue_lock);
+	_event_queue_lock->unlock();
 }
 
 #endif

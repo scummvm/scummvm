@@ -55,6 +55,7 @@ struct PaletteInfo {
 	byte speed;
 	uint16 frameCount;
 	uint16 cycleCount;
+	uint16 cycleLength;
 	byte fade;
 	byte delay;
 	byte style;
@@ -64,7 +65,7 @@ struct PaletteInfo {
 		paletteId = 0;
 		firstColor = lastColor = 0;
 		flags = 0; speed = 0;
-		frameCount = cycleCount = 0;
+		frameCount = cycleCount = cycleLength = 0;
 		fade = delay = style = colorCode = 0;
 	}
 };
@@ -84,17 +85,17 @@ public:
 	Score *getScore() const { return _score; }
 
 	void readChannels(Common::ReadStreamEndian *stream);
-	void readChannel(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
+	void readChannel(Common::SeekableReadStreamEndian &stream, uint16 offset, uint16 size);
 
 	void executeImmediateScripts();
 
 private:
 
-	void readPaletteInfo(Common::SeekableSubReadStreamEndian &stream);
-	void readSprite(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
-	void readMainChannels(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
+	void readPaletteInfo(Common::SeekableReadStreamEndian &stream);
+	void readSprite(Common::SeekableReadStreamEndian &stream, uint16 offset, uint16 size);
+	void readMainChannels(Common::SeekableReadStreamEndian &stream, uint16 offset, uint16 size);
 	Image::ImageDecoder *getImageFrom(uint16 spriteId);
-	Common::String readTextStream(Common::SeekableSubReadStreamEndian *textStream, TextCastMember *textCast);
+	Common::String readTextStream(Common::SeekableReadStreamEndian *textStream, TextCastMember *textCast);
 
 
 public:
@@ -102,7 +103,7 @@ public:
 	byte _channelData[kChannelDataSize];
 	uint16 _actionId;
 	uint16 _transDuration;
-	uint8 _transArea; // 1 - Whole Stage, 0 - Changing Area
+	uint8 _transArea; // 1 - Whole Window, 0 - Changing Area
 	uint8 _transChunkSize;
 	TransitionType _transType;
 	PaletteInfo _palette;

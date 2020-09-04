@@ -22,6 +22,8 @@
 
 #include "common/file.h"
 #include "common/keyboard.h"
+#include "common/memstream.h"
+#include "common/zlib.h"
 
 #include "director/director.h"
 #include "director/util.h"
@@ -283,6 +285,19 @@ Common::String convertPath(Common::String &path) {
 	return res1;
 }
 
+Common::String unixToMacPath(const Common::String &path) {
+	Common::String res;
+	for (uint32 idx = 0; idx < path.size(); idx++) {
+		if (path[idx] == ':')
+			res += '/';
+		else if (path[idx] == '/')
+			res += ':';
+		else
+			res += path[idx];
+	}
+	return res;
+}
+
 Common::String getPath(Common::String path, Common::String cwd) {
 	const char *s;
 	if ((s = strrchr(path.c_str(), '/'))) {
@@ -292,7 +307,17 @@ Common::String getPath(Common::String path, Common::String cwd) {
 	return cwd; // The path is not altered
 }
 
-bool testPath(Common::String &path) {
+bool testPath(Common::String &path, bool directory) {
+	if (directory) {
+		// TOOD: This directory-searching branch only works for one level from the
+		// current directory, but it fixes current game loading issues.
+		if (path.contains('/'))
+			return false;
+
+		Common::FSNode d = Common::FSNode(*g_director->getGameDataDir()).getChild(path);
+		return d.exists();
+	}
+
 	Common::File f;
 	if (f.open(path)) {
 		if (f.size())
@@ -302,8 +327,11 @@ bool testPath(Common::String &path) {
 	return false;
 }
 
-Common::String pathMakeRelative(Common::String path, bool recursive, bool addexts) {
+Common::String pathMakeRelative(Common::String path, bool recursive, bool addexts, bool directory) {
 	Common::String initialPath(path);
+
+	if (testPath(initialPath, directory))
+		return initialPath;
 
 	if (recursive) // first level
 		initialPath = convertPath(initialPath);
@@ -311,7 +339,6 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 	debug(2, "pathMakeRelative(): s1 %s -> %s", path.c_str(), initialPath.c_str());
 
 	initialPath = Common::normalizePath(g_director->getCurrentPath() + initialPath, '/');
-	Common::File f;
 	Common::String convPath = initialPath;
 
 	debug(2, "pathMakeRelative(): s2 %s", convPath.c_str());
@@ -319,18 +346,19 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 	// Strip the leading whitespace from the path
 	initialPath.trim();
 
-	if (testPath(initialPath))
+	if (testPath(initialPath, directory))
 		return initialPath;
 
 	// Now try to search the file
 	bool opened = false;
+
 	while (convPath.contains('/')) {
 		int pos = convPath.find('/');
 		convPath = Common::String(&convPath.c_str()[pos + 1]);
 
 		debug(2, "pathMakeRelative(): s3 try %s", convPath.c_str());
 
-		if (!f.open(convPath))
+		if (!testPath(convPath, directory))
 			continue;
 
 		debug(2, "pathMakeRelative(): s3 converted %s -> %s", path.c_str(), convPath.c_str());
@@ -346,7 +374,7 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 
 		debug(2, "pathMakeRelative(): s4 %s", convPath.c_str());
 
-		if (testPath(initialPath))
+		if (testPath(initialPath, directory))
 			return initialPath;
 
 		// Now try to search the file
@@ -356,7 +384,7 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 
 			debug(2, "pathMakeRelative(): s5 try %s", convPath.c_str());
 
-			if (!f.open(convPath))
+			if (!testPath(convPath, directory))
 				continue;
 
 			debug(2, "pathMakeRelative(): s5 converted %s -> %s", path.c_str(), convPath.c_str());
@@ -367,12 +395,12 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 		}
 	}
 
-	f.close();
-
-	if (!opened && recursive) {
+	if (!opened && recursive && !directory) {
 		// Hmmm. We couldn't find the path as is.
 		// Let's try to translate file path into 8.3 format
-		if (g_director->getPlatform() == Common::kPlatformWindows && g_director->getVersion() < 5) {
+		Common::String addedexts;
+
+		if (g_director->getPlatform() == Common::kPlatformWindows && g_director->getVersion() < 500) {
 			convPath.clear();
 			const char *ptr = initialPath.c_str();
 			Common::String component;
@@ -394,20 +422,15 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 				ptr++;
 			}
 
-			Common::String convname = convertMacFilename(component.c_str());
-			debug(2, "pathMakeRelative(): s6 %s -> %s%s", initialPath.c_str(), convPath.c_str(), convname.c_str());
+			if (addexts)
+				addedexts = testExtensions(component, initialPath, convPath);
+		} else {
+			if (addexts)
+				addedexts = testExtensions(initialPath, initialPath, convPath);
+		}
 
-			const char *exts[] = { ".MMM", ".DIR", ".DXR", 0 };
-			for (int i = 0; exts[i] && addexts; ++i) {
-				Common::String newpath = convPath + convname + exts[i];
-
-				debug(2, "pathMakeRelative(): s6 try %s", newpath.c_str());
-
-				Common::String res = pathMakeRelative(newpath, false, false);
-
-				if (testPath(res))
-					return res;
-			}
+		if (!addedexts.empty()) {
+			return addedexts;
 		}
 
 		return initialPath;	// Anyway nothing good is happening
@@ -417,6 +440,21 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 		return convPath;
 	else
 		return initialPath;
+}
+
+Common::String testExtensions(Common::String component, Common::String initialPath, Common::String convPath) {
+	const char *exts[] = { ".MMM", ".DIR", ".DXR", 0 };
+	for (int i = 0; exts[i]; ++i) {
+		Common::String newpath = convPath + (strcmp(exts[i], ".MMM") == 0 ?  convertMacFilename(component.c_str()) : component.c_str()) + exts[i];
+
+		debug(2, "pathMakeRelative(): s6 %s -> try %s", initialPath.c_str(), newpath.c_str());
+		Common::String res = pathMakeRelative(newpath, false, false);
+
+		if (testPath(res))
+			return res;
+	}
+
+	return Common::String();
 }
 
 Common::String getFileName(Common::String path) {
@@ -620,6 +658,36 @@ int32 RandomState::perlin(int32 val) {
 	res = ((res << 13) ^ res) - (res >> 21);
 
 	return res;
+}
+
+uint32 readVarInt(Common::SeekableReadStream &stream) {
+	// Shockwave variable-length integer
+	uint32 val = 0;
+	byte b;
+	do {
+		b = stream.readByte();
+		val = (val << 7) | (b & 0x7f); // The 7 least significant bits are appended to the result
+	} while (b >> 7); // If the most significant bit is 1, there's another byte after
+	return val;
+}
+
+Common::SeekableReadStreamEndian *readZlibData(Common::SeekableReadStream &stream, unsigned long len, unsigned long *outLen, bool bigEndian) {
+#ifdef USE_ZLIB
+	byte *in = (byte *)malloc(len);
+	byte *out = (byte *)malloc(*outLen);
+	stream.read(in, len);
+
+	if (!Common::uncompress(out, outLen, in, len)) {
+		free(in);
+		free(out);
+		return nullptr;
+	}
+
+	free(in);
+	return new Common::MemoryReadStreamEndian(out, *outLen, bigEndian, DisposeAfterUse::YES);
+# else
+	return nullptr;
+# endif
 }
 
 } // End of namespace Director

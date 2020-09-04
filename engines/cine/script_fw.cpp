@@ -1555,8 +1555,10 @@ int FWScript::o1_break() {
 		return 0;
 	}
 
-	// Jump over breaks when running only until copy protection check
-	if (runOnlyUntilCopyProtectionCheck) {
+	// Jump over breaks when running only until o1_freePartRange(0, 200) in AUTO00.PRC.
+	// This is used for making sound effects work with Roland MT-32 and AdLib
+	// when loading savegames.
+	if (runOnlyUntilFreePartRangeFirst200) {
 		return 0;
 	}
 
@@ -1640,16 +1642,6 @@ int FWScript::o1_compareGlobalVar() {
 			_compare = kCmpEQ;
 		} else {
 			_compare = compareVars(_globalVars[varIdx], value);
-
-			// Used for bailing out early from AUTO00.PRC before loading a savegame.
-			// Used for making sound effects work using Roland MT-32 and AdLib in
-			// Operation Stealth after loading a savegame. The sound effects are loaded
-			// in AUTO00.PRC using a combination of o2_loadAbs and o2_playSample(1, ...)
-			// before checking if _globalVars[255] == 0.
-			if (varIdx == 255 && value == 0 && runOnlyUntilCopyProtectionCheck) {
-				runOnlyUntilCopyProtectionCheck = false;
-				return o1_endScript();
-			}
 		}
 	}
 
@@ -1671,6 +1663,17 @@ int FWScript::o1_freePartRange() {
 
 	debugC(5, kCineDebugScript, "Line: %d: freePartRange(%d,%d)", _line, startIdx, numIdx);
 	freeAnimDataRange(startIdx, numIdx);
+
+	// Used for bailing out early from AUTO00.PRC before loading a savegame.
+	// Used for making sound effects work using Roland MT-32 and AdLib in
+	// Operation Stealth after loading a savegame. The sound effects are loaded
+	// in AUTO00.PRC using a combination of o2_loadAbs and o2_playSample(1, ...)
+	// before o1_freePartRange(0, 200).
+	if (runOnlyUntilFreePartRangeFirst200 && startIdx == 0 && numIdx == 200) {
+		runOnlyUntilFreePartRangeFirst200 = false;
+		return o1_endScript();
+	}
+
 	return 0;
 }
 

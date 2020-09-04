@@ -31,22 +31,16 @@ namespace Common {
 class Mutex;
 
 /**
- * An pseudo-opaque mutex type. See OSystem::createMutex etc. for more details.
- */
-typedef OSystem::MutexRef MutexRef;
-
-
-/**
  * Auxillary class to (un)lock a mutex on the stack.
  */
 class StackLock {
-	MutexRef _mutex;
+	OSystem::MutexRef _mutex;
 	const char *_mutexName;
 
 	void lock();
 	void unlock();
 public:
-	explicit StackLock(MutexRef mutex, const char *mutexName = nullptr);
+	explicit StackLock(OSystem::MutexRef mutex, const char *mutexName = nullptr);
 	explicit StackLock(const Mutex &mutex, const char *mutexName = nullptr);
 	~StackLock();
 };
@@ -58,7 +52,7 @@ public:
 class Mutex {
 	friend class StackLock;
 
-	MutexRef _mutex;
+	OSystem::MutexRef _mutex;
 
 public:
 	Mutex();

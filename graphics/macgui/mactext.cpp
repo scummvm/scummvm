@@ -37,7 +37,7 @@ namespace Graphics {
 enum {
 	kConScrollStep = 12,
 
-	kCursorHeight = 12
+	kCursorMaxHeight = 100
 };
 
 static void cursorTimerHandler(void *refCon);
@@ -236,10 +236,12 @@ void MacText::init() {
 	_cursorRow = getLineCount() - 1;
 	_cursorCol = getLineCharWidth(_cursorRow);
 
-	_cursorRect = new Common::Rect(0, 0, 1, kCursorHeight);
+	_cursorRect = new Common::Rect(0, 0, 1, 0);
 
-	_cursorSurface = new ManagedSurface(1, kCursorHeight);
+	_cursorSurface = new ManagedSurface(1, kCursorMaxHeight, _wm->_pixelformat);
 	_cursorSurface->clear(_wm->_colorBlack);
+	_cursorSurface2 = new ManagedSurface(1, kCursorMaxHeight, _wm->_pixelformat);
+	_cursorSurface2->clear(_bgcolor);
 
 	reallocSurface();
 	setAlignOffset(_textAlignment);
@@ -253,6 +255,7 @@ MacText::~MacText() {
 	delete _cursorRect;
 	delete _surface;
 	delete _cursorSurface;
+	delete _cursorSurface2;
 }
 
 void MacText::setMaxWidth(int maxWidth) {
@@ -283,7 +286,7 @@ static const Common::U32String::value_type *readHex(uint16 *res, const Common::U
 		char b = (char)*s++;
 
 		*res <<= 4;
-		if (tolower(b) > 'a')
+		if (tolower(b) >= 'a')
 			*res |= tolower(b) - 'a' + 10;
 		else
 			*res |= tolower(b) - '0';
@@ -507,14 +510,14 @@ void MacText::reallocSurface() {
 	//int requiredH = (_text.size() + (_text.size() * 10 + 9) / 10) * lineH
 
 	if (!_surface) {
-		_surface = new ManagedSurface(_textMaxWidth, _textMaxHeight);
+		_surface = new ManagedSurface(_textMaxWidth, _textMaxHeight, _wm->_pixelformat);
 
 		return;
 	}
 
 	if (_surface->w < _textMaxWidth || _surface->h < _textMaxHeight) {
 		// realloc surface and copy old content
-		ManagedSurface *n = new ManagedSurface(_textMaxWidth, _textMaxHeight);
+		ManagedSurface *n = new ManagedSurface(_textMaxWidth, _textMaxHeight, _wm->_pixelformat);
 		n->clear(_bgcolor);
 		n->blitFrom(*_surface, Common::Point(0, 0));
 
@@ -525,6 +528,7 @@ void MacText::reallocSurface() {
 
 void MacText::render() {
 	if (_fullRefresh) {
+		_surface->clear(_bgcolor);
 		render(0, _textLines.size());
 
 		_fullRefresh = false;
@@ -560,9 +564,9 @@ void MacText::render(int from, int to) {
 
 		// TODO: _textMaxWidth, when -1, was not rendering ANY text.
 		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
-			debug(9, "MacText::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d on %dx%d",
+			debug(9, "MacText::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d on %dx%d, color: %d",
 				i, j, xOffset, _textLines[i].y, _textLines[i].height, _textLines[i].chunks[j].text.encode().c_str(),
-				_textLines[i].chunks[j].fontId, _surface->w, _surface->h);
+				_textLines[i].chunks[j].fontId, _surface->w, _surface->h, _textLines[i].chunks[j].fgcolor);
 
 			if (_textLines[i].chunks[j].text.empty())
 				continue;
@@ -854,10 +858,13 @@ void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int 
 
 	if (x + w < _surface->w || y + h < _surface->h)
 		g->fillRect(Common::Rect(x, y, x + w, y + w), _bgcolor);
+
+	_contentIsDirty = false;
+	_cursorDirty = false;
 }
 
 bool MacText::draw(bool forceRedraw) {
-	if (!_contentIsDirty && !_cursorDirty && !forceRedraw)
+	if (!needsRedraw() && !forceRedraw)
 		return false;
 
 	if (!_surface) {
@@ -870,6 +877,10 @@ bool MacText::draw(bool forceRedraw) {
 	_cursorDirty = false;
 
 	Common::Point offset(calculateOffset());
+
+	if (!_cursorState)
+		_composeSurface->blitFrom(*_cursorSurface2, *_cursorRect, Common::Point(_cursorX, _cursorY + offset.y + 1));
+
 	draw(_composeSurface, 0, _scrollPos, _surface->w, _scrollPos + _surface->h, offset.x, offset.y);
 
 	for (int bb = 0; bb < _shadow; bb ++) {
@@ -895,7 +906,7 @@ bool MacText::draw(ManagedSurface *g, bool forceRedraw) {
 	if (!draw(forceRedraw))
 		return false;
 
-	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), Common::Point(_dims.left - 2, _dims.top - 2), kColorGreen2);
+	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), Common::Point(_dims.left - 2, _dims.top - 2), _wm->_colorGreen2);
 
 	return true;
 }
@@ -1131,8 +1142,6 @@ bool MacText::processEvent(Common::Event &event) {
 			return false;
 		}
 
-		int ncol;
-
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_BACKSPACE:
 			if (_cursorRow > 0 || _cursorCol > 0) {
@@ -1154,7 +1163,7 @@ bool MacText::processEvent(Common::Event &event) {
 					return true;
 				}
 				_cursorRow--;
-				_cursorCol = getLineCharWidth(_cursorRow) - 1;
+				_cursorCol = getLineCharWidth(_cursorRow);
 			} else {
 				_cursorCol--;
 			}
@@ -1182,11 +1191,7 @@ bool MacText::processEvent(Common::Event &event) {
 
 			_cursorRow--;
 
-			if (_cursorCol > 0) {
-				getRowCol(_cursorX, _textLines[_cursorRow].y, nullptr, nullptr, nullptr, &ncol);
-				_cursorCol = ncol + 1;
-			}
-
+			getRowCol(_cursorX + 1, _textLines[_cursorRow].y, nullptr, nullptr, &_cursorRow, &_cursorCol);
 			updateCursorPos();
 
 			return true;
@@ -1196,11 +1201,8 @@ bool MacText::processEvent(Common::Event &event) {
 				return true;
 
 			_cursorRow++;
-			if (_cursorCol > 0) {
-				getRowCol(_cursorX, _textLines[_cursorRow].y, nullptr, nullptr, nullptr, &ncol);
-				_cursorCol = ncol + 1;
-			}
 
+			getRowCol(_cursorX + 1, _textLines[_cursorRow].y, nullptr, nullptr, &_cursorRow, &_cursorCol);
 			updateCursorPos();
 
 			return true;
@@ -1679,6 +1681,8 @@ void MacText::updateCursorPos() {
 	if (_textLines.empty()) {
 		_cursorX = _cursorY = 0;
 	} else {
+		undrawCursor();
+
 		_cursorRow = MIN<int>(_cursorRow, _textLines.size() - 1);
 
 		Common::Point offset(calculateOffset());
@@ -1693,12 +1697,24 @@ void MacText::updateCursorPos() {
 		_cursorX = getLineWidth(_cursorRow, false, _cursorCol) + alignOffset + offset.x - 1;
 	}
 
+	int cursorHeight = getLineHeight(_cursorRow);
+
+	if (cursorHeight == 0)
+		cursorHeight = 12;
+
+	// Do not exceed max height and widget height
+	cursorHeight = MIN<int>(MIN<int>(cursorHeight, kCursorMaxHeight), _dims.height());
+
+	_cursorRect->setHeight(cursorHeight);
+
 	_cursorDirty = true;
 }
 
 void MacText::undrawCursor() {
-	_cursorState = false;
 	_cursorDirty = true;
+
+	Common::Point offset(calculateOffset());
+	_composeSurface->blitFrom(*_cursorSurface2, *_cursorRect, Common::Point(_cursorX, _cursorY + offset.y + 1));
 }
 
 } // End of namespace Graphics

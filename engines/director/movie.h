@@ -26,7 +26,7 @@
 namespace Common {
 struct Event;
 class ReadStreamEndian;
-class SeekableSubReadStreamEndian;
+class SeekableReadStreamEndian;
 }
 
 namespace Director {
@@ -40,7 +40,7 @@ class Lingo;
 struct LingoArchive;
 struct LingoEvent;
 class ScriptContext;
-class Stage;
+class Window;
 struct Symbol;
 
 struct InfoEntry {
@@ -49,8 +49,23 @@ struct InfoEntry {
 
 	InfoEntry() { len = 0; data = nullptr; }
 
+	InfoEntry(const InfoEntry &old) {
+		len = old.len;
+		data = (byte *)malloc(len);
+		memcpy(data, old.data, len);
+	}
+
 	~InfoEntry() {
 		free(data);
+		data = nullptr;
+	}
+
+	InfoEntry &operator=(const InfoEntry &old) {
+		free(data);
+		len = old.len;
+		data = (byte *)malloc(len);
+		memcpy(data, old.data, len);
+		return *this;
 	}
 
 	Common::String readString(bool pascal = true) {
@@ -83,17 +98,17 @@ struct InfoEntries {
 
 class Movie {
 public:
-	Movie(Stage *stage);
+	Movie(Window *window);
 	~Movie();
 
 	static Common::Rect readRect(Common::ReadStreamEndian &stream);
-	static InfoEntries loadInfoEntries(Common::SeekableSubReadStreamEndian &stream);
+	static InfoEntries loadInfoEntries(Common::SeekableReadStreamEndian &stream);
 
 	bool loadArchive();
 	void setArchive(Archive *archive);
 	Archive *getArchive() const { return _movieArchive; };
 	Common::String getMacName() const { return _macName; }
-	Stage *getStage() const { return _stage; }
+	Window *getWindow() const { return _window; }
 	DirectorEngine *getVM() const { return _vm; }
 	Cast *getCast() const { return _cast; }
 	Cast *getSharedCast() const { return _sharedCast; }
@@ -123,7 +138,7 @@ public:
 	void registerEvent(LEvent event, int targetId = 0);
 
 private:
-	void loadFileInfo(Common::SeekableSubReadStreamEndian &stream);
+	void loadFileInfo(Common::SeekableReadStreamEndian &stream);
 
 	void queueSpriteEvent(LEvent event, int eventId, int spriteId);
 	void queueFrameEvent(LEvent event, int eventId);
@@ -140,9 +155,11 @@ public:
 	Common::Point _lastClickPos;
 	uint32 _lastKeyTime;
 	uint32 _lastTimerReset;
-	uint16 _stageColor;
+	uint32 _stageColor;
 	Cast *_sharedCast;
 	bool _allowOutdatedLingo;
+
+	bool _videoPlayback;
 
 	int _nextEventId;
 	Common::Queue<LingoEvent> _eventQueue;
@@ -152,7 +169,7 @@ public:
 	byte _keyFlags;
 
 private:
-	Stage *_stage;
+	Window *_window;
 	DirectorEngine *_vm;
 	Lingo *_lingo;
 	Cast *_cast;

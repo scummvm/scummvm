@@ -44,6 +44,7 @@
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "backends/events/default/default-events.h"
+#include "backends/mixer/null/null-mixer.h"
 #include "backends/mutex/null/null-mutex.h"
 #include "backends/graphics/null/null-graphics.h"
 #include "audio/mixer_intern.h"
@@ -65,14 +66,13 @@
 	#include "backends/fs/windows/windows-fs-factory.h"
 #endif
 
-class OSystem_NULL : public ModularBackend, Common::EventSource {
+class OSystem_NULL : public ModularMutexBackend, public ModularMixerBackend, public ModularGraphicsBackend, Common::EventSource {
 public:
 	OSystem_NULL();
 	virtual ~OSystem_NULL();
 
 	virtual void initBackend();
 
-	virtual Common::EventSource *getDefaultEventSource() { return this; }
 	virtual bool pollEvent(Common::Event &event);
 
 	virtual uint32 getMillis(bool skipRecord = false);
@@ -83,8 +83,8 @@ public:
 
 	virtual void logMessage(LogMessageType::Type type, const char *message);
 
-#ifdef POSIX
 private:
+#ifdef POSIX
 	timeval _startTime;
 #endif
 };
@@ -131,19 +131,16 @@ void OSystem_NULL::initBackend() {
 	_eventManager = new DefaultEventManager(this);
 	_savefileManager = new DefaultSaveFileManager();
 	_graphicsManager = new NullGraphicsManager();
-	_mixer = new Audio::MixerImpl(22050);
+	_mixerManager = new NullMixerManager();
+	// Setup and start mixer
+	_mixerManager->init();
 
-	((Audio::MixerImpl *)_mixer)->setReady(false);
-
-	// Note that the mixer is useless this way; it needs to be hooked
-	// into the system somehow to be functional. Of course, can't do
-	// that in a NULL backend :).
-
-	ModularBackend::initBackend();
+	BaseBackend::initBackend();
 }
 
 bool OSystem_NULL::pollEvent(Common::Event &event) {
 	((DefaultTimerManager *)getTimerManager())->checkTimers();
+	((NullMixerManager *)_mixerManager)->update(1);
 
 #ifdef POSIX
 	if (intReceived) {

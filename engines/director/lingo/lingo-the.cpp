@@ -31,7 +31,7 @@
 #include "director/sound.h"
 #include "director/sprite.h"
 #include "director/score.h"
-#include "director/stage.h"
+#include "director/window.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-code.h"
@@ -43,237 +43,244 @@ namespace Director {
 class Sprite;
 
 TheEntity entities[] = {
-	{ kTheActorList,		"actorList",		false, 4 },	//			D4 property
-	{ kTheBeepOn,			"beepOn",			false, 2 },	// D2 p
-	{ kTheButtonStyle,		"buttonStyle",		false, 2 },	// D2 p
-	{ kTheCast,				"cast",				true,  2 },	// D2
-	{ kTheCastMembers,		"castmembers",		false, 3 },	//		 D3
-	{ kTheCenterStage,		"centerStage",		false, 2 },	// D2 p
-	{ kTheCheckBoxAccess,	"checkBoxAccess",	false, 2 },	// D2 p
-	{ kTheCheckBoxType,		"checkBoxType",		false, 2 },	// D2 p
-	{ kTheClickLoc,			"clickLoc",			false, 4 },	// 			D4 function
-	{ kTheClickOn,			"clickOn",			false, 2 },	// D2 f
-	{ kTheColorDepth,		"colorDepth",		false, 2 },	// D2 p
-	{ kTheColorQD,			"colorQD",			false, 2 },	// D2 f
-	{ kTheCommandDown,		"commandDown",		false, 2 },	// D2 f
-	{ kTheControlDown,		"controlDown",		false, 2 },	// D2 f
-	{ kTheDate,				"date",				false, 3 },	//		D3 f
-	{ kTheDoubleClick,		"doubleClick",		false, 2 },	// D2 f
-	{ kTheExitLock,			"exitLock",			false, 2 },	// D2 p
-	{ kTheField,			"field",			true,  3 },	//		D3
-	{ kTheFixStageSize,		"fixStageSize",		false, 2 },	// D2 p
-	{ kTheFloatPrecision,	"floatPrecision",	false, 3 },	//		D3 p
-	{ kTheFrame,			"frame",			false, 2 },	// D2 f
-	{ kTheFrameLabel,		"frameLabel",		false, 4 },	//			D4 p
-	{ kTheFrameScript,		"frameScript",		false, 4 },	//			D4 p
-	{ kTheFramePalette,		"framePalette",		false, 4 },	//			D4 p
-	{ kTheFrameTempo,		"frameTempo",		false, 4 },	//			D4 f
-	{ kTheFreeBlock,		"freeBlock",		false, 2 },	// D2 f
-	{ kTheFreeBytes,		"freeBytes",		false, 2 },	// D2 f
-	{ kTheFullColorPermit,	"fullColorPermit",	false, 2 },	// D2 p
-	{ kTheImageDirect,		"imageDirect",		false, 2 },	// D2 p
-	{ kTheItemDelimiter,	"itemDelimiter",	false, 4 },	//			D4 p
-	{ kTheKey,				"key",				false, 2 },	// D2 f
-	{ kTheKeyCode,			"keyCode",			false, 2 },	// D2 f
-	{ kTheKeyDownScript,	"keyDownScript",	false, 2 },	// D2 p
-	{ kTheKeyUpScript,		"keyUpScript",		false, 4 },	//			D4 p
-	{ kTheLabelList,		"labelList",		false, 3 },	//		D3 f
-	{ kTheLastClick,		"lastClick",		false, 2 },	// D2 f
-	{ kTheLastEvent,		"lastEvent",		false, 2 },	// D2 f
-	{ kTheLastFrame,		"lastFrame",		false, 4 },	//			D4 p
-	{ kTheLastKey,			"lastKey",			false, 2 },	// D2 f
-	{ kTheLastRoll,			"lastRoll",			false, 2 },	// D2 f
-	{ kTheMachineType,		"machineType",		false, 2 },	// D2 f
-	{ kTheMaxInteger,		"maxInteger",		false, 3 },	//		D3.1 f
-	{ kTheMemorySize,		"memorySize",		false, 2 },	// D2 f
-	{ kTheMenu,				"menu",				true,  3 },	//		D3 p
-	{ kTheMenuItem,			"menuitem",			true,  3 },	//		D3 p
-	{ kTheMenuItems,		"menuitems",		false, 3 },	//		D3 f
-	{ kTheMouseCast,		"mouseCast",		false, 3 },	//		D3 f
-	{ kTheMouseChar,		"mouseChar",		false, 3 },	//		D3 f
-	{ kTheMouseDown,		"mouseDown",		false, 2 },	// D2 f
-	{ kTheMouseDownScript,  "mouseDownScript",	false, 2 },	// D2 p
-	{ kTheMouseH,			"mouseH",			false, 2 },	// D2 f
-	{ kTheMouseItem,		"mouseItem",		false, 3 },	//		D3 f
-	{ kTheMouseLine,		"mouseLine",		false, 3 },	//		D3 f
-	{ kTheMouseUp,			"mouseUp",			false, 2 },	// D2 f
-	{ kTheMouseUpScript,  	"mouseUpScript",	false, 2 },	// D2 p
-	{ kTheMouseV,			"mouseV",			false, 2 },	// D2 f
-	{ kTheMouseWord,		"mouseWord",		false, 3 },	//		D3 f
-	{ kTheMovie,			"movie",			false, 2 },	// D2 f
-	{ kTheMovieFileFreeSize,"movieFileFreeSize",false, 4 },	//			D4 f
-	{ kTheMovieFileSize,	"movieFileSize",	false, 4 },	//			D4 f
-	{ kTheMovieName,		"movieName",		false, 4 },	//			D4 f
-	{ kTheMoviePath,		"moviePath",		false, 4 },	//			D4 f
-	{ kTheMultiSound,		"multiSound",		false, 3 },	//		D3.1 f
-	{ kTheOptionDown,		"optionDown",		false, 2 },	// D2 f
-	{ kTheParamCount,		"paramCount",		false, 4 },	//			D4 f
-	{ kThePathName,			"pathName",			false, 2 },	// D2 f
-	{ kThePauseState,		"pauseState",		false, 2 },	// D2 f
-	{ kThePerFrameHook,		"perFrameHook",		false, 2 },	// D2 p
-	{ kThePreloadEventAbort,"preloadEventAbort",false, 4 },	//			D4 p
-	{ kThePreLoadRAM,		"preLoadRAM",		false, 4 },	//			D4 p
-	{ kThePi,				"pi",				false, 4 },	//			D4 f
-	{ kTheQuickTimePresent,	"quickTimePresent",	false, 3 },	//		D3.1 f
-	{ kTheRandomSeed,		"randomSeed",		false, 4 },	//			D4 p
-	{ kTheResult,			"result",			false, 2 },	// D2 f
-	{ kTheRightMouseDown,	"rightMouseDown",	false, 5 },	//					D5 f
-	{ kTheRightMouseUp,		"rightMouseUp",		false, 5 },	//					D5 f
-	{ kTheRomanLingo,		"romanLingo",		false, 3 },	//		D3.1 p
-	{ kTheSearchCurrentFolder,"searchCurrentFolder",false,4 },//		D4 f
-	{ kTheSearchPath,		"searchPath",		false, 4 },	//			D4 f
-	{ kTheSelection,		"selection",		false, 2 },	// D2 f
-	{ kTheSelEnd,			"selEnd",			false, 2 },	// D2 p
-	{ kTheSelStart,			"selStart",			false, 2 },	// D2 p
-	{ kTheShiftDown,		"shiftDown",		false, 2 },	// D2 f
-	{ kTheSoundEnabled,		"soundEnabled",		false, 2 },	// D2 p
-	{ kTheSoundEntity,		"sound",			true,  3 },	// 		D3 p
-	{ kTheSoundLevel,		"soundLevel",		false, 2 },	// D2 p
-	{ kTheSprite,			"sprite",			true,  2 },	// 			D4 p
-	{ kTheStage,			"stage",			false, 4 },	//			D4 p
-	{ kTheStageBottom,		"stageBottom",		false, 2 },	// D2 f
-	{ kTheStageColor,		"stageColor",		false, 3 },	//		D3 p
-	{ kTheStageLeft,		"stageLeft",		false, 2 },	// D2 f
-	{ kTheStageRight,		"stageRight",		false, 2 },	// D2 f
-	{ kTheStageTop,			"stageTop",			false, 2 },	// D2 f
-	{ kTheStillDown,		"stillDown",		false, 2 },	// D2 f
-	{ kTheSwitchColorDepth,	"switchColorDepth",	false, 2 },	// D2 p
-	{ kTheTicks,			"ticks",			false, 2 },	// D2 f
-	{ kTheTime,				"time",				false, 3 },	// 		D3 f
-	{ kTheTimeoutKeyDown,	"timeoutKeyDown",	false, 2 },	// D2 p
-	{ kTheTimeoutLapsed,	"timeoutLapsed",	false, 2 },	// D2 p
-	{ kTheTimeoutLength,	"timeoutLength",	false, 2 },	// D2 p
-	{ kTheTimeoutMouse,		"timeoutMouse",		false, 2 },	// D2 p
-	{ kTheTimeoutPlay,		"timeoutPlay",		false, 2 },	// D2 p
-	{ kTheTimeoutScript,	"timeoutScript",	false, 2 },	// D2 p
-	{ kTheTimer,			"timer",			false, 2 },	// D2 p
-	{ kTheTrace,			"trace",			false, 4 },	//			D4 p
-	{ kTheTraceLoad,		"traceLoad",		false, 4 },	//			D4 p
-	{ kTheTraceLogFile,		"traceLogFile",		false, 4 },	//			D4 p
-	{ kTheUpdateMovieEnabled,"updateMovieEnabled",false,4 },//			D4 p
-	{ kTheWindow,			"window",			true,  4 },	//			D4
-	{ kTheWindowList,		"windowList",		false, 4 },	//			D4 p
+	{ kTheActorList,		"actorList",		false, 400 },	//			D4 property
+	{ kTheBeepOn,			"beepOn",			false, 200 },	// D2 p
+	{ kTheButtonStyle,		"buttonStyle",		false, 200 },	// D2 p
+	{ kTheCast,				"cast",				true,  200 },	// D2
+	{ kTheCastMembers,		"castmembers",		false, 300 },	//		 D3
+	{ kTheCenterStage,		"centerStage",		false, 200 },	// D2 p
+	{ kTheCheckBoxAccess,	"checkBoxAccess",	false, 200 },	// D2 p
+	{ kTheCheckBoxType,		"checkBoxType",		false, 200 },	// D2 p
+	{ kTheClickLoc,			"clickLoc",			false, 400 },	// 			D4 function
+	{ kTheClickOn,			"clickOn",			false, 200 },	// D2 f
+	{ kTheColorDepth,		"colorDepth",		false, 200 },	// D2 p
+	{ kTheColorQD,			"colorQD",			false, 200 },	// D2 f
+	{ kTheCommandDown,		"commandDown",		false, 200 },	// D2 f
+	{ kTheControlDown,		"controlDown",		false, 200 },	// D2 f
+	{ kTheDate,				"date",				false, 300 },	//		D3 f
+	{ kTheDoubleClick,		"doubleClick",		false, 200 },	// D2 f
+	{ kTheExitLock,			"exitLock",			false, 200 },	// D2 p
+	{ kTheField,			"field",			true,  300 },	//		D3
+	{ kTheFixStageSize,		"fixStageSize",		false, 200 },	// D2 p
+	{ kTheFloatPrecision,	"floatPrecision",	false, 300 },	//		D3 p
+	{ kTheFrame,			"frame",			false, 200 },	// D2 f
+	{ kTheFrameLabel,		"frameLabel",		false, 400 },	//			D4 p
+	{ kTheFrameScript,		"frameScript",		false, 400 },	//			D4 p
+	{ kTheFramePalette,		"framePalette",		false, 400 },	//			D4 p
+	{ kTheFrameTempo,		"frameTempo",		false, 400 },	//			D4 f
+	{ kTheFreeBlock,		"freeBlock",		false, 200 },	// D2 f
+	{ kTheFreeBytes,		"freeBytes",		false, 200 },	// D2 f
+	{ kTheFullColorPermit,	"fullColorPermit",	false, 200 },	// D2 p
+	{ kTheImageDirect,		"imageDirect",		false, 200 },	// D2 p
+	{ kTheItemDelimiter,	"itemDelimiter",	false, 400 },	//			D4 p
+	{ kTheKey,				"key",				false, 200 },	// D2 f
+	{ kTheKeyCode,			"keyCode",			false, 200 },	// D2 f
+	{ kTheKeyDownScript,	"keyDownScript",	false, 200 },	// D2 p
+	{ kTheKeyUpScript,		"keyUpScript",		false, 400 },	//			D4 p
+	{ kTheLabelList,		"labelList",		false, 300 },	//		D3 f
+	{ kTheLastClick,		"lastClick",		false, 200 },	// D2 f
+	{ kTheLastEvent,		"lastEvent",		false, 200 },	// D2 f
+	{ kTheLastFrame,		"lastFrame",		false, 400 },	//			D4 p
+	{ kTheLastKey,			"lastKey",			false, 200 },	// D2 f
+	{ kTheLastRoll,			"lastRoll",			false, 200 },	// D2 f
+	{ kTheMachineType,		"machineType",		false, 200 },	// D2 f
+	{ kTheMaxInteger,		"maxInteger",		false, 300 },	//		D3.1 f
+	{ kTheMemorySize,		"memorySize",		false, 200 },	// D2 f
+	{ kTheMenu,				"menu",				true,  300 },	//		D3 p
+	{ kTheMenuItem,			"menuitem",			true,  300 },	//		D3 p
+	{ kTheMenuItems,		"menuitems",		false, 300 },	//		D3 f
+	{ kTheMouseCast,		"mouseCast",		false, 300 },	//		D3 f
+	{ kTheMouseChar,		"mouseChar",		false, 300 },	//		D3 f
+	{ kTheMouseDown,		"mouseDown",		false, 200 },	// D2 f
+	{ kTheMouseDownScript,  "mouseDownScript",	false, 200 },	// D2 p
+	{ kTheMouseH,			"mouseH",			false, 200 },	// D2 f
+	{ kTheMouseItem,		"mouseItem",		false, 300 },	//		D3 f
+	{ kTheMouseLine,		"mouseLine",		false, 300 },	//		D3 f
+	{ kTheMouseUp,			"mouseUp",			false, 200 },	// D2 f
+	{ kTheMouseUpScript,  	"mouseUpScript",	false, 200 },	// D2 p
+	{ kTheMouseV,			"mouseV",			false, 200 },	// D2 f
+	{ kTheMouseWord,		"mouseWord",		false, 300 },	//		D3 f
+	{ kTheMovie,			"movie",			false, 200 },	// D2 f
+	{ kTheMovieFileFreeSize,"movieFileFreeSize",false, 400 },	//			D4 f
+	{ kTheMovieFileSize,	"movieFileSize",	false, 400 },	//			D4 f
+	{ kTheMovieName,		"movieName",		false, 400 },	//			D4 f
+	{ kTheMoviePath,		"moviePath",		false, 400 },	//			D4 f
+	{ kTheMultiSound,		"multiSound",		false, 300 },	//		D3.1 f
+	{ kTheOptionDown,		"optionDown",		false, 200 },	// D2 f
+	{ kTheParamCount,		"paramCount",		false, 400 },	//			D4 f
+	{ kThePathName,			"pathName",			false, 200 },	// D2 f
+	{ kThePauseState,		"pauseState",		false, 200 },	// D2 f
+	{ kThePerFrameHook,		"perFrameHook",		false, 200 },	// D2 p
+	{ kThePreloadEventAbort,"preloadEventAbort",false, 400 },	//			D4 p
+	{ kThePreLoadRAM,		"preLoadRAM",		false, 400 },	//			D4 p
+	{ kThePi,				"pi",				false, 400 },	//			D4 f
+	{ kTheQuickTimePresent,	"quickTimePresent",	false, 300 },	//		D3.1 f
+	{ kTheRandomSeed,		"randomSeed",		false, 400 },	//			D4 p
+	{ kTheResult,			"result",			false, 200 },	// D2 f
+	{ kTheRightMouseDown,	"rightMouseDown",	false, 500 },	//					D5 f
+	{ kTheRightMouseUp,		"rightMouseUp",		false, 500 },	//					D5 f
+	{ kTheRomanLingo,		"romanLingo",		false, 300 },	//		D3.1 p
+	{ kTheScummvmVersion,	"scummvmVersion",	false, 200 }, // 					ScummVM only
+	{ kTheSearchCurrentFolder,"searchCurrentFolder",false,400 },//			D4 f
+	{ kTheSearchPath,		"searchPath",		false, 400 },	//			D4 f
+	{ kTheSelection,		"selection",		false, 200 },	// D2 f
+	{ kTheSelEnd,			"selEnd",			false, 200 },	// D2 p
+	{ kTheSelStart,			"selStart",			false, 200 },	// D2 p
+	{ kTheShiftDown,		"shiftDown",		false, 200 },	// D2 f
+	{ kTheSoundEnabled,		"soundEnabled",		false, 200 },	// D2 p
+	{ kTheSoundEntity,		"sound",			true,  300 },	// 		D3 p
+	{ kTheSoundLevel,		"soundLevel",		false, 200 },	// D2 p
+	{ kTheSprite,			"sprite",			true,  200 },	// 			D4 p
+	{ kTheStage,			"stage",			false, 400 },	//			D4 p
+	{ kTheStageBottom,		"stageBottom",		false, 200 },	// D2 f
+	{ kTheStageColor,		"stageColor",		false, 300 },	//		D3 p
+	{ kTheStageLeft,		"stageLeft",		false, 200 },	// D2 f
+	{ kTheStageRight,		"stageRight",		false, 200 },	// D2 f
+	{ kTheStageTop,			"stageTop",			false, 200 },	// D2 f
+	{ kTheStillDown,		"stillDown",		false, 200 },	// D2 f
+	{ kTheSwitchColorDepth,	"switchColorDepth",	false, 200 },	// D2 p
+	{ kTheTicks,			"ticks",			false, 200 },	// D2 f
+	{ kTheTime,				"time",				false, 300 },	// 		D3 f
+	{ kTheTimeoutKeyDown,	"timeoutKeyDown",	false, 200 },	// D2 p
+	{ kTheTimeoutLapsed,	"timeoutLapsed",	false, 200 },	// D2 p
+	{ kTheTimeoutLength,	"timeoutLength",	false, 200 },	// D2 p
+	{ kTheTimeoutMouse,		"timeoutMouse",		false, 200 },	// D2 p
+	{ kTheTimeoutPlay,		"timeoutPlay",		false, 200 },	// D2 p
+	{ kTheTimeoutScript,	"timeoutScript",	false, 200 },	// D2 p
+	{ kTheTimer,			"timer",			false, 200 },	// D2 p
+	{ kTheTrace,			"trace",			false, 400 },	//			D4 p
+	{ kTheTraceLoad,		"traceLoad",		false, 400 },	//			D4 p
+	{ kTheTraceLogFile,		"traceLogFile",		false, 400 },	//			D4 p
+	{ kTheUpdateMovieEnabled,"updateMovieEnabled",false,400 },//			D4 p
+	{ kTheWindow,			"window",			true,  400 },	//			D4
+	{ kTheWindowList,		"windowList",		false, 400 },	//			D4 p
 	{ kTheNOEntity, NULL, false, 0 }
 };
 
 TheEntityField fields[] = {
-	{ kTheSprite,	"backColor",	kTheBackColor,	2 },// D2 p
-	{ kTheSprite,	"blend",		kTheBlend,		4 },//				D4 p
-	{ kTheSprite,	"bottom",		kTheBottom,		2 },// D2 p
-	{ kTheSprite,	"castNum",		kTheCastNum,	2 },// D2 p
-	{ kTheSprite,	"constraint",	kTheConstraint, 2 },// D2 p
-	{ kTheSprite,	"cursor",		kTheCursor,		2 },// D2 p
-	{ kTheSprite,	"editableText", kTheEditableText,4 },//				D4 p
-	{ kTheSprite,	"foreColor",	kTheForeColor,	2 },// D2 p
-	{ kTheSprite,	"height",		kTheHeight,		2 },// D2 p
-	{ kTheSprite,	"immediate",	kTheImmediate,	2 },// D2 p
-	{ kTheSprite,	"ink",			kTheInk,		2 },// D2 p
-	{ kTheSprite,	"left",			kTheLeft,		2 },// D2 p
-	{ kTheSprite,	"lineSize",		kTheLineSize,	2 },// D2 p
-	{ kTheSprite,	"loc",			kTheLoc,		4 },//				D4 p ???
-	{ kTheSprite,	"locH",			kTheLocH,		2 },// D2 p
-	{ kTheSprite,	"locV",			kTheLocV,		2 },// D2 p
-	{ kTheSprite,	"moveableSprite",kTheMoveableSprite,4 },//			D4 p
-	{ kTheSprite,	"pattern",		kThePattern,	2 },// D2 p
-	{ kTheSprite,	"puppet",		kThePuppet,		2 },// D2 p
-	{ kTheSprite,	"rect",			kTheRect,		4 },//				D4 p ???
-	{ kTheSprite,	"right",		kTheRight,		2 },// D2 p
-	{ kTheSprite,	"scoreColor",	kTheScoreColor,	4 },//				D4 p
-	{ kTheSprite,	"scriptNum",	kTheScriptNum,	4 },//				D4 p
-	{ kTheSprite,	"stretch",		kTheStretch,		2 },// D2 p
-	{ kTheSprite,	"top",			kTheTop,		2 },// D2 p
-	{ kTheSprite,	"trails",		kTheTrails,		3 },//		D3.1 p
-	{ kTheSprite,	"type",			kTheType,		2 },// D2 p
-	{ kTheSprite,	"visibility",	kTheVisibility,	3 },//		D3.1 p
-	{ kTheSprite,	"visible",		kTheVisible,	4 },//				D4 p
-	{ kTheSprite,	"width",		kTheWidth,		2 },// D2 p
+	{ kTheSprite,	"backColor",	kTheBackColor,	200 },// D2 p
+	{ kTheSprite,	"blend",		kTheBlend,		400 },//				D4 p
+	{ kTheSprite,	"bottom",		kTheBottom,		200 },// D2 p
+	{ kTheSprite,	"castNum",		kTheCastNum,	200 },// D2 p
+	{ kTheSprite,	"constraint",	kTheConstraint, 200 },// D2 p
+	{ kTheSprite,	"cursor",		kTheCursor,		200 },// D2 p
+	{ kTheSprite,	"editableText", kTheEditableText,400 },//				D4 p
+	{ kTheSprite,	"foreColor",	kTheForeColor,	200 },// D2 p
+	{ kTheSprite,	"height",		kTheHeight,		200 },// D2 p
+	{ kTheSprite,	"immediate",	kTheImmediate,	200 },// D2 p
+	{ kTheSprite,	"ink",			kTheInk,		200 },// D2 p
+	{ kTheSprite,	"left",			kTheLeft,		200 },// D2 p
+	{ kTheSprite,	"lineSize",		kTheLineSize,	200 },// D2 p
+	{ kTheSprite,	"loc",			kTheLoc,		400 },//				D4 p ???
+	{ kTheSprite,	"locH",			kTheLocH,		200 },// D2 p
+	{ kTheSprite,	"locV",			kTheLocV,		200 },// D2 p
+	{ kTheSprite,	"moveableSprite",kTheMoveableSprite,400 },//			D4 p
+	{ kTheSprite,	"pattern",		kThePattern,	200 },// D2 p
+	{ kTheSprite,	"puppet",		kThePuppet,		200 },// D2 p
+	{ kTheSprite,	"rect",			kTheRect,		400 },//				D4 p ???
+	{ kTheSprite,	"right",		kTheRight,		200 },// D2 p
+	{ kTheSprite,	"scoreColor",	kTheScoreColor,	400 },//				D4 p
+	{ kTheSprite,	"scriptNum",	kTheScriptNum,	400 },//				D4 p
+	{ kTheSprite,	"stretch",		kTheStretch,		200 },// D2 p
+	{ kTheSprite,	"top",			kTheTop,		200 },// D2 p
+	{ kTheSprite,	"trails",		kTheTrails,		300 },//		D3.1 p
+	{ kTheSprite,	"type",			kTheType,		200 },// D2 p
+	{ kTheSprite,	"visibility",	kTheVisibility,	300 },//		D3.1 p
+	{ kTheSprite,	"visible",		kTheVisible,	400 },//				D4 p
+	{ kTheSprite,	"width",		kTheWidth,		200 },// D2 p
 
 	// Common cast fields
-	{ kTheCast,		"castType",		kTheCastType,	4 },//				D4 p
-	{ kTheCast,		"filename",		kTheFileName,	4 },//				D4 p
-	{ kTheCast,		"height",		kTheHeight,		4 },//				D4 p
-	{ kTheCast,		"loaded",		kTheLoaded,		4 },//				D4 p
-	{ kTheCast,		"modified",		kTheModified,	4 },//				D4 p
-	{ kTheCast,		"name",			kTheName,		3 },//		D3 p
-	{ kTheCast,		"number",		kTheNumber,		3 },//		D3 p
-	{ kTheCast,		"rect",			kTheRect,		4 },//				D4 p
-	{ kTheCast,		"purgePriority",kThePurgePriority,4 },//			D4 p // 0 Never purge, 1 Purge Last, 2 Purge next, 2 Purge normal
-	{ kTheCast,		"scriptText",	kTheScriptText,	4 },//				D4 p
-	{ kTheCast,		"width",		kTheWidth,		4 },//				D4 p
-
-	// Shape fields
-	{ kTheCast,		"backColor",	kTheBackColor,	4 },//				D4 p
-	{ kTheCast,		"foreColor",	kTheForeColor,	4 },//				D4 p
+	{ kTheCast,		"backColor",	kTheBackColor,	400 },//				D4 p
+	{ kTheCast,		"castType",		kTheCastType,	400 },//				D4 p
+	{ kTheCast,		"filename",		kTheFileName,	400 },//				D4 p
+	{ kTheCast,		"foreColor",	kTheForeColor,	400 },//				D4 p
+	{ kTheCast,		"height",		kTheHeight,		400 },//				D4 p
+	{ kTheCast,		"loaded",		kTheLoaded,		400 },//				D4 p
+	{ kTheCast,		"modified",		kTheModified,	400 },//				D4 p
+	{ kTheCast,		"name",			kTheName,		300 },//		D3 p
+	{ kTheCast,		"number",		kTheNumber,		300 },//		D3 p
+	{ kTheCast,		"rect",			kTheRect,		400 },//				D4 p
+	{ kTheCast,		"purgePriority",kThePurgePriority,400 },//				D4 p // 0 Never purge, 1 Purge Last, 2 Purge next, 2 Purge normal
+	{ kTheCast,		"scriptText",	kTheScriptText,	400 },//				D4 p
+	{ kTheCast,		"size",			kTheSize,		300 },//		D3.1 p
+	{ kTheCast,		"width",		kTheWidth,		400 },//				D4 p
 
 	// Digital video fields
-	{ kTheCast,		"center",		kTheCenter,		4 },//				D4 p
-	{ kTheCast,		"controller",	kTheController,	3 },//			D3.1 p
-	{ kTheCast,		"crop",			kTheCrop,		4 },//				D4 p
-	{ kTheCast,		"directToStage",kTheDirectToStage,3 },//		D3.1 p
-	{ kTheCast,		"duration",		kTheDuration,	3 },//			D3.1 p
-	{ kTheCast,		"frameRate",	kTheFrameRate,	4 },//				D4 p
-	{ kTheCast,		"loop",			kTheLoop,		3 },//			D3.1 p
-	{ kTheSprite,	"movieRate",	kTheMovieRate,	3 },//			D3.1 P
-	{ kTheSprite,	"movieTime",	kTheMovieTime,	3 },//			D3.1 P
-	{ kTheCast,		"pausedAtStart",kThePausedAtStart,4 },//			D4 p
-	{ kTheCast,		"preLoad",		kThePreLoad,	3 },//			D3.1 p
-	{ kTheCast,		"sound",		kTheSound,		3 },//			D3.1 p // 0-1 off-on
-	{ kTheSprite,	"startTime",	kTheStartTime,	3 },//			D3.1 p
-	{ kTheSprite,	"stopTime",		kTheStopTime,	3 },//			D3.1 p
-	{ kTheCast,		"video",		kTheVideo,		4 },//				D4 p
-	{ kTheSprite,	"volume",		kTheVolume,		3 },//		D3.1 p
+	{ kTheCast,		"center",		kTheCenter,		400 },//				D4 p
+	{ kTheCast,		"controller",	kTheController,	300 },//		D3.1 p
+	{ kTheCast,		"crop",			kTheCrop,		400 },//				D4 p
+	{ kTheCast,		"directToStage",kTheDirectToStage,300 },//		D3.1 p
+	{ kTheCast,		"duration",		kTheDuration,	300 },//		D3.1 p
+	{ kTheCast,		"frameRate",	kTheFrameRate,	400 },//				D4 p
+	{ kTheCast,		"loop",			kTheLoop,		300 },//		D3.1 p
+	{ kTheSprite,	"movieRate",	kTheMovieRate,	300 },//		D3.1 P
+	{ kTheSprite,	"movieTime",	kTheMovieTime,	300 },//		D3.1 P
+	{ kTheCast,		"pausedAtStart",kThePausedAtStart,400 },//				D4 p
+	{ kTheCast,		"preLoad",		kThePreLoad,	300 },//		D3.1 p
+	{ kTheCast,		"sound",		kTheSound,		300 },//		D3.1 p // 0-1 off-on
+	{ kTheSprite,	"startTime",	kTheStartTime,	300 },//		D3.1 p
+	{ kTheSprite,	"stopTime",		kTheStopTime,	300 },//		D3.1 p
+	{ kTheCast,		"video",		kTheVideo,		400 },//				D4 p
+	{ kTheSprite,	"volume",		kTheVolume,		300 },//		D3.1 p
 
 	// Bitmap fields
-	{ kTheCast,		"depth",		kTheDepth,		4 },//				D4 p
-	{ kTheCast,		"regPoint",		kTheRegPoint,	4 },//				D4 p
-	{ kTheCast,		"palette",		kThePalette,	4 },//				D4 p
-	{ kTheCast,		"picture",		kThePicture,	3 },//		D3 p
+	{ kTheCast,		"depth",		kTheDepth,		400 },//				D4 p
+	{ kTheCast,		"regPoint",		kTheRegPoint,	400 },//				D4 p
+	{ kTheCast,		"palette",		kThePalette,	400 },//				D4 p
+	{ kTheCast,		"picture",		kThePicture,	300 },//		D3 p
 
 	// TextCastMember fields
-	{ kTheCast,		"hilite",		kTheHilite,		2 },// D2 p
-	{ kTheCast,		"size",			kTheSize,		3 },//		D3.1 p
-	{ kTheCast,		"text",			kTheText,		2 },// D2 p
+	{ kTheCast,		"hilite",		kTheHilite,		200 },// D2 p
+	{ kTheCast,		"text",			kTheText,		200 },// D2 p
+	{ kTheCast,		"textAlign",	kTheTextAlign,	300 },//		D3 p
+	{ kTheCast,		"textFont",		kTheTextFont,	300 },//		D3 p
+	{ kTheCast,		"textHeight",	kTheTextHeight,	300 },//		D3 p
+	{ kTheCast,		"textSize",		kTheTextSize,	300 },//		D3 p
+	{ kTheCast,		"textStyle",	kTheTextStyle,	300 },//		D3 p
 
 	// Field fields
-	{ kTheField,	"text",			kTheText,		3 },// 		D3 p undocumented
-	{ kTheField,	"textAlign",	kTheTextAlign,	3 },//		D3 p
-	{ kTheField,	"textFont",		kTheTextFont,	3 },//		D3 p
-	{ kTheField,	"textHeight",	kTheTextHeight,	3 },//		D3 p
-	{ kTheField,	"textSize",		kTheTextSize,	3 },//		D3 p
-	{ kTheField,	"textStyle",	kTheTextStyle,	3 },//		D3 p
+	{ kTheField,	"foreColor",	kTheForeColor,	400 },//				D4 p
+	{ kTheField,	"hilite",		kTheHilite,		200 },// D2 p
+	{ kTheField,	"name",			kTheName,		300 },//		D3 p
+	{ kTheField,	"text",			kTheText,		200 },// D2 p
+	{ kTheField,	"textAlign",	kTheTextAlign,	300 },//		D3 p
+	{ kTheField,	"textFont",		kTheTextFont,	300 },//		D3 p
+	{ kTheField,	"textHeight",	kTheTextHeight,	300 },//		D3 p
+	{ kTheField,	"textSize",		kTheTextSize,	300 },//		D3 p
+	{ kTheField,	"textStyle",	kTheTextStyle,	300 },//		D3 p
 
-	{ kTheWindow,	"drawRect",		kTheDrawRect,	4 },//				D4 p
-	{ kTheWindow,	"fileName",		kTheFileName,	4 },//				D4 p
-	{ kTheWindow,	"modal",		kTheModal,		4 },//				D4 p
-	{ kTheWindow,	"rect",			kTheRect,		4 },//				D4 p
-	{ kTheWindow,	"title",		kTheTitle,		4 },//				D4 p
-	{ kTheWindow,	"titleVisible",	kTheTitleVisible,4 },//				D4 p
-	{ kTheWindow,	"sourceRect",	kTheSourceRect,	4 },//				D4 p
-	{ kTheWindow,	"visible",		kTheVisible,	4 },//				D4 p
-	{ kTheWindow,	"windowType",	kTheWindowType,	4 },//				D4 p
+	{ kTheWindow,	"drawRect",		kTheDrawRect,	400 },//				D4 p
+	{ kTheWindow,	"fileName",		kTheFileName,	400 },//				D4 p
+	{ kTheWindow,	"modal",		kTheModal,		400 },//				D4 p
+	{ kTheWindow,	"rect",			kTheRect,		400 },//				D4 p
+	{ kTheWindow,	"title",		kTheTitle,		400 },//				D4 p
+	{ kTheWindow,	"titleVisible",	kTheTitleVisible,400 },//				D4 p
+	{ kTheWindow,	"sourceRect",	kTheSourceRect,	400 },//				D4 p
+	{ kTheWindow,	"visible",		kTheVisible,	400 },//				D4 p
+	{ kTheWindow,	"windowType",	kTheWindowType,	400 },//				D4 p
 
-	{ kTheMenuItem,	"checkmark",	kTheCheckMark,	3 },//		D3 p
-	{ kTheMenuItem, "enabled",		kTheEnabled,	3 },//		D3 p
-	{ kTheMenuItem, "name",			kTheName,		3 },//		D3 p
-	{ kTheMenuItem, "script",		kTheScript,		3 },//		D3 p
-	{ kTheMenuItems,"number",		kTheNumber,		3 },//		D3 p 			// number of menuitems of menu <xx>
+	{ kTheMenuItem,	"checkmark",	kTheCheckMark,	300 },//		D3 p
+	{ kTheMenuItem, "enabled",		kTheEnabled,	300 },//		D3 p
+	{ kTheMenuItem, "name",			kTheName,		300 },//		D3 p
+	{ kTheMenuItem, "script",		kTheScript,		300 },//		D3 p
+	{ kTheMenuItems,"number",		kTheNumber,		300 },//		D3 p 			// number of menuitems of menu <xx>
 
-	{ kTheMenu,		"name",			kTheName,		3 },//		D3 p
+	{ kTheMenu,		"name",			kTheName,		300 },//		D3 p
 
-	{ kTheCastMembers,	"number",	kTheNumber,		3 },// 		D3 p
+	{ kTheCastMembers,	"number",	kTheNumber,		300 },// 		D3 p
 
-	{ kTheDate,		"short",		kTheShort,		3 },//		D3 f
-	{ kTheDate,		"long",			kTheLong,		3 },//		D3 f
-	{ kTheDate,		"abbreviated",	kTheAbbr,		3 },//		D3 f
-	{ kTheDate,		"abbrev",		kTheAbbr,		3 },//		D3 f
-	{ kTheDate,		"abbr",			kTheAbbr,		3 },//		D3 f
-	{ kTheTime,		"short",		kTheShort,		3 },//		D3 f
-	{ kTheTime,		"long",			kTheLong,		3 },//		D3 f
-	{ kTheTime,		"abbreviated",	kTheAbbr,		3 },//		D3 f
-	{ kTheTime,		"abbrev",		kTheAbbr,		3 },//		D3 f
-	{ kTheTime,		"abbr",			kTheAbbr,		3 },//		D3 f
+	{ kTheDate,		"short",		kTheShort,		300 },//		D3 f
+	{ kTheDate,		"long",			kTheLong,		300 },//		D3 f
+	{ kTheDate,		"abbreviated",	kTheAbbr,		300 },//		D3 f
+	{ kTheDate,		"abbrev",		kTheAbbr,		300 },//		D3 f
+	{ kTheDate,		"abbr",			kTheAbbr,		300 },//		D3 f
+	{ kTheTime,		"short",		kTheShort,		300 },//		D3 f
+	{ kTheTime,		"long",			kTheLong,		300 },//		D3 f
+	{ kTheTime,		"abbreviated",	kTheAbbr,		300 },//		D3 f
+	{ kTheTime,		"abbrev",		kTheAbbr,		300 },//		D3 f
+	{ kTheTime,		"abbr",			kTheAbbr,		300 },//		D3 f
 
-	{ kTheSoundEntity,"volume",		kTheVolume,		3 },//		D3 p
+	{ kTheSoundEntity,"volume",		kTheVolume,		300 },//		D3 p
 
 	{ kTheNOEntity, NULL, kTheNOField, 0 }
 };
@@ -311,6 +318,11 @@ void Lingo::initTheEntities() {
 	}
 }
 
+void Lingo::cleanUpTheEntities() {
+	_entityNames.clear();
+	_fieldNames.clear();
+}
+
 const char *Lingo::entity2str(int id) {
 	static char buf[20];
 
@@ -341,15 +353,17 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	}
 
 	Datum d;
+	Movie *movie = _vm->getCurrentMovie();
 
-	if (!_vm->getCurrentMovie()) {
+	if (!movie) {
 		warning("Lingo::getTheEntity(): Movie is missing");
 		d.type = VOID;
 
 		return d;
 	}
 
-	LingoArchive *mainArchive = _vm->getCurrentMovie()->getMainLingoArch();
+	LingoArchive *mainArchive = movie->getMainLingoArch();
+	Score *score = movie->getScore();
 
 	switch (entity) {
 	case kTheActorList:
@@ -368,7 +382,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		warning("STUB: Lingo::getTheEntity(): Unprocessed getting field %s of entity %s", field2str(field), entity2str(entity));
 		break;
 	case kTheCenterStage:
-		getTheEntitySTUB(kTheCenterStage);
+		d.type = INT;
+		d.u.i = g_director->_centerStage;
 		break;
 	case kTheCheckBoxAccess:
 		getTheEntitySTUB(kTheCheckBoxAccess);
@@ -379,13 +394,13 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheClickLoc:
 		d.u.farr = new DatumArray;
 
-		d.u.farr->push_back(_vm->getCurrentMovie()->_lastClickPos.x);
-		d.u.farr->push_back(_vm->getCurrentMovie()->_lastClickPos.y);
+		d.u.farr->push_back(movie->_lastClickPos.x);
+		d.u.farr->push_back(movie->_lastClickPos.y);
 		d.type = POINT;
 		break;
 	case kTheClickOn:
 		d.type = INT;
-		d.u.i = _vm->getCurrentMovie()->_currentClickOnSpriteId;
+		d.u.i = movie->_currentClickOnSpriteId;
 		break;
 	case kTheColorDepth:
 		// bpp. 1, 2, 4, 8, 32
@@ -398,11 +413,11 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheCommandDown:
 		d.type = INT;
-		d.u.i = (_vm->getCurrentMovie()->_keyFlags & Common::KBD_META) ? 1 : 0;
+		d.u.i = (movie->_keyFlags & Common::KBD_META) ? 1 : 0;
 		break;
 	case kTheControlDown:
 		d.type = INT;
-		d.u.i = (_vm->getCurrentMovie()->_keyFlags & Common::KBD_CTRL) ? 1 : 0;
+		d.u.i = (movie->_keyFlags & Common::KBD_CTRL) ? 1 : 0;
 		break;
 	case kTheDate:
 		d = getTheDate(field);
@@ -413,6 +428,9 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheExitLock:
 		getTheEntitySTUB(kTheExitLock);
 		break;
+	case kTheField:
+		d = getTheField(id, field);
+		break;
 	case kTheFixStageSize:
 		getTheEntitySTUB(kTheFixStageSize);
 		break;
@@ -422,21 +440,22 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheFrame:
 		d.type = INT;
-		d.u.i = _vm->getCurrentMovie()->getScore()->getCurrentFrame();
+		d.u.i = score->getCurrentFrame();
 		break;
 	case kTheFrameLabel:
-		getTheEntitySTUB(kTheFrameLabel);
+		d.type = STRING;
+		d.u.s = score->getFrameLabel(score->getCurrentFrame());
 		break;
 	case kTheFrameScript:
 		getTheEntitySTUB(kTheFrameScript);
 		break;
 	case kTheFramePalette:
 		d.type = INT;
-		d.u.i = _vm->getCurrentMovie()->getScore()->getCurrentPalette();
+		d.u.i = score->getCurrentPalette();
 		break;
 	case kTheFrameTempo:
 		d.type = INT;
-		d.u.i = _vm->getCurrentMovie()->getScore()->_currentFrameRate;
+		d.u.i = score->_currentFrameRate;
 		break;
 	case kTheFreeBlock:
 	case kTheFreeBytes:
@@ -457,11 +476,11 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheKey:
 		d.type = STRING;
-		d.u.s = new Common::String(_vm->getCurrentMovie()->_key);
+		d.u.s = new Common::String(movie->_key);
 		break;
 	case kTheKeyCode:
 		d.type = INT;
-		d.u.i = _vm->getCurrentMovie()->_keyCode;
+		d.u.i = movie->_keyCode;
 		break;
 	case kTheKeyDownScript:
 		d.type = STRING;
@@ -479,27 +498,27 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheLabelList:
 		d.type = STRING;
-		d.u.s = _vm->getCurrentMovie()->getScore()->getLabelList();
+		d.u.s = score->getLabelList();
 		break;
 	case kTheLastClick:
 		d.type = INT;
-		d.u.i = _vm->getMacTicks() - _vm->getCurrentMovie()->_lastClickTime;
+		d.u.i = _vm->getMacTicks() - movie->_lastClickTime;
 		break;
 	case kTheLastEvent:
 		d.type = INT;
-		d.u.i = _vm->getMacTicks() - _vm->getCurrentMovie()->_lastEventTime;
+		d.u.i = _vm->getMacTicks() - movie->_lastEventTime;
 		break;
 	case kTheLastFrame:
 		d.type = INT;
-		d.u.i = _vm->getCurrentMovie()->getScore()->_frames.size() - 1;
+		d.u.i = score->_frames.size() - 1;
 		break;
 	case kTheLastKey:
 		d.type = INT;
-		d.u.i = _vm->getMacTicks() - _vm->getCurrentMovie()->_lastKeyTime;
+		d.u.i = _vm->getMacTicks() - movie->_lastKeyTime;
 		break;
 	case kTheLastRoll:
 		d.type = INT;
-		d.u.i = _vm->getMacTicks() - _vm->getCurrentMovie()->_lastRollTime;
+		d.u.i = _vm->getMacTicks() - movie->_lastRollTime;
 		break;
 	case kTheMachineType:
 		// 1 - Macintosh 512Ke			D2
@@ -562,11 +581,10 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheMouseCast:
 		{
-			Common::Point pos = g_director->getCurrentStage()->getMousePos();
-			Score *sc = _vm->getCurrentMovie()->getScore();
-			uint16 spriteId = sc->getSpriteIDFromPos(pos);
+			Common::Point pos = g_director->getCurrentWindow()->getMousePos();
+			uint16 spriteId = score->getSpriteIDFromPos(pos);
 			d.type = INT;
-			d.u.i = sc->getSpriteById(spriteId)->_castId;
+			d.u.i = score->getSpriteById(spriteId)->_castId;
 			if (d.u.i == 0)
 				d.u.i = -1;
 		}
@@ -587,7 +605,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheMouseH:
 		d.type = INT;
-		d.u.i = g_director->getCurrentStage()->getMousePos().x;
+		d.u.i = g_director->getCurrentWindow()->getMousePos().x;
 		break;
 	case kTheMouseItem:
 		getTheEntitySTUB(kTheMouseItem);
@@ -608,7 +626,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheMouseV:
 		d.type = INT;
-		d.u.i = g_director->getCurrentStage()->getMousePos().y;
+		d.u.i = g_director->getCurrentWindow()->getMousePos().y;
 		break;
 	case kTheMouseWord:
 		getTheEntitySTUB(kTheMouseWord);
@@ -616,7 +634,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheMovie:
 	case kTheMovieName:
 		d.type = STRING;
-		d.u.s = new Common::String(_vm->getCurrentMovie()->getMacName());
+		d.u.s = new Common::String(movie->getMacName());
 		break;
 	case kTheMovieFileFreeSize:
 		d.type = INT;
@@ -624,12 +642,12 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheMovieFileSize:
 		d.type = INT;
-		d.u.i = _vm->getCurrentMovie()->getArchive()->getFileSize();
+		d.u.i = movie->getArchive()->getFileSize();
 		break;
 	case kTheMoviePath:
 	case kThePathName:
 		d.type = STRING;
-		d.u.s = new Common::String(_vm->getCurrentPath());
+		d.u.s = new Common::String(unixToMacPath(_vm->getCurrentPath()));
 		break;
 	case kTheMultiSound:
 		// We always support multiple sound channels!
@@ -638,7 +656,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheOptionDown:
 		d.type = INT;
-		d.u.i = (_vm->getCurrentMovie()->_keyFlags & Common::KBD_ALT) ? 1 : 0;
+		d.u.i = (movie->_keyFlags & Common::KBD_ALT) ? 1 : 0;
 		break;
 	case kThePauseState:
 		getTheEntitySTUB(kThePauseState);
@@ -677,6 +695,10 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheRomanLingo:
 		getTheEntitySTUB(kTheRomanLingo);
 		break;
+	case kTheScummvmVersion:
+		d.type = INT;
+		d.u.i = _vm->getVersion();
+		break;
 	case kTheSearchCurrentFolder:
 		getTheEntitySTUB(kTheSearchCurrentFolder);
 		break;
@@ -684,8 +706,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		getTheEntitySTUB(kTheSearchPath);
 		break;
 	case kTheSelection:
-		if (_vm->getCurrentMovie()->_currentEditableTextChannel) {
-			Channel *channel = _vm->getCurrentMovie()->getScore()->_channels[_vm->getCurrentMovie()->_currentEditableTextChannel];
+		if (movie->_currentEditableTextChannel) {
+			Channel *channel = score->_channels[movie->_currentEditableTextChannel];
 
 			if (channel->_widget) {
 				d.type = STRING;
@@ -695,8 +717,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheSelEnd:
 	case kTheSelStart:
-		if (_vm->getCurrentMovie()->_currentEditableTextChannel) {
-			Channel *channel = _vm->getCurrentMovie()->getScore()->_channels[_vm->getCurrentMovie()->_currentEditableTextChannel];
+		if (movie->_currentEditableTextChannel) {
+			Channel *channel = score->_channels[movie->_currentEditableTextChannel];
 
 			if (channel->_widget) {
 				d.type = INT;
@@ -706,7 +728,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheShiftDown:
 		d.type = INT;
-		d.u.i = (_vm->getCurrentMovie()->_keyFlags & Common::KBD_SHIFT) ? 1 : 0;
+		d.u.i = (movie->_keyFlags & Common::KBD_SHIFT) ? 1 : 0;
 		break;
 	case kTheSoundEnabled:
 		getTheEntitySTUB(kTheSoundEnabled);
@@ -736,26 +758,26 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = getTheSprite(id, field);
 		break;
 	case kTheStage:
-		d = _vm->getMainStage();
+		d = _vm->getStage();
 		break;
 	case kTheStageBottom:
 		d.type = INT;
-		d.u.i = _vm->getCurrentMovie()->_movieRect.bottom;
+		d.u.i = movie->_movieRect.bottom;
 		break;
 	case kTheStageColor:
 		getTheEntitySTUB(kTheStageColor);
 		break;
 	case kTheStageLeft:
 		d.type = INT;
-		d.u.i = _vm->getCurrentMovie()->_movieRect.left;
+		d.u.i = movie->_movieRect.left;
 		break;
 	case kTheStageRight:
 		d.type = INT;
-		d.u.i = _vm->getCurrentMovie()->_movieRect.right;
+		d.u.i = movie->_movieRect.right;
 		break;
 	case kTheStageTop:
 		d.type = INT;
-		d.u.i = _vm->getCurrentMovie()->_movieRect.top;
+		d.u.i = movie->_movieRect.top;
 		break;
 	case kTheStillDown:
 		d.type = INT;
@@ -795,7 +817,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheTimer:
 		d.type = INT;
-		d.u.i = _vm->getMacTicks() - _vm->getCurrentMovie()->_lastTimerReset;
+		d.u.i = _vm->getMacTicks() - movie->_lastTimerReset;
 		break;
 	case kTheTrace:
 		getTheEntitySTUB(kTheTrace);
@@ -836,6 +858,9 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		debugC(3, kDebugLingoExec, "Lingo::setTheEntity(%s, %s, %s, %s)", entity2str(entity), id.asString(true).c_str(), field2str(field), d.asString(true).c_str());
 	}
 
+	Movie *movie = _vm->getCurrentMovie();
+	Score *score = movie->getScore();
+
 	switch (entity) {
 	case kTheActorList:
 		setTheEntitySTUB(kTheActorList);
@@ -853,7 +878,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		setTheCast(id, field, d);
 		break;
 	case kTheCenterStage:
-		setTheEntitySTUB(kTheCenterStage);
+		g_director->_centerStage = d.asInt();
 		break;
 	case kTheCheckBoxAccess:
 		setTheEntitySTUB(kTheCheckBoxAccess);
@@ -882,7 +907,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		_floatPrecisionFormat = Common::String::format("%%.%df", _floatPrecision);
 		break;
 	case kTheFrameLabel:
-		setTheEntitySTUB(kTheFrameLabel);
+		setTheEntityReadOnly(kTheFrameLabel);
 		break;
 	case kTheFrameScript:
 		setTheEntitySTUB(kTheFrameScript);
@@ -906,10 +931,10 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 			g_lingo->_itemDelimiter = d.asString()[0];
 		break;
 	case kTheKeyDownScript:
-		_vm->getCurrentMovie()->setPrimaryEventHandler(kEventKeyDown, d.asString());
+		movie->setPrimaryEventHandler(kEventKeyDown, d.asString());
 		break;
 	case kTheKeyUpScript:
-		_vm->getCurrentMovie()->setPrimaryEventHandler(kEventKeyUp, d.asString());
+		movie->setPrimaryEventHandler(kEventKeyUp, d.asString());
 		break;
 	case kTheMenu:
 		setTheEntitySTUB(kTheMenu);
@@ -918,10 +943,10 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		setTheEntitySTUB(kTheMenuItem);
 		break;
 	case kTheMouseDownScript:
-		_vm->getCurrentMovie()->setPrimaryEventHandler(kEventMouseDown, d.asString());
+		movie->setPrimaryEventHandler(kEventMouseDown, d.asString());
 		break;
 	case kTheMouseUpScript:
-		_vm->getCurrentMovie()->setPrimaryEventHandler(kEventMouseUp, d.asString());
+		movie->setPrimaryEventHandler(kEventMouseUp, d.asString());
 		break;
 	case kThePerFrameHook:
 		_perFrameHook = d;
@@ -938,17 +963,21 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 	case kTheRomanLingo:
 		setTheEntitySTUB(kTheRomanLingo);
 		break;
+	case kTheScummvmVersion:
+		// Allow director version change: used for testing version differences via the lingo tests.
+		_vm->setVersion(d.asInt());
+		break;
 	case kTheSelEnd:
-		if (_vm->getCurrentMovie()->_currentEditableTextChannel != 0) {
-			Channel *channel = _vm->getCurrentMovie()->getScore()->getChannelById(_vm->getCurrentMovie()->_currentEditableTextChannel);
+		if (movie->_currentEditableTextChannel != 0) {
+			Channel *channel = score->getChannelById(movie->_currentEditableTextChannel);
 
 			if (channel->_widget)
 				(((Graphics::MacText *)channel->_widget)->setSelection(d.asInt(), false));
 		}
 		break;
 	case kTheSelStart:
-		if (_vm->getCurrentMovie()->_currentEditableTextChannel != 0) {
-			Channel *channel = _vm->getCurrentMovie()->getScore()->getChannelById(_vm->getCurrentMovie()->_currentEditableTextChannel);
+		if (movie->_currentEditableTextChannel != 0) {
+			Channel *channel = score->getChannelById(movie->_currentEditableTextChannel);
 
 			if (channel->_widget)
 				(((Graphics::MacText *)channel->_widget)->setSelection(d.asInt(), true));
@@ -984,11 +1013,11 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		setTheEntitySTUB(kTheStage);
 		break;
 	case kTheStageColor:
-		g_director->getCurrentStage()->setStageColor(d.asInt());
+		g_director->getCurrentWindow()->setStageColor(d.asInt());
 
 		// Queue an immediate update of the stage
-		if (! _vm->getCurrentMovie()->getScore()->getNextFrame())
-			_vm->getCurrentMovie()->getScore()->setCurrentFrame( _vm->getCurrentMovie()->getScore()->getCurrentFrame());
+		if (!score->getNextFrame())
+			score->setCurrentFrame(score->getCurrentFrame());
 		break;
 	case kTheSwitchColorDepth:
 		setTheEntitySTUB(kTheSwitchColorDepth);
@@ -1009,7 +1038,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		setTheEntitySTUB(kTheTimeoutPlay);
 		break;
 	case kTheTimeoutScript:
-		_vm->getCurrentMovie()->setPrimaryEventHandler(kEventTimeout, d.asString());
+		movie->setPrimaryEventHandler(kEventTimeout, d.asString());
 		break;
 	case kTheTimer:
 		setTheEntitySTUB(kTheTimer);
@@ -1143,7 +1172,10 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.i = sprite->_moveable;
 		break;
 	case kTheMovieRate:
-		d.u.i = channel->_movieRate;
+		d.type = FLOAT;
+		d.u.f = channel->_movieRate;
+		if (debugChannelSet(-1, kDebugEndVideo))
+			d.u.f = 0.0;
 		break;
 	case kTheMovieTime:
 		d.u.i = channel->_movieTime;
@@ -1231,7 +1263,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 
 	switch (field) {
 	case kTheBackColor:
-		if (d.asInt() != sprite->_backColor) {
+		if ((uint32)d.asInt() != sprite->_backColor) {
 			sprite->_backColor = d.asInt();
 			channel->_dirty = true;
 		}
@@ -1243,52 +1275,78 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		}
 		break;
 	case kTheCastNum:
-		if (d.asInt() != sprite->_castId) {
-			g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
-			channel->setCast(d.asInt());
-			channel->_dirty = true;
+		{
+			int castId = d.asCastId();
+			if (castId != sprite->_castId) {
+				// WORKAROUND: Chop Suey cursor is not marked puppet, so it will flash
+				// unnecessarily on frame change unless it is puppet.
+				if (!sprite->_puppet) {
+					warning("setTheSprite(): kTheCastNum: Sprite %d not a puppet", id);
+					sprite->_puppet = true;
+				}
+
+				g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
+				channel->setCast(castId);
+				channel->_dirty = true;
+			}
 		}
 		break;
 	case kTheConstraint:
-		if (d.asInt() != (int)channel->_constraint) {
+		{
+			int channelId = -1;
 			if (d.type == CASTREF) {
 				// Reference: CastMember ID
 				// Find the first channel that uses this cast.
-				for (uint i = 0; i < score->_channels.size(); i++)
-					if (score->_channels[i]->_sprite->_castId == d.u.i)
-						d.u.i = i;
+				int castId = d.u.i;
+				for (uint i = 0; i < score->_channels.size(); i++) {
+					if (score->_channels[i]->_sprite->_castId == castId) {
+						channelId = i;
+						break;
+					}
+				}
+			} else {
+				channelId = d.asInt();
 			}
-
-			channel->_constraint = d.u.i;
-			channel->_dirty = true;
+			if (channelId != -1 && channelId != (int)channel->_constraint) {
+				channel->_constraint = d.u.i;
+				channel->_dirty = true;
+			}
 		}
 		break;
 	case kTheCursor:
-		if (d.type == INT) {
+		if (d.type == INT && channel->_cursor._cursorResId != d.asInt()) {
 			channel->_cursor.readFromResource(d.asInt());
+			score->_cursorDirty = true;
 		} else if (d.type == ARRAY && d.u.farr->size() == 2) {
-			channel->_cursor.readFromCast(d.u.farr->operator[](0).asInt(), d.u.farr->operator[](1).asInt());
+			uint cursorId =	d.u.farr->operator[](0).asCastId();
+			uint maskId = d.u.farr->operator[](1).asCastId();
+
+			if (cursorId == channel->_cursor._cursorCastId &&
+					maskId == channel->_cursor._cursorMaskId)
+				break;
+
+			channel->_cursor.readFromCast(cursorId, maskId);
+			score->_cursorDirty = true;
 		}
 		break;
 	case kTheEditableText:
-		if (sprite->_cast)
-			sprite->_cast->setEditable(d.asInt());
+		channel->setEditable(d.asInt());
 		break;
 	case kTheForeColor:
-		if (d.asInt() != sprite->_foreColor) {
+		if ((uint32)d.asInt() != sprite->_foreColor) {
 			sprite->_foreColor = d.asInt();
 			channel->_dirty = true;
 		}
 		break;
 	case kTheHeight:
 		if (d.asInt() != channel->_height) {
-			g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
+			g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
 			channel->setHeight(d.asInt());
 			channel->_dirty = true;
 		}
 		break;
 	case kTheImmediate:
-		sprite->_immediate = d.asInt();
+		sprite->_immediate = (bool)d.asInt();
 		break;
 	case kTheInk:
 		if (d.asInt() != sprite->_ink) {
@@ -1307,35 +1365,43 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheLocH:
 		if (d.asInt() != channel->_currentPoint.x) {
-			g_director->getCurrentMovie()->getStage()->addDirtyRect(channel->getBbox());
+			g_director->getCurrentMovie()->getWindow()->addDirtyRect(channel->getBbox());
 			channel->_currentPoint.x = d.asInt();
 			channel->_dirty = true;
 		}
 		break;
 	case kTheLocV:
 		if (d.asInt() != channel->_currentPoint.y) {
-			g_director->getCurrentMovie()->getStage()->addDirtyRect(channel->getBbox());
+			g_director->getCurrentMovie()->getWindow()->addDirtyRect(channel->getBbox());
 			channel->_currentPoint.y = d.asInt();
 			channel->_dirty = true;
 		}
 		break;
 	case kTheMoveableSprite:
-		sprite->_moveable = d.asInt();
+		sprite->_moveable = (bool)d.asInt();
 		break;
 	case kTheMovieRate:
-		channel->_movieRate = d.asInt();
+		channel->_movieRate = d.asFloat();
+		if (sprite->_cast->_type == kCastDigitalVideo)
+			((DigitalVideoCastMember *)sprite->_cast)->setMovieRate(channel->_movieRate);
+		else
+			warning("Setting movieTime for non-digital video");
 		break;
 	case kTheMovieTime:
 		channel->_movieTime = d.asInt();
+		if (sprite->_cast->_type == kCastDigitalVideo)
+			((DigitalVideoCastMember *)sprite->_cast)->seekMovie(channel->_movieTime);
+		else
+			warning("Setting movieTime for non-digital video");
 		break;
 	case kThePattern:
-		if (d.asInt() != sprite->getPattern()){
+		if (d.asInt() != sprite->getPattern()) {
 			sprite->setPattern(d.asInt());
 			channel->_dirty = true;
 		}
 		break;
 	case kThePuppet:
-		sprite->_puppet = d.asInt();
+		sprite->_puppet = (bool)d.asInt();
 		if (!d.asInt()) {
 			// TODO: Properly reset sprite properties after puppet disabled.
 			sprite->_moveable = false;
@@ -1343,9 +1409,17 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheStartTime:
 		channel->_startTime = d.asInt();
+		if (sprite->_cast->_type == kCastDigitalVideo)
+			((DigitalVideoCastMember *)sprite->_cast)->seekMovie(channel->_startTime);
+		else
+			warning("Setting startTime for non-digital video");
 		break;
 	case kTheStopTime:
 		channel->_stopTime = d.asInt();
+		if (sprite->_cast->_type == kCastDigitalVideo)
+			((DigitalVideoCastMember *)sprite->_cast)->setStopTime(channel->_stopTime);
+		else
+			warning("Setting stopTime for non-digital video");
 		break;
 	case kTheStretch:
 		if (d.asInt() != sprite->_stretch) {
@@ -1353,7 +1427,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			channel->_dirty = true;
 
 			if (sprite->_stretch) {
-				g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
+				g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
 
 				channel->_width = sprite->_width;
 				channel->_height = sprite->_height;
@@ -1371,8 +1445,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheVisibility:
 	case kTheVisible:
-		if (d.asInt() != channel->_visible) {
-			channel->_visible = d.asInt();
+		if ((bool)d.asInt() != channel->_visible) {
+			channel->_visible = (bool)d.asInt();
 			channel->_dirty = true;
 		}
 		break;
@@ -1382,7 +1456,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheWidth:
 		if (d.asInt() != channel->_width) {
-			g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
+			g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
 			channel->setWidth(d.asInt());
 			channel->_dirty = true;
 		}
@@ -1392,493 +1466,123 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	}
 
 	if (channel->_dirty && g_director->getCurrentMovie())
-		g_director->getCurrentMovie()->getStage()->addDirtyRect(channel->getBbox());
+		g_director->getCurrentMovie()->getWindow()->addDirtyRect(channel->getBbox());
 }
 
 Datum Lingo::getTheCast(Datum &id1, int field) {
 	Datum d;
-	int id = g_lingo->castIdFetch(id1);
 
 	Movie *movie = _vm->getCurrentMovie();
-	// Setting default type
-	d.type = INT;
-
 	if (!movie) {
 		warning("Lingo::getTheCast(): No movie loaded");
 		return d;
 	}
 
-	CastMember *member = _vm->getCurrentMovie()->getCastMember(id);
+	int id = id1.asCastId();
+
+	CastMember *member = movie->getCastMember(id);
 	if (!member) {
 		if (field == kTheLoaded) {
-			d.u.i = 0;
+			d = 0;
 		} else {
-			warning("Lingo::getTheCast(): CastMember %d not found", id);
+			g_lingo->lingoError("Lingo::getTheCast(): CastMember %s not found", id1.asString().c_str());
 		}
 		return d;
 	}
-	Cast *cast = member->getCast();
 
-	CastType castType = member->_type;
-	CastMemberInfo *castInfo = cast->getCastMemberInfo(id);
-	if (!castInfo)
-		warning("Lingo::getTheCast(): CastMember info for %d not found", id);
-
-	switch (field) {
-	case kTheBackColor:
-		d.u.i = member->getBackColor();
-		break;
-	case kTheCastType:
-		d.u.i = castType;
-		break;
-	case kTheCenter:
-		if (castType == kCastDigitalVideo) {
-			d.u.i = ((DigitalVideoCastMember *)member)->_center ? 1 : 0;
-		} else {
-			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheController:
-		if (castType == kCastDigitalVideo) {
-			d.u.i = ((DigitalVideoCastMember *)member)->_showControls ? 1 : 0;
-		} else {
-			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheCrop:
-		if (castType == kCastDigitalVideo) {
-			d.u.i = ((DigitalVideoCastMember *)member)->_crop ? 1 : 0;
-		} else {
-			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheDepth:
-		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
-		break;
-	case kTheDirectToStage:
-		if (castType == kCastDigitalVideo) {
-			d.u.i = ((DigitalVideoCastMember *)member)->_directToStage ? 1 : 0;
-		} else {
-			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheDuration:
-		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
-		break;
-	case kTheFileName:
-		if (castInfo)
-			d = Datum(castInfo->fileName);
-		break;
-	case kTheForeColor:
-		d.u.i = member->getForeColor();
-		break;
-	case kTheFrameRate:
-		if (castType == kCastDigitalVideo) {
-			d.u.i = ((DigitalVideoCastMember *)member)->_frameRate;
-		} else {
-			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheHeight:
-		d.u.i = cast->getCastMemberInitialRect(id).height();
-		break;
-	case kTheHilite:
-		d.u.i = member->_hilite;
-		break;
-	case kTheLoaded:
-		d.u.i = 1; //Not loaded handled above
-		break;
-	case kTheLoop:
-		if (castType == kCastDigitalVideo) {
-			d.u.i = ((DigitalVideoCastMember *)member)->_looping ? 1 : 0;
-		} else {
-			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheModified:
-		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
-		break;
-	case kTheName:
-		if (castInfo)
-			d = Datum(castInfo->name);
-		break;
-	case kTheNumber:
-		d.u.i = id;
-		break;
-	case kThePausedAtStart:
-		if (castType == kCastDigitalVideo) {
-			d.u.i = ((DigitalVideoCastMember *)member)->_pausedAtStart ? 1 : 0;
-		} else {
-			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kThePreLoad:
-		if (castType == kCastDigitalVideo) {
-			d.u.i = ((DigitalVideoCastMember *)member)->_preload ? 1 : 0;
-		} else {
-			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheRect:
-		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
-		break;
-	case kTheRegPoint:
-		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
-		break;
-	case kThePalette:
-		if (member->_type == kCastBitmap)
-			d.u.i = ((BitmapCastMember *)member)->_clut;
-		break;
-	case kThePicture:
-		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
-		break;
-	case kThePurgePriority:
-		d.u.i = member->_purgePriority;
-		break;
-	case kTheScriptText:
-		if (castInfo)
-			d = Datum(castInfo->script);
-		break;
-	case kTheSize:
-		d.u.i = member->_size;
-		break;
-	case kTheSound:
-		if (castType == kCastDigitalVideo) {
-			d.u.i = ((DigitalVideoCastMember *)member)->_enableSound ? 1 : 0;
-		} else {
-			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheText:
-		{
-			Common::String text;
-			if (castType == kCastText) {
-				if (member && member->_type == kCastText) {
-					text = ((TextCastMember *)member)->getText();
-				} else {
-					warning("Lingo::getTheCast(): Unknown STXT cast id %d", id);
-				}
-			} else {
-				warning("Lingo::getTheCast(): Unprocessed getting text of cast %d type %d", id, castType);
-			}
-			d = Datum(text);
-		}
-		break;
-	case kTheVideo:
-		if (castType == kCastDigitalVideo) {
-			d.u.i = ((DigitalVideoCastMember *)member)->_enableVideo ? 1 : 0;
-		} else {
-			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheWidth:
-		d.u.i = cast->getCastMemberInitialRect(id).width();
-		break;
-	default:
-		warning("Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
-		d.type = VOID;
-	//TODO find out about String fields
+	if (!member->hasField(field)) {
+		warning("Lingo::getTheCast(): CastMember %d has no property '%s'", id, field2str(field));
+		return d;
 	}
+
+	d = member->getField(field);
 
 	return d;
 }
 
 void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
-	int id = 0;
-
-	if (id1.type == INT) {
-		id = id1.u.i;
-	} else if (id1.type == STRING) {
-		id = g_lingo->castIdFetch(id1);
-	} else {
-		warning("Lingo::setTheCast(): Unknown the cast id type: %s", id1.type2str());
+	Movie *movie = _vm->getCurrentMovie();
+	if (!movie) {
+		warning("Lingo::setTheCast(): No movie loaded");
 		return;
 	}
 
-	CastMember *member = _vm->getCurrentMovie()->getCastMember(id);
+	int id = id1.asCastId();
+
+	CastMember *member = movie->getCastMember(id);
 	if (!member) {
-		warning("Lingo::setTheCast(): CastMember id %d doesn't exist", id);
+		g_lingo->lingoError("Lingo::setTheCast(): CastMember %d not found", id);
 		return;
 	}
-	Cast *cast = member->getCast();
-	CastType castType = member->_type;
-	CastMemberInfo *castInfo = cast->getCastMemberInfo(id);
 
-	switch (field) {
-	case kTheBackColor:
-		if (castType == kCastText) {
-			int color = _vm->transformColor(d.asInt());
-			member->setColors(nullptr, &color);
-		}
-		break;
-	case kTheCastType:
-		warning("Lingo::setTheCast(): Attempt to set read-only field %s of cast %d", entity2str(field), id);
-		break;
-	case kTheCenter:
-		if (castType == kCastDigitalVideo) {
-			((DigitalVideoCastMember *)member)->_center = (bool)d.asInt();
-		} else {
-			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheController:
-		if (castType == kCastDigitalVideo) {
-			((DigitalVideoCastMember *)member)->_showControls = (bool)d.asInt();
-		} else {
-			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheCrop:
-		if (castType == kCastDigitalVideo) {
-			((DigitalVideoCastMember *)member)->_crop = (bool)d.asInt();
-		} else {
-			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheDepth:
-		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
-		break;
-	case kTheDirectToStage:
-		if (castType == kCastDigitalVideo) {
-			((DigitalVideoCastMember *)member)->_directToStage = (bool)d.asInt();
-		} else {
-			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheDuration:
-		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
-		break;
-	case kTheFileName:
-		if (!castInfo) {
-			warning("Lingo::setTheCast(): The cast %d not found. type: %d", id, castType);
-			return;
-		}
-		castInfo->fileName = d.asString();
-		break;
-	case kTheForeColor:
-		if (castType == kCastText) {
-			int color = _vm->transformColor(d.asInt());
-			member->setColors(&color, nullptr);
-		}
-		break;
-	case kTheFrameRate:
-		if (castType == kCastDigitalVideo) {
-			((DigitalVideoCastMember *)member)->_frameRate = d.asInt();
-		} else {
-			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheHeight:
-		warning("Lingo::setTheCast(): Attempt to set read-only field \"%s\" of cast %d", field2str(field), id);
-		break;
-	case kTheHilite:
-		// TODO: Understand how texts can be selected programmatically as well.
-		if (member->_type == kCastButton) {
-			TextCastMember *button = (TextCastMember *)member;
-			if ((bool)d.asInt() !=  member->_hilite) {
-				button->_hilite = !!d.asInt();
-			}
-		} else {
-			warning("Lingo::setTheCast: Attempted to set hilite of unsupported cast type");
-		}
-		break;
-	case kTheLoop:
-		if (castType == kCastDigitalVideo) {
-			((DigitalVideoCastMember *)member)->_looping = (bool)d.asInt();
-		} else {
-			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheName:
-		if (!castInfo) {
-			warning("Lingo::setTheCast(): The cast %d not found. type: %d", id, castType);
-			return;
-		}
-		castInfo->name = d.asString();
-		break;
-	case kThePausedAtStart:
-		if (castType == kCastDigitalVideo) {
-			((DigitalVideoCastMember *)member)->_pausedAtStart = (bool)d.asInt();
-		} else {
-			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kThePreLoad:
-		if (castType == kCastDigitalVideo) {
-			((DigitalVideoCastMember *)member)->_preload = (bool)d.asInt();
-		} else {
-			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheRect:
-		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
-		break;
-	case kTheRegPoint:
-		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
-		break;
-	case kThePalette:
-		if (member->_type == kCastBitmap)
-			((BitmapCastMember *)member)->_clut = d.asInt();
-		break;
-	case kThePicture:
-		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
-		break;
-	case kThePurgePriority:
-		member->_purgePriority = CLIP<int>(d.asInt(), 0, 3);
-		break;
-	case kTheScriptText:
-		if (!castInfo) {
-			warning("Lingo::setTheCast(): The cast %d not found. type: %d", id, castType);
-			return;
-		}
-		cast->_lingoArchive->addCode(d.u.s->c_str(), kCastScript, id);
-		castInfo->script = d.asString();
-		break;
-	case kTheSound:
-		if (castType == kCastDigitalVideo) {
-			((DigitalVideoCastMember *)member)->_enableSound = (bool)d.asInt();
-		} else {
-			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheText:
-		if (castType == kCastText) {
-			if (member->_type == kCastText) {
-				((TextCastMember *)member)->setText(d.asString().c_str());
-			} else {
-				warning("Lingo::setTheCast(): Unknown STXT cast id %d", id);
-				return;
-			}
-		} else {
-			warning("Lingo::setTheCast(): Unprocessed setting text of cast %d type %d", id, castType);
-		}
-		break;
-	case kTheVideo:
-		if (castType == kCastDigitalVideo) {
-			((DigitalVideoCastMember *)member)->_enableVideo = (bool)d.asInt();
-		} else {
-			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
-		}
-		break;
-	case kTheWidth:
-		warning("Lingo::setTheCast(): Attempt to set read-only field \"%s\" of cast %d", field2str(field), id);
-		break;
-	default:
-		warning("Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
+	if (!member->hasField(field)) {
+		warning("Lingo::setTheCast(): CastMember %d has no property '%s'", id, field2str(field));
+		return;
 	}
+
+	member->setField(field, d);
 }
 
 Datum Lingo::getTheField(Datum &id1, int field) {
 	Datum d;
-	int id = g_lingo->castIdFetch(id1);
 
-	CastMember *member = _vm->getCurrentMovie()->getCastMember(id);
+	Movie *movie = _vm->getCurrentMovie();
+	if (!movie) {
+		warning("Lingo::getTheField(): No movie loaded");
+		return d;
+	}
+
+	int id = id1.asCastId();
+
+	CastMember *member = movie->getCastMember(id);
 	if (!member) {
-		warning("Lingo::getTheField(): CastMember id %d doesn't exist", id);
+		if (field == kTheLoaded) {
+			d = 0;
+		} else {
+			g_lingo->lingoError("Lingo::getTheField(): CastMember %d not found", id);
+		}
 		return d;
-	} else if (member->_type != kCastText) {
-		warning("Lingo::getTheField(): CastMember id %d is not a field", id);
+	}
+	if (member->_type != kCastText) {
+		g_lingo->lingoError("Lingo::getTheField(): CastMember %d is not a field", id);
 		return d;
 	}
 
-	switch (field) {
-	case kTheText:
-		warning("Lingo::getTheField(): Unprocessed getting field \"%s\" of field %d", field2str(field), id);
-		break;
-	case kTheTextAlign:
-		d.type = STRING;
-		switch (((TextCastMember *)member)->_textAlign) {
-		case kTextAlignLeft:
-			d.u.s = new Common::String("left");
-			break;
-		case kTextAlignCenter:
-			d.u.s = new Common::String("center");
-			break;
-		case kTextAlignRight:
-			d.u.s = new Common::String("right");
-			break;
-		default:
-			warning("Lingo::getTheField: Invalid text align spec");
-			break;
-		}
-		break;
-	case kTheTextFont:
-		warning("Lingo::getTheField(): Unprocessed getting field \"%s\" of field %d", field2str(field), id);
-		break;
-	case kTheTextHeight:
-		warning("Lingo::getTheField(): Unprocessed getting field \"%s\" of field %d", field2str(field), id);
-		break;
-	case kTheTextSize:
-		warning("Lingo::getTheField(): Unprocessed getting field \"%s\" of field %d", field2str(field), id);
-		break;
-	case kTheTextStyle:
-		warning("Lingo::getTheField(): Unprocessed getting field \"%s\" of field %d", field2str(field), id);
-		break;
-	default:
-		warning("Lingo::getTheField(): Unprocessed getting field \"%s\" of field %d", field2str(field), id);
+	if (!member->hasField(field)) {
+		warning("Lingo::getTheField(): CastMember %d has no property '%s'", id, field2str(field));
+		return d;
 	}
+
+	d = member->getField(field);
 
 	return d;
 }
 
 void Lingo::setTheField(Datum &id1, int field, Datum &d) {
-	int id = 0;
-
-	if (id1.type == INT) {
-		id = id1.u.i;
-	} else {
-		warning("Lingo::setTheField(): Unknown the cast id type: %s", id1.type2str());
+	Movie *movie = _vm->getCurrentMovie();
+	if (!movie) {
+		warning("Lingo::setTheField(): No movie loaded");
 		return;
 	}
 
-	CastMember *member = _vm->getCurrentMovie()->getCastMember(id);
+	int id = id1.asCastId();
+
+	CastMember *member = movie->getCastMember(id);
 	if (!member) {
-		warning("Lingo::setTheField(): CastMember id %d doesn't exist", id);
+		g_lingo->lingoError("Lingo::setTheField(): CastMember %d not found", id);
 		return;
-	} else if (member->_type != kCastText) {
-		warning("Lingo::setTheField(): CastMember id %d is not a field", id);
+	}
+	if (member->_type != kCastText) {
+		g_lingo->lingoError("Lingo::setTheField(): CastMember %d is not a field", id);
+		return;
 	}
 
-	switch (field) {
-	case kTheText:
-		warning("Lingo::setTheField(): Unprocessed setting field \"%s\" of field %d", field2str(field), id);
-		break;
-	case kTheTextAlign:
-		{
-			Common::String select = d.asString(true);
-			select.toLowercase();
-
-			TextAlignType align;
-			if (select == "\"left\"") {
-				align = kTextAlignLeft;
-			} else if (select == "\"center\"") {
-				align = kTextAlignCenter;
-			} else if (select == "\"right\"") {
-				align = kTextAlignRight;
-			} else {
-				warning("Lingo::setTheField: Unknown text align spec: %s", d.asString(true).c_str());
-				break;
-			}
-
-			((TextCastMember *)member)->_textAlign = align;
-			member->_modified = true;
-			break;
-		}
-	case kTheTextFont:
-		warning("Lingo::setTheField(): Unprocessed setting field \"%s\" of field %d", field2str(field), id);
-		break;
-	case kTheTextHeight:
-		warning("Lingo::setTheField(): Unprocessed setting field \"%s\" of field %d", field2str(field), id);
-		break;
-	case kTheTextSize:
-		warning("Lingo::setTheField(): Unprocessed setting field \"%s\" of field %d", field2str(field), id);
-		break;
-	case kTheTextStyle:
-		warning("Lingo::setTheField(): Unprocessed setting field \"%s\" of field %d", field2str(field), id);
-		break;
-	default:
-		warning("Lingo::setTheField(): Unprocessed setting field \"%s\" of field %d", field2str(field), id);
+	if (!member->hasField(field)) {
+		warning("Lingo::setTheField(): CastMember %d has no property '%s'", id, field2str(field));
+		return;
 	}
+
+	member->setField(field, d);
 }
 
 Datum Lingo::getObjectProp(Datum &obj, Common::String &propName) {
@@ -1896,13 +1600,27 @@ Datum Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 		}
 		return d;
 	} else if (obj.type == CASTREF) {
-		// WORKAROUND: Until CastMembers are made Lingo objects
-		if (propName.equalsIgnoreCase("palette")) {
-			d.type = INT;
-			CastMember *member = _vm->getCurrentMovie()->getCastMember(obj.u.i);
+		Movie *movie = _vm->getCurrentMovie();
+		if (!movie) {
+			warning("Lingo::getObjectProp(): No movie loaded");
+			return d;
+		}
 
-			if (member && member->_type == kCastBitmap)
-				d.u.i = ((BitmapCastMember *)member)->_clut + 1;
+		int id = obj.u.i;
+		CastMember *member = movie->getCastMember(id);
+		if (!member) {
+			if (propName.equalsIgnoreCase("loaded")) {
+				d = 0;
+			} else {
+				warning("Lingo::getObjectProp(): CastMember %d not found", id);
+			}
+			return d;
+		}
+
+		if (member->hasProp(propName)) {
+			return member->getProp(propName);
+		} else {
+			warning("Lingo::getObjectProp(): CastMember %d has no property '%s'", id, propName.c_str());
 		}
 	} else {
 		warning("Lingo::getObjectProp: Invalid object: %s", obj.asString(true).c_str());
@@ -1925,13 +1643,24 @@ void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
 			PCell cell = PCell(propName, val);
 			obj.u.parr->push_back(cell);
 		}
-	} if (obj.type == CASTREF) {
-		// WORKAROUND: Until CastMembers are made Lingo objects
-		if (propName.equalsIgnoreCase("palette")) {
-			CastMember *member = _vm->getCurrentMovie()->getCastMember(obj.u.i);
+	} else if (obj.type == CASTREF) {
+		Movie *movie = _vm->getCurrentMovie();
+		if (!movie) {
+			warning("Lingo::setObjectProp(): No movie loaded");
+			return;
+		}
 
-			if (member && member->_type == kCastBitmap)
-				((BitmapCastMember *)member)->_clut = val.asInt();
+		int id = obj.u.i;
+		CastMember *member = movie->getCastMember(id);
+		if (!member) {
+			warning("Lingo::setObjectProp(): CastMember %d not found", id);
+			return;
+		}
+
+		if (member->hasProp(propName)) {
+			member->setProp(propName, val);
+		} else {
+			warning("Lingo::setObjectProp(): CastMember %d has no property '%s'", id, propName.c_str());
 		}
 	} else {
 		warning("Lingo::setObjectProp: Invalid object: %s", obj.asString(true).c_str());
@@ -1940,7 +1669,7 @@ void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
 
 static const char *mfull[] = {
 	"January", "February", "March", "April", "May", "June",
-	"July", "August" "September", "October", "Novemver", "December"
+	"July", "August" "September", "October", "November", "December"
 };
 
 static const char *wday[] = {

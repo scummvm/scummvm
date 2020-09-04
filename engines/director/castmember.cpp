@@ -26,13 +26,15 @@
 
 #include "director/director.h"
 #include "director/castmember.h"
+#include "director/cursor.h"
+#include "director/channel.h"
 #include "director/movie.h"
-#include "director/stage.h"
+#include "director/window.h"
 #include "director/stxt.h"
 
 namespace Director {
 
-CastMember::CastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream) {
+CastMember::CastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream) : Object<CastMember>("CastMember") {
 	_type = kCastTypeNull;
 	_cast = cast;
 	_castId = castId;
@@ -43,7 +45,14 @@ CastMember::CastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndi
 	_flags1 = 0;
 
 	_modified = true;
+
+	_objType = kCastMemberObj;
 }
+
+
+/////////////////////////////////////
+// Bitmap
+/////////////////////////////////////
 
 BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint32 castTag, uint16 version, uint8 flags1)
 		: CastMember(cast, castId, stream) {
@@ -58,7 +67,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 	_clut = kClutSystemMac;
 	_bitsPerPixel = 0;
 
-	if (version < 4) {
+	if (version < 400) {
 		_flags1 = flags1;	// region: 0 - auto, 1 - matte, 2 - disabled, 8 - no auto
 		if (_flags1 >> 4 == 0x0)
 			_autoHilite = true;
@@ -81,7 +90,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 		if (_pitch % 16)
 			_pitch += 16 - (_initialRect.width() % 16);
 
-	} else if (version == 4) {
+	} else if (version >= 400 && version < 500) {
 		_flags1 = flags1;
 		_pitch = stream.readUint16();
 		_pitch &= 0x0fff;
@@ -132,7 +141,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 			debug("BitmapCastMember: tail");
 			Common::hexdump(buf, tail);
 		}
-	} else if (version == 5) {
+	} else if (version >= 500) {
 		uint16 count = stream.readUint16();
 		for (uint16 cc = 0; cc < count; cc++)
 			stream.readUint32();
@@ -163,13 +172,13 @@ BitmapCastMember::~BitmapCastMember() {
 		delete _matte;
 }
 
-Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox) {
+Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel *channel) {
 	if (!_img) {
 		warning("BitmapCastMember::createWidget: No image decoder");
 		return nullptr;
 	}
 
-	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentStage(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
+	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
 	widget->getSurface()->blitFrom(*_img->getSurface());
 	return widget;
 }
@@ -178,28 +187,36 @@ void BitmapCastMember::createMatte() {
 	// Like background trans, but all white pixels NOT ENCLOSED by coloured pixels
 	// are transparent
 	Graphics::Surface tmp;
-	tmp.create(_initialRect.width(), _initialRect.height(), Graphics::PixelFormat::createFormatCLUT8());
+	tmp.create(_initialRect.width(), _initialRect.height(), g_director->_pixelformat);
 	tmp.copyFrom(*_img->getSurface());
 
+	_noMatte = true;
+
 	// Searching white color in the corners
-	int whiteColor = -1;
+	uint32 whiteColor = 0;
+	bool colorFound = false;
 
-	for (int y = 0; y < tmp.h; y++) {
-		for (int x = 0; x < tmp.w; x++) {
-			byte color = *(byte *)tmp.getBasePtr(x, y);
+	if (g_director->_pixelformat.bytesPerPixel == 1) {
+		for (int y = 0; y < tmp.h; y++) {
+			for (int x = 0; x < tmp.w; x++) {
+				byte color = *(byte *)tmp.getBasePtr(x, y);
 
-			if (g_director->getPalette()[color * 3 + 0] == 0xff &&
-					g_director->getPalette()[color * 3 + 1] == 0xff &&
-					g_director->getPalette()[color * 3 + 2] == 0xff) {
-				whiteColor = color;
-				break;
+				if (g_director->getPalette()[color * 3 + 0] == 0xff &&
+						g_director->getPalette()[color * 3 + 1] == 0xff &&
+						g_director->getPalette()[color * 3 + 2] == 0xff) {
+					whiteColor = color;
+					colorFound = true;
+					break;
+				}
 			}
 		}
+	} else {
+		whiteColor = g_director->_wm->_colorWhite;
+		colorFound = true;
 	}
 
-	if (whiteColor == -1) {
+	if (!colorFound) {
 		debugC(1, kDebugImages, "BitmapCastMember::createMatte(): No white color for matte image");
-		_noMatte = true;
 	} else {
 		delete _matte;
 
@@ -231,78 +248,231 @@ Graphics::Surface *BitmapCastMember::getMatte() {
 	return _matte ? _matte->getMask() : nullptr;
 }
 
+
+/////////////////////////////////////
+// DigitalVideo
+/////////////////////////////////////
+
 DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
 		: CastMember(cast, castId, stream) {
 	_type = kCastDigitalVideo;
 	_video = nullptr;
+	_lastFrame = nullptr;
 
-	if (version < 4) {
-		warning("STUB: DigitalVideoCastMember: unhandled rect data");
-		if (debugChannelSet(5, kDebugLoading))
-			stream.hexdump(stream.size());
-		for (int i = 0; i < 0x4; i++)
-			stream.readByte(); // 0
+	_getFirstFrame = false;
+	_duration = 0;
 
-		for (int i = 0; i < 0x4; i++)
-			stream.readByte(); // looks rect like, but as bytes not uint16.
+	_initialRect = Movie::readRect(stream);
+	_vflags = stream.readUint32();
+	_frameRate = (_vflags >> 24) & 0xff;
 
-		for ( int i = 0; i < 0x3; i++)
-			stream.readByte(); // 0
-
-		_frameRate = 12;
-		_frameRateType = kFrameRateDefault;
-
-		_preload = false;
-		_enableVideo = false;
-		_pausedAtStart = false;
-
-		byte flag = stream.readByte();
-
-		_showControls = flag & 0x40;
-		_looping = flag & 0x10;
-		_enableSound = flag & 0x08;
-		_crop = !(flag & 0x02);
-		_center = flag & 0x01;
-		_directToStage = flag & 0x20;
-	} else {
-		stream.readByte();
-		_initialRect = Movie::readRect(stream);
-		_frameRate = stream.readByte();
-		stream.readByte();
-
-		byte flags1 = stream.readByte();
-		_frameRateType = kFrameRateDefault;
-		if (flags1 & 0x08) {
-			_frameRateType = (FrameRateType)((flags1 & 0x30) >> 4);
-		}
-		_preload = flags1 & 0x04;
-		_enableVideo = !(flags1 & 0x02);
-		_pausedAtStart = flags1 & 0x01;
-
-		byte flags2 = stream.readByte();
-		_showControls = flags2 & 0x40;
-		_looping = flags2 & 0x10;
-		_enableSound = flags2 & 0x08;
-		_crop = !(flags2 & 0x02);
-		_center = flags2 & 0x01;
-		_directToStage = true;
-		debugC(2, kDebugLoading, "DigitalVideoCastMember(): flags1: (%d 0x%x)", flags1, flags1);
-
-		debugC(2, kDebugLoading, "DigitalVideoCastMember(): flags2: (%d 0x%x)", flags2, flags2);
+	_frameRateType = kFrameRateDefault;
+	if (_vflags & 0x0800) {
+		_frameRateType = (FrameRateType)((_vflags & 0x3000) >> 12);
 	}
-	debugC(2, kDebugLoading, "_frameRate: %d", _frameRateType);
+	_qtmovie = _vflags & 0x8000;
+	_avimovie = _vflags & 0x4000;
+	_preload = _vflags & 0x0400;
+	_enableVideo = !(_vflags & 0x0200);
+	_pausedAtStart = _vflags & 0x0100;
+	_showControls = _vflags & 0x40;
+	_directToStage = _vflags & 0x20;
+	_looping = _vflags & 0x10;
+	_enableSound = _vflags & 0x08;
+	_crop = !(_vflags & 0x02);
+	_center = _vflags & 0x01;
+
+	if (debugChannelSet(2, kDebugLoading))
+		_initialRect.debugPrint(2, "DigitalVideoCastMember(): rect:");
+
+	debugC(2, kDebugLoading, "DigitalVideoCastMember(): flags: (%d 0x%04x)", _vflags, _vflags);
+
+	debugC(2, kDebugLoading, "_frameRate: %d", _frameRate);
 	debugC(2, kDebugLoading, "_frameRateType: %d, _preload: %d, _enableVideo %d, _pausedAtStart %d",
 			_frameRateType, _preload, _enableVideo, _pausedAtStart);
 	debugC(2, kDebugLoading, "_showControls: %d, _looping: %d, _enableSound: %d, _crop %d, _center: %d, _directToStage: %d",
 			_showControls, _looping, _enableSound, _crop, _center, _directToStage);
-
-	if (debugChannelSet(2, kDebugLoading))
-		_initialRect.debugPrint(2, "DigitalVideoCastMember(): rect:");
+	debugC(2, kDebugLoading, "_avimovie: %d, _qtmovie: %d", _avimovie, _qtmovie);
 }
 
 DigitalVideoCastMember::~DigitalVideoCastMember() {
+	delete _video;
 
+	if (g_director->_pixelformat.bytesPerPixel != 1)
+		delete _lastFrame;
 }
+
+bool DigitalVideoCastMember::loadVideo(Common::String path) {
+	// TODO: detect file type (AVI, QuickTime, FLIC) based on magic number,
+	// insert the right video decoder
+
+	_filename = path;
+	_video = new Video::QuickTimeDecoder();
+
+	debugC(2, kDebugLoading | kDebugImages, "Loading video %s", path.c_str());
+
+	return _video->loadFile(path);
+}
+
+bool DigitalVideoCastMember::isModified() {
+	if (!_video || !_video->isVideoLoaded())
+		return true;
+
+	if (_getFirstFrame)
+		return true;
+
+	if (_channel->_movieRate == 0.0)
+		return false;
+
+	return _video->needsUpdate();
+}
+
+void DigitalVideoCastMember::startVideo(Channel *channel) {
+	_channel = channel;
+
+	if (_pausedAtStart) {
+		_getFirstFrame = true;
+	} else {
+		if (_channel->_movieRate == 0.0)
+			_channel->_movieRate = 1.0;
+	}
+
+	if (_video->isPlaying())
+		_video->rewind();
+	else
+		_video->start();
+
+	debugC(2, kDebugImages, "STARTING VIDEO %s", _filename.c_str());
+
+	if (_channel->_stopTime == 0)
+		_channel->_stopTime = getMovieTotalTime();
+
+	_duration = getMovieTotalTime();
+}
+
+Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Channel *channel) {
+	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
+
+	_channel = channel;
+
+	if (!_video || !_video->isVideoLoaded()) {
+		warning("DigitalVideoCastMember::createWidget: No video decoder");
+		delete widget;
+
+		return nullptr;
+	}
+
+	// Do not render stopped videos
+	if (_channel->_movieRate == 0.0 && !_getFirstFrame) {
+		widget->getSurface()->blitFrom(*_lastFrame);
+
+		return widget;
+	}
+
+	debugC(1, kDebugImages, "Video time: %d  rate: %f", _channel->_movieTime, _channel->_movieRate);
+	const Graphics::Surface *frame = _video->decodeNextFrame();
+
+	_channel->_movieTime = getMovieCurrentTime();
+
+	if (frame) {
+		if (g_director->_pixelformat.bytesPerPixel == 1) {
+			if (frame->format.bytesPerPixel != 1) {
+				warning("STUB: video >8bpp");
+			} else {
+				_lastFrame = frame;
+				widget->getSurface()->blitFrom(*frame);
+			}
+		} else {
+			delete _lastFrame;
+			_lastFrame = frame->convertTo(g_director->_pixelformat, g_director->getPalette());
+			widget->getSurface()->blitFrom(*_lastFrame);
+		}
+	} else {
+		widget->getSurface()->blitFrom(*_lastFrame);
+	}
+
+	if (_getFirstFrame) {
+		_video->stop();
+		_getFirstFrame = false;
+	}
+
+	if (_video->endOfVideo()) {
+		if (_looping) {
+			_video->rewind();
+		} else {
+			_channel->_movieRate = 0.0;
+		}
+	}
+
+	return widget;
+}
+
+uint DigitalVideoCastMember::getMovieCurrentTime() {
+	if (!_video)
+		return 0;
+
+	int stamp = MIN<int>(_video->getTime() * 60 / 1000, getMovieTotalTime());
+
+	return stamp;
+}
+
+uint DigitalVideoCastMember::getMovieTotalTime() {
+	if (!_video)
+		return 0;
+
+	int stamp = _video->getDuration().msecs() * 60 / 1000;
+
+	return stamp;
+}
+
+void DigitalVideoCastMember::seekMovie(int stamp) {
+	if (!_video)
+		return;
+
+	_channel->_startTime = stamp;
+
+	Audio::Timestamp dur = _video->getDuration();
+
+	_video->seek(Audio::Timestamp(_channel->_startTime * 1000 / 60, dur.framerate()));
+}
+
+void DigitalVideoCastMember::setStopTime(int stamp) {
+	if (!_video)
+		return;
+
+	_channel->_stopTime = stamp;
+
+	Audio::Timestamp dur = _video->getDuration();
+
+	_video->setEndTime(Audio::Timestamp(_channel->_stopTime * 1000 / 60, dur.framerate()));
+}
+
+void DigitalVideoCastMember::setMovieRate(double rate) {
+	if (!_video)
+		return;
+
+	_channel->_movieRate = rate;
+
+	if (rate < 0.0)
+		warning("STUB: DigitalVideoCastMember::setMovieRate(%g)", rate);
+	else
+		_video->setRate(Common::Rational((int)(rate * 100.0), 100));
+
+	if (_video->endOfVideo())
+		_video->rewind();
+}
+
+void DigitalVideoCastMember::setFrameRate(int rate) {
+	if (!_video)
+		return;
+
+	warning("STUB: DigitalVideoCastMember::setFrameRate(%d)", rate);
+}
+
+
+/////////////////////////////////////
+// Sound
+/////////////////////////////////////
 
 SoundCastMember::SoundCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
 		: CastMember(cast, castId, stream) {
@@ -310,6 +480,11 @@ SoundCastMember::SoundCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 	_audio = nullptr;
 	_looping = 0;
 }
+
+
+/////////////////////////////////////
+// Text
+/////////////////////////////////////
 
 TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version, uint8 flags1, bool asButton)
 		: CastMember(cast, castId, stream) {
@@ -336,7 +511,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 	_bgpalinfo1 = _bgpalinfo2 = _bgpalinfo3 = 0;
 	_fgpalinfo1 = _fgpalinfo2 = _fgpalinfo3 = 0xff;
 
-	if (version <= 3) {
+	if (version < 400) {
 		_flags1 = flags1; // region: 0 - auto, 1 - matte, 2 - disabled
 		_borderSize = static_cast<SizeType>(stream.readByte());
 		_gutterSize = static_cast<SizeType>(stream.readByte());
@@ -352,7 +527,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 		uint16 pad4 = 0;
 		uint16 totalTextHeight;
 
-		if (version == 2) {
+		if (version >= 200 && version < 300) {
 			pad2 = stream.readUint16();
 			if (pad2 != 0) { // In D2 there are values
 				warning("TextCastMember: pad2: %x", pad2);
@@ -382,7 +557,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 		if (debugChannelSet(2, kDebugLoading)) {
 			_initialRect.debugPrint(2, "TextCastMember(): rect:");
 		}
-	} else if (version == 4) {
+	} else if (version >= 400 && version < 500) {
 		_flags1 = flags1;
 		_borderSize = static_cast<SizeType>(stream.readByte());
 		_gutterSize = static_cast<SizeType>(stream.readByte());
@@ -432,7 +607,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 	if (asButton) {
 		_type = kCastButton;
 
-		if (version <= 4) {
+		if (version < 500) {
 			_buttonType = static_cast<ButtonType>(stream.readUint16BE() - 1);
 		} else {
 			warning("TextCastMember(): Attempting to initialize >D4 button castmember");
@@ -445,7 +620,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 	_modified = true;
 }
 
-void TextCastMember::setColors(int *fgcolor, int *bgcolor) {
+void TextCastMember::setColors(uint32 *fgcolor, uint32 *bgcolor) {
 	if (fgcolor)
 		_fgcolor = *fgcolor;
 
@@ -476,13 +651,13 @@ void TextCastMember::importStxt(const Stxt *stxt) {
 	_ptext = stxt->_ptext;
 }
 
-Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox) {
+Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *channel) {
 	Graphics::MacFont *macFont = new Graphics::MacFont(_fontId, _fontSize, _textSlant);
 	Graphics::MacWidget *widget = nullptr;
 
 	switch (_type) {
 	case kCastText:
-		widget = new Graphics::MacText(g_director->getCurrentStage(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), bbox.width(), getAlignment(), 0, _borderSize, _gutterSize, _boxShadow, _textShadow);
+		widget = new Graphics::MacText(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), bbox.width(), getAlignment(), 0, _borderSize, _gutterSize, _boxShadow, _textShadow);
 		((Graphics::MacText *)widget)->draw();
 		((Graphics::MacText *)widget)->_focusable = _editable;
 		((Graphics::MacText *)widget)->setEditable(_editable);
@@ -492,7 +667,7 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox) {
 	case kCastButton:
 		// note that we use _initialRect for the dimensions of the button;
 		// the values provided in the sprite bounding box are ignored
-		widget = new Graphics::MacButton(Graphics::MacButtonType(_buttonType), getAlignment(), g_director->getCurrentStage(), bbox.left, bbox.top, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, getForeColor(), 0xff);
+		widget = new Graphics::MacButton(Graphics::MacButtonType(_buttonType), getAlignment(), g_director->getCurrentWindow(), bbox.left, bbox.top, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, getForeColor(), 0xff);
 		((Graphics::MacButton *)widget)->draw();
 		widget->_focusable = true;
 
@@ -507,16 +682,6 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox) {
 	return widget;
 }
 
-Common::Rect TextCastMember::getWidgetRect() {
-	Graphics::MacWidget *widget = createWidget(_initialRect);
-	Common::Rect result = _initialRect;
-	if (widget) {
-		result = widget->_dims;
-		delete widget;
-	}
-	return result;
-}
-
 void TextCastMember::importRTE(byte *text) {
 	//assert(rteList.size() == 3);
 	//child0 is probably font data.
@@ -527,19 +692,19 @@ void TextCastMember::importRTE(byte *text) {
 
 void TextCastMember::setText(const char *text) {
 	// Do nothing if text did not change
-	if (_ftext.equals(text))
+	if (_ptext.equals(text))
 		return;
 
-	_ptext = _ftext = text;
+	// If text has changed, use the cached formatting from first STXT in this castmember.
+	Common::String formatting = Common::String::format("\001\016%04x%02x%04x%04x%04x%04x", _fontId, _textSlant, _fontSize, _fgpalinfo1, _fgpalinfo2, _fgpalinfo3);
+	_ptext = text;
+	_ftext = formatting + text;
+
 	_modified = true;
 }
 
 Common::String TextCastMember::getText() {
 	return _ptext;
-}
-
-bool TextCastMember::isModified() {
-	return _modified;
 }
 
 bool TextCastMember::isEditable() {
@@ -556,6 +721,11 @@ void TextCastMember::updateFromWidget(Graphics::MacWidget *widget) {
 	}
 }
 
+
+/////////////////////////////////////
+// Shape
+/////////////////////////////////////
+
 ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
 		: CastMember(cast, castId, stream) {
 	_type = kCastShape;
@@ -564,7 +734,7 @@ ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 
 	_ink = kInkTypeCopy;
 
-	if (version < 4) {
+	if (version < 400) {
 		unk1 = stream.readByte();
 		_shapeType = static_cast<ShapeType>(stream.readByte());
 		_initialRect = Movie::readRect(stream);
@@ -576,7 +746,7 @@ ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 		_ink = static_cast<InkType>(_fillType & 0x3f);
 		_lineThickness = stream.readByte();
 		_lineDirection = stream.readByte();
-	} else if (version == 4) {
+	} else if (version >= 400 && version < 500) {
 		unk1 = stream.readByte();
 		_shapeType = static_cast<ShapeType>(stream.readByte());
 		_initialRect = Movie::readRect(stream);
@@ -610,14 +780,19 @@ ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 		_initialRect.debugPrint(0, "ShapeCastMember: rect:");
 }
 
+
+/////////////////////////////////////
+// Script
+/////////////////////////////////////
+
 ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
 		: CastMember(cast, castId, stream) {
 	_type = kCastLingoScript;
 	_scriptType = kNoneScript;
 
-	if (version < 4) {
+	if (version < 400) {
 		error("Unhandled Script cast");
-	} else if (version == 4) {
+	} else if (version >= 400 && version < 500) {
 		byte unk1 = stream.readByte();
 		byte type = stream.readByte();
 
@@ -636,7 +811,7 @@ ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 
 		stream.readByte(); // There should be no more data
 		assert(stream.eos());
-	} else if (version > 4) {
+	} else if (version >= 500) {
 		stream.readByte();
 		stream.readByte();
 
@@ -645,6 +820,11 @@ ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 		// WIP need to complete this!
 	}
 }
+
+
+/////////////////////////////////////
+// RTE
+/////////////////////////////////////
 
 RTECastMember::RTECastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
 		: TextCastMember(cast, castId, stream, version) {
@@ -666,10 +846,15 @@ void RTECastMember::loadChunks() {
 #endif
 }
 
+
+/////////////////////////////////////
+// Palette
+/////////////////////////////////////
+
 PaletteCastMember::PaletteCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
 	: CastMember(cast, castId, stream) {
 	_type = kCastPalette;
 	_palette = nullptr;
 }
 
-} // end of namespace Director
+} // End of namespace Director

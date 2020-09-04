@@ -33,19 +33,14 @@ void Clipboard::clipboardStore(const Common::U32String &text) {
 }
 
 void Clipboard::clipboardSend(ClipSource source) {
-	// Convert unicode string to standard string, since that's all ScummVM supports
-	Common::String text;
-	for (uint idx = 0; idx < _text.size(); ++idx)
-		text += (_text[idx] <= 0x7f) ? (char)_text[idx] : '?';
-
-	g_system->setTextInClipboard(text);
+	g_system->setTextInClipboard(_text);
 }
 
 void Clipboard::clipboardReceive(ClipSource source) {
 	Windows &windows = *g_vm->_windows;
 
 	if (g_system->hasTextInClipboard()) {
-		Common::String text = g_system->getTextFromClipboard();
+		Common::U32String text = g_system->getTextFromClipboard();
 		for (uint idx = 0; idx < text.size(); ++idx) {
 			uint c = text[idx];
 			if (c != '\r' && c != '\n' && c != '\b' && c != '\t')

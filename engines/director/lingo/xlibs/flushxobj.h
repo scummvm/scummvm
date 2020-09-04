@@ -31,13 +31,15 @@ public:
 };
 
 namespace FlushXObj {
-	void initialize(int type);
 
-	void m_new(int nargs);
-	void m_clearMask(int nargs);
-	void m_addToMask(int nargs);
-	void m_flush(int nargs);
-	void m_flushEvents(int nargs);
+void initialize(int type);
+
+void m_new(int nargs);
+void m_clearMask(int nargs);
+void m_addToMask(int nargs);
+void m_flush(int nargs);
+void m_flushEvents(int nargs);
+
 } // End of namespace FlushXObj
 
 } // End of namespace Director

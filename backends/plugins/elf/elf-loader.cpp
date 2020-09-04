@@ -311,6 +311,9 @@ void DLObject::relocateSymbols(ptrdiff_t offset) {
 	for (uint32 c = _symbol_cnt; c--; s++) {
 		// Make sure we don't relocate special valued symbols
 		if (s->st_shndx < SHN_LOPROC) {
+			if (s->st_value < _segmentVMA)
+				s->st_value = _segmentVMA;	// deal with symbols referring to sections, which start before the VMA
+
 			s->st_value += offset;
 
 			if (s->st_value < Elf32_Addr(_segment) ||

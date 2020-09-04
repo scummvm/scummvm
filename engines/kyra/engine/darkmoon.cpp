@@ -644,7 +644,7 @@ void DarkMoonEngine::snd_loadAmigaSounds(int level, int sub) {
 		if (val == -1)
 			i++;
 	}
-	
+
 	if (sub)
 		sndIndex += 4;
 

@@ -28,6 +28,8 @@
 #include "backends/platform/android/portdefs.h"
 #include "common/fs.h"
 #include "common/archive.h"
+#include "common/mutex.h"
+#include "common/ustr.h"
 #include "audio/mixer_intern.h"
 #include "backends/modular-backend.h"
 #include "backends/plugins/posix/posix-provider.h"
@@ -55,7 +57,7 @@ extern const char *android_log_tag;
 #define ENTER(fmt, args...) do {  } while (false)
 #endif
 
-class OSystem_Android : public ModularBackend, Common::EventSource {
+class OSystem_Android : public ModularMutexBackend, public ModularGraphicsBackend, Common::EventSource {
 private:
 	// passed from the dark side
 	int _audio_sample_rate;
@@ -80,9 +82,6 @@ private:
 
 	Common::String getSystemProperty(const char *name) const;
 
-protected:
-	virtual Common::EventSource *getDefaultEventSource() { return this; }
-
 public:
 	OSystem_Android(int audio_sample_rate, int audio_buffer_size);
 	virtual ~OSystem_Android();
@@ -100,7 +99,7 @@ private:
 	Common::Queue<Common::Event> _event_queue;
 	Common::Event _queuedEvent;
 	uint32 _queuedEventTime;
-	MutexRef _event_queue_lock;
+	Common::Mutex *_event_queue_lock;
 
 	Common::Point _touch_pt_down, _touch_pt_scroll, _touch_pt_dt;
 	int _eventScaleX;
@@ -135,8 +134,8 @@ public:
 											int priority = 0);
 	virtual bool openUrl(const Common::String &url);
 	virtual bool hasTextInClipboard();
-	virtual Common::String getTextFromClipboard();
-	virtual bool setTextInClipboard(const Common::String &text);
+	virtual Common::U32String getTextFromClipboard();
+	virtual bool setTextInClipboard(const Common::U32String &text);
 	virtual bool isConnectionLimited();
 	virtual Common::String getSystemLanguage() const;
 	virtual char *convertEncoding(const char *to, const char *from, const char *string, size_t length);

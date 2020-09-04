@@ -91,9 +91,9 @@ Background::Background() : _priorityLayer(0), _points2(0), _data(0) {
 	_layerOffset[0] = Common::Point(0, 0);
 	_layerOffset[1] = Common::Point(0, 0);
 	_layerOffset[2] = Common::Point(0, 0);
-	_layerAlphaMode[0] = NORMAL;
-	_layerAlphaMode[1] = NORMAL;
-	_layerAlphaMode[2] = NORMAL;
+	_layerAlphaMode[0] = NONE;
+	_layerAlphaMode[1] = NONE;
+	_layerAlphaMode[2] = NONE;
 
 	_tileDataOffset = nullptr;
 }
@@ -133,7 +133,7 @@ bool Background::load(byte *dataStart, uint32 size) {
 		_tileMap[i].size = stream.readUint32LE();
 		_tileMap[i].map = dataStart + tilemapOffset;
 		_tileMap[i].tileIndexOffset = tileindexOffset;
-		debug("Tilemap (%d, %d) map: %X", _tileMap[i].w, _tileMap[i].h, tilemapOffset);
+		debug(3, "Tilemap (%d, %d) map: %X", _tileMap[i].w, _tileMap[i].h, tilemapOffset);
 
 		tilemapOffset += _tileMap[i].size;
 	}
@@ -155,8 +155,8 @@ bool Background::load(byte *dataStart, uint32 size) {
 	_priorityLayer = new PriorityLayer();
 	_priorityLayer->load(priorityTilemap, _tileDataOffset);
 
-	debug("Tiles: %X", tilesOffset);
-	debug("tileIndexOffset: %d", _tileMap[0].tileIndexOffset);
+	debug(3, "Tiles: %X", tilesOffset);
+	debug(3, "tileIndexOffset: %d", _tileMap[0].tileIndexOffset);
 
 	for (int i = 0; i < 3; i++) {
 		_layerSurface[i] = initGfxLayer(_tileMap[i]);
@@ -223,13 +223,13 @@ Common::Point Background::getPoint2(uint32 pointIndex) {
 }
 
 uint16 Background::getWidth() {
-	assert (_layerSurface[0]);
-	return _layerSurface[0]->w;
+	assert (_layerSurface[1]);
+	return _layerSurface[1]->w;
 }
 
 uint16 Background::getHeight() {
-	assert (_layerSurface[0]);
-	return _layerSurface[0]->h;
+	assert (_layerSurface[1]);
+	return _layerSurface[1]->h;
 }
 
 int16 Background::getPriorityAtPoint(Common::Point pos) {
@@ -311,7 +311,7 @@ Background *BackgroundResourceLoader::load(uint32 sceneId) {
 }
 
 Background *BackgroundResourceLoader::load(const char *filename) {
-	debug("Loading %s", filename);
+	debug(1, "Loading %s", filename);
 	uint32 size;
 	byte *scrData = _bigFileArchive->load(filename, size);
 	Background *bg = new Background();

@@ -59,7 +59,7 @@ bool UltimaEngine::initialize() {
 		return true;
 
 	// Try and set up the data archive
-	Common::String errorMsg;
+	Common::U32String errorMsg;
 	if (!UltimaDataArchive::load(folder, reqMajorVersion, reqMinorVersion, errorMsg)) {
 		GUIError(errorMsg);
 		return false;
@@ -68,7 +68,7 @@ bool UltimaEngine::initialize() {
 	return true;
 }
 
-void UltimaEngine::GUIError(const Common::String &msg) {
+void UltimaEngine::GUIError(const Common::U32String &msg) {
 	GUIErrorMessage(msg);
 }
 

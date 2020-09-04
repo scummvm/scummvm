@@ -1495,6 +1495,7 @@ class Sound {
 public:
 
 	Sound();
+	~Sound();
 
 	void test(); // FIXME. Remove
 

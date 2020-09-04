@@ -29,6 +29,7 @@
 
 #include "common/text-to-speech.h"
 #include "common/str.h"
+#include "common/ustr.h"
 #include "common/list.h"
 #include "common/mutex.h"
 
@@ -59,7 +60,7 @@ public:
 	SpeechDispatcherManager();
 	virtual ~SpeechDispatcherManager() override;
 
-	virtual bool say(Common::String str, Action action, Common::String charset = "") override;
+	virtual bool say(const Common::U32String &str, Action action) override;
 
 	virtual bool stop() override;
 	virtual bool pause() override;

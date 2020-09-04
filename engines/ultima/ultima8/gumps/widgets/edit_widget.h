@@ -56,6 +56,8 @@ public:
 	bool OnKeyUp(int key) override;
 	bool OnTextInput(int unicode) override;
 
+	void OnFocus(bool gain) override;
+
 	//! get the current text
 	Std::string getText() const {
 		return _text;

@@ -776,14 +776,14 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 
 	_contentIsDirty = false;
 
-	_screen.clear(kColorGreen);
+	_screen.clear(_wm->_colorGreen);
 
 	drawFilledRoundRect(&_screen, r, kDesktopArc, _wm->_colorWhite);
 	r.top = 7;
 	_screen.fillRect(r, _wm->_colorWhite);
 	r.top = kMenuHeight - 1;
 	r.bottom++;
-	_screen.fillRect(r, kColorGreen);
+	_screen.fillRect(r, _wm->_colorGreen);
 	r.bottom--;
 	_screen.fillRect(r, _wm->_colorBlack);
 
@@ -824,7 +824,7 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 		}
 	}
 
-	if (_wm->_mode & kWMModalMenuMode)
+	if ((_wm->_mode & kWMModalMenuMode) | !_wm->_screen)
 		g_system->copyRectToScreen(_screen.getBasePtr(_bbox.left, _bbox.top), _screen.pitch, _bbox.left, _bbox.top, _bbox.width(), _bbox.height());
 
 
@@ -832,9 +832,10 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 		renderSubmenu(_menustack[i], (i == _menustack.size() - 1));
 	}
 
-	g->transBlitFrom(_screen, kColorGreen);
+	if (g)
+		g->transBlitFrom(_screen, _wm->_colorGreen);
 
-	if (!(_wm->_mode & kWMModalMenuMode))
+	if (!(_wm->_mode & kWMModalMenuMode) && g)
 		g_system->copyRectToScreen(g->getPixels(), g->pitch, 0, 0, g->w, g->h);
 
 	return true;
@@ -893,7 +894,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 				ty = 0;
 				accelX -= x;
 
-				_tempSurface.clear(kColorGreen);
+				_tempSurface.clear(_wm->_colorGreen);
 			}
 
 			if (menu->items[i]->unicode) {
@@ -920,7 +921,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 					byte *dst = (byte *)_screen.getBasePtr(x, y+ii);
 					byte pat = _wm->getPatterns()[kPatternCheckers2 - 1][ii % 8];
 					for (int j = 0; j < r->width(); j++) {
-						if (*src != kColorGreen && (pat & (1 << (7 - (x + j) % 8))))
+						if (*src != _wm->_colorGreen && (pat & (1 << (7 - (x + j) % 8))))
 							*dst = *src;
 						src++;
 						dst++;

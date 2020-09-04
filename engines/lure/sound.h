@@ -112,7 +112,7 @@ private:
 	bool _isPlaying;
 	bool _nativeMT32;
 	bool _isRoland;
-	Common::MutexRef _soundMutex;
+	Common::Mutex _soundMutex;
 	bool _paused;
 
 	uint _musicVolume;

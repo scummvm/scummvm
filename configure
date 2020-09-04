@@ -169,6 +169,7 @@ _iconv=auto
 _tts=auto
 _gtk=auto
 _fribidi=auto
+_discord=auto
 _test_cxx11=no
 # Default option behavior yes/no
 _debug_build=auto
@@ -183,6 +184,7 @@ _build_scalers=yes
 _build_hq_scalers=yes
 _enable_prof=no
 _enable_asan=no
+_enable_tsan=no
 _global_constructors=no
 _no_undefined_var_template=no
 _no_pragma_pack=no
@@ -441,7 +443,7 @@ find_sdlconfig() {
 				echo $_sdlconfig
 				# Save the prefix
 				_sdlpath=$path_dir
-				if test `basename $path_dir` = bin ; then
+				if test `basename $path_dir` = bin || test `basename $path_dir` = sbin ; then
 					_sdlpath=`dirname $path_dir`
 				fi
 				# break at first sdl-config found in path
@@ -1027,6 +1029,7 @@ Optional Features:
   --enable-release-mode    enable building in release mode (without optimizations)
   --enable-optimizations   enable optimizations
   --enable-asan            enable Address Sanitizer for memory-related debugging
+  --enable-tsan            enable Thread Sanitizer for thread-related debugging
   --enable-profiling       enable profiling
   --enable-plugins         enable the support for dynamic plugins
   --default-dynamic        make plugins dynamic by default
@@ -1155,6 +1158,9 @@ Optional Libraries:
 
   --with-iconv-prefix=DIR    prefix where libiconv is installed (optional)
   --disable-iconv        disable libiconv encoding conversion library [autodetect]
+
+  --with-discord-prefix=DIR   prefix where discord-rpc is installed (optional)
+  --disable-discord       disable Discord rich presence integration [autodetect]
 
 Some influential environment variables:
   AR                 archiver command
@@ -1287,6 +1293,8 @@ for ac_option in $@; do
 	--disable-gtk)                _gtk=no                ;;
 	--enable-bink)                _bink=yes              ;;
 	--disable-bink)               _bink=no               ;;
+	--enable-discord)             _discord=yes           ;;
+	--disable-discord)            _discord=no            ;;
 	--opengl-mode=*)
 		_opengl_mode=`echo $ac_option | cut -d '=' -f 2`
 		;;
@@ -1423,6 +1431,11 @@ for ac_option in $@; do
 		ICONV_CFLAGS="-I$arg/include"
 		ICONV_LIBS="-L$arg/lib"
 		;;
+	--with-discord-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		DISCORD_CFLAGS="-I$arg/include"
+		DISCORD_LIBS="-L$arg/lib"
+		;;
 	--backend=*)
 		_backend=`echo $ac_option | cut -d '=' -f 2`
 		;;
@@ -1467,6 +1480,9 @@ for ac_option in $@; do
 		;;
 	--enable-asan)
 		_enable_asan=yes
+		;;
+	--enable-tsan)
+		_enable_tsan=yes
 		;;
 	--with-sdl-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -2625,6 +2641,9 @@ case $_host_os in
 		_nuked_opl=no
 		;;
 	morphos*)
+		if test "$_debug_build" = no; then
+			_optimization_level=-O2
+		fi
 		append_var LDFLAGS "-Wl,--export-dynamic"
 		append_var LDFLAGS "-L/usr/local/lib"
 		append_var CXXFLAGS "-D__MORPHOS_SHAREDLIBS"
@@ -2635,6 +2654,7 @@ case $_host_os in
 		append_var CXXFLAGS "-Wno-format"
 		add_line_to_config_mk 'MORPHOS = 1'
 		_port_mk="backends/platform/sdl/morphos/morphos.mk"
+		# for use SDL2
 		_sdlconfig=sdl2-config
 		_nuked_opl=no
 		;;
@@ -3878,7 +3898,7 @@ esac
 #
 echo_n "Checking if host is POSIX compliant... "
 case $_host_os in
-	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | morphos* |  n64 | ps3 | psp2 | psp | riscos | wii)
+	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | morphos | n64 | ps3 | psp2 | psp | riscos | wii)
 		_posix=no
 		;;
 	3ds | android | androidsdl | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | switch | uclinux*)
@@ -4877,6 +4897,10 @@ if test "$_fluidsynth" = auto; then
 int main(void) { delete_fluid_settings(new_fluid_settings()); return 0; }
 EOF
 	cc_check_no_clean $FLUIDSYNTH_CFLAGS $FLUIDSYNTH_LIBS && _fluidsynth=yes
+	if test "$_fluidsynth" != yes && test "$_pkg_config" = "yes" && $_pkgconfig --exists fluidsynth; then
+		FLUIDSYNTH_LIBS="`$_pkgconfig --static --libs fluidsynth`"
+		cc_check_no_clean $FLUIDSYNTH_CFLAGS $FLUIDSYNTH_LIBS && _fluidsynth=yes
+	fi
 	if test "$_fluidsynth" != yes; then
 		FLUIDSYNTH_LIBS="$FLUIDSYNTH_STATIC_LIBS"
 		cc_check_no_clean $FLUIDSYNTH_CFLAGS $FLUIDSYNTH_LIBS && _fluidsynth=yes
@@ -5429,6 +5453,25 @@ if test "$_pandocext" = "default"; then
 fi
 
 #
+# Check for Discord
+#
+echocheck "Discord RPC"
+if test "$_discord" = auto ; then
+	_discord=no
+	cat > $TMPC << EOF
+#include <discord_rpc.h>
+int main(void) { Discord_Shutdown(); return 0; }
+EOF
+	cc_check $DISCORD_CFLAGS $DISCORD_LIBS -ldiscord-rpc && _discord=yes
+fi
+if test "$_discord" = yes ; then
+	append_var LIBS "$DISCORD_LIBS -ldiscord-rpc"
+	append_var INCLUDES "$DISCORD_CFLAGS"
+fi
+define_in_config_if_yes "$_discord" 'USE_DISCORD'
+echo "$_discord"
+
+#
 # Enable vkeybd / event recorder
 #
 define_in_config_if_yes $_vkeybd 'ENABLE_VKEYBD'
@@ -5620,15 +5663,28 @@ fi
 echo_n "Enabling Address Sanitizer... "
 
 if test "$_enable_asan" = yes ; then
-	append_var CXXFLAGS "-fsanitize=address -fno-omit-frame-pointer"
-	append_var LDFLAGS "-fsanitize=address -fno-omit-frame-pointer"
+	if test "$_enable_tsan" = yes ; then
+		echo_n "conflicting with tsan, disabling... "
+		_enable_asan=no
+	else
+		append_var CXXFLAGS "-fsanitize=address -fno-omit-frame-pointer"
+		append_var LDFLAGS "-fsanitize=address -fno-omit-frame-pointer"
+	fi
 fi
 echo "$_enable_asan"
+
+echo_n "Enabling Thread Sanitizer... "
+
+if test "$_enable_tsan" = yes ; then
+	append_var CXXFLAGS "-fsanitize=thread"
+	append_var LDFLAGS "-fsanitize=thread"
+fi
+echo "$_enable_tsan"
 
 echo_n "Backend... "
 echo_n "$_backend"
 
-if test "$_backend" = "sdl" -a -n "$_sdlversion"; then
+if test "$_sdl" = yes -a -n "$_sdlversion"; then
 	echo_n " ($_sdlversion)"
 fi
 

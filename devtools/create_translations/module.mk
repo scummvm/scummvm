@@ -1,7 +1,6 @@
 MODULE := devtools/create_translations
 
 MODULE_OBJS := \
-	cp_parser.o \
 	po_parser.o \
 	create_translations.o
 

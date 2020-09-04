@@ -171,21 +171,21 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 			byte *surfrow = (byte *)textSurf.getBasePtr(0, y);
 
 			// CHECKME: _borderSize!
-			uint32 *bufrow = texBuf + (iter->_dims.y + y + _borderSize) * resultWidth;
+			uint32 *bufrow = texBuf + (iter->_dims.top + y + _borderSize) * resultWidth;
 			for (int x = 0; x < textSurf.w; x++) {
 
 				if (!_antiAliased && surfrow[x] == 1) {
-					bufrow[iter->_dims.x + x + _borderSize] = _color | 0xFF000000;
+					bufrow[iter->_dims.left + x + _borderSize] = _color | 0xFF000000;
 					if (_borderSize <= 0) continue;
 					if (_borderSize == 1) {
 						// optimize common case
 						for (int dx = -1; dx <= 1; dx++) {
 							for (int dy = -1; dy <= 1; dy++) {
-								if (x + 1 + iter->_dims.x + dx >= 0 &&
-									    x + 1 + iter->_dims.x + dx < resultWidth &&
+								if (x + 1 + iter->_dims.left + dx >= 0 &&
+									    x + 1 + iter->_dims.left + dx < resultWidth &&
 									    y + 1 + dy >= 0 && y + 1 + dy < resultHeight) {
-									if (texBuf[(y + iter->_dims.y + dy + 1)*resultWidth + x + 1 + iter->_dims.x + dx] == 0) {
-										texBuf[(y + iter->_dims.y + dy + 1)*resultWidth + x + 1 + iter->_dims.x + dx] = 0xFF000000;
+									if (texBuf[(y + iter->_dims.top + dy + 1)*resultWidth + x + 1 + iter->_dims.left + dx] == 0) {
+										texBuf[(y + iter->_dims.top + dy + 1)*resultWidth + x + 1 + iter->_dims.left + dx] = 0xFF000000;
 									}
 								}
 							}
@@ -194,11 +194,11 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 					}
 					for (int dx = -_borderSize; dx <= _borderSize; dx++) {
 						for (int dy = -_borderSize; dy <= _borderSize; dy++) {
-							if (x + _borderSize + iter->_dims.x + dx >= 0 &&
-								    x + _borderSize + iter->_dims.x + dx < resultWidth &&
+							if (x + _borderSize + iter->_dims.left + dx >= 0 &&
+								    x + _borderSize + iter->_dims.left + dx < resultWidth &&
 								    y + _borderSize + dy >= 0 && y + _borderSize + dy < resultHeight) {
-								if (texBuf[(y + iter->_dims.y + dy + _borderSize)*resultWidth + x + _borderSize + iter->_dims.x + dx] == 0) {
-									texBuf[(y + iter->_dims.y + dy + _borderSize)*resultWidth + x + _borderSize + iter->_dims.x + dx] = 0xFF000000;
+								if (texBuf[(y + iter->_dims.top + dy + _borderSize)*resultWidth + x + _borderSize + iter->_dims.left + dx] == 0) {
+									texBuf[(y + iter->_dims.top + dy + _borderSize)*resultWidth + x + _borderSize + iter->_dims.left + dx] = 0xFF000000;
 								}
 							}
 						}
@@ -213,33 +213,33 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 					int idx = pixA;
 
 					if (_borderSize <= 0) {
-						bufrow[iter->_dims.x + x + _borderSize] = TEX32_PACK_RGBA(pixR, pixG, pixB, pixA);
+						bufrow[iter->_dims.left + x + _borderSize] = TEX32_PACK_RGBA(pixR, pixG, pixB, pixA);
 					} else {
-						bufrow[iter->_dims.x + x + _borderSize] = TEX32_PACK_RGBA(pixR, pixG, pixB, 0xFF);
+						bufrow[iter->_dims.left + x + _borderSize] = TEX32_PACK_RGBA(pixR, pixG, pixB, 0xFF);
 
 						// optimize common case
 						if (_borderSize == 1) for (int dx = -1; dx <= 1; dx++) {
 							for (int dy = -1; dy <= 1; dy++) {
-								if (x + 1 + iter->_dims.x + dx >= 0 &&
-										x + 1 + iter->_dims.x + dx < resultWidth &&
+								if (x + 1 + iter->_dims.left + dx >= 0 &&
+										x + 1 + iter->_dims.left + dx < resultWidth &&
 										y + 1 + dy >= 0 && y + 1 + dy < resultHeight) {
-									uint32 alpha = TEX32_A(texBuf[(y + iter->_dims.y + dy + 1) * resultWidth + x + 1 + iter->_dims.x + dx]);
+									uint32 alpha = TEX32_A(texBuf[(y + iter->_dims.top + dy + 1) * resultWidth + x + 1 + iter->_dims.left + dx]);
 									if (alpha != 0xFF) {
 										alpha = 255 - (((255 - alpha) * (255 - idx)) >> 8);
-										texBuf[(y + iter->_dims.y + dy + 1)*resultWidth + x + 1 + iter->_dims.x + dx] = alpha << TEX32_A_SHIFT;
+										texBuf[(y + iter->_dims.top + dy + 1)*resultWidth + x + 1 + iter->_dims.left + dx] = alpha << TEX32_A_SHIFT;
 									}
 								}
 							}
 						} else {
 							for (int dx = -_borderSize; dx <= _borderSize; dx++) {
 								for (int dy = -_borderSize; dy <= _borderSize; dy++) {
-									if (x + _borderSize + iter->_dims.x + dx >= 0 &&
-											x + _borderSize + iter->_dims.x + dx < resultWidth &&
+									if (x + _borderSize + iter->_dims.left + dx >= 0 &&
+											x + _borderSize + iter->_dims.left + dx < resultWidth &&
 											y + _borderSize + dy >= 0 && y + _borderSize + dy < resultHeight) {
-										uint32 alpha = TEX32_A(texBuf[(y + iter->_dims.y + dy + _borderSize) * resultWidth + x + _borderSize + iter->_dims.x + dx]);
+										uint32 alpha = TEX32_A(texBuf[(y + iter->_dims.top + dy + _borderSize) * resultWidth + x + _borderSize + iter->_dims.left + dx]);
 										if (alpha != 0xFF) {
 											alpha = 255 - (((255 - alpha) * (255 - idx)) >> 8);
-											texBuf[(y + iter->_dims.y + dy + _borderSize)*resultWidth + x + _borderSize + iter->_dims.x + dx] = alpha << TEX32_A_SHIFT;
+											texBuf[(y + iter->_dims.top + dy + _borderSize)*resultWidth + x + _borderSize + iter->_dims.left + dx] = alpha << TEX32_A_SHIFT;
 										}
 									}
 								}
@@ -256,11 +256,11 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 
 			int w = _ttfFont->getStringWidth(unicodeText);
 
-			for (int y = 0; y < iter->_dims.h; y++) {
-				uint32 *bufrow = texBuf + (iter->_dims.y + y) * resultWidth;
-				bufrow[iter->_dims.x + w + _borderSize] = 0xFF000000;
+			for (int y = 0; y < iter->_dims.height(); y++) {
+				uint32 *bufrow = texBuf + (iter->_dims.top + y) * resultWidth;
+				bufrow[iter->_dims.left + w + _borderSize] = 0xFF000000;
 //				if (_borderSize > 0)
-//					bufrow[iter->_dims.x+w+_borderSize-1] = 0xFF000000;
+//					bufrow[iter->_dims.left+w+_borderSize-1] = 0xFF000000;
 			}
 		}
 	}

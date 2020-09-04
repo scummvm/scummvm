@@ -31,7 +31,8 @@
 
 namespace Cine {
 
-#define kMaxSavegames 20 // 20 fit on screen using original save/load interface
+#define kMaxSavegames 100
+#define kMaxOrigUiSavegames 20 // 20 fit on screen using original save/load interface
 
 // Maximum size of the command buffer including the trailing zero
 #define kMaxCommandBufferSize 80
@@ -48,7 +49,7 @@ void setTextWindow(uint16 param1, uint16 param2, uint16 param3, uint16 param4);
 
 extern int16 disableSystemMenu;
 extern bool inMenu;
-extern bool runOnlyUntilCopyProtectionCheck;
+extern bool runOnlyUntilFreePartRangeFirst200;
 
 extern CommandeType currentSaveName[kMaxSavegames];
 
@@ -77,6 +78,8 @@ extern uint16 reloadBgPalOnNextFlip;
 extern uint16 forbidBgPalReload;
 extern uint16 gfxFadeOutCompleted;
 extern uint16 gfxFadeInRequested;
+extern uint32 safeControlsLastAccessedMs; ///< Time in milliseconds when safe controls were last accessed.
+extern int16 lastSafeControlObjIdx; ///< Object index of the last safe control accessed.
 extern int16 commandVar1;
 extern int16 commandVar2;
 extern int16 commandVar3[4];

@@ -193,6 +193,8 @@ void CineEngine::initialize() {
 	reloadBgPalOnNextFlip = 0;
 	gfxFadeOutCompleted = 0;
 	gfxFadeInRequested = 0;
+	safeControlsLastAccessedMs = 0;
+	lastSafeControlObjIdx = -1;
 	currentDisk = 1;
 
 	collisionPage = new byte[320 * 200];
@@ -235,6 +237,12 @@ void CineEngine::initialize() {
 		// A proper fix here would be to save this variable in FW's saves.
 		// Since it seems these are unversioned so far, there would be need
 		// to properly add versioning to them first.
+		//
+		// Adding versioning to FW saves didn't solve this problem. Setting
+		// disableSystemMenu according to the saved value still caused the
+		// action menu (EXAMINE, TAKE, INVENTORY, ...) sometimes to be
+		// disabled when it wasn't supposed to be disabled when
+		// loading from the launcher or command line.
 		disableSystemMenu = 0;
 	}
 
@@ -248,15 +256,19 @@ void CineEngine::initialize() {
 	// Used for making sound effects work using Roland MT-32 and AdLib in
 	// Operation Stealth after loading a savegame. The sound effects are loaded
 	// in AUTO00.PRC using a combination of o2_loadAbs and o2_playSample(1, ...)
-	// before checking if _globalVars[255] == 0. In the original game AUTO00.PRC
+	// before o1_freePartRange(0, 200). In the original game AUTO00.PRC
 	// was run when starting or restarting the game and one could not load a savegame
 	// before passing the copy protection. Thus, we try to emulate that behaviour by
 	// running at least part of AUTO00.PRC before loading a savegame.
-	if (getGameType() == Cine::GType_OS && !(getFeatures() & GF_DEMO)) {
+	//
+	// Confirmed that DOS and Atari ST versions do have these commands in their AUTO00.PRC files.
+	// Confirmed that Amiga and demo versions do not have these commands in their AUTO00.PRC files.
+	if (getGameType() == Cine::GType_OS && !(getFeatures() & GF_DEMO) &&
+		(getPlatform() == Common::kPlatformDOS || getPlatform() == Common::kPlatformAtariST)) {
 		loadPrc(BOOT_PRC_NAME);
 		strcpy(currentPrcName, BOOT_PRC_NAME);
 		addScriptToGlobalScripts(BOOT_SCRIPT_INDEX);
-		runOnlyUntilCopyProtectionCheck = true;
+		runOnlyUntilFreePartRangeFirst200 = true;
 		executeGlobalScripts();
 	}
 

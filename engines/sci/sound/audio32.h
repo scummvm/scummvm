@@ -29,6 +29,7 @@
 #include "common/mutex.h"          // for StackLock, Mutex
 #include "common/scummsys.h"       // for int16, uint8, uint32, uint16
 #include "sci/resource.h"          // for ResourceId
+#include "sci/engine/state.h"      // for EngineState
 #include "sci/engine/vm_types.h"   // for reg_t, NULL_REG
 #include "sci/video/robot_decoder.h" // for RobotAudioStream
 
@@ -250,7 +251,7 @@ public:
 	 * @param startIndex The location of the audio resource information in the
 	 * arguments list.
 	 */
-	int16 findChannelByArgs(int argc, const reg_t *argv, const int startIndex, const reg_t soundNode) const;
+	int16 findChannelByArgs(EngineState *s, int argc, const reg_t *argv, const int startIndex, const reg_t soundNode) const;
 
 	/**
 	 * Finds a channel that is already configured for the given audio sample.
@@ -636,17 +637,17 @@ private:
 #pragma mark -
 #pragma mark Kernel
 public:
-	reg_t kernelPlay(const bool autoPlay, const int argc, const reg_t *const argv);
-	reg_t kernelStop(const int argc, const reg_t *const argv);
-	reg_t kernelPause(const int argc, const reg_t *const argv);
-	reg_t kernelResume(const int argc, const reg_t *const argv);
-	reg_t kernelPosition(const int argc, const reg_t *const argv);
-	reg_t kernelVolume(const int argc, const reg_t *const argv);
+	reg_t kernelPlay(const bool autoPlay, EngineState *s, const int argc, const reg_t *const argv);
+	reg_t kernelStop(EngineState *s, const int argc, const reg_t *const argv);
+	reg_t kernelPause(EngineState *s, const int argc, const reg_t *const argv);
+	reg_t kernelResume(EngineState *s, const int argc, const reg_t *const argv);
+	reg_t kernelPosition(EngineState *s, const int argc, const reg_t *const argv);
+	reg_t kernelVolume(EngineState *s, const int argc, const reg_t *const argv);
 	reg_t kernelMixing(const int argc, const reg_t *const argv);
-	reg_t kernelFade(const int argc, const reg_t *const argv);
-	void kernelLoop(const int argc, const reg_t *const argv);
-	void kernelPan(const int argc, const reg_t *const argv);
-	void kernelPanOff(const int argc, const reg_t *const argv);
+	reg_t kernelFade(EngineState *s, const int argc, const reg_t *const argv);
+	void kernelLoop(EngineState *s, const int argc, const reg_t *const argv);
+	void kernelPan(EngineState *s, const int argc, const reg_t *const argv);
+	void kernelPanOff(EngineState *s, const int argc, const reg_t *const argv);
 
 #pragma mark -
 #pragma mark Debugging

@@ -51,6 +51,12 @@ protected:
 	void print(const Common::String &msg);
 
 	/**
+	 * Print a unicode string
+	 * @param msg		U32String
+	 */
+	void print(const Common::U32String &msg);
+
+	/**
 	 * Print a number
 	 * @param number	Number to print
 	 */

@@ -414,8 +414,9 @@ class ArrayTestSuite : public CxxTest::TestSuite
 
 struct ListElement {
 	int value;
+	int tag;
 
-	ListElement(int v) : value(v) {}
+	ListElement(int v, int t = 0) : value(v), tag(t) {}
 };
 
 static int compareInts(const void *a, const void *b) {
@@ -444,6 +445,32 @@ public:
 
 		for (int i = 1; i < 10; i++) {
 			TS_ASSERT_EQUALS((*iter)->value, i);
+			++iter;
+		}
+
+		TS_ASSERT_EQUALS(iter, container.end());
+	}
+
+	void test_stability() {
+		Common::SortedArray<ListElement *> container(compareInts);
+		Common::SortedArray<ListElement *>::iterator iter;
+
+		// Check stability, using duplicate keys and sequential tags.
+		container.insert(new ListElement(1, 3));
+		container.insert(new ListElement(0, 1));
+		container.insert(new ListElement(4, 8));
+		container.insert(new ListElement(1, 4));
+		container.insert(new ListElement(0, 2));
+		container.insert(new ListElement(2, 6));
+		container.insert(new ListElement(1, 5));
+		container.insert(new ListElement(3, 7));
+		container.insert(new ListElement(4, 9));
+
+		// Verify contents are correct
+		iter = container.begin();
+
+		for (int i = 1; i < 10; i++) {
+			TS_ASSERT_EQUALS((*iter)->tag, i);
 			++iter;
 		}
 

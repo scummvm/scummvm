@@ -486,7 +486,7 @@ void Movement::draw(bool flipFlag, int angle) {
 	int x = _ox - point.x;
 	int y = _oy - point.y;
 
-	if (_currDynamicPhase->getPaletteData().size())
+	if (_currDynamicPhase->getPaletteData().size)
 		g_fp->_globalPalette = &_currDynamicPhase->getPaletteData();
 
 	Common::ScopedPtr<Bitmap> bmp;
@@ -2135,7 +2135,7 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 	_dynFlags = src->_dynFlags;
 
 	debug(8, "DynamicPhase::DynamicPhase(): pal: %p, pal size: %d",
-		(const void *)&src->getPaletteData(), src->getPaletteData().size());
+		(const void *)&src->getPaletteData(), src->getPaletteData().size);
 	setPaletteData(src->getPaletteData());
 
 	copyMemoryObject2(*src);

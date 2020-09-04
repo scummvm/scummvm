@@ -61,10 +61,10 @@ public:
 public:
 	FileObject(ObjectType objType);
 	FileObject(const FileObject &obj);
-	virtual ~FileObject();
+	~FileObject() override;
 
 	void clear();
-	virtual void dispose();
+	void dispose() override;
 };
 
 namespace FileIO {

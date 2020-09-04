@@ -36,10 +36,7 @@ class DynamicPhase;
 class Movement;
 struct PicAniInfo;
 
-typedef Common::Array<int32> Palette;
 typedef Common::Point Dims;
-
-typedef Common::SharedPtr<Graphics::TransparentSurface> TransSurfacePtr;
 
 struct Bitmap {
 	int _x;
@@ -50,7 +47,7 @@ struct Bitmap {
 	int _dataSize;
 	int _flags;
 	int _flipping;
-	TransSurfacePtr _surface;
+	Graphics::TransparentSurface *_surface;
 
 	Bitmap();
 	Bitmap(const Bitmap &src);
@@ -185,7 +182,7 @@ public:
 	bool isPixelHitAtPos(int x, int y);
 	void setOXY2();
 
-	Common::SharedPtr<Picture> _picture;
+	Picture *_picture;
 
 private:
 	Common::Array<GameObject> _pictureObject2List;

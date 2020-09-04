@@ -232,7 +232,7 @@ void ScummEngine::askForDisk(const char *filename, int disknum) {
 #endif
 	} else {
 		sprintf(buf, "Cannot find file: '%s'", filename);
-		InfoDialog dialog(this, (char *)buf);
+		InfoDialog dialog(this, Common::U32String(buf));
 		runDialog(dialog);
 		error("Cannot find file: '%s'", filename);
 	}

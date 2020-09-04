@@ -45,7 +45,7 @@ public:
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
-	const char *getResult() { return Dialog::getResult() ? _fileName->getEditString().c_str() : nullptr; }
+	Common::String getResult() { return Dialog::getResult() ? _fileName->getEditString().encode() : Common::String(); }
 
 protected:
 	EditTextWidget *_fileName;

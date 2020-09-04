@@ -24,6 +24,7 @@
 #define SCUMM_DIALOGS_H
 
 #include "common/str.h"
+#include "common/ustr.h"
 #include "common/keyboard.h"
 #include "gui/dialog.h"
 #include "engines/dialogs.h"
@@ -45,6 +46,7 @@ public:
 
 protected:
 	typedef Common::String String;
+	typedef Common::U32String U32String;
 };
 
 #ifndef DISABLE_HELP
@@ -68,16 +70,16 @@ protected:
 class InfoDialog : public ScummDialog {
 protected:
 	ScummEngine		*_vm;
-	String _message;
+	U32String _message;
 	GUI::StaticTextWidget *_text;
 
 public:
 	// arbitrary message
-	InfoDialog(ScummEngine *scumm, const String& message);
+	InfoDialog(ScummEngine *scumm, const U32String &message);
 	// from resources
 	InfoDialog(ScummEngine *scumm, int res);
 
-	void setInfoText(const String& message);
+	void setInfoText(const U32String &message);
 
 	void handleMouseDown(int x, int y, int button, int clickCount) override {
 		setResult(0);
@@ -93,7 +95,7 @@ public:
 protected:
 
 	// Query a string from the resources
-	const String queryResString(int stringno);
+	const U32String queryResString(int stringno);
 };
 
 /**
@@ -125,7 +127,7 @@ protected:
  */
 class ValueDisplayDialog : public GUI::Dialog {
 public:
-	ValueDisplayDialog(const Common::String& label, int minVal, int maxVal, int val, uint16 incKey, uint16 decKey);
+	ValueDisplayDialog(const Common::U32String &label, int minVal, int maxVal, int val, uint16 incKey, uint16 decKey);
 
 	void open() override;
 	void drawDialog(GUI::DrawLayer layerToDraw) override;
@@ -141,7 +143,7 @@ protected:
 	enum {
 		kDisplayDelay = 1500
 	};
-	Common::String _label;
+	Common::U32String _label;
 	const int _min, _max;
 	const uint16 _incKey, _decKey;
 	int _percentBarWidth;

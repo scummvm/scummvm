@@ -221,6 +221,7 @@ public:
 
 	/**
 	 * Helper function for lookupWordPrefix, checking specific prefix for match
+	 * Intended for nouns and prepositions, and the prefix has meaning as another word
 	 * @param parent_retval     lookupWordPrefix's parent's function list of matches
 	 * @param retval            lookupWordPrefix's list of matches
 	 * @param word              pointer to the word to look up
@@ -229,8 +230,19 @@ public:
 	 * @param meaning           the meaning of that prefix
 	 * @return true on prefix match, false on prefix not matching
 	 */
-	bool lookupSpecificPrefix(ResultWordListList &parent_retval, ResultWordList &retval, const char *word, int word_len, unsigned char prefix, const char *meaning);
+	bool lookupSpecificPrefixWithMeaning(ResultWordListList &parent_retval, ResultWordList &retval, const char *word, int word_len, unsigned char prefix, const char *meaning);
 
+	/**
+	 * Helper function for lookupWordPrefix, checking specific prefix for match
+	 * Intended for verbs, and the prefix doesn't have any meaning
+	 * @param parent_retval     lookupWordPrefix's parent's function list of matches
+	 * @param retval            lookupWordPrefix's list of matches
+	 * @param word              pointer to the word to look up
+	 * @param word_len          length of the word to look up
+	 * @param prefix            the prefix to look for in the word
+	 * @return true on prefix match, false on prefix not matching
+	 */
+	bool lookupVerbPrefix(ResultWordListList &parent_retval, ResultWordList &retval, Common::String word, int word_len, Common::String prefix);
 
 	/**
 	 * Tokenizes a string and compiles it into word_ts.
@@ -346,11 +358,6 @@ private:
 	 * @return true on success, false on failure
 	 */
 	bool loadSuffixes();
-
-	/**
-	 * Appends required suffixes for specific languages
-	 */
-	void appendSuffixes();
 
 	/**
 	 * Frees all suffixes in the given list.

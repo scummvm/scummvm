@@ -46,22 +46,22 @@ UnknownGameDialog::UnknownGameDialog(const DetectedGame &detectedGame) :
 		_detectedGame(detectedGame) {
 
 	if (detectedGame.canBeAdded) {
-		_addAnywayButton = new ButtonWidget(this, "UnknownGameDialog.Add", _("Add anyway"), nullptr, kAddAnyway);
+		_addAnywayButton = new ButtonWidget(this, "UnknownGameDialog.Add", _("Add anyway"), Common::U32String(""), kAddAnyway);
 	} else {
 		_addAnywayButton = nullptr;
 	}
 
-	_closeButton = new ButtonWidget(this, "UnknownGameDialog.Close", detectedGame.canBeAdded ? _("Cancel") : _("Close"), nullptr, kClose);
+	_closeButton = new ButtonWidget(this, "UnknownGameDialog.Close", detectedGame.canBeAdded ? _("Cancel") : _("Close"), Common::U32String(""), kClose);
 
 	//Check if we have clipboard functionality
 	if (g_system->hasFeature(OSystem::kFeatureClipboardSupport)) {
-		_copyToClipboardButton = new ButtonWidget(this, "UnknownGameDialog.Copy", _("Copy to clipboard"), nullptr, kCopyToClipboard);
+		_copyToClipboardButton = new ButtonWidget(this, "UnknownGameDialog.Copy", _("Copy to clipboard"), Common::U32String(""), kCopyToClipboard);
 	} else
 		_copyToClipboardButton = nullptr;
 
 	//Check if we have support for opening URLs
 	if (g_system->hasFeature(OSystem::kFeatureOpenUrl)) {
-		_openBugTrackerUrlButton = new ButtonWidget(this, "UnknownGameDialog.Report", _("Report game"), nullptr, kOpenBugtrackerURL);
+		_openBugTrackerUrlButton = new ButtonWidget(this, "UnknownGameDialog.Report", _("Report game"), Common::U32String(""), kOpenBugtrackerURL);
 	} else
 		_openBugTrackerUrlButton = nullptr;
 
@@ -93,21 +93,21 @@ void UnknownGameDialog::rebuild() {
 	}
 	_textWidgets.clear();
 
-	Common::String reportTranslated = generateUnknownGameReport(_detectedGame, true, true);
+	Common::U32String reportTranslated = generateUnknownGameReport(_detectedGame, true, true);
 
 	// Check if we have clipboard functionality and expand the reportTranslated message if needed...
 	if (g_system->hasFeature(OSystem::kFeatureClipboardSupport)) {
-		reportTranslated += "\n";
+		reportTranslated += Common::U32String("\n");
 		reportTranslated += _("Use the button below to copy the required game information into your clipboard.");
 	}
 	// Check if we have support for opening URLs and expand the reportTranslated message if needed...
 	if (g_system->hasFeature(OSystem::kFeatureOpenUrl)) {
-		reportTranslated += "\n";
+		reportTranslated += Common::U32String("\n");
 		reportTranslated += _("You can also directly report your game to the Bug Tracker.");
 	}
 
 	// We use a ScrollContainer to display the text, with a 2 * 10 margin for the text in the container.
-	Common::Array<Common::String> lines;
+	Common::Array<Common::U32String> lines;
 	g_gui.getFont().wordWrapText(reportTranslated, _textContainer->getWidth() - 20, lines);
 
 	// Create text widgets
@@ -149,7 +149,7 @@ Common::String UnknownGameDialog::generateBugtrackerURL() {
 void UnknownGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch(cmd) {
 	case kCopyToClipboard: {
-		Common::String report = generateUnknownGameReport(_detectedGame, false, false);
+		Common::U32String report = generateUnknownGameReport(_detectedGame, false, false);
 
 		if (g_system->setTextInClipboard(report)) {
 			g_system->displayMessageOnOSD(

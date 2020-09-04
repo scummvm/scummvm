@@ -220,11 +220,12 @@ static const SciKernelMapSubEntry kDoAudio_subops[] = {
 	// kDoAudioWaitForPlay, but SSCI has no opcode 1 until
 	// SCI2.1early
 	{ SIG_SINCE_SCI21,     1, MAP_CALL(DoAudioWaitForPlay),        "(i)(i)(i)(i)(i)(i)(i)", NULL },
-	{ SIG_SCI32,           2, MAP_CALL(DoAudioPlay),               "(i)(i)(i)(i)(i)(i)(i)", NULL },
-	{ SIG_SCI32,           3, MAP_CALL(DoAudioStop),               "(i)(i)(i)(i)(i)",      NULL },
-	{ SIG_SCI32,           4, MAP_CALL(DoAudioPause),              "(i)(i)(i)(i)(i)",      NULL },
-	{ SIG_SCI32,           5, MAP_CALL(DoAudioResume),             "(i)(i)(i)(i)(i)",      kDoAudioResume_workarounds },
-	{ SIG_SCI32,           6, MAP_CALL(DoAudioPosition),           "(i)(i)(i)(i)(i)",      NULL },
+	// LSL6 hires Mac passes an extra filename string parameter to play AIFF files
+	{ SIG_SCI32,           2, MAP_CALL(DoAudioPlay),               "(i)(i)(i)(i)(i)([ir])(i)", NULL },
+	{ SIG_SCI32,           3, MAP_CALL(DoAudioStop),               "(i)(i)(i)(i)(i)(r)",   NULL },
+	{ SIG_SCI32,           4, MAP_CALL(DoAudioPause),              "(i)(i)(i)(i)(i)(r)",   NULL },
+	{ SIG_SCI32,           5, MAP_CALL(DoAudioResume),             "(i)(i)(i)(i)(i)(r)",   kDoAudioResume_workarounds },
+	{ SIG_SCI32,           6, MAP_CALL(DoAudioPosition),           "(i)(i)(i)(i)(i)(r)",   NULL },
 	{ SIG_SCI32,           7, MAP_CALL(DoAudioRate),               "(i)",                  NULL },
 	{ SIG_SCI32,           8, MAP_CALL(DoAudioVolume),             "(i)(i)(i)(i)(i)(i)",   NULL },
 	{ SIG_SCI32,           9, MAP_CALL(DoAudioGetCapability),      "",                     NULL },

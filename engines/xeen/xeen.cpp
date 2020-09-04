@@ -328,7 +328,7 @@ void XeenEngine::saveSettings() {
 	ConfMan.flushToDisk();
 }
 
-void XeenEngine::GUIError(const Common::String &msg) {
+void XeenEngine::GUIError(const Common::U32String &msg) {
 	GUIErrorMessage(msg);
 }
 

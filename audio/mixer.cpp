@@ -187,6 +187,8 @@ MixerImpl::~MixerImpl() {
 }
 
 void MixerImpl::setReady(bool ready) {
+	Common::StackLock lock(_mutex);
+
 	_mixerReady = ready;
 }
 

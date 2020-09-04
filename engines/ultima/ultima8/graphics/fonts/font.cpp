@@ -209,17 +209,18 @@ Std::list<PositionedText> typesetText(Font *font,
 			// break here
 			int32 stringwidth = 0, stringheight = 0;
 			font->getStringSize(curline, stringwidth, stringheight);
-			line._dims.x = 0;
-			line._dims.y = totalheight;
-			line._dims.w = stringwidth;
-			line._dims.h = stringheight;
+			line._dims.left = 0;
+			line._dims.top = totalheight;
+			line._dims.setWidth(stringwidth);
+			line._dims.setHeight(stringheight);
 			line._text = curline;
 			line._cursor = Std::string::npos;
 			if (cursor != Std::string::npos && cursoriter >= curlinestart &&
 			        (cursoriter < iter || (!breakhere && cursoriter == iter))) {
 				line._cursor = cursoriter - curlinestart;
-				if (line._dims.w == 0) {
-					stringwidth = line._dims.w = 2;
+				if (line._dims.width() == 0) {
+					stringwidth = 2;
+					line._dims.setWidth(stringwidth);
 				}
 			}
 			lines.push_back(line);
@@ -344,15 +345,15 @@ Std::list<PositionedText> typesetText(Font *font,
 		case Font::TEXT_LEFT:
 			break;
 		case Font::TEXT_RIGHT:
-			lineiter->_dims.x = totalwidth - lineiter->_dims.w;
+			lineiter->_dims.moveTo(totalwidth - lineiter->_dims.width(), lineiter->_dims.top);
 			break;
 		case Font::TEXT_CENTER:
-			lineiter->_dims.x = (totalwidth - lineiter->_dims.w) / 2;
+			lineiter->_dims.moveTo((totalwidth - lineiter->_dims.width()) / 2, lineiter->_dims.top);
 			break;
 		}
 #if 0
 		pout << lineiter->_dims.x << "," << lineiter->_dims.y << " "
-		     << lineiter->_dims.w << "," << lineiter->_dims.h << ": "
+		     << lineiter->_dims.width() << "," << lineiter->_dims.height() << ": "
 		     << lineiter->text << Std::endl;
 #endif
 	}

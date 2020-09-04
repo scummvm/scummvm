@@ -31,7 +31,7 @@
 #include "director/cast.h"
 #include "director/castmember.h"
 #include "director/movie.h"
-#include "director/stage.h"
+#include "director/window.h"
 #include "director/lingo/lingo.h"
 #include "director/util.h"
 
@@ -39,19 +39,19 @@ namespace Director {
 
 Archive *DirectorEngine::createArchive() {
 	if (getPlatform() == Common::kPlatformMacintosh) {
-		if (getVersion() < 4)
+		if (getVersion() < 400)
 			return new MacArchive();
 		else
 			return new RIFXArchive();
 	} else {
-		if (getVersion() < 4)
+		if (getVersion() < 400)
 			return new RIFFArchive();
 		else
 			return new RIFXArchive();
 	}
 }
 
-Common::Error Stage::loadInitialMovie() {
+Common::Error Window::loadInitialMovie() {
 	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 	debug(0, "@@@@   Loading initial movie");
 	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
@@ -72,14 +72,12 @@ Common::Error Stage::loadInitialMovie() {
 	_currentMovie = new Movie(this);
 	_currentPath = getPath(movie, _currentPath);
 	_currentMovie->loadSharedCastsFrom(_currentPath + g_director->_sharedCastFile);
-
-	if (_currentMovie)
-		_currentMovie->setArchive(_mainArchive);
+	_currentMovie->setArchive(_mainArchive);
 
 	return Common::kNoError;
 }
 
-void Stage::probeProjector(const Common::String &movie) {
+void Window::probeProjector(const Common::String &movie) {
 	if (g_director->getPlatform() == Common::kPlatformWindows)
 		return;
 
@@ -99,7 +97,7 @@ void Stage::probeProjector(const Common::String &movie) {
 		if (archive->hasResource(MKTAG('v', 'e', 'r', 's'), -1)) {
 			Common::Array<uint16> vers = archive->getResourceIDList(MKTAG('v', 'e', 'r', 's'));
 			for (Common::Array<uint16>::iterator iterator = vers.begin(); iterator != vers.end(); ++iterator) {
-				Common::SeekableSubReadStreamEndian *vvers = archive->getResource(MKTAG('v', 'e', 'r', 's'), *iterator);
+				Common::SeekableReadStreamEndian *vvers = archive->getResource(MKTAG('v', 'e', 'r', 's'), *iterator);
 				Common::MacResManager::MacVers *v = Common::MacResManager::parseVers(vvers);
 
 				debug(0, "Detected vers %d.%d %s.%d region %d '%s' '%s'", v->majorVer, v->minorVer, v->devStr.c_str(),
@@ -122,7 +120,7 @@ void Stage::probeProjector(const Common::String &movie) {
 			if (_currentMovie)
 				_currentMovie->setArchive(archive);
 
-			Common::SeekableSubReadStreamEndian *name = archive->getResource(MKTAG('S', 'T', 'R', '#'), 0);
+			Common::SeekableReadStreamEndian *name = archive->getResource(MKTAG('S', 'T', 'R', '#'), 0);
 			int num = name->readUint16();
 			if (num != 1) {
 				warning("Incorrect number of strings in Projector file");
@@ -146,7 +144,7 @@ void Stage::probeProjector(const Common::String &movie) {
 	delete archive;
 }
 
-Archive *Stage::openMainArchive(const Common::String movie) {
+Archive *Window::openMainArchive(const Common::String movie) {
 	debug(1, "openMainArchive(\"%s\")", movie.c_str());
 
 	_mainArchive = g_director->createArchive();
@@ -162,7 +160,7 @@ Archive *Stage::openMainArchive(const Common::String movie) {
 	return _mainArchive;
 }
 
-void Stage::loadEXE(const Common::String movie) {
+void Window::loadEXE(const Common::String movie) {
 	Common::SeekableReadStream *iniStream = SearchMan.createReadStreamForMember("LINGO.INI");
 	if (iniStream) {
 		char *script = (char *)calloc(iniStream->size() + 1, 1);
@@ -194,6 +192,9 @@ void Stage::loadEXE(const Common::String movie) {
 			error("Failed to load RIFF");
 	} else {
 		Common::WinResources *exe = Common::WinResources::createFromEXE(movie);
+		if (!exe)
+			error("Failed to open EXE '%s'", g_director->getEXEName().c_str());
+
 		const Common::Array<Common::WinResourceID> versions = exe->getIDList(Common::kWinVersion);
 		for (uint i = 0; i < versions.size(); i++) {
 			Common::SeekableReadStream *res = exe->getResource(Common::kWinVersion, versions[i]);
@@ -212,21 +213,15 @@ void Stage::loadEXE(const Common::String movie) {
 		exeStream->seek(-4, SEEK_END);
 		exeStream->seek(exeStream->readUint32LE());
 
-		switch (g_director->getVersion()) {
-		case 2:
-		case 3:
-			loadEXEv3(exeStream);
-			break;
-		case 4:
-			loadEXEv4(exeStream);
-			break;
-		case 5:
-			loadEXEv5(exeStream);
-			break;
-		case 7:
+		if (g_director->getVersion() >= 700) {
 			loadEXEv7(exeStream);
-			break;
-		default:
+		} else if (g_director->getVersion() >= 500) {
+			loadEXEv5(exeStream);
+		} else if (g_director->getVersion() >= 400) {
+			loadEXEv4(exeStream);
+		} else if (g_director->getVersion() >= 200) {
+			loadEXEv3(exeStream);
+		} else {
 			error("Unhandled Windows EXE version %d", g_director->getVersion());
 		}
 	}
@@ -235,7 +230,7 @@ void Stage::loadEXE(const Common::String movie) {
 		_mainArchive->setPathName(movie);
 }
 
-void Stage::loadEXEv3(Common::SeekableReadStream *stream) {
+void Window::loadEXEv3(Common::SeekableReadStream *stream) {
 	uint16 entryCount = stream->readUint16LE();
 	if (entryCount != 1)
 		error("Unhandled multiple entry v3 EXE");
@@ -265,7 +260,7 @@ void Stage::loadEXEv3(Common::SeekableReadStream *stream) {
 
 
 			if (!out.open(fname.c_str(), true)) {
-				warning("Stage::loadEXEv3(): Can not open dump file %s", fname.c_str());
+				warning("Window::loadEXEv3(): Can not open dump file %s", fname.c_str());
 			} else {
 				out.write(buf, mmmSize);
 
@@ -288,7 +283,7 @@ void Stage::loadEXEv3(Common::SeekableReadStream *stream) {
 	openMainArchive(mmmFileName);
 }
 
-void Stage::loadEXEv4(Common::SeekableReadStream *stream) {
+void Window::loadEXEv4(Common::SeekableReadStream *stream) {
 	if (stream->readUint32BE() != MKTAG('P', 'J', '9', '3'))
 		error("Invalid projector tag found in v4 EXE");
 
@@ -306,7 +301,7 @@ void Stage::loadEXEv4(Common::SeekableReadStream *stream) {
 	loadEXERIFX(stream, rifxOffset);
 }
 
-void Stage::loadEXEv5(Common::SeekableReadStream *stream) {
+void Window::loadEXEv5(Common::SeekableReadStream *stream) {
 	uint32 ver = stream->readUint32LE();
 
 	if (ver != MKTAG('P', 'J', '9', '5'))
@@ -328,7 +323,7 @@ void Stage::loadEXEv5(Common::SeekableReadStream *stream) {
 	loadEXERIFX(stream, rifxOffset);
 }
 
-void Stage::loadEXEv7(Common::SeekableReadStream *stream) {
+void Window::loadEXEv7(Common::SeekableReadStream *stream) {
 	if (stream->readUint32LE() != MKTAG('P', 'J', '0', '0'))
 		error("Invalid projector tag found in v7 EXE");
 
@@ -342,15 +337,15 @@ void Stage::loadEXEv7(Common::SeekableReadStream *stream) {
 	loadEXERIFX(stream, rifxOffset);
 }
 
-void Stage::loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset) {
+void Window::loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset) {
 	_mainArchive = new RIFXArchive();
 
 	if (!_mainArchive->openStream(stream, offset))
 		error("Failed to load RIFX from EXE");
 }
 
-void Stage::loadMac(const Common::String movie) {
-	if (g_director->getVersion() < 4) {
+void Window::loadMac(const Common::String movie) {
+	if (g_director->getVersion() < 400) {
 		// The data is part of the resource fork of the executable
 		openMainArchive(movie);
 	} else {

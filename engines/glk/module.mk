@@ -183,20 +183,20 @@ MODULE_OBJS := \
 	comprehend/game_tr.o \
 	comprehend/opcode_map.o \
 	comprehend/pics.o \
-	glulxe/accel.o \
-	glulxe/detection.o \
-	glulxe/exec.o \
-	glulxe/float.o \
-	glulxe/funcs.o \
-	glulxe/gestalt.o \
-	glulxe/glkop.o \
-	glulxe/glulxe.o \
-	glulxe/heap.o \
-	glulxe/operand.o \
-	glulxe/search.o \
-	glulxe/serial.o \
-	glulxe/string.o \
-	glulxe/vm.o \
+	glulx/accel.o \
+	glulx/detection.o \
+	glulx/exec.o \
+	glulx/float.o \
+	glulx/funcs.o \
+	glulx/gestalt.o \
+	glulx/glkop.o \
+	glulx/glulx.o \
+	glulx/heap.o \
+	glulx/operand.o \
+	glulx/search.o \
+	glulx/serial.o \
+	glulx/string.o \
+	glulx/vm.o \
 	hugo/detection.o \
 	hugo/heexpr.o \
 	hugo/heglk.o \
@@ -209,6 +209,7 @@ MODULE_OBJS := \
 	hugo/heset.o \
 	hugo/htokens.o \
 	hugo/hugo.o \
+	hugo/resource_archive.o \
 	hugo/stringfn.o \
 	jacl/detection.o \
 	jacl/display.o \

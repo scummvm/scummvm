@@ -435,7 +435,9 @@ GUI_status VideoDialog::callback(uint16 msg, GUI_CallBack *caller, void *data) {
 		config->set("config/video/scale_factor", scale);
 #endif
 		// fullscreen
-		config->set("config/video/fullscreen", fullscreen ? "yes" : "no");
+		config->set("config/fullscreen", fullscreen ? "yes" : "no");
+		game->get_screen()->set_fullscreen(fullscreen);
+
 		// non-square pixels
 		config->set("config/video/non_square_pixels", non_square_pixels ? "yes" : "no");
 		// roof mode

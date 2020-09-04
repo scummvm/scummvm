@@ -121,6 +121,9 @@ void FlicDecoder::FlicVideoTrack::readHeader() {
 	_offsetFrame1 = _fileStream->readUint32LE();
 	_offsetFrame2 = _fileStream->readUint32LE();
 
+	if (_offsetFrame1 == 0)
+		_offsetFrame1 = 0x80; //length of FLIC header
+
 	// Seek to the first frame
 	_fileStream->seek(_offsetFrame1);
 }
@@ -153,12 +156,14 @@ Graphics::PixelFormat FlicDecoder::FlicVideoTrack::getPixelFormat() const {
 	return _surface->format;
 }
 
-#define FLI_SETPAL 4
-#define FLI_SS2    7
-#define FLI_BRUN   15
-#define FLI_COPY   16
-#define PSTAMP     18
-#define FRAME_TYPE 0xF1FA
+#define FLI_SETPAL            4
+#define FLI_SS2               7
+#define FLI_BRUN              15
+#define FLI_COPY              16
+#define PSTAMP                18
+#define FRAME_TYPE            0xF1FA
+#define FLC_FILE_HEADER       0xAF12
+#define FLC_FILE_HEADER_SIZE  0x80
 
 const Graphics::Surface *FlicDecoder::FlicVideoTrack::decodeNextFrame() {
 	// Read chunk
@@ -168,6 +173,10 @@ const Graphics::Surface *FlicDecoder::FlicVideoTrack::decodeNextFrame() {
 	switch (frameType) {
 	case FRAME_TYPE:
 		handleFrame();
+		break;
+	case FLC_FILE_HEADER:
+		// Skip 0x80 bytes of file header subtracting 6 bytes of header
+		_fileStream->skip(FLC_FILE_HEADER_SIZE - 6);
 		break;
 	default:
 		error("FlicDecoder::decodeFrame(): unknown main chunk type (type = 0x%02X)", frameType);

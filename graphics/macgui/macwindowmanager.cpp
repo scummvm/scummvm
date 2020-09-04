@@ -34,11 +34,15 @@
 #include "graphics/macgui/mactextwindow.h"
 #include "graphics/macgui/macmenu.h"
 
+#include "image/bmp.h"
+
 namespace Graphics {
 
 static const byte palette[] = {
 	0, 0, 0,           // Black
-	0x80, 0x80, 0x80,  // Gray
+	0x80, 0x80, 0x80,  // Gray80
+	0x88, 0x88, 0x88,  // Gray88
+	0xee, 0xee, 0xee,  // GrayEE
 	0xff, 0xff, 0xff,  // White
 	0x00, 0xff, 0x00,  // Green
 	0x00, 0xcf, 0x00   // Green2
@@ -152,8 +156,10 @@ static const byte macCursorCrossBar[] = {
 static void menuTimerHandler(void *refCon);
 
 MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns) {
-	_screen = 0;
+	_screen = nullptr;
 	_screenCopy = nullptr;
+	_desktopBmp = nullptr;
+	_desktop = nullptr;
 	_lastId = 0;
 	_activeWindow = -1;
 	_needsRemoval = false;
@@ -171,14 +177,25 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns) {
 	_engineP = nullptr;
 	_engineR = nullptr;
 	_redrawEngineCallback = nullptr;
+	_screenCopyPauseToken = nullptr;
 
-	_colorBlack = 0;
-	_colorWhite = 2;
+	_colorBlack = kColorBlack;
+	_colorGray80 = kColorGray80;
+	_colorGray88 = kColorGray88;
+	_colorGrayEE = kColorGrayEE;
+	_colorWhite = kColorWhite;
+	_colorGreen = kColorGreen;
+	_colorGreen2 = kColorGreen2;
 
 	_fullRefresh = true;
 
 	_palette = nullptr;
 	_paletteSize = 0;
+
+	if (mode & kWMMode32bpp)
+		_pixelformat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	else
+		_pixelformat = PixelFormat::createFormatCLUT8();
 
 	if (patterns) {
 		_patterns = *patterns;
@@ -198,6 +215,7 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns) {
 	CursorMan.showMouse(true);
 
 	loadDataBundle();
+	loadDesktop();
 }
 
 MacWindowManager::~MacWindowManager() {
@@ -210,7 +228,35 @@ MacWindowManager::~MacWindowManager() {
 	delete _fontMan;
 	delete _screenCopy;
 
+	delete _desktopBmp;
+	delete _desktop;
+
 	g_system->getTimerManager()->removeTimerProc(&menuTimerHandler);
+}
+
+void MacWindowManager::setScreen(ManagedSurface *screen) {
+	_screen = screen;
+	delete _screenCopy;
+	_screenCopy = nullptr;
+
+	if (_desktop)
+		_desktop->free();
+	else
+		_desktop = new ManagedSurface();
+
+	_desktop->create(_screen->w, _screen->h, _pixelformat);
+	drawDesktop();
+}
+
+void MacWindowManager::setScreen(int w, int h) {
+	if (_desktop)
+		_desktop->free();
+	else
+		_desktop = new ManagedSurface();
+
+	_screenDims = Common::Rect(w, h);
+	_desktop->create(w, h, _pixelformat);
+	drawDesktop();
 }
 
 void MacWindowManager::setMode(uint32 mode) {
@@ -270,7 +316,7 @@ MacMenu *MacWindowManager::addMenu() {
 		delete _menu;
 	}
 
-	_menu = new MacMenu(getNextId(), _screen->getBounds(), this);
+	_menu = new MacMenu(getNextId(), getScreenBounds(), this);
 
 	_windows[_menu->getId()] = _menu;
 
@@ -297,17 +343,35 @@ void MacWindowManager::activateMenu() {
 }
 
 void MacWindowManager::activateScreenCopy() {
-	if (!_screenCopy)
-		_screenCopy = new ManagedSurface(*_screen);	// Create a copy
-	else
-		*_screenCopy = *_screen;
+	if (_screen) {
+		if (!_screenCopy)
+			_screenCopy = new ManagedSurface(*_screen);	// Create a copy
+		else
+			*_screenCopy = *_screen;
+	} else {
+		Surface *surface = g_system->lockScreen();
 
-	_screenCopyPauseToken = pauseEngine();
+		if (!_screenCopy) {
+			_screenCopy = new ManagedSurface(_screenDims.width(), _screenDims.height());
+		}
+
+		_screenCopy->blitFrom(*surface);
+		g_system->unlockScreen();
+	}
+
+	_screenCopyPauseToken = new PauseToken(pauseEngine());
 }
 
 void MacWindowManager::disableScreenCopy() {
-	_screenCopyPauseToken.clear();
-	*_screen = *_screenCopy; // restore screen
+	if (_screenCopyPauseToken) {
+		_screenCopyPauseToken->clear();
+		delete _screenCopyPauseToken;
+		_screenCopyPauseToken = nullptr;
+	}
+
+	if (_screen)
+		*_screen = *_screenCopy; // restore screen
+
 	g_system->copyRectToScreen(_screenCopy->getBasePtr(0, 0), _screenCopy->pitch, 0, 0, _screenCopy->w, _screenCopy->h);
 }
 
@@ -344,6 +408,7 @@ void MacWindowManager::removeWindow(MacWindow *target) {
 		_activeWindow = -1;
 }
 
+template<typename T>
 void macDrawPixel(int x, int y, int color, void *data) {
 	MacPlotData *p = (MacPlotData *)data;
 
@@ -357,11 +422,11 @@ void macDrawPixel(int x, int y, int color, void *data) {
 			uint xu = (uint)x; // for letting compiler optimize it
 			uint yu = (uint)y;
 
-			*((byte *)p->surface->getBasePtr(xu, yu)) = p->invert ? ~(*((byte *)p->surface->getBasePtr(xu, yu))) :
+			*((T)p->surface->getBasePtr(xu, yu)) = p->invert ? ~(*((T)p->surface->getBasePtr(xu, yu))) :
 				(pat[(yu - p->fillOriginY) % 8] & (1 << (7 - (xu - p->fillOriginX) % 8))) ? color : p->bgColor;
 
 			if (p->mask)
-				*((byte *)p->mask->getBasePtr(xu, yu)) = 0xff;
+				*((T)p->mask->getBasePtr(xu, yu)) = 0xff;
 		}
 	} else {
 		int x1 = x;
@@ -374,33 +439,87 @@ void macDrawPixel(int x, int y, int color, void *data) {
 				if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h) {
 					uint xu = (uint)x; // for letting compiler optimize it
 					uint yu = (uint)y;
-					*((byte *)p->surface->getBasePtr(xu, yu)) = p->invert ? ~(*((byte *)p->surface->getBasePtr(xu, yu))) :
+					*((T)p->surface->getBasePtr(xu, yu)) = p->invert ? ~(*((T)p->surface->getBasePtr(xu, yu))) :
 						(pat[(yu - p->fillOriginY) % 8] & (1 << (7 - (xu - p->fillOriginX) % 8))) ? color : p->bgColor;
 
 					if (p->mask)
-						*((byte *)p->mask->getBasePtr(xu, yu)) = 0xff;
+						*((T)p->mask->getBasePtr(xu, yu)) = 0xff;
 				}
 	}
 }
 
+MacDrawPixPtr MacWindowManager::getDrawPixel() {
+	if (_pixelformat.bytesPerPixel == 1)
+		return &macDrawPixel<byte *>;
+	else
+		return &macDrawPixel<uint32 *>;
+}
+
+void MacWindowManager::loadDesktop() {
+	Common::SeekableReadStream *file = getFile("scummvm_background.bmp");
+	if (!file)
+		return;
+
+	Image::BitmapDecoder bmpDecoder;
+	Graphics::Surface *source;
+	_desktopBmp = new Graphics::TransparentSurface();
+
+	bmpDecoder.loadStream(*file);
+	source = bmpDecoder.getSurface()->convertTo(_desktopBmp->getSupportedPixelFormat(), bmpDecoder.getPalette());
+
+	_desktopBmp->create(source->w, source->h, _desktopBmp->getSupportedPixelFormat());
+	_desktopBmp->copyFrom(*source);
+
+	delete file;
+	source->free();
+	delete source;
+}
+
 void MacWindowManager::drawDesktop() {
-	Common::Rect r(_screen->getBounds());
+	if (_desktopBmp) {
+		for (uint i = 0; i < _desktop->w; ++i) {
+			for (uint j = 0; j < _desktop->h; ++j) {
+				uint32 color = *(uint32 *)_desktopBmp->getBasePtr(i % _desktopBmp->w, j % _desktopBmp->h);
+				if (_pixelformat.bytesPerPixel == 1) {
+					byte r, g, b;
+					_desktopBmp->format.colorToRGB(color, r, g, b);
+					if (color > 0) {
+						*((byte *)_desktop->getBasePtr(i, j)) = findBestColor(r, g, b);
+					}
+				} else {
+					*((uint32 *)_desktop->getBasePtr(i, j)) = color;
+				}
+			}
+		}
+	} else {
+		Common::Rect r(_desktop->getBounds());
 
-	MacPlotData pd(_screen, nullptr, &_patterns, kPatternCheckers, 0, 0, 1, _colorWhite);
+		MacPlotData pd(_desktop, nullptr, &_patterns, kPatternCheckers, 0, 0, 1, _colorWhite);
 
-	Graphics::drawRoundRect(r, kDesktopArc, _colorBlack, true, macDrawPixel, &pd);
-
-	g_system->copyRectToScreen(_screen->getPixels(), _screen->pitch, 0, 0, _screen->w, _screen->h);
+		Graphics::drawRoundRect(r, kDesktopArc, _colorBlack, true, getDrawPixel(), &pd);
+	}
 }
 
 void MacWindowManager::draw() {
-	assert(_screen);
-
 	removeMarked();
 
+	Common::Rect bounds = getScreenBounds();
+
 	if (_fullRefresh) {
-		if (!(_mode & kWMModeNoDesktop))
+		Common::Rect screen = getScreenBounds();
+		if (_desktop->w != screen.width() || _desktop->h != screen.height()) {
+			_desktop->free();
+			_desktop->create(screen.width(), screen.height(), _pixelformat);
 			drawDesktop();
+		}
+
+		if (_screen) {
+			_screen->blitFrom(*_desktop, Common::Point(0, 0));
+			g_system->copyRectToScreen(_screen->getPixels(), _screen->pitch, 0, 0, _screen->w, _screen->h);
+		} else {
+			_screenCopyPauseToken = new PauseToken(pauseEngine());
+			g_system->copyRectToScreen(_desktop->getPixels(), _desktop->pitch, 0, 0, _desktop->w, _desktop->h);
+		}
 
 		if (_redrawEngineCallback != nullptr)
 			_redrawEngineCallback(_engineR);
@@ -412,9 +531,14 @@ void MacWindowManager::draw() {
 		if (!w->isVisible())
 			continue;
 
-		Common::Rect clip = w->getDimensions();
-		clip.clip(_screen->getBounds());
-		clip.clip(Common::Rect(0, 0, g_system->getWidth() - 1, g_system->getHeight() - 1));
+		Common::Rect clip = w->getInnerDimensions();
+		clip.clip(bounds);
+
+		if (clip.isEmpty())
+			continue;
+
+		clip = w->getDimensions();
+		clip.clip(bounds);
 
 		if (clip.isEmpty())
 			continue;
@@ -429,7 +553,49 @@ void MacWindowManager::draw() {
 			}
 		}
 
-		if (w->draw(_screen, forceRedraw)) {
+		if (!_screen) {
+			if (w->isDirty() || forceRedraw) {
+				w->draw(forceRedraw);
+
+				Common::Rect outerDims = w->getDimensions();
+				Common::Rect innerDims = w->getInnerDimensions();
+				int adjWidth, adjHeight;
+
+				if (w->isDirty() || forceRedraw) {
+					w->draw(forceRedraw);
+
+					adjustDimensions(clip, outerDims, adjWidth, adjHeight);
+
+					if (_pixelformat.bytesPerPixel == 1) {
+						Surface *surface = g_system->lockScreen();
+						ManagedSurface *border = w->getBorderSurface();
+
+						for (int y = 0; y < adjHeight; y++) {
+							const byte *src = (const byte *)border->getBasePtr(clip.left - outerDims.left, y);
+							byte *dst = (byte *)surface->getBasePtr(clip.left, y + clip.top);
+							for (int x = 0; x < adjWidth; x++, src++, dst++)
+									if (*src != _colorGreen2 && *src != _colorGreen)
+										*dst = *src;
+						}
+
+						g_system->unlockScreen();
+					} else {
+						g_system->copyRectToScreen(w->getBorderSurface()->getBasePtr(MAX(clip.left - outerDims.left, 0), MAX(clip.top - outerDims.top, 0)), w->getBorderSurface()->pitch, clip.left, clip.top, adjWidth, adjHeight);
+					}
+				}
+
+				adjustDimensions(clip, innerDims, adjWidth, adjHeight);
+				g_system->copyRectToScreen(w->getWindowSurface()->getBasePtr(MAX(clip.left - innerDims.left, 0), MAX(clip.top - innerDims.top, 0)), w->getWindowSurface()->pitch,MAX(innerDims.left, (int16)0), MAX(innerDims.top, (int16)0), adjWidth, adjHeight);
+
+				dirtyRects.push_back(clip);
+			}
+
+			if (_screenCopyPauseToken) {
+				_screenCopyPauseToken->clear();
+				delete _screenCopyPauseToken;
+				_screenCopyPauseToken = nullptr;
+			}
+		} else if (w->draw(_screen, forceRedraw)) {
 			w->setDirty(false);
 			g_system->copyRectToScreen(_screen->getBasePtr(clip.left, clip.top), _screen->pitch, clip.left, clip.top, clip.width(), clip.height());
 			dirtyRects.push_back(clip);
@@ -437,8 +603,9 @@ void MacWindowManager::draw() {
 	}
 
 	// Menu is drawn on top of everything and always
-	if (_menu && !(_mode & kWMModeFullscreen))
+	if (_menu && !(_mode & kWMModeFullscreen)) {
 		_menu->draw(_screen, _fullRefresh);
+	}
 
 	_fullRefresh = false;
 }
@@ -515,6 +682,26 @@ bool MacWindowManager::processEvent(Common::Event &event) {
 	}
 
 	return false;
+}
+
+void MacWindowManager::adjustDimensions(const Common::Rect &clip, const Common::Rect &dims, int &adjWidth, int &adjHeight) {
+	int wOffset, hOffset;
+
+	wOffset = clip.left - dims.left;
+	adjWidth = dims.width();
+	if (wOffset > 0) {
+		adjWidth -= wOffset;
+	} else if (dims.right > getScreenBounds().right) {
+		adjWidth -= (dims.right - getScreenBounds().right);
+	}
+
+	hOffset = clip.top - dims.top;
+	adjHeight = dims.height();
+	if (hOffset > 0) {
+		adjHeight -= hOffset;
+	} else if (dims.bottom > getScreenBounds().bottom) {
+		adjHeight -= (dims.bottom - getScreenBounds().bottom);
+	}
 }
 
 void MacWindowManager::removeMarked() {
@@ -622,10 +809,10 @@ void MacWindowManager::renderZoomBox(bool redraw) {
 }
 
 void MacWindowManager::zoomBoxInner(Common::Rect &r, Graphics::MacPlotData &pd) {
-	Graphics::drawLine(r.left,  r.top,    r.right, r.top,    0xff, Graphics::macDrawPixel, &pd);
-	Graphics::drawLine(r.right, r.top,    r.right, r.bottom, 0xff, Graphics::macDrawPixel, &pd);
-	Graphics::drawLine(r.left,  r.bottom, r.right, r.bottom, 0xff, Graphics::macDrawPixel, &pd);
-	Graphics::drawLine(r.left,  r.top,    r.left,  r.bottom, 0xff, Graphics::macDrawPixel, &pd);
+	Graphics::drawLine(r.left,  r.top,    r.right, r.top,    0xff, getDrawPixel(), &pd);
+	Graphics::drawLine(r.right, r.top,    r.right, r.bottom, 0xff, getDrawPixel(), &pd);
+	Graphics::drawLine(r.left,  r.bottom, r.right, r.bottom, 0xff, getDrawPixel(), &pd);
+	Graphics::drawLine(r.left,  r.top,    r.left,  r.bottom, 0xff, getDrawPixel(), &pd);
 }
 
 /////////////////
@@ -657,6 +844,9 @@ void MacWindowManager::pushWatchCursor() {
 }
 
 void MacWindowManager::pushCursor(MacCursorType type, Cursor *cursor) {
+	if (_cursorType == kMacCursorOff && type != _cursorType)
+		CursorMan.showMouse(true);
+
 	switch (type) {
 	case kMacCursorOff:
 		CursorMan.showMouse(false);
@@ -689,6 +879,9 @@ void MacWindowManager::pushCursor(MacCursorType type, Cursor *cursor) {
 }
 
 void MacWindowManager::replaceCursor(MacCursorType type, Cursor *cursor) {
+	if (_cursorType == kMacCursorOff && type != _cursorType)
+		CursorMan.showMouse(true);
+
 	switch (type) {
 	case kMacCursorOff:
 		CursorMan.showMouse(false);
@@ -748,63 +941,34 @@ void MacWindowManager::popCursor() {
 ///////////////////
 // Palette stuff
 ///////////////////
-void MacWindowManager::passPalette(const byte *pal, uint size) {
-	const byte *p = pal;
+#define LOOKUPCOLOR(x) _color ## x = findBestColor(palette[kColor ## x * 3], palette[kColor ## x  * 3 + 1], palette[kColor ## x * 3 + 2]);
 
+void MacWindowManager::passPalette(const byte *pal, uint size) {
 	if (_palette)
 		free(_palette);
 
 	_palette = (byte *)malloc(size * 3);
+	memcpy(_palette, pal, size * 3);
 	_paletteSize = size;
 
 	_colorHash.clear();
 
-	_colorWhite = -1;
-	_colorBlack = -1;
+	LOOKUPCOLOR(White);
+	LOOKUPCOLOR(Gray80);
+	LOOKUPCOLOR(Gray88);
+	LOOKUPCOLOR(GrayEE);
+	LOOKUPCOLOR(Black);
+	LOOKUPCOLOR(Green);
+	LOOKUPCOLOR(Green2);
 
-	// Search pure white and black colors
-	for (uint i = 0; i < size; i++) {
-		if (_colorWhite == -1 && p[0] == 0xff && p[1] == 0xff && p[2] == 0xff)
-			_colorWhite = i;
-
-
-		if (_colorBlack == -1 && p[0] == 0x00 && p[1] == 0x00 && p[2] == 0x00)
-			_colorBlack = i;
-
-		_palette[i * 3 + 0] = *p++;
-		_palette[i * 3 + 1] = *p++;
-		_palette[i * 3 + 2] = *p++;
-	}
-
-	if (_colorWhite != -1 && _colorBlack != -1)
-		return;
-
-	// We did not find some color. Let's find closest approximations
-	float darkest = 1000.0f, brightest = -1.0f;
-	int di = -1, bi = -1;
-	p = pal;
-
-	for (uint i = 0; i < size; i++) {
-		float gray = p[0] * 0.3f + p[1] * 0.59f + p[2] * 0.11f;
-
-		if (darkest > gray) {
-			darkest = gray;
-			di = i;
-		}
-
-		if (brightest < gray) {
-			brightest = gray;
-			bi = i;
-		}
-
-		p += 3;
-	}
-
-	_colorWhite = bi;
-	_colorBlack = di;
+	drawDesktop();
+	setFullRefresh(true);
 }
 
 uint MacWindowManager::findBestColor(byte cr, byte cg, byte cb) {
+	if (_pixelformat.bytesPerPixel == 4)
+		return _pixelformat.RGBToColor(cr, cg, cb);
+
 	uint bestColor = 0;
 	double min = 0xFFFFFFFF;
 
@@ -831,10 +995,14 @@ uint MacWindowManager::findBestColor(byte cr, byte cg, byte cb) {
 	return bestColor;
 }
 
-void MacWindowManager::decomposeColor(byte color, byte &r, byte &g, byte &b) {
-	r = *(_palette + 3 * color + 0);
-	g = *(_palette + 3 * color + 1);
-	b = *(_palette + 3 * color + 2);
+void MacWindowManager::decomposeColor(uint32 color, byte &r, byte &g, byte &b) {
+	if (_pixelformat.bytesPerPixel == 1 || color <= 0xff) {
+		r = *(_palette + 3 * color + 0);
+		g = *(_palette + 3 * color + 1);
+		b = *(_palette + 3 * color + 2);
+	} else {
+		_pixelformat.colorToRGB(color, r, g, b);
+	}
 }
 
 PauseToken MacWindowManager::pauseEngine() {

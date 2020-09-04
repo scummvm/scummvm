@@ -24,6 +24,7 @@
 #include "ultima/ultima8/misc/debugger.h"
 #include "ultima/ultima8/ultima8.h"
 #include "common/translation.h"
+#include "common/ustr.h"
 #include "backends/keymapper/action.h"
 
 namespace Ultima {
@@ -119,7 +120,7 @@ Common::KeymapArray MetaEngine::initKeymaps(const Common::String &gameId, bool i
 	Common::KeymapArray keymapArray;
 
 	// Core keymaps
-	const char *desc = (gameId == "ultima8" ? _("Ultima VIII") : _("Crusader"));
+	Common::U32String desc = (gameId == "ultima8" ? _("Ultima VIII") : _("Crusader"));
 
 	Common::Keymap *keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, gameId, desc);
 	keymapArray.push_back(keyMap);

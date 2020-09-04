@@ -555,7 +555,7 @@ MoviePlayer *makeMoviePlayer(AGOSEngine_Feeble *vm, const char *name) {
 		return new MoviePlayerSMK(vm, baseName);
 	}
 
-	Common::String buf = Common::String::format(_("Cutscene file '%s' not found!"), baseName);
+	Common::U32String buf = Common::U32String::format(_("Cutscene file '%s' not found!"), baseName);
 	GUI::MessageDialog dialog(buf, _("OK"));
 	dialog.runModal();
 

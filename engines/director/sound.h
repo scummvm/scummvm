@@ -102,9 +102,9 @@ public:
 	SNDDecoder();
 	~SNDDecoder();
 
-	bool loadStream(Common::SeekableSubReadStreamEndian &stream);
-	bool processCommands(Common::SeekableSubReadStreamEndian &stream);
-	bool processBufferCommand(Common::SeekableSubReadStreamEndian &stream);
+	bool loadStream(Common::SeekableReadStreamEndian &stream);
+	bool processCommands(Common::SeekableReadStreamEndian &stream);
+	bool processBufferCommand(Common::SeekableReadStreamEndian &stream);
 	Audio::RewindableAudioStream *getAudioStream(DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 private:

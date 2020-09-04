@@ -443,6 +443,15 @@ static Common::Language detectLanguage(const Common::FSList &fslist, byte id) {
 			&& searchFSNode(tmpList, filename, langFile)) {
 			tmp.open(langFile);
 		}
+		// The Chinese version of Dig has the LANGUAGE.BND in the VIDEO sub dir.
+		if (!tmp.isOpen()
+			&& id == GID_DIG
+			&& searchFSNode(fslist, "VIDEO", resDir)
+			&& resDir.isDirectory()
+			&& resDir.getChildren(tmpList, Common::FSNode::kListFilesOnly)
+			&& searchFSNode(tmpList, filename, langFile)) {
+			tmp.open(langFile);
+		}
 	}
 	if (tmp.isOpen()) {
 		uint size = tmp.size();
@@ -1136,7 +1145,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	if (!findInMD5Table(res.md5.c_str())) {
 		Common::String md5Warning;
 
-		md5Warning = _("Your game version appears to be unknown. If this is *NOT* a fan-modified\n"
+		md5Warning = ("Your game version appears to be unknown. If this is *NOT* a fan-modified\n"
 		               "version (in particular, not a fan-made translation), please, report the\n"
 		               "following data to the ScummVM team along with the name of the game you tried\n"
 		               "to add and its version, language, etc.:\n");
@@ -1156,6 +1165,13 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	if (!strcmp(res.game.gameid, "puttzoo") && !strcmp(res.extra, "Lite")) {
 		GUIErrorMessage(_("The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid piracy.\n"
 		                  "The full version is available for purchase from the iTunes Store."));
+		return Common::kUnsupportedGameidError;
+	}
+
+	// We don't support yet the
+	// the full game.
+	if (!strcmp(res.game.gameid, "pajama2") && !strcmp(res.extra, "Russobit")) {
+		GUIErrorMessage(_("The Russian version of Pajama Sam 2 is not supported yet due to incomplete code."));
 		return Common::kUnsupportedGameidError;
 	}
 

@@ -109,6 +109,7 @@ enum TheEntityType {
 	kTheRightMouseDown,
 	kTheRightMouseUp,
 	kTheRomanLingo,
+	kTheScummvmVersion,			// set the Director version via lingo in tests
 	kTheSearchCurrentFolder,
 	kTheSearchPath,
 	kTheSelection,

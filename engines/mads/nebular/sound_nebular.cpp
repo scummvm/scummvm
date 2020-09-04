@@ -466,6 +466,7 @@ void ASound::pollActiveChannel() {
 				}
 				if (pSrc > chan->_ptrEnd) {
 					warning("Read beyond end of loaded sound data");
+					return;
 				}
 
 				if (!(*pSrc & 0x80) || (*pSrc <= 0xF0)) {

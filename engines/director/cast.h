@@ -28,7 +28,7 @@
 namespace Common {
 	class ReadStreamEndian;
 	struct Rect;
-	class SeekableSubReadStreamEndian;
+	class SeekableReadStreamEndian;
 }
 
 namespace Director {
@@ -56,16 +56,14 @@ public:
 	Archive *getArchive() const { return _castArchive; };
 	Common::String getMacName() const { return _macName; }
 
-	void loadConfig(Common::SeekableSubReadStreamEndian &stream);
-	void loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream);
-	void loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, Resource *res);
-	void loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id);
-	void loadLingoNames(Common::SeekableSubReadStreamEndian &stream);
-	void loadLingoContext(Common::SeekableSubReadStreamEndian &stream);
+	void loadConfig(Common::SeekableReadStreamEndian &stream);
+	void loadCastDataVWCR(Common::SeekableReadStreamEndian &stream);
+	void loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Resource *res);
+	void loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id);
+	void loadLingoContext(Common::SeekableReadStreamEndian &stream);
 
 	void loadCastChildren();
 	void loadSoundCasts();
-	void loadDigitalVideoCasts();
 
 	void copyCastStxts();
 	Common::Rect getCastMemberInitialRect(int castId);
@@ -75,13 +73,14 @@ public:
 	CastMember *getCastMemberByScriptId(int scriptId);
 	CastMemberInfo *getCastMemberInfo(int castId);
 	const Stxt *getStxt(int castId);
+	Common::String getVideoPath(int castId);
 
 	void dumpScript(const char *script, ScriptType type, uint16 id);
 
 private:
-	PaletteV4 loadPalette(Common::SeekableSubReadStreamEndian &stream);
-	void loadScriptText(Common::SeekableSubReadStreamEndian &stream);
-	void loadFontMap(Common::SeekableSubReadStreamEndian &stream);
+	PaletteV4 loadPalette(Common::SeekableReadStreamEndian &stream);
+	void loadScriptText(Common::SeekableReadStreamEndian &stream);
+	void loadFontMap(Common::SeekableReadStreamEndian &stream);
 	Common::String getString(Common::String str);
 
 public:

@@ -22,6 +22,8 @@
 
 #include "bbvs/minigames/bbloogie.h"
 
+#include "engines/advancedDetector.h"
+
 namespace Bbvs {
 
 static const int kLoogieOffY[16] = {
@@ -87,6 +89,18 @@ static const char * const kSoundFilenames[] = {
 };
 
 static const uint kSoundFilenamesCount = ARRAYSIZE(kSoundFilenames);
+
+static const char * const kDemoSoundFilenames[] = {
+	"loog1.aif", "loog2.aif", "loog3.aif", "loog4.aif", "loog5.aif",
+	"loog6.aif", "loog7.aif", "loog8.aif", "loog9.aif", "loog10.aif",
+	"loog11.aif", "loog12.aif", "loog13.aif", "loog14.aif", "loog15.aif",
+	"loog16.aif", "loog17.aif", "loog18.aif", "loog19.aif", "loog20.aif",
+	"loog21.aif", "loog22.aif", "loog23.aif", "loog24.aif", "loog25.aif",
+	"loog26.aif", "loog27.aif", "meghoker.aif", "spit1.aif", "megaloog.aif",
+	"megaspit.aif", "rocktune.aif", "bing.aif"
+};
+
+static const uint kDemoSoundFilenamesCount = ARRAYSIZE(kDemoSoundFilenames);
 
 void MinigameBbLoogie::buildDrawList(DrawList &drawList) {
 	switch (_gameState) {
@@ -454,6 +468,10 @@ bool MinigameBbLoogie::updateStatus0(int mouseX, int mouseY, uint mouseButtons) 
 		_objects[2].kind = 1;
 	}
 
+	if (_vm->_gameDescription->flags & ADGF_DEMO) {
+		_objects[0].frameIndex = 0;
+	}
+
 	for (int i = 0; i < kMaxObjectsCount; ++i) {
 		Obj *obj = &_objects[i];
 		if (obj->kind == 11) {
@@ -558,7 +576,9 @@ bool MinigameBbLoogie::updateStatus2(int mouseX, int mouseY, uint mouseButtons) 
 	} else if (_bonusDisplayDelay2 > 0) {
 		if (--_bonusDisplayDelay2 == 0) {
 			_bonusDisplayDelay3 = 150;
-			playSound(38);
+			if (!(_vm->_gameDescription->flags & ADGF_DEMO)) {
+				playSound(38);
+			}
 		} else if (_timeBonusCtr > 0) {
 			++_bonusDisplayDelay2;
 			++_levelTimeLeft;
@@ -870,7 +890,9 @@ void MinigameBbLoogie::updateCar(int objIndex) {
 				loogieObj->ticks = getAnimation(5)->frameTicks[12];
 				obj->frameIndex = 4;
 				obj->ticks = getAnimation(2)->frameTicks[4];
-				playSound(34);
+				if (!(_vm->_gameDescription->flags & ADGF_DEMO)) {
+					playSound(34);
+				}
 				playRndSound();
 			}
 			loogieObj = findLoogieObj(loogieObjIndex++);
@@ -905,7 +927,9 @@ void MinigameBbLoogie::updateBike(int objIndex) {
 				loogieObj->ticks = getAnimation(5)->frameTicks[12];
 				obj->frameIndex = 4;
 				obj->ticks = getAnimation(3)->frameTicks[4];
-				playSound(35);
+				if (!(_vm->_gameDescription->flags & ADGF_DEMO)) {
+					playSound(35);
+				}
 				playRndSound();
 			}
 			loogieObj = findLoogieObj(loogieObjIndex++);
@@ -940,7 +964,9 @@ void MinigameBbLoogie::updateSquirrel(int objIndex) {
 				obj->x += kSquirrelOffX[obj->frameIndex];
 				obj->frameIndex = obj->frameIndex < 29 ? 54 : 58;
 				obj->ticks = getAnimation(7)->frameTicks[obj->frameIndex];
-				playSound(36);
+				if (!(_vm->_gameDescription->flags & ADGF_DEMO)) {
+					playSound(36);
+				}
 				playRndSound();
 			}
 			loogieObj = findLoogieObj(loogieObjIndex++);
@@ -973,7 +999,9 @@ void MinigameBbLoogie::updatePaperPlane(int objIndex) {
 				obj->frameIndex = (obj->frameIndex + 1) % 8;
 				obj->xIncr = kPlaneOffX[obj->frameIndex];
 				obj->yIncr = kPlaneOffY[obj->frameIndex];
-				playSound(37);
+				if (!(_vm->_gameDescription->flags & ADGF_DEMO)) {
+					playSound(37);
+				}
 				playRndSound();
 			}
 			loogieObj = findLoogieObj(loogieObjIndex++);
@@ -1282,12 +1310,23 @@ void MinigameBbLoogie::playRndSound() {
 
 bool MinigameBbLoogie::run(bool fromMainGame) {
 
+	if (!_vm->isLoogieDemo()) {
+		Common::strlcpy(_prefix, "bbloogie/", 20);
+	} else {
+		_prefix[0] = 0;
+	}
+
 	memset(_objects, 0, sizeof(_objects));
 
 	_numbersAnim = getAnimation(9);
 
-	_backgroundSpriteIndex = 210;
-	_titleScreenSpriteIndex = 211;
+	if (_vm->_gameDescription->flags & ADGF_DEMO) {
+		_backgroundSpriteIndex = 209;
+		_titleScreenSpriteIndex = 210;
+	} else {
+		_backgroundSpriteIndex = 210;
+		_titleScreenSpriteIndex = 211;
+	}
 
 	_fromMainGame = fromMainGame;
 
@@ -1303,7 +1342,7 @@ bool MinigameBbLoogie::run(bool fromMainGame) {
 	initVars();
 
 	_spriteModule = new SpriteModule();
-	_spriteModule->load("bbloogie/bbloogie.000");
+	_spriteModule->load(Common::String::format("%sbbloogie.000", _prefix).c_str());
 
 	Palette palette = _spriteModule->getPalette();
 	_vm->_screen->setPalette(palette);
@@ -1364,9 +1403,16 @@ void MinigameBbLoogie::update() {
 }
 
 void MinigameBbLoogie::loadSounds() {
-	for (uint i = 0; i < kSoundFilenamesCount; ++i) {
-		Common::String filename = Common::String::format("bbloogie/%s", kSoundFilenames[i]);
-		_vm->_sound->loadSound(filename.c_str());
+	if (_vm->_gameDescription->flags & ADGF_DEMO) {
+		for (uint i = 0; i < kDemoSoundFilenamesCount; ++i) {
+			Common::String filename = Common::String::format("%s%s", _prefix, kDemoSoundFilenames[i]);
+			_vm->_sound->loadSound(filename.c_str());
+		}
+	} else {
+		for (uint i = 0; i < kSoundFilenamesCount; ++i) {
+			Common::String filename = Common::String::format("%s%s", _prefix, kSoundFilenames[i]);
+			_vm->_sound->loadSound(filename.c_str());
+		}
 	}
 }
 

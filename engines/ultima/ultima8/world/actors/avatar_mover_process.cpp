@@ -263,7 +263,7 @@ void AvatarMoverProcess::handleCombatMode() {
 			// want to run while in combat mode?
 			// first sheath weapon
 			nextanim = Animation::readyWeapon;
-		} else if (ABS(direction - mousedir) == 4) {
+		} else if (Direction_Invert(direction) == mousedir) {
 			nextanim = Animation::retreat;
 			nextdir = direction;
 		} else {
@@ -356,7 +356,7 @@ void AvatarMoverProcess::handleCombatMode() {
 			// want to run while in combat mode?
 			// first sheath weapon
 			nextanim = Animation::readyWeapon;
-		} else if (ABS(direction - nextdir) == 4) {
+		} else if (Direction_Invert(direction) == nextdir) {
 			nextanim = Animation::retreat;
 			nextdir = direction;
 		} else {
@@ -690,6 +690,18 @@ void AvatarMoverProcess::handleNormalMode() {
 	if (Kernel::get_instance()->getNumProcesses(1, ActorAnimProcess::ACTOR_ANIM_PROC_TYPE))
 		return;
 
+	// if we were running, slow to a walk before stopping
+	if (lastanim == Animation::run) {
+		waitFor(avatar->doAnim(Animation::walk, direction));
+		return;
+	}
+
+	// not doing anything in particular? stand
+	if (lastanim != Animation::stand && currentIdleTime == 0) {
+		waitFor(avatar->doAnim(Animation::stand, direction));
+		return;
+	}
+
 	// idle
 	_idleTime = currentIdleTime + 1;
 
@@ -698,7 +710,7 @@ void AvatarMoverProcess::handleNormalMode() {
 		if ((getRandom() % 1500) + 30 < _idleTime) {
 			_lastHeadShakeAnim = lastanim;
 			waitFor(avatar->doAnim(Animation::stand, direction));
-			_idleTime = 0;
+			_idleTime = 1;
 			return;
 		}
 	} else {
@@ -710,19 +722,9 @@ void AvatarMoverProcess::handleNormalMode() {
 			else
 				nextanim = Animation::lookLeft;
 			waitFor(avatar->doAnim(nextanim, direction));
-			_idleTime = 0;
+			_idleTime = 1;
 			return;
 		}
-	}
-
-	// if we were running, slow to a walk before stopping
-	if (lastanim == Animation::run) {
-		waitFor(avatar->doAnim(Animation::walk, direction));
-	}
-
-	// not doing anything in particular? stand
-	if (lastanim != Animation::stand) {
-		waitFor(avatar->doAnim(Animation::stand, direction));
 	}
 }
 
@@ -864,14 +866,13 @@ bool AvatarMoverProcess::checkTurn(Direction direction, bool moving) {
 
 	// Note: don't need to turn if moving backward in combat stance
 	// CHECKME: currently, first turn in the right direction
-	if (direction != curdir && !(
-	            combat && ABS(direction - curdir) == 8)) {
+	if (direction != curdir && !(combat && Direction_Invert(direction) == curdir)) {
 		Animation::Sequence lastanim = avatar->getLastAnim();
 
 		if (moving &&
 		        (lastanim == Animation::walk || lastanim == Animation::run ||
 		         lastanim == Animation::combatStand) &&
-		        (ABS(direction - curdir) + 2 % 16 <= 4)) {
+		        (ABS(direction - curdir) + 2) % 16 <= 4) {
 			// don't need to explicitly do a turn animation
 			return false;
 		}

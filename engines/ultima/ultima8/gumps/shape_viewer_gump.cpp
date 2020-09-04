@@ -90,10 +90,10 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 		return;
 	}
 
-	surf->Fill32(_background, 0, 0, _dims.w, _dims.h);
+	surf->Fill32(_background, 0, 0, _dims.width(), _dims.height());
 
-	int32 posx = (_dims.w - _shapeW) / 2 + _shapeX;
-	int32 posy = (_dims.h - _shapeH) / 2 + _shapeY - 25;
+	int32 posx = (_dims.width() - _shapeW) / 2 + _shapeX;
+	int32 posy = (_dims.height() - _shapeH) / 2 + _shapeY - 25;
 
 	Shape *shape_ = _flex->getShape(_curShape);
 	if (shape_ && _curFrame < shape_->frameCount())
@@ -174,7 +174,7 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 			sprintf(buf6, "ShapeInfo: %s\n %s, %s\nUsecode: %s",
 					buf3, buf4, buf5, GameData::get_instance()->getMainUsecode()->get_class_name(_curShape));
 			rendtext = font->renderText(buf6, remaining);
-			rendtext->draw(surf, 20, _dims.h - 58);
+			rendtext->draw(surf, 20, _dims.height() - 58);
 			delete rendtext;
 		}
 	}
@@ -333,10 +333,10 @@ void ShapeViewerGump::U8ShapeViewer() {
 	Rect res;
 	desktopGump->GetDims(res);
 
-	int width = (res.w * 4) / 5;
-	int height = (res.h * 5) / 6;
-	int xoff = res.w / 10;
-	int yoff = res.h / 12;
+	int width = (res.width() * 4) / 5;
+	int height = (res.height() * 5) / 6;
+	int xoff = res.width() / 10;
+	int yoff = res.height() / 12;
 
 	ModalGump *gump = new ShapeViewerGump(xoff, yoff, width, height, _flexes);
 	gump->InitGump(0);

@@ -33,7 +33,13 @@ MacWindowBorder::MacWindowBorder() : _activeInitialized(false), _inactiveInitial
 	_activeBorder = nullptr;
 	_inactiveBorder = nullptr;
 
-	_borderOffsets.right = -1; // make invalid rect
+	_borderOffsets.left = -1;
+	_borderOffsets.right = -1;
+	_borderOffsets.top = -1;
+	_borderOffsets.bottom = -1;
+	_borderOffsets.titleTop = -1;
+	_borderOffsets.titleBottom = -1;
+	_borderOffsets.dark = false;
 }
 
 MacWindowBorder::~MacWindowBorder() {
@@ -48,7 +54,9 @@ bool MacWindowBorder::hasBorder(bool active) {
 }
 
 void MacWindowBorder::addActiveBorder(TransparentSurface *source) {
-	assert(!_activeBorder);
+	if (_activeBorder)
+		delete _activeBorder;
+
 	_activeBorder = new NinePatchBitmap(source, true);
 	_activeInitialized = true;
 
@@ -57,7 +65,9 @@ void MacWindowBorder::addActiveBorder(TransparentSurface *source) {
 }
 
 void MacWindowBorder::addInactiveBorder(TransparentSurface *source) {
-	assert(!_inactiveBorder);
+	if (_inactiveBorder)
+		delete _inactiveBorder;
+
 	_inactiveBorder = new NinePatchBitmap(source, true);
 	_inactiveInitialized = true;
 
@@ -78,10 +88,17 @@ void MacWindowBorder::setOffsets(int left, int right, int top, int bottom) {
 }
 
 void MacWindowBorder::setOffsets(Common::Rect &rect) {
-	_borderOffsets = rect;
+	_borderOffsets.left = rect.left;
+	_borderOffsets.right = rect.right;
+	_borderOffsets.top = rect.top;
+	_borderOffsets.bottom = rect.bottom;
 }
 
-Common::Rect &MacWindowBorder::getOffset() {
+void MacWindowBorder::setOffsets(const BorderOffsets &offsets) {
+	_borderOffsets = offsets;
+}
+
+BorderOffsets &MacWindowBorder::getOffset() {
 	return _borderOffsets;
 }
 
@@ -100,13 +117,10 @@ void MacWindowBorder::blitBorderInto(ManagedSurface &destination, bool active, M
 	}
 
 	srf.create(destination.w, destination.h, destination.format);
-	srf.fillRect(Common::Rect(srf.w, srf.h), kColorGreen2);
-
-	byte palette[kColorCount * 3];
-	g_system->getPaletteManager()->grabPalette(palette, 0, kColorCount);
+	srf.fillRect(Common::Rect(srf.w, srf.h), wm->_colorGreen2);
 
 	src->blit(srf, 0, 0, srf.w, srf.h, NULL, 0, wm);
-	destination.transBlitFrom(srf, kColorGreen2);
+	destination.transBlitFrom(srf, wm->_colorGreen2);
 	srf.free();
 }
 
