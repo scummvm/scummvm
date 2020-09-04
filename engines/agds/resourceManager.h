@@ -94,6 +94,7 @@ public:
 	Common::String loadText(const Common::String & name) const;
 };
 
+Common::String readString(Common::SeekableReadStream * stream, uint size);
 
 } // End of namespace AGDS
 
