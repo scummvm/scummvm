@@ -95,6 +95,9 @@ Programmcodes finden Sie auf Englisch unter:
    - Farbpalette in der Apple //gs-Version von Maniac Mansion verbessert.
    - Absturz beim Betreten der Garage in der Apple //gs-Version von Maniac Mansion behoben.
 
+ Supernova:
+   - Verbesserung der englischsprachigen Übersetzung.
+
  Sky:
    - Synchronisation der Musik-Lautstärke zwischen dem nativen Einstellungs-Dialog des Spiels und der ScummVM-Konfiguration korrigiert.
 
@@ -106,7 +109,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für eine spanische Demoversion hinzugefügt (auf unserer Website verfügbar).
 
  Titanic:
-   - Das Spiel stürzt nur nicht mehr ab, wenn man sich nach den Bedürfnissen des Barbot erkundigt.
+   - Das Spiel stürzt nicht mehr ab, wenn man sich nach den Bedürfnissen des Barbot erkundigt.
 
  Wintermute:
    - System zur Verfolgung von Errungenschaften hinzugefügt, für mehr als 10 Spiele verfügbar.
