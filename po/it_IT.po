@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-03 01:28+0000\n"
-"PO-Revision-Date: 2020-09-01 08:51+0000\n"
+"PO-Revision-Date: 2020-09-04 20:11+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -4572,7 +4572,7 @@ msgstr "Mostra ~M~appa"
 
 #: engines/mohawk/dialogs.cpp:134
 msgid "Main Men~u~"
-msgstr "~M~enu principale"
+msgstr "Menu ~p~rincipale"
 
 #: engines/mohawk/dialogs.cpp:248
 msgid "The new language will be applied after restarting the game."
