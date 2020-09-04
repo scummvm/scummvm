@@ -21,6 +21,7 @@
  */
 
 #include "agds/region.h"
+#include "agds/resourceManager.h"
 #include "common/algorithm.h"
 #include "common/debug.h"
 #include "common/endian.h"
@@ -29,23 +30,13 @@
 namespace AGDS {
 
 Region::Region(const Common::String &resourceName, Common::SeekableReadStream *stream) {
-	static const int kRegionHeaderSize = 0x26;
-	static const int kRegionHeaderWidthOffset = 0x20;
-	static const int kRegionHeaderHeightOffset = 0x22;
-	static const int kRegionHeaderFlagsOffset = 0x24;
-
 	int size = stream->size();
-	debug("region size %d, data %d", size, size - kRegionHeaderSize);
-	byte header[kRegionHeaderSize];
-	if (stream->read(header, kRegionHeaderSize) != kRegionHeaderSize)
-		error("invalid region %s", resourceName.c_str());
-	byte *nameEnd = Common::find(header, header + 0x20, 0);
-	name = Common::String(reinterpret_cast<char *>(header), nameEnd - header);
-	center.x = READ_UINT16(header + kRegionHeaderWidthOffset);
-	center.y = READ_UINT16(header + kRegionHeaderHeightOffset);
-	flags = READ_UINT16(header + kRegionHeaderFlagsOffset);
+	name = readString(stream, 32);
+	center.x = stream->readUint16LE();
+	center.y = stream->readUint16LE();
+	flags = stream->readUint16LE();
 	debug("region %s at (%d,%d) %04x", name.c_str(), center.x, center.y, flags);
-	if (size > kRegionHeaderSize) {
+	if (stream->pos() < size) {
 		uint16 ext = stream->readUint16LE();
 		//debug("extended entries %u", ext);
 		while (ext--) {
