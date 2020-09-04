@@ -21,6 +21,7 @@
  */
 
 #include "agds/character.h"
+#include "agds/resourceManager.h"
 #include "common/array.h"
 #include "common/debug.h"
 #include "common/error.h"
@@ -54,11 +55,10 @@ void Character::load(Common::SeekableReadStream* stream) {
 
 		uint16 frames = stream->readUint16LE();
 		uint16 format = stream->readUint16LE();
-		Common::Array<char> nameData(33);
-		stream->read(nameData.data(), 32);
+		Common::String filename = readString(stream, 32);
 
 		AnimationDescription animation;
-		animation.filename = Common::String(nameData.data());
+		animation.filename = filename;
 		debug("animation %s, frames: %d, format: %d", animation.filename.c_str(), frames, format);
 		while(frames--) {
 			int x = stream->readSint16LE();
