@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-03 01:28+0000\n"
-"PO-Revision-Date: 2020-09-04 20:29+0000\n"
+"PO-Revision-Date: 2020-09-04 20:46+0000\n"
 "Last-Translator: Ivan Lukyanov <greencis@mail.ru>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -23,7 +23,7 @@ msgstr ""
 #: gui/about.cpp:102
 #, c-format
 msgid "(built on %s)"
-msgstr "(собран %s)"
+msgstr "(собрано %s)"
 
 #: gui/about.cpp:109
 msgid "Features compiled in:"
@@ -569,7 +569,7 @@ msgstr ""
 
 #: gui/gui-manager.cpp:122
 msgid "GUI"
-msgstr "Графический Интерфейс"
+msgstr "Графический интерфейс"
 
 #: gui/gui-manager.cpp:126 engines/mohawk/myst.cpp:585
 #: engines/mohawk/riven.cpp:854
@@ -1119,11 +1119,11 @@ msgstr "Не использовать музыку Roland MT-32"
 
 #: gui/options.cpp:1416
 msgid "Text and speech:"
-msgstr "Текст и озвучка:"
+msgstr "Текст и речь:"
 
 #: gui/options.cpp:1420 gui/options.cpp:1430
 msgid "Speech"
-msgstr "Озвучка"
+msgstr "Речь"
 
 #: gui/options.cpp:1421 gui/options.cpp:1431
 msgid "Subtitles"
@@ -1140,11 +1140,11 @@ msgstr "Скорость субтитров:"
 #: gui/options.cpp:1426
 msgctxt "lowres"
 msgid "Text and speech:"
-msgstr "Текст и озвучка:"
+msgstr "Текст и речь:"
 
 #: gui/options.cpp:1430
 msgid "Spch"
-msgstr "Озв"
+msgstr "Речь"
 
 #: gui/options.cpp:1431
 msgid "Subs"
@@ -1192,12 +1192,12 @@ msgstr "Громк. SFX:"
 
 #: gui/options.cpp:1472
 msgid "Speech volume:"
-msgstr "Громк. озвучки:"
+msgstr "Громкость речи:"
 
 #: gui/options.cpp:1474
 msgctxt "lowres"
 msgid "Speech volume:"
-msgstr "Громк. озвучки:"
+msgstr "Громк. речи:"
 
 #: gui/options.cpp:1721
 msgid "Control"
