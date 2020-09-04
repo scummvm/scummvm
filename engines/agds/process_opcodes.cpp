@@ -836,14 +836,11 @@ void Process::exitProcess() {
 
 void Process::exitProcessCreatePatch() {
 	SystemVariable *initVar = _engine->getSystemVariable("init_resources");
-	if (!initVar)
-		error("no init_resources declared");
 	Common::String init = initVar->getString();
 
 	SystemVariable *doneVar = _engine->getSystemVariable("done_resources");
-	if (!doneVar)
-		error("no done_resources declared");
 	Common::String done = doneVar->getString();
+
 	debug("exitProcessCreatePatch stub, resource objects: %s %s", done.c_str(), init.c_str());
 	suspend(kExitCodeCreatePatchLoadResources, done, init);
 }
