@@ -300,6 +300,11 @@ MODULE_OBJS += \
 	graphics/downscalesdl/downscalesdl-graphics.o
 endif
 
+ifeq ($(BACKEND),iphone)
+MODULE_OBJS += \
+	mutex/pthread/pthread-mutex.o
+endif
+
 ifeq ($(BACKEND),maemo)
 MODULE_OBJS += \
 	events/maemosdl/maemosdl-events.o \
