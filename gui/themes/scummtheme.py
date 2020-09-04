@@ -12,7 +12,7 @@ def buildTheme(themeName):
 		print ("Invalid theme name: " + themeName)
 		return
 
-	zf = zipfile.ZipFile(themeName + ".zip", 'w')
+	zf = zipfile.ZipFile(themeName + ".zip", 'w', zipfile.ZIP_DEFLATED, 9)
 
 	print ("Building '" + themeName + "' theme:")
 	os.chdir(themeName)

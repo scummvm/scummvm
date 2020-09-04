@@ -66,7 +66,7 @@ void SnapProcess::updateCurrentEgg() {
 	int32 ax, ay, az, axd, ayd, azd, x, y, z;
 	a->getLocation(ax, ay, az);
 	a->getFootpadWorld(axd, ayd, azd);
-	Rect arect(ax, ay, axd, ayd);
+	Rect arect(ax, ay, ax + axd, ay + ayd);
 
 	for (Std::list<ObjId>::const_iterator iter = _snapEggs.begin();
 		 iter != _snapEggs.end(); iter++) {
@@ -76,7 +76,7 @@ void SnapProcess::updateCurrentEgg() {
 		Rect r;
 		egg->getLocation(x, y, z);
 		getSnapEggRange(egg, r);
-		if (r.Overlaps(arect) && (az < z + 0x30 && az > z - 0x30)) {
+		if (r.intersects(arect) && (az < z + 0x30 && az > z - 0x30)) {
 			_currentSnapEgg = *iter;
 			_currentSnapEggRange = r;
 			CameraProcess::SetCameraProcess(new CameraProcess(_currentSnapEgg));
@@ -114,9 +114,9 @@ bool SnapProcess::isNpcInRangeOfCurrentEgg() const {
 	a->getFootpadWorld(axd, ayd, azd);
 	currentegg->getLocation(x, y, z);
 
-	Rect arect(ax, ay, axd, ayd);
+	Rect arect(ax, ay, ax + axd, ay + ayd);
 
-	if (!_currentSnapEggRange.Overlaps(arect))
+	if (!_currentSnapEggRange.intersects(arect))
 		return false;
 	if (az > z + 0x30 || az < z - 0x30)
 		return false;
@@ -136,10 +136,10 @@ void SnapProcess::getSnapEggRange(const Item *item, Rect &rect) const {
 	int32 x, y, z;
 	item->getLocation(x, y, z);
 
-	rect.x = x - xrange + xoff;
-	rect.y = y - yrange + yoff;
-	rect.w = xrange * 2;
-	rect.h = yrange * 2;
+	rect.left = x - xrange + xoff;
+	rect.top = y - yrange + yoff;
+	rect.setWidth(xrange * 2);
+	rect.setHeight(yrange * 2);
 }
 
 void SnapProcess::saveData(Common::WriteStream *ws) {

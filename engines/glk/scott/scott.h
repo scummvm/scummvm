@@ -141,6 +141,7 @@ private:
 	void initialize();
 
 	void display(winid_t w, const char *fmt, ...);
+	void display(winid_t w, const Common::U32String fmt, ...);
 	void delay(int seconds);
 	void fatal(const char *x);
 	void clearScreen(void);
@@ -151,6 +152,7 @@ private:
 	Common::String readString(Common::SeekableReadStream *f);
 	void loadDatabase(Common::SeekableReadStream *f, bool loud);
 	void output(const Common::String &a);
+	void output(const Common::U32String &a);
 	void outputNumber(int a);
 	void look(void);
 	int whichWord(const char *word, const Common::StringArray &list);

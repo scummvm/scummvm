@@ -441,8 +441,8 @@ int FWScript::o2_playSampleAlt() {
 	byte num = getNextByte();
 	byte channel = getNextByte();
 	uint16 frequency = getNextWord();
-	byte param4 = getNextByte();
-	uint16 param5 = getNextWord();
+	/* byte param4 = */getNextByte();
+	/* uint16 param5 = */getNextWord();
 	uint16 size = getNextWord();
 
 	if (size == 0xFFFF) {
@@ -826,8 +826,8 @@ int FWScript::o2_setAdditionalBgVScroll() {
  */
 int FWScript::o2_op9F() {
 	warning("o2_op9F()");
-	uint16 param1 = getNextWord();
-	uint16 param2 = getNextWord();	
+	/* uint16 param1 = */getNextWord();
+	/* uint16 param2 = */getNextWord();
 	return 0;
 }
 

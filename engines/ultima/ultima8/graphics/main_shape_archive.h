@@ -33,7 +33,7 @@ class TypeFlags;
 class ShapeInfo;
 class AnimDat;
 class ActorAnim;
-struct AnimAction;
+class AnimAction;
 
 class MainShapeArchive : public ShapeArchive {
 public:

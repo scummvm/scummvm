@@ -90,7 +90,7 @@ void InverterGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool sc
 		return;
 	}
 
-	int width = _dims.w, height = _dims.h;
+	int width = _dims.width(), height = _dims.height();
 
 
 	// need a backbuffer
@@ -115,18 +115,18 @@ void InverterGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool sc
 // Convert a parent relative point to a gump point
 void InverterGump::ParentToGump(int32 &px, int32 &py, PointRoundDir) {
 	px -= _x;
-	px += _dims.x;
+	px += _dims.left;
 	py -= _y;
-	if (Ultima8Engine::get_instance()->isInverted()) py = _dims.h - py - 1;
-	py += _dims.y;
+	if (Ultima8Engine::get_instance()->isInverted()) py = _dims.height() - py - 1;
+	py += _dims.top;
 }
 
 // Convert a gump point to parent relative point
 void InverterGump::GumpToParent(int32 &gx, int32 &gy, PointRoundDir) {
-	gx -= _dims.x;
+	gx -= _dims.left;
 	gx += _x;
-	gy -= _dims.y;
-	if (Ultima8Engine::get_instance()->isInverted()) gy = _dims.h - gy - 1;
+	gy -= _dims.top;
+	if (Ultima8Engine::get_instance()->isInverted()) gy = _dims.height() - gy - 1;
 	gy += _y;
 }
 

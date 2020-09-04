@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
@@ -17,7 +18,10 @@ import android.os.Environment;
 import android.text.ClipboardManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 import android.view.MotionEvent;
@@ -35,7 +39,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-public class ScummVMActivity extends Activity {
+public class ScummVMActivity extends Activity implements OnKeyboardVisibilityListener {
 
 	/* Establish whether the hover events are available */
 	private static boolean _hoverAvailable;
@@ -195,6 +199,8 @@ public class ScummVMActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		hideSystemUI();
+
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
 		setContentView(R.layout.main);
@@ -262,6 +268,9 @@ public class ScummVMActivity extends Activity {
 
 		// On screen button listener
 		((ImageView)findViewById(R.id.show_keyboard)).setOnClickListener(keyboardBtnOnClickListener);
+
+		// Keyboard visibility listener
+		setKeyboardVisibilityListener(this);
 
 		main_surface.setOnKeyListener(_events);
 		main_surface.setOnTouchListener(_events);
@@ -364,18 +373,65 @@ public class ScummVMActivity extends Activity {
 		return false;
 	}
 
+
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+	    super.onWindowFocusChanged(hasFocus);
+	    if (hasFocus) {
+		hideSystemUI();
+	    }
+	}
+
+
+	// TODO setSystemUiVisibility is introduced in API 11 and deprecated in API 30 - When we move to API 30 we will have to replace this code
+	//	https://developer.android.com/training/system-ui/immersive.html#java
+	//
+	//      The code sample in the url below contains code to switch between immersive and default mode
+	//	https://github.com/android/user-interface-samples/tree/master/AdvancedImmersiveMode
+	//      We could do something similar by making it a Global UI option.
+	private void hideSystemUI() {
+		// Enables regular immersive mode.
+		// For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
+		// Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+		View decorView = getWindow().getDecorView();
+		decorView.setSystemUiVisibility(
+		View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+		// Set the content to appear under the system bars so that the
+		// content doesn't resize when the system bars hide and show.
+		| View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+		| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+		| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+		// Hide the nav bar and status bar
+		| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+		| View.SYSTEM_UI_FLAG_FULLSCREEN);
+	}
+
+	// Shows the system bars by removing all the flags
+	// except for the ones that make the content appear under the system bars.
+	private void showSystemUI() {
+		View decorView = getWindow().getDecorView();
+		decorView.setSystemUiVisibility(
+		    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+		    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+		    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+	}
+
+	// Show or hide the Android keyboard.
+	// Called by the override of showVirtualKeyboard()
 	private void showKeyboard(boolean show) {
 		SurfaceView main_surface = (SurfaceView)findViewById(R.id.main_surface);
 		InputMethodManager imm = (InputMethodManager)
 			getSystemService(INPUT_METHOD_SERVICE);
 
-		if (show)
+		if (show) {
 			imm.showSoftInput(main_surface, InputMethodManager.SHOW_IMPLICIT);
-		else
-			imm.hideSoftInputFromWindow(main_surface.getWindowToken(),
-										InputMethodManager.HIDE_IMPLICIT_ONLY);
+		} else  {
+			imm.hideSoftInputFromWindow(main_surface.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+		}
 	}
 
+	// Toggle showing or hiding the virtual keyboard.
+	// Called by keyboardBtnOnClickListener()
 	private void toggleKeyboard() {
 		SurfaceView main_surface = (SurfaceView)findViewById(R.id.main_surface);
 		InputMethodManager imm = (InputMethodManager)
@@ -386,13 +442,16 @@ public class ScummVMActivity extends Activity {
 		                              InputMethodManager.HIDE_IMPLICIT_ONLY);
 	}
 
+	// Show or hide the semi-transparent keyboard btn (which is used to explicitly bring up the android keyboard).
+	// Called by the override of showKeyboardControl()
 	private void showKeyboardView(boolean show) {
 		ImageView keyboardBtn = (ImageView)findViewById(R.id.show_keyboard);
 
-		if (show)
+		if (show) {
 			keyboardBtn.setVisibility(View.VISIBLE);
-		else
+		} else {
 			keyboardBtn.setVisibility(View.GONE);
+		}
 	}
 
 	private void showMouseCursor(boolean show) {
@@ -412,7 +471,41 @@ public class ScummVMActivity extends Activity {
 		}
 	}
 
-	// Auxilliary function to overwrite a file (used for overwriting the scummvm.ini file with an existing other one)
+	// Listener to check for keyboard visibility changes
+	// https://stackoverflow.com/a/36259261
+	private void setKeyboardVisibilityListener(final OnKeyboardVisibilityListener onKeyboardVisibilityListener) {
+		final View parentView = ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
+		parentView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+
+			private boolean alreadyOpen;
+			private final int defaultKeyboardHeightDP = 100;
+			private final int EstimatedKeyboardDP = defaultKeyboardHeightDP + (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? 48 : 0);
+			private final Rect rect = new Rect();
+
+			@Override
+			public void onGlobalLayout() {
+				    int estimatedKeyboardHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, EstimatedKeyboardDP, parentView.getResources().getDisplayMetrics());
+				    parentView.getWindowVisibleDisplayFrame(rect);
+				    int heightDiff = parentView.getRootView().getHeight() - (rect.bottom - rect.top);
+				    boolean isShown = heightDiff >= estimatedKeyboardHeight;
+
+				    if (isShown == alreadyOpen) {
+					Log.i("Keyboard state", "Ignoring global layout change...");
+					return;
+				    }
+				    alreadyOpen = isShown;
+				    onKeyboardVisibilityListener.onVisibilityChanged(isShown);
+			}
+		});
+	}
+
+	@Override
+	public void onVisibilityChanged(boolean visible) {
+//		Toast.makeText(HomeActivity.this, visible ? "Keyboard is active" : "Keyboard is Inactive", Toast.LENGTH_SHORT).show();
+		hideSystemUI();
+	}
+
+	// Auxiliary function to overwrite a file (used for overwriting the scummvm.ini file with an existing other one)
 	private static void copyFileUsingStream(File source, File dest) throws IOException {
 		InputStream is = null;
 		OutputStream os = null;

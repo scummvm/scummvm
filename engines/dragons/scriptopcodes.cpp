@@ -90,7 +90,7 @@ ScriptOpcodes::~ScriptOpcodes() {
 void ScriptOpcodes::execOpcode(ScriptOpCall &scriptOpCall) {
 	if (!_opcodes[scriptOpCall._op])
 		error("ScriptOpcodes::execOpcode() Unimplemented opcode %d (0x%X)", scriptOpCall._op, scriptOpCall._op);
-	debug("execScriptOpcode(0x%X) @%lX  %s", scriptOpCall._op, scriptOpCall._code - scriptOpCall._base, _opcodeNames[scriptOpCall._op].c_str());
+	debug(1, "execScriptOpcode(0x%X) @%lX  %s", scriptOpCall._op, scriptOpCall._code - scriptOpCall._base, _opcodeNames[scriptOpCall._op].c_str());
 	(*_opcodes[scriptOpCall._op])(scriptOpCall);
 }
 
@@ -201,7 +201,7 @@ void ScriptOpcodes::executeScriptLoop(ScriptOpCall &scriptOpCall) {
 //		execOpcode(scriptOpCall);
 //	}
 //
-	while (scriptOpCall._code < scriptOpCall._codeEnd && !(scriptOpCall._result & 1)) {
+	while (scriptOpCall._code < scriptOpCall._codeEnd && !(scriptOpCall._result & 1) && !_vm->shouldQuit()) {
 
 		if (_vm->isFlagSet(ENGINE_FLAG_100000)) {
 			return;
@@ -659,7 +659,7 @@ void ScriptOpcodes::opRunSpecialOpCode(ScriptOpCall &scriptOpCall) {
 		error("Invalid Special OpCode %d", specialOpCode);
 	}
 
-	debug("Special opCode %X", specialOpCode);
+	debug(1, "Special opCode %X", specialOpCode);
 	_specialOpCodes->run(specialOpCode);
 }
 
@@ -959,7 +959,7 @@ void ScriptOpcodes::opCodeActorTalk(ScriptOpCall &scriptOpCall) {
 	} else {
 		_vm->_talk->FUN_8003239c(dialog,
 								 (int)(((uint)ini->actor->_x_pos - (uint)_vm->_scene->_camera.x) * 0x10000) >> 0x13,
-								 (int)(((ini->actor->_y_pos - ini->actor->getFrameYOffset()) - (uint)_vm->_scene->_camera.y) * 0x10000) >> 0x13,
+								 (int)((((ini->actor->_y_pos - ini->actor->getFrameYOffset()) - (uint)_vm->_scene->_camera.y) * 0x10000) >> 0x13) - 3,
 								 READ_LE_INT16(_vm->_dragonOBD->getFromOpt(iniId) + 6),
 								 1,
 								 ini->actor, startSequenceId, endSequenceId, textIndex);

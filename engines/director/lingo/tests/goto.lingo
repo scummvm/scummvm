@@ -8,7 +8,6 @@ set varframe to "VARFrame"
 set varmovie to "VARMovie"
 
 go to frame 35
-go to the frame 2
 go the frame
 go "label two"
 go to movie "Chicago"

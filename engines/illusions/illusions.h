@@ -39,7 +39,8 @@
 
 namespace Illusions {
 
-char *debugW2I(byte *wstr);
+char *debugW2I(uint16 *wstr);
+void swapBytesInWideString(byte * wstr);
 
 #define ILLUSIONS_SAVEGAME_VERSION 0
 

@@ -52,7 +52,7 @@ public:
 	bool setAmiga();
 	void modifyAmigaPalette(const SciSpan<const byte> &data);
 	void setEGA();
-	void set(Palette *sciPal, bool force, bool forceRealMerge = false, bool includeFirstColor = false);
+	void set(Palette *sciPal, bool force, bool forceRealMerge = false, bool includeFirstColor = true);
 	bool insert(Palette *newPalette, Palette *destPalette, bool includeFirstColor = false);
 	bool merge(Palette *pFrom, bool force, bool forceRealMerge);
 	uint16 matchColor(byte r, byte g, byte b);

@@ -116,6 +116,28 @@ public:
 	ManagedSurface *getWindowSurface() { return _composeSurface; }
 
 	/**
+	 * Method to access the border surface of the window.
+	 * @return A pointer to the border surface of the window.
+	 */
+	virtual ManagedSurface *getBorderSurface() = 0;
+
+	/**
+	 * Accessor to retrieve the dimensions of the inner surface of the window
+	 * (i.e. without taking borders into account).
+	 * Note that the returned dimensions' position is relative to the WM's
+	 * screen, just like in getDimensions().
+	 * @return The inner dimensions of the window.
+	 */
+	virtual const Common::Rect &getInnerDimensions() = 0;
+
+	/**
+	 * Method called to internally draw the window. This relies on the window
+	 * being marked as dirty unless otherwise specified.
+	 * @param forceRedraw Its behavior depends on the subclass.
+	 */
+	virtual bool draw(bool forceRedraw = false) = 0;
+
+	/**
 	 * Method called to draw the window into the target surface.
 	 * This method is most often called by the WM, and relies on
 	 * the window being marked as dirty unless otherwise specified.
@@ -132,6 +154,11 @@ public:
 	 * @return true If the event was successfully consumed and processed.
 	 */
 	virtual bool processEvent(Common::Event &event) = 0;
+
+	/**
+	 * Method that checks if the window is needs redrawing.
+	 */
+	virtual bool isDirty() = 0;
 
 	/**
 	 * Set the callback that will be used when an event needs to be processed.
@@ -197,15 +224,6 @@ public:
 	virtual void setDimensions(const Common::Rect &r) override;
 
 	/**
-	 * Accessor to retrieve the dimensions of the inner surface of the window
-	 * (i.e. without taking borders into account).
-	 * Note that the returned dimensions' position is relative to the WM's
-	 * screen, just like in getDimensions().
-	 * @return The inner dimensions of the window.
-	 */
-	const Common::Rect &getInnerDimensions() { return _innerDims; }
-
-	/**
 	 * Set a background pattern for the window.
 	 * @param pattern
 	 */
@@ -220,6 +238,15 @@ public:
 
 	virtual bool draw(bool forceRedraw = false) override;
 	virtual void blit(ManagedSurface *g, Common::Rect &dest) override;
+
+	virtual const Common::Rect &getInnerDimensions() override { return _innerDims; }
+	virtual ManagedSurface *getBorderSurface() override { return &_borderSurface; }
+
+	/**
+	 * Centers the window using the dimensions of the parent window manager, or undoes this; does
+	 * nothing if WM is null.
+	 */
+	void center(bool toCenter = true);
 
 	/**
 	 * Mutator to change the active state of the window.
@@ -243,16 +270,6 @@ public:
 	 * @return Title.
 	 */
 	Common::String getTitle() { return _title; };
-	/**
-	 * Mutator to change the visible state of the title.
-	 * @param active Target state.
-	 */
-	void setTitleVisible(bool titleVisible) { _titleVisible = titleVisible; _borderIsDirty = true; };
-	/**
-	 * Accessor to determine whether the title is visible.
-	 * @return True if the title is visible.
-	 */
-	bool isTitleVisible() { return _titleVisible; };
 
 	/**
 	 * Highlight the target part of the window.
@@ -284,7 +301,9 @@ public:
 	 * @param bo Width of the bottom side of the border, in pixels.
 	 */
 	void loadBorder(Common::SeekableReadStream &file, bool active, int lo = -1, int ro = -1, int to = -1, int bo = -1);
+	void loadBorder(Common::SeekableReadStream &file, bool active, BorderOffsets offsets);
 	void setBorder(TransparentSurface *border, bool active, int lo = -1, int ro = -1, int to = -1, int bo = -1);
+	void setBorder(TransparentSurface *border, bool active, BorderOffsets offsets);
 	void disableBorder();
 
 	/**
@@ -303,6 +322,13 @@ public:
 	 * @return Border type.
 	 */
 	int getBorderType() { return _borderType; };
+
+
+	void addDirtyRect(const Common::Rect &r);
+	void markAllDirty();
+	void mergeDirtyRects();
+
+	virtual bool isDirty() override { return _borderIsDirty || _contentIsDirty; }
 
 private:
 	void prepareBorderSurface(ManagedSurface *g);
@@ -329,6 +355,8 @@ protected:
 	bool _borderIsDirty;
 	Common::Rect _innerDims;
 
+	Common::List<Common::Rect> _dirtyRects;
+
 private:
 	MacWindowBorder _macBorder;
 
@@ -349,12 +377,9 @@ private:
 	float _scrollPos, _scrollSize;
 
 	Common::String _title;
-	bool _titleVisible;
 
 	int _borderType;
 };
-
-
 
 } // End of namespace Graphics
 

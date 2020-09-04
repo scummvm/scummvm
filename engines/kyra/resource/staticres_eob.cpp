@@ -525,7 +525,7 @@ void EoBCoreEngine::initStaticResource() {
 	// EOB I doesn't have load and save menus, because there is only one single
 	// save slot. Instead of emulating this we provide a menu similiar to EOB II.
 	// EOB I SegaCD actually has save/load menus with more than 1 slot if there is
-	// a RAM cart present). I supply the strings here, too... 
+	// a RAM cart present). I supply the strings here, too...
 
 	static const char *const saveLoadStrings[7][4] = {
 		{   "Cancel",   "Empty Slot",		"Save Game",    "Load Game"     },
@@ -545,7 +545,7 @@ void EoBCoreEngine::initStaticResource() {
 		"\r ""\x82\xBB\x82\xCC\x83""X""\x83\x8D\x83""b""\x83""g""\x82\xC9\x82\xCD\x83""Q""\x81""[""\x83\x80\x82\xAA\x83""Z""\x81""[""\x83""u\r ""\x82\xB3\x82\xEA\x82\xC4\x82\xA2\x82\xDC\x82\xB9\x82\xF1\x81""B",
 		0
 	};
-	
+
 	switch (_flags.lang) {
 	case Common::EN_ANY: {
 		if (_flags.platform == Common::kPlatformSegaCD) {
@@ -911,7 +911,7 @@ void EoBCoreEngine::initMenus() {
 		{   0,   8,  88,  48,  16,   0,  3  },
 		{   0,   0,   0,   0,   0,   0,  0  },
 		{   0,   8,  40,  48,  16,   0,  3  },
-		{   0, 120,  40,  24,  16,   0,  3  },		
+		{   0, 120,  40,  24,  16,   0,  3  },
 		{   0,  24,  80,  48,  16,  48,  3  },
 		{   0, 104,  80,  48,  16,  19,  3  },
 		{   0, 120, 144,  48,  16,  19,  5  },

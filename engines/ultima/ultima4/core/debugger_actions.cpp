@@ -208,12 +208,12 @@ bool DebuggerActions::mixReagentsForSpellU4(int spell) {
 		}
 
 		// escape: put ingredients back and quit mixing
-		if (choice == '\033') {
+		if (choice == -1 || choice == '\033') {
 			ingredients.revert();
 			return true;
 		}
 
-		g_screen->screenMessage("%c\n", toupper(choice));
+		g_screen->screenMessage("\n");
 		if (!ingredients.addReagent((Reagent)(choice - 'a')))
 			g_screen->screenMessage("%cNone Left!%c\n", FG_GREY, FG_WHITE);
 		g_screen->screenMessage("Reagent: ");

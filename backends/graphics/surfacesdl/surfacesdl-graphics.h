@@ -28,7 +28,7 @@
 #include "graphics/pixelformat.h"
 #include "graphics/scaler.h"
 #include "common/events.h"
-#include "common/system.h"
+#include "common/mutex.h"
 
 #include "backends/events/sdl/sdl-events.h"
 
@@ -134,7 +134,7 @@ public:
 	virtual void setCursorPalette(const byte *colors, uint start, uint num) override;
 
 #ifdef USE_OSD
-	virtual void displayMessageOnOSD(const char *msg) override;
+	virtual void displayMessageOnOSD(const Common::U32String &msg) override;
 	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon) override;
 #endif
 
@@ -397,7 +397,7 @@ protected:
 	 * Mutex which prevents multiple threads from interfering with each other
 	 * when accessing the screen.
 	 */
-	OSystem::MutexRef _graphicsMutex;
+	Common::Mutex _graphicsMutex;
 
 #ifdef USE_SDL_DEBUG_FOCUSRECT
 	bool _enableFocusRectDebugCode;

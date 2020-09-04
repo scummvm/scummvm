@@ -150,7 +150,7 @@ public:
 
 	int acceptScroll(uint arg);
 
-	uint drawPicture(uint image, uint align, uint scaled, uint width, uint height);
+	uint drawPicture(const Common::String &image, uint align, uint scaled, uint width, uint height);
 
 	/**
 	 * Get the font info structure associated with the window

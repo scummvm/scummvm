@@ -26,146 +26,84 @@
 namespace Ultima {
 namespace Ultima8 {
 
+// TODO: Replace Ultima8::Rect with Common::Rect
+// The key difference between Ultima8::Rect and Common::Rect is the use of int32 for variables.
+// Attempts to change this may cause the game to be unstable.
+
 struct Rect {
-	int32       x, y;
-	int32       w, h;
+	int32 left, top;
+	int32 right, bottom;
 
-	Rect() : x(0), y(0), w(0), h(0) {}
-	Rect(int nx, int ny, int nw, int nh) : x(nx), y(ny), w(nw), h(nh) {}
+	Rect() : top(0), left(0), bottom(0), right(0) {}
+	Rect(int x1, int y1, int x2, int y2) : top(y1), left(x1), bottom(y2), right(x2) {}
 
-	void    Set(int nx, int ny, int nw, int nh) {
-		x = nx;
-		y = ny;
-		w = nw;
-		h = nh;
+	bool operator==(const Rect &rhs) const { return equals(rhs); }
+	bool operator!=(const Rect &rhs) const { return !equals(rhs); }
+
+	int16 width() const { return right - left; }
+	int16 height() const { return bottom - top; }
+
+	void setWidth(int16 aWidth) {
+		right = left + aWidth;
 	}
-	void    Set(Rect &o) {
-		*this = o;
+
+	void setHeight(int16 aHeight) {
+		bottom = top + aHeight;
+	}
+
+	void grow(int16 offset) {
+		left -= offset;
+		top -= offset;
+		right += offset;
+		bottom += offset;
 	}
 
 	// Check to see if a Rectangle is 'valid'
-	bool    IsValid() const {
-		return w > 0 && h > 0;
+	bool isValidRect() const {
+		return (left <= right && top <= bottom);
 	}
 
 	// Check to see if a point is within the Rectangle
-	bool    InRect(int px, int py) const {
-		return px >= x && py >= y && px < (x + w) && py < (y + h);
+	bool contains(int16 x, int16 y) const {
+		return (left <= x) && (x < right) && (top <= y) && (y < bottom);
 	}
 
 	// Move the Rect (Relative)
-	void    MoveRel(int32 dx, int32 dy) {
-		x = x + dx;
-		y = y + dy;
+	void translate(int32 dx, int32 dy) {
+		left += dx;
+		right += dx;
+		top += dy;
+		bottom += dy;
 	}
 
 	// Move the Rect (Absolute)
-	void    MoveAbs(int32 nx, int32 ny) {
-		x = nx;
-		y = ny;
+	void moveTo(int32 x, int32 y) {
+		bottom += y - top;
+		right += x - left;
+		top = y;
+		left = x;
 	}
 
-	// Resize the Rect (Relative)
-	void    ResizeRel(int32 dw, int32 dh) {
-		w = w + dw;
-		h = h + dh;
+	void clip(const Rect &r) {
+		if (top < r.top) top = r.top;
+		else if (top > r.bottom) top = r.bottom;
+
+		if (left < r.left) left = r.left;
+		else if (left > r.right) left = r.right;
+
+		if (bottom < r.top) bottom = r.bottom;
+		else if (bottom > r.bottom) bottom = r.bottom;
+
+		if (right < r.left) right = r.left;
+		else if (right > r.right) right = r.right;
 	}
 
-	// Resize the Rect (Absolute)
-	void    ResizeAbs(int32 nw, int32 nh) {
-		w = nw;
-		h = nh;
+	bool intersects(const Rect &r) const {
+		return (left < r.right) && (r.left < right) && (top < r.bottom) && (r.top < bottom);
 	}
 
-	// Intersect/Clip this rect with another
-	void    Intersect(int ox, int oy, int ow, int oh) {
-		int x2 = x + w,     y2 = y + h;
-		int ox2 = ox + ow,  oy2 = oy + oh;
-
-		if (x < ox) x = ox;
-		else if (x > ox2) x = ox2;
-
-		if (x2 < ox) x2 = ox;
-		else if (x2 > ox2) x2 = ox2;
-
-		if (y < oy) y = oy;
-		else if (y > oy2) y = oy2;
-
-		if (y2 < oy) y2 = oy;
-		else if (y2 > oy2) y2 = oy2;
-
-		w = x2 - x;
-		h = y2 - y;
-
-	}
-
-	// Intersect/Clip this another with this
-	template<typename T>
-	void IntersectOther(T &ox, T &oy, T &ow, T &oh) const {
-		int x2 = x + w,     y2 = y + h;
-		int ox2 = ox + ow,  oy2 = oy + oh;
-
-		if (ox < x) ox = x;
-		else if (ox > x2) ox = x2;
-
-		if (ox2 < x) ox2 = x;
-		else if (ox2 > x2) ox2 = x2;
-
-		if (oy < y) oy = y;
-		else if (oy > y2) oy = y2;
-
-		if (oy2 < y) oy2 = y;
-		else if (oy2 > y2) oy2 = y2;
-
-		ow = ox2 - ox;
-		oh = oy2 - oy;
-	}
-
-	// Intersect/Clip this rect with another
-	void    Intersect(const Rect &o) {
-		Intersect(o.x, o.y, o.w, o.h);
-	}
-
-	// Union/Add this rect with another
-	void    Union(int ox, int oy, int ow, int oh) {
-		int x2 = x + w,     y2 = y + h;
-		int ox2 = ox + ow,  oy2 = oy + oh;
-
-		if (ox < x) x = ox;
-		else if (ox2 > x2) x2 = ox2;
-
-		if (oy < y) y = ox;
-		else if (oy2 > y2) y2 = ox2;
-
-		w = x2 - x;
-		h = y2 - y;
-	}
-
-	// Union/Add this rect with another
-	void    Union(const Rect &o) {
-		Union(o.x, o.y, o.w, o.h);
-	}
-
-	bool    Overlaps(const Rect &o) const {
-		if (x + w <= o.x || o.x + o.w <= x) return false;
-		if (y + h <= o.y || o.y + o.h <= y) return false;
-		return true;
-	}
-
-	// Operator +=
-	Rect &operator += (const Rect &o) {
-		Union(o.x, o.y, o.w, o.h);
-		return *(this);
-	}
-
-	// Operator +
-	Rect &operator + (const Rect &o) const {
-		Rect result(*this);
-		return (result += o);
-	}
-
-	bool operator == (const Rect &o) const {
-		return x == o.x && y == o.y && w == o.w && h == o.h;
+	bool equals(const Rect &o) const {
+		return left == o.left && top == o.top && right == o.right && bottom == o.bottom;
 	}
 
 };

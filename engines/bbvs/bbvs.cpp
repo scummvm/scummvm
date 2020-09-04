@@ -177,6 +177,20 @@ Common::Error BbvsEngine::run() {
 	_spriteModule = new SpriteModule();
 	_sound = new SoundMan();
 
+	if (isLoogieDemo()) {
+		Minigame *minigame = new MinigameBbLoogie(this);
+
+		minigame->run(true);
+
+		delete minigame;
+		delete _sound;
+		delete _spriteModule;
+		delete _gameModule;
+		delete _screen;
+
+		return Common::kNoError;
+	}
+
 	allocSnapshot();
 
 	newGame();

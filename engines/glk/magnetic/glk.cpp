@@ -465,11 +465,8 @@ void Magnetic::gms_graphics_split_color(glui32 color, gms_rgbref_t rgb_color) {
 }
 
 glui32 Magnetic::gms_graphics_combine_color(gms_rgbref_t rgb_color) {
-	glui32 color;
-	assert(rgb_color);
-
-	color = (rgb_color->red << 16) | (rgb_color->green << 8) | rgb_color->blue;
-	return color;
+	assert(rgb_color && _screen->format.bytesPerPixel == 2);
+	return  _screen->format.RGBToColor(rgb_color->red, rgb_color->green, rgb_color->blue);
 }
 
 int Magnetic::gms_graphics_color_luminance(gms_rgbref_t rgb_color) {
@@ -1083,19 +1080,22 @@ break_y_max:
 void Magnetic::gms_graphics_paint_everything(winid_t glk_window,
         glui32 palette[], type8 off_screen[], int x_offset, int y_offset,
         type16 width, type16 height) {
-	type8       pixel;          /* Reference pixel color */
-	int     x, y;
+	type16 x, y;
+	glui32 pixel;
+
+	Graphics::ManagedSurface s(width, height, _screen->format);
 
 	for (y = 0; y < height; y++) {
-		for (x = 0; x < width; x ++) {
-			pixel = off_screen[ y * width + x ];
-			glk_window_fill_rect(glk_window,
-			                           palette[ pixel ],
-			                           x * GMS_GRAPHICS_PIXEL + x_offset,
-			                           y * GMS_GRAPHICS_PIXEL + y_offset,
-			                           GMS_GRAPHICS_PIXEL, GMS_GRAPHICS_PIXEL);
+		uint16 *lineP = (uint16 *)s.getBasePtr(0, y);
+
+		for (x = 0; x < width; ++x, ++lineP) {
+			pixel = palette[off_screen[y * width + x]];
+			*lineP = pixel;
 		}
 	}
+
+	glk_image_draw_scaled(glk_window, s, (uint)-1, x_offset, y_offset,
+		width * GMS_GRAPHICS_PIXEL, height * GMS_GRAPHICS_PIXEL);
 }
 
 void Magnetic::gms_graphics_timeout() {

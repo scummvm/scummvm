@@ -97,9 +97,9 @@ public:
 	}
 
 	/**
-	 * Show a messae in a GUI dialog
+	 * Show a message in a GUI dialog
 	 */
-	void GUIError(const Common::String &msg);
+	void GUIError(const Common::U32String &msg);
 
 	/**
 	 * Get a random number

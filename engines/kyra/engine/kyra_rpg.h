@@ -174,8 +174,8 @@ protected:
 	// Init
 	void initStaticResource();
 
-	static void addKeymapAction(Common::Keymap *const keyMap, const char *actionId, const Common::String &actionDesc, const Common::Functor0Mem<void, Common::Action>::FuncType setEventProc, const Common::String &mapping1, const Common::String &mapping2);
-	static void addKeymapAction(Common::Keymap *const keyMap, const char *actionId, const Common::String &actionDesc, Common::KeyState eventKeyState, const Common::String &mapping1, const Common::String &mapping2);
+	static void addKeymapAction(Common::Keymap *const keyMap, const char *actionId, const Common::U32String &actionDesc, const Common::Functor0Mem<void, Common::Action>::FuncType setEventProc, const Common::String &mapping1, const Common::String &mapping2);
+	static void addKeymapAction(Common::Keymap *const keyMap, const char *actionId, const Common::U32String &actionDesc, Common::KeyState eventKeyState, const Common::String &mapping1, const Common::String &mapping2);
 
 	const uint8 **_itemIconShapes;
 

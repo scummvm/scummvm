@@ -110,6 +110,7 @@ void Cursor::readFromResource(int resourceId) {
 
 	switch(resourceId) {
 	case -1:
+	case 0:
 		resetCursor(Graphics::kMacCursorArrow, true, resourceId);
 		break;
 	case 1:
@@ -132,7 +133,7 @@ void Cursor::readFromResource(int resourceId) {
 		_keyColor = 0xff;
 
 		for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); ++it) {
-			Common::SeekableSubReadStreamEndian *cursorStream;
+			Common::SeekableReadStreamEndian *cursorStream;
 
 			cursorStream = ((MacArchive *)it->_value)->getResource(MKTAG('C', 'U', 'R', 'S'), resourceId);
 			if (!cursorStream)
@@ -163,4 +164,4 @@ void Cursor::resetCursor(Graphics::MacCursorType type, bool shouldClear, int res
 	_hotspotY = 0;
 }
 
-} // end of namespace Director
+} // End of namespace Director

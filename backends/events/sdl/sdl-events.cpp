@@ -426,7 +426,7 @@ bool SdlEventSource::pollEvent(Common::Event &event) {
 #endif
 
 	// If the screen changed, send an Common::EVENT_SCREEN_CHANGED
-	int screenID = ((OSystem_SDL *)g_system)->getGraphicsManager()->getScreenChangeID();
+	int screenID = g_system->getScreenChangeID();
 	if (screenID != _lastScreenID) {
 		_lastScreenID = screenID;
 		event.type = Common::EVENT_SCREEN_CHANGED;
@@ -963,7 +963,7 @@ bool SdlEventSource::handleResizeEvent(Common::Event &event, int w, int h) {
 		_graphicsManager->notifyResize(w, h);
 
 		// If the screen changed, send an Common::EVENT_SCREEN_CHANGED
-		int screenID = ((OSystem_SDL *)g_system)->getGraphicsManager()->getScreenChangeID();
+		int screenID = g_system->getScreenChangeID();
 		if (screenID != _lastScreenID) {
 			_lastScreenID = screenID;
 			event.type = Common::EVENT_SCREEN_CHANGED;

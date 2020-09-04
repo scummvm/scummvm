@@ -76,19 +76,19 @@ bool ImageViewer::load(int imageNum) {
 	char error[100];
 	if (status == PngLoader::BAD_FILE) {
 		sprintf(error, "Cannot display %s. Not a proper PNG file", specificImageName.c_str());
-		GUI::TimedMessageDialog dialog(error, 4000);
+		GUI::TimedMessageDialog dialog(Common::U32String(error), 4000);
 		dialog.runModal();
 		return false;
 	} else if (status == PngLoader::OUT_OF_MEMORY) {
 		sprintf(error, "Out of memory loading %s. Try making the image smaller", specificImageName.c_str());
-		GUI::TimedMessageDialog dialog(error, 4000);
+		GUI::TimedMessageDialog dialog(Common::U32String(error), 4000);
 		dialog.runModal();
 		return false;
 	}
 	// try to load the image file
 	if (!image.load()) {
 		sprintf(error, "Cannot display %s. Not a proper PNG file", specificImageName.c_str());
-		GUI::TimedMessageDialog dialog(error, 4000);
+		GUI::TimedMessageDialog dialog(Common::U32String(error), 4000);
 		dialog.runModal();
 		return false;
 	}
@@ -146,7 +146,7 @@ void ImageViewer::setVisible(bool visible) {
 		setViewerButtons(true);
 
 		{ // so dialog goes out of scope, destroying all allocations
-			GUI::TimedMessageDialog dialog("Image Viewer", 1000);
+			GUI::TimedMessageDialog dialog(Common::U32String("Image Viewer"), 1000);
 			dialog.runModal();
 		}
 

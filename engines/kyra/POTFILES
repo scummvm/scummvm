@@ -3,3 +3,4 @@ engines/kyra/engine/eobcommon.cpp
 engines/kyra/engine/lol.cpp
 engines/kyra/gui/saveload_eob.cpp
 engines/kyra/graphics/screen_eob_amiga.cpp
+engines/kyra/sound/sound_pc_midi.cpp

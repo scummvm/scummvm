@@ -60,13 +60,15 @@ ResultAction::ResultAction(ZVision *engine, int32 slotKey) :
 ActionAdd::ActionAdd(ZVision *engine, int32 slotKey, const Common::String &line) :
 	ResultAction(engine, slotKey) {
 	_key = 0;
-	_value = 0;
 
-	sscanf(line.c_str(), "%u,%d", &_key, &_value);
+	char buf[64];
+	memset(buf, 0, 64);
+	sscanf(line.c_str(), "%u,%s", &_key, buf);
+	_value = new ValueSlot(_scriptManager, buf);
 }
 
 bool ActionAdd::execute() {
-	_scriptManager->setStateValue(_key, _scriptManager->getStateValue(_key) + _value);
+	_scriptManager->setStateValue(_key, _scriptManager->getStateValue(_key) + _value->getValue());
 	return true;
 }
 
@@ -130,10 +132,9 @@ ActionChangeLocation::ActionChangeLocation(ZVision *engine, int32 slotKey, const
 }
 
 bool ActionChangeLocation::execute() {
-	// We can't directly call ScriptManager::ChangeLocationIntern() because doing so clears all the Puzzles, and thus would corrupt the current puzzle checking
+	// We can't directly call ScriptManager::ChangeLocationReal() because doing so clears all the Puzzles, and thus would corrupt the current puzzle checking
 	_scriptManager->changeLocation(_world, _room, _node, _view, _offset);
-	// Tell the puzzle system to stop checking any more puzzles
-	return false;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -999,7 +1000,27 @@ bool ActionStreamVideo::execute() {
 		_engine->getRenderManager()->initSubArea(HIRES_WINDOW_WIDTH, HIRES_WINDOW_HEIGHT, workingWindow);
 	}
 
+	// WORKAROUND for what appears to be a script bug. When riding with
+	// Charon in one direction, the game issues a command to kill the
+	// universe_hades_sound_task. When going in the other direction (either
+	// as yourself or as the two-headed beast) it does not. Since the
+	// cutscene plays music, there may be two pieces of music playing
+	// simultaneously during the ride.
+	//
+	// Rather than mucking about with killing and restarting the sound,
+	// simply pause the ScummVM mixer during the ride.
+
+	bool pauseBackgroundMusic = _engine->getGameId() == GID_GRANDINQUISITOR && (_fileName == "hp3ea021.avi" || _fileName == "hp4ea051.avi");
+
+	if (pauseBackgroundMusic) {
+		_engine->_mixer->pauseAll(true);
+	}
+
 	_engine->playVideo(*decoder, destRect, _skippable, sub);
+
+	if (pauseBackgroundMusic) {
+		_engine->_mixer->pauseAll(false);
+	}
 
 	if (switchToHires) {
 		_engine->initScreen();

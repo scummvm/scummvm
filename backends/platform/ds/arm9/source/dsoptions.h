@@ -27,6 +27,7 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/config-manager.h"
+#include "common/ustr.h"
 
 #include "gui/object.h"
 #include "gui/widget.h"
@@ -37,6 +38,8 @@
 namespace DS {
 
 class DSOptionsDialog : public GUI::Dialog {
+
+typedef Common::U32String U32String;
 
 public:
 	DSOptionsDialog();

@@ -87,8 +87,8 @@ void CruStatusGump::InitGump(Gump *newparent, bool take_focus) {
 	Gump *energyGump = new CruEnergyGump(frameShape, xoff + (w + PX_GAP) * 4);
 	energyGump->InitGump(this);
 
-	_dims.w = w * 5 + PX_GAP * 4;
-	_dims.h = h;
+	_dims.setWidth(w * 5 + PX_GAP * 4);
+	_dims.setHeight(h);
 	setRelativePosition(BOTTOM_LEFT, PX_FROM_LEFT, -PX_FROM_BOTTOM);
 }
 

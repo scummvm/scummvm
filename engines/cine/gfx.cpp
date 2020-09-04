@@ -653,7 +653,14 @@ void FWRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		sprite = &g_cine->_animDataTable[g_cine->_objectTable[it->objIdx].frame];
 		len = sprite->_realWidth * sprite->_height;
 		mask = new byte[len];
-		memcpy(mask, sprite->mask(), len);
+		if (sprite->mask() != NULL) {
+			memcpy(mask, sprite->mask(), len);
+		} else {
+			// This case happens in French Amiga Future Wars (Bug #10643) when
+			// walking left from the scene with the open manhole cover. This
+			// seems to work fine at least in this case.
+			memset(mask, 0, len);
+		}
 		remaskSprite(mask, it);
 		drawMaskedSprite(g_cine->_objectTable[it->objIdx], mask);
 		delete[] mask;

@@ -1,6 +1,5 @@
 POTFILE := $(srcdir)/po/scummvm.pot
 POFILES := $(wildcard $(srcdir)/po/*.po)
-CPFILES := $(wildcard $(srcdir)/po/*.cp)
 
 ENGINE_INPUT_POTFILES := $(sort $(wildcard $(srcdir)/engines/*/POTFILES))
 updatepot:
@@ -37,12 +36,12 @@ updatepot:
 	fi;
 
 translations-dat: devtools/create_translations
-	devtools/create_translations/create_translations $(POFILES) $(CPFILES)
+	devtools/create_translations/create_translations $(POFILES)
 	mv translations.dat $(srcdir)/gui/themes/
 
-update-translations: updatepot $(POFILES) $(CPFILES) translations-dat
+update-translations: updatepot $(POFILES) translations-dat
 
-update-translations: updatepot $(POFILES) $(CPFILES)
+update-translations: updatepot $(POFILES)
 	@$(foreach file, $(POFILES), echo -n $(notdir $(basename $(file)))": ";msgfmt --statistic $(file);)
 	@rm -f messages.mo
 

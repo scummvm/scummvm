@@ -28,12 +28,12 @@
 
 namespace GUI {
 
-EditableWidget::EditableWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip, uint32 cmd)
+EditableWidget::EditableWidget(GuiObject *boss, int x, int y, int w, int h, const U32String &tooltip, uint32 cmd)
 	: Widget(boss, x, y, w, h, tooltip), CommandSender(boss), _cmd(cmd) {
 	init();
 }
 
-EditableWidget::EditableWidget(GuiObject *boss, const String &name, const char *tooltip, uint32 cmd)
+EditableWidget::EditableWidget(GuiObject *boss, const String &name, const U32String &tooltip, uint32 cmd)
 	: Widget(boss, name, tooltip), CommandSender(boss), _cmd(cmd) {
 	init();
 }
@@ -69,7 +69,7 @@ void EditableWidget::reflowLayout() {
 	}
 }
 
-void EditableWidget::setEditString(const String &str) {
+void EditableWidget::setEditString(const U32String &str) {
 	// TODO: We probably should filter the input string here,
 	// e.g. using tryInsertChar.
 	_editString = str;
@@ -197,7 +197,7 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 	case Common::KEYCODE_v:
 		if (state.flags & Common::KBD_CTRL) {
 			if (g_system->hasTextInClipboard()) {
-				String text = g_system->getTextFromClipboard();
+				U32String text = g_system->getTextFromClipboard();
 				for (uint32 i = 0; i < text.size(); ++i) {
 					if (tryInsertChar(text[i], _caretPos))
 						++_caretPos;
@@ -274,7 +274,7 @@ void EditableWidget::defaultKeyDownHandler(Common::KeyState &state, bool &dirty,
 }
 
 int EditableWidget::getCaretOffset() const {
-	Common::String substr(_editString.c_str(), _caretPos);
+	Common::U32String substr(_editString.begin(), _editString.begin() + _caretPos);
 	return g_gui.getStringWidth(substr, _font) - _editScrollOffset;
 }
 

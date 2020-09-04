@@ -58,7 +58,7 @@ public:
 	 * @param isDirBrowser Restrict selection to directories
 	 * @return The dialog result
 	 */
-	virtual DialogResult showFileBrowser(const char *title, FSNode &choice, bool isDirBrowser = false) { return kDialogError; }
+	virtual DialogResult showFileBrowser(const Common::U32String &title, FSNode &choice, bool isDirBrowser = false) { return kDialogError; }
 
 protected:
 	bool _wasFullscreen;

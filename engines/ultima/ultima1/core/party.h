@@ -60,7 +60,7 @@ private:
 	Ultima1Game *_game;
 	Character *_character;
 	WeaponType _type;
-public:	
+public:
 	/**
 	 * Constructor
 	 */
@@ -98,7 +98,7 @@ private:
 //	Ultima1Game *_game;
 	Character *_character;
 	ArmorType _type;
-public:	
+public:
 	/**
 	 * Constructor
 	 */
@@ -171,6 +171,7 @@ public:
 	 * Constructor
 	 */
 	Character(Ultima1Game *game);
+	virtual ~Character() {}
 
 	/**
 	 * Setup the party

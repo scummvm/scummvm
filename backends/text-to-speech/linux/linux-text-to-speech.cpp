@@ -177,7 +177,7 @@ void SpeechDispatcherManager::updateState(SpeechDispatcherManager::SpeechEvent e
 	}
 }
 
-bool SpeechDispatcherManager::say(Common::String str, Action action, Common::String charset) {
+bool SpeechDispatcherManager::say(const Common::U32String &str, Action action) {
 
 	pthread_mutex_lock(&_speechMutex);
 	// reinitialize if needed
@@ -194,22 +194,7 @@ bool SpeechDispatcherManager::say(Common::String str, Action action, Common::Str
 		return true;
 	}
 
-	if (charset.empty()) {
-#ifdef USE_TRANSLATION
-		charset = TransMan.getCurrentCharset();
-#else
-		charset = "ASCII";
-#endif
-	}
-
-	char *tmpStr = Common::Encoding::convert("UTF-8", charset, str.c_str(), str.size());
-	if (tmpStr == nullptr) {
-		warning("Cannot convert from %s encoding for text to speech", charset.c_str());
-		pthread_mutex_unlock(&_speechMutex);
-		return true;
-	}
-	Common::String strUtf8 = tmpStr;
-	free(tmpStr);
+	Common::String strUtf8 = str.encode();
 
 	if (!_speechQueue.empty() && action == INTERRUPT_NO_REPEAT &&
 			_speechQueue.front() == strUtf8 && isSpeaking()) {

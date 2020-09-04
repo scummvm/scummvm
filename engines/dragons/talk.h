@@ -103,8 +103,8 @@ private:
 	uint16 *findCharInU16Str(uint16 *text, uint16 chr);
 	void drawDialogBox(uint32 x1, uint32 y1, uint32 x2, uint32 y2, uint16 unk);
 	uint16 *UTF16ToUTF16Z(uint16 *dest, uint16 *src);
-	uint16 FindLastPositionOf5cChar(uint16 *text);
-	uint32 FUN_80031c28(uint16 *srcText, uint16 *destText, uint32 cutLength, uint16 param_4);
+	uint16 findLastPositionOf5cChar(uint16 *text);
+	uint32 truncateDialogText(uint16 *srcText, uint16 *destText, uint32 srcLength, uint16 destLength);
 
 	uint32 extractTextIndex(Common::File *fd, uint16 offset);
 };

@@ -226,11 +226,11 @@ void JNI::getDPI(float *values) {
 	env->DeleteLocalRef(array);
 }
 
-void JNI::displayMessageOnOSD(const Common::String &msg) {
+void JNI::displayMessageOnOSD(const Common::U32String &msg) {
 	// called from common/osd_message_queue, method: OSDMessageQueue::pollEvent()
 	JNIEnv *env = JNI::getEnv();
 
-	jstring java_msg = convertToJString(env, msg, getCurrentCharset());
+	jstring java_msg = convertToJString(env, msg.encode(), "UTF-8");
 	if (java_msg == nullptr) {
 		// Show a placeholder indicative of the translation error instead of silent failing
 		java_msg = env->NewStringUTF("?");
@@ -283,7 +283,7 @@ bool JNI::hasTextInClipboard() {
 	return hasText;
 }
 
-Common::String JNI::getTextFromClipboard() {
+Common::U32String JNI::getTextFromClipboard() {
 	JNIEnv *env = JNI::getEnv();
 
 	jstring javaText = (jstring)env->CallObjectMethod(_jobj, _MID_getTextFromClipboard);
@@ -294,18 +294,18 @@ Common::String JNI::getTextFromClipboard() {
 		env->ExceptionDescribe();
 		env->ExceptionClear();
 
-		return Common::String();
+		return Common::U32String();
 	}
 
-	Common::String text = convertFromJString(env, javaText, getCurrentCharset());
+	Common::String text = convertFromJString(env, javaText, "UTF-8");
 	env->DeleteLocalRef(javaText);
 
-	return text;
+	return text.decode();
 }
 
-bool JNI::setTextInClipboard(const Common::String &text) {
+bool JNI::setTextInClipboard(const Common::U32String &text) {
 	JNIEnv *env = JNI::getEnv();
-	jstring javaText = convertToJString(env, text, getCurrentCharset());
+	jstring javaText = convertToJString(env, text.encode(), "UTF-8");
 
 	bool success = env->CallBooleanMethod(_jobj, _MID_setTextInClipboard, javaText);
 
@@ -726,15 +726,6 @@ void JNI::setPause(JNIEnv *env, jobject self, jboolean value) {
 		for (uint i = 0; i < 3; ++i)
 			sem_post(&pause_sem);
 	}
-}
-
-Common::String JNI::getCurrentCharset() {
-#ifdef USE_TRANSLATION
-	if (TransMan.getCurrentCharset() != "ASCII") {
-		return TransMan.getCurrentCharset();
-	}
-#endif
-	return "ISO-8859-1";
 }
 
 jstring JNI::convertToJString(JNIEnv *env, const Common::String &str, const Common::String &from) {

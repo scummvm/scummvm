@@ -58,7 +58,7 @@ void TestbedExitDialog::init() {
 	_yOffset = 0;
 	Common::String text = "Thank you for using ScummVM testbed! Here are yor summarized results:";
 	addText(450, 20, text, Graphics::kTextAlignCenter, _xOffset, 15);
-	Common::Array<Common::String> strArray;
+	Common::Array<Common::U32String> strArray;
 	GUI::ListWidget::ColorList colors;
 
 	for (Common::Array<Testsuite *>::const_iterator i = _testsuiteList.begin(); i != _testsuiteList.end(); ++i) {
@@ -67,7 +67,7 @@ void TestbedExitDialog::init() {
 		if ((*i)->isEnabled()) {
 			strArray.push_back(Common::String::format("Passed: %d  Failed: %d Skipped: %d", (*i)->getNumTestsPassed(), (*i)->getNumTestsFailed(), (*i)->getNumTestsSkipped()));
 		} else {
-			strArray.push_back("Skipped");
+			strArray.push_back(Common::U32String("Skipped"));
 		}
 		colors.push_back(GUI::ThemeEngine::kFontColorAlternate);
 	}
@@ -215,6 +215,11 @@ void TestbedEngine::checkForAllAchievements() {
 }
 
 Common::Error TestbedEngine::run() {
+	if (ConfMan.hasKey("start_movie")) {
+		videoTest();
+		return Common::kNoError;
+	}
+
 	// Initialize graphics using following:
 	initGraphics(320, 200);
 

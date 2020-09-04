@@ -27,10 +27,11 @@
 
 #include "common/fs.h"
 #include "common/dialogs.h"
+#include "common/ustr.h"
 
 class MacOSXDialogManager : public Common::DialogManager {
 public:
-	virtual DialogResult showFileBrowser(const char *title, Common::FSNode &choice, bool isDirBrowser);
+	virtual DialogResult showFileBrowser(const Common::U32String &title, Common::FSNode &choice, bool isDirBrowser);
 };
 
 #endif

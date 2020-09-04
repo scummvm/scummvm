@@ -169,6 +169,7 @@ _iconv=auto
 _tts=auto
 _gtk=auto
 _fribidi=auto
+_discord=auto
 _test_cxx11=no
 # Default option behavior yes/no
 _debug_build=auto
@@ -183,6 +184,7 @@ _build_scalers=yes
 _build_hq_scalers=yes
 _enable_prof=no
 _enable_asan=no
+_enable_tsan=no
 _global_constructors=no
 _no_undefined_var_template=no
 _no_pragma_pack=no
@@ -441,7 +443,7 @@ find_sdlconfig() {
 				echo $_sdlconfig
 				# Save the prefix
 				_sdlpath=$path_dir
-				if test `basename $path_dir` = bin ; then
+				if test `basename $path_dir` = bin || test `basename $path_dir` = sbin ; then
 					_sdlpath=`dirname $path_dir`
 				fi
 				# break at first sdl-config found in path
@@ -1027,6 +1029,7 @@ Optional Features:
   --enable-release-mode    enable building in release mode (without optimizations)
   --enable-optimizations   enable optimizations
   --enable-asan            enable Address Sanitizer for memory-related debugging
+  --enable-tsan            enable Thread Sanitizer for thread-related debugging
   --enable-profiling       enable profiling
   --enable-plugins         enable the support for dynamic plugins
   --default-dynamic        make plugins dynamic by default
@@ -1155,6 +1158,9 @@ Optional Libraries:
 
   --with-iconv-prefix=DIR    prefix where libiconv is installed (optional)
   --disable-iconv        disable libiconv encoding conversion library [autodetect]
+
+  --with-discord-prefix=DIR   prefix where discord-rpc is installed (optional)
+  --disable-discord       disable Discord rich presence integration [autodetect]
 
 Some influential environment variables:
   AR                 archiver command
@@ -1287,6 +1293,8 @@ for ac_option in $@; do
 	--disable-gtk)                _gtk=no                ;;
 	--enable-bink)                _bink=yes              ;;
 	--disable-bink)               _bink=no               ;;
+	--enable-discord)             _discord=yes           ;;
+	--disable-discord)            _discord=no            ;;
 	--opengl-mode=*)
 		_opengl_mode=`echo $ac_option | cut -d '=' -f 2`
 		;;
@@ -1423,6 +1431,11 @@ for ac_option in $@; do
 		ICONV_CFLAGS="-I$arg/include"
 		ICONV_LIBS="-L$arg/lib"
 		;;
+	--with-discord-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		DISCORD_CFLAGS="-I$arg/include"
+		DISCORD_LIBS="-L$arg/lib"
+		;;
 	--backend=*)
 		_backend=`echo $ac_option | cut -d '=' -f 2`
 		;;
@@ -1467,6 +1480,9 @@ for ac_option in $@; do
 		;;
 	--enable-asan)
 		_enable_asan=yes
+		;;
+	--enable-tsan)
+		_enable_tsan=yes
 		;;
 	--with-sdl-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -5437,6 +5453,25 @@ if test "$_pandocext" = "default"; then
 fi
 
 #
+# Check for Discord
+#
+echocheck "Discord RPC"
+if test "$_discord" = auto ; then
+	_discord=no
+	cat > $TMPC << EOF
+#include <discord_rpc.h>
+int main(void) { Discord_Shutdown(); return 0; }
+EOF
+	cc_check $DISCORD_CFLAGS $DISCORD_LIBS -ldiscord-rpc && _discord=yes
+fi
+if test "$_discord" = yes ; then
+	append_var LIBS "$DISCORD_LIBS -ldiscord-rpc"
+	append_var INCLUDES "$DISCORD_CFLAGS"
+fi
+define_in_config_if_yes "$_discord" 'USE_DISCORD'
+echo "$_discord"
+
+#
 # Enable vkeybd / event recorder
 #
 define_in_config_if_yes $_vkeybd 'ENABLE_VKEYBD'
@@ -5628,10 +5663,23 @@ fi
 echo_n "Enabling Address Sanitizer... "
 
 if test "$_enable_asan" = yes ; then
-	append_var CXXFLAGS "-fsanitize=address -fno-omit-frame-pointer"
-	append_var LDFLAGS "-fsanitize=address -fno-omit-frame-pointer"
+	if test "$_enable_tsan" = yes ; then
+		echo_n "conflicting with tsan, disabling... "
+		_enable_asan=no
+	else
+		append_var CXXFLAGS "-fsanitize=address -fno-omit-frame-pointer"
+		append_var LDFLAGS "-fsanitize=address -fno-omit-frame-pointer"
+	fi
 fi
 echo "$_enable_asan"
+
+echo_n "Enabling Thread Sanitizer... "
+
+if test "$_enable_tsan" = yes ; then
+	append_var CXXFLAGS "-fsanitize=thread"
+	append_var LDFLAGS "-fsanitize=thread"
+fi
+echo "$_enable_tsan"
 
 echo_n "Backend... "
 echo_n "$_backend"

@@ -176,6 +176,8 @@ byte *ScummEngine::get2byteCharPtr(int idx) {
 			}
 
 			idx = (SWAP_CONSTANT_16(idx) & 0x7fff) - 1;
+		} else {
+			idx = Graphics::FontTowns::getCharFMTChunk(idx);
 		}
 
 		break;

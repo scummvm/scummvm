@@ -804,11 +804,11 @@ bool Debugger::cmdMixReagents(int argc, const char **argv) {
 			g_context->_stats->setView(STATS_MIXTURES);
 
 			int choice = ReadChoiceController::get("abcdefghijklmnopqrstuvwxyz \033\n\r");
-			if (choice == ' ' || choice == '\033' || choice == '\n' || choice == '\r')
+			if (choice == -1 || choice == ' ' || choice == '\033' || choice == '\n' || choice == '\r')
 				break;
 
 			int spell = choice - 'a';
-			print("%s", g_spells->spellGetName(spell));
+			print("\n%s", g_spells->spellGetName(spell));
 
 			// ensure the mixtures for the spell isn't already maxed out
 			if (g_ultima->_saveGame->_mixtures[spell] == 99) {

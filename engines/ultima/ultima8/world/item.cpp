@@ -606,8 +606,8 @@ bool Item::isOnScreen() const {
 	int32 xd, yd, zd;
 	getFootpadWorld(xd, yd, zd);
 
-	if (game_map_dims.InRect(screenx, screeny) &&
-		game_map_dims.InRect(screenx + xd, screeny + yd)) {
+	if (game_map_dims.contains(screenx, screeny) &&
+	    game_map_dims.contains(screenx + xd, screeny + yd)) {
 		return true;
 	}
 

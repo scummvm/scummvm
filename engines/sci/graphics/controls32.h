@@ -481,7 +481,7 @@ private:
 	/**
 	 * Convenience function for creating and showing a message box.
 	 */
-	int16 showMessageBox(const Common::String &message, const char *const okLabel, const char *const altLabel, const int16 okValue, const int16 altValue);
+	int16 showMessageBox(const Common::U32String &message, const Common::U32String &okLabel, const Common::U32String &altLabel, const int16 okValue, const int16 altValue);
 };
 
 } // End of namespace Sci

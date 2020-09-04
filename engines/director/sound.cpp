@@ -41,7 +41,7 @@ namespace Director {
 
 DirectorSound::DirectorSound(DirectorEngine *vm) : _vm(vm) {
 	uint numChannels = 2;
-	if (g_director->getVersion() >= 4) {
+	if (g_director->getVersion() >= 400) {
 		numChannels = 4;
 	}
 
@@ -249,7 +249,7 @@ SNDDecoder::~SNDDecoder() {
 	}
 }
 
-bool SNDDecoder::loadStream(Common::SeekableSubReadStreamEndian &stream) {
+bool SNDDecoder::loadStream(Common::SeekableReadStreamEndian &stream) {
 	if (_data) {
 		free(_data);
 		_data = nullptr;
@@ -289,7 +289,7 @@ bool SNDDecoder::loadStream(Common::SeekableSubReadStreamEndian &stream) {
 	return true;
 }
 
-bool SNDDecoder::processCommands(Common::SeekableSubReadStreamEndian &stream) {
+bool SNDDecoder::processCommands(Common::SeekableReadStreamEndian &stream) {
 	uint16 cmdCount = stream.readUint16();
 	for (uint16 i = 0; i < cmdCount; i++) {
 		uint16 cmd = stream.readUint16();
@@ -305,7 +305,7 @@ bool SNDDecoder::processCommands(Common::SeekableSubReadStreamEndian &stream) {
 	return true;
 }
 
-bool SNDDecoder::processBufferCommand(Common::SeekableSubReadStreamEndian &stream) {
+bool SNDDecoder::processBufferCommand(Common::SeekableReadStreamEndian &stream) {
 	if (_data) {
 		warning("SNDDecoder: Already read data");
 		return false;
@@ -408,7 +408,5 @@ Audio::RewindableAudioStream *AudioFileDecoder::getAudioStream(DisposeAfterUse::
 
 	return nullptr;
 }
-
-
 
 } // End of namespace Director

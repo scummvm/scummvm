@@ -62,6 +62,8 @@ public:
 	 */
 	void setDirty(bool dirty) { _contentIsDirty = dirty; }
 
+	virtual bool needsRedraw() { return _contentIsDirty; }
+
 	virtual bool draw(ManagedSurface *g, bool forceRedraw = false);
 	virtual bool draw(bool forceRedraw = false);
 	virtual void blit(ManagedSurface *g, Common::Rect &dest);
@@ -69,7 +71,7 @@ public:
 	virtual bool hasAllFocus() { return _active; }
 	virtual bool isEditable() { return _editable; }
 
-	virtual void setColors(int fg, int bg);
+	virtual void setColors(uint32 fg, uint32 bg);
 
 	virtual void setDimensions(const Common::Rect &r) {
 		_dims = r;
@@ -87,13 +89,14 @@ protected:
 	uint16 _gutter;
 	uint16 _shadow;
 
-	int _fgcolor, _bgcolor;
+	uint32 _fgcolor, _bgcolor;
 
 	Graphics::ManagedSurface *_composeSurface;
 
+	bool _contentIsDirty;
+
 public:
 	bool _focusable;
-	bool _contentIsDirty;
 	bool _active;
 	bool _editable;
 	uint _priority;

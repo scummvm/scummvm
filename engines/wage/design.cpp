@@ -111,7 +111,7 @@ void Design::paint(Graphics::ManagedSurface *surface, Graphics::MacPatterns &pat
 	PlotData pd(_surface, &patterns, 8, 1, this);
 	int x1 = 50, y1 = 50, x2 = 200, y2 = 200, borderThickness = 30;
 	Common::Rect inn(x1-5, y1-5, x2+5, y2+5);
-	drawRoundRect(inn, 6, kColorGray, false, drawPixelPlain, &pd);
+	drawRoundRect(inn, 6, kColorGray80, false, drawPixelPlain, &pd);
 
 	drawThickLine(x1, y1, x2-borderThickness, y1, borderThickness, kColorBlack, drawPixel, &pd);
 	drawThickLine(x2-borderThickness, y1, x2-borderThickness, y2, borderThickness, kColorBlack, drawPixel, &pd);

@@ -30,7 +30,7 @@
 #include "director/cursor.h"
 #include "director/channel.h"
 #include "director/sprite.h"
-#include "director/stage.h"
+#include "director/window.h"
 #include "director/castmember.h"
 #include "director/lingo/lingo.h"
 
@@ -65,18 +65,6 @@ void DirectorEngine::processEvents() {
 
 	uint endTime = g_system->getMillis() + 10;
 
-	Movie *m = getCurrentMovie();
-	if (m) {
-		Score *sc = m->getScore();
-
-		if (sc && sc->getCurrentFrame() >= sc->_frames.size()) {
-			warning("processEvents: request to access frame %d of %d", sc->getCurrentFrame(), sc->_frames.size() - 1);
-			return;
-		}
-	}
-
-	Common::Point pos;
-
 	while (g_system->getMillis() < endTime) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			if (_wm->processEvent(event)) {
@@ -86,7 +74,7 @@ void DirectorEngine::processEvents() {
 
 			switch (event.type) {
 			case Common::EVENT_QUIT:
-				_mainStage->getCurrentMovie()->getScore()->_playState = kPlayStopped;
+				_stage->getCurrentMovie()->getScore()->_playState = kPlayStopped;
 				break;
 			default:
 				break;
@@ -97,7 +85,7 @@ void DirectorEngine::processEvents() {
 	}
 }
 
-bool Stage::processEvent(Common::Event &event) {
+bool Window::processEvent(Common::Event &event) {
 	if (MacWindow::processEvent(event))
 		return true;
 
@@ -119,16 +107,16 @@ bool Movie::processEvent(Common::Event &event) {
 
 	switch (event.type) {
 	case Common::EVENT_MOUSEMOVE:
-		pos = _stage->getMousePos();
+		pos = _window->getMousePos();
 
 		_lastEventTime = g_director->getMacTicks();
 		_lastRollTime =	 _lastEventTime;
 
-		sc->renderCursor(sc->getSpriteIDFromPos(pos));
+		sc->renderCursor(pos);
 
 		if (_currentDraggedChannel) {
 			if (_currentDraggedChannel->_sprite->_moveable) {
-				pos = _stage->getMousePos();
+				pos = _window->getMousePos();
 
 				_currentDraggedChannel->addDelta(pos - _draggingSpritePos);
 				_draggingSpritePos = pos;
@@ -139,38 +127,43 @@ bool Movie::processEvent(Common::Event &event) {
 		return true;
 
 	case Common::EVENT_LBUTTONDOWN:
-		pos = _stage->getMousePos();
+		if (sc->_waitForClick) {
+			sc->_waitForClick = false;
+			_vm->setCursor(kCursorDefault);
+		} else {
+			pos = _window->getMousePos();
 
-		// D3 doesn't have both mouse up and down.
-		// But we still want to know if the mouse is down for press effects.
-		spriteId = sc->getMouseSpriteIDFromPos(pos);
-		_currentClickOnSpriteId = sc->getActiveSpriteIDFromPos(pos);
+			// D3 doesn't have both mouse up and down.
+			// But we still want to know if the mouse is down for press effects.
+			spriteId = sc->getMouseSpriteIDFromPos(pos);
+			_currentClickOnSpriteId = sc->getActiveSpriteIDFromPos(pos);
 
-		if (spriteId > 0 && sc->_channels[spriteId]->_sprite->shouldHilite())
-			g_director->getCurrentStage()->invertChannel(sc->_channels[spriteId]);
+			if (spriteId > 0 && sc->_channels[spriteId]->_sprite->shouldHilite())
+				g_director->getCurrentWindow()->invertChannel(sc->_channels[spriteId]);
 
-		_lastEventTime = g_director->getMacTicks();
-		_lastClickTime = _lastEventTime;
-		_lastClickPos = pos;
+			_lastEventTime = g_director->getMacTicks();
+			_lastClickTime = _lastEventTime;
+			_lastClickPos = pos;
 
-		debugC(3, kDebugEvents, "event: Button Down @(%d, %d), movie '%s', sprite id: %d", pos.x, pos.y, _macName.c_str(), spriteId);
-		registerEvent(kEventMouseDown, spriteId);
+			debugC(3, kDebugEvents, "event: Button Down @(%d, %d), movie '%s', sprite id: %d", pos.x, pos.y, _macName.c_str(), spriteId);
+			registerEvent(kEventMouseDown, spriteId);
 
-		if (sc->_channels[spriteId]->_sprite->_moveable) {
-			_draggingSpritePos = _stage->getMousePos();
-			_currentDraggedChannel = sc->_channels[spriteId];
+			if (sc->_channels[spriteId]->_sprite->_moveable) {
+				_draggingSpritePos = _window->getMousePos();
+				_currentDraggedChannel = sc->_channels[spriteId];
+			}
 		}
 
 		return true;
 
 	case Common::EVENT_LBUTTONUP:
-		pos = _stage->getMousePos();
+		pos = _window->getMousePos();
 
 		spriteId = sc->getMouseSpriteIDFromPos(pos);
 		_currentClickOnSpriteId = sc->getActiveSpriteIDFromPos(pos);
 
 		if (spriteId > 0 && sc->_channels[spriteId]->_sprite->shouldHilite())
-			g_director->getCurrentStage()->invertChannel(sc->_channels[spriteId]);
+			g_director->getCurrentWindow()->invertChannel(sc->_channels[spriteId]);
 
 		debugC(3, kDebugEvents, "event: Button Up @(%d, %d), movie '%s', sprite id: %d", pos.x, pos.y, _macName.c_str(), spriteId);
 
@@ -183,7 +176,7 @@ bool Movie::processEvent(Common::Event &event) {
 		}
 
 		registerEvent(kEventMouseUp, spriteId);
-		sc->renderCursor(sc->getSpriteIDFromPos(pos));
+		sc->renderCursor(pos);
 		return true;
 
 	case Common::EVENT_KEYDOWN:
@@ -196,7 +189,7 @@ bool Movie::processEvent(Common::Event &event) {
 		_lastEventTime = g_director->getMacTicks();
 		_lastKeyTime = _lastEventTime;
 		registerEvent(kEventKeyDown);
-		break;
+		return true;
 
 	case Common::EVENT_KEYUP:
 		_keyFlags = event.kbd.flags;
@@ -207,30 +200,6 @@ bool Movie::processEvent(Common::Event &event) {
 	}
 
 	return false;
-}
-
-void DirectorEngine::waitForClick() {
-	setCursor(kCursorMouseUp);
-
-	bool cursor = false;
-	uint32 nextTime = g_system->getMillis() + 1000;
-
-	while (!processQuitEvent(true)) {
-		g_system->updateScreen();
-		g_system->delayMillis(10);
-
-		if (g_system->getMillis() >= nextTime) {
-			nextTime = g_system->getMillis() + 1000;
-
-			setCursor(kCursorDefault);
-
-			setCursor(cursor ? kCursorMouseDown : kCursorMouseUp);
-
-			cursor = !cursor;
-		}
-	}
-
-	setCursor(kCursorDefault);
 }
 
 } // End of namespace Director

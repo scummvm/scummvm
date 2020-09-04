@@ -172,21 +172,6 @@ bool HandlerUtils::permittedPath(const Common::String path) {
 	return hasPermittedPrefix(path) && !isBlacklisted(path);
 }
 
-Common::String HandlerUtils::toUtf8(const char *text) {
-#ifdef USE_TRANSLATION
-	Common::String guiEncoding = TransMan.getCurrentCharset();
-	if (guiEncoding != "ASCII") {
-		char *utf8Text = Common::Encoding::convert("utf-8", guiEncoding, text, strlen(text));
-		if (utf8Text != nullptr) {
-			Common::String str(utf8Text);
-			free(utf8Text);
-			return str;
-		}
-	}
-#endif
-	return Common::String(text);
-}
-
 void HandlerUtils::setMessageHandler(Client &client, Common::String message, Common::String redirectTo) {
 	Common::String response = "<html><head><title>ScummVM</title><meta charset=\"utf-8\"/></head><body>{message}</body></html>";
 
@@ -210,7 +195,7 @@ void HandlerUtils::setFilesManagerErrorMessageHandler(Client &client, Common::St
 			message.c_str(),
 			client.queryParameter("ajax") == "true" ? "AJAX" : "",
 			"%2F", //that's encoded "/"
-			toUtf8(_("Back to the files manager")).c_str()
+			Common::convertFromU32String(_("Back to the files manager")).c_str()
 		),
 		redirectTo
 	);

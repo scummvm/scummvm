@@ -77,6 +77,8 @@ BaseMenu *DuckmanMenuSystem::createMenuById(int menuId) {
 	switch (menuId) {
 	case kDuckmanMainMenu:
 		return createMainMenu();
+	case kDuckmanMainMenuDemo:
+		return createMainMenuDemo();
 	case kDuckmanPauseMenu:
 		return createPauseMenu();
 	case kDuckmanQueryRestartMenu:
@@ -104,6 +106,15 @@ BaseMenu *DuckmanMenuSystem::createMainMenu() {
 	menu->addMenuItem(new MenuItem("Load Saved Game", new MenuActionLoadGame(this, 1)));
 	menu->addMenuItem(new MenuItem("Options", new MenuActionEnterMenu(this, kDuckmanOptionsMenu)));
 	menu->addMenuItem(new MenuItem("Quit Game", new MenuActionEnterQueryMenu(this, kDuckmanQueryQuitMenu, 12)));
+	return menu;
+}
+
+BaseMenu *DuckmanMenuSystem::createMainMenuDemo() {
+	BaseMenu *menu = new BaseMenu(this, 0x00120003, 12, 17, 11, 27, 0);
+	menu->addMenuItem(new MenuItem("Start New Game", new MenuActionReturnChoice(this, 2)));
+	menu->addMenuItem(new MenuItem("Load Saved Game", new MenuActionLoadGame(this, 1)));
+	menu->addMenuItem(new MenuItem("Options", new MenuActionEnterMenu(this, kDuckmanOptionsMenu)));
+	menu->addMenuItem(new MenuItem("Quit Game", new MenuActionEnterQueryMenu(this, kDuckmanQueryQuitMenu, 3)));
 	return menu;
 }
 
@@ -277,10 +288,9 @@ int DuckmanMenuSystem::convertRootMenuId(uint32 menuId) {
 	case 0x180007: // load game failed menu
 		return kDuckmanLoadGameFailedMenu;
 
-	/* TODO CHECKME Another pause menu?
 	case 0x180008:
-		menuData = &g_menuDataPause;
-	*/
+		return kDuckmanMainMenuDemo;
+
 	default:
 		error("DuckmanMenuSystem() Menu ID %08X not found", menuId);
 	}

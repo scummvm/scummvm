@@ -184,18 +184,7 @@ Common::Error NuvieEngine::run() {
 
 void NuvieEngine::initConfig() {
 	_config = new Configuration();
-
-	// nuvie.cfg in the game folder can supercede any ScummVM settings
-	if (Common::File::exists("nuvie.cfg"))
-		(void)_config->readConfigFile("nuvie.cfg", "config");
-
-	if (!_config->isDefaultsSet()) {
-		if (isEnhanced())
-			_config->setEnhancedDefaults(_gameDescription->gameId);
-		else
-			_config->setUnenhancedDefaults(_gameDescription->gameId);
-	}
-
+	_config->load(_gameDescription->gameId, isEnhanced());
 }
 
 void NuvieEngine::assignGameConfigValues(uint8 gameType) {
@@ -321,7 +310,7 @@ Common::Error NuvieEngine::saveGameState(int slot, const Common::String &desc, b
 
 			// Display that the game was saved
 			MsgScroll *scroll = Game::get_game()->get_scroll();
-			scroll->display_string(_("\nGame Saved\n\n"));
+			scroll->display_string("\nGame Saved\n\n");
 			scroll->display_prompt();
 		}
 
@@ -370,12 +359,12 @@ bool NuvieEngine::quickSave(int saveSlot, bool isLoad) {
 		if (!canLoadGameStateCurrently(false))
 			return false;
 
-		text = _("loading quick save %d");
+		text = Common::convertFromU32String(_("loading quick save %d"));
 	} else {
 		if (!canSaveGameStateCurrently(false))
 			return false;
 
-		text = _("saving quick save %d");
+		text = Common::convertFromU32String(_("saving quick save %d"));
 	}
 
 	text = Std::string::format(text.c_str(), saveSlot);
@@ -389,7 +378,7 @@ bool NuvieEngine::quickSave(int saveSlot, bool isLoad) {
 			return false;
 		}
 	} else {
-		Common::String saveDesc = Common::String::format(_("Quicksave %03d"), saveSlot);
+		Common::String saveDesc = Common::String::format("Quicksave %03d", saveSlot);
 		return saveGameState(saveSlot, saveDesc, false).getCode() == Common::kNoError;
 	}
 }

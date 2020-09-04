@@ -35,18 +35,18 @@ namespace Director {
 static const char *xlibName = "FileIO";
 
 static MethodProto xlibMethods[] = {
-	{ "delete",					FileIO::m_delete,			 0, 0,	2 },	// D2
-	{ "fileName",				FileIO::m_fileName,			 0, 0,	2 },	// D2
-	{ "getLength",				FileIO::m_getLength,		 0, 0,	2 },	// D2
-	{ "getPosition",			FileIO::m_getPosition,		 0, 0,	2 },	// D2
-	{ "new",					FileIO::m_new,				 2, 2,	2 },	// D2
-	{ "readChar",				FileIO::m_readChar,			 0, 0,	2 },	// D2
-	{ "readLine",				FileIO::m_readLine,			 0, 0,	2 },	// D2
-	{ "readToken",				FileIO::m_readToken,		 2, 2,	2 },	// D2
-	{ "readWord",				FileIO::m_readWord,			 0, 0,	2 },	// D2
-	{ "setPosition",			FileIO::m_setPosition,		 1, 1,	2 },	// D2
-	{ "writeChar",				FileIO::m_writeChar,		 1, 1,	2 },	// D2
-	{ "writeString",			FileIO::m_writeString,		 1, 1,	2 },	// D2
+	{ "delete",					FileIO::m_delete,			 0, 0,	200 },	// D2
+	{ "fileName",				FileIO::m_fileName,			 0, 0,	200 },	// D2
+	{ "getLength",				FileIO::m_getLength,		 0, 0,	200 },	// D2
+	{ "getPosition",			FileIO::m_getPosition,		 0, 0,	200 },	// D2
+	{ "new",					FileIO::m_new,				 2, 2,	200 },	// D2
+	{ "readChar",				FileIO::m_readChar,			 0, 0,	200 },	// D2
+	{ "readLine",				FileIO::m_readLine,			 0, 0,	200 },	// D2
+	{ "readToken",				FileIO::m_readToken,		 2, 2,	200 },	// D2
+	{ "readWord",				FileIO::m_readWord,			 0, 0,	200 },	// D2
+	{ "setPosition",			FileIO::m_setPosition,		 1, 1,	200 },	// D2
+	{ "writeChar",				FileIO::m_writeChar,		 1, 1,	200 },	// D2
+	{ "writeString",			FileIO::m_writeString,		 1, 1,	200 },	// D2
 	{ 0, 0, 0, 0, 0 }
 };
 
@@ -152,7 +152,7 @@ void FileIO::m_new(int nargs) {
 		me->_inStream = me->_inFile;
 		if (!me->_inFile) {
 			saveFileError();
-			delete me;
+			me->dispose();
 			return;
 		}
 	} else if (option.equalsIgnoreCase("write")) {
@@ -162,14 +162,14 @@ void FileIO::m_new(int nargs) {
 		me->_outStream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 		if (!me->_outFile) {
 			saveFileError();
-			delete me;
+			me->dispose();
 			return;
 		}
 	} else if (option.equalsIgnoreCase("append")) {
 		Common::InSaveFile *_inFile = saves->openForLoading(filename);
 		if (!_inFile) {
 			saveFileError();
-			delete me;
+			me->dispose();
 			return;
 		}
 		me->_outStream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
@@ -182,7 +182,7 @@ void FileIO::m_new(int nargs) {
 		me->_outFile = saves->openForSaving(filename, false);
 		if (!me->_outFile) {
 			saveFileError();
-			delete me;
+			me->dispose();
 			return;
 		}
 	} else {

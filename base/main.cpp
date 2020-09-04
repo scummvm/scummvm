@@ -260,7 +260,7 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 		if (token.equalsIgnoreCase("all"))
 			DebugMan.enableAllDebugChannels();
 		else if (!DebugMan.enableDebugChannel(token))
-			warning(_("Engine does not support debug level '%s'"), token.c_str());
+			warning("Engine does not support debug level '%s'", token.c_str());
 	}
 
 #ifdef USE_TRANSLATION

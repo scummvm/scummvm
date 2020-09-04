@@ -85,7 +85,7 @@ wchar_t *ansiToUnicode(const char *s, uint codePage) {
 	DWORD size = MultiByteToWideChar(codePage, 0, s, -1, NULL, 0);
 
 	if (size > 0) {
-		LPWSTR result = new WCHAR[size];
+		LPWSTR result = (LPWSTR)calloc(size, sizeof(WCHAR));
 		if (MultiByteToWideChar(codePage, 0, s, -1, result, size) != 0)
 			return result;
 	}
@@ -97,7 +97,7 @@ char *unicodeToAnsi(const wchar_t *s, uint codePage) {
 	DWORD size = WideCharToMultiByte(codePage, 0, s, -1, NULL, 0, 0, 0);
 
 	if (size > 0) {
-		char *result = new char[size];
+		char *result = (char *)calloc(size, sizeof(char));
 		if (WideCharToMultiByte(codePage, 0, s, -1, result, size, 0, 0) != 0)
 			return result;
 	}
@@ -105,19 +105,16 @@ char *unicodeToAnsi(const wchar_t *s, uint codePage) {
 	return NULL;
 }
 
-uint getCurrentCharset() {
-#ifdef USE_TRANSLATION
-	Common::String charset = TransMan.getCurrentCharset();
-	if (charset == "iso-8859-2")
-		return 28592;
-	if (charset == "iso-8859-5")
-		return 28595;
-	if (charset == "iso-8859-7")
-		return 28597;
-	if (charset == "iso-8859-8")
-		return 28598;
-#endif
-	return 28591;
+wchar_t *UTF8ToUnicode(const char *s) {
+	DWORD size = MultiByteToWideChar(CP_UTF8, 0, s, -1, NULL, 0);
+
+	if (size > 0) {
+		LPWSTR result = (LPWSTR)calloc(size, sizeof(WCHAR));
+		if (MultiByteToWideChar(CP_UTF8, 0, s, -1, result, size) != 0)
+			return result;
+	}
+
+	return NULL;
 }
 
 }

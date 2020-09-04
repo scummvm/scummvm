@@ -30,6 +30,10 @@
 #include "common/translation.h"
 #include "common/encoding.h"
 
+#ifdef USE_DISCORD
+#include "backends/presence/discord/discord.h"
+#endif
+
 #include "backends/saves/default/default-saves.h"
 
 // Audio CD support was removed with SDL 2.0
@@ -81,7 +85,6 @@ OSystem_SDL::OSystem_SDL()
 	_initedSDLnet(false),
 #endif
 	_logger(0),
-	_mixerManager(0),
 	_eventSource(0),
 	_eventSourceWrapper(nullptr),
 	_window(0) {
@@ -91,7 +94,7 @@ OSystem_SDL::~OSystem_SDL() {
 	SDL_ShowCursor(SDL_ENABLE);
 
 	// Delete the various managers here. Note that the ModularBackend
-	// destructor would also take care of this for us. However, various
+	// destructors would also take care of this for us. However, various
 	// of our managers must be deleted *before* we call SDL_Quit().
 	// Hence, we perform the destruction on our own.
 	delete _savefileManager;
@@ -128,6 +131,11 @@ OSystem_SDL::~OSystem_SDL() {
 
 	delete _logger;
 	_logger = 0;
+
+#ifdef USE_DISCORD
+	delete _presence;
+	_presence = 0;
+#endif
 
 #ifdef USE_SDL_NET
 	if (_initedSDLnet) SDLNet_Quit();
@@ -170,7 +178,7 @@ bool OSystem_SDL::hasFeature(Feature f) {
 	if (f == kFeatureJoystickDeadzone || f == kFeatureKbdMouseSpeed) {
 		return _eventSource->isJoystickConnected();
 	}
-	return ModularBackend::hasFeature(f);
+	return ModularGraphicsBackend::hasFeature(f);
 }
 
 void OSystem_SDL::initBackend() {
@@ -264,9 +272,13 @@ void OSystem_SDL::initBackend() {
 	// Setup a custom program icon.
 	_window->setupIcon();
 
+#ifdef USE_DISCORD
+	_presence = new DiscordPresence();
+#endif
+
 	_inited = true;
 
-	ModularBackend::initBackend();
+	BaseBackend::initBackend();
 
 	// We have to initialize the graphics manager before the event manager
 	// so the virtual keyboard can be initialized, but we have to add the
@@ -285,9 +297,14 @@ void OSystem_SDL::engineInit() {
 	// Add the started engine to the list of recent tasks
 	_taskbarManager->addRecent(ConfMan.getActiveDomainName(), ConfMan.get("description"));
 
-	// Set the overlay icon the current running engine
+	// Set the overlay icon to the current running engine
 	_taskbarManager->setOverlayIcon(ConfMan.getActiveDomainName(), ConfMan.get("description"));
 #endif
+#ifdef USE_DISCORD
+	// Set the presence status to the current running engine
+	_presence->updateStatus(ConfMan.get("gameid"), ConfMan.get("description"));
+#endif
+
 	_eventSource->setEngineRunning(true);
 }
 
@@ -299,6 +316,10 @@ void OSystem_SDL::engineDone() {
 #ifdef USE_TASKBAR
 	// Remove overlay icon
 	_taskbarManager->setOverlayIcon("", "");
+#endif
+#ifdef USE_DISCORD
+	// Reset presence status
+	_presence->updateStatus("", "");
 #endif
 	_eventSource->setEngineRunning(false);
 }
@@ -376,7 +397,7 @@ void OSystem_SDL::fatalError() {
 }
 
 Common::KeymapArray OSystem_SDL::getGlobalKeymaps() {
-	Common::KeymapArray globalMaps = ModularBackend::getGlobalKeymaps();
+	Common::KeymapArray globalMaps = BaseBackend::getGlobalKeymaps();
 
 	SdlGraphicsManager *graphicsManager = dynamic_cast<SdlGraphicsManager *>(_graphicsManager);
 	globalMaps.push_back(graphicsManager->getKeymap());
@@ -447,7 +468,7 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 
 	// Detect the language from the locale
 	if (locale.empty()) {
-		return ModularBackend::getSystemLanguage();
+		return BaseBackend::getSystemLanguage();
 	} else {
 		int length = 0;
 
@@ -465,7 +486,7 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 		return Common::String(locale.c_str(), length);
 	}
 #else // USE_DETECTLANG
-	return ModularBackend::getSystemLanguage();
+	return BaseBackend::getSystemLanguage();
 #endif // USE_DETECTLANG
 }
 
@@ -474,41 +495,22 @@ bool OSystem_SDL::hasTextInClipboard() {
 	return SDL_HasClipboardText() == SDL_TRUE;
 }
 
-Common::String OSystem_SDL::getTextFromClipboard() {
-	if (!hasTextInClipboard()) return "";
+Common::U32String OSystem_SDL::getTextFromClipboard() {
+	if (!hasTextInClipboard()) return Common::U32String("");
 
 	char *text = SDL_GetClipboardText();
-	// The string returned by SDL is in UTF-8. Convert to the
-	// current TranslationManager encoding or ISO-8859-1.
-#ifdef USE_TRANSLATION
-	char *conv_text = SDL_iconv_string(TransMan.getCurrentCharset().c_str(), "UTF-8", text, SDL_strlen(text) + 1);
-#else
-	char *conv_text = SDL_iconv_string("ISO-8859-1", "UTF-8", text, SDL_strlen(text) + 1);
-#endif
-	if (conv_text) {
-		SDL_free(text);
-		text = conv_text;
-	}
-	Common::String strText = text;
+
+	Common::String utf8Text(text);
+	Common::U32String strText = utf8Text.decode();
 	SDL_free(text);
 
 	return strText;
 }
 
-bool OSystem_SDL::setTextInClipboard(const Common::String &text) {
-	// The encoding we need to use is UTF-8. Assume we currently have the
-	// current TranslationManager encoding or ISO-8859-1.
-#ifdef USE_TRANSLATION
-	char *utf8_text = SDL_iconv_string("UTF-8", TransMan.getCurrentCharset().c_str(), text.c_str(), text.size() + 1);
-#else
-	char *utf8_text = SDL_iconv_string("UTF-8", "ISO-8859-1", text.c_str(), text.size() + 1);
-#endif
-	if (utf8_text) {
-		int status = SDL_SetClipboardText(utf8_text);
-		SDL_free(utf8_text);
-		return status == 0;
-	}
-	return SDL_SetClipboardText(text.c_str()) == 0;
+bool OSystem_SDL::setTextInClipboard(const Common::U32String &text) {
+	// The encoding we need to use is UTF-8.
+	Common::String utf8Text = text.encode();
+	return SDL_SetClipboardText(utf8Text.c_str()) == 0;
 }
 #endif
 
@@ -541,12 +543,7 @@ void OSystem_SDL::getTimeAndDate(TimeDate &td) const {
 	td.tm_wday = t.tm_wday;
 }
 
-Audio::Mixer *OSystem_SDL::getMixer() {
-	assert(_mixerManager);
-	return getMixerManager()->getMixer();
-}
-
-SdlMixerManager *OSystem_SDL::getMixerManager() {
+MixerManager *OSystem_SDL::getMixerManager() {
 	assert(_mixerManager);
 
 #ifdef ENABLE_EVENTRECORDER
@@ -781,7 +778,6 @@ char *OSystem_SDL::convertEncoding(const char *to, const char *from, const char 
 	SDL_free(result);
 	return finalResult;
 #else
-	return ModularBackend::convertEncoding(to, from, string, length);
+	return BaseBackend::convertEncoding(to, from, string, length);
 #endif // SDL_VERSION_ATLEAST(1, 2, 10)
 }
-

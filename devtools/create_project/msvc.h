@@ -38,7 +38,21 @@ protected:
 	StringList _disableEditAndContinue;
 
 	std::list<MSVC_Architecture> _archs;
-	std::map<MSVC_Architecture, StringList> _arch_disabled_features;
+	std::map<MSVC_Architecture, StringList> _arch_disabled_features;	
+	
+	/**
+	 * MSVC properties for a library required by a feature
+	*/
+	struct MSVCLibrary {
+		const char *feature; ///< Feature ID.
+		const char *release; ///< Filename of the Release build of the library.
+		const char *debug;   ///< Filename of the Debug build of the library.
+		const char *depends; ///< Win32 libs this library must be linked against.
+		const char *legacy;  ///< Legacy name for old precompiled libraries (deprecated).
+	};
+
+	std::string getLibraryFromFeature(const char *feature, const BuildSetup &setup, bool isRelease) const;
+	std::string outputLibraryDependencies(const BuildSetup &setup, bool isRelease) const;
 
 	void createWorkspace(const BuildSetup &setup);
 

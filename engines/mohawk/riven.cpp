@@ -153,10 +153,11 @@ Common::Error MohawkEngine_Riven::run() {
 
 	// We need to have a cursor source, or the game won't work
 	if (!_cursor->hasSource()) {
-		Common::String message = _("You're missing a Riven executable. The Windows executable is 'riven.exe' or 'rivendmo.exe'. ");
+		Common::U32String message = _("You're missing a Riven executable. The Windows executable is 'riven.exe' or 'rivendmo.exe'. ");
 		message += _("Using the 'arcriven.z' installer file also works. In addition, you can use the Mac 'Riven' executable.");
 		GUIErrorMessage(message);
-		warning("%s", message.c_str());
+		warning("You're missing a Riven executable. The Windows executable is 'riven.exe' or 'rivendmo.exe'. \
+			Using the 'arcriven.z' installer file also works. In addition, you can use the Mac 'Riven' executable.");
 		return Common::kNoGameDataFoundError;
 	}
 
@@ -165,9 +166,10 @@ Common::Error MohawkEngine_Riven::run() {
 
 	// We need extras.mhk for inventory images, marble images, and credits images
 	if (!_extrasFile->openFile("extras.mhk")) {
-		Common::String message = _("You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also works.");
+		const char *msg = _s("You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also works.");
+		Common::U32String message = _(msg);
 		GUIErrorMessage(message);
-		warning("%s", message.c_str());
+		warning(msg);
 		return Common::kNoGameDataFoundError;
 	}
 
@@ -498,8 +500,10 @@ bool MohawkEngine_Riven::checkDatafiles() {
 		return true;
 	}
 
-	Common::String message = _("You are missing the following required Riven data files:\n") + missingFiles;
-	warning("%s", message.c_str());
+	const char *msg = _s("You are missing the following required Riven data files:\n");
+	Common::U32String message = _(msg) + Common::U32String(missingFiles);
+
+	warning("%s%s", msg, missingFiles.c_str());
 	GUIErrorMessage(message);
 
 	return false;

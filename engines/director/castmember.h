@@ -28,6 +28,8 @@
 #include "director/archive.h"
 #include "director/stxt.h"
 
+#include "director/lingo/lingo-object.h"
+
 namespace Graphics {
 struct Surface;
 class FloodFill;
@@ -52,11 +54,12 @@ class VideoDecoder;
 
 namespace Director {
 
-class Stxt;
 class AudioDecoder;
+class Channel;
 struct Resource;
+class Stxt;
 
-class CastMember {
+class CastMember : public Object<CastMember> {
 public:
 	CastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream);
 	virtual ~CastMember() {}
@@ -67,13 +70,20 @@ public:
 	virtual bool isEditable() { return false; }
 	virtual void setEditable(bool editable) {}
 	virtual bool isModified() { return _modified; }
-	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox) { return nullptr; }
+	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel) { return nullptr; }
 	virtual void updateFromWidget(Graphics::MacWidget *widget) {}
-	virtual Common::Rect getWidgetRect() { return _initialRect; }
+	virtual Common::Rect getInitialRect() { return _initialRect; }
 
-	virtual void setColors(int *fgcolor, int *bgcolor) { return; }
-	virtual uint getForeColor() { return 0; }
-	virtual uint getBackColor() { return 0; }
+	virtual void setColors(uint32 *fgcolor, uint32 *bgcolor) { return; }
+	virtual uint32 getForeColor() { return 0; }
+	virtual uint32 getBackColor() { return 0; }
+
+	bool hasProp(const Common::String &propName) override;
+	Datum getProp(const Common::String &propName) override;
+	bool setProp(const Common::String &propName, const Datum &value) override;
+	bool hasField(int field) override;
+	Datum getField(int field) override;
+	bool setField(int field, const Datum &value) override;
 
 	CastType _type;
 	Common::Rect _initialRect;
@@ -87,7 +97,7 @@ public:
 	uint32 _size;
 	uint8 _flags1;
 
-private:
+protected:
 	Cast *_cast;
 	uint16 _castId;
 };
@@ -96,10 +106,14 @@ class BitmapCastMember : public CastMember {
 public:
 	BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint32 castTag, uint16 version, uint8 flags1 = 0);
 	~BitmapCastMember();
-	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox) override;
+	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel) override;
 
 	void createMatte();
 	Graphics::Surface *getMatte();
+
+	bool hasField(int field) override;
+	Datum getField(int field) override;
+	bool setField(int field, const Datum &value) override;
 
 	Image::ImageDecoder *_img;
 	Graphics::FloodFill *_matte;
@@ -122,6 +136,26 @@ public:
 	DigitalVideoCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 	~DigitalVideoCastMember();
 
+	virtual bool isModified() override;
+	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel) override;
+
+	bool loadVideo(Common::String path);
+	void startVideo(Channel *channel);
+
+	uint getMovieCurrentTime();
+	uint getMovieTotalTime();
+	void seekMovie(int stamp);
+	void setStopTime(int stamp);
+	void setMovieRate(double rate);
+	void setFrameRate(int rate);
+
+	bool hasField(int field) override;
+	Datum getField(int field) override;
+	bool setField(int field, const Datum &value) override;
+
+	Common::String _filename;
+
+	uint32 _vflags;
 	bool _looping;
 	bool _pausedAtStart;
 	bool _enableVideo;
@@ -131,11 +165,17 @@ public:
 	bool _preload;
 	bool _showControls;
 	bool _directToStage;
+	bool _avimovie, _qtmovie;
 	FrameRateType _frameRateType;
 
 	uint16 _frameRate;
+	bool _getFirstFrame;
+	int _duration;
 
 	Video::VideoDecoder *_video;
+	const Graphics::Surface *_lastFrame;
+
+	Channel *_channel;
 };
 
 class SoundCastMember : public CastMember {
@@ -149,8 +189,8 @@ public:
 class ShapeCastMember : public CastMember {
 public:
 	ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
-	virtual uint getForeColor() override { return _fgCol; }
-	virtual uint getBackColor() override { return _bgCol; }
+	virtual uint32 getForeColor() override { return _fgCol; }
+	virtual uint32 getBackColor() override { return _bgCol; }
 
 	ShapeType _shapeType;
 	uint16 _pattern;
@@ -160,27 +200,29 @@ public:
 	InkType _ink;
 
 private:
-	byte _fgCol;
-	byte _bgCol;
+	uint32 _fgCol;
+	uint32 _bgCol;
 };
 
 class TextCastMember : public CastMember {
 public:
 	TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version, uint8 flags1 = 0, bool asButton = false);
-	virtual void setColors(int *fgcolor, int *bgcolor) override;
+	virtual void setColors(uint32 *fgcolor, uint32 *bgcolor) override;
 
 	void setText(const char *text);
-	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox) override;
-	virtual Common::Rect getWidgetRect() override;
+	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel) override;
 
-	virtual bool isModified() override;
 	virtual bool isEditable() override;
 	virtual void setEditable(bool editable) override;
 	virtual void updateFromWidget(Graphics::MacWidget *widget) override;
 	Graphics::TextAlign getAlignment();
 
-	virtual uint getBackColor() override { return _bgcolor; }
-	virtual uint getForeColor() override { return _fgcolor; }
+	virtual uint32 getBackColor() override { return _bgcolor; }
+	virtual uint32 getForeColor() override { return _fgcolor; }
+
+	bool hasField(int field) override;
+	Datum getField(int field) override;
+	bool setField(int field, const Datum &value) override;
 
 	SizeType _borderSize;
 	SizeType _gutterSize;
@@ -209,8 +251,8 @@ public:
 	Common::String getText();
 
 private:
-	uint _bgcolor;
-	uint _fgcolor;
+	uint32 _bgcolor;
+	uint32 _fgcolor;
 };
 
 class ScriptCastMember : public CastMember {

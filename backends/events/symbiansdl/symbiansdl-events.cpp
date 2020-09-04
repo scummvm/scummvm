@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#ifdef __SYMBIAN32__
+#if defined(__SYMBIAN32__) && defined(GUI_ENABLE_KEYSDIALOG)
 
 #include "backends/events/symbiansdl/symbiansdl-events.h"
 #include "backends/platform/symbian/src/SymbianActions.h"

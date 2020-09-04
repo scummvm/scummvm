@@ -229,6 +229,8 @@ public:
 	const Common::String getTargetName() { return _targetName; }
 	const ADGameDescription *_gameDescription;
 
+	bool isLoogieDemo() const;
+
 private:
 	Graphics::PixelFormat _pixelFormat;
 

@@ -445,6 +445,8 @@ bool Script::hotspot(Common::Rect rect, uint16 address, uint8 cursor) {
 }
 
 void Script::loadgame(uint slot) {
+	_vm->_musicPlayer->stop();
+
 	Common::InSaveFile *file = SaveLoad::openForLoading(ConfMan.getActiveDomainName(), slot);
 
 	// Loading the variables. It is endian safe because they're byte variables
@@ -766,8 +768,6 @@ void Script::o_inputloopstart() {	//0x0B
 	// Save the current pressed character for the whole loop
 	_kbdChar = _eventKbdChar;
 	_eventKbdChar = 0;
-
-	_vm->_musicPlayer->startBackground();
 }
 
 void Script::o_keyboardaction() {
@@ -1494,7 +1494,7 @@ void Script::o_checkvalidsaves() {
 	while (it != list.end()) {
 		int8 slot = it->getSaveSlot();
 		if (SaveLoad::isSlotValid(slot)) {
-			debugC(2, kDebugScript, "  Found valid savegame: %s", it->getDescription().c_str());
+			debugC(2, kDebugScript, "  Found valid savegame: %s", it->getDescription().encode().c_str());
 
 			// Mark this slot as used
 			setVariable(slot, 1);

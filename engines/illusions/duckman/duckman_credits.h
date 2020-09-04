@@ -29,7 +29,7 @@ namespace Illusions {
 
 class IllusionsEngine_Duckman;
 
-struct CreditsItem {
+struct DCreditsItem {
 	uint32 objectId;
 	bool active;
 	int16 scrollPosIndex;
@@ -42,13 +42,13 @@ public:
 	~DuckmanCredits();
 	void start();
 public:
-	typedef Common::Array<CreditsItem> CreditsItems;
+	typedef Common::Array<DCreditsItem> DCreditsItems;
 	IllusionsEngine_Duckman *_vm;
 	uint32 _lastUpdateTicks;
 	uint32 _nextUpdateTicks;
 	int _lastItemIndex;
 	bool _endReached;
-	CreditsItems _creditsItems;
+	DCreditsItems _creditsItems;
 	char *_currText;
 	int update(uint flags);
 	char *readNextLine();

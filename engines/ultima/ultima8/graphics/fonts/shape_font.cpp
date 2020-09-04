@@ -116,7 +116,7 @@ int ShapeFont::charToFrameNum(char c) const {
 		else
 			return c - 2;
 	} else {
-		return c;
+		return static_cast<unsigned char>(c);
 	}
 }
 

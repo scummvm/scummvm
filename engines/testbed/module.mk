@@ -13,7 +13,8 @@ MODULE_OBJS := \
 	sound.o \
 	encoding.o \
 	testbed.o \
-	testsuite.o
+	testsuite.o \
+	video.o
 
 ifdef USE_CLOUD
 ifdef USE_LIBCURL

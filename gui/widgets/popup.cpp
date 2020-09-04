@@ -199,7 +199,7 @@ void PopUpDialog::handleMouseLeft(int button) {
 	_lastRead = -1;
 }
 
-void PopUpDialog::read(Common::String str) {
+void PopUpDialog::read(const Common::U32String &str) {
 #ifdef USE_TTS
 	if (ConfMan.hasKey("tts_enabled", "scummvm") &&
 			ConfMan.getBool("tts_enabled", "scummvm")) {
@@ -288,7 +288,7 @@ void PopUpDialog::setWidth(uint16 width) {
 	_w = width;
 }
 
-void PopUpDialog::appendEntry(const Common::String &entry) {
+void PopUpDialog::appendEntry(const Common::U32String &entry) {
 	_entries.push_back(entry);
 }
 
@@ -390,7 +390,7 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 		w = _w - 2;
 	}
 
-	Common::String &name(_entries[entry]);
+	Common::U32String &name(_entries[entry]);
 
 	Common::Rect r1(x, y, x + w, y + _lineHeight);
 	Common::Rect r2(x + 1, y + 2, x + w, y + 2 + _lineHeight);
@@ -428,7 +428,7 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 // PopUpWidget
 //
 
-PopUpWidget::PopUpWidget(GuiObject *boss, const String &name, const char *tooltip)
+PopUpWidget::PopUpWidget(GuiObject *boss, const String &name, const U32String &tooltip)
 	: Widget(boss, name, tooltip), CommandSender(boss) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_IGNORE_DRAG);
 	_type = kPopUpWidget;
@@ -437,7 +437,7 @@ PopUpWidget::PopUpWidget(GuiObject *boss, const String &name, const char *toolti
 	_leftPadding = _rightPadding = 0;
 }
 
-PopUpWidget::PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip)
+PopUpWidget::PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const U32String &tooltip)
 	: Widget(boss, x, y, w, h, tooltip), CommandSender(boss) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_IGNORE_DRAG);
 	_type = kPopUpWidget;
@@ -496,11 +496,15 @@ void PopUpWidget::reflowLayout() {
 	Widget::reflowLayout();
 }
 
-void PopUpWidget::appendEntry(const String &entry, uint32 tag) {
+void PopUpWidget::appendEntry(const U32String &entry, uint32 tag) {
 	Entry e;
 	e.name = entry;
 	e.tag = tag;
 	_entries.push_back(e);
+}
+
+void PopUpWidget::appendEntry(const String &entry, uint32 tag) {
+	appendEntry(U32String(entry), tag);
 }
 
 void PopUpWidget::clearEntries() {
@@ -529,7 +533,7 @@ void PopUpWidget::setSelectedTag(uint32 tag) {
 }
 
 void PopUpWidget::drawWidget() {
-	Common::String sel;
+	Common::U32String sel;
 	if (_selectedItem >= 0)
 		sel = _entries[_selectedItem].name;
 

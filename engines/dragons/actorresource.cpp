@@ -41,7 +41,7 @@ ActorResource *ActorResourceLoader::load(uint32 resourceId) {
 	byte *scrData = _bigFileArchive->load(filename, size);
 	Common::SeekableReadStream *readStream = new Common::MemoryReadStream(scrData, size, DisposeAfterUse::NO);
 
-	debug("Loading '%s'", filename);
+	debug(1, "Loading '%s'", filename);
 	actorResource->load(resourceId, scrData, *readStream);
 	return actorResource;
 }
@@ -71,7 +71,7 @@ bool ActorResource::load(uint32 id, byte *dataStart, Common::SeekableReadStream 
 
 	_framesCount = (paletteOffset - stream.readUint16LE()) / 0xe;
 
-	debug("Frame Count: %d", _framesCount);
+	debug(3, "Frame Count: %d", _framesCount);
 
 	_frames = new ActorFrame[_framesCount];
 	for (int i = 0; i < _framesCount; i++) {

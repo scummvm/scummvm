@@ -29,7 +29,8 @@
 namespace Dragons {
 
 enum {
-	kGameIdDragons = 1
+	kGameIdDragons = 1,
+	kGameIdDragonsBadExtraction = 2
 };
 
 struct DragonsGameDescription {
@@ -94,12 +95,41 @@ enum UnkFlags {
 	ENGINE_UNK1_FLAG_80 = 0x80
 };
 
+enum MouseWheel {
+	MOUSE_WHEEL_NO_EVENT,
+	MOUSE_WHEEL_DOWN,
+	MOUSE_WHEEL_UP
+};
+
 struct PaletteCyclingInstruction {
 	int16 paletteType;
 	int16 startOffset;
 	int16 endOffset;
 	int16 updateInterval;
 	int16 updateCounter;
+};
+
+enum DragonsAction {
+	kDragonsActionNone,
+	kDragonsActionUp,
+	kDragonsActionDown,
+	kDragonsActionLeft,
+	kDragonsActionRight,
+	kDragonsActionSquare,
+	kDragonsActionTriangle,
+	kDragonsActionCircle,
+	kDragonsActionCross,
+	kDragonsActionL1,
+	kDragonsActionR1,
+	kDragonsActionSelect,
+	kDragonsActionChangeCommand,
+	kDragonsActionInventory,
+	kDragonsActionEnter,
+	kDragonsActionMenu,
+	kDragonsActionPause,
+	kDragonsActionDebug,
+	kDragonsActionDebugGfx,
+	kDragonsActionQuit
 };
 
 class BigfileArchive;
@@ -198,7 +228,9 @@ private:
 	bool _leftMouseButtonDown;
 	bool _rightMouseButtonUp;
 	bool _iKeyUp;
+	bool _downKeyDown;
 	bool _downKeyUp;
+	bool _upKeyDown;
 	bool _upKeyUp;
 	bool _enterKeyUp;
 
@@ -212,6 +244,7 @@ private:
 	bool _dKeyDown;
 	bool _oKeyDown;
 	bool _pKeyDown;
+	MouseWheel _mouseWheel;
 
 	bool _debugMode;
 	bool _isGamePaused;
@@ -236,6 +269,7 @@ public:
 	bool canLoadGameStateCurrently() override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
 	bool canSaveGameStateCurrently() override;
+	void syncSoundSettings() override;
 
 	void updateActorSequences();
 	void setFlags(uint32 flags);
@@ -302,6 +336,8 @@ public:
 	bool checkForActionButtonRelease();
 	bool checkForDownKeyRelease();
 	bool checkForUpKeyRelease();
+	bool checkForWheelUp();
+	bool checkForWheelDown();
 
 	bool isDebugMode();
 
@@ -313,12 +349,19 @@ public:
 
 	void loadingScreenUpdate();
 
+	void clearAllText();
+
 	//TODO this logic should probably go in its own class.
+	uint16 getBigFileTotalRecords();
 	uint32 getBigFileInfoTblFromDragonEXE();
 	uint32 getFontOffsetFromDragonEXE();
 	uint32 getSpeechTblOffsetFromDragonEXE();
 	uint32 getCutscenePaletteOffsetFromDragonEXE();
 	uint32 defaultResponseOffsetFromDragonEXE();
+	uint16 getCursorHandPointerSequenceID();
+	uint32 getMiniGame3StartingDialog();
+	uint32 getMiniGame3PickAHatDialog();
+	uint32 getMiniGame3DataOffset();
 private:
 	bool savegame(const char *filename, const char *description);
 	bool loadgame(const char *filename);

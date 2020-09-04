@@ -316,4 +316,4 @@ void Lingo::codeFactory(Common::String &name) {
 	}
 }
 
-}
+} // End of namespace Director

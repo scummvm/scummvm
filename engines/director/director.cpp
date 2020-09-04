@@ -23,7 +23,6 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/error.h"
-#include "common/file.h"
 
 #include "graphics/macgui/macwindowmanager.h"
 
@@ -33,7 +32,7 @@
 #include "director/movie.h"
 #include "director/score.h"
 #include "director/sound.h"
-#include "director/stage.h"
+#include "director/window.h"
 #include "director/lingo/lingo.h"
 
 namespace Director {
@@ -46,22 +45,24 @@ uint32 wmMode = 0;
 DirectorEngine *g_director;
 
 DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
-	DebugMan.addDebugChannel(kDebugLingoExec, "lingoexec", "Lingo Execution");
+	DebugMan.addDebugChannel(kDebug32bpp, "32bpp", "Work in 32bpp mode");
 	DebugMan.addDebugChannel(kDebugCompile, "compile", "Lingo Compilation");
-	DebugMan.addDebugChannel(kDebugParse, "parse", "Lingo code parsing");
 	DebugMan.addDebugChannel(kDebugCompileOnly, "compileonly", "Skip Lingo code execution");
-	DebugMan.addDebugChannel(kDebugLoading, "loading", "Loading");
-	DebugMan.addDebugChannel(kDebugImages, "images", "Image drawing");
-	DebugMan.addDebugChannel(kDebugText, "text", "Text rendering");
+	DebugMan.addDebugChannel(kDebugDesktop, "desktop", "Show the Classic Mac desktop");
+	DebugMan.addDebugChannel(kDebugEndVideo, "endvideo", "Fake that the end of video is reached setting");
 	DebugMan.addDebugChannel(kDebugEvents, "events", "Event processing");
-	DebugMan.addDebugChannel(kDebugSlow, "slow", "Slow playback");
 	DebugMan.addDebugChannel(kDebugFast, "fast", "Fast (no delay) playback");
-	DebugMan.addDebugChannel(kDebugNoLoop, "noloop", "Do not loop the playback");
-	DebugMan.addDebugChannel(kDebugNoBytecode, "nobytecode", "Do not execute Lscr bytecode");
 	DebugMan.addDebugChannel(kDebugFewFramesOnly, "fewframesonly", "Only run the first 10 frames");
+	DebugMan.addDebugChannel(kDebugImages, "images", "Image drawing");
+	DebugMan.addDebugChannel(kDebugLingoExec, "lingoexec", "Lingo Execution");
+	DebugMan.addDebugChannel(kDebugLoading, "loading", "Loading");
+	DebugMan.addDebugChannel(kDebugNoBytecode, "nobytecode", "Do not execute Lscr bytecode");
+	DebugMan.addDebugChannel(kDebugNoLoop, "noloop", "Do not loop the playback");
+	DebugMan.addDebugChannel(kDebugParse, "parse", "Lingo code parsing");
 	DebugMan.addDebugChannel(kDebugPreprocess, "preprocess", "Lingo preprocessing");
 	DebugMan.addDebugChannel(kDebugScreenshot, "screenshot", "screenshot each frame");
-	DebugMan.addDebugChannel(kDebugDesktop, "desktop", "Show the Classic Mac desktop");
+	DebugMan.addDebugChannel(kDebugSlow, "slow", "Slow playback");
+	DebugMan.addDebugChannel(kDebugText, "text", "Text rendering");
 
 	g_director = this;
 
@@ -80,32 +81,32 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_soundManager = nullptr;
 	_currentPalette = nullptr;
 	_currentPaletteLength = 0;
-	_mainStage = nullptr;
+	_stage = nullptr;
 	_windowList = new Datum;
 	_windowList->type = ARRAY;
 	_windowList->u.farr = new DatumArray;
-	_currentStage = nullptr;
+	_currentWindow = nullptr;
 	_lingo = nullptr;
 	_version = getDescriptionVersion();
 
 	_wm = nullptr;
-	_surface = nullptr;
 
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	_gameDataDir = Common::FSNode(ConfMan.get("path"));
 
 	// Meet Mediaband could have up to 5 levels of directories
-	SearchMan.addDirectory(gameDataDir.getPath(), gameDataDir, 0, 5);
+	SearchMan.addDirectory(_gameDataDir.getPath(), _gameDataDir, 0, 5);
 
-	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "install");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "main");		// Meet Mediaband
-	SearchMan.addSubDirectoryMatching(gameDataDir, "l_zone");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "win_data", 0, 2);	// L-ZONE
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "data");
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "install");
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "main");		// Meet Mediaband
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "l_zone");
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "win_data", 0, 2);	// L-ZONE
 
 	_colorDepth = 8;	// 256-color
 	_machineType = 9; // Macintosh IIci
 	_playbackPaused = false;
 	_skipFrameAdvance = false;
+	_centerStage = true;
 }
 
 DirectorEngine::~DirectorEngine() {
@@ -113,7 +114,6 @@ DirectorEngine::~DirectorEngine() {
 	delete _soundManager;
 	delete _lingo;
 	delete _wm;
-	delete _surface;
 
 	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _openResFiles.begin(); it != _openResFiles.end(); ++it) {
 		delete it->_value;
@@ -122,14 +122,23 @@ DirectorEngine::~DirectorEngine() {
 	clearPalettes();
 }
 
-Archive *DirectorEngine::getMainArchive() const { return _currentStage->getMainArchive(); }
-Movie *DirectorEngine::getCurrentMovie() const { return _currentStage->getCurrentMovie(); }
-Common::String DirectorEngine::getCurrentPath() const { return _currentStage->getCurrentPath(); }
+Archive *DirectorEngine::getMainArchive() const { return _currentWindow->getMainArchive(); }
+Movie *DirectorEngine::getCurrentMovie() const { return _currentWindow->getCurrentMovie(); }
+Common::String DirectorEngine::getCurrentPath() const { return _currentWindow->getCurrentPath(); }
 
 static void buildbotErrorHandler(const char *msg) { }
 
 void DirectorEngine::setCurrentMovie(Movie *movie) {
-	_currentStage = movie->getStage();
+	_currentWindow = movie->getWindow();
+}
+
+void DirectorEngine::setVersion(uint16 version) {
+	if (version == _version)
+		return;
+
+	debug("Switching to Director v%d", version);
+	_version = version;
+	_lingo->reloadBuiltIns();
 }
 
 Common::Error DirectorEngine::run() {
@@ -148,46 +157,48 @@ Common::Error DirectorEngine::run() {
 	_soundManager = nullptr;
 
 	wmMode = debugChannelSet(-1, kDebugDesktop) ? wmModeDesktop : wmModeFullscreen;
+
+	if (debugChannelSet(-1, kDebug32bpp))
+		wmMode |= Graphics::kWMMode32bpp;
+
 	_wm = new Graphics::MacWindowManager(wmMode, &_director3QuickDrawPatterns);
 	_wm->setEngine(this);
 
+	_pixelformat = _wm->_pixelformat;
 
-	_mainStage = new Stage(_wm->getNextId(), false, false, false, _wm, this);
-	*_mainStage->_refCount += 1;
+	_stage = new Window(_wm->getNextId(), false, false, false, _wm, this, true);
+	*_stage->_refCount += 1;
 
-	if (debugChannelSet(-1, kDebugDesktop))
-		_mainStage->setBorderType(3);
-	else
-		_mainStage->disableBorder();
+	if (!debugChannelSet(-1, kDebugDesktop))
+		_stage->disableBorder();
 
-	_surface = new Graphics::ManagedSurface;
-	_wm->setScreen(_surface);
-	_wm->addWindowInitialized(_mainStage);
-	_wm->setActiveWindow(_mainStage->getId());
+	_wm->setScreen(1, 1);
+	_wm->addWindowInitialized(_stage);
+	_wm->setActiveWindow(_stage->getId());
 	setPalette(-1);
 
-	_currentStage = _mainStage;
+	_currentWindow = _stage;
 
 	_lingo = new Lingo(this);
 	_soundManager = new DirectorSound(this);
 
 	if (getGameGID() == GID_TEST) {
-		_currentStage->runTests();
+		_currentWindow->runTests();
 		return Common::kNoError;
 	} else if (getGameGID() == GID_TESTALL) {
-		_currentStage->enqueueAllMovies();
+		_currentWindow->enqueueAllMovies();
 	}
 
 	if (getPlatform() == Common::kPlatformWindows)
 		_machineType = 256; // IBM PC-type machine
 
-	if (getVersion() < 4) {
+	if (getVersion() < 400) {
 		if (getPlatform() == Common::kPlatformWindows) {
 			_sharedCastFile = "SHARDCST.MMM";
 		} else {
 			_sharedCastFile = "Shared Cast";
 		}
-	} else if (getVersion() == 5) {
+	} else if (getVersion() == 500) {
 		if (getPlatform() == Common::kPlatformWindows) {
 			_sharedCastFile = "SHARED.Cxt";
 		}
@@ -195,18 +206,18 @@ Common::Error DirectorEngine::run() {
 		_sharedCastFile = "Shared.dir";
 	}
 
-	Common::Error err = _currentStage->loadInitialMovie();
+	Common::Error err = _currentWindow->loadInitialMovie();
 	if (err.getCode() != Common::kNoError)
 		return err;
 
 	bool loop = true;
 
 	while (loop) {
-		if (_mainStage->getCurrentMovie())
+		if (_stage->getCurrentMovie())
 			processEvents();
 
-		_currentStage = _mainStage;
-		loop = _currentStage->step();
+		_currentWindow = _stage;
+		loop = _currentWindow->step();
 
 		if (loop) {
 			DatumArray *windowList = g_lingo->_windowList.u.farr;
@@ -214,8 +225,8 @@ Common::Error DirectorEngine::run() {
 				if ((*windowList)[i].type != OBJECT || (*windowList)[i].u.obj->getObjType() != kWindowObj)
 					continue;
 
-				_currentStage = static_cast<Stage *>((*windowList)[i].u.obj);
-				_currentStage->step();
+				_currentWindow = static_cast<Window *>((*windowList)[i].u.obj);
+				_currentWindow->step();
 			}
 		}
 

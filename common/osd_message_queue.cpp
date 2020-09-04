@@ -38,7 +38,7 @@ void OSDMessageQueue::registerEventSource() {
 	g_system->getEventManager()->getEventDispatcher()->registerSource(this, false);
 }
 
-void OSDMessageQueue::addMessage(const char *msg) {
+void OSDMessageQueue::addMessage(const Common::U32String &msg) {
 	_mutex.lock();
 	_messages.push(msg);
 	_mutex.unlock();
@@ -50,8 +50,8 @@ bool OSDMessageQueue::pollEvent(Common::Event &event) {
 		uint t = g_system->getMillis();
 		if (t - _lastUpdate >= kMinimumDelay) {
 			_lastUpdate = t;
-			String msg = _messages.pop();
-			g_system->displayMessageOnOSD(msg.c_str());
+			Common::U32String msg = _messages.pop();
+			g_system->displayMessageOnOSD(msg);
 		}
 	}
 	_mutex.unlock();

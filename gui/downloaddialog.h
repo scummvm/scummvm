@@ -25,6 +25,7 @@
 
 #include "gui/dialog.h"
 #include "common/str.h"
+#include "common/ustr.h"
 
 namespace GUI {
 class LauncherDialog;
@@ -59,8 +60,8 @@ class DownloadDialog : public Dialog {
 	Common::String _localDirectory;
 	bool _close;
 
-	Common::String getSizeLabelText();
-	Common::String getSpeedLabelText();
+	Common::U32String getSizeLabelText();
+	Common::U32String getSpeedLabelText();
 
 	void refreshWidgets();
 	bool selectDirectories();

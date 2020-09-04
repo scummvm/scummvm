@@ -136,6 +136,11 @@ public:
 	bool operator!=(const value_type *x) const;
 	bool operator!=(const char *x) const;
 
+	bool operator<(const U32String &x) const;
+	bool operator<=(const U32String &x) const;
+	bool operator>(const U32String &x) const;
+	bool operator>=(const U32String &x) const;
+
 	/**
 	 * Compares whether two U32String are the same based on memory comparison.
 	 * This does *not* do comparison based on canonical equivalence.
@@ -149,6 +154,11 @@ public:
 	bool equals(const String &x) const;
 
 	bool contains(value_type x) const;
+
+	/**
+	 * Checks if a given string is present in the internal string or not.
+	 */
+	bool contains(const U32String &otherString) const;
 
 	inline const value_type *c_str() const { return _str; }
 	inline uint32 size() const             { return _size; }
@@ -167,6 +177,8 @@ public:
 
 	/** Insert character c before position p. */
 	void insertChar(value_type c, uint32 p);
+	void insertString(String s, uint32 p);
+	void insertString(value_type *s, uint32 p);
 
 	/**
 	 * Removes the value at position p from the string.
@@ -230,6 +242,29 @@ public:
 
     /** Python-like method **/
     String encode(CodePage page = kUtf8) const;
+
+	void wordWrap(const uint32 maxLength);
+
+	uint64 asUint64() const;
+
+	void trim();
+
+	/**
+	 * Print formatted data into a U32String object.
+	 */
+	static U32String format(U32String fmt, ...);
+
+	/**
+	 * Print formatted data into a U32String object. It takes in the
+	 * output by reference and works with iterators.
+	 */
+	static int vformat(U32String::const_iterator fmt, const U32String::const_iterator inputItrEnd, U32String &output, va_list args);
+
+	/**
+	 * Helper function for vformat, convert an int to string
+	 * minimal implementation, only for base 10
+	*/
+	static char* itoa(int num, char* str, int base);
 
 private:
 	void makeUnique();

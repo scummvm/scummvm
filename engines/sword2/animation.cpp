@@ -471,7 +471,7 @@ MoviePlayer *makeMoviePlayer(const char *name, Sword2Engine *vm, OSystem *system
 	// The demo tries to play some cutscenes that aren't there, so make those warnings more discreet.
 	// In addition, some of the later re-releases of the game don't have the "eye" Virgin logo movie.
 	if (!vm->_logic->readVar(DEMO) && strcmp(name, "eye") != 0) {
-		Common::String buf = Common::String::format(_("Cutscene '%s' not found"), name);
+		Common::U32String buf = Common::U32String::format(_("Cutscene '%s' not found"), name);
 		GUI::MessageDialog dialog(buf, _("OK"));
 		dialog.runModal();
 	} else

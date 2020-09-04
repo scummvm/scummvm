@@ -103,7 +103,7 @@ const char *gameText1[] = {
 	"Das mu\341t du erst nehmen.",              // kStringTakeMessage
 	// 55
 	"Keycard",                               // kStringKeycard
-	"Die Keycard f\224r deine Schr\204nke.", // kStringKeycardDescription
+	"Die Keycard f\201r deine Schr\204nke.", // kStringKeycardDescription
 	"Taschenmesser",                         // kStringKnife
 	"Es ist nicht mehr das sch\204rfste.",   // kStringKnifeDescription
 	"Armbanduhr",                            // kStringWatch

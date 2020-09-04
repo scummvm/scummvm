@@ -702,7 +702,7 @@ void MenuActionSaveGame::execute() {
 
 	dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 	slot = dialog->runModalWithCurrentTarget();
-	desc = dialog->getResultString().c_str();
+	desc = dialog->getResultString();
 
 	delete dialog;
 

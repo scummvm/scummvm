@@ -120,6 +120,24 @@ static const MADSGameDescription gameDescriptions[] = {
 		0
 	},
 
+	{
+		// Dragonsphere DOS English demo
+		{
+			"dragonsphere",
+			"Demo",
+			{
+				{"section1.hag", 0, "9587b06eb4f9ee7ed5b19af4643743b0", 328083},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE | ADGF_DEMO,
+			GUIO1(GAMEOPTION_EASY_MOUSE)
+		},
+		GType_Dragonsphere,
+		0
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 

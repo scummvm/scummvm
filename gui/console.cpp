@@ -528,8 +528,8 @@ void ConsoleDialog::specialKeys(Common::KeyCode keycode) {
 		break;
 	case Common::KEYCODE_v:
 		if (g_system->hasTextInClipboard()) {
-			Common::String text = g_system->getTextFromClipboard();
-			insertIntoPrompt(text.c_str());
+			Common::U32String text = g_system->getTextFromClipboard();
+			insertIntoPrompt(text.encode().c_str());
 			scrollToCurrent();
 			drawLine(pos2line(_currentPos));
 		}

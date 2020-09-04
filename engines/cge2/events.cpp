@@ -28,7 +28,6 @@
 #include "gui/saveload.h"
 #include "common/config-manager.h"
 #include "common/events.h"
-#include "common/translation.h"
 #include "cge2/events.h"
 #include "cge2/text.h"
 #include "cge2/cge2_main.h"

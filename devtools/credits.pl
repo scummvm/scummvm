@@ -58,7 +58,7 @@ if ($mode eq "") {
 $Text::Wrap::unexpand = 0;
 if ($mode eq "TEXT") {
 	$Text::Wrap::columns = 78;
-	$max_name_width = 29; # The maximal width of a name.
+	$max_name_width = 30; # The maximal width of a name.
 } elsif ($mode eq "CPP") {
 	$Text::Wrap::columns = 48;	# Approx.
 }
@@ -68,6 +68,7 @@ sub html_entities_to_ascii {
 	my $text = shift;
 
 	# For now we hardcode these mappings
+	# &Aacute;  -> A
 	# &aacute;  -> a
 	# &eacute;  -> e
 	# &iacute;  -> i
@@ -88,6 +89,7 @@ sub html_entities_to_ascii {
 	# &Scaron;  -> S
 	# &Lcaron;  -> L
 	# &ntilde;  -> n
+	$text =~ s/&Aacute;/A/g;
 	$text =~ s/&aacute;/a/g;
 	$text =~ s/&eacute;/e/g;
 	$text =~ s/&iacute;/i/g;
@@ -120,6 +122,7 @@ sub html_entities_to_ascii {
 sub html_entities_to_iso8859_1 {
 	my $text = shift;
 
+	$text =~ s/&Aacute;/\xC1/g;
 	$text =~ s/&aacute;/\xE1/g;
 	$text =~ s/&eacute;/\xE9/g;
 	$text =~ s/&iacute;/\xED/g;
@@ -151,6 +154,7 @@ sub html_entities_to_cpp {
 	my $text = shift;
 
 	# The numerical values are octal!
+	$text =~ s/&Aacute;/\\301/g;
 	$text =~ s/&aacute;/\\341/g;
 	$text =~ s/&eacute;/\\351/g;
 	$text =~ s/&iacute;/\\355/g;
@@ -182,6 +186,7 @@ sub html_entities_to_cpp {
 sub html_entities_to_rtf {
 	my $text = shift;
 
+	$text =~ s/&Aacute;/\\'c1/g;
 	$text =~ s/&aacute;/\\'87/g;
 	$text =~ s/&eacute;/\\'8e/g;
 	$text =~ s/&iacute;/\\'92/g;
@@ -324,19 +329,11 @@ sub begin_section {
 		if ($section_level eq 0) {
 			# TODO: Would be nice to have a 'fat' or 'large' mode for
 			# headlines...
-			my $ascii_title = html_entities_to_ascii($title);
 			$title = html_entities_to_cpp($title);
-			if ($ascii_title ne $title) {
-				print '"A1""'.$ascii_title.'",' . "\n";
-			}
 			print '"C1""'.$title.'",' . "\n";
 			print '"",' . "\n";
 		} else {
-			my $ascii_title = html_entities_to_ascii($title);
 			$title = html_entities_to_cpp($title);
-			if ($ascii_title ne $title) {
-				print '"A1""'.$ascii_title.'",' . "\n";
-			}
 			print '"C1""'.$title.'",' . "\n";
 		}
 	} elsif ($mode eq "XML-DOC") {
@@ -499,21 +496,12 @@ sub add_person {
 		}
 	} elsif ($mode eq "CPP") {
 		$name = $nick if $name eq "";
-		my $ascii_name = html_entities_to_ascii($name);
 		$name = html_entities_to_cpp($name);
-
-		if ($ascii_name ne $name) {
-			print '"A0""'.$ascii_name.'",' . "\n";
-		}
 		print '"C0""'.$name.'",' . "\n";
 
 		# Print desc wrapped
 		if (length $desc > 0) {
-			my $ascii_desc = html_entities_to_ascii($desc);
 			$desc = html_entities_to_cpp($desc);
-			if ($ascii_desc ne $desc) {
-				print '"A2""'.$ascii_desc.'",' . "\n";
-			}
 			print '"C2""'.$desc.'",' . "\n";
 		}
 	} elsif ($mode eq "XML-DOC") {
@@ -745,6 +733,12 @@ begin_credits("Credits");
 				add_person("Robert &Scaron;palek", "spalek", "");
 			end_section();
 
+			begin_section("Dragons");
+				add_person("Eric Fry", "yuv422", "");
+				add_person("Benjamin Haisch", "john_doe", "Actor pathfinding");
+				add_person("&Aacute;ngel Eduardo Garc&iacute;a Hern&aacute;ndez", "arcnor", "Help with reverse engineering");
+			end_section();
+
 			begin_section("Drascula");
 				add_person("Filippos Karapetis", "[md5]", "");
 				add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
@@ -781,6 +775,10 @@ begin_credits("Credits");
 				add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
 				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
 				add_person("Sven Hesse", "DrMcCoy", "");
+				add_person("Eugene Sandulenko", "sev", "");
+			end_section();
+
+			begin_section("Griffon");
 				add_person("Eugene Sandulenko", "sev", "");
 			end_section();
 
@@ -1266,7 +1264,7 @@ begin_credits("Credits");
 		begin_section("Packages", "packages");
 			begin_section("AmigaOS 4");
 				add_person("Hans-J&ouml;rg Frieden", "", "(retired)");
-				add_person("Hubert Maier", "Raziel_AOne", "");
+				add_person("Hubert Maier", "raziel-", "");
 				add_person("Juha Niemim&auml;ki", "", "(retired)");
 			end_section();
 
@@ -1303,6 +1301,7 @@ begin_credits("Credits");
 			end_section();
 
 			begin_section("MorphOS");
+				add_person("", "BeWorld", "");
 				add_person("Fabien Coeurjoly", "fab1", "");
 				add_person("R&uuml;diger Hanke", "", "(retired)");
 			end_section();
@@ -1355,15 +1354,18 @@ begin_credits("Credits");
 				end_section();
 				begin_section("Danish");
 					add_person("Steffen Nyeland", "", "");
+					add_person("", "scootergrisen", "");
 				end_section();
 				begin_section("Dutch");
 					add_person("Ben Castricum", "", "");
 				end_section();
 				begin_section("Finnish");
 					add_person("Toni Saarela", "catnose", "");
+					add_person("Timo Mikkolainen", "timpii", "");
 				end_section();
 				begin_section("French");
 					add_person("Thierry Crozat", "criezy", "");
+					add_person("", "Purple T", "");
 				end_section();
 				begin_section("Galician");
 					add_person("Santiago G. Sanz", "sgsanz", "");
@@ -1372,12 +1374,17 @@ begin_credits("Credits");
 					add_person("Simon Sawatzki", "SimSaw", "");
 					add_person("Lothar Serra Mari", "lotharsm", "");
 				end_section();
+				begin_section("Greek");
+					add_person("Thanasis Antoniou", "Praetorian", "");
+				end_section();
 				begin_section("Hungarian");
 					add_person("Alex Bevilacqua", "", "");
 					add_person("George Kormendi", "GoodOldGeorg", "");
 				end_section();
 				begin_section("Italian");
 					add_person("Matteo Angelino", "Maff", "");
+					add_person("Paolo Bossi", "", "");
+					add_person("Walter Agazzi", "tag2015", "");
 				end_section();
 				begin_section("Norwegian (Bokm&aring;l)");
 					add_person("Einar Johan S&oslash;m&aring;en", "somaen", "");
@@ -1390,6 +1397,10 @@ begin_credits("Credits");
 				end_section();
 				begin_section("Brazilian Portuguese");
 					add_person("ScummBR Team", "", "");
+					add_person("Marcel Souza Lemes", "marcosoutsider", "");
+				end_section();
+				begin_section("Portuguese");
+					add_person("Daniel", "SupSuper", "");
 				end_section();
 				begin_section("Russian");
 					add_person("Eugene Sandulenko", "sev", "");
@@ -1397,9 +1408,12 @@ begin_credits("Credits");
 				begin_section("Spanish");
 					add_person("Tom&aacute;s Maidagan", "", "");
 					add_person("Jordi Vilalta Prat", "jvprat", "");
+					add_person("", "IlDucci", "");
+					add_person("Rodrigo Vegas S&aacute;nchez-Ferrero", "", "");
 				end_section();
 				begin_section("Swedish");
 					add_person("Hampus Flink", "", "");
+					add_person("Adrian Fr&uuml;hwirth", "bonki", "");
 				end_section();
 				begin_section("Ukrainian");
 					add_person("Lubomyr Lisen", "", "");

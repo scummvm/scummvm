@@ -42,11 +42,11 @@ enum TranslationIDs {
 };
 
 struct TLanguage {
-	const char *name;
+	U32String name;
 	int id;
 
-	TLanguage() : name(nullptr), id(0) {}
-	TLanguage(const char *n, int i) : name(n), id(i) {}
+	TLanguage() : id(0) {}
+	TLanguage(const U32String &n, int i) : name(n), id(i) {}
 };
 
 bool operator<(const TLanguage &l, const TLanguage &r);
@@ -56,7 +56,7 @@ typedef Array<TLanguage> TLangArray;
 struct PoMessageEntry {
 	int msgid;
 	String msgctxt;
-	String msgstr;
+	U32String msgstr;
 };
 
 /**
@@ -110,38 +110,38 @@ public:
 	/**
 	 * Returns the translation into the current language of the parameter
 	 * message. In case the message isn't found in the translation catalog,
-	 * it returns the original untranslated message.
+	 * it returns the original untranslated message, as a U32String.
 	 */
-	const char *getTranslation(const char *message) const;
+	U32String getTranslation(const char *message) const;
 
 	/**
 	 * Returns the translation into the current language of the parameter
 	 * message. In case the message isn't found in the translation catalog,
-	 * it returns the original untranslated message.
+	 * it returns the original untranslated message, as a U32String.
 	 */
-	String getTranslation(const String &message) const;
+	U32String getTranslation(const String &message) const;
 
 	/**
 	 * Returns the translation into the current language of the parameter
 	 * message. In case the message isn't found in the translation catalog,
-	 * it returns the original untranslated message.
+	 * it returns the original untranslated message, as a U32String.
 	 *
 	 * If a translation is found for the given context it will return that
 	 * translation, otherwise it will look for a translation for the same
 	 * massage without a context or with a different context.
 	 */
-	const char *getTranslation(const char *message, const char *context) const;
+	U32String getTranslation(const char *message, const char *context) const;
 
 	/**
 	 * Returns the translation into the current language of the parameter
 	 * message. In case the message isn't found in the translation catalog,
-	 * it returns the original untranslated message.
+	 * it returns the original untranslated message, as a U32String.
 	 *
 	 * If a translation is found for the given context it will return that
 	 * translation, otherwise it will look for a translation for the same
 	 * massage without a context or with a different context.
 	 */
-	String getTranslation(const String &message, const String &context) const;
+	U32String getTranslation(const String &message, const String &context) const;
 
 	/**
 	 * Returns a list of supported languages.
@@ -156,21 +156,6 @@ public:
 	String getCurrentCharset() const;
 
 	/**
-	 * Returns a pointer to the current charset mapping. This mapping is a
-	 * codepage encoding -> unicode mapping and always 256 entries long.
-	 *
-	 * The MSB of the individual mapped (i.e. unicode) character states
-	 * whether the character is required for this charset. If it is set, the
-	 * character needs to be present in order to have the text displayed.
-	 * This is used in the font loading code to detect whether the font is
-	 * able of supporting this language.
-	 *
-	 * The return value might be 0 in case it's a default ASCII/ISO-8859-1
-	 * map.
-	 */
-	const uint32 *getCharsetMapping() const { return _charmap; }
-
-	/**
 	 * Returns currently selected translation language
 	 */
 	String getCurrentLanguage() const;
@@ -181,6 +166,7 @@ public:
 	 * For RTL (Right To Left) languages, returns visual representation of a logical single-line input
 	 */
 	String convertBiDiString(const String &input);
+	U32String convertBiDiString(const U32String &input);
 
 private:
 	/**
@@ -223,16 +209,12 @@ private:
 	bool checkHeader(File &in);
 
 	StringArray _langs;
-	StringArray _langNames;
-	StringArray _charmaps;
+	U32StringArray _langNames;
 
 	StringArray _messageIds;
 	Array<PoMessageEntry> _currentTranslationMessages;
 	String _currentCharset;
 	int _currentLang;
-
-	uint32 _charmapStart;
-	uint32 *_charmap;
 };
 
 } // End of namespace Common
@@ -244,8 +226,8 @@ private:
 
 #else // !USE_TRANSLATION
 
-#define _(str) str
-#define _c(str, context) str
+#define _(str) Common::U32String(str)
+#define _c(str, context) Common::U32String(str)
 
 #endif // USE_TRANSLATION
 

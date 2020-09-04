@@ -79,19 +79,11 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 	std::map<std::string, std::list<std::string> >::iterator warningsIterator = _projectWarnings.find(name);
 
 	if (setup.devTools || setup.tests || name == setup.projectName) {
-		std::string libraries;
-
-		for (StringList::const_iterator i = setup.libraries.begin(); i != setup.libraries.end(); ++i)
-			libraries += ' ' + *i + ".lib";
-
-		// For 'x64' we must disable NASM support. Usually we would need to disable the "nasm" feature for that and
-		// re-create the library list, BUT since NASM doesn't link any additional libraries, we can just use the
-		// libraries list created for IA-32. If that changes in the future, we need to adjust this part!
 		for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
-			outputConfiguration(project, setup, libraries, "Debug", *arch);
-			outputConfiguration(project, setup, libraries, "Analysis", *arch);
-			outputConfiguration(project, setup, libraries, "LLVM", *arch);
-			outputConfiguration(project, setup, libraries, "Release", *arch);
+			outputConfiguration(project, setup, false, "Debug", *arch);
+			outputConfiguration(project, setup, false, "Analysis", *arch);
+			outputConfiguration(project, setup, false, "LLVM", *arch);
+			outputConfiguration(project, setup, true, "Release", *arch);
 		}
 
 	} else {
@@ -140,7 +132,9 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 	        << "</VisualStudioProject>\n";
 }
 
-void VisualStudioProvider::outputConfiguration(std::ostream &project, const BuildSetup &setup, const std::string &libraries, const std::string &config, const MSVC_Architecture arch) {
+void VisualStudioProvider::outputConfiguration(std::ostream &project, const BuildSetup &setup, bool isRelease, const std::string &config, const MSVC_Architecture arch) {
+	std::string libraries = outputLibraryDependencies(setup, isRelease);
+
 	project << "\t\t<Configuration Name=\"" << config << "|" << getMSVCConfigName(arch) << "\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\" << setup.projectDescription << "_" << config << getMSVCArchName(arch) << ".vsprops\">\n"
 	        << "\t\t\t<Tool\tName=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" DebugInformationFormat=\"3\" />\n"
 	        << "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/" << setup.projectName << ".exe\"\n"

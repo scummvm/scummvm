@@ -94,3 +94,7 @@ Method mAtFrame2 frame, subFrame
 macro KillIt2
 global KillLoc
 set the locH of sprite 3 to KillLoc
+
+on aim2 test
+    put "fallback worked!"
+end

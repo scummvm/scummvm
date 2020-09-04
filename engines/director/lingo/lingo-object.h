@@ -56,6 +56,7 @@ public:
 	virtual bool hasProp(const Common::String &propName) = 0;
 	virtual Datum getProp(const Common::String &propName) = 0;
 	virtual bool setProp(const Common::String &propName, const Datum &value) = 0;
+	virtual bool hasField(int field) = 0;
 	virtual Datum getField(int field) = 0;
 	virtual bool setField(int field, const Datum &value) = 0;
 };
@@ -101,28 +102,33 @@ public:
 		}
 	}
 
+	static void cleanupMethods() {
+		delete _methods;
+		_methods = nullptr;
+	}
+
 	virtual ~Object() {
 		delete _refCount;
 	};
 
-	virtual Common::String getName() const { return _name; };
-	virtual ObjectType getObjType() const { return _objType; };
-	virtual bool isDisposed() const { return _disposed; };
-	virtual int *getRefCount() const { return _refCount; };
-	virtual int getInheritanceLevel() const { return _inheritanceLevel; };
+	Common::String getName() const override { return _name; };
+	ObjectType getObjType() const override { return _objType; };
+	bool isDisposed() const override { return _disposed; };
+	int *getRefCount() const override { return _refCount; };
+	int getInheritanceLevel() const override { return _inheritanceLevel; };
 
-	virtual void setName(const Common::String &name) { _name = name; };
-	virtual void dispose() { _disposed = true; };
+	void setName(const Common::String &name) override { _name = name; };
+	void dispose() override { _disposed = true; };
 
-	virtual Common::String asString() {
+	Common::String asString() override {
 		return Common::String::format("object: #%s %d %p", _name.c_str(), _inheritanceLevel, (void *)this);
 	};
 
-	virtual AbstractObject *clone() {
+	AbstractObject *clone() override {
 		return new Derived(static_cast<Derived const &>(*this));
 	};
 
-	virtual Symbol getMethod(const Common::String &methodName) {
+	Symbol getMethod(const Common::String &methodName) override {
 		if (_disposed) {
 			error("Method '%s' called on disposed object <%s>", methodName.c_str(), asString().c_str());
 		}
@@ -150,19 +156,22 @@ public:
 		return sym;
 	};
 
-	virtual bool hasProp(const Common::String &propName) {
+	bool hasProp(const Common::String &propName) override {
 		return false;
 	};
-	virtual Datum getProp(const Common::String &propName) {
+	Datum getProp(const Common::String &propName) override {
 		return Datum();
 	};
-	virtual bool setProp(const Common::String &propName, const Datum &value) {
+	bool setProp(const Common::String &propName, const Datum &value) override {
 		return false;
 	};
-	virtual Datum getField(int field) {
+	bool hasField(int field) override {
+		return false;
+	};
+	Datum getField(int field) override {
 		return Datum();
 	};
-	virtual bool setField(int field, const Datum &value) {
+	bool setField(int field, const Datum &value) override {
 		return false;
 	};
 
@@ -181,7 +190,7 @@ class ScriptContext : public Object<ScriptContext> {
 public:
 	LingoArchive *_archive;
 	ScriptType _scriptType;
-	uint16 _id;
+	int _id;
 	Common::Array<Common::String> _functionNames; // used by cb_localcall
 	SymbolHash _functionHandlers;
 	Common::HashMap<uint32, Symbol> _eventHandlers;
@@ -190,41 +199,42 @@ public:
 	Common::HashMap<uint32, Datum> _objArray;
 
 public:
-	ScriptContext(Common::String name, LingoArchive *archive = nullptr, ScriptType type = kNoneScript, uint16 id = 0);
+	ScriptContext(Common::String name, LingoArchive *archive = nullptr, ScriptType type = kNoneScript, int id = 0);
 	ScriptContext(const ScriptContext &sc);
-	virtual ~ScriptContext();
+	~ScriptContext() override;
 
 	bool isFactory() const { return _objType == kFactoryObj; };
 	void setFactory(bool flag) { _objType = flag ? kFactoryObj : kScriptObj; }
 
-	virtual Common::String asString();
-	virtual Symbol getMethod(const Common::String &methodName);
-	virtual bool hasProp(const Common::String &propName);
-	virtual Datum getProp(const Common::String &propName);
-	virtual bool setProp(const Common::String &propName, const Datum &value);
+	Common::String asString() override;
+	Symbol getMethod(const Common::String &methodName) override;
+	bool hasProp(const Common::String &propName) override;
+	Datum getProp(const Common::String &propName) override;
+	bool setProp(const Common::String &propName, const Datum &value) override;
 
 	Symbol define(Common::String &name, int nargs, ScriptData *code, Common::Array<Common::String> *argNames, Common::Array<Common::String> *varNames);
 };
 
 namespace LM {
-	// predefined methods
-	void m_describe(int nargs);
-	void m_dispose(int nargs);
-	void m_get(int nargs);
-	void m_instanceRespondsTo(int nargs);
-	void m_messageList(int nargs);
-	void m_name(int nargs);
-	void m_new(int nargs);
-	void m_perform(int nargs);
-	void m_put(int nargs);
-	void m_respondsTo(int nargs);
 
-	// window
-	void m_close(int nargs);
-	void m_forget(int nargs);
-	void m_moveToBack(int nargs);
-	void m_moveToFront(int nargs);
-	void m_open(int nargs);
+// predefined methods
+void m_describe(int nargs);
+void m_dispose(int nargs);
+void m_get(int nargs);
+void m_instanceRespondsTo(int nargs);
+void m_messageList(int nargs);
+void m_name(int nargs);
+void m_new(int nargs);
+void m_perform(int nargs);
+void m_put(int nargs);
+void m_respondsTo(int nargs);
+
+// window
+void m_close(int nargs);
+void m_forget(int nargs);
+void m_moveToBack(int nargs);
+void m_moveToFront(int nargs);
+void m_open(int nargs);
 
 } // End of namespace LM
 

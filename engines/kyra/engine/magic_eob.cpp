@@ -395,7 +395,7 @@ void EoBCoreEngine::sparkEffectDefensive(int charIndex) {
 		first = 0;
 		last = 5;
 	}
-	
+
 	if (_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformAmiga)
 		snd_playSoundEffect(104);
 

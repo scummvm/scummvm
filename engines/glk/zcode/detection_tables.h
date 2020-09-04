@@ -634,7 +634,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "tatctae",           "Time: All things come to an end" },
 	{ "tauntingdonut",     "Taunting Donut" },
 	{ "tblw",              "The Blood lust Warrior" },
-	{ "tcomremake",        "The Color of Magic remake" },
+	{ "tcomremake",        "The Colour of Magic remake" },
 	{ "tcoty",             "The Citizen of the Year" },
 	{ "teacherfeature",    "Teacher Feature" },
 	{ "williamtell",       "William Tell" },

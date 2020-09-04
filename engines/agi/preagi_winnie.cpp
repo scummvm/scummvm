@@ -96,7 +96,7 @@ uint32 WinnieEngine::readRoom(int iRoom, uint8 *buffer, WTP_ROOM_HDR &roomHdr) {
 		fileName = Common::String::format(IDS_WTP_ROOM_AMIGA, iRoom);
 	else if (getPlatform() == Common::kPlatformC64)
 		fileName = Common::String::format(IDS_WTP_ROOM_C64, iRoom);
-	else if (getPlatform() == Common::kPlatformApple2GS)
+	else if (getPlatform() == Common::kPlatformApple2)
 		fileName = Common::String::format(IDS_WTP_ROOM_APPLE, iRoom);
 
 	Common::File file;
@@ -129,7 +129,7 @@ uint32 WinnieEngine::readObj(int iObj, uint8 *buffer) {
 		fileName = Common::String::format(IDS_WTP_OBJ_AMIGA, iObj);
 	else if (getPlatform() == Common::kPlatformC64)
 		fileName = Common::String::format(IDS_WTP_OBJ_C64, iObj);
-	else if (getPlatform() == Common::kPlatformApple2GS)
+	else if (getPlatform() == Common::kPlatformApple2)
 		fileName = Common::String::format(IDS_WTP_OBJ_APPLE, iObj);
 
 	Common::File file;
@@ -1366,7 +1366,7 @@ void WinnieEngine::init() {
 		_objOffset = 0;
 	}
 
-	if (getPlatform() == Common::kPlatformC64 || getPlatform() == Common::kPlatformApple2GS)
+	if (getPlatform() == Common::kPlatformC64 || getPlatform() == Common::kPlatformApple2)
 		_picture->setPictureVersion(AGIPIC_C64);
 
 	hotspotNorth = Common::Rect(20, 0, (IDI_WTP_PIC_WIDTH + 10) * 2, 10);
@@ -1380,7 +1380,7 @@ Common::Error WinnieEngine::go() {
 	randomize();
 
 	// The intro is not supported on these platforms yet
-	if (getPlatform() != Common::kPlatformC64 && getPlatform() != Common::kPlatformApple2GS)
+	if (getPlatform() != Common::kPlatformC64 && getPlatform() != Common::kPlatformApple2)
 		intro();
 
 	gameLoop();

@@ -645,7 +645,7 @@ public:
 	 * Set the current output stream
 	 */
 	void setCurrent(Stream *stream) {
-		assert(stream->_writable);
+		assert(!stream || stream->_writable);
 		_currentStream = stream;
 	}
 

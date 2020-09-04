@@ -115,7 +115,6 @@ USE_ARM_COSTUME_ASM = 1
 
 ifdef DS_BUILD_A
 	DEFINES = -DDS_BUILD_A -DUSE_ARM_GFX_ASM -DUSE_ARM_COSTUME_ASM
-	LOGO = logoa.bmp
 	ENABLE_SCUMM = STATIC_PLUGIN
 	USE_ARM_GFX_ASM = 1
 	BUILD=scummvm-A
@@ -123,7 +122,6 @@ endif
 
 ifdef DS_BUILD_B
 	DEFINES = -DDS_BUILD_B
-	LOGO = logob.bmp
 	ENABLE_SKY = STATIC_PLUGIN
 	ENABLE_QUEEN = STATIC_PLUGIN
 	BUILD=scummvm-B
@@ -131,14 +129,12 @@ endif
 
 ifdef DS_BUILD_C
 	DEFINES = -DDS_BUILD_C
-	LOGO = logoc.bmp
 	ENABLE_AGOS = STATIC_PLUGIN
 	BUILD=scummvm-C
 endif
 
 ifdef DS_BUILD_D
 	DEFINES = -DDS_BUILD_D
-	LOGO = logod.bmp
 	ENABLE_GOB = STATIC_PLUGIN
 	ENABLE_CINE = STATIC_PLUGIN
 	ENABLE_AGI = STATIC_PLUGIN
@@ -147,42 +143,36 @@ endif
 
 ifdef DS_BUILD_E
 	DEFINES = -DDS_BUILD_E
-	LOGO = logoe.bmp
 	ENABLE_SAGA = STATIC_PLUGIN
 	BUILD=scummvm-E
 endif
 
 ifdef DS_BUILD_F
 	DEFINES = -DDS_BUILD_F
-	LOGO = logof.bmp
 	ENABLE_KYRA = STATIC_PLUGIN
 	BUILD=scummvm-F
 endif
 
 ifdef DS_BUILD_G
 	DEFINES = -DDS_BUILD_G
-	LOGO = logog.bmp
 	ENABLE_LURE = STATIC_PLUGIN
 	BUILD=scummvm-G
 endif
 
 ifdef DS_BUILD_H
 	DEFINES = -DDS_BUILD_H
-	LOGO = logoh.bmp
 	ENABLE_PARALLACTION = STATIC_PLUGIN
 	BUILD=scummvm-H
 endif
 
 ifdef DS_BUILD_I
 	DEFINES = -DDS_BUILD_I
-	LOGO = logoi.bmp
 	ENABLE_MADE = STATIC_PLUGIN
 	BUILD=scummvm-I
 endif
 
 ifdef DS_BUILD_K
 	DEFINES = -DDS_BUILD_K
-	LOGO = logok.bmp
 	ENABLE_CRUISE = STATIC_PLUGIN
 	BUILD=scummvm-K
 endif
@@ -190,14 +180,12 @@ endif
 
 #ifdef DS_BUILD_L
 #	DEFINES = -DDS_BUILD_L
-#	LOGO = logog.bmp
 #	ENABLE_DRASCULA = STATIC_PLUGIN
 #	BUILD=scummvm-K
 #endif
 
 #ifdef DS_BUILD_M
 #	DEFINES = -DDS_BUILD_M
-#	LOGO = logog.bmp
 #	ENABLE_TUCKER = STATIC_PLUGIN
 #	BUILD=scummvm-K
 #endif
@@ -406,7 +394,7 @@ endef
 
 #---------------------------------------------------------------------------------
 %.nds: %.bin
-	ndstool -c $@ -9 $< $(ARM7BIN) -b ../../$(LOGO) "$(@F);ScummVM $(VERSION);DS Port"
+	ndstool -c $@ -9 $< $(ARM7BIN) -b ../../logo.bmp "$(@F);ScummVM $(VERSION);DS Port"
 
 %.ds.gba: %.nds
 	dsbuild $< -o $@ -l $(portdir)/ndsloader.bin

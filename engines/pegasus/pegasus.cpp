@@ -382,7 +382,7 @@ Common::Error PegasusEngine::showSaveDialog() {
 }
 
 void PegasusEngine::showSaveFailedDialog(const Common::Error &status) {
-	Common::String failMessage = Common::String::format(_("Failed to save game (%s)! "
+	Common::U32String failMessage = Common::U32String::format(_("Failed to save game (%s)! "
 			"Please consult the README for basic information, and for "
 			"instructions on how to obtain further assistance."), status.getDesc().c_str());
 	GUI::MessageDialog dialog(failMessage);

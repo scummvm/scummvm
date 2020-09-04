@@ -29,7 +29,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-struct AnimAction;
+class AnimAction;
 class ActorAnim;
 class Actor;
 

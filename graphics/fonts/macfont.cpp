@@ -420,7 +420,7 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, bool bo
 	Graphics::Surface srcSurf, tmpSurf;
 	srcSurf.create(MAX(src->getFontSize() * 2, newSize * 2), MAX(src->getFontSize() * 2, newSize * 2),
 				PixelFormat::createFormatCLUT8());
-	int dstGraySize = newSize * 2 * newSize;
+	int dstGraySize = newSize * 20 * newSize;
 	int *dstGray = (int *)malloc(dstGraySize * sizeof(int));
 
 	tmpSurf.create(MAX(src->getFontSize() * 2, newSize * 2), MAX(src->getFontSize() * 2 + 2, newSize * 2 + 2),

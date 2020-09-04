@@ -129,12 +129,12 @@ void LauncherDialog::build() {
 		_logo->useThemeTransparency(true);
 		_logo->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageLogo));
 
-		new StaticTextWidget(this, "Launcher.Version", gScummVMVersionDate);
+		new StaticTextWidget(this, "Launcher.Version", Common::U32String(gScummVMVersionDate));
 	} else
-		new StaticTextWidget(this, "Launcher.Version", gScummVMFullVersion);
+		new StaticTextWidget(this, "Launcher.Version", Common::U32String(gScummVMFullVersion));
 #else
 	// Show ScummVM version
-	new StaticTextWidget(this, "Launcher.Version", gScummVMFullVersion);
+	new StaticTextWidget(this, "Launcher.Version", Common::U32String(gScummVMFullVersion));
 #endif
 	if (!g_system->hasFeature(OSystem::kFeatureNoQuit))
 		new ButtonWidget(this, "Launcher.QuitButton", _("~Q~uit"), _("Quit ScummVM"), kQuitCmd);
@@ -184,11 +184,11 @@ void LauncherDialog::build() {
 #endif
 		_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", _("Search:"));
 
-	_searchWidget = new EditTextWidget(this, "Launcher.Search", _search, nullptr, kSearchCmd);
+	_searchWidget = new EditTextWidget(this, "Launcher.Search", _search, Common::U32String(""), kSearchCmd);
 	_searchClearButton = addClearButton(this, "Launcher.SearchClearButton", kSearchClearCmd);
 
 	// Add list with game titles
-	_list = new ListWidget(this, "Launcher.GameList", nullptr, kListSearchCmd);
+	_list = new ListWidget(this, "Launcher.GameList", Common::U32String(""), kListSearchCmd);
 	_list->setEditable(false);
 	_list->enableDictionarySelect(true);
 	_list->setNumberingMode(kListNumberingOff);
@@ -255,7 +255,7 @@ void LauncherDialog::close() {
 }
 
 void LauncherDialog::updateListing() {
-	StringArray l;
+	U32StringArray l;
 	ListWidget::ColorList colors;
 	ThemeEngine::FontColor color;
 
@@ -293,7 +293,7 @@ void LauncherDialog::updateListing() {
 			// Insert the game into the launcher list
 			int pos = 0, size = l.size();
 
-			while (pos < size && (scumm_compareDictionary(description.c_str(), l[pos].c_str()) > 0))
+			while (pos < size && (scumm_compareDictionary(description.c_str(), l[pos].encode().c_str()) > 0))
 				pos++;
 
 			color = ThemeEngine::kFontColorNormal;
@@ -544,8 +544,8 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 	DetectionResults detectionResults = EngineMan.detectGames(files);
 
 	if (detectionResults.foundUnknownGames()) {
-		Common::String report = detectionResults.generateUnknownGameReport(false, 80);
-		g_system->logMessage(LogMessageType::kInfo, report.c_str());
+		Common::U32String report = detectionResults.generateUnknownGameReport(false, 80);
+		g_system->logMessage(LogMessageType::kInfo, report.encode().c_str());
 	}
 
 	Common::Array<DetectedGame> candidates = detectionResults.listDetectedGames();
@@ -562,12 +562,12 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 		idx = 0;
 	} else {
 		// Display the candidates to the user and let her/him pick one
-		StringArray list;
+		U32StringArray list;
 		for (idx = 0; idx < (int)candidates.size(); idx++) {
-			Common::String description = candidates[idx].description;
+			Common::U32String description = candidates[idx].description;
 
 			if (candidates[idx].hasUnknownFiles) {
-				description += " - ";
+				description += Common::U32String(" - ");
 				description += _("Unknown variant");
 			}
 
@@ -677,8 +677,8 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kSearchClearCmd:
 		// Reset the active search filter, thus showing all games again
-		_searchWidget->setEditString("");
-		_list->setFilter("");
+		_searchWidget->setEditString(Common::U32String(""));
+		_list->setFilter(Common::U32String(""));
 		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);
@@ -718,7 +718,7 @@ void LauncherDialog::reflowLayout() {
 		StaticTextWidget *ver = (StaticTextWidget *)findWidget("Launcher.Version");
 		if (ver) {
 			ver->setAlign(g_gui.xmlEval()->getWidgetTextHAlign("Launcher.Version"));
-			ver->setLabel(gScummVMVersionDate);
+			ver->setLabel(Common::U32String(gScummVMVersionDate));
 		}
 
 		if (!_logo)
@@ -729,7 +729,7 @@ void LauncherDialog::reflowLayout() {
 		StaticTextWidget *ver = (StaticTextWidget *)findWidget("Launcher.Version");
 		if (ver) {
 			ver->setAlign(g_gui.xmlEval()->getWidgetTextHAlign("Launcher.Version"));
-			ver->setLabel(gScummVMFullVersion);
+			ver->setLabel(Common::U32String(gScummVMFullVersion));
 		}
 
 		if (_logo) {

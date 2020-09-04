@@ -751,7 +751,7 @@ void MidiSoundDriverH32::playSample(int mode, int channel, int param3, int param
 		break;
 	case 4: // show text in Roland MT-32 LCD display
 		// Don't display text in Roland MT-32 LCD display when loading a savegame
-		if (!runOnlyUntilCopyProtectionCheck) {
+		if (!runOnlyUntilFreePartRangeFirst200) {
 			selectInstrument5(channel);
 		}
 		break;

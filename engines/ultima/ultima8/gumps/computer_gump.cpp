@@ -74,10 +74,10 @@ void ComputerGump::InitGump(Gump *newparent, bool take_focus) {
 		return;
 	}
 
-	_dims.w = topFrame->_width;
-	_dims.h = topFrame->_height + botFrame->_height;
-	_dims.x = 0;
-	_dims.y = 0;
+	_dims.left = 0;
+	_dims.top = 0;
+	_dims.setWidth(topFrame->_width);
+	_dims.setHeight(topFrame->_height + botFrame->_height);
 
 	Gump *topGump = new Gump(0, 0, topFrame->_width, topFrame->_height);
 	topGump->SetShape(shape, 0);
@@ -86,7 +86,7 @@ void ComputerGump::InitGump(Gump *newparent, bool take_focus) {
 	botGump->SetShape(shape, 1);
 	botGump->InitGump(this, false);
 
-	_textWidget = new TextWidget(41, 38, _text, true, COMPUTER_FONT, _dims.w - 100, 0, Font::TEXT_LEFT);
+	_textWidget = new TextWidget(41, 38, _text, true, COMPUTER_FONT, _dims.width() - 100, 0, Font::TEXT_LEFT);
 	_textWidget->InitGump(this);
 
 	AudioProcess *audio = AudioProcess::get_instance();

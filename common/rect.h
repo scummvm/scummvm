@@ -267,6 +267,34 @@ struct Rect {
 		int x = cx - w / 2, y = cy - h / 2;
 		return Rect(x, y, x + w, y + h);
 	}
+
+	/**
+	 * Given target surface with size clip, this function ensures that
+	 * blit arguments dst, rect are within clip rectangle.
+	 * @param dst blit destination coordinates
+	 * @param rect blit source rectangle
+	 * @param clip clip rectangle (size of destination surface)
+	 */
+	static bool getBlitRect(Point &dst, Rect &rect, const Rect &clip) {
+		if (dst.x < clip.left) {
+			rect.left += clip.left - dst.x;
+			dst.x = clip.left;
+		}
+
+		if (dst.y < clip.top) {
+			rect.top += clip.top - dst.y;
+			dst.y = clip.top;
+		}
+
+		int right = dst.x + rect.right;
+		if (right > clip.right)
+			rect.right -= right - clip.right;
+
+		int bottom = dst.y + rect.bottom;
+		if (bottom > clip.bottom)
+			rect.bottom -= bottom - clip.bottom;
+		return !rect.isEmpty();
+	}
 };
 
 } // End of namespace Common

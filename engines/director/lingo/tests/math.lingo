@@ -25,7 +25,7 @@ put the sqrt of 9
 
 -- Testing rounding
 set save to the scummvmVersion
-set the scummvmVersion to 3
+set the scummvmVersion to 300
 scummvmAssertEqual(integer(2.5), 3)
 scummvmAssertEqual(integer(2.49), 2)
 scummvmAssertEqual(integer(2.1), 2)

@@ -48,7 +48,7 @@ namespace Sci {
 // GUI-options, primarily used by detection_tables.h
 #define GAMEOPTION_PREFER_DIGITAL_SFX       GUIO_GAMEOPTIONS1
 #define GAMEOPTION_ORIGINAL_SAVELOAD        GUIO_GAMEOPTIONS2
-#define GAMEOPTION_FB01_MIDI                GUIO_GAMEOPTIONS3
+#define GAMEOPTION_MIDI_MODE                GUIO_GAMEOPTIONS3
 #define GAMEOPTION_JONES_CDAUDIO            GUIO_GAMEOPTIONS4
 #define GAMEOPTION_KQ6_WINDOWS_CURSORS      GUIO_GAMEOPTIONS5
 #define GAMEOPTION_SQ4_SILVER_CURSORS       GUIO_GAMEOPTIONS6
@@ -245,6 +245,13 @@ enum kLanguage {
 	K_LANG_GERMAN = 49,
 	K_LANG_JAPANESE = 81,
 	K_LANG_PORTUGUESE = 351
+};
+
+/** MIDI devices */
+enum kMidiMode {
+	kMidiModeStandard,
+	kMidiModeFB01,
+	kMidiModeD110
 };
 
 class SciEngine : public Engine {

@@ -38,6 +38,7 @@
 #include "common/file.h"
 #include "common/system.h"
 #include "common/str.h"
+#include "common/ustr.h"
 #include "common/error.h"
 #include "common/list.h"
 #include "common/memstream.h"
@@ -314,17 +315,17 @@ void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
 
 	// Error out on size switch failure
 	if (gfxError & OSystem::kTransactionSizeChangeFailed) {
-		Common::String message;
-		message = Common::String::format(_("Could not switch to resolution '%dx%d'."), width, height);
+		Common::U32String message;
+		message = Common::U32String::format(_("Could not switch to resolution '%dx%d'."), width, height);
 
 		GUIErrorMessage(message);
-		error("%s", message.c_str());
+		error("Could not switch to resolution '%dx%d'.", width, height);
 	}
 
 	// Just show warnings then these occur:
 #ifdef USE_RGB_COLOR
 	if (gfxError & OSystem::kTransactionFormatNotSupported) {
-		Common::String message = _("Could not initialize color format.");
+		Common::U32String message = _("Could not initialize color format.");
 
 		GUI::MessageDialog dialog(message);
 		dialog.runModal();
@@ -332,16 +333,16 @@ void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
 #endif
 
 	if (gfxError & OSystem::kTransactionModeSwitchFailed) {
-		Common::String message;
-		message = Common::String::format(_("Could not switch to video mode '%s'."), ConfMan.get("gfx_mode").c_str());
+		Common::U32String message;
+		message = Common::U32String::format(_("Could not switch to video mode '%s'."), ConfMan.get("gfx_mode").c_str());
 
 		GUI::MessageDialog dialog(message);
 		dialog.runModal();
 	}
 
 	if (gfxError & OSystem::kTransactionStretchModeSwitchFailed) {
-		Common::String message;
-		message = Common::String::format(_("Could not switch to stretch mode '%s'."), ConfMan.get("stretch_mode").c_str());
+		Common::U32String message;
+		message = Common::U32String::format(_("Could not switch to stretch mode '%s'."), ConfMan.get("stretch_mode").c_str());
 
 		GUI::MessageDialog dialog(message);
 		dialog.runModal();
@@ -394,16 +395,33 @@ void initGraphics(int width, int height) {
 	initGraphics(width, height, &format);
 }
 
-void GUIErrorMessage(const Common::String &msg) {
+void GUIErrorMessageWithURL(const Common::U32String &msg, const char *url) {
+	GUIErrorMessage(msg, url);
+}
+
+void GUIErrorMessageWithURL(const Common::String &msg, const char *url) {
+	GUIErrorMessage(Common::U32String(msg), url);
+}
+
+void GUIErrorMessage(const Common::String &msg, const char *url) {
+	GUIErrorMessage(Common::U32String(msg), url);
+}
+
+void GUIErrorMessage(const Common::U32String &msg, const char *url) {
 	g_system->setWindowCaption("Error");
 	g_system->beginGFXTransaction();
 		initCommonGFX();
 		g_system->initSize(320, 200);
 	if (g_system->endGFXTransaction() == OSystem::kTransactionSuccess) {
-		GUI::MessageDialog dialog(msg);
-		dialog.runModal();
+		if (url) {
+			GUI::MessageDialogWithURL dialog(msg, url);
+			dialog.runModal();
+		} else {
+			GUI::MessageDialog dialog(msg);
+			dialog.runModal();
+		}
 	} else {
-		error("%s", msg.c_str());
+		error("%s", msg.encode().c_str());
 	}
 }
 
@@ -413,6 +431,17 @@ void GUIErrorMessageFormat(const char *fmt, ...) {
 	va_list va;
 	va_start(va, fmt);
 	msg = Common::String::vformat(fmt, va);
+	va_end(va);
+
+	GUIErrorMessage(msg);
+}
+
+void GUIErrorMessageFormat(Common::U32String fmt, ...) {
+	Common::U32String msg("");
+
+	va_list va;
+	va_start(va, fmt);
+	Common::U32String::vformat(fmt.begin(), fmt.end(), msg, va);
 	va_end(va);
 
 	GUIErrorMessage(msg);
@@ -507,7 +536,7 @@ void Engine::saveAutosaveIfEnabled() {
 			saveFlag = desc.getSaveSlot() == -1 || desc.isAutosave();
 		}
 
-		if (saveFlag && saveGameState(getAutosaveSlot(), _("Autosave"), true).getCode() != Common::kNoError) {
+		if (saveFlag && saveGameState(getAutosaveSlot(), Common::convertFromU32String(_("Autosave")), true).getCode() != Common::kNoError) {
 			// Couldn't autosave at the designated time
 			g_system->displayMessageOnOSD(_("Error occurred making autosave"));
 			saveFlag = false;
@@ -572,7 +601,14 @@ void Engine::openMainMenuDialog() {
 
 	setGameToLoadSlot(-1);
 
+	bool hasVKeyb = g_system->getFeatureState(OSystem::kFeatureVirtualKeyboard);
+	if (hasVKeyb)
+		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+
 	runDialog(*_mainMenuDialog);
+
+	if (hasVKeyb)
+		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 
 	// Load savegame after main menu execution
 	// (not from inside the menu loop to avoid
@@ -581,7 +617,7 @@ void Engine::openMainMenuDialog() {
 	if (_saveSlotToLoad >= 0) {
 		Common::Error status = loadGameState(_saveSlotToLoad);
 		if (status.getCode() != Common::kNoError) {
-			Common::String failMessage = Common::String::format(_("Failed to load saved game (%s)! "
+			Common::U32String failMessage = Common::U32String::format(_("Failed to load saved game (%s)! "
 				  "Please consult the README for basic information, and for "
 				  "instructions on how to obtain further assistance."), status.getDesc().c_str());
 			GUI::MessageDialog dialog(failMessage);

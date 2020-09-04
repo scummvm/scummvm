@@ -813,7 +813,7 @@ void ResourceManager::addScriptChunkSources() {
 #endif
 }
 
-extern int showScummVMDialog(const Common::String& message, const char* altButton = nullptr, bool alignCenter = true);
+extern int showScummVMDialog(const Common::U32String &message, const Common::U32String &altButton = Common::U32String(""), bool alignCenter = true);
 
 void ResourceManager::scanNewSources() {
 	_hasBadResources = false;
@@ -848,6 +848,9 @@ void DirectoryResourceSource::scanSource(ResourceManager *resMan) {
 		resMan->readResourcePatchesBase36();
 
 	resMan->readWaveAudioPatches();
+#ifdef ENABLE_SCI32
+	resMan->readAIFFAudioPatches();
+#endif
 }
 
 void ExtMapResourceSource::scanSource(ResourceManager *resMan) {

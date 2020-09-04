@@ -34,6 +34,7 @@
 #include "backends/platform/3ds/sprite.h"
 #include "common/rect.h"
 #include "common/queue.h"
+#include "common/ustr.h"
 #include "engines/engine.h"
 
 #define TICKS_PER_MSEC 268123
@@ -165,7 +166,7 @@ public:
 	                       int h);
 	virtual int16 getOverlayHeight();
 	virtual int16 getOverlayWidth();
-	void displayMessageOnOSD(const char *msg) override;
+	void displayMessageOnOSD(const Common::U32String &msg) override;
 	void displayActivityIconOnOSD(const Graphics::Surface *icon) override;
 
 	bool showMouse(bool visible);

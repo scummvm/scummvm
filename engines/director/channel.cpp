@@ -24,6 +24,7 @@
 #include "director/movie.h"
 #include "director/score.h"
 #include "director/cursor.h"
+#include "director/cast.h"
 #include "director/channel.h"
 #include "director/sprite.h"
 #include "director/castmember.h"
@@ -44,7 +45,7 @@ Channel::Channel(Sprite *sp, int priority) {
 	_width = _sprite->_width;
 	_height = _sprite->_height;
 
-	_movieRate = 0;
+	_movieRate = 0.0;
 	_movieTime = 0;
 	_startTime = 0;
 	_stopTime = 0;
@@ -69,7 +70,7 @@ DirectorPlotData Channel::getPlotData() {
 	pd.dst = nullptr;
 
 	pd.srf = getSurface();
-	if (!pd.srf) {
+	if (!pd.srf && _sprite->_spriteType != kBitmapSprite) {
 		// Shapes come colourized from macDrawPixel
 		pd.ms = getShape();
 		pd.applyColor = false;
@@ -113,7 +114,7 @@ const Graphics::Surface *Channel::getMask(bool forceMatte) {
 
 		if (member && member->_initialRect == _sprite->_cast->_initialRect) {
 			Common::Rect bbox(getBbox());
-			Graphics::MacWidget *widget = member->createWidget(bbox);
+			Graphics::MacWidget *widget = member->createWidget(bbox, this);
 			if (_mask)
 				delete _mask;
 			_mask = new Graphics::ManagedSurface();
@@ -243,6 +244,20 @@ bool Channel::isMatteWithin(Channel *channel) {
 	return false;
 }
 
+bool Channel::isActiveVideo() {
+	if (!_sprite->_cast || _sprite->_cast->_type != kCastDigitalVideo)
+		return false;
+
+	return true;
+}
+
+bool Channel::isVideoDirectToStage() {
+	if (!_sprite->_cast || _sprite->_cast->_type != kCastDigitalVideo)
+		return false;
+
+	return ((DigitalVideoCastMember *)_sprite->_cast)->_directToStage;
+}
+
 Common::Rect Channel::getBbox(bool unstretched) {
 	Common::Rect result(unstretched ? _sprite->_width : _width,
 											unstretched ? _sprite->_height : _height);
@@ -265,6 +280,17 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 	bool replace = isDirty(nextSprite);
 
 	if (nextSprite) {
+		if (nextSprite->_cast && (_dirty || _sprite->_castId != nextSprite->_castId)) {
+			if (nextSprite->_cast->_type == kCastDigitalVideo) {
+				Common::String path = nextSprite->_cast->getCast()->getVideoPath(nextSprite->_castId);
+
+				if (!path.empty()) {
+					((DigitalVideoCastMember *)nextSprite->_cast)->loadVideo(pathMakeRelative(path));
+					((DigitalVideoCastMember *)nextSprite->_cast)->startVideo(this);
+				}
+			}
+		}
+
 		if (_sprite->_puppet || partial) {
 			// Updating scripts, etc. does not require a full re-render
 			_sprite->_scriptId = nextSprite->_scriptId;
@@ -280,7 +306,21 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 		_sprite->updateCast();
 		replaceWidget();
 	}
+
+	setEditable(_sprite->_editable);
+
 	_dirty = false;
+}
+
+void Channel::setEditable(bool editable) {
+	if (_sprite->_cast && _sprite->_cast->_type == kCastText) {
+		_sprite->_cast->setEditable(editable);
+
+		if (_widget) {
+			_widget->_editable = editable;
+			g_director->_wm->setActiveWidget(_widget);
+		}
+	}
 }
 
 void Channel::replaceSprite(Sprite *nextSprite) {
@@ -335,17 +375,25 @@ void Channel::replaceWidget() {
 		Common::Rect bbox(getBbox());
 		_sprite->_cast->_modified = false;
 
-		_widget = _sprite->_cast->createWidget(bbox);
+		_widget = _sprite->_cast->createWidget(bbox, this);
 		if (_widget) {
 			_widget->_priority = _priority;
 			_widget->draw();
-			_widget->_contentIsDirty = false;
+
+			// HACK: Account for the added dimensions for borders, etc.
+			if (_sprite->_cast->_type == kCastText || _sprite->_cast->_type == kCastButton) {
+				_sprite->_width = _widget->_dims.width();
+				_sprite->_height = _widget->_dims.height();
+
+				_width = _sprite->_width;
+				_height = _sprite->_height;
+			}
 		}
 	}
 }
 
 bool Channel::updateWidget() {
-	if (_widget && _widget->_contentIsDirty) {
+	if (_widget && _widget->needsRedraw()) {
 		if (_sprite->_cast) {
 			_sprite->_cast->updateFromWidget(_widget);
 		}
@@ -357,16 +405,27 @@ bool Channel::updateWidget() {
 }
 
 void Channel::addRegistrationOffset(Common::Point &pos, bool subtract) {
-	if (_sprite->_cast && _sprite->_cast->_type == kCastBitmap) {
-		BitmapCastMember *bc = (BitmapCastMember *)(_sprite->_cast);
+	if (!_sprite->_cast)
+		return;
 
-		if (subtract) {
-			pos -= Common::Point(bc->_initialRect.left - bc->_regX,
-													 bc->_initialRect.top - bc->_regY);
-		} else {
-			pos += Common::Point(bc->_initialRect.left - bc->_regX,
-													 bc->_initialRect.top - bc->_regY);
+	switch (_sprite->_cast->_type) {
+	case kCastBitmap:
+		{
+			BitmapCastMember *bc = (BitmapCastMember *)(_sprite->_cast);
+
+			if (subtract)
+				pos -= Common::Point(bc->_initialRect.left - bc->_regX,
+															bc->_initialRect.top - bc->_regY);
+			else
+				pos += Common::Point(bc->_initialRect.left - bc->_regX,
+															bc->_initialRect.top - bc->_regY);
 		}
+		break;
+	case kCastDigitalVideo:
+		pos -= Common::Point(_sprite->_cast->_initialRect.width() >> 1, _sprite->_cast->_initialRect.height() >> 1);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -430,7 +489,7 @@ MacShape *Channel::getShape() {
 	shape->lineSize = _sprite->_thickness & 0x3;
 	shape->pattern = _sprite->getPattern();
 
-	if (g_director->getVersion() >= 3 && shape->spriteType == kCastMemberSprite) {
+	if (g_director->getVersion() >= 300 && shape->spriteType == kCastMemberSprite) {
 		if (!_sprite->_cast) {
 			warning("Channel::getShape(): kCastMemberSprite has no cast defined");
 			delete shape;
@@ -455,7 +514,7 @@ MacShape *Channel::getShape() {
 			break;
 		}
 
-		if (g_director->getVersion() > 3) {
+		if (g_director->getVersion() >= 400) {
 			shape->foreColor = sc->getForeColor();
 			shape->backColor = sc->getBackColor();
 			shape->lineSize = sc->_lineThickness;
@@ -469,7 +528,7 @@ MacShape *Channel::getShape() {
 	return shape;
 }
 
-uint Channel::getBackColor() {
+uint32 Channel::getBackColor() {
 	if (!_sprite->_cast)
 		return _sprite->_backColor;
 
@@ -484,7 +543,7 @@ uint Channel::getBackColor() {
 	}
 }
 
-uint Channel::getForeColor() {
+uint32 Channel::getForeColor() {
 	if (!_sprite->_cast)
 		return _sprite->_foreColor;
 

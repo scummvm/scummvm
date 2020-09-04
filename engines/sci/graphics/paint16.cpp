@@ -30,7 +30,7 @@
 #include "sci/graphics/ports.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/animate.h"
-#include "sci/graphics/font.h"
+#include "sci/graphics/scifont.h"
 #include "sci/graphics/picture.h"
 #include "sci/graphics/view.h"
 #include "sci/graphics/screen.h"

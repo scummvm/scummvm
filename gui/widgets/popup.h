@@ -43,10 +43,11 @@ enum {
  */
 class PopUpWidget : public Widget, public CommandSender {
 	typedef Common::String String;
+	typedef Common::U32String U32String;
 
 	struct Entry {
-		String	name;
-		uint32	tag;
+		U32String	name;
+		uint32		tag;
 	};
 	typedef Common::Array<Entry> EntryList;
 protected:
@@ -57,12 +58,13 @@ protected:
 	int				_rightPadding;
 
 public:
-	PopUpWidget(GuiObject *boss, const String &name, const char *tooltip = nullptr);
-	PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip = nullptr);
+	PopUpWidget(GuiObject *boss, const String &name, const U32String &tooltip = U32String(""));
+	PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const U32String &tooltip = U32String(""));
 
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
 	void handleMouseWheel(int x, int y, int direction) override;
 
+	void appendEntry(const U32String &entry, uint32 tag = (uint32)-1);
 	void appendEntry(const String &entry, uint32 tag = (uint32)-1);
 	void clearEntries();
 	int numEntries() { return _entries.size(); }
@@ -106,7 +108,7 @@ protected:
 
 	int			_lastRead;
 
-	typedef Common::Array<Common::String> EntryList;
+	typedef Common::Array<Common::U32String> EntryList;
 	EntryList		_entries;
 
 public:
@@ -127,7 +129,7 @@ public:
 	void setLineHeight(int lineHeight);
 	void setWidth(uint16 width);
 
-	void appendEntry(const Common::String &entry);
+	void appendEntry(const Common::U32String &entry);
 	void clearEntries();
 	void setSelection(int item);
 
@@ -139,7 +141,7 @@ protected:
 
 	void moveUp();
 	void moveDown();
-	void read(Common::String);
+	void read(const Common::U32String &str);
 };
 
 } // End of namespace GUI

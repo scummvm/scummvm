@@ -113,17 +113,17 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 //	
 #else
 
-	const int		scrn_width = _clipWindow.w;
-	const int		scrn_height = _clipWindow.h;
+	const int		scrn_width = _clipWindow.width();
+	const int		scrn_height = _clipWindow.height();
 
 #define LINE_END_ASSIGN const uintX *dst_line_end = dst_line_start + scrn_width
 #define NOT_CLIPPED_X (dstpix >= dst_line_start && dstpix < dst_line_end)
 #define NOT_CLIPPED_Y (line >= 0 && line < scrn_height)
 #define OFFSET_PIXELS (off_pixels)
 
-	uint8			*off_pixels  = _pixels + _clipWindow.x * sizeof(uintX) + _clipWindow.y * _pitch;
-	x -= _clipWindow.x;
-	y -= _clipWindow.y;
+	uint8			*off_pixels  = _pixels + _clipWindow.left * sizeof(uintX) + _clipWindow.top * _pitch;
+	x -= _clipWindow.left;
+	y -= _clipWindow.top;
 
 #endif
 

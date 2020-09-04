@@ -96,7 +96,9 @@ DragonsEngine::DragonsEngine(OSystem *syst, const ADGameDescription *desc) : Eng
 	_leftMouseButtonDown = false;
 	_rightMouseButtonUp = false;
 	_iKeyUp = false;
+	_downKeyDown = false;
 	_downKeyUp = false;
+	_upKeyDown = false;
 	_upKeyUp = false;
 	_enterKeyUp = false;
 	_leftKeyDown = false;
@@ -109,6 +111,7 @@ DragonsEngine::DragonsEngine(OSystem *syst, const ADGameDescription *desc) : Eng
 	_dKeyDown = false;
 	_oKeyDown = false;
 	_pKeyDown = false;
+	_mouseWheel = MOUSE_WHEEL_NO_EVENT;
 
 	_debugMode = false;
 	_isGamePaused = false;
@@ -135,6 +138,7 @@ void DragonsEngine::updateEvents() {
 	_enterKeyUp = false;
 	_leftKeyUp = false;
 	_rightKeyUp = false;
+	_mouseWheel = MOUSE_WHEEL_NO_EVENT;
 	while (_eventMan->pollEvent(event)) {
 //		_input->processEvent(event);
 		switch (event.type) {
@@ -144,65 +148,75 @@ void DragonsEngine::updateEvents() {
 		case Common::EVENT_MOUSEMOVE:
 			_cursor->updatePosition(event.mouse.x, event.mouse.y);
 			break;
-		case Common::EVENT_LBUTTONUP:
-			_leftMouseButtonUp = true;
-			_leftMouseButtonDown = false;
+		case Common::EVENT_WHEELDOWN:
+			_mouseWheel = MOUSE_WHEEL_DOWN;
 			break;
-		case Common::EVENT_LBUTTONDOWN:
-			_leftMouseButtonDown = true;
+		case Common::EVENT_WHEELUP:
+			_mouseWheel = MOUSE_WHEEL_UP;
 			break;
-		case Common::EVENT_RBUTTONUP:
-			_rightMouseButtonUp = true;
-			break;
-		case Common::EVENT_KEYUP:
-			if (event.kbd.keycode == Common::KEYCODE_i) {
-				_iKeyUp = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_DOWN) {
-				_downKeyUp = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_UP) {
-				_upKeyUp = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_RETURN ||
-						event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
-				_enterKeyUp = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_LEFT) {
-				_leftKeyUp = true;
-				_leftKeyDown = false;
-			} else if (event.kbd.keycode == Common::KEYCODE_RIGHT) {
-				_rightKeyUp = true;
-				_rightKeyDown = false;
-			} else if (event.kbd.keycode == Common::KEYCODE_w) {
-				_wKeyDown = false;
-			} else if (event.kbd.keycode == Common::KEYCODE_a) {
-				_aKeyDown = false;
-			} else if (event.kbd.keycode == Common::KEYCODE_s) {
-				_sKeyDown = false;
-			} else if (event.kbd.keycode == Common::KEYCODE_d) {
-				_dKeyDown = false;
-			} else if (event.kbd.keycode == Common::KEYCODE_o) {
-				_oKeyDown = false;
-			} else if (event.kbd.keycode == Common::KEYCODE_p) {
-				_pKeyDown = false;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			if (event.customType == Dragons::kDragonsActionLeft) {
+				_leftKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionRight) {
+				_rightKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionUp) {
+				_upKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionDown) {
+				_downKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionSquare) {
+				_aKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionTriangle) {
+				_wKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionCircle) {
+				_dKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionCross) {
+				_sKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionL1) {
+				_oKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionR1) {
+				_pKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionSelect) {
+				_leftMouseButtonDown = true;
+			} else if (event.customType == Dragons::kDragonsActionDebugGfx) {
+				_debugMode = !_debugMode;
 			}
 			break;
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_LEFT) {
-				_leftKeyDown = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_RIGHT) {
-				_rightKeyDown = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_w) {
-				_wKeyDown = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_a) {
-				_aKeyDown = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_s) {
-				_sKeyDown = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_d) {
-				_dKeyDown = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_o) {
-				_oKeyDown = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_p) {
-				_pKeyDown = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_TAB) {
-				_debugMode = !_debugMode;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+			if (event.customType == Dragons::kDragonsActionLeft) {
+				_leftKeyUp = true;
+				_leftKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionRight) {
+				_rightKeyUp = true;
+				_rightKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionUp) {
+				_upKeyUp = true;
+				_upKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionDown) {
+				_downKeyUp = true;
+				_downKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionSquare) {
+				_aKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionTriangle) {
+				_wKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionCircle) {
+				_dKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionCross) {
+				_sKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionL1) {
+				_oKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionR1) {
+				_pKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionSelect) {
+				_leftMouseButtonUp = true;
+				_leftMouseButtonDown = false;
+			} else if (event.customType == Dragons::kDragonsActionChangeCommand) {
+				_rightMouseButtonUp = true;
+			} else if (event.customType == Dragons::kDragonsActionInventory) {
+				_iKeyUp = true;
+			} else if (event.customType == Dragons::kDragonsActionEnter) {
+				_enterKeyUp = true;
+			} else if (event.customType == Dragons::kDragonsActionQuit) {
+				quitGame();
 			}
 			break;
 		default:
@@ -248,10 +262,12 @@ Common::Error DragonsEngine::run() {
 		loadScene(0);
 	}
 
-	_scene->draw();
-	_screen->updateScreen();
+	if (!shouldQuit()) {
+		_scene->draw();
+		_screen->updateScreen();
 
-	gameLoop();
+		gameLoop();
+	}
 
 	delete _scene;
 	delete _actorManager;
@@ -673,7 +689,7 @@ void DragonsEngine::updateHandler() {
 				int16 priority = _scene->getPriorityAtPosition(Common::Point(actor->_x_pos, actor->_y_pos));
 				DragonINI *flicker = _dragonINIResource->getFlickerRecord();
 				if (flicker && _scene->contains(flicker) && flicker->actor->_actorID == i) {
-					if (priority < 8 || priority == 0x10) {
+					if ((priority >= 0 && priority < 8) || priority == 0x10) {
 						actor->_priorityLayer = priority;
 					}
 				} else {
@@ -944,7 +960,7 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 }
 
 void DragonsEngine::waitForFrames(uint16 numFrames) {
-	for (uint16 i = 0; i < numFrames; i++) {
+	for (uint16 i = 0; i < numFrames && !Engine::shouldQuit(); i++) {
 		wait();
 		updateHandler();
 
@@ -965,7 +981,7 @@ void DragonsEngine::waitForFramesAllowSkip(uint16 numFrames) {
 }
 
 void DragonsEngine::playOrStopSound(uint16 soundId) {
-	debug("play sound 0x%x", soundId);
+	debug(1, "play sound 0x%x", soundId);
 
 	this->_sound->playOrStopSound(soundId);
 }
@@ -1130,11 +1146,11 @@ bool DragonsEngine::isRightKeyPressed() {
 }
 
 bool DragonsEngine::isUpKeyPressed() {
-	return false; // TODO
+	return _upKeyDown;
 }
 
 bool DragonsEngine::isDownKeyPressed() {
-	return false; // TODO
+	return _downKeyDown;
 }
 
 bool DragonsEngine::checkForActionButtonRelease() {
@@ -1215,11 +1231,12 @@ void DragonsEngine::reset_screen_maybe() {
 }
 
 bool DragonsEngine::canLoadGameStateCurrently() {
-	return isInputEnabled();
+	//player has control and not currently talking to anyone.
+	return isInputEnabled() && isFlagSet(ENGINE_FLAG_8) && !isFlagSet(Dragons::ENGINE_FLAG_100);
 }
 
 bool DragonsEngine::canSaveGameStateCurrently() {
-	return isInputEnabled() && !_inventory->isOpen();
+	return isInputEnabled() && !_inventory->isOpen() && isFlagSet(ENGINE_FLAG_8) && !isFlagSet(Dragons::ENGINE_FLAG_100);
 }
 
 bool DragonsEngine::hasFeature(Engine::EngineFeature f) const {
@@ -1463,6 +1480,13 @@ uint32 DragonsEngine::getSpeechTblOffsetFromDragonEXE() {
 	}
 }
 
+uint16 DragonsEngine::getBigFileTotalRecords() {
+	if (_language == Common::EN_USA || _language == Common::EN_GRB) {
+		return 576;
+	}
+	return 588;
+}
+
 uint32 DragonsEngine::getBigFileInfoTblFromDragonEXE() {
 	switch (_language) {
 	case Common::EN_USA : return 0x4a238;
@@ -1612,7 +1636,7 @@ void DragonsEngine::mainMenu() {
 				_fontManager->addAsciiText((i == 0 ? 17 : 16) * 8, (0x12 + i) * 8, &menuItems[i][0],
 										   strlen(menuItems[i]), i == curMenuItem ? 0 : 1);
 			}
-			if (checkForDownKeyRelease()) {
+			if (checkForDownKeyRelease() || checkForWheelDown()) {
 				if (curMenuItem < 2) {
 					curMenuItem++;
 				} else {
@@ -1621,7 +1645,7 @@ void DragonsEngine::mainMenu() {
 				playOrStopSound(0x8009);
 			}
 
-			if (checkForUpKeyRelease()) {
+			if (checkForUpKeyRelease() || checkForWheelUp()) {
 				if (curMenuItem > 0) {
 					curMenuItem--;
 				} else {
@@ -1632,14 +1656,16 @@ void DragonsEngine::mainMenu() {
 			waitForFrames(1);
 		} while (!checkForActionButtonRelease() && !shouldQuit());
 
-		if (curMenuItem == 0) {
-			_screen->clearScreen();
-			loadingScreen();
-			startGame = true;
-		} else if (curMenuItem == 1) {
-			//TODO options menu
-		} else if (curMenuItem == 2) {
-			_strPlayer->playVideo("previews.str");
+		if (!shouldQuit()) {
+			if (curMenuItem == 0) {
+				_screen->clearScreen();
+				loadingScreen();
+				startGame = true;
+			} else if (curMenuItem == 1) {
+				//TODO options menu
+			} else if (curMenuItem == 2) {
+				_strPlayer->playVideo("previews.str");
+			}
 		}
 	} while (!shouldQuit() && !startGame);
 
@@ -1668,6 +1694,17 @@ void DragonsEngine::loadingScreen() {
 	actor->setFlag(ACTOR_FLAG_100);
 	actor->setFlag(ACTOR_FLAG_200);
 	actor->setFlag(ACTOR_FLAG_80);
+
+	if (_language == Common::DE_DEU || _language == Common::FR_FRA) {
+		actor = _actorManager->loadActor(0,0x84,0,0,6);
+		actor->setFlag(ACTOR_FLAG_100);
+		actor->setFlag(ACTOR_FLAG_200);
+		actor->setFlag(ACTOR_FLAG_80);
+		actor = _actorManager->loadActor(0,0x85,0,0,6);
+		actor->setFlag(ACTOR_FLAG_100);
+		actor->setFlag(ACTOR_FLAG_200);
+		actor->setFlag(ACTOR_FLAG_80);
+	}
 
 	for (int i = 0; i < 10; i++) {
 		actor = _actorManager->loadActor(0,flamesActorOffset[(i % 4)] + 0x7e,i * 0x20 + 0x10,0xbe,6);
@@ -1756,9 +1793,56 @@ bool DragonsEngine::validateAVFile(const char *filename) {
 	file.close();
 
 	if(!fileValid) {
-		GUIErrorMessage(Common::String::format(_("Error: The file '%s' hasn't been extracted properly.\nPlease refer to the wiki page\nhttps://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos for details on how to properly extract the DTSPEECH.XA and *.STR files from your game disc."), filename));
+		GUIErrorMessageWithURL(Common::U32String::format(_("Error: The file '%s' hasn't been extracted properly.\nPlease refer to the wiki page\nhttps://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos for details on how to properly extract the DTSPEECH.XA and *.STR files from your game disc."), filename),
+				"https://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos");
 	}
 	return fileValid;
+}
+
+bool DragonsEngine::checkForWheelUp() {
+	return _mouseWheel == MOUSE_WHEEL_UP;
+}
+
+bool DragonsEngine::checkForWheelDown() {
+	return _mouseWheel == MOUSE_WHEEL_DOWN;
+}
+
+void DragonsEngine::clearAllText() {
+	_fontManager->clearText();
+}
+
+void DragonsEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+	_sound->syncSoundSettings();
+}
+
+uint16 DragonsEngine::getCursorHandPointerSequenceID() {
+	return _language == Common::DE_DEU || _language == Common::FR_FRA ? 0x86 : 0x84;
+}
+
+uint32 DragonsEngine::getMiniGame3StartingDialog() {
+	switch (_language) {
+	case Common::DE_DEU : return 0x5456;
+	case Common::FR_FRA : return 0x509C;
+	default : break;
+	}
+	return 0x479A;
+}
+
+uint32 DragonsEngine::getMiniGame3PickAHatDialog() {
+	switch (_language) {
+	case Common::DE_DEU : return 0x2E32E;
+	case Common::FR_FRA : return 0x2F180;
+	default : break;
+	}
+	return 0x2958A;
+}
+
+uint32 DragonsEngine::getMiniGame3DataOffset() {
+	if (_language == Common::DE_DEU || _language == Common::FR_FRA) {
+		return 0x265c;
+	}
+	return 0x4914;
 }
 
 void (*DragonsEngine::getSceneUpdateFunction())() {

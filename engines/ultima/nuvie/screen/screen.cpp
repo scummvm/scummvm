@@ -51,7 +51,6 @@ Screen::Screen(Configuration *cfg) {
 	shading_data = NULL;
 	scaler_index = 0;
 	scale_factor = 2;
-	fullscreen = false;
 	doubleBuffer = false;
 	is_no_darkness = false;
 	non_square_pixels = false;
@@ -110,7 +109,6 @@ bool Screen::init() {
 
 	config->value("config/video/scale_factor", scale_factor, 1);
 
-	config->value("config/video/fullscreen", fullscreen, false);
 	config->value("config/video/non_square_pixels", non_square_pixels, false);
 
 	set_screen_mode();
@@ -1245,14 +1243,21 @@ void Screen::set_screen_mode() {
 	_renderSurface = CreateRenderSurface(_rawSurface);
 }
 
+bool Screen::is_fullscreen() const {
+	return g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
+}
+
 bool Screen::toggle_fullscreen() {
-	// No implementation
+	set_fullscreen(!is_fullscreen());
 	return true;
 }
 
 bool Screen::set_fullscreen(bool value) {
-	// No implementation
-	return false;
+	g_system->beginGFXTransaction();
+	g_system->setFeatureState(OSystem::kFeatureFullscreenMode, value);
+	g_system->endGFXTransaction();
+
+	return true;
 }
 
 //Note! assumes area divides evenly by down_scale factor

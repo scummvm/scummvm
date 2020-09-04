@@ -112,6 +112,7 @@ public:
 
 	~VabSound();
 
+	bool hasSound(uint16 program, uint16 key);
 	Audio::AudioStream *getAudioStream(uint16 program, uint16 key);
 
 private:
@@ -127,6 +128,11 @@ private:
 	void loadHeader(Common::SeekableReadStream *vhData);
 	void loadProgramAttributes(Common::SeekableReadStream *vhData);
 	void loadToneAttributes(Common::SeekableReadStream *vhData);
+
+	int16 getVagID(uint16 program, uint16 key);
+	int16 getBaseToneKey(uint16 program, uint16 key);
+
+	int getAdjustedSampleRate(int16 desiredKey, int16 baseToneKey);
 };
 
 } // End of namespace Dragons

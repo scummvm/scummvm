@@ -42,7 +42,6 @@ RMInventory::RMInventory() {
 	_items = NULL;
 	_state = CLOSED;
 	_bCombining = false;
-	_csModifyInterface = g_system->createMutex();
 	_nItems = 0;
 
 	Common::fill(_inv, _inv + 256, 0);
@@ -60,7 +59,6 @@ RMInventory::RMInventory() {
 
 RMInventory::~RMInventory() {
 	close();
-	g_system->deleteMutex(_csModifyInterface);
 }
 
 bool RMInventory::checkPointInside(const RMPoint &pt) {
@@ -182,9 +180,9 @@ void RMInventory::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pr
 	CORO_BEGIN_CODE(_ctx);
 
 	prim->setDst(RMPoint(0, _curPutY));
-	g_system->lockMutex(_csModifyInterface);
+	_csModifyInterface.lock();
 	CORO_INVOKE_2(RMGfxWoodyBuffer::draw, bigBuf, prim);
-	g_system->unlockMutex(_csModifyInterface);
+	_csModifyInterface.unlock();
 
 	if (_state == SELECTING) {
 
@@ -228,7 +226,7 @@ void RMInventory::removeThis(CORO_PARAM, bool &result) {
 void RMInventory::removeItem(int code) {
 	for (int i = 0; i < _nInv; i++) {
 		if (_inv[i] == code - 10000) {
-			g_system->lockMutex(_csModifyInterface);
+			_csModifyInterface.lock();
 
 			Common::copy(&_inv[i + 1], &_inv[i + 1] + (_nInv - i), &_inv[i]);
 			_nInv--;
@@ -236,7 +234,7 @@ void RMInventory::removeItem(int code) {
 			prepare();
 			drawOT(Common::nullContext);
 			clearOT();
-			g_system->unlockMutex(_csModifyInterface);
+			_csModifyInterface.unlock();
 			return;
 		}
 	}
@@ -247,7 +245,7 @@ void RMInventory::addItem(int code) {
 		// If we are here, it means that we are adding an item that should not be in the inventory
 		warning("RMInventory::addItem(%d) - Cannot find a valid icon for this item, and then it will not be added to the inventory", code);
 	} else {
-		g_system->lockMutex(_csModifyInterface);
+		_csModifyInterface.lock();
 		if (_curPos + 8 == _nInv) {
 			// Break through the inventory! On the flashing pattern
 			_items[28]._icon.setPattern(2);
@@ -258,7 +256,7 @@ void RMInventory::addItem(int code) {
 		prepare();
 		drawOT(Common::nullContext);
 		clearOT();
-		g_system->unlockMutex(_csModifyInterface);
+		_csModifyInterface.unlock();
 	}
 }
 
@@ -266,14 +264,14 @@ void RMInventory::changeItemStatus(uint32 code, uint32 dwStatus) {
 	if (code <= 10000 || code >= 10101) {
 		error("RMInventory::changeItemStatus(%d) - Specified object code is not valid", code);
 	} else {
-		g_system->lockMutex(_csModifyInterface);
+		_csModifyInterface.lock();
 		_items[code - 10000]._icon.setPattern(dwStatus);
 		_items[code - 10000]._status = dwStatus;
 
 		prepare();
 		drawOT(Common::nullContext);
 		clearOT();
-		g_system->unlockMutex(_csModifyInterface);
+		_csModifyInterface.unlock();
 	}
 }
 
@@ -331,7 +329,7 @@ bool RMInventory::leftClick(const RMPoint &mpos, int &nCombineObj) {
 
 	// Click the right arrow
 	if ((_state == OPENED) && _bBlinkingRight) {
-		g_system->lockMutex(_csModifyInterface);
+		_csModifyInterface.lock();
 		_curPos++;
 
 		if (_curPos + 8 >= _nInv) {
@@ -347,13 +345,13 @@ bool RMInventory::leftClick(const RMPoint &mpos, int &nCombineObj) {
 		prepare();
 		drawOT(Common::nullContext);
 		clearOT();
-		g_system->unlockMutex(_csModifyInterface);
+		_csModifyInterface.unlock();
 	}
 
 	// Click the left arrow
 	else if ((_state == OPENED) && _bBlinkingLeft) {
 		assert(_curPos > 0);
-		g_system->lockMutex(_csModifyInterface);
+		_csModifyInterface.lock();
 		_curPos--;
 
 		if (_curPos == 0) {
@@ -369,7 +367,7 @@ bool RMInventory::leftClick(const RMPoint &mpos, int &nCombineObj) {
 		prepare();
 		drawOT(Common::nullContext);
 		clearOT();
-		g_system->unlockMutex(_csModifyInterface);
+		_csModifyInterface.unlock();
 	}
 
 	return false;
@@ -392,7 +390,7 @@ void RMInventory::rightClick(const RMPoint &mpos) {
 	}
 
 	if ((_state == OPENED) && _bBlinkingRight) {
-		g_system->lockMutex(_csModifyInterface);
+		_csModifyInterface.lock();
 		_curPos += 7;
 		if (_curPos + 8 > _nInv)
 			_curPos = _nInv - 8;
@@ -410,10 +408,10 @@ void RMInventory::rightClick(const RMPoint &mpos) {
 		prepare();
 		drawOT(Common::nullContext);
 		clearOT();
-		g_system->unlockMutex(_csModifyInterface);
+		_csModifyInterface.unlock();
 	} else if ((_state == OPENED) && _bBlinkingLeft) {
 		assert(_curPos > 0);
-		g_system->lockMutex(_csModifyInterface);
+		_csModifyInterface.lock();
 		_curPos -= 7;
 		if (_curPos < 0)
 			_curPos = 0;
@@ -431,7 +429,7 @@ void RMInventory::rightClick(const RMPoint &mpos) {
 		prepare();
 		drawOT(Common::nullContext);
 		clearOT();
-		g_system->unlockMutex(_csModifyInterface);
+		_csModifyInterface.unlock();
 	}
 }
 
@@ -459,7 +457,7 @@ bool RMInventory::rightRelease(const RMPoint &mpos, RMTonyAction &curAction) {
 void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpos, bool bCanOpen) {
 	if (_state != CLOSED) {
 		// Clean up the OT list
-		g_system->lockMutex(_csModifyInterface);
+		_csModifyInterface.lock();
 		clearOT();
 
 		// DoFrame makes all the objects currently in the inventory be displayed
@@ -506,7 +504,7 @@ void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 		if (bNeedRedraw)
 			prepare();
 
-		g_system->unlockMutex(_csModifyInterface);
+		_csModifyInterface.unlock();
 	}
 
 	if (g_vm->getEngine()->getInput().getAsyncKeyState(Common::KEYCODE_i)) {

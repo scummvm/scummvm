@@ -55,8 +55,8 @@ void JPRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destmaske
 	Std::list<PositionedText>::const_iterator iter;
 
 	for (iter = _lines.begin(); iter != _lines.end(); ++iter) {
-		int line_x = x + iter->_dims.x;
-		int line_y = y + iter->_dims.y;
+		int line_x = x + iter->_dims.left;
+		int line_y = y + iter->_dims.top;
 
 		size_t textsize = iter->_text.size();
 
@@ -71,7 +71,7 @@ void JPRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destmaske
 
 			if (i == iter->_cursor) {
 				surface->Fill32(0xFF000000, line_x, line_y - _font->getBaseline(),
-				                1, iter->_dims.h);
+				                1, iter->_dims.height());
 			}
 
 			line_x += (_font->getFrame(u8char))->_width - _font->getHlead();
@@ -79,7 +79,7 @@ void JPRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destmaske
 
 		if (iter->_cursor == textsize) {
 			surface->Fill32(0xFF000000, line_x, line_y - _font->getBaseline(),
-			                1, iter->_dims.h);
+			                1, iter->_dims.height());
 		}
 	}
 
@@ -100,8 +100,8 @@ void JPRenderedText::drawBlended(RenderSurface *surface, int x, int y,
 	Std::list<PositionedText>::const_iterator iter;
 
 	for (iter = _lines.begin(); iter != _lines.end(); ++iter) {
-		int line_x = x + iter->_dims.x;
-		int line_y = y + iter->_dims.y;
+		int line_x = x + iter->_dims.left;
+		int line_y = y + iter->_dims.top;
 
 		size_t textsize = iter->_text.size();
 

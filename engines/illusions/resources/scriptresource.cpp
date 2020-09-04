@@ -225,7 +225,8 @@ SceneInfo::~SceneInfo() {
 void SceneInfo::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_id = stream.readUint16LE();
 	_unk = stream.readUint16LE();
-	_name = dataStart + stream.pos();
+	_name = (uint16 *)(dataStart + stream.pos());
+	swapBytesInWideString((byte *)_name);
 	stream.skip(128);
 	_triggerObjectsCount = stream.readUint16LE();
 	_resourcesCount = stream.readUint16LE();

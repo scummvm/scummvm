@@ -1,5 +1,5 @@
 /*
-$VER: RM2AG.rexx 0.23 (24.10.2019) README(.md) to .guide converter.
+$VER: RM2AG.rexx 0.24 (23.08.2020) README(.md) to .guide converter.
 This script converts a given markdown README file (right now, only
 ScummVM is supported) to a basic hypertext Amiga guide file and installs
 it to a given path, if available.
@@ -77,15 +77,15 @@ END
 /*
 Prepare the Amiga guide file, add intro and fixed text.
 */
-WRITELN(guide_write,'@DATABASE ScummVM README.guide')
-WRITELN(guide_write,'@$VER: ScummVM Readme @VERSION@')
-WRITELN(guide_write,'@(C) by The ScummVM team')
-WRITELN(guide_write,'@AUTHOR The ScummVM team')
-WRITELN(guide_write,'@WORDWRAP')
-WRITELN(guide_write,'@NODE "main" "ScummVM README Guide"')
-WRITELN(guide_write,'@{b}')
-WRITELN(guide_write,SUBSTR(READLN(readme_read),4,14))
-WRITELN(guide_write,'@{ub}')
+CALL WRITELN guide_write,'@DATABASE ScummVM README.guide'
+CALL WRITELN guide_write,'@$VER: ScummVM Readme @VERSION@'
+CALL WRITELN guide_write,'@(C) by The ScummVM team'
+CALL WRITELN guide_write,'@AUTHOR The ScummVM team'
+CALL WRITELN guide_write,'@WORDWRAP'
+CALL WRITELN guide_write,'@NODE "main" "ScummVM README Guide"'
+CALL WRITELN guide_write,'@{b}'
+CALL WRITELN guide_write,SUBSTR(READLN(readme_read),4,14)
+CALL WRITELN guide_write,'@{ub}'
 
 /*
 Creating main (TOC) link nodes.
@@ -117,7 +117,7 @@ DO WHILE EOF(readme_read) = 0
 	If no chapter has been found, simply write the line and skip the rest.
 	*/
 	IF POS('- [',working_line) = 0 THEN
-		WRITELN(guide_write,working_line)
+		CALL WRITELN guide_write,working_line
 	ELSE DO
 		/*
 		Fix empty chapters:
@@ -133,7 +133,7 @@ DO WHILE EOF(readme_read) = 0
 			them again.
 			*/
 			working_line=COMPRESS(working_line,'[<>')
-			WRITELN(guide_write,'  @{" 1.0 " Link "1.1"} 'SUBSTR(working_line,1,LASTPOS(']',working_line)-1))
+			CALL WRITELN guide_write,'  @{" 1.0 " Link "1.1"} 'SUBSTR(working_line,1,LASTPOS(']',working_line)-1)
 		END
 
 		/*
@@ -145,7 +145,7 @@ DO WHILE EOF(readme_read) = 0
 			them again.
 			*/
 			working_line=COMPRESS(working_line,'[<>')
-			WRITELN(guide_write,'    @{" 7.8 " Link "7.8.1"} 'SUBSTR(working_line,1,LASTPOS(']',working_line)-1))
+			CALL WRITELN guide_write,'    @{" 7.8 " Link "7.8.1"} 'SUBSTR(working_line,1,LASTPOS(']',working_line)-1)
 		END
 
 		/*
@@ -156,8 +156,8 @@ DO WHILE EOF(readme_read) = 0
 		Remove it from the node links.
 		*/
 		IF POS('- [<>',working_line) = 3 THEN DO
-			WRITELN(guide_write,' ')
-			WRITELN(guide_write,'  @{" 'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2) '" Link "'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2)'"} 'COMPRESS(SUBSTR(working_line,1,LASTPOS(']',working_line)-1),'*<>[]\'))
+			CALL WRITELN guide_write,' '
+			CALL WRITELN guide_write,'  @{" 'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2) '" Link "'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2)'"} 'COMPRESS(SUBSTR(working_line,1,LASTPOS(']',working_line)-1),'*<>[]\')
 			/*
 			Get rid of the markers, so the following loops won`t process
 			them again.
@@ -170,7 +170,7 @@ DO WHILE EOF(readme_read) = 0
 		prepare and write the link node.
 		*/
 		IF POS('- [<>',working_line) = 7 THEN DO
-			WRITELN(guide_write,'    @{" 'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2) '" Link "'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2)'"} 'COMPRESS(SUBSTR(working_line,1,LASTPOS(']',working_line)-1),'*<>[]\'))
+			CALL WRITELN guide_write,'    @{" 'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2) '" Link "'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2)'"} 'COMPRESS(SUBSTR(working_line,1,LASTPOS(']',working_line)-1),'*<>[]\')
 			/*
 			Get rid of the markers, so the following loops won`t process
 			them again.
@@ -183,7 +183,7 @@ DO WHILE EOF(readme_read) = 0
 		prepare and write the link node.
 		*/
 		IF POS('- [<>',working_line) = 11 THEN DO
-			WRITELN(guide_write,'      @{" 'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2) '" Link "'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2)'"} 'COMPRESS(SUBSTR(working_line,1,LASTPOS(']',working_line)-1),'*<>[]\'))
+			CALL WRITELN guide_write,'      @{" 'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2) '" Link "'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2)'"} 'COMPRESS(SUBSTR(working_line,1,LASTPOS(']',working_line)-1),'*<>[]\')
 			/*
 			Get rid of the markers, so the following loops won`t process
 			them again.
@@ -197,11 +197,11 @@ END
 Finish TOC (hardcoded as the outro text would be read in last,
 but needs to be written after TOC creation finished).
 */
-WRITELN(guide_write,'-----')
-WRITELN(guide_write,' ')
-WRITELN(guide_write,'Good Luck and Happy Adventuring!')
-WRITELN(guide_write,'The ScummVM team.')
-WRITELN(guide_write,'@{"https://www.scummvm.org/" System "URLOpen https://www.scummvm.org/"}')
+CALL WRITELN guide_write,'-----'
+CALL WRITELN guide_write,' '
+CALL WRITELN guide_write,'Good Luck and Happy Adventuring!'
+CALL WRITELN guide_write,'The ScummVM team.'
+CALL WRITELN guide_write,'@{"https://www.scummvm.org/" System "URLOpen https://www.scummvm.org/"}'
 
 /*
 Creating sub link nodes.
@@ -221,7 +221,7 @@ DO WHILE EOF(readme_read) = 0
 	If no chapter has been found, simply write the line and skip the rest.
 	*/
 	IF POS('<>',working_line) = 0 THEN
-		WRITELN(guide_write,working_line)
+		CALL WRITELN guide_write,working_line
 	ELSE DO
 		/*
 		Fix empty chapters:
@@ -236,7 +236,7 @@ DO WHILE EOF(readme_read) = 0
 			Get rid of the markers, so the following loops won`t process
 			them again.
 			*/
-			WRITELN(guide_write,COMPRESS(working_line,'<>'))
+			CALL WRITELN guide_write,COMPRESS(working_line,'<>')
 		END
 
 		/*
@@ -247,7 +247,7 @@ DO WHILE EOF(readme_read) = 0
 			Get rid of the markers, so the following loops won`t process
 			them again.
 			*/
-			WRITELN(guide_write,COMPRESS(working_line,'<>'))
+			CALL WRITELN guide_write,COMPRESS(working_line,'<>')
 		END
 
 		IF POS('<>',working_line) > 0 THEN DO
@@ -261,20 +261,20 @@ DO WHILE EOF(readme_read) = 0
 				Get rid of the markers, so the following loops won`t
 				process them again.
 				*/
-				WRITELN(guide_write,COMPRESS(working_line,'<>'))
+				CALL WRITELN guide_write,COMPRESS(working_line,'<>')
 			END
 			ELSE DO
 				/*
 				If a chapter has been found, prepare and write the link node.
 				*/
-				WRITELN(guide_write,'@ENDNODE')
-				WRITELN(guide_write,'@NODE "'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2)'" "'COMPRESS(working_line,'<>#')'"')
-				WRITELN(guide_write,' ')
+				CALL WRITELN guide_write,'@ENDNODE'
+				CALL WRITELN guide_write,'@NODE "'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2)'" "'COMPRESS(working_line,'<>#')'"'
+				CALL WRITELN guide_write,' '
 				/*
 				Get rid of the markers, so the following loops won`t process
 				them again.
 				*/
-				WRITELN(guide_write,COMPRESS(working_line,'<>'))
+				CALL WRITELN guide_write,COMPRESS(working_line,'<>')
 			END
 		END
 	END
@@ -291,12 +291,12 @@ DO WHILE EOF(readme_read) = 0
 		LEAVE
 END
 
-WRITELN(guide_write,'@ENDNODE')
+CALL WRITELN guide_write,'@ENDNODE'
 
 /*
 Close guide and clean up.
 */
-WRITELN(guide_write,'@ENDNODE')
+CALL WRITELN guide_write,'@ENDNODE'
 
 IF ~CLOSE(readme_read) THEN DO
 	SAY readme_md' closing failed!'

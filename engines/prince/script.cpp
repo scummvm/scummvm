@@ -1405,6 +1405,11 @@ void Interpreter::O_GETCHAR() {
 	debugInterpreter("O_GETCHAR %04X (%s) %02x", flagId, _flagMap.getFlagName(flagId), _flags->getFlagValue(flagId));
 	_flags->setFlagValue(flagId, *_string);
 	_string++;
+
+	if (_vm->_missingVoice) {	// Sometimes data is missing the END tag, insert it here
+		_flags->setFlagValue(flagId, 255);
+		_vm->_missingVoice = false;
+	}
 }
 
 void Interpreter::O_SETDFLAG() {

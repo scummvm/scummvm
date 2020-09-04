@@ -232,6 +232,10 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 
 	_actorUpdateCounter  = 0;
 	_actorUpdateTimeLast = 0;
+
+	_currentKeyDown.keycode = Common::KEYCODE_INVALID;
+	_keyRepeatTimeLast = 0;
+	_keyRepeatTimeDelay = 0;
 }
 
 BladeRunnerEngine::~BladeRunnerEngine() {
@@ -1284,6 +1288,7 @@ void BladeRunnerEngine::handleEvents() {
 		return;
 	}
 
+	uint32 timeNow = _time->currentSystem();
 	Common::Event event;
 	Common::EventManager *eventMan = _system->getEventManager();
 	while (eventMan->pollEvent(event)) {
@@ -1295,6 +1300,13 @@ void BladeRunnerEngine::handleEvents() {
 		case Common::EVENT_KEYDOWN:
 			// Process the actual key press only and filter out repeats
 			if (!event.kbdRepeat) {
+				// Only for Esc and Return keys, allow repeated firing emulation
+				// First hit (fire) has a bigger delay (kKeyRepeatInitialDelay) before repeated events are fired from the same key
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE || event.kbd.keycode == Common::KEYCODE_RETURN) {
+					_currentKeyDown = event.kbd.keycode;
+					_keyRepeatTimeLast = timeNow;
+					_keyRepeatTimeDelay = kKeyRepeatInitialDelay;
+				}
 				handleKeyDown(event);
 			}
 			break;
@@ -1331,9 +1343,25 @@ void BladeRunnerEngine::handleEvents() {
 			; // nothing to do
 		}
 	}
+
+	if ((_currentKeyDown == Common::KEYCODE_ESCAPE || _currentKeyDown == Common::KEYCODE_RETURN) && (timeNow - _keyRepeatTimeLast >= _keyRepeatTimeDelay)) {
+		// create a "new" keydown event
+		event.type = Common::EVENT_KEYDOWN;
+		// kbdRepeat field will be unused here since we emulate the kbd repeat behavior anyway, but it's good to set it for consistency
+		event.kbdRepeat = true;
+		event.kbd = _currentKeyDown;
+		_keyRepeatTimeLast = timeNow;
+		_keyRepeatTimeDelay = kKeyRepeatSustainDelay;
+		handleKeyDown(event);
+	}
 }
 
 void BladeRunnerEngine::handleKeyUp(Common::Event &event) {
+	if (event.kbd.keycode == _currentKeyDown.keycode) {
+		// Only stop firing events if it's the current key
+		_currentKeyDown.keycode = Common::KEYCODE_INVALID;
+	}
+
 	if (!playerHasControl() || _isWalkingInterruptible) {
 		return;
 	}
@@ -2238,13 +2266,13 @@ bool BladeRunnerEngine::loadGame(Common::SeekableReadStream &stream) {
 	if ((_gameFlags->query(kFlagGamePlayedInRestoredContentMode) && !_cutContent)
 	    || (!_gameFlags->query(kFlagGamePlayedInRestoredContentMode) && _cutContent)
 	) {
-		Common::String warningMsg;
+		Common::U32String warningMsg;
 		if (!_cutContent) {
 			warningMsg = _("WARNING: This game was saved in Restored Cut Content mode, but you are playing in Original Content mode. The mode will be adjusted to Restored Cut Content for this session until you completely Quit the game.");
 		} else {
 			warningMsg = _("WARNING: This game was saved in Original Content mode, but you are playing in Restored Cut Content mode. The mode will be adjusted to Original Content mode for this session until you completely Quit the game.");
 		}
-		GUI::MessageDialog dialog(warningMsg, _("Continue"), 0);
+		GUI::MessageDialog dialog(warningMsg, _("Continue"));
 		dialog.runModal();
 		_cutContent = !_cutContent;
 		// force a Key Down event, since we need it to remove the KIA

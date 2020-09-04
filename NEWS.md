@@ -1,19 +1,32 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.2.0 (XXXX-XX-XX)
+#### 2.3.0 (XXXX-XX-XX)
+
+ General:
+   - Switched ScummVM GUI output to UTF-32.
+
+
+#### 2.2.0 (2020-09-XX)
 
  New games:
-   - Added support for English translation of Prince and the Coward.
-   - Added support for Ultima IV - Quest of the Avatar.
-   - Added support for Ultima VI - The False Prophet.
-   - Added support for Ultima VIII - Pagan.
+   - Added support for Blazing Dragons.
+   - Added support for Griffon Legend.
    - Added support for Interactive Fiction games based on the following engines:
      ADRIFT (except for version 5), AdvSys, AGT, Alan 2 & 3,
      Archetype (newly reimplemented for Glk from the original Pascal sources),
      Hugo, JACL, Level 9, Magnetic Scrolls, Quest, Scott Adams,
      ZCode (all ZCode games except the Infocom graphical version 6 games).
      Currently, more than 1600 games are detected and supported.
+   - Added support for Operation Stealth.
+   - Added support for Police Quest: SWAT.
+   - Added support for English translation of Prince and the Coward.
+   - Added support for Ultima IV - Quest of the Avatar.
+   - Added support for Ultima VI - The False Prophet.
+   - Added support for Ultima VIII - Pagan.
+
+ New ports:
+   - MorphOS port got a major rewrite.
 
  General:
    - Autosaves are now supported for all the engines.
@@ -21,6 +34,11 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Games are sorted in GUI ignoring the articles.
    - Now Hebrew is displayed correctly in GUI (requires FriBiDi library).
    - Updated the Roland MT-32 emulation code to Munt 2.4.0.
+   - Added option to select the default voice for ports that support Text-to-Speech.
+
+ BBVS:
+   - Added support for the demo, available from our website.
+   - Added support for the Loogie minigame demo.
 
  Dreamweb:
    - Added support for Russian fan-translation.
@@ -35,12 +53,40 @@ For a more comprehensive changelog of the latest experimental code, see:
      CD-ROM fan translation). Fix Spanish Lands of Lore support (floppy version and
      CD-ROM fan translation).
 
+ Lab:
+   - Fixed sound looping in some rooms.
+
+ Neverhood:
+   - Added support for bigger demo, available from our website.
+
  Prince:
    - Fixed inventory item descriptions display.
    - Added English translation.
+   - Fixed bug with infinite loop when looking at some objects.
 
  Queen:
    - Fixed loading a save game from the launcher.
+   - Fixed random long delays when starting a game.
+
+ SCI:
+   - Major improvements to Amiga and Mac sound drivers.
+   - Improved MIDI playback and fixed many audio issues.
+   - Fixed 30 original script bugs in ECO2, GK1, KQ4, KQ5, KQ6, KQ7, LB1, LONGBOW,
+     PHANT2, QFG1, QFG3, QFG4, SQ5 and SQ6.
+   - Fixed a script bug responsible for rare and random lockups in most Sierra
+     games between 1992-1996.
+   - Added support for Inside the Chest / Behind the Developer's Shield.
+   - Added support for German LSL6-Floppy.
+   - Added support for Hebrew Torin's Passage.
+   - Added support for Italian Lighthouse.
+   - Added support for Polish KQ5, LSL2, LSL3, LSL5 and LSL6-Floppy.
+   - Fixed Russian LSL1 error when hailing a taxi.
+   - Fixed Phantasmagoria 2 error when attempting easter eggs.
+   - Fixed QFG3 auto-saves.
+   - Fixed QFG4 and Shivers save game thumbnails being obscured by control panels.
+   - Fixed a random crash in the Windows version when exiting a game.
+   - Added support for Roland D-110 sound driver.
+   - The "Prefer digital sound effects" checkbox works correctly now for SCI01/SCI1 games.
 
  SCUMM:
    - Fixed palette issues leading to incorrect colors in MM NES intro and dark rooms.
@@ -50,11 +96,21 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved colors in Apple //gs Maniac Mansion.
    - Fixed crash when entering garage in Apple //gs Maniac Mansion.
 
+ Supernova:
+   - Improved English translation.
+
  Sky:
    - Fixed syncing of music volume between native settings panel and ScummVM configuration.
 
  Sword1:
    - Added support for localized menus in Novy Disk Russian Trilogy release.
+   - Added support for Spanish playable Demo available from our website.
+
+ Sword2:
+   - Added support for Spanish playable Demo available from our website.
+
+ Titanic:
+   - Fixed Barbot crash after asking what else he needs.
 
  Wintermute:
    - Added subsystem for tracking achievements, implemented for 10+ games.
@@ -66,9 +122,23 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix curing the well in Nightshadow.
    - Fix loading of wall items from savegames.
 
+ ZVision:
+   - Fixed regression in the safe puzzle in Zork Nemesis: The Forbidden Lands.
+   - Fixed getting perfect score in Zork: Grand Inquisitor.
+
+ iOS port:
+   - Fixed unsupported graphic mode for some games (such as SCI games with high
+     quality video scaling enabled).
+   - Removed Quit button to follow the iOS design guidelines.
+   - Removed virtual keyboard input assistant bar. In particular this means that we
+     no longer see a bar at the bottom of the screen when using an external keyboard.
+
  Linux port:
    - Added option to use the system file browser instead of the ScummVM file browser.
 
+ MacOS X port:
+   - Fixed blurry on Retina screens. Unfortunately this required dropping support
+     for the dark theme for window decorations.
 
 #### 2.1.2 "Fixing Powerful Windows" (2020-03-31)
 

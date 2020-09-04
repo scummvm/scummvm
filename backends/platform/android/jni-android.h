@@ -31,6 +31,7 @@
 #include "common/fs.h"
 #include "common/archive.h"
 #include "common/array.h"
+#include "common/ustr.h"
 #include "engines/engine.h"
 
 class OSystem_Android;
@@ -59,11 +60,11 @@ public:
 
 	static void setWindowCaption(const Common::String &caption);
 	static void getDPI(float *values);
-	static void displayMessageOnOSD(const Common::String &msg);
+	static void displayMessageOnOSD(const Common::U32String &msg);
 	static bool openUrl(const Common::String &url);
 	static bool hasTextInClipboard();
-	static Common::String getTextFromClipboard();
-	static bool setTextInClipboard(const Common::String &text);
+	static Common::U32String getTextFromClipboard();
+	static bool setTextInClipboard(const Common::U32String &text);
 	static bool isConnectionLimited();
 	static void showVirtualKeyboard(bool enable);
 	static void showKeyboardControl(bool enable);
@@ -140,8 +141,6 @@ private:
 	static void pushEvent(JNIEnv *env, jobject self, int type, int arg1,
 							int arg2, int arg3, int arg4, int arg5, int arg6);
 	static void setPause(JNIEnv *env, jobject self, jboolean value);
-
-	static Common::String getCurrentCharset();
 
 	static jstring convertToJString(JNIEnv *env, const Common::String &str, const Common::String &from);
 	static Common::String convertFromJString(JNIEnv *env, const jstring &jstr, const Common::String &to);

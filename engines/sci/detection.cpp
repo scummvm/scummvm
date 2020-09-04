@@ -24,12 +24,16 @@
 #include "base/plugins.h"
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/hashmap.h"
 #include "common/ptr.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/translation.h"
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
+#include "gui/ThemeEval.h"
+#include "gui/widget.h"
+#include "gui/widgets/popup.h"
 
 #include "sci/sci.h"
 #include "sci/engine/kernel.h"
@@ -460,17 +464,6 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			false
 		}
 	},
-
-	{
-		GAMEOPTION_FB01_MIDI,
-		{
-			_s("Use IMF/Yamaha FB-01 for MIDI output"),
-			_s("Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI output"),
-			"native_fb01",
-			false
-		}
-	},
-
 	// Jones in the Fast Lane - CD audio tracks or resource.snd
 	{
 		GAMEOPTION_JONES_CDAUDIO,
@@ -528,6 +521,50 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
+struct PopUpOptionsItem {
+	const char *label;
+	int configValue;
+};
+
+#define POPUP_OPTIONS_ITEMS_TERMINATOR { nullptr, 0 }
+
+struct PopUpOptionsMap {
+	const char *guioFlag;
+	const char *label;
+	const char *tooltip;
+	const char *configOption;
+	int defaultState;
+	PopUpOptionsItem items[10];
+};
+
+#define POPUP_OPTIONS_TERMINATOR { nullptr, nullptr, nullptr, nullptr, 0, { POPUP_OPTIONS_ITEMS_TERMINATOR } }
+
+static const PopUpOptionsMap popUpOptionsList[] = {
+	{
+		GAMEOPTION_MIDI_MODE,
+		_s("MIDI mode:"),
+		_s("When using external MIDI devices (e.g. through USB-MIDI), select your device here"),
+		"midi_mode",
+		kMidiModeStandard,
+		{
+			{
+				_s("Standard (GM / MT-32)"),
+				kMidiModeStandard
+			},
+			{
+				_s("Roland D-110 / D-10 / D-20"),
+				kMidiModeD110
+			},
+			{
+				_s("Yamaha FB-01"),
+				kMidiModeFB01
+			},
+			POPUP_OPTIONS_ITEMS_TERMINATOR
+		}
+	},
+	POPUP_OPTIONS_TERMINATOR
+};
+
 /**
  * The fallback game descriptor used by the SCI engine's fallbackDetector.
  * Contents of this struct are overwritten by the fallbackDetector.
@@ -539,7 +576,7 @@ static ADGameDescription s_fallbackDesc = {
 	Common::UNK_LANG,
 	Common::kPlatformDOS,
 	ADGF_NO_FLAGS,
-	GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)
+	GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE)
 };
 
 static char s_fallbackGameIdBuf[256];
@@ -555,6 +592,88 @@ static const char *directoryGlobs[] = {
 	"patches",
 	0
 };
+
+class OptionsWidget : public GUI::OptionsContainerWidget {
+public:
+	explicit OptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain);
+
+	// OptionsContainerWidget API
+	void load() override;
+	bool save() override;
+
+private:
+	// OptionsContainerWidget API
+	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
+
+	Common::String _guiOptions;
+	Common::HashMap<Common::String, GUI::CheckboxWidget *> _checkboxes;
+	Common::HashMap<Common::String, GUI::PopUpWidget *> _popUps;
+};
+
+OptionsWidget::OptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
+		OptionsContainerWidget(boss, name, "SciOptionsDialog", false, domain) {
+	_guiOptions = ConfMan.get("guioptions", domain);
+
+	for (const ADExtraGuiOptionsMap *entry = optionsList; entry->guioFlag; ++entry)
+		if (checkGameGUIOption(entry->guioFlag, _guiOptions))
+			_checkboxes[entry->option.configOption] = new GUI::CheckboxWidget(widgetsBoss(), _dialogLayout + "." + entry->option.configOption, Common::U32String(entry->option.label), Common::U32String(entry->option.tooltip));
+
+	for (const PopUpOptionsMap *entry = popUpOptionsList; entry->guioFlag; ++entry)
+		if (checkGameGUIOption(entry->guioFlag, _guiOptions)) {
+			GUI::StaticTextWidget *textWidget = new GUI::StaticTextWidget(widgetsBoss(), _dialogLayout + "." + entry->configOption + "_desc", Common::U32String(entry->label), Common::U32String(entry->tooltip));
+			textWidget->setAlign(Graphics::kTextAlignRight);
+
+			_popUps[entry->configOption] = new GUI::PopUpWidget(widgetsBoss(), _dialogLayout + "." + entry->configOption);
+
+			for (uint i = 0; entry->items[i].label; ++i)
+				_popUps[entry->configOption]->appendEntry(entry->items[i].label, entry->items[i].configValue);
+		}
+}
+
+void OptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
+	layouts.addDialog(layoutName, overlayedLayout);
+	layouts.addLayout(GUI::ThemeLayout::kLayoutVertical).addPadding(16, 16, 16, 16);
+
+	for (const ADExtraGuiOptionsMap *entry = optionsList; entry->guioFlag; ++entry)
+		layouts.addWidget(entry->option.configOption, "Checkbox");
+
+	for (const PopUpOptionsMap *entry = popUpOptionsList; entry->guioFlag; ++entry) {
+		layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal).addPadding(0, 0, 0, 0);
+		layouts.addWidget(Common::String(entry->configOption) + "_desc", "OptionsLabel");
+		layouts.addWidget(entry->configOption, "PopUp").closeLayout();
+	}
+
+	layouts.closeLayout().closeDialog();
+}
+
+void OptionsWidget::load() {
+	for (const ADExtraGuiOptionsMap *entry = optionsList; entry->guioFlag; ++entry)
+		if (checkGameGUIOption(entry->guioFlag, _guiOptions))
+			_checkboxes[entry->option.configOption]->setState(ConfMan.getBool(entry->option.configOption, _domain));
+
+	for (const PopUpOptionsMap *entry = popUpOptionsList; entry->guioFlag; ++entry)
+		if (checkGameGUIOption(entry->guioFlag, _guiOptions))
+			_popUps[entry->configOption]->setSelectedTag(ConfMan.getInt(entry->configOption, _domain));
+
+	// If the deprecated native_fb01 option is set, use it to set midi_mode
+	if (ConfMan.hasKey("native_fb01", _domain) && ConfMan.getBool("native_fb01", _domain))
+		_popUps["midi_mode"]->setSelectedTag(kMidiModeFB01);
+}
+
+bool OptionsWidget::save() {
+	for (const ADExtraGuiOptionsMap *entry = optionsList; entry->guioFlag; ++entry)
+		if (checkGameGUIOption(entry->guioFlag, _guiOptions))
+			ConfMan.setBool(entry->option.configOption, _checkboxes[entry->option.configOption]->getState(), _domain);
+
+	for (const PopUpOptionsMap *entry = popUpOptionsList; entry->guioFlag; ++entry)
+		if (checkGameGUIOption(entry->guioFlag, _guiOptions))
+			ConfMan.setInt(entry->configOption, _popUps[entry->configOption]->getSelectedTag(), _domain);
+
+	// Remove deprecated option
+	ConfMan.removeKey("native_fb01", _domain);
+
+	return true;
+}
 
 class SciMetaEngine : public AdvancedMetaEngine {
 public:
@@ -589,7 +708,20 @@ public:
 	int getMaximumSaveSlot() const override;
 	void removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	void registerDefaultSettings(const Common::String &target) const override;
+	GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 };
+
+void SciMetaEngine::registerDefaultSettings(const Common::String &target) const {
+	AdvancedMetaEngine::registerDefaultSettings(target);
+
+	for (const PopUpOptionsMap *entry = popUpOptionsList; entry->guioFlag; ++entry)
+		ConfMan.registerDefault(entry->configOption, entry->defaultState);
+}
+
+GUI::OptionsContainerWidget *SciMetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+	return new OptionsWidget(boss, name, target);
+}
 
 Common::Language charToScummVMLanguage(const char c) {
 	switch (c) {
@@ -621,7 +753,7 @@ ADDetectedGame SciMetaEngine::fallbackDetect(const FileMap &allFiles, const Comm
 	s_fallbackDesc.flags = ADGF_NO_FLAGS;
 	s_fallbackDesc.platform = Common::kPlatformDOS;	// default to PC platform
 	s_fallbackDesc.gameId = "sci";
-	s_fallbackDesc.guiOptions = GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI);
+	s_fallbackDesc.guiOptions = GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE);
 
 	if (allFiles.contains("resource.map") || allFiles.contains("Data1")
 	    || allFiles.contains("resmap.000") || allFiles.contains("resmap.001")) {
@@ -746,7 +878,7 @@ ADDetectedGame SciMetaEngine::fallbackDetect(const FileMap &allFiles, const Comm
 	const bool isCD = (s_fallbackDesc.flags & ADGF_CD);
 
 	if (!isCD)
-		s_fallbackDesc.guiOptions = GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI);
+		s_fallbackDesc.guiOptions = GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE);
 
 	if (gameId.hasSuffix("sci")) {
 		s_fallbackDesc.extra = "SCI";

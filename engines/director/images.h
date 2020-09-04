@@ -78,6 +78,7 @@ private:
 	const byte *_palette;
 	uint8 _paletteColorCount;
 	uint16 _bitsPerPixel;
+	uint16 _pitch;
 };
 
 } // End of namespace Director

@@ -51,10 +51,14 @@ class ListWidget : public EditableWidget {
 public:
 	typedef Common::String String;
 	typedef Common::Array<Common::String> StringArray;
+
+	typedef Common::U32String U32String;
+	typedef Common::Array<Common::U32String> U32StringArray;
+
 	typedef Common::Array<ThemeEngine::FontColor> ColorList;
 protected:
-	StringArray		_list;
-	StringArray		_dataList;
+	U32StringArray	_list;
+	U32StringArray		_dataList;
 	ColorList		_listColors;
 	Common::Array<int>		_listIndex;
 	bool			_editable;
@@ -77,7 +81,7 @@ protected:
 	int				_bottomPadding;
 	int				_scrollBarWidth;
 
-	String			_filter;
+	U32String		_filter;
 	bool			_quickSelect;
 	bool			_dictionarySelect;
 
@@ -88,21 +92,21 @@ protected:
 	int				_lastRead;
 
 public:
-	ListWidget(Dialog *boss, const String &name, const char *tooltip = nullptr, uint32 cmd = 0);
-	ListWidget(Dialog *boss, int x, int y, int w, int h, const char *tooltip = nullptr, uint32 cmd = 0);
+	ListWidget(Dialog *boss, const String &name, const Common::U32String &tooltip = Common::U32String(""), uint32 cmd = 0);
+	ListWidget(Dialog *boss, int x, int y, int w, int h, const Common::U32String &tooltip = Common::U32String(""), uint32 cmd = 0);
 
 	bool containsWidget(Widget *) const override;
 	Widget *findWidget(int x, int y) override;
 
-	void setList(const StringArray &list, const ColorList *colors = nullptr);
-	const StringArray &getList()	const			{ return _dataList; }
+	void setList(const U32StringArray &list, const ColorList *colors = nullptr);
+	const U32StringArray &getList()	const			{ return _dataList; }
 
 	void append(const String &s, ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal);
 
 	void setSelected(int item);
 	int getSelected() const						{ return (_filter.empty() || _selectedItem == -1) ? _selectedItem : _listIndex[_selectedItem]; }
 
-	const String &getSelectedString() const		{ return _list[_selectedItem]; }
+	const U32String &getSelectedString() const		{ return _list[_selectedItem]; }
 	ThemeEngine::FontColor getSelectionColor() const;
 
 	void setNumberingMode(NumberingMode numberingMode)	{ _numberingMode = numberingMode; }
@@ -124,7 +128,7 @@ public:
 	void startEditMode() override;
 	void endEditMode() override;
 
-	void setFilter(const String &filter, bool redraw = true);
+	void setFilter(const U32String &filter, bool redraw = true);
 
 	void handleTickle() override;
 	void handleMouseDown(int x, int y, int button, int clickCount) override;

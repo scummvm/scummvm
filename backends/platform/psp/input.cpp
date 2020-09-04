@@ -540,7 +540,7 @@ void InputHandler::handleModeSwitchEvent() {
 		if (_padMode >= PAD_MODE_LAST)
 			_padMode = PAD_MODE_NORMAL;
 
-		GUI::TimedMessageDialog dialog(_padModeText[_padMode], 1500);
+		GUI::TimedMessageDialog dialog(Common::U32String(_padModeText[_padMode]), 1500);
 		dialog.runModal();
 
 		_buttonPad.setPadMode(_padMode);

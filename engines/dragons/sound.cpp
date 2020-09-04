@@ -19,6 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#include <audio/soundfont/rawfile.h>
+#include <audio/soundfont/vab/vab.h>
+#include <audio/soundfont/vgmcoll.h>
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
@@ -68,15 +71,14 @@ void CdIntToPos_0(uint32 param_1) { //, byte *param_2)
 						   (uint)(second >> 4) * 10 + ((uint)second & 0xf)) * 0x4b +
 						  (uint)(sector >> 4) * 10 + ((uint)sector & 0xf) + -0x96;
 
-	debug("Seek Audio %2X:%2X:%2X  in: %d out %d", minute, second, sector, param_1, out);
+	debug(3, "Seek Audio %2X:%2X:%2X  in: %d out %d", minute, second, sector, param_1, out);
 
 	return;
 }
 
 void SoundManager::playSpeech(uint32 textIndex) {
 	if (isSpeechPlaying()) {
-//		_vm->_mixer->stopHandle(_speechHandle);
-		return;
+		_vm->_mixer->stopHandle(_speechHandle);
 	}
 
 	// Reduce music volume while playing dialog.
@@ -124,7 +126,7 @@ bool SoundManager::getSpeechLocation(uint32 talkId, struct SpeechLocation *locat
 			location->startOffset = startOffset;
 			location->sectorEnd = end;
 			foundId = true;
-			debug("sectors [%d-%d] unk byte = %d", start * 32, end * 32, startOffset);
+			debug(3, "sectors [%d-%d] unk byte = %d", start * 32, end * 32, startOffset);
 			break;
 		}
 	}
@@ -264,6 +266,9 @@ Audio::QueuingAudioStream *SoundManager::PSXAudioTrack::createNewAudioStream(Com
 
 SoundManager::SoundManager(DragonsEngine *vm, BigfileArchive *bigFileArchive, DragonRMS *dragonRMS)
 		: _vm(vm),
+		  _sfxVolume(0),
+		  _musicVolume(0),
+		  _speechVolume(0),
 		  _bigFileArchive(bigFileArchive),
 		  _dragonRMS(dragonRMS) {
 	_dat_8006bb60_sound_related = 0;
@@ -273,9 +278,6 @@ SoundManager::SoundManager(DragonsEngine *vm, BigfileArchive *bigFileArchive, Dr
 	if (ConfMan.hasKey("mute")) {
 		allSoundIsMuted = ConfMan.getBool("mute");
 	}
-	_speechVolume = ConfMan.getInt("speech_volume");
-	_sfxVolume = ConfMan.getInt("sfx_volume");
-	_musicVolume = ConfMan.getInt("music_volume");
 
 	if (ConfMan.hasKey("speech_mute") && !allSoundIsMuted) {
 		_vm->_mixer->muteSoundType(_vm->_mixer->kSpeechSoundType, ConfMan.getBool("speech_mute"));
@@ -291,8 +293,9 @@ SoundManager::SoundManager(DragonsEngine *vm, BigfileArchive *bigFileArchive, Dr
 
 	SomeInitSound_FUN_8003f64c();
 	initVabData();
-	_midiPlayer = new MidiMusicPlayer(_vabMusx);
-	_midiPlayer->setVolume(_musicVolume);
+	_midiPlayer = new MidiMusicPlayer(_bigFileArchive, _vabMusx);
+
+	syncSoundSettings();
 }
 
 SoundManager::~SoundManager() {
@@ -434,9 +437,15 @@ void SoundManager::playSound(uint16 soundId, uint16 volumeId) {
 		stopVoicePlaying(soundId);
 	}
 
-	Audio::SoundHandle *handle = getVoiceHandle(soundId);
-	if (handle) {
-		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, handle, vabSound->getAudioStream(program, key), -1, _sfxVolume);
+	if (vabSound->hasSound(program, key)) {
+		Audio::SoundHandle *handle = getVoiceHandle(soundId);
+		if (handle) {
+			//TODO need to handle sfx where the requested key doesn't match the vag tone.
+			// We need to change pitch in this case.
+			_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, handle, vabSound->getAudioStream(program, key), -1, _sfxVolume);
+		}
+	} else {
+		warning("Sound not found Program: %d, key %d", program, key);
 	}
 }
 
@@ -456,6 +465,8 @@ uint16 SoundManager::getVabFromSoundId(uint16 soundId) {
 void SoundManager::loadMsf(uint32 sceneId) {
 	char msfFileName[] = "XXXX.MSF";
 	memcpy(msfFileName, _dragonRMS->getSceneName(sceneId), 4);
+
+	debug(3, "Loading SFX file %s", msfFileName);
 
 	if (_bigFileArchive->doesFileExist(msfFileName)) {
 		uint32 msfSize;
@@ -516,13 +527,26 @@ void SoundManager::playMusic(int16 song) {
 
 	memcpy(sceneName, _vm->_dragonRMS->getSceneName(_vm->getCurrentSceneId()), 4);
 	snprintf(filename, 12, "%sz%02d.msq", sceneName, song);
-	debug("Load music file %s", filename);
+	debug(1, "Load music file %s", filename);
+
+	if (!_bigFileArchive->doesFileExist(filename)) {
+		warning("Could not find music file %s", filename);
+		return;
+	}
 
 	uint32 dataSize;
 	byte *seqData = _bigFileArchive->load(filename, dataSize);
 	Common::MemoryReadStream *seq = new Common::MemoryReadStream(seqData, dataSize, DisposeAfterUse::YES);
 	_midiPlayer->playSong(seq);
 	delete seq;
+}
+
+void SoundManager::syncSoundSettings() {
+	_musicVolume = CLIP<int>(ConfMan.getInt("music_volume"), 0, 255);
+	_sfxVolume = CLIP<int>(ConfMan.getInt("sfx_volume"), 0, 255);
+	_speechVolume = CLIP<int>(ConfMan.getInt("speech_volume"), 0, 255);
+
+	_midiPlayer->setVolume(_musicVolume);
 }
 
 } // End of namespace Dragons

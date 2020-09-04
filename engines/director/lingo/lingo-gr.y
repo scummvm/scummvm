@@ -71,7 +71,9 @@ using namespace Director;
 
 static void yyerror(const char *s) {
 	g_lingo->_hadError = true;
-	warning("######################  LINGO: %s at line %d col %d", s, g_lingo->_linenumber, g_lingo->_colnumber);
+	warning("######################  LINGO: %s at line %d col %d in %s id: %d",
+		s, g_lingo->_linenumber, g_lingo->_colnumber, scriptType2str(g_lingo->_assemblyContext->_scriptType),
+		g_lingo->_assemblyContext->_id);
 	if (g_lingo->_lines[2] != g_lingo->_lines[1])
 		warning("# %3d: %s", g_lingo->_linenumber - 2, Common::String(g_lingo->_lines[2], g_lingo->_lines[1] - 1).c_str());
 
@@ -193,7 +195,8 @@ static void mVar(Common::String *s, VarType type) {
 %token UNARY
 
 // Datum types
-%token CASTREF VOID VAR POINT RECT ARRAY OBJECT FIELDREF LEXERROR PARRAY
+%token VOID VAR POINT RECT ARRAY OBJECT LEXERROR PARRAY
+%token CASTREF FIELDREF CHUNKREF
 %token<i> INT ARGC ARGCNORET
 
 %token<e> THEENTITY THEENTITYWITHID THEMENUITEMENTITY THEMENUITEMSENTITY
@@ -210,6 +213,7 @@ static void mVar(Common::String *s, VarType type) {
 %token tAFTER tBEFORE tCONCAT tCONTAINS tSTARTS tCHAR tITEM tLINE tWORD
 %token tSPRITE tINTERSECTS tWITHIN tTELL tPROPERTY
 %token tON tENDIF tENDREPEAT tENDTELL
+%token tASSERTERROR
 
 %type<code> asgn lbl expr if chunkexpr simpleexprnoparens
 %type<code> tellstart reference simpleexpr list valuelist
@@ -508,11 +512,14 @@ stmt: stmtoneliner
 		g_lingo->codeString($ID->c_str()); }
 	| tTELL expr '\n' tellstart stmtlist lbl tENDTELL { g_lingo->code1(LC::c_telldone); }
 	| tTELL expr tTO tellstart stmtoneliner lbl { g_lingo->code1(LC::c_telldone); }
+	| tASSERTERROR asserterrorstart stmtoneliner { g_lingo->code1(LC::c_asserterrordone); }
 	| error	'\n'			{ yyerrok; }
 
 startrepeat:	/* nothing */	{ startRepeat(); }
 
 tellstart:	  /* empty */	{ g_lingo->code1(LC::c_tell); }
+
+asserterrorstart:	/* empty */	{ g_lingo->code1(LC::c_asserterror); }
 
 ifstmt: if expr jumpifz[then] tTHEN stmtlist jump[else1] elseifstmtlist lbl[end3] tENDIF {
 		inst else1 = 0, end3 = 0;
@@ -609,12 +616,12 @@ simpleexprnoparens: INT		{
     | tSPRITE expr tWITHIN simpleexpr		{ g_lingo->code1(LC::c_within); }
 	| list
 	| ID[func] '(' ID[method] ')' {
-			g_lingo->code1(LC::c_lazyeval);
+			g_lingo->code1(LC::c_varpush);
 			g_lingo->codeString($method->c_str());
 			g_lingo->codeFunc($func, 1);
 			delete $func;
 			delete $method; }
-	| ID[func] '(' ID[method] ',' { g_lingo->code1(LC::c_lazyeval); g_lingo->codeString($method->c_str()); }
+	| ID[func] '(' ID[method] ',' { g_lingo->code1(LC::c_varpush); g_lingo->codeString($method->c_str()); }
 				nonemptyarglist ')' {
 			g_lingo->codeFunc($func, $nonemptyarglist + 1);
 			delete $func;
@@ -676,7 +683,9 @@ reference: 	chunkexpr
 		Common::String window("window");
 		g_lingo->codeFunc(&window, 1); }
 
-proc: tPUT expr					{ g_lingo->code1(LC::c_printtop); }
+proc: tPUT expr					{
+		Common::String put("put");
+		g_lingo->codeCmd(&put, 1); }
 	| gotofunc
 	| playfunc
 	| tEXIT tREPEAT				{
@@ -698,12 +707,12 @@ proc: tPUT expr					{ g_lingo->code1(LC::c_printtop); }
 		Common::String open("open");
 		g_lingo->codeCmd(&open, 1); }
 	| ID[func] '(' ID[method] ')' {
-			g_lingo->code1(LC::c_lazyeval);
+			g_lingo->code1(LC::c_varpush);
 			g_lingo->codeString($method->c_str());
 			g_lingo->codeCmd($func, 1);
 			delete $func;
 			delete $method; }
-	| ID[func] '(' ID[method] ',' { g_lingo->code1(LC::c_lazyeval); g_lingo->codeString($method->c_str()); }
+	| ID[func] '(' ID[method] ',' { g_lingo->code1(LC::c_varpush); g_lingo->codeString($method->c_str()); }
 				nonemptyarglist ')' {
 			g_lingo->codeCmd($func, $nonemptyarglist + 1);
 			delete $func;
@@ -814,12 +823,16 @@ defn: tMACRO { startDef(); } ID
 		endDef();
 		delete $ID; }
 	| tFACTORY ID	{ g_lingo->codeFactory(*$ID); delete $ID; }
-	| tMETHOD { startDef(); (*g_lingo->_methodVars)["me"] = kVarArgument; }
-			lbl argdef '\n' argstore stmtlist 		{
-		g_lingo->code1(LC::c_procret);
-		g_lingo->codeDefine(*$tMETHOD, $lbl, $argdef + 1);
-		endDef();
-		delete $tMETHOD; }
+	| tMETHOD {
+			startDef();
+			Common::String me("me");
+			g_lingo->codeArg(&me);
+			mVar(&me, kVarArgument);
+		} lbl argdef '\n' argstore stmtlist {
+			g_lingo->code1(LC::c_procret);
+			g_lingo->codeDefine(*$tMETHOD, $lbl, $argdef + 1);
+			endDef();
+			delete $tMETHOD; }
 	| on lbl argdef '\n' argstore stmtlist ENDCLAUSE endargdef {	// D3
 		g_lingo->code1(LC::c_procret);
 		g_lingo->codeDefine(*$on, $lbl, $argdef);

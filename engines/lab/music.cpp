@@ -143,7 +143,7 @@ void Music::changeMusic(const Common::String filename, bool storeCurPos, bool se
 		_musicFile->seek(_storedPos);
 
 	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(_musicFile, 15000, getSoundFlags());
-	_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, new Audio::LoopingAudioStream(audioStream, 0));
+	_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES, false));
 }
 
 void Music::resetMusic(bool seektoStoredPos) {

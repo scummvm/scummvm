@@ -25,6 +25,7 @@
 
 #include "gui/dialog.h"
 #include "common/str.h"
+#include "common/ustr.h"
 #include "common/array.h"
 #include "common/keyboard.h"
 
@@ -33,17 +34,19 @@ namespace GUI {
 class EEHandler;
 
 class AboutDialog : public Dialog {
-	typedef Common::Array<Common::String> StringArray;
+	typedef Common::String String;
+	typedef Common::U32String U32String;
+	typedef Common::Array<Common::U32String> U32StringArray;
 protected:
-	int			_scrollPos;
-	uint32		_scrollTime;
-	StringArray	_lines;
-	uint32		_lineHeight;
-	bool		_willClose;
+	int	       _scrollPos;
+	uint32         _scrollTime;
+	U32StringArray _lines;
+	uint32         _lineHeight;
+	bool           _willClose;
 
 	int _xOff, _yOff;
 
-	void addLine(const char *str);
+	void addLine(const U32String &str);
 
 	EEHandler	*_eeHandler;
 

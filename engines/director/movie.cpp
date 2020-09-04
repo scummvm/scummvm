@@ -25,24 +25,26 @@
 
 #include "engines/util.h"
 
+#include "graphics/macgui/macwindowmanager.h"
+
 #include "director/director.h"
 #include "director/archive.h"
 #include "director/cast.h"
 #include "director/movie.h"
 #include "director/score.h"
-#include "director/stage.h"
+#include "director/window.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
 
 namespace Director {
 
-Movie::Movie(Stage *stage) {
-	_stage = stage;
-	_vm = _stage->getVM();
+Movie::Movie(Window *window) {
+	_window = window;
+	_vm = _window->getVM();
 	_lingo = _vm->getLingo();
 
 	_flags = 0;
-	_stageColor = 0xFF;
+	_stageColor = _window->_wm->_colorWhite;
 
 	_currentClickOnSpriteId = 0;
 	_currentEditableTextChannel = 0;
@@ -52,6 +54,8 @@ Movie::Movie(Stage *stage) {
 	_lastRollTime = _lastEventTime;
 	_lastTimerReset = _lastEventTime;
 	_nextEventId = 0;
+
+	_videoPlayback = false;
 
 	_key = 0;
 	_keyCode = 0;
@@ -88,14 +92,14 @@ void Movie::setArchive(Archive *archive) {
 
 	// Frame Labels
 	if (archive->hasResource(MKTAG('V', 'W', 'L', 'B'), -1)) {
-		Common::SeekableSubReadStreamEndian *r;
+		Common::SeekableReadStreamEndian *r;
 		_score->loadLabels(*(r = archive->getFirstResource(MKTAG('V', 'W', 'L', 'B'))));
 		delete r;
 	}
 }
 
 bool Movie::loadArchive() {
-	Common::SeekableSubReadStreamEndian *r = nullptr;
+	Common::SeekableReadStreamEndian *r = nullptr;
 
 	// File Info
 	if (_movieArchive->hasResource(MKTAG('V', 'W', 'F', 'I'), -1)) {
@@ -108,23 +112,30 @@ bool Movie::loadArchive() {
 
 	// _movieRect and _stageColor are in VWCF, which the cast handles
 
+	bool recenter = false;
 	// If the stage dimensions are different, delete it and start again.
 	// Otherwise, do not clear it so there can be a nice transition.
-	if (_stage->getSurface()->w != _movieRect.width() || _stage->getSurface()->h != _movieRect.height()) {
-		_stage->resize(_movieRect.width(), _movieRect.height(), true);
-	}
-	// TODO: Add more options for desktop dimensions
-	if (_stage == _vm->getMainStage()) {
-		uint16 windowWidth = debugChannelSet(-1, kDebugDesktop) ? 1024 : _movieRect.width();
-		uint16 windowHeight = debugChannelSet(-1, kDebugDesktop) ? 768 : _movieRect.height();
-		if (_vm->_surface->w != windowWidth || _vm->_surface->h != windowHeight) {
-			_vm->_surface->free();
-			_vm->_surface->create(windowWidth, windowHeight, Graphics::PixelFormat::createFormatCLUT8());
-		}
-		initGraphics(windowWidth, windowHeight);
+	if (_window->getSurface()->w != _movieRect.width() || _window->getSurface()->h != _movieRect.height()) {
+		_window->resize(_movieRect.width(), _movieRect.height(), true);
+		recenter = true;
 	}
 
-	_stage->setStageColor(_stageColor);
+	// TODO: Add more options for desktop dimensions
+	if (_window == _vm->getStage()) {
+		uint16 windowWidth = debugChannelSet(-1, kDebugDesktop) ? 1024 : _movieRect.width();
+		uint16 windowHeight = debugChannelSet(-1, kDebugDesktop) ? 768 : _movieRect.height();
+		if (_vm->_wm->_screenDims.width() != windowWidth || _vm->_wm->_screenDims.height() != windowHeight) {
+			_vm->_wm->_screenDims = Common::Rect(windowWidth, windowHeight);
+			recenter = true;
+
+			initGraphics(windowWidth, windowHeight, &_vm->_pixelformat);
+		}
+	}
+
+	if (recenter && debugChannelSet(-1, kDebugDesktop))
+		_window->center(g_director->_centerStage);
+
+	_window->setStageColor(_stageColor, true);
 
 	// Score
 	if (!_movieArchive->hasResource(MKTAG('V', 'W', 'S', 'C'), -1)) {
@@ -155,7 +166,7 @@ Common::Rect Movie::readRect(Common::ReadStreamEndian &stream) {
 	return rect;
 }
 
-InfoEntries Movie::loadInfoEntries(Common::SeekableSubReadStreamEndian &stream) {
+InfoEntries Movie::loadInfoEntries(Common::SeekableReadStreamEndian &stream) {
 	uint32 offset = stream.pos();
 	offset += stream.readUint32();
 
@@ -164,7 +175,7 @@ InfoEntries Movie::loadInfoEntries(Common::SeekableSubReadStreamEndian &stream) 
 	res.unk2 = stream.readUint32();
 	res.flags = stream.readUint32();
 
-	if (g_director->getVersion() >= 4)
+	if (g_director->getVersion() >= 400)
 		res.scriptId = stream.readUint32();
 
 	stream.seek(offset);
@@ -195,7 +206,7 @@ InfoEntries Movie::loadInfoEntries(Common::SeekableSubReadStreamEndian &stream) 
 	return res;
 }
 
-void Movie::loadFileInfo(Common::SeekableSubReadStreamEndian &stream) {
+void Movie::loadFileInfo(Common::SeekableReadStreamEndian &stream) {
 	debugC(2, kDebugLoading, "****** Loading FileInfo VWFI");
 
 	InfoEntries fileInfo = Movie::loadInfoEntries(stream);

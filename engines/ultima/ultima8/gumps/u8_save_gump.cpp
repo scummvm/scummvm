@@ -59,8 +59,8 @@ U8SaveGump::~U8SaveGump() {
 void U8SaveGump::InitGump(Gump *newparent, bool take_focus) {
 	Gump::InitGump(newparent, take_focus);
 
-	_dims.w = 220;
-	_dims.h = 170;
+	_dims.setWidth(220);
+	_dims.setHeight(170);
 
 	FrameID entry_id(GameData::GUMPS, 46, 0);
 	entry_id = _TL_SHP_(entry_id);
@@ -82,7 +82,7 @@ void U8SaveGump::InitGump(Gump *newparent, bool take_focus) {
 		int xbase = 3;
 		int yi = i;
 		if (i >= 3) {
-			xbase += _dims.w / 2 + 9;
+			xbase += _dims.width() / 2 + 9;
 			yi -= 3;
 		}
 
@@ -115,14 +115,14 @@ void U8SaveGump::InitGump(Gump *newparent, bool take_focus) {
 			// frame for '10', cutting off the first 6 pixels.
 			Rect rect;
 			gump->GetDims(rect);
-			rect.x += 6;
+			rect.translate(6, 0);
 			gump->SetDims(rect);
 		}
 		gump->InitGump(this, false);
 
 		if (index_ == 0) {
 			// special case for 'The Beginning...' _save
-			Gump *widget = new TextWidget(xbase, 12 + entryheight,
+			Gump *widget = new TextWidget(xbase, entryheight + 4 + 40 * yi,
 			                              _TL_("The Beginning..."),
 			                              true, entryfont, 95);
 			widget->InitGump(this, false);
@@ -180,7 +180,7 @@ void U8SaveGump::onMouseClick(int button, int32 mx, int32 my) {
 	int x_;
 	if (mx >= 3 && mx <= 100)
 		x_ = 0;
-	else if (mx >= _dims.w / 2 + 10)
+	else if (mx >= _dims.width() / 2 + 10)
 		x_ = 1;
 	else
 		return;
@@ -296,13 +296,13 @@ void U8SaveGump::loadDescriptions() {
 		// FIXME: move version checks elsewhere!!
 		switch (state) {
 		case SavegameReader::SAVE_CORRUPT:
-			_descriptions[i] = _("[corrupt]");
+			_descriptions[i] = Common::convertFromU32String(_("[corrupt]"));
 			break;
 		case SavegameReader::SAVE_OUT_OF_DATE:
-			_descriptions[i] = _("[outdated]");
+			_descriptions[i] = Common::convertFromU32String(_("[outdated]"));
 			break;
 		case SavegameReader::SAVE_TOO_RECENT:
-			_descriptions[i] = _("[too modern]");
+			_descriptions[i] = Common::convertFromU32String(_("[too modern]"));
 			break;
 		default:
 			break;

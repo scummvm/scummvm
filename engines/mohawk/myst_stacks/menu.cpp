@@ -366,7 +366,7 @@ void Menu::introMovies_run() {
 	}
 }
 
-bool Menu::showConfirmationDialog(const char *message, const char *confirmButton, const char *cancelButton) {
+bool Menu::showConfirmationDialog(const Common::U32String &message, const Common::U32String &confirmButton, const Common::U32String &cancelButton) {
 	if (!_inGame) {
 		return true;
 	}

@@ -23,17 +23,22 @@
 #ifndef KEYSDIALOG_H
 #define KEYSDIALOG_H
 
+#include "common/scummsys.h"
+
+#ifdef GUI_ENABLE_KEYSDIALOG
+
 #include "gui/gui-manager.h"
 #include "gui/dialog.h"
 #include "gui/widgets/list.h"
 #include "common/str.h"
+#include "common/ustr.h"
 #include "common/translation.h"
 
 namespace GUI {
 
 class KeysDialog : public GUI::Dialog {
 public:
-	KeysDialog(const Common::String &title = _("Choose an action to map"));
+	KeysDialog(const Common::U32String &title = _("Choose an action to map"));
 
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 	void handleKeyUp(Common::KeyState state) override;
@@ -48,5 +53,7 @@ protected:
 };
 
 } // namespace GUI
+
+#endif
 
 #endif

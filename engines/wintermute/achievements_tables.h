@@ -257,6 +257,65 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 	},
 
 	{
+		"sotv1",
+		Common::STEAM_ACHIEVEMENTS,
+		"286360",
+		{
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_ZENMASTER", "Zen Master", "Survive a conversation with Anna Marano"),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_LOOK_BIDET", "Italian memories", "Find a widespread sign of modern civilization"),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_TUTORIAL_DONE", "James Murphy, doctor", "Finish the tutorial by stitching Mario's wound"),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_CRI_STUFF", "The game is on", "Find the first clues about the Cristoforo investigation"),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_HOLYPICS", "Harder path", "Solve a puzzle using the calendar at home"),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_LEPRIGNANO", "Cyberspace Surfer", "Complete successfully your first online search"),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_SCROOGE", "Cheap James", "Corrupt the Capena church keeper"),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_DRAPE", "Take that, dr. Jones", "Solve the most cryptic puzzle left by Cristoforo"),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_DRUNKNUN", "James the sinner", "Get ready for hell by ruining sister Candida"),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_MARANO_DIARY", "Attentive reader", "Face an adventure cliche: the diary!"),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_CIGAR", "Not afraid of pixel hunting", "Find something that belonged to the jeweler"),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_CARCHASE", "Lights off", "Follow the car to its destination without making mistakes"),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_HOTSPOTTER", "Look, a bush!", "It's not pixel hunting if you have a magnifier..."),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_NOLK27", "Mysterious password", "...it maybe makes sense in another game?"),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_SANTA", "Ho ho ho!", "Try entering from the chimney on December 24th"),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_ELISA", "Audere Semper", "Elisa, we hold you in our hearts"),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_SILVIA", "Lots of space here...", "Bring a sexy lady back home"),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_MATH_ACE", "Math Ace", "Get the calculation wrong twice"),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_COMPLETION", "Thrilled face", "Complete Shadows on the Vatican Act I"),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_FAST_GAMER", "Dialogue skipper", "Complete the adventure in less than two hours"),
+			ACHIEVEMENTS_LISTEND
+		}
+	},
+
+	{
+		"sotv2",
+		Common::STEAM_ACHIEVEMENTS,
+		"378630",
+		{
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_FARMER", "Very appropriate, you fight like a priest", "Get rid of James by using no wrong answers."),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_LAZYKILLER", "Lazy Killer", "Open the car trunk as lazy people do."),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_GOAULD", "Silvia the Goa'uld", "Try camouflaging your voice to trick a thug."),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_RAJATHUGS", "Queen of the shadows", "Get rid of all the thugs guarding the Raja."),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_MURDER", "Fifth Commandment", "Commit murder."),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_CROWBAR", "Now I am an adventure hero", "An adventure game with no crowbars? Make one!"),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_CHAMOMILE", "Chamomile needed", "Hit someone five times in a row just because you can."),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_LADIESFIRST", "Ladies First", "Can't get enough of playing with Silvia, huh?"),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_TRUEDETECTIVE", "True Detective", "Complete James actions first."),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_ACTIONADDICT", "Action Addict", "Complete Silvia actions first."),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_COCKTAIL", "Cocktail Master", "Get the anti-hangover preparation right on first try"),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_OLDSCHOOL", "Old School Adventurer", "Playing with pen and paper on your side?"),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_SEDUCTION", "Seduction Failure", "That's not going to work with him."),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_MARIKA", "No shortcuts", "We understand you, but better avoid violence if possible!"),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_DAMSEL", "To the rescue!", "Find out where Silvia is taken captive."),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_PIN", "Desperate attempt", "Sorry, this is not your tv's default PIN."),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_COPYPASTER", "Copy Paster", "Nice try, but wrong!"),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_TEAMPLAY", "Team Play", "Wasn't \"team\" the best path of the three?"),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_TOMBRAIDERS", "Tomb Raiders", "Complete Shadows on the Vatican Act II."),
+			ACHIEVEMENT_SIMPLE_ENTRY("ACH_DIALOGUELOVER", "Dialogue Lover", "Complete the adventure with dialogue skipping disabled."),
+			ACHIEVEMENT_HIDDEN_ENTRY("ACH_CHEATER", "Cheater"),
+			ACHIEVEMENTS_LISTEND
+		}
+	},
+
+	{
 		"thelostcrowngha",
 		Common::STEAM_ACHIEVEMENTS,
 		"291710",

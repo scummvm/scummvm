@@ -127,13 +127,33 @@ struct ScriptPatch {
 			5, "end if", ""},
 
 	// Missing '&'
-	{"warlock", "", kPlatformUnknown, "NAV/Shared Cast", kMovieScript, 0,
+	{"warlock", nullptr, kPlatformUnknown, "NAV/Shared Cast", kMovieScript, 0,
 			23, "alert \"Failed Save.\" & return & \"Error message number: \" string ( filer )",
 				"alert \"Failed Save.\" & return & \"Error message number: \" & string ( filer )"},
 
-	{"warlock", "", kPlatformUnknown, "NAV/Shared Cast", kMovieScript, 1,	// For running by the buildbot
+	{"warlock", nullptr, kPlatformUnknown, "NAV/Shared Cast", kMovieScript, 1,	// For running by the buildbot
 			23, "alert \"Failed Save.\" & return & \"Error message number: \" string ( filer )",
 				"alert \"Failed Save.\" & return & \"Error message number: \" & string ( filer )"},
+
+
+	// Patching dead loop which was fixed in v2
+	{"lzone", "", kPlatformMacintosh, "DATA/R-A/Ami-00", kScoreScript, 3,
+			2, "continue", "go \"OUT\""},
+
+	// Garbage at end of statements
+	{"lzone", "", kPlatformMacintosh, "DATA/R-E/ZD2-LAS", kScoreScript, 7,
+			4, "go to the frame 0", "go to the frame"},
+	{"lzone", "", kPlatformMacintosh, "DATA/R-E/zd1-con1", kScoreScript, 27,
+			1, "go to the frame 0", "go to the frame"},
+	{"lzone", "", kPlatformMacintosh, "DATA/R-E/zd1-con1", kScoreScript, 30,
+			4, "go the frame 0", "go to the frame"},
+	{"lzone", "", kPlatformMacintosh, "DATA/R-G/st-c", kScoreScript, 14,
+			1, "go to the frame 0", "go to the frame"},
+	{"lzone", "", kPlatformMacintosh, "DATA/R-G/st-d.mo", kScoreScript, 4,
+			1, "go to the frame 0", "go to the frame"},
+	{"lzone", "", kPlatformMacintosh, "DATA/R-F/ARCH-U.D-1", kScoreScript, 8,
+			1, "GO \"SPACE\" OF MOVIE \"L-ZONE:DATA:R-G:ST-A2\",\"242,197\"",
+			   "GO \"SPACE\" OF MOVIE \"L-ZONE:DATA:R-G:ST-A2\""},
 
 
 	// Unbalanced 'end if' at the end of the script
@@ -177,7 +197,7 @@ Common::String Lingo::patchLingoCode(Common::String &line, LingoArchive *archive
 		}
 
 		// Now everything matched
-		debugC(1, kDebugParse | kDebugPreprocess, "Lingo::patchLingoCode(): Applied a patch for '%s', '%s' %s:%d @ %d. \"%s\" -> \"%s\"",
+		warning("Lingo::patchLingoCode(): Applied a patch for '%s', '%s' %s:%d @ %d. \"%s\" -> \"%s\"",
 				patch->gameId, patch->movie, scriptType2str(type), id, linenum,
 				patch->orig, patch->replace);
 		return patch->replace;

@@ -49,7 +49,7 @@ enum {
  * - others???
  */
 
-BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
+BrowserDialog::BrowserDialog(const Common::U32String &title, bool dirBrowser)
 	: Dialog("Browser") {
 
 	_title = title;
@@ -62,7 +62,7 @@ BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 	new StaticTextWidget(this, "Browser.Headline", title);
 
 	// Current path - TODO: handle long paths ?
-	_currentPath = new EditTextWidget(this, "Browser.Path", "", nullptr, 0, kPathEditedCmd);
+	_currentPath = new EditTextWidget(this, "Browser.Path", Common::U32String(""), Common::U32String(""), 0, kPathEditedCmd);
 
 	// Add file list
 	_fileList = new ListWidget(this, "Browser.List");
@@ -79,8 +79,8 @@ BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 		new ButtonWidget(this, "Browser.Up", _("Go up"), _("Go to previous directory level"), kGoUpCmd);
 	else
 		new ButtonWidget(this, "Browser.Up", _c("Go up", "lowres"), _("Go to previous directory level"), kGoUpCmd);
-	new ButtonWidget(this, "Browser.Cancel", _("Cancel"), nullptr, kCloseCmd);
-	new ButtonWidget(this, "Browser.Choose", _("Choose"), nullptr, kChooseCmd);
+	new ButtonWidget(this, "Browser.Cancel", _("Cancel"), Common::U32String(""), kCloseCmd);
+	new ButtonWidget(this, "Browser.Choose", _("Choose"), Common::U32String(""), kChooseCmd);
 }
 
 int BrowserDialog::runModal() {
@@ -89,7 +89,7 @@ int BrowserDialog::runModal() {
 	Common::DialogManager *dialogManager = g_system->getDialogManager();
 	if (dialogManager) {
 		if (ConfMan.getBool("gui_browser_native", Common::ConfigManager::kApplicationDomain)) {
-			Common::DialogManager::DialogResult result = dialogManager->showFileBrowser(_title.c_str(), _choice, _isDirBrowser);
+			Common::DialogManager::DialogResult result = dialogManager->showFileBrowser(_title, _choice, _isDirBrowser);
 			if (result != Common::DialogManager::kDialogError) {
 				return result;
 			}
@@ -119,7 +119,7 @@ void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	switch (cmd) {
 	//Search for typed-in directory
 	case kPathEditedCmd:
-		_node = Common::FSNode(_currentPath->getEditString());
+		_node = Common::FSNode(Common::convertFromU32String(_currentPath->getEditString()));
 		updateListing();
 		break;
 	//Search by text input
@@ -201,7 +201,7 @@ void BrowserDialog::updateListing() {
 		Common::sort(_nodeContent.begin(), _nodeContent.end());
 
 	// Populate the ListWidget
-	ListWidget::StringArray list;
+	ListWidget::U32StringArray list;
 	ListWidget::ColorList colors;
 	for (Common::FSList::iterator i = _nodeContent.begin(); i != _nodeContent.end(); ++i) {
 		if (i->isDirectory())

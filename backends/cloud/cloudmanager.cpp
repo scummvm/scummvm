@@ -153,8 +153,8 @@ void CloudManager::replaceStorage(Storage *storage, uint32 index) {
 	_currentStorageIndex = index;
 	if (_storages[index].username == "") {
 		// options' Cloud tab believes Storage is connected once it has non-empty username
-		_storages[index].username = _("<syncing...>");
-		_storages[index].lastSyncDate = _("<right now>");
+		_storages[index].username = Common::convertFromU32String(_("<syncing...>"));
+		_storages[index].lastSyncDate = Common::convertFromU32String(_("<right now>"));
 		_storages[index].usedBytes = 0;
 	}
 	save();

@@ -45,11 +45,11 @@ namespace Director {
 static const char *xlibName = "FlushXObj";
 
 static MethodProto xlibMethods[] = {
-	{ "new",				FlushXObj::m_new,				 0, 0,	4 },	// D4
-	{ "AddToMask",			FlushXObj::m_addToMask,			 2, 2,	4 },	// D4
-	{ "ClearMask",			FlushXObj::m_clearMask,			 0, 0,	4 },	// D4
-	{ "Flush",				FlushXObj::m_flush,				 0, 0,  4 },	// D4
-	{ "FlushEvents",		FlushXObj::m_flushEvents,		 2, 2,  4 },	// D4
+	{ "new",				FlushXObj::m_new,				 0, 0,	400 },	// D4
+	{ "AddToMask",			FlushXObj::m_addToMask,			 2, 2,	400 },	// D4
+	{ "ClearMask",			FlushXObj::m_clearMask,			 0, 0,	400 },	// D4
+	{ "Flush",				FlushXObj::m_flush,				 0, 0,  400 },	// D4
+	{ "FlushEvents",		FlushXObj::m_flushEvents,		 2, 2,  400 },	// D4
 	{ 0, 0, 0, 0, 0 }
 };
 

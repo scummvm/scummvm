@@ -136,7 +136,7 @@ void Win32TaskbarManager::setOverlayIcon(const Common::String &name, const Commo
 
 	DestroyIcon(pIcon);
 
-	delete[] desc;
+	free(desc);
 }
 
 void Win32TaskbarManager::setProgressValue(int completed, int total) {
@@ -267,7 +267,7 @@ void Win32TaskbarManager::setCount(int count) {
 	// Sets the overlay icon
 	LPWSTR desc = Win32::ansiToUnicode(Common::String::format("Found games: %d", count).c_str());
 	_taskbar->SetOverlayIcon(_window->getHwnd(), _icon, desc);
-	delete[] desc;
+	free(desc);
 }
 
 void Win32TaskbarManager::addRecent(const Common::String &name, const Common::String &description) {
@@ -301,7 +301,7 @@ void Win32TaskbarManager::addRecent(const Common::String &name, const Common::St
 
 			link->SetIconLocation(icon, 0);
 
-			delete[] icon;
+			free(icon);
 		}
 
 		// The link's display name must be set via property store.
@@ -321,8 +321,8 @@ void Win32TaskbarManager::addRecent(const Common::String &name, const Common::St
 		// SHAddToRecentDocs will cause the games to be added to the Recent list, allowing the user to pin them.
 		SHAddToRecentDocs(SHARD_LINK, link);
 		link->Release();
-		delete[] game;
-		delete[] desc;
+		free(game);
+		free(desc);
 	}
 }
 

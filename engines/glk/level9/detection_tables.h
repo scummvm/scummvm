@@ -104,25 +104,6 @@ static const gln_game_table_t GLN_GAME_TABLE[] = {
 	{0x5b58, 0x50, 0x332e, "adventurequest", "Adventure Quest /JoD", "Atari"},
 	{0x5ace, 0x11, 0xdc12, "adventurequest", "Adventure Quest /JoD", "Spectrum 48"},
 
-	{0x3ebb, 0x00, 0xf6dc, "championraj", "Champion of the Raj", "English 1/2 GD/Amiga"},
-	{0x0fd8, 0x00, 0xf250, "championraj", "Champion of the Raj", "English 2/2 GD/Amiga"},
-
-	{0x3e8f, 0x00, 0x5599, "championraj", "Champion of the Raj", "English 1/2 GD/ST"},
-
-	{0x3e4f, 0x00, 0xb202, "championraj", "Champion of the Raj", "English 1/2 GD/PC"},
-	{0x14a3, 0x00, 0xa288, "championraj", "Champion of the Raj", "English 2/2 GD/PC"},
-
-	{0x1929, 0x00, 0xd4b2, "championraj", "Champion of the Raj", "demo, 1/2 GD/ST"},
-	{0x40e0, 0x02, 0x080d, "championraj", "Champion of the Raj", "demo, 2/2 GD/ST"},
-
-	{0x4872, 0x00, 0x9515, "championraj", "Champion of the Raj", "German 1/2 GD/Amiga"},
-	{0x11f5, 0x00, 0xbf39, "championraj", "Champion of the Raj", "German 2/2 GD/Amiga"},
-
-	{0x4846, 0x00, 0xd9c1, "championraj", "Champion of the Raj", "German 1/2 GD/ST"},
-	{0x11f5, 0x00, 0x7aa4, "championraj", "Champion of the Raj", "German 2/2 GD/ST"},
-
-	{0x110f, 0x00, 0x4b57, "championraj", "Champion of the Raj", "French 2/2 GD/ST"},
-
 	{0x76f4, 0x5e, 0x1fe5, "colossaladvjod", "Colossal Adventure /JoD", "Amiga/PC"},
 	{0x76f4, 0x5a, 0xcf4b, "colossaladvjod", "Colossal Adventure /JoD", "ST"},
 	{0x6f70, 0x40, 0xbd91, "colossaladvjod", "Colossal Adventure /JoD", "MSX"},

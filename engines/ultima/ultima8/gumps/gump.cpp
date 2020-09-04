@@ -90,10 +90,10 @@ void Gump::SetShape(FrameID frame, bool adjustsize) {
 void Gump::UpdateDimsFromShape() {
 	const ShapeFrame *sf = _shape->getFrame(_frameNum);
 	assert(sf);
-	_dims.w = sf->_width;
-	_dims.h = sf->_height;
-	_dims.x = -sf->_xoff;
-	_dims.y = -sf->_yoff;
+	_dims.left = -sf->_xoff;
+	_dims.top = -sf->_yoff;
+	_dims.setWidth(sf->_width);
+	_dims.setHeight(sf->_height);
 }
 
 void Gump::CreateNotifier() {
@@ -237,7 +237,7 @@ void Gump::Paint(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 
 	// Set new clipping rect
 	Rect new_rect = _dims;
-	new_rect.Intersect(old_rect);
+	new_rect.clip(old_rect);
 	surf->SetClippingRect(new_rect);
 
 	// Paint This
@@ -307,10 +307,9 @@ void Gump::PaintCompositing(RenderSurface *surf, int32 lerp_factor,
 	surf->GetClippingRect(old_rect);
 
 	// Set new clipping rect
-	int32 cx = _dims.x, cy = _dims.y, cw = _dims.w, ch = _dims.h;
-	GumpRectToScreenSpace(cx, cy, cw, ch, ROUND_OUTSIDE);
-	Rect new_rect(cx, cy, cw, ch);
-	new_rect.Intersect(old_rect);
+	Rect new_rect(_dims);
+	GumpRectToScreenSpace(new_rect, ROUND_OUTSIDE);
+	new_rect.clip(old_rect);
 	surf->SetClippingRect(new_rect);
 
 	// Iterate all children
@@ -372,26 +371,26 @@ void Gump::setRelativePosition(Gump::Position pos, int xoffset, int yoffset) {
 
 		switch (pos) {
 		case CENTER:
-			Move(rect.w / 2 - _dims.w / 2 + xoffset,
-			     rect.h / 2 - _dims.h / 2 + yoffset);
+			Move(rect.width() / 2 - _dims.width() / 2 + xoffset,
+			     rect.height() / 2 - _dims.height() / 2 + yoffset);
 			break;
 		case TOP_LEFT:
 			Move(xoffset, yoffset);
 			break;
 		case TOP_RIGHT:
-			Move(rect.w - _dims.w + xoffset, yoffset);
+			Move(rect.width() - _dims.width() + xoffset, yoffset);
 			break;
 		case BOTTOM_LEFT:
-			Move(xoffset, rect.h - _dims.h + yoffset);
+			Move(xoffset, rect.height() - _dims.height() + yoffset);
 			break;
 		case BOTTOM_RIGHT:
-			Move(rect.w - _dims.w + xoffset, rect.h - _dims.h + yoffset);
+			Move(rect.width() - _dims.width() + xoffset, rect.height() - _dims.height() + yoffset);
 			break;
 		case TOP_CENTER:
-			Move(rect.w / 2 - _dims.w / 2 + xoffset, yoffset);
+			Move(rect.width() / 2 - _dims.width() / 2 + xoffset, yoffset);
 			break;
 		case BOTTOM_CENTER:
-			Move(rect.w / 2 - _dims.w / 2 + xoffset, rect.h - _dims.h + yoffset);
+			Move(rect.width() / 2 - _dims.width() / 2 + xoffset, rect.height() - _dims.height() + yoffset);
 			break;
 		default:
 			break;
@@ -404,7 +403,7 @@ bool Gump::PointOnGump(int mx, int my) {
 	ParentToGump(gx, gy);
 
 	// First check again rectangle
-	if (!_dims.InRect(gx, gy)) {
+	if (!_dims.contains(gx, gy)) {
 		return false;
 	}
 
@@ -454,49 +453,49 @@ void Gump::GumpToScreenSpace(int32 &gx, int32 &gy, PointRoundDir r) {
 // Convert a parent relative point to a gump point
 void Gump::ParentToGump(int32 &px, int32 &py, PointRoundDir) {
 	px -= _x;
-	px += _dims.x;
+	px += _dims.left;
 	py -= _y;
-	py += _dims.y;
+	py += _dims.top;
 }
 
 // Convert a gump point to parent relative point
 void Gump::GumpToParent(int32 &gx, int32 &gy, PointRoundDir) {
-	gx -= _dims.x;
+	gx -= _dims.left;
 	gx += _x;
-	gy -= _dims.y;
+	gy -= _dims.top;
 	gy += _y;
 }
 
 // Transform a rectangle to screenspace from gumpspace
-void Gump::GumpRectToScreenSpace(int32 &gx, int32 &gy, int32 &gw, int32 &gh,
-                                 RectRoundDir r) {
+void Gump::GumpRectToScreenSpace(Rect &gr, RectRoundDir r) {
 	PointRoundDir tl = (r == ROUND_INSIDE ? ROUND_BOTTOMRIGHT : ROUND_TOPLEFT);
 	PointRoundDir br = (r == ROUND_OUTSIDE ? ROUND_BOTTOMRIGHT : ROUND_TOPLEFT);
 
-	int32 x1 = gx, y1 = gy;
-	int32 x2 = gx + gw, y2 = gy + gh;
+	int32 x1 = gr.left, y1 = gr.top;
+	int32 x2 = gr.right, y2 = gr.bottom;
 	GumpToScreenSpace(x1, y1, tl);
 	GumpToScreenSpace(x2, y2, br);
-	gx = x1;
-	gy = y1;
-	if (gw != 0) gw = x2 - x1;
-	if (gh != 0) gh = y2 - y1;
+	gr.moveTo(x1, y1);
+	if (gr.width() != 0)
+		gr.setWidth(x2 - x1);
+	if (gr.height() != 0)
+		gr.setHeight(y2 - y1);
 }
 
 // Transform a rectangle to gumpspace from screenspace
-void Gump::ScreenSpaceToGumpRect(int32 &sx, int32 &sy, int32 &sw, int32 &sh,
-                                 RectRoundDir r) {
+void Gump::ScreenSpaceToGumpRect(Rect &sr, RectRoundDir r) {
 	PointRoundDir tl = (r == ROUND_INSIDE ? ROUND_BOTTOMRIGHT : ROUND_TOPLEFT);
 	PointRoundDir br = (r == ROUND_OUTSIDE ? ROUND_BOTTOMRIGHT : ROUND_TOPLEFT);
 
-	int32 x1 = sx, y1 = sy;
-	int32 x2 = sx + sw, y2 = sy + sh;
+	int32 x1 = sr.left, y1 = sr.top;
+	int32 x2 = sr.right, y2 = sr.bottom;
 	ScreenSpaceToGump(x1, y1, tl);
 	ScreenSpaceToGump(x2, y2, br);
-	sx = x1;
-	sy = y1;
-	if (sw != 0) sw = x2 - x1;
-	if (sh != 0) sh = y2 - y1;
+	sr.moveTo(x1, y1);
+	if (sr.width() != 0)
+		sr.setWidth(x2 - x1);
+	if (sr.height() != 0)
+		sr.setHeight(y2 - y1);
 }
 
 uint16 Gump::TraceObjId(int32 mx, int32 my) {
@@ -784,10 +783,10 @@ void Gump::saveData(Common::WriteStream *ws) {
 	ws->writeUint16LE(_owner);
 	ws->writeUint32LE(static_cast<uint32>(_x));
 	ws->writeUint32LE(static_cast<uint32>(_y));
-	ws->writeUint32LE(static_cast<uint32>(_dims.x));
-	ws->writeUint32LE(static_cast<uint32>(_dims.y));
-	ws->writeUint32LE(static_cast<uint32>(_dims.w));
-	ws->writeUint32LE(static_cast<uint32>(_dims.h));
+	ws->writeUint32LE(static_cast<uint32>(_dims.left));
+	ws->writeUint32LE(static_cast<uint32>(_dims.top));
+	ws->writeUint32LE(static_cast<uint32>(_dims.width()));
+	ws->writeUint32LE(static_cast<uint32>(_dims.height()));
 	ws->writeUint32LE(_flags);
 	ws->writeUint32LE(static_cast<uint32>(_layer));
 	ws->writeUint32LE(static_cast<uint32>(_index));
@@ -835,7 +834,9 @@ bool Gump::loadData(Common::ReadStream *rs, uint32 version) {
 	int dy = static_cast<int32>(rs->readUint32LE());
 	int dw = static_cast<int32>(rs->readUint32LE());
 	int dh = static_cast<int32>(rs->readUint32LE());
-	_dims.Set(dx, dy, dw, dh);
+	_dims.moveTo(dx, dy);
+	_dims.setWidth(dw);
+	_dims.setHeight(dh);
 
 	_flags = rs->readUint32LE();
 	_layer = static_cast<int32>(rs->readUint32LE());

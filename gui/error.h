@@ -33,14 +33,14 @@ namespace GUI {
  * @param error error code
  * @param extraText extra text to be displayed in addition to default string description(optional)
  */
-void displayErrorDialog(const Common::Error &error, const char *extraText = "");
+void displayErrorDialog(const Common::Error &error, const Common::U32String &extraText = Common::U32String(""));
 
 /**
  * Displays an error dialog for a given message.
  *
  * @param text message to be displayed
  */
-void displayErrorDialog(const char *text);
+void displayErrorDialog(const Common::U32String &text);
 
 } // End of namespace GUI
 

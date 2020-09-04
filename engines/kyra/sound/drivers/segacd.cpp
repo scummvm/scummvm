@@ -361,7 +361,7 @@ bool SegaAudioChannel::update() {
 	not implemented/required: sfx channel lock handling
 	restoreTone();
 	*/
-	
+
 	fadeUpdate();
 
 	if (!_dataPtr)

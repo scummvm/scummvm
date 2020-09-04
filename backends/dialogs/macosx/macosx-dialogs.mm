@@ -75,14 +75,7 @@
 		showHiddenFilesButton = [[NSButton alloc] init];
 		[showHiddenFilesButton setButtonType:NSSwitchButton];
 
-#ifdef USE_TRANSLATION
-		CFStringRef encStr = CFStringCreateWithCString(NULL, TransMan.getCurrentCharset().c_str(), kCFStringEncodingASCII);
-		CFStringEncoding stringEncoding = CFStringConvertIANACharSetNameToEncoding(encStr);
-		CFRelease(encStr);
-#else
-		CFStringEncoding stringEncoding = kCFStringEncodingASCII;
-#endif
-		CFStringRef hiddenFilesString = CFStringCreateWithCString(0, _("Show hidden files"), stringEncoding);
+		CFStringRef hiddenFilesString = CFStringCreateWithCString(0, _("Show hidden files").encode().c_str(), kCFStringEncodingUTF8);
 		[showHiddenFilesButton setTitle:(NSString*)hiddenFilesString];
 		CFRelease(hiddenFilesString);
 
@@ -128,22 +121,15 @@
 
 @end
 
-Common::DialogManager::DialogResult MacOSXDialogManager::showFileBrowser(const char *title, Common::FSNode &choice, bool isDirBrowser) {
-
+Common::DialogManager::DialogResult MacOSXDialogManager::showFileBrowser(const Common::U32String &title, Common::FSNode &choice, bool isDirBrowser) {
 	DialogResult result = kDialogCancel;
 
 	// Get current encoding
-#ifdef USE_TRANSLATION
-	CFStringRef encStr = CFStringCreateWithCString(NULL, TransMan.getCurrentCharset().c_str(), kCFStringEncodingASCII);
-	CFStringEncoding stringEncoding = CFStringConvertIANACharSetNameToEncoding(encStr);
-	CFRelease(encStr);
-#else
-	CFStringEncoding stringEncoding = kCFStringEncodingASCII;
-#endif
+	CFStringEncoding stringEncoding = kCFStringEncodingUTF8;
 
 	// Convert labels to NSString
-	CFStringRef titleRef = CFStringCreateWithCString(0, title, stringEncoding);
-	CFStringRef chooseRef = CFStringCreateWithCString(0, _("Choose"), stringEncoding);
+	CFStringRef titleRef = CFStringCreateWithCString(0, title.encode().c_str(), stringEncoding);
+	CFStringRef chooseRef = CFStringCreateWithCString(0, _("Choose").encode().c_str(), stringEncoding);
 
 	beginDialog();
 

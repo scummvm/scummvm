@@ -36,10 +36,13 @@
 namespace Glk {
 namespace Hugo {
 
+class ResourceArchive;
+
 /**
  * Hugo game interpreter
  */
 class Hugo : public GlkAPI, public HTokens, public StringFunctions {
+	friend class ResourceArchive;
 private:
 	int _savegameSlot;
 	winid_t mainwin, currentwin;
@@ -639,8 +642,6 @@ private:
 
 	int hugo_hasgraphics();
 
-	int hugo_displaypicture(HUGO_FILE infile, long reslen);
-
 	void initsound();
 
 	void initmusic();
@@ -905,7 +906,7 @@ private:
 	 * and on-disk resources in (if not the given directory) "source" or "resource" (where these are the
 	 * environment variables "HUGO_...", not actual on-disk directories).
 	 */
-	long FindResource(char *filename, char *resname);
+	long FindResource(const char *filename, const char *resname);
 
 	/**
 	 * Processes resourcefile/filename (and resource, if applicable).
@@ -1183,6 +1184,11 @@ public:
 	Hugo(OSystem *syst, const GlkGameDescription &gameDesc);
 
 	/**
+	 * Destructor
+	 */
+	~Hugo();
+
+	/**
 	 * Run the game
 	 */
 	void runGame() override;
@@ -1203,6 +1209,8 @@ public:
 	 */
 	Common::Error writeGameData(Common::WriteStream *ws) override;
 };
+
+extern Hugo *g_vm;
 
 } // End of namespace Hugo
 } // End of namespace Glk

@@ -121,11 +121,8 @@ void SpeechManager::speak(const Common::U32String &text, Speech *speechSource) {
 			//speechAction = Common::TextToSpeechManager::INTERRUPT;
 			_lastSpeechSource = speechSource;
 		}
-		// Curently the TextToSpeechManager takes a String, which does not properly support
-		// UTF-32. So convert to UTF-8.
-		Common::String textUtf8 = text.encode();
-		debugC(kDebugSpeech, "Speaking: \"%s\"", textUtf8.c_str());
-		_ttsMan->say(textUtf8, speechAction, "utf-8");
+		//debugC(kDebugSpeech, "Speaking: \"%s\"", text.encode().c_str());
+		_ttsMan->say(text, speechAction);
 	}
 #endif
 }

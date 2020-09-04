@@ -85,8 +85,6 @@ public:
 	ConfigDialog();
 	~ConfigDialog() override;
 
-	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
-
 	// OptionsDialog API
 	void build() override;
 	void apply() override;
@@ -95,6 +93,10 @@ private:
 	OptionsContainerWidget *_engineOptions;
 
 #ifdef GUI_ENABLE_KEYSDIALOG
+public:
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+
+private:
 	Dialog *_keysDialog;
 #endif
 };

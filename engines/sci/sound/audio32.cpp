@@ -40,7 +40,6 @@
 #include "sci/console.h"            // for Console
 #include "sci/engine/features.h"    // for GameFeatures
 #include "sci/engine/guest_additions.h" // for GuestAdditions
-#include "sci/engine/state.h"       // for EngineState
 #include "sci/engine/vm_types.h"    // for reg_t, make_reg, NULL_REG
 #include "sci/resource.h"           // for ResourceId, ResourceType::kResour...
 #include "sci/sci.h"                // for SciEngine, g_sci, getSciVersion
@@ -468,7 +467,7 @@ uint8 Audio32::getNumUnlockedChannels() const {
 	return numChannels;
 }
 
-int16 Audio32::findChannelByArgs(int argc, const reg_t *argv, const int startIndex, const reg_t soundNode) const {
+int16 Audio32::findChannelByArgs(EngineState *s, int argc, const reg_t *argv, const int startIndex, const reg_t soundNode) const {
 	// SSCI takes extra steps to skip the subop argument here, but argc/argv are
 	// already reduced by one in our engine by the kernel since these calls are
 	// always subops so we do not need to do anything extra
@@ -488,6 +487,17 @@ int16 Audio32::findChannelByArgs(int argc, const reg_t *argv, const int startInd
 
 	if (argc < 5) {
 		searchId = ResourceId(kResourceTypeAudio, argv[startIndex].toUint16());
+	} else if (argc == 6 && argv[startIndex + 5].isPointer()) {
+		// LSL6 hires Mac plays external AIFF files by passing filenames as strings.
+		//  All other parameters are ignored.
+		const Common::String audioName = s->_segMan->getString(argv[startIndex + 5]);
+		uint16 audioNumber = atoi(audioName.c_str());
+		if (audioNumber == 0) {
+			// script passed a dummy value such as "XXXX" to indicate
+			//  that all sounds should be stopped
+			return kAllChannels;
+		}
+		searchId = ResourceId(kResourceTypeAudio, audioNumber);
 	} else {
 		searchId = ResourceId(
 			kResourceTypeAudio36,
@@ -1186,17 +1196,32 @@ bool Audio32::hasSignal() const {
 #pragma mark -
 #pragma mark Kernel
 
-reg_t Audio32::kernelPlay(const bool autoPlay, const int argc, const reg_t *const argv) {
+reg_t Audio32::kernelPlay(const bool autoPlay, EngineState *s, const int argc, const reg_t *const argv) {
 	Common::StackLock lock(_mutex);
 
-	const int16 channelIndex = findChannelByArgs(argc, argv, 0, NULL_REG);
+	int16 channelIndex = findChannelByArgs(s, argc, argv, 0, NULL_REG);
 	ResourceId resourceId;
 	bool loop;
 	int16 volume;
 	bool monitor = false;
 	reg_t soundNode = NULL_REG;
 
-	if (argc >= 5) {
+	if (argc == 6 && argv[5].isPointer()) {
+		// LSL6 hires Mac plays external AIFF files by passing filenames as strings.
+		//  All other parameters are ignored.
+		const Common::String audioName = s->_segMan->getString(argv[5]);
+		uint16 audioNumber = atoi(audioName.c_str());
+		resourceId = ResourceId(kResourceTypeAudio, audioNumber);
+		loop = false;
+		volume = Audio32::kMaxVolume;
+		
+		// SSCI only plays one AIFF file at a time using this method. The game scripts
+		//  rely on this and don't stop the previous AIFF before playing another.
+		//  This entire scheme is only used in two rooms, so rather than track the
+		//  AIFF channel, just stop all channels when an AIFF is played.
+		stop(kAllChannels);
+		channelIndex = kNoExistingChannel;
+	} else if (argc >= 5) {
 		resourceId = ResourceId(kResourceTypeAudio36, argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), argv[3].toUint16(), argv[4].toUint16());
 
 		if (argc < 6 || argv[5].toSint16() == 1) {
@@ -1260,31 +1285,31 @@ reg_t Audio32::kernelPlay(const bool autoPlay, const int argc, const reg_t *cons
 	return make_reg(0, play(channelIndex, resourceId, autoPlay, loop, volume, soundNode, monitor));
 }
 
-reg_t Audio32::kernelStop(const int argc, const reg_t *const argv) {
+reg_t Audio32::kernelStop(EngineState *s, const int argc, const reg_t *const argv) {
 	Common::StackLock lock(_mutex);
-	const int16 channelIndex = findChannelByArgs(argc, argv, 0, argc > 1 ? argv[1] : NULL_REG);
+	const int16 channelIndex = findChannelByArgs(s, argc, argv, 0, argc > 1 ? argv[1] : NULL_REG);
 	return make_reg(0, stop(channelIndex));
 }
 
-reg_t Audio32::kernelPause(const int argc, const reg_t *const argv) {
+reg_t Audio32::kernelPause(EngineState *s, const int argc, const reg_t *const argv) {
 	Common::StackLock lock(_mutex);
-	const int16 channelIndex = findChannelByArgs(argc, argv, 0, argc > 1 ? argv[1] : NULL_REG);
+	const int16 channelIndex = findChannelByArgs(s, argc, argv, 0, argc > 1 ? argv[1] : NULL_REG);
 	return make_reg(0, pause(channelIndex));
 }
 
-reg_t Audio32::kernelResume(const int argc, const reg_t *const argv) {
+reg_t Audio32::kernelResume(EngineState *s, const int argc, const reg_t *const argv) {
 	Common::StackLock lock(_mutex);
-	const int16 channelIndex = findChannelByArgs(argc, argv, 0, argc > 1 ? argv[1] : NULL_REG);
+	const int16 channelIndex = findChannelByArgs(s, argc, argv, 0, argc > 1 ? argv[1] : NULL_REG);
 	return make_reg(0, resume(channelIndex));
 }
 
-reg_t Audio32::kernelPosition(const int argc, const reg_t *const argv) {
+reg_t Audio32::kernelPosition(EngineState *s, const int argc, const reg_t *const argv) {
 	Common::StackLock lock(_mutex);
-	const int16 channelIndex = findChannelByArgs(argc, argv, 0, argc > 1 ? argv[1] : NULL_REG);
+	const int16 channelIndex = findChannelByArgs(s, argc, argv, 0, argc > 1 ? argv[1] : NULL_REG);
 	return make_reg(0, getPosition(channelIndex));
 }
 
-reg_t Audio32::kernelVolume(const int argc, const reg_t *const argv) {
+reg_t Audio32::kernelVolume(EngineState *s, const int argc, const reg_t *const argv) {
 	Common::StackLock lock(_mutex);
 
 	const int16 volume = argc > 0 ? argv[0].toSint16() : -1;
@@ -1293,7 +1318,7 @@ reg_t Audio32::kernelVolume(const int argc, const reg_t *const argv) {
 	if (getSciVersion() == SCI_VERSION_3 && argc < 2) {
 		channelIndex = kAllChannels;
 	} else {
-		channelIndex = findChannelByArgs(argc, argv, 1, argc > 2 ? argv[2] : NULL_REG);
+		channelIndex = findChannelByArgs(s, argc, argv, 1, argc > 2 ? argv[2] : NULL_REG);
 	}
 
 	if (volume != -1) {
@@ -1313,7 +1338,7 @@ reg_t Audio32::kernelMixing(const int argc, const reg_t *const argv) {
 	return make_reg(0, getAttenuatedMixing());
 }
 
-reg_t Audio32::kernelFade(const int argc, const reg_t *const argv) {
+reg_t Audio32::kernelFade(EngineState *s, const int argc, const reg_t *const argv) {
 	if (argc < 4) {
 		return make_reg(0, 0);
 	}
@@ -1324,7 +1349,7 @@ reg_t Audio32::kernelFade(const int argc, const reg_t *const argv) {
 	// before the call, and then restored after the call. We just implemented
 	// findChannelByArgs in a manner that allows us to pass this information
 	// without messing with argc/argv instead
-	const int16 channelIndex = findChannelByArgs(2, argv, 0, argc > 5 ? argv[5] : NULL_REG);
+	const int16 channelIndex = findChannelByArgs(s, 2, argv, 0, argc > 5 ? argv[5] : NULL_REG);
 	const int16 volume = argv[1].toSint16();
 	const int16 speed = argv[2].toSint16();
 	const int16 steps = argv[3].toSint16();
@@ -1333,19 +1358,19 @@ reg_t Audio32::kernelFade(const int argc, const reg_t *const argv) {
 	return make_reg(0, fadeChannel(channelIndex, volume, speed, steps, stopAfterFade));
 }
 
-void Audio32::kernelLoop(const int argc, const reg_t *const argv) {
+void Audio32::kernelLoop(EngineState *s, const int argc, const reg_t *const argv) {
 	Common::StackLock lock(_mutex);
 
-	const int16 channelIndex = findChannelByArgs(argc, argv, 0, argc == 3 ? argv[2] : NULL_REG);
+	const int16 channelIndex = findChannelByArgs(s, argc, argv, 0, argc == 3 ? argv[2] : NULL_REG);
 	const bool loop = argv[0].toSint16() != 0 && argv[0].toSint16() != 1;
 
 	setLoop(channelIndex, loop);
 }
 
-void Audio32::kernelPan(const int argc, const reg_t *const argv) {
+void Audio32::kernelPan(EngineState *s, const int argc, const reg_t *const argv) {
 	Common::StackLock lock(_mutex);
 
-	const int16 channelIndex = findChannelByArgs(argc, argv, 1, argc == 3 ? argv[2] : NULL_REG);
+	const int16 channelIndex = findChannelByArgs(s, argc, argv, 1, argc == 3 ? argv[2] : NULL_REG);
 	const int16 pan = argv[0].toSint16();
 	if (channelIndex != kNoExistingChannel) {
 		setPan(channelIndex, pan);
@@ -1354,10 +1379,10 @@ void Audio32::kernelPan(const int argc, const reg_t *const argv) {
 	}
 }
 
-void Audio32::kernelPanOff(const int argc, const reg_t *const argv) {
+void Audio32::kernelPanOff(EngineState *s, const int argc, const reg_t *const argv) {
 	Common::StackLock lock(_mutex);
 
-	const int16 channelIndex = findChannelByArgs(argc, argv, 0, argc == 2 ? argv[1] : NULL_REG);
+	const int16 channelIndex = findChannelByArgs(s, argc, argv, 0, argc == 2 ? argv[1] : NULL_REG);
 	if (channelIndex != kNoExistingChannel) {
 		setPan(channelIndex, -1);
 	}

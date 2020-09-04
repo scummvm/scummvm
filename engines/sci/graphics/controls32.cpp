@@ -32,7 +32,7 @@
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
 #include "sci/graphics/controls32.h"
-#include "sci/graphics/font.h"
+#include "sci/graphics/scifont.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/text32.h"
 
@@ -907,7 +907,7 @@ void GfxControls32::destroyScrollWindow(const reg_t id) {
 #pragma mark -
 #pragma mark Message box
 
-int16 GfxControls32::showMessageBox(const Common::String &message, const char *const okLabel, const char *const altLabel, const int16 okValue, const int16 altValue) {
+int16 GfxControls32::showMessageBox(const Common::U32String &message, const Common::U32String &okLabel, const Common::U32String &altLabel, const int16 okValue, const int16 altValue) {
 	GUI::MessageDialog dialog(message, okLabel, altLabel);
 	return (dialog.runModal() == GUI::kMessageOK) ? okValue : altValue;
 }
@@ -922,7 +922,7 @@ reg_t GfxControls32::kernelMessageBox(const Common::String &message, const Commo
 
 	switch (style & 0xF) {
 	case kMessageBoxOK:
-		result = showMessageBox(message, _("OK"), NULL, 1, 1);
+		result = showMessageBox(message, _("OK"), Common::U32String(""), 1, 1);
 	break;
 	case kMessageBoxYesNo:
 		result = showMessageBox(message, _("Yes"), _("No"), 6, 7);

@@ -41,7 +41,6 @@ namespace Lure {
 
 SoundManager::SoundManager() {
 	Disk &disk = Disk::getReference();
-	_soundMutex = g_system->createMutex();
 
 	int index;
 	_descs = disk.getEntry(SOUND_DESC_RESOURCE_ID);
@@ -86,9 +85,9 @@ SoundManager::~SoundManager() {
 	removeSounds();
 	_activeSounds.clear();
 
-	g_system->lockMutex(_soundMutex);
+	_soundMutex.lock();
 	_playingSounds.clear();
-	g_system->unlockMutex(_soundMutex);
+	_soundMutex.unlock();
 
 	delete _descs;
 	delete _soundData;
@@ -98,8 +97,6 @@ SoundManager::~SoundManager() {
 		delete _driver;
 		_driver = NULL;
 	}
-
-	g_system->deleteMutex(_soundMutex);
 }
 
 void SoundManager::saveToStream(Common::WriteStream *stream) {
@@ -300,7 +297,7 @@ void SoundManager::syncSounds() {
 	_musicVolume = mute ? 0 : MIN(255, ConfMan.getInt("music_volume"));
 	_sfxVolume = mute ? 0 : MIN(255, ConfMan.getInt("sfx_volume"));
 
-	g_system->lockMutex(_soundMutex);
+	_soundMutex.lock();
 	MusicListIterator i;
 	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
 		if ((*i)->isMusic())
@@ -308,7 +305,7 @@ void SoundManager::syncSounds() {
 		else
 			(*i)->setVolume(_sfxVolume);
 	}
-	g_system->unlockMutex(_soundMutex);
+	_soundMutex.unlock();
 }
 
 SoundDescResource *SoundManager::findSound(uint8 soundNumber) {
@@ -393,7 +390,7 @@ void SoundManager::fadeOut() {
 	{
 		inProgress = false;
 
-		g_system->lockMutex(_soundMutex);
+		_soundMutex.lock();
 		MusicListIterator i;
 		for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
 			MidiMusic &music = **i;
@@ -403,7 +400,7 @@ void SoundManager::fadeOut() {
 			}
 		}
 
-		g_system->unlockMutex(_soundMutex);
+		_soundMutex.unlock();
 		g_system->delayMillis(10);
 	}
 
@@ -449,11 +446,11 @@ void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber, u
 		dataSize = nextDataOfs - dataOfs;
 	}
 
-	g_system->lockMutex(_soundMutex);
+	_soundMutex.lock();
 	MidiMusic *sound = new MidiMusic(_driver, _channelsInner, channelNumber, soundNum,
 		isMusic, numChannels, soundStart, dataSize);
 	_playingSounds.push_back(MusicList::value_type(sound));
-	g_system->unlockMutex(_soundMutex);
+	_soundMutex.unlock();
 }
 
 // musicInterface_Stop
@@ -464,7 +461,7 @@ void SoundManager::musicInterface_Stop(uint8 soundNumber) {
 	musicInterface_TidySounds();
 	uint8 soundNum = soundNumber & 0x7f;
 
-	g_system->lockMutex(_soundMutex);
+	_soundMutex.lock();
 	MusicListIterator i;
 	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
 		if ((*i)->soundNumber() == soundNum) {
@@ -472,7 +469,7 @@ void SoundManager::musicInterface_Stop(uint8 soundNumber) {
 			break;
 		}
 	}
-	g_system->unlockMutex(_soundMutex);
+	_soundMutex.unlock();
 }
 
 // musicInterface_CheckPlaying
@@ -484,7 +481,7 @@ bool SoundManager::musicInterface_CheckPlaying(uint8 soundNumber) {
 	uint8 soundNum = soundNumber & 0x7f;
 	bool result = false;
 
-	g_system->lockMutex(_soundMutex);
+	_soundMutex.lock();
 	MusicListIterator i;
 	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
 		if ((*i)->soundNumber() == soundNum) {
@@ -492,7 +489,7 @@ bool SoundManager::musicInterface_CheckPlaying(uint8 soundNumber) {
 			break;
 		}
 	}
-	g_system->unlockMutex(_soundMutex);
+	_soundMutex.unlock();
 
 	return result;
 }
@@ -505,14 +502,14 @@ void SoundManager::musicInterface_SetVolume(uint8 channelNum, uint8 volume) {
 		channelNum, volume);
 	musicInterface_TidySounds();
 
-	g_system->lockMutex(_soundMutex);
+	_soundMutex.lock();
 	MusicListIterator i;
 	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
 		MidiMusic &music = **i;
 		if (music.channelNumber() == channelNum)
 			music.setVolume(volume);
 	}
-	g_system->unlockMutex(_soundMutex);
+	_soundMutex.unlock();
 }
 
 // musicInterface_KillAll
@@ -522,7 +519,7 @@ void SoundManager::musicInterface_KillAll() {
 	debugC(ERROR_INTERMEDIATE, kLureDebugSounds, "musicInterface_KillAll");
 	musicInterface_TidySounds();
 
-	g_system->lockMutex(_soundMutex);
+	_soundMutex.lock();
 	MusicListIterator i;
 	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
 		(*i)->stopMusic();
@@ -530,7 +527,7 @@ void SoundManager::musicInterface_KillAll() {
 
 	_playingSounds.clear();
 	_activeSounds.clear();
-	g_system->unlockMutex(_soundMutex);
+	_soundMutex.unlock();
 }
 
 // musicInterface_ContinuePlaying
@@ -554,7 +551,7 @@ void SoundManager::musicInterface_TrashReverb() {
 void SoundManager::musicInterface_TidySounds() {
 	debugC(ERROR_DETAILED, kLureDebugSounds, "musicInterface_TidySounds");
 
-	g_system->lockMutex(_soundMutex);
+	_soundMutex.lock();
 	MusicListIterator i = _playingSounds.begin();
 	while (i != _playingSounds.end()) {
 		if (!(*i)->isPlaying())
@@ -562,7 +559,7 @@ void SoundManager::musicInterface_TidySounds() {
 		else
 			++i;
 	}
-	g_system->unlockMutex(_soundMutex);
+	_soundMutex.unlock();
 }
 
 void SoundManager::onTimer(void *data) {
@@ -574,7 +571,7 @@ void SoundManager::doTimer() {
 	if (_paused)
 		return;
 
-	g_system->lockMutex(_soundMutex);
+	_soundMutex.lock();
 
 	MusicListIterator i;
 	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
@@ -583,7 +580,7 @@ void SoundManager::doTimer() {
 			music.onTimer();
 	}
 
-	g_system->unlockMutex(_soundMutex);
+	_soundMutex.unlock();
 }
 
 /*------------------------------------------------------------------------*/

@@ -36,11 +36,15 @@ Common::String toLowercaseMac(const Common::String &s);
 
 Common::String convertPath(Common::String &path);
 
+Common::String unixToMacPath(const Common::String &path);
+
 Common::String getPath(Common::String path, Common::String cwd);
 
-bool testPath(Common::String &path);
+bool testPath(Common::String &path, bool directory = false);
 
-Common::String pathMakeRelative(Common::String path, bool recursive = true, bool addexts = true);
+Common::String pathMakeRelative(Common::String path, bool recursive = true, bool addexts = true, bool directory = false);
+
+Common::String testExtensions(Common::String component, Common::String initialPath, Common::String convPath);
 
 Common::String getFileName(Common::String path);
 
@@ -71,6 +75,10 @@ private:
     int32 genNextRandom();
     int32 perlin(int32 val);
 };
+
+uint32 readVarInt(Common::SeekableReadStream &stream);
+
+Common::SeekableReadStreamEndian *readZlibData(Common::SeekableReadStream &stream, unsigned long len, unsigned long *outLen, bool bigEndian);
 
 } // End of namespace Director
 

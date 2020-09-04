@@ -149,7 +149,7 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index, bool screenUpdt) {
 
 			_screen->copyRegion(x2, y2, guiSettings()->charBoxCoords.boxX[index & 1], y2, guiSettings()->charBoxCoords.boxWidth, guiSettings()->charBoxCoords.boxHeight, 2, 0, Screen::CR_NO_P_CHECK);
 
-			// Redraw this for the SegaCD version, since the red splat shapes do overlap with the next portrait to the bottom and would otherwise be cut off. 
+			// Redraw this for the SegaCD version, since the red splat shapes do overlap with the next portrait to the bottom and would otherwise be cut off.
 			if (_flags.platform == Common::kPlatformSegaCD && c->damageTaken > 0) {
 				_screen->drawShape(0, _redSplatShape, guiSettings()->charBoxCoords.boxX[index & 1] + guiSettings()->charBoxCoords.redSplatOffsetX, y2 + guiSettings()->charBoxCoords.redSplatOffsetY, 0);
 				gui_printInventoryDigits(guiSettings()->charBoxCoords.boxX[index & 1] + guiSettings()->charBoxCoords.redSplatOffsetX + 12, y2 + guiSettings()->charBoxCoords.redSplatOffsetY + 10, c->damageTaken);
@@ -881,7 +881,7 @@ int EoBCoreEngine::clickedCamp(Button *button) {
 	}
 
 	_screen->copyPage(0, 7);
-	
+
 	// Create a thumbnail from the screen for a possible savegame.
 	// This ensures that all special rendering (EGA dithering, 16bit rendering, Japanese font rendering) will be visible on the thumbnail.
 	::createThumbnailFromScreen(&_thumbNail);
@@ -903,7 +903,7 @@ int EoBCoreEngine::clickedCamp(Button *button) {
 	_screen->setScreenDim(cd);
 
 	_thumbNail.free();
-	 
+
 	drawScene(0);
 
 	for (int i = 0; i < 6; i++)
@@ -2341,7 +2341,7 @@ void GUI_EoB::runCampMenu() {
 				}
 				// fall through
 
-			case 0x800C:			
+			case 0x800C:
 				if (lastMenu == 1 || lastMenu == 2)
 					newMenu = 0;
 				else if (inputFlag == _vm->_keyMap[Common::KEYCODE_ESCAPE])
@@ -2491,7 +2491,7 @@ bool GUI_EoB::runLoadMenu(int x, int y, bool fromMainMenu) {
 
 	for (bool runLoop = true; runLoop && !_vm->shouldQuit();) {
 		updateSaveSlotsList(_vm->_targetName);
-		
+
 		_vm->useMainMenuGUISettings(fromMainMenu);
 		int slot = selectSaveSlotDialog(x, y, 1);
 		_vm->useMainMenuGUISettings(false);
@@ -2882,7 +2882,7 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 			} else {
 				sufx[0] = 32;
 				sufx[1] = 0;
-			}			
+			}
 		} else {
 			sufx[0] = (pos < len) ? dest[pos] : 32;
 		}
@@ -3142,7 +3142,7 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 					_screen->fillRect(fx - 2, fy, fx + 160, fy + 8, _vm->guiSettings()->colors.fill);
 				if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
 					TimeDate td;
-					_vm->_system->getTimeAndDate(td);					
+					_vm->_system->getTimeAndDate(td);
 					Common::strlcpy(_saveSlotStringsTemp[slot], Common::String::format(_vm->_saveNamePatterns[_vm->_currentLevel * 2 + _vm->_currentSub], td.tm_mon + 1, td.tm_mday, td.tm_hour, td.tm_min).c_str(), 25);
 					in = strlen(_saveSlotStringsTemp[slot]);
 					of = _vm->screen()->setFont(Screen::FID_6_FNT);
@@ -3199,7 +3199,7 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 int GUI_EoB::selectSaveSlotDialog(int x, int y, int id) {
 	_saveSlotX = _saveSlotY = 0;
 	_savegameOffset = 0;
-	
+
 	drawSaveSlotDialog(x, y, id);
 	_screen->updateScreen();
 
@@ -3472,7 +3472,7 @@ void GUI_EoB::runMemorizePrayMenu(int charIndex, int spellType) {
 				_screen->copyRegion(0, 50, 0, 50, 176, 72, 2, 0, Screen::CR_NO_P_CHECK);
 			lastHighLightText = -1;
 		}
-		
+
 		if (updateDesc) {
 			updateDesc = false;
 			if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
@@ -4431,7 +4431,7 @@ void GUI_EoB::drawSaveSlotButton(int slot, int redrawBox, bool highlight) {
 	int w = 167;
 	char slotString[26];
 	Common::strlcpy(slotString, slot < _numSlotsVisible ? _saveSlotStringsTemp[slot] : _vm->_saveLoadStrings[0], _vm->gameFlags().platform == Common::kPlatformFMTowns ? 25 : 20);
-	
+
 	if (slot >= 6) {
 		x = _saveSlotX + 118;
 		y = _saveSlotY + 126;

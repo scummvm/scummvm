@@ -119,7 +119,7 @@ public:
 	* Sets a text 16bit palette map. Only used in in EOB II FM-Towns. The map contains 2 entries.
 	*/
 	virtual void set16bitColorMap(const uint16 *src) {}
-	
+
 	enum FontStyle {
 		kStyleNone			=	0,
 		kStyleLeftShadow	=	1	<<	0,
@@ -603,8 +603,14 @@ protected:
 	void updateDirtyRectsAmiga();
 	void updateDirtyRectsOvl();
 
-	void scale2x(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h);
-	virtual void mergeOverlay(int x, int y, int w, int h);
+	template<typename srcType, typename scaleToType> void scale2x(uint8 *dst, int dstPitch, const uint8 *src, int srcPitch, int w, int h);
+	template<typename pixelType> void mergeOverlayImpl(int x, int y, int w, int h);
+	virtual void mergeOverlay(int x, int y, int w, int h) {
+		if (_useHiColorScreen)
+			mergeOverlayImpl<uint16>(x, y, w, h);
+		else
+			mergeOverlayImpl<uint8>(x, y, w, h);
+	}
 
 	// overlay specific
 	byte *getOverlayPtr(int pageNum);
