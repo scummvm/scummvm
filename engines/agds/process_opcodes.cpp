@@ -1102,7 +1102,6 @@ void Process::loadCharacter() {
 	Common::String object = popString();
 	Common::String chrFilename = popText();
 	Common::String id = popString();
-	debug("loadCharacter %s %s %s", id.c_str(), chrFilename.c_str(), object.c_str());
 	_engine->loadCharacter(id, chrFilename, object);
 }
 
