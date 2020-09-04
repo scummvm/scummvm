@@ -889,6 +889,9 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 		}
 	}
 
+	SystemVariable *initVar = getSystemVariable("init_resources");
+	runObject(initVar->getString());
+
 	loadScreen(screenName);
 
 	return Common::kNoError;
