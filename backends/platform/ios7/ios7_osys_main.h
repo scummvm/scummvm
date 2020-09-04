@@ -25,7 +25,7 @@
 
 #include "graphics/surface.h"
 #include "backends/platform/ios7/ios7_common.h"
-#include "backends/base-backend.h"
+#include "backends/modular-backend.h"
 #include "common/events.h"
 #include "common/str.h"
 #include "common/ustr.h"
@@ -54,7 +54,7 @@ struct AQCallbackStruct {
 	AudioStreamBasicDescription dataFormat;
 };
 
-class OSystem_iOS7 : public EventsBaseBackend, public PaletteManager {
+class OSystem_iOS7 : public EventsBaseBackend, public ModularMutexBackend, public PaletteManager {
 protected:
 	static const OSystem::GraphicsMode s_supportedGraphicsModes[];
 	static AQCallbackStruct s_AudioQueue;
@@ -183,11 +183,6 @@ public:
 	virtual bool pollEvent(Common::Event &event) override;
 	virtual uint32 getMillis(bool skipRecord = false) override;
 	virtual void delayMillis(uint msecs) override;
-
-	virtual MutexRef createMutex(void) override;
-	virtual void lockMutex(MutexRef mutex) override;
-	virtual void unlockMutex(MutexRef mutex) override;
-	virtual void deleteMutex(MutexRef mutex) override;
 
 	static void mixCallback(void *sys, byte *samples, int len);
 	virtual void setupMixer(void);
