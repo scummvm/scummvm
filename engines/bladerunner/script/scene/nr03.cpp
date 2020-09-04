@@ -157,18 +157,31 @@ bool SceneScriptNR03::ClickedOnExit(int exitId) {
 				AI_Movement_Track_Pause(kActorHanoi);
 				Actor_Face_Actor(kActorHanoi, kActorMcCoy, true);
 				Actor_Face_Actor(kActorMcCoy, kActorHanoi, true);
-				int warnings = Global_Variable_Query(kVariableHanoiNR04Warnings);
-				if (warnings == 0) {
+				switch (Global_Variable_Query(kVariableHanoiNR04Warnings)) {
+				case 0:
 					Actor_Says(kActorHanoi, 50, 13);
 					AI_Movement_Track_Unpause(kActorHanoi);
-				} else if (warnings == 1) {
+					break;
+				case 1:
 					Actor_Says(kActorHanoi, 210, 15);
 					AI_Movement_Track_Unpause(kActorHanoi);
-				} else if (warnings == 2) {
+					break;
+				case 2:
+					// fall through
+				default:
+#if !BLADERUNNER_ORIGINAL_BUGS
+					// Needed delay, otherwise McCoy's animation of being thrown out won't play
+					Delay(150);
+#endif
 					Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiThrowOutMcCoy);
+					break;
 				}
-				// game bug? after reentering this does nothing as variable is never reset or checked for > 2
 				Global_Variable_Increment(kVariableHanoiNR04Warnings, 1);
+#if !BLADERUNNER_ORIGINAL_BUGS
+				if (Global_Variable_Query(kVariableHanoiNR04Warnings) > 2) {
+					Global_Variable_Set(kVariableHanoiNR04Warnings, 1);
+				}
+#endif
 			} else {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -191,23 +204,31 @@ bool SceneScriptNR03::ClickedOnExit(int exitId) {
 				Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
 				AI_Movement_Track_Pause(kActorHanoi);
 				Actor_Face_Actor(kActorHanoi, kActorMcCoy, true);
-
-				int warnings = Global_Variable_Query(kVariableHanoiNR05Warnings);
-				if (warnings == 0) {
+				switch (Global_Variable_Query(kVariableHanoiNR05Warnings)) {
+				case 0:
 					Actor_Says(kActorHanoi, 0, 15);
 					Actor_Face_Actor(kActorMcCoy, kActorHanoi, true);
 					Actor_Says(kActorMcCoy, 3335, 13);
 					Actor_Says(kActorHanoi, 10, 16);
 					AI_Movement_Track_Unpause(kActorHanoi);
-				} else if (warnings == 1) {
+					break;
+				case 1:
 					Actor_Face_Actor(kActorMcCoy, kActorHanoi, true);
 					Actor_Says(kActorHanoi, 210, 12);
 					AI_Movement_Track_Unpause(kActorHanoi);
-				} else if (warnings == 2) {
+					break;
+				case 2:
+					// fall through
+				default:
 					Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiThrowOutMcCoy);
+					break;
 				}
-				// game bug? after reentering this does nothing as variable is never reset or checked for > 2
 				Global_Variable_Increment(kVariableHanoiNR05Warnings, 1);
+#if !BLADERUNNER_ORIGINAL_BUGS
+				if (Global_Variable_Query(kVariableHanoiNR05Warnings) > 2) {
+					Global_Variable_Set(kVariableHanoiNR05Warnings, 1);
+				}
+#endif
 			} else {
 				Player_Loses_Control();
 				Player_Set_Combat_Mode(false);
@@ -287,9 +308,7 @@ void SceneScriptNR03::SceneFrameAdvanced(int frame) {
 		Sound_Play(kSfxMAGMOVE2, 62, -70, -70, 50);
 	}
 
-	if (frame > 70
-	 && frame < 110
-	) {
+	if (frame > 70 && frame < 110) {
 		rotateActorOnTable(frame);
 	} else if (frame == 110) {
 		if (Actor_Query_Goal_Number(kActorGuzza) == kGoalGuzzaSitAtNR03) {
@@ -320,6 +339,8 @@ void SceneScriptNR03::PlayerWalkedIn() {
 		Game_Flag_Reset(kFlagNR01toNR03);
 	}
 
+	// This seems redundant since we set the combat mode to false at start of WalkedIn() method
+	// Probably a last minute original behavior fix to be more user friendly (not being tossed off the bar immediately upon entering)
 	if (Player_Query_Combat_Mode()) {
 		Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiThrowOutMcCoy);
 	}

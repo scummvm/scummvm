@@ -219,7 +219,6 @@ void AIScriptDektora::ClickedByPlayer() {
 	if (Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraGone) {
 		Actor_Face_Actor(0, kActorDektora, true);
 		Actor_Says(kActorMcCoy, 8630, 12);  // What a waste
-
 		return; //true;
 	}
 
@@ -232,9 +231,11 @@ void AIScriptDektora::ClickedByPlayer() {
 		Game_Flag_Set(kFlagNR08TouchedDektora);
 		AI_Movement_Track_Flush(kActorHanoi);
 		Actor_Force_Stop_Walking(kActorMcCoy);
+#if BLADERUNNER_ORIGINAL_BUGS
+		// this is a redundant call
 		Player_Loses_Control();
+#endif
 		Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiThrowOutMcCoy);
-
 		return; //true;
 	}
 
