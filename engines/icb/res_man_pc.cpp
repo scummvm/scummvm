@@ -61,6 +61,7 @@
 #include "zsupport.h"
 
 #include "common/archive.h"
+#include "common/mutex.h"
 #include "common/textconsole.h"
 #include "common/config-manager.h"
 #include "common/memstream.h"
@@ -135,7 +136,7 @@ int async_loadThread(void *v) {
 	Zdebug(100, "ASYNC: Thread active...\n");
 	for (;;) {
 		g_system->delayMillis(10); // Sleep(10);
-		g_system->lockMutex(rm->hResManMutex); // if ( WaitForSingleObject(rm->hResManMutex,INFINITE)!=WAIT_TIMEOUT )
+		rm->hResManMutex->lock(); // if ( WaitForSingleObject(rm->hResManMutex,INFINITE)!=WAIT_TIMEOUT )
 		{
 			if (rm->async_loading == 1) {
 				z = rm->async_data.zipped;
@@ -144,7 +145,7 @@ int async_loadThread(void *v) {
 				p = rm->async_data.p;
 				size = rm->async_data.size;
 
-				g_system->unlockMutex(rm->hResManMutex); // ReleaseMutex(rm->hResManMutex);
+				rm->hResManMutex->unlock(); // ReleaseMutex(rm->hResManMutex);
 
 				if (z)
 					memUncompress(p, (const char *)fn); // TODO: Use wrapCompressedStream to solve?
@@ -169,17 +170,17 @@ int async_loadThread(void *v) {
 					Zdebug(100, "%d", timer);
 				}
 
-				g_system->lockMutex(rm->hResManMutex); // WaitForSingleObject(rm->hResManMutex,INFINITE);
+				rm->hResManMutex->lock(); // WaitForSingleObject(rm->hResManMutex,INFINITE);
 				rm->async_loading = 0;
 				rm->async_done = 1;
-				g_system->unlockMutex(rm->hResManMutex); // ReleaseMutex(rm->hResManMutex);
+				rm->hResManMutex->unlock(); // ReleaseMutex(rm->hResManMutex);
 
 			} else {
-				g_system->unlockMutex(rm->hResManMutex); // ReleaseMutex(rm->hResManMutex);
+				rm->hResManMutex->unlock(); // ReleaseMutex(rm->hResManMutex);
 
 				//				if (SDL_TryLockMutex(rm->hRunMutex) != SDL_MUTEX_TIMEDOUT) { //if ( WaitForSingleObject(rm->hRunMutex,0)!=WAIT_TIMEOUT
 				//)
-				g_system->lockMutex(rm->hRunMutex); // TODO: Fix this.
+				rm->hRunMutex->lock(); // TODO: Fix this.
 				{
 					if (fn)
 						delete[] fn;
@@ -198,11 +199,11 @@ void res_man::OpenAsync() {
 	Zdebug("starting ASYNC");
 	hasThread = 1;
 	// hRunMutex=CreateMutex(NULL,TRUE,NULL);
-	hRunMutex = g_system->createMutex();
-	g_system->lockMutex(hRunMutex);
+	hRunMutex = new Common::Mutex();
+	hRunMutex->lock();
 
 	// hResManMutex=CreateMutex(NULL,FALSE,NULL);
-	hResManMutex = g_system->createMutex();
+	hResManMutex = new Common::Mutex();
 
 	//_beginthread(async_loadThread,0,this);
 	warning("TODO: Fix threading");
@@ -222,7 +223,7 @@ void res_man::CloseAsync() {
 	if (hasThread) {
 		Zdebug("ASYNC: shutting down\n");
 
-		g_system->unlockMutex(hRunMutex); // ReleaseMutex(hRunMutex);
+		hRunMutex->unlock(); // ReleaseMutex(hRunMutex);
 		// SDL_Delay(50);    //Sleep(50);
 
 		warning("TODO: Fix threading");
@@ -231,8 +232,8 @@ void res_man::CloseAsync() {
 		SDL_WaitThread(hThread, NULL);
 		hThread = NULL;
 #endif
-		g_system->deleteMutex(hRunMutex); // CloseHandle(hRunMutex);
-		g_system->deleteMutex(hResManMutex); // CloseHandle(hResManMutex);
+		delete hRunMutex; // CloseHandle(hRunMutex);
+		delete hResManMutex; // CloseHandle(hResManMutex);
 	}
 }
 
@@ -274,10 +275,10 @@ void res_man::async_addFile(const int8 *fn, uint8 *p, int32 size, int32 zipped, 
 
 // Pass information to thread to start loading
 void res_man::async_setLoading(async_PacketType s) {
-	g_system->lockMutex(hResManMutex); // WaitForSingleObject(hResManMutex,INFINITE);
+	hResManMutex->lock(); // WaitForSingleObject(hResManMutex,INFINITE);
 	async_loading = 1;
 	async_data = s;
-	g_system->unlockMutex(hResManMutex); // ReleaseMutex(hResManMutex);
+	hResManMutex->unlock(); // ReleaseMutex(hResManMutex);
 }
 
 // Check for new files
@@ -291,20 +292,20 @@ int32 res_man::async_checkArray() {
 
 	//if (SDL_TryLockMutex(hResManMutex) != SDL_MUTEX_TIMEDOUT) { //if ( WaitForSingleObject(hResManMutex,0)!=WAIT_TIMEOUT )
 	// TODO: Fix this
-	g_system->lockMutex(hResManMutex);
+	hResManMutex->lock();
 	{
 		if (async_done == 1) {
 			async_done = 0;
-			g_system->unlockMutex(hResManMutex); // ReleaseMutex(hResManMutex);
+			hResManMutex->unlock(); // ReleaseMutex(hResManMutex);
 			async_shiftArray();
 			i--;
 			RegisterAsync(async_data.memListNo);
 			return i;
 		} else if ((i > 0) && (async_loading == 0)) {
-			g_system->unlockMutex(hResManMutex); // ReleaseMutex(hResManMutex);
+			hResManMutex->unlock(); // ReleaseMutex(hResManMutex);
 			async_setLoading(async_fnArray[0]);
 		} else
-			g_system->unlockMutex(hResManMutex); // ReleaseMutex(hResManMutex);
+			hResManMutex->unlock(); // ReleaseMutex(hResManMutex);
 	}
 	return i;
 }

@@ -36,7 +36,9 @@
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_clu_api.h"
 
-#include "common/system.h"
+namespace Common {
+class Mutex;
+}
 
 namespace ICB {
 
@@ -146,8 +148,8 @@ public:
 	int32 async_loading;
 	int32 async_done;
 	//SDL_Thread *hThread; // TODO: Fix threading
-	OSystem::MutexRef hResManMutex;
-	OSystem::MutexRef hRunMutex;
+	Common::Mutex *hResManMutex;
+	Common::Mutex *hRunMutex;
 	res_man();
 	res_man(uint32 memory_tot, uint32 threadFlag);
 	res_man(uint8 *base, uint32 size);
