@@ -197,7 +197,7 @@ Graphics::Surface *ResourceManager::loadPicture(const Common::String &name, cons
 Common::String ResourceManager::loadText(Common::SeekableReadStream *stream) {
 	if (!stream)
 		error("stream is null");
-	Common::Array<byte> text(stream->size());
+	Common::Array<char> text(stream->size());
 	if (stream->read(text.data(), text.size()) != text.size())
 		error("short read from text resource");
 	delete stream;
@@ -205,12 +205,12 @@ Common::String ResourceManager::loadText(Common::SeekableReadStream *stream) {
 	if (text.empty())
 		return Common::String();
 
-	char *begin = reinterpret_cast<char *>(text.data());
+	char *begin = text.data();
 	char *end = begin + text.size();
 	while (begin != end && end[-1] == 0)
 		--end;
 
-	decrypt(text.data(), end - begin);
+	decrypt(reinterpret_cast<uint8 *>(text.data()), end - begin);
 
 	while (begin != end && end[-1] == 0)
 		--end;
@@ -223,6 +223,16 @@ Common::String ResourceManager::loadText(const Common::String &name) const {
 	if (!stream)
 		error("no text resource %s", name.c_str());
 	return loadText(stream);
+}
+
+Common::String readString(Common::SeekableReadStream * stream, uint size) {
+	Common::Array<char> text(size);
+	if (stream->read(text.data(), text.size()) != text.size())
+		error("readString: short read");
+
+	uint len;
+	for(len = 0; len < text.size() && text[len]; ++len);
+	return Common::String(text.data(), len);
 }
 
 } // End of namespace AGDS
