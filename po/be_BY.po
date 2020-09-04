@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-03 01:28+0000\n"
-"PO-Revision-Date: 2020-09-04 20:29+0000\n"
+"PO-Revision-Date: 2020-09-04 20:43+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/be/>\n"
@@ -4443,12 +4443,11 @@ msgid ""
 "General MIDI ones. It is still possible that\n"
 "some tracks sound incorrect."
 msgstr ""
-"Здаецца, вы спрабуеце выкарыстоўваць прыладу\n"
-"General MIDI, але гэтая гульня падтрымвае толькі\n"
-"Roland MT32 MIDI. Мы паспрабуем падабраць General\n"
-"MIDI-прылады, падобныя да Roland MT32, але\n"
-"можа так атрымацца, што некаторыя трэкі будуць\n"
-"сыграны няправільна."
+"Здаецца, вы ўжываеце прыладу General MIDI, \n"
+"але гульня падтрымвае толькі Roland MT32 MIDI. \n"
+"Мы паспрабуем падабраць General MIDI-прылады, \n"
+"падобныя на Roland MT32. Можа атрымацца, што \n"
+"некаторыя трэкі будуць гучаць няправільна."
 
 #: engines/lab/engine.cpp:125
 msgid ""
@@ -5998,7 +5997,7 @@ msgstr "Немагчыма знайсці блок для часткі %d"
 #: engines/supernova/supernova.cpp:523
 #, c-format
 msgid "Unable to find '%s' in game folder or the engine data file."
-msgstr "Не магчыма знайсці '%s' у тэчцы з гульнёй ці ў дадзеных рухавічка"
+msgstr "Не магчыма знайсці '%s' у тэчцы з гульнёй ці ў дадзеных рухавічка."
 
 #: engines/supernova/detection.cpp:40
 msgid "Improved mode"
@@ -6148,7 +6147,7 @@ msgstr "Не атрымалася знайсці дадзеныя рухавічка %s"
 #, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr ""
-"Няправільная версія файла рухавічка. Чакалася %d.%d, але знойдзена %d.%d."
+"Няправільная версія файла рухавічка. Чакалася %d.%d, але знойдзена %d.%d"
 
 #: engines/ultima/nuvie/nuvie.cpp:313
 msgid ""
@@ -6342,85 +6341,84 @@ msgstr "GUI варыянт B"
 #: engines/wintermute/keymapper_tables.h:352
 #: engines/wintermute/keymapper_tables.h:866
 msgid "Phone cancel button"
-msgstr ""
+msgstr "Кнопка тэлефона \"Адмена\""
 
 #: engines/wintermute/keymapper_tables.h:281
 #: engines/wintermute/keymapper_tables.h:357
 #: engines/wintermute/keymapper_tables.h:871
 msgid "Phone up button"
-msgstr ""
+msgstr "Кнопка тэлефона \"Угару\""
 
 #: engines/wintermute/keymapper_tables.h:287
 #: engines/wintermute/keymapper_tables.h:363
 #: engines/wintermute/keymapper_tables.h:877
 msgid "Phone down button"
-msgstr ""
+msgstr "Кнопка тэлефона \"Уніз\""
 
 #: engines/wintermute/keymapper_tables.h:369
 #: engines/wintermute/keymapper_tables.h:883
 msgid "Phone 0 button"
-msgstr ""
+msgstr "Кнопка тэлефона 0"
 
 #: engines/wintermute/keymapper_tables.h:374
 #: engines/wintermute/keymapper_tables.h:888
 msgid "Phone 1 button"
-msgstr ""
+msgstr "Кнопка тэлефона 1"
 
 #: engines/wintermute/keymapper_tables.h:379
 #: engines/wintermute/keymapper_tables.h:893
 msgid "Phone 2 button"
-msgstr ""
+msgstr "Кнопка тэлефона 2"
 
 #: engines/wintermute/keymapper_tables.h:384
 #: engines/wintermute/keymapper_tables.h:898
 msgid "Phone 3 button"
-msgstr ""
+msgstr "Кнопка тэлефона 3"
 
 #: engines/wintermute/keymapper_tables.h:389
 #: engines/wintermute/keymapper_tables.h:903
 msgid "Phone 4 button"
-msgstr ""
+msgstr "Кнопка тэлефона 4"
 
 #: engines/wintermute/keymapper_tables.h:394
 #: engines/wintermute/keymapper_tables.h:908
 msgid "Phone 5 button"
-msgstr ""
+msgstr "Кнопка тэлефона 5"
 
 #: engines/wintermute/keymapper_tables.h:399
 #: engines/wintermute/keymapper_tables.h:913
 msgid "Phone 6 button"
-msgstr ""
+msgstr "Кнопка тэлефона 6"
 
 #: engines/wintermute/keymapper_tables.h:404
 #: engines/wintermute/keymapper_tables.h:918
 msgid "Phone 7 button"
-msgstr ""
+msgstr "Кнопка тэлефона 7"
 
 #: engines/wintermute/keymapper_tables.h:409
 #: engines/wintermute/keymapper_tables.h:923
 msgid "Phone 8 button"
-msgstr ""
+msgstr "Кнопка тэлефона 8"
 
 #: engines/wintermute/keymapper_tables.h:414
 #: engines/wintermute/keymapper_tables.h:928
 msgid "Phone 9 button"
-msgstr ""
+msgstr "Кнопка тэлефона 9"
 
 #: engines/wintermute/keymapper_tables.h:419
 #: engines/wintermute/keymapper_tables.h:933
 msgid "Phone * button"
-msgstr ""
+msgstr "Кнопка тэлефона *"
 
 #: engines/wintermute/keymapper_tables.h:424
 #: engines/wintermute/keymapper_tables.h:938
 msgid "Phone # button"
-msgstr ""
+msgstr "Кнопка тэлефона #"
 
 #: engines/wintermute/keymapper_tables.h:448
 #: engines/wintermute/keymapper_tables.h:1073
-#, fuzzy
 msgid "Show help"
-msgstr "Паказаць усё"
+msgstr "Паказаць дапамогу"
 
 #: engines/wintermute/keymapper_tables.h:454
 #: engines/wintermute/keymapper_tables.h:621
@@ -6432,9 +6430,8 @@ msgstr "Паказаць усё"
 #: engines/wintermute/keymapper_tables.h:1275
 #: engines/wintermute/keymapper_tables.h:1458
 #: engines/wintermute/keymapper_tables.h:1656
-#, fuzzy
 msgid "Scroll up"
-msgstr "Пракруціць спіс уверх"
+msgstr "Пракруціць угару"
 
 #: engines/wintermute/keymapper_tables.h:461
 #: engines/wintermute/keymapper_tables.h:628
@@ -6446,134 +6443,118 @@ msgstr "Пракруціць спіс уверх"
 #: engines/wintermute/keymapper_tables.h:1282
 #: engines/wintermute/keymapper_tables.h:1465
 #: engines/wintermute/keymapper_tables.h:1661
-#, fuzzy
 msgid "Scroll down"
-msgstr "Пракруціць спіс уніз"
+msgstr "Пракруціць уніз"
 
 #: engines/wintermute/keymapper_tables.h:473
 msgid "Change shadow type"
-msgstr ""
+msgstr "Змяніць тып ценю"
 
 #: engines/wintermute/keymapper_tables.h:483
 #: engines/wintermute/keymapper_tables.h:570
-#, fuzzy
 msgid "Volume max"
-msgstr "Гучнасць"
+msgstr "Максімальная гучнасць"
 
 #: engines/wintermute/keymapper_tables.h:488
-#, fuzzy
 msgid "Show debug parser"
-msgstr "Паказаць/Прыбраць курсор"
+msgstr "Паказаць адладкавы парсер"
 
 #: engines/wintermute/keymapper_tables.h:495
 #: engines/wintermute/keymapper_tables.h:603
 #: engines/wintermute/keymapper_tables.h:1369
-#, fuzzy
 msgid "Debug print"
-msgstr "Адладчык"
+msgstr "Адладкавы друк"
 
 #: engines/wintermute/keymapper_tables.h:500
 #: engines/wintermute/keymapper_tables.h:1342
 msgid "Exit"
-msgstr ""
+msgstr "Выхад"
 
 #: engines/wintermute/keymapper_tables.h:505
 msgid "Light helper window"
-msgstr ""
+msgstr "Акно кіравання асвятленнем"
 
 #: engines/wintermute/keymapper_tables.h:530
-#, fuzzy
 msgid "Run forward"
-msgstr "Ісці наперад"
+msgstr "Бегчы наперад"
 
 #: engines/wintermute/keymapper_tables.h:535
-#, fuzzy
 msgid "Run backward"
-msgstr "Ісці наперад"
+msgstr "Бегчы назад"
 
 #: engines/wintermute/keymapper_tables.h:540
-#, fuzzy
 msgid "Turn left fast"
-msgstr "Паварот налева"
+msgstr "Хутка павярнуцца налева"
 
 #: engines/wintermute/keymapper_tables.h:545
-#, fuzzy
 msgid "Turn right fast"
-msgstr "Паварот направа"
+msgstr "Хутка павярнуцца направа"
 
 #: engines/wintermute/keymapper_tables.h:550
-#, fuzzy
 msgid "Show blueprint"
-msgstr "Паказваць радок аб'ектаў"
+msgstr "Паказаць краслюнак"
 
 #: engines/wintermute/keymapper_tables.h:577
-#, fuzzy
 msgid "Volume off"
-msgstr "Гучнасць"
+msgstr "Гучнасць выкл"
 
 #: engines/wintermute/keymapper_tables.h:591
 msgid "Change font size"
-msgstr ""
+msgstr "Змяніць памер шрыфта"
 
 #: engines/wintermute/keymapper_tables.h:670
 msgid "Save game"
 msgstr "Захаваць гульню"
 
 #: engines/wintermute/keymapper_tables.h:680
-#, fuzzy
 msgid "Quick save"
-msgstr "Рэжым пстрычкі"
+msgstr "Хуткае захаванне"
 
 #: engines/wintermute/keymapper_tables.h:685
 msgid "Walking speed: Low"
-msgstr ""
+msgstr "Хуткасць хады: Павольная"
 
 #: engines/wintermute/keymapper_tables.h:690
 msgid "Walking speed: Medium"
-msgstr ""
+msgstr "Хуткасць хады: Сярэдняя"
 
 #: engines/wintermute/keymapper_tables.h:695
 msgid "Walking speed: High"
-msgstr ""
+msgstr "Хуткасць хады: Высокая"
 
 #: engines/wintermute/keymapper_tables.h:700
-#, fuzzy
 msgid "Quick load"
-msgstr "Рэжым пстрычкі"
+msgstr "Хуткая загрузка"
 
 #: engines/wintermute/keymapper_tables.h:705
 #: engines/wintermute/keymapper_tables.h:1035
 #: engines/wintermute/keymapper_tables.h:1364
-#, fuzzy
 msgid "Cancel waiting"
-msgstr "Адмяніць загрузку"
+msgstr "Перапыніць чаканне"
 
 #: engines/wintermute/keymapper_tables.h:715
-#, fuzzy
 msgid "First page"
-msgstr "Ужыць загавор"
+msgstr "Першая старонка"
 
 #: engines/wintermute/keymapper_tables.h:720
-#, fuzzy
 msgid "Last page"
-msgstr "Ужыць загавор"
+msgstr "Апошняя старонка"
 
 #: engines/wintermute/keymapper_tables.h:727
 msgid "Walking speed: Ultra Super Mega Fast"
-msgstr ""
+msgstr "Хуткасць хады: Ультра-супер-мега-хутка"
 
 #: engines/wintermute/keymapper_tables.h:743
-#, fuzzy
 msgid "Show game credits"
-msgstr "Паказваць курсор мышы"
+msgstr "Паказаць аўтараў гульні"
 
 #: engines/wintermute/keymapper_tables.h:748
 msgid "Play selected music record"
-msgstr ""
+msgstr "Прайграць абраны музычны запіс"
 
 #: engines/wintermute/keymapper_tables.h:753
 msgid "Select next music record"
-msgstr ""
+msgstr "Прайграць наступны музычны запіс"
 
 #: engines/wintermute/keymapper_tables.h:758
 msgid "Play note 1: A"
@@ -6605,140 +6586,127 @@ msgstr "Нота 7: сі"
 
 #: engines/wintermute/keymapper_tables.h:801
 msgid "Ability: Telekinesis"
-msgstr ""
+msgstr "Уменне: Тэлекінез"
 
 #: engines/wintermute/keymapper_tables.h:806
 msgid "Ability: Push"
-msgstr ""
+msgstr "Уменне: Штуршок"
 
 #: engines/wintermute/keymapper_tables.h:811
 msgid "Ability: Lightning"
-msgstr ""
+msgstr "Уменне: Маланка"
 
 #: engines/wintermute/keymapper_tables.h:816
 msgid "Ability: Light"
-msgstr ""
+msgstr "Уменне: Святло"
 
 #: engines/wintermute/keymapper_tables.h:821
 msgid "Ability: Wind"
-msgstr ""
+msgstr "Уменне: Вецер"
 
 #: engines/wintermute/keymapper_tables.h:826
 msgid "Ability: Sound"
-msgstr ""
+msgstr "Уменне: Гук"
 
 #: engines/wintermute/keymapper_tables.h:831
 msgid "Ability: Esence"
-msgstr ""
+msgstr "Уменне: Пах"
 
 #: engines/wintermute/keymapper_tables.h:836
 msgid "Ability: Exorcist"
-msgstr ""
+msgstr "Уменне: Экзарцыст"
 
 #: engines/wintermute/keymapper_tables.h:841
-#, fuzzy
 msgid "Skip minigame"
-msgstr "Прапусціць радок"
+msgstr "Прапусціць міні-гульню"
 
 #: engines/wintermute/keymapper_tables.h:949
-#, fuzzy
 msgid "Show hints / Dance move"
-msgstr "Паказваць схаваныя файлы"
+msgstr "Паказаць падказкі / Рухі танца"
 
 #: engines/wintermute/keymapper_tables.h:956
-#, fuzzy
 msgid "Dance move up"
-msgstr "Адмяніць загрузку"
+msgstr "Рух танца ўгару"
 
 #: engines/wintermute/keymapper_tables.h:962
-#, fuzzy
 msgid "Dance move down"
-msgstr "Адмяніць загрузку"
+msgstr "Рух танца ўніз"
 
 #: engines/wintermute/keymapper_tables.h:968
-#, fuzzy
 msgid "Dance move left"
-msgstr "Ісці направа"
+msgstr "Рух танца налева"
 
 #: engines/wintermute/keymapper_tables.h:974
-#, fuzzy
 msgid "Dance move right"
-msgstr "Ісці направа"
+msgstr "Рух танца направа"
 
 #: engines/wintermute/keymapper_tables.h:1004
-#, fuzzy
 msgid "Cancel input"
-msgstr "Адмена"
+msgstr "Адмена ўводу"
 
 #: engines/wintermute/keymapper_tables.h:1114
 msgid "Shift"
-msgstr ""
+msgstr "Shift"
 
 #: engines/wintermute/keymapper_tables.h:1169
 #: engines/wintermute/keymapper_tables.h:1574
-#, fuzzy
 msgid "Next action"
-msgstr "~П~апяр"
+msgstr "Наступнае дзеянне"
 
 #: engines/wintermute/keymapper_tables.h:1177
 #: engines/wintermute/keymapper_tables.h:1582
-#, fuzzy
 msgid "Previous action"
-msgstr "~П~апяр"
+msgstr "Папярэдняе дзеянне"
 
 #: engines/wintermute/keymapper_tables.h:1196
 #: engines/wintermute/keymapper_tables.h:1359
 msgid "Settings"
-msgstr ""
+msgstr "Налады"
 
 #: engines/wintermute/keymapper_tables.h:1201
 msgid "Dialogue answer 1"
-msgstr ""
+msgstr "Адказ дыялога 1"
 
 #: engines/wintermute/keymapper_tables.h:1206
 msgid "Dialogue answer 2"
-msgstr ""
+msgstr "Адказ дыялога 2"
 
 #: engines/wintermute/keymapper_tables.h:1211
 msgid "Dialogue answer 3"
-msgstr ""
+msgstr "Адказ дыялога 3"
 
 #: engines/wintermute/keymapper_tables.h:1216
 msgid "Dialogue answer 4"
-msgstr ""
+msgstr "Адказ дыялога 4"
 
 #: engines/wintermute/keymapper_tables.h:1226
 msgid "Spin slower"
-msgstr ""
+msgstr "Круціцца павольней"
 
 #: engines/wintermute/keymapper_tables.h:1233
 msgid "Spin faster"
-msgstr ""
+msgstr "Круціцца хутчэй"
 
 #: engines/wintermute/keymapper_tables.h:1311
-#, fuzzy
 msgid "Zoom out"
-msgstr "Павял. маштаб"
+msgstr "Павялічыць маштаб"
 
 #: engines/wintermute/keymapper_tables.h:1318
-#, fuzzy
 msgid "Zoom in"
-msgstr "Павял. маштаб"
+msgstr "Паменшыць маштаб"
 
 #: engines/wintermute/keymapper_tables.h:1331
 #: engines/wintermute/keymapper_tables.h:1446
-#, fuzzy
 msgid "Show journal"
-msgstr "Паказаць усё"
+msgstr "Паказаць журнал"
 
 #: engines/wintermute/keymapper_tables.h:1374
 msgid "Bezier window"
-msgstr ""
+msgstr "Акно Безье"
 
 #: engines/wintermute/keymapper_tables.h:1390
-#, fuzzy
 msgid "Droid action"
-msgstr "~П~апяр"
+msgstr "Дзеянне дроіда"
 
 #: engines/wintermute/keymapper_tables.h:1452
 msgid "Music menu"
@@ -6749,9 +6717,8 @@ msgid "Rotate"
 msgstr "Павярнуць"
 
 #: engines/wintermute/keymapper_tables.h:1521
-#, fuzzy
 msgid "Drop"
-msgstr "~В~ыкінуць старонку"
+msgstr "Выкінуць"
 
 #: engines/wintermute/keymapper_tables.h:1529
 msgid "Player 1: Up"
@@ -6782,26 +6749,24 @@ msgid "Player 2: Down"
 msgstr "Гулец 2: уніз"
 
 #: engines/wintermute/keymapper_tables.h:1564
-#, fuzzy
 msgid "Player 2: Right"
-msgstr "Слізгаць направа"
+msgstr "Гулец 2: Направа"
 
 #: engines/wintermute/keymapper_tables.h:1569
-#, fuzzy
 msgid "Debug FPS"
-msgstr "Падвойны FPS"
+msgstr "Адладкавыя FPS"
 
 #: engines/wintermute/keymapper_tables.h:1666
 msgid "F1"
-msgstr ""
+msgstr "F1"
 
 #: engines/wintermute/keymapper_tables.h:1671
 msgid "Key i"
-msgstr ""
+msgstr "Кнопка i"
 
 #: engines/xeen/detection.cpp:96
 msgid "Show item costs in standard inventory mode"
-msgstr "Паказаць кошт рэчаў ў рэжыме звычайнага інвентара."
+msgstr "Паказаць кошт рэчаў ў рэжыме звычайнага інвентара"
 
 #: engines/xeen/detection.cpp:97
 msgid ""
@@ -6811,16 +6776,15 @@ msgstr "Паказаць кошт рэчаў ў рэжыме звычайнага інвентара дзеля параўнання"
 
 #: engines/xeen/detection.cpp:106
 msgid "More durable armor"
-msgstr ""
+msgstr "Мацнейшая браня"
 
 #: engines/xeen/detection.cpp:107
 msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
-msgstr ""
+msgstr "Браня не зламаецца, пакуль у героя не стане -80HP замест усяго -10HP"
 
 #: engines/xeen/saves.cpp:291
-#, fuzzy
 msgid "Failed to autosave"
-msgstr "Не атрымалася захаваць гульню"
+msgstr "Не атрымалася аўтаматычна захаваць гульню"
 
 #: engines/zvision/detection_tables.h:60
 msgid "Double FPS"
@@ -6857,35 +6821,32 @@ msgstr ""
 "фармаце AVI"
 
 #: engines/zvision/detection.cpp:150
-#, fuzzy
 msgid "Look Up"
-msgstr "Глядзець"
+msgstr "Глядзець угару"
 
 #: engines/zvision/detection.cpp:156
-#, fuzzy
 msgid "Look Down"
-msgstr "Паменш. маштаб"
+msgstr "Глядзець уніз"
 
 #: engines/zvision/detection.cpp:174
-#, fuzzy
 msgid "Show FPS"
-msgstr "Паказаць лічыльнік FPS"
+msgstr "Паказаць лічыльнік кадраў у секунду"
 
 #: engines/zvision/detection.cpp:191
 msgid "Spellbook"
-msgstr ""
+msgstr "Кніга загавораў"
 
 #: engines/zvision/detection.cpp:197
 msgid "Score"
-msgstr ""
+msgstr "Лік"
 
 #: engines/zvision/detection.cpp:203
 msgid "Put away object"
-msgstr ""
+msgstr "Адкласці аб'ект"
 
 #: engines/zvision/detection.cpp:209
 msgid "Extract coin"
-msgstr ""
+msgstr "Дастаць манету"
 
 #: engines/zvision/detection.cpp:230
 msgid "Preferences"
