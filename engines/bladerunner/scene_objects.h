@@ -87,12 +87,17 @@ public:
 	void setIsObstacle(int sceneObjectId, bool isObstacle);
 	void setIsTarget(int sceneObjectId, bool isTarget);
 	void updateObstacles();
+	int getCount() { return _count; }
+
+	int findById(int sceneObjectId) const;
+	bool isEmptyScreenRectangle(int sceneObjectId);
+	int compareScreenRectangle(int sceneObjectId, const Common::Rect &rectangle);
+	void resetScreenRectangleAndBbox(int sceneObjectId);
 
 	void save(SaveFileWriteStream &f);
 	void load(SaveFileReadStream &f);
 
 private:
-	int findById(int sceneObjectId) const;
 	bool addSceneObject(int sceneObjectId, SceneObjectType sceneObjectType, const BoundingBox &boundingBox, const Common::Rect &screenRectangle, bool isClickable, bool isObstacle, uint8 unknown1, bool isTarget, bool isMoving, bool isRetired);
 	int findEmpty() const;
 };

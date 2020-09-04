@@ -341,6 +341,38 @@ void SceneObjects::updateObstacles() {
 	_vm->_obstacles->backup();
 }
 
+bool SceneObjects::isEmptyScreenRectangle(int sceneObjectId) {
+	int index = findById(sceneObjectId);
+	if (index != -1) {
+		const SceneObject *sceneObject = &_sceneObjects[index];
+		return sceneObject->screenRectangle.isEmpty();
+	}
+	return true;
+}
+
+int SceneObjects::compareScreenRectangle(int sceneObjectId, const Common::Rect &rectangle) {
+	int index = findById(sceneObjectId);
+	if (index != -1) {
+		const SceneObject *sceneObject = &_sceneObjects[index];
+		if (sceneObject->screenRectangle == rectangle) {
+			return 0;
+		}
+	}
+	return -1;
+}
+
+void SceneObjects::resetScreenRectangleAndBbox(int sceneObjectId) {
+	int index = findById(sceneObjectId);
+	if (index != -1) {
+		SceneObject *sceneObject = &_sceneObjects[index];
+		sceneObject->screenRectangle.left   = -1;
+		sceneObject->screenRectangle.top    = -1;
+		sceneObject->screenRectangle.right  = -1;
+		sceneObject->screenRectangle.bottom = -1;
+		sceneObject->boundingBox.setXYZ(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	}
+}
+
 void SceneObjects::save(SaveFileWriteStream &f) {
 	f.writeInt(_count);
 	for (int i = 0; i < kSceneObjectCount; ++i) {
