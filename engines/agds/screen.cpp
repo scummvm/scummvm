@@ -99,20 +99,20 @@ void Screen::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 		bool animation_valid = animation != _animations.end();
 		if (child_valid && animation_valid) {
 			if ((*child)->z() > (*animation)->z()) {
-				debug("object %d, z: %d", idx++, (*child)->z());
+				//debug("object %d, z: %d", idx++, (*child)->z());
 				(*child)->paint(engine, backbuffer);
 				++child;
 			} else {
-				debug("animation %d, z: %d", idx++, (*animation)->z());
+				//debug("animation %d, z: %d", idx++, (*animation)->z());
 				(*animation)->paint(engine, backbuffer, Common::Point());
 				++animation;
 			}
 		} else if (child_valid) {
-			debug("object %d, z: %d", idx++, (*child)->z());
+			//debug("object %d, z: %d", idx++, (*child)->z());
 			(*child)->paint(engine, backbuffer);
 			++child;
 		} else {
-			debug("animation %d, z: %d", idx++, (*animation)->z());
+			//debug("animation %d, z: %d", idx++, (*animation)->z());
 			(*animation)->paint(engine, backbuffer, Common::Point());
 			++animation;
 		}
