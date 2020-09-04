@@ -199,6 +199,7 @@ static const char *const selectorNameTable[] = {
 	"enable",       // SQ6
 	"setupExit",    // SQ6
 	"vol",          // SQ6
+	"walkIconItem", // SQ6
 #endif
 	NULL
 };
@@ -321,7 +322,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_value,
 	SELECTOR_enable,
 	SELECTOR_setupExit,
-	SELECTOR_vol
+	SELECTOR_vol,
+	SELECTOR_walkIconItem
 #endif
 };
 
@@ -19277,6 +19279,38 @@ static const uint16 sq6CockpitIconBarPatch[] = {
 	PATCH_END
 };
 
+// The ExitFeature class has a bug which permanently breaks the game's cursors.
+//  ExitFeature:doit is responsible for toggling the Walk cursor to and from an
+//  Exit cursor. If an ExitFeature's area overlaps with the icon bar and a user
+//  mouses from it to the icon bar while the cursor is Exit and clicks on an
+//  icon then the new cursor will no longer work. ExitFeature assumes the new
+//  icon is Walk and incorrectly sets its message property to Exit, preventing
+//  it from ever sending the correct verb again. This occurs in the esophagus
+//  where room 640 can be scrolled to a position where the southern ExitFeature
+//  is partially under the icon bar.
+//
+// We fix by this by patching ExitFeature to explicitly use the Walk icon
+//  instead of assuming that the current icon is always Walk when the cursor is.
+//  This assumption is false when SQIconbar is in the middle of changing icons
+//  and calls everyone's doit methods.
+//
+// Applies to: All versions
+// Responsible method: ExitFeature:doit
+// Fixes bug: #11640
+static const uint16 sq6ExitFeatureIconSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(curIcon),      // pushi curIcon
+	0x76,                               // push0
+	0x81, 0x45,                         // lag 45
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ SQIconbar curIcon? ]
+	SIG_END
+};
+
+static const uint16 sq6ExitFeatureIconPatch[] = {
+	0x38, PATCH_SELECTOR16(walkIconItem), // pushi walkIconItem
+	PATCH_END
+};
+
 // Narrator lockup fix for SQ6's SQNarrator:sayForReal in versions compiled
 //  without debug line number instructions, see sciNarratorLockupSignature.
 //  SQ6 also uses the regular Narrator:say which the generic patches handle.
@@ -19335,6 +19369,7 @@ static const SciScriptPatcherEntry sq6Signatures[] = {
 	{  true,    15, "fix hookah hose missing point",               1, sq6HookahHosePointSignature,     sq6HookahHosePointPatch },
 	{  true,    15, "fix invalid array construction",              1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true,    22, "fix invalid array construction",              1, sci21IntArraySignature,          sci21IntArrayPatch },
+	{  true,    31, "fix ExitFeature breaking icons",              2, sq6ExitFeatureIconSignature,     sq6ExitFeatureIconPatch },
 	{  true,    33, "disable video benchmarking",                  1, sci2BenchmarkSignature,          sci2BenchmarkPatch },
 	{  true,   330, "fix polysorbate lx music volume",             1, sq6PolysorbateVolumeSignature,   sq6PolysorbateVolumePatch },
 	{  true,   410, "fix slow transitions",                        1, sq6SlowTransitionSignature2,     sq6SlowTransitionPatch2 },
