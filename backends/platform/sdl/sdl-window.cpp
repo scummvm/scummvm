@@ -62,6 +62,7 @@ SdlWindow::~SdlWindow() {
 }
 
 void SdlWindow::setupIcon() {
+#ifndef __MORPHOS__
 	int x, y, w, h, ncols, nbytes, i;
 	unsigned int rgba[256];
 	unsigned int *icon;
@@ -130,6 +131,7 @@ void SdlWindow::setupIcon() {
 
 	SDL_FreeSurface(sdl_surf);
 	free(icon);
+#endif
 }
 
 void SdlWindow::setWindowCaption(const Common::String &caption) {
