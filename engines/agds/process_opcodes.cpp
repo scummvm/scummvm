@@ -590,7 +590,8 @@ void Process::stub153() {
 void Process::getObjectSurfaceX() {
 	Common::String name = popString();
 	debug("getObjectSurfaceX: %s", name.c_str());
-	int x = _engine->getCurrentScreenObject(name)->getPosition().x;
+	ObjectPtr object = _engine->getCurrentScreenObject(name);
+	int x = object? object->getPosition().x: 0;
 	debug("\t%d", x);
 	push(x);
 }
@@ -598,7 +599,8 @@ void Process::getObjectSurfaceX() {
 void Process::getObjectSurfaceY() {
 	Common::String name = popString();
 	debug("getObjectSurfaceY: %s", name.c_str());
-	int y = _engine->getCurrentScreenObject(name)->getPosition().y;
+	ObjectPtr object = _engine->getCurrentScreenObject(name);
+	int y = object? object->getPosition().y: 0;
 	debug("\t%d", y);
 	push(y);
 }
