@@ -47,6 +47,7 @@ void SceneScriptNR01::InitializeScene() {
 	} else if (Game_Flag_Query(kFlagNotUsed545)) {
 		Setup_Scene_Information( -170.0f,  24.0f,  -574.0f, 768);
 	} else {
+		// eg. when thrown out
 		Setup_Scene_Information(   76.0f, 23.88f,  -109.0f, 966);
 	}
 
@@ -88,8 +89,8 @@ void SceneScriptNR01::InitializeScene() {
 	 && !Game_Flag_Query(kFlagArrivedFromSpinner1)
 	) {
 		if ((!Game_Flag_Query(kFlagNR01VisitedFirstTimeWithSpinner) && Global_Variable_Query(kVariableChapter) == 3)
-		     || Random_Query(1, 3) == 1)
-		{
+		    || Random_Query(1, 3) == 1
+		) {
 			// enhancement: don't always play after first visit
 			Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kNR01LoopInshot, false);
 		}
@@ -330,7 +331,13 @@ void SceneScriptNR01::PlayerWalkedIn() {
 			Game_Flag_Reset(kFlagNR08TouchedDektora);
 		}
 		Game_Flag_Reset(kFlagNR03McCoyThrownOut);
+#if BLADERUNNER_ORIGINAL_BUGS
+		// This is an extra call Player_Gains_Control() (McCoy should gain control by his AI script - goal kGoalMcCoyNR01GetUp)
+		// or when he's drugged the goal kGoalMcCoyNR01LayDrugged ensures gaining control
+		// It causes buggy behavior since it enables control, and by clicking fast the player can skip McCoy's AI script handling
+		// of his goal change to kGoalMcCoyNR01ThrownOut, and he can stay invisible, and also spawn at the bottom right of the scene
 		Player_Gains_Control();
+#endif
 		//return true;
 		return;
 	}

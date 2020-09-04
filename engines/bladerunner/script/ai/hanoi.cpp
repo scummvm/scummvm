@@ -185,7 +185,10 @@ void AIScriptHanoi::OtherAgentEnteredCombatMode(int otherActorId, int combatMode
 	 && combatMode
 	) {
 		Player_Set_Combat_Mode(false);
+#if BLADERUNNER_ORIGINAL_BUGS
+		// redundant call to lose control here
 		Player_Loses_Control();
+#endif
 		Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiThrowOutMcCoy);
 		return; //true;
 	}
@@ -290,7 +293,14 @@ bool AIScriptHanoi::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case kGoalHanoiThrowOutMcCoy:
 		Game_Flag_Set(kFlagNR03McCoyThrownOut);
 		AI_Countdown_Timer_Reset(kActorHanoi, kActorTimerAIScriptCustomTask0);
+#if BLADERUNNER_ORIGINAL_BUGS
 		Player_Loses_Control();
+#else
+		// Lose control only if not already lost control (like in the case of Dektora's dressing room NR07 time-out)
+		if (Player_Has_Control()) {
+			Player_Loses_Control();
+		}
+#endif
 		Player_Set_Combat_Mode(false); // this is missing in ITA and ESP versions of the game
 		Actor_Force_Stop_Walking(kActorMcCoy);
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);

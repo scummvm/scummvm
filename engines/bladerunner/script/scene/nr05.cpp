@@ -189,13 +189,9 @@ void SceneScriptNR05::SceneFrameAdvanced(int frame) {
 		}
 	}
 
-	if (frame > 77
-	 && frame <= 134
-	) {
+	if (frame > 77 && frame <= 134) {
 		rotateActorOnTable(frame - 13);
-		if ( frame == 134
-		 && !Game_Flag_Query(kFlagNR05toNR03)
-		) {
+		if ( frame == 134 && !Game_Flag_Query(kFlagNR05toNR03)) {
 			Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyNRxxSitAtTable);
 		}
 		//return true;
