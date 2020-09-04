@@ -45,11 +45,11 @@ jobs:
           vcpkgGitCommitId: 2f7a104d4d6f1f3790db929f85a4086aa6973d7f
           vcpkgTriplet: '${{ matrix.triplet }}'
           vcpkgArguments: '${{ matrix.vcpkgPackages }}'
-      - name: Upload libs
-        uses: actions/upload-artifact@v2
-        with:
-          name: libs-${{ matrix.triplet }}
-          path: ${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}\\installed\\${{ matrix.triplet }}
+#      - name: Upload libs
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: libs-${{ matrix.triplet }}
+#          path: ${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}\\installed\\${{ matrix.triplet }}
       - name: Build create_project
         run: |
           cd devtools/create_project/cmake
