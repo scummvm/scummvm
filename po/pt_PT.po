@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-03 01:28+0000\n"
-"PO-Revision-Date: 2020-08-31 12:24+0000\n"
+"PO-Revision-Date: 2020-09-04 12:21+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_PT/>\n"
@@ -1356,6 +1356,8 @@ msgstr ""
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
+"4. O armazenamento ainda não está ativo. Verifique o seu nome de utilizador "
+"e ative-o:"
 
 #: gui/options.cpp:2088
 msgid "Enable storage"
@@ -1363,7 +1365,7 @@ msgstr "Ativar armazenamento"
 
 #: gui/options.cpp:2088
 msgid "Confirm you want to use this account for this storage"
-msgstr ""
+msgstr "Confirme que deseja usar esta conta de armazenamento"
 
 #: gui/options.cpp:2090 backends/platform/wii/options.cpp:114
 msgid "Username:"
@@ -1403,10 +1405,14 @@ msgstr "<nunca>"
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
+"Jogos guardados são sincronizados automaticamente no arranque e quando "
+"guarda ou carrega jogos."
 
 #: gui/options.cpp:2101
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
+"Jogos guardados são sincronizados automaticamente no arranque e quando "
+"guarda ou carrega jogos."
 
 #: gui/options.cpp:2102
 msgid "Sync now"
@@ -1419,11 +1425,11 @@ msgstr "Iniciar sincronização de jogos guardados"
 #: gui/options.cpp:2105
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr ""
+msgstr "Pode transferir ficheiros de jogo a partir da sua pasta nuvem ScummVM:"
 
 #: gui/options.cpp:2107
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr ""
+msgstr "Pode transferir ficheiros de jogo a partir da sua pasta nuvem ScummVM:"
 
 #: gui/options.cpp:2108
 msgid "Download game files"
@@ -1436,11 +1442,11 @@ msgstr "Abrir o gestor de transferências"
 #: gui/options.cpp:2111
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
-msgstr ""
+msgstr "Para alterar a conta deste armazenamento, desligue e volte a ligar:"
 
 #: gui/options.cpp:2113
 msgid "To change account for this storage, disconnect and connect again:"
-msgstr ""
+msgstr "Para alterar a conta deste armazenamento, desligue e volte a ligar:"
 
 #: gui/options.cpp:2114
 msgid "Disconnect"
@@ -1448,16 +1454,16 @@ msgstr "Desligar"
 
 #: gui/options.cpp:2114
 msgid "Stop using this storage on this device"
-msgstr ""
+msgstr "Parar de usar este armazenamento neste dispositivo"
 
 #: gui/options.cpp:2117
 msgctxt "lowres"
 msgid "This storage is not connected yet! To connect,"
-msgstr ""
+msgstr "Este armazenamento ainda não está ligado! Para ligar,"
 
 #: gui/options.cpp:2119
 msgid "This storage is not connected yet! To connect,"
-msgstr ""
+msgstr "Este armazenamento ainda não está ligado! Para ligar,"
 
 #: gui/options.cpp:2120
 msgid "1. Open this link:"
@@ -1525,19 +1531,21 @@ msgstr "Porta utilizada pelo servidor"
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
+"Inicie o servidor para gerir ficheiros através dum navegador (na mesma rede)."
 
 #: gui/options.cpp:2156
 msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
-msgstr ""
+msgstr "Fechar esta janela de opções irá parar o servidor."
 
 #: gui/options.cpp:2158
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
+"Inicie o servidor para gerir ficheiros através dum navegador (na mesma rede)."
 
 #: gui/options.cpp:2159
 msgid "Closing options dialog will stop the server."
-msgstr ""
+msgstr "Fechar esta janela de opções irá parar o servidor."
 
 #: gui/options.cpp:2171
 msgid "Use Text to speech"
@@ -2206,11 +2214,11 @@ msgstr "Iniciar na mesma"
 
 #: engines/engine.cpp:761
 msgid "Loading game is currently unavailable"
-msgstr ""
+msgstr "Não é possível carregar um jogo neste momento"
 
 #: engines/engine.cpp:790
 msgid "Saving game is currently unavailable"
-msgstr ""
+msgstr "Não é possível guardar um jogo neste momento"
 
 #: engines/game.cpp:171
 #, c-format
@@ -2667,35 +2675,35 @@ msgstr "Diminuir a escala"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:425
 msgid "Switch to nearest neighbour scaling"
-msgstr ""
+msgstr "Redimensionar por vizinho mais próximo"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:426
 msgid "Switch to AdvMame 2x/3x scaling"
-msgstr ""
+msgstr "Redimensionar por AdvMame 2x/3x"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:428
 msgid "Switch to HQ 2x/3x scaling"
-msgstr ""
+msgstr "Redimensionar por HQ 2x/3x"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:430
 msgid "Switch to 2xSai scaling"
-msgstr ""
+msgstr "Redimensionar por 2xSai"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:431
 msgid "Switch to Super2xSai scaling"
-msgstr ""
+msgstr "Redimensionar por Super2xSai"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:432
 msgid "Switch to SuperEagle scaling"
-msgstr ""
+msgstr "Redimensionar por SuperEagle"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:433
 msgid "Switch to TV 2x scaling"
-msgstr ""
+msgstr "Redimensionar por TV 2x"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:434
 msgid "Switch to DotMatrix scaling"
-msgstr ""
+msgstr "Redimensionar por DotMatrix"
 
 #: backends/keymapper/hardware-input.cpp:245
 msgid "Left Mouse Button"
@@ -4805,7 +4813,7 @@ msgstr ""
 
 #: engines/sci/detection.cpp:430
 msgid "Use high-quality video scaling"
-msgstr ""
+msgstr "Usar redimensionamento de vídeo de alta qualidade"
 
 #: engines/sci/detection.cpp:431
 msgid "Use linear interpolation when upscaling videos, where possible"
@@ -4813,7 +4821,7 @@ msgstr "Usar interpolação linear para aumentar vídeos, quando possível"
 
 #: engines/sci/detection.cpp:441
 msgid "Use high-quality \"LarryScale\" cel scaling"
-msgstr ""
+msgstr "Usar redimensionamento cel \"LarryScale\" de alta qualidade"
 
 #: engines/sci/detection.cpp:442
 msgid "Use special cartoon scaler for drawing character sprites"
@@ -4885,7 +4893,7 @@ msgstr ""
 
 #: engines/sci/detection.cpp:555
 msgid "Roland D-110 / D-10 / D-20"
-msgstr ""
+msgstr "Roland D-110 / D-10 / D-20"
 
 #: engines/sci/detection.cpp:559
 msgid "Yamaha FB-01"
@@ -6494,12 +6502,10 @@ msgid "Spin faster"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:1311
-#, fuzzy
 msgid "Zoom out"
-msgstr "Ampliar"
+msgstr "Reduzir"
 
 #: engines/wintermute/keymapper_tables.h:1318
-#, fuzzy
 msgid "Zoom in"
 msgstr "Ampliar"
 
@@ -6640,19 +6646,19 @@ msgstr "Mostrar FPS"
 
 #: engines/zvision/detection.cpp:191
 msgid "Spellbook"
-msgstr ""
+msgstr "Livro de feitiços"
 
 #: engines/zvision/detection.cpp:197
 msgid "Score"
-msgstr ""
+msgstr "Pontuação"
 
 #: engines/zvision/detection.cpp:203
 msgid "Put away object"
-msgstr ""
+msgstr "Retirar objeto"
 
 #: engines/zvision/detection.cpp:209
 msgid "Extract coin"
-msgstr ""
+msgstr "Extrair moeda"
 
 #: engines/zvision/detection.cpp:230
 msgid "Preferences"
