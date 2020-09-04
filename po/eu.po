@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-03 01:28+0000\n"
-"PO-Revision-Date: 2020-08-31 12:24+0000\n"
+"PO-Revision-Date: 2020-09-04 20:46+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/eu/>\n"
@@ -6145,12 +6145,11 @@ msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr ""
 
 #: engines/ultima/nuvie/nuvie.cpp:313
-#, fuzzy
 msgid ""
 "\n"
 "Game Saved\n"
 "\n"
-msgstr "Gorde"
+msgstr ""
 
 #: engines/ultima/nuvie/nuvie.cpp:362
 #, c-format
