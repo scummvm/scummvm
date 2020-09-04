@@ -27,10 +27,8 @@
 
 class OSystem_MorphOS : public OSystem_SDL {
 public:
-	OSystem_MorphOS() {}
-	virtual ~OSystem_MorphOS() {}
-
-	virtual void init();
+	virtual void init() override;
+	virtual bool openUrl(const Common::String &url) override;
 };
 
 #endif
