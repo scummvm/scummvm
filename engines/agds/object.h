@@ -68,7 +68,7 @@ private:
 	RegionPtr						_region;
 	Animation *						_animation;
 	Animation *						_mouseCursor;
-	Common::Point					_pos, _animationPos;
+	Common::Point					_pos, _animationPos, _offset;
 	int								_z;
 	Common::String					_text;
 	uint							_clickHandler;
@@ -175,6 +175,10 @@ public:
 
 	Common::Point getPosition() const {
 		return _pos;
+	}
+
+	Common::Point getOffset() const {
+		return _offset;
 	}
 
 	void setKeyHandler(const Common::String &name, uint ip) {
