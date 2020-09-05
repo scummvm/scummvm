@@ -113,6 +113,35 @@ void Object::setPicture(Graphics::TransparentSurface *picture) {
 		delete _picture;
 	}
 	_picture = picture;
+
+	if (!picture) {
+		_offset = Common::Point();
+		return;
+	}
+
+	assert(picture->format.bytesPerPixel == 4);
+	const byte *pixels = static_cast<const byte *>(picture->getPixels());
+	uint pitch = picture->pitch;
+
+	uint16 w = picture->w, h = picture->h;
+	_offset.x = w;
+	_offset.y = h;
+
+	for (uint16 y = 0; y < h; ++y) {
+		for (uint16 x = 0; x < w; ++x) {
+			uint32 color = *reinterpret_cast<const uint32 *>(pixels + (y * pitch + x * picture->format.bytesPerPixel));
+			uint8 r, g, b, a;
+			picture->format.colorToARGB(color, a, r, g, b);
+			if (a != 0) {
+				if (y < _offset.y)
+					_offset.y = y;
+				if (x < _offset.x)
+					_offset.x = x;
+				break;
+			}
+		}
+	}
+	debug("OFFSET %d, %d", _offset.x, _offset.y);
 }
 
 void Object::region(RegionPtr region) {
@@ -143,7 +172,7 @@ void Object::generateRegion() {
 
 void Object::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 	if (_picture) {
-		Common::Point dst = _pos;
+		Common::Point dst = _pos - _offset;
 		Common::Rect srcRect = _picture->getRect();
 		uint32 color = (_alpha << 24) | 0xffffff; //fixme: _picture->format.ARGBToColor(_alpha, 255, 255, 255); is not working
 		if (Common::Rect::getBlitRect(dst, srcRect, backbuffer.getRect())) {
