@@ -148,7 +148,7 @@ bool SoundFx::load(Common::SeekableReadStream *data, LoadSoundFxInstrumentCallba
 			}
 		} else {
 			if (ins->name[0]) {
-				ins->name[8] = '\0';
+				ins->name[22] = '\0';
 				ins->data = (int8 *)(*loadCb)(ins->name, 0);
 				if (!ins->data) {
 					return false;
