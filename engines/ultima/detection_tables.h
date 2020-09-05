@@ -278,16 +278,15 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			AD_ENTRY1s("jusecode.flx", "1793bb252b805bf8d59300690987c605", 1208003),
 			Common::JA_JPN,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
+			ADGF_TESTING,
 			GUIO1(GUIO_NOMIDI)
 		},
 		GAME_ULTIMA8,
 		0
 	},
 
-#ifndef RELEASE_BUILD
 	// Crusader games use basically the same engine as ultima8, but still
-	// need a lot of work.
+	// need a lot of work.  All are unstable, some simply crash on startup.
 
 	// GOG Crusader - No Remorse (V1.21)
 	{
@@ -334,6 +333,21 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		0
 	},
 
+	// Crusader - No Remorse (Japanese) provided by Dominus
+	{
+		{
+			"remorse",
+			"",
+			AD_ENTRY1s("jusecode.flx", "088105959be4f2de1cb9e796e71c5f2d", 554522),
+			Common::JA_JPN,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GAME_CRUSADER_REM,
+		0
+	},
+
 	// Crusader - No Remorse - Demo V1.12D
 	{
 		{
@@ -364,7 +378,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		0
 	},
 
-	// Crusader - No Regret - Demo - V1.08
+	// Crusader - No Regret - Demo V1.08
 	{
 		{
 			"regret",
@@ -393,7 +407,6 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GAME_CRUSADER_REG,
 		0
 	},
-#endif
 
 	// GOG Martian Dreams
 	{
