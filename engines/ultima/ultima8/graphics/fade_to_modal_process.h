@@ -32,6 +32,7 @@ namespace Ultima8 {
 
 class PaletteFaderProcess;
 
+/** A process to fade out the screen and open a modal */
 class FadeToModalProcess : public Process {
 
 	enum FadeToModalState {

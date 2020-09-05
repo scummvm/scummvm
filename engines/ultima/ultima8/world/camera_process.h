@@ -30,15 +30,14 @@
 namespace Ultima {
 namespace Ultima8 {
 
-//
-// The camera process. This works in 3 ways
-//
-// It can be set to stay where it currently is
-// It can be set to follow an item.
-// It can be set to scroll to an item
-// It can be set to stay at a location
-//
-
+/**
+* The camera process. This works in 4 ways:
+*
+* It can be set to stay where it currently is
+* It can be set to follow an item.
+* It can be set to scroll to an item
+* It can be set to stay at a location
+*/
 class CameraProcess : public Process {
 public:
 	CameraProcess();

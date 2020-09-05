@@ -31,6 +31,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
+/** A process to fade the palette from one transform matrix to another */
 class PaletteFaderProcess : public Process {
 	int                         _priority;
 	int32                       _counter;

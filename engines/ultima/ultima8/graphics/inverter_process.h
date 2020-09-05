@@ -30,6 +30,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
+/** The process to tear and flip the screen, triggered by some game events in U8 */
 class InverterProcess : public Process {
 public:
 	InverterProcess();
