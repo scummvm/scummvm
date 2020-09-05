@@ -202,10 +202,8 @@ bool INIFile::readConfigString(string config) {
 				// save previous section
 				_sections.push_back(section);
 			}
-			section._name.clear();
-			section._comment.clear();
-			section._keys.clear();
 
+			section._keys.clear();
 			section._name = line.substr(1, p - 1);
 			section._comment = comment;
 			comment.clear();
