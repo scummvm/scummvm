@@ -899,7 +899,7 @@ int loadResource(const char *resourceName, int16 idx, int16 frameIndex) {
 	} else if (strstr(resourceName, ".ADL")) {
 		result = loadSpl(resourceName, idx);
 	} else if (strstr(resourceName, ".AMI")) {
-		result = loadAni(resourceName, idx, frameIndex);
+		result = loadSpl(resourceName, idx);
 	} else if (strstr(resourceName, "ECHEC")) { // Echec (French) means failure
 		g_cine->quitGame();
 	} else {
