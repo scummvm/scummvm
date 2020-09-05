@@ -73,8 +73,7 @@ private:
 	uint8 _sfxVolume;
 	uint8 _musicVolume;
 
-	// SOUND_ARR_DAT_80071f6c
-	uint8 _soundArr[0x780];
+	uint8 _sfxVolumeTbl[0x780];
 
 	VabSound* _vabMusx;
 	VabSound* _vabMsf;
