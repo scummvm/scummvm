@@ -542,7 +542,7 @@ void SegaSequencePlayer::s_orbZoomEffect(const uint8*) {
 	int step = 512;
 	for (int i = 0; i < 90; ++i) {
 		uint32 nextFrame = _vm->_system->getMillis() + 64;
-		uint16 *dst = (uint16*)_scaleTraceVectors;
+		uint16 *dst = _scaleTraceVectors;
 		uint32 xtr = 0x58000 - step * 128;
 		uint32 ytr = 0x59000 - step * 88;
 		for (int ii = 0; ii < 176; ++ii) {
