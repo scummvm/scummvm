@@ -1443,10 +1443,14 @@ void PaulaSound::playSound(int mode, int channel, int param3, int param4, int pa
 void PaulaSound::playSound(int channel, int frequency, const uint8 *data, int size, int volumeStep, int stepCount, int volume, int repeat) {
 	debugC(5, kCineDebugSound, "PaulaSound::playSound() channel %d size %d", channel, size);
 	Common::StackLock lock(_sfxMutex);
-	assert(frequency > 0);
+
+	if (channel < 0 || channel >= NUM_CHANNELS) {
+		warning("PaulaSound::playSound: Channel number out of range (%d)", channel);
+		return;
+	}
 
 	stopSound(channel);
-	if (size > 0) {
+	if (frequency > 0 && size > 0) {
 		byte *sound = (byte *)malloc(size);
 		if (sound) {
 			// Create the audio stream
@@ -1454,6 +1458,10 @@ void PaulaSound::playSound(int channel, int frequency, const uint8 *data, int si
 
 			// Clear the first and last 16 bits like in the original.
 			sound[0] = sound[1] = sound[size - 2] = sound[size - 1] = 0;
+
+			if (g_cine->getGameType() == Cine::GType_OS) {
+				frequency = ((frequency * 2) / 20) + 50;
+			}
 
 			Audio::SeekableAudioStream *stream = Audio::makeRawStream(sound, size, PAULA_FREQ / frequency, 0);
 
