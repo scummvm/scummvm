@@ -1402,7 +1402,10 @@ void PaulaSound::loadMusic(const char *name) {
 		byte *buf = readBundleSoundFile(name, &size);
 		if (buf) {
 			Common::MemoryReadStream s(buf, size);
-			_moduleStream = Audio::makeSoundFxStream(&s, readBundleSoundFile, _mixer->getOutputRate());
+			// Operation Stealth for Amiga has to have its music frequency halved
+			// or otherwise the music sounds too high pitched.
+			const int periodScaleDivisor = 2;
+			_moduleStream = Audio::makeSoundFxStream(&s, readBundleSoundFile, _mixer->getOutputRate(), true, periodScaleDivisor);
 			free(buf);
 		}
 	}
