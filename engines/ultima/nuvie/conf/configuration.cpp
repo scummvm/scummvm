@@ -38,7 +38,7 @@ Configuration::Configuration() : _configChanged(false) {
 	_localKeys["GameName"] = "";
 	_localKeys["GameID"] = "";
 	_localKeys["datadir"] = "data";		// This maps to ultima6/ in ultima.dat
-	_localKeys["quit"] = "false";
+	_localKeys["quit"] = "no";
 }
 
 Configuration::~Configuration() {
@@ -153,13 +153,15 @@ void Configuration::value(const Std::string &key, bool &ret, bool defaultvalue) 
 
 	// Check for local entry
 	if (_localKeys.contains(k)) {
-		ret = _localKeys[k].hasPrefixIgnoreCase("t");
+		ret = _localKeys[k].hasPrefixIgnoreCase("y") ||
+			_localKeys[k].hasPrefixIgnoreCase("t");
 		return;
 	}
 
 	// Check for ScummVM key
 	if (_settings.contains(k)) {
-		ret = _settings[k].hasPrefixIgnoreCase("t");
+		ret = _settings[k].hasPrefixIgnoreCase("y") ||
+			_settings[k].hasPrefixIgnoreCase("t");
 		return;
 	}
 
@@ -253,7 +255,7 @@ bool Configuration::set(const Std::string &key, bool value) {
 
 	assert(key.hasPrefix("config/"));
 	Std::string k = key.substr(7);
-	Common::String strValue = value ? "true" : "false";
+	Common::String strValue = value ? "yes" : "no";
 
 	if (_localKeys.contains(k)) {
 		_localKeys[k] = strValue;
@@ -341,28 +343,28 @@ void Configuration::setCommonDefaults(GameId gameType) {
 	_settings["audio/music_volume"] = 100;
 	_settings["audio/sfx_volume"] = 255;
 #endif
-	_settings["audio/combat_changes_music"] = "true";
-	_settings["audio/vehicles_change_music"] = "true";
-	_settings["audio/conversations_stop_music"] = "false"; // original stopped music - maybe due to memory and disk swapping
-	_settings["audio/stop_music_on_group_change"] = "true";
+	_settings["audio/combat_changes_music"] = "yes";
+	_settings["audio/vehicles_change_music"] = "yes";
+	_settings["audio/conversations_stop_music"] = "no"; // original stopped music - maybe due to memory and disk swapping
+	_settings["audio/stop_music_on_group_change"] = "yes";
 
-	_settings["input/enable_doubleclick"] = "true";
-	_settings["input/enabled_dragging"] = "true";
-	_settings["input/look_on_left_click"] = "true";
-	_settings["input/walk_with_left_button"] = "true";
-	_settings["input/direction_selects_target"] = "true";
+	_settings["input/enable_doubleclick"] = "yes";
+	_settings["input/enabled_dragging"] = "yes";
+	_settings["input/look_on_left_click"] = "yes";
+	_settings["input/walk_with_left_button"] = "yes";
+	_settings["input/direction_selects_target"] = "yes";
 
 	_settings["general/dither_mode"] = "none";
-	_settings["general/enable_cursors"] = "true";
+	_settings["general/enable_cursors"] = "yes";
 	_settings["general/party_formation"] = "standard";
 
 	// Only show the startup console if in ScummVM debug mode
-	_settings["general/show_console"] = gDebugLevel > 0 ? "true" : "false";
+	_settings["general/show_console"] = gDebugLevel > 0 ? "yes" : "no";
 
-	_settings["cheats/enabled"] = "false";
-	_settings["cheats/enable_hackmove"] = "false";
+	_settings["cheats/enabled"] = "no";
+	_settings["cheats/enable_hackmove"] = "no";
 	_settings["cheats/min_brightness"] = "0";
-	_settings["cheats/party_all_the_time"] = "false";
+	_settings["cheats/party_all_the_time"] = "no";
 
 	// game specific settings
 	uint8 bg_color[] = { 218, 136, 216 }; // U6, MD, SE
@@ -382,32 +384,32 @@ void Configuration::setCommonDefaults(GameId gameType) {
 	if (i == 0) // U6
 		_settings["enable_speech", "yes";
 #endif
-	_settings["skip_intro"] = "false";
-	_settings["show_eggs"] = "false";
+	_settings["skip_intro"] = "no";
+	_settings["show_eggs"] = "no";
 	if (i == 0) { // U6
-		_settings["show_stealing"] = "false";
-		_settings["roof_mode"] = "false";
+		_settings["show_stealing"] = "no";
+		_settings["roof_mode"] = "no";
 	}
-	_settings["use_new_dolls"] = "false";
+	_settings["use_new_dolls"] = "no";
 	_settings["cb_position"] = "default";
 	_settings["show_orig_style_cb"] = "default";
 	if (i == 0) // U6
 		_settings["cb_text_color"] = "115";
-	_settings["map_tile_lighting"] = i == 1 ? "false": "true"; // MD has canals lit up so disable
+	_settings["map_tile_lighting"] = i == 1 ? "no": "yes"; // MD has canals lit up so disable
 	_settings["custom_actor_tiles"] = "default";
-	_settings["converse_solid_bg"] = "false";
+	_settings["converse_solid_bg"] = "no";
 	_settings["converse_bg_color"] =
 		Common::String::format("%d", bg_color[i]);
 	_settings["converse_width"] = "default";
 	_settings["converse_height"] = "default";
 	if (i == 0) { // U6
 		_settings["displayed_wind_dir"] = "from";
-		_settings["free_balloon_movement"] = "false";
+		_settings["free_balloon_movement"] = "no";
 	}
 	_settings["game_specific_keys"] = "(default)";
 	_settings["newscroll/width"] = "30";
 	_settings["newscroll/height"] = "19";
-	_settings["newscroll/solid_bg"] = "false";
+	_settings["newscroll/solid_bg"] = "no";
 	_settings["newscroll/bg_color"] =
 		Common::String::format("%d", bg_color[i]);
 	_settings["newscroll/border_color"] =
@@ -433,11 +435,11 @@ void Configuration::setUnenhancedDefaults(GameId gameType) {
 
 	_settings["general/converse_gump"] = "default";
 	_settings["general/lighting"] = "original";
-	_settings["general/use_text_gumps"] = "false";
+	_settings["general/use_text_gumps"] = "no";
 
-	_settings["input/doubleclick_opens_containers"] = "false";
-	_settings["input/party_view_targeting"] = "false";
-	_settings["input/new_command_bar"] = "false";
+	_settings["input/doubleclick_opens_containers"] = "no";
+	_settings["input/party_view_targeting"] = "no";
+	_settings["input/new_command_bar"] = "no";
 	_settings["input/interface"] = "normal";
 }
 
@@ -453,11 +455,11 @@ void Configuration::setEnhancedDefaults(GameId gameType) {
 
 	_settings["general/converse_gump"] = "yes";
 	_settings["general/lighting"] = "smooth";
-	_settings["general/use_text_gumps"] = "true";
+	_settings["general/use_text_gumps"] = "yes";
 
-	_settings["input/doubleclick_opens_containers"] = "true";
-	_settings["input/party_view_targeting"] = "true";
-	_settings["input/new_command_bar"] = "true";
+	_settings["input/doubleclick_opens_containers"] = "yes";
+	_settings["input/party_view_targeting"] = "yes";
+	_settings["input/new_command_bar"] = "yes";
 	_settings["input/interface"] = "fullscreen";
 }
 
