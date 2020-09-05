@@ -141,6 +141,19 @@ void MidiMusicPlayer::setVolume(int volume) {
 	MidiPlayer::setVolume(volume);
 }
 
+void MidiMusicPlayer::sendToChannel(byte channel, uint32 b) {
+	if (!_channelsTable[channel]) {
+		_channelsTable[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
+		// If a new channel is allocated during the playback, make sure
+		// its volume is correctly initialized.
+		if (_channelsTable[channel])
+			_channelsTable[channel]->volume(_channelsVolume[channel] * _masterVolume / 255);
+	}
+
+	if (_channelsTable[channel])
+		_channelsTable[channel]->send(b);
+}
+
 Common::SeekableReadStream *MidiMusicPlayer::loadSoundFont(BigfileArchive *bigFileArchive) {
 	uint32 headSize, bodySize;
 	byte *headData = bigFileArchive->load("musx.vh", headSize);

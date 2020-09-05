@@ -250,6 +250,8 @@ Common::Error DragonsEngine::run() {
 	_sound = new SoundManager(this, _bigfileArchive, _dragonRMS);
 	_strPlayer = new StrPlayer(this, _screen);
 
+	syncSoundSettings();
+
 	if (ConfMan.hasKey("save_slot")) {
 		loadGameState(ConfMan.getInt("save_slot"));
 	} else {
@@ -1813,7 +1815,9 @@ void DragonsEngine::clearAllText() {
 
 void DragonsEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
-	_sound->syncSoundSettings();
+	if (_sound) {
+		_sound->syncSoundSettings();
+	}
 }
 
 uint16 DragonsEngine::getCursorHandPointerSequenceID() {
