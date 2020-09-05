@@ -109,7 +109,7 @@ KeyHandlerController::~KeyHandlerController() {
 }
 
 bool KeyHandlerController::keyPressed(int key) {
-	ASSERT(_handler != nullptr, "key handler must be initialized");
+	assertMsg(_handler != nullptr, "key handler must be initialized");
 	return _handler->handle(key);
 }
 

@@ -131,7 +131,7 @@ void moveAvatarInDungeon(MoveEvent &event) {
 	MapTile *tile;
 
 	// We're not in a dungeon, failed!
-	ASSERT(g_context->_location->_context & CTX_DUNGEON, "moveAvatarInDungeon() called outside of dungeon, failed!");
+	assertMsg(g_context->_location->_context & CTX_DUNGEON, "moveAvatarInDungeon() called outside of dungeon, failed!");
 
 	// You must turn first!
 	if (!advancing && !retreating) {
@@ -268,7 +268,7 @@ int moveCombatObject(int act, Map *map, Creature *obj, MapCoords target) {
 		dir = new_coords.pathAway(target, valid_dirs);
 
 	} else {
-		ASSERT(action == CA_ADVANCE, "action must be CA_ADVANCE or CA_FLEE");
+		assertMsg(action == CA_ADVANCE, "action must be CA_ADVANCE or CA_FLEE");
 		// If they're not fleeing, make sure they don't flee on accident
 		if (new_coords.x == 0)
 			valid_dirs = DIR_REMOVE_FROM_MASK(DIR_WEST, valid_dirs);

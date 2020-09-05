@@ -149,8 +149,8 @@ bool CityMapLoader::load(Map *map) {
 		error("unable to load map data");
 
 	// The map must be 32x32 to be read from an .ULT file
-	ASSERT(city->_width == CITY_WIDTH, "map width is %d, should be %d", city->_width, CITY_WIDTH);
-	ASSERT(city->_height == CITY_HEIGHT, "map height is %d, should be %d", city->_height, CITY_HEIGHT);
+	assertMsg(city->_width == CITY_WIDTH, "map width is %d, should be %d", city->_width, CITY_WIDTH);
+	assertMsg(city->_height == CITY_HEIGHT, "map height is %d, should be %d", city->_height, CITY_HEIGHT);
 
 	if (!loadData(city, ult))
 		return false;
@@ -263,8 +263,8 @@ bool ConMapLoader::load(Map *map) {
 		error("unable to load map data");
 
 	// The map must be 11x11 to be read from an .CON file
-	ASSERT(map->_width == CON_WIDTH, "map width is %d, should be %d", map->_width, CON_WIDTH);
-	ASSERT(map->_height == CON_HEIGHT, "map height is %d, should be %d", map->_height, CON_HEIGHT);
+	assertMsg(map->_width == CON_WIDTH, "map width is %d, should be %d", map->_width, CON_WIDTH);
+	assertMsg(map->_height == CON_HEIGHT, "map height is %d, should be %d", map->_height, CON_HEIGHT);
 
 	if (map->_type != Map::SHRINE) {
 		CombatMap *cm = getCombatMap(map);
@@ -303,8 +303,8 @@ bool DngMapLoader::load(Map *map) {
 		error("unable to load map data");
 
 	// The map must be 11x11 to be read from an .CON file
-	ASSERT(dungeon->_width == DNG_WIDTH, "map width is %d, should be %d", dungeon->_width, DNG_WIDTH);
-	ASSERT(dungeon->_height == DNG_HEIGHT, "map height is %d, should be %d", dungeon->_height, DNG_HEIGHT);
+	assertMsg(dungeon->_width == DNG_WIDTH, "map width is %d, should be %d", dungeon->_width, DNG_WIDTH);
+	assertMsg(dungeon->_height == DNG_HEIGHT, "map height is %d, should be %d", dungeon->_height, DNG_HEIGHT);
 
 	// Load the dungeon map
 	uint i, j;

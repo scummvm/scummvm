@@ -545,7 +545,7 @@ MapTile PartyMember::tileForClass(int klass) {
 	}
 
 	const Tile *tile = g_tileSets->get("base")->getByName(name);
-	ASSERT(tile, "no tile found for class %d", klass);
+	assertMsg(tile, "no tile found for class %d", klass);
 	return tile->getId();
 }
 
@@ -1069,7 +1069,7 @@ MapTile Party::getTransport() const {
 void Party::setTransport(MapTile tile) {
 	// transport value stored in savegame hardcoded to index into base tilemap
 	_saveGame->_transport = g_tileMaps->get("base")->untranslate(tile);
-	ASSERT(_saveGame->_transport != 0, "could not generate valid savegame transport for tile with id %d\n", tile._id);
+	assertMsg(_saveGame->_transport != 0, "could not generate valid savegame transport for tile with id %d\n", tile._id);
 
 	_transport = tile;
 
@@ -1131,8 +1131,8 @@ int Party::getActivePlayer() const {
 }
 
 void Party::swapPlayers(int p1, int p2) {
-	ASSERT(p1 < _saveGame->_members, "p1 out of range: %d", p1);
-	ASSERT(p2 < _saveGame->_members, "p2 out of range: %d", p2);
+	assertMsg(p1 < _saveGame->_members, "p1 out of range: %d", p1);
+	assertMsg(p2 < _saveGame->_members, "p2 out of range: %d", p2);
 
 	SaveGamePlayerRecord tmp = _saveGame->_players[p1];
 	_saveGame->_players[p1] = g_ultima->_saveGame->_players[p2];

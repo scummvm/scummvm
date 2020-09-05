@@ -205,7 +205,7 @@ void CombatController::initDungeonRoom(int room, Direction from) {
 	int i;
 	init(nullptr);
 
-	ASSERT(g_context->_location->_prev->_context & CTX_DUNGEON, "Error: called initDungeonRoom from non-dungeon context");
+	assertMsg(g_context->_location->_prev->_context & CTX_DUNGEON, "Error: called initDungeonRoom from non-dungeon context");
 	{
 		Dungeon *dng = dynamic_cast<Dungeon *>(g_context->_location->_prev->_map);
 		assert(dng);  
@@ -565,8 +565,8 @@ void CombatController::awardLoot() {
 }
 
 bool CombatController::attackHit(Creature *attacker, Creature *defender) {
-	ASSERT(attacker != nullptr, "attacker must not be nullptr");
-	ASSERT(defender != nullptr, "defender must not be nullptr");
+	assertMsg(attacker != nullptr, "attacker must not be nullptr");
+	assertMsg(defender != nullptr, "defender must not be nullptr");
 
 	int attackValue = xu4_random(0x100) + attacker->getAttackBonus();
 	int defenseValue = defender->getDefense();
