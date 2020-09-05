@@ -302,7 +302,8 @@ void OSystem_SDL::engineInit() {
 #endif
 #ifdef USE_DISCORD
 	// Set the presence status to the current running engine
-	_presence->updateStatus(ConfMan.get("gameid"), ConfMan.get("description"));
+	Common::String qualifiedGameId = Common::String::format("%s-%s", ConfMan.get("engineid").c_str(), ConfMan.get("gameid").c_str());
+	_presence->updateStatus(qualifiedGameId, ConfMan.get("description"));
 #endif
 
 	_eventSource->setEngineRunning(true);
