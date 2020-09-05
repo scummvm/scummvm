@@ -93,7 +93,7 @@ Image::~Image() {
 }
 
 void Image::setPalette(const RGBA *colors, unsigned n_colors) {
-	ASSERT(_paletted, "imageSetPalette called on non-paletted image");
+	assertMsg(_paletted, "imageSetPalette called on non-paletted image");
 
 	byte *pal = new byte[n_colors * 3];
 	byte *palP = pal;
@@ -108,7 +108,7 @@ void Image::setPalette(const RGBA *colors, unsigned n_colors) {
 }
 
 void Image::setPaletteFromImage(const Image *src) {
-	ASSERT(_paletted && src->_paletted, "imageSetPaletteFromImage called on non-indexed image");
+	assertMsg(_paletted && src->_paletted, "imageSetPaletteFromImage called on non-indexed image");
 
 	const uint32 *srcPal = src->_surface->getPalette();
 	_surface->setPalette(srcPal, 0, PALETTE_COUNT);

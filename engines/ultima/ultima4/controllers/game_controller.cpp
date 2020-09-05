@@ -287,7 +287,7 @@ void GameController::flashTile(const Coords &coords, MapTile tile, int frames) {
 
 void GameController::flashTile(const Coords &coords, const Common::String &tilename, int timeFactor) {
 	Tile *tile = g_context->_location->_map->_tileSet->getByName(tilename);
-	ASSERT(tile, "no tile named '%s' found in tileset", tilename.c_str());
+	assertMsg(tile, "no tile named '%s' found in tileset", tilename.c_str());
 	flashTile(coords, tile->getId(), timeFactor);
 }
 
@@ -358,9 +358,9 @@ void GameController::initMoons() {
 	int trammelphase = g_ultima->_saveGame->_trammelPhase,
 	    feluccaphase = g_ultima->_saveGame->_feluccaPhase;
 
-	ASSERT(g_context != nullptr, "Game context doesn't exist!");
-	ASSERT(g_ultima->_saveGame != nullptr, "Savegame doesn't exist!");
-	//ASSERT(mapIsWorldMap(c->location->map) && c->location->viewMode == VIEW_NORMAL, "Can only call gameInitMoons() from the world map!");
+	assertMsg(g_context != nullptr, "Game context doesn't exist!");
+	assertMsg(g_ultima->_saveGame != nullptr, "Savegame doesn't exist!");
+	//assertMsg(mapIsWorldMap(c->location->map) && c->location->viewMode == VIEW_NORMAL, "Can only call gameInitMoons() from the world map!");
 
 	g_ultima->_saveGame->_trammelPhase = g_ultima->_saveGame->_feluccaPhase = 0;
 	g_context->_moonPhase = 0;
@@ -779,7 +779,7 @@ bool GameController::createBalloon(Map *map) {
 	}
 
 	const Tile *balloon = map->_tileSet->getByName("balloon");
-	ASSERT(balloon, "no balloon tile found in tileset");
+	assertMsg(balloon, "no balloon tile found in tileset");
 	map->addObject(balloon->getId(), balloon->getId(), map->getLabel("balloon"));
 	return true;
 }

@@ -549,7 +549,7 @@ bool Debugger::cmdExit(int argc, const char **argv) {
 			g_context->_lastShip = obj;
 
 		Tile *avatar = g_context->_location->_map->_tileSet->getByName("avatar");
-		ASSERT(avatar, "no avatar tile found in tileset");
+		assertMsg(avatar, "no avatar tile found in tileset");
 
 		g_context->_party->setTransport(avatar->getId());
 		g_context->_horseSpeed = 0;

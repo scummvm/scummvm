@@ -205,7 +205,7 @@ int gameGetPlayer(bool canBeDisabled, bool canBeActivePlayer) {
 		return -1;
 	}
 
-	ASSERT(player < g_context->_party->size(), "player %d, but only %d members\n", player, g_context->_party->size());
+	assertMsg(player < g_context->_party->size(), "player %d, but only %d members\n", player, g_context->_party->size());
 	return player;
 }
 

@@ -35,7 +35,7 @@ Image *FMTOWNSImageLoader::load(Common::File *file, int width, int height, int b
 		error("dimensions not set for fmtowns image");
 	}
 
-	ASSERT((bpp == 16) | (bpp == 4), "invalid bpp: %d", bpp);
+	assertMsg((bpp == 16) | (bpp == 4), "invalid bpp: %d", bpp);
 
 	int rawLen = file->size() - _offset;
 	file->seek(_offset, 0);

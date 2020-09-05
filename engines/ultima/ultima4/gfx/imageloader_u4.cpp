@@ -40,7 +40,7 @@ Image *U4RawImageLoader::load(Common::File *file, int width, int height, int bpp
 		error("dimensions not set for u4raw image");
 	}
 
-	ASSERT(bpp == 1 || bpp == 4 || bpp == 8 || bpp == 24 || bpp == 32, "invalid bpp: %d", bpp);
+	assertMsg(bpp == 1 || bpp == 4 || bpp == 8 || bpp == 24 || bpp == 32, "invalid bpp: %d", bpp);
 
 	long rawLen = file->size();
 	byte *raw = (byte *)malloc(rawLen);
@@ -85,7 +85,7 @@ Image *U4RleImageLoader::load(Common::File *file, int width, int height, int bpp
 		error("dimensions not set for u4rle image");
 	}
 
-	ASSERT(bpp == 1 || bpp == 4 || bpp == 8 || bpp == 24 || bpp == 32, "invalid bpp: %d", bpp);
+	assertMsg(bpp == 1 || bpp == 4 || bpp == 8 || bpp == 24 || bpp == 32, "invalid bpp: %d", bpp);
 
 	long compressedLen = file->size();
 	byte *compressed = (byte *) malloc(compressedLen);
@@ -132,7 +132,7 @@ Image *U4LzwImageLoader::load(Common::File *file, int width, int height, int bpp
 		error("dimensions not set for u4lzw image");
 	}
 
-	ASSERT(bpp == 1 || bpp == 4 || bpp == 8 || bpp == 24 || bpp == 32, "invalid bpp: %d", bpp);
+	assertMsg(bpp == 1 || bpp == 4 || bpp == 8 || bpp == 24 || bpp == 32, "invalid bpp: %d", bpp);
 
 	long compressedLen = file->size();
 	byte *compressed = (byte *) malloc(compressedLen);

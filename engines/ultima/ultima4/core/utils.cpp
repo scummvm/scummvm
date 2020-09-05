@@ -25,7 +25,7 @@
 namespace Ultima {
 namespace Ultima4 {
 
-void ASSERT(bool exp, const char *desc, ...) {
+void assertMsg(bool exp, const char *desc, ...) {
 	if (!exp) {
 		va_list args;
 		va_start(args, desc);

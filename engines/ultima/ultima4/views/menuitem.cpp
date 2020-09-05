@@ -32,7 +32,7 @@ MenuItem::MenuItem(Common::String t, short x, short y, int sc) :
 	_id(-1), _x(x), _y(y), _text(t), _highlighted(false),
 	_selected(false), _visible(true), _scOffset(sc), _closesMenu(false) {
 	// if the sc/scOffset is outside the range of the text string, assert
-	ASSERT(sc == -1 || (sc >= 0 && sc <= (int)_text.size()), "sc value of %d out of range!", sc);
+	assertMsg(sc == -1 || (sc >= 0 && sc <= (int)_text.size()), "sc value of %d out of range!", sc);
 	if (sc != -1) addShortcutKey(tolower(_text[sc]));
 }
 
