@@ -1007,11 +1007,19 @@ local function main_menu(img_tbl2)
 	local seTitle = sprite_new(img_tbl2[0][0], 0, 0, true)
 	mouse_cursor_visible(true)
 	initialize_main_g_menu_sprites(img_tbl2)
+   canvas_set_update_interval(10)
 
 	while true do
 		canvas_update()
 		input = input_poll(true)
+
+		if engine_should_quit() == 1 then
+			return "Q"
+		end
+
 		if input ~= nil then
+			canvas_set_update_interval(25)
+
 			if input == SDLK_q then -- q
 				return "Q"
 			elseif input == SDLK_RETURN or input == SDLK_SPACE or input == KP_ENTER then -- space or return
@@ -1087,6 +1095,8 @@ local function main_menu(img_tbl2)
 					set_main_menu_highlight()
 				end
 			end
+
+			canvas_set_update_interval(10)
 		end
 	end
 --[[		This code should never execute because there is no break in the loop

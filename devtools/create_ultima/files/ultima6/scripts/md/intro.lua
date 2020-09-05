@@ -1962,11 +1962,19 @@ function main_menu()
 
    g_menu_cursor_sprite = sprite_new(g_img_tbl[0][2], 26, 0, true)
    update_menu_cursor()
+   canvas_set_update_interval(10)
 
    while true do
       canvas_update()
       local input = input_poll(true)
+
+      if engine_should_quit() == 1 then
+         return "Q"
+      end
+
       if input ~= nil then
+         canvas_set_update_interval(25)
+
          if input == SDLK_q then -- q
             return "Q"
          elseif input == SDLK_RETURN or input == SDLK_SPACE or input == KP_ENTER then -- space or return
@@ -2009,6 +2017,8 @@ function main_menu()
                end
             end
          end
+
+         canvas_set_update_interval(10)
       end
    end
 
