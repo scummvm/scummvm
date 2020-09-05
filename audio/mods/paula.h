@@ -69,9 +69,10 @@ public:
 	};
 
 	Paula(bool stereo = false, int rate = 44100, uint interruptFreq = 0,
-	      FilterMode filterMode = kFilterModeA1200);
+	      FilterMode filterMode = Paula::defaultFilterMode(), int periodScaleDivisor = 1);
 	~Paula();
 
+	static FilterMode defaultFilterMode() { return kFilterModeA1200; }
 	bool playing() const { return _playing; }
 	void setTimerBaseValue( uint32 ticksPerSecond ) { _timerBase = ticksPerSecond; }
 	uint32 getTimerBaseValue() { return _timerBase; }

@@ -40,8 +40,8 @@
 
 namespace Audio {
 
-Paula::Paula(bool stereo, int rate, uint interruptFreq, FilterMode filterMode) :
-		_stereo(stereo), _rate(rate), _periodScale((double)kPalPaulaClock / rate), _intFreq(interruptFreq) {
+Paula::Paula(bool stereo, int rate, uint interruptFreq, FilterMode filterMode, int periodScaleDivisor) :
+		_stereo(stereo), _rate(rate), _periodScale((double)kPalPaulaClock / (rate * periodScaleDivisor)), _intFreq(interruptFreq) {
 
 	_filterState.mode      = filterMode;
 	_filterState.ledFilter = false;

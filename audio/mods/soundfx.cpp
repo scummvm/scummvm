@@ -47,7 +47,7 @@ public:
 		NUM_INSTRUMENTS = 15
 	};
 
-	SoundFx(int rate, bool stereo);
+	SoundFx(int rate, bool stereo, int periodScaleDivisor = 1);
 	virtual ~SoundFx();
 
 	bool load(Common::SeekableReadStream *data, LoadSoundFxInstrumentCallback loadCb);
@@ -75,8 +75,8 @@ protected:
 	uint16 _effects[NUM_CHANNELS];
 };
 
-SoundFx::SoundFx(int rate, bool stereo)
-	: Paula(stereo, rate) {
+SoundFx::SoundFx(int rate, bool stereo, int periodScaleDivisor)
+	: Paula(stereo, rate, 0, Paula::defaultFilterMode(), periodScaleDivisor) {
 	setTimerBaseValue(kPalCiaClock);
 	_ticks = 0;
 	_delay = 0;
@@ -264,8 +264,8 @@ void SoundFx::interrupt() {
 	handleTick();
 }
 
-AudioStream *makeSoundFxStream(Common::SeekableReadStream *data, LoadSoundFxInstrumentCallback loadCb, int rate, bool stereo) {
-	SoundFx *stream = new SoundFx(rate, stereo);
+AudioStream *makeSoundFxStream(Common::SeekableReadStream *data, LoadSoundFxInstrumentCallback loadCb, int rate, bool stereo, int periodScaleDivisor) {
+	SoundFx *stream = new SoundFx(rate, stereo, periodScaleDivisor);
 	if (stream->load(data, loadCb)) {
 		stream->play();
 		return stream;
