@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-03 01:28+0000\n"
-"PO-Revision-Date: 2020-09-01 06:43+0000\n"
+"PO-Revision-Date: 2020-09-06 01:43+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -282,7 +282,7 @@ msgstr "Ignorar opciones gráficas generales"
 #: gui/editgamedialog.cpp:204
 msgctxt "lowres"
 msgid "Override global graphic settings"
-msgstr "Opciones gráficas específicas"
+msgstr "Ignorar opciones globales"
 
 #: gui/editgamedialog.cpp:214 gui/options.cpp:1709
 msgid "Shader"
