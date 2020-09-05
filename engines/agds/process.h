@@ -233,8 +233,8 @@ private:
 	void setRandom();
 	void stub133();
 	void stub138();
-	void stub152();
-	void stub153();
+	void getPictureBaseX();
+	void getPictureBaseY();
 	void getObjectSurfaceX();
 	void getObjectSurfaceY();
 	void loadGame();

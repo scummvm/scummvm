@@ -575,16 +575,22 @@ void Process::stub138() {
 	suspend(kExitCodeLoadScreenObject, arg2);
 }
 
-void Process::stub152() {
+void Process::getPictureBaseX() {
 	Common::String name = popString();
-	debug("stub152(getSomeX): %s", name.c_str());
-	push(0);
+	debug("getPictureBaseX: %s", name.c_str());
+	ObjectPtr object = _engine->getCurrentScreenObject(name);
+	int x = object? object->getOffset().x: 0;
+	debug("\t%d", x);
+	push(x);
 }
 
-void Process::stub153() {
+void Process::getPictureBaseY() {
 	Common::String name = popString();
-	debug("stub153:(getSomeY): %s", name.c_str());
-	push(0);
+	debug("getPictureBaseY: %s", name.c_str());
+	ObjectPtr object = _engine->getCurrentScreenObject(name);
+	int y = object? object->getOffset().y: 0;
+	debug("\t%d", y);
+	push(y);
 }
 
 void Process::getObjectSurfaceX() {
@@ -1448,8 +1454,8 @@ ProcessExitCode Process::execute() {
 			OP(kCloneName, cloneName);
 			OP(kGetCloneVar, getCloneVar);
 			OP(kSetCloneVar, setCloneVar);
-			OP(kStub152, stub152);
-			OP(kStub153, stub153);
+			OP(kGetPictureBaseX, getPictureBaseX);
+			OP(kGetPictureBaseY, getPictureBaseY);
 			OP(kGetObjectSurfaceX, getObjectSurfaceX);
 			OP(kGetObjectSurfaceY, getObjectSurfaceX);
 			OP(kLoadGame, loadGame);
