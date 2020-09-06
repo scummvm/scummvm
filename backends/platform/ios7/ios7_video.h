@@ -128,8 +128,9 @@ typedef struct {
 - (BOOL)isKeyboardShown;
 
 - (void)applicationSuspend;
-
 - (void)applicationResume;
+- (void)applicationEnteredBackground;
+- (void)applicationEnteredForeground;
 
 - (bool)fetchEvent:(InternalEvent *)event;
 

@@ -1107,4 +1107,12 @@ uint getSizeNextPOT(uint size) {
 	[self addEvent:InternalEvent(kInputApplicationResumed, 0, 0)];
 }
 
+- (void)applicationEnteredBackground {
+	[self addEvent:InternalEvent(kInputApplicationEnteredBackground, 0, 0)];
+}
+
+- (void)applicationEnteredForeground {
+	[self addEvent:InternalEvent(kInputApplicationEnteredForeground, 0, 0)];
+}
+
 @end

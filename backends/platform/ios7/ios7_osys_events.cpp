@@ -77,6 +77,14 @@ bool OSystem_iOS7::pollEvent(Common::Event &event) {
 			handleEvent_applicationResumed();
 			return false;
 
+		case kInputApplicationEnteredBackground:
+			handleEvent_applicationEnteredBackground();
+			return false;
+
+		case kInputApplicationEnteredForeground:
+			handleEvent_applicationEnteredForeground();
+			return false;
+
 		case kInputMouseSecondDragged:
 			if (!handleEvent_mouseSecondDragged(event, internalEvent.value1, internalEvent.value2))
 				return false;
@@ -383,6 +391,14 @@ void OSystem_iOS7::handleEvent_applicationSuspended() {
 
 void OSystem_iOS7::handleEvent_applicationResumed() {
 	rebuildSurface();
+}
+
+void OSystem_iOS7::handleEvent_applicationEnteredBackground() {
+	saveState();
+}
+
+void OSystem_iOS7::handleEvent_applicationEnteredForeground() {
+	restoreState();
 }
 
 void  OSystem_iOS7::handleEvent_keyPressed(Common::Event &event, int keyPressed) {

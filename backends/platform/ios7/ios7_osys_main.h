@@ -227,6 +227,8 @@ protected:
 	void dirtyFullScreen();
 	void dirtyFullOverlayScreen();
 	void suspendLoop();
+	void saveState();
+	void restoreState();
 	void drawDirtyRect(const Common::Rect &dirtyRect);
 	void updateMouseTexture();
 	static void AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBufferRef outQB);
@@ -238,6 +240,8 @@ protected:
 	void handleEvent_orientationChanged(int orientation);
 	void handleEvent_applicationSuspended();
 	void handleEvent_applicationResumed();
+	void handleEvent_applicationEnteredBackground();
+	void handleEvent_applicationEnteredForeground();
 
 	bool handleEvent_mouseDown(Common::Event &event, int x, int y);
 	bool handleEvent_mouseUp(Common::Event &event, int x, int y);
