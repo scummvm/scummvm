@@ -26,7 +26,6 @@
 
 #include "backends/platform/sdl/morphos/morphos.h"
 #include "backends/fs/morphos/morphos-fs-factory.h"
-#include <proto/exec.h>
 #include <proto/openurl.h>
 
 void OSystem_MorphOS::init() {
@@ -37,14 +36,19 @@ void OSystem_MorphOS::init() {
 	OSystem_SDL::init();
 }
 
+bool OSystem_MorphOS::hasFeature(Feature f) {
+	if (f == kFeatureOpenUrl)
+		return true;
+
+	return OSystem_SDL::hasFeature(f);
+}
+
 bool OSystem_MorphOS::openUrl(const Common::String &url) {
 
-	struct Library *OpenURLBase = OpenLibrary("openurl.library",0);
 	static struct TagItem URLTags[] = {{TAG_DONE, (ULONG) NULL}};
 
 	if (OpenURLBase){
 		URL_OpenA((STRPTR)url.c_str(), (struct TagItem*) URLTags);
-		CloseLibrary(OpenURLBase);
 		return true;
 	}
 
