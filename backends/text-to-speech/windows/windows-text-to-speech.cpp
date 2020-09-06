@@ -380,7 +380,7 @@ void WindowsTextToSpeechManager::createVoice(void *cpVoiceToken) {
 		warning("Could not get the language attribute for voice: %s", desc.c_str());
 		return;
 	}
-	Common::String language = lcidToLocale(data);
+	Common::String language = lcidToLocale(wcstol(data, NULL, 16));
 	CoTaskMemFree(data);
 
 	// only get the voices for the current language
@@ -412,20 +412,7 @@ void WindowsTextToSpeechManager::createVoice(void *cpVoiceToken) {
 	_ttsState->_availableVoices.push_back(Common::TTSVoice(gender, age, (void *) voiceToken, desc));
 }
 
-int strToInt(WCHAR *str) {
-	int result = 0;
-	for (unsigned i = 0; i < wcslen(str); i++) {
-		WCHAR c = towupper(str[i]);
-		if (c < L'0' || (c > L'9' && c < L'A') || c > L'F')
-			break;
-		int num = (c <= L'9') ? c - L'0' : c - 55;
-		result = result * 16 + num;
-	}
-	return result;
-}
-
-Common::String WindowsTextToSpeechManager::lcidToLocale(WCHAR *lcid) {
-	LCID locale = strToInt(lcid);
+Common::String WindowsTextToSpeechManager::lcidToLocale(LCID locale) {
 	int nchars = GetLocaleInfoA(locale, LOCALE_SISO639LANGNAME, NULL, 0);
 	char *languageCode = new char[nchars];
 	GetLocaleInfoA(locale, LOCALE_SISO639LANGNAME, languageCode, nchars);
