@@ -2608,7 +2608,7 @@ The following keywords are recognized:
     savepath           string   The path to where a game will store its
                                 saved games.
     screenshotpath     string   The path to where screenshots are saved.
-    iconpath           string   The path to where to look for icons to use as
+    iconspath          string   The path to where to look for icons to use as
                                 overlay for the ScummVM icon in the Windows
                                 taskbar or macOS X Dock when running a game.
                                 The icon files should be named after the game
