@@ -175,9 +175,8 @@ public:
 	 * It will convert to UTF-32 before passing along to the intended method.
 	 */
 	bool say(const String &str, Action action, String charset = "UTF-8") {
-		Encoding speakWithCustomCharset("UTF-32", charset);
-		char *res = speakWithCustomCharset.convert(str.c_str(), str.size());
-		U32String textToSpeak(reinterpret_cast<uint32*>(res));
+		uint32 *res = (uint32 *)Encoding::convert("UTF-32", charset, str);
+		U32String textToSpeak(res);
 		free(res);
 
 		return say(textToSpeak, action);
