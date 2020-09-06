@@ -64,7 +64,7 @@ AGDSEngine::~AGDSEngine() {
 	}
 }
 
-bool AGDSEngine::initGraphics() {
+bool AGDSEngine::initGraphics(int w, int h) {
 	//fixme: get mode from config?
 	typedef Common::List<Graphics::PixelFormat> FormatsType;
 	FormatsType formats = _system->getSupportedFormats();
@@ -74,7 +74,7 @@ bool AGDSEngine::initGraphics() {
 		if (fi->bytesPerPixel == 4 && format == Graphics::TransparentSurface::getSupportedPixelFormat()) {
 			debug("found mode %s", format.toString().c_str());
 			_pixelFormat = format;
-			::initGraphics(800, 600, &_pixelFormat);
+			::initGraphics(w, h, &_pixelFormat);
 			return true;
 		}
 	}
@@ -93,7 +93,13 @@ bool AGDSEngine::load() {
 	if (!config.loadFromStream(configFile))
 		return false;
 
-	if (!initGraphics())
+	int w = 800, h = 600, d = 32;
+	Common::String videoMode;
+	if (config.getKey("videomode", "core", videoMode) && sscanf(videoMode.c_str(), "%dx%dx%d", &w, &h, &d) == 3) {
+		debug("config videomode = %dx%d", w, h);
+	}
+
+	if (!initGraphics(w, h))
 		error("no video mode found");
 
 	Common::INIFile::SectionKeyList values = config.getKeys("core");
