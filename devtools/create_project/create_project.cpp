@@ -28,6 +28,21 @@
 #undef main
 #endif // main
 
+#if (defined(_WIN32) || defined(WIN32)) && !defined(__GNUC__)
+#define USE_WIN32_API
+#endif
+
+#if (defined(_WIN32) || defined(WIN32))
+#define _WIN32_WINNT 0x0502
+#include <windows.h>
+#else
+#include <dirent.h>
+#include <errno.h>
+#include <sstream>
+#include <sys/param.h>
+#include <sys/stat.h>
+#endif
+
 #include "create_project.h"
 #include "config.h"
 
@@ -50,20 +65,6 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
-
-#if (defined(_WIN32) || defined(WIN32)) && !defined(__GNUC__)
-#define USE_WIN32_API
-#endif
-
-#if (defined(_WIN32) || defined(WIN32))
-#include <windows.h>
-#else
-#include <dirent.h>
-#include <errno.h>
-#include <sstream>
-#include <sys/param.h>
-#include <sys/stat.h>
-#endif
 
 namespace {
 /**
@@ -1199,7 +1200,7 @@ int getInstalledMSVC() {
 	// Use the registry to get the latest version
 	if (latest == 0) {
 		HKEY key;
-		LSTATUS err = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\VisualStudio\\SxS\\VS7", 0, KEY_QUERY_VALUE | KEY_WOW64_32KEY, &key);
+		LONG err = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\VisualStudio\\SxS\\VS7", 0, KEY_QUERY_VALUE | KEY_WOW64_32KEY, &key);
 		if (err == ERROR_SUCCESS && key != NULL) {
 			const MSVCList msvc = getAllMSVCVersions();
 			for (MSVCList::const_reverse_iterator i = msvc.rbegin(); i != msvc.rend(); ++i) {
