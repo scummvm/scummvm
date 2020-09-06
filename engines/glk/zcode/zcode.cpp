@@ -139,6 +139,7 @@ Common::Error ZCode::saveGameState(int slot, const Common::String &desc, bool is
 
 	Quetzal q(story_fp);
 	bool success = q.save(*file, this, desc);
+	file->close();
 
 	if (!success)
 		print_string_uni(_("Error writing save file\n").c_str());

@@ -72,6 +72,17 @@ public:
 	void runGame() override;
 
 	/**
+	 * Indicates whether an autosave can currently be saved.
+	 */
+	virtual bool canSaveAutosaveCurrently() {
+		/* ZCode saves also include the execution stack.
+		 * So I don't know how to do autosaves in the background
+		 * without ending up with an invalid stack state
+		 */
+		return false;
+	}
+
+	/**
 	 * Load a savegame from a given slot
 	 */
 	Common::Error loadGameState(int slot) override;
