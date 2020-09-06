@@ -2355,12 +2355,12 @@ void GlobalOptionsDialog::apply() {
 			else {
 				ttsMan->setLanguage(newLang);
 			}
+			_ttsVoiceSelectionPopUp->setSelected(0);
 		}
 #else
 		ttsMan->setLanguage("en");
 #endif // USE_TRANSLATION
 
-		_ttsVoiceSelectionPopUp->setSelected(0);
 		int volume = (ConfMan.getInt("speech_volume", "scummvm") * 100) / 256;
 		if (ConfMan.hasKey("mute", "scummvm") && ConfMan.getBool("mute", "scummvm"))
 			volume = 0;
