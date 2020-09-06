@@ -50,6 +50,8 @@ typedef struct {
 	SoftKeyboard *_keyboardView;
 	BOOL _keyboardVisible;
 
+	UIBackgroundTaskIdentifier _backgroundSaveStateTask;
+
 	EAGLContext *_context;
 	GLuint _viewRenderbuffer;
 	GLuint _viewFramebuffer;
@@ -131,6 +133,9 @@ typedef struct {
 - (void)applicationResume;
 - (void)applicationEnteredBackground;
 - (void)applicationEnteredForeground;
+
+- (void) beginBackgroundSaveStateTask;
+- (void) endBackgroundSaveStateTask;
 
 - (bool)fetchEvent:(InternalEvent *)event;
 

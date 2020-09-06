@@ -246,9 +246,9 @@ void OSystem_iOS7::suspendLoop() {
 			if (event.type == kInputApplicationResumed)
 				done = true;
 			else if (event.type == kInputApplicationEnteredBackground)
-				saveState();
+				handleEvent_applicationEnteredBackground();
 			else if (event.type == kInputApplicationEnteredForeground)
-				restoreState();
+				handleEvent_applicationEnteredForeground();
 		}
 		usleep(100000);
 	}

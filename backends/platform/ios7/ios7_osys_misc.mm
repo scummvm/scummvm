@@ -28,6 +28,8 @@
 #include <UIKit/UIKit.h>
 #include <SystemConfiguration/SCNetworkReachability.h>
 #include "common/translation.h"
+#include "backends/platform/ios7/ios7_app_delegate.h"
+#include "backends/platform/ios7/ios7_video.h"
 
 static inline void execute_on_main_thread_async(void (^block)(void)) {
 	if ([NSThread currentThread] == [NSThread mainThread]) {
@@ -118,4 +120,14 @@ bool OSystem_iOS7::isConnectionLimited() {
 	SCNetworkReachabilityGetFlags(ref, &flags);
 	CFRelease(ref);
 	return (flags & kSCNetworkReachabilityFlagsIsWWAN);
+}
+
+void OSystem_iOS7::handleEvent_applicationEnteredBackground() {
+	[[iOS7AppDelegate iPhoneView] beginBackgroundSaveStateTask];
+	saveState();
+	[[iOS7AppDelegate iPhoneView] endBackgroundSaveStateTask];
+}
+
+void OSystem_iOS7::handleEvent_applicationEnteredForeground() {
+	restoreState();
 }
