@@ -143,7 +143,7 @@ void GameHeader::clear() {
 	addr_strings = 0;
 	addr_strings_end = 0;
 
-	Common::fill(&addr_actions[0], &addr_actions[8], 0);
+	Common::fill(&addr_actions[0], &addr_actions[7], 0);
 	Common::fill(&room_direction_table[0], &room_direction_table[NR_DIRECTIONS], 0);
 }
 
