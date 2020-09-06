@@ -159,7 +159,9 @@ PluginList FilePluginProvider::getPlugins() {
 	Common::FSList pluginDirs;
 
 	// Add the default directories
+	#ifndef WIN32
 	pluginDirs.push_back(Common::FSNode("."));
+	#endif
 	pluginDirs.push_back(Common::FSNode("plugins"));
 
 	// Add the provider's custom directories
