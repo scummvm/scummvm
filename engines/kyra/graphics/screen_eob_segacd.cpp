@@ -933,7 +933,11 @@ template<bool hflip> void SegaRenderer::renderLineFragment(uint8 *dst, uint8 *ma
 #undef mRenderLineFragment
 
 void SegaRenderer::initPrioRenderTask(uint8 *dst, uint8 *mask, const uint8 *src, int start, int end, uint8 pal, bool hflip) {
+#if SEGA_USE_MEMPOOL
+	_prioChainEnd =	new (_prioRenderMemPool) PrioTileRenderObj(_prioChainEnd, dst, mask, src, start, end, pal, hflip);
+#else
 	_prioChainEnd = new PrioTileRenderObj(_prioChainEnd, dst, mask, src, start, end, pal, hflip);
+#endif
 	if (!_prioChainStart)
 		_prioChainStart = _prioChainEnd;
 }
@@ -942,7 +946,11 @@ void SegaRenderer::clearPrioChain() {
 	while (_prioChainEnd) {
 		_prioChainEnd->_next = 0;
 		PrioTileRenderObj *e = _prioChainEnd->_pred;
+#if SEGA_USE_MEMPOOL
+		_prioRenderMemPool.deleteChunk(_prioChainEnd);
+#else
 		delete _prioChainEnd;
+#endif
 		_prioChainEnd = e;
 	}
 	_prioChainStart = 0;
@@ -1110,7 +1118,7 @@ void SegaCDFont::drawChar(uint16 c, byte *dst, int pitch, int xOffs, int yOffs) 
 				dst++;
 			if ((x & 7) == 7)
 				dst += 28;
- 		}
+		}
 		dst = dst2 + 4;
 		if ((++yOffs & 7) == 0)
 			dst = dst + (pitch << 5) - 32;

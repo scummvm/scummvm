@@ -25,11 +25,16 @@
 
 #ifdef ENABLE_EOB
 
+#define SEGA_PERFORMANCE		true
+#define SEGA_USE_MEMPOOL		true
+
 #include "kyra/graphics/screen_eob.h"
 
-namespace Kyra {
+#if SEGA_USE_MEMPOOL
+#include "common/memorypool.h"
+#endif
 
-#define SEGA_PERFORMANCE		true
+namespace Kyra {
 
 class SegaRenderer {
 public:
@@ -141,6 +146,9 @@ private:
 		PrioTileRenderObj *_next;
 	};
 
+#if SEGA_USE_MEMPOOL
+	Common::ObjectPool<PrioTileRenderObj> _prioRenderMemPool;
+#endif
 	PrioTileRenderObj *_prioChainStart, *_prioChainEnd;
 	uint16 _screenW, _screenH, _blocksW, _blocksH;
 	Screen_EoB *_screen;
