@@ -75,6 +75,11 @@ public:
 	// until no dialogs are active anymore.
 	void runLoop();
 
+	// If the GUI loop is running close all the dialogs causing the loop to finish.
+	// Typically you may want to use it after setting the ConfMan active domain to
+	// a game domain to cause the game to start.
+	void exitLoop();
+
 	void processEvent(const Common::Event &event, Dialog *const activeDialog);
 	Common::Keymap *getKeymap() const;
 	void scheduleTopDialogRedraw();
