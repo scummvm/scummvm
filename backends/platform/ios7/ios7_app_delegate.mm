@@ -86,6 +86,18 @@
 	[_view applicationResume];
 }
 
+- (void)applicationDidEnterBackground:(UIApplication *)application {
+	[_view applicationEnteredBackground];
+	// Add a delay so that the app continues running and gives time for the scummvm thread to
+	// poll the events and call saveState(). The application says we have 5 seconds to do things
+	// in this function before the app is terminated. Wait 2 seconds as it should be sufficient.
+	usleep(2000000);
+}
+
+- (void)applicationWillEnterForeground:(UIApplication *)application {
+	[_view applicationEnteredForeground];
+}
+
 - (void)didRotate:(NSNotification *)notification {
 	UIDeviceOrientation screenOrientation = [[UIDevice currentDevice] orientation];
 	[_view deviceOrientationChanged:screenOrientation];

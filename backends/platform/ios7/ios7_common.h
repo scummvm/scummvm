@@ -39,6 +39,8 @@ enum InputEvent {
 	kInputKeyPressed,
 	kInputApplicationSuspended,
 	kInputApplicationResumed,
+	kInputApplicationEnteredBackground,
+	kInputApplicationEnteredForeground,
 	kInputSwipe,
 	kInputTap,
 	kInputMainMenu
