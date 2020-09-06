@@ -4576,7 +4576,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{ "Data11", 0, "a812ef1adfccdd571797250abf6b9db2", 4948885 },
 		{ "Data12", 0, "17e2254bdfb100d1981524f93b6ed06a", 1440467 },
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_NO_FLAGS, GUIO_RAMA },
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_RAMA },
 
 #undef GUIO_RAMA_DEMO
 #undef GUIO_RAMA
