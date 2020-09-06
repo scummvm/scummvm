@@ -61,17 +61,6 @@ wchar_t *ansiToUnicode(const char *s, uint codePage = CP_ACP);
  */
 char *unicodeToAnsi(const wchar_t *s, uint codePage = CP_ACP);
 
-/**
- * Converts a C string encoded in UTF8-multibyte char into a Windows wide-character string.
- * Used to interact with Win32 Unicode APIs with no ANSI fallback.
- *
- * @param s Source string, encoded in UTF8
- * @return Converted string
- *
- * @note Return value must be freed by the caller.
- */
-wchar_t *UTF8ToUnicode(const char *s);
-
 }
 
 #endif

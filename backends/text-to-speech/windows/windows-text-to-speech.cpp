@@ -183,15 +183,11 @@ bool WindowsTextToSpeechManager::say(const Common::U32String &str, Action action
 	if (isSpeaking() && action == DROP)
 		return true;
 
-	Common::String strToSpeak = str.encode();
-	Common::String charset = "UTF-8";
-
 	// We have to set the pitch by prepending xml code at the start of the said string;
-	Common::String pitch = Common::String::format("<pitch absmiddle=\"%d\">", _ttsState->_pitch / 10);
-	strToSpeak.replace((uint32)0, 0, pitch);
-	WCHAR *strW = (WCHAR *) Common::Encoding::convert("UTF-16", charset, strToSpeak.c_str(), strToSpeak.size());
+	Common::U32String pitch = Common::U32String::format(Common::U32String("<pitch absmiddle=\"%d\">%S"), _ttsState->_pitch / 10, str.c_str());
+	WCHAR *strW = (WCHAR *) Common::Encoding::convert("UTF-16", pitch);
 	if (strW == nullptr) {
-		warning("Cannot convert from %s encoding for text to speech", charset.c_str());
+		warning("Cannot convert from UTF-32 encoding for text to speech");
 		return true;
 	}
 
