@@ -31,6 +31,7 @@
 #include "agds/systemVariable.h"
 #include "common/debug.h"
 #include "common/savefile.h"
+#include "common/system.h"
 #include "graphics/transparent_surface.h"
 
 namespace AGDS {
@@ -1035,7 +1036,7 @@ void Process::setObjectZ() {
 
 void Process::updateScreenHeightToDisplay() {
 	debug("updateObjectZtoDisplayHeight");
-	_object->z(600);
+	_object->z(g_system->getHeight());
 	_engine->getCurrentScreen()->update(_object);
 }
 
