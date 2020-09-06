@@ -67,6 +67,7 @@
 #include "backends/platform/sdl/win32/win32-window.h"
 
 #include "common/config-manager.h"
+#include "common/encoding.h"
 #include "common/translation.h"
 
 Win32DialogManager::Win32DialogManager(SdlWindow_Win32 *window) : _window(window) {
@@ -130,11 +131,11 @@ Common::DialogManager::DialogResult Win32DialogManager::showFileBrowser(const Co
 			hr = dialog->SetOptions(dwOptions);
 		}
 
-		LPWSTR dialogTitle = Win32::UTF8ToUnicode(title.encode().c_str());
+		LPWSTR dialogTitle = (LPWSTR)Common::Encoding::convert("UTF-16", title);
 		hr = dialog->SetTitle(dialogTitle);
 		free(dialogTitle);
 
-		LPWSTR okTitle = Win32::UTF8ToUnicode(_("Choose").encode().c_str());
+		LPWSTR okTitle = (LPWSTR)Common::Encoding::convert("UTF-16", _("Choose"));
 		hr = dialog->SetOkButtonLabel(okTitle);
 		free(okTitle);
 
