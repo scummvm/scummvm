@@ -38,6 +38,8 @@
 
 #include "base/main.h"
 
+#include "engines/engine.h"
+
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "backends/fs/chroot/chroot-fs-factory.h"
@@ -226,6 +228,12 @@ void OSystem_iOS7::suspendLoop() {
 	bool done = false;
 	uint32 startTime = getMillis();
 
+	PauseToken pt;
+	if (g_engine)
+		pt = g_engine->pauseEngine();
+
+	// We also need to stop the audio queue and restart it later in case there
+	// is an audio interruption that render it invalid.
 	stopSoundsystem();
 
 	InternalEvent event;
