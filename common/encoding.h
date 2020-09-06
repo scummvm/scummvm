@@ -78,6 +78,14 @@ class Encoding {
 		 */
 		static char *convert(const String &to, const String &from, const char *string, size_t length);
 
+		static char *convert(const String &to, const String &from, const String &s) {
+			return convert(to, from, s.c_str(), s.size());
+		}
+
+		static char *convert(const String &to, const U32String &s) {
+			return convert(to, "UTF-32", (const char *)s.c_str(), s.size() * 4);
+		}
+
 		/**
 		 * @return The encoding, which is currently being converted from
 		 */
