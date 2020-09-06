@@ -29,7 +29,17 @@ static const ADGameDescription gameDescriptions[] = {
 		"black-mirror",
 		0,
 		AD_ENTRY1s("gfx1.grp", "6665ce103cf12a362fd55f863d1ec9e6", 907820240),
-		Common::EN_ANY,
+		Common::EN_USA,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NONE)
+	},
+
+	{
+		"nibiru",
+		0,
+		AD_ENTRY1s("gfx1.grp", "c8e711bc01b16cd82849cbd996d02642", 381768360),
+		Common::RU_RUS,
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
