@@ -709,11 +709,15 @@ int U32String::vformat(U32String::const_iterator fmt, const U32String::const_ite
 char* U32String::itoa(int num, char* str, int base) {
 	int i = 0;
 
-	// go digit by digit
-	while (num != 0) {
-		int rem = num % base;
-		str[i++] = rem + '0';
-		num /= base;
+	if (num) {
+		// go digit by digit
+		while (num != 0) {
+			int rem = num % base;
+			str[i++] = rem + '0';
+			num /= base;
+		}
+	} else {
+		str[i++] = '0';
 	}
 
 	// append string terminator
