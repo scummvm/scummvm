@@ -5416,13 +5416,19 @@ define_in_config_if_yes $_pandoc 'USE_PANDOC'
 # Check for FriBidi
 #
 echocheck "FriBidi"
+if test "$_pkg_config" = "yes" && $_pkgconfig --exists fribidi; then
+	append_var FRIBIDI_LIBS "`$_pkgconfig --libs fribidi`"
+	append_var FRIBIDI_CFLAGS "`$_pkgconfig --cflags fribidi`"
+else
+	append_var FRIBIDI_LIBS "-lfribidi"
+fi
 if test "$_fribidi" = auto ; then
 	_fribidi=no
 	cat > $TMPC << EOF
 #include <fribidi/fribidi.h>
 int main(void) { return 0; }
 EOF
-	cc_check $FRIBIDI_CFLAGS $FRIBIDI_LIBS -lfribidi && _fribidi=yes
+	cc_check $FRIBIDI_CFLAGS $FRIBIDI_LIBS && _fribidi=yes
 fi
 if test "$_fribidi" = yes ; then
 	append_var LIBS "$FRIBIDI_LIBS -lfribidi"
