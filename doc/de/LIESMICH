@@ -2766,7 +2766,7 @@ Die folgenden Schlüsselwörter werden erkannt:
                                 geladen werden soll
     savepath           Text     Verzeichnis für Spielstände des Spiels
     screenshotpath     Text     Verzeichnis für Bildschirmfotos
-    iconpaths          Text     Verzeichnis, in dem nach Icons gesucht wird,
+    iconspath          Text     Verzeichnis, in dem nach Icons gesucht wird,
                                 die für das ScummVM-Icon in der Windows-Taskbar
                                 oder im macOS X-Dock verwendet werden, wenn
                                 ein Spiel läuft. Die Icon-Dateien sollten nach
