@@ -393,14 +393,6 @@ void OSystem_iOS7::handleEvent_applicationResumed() {
 	rebuildSurface();
 }
 
-void OSystem_iOS7::handleEvent_applicationEnteredBackground() {
-	saveState();
-}
-
-void OSystem_iOS7::handleEvent_applicationEnteredForeground() {
-	restoreState();
-}
-
 void  OSystem_iOS7::handleEvent_keyPressed(Common::Event &event, int keyPressed) {
 	int ascii = keyPressed;
 	//printf("key: %i\n", keyPressed);
