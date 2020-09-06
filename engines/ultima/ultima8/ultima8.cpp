@@ -79,6 +79,7 @@
 #include "ultima/ultima8/world/actors/targeted_anim_process.h"
 #include "ultima/ultima8/usecode/u8_intrinsics.h"
 #include "ultima/ultima8/usecode/remorse_intrinsics.h"
+#include "ultima/ultima8/usecode/regret_intrinsics.h"
 #include "ultima/ultima8/world/egg.h"
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/graphics/inverter_process.h"
@@ -335,8 +336,7 @@ void Ultima8Engine::startupGame() {
 	} else if (_gameInfo->_type == GameInfo::GAME_REMORSE) {
 		_ucMachine = new UCMachine(RemorseIntrinsics, 308);
 	} else if (_gameInfo->_type == GameInfo::GAME_REGRET) {
-		// TODO: Do these work the same as remorse?
-		_ucMachine = new UCMachine(RemorseIntrinsics, 308);
+		_ucMachine = new UCMachine(RegretIntrinsics, 350);
 	} else {
 		CANT_HAPPEN_MSG("Invalid game type.");
 	}
