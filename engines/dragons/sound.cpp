@@ -434,7 +434,10 @@ void SoundManager::playSound(uint16 soundId, uint16 volumeId) {
 		if (handle) {
 			uint8 adjustedVolume = (uint8)((float)_sfxVolume * ((float)volume / 31));
 			debug(3, "Playing SFX: Master Volume %d  Adjusted Volume %d diff %f%%", _sfxVolume, adjustedVolume, 100 * ((float)volume / 31));
-			_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, handle, vabSound->getAudioStream(program, key), -1, adjustedVolume);
+			Audio::AudioStream *audioStream = vabSound->getAudioStream(program, key);
+			if (audioStream) {
+				_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, handle, audioStream, -1, adjustedVolume);
+			}
 		}
 	} else {
 		warning("Sound not found Program: %d, key %d", program, key);

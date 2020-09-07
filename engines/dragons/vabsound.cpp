@@ -104,6 +104,9 @@ VabSound::~VabSound() {
 
 Audio::AudioStream *VabSound::getAudioStream(uint16 program, uint16 key) {
 	int16 vagID = getVagID(program, key);
+	if (vagID < 0) {
+		return nullptr;
+	}
 	int16 baseKey = getBaseToneKey(program, key);
 	int sampleRate = getAdjustedSampleRate(key, baseKey);
 	debug(3, "Playing program %d, Key %d, numTones: %d, vagID %d, vagOffset: %x, size: %x adjustedSampleRate: %d",
