@@ -50,7 +50,7 @@ LBGraphics::~LBGraphics() {
 
 MohawkSurface *LBGraphics::decodeImage(uint16 id) {
 	if (_vm->isPreMohawk())
-		return _bmpDecoderLB->decodeImage(_vm->wrapStreamEndian(ID_BMAP, id));
+		return _bmpDecoderLB->decodeImageLB(_vm->wrapStreamEndian(ID_BMAP, id));
 
 	return _bmpDecoder->decodeImage(_vm->getResource(ID_TBMP, id));
 }
