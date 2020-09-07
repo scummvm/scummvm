@@ -31,29 +31,6 @@ addons:
     - libieee1284-3-dev
     - libsndio-dev
     - libreadline-dev
-  homebrew:
-    packages:
-    - ccache
-    - a52dec
-    - curl-openssl
-    - faad2
-    - flac
-    - fluid-synth
-    - freetype
-    - fribidi
-    - jpeg-turbo
-    - mad
-    - libmpeg2
-    - libogg
-    - libpng
-    - libvorbis
-    - pandoc
-    - pkg-config
-    - sdl2
-    - sdl2_net
-    - theora
-    - zlib
-    update: true
 
 branches:
  only:
@@ -72,14 +49,6 @@ matrix:
       before_script:
         - sudo ln -s $(which ccache) /usr/lib/ccache/clang
         - sudo ln -s $(which ccache) /usr/lib/ccache/clang++
-    - os: osx
-      compiler: clang
-      cache:
-        directories:
-          - $HOME/Library/Caches/Homebrew
-        ccache: true
-      before_cache:
-        - brew cleanup
 
 dist: xenial
 
