@@ -18,6 +18,7 @@
 
 const char *lang[] = {
 	"en",
+	"it",
 	NULL
 };
 
