@@ -194,6 +194,7 @@ void AGDSEngine::setCurrentScreen(Screen *screen) {
 	_currentScreenName = screen->getName();
 	_currentScreen = screen;
 	_previousScreen = NULL;
+	_previousScreenName.clear();
 }
 
 void AGDSEngine::resetCurrentScreen() {
@@ -206,6 +207,7 @@ void AGDSEngine::resetCurrentScreen() {
 	if (_currentScreen != _previousScreen) //we didnt come from back command, fixme: refactor it
 		delete _currentScreen;
 	_currentScreen = NULL;
+	_currentScreenName.clear();
 }
 
 void AGDSEngine::runProcess(ProcessListType::iterator &it) {
@@ -251,12 +253,18 @@ void AGDSEngine::runProcess(ProcessListType::iterator &it) {
 		if (_currentScreen) {
 			delete _previousScreen;
 			_previousScreen = _currentScreen;
+			_previousScreenName = _currentScreenName;
 		}
 		loadScreen(process.getExitArg1());
 		destroy = true;
 		break;
 	case kExitCodeLoadPreviousScreenObject:
-		setCurrentScreen(_previousScreen);
+		if (_previousScreen)
+			setCurrentScreen(_previousScreen);
+		else if (!_previousScreenName.empty()) {
+			loadScreen(_previousScreenName);
+			_previousScreenName.clear();
+		}
 		break;
 	case kExitCodeMouseAreaChange:
 		changeMouseArea(process.getExitIntArg1(), process.getExitIntArg2());
