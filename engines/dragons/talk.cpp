@@ -713,6 +713,11 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 	LAB_800317a4:
 //		CheckIfCdShellIsOpen();
 	_vm->waitForFrames(1);
+
+	if (Engine::shouldQuit()) {
+		return nullptr;
+	}
+
 	y = 0;
 	x = 0;
 	if (hasDialogEntries) {
