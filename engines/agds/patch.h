@@ -50,7 +50,7 @@ struct Patch {
 	uint unk51;
 
 	byte palette[0x300];
-	Common::String defaultMousePointerName;
+	Common::String defaultMouseCursor;
 	Common::Array<Object> objects;
 
 	void load(Common::SeekableReadStream *stream);
