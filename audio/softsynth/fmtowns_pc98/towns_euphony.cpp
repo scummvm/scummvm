@@ -27,6 +27,14 @@
 
 #define EUP_EVENT(x) _euphonyEvents.push_back(new EuphonyEvent(this, &EuphonyPlayer::event_##x))
 
+#ifdef EUP_USE_MEMPOOL
+#define EUP_EVENTS_DELETE(a)	_pendingEventsPool.deleteChunk(a)
+#define EUP_EVENTS_NEW			new (_pendingEventsPool)
+#else
+#define EUP_EVENTS_DELETE(a)	delete a
+#define EUP_EVENTS_NEW			new
+#endif
+
 EuphonyPlayer::EuphonyPlayer(Audio::Mixer *mixer) : _partConfig_enable(0), _partConfig_type(0), _partConfig_ordr(0), _partConfig_volume(0),
 	_partConfig_transpose(0), _musicPos(0), _musicStart(0), _playing(false), _pendingEventsChain(0), _tempoModifier(0), _bar(0),
 	_beat(0), _defaultBarLength(0), _barLength(0), _playerUpdatesLeft(0), _updatesPerPulseRemainder(0),	_updatesPerPulse(0),
@@ -62,7 +70,7 @@ EuphonyPlayer::~EuphonyPlayer() {
 	while (_pendingEventsChain) {
 		PendingEvent *evt = _pendingEventsChain;
 		_pendingEventsChain = _pendingEventsChain->next;
-		delete evt;
+		EUP_EVENTS_DELETE(evt);
 	}
 
 	delete[] _partConfig_enable;
@@ -92,7 +100,7 @@ bool EuphonyPlayer::init() {
 	while (_pendingEventsChain) {
 		PendingEvent *evt = _pendingEventsChain;
 		_pendingEventsChain = _pendingEventsChain->next;
-		delete evt;
+		EUP_EVENTS_DELETE(evt);
 	}
 
 	delete[] _partConfig_enable;
@@ -229,7 +237,7 @@ void EuphonyPlayer::reset() {
 	while (_pendingEventsChain) {
 		PendingEvent *evt = _pendingEventsChain;
 		_pendingEventsChain = _pendingEventsChain->next;
-		delete evt;
+		EUP_EVENTS_DELETE(evt);
 	}
 
 	_playing = _endOfTrack = _paused = _loop = false;
@@ -388,7 +396,7 @@ void EuphonyPlayer::updateHangingNotes() {
 			_pendingEventsChain = n;
 
 		sendPendingEvent(e->type, e->evt, e->note, e->velo);
-		delete e;
+		EUP_EVENTS_DELETE(e);
 
 		e = n;
 	}
@@ -399,7 +407,7 @@ void EuphonyPlayer::clearHangingNotes() {
 		PendingEvent *e = _pendingEventsChain;
 		_pendingEventsChain = _pendingEventsChain->next;
 		sendPendingEvent(e->type, e->evt, e->note, e->velo);
-		delete e;
+		EUP_EVENTS_DELETE(e);
 	}
 }
 
@@ -458,7 +466,7 @@ bool EuphonyPlayer::event_noteOn() {
 	velo = _musicPos[5];
 	uint16 len = (_musicPos[1] & 0x0f) | ((_musicPos[2] & 0x0f) << 4) | ((_musicPos[3] & 0x0f) << 8) | ((_musicPos[4] & 0x0f) << 12);
 
-	_pendingEventsChain = new PendingEvent(evt, type, note, velo, len ? len : 1, _pendingEventsChain);
+	_pendingEventsChain = EUP_EVENTS_NEW PendingEvent(evt, type, note, velo, len ? len : 1, _pendingEventsChain);
 
 	return false;
 }
@@ -971,3 +979,6 @@ bool Type0Driver::init() {
 
 void Type0Driver::send(uint8 command) {
 }
+
+#undef EUP_EVENTS_DELETE
+#undef EUP_EVENTS_NEW
