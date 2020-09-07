@@ -55,7 +55,7 @@ void Character::load(Common::SeekableReadStream* stream) {
 
 		uint16 frames = stream->readUint16LE();
 		uint16 format = stream->readUint16LE();
-		Common::String filename = readString(stream, 32);
+		Common::String filename = readString(stream);
 
 		AnimationDescription animation;
 		animation.filename = filename;

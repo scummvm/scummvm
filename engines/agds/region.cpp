@@ -31,7 +31,7 @@ namespace AGDS {
 
 Region::Region(const Common::String &resourceName, Common::SeekableReadStream *stream) {
 	int size = stream->size();
-	name = readString(stream, 32);
+	name = readString(stream);
 	center.x = stream->readUint16LE();
 	center.y = stream->readUint16LE();
 	flags = stream->readUint16LE();
