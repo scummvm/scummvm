@@ -7,6 +7,8 @@ Programmcodes finden Sie auf Englisch unter:
  Allgemein:
    - Die ScummVM-Benutzeroberfläche unterstützt nun UTF-32.
 
+ Supernova:
+   - Teil 1 von Supernova ist nun in einer italienischen Übersetzung verfügbar.
 
 #### 2.2.0 (DD.09.2020)
 
