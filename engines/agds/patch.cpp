@@ -7,13 +7,19 @@
 namespace AGDS {
 
 void Patch::load(Common::SeekableReadStream *stream) {
-	bool regionNameValid = stream->readByte();
-	if (regionNameValid) {
-		screenRegionName = readString(stream);
-	} else {
-		stream->skip(32);
+	byte extended = stream->readByte();
+	if (extended != 1 && extended != 0) {
+		Common::String prototype = (char)extended + readString(stream, 31);
+		Common::String unk = readString(stream);
+		debug("patch for object: %s %s", prototype.c_str(), unk.c_str());
+		return;
 	}
+
+	screenRegionName = readString(stream);
 	prevScreenName = readString(stream);
+	if (extended == 0)
+		return;
+
 	unk41 = stream->readUint32LE();
 	characterX = stream->readUint32LE();
 	characterY = stream->readUint32LE();
