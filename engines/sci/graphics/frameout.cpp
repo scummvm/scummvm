@@ -354,7 +354,7 @@ void GfxFrameout::deletePlanesForMacRestore() {
 	//  care of this in both PC and Mac versions.
 	if (!(g_sci->getGameId() == GID_GK1 ||
 		  g_sci->getGameId() == GID_PQ4 ||
-		  g_sci->getGameId() == GID_LSL6 ||
+		  g_sci->getGameId() == GID_LSL6HIRES ||
 		  g_sci->getGameId() == GID_KQ7)) {
 		return;
 	}
