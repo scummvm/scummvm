@@ -818,9 +818,9 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 	{
 		// Current character
 		Common::ScopedPtr<Common::SeekableReadStream> agds_c(db.getEntry(file, "__agds_c"));
-		Common::String object = readString(agds_c.get(), 32);
-		Common::String name = readString(agds_c.get(), 32);
-		Common::String id = readString(agds_c.get(), 32);
+		Common::String object = readString(agds_c.get());
+		Common::String name = readString(agds_c.get());
+		Common::String id = readString(agds_c.get());
 		Common::String filename = loadText(name);
 		debug("savegame character %s %s -> %s %s", object.c_str(), name.c_str(), filename.c_str(), id.c_str());
 		loadCharacter(id, filename, object);
@@ -838,7 +838,7 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 	{
 		// Screenshot and screen name
 		Common::ScopedPtr<Common::SeekableReadStream> agds_s(db.getEntry(file, "__agds_s"));
-		screenName = readString(agds_s.get(), 32);
+		screenName = readString(agds_s.get());
 	}
 
 	{
@@ -848,7 +848,7 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 		uint32 n = agds_v->readUint32LE();
 		debug("reading %u vars...", n);
 		while(n--) {
-			Common::String name = readString(agds_v.get(), 32);
+			Common::String name = readString(agds_v.get());
 			int value = agds_v->readSint32LE();
 			debug("setting var %s to %d", name.c_str(), value);
 			setGlobal(name, value);
@@ -858,8 +858,8 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 	{
 		// Audio samples
 		Common::ScopedPtr<Common::SeekableReadStream> agds_a(db.getEntry(file, "__agds_a"));
-		Common::String sample = loadText(readString(agds_a.get(), 32));
-		Common::String phaseVar = readString(agds_a.get(), 32);
+		Common::String sample = loadText(readString(agds_a.get()));
+		Common::String phaseVar = readString(agds_a.get());
 		uint unk0 = agds_a->readUint32LE();
 		uint unk1 = agds_a->readUint32LE();
 		debug("saved audio state: sample: %s, var: %s %u %u", sample.c_str(), phaseVar.c_str(), unk0, unk1);
@@ -881,7 +881,7 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 		Common::ScopedPtr<Common::SeekableReadStream> agds_i(db.getEntry(file, "__agds_i"));
 		int n = 34;
 		while(n--) {
-			Common::String name = readString(agds_i.get(), 32);
+			Common::String name = readString(agds_i.get());
 			int unk = agds_i->readUint32LE();
 			int present = agds_i->readUint32LE();
 			if (!name.empty() && present) {
