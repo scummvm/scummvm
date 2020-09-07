@@ -27,6 +27,7 @@
 #include "ultima/nuvie/sound/adplug/u6m.h"
 #include "ultima/nuvie/sound/song_adplug.h"
 #include "ultima/nuvie/sound/sound_manager.h"
+#include "ultima/nuvie/nuvie.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -39,7 +40,6 @@ SongAdPlug::SongAdPlug(Audio::Mixer *m, CEmuopl *o) {
 }
 
 SongAdPlug::~SongAdPlug() {
-//delete player;
 }
 
 bool SongAdPlug::Init(const char *filename, uint16 song_num) {
@@ -54,14 +54,18 @@ bool SongAdPlug::Init(const char *filename, uint16 song_num) {
 }
 
 bool SongAdPlug::Play(bool looping) {
+	// Just in case song is already playing, stop it
+	Stop();
+
+	// Tell the mixer to play the stream
 	if (stream) {
-		mixer->playStream(Audio::Mixer::kMusicSoundType, &handle, stream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+		byte volume = g_engine->getSoundManager()->get_music_volume();
+		mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, stream, -1, volume, 0, DisposeAfterUse::NO);
 	}
 	return true;
 }
 
 bool SongAdPlug::Stop() {
-
 	mixer->stopHandle(handle);
 	stream->rewind();
 	return true;
@@ -71,18 +75,6 @@ bool SongAdPlug::SetVolume(uint8 volume) {
 	mixer->setChannelVolume(handle, volume);
 	return true;
 }
-
-/*
-bool SongAdPlug::Pause() {
-    if (!Mix_PlayingMusic()) return false;
-    return true;
-}
-
-bool SongAdPlug::Resume() {
-    if (Mix_PlayingMusic()) return false;
-    return true;
-}
-*/
 
 } // End of namespace Nuvie
 } // End of namespace Ultima

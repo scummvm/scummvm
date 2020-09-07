@@ -49,7 +49,7 @@ NuvieEngine *g_engine;
 
 NuvieEngine::NuvieEngine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Ultima::Shared::UltimaEngine(syst, gameDesc),  _config(nullptr), _savegame(nullptr),
-		_screen(nullptr), _script(nullptr), _game(nullptr) {
+		_screen(nullptr), _script(nullptr), _game(nullptr), _soundManager(nullptr) {
 	g_engine = this;
 }
 
@@ -144,12 +144,12 @@ bool NuvieEngine::initialize() {
 	if (checkDataDir() == false)
 		return false;
 
-	SoundManager *sound_manager = new SoundManager(_mixer);
-	sound_manager->nuvieStartup(_config);
+	_soundManager = new SoundManager(_mixer);
+	_soundManager->nuvieStartup(_config);
 
-	_game = new Game(_config, events, _screen, gui, gameType, sound_manager);
+	_game = new Game(_config, events, _screen, gui, gameType, _soundManager);
 
-	_script = new Script(_config, gui, sound_manager, gameType);
+	_script = new Script(_config, gui, _soundManager, gameType);
 	if (_script->init() == false)
 		return false;
 
@@ -228,6 +228,26 @@ bool NuvieEngine::checkDataDir() {
 	ConsoleAddInfo("datadir: \"%s\"", path.c_str());
 
 	return true;
+}
+
+void NuvieEngine::syncSoundSettings() {
+	Ultima::Shared::UltimaEngine::syncSoundSettings();
+	if (!_soundManager)
+		return;
+
+	_soundManager->set_audio_enabled(
+		!ConfMan.hasKey("mute") || !ConfMan.getBool("mute"));
+	_soundManager->set_sfx_enabled(
+		!ConfMan.hasKey("sfx_mute") || !ConfMan.getBool("sfx_mute"));
+	_soundManager->set_music_enabled(
+		!ConfMan.hasKey("music_mute") || !ConfMan.getBool("music_mute"));
+	_soundManager->set_speech_enabled(
+		!ConfMan.hasKey("speech_mute") || !ConfMan.getBool("speech_mute"));
+
+	_soundManager->set_sfx_volume(ConfMan.hasKey("sfx_volume") ?
+		ConfMan.getInt("sfx_volume") : 255);
+	_soundManager->set_music_volume(ConfMan.hasKey("music_volume") ?
+		ConfMan.getInt("music_volume") : 255);
 }
 
 bool NuvieEngine::canLoadGameStateCurrently(bool isAutosave) {
