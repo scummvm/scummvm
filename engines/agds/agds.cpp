@@ -183,6 +183,23 @@ void AGDSEngine::loadScreen(const Common::String &name) {
 	_currentScreen = new Screen(loadObject(name), _mouseMap);
 	_mouseMap.clear();
 	runObject(_currentScreen->getObject()); //is it called once or per screen activation?
+
+	PatchesType::const_iterator it = _patches.find(name);
+	if (it == _patches.end())
+		return;
+
+	debug("found patch");
+	PatchPtr patch = it->_value;
+	const Common::Array<Patch::Object> &objects = patch->objects;
+	for(uint i = 0; i < objects.size(); ++i) {
+		const Patch::Object &object = objects[i];
+		if (object.flag <= 0)
+			_currentScreen->remove(object.name);
+		else if (!_currentScreen->find(object.name)) {
+			runObject(object.name);
+		}
+	}
+	loadDefaultMouseCursor(patch->defaultMouseCursor);
 }
 
 void AGDSEngine::setCurrentScreen(Screen *screen) {
@@ -529,6 +546,7 @@ int AGDSEngine::getGlobal(const Common::String &name) const {
 }
 
 Animation *AGDSEngine::loadAnimation(const Common::String &name) {
+	debug("loadAnimation %s", name.c_str());
 	AnimationsType::iterator i = _animations.find(name);
 	if (i != _animations.end())
 		return i->_value;
@@ -910,6 +928,7 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 	SystemVariable *initVar = getSystemVariable("init_resources");
 	runObject(initVar->getString());
 
+	loadPatches(file, db);
 	loadScreen(screenName);
 
 	{
@@ -929,7 +948,6 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 			}
 		}
 	}
-	loadPatches(file, db);
 
 	return Common::kNoError;
 }

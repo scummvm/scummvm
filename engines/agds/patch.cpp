@@ -32,8 +32,8 @@ void Patch::load(Common::SeekableReadStream *stream) {
 		error("short read, can't read palette");
 	}
 
-	defaultMousePointerName = readString(stream);
-	debug("default pointer name: %s", defaultMousePointerName.c_str());
+	defaultMouseCursor = readString(stream);
+	debug("default pointer name: %s", defaultMouseCursor.c_str());
 	objects.clear();
 	for(uint i = 0; i < object_count; ++i) {
 		int flag = stream->readSint16LE();
