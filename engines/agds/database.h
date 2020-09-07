@@ -55,6 +55,7 @@ private:
 public:
 	bool open(const Common::String &filename);
 	bool open(const Common::String &filename, Common::SeekableReadStream *stream);
+	Common::Array<Common::String> getEntries() const;
 
 	Common::SeekableReadStream * getEntry(const Common::String &name) const;
 	Common::SeekableReadStream *getEntry(Common::SeekableReadStream *parent, const Common::String &name) const;

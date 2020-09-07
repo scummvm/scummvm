@@ -71,6 +71,14 @@ bool Database::open(const Common::String &filename, Common::SeekableReadStream *
 	return true;
 }
 
+Common::Array<Common::String> Database::getEntries() const {
+	Common::Array<Common::String> names;
+	for(EntriesType::const_iterator i = _entries.begin(); i != _entries.end(); ++i) {
+		names.push_back(i->_key);
+	}
+	return names;
+}
+
 Common::SeekableReadStream *Database::getEntry(const Common::String &name) const {
 	Common::File file;
 	if (!file.open(_filename)) {

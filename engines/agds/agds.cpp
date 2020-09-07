@@ -27,6 +27,7 @@
 #include "agds/font.h"
 #include "agds/mjpgPlayer.h"
 #include "agds/object.h"
+#include "agds/patch.h"
 #include "agds/process.h"
 #include "agds/region.h"
 #include "agds/screen.h"
@@ -111,10 +112,15 @@ bool AGDSEngine::load() {
 	if (!_data.open("data.adb"))
 		return false;
 
-	_patch.open("patch.adb"); //it's ok
-
 	initSystemVariables();
 	loadScreen("main");
+
+	Common::File file;
+	file.open("patch.adb");
+	Database patch;
+	patch.open("patch.adb");
+
+	loadPatches(&file, patch);
 
 	return true;
 }
@@ -799,6 +805,24 @@ bool AGDSEngine::hasFeature(EngineFeature f) const {
 	}
 }
 
+void AGDSEngine::loadPatches(Common::SeekableReadStream *file, Database & db) {
+	debug("loading patches");
+	_patches.clear();
+	Common::Array<Common::String> entries = db.getEntries();
+	for (uint i = 0; i < entries.size(); ++i) {
+		const Common::String & name = entries[i];
+		if (name[0] == '_')
+			continue;
+		debug("loading patch for %s", name.c_str());
+		Common::ScopedPtr<Common::SeekableReadStream> patchStream(db.getEntry(file, name));
+		PatchPtr patch(new Patch());
+		patch->load(patchStream.get());
+		_patches[name] = patch;
+	}
+	debug("done loading patches");
+}
+
+
 Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 	Database db;
 	if (!db.open("savefile", file))
@@ -875,6 +899,11 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 		}
 	}
 
+	SystemVariable *initVar = getSystemVariable("init_resources");
+	runObject(initVar->getString());
+
+	loadScreen(screenName);
+
 	{
 		// Inventory
 		_inventory.clear();
@@ -892,11 +921,7 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 			}
 		}
 	}
-
-	SystemVariable *initVar = getSystemVariable("init_resources");
-	runObject(initVar->getString());
-
-	loadScreen(screenName);
+	loadPatches(file, db);
 
 	return Common::kNoError;
 }

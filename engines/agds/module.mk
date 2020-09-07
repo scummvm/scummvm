@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	inventory.o \
 	mjpgPlayer.o \
 	object.o \
+	patch.o \
 	process.o \
 	process_opcodes.o \
 	region.o \

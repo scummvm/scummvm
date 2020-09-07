@@ -20,79 +20,43 @@
  *
  */
 
-#ifndef AGDS_CHARACTER_H
-#define AGDS_CHARACTER_H
+#ifndef AGDS_PATCH_H
+#define AGDS_PATCH_H
 
 #include "common/scummsys.h"
 #include "common/array.h"
-#include "common/rect.h"
+#include "common/str.h"
 
 namespace Common	{ class SeekableReadStream; }
-namespace Graphics	{ struct Surface; }
 
 namespace AGDS {
 
 class AGDSEngine;
 class Object;
 
-class Character {
-	Common::String _name;
-	Common::String _object;
-	bool _enabled;
-	int _phase;
-	int _frames;
-
-	struct AnimationDescription {
-		struct Frame {
-			int x, y;
-			int w, h;
-		};
-
-		Common::String 			filename;
-		Common::Array<Frame> 	frames;
+struct Patch {
+	struct Object {
+		Common::String 	name;
+		uint32			flag;
 	};
-	Common::Array<AnimationDescription> _animations;
 
-public:
-	Character(const Common::String & name, const Common::String & object):
-		_name(name), _object(object), _enabled(true), _phase(0), _frames(0) {
-	}
+	Common::String screenRegionName;
+	Common::String prevScreenName;
 
-	const Common::String & name() const {
-		return _name;
-	}
+	uint unk41;
+	uint characterX;
+	uint characterY;
+	uint characterDirection;
+	uint unk51;
 
-	const Common::String & object() const {
-		return _object;
-	}
+	byte palette[0x300];
+	Common::String defaultMousePointerName;
+	Common::Array<Object> objects;
 
-	void load(Common::SeekableReadStream* stream);
-
-	void enable(bool enabled = true) {
-		_enabled = enabled;
-	}
-
-	void animate(int frames) {
-		_frames += frames;
-	}
-
-	void stop() {
-		_phase = 0;
-		_frames = 0;
-	}
-
-	int getPhase() const {
-		return _phase <= _frames? _phase + 1: -1;
-	}
-
-	void paint(AGDSEngine & engine, Graphics::Surface & backbuffer) {
-		if (_enabled && _phase <= _frames)
-			++_phase;
-	}
-
+	void load(Common::SeekableReadStream *stream);
 };
 
 
 } // End of namespace AGDS
 
-#endif /* AGDS_CHARACTER_H */
+#endif /* AGDS_PATCH_H */
