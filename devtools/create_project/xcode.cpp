@@ -454,6 +454,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	DEF_SYSTBD("libiconv");
 
 	// Local libraries
+	if (CONTAINS_DEFINE(setup.defines, "USE_FAAD")) {
+		DEF_LOCALLIB_STATIC("libfaad");
+	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_FLAC")) {
 		DEF_LOCALLIB_STATIC("libFLAC");
 	}
@@ -474,6 +477,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_MAD")) {
 		DEF_LOCALLIB_STATIC("libmad");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_MPEG2")) {
+		DEF_LOCALLIB_STATIC("libmpeg2");
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_FRIBIDI")) {
 		DEF_LOCALLIB_STATIC("libfribidi");
@@ -547,6 +553,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	frameworks_iOS.push_back("QuartzCore.framework");
 	frameworks_iOS.push_back("OpenGLES.framework");
 
+	if (CONTAINS_DEFINE(setup.defines, "USE_FAAD")) {
+		frameworks_iOS.push_back("libfaad.a");
+	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_FLAC")) {
 		frameworks_iOS.push_back("libFLAC.a");
 	}
@@ -574,6 +583,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_MAD")) {
 		frameworks_iOS.push_back("libmad.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_MPEG2")) {
+		frameworks_iOS.push_back("libmpeg2.a");
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_FRIBIDI")) {
 		frameworks_iOS.push_back("libfribidi.a");
@@ -637,6 +649,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	frameworks_osx.push_back("Cocoa.framework");
 	frameworks_osx.push_back("AudioUnit.framework");
 
+	if (CONTAINS_DEFINE(setup.defines, "USE_FAAD")) {
+		frameworks_osx.push_back("libfaad.a");
+	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_FLAC")) {
 		frameworks_osx.push_back("libFLAC.a");
 	}
@@ -656,6 +671,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_MAD")) {
 		frameworks_osx.push_back("libmad.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_MPEG2")) {
+		frameworks_osx.push_back("libmpeg2.a");
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_FRIBIDI")) {
 		frameworks_osx.push_back("libfribidi.a");
@@ -678,6 +696,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_ZLIB")) {
 		frameworks_osx.push_back("libz.tbd");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_DISCORD")) {
+		frameworks_osx.push_back("libdiscord-rpc.a");
 	}
 
 	if (setup.useSDL2) {
