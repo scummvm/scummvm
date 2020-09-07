@@ -844,6 +844,8 @@ static const char *credits[] = {
 "C2""English translation",
 "C0""Thierry Crozat",
 "C2""English translation",
+"C0""Walter Agazzi",
+"C2""Italian translation",
 "",
 "",
 "C1""Websites (design)",

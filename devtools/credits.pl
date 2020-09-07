@@ -1370,6 +1370,7 @@ begin_credits("Credits");
 				begin_section("Supernova");
 					add_person("Joseph-Eugene Winzer", "Joefish", "English translation");
 					add_person("Thierry Crozat", "criezy", "English translation");
+					add_person("Walter Agazzi", "", "Italian translation");
 				end_section();
 		end_section();
 
