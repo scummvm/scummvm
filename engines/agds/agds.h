@@ -225,6 +225,7 @@ private:
 	Screen *					_currentScreen;
 	Common::String				_currentScreenName;
 	Screen *					_previousScreen;
+	Common::String				_previousScreenName;
 	Animation *					_defaultMouseCursor;
 	Common::Point				_mouse;
 	MouseRegion *				_currentRegion;
