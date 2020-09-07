@@ -81,7 +81,7 @@ void GfxMacCursor32::hide() {
 		return;
 	}
 
-	g_system->showMouse(false);
+	CursorMan.showMouse(false);
 }
 
 void GfxMacCursor32::unhide() {
@@ -89,12 +89,12 @@ void GfxMacCursor32::unhide() {
 		return;
 	}
 
-	g_system->showMouse(true);
+	CursorMan.showMouse(true);
 }
 
 void GfxMacCursor32::show() {
 	if (_hideCount) {
-		g_system->showMouse(true);
+		CursorMan.showMouse(true);
 		_hideCount = 0;
 	}
 }
