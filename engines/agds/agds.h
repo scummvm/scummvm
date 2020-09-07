@@ -56,6 +56,8 @@ class Character;
 class Font;
 class Object;
 typedef Common::SharedPtr<Object> ObjectPtr;
+struct Patch;
+typedef Common::SharedPtr<Patch> PatchPtr;
 class Process;
 struct Region;
 typedef Common::SharedPtr<Region> RegionPtr;
@@ -187,6 +189,7 @@ public:
 
 private:
 	void parseDialogDefs(const Common::String &defs);
+	void loadPatches(Common::SeekableReadStream *file, Database & db);
 
 	typedef Common::HashMap<int, Graphics::TransparentSurface *> PictureCacheType;
 	typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> PictureCacheLookup;
@@ -198,11 +201,12 @@ private:
 	typedef Common::HashMap<Common::String, Character *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> CharactersType;
 	typedef Common::HashMap<int, Font *> FontsType;
 	typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> DialogDefsType;
+	typedef Common::HashMap<Common::String, PatchPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> PatchesType;
 
 	const ADGameDescription *	_gameDescription;
 	ResourceManager				_resourceManager;
 	SoundManager				_soundManager;
-	Database					_data, _patch; //data and patch databases
+	Database					_data;
 	PictureCacheType			_pictureCache;
 	PictureCacheLookup			_pictureCacheLookup;
 	int							_pictureCacheId;
@@ -210,6 +214,7 @@ private:
 	AnimationsType				_animations;
 	CharactersType				_characters;
 	ProcessListType				_processes;
+	PatchesType					_patches;
 	int							_sharedStorageIndex;
 	Common::String				_sharedStorage[10];
 	GlobalsType					_globals;
