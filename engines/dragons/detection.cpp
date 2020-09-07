@@ -298,7 +298,7 @@ Common::KeymapArray DragonsMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_B");
 	engineKeyMap->addAction(act);
 
-	act = new Action("s", _("Cross"));
+	act = new Action("CROSS", _("Cross"));
 	act->setCustomEngineActionEvent(Dragons::kDragonsActionCross);
 	act->addDefaultInputMapping("s");
 	act->addDefaultInputMapping("JOY_A");
