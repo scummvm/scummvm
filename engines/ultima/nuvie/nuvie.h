@@ -38,6 +38,7 @@ class Game;
 class SaveGame;
 class Screen;
 class Script;
+class SoundManager;
 
 class NuvieEngine : public Ultima::Shared::UltimaEngine {
 private:
@@ -46,6 +47,8 @@ private:
 	Script *_script;
 	Game *_game;
 	SaveGame *_savegame;
+
+	SoundManager *_soundManager;
 private:
 	void initConfig();
 	void assignGameConfigValues(uint8 game_type);
@@ -70,6 +73,11 @@ public:
 	 * Play the game
 	 */
 	Common::Error run() override;
+
+	/**
+	 * Synchronize sound settings
+	 */
+	void syncSoundSettings() override;
 
 	/**
 	 * Indicates whether a game state can be loaded.
@@ -113,6 +121,13 @@ public:
 	 * Quick save or load a savegame
 	 */
 	bool quickSave(int saveSlot, bool isLoad);
+
+	/**
+	 * Return a reference to the sound manager
+	 */
+	SoundManager *getSoundManager() const {
+		return _soundManager;
+	}
 };
 
 extern NuvieEngine *g_engine;
