@@ -6,6 +6,8 @@ For a more comprehensive changelog of the latest experimental code, see:
  General:
    - Switched ScummVM GUI output to UTF-32.
 
+ Supernova:
+   - Added Italian translation for part 1.
 
 #### 2.2.0 (2020-09-XX)
 
