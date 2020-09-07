@@ -23,6 +23,7 @@
 #include "dragons/actor.h"
 #include "dragons/dragons.h"
 #include "dragons/dragonini.h"
+#include "dragons/font.h"
 #include "dragons/talk.h"
 #include "dragons/inventory.h"
 #include "dragons/scene.h"
@@ -207,11 +208,7 @@ uint16 Minigame4::runDanceBattle() {
 			_vm->_talk->displayDialogAroundPoint(auStack2192, 0x27, 0xc, 0x3321, 0, 0x4C0C);
 			_vm->waitForFrames(0x10a);
 			_bruteActor->updateSequence(8);
-			//TODO
-//			if ((((DAT_8008e7e8 != 0) || (DAT_8008e848 != 0)) || (DAT_8008e844 != 0)) ||
-//				(DAT_8008e874 != 0)) {
-//				clearTextDialog((uint)DAT_8008e7e8, (uint)DAT_8008e844, (uint)DAT_8008e848, (uint)DAT_8008e874);
-//			}
+			_vm->_fontManager->clearText();
 			_flickerActor->waitUntilFlag8SetThenSet1000AndWaitFor4();
 			_flickerActor->updateSequence(7);
 			actorTalk(_flickerActor, 0, 0x4CC8);
