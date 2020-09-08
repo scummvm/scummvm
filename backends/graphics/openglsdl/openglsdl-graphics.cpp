@@ -659,7 +659,7 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		endGFXTransaction();
 
 #ifdef USE_OSD
-		Common::U32String message = Common::U32String::format(Common::U32String("%S: %S"),
+		Common::U32String message = Common::U32String::format("%S: %S",
 			_("Stretch mode").c_str(),
 			_(stretchModes[index].description).c_str()
 		);
