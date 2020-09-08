@@ -639,6 +639,18 @@ U32String U32String::format(U32String fmt, ...) {
 	return output;
 }
 
+U32String U32String::format(const char *fmt, ...) {
+	U32String output;
+
+	Common::U32String fmtU32(fmt);
+	va_list va;
+	va_start(va, fmt);
+	U32String::vformat(fmtU32.begin(), fmtU32.end(), output, va);
+	va_end(va);
+
+	return output;
+}
+
 int U32String::vformat(U32String::const_iterator fmt, const U32String::const_iterator inputItrEnd, U32String &output, va_list args) {
 	int int_temp;
 	char *string_temp;

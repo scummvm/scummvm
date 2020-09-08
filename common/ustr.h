@@ -253,6 +253,7 @@ public:
 	 * Print formatted data into a U32String object.
 	 */
 	static U32String format(U32String fmt, ...);
+	static U32String format(const char *fmt, ...);
 
 	/**
 	 * Print formatted data into a U32String object. It takes in the
