@@ -631,7 +631,7 @@ void GameData::load_extra_string_file(const StringFile &stringFile) {
 
 	if (stringFile._baseOffset > 0) {
 		// Explicit offset specified, so read the strings in sequentially
-		uint endOffset = stringFile._baseOffset;
+		uint endOffset = stringFile._endOffset;
 		if (!endOffset)
 			endOffset = fb.size();
 
