@@ -5687,7 +5687,11 @@ echo_n "Backend... "
 echo_n "$_backend"
 
 if test "$_sdl" = yes -a -n "$_sdlversion"; then
-	echo_n " ($_sdlversion)"
+	if test "$_backend" = sdl; then
+		echo_n " ($_sdlversion)"
+	else
+		echo_n " (SDL $_sdlversion)"
+	fi
 fi
 
 if test "$_nasm" = yes ; then
