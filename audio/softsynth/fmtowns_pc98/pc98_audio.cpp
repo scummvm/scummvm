@@ -86,7 +86,7 @@ PC98AudioCoreInternal::~PC98AudioCoreInternal() {
 	_ready = false;
 
 	/*
-	
+
 	*/
 }
 
@@ -125,10 +125,10 @@ bool PC98AudioCoreInternal::init() {
 		return false;
 
 	reset();
-	
+
 	writeReg(0, 0x26, 0xDD);
 	writeReg(0, 0x25, 0x01);
-	writeReg(0, 0x24, 0x00);	
+	writeReg(0, 0x24, 0x00);
 	writeReg(0, 0x27, 0x30);
 
 	setVolumeChannelMasks(-1, 0);

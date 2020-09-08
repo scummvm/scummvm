@@ -470,7 +470,7 @@ int TownsAudioInterfaceInternal::processCommand(int command, va_list &args) {
 
 	if (command < 0 || command > 81)
 		return 4;
-	
+
 	int res = (this->*_intfOpcodes[command])(args);
 
 	return res;

@@ -45,8 +45,8 @@ public:
 	virtual void loadData(uint8 *data);
 	virtual void processEvents();
 	virtual void processFrequency();
-	
-	virtual void fadeStep();	
+
+	virtual void fadeStep();
 
 	const uint8 _idFlag;
 
@@ -108,7 +108,7 @@ private:
 	int16 _vbrModCurVal;
 	uint8 _vbrDurLeft;
 	uint8 _algorithm;
-	
+
 	const uint8 _keyNum;
 	const uint8 _part;
 
