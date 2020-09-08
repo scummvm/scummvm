@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-03 01:28+0000\n"
-"PO-Revision-Date: 2020-09-08 13:51+0000\n"
+"PO-Revision-Date: 2020-09-08 13:53+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -421,7 +421,7 @@ msgstr "Errungenschaften"
 #: gui/options.cpp:2472 gui/options.cpp:2478 gui/options.cpp:2489
 msgctxt "path"
 msgid "None"
-msgstr "Leer (Standard-Pfad)"
+msgstr "Standard"
 
 #: gui/editgamedialog.cpp:369 gui/editgamedialog.cpp:460
 #: gui/editgamedialog.cpp:581 gui/options.cpp:1859 gui/options.cpp:2204
@@ -1384,7 +1384,7 @@ msgstr "Benutzername, der von diesem Cloud-Speicher verwendet wird"
 
 #: gui/options.cpp:2091
 msgid "<none>"
-msgstr "<keiner>"
+msgstr "<keine>"
 
 #: gui/options.cpp:2093
 msgid "Used space:"
