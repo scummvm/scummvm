@@ -3977,7 +3977,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"Data5", 0, "e766923060f7b85f1cd8909240412796", 5194686},
 		{"Data6", 0, "ca95355f5f89dcf45e78c073ef83471b", 6599265},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_CD | ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_PQ4_MAC },
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_PQ4_MAC },
 
 #undef GUIO_PQ4_FLOPPY
 #undef GUIO_PQ4_CD

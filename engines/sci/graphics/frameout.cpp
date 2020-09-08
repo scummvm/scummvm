@@ -140,7 +140,9 @@ bool GfxFrameout::detectHiRes() const {
 	}
 
 	// PQ4 DOS floppy is low resolution only
-	if (g_sci->getGameId() == GID_PQ4 && !g_sci->isCD()) {
+	if (g_sci->getGameId() == GID_PQ4 &&
+		g_sci->getPlatform() == Common::kPlatformDOS &&
+		!g_sci->isCD()) {
 		return false;
 	}
 
