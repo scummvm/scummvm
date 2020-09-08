@@ -93,7 +93,8 @@ U32String::U32String(const char *beginP, const char *endP) : _size(0), _str(_sto
 }
 
 U32String::U32String(const String &str) : _size(0), _str(_storage) {
-	initWithCStr(str.c_str(), str.size());
+	_storage[0] = 0;
+	*this = U32String(str.decode());
 }
 
 U32String::U32String(const UnicodeBiDiText &txt) : _size(0), _str(_storage) {
