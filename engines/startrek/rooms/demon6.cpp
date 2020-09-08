@@ -578,7 +578,8 @@ int Room::demon6ShowCaseProcessSelection(Sprite *sprites, Sprite *clickedSprite,
 	clickedSprite->dontDrawNextFrame();
 	_vm->_gfx->drawAllSprites();
 	_vm->_gfx->delSprite(clickedSprite);
-	clickedSprite->bitmap.reset();
+	delete clickedSprite->bitmap;
+	clickedSprite->bitmap = nullptr;
 	visible ^= (0x10 >> (clickedSprite - sprites));
 	
 	return visible;

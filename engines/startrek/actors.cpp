@@ -206,7 +206,8 @@ void StarTrekEngine::updateActorAnimations() {
 					Fixed16 newX = actor->granularPosX + actor->speedX;
 					Fixed16 newY = actor->granularPosY + actor->speedY;
 					if ((actor->field90 & 3) == 0) {
-						sprite->bitmap.reset();
+						delete sprite->bitmap;
+						sprite->bitmap = nullptr;
 						updateActorPositionWhileWalking(actor, (newX + 0.5).toInt(), (newY + 0.5).toInt());
 						actor->field92++;
 					}
@@ -222,7 +223,8 @@ void StarTrekEngine::updateActorAnimations() {
 						addAction(ACTION_FINISHED_WALKING, actor->finishedAnimActionParam & 0xff, 0, 0);
 					}
 
-					actor->sprite.bitmap.reset();
+					delete actor->sprite.bitmap;
+					actor->sprite.bitmap = nullptr;
 					updateActorPositionWhileWalking(actor, (actor->granularPosX + 0.5).toInt(), (actor->granularPosY + 0.5).toInt());
 					initStandAnim(i);
 				} else { // actor->iwSrcPosition != -1
@@ -487,11 +489,11 @@ void StarTrekEngine::releaseAnim(Actor *actor) {
 	switch (actor->animType) {
 	case 0:
 	case 2:
-		actor->sprite.bitmap.reset();
 		actor->animFile.reset();
-		break;
+		// Fall through
 	case 1:
-		actor->sprite.bitmap.reset();
+		delete actor->sprite.bitmap;
+		actor->sprite.bitmap = nullptr;
 		break;
 	default:
 		error("Invalid anim type");
@@ -791,6 +793,7 @@ Bitmap *StarTrekEngine::loadAnimationFrame(const Common::String &filename, Fixed
 				}
 
 				delete xorFile;
+				delete bitmap;
 			}
 		}
 	} else {
@@ -1075,13 +1078,15 @@ void StarTrekEngine::hideInventoryIcons() {
 	if (_itemIconSprite.drawMode == 2) {
 		_gfx->delSprite(&_itemIconSprite);
 		_itemIconSprite.drawMode = 0;
-		_itemIconSprite.bitmap.reset();
+		delete _itemIconSprite.bitmap;
+		_itemIconSprite.bitmap = nullptr;
 	}
 
 	if (_inventoryIconSprite.drawMode == 2) {
 		_gfx->delSprite(&_inventoryIconSprite);
 		_inventoryIconSprite.drawMode = 0;
-		_inventoryIconSprite.bitmap.reset();
+		delete _inventoryIconSprite.bitmap;
+		_inventoryIconSprite.bitmap = nullptr;
 	}
 }
 
@@ -1183,11 +1188,11 @@ int StarTrekEngine::showInventoryMenu(int x, int y, bool restoreMouse) {
 			itemIndex = getMenuButtonAt(itemSprites, numItems, mousePos.x, mousePos.y);
 			if (itemIndex != lastItemIndex) {
 				if (lastItemIndex != -1) {
-					drawMenuButtonOutline(itemSprites[lastItemIndex].bitmap.get(), 0);
+					drawMenuButtonOutline(itemSprites[lastItemIndex].bitmap, 0);
 					itemSprites[lastItemIndex].bitmapChanged = true;
 				}
 				if (itemIndex != -1) {
-					drawMenuButtonOutline(itemSprites[itemIndex].bitmap.get(), 15);
+					drawMenuButtonOutline(itemSprites[itemIndex].bitmap, 15);
 					itemSprites[itemIndex].bitmapChanged = true;
 				}
 				lastItemIndex = itemIndex;
@@ -1266,7 +1271,7 @@ exitWithoutSelection:
 
 	_sound->playSoundEffectIndex(0x10);
 	if (lastItemIndex >= 0)
-		drawMenuButtonOutline(itemSprites[lastItemIndex].bitmap.get(), 0);
+		drawMenuButtonOutline(itemSprites[lastItemIndex].bitmap, 0);
 
 	for (int i = 0; i < numItems; i++)
 		itemSprites[i].dontDrawNextFrame();
@@ -1274,7 +1279,8 @@ exitWithoutSelection:
 	_gfx->drawAllSprites();
 
 	for (int i = 0; i < numItems; i++) {
-		itemSprites[i].bitmap.reset();
+		delete itemSprites[i].bitmap;
+		itemSprites[i].bitmap = nullptr;
 		_gfx->delSprite(&itemSprites[i]);
 	}
 

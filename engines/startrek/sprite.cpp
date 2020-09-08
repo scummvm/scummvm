@@ -27,19 +27,25 @@ namespace StarTrek {
 
 Sprite::Sprite() :
 	pos(), drawPriority(0), drawPriority2(0), field8(""),
-	bitmap(), drawMode(0), textColor(0), bitmapChanged(false),
+	bitmap(nullptr), drawMode(0), textColor(0), bitmapChanged(false),
 	rect2Valid(false), isOnScreen(false), field16(false), lastDrawRect(),
 	drawRect(), rectangle2(), drawX(0), drawY(0)
 {}
 
+Sprite::~Sprite() {
+	delete bitmap;
+	bitmap = nullptr;
+}
+
 void Sprite::setBitmap(Bitmap *b) {
-	bitmap = SharedPtr<Bitmap>(b);
+	if (bitmap)
+		delete bitmap;
+	bitmap = b;
 	bitmapChanged = true;
 }
 
 void Sprite::setBitmap(Common::MemoryReadStreamEndian *stream) {
-	bitmap = SharedPtr<Bitmap>(new Bitmap(stream));
-	bitmapChanged = true;
+	setBitmap(new Bitmap(stream));
 }
 
 void Sprite::setXYAndPriority(int16 x, int16 y, int16 priority) {

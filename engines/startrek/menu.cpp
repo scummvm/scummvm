@@ -555,7 +555,7 @@ void StarTrekEngine::setVisibleMenuButtons(uint32 bits) {
 		if ((bits & spriteBitmask) == 0 || sprite->drawMode != 0) {
 			if ((bits & spriteBitmask) == 0 && sprite->drawMode == 2) {
 				if (i == _activeMenu->selectedButton) {
-					drawMenuButtonOutline(sprite->bitmap.get(), 0x00);
+					drawMenuButtonOutline(sprite->bitmap, 0x00);
 					_activeMenu->selectedButton = -1;
 				}
 
@@ -592,7 +592,7 @@ void StarTrekEngine::disableMenuButtons(uint32 bits) {
 	if (_activeMenu->selectedButton != -1
 	        && (_activeMenu->disabledButtons & (1 << _activeMenu->selectedButton))) {
 		Sprite *sprite = &_activeMenu->sprites[_activeMenu->selectedButton];
-		drawMenuButtonOutline(sprite->bitmap.get(), 0x00);
+		drawMenuButtonOutline(sprite->bitmap, 0x00);
 
 		sprite->bitmapChanged = true;
 		_activeMenu->selectedButton = -1;
@@ -622,12 +622,12 @@ int StarTrekEngine::handleMenuEvents(uint32 ticksUntilClickingEnabled, bool inTe
 				if (buttonIndex != _activeMenu->selectedButton) {
 					if (_activeMenu->selectedButton != -1) {
 						Sprite &spr = _activeMenu->sprites[_activeMenu->selectedButton];
-						drawMenuButtonOutline(spr.bitmap.get(), 0x00);
+						drawMenuButtonOutline(spr.bitmap, 0x00);
 						spr.bitmapChanged = true;
 					}
 					if (buttonIndex != -1) {
 						Sprite &spr = _activeMenu->sprites[buttonIndex];
-						drawMenuButtonOutline(spr.bitmap.get(), 0xda);
+						drawMenuButtonOutline(spr.bitmap, 0xda);
 						spr.bitmapChanged = true;
 					}
 					_activeMenu->selectedButton = buttonIndex;
@@ -835,7 +835,7 @@ rclick:
 
 void StarTrekEngine::unloadMenuButtons() {
 	if (_activeMenu->selectedButton != -1)
-		drawMenuButtonOutline(_activeMenu->sprites[_activeMenu->selectedButton].bitmap.get(), 0x00);
+		drawMenuButtonOutline(_activeMenu->sprites[_activeMenu->selectedButton].bitmap, 0x00);
 
 	for (int i = 0; i < _activeMenu->numButtons; i++) {
 		Sprite *sprite = &_activeMenu->sprites[i];
@@ -849,7 +849,8 @@ void StarTrekEngine::unloadMenuButtons() {
 
 	for (int i = 0; i < _activeMenu->numButtons; i++) {
 		Sprite *sprite = &_activeMenu->sprites[i];
-		sprite->bitmap.reset();
+		delete sprite->bitmap;
+		sprite->bitmap = nullptr;
 		if (sprite->drawMode == 2)
 			_gfx->delSprite(sprite);
 	}
@@ -1142,7 +1143,8 @@ lclick:
 					someSprite.dontDrawNextFrame();
 					_gfx->drawAllSprites();
 					_gfx->delSprite(&someSprite);
-					someSprite.bitmap.reset();
+					delete someSprite.bitmap;
+					someSprite.bitmap = nullptr;
 					spriteLoaded = false;
 				}
 			}
@@ -1167,7 +1169,8 @@ lclick:
 	}
 
 	_gfx->fadeoutScreen();
-	someSprite.bitmap.reset();
+	delete someSprite.bitmap;
+	someSprite.bitmap = nullptr;
 	_gfx->popSprites();
 
 	_gfx->loadPri(getScreenName());
