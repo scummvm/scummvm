@@ -156,7 +156,6 @@ Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
 		break;
 	}
 
-	line += "\n";
 	return line;
 }
 
@@ -174,7 +173,7 @@ void DebuggerDumper::dumpFunction(uint functionNum) {
 	print("[%.4x] (%u instructions)\n", functionNum, func.size());
 	for (uint i = 0; i < func.size(); i++) {
 		Common::String line = dumpInstruction(_game, NULL, &func[i]);
-		print("%s", line.c_str());
+		print("%s\n", line.c_str());
 	}
 
 	print("\n");

@@ -547,7 +547,7 @@ void ComprehendGame::move_object(Item *item, int new_room) {
 }
 
 void ComprehendGame::eval_instruction(FunctionState *func_state,
-		const Instruction *instr, const Sentence *sentence) {
+		const Function &func, uint functionOffset, const Sentence *sentence) {
 	const byte *opcode_map = _opcodeMap;
 	byte verb = sentence ? sentence->_formattedWords[0] : 0;
 	byte noun = sentence ? sentence->_formattedWords[2] : 0;
@@ -557,6 +557,7 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 	bool test;
 	uint i, count;
 
+	const Instruction *instr = &func[functionOffset];
 	room = get_room(_currentRoom);
 
 	if (DebugMan.isDebugChannelEnabled(kDebugScripts)) {
@@ -570,6 +571,7 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 				line += "- ";
 		}
 
+		line += Common::String::format("%.2x  ", functionOffset);
 		line += g_debugger->dumpInstruction(this, func_state, instr);
 		debugC(kDebugScripts, "%s", line.c_str());
 	}
@@ -996,8 +998,7 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 			error("Bad function %.4x >= %.4x\n",
 			      index, _functions.size());
 
-		debugC(kDebugScripts, "Calling subfunction %.4x", index);
-		eval_function(_functions[index], sentence);
+		eval_function(index, sentence);
 		break;
 
 	case OPCODE_TEST_FALSE:
@@ -1075,12 +1076,15 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 	}
 }
 
-void ComprehendGame::eval_function(const Function &func, const Sentence *sentence) {
+void ComprehendGame::eval_function(uint functionNum, const Sentence *sentence) {
 	FunctionState func_state;
 	uint i;
 
+	const Function &func = _functions[functionNum];
 	func_state._elseResult = true;
 	func_state._executed = false;
+
+	debugC(kDebugScripts, "Start of function %.4x", functionNum);
 
 	for (i = 0; i < func.size(); i++) {
 		if (func_state._executed && !func[i]._isCommand) {
@@ -1091,8 +1095,10 @@ void ComprehendGame::eval_function(const Function &func, const Sentence *sentenc
 			break;
 		}
 
-		eval_instruction(&func_state, &func[i], sentence);
+		eval_instruction(&func_state, func, i, sentence);
 	}
+
+	debugC(kDebugScripts, "End of function %.4x\n", functionNum);
 }
 
 void ComprehendGame::skip_whitespace(char **p) {
@@ -1207,8 +1213,7 @@ bool ComprehendGame::handle_sentence(uint tableNum, Sentence *sentence, Common::
 
 		if (isMatch) {
 			// Match
-			const Function &func = _functions[action._function];
-			eval_function(func, sentence);
+			eval_function(action._function, sentence);
 			return true;
 		}
 	}
@@ -1294,7 +1299,7 @@ void ComprehendGame::doBeforeTurn() {
 	beforeTurn();
 
 	// Run the each turn functions
-	eval_function(_functions[0], nullptr);
+	eval_function(0, nullptr);
 
 	update();
 }

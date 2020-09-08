@@ -150,7 +150,7 @@ void CrimsonCrownGame::throneCutscene() {
 	console_println(stringLookup(0x20A).c_str());
 
 	// Handle what happens in climatic showdown
-	eval_function(_functions[14], nullptr);
+	eval_function(14, nullptr);
 }
 
 void CrimsonCrownGame::beforePrompt() {

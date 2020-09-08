@@ -157,6 +157,7 @@ void Comprehend::readLine(char *buffer, size_t maxLen) {
 	}
 
 	buffer[ev.val1] = 0;
+	debug(1, "\n> %s", buffer);
 }
 
 int Comprehend::readChar() {
