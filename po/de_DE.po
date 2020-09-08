@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-03 01:28+0000\n"
-"PO-Revision-Date: 2020-09-08 13:44+0000\n"
+"PO-Revision-Date: 2020-09-08 13:49+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -1533,8 +1533,7 @@ msgstr "Port, der für den Server genutzt wird"
 #: gui/options.cpp:2155
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
-msgstr ""
-"Erlaubt das Verwalten von Dateien über einen Browser (im gleichen Netzwerk)."
+msgstr "Erlaubt die Dateiverwaltung über einen Browser (im gleichen Netzwerk)."
 
 #: gui/options.cpp:2156
 msgctxt "lowres"
@@ -1543,8 +1542,7 @@ msgstr "Das Schließen des Optionen-Dialogs wird den Server beenden."
 
 #: gui/options.cpp:2158
 msgid "Run server to manage files with browser (in the same network)."
-msgstr ""
-"Erlaubt das Verwalten von Dateien über einen Browser (im gleichen Netzwerk)."
+msgstr "Erlaubt die Dateiverwaltung über einen Browser (im gleichen Netzwerk)."
 
 #: gui/options.cpp:2159
 msgid "Closing options dialog will stop the server."
@@ -2859,7 +2857,7 @@ msgstr "Rechter Stick Y"
 #: backends/keymapper/remap-widget.cpp:285
 #: backends/keymapper/remap-widget.cpp:315
 msgid "Reset to defaults"
-msgstr "Standard-Einstellungen"
+msgstr "Standard-Werte"
 
 #: backends/keymapper/remap-widget.cpp:286
 msgid "Clear mapping"
