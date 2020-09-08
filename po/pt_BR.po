@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-03 01:28+0000\n"
-"PO-Revision-Date: 2020-09-04 01:43+0000\n"
+"PO-Revision-Date: 2020-09-09 05:43+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -704,7 +704,7 @@ msgstr "Adiciona jogos à lista"
 
 #: gui/launcher.cpp:157
 msgid "Mass Add..."
-msgstr "Multi-Adição..."
+msgstr "Adic. Vários..."
 
 #: gui/launcher.cpp:161
 msgid "~E~dit Game..."
@@ -730,7 +730,7 @@ msgstr "~A~dicionar Jogo..."
 #: gui/launcher.cpp:167
 msgctxt "lowres"
 msgid "Mass Add..."
-msgstr "Multi-Adição..."
+msgstr "Adic. Vários..."
 
 #: gui/launcher.cpp:171
 msgctxt "lowres"
