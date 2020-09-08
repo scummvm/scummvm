@@ -3091,9 +3091,6 @@ EOF
 		append_var CXXFLAGS "-mtune=xscale"
 		append_var LDFLAGS "-static"
 		_optimization_level=-O2
-		append_var CXXFLAGS "-ffunction-sections"
-		append_var CXXFLAGS "-fdata-sections"
-		append_var LDFLAGS "-Wl,--gc-sections"
 		_port_mk="backends/platform/sdl/riscos/riscos.mk"
 		_pandoc=yes
 		_sdlconfig=sdl-config
@@ -5748,10 +5745,10 @@ else
 fi
 
 #
-# Some last-minute backend specific stuff, executed
+# Some last-minute platform specific stuff, executed
 # after all of CXXFLAGS, LDFLAGS, LIBS etc. have been setup
 #
-case $_backend in
+case $_host_os in
 	3ds)
 		if test "$_freetype2" = yes -a "$_png" = yes; then
 			append_var LIBS "-lbz2"
@@ -5793,6 +5790,12 @@ case $_backend in
 		# all toolchain symbols in *our* libraries rather
 		# than pick up anything unhygenic from the Android libs.
 		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -llog -landroid -lGLESv1_CM"
+		;;
+	riscos)
+		append_var CXXFLAGS "-mno-poke-function-name"
+		append_var CXXFLAGS "-ffunction-sections"
+		append_var CXXFLAGS "-fdata-sections"
+		append_var LDFLAGS "-Wl,--gc-sections"
 		;;
 	n64)
 		# Move some libs down here, otherwise some symbols requires by libvorbis aren't found
