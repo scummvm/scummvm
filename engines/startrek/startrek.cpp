@@ -378,7 +378,7 @@ Common::MemoryReadStreamEndian *StarTrekEngine::loadFile(Common::String filename
 		byte *data = (byte *)malloc(size);
 		file->read(data, size);
 		delete file;
-		return new Common::MemoryReadStreamEndian(data, size, bigEndian);
+		return new Common::MemoryReadStreamEndian(data, size, bigEndian, DisposeAfterUse::YES);
 	}
 
 	Common::SeekableReadStream *indexFile = 0;
@@ -508,7 +508,7 @@ Common::MemoryReadStreamEndian *StarTrekEngine::loadFile(Common::String filename
 	stream->read(data, size);
 	delete stream;
 
-	return new Common::MemoryReadStreamEndian(data, size, bigEndian);
+	return new Common::MemoryReadStreamEndian(data, size, bigEndian, DisposeAfterUse::YES);
 }
 
 Common::MemoryReadStreamEndian *StarTrekEngine::loadBitmapFile(Common::String baseName) {
