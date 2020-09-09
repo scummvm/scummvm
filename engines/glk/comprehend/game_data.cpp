@@ -528,6 +528,8 @@ void GameData::parse_header(FileBuffer *fb) {
 
 	fb->seek(0);
 	header->magic = fb->readUint16LE();
+	fb->skip(2);		// Unknown in earlier versions
+
 	switch (header->magic) {
 	case 0x2000: /* Transylvania, Crimson Crown disk one */
 	case 0x4800: /* Crimson Crown disk two */
@@ -536,13 +538,12 @@ void GameData::parse_header(FileBuffer *fb) {
 		break;
 
 	case 0x93f0: /* OO-Topos */
-		_comprehendVersion = 2;
-		_magicWord = (uint16)-0x5a00;
-		break;
-
 	case 0xa429: /* Talisman */
 		_comprehendVersion = 2;
 		_magicWord = (uint16)-0x5a00;
+
+		// Actions table starts right at the start of the file
+		fb->seek(0);
 		break;
 
 	default:
@@ -550,15 +551,8 @@ void GameData::parse_header(FileBuffer *fb) {
 		break;
 	}
 
-	/* FIXME - Second word in header has unknown usage */
-	parse_header_le16(fb, &dummy);
-
-	/*
-	* Action tables.
-	*
-	* Layout depends on the comprehend version.
-	*/
-	for (int idx = 0; idx < (_comprehendVersion == 1 ? 7 : 5); ++idx)
+	/* Basic data */
+	for (int idx = 0; idx < 7; ++idx)
 		parse_header_le16(fb, &header->addr_actions[idx]);
 
 	parse_header_le16(fb, &header->addr_vm);
