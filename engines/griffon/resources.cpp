@@ -396,8 +396,8 @@ void GriffonEngine::loadMap(int mapnum) {
 	for (int i = 0; i < kMaxNPC; i++)
 		_npcInfo[i].onMap = false;
 
-	for (int x = 0; x <= 19; x++) {
-		for (int y = 0; y <= 19; y++) {
+	for (int x = 0; x <= 20; x++) {
+		for (int y = 0; y <= 14; y++) {
 			int d = tempmap[3 * 40 + x][y];
 
 			int npc = 0;
