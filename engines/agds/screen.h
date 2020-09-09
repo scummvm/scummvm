@@ -25,10 +25,10 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
-#include "common/list.h"
 #include "common/ptr.h"
 #include "common/str.h"
 #include "common/rect.h"
+#include "agds/mouseMap.h"
 
 namespace Graphics {
 	struct Surface;
@@ -42,61 +42,6 @@ class Animation;
 typedef Common::SharedPtr<Object> ObjectPtr;
 struct Region;
 typedef Common::SharedPtr<Region> RegionPtr;
-
-
-struct MouseRegion {
-	int			id;
-	RegionPtr	region;
-	int			enabled;
-	bool		currentlyIn;
-
-	Common::String onEnter;
-	Common::String onLeave;
-
-	void enable() {
-		++enabled;
-	}
-
-	void disable() {
-		if (enabled > 0)
-			--enabled;
-	}
-
-	MouseRegion(RegionPtr reg, const Common::String &enter, const Common::String &leave):
-		id(-1), region(reg), enabled(1), currentlyIn(false), onEnter(enter), onLeave(leave) {
-	}
-};
-
-//fixme: move me away
-class MouseMap {
-	typedef Common::List<MouseRegion> MouseRegionsType;
-	MouseRegionsType	_mouseRegions;
-	int					_nextId;
-	bool				_disabled;
-
-public:
-	MouseMap(): _nextId(0), _disabled(false) { }
-
-	void disable(bool disabled) {
-		_disabled = disabled;
-	}
-
-	bool disabled() const {
-		return _disabled;
-	}
-
-	int add(const MouseRegion & area) {
-		_mouseRegions.push_back(area);
-		_mouseRegions.back().id = _nextId++;
-		return _mouseRegions.back().id;
-	}
-	void clear() {
-		_mouseRegions.clear();
-	}
-	MouseRegion * find(Common::Point pos);
-	MouseRegion * find(int id);
-	void remove(int id);
-};
 
 class Screen {
 	static int ObjectZCompare(const ObjectPtr & a, const ObjectPtr & b);

@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	font.o \
 	inventory.o \
 	mjpgPlayer.o \
+	mouseMap.o \
 	object.o \
 	patch.o \
 	process.o \
