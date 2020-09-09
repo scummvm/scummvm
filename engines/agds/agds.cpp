@@ -188,11 +188,12 @@ void AGDSEngine::loadScreen(const Common::String &name) {
 	if (it == _patches.end())
 		return;
 
-	debug("found patch");
 	PatchPtr patch = it->_value;
 	const Common::Array<Patch::Object> &objects = patch->objects;
+	debug("found patch with %u objects", objects.size());
 	for(uint i = 0; i < objects.size(); ++i) {
 		const Patch::Object &object = objects[i];
+		debug("patch object %s %d", object.name.c_str(), object.flag);
 		if (object.flag <= 0)
 			_currentScreen->remove(object.name);
 		else if (!_currentScreen->find(object.name)) {
