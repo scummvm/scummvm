@@ -878,6 +878,11 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 		}
 	}
 
+	SystemVariable *doneVar = getSystemVariable("done_resources");
+	Common::String done = doneVar->getString();
+	if (!done.empty())
+		runObject(done);
+
 	{
 		// Current character
 		Common::ScopedPtr<Common::SeekableReadStream> agds_c(db.getEntry(file, "__agds_c"));
@@ -938,6 +943,7 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 		}
 	}
 
+	_mouseMap.clear();
 	SystemVariable *initVar = getSystemVariable("init_resources");
 	runObject(initVar->getString());
 
