@@ -1545,14 +1545,42 @@ int FWScript::o1_break() {
 	// Thus the longer pause is eliminated by running only one BREAK when several
 	// are designated (i.e. ignoring a BREAK if there's another BREAK after it).
 	//
-	// TODO: Check whether the speed is halved in any other scenes in Amiga/Atari ST versions under ScummVM
 	// TODO: Check whether the speed is halved when running the original executable under an emulator
 	if (g_cine->getGameType() == Cine::GType_FW &&
 		(g_cine->getPlatform() == Common::kPlatformAmiga || g_cine->getPlatform() == Common::kPlatformAtariST) &&
-		_pos < _script._size && _script.getByte(_pos) == (0x4F + 1) && // Is the next opcode a BREAK too?
-		scumm_stricmp(currentPrcName, "PART02.PRC") == 0 &&
-		scumm_stricmp(renderer->getBgName(), "L11.PI1") == 0) {
-		return 0;
+		_pos < _script._size && _script.getByte(_pos) == (0x4F + 1)) { // Is the next opcode a BREAK too?
+		// Determine whether to combine breaks into a single break based on
+		// current procedure's part number (e.g. "PART02.PRC" -> 2) and the
+		// current background's number (e.g. "L11.PI1" -> 11).
+		if ((Common::matchString(currentPrcName, "PART0#.PRC", true) || // e.g. "PART03.PRC"
+			Common::matchString(currentPrcName, "PART0#?.PRC", true)) && // e.g. "PART02C.PRC"
+			(Common::matchString(renderer->getBgName(), "L#.PI1", true) ||
+			Common::matchString(renderer->getBgName(), "L##.PI1", true))) {
+			const int partNum = (currentPrcName[5] - '0'); // The single digit after "PART0" prefix
+			if (partNum >= 2 && partNum <= 4) {
+				Common::String bgName(renderer->getBgName());
+				bgName.deleteChar(0); // Remove prefix "L"
+				bgName.erase(bgName.find('.'), Common::String::npos); // Remove suffix ".PI1"
+				const int bgNum = (int)bgName.asUint64(); // The rest is the background number
+
+				// Fall through by default on each case in this switch statement:
+				switch (bgNum) {
+				case 6: // Swamp with mosquitoes
+				case 9: // Inside the medieval tavern
+				//case 10: // The medieval castle's hall (Fix breaks scene)
+				case 11: // Tree with monks habit
+				case 14: // Room with stained glass windows in monastery (Door on left)
+				case 16: // Father superior's room in monastery (Door on right)
+				//case 18: // The medieval castle's teleport room (Fix breaks scene)
+				case 21: // Sewers in the future
+				case 25: // Bathroom at the metro station
+				case 27: // Cell in the future
+				case 35: // At door of Crughons' shuttle
+				//case 45: // Space station's computer room (Fix breaks scene)
+					return 0;
+				}
+			}
+		}
 	}
 
 	// Jump over breaks when running only until o1_freePartRange(0, 200) in AUTO00.PRC.
