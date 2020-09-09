@@ -14,6 +14,7 @@ MODULE_OBJS = \
 	iwfile.o \
 	lzss.o \
 	menu.o \
+	resource.o \
 	room.o \
 	saveload.o \
 	sound.o \

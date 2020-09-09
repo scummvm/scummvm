@@ -393,13 +393,13 @@ bool Room::demon4ShowSunPuzzle() {
 		_vm->_gfx->addSprite(&sprites[i]);
 	}
 
-	sprites[0].setBitmap(_vm->loadBitmapFile("levery"));
-	sprites[1].setBitmap(_vm->loadBitmapFile("leverr"));
-	sprites[2].setBitmap(_vm->loadBitmapFile("leverb"));
+	sprites[0].setBitmap(loadBitmapFile("levery"));
+	sprites[1].setBitmap(loadBitmapFile("leverr"));
+	sprites[2].setBitmap(loadBitmapFile("leverb"));
 
-	Bitmap *lightyBitmap = new Bitmap(_vm->loadBitmapFile("lighty"));
-	Bitmap *lightrBitmap = new Bitmap(_vm->loadBitmapFile("lightr"));
-	Bitmap *lightbBitmap = new Bitmap(_vm->loadBitmapFile("lightb"));
+	Bitmap *lightyBitmap = new Bitmap(loadBitmapFile("lighty"));
+	Bitmap *lightrBitmap = new Bitmap(loadBitmapFile("lightr"));
+	Bitmap *lightbBitmap = new Bitmap(loadBitmapFile("lightb"));
 
 	for (int i = 3; i < 9; i++)
 		sprites[i].setBitmap(lightyBitmap);
@@ -411,7 +411,7 @@ bool Room::demon4ShowSunPuzzle() {
 	Sprite doneButtonSprite;
 	_vm->_gfx->addSprite(&doneButtonSprite);
 	doneButtonSprite.setXYAndPriority(0x104, 0x64, 2);
-	doneButtonSprite.setBitmap(_vm->loadBitmapFile("donebutt"));
+	doneButtonSprite.setBitmap(loadBitmapFile("donebutt"));
 	// BUGFIX: use draw mode 2 so the entire button is clickable (not just non-transparent
 	// pixels)
 	doneButtonSprite.drawMode = 2;

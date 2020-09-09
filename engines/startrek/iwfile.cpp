@@ -21,6 +21,7 @@
  */
 
 #include "startrek/iwfile.h"
+#include "startrek/resource.h"
 
 namespace StarTrek {
 
@@ -29,7 +30,7 @@ IWFile::IWFile(StarTrekEngine *vm, const Common::String &filename) {
 
 	_vm = vm;
 
-	Common::MemoryReadStreamEndian *file = _vm->loadFile(filename);
+	Common::MemoryReadStreamEndian *file = _vm->_resource->loadFile(filename);
 	_numEntries = file->readUint16();
 
 	assert(_numEntries < MAX_KEY_POSITIONS);

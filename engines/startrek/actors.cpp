@@ -24,6 +24,7 @@
 #include "common/memstream.h"
 
 #include "startrek/iwfile.h"
+#include "startrek/resource.h"
 #include "startrek/room.h"
 #include "startrek/startrek.h"
 
@@ -71,7 +72,7 @@ void StarTrekEngine::loadBanFile(const Common::String &name) {
 	debugC(kDebugGeneral, 7, "Load BAN file: %s.ban", name.c_str());
 	for (int i = 0; i < MAX_BAN_FILES; i++) {
 		if (!_banFiles[i]) {
-			_banFiles[i] = loadFile(name + ".ban");
+			_banFiles[i] = _resource->loadFile(name + ".ban");
 			_banFileOffsets[i] = 0;
 			return;
 		}
@@ -448,7 +449,7 @@ void StarTrekEngine::drawActorToScreen(Actor *actor, const Common::String &_anim
 
 	actor->animFilename = _animName;
 	actor->animType = 2;
-	actor->animFile = SharedPtr<Common::MemoryReadStreamEndian>(loadFile(animFilename + ".anm"));
+	actor->animFile = SharedPtr<Common::MemoryReadStreamEndian>(_resource->loadFile(animFilename + ".anm"));
 	actor->numAnimFrames = actor->animFile->size() / 22;
 	actor->animFrame = 0;
 	actor->pos.x = x;
@@ -719,7 +720,7 @@ Bitmap *StarTrekEngine::loadAnimationFrame(const Common::String &filename, Fixed
 	        && (c == 'm' || c == 's' || c == 'k' || c == 'r')) {
 		if (c == 'm') {
 			// Mccoy has the "base" animations for all crewmen
-			bitmapToReturn = new Bitmap(loadBitmapFile(filename));
+			bitmapToReturn = new Bitmap(_resource->loadBitmapFile(filename));
 		} else {
 			// All crewman other than mccoy copy the animation frames from mccoy, change
 			// the colors of the uniforms, and load an "xor" file to redraw the face.
@@ -731,7 +732,7 @@ Bitmap *StarTrekEngine::loadAnimationFrame(const Common::String &filename, Fixed
 			if (bitmapToReturn == nullptr) {
 				Common::String mccoyFilename = filename;
 				mccoyFilename.setChar('m', 0);
-				Bitmap *bitmap = new Bitmap(loadBitmapFile(mccoyFilename));
+				Bitmap *bitmap = new Bitmap(_resource->loadBitmapFile(mccoyFilename));
 
 				uint16 width = bitmap->width;
 				uint16 height = bitmap->height;
@@ -777,7 +778,7 @@ Bitmap *StarTrekEngine::loadAnimationFrame(const Common::String &filename, Fixed
 				}
 
 				// Redraw face with xor file
-				Common::MemoryReadStreamEndian *xorFile = loadFile(filename + ".xor");
+				Common::MemoryReadStreamEndian *xorFile = _resource->loadFile(filename + ".xor");
 				xorFile->seek(0, SEEK_SET);
 				uint16 xoffset = bitmap->xoffset - xorFile->readUint16();
 				uint16 yoffset = bitmap->yoffset - xorFile->readUint16();
@@ -799,7 +800,7 @@ Bitmap *StarTrekEngine::loadAnimationFrame(const Common::String &filename, Fixed
 	} else {
 		// TODO: when loading a bitmap, it passes a different argument than is standard to
 		// the "file loading with cache" function...
-		bitmapToReturn = new Bitmap(loadBitmapFile(filename));
+		bitmapToReturn = new Bitmap(_resource->loadBitmapFile(filename));
 	}
 
 	if (scale != 1.0) {
@@ -1038,7 +1039,7 @@ void StarTrekEngine::showInventoryIcons(bool showItem) {
 		_itemIconSprite.pos.y = 10;
 		_itemIconSprite.drawPriority = 15;
 		_itemIconSprite.drawPriority2 = 8;
-		_itemIconSprite.setBitmap(loadBitmapFile(itemFilename));
+		_itemIconSprite.setBitmap(_resource->loadBitmapFile(itemFilename));
 
 		_inventoryIconSprite.pos.x = 46;
 	}
@@ -1049,7 +1050,7 @@ void StarTrekEngine::showInventoryIcons(bool showItem) {
 	_inventoryIconSprite.drawMode = 2;
 	_inventoryIconSprite.drawPriority = 15;
 	_inventoryIconSprite.drawPriority2 = 8;
-	_inventoryIconSprite.setBitmap(loadBitmapFile("inv00"));
+	_inventoryIconSprite.setBitmap(_resource->loadBitmapFile("inv00"));
 }
 
 bool StarTrekEngine::isObjectUnusable(int object, int action) {
@@ -1168,7 +1169,7 @@ int StarTrekEngine::showInventoryMenu(int x, int y, bool restoreMouse) {
 		itemSprites[i].pos.y = itemPositions[i].y;
 		itemSprites[i].drawPriority = 15;
 		itemSprites[i].drawPriority2 = 8;
-		itemSprites[i].setBitmap(loadBitmapFile(itemNames[i]));
+		itemSprites[i].setBitmap(_resource->loadBitmapFile(itemNames[i]));
 	}
 
 	chooseMousePositionFromSprites(itemSprites, numItems, -1, 4);

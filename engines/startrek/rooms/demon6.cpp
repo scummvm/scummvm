@@ -466,7 +466,7 @@ int Room::demon6ShowCase(int visible) {
 		sprites[i].pos.y = spritePositions[i].y;
 		sprites[i].drawPriority = 2;
 		sprites[i].bitmapChanged = true;
-		sprites[i].setBitmap(_vm->loadBitmapFile(Common::String::format("stlitem%d", i)));
+		sprites[i].setBitmap(loadBitmapFile(Common::String::format("stlitem%d", i)));
 	}
 
 	Sprite buttonSprite;
@@ -478,7 +478,7 @@ int Room::demon6ShowCase(int visible) {
 	buttonSprite.pos.y = 0x19;
 	buttonSprite.drawPriority = 2;
 	buttonSprite.bitmapChanged = true;
-	buttonSprite.setBitmap(_vm->loadBitmapFile("donebutt"));
+	buttonSprite.setBitmap(loadBitmapFile("donebutt"));
 
 	_vm->_gfx->addSprite(&buttonSprite);
 	_vm->_gfx->forceDrawAllSprites();

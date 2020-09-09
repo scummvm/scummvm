@@ -20,7 +20,7 @@
  *
  */
 
-
+#include "startrek/resource.h"
 #include "startrek/startrek.h"
 
 namespace StarTrek {
@@ -84,7 +84,7 @@ void StarTrekEngine::drawStarfield() {
 	int16 yvar = var2a / 2;
 	int16 var8 = _starfieldPointDivisor << 3;
 
-	Common::MemoryReadStreamEndian *file = loadFile("stars.shp");
+	Common::MemoryReadStreamEndian *file = _resource->loadFile("stars.shp");
 
 	for (int i = 0; i < NUM_STARS; i++) {
 		Star *star = &_starList[i];

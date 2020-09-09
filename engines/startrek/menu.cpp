@@ -25,6 +25,7 @@
 #include "graphics/cursorman.h"
 
 #include "startrek/graphics.h"
+#include "startrek/resource.h"
 
 namespace StarTrek {
 
@@ -307,7 +308,7 @@ int StarTrekEngine::showActionMenu() {
 	bool addEventBack = false;
 	int action = ACTION_WALK;
 
-	menuSprite.setBitmap(loadBitmapFile("action"));
+	menuSprite.setBitmap(_resource->loadBitmapFile("action"));
 	int menuWidth = menuSprite.bitmap->width;
 	int menuHeight = menuSprite.bitmap->height;
 
@@ -505,7 +506,7 @@ void StarTrekEngine::loadMenuButtons(String mnuFilename, int xpos, int ypos) {
 	_activeMenu = new Menu();
 	_activeMenu->nextMenu = oldMenu;
 
-	Common::MemoryReadStreamEndian *stream = loadFile(mnuFilename + ".MNU");
+	Common::MemoryReadStreamEndian *stream = _resource->loadFile(mnuFilename + ".MNU");
 
 	_activeMenu->numButtons = stream->size() / 16;
 
@@ -523,7 +524,7 @@ void StarTrekEngine::loadMenuButtons(String mnuFilename, int xpos, int ypos) {
 		}
 		bitmapBasename[10] = '\0';
 
-		_activeMenu->sprites[i].setBitmap(loadBitmapFile(bitmapBasename));
+		_activeMenu->sprites[i].setBitmap(_resource->loadBitmapFile(bitmapBasename));
 		_activeMenu->sprites[i].pos.x = stream->readUint16() + xpos;
 		_activeMenu->sprites[i].pos.y = stream->readUint16() + ypos;
 		_activeMenu->retvals[i] = stream->readUint16();
@@ -1135,7 +1136,7 @@ lclick:
 				if (!spriteLoaded) {
 					_gfx->addSprite(&someSprite);
 					someSprite.setXYAndPriority(3, 168, 15);
-					someSprite.setBitmap(loadBitmapFile(Common::String::format("turbo%d", clickedArea)));
+					someSprite.setBitmap(_resource->loadBitmapFile(Common::String::format("turbo%d", clickedArea)));
 					spriteLoaded = true;
 				}
 			} else {

@@ -29,6 +29,7 @@
 #include "common/serializer.h"
 #include "common/translation.h"
 
+#include "startrek/resource.h"
 #include "startrek/room.h"
 #include "startrek/startrek.h"
 
@@ -148,7 +149,7 @@ bool StarTrekEngine::loadGame(int slot) {
 			Actor *a = &_actorList[i];
 			if (a->spriteDrawn) {
 				if (a->animType != 1)
-					a->animFile = SharedPtr<Common::MemoryReadStreamEndian>(loadFile(a->animFilename + ".anm"));
+					a->animFile = SharedPtr<Common::MemoryReadStreamEndian>(_resource->loadFile(a->animFilename + ".anm"));
 				_gfx->addSprite(&a->sprite);
 				a->sprite.setBitmap(loadAnimationFrame(a->bitmapFilename, a->scale));
 			}
@@ -158,7 +159,7 @@ bool StarTrekEngine::loadGame(int slot) {
 		_lastGameMode = GAMEMODE_BRIDGE;
 		// TODO: mode change
 	} else {
-		_txtFilename = _missionToLoad;
+		_resource->setTxtFileName(_missionToLoad);
 		initBridge(false);
 		// TODO: mode change
 	}
@@ -227,7 +228,7 @@ bool StarTrekEngine::saveOrLoadGameData(Common::SeekableReadStream *in, Common::
 
 		if (ser.isLoading()) {
 			_gfx->fadeoutScreen();
-			_txtFilename = "ground";
+			_resource->setTxtFileName("ground");
 
 			// This must be done before loading the actor variables, since this clears
 			// them.

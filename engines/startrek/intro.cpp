@@ -20,6 +20,7 @@
  *
  */
 
+#include "startrek/resource.h"
 #include "startrek/startrek.h"
 
 namespace StarTrek {
@@ -56,7 +57,7 @@ void StarTrekEngine::playIntro() {
 	Sprite subtitleSprite;
 	_gfx->addSprite(&subtitleSprite);
 	subtitleSprite.setXYAndPriority(0, 0, 12);
-	subtitleSprite.setBitmap(loadBitmapFile("blank"));
+	subtitleSprite.setBitmap(_resource->loadBitmapFile("blank"));
 	subtitleSprite.drawPriority2 = 16;
 
 	int index = 12;
@@ -151,7 +152,7 @@ void StarTrekEngine::playIntro() {
 			loadSubtitleSprite(2, &subtitleSprite);
 			planetR3.field22 = 2000;
 			planetR3.field24 = 10000 / _starfieldPointDivisor;
-			planetR3.bitmap = new Bitmap(loadFile("planet.shp"));
+			planetR3.bitmap = new Bitmap(_resource->loadFile("planet.shp"));
 			initIntroR3ObjectToMove(&planetR3, 6, 10000, 6, 10000, 0);
 			addR3(&planetR3);
 			initIntroR3ObjectToMove(&_enterpriseR3, -15, 250, 15, 500, 18);
@@ -313,7 +314,7 @@ void StarTrekEngine::showCreditsScreen(R3 *creditsBuffer, int index, bool delete
 	if (deletePrevious) {
 		delR3(creditsBuffer);
 	}
-	creditsBuffer->bitmap = new Bitmap(loadFile(Common::String::format("credit%02d.shp", index)));
+	creditsBuffer->bitmap = new Bitmap(_resource->loadFile(Common::String::format("credit%02d.shp", index)));
 	creditsBuffer->field1e = 3;
 	creditsBuffer->field22 = 1;
 	creditsBuffer->field24 = 1;
@@ -351,10 +352,10 @@ void StarTrekEngine::initIntroR3ObjectToMove(R3 *r3, int16 srcAngle, int16 srcDe
 void StarTrekEngine::loadSubtitleSprite(int index, Sprite *sprite) {
 	if (_showSubtitles) {
 		if (index == -1)
-			sprite->setBitmap(loadBitmapFile("blank"));
+			sprite->setBitmap(_resource->loadBitmapFile("blank"));
 		else {
 			Common::String file = Common::String::format("tittxt%02d", index);
-			sprite->setBitmap(loadBitmapFile(file));
+			sprite->setBitmap(_resource->loadBitmapFile(file));
 		}
 	}
 }

@@ -180,6 +180,9 @@ private:
 	void loadRoomMessage(const char *text);
 	Common::String patchRoomMessage(const char *text);
 
+	Common::MemoryReadStreamEndian *loadBitmapFile(Common::String baseName);
+	Common::MemoryReadStreamEndian *loadFileWithParams(Common::String filename, bool unk1, bool unk2, bool unk3);
+
 	int findFunctionPointer(int action, void (Room::*funcPtr)());
 
 
