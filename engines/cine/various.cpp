@@ -1193,7 +1193,7 @@ uint16 executePlayerInput() {
 		// the command line.
 		manageEvents(EXECUTE_PLAYER_INPUT, UNTIL_WAIT_ENDED, true);
 	} else {
-		manageEvents(EXECUTE_PLAYER_INPUT, UNTIL_MOUSE_BUTTON_UP_AND_WAIT_ENDED);
+		manageEvents(EXECUTE_PLAYER_INPUT, UNTIL_MOUSE_BUTTON_UP_AND_WAIT_ENDED, true);
 	}
 
 	// Get mouse position and button states
