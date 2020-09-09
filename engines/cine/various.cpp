@@ -1102,7 +1102,20 @@ void playerCommandMouseLeftRightUp(uint16 mouseX, uint16 mouseY) {
 
 	objIdx = getObjectUnderCursor(mouseX, mouseY);
 
-	if (g_cine->getGameType() == Cine::GType_OS || commandVar2 != objIdx) {
+	// Previously in Operation Stealth the following code was always run but in
+	// Future Wars only if commandVar2 != objIdx (Both cases based on disassembly).
+	// Trying to update the command line e.g. "EXAMINE" -> "EXAMINE scaffolding"
+	// in the manageEvents function to make the user interface responsive made a
+	// regression in Future Wars.
+	//
+	// In Future Wars the command line was not always updated and thus failed sometimes
+	// to be up to date (i.e. showing wrong text, e.g. "EXAMINE" only when it should
+	// have read "EXAMINE scaffolding" because the mouse cursor was on the scaffolding).
+	//
+	// Now we just always run this code for both Future Wars and Operation Stealth
+	// which seems to fix the command line updating.
+	const bool update = true; // Previously: g_cine->getGameType() == Cine::GType_OS || commandVar2 != objIdx
+	if (update) {
 		if (objIdx != -1) {
 			renderer->setCommand(g_cine->_commandBuffer + " " + g_cine->_objectTable[objIdx].name);
 		} else {
