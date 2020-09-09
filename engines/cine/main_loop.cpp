@@ -242,9 +242,9 @@ void manageEvents(CallSource callSource, EventTarget eventTarget, bool useMaxMou
 	bool updateAudio = false;
 
 	do {
-		Common::Event event;
+		Common::Event event = Common::Event();
 		int eventsCheckedBeforePolling = eventsChecked;
-		while (!foundTarget && !frameEnded && eventMan->pollEvent(event)) {
+		while (!foundTarget && !frameEnded && (eventMan->pollEvent(event) || eventsChecked == 0)) {
 			processEvent(event);
 			eventsChecked++;
 			maxMouseLeft = MAX<uint16>(mouseLeft, maxMouseLeft);
@@ -340,14 +340,6 @@ void manageEvents(CallSource callSource, EventTarget eventTarget, bool useMaxMou
 		}
 
 		foundTarget |= (checkWaitEnd && waitEnded);
-
-		if (!foundTarget && eventsChecked == 0) {
-			// If there are no events to check then
-			// add an empty event to check the current state.
-			eventMan->pushEvent(Common::Event());
-			continue;
-		}
-
 		updateScreen = updateAudio = (foundTarget || frameEnded);
 
 		if (updateScreen) {
