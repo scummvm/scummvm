@@ -943,10 +943,10 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 		}
 	}
 
-	_mouseMap.clear();
 	SystemVariable *initVar = getSystemVariable("init_resources");
 	runObject(initVar->getString());
 
+	_mouseMap.clear();
 	loadPatches(file, db);
 	loadScreen(screenName);
 
