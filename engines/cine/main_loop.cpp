@@ -350,12 +350,9 @@ void manageEvents(CallSource callSource, EventTarget eventTarget, bool useMaxMou
 				// responsive by updating it here.
 				if (allowPlayerInput && playerCommand != -1 && !mouseLeft && !mouseRight) {
 					// A player command is given, left and right mouse buttons are up
-					Common::String oldCommand = renderer->getCommand();
 					mousePos = eventMan->getMousePos();
 					playerCommandMouseLeftRightUp(mousePos.x, mousePos.y);
-					if (!oldCommand.equals(renderer->getCommand())) {
-						renderer->drawCommand();
-					}
+					renderer->drawCommand();
 				}
 
 				renderer->blit();
