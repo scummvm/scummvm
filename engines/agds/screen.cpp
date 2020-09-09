@@ -93,7 +93,6 @@ bool Screen::remove(const Common::String &name) {
 void Screen::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 	ChildrenType::iterator child = _children.begin();
 	AnimationsType::iterator animation = _animations.begin();
-	int idx = 0;
 	while(child != _children.end() || animation != _animations.end()) {
 		bool child_valid = child != _children.end();
 		bool animation_valid = animation != _animations.end();
@@ -141,36 +140,6 @@ Screen::KeyHandler Screen::findKeyHandler(const Common::String &keyName) {
 		}
 	}
 	return keyHandler;
-}
-
-MouseRegion *MouseMap::find(Common::Point pos) {
-	if (_disabled)
-		return NULL;
-	for (MouseRegionsType::iterator i = _mouseRegions.begin(); i != _mouseRegions.end(); ++i) {
-		MouseRegion &mouse = *i;
-		if (mouse.enabled && mouse.region->pointIn(pos))
-			return &mouse;
-	}
-	return NULL;
-}
-
-MouseRegion *MouseMap::find(int id) {
-	for (MouseRegionsType::iterator i = _mouseRegions.begin(); i != _mouseRegions.end(); ++i) {
-		MouseRegion &mouse = *i;
-		if (mouse.id == id)
-			return &mouse;
-	}
-	return NULL;
-}
-
-void MouseMap::remove(int id) {
-	for (MouseRegionsType::iterator i = _mouseRegions.begin(); i != _mouseRegions.end();) {
-		MouseRegion &mouse = *i;
-		if (mouse.id == id)
-			i = _mouseRegions.erase(i);
-		else
-			++i;
-	}
 }
 
 } // namespace AGDS
