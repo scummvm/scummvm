@@ -880,7 +880,7 @@ bool CineEngine::makeLoad(const Common::String &saveName) {
 
 		ExtendedSavegameHeader header;
 		if (MetaEngine::readSavegameHeader(saveFile.get(), &header)) {
-			setTotalPlayTime(header.playtime);
+			setTotalPlayTime(header.playtime * 1000); // Seconds to milliseconds
 		}
 	}
 
