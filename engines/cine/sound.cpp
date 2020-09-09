@@ -1405,7 +1405,7 @@ void PaulaSound::loadMusic(const char *name) {
 			// Operation Stealth for Amiga has to have its music frequency halved
 			// or otherwise the music sounds too high pitched.
 			const int periodScaleDivisor = 2;
-			_moduleStream = Audio::makeSoundFxStream(&s, readBundleSoundFile, _mixer->getOutputRate(), true, periodScaleDivisor);
+			_moduleStream = Audio::makeSoundFxStream(&s, readBundleSoundFile, _mixer->getOutputRate(), true, true, periodScaleDivisor);
 			free(buf);
 		}
 	}
