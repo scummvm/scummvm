@@ -23,6 +23,7 @@
 namespace Ultima {
 
 static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
+#ifndef RELEASE_BUILD
 	{
 		// Ultima I - The First Age of Darkness
 		{
@@ -76,6 +77,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GAME_ULTIMA1,
 		0
 	},
+#endif
 
 	{
 		// Ultima IV - Quest of the Avatar
