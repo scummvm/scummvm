@@ -22,8 +22,11 @@
 
 #include "ultima/shared/engine/resources.h"
 #include "ultima/shared/early/font_resources.h"
-#include "ultima/ultima1/core/resources.h"
 #include "common/endian.h"
+
+#ifndef RELEASE_BUILD
+#include "ultima/ultima1/core/resources.h"
+#endif
 
 namespace Ultima {
 namespace Shared {
@@ -34,8 +37,10 @@ bool Resources::open() {
 	// Save locally constructred resources to the archive manager for access
 	Shared::FontResources sharedFonts(this);
 	sharedFonts.save();
+#ifndef RELEASE_BUILD
 	Ultima1::GameResources u1Data(this);
 	u1Data.save();
+#endif
 
 	return true;
 }

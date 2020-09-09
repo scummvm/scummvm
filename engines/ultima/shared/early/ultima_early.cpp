@@ -29,13 +29,17 @@
 #include "graphics/scaler.h"
 #include "gui/saveload.h"
 #include "ultima/shared/early/ultima_early.h"
+#include "ultima/shared/early/game.h"
 #include "ultima/shared/engine/ultima.h"
 #include "ultima/shared/engine/debugger.h"
 #include "ultima/shared/engine/events.h"
 #include "ultima/shared/engine/resources.h"
 #include "ultima/shared/core/mouse_cursor.h"
 #include "ultima/shared/gfx/screen.h"
+
+#ifndef RELEASE_BUILD
 #include "ultima/ultima1/game.h"
+#endif
 
 namespace Ultima {
 
@@ -117,8 +121,10 @@ Graphics::Screen *UltimaEarlyEngine::getScreen() const {
 
 Game *UltimaEarlyEngine::createGame() const {
 	switch (getGameId()) {
+#ifndef RELEASE_BUILD
 	case GAME_ULTIMA1:
 		return new Ultima1::Ultima1Game();
+#endif
 	default:
 		error("Unknown game");
 	}
