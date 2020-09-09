@@ -1390,11 +1390,13 @@ void PaulaSound::loadMusic(const char *name) {
 	Common::StackLock lock(_musicMutex);
 	assert(!_mixer->isSoundHandleActive(_moduleHandle));
 
+	bool foundFile = false;
 	if (_vm->getGameType() == GType_FW) {
 		// look for separate files
 		Common::File f;
 		if (f.open(name)) {
 			_moduleStream = Audio::makeSoundFxStream(&f, 0, _mixer->getOutputRate());
+			foundFile = true;
 		}
 	} else {
 		// look in bundle files
@@ -1407,7 +1409,18 @@ void PaulaSound::loadMusic(const char *name) {
 			const int periodScaleDivisor = 2;
 			_moduleStream = Audio::makeSoundFxStream(&s, readBundleSoundFile, _mixer->getOutputRate(), true, true, periodScaleDivisor);
 			free(buf);
+			foundFile = true;
 		}
+	}
+
+	if (!foundFile) {
+		warning("Unable to find music file '%s', not playing music...", name);
+
+		// Remove the old module stream so that it won't be played.
+		// Fixes not trying to play a null stream or an old wrong music in
+		// e.g. Italian version of Future Wars when first teleporting from
+		// the office to to the swamp.
+		_moduleStream = nullptr;
 	}
 }
 
