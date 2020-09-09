@@ -559,7 +559,7 @@ void InitScript::Init_Clues2() {
 
 #define IMPORT_CLUE_TABLE(a, arr) \
 	for (int i = 0; i != ARRAYSIZE(arr); ++i) {\
-		Actor_Clue_Add_To_Database( a, arr[i].clue, arr[i].weight, 0, 0, -1);\
+		Actor_Clue_Add_To_Database( a, arr[i].clue, arr[i].weight, false, false, -1);\
 	}
 
 	IMPORT_CLUE_TABLE(kActorSteele, ClueWeightsForSteele);

@@ -1095,7 +1095,7 @@ enum Flags {
 	kFlagMcCoyIsHelpingReplicants             = 653,
 	kFlagMA02Chapter5Started                  = 654,
 	kFlagMA02RajifTalk                        = 655,
-	kFlagUG02RagiationGooglesTaken            = 656,
+	kFlagUG02RadiationGogglesTaken            = 656,
 	kFlagNotUsed657                           = 657, // is never set
 	kFlagKP07Entered                          = 658,
 	kFlagNR11BreakWindow                      = 659,

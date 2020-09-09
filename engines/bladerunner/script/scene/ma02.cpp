@@ -42,8 +42,7 @@ void SceneScriptMA02::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(kMA02ExitMA06, 538, 84, 639, 327, 1);
 	Scene_Exit_Add_2D_Exit(kMA02ExitMA04,  56, 98, 150, 260, 0);
 
-	if (Global_Variable_Query(kVariableChapter) >= 4
-	 && Global_Variable_Query(kVariableChapter) == 5
+	if (Global_Variable_Query(kVariableChapter) == 5
 	 && Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
 	) {
 		Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieDead);

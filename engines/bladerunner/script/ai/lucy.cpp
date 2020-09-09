@@ -88,7 +88,7 @@ bool AIScriptLucy::Update() {
 	 && !Player_Query_Combat_Mode()
 	 &&  Actor_Query_Friendliness_To_Other(kActorLucy, kActorMcCoy) > 40
 	) {
-		Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF04TalkToMcCoy); // how can this be triggered?
+		Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF04TalkToMcCoy); // TODO how can this be triggered?
 	}
 
 	if (Actor_Query_Goal_Number(kActorLucy) == kGoalLucyHF04WaitForMcCoy1) {
