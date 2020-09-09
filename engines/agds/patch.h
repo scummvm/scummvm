@@ -37,7 +37,9 @@ class Object;
 struct Patch {
 	struct Object {
 		Common::String 	name;
-		uint32			flag;
+		int				flag;
+
+		Object(const Common::String &n, int f): name(n), flag(f) {}
 	};
 
 	Common::String screenRegionName;

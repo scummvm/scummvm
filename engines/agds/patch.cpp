@@ -38,7 +38,7 @@ void Patch::load(Common::SeekableReadStream *stream) {
 	for(uint i = 0; i < object_count; ++i) {
 		int flag = stream->readSint16LE();
 		Common::String name = readString(stream);
-		debug("object %s, status: %d", name.c_str(), flag);
+		objects.push_back(Object(name, flag));
 	}
 }
 
