@@ -671,6 +671,16 @@ int loadAni(const char *resourceName, int16 idx, int16 frameIndex) {
 	transparentColor = getAnimTransparentColor(resourceName);
 
 	// TODO: Merge this special case hack into getAnimTransparentColor somehow.
+	// HACK: Amiga and Atari ST versions of ALPHA.ANI in Future Wars use 0 instead of 0xF for transparency.
+	// Fixes transparency of page number and grid position (e.g. 04 and D2) in the copy protection scene
+	// of Amiga and Atari ST versions of Future Wars.
+	if (hacksEnabled && g_cine->getGameType() == Cine::GType_FW &&
+		(g_cine->getPlatform() == Common::kPlatformAmiga || g_cine->getPlatform() == Common::kPlatformAtariST) &&
+		scumm_stricmp(resourceName, "ALPHA.ANI") == 0) {
+		transparentColor = 0;
+	}
+
+	// TODO: Merge this special case hack into getAnimTransparentColor somehow.
 	// HACK: Versions of TITRE.ANI with height 37 use color 0xF for transparency.
 	//       Versions of TITRE.ANI with height 57 use color 0x0 for transparency.
 	//       Fixes bug #2057619: FW: Glitches in title display of demo (regression).
