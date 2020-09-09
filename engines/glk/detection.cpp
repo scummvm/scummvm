@@ -35,12 +35,8 @@
 #include "glk/alan3/alan3.h"
 #include "glk/archetype/archetype.h"
 #include "glk/archetype/detection.h"
-#include "glk/comprehend/comprehend.h"
-#include "glk/comprehend/detection.h"
 #include "glk/zcode/detection.h"
 #include "glk/zcode/zcode.h"
-#include "glk/glulx/detection.h"
-#include "glk/glulx/glulx.h"
 #include "glk/hugo/detection.h"
 #include "glk/hugo/hugo.h"
 #include "glk/jacl/detection.h"
@@ -53,9 +49,16 @@
 #include "glk/quest/quest.h"
 #include "glk/scott/detection.h"
 #include "glk/scott/scott.h"
+
+#ifndef RELEASE_BUILD
+#include "glk/comprehend/comprehend.h"
+#include "glk/comprehend/detection.h"
+#include "glk/glulx/detection.h"
+#include "glk/glulx/glulx.h"
 #include "glk/tads/detection.h"
 #include "glk/tads/tads2/tads2.h"
 #include "glk/tads/tads3/tads3.h"
+#endif
 
 #include "base/plugins.h"
 #include "common/md5.h"
@@ -169,7 +172,9 @@ template<class META, class ENG>bool create(OSystem *syst,
 }
 
 Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
+#ifndef RELEASE_BUILD
 	Glk::GameDescriptor td = Glk::GameDescriptor::empty();
+#endif
 	assert(engine);
 
 	// Populate the game description
@@ -208,14 +213,16 @@ Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 	else if ((create<Glk::Alan2::Alan2MetaEngine, Glk::Alan2::Alan2>(syst, gameDesc, *engine))) {}
 	else if ((create<Glk::Alan3::Alan3MetaEngine, Glk::Alan3::Alan3>(syst, gameDesc, *engine))) {}
 	else if ((create<Glk::Archetype::ArchetypeMetaEngine, Glk::Archetype::Archetype>(syst, gameDesc, *engine))) {}
-	else if ((create<Glk::Comprehend::ComprehendMetaEngine, Glk::Comprehend::Comprehend>(syst, gameDesc, *engine))) {}
-	else if ((create<Glk::Glulx::GlulxMetaEngine, Glk::Glulx::Glulx>(syst, gameDesc, *engine))) {}
 	else if ((create<Glk::Hugo::HugoMetaEngine, Glk::Hugo::Hugo>(syst, gameDesc, *engine))) {}
 	else if ((create<Glk::JACL::JACLMetaEngine, Glk::JACL::JACL>(syst, gameDesc, *engine))) {}
 	else if ((create<Glk::Level9::Level9MetaEngine, Glk::Level9::Level9>(syst, gameDesc, *engine))) {}
 	else if ((create<Glk::Magnetic::MagneticMetaEngine, Glk::Magnetic::Magnetic>(syst, gameDesc, *engine))) {}
 	else if ((create<Glk::Quest::QuestMetaEngine, Glk::Quest::Quest>(syst, gameDesc, *engine))) {}
 	else if ((create<Glk::Scott::ScottMetaEngine, Glk::Scott::Scott>(syst, gameDesc, *engine))) {}
+	else if ((create<Glk::ZCode::ZCodeMetaEngine, Glk::ZCode::ZCode>(syst, gameDesc, *engine))) {}
+#ifndef RELEASE_BUILD
+	else if ((create<Glk::Comprehend::ComprehendMetaEngine, Glk::Comprehend::Comprehend>(syst, gameDesc, *engine))) {}
+	else if ((create<Glk::Glulx::GlulxMetaEngine, Glk::Glulx::Glulx>(syst, gameDesc, *engine))) {}
 	else if ((td = Glk::TADS::TADSMetaEngine::findGame(gameDesc._gameId.c_str()))._description) {
 		if (!isGameAllowed(td._supportLevel))
 			return Common::kUserCanceled;
@@ -223,8 +230,9 @@ Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 			new Glk::TADS::TADS3::TADS3(syst, gameDesc);
 		else
 			new Glk::TADS::TADS2::TADS2(syst, gameDesc);
-	} else if ((create<Glk::ZCode::ZCodeMetaEngine, Glk::ZCode::ZCode>(syst, gameDesc, *engine))) {
-	} else {
+	}
+#endif
+	else {
 		return Common::kNoGameDataFoundError;
 	}
 
@@ -261,16 +269,18 @@ PlainGameList GlkMetaEngine::getSupportedGames() const {
 	Glk::Alan2::Alan2MetaEngine::getSupportedGames(list);
 	Glk::Alan3::Alan3MetaEngine::getSupportedGames(list);
 	Glk::Archetype::ArchetypeMetaEngine::getSupportedGames(list);
-	Glk::Comprehend::ComprehendMetaEngine::getSupportedGames(list);
-	Glk::Glulx::GlulxMetaEngine::getSupportedGames(list);
 	Glk::Hugo::HugoMetaEngine::getSupportedGames(list);
 	Glk::JACL::JACLMetaEngine::getSupportedGames(list);
 	Glk::Level9::Level9MetaEngine::getSupportedGames(list);
 	Glk::Magnetic::MagneticMetaEngine::getSupportedGames(list);
 	Glk::Quest::QuestMetaEngine::getSupportedGames(list);
 	Glk::Scott::ScottMetaEngine::getSupportedGames(list);
-	Glk::TADS::TADSMetaEngine::getSupportedGames(list);
 	Glk::ZCode::ZCodeMetaEngine::getSupportedGames(list);
+#ifndef RELEASE_BUILD
+	Glk::Comprehend::ComprehendMetaEngine::getSupportedGames(list);
+	Glk::Glulx::GlulxMetaEngine::getSupportedGames(list);
+	Glk::TADS::TADSMetaEngine::getSupportedGames(list);
+#endif
 
 	return list;
 }
@@ -286,16 +296,18 @@ PlainGameDescriptor GlkMetaEngine::findGame(const char *gameId) const {
 	FIND_GAME(AGT);
 	FIND_GAME(Alan3);
 	FIND_GAME(Archetype);
-	FIND_GAME(Comprehend);
-	FIND_GAME(Glulx);
 	FIND_GAME(Hugo);
 	FIND_GAME(JACL);
 	FIND_GAME(Level9);
 	FIND_GAME(Magnetic);
 	FIND_GAME(Quest);
 	FIND_GAME(Scott);
-	FIND_GAME(TADS);
 	FIND_GAME(ZCode);
+#ifndef RELEASE_BUILD
+	FIND_GAME(Comprehend);
+	FIND_GAME(Glulx);
+	FIND_GAME(TADS);
+#endif
 
 	return PlainGameDescriptor();
 }
@@ -313,16 +325,18 @@ DetectedGames GlkMetaEngine::detectGames(const Common::FSList &fslist) const {
 	Glk::Alan2::Alan2MetaEngine::detectGames(fslist, detectedGames);
 	Glk::Alan3::Alan3MetaEngine::detectGames(fslist, detectedGames);
 	Glk::Archetype::ArchetypeMetaEngine::detectGames(fslist, detectedGames);
-	Glk::Comprehend::ComprehendMetaEngine::detectGames(fslist, detectedGames);
-	Glk::Glulx::GlulxMetaEngine::detectGames(fslist, detectedGames);
 	Glk::Hugo::HugoMetaEngine::detectGames(fslist, detectedGames);
 	Glk::JACL::JACLMetaEngine::detectGames(fslist, detectedGames);
 	Glk::Level9::Level9MetaEngine::detectGames(fslist, detectedGames);
 	Glk::Magnetic::MagneticMetaEngine::detectGames(fslist, detectedGames);
 	Glk::Quest::QuestMetaEngine::detectGames(fslist, detectedGames);
 	Glk::Scott::ScottMetaEngine::detectGames(fslist, detectedGames);
-	Glk::TADS::TADSMetaEngine::detectGames(fslist, detectedGames);
 	Glk::ZCode::ZCodeMetaEngine::detectGames(fslist, detectedGames);
+#ifndef RELEASE_BUILD
+	Glk::Comprehend::ComprehendMetaEngine::detectGames(fslist, detectedGames);
+	Glk::Glulx::GlulxMetaEngine::detectGames(fslist, detectedGames);
+	Glk::TADS::TADSMetaEngine::detectGames(fslist, detectedGames);
+#endif
 
 	return detectedGames;
 }
@@ -335,16 +349,18 @@ void GlkMetaEngine::detectClashes() const {
 	Glk::Alan2::Alan2MetaEngine::detectClashes(map);
 	Glk::Alan3::Alan3MetaEngine::detectClashes(map);
 	Glk::Archetype::ArchetypeMetaEngine::detectClashes(map);
-	Glk::Comprehend::ComprehendMetaEngine::detectClashes(map);
-	Glk::Glulx::GlulxMetaEngine::detectClashes(map);
 	Glk::Hugo::HugoMetaEngine::detectClashes(map);
 	Glk::JACL::JACLMetaEngine::detectClashes(map);
 	Glk::Level9::Level9MetaEngine::detectClashes(map);
 	Glk::Magnetic::MagneticMetaEngine::detectClashes(map);
 	Glk::Quest::QuestMetaEngine::detectClashes(map);
 	Glk::Scott::ScottMetaEngine::detectClashes(map);
-	Glk::TADS::TADSMetaEngine::detectClashes(map);
 	Glk::ZCode::ZCodeMetaEngine::detectClashes(map);
+#ifndef RELEASE_BUILD
+	Glk::Comprehend::ComprehendMetaEngine::detectClashes(map);
+	Glk::Glulx::GlulxMetaEngine::detectClashes(map);
+	Glk::TADS::TADSMetaEngine::detectClashes(map);
+#endif
 }
 
 const ExtraGuiOptions GlkMetaEngine::getExtraGuiOptions(const Common::String &) const {
