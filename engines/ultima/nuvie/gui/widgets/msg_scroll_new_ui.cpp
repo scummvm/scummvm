@@ -240,7 +240,7 @@ void MsgScrollNewUI::Display(bool full_redraw) {
 }
 
 GUI_status MsgScrollNewUI::KeyDown(const Common::KeyState &key) {
-	ScrollEventType event = SCROLL_ESCAPE;
+	MsgScrollEventType event = SCROLL_ESCAPE;
 	/*
 	    switch(key.keycode)
 	    {
@@ -256,12 +256,12 @@ GUI_status MsgScrollNewUI::KeyDown(const Common::KeyState &key) {
 }
 
 GUI_status MsgScrollNewUI::MouseDown(int x, int y, Shared::MouseButton button) {
-	ScrollEventType event = SCROLL_ESCAPE;
+	MsgScrollEventType event = SCROLL_ESCAPE;
 
 	return scroll_movement_event(event);
 }
 
-GUI_status MsgScrollNewUI::scroll_movement_event(ScrollEventType event) {
+GUI_status MsgScrollNewUI::scroll_movement_event(MsgScrollEventType event) {
 	switch (event) {
 	case SCROLL_UP :
 		if (position > 0) {
