@@ -932,7 +932,7 @@ void Talk::flickerRandomDefaultResponse() {
 			flicker->actor->setFlag(ACTOR_FLAG_4);
 		}
 	}
-	talkFromIni(0x11, getDefaultResponseTextIndex());
+	talkFromIni(0, getDefaultResponseTextIndex());
 }
 
 uint32 Talk::getDefaultResponseTextIndex() {
