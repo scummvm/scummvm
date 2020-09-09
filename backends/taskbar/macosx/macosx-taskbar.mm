@@ -27,8 +27,6 @@
 #if defined(MACOSX) && defined(USE_TASKBAR)
 
 #include "backends/taskbar/macosx/macosx-taskbar.h"
-#include "common/config-manager.h"
-#include "common/file.h"
 #include "backends/platform/sdl/macosx/macosx-compat.h"
 #include <AppKit/NSApplication.h>
 #include <AppKit/NSImage.h>
@@ -119,7 +117,7 @@ void MacOSXTaskbarManager::setOverlayIcon(const Common::String &name, const Comm
 		return;
 	}
 
-	Common::String path = getIconPath(name);
+	Common::String path = getIconPath(name, ".png");
 	if (path.empty())
 		return;
 
@@ -208,38 +206,6 @@ void MacOSXTaskbarManager::clearError() {
 	return;
 }
 
-Common::String MacOSXTaskbarManager::getIconPath(const Common::String& target) {
-	// We first try to look for a iconspath configuration variable then
-	// fallback to the extra path
-	//
-	// Icons can be either in a subfolder named "icons" or directly in the path
-
-	Common::String iconsPath = ConfMan.get("iconspath");
-	Common::String extraPath = ConfMan.get("extrapath");
-
-#define TRY_ICON_PATH(path) { \
-Common::FSNode node((path)); \
-if (node.exists()) \
-return (path); \
-}
-
-	if (!iconsPath.empty()) {
-		TRY_ICON_PATH(iconsPath + "/" + target + ".png");
-		TRY_ICON_PATH(iconsPath + "/" + ConfMan.get("gameid") + ".png");
-		TRY_ICON_PATH(iconsPath + "/icons/" + target + ".png");
-		TRY_ICON_PATH(iconsPath + "/icons/" + ConfMan.get("gameid") + ".png");
-	}
-
-	if (!extraPath.empty()) {
-		TRY_ICON_PATH(extraPath + "/" + target + ".png");
-		TRY_ICON_PATH(extraPath + "/" + ConfMan.get("gameid") + ".png");
-		TRY_ICON_PATH(extraPath + "/icons/" + target + ".png");
-		TRY_ICON_PATH(extraPath + "/icons/" + ConfMan.get("gameid") + ".png");
-	}
-
-	return "";
-}
-
 void MacOSXTaskbarManager::addRecent(const Common::String &name, const Common::String &description) {
 	//warning("[MacOSXTaskbarManager::addRecent] Adding recent list entry: %s (%s)", name.c_str(), description.c_str());
 
@@ -258,7 +224,7 @@ void MacOSXTaskbarManager::addRecent(const Common::String &name, const Common::S
 	[dict setObject:(NSString *)desc forKey:@"description"];
 
 	// Icon
-	Common::String iconPath = getIconPath(name);
+	Common::String iconPath = getIconPath(name, ".png");
 	if (!iconPath.empty()) {
 		CFStringRef icon = CFStringCreateWithCString(0, iconPath.c_str(), kCFStringEncodingASCII);
 		[dict setObject:(NSString *)icon forKey:@"icon"];

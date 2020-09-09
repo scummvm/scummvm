@@ -42,8 +42,6 @@ public:
 	virtual void clearError();
 
 private:
-	Common::String getIconPath(const Common::String&);
-
 	void initApplicationIconView();
 	void clearApplicationIconView();
 
