@@ -86,8 +86,6 @@ public:
 	bool isPrivate(int clueId) const;
 	void setPrivate(int clueId, bool value);
 
-	int getField1(int clueId) const;
-
 	int getCount() const;
 	int getClueIdByIndex(int index) const;
 
