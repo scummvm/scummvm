@@ -293,9 +293,21 @@ void AGDSEngine::runProcess(ProcessListType::iterator &it) {
 	case kExitCodeSuspend:
 		break;
 	case kExitCodeCreatePatchLoadResources:
-		runObject(process.getExitArg1());
-		_inventory.clear();
-		runObject(process.getExitArg2());
+		{
+			debug("exitProcessCreatePatch");
+
+			SystemVariable *doneVar = getSystemVariable("done_resources");
+			Common::String done = doneVar->getString();
+			runObject(done);
+
+			_patches.clear();
+			_inventory.clear();
+			_globals.clear();
+
+			SystemVariable *initVar = getSystemVariable("init_resources");
+			Common::String init = initVar->getString();
+			runObject(init);
+		}
 		break;
 	case kExitCodeLoadSaveGame:
 		loadGameState(process.getExitIntArg1());

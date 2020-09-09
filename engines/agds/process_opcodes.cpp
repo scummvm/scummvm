@@ -846,14 +846,7 @@ void Process::exitProcess() {
 }
 
 void Process::exitProcessCreatePatch() {
-	SystemVariable *initVar = _engine->getSystemVariable("init_resources");
-	Common::String init = initVar->getString();
-
-	SystemVariable *doneVar = _engine->getSystemVariable("done_resources");
-	Common::String done = doneVar->getString();
-
-	debug("exitProcessCreatePatch stub, resource objects: %s %s", done.c_str(), init.c_str());
-	suspend(kExitCodeCreatePatchLoadResources, done, init);
+	suspend(kExitCodeCreatePatchLoadResources);
 }
 
 void Process::clearScreen() {
