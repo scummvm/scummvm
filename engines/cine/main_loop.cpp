@@ -103,13 +103,13 @@ static void processEvent(Common::Event &event) {
 			}
 			break;
 		case Common::KEYCODE_F3:
-			if (allowPlayerInput) {
+			if (allowPlayerInput && !inMenu) {
 				playerCommand = 2; // INVENTORY
 				makeCommandLine();
 			}
 			break;
 		case Common::KEYCODE_F4:
-			if (allowPlayerInput) {
+			if (allowPlayerInput && !inMenu) {
 				playerCommand = 3; // USE
 				makeCommandLine();
 			}
