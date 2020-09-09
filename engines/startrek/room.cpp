@@ -596,7 +596,7 @@ void Room::loadMapFile(const Common::String &name) {
 }
 
 Common::MemoryReadStreamEndian *Room::loadBitmapFile(Common::String baseName) {
-	return _vm->_resource->loadFile(baseName);
+	return _vm->_resource->loadBitmapFile(baseName);
 }
 
 Common::MemoryReadStreamEndian *Room::loadFileWithParams(Common::String filename, bool unk1, bool unk2, bool unk3) {
