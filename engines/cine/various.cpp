@@ -587,6 +587,9 @@ void processInventory(int16 x, int16 y) {
 	for (int i = 0; i < listSize; ++i)
 		list.push_back(objectListCommand[i]);
 	SelectionMenu *menu = new SelectionMenu(Common::Point(x, y), menuWidth, list);
+
+	inMenu = true;
+
 	renderer->pushMenu(menu);
 	renderer->drawFrame();
 	renderer->popMenu();
@@ -594,6 +597,8 @@ void processInventory(int16 x, int16 y) {
 	menu = 0;
 
 	manageEvents(PROCESS_INVENTORY, UNTIL_MOUSE_BUTTON_DOWN_UP);
+
+	inMenu = false;
 }
 
 int16 buildObjectListCommand(int16 param) {
@@ -624,7 +629,9 @@ int16 selectSubObject(int16 x, int16 y, int16 param) {
 	}
 
 	if (disableSystemMenu == 0) {
+		inMenu = true;
 		selectedObject = makeMenuChoice(objectListCommand, listSize, x, y, 140, 0, osExtras, osExtras);
+		inMenu = false;
 	}
 
 	if (selectedObject == -1)
