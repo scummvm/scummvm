@@ -38,7 +38,7 @@ Object::Object(const Common::String &name, Common::SeekableReadStream *stream) :
                                                                                  _animation(), _mouseCursor(),
                                                                                  _pos(), _z(10),
                                                                                  _clickHandler(0), _examineHandler(0),
-                                                                                 _alpha(255), _active(false) {
+                                                                                 _alpha(255), _inScene(false) {
 	byte id = stream->readUint16LE();
 	debug("id: 0x%02x %u", id, id);
 
