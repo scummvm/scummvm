@@ -71,6 +71,7 @@ bool Screen::remove(const ObjectPtr &object) {
 	for (ChildrenType::iterator i = _children.begin(); i != _children.end();) {
 		if (*i == object) {
 			i = _children.erase(i);
+			object->inScene(false);
 			found = true;
 		} else
 			++i;
@@ -81,7 +82,9 @@ bool Screen::remove(const ObjectPtr &object) {
 bool Screen::remove(const Common::String &name) {
 	bool found = false;
 	for (ChildrenType::iterator i = _children.begin(); i != _children.end();) {
-		if ((*i)->getName() == name) {
+		const ObjectPtr & object = *i;
+		if (object->getName() == name) {
+			object->inScene(false);
 			i = _children.erase(i);
 			found = true;
 		} else

@@ -162,7 +162,7 @@ void AGDSEngine::runObject(ObjectPtr object) {
 }
 
 void AGDSEngine::runProcess(ObjectPtr object, uint ip, Process *caller) {
-	object->activate(true);
+	object->inScene(true);
 	_processes.push_front(Process(this, object, ip, caller));
 	ProcessListType::iterator it = _processes.begin();
 	runProcess(it);

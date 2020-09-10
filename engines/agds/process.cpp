@@ -102,7 +102,6 @@ Common::String Process::popText() {
 
 void Process::activate(bool active) {
 	if (active) {
-		_object->activate(active);
 		switch (_status) {
 		case kStatusActive:
 			break;
@@ -117,8 +116,6 @@ void Process::activate(bool active) {
 		if (_caller) {
 			debug("returning to caller");
 			_caller->_waitForCall = false;
-		} else {
-			_object->activate(false);
 		}
 	}
 }

@@ -74,7 +74,7 @@ private:
 	uint							_clickHandler;
 	uint							_examineHandler;
 	int								_alpha;
-	bool							_active;
+	bool							_inScene;
 
 public:
 	Object(const Common::String &name, Common::SeekableReadStream * stream);
@@ -190,11 +190,11 @@ public:
 		return i != _keyHandlers.end()? i->_value: 0;
 	}
 
-	bool isActive() const
-	{ return _active; }
+	bool inScene() const
+	{ return _inScene; }
 
-	void activate(bool active)
-	{ _active = active; }
+	void inScene(bool value)
+	{ _inScene = value; }
 };
 typedef Common::SharedPtr<Object> ObjectPtr;
 

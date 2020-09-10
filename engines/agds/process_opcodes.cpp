@@ -456,7 +456,8 @@ void Process::changeScreenPatch() {
 	} else {
 		//change screen patch (load and return 1)
 		ObjectPtr object = screen->find(objectName);
-		int value = object && object->isActive();
+		int value = object && object->inScene();
+		debug("\t%d", value);
 		push(value);
 	}
 }
