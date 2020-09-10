@@ -106,43 +106,51 @@ Common::KeymapArray GriffonMetaEngine::initKeymaps(const char *target) const {
 	act = new Action(kStandardActionSkip, _("Menu / Skip"));
 	act->setCustomEngineActionEvent(Griffon::kGriffonMenu);
 	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_Y");
 	engineKeyMap->addAction(act);
 
 	act = new Action("RETURN", _("Confirm"));
 	act->setCustomEngineActionEvent(Griffon::kGriffonConfirm);
 	act->addDefaultInputMapping("RETURN");
+	act->addDefaultInputMapping("JOY_X");
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionMoveUp, _("Up"));
 	act->setCustomEngineActionEvent(Griffon::kGriffonUp);
 	act->addDefaultInputMapping("UP");
+	act->addDefaultInputMapping("JOY_UP");
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionMoveDown, _("Down"));
 	act->setCustomEngineActionEvent(Griffon::kGriffonDown);
 	act->addDefaultInputMapping("DOWN");
+	act->addDefaultInputMapping("JOY_DOWN");
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionMoveLeft, _("Left"));
 	act->setCustomEngineActionEvent(Griffon::kGriffonLeft);
 	act->addDefaultInputMapping("LEFT");
+	act->addDefaultInputMapping("JOY_LEFT");
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionMoveRight, _("Right"));
 	act->setCustomEngineActionEvent(Griffon::kGriffonRight);
 	act->addDefaultInputMapping("RIGHT");
+	act->addDefaultInputMapping("JOY_RIGHT");
 	engineKeyMap->addAction(act);
 
 	act = new Action("ATTACK", _("Attack"));
 	act->setCustomEngineActionEvent(Griffon::kGriffonAttack);
 	act->addDefaultInputMapping("LCTRL");
 	act->addDefaultInputMapping("RCTRL");
+	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
 	act = new Action("INVENTORY", _("Inventory"));
 	act->setCustomEngineActionEvent(Griffon::kGriffonInventory);
 	act->addDefaultInputMapping("LALT");
 	act->addDefaultInputMapping("RALT");
+	act->addDefaultInputMapping("JOY_B");
 	engineKeyMap->addAction(act);
 
 	act = new Action("SPEEDUP", _("Speed Up Cutscene"));
