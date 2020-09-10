@@ -43,18 +43,19 @@ Screen::~Screen() {
 	_children.clear();
 }
 
-void Screen::add(ObjectPtr object) {
+bool Screen::add(ObjectPtr object) {
 	if (object == NULL) {
 		warning("refusing to add null to scene");
-		return;
+		return false;
 	}
 	for (ChildrenType::iterator i = _children.begin(); i != _children.end(); ++i) {
 		if (*i == object) {
 			debug("double adding object %s", (*i)->getName().c_str());
-			return;
+			return false;
 		}
 	}
 	_children.insert(object);
+	return true;
 }
 
 ObjectPtr Screen::find(const Common::String &name) {
