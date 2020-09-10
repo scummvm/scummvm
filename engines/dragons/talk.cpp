@@ -854,10 +854,14 @@ void Talk::exitTalkMenu(bool isFlag8Set, bool isFlag100Set, Common::Array<TalkDi
 	_vm->_fontManager->clearText();
 }
 
+//TODO move to cutscene class
 uint Talk::somethingTextAndSpeechAndAnimRelated(Actor *actor, int16 sequenceId1, int16 sequenceId2, uint32 textIndex,
 												uint16 param_5) {
 	uint16 dialog[2048];
 	dialog[0] = 0;
+
+	textIndex = _vm->getDialogTextId(textIndex);
+
 	_vm->_talk->loadText(textIndex, dialog, 2048);
 
 	if (sequenceId1 != -1) {

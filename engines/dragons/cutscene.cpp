@@ -341,7 +341,7 @@ void CutScene::scene1() {
 		dialog[0] = 0;
 		_vm->_talk->loadText(0x5ea2, dialog, 2000);
 
-		_vm->_talk->displayDialogAroundPoint(dialog, 0x27, 0xc, 0xc01, 0, 0x5ea2);
+		_vm->_talk->displayDialogAroundPoint(dialog, 0x27, 0xc, 0xc01, 0, _vm->getDialogTextId(0x5ea2));
 		_actor_80072df0->waitUntilFlag8And4AreSet();
 		_actor_80072df0->_x_pos = 0xcf;
 		_actor_80072df0->_y_pos = 0x90;
@@ -351,7 +351,7 @@ void CutScene::scene1() {
 
 		dialog[0] = 0;
 		_vm->_talk->loadText(0x5ecc, dialog, 2000);
-		_vm->_talk->displayDialogAroundPoint(dialog, 0x14, 6, 0xc01, 0, 0x5ecc);
+		_vm->_talk->displayDialogAroundPoint(dialog, 0x14, 6, 0xc01, 0, _vm->getDialogTextId(0x5ecc));
 		_vm->waitForFrames(0x3c);
 
 		break;	// we do not need to loop in fact
@@ -479,6 +479,7 @@ void CutScene::closeUpKnightsAtTable() {
 uint16 CutScene::fun_8003dab8(uint32 textId, uint16 x, uint16 y, uint16 param_4, int16 param_5) {
 	uint16 dialog[2000];
 	dialog[0] = 0;
+	textId = _vm->getDialogTextId(textId);
 	_vm->_talk->loadText(textId, dialog, 2000);
 
 	_vm->_talk->displayDialogAroundPoint(dialog, x, y, param_4, param_5, textId);
@@ -926,19 +927,19 @@ void CutScene::tournamentCutScene() {
 	tournamentUpdateCameraX = 0x140;
 	_vm->setVsyncUpdateFunction(tournamentUpdateFunction);
 	_vm->_talk->loadText(0x4C40C, dialogText, 1000);
-	_vm->_talk->displayDialogAroundPoint(dialogText, 0, 0, 0x1e01, 1, 0x4C40C);
+	_vm->_talk->displayDialogAroundPoint(dialogText, 0, 0, 0x1e01, 1, _vm->getDialogTextId(0x4C40C));
 
 	_vm->_talk->loadText(0x4C530, dialogText, 1000);
-	_vm->_talk->displayDialogAroundPoint(dialogText, 0, 0, 0xc01, 1, 0x4C530);
+	_vm->_talk->displayDialogAroundPoint(dialogText, 0, 0, 0xc01, 1, _vm->getDialogTextId(0x4C530));
 
 	_vm->_talk->loadText(0x4C588, dialogText, 1000);
-	_vm->_talk->displayDialogAroundPoint(dialogText, 0, 0, 0x1e01, 1, 0x4C588);
+	_vm->_talk->displayDialogAroundPoint(dialogText, 0, 0, 0x1e01, 1, _vm->getDialogTextId(0x4C588));
 
 	_vm->_talk->loadText(0x4C6B0, dialogText, 1000);
-	_vm->_talk->displayDialogAroundPoint(dialogText, 0, 0, 0xc01, 1, 0x4C6B0);
+	_vm->_talk->displayDialogAroundPoint(dialogText, 0, 0, 0xc01, 1, _vm->getDialogTextId(0x4C6B0));
 
 	_vm->_talk->loadText(0x4C6E8, dialogText, 1000);
-	_vm->_talk->displayDialogAroundPoint(dialogText, 0, 0, 0x1e01, 1, 0x4C6E8);
+	_vm->_talk->displayDialogAroundPoint(dialogText, 0, 0, 0x1e01, 1, _vm->getDialogTextId(0x4C6E8));
 	_vm->setVsyncUpdateFunction(nullptr);
 	_vm->setFlags(ENGINE_FLAG_20000);
 	_vm->fadeToBlack();
@@ -957,9 +958,9 @@ void CutScene::tournamentCutScene() {
 	_vm->_scene->_camera.x = 0x3c0;
 	_vm->fadeFromBlack();
 	_vm->_talk->loadText(0x4C814, dialogText, 1000);
-	_vm->_talk->displayDialogAroundPoint(dialogText, 0, 0, 0xc01, 1, 0x4C814);
+	_vm->_talk->displayDialogAroundPoint(dialogText, 0, 0, 0xc01, 1, _vm->getDialogTextId(0x4C814));
 	_vm->_talk->loadText(0x4C852, dialogText, 1000);
-	_vm->_talk->displayDialogAroundPoint(dialogText, 0, 0, 0x1e01, 1, 0x4C852);
+	_vm->_talk->displayDialogAroundPoint(dialogText, 0, 0, 0x1e01, 1, _vm->getDialogTextId(0x4C852));
 	_vm->setFlags(ENGINE_FLAG_20000);
 	_vm->fadeToBlack();
 }
