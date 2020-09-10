@@ -856,8 +856,8 @@ void Gfx::setBackground(uint type, BackgroundInfo *info) {
 	_backgroundInfo->finalizePath();
 
 	if (_gameType == GType_BRA) {
-		int width = CLIP(info->width, (int)_vm->_screenWidth, info->width);
-		int height = CLIP(info->height, (int)_vm->_screenHeight, info->height);
+		int width = MAX(info->width, (int)_vm->_screenWidth);
+		int height = MAX(info->height, (int)_vm->_screenHeight);
 
 		if (width != _backBuffer.w || height != _backBuffer.h) {
 			_backBuffer.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
