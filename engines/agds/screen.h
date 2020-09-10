@@ -83,7 +83,7 @@ public:
 		_region = region;
 	}
 
-	void add(ObjectPtr object);
+	bool add(ObjectPtr object);
 	void add(Animation * animation) {
 		_animations.insert(animation);
 	}
