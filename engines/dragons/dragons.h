@@ -362,6 +362,7 @@ public:
 	uint32 getMiniGame3StartingDialog();
 	uint32 getMiniGame3PickAHatDialog();
 	uint32 getMiniGame3DataOffset();
+	uint32 getDialogTextId(uint32 textId);
 private:
 	bool savegame(const char *filename, const char *description);
 	bool loadgame(const char *filename);
@@ -399,6 +400,10 @@ private:
 
 	bool checkAudioVideoFiles();
 	bool validateAVFile(const char *filename);
+
+	uint32 getDialogTextIdGrb(uint32 textId);
+	uint32 getDialogTextIdDe(uint32 textId);
+	uint32 getDialogTextIdFr(uint32 textId);
 };
 
 DragonsEngine *getEngine();
