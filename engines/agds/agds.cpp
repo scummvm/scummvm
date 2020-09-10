@@ -178,10 +178,11 @@ void AGDSEngine::runObject(const Common::String &name, const Common::String &pro
 void AGDSEngine::loadScreen(const Common::String &name) {
 	debug("loadScreen %s", name.c_str());
 	resetCurrentScreen();
+
+	_mouseMap.hideAll(this);
 	_soundManager.stopAll();
 	_currentScreenName = name;
-	_currentScreen = new Screen(loadObject(name), _mouseMap);
-	_mouseMap.clear();
+	_currentScreen = new Screen(loadObject(name));
 	runObject(_currentScreen->getObject()); //is it called once or per screen activation?
 
 	PatchesType::const_iterator it = _patches.find(name);
@@ -217,8 +218,7 @@ void AGDSEngine::setCurrentScreen(Screen *screen) {
 
 void AGDSEngine::resetCurrentScreen() {
 	if (_currentRegion) {
-		if (_currentRegion->currentlyIn)
-			runObject(_currentRegion->onLeave);
+		_currentRegion->hide(this);
 		_currentRegion = NULL;
 	}
 
@@ -341,8 +341,10 @@ Animation *AGDSEngine::loadMouseCursor(const Common::String &name) {
 }
 
 void AGDSEngine::changeMouseArea(int id, int enabled) {
-	if (id < 0)
+	if (id < 0) {
+		warning("invalid mouse area %d", id);
 		return;
+	}
 
 	MouseRegion *mouseArea = _mouseMap.find(id);
 	if (mouseArea) {
@@ -353,15 +355,22 @@ void AGDSEngine::changeMouseArea(int id, int enabled) {
 			break;
 		case 0:
 			debug("disabling mouse area %d", id);
-			if (mouseArea->currentlyIn) {
-				runObject(mouseArea->onLeave);
+			if (_currentRegion && _currentRegion->id) {
+				_currentRegion->hide(this);
+				_currentRegion = NULL;
 			}
-			mouseArea->disable();
+			mouseArea->disable(this);
 			break;
 		case -1:
 			debug("removing mouse area %d", id);
-			_mouseMap.remove(id);
+			if (_currentRegion && _currentRegion->id) {
+				_currentRegion->hide(this);
+				_currentRegion = NULL;
+			}
+			_mouseMap.remove(this, id);
 			break;
+		default:
+			warning("invalid value for changeMouseArea: %d", enabled);
 		}
 	} else
 		warning("mouse area %d could not be found", id);
@@ -421,22 +430,20 @@ Common::Error AGDSEngine::run() {
 			case Common::EVENT_MOUSEMOVE:
 				_mouse = event.mouse;
 				if (_userEnabled) {
-					MouseMap &mouseMap = _currentScreen->mouseMap();
-					MouseRegion *region = mouseMap.find(_mouse);
+					MouseRegion *region = _mouseMap.find(_mouse);
 					if (region != _currentRegion) {
 						if (_currentRegion) {
 							MouseRegion *currentRegion = _currentRegion;
 							_currentRegion = NULL;
-							currentRegion->currentlyIn = false;
-							runObject(currentRegion->onLeave);
+							currentRegion->hide(this);
 						}
+
 						if (region) {
 							_currentRegion = region;
-							_currentRegion->currentlyIn = true;
-							runObject(region->onEnter);
+							region->show(this);
 						}
 					}
-					_inventory.enable(_inventoryRegion ? !mouseMap.disabled() && _inventoryRegion->pointIn(_mouse) : false);
+					_inventory.enable(_inventoryRegion ? !_mouseMap.disabled() && _inventoryRegion->pointIn(_mouse) : false);
 				}
 				break;
 			case Common::EVENT_LBUTTONDOWN:

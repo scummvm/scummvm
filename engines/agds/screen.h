@@ -28,7 +28,6 @@
 #include "common/ptr.h"
 #include "common/str.h"
 #include "common/rect.h"
-#include "agds/mouseMap.h"
 
 namespace Graphics {
 	struct Surface;
@@ -54,7 +53,6 @@ class Screen {
 	Common::String	_name;
 	ChildrenType	_children;
 	AnimationsType	_animations;
-	MouseMap		_mouseMap;
 	RegionPtr		_region;
 
 public:
@@ -66,7 +64,7 @@ public:
 		KeyHandler(Object *o, uint i): object(o), ip(i) { }
 	};
 
-	Screen(ObjectPtr object, const MouseMap &mouseMap);
+	Screen(ObjectPtr object);
 	~Screen();
 
 	ObjectPtr getObject() {
@@ -75,10 +73,6 @@ public:
 
 	const Common::String &getName() const {
 		return _name;
-	}
-
-	MouseMap & mouseMap() {
-		return _mouseMap;
 	}
 
 	RegionPtr region() const {
