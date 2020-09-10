@@ -1954,6 +1954,9 @@ uint32 DragonsEngine::getDialogTextIdDe(uint32 textId) {
 	case 0x4c814 : return 0x556c4;
 	case 0x4c852 : return 0x556fc;
 
+		//for camelhot
+	case 0x30DD8 : return 0x36594;
+
 	default: break;
 	}
 	warning("Unhandled textID 0x%x", textId);
@@ -2041,6 +2044,9 @@ uint32 DragonsEngine::getDialogTextIdFr(uint32 textId) {
 	case 0x4c6e8 : return 0x57a4a;
 	case 0x4c814 : return 0x57bd6;
 	case 0x4c852 : return 0x57c08;
+
+	//for camelhot
+	case 0x30DD8 : return 0x37cb8;
 
 	default: break;
 	}

@@ -1009,8 +1009,9 @@ void SpecialOpcodes::panCamera(int16 mode) {
 
 void SpecialOpcodes::spcBlackDragonDialogForCamelhot() {
 	uint16 buffer[1024];
-	_vm->_talk->loadText(0x30DD8, buffer, 1024); //TODO might need to check dialog in other game versions
-	_vm->_talk->displayDialogAroundPoint(buffer, 0x27, 0xc, 0xc01, 0, 0x30DD8);
+	uint32 textId = _vm->getDialogTextId(0x30DD8);
+	_vm->_talk->loadText(textId, buffer, 1024);
+	_vm->_talk->displayDialogAroundPoint(buffer, 0x27, 0xc, 0xc01, 0, textId);
 	//TODO this isn't quite right. The audio isn't played and it's not waiting long enough.
 }
 
