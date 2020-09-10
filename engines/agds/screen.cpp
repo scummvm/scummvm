@@ -35,8 +35,7 @@ int Screen::AnimationZCompare(const Animation *a, const Animation *b) {
 	return b->z() - a->z();
 }
 
-Screen::Screen(ObjectPtr object, const MouseMap &mouseMap) : _object(object), _name(object->getName()), _mouseMap(mouseMap),
-                                                             _children(&ObjectZCompare), _animations(&AnimationZCompare) {
+Screen::Screen(ObjectPtr object) : _object(object), _name(object->getName()), _children(&ObjectZCompare), _animations(&AnimationZCompare) {
 	add(object);
 }
 

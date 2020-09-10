@@ -32,6 +32,7 @@
 #include "agds/soundManager.h"
 #include "agds/database.h"
 #include "agds/inventory.h"
+#include "agds/mouseMap.h"
 #include "agds/processExitCode.h"
 #include "agds/resourceManager.h"
 #include "agds/screen.h"

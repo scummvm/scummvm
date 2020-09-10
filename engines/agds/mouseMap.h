@@ -30,30 +30,34 @@
 
 namespace AGDS {
 
+class AGDSEngine;
 struct Region;
 typedef Common::SharedPtr<Region> RegionPtr;
 
 struct MouseRegion {
 	int			id;
 	RegionPtr	region;
-	int			enabled;
-	bool		currentlyIn;
+	bool		enabled;
+	bool		visible;
 
 	Common::String onEnter;
 	Common::String onLeave;
 
 	void enable() {
-		++enabled;
+		enabled = true;
 	}
 
-	void disable() {
-		if (enabled > 0)
-			--enabled;
+	void disable(AGDSEngine *engine) {
+		enabled = false;
+		hide(engine);
 	}
 
 	MouseRegion(RegionPtr reg, const Common::String &enter, const Common::String &leave):
-		id(-1), region(reg), enabled(1), currentlyIn(false), onEnter(enter), onLeave(leave) {
+		id(-1), region(reg), enabled(1), visible(false), onEnter(enter), onLeave(leave) {
 	}
+
+	void hide(AGDSEngine * engine);
+	void show(AGDSEngine * engine);
 };
 
 class MouseMap {
@@ -65,25 +69,26 @@ class MouseMap {
 public:
 	MouseMap(): _nextId(0), _disabled(false) { }
 
-	void disable(bool disabled) {
+	void disable(AGDSEngine * engine, bool disabled) {
 		_disabled = disabled;
+		if (disabled)
+			hideAll(engine);
 	}
 
 	bool disabled() const {
 		return _disabled;
 	}
 
-	int add(const MouseRegion & area) {
-		_mouseRegions.push_back(area);
-		_mouseRegions.back().id = _nextId++;
-		return _mouseRegions.back().id;
-	}
+	int add(const MouseRegion & area);
+	void remove(AGDSEngine *engine, int id);
+
+	void hideAll(AGDSEngine *engine);
+
 	void clear() {
 		_mouseRegions.clear();
 	}
 	MouseRegion * find(Common::Point pos);
 	MouseRegion * find(int id);
-	void remove(int id);
 };
 
 } // End of namespace AGDS

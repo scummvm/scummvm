@@ -1,7 +1,16 @@
 #include "agds/mouseMap.h"
+#include "agds/agds.h"
 #include "agds/region.h"
+#include "agds/object.h"
 
 namespace AGDS {
+
+int MouseMap::add(const MouseRegion & area) {
+	int id = _nextId++;
+	_mouseRegions.push_back(area);
+	_mouseRegions.back().id = id;
+	return id;
+}
 
 MouseRegion *MouseMap::find(Common::Point pos) {
 	if (_disabled)
@@ -23,16 +32,39 @@ MouseRegion *MouseMap::find(int id) {
 	return NULL;
 }
 
-void MouseMap::remove(int id) {
+void MouseMap::remove(AGDSEngine *engine, int id) {
 	for (MouseRegionsType::iterator i = _mouseRegions.begin(); i != _mouseRegions.end();) {
 		MouseRegion &mouse = *i;
-		if (mouse.id == id)
+		if (mouse.id == id) {
+			i->disable(engine);
 			i = _mouseRegions.erase(i);
-		else
+		} else
 			++i;
 	}
 }
 
+void MouseRegion::show(AGDSEngine *engine) {
+	if (visible)
+		return;
+
+	visible = true;
+	debug("calling mouseArea[%d].onEnter...", id);
+	engine->runObject(onEnter);
+}
+
+void MouseRegion::hide(AGDSEngine *engine) {
+	if (!visible)
+		return;
+
+	visible = false;
+	debug("calling mouseArea[%d].onLeave...", id);
+	engine->runObject(onLeave);
+}
+
+void MouseMap::hideAll(AGDSEngine *engine) {
+	for (MouseRegionsType::iterator i = _mouseRegions.begin(); i != _mouseRegions.end(); ++i)
+		i->hide(engine);
+}
 
 } // End of namespace AGDS
 
