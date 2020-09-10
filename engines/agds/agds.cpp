@@ -46,7 +46,7 @@ namespace AGDS {
 
 AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Engine(system),
                                                                              _gameDescription(gameDesc), _pictureCacheId(1), _sharedStorageIndex(-2),
-                                                                             _mjpgPlayer(), _currentScreen(), _previousScreen(),
+                                                                             _mjpgPlayer(), _currentScreen(),
                                                                              _defaultMouseCursor(),
                                                                              _mouse(400, 300), _userEnabled(false), _currentRegion(),
                                                                              _random("agds"),
@@ -58,7 +58,6 @@ AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Eng
 
 AGDSEngine::~AGDSEngine() {
 	delete _currentScreen;
-	delete _previousScreen;
 	for (PictureCacheType::iterator i = _pictureCache.begin(); i != _pictureCache.end(); ++i) {
 		i->_value->free();
 		delete i->_value;
@@ -220,7 +219,6 @@ void AGDSEngine::setCurrentScreen(Screen *screen) {
 
 	_currentScreenName = screen->getName();
 	_currentScreen = screen;
-	_previousScreen = NULL;
 	_previousScreenName.clear();
 }
 
@@ -230,8 +228,7 @@ void AGDSEngine::resetCurrentScreen() {
 		_currentRegion = NULL;
 	}
 
-	if (_currentScreen != _previousScreen) //we didnt come from back command, fixme: refactor it
-		delete _currentScreen;
+	delete _currentScreen;
 	_currentScreen = NULL;
 	_currentScreenName.clear();
 }
@@ -269,17 +266,13 @@ void AGDSEngine::runProcess(Process &process, bool &destroy, bool &suspend) {
 		break;
 	case kExitCodeSetNextScreenSaveInHistory:
 		if (_currentScreen) {
-			delete _previousScreen;
-			_previousScreen = _currentScreen;
 			_previousScreenName = _currentScreenName;
 		}
 		_nextScreenName = process.getExitArg1();
 		destroy = true;
 		break;
 	case kExitCodeLoadPreviousScreenObject:
-		if (_previousScreen)
-			setCurrentScreen(_previousScreen);
-		else if (!_previousScreenName.empty()) {
+		if (!_previousScreenName.empty()) {
 			_nextScreenName = _previousScreenName;
 			_previousScreenName.clear();
 		}
