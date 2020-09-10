@@ -226,6 +226,7 @@ private:
 	MJPGPlayer *				_mjpgPlayer;
 	Screen *					_currentScreen;
 	Common::String				_currentScreenName;
+	Common::String				_nextScreenName;
 	Screen *					_previousScreen;
 	Common::String				_previousScreenName;
 	Animation *					_defaultMouseCursor;

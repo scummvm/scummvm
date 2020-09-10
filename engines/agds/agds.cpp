@@ -177,6 +177,15 @@ void AGDSEngine::runObject(const Common::String &name, const Common::String &pro
 void AGDSEngine::loadScreen(const Common::String &name) {
 	debug("loadScreen %s", name.c_str());
 	resetCurrentScreen();
+	for(ProcessListType::iterator i = _processes.begin(); i != _processes.end(); ) {
+		Process &process = *i;
+		if (process.parentScreenName() != _currentScreenName) {
+			debug("process %s from different screen, destroy", process.getName().c_str());
+			process.activate(false);
+			i = _processes.erase(i);
+		} else
+			++i;
+	}
 
 	_mouseMap.hideAll(this);
 	_soundManager.stopAll();
@@ -228,11 +237,6 @@ void AGDSEngine::resetCurrentScreen() {
 }
 
 void AGDSEngine::runProcess(Process &process, bool &destroy, bool &suspend) {
-	// if (process.parentScreenName() != _currentScreenName) {
-	// 	debug("process %s from different screen, quit", process.getName().c_str());
-	// 	process.activate(false);
-	// 	return true;
-	// }
 	suspend = false;
 
 	const Common::String &name = process.getName();
@@ -248,6 +252,7 @@ void AGDSEngine::runProcess(Process &process, bool &destroy, bool &suspend) {
 	ProcessExitCode code = process.execute();
 	switch (code) {
 	case kExitCodeDestroy:
+		debug("process returned destroy exit code");
 		destroy = true;
 		break;
 	case kExitCodeLoadScreenObjectAs:
@@ -258,7 +263,8 @@ void AGDSEngine::runProcess(Process &process, bool &destroy, bool &suspend) {
 		_dialogProcessName = process.getExitArg1();
 		break;
 	case kExitCodeSetNextScreen:
-		loadScreen(process.getExitArg1());
+		_nextScreenName = process.getExitArg1();
+		debug("process returned load screen/destroy exit code");
 		destroy = true;
 		break;
 	case kExitCodeSetNextScreenSaveInHistory:
@@ -267,14 +273,14 @@ void AGDSEngine::runProcess(Process &process, bool &destroy, bool &suspend) {
 			_previousScreen = _currentScreen;
 			_previousScreenName = _currentScreenName;
 		}
-		loadScreen(process.getExitArg1());
+		_nextScreenName = process.getExitArg1();
 		destroy = true;
 		break;
 	case kExitCodeLoadPreviousScreenObject:
 		if (_previousScreen)
 			setCurrentScreen(_previousScreen);
 		else if (!_previousScreenName.empty()) {
-			loadScreen(_previousScreenName);
+			_nextScreenName = _previousScreenName;
 			_previousScreenName.clear();
 		}
 		break;
@@ -316,12 +322,11 @@ void AGDSEngine::runProcesses() {
 	if (_processes.empty())
 		return;
 
-	debug("enter");
-	bool destroy;
+	bool destroy, suspend;
 	do {
 		for (ProcessListType::iterator i = _processes.begin(); i != _processes.end(); ) {
 			Process & process = *i;
-			bool suspend;
+			process.activate(true);
 			runProcess(process, destroy, suspend);
 			if (destroy) {
 				debug("destroying process %s...", process.getName().c_str());
@@ -334,8 +339,13 @@ void AGDSEngine::runProcesses() {
 				++i;
 			}
 		}
-	} while (destroy && !_processes.empty());
-	debug("exit");
+	} while (!_processes.empty() && destroy);
+
+	while (!_nextScreenName.empty()) {
+		Common::String nextScreenName = _nextScreenName;
+		_nextScreenName.clear();
+		loadScreen(nextScreenName);
+	}
 }
 
 
