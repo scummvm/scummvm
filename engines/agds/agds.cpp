@@ -161,11 +161,10 @@ void AGDSEngine::runObject(ObjectPtr object) {
 	runProcess(object);
 }
 
-void AGDSEngine::runProcess(ObjectPtr object, uint ip, Process *caller) {
+void AGDSEngine::runProcess(ObjectPtr object, uint ip) {
+	debug("starting process %s:%04x", object->getName().c_str(), ip);
 	object->inScene(true);
-	_processes.push_front(Process(this, object, ip, caller));
-	ProcessListType::iterator it = _processes.begin();
-	runProcess(it);
+	_processes.push_front(Process(this, object, ip));
 }
 
 void AGDSEngine::runObject(const Common::String &name, const Common::String &prototype) {
@@ -183,7 +182,7 @@ void AGDSEngine::loadScreen(const Common::String &name) {
 	_soundManager.stopAll();
 	_currentScreenName = name;
 	_currentScreen = new Screen(loadObject(name));
-	runObject(_currentScreen->getObject()); //is it called once or per screen activation?
+	runProcess(_currentScreen->getObject());
 
 	PatchesType::const_iterator it = _patches.find(name);
 	if (it == _patches.end())
@@ -228,30 +227,25 @@ void AGDSEngine::resetCurrentScreen() {
 	_currentScreenName.clear();
 }
 
-void AGDSEngine::runProcess(ProcessListType::iterator &it) {
-	Process &process = *it;
-	if (process.parentScreenName() != _currentScreenName) {
-		if (process.active())
-			process.activate(false);
-		it = _processes.erase(it);
-		return;
-	}
-
-	if (!process.active()) {
-		++it;
-		return;
-	}
+void AGDSEngine::runProcess(Process &process, bool &destroy, bool &suspend) {
+	// if (process.parentScreenName() != _currentScreenName) {
+	// 	debug("process %s from different screen, quit", process.getName().c_str());
+	// 	process.activate(false);
+	// 	return true;
+	// }
+	suspend = false;
 
 	const Common::String &name = process.getName();
 	if (process.getStatus() == Process::kStatusDone || process.getStatus() == Process::kStatusError) {
 		debug("process %s finished", name.c_str());
 		process.activate(false);
-		it = _processes.erase(it);
+		destroy = true;
 		return;
 	}
+
+	destroy = false;
 	process.activate(true);
 	ProcessExitCode code = process.execute();
-	bool destroy = false;
 	switch (code) {
 	case kExitCodeDestroy:
 		destroy = true;
@@ -291,6 +285,7 @@ void AGDSEngine::runProcess(ProcessListType::iterator &it) {
 		_inventory.add(loadObject(process.getExitArg1()));
 		break;
 	case kExitCodeSuspend:
+		suspend = true;
 		break;
 	case kExitCodeCreatePatchLoadResources:
 		{
@@ -315,21 +310,40 @@ void AGDSEngine::runProcess(ProcessListType::iterator &it) {
 	default:
 		error("unknown process exit code %d", code);
 	}
-	if (destroy) {
-		debug("destroying process %s...", name.c_str());
-		process.activate(false);
-		it = _processes.erase(it);
-	} else
-		++it;
 }
+
+void AGDSEngine::runProcesses() {
+	if (_processes.empty())
+		return;
+
+	debug("enter");
+	bool destroy;
+	do {
+		for (ProcessListType::iterator i = _processes.begin(); i != _processes.end(); ) {
+			Process & process = *i;
+			bool suspend;
+			runProcess(process, destroy, suspend);
+			if (destroy) {
+				debug("destroying process %s...", process.getName().c_str());
+				process.activate(false);
+				i = _processes.erase(i);
+				break;
+			} else if (!suspend) {
+				break;
+			} else {
+				++i;
+			}
+		}
+	} while (destroy && !_processes.empty());
+	debug("exit");
+}
+
 
 void AGDSEngine::tick() {
 	if (tickDialog())
 		return;
 	tickInventory();
-	for (ProcessListType::iterator p = _processes.begin(); active() && p != _processes.end();) {
-		runProcess(p);
-	}
+	runProcesses();
 }
 
 Animation *AGDSEngine::loadMouseCursor(const Common::String &name) {

@@ -1044,8 +1044,7 @@ void Process::call(uint16 addr) {
 	debug("call %04x", addr);
 	//original engine just create new process, save exit code in screen object
 	//and on stack, then just ignore return code, fixme?
-	_waitForCall = true;
-	_engine->runProcess(_object, _ip + addr, this);
+	_engine->runProcess(_object, _ip + addr);
 	suspend();
 }
 
@@ -1325,7 +1324,9 @@ void Process::stub244() {
 	} break
 
 ProcessExitCode Process::execute() {
-	if (_waitForCall) {
+	if (_timer > 0) {
+		debug("waiting for timer (%d)...", _timer);
+		--_timer;
 		_exitCode = kExitCodeSuspend;
 		return _exitCode;
 	}

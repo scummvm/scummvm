@@ -89,7 +89,8 @@ private:
 	void addSystemVar(const Common::String &name, SystemVariable *var);
 	bool initGraphics(int w, int h);
 	bool load();
-	void runProcess(ProcessListType::iterator &it);
+	void runProcess(Process &process, bool &destroy, bool &suspend);
+	void runProcesses();
 	void tick();
 
 public:
@@ -103,7 +104,7 @@ public:
 	ObjectPtr loadObject(const Common::String & name, const Common::String & prototype = Common::String());
 	void runObject(ObjectPtr object);
 	void runObject(const Common::String & name, const Common::String &prototype = Common::String());
-	void runProcess(ObjectPtr object, uint ip = 0, Process * caller = NULL);
+	void runProcess(ObjectPtr object, uint ip = 0);
 
 	void resetCurrentScreen();
 	void loadScreen(const Common::String & name);
