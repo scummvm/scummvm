@@ -156,8 +156,7 @@ void GriffonEngine::showLogos() {
 		g_system->updateScreen();
 
 		if (g_system->getEventManager()->pollEvent(_event)) {
-
-			if (_event.kbd.keycode == Common::KEYCODE_ESCAPE)
+			if (_event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START && _event.customType == kGriffonMenu)
 				return;
 
 			CHECK_QUIT();
@@ -204,6 +203,7 @@ void GriffonEngine::intro() {
 	_secStart = 0;
 
 	bool ldStop = false;
+	bool speedUp = false;
 	int cnt = 0;
 	float xofs = 0.0;
 	float ld = 0.0;
@@ -269,14 +269,21 @@ void GriffonEngine::intro() {
 			xofs -= 320;
 
 		if (g_system->getEventManager()->pollEvent(_event)) {
-
-			if (_event.type == Common::EVENT_KEYDOWN)
-				cnt = 6;
-			if (_event.kbd.keycode == Common::KEYCODE_ESCAPE)
-				return;
+			if (_event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+				if (_event.customType == kGriffonCutsceneSpeedUp) {
+					speedUp = true;
+					cnt = 6;
+				}
+				else if (_event.customType == kGriffonMenu)
+					return;
+			} else if (_event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
+				if (_event.customType == kGriffonCutsceneSpeedUp)
+					speedUp = false;
+			}
 
 			CHECK_QUIT();
-		}
+		} else if (speedUp)
+			cnt = 6;
 
 		g_system->delayMillis(10);
 	} while (!_shouldQuit);
@@ -401,13 +408,15 @@ void GriffonEngine::endOfGame() {
 			xofs -= 320;
 
 		if (g_system->getEventManager()->pollEvent(_event)) {
-			if (_event.type == Common::EVENT_KEYDOWN)
-				spd = 1.0f;
-			if (_event.type == Common::EVENT_KEYUP)
-				spd = 0.2f;
-
-			if (_event.kbd.keycode == Common::KEYCODE_ESCAPE)
-				break;
+			if (_event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+				if (_event.customType == kGriffonCutsceneSpeedUp)
+					spd = 1.0f;
+				else if (_event.customType == kGriffonMenu)
+					break;
+			} else if (_event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
+				if (_event.customType == kGriffonCutsceneSpeedUp)
+					spd = 0.2f;
+			}
 
 			CHECK_QUIT();
 		}
@@ -497,7 +506,7 @@ void GriffonEngine::endOfGame() {
 		if (g_system->getEventManager()->pollEvent(_event)) {
 			CHECK_QUIT();
 
-			if (_event.type == Common::EVENT_KEYDOWN && keywait < _ticks)
+			if ((_event.type == Common::EVENT_KEYDOWN || _event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) && keywait < _ticks)
 				break;
 		}
 

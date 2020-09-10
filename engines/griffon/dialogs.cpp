@@ -163,23 +163,23 @@ void GriffonEngine::title(int mode) {
 			if (_event.type == Common::EVENT_QUIT)
 				_shouldQuit = true;
 
-			if (_event.type == Common::EVENT_KEYDOWN) {
-				switch(_event.kbd.keycode) {
-				case Common::KEYCODE_ESCAPE:
+			if (_event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+				switch(_event.customType) {
+				case kGriffonMenu:
 					if (mode == 1)
 						exitTitle = true;
 					break;
-				case Common::KEYCODE_UP:
+				case kGriffonUp:
 					cursel--;
 					if (cursel < 0)
 						cursel = (mode == 1 ? 3 : 2);
 					break;
-				case Common::KEYCODE_DOWN:
+				case kGriffonDown:
 					cursel++;
 					if (cursel >= (mode == 1 ? 4 : 3))
 						cursel = 0;
 					break;
-				case Common::KEYCODE_RETURN:
+				case kGriffonConfirm:
 					switch(cursel) {
 					case 0:
 						_ticks = g_system->getMillis();
@@ -356,13 +356,13 @@ void GriffonEngine::configMenu() {
 				_shouldQuit = true;
 				break;
 
-			case Common::EVENT_KEYDOWN:
-				switch (_event.kbd.keycode) {
-				case Common::KEYCODE_ESCAPE:
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				switch (_event.customType) {
+				case kGriffonMenu:
 					exitMenu = true;
 					break;
 
-				case Common::KEYCODE_LEFT:
+				case kGriffonLeft:
 					if (cursel == 11) {
 						config.musicVol = CLIP(config.musicVol - 25, 0, 255);
 						setChannelVolume(_musicChannel, config.musicVol);
@@ -380,7 +380,7 @@ void GriffonEngine::configMenu() {
 					}
 					break;
 
-				case Common::KEYCODE_RIGHT:
+				case kGriffonRight:
 					if (cursel == 11) {
 						config.musicVol = CLIP(config.musicVol + 25, 0, 255);
 						setChannelVolume(_musicChannel, config.musicVol);
@@ -399,19 +399,19 @@ void GriffonEngine::configMenu() {
 					}
 					break;
 
-				case Common::KEYCODE_UP:
+				case kGriffonUp:
 					cursel--;
 					if (cursel < MINCURSEL)
 						cursel = MAXCURSEL;
 					break;
 
-				case Common::KEYCODE_DOWN:
+				case kGriffonDown:
 					++cursel;
 					if (cursel > MAXCURSEL)
 						cursel = MINCURSEL;
 					break;
 
-				case Common::KEYCODE_RETURN:
+				case kGriffonConfirm:
 					switch (cursel) {
 					case 7:
 						if (!config.music) {
@@ -597,10 +597,10 @@ void GriffonEngine::saveLoadNew() {
 				return;
 			}
 
-			if (tickPause < _ticks && _event.type == Common::EVENT_KEYDOWN) {
+			if (tickPause < _ticks && _event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
 				_itemTicks = _ticks + 220;
 
-				if (_event.kbd.keycode == Common::KEYCODE_RETURN) {
+				if (_event.customType == kGriffonConfirm) {
 					if (curRow == 0) {
 						if (curCol == 0) {
 							// NEW GAME
@@ -643,15 +643,15 @@ void GriffonEngine::saveLoadNew() {
 					}
 				}
 
-				switch (_event.kbd.keycode) {
-				case Common::KEYCODE_ESCAPE:
+				switch (_event.customType) {
+				case kGriffonMenu:
 					if (curRow == 0)
 						return;
 					lowerLock = false;
 					curRow = 0;
 					tickPause = _ticks + 125;
 					break;
-				case Common::KEYCODE_DOWN:
+				case kGriffonDown:
 					if (lowerLock) {
 						++curRow;
 						if (curRow == 5)
@@ -660,7 +660,7 @@ void GriffonEngine::saveLoadNew() {
 					}
 					break;
 
-				case Common::KEYCODE_UP:
+				case kGriffonUp:
 					if (lowerLock) {
 						--curRow;
 						if (curRow == 0)
@@ -669,7 +669,7 @@ void GriffonEngine::saveLoadNew() {
 					}
 					break;
 
-				case Common::KEYCODE_LEFT:
+				case kGriffonLeft:
 					if (!lowerLock) {
 						--curCol;
 						if (curCol == -1)
@@ -682,7 +682,7 @@ void GriffonEngine::saveLoadNew() {
 					}
 					break;
 
-				case Common::KEYCODE_RIGHT:
+				case kGriffonRight:
 					if (!lowerLock) {
 						++curCol;
 						if (curCol == 4)
