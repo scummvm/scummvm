@@ -795,7 +795,7 @@ L9BOOL intinitialise(const char *filename, char *picname) {
 			error("\rWhat appears to be V1 game data was found, but the game was not recognised.\rEither this is an unknown V1 game file or, more likely, it is corrupted.\r");
 			return FALSE;
 		}
-		for (i = 0; i < 6; i++) {
+		for (i = 0; i < 5; i++) {
 			int off = g_vm->_detection.v1Game().L9Ptrs[i];
 			if (off < 0)
 				L9Pointers[i + 2] = acodeptr + off;
