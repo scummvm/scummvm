@@ -27,12 +27,12 @@
 
 namespace AGDS {
 
-Process::Process(AGDSEngine *engine, ObjectPtr object, unsigned ip, Process *caller) : _engine(engine), _parentScreen(engine->getCurrentScreenName()), _object(object), _ip(ip),
-                                                                                       _status(kStatusActive), _caller(caller), _exitCode(kExitCodeDestroy),
+Process::Process(AGDSEngine *engine, ObjectPtr object, unsigned ip) : _engine(engine), _parentScreen(engine->getCurrentScreenName()), _object(object), _ip(ip),
+                                                                                       _status(kStatusActive), _exitCode(kExitCodeDestroy),
                                                                                        _tileWidth(16), _tileHeight(16), _tileResource(0), _tileIndex(0),
                                                                                        _timer(0),
-                                                                                       _animationCycles(1), _animationLoop(false), _animationZ(0), _animationPaused(false), _animationSpeed(100),
-                                                                                       _waitForCall(false) {
+                                                                                       _animationCycles(1), _animationLoop(false), _animationZ(0), _animationPaused(false), _animationSpeed(100)
+                                                                                       {
 }
 
 void Process::debug(const char *str, ...) {
@@ -111,11 +111,6 @@ void Process::activate(bool active) {
 		default:
 			error("process in invalid state %d", _status);
 			_status = kStatusError;
-		}
-	} else {
-		if (_caller) {
-			debug("returning to caller");
-			_caller->_waitForCall = false;
 		}
 	}
 }
