@@ -184,12 +184,6 @@ void Process::updatePhaseVarOr4() {
 void Process::loadScreenObject() {
 	Common::String name = popString();
 	debug("loadScreenObject: %s", name.c_str());
-	Screen *screen = _engine->getCurrentScreen();
-	if (!screen->find(name)) {
-		screen->add(_engine->loadObject(name));
-	} else {
-		warning("loadScreenObject: object %s already loaded", name.c_str());
-	}
 	suspend(kExitCodeLoadScreenObject, name);
 }
 
