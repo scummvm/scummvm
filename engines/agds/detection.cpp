@@ -38,11 +38,11 @@ public:
 		_maxScanDepth = 3;
 	}
 
-	const char *getEngineId() const override {
+	const char *getEngineId() const {
 		return "agds";
 	}
 
-	const char *getName() const override {
+	const char *getName() const {
 		return "AGDS Engine";
 	}
 
@@ -51,7 +51,7 @@ public:
 	}
 
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-	bool hasFeature(MetaEngineFeature f) const override {
+	bool hasFeature(MetaEngineFeature f) const {
 		switch (f) {
 		case kSupportsListSaves:
 		case kSupportsLoadingDuringStartup:
@@ -65,12 +65,12 @@ public:
 		}
 	}
 
-	int getMaximumSaveSlot() const override {
+	int getMaximumSaveSlot() const {
 		return 99;
 	}
 };
 
-bool AGDSMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
+bool AGDSMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc) {
 		*engine = new AGDS::AGDSEngine(syst, desc);
 	}
