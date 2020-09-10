@@ -74,11 +74,11 @@ void GriffonEngine::checkInputs() {
 		return;
 	}
 
-	if (_event.type == Common::EVENT_KEYDOWN) {
-		if (_event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+	if (_event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+		if (_event.customType == kGriffonMenu) {
 			if (_itemTicks < _ticks)
 				title(1);
-		} else if (_event.kbd.hasFlags(Common::KBD_CTRL)) {
+		} else if (_event.customType == kGriffonAttack) {
 			if (!_itemSelOn && (_itemTicks < _ticks))
 				attack();
 
@@ -230,7 +230,7 @@ __exit_do:
 
 				}
 			}
-		} else if (_event.kbd.hasFlags(Common::KBD_ALT)) {
+		} else if (_event.customType == kGriffonInventory) {
 			if (_itemTicks < _ticks) {
 				_selEnemyOn = false;
 				if (_itemSelOn) {
@@ -252,14 +252,17 @@ __exit_do:
 		_movingDown = false;
 		_movingLeft = false;
 		_movingRight = false;
-		if (_event.kbd.keycode == Common::KEYCODE_UP)
-			_movingUp = true;
-		if (_event.kbd.keycode == Common::KEYCODE_DOWN)
-			_movingDown = true;
-		if (_event.kbd.keycode == Common::KEYCODE_LEFT)
-			_movingLeft = true;
-		if (_event.kbd.keycode == Common::KEYCODE_RIGHT)
-			_movingRight = true;
+		// We continue moving even after the key has been released until we receive a different event
+		if (_event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START || _event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
+			if (_event.customType == kGriffonUp)
+				_movingUp = true;
+			if (_event.customType == kGriffonDown)
+				_movingDown = true;
+			if (_event.customType == kGriffonLeft)
+				_movingLeft = true;
+			if (_event.customType == kGriffonRight)
+				_movingRight = true;
+		}
 	} else {
 		_movingUp = false;
 		_movingDown = false;
@@ -268,37 +271,38 @@ __exit_do:
 
 		if (_selEnemyOn) {
 			if (_itemTicks < _ticks) {
-				if (_event.kbd.keycode == Common::KEYCODE_LEFT) {
-					int origin = _curEnemy;
-					do {
-						_curEnemy = _curEnemy - 1;
-						if (_curEnemy < 1)
-							_curEnemy = _lastNpc + _postInfoNbr;
-						if (_curEnemy == origin)
-							break;
-						if (_curEnemy <= _lastNpc && _npcInfo[_curEnemy].hp > 0)
-							break;
-						if (_curEnemy > _lastNpc)
-							break;
-					} while (1);
-					_itemTicks = _ticks + ntickdelay;
+				if (_event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+					if (_event.customType == kGriffonLeft) {
+						int origin = _curEnemy;
+						do {
+							_curEnemy = _curEnemy - 1;
+							if (_curEnemy < 1)
+								_curEnemy = _lastNpc + _postInfoNbr;
+							if (_curEnemy == origin)
+								break;
+							if (_curEnemy <= _lastNpc && _npcInfo[_curEnemy].hp > 0)
+								break;
+							if (_curEnemy > _lastNpc)
+								break;
+						} while (1);
+						_itemTicks = _ticks + ntickdelay;
+					}
+					if (_event.customType == kGriffonRight) {
+						int origin = _curEnemy;
+						do {
+							_curEnemy = _curEnemy + 1;
+							if (_curEnemy > _lastNpc + _postInfoNbr)
+								_curEnemy = 1;
+							if (_curEnemy == origin)
+								break;
+							if (_curEnemy <= _lastNpc && _npcInfo[_curEnemy].hp > 0)
+								break;
+							if (_curEnemy > _lastNpc)
+								break;
+						} while (1);
+						_itemTicks = _ticks + ntickdelay;
+					}
 				}
-				if (_event.kbd.keycode == Common::KEYCODE_RIGHT) {
-					int origin = _curEnemy;
-					do {
-						_curEnemy = _curEnemy + 1;
-						if (_curEnemy > _lastNpc + _postInfoNbr)
-							_curEnemy = 1;
-						if (_curEnemy == origin)
-							break;
-						if (_curEnemy <= _lastNpc && _npcInfo[_curEnemy].hp > 0)
-							break;
-						if (_curEnemy > _lastNpc)
-							break;
-					} while (1);
-					_itemTicks = _ticks + ntickdelay;
-				}
-
 
 				if (_curEnemy > _lastNpc + _postInfoNbr)
 					_curEnemy = 1;
@@ -306,8 +310,8 @@ __exit_do:
 					_curEnemy = _lastNpc + _postInfoNbr;
 			}
 		} else {
-			if (_keyPressed && _event.type == Common::EVENT_KEYDOWN) {
-				if (_event.kbd.keycode == Common::KEYCODE_UP) {
+			if (_keyPressed && _event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+				if (_event.customType == kGriffonUp) {
 					_curItem = _curItem - 1;
 					_itemTicks = _ticks + ntickdelay;
 					if (_curItem == 4)
@@ -315,7 +319,7 @@ __exit_do:
 					if (_curItem == -1)
 						_curItem = 4;
 				}
-				if (_event.kbd.keycode == Common::KEYCODE_DOWN) {
+				if (_event.customType == kGriffonDown) {
 					_curItem = _curItem + 1;
 					_itemTicks = _ticks + ntickdelay;
 					if (_curItem == 5)
@@ -323,20 +327,20 @@ __exit_do:
 					if (_curItem == 10)
 						_curItem = 5;
 				}
-				if (_event.kbd.keycode == Common::KEYCODE_LEFT) {
+				if (_event.customType == kGriffonLeft) {
 					_curItem = _curItem - 5;
 					_itemTicks = _ticks + ntickdelay;
 				}
-				if (_event.kbd.keycode == Common::KEYCODE_RIGHT) {
+				if (_event.customType == kGriffonRight) {
 					_curItem = _curItem + 5;
 					_itemTicks = _ticks + ntickdelay;
 				}
-
-				if (_curItem > 9)
-					_curItem = _curItem - 10;
-				if (_curItem < 0)
-					_curItem = _curItem + 10;
 			}
+
+			if (_curItem > 9)
+				_curItem = _curItem - 10;
+			if (_curItem < 0)
+				_curItem = _curItem + 10;
 		}
 	}
 }
