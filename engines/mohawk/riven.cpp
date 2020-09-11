@@ -169,7 +169,7 @@ Common::Error MohawkEngine_Riven::run() {
 		const char *msg = _s("You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also works.");
 		Common::U32String message = _(msg);
 		GUIErrorMessage(message);
-		warning(msg);
+		warning("%s", msg);
 		return Common::kNoGameDataFoundError;
 	}
 
