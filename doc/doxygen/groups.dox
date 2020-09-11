@@ -1,0 +1,14 @@
+/**
+
+@defgroup common Common API
+@brief Common functions and structures.
+
+*/
+
+/**
+
+@defgroup lua Lua API
+@ingroup common
+@brief Functions for the Lua programming language. See @linkLua.
+
+*/
