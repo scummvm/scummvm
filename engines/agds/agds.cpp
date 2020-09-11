@@ -232,116 +232,54 @@ void AGDSEngine::resetCurrentScreen() {
 	_currentScreenName.clear();
 }
 
-void AGDSEngine::runProcess(Process &process, bool &destroy, bool &suspend) {
-	suspend = false;
 
-	const Common::String &name = process.getName();
-	if (process.getStatus() == Process::kStatusDone || process.getStatus() == Process::kStatusError) {
-		debug("process %s finished", name.c_str());
-		destroy = true;
-		return;
-	}
+// void AGDSEngine::runProcesses() {
+// 	if (_processes.empty())
+// 		return;
 
-	destroy = false;
-	ProcessExitCode code = process.execute();
-	switch (code) {
-	case kExitCodeDestroy:
-		debug("process returned destroy exit code");
-		destroy = true;
-		break;
-	case kExitCodeLoadScreenObjectAs:
-	case kExitCodeLoadScreenObject:
-		runObject(process.getExitArg1(), process.getExitArg2());
-		break;
-	case kExitCodeRunDialog:
-		_dialogProcessName = process.getExitArg1();
-		break;
-	case kExitCodeSetNextScreen:
-		_nextScreenName = process.getExitArg1();
-		debug("process returned load screen/destroy exit code");
-		destroy = true;
-		break;
-	case kExitCodeSetNextScreenSaveInHistory:
-		if (_currentScreen) {
-			_previousScreenName = _currentScreenName;
-		}
-		_nextScreenName = process.getExitArg1();
-		destroy = true;
-		break;
-	case kExitCodeLoadPreviousScreenObject:
-		if (!_previousScreenName.empty()) {
-			_nextScreenName = _previousScreenName;
-			_previousScreenName.clear();
-		}
-		break;
-	case kExitCodeMouseAreaChange:
-		changeMouseArea(process.getExitIntArg1(), process.getExitIntArg2());
-		break;
-	case kExitCodeLoadInventoryObject:
-		_inventory.add(loadObject(process.getExitArg1()));
-		break;
-	case kExitCodeSuspend:
-		suspend = true;
-		break;
-	case kExitCodeCreatePatchLoadResources:
-		{
-			debug("exitProcessCreatePatch");
+// 	bool destroy, suspend;
+// 	do {
+// 		for (ProcessListType::iterator i = _processes.begin(); i != _processes.end(); ) {
+// 			Process & process = *i;
+// 			runProcess(process, destroy, suspend);
+// 			if (destroy) {
+// 				debug("destroying process %s...", process.getName().c_str());
+// 				i = _processes.erase(i);
+// 				break;
+// 			} else if (suspend) {
+// 				break;
+// 			} else {
+// 				++i;
+// 			}
+// 		}
+// 	} while (!_processes.empty() && !suspend);
 
-			SystemVariable *doneVar = getSystemVariable("done_resources");
-			Common::String done = doneVar->getString();
-			runObject(done);
+// 	while (!_nextScreenName.empty()) {
+// 		Common::String nextScreenName = _nextScreenName;
+// 		_nextScreenName.clear();
+// 		loadScreen(nextScreenName);
+// 	}
+// }
 
-			_patches.clear();
-			_inventory.clear();
-			_globals.clear();
+void AGDSEngine::newGame() {
+	SystemVariable *doneVar = getSystemVariable("done_resources");
+	Common::String done = doneVar->getString();
+	runObject(done);
 
-			SystemVariable *initVar = getSystemVariable("init_resources");
-			Common::String init = initVar->getString();
-			runObject(init);
-		}
-		break;
-	case kExitCodeLoadSaveGame:
-		loadGameState(process.getExitIntArg1());
-		break;
-	default:
-		error("unknown process exit code %d", code);
-	}
+	_patches.clear();
+	_inventory.clear();
+	_globals.clear();
+
+	SystemVariable *initVar = getSystemVariable("init_resources");
+	Common::String init = initVar->getString();
+	runObject(init);
 }
-
-void AGDSEngine::runProcesses() {
-	if (_processes.empty())
-		return;
-
-	bool destroy, suspend;
-	do {
-		for (ProcessListType::iterator i = _processes.begin(); i != _processes.end(); ) {
-			Process & process = *i;
-			runProcess(process, destroy, suspend);
-			if (destroy) {
-				debug("destroying process %s...", process.getName().c_str());
-				i = _processes.erase(i);
-				break;
-			} else if (suspend) {
-				break;
-			} else {
-				++i;
-			}
-		}
-	} while (!_processes.empty() && !suspend);
-
-	while (!_nextScreenName.empty()) {
-		Common::String nextScreenName = _nextScreenName;
-		_nextScreenName.clear();
-		loadScreen(nextScreenName);
-	}
-}
-
 
 void AGDSEngine::tick() {
 	if (tickDialog())
 		return;
 	tickInventory();
-	runProcesses();
+	//runProcesses();
 }
 
 Animation *AGDSEngine::loadMouseCursor(const Common::String &name) {
