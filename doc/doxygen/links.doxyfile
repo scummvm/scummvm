@@ -1,0 +1,4 @@
+ALIASES += \
+linkLua="<a href=\"https://www.lua.org\" target=\"_blank\">Lua.org</a>" \
+linkDoxygen="<a href=\"https://www.doxygen.nl/index.html\" target=\"_blank\">Doxygen</a>" \
+linkCoroutine="<a href=\"https://www.chiark.greenend.org.uk/~sgtatham/coroutines.html\" target=\"_blank\">Coroutines in C</a>"
