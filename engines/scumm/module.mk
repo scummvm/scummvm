@@ -101,6 +101,7 @@ MODULE_OBJS += \
 	insane/insane_iact.o \
 	smush/channel.o \
 	smush/codec1.o \
+	smush/codec20.o \
 	smush/codec37.o \
 	smush/codec47.o \
 	smush/imuse_channel.o \
