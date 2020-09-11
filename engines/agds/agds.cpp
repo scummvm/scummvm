@@ -153,15 +153,15 @@ ObjectPtr AGDSEngine::loadObject(const Common::String &name, const Common::Strin
 }
 
 void AGDSEngine::runObject(ObjectPtr object) {
-	if (_currentScreen)
-		_currentScreen->add(object);
-	else
-		warning("object %s has been loaded, but was not added to any screen", object->getName().c_str());
 	runProcess(object);
 }
 
 void AGDSEngine::runProcess(ObjectPtr object, uint ip) {
 	debug("starting process %s:%04x", object->getName().c_str(), ip);
+	if (_currentScreen)
+		_currentScreen->add(object);
+	else
+		warning("object %s has been loaded, but was not added to any screen", object->getName().c_str());
 	object->inScene(true);
 	_processes.push_front(Process(this, object, ip));
 }
