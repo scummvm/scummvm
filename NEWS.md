@@ -98,6 +98,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added a new GUI option to switch to an alternative NES palette based on the NES Classic.
    - Improved colors in Apple //gs Maniac Mansion.
    - Fixed crash when entering garage in Apple //gs Maniac Mansion.
+   - Added support from Classic Full Throttle from Remastered release.
 
  Supernova:
    - Improved English translation.
