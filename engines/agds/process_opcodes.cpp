@@ -1067,8 +1067,13 @@ void Process::onLook(unsigned size) {
 	_ip += size;
 }
 
-void Process::onScreenBD(unsigned size) {
-	debug("onScreen(+BD) [handler], %u instructions", size);
+void Process::onObjectB9(unsigned size) {
+	debug("onObject(+B9) [handler], %u instructions", size);
+	_ip += size;
+}
+
+void Process::onObjectBD(unsigned size) {
+	debug("onObject(+BD) [handler], %u instructions", size);
 	_ip += size;
 }
 
@@ -1147,6 +1152,12 @@ void Process::leaveCharacter() {
 	RegionPtr region = _engine->loadRegion(arg2);
 	debug("region: %s", region->toString().c_str());
 }
+void Process::leaveCharacterEx() {
+	int arg3 = pop();
+	Common::String arg2 = popString();
+	Common::String arg1 = popString();
+	debug("leaveCharacterEx %s %s %d", arg1.c_str(), arg2.c_str(), arg3);
+}
 
 void Process::setCharacter() {
 	Common::String object = popString();
@@ -1188,6 +1199,17 @@ void Process::fogOnCharacter() {
 	debug("fogOnCharacter %s %d %d", name.c_str(), arg1, arg2);
 	debug("fixme: some script commands call enableUser again");
 	enableUser();
+}
+
+void Process::setRain() {
+	Common::String name = popString();
+	debug("setRain stub: %s", name.c_str());
+}
+
+void Process::setRainDensity() {
+	int density = pop();
+	debug("setRainDensity stub: %d", density);
+
 }
 
 void Process::loadRegionFromObject() {
@@ -1381,7 +1403,8 @@ ProcessExitCode Process::resume() {
 			OP_U(kObjectRegisterLookHandler, onLook);
 			OP_U(kObjectRegisterUseHandler, onUse);
 			OP_U(kObjectRegisterHandlerC1, onObjectC1);
-			OP_U(kScreenRegisterHandlerBD, onScreenBD);
+			OP_U(kObjectRegisterHandlerB9, onObjectB9);
+			OP_U(kObjectRegisterHandlerBD, onObjectBD);
 			OP(kLoadMouseCursorFromObject, loadMouseCursorFromObject);
 			OP(kLoadRegionFromObject, loadRegionFromObject);
 			OP(kLoadPictureFromObject, loadPictureFromObject);
@@ -1486,6 +1509,7 @@ ProcessExitCode Process::resume() {
 			OP(kStub216, stub216);
 			OP(kStub217, stub217);
 			OP(kStopCharacter, stopCharacter);
+			OP(kLeaveCharacterEx, leaveCharacterEx);
 			OP(kPlayAnimationWithPhaseVar, playAnimationWithPhaseVar);
 			OP(kStub223, stub223);
 			OP(kStub225, stub225);
@@ -1495,6 +1519,8 @@ ProcessExitCode Process::resume() {
 			OP_U(kStub202ScreenHandler, stub202);
 			OP(kPlayFilm, playFilm);
 			OP(kAddMouseArea, addMouseArea);
+			OP(kSetRain, setRain);
+			OP(kSetRainDensity, setRainDensity);
 			OP(kFogOnCharacter, fogOnCharacter);
 			OP(kSetTileIndex, setTileIndex);
 			OP(kModifyMouseArea, modifyMouseArea);

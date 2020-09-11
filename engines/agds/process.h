@@ -167,7 +167,10 @@ private:
 	void moveCharacter(bool usermove);
 	void showCharacter();
 	void fogOnCharacter();
+	void setRain();
+	void setRainDensity();
 	void leaveCharacter();
+	void leaveCharacterEx();
 	void setCharacter();
 	void pointCharacter();
 	void animateCharacter();
@@ -220,7 +223,8 @@ private:
 	void onUse(unsigned size);
 	void onLook(unsigned size);
 	void onObjectC1(unsigned size);
-	void onScreenBD(unsigned size);
+	void onObjectB9(unsigned size);
+	void onObjectBD(unsigned size);
 	void onObjectUse(unsigned size);
 
 	void stub82();
