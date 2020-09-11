@@ -89,7 +89,7 @@ private:
 	void addSystemVar(const Common::String &name, SystemVariable *var);
 	bool initGraphics(int w, int h);
 	bool load();
-	//void runProcesses();
+	void runProcesses();
 	void tick();
 
 public:
