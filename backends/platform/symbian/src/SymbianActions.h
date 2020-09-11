@@ -62,7 +62,9 @@ class SymbianActions : public Actions {
 public:
 	// Actions
 	bool perform(ActionType action, bool pushed = true);
-	Common::String actionName(ActionType action);
+
+	Common::String actionName(ActionType action) override;
+
 	int size();
 	static void init();
 	void initInstanceMain(OSystem *mainSystem);
