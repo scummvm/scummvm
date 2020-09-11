@@ -181,7 +181,6 @@ void AGDSEngine::loadScreen(const Common::String &name) {
 		Process &process = *i;
 		if (process.parentScreenName() != _currentScreenName) {
 			debug("process %s from different screen, destroy", process.getName().c_str());
-			process.activate(false);
 			i = _processes.erase(i);
 		} else
 			++i;
@@ -239,13 +238,11 @@ void AGDSEngine::runProcess(Process &process, bool &destroy, bool &suspend) {
 	const Common::String &name = process.getName();
 	if (process.getStatus() == Process::kStatusDone || process.getStatus() == Process::kStatusError) {
 		debug("process %s finished", name.c_str());
-		process.activate(false);
 		destroy = true;
 		return;
 	}
 
 	destroy = false;
-	process.activate(true);
 	ProcessExitCode code = process.execute();
 	switch (code) {
 	case kExitCodeDestroy:
@@ -319,20 +316,18 @@ void AGDSEngine::runProcesses() {
 	do {
 		for (ProcessListType::iterator i = _processes.begin(); i != _processes.end(); ) {
 			Process & process = *i;
-			process.activate(true);
 			runProcess(process, destroy, suspend);
 			if (destroy) {
 				debug("destroying process %s...", process.getName().c_str());
-				process.activate(false);
 				i = _processes.erase(i);
 				break;
-			} else if (!suspend) {
+			} else if (suspend) {
 				break;
 			} else {
 				++i;
 			}
 		}
-	} while (!_processes.empty() && destroy);
+	} while (!_processes.empty() && !suspend);
 
 	while (!_nextScreenName.empty()) {
 		Common::String nextScreenName = _nextScreenName;
