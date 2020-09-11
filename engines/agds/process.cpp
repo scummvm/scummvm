@@ -100,19 +100,4 @@ Common::String Process::popText() {
 	return _engine->loadText(popString());
 }
 
-void Process::activate(bool active) {
-	if (active) {
-		switch (_status) {
-		case kStatusActive:
-			break;
-		case kStatusPassive:
-			_status = kStatusActive;
-			break;
-		default:
-			error("process in invalid state %d", _status);
-			_status = kStatusError;
-		}
-	}
-}
-
 } // namespace AGDS

@@ -333,8 +333,6 @@ public:
 		return _status;
 	}
 
-	void activate(bool active);
-
 	ProcessExitCode execute();
 
 	ProcessExitCode getExitCode() const {

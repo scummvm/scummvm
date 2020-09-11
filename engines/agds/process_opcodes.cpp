@@ -1321,9 +1321,11 @@ ProcessExitCode Process::execute() {
 	if (_timer > 0) {
 		debug("waiting for timer (%d)...", _timer);
 		--_timer;
+		_status = kStatusPassive;
 		_exitCode = kExitCodeSuspend;
 		return _exitCode;
 	}
+	_status = kStatusActive;
 	_exitCode = kExitCodeDestroy;
 
 	const Object::CodeType &code = _object->getCode();
