@@ -175,6 +175,7 @@ void AGDSEngine::runObject(const Common::String &name, const Common::String &pro
 
 void AGDSEngine::loadScreen(const Common::String &name) {
 	debug("loadScreen %s", name.c_str());
+	_mouseMap.hideAll(this);
 	resetCurrentScreen();
 	for(ProcessListType::iterator i = _processes.begin(); i != _processes.end(); ) {
 		Process &process = *i;
@@ -186,7 +187,6 @@ void AGDSEngine::loadScreen(const Common::String &name) {
 			++i;
 	}
 
-	_mouseMap.hideAll(this);
 	_soundManager.stopAll();
 	_currentScreenName = name;
 	_currentScreen = new Screen(loadObject(name));
