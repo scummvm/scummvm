@@ -34,10 +34,12 @@
 #if (__GNUC__ && __cplusplus)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wreturn-local-addr"
+#pragma GCC diagnostic ignored "-Wnarrowing"
 #endif
 #include <e32def.h>
 #include <e32std.h>
 #if (__GNUC__ && __cplusplus)
+#pragma GCC diagnostic pop
 #pragma GCC diagnostic pop
 #endif
 
@@ -165,6 +167,23 @@ namespace std
 	#define snprintf(buf,len,args...) symbian_snprintf(buf,len,args)
 	#define vsnprintf(buf,len,format,valist) symbian_vsnprintf(buf,len,format,valist)
 #endif
+
+extern "C" float roundf (float x); // ultima engine
+extern "C" double nearbyint(double x); // ultima engine
+extern "C" double round(double x); // ultima engine
+
+
+#ifndef signbit
+#define signbit(x)     \
+    ((sizeof (x) == sizeof (float)) ? __signbitf(x) \
+    : (sizeof (x) == sizeof (double)) ? __signbit(x) \
+    : __signbitl(x))
+#endif 
+
+extern "C" int __signbit(double);
+extern "C" int __signbitf(float);
+extern "C" int __signbitl(long double);
+extern "C" float truncf(float);
 
 #ifndef __WINS__
 #define USE_ARM_GFX_ASM

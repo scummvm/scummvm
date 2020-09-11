@@ -1,0 +1,140 @@
+/* ScummVM - Graphic Adventure Engine
+ * Copyright (C) 2020 Stryzhniou Fiodar
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+START BITMAP    ScummVM.mbm
+TARGETPATH              \Resource\Apps
+SOURCEPATH              ..\res
+// Source Color-depth Source-bitmap-list
+// c denotes whether the bitmap is a color bitmap and the digits represent the
+// color-depth of the bitmap and the bitmap mask respectively
+SOURCE  c24             ScummSmall.bmp
+SOURCE  8               ScummSmallMask.bmp
+SOURCE  c24             ScummLarge.bmp
+SOURCE  8               ScummLargeMask.bmp
+SOURCE  c24             ScummxLarge.bmp
+SOURCE  8               ScummxLargeMask.bmp
+END
+
+CAPABILITY LocalServices ReadUserData
+
+MACRO			S60
+MACRO			S60V3
+
+ALWAYS_BUILD_AS_ARM
+
+MACRO		SDL_BACKEND
+MACRO		NONSTANDARD_PORT
+MACRO		ENABLE_VKEYBD
+MACRO		DISABLE_FANCY_THEMES
+MACRO		USE_TRANSLATION
+MACRO		USE_BINK
+
+MACRO		USE_A52
+MACRO		USE_FAAD		// LIB:libFAAD2.lib
+MACRO		USE_FLAC		// LIB:libflacdec.lib
+MACRO		USE_FREETYPE2	// LIB:freetype.lib
+MACRO		USE_JPEG		// LIB:libjpeg.lib
+MACRO		USE_MAD			// LIB:libmad.lib
+MACRO		USE_MPEG2		// LIB:libmpeg2.lib
+MACRO		USE_PNG			// LIB:libpng.lib
+MACRO		USE_THEORADEC	// LIB:theora.lib
+MACRO		USE_TREMOR		// LIB:libtremor.lib
+MACRO		USE_ZLIB		// LIB:zlib.lib
+
+// *** Static Libraries
+STATICLIBRARY	scummvm_base.lib
+STATICLIBRARY	liba52.lib
+STATICLIBRARY	libFAAD2.lib
+STATICLIBRARY	libflacdec.lib
+STATICLIBRARY	freetype.lib
+STATICLIBRARY	libjpeg.lib
+STATICLIBRARY	libmad.lib
+STATICLIBRARY	libmpeg2.lib
+STATICLIBRARY	libpng.lib
+STATICLIBRARY	theora.lib
+STATICLIBRARY	libtremor.lib
+STATICLIBRARY	zlib.lib
+STATICLIBRARY	esdl.lib
+
+// *** Include paths
+
+USERINCLUDE	    ..\..\..\.. ..\..\..\..\gui ..\..\..\..\engines
+USERINCLUDE		..\..\..\..\backends\fs ..\src ..\..\..\..\backends\platform\sdl ..\..\..\..\audio
+
+SYSTEMINCLUDE	\epoc32\include\freetype
+SYSTEMINCLUDE	\epoc32\include\mpeg2dec
+SYSTEMINCLUDE   \epoc32\include\jpeg
+SYSTEMINCLUDE   \epoc32\include\png
+SYSTEMINCLUDE	\epoc32\include\ESDL
+SYSTEMINCLUDE	\epoc32\include\ZLIB // before \epoc32\include because symbian already has older version
+SYSTEMINCLUDE   \epoc32\include\libc
+SYSTEMINCLUDE 	\epoc32\include\theora
+SYSTEMINCLUDE   \epoc32\include\tremor
+SYSTEMINCLUDE   \epoc32\include
+SYSTEMINCLUDE   ..\src // for portdefs.h
+
+// *** SOURCE files
+
+SOURCEPATH ..\..\..\..\base
+
+//START_AUTO_OBJECTS_BASE_// Updated @ Fri Nov  1 17:47:21 2013
+SOURCE main.cpp
+SOURCE commandLine.cpp
+SOURCE plugins.cpp
+SOURCE version.cpp
+//STOP_AUTO_OBJECTS_BASE_//
+
+SOURCEPATH ..\..\..\..
+
+// backend EPOC/SDL/ESDL specific includes
+SOURCE backends\platform\sdl\sdl.cpp
+SOURCE backends\audiocd\sdl\sdl-audiocd.cpp
+SOURCE backends\audiocd\default\default-audiocd.cpp
+SOURCE backends\fs\symbian\symbian-fs.cpp
+SOURCE backends\fs\symbian\symbian-fs-factory.cpp
+SOURCE backends\platform\symbian\src\SymbianOS.cpp
+SOURCE backends\platform\symbian\src\SymbianActions.cpp
+SOURCE backends\platform\symbian\src\ScummApp.cpp
+SOURCE backends\platform\symbian\src\SymbianMain.cpp
+SOURCE gui\Key.cpp
+SOURCE gui\KeysDialog.cpp
+SOURCE gui\Actions.cpp
+SOURCE gui\Dialog.cpp
+
+// Common error
+source common\error.cpp
+source common\quicktime.cpp
+
+// Special for graphics
+source backends\graphics\surfacesdl\surfacesdl-graphics.cpp
+source engines\obsolete.cpp
+
+// *** Dynamic Libraries
+LIBRARY cone.lib  eikcore.lib euser.lib apparc.lib
+LIBRARY fbscli.lib estlib.lib apgrfx.lib gdi.lib
+LIBRARY hal.lib bitgdi.lib mediaclientaudiostream.lib
+LIBRARY efsrv.lib ws32.lib avkon.lib bafl.lib esock.lib
+LIBRARY  remconcoreapi.lib remconinterfacebase.lib libcurl.dll apmime.lib
+
+SOURCEPATH ..\..\sdl
+SOURCE sdl-window.cpp
