@@ -164,6 +164,7 @@ void AGDSEngine::runProcess(ObjectPtr object, uint ip) {
 		warning("object %s has been loaded, but was not added to any screen", object->getName().c_str());
 	object->inScene(true);
 	_processes.push_front(Process(this, object, ip));
+	_processes.front().run();
 }
 
 void AGDSEngine::runObject(const Common::String &name, const Common::String &prototype) {
@@ -177,13 +178,12 @@ void AGDSEngine::loadScreen(const Common::String &name) {
 	debug("loadScreen %s", name.c_str());
 	_mouseMap.hideAll(this);
 	resetCurrentScreen();
-	for(ProcessListType::iterator i = _processes.begin(); i != _processes.end(); ) {
+	for(ProcessListType::iterator i = _processes.begin(); i != _processes.end(); ++i) {
 		Process &process = *i;
 		if (process.parentScreenName() != _currentScreenName) {
 			debug("process %s from different screen, destroy", process.getName().c_str());
-			i = _processes.erase(i);
-		} else
-			++i;
+			process.done();
+		}
 	}
 
 	_soundManager.stopAll();
@@ -233,33 +233,25 @@ void AGDSEngine::resetCurrentScreen() {
 }
 
 
-// void AGDSEngine::runProcesses() {
-// 	if (_processes.empty())
-// 		return;
+void AGDSEngine::runProcesses() {
+	for (ProcessListType::iterator i = _processes.begin(); i != _processes.end(); ) {
+		Process & process = *i;
+		if (process.active() || process.passive()) {
+			process.run();
+			++i;
+		} else {
+			debug("deleting process %s", process.getName().c_str());
+			i = _processes.erase(i);
+			//FIXME: when the last process exits, remove object from scene
+		}
+	}
 
-// 	bool destroy, suspend;
-// 	do {
-// 		for (ProcessListType::iterator i = _processes.begin(); i != _processes.end(); ) {
-// 			Process & process = *i;
-// 			runProcess(process, destroy, suspend);
-// 			if (destroy) {
-// 				debug("destroying process %s...", process.getName().c_str());
-// 				i = _processes.erase(i);
-// 				break;
-// 			} else if (suspend) {
-// 				break;
-// 			} else {
-// 				++i;
-// 			}
-// 		}
-// 	} while (!_processes.empty() && !suspend);
-
-// 	while (!_nextScreenName.empty()) {
-// 		Common::String nextScreenName = _nextScreenName;
-// 		_nextScreenName.clear();
-// 		loadScreen(nextScreenName);
-// 	}
-// }
+	while (!_nextScreenName.empty()) {
+		Common::String nextScreenName = _nextScreenName;
+		_nextScreenName.clear();
+		loadScreen(nextScreenName);
+	}
+ }
 
 void AGDSEngine::newGame() {
 	SystemVariable *doneVar = getSystemVariable("done_resources");
@@ -279,7 +271,7 @@ void AGDSEngine::tick() {
 	if (tickDialog())
 		return;
 	tickInventory();
-	//runProcesses();
+	runProcesses();
 }
 
 Animation *AGDSEngine::loadMouseCursor(const Common::String &name) {

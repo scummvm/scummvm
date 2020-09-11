@@ -836,7 +836,7 @@ void Process::setObjectText() {
 
 void Process::exitProcess() {
 	debug("exitProcess");
-	_status = kStatusDone;
+	done();
 	_exitCode = kExitCodeDestroy;
 }
 
@@ -1038,7 +1038,8 @@ void Process::call(uint16 addr) {
 	debug("call %04x", addr);
 	//original engine just create new process, save exit code in screen object
 	//and on stack, then just ignore return code, fixme?
-	_engine->runProcess(_object, _ip + addr);
+	Process process(_engine, _object, _ip + addr);
+	process.run();
 	suspend();
 }
 
@@ -1325,11 +1326,10 @@ ProcessExitCode Process::resume() {
 		_exitCode = kExitCodeSuspend;
 		return _exitCode;
 	}
-	_status = kStatusActive;
 	_exitCode = kExitCodeDestroy;
 
 	const Object::CodeType &code = _object->getCode();
-	while (_status == kStatusActive && _ip < code.size()) {
+	while (active() && _ip < code.size()) {
 		_lastIp = _ip;
 		uint8 op = next();
 		switch (op) {
@@ -1513,12 +1513,12 @@ ProcessExitCode Process::resume() {
 			OP(kSetDialogForNextFilm, setDialogForNextFilm);
 		default:
 			error("%s: %08x: unknown opcode 0x%02x (%u)", _object->getName().c_str(), _ip - 1, (unsigned)op, (unsigned)op);
-			_status = kStatusError;
+			fail();
 			break;
 		}
 	}
 
-	if (_status == kStatusActive) {
+	if (active()) {
 		debug("code ended, exiting...");
 	}
 

@@ -294,7 +294,7 @@ private:
 
 	void suspend(ProcessExitCode exitCode, const Common::String &arg1, const Common::String &arg2 = Common::String()) {
 		debug("suspend %d", exitCode);
-		if (_status == kStatusActive)
+		if (active())
 			_status = kStatusPassive;
 		_exitCode = exitCode;
 		_exitIntArg1 = 0;
@@ -305,7 +305,7 @@ private:
 
 	void suspend(ProcessExitCode exitCode = kExitCodeSuspend, int arg1 = 0, int arg2 = 0) {
 		debug("suspend %d", exitCode);
-		if (_status == kStatusActive)
+		if (active())
 			_status = kStatusPassive;
 		_exitCode = exitCode;
 		_exitIntArg1 = arg1;
@@ -313,6 +313,8 @@ private:
 		_exitArg1.clear();
 		_exitArg2.clear();
 	}
+
+	ProcessExitCode resume();
 
 public:
 	Process(AGDSEngine *engine, ObjectPtr object, unsigned ip = 0);
@@ -329,13 +331,25 @@ public:
 		return _parentScreen;
 	}
 
-	Status getStatus() const {
+	Status status() const {
 		return _status;
 	}
 
-	ProcessExitCode resume();
+	bool active() const {
+		return _status == kStatusActive;
+	}
+	bool passive() const {
+		return _status == kStatusPassive;
+	}
+	void activate();
+	void done() {
+		_status = kStatusDone;
+	}
+	void fail() {
+		_status = kStatusError;
+	}
 
-	void run(bool &destroy, bool &suspend);
+	void run();
 
 	ProcessExitCode getExitCode() const {
 		return _exitCode;
