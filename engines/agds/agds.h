@@ -89,8 +89,7 @@ private:
 	void addSystemVar(const Common::String &name, SystemVariable *var);
 	bool initGraphics(int w, int h);
 	bool load();
-	void runProcess(Process &process, bool &destroy, bool &suspend);
-	void runProcesses();
+	//void runProcesses();
 	void tick();
 
 public:
@@ -174,9 +173,27 @@ public:
 		return _userEnabled;
 	}
 
+	void newGame();
 	void initSystemVariables();
 	SystemVariable *getSystemVariable(const Common::String &name);
 
+	void setNextScreenName(const Common::String &nextScreenName, bool savePrev) {
+		if (_currentScreen && savePrev) {
+			_previousScreenName = _currentScreenName;
+		}
+		_nextScreenName = nextScreenName;
+	}
+
+	void returnToPreviousScreen() {
+		if (!_previousScreenName.empty()) {
+			_nextScreenName = _previousScreenName;
+			_previousScreenName.clear();
+		}
+	}
+
+	void runDialog(const Common::String &dialogProcess) {
+		_dialogProcessName = dialogProcess;
+	}
 	void runDialog(const Common::String &dialogScript, const Common::String & defs);
 	bool tickDialog();
 	void tickInventory();

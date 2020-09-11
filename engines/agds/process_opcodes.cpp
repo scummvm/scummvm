@@ -1317,7 +1317,7 @@ void Process::stub244() {
 		METHOD(arg1 | (arg2 << 16)); \
 	} break
 
-ProcessExitCode Process::execute() {
+ProcessExitCode Process::resume() {
 	if (_timer > 0) {
 		debug("waiting for timer (%d)...", _timer);
 		--_timer;

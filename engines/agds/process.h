@@ -333,7 +333,9 @@ public:
 		return _status;
 	}
 
-	ProcessExitCode execute();
+	ProcessExitCode resume();
+
+	void run(bool &destroy, bool &suspend);
 
 	ProcessExitCode getExitCode() const {
 		return _exitCode;

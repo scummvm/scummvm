@@ -100,4 +100,67 @@ Common::String Process::popText() {
 	return _engine->loadText(popString());
 }
 
+void Process::run(bool &destroy, bool &suspend) {
+	suspend = false;
+
+	switch(getStatus()) {
+	case Process::kStatusDone:
+	case Process::kStatusError:
+		debug("process %s finished", getName().c_str());
+		destroy = true;
+		return;
+	default:
+		break;
+	}
+
+	destroy = false;
+	ProcessExitCode code = resume();
+	switch (code) {
+	case kExitCodeDestroy:
+		debug("process %s returned destroy exit code", getName().c_str());
+		destroy = true;
+		break;
+	case kExitCodeLoadScreenObjectAs:
+	case kExitCodeLoadScreenObject:
+		_engine->runObject(getExitArg1(), getExitArg2());
+		break;
+	case kExitCodeRunDialog:
+		_engine->runDialog(getExitArg1());
+		break;
+	case kExitCodeSetNextScreen:
+		debug("process %s launches screen: %s", getName().c_str(), getExitArg1().c_str());
+		_engine->setNextScreenName(getExitArg1(), false);
+		destroy = true;
+		break;
+	case kExitCodeSetNextScreenSaveInHistory:
+		_engine->setNextScreenName(getExitArg1(), true);
+		destroy = true;
+		break;
+	case kExitCodeLoadPreviousScreenObject:
+		_engine->returnToPreviousScreen();
+		break;
+	case kExitCodeMouseAreaChange:
+		_engine->changeMouseArea(getExitIntArg1(), getExitIntArg2());
+		break;
+	case kExitCodeLoadInventoryObject:
+		_engine->inventory().add(_engine->loadObject(getExitArg1()));
+		break;
+	case kExitCodeSuspend:
+		suspend = true;
+		break;
+	case kExitCodeCreatePatchLoadResources:
+		{
+			debug("exitProcessCreatePatch");
+			_engine->newGame();
+		}
+		break;
+	case kExitCodeLoadSaveGame:
+		_engine->loadGameState(getExitIntArg1());
+		break;
+	default:
+		error("unknown process exit code %d", code);
+	}
+}
+
+
 } // namespace AGDS
