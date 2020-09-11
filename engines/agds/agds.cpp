@@ -372,7 +372,7 @@ void AGDSEngine::changeMouseArea(int id, int enabled) {
 			break;
 		case 0:
 			debug("disabling mouse area %d", id);
-			if (_currentRegion && _currentRegion->id) {
+			if (_currentRegion) {
 				_currentRegion->hide(this);
 				_currentRegion = NULL;
 			}
@@ -380,7 +380,7 @@ void AGDSEngine::changeMouseArea(int id, int enabled) {
 			break;
 		case -1:
 			debug("removing mouse area %d", id);
-			if (_currentRegion && _currentRegion->id) {
+			if (_currentRegion) {
 				_currentRegion->hide(this);
 				_currentRegion = NULL;
 			}
