@@ -41,6 +41,7 @@
 #include "base/main.h"
 
 #include "engines/engine.h"
+#include "engines/metaengine.h"
 
 #include "gui/gui-manager.h"
 
@@ -262,14 +263,21 @@ void OSystem_iOS7::saveState() {
 
 	// If there is an engine running and it accepts autosave, do an autosave and add the current
 	// running target to the config file.
-	if (g_engine && g_engine->hasFeature(Engine::kSupportsSavingDuringRuntime) && g_engine->canSaveGameStateCurrently()) {
-		if (g_engine->saveGameState(g_engine->getAutosaveSlot(), _("Autosave"), true).getCode() == Common::kNoError) {
-			ConfMan.set("restore_target", ConfMan.getActiveDomainName(), Common::ConfigManager::kApplicationDomain);
-			ConfMan.setInt("restore_slot", g_engine->getAutosaveSlot(), Common::ConfigManager::kApplicationDomain);
+	if (g_engine && g_engine->hasFeature(Engine::kSupportsSavingDuringRuntime) && g_engine->canSaveAutosaveCurrently()) {
+		Common::String targetName(ConfMan.getActiveDomainName());
+		int saveSlot = g_engine->getAutosaveSlot();
+		// Make sure we do not overwrite a user save
+		SaveStateDescriptor desc = g_engine->getMetaEngine().querySaveMetaInfos(targetName.c_str(), saveSlot);
+		if (desc.getSaveSlot() != -1 && !desc.isAutosave())
+			return;
+
+		// Do the auto-save, and if successful store this it in the config
+		if (g_engine->saveGameState(saveSlot, _("Autosave"), true).getCode() == Common::kNoError) {
+			ConfMan.set("restore_target", targetName, Common::ConfigManager::kApplicationDomain);
+			ConfMan.setInt("restore_slot", saveSlot, Common::ConfigManager::kApplicationDomain);
+			ConfMan.flushToDisk();
 		}
 	}
-
-	ConfMan.flushToDisk();
 }
 
 void OSystem_iOS7::restoreState() {
