@@ -1635,7 +1635,7 @@ arm-vfp-riscos)
 	_host_os=riscos
 	_host_cpu=arm
 	_host_alias=arm-unknown-riscos
-	datarootdir='/\<ScummVM\$$Dir\>'
+	datarootdir='/\<ResidualVM\$$Dir\>'
 	datadir='${datarootdir}/data'
 	docdir='${datarootdir}/docs'
 	;;
