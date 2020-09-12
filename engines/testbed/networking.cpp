@@ -38,7 +38,6 @@ TestExitStatus Networkingtests::testConnectionLimit() {
 		bool isLimited = g_system->isConnectionLimited();
 
 		if (ConfParams.isSessionInteractive()) {
-			// Directly verify date
 			Common::String status = "We expect the internet connection to be ";
 			status += (isLimited ? "limited." : "unlimited.");
 			if (Testsuite::handleInteractiveInput(status, "Correct!", "Wrong", kOptionRight)) {
