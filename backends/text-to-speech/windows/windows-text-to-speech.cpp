@@ -183,15 +183,11 @@ bool WindowsTextToSpeechManager::say(const Common::U32String &str, Action action
 	if (isSpeaking() && action == DROP)
 		return true;
 
-	Common::String strToSpeak = str.encode();
-	Common::String charset = "UTF-8";
-
 	// We have to set the pitch by prepending xml code at the start of the said string;
-	Common::String pitch = Common::String::format("<pitch absmiddle=\"%d\">", _ttsState->_pitch / 10);
-	strToSpeak.replace((uint32)0, 0, pitch);
-	WCHAR *strW = (WCHAR *) Common::Encoding::convert("UTF-16", charset, strToSpeak.c_str(), strToSpeak.size());
+	Common::U32String pitch = Common::U32String::format(Common::U32String("<pitch absmiddle=\"%d\">%S"), _ttsState->_pitch / 10, str.c_str());
+	WCHAR *strW = (WCHAR *) Common::Encoding::convert("UTF-16", pitch);
 	if (strW == nullptr) {
-		warning("Cannot convert from %s encoding for text to speech", charset.c_str());
+		warning("Cannot convert from UTF-32 encoding for text to speech");
 		return true;
 	}
 
@@ -384,7 +380,7 @@ void WindowsTextToSpeechManager::createVoice(void *cpVoiceToken) {
 		warning("Could not get the language attribute for voice: %s", desc.c_str());
 		return;
 	}
-	Common::String language = lcidToLocale(data);
+	Common::String language = lcidToLocale(wcstol(data, NULL, 16));
 	CoTaskMemFree(data);
 
 	// only get the voices for the current language
@@ -416,20 +412,7 @@ void WindowsTextToSpeechManager::createVoice(void *cpVoiceToken) {
 	_ttsState->_availableVoices.push_back(Common::TTSVoice(gender, age, (void *) voiceToken, desc));
 }
 
-int strToInt(WCHAR *str) {
-	int result = 0;
-	for (unsigned i = 0; i < wcslen(str); i++) {
-		WCHAR c = towupper(str[i]);
-		if (c < L'0' || (c > L'9' && c < L'A') || c > L'F')
-			break;
-		int num = (c <= L'9') ? c - L'0' : c - 55;
-		result = result * 16 + num;
-	}
-	return result;
-}
-
-Common::String WindowsTextToSpeechManager::lcidToLocale(WCHAR *lcid) {
-	LCID locale = strToInt(lcid);
+Common::String WindowsTextToSpeechManager::lcidToLocale(LCID locale) {
 	int nchars = GetLocaleInfoA(locale, LOCALE_SISO639LANGNAME, NULL, 0);
 	char *languageCode = new char[nchars];
 	GetLocaleInfoA(locale, LOCALE_SISO639LANGNAME, languageCode, nchars);

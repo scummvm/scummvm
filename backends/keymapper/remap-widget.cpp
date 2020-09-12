@@ -288,10 +288,10 @@ void RemapWidget::refreshKeymap() {
 
 		Array<HardwareInput> mappedInputs = row.keymap->getActionMapping(row.action);
 
-		String keysLabel;
+		U32String keysLabel;
 		for (uint j = 0; j < mappedInputs.size(); j++) {
 			if (!keysLabel.empty()) {
-				keysLabel += ", ";
+				keysLabel += Common::U32String(", ");
 			}
 
 			keysLabel += mappedInputs[j].description;

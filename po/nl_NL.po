@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ResidualVM 0.3.0git\n"
 "Report-Msgid-Bugs-To: https://github.com/residualvm/residualvm/issues\n"
-"POT-Creation-Date: 2020-09-03 02:06+0200\n"
+"POT-Creation-Date: 2020-09-12 19:37+0200\n"
 "PO-Revision-Date: 2015-09-02 14:36+0200\n"
 "Last-Translator: Dries Harnie <dries@harnie.be>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
@@ -16,6 +16,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: gui/downloaddialog.cpp:137 gui/launcher.cpp:537
+msgid "ResidualVM couldn't open the specified directory!"
+msgstr "ResidualVM kon de opgegeven map niet openen!"
 
 #: gui/launcher.cpp:140 backends/platform/sdl/macosx/appmenu_osx.mm:216
 msgid "Quit ResidualVM"
@@ -35,10 +39,6 @@ msgid ""
 msgstr ""
 "ResidualVM heeft geen engine gevonden die in staat was het geselecteerde "
 "spel te spelen!"
-
-#: gui/launcher.cpp:537
-msgid "ResidualVM couldn't open the specified directory!"
-msgstr "ResidualVM kon de opgegeven map niet openen!"
 
 #: gui/launcher.cpp:556
 msgid "ResidualVM could not find any game in the specified directory!"
@@ -67,6 +67,14 @@ msgstr ""
 #: gui/options.cpp:1336
 msgid "Anti-aliasing:"
 msgstr ""
+
+#: gui/options.cpp:2060 gui/options.cpp:2062 gui/options.cpp:2063
+msgid "Specifies path to additional data used by all games or ResidualVM"
+msgstr ""
+
+#: gui/options.cpp:2113
+msgid "Language of ResidualVM GUI"
+msgstr "Taal van de ResidualVM GUI"
 
 #: gui/options.cpp:2139
 msgid "Switch the ResidualVM GUI language to the game language"
@@ -133,6 +141,12 @@ msgid ""
 "\n"
 "Please report the following data to the ResidualVM team at %s along with the "
 "name of the game you tried to add and its version, language, etc.:"
+msgstr ""
+
+#: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:59
+msgid ""
+"The page is not available without the resources. Make sure file wwwroot.zip "
+"from ResidualVM distribution is available in 'themepath'."
 msgstr ""
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:218
@@ -7650,9 +7664,6 @@ msgstr ""
 
 #~ msgid "Enable software rendering"
 #~ msgstr "Gebruik software rendering"
-
-#~ msgid "Language of ResidualVM GUI"
-#~ msgstr "Taal van de ResidualVM GUI"
 
 #~ msgid "You have to restart ResidualVM before your changes will take effect."
 #~ msgstr ""

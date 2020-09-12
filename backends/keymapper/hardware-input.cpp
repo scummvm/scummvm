@@ -297,7 +297,7 @@ HardwareInput KeyboardHardwareInputSet::findHardwareInput(const String &id) cons
 	byte modifierFlags = 0;
 
 	// TODO: Normalize modifier order
-	String fullKeyDesc;
+	U32String fullKeyDesc;
 
 	String token;
 	while (!tokenizer.empty()) {
@@ -312,7 +312,7 @@ HardwareInput KeyboardHardwareInputSet::findHardwareInput(const String &id) cons
 
 		if (modifier && modifier->id) {
 			modifierFlags |= modifier->flag;
-			fullKeyDesc += modifier->desc;
+			fullKeyDesc += _(modifier->desc);
 		} else {
 			// We reached the end of the modifiers, the token is a keycode
 			break;
@@ -335,7 +335,7 @@ HardwareInput KeyboardHardwareInputSet::findHardwareInput(const String &id) cons
 	}
 
 	const KeyState keystate = KeyState(key->keycode, 0, modifierFlags);
-	return HardwareInput::createKeyboard(id, keystate, fullKeyDesc + key->desc);
+	return HardwareInput::createKeyboard(id, keystate, fullKeyDesc + _(key->desc));
 }
 
 HardwareInput KeyboardHardwareInputSet::findHardwareInput(const Event &event) const {
@@ -356,20 +356,20 @@ HardwareInput KeyboardHardwareInputSet::findHardwareInput(const Event &event) co
 		}
 
 		String id;
-		String fullKeyDesc;
+		U32String fullKeyDesc;
 		byte modifierFlags = 0;
 
 		for (const ModifierTableEntry *modifier = _modifiers;  modifier->id; modifier++) {
 			if (normalizedKeystate.flags & modifier->flag) {
 				id += modifier->id;
 				id += "+";
-				fullKeyDesc += modifier->desc;
+				fullKeyDesc += _(modifier->desc);
 				modifierFlags |= modifier->flag;
 			}
 		}
 
 		const KeyState keystate = KeyState(key->keycode, 0, modifierFlags);
-		return HardwareInput::createKeyboard(id + key->hwId, keystate, fullKeyDesc + key->desc);
+		return HardwareInput::createKeyboard(id + key->hwId, keystate, fullKeyDesc + _(key->desc));
 	}
 	default:
 		return HardwareInput();
@@ -431,7 +431,7 @@ HardwareInput MouseHardwareInputSet::findHardwareInput(const String &id) const {
 		return HardwareInput();
 	}
 
-	return HardwareInput::createMouse(hw->hwId, hw->code, hw->desc);
+	return HardwareInput::createMouse(hw->hwId, hw->code, _(hw->desc));
 }
 
 HardwareInput MouseHardwareInputSet::findHardwareInput(const Event &event) const {
@@ -477,7 +477,7 @@ HardwareInput MouseHardwareInputSet::findHardwareInput(const Event &event) const
 		return HardwareInput();
 	}
 
-	return HardwareInput::createMouse(hw->hwId, hw->code, hw->desc);
+	return HardwareInput::createMouse(hw->hwId, hw->code, _(hw->desc));
 }
 
 JoystickHardwareInputSet::JoystickHardwareInputSet(const HardwareInputTableEntry *buttonEntries, const AxisTableEntry *axisEntries) :
@@ -490,7 +490,7 @@ JoystickHardwareInputSet::JoystickHardwareInputSet(const HardwareInputTableEntry
 HardwareInput JoystickHardwareInputSet::findHardwareInput(const String &id) const {
 	const HardwareInputTableEntry *hw = HardwareInputTableEntry::findWithId(_buttonEntries, id);
 	if (hw && hw->hwId) {
-		return HardwareInput::createJoystickButton(hw->hwId, hw->code, hw->desc);
+		return HardwareInput::createJoystickButton(hw->hwId, hw->code, _(hw->desc));
 	}
 
 	bool hasHalfSuffix = id.lastChar() == '-' || id.lastChar() == '+';
@@ -504,10 +504,10 @@ HardwareInput JoystickHardwareInputSet::findHardwareInput(const String &id) cons
 		}
 
 		if (axis->type == kAxisTypeHalf) {
-			return HardwareInput::createJoystickHalfAxis(axis->hwId, axis->code, true, axis->desc);
+			return HardwareInput::createJoystickHalfAxis(axis->hwId, axis->code, true, _(axis->desc));
 		} else {
 			bool positiveHalf = id.lastChar() == '+';
-			Common::String desc = String::format("%s%c", axis->desc, id.lastChar());
+			Common::U32String desc = U32String::format("%S%c", _(axis->desc).c_str(), id.lastChar());
 			return HardwareInput::createJoystickHalfAxis(id, axis->code, positiveHalf, desc);
 		}
 	}
@@ -524,7 +524,7 @@ HardwareInput JoystickHardwareInputSet::findHardwareInput(const Event &event) co
 			return HardwareInput();
 		}
 
-		return HardwareInput::createJoystickButton(hw->hwId, hw->code, hw->desc);
+		return HardwareInput::createJoystickButton(hw->hwId, hw->code, _(hw->desc));
 	}
 	case EVENT_JOYAXIS_MOTION: {
 		if (ABS(event.joystick.position) < (JOYAXIS_MAX / 2)) {
@@ -537,12 +537,12 @@ HardwareInput JoystickHardwareInputSet::findHardwareInput(const Event &event) co
 		}
 
 		if (hw->type == kAxisTypeHalf) {
-			return HardwareInput::createJoystickHalfAxis(hw->hwId, hw->code, true, hw->desc);
+			return HardwareInput::createJoystickHalfAxis(hw->hwId, hw->code, true, _(hw->desc));
 		} else {
 			bool positiveHalf = event.joystick.position >= 0;
 			char halfSuffix = positiveHalf ? '+' : '-';
 			Common::String hwId = String::format("%s%c", hw->hwId, halfSuffix);
-			Common::String desc = String::format("%s%c", hw->desc, halfSuffix);
+			Common::U32String desc = U32String::format("%S%c", _(hw->desc).c_str(), halfSuffix);
 			return HardwareInput::createJoystickHalfAxis(hwId, hw->code, positiveHalf, desc);
 		}
 	}
@@ -563,7 +563,7 @@ HardwareInput CustomHardwareInputSet::findHardwareInput(const String &id) const 
 		return HardwareInput();
 	}
 
-	return HardwareInput::createCustom(hw->hwId, hw->code, hw->desc);
+	return HardwareInput::createCustom(hw->hwId, hw->code, _(hw->desc));
 }
 
 HardwareInput CustomHardwareInputSet::findHardwareInput(const Event &event) const {
@@ -574,7 +574,7 @@ HardwareInput CustomHardwareInputSet::findHardwareInput(const Event &event) cons
 			return HardwareInput();
 		}
 
-		return HardwareInput::createCustom(hw->hwId, hw->code, hw->desc);
+		return HardwareInput::createCustom(hw->hwId, hw->code, _(hw->desc));
 	}
 	default:
 		return HardwareInput();

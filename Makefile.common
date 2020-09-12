@@ -337,6 +337,9 @@ endif
 ifdef ENABLE_LURE
 DIST_FILES_ENGINEDATA+=lure.dat
 endif
+ifdef ENABLE_MACVENTURE
+DIST_FILES_ENGINEDATA+=macventure.dat
+endif
 ifdef ENABLE_MORTEVIELLE
 DIST_FILES_ENGINEDATA+=mort.dat
 endif
@@ -370,15 +373,13 @@ endif
 ifdef ENABLE_WINTERMUTE
 DIST_FILES_ENGINEDATA+=wintermute.zip
 endif
-ifdef ENABLE_MACVENTURE
-DIST_FILES_ENGINEDATA+=macventure.dat
-endif
 ifdef ENABLE_XEEN
 DIST_FILES_ENGINEDATA+=xeen.ccs
 endif
 ifdef USE_FREETYPE2
 DIST_FILES_ENGINEDATA+=fonts.dat
 endif
+#DIST_FILES_ENGINEDATA+=macgui.dat # ResidualVM specific
 ifdef ENABLE_GRIM
 DIST_FILES_ENGINEDATA+=residualvm-grim-patch.lab
 endif

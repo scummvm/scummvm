@@ -1631,6 +1631,14 @@ androidsdl-x86_64)
 	_host_cpu=x86_64
 	_host_alias=x86_64-linux-android
 	;;
+arm-vfp-riscos)
+	_host_os=riscos
+	_host_cpu=arm
+	_host_alias=arm-unknown-riscos
+	datarootdir='/\<ScummVM\$$Dir\>'
+	datadir='${datarootdir}/data'
+	docdir='${datarootdir}/docs'
+	;;
 arm-*riscos)
 	_host_os=riscos
 	_host_cpu=arm
@@ -2997,22 +3005,12 @@ EOF
 		;;
 	riscos)
 		define_in_config_if_yes yes 'RISCOS'
-		append_var LDFLAGS "-L$GCCSDK_INSTALL_ENV/lib"
-		append_var CXXFLAGS "-isystem $GCCSDK_INSTALL_ENV/include"
-		_pkgconfig=$GCCSDK_INSTALL_ENV/ro-pkg-config
-		_sdlpath=$GCCSDK_INSTALL_ENV/bin
-		_freetypepath=$GCCSDK_INSTALL_ENV/bin
-		_libcurlpath=$GCCSDK_INSTALL_ENV/bin
-		append_var CXXFLAGS "-march=armv3m"
-		append_var CXXFLAGS "-mtune=xscale"
 		append_var LDFLAGS "-static"
 		_optimization_level=-O2
-		append_var CXXFLAGS "-ffunction-sections"
-		append_var CXXFLAGS "-fdata-sections"
-		append_var LDFLAGS "-Wl,--gc-sections"
 		_port_mk="backends/platform/sdl/riscos/riscos.mk"
 		_pandoc=yes
 		_sdlconfig=sdl-config
+		_opengl_mode=none
 		;;
 	solaris*)
 		append_var DEFINES "-DSOLARIS"
@@ -3103,8 +3101,27 @@ if test -n "$_host"; then
 			;;
 		arm-linux|arm*-linux-gnueabi|arm-*-linux)
 			;;
+		arm-vfp-riscos)
+			append_var LDFLAGS "-L$GCCSDK_INSTALL_ENV/vfp/lib"
+			append_var CXXFLAGS "-isystem $GCCSDK_INSTALL_ENV/vfp/include"
+			_sdlpath=$GCCSDK_INSTALL_ENV/vfp/bin
+			_freetypepath=$GCCSDK_INSTALL_ENV/vfp/bin
+			_libcurlpath=$GCCSDK_INSTALL_ENV/vfp/bin
+			append_var CXXFLAGS "-march=armv6zk"
+			append_var CXXFLAGS "-mtune=cortex-a9"
+			append_var CXXFLAGS "-mfpu=vfp"
+			append_var LDFLAGS "-mfpu=vfp"
+			append_var ASFLAGS "-mfpu=vfp"
+			;;
 		arm-*riscos)
-			_opengl_mode=none
+			append_var LDFLAGS "-L$GCCSDK_INSTALL_ENV/lib"
+			append_var CXXFLAGS "-isystem $GCCSDK_INSTALL_ENV/include"
+			_pkgconfig=$GCCSDK_INSTALL_ENV/ro-pkg-config
+			_sdlpath=$GCCSDK_INSTALL_ENV/bin
+			_freetypepath=$GCCSDK_INSTALL_ENV/bin
+			_libcurlpath=$GCCSDK_INSTALL_ENV/bin
+			append_var CXXFLAGS "-march=armv3m"
+			append_var CXXFLAGS "-mtune=xscale"
 			_vorbis=no
 			;;
 		bfin*)
@@ -3170,7 +3187,6 @@ if test -n "$_host"; then
 			append_var CXXFLAGS "-I$RPI_ROOT/usr/include"
 			# This is so optional OpenGL ES includes are found.
 			append_var CXXFLAGS "-I$RPI_ROOT/opt/vc/include"
-			_savegame_timestamp=no
 			# We prefer SDL2 on the Raspberry Pi: acceleration now depends on it
 			# since SDL2 manages dispmanx/GLES2 very well internally.
 			# SDL1 is bit-rotten on this platform.
@@ -5438,13 +5454,19 @@ define_in_config_if_yes $_pandoc 'USE_PANDOC'
 # Check for FriBidi
 #
 echocheck "FriBidi"
+if test "$_pkg_config" = "yes" && $_pkgconfig --exists fribidi; then
+	append_var FRIBIDI_LIBS "`$_pkgconfig --libs fribidi`"
+	append_var FRIBIDI_CFLAGS "`$_pkgconfig --cflags fribidi`"
+else
+	append_var FRIBIDI_LIBS "-lfribidi"
+fi
 if test "$_fribidi" = auto ; then
 	_fribidi=no
 	cat > $TMPC << EOF
 #include <fribidi/fribidi.h>
 int main(void) { return 0; }
 EOF
-	cc_check $FRIBIDI_CFLAGS $FRIBIDI_LIBS -lfribidi && _fribidi=yes
+	cc_check $FRIBIDI_CFLAGS $FRIBIDI_LIBS && _fribidi=yes
 fi
 if test "$_fribidi" = yes ; then
 	append_var LIBS "$FRIBIDI_LIBS -lfribidi"
@@ -5719,7 +5741,11 @@ echo_n "Backend... "
 echo_n "$_backend"
 
 if test "$_sdl" = yes -a -n "$_sdlversion"; then
-	echo_n " ($_sdlversion)"
+	if test "$_backend" = sdl; then
+		echo_n " ($_sdlversion)"
+	else
+		echo_n " (SDL $_sdlversion)"
+	fi
 fi
 
 if test "$_nasm" = yes ; then
@@ -5777,10 +5803,10 @@ else
 fi
 
 #
-# Some last-minute backend specific stuff, executed
+# Some last-minute platform specific stuff, executed
 # after all of CXXFLAGS, LDFLAGS, LIBS etc. have been setup
 #
-case $_backend in
+case $_host_os in
 	3ds)
 		if test "$_freetype2" = yes -a "$_png" = yes; then
 			append_var LIBS "-lbz2"
@@ -5822,6 +5848,12 @@ case $_backend in
 		# all toolchain symbols in *our* libraries rather
 		# than pick up anything unhygenic from the Android libs.
 		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -llog -landroid" # ResidualVM removed: -lGLESv1_CM
+		;;
+	riscos)
+		append_var CXXFLAGS "-mno-poke-function-name"
+		append_var CXXFLAGS "-ffunction-sections"
+		append_var CXXFLAGS "-fdata-sections"
+		append_var LDFLAGS "-Wl,--gc-sections"
 		;;
 	n64)
 		# Move some libs down here, otherwise some symbols requires by libvorbis aren't found

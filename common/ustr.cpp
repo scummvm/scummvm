@@ -198,31 +198,35 @@ bool U32String::operator!=(const char *x) const {
 	return !equals(x);
 }
 
-bool U32String::operator<(const String &x) const {
-	for (int i = 0 ; i < _size && i < x.size() ; ++i) {
-		if (_str[i] < x[i])
+bool U32String::operator<(const U32String &x) const {
+	for (uint32 i = 0, n = x.size(); i < _size && i < n; ++i) {
+		uint32 sc = _str[i];
+		uint32 xc = x[i];
+		if (sc < xc)
 			return true;
-		else if (_str[i] > x[i])
+		else if (sc > xc)
 			return false;
 	}
 	return (_size < x.size());
 }
 
-bool U32String::operator<=(const String &x) const {
+bool U32String::operator<=(const U32String &x) const {
 	return !operator>(x);
 }
 
-bool U32String::operator>(const String &x) const {
-	for (int i = 0 ; i < _size && i < x.size() ; ++i) {
-		if (_str[i] > x[i])
+bool U32String::operator>(const U32String &x) const {
+	for (uint i = 0, n = x.size(); i < _size && i < n; ++i) {
+		uint32 sc = _str[i];
+		uint32 xc = x[i];
+		if (sc > xc)
 			return true;
-		else if (_str[i] < x[i])
+		else if (sc < xc)
 			return false;
 	}
 	return (_size > x.size());
 }
 
-bool U32String::operator>=(const String &x) const {
+bool U32String::operator>=(const U32String &x) const {
 	return !operator<(x);
 }
 
@@ -242,8 +246,8 @@ bool U32String::equals(const String &x) const {
 	if (x.size() != _size)
 		return false;
 
-	for (size_t idx = 0; idx < _size; ++idx)
-		if (_str[idx] != (value_type)x[idx])
+	for (uint32 idx = 0; idx < _size; ++idx)
+		if (_str[idx] != static_cast<value_type>(x[idx]))
 			return false;
 
 	return true;
@@ -626,11 +630,22 @@ void U32String::trim() {
 
 U32String U32String::format(U32String fmt, ...) {
 	U32String output;
-	int len;
 
 	va_list va;
 	va_start(va, fmt);
-	len = U32String::vformat(fmt.begin(), fmt.end(), output, va);
+	U32String::vformat(fmt.begin(), fmt.end(), output, va);
+	va_end(va);
+
+	return output;
+}
+
+U32String U32String::format(const char *fmt, ...) {
+	U32String output;
+
+	Common::U32String fmtU32(fmt);
+	va_list va;
+	va_start(va, fmt);
+	U32String::vformat(fmtU32.begin(), fmtU32.end(), output, va);
 	va_end(va);
 
 	return output;
@@ -691,6 +706,12 @@ int U32String::vformat(U32String::const_iterator fmt, const U32String::const_ite
 				output.insertString(buffer, pos);
 				pos += len - 1;
 				break;
+			case 'c':
+				//char is promoted to int when passed through '...'
+				int_temp = va_arg(args, int);
+				output.insertChar(int_temp, pos);
+				++length;
+				break;
 			default:
 				warning("Unexpected formatting type for U32String::Format.");
 				break;
@@ -706,11 +727,15 @@ int U32String::vformat(U32String::const_iterator fmt, const U32String::const_ite
 char* U32String::itoa(int num, char* str, int base) {
 	int i = 0;
 
-	// go digit by digit
-	while (num != 0) {
-		int rem = num % base;
-		str[i++] = rem + '0';
-		num /= base;
+	if (num) {
+		// go digit by digit
+		while (num != 0) {
+			int rem = num % base;
+			str[i++] = rem + '0';
+			num /= base;
+		}
+	} else {
+		str[i++] = '0';
 	}
 
 	// append string terminator

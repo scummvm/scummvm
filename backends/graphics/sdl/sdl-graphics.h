@@ -105,7 +105,7 @@ public:
 	virtual bool notifyMousePosition(Common::Point &mouse) = 0; // ResidualVM specific
 
 #if 0 // ResidualVM - not used
-	virtual bool showMouse(const bool visible) override;
+	virtual bool showMouse(bool visible) override;
 #endif
 
 	virtual bool saveScreenshot(const Common::String &filename) const { return false; }

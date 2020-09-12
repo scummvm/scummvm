@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ResidualVM 0.4.0git\n"
 "Report-Msgid-Bugs-To: https://github.com/residualvm/residualvm/issues\n"
-"POT-Creation-Date: 2020-09-03 02:06+0200\n"
+"POT-Creation-Date: 2020-09-12 19:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,10 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: gui/downloaddialog.cpp:137 gui/launcher.cpp:537
+msgid "ResidualVM couldn't open the specified directory!"
+msgstr ""
 
 #: gui/launcher.cpp:140 backends/platform/sdl/macosx/appmenu_osx.mm:216
 msgid "Quit ResidualVM"
@@ -32,10 +36,6 @@ msgstr ""
 #: gui/launcher.cpp:491
 msgid ""
 "ResidualVM could not find any engine capable of running the selected game!"
-msgstr ""
-
-#: gui/launcher.cpp:537
-msgid "ResidualVM couldn't open the specified directory!"
 msgstr ""
 
 #: gui/launcher.cpp:556
@@ -64,6 +64,14 @@ msgstr ""
 
 #: gui/options.cpp:1336
 msgid "Anti-aliasing:"
+msgstr ""
+
+#: gui/options.cpp:2060 gui/options.cpp:2062 gui/options.cpp:2063
+msgid "Specifies path to additional data used by all games or ResidualVM"
+msgstr ""
+
+#: gui/options.cpp:2113
+msgid "Language of ResidualVM GUI"
 msgstr ""
 
 #: gui/options.cpp:2139
@@ -125,6 +133,12 @@ msgid ""
 "\n"
 "Please report the following data to the ResidualVM team at %s along with the "
 "name of the game you tried to add and its version, language, etc.:"
+msgstr ""
+
+#: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:59
+msgid ""
+"The page is not available without the resources. Make sure file wwwroot.zip "
+"from ResidualVM distribution is available in 'themepath'."
 msgstr ""
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:218
