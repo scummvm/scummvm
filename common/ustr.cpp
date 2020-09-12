@@ -706,6 +706,12 @@ int U32String::vformat(U32String::const_iterator fmt, const U32String::const_ite
 				output.insertString(buffer, pos);
 				pos += len - 1;
 				break;
+			case 'c':
+				//char is promoted to int when passed through '...'
+				int_temp = va_arg(args, int);
+				output.insertChar(int_temp, pos);
+				++length;
+				break;
 			default:
 				warning("Unexpected formatting type for U32String::Format.");
 				break;

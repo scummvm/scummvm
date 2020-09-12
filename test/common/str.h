@@ -364,6 +364,14 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(s.size(), 7U);
 	}
 
+	void test_ustring_printf() {
+		//Ideally should be the same as above (make String template?)
+		TS_ASSERT_EQUALS( Common::U32String::format(" ").encode(), " " );
+		TS_ASSERT_EQUALS( Common::U32String::format("%s", "test").encode(), "test" );
+		TS_ASSERT_EQUALS( Common::U32String::format("%s%c%s", "Press ", 'X', " to win").encode(), "Press X to win" );
+		TS_ASSERT_EQUALS( Common::U32String::format("Some %s to make this string longer than the default built-in %s %d", "text", "capacity", 123456).encode(), "Some text to make this string longer than the default built-in capacity 123456" );
+	}
+
 	void test_strlcpy() {
 		static const char * const testString = "1234567890";
 
