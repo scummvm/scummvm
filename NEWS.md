@@ -118,6 +118,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix curing the well in Nightshadow.
    - Fix loading of wall items from savegames.
    - Fix U/D keys not working on Quests dialog
+   - Fix incorrect mirror destination for Dragon Tower
 
  ZVision:
    - Fixed regression in the safe puzzle in Zork Nemesis: The Forbidden Lands.
