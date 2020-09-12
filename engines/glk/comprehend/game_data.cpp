@@ -160,6 +160,8 @@ void GameData::clearGame() {
 	_currentReplaceWord = 0;
 	_updateFlags = 0;
 	_colorTable = 0;
+	_itemCount = 0;
+	_itemsWeight = 0;
 
 	_strings.clear();
 	_strings2.clear();
@@ -611,6 +613,9 @@ void GameData::parse_header(FileBuffer *fb) {
 
 	parse_variables(fb);
 	parse_flags(fb);
+
+	fb->skip(9);
+	_itemCount = fb->readByte();
 
 	_rooms.resize(header->room_direction_table[DIRECTION_SOUTH] -
 	                    header->room_direction_table[DIRECTION_NORTH] + 1);
