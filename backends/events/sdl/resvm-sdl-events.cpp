@@ -173,6 +173,12 @@ static int mapSDLControllerButtonToResVM(Uint8 sdlButton) {
 
 bool ResVmSdlEventSource::handleControllerButton(const SDL_Event &ev, Common::Event &event, bool buttonUp) {
 	if (shouldGenerateMouseEvents()) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		if (event.joystick.button == Common::JOYSTICK_BUTTON_RIGHT_SHOULDER) {
+			// Right shoulder is the modifier button that makes the mouse go slower.
+			_km.modifier = !buttonUp;
+		}
+#endif
 		return SdlEventSource::handleControllerButton(ev, event, buttonUp);
 	} else {
 #ifdef ENABLE_VKEYBD
