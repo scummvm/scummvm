@@ -141,7 +141,6 @@ void Object::setPicture(Graphics::TransparentSurface *picture) {
 			}
 		}
 	}
-	debug("OFFSET %d, %d", _offset.x, _offset.y);
 }
 
 void Object::region(RegionPtr region) {
