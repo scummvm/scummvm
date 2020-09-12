@@ -130,7 +130,7 @@ void Minigame4::actorTalk(Actor *actorId, uint16 param_2, uint32 textIndex) {
 		_flickerActor->updateSequence(9);
 	}
 
-	actorDialog(actorId, (uint)param_2, textIndex);
+	actorDialog(actorId, (uint)param_2, _vm->getDialogTextId(textIndex));
 	actorId->waitUntilFlag8SetThenSet1000AndWaitFor4();
 	if (actorId == _bruteActor) {
 		_bruteActor->updateSequence(0);
@@ -204,8 +204,9 @@ uint16 Minigame4::runDanceBattle() {
 	currentStep = 0;
 	while (true) {
 		if (0x11 < currentStep) {
-			_vm->_talk->loadText(0x4C0C, auStack2192, 1000);
-			_vm->_talk->displayDialogAroundPoint(auStack2192, 0x27, 0xc, 0x3321, 0, 0x4C0C);
+			uint32 textId = _vm->getDialogTextId(0x4C0C);
+			_vm->_talk->loadText(textId, auStack2192, 1000);
+			_vm->_talk->displayDialogAroundPoint(auStack2192, 0x27, 0xc, 0x3321, 0, textId);
 			_vm->waitForFrames(0x10a);
 			_bruteActor->updateSequence(8);
 			_vm->_fontManager->clearText();
