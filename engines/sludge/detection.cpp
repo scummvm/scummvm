@@ -159,7 +159,7 @@ ADDetectedGame SludgeMetaEngine::fallbackDetect(const FileMap &allFiles, const C
 		game.desc = &s_fallbackDesc.desc;
 
 		FileProperties tmp;
-		if (getFileProperties(file->getParent(), allFiles, s_fallbackDesc.desc, fileName, tmp)) {
+		if (getFileProperties(allFiles, s_fallbackDesc.desc, fileName, tmp)) {
 			game.hasUnknownFiles = true;
 			game.matchedFiles[fileName] = tmp;
 		}

@@ -68,14 +68,14 @@ public:
 	bool open(const String &fileName);
 
 	/**
-	 * Open a Mac data/resource fork pair.
+	 * Open a Mac data/resource fork pair from within the given archive.
 	 *
 	 * @param path The path that holds the forks
 	 * @param fileName The base file name of the file
 	 * @note This will check for the raw resource fork, MacBinary, and AppleDouble formats.
 	 * @return True on success
 	 */
-	bool open(const FSNode &path, const String &fileName);
+	bool open(const String &fileName, Archive &archive);
 
 	/**
 	 * See if a Mac data/resource fork pair exists.

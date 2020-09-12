@@ -305,7 +305,7 @@ protected:
 	 * @param fileBasedFallback	a list of ADFileBasedFallback records, zero-terminated
 	 * @param filesProps	if not 0, return a map of properties for all detected files here
 	 */
-	ADDetectedGame detectGameFilebased(const FileMap &allFiles, const Common::FSList &fslist, const ADFileBasedFallback *fileBasedFallback) const;
+	ADDetectedGame detectGameFilebased(const FileMap &allFiles, const ADFileBasedFallback *fileBasedFallback) const;
 
 	/**
 	 * Compose a hashmap of all files in fslist.
@@ -314,10 +314,12 @@ protected:
 	void composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth, const Common::String &parentName = Common::String()) const;
 
 	/** Get the properties (size and MD5) of this file. */
-	bool getFileProperties(const Common::FSNode &parent, const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps) const;
+	bool getFileProperties(const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps) const;
 
 	/** Convert an AD game description into the shared game description format */
 	virtual DetectedGame toDetectedGame(const ADDetectedGame &adGame) const;
+
+	friend class FileMapArchive; // for FileMap
 };
 
 #endif

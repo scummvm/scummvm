@@ -148,7 +148,7 @@ public:
 			if (!file->getName().hasSuffixIgnoreCase(".dcp")) continue;
 
 			FileProperties tmp;
-			if (getFileProperties(file->getParent(), allFiles, s_fallbackDesc, file->getName(), tmp)) {
+			if (getFileProperties(allFiles, s_fallbackDesc, file->getName(), tmp)) {
 				game.hasUnknownFiles = true;
 				game.matchedFiles[file->getName()] = tmp;
 			}

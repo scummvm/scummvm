@@ -179,7 +179,7 @@ public:
 	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override {
-		return detectGameFilebased(allFiles, fslist, Mohawk::fileBased);
+		return detectGameFilebased(allFiles, Mohawk::fileBased);
 	}
 
 	const char *getEngineId() const override {

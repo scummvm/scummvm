@@ -91,7 +91,7 @@ public:
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles,
 								  const Common::FSList &fslist) const override {
-		return detectGameFilebased(allFiles, fslist, fileBased);
+		return detectGameFilebased(allFiles, fileBased);
 	}
 
 	const char *getEngineId() const override {

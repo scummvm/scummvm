@@ -60,7 +60,7 @@ GobMetaEngine::GobMetaEngine() :
 }
 
 ADDetectedGame GobMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
-	ADDetectedGame detectedGame = detectGameFilebased(allFiles, fslist, Gob::fileBased);
+	ADDetectedGame detectedGame = detectGameFilebased(allFiles, Gob::fileBased);
 	if (!detectedGame.desc) {
 		return ADDetectedGame();
 	}

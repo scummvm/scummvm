@@ -164,7 +164,7 @@ static const ADFileBasedFallback fileBasedFallback[] = {
 };
 
 ADDetectedGame CGEMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
-	ADDetectedGame game = detectGameFilebased(allFiles, fslist, CGE::fileBasedFallback);
+	ADDetectedGame game = detectGameFilebased(allFiles, CGE::fileBasedFallback);
 
 	if (!game.desc)
 		return ADDetectedGame();
