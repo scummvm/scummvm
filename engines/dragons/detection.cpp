@@ -46,7 +46,7 @@ static const DragonsGameDescription gameDescriptions[] = {
 					AD_ENTRY1s("bigfile.dat", "02c26712bee57266f28235fdc0207725", 44990464),
 					Common::EN_USA,
 					Common::kPlatformPSX,
-					ADGF_DROPPLATFORM | ADGF_TESTING,
+					ADGF_DROPPLATFORM,
 					GUIO0()
 			},
 			kGameIdDragons
@@ -58,7 +58,7 @@ static const DragonsGameDescription gameDescriptions[] = {
 					AD_ENTRY1s("bigfile.dat", "02c26712bee57266f28235fdc0207725", 44992512),
 					Common::EN_GRB,
 					Common::kPlatformPSX,
-					ADGF_DROPPLATFORM | ADGF_TESTING,
+					ADGF_DROPPLATFORM,
 					GUIO0()
 			},
 			kGameIdDragons
@@ -70,7 +70,7 @@ static const DragonsGameDescription gameDescriptions[] = {
 					AD_ENTRY1s("bigfile.dat", "9854fed0d2b48522a62973e99b52a0be", 45099008),
 					Common::DE_DEU,
 					Common::kPlatformPSX,
-					ADGF_DROPPLATFORM | ADGF_UNSTABLE,
+					ADGF_DROPPLATFORM,
 					GUIO0()
 			},
 			kGameIdDragons
@@ -82,7 +82,7 @@ static const DragonsGameDescription gameDescriptions[] = {
 					AD_ENTRY1s("bigfile.dat", "9854fed0d2b48522a62973e99b52a0be", 45107200),
 					Common::FR_FRA,
 					Common::kPlatformPSX,
-					ADGF_DROPPLATFORM | ADGF_UNSTABLE,
+					ADGF_DROPPLATFORM,
 					GUIO0()
 			},
 			kGameIdDragons
