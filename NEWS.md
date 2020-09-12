@@ -138,6 +138,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Removed Quit button to follow the iOS design guidelines.
    - Removed virtual keyboard input assistant bar. In particular this means that we
      no longer see a bar at the bottom of the screen when using an external keyboard.
+   - Added save of current game state if possible when switching to a different task
+     and restore game state when returning to the ScummVM task.
 
  Linux port:
    - Added option to use the system file browser instead of the ScummVM file browser.
