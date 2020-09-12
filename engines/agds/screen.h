@@ -41,6 +41,8 @@ class Animation;
 typedef Common::SharedPtr<Object> ObjectPtr;
 struct Region;
 typedef Common::SharedPtr<Region> RegionPtr;
+struct Patch;
+typedef Common::SharedPtr<Patch> PatchPtr;
 
 class Screen {
 	static int ObjectZCompare(const ObjectPtr & a, const ObjectPtr & b);
@@ -100,6 +102,9 @@ public:
 	ObjectPtr find(Common::Point pos) const;
 	ObjectPtr find(const Common::String &name);
 	KeyHandler findKeyHandler(const Common::String &keyName);
+
+	void load(AGDSEngine & engine, const PatchPtr &patch);
+	void save(AGDSEngine & engine, const PatchPtr &patch);
 };
 
 

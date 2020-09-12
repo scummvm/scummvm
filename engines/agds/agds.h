@@ -107,7 +107,6 @@ public:
 
 	void resetCurrentScreen();
 	void loadScreen(const Common::String & name);
-	void setCurrentScreen(Screen *screen);
 
 	RegionPtr loadRegion(const Common::String &name);
 	Common::String loadText(const Common::String &name);
