@@ -671,7 +671,7 @@ void Process::stub173() {
 }
 
 void Process::stub174() {
-	debug("stub174: mouse pointer mode 1?");
+	debug("stub174: set mouse relative mode");
 }
 
 void Process::stub192() {
