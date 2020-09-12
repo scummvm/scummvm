@@ -1109,12 +1109,16 @@ uint getSizeNextPOT(uint size) {
 	[self addEvent:InternalEvent(kInputApplicationResumed, 0, 0)];
 }
 
-- (void)applicationEnteredBackground {
-	[self addEvent:InternalEvent(kInputApplicationEnteredBackground, 0, 0)];
+- (void)saveApplicationState {
+	[self addEvent:InternalEvent(kInputApplicationSaveState, 0, 0)];
 }
 
-- (void)applicationEnteredForeground {
-	[self addEvent:InternalEvent(kInputApplicationEnteredForeground, 0, 0)];
+- (void)clearApplicationState {
+	[self addEvent:InternalEvent(kInputApplicationClearState, 0, 0)];
+}
+
+- (void)restoreApplicationState {
+	[self addEvent:InternalEvent(kInputApplicationRestoreState, 0, 0)];
 }
 
 - (void) beginBackgroundSaveStateTask {
