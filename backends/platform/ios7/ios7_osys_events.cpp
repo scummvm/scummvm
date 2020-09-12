@@ -77,12 +77,16 @@ bool OSystem_iOS7::pollEvent(Common::Event &event) {
 			handleEvent_applicationResumed();
 			return false;
 
-		case kInputApplicationEnteredBackground:
-			handleEvent_applicationEnteredBackground();
+		case kInputApplicationSaveState:
+			handleEvent_applicationSaveState();
 			return false;
 
-		case kInputApplicationEnteredForeground:
-			handleEvent_applicationEnteredForeground();
+		case kInputApplicationRestoreState:
+			handleEvent_applicationRestoreState();
+			return false;
+
+		case kInputApplicationClearState:
+			handleEvent_applicationClearState();
 			return false;
 
 		case kInputMouseSecondDragged:

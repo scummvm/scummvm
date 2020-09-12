@@ -131,8 +131,10 @@ typedef struct {
 
 - (void)applicationSuspend;
 - (void)applicationResume;
-- (void)applicationEnteredBackground;
-- (void)applicationEnteredForeground;
+
+- (void)saveApplicationState;
+- (void)clearApplicationState;
+- (void)restoreApplicationState;
 
 - (void) beginBackgroundSaveStateTask;
 - (void) endBackgroundSaveStateTask;

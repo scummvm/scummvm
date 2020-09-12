@@ -122,12 +122,16 @@ bool OSystem_iOS7::isConnectionLimited() {
 	return (flags & kSCNetworkReachabilityFlagsIsWWAN);
 }
 
-void OSystem_iOS7::handleEvent_applicationEnteredBackground() {
+void OSystem_iOS7::handleEvent_applicationSaveState() {
 	[[iOS7AppDelegate iPhoneView] beginBackgroundSaveStateTask];
 	saveState();
 	[[iOS7AppDelegate iPhoneView] endBackgroundSaveStateTask];
 }
 
-void OSystem_iOS7::handleEvent_applicationEnteredForeground() {
+void OSystem_iOS7::handleEvent_applicationRestoreState() {
 	restoreState();
+}
+
+void OSystem_iOS7::handleEvent_applicationClearState() {
+	clearState();
 }

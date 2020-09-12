@@ -245,10 +245,8 @@ void OSystem_iOS7::suspendLoop() {
 		if (iOS7_fetchEvent(&event)) {
 			if (event.type == kInputApplicationResumed)
 				done = true;
-			else if (event.type == kInputApplicationEnteredBackground)
-				handleEvent_applicationEnteredBackground();
-			else if (event.type == kInputApplicationEnteredForeground)
-				handleEvent_applicationEnteredForeground();
+			else if (event.type == kInputApplicationSaveState)
+				handleEvent_applicationSaveState();
 		}
 		usleep(100000);
 	}
@@ -260,11 +258,7 @@ void OSystem_iOS7::suspendLoop() {
 
 void OSystem_iOS7::saveState() {
 	// Clear any previous restore state to avoid having and obsolete one if we don't save it again below.
-	if (ConfMan.hasKey("restore_target", Common::ConfigManager::kApplicationDomain) &&
-		ConfMan.hasKey("restore_slot", Common::ConfigManager::kApplicationDomain)) {
-		ConfMan.removeKey("restore_target", Common::ConfigManager::kApplicationDomain);
-		ConfMan.removeKey("restore_slot", Common::ConfigManager::kApplicationDomain);
-	}
+	clearState();
 
 	// If there is an engine running and it accepts autosave, do an autosave and add the current
 	// running target to the config file.
@@ -285,9 +279,7 @@ void OSystem_iOS7::restoreState() {
 		ConfMan.hasKey("restore_slot", Common::ConfigManager::kApplicationDomain)) {
 		target = ConfMan.get("restore_target", Common::ConfigManager::kApplicationDomain);
 		slot = ConfMan.getInt("restore_slot", Common::ConfigManager::kApplicationDomain);
-		ConfMan.removeKey("restore_target", Common::ConfigManager::kApplicationDomain);
-		ConfMan.removeKey("restore_slot", Common::ConfigManager::kApplicationDomain);
-		ConfMan.flushToDisk();
+		clearState();
 	}
 
 	// If the g_engine is still running (i.e. the application was not terminated) we don't need to do anything.
@@ -299,6 +291,15 @@ void OSystem_iOS7::restoreState() {
 		ConfMan.setActiveDomain(target);
 		if (GUI::GuiManager::hasInstance())
 			g_gui.exitLoop();
+	}
+}
+
+void OSystem_iOS7::clearState() {
+	if (ConfMan.hasKey("restore_target", Common::ConfigManager::kApplicationDomain) &&
+	ConfMan.hasKey("restore_slot", Common::ConfigManager::kApplicationDomain)) {
+		ConfMan.removeKey("restore_target", Common::ConfigManager::kApplicationDomain);
+		ConfMan.removeKey("restore_slot", Common::ConfigManager::kApplicationDomain);
+		ConfMan.flushToDisk();
 	}
 }
 
