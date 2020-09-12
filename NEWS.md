@@ -135,6 +135,8 @@ For a more comprehensive changelog of the latest experimental code, see:
  MacOS X port:
    - Fixed blurry on Retina screens. Unfortunately this required dropping support
      for the dark theme for window decorations.
+   - Fixed Taskbar icon display when running a game (this was broken since ScummVM
+     1.9.0).
 
 #### 2.1.2 "Fixing Powerful Windows" (2020-03-31)
 

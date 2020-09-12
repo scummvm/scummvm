@@ -52,15 +52,24 @@ NSDockTilePtr _dockTile;
 NSImageView *_applicationIconView;
 NSImageView *_overlayIconView;
 
+BOOL hasDockTile() {
+	if (_dockTile != nil)
+		return YES;
+	if ([NSApp respondsToSelector:@selector(dockTile)])
+		_dockTile = [NSApp dockTile];
+	return _dockTile != nil;
+}
+
 // Using a NSProgressIndicator as a sub-view of the NSDockTile view does not work properly.
 // The progress indicator is grayed out and display no progress. So instead the bar is drawn
 // manually, which is a bit more work :(
 
 MacOSXTaskbarManager::MacOSXTaskbarManager() : _progress(-1.0) {
-	if ([NSApp respondsToSelector:@selector(dockTile)])
-		_dockTile = [NSApp dockTile];
+	_dockTile = nil;
 	_applicationIconView = nil;
 	_overlayIconView = nil;
+
+
 }
 
 MacOSXTaskbarManager::~MacOSXTaskbarManager() {
@@ -68,7 +77,7 @@ MacOSXTaskbarManager::~MacOSXTaskbarManager() {
 }
 
 void MacOSXTaskbarManager::initApplicationIconView() {
-	if (_dockTile == nil)
+	if (!hasDockTile())
 		return;
 	if (_applicationIconView == nil) {
 		_applicationIconView = [[NSImageView alloc] init];
@@ -78,7 +87,7 @@ void MacOSXTaskbarManager::initApplicationIconView() {
 }
 
 void MacOSXTaskbarManager::clearApplicationIconView() {
-	if (_dockTile == nil)
+	if (!hasDockTile())
 		return;
 	[_dockTile performSelector:@selector(setContentView:) withObject:nil];
 	[_applicationIconView release];
@@ -86,7 +95,7 @@ void MacOSXTaskbarManager::clearApplicationIconView() {
 }
 
 void MacOSXTaskbarManager::initOverlayIconView() {
-	if (_dockTile == nil)
+	if (!hasDockTile())
 		return;
 	if (_overlayIconView == nil) {
 		const double overlaySize = 0.75;
@@ -108,7 +117,7 @@ void MacOSXTaskbarManager::clearOverlayIconView() {
 }
 
 void MacOSXTaskbarManager::setOverlayIcon(const Common::String &name, const Common::String &description) {
-	if (_dockTile == nil)
+	if (!hasDockTile())
 		return;
 
     if (name.empty()) {
@@ -133,7 +142,7 @@ void MacOSXTaskbarManager::setOverlayIcon(const Common::String &name, const Comm
 }
 
 void MacOSXTaskbarManager::setProgressValue(int completed, int total) {
-	if (_dockTile == nil)
+	if (!hasDockTile())
 		return;
 
 	if (total > 0)
@@ -159,7 +168,7 @@ void MacOSXTaskbarManager::setProgressValue(int completed, int total) {
 }
 
 void MacOSXTaskbarManager::setProgressState(TaskbarProgressState state) {
-	if (_dockTile == nil)
+	if (!hasDockTile())
 		return;
 
 	// Only support two states: visible and not visible.
@@ -176,7 +185,7 @@ void MacOSXTaskbarManager::setProgressState(TaskbarProgressState state) {
 }
 
 void MacOSXTaskbarManager::setCount(int count) {
-	if (_dockTile == nil)
+	if (!hasDockTile())
 		return;
 
 	if (count > 0)
@@ -186,7 +195,7 @@ void MacOSXTaskbarManager::setCount(int count) {
 }
 
 void MacOSXTaskbarManager::notifyError() {
-	if (_dockTile == nil)
+	if (!hasDockTile())
 		return;
 
 	// NSImageNameCaution was introduced in 10.6.
@@ -198,7 +207,7 @@ void MacOSXTaskbarManager::notifyError() {
 }
 
 void MacOSXTaskbarManager::clearError() {
-	if (_dockTile == nil)
+	if (!hasDockTile())
 		return;
 
     clearOverlayIconView();
@@ -209,7 +218,7 @@ void MacOSXTaskbarManager::clearError() {
 void MacOSXTaskbarManager::addRecent(const Common::String &name, const Common::String &description) {
 	//warning("[MacOSXTaskbarManager::addRecent] Adding recent list entry: %s (%s)", name.c_str(), description.c_str());
 
-	if (_dockTile == nil)
+	if (!hasDockTile())
 		return;
 
 	// Store the game, description and icon in user preferences.
