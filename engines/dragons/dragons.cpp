@@ -1464,7 +1464,8 @@ void DragonsEngine::updatePaletteCycling() {
 
 uint32 DragonsEngine::getFontOffsetFromDragonEXE() {
 	switch (_language) {
-	case Common::EN_USA : return 0x4a144;
+	case Common::EN_USA :
+	case Common::RU_RUS : return 0x4a144;
 	case Common::EN_GRB : return 0x4b4fc;
 	case Common::DE_DEU : return 0x4af5c;
 	case Common::FR_FRA : return 0x4b158;
@@ -1474,7 +1475,8 @@ uint32 DragonsEngine::getFontOffsetFromDragonEXE() {
 
 uint32 DragonsEngine::getSpeechTblOffsetFromDragonEXE() {
 	switch (_language) {
-	case Common::EN_USA : return 0x4e138;
+	case Common::EN_USA :
+	case Common::RU_RUS : return 0x4e138;
 	case Common::EN_GRB : return 0x4f4f4;
 	case Common::DE_DEU : return 0x4f0a4;
 	case Common::FR_FRA : return 0x4f2a0;
@@ -1483,7 +1485,7 @@ uint32 DragonsEngine::getSpeechTblOffsetFromDragonEXE() {
 }
 
 uint16 DragonsEngine::getBigFileTotalRecords() {
-	if (_language == Common::EN_USA || _language == Common::EN_GRB) {
+	if (_language == Common::EN_USA || _language == Common::EN_GRB || _language == Common::RU_RUS) {
 		return 576;
 	}
 	return 588;
@@ -1491,7 +1493,8 @@ uint16 DragonsEngine::getBigFileTotalRecords() {
 
 uint32 DragonsEngine::getBigFileInfoTblFromDragonEXE() {
 	switch (_language) {
-	case Common::EN_USA : return 0x4a238;
+	case Common::EN_USA :
+	case Common::RU_RUS : return 0x4a238;
 	case Common::EN_GRB : return 0x4b5f4;
 	case Common::DE_DEU : return 0x4b054;
 	case Common::FR_FRA : return 0x4b250;
@@ -1502,7 +1505,8 @@ uint32 DragonsEngine::getBigFileInfoTblFromDragonEXE() {
 
 uint32 DragonsEngine::getCutscenePaletteOffsetFromDragonEXE() {
 	switch (_language) {
-	case Common::EN_USA : return 0x5336c;
+	case Common::EN_USA :
+	case Common::RU_RUS : return 0x5336c;
 	case Common::EN_GRB : return 0x54628;
 	case Common::DE_DEU : return 0x541d8;
 	case Common::FR_FRA : return 0x543d4;
@@ -1513,7 +1517,8 @@ uint32 DragonsEngine::getCutscenePaletteOffsetFromDragonEXE() {
 
 uint32 DragonsEngine::defaultResponseOffsetFromDragonEXE() {
 	switch (_language) {
-	case Common::EN_USA : return 0x541b0;
+	case Common::EN_USA :
+	case Common::RU_RUS : return 0x541b0;
 	case Common::EN_GRB : return 0x55470;
 	case Common::DE_DEU : return 0x55020;
 	case Common::FR_FRA : return 0x5521c;
