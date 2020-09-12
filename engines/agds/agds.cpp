@@ -162,7 +162,6 @@ void AGDSEngine::runProcess(ObjectPtr object, uint ip) {
 		_currentScreen->add(object);
 	else
 		warning("object %s has been loaded, but was not added to any screen", object->getName().c_str());
-	object->inScene(true);
 	_processes.push_front(Process(this, object, ip));
 	_processes.front().run();
 }

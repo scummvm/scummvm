@@ -50,49 +50,50 @@ bool Screen::add(ObjectPtr object) {
 		warning("refusing to add null to scene");
 		return false;
 	}
-	for (ChildrenType::iterator i = _children.begin(); i != _children.end(); ++i) {
+	for (ChildrenType::iterator i = _children.begin(); i != _children.end(); ) {
 		if (*i == object) {
-			debug("double adding object %s", (*i)->getName().c_str());
-			return false;
-		}
+			if ((*i)->inScene()) {
+				debug("double adding object %s", (*i)->getName().c_str());
+				return false;
+			} else {
+				i = _children.erase(i);
+			}
+		} else
+			++i;
 	}
+	object->inScene(true);
 	_children.insert(object);
 	return true;
 }
 
 ObjectPtr Screen::find(const Common::String &name) {
 	for (ChildrenType::iterator i = _children.begin(); i != _children.end(); ++i) {
-		if ((*i)->getName() == name)
+		ObjectPtr &object = *i;
+		if (object->getName() == name && object->inScene())
 			return *i;
 	}
 	return ObjectPtr();
 }
 
 bool Screen::remove(const ObjectPtr &object) {
-	bool found = false;
-	for (ChildrenType::iterator i = _children.begin(); i != _children.end();) {
-		if (*i == object) {
-			i = _children.erase(i);
+	for (ChildrenType::iterator i = _children.begin(); i != _children.end(); ++i) {
+		if (*i == object && object->inScene()) {
 			object->inScene(false);
-			found = true;
-		} else
-			++i;
+			return true;
+		}
 	}
-	return found;
+	return false;
 }
 
 bool Screen::remove(const Common::String &name) {
-	bool found = false;
-	for (ChildrenType::iterator i = _children.begin(); i != _children.end();) {
+	for (ChildrenType::iterator i = _children.begin(); i != _children.end(); ++i) {
 		const ObjectPtr & object = *i;
-		if (object->getName() == name) {
+		if (object->getName() == name && object->inScene()) {
 			object->inScene(false);
-			i = _children.erase(i);
-			found = true;
-		} else
-			++i;
+			return true;
+		}
 	}
-	return found;
+	return false;
 }
 
 void Screen::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
@@ -104,7 +105,8 @@ void Screen::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 		if (child_valid && animation_valid) {
 			if ((*child)->z() > (*animation)->z()) {
 				//debug("object %d, z: %d", idx++, (*child)->z());
-				(*child)->paint(engine, backbuffer);
+				if ((*child)->inScene())
+					(*child)->paint(engine, backbuffer);
 				++child;
 			} else {
 				//debug("animation %d, z: %d", idx++, (*animation)->z());
@@ -113,7 +115,8 @@ void Screen::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 			}
 		} else if (child_valid) {
 			//debug("object %d, z: %d", idx++, (*child)->z());
-			(*child)->paint(engine, backbuffer);
+			if ((*child)->inScene())
+				(*child)->paint(engine, backbuffer);
 			++child;
 		} else {
 			//debug("animation %d, z: %d", idx++, (*animation)->z());
@@ -126,6 +129,9 @@ void Screen::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 ObjectPtr Screen::find(Common::Point pos) const {
 	for (ChildrenType::const_iterator i = _children.begin(); i != _children.end(); ++i) {
 		ObjectPtr object = *i;
+		if (!object->inScene())
+			continue;
+
 		RegionPtr region = object->region();
 		if (region && region->pointIn(pos))
 			return object;
@@ -137,6 +143,9 @@ Screen::KeyHandler Screen::findKeyHandler(const Common::String &keyName) {
 	KeyHandler keyHandler;
 	for (ChildrenType::const_iterator i = _children.begin(); i != _children.end(); ++i) {
 		ObjectPtr object = *i;
+		if (!object->inScene())
+			continue;
+
 		uint ip = object->getKeyHandler(keyName);
 		if (ip) {
 			keyHandler.ip = ip;
@@ -161,7 +170,12 @@ void Screen::load(AGDSEngine & engine, const PatchPtr &patch) {
 }
 
 void Screen::save(AGDSEngine & engine, const PatchPtr &patch) {
-
+	patch->objects.clear();
+	for (ChildrenType::const_iterator i = _children.begin(); i != _children.end(); ++i) {
+		ObjectPtr object = *i;
+		debug("saving patch object %s %d", object->getName().c_str(), object->inScene());
+		patch->objects.push_back(Patch::Object(object->getName(), object->inScene()));
+	}
 }
 
 
