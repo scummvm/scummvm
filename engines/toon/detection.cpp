@@ -142,7 +142,7 @@ public:
 	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override {
-		return detectGameFilebased(allFiles, fslist, Toon::fileBasedFallback);
+		return detectGameFilebased(allFiles, Toon::fileBasedFallback);
 	}
 
 	const char *getEngineId() const override {

@@ -35,6 +35,45 @@
 #include "engines/advancedDetector.h"
 #include "engines/obsolete.h"
 
+/**
+ * Adapter to be able to use Common::Archive based code from the AD.
+ */
+class FileMapArchive : public Common::Archive {
+public:
+	FileMapArchive(const AdvancedMetaEngine::FileMap &fileMap) : _fileMap(fileMap) {}
+
+	bool hasFile(const Common::String &name) const override {
+		return _fileMap.contains(name);
+	}
+
+	int listMembers(Common::ArchiveMemberList &list) const override {
+		int files = 0;
+		for (AdvancedMetaEngine::FileMap::const_iterator it = _fileMap.begin(); it != _fileMap.end(); ++it) {
+			list.push_back(Common::ArchiveMemberPtr(new Common::FSNode(it->_value)));
+			++files;
+		}
+
+		return files;
+	}
+
+	const Common::ArchiveMemberPtr getMember(const Common::String &name) const override {
+		AdvancedMetaEngine::FileMap::const_iterator it = _fileMap.find(name);
+		if (it == _fileMap.end()) {
+			return Common::ArchiveMemberPtr();
+		}
+
+		return Common::ArchiveMemberPtr(new Common::FSNode(it->_value));
+	}
+
+	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override {
+		Common::FSNode fsNode = _fileMap[name];
+		return fsNode.createReadStream();
+	}
+
+private:
+	const AdvancedMetaEngine::FileMap &_fileMap;
+};
+
 static Common::String sanitizeName(const char *name) {
 	Common::String res;
 
@@ -355,14 +394,16 @@ void AdvancedMetaEngine::composeFileHashMap(FileMap &allFiles, const Common::FSL
 	}
 }
 
-bool AdvancedMetaEngine::getFileProperties(const Common::FSNode &parent, const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps) const {
+bool AdvancedMetaEngine::getFileProperties(const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps) const {
 	// FIXME/TODO: We don't handle the case that a file is listed as a regular
 	// file and as one with resource fork.
 
 	if (game.flags & ADGF_MACRESFORK) {
+		FileMapArchive fileMapArchive(allFiles);
+
 		Common::MacResManager macResMan;
 
-		if (!macResMan.open(parent, fname))
+		if (!macResMan.open(fname, fileMapArchive))
 			return false;
 
 		fileProps.md5 = macResMan.computeResForkMD5AsString(_md5Bytes);
@@ -407,7 +448,7 @@ ADDetectedGames AdvancedMetaEngine::detectGame(const Common::FSNode &parent, con
 				continue;
 
 			FileProperties tmp;
-			if (getFileProperties(parent, allFiles, *g, fname, tmp)) {
+			if (getFileProperties(allFiles, *g, fname, tmp)) {
 				debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5.c_str());
 			}
 
@@ -510,7 +551,7 @@ ADDetectedGames AdvancedMetaEngine::detectGame(const Common::FSNode &parent, con
 	return matched;
 }
 
-ADDetectedGame AdvancedMetaEngine::detectGameFilebased(const FileMap &allFiles, const Common::FSList &fslist, const ADFileBasedFallback *fileBasedFallback) const {
+ADDetectedGame AdvancedMetaEngine::detectGameFilebased(const FileMap &allFiles, const ADFileBasedFallback *fileBasedFallback) const {
 	const ADFileBasedFallback *ptr;
 	const char* const* filenames;
 
@@ -546,7 +587,7 @@ ADDetectedGame AdvancedMetaEngine::detectGameFilebased(const FileMap &allFiles, 
 				for (filenames = ptr->filenames; *filenames; ++filenames) {
 					FileProperties tmp;
 
-					if (getFileProperties(fslist.begin()->getParent(), allFiles, *agdesc, *filenames, tmp))
+					if (getFileProperties(allFiles, *agdesc, *filenames, tmp))
 						game.matchedFiles[*filenames] = tmp;
 				}
 
