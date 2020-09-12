@@ -87,6 +87,24 @@ static const DragonsGameDescription gameDescriptions[] = {
 			},
 			kGameIdDragons
 	},
+	// Russian localization by Russian Versions
+	{
+			{
+					"dragons",
+					0,
+					{
+						{"bigfile.dat", 0, "02c26712bee57266f28235fdc0207725", 44990464},
+						{"dtspeech.xa", 0, "7f7ace860e5dd3696b51eace20215274", 182138880},
+						AD_LISTEND
+					},
+					Common::RU_RUS,
+					Common::kPlatformPSX,
+					ADGF_DROPPLATFORM,
+					GUIO0()
+			},
+			kGameIdDragons
+	},
+
 
 	// BAD EXTRACTIONS
 	{
