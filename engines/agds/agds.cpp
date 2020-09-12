@@ -181,6 +181,7 @@ void AGDSEngine::loadScreen(const Common::String &name) {
 		if (!patch)
 			patch = PatchPtr(new Patch());
 		_currentScreen->save(*this, patch);
+		patch->defaultMouseCursor = _defaultMouseCursorName;
 	}
 	_mouseMap.hideAll(this);
 	resetCurrentScreen();
@@ -201,7 +202,8 @@ void AGDSEngine::loadScreen(const Common::String &name) {
 	if (it != _patches.end()) {
 		const PatchPtr &patch = it->_value;
 		_currentScreen->load(*this, patch);
-		loadDefaultMouseCursor(patch->defaultMouseCursor);
+		if (!patch->defaultMouseCursor.empty())
+			loadDefaultMouseCursor(patch->defaultMouseCursor);
 	}
 }
 

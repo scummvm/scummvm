@@ -160,6 +160,7 @@ public:
 	Character * getCharacter(const Common::String &name) const;
 
 	void loadDefaultMouseCursor(const Common::String &name) {
+		_defaultMouseCursorName = name;
 		_defaultMouseCursor = loadMouseCursor(name);
 	}
 
@@ -248,6 +249,7 @@ private:
 	Common::String				_currentScreenName;
 	Common::String				_nextScreenName;
 	Common::String				_previousScreenName;
+	Common::String 				_defaultMouseCursorName;
 	Animation *					_defaultMouseCursor;
 	Common::Point				_mouse;
 	MouseRegion *				_currentRegion;
