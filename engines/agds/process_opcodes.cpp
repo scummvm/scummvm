@@ -607,6 +607,16 @@ void Process::getObjectSurfaceY() {
 	push(y);
 }
 
+void Process::getSavedMouseX() {
+	debug("saved mouse position x -> %d", _mousePosition.x);
+	push(_mousePosition.x);
+}
+
+void Process::getSavedMouseY() {
+	debug("saved mouse position y -> %d", _mousePosition.y);
+	push(_mousePosition.y);
+}
+
 void Process::loadGame() {
 	int saveSlot = pop();
 	debug("loadGame %d", saveSlot);
@@ -1455,6 +1465,8 @@ ProcessExitCode Process::resume() {
 			OP(kSetAnimationLoop, setAnimationLoop);
 			OP(kSetAnimationSpeed, setAnimationSpeed);
 			OP(kStub138, stub138);
+			OP(kGetSavedMouseX, getSavedMouseX);
+			OP(kGetSavedMouseY, getSavedMouseY);
 			OP(kScreenChangeScreenPatch, changeScreenPatch);
 			OP(kGetFreeInventorySpace, getInventoryFreeSpace);
 			OP(kSetStringSystemVariable, setStringSystemVariable);
