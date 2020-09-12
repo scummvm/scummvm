@@ -287,20 +287,20 @@ void TouchControls::keyDown(Common::KeyCode kc) {
 	Common::Event ev;
 	ev.type = Common::EVENT_KEYDOWN;
 	ev.kbd.keycode = kc;
-	static_cast<OSystem_Android *>(g_system)->pushEvent(ev);
+	dynamic_cast<OSystem_Android *>(g_system)->pushEvent(ev);
 }
 
 void TouchControls::keyUp(Common::KeyCode kc) {
 	Common::Event ev;
 	ev.type = Common::EVENT_KEYUP;
 	ev.kbd.keycode = kc;
-	static_cast<OSystem_Android *>(g_system)->pushEvent(ev);
+	dynamic_cast<OSystem_Android *>(g_system)->pushEvent(ev);
 }
 
 void TouchControls::keyPress(Common::KeyCode kc) {
 	Common::Event ev;
 	ev.kbd.keycode = kc;
-	static_cast<OSystem_Android *>(g_system)->pushKeyPressEvent(ev);
+	dynamic_cast<OSystem_Android *>(g_system)->pushKeyPressEvent(ev);
 }
 
 #endif
