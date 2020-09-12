@@ -493,13 +493,21 @@ bool Scripts::cmdTeleport(ParamsIterator &params) {
 		// Mirror teleportation
 		assert(_mirrorId > 0);
 		MirrorEntry &me = _mirror[_mirrorId - 1];
-		mapId = me._mapId;
-		pt = me._position;
-		if (me._direction != -1)
-			party._mazeDirection = (Direction)me._direction;
 
-		if (pt.x == 0 && pt.y == 0)
-			pt.x = 999;
+		// WORKAROUND: Wrong destination for Dragon Tower in Clouds
+		if (me._name == "dragon tower") {
+			mapId = 13;
+			pt = Common::Point(10, 5);
+			party._mazeDirection = DIR_SOUTH;
+		} else {
+			mapId = me._mapId;
+			pt = me._position;
+			if (me._direction != -1)
+				party._mazeDirection = (Direction)me._direction;
+
+			if (pt.x == 0 && pt.y == 0)
+				pt.x = 999;
+		}
 
 		sound.playFX(51);
 	}
