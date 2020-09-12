@@ -21,8 +21,10 @@
  */
 
 #include "agds/screen.h"
+#include "agds/agds.h"
 #include "agds/animation.h"
 #include "agds/object.h"
+#include "agds/patch.h"
 #include "agds/region.h"
 
 namespace AGDS {
@@ -144,5 +146,23 @@ Screen::KeyHandler Screen::findKeyHandler(const Common::String &keyName) {
 	}
 	return keyHandler;
 }
+
+void Screen::load(AGDSEngine & engine, const PatchPtr &patch) {
+	debug("applying patch with %u objects", patch->objects.size());
+	for(uint i = 0; i < patch->objects.size(); ++i) {
+		const Patch::Object &object = patch->objects[i];
+		debug("patch object %s %d", object.name.c_str(), object.flag);
+		if (object.flag <= 0)
+			remove(object.name);
+		else if (!find(object.name)) {
+			engine.runObject(object.name);
+		}
+	}
+}
+
+void Screen::save(AGDSEngine & engine, const PatchPtr &patch) {
+
+}
+
 
 } // namespace AGDS

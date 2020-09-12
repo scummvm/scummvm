@@ -176,6 +176,13 @@ void AGDSEngine::runObject(const Common::String &name, const Common::String &pro
 
 void AGDSEngine::loadScreen(const Common::String &name) {
 	debug("loadScreen %s", name.c_str());
+	if (_currentScreen && !_currentScreenName.empty())
+	{
+		PatchPtr &patch = _patches[_currentScreenName];
+		if (!patch)
+			patch = PatchPtr(new Patch());
+		_currentScreen->save(*this, patch);
+	}
 	_mouseMap.hideAll(this);
 	resetCurrentScreen();
 	for(ProcessListType::iterator i = _processes.begin(); i != _processes.end(); ++i) {
@@ -192,33 +199,11 @@ void AGDSEngine::loadScreen(const Common::String &name) {
 	runProcess(_currentScreen->getObject());
 
 	PatchesType::const_iterator it = _patches.find(name);
-	if (it == _patches.end())
-		return;
-
-	PatchPtr patch = it->_value;
-	const Common::Array<Patch::Object> &objects = patch->objects;
-	debug("found patch with %u objects", objects.size());
-	for(uint i = 0; i < objects.size(); ++i) {
-		const Patch::Object &object = objects[i];
-		debug("patch object %s %d", object.name.c_str(), object.flag);
-		if (object.flag <= 0)
-			_currentScreen->remove(object.name);
-		else if (!_currentScreen->find(object.name)) {
-			runObject(object.name);
-		}
+	if (it != _patches.end()) {
+		const PatchPtr &patch = it->_value;
+		_currentScreen->load(*this, patch);
+		loadDefaultMouseCursor(patch->defaultMouseCursor);
 	}
-	loadDefaultMouseCursor(patch->defaultMouseCursor);
-}
-
-void AGDSEngine::setCurrentScreen(Screen *screen) {
-	if (!screen)
-		error("no previous screen");
-
-	resetCurrentScreen();
-
-	_currentScreenName = screen->getName();
-	_currentScreen = screen;
-	_previousScreenName.clear();
 }
 
 void AGDSEngine::resetCurrentScreen() {
