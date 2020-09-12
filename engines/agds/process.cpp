@@ -100,6 +100,10 @@ Common::String Process::popText() {
 	return _engine->loadText(popString());
 }
 
+void Process::updateWithCurrentMousePosition() {
+	setMousePosition(_engine->mousePosition());
+}
+
 void Process::activate() {
 	switch(status()) {
 	case kStatusPassive:
@@ -152,6 +156,7 @@ void Process::run() {
 			activate();
 			break;
 		case kExitCodeSuspend:
+			updateWithCurrentMousePosition();
 			break;
 		case kExitCodeCreatePatchLoadResources:
 			{

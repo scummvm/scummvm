@@ -206,6 +206,10 @@ public:
 		return _fastMode;
 	}
 
+	Common::Point mousePosition() const {
+		return _mouse;
+	}
+
 private:
 	void parseDialogDefs(const Common::String &defs);
 	void loadPatches(Common::SeekableReadStream *file, Database & db);

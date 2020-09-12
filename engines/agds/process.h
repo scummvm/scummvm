@@ -61,6 +61,7 @@ private:
 	int				_animationZ;
 	bool			_animationPaused;
 	int				_animationSpeed;
+	Common::Point	_mousePosition;
 
 private:
 	uint8 next() {
@@ -239,6 +240,8 @@ private:
 	void getPictureBaseY();
 	void getObjectSurfaceX();
 	void getObjectSurfaceY();
+	void getSavedMouseX();
+	void getSavedMouseY();
 	void loadGame();
 	void loadSaveSlotNamePicture();
 	void stub166();
@@ -374,6 +377,11 @@ public:
 	int getExitIntArg2() const {
 		return _exitIntArg2;
 	}
+
+	void setMousePosition(Common::Point	mousePosition) {
+		_mousePosition = mousePosition;
+	}
+	void updateWithCurrentMousePosition();
 
 };
 
