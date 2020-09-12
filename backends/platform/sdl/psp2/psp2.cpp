@@ -30,12 +30,12 @@
 #include "backends/platform/sdl/psp2/psp2.h"
 #include "backends/graphics/psp2sdl/psp2sdl-graphics.h"
 #include "backends/saves/default/default-saves.h"
-
-#include "backends/fs/psp2/psp2-fs-factory.h"
+#include "backends/fs/posix-drives/posix-drives-fs-factory.h"
 #include "backends/events/psp2sdl/psp2sdl-events.h"
-#include "backends/fs/psp2/psp2-dirent.h"
 #include "backends/keymapper/hardware-input.h"
 #include <sys/stat.h>
+
+#include <psp2/io/stat.h>
 
 #ifdef __PSP2_DEBUG__
 #include <psp2shell.h>
@@ -81,11 +81,16 @@ void OSystem_PSP2::init() {
 	gDebugLevel = 3;
 #endif
 
-	// Initialze File System Factory
+	// Initialize File System Factory
 	sceIoMkdir("ux0:data", 0755);
 	sceIoMkdir("ux0:data/scummvm", 0755);
 	sceIoMkdir("ux0:data/scummvm/saves", 0755);
-	_fsFactory = new PSP2FilesystemFactory();
+
+	DrivesPOSIXFilesystemFactory *fsFactory = new DrivesPOSIXFilesystemFactory();
+	fsFactory->addDrive("ux0:");
+	fsFactory->addDrive("uma0:");
+
+	_fsFactory = fsFactory;
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::init();
