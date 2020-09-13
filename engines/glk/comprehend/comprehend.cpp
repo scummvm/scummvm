@@ -110,7 +110,7 @@ void Comprehend::createDebugger() {
 void Comprehend::createGame() {
 	if (_gameDescription._gameId == "crimsoncrown")
 		_game = new CrimsonCrownGame();
-	else if (_gameDescription._gameId == "ootopis")
+	else if (_gameDescription._gameId == "ootopos")
 		_game = new OOToposGame();
 	else if (_gameDescription._gameId == "talisman")
 		_game = new OOToposGame();
