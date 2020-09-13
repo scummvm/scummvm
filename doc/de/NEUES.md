@@ -50,6 +50,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Animationsgeschwindigkeit korrigiert.
 
  Illusions:
+   - Geschwindigkeit für die Untertitel korrigiert (maximale Geschwindigkeit ergibt eine gute Geschwindigkeit)
    - Unterstützung für die russische Version von Duckman hinzugefügt.
 
  Kyra:
