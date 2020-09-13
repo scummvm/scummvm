@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
-"PO-Revision-Date: 2020-09-08 13:53+0000\n"
+"PO-Revision-Date: 2020-09-13 22:07+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -188,14 +188,14 @@ msgstr ""
 "Möchten Sie wirklich die Dateien in das gewählte Verzeichnis herunterladen?"
 
 #: gui/downloaddialog.cpp:215
-#, fuzzy, c-format
+#, c-format
 msgid "Downloaded %s %S / %s %S"
-msgstr "%s %s / %s %s heruntergeladen"
+msgstr "%s %S / %s %S heruntergeladen"
 
 #: gui/downloaddialog.cpp:222
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %S"
-msgstr "Download-Geschwindigkeit: %s %s"
+msgstr "Download-Geschwindigkeit: %s %S"
 
 #: gui/editgamedialog.cpp:135 engines/dialogs.cpp:285
 msgid "Game"
@@ -1751,14 +1751,12 @@ msgid "ScummVM could not access the directory!"
 msgstr "ScummVM konnte auf das gewählte Verzeichnis nicht zugreifen!"
 
 #: gui/saveload-dialog.cpp:52
-#, fuzzy
 msgid "Downloading saves..."
-msgstr "Spiel wird geladen..."
+msgstr "Spielstände werden heruntergeladen..."
 
 #: gui/saveload-dialog.cpp:61
-#, fuzzy
 msgid "Run in background"
-msgstr "Rückwärts laufen"
+msgstr "Im Hintergrund laufen"
 
 #: gui/saveload-dialog.cpp:343
 msgid "List view"
@@ -3255,7 +3253,6 @@ msgid "ScummVM Main Menu"
 msgstr "ScummVM-Hauptmenü"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:61
-#, fuzzy
 msgid "Controls"
 msgstr "Steuerung"
 
@@ -3313,7 +3310,7 @@ msgstr "Helligkeit:"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:119
 msgid "General"
-msgstr ""
+msgstr "Allgemein"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:121
 msgid "High quality audio (slower) (reboot)"
@@ -3325,117 +3322,102 @@ msgstr "Stromsparmodus abschalten"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:41
 msgid "DS Controls (right handed):"
-msgstr ""
+msgstr "DS-Steuerung (rechtshändig):"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:42
 #: backends/platform/ds/arm9/source/scummhelp.cpp:67
 #: backends/platform/ds/arm9/source/scummhelp.cpp:76
-#, fuzzy
 msgid "Pad Left"
 msgstr "Steuerkreuz links"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:42
 #: backends/platform/ds/arm9/source/scummhelp.cpp:59
-#, fuzzy
 msgid "Left mouse button"
 msgstr "Linke Maustaste"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:43
 #: backends/platform/ds/arm9/source/scummhelp.cpp:68
 #: backends/platform/ds/arm9/source/scummhelp.cpp:77
-#, fuzzy
 msgid "Pad Right"
 msgstr "Steuerkreuz rechts"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:43
 #: backends/platform/ds/arm9/source/scummhelp.cpp:60
-#, fuzzy
 msgid "Right mouse button"
 msgstr "Rechte Maustaste"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:44
 #: backends/platform/ds/arm9/source/scummhelp.cpp:66
 #: backends/platform/ds/arm9/source/scummhelp.cpp:78
-#, fuzzy
 msgid "Pad Up"
 msgstr "Steuerkreuz hoch"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:44
 #: backends/platform/ds/arm9/source/scummhelp.cpp:61
 msgid "Mouse hover mode (no click)"
-msgstr ""
+msgstr "Mit der Maus zeigen (kein Klick)"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:45
 #: backends/platform/ds/arm9/source/scummhelp.cpp:65
 #: backends/platform/ds/arm9/source/scummhelp.cpp:79
-#, fuzzy
 msgid "Pad Down"
 msgstr "Steuerkreuz runter"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:45
 #: backends/platform/ds/arm9/source/scummhelp.cpp:62
 msgid "Skip dialog line (some games)"
-msgstr ""
+msgstr "Dialogzeilen überspringen (einige Spiele)"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:46
 #: backends/platform/ds/arm9/source/scummhelp.cpp:63
-#, fuzzy
 msgid "Pause/Game menu"
-msgstr "Spielmenü"
+msgstr "Pause/Spielmenü"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:47
 #: backends/platform/ds/arm9/source/scummhelp.cpp:64
-#, fuzzy
 msgid "DS Options menu"
-msgstr "Optionsmenü anzeigen"
+msgstr "DS-Optionsmenü"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:48
 #: backends/platform/ds/arm9/source/scummhelp.cpp:65
-#, fuzzy
 msgid "Skip cutscenes"
-msgstr "Zwischensequenz überspringen"
+msgstr "Zwischensequenzen überspringen"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:49
-#, fuzzy
 msgid "Switch screens"
-msgstr "Figuren wechseln:"
+msgstr "Bildschirme wechseln"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:50
 #: backends/platform/ds/arm9/source/scummhelp.cpp:67
-#, fuzzy
 msgid "Show/hide debug console"
 msgstr "Konsole zeigen/verbergen"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:51
 #: backends/platform/ds/arm9/source/scummhelp.cpp:66
-#, fuzzy
 msgid "Show/hide keyboard"
-msgstr "Tastatur zeigen"
+msgstr "Tastatur zeigen/verbergen"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:52
 #: backends/platform/ds/arm9/source/scummhelp.cpp:69
 msgid "Scroll current touch screen view"
-msgstr ""
+msgstr "Durch aktuelle Touchscreen-Ansicht scrollen"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:53
 #: backends/platform/ds/arm9/source/scummhelp.cpp:70
-#, fuzzy
 msgid "Zoom in/out"
-msgstr "Herauszoomen"
+msgstr "Herein/heraus zoomen"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:58
 msgid "DS Controls (left handed):"
-msgstr ""
+msgstr "DS-Steuerung (linkshändig):"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:68
-#, fuzzy
 msgid "Swap screens"
-msgstr "Screenshot speichern"
+msgstr "Bildschirme vertauschen"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:75
-#, fuzzy
 msgid "Indiana Jones Fight controls:"
-msgstr "~K~ampfsteuerung für Indiana Jones"
+msgstr "Kampfsteuerung für Indiana Jones:"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:76
 #: engines/hdb/detection.cpp:321
@@ -3449,16 +3431,15 @@ msgstr "Nach rechts bewegen"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:78
 msgid "High guard"
-msgstr ""
+msgstr "High guard"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:79
 msgid "Guard down"
 msgstr ""
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:80
-#, fuzzy
 msgid "Guard middle"
-msgstr "Schlag Mitte"
+msgstr ""
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:81
 #: engines/scumm/help.cpp:312
@@ -3960,6 +3941,8 @@ msgstr "Laden"
 #: engines/agos/saveload.cpp:137
 msgid "Quick load or save game isn't supported in this location"
 msgstr ""
+"Schnelles Laden oder Speichern eines Spiels wird an diesem Ort nicht "
+"unterstützt"
 
 #: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2466
 #, c-format
@@ -4546,11 +4529,11 @@ msgstr "Fehler beim Schreiben der Spielstand-Datei\n"
 
 #: engines/glk/hugo/hugo.cpp:183
 msgid "Incorrect rs file."
-msgstr ""
+msgstr "Fehlerhafte rs-Datei."
 
 #: engines/glk/hugo/hugo.cpp:190
 msgid "Save file created by different version."
-msgstr ""
+msgstr "Spielstand-Datei wurde mit einer abweichenden Version erstellt."
 
 #: engines/gob/inter_playtoons.cpp:258 engines/gob/inter_v2.cpp:1479
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:538
@@ -4568,17 +4551,15 @@ msgstr "Konnte Datei nicht löschen."
 
 #: engines/griffon/detection.cpp:106
 msgid "Menu / Skip"
-msgstr ""
+msgstr "Menü / Überspringen"
 
 #: engines/griffon/detection.cpp:142
-#, fuzzy
 msgid "Attack"
-msgstr "Attacke 1"
+msgstr "Angreifen"
 
 #: engines/griffon/detection.cpp:156
-#, fuzzy
 msgid "Speed Up Cutscene"
-msgstr "Zwischensequenz überspringen"
+msgstr "Zwischensequenz beschleunigen"
 
 #: engines/groovie/detection.cpp:321
 msgid "Fast movie speed"
@@ -5122,7 +5103,7 @@ msgstr ""
 
 #: engines/mohawk/myst_stacks/preview.cpp:90
 msgid "You can't leave the library in the demo."
-msgstr ""
+msgstr "Sie können die Bibliothek in der Demo-Version nicht verlassen."
 
 #: engines/mohawk/riven.cpp:156
 msgid ""
@@ -5369,9 +5350,8 @@ msgid "Use an alternative game intro (CD version only)"
 msgstr "Verwendet einen alternativen Vorspann (nur bei CD-Version)"
 
 #: engines/saga/saga.cpp:247
-#, fuzzy
 msgid "Error loading game resources."
-msgstr "Fehler beim Lesen der Spielstand-Datei"
+msgstr "Fehler beim Laden der Spiel-Dateien."
 
 #: engines/sci/detection.cpp:399
 msgid "Skip EGA dithering pass (full color backgrounds)"
@@ -5512,6 +5492,9 @@ msgid ""
 "There exists some dummy logic for now, where opponent actions are chosen "
 "randomly"
 msgstr ""
+"Die Poker-Logik ist in einer externen DLL-Datei hart kodiert und noch nicht "
+"implementiert. Es existiert eine Platzhalter-Logik, welche die Aktionen der "
+"Gegner zufällig auswählt"
 
 #: engines/sci/engine/savegame.cpp:1407
 msgid "The format of this saved game is obsolete, unable to load it"
@@ -6516,11 +6499,12 @@ msgid ""
 "Failed to save temporary game state. Make sure your save game directory is "
 "set in ScummVM and that you can write to it."
 msgstr ""
+"Fehler beim Speichern des temporären Spielstands. Stellen Sie sicher, dass "
+"das Spielstand-Verzeichnis in ScummVM gesetzt und schreibbar ist."
 
 #: engines/supernova/supernova.cpp:828
-#, fuzzy
 msgid "Failed to load temporary game state."
-msgstr "Konnte Spielstand aus Datei nicht laden."
+msgstr "Fehler beim Laden des temporären Spielstands."
 
 #: engines/supernova/detection.cpp:40
 msgid "Improved mode"
@@ -7390,6 +7374,14 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+"Bevor Sie dieses Spiel spielen, müssen Sie die benötigten Schriftarten in "
+"das Extras-Verzsichnis von ScummVM oder in das Spielverzeichnis kopieren. "
+"Unter Windows benötigen Sie folgende Dateien aus dem Windows-Schriftarten-"
+"Verzeichnis: Times New Roman, Century Schoolbook, Garamond, Courier New und "
+"Arial. Alternativ können Sie auch die Liberation-Schriftarten oder das GNU "
+"FreeFont-Paket herunterladen. Sie benötigen jeweils alle Schriftarten des "
+"gewählten Paketes, beispielsweise LiberationMono, LiberationSans und "
+"LiberationSerif oder FreeMono, FreeSans und FreeSerif."
 
 #~ msgid "Engine does not support debug level '%s'"
 #~ msgstr "Engine unterstützt den Debug-Level \"%s\" nicht"
