@@ -173,42 +173,27 @@ DetectedGames detectGamesImpl(const Common::FSList &fslist, bool recursion = fal
 	for (g = Sword2::sword2_settings; g->gameid; ++g) {
 		// Iterate over all files in the given directory
 		for (file = fslist.begin(); file != fslist.end(); ++file) {
-			if (!file->isDirectory()) {
-				// The required game data files can be located in the game directory, or in
-				// a subdirectory called "clusters". In the latter case, we don't want to
-				// detect the game in that subdirectory, as this will detect the game twice
-				// when mass add is searching inside a directory. In this case, the first
-				// result (the game directory) will be correct, but the second result (the
-				// clusters subdirectory) will be wrong, as the optional speech, music and
-				// video data files will be ignored. Note that this fix will skip the game
-				// data files if the user has placed them inside a "clusters" subdirectory,
-				// or if he/she points ScummVM directly to the "clusters" directory of the
-				// game CD. Fixes bug #3049336.
-				Common::String directory = file->getParent().getName();
-				directory.toLowercase();
-				if (directory.hasPrefix("clusters") && directory.size() <= 9 && !recursion)
+			if (file->isDirectory()) continue;
+
+			if (file->getName().equalsIgnoreCase(g->detectname)) {
+				// Make sure that the sword2 demo is not mixed up with the
+				// full version, since they use the same filename for detection
+				if ((g->features == Sword2::GF_DEMO && isFullVersion) ||
+					(g->features == 0 && !isFullVersion))
 					continue;
 
-				if (file->getName().equalsIgnoreCase(g->detectname)) {
-					// Make sure that the sword2 demo is not mixed up with the
-					// full version, since they use the same filename for detection
-					if ((g->features == Sword2::GF_DEMO && isFullVersion) ||
-						(g->features == 0 && !isFullVersion))
-						continue;
+				// Match found, add to list of candidates, then abort inner loop.
+				DetectedGame game = DetectedGame("sword2", g->gameid, g->description);
+				game.setGUIOptions(GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
 
-					// Match found, add to list of candidates, then abort inner loop.
-					DetectedGame game = DetectedGame("sword2", g->gameid, g->description);
-					game.setGUIOptions(GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
-
-					detectedGames.push_back(game);
-					break;
-				}
+				detectedGames.push_back(game);
+				break;
 			}
 		}
 	}
 
 
-	if (detectedGames.empty()) {
+	if (detectedGames.empty() && !recursion) {
 		// Nothing found -- try to recurse into the 'clusters' subdirectory,
 		// present e.g. if the user copied the data straight from CD.
 		for (file = fslist.begin(); file != fslist.end(); ++file) {
@@ -232,6 +217,22 @@ DetectedGames detectGamesImpl(const Common::FSList &fslist, bool recursion = fal
 }
 
 DetectedGames Sword2MetaEngine::detectGames(const Common::FSList &fslist) const {
+	// The required game data files can be located in the game directory, or in
+	// a subdirectory called "clusters". In the latter case, we don't want to
+	// detect the game in that subdirectory, as this will detect the game twice
+	// when mass add is searching inside a directory. In this case, the first
+	// result (the game directory) will be correct, but the second result (the
+	// clusters subdirectory) will be wrong, as the optional speech, music and
+	// video data files will be ignored. Note that this fix will skip the game
+	// data files if the user has placed them inside a "clusters" subdirectory,
+	// or if he/she points ScummVM directly to the "clusters" directory of the
+	// game CD. Fixes bug #3049336.
+	if (!fslist.empty()) {
+		Common::String directory = fslist[0].getParent().getName();
+		if (directory.hasPrefixIgnoreCase("clusters") && directory.size() <= 9)
+			return DetectedGames();
+	}
+
 	return detectGamesImpl(fslist);
 }
 
