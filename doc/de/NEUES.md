@@ -10,7 +10,7 @@ Programmcodes finden Sie auf Englisch unter:
  Supernova:
    - Teil 1 von Supernova ist nun in einer italienischen Übersetzung verfügbar.
 
-#### 2.2.0 (DD.09.2020)
+#### 2.2.0 (27.09.2020)
 
  Neue Spiele:
    - Unterstützung für Blazing Dragons hinzugefügt.
