@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-09-02 12:38+0200\n"
-"PO-Revision-Date: 2020-08-30 00:43+0000\n"
+"POT-Creation-Date: 2020-09-13 22:06+0100\n"
+"PO-Revision-Date: 2020-09-01 06:43+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -64,7 +64,7 @@ msgstr "Вгору"
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:60
 #: gui/saveload-dialog.cpp:60 gui/saveload-dialog.cpp:393
 #: gui/saveload-dialog.cpp:465 gui/saveload-dialog.cpp:767
-#: gui/saveload-dialog.cpp:1165 gui/themebrowser.cpp:55
+#: gui/saveload-dialog.cpp:1163 gui/themebrowser.cpp:55
 #: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:642
 #: backends/dialogs/gtk/gtk-dialogs.cpp:47
 #: backends/events/default/default-events.cpp:176
@@ -85,7 +85,7 @@ msgstr "Відміна"
 #: gui/remotebrowser.cpp:61 gui/themebrowser.cpp:56
 #: backends/dialogs/gtk/gtk-dialogs.cpp:46
 #: backends/dialogs/macosx/macosx-dialogs.mm:132
-#: backends/dialogs/win32/win32-dialogs.cpp:137
+#: backends/dialogs/win32/win32-dialogs.cpp:138
 msgid "Choose"
 msgstr "Вибрати"
 
@@ -161,7 +161,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:351
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:43 gui/launcher.cpp:487
 #: gui/launcher.cpp:491 gui/massadd.cpp:89 gui/options.cpp:1840
-#: gui/saveload-dialog.cpp:1166 engines/engine.cpp:502 engines/engine.cpp:513
+#: gui/saveload-dialog.cpp:1164 engines/engine.cpp:502 engines/engine.cpp:513
 #: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
 #: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
@@ -528,7 +528,7 @@ msgid "Sine"
 msgstr "Синусоїда"
 
 #: gui/fluidsynth-dialog.cpp:137 backends/platform/sdl/ps3/ps3.cpp:44
-#: backends/platform/sdl/psp2/psp2.cpp:48 engines/dragons/detection.cpp:289
+#: backends/platform/sdl/psp2/psp2.cpp:48 engines/dragons/detection.cpp:307
 msgid "Triangle"
 msgstr "Трикутник"
 
@@ -590,7 +590,8 @@ msgstr "Закрити"
 
 #: gui/gui-manager.cpp:137 engines/metaengine.cpp:112
 #: backends/platform/symbian/src/SymbianActions.cpp:40
-#: engines/dragons/detection.cpp:259 engines/glk/scott/scott.cpp:412
+#: engines/dragons/detection.cpp:277 engines/glk/scott/scott.cpp:412
+#: engines/griffon/detection.cpp:118
 #: engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
 #: engines/wintermute/keymapper_tables.h:1409
@@ -600,7 +601,8 @@ msgstr "Догори"
 
 #: gui/gui-manager.cpp:142 engines/metaengine.cpp:117
 #: backends/platform/symbian/src/SymbianActions.cpp:41
-#: engines/dragons/detection.cpp:265 engines/glk/scott/scott.cpp:412
+#: engines/dragons/detection.cpp:283 engines/glk/scott/scott.cpp:412
+#: engines/griffon/detection.cpp:124
 #: engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
 #: engines/wintermute/keymapper_tables.h:1415
@@ -610,7 +612,8 @@ msgstr "Донизу"
 
 #: gui/gui-manager.cpp:147 engines/metaengine.cpp:122
 #: backends/platform/symbian/src/SymbianActions.cpp:42
-#: engines/dragons/detection.cpp:271 engines/wintermute/keymapper_tables.h:1023
+#: engines/dragons/detection.cpp:289 engines/griffon/detection.cpp:130
+#: engines/wintermute/keymapper_tables.h:1023
 #: engines/wintermute/keymapper_tables.h:1397
 #: engines/wintermute/keymapper_tables.h:1505
 #: engines/wintermute/keymapper_tables.h:1627
@@ -619,7 +622,8 @@ msgstr "Наліво"
 
 #: gui/gui-manager.cpp:152 engines/metaengine.cpp:127
 #: backends/platform/symbian/src/SymbianActions.cpp:43
-#: engines/dragons/detection.cpp:277 engines/wintermute/keymapper_tables.h:1029
+#: engines/dragons/detection.cpp:295 engines/griffon/detection.cpp:136
+#: engines/wintermute/keymapper_tables.h:1029
 #: engines/wintermute/keymapper_tables.h:1403
 #: engines/wintermute/keymapper_tables.h:1513
 #: engines/wintermute/keymapper_tables.h:1633
@@ -1813,7 +1817,7 @@ msgstr "Створити новий запис гри"
 msgid "Name: "
 msgstr "Назва: "
 
-#: gui/saveload-dialog.cpp:1185
+#: gui/saveload-dialog.cpp:1183
 #, c-format
 msgid "Enter a description for slot %d:"
 msgstr "Введіть опис для слоту %d:"
@@ -2077,10 +2081,11 @@ msgstr "~П~овер.в головне меню"
 #: engines/neverhood/menumodule.cpp:890 engines/pegasus/pegasus.cpp:374
 #: engines/prince/saveload.cpp:55 engines/sci/engine/guest_additions.cpp:698
 #: engines/sci/engine/kfile.cpp:1074 engines/sherlock/scalpel/scalpel.cpp:1250
-#: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:42
-#: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
-#: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
-#: engines/xeen/saves.cpp:277 engines/zvision/file/save_manager.cpp:49
+#: engines/sherlock/tattoo/widget_files.cpp:75
+#: engines/startrek/saveload.cpp:43 engines/toltecs/menu.cpp:292
+#: engines/toon/toon.cpp:3362 engines/tsage/scenes.cpp:599
+#: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
+#: engines/zvision/file/save_manager.cpp:49
 msgid "Save game:"
 msgstr "Зберегти гру:"
 
@@ -2095,13 +2100,14 @@ msgstr "Зберегти гру:"
 #: engines/lab/savegame.cpp:243 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/neverhood/menumodule.cpp:890 engines/parallaction/saveload.cpp:209
 #: engines/pegasus/pegasus.cpp:374 engines/prince/saveload.cpp:55
-#: engines/sci/engine/guest_additions.cpp:699 engines/sci/engine/kfile.cpp:1074
-#: engines/scumm/dialogs.cpp:181 engines/sherlock/scalpel/scalpel.cpp:1250
-#: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:42
-#: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
-#: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
-#: engines/xeen/saves.cpp:277 engines/zvision/detection.cpp:215
-#: engines/zvision/file/save_manager.cpp:49
+#: engines/sci/engine/guest_additions.cpp:699
+#: engines/sci/engine/kfile.cpp:1074 engines/scumm/dialogs.cpp:181
+#: engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/sherlock/tattoo/widget_files.cpp:75
+#: engines/startrek/saveload.cpp:43 engines/toltecs/menu.cpp:292
+#: engines/toon/toon.cpp:3362 engines/tsage/scenes.cpp:599
+#: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
+#: engines/zvision/detection.cpp:215 engines/zvision/file/save_manager.cpp:49
 msgid "Save"
 msgstr "Записати"
 
@@ -2308,8 +2314,8 @@ msgstr "Пропустити рядок"
 msgid "Predictive input dialog"
 msgstr "Діалог предиктивного вводу"
 
-#: engines/metaengine.cpp:107 engines/sky/detection.cpp:228
-#: engines/wintermute/keymapper_tables.h:55
+#: engines/metaengine.cpp:107 engines/griffon/detection.cpp:112
+#: engines/sky/detection.cpp:228 engines/wintermute/keymapper_tables.h:55
 msgid "Confirm"
 msgstr "Підтвердити"
 
@@ -2403,18 +2409,17 @@ msgid "Creative Music System emulator"
 msgstr "Емулятор Creative Music System"
 
 #: audio/softsynth/fluidsynth.cpp:178
-#, fuzzy
 msgid ""
 "FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI "
 "on MIDI tab. Music is off."
 msgstr ""
 "FluidSynth вимагає налаштування 'soundfont'. Будь-ласка, вкажіть її у "
-"ScummVM GUI на вкладці MIDI. Музику виключено"
+"ScummVM GUI на вкладці MIDI. Музику виключено."
 
 #: audio/softsynth/fluidsynth.cpp:279
-#, fuzzy, c-format
+#, c-format
 msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
-msgstr "FluidSynth: Не вдалося завантажити sound font '%s'. Музику виключено"
+msgstr "FluidSynth: Не вдалося завантажити SoundFont '%s'. Музику виключено."
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:32
 msgid "FM-Towns Audio"
@@ -2524,37 +2529,37 @@ msgstr "Перемкнути звук"
 msgid "Open Debugger"
 msgstr "Відкрити відладчик"
 
-#: backends/events/gph/gph-events.cpp:423
-#: backends/events/gph/gph-events.cpp:466
-#: backends/events/openpandora/op-events.cpp:165
+#: backends/events/gph/gph-events.cpp:417
+#: backends/events/gph/gph-events.cpp:460
+#: backends/events/openpandora/op-events.cpp:157
 msgid "Touchscreen 'Tap Mode' - Left Click"
 msgstr "Режим дотику у тачскріні - Лівий клік"
 
-#: backends/events/gph/gph-events.cpp:425
-#: backends/events/gph/gph-events.cpp:468
-#: backends/events/openpandora/op-events.cpp:167
+#: backends/events/gph/gph-events.cpp:419
+#: backends/events/gph/gph-events.cpp:462
+#: backends/events/openpandora/op-events.cpp:159
 msgid "Touchscreen 'Tap Mode' - Right Click"
 msgstr "Режим дотику у тачскріні - Правий клік"
 
-#: backends/events/gph/gph-events.cpp:427
-#: backends/events/gph/gph-events.cpp:470
-#: backends/events/openpandora/op-events.cpp:169
+#: backends/events/gph/gph-events.cpp:421
+#: backends/events/gph/gph-events.cpp:464
+#: backends/events/openpandora/op-events.cpp:161
 msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
 msgstr "Режим дотику у тачскріні - Проліт (без кліку)"
 
-#: backends/events/gph/gph-events.cpp:447
+#: backends/events/gph/gph-events.cpp:441
 msgid "Maximum Volume"
 msgstr "Максимальна Гучність"
 
-#: backends/events/gph/gph-events.cpp:449
+#: backends/events/gph/gph-events.cpp:443
 msgid "Increasing Volume"
 msgstr "Підвищення гучності"
 
-#: backends/events/gph/gph-events.cpp:455
+#: backends/events/gph/gph-events.cpp:449
 msgid "Minimal Volume"
 msgstr "Мінімальна Гучність"
 
-#: backends/events/gph/gph-events.cpp:457
+#: backends/events/gph/gph-events.cpp:451
 msgid "Decreasing Volume"
 msgstr "Пониження гучності"
 
@@ -2566,7 +2571,7 @@ msgstr "Кліки увімкнено"
 msgid "Clicking Disabled"
 msgstr "Кліки вимкнено"
 
-#: backends/events/openpandora/op-events.cpp:171
+#: backends/events/openpandora/op-events.cpp:163
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
 msgstr "Режим дотику у тачскріні - Проліт (клік DPad)"
 
@@ -2787,11 +2792,11 @@ msgstr "Лівий стік"
 msgid "Right Stick"
 msgstr "Правий стік"
 
-#: backends/keymapper/hardware-input.cpp:265 engines/dragons/detection.cpp:307
+#: backends/keymapper/hardware-input.cpp:265 engines/dragons/detection.cpp:325
 msgid "Left Shoulder"
 msgstr "Лівий курок"
 
-#: backends/keymapper/hardware-input.cpp:266 engines/dragons/detection.cpp:313
+#: backends/keymapper/hardware-input.cpp:266 engines/dragons/detection.cpp:331
 msgid "Right Shoulder"
 msgstr "Правий курок"
 
@@ -3446,38 +3451,41 @@ msgstr ""
 msgid "Guard middle"
 msgstr "Бити посередині"
 
-#: backends/platform/ds/arm9/source/scummhelp.cpp:81 engines/scumm/help.cpp:312
+#: backends/platform/ds/arm9/source/scummhelp.cpp:81
+#: engines/scumm/help.cpp:312
 msgid "Punch high"
 msgstr "Бити зверху"
 
-#: backends/platform/ds/arm9/source/scummhelp.cpp:82 engines/scumm/help.cpp:313
+#: backends/platform/ds/arm9/source/scummhelp.cpp:82
+#: engines/scumm/help.cpp:313
 msgid "Punch middle"
 msgstr "Бити посередині"
 
-#: backends/platform/ds/arm9/source/scummhelp.cpp:83 engines/scumm/help.cpp:314
+#: backends/platform/ds/arm9/source/scummhelp.cpp:83
+#: engines/scumm/help.cpp:314
 msgid "Punch low"
 msgstr "Бити знизу"
 
-#: backends/platform/ios7/ios7_osys_events.cpp:315
-#: backends/platform/ios7/ios7_osys_events.cpp:443
+#: backends/platform/ios7/ios7_osys_events.cpp:327
+#: backends/platform/ios7/ios7_osys_events.cpp:455
 #: backends/platform/iphone/osys_events.cpp:300
 msgid "Mouse-click-and-drag mode enabled."
 msgstr "Режим миші клікнути-та-тягнути увімкнено."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:317
-#: backends/platform/ios7/ios7_osys_events.cpp:445
+#: backends/platform/ios7/ios7_osys_events.cpp:329
+#: backends/platform/ios7/ios7_osys_events.cpp:457
 #: backends/platform/iphone/osys_events.cpp:302
 msgid "Mouse-click-and-drag mode disabled."
 msgstr "Режим миші клікнути-та-тягнути вимкнено."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:328
-#: backends/platform/ios7/ios7_osys_events.cpp:464
+#: backends/platform/ios7/ios7_osys_events.cpp:340
+#: backends/platform/ios7/ios7_osys_events.cpp:476
 #: backends/platform/iphone/osys_events.cpp:313
 msgid "Touchpad mode enabled."
 msgstr "Режим тачпаду увімкнено."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:330
-#: backends/platform/ios7/ios7_osys_events.cpp:466
+#: backends/platform/ios7/ios7_osys_events.cpp:342
+#: backends/platform/ios7/ios7_osys_events.cpp:478
 #: backends/platform/iphone/osys_events.cpp:315
 msgid "Touchpad mode disabled."
 msgstr "Режим тачпаду вимкнено."
@@ -3548,17 +3556,17 @@ msgid "BSD License"
 msgstr "Ліцензія BSD"
 
 #: backends/platform/sdl/ps3/ps3.cpp:41 backends/platform/sdl/psp2/psp2.cpp:45
-#: engines/dragons/detection.cpp:301
+#: engines/dragons/detection.cpp:319
 msgid "Cross"
 msgstr "Хрест"
 
 #: backends/platform/sdl/ps3/ps3.cpp:42 backends/platform/sdl/psp2/psp2.cpp:46
-#: engines/dragons/detection.cpp:295
+#: engines/dragons/detection.cpp:313
 msgid "Circle"
 msgstr "Коло"
 
 #: backends/platform/sdl/ps3/ps3.cpp:43 backends/platform/sdl/psp2/psp2.cpp:47
-#: engines/dragons/detection.cpp:283
+#: engines/dragons/detection.cpp:301
 msgid "Square"
 msgstr "Квадрат"
 
@@ -3913,11 +3921,11 @@ msgstr ""
 #: engines/illusions/menusystem.cpp:680 engines/kingdom/kingdom.cpp:749
 #: engines/lab/savegame.cpp:258 engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:903 engines/prince/saveload.cpp:64
-#: engines/sci/engine/guest_additions.cpp:701 engines/sci/engine/kfile.cpp:1186
-#: engines/sherlock/scalpel/scalpel.cpp:1263
-#: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:67
-#: engines/toltecs/menu.cpp:267 engines/toon/toon.cpp:3456
-#: engines/zvision/file/save_manager.cpp:62
+#: engines/sci/engine/guest_additions.cpp:701
+#: engines/sci/engine/kfile.cpp:1186 engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sherlock/tattoo/widget_files.cpp:94
+#: engines/startrek/saveload.cpp:68 engines/toltecs/menu.cpp:267
+#: engines/toon/toon.cpp:3456 engines/zvision/file/save_manager.cpp:62
 msgid "Restore game:"
 msgstr "Відновити гру:"
 
@@ -3930,11 +3938,12 @@ msgstr "Відновити гру:"
 #: engines/lab/savegame.cpp:238 engines/lab/savegame.cpp:258
 #: engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:903 engines/prince/saveload.cpp:64
-#: engines/sci/engine/guest_additions.cpp:702 engines/sci/engine/kfile.cpp:1186
-#: engines/sherlock/scalpel/scalpel.cpp:1263
-#: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:67
-#: engines/toltecs/menu.cpp:267 engines/toon/toon.cpp:3456
-#: engines/zvision/detection.cpp:220 engines/zvision/file/save_manager.cpp:62
+#: engines/sci/engine/guest_additions.cpp:702
+#: engines/sci/engine/kfile.cpp:1186 engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sherlock/tattoo/widget_files.cpp:94
+#: engines/startrek/saveload.cpp:68 engines/toltecs/menu.cpp:267
+#: engines/toon/toon.cpp:3456 engines/zvision/detection.cpp:220
+#: engines/zvision/file/save_manager.cpp:62
 msgid "Restore"
 msgstr "Відновити"
 
@@ -3994,15 +4003,15 @@ msgstr ""
 "MT32 на General MIDI. Але в результаті може\n"
 "статися, що деякі треки будуть грати неправильно."
 
-#: engines/bladerunner/bladerunner.cpp:359
+#: engines/bladerunner/bladerunner.cpp:363
 msgid "Failed to initialize resources"
 msgstr "Не вдалося ініціалізувати ресурси"
 
-#: engines/bladerunner/bladerunner.cpp:1063
+#: engines/bladerunner/bladerunner.cpp:1067
 msgid "A required game resource was not found"
 msgstr "Потрібний ігровий ресурс не знайдено"
 
-#: engines/bladerunner/bladerunner.cpp:2265
+#: engines/bladerunner/bladerunner.cpp:2271
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -4012,7 +4021,7 @@ msgstr ""
 "ви граєте в режимі оригінального вмісту. Режим буде налаштовано на "
 "Відновлений вміст для цього сеансу до повного виходу з гри."
 
-#: engines/bladerunner/bladerunner.cpp:2267
+#: engines/bladerunner/bladerunner.cpp:2273
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -4022,7 +4031,7 @@ msgstr ""
 "у режимі відновленого вирізаного вмісту. Для цього сеансу буде налаштовано "
 "режим оригінального вмісту до повного виходу з гри."
 
-#: engines/bladerunner/bladerunner.cpp:2269
+#: engines/bladerunner/bladerunner.cpp:2275
 msgid "Continue"
 msgstr "Продовжуйте"
 
@@ -4078,11 +4087,11 @@ msgstr ""
 "Під час бігу МакКой не буде уповільнюватися коли гравець припиняє клікати "
 "мишею"
 
-#: engines/cge/detection.cpp:115 engines/cge2/detection.cpp:111
+#: engines/cge/detection.cpp:115
 msgid "Color Blind Mode"
 msgstr "Режим без кольору"
 
-#: engines/cge/detection.cpp:116 engines/cge2/detection.cpp:112
+#: engines/cge/detection.cpp:116
 msgid "Enable Color Blind Mode by default"
 msgstr "Включає режим для людей з погіршенним сприяттям кольору"
 
@@ -4124,7 +4133,7 @@ msgstr ""
 msgid "Load anyway"
 msgstr "Все одно зчитати"
 
-#: engines/dragons/detection.cpp:218
+#: engines/dragons/detection.cpp:236
 msgid ""
 "Error: It appears that the game data files were extracted incorrectly.\n"
 "\n"
@@ -4140,35 +4149,35 @@ msgstr ""
 "\n"
 "Дивіться https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
 
-#: engines/dragons/detection.cpp:236
+#: engines/dragons/detection.cpp:254
 msgid "Action"
 msgstr "Дія"
 
-#: engines/dragons/detection.cpp:242
+#: engines/dragons/detection.cpp:260
 msgid "Change Command"
 msgstr "Змінити команду"
 
-#: engines/dragons/detection.cpp:248 engines/hdb/detection.cpp:347
-#: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
-#: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
-#: engines/zvision/detection.cpp:185
+#: engines/dragons/detection.cpp:266 engines/griffon/detection.cpp:149
+#: engines/hdb/detection.cpp:347 engines/scumm/help.cpp:225
+#: engines/scumm/help.cpp:234 engines/scumm/help.cpp:241
+#: engines/scumm/help.cpp:249 engines/zvision/detection.cpp:185
 msgid "Inventory"
 msgstr "Інвентар"
 
-#: engines/dragons/detection.cpp:253 engines/scumm/help.cpp:86
+#: engines/dragons/detection.cpp:271 engines/scumm/help.cpp:86
 #: engines/scumm/help.cpp:89
 msgid "Enter"
 msgstr "Enter"
 
-#: engines/dragons/detection.cpp:319
+#: engines/dragons/detection.cpp:337
 msgid "Debug Graphics"
 msgstr "Відладка графіки"
 
-#: engines/dragons/detection.cpp:324
+#: engines/dragons/detection.cpp:342
 msgid "Quit Game"
 msgstr "Вийти з ігри"
 
-#: engines/dragons/dragons.cpp:1796
+#: engines/dragons/dragons.cpp:1803
 #, c-format
 msgid ""
 "Error: The file '%s' hasn't been extracted properly.\n"
@@ -4208,19 +4217,19 @@ msgstr "Використовувати режим яскравої палітр�
 msgid "Display graphics using the game's bright palette"
 msgstr "Відображення графіки з використанням яскравої палітри ігр"
 
-#: engines/glk/detection.cpp:354
+#: engines/glk/detection.cpp:370
 msgid "Enable Text to Speech"
 msgstr "Включити генератор мови"
 
-#: engines/glk/detection.cpp:355
+#: engines/glk/detection.cpp:371
 msgid "Use TTS to read the text"
 msgstr "Використовувати TTS для читання тексту"
 
-#: engines/glk/detection.cpp:360
+#: engines/glk/detection.cpp:376
 msgid "Also read input text"
 msgstr "Також читати текст вводу"
 
-#: engines/glk/detection.cpp:361
+#: engines/glk/detection.cpp:377
 msgid "Use TTS to read the input text"
 msgstr "Використовувати TTS для читання введеного тексту"
 
@@ -4273,7 +4282,7 @@ msgstr "Це недійсний файл Alan2."
 msgid "Savegame"
 msgstr "Збережена гра"
 
-#: engines/glk/comprehend/game.cpp:1333
+#: engines/glk/comprehend/game.cpp:1373
 msgid "Picture window toggled\n"
 msgstr "Вікно з ілюстрацією перемкнено\n"
 
@@ -4512,7 +4521,7 @@ msgstr "Це не в силах зробити це.\n"
 msgid "It's beyond my power to do that.\n"
 msgstr "Це не в силах зробити це.\n"
 
-#: engines/glk/zcode/zcode.cpp:144
+#: engines/glk/zcode/zcode.cpp:145
 msgid "Error writing save file\n"
 msgstr "Помилка запису збереження гри\n"
 
@@ -4537,6 +4546,20 @@ msgstr "Не вдалося зберегти гру у файл."
 #: engines/gob/inter_v5.cpp:107
 msgid "Failed to delete file."
 msgstr "Не вдалося видалити файл."
+
+#: engines/griffon/detection.cpp:106
+msgid "Menu / Skip"
+msgstr ""
+
+#: engines/griffon/detection.cpp:142
+#, fuzzy
+msgid "Attack"
+msgstr "Атака 1"
+
+#: engines/griffon/detection.cpp:156
+#, fuzzy
+msgid "Speed Up Cutscene"
+msgstr "Пропустити ролік"
 
 #: engines/groovie/detection.cpp:321
 msgid "Fast movie speed"
@@ -6516,11 +6539,11 @@ msgid ""
 msgstr ""
 "Знайдено PSX ролики, але ScummVM було зібрано без підтримки кольорів RGB"
 
-#: engines/sword2/sword2.cpp:79
+#: engines/sword2/sword2.cpp:80
 msgid "Show object labels"
 msgstr "Показувати назви об'єктів"
 
-#: engines/sword2/sword2.cpp:80
+#: engines/sword2/sword2.cpp:81
 msgid "Show labels for objects on mouse hover"
 msgstr "Показувати назви для об'єктів при наведенні миші"
 
@@ -6573,7 +6596,7 @@ msgstr "Не вдалося завантажити збережену гру №
 msgid "Unable to locate the '%s' data file."
 msgstr "Не вдалося знайти файл даних '%s'."
 
-#: engines/ultima/shared/early/ultima_early.cpp:67
+#: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
 msgstr "Не можу знайти коректний файл ultima.dat"
 
@@ -6588,12 +6611,12 @@ msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr ""
 "Знайдено невірну версію даних движка. Очікувана %d.%d, але знайдено %d.%d"
 
-#: engines/ultima/nuvie/nuvie.cpp:362
+#: engines/ultima/nuvie/nuvie.cpp:382
 #, c-format
 msgid "loading quick save %d"
 msgstr "читаю швидко збережену гру %d"
 
-#: engines/ultima/nuvie/nuvie.cpp:367
+#: engines/ultima/nuvie/nuvie.cpp:387
 #, c-format
 msgid "saving quick save %d"
 msgstr "записую швидке збереження %d"
@@ -7112,14 +7135,12 @@ msgid "Spin faster"
 msgstr "Крутитися швидше"
 
 #: engines/wintermute/keymapper_tables.h:1311
-#, fuzzy
 msgid "Zoom out"
 msgstr "Збіл. масштаб"
 
 #: engines/wintermute/keymapper_tables.h:1318
-#, fuzzy
 msgid "Zoom in"
-msgstr "Збіл. масштаб"
+msgstr "Змен. масштаб"
 
 #: engines/wintermute/keymapper_tables.h:1331
 #: engines/wintermute/keymapper_tables.h:1446
@@ -7302,7 +7323,6 @@ msgid ""
 "respectively."
 msgstr ""
 
-#, c-format
 #~ msgid "Engine does not support debug level '%s'"
 #~ msgstr "Движок не підтримує рівень відладки '%s'"
 
@@ -7328,7 +7348,6 @@ msgstr ""
 #~ "Гру збережено\n"
 #~ "\n"
 
-#, c-format
 #~ msgid "Quicksave %03d"
 #~ msgstr "Швидке збереження %03d"
 

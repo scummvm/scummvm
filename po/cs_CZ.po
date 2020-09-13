@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-09-02 12:38+0200\n"
-"PO-Revision-Date: 2020-07-23 21:43+0000\n"
+"POT-Creation-Date: 2020-09-13 22:06+0100\n"
+"PO-Revision-Date: 2020-08-31 12:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/cs/>\n"
@@ -64,7 +64,7 @@ msgstr "Jít nahoru"
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:60
 #: gui/saveload-dialog.cpp:60 gui/saveload-dialog.cpp:393
 #: gui/saveload-dialog.cpp:465 gui/saveload-dialog.cpp:767
-#: gui/saveload-dialog.cpp:1165 gui/themebrowser.cpp:55
+#: gui/saveload-dialog.cpp:1163 gui/themebrowser.cpp:55
 #: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:642
 #: backends/dialogs/gtk/gtk-dialogs.cpp:47
 #: backends/events/default/default-events.cpp:176
@@ -85,7 +85,7 @@ msgstr "Zrušit"
 #: gui/remotebrowser.cpp:61 gui/themebrowser.cpp:56
 #: backends/dialogs/gtk/gtk-dialogs.cpp:46
 #: backends/dialogs/macosx/macosx-dialogs.mm:132
-#: backends/dialogs/win32/win32-dialogs.cpp:137
+#: backends/dialogs/win32/win32-dialogs.cpp:138
 msgid "Choose"
 msgstr "Zvolit"
 
@@ -161,7 +161,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:351
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:43 gui/launcher.cpp:487
 #: gui/launcher.cpp:491 gui/massadd.cpp:89 gui/options.cpp:1840
-#: gui/saveload-dialog.cpp:1166 engines/engine.cpp:502 engines/engine.cpp:513
+#: gui/saveload-dialog.cpp:1164 engines/engine.cpp:502 engines/engine.cpp:513
 #: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
 #: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
@@ -527,7 +527,7 @@ msgid "Sine"
 msgstr "Sinus"
 
 #: gui/fluidsynth-dialog.cpp:137 backends/platform/sdl/ps3/ps3.cpp:44
-#: backends/platform/sdl/psp2/psp2.cpp:48 engines/dragons/detection.cpp:289
+#: backends/platform/sdl/psp2/psp2.cpp:48 engines/dragons/detection.cpp:307
 msgid "Triangle"
 msgstr "Trojúhelník"
 
@@ -589,7 +589,8 @@ msgstr "Zavřít"
 
 #: gui/gui-manager.cpp:137 engines/metaengine.cpp:112
 #: backends/platform/symbian/src/SymbianActions.cpp:40
-#: engines/dragons/detection.cpp:259 engines/glk/scott/scott.cpp:412
+#: engines/dragons/detection.cpp:277 engines/glk/scott/scott.cpp:412
+#: engines/griffon/detection.cpp:118
 #: engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
 #: engines/wintermute/keymapper_tables.h:1409
@@ -599,7 +600,8 @@ msgstr "Nahoru"
 
 #: gui/gui-manager.cpp:142 engines/metaengine.cpp:117
 #: backends/platform/symbian/src/SymbianActions.cpp:41
-#: engines/dragons/detection.cpp:265 engines/glk/scott/scott.cpp:412
+#: engines/dragons/detection.cpp:283 engines/glk/scott/scott.cpp:412
+#: engines/griffon/detection.cpp:124
 #: engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
 #: engines/wintermute/keymapper_tables.h:1415
@@ -609,7 +611,8 @@ msgstr "Dolů"
 
 #: gui/gui-manager.cpp:147 engines/metaengine.cpp:122
 #: backends/platform/symbian/src/SymbianActions.cpp:42
-#: engines/dragons/detection.cpp:271 engines/wintermute/keymapper_tables.h:1023
+#: engines/dragons/detection.cpp:289 engines/griffon/detection.cpp:130
+#: engines/wintermute/keymapper_tables.h:1023
 #: engines/wintermute/keymapper_tables.h:1397
 #: engines/wintermute/keymapper_tables.h:1505
 #: engines/wintermute/keymapper_tables.h:1627
@@ -618,7 +621,8 @@ msgstr "Doleva"
 
 #: gui/gui-manager.cpp:152 engines/metaengine.cpp:127
 #: backends/platform/symbian/src/SymbianActions.cpp:43
-#: engines/dragons/detection.cpp:277 engines/wintermute/keymapper_tables.h:1029
+#: engines/dragons/detection.cpp:295 engines/griffon/detection.cpp:136
+#: engines/wintermute/keymapper_tables.h:1029
 #: engines/wintermute/keymapper_tables.h:1403
 #: engines/wintermute/keymapper_tables.h:1513
 #: engines/wintermute/keymapper_tables.h:1633
@@ -1802,7 +1806,7 @@ msgstr "Vytvořit novou uloženou hru"
 msgid "Name: "
 msgstr "Název: "
 
-#: gui/saveload-dialog.cpp:1185
+#: gui/saveload-dialog.cpp:1183
 #, c-format
 msgid "Enter a description for slot %d:"
 msgstr "Zadejte popis pro pozici %d:"
@@ -2066,10 +2070,11 @@ msgstr "~N~ávrat do Spouštěče"
 #: engines/neverhood/menumodule.cpp:890 engines/pegasus/pegasus.cpp:374
 #: engines/prince/saveload.cpp:55 engines/sci/engine/guest_additions.cpp:698
 #: engines/sci/engine/kfile.cpp:1074 engines/sherlock/scalpel/scalpel.cpp:1250
-#: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:42
-#: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
-#: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
-#: engines/xeen/saves.cpp:277 engines/zvision/file/save_manager.cpp:49
+#: engines/sherlock/tattoo/widget_files.cpp:75
+#: engines/startrek/saveload.cpp:43 engines/toltecs/menu.cpp:292
+#: engines/toon/toon.cpp:3362 engines/tsage/scenes.cpp:599
+#: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
+#: engines/zvision/file/save_manager.cpp:49
 msgid "Save game:"
 msgstr "Uložit hru:"
 
@@ -2084,13 +2089,14 @@ msgstr "Uložit hru:"
 #: engines/lab/savegame.cpp:243 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/neverhood/menumodule.cpp:890 engines/parallaction/saveload.cpp:209
 #: engines/pegasus/pegasus.cpp:374 engines/prince/saveload.cpp:55
-#: engines/sci/engine/guest_additions.cpp:699 engines/sci/engine/kfile.cpp:1074
-#: engines/scumm/dialogs.cpp:181 engines/sherlock/scalpel/scalpel.cpp:1250
-#: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:42
-#: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
-#: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
-#: engines/xeen/saves.cpp:277 engines/zvision/detection.cpp:215
-#: engines/zvision/file/save_manager.cpp:49
+#: engines/sci/engine/guest_additions.cpp:699
+#: engines/sci/engine/kfile.cpp:1074 engines/scumm/dialogs.cpp:181
+#: engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/sherlock/tattoo/widget_files.cpp:75
+#: engines/startrek/saveload.cpp:43 engines/toltecs/menu.cpp:292
+#: engines/toon/toon.cpp:3362 engines/tsage/scenes.cpp:599
+#: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
+#: engines/zvision/detection.cpp:215 engines/zvision/file/save_manager.cpp:49
 msgid "Save"
 msgstr "Uložit"
 
@@ -2298,8 +2304,8 @@ msgstr "Přeskočit řádek"
 msgid "Predictive input dialog"
 msgstr ""
 
-#: engines/metaengine.cpp:107 engines/sky/detection.cpp:228
-#: engines/wintermute/keymapper_tables.h:55
+#: engines/metaengine.cpp:107 engines/griffon/detection.cpp:112
+#: engines/sky/detection.cpp:228 engines/wintermute/keymapper_tables.h:55
 msgid "Confirm"
 msgstr ""
 
@@ -2514,37 +2520,37 @@ msgstr "Povolit zachycování myši"
 msgid "Open Debugger"
 msgstr "Otevřít ladící program"
 
-#: backends/events/gph/gph-events.cpp:423
-#: backends/events/gph/gph-events.cpp:466
-#: backends/events/openpandora/op-events.cpp:165
+#: backends/events/gph/gph-events.cpp:417
+#: backends/events/gph/gph-events.cpp:460
+#: backends/events/openpandora/op-events.cpp:157
 msgid "Touchscreen 'Tap Mode' - Left Click"
 msgstr "'Režim Ťuknutí' Dotykové Obrazovky - Levé Kliknutí"
 
-#: backends/events/gph/gph-events.cpp:425
-#: backends/events/gph/gph-events.cpp:468
-#: backends/events/openpandora/op-events.cpp:167
+#: backends/events/gph/gph-events.cpp:419
+#: backends/events/gph/gph-events.cpp:462
+#: backends/events/openpandora/op-events.cpp:159
 msgid "Touchscreen 'Tap Mode' - Right Click"
 msgstr "'Režim Ťuknutí' Dotykové Obrazovky - Pravé Kliknutí"
 
-#: backends/events/gph/gph-events.cpp:427
-#: backends/events/gph/gph-events.cpp:470
-#: backends/events/openpandora/op-events.cpp:169
+#: backends/events/gph/gph-events.cpp:421
+#: backends/events/gph/gph-events.cpp:464
+#: backends/events/openpandora/op-events.cpp:161
 msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
 msgstr "'Režim Ťuknutí' Dotykové Obrazovky - Najetí (Bez Kliknutí)"
 
-#: backends/events/gph/gph-events.cpp:447
+#: backends/events/gph/gph-events.cpp:441
 msgid "Maximum Volume"
 msgstr "Maximální Hlasitost"
 
-#: backends/events/gph/gph-events.cpp:449
+#: backends/events/gph/gph-events.cpp:443
 msgid "Increasing Volume"
 msgstr "Zvyšuji Hlasitost"
 
-#: backends/events/gph/gph-events.cpp:455
+#: backends/events/gph/gph-events.cpp:449
 msgid "Minimal Volume"
 msgstr "Minimální Hlasitost"
 
-#: backends/events/gph/gph-events.cpp:457
+#: backends/events/gph/gph-events.cpp:451
 msgid "Decreasing Volume"
 msgstr "Snižuji Hlasitost"
 
@@ -2556,7 +2562,7 @@ msgstr "Kliknutí Povoleno"
 msgid "Clicking Disabled"
 msgstr "Kliknutí Zakázáno"
 
-#: backends/events/openpandora/op-events.cpp:171
+#: backends/events/openpandora/op-events.cpp:163
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
 msgstr "'Režim Ťuknutí' Dotykové Obrazovky - Najetí (Dpad kliká)"
 
@@ -2786,11 +2792,11 @@ msgstr "Levé Kliknutí"
 msgid "Right Stick"
 msgstr "Pravé kliknutí"
 
-#: backends/keymapper/hardware-input.cpp:265 engines/dragons/detection.cpp:307
+#: backends/keymapper/hardware-input.cpp:265 engines/dragons/detection.cpp:325
 msgid "Left Shoulder"
 msgstr ""
 
-#: backends/keymapper/hardware-input.cpp:266 engines/dragons/detection.cpp:313
+#: backends/keymapper/hardware-input.cpp:266 engines/dragons/detection.cpp:331
 msgid "Right Shoulder"
 msgstr ""
 
@@ -3471,38 +3477,41 @@ msgstr ""
 msgid "Guard middle"
 msgstr "Udeřit doprostřed"
 
-#: backends/platform/ds/arm9/source/scummhelp.cpp:81 engines/scumm/help.cpp:312
+#: backends/platform/ds/arm9/source/scummhelp.cpp:81
+#: engines/scumm/help.cpp:312
 msgid "Punch high"
 msgstr "Udeřit nahoru"
 
-#: backends/platform/ds/arm9/source/scummhelp.cpp:82 engines/scumm/help.cpp:313
+#: backends/platform/ds/arm9/source/scummhelp.cpp:82
+#: engines/scumm/help.cpp:313
 msgid "Punch middle"
 msgstr "Udeřit doprostřed"
 
-#: backends/platform/ds/arm9/source/scummhelp.cpp:83 engines/scumm/help.cpp:314
+#: backends/platform/ds/arm9/source/scummhelp.cpp:83
+#: engines/scumm/help.cpp:314
 msgid "Punch low"
 msgstr "Udeřit dolů"
 
-#: backends/platform/ios7/ios7_osys_events.cpp:315
-#: backends/platform/ios7/ios7_osys_events.cpp:443
+#: backends/platform/ios7/ios7_osys_events.cpp:327
+#: backends/platform/ios7/ios7_osys_events.cpp:455
 #: backends/platform/iphone/osys_events.cpp:300
 msgid "Mouse-click-and-drag mode enabled."
 msgstr "Režim přetáhnutí myši zapnut."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:317
-#: backends/platform/ios7/ios7_osys_events.cpp:445
+#: backends/platform/ios7/ios7_osys_events.cpp:329
+#: backends/platform/ios7/ios7_osys_events.cpp:457
 #: backends/platform/iphone/osys_events.cpp:302
 msgid "Mouse-click-and-drag mode disabled."
 msgstr "Režim přetáhnutí myši vypnut."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:328
-#: backends/platform/ios7/ios7_osys_events.cpp:464
+#: backends/platform/ios7/ios7_osys_events.cpp:340
+#: backends/platform/ios7/ios7_osys_events.cpp:476
 #: backends/platform/iphone/osys_events.cpp:313
 msgid "Touchpad mode enabled."
 msgstr "Touchpad režim zapnut."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:330
-#: backends/platform/ios7/ios7_osys_events.cpp:466
+#: backends/platform/ios7/ios7_osys_events.cpp:342
+#: backends/platform/ios7/ios7_osys_events.cpp:478
 #: backends/platform/iphone/osys_events.cpp:315
 msgid "Touchpad mode disabled."
 msgstr "Touchpad režim vypnut."
@@ -3574,17 +3583,17 @@ msgid "BSD License"
 msgstr ""
 
 #: backends/platform/sdl/ps3/ps3.cpp:41 backends/platform/sdl/psp2/psp2.cpp:45
-#: engines/dragons/detection.cpp:301
+#: engines/dragons/detection.cpp:319
 msgid "Cross"
 msgstr ""
 
 #: backends/platform/sdl/ps3/ps3.cpp:42 backends/platform/sdl/psp2/psp2.cpp:46
-#: engines/dragons/detection.cpp:295
+#: engines/dragons/detection.cpp:313
 msgid "Circle"
 msgstr ""
 
 #: backends/platform/sdl/ps3/ps3.cpp:43 backends/platform/sdl/psp2/psp2.cpp:47
-#: engines/dragons/detection.cpp:283
+#: engines/dragons/detection.cpp:301
 msgid "Square"
 msgstr ""
 
@@ -3936,11 +3945,11 @@ msgstr ""
 #: engines/illusions/menusystem.cpp:680 engines/kingdom/kingdom.cpp:749
 #: engines/lab/savegame.cpp:258 engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:903 engines/prince/saveload.cpp:64
-#: engines/sci/engine/guest_additions.cpp:701 engines/sci/engine/kfile.cpp:1186
-#: engines/sherlock/scalpel/scalpel.cpp:1263
-#: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:67
-#: engines/toltecs/menu.cpp:267 engines/toon/toon.cpp:3456
-#: engines/zvision/file/save_manager.cpp:62
+#: engines/sci/engine/guest_additions.cpp:701
+#: engines/sci/engine/kfile.cpp:1186 engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sherlock/tattoo/widget_files.cpp:94
+#: engines/startrek/saveload.cpp:68 engines/toltecs/menu.cpp:267
+#: engines/toon/toon.cpp:3456 engines/zvision/file/save_manager.cpp:62
 msgid "Restore game:"
 msgstr "Obnovit hru:"
 
@@ -3953,11 +3962,12 @@ msgstr "Obnovit hru:"
 #: engines/lab/savegame.cpp:238 engines/lab/savegame.cpp:258
 #: engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:903 engines/prince/saveload.cpp:64
-#: engines/sci/engine/guest_additions.cpp:702 engines/sci/engine/kfile.cpp:1186
-#: engines/sherlock/scalpel/scalpel.cpp:1263
-#: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:67
-#: engines/toltecs/menu.cpp:267 engines/toon/toon.cpp:3456
-#: engines/zvision/detection.cpp:220 engines/zvision/file/save_manager.cpp:62
+#: engines/sci/engine/guest_additions.cpp:702
+#: engines/sci/engine/kfile.cpp:1186 engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sherlock/tattoo/widget_files.cpp:94
+#: engines/startrek/saveload.cpp:68 engines/toltecs/menu.cpp:267
+#: engines/toon/toon.cpp:3456 engines/zvision/detection.cpp:220
+#: engines/zvision/file/save_manager.cpp:62
 msgid "Restore"
 msgstr "Obnovit"
 
@@ -4017,29 +4027,29 @@ msgstr ""
 "ty od General MIDI. Je stále možné, že\n"
 "některé stopy nebudou znít správně."
 
-#: engines/bladerunner/bladerunner.cpp:359
+#: engines/bladerunner/bladerunner.cpp:363
 msgid "Failed to initialize resources"
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:1063
+#: engines/bladerunner/bladerunner.cpp:1067
 msgid "A required game resource was not found"
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:2265
+#: engines/bladerunner/bladerunner.cpp:2271
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
 "Content for this session until you completely Quit the game."
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:2267
+#: engines/bladerunner/bladerunner.cpp:2273
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
 "mode for this session until you completely Quit the game."
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:2269
+#: engines/bladerunner/bladerunner.cpp:2275
 msgid "Continue"
 msgstr ""
 
@@ -4091,11 +4101,11 @@ msgid ""
 "clicking the mouse"
 msgstr ""
 
-#: engines/cge/detection.cpp:115 engines/cge2/detection.cpp:111
+#: engines/cge/detection.cpp:115
 msgid "Color Blind Mode"
 msgstr "Režim pro barvoslepé"
 
-#: engines/cge/detection.cpp:116 engines/cge2/detection.cpp:112
+#: engines/cge/detection.cpp:116
 msgid "Enable Color Blind Mode by default"
 msgstr "Standardně zapínat režim pro barvoslepé"
 
@@ -4136,7 +4146,7 @@ msgstr ""
 msgid "Load anyway"
 msgstr "Přesto přidat"
 
-#: engines/dragons/detection.cpp:218
+#: engines/dragons/detection.cpp:236
 msgid ""
 "Error: It appears that the game data files were extracted incorrectly.\n"
 "\n"
@@ -4146,38 +4156,38 @@ msgid ""
 " See https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
 msgstr ""
 
-#: engines/dragons/detection.cpp:236
+#: engines/dragons/detection.cpp:254
 #, fuzzy
 msgid "Action"
 msgstr "Aktivní"
 
-#: engines/dragons/detection.cpp:242
+#: engines/dragons/detection.cpp:260
 msgid "Change Command"
 msgstr ""
 
-#: engines/dragons/detection.cpp:248 engines/hdb/detection.cpp:347
-#: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
-#: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
-#: engines/zvision/detection.cpp:185
+#: engines/dragons/detection.cpp:266 engines/griffon/detection.cpp:149
+#: engines/hdb/detection.cpp:347 engines/scumm/help.cpp:225
+#: engines/scumm/help.cpp:234 engines/scumm/help.cpp:241
+#: engines/scumm/help.cpp:249 engines/zvision/detection.cpp:185
 msgid "Inventory"
 msgstr "Inventář"
 
-#: engines/dragons/detection.cpp:253 engines/scumm/help.cpp:86
+#: engines/dragons/detection.cpp:271 engines/scumm/help.cpp:86
 #: engines/scumm/help.cpp:89
 msgid "Enter"
 msgstr "Enter"
 
-#: engines/dragons/detection.cpp:319
+#: engines/dragons/detection.cpp:337
 #, fuzzy
 msgid "Debug Graphics"
 msgstr "Obraz"
 
-#: engines/dragons/detection.cpp:324
+#: engines/dragons/detection.cpp:342
 #, fuzzy
 msgid "Quit Game"
 msgstr " (Hra)"
 
-#: engines/dragons/dragons.cpp:1796
+#: engines/dragons/dragons.cpp:1803
 #, c-format
 msgid ""
 "Error: The file '%s' hasn't been extracted properly.\n"
@@ -4213,21 +4223,21 @@ msgstr "Použít režim jasné palety"
 msgid "Display graphics using the game's bright palette"
 msgstr "Zobrazit grafiku pomocí jasné palety hry"
 
-#: engines/glk/detection.cpp:354
+#: engines/glk/detection.cpp:370
 #, fuzzy
 msgid "Enable Text to Speech"
 msgstr "Použít Text ke čtení"
 
-#: engines/glk/detection.cpp:355
+#: engines/glk/detection.cpp:371
 #, fuzzy
 msgid "Use TTS to read the text"
 msgstr "Nelze smazat soubor."
 
-#: engines/glk/detection.cpp:360
+#: engines/glk/detection.cpp:376
 msgid "Also read input text"
 msgstr ""
 
-#: engines/glk/detection.cpp:361
+#: engines/glk/detection.cpp:377
 msgid "Use TTS to read the input text"
 msgstr ""
 
@@ -4251,8 +4261,9 @@ msgid "Could not start AdvSys game"
 msgstr "Nelze přepnout na režim obrazu: '"
 
 #: engines/glk/advsys/advsys.cpp:48 engines/glk/advsys/vm.cpp:320
+#, fuzzy
 msgid "Sorry, the savegame couldn't be restored"
-msgstr ""
+msgstr "režim obrazu nemohl být změněn."
 
 #: engines/glk/advsys/vm.cpp:315
 #, fuzzy
@@ -4285,7 +4296,7 @@ msgstr ""
 msgid "Savegame"
 msgstr "Uložit hru"
 
-#: engines/glk/comprehend/game.cpp:1333
+#: engines/glk/comprehend/game.cpp:1373
 msgid "Picture window toggled\n"
 msgstr ""
 
@@ -4327,8 +4338,9 @@ msgid "Your light has run out. "
 msgstr ""
 
 #: engines/glk/scott/scott.cpp:130
+#, fuzzy
 msgid "Light runs out in "
-msgstr ""
+msgstr "Napodobit pravé tlačítko myši"
 
 #: engines/glk/scott/scott.cpp:132
 #, fuzzy
@@ -4428,8 +4440,9 @@ msgid "The game is now over.\n"
 msgstr "Hra NEBYLA načtena"
 
 #: engines/glk/scott/scott.cpp:836
+#, fuzzy
 msgid "You have stored "
-msgstr ""
+msgstr "Obnovit"
 
 #: engines/glk/scott/scott.cpp:838
 #, fuzzy
@@ -4525,7 +4538,7 @@ msgstr ""
 msgid "It's beyond my power to do that.\n"
 msgstr ""
 
-#: engines/glk/zcode/zcode.cpp:144
+#: engines/glk/zcode/zcode.cpp:145
 #, fuzzy
 msgid "Error writing save file\n"
 msgstr "Chyba při spuštění hry:"
@@ -4551,6 +4564,20 @@ msgstr "Uložení hry do souboru selhalo."
 #: engines/gob/inter_v5.cpp:107
 msgid "Failed to delete file."
 msgstr "Nelze smazat soubor."
+
+#: engines/griffon/detection.cpp:106
+msgid "Menu / Skip"
+msgstr ""
+
+#: engines/griffon/detection.cpp:142
+#, fuzzy
+msgid "Attack"
+msgstr "Útok 1"
+
+#: engines/griffon/detection.cpp:156
+#, fuzzy
+msgid "Speed Up Cutscene"
+msgstr "Přeskočit video"
 
 #: engines/groovie/detection.cpp:321
 msgid "Fast movie speed"
@@ -6483,11 +6510,11 @@ msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
 msgstr "Videa PSX nalezena, ale ScummVM byl sestaven bez podpory barev RGB"
 
-#: engines/sword2/sword2.cpp:79
+#: engines/sword2/sword2.cpp:80
 msgid "Show object labels"
 msgstr "Zobrazit jmenovky objektů"
 
-#: engines/sword2/sword2.cpp:80
+#: engines/sword2/sword2.cpp:81
 msgid "Show labels for objects on mouse hover"
 msgstr "Zobrazit jmenovky objektů při najetí myši"
 
@@ -6538,7 +6565,7 @@ msgstr "Uloženou pozici #%d nelze rychle načíst"
 msgid "Unable to locate the '%s' data file."
 msgstr "Nelze najít datové soubory jádra '%s'."
 
-#: engines/ultima/shared/early/ultima_early.cpp:67
+#: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
 msgstr ""
 
@@ -6552,15 +6579,15 @@ msgstr "Nelze najít datové soubory jádra %s"
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr "Nalezena data jádra. Očekávána %d.%d, ale byla %d.%d"
 
-#: engines/ultima/nuvie/nuvie.cpp:362
+#: engines/ultima/nuvie/nuvie.cpp:382
 #, fuzzy, c-format
 msgid "loading quick save %d"
 msgstr "Nelze rychle uložit do pozice #%d"
 
-#: engines/ultima/nuvie/nuvie.cpp:367
-#, fuzzy, c-format
+#: engines/ultima/nuvie/nuvie.cpp:387
+#, c-format
 msgid "saving quick save %d"
-msgstr "Režim kliknutí"
+msgstr ""
 
 #: engines/ultima/nuvie/meta_engine.cpp:39
 msgid "Original Save"
@@ -7314,7 +7341,6 @@ msgid ""
 "respectively."
 msgstr ""
 
-#, c-format
 #~ msgid "Engine does not support debug level '%s'"
 #~ msgstr "Jádro nepodporuje úroveň ladění '%s'"
 
@@ -7337,10 +7363,6 @@ msgstr ""
 #~ "Game Saved\n"
 #~ "\n"
 #~ msgstr "Uložit"
-
-#, fuzzy, c-format
-#~ msgid "Quicksave %03d"
-#~ msgstr "Režim kliknutí"
 
 #~ msgid "Use IMF/Yamaha FB-01 for MIDI output"
 #~ msgstr "Použít IMF/Yamaha FB-01 pro výstup MIDI"
