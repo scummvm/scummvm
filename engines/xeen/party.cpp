@@ -249,7 +249,7 @@ Party::Party(XeenEngine *vm) {
 	Common::fill(&_questItems[0], &_questItems[85], 0);
 
 	for (int i = 0; i < TOTAL_CHARACTERS; ++i)
-		Common::fill(&_characterFlags[i][0], &_characterFlags[i][24], false);
+		Common::fill(&_characterFlags[i][0], &_characterFlags[i][32], false);
 
 	_newDay = false;
 	_isNight = false;
@@ -338,9 +338,11 @@ void Party::synchronize(Common::Serializer &s) {
 
 	_blacksmithWares.synchronize(s, 1);
 
+	int numFlags = s.getVersion() == 1 ? 24 : 32;
 	for (int i = 0; i < TOTAL_CHARACTERS; ++i)
-		File::syncBitFlags(s, &_characterFlags[i][0], &_characterFlags[i][24]);
-	s.syncBytes(&dummy[0], 30);
+		File::syncBitFlags(s, &_characterFlags[i][0], &_characterFlags[i][numFlags]);
+	if (s.getVersion() == 1)
+		s.syncBytes(&dummy[0], 30);
 
 	if (s.isLoading())
 		_newDay = _minutes < 300;
@@ -1450,7 +1452,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		_questFlags[(_vm->getGameID() == GType_Swords ? 0 : files._ccNum * 30) + giveVal] = true;
 		break;
 	case 107:
-		assert(giveVal < 24);
+		assert(giveVal < 32);
 		_characterFlags[ps._rosterId][giveVal] = true;
 		break;
 	default:
