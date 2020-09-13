@@ -9,7 +9,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  Supernova:
    - Added Italian translation for part 1.
 
-#### 2.2.0 (2020-09-XX)
+#### 2.2.0 (2020-09-27)
 
  New games:
    - Added support for Blazing Dragons.
@@ -49,6 +49,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed animation speed.
 
  Illusions:
+   - Fixed subtitle speed (set it to max for good speed).
    - Added support for Russian Duckman.
 
  Kyra:
