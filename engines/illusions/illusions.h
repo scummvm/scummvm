@@ -146,6 +146,7 @@ public:
 	int16 _menuChoiceOfs;
 
 	int getGameId() const;
+	Common::Language getGameLanguage() const;
 
 	void runUpdateFunctions();
 	int updateActors(uint flags);

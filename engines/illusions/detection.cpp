@@ -48,6 +48,10 @@ int IllusionsEngine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
+Common::Language IllusionsEngine::getGameLanguage() const {
+	return _gameDescription->desc.language;
+}
+
 static const IllusionsGameDescription gameDescriptions[] = {
 	{
 		{
@@ -94,6 +98,19 @@ static const IllusionsGameDescription gameDescriptions[] = {
 			0,
 			AD_ENTRY1s("duckman.gam", "64d16922ffb46b746fc2c12a14d75bcc", 29779968),
 			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_DROPPLATFORM,
+			GUIO0()
+		},
+		kGameIdDuckman
+	},
+
+	{
+		{
+			"duckman",
+			0,
+			AD_ENTRY1s("duckman.gam", "a65f9b58427b3543882bddf36abe5878", 29564928),
+			Common::RU_RUS,
 			Common::kPlatformWindows,
 			ADGF_DROPPLATFORM,
 			GUIO0()
