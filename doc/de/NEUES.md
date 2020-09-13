@@ -40,6 +40,9 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für russische Fan-Übersetzung hinzugefügt.
    - Animationsgeschwindigkeit korrigiert.
 
+ Illusions:
+   - Unterstützung für die russische Version von Duckman hinzugefügt.
+
  Kyra:
    - Unterstützung für die SegaCD-Version von Eye of the Beholder I (mit CD-Audio, animierten
      Zwischensequenzen und der Karten-Funktion) hinzugefügt.
@@ -116,6 +119,11 @@ Programmcodes finden Sie auf Englisch unter:
    - Absturz beim Laden einige Spielstände aus dem Launcher heraus korrigiert.
    - Die Quelle in Nightshadow kann nun geheilt werden.
    - Fehler beim Laden einiger Items behoben.
+   - Im Quest-Dialog können nun die Pfeiltasten verwendet werden.
+   - Fehlerhafte Ausrichtung der Spiegel im Dragon Tower korrigiert.
+   - Absturz beim Lesen des Buchs im Tresor der großen Pyramide korrigiert.
+   - Attribute können nun nicht mehr negativ werden.
+   - Fehler bei der Darstellung einiger Animationen behoben.
 
  ZVision:
    - Korrektur eines neu aufgetrenenen Fehlers im Zusammenhang mit dem Tresor-Puzzle von Zork Nemesis: The Forbidden Lands.
@@ -126,6 +134,8 @@ Programmcodes finden Sie auf Englisch unter:
    - "Beenden"-Button entfernt, um den iOS-Design-Richtlinien zu entsprehcne.
    - Eingabehilfen für die virtuelle Tastatur entfernt. Dies bedeutet, dass bei der Verwendung einer
      externen Tastatur keine zusätzliche Leiste im unteren Bereich des Bildschirms mehr angezeigt wird.
+   - Sofern unterstützt wird bei einem Wechsel in eine andere App der aktuelle Spielstand in ScummVM
+     gespeichert und bei der Rückkehr in die ScummVM-App wiederhergestellt.
 
  Linux-Portierung:
    - Anstelle des Datei-Browsers von ScummVM kann nun der Datei-Browser des Betriebssystems verwendet werden.
@@ -133,6 +143,7 @@ Programmcodes finden Sie auf Englisch unter:
  MacOS X-Portierung:
    - Unscharfe Darstellung bei der Verwendung von Retina-Displays behoben. Leider musste hierzu die Unterstützung
      für das Dark-Theme für Fenster-Dekorationen entfernt werden.
+   - Darstellung des Spiel-Icons in der Taskbar korrigiert (diese Funktion war seit ScummVM 1.9.0 defekt).
 
 
 #### 2.1.2 "Fixing Powerful Windows" (31.03.2020)
