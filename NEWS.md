@@ -37,7 +37,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Now Hebrew is displayed correctly in GUI (requires FriBiDi library).
    - Updated the Roland MT-32 emulation code to Munt 2.4.0.
    - Added option to select the default voice for ports that support Text-to-Speech.
-   - Added support for Discord Rich Presence integration on supported platforms (Windows, macOS 10.9+ 64 Bit)
+   - Added support for Discord Rich Presence integration on supported platforms (Windows XP+, macOS 10.9+ 64 Bit)
+   - Major improvements to the keymapper.
 
  BBVS:
    - Added support for the demo, available from our website.
@@ -138,6 +139,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed regression in the safe puzzle in Zork Nemesis: The Forbidden Lands.
    - Fixed getting perfect score in Zork: Grand Inquisitor.
 
+ Android port:
+   - Added support for immersive fullscreen mode.
+   - Improved keyboard and mouse input.
+
  iOS port:
    - Fixed unsupported graphic mode for some games (such as SCI games with high
      quality video scaling enabled).
@@ -155,6 +160,12 @@ For a more comprehensive changelog of the latest experimental code, see:
      for the dark theme for window decorations.
    - Fixed Taskbar icon display when running a game (this was broken since ScummVM
      1.9.0).
+
+ RISC OS port:
+   - Added a VFP optimized build for newer hardware.
+
+ Windows port:
+   - Added support for using additional OneCore voices for text to speech.
 
 #### 2.1.2 "Fixing Powerful Windows" (2020-03-31)
 
