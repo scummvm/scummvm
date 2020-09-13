@@ -166,6 +166,8 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Windows port:
    - Added support for using additional OneCore voices for text to speech.
+   - Active support for Windows Vista and lower is now discontinued. While we still provide
+     builds for those systems in the foreseeable future, some newer features might be missing.
 
 #### 2.1.2 "Fixing Powerful Windows" (2020-03-31)
 
