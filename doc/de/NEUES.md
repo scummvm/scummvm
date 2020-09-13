@@ -2,7 +2,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen experimentellen
 Programmcodes finden Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.2.0 (DD.09.2020)
+#### 2.2.0 (27.09.2020)
 
  Neue Spiele:
    - Unterstützung für Blazing Dragons hinzugefügt.
