@@ -122,6 +122,7 @@ void OpcodeMap::loadVersion2() {
 	_opcodeMap[0x20] = OPCODE_HAVE_CURRENT_OBJECT;
 	_opcodeMap[0x21] = OPCODE_OBJECT_PRESENT;
 	_opcodeMap[0x22] = OPCODE_OBJECT_IN_ROOM;
+	_opcodeMap[0x2d] = OPCODE_OBJECT_CAN_TAKE;
 	_opcodeMap[0x30] = OPCODE_CURRENT_OBJECT_PRESENT;
 	_opcodeMap[0x31] = OPCODE_TEST_ROOM_FLAG;
 	_opcodeMap[0x38] = OPCODE_INVENTORY_FULL;

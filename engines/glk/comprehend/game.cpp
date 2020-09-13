@@ -733,6 +733,11 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 		func_set_test_result(func_state, !item || item->_room != _currentRoom);
 		break;
 
+	case OPCODE_OBJECT_CAN_TAKE:
+		item = get_item(instr->_operand[0] - 1);
+		func_set_test_result(func_state, item->_flags & ITEMF_CAN_TAKE);
+		break;
+
 	case OPCODE_CURRENT_OBJECT_NOT_IN_ROOM:
 		item = get_item_by_noun(noun);
 		func_set_test_result(func_state, !item || item->_room != _currentRoom);
