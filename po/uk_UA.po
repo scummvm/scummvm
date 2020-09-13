@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
-"PO-Revision-Date: 2020-09-01 06:43+0000\n"
+"PO-Revision-Date: 2020-09-13 23:16+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -17,8 +17,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Українська\n"
 
@@ -187,14 +187,14 @@ msgstr ""
 "Чи ви дійсно хочете завантажити файли в цю папку?"
 
 #: gui/downloaddialog.cpp:215
-#, fuzzy, c-format
+#, c-format
 msgid "Downloaded %s %S / %s %S"
-msgstr "Завантажено %s %s з %s %s"
+msgstr "Завантажено %s %S з %s %S"
 
 #: gui/downloaddialog.cpp:222
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %S"
-msgstr "Швидкість завантаження: %s %s"
+msgstr "Швидкість завантаження: %s %S"
 
 #: gui/editgamedialog.cpp:135 engines/dialogs.cpp:285
 msgid "Game"
@@ -1748,14 +1748,12 @@ msgid "ScummVM could not access the directory!"
 msgstr "ScummVM не має доступу до вказаної папки!"
 
 #: gui/saveload-dialog.cpp:52
-#, fuzzy
 msgid "Downloading saves..."
-msgstr "Завантажую гру..."
+msgstr "Завантажую збереження гри..."
 
 #: gui/saveload-dialog.cpp:61
-#, fuzzy
 msgid "Run in background"
-msgstr "Бігти назад"
+msgstr "Бігти у фоні"
 
 #: gui/saveload-dialog.cpp:343
 msgid "List view"
@@ -3246,7 +3244,6 @@ msgid "ScummVM Main Menu"
 msgstr "Головне меню ScummVM"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:61
-#, fuzzy
 msgid "Controls"
 msgstr "Керування"
 
@@ -3304,7 +3301,7 @@ msgstr "Яскравість:"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:119
 msgid "General"
-msgstr ""
+msgstr "Загальні"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:121
 msgid "High quality audio (slower) (reboot)"
@@ -3316,117 +3313,102 @@ msgstr "Заборонити вимкнення"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:41
 msgid "DS Controls (right handed):"
-msgstr ""
+msgstr "Керування DS (для правшів):"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:42
 #: backends/platform/ds/arm9/source/scummhelp.cpp:67
 #: backends/platform/ds/arm9/source/scummhelp.cpp:76
-#, fuzzy
 msgid "Pad Left"
-msgstr "Стрілка вліво"
+msgstr "Пад вліво"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:42
 #: backends/platform/ds/arm9/source/scummhelp.cpp:59
-#, fuzzy
 msgid "Left mouse button"
-msgstr "Лівий клік миші"
+msgstr "Ліва кнопка миші"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:43
 #: backends/platform/ds/arm9/source/scummhelp.cpp:68
 #: backends/platform/ds/arm9/source/scummhelp.cpp:77
-#, fuzzy
 msgid "Pad Right"
-msgstr "Стрілка вправо"
+msgstr "Пад вправо"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:43
 #: backends/platform/ds/arm9/source/scummhelp.cpp:60
-#, fuzzy
 msgid "Right mouse button"
-msgstr "Правий клік миші"
+msgstr "Права кнопка миші"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:44
 #: backends/platform/ds/arm9/source/scummhelp.cpp:66
 #: backends/platform/ds/arm9/source/scummhelp.cpp:78
-#, fuzzy
 msgid "Pad Up"
-msgstr "Стрілка уверх"
+msgstr "Пад уверх"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:44
 #: backends/platform/ds/arm9/source/scummhelp.cpp:61
 msgid "Mouse hover mode (no click)"
-msgstr ""
+msgstr "Режим миші ковзання (без кліку)"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:45
 #: backends/platform/ds/arm9/source/scummhelp.cpp:65
 #: backends/platform/ds/arm9/source/scummhelp.cpp:79
-#, fuzzy
 msgid "Pad Down"
-msgstr "Стрілка донизу"
+msgstr "Пад донизу"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:45
 #: backends/platform/ds/arm9/source/scummhelp.cpp:62
 msgid "Skip dialog line (some games)"
-msgstr ""
+msgstr "Пропустити рядок діалогу (у деяких іграх)"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:46
 #: backends/platform/ds/arm9/source/scummhelp.cpp:63
-#, fuzzy
 msgid "Pause/Game menu"
-msgstr "Меню гри"
+msgstr "Пауза/Меню гри"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:47
 #: backends/platform/ds/arm9/source/scummhelp.cpp:64
-#, fuzzy
 msgid "DS Options menu"
-msgstr "Показати меню налаштування"
+msgstr "Меню налаштування DS"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:48
 #: backends/platform/ds/arm9/source/scummhelp.cpp:65
-#, fuzzy
 msgid "Skip cutscenes"
-msgstr "Пропустити ролік"
+msgstr "Пропустити роліки"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:49
-#, fuzzy
 msgid "Switch screens"
-msgstr "Переключення героїв:"
+msgstr "Переключення екранів"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:50
 #: backends/platform/ds/arm9/source/scummhelp.cpp:67
-#, fuzzy
 msgid "Show/hide debug console"
-msgstr "Показати / cховати консоль"
+msgstr "Показати/cховати консоль відладки"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:51
 #: backends/platform/ds/arm9/source/scummhelp.cpp:66
-#, fuzzy
 msgid "Show/hide keyboard"
-msgstr "Показати клавіатуру"
+msgstr "Показати/сховати клавіатуру"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:52
 #: backends/platform/ds/arm9/source/scummhelp.cpp:69
 msgid "Scroll current touch screen view"
-msgstr ""
+msgstr "Показати поточний огляд тач-скріну"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:53
 #: backends/platform/ds/arm9/source/scummhelp.cpp:70
-#, fuzzy
 msgid "Zoom in/out"
-msgstr "Збіл. масштаб"
+msgstr "Масштаб збільш/зменш"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:58
 msgid "DS Controls (left handed):"
-msgstr ""
+msgstr "Керування DS (для лівшів):"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:68
-#, fuzzy
 msgid "Swap screens"
-msgstr "Зберегти екран"
+msgstr "Поміняти екрани місцями"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:75
-#, fuzzy
 msgid "Indiana Jones Fight controls:"
-msgstr "Керування боями в Indy"
+msgstr "Керування боями в Indy:"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:76
 #: engines/hdb/detection.cpp:321
@@ -3440,16 +3422,15 @@ msgstr "Рухатись направо"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:78
 msgid "High guard"
-msgstr ""
+msgstr "Захист зверху"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:79
 msgid "Guard down"
-msgstr ""
+msgstr "Захист знизу"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:80
-#, fuzzy
 msgid "Guard middle"
-msgstr "Бити посередині"
+msgstr "Захист посередині"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:81
 #: engines/scumm/help.cpp:312
@@ -3949,7 +3930,7 @@ msgstr "Відновити"
 
 #: engines/agos/saveload.cpp:137
 msgid "Quick load or save game isn't supported in this location"
-msgstr ""
+msgstr "Швидке завантаження або збереження не підтримується в цій локації"
 
 #: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2466
 #, c-format
@@ -4527,11 +4508,11 @@ msgstr "Помилка запису збереження гри\n"
 
 #: engines/glk/hugo/hugo.cpp:183
 msgid "Incorrect rs file."
-msgstr ""
+msgstr "Невірний файл rs."
 
 #: engines/glk/hugo/hugo.cpp:190
 msgid "Save file created by different version."
-msgstr ""
+msgstr "Збереження гри створене іншою версією."
 
 #: engines/gob/inter_playtoons.cpp:258 engines/gob/inter_v2.cpp:1479
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:538
@@ -4549,17 +4530,15 @@ msgstr "Не вдалося видалити файл."
 
 #: engines/griffon/detection.cpp:106
 msgid "Menu / Skip"
-msgstr ""
+msgstr "Меню / Пропустити"
 
 #: engines/griffon/detection.cpp:142
-#, fuzzy
 msgid "Attack"
-msgstr "Атака 1"
+msgstr "Атака"
 
 #: engines/griffon/detection.cpp:156
-#, fuzzy
 msgid "Speed Up Cutscene"
-msgstr "Пропустити ролік"
+msgstr "Прискорити ролік"
 
 #: engines/groovie/detection.cpp:321
 msgid "Fast movie speed"
@@ -5091,7 +5070,7 @@ msgstr ""
 
 #: engines/mohawk/myst_stacks/preview.cpp:90
 msgid "You can't leave the library in the demo."
-msgstr ""
+msgstr "Ви не можете піти з бібліотеки у демо-версії."
 
 #: engines/mohawk/riven.cpp:156
 msgid ""
@@ -5332,9 +5311,8 @@ msgid "Use an alternative game intro (CD version only)"
 msgstr "Використовувати альтернативний вступ гри (тільки в CD версії)"
 
 #: engines/saga/saga.cpp:247
-#, fuzzy
 msgid "Error loading game resources."
-msgstr "Помилка читання файлу"
+msgstr "Помилка читання файлу ресурсів гри."
 
 #: engines/sci/detection.cpp:399
 msgid "Skip EGA dithering pass (full color backgrounds)"
@@ -5473,6 +5451,8 @@ msgid ""
 "There exists some dummy logic for now, where opponent actions are chosen "
 "randomly"
 msgstr ""
+"Логіка гри у покер зберігається у окремій DLL, яку ще не реалізовано. Зараз "
+"зроблено заглушку, в якій дії суперників обираються випадково"
 
 #: engines/sci/engine/savegame.cpp:1407
 msgid "The format of this saved game is obsolete, unable to load it"
@@ -6458,11 +6438,12 @@ msgid ""
 "Failed to save temporary game state. Make sure your save game directory is "
 "set in ScummVM and that you can write to it."
 msgstr ""
+"Не вдалося завантажити тимчасове збереження гри. Упевніться в тому, що папка "
+"для збережень правильно вказана у ScummVM, і ви можете туди писати."
 
 #: engines/supernova/supernova.cpp:828
-#, fuzzy
 msgid "Failed to load temporary game state."
-msgstr "Не вдалося завантажити збережену гру з файлу."
+msgstr "Не вдалося завантажити тимчасове збереження гри."
 
 #: engines/supernova/detection.cpp:40
 msgid "Improved mode"
@@ -7322,6 +7303,13 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+"Перед тим, як ви зможете грати у цю гру, вам буде потрібно скопіювати "
+"необхідні файли шрифів у extra папку ScummVM, або у папку з ігрою. У Windows "
+"вам будуть потрібні наступні файли з папки шрифтів Windows: Times New Roman, "
+"Century Schoolbook, Garamond, Courier New та Arial. Також ви можете "
+"завантажити Liberation Fonts, або пакет GNU FreeFont. Вам будуть потрібні "
+"всі шрифти з пакету, який ви оберете, тобто, LiberationMono, LiberationSans "
+"та LiberationSerif, або FreeMono, FreeSans та FreeSerif відповідно."
 
 #~ msgid "Engine does not support debug level '%s'"
 #~ msgstr "Движок не підтримує рівень відладки '%s'"
