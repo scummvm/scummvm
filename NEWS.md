@@ -124,6 +124,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix incorrect mirror destination for Dragon Tower
    - Fix crash reading book in Great Pyramid safe
    - Prevent attributes from going negative
+   - Fix border faces animation during Clairvoyance
 
  ZVision:
    - Fixed regression in the safe puzzle in Zork Nemesis: The Forbidden Lands.
