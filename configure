@@ -2947,7 +2947,7 @@ EOF
 		append_var LIBS "-specs=ds_arm9.specs"
 		append_var LIBS "-lnds9"
 		;;
-	freebsd*)
+	freebsd* | openbsd*)
 		append_var LDFLAGS "-L/usr/local/lib"
 		append_var CXXFLAGS "-I/usr/local/include"
 		;;
@@ -4059,7 +4059,7 @@ _mak_plugins='
 PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/ds/plugin.ld -mthumb-interwork -mfloat-abi=soft
 '
 		;;
-	freebsd*)
+	freebsd* | openbsd*)
 		_plugin_prefix="lib"
 		_plugin_suffix=".so"
 		append_var CXXFLAGS "-fPIC"
@@ -4248,7 +4248,7 @@ int main(void) { return 0; }
 EOF
 			cc_check -lsapi -lole32 && _tts=yes
 			;;
-		linux* | freebsd*)
+		linux* | freebsd* | openbsd*)
 			cat > $TMPC << EOF
 #include <speech-dispatcher/libspeechd.h>
 int main(void) { return 0; }
@@ -5593,7 +5593,7 @@ if test "$_tts" = "no"; then
 	echo "no"
 else
 	case $_host_os in
-	linux* | freebsd*)
+	linux* | freebsd* | openbsd*)
 		echo "speech dispatcher"
 		_tts=yes
 		define_in_config_if_yes $_tts 'USE_SPEECH_DISPATCHER'
