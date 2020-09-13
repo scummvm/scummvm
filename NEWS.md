@@ -39,6 +39,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Russian fan-translation.
    - Fixed animation speed.
 
+ Illusions:
+   - Added support for Russian Duckman.
+
  Kyra:
    - Added support for the SegaCD version of Eye of the Beholder I (with CD-Audio, animated
      cutscenes and map function).
