@@ -624,10 +624,28 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 		_variables[instr->_operand[0]]--;
 		break;
 
-	case OPCODE_VAR_EQ:
+	case OPCODE_VAR_EQ1:
 		func_set_test_result(func_state,
-		                     _variables[instr->_operand[0]] ==
-		                     _variables[instr->_operand[1]]);
+			_variables[0] ==
+			_variables[instr->_operand[0]]);
+		break;
+
+	case OPCODE_VAR_EQ2:
+		func_set_test_result(func_state,
+		    _variables[instr->_operand[0]] ==
+		    _variables[instr->_operand[1]]);
+		break;
+
+	case OPCODE_VAR_GT1:
+		func_set_test_result(func_state,
+			_variables[0] >
+			_variables[instr->_operand[0]]);
+		break;
+
+	case OPCODE_VAR_GT2:
+		func_set_test_result(func_state,
+			_variables[instr->_operand[0]] >
+			_variables[instr->_operand[1]]);
 		break;
 
 	case OPCODE_VAR_GTE1:

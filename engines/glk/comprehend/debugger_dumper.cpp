@@ -52,7 +52,10 @@ DebuggerDumper::DebuggerDumper() : _game(nullptr) {
 
 	_opcodes[OPCODE_OR] = "or";
 	_opcodes[OPCODE_IN_ROOM] = "in_room";
-	_opcodes[OPCODE_VAR_EQ] = "var_eq";
+	_opcodes[OPCODE_VAR_EQ1] = "var_eq1";
+	_opcodes[OPCODE_VAR_EQ2] = "var_eq2";
+	_opcodes[OPCODE_VAR_GT1] = "var_gt1";
+	_opcodes[OPCODE_VAR_GT2] = "var_gt2";
 	_opcodes[OPCODE_VAR_GTE1] = "var_gte1";
 	_opcodes[OPCODE_VAR_GTE2] = "var_gte2";
 	_opcodes[OPCODE_CURRENT_OBJECT_NOT_VALID] = "current_object_not_valid";
