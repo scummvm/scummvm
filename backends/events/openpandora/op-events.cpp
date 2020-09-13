@@ -87,7 +87,7 @@ bool OPEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
 
 bool OPEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 	if (ev.button.button != SDL_BUTTON_LEFT)
-		return SdlEventSource::handleMouseButtonDown(ev, event);
+		return SdlEventSource::handleMouseButtonUp(ev, event);
 
 	if (_buttonStateL == true) /* _buttonStateL = Left Trigger Held, force Right Click */
 		event.type = Common::EVENT_RBUTTONUP;
