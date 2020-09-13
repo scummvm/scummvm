@@ -38,7 +38,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Hebräisch wird nun korrekt in der Benutzeroberfläche dargestellt (benötigt die FriBiDi-Bibliothek).
    - Code der Roland MT-32-Emulation auf Munt 2.4.0 aktualisiert.
    - Die Standard-Stimme der Sprachausgabe kann auf unterstützten Plattformen nun angepasst werden.
-   - Unterstützung für Discord-Integration auf unterstützten Plattformen (Windows XP+, macOS 10.9+ 64 Bit) hinzugefügt.
+   - Unterstützung für Discord-Integration auf unterstützten Plattformen (Windows Vista+, macOS 10.9+ 64 Bit) hinzugefügt.
    - Die Unterstützung für Tastenkürzel über den Keymapper wurde erheblich verbessert.
 
  BBVS:
