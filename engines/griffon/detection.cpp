@@ -44,7 +44,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("objectdb.dat", "ec5371da28f01ccf88980b32d9de2232", 27754),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_TESTING | ADGF_DROPPLATFORM,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NOMIDI)
 	},
 
