@@ -29,7 +29,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Now Hebrew is displayed correctly in GUI (requires FriBiDi library).
    - Updated the Roland MT-32 emulation code to Munt 2.4.0.
    - Added option to select the default voice for ports that support Text-to-Speech.
-   - Added support for Discord Rich Presence integration on supported platforms (Windows XP+, macOS 10.9+ 64 Bit)
+   - Added support for Discord Rich Presence integration on supported platforms (Windows Vista+, macOS 10.9+ 64 Bit)
    - Major improvements to the keymapper.
 
  BBVS:
