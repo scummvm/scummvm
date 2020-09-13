@@ -30,7 +30,8 @@ Programmcodes finden Sie auf Englisch unter:
    - Hebräisch wird nun korrekt in der Benutzeroberfläche dargestellt (benötigt die FriBiDi-Bibliothek).
    - Code der Roland MT-32-Emulation auf Munt 2.4.0 aktualisiert.
    - Die Standard-Stimme der Sprachausgabe kann auf unterstützten Plattformen nun angepasst werden.
-   - Unterstützung für Discord-Integration auf unterstützten Plattformen (Windows, macOS 10.9+ 64 Bit) hinzugefügt.
+   - Unterstützung für Discord-Integration auf unterstützten Plattformen (Windows XP+, macOS 10.9+ 64 Bit) hinzugefügt.
+   - Die Unterstützung für Tastenkürzel über den Keymapper wurde erheblich verbessert.
 
  BBVS:
    - Unterstützung für die Demo-Version hinzugefügt. Die Demo-Version ist auf unserer Website verfügbar.
@@ -129,6 +130,10 @@ Programmcodes finden Sie auf Englisch unter:
    - Korrektur eines neu aufgetrenenen Fehlers im Zusammenhang mit dem Tresor-Puzzle von Zork Nemesis: The Forbidden Lands.
    - In Zork: Grad Inquisitor kann nun ein perfekter Punkte-Stand erzielt werden.
 
+ Android-Portierung:
+   - Unterstützung für den Immersive Full-Screen Mode hinzugefügt.
+   - Unterstützung für Tastatur und Maus verbessert.
+
  iOS-Portierung:
    - Erweiterung der Grafik-Unterstützung für einige Spiele (zum Beispiel SCI-Spiele mit hochauflösenden Videos).
    - "Beenden"-Button entfernt, um den iOS-Design-Richtlinien zu entsprehcne.
@@ -144,6 +149,12 @@ Programmcodes finden Sie auf Englisch unter:
    - Unscharfe Darstellung bei der Verwendung von Retina-Displays behoben. Leider musste hierzu die Unterstützung
      für das Dark-Theme für Fenster-Dekorationen entfernt werden.
    - Darstellung des Spiel-Icons in der Taskbar korrigiert (diese Funktion war seit ScummVM 1.9.0 defekt).
+
+ RISC OS-Portierung:
+   - Für VFP optimierte Version zur verbesserten Unterstützung neuerer Hardware hinzugefügt.
+
+ Windows-Portierung:
+   - Sprachausgabe um die Unterstützung für OneCore-Stimmen erweitert.
 
 
 #### 2.1.2 "Fixing Powerful Windows" (31.03.2020)
