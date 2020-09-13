@@ -155,6 +155,9 @@ Programmcodes finden Sie auf Englisch unter:
 
  Windows-Portierung:
    - Sprachausgabe um die Unterstützung für OneCore-Stimmen erweitert.
+   - Die aktive Unterstützung für Windows Vista und älter wird eingestellt. Während wir auf absehbare
+     Zeit ScummVM für diese Systeme weiterhin zur Verfügung stellen werden, werden einige neuere
+     Funktionen möglicherweise fehlen.
 
 
 #### 2.1.2 "Fixing Powerful Windows" (31.03.2020)
