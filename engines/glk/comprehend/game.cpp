@@ -630,6 +630,18 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 		                     _variables[instr->_operand[1]]);
 		break;
 
+	case OPCODE_VAR_GTE1:
+		func_set_test_result(func_state,
+			_variables[0] >=
+			_variables[instr->_operand[0]]);
+		break;
+
+	case OPCODE_VAR_GTE2:
+		func_set_test_result(func_state,
+			_variables[instr->_operand[0]] >=
+			_variables[instr->_operand[1]]);
+		break;
+
 	case OPCODE_TURN_TICK:
 		_variables[VAR_TURN_COUNT]++;
 		break;
