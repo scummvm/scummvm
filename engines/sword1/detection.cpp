@@ -147,24 +147,9 @@ PlainGameDescriptor SwordMetaEngine::findGame(const char *gameId) const {
 	return PlainGameDescriptor::empty();
 }
 
-void Sword1CheckDirectory(const Common::FSList &fslist, bool *filesFound, bool recursion = false) {
+void Sword1CheckDirectory(const Common::FSList &fslist, bool *filesFound) {
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (!file->isDirectory()) {
-			// The required game data files can be located in the game directory, or in
-			// a subdirectory called "clusters". In the latter case, we don't want to
-			// detect the game in that subdirectory, as this will detect the game twice
-			// when mass add is searching inside a directory. In this case, the first
-			// result (the game directory) will be correct, but the second result (the
-			// clusters subdirectory) will be wrong, as the optional speech, music and
-			// video data files will be ignored. Note that this fix will skip the game
-			// data files if the user has placed them inside a "clusters" subdirectory,
-			// or if he/she points ScummVM directly to the "clusters" directory of the
-			// game CD. Fixes bug #3049346.
-			Common::String directory = file->getParent().getName();
-			directory.toLowercase();
-			if (directory.hasPrefix("clusters") && directory.size() <= 9 && !recursion)
-				continue;
-
 			for (int cnt = 0; cnt < NUM_FILES_TO_CHECK; cnt++)
 				if (scumm_stricmp(file->getName().c_str(), g_filesToCheck[cnt]) == 0)
 					filesFound[cnt] = true;
@@ -173,7 +158,7 @@ void Sword1CheckDirectory(const Common::FSList &fslist, bool *filesFound, bool r
 				if (scumm_stricmp(file->getName().c_str(), g_dirNames[cnt]) == 0) {
 					Common::FSList fslist2;
 					if (file->getChildren(fslist2, Common::FSNode::kListFilesOnly))
-						Sword1CheckDirectory(fslist2, filesFound, true);
+						Sword1CheckDirectory(fslist2, filesFound);
 				}
 		}
 	}
@@ -185,6 +170,22 @@ DetectedGames SwordMetaEngine::detectGames(const Common::FSList &fslist) const {
 	bool filesFound[NUM_FILES_TO_CHECK];
 	for (i = 0; i < NUM_FILES_TO_CHECK; i++)
 		filesFound[i] = false;
+
+	// The required game data files can be located in the game directory, or in
+	// a subdirectory called "clusters". In the latter case, we don't want to
+	// detect the game in that subdirectory, as this will detect the game twice
+	// when mass add is searching inside a directory. In this case, the first
+	// result (the game directory) will be correct, but the second result (the
+	// clusters subdirectory) will be wrong, as the optional speech, music and
+	// video data files will be ignored. Note that this fix will skip the game
+	// data files if the user has placed them inside a "clusters" subdirectory,
+	// or if he/she points ScummVM directly to the "clusters" directory of the
+	// game CD. Fixes bug #3049346.
+	if (!fslist.empty()) {
+		Common::String directory = fslist[0].getParent().getName();
+		if (directory.hasPrefixIgnoreCase("clusters") && directory.size() <= 9)
+			return detectedGames;
+	}
 
 	Sword1CheckDirectory(fslist, filesFound);
 	bool mainFilesFound = true;
