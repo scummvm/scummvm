@@ -104,7 +104,7 @@ enum GameMode {
 
 struct XeenGameDescription;
 
-#define XEEN_SAVEGAME_VERSION 1
+#define XEEN_SAVEGAME_VERSION 2
 
 class XeenEngine : public Engine {
 	/**
