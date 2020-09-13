@@ -125,7 +125,6 @@ void OpcodeMap::loadVersion2() {
 	_opcodeMap[0x2d] = OPCODE_OBJECT_CAN_TAKE;
 	_opcodeMap[0x30] = OPCODE_CURRENT_OBJECT_PRESENT;
 	_opcodeMap[0x31] = OPCODE_TEST_ROOM_FLAG;
-	_opcodeMap[0x38] = OPCODE_INVENTORY_FULL;
 	_opcodeMap[0x41] = OPCODE_NOT_HAVE_OBJECT;
 	_opcodeMap[0x45] = OPCODE_NOT_IN_ROOM;
 	_opcodeMap[0x48] = OPCODE_CURRENT_OBJECT_NOT_PRESENT;
@@ -159,6 +158,7 @@ void OpcodeMap::loadVersion2() {
 	_opcodeMap[0x9e] = OPCODE_INVENTORY_ROOM;
 	_opcodeMap[0xa0] = OPCODE_TAKE_CURRENT_OBJECT;
 	_opcodeMap[0xa2] = OPCODE_SET_OBJECT_GRAPHIC;
+	_opcodeMap[0xa9] = OPCODE_INVENTORY_FULL;
 	_opcodeMap[0xb1] = OPCODE_MOVE_DIR;
 	_opcodeMap[0xb5] = OPCODE_DESCRIBE_CURRENT_OBJECT;
 	_opcodeMap[0xc1] = OPCODE_VAR_DEC;

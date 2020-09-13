@@ -750,10 +750,18 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 
 	case OPCODE_INVENTORY_FULL:
 		item = get_item_by_noun(noun);
-		func_set_test_result(func_state,
-		                     _variables[VAR_INVENTORY_WEIGHT] +
-		                     (item->_flags & ITEMF_WEIGHT_MASK) >
-		                     _variables[VAR_INVENTORY_LIMIT]);
+
+		if (_comprehendVersion == 1) {
+			func_set_test_result(func_state,
+				_variables[VAR_INVENTORY_WEIGHT] +
+				(item->_flags & ITEMF_WEIGHT_MASK) >
+				_variables[VAR_INVENTORY_LIMIT]);
+		} else {
+			weighInventory();
+			func_set_test_result(func_state,
+				_totalInventoryWeight + (item->_flags & ITEMF_WEIGHT_MASK) <
+				_variables[VAR_INVENTORY_LIMIT]);
+		}
 		break;
 
 	case OPCODE_DESCRIBE_CURRENT_OBJECT:
@@ -1429,6 +1437,16 @@ bool ComprehendGame::isItemPresent(Item *item) const {
 		item->_room == _currentRoom || item->_room == ROOM_INVENTORY
 		|| item->_room == ROOM_CONTAINER
 	);
+}
+
+void ComprehendGame::weighInventory() {
+	_totalInventoryWeight = 0;
+
+	for (int idx = _itemCount - 1; idx > 0; --idx) {
+		Item *item = get_item(idx);
+		if (item->_room == ROOM_INVENTORY)
+			_totalInventoryWeight += item->_flags & ITEMF_WEIGHT_MASK;
+	}
 }
 
 } // namespace Comprehend

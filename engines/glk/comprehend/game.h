@@ -63,6 +63,7 @@ private:
 	void read_input();
 	void doMovementVerb(uint verbNum);
 	bool isItemPresent(Item *item) const;
+	void weighInventory();
 
 protected:
 	void game_save();

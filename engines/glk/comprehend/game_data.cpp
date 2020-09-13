@@ -161,7 +161,7 @@ void GameData::clearGame() {
 	_updateFlags = 0;
 	_colorTable = 0;
 	_itemCount = 0;
-	_itemsWeight = 0;
+	_totalInventoryWeight = 0;
 
 	_strings.clear();
 	_strings2.clear();

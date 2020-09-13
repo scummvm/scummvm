@@ -374,7 +374,7 @@ public:
 	uint8 _currentRoom;
 	uint8 _startRoom;
 	uint8 _itemCount;
-	uint8 _itemsWeight;
+	uint8 _totalInventoryWeight;
 
 	Common::Array<Item> _items;
 
