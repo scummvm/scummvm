@@ -96,7 +96,7 @@ public:
 private:
 	void copyRectToSurface(const void *buffer, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX, AlphaBlendMode alpha);
 	void copyRectToSurface8bpp(const void *buffer, const byte* palette, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX, AlphaBlendMode alpha);
-	void drawScaledSprite(Graphics::Surface *destSurface, const byte *source, int sourceWidth, int sourceHeight, int destX, int destY, int destWidth, int destHeight, const byte *palette, bool flipX, uint8 alpha);
+	void drawScaledSprite(Graphics::Surface *destSurface, const byte *source, int sourceWidth, int sourceHeight, int destX, int destY, int destWidth, int destHeight, const byte *palette, bool flipX, AlphaBlendMode alpha);
 };
 
 } // End of namespace Dragons
