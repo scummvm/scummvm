@@ -205,7 +205,7 @@ void Screen::copyRectToSurface8bpp(const void *buffer, const byte* palette, int 
 }
 
 void Screen::drawScaledSprite(Graphics::Surface *destSurface, const byte *source, int sourceWidth, int sourceHeight,
-		int destX, int destY, int destWidth, int destHeight, const byte *palette, bool flipX, uint8 alpha) {
+		int destX, int destY, int destWidth, int destHeight, const byte *palette, bool flipX, AlphaBlendMode alpha) {
 	//TODO this logic is pretty messy. It should probably be re-written. It is trying to scale, clip, flip and blend at once.
 
 	// Based on the GNAP engine scaling code
@@ -245,11 +245,11 @@ void Screen::drawScaledSprite(Graphics::Surface *destSurface, const byte *source
 				byte colorIndex = *wsrc;
 				uint16 c = READ_LE_UINT16(&palette[colorIndex * 2]);
 				if (c != 0) {
-					if (!(c & 0x8000) || alpha == 255) {
+					if (!(c & 0x8000u) || alpha == NONE) {
 						// only copy opaque pixels
 						WRITE_LE_UINT16(wdst, c & ~0x8000);
 					} else {
-						WRITE_LE_UINT16(wdst, alphaBlendRGB555(c, READ_LE_INT16(wdst), alpha));
+						WRITE_LE_UINT16(wdst, alphaBlendRGB555(c & 0x7fffu, READ_LE_UINT16(wdst) & 0x7fffu, 128));
 						// semi-transparent pixels.
 					}
 				}
