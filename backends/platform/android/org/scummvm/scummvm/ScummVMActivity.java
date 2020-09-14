@@ -334,6 +334,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		super.onDestroy();
 
 		if (_events != null) {
+			_events.clearEventHandler();
 			_events.sendQuitEvent();
 
 			try {
