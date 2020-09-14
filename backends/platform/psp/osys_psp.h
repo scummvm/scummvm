@@ -104,6 +104,7 @@ public:
 	// Overlay related
 	void showOverlay();
 	void hideOverlay();
+	bool isOverlayVisible() const;
 	void clearOverlay();
 	void grabOverlay(void *buf, int pitch);
 	void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h);

@@ -999,6 +999,9 @@ public:
 	/** Deactivate the overlay mode. */
 	virtual void hideOverlay() = 0;
 
+	/** Returns true if the overlay mode is activated, false otherwise. */
+	virtual bool isOverlayVisible() const = 0;
+
 	/**
 	 * Returns the pixel format description of the overlay.
 	 * @see Graphics::PixelFormat

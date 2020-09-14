@@ -72,8 +72,9 @@ public:
 	void setFocusRectangle(const Common::Rect& rect) override {}
 	void clearFocusRectangle() override {}
 
-	void showOverlay() override {}
-	void hideOverlay() override {}
+	void showOverlay() override { _overlayVisible = true; }
+	void hideOverlay() override { _overlayVisible = false; }
+	bool isOverlayVisible() const override { return _overlayVisible; }
 	Graphics::PixelFormat getOverlayFormat() const override { return Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0); }
 	void clearOverlay() override {}
 	void grabOverlay(void *buf, int pitch) const override {}
@@ -89,6 +90,7 @@ public:
 private:
 	uint _width, _height;
 	Graphics::PixelFormat _format;
+	bool _overlayVisible;
 };
 
 #endif

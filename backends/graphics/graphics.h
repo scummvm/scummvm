@@ -91,6 +91,7 @@ public:
 
 	virtual void showOverlay() = 0;
 	virtual void hideOverlay() = 0;
+	virtual bool isOverlayVisible() const = 0;
 	virtual Graphics::PixelFormat getOverlayFormat() const = 0;
 	virtual void clearOverlay() = 0;
 	virtual void grabOverlay(void *buf, int pitch) const = 0;

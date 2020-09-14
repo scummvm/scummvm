@@ -486,6 +486,10 @@ void OSystem_DS::hideOverlay() {
 	DS::displayMode8Bit();
 }
 
+bool OSystem_DS::isOverlayVisible() const {
+	return !DS::getIsDisplayMode8Bit();
+}
+
 void OSystem_DS::clearOverlay() {
 	memset((u16 *) DS::get16BitBackBuffer(), 0, 512 * 256 * 2);
 //	consolePrintf("clearovl\n");
