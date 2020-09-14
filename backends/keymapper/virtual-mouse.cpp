@@ -65,7 +65,7 @@ bool VirtualMouse::pollEvent(Event &event) {
 
 	// Adjust the speed of the cursor according to the virtual screen resolution
 	Common::Rect screenSize;
-	if (g_gui.isActive()) {
+	if (g_system->isOverlayVisible()) {
 		screenSize = Common::Rect(g_system->getOverlayWidth(), g_system->getOverlayHeight());
 	} else {
 		screenSize = Common::Rect(g_system->getWidth(), g_system->getHeight());
