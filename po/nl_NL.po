@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
-"PO-Revision-Date: 2020-08-31 18:14+0000\n"
+"PO-Revision-Date: 2020-09-14 15:43+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -184,14 +184,14 @@ msgstr ""
 "Wilt u echt bestanden in die map downloaden?"
 
 #: gui/downloaddialog.cpp:215
-#, fuzzy, c-format
+#, c-format
 msgid "Downloaded %s %S / %s %S"
-msgstr "%s %s / %s %s gedownload"
+msgstr "%s %S / %s %S gedownload"
 
 #: gui/downloaddialog.cpp:222
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %S"
-msgstr "Download snelheid: %s %s"
+msgstr "Download snelheid: %s %S"
 
 #: gui/editgamedialog.cpp:135 engines/dialogs.cpp:285
 msgid "Game"
@@ -1739,14 +1739,12 @@ msgid "ScummVM could not access the directory!"
 msgstr "ScummVM kon de opgegeven map niet openen!"
 
 #: gui/saveload-dialog.cpp:52
-#, fuzzy
 msgid "Downloading saves..."
-msgstr "Spel laden..."
+msgstr "Opgeslagen spellen downloaden..."
 
 #: gui/saveload-dialog.cpp:61
-#, fuzzy
 msgid "Run in background"
-msgstr "Ren achteruit"
+msgstr "Draai op de achtergrond"
 
 #: gui/saveload-dialog.cpp:343
 msgid "List view"
@@ -3247,7 +3245,6 @@ msgid "ScummVM Main Menu"
 msgstr "ScummVM Hoofdmenu"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:61
-#, fuzzy
 msgid "Controls"
 msgstr "Besturing"
 
@@ -3305,7 +3302,7 @@ msgstr "Helderheid:"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:119
 msgid "General"
-msgstr ""
+msgstr "Algemeen"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:121
 msgid "High quality audio (slower) (reboot)"
@@ -3317,117 +3314,102 @@ msgstr "Power-off uitschakelen"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:41
 msgid "DS Controls (right handed):"
-msgstr ""
+msgstr "DS Besturing (rechtshandig):"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:42
 #: backends/platform/ds/arm9/source/scummhelp.cpp:67
 #: backends/platform/ds/arm9/source/scummhelp.cpp:76
-#, fuzzy
 msgid "Pad Left"
-msgstr "D-pad Links"
+msgstr "Pad Links"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:42
 #: backends/platform/ds/arm9/source/scummhelp.cpp:59
-#, fuzzy
 msgid "Left mouse button"
-msgstr "Linker Muisknop"
+msgstr "Linker muisknop"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:43
 #: backends/platform/ds/arm9/source/scummhelp.cpp:68
 #: backends/platform/ds/arm9/source/scummhelp.cpp:77
-#, fuzzy
 msgid "Pad Right"
-msgstr "D-pad Rechts"
+msgstr "Pad Rechts"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:43
 #: backends/platform/ds/arm9/source/scummhelp.cpp:60
-#, fuzzy
 msgid "Right mouse button"
-msgstr "Rechter Muisknop"
+msgstr "Rechter muisknop"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:44
 #: backends/platform/ds/arm9/source/scummhelp.cpp:66
 #: backends/platform/ds/arm9/source/scummhelp.cpp:78
-#, fuzzy
 msgid "Pad Up"
-msgstr "D-pad Omhoog"
+msgstr "Pad Omhoog"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:44
 #: backends/platform/ds/arm9/source/scummhelp.cpp:61
 msgid "Mouse hover mode (no click)"
-msgstr ""
+msgstr "Muis zweef modus (zonder klik)"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:45
 #: backends/platform/ds/arm9/source/scummhelp.cpp:65
 #: backends/platform/ds/arm9/source/scummhelp.cpp:79
-#, fuzzy
 msgid "Pad Down"
-msgstr "D-pad Omlaag"
+msgstr "Pad Omlaag"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:45
 #: backends/platform/ds/arm9/source/scummhelp.cpp:62
 msgid "Skip dialog line (some games)"
-msgstr ""
+msgstr "Sla dialoog regel over (sommige spellen)"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:46
 #: backends/platform/ds/arm9/source/scummhelp.cpp:63
-#, fuzzy
 msgid "Pause/Game menu"
-msgstr "Spelmenu"
+msgstr "Pauzeer/Spelmenu"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:47
 #: backends/platform/ds/arm9/source/scummhelp.cpp:64
-#, fuzzy
 msgid "DS Options menu"
-msgstr "Toon opties menu"
+msgstr "DS Opties menu"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:48
 #: backends/platform/ds/arm9/source/scummhelp.cpp:65
-#, fuzzy
 msgid "Skip cutscenes"
-msgstr "Cutscene overslaan"
+msgstr "Cutscenes overslaan"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:49
-#, fuzzy
 msgid "Switch screens"
-msgstr "Verwissel personages:"
+msgstr "Wissel scherm"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:50
 #: backends/platform/ds/arm9/source/scummhelp.cpp:67
-#, fuzzy
 msgid "Show/hide debug console"
-msgstr "Toon / Verberg console"
+msgstr "Toon/verberg debug console"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:51
 #: backends/platform/ds/arm9/source/scummhelp.cpp:66
-#, fuzzy
 msgid "Show/hide keyboard"
-msgstr "Toon Toetsenbord"
+msgstr "Toon/verberg toetsenbord"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:52
 #: backends/platform/ds/arm9/source/scummhelp.cpp:69
 msgid "Scroll current touch screen view"
-msgstr ""
+msgstr "Scroll huidig touchscreen beeld"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:53
 #: backends/platform/ds/arm9/source/scummhelp.cpp:70
-#, fuzzy
 msgid "Zoom in/out"
-msgstr "Zoom uit"
+msgstr "Zoom in/uit"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:58
 msgid "DS Controls (left handed):"
-msgstr ""
+msgstr "DS Besturing (linkshandig):"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:68
-#, fuzzy
 msgid "Swap screens"
-msgstr "Bewaar schermafdruk"
+msgstr "Wissel schermen"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:75
-#, fuzzy
 msgid "Indiana Jones Fight controls:"
-msgstr "~I~ndy vecht besturing"
+msgstr "Indiana Jones Vecht besturing:"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:76
 #: engines/hdb/detection.cpp:321
@@ -3441,16 +3423,15 @@ msgstr "Beweeg naar rechts"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:78
 msgid "High guard"
-msgstr ""
+msgstr "Hoge waakzaamheid"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:79
 msgid "Guard down"
-msgstr ""
+msgstr "Niet waakzaam"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:80
-#, fuzzy
 msgid "Guard middle"
-msgstr "Stoot in het midden"
+msgstr "Middelmatig waakzaam"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:81
 #: engines/scumm/help.cpp:312
@@ -3952,7 +3933,7 @@ msgstr "Laad"
 
 #: engines/agos/saveload.cpp:137
 msgid "Quick load or save game isn't supported in this location"
-msgstr ""
+msgstr "Snel laden of bewaren wordt niet ondersteund op deze locatie"
 
 #: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2466
 #, c-format
@@ -4536,11 +4517,11 @@ msgstr "Fout tijdens het opslaan van het spel\n"
 
 #: engines/glk/hugo/hugo.cpp:183
 msgid "Incorrect rs file."
-msgstr ""
+msgstr "Ongeldig rs bestand."
 
 #: engines/glk/hugo/hugo.cpp:190
 msgid "Save file created by different version."
-msgstr ""
+msgstr "Opgeslagen spel gecreëerd door andere versie."
 
 #: engines/gob/inter_playtoons.cpp:258 engines/gob/inter_v2.cpp:1479
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:538
@@ -4558,17 +4539,15 @@ msgstr "Bestand verwijderen niet gelukt."
 
 #: engines/griffon/detection.cpp:106
 msgid "Menu / Skip"
-msgstr ""
+msgstr "Menu / Overslaan"
 
 #: engines/griffon/detection.cpp:142
-#, fuzzy
 msgid "Attack"
-msgstr "Aanval 1"
+msgstr "Aanval"
 
 #: engines/griffon/detection.cpp:156
-#, fuzzy
 msgid "Speed Up Cutscene"
-msgstr "Cutscene overslaan"
+msgstr "Cutscene versnellen"
 
 #: engines/groovie/detection.cpp:321
 msgid "Fast movie speed"
@@ -5103,7 +5082,7 @@ msgstr ""
 
 #: engines/mohawk/myst_stacks/preview.cpp:90
 msgid "You can't leave the library in the demo."
-msgstr ""
+msgstr "Je kan de bibliotheek niet verlaten in de demo."
 
 #: engines/mohawk/riven.cpp:156
 msgid ""
@@ -5349,9 +5328,8 @@ msgstr ""
 "Gebruik een alternatieve versie van de intro (alleen voor de CD versie)"
 
 #: engines/saga/saga.cpp:247
-#, fuzzy
 msgid "Error loading game resources."
-msgstr "Fout tijdens het inladen van het opgeslagen spel"
+msgstr "Fout bij laden spel onderdelen."
 
 #: engines/sci/detection.cpp:399
 msgid "Skip EGA dithering pass (full color backgrounds)"
@@ -5493,6 +5471,9 @@ msgid ""
 "There exists some dummy logic for now, where opponent actions are chosen "
 "randomly"
 msgstr ""
+"De Poker logica is hard gecodeerd in een externe DLL, en is nog niet "
+"geimplementeerd. Er is nu wat tijdelijke logica waar de acties van de "
+"tegenstanders willekeurig gekozen worden"
 
 #: engines/sci/engine/savegame.cpp:1407
 msgid "The format of this saved game is obsolete, unable to load it"
@@ -6487,11 +6468,12 @@ msgid ""
 "Failed to save temporary game state. Make sure your save game directory is "
 "set in ScummVM and that you can write to it."
 msgstr ""
+"Opslaan van tijdelijk spel mislukt. Controleer of de map voor opgeslagen "
+"spellen bestaat en dat je er in kan schrijven."
 
 #: engines/supernova/supernova.cpp:828
-#, fuzzy
 msgid "Failed to load temporary game state."
-msgstr "Laden van opgeslagen spel mislukt."
+msgstr "Laden van tijdelijk opgeslagen spel mislukt."
 
 #: engines/supernova/detection.cpp:40
 msgid "Improved mode"
@@ -7351,6 +7333,14 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+"Voordat u dit spel kan spelen zal u de benodigde lettertypes naar de ScummVM "
+"extra directory, of naar de spel map moeten kopiëren. Op Windows zal u de "
+"volgende lettertypebestanden van de Windows lettertype map moeten kopiëren: "
+"Times New Roman, Century Schoolbook, Garamond, Courier New en Arial. U kunt "
+"ook de Liberation Fonts of de GNU FreeFont collectie downloaden. U heeft "
+"alle lettertypes van de collectie nodig die u selecteert, dus "
+"LiberationMono, LiberationSans en LiberationSerif, of FreeMono, FreeSans en "
+"FreeSerif respectievelijk."
 
 #~ msgid "Engine does not support debug level '%s'"
 #~ msgstr "Engine ondersteunt debug level '%s' niet"
