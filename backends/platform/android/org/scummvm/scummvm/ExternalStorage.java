@@ -51,13 +51,13 @@ public class ExternalStorage {
 	}
 
 	private static Pattern
-		/** Pattern that SD card device should match */
+		// Pattern that SD card device should match
 		devicePattern = Pattern.compile("/dev/(block/.*vold.*|fuse)|/mnt/.*"),
-		/** Pattern that SD card mount path should match */
+		// Pattern that SD card mount path should match
 		pathPattern = Pattern.compile("/(mnt|storage|external_sd|extsd|_ExternalSD|Removable|.*MicroSD).*", Pattern.CASE_INSENSITIVE),
-		/** Pattern that the mount path should not match.
-		 * 'emulated' indicates an internal storage location, so skip it.
-		 * 'asec' is an encrypted package file, decrypted and mounted as a directory. */
+		// Pattern that the mount path should not match.
+		//' emulated' indicates an internal storage location, so skip it.
+		// 'asec' is an encrypted package file, decrypted and mounted as a directory.
 		pathAntiPattern = Pattern.compile(".*(/secure|/asec|/emulated).*"),
 		/** These are expected fs types, including vfat. tmpfs is not OK.
 		 * fuse can be removable SD card (as on Moto E or Asus ZenPad), or can be internal (Huawei G610). */
@@ -116,14 +116,14 @@ public class ExternalStorage {
 	public static LinkedHashSet<File> findSdCardPath() {
 		String[] mountFields;
 		BufferedReader bufferedReader = null;
-		String lineRead = null;
+		String lineRead;
 
-		/** Possible SD card paths */
-		LinkedHashSet<File> candidatePaths = new LinkedHashSet<File>();
+		// Possible SD card paths
+		LinkedHashSet<File> candidatePaths = new LinkedHashSet<>();
 
-		/** Build a list of candidate paths, roughly in order of preference. That way if
-		 * we can't definitively detect removable storage, we at least can pick a more likely
-		 * candidate. */
+		// Build a list of candidate paths, roughly in order of preference. That way if
+		// we can't definitively detect removable storage, we at least can pick a more likely
+		// candidate.
 
 		// Could do: use getExternalStorageState(File path), with and without an argument, when
 		// available. With an argument is available since API level 21.
@@ -153,7 +153,7 @@ public class ExternalStorage {
 		}
 
 		// Get listing of mounted devices with their properties.
-		ArrayList<File> mountedPaths = new ArrayList<File>();
+		ArrayList<File> mountedPaths = new ArrayList<>();
 		try {
 			// Note: Despite restricting some access to /proc (http://stackoverflow.com/a/38728738/423105),
 			// Android 7.0 does *not* block access to /proc/mounts, according to our test on George's Alcatel A30 GSM.
@@ -334,10 +334,7 @@ public class ExternalStorage {
 	 */
 	public static boolean isAvailable() {
 		String state = Environment.getExternalStorageState();
-		if (Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-			return true;
-		}
-		return false;
+		return Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state);
 	}
 
 	public static String getSdCardPath() {
@@ -349,10 +346,7 @@ public class ExternalStorage {
 	 */
 	public static boolean isWritable() {
 		String state = Environment.getExternalStorageState();
-		if (Environment.MEDIA_MOUNTED.equals(state)) {
-			return true;
-		}
-		return false;
+		return Environment.MEDIA_MOUNTED.equals(state);
 
 	}
 
@@ -360,10 +354,10 @@ public class ExternalStorage {
 	 * @return list of locations available. Odd elements are names, even are paths
 	 */
 	public static List<String> getAllStorageLocations() {
-		List<String> map = new ArrayList<String>(20);
+		List<String> map = new ArrayList<>(20);
 
-		List<String> mMounts = new ArrayList<String>(10);
-		List<String> mVold = new ArrayList<String>(10);
+		List<String> mMounts = new ArrayList<>(10);
+		List<String> mVold = new ArrayList<>(10);
 		mMounts.add("/mnt/sdcard");
 		mVold.add("/mnt/sdcard");
 
@@ -417,27 +411,27 @@ public class ExternalStorage {
 		}
 		mVold.clear();
 
-		List<String> mountHash = new ArrayList<String>(10);
+		List<String> mountHash = new ArrayList<>(10);
 
 		for (String mount : mMounts) {
 			File root = new File(mount);
 			if (root.exists() && root.isDirectory() && root.canRead()) {
 				File[] list = root.listFiles();
-				String hash = "[";
+				StringBuilder hash = new StringBuilder("[");
 				if (list != null) {
 					for (File f : list) {
-						hash += f.getName().hashCode() + ":" + f.length() + ", ";
+						hash.append(f.getName().hashCode()).append(":").append(f.length()).append(", ");
 					}
 				}
-				hash += "]";
-				if (!mountHash.contains(hash)) {
+				hash.append("]");
+				if (!mountHash.contains(hash.toString())) {
 					String key = SD_CARD + "_" + (map.size() / 2);
 					if (map.size() == 0) {
 						key = SD_CARD;
 					} else if (map.size() == 2) {
 						key = EXTERNAL_SD_CARD;
 					}
-					mountHash.add(hash);
+					mountHash.add(hash.toString());
 					map.add(key);
 					map.add(root.getAbsolutePath());
 				}
@@ -456,7 +450,6 @@ public class ExternalStorage {
 
 			//Retrieve the External Storages root directory:
 			String externalStorageRootDir;
-			int count = 0;
 			if ((externalStorageRootDir = primaryExternalStorage.getParent()) == null) {  // no parent...
 				String key = primaryExternalStorage.getAbsolutePath();
 				if (!map.contains(key)) {
