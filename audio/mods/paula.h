@@ -49,7 +49,13 @@ public:
 	enum FilterMode {
 		kFilterModeNone = 0,
 		kFilterModeA500,
-		kFilterModeA1200
+		kFilterModeA1200,
+
+#if defined(__DS__)
+		kFilterModeDefault = kFilterModeNone
+#else
+		kFilterModeDefault = kFilterModeA1200
+#endif
 	};
 
 	/* TODO: Document this */
@@ -69,10 +75,9 @@ public:
 	};
 
 	Paula(bool stereo = false, int rate = 44100, uint interruptFreq = 0,
-	      FilterMode filterMode = Paula::defaultFilterMode(), int periodScaleDivisor = 1);
+	      FilterMode filterMode = kFilterModeDefault, int periodScaleDivisor = 1);
 	~Paula();
 
-	static FilterMode defaultFilterMode() { return kFilterModeA1200; }
 	bool playing() const { return _playing; }
 	void setTimerBaseValue( uint32 ticksPerSecond ) { _timerBase = ticksPerSecond; }
 	uint32 getTimerBaseValue() { return _timerBase; }
