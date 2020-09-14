@@ -1,43 +1,55 @@
 package org.scummvm.scummvm;
 
 import android.Manifest;
-import android.content.pm.PackageManager;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.media.AudioManager;
 import android.net.Uri;
-import android.net.wifi.WifiManager;
 import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.text.ClipboardManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.MotionEvent;
+import android.view.PointerIcon;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.SurfaceView;
-import android.view.SurfaceHolder;
-import android.view.MotionEvent;
-import android.view.PointerIcon;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.IOException;
+import java.io.Reader;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Properties;
+
+//import android.os.Environment;
+//import java.util.List;
 
 public class ScummVMActivity extends Activity implements OnKeyboardVisibilityListener {
 
@@ -182,7 +194,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			) {
 				requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_EXT_STORAGE);
 			} else {
-				return _externalStorage.getAllStorageLocations().toArray(new String[0]);
+				return ExternalStorage.getAllStorageLocations().toArray(new String[0]);
 			}
 			return new String[0]; // an array of zero length
 		}
@@ -193,8 +205,8 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	private ScummVMEvents _events;
 	private MouseHelper _mouseHelper;
 	private Thread _scummvm_thread;
-	private ExternalStorage _externalStorage;
 
+	@RequiresApi(api = Build.VERSION_CODES.KITKAT)
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -214,7 +226,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 		// REMOVED: Dialogue prompt with only option to Quit the app if !Environment.getExternalStorageDirectory().canRead()
 
-		SurfaceView main_surface = (SurfaceView)findViewById(R.id.main_surface);
+		SurfaceView main_surface = findViewById(R.id.main_surface);
 
 		main_surface.requestFocus();
 
@@ -224,16 +236,16 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		//                            so that it will be in persistent external storage and not deleted on uninstall
 		//                            This has the issue for external storage being unavailable on some devices
 		//                            Is this persistence really important considering that Android does not really support it anymore
-		//                               Exceptions are:
+		//                               Exceptions (storage locations that are persisted or methods to access files across apps) are:
 		//                                 - shareable media files (images, audio, video)
 		//                                 - files stored with Storage Access Framework (SAF) which requires user interaction with FilePicker)
 		//          Original fallback was getDir()
-		//                            so app's internal space, which would be deleted on uninstall) set as WORLD_READABLE which is no longer supported in newer versions of Android API
-		//                            In newer APIs we can set that path as Context.MODE_PRIVATE which is the default - but will make the files inaccessible to other apps
+		//                            so app's internal space (which would be deleted on uninstall) was set as WORLD_READABLE which is no longer supported in newer versions of Android API
+		//                            In newer APIs we can set that path as Context.MODE_PRIVATE which is the default - but this makes the files inaccessible to other apps
 
 		//
-		// seekAndInitScummvmConfiguration() returns false if something went wrong when
-		// initializing configuration (or finding and using an old ini file) for ScummVM
+		// seekAndInitScummvmConfiguration() returns false if something went wrong
+		// when initializing configuration (or when seeking and trying to use an existing ini file) for ScummVM
 		if (!seekAndInitScummvmConfiguration()) {
 			Log.e(ScummVM.LOG_TAG, "Error while trying to find and/or initialize scummvm configuration file!");
 			// TODO error prompt (popup to user)
@@ -267,7 +279,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 
 		// On screen button listener
-		((ImageView)findViewById(R.id.show_keyboard)).setOnClickListener(keyboardBtnOnClickListener);
+		findViewById(R.id.show_keyboard).setOnClickListener(keyboardBtnOnClickListener);
 
 		// Keyboard visibility listener
 		setKeyboardVisibilityListener(this);
@@ -337,22 +349,18 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 
 	@Override
-	public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-		switch (requestCode) {
-		case MY_PERMISSIONS_REQUEST_READ_EXT_STORAGE:
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		if (requestCode == MY_PERMISSIONS_REQUEST_READ_EXT_STORAGE) {
 			// If request is cancelled, the result arrays are empty.
 			if (grantResults.length > 0
-			   && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+				&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 				// permission was granted
 				Log.i(ScummVM.LOG_TAG, "Read External Storage permission was granted at Runtime");
 			} else {
 				// permission denied! We won't be able to make use of functionality depending on this permission.
 				Toast.makeText(this, "Until permission is granted, some storage locations may be inaccessible!", Toast.LENGTH_SHORT)
-				              .show();
+					.show();
 			}
-			break;
-		default:
-			break;
 		}
 	}
 
@@ -386,9 +394,10 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	// TODO setSystemUiVisibility is introduced in API 11 and deprecated in API 30 - When we move to API 30 we will have to replace this code
 	//	https://developer.android.com/training/system-ui/immersive.html#java
 	//
-	//      The code sample in the url below contains code to switch between immersive and default mode
+	//  The code sample in the url below contains code to switch between immersive and default mode
 	//	https://github.com/android/user-interface-samples/tree/master/AdvancedImmersiveMode
-	//      We could do something similar by making it a Global UI option.
+	//  We could do something similar by making it a Global UI option.
+	@TargetApi(Build.VERSION_CODES.KITKAT)
 	private void hideSystemUI() {
 		// Enables regular immersive mode.
 		// For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
@@ -406,20 +415,22 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		| View.SYSTEM_UI_FLAG_FULLSCREEN);
 	}
 
-	// Shows the system bars by removing all the flags
-	// except for the ones that make the content appear under the system bars.
-	private void showSystemUI() {
-		View decorView = getWindow().getDecorView();
-		decorView.setSystemUiVisibility(
-		    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-		    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-		    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-	}
+//	// Shows the system bars by removing all the flags
+//	// except for the ones that make the content appear under the system bars.
+//	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+//	private void showSystemUI() {
+//		View decorView = getWindow().getDecorView();
+//		decorView.setSystemUiVisibility(
+//		    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+//		    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+//		    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+//	}
 
 	// Show or hide the Android keyboard.
 	// Called by the override of showVirtualKeyboard()
+	@TargetApi(Build.VERSION_CODES.CUPCAKE)
 	private void showKeyboard(boolean show) {
-		SurfaceView main_surface = (SurfaceView)findViewById(R.id.main_surface);
+		SurfaceView main_surface = findViewById(R.id.main_surface);
 		InputMethodManager imm = (InputMethodManager)
 			getSystemService(INPUT_METHOD_SERVICE);
 
@@ -432,8 +443,9 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 	// Toggle showing or hiding the virtual keyboard.
 	// Called by keyboardBtnOnClickListener()
+	@TargetApi(Build.VERSION_CODES.CUPCAKE)
 	private void toggleKeyboard() {
-		SurfaceView main_surface = (SurfaceView)findViewById(R.id.main_surface);
+		SurfaceView main_surface = findViewById(R.id.main_surface);
 		InputMethodManager imm = (InputMethodManager)
 			getSystemService(INPUT_METHOD_SERVICE);
 
@@ -445,7 +457,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	// Show or hide the semi-transparent keyboard btn (which is used to explicitly bring up the android keyboard).
 	// Called by the override of showKeyboardControl()
 	private void showKeyboardView(boolean show) {
-		ImageView keyboardBtn = (ImageView)findViewById(R.id.show_keyboard);
+		ImageView keyboardBtn = findViewById(R.id.show_keyboard);
 
 		if (show) {
 			keyboardBtn.setVisibility(View.VISIBLE);
@@ -456,7 +468,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 	private void showMouseCursor(boolean show) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-			SurfaceView main_surface = (SurfaceView)findViewById(R.id.main_surface);
+			SurfaceView main_surface = findViewById(R.id.main_surface);
 			int type = show ? PointerIcon.TYPE_DEFAULT : PointerIcon.TYPE_NULL;
 			main_surface.setPointerIcon(PointerIcon.getSystemIcon(this, type));
 		} else {
@@ -482,6 +494,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			private final int EstimatedKeyboardDP = defaultKeyboardHeightDP + (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? 48 : 0);
 			private final Rect rect = new Rect();
 
+			@TargetApi(Build.VERSION_CODES.CUPCAKE)
 			@Override
 			public void onGlobalLayout() {
 				    int estimatedKeyboardHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, EstimatedKeyboardDP, parentView.getResources().getDisplayMetrics());
@@ -506,25 +519,58 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	}
 
 	// Auxiliary function to overwrite a file (used for overwriting the scummvm.ini file with an existing other one)
+	@RequiresApi(api = Build.VERSION_CODES.KITKAT)
 	private static void copyFileUsingStream(File source, File dest) throws IOException {
-		InputStream is = null;
-		OutputStream os = null;
-		try {
-			is = new FileInputStream(source);
-			os = new FileOutputStream(dest);
+		try (InputStream is = new FileInputStream(source); OutputStream os = new FileOutputStream(dest)) {
 			byte[] buffer = new byte[1024];
 			int length;
 			while ((length = is.read(buffer)) > 0) {
 				os.write(buffer, 0, length);
 			}
-		} finally {
-			is.close();
-			os.close();
 		}
 	}
 
+	/**
+	 * Auxiliary function to read our ini configuration file
+	 * Code is from https://stackoverflow.com/a/41084504
+	 * returns The sections of the ini file as a Map of the header Strings to a Properties object (the key=value list of each section)
+	 */
+	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
+	private static Map<String, Properties> parseINI(Reader reader) throws IOException {
+		final HashMap<String, Properties> result = new HashMap<>();
+		new Properties() {
+
+			private Properties section;
+
+			@Override
+			public Object put(Object key, Object value) {
+				String header = (key + " " + value).trim();
+				if (header.startsWith("[") && header.endsWith("]"))
+					return result.put(header.substring(1, header.length() - 1),
+						section = new Properties());
+				else
+					return section.put(key, value);
+			}
+
+		}.load(reader);
+		return result;
+	}
+
+	@RequiresApi(api = Build.VERSION_CODES.KITKAT)
+	private static String getVersionInfoFromScummvmConfiguration(String fullIniFilePath) {
+		try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fullIniFilePath))) {
+			Map<String, Properties> parsedIniMap = parseINI(bufferedReader);
+			if (!parsedIniMap.isEmpty() && parsedIniMap.containsKey("scummvm")) {
+				return Objects.requireNonNull(parsedIniMap.get("scummvm")).getProperty("versioninfo", "");
+			}
+		} catch (IOException ignored) {
+		} catch (NullPointerException ignored) {
+		}
+		return "";
+	}
+
+	@RequiresApi(api = Build.VERSION_CODES.KITKAT)
 	private boolean seekAndInitScummvmConfiguration() {
-		boolean retVal = false;
 
 		_actualScummVMDataDir = getExternalFilesDir(null);
 		if (_actualScummVMDataDir == null || !_actualScummVMDataDir.canRead()) {
@@ -533,26 +579,27 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				.setIcon(android.R.drawable.ic_dialog_alert)
 				.setMessage(R.string.no_external_files_dir_access)
 				.setNegativeButton(R.string.quit,
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog, int which) {
-									finish();
-								}
-							})
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							finish();
+						}
+					})
 				.show();
-			retVal = false;
-			return retVal;
+			return false;
 		}
 
 		Log.d(ScummVM.LOG_TAG, "Base ScummVM data folder is: " + _actualScummVMDataDir.getPath());
 
 		File[] extfiles = _actualScummVMDataDir.listFiles();
-		Log.d(ScummVM.LOG_TAG, "Size: "+ extfiles.length);
-		for (int i = 0; i < extfiles.length; i++) {
-			Log.d(ScummVM.LOG_TAG, "FileName:" + extfiles[i].getName());
+		if (extfiles != null) {
+			Log.d(ScummVM.LOG_TAG, "Size: "+ extfiles.length);
+			for (File extfile : extfiles) {
+				Log.d(ScummVM.LOG_TAG, "FileName:" + extfile.getName());
+			}
 		}
 
 		File externalScummVMConfigDir = new File(_actualScummVMDataDir, ".config/scummvm");
-		if (externalScummVMConfigDir.mkdirs()) {
+		if (!externalScummVMConfigDir.exists() && externalScummVMConfigDir.mkdirs()) {
 			Log.d(ScummVM.LOG_TAG, "Created ScummVM Config path: " + externalScummVMConfigDir.getPath());
 		} else if (externalScummVMConfigDir.isDirectory()) {
 			Log.d(ScummVM.LOG_TAG, "ScummVM Config path already exists: " + externalScummVMConfigDir.getPath());
@@ -563,30 +610,43 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				.setIcon(android.R.drawable.ic_dialog_alert)
 				.setMessage(R.string.no_config_file)
 				.setNegativeButton(R.string.quit,
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog, int which) {
-									finish();
-								}
-							})
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							finish();
+						}
+					})
 				.show();
 		}
 
+		// TODO search in other known places for scummvm.ini too
 		_configScummvmFile = new File(_actualScummVMDataDir, "scummvm.ini");
 		try {
-			if (!_configScummvmFile.createNewFile()) {
+			if (_configScummvmFile.exists() || !_configScummvmFile.createNewFile()) {
 				Log.d(ScummVM.LOG_TAG, "ScummVM Config file already exists!");
-				Log.d(ScummVM.LOG_TAG, "Existing Scummvm INI: " + _configScummvmFile.getPath());
+				Log.d(ScummVM.LOG_TAG, "Existing ScummVM INI: " + _configScummvmFile.getPath());
+				String existingVersionInfo = getVersionInfoFromScummvmConfiguration(_configScummvmFile.getPath());
+				if (!"".equals(existingVersionInfo.trim())) {
+					Log.d(ScummVM.LOG_TAG, "Existing ScummVM Version: " + existingVersionInfo.trim());
+				} else {
+					Log.d(ScummVM.LOG_TAG, "Could not find info on existing ScummVM version. Old or corrupt file?");
+				}
 			} else {
 				Log.d(ScummVM.LOG_TAG, "ScummVM Config file was created!");
-				Log.d(ScummVM.LOG_TAG, "New Scummvm INI: " + _configScummvmFile.getPath());
+				Log.d(ScummVM.LOG_TAG, "New ScummVM INI: " + _configScummvmFile.getPath());
 				// if there was an old scummvmrc file (old config file), then copy that over the empty new scummvm.ini
 				File oldScummVMconfig = getFileStreamPath("scummvmrc");
 				if (!oldScummVMconfig.exists()) {
-					Log.d(ScummVM.LOG_TAG, "Old config Scummvm file was not found!");
+					Log.d(ScummVM.LOG_TAG, "Old config (scummvmrc) ScummVM file was not found!");
 				} else {
-					Log.d(ScummVM.LOG_TAG, "Old config Scummvm file was found!");
+					Log.d(ScummVM.LOG_TAG, "Old config (scummvmrc) ScummVM file was found!");
+					String existingVersionInfo = getVersionInfoFromScummvmConfiguration(_configScummvmFile.getPath());
+					if (!"".equals(existingVersionInfo.trim())) {
+						Log.d(ScummVM.LOG_TAG, "Existing ScummVM Version: " + existingVersionInfo.trim());
+					} else {
+						Log.d(ScummVM.LOG_TAG, "Could not find info on existing ScummVM version. Old or corrupt file?");
+					}
 					copyFileUsingStream(oldScummVMconfig, _configScummvmFile);
-					Log.d(ScummVM.LOG_TAG, "Old config Scummvm file overwrites the new (empty) scummvm.ini");
+					Log.d(ScummVM.LOG_TAG, "Old config (scummvmrc) ScummVM file was renamed and overwrote the new (empty) scummvm.ini");
 				}
 			}
 		} catch(Exception e) {
@@ -596,11 +656,11 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				.setIcon(android.R.drawable.ic_dialog_alert)
 				.setMessage(R.string.no_config_file)
 				.setNegativeButton(R.string.quit,
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog, int which) {
-									finish();
-								}
-							})
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							finish();
+						}
+					})
 				.show();
 		}
 
@@ -612,11 +672,12 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		//      - allowing the user to set a user-defined location via Storage Access Framework, that would override this location!
 		// TODO This would override/ overwrite(?) actual old save-game path stored in the config file!
 		//
-		// By default shoose to store savegames on app's external storage, which means they're accessible by other apps BUT will get deleted on uninstall!
+		// By default choose to store savegames on app's external storage, which means they're ACCESSIBLE BY OTHER APPS, BUT they will still get DELETED ON UNINSTALL!
 		//
 		_defaultScummVMSavesDir = new File(_actualScummVMDataDir, "saves");
+		//
 		// TODO what about old save paths from plain android port? do we favor them?
-		if (_defaultScummVMSavesDir.mkdirs()) {
+		if (!_defaultScummVMSavesDir.exists() && _defaultScummVMSavesDir.mkdirs()) {
 			Log.d(ScummVM.LOG_TAG, "Created ScummVM saves path: " + _defaultScummVMSavesDir.getPath());
 		} else if (_defaultScummVMSavesDir.isDirectory()) {
 			Log.d(ScummVM.LOG_TAG, "ScummVM saves path already exists: " + _defaultScummVMSavesDir.getPath());
@@ -627,16 +688,15 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				.setIcon(android.R.drawable.ic_dialog_alert)
 				.setMessage(R.string.no_config_file)
 				.setNegativeButton(R.string.quit,
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog, int which) {
-									finish();
-								}
-							})
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							finish();
+						}
+					})
 				.show();
 		}
 
-		retVal = true;
-		return retVal;
+		return true;
 	}
 
 }
