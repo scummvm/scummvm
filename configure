@@ -2985,6 +2985,7 @@ EOF
 		append_var DEFINES "-DNONSTANDARD_PORT"
 		;;
 	ds)
+		_optimization_level=-Os
 		append_var DEFINES "-D__DS__"
 		append_var DEFINES "-DNDS"
 		append_var DEFINES "-DARM9"
@@ -2996,6 +2997,7 @@ EOF
 		append_var CXXFLAGS "-march=armv5te"
 		append_var CXXFLAGS "-mtune=arm946e-s"
 		append_var CXXFLAGS "-fomit-frame-pointer"
+		append_var CXXFLAGS "-mthumb"
 		append_var CXXFLAGS "-mthumb-interwork"
 		append_var CXXFLAGS "-ffunction-sections"
 		append_var CXXFLAGS "-fdata-sections"

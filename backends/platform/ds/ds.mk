@@ -25,69 +25,6 @@
 #   There are a few game specific hacks which are currently controlled by this,
 #   too; we need to investigate those.
 
-# Set location of ndsdir so that we can easily refer to files in it
-ndsdir = backends/platform/ds
-
-# Compiler options for files which should be optimised for speed
-OPT_SPEED := -O3 -marm
-
-# Compiler options for files which should be optimised for space
-OPT_SIZE := -Os -mthumb
-
-# By default optimize for size
-CXXFLAGS += $(OPT_SIZE)
-
-# Files listed below will be optimisied for speed, otherwise they will be optimised for space.
-# TODO: Several of these files probably should not be optimized for speed, but for now
-# we replicate the *precise* list from the old DS makefile, to ensure full compatibility.
-# Eventually, we should tune this list.
-$(ndsdir)/blitters.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-$(ndsdir)/dsmain.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-$(ndsdir)/osystem_ds.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-base/main.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-sound/rate.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-sound/softsynth/opl/mame.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-engines/agi/sprite.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-engines/agos/gfx.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-engines/agos/script.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-engines/cine/gfx.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-engines/cruise/actor.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-engines/cruise/script.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-engines/draci/script.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-engines/draci/sprite.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-engines/gob/script.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-engines/groovie/script.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-engines/kyra/script.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-engines/m4/actor.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-engines/m4/script.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-engines/m4/sprite.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-engines/made/script.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-engines/saga/actor_path.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-engines/saga/actor_walk.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-engines/saga/actor.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-engines/saga/gfx.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-engines/saga/image.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-engines/saga/isomap.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-engines/saga/script.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-engines/saga/sprite.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-engines/sci/engine/script.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-engines/scumm/actor.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-engines/scumm/gfx.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-engines/scumm/script.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-engines/sword2/sprite.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-engines/teenagent/actor.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-# TODO: Fingolfin says: optimizing kyra/staticres.o for size would
-# save about 30k, so maybe consider that?
-#engines/kyra/staticres.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
-
-
-
-#############################################################################
-#
-# ARM9 rules.
-#
-#############################################################################
-
 all: scummvm.nds
 
 clean: dsclean
@@ -101,7 +38,7 @@ dsclean:
 # TODO: Add a 'dsdist' target ?
 
 %.nds: %.elf romfs
-	ndstool -c $@ -9 $< -b $(srcdir)/$(ndsdir)/logo.bmp "$(@F);ScummVM $(VERSION);DS Port" -d romfs
+	ndstool -c $@ -9 $< -b $(srcdir)/backends/platform/ds/logo.bmp "$(@F);ScummVM $(VERSION);DS Port" -d romfs
 
 romfs: $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(PLUGINS)
 	@rm -rf romfs
