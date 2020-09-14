@@ -77,6 +77,8 @@ public:
 		_forceRedraw = true;
 	}
 
+	virtual bool isOverlayVisible() const override { return _overlayVisible; }
+
 	virtual void setShakePos(int shakeXOffset, int shakeYOffset) override {
 		if (_gameScreenShakeXOffset != shakeXOffset || _gameScreenShakeYOffset != shakeYOffset) {
 			_gameScreenShakeXOffset = shakeXOffset;

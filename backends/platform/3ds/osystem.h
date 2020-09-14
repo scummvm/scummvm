@@ -159,6 +159,7 @@ public:
 	void clearFocusRectangle();
 	void showOverlay();
 	void hideOverlay();
+	bool isOverlayVisible() const { return _overlayVisible; }
 	Graphics::PixelFormat getOverlayFormat() const;
 	void clearOverlay();
 	void grabOverlay(void *buf, int pitch);

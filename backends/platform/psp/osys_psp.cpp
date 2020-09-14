@@ -246,6 +246,11 @@ void OSystem_PSP::hideOverlay() {
 	_cursor.useGlobalScaler(true);	// mouse needs to be scaled with screen
 }
 
+bool OSystem_PSP::isOverlayVisible() const {
+	DEBUG_ENTER_FUNC();
+	return _overlay.isVisible();
+}
+
 void OSystem_PSP::clearOverlay() {
 	DEBUG_ENTER_FUNC();
 	_displayManager.waitUntilRenderFinished();
