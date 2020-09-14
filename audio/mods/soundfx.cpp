@@ -77,7 +77,7 @@ protected:
 };
 
 SoundFx::SoundFx(int rate, bool stereo, bool repeat, int periodScaleDivisor)
-	: Paula(stereo, rate, 0, Paula::defaultFilterMode(), periodScaleDivisor) {
+	: Paula(stereo, rate, 0, kFilterModeDefault, periodScaleDivisor) {
 	setTimerBaseValue(kPalCiaClock);
 	_ticks = 0;
 	_delay = 0;
