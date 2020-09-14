@@ -3543,6 +3543,80 @@ static const uint16 gk1LoreleiDanceTimerPatch[] = {
 	PATCH_END
 };
 
+// When walking between rooms in Jackson Square, the cursor is often initialized
+//  to the wrong view, even though it's really the Walk cursor. This seemingly
+//  random event with many variations is due to a bug in the ExitFeature class.
+//
+// ExitFeature is responsible for swapping the cursor with an Exit cursor when
+//  the mouse is over it and then restoring afterwards. The previous cursor is
+//  stored in ExitFeature:lastCursor. The first problem is that ExitFeature:init
+//  initializes lastCursor to the current cursor even though the mouse hasn't
+//  touched it yet. The second problem is that ExitFeature:dispose restores the
+//  cursor to lastCursor if the current cursor is any Exit cursor, including
+//  ones it's not responsible for. Entering Jackson Square from the cathedral
+//  causes all three ExitFeatures in the room to initialize lastCursor to
+//  theWaitCursor (the shield). When exiting the room, the ExitFeatures are
+//  disposed in the order they were added, which means northExit disposes first.
+//  northExit:lastCursor is still theWaitCursor unless it was moused over.
+//  Exiting to another Jackson Square room will cause northExit:dispose to check
+//  if the cursor is globeCursor, which represents all Exit cursors, and if so
+//  then it will incorrectly restore the cursor to theWaitCursor, preventing
+//  the ExitFeature responsible for the room change from correctly restoring.
+//
+// We fix this by patching ExitFeature:dispose to only restore the cursor if
+//  its view matches the Exit cursor that it's responsible for.
+//
+// Applies to: All versions
+// Responsible method: ExitFeature:dispose
+static const uint16 gk1ExitFeatureCursorSignature[] = {
+	0x89, 0x13,                             // lsg 13 [ current-cursor ]
+	0x7a,                                   // push2
+	0x76,                                   // push0
+	0x78,                                   // push1
+	0x43, 0x02, SIG_UINT16(0x0004),         // callk ScriptID 0 1 [ globeCursor ]
+	0x1a,                                   // eq?
+	0x31, 0x0b,                             // bnt 0b [ skip if current-cursor isn't an exit cursor ]
+	0x38, SIG_SELECTOR16(setCursor),        // pushi setCursor
+	0x78,                                   // push1
+	0x67, SIG_ADDTOOFFSET(+1),              // pTos lastCursor
+	0x81, 0x01,                             // lag 01
+	0x4a, SIG_UINT16(0x0006),               // send 06 [ GK1 setCursor: lastCursor ]
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(delete),            // pushi delete
+	0x78,                                   // push1
+	0x7c,                                   // pushSelf
+	0x81, 0xce,                             // lag ce
+	0x4a, SIG_UINT16(0x0006),               // send 06 [ gk1Exits delete: self ]
+	0x48,                                   // ret
+	SIG_ADDTOOFFSET(+372),
+	0x38, SIG_SELECTOR16(setCursor),        // pushi setCursor
+	0x78,                                   // push1
+	0x67, SIG_ADDTOOFFSET(+1),              // pTos lastCursor
+	0x81, 0x01,                             // lag 01
+	0x4a, SIG_UINT16(0x0006),               // send 06 [ GK1 setCursor: lastCursor ]
+	0x35, 0x01,                             // ldi 01
+	0x65, SIG_ADDTOOFFSET(+1),              // aTop eCursor [ eCursor = 1 ]
+	0x48,                                   // ret
+	SIG_END
+};
+
+static const uint16 gk1ExitFeatureCursorPatch[] = {
+	0x39, PATCH_SELECTOR8(delete),          // pushi delete
+	0x78,                                   // push1
+	0x7c,                                   // pushSelf
+	0x81, 0xce,                             // lag ce
+	0x4a, PATCH_UINT16(0x0006),             // send 06 [ gk1Exits delete: self ]
+	0x39, PATCH_SELECTOR8(view),            // pushi view
+	0x76,                                   // push0
+	0x81, 0x13,                             // lag 13  [ current-cursor ]
+	0x4a, PATCH_UINT16(0x0004),             // send 04 [ current-cursor: view? ]
+	0x67, PATCH_GETORIGINALBYTEADJUST(+17, -2), // pTos cursor
+	0x1a,                                   // eq?     [ current-cursor:view == self:cursor ]
+	0x2e, PATCH_UINT16(0x017e),             // bt 017e [ GK1 setCursor: lastCursor ]
+	0x48,                                   // ret
+	PATCH_END
+};
+
 // GK1 Mac is missing view 56, which is the close-up of the talisman. Clicking
 //  Look on the talisman from inventory is supposed to display an inset with
 //  view 56 and say a message, but instead this would crash the Mac interpreter.
@@ -3606,6 +3680,7 @@ static const uint16 gk1NarratorLockupPatch[] = {
 static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,     0, "remove alt+n syslogger hotkey",               1, gk1SysLoggerHotKeySignature,      gk1SysLoggerHotKeyPatch },
 	{  true,    17, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
+	{  true,    21, "fix ExitFeature cursor restore",              1, gk1ExitFeatureCursorSignature,    gk1ExitFeatureCursorPatch },
 	{  false,   24, "mac: fix missing talisman view",              1, gk1MacTalismanInsetSignature,     gk1MacTalismanInsetPatch },
 	{  true,    51, "fix interrogation bug",                       1, gk1InterrogationBugSignature,     gk1InterrogationBugPatch },
 	{  true,    93, "fix inventory on restart",                    1, gk1RestartInventorySignature,     gk1RestartInventoryPatch },
