@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
-"PO-Revision-Date: 2020-09-14 00:19+0000\n"
-"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
+"PO-Revision-Date: 2020-09-14 15:43+0000\n"
+"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -3445,15 +3445,15 @@ msgstr "Déplacement droite"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:78
 msgid "High guard"
-msgstr "Guarde haute"
+msgstr "Garde haute"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:79
 msgid "Guard down"
-msgstr "Guarde basse"
+msgstr "Garde basse"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:80
 msgid "Guard middle"
-msgstr "Guarde milieu"
+msgstr "Garde milieu"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:81
 #: engines/scumm/help.cpp:312
@@ -4268,7 +4268,7 @@ msgstr "Désolé, la sauvegarde n'a pas pu être créée"
 
 #: engines/glk/advsys/vm.cpp:561
 msgid "Speak up! I can't hear you!\n"
-msgstr "Plus fort! Je ne vous entends pas!\n"
+msgstr "Plus fort ! Je ne vous entends pas !\n"
 
 #: engines/glk/advsys/vm.cpp:597
 #, c-format
