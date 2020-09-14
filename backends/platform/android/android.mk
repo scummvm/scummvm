@@ -23,6 +23,8 @@ $(PATH_BUILD_GRADLE): $(GRADLE_FILES) | $(PATH_BUILD)
 	$(INSTALL) -c -m 644 $(PATH_DIST)/build.gradle $(PATH_BUILD)
 	$(ECHO) "srcdir=$(realpath $(srcdir))\n" > $(PATH_BUILD)/gradle.properties
 	$(ECHO) "org.gradle.jvmargs=-Xmx4096m\n" >> $(PATH_BUILD)/gradle.properties
+	$(ECHO) "android.useAndroidX=true\n" >> $(PATH_BUILD)/gradle.properties
+	$(ECHO) "android.enableJetifier=true\n" >> $(PATH_BUILD)/gradle.properties
 	$(ECHO) "sdk.dir=$(realpath $(ANDROID_SDK_ROOT))\n" > $(PATH_BUILD)/local.properties
 	$(ECHO) "ndk.dir=$(realpath $(ANDROID_NDK_ROOT))\n" >> $(PATH_BUILD)/local.properties
 
