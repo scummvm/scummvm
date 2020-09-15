@@ -2637,6 +2637,9 @@ case $_host_os in
 		append_var LIBS "-lcitro3d"
 		;;
 	amigaos*)
+		if test "$_debug_build" = no; then
+			_optimization_level=-O2
+		fi
 		append_var LDFLAGS "-Wl,--export-dynamic"
 		append_var LDFLAGS "-L/sdk/local/newlib/lib"
 		# We have to use 'long' for our 4 byte typedef because AmigaOS already typedefs (u)int32
@@ -2646,24 +2649,6 @@ case $_host_os in
 		append_var CXXFLAGS "-Wno-format"
 		add_line_to_config_mk 'AMIGAOS = 1'
 		_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
-		_nuked_opl=no
-		;;
-	morphos*)
-		if test "$_debug_build" = no; then
-			_optimization_level=-O2
-		fi
-		append_var LDFLAGS "-Wl,--export-dynamic"
-		append_var LDFLAGS "-L/usr/local/lib"
-		append_var CXXFLAGS "-D__MORPHOS_SHAREDLIBS"
-		# We have to use 'long' for our 4 byte typedef because MorphOS already typedefs (u)int32
-		# as (unsigned) long, and consequently we'd get a compiler error otherwise.
-		type_4_byte='long'
-		# Supress format warnings as the long 4 byte causes noisy warnings.
-		append_var CXXFLAGS "-Wno-format"
-		add_line_to_config_mk 'MORPHOS = 1'
-		_port_mk="backends/platform/sdl/morphos/morphos.mk"
-		# for use SDL2
-		_sdlconfig=sdl2-config
 		_nuked_opl=no
 		;;
 	android)
@@ -3006,6 +2991,24 @@ EOF
 		append_var DEFINES "-DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		append_var DEFINES "-D_GNU_SOURCE"
 		append_var DEFINES "-D_ISOC11_SOURCE"
+		;;
+	morphos*)
+		if test "$_debug_build" = no; then
+			_optimization_level=-O2
+		fi
+		append_var LDFLAGS "-Wl,--export-dynamic"
+		append_var LDFLAGS "-L/usr/local/lib"
+		append_var CXXFLAGS "-D__MORPHOS_SHAREDLIBS"
+		# We have to use 'long' for our 4 byte typedef because MorphOS already typedefs (u)int32
+		# as (unsigned) long, and consequently we'd get a compiler error otherwise.
+		type_4_byte='long'
+		# Supress format warnings as the long 4 byte causes noisy warnings.
+		append_var CXXFLAGS "-Wno-format"
+		add_line_to_config_mk 'MORPHOS = 1'
+		_port_mk="backends/platform/sdl/morphos/morphos.mk"
+		# for use SDL2
+		_sdlconfig=sdl2-config
+		_nuked_opl=no
 		;;
 	msys)
 		echo ERROR: Using the MSYS shell in msys mode is not supported. Please use the MSYS shell in mingw mode instead.
