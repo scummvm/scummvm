@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
-"PO-Revision-Date: 2020-09-04 12:21+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2020-09-16 01:43+0000\n"
+"Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_PT/>\n"
 "Language: pt_PT\n"
@@ -185,14 +185,14 @@ msgstr ""
 "Deseja mesmo transferir ficheiros para esta pasta?"
 
 #: gui/downloaddialog.cpp:215
-#, fuzzy, c-format
+#, c-format
 msgid "Downloaded %s %S / %s %S"
-msgstr "Descarregado %s %s / %s %s"
+msgstr "Transferido %s %S / %s %S"
 
 #: gui/downloaddialog.cpp:222
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %S"
-msgstr "Velocidade da transferência: %s %s"
+msgstr "Velocidade da transferência: %s %S"
 
 #: gui/editgamedialog.cpp:135 engines/dialogs.cpp:285
 msgid "Game"
@@ -537,7 +537,7 @@ msgstr "Interpolação:"
 
 #: gui/fluidsynth-dialog.cpp:144
 msgid "None (fastest)"
-msgstr "Nenhum (acelerado)"
+msgstr "Nenhuma (mais rápido)"
 
 #: gui/fluidsynth-dialog.cpp:145
 msgid "Linear"
@@ -554,11 +554,11 @@ msgstr "Sétima"
 #. I18N: Button to reset keymap mappings to defaults
 #: gui/fluidsynth-dialog.cpp:151 backends/keymapper/remap-widget.cpp:314
 msgid "Reset"
-msgstr "Reiniciar"
+msgstr "Restaurar"
 
 #: gui/fluidsynth-dialog.cpp:151
 msgid "Reset all FluidSynth settings to their default values."
-msgstr "Restaurar todas as configurações FluidSynth para os valores de origem."
+msgstr "Restaura todas as configurações FluidSynth para os valores de origem."
 
 #: gui/fluidsynth-dialog.cpp:218
 msgid ""
@@ -636,11 +636,11 @@ msgstr "Selecione uma acção e clique em 'Definir'"
 #: gui/KeysDialog.cpp:81 gui/KeysDialog.cpp:103 gui/KeysDialog.cpp:138
 #, c-format
 msgid "Associated key : %s"
-msgstr "Teclas associadas : %s"
+msgstr "Teclas associada : %s"
 
 #: gui/KeysDialog.cpp:83 gui/KeysDialog.cpp:105 gui/KeysDialog.cpp:140
 msgid "Associated key : none"
-msgstr "Teclas associadas : nenhuma"
+msgstr "Tecla associada : nenhuma"
 
 #: gui/KeysDialog.cpp:91
 msgid "Please select an action"
@@ -708,7 +708,7 @@ msgstr "Adicionar jogos à lista"
 
 #: gui/launcher.cpp:157
 msgid "Mass Add..."
-msgstr "Adição em Massa..."
+msgstr "Adic. Vários..."
 
 #: gui/launcher.cpp:161
 msgid "~E~dit Game..."
@@ -730,7 +730,7 @@ msgstr ""
 #: gui/launcher.cpp:166
 msgctxt "lowres"
 msgid "~A~dd Game..."
-msgstr "~A~dicionar Jogo..."
+msgstr "~A~dicionar..."
 
 #: gui/launcher.cpp:167
 msgctxt "lowres"
@@ -996,11 +996,11 @@ msgstr "Modo de ecrã inteiro"
 
 #: gui/options.cpp:1261
 msgid "Filter graphics"
-msgstr "Filtros gráficos"
+msgstr "Filtrar gráficos"
 
 #: gui/options.cpp:1261
 msgid "Use linear filtering when scaling graphics"
-msgstr "Usar filtragem linear ao redimensionar gráficos"
+msgstr "Usa filtragem linear ao redimensionar gráficos"
 
 #: gui/options.cpp:1264
 msgid "Aspect ratio correction"
@@ -1008,7 +1008,7 @@ msgstr "Correção da taxa de proporção"
 
 #: gui/options.cpp:1264
 msgid "Correct aspect ratio for 320x200 games"
-msgstr "Corrigir taxa de proporção em jogos de 320x200"
+msgstr "Corrige a taxa de proporção em jogos de 320x200"
 
 #: gui/options.cpp:1272
 msgid "Preferred device:"
@@ -1287,12 +1287,12 @@ msgstr "Interface gráfica:"
 
 #: gui/options.cpp:1992
 msgid "Autosave:"
-msgstr "Guardar automático:"
+msgstr "Auto-guardar:"
 
 #: gui/options.cpp:1994
 msgctxt "lowres"
 msgid "Autosave:"
-msgstr "Guardar auto.:"
+msgstr "Auto-guardar:"
 
 #: gui/options.cpp:2002
 msgid "Keys"
@@ -1346,7 +1346,7 @@ msgstr "Verificar agora"
 
 #: gui/options.cpp:2076
 msgid "Active storage:"
-msgstr "Armazenamento em nuvem activo:"
+msgstr "Armazenamento:"
 
 #: gui/options.cpp:2076
 msgid "Active cloud storage"
@@ -1504,11 +1504,11 @@ msgstr "Ligue a sua conta de armazenamento em nuvem"
 
 #: gui/options.cpp:2137
 msgid "Run server"
-msgstr "Correr servidor"
+msgstr "Iniciar servidor"
 
 #: gui/options.cpp:2137
 msgid "Run local webserver"
-msgstr "Executar o servidor local"
+msgstr "Executa o servidor local"
 
 #: gui/options.cpp:2138 gui/options.cpp:2942
 msgid "Not running"
@@ -1557,11 +1557,11 @@ msgstr "Fechar esta janela de opções irá parar o servidor."
 
 #: gui/options.cpp:2171
 msgid "Use Text to speech"
-msgstr "Use Texto para voz"
+msgstr "Usar Texto para Voz"
 
 #: gui/options.cpp:2171
 msgid "Will read text in gui on mouse over."
-msgstr "Irá ler o texto da interface gráfica ao sobrepor o cursor."
+msgstr "Lê o texto da interface gráfica ao sobrepor o cursor."
 
 #: gui/options.cpp:2184
 msgid "None"
@@ -1743,14 +1743,12 @@ msgid "ScummVM could not access the directory!"
 msgstr "O ScummVM não pôde aceder a esta pasta!"
 
 #: gui/saveload-dialog.cpp:52
-#, fuzzy
 msgid "Downloading saves..."
-msgstr "Jogo a carregar..."
+msgstr "A transferir jogos guardados..."
 
 #: gui/saveload-dialog.cpp:61
-#, fuzzy
 msgid "Run in background"
-msgstr "Correr para trás"
+msgstr "Correr em segundo plano"
 
 #: gui/saveload-dialog.cpp:343
 msgid "List view"
@@ -2593,7 +2591,7 @@ msgstr "Ajustar à janela"
 #: backends/graphics/opengl/opengl-graphics.cpp:240
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:86
 msgid "Stretch to window"
-msgstr "Esticar à janela"
+msgstr "Preencher janela"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:241
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:87
@@ -2649,7 +2647,7 @@ msgstr "Modo janela"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:369 engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
-msgstr "Mudar para ecrã inteiro"
+msgstr "Alternar entre janela / ecrã inteiro"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:376 engines/scumm/help.cpp:99
 #: engines/wintermute/keymapper_tables.h:710
@@ -2690,35 +2688,35 @@ msgstr "Diminuir a escala"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:425
 msgid "Switch to nearest neighbour scaling"
-msgstr "Redimensionar por vizinho mais próximo"
+msgstr "Redimensionamento vizinho mais próximo"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:426
 msgid "Switch to AdvMame 2x/3x scaling"
-msgstr "Redimensionar por AdvMame 2x/3x"
+msgstr "Redimensionamento AdvMame 2x/3x"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:428
 msgid "Switch to HQ 2x/3x scaling"
-msgstr "Redimensionar por HQ 2x/3x"
+msgstr "Redimensionamento HQ 2x/3x"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:430
 msgid "Switch to 2xSai scaling"
-msgstr "Redimensionar por 2xSai"
+msgstr "Redimensionamento 2xSai"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:431
 msgid "Switch to Super2xSai scaling"
-msgstr "Redimensionar por Super2xSai"
+msgstr "Redimensionamento Super2xSai"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:432
 msgid "Switch to SuperEagle scaling"
-msgstr "Redimensionar por SuperEagle"
+msgstr "Redimensionamento SuperEagle"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:433
 msgid "Switch to TV 2x scaling"
-msgstr "Redimensionar por TV 2x"
+msgstr "Redimensionamento TV 2x"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:434
 msgid "Switch to DotMatrix scaling"
-msgstr "Redimensionar por DotMatrix"
+msgstr "Redimensionamento DotMatrix"
 
 #: backends/keymapper/hardware-input.cpp:245
 msgid "Left Mouse Button"
@@ -2750,31 +2748,31 @@ msgstr "Botão X2 do Rato"
 
 #: backends/keymapper/hardware-input.cpp:256
 msgid "Joy A"
-msgstr "Joy A"
+msgstr "Botão A"
 
 #: backends/keymapper/hardware-input.cpp:257
 msgid "Joy B"
-msgstr "Joy B"
+msgstr "Botão B"
 
 #: backends/keymapper/hardware-input.cpp:258
 msgid "Joy X"
-msgstr "Joy X"
+msgstr "Botão X"
 
 #: backends/keymapper/hardware-input.cpp:259
 msgid "Joy Y"
-msgstr "Joy Y"
+msgstr "Botão Y"
 
 #: backends/keymapper/hardware-input.cpp:260
 msgid "Joy Back"
-msgstr "Joy Voltar"
+msgstr "Botão Retroceder"
 
 #: backends/keymapper/hardware-input.cpp:261
 msgid "Joy Guide"
-msgstr "Joy Guia"
+msgstr "Botão Guia"
 
 #: backends/keymapper/hardware-input.cpp:262
 msgid "Joy Start"
-msgstr "Joy Iniciar"
+msgstr "Botão Iniciar"
 
 #: backends/keymapper/hardware-input.cpp:263
 msgid "Left Stick"
@@ -2859,23 +2857,23 @@ msgstr "Restaurar padrões"
 
 #: backends/keymapper/remap-widget.cpp:286
 msgid "Clear mapping"
-msgstr "Limpar mapeamentos"
+msgstr "Remover atalhos"
 
 #: backends/keymapper/virtual-mouse.cpp:154
 msgid "Virtual mouse up"
-msgstr "Rato virtual cima"
+msgstr "Rato virtual para cima"
 
 #: backends/keymapper/virtual-mouse.cpp:159
 msgid "Virtual mouse down"
-msgstr "Rato virtual baixo"
+msgstr "Rato virtual para baixo"
 
 #: backends/keymapper/virtual-mouse.cpp:164
 msgid "Virtual mouse left"
-msgstr "Rato virtual esquerda"
+msgstr "Rato virtual para a esquerda"
 
 #: backends/keymapper/virtual-mouse.cpp:169
 msgid "Virtual mouse right"
-msgstr "Rato virtual direita"
+msgstr "Rato virtual para a direita"
 
 #: backends/keymapper/virtual-mouse.cpp:174
 msgid "Slow down virtual mouse"
@@ -3228,9 +3226,8 @@ msgid "ScummVM Main Menu"
 msgstr "Menu Principal ScummVM"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:61
-#, fuzzy
 msgid "Controls"
-msgstr "Controlo"
+msgstr "Controlos"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:63
 msgid "~L~eft handed mode"
@@ -3309,9 +3306,8 @@ msgstr "D-pad Esquerda"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:42
 #: backends/platform/ds/arm9/source/scummhelp.cpp:59
-#, fuzzy
 msgid "Left mouse button"
-msgstr "Botão Esquerdo do Rato"
+msgstr "Botão esquerdo do rato"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:43
 #: backends/platform/ds/arm9/source/scummhelp.cpp:68
@@ -3322,9 +3318,8 @@ msgstr "D-pad Direita"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:43
 #: backends/platform/ds/arm9/source/scummhelp.cpp:60
-#, fuzzy
 msgid "Right mouse button"
-msgstr "Botão Direito do Rato"
+msgstr "Botão direito do rato"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:44
 #: backends/platform/ds/arm9/source/scummhelp.cpp:66
@@ -3352,38 +3347,32 @@ msgstr ""
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:46
 #: backends/platform/ds/arm9/source/scummhelp.cpp:63
-#, fuzzy
 msgid "Pause/Game menu"
-msgstr "Menu do jogo"
+msgstr "Pausa/Menu do jogo"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:47
 #: backends/platform/ds/arm9/source/scummhelp.cpp:64
-#, fuzzy
 msgid "DS Options menu"
-msgstr "Opções"
+msgstr "Menu de Opções da DS"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:48
 #: backends/platform/ds/arm9/source/scummhelp.cpp:65
-#, fuzzy
 msgid "Skip cutscenes"
-msgstr "Ignorar linha"
+msgstr "Ignorar cenas"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:49
-#, fuzzy
 msgid "Switch screens"
-msgstr "Capturar ecrã"
+msgstr "Trocar ecrãs"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:50
 #: backends/platform/ds/arm9/source/scummhelp.cpp:67
-#, fuzzy
 msgid "Show/hide debug console"
-msgstr "Mostrar analisador de depuração"
+msgstr "Mostrar/ocultar consola de depuração"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:51
 #: backends/platform/ds/arm9/source/scummhelp.cpp:66
-#, fuzzy
 msgid "Show/hide keyboard"
-msgstr "Mostrar teclado"
+msgstr "Mostrar/ocultar teclado"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:52
 #: backends/platform/ds/arm9/source/scummhelp.cpp:69
@@ -3392,23 +3381,20 @@ msgstr ""
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:53
 #: backends/platform/ds/arm9/source/scummhelp.cpp:70
-#, fuzzy
 msgid "Zoom in/out"
-msgstr "Reduzir"
+msgstr "Ampliar/Reduzir"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:58
 msgid "DS Controls (left handed):"
 msgstr ""
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:68
-#, fuzzy
 msgid "Swap screens"
-msgstr "Capturar ecrã"
+msgstr "Trocar ecrãs"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:75
-#, fuzzy
 msgid "Indiana Jones Fight controls:"
-msgstr "Controlos de combate ~I~ndy"
+msgstr "Controlos de Combate do Indiana Jones:"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:76
 #: engines/hdb/detection.cpp:321
@@ -3831,14 +3817,14 @@ msgstr "Usar ecrãs originais de Salvar/Carregar ao invés dos do ScummVM"
 
 #: engines/agi/detection.cpp:157
 msgid "Use an alternative palette"
-msgstr "Usar uma palete de cores alternativa"
+msgstr "Usar uma paleta de cores alternativa"
 
 #: engines/agi/detection.cpp:158
 msgid ""
 "Use an alternative palette, common for all Amiga games. This was the old "
 "behavior"
 msgstr ""
-"Usar uma palete de cores alternativa, comum em todos os jogos Amiga. Este "
+"Usar uma paleta de cores alternativa, comum em todos os jogos Amiga. Este "
 "era o comportamento antigo"
 
 #: engines/agi/detection.cpp:167
@@ -4159,7 +4145,7 @@ msgstr ""
 
 #: engines/dreamweb/detection.cpp:58
 msgid "Use bright palette mode"
-msgstr "Usar palete de cores claras"
+msgstr "Usar paleta de cores claras"
 
 #: engines/dreamweb/detection.cpp:59
 msgid "Display graphics using the game's bright palette"
@@ -4198,9 +4184,8 @@ msgid "Could not start AdvSys game"
 msgstr "Não foi possível iniciar o jogo AdvSys"
 
 #: engines/glk/advsys/advsys.cpp:48 engines/glk/advsys/vm.cpp:320
-#, fuzzy
 msgid "Sorry, the savegame couldn't be restored"
-msgstr "Desculpe, não foi possível criar o ficheiro para gravar o jogo"
+msgstr "Desculpe, não foi possível carregar o jogo guardado"
 
 #: engines/glk/advsys/vm.cpp:315
 msgid "Sorry, the savegame couldn't be created"
@@ -4308,9 +4293,9 @@ msgid "I can't see. It is too dark!\n"
 msgstr "Não consigo ver. Está demasiado escuro\n"
 
 #: engines/glk/scott/scott.cpp:436
-#, fuzzy, c-format
+#, c-format
 msgid "You are in a %s\n"
-msgstr "Estás morto.\n"
+msgstr "Estás num %s\n"
 
 #: engines/glk/scott/scott.cpp:438
 #, c-format
@@ -4459,9 +4444,8 @@ msgid "O.K. "
 msgstr "O.K. "
 
 #: engines/glk/scott/scott.cpp:1158
-#, fuzzy
 msgid "Nothing dropped.\n"
-msgstr "Nada foi apanhado."
+msgstr "Nada foi largado.\n"
 
 #: engines/glk/scott/scott.cpp:1168
 msgid "It's beyond your power to do that.\n"
@@ -4502,9 +4486,8 @@ msgid "Menu / Skip"
 msgstr ""
 
 #: engines/griffon/detection.cpp:142
-#, fuzzy
 msgid "Attack"
-msgstr "Ataque 1"
+msgstr "Atacar"
 
 #: engines/griffon/detection.cpp:156
 msgid "Speed Up Cutscene"
@@ -4735,7 +4718,7 @@ msgstr "Ataque 3"
 
 #: engines/kyra/engine/lol.cpp:474
 msgid "Show Map"
-msgstr "Mostrar Mapa"
+msgstr "Mostrar o Mapa"
 
 #: engines/kyra/engine/lol.cpp:477
 msgid "Slide Left"
@@ -5243,9 +5226,8 @@ msgid "Use an alternative game intro (CD version only)"
 msgstr "Usar uma introdução alternativa do jogo (Versão CD apenas)"
 
 #: engines/saga/saga.cpp:247
-#, fuzzy
 msgid "Error loading game resources."
-msgstr "Erro a abrir o jogo gravado"
+msgstr "Erro a carregar os dados do jogo."
 
 #: engines/sci/detection.cpp:399
 msgid "Skip EGA dithering pass (full color backgrounds)"
@@ -6288,9 +6270,8 @@ msgid ""
 msgstr ""
 
 #: engines/supernova/supernova.cpp:828
-#, fuzzy
 msgid "Failed to load temporary game state."
-msgstr "Não foi possível carregar o jogo guardado."
+msgstr "Falha ao carregar o estado temporário do jogo."
 
 #: engines/supernova/detection.cpp:40
 msgid "Improved mode"
@@ -6391,17 +6372,17 @@ msgstr "Jogo guardado na posição #%d "
 #: engines/toon/toon.cpp:229
 #, c-format
 msgid "Could not quick save into slot #%d"
-msgstr "Não foi possível guardar o jogo na posição #%d"
+msgstr "Não foi possível guardar rápido na posição #%d"
 
 #: engines/toon/toon.cpp:242
 #, c-format
 msgid "Saved game #%d quick loaded"
-msgstr "Jogo guardado #%d carregado"
+msgstr "Jogo #%d carregado rápido"
 
 #: engines/toon/toon.cpp:246
 #, c-format
 msgid "Could not quick load the saved game #%d"
-msgstr "Não foi possível carregar o jogo guardado #%d"
+msgstr "Não foi possível carregar rápido o jogo #%d"
 
 #: engines/toon/toon.cpp:1528
 #, c-format
