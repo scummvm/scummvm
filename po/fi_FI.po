@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
-"PO-Revision-Date: 2020-09-01 13:55+0000\n"
-"Last-Translator: anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2020-09-16 01:43+0000\n"
+"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -184,14 +184,14 @@ msgstr ""
 "tiedostoja tähän hakemistoon?"
 
 #: gui/downloaddialog.cpp:215
-#, fuzzy, c-format
+#, c-format
 msgid "Downloaded %s %S / %s %S"
-msgstr "Ladattu %s %s / %s %s"
+msgstr "Ladattu %s %S / %s %S"
 
 #: gui/downloaddialog.cpp:222
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %S"
-msgstr "Latausnopeus: %s %s"
+msgstr "Latausnopeus: %s %S"
 
 #: gui/editgamedialog.cpp:135 engines/dialogs.cpp:285
 msgid "Game"
@@ -1743,14 +1743,12 @@ msgid "ScummVM could not access the directory!"
 msgstr "ScummVM ei voi avata kyseistä hakemistoa!"
 
 #: gui/saveload-dialog.cpp:52
-#, fuzzy
 msgid "Downloading saves..."
-msgstr "Ladataan peliä..."
+msgstr "Ladataan pelitallenteita..."
 
 #: gui/saveload-dialog.cpp:61
-#, fuzzy
 msgid "Run in background"
-msgstr "Juokse taaksepäin"
+msgstr "Aja taustalla"
 
 #: gui/saveload-dialog.cpp:343
 msgid "List view"
@@ -3233,7 +3231,6 @@ msgid "ScummVM Main Menu"
 msgstr "ScummVM päävalikko"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:61
-#, fuzzy
 msgid "Controls"
 msgstr "Kontrollit"
 
@@ -3293,7 +3290,7 @@ msgstr "Kirkkaus:"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:119
 msgid "General"
-msgstr ""
+msgstr "Yleinen"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:121
 msgid "High quality audio (slower) (reboot)"
@@ -3305,117 +3302,102 @@ msgstr "Poista virran sammutus käytöstä"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:41
 msgid "DS Controls (right handed):"
-msgstr ""
+msgstr "DS Kontrollit (oikeakätinen):"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:42
 #: backends/platform/ds/arm9/source/scummhelp.cpp:67
 #: backends/platform/ds/arm9/source/scummhelp.cpp:76
-#, fuzzy
 msgid "Pad Left"
-msgstr "D-pad vasemmalle"
+msgstr "Pad vasemmalle"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:42
 #: backends/platform/ds/arm9/source/scummhelp.cpp:59
-#, fuzzy
 msgid "Left mouse button"
 msgstr "Vasen hiirennappi"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:43
 #: backends/platform/ds/arm9/source/scummhelp.cpp:68
 #: backends/platform/ds/arm9/source/scummhelp.cpp:77
-#, fuzzy
 msgid "Pad Right"
-msgstr "D-pad oikealle"
+msgstr "Pad oikealle"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:43
 #: backends/platform/ds/arm9/source/scummhelp.cpp:60
-#, fuzzy
 msgid "Right mouse button"
 msgstr "Oikea hiirennappi"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:44
 #: backends/platform/ds/arm9/source/scummhelp.cpp:66
 #: backends/platform/ds/arm9/source/scummhelp.cpp:78
-#, fuzzy
 msgid "Pad Up"
-msgstr "D-pad ylös"
+msgstr "Pad ylös"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:44
 #: backends/platform/ds/arm9/source/scummhelp.cpp:61
 msgid "Mouse hover mode (no click)"
-msgstr ""
+msgstr "Hiiren hover-tila (ei klikkausta)"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:45
 #: backends/platform/ds/arm9/source/scummhelp.cpp:65
 #: backends/platform/ds/arm9/source/scummhelp.cpp:79
-#, fuzzy
 msgid "Pad Down"
-msgstr "D-pad alas"
+msgstr "Pad alas"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:45
 #: backends/platform/ds/arm9/source/scummhelp.cpp:62
 msgid "Skip dialog line (some games)"
-msgstr ""
+msgstr "Ohita dialogi (joissain peleissä)"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:46
 #: backends/platform/ds/arm9/source/scummhelp.cpp:63
-#, fuzzy
 msgid "Pause/Game menu"
-msgstr "Pelivalikko"
+msgstr "Pause / Pelivalikko"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:47
 #: backends/platform/ds/arm9/source/scummhelp.cpp:64
-#, fuzzy
 msgid "DS Options menu"
-msgstr "Näytä asetusvalikko"
+msgstr "DS asetusvalikko"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:48
 #: backends/platform/ds/arm9/source/scummhelp.cpp:65
-#, fuzzy
 msgid "Skip cutscenes"
-msgstr "Ohita video"
+msgstr "Ohita videot"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:49
-#, fuzzy
 msgid "Switch screens"
-msgstr "Vaihda hahmoa:"
+msgstr "Vaihda näyttöä"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:50
 #: backends/platform/ds/arm9/source/scummhelp.cpp:67
-#, fuzzy
 msgid "Show/hide debug console"
-msgstr "Näytä / piilota konsoli"
+msgstr "Näytä / piilota debug-konsoli"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:51
 #: backends/platform/ds/arm9/source/scummhelp.cpp:66
-#, fuzzy
 msgid "Show/hide keyboard"
-msgstr "Näytä näppäimistö"
+msgstr "Näytä / piilota näppäimistö"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:52
 #: backends/platform/ds/arm9/source/scummhelp.cpp:69
 msgid "Scroll current touch screen view"
-msgstr ""
+msgstr "Vieritä kosketusnäytön näkymää"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:53
 #: backends/platform/ds/arm9/source/scummhelp.cpp:70
-#, fuzzy
 msgid "Zoom in/out"
-msgstr "Loitonna"
+msgstr "Lähennä / Loitonna"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:58
 msgid "DS Controls (left handed):"
-msgstr ""
+msgstr "DS Kontrollit (vasenkätinen):"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:68
-#, fuzzy
 msgid "Swap screens"
-msgstr "Tallenna kuvakaappaus"
+msgstr "Vaihda näytöt päittäin"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:75
-#, fuzzy
 msgid "Indiana Jones Fight controls:"
-msgstr "~I~ndyn tappelukontrollit"
+msgstr "Indiana Jones tappelukontrollit:"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:76
 #: engines/hdb/detection.cpp:321
@@ -3429,16 +3411,15 @@ msgstr "Liiku oikealle"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:78
 msgid "High guard"
-msgstr ""
+msgstr "Ylätorjunta"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:79
 msgid "Guard down"
-msgstr ""
+msgstr "Alatorjunta"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:80
-#, fuzzy
 msgid "Guard middle"
-msgstr "Lyö keskelle"
+msgstr "Keskitorjunta"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:81
 #: engines/scumm/help.cpp:312
@@ -3936,7 +3917,7 @@ msgstr "Lataa tallenne"
 
 #: engines/agos/saveload.cpp:137
 msgid "Quick load or save game isn't supported in this location"
-msgstr ""
+msgstr "Pelin pikalataus tai tallennus ei ole tuettu tässä sijainnissa"
 
 #: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2466
 #, c-format
@@ -4514,11 +4495,11 @@ msgstr "Pelitallennusta kirjoittaessa tapahtui virhe\n"
 
 #: engines/glk/hugo/hugo.cpp:183
 msgid "Incorrect rs file."
-msgstr ""
+msgstr "Viallinen rs-tiedosto."
 
 #: engines/glk/hugo/hugo.cpp:190
 msgid "Save file created by different version."
-msgstr ""
+msgstr "Pelitallenne on luotu pelin toisella versiolla."
 
 #: engines/gob/inter_playtoons.cpp:258 engines/gob/inter_v2.cpp:1479
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:538
@@ -4536,17 +4517,15 @@ msgstr "Tiedoston poistaminen ei onnistunut."
 
 #: engines/griffon/detection.cpp:106
 msgid "Menu / Skip"
-msgstr ""
+msgstr "Valikko / Ohita"
 
 #: engines/griffon/detection.cpp:142
-#, fuzzy
 msgid "Attack"
-msgstr "Hyökkäys 1"
+msgstr "Hyökkäys"
 
 #: engines/griffon/detection.cpp:156
-#, fuzzy
 msgid "Speed Up Cutscene"
-msgstr "Ohita video"
+msgstr "Nopeuta videota"
 
 #: engines/groovie/detection.cpp:321
 msgid "Fast movie speed"
@@ -5074,7 +5053,7 @@ msgstr "Haluatko varmasti lopettaa? Menetät tallentamattoman edistymisesi."
 
 #: engines/mohawk/myst_stacks/preview.cpp:90
 msgid "You can't leave the library in the demo."
-msgstr ""
+msgstr "Et voi lähteä kirjastosta tässä demossa."
 
 #: engines/mohawk/riven.cpp:156
 msgid ""
@@ -5316,9 +5295,8 @@ msgid "Use an alternative game intro (CD version only)"
 msgstr "Käytä vaihtoehtoista pelin introa (vain CD versiossa)"
 
 #: engines/saga/saga.cpp:247
-#, fuzzy
 msgid "Error loading game resources."
-msgstr "Pelitallennusta lukiessa tapahtui virhe"
+msgstr "Peliresursseja lukiessa tapahtui virhe."
 
 #: engines/sci/detection.cpp:399
 msgid "Skip EGA dithering pass (full color backgrounds)"
@@ -5454,6 +5432,9 @@ msgid ""
 "There exists some dummy logic for now, where opponent actions are chosen "
 "randomly"
 msgstr ""
+"Pokerilogiikka on kovakoodattu ulkoiseen DLL-tiedostoon, eikä sitä ole vielä "
+"toteutettu. Sen paikalla on nyt palikkalogiikka, joka valitsee vastustajan "
+"teot sattumanvaraisesti"
 
 #: engines/sci/engine/savegame.cpp:1407
 msgid "The format of this saved game is obsolete, unable to load it"
@@ -6445,11 +6426,13 @@ msgid ""
 "Failed to save temporary game state. Make sure your save game directory is "
 "set in ScummVM and that you can write to it."
 msgstr ""
+"Väliaikaisen pelitallenteen luominen epäonnistui. Varmista että "
+"pelitallennushakemistosi on asetettu ScummVM:ssä ja että voit kirjoittaa "
+"sinne."
 
 #: engines/supernova/supernova.cpp:828
-#, fuzzy
 msgid "Failed to load temporary game state."
-msgstr "Pelitallenteen lataaminen tiedostosta epäonnistui."
+msgstr "Väliaikaisen pelitallenteen lataaminen epäonnistui."
 
 #: engines/supernova/detection.cpp:40
 msgid "Improved mode"
@@ -7317,6 +7300,13 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+"Ennen tämän pelin pelaamista, sinun täytyy kopioida vaaditut fontit ScummVM:"
+"n extras-hakemistoon, tai pelin hakemistoon. Windowsissa tarvitset seuraavat "
+"fonttitiedostot Windowsin fonttihakemistosta: Times New Roman, Century "
+"Schoolbook, Garamond, Courier New ja Arial. Vaihtoehtoisesti voit myös "
+"ladata Liberation Fonts -paketin tai GNU FreeFont -paketin. Tarvitset kaikki "
+"fontit paketista jonka valitset, i.e. LiberationMono, LiberationSans ja "
+"LiberationSerif, tai FreeMono, FreeSans ja FreeSerif riippuen valinnastasi."
 
 #~ msgid "Engine does not support debug level '%s'"
 #~ msgstr "Pelimoottori ei tue debug tasoa '%s'"
