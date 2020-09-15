@@ -49,6 +49,8 @@
 
 #include "backends/audiocd/default/default-audiocd.h"
 #include "backends/events/default/default-events.h"
+#include "backends/mixer/maxmod/maxmod-mixer.h"
+#include "backends/mutex/null/null-mutex.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 
@@ -57,7 +59,7 @@
 OSystem_DS *OSystem_DS::_instance = NULL;
 
 OSystem_DS::OSystem_DS()
-	: _eventSource(NULL), _mixerManager(NULL), _isOverlayShown(true),
+	: _eventSource(NULL), _isOverlayShown(true),
 	_graphicsMode(GFX_HWSCALE), _stretchMode(100),
 	_disableCursorPalette(true), _graphicsEnable(true),
 	_callbackTimer(10), _currentTimeMillis(0)
@@ -66,11 +68,10 @@ OSystem_DS::OSystem_DS()
 
 	nitroFSInit(NULL);
 	_fsFactory = new DevoptabFilesystemFactory();
+	_mutexManager = new NullMutexManager();
 }
 
 OSystem_DS::~OSystem_DS() {
-	delete _mixerManager;
-	_mixerManager = 0;
 }
 
 void timerTickHandler() {
@@ -439,19 +440,6 @@ void OSystem_DS::getTimeAndDate(TimeDate &td) const {
 	td.tm_mon = t.tm_mon;
 	td.tm_year = t.tm_year;
 	td.tm_wday = t.tm_wday;
-}
-
-OSystem::MutexRef OSystem_DS::createMutex(void) {
-	return NULL;
-}
-
-void OSystem_DS::lockMutex(MutexRef mutex) {
-}
-
-void OSystem_DS::unlockMutex(MutexRef mutex) {
-}
-
-void OSystem_DS::deleteMutex(MutexRef mutex) {
 }
 
 void OSystem_DS::quit() {

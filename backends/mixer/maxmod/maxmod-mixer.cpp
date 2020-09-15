@@ -36,7 +36,6 @@
 
 MaxModMixerManager::MaxModMixerManager(int freq, int bufSize)
 	:
-	_mixer(0),
 	_freq(freq),
 	_bufSize(bufSize) {
 
@@ -66,17 +65,30 @@ void MaxModMixerManager::init() {
 	sys.fifo_channel		= FIFO_MAXMOD;
 	mmInit( &sys );
 
-	mm_stream mystream;
-	mystream.sampling_rate = _freq;
-	mystream.buffer_length = _bufSize / 4;
-	mystream.callback = on_stream_request;
-	mystream.format = MM_STREAM_16BIT_STEREO;
-	mystream.timer = MM_TIMER2;
-	mystream.manual = 0;
+	_stream.sampling_rate = _freq;
+	_stream.buffer_length = _bufSize / 4;
+	_stream.callback = on_stream_request;
+	_stream.format = MM_STREAM_16BIT_STEREO;
+	_stream.timer = MM_TIMER2;
+	_stream.manual = 0;
 
-	mmStreamOpen( &mystream );
+	mmStreamOpen( &_stream );
 
 	_mixer->setReady(true);
+}
+
+void MaxModMixerManager::suspendAudio() {
+	mmStreamClose();
+	_audioSuspended = true;
+}
+
+int MaxModMixerManager::resumeAudio() {
+	if (!_audioSuspended)
+		return -2;
+
+	mmStreamOpen( &_stream );
+	_audioSuspended = false;
+	return 0;
 }
 
 #endif

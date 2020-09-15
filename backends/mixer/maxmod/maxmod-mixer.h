@@ -23,14 +23,16 @@
 #ifndef BACKENDS_MIXER_MAXMOD_H
 #define BACKENDS_MIXER_MAXMOD_H
 
-#include "audio/mixer_intern.h"
+#include "backends/mixer/mixer.h"
+
+#include <mm_types.h>
 
 /**
  * MaxMod mixer manager. It wraps the actual implementation
  * of the Audio:Mixer used by the engine, and sets up
  * MaxMod and the callback for the audio mixer implementation.
  */
-class MaxModMixerManager {
+class MaxModMixerManager : public MixerManager {
 public:
 	MaxModMixerManager(int freq, int bufSize);
 	virtual ~MaxModMixerManager();
@@ -41,14 +43,17 @@ public:
 	virtual void init();
 
 	/**
-	 * Get the audio mixer implementation
+	 * Pauses the audio system
 	 */
-	Audio::Mixer *getMixer() { return (Audio::Mixer *)_mixer; }
+	virtual void suspendAudio();
+
+	/**
+	 * Resumes the audio system
+	 */
+	virtual int resumeAudio();
 
 protected:
-	/** The mixer implementation */
-	Audio::MixerImpl *_mixer;
-
+	mm_stream _stream;
 	int _freq, _bufSize;
 };
 
