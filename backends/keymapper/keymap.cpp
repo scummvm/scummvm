@@ -359,10 +359,12 @@ bool Keymap::areMappingsIdentical(const Array<HardwareInput> &mappingsA, const S
 	// Assumes array values are not duplicated, but registerMapping and addDefaultInputMapping ensure that
 
 	uint foundCount = 0;
+	uint validDefaultMappings = 0;
 	for (uint i = 0; i < mappingsB.size(); i++) {
 		// We resolve the hardware input to make sure it is not a default for some hardware we don't have currently
 		HardwareInput mappingB = _hardwareInputSet->findHardwareInput(mappingsB[i]);
 		if (mappingB.type == kHardwareInputTypeInvalid) continue;
+		validDefaultMappings++;
 
 		for (uint j = 0; j < mappingsA.size(); j++) {
 			if (mappingsA[j].id == mappingB.id) {
@@ -372,7 +374,7 @@ bool Keymap::areMappingsIdentical(const Array<HardwareInput> &mappingsA, const S
 		}
 	}
 
-	return foundCount == mappingsA.size();
+	return foundCount == mappingsA.size() && foundCount == validDefaultMappings;
 }
 
 } // End of namespace Common
