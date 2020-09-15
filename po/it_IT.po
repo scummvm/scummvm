@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
-"PO-Revision-Date: 2020-09-13 23:16+0000\n"
+"PO-Revision-Date: 2020-09-15 09:23+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -3359,7 +3359,7 @@ msgstr "Pad Su"
 #: backends/platform/ds/arm9/source/scummhelp.cpp:44
 #: backends/platform/ds/arm9/source/scummhelp.cpp:61
 msgid "Mouse hover mode (no click)"
-msgstr ""
+msgstr "Puntatore mouse fluttuante (nessun clic)"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:45
 #: backends/platform/ds/arm9/source/scummhelp.cpp:65
@@ -3404,7 +3404,7 @@ msgstr "Mostra/nascondi tastiera"
 #: backends/platform/ds/arm9/source/scummhelp.cpp:52
 #: backends/platform/ds/arm9/source/scummhelp.cpp:69
 msgid "Scroll current touch screen view"
-msgstr ""
+msgstr "Scorri schermata touchscreen"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:53
 #: backends/platform/ds/arm9/source/scummhelp.cpp:70
@@ -5341,9 +5341,8 @@ msgid "Use an alternative game intro (CD version only)"
 msgstr "Usa un'introduzione alternativa (solo versione CD)"
 
 #: engines/saga/saga.cpp:247
-#, fuzzy
 msgid "Error loading game resources."
-msgstr "Errore durante la lettura del salvataggio"
+msgstr "Errore nel caricamento delle risorse del gioco."
 
 #: engines/sci/detection.cpp:399
 msgid "Skip EGA dithering pass (full color backgrounds)"
@@ -5484,6 +5483,9 @@ msgid ""
 "There exists some dummy logic for now, where opponent actions are chosen "
 "randomly"
 msgstr ""
+"La logica del Poker è codificata in un file DLL esterno, e non è ancora "
+"stata implementata. Attualmente è presente una logica rudimentale, dove le "
+"azioni degli avversari sono scelte casualmente"
 
 #: engines/sci/engine/savegame.cpp:1407
 msgid "The format of this saved game is obsolete, unable to load it"
@@ -6484,11 +6486,13 @@ msgid ""
 "Failed to save temporary game state. Make sure your save game directory is "
 "set in ScummVM and that you can write to it."
 msgstr ""
+"Non è stato possibile salvare lo stato di gioco temporaneo. Accertati di "
+"avere specificato la directory per i salvataggi in ScummVM e di avere il "
+"permesso di scrittura."
 
 #: engines/supernova/supernova.cpp:828
-#, fuzzy
 msgid "Failed to load temporary game state."
-msgstr "Impossibile caricare la partita dal file."
+msgstr "Non è stato possibile caricare lo stato di gioco temporaneo."
 
 #: engines/supernova/detection.cpp:40
 msgid "Improved mode"
@@ -7365,6 +7369,14 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+"Prima di avviare questo gioco, devi copiare i font necessari nella cartella "
+"'extra' di ScummVM, oppure direttamente nella cartella del gioco. Avrai "
+"bisogno dei seguenti font presenti nella sottocartella Fonts di Windows: "
+"Times New Roman, Century Schoolbook, Garamond, Courier New e Arial. In "
+"alternativa puoi scaricare le Liberation Fonts o il pacchetto FreeFont della "
+"GNU. Ti serviranno tutti i font presenti nel pacchetto di tua preferenza, "
+"precisamente: LiberationMono, LiberationSans e LiberationSerif; oppure "
+"FreeMono, FreeSans e FreeSerif."
 
 #~ msgid "Engine does not support debug level '%s'"
 #~ msgstr "Il motore non supporta il livello di debug '%s'"
