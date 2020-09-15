@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
-"PO-Revision-Date: 2020-09-01 06:43+0000\n"
+"PO-Revision-Date: 2020-09-16 01:43+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -184,14 +184,14 @@ msgstr ""
 "Θέλετε σίγουρα να κάνετε λήψη αρχείων σε εκείνο το φάκελο;"
 
 #: gui/downloaddialog.cpp:215
-#, fuzzy, c-format
+#, c-format
 msgid "Downloaded %s %S / %s %S"
-msgstr "Μεταφορτώθηκαν %s %s / %s %s"
+msgstr "Λήφθηκαν %s %S / %s %S"
 
 #: gui/downloaddialog.cpp:222
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %S"
-msgstr "Ταχύτητα μεταφόρτωσης: %s %s"
+msgstr "Ταχύτητα λήψης: %s %S"
 
 #: gui/editgamedialog.cpp:135 engines/dialogs.cpp:285
 msgid "Game"
@@ -380,7 +380,7 @@ msgstr "Φάκελος Παιχνιδιού:"
 
 #: gui/editgamedialog.cpp:317 gui/options.cpp:1956
 msgid "Extra Path:"
-msgstr "Φάκελος Έξτρα:"
+msgstr "Πρόσθετα:"
 
 #: gui/editgamedialog.cpp:317 gui/editgamedialog.cpp:319
 #: gui/editgamedialog.cpp:320
@@ -391,7 +391,7 @@ msgstr ""
 #: gui/editgamedialog.cpp:319 gui/options.cpp:1958
 msgctxt "lowres"
 msgid "Extra Path:"
-msgstr "Φάκελος Έξτρα:"
+msgstr "Πρόσθετα:"
 
 #: gui/editgamedialog.cpp:326 gui/options.cpp:1940
 msgid "Save Path:"
@@ -1634,7 +1634,7 @@ msgstr "Επιλέξτε φάκελο για θέματα GUI"
 
 #: gui/options.cpp:2428
 msgid "Select directory for extra files"
-msgstr "Επιλέξτε φάκελο για έξτρα αρχεία"
+msgstr "Επιλέξτε φάκελο για πρόσθετα αρχεία"
 
 #: gui/options.cpp:2439
 msgid "Select directory for plugins"
@@ -1780,14 +1780,12 @@ msgid "ScummVM could not access the directory!"
 msgstr "Το ScummVM δε μπόρεσε να προσπελάσει τον φάκελο!"
 
 #: gui/saveload-dialog.cpp:52
-#, fuzzy
 msgid "Downloading saves..."
-msgstr "Φόρτωση παιχνιδιού..."
+msgstr "Λήψη αποθηκευμένων παιχνιδιών (saves)..."
 
 #: gui/saveload-dialog.cpp:61
-#, fuzzy
 msgid "Run in background"
-msgstr "Τρέξε προς τα πίσω"
+msgstr "Εκτέλεση στο παρασκήνιο"
 
 #: gui/saveload-dialog.cpp:343
 msgid "List view"
@@ -3297,7 +3295,6 @@ msgid "ScummVM Main Menu"
 msgstr "Κεντρικό Μενού ScummVM"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:61
-#, fuzzy
 msgid "Controls"
 msgstr "Χειρισμός"
 
@@ -3355,7 +3352,7 @@ msgstr "Φωτεινότητα:"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:119
 msgid "General"
-msgstr ""
+msgstr "Γενικά"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:121
 msgid "High quality audio (slower) (reboot)"
@@ -3367,117 +3364,102 @@ msgstr "Απενεργοποίηση σβησίματος"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:41
 msgid "DS Controls (right handed):"
-msgstr ""
+msgstr "Χειρισμός DS (δεξιόχειρες):"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:42
 #: backends/platform/ds/arm9/source/scummhelp.cpp:67
 #: backends/platform/ds/arm9/source/scummhelp.cpp:76
-#, fuzzy
 msgid "Pad Left"
-msgstr "D-pad Αριστερά"
+msgstr "Pad Αριστερά"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:42
 #: backends/platform/ds/arm9/source/scummhelp.cpp:59
-#, fuzzy
 msgid "Left mouse button"
 msgstr "Αριστερό Κουμπί Ποντικιού"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:43
 #: backends/platform/ds/arm9/source/scummhelp.cpp:68
 #: backends/platform/ds/arm9/source/scummhelp.cpp:77
-#, fuzzy
 msgid "Pad Right"
-msgstr "D-pad Δεξιά"
+msgstr "Pad Δεξιά"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:43
 #: backends/platform/ds/arm9/source/scummhelp.cpp:60
-#, fuzzy
 msgid "Right mouse button"
 msgstr "Δεξί Κουμπί Ποντικιού"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:44
 #: backends/platform/ds/arm9/source/scummhelp.cpp:66
 #: backends/platform/ds/arm9/source/scummhelp.cpp:78
-#, fuzzy
 msgid "Pad Up"
-msgstr "D-pad Πάνω"
+msgstr "Pad Πάνω"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:44
 #: backends/platform/ds/arm9/source/scummhelp.cpp:61
 msgid "Mouse hover mode (no click)"
-msgstr ""
+msgstr "Κατάσταση αιώρησης ποντικιού (χωρίς κλικ)"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:45
 #: backends/platform/ds/arm9/source/scummhelp.cpp:65
 #: backends/platform/ds/arm9/source/scummhelp.cpp:79
-#, fuzzy
 msgid "Pad Down"
-msgstr "D-pad Κάτω"
+msgstr "Pad Κάτω"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:45
 #: backends/platform/ds/arm9/source/scummhelp.cpp:62
 msgid "Skip dialog line (some games)"
-msgstr ""
+msgstr "Παράκαμψη γραμμής διαλόγου (σε μερικά παιχνίδια)"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:46
 #: backends/platform/ds/arm9/source/scummhelp.cpp:63
-#, fuzzy
 msgid "Pause/Game menu"
-msgstr "Μενού παιχνιδιού"
+msgstr "Διακοπή/Μενού Παιχνιδιού"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:47
 #: backends/platform/ds/arm9/source/scummhelp.cpp:64
-#, fuzzy
 msgid "DS Options menu"
-msgstr "Προβολή μενού επιλογών"
+msgstr "Μενού Επιλογών DS"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:48
 #: backends/platform/ds/arm9/source/scummhelp.cpp:65
-#, fuzzy
 msgid "Skip cutscenes"
-msgstr "Παράλειψη ταινίας"
+msgstr "Παράλειψη σκηνών"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:49
-#, fuzzy
 msgid "Switch screens"
-msgstr "Εναλλαγή χαρακτήρων:"
+msgstr "Εναλλαγή οθονών"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:50
 #: backends/platform/ds/arm9/source/scummhelp.cpp:67
-#, fuzzy
 msgid "Show/hide debug console"
-msgstr "Προβολή / Απόκρυψη κονσόλας"
+msgstr "Προβολή/απόκρυψη κονσόλας αποσφαλμάτωσης"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:51
 #: backends/platform/ds/arm9/source/scummhelp.cpp:66
-#, fuzzy
 msgid "Show/hide keyboard"
-msgstr "Προβολή Πληκτρολογίου"
+msgstr "Προβολή/απόκρυψη πληκτρολογίου"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:52
 #: backends/platform/ds/arm9/source/scummhelp.cpp:69
 msgid "Scroll current touch screen view"
-msgstr ""
+msgstr "Κύλιση τρέχουσας οθόνης επαφής"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:53
 #: backends/platform/ds/arm9/source/scummhelp.cpp:70
-#, fuzzy
 msgid "Zoom in/out"
-msgstr "Μεγέθυνση"
+msgstr "Μεγέθυνση/σμίκρυνση"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:58
 msgid "DS Controls (left handed):"
-msgstr ""
+msgstr "Χειρισμός DS (αριστερόχειρες):"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:68
-#, fuzzy
 msgid "Swap screens"
-msgstr "Αποθήκευση στιγμιότυπου"
+msgstr "Εναλλαγή οθονών"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:75
-#, fuzzy
 msgid "Indiana Jones Fight controls:"
-msgstr "~Χ~ειρισμοί μάχης Ίντυ"
+msgstr "Χειρισμός μάχης του Indiana Jones:"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:76
 #: engines/hdb/detection.cpp:321
@@ -3491,59 +3473,58 @@ msgstr "Κίνηση δεξιά"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:78
 msgid "High guard"
-msgstr ""
+msgstr "Άμυνα ψηλά"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:79
 msgid "Guard down"
-msgstr ""
+msgstr "Άμυνα χαμηλά"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:80
-#, fuzzy
 msgid "Guard middle"
-msgstr "Μεσαία μπουνιά"
+msgstr "Άμυνα στη μέση"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:81
 #: engines/scumm/help.cpp:312
 msgid "Punch high"
-msgstr "Ψηλή μπουνιά"
+msgstr "Μπουνιά ψηλά"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:82
 #: engines/scumm/help.cpp:313
 msgid "Punch middle"
-msgstr "Μεσαία μπουνιά"
+msgstr "Μπουνιά στη μέση"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:83
 #: engines/scumm/help.cpp:314
 msgid "Punch low"
-msgstr "Χαμηλή μπουνιά"
+msgstr "Μπουνιά χαμηλά"
 
 #: backends/platform/ios7/ios7_osys_events.cpp:327
 #: backends/platform/ios7/ios7_osys_events.cpp:455
 #: backends/platform/iphone/osys_events.cpp:300
 msgid "Mouse-click-and-drag mode enabled."
-msgstr "Ενεργοποίηση λειτουργίας ποντικιού click-and-drag."
+msgstr "Ενεργοποιήθηκε το click-and-drag με το ποντίκι."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:329
 #: backends/platform/ios7/ios7_osys_events.cpp:457
 #: backends/platform/iphone/osys_events.cpp:302
 msgid "Mouse-click-and-drag mode disabled."
-msgstr "Απενεργοποίηση λειτουργίας ποντικιού click-and-drag."
+msgstr "Απενεργοποιήθηκε το click-and-drag με το ποντίκι."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:340
 #: backends/platform/ios7/ios7_osys_events.cpp:476
 #: backends/platform/iphone/osys_events.cpp:313
 msgid "Touchpad mode enabled."
-msgstr "Λειτουργία Touchpad ενεργοποιημένη."
+msgstr "Η λειτουργία Touchpad ενεργοποιήθηκε."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:342
 #: backends/platform/ios7/ios7_osys_events.cpp:478
 #: backends/platform/iphone/osys_events.cpp:315
 msgid "Touchpad mode disabled."
-msgstr "Λειτουργία Touchpad απενεργοποιημένη."
+msgstr "Η λειτουργία Touchpad απενεργοποιήθηκε."
 
 #: backends/platform/maemo/maemo.cpp:170
 msgid "Click Mode"
-msgstr "Λειτουργία Click"
+msgstr "Λειτουργία Κλικ"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:212
 msgid "Hide ScummVM"
@@ -4004,6 +3985,8 @@ msgstr "Επαναφορά"
 #: engines/agos/saveload.cpp:137
 msgid "Quick load or save game isn't supported in this location"
 msgstr ""
+"Η γρήγορη φόρτωση ή αποθήκευση παιχνιδιού δεν υποστηρίζεται σε αυτή την "
+"περιοχή"
 
 #: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2466
 #, c-format
@@ -4590,11 +4573,11 @@ msgstr "Σφάλμα στην εγγραφή αποθηκευμένου παιχ
 
 #: engines/glk/hugo/hugo.cpp:183
 msgid "Incorrect rs file."
-msgstr ""
+msgstr "Εσφαλμένο αρχείο rs."
 
 #: engines/glk/hugo/hugo.cpp:190
 msgid "Save file created by different version."
-msgstr ""
+msgstr "Το αρχείο αποθήκευσης δημιουργήθηκε από διαφορετική έκδοση."
 
 #: engines/gob/inter_playtoons.cpp:258 engines/gob/inter_v2.cpp:1479
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:538
@@ -4612,17 +4595,15 @@ msgstr "Η διαγραφή του αρχείου απέτυχε."
 
 #: engines/griffon/detection.cpp:106
 msgid "Menu / Skip"
-msgstr ""
+msgstr "Μενού / Παράκαμψη"
 
 #: engines/griffon/detection.cpp:142
-#, fuzzy
 msgid "Attack"
-msgstr "Επίθεση 1"
+msgstr "Επίθεση"
 
 #: engines/griffon/detection.cpp:156
-#, fuzzy
 msgid "Speed Up Cutscene"
-msgstr "Παράλειψη ταινίας"
+msgstr "Επιτάχυνση Αναπαραγωγής Ταινίας"
 
 #: engines/groovie/detection.cpp:321
 msgid "Fast movie speed"
@@ -5170,7 +5151,7 @@ msgstr ""
 
 #: engines/mohawk/myst_stacks/preview.cpp:90
 msgid "You can't leave the library in the demo."
-msgstr ""
+msgstr "Δεν μπορείτε να αποχωρήσετε από τη βιβλιοθήκη στο demo."
 
 #: engines/mohawk/riven.cpp:156
 msgid ""
@@ -5416,9 +5397,8 @@ msgid "Use an alternative game intro (CD version only)"
 msgstr "Χρήση εναλλακτικής εισαγωγής παιχνιδιού (έκδοση CD μόνο)"
 
 #: engines/saga/saga.cpp:247
-#, fuzzy
 msgid "Error loading game resources."
-msgstr "Σφάλμα στην ανάγνωση αποθηκευμένου παιχνιδιού"
+msgstr "Σφάλμα στη φόρτωση πόρων παιχνιδιού."
 
 #: engines/sci/detection.cpp:399
 msgid "Skip EGA dithering pass (full color backgrounds)"
@@ -5558,6 +5538,9 @@ msgid ""
 "There exists some dummy logic for now, where opponent actions are chosen "
 "randomly"
 msgstr ""
+"Η λογική για το Πόκερ είναι περιέχεται σε εξωτερικό DLL, και δεν έχει "
+"υλοποιηθεί ακόμα. Για την ώρα υπάρχει μόνο μια απλή λογική, όπου οι "
+"ενέργειες του αντιπάλου επιλέγονται τυχαία"
 
 #: engines/sci/engine/savegame.cpp:1407
 msgid "The format of this saved game is obsolete, unable to load it"
@@ -5630,13 +5613,13 @@ msgstr ""
 "βοηθητικό πρόγραμμα \"General MIDI Utility\". Εφαρμόστε την διόρθωση (patch) "
 "ώστε να απολαύσετε μουσική MIDI με αυτό το παιχνίδι. Μόλις προμηθευτείτε το "
 "βοηθητικό πρόγραμμα, μπορείτε να αποσυμπιέσετε όλα τα συμπεριλαμβανόμενα "
-"αρχεία τύπου *.PAT στον φάκελο extras του ScummVM και το ScummVM θα "
-"προσθέσει αυτόματα την κατάλληλη διόρθωση (patch). Εναλλακτικά, μπορείτε να "
-"ακολουθήσετε τις οδηγίες του αρχείου READ.ME το οποίο συμπεριλαμβάνεται στα "
-"αρχεία της διόρθωσης (patch). Εν συντομία, θα πρέπει να πάρετε το σχετικό "
-"αρχείο *.PAT, να το μετονομάσετε σε 4.PAT και ύστερα να το τοποθετήσετε στον "
-"φάκελο του παιχνιδιού. Χωρίς αυτήν τη διόρθωση (patch) η μουσική με General "
-"MIDI για αυτό το παιχνίδι θα ακούγεται πολύ παραμορφωμένη."
+"αρχεία τύπου *.PAT στον φάκελο extras (πρόσθετα) του ScummVM και το ScummVM "
+"θα προσθέσει αυτόματα την κατάλληλη διόρθωση (patch). Εναλλακτικά, μπορείτε "
+"να ακολουθήσετε τις οδηγίες του αρχείου READ.ME το οποίο συμπεριλαμβάνεται "
+"στα αρχεία της διόρθωσης (patch). Εν συντομία, θα πρέπει να πάρετε το "
+"σχετικό αρχείο *.PAT, να το μετονομάσετε σε 4.PAT και ύστερα να το "
+"τοποθετήσετε στον φάκελο του παιχνιδιού. Χωρίς αυτήν τη διόρθωση (patch) η "
+"μουσική με General MIDI για αυτό το παιχνίδι θα ακούγεται πολύ παραμορφωμένη."
 
 #: engines/sci/sci.cpp:432
 msgid ""
@@ -6154,28 +6137,28 @@ msgstr "παίξε C μείζονα στη ρόκα"
 
 #: engines/scumm/help.cpp:192 engines/scumm/help.cpp:214
 msgid "puSh"
-msgstr "Σπρώξε (S)"
+msgstr "Σπρώξε"
 
 #: engines/scumm/help.cpp:193 engines/scumm/help.cpp:215
 msgid "pull (Yank)"
-msgstr "Τράβηξε (Y)"
+msgstr "Τράβηξε"
 
 #: engines/scumm/help.cpp:196 engines/scumm/help.cpp:212
 #: engines/scumm/help.cpp:248 engines/wintermute/keymapper_tables.h:126
 msgid "Talk to"
-msgstr "Μίλα με (T)"
+msgstr "Μίλα με"
 
 #: engines/scumm/help.cpp:199 engines/scumm/help.cpp:211
 msgid "Look at"
-msgstr "Κοίταξε το"
+msgstr "Κοίτα προς"
 
 #: engines/scumm/help.cpp:200
 msgid "turn oN"
-msgstr "άναψε (N)"
+msgstr "Ενεργοποίησε"
 
 #: engines/scumm/help.cpp:201
 msgid "turn oFf"
-msgstr "σβήσε (F)"
+msgstr "Απενεργοποίησε"
 
 #: engines/scumm/help.cpp:217
 msgid "KeyUp"
@@ -6568,11 +6551,13 @@ msgid ""
 "Failed to save temporary game state. Make sure your save game directory is "
 "set in ScummVM and that you can write to it."
 msgstr ""
+"Αποτυχία αποθήκευσης προσωρινής κατάστασης παιχνιδιού. Σιγουρευτείτε ότι ο "
+"φάκελος αποθήκευσης έχει οριστεί στο ScummVM και ότι έχετε δικαιώματα "
+"εγγραφής σε αυτόν."
 
 #: engines/supernova/supernova.cpp:828
-#, fuzzy
 msgid "Failed to load temporary game state."
-msgstr "Η ανάγνωση αποθηκευμένου παιχνιδιού από αρχείο απέτυχε."
+msgstr "Αποτυχία φόρτωσης προσωρινής κατάστασης παιχνιδιού."
 
 #: engines/supernova/detection.cpp:40
 msgid "Improved mode"
@@ -7445,6 +7430,14 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+"Πριν παίξετε αυτό το παιχνίδι, θα χρειαστεί να αντιγράψετε τα απαιτούμενα "
+"fonts (γραμματοσειρές) στο φάκελο extras (πρόσθετα) του ScummVM, ή απευθείας "
+"στο φάκελο του παιχνιδιού. Στα Windows, θα χρειαστείτε τα ακόλουθα αρχεία "
+"font από τον φάκελο font των Windows: Times New Roman, Century Schoolbook, "
+"Garamond, Courier New και Arial. Εναλλακτικά, μπορείτε να μεταφορτώσετε τα "
+"Liberation Fonts ή το πακέτο GNU FreeFont. Θα χρειαστείτε όλα τα fonts από "
+"το πακέτο με fonts που θα επιλέξετε, δηλαδή, LiberationMono, LiberationSans "
+"και LiberationSerif, ή FreeMono, FreeSans και FreeSerif αντίστοιχα."
 
 #~ msgid "Engine does not support debug level '%s'"
 #~ msgstr "Η μηχανή δεν υποστηρίζει επίπεδο εντοπισμού σφαλμάτων '%s'"
