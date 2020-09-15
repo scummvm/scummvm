@@ -24,9 +24,9 @@
 #ifndef _OSYSTEM_DS_H_
 #define _OSYSTEM_DS_H_
 
-#include "backends/base-backend.h"
+#include "backends/modular-backend.h"
 #include "backends/events/ds/ds-events.h"
-#include "backends/mixer/maxmod/maxmod-mixer.h"
+#include "backends/mixer/mixer.h"
 #include "graphics/surface.h"
 #include "graphics/palette.h"
 
@@ -36,9 +36,8 @@ enum {
 	GFX_SWSCALE = 2
 };
 
-class OSystem_DS : public BaseBackend, public PaletteManager {
+class OSystem_DS : public ModularMutexBackend, public ModularMixerBackend, public PaletteManager {
 protected:
-	MaxModMixerManager *_mixerManager;
 	Graphics::Surface _framebuffer, _overlay, _cursor;
 	bool _graphicsEnable, _isOverlayShown;
 	int _graphicsMode, _stretchMode;
@@ -123,11 +122,6 @@ public:
 
 	virtual Common::String getSystemLanguage() const;
 
-	virtual MutexRef createMutex(void);
-	virtual void lockMutex(MutexRef mutex);
-	virtual void unlockMutex(MutexRef mutex);
-	virtual void deleteMutex(MutexRef mutex);
-
 	virtual void quit();
 
 	virtual void setFocusRectangle(const Common::Rect& rect);
@@ -140,8 +134,6 @@ public:
 
 	virtual Graphics::Surface *lockScreen();
 	virtual void unlockScreen();
-
-	virtual Audio::Mixer *getMixer() { return _mixerManager->getMixer(); }
 
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 
