@@ -56,6 +56,8 @@ protected:
 
 	DSEventSource *_eventSource;
 
+	void initGraphics();
+
 	Graphics::Surface *createTempFrameBuffer();
 	bool _disableCursorPalette;
 

@@ -23,7 +23,7 @@
 #include <nds.h>
 
 #include "backends/events/ds/ds-events.h"
-#include "osystem_ds.h"
+#include "backends/platform/ds/osystem_ds.h"
 
 bool DSEventSource::pollEvent(Common::Event &event) {
 	if (_eventQueue.empty()) {
