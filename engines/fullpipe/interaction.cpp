@@ -189,7 +189,7 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 					ex->_param = subj ? subj->_odelay : 0;
 					ex->_excFlags = 3;
 					ex->_z = (obj->_objtype != kObjTypePictureObject);
-					ex->_field_20 = invId;
+					ex->_invId = invId;
 					mq->addExCommandToEnd(ex);
 
 					if (mq->_isFinished) {
@@ -324,7 +324,7 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 			ex->_y = obj->_odelay;
 			ex->_param = subj->_odelay;
 			ex->_excFlags = 3;
-			ex->_field_20 = invId;
+			ex->_invId = invId;
 			ex->_z = (obj->_objtype != kObjTypePictureObject);
 			mq->addExCommandToEnd(ex);
 
@@ -336,7 +336,7 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 			ex->_excFlags |= 3;
 			ex->_param = 6;
 			ex->_z = obj->_id;
-			ex->_field_20 = obj->_odelay;
+			ex->_invId = obj->_odelay;
 			ex->postMessage();
 		}
 
@@ -384,7 +384,7 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 				ex->_param = subj->_odelay;
 				ex->_excFlags = 2;
 				ex->_z = (obj->_objtype != kObjTypePictureObject);
-				ex->_field_20 = invId;
+				ex->_invId = invId;
 				mq->addExCommandToEnd(ex);
 
 				if (!mq->_isFinished)

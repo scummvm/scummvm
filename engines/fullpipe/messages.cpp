@@ -89,7 +89,7 @@ bool ExCommand::load(MfcArchive &file) {
 	_z = file.readUint32LE();
 	_sceneClickX = file.readUint32LE();
 	_sceneClickY = file.readUint32LE();
-	_field_20 = file.readUint32LE();
+	_invId = file.readUint32LE();
 	_field_24 = file.readUint32LE();
 	_param = file.readUint32LE();
 	_field_2C = file.readUint32LE();
@@ -108,7 +108,7 @@ bool ExCommand::load(MfcArchive &file) {
 	_objtype = kObjTypeExCommand;
 
 	debugC(6, kDebugXML, "%% <COMMAND parent=%d cmd=%s x=%d y=%d f14=%d sceneX=%d sceneY=%d f20=%d f24=%d param=%d f2c=%d f30=%d f34=%d num=%d flags=%d parId=%d />",
-			_parentId, exCommandType2str(_messageKind), _x, _y, _z, _sceneClickX, _sceneClickY, _field_20, _field_24, _param, _field_2C,
+			_parentId, exCommandType2str(_messageKind), _x, _y, _z, _sceneClickX, _sceneClickY, _invId, _field_24, _param, _field_2C,
 			_field_30, _field_34, _messageNum, _excFlags, _parId);
 
 	return true;
@@ -193,7 +193,7 @@ Message::Message() {
 	_z = 0;
 	_sceneClickX = 0;
 	_sceneClickY = 0;
-	_field_20 = 0;
+	_invId = 0;
 	_field_24 = 0;
 	_param = 0;
 	_field_2C = 0;
@@ -210,7 +210,7 @@ Message::Message(int16 parentId, int messageKind, int x, int y, int z, int a7, i
 	_sceneClickX = sceneClickX;
 	_sceneClickY = sceneClickY;
 	_field_24 = a7;
-	_field_20 = a10;
+	_invId = a10;
 	_param = 0;
 	_field_2C = 0;
 	_field_30 = 0;
@@ -957,7 +957,7 @@ void postExCommand(int parentId, int keyCode, int x, int y, int f20, int f14) {
 	ex->_excFlags |= 3;
 	ex->_x = x;
 	ex->_y = y;
-	ex->_field_20 = f20;
+	ex->_invId = f20;
 	ex->_z = f14;
 
 	ex->postMessage();

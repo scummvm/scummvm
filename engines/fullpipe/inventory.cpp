@@ -362,7 +362,7 @@ void Inventory2::slideIn() {
 
 	ex->_field_2C = 10;
 	ex->_z = _isInventoryOut;
-	ex->_field_20 = !_isInventoryOut;
+	ex->_invId = !_isInventoryOut;
 	ex->_excFlags |= 3;
 	ex->postMessage();
 }
@@ -374,7 +374,7 @@ void Inventory2::slideOut() {
 
 	ex->_field_2C = 10;
 	ex->_z = _isInventoryOut;
-	ex->_field_20 = !_isInventoryOut;
+	ex->_invId = !_isInventoryOut;
 	ex->_excFlags |= 3;
 	ex->postMessage();
 }

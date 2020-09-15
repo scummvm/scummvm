@@ -379,7 +379,7 @@ int global_messageHandler3(ExCommand *cmd) {
 			return g_fp->_gameLoader->gotoScene(cmd->_parentId, cmd->_param);
 		case 64:
 			if (g_fp->_currentScene && g_fp->_msgObjectId2
-					&& (!(cmd->_param & 4) || g_fp->_msgObjectId2 != cmd->_z || g_fp->_msgId != cmd->_field_20)) {
+					&& (!(cmd->_param & 4) || g_fp->_msgObjectId2 != cmd->_z || g_fp->_msgId != cmd->_invId)) {
 				ani = g_fp->_currentScene->getStaticANIObject1ById(g_fp->_msgObjectId2, g_fp->_msgId);
 				if (ani) {
 					ani->_flags &= 0xFF7F;
@@ -397,7 +397,7 @@ int global_messageHandler3(ExCommand *cmd) {
 			}
 			if (cmd->_param & 4) {
 				g_fp->_msgObjectId2 = cmd->_z;
-				g_fp->_msgId = cmd->_field_20;
+				g_fp->_msgId = cmd->_invId;
 			}
 			return result;
 		case 29:
@@ -478,7 +478,7 @@ int global_messageHandler3(ExCommand *cmd) {
 		return result;
 	case 57:
 		if (cmd->_field_2C) {
-			if (!cmd->_field_20) {
+			if (!cmd->_invId) {
 				getGameLoaderInventory()->removeItem2(g_fp->_currentScene, cmd->_parentId, cmd->_x, cmd->_y, cmd->_z);
 				getGameLoaderInventory()->rebuildItemRects();
 				return 1;
@@ -501,14 +501,14 @@ int global_messageHandler3(ExCommand *cmd) {
 				obj = g_fp->_currentScene->getStaticANIObject1ById(cmd->_x, cmd->_y);
 			else
 				obj = g_fp->_currentScene->getPictureObjectById(cmd->_x, cmd->_y);
-			handleObjectInteraction(g_fp->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_param), obj, cmd->_field_20);
+			handleObjectInteraction(g_fp->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_param), obj, cmd->_invId);
 			result = 1;
 		}
 		return result;
 	case 51:
-		return startWalkTo(cmd->_parentId, cmd->_param, cmd->_x, cmd->_y, cmd->_field_20);
+		return startWalkTo(cmd->_parentId, cmd->_param, cmd->_x, cmd->_y, cmd->_invId);
 	case 52:
-		return doSomeAnimation(cmd->_parentId, cmd->_param, cmd->_field_20);
+		return doSomeAnimation(cmd->_parentId, cmd->_param, cmd->_invId);
 	case 53:
 		return doSomeAnimation2(cmd->_parentId, cmd->_param);
 	case 63:
@@ -666,7 +666,7 @@ int global_messageHandler4(ExCommand *cmd) {
 
 	case 27:
 		if (!g_fp->_currentScene || g_fp->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_param) == 0) {
-			ani = g_fp->accessScene(cmd->_field_20)->getStaticANIObject1ById(cmd->_parentId, -1);
+			ani = g_fp->accessScene(cmd->_invId)->getStaticANIObject1ById(cmd->_parentId, -1);
 			if (ani) {
 				ani = new StaticANIObject(ani);
 				g_fp->_currentScene->addStaticANIObject(ani, 1);

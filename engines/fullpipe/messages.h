@@ -44,7 +44,7 @@ class Message : public CObject {
 	int _z;
 	int _sceneClickX;
 	int _sceneClickY;
-	int _field_20;
+	int _invId;
 	int _field_24;
 	int _param;
 	int _field_2C;

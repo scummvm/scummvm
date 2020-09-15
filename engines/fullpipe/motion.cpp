@@ -249,7 +249,7 @@ MessageQueue *MctlCompound::startMove(StaticANIObject *ani, int sourceX, int sou
 	ExCommand *ex = new ExCommand(ani->_id, 51, 0, sourceX, sourceY, 0, 1, 0, 0, 0);
 
 	ex->_excFlags |= 2;
-	ex->_field_20 = fuzzyMatch;
+	ex->_invId = fuzzyMatch;
 	ex->_param = ani->_odelay;
 
 	mq->addExCommandToEnd(ex);
@@ -317,7 +317,7 @@ MessageQueue *MctlCompound::makeQueue(StaticANIObject *subj, int xpos, int ypos,
 
 		ex = new ExCommand(subj->_id, 51, 0, xpos, ypos, 0, 1, 0, 0, 0);
 
-		ex->_field_20 = fuzzyMatch;
+		ex->_invId = fuzzyMatch;
 		ex->_param = subj->_odelay;
 		ex->_excFlags |= 2;
 
@@ -957,7 +957,7 @@ MessageQueue *MovGraph::startMove(StaticANIObject *ani, int xpos, int ypos, int 
 			ex->_param = ani->_odelay;
 			ex->_field_3C = 1;
 			ex->_field_24 = 0;
-			ex->_field_20 = fuzzyMatch;
+			ex->_invId = fuzzyMatch;
 			mq->addExCommandToEnd(ex);
 
 			if (mq->chain(0))
