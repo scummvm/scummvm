@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
 "PO-Revision-Date: 2020-09-15 18:44+0000\n"
-"Last-Translator: Donovan Watteau <contrib@dwatteau.fr>\n"
+"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -3380,7 +3380,7 @@ msgstr "Pad bas"
 #: backends/platform/ds/arm9/source/scummhelp.cpp:45
 #: backends/platform/ds/arm9/source/scummhelp.cpp:62
 msgid "Skip dialog line (some games)"
-msgstr "Sauter la ligne de dialogue (certains jeux)"
+msgstr "Passer la ligne de dialogue (certains jeux)"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:46
 #: backends/platform/ds/arm9/source/scummhelp.cpp:63
@@ -3626,7 +3626,7 @@ msgstr "Changement de personnage"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:51
 msgid "Skip text"
-msgstr "Sauter le texte"
+msgstr "Passer le texte"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:53
 msgid "Fast mode"
@@ -4558,7 +4558,7 @@ msgstr "Échec de la suppression du fichier."
 
 #: engines/griffon/detection.cpp:106
 msgid "Menu / Skip"
-msgstr "Menu / Sauter"
+msgstr "Menu / Passer"
 
 #: engines/griffon/detection.cpp:142
 msgid "Attack"
@@ -4643,7 +4643,7 @@ msgstr "Support des interruptions"
 
 #: engines/kyra/detection.cpp:74
 msgid "Allow text and cutscenes to be skipped"
-msgstr "Permet de sauter les textes et scènes cinématiques"
+msgstr "Permet de passer les textes et scènes cinématiques"
 
 #. I18N: Helium mode makes people sound like they've inhaled Helium.
 #: engines/kyra/detection.cpp:84
@@ -5207,12 +5207,12 @@ msgstr "Impossible de trouver le fichier de données du moteur '%s'"
 
 #: engines/neverhood/detection.cpp:151
 msgid "Skip the Hall of Records storyboard scenes"
-msgstr "Sauter les scènes storyboard de la Salle des Archives"
+msgstr "Passer les scènes storyboard de la Salle des Archives"
 
 #: engines/neverhood/detection.cpp:152
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
 msgstr ""
-"Permet au joueur de sauter les scènes de storyboard de la Salle des Archives"
+"Permet au joueur de passer les scènes de storyboard de la Salle des Archives"
 
 #: engines/neverhood/detection.cpp:158
 msgid "Scale the making of videos to full screen"
