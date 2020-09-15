@@ -38,17 +38,15 @@ namespace Common {
  * @defgroup common_array Arrays
  * @ingroup common
  *
- * @brief  Functions for working on arrays.
- *
+ * @brief  Functions for replacing std arrays.
  * @{
  */
 
-
 /**
  * This class implements a dynamically sized container, which
- * can be accessed similar to a regular C++ array. Accessing
+ * can be accessed similarly to a regular C++ array. Accessing
  * elements is performed in constant time (like with plain arrays).
- * In addition, one can append, insert and remove entries (this
+ * In addition, you can append, insert, and remove entries (this
  * is the 'dynamic' part). Doing that in general takes time
  * proportional to the number of elements in the array.
  *
@@ -74,7 +72,7 @@ public:
 	Array() : _capacity(0), _size(0), _storage(nullptr) {}
 
 	/**
-	 * Constructs an array with `count` default-inserted instances of T. No
+	 * Construct an array with `count` default-inserted instances of @p T. No
 	 * copies are made.
 	 */
 	explicit Array(size_type count) : _size(count) {
@@ -84,7 +82,7 @@ public:
 	}
 
 	/**
-	 * Constructs an array with `count` copies of elements with value `value`.
+	 * Construct an array with `count` copies of elements with value `value`.
 	 */
 	Array(size_type count, const T &value) : _size(count) {
 		allocCapacity(count);
@@ -134,7 +132,7 @@ public:
 		_capacity = _size = 0;
 	}
 
-	/** Appends element to the end of the array. */
+	/** Append an element to the end of the array. */
 	void push_back(const T &element) {
 		if (_size + 1 <= _capacity)
 			new ((void *)&_storage[_size++]) T(element);
@@ -150,7 +148,7 @@ public:
 			insert_aux(end(), array.begin(), array.end());
 	}
 
-	/** Removes the last element of the array. */
+	/** Remove the last element of the array. */
 	void pop_back() {
 		assert(_size > 0);
 		_size--;
@@ -158,35 +156,35 @@ public:
 		_storage[_size].~T();
 	}
 
-	/** Returns a pointer to the underlying memory serving as element storage. */
+	/** Return a pointer to the underlying memory serving as element storage. */
 	const T *data() const {
 		return _storage;
 	}
 
-	/** Returns a pointer to the underlying memory serving as element storage. */
+	/** Return a pointer to the underlying memory serving as element storage. */
 	T *data() {
 		return _storage;
 	}
 
-	/** Returns a reference to the first element of the array. */
+	/** Return a reference to the first element of the array. */
 	T &front() {
 		assert(_size > 0);
 		return _storage[0];
 	}
 
-	/** Returns a reference to the first element of the array. */
+	/** Return a reference to the first element of the array. */
 	const T &front() const {
 		assert(_size > 0);
 		return _storage[0];
 	}
 
-	/** Returns a reference to the last element of the array. */
+	/** Return a reference to the last element of the array. */
 	T &back() {
 		assert(_size > 0);
 		return _storage[_size-1];
 	}
 
-	/** Returns a reference to the last element of the array. */
+	/** Return a reference to the last element of the array. */
 	const T &back() const {
 		assert(_size > 0);
 		return _storage[_size-1];
@@ -204,7 +202,7 @@ public:
 	}
 
 	/**
-	 * Inserts element before pos.
+	 * Insert an element before @p pos.
 	 */
 	void insert(iterator pos, const T &element) {
 		insert_aux(pos, &element, &element + 1);
@@ -377,7 +375,7 @@ protected:
 	 * Unlike std::vector::insert, this method does not accept
 	 * arbitrary iterators, mainly because our iterator system is
 	 * seriously limited and does not distinguish between input iterators,
-	 * output iterators, forward iterators or random access iterators.
+	 * output iterators, forward iterators, or random access iterators.
 	 *
 	 * So, we simply restrict to Array iterators. Extending this to arbitrary
 	 * random access iterators would be trivial.
@@ -404,7 +402,7 @@ protected:
 				uninitialized_copy(oldStorage, oldStorage + idx, _storage);
 				// Copy the data we insert
 				uninitialized_copy(first, last, _storage + idx);
-				// Afterwards copy the old data from the position where we
+				// Afterwards, copy the old data from the position where we
 				// insert.
 				uninitialized_copy(oldStorage + idx, oldStorage + _size, _storage + idx + n);
 
@@ -442,7 +440,7 @@ protected:
 };
 
 /**
- * Double linked list with sorted nodes.
+ * Doubly linked list with sorted nodes.
  */
 template<class T, typename CompareArgType = const void *>
 class SortedArray : public Array<T> {
@@ -456,7 +454,7 @@ public:
 	}
 
 	/**
-	 * Inserts element at the sorted position.
+	 * Insert an element at the sorted position.
 	 */
 	void insert(const T &element) {
 		if (!this->_size) {
