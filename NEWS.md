@@ -411,6 +411,8 @@ For a more comprehensive changelog of the latest experimental code, see:
  ZVISION:
    - Fixed graphical glitch in Zork: Grand Inquisitor.
    - Packaged the required fonts with ScummVM.
+   - Enabled hires movies in the DVD version of Zork: Grand Inquisitor (requires
+     libmpeg2 and libac52).
 
  Android port:
    - Rewrote to make use of the OpenGL Graphics Manager.
