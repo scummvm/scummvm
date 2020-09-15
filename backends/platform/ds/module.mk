@@ -2,6 +2,7 @@ MODULE := backends/platform/ds
 
 MODULE_OBJS := \
 	blitters_arm.o \
+	ds-graphics.o \
 	dsmain.o \
 	osystem_ds.o
 
