@@ -311,11 +311,10 @@ void OSystem_Android::initBackend() {
 	ConfMan.registerDefault("aspect_ratio", true);
 	ConfMan.registerDefault("touchpad_mouse_mode", true);
 	ConfMan.registerDefault("onscreen_control", true);
-	// The swap_menu_and_back is a legacy configuration key
+	// The swap_menu_and_back is a deprecated configuration key
 	// It is no longer relevant, after introducing the keymapper functionality
 	// since the behaviour of the menu and back buttons is now handled by the keymapper.
-	// The key is thus registered to default to a "false" value
-	ConfMan.registerDefault("swap_menu_and_back", false);
+	// We now ignore it completely
 
 	ConfMan.registerDefault("autosave_period", 0);
 	ConfMan.setBool("FM_high_quality", false);
@@ -328,10 +327,12 @@ void OSystem_Android::initBackend() {
 		ConfMan.set("browser_lastpath", "/");
 	}
 
-	if (ConfMan.hasKey("touchpad_mouse_mode"))
+	if (ConfMan.hasKey("touchpad_mouse_mode")) {
 		_touchpad_mode = ConfMan.getBool("touchpad_mouse_mode");
-	else
+	} else {
 		ConfMan.setBool("touchpad_mouse_mode", true);
+		_touchpad_mode = true;
+	}
 
 	if (ConfMan.hasKey("onscreen_control"))
 		JNI::showKeyboardControl(ConfMan.getBool("onscreen_control"));
@@ -425,18 +426,10 @@ Common::KeymapperDefaultBindings *OSystem_Android::getKeymapperDefaultBindings()
 	Common::KeymapperDefaultBindings *keymapperDefaultBindings = new Common::KeymapperDefaultBindings();
 
 	// The swap_menu_and_back is a legacy configuration key
-	// It is only checked here for compatibility with old config files
-	// where it may have been set as "true"
-	// TODO Why not just ignore it entirely anyway?
-	if (ConfMan.hasKey("swap_menu_and_back")  && ConfMan.getBool("swap_menu_and_back")) {
-		keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, "MENU", "AC_BACK");
-		keymapperDefaultBindings->setDefaultBinding("engine-default", Common::kStandardActionSkip, "MENU");
-		keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, "CLOS", "MENU");
-	} else {
-		keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, "MENU", "MENU");
-		keymapperDefaultBindings->setDefaultBinding("engine-default", Common::kStandardActionSkip, "AC_BACK");
-		keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, "CLOS", "AC_BACK");
-	}
+	// We now ignore it entirely (it as always false -- ie. back short press is AC_BACK)
+	keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, "MENU", "MENU");
+	keymapperDefaultBindings->setDefaultBinding("engine-default", Common::kStandardActionSkip, "AC_BACK");
+	keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, "CLOS", "AC_BACK");
 
 	return keymapperDefaultBindings;
 }
