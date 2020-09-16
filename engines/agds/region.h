@@ -36,7 +36,7 @@ struct Region {
 	Common::String	name;
 	Common::Point	center;
 	uint16			flags;
-	PointsType		points;
+	Common::Array<PointsType> regions;
 
 	Region(const Common::String &resourceName, Common::SeekableReadStream * stream);
 	Region(const Common::Rect rect);

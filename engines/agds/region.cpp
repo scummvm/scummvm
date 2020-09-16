@@ -36,9 +36,12 @@ Region::Region(const Common::String &resourceName, Common::SeekableReadStream *s
 	center.y = stream->readUint16LE();
 	flags = stream->readUint16LE();
 	debug("region %s at (%d,%d) %04x", name.c_str(), center.x, center.y, flags);
-	if (stream->pos() < size) {
+	while (stream->pos() + 2 <= size) {
 		uint16 ext = stream->readUint16LE();
-		//debug("extended entries %u", ext);
+		if (ext)
+			debug("extended entries %u", ext);
+
+		PointsType points;
 		while (ext--) {
 			int16 a = stream->readSint16LE();
 			int16 b = stream->readSint16LE();
@@ -49,26 +52,35 @@ Region::Region(const Common::String &resourceName, Common::SeekableReadStream *s
 				debug("extended entry: %d %d", a, b);
 			points.push_back(Common::Point(a, b));
 		}
-		if (stream->pos() != size)
-			warning("region data left: %u", size - stream->pos());
+		regions.push_back(points);
 	}
 }
 
 Region::Region(const Common::Rect rect) : flags(0) {
+	PointsType points;
 	points.push_back(Common::Point(rect.left, rect.top));
 	points.push_back(Common::Point(rect.right, rect.top));
 	points.push_back(Common::Point(rect.right, rect.bottom));
 	points.push_back(Common::Point(rect.left, rect.bottom));
+	regions.push_back(points);
+
 	center.x = (rect.left + rect.right) / 2;
 	center.y = (rect.top + rect.bottom) / 2;
 }
 
 Common::String Region::toString() const {
 	Common::String str = Common::String::format("region(%d, %d, [", center.x, center.y);
-	for (size_t i = 0; i < points.size(); ++i) {
+	for (size_t i = 0; i < regions.size(); ++i) {
 		if (i != 0)
 			str += ", ";
-		str += Common::String::format("(%d, %d)", points[i].x, points[i].y);
+		str += "Region {";
+		const PointsType &points = regions[i];
+		for (size_t j = 0; j < points.size(); ++j) {
+			if (j != 0)
+				str += ", ";
+			str += Common::String::format("(%d, %d)", points[j].x, points[j].y);
+		}
+		str += "}";
 	}
 	str += "]";
 	return str;
@@ -79,21 +91,28 @@ void Region::move(Common::Point rel) {
 		return;
 
 	center += rel;
-	for (uint i = 0; i < points.size(); ++i)
-		points[i] += rel;
+	for (uint i = 0; i < regions.size(); ++i) {
+		PointsType &points = regions[i];
+		for (uint j = 0; j < points.size(); ++j)
+			points[j] += rel;
+	}
 }
 
 Common::Point Region::topLeft() const {
-	if (points.empty())
+	if (regions.empty())
 		return Common::Point();
 
-	Common::Point p = points[0];
-	for(uint i = 1; i < points.size(); ++i) {
-		Common::Point point = points[i];
-		if (point.x < p.x)
-			p.x = point.x;
-		if (point.y < p.y)
-			p.y = point.y;
+	Common::Point p = regions[0][0];
+	for(uint i = 0; i < regions.size(); ++i) {
+		const PointsType &points = regions[i];
+
+		for(uint j = 0; j < points.size(); ++j) {
+			Common::Point point = points[j];
+			if (point.x < p.x)
+				p.x = point.x;
+			if (point.y < p.y)
+				p.y = point.y;
+		}
 	}
 	return p;
 }
@@ -105,45 +124,49 @@ typedef struct {
 } dPoint;
 
 bool Region::pointIn(Common::Point point) const {
-	uint32 size = points.size();
-	if (size < 3) {
-		return false;
-	}
+	for(uint r = 0; r < regions.size(); ++r) {
+		const PointsType &points = regions[r];
+		uint32 size = points.size();
+		if (size < 3) {
+			continue;
+		}
 
-	int counter = 0;
-	double xinters;
-	dPoint p, p1, p2;
+		int counter = 0;
+		double xinters;
+		dPoint p, p1, p2;
 
-	p.x = (double)point.x;
-	p.y = (double)point.y;
+		p.x = (double)point.x;
+		p.y = (double)point.y;
 
-	p1.x = (double)points[0].x;
-	p1.y = (double)points[0].y;
+		p1.x = (double)points[0].x;
+		p1.y = (double)points[0].y;
 
-	for (uint32 i = 1; i <= size; i++) {
-		p2.x = (double)points[i % size].x;
-		p2.y = (double)points[i % size].y;
+		for (uint32 i = 1; i <= size; i++) {
+			p2.x = (double)points[i % size].x;
+			p2.y = (double)points[i % size].y;
 
-		if (p.y > MIN(p1.y, p2.y)) {
-			if (p.y <= MAX(p1.y, p2.y)) {
-				if (p.x <= MAX(p1.x, p2.x)) {
-					if (p1.y != p2.y) {
-						xinters = (p.y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y) + p1.x;
-						if (p1.x == p2.x || p.x <= xinters) {
-							counter++;
+			if (p.y > MIN(p1.y, p2.y)) {
+				if (p.y <= MAX(p1.y, p2.y)) {
+					if (p.x <= MAX(p1.x, p2.x)) {
+						if (p1.y != p2.y) {
+							xinters = (p.y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y) + p1.x;
+							if (p1.x == p2.x || p.x <= xinters) {
+								counter++;
+							}
 						}
 					}
 				}
 			}
+			p1 = p2;
 		}
-		p1 = p2;
-	}
 
-	if (counter % 2 == 0) {
-		return false;
-	} else {
-		return true;
+		if (counter % 2 == 0) {
+			continue;
+		} else {
+			return true;
+		}
 	}
+	return false;
 }
 
 } // namespace AGDS
