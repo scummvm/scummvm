@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
-"PO-Revision-Date: 2020-09-04 12:21+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2020-09-16 09:43+0000\n"
+"Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
 "Language: hu_HU\n"
@@ -185,14 +185,14 @@ msgstr ""
 "Biztos benne hogy letölti a fájlokat ebbe a könyvtárba?"
 
 #: gui/downloaddialog.cpp:215
-#, fuzzy, c-format
+#, c-format
 msgid "Downloaded %s %S / %s %S"
-msgstr "Letöltött %s %s / %s %s"
+msgstr "Letöltött %s %S / %s %S"
 
 #: gui/downloaddialog.cpp:222
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %S"
-msgstr "Letöltés sebessége: %s %s"
+msgstr "Letöltési sebesség: %s %S"
 
 #: gui/editgamedialog.cpp:135 engines/dialogs.cpp:285
 msgid "Game"
@@ -1731,14 +1731,12 @@ msgid "ScummVM could not access the directory!"
 msgstr "ScummVM nem tud hozzáférni a mappához!"
 
 #: gui/saveload-dialog.cpp:52
-#, fuzzy
 msgid "Downloading saves..."
-msgstr "Játék betöltés..."
+msgstr "Mentések letöltése ..."
 
 #: gui/saveload-dialog.cpp:61
-#, fuzzy
 msgid "Run in background"
-msgstr "Futás hátra"
+msgstr "Futás a háttérben"
 
 #: gui/saveload-dialog.cpp:343
 msgid "List view"
@@ -3228,9 +3226,8 @@ msgid "ScummVM Main Menu"
 msgstr "ScummVM Fõmenü"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:61
-#, fuzzy
 msgid "Controls"
-msgstr "Irányitás"
+msgstr "Vezérlők"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:63
 msgid "~L~eft handed mode"
@@ -3286,7 +3283,7 @@ msgstr "Fényerõ:"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:119
 msgid "General"
-msgstr ""
+msgstr "Általános"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:121
 msgid "High quality audio (slower) (reboot)"
@@ -3298,117 +3295,102 @@ msgstr "Leállítás tiltva"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:41
 msgid "DS Controls (right handed):"
-msgstr ""
+msgstr "DS vezérlők (jobbkezes):"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:42
 #: backends/platform/ds/arm9/source/scummhelp.cpp:67
 #: backends/platform/ds/arm9/source/scummhelp.cpp:76
-#, fuzzy
 msgid "Pad Left"
-msgstr "D-pad Bal"
+msgstr "Pad balra"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:42
 #: backends/platform/ds/arm9/source/scummhelp.cpp:59
-#, fuzzy
 msgid "Left mouse button"
-msgstr "Bal Egérgomb"
+msgstr "Bal egérgomb"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:43
 #: backends/platform/ds/arm9/source/scummhelp.cpp:68
 #: backends/platform/ds/arm9/source/scummhelp.cpp:77
-#, fuzzy
 msgid "Pad Right"
-msgstr "D-pad Jobb"
+msgstr "Pad Jobbra"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:43
 #: backends/platform/ds/arm9/source/scummhelp.cpp:60
-#, fuzzy
 msgid "Right mouse button"
-msgstr "Jobb Egérgomb"
+msgstr "Jobb egérgomb"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:44
 #: backends/platform/ds/arm9/source/scummhelp.cpp:66
 #: backends/platform/ds/arm9/source/scummhelp.cpp:78
-#, fuzzy
 msgid "Pad Up"
-msgstr "D-pad Fel"
+msgstr "Pad Fel"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:44
 #: backends/platform/ds/arm9/source/scummhelp.cpp:61
 msgid "Mouse hover mode (no click)"
-msgstr ""
+msgstr "Egér lebegési mód (nincs kattintás)"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:45
 #: backends/platform/ds/arm9/source/scummhelp.cpp:65
 #: backends/platform/ds/arm9/source/scummhelp.cpp:79
-#, fuzzy
 msgid "Pad Down"
-msgstr "D-pad Le"
+msgstr "Pad Le"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:45
 #: backends/platform/ds/arm9/source/scummhelp.cpp:62
 msgid "Skip dialog line (some games)"
-msgstr ""
+msgstr "Párbeszéd kihagyása (néhány játéknál)"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:46
 #: backends/platform/ds/arm9/source/scummhelp.cpp:63
-#, fuzzy
 msgid "Pause/Game menu"
-msgstr "Játék menü"
+msgstr "Szünet/Játék menü"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:47
 #: backends/platform/ds/arm9/source/scummhelp.cpp:64
-#, fuzzy
 msgid "DS Options menu"
-msgstr "Opciók menü megjelenítése"
+msgstr "DS Opciók menü"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:48
 #: backends/platform/ds/arm9/source/scummhelp.cpp:65
-#, fuzzy
 msgid "Skip cutscenes"
-msgstr "Bevezetõ átugrása"
+msgstr "Bevezetők átugrása"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:49
-#, fuzzy
 msgid "Switch screens"
-msgstr "Karakterek cseréje:"
+msgstr "Képernyők cseréje"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:50
 #: backends/platform/ds/arm9/source/scummhelp.cpp:67
-#, fuzzy
 msgid "Show/hide debug console"
-msgstr "Konzol be / ki kapcsolás"
+msgstr "Hibakereső konzol megjelenítés/elrejtés"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:51
 #: backends/platform/ds/arm9/source/scummhelp.cpp:66
-#, fuzzy
 msgid "Show/hide keyboard"
-msgstr "Billentyûzet megjelenítés"
+msgstr "Billentyűzet megjelenítés/rejtés"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:52
 #: backends/platform/ds/arm9/source/scummhelp.cpp:69
 msgid "Scroll current touch screen view"
-msgstr ""
+msgstr "Aktuális érintőképernyő nézet görgetése"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:53
 #: backends/platform/ds/arm9/source/scummhelp.cpp:70
-#, fuzzy
 msgid "Zoom in/out"
-msgstr "Kicsinyítés"
+msgstr "Nagyítás/kicsinyítés"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:58
 msgid "DS Controls (left handed):"
-msgstr ""
+msgstr "DS vezérlők (balkezes):"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:68
-#, fuzzy
 msgid "Swap screens"
-msgstr "Képernyõkép mentés"
+msgstr "Képernyők cseréje"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:75
-#, fuzzy
 msgid "Indiana Jones Fight controls:"
-msgstr "~I~ndy harc irányitás"
+msgstr "Indiana Jones Harc irányítás:"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:76
 #: engines/hdb/detection.cpp:321
@@ -3930,7 +3912,7 @@ msgstr "Visszaállítás"
 
 #: engines/agos/saveload.cpp:137
 msgid "Quick load or save game isn't supported in this location"
-msgstr ""
+msgstr "A játék gyors töltése vagy mentése nem támogatott ezen a helyen"
 
 #: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2466
 #, c-format
@@ -4508,11 +4490,11 @@ msgstr "Hiba a mentésfájl írásakor\n"
 
 #: engines/glk/hugo/hugo.cpp:183
 msgid "Incorrect rs file."
-msgstr ""
+msgstr "Helytelen rs fájl."
 
 #: engines/glk/hugo/hugo.cpp:190
 msgid "Save file created by different version."
-msgstr ""
+msgstr "Más verzióval létrehozott fájl mentés."
 
 #: engines/gob/inter_playtoons.cpp:258 engines/gob/inter_v2.cpp:1479
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:538
@@ -4530,17 +4512,15 @@ msgstr "Fájl törlés sikertelen."
 
 #: engines/griffon/detection.cpp:106
 msgid "Menu / Skip"
-msgstr ""
+msgstr "Menü / Ugrás"
 
 #: engines/griffon/detection.cpp:142
-#, fuzzy
 msgid "Attack"
-msgstr "Támadás 1"
+msgstr "Támadás"
 
 #: engines/griffon/detection.cpp:156
-#, fuzzy
 msgid "Speed Up Cutscene"
-msgstr "Bevezetõ átugrása"
+msgstr "Bevezető Átugrása"
 
 #: engines/groovie/detection.cpp:321
 msgid "Fast movie speed"
@@ -5071,7 +5051,7 @@ msgstr ""
 
 #: engines/mohawk/myst_stacks/preview.cpp:90
 msgid "You can't leave the library in the demo."
-msgstr ""
+msgstr "Nem hagyhatod el a könyvtárt a demóban."
 
 #: engines/mohawk/riven.cpp:156
 msgid ""
@@ -5314,9 +5294,8 @@ msgid "Use an alternative game intro (CD version only)"
 msgstr "Alternatív játékintro használata (csak CD verziónál)"
 
 #: engines/saga/saga.cpp:247
-#, fuzzy
 msgid "Error loading game resources."
-msgstr "Hiba a mentésfájl olvasásakor"
+msgstr "Hiba a játék erőforrások betöltésekor."
 
 #: engines/sci/detection.cpp:399
 msgid "Skip EGA dithering pass (full color backgrounds)"
@@ -5450,6 +5429,9 @@ msgid ""
 "There exists some dummy logic for now, where opponent actions are chosen "
 "randomly"
 msgstr ""
+"A Póker logikát egy külső DLL kódolja, és még nincs megvalósítva. Jelenleg "
+"van némi színlelt logika, ami az ellenfél műveleteit véletlenszerűen "
+"választja ki"
 
 #: engines/sci/engine/savegame.cpp:1407
 msgid "The format of this saved game is obsolete, unable to load it"
@@ -6436,11 +6418,12 @@ msgid ""
 "Failed to save temporary game state. Make sure your save game directory is "
 "set in ScummVM and that you can write to it."
 msgstr ""
+"Nem sikerült menteni az ideiglenes játékállást. Győződj meg arról, hogy a "
+"játékmentési könyvtár a ScummVM-ben be van-e állítva, és írhat-e rá."
 
 #: engines/supernova/supernova.cpp:828
-#, fuzzy
 msgid "Failed to load temporary game state."
-msgstr "Nem sikerült a mentett játékállás betöltése fájlból."
+msgstr "Nem sikerült az átmeneti játékállás betöltése."
 
 #: engines/supernova/detection.cpp:40
 msgid "Improved mode"
@@ -7301,6 +7284,14 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+"A játék megkezdése előtt át kell másolnod a szükséges betűtípusokat a "
+"ScummVM extrák könyvtárába, vagy a játék könyvtárába. Windows rendszeren a "
+"következő betűtípusfájlokra lesz szüksége a Windows betűtípus-könyvtárából: "
+"Times New Roman, Century Schoolbook, Garamond, Courier New and Arial. "
+"Alternatív megoldásként letöltheted a Liberation Fontokat vagy a GNU "
+"FreeFont csomagot. Szükséged lesz az összes betűtípusra a választott "
+"betűkészletből, azaz, LiberationMono, LiberationSans és LiberationSerif, "
+"vagy FreeMono, FreeSans és FreeSerif választhatóan."
 
 #~ msgid "Engine does not support debug level '%s'"
 #~ msgstr "A motor nem támogatja a '%s' debug szintet"
