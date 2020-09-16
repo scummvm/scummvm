@@ -44,6 +44,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
@@ -573,7 +574,38 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	@RequiresApi(api = Build.VERSION_CODES.KITKAT)
 	private boolean seekAndInitScummvmConfiguration() {
 
-		_actualScummVMDataDir = getExternalFilesDir(null);
+		// https://developer.android.com/reference/android/content/Context#getExternalFilesDir(java.lang.String)
+		// The returned path may change over time if the calling app is moved to an adopted storage device, so only relative paths should be persisted.
+		// Returns the absolute path to the directory on the primary shared/external storage device where the application can place persistent files it owns.
+		// These files are internal to the applications, and not typically visible to the user as media.
+		//
+		// This is like getFilesDir() in that these files will be deleted when the application is uninstalled, however there are some important differences:
+		//
+		//    - Shared storage may not always be available, since removable media can be ejected by the user. Media state can be checked using Environment#getExternalStorageState(File).
+		//    - There is no security enforced with these files. For example, any application holding Manifest.permission.WRITE_EXTERNAL_STORAGE can write to these files.
+		//
+		// If a shared storage device is emulated (as determined by Environment#isExternalStorageEmulated(File)), it's contents are backed by a private user data partition,
+		// !! which means there is little benefit to storing data here instead of the private directories returned by getFilesDir(), etc.!!
+		// TODO Maybe also make use Environment#isExternalStorageEmulated(File)) since this is not deprecated, to have more info available on storage
+		// TODO (other methods *are* deprecated -- such as getExternalStoragePublicDirectory)
+		// Starting in Build.VERSION_CODES.KITKAT, no permissions are required to read or write to the returned path; it's always accessible to the calling app.
+		// This only applies to paths generated for package name of the calling application. To access paths belonging to other packages,
+		// Manifest.permission.WRITE_EXTERNAL_STORAGE and/or Manifest.permission.READ_EXTERNAL_STORAGE are required.
+		//
+		// On devices with multiple users (as described by UserManager), each user has their own isolated shared storage. Applications only have access to the shared storage for the user they're running as.
+		//
+		// WARNING: The returned path may change over time if different shared storage media is inserted, so only relative paths should be persisted.
+		//
+		// If you supply a non-null type to this function, the returned file will be a path to a sub-directory of the given type.
+		//
+		File externalPossibleAlternateScummVMFilesDir = getExternalFilesDir(null);
+
+		// Unlike getExternalFilesDir, this is guaranteed to ALWAYS be available
+		//
+		// NOTE: It is better to just always use the internal app path anyway for ScummVM, as "_actualScummVMDataDir" that is,
+		//      to avoid issues with unavailable shared / external storage and to be (mostly) compatible with what the older versions did
+		// WARNING: The returned path may change over time if the calling app is moved to an adopted storage device, so only relative paths should be persisted.
+		_actualScummVMDataDir = getFilesDir();
 		if (_actualScummVMDataDir == null || !_actualScummVMDataDir.canRead()) {
 			new AlertDialog.Builder(this)
 				.setTitle(R.string.no_external_files_dir_access_title)
@@ -599,13 +631,13 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			}
 		}
 
-		File externalScummVMConfigDir = new File(_actualScummVMDataDir, ".config/scummvm");
-		if (!externalScummVMConfigDir.exists() && externalScummVMConfigDir.mkdirs()) {
-			Log.d(ScummVM.LOG_TAG, "Created ScummVM Config path: " + externalScummVMConfigDir.getPath());
-		} else if (externalScummVMConfigDir.isDirectory()) {
-			Log.d(ScummVM.LOG_TAG, "ScummVM Config path already exists: " + externalScummVMConfigDir.getPath());
+		File internalScummVMConfigDir = new File(_actualScummVMDataDir, ".config/scummvm");
+		if (!internalScummVMConfigDir.exists() && internalScummVMConfigDir.mkdirs()) {
+			Log.d(ScummVM.LOG_TAG, "Created ScummVM Config path: " + internalScummVMConfigDir.getPath());
+		} else if (internalScummVMConfigDir.isDirectory()) {
+			Log.d(ScummVM.LOG_TAG, "ScummVM Config path already exists: " + internalScummVMConfigDir.getPath());
 		} else {
-			Log.e(ScummVM.LOG_TAG, "Could not create folder for ScummVM Config path: " + externalScummVMConfigDir.getPath());
+			Log.e(ScummVM.LOG_TAG, "Could not create folder for ScummVM Config path: " + internalScummVMConfigDir.getPath());
 			new AlertDialog.Builder(this)
 				.setTitle(R.string.no_config_file_title)
 				.setIcon(android.R.drawable.ic_dialog_alert)
@@ -619,7 +651,23 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				.show();
 		}
 
-		// TODO search in other known places for scummvm.ini too
+		LinkedHashMap<String, File> candidateOldLocationsOfScummVMConfigMap = new LinkedHashMap<>();
+		// Note: The "missing" case below for: (scummvm.ini)) (SDL port - A) is checked above; it is the same path we store the config file for 2.3+
+		// SDL port was officially on the Play Store for versions 1.9+ up until and including 2.0)
+		// Using LinkedHashMap because the order of searching is important
+		// We want to re-use the more recent ScummVM old version too
+		// TODO try getDir too without a path? just "." ??
+		candidateOldLocationsOfScummVMConfigMap.put("(scummvm.ini) (SDL port - B)", new File(_actualScummVMDataDir, "../.config/scummvm/scummvm.ini"));
+		candidateOldLocationsOfScummVMConfigMap.put("(scummvm.ini) (SDL port - C)", new File(externalPossibleAlternateScummVMFilesDir, ".config/scummvm/scummvm.ini"));
+		candidateOldLocationsOfScummVMConfigMap.put("(scummvm.ini) (SDL port - D)", new File(externalPossibleAlternateScummVMFilesDir, "../.config/scummvm/scummvm.ini"));
+		candidateOldLocationsOfScummVMConfigMap.put("(scummvmrc) (version 1.8.1- or PlayStore 2.1.0) - Internal", new File(_actualScummVMDataDir, "scummvmrc"));
+		candidateOldLocationsOfScummVMConfigMap.put("(scummvmrc) (version 1.8.1- or PlayStore 2.1.0) - External", new File(externalPossibleAlternateScummVMFilesDir, "scummvmrc"));
+		candidateOldLocationsOfScummVMConfigMap.put("(.scummvmrc) (POSIX conformance) - Internal", new File(_actualScummVMDataDir, ".scummvmrc"));
+		candidateOldLocationsOfScummVMConfigMap.put("(.scummvmrc) (POSIX conformance) - External", new File(externalPossibleAlternateScummVMFilesDir, ".scummvmrc"));
+
+		boolean scummVMConfigHandled = false;
+		Version maxOldVersionFound = new Version("0"); // dummy initializer
+
 		_configScummvmFile = new File(_actualScummVMDataDir, "scummvm.ini");
 		try {
 			if (_configScummvmFile.exists() || !_configScummvmFile.createNewFile()) {
@@ -628,26 +676,61 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				String existingVersionInfo = getVersionInfoFromScummvmConfiguration(_configScummvmFile.getPath());
 				if (!"".equals(existingVersionInfo.trim())) {
 					Log.d(ScummVM.LOG_TAG, "Existing ScummVM Version: " + existingVersionInfo.trim());
-				} else {
-					Log.d(ScummVM.LOG_TAG, "Could not find info on existing ScummVM version. Old or corrupt file?");
-				}
-			} else {
-				Log.d(ScummVM.LOG_TAG, "ScummVM Config file was created!");
-				Log.d(ScummVM.LOG_TAG, "New ScummVM INI: " + _configScummvmFile.getPath());
-				// if there was an old scummvmrc file (old config file), then copy that over the empty new scummvm.ini
-				File oldScummVMconfig = getFileStreamPath("scummvmrc");
-				if (!oldScummVMconfig.exists()) {
-					Log.d(ScummVM.LOG_TAG, "Old config (scummvmrc) ScummVM file was not found!");
-				} else {
-					Log.d(ScummVM.LOG_TAG, "Old config (scummvmrc) ScummVM file was found!");
-					String existingVersionInfo = getVersionInfoFromScummvmConfiguration(_configScummvmFile.getPath());
-					if (!"".equals(existingVersionInfo.trim())) {
-						Log.d(ScummVM.LOG_TAG, "Existing ScummVM Version: " + existingVersionInfo.trim());
-					} else {
-						Log.d(ScummVM.LOG_TAG, "Could not find info on existing ScummVM version. Old or corrupt file?");
+					Version tmpOldVersionFound = new Version(existingVersionInfo.trim());
+					if (tmpOldVersionFound.compareTo(maxOldVersionFound) > 0) {
+						maxOldVersionFound = tmpOldVersionFound;
+						scummVMConfigHandled = false; // invalidate the handled flag
 					}
-					copyFileUsingStream(oldScummVMconfig, _configScummvmFile);
-					Log.d(ScummVM.LOG_TAG, "Old config (scummvmrc) ScummVM file was renamed and overwrote the new (empty) scummvm.ini");
+				} else {
+					Log.d(ScummVM.LOG_TAG, "Could not find info on existing ScummVM version. Unsupported or corrupt file?");
+				}
+				scummVMConfigHandled = true;
+			} else {
+				Log.d(ScummVM.LOG_TAG, "An empty ScummVM config file was created!");
+				Log.d(ScummVM.LOG_TAG, "New ScummVM INI: " + _configScummvmFile.getPath());
+			}
+
+			//
+			// NOTE: Android app's version number (in build.gradle) avoids the need to check against "upgrading" to a lower version,
+			//       since Android will not allow that and will force the user to uninstall first any current higher version.
+
+			// Do an exhaustive search to discover all old configs in order to:
+			// - find a useable / recent existing one that we might want to upgrade from
+			// - remove them as old remnants and avoid re-checking / re-using them in a subsequent installation
+			for (String oldConfigFiledescription : candidateOldLocationsOfScummVMConfigMap.keySet()) {
+				File oldCandidateScummVMConfig = candidateOldLocationsOfScummVMConfigMap.get(oldConfigFiledescription);
+				Log.d(ScummVM.LOG_TAG, "Looking for old config " + oldConfigFiledescription + " ScummVM file...");
+				Log.d(ScummVM.LOG_TAG, "at Path: " + oldCandidateScummVMConfig.getPath() + "...");
+				if (oldCandidateScummVMConfig.exists() && oldCandidateScummVMConfig.isFile()) {
+					Log.d(ScummVM.LOG_TAG, "Old config " + oldConfigFiledescription + " ScummVM file was found!");
+					String existingVersionInfo = getVersionInfoFromScummvmConfiguration(oldCandidateScummVMConfig.getPath());
+					if (!"".equals(existingVersionInfo.trim())) {
+						Log.d(ScummVM.LOG_TAG, "Old config's ScummVM version: " + existingVersionInfo.trim());
+						Version tmpOldVersionFound = new Version(existingVersionInfo.trim());
+						if (tmpOldVersionFound.compareTo(maxOldVersionFound) > 0) {
+							maxOldVersionFound = tmpOldVersionFound;
+							scummVMConfigHandled = false; // invalidate the handled flag, since we found a new great(er) version so we should re-use that one
+						}
+					} else {
+						Log.d(ScummVM.LOG_TAG, "Could not find info on the old config's ScummVM version. Unsupported or corrupt file?");
+					}
+					if (!scummVMConfigHandled) {
+						// We copy the old file over the new one.
+						// This will happen once during this installation, but on a subsequent one it will again copy that old config file
+						// if we don't remove it
+						copyFileUsingStream(oldCandidateScummVMConfig, _configScummvmFile);
+						Log.d(ScummVM.LOG_TAG, "Old config " + oldConfigFiledescription + " ScummVM file was renamed and overwrote the new (empty) scummvm.ini");
+						scummVMConfigHandled = true;
+					}
+
+					// Here we remove the old config
+					if (oldCandidateScummVMConfig.delete()) {
+						Log.d(ScummVM.LOG_TAG, "The old config " + oldConfigFiledescription + " ScummVM file is now deleted!");
+					} else {
+						Log.d(ScummVM.LOG_TAG, "Failed to delete the old config " + oldConfigFiledescription + " ScummVM file!");
+					}
+				} else {
+					Log.d(ScummVM.LOG_TAG, "...not found!");
 				}
 			}
 		} catch(Exception e) {
@@ -665,6 +748,11 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				.show();
 		}
 
+		if (maxOldVersionFound.compareTo(new Version("0")) != 0) {
+			Log.d(ScummVM.LOG_TAG, "Maximum ScummVM version found and (re)used is: " + maxOldVersionFound.getDescription() +" (" + maxOldVersionFound.get() +")");
+		} else {
+			Log.d(ScummVM.LOG_TAG, "No viable existing ScummVM config version found");
+		}
 
 		// Set global savepath
 		// TODO what if the old save-game path is no longer accessible (due to missing SD card, or newer Android API/OS version more strict restrictions)
