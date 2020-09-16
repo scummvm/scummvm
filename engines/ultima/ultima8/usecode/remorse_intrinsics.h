@@ -60,7 +60,7 @@ Intrinsic RemorseIntrinsics[] = {
 	AudioProcess::I_playSFXCru,
 	Item::I_getShape,
 	Item::I_explode, // void Intrinsic017(8 bytes)
-	UCMachine::I_rndRange, // int16 Intrinsic018(4 bytes) // probably.. always called with 2 constants, then result compared to some number between
+	UCMachine::I_rndRange, // int16 Intrinsic018(4 bytes)
 	Item::I_legalCreateAtCoords, // byte Intrinsic019(14 bytes)
 	Item::I_andStatus, // void Intrinsic01A(6 bytes)
 	World::I_getControlledNPCNum,  // int16 Intrinsic01B(void)

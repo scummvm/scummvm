@@ -680,8 +680,12 @@ uint16 Actor::setActivityCru(int activity) {
 	case 0xb:
 	case 0xc:
 		// attack
-	   setInCombat();
-	   return 0;
+		setInCombat();
+		return 0;
+	case 0xd:
+		// Only in No Regret
+		perr << "Actor::setActivityCru: TODO: RollingThunderProcess (" << activity << ")";
+		return doAnim(Animation::stand, dir_current);
 	case 0x70:
 		return setActivity(getDefaultActivity(0));
 	case 0x71:
