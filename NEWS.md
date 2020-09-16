@@ -9,6 +9,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Supernova:
    - Added Italian translation for part 1.
 
+ Xeen:
+   - Fixed occasional border corruption during fights
+
 #### 2.2.0 (2020-09-27)
 
  New games:

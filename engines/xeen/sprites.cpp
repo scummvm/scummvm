@@ -361,8 +361,10 @@ void SpriteDrawer::draw(XSurface &dest, uint16 offset, const Common::Point &pt,
 
 			// Handle drawing out the line
 			byte *destP = (byte *)dest.getBasePtr(destPos.x, destPos.y);
-			_destLeft = (byte *)dest.getBasePtr(clipRect.left, destPos.y);
-			_destRight = (byte *)dest.getBasePtr(clipRect.right, destPos.y);
+			_destLeft = (byte *)dest.getBasePtr(
+				(flags & SPRFLAG_SCENE_CLIPPED) ? SCENE_CLIP_LEFT : clipRect.left, destPos.y);
+			_destRight = (byte *)dest.getBasePtr(
+				(flags & SPRFLAG_SCENE_CLIPPED) ? SCENE_CLIP_RIGHT : clipRect.right, destPos.y);
 			int16 xp = destPos.x;
 			lineP = &tempLine[SCREEN_WIDTH];
 
