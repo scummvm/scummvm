@@ -227,6 +227,8 @@ private:
 	void onObjectB9(unsigned size);
 	void onObjectBD(unsigned size);
 	void onObjectUse(unsigned size);
+	void onObjectUserUse(unsigned size);
+
 
 	void stub82();
 	void stub83();
@@ -255,7 +257,6 @@ private:
 	void stub199();
 	void stub201(unsigned size);
 	void stub202(unsigned size);
-	void stub209(unsigned size);
 	void stub215();
 	void stub216();
 	void stub217();

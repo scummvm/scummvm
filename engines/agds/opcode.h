@@ -226,7 +226,7 @@ enum Opcode {
 	kModifyMouseArea				= 206,
 	kSetRain						= 207,
 	kFogOnCharacter					= 208,
-	kStub209						= 209,
+	kObjectRegisterUserUseHandler	= 209,
 	kStub210						= 210,
 	kStub211						= 211,
 	kSetSampleVolumeAndPan			= 212,
