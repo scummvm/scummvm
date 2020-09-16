@@ -127,6 +127,10 @@ public:
 		return _inventory;
 	}
 
+	Dialog & dialog() {
+		return _dialog;
+	}
+
 	Screen * getCurrentScreen() {
 		return _currentScreen;
 	}
@@ -195,9 +199,7 @@ public:
 	void runDialog(const Common::String &dialogProcess) {
 		_dialog.run(dialogProcess);
 	}
-	void loadDialog(const Common::String &dialogScript, const Common::String & defs) {
-		_dialog.load(dialogScript, defs);
-	}
+
 	void tickInventory();
 
 	void playSound(const Common::String &resource, const Common::String &phaseVar) {

@@ -907,9 +907,15 @@ void Process::loadDialog() {
 	arg2 = _engine->loadText(arg2);
 	arg3 = _engine->loadText(arg3);
 
-	_engine->loadDialog(arg2, arg3);
+	_engine->dialog().load(arg2, arg3);
 
 	suspend(kExitCodeRunDialog, arg1);
+}
+
+void Process::setNPCTellNotifyVar() {
+	Common::String name = popString();
+	debug("setNPCTellNotifyVar %s", name.c_str());
+	_engine->dialog().setNPCNotifyVar(name);
 }
 
 void Process::getObjectPictureWidth() {
@@ -1524,6 +1530,7 @@ ProcessExitCode Process::resume() {
 			OP(kLeaveCharacterEx, leaveCharacterEx);
 			OP(kPlayAnimationWithPhaseVar, playAnimationWithPhaseVar);
 			OP(kStub223, stub223);
+			OP(kSetNPCTellNotifyVar, setNPCTellNotifyVar);
 			OP(kStub225, stub225);
 			OP(kFadeObject, fadeObject);
 			OP(kLoadFont, loadFont);
