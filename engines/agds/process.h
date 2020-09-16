@@ -182,7 +182,7 @@ private:
 	void setDialogForNextFilm();
 	void npcSay();
 	void playerSay();
-	void runDialog();
+	void loadDialog();
 	void setObjectText();
 
 	void getRandomNumber();
