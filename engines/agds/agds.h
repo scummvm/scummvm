@@ -31,6 +31,7 @@
 #include "engines/advancedDetector.h"
 #include "agds/soundManager.h"
 #include "agds/database.h"
+#include "agds/dialog.h"
 #include "agds/inventory.h"
 #include "agds/mouseMap.h"
 #include "agds/processExitCode.h"
@@ -192,10 +193,11 @@ public:
 	}
 
 	void runDialog(const Common::String &dialogProcess) {
-		_dialogProcessName = dialogProcess;
+		_dialog.run(dialogProcess);
 	}
-	void runDialog(const Common::String &dialogScript, const Common::String & defs);
-	bool tickDialog();
+	void loadDialog(const Common::String &dialogScript, const Common::String & defs) {
+		_dialog.load(dialogScript, defs);
+	}
 	void tickInventory();
 
 	void playSound(const Common::String &resource, const Common::String &phaseVar) {
@@ -211,7 +213,6 @@ public:
 	}
 
 private:
-	void parseDialogDefs(const Common::String &defs);
 	void loadPatches(Common::SeekableReadStream *file, Database & db);
 
 	typedef Common::HashMap<int, Graphics::TransparentSurface *> PictureCacheType;
@@ -223,7 +224,6 @@ private:
 	typedef Common::HashMap<Common::String, Animation *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> AnimationsType;
 	typedef Common::HashMap<Common::String, Character *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> CharactersType;
 	typedef Common::HashMap<int, Font *> FontsType;
-	typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> DialogDefsType;
 	typedef Common::HashMap<Common::String, PatchPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> PatchesType;
 
 	const ADGameDescription *	_gameDescription;
@@ -259,11 +259,8 @@ private:
 	Inventory					_inventory;
 	Common::String				_inventoryRegionName;
 	RegionPtr					_inventoryRegion;
+	Dialog						_dialog;
 	bool						_fastMode;
-	DialogDefsType				_dialogDefs;
-	Common::String				_dialogScript;
-	uint32						_dialogScriptPos;
-	Common::String				_dialogProcessName;
 };
 
 

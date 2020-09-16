@@ -899,15 +899,15 @@ void Process::playerSay() {
 	//close inventory here if close flag was set
 }
 
-void Process::runDialog() {
+void Process::loadDialog() {
 	Common::String arg3 = popString();
 	Common::String arg2 = popString();
 	Common::String arg1 = popString();
-	debug("runDialog %s %s %s", arg1.c_str(), arg2.c_str(), arg3.c_str());
+	debug("loadDialog %s %s %s", arg1.c_str(), arg2.c_str(), arg3.c_str());
 	arg2 = _engine->loadText(arg2);
 	arg3 = _engine->loadText(arg3);
 
-	_engine->runDialog(arg2, arg3);
+	_engine->loadDialog(arg2, arg3);
 
 	suspend(kExitCodeRunDialog, arg1);
 }
@@ -1547,7 +1547,7 @@ ProcessExitCode Process::resume() {
 			OP(kUserEnabled, userEnabled);
 			OP(kStub244, stub244);
 			OP(kInventoryFindObjectByName, inventoryFindObjectByName);
-			OP(kRunDialog, runDialog);
+			OP(kLoadDialog, loadDialog);
 			OP(kHasGlobal, hasGlobal);
 			OP(kSetDialogForNextFilm, setDialogForNextFilm);
 		default:
