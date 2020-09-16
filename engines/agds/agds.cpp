@@ -254,8 +254,10 @@ void AGDSEngine::newGame() {
 }
 
 void AGDSEngine::tick() {
-	if (_dialog.tick())
+	if (_dialog.tick()) {
+		runProcesses();
 		return;
+	}
 	tickInventory();
 	runProcesses();
 }
