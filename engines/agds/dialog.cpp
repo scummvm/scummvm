@@ -8,6 +8,7 @@ namespace AGDS {
 
 void Dialog::run(const Common::String & dialogProcess) {
 	_dialogProcessName = dialogProcess;
+	_engine->runObject(dialogProcess);
 }
 
 void Dialog::parseDialogDefs(const Common::String &defs) {
