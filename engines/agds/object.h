@@ -73,6 +73,7 @@ private:
 	Common::String					_text;
 	uint							_clickHandler;
 	uint							_examineHandler;
+	uint							_userUseHandler;
 	int								_alpha;
 	bool							_inScene;
 
@@ -151,6 +152,10 @@ public:
 
 	void setUseHandler(const Common::String &name, uint ip) {
 		_useHandlers[name] = ip;
+	}
+
+	void setUserUseHandler(uint ip) {
+		_userUseHandler = ip;
 	}
 
 	void paint(AGDSEngine &engine, Graphics::Surface &backbuffer);

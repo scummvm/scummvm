@@ -481,6 +481,12 @@ void Process::onObjectUse(unsigned size) {
 	_ip += size;
 }
 
+void Process::onObjectUserUse(unsigned size) {
+	debug("register user use handler %u", _ip);
+	_object->setUserUseHandler(_ip);
+	_ip += size;
+}
+
 void Process::setScreenHeight() {
 	int arg2 = pop();
 	int arg1 = pop();
@@ -717,11 +723,6 @@ void Process::stub201(unsigned size) {
 
 void Process::stub202(unsigned size) {
 	debug("stub202, [handler] %u instructions", size);
-	_ip += size;
-}
-
-void Process::stub209(unsigned size) {
-	debug("stub209, [handler] %u instructions", size);
 	_ip += size;
 }
 
@@ -1536,7 +1537,7 @@ ProcessExitCode Process::resume() {
 			OP(kFogOnCharacter, fogOnCharacter);
 			OP(kSetTileIndex, setTileIndex);
 			OP(kModifyMouseArea, modifyMouseArea);
-			OP_U(kStub209, stub209);
+			OP_U(kObjectRegisterUserUseHandler, onObjectUserUse);
 			OP_I(kMoveCharacterNoUserMove, moveCharacter, false);
 			OP_U(kOnKey, onKey);
 			OP(kGetSampleVolume, getSampleVolume);
