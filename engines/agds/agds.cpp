@@ -702,10 +702,16 @@ void AGDSEngine::tickInventory() {
 	}
 
 	const Common::String &inv_region_name = getSystemVariable("inv_region")->getString();
-	if (inv_region_name.empty())
-		return;
+	if (!inv_region_name.empty()) {
+		if (!_inventoryRegion || _inventoryRegionName != inv_region_name) {
+			_inventoryRegionName = inv_region_name;
+			_inventoryRegion = loadRegion(inv_region_name);
+		}
+	} else {
+		_inventoryRegionName.clear();
+		_inventoryRegion.reset();
+	}
 
-	_inventoryRegion = loadRegion(inv_region_name);
 }
 
 bool AGDSEngine::tickDialog() {

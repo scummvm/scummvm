@@ -257,6 +257,7 @@ private:
 	MouseMap					_mouseMap;
 	Common::RandomSource		_random;
 	Inventory					_inventory;
+	Common::String				_inventoryRegionName;
 	RegionPtr					_inventoryRegion;
 	bool						_fastMode;
 	DialogDefsType				_dialogDefs;
