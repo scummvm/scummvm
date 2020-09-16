@@ -41,11 +41,27 @@ private:
 	uint32						_dialogScriptPos;
 	Common::String				_dialogProcessName;
 
+	Common::String				_charNotifyVar;
+	Common::String				_charDirectionNotifyVar;
+	Common::String				_npcNotifyVar;
+
 	void parseDialogDefs(const Common::String &defs);
 
 public:
 	Dialog(AGDSEngine *engine): _engine(engine), _dialogScriptPos(0) { }
 	void run(const Common::String &dialogProcess);
+
+	void setCharNotifyVar(const Common::String &name) {
+		_charNotifyVar = name;
+	}
+
+	void setCharDirectionNotifyVar(const Common::String &name) {
+		_charDirectionNotifyVar = name;
+	}
+
+	void setNPCNotifyVar(const Common::String &name) {
+		_npcNotifyVar = name;
+	}
 
 	void load(const Common::String &dialogScript, const Common::String & defs);
 	bool tick();

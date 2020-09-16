@@ -184,6 +184,7 @@ private:
 	void playerSay();
 	void loadDialog();
 	void setObjectText();
+	void setNPCTellNotifyVar();
 
 	void getRandomNumber();
 	void setStringSystemVariable();
