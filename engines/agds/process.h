@@ -271,7 +271,7 @@ private:
 	void stub233();
 	void stub235();
 	void userEnabled();
-	void stub244();
+	void setCharacterNotifyVars();
 	void debug(const char *str, ...);
 	void error(const char *str, ...);
 

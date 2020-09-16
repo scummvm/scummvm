@@ -241,7 +241,7 @@ enum Opcode {
 	kPlayAnimationWithPhaseVar		= 221,
 	kStub222						= 222,
 	kStub223						= 223,
-	kStub224						= 224,
+	kSetNPCTellNotifyVar			= 224,
 	kStub225						= 225,
 	kFadeObject						= 226,
 	kLoadFont						= 227,
@@ -261,7 +261,7 @@ enum Opcode {
 	kStub241						= 241,
 	kHasGlobal						= 242,
 	kStub243						= 243,
-	kStub244						= 244,
+	kSetCharacterNotifyVars			= 244,
 	kStub245						= 245,
 	kStub246						= 246,
 	kSetDialogForNextFilm			= 247
