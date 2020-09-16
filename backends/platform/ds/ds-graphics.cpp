@@ -335,7 +335,7 @@ void OSystem_DS::initGraphics() {
 	oamInit(&oamMain, SpriteMapping_Bmp_1D_128, false);
 	_cursorSprite = oamAllocateGfx(&oamMain, SpriteSize_64x64, SpriteColorFormat_Bmp);
 
-	_overlay.create(256, 192, Graphics::PixelFormat(2, 5, 5, 5, 1, 0, 5, 10, 15));
+	_overlay.create(256, 192, _pfABGR1555);
 }
 
 bool OSystem_DS::hasFeature(Feature f) {
@@ -607,31 +607,52 @@ void OSystem_DS::warpMouse(int x, int y) {
 }
 
 void OSystem_DS::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, u32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
-	if (!buf || w == 0 || h == 0 || (format && *format != Graphics::PixelFormat::createFormatCLUT8()))
+	if (!buf || w == 0 || h == 0)
 		return;
 
-	if (_cursor.w != w || _cursor.h != h)
-		_cursor.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
-	_cursor.copyRectToSurface(buf, w, 0, 0, w, h);
+	Graphics::PixelFormat actualFormat = format ? *format : _pfCLUT8;
+	if (_cursor.w != w || _cursor.h != h || _cursor.format != actualFormat)
+		_cursor.create(w, h, actualFormat);
+	_cursor.copyRectToSurface(buf, w * actualFormat.bytesPerPixel, 0, 0, w, h);
 	_cursorHotX = hotspotX;
 	_cursorHotY = hotspotY;
 	_cursorKey = keycolor;
+
+	if (actualFormat != _pfCLUT8 && actualFormat != _pfABGR1555) {
+		uint8 a, r, g, b;
+		actualFormat.colorToARGB(_cursorKey, a, r, g, b);
+		_cursorKey = _pfABGR1555.ARGBToColor(a, r, g, b);
+		_cursor.convertToInPlace(_pfABGR1555);
+	}
+
 	refreshCursor(_cursorSprite, _cursor, !_disableCursorPalette ? _cursorPalette : _palette);
 }
 
 void OSystem_DS::refreshCursor(u16 *dst, const Graphics::Surface &src, const uint16 *palette) {
-	uint w = MIN<uint>(src.w, 64);
-	uint h = MIN<uint>(src.h, 64);
+	const uint w = MIN<uint>(src.w, 64);
+	const uint h = MIN<uint>(src.h, 64);
 
 	dmaFillHalfWords(0, dst, 64 * 64 * 2);
 
-	for (uint y = 0; y < h; y++) {
-		const uint8 *row = (const uint8 *)src.getBasePtr(0, y);
-		for (uint x = 0; x < w; x++) {
-			uint8 color = *row++;
+	if (src.format == _pfCLUT8) {
+		for (uint y = 0; y < h; y++) {
+			const uint8 *row = (const uint8 *)src.getBasePtr(0, y);
+			for (uint x = 0; x < w; x++) {
+				uint8 color = *row++;
 
-			if (color != _cursorKey)
-				dst[y * 64 + x] = palette[color] | 0x8000;
+				if (color != _cursorKey)
+					dst[y * 64 + x] = palette[color] | 0x8000;
+			}
+		}
+	} else {
+		for (uint y = 0; y < h; y++) {
+			const uint16 *row = (const uint16 *)src.getBasePtr(0, y);
+			for (uint x = 0; x < w; x++) {
+				uint16 color = *row++;
+
+				if (color != _cursorKey)
+					dst[y * 64 + x] = color;
+			}
 		}
 	}
 }

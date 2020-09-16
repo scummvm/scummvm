@@ -51,7 +51,7 @@ protected:
 	Common::Point _cursorPos;
 	int _cursorHotX;
 	int _cursorHotY;
-	byte _cursorKey;
+	uint32 _cursorKey;
 	bool _cursorVisible;
 
 	DSEventSource *_eventSource;
@@ -60,6 +60,8 @@ protected:
 
 	Graphics::Surface *createTempFrameBuffer();
 	bool _disableCursorPalette;
+
+	const Graphics::PixelFormat _pfCLUT8, _pfABGR1555;
 
 public:
 	OSystem_DS();
