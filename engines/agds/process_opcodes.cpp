@@ -1292,14 +1292,13 @@ void Process::stub235() {
 		suspend();
 }
 
-void Process::stub244() {
+void Process::setCharacterNotifyVars() {
 	Common::String arg2 = popString();
 	Common::String arg1 = popString();
 
-	debug("stub244 [text tell status?] %s %s", arg1.c_str(), arg2.c_str());
-	_engine->setGlobal(arg1, 1);
-	_engine->setGlobal(arg2, 1);
-	_engine->getSystemVariable("dialog_var")->setInteger(1);
+	debug("setCharacterNotifyVars, tell: %s, direction: %s", arg1.c_str(), arg2.c_str());
+	_engine->setGlobal(arg1, 0);
+	_engine->setGlobal(arg2, 1); //FIXME: pass current direction
 }
 
 //fixme: add trace here
@@ -1545,7 +1544,7 @@ ProcessExitCode Process::resume() {
 			OP(kStub233, stub233);
 			OP(kStub235, stub235);
 			OP(kUserEnabled, userEnabled);
-			OP(kStub244, stub244);
+			OP(kSetCharacterNotifyVars, setCharacterNotifyVars);
 			OP(kInventoryFindObjectByName, inventoryFindObjectByName);
 			OP(kLoadDialog, loadDialog);
 			OP(kHasGlobal, hasGlobal);
