@@ -743,9 +743,7 @@ protected:
 	ImagesMap _bitmaps;
 	AImagesMap _abitmaps;
 	Graphics::PixelFormat _overlayFormat;
-#ifdef USE_RGB_COLOR
 	Graphics::PixelFormat _cursorFormat;
-#endif
 
 	/** List of all the dirty screens that must be blitted to the overlay. */
 	Common::List<Common::Rect> _dirtyScreen;
@@ -762,13 +760,16 @@ protected:
 
 	bool _useCursor;
 	int _cursorHotspotX, _cursorHotspotY;
+	uint32 _cursorTransparent;
+	byte *_cursor;
+	uint _cursorWidth, _cursorHeight;
+#ifndef USE_RGB_COLOR
 	enum {
 		MAX_CURS_COLORS = 255
 	};
-	byte *_cursor;
-	uint _cursorWidth, _cursorHeight;
 	byte _cursorPal[3 * MAX_CURS_COLORS];
 	byte _cursorPalSize;
+#endif
 
 	Common::Rect _clip;
 };
