@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
 "PO-Revision-Date: 2020-09-17 11:44+0000\n"
-"Last-Translator: Aryan Rawlani <aryanrawlani007@gmail.com>\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hi/>\n"
 "Language: hi\n"
@@ -667,7 +667,7 @@ msgstr ""
 
 #: gui/launcher.cpp:144
 msgid "~S~tart"
-msgstr ""
+msgstr "शुरू(S)"
 
 #: gui/launcher.cpp:144
 msgid "Start selected game"
