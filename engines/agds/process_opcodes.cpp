@@ -145,6 +145,7 @@ void Process::loadSample() {
 		return;
 	}
 	_engine->playSound(name, _phaseVar);
+	suspend();
 }
 
 void Process::getSampleVolume() {
@@ -884,19 +885,26 @@ void Process::setDialogForNextFilm() {
 	debug("setDialogForNextFilm %d", value);
 }
 
-void Process::npcSay() {
-	debug("npcSay -> playerSay");
-	playerSay();
-}
-
-void Process::playerSay() {
+void Process::tell(bool npc) {
 	Common::String sound = popText();
-	Common::String arg2 = popText();
-	Common::String arg1 = popString();
-	debug("playerSay '%s' '%s' '%s'", arg1.c_str(), arg2.c_str(), sound.c_str());
+	Common::String text = popText();
+	Common::String region = popString();
+	debug("%s '%s' '%s' '%s'", npc? "npcSay": "playerSay", region.c_str(), text.c_str(), sound.c_str());
+	_engine->tell(region, text, sound, npc);
+
 	if (!sound.empty())
 		_engine->playSound(sound, _phaseVar);
 	//close inventory here if close flag was set
+	Common::String inventoryClose = _engine->getSystemVariable("inv_close")->getString();
+	suspend(!inventoryClose.empty()? kExitCodeCloseInventory: kExitCodeSuspend);
+}
+
+void Process::npcSay() {
+	tell(true);
+}
+
+void Process::playerSay() {
+	tell(false);
 }
 
 void Process::loadDialog() {

@@ -155,6 +155,10 @@ void Process::run() {
 			_engine->inventory().add(_engine->loadObject(getExitArg1()));
 			activate();
 			break;
+		case kExitCodeCloseInventory:
+			_engine->inventory().enable(false);
+			updateWithCurrentMousePosition();
+			break;
 		case kExitCodeSuspend:
 			updateWithCurrentMousePosition();
 			break;

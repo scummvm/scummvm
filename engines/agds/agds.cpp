@@ -595,6 +595,10 @@ void AGDSEngine::addSystemVar(const Common::String &name, SystemVariable *var) {
 	_systemVars[name] = var;
 }
 
+void AGDSEngine::tell(const Common::String &region, const Common::String &text, const Common::String &sound, bool npc) {
+
+}
+
 
 void AGDSEngine::initSystemVariables() {
 	addSystemVar("inventory_scr", new StringSystemVariable());
