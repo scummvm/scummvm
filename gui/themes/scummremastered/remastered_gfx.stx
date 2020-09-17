@@ -130,7 +130,7 @@
 		<font	id = 'text_default'
 				file = 'helvb12.bdf'>
 				<!-- Add these in order of priority. First match is used -->
-				<language id = 'jp'  scalable_file = 'NotoSansJP-Bold.otf'/>
+				<language id = 'ja'  scalable_file = 'NotoSansJP-Bold.otf'/>
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Bold.otf'/>
 				<language id = 'zh*' scalable_file = 'NotoSansTC-Bold.otf'/>
 				<language id = 'hi'  scalable_file = 'NotoSans-Bold.ttf'/>
@@ -140,7 +140,7 @@
 				id = 'text_default'
 				file = 'clR6x12.bdf'
 				point_size = '11'>
-				<language id = 'jp'  scalable_file = 'NotoSansJP-Regular.otf'/>
+				<language id = 'ja'  scalable_file = 'NotoSansJP-Regular.otf'/>
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Regular.otf'/>
 				<language id = 'zh*' scalable_file = 'NotoSansTC-Regular.otf'/>
 				<language id = 'hi'  scalable_file = 'NotoSans-Regular.ttf'/>
@@ -148,7 +148,7 @@
 		</font>
 		<font	id = 'text_button'
 				file = 'helvb12.bdf'>
-				<language id = 'jp'  scalable_file = 'NotoSansJP-Bold.otf'/>
+				<language id = 'ja'  scalable_file = 'NotoSansJP-Bold.otf'/>
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Bold.otf'/>
 				<language id = 'zh*' scalable_file = 'NotoSansTC-Bold.otf'/>
 				<language id = 'hi'  scalable_file = 'NotoSans-Bold.ttf'/>
@@ -158,7 +158,7 @@
 				id = 'text_button'
 				file = 'clR6x12.bdf'
 				point_size = '11'>
-				<language id = 'jp'  scalable_file = 'NotoSansJP-Regular.otf'/>
+				<language id = 'ja'  scalable_file = 'NotoSansJP-Regular.otf'/>
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Regular.otf'/>
 				<language id = 'zh*' scalable_file = 'NotoSansTC-Regular.otf'/>
 				<language id = 'hi'  scalable_file = 'NotoSans-Regular.ttf'/>
@@ -166,7 +166,7 @@
 		</font>
 		<font	id = 'text_normal'
 				file = 'helvb12.bdf'>
-				<language id = 'jp'  scalable_file = 'NotoSansJP-Regular.otf'/>
+				<language id = 'ja'  scalable_file = 'NotoSansJP-Regular.otf'/>
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Regular.otf'/>
 				<language id = 'zh*' scalable_file = 'NotoSansTC-Regular.otf'/>
 				<language id = 'hi'  scalable_file = 'NotoSans-Regular.ttf'/>
@@ -176,7 +176,7 @@
 				id = 'text_normal'
 				file = 'clR6x12.bdf'
 				point_size = '11'>
-				<language id = 'jp'  scalable_file = 'NotoSansJP-Regular.otf'/>
+				<language id = 'ja'  scalable_file = 'NotoSansJP-Regular.otf'/>
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Regular.otf'/>
 				<language id = 'zh*' scalable_file = 'NotoSansTC-Regular.otf'/>
 				<language id = 'hi'  scalable_file = 'NotoSans-Regular.ttf'/>
@@ -185,7 +185,7 @@
 		<font	id = 'tooltip_normal'
 				file = 'clR6x12.bdf'
 				point_size = '11'>
-				<language id = 'jp'  scalable_file = 'NotoSansJP-Regular.otf'/>
+				<language id = 'ja'  scalable_file = 'NotoSansJP-Regular.otf'/>
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Regular.otf'/>
 				<language id = 'zh*' scalable_file = 'NotoSansTC-Regular.otf'/>
 				<language id = 'hi'  scalable_file = 'NotoSans-Regular.ttf'/>
