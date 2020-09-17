@@ -206,6 +206,8 @@ public:
 		_soundManager.play(resource, phaseVar);
 	}
 
+	void tell(const Common::String &region, const Common::String &text, const Common::String &sound, bool npc);
+
 	bool fastMode() const {
 		return _fastMode;
 	}

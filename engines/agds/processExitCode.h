@@ -38,6 +38,7 @@ namespace AGDS {
 		kExitCodeCreatePatchLoadResources		= 13,
 		kExitCodeLoadSaveGame					= 14,
 		kExitCodeExitScreen						= 15,
+		kExitCodeCloseInventory					= 16,
 
 		kExitCodeLoadPreviousScreenObject		= 99
 	};

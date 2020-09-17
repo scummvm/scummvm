@@ -182,6 +182,7 @@ private:
 	void setDialogForNextFilm();
 	void npcSay();
 	void playerSay();
+	void tell(bool npc);
 	void loadDialog();
 	void setObjectText();
 	void setNPCTellNotifyVar();
