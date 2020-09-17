@@ -290,7 +290,7 @@ void Music::setVolume(int volume, int time) {
 }
 
 bool Music::isPlaying() {
-	
+
 	return _mixer->isSoundHandleActive(_musicHandle) || (_player ? _player->isPlaying() : false) || (_playerPC98 ? _playerPC98->musicPlaying() : false);
 }
 
@@ -314,7 +314,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		_player->stop();
 	if (_playerPC98)
 		_playerPC98->reset();
-	
+
 	int realTrackNumber = 0;
 
 	if (_vm->getGameId() == GID_ITE) {
@@ -364,7 +364,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 					byte musicFlags = Audio::FLAG_STEREO |
 										Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
 
-					if (_vm->isBigEndian())
+					if (_vm->isBigEndian() || (_vm->getFeatures() & GF_SOME_MAC_RESOURCES))
 						musicFlags &= ~Audio::FLAG_LITTLE_ENDIAN;
 
 					// The newer ITE Mac demo version contains a music file, but it has mono music.
