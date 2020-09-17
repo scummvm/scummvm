@@ -115,7 +115,7 @@ public:
 	int appendToSharedStorage(const Common::String &value);
 	const Common::String & getSharedStorage(int id) const;
 
-	bool active() const { return !_mjpgPlayer; }
+	bool active() const { return !_mjpgPlayer && !(_soundManager.playing(_syncSoundId) || _tellTextTimer > 0); }
 	void playFilm(const Common::String &video, const Common::String &audio);
 	void skipFilm();
 
@@ -202,11 +202,15 @@ public:
 
 	void tickInventory();
 
-	void playSound(const Common::String &resource, const Common::String &phaseVar) {
-		_soundManager.play(resource, phaseVar);
+	int playSound(const Common::String &resource, const Common::String &phaseVar) {
+		return _soundManager.play(resource, phaseVar);
 	}
 
-	void tell(const Common::String &region, const Common::String &text, const Common::String &sound, bool npc);
+	void playSoundSync(const Common::String &resource, const Common::String &phaseVar) {
+		_syncSoundId = playSound(resource, phaseVar);
+	}
+
+	void tell(const Common::String &region, const Common::String &text, const Common::String &sound, const Common::String &soundPhaseVar, bool npc);
 
 	bool fastMode() const {
 		return _fastMode;
@@ -264,6 +268,16 @@ private:
 	Common::String				_inventoryRegionName;
 	RegionPtr					_inventoryRegion;
 	Dialog						_dialog;
+
+	// Original engine use weird names for the vars, I keep them.
+	Common::Point				_tellPos;
+	Common::String				_tellText;
+	int							_tellTextTimer;
+	bool						_tellPlayer;
+	int							_tellFontId;
+
+	int							_syncSoundId;
+
 	bool						_fastMode;
 };
 

@@ -83,4 +83,8 @@ int SoundManager::play(const Common::String &resource, const Common::String &pha
 	return id;
 }
 
+bool SoundManager::playing(int id) const {
+	return _mixer->isSoundIDActive(id);
+}
+
 } // namespace AGDS
