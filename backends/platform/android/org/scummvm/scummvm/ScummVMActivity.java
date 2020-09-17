@@ -871,7 +871,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 					try {
 						in = assetManager.open(filename);
 						File outFile = new File(_actualScummVMDataDir, filename);
-						if (sideUpgrade && outFile.exists() && outFile.isFile()) {
+						if (sideUpgrade && outFile.exists()) {
 							Log.d(ScummVM.LOG_TAG, "Side-upgrade. No need to update asset file: " + filename);
 						} else {
 							Log.d(ScummVM.LOG_TAG, "Copying asset file: " + filename);
