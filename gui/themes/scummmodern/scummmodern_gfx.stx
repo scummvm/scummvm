@@ -131,6 +131,7 @@
 				<language id = 'jp'  scalable_file = 'NotoSansJP-Bold.otf'/>
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Bold.otf'/>
 				<language id = 'zh*' scalable_file = 'NotoSansTC-Bold.otf'/>
+				<language id = 'hi'  scalable_file = 'NotoSans-Bold.ttf'/>
 				<language id = '*'   scalable_file = 'FreeSansBold.ttf'/>
 		</font>
 		<font	resolution = 'y<400'
@@ -140,6 +141,7 @@
 				<language id = 'jp'  scalable_file = 'NotoSansJP-Regular.otf'/>
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Regular.otf'/>
 				<language id = 'zh*' scalable_file = 'NotoSansTC-Regular.otf'/>
+				<language id = 'hi'  scalable_file = 'NotoSans-Regular.ttf'/>
 				<language id = '*'   scalable_file = 'FreeSans.ttf'/>
 		</font>
 		<font	id = 'text_button'
@@ -147,6 +149,7 @@
 				<language id = 'jp'  scalable_file = 'NotoSansJP-Bold.otf'/>
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Bold.otf'/>
 				<language id = 'zh*' scalable_file = 'NotoSansTC-Bold.otf'/>
+				<language id = 'hi'  scalable_file = 'NotoSans-Bold.ttf'/>
 				<language id = '*'   scalable_file = 'FreeSansBold.ttf'/>
 		</font>
 		<font	resolution = 'y<400'
@@ -156,6 +159,7 @@
 				<language id = 'jp'  scalable_file = 'NotoSansJP-Regular.otf'/>
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Regular.otf'/>
 				<language id = 'zh*' scalable_file = 'NotoSansTC-Regular.otf'/>
+				<language id = 'hi'  scalable_file = 'NotoSans-Regular.ttf'/>
 				<language id = '*'   scalable_file = 'FreeSans.ttf'/>
 		</font>
 		<font	id = 'text_normal'
@@ -163,6 +167,7 @@
 				<language id = 'jp'  scalable_file = 'NotoSansJP-Regular.otf'/>
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Regular.otf'/>
 				<language id = 'zh*' scalable_file = 'NotoSansTC-Regular.otf'/>
+				<language id = 'hi'  scalable_file = 'NotoSans-Regular.ttf'/>
 				<language id = '*'   scalable_file = 'FreeSans.ttf'/>
 		</font>
 		<font	resolution = 'y<400'
@@ -172,6 +177,7 @@
 				<language id = 'jp'  scalable_file = 'NotoSansJP-Regular.otf'/>
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Regular.otf'/>
 				<language id = 'zh*' scalable_file = 'NotoSansTC-Regular.otf'/>
+				<language id = 'hi'  scalable_file = 'NotoSans-Regular.ttf'/>
 				<language id = '*'   scalable_file = 'FreeSans.ttf'/>
 		</font>
 		<font	id = 'tooltip_normal'
@@ -180,6 +186,7 @@
 				<language id = 'jp'  scalable_file = 'NotoSansJP-Regular.otf'/>
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Regular.otf'/>
 				<language id = 'zh*' scalable_file = 'NotoSansTC-Regular.otf'/>
+				<language id = 'hi'  scalable_file = 'NotoSans-Regular.ttf'/>
 				<language id = '*'   scalable_file = 'FreeMonoBold.ttf'/>
 		</font>
 		<font	id = 'console'
