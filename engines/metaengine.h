@@ -244,7 +244,8 @@ public:
 	 * @return			maximum save slot number supported
 	 */
 	virtual int getMaximumSaveSlot() const {
-		return 0;
+		// For games using the new save format, assume 99 slots by default
+		return hasFeature(kSavesUseExtendedFormat) ? 99 : 0;
 	}
 
 	/**
