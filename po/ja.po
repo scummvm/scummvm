@@ -8,13 +8,16 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2020-09-17 11:15+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/ja/>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 4.0.4\n"
 
 #: gui/about.cpp:102
 #, c-format
@@ -640,7 +643,7 @@ msgstr ""
 
 #: gui/launcher.cpp:140 engines/dialogs.cpp:99
 msgid "~Q~uit"
-msgstr ""
+msgstr "終了(Q)"
 
 #: gui/launcher.cpp:140 backends/platform/sdl/macosx/appmenu_osx.mm:216
 msgid "Quit ScummVM"
@@ -648,7 +651,7 @@ msgstr ""
 
 #: gui/launcher.cpp:141
 msgid "A~b~out..."
-msgstr ""
+msgstr "ScummVMについて(b)..."
 
 #: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:210
 msgid "About ScummVM"
@@ -656,7 +659,7 @@ msgstr ""
 
 #: gui/launcher.cpp:142
 msgid "~O~ptions..."
-msgstr ""
+msgstr "設定(O)..."
 
 #: gui/launcher.cpp:142
 msgid "Change global ScummVM options"
@@ -664,7 +667,7 @@ msgstr ""
 
 #: gui/launcher.cpp:144
 msgid "~S~tart"
-msgstr ""
+msgstr "開始(S)"
 
 #: gui/launcher.cpp:144
 msgid "Start selected game"
@@ -672,7 +675,7 @@ msgstr ""
 
 #: gui/launcher.cpp:147
 msgid "~L~oad..."
-msgstr ""
+msgstr "ロード(L)..."
 
 #: gui/launcher.cpp:147
 msgid "Load saved game for selected game"
@@ -684,7 +687,7 @@ msgstr ""
 
 #: gui/launcher.cpp:156
 msgid "~A~dd Game..."
-msgstr ""
+msgstr "ゲームを追加(A)..."
 
 #: gui/launcher.cpp:156 gui/launcher.cpp:166
 msgid "Add games to the list"
@@ -696,7 +699,7 @@ msgstr ""
 
 #: gui/launcher.cpp:161
 msgid "~E~dit Game..."
-msgstr ""
+msgstr "ゲームを編集(E)..."
 
 #: gui/launcher.cpp:161 gui/launcher.cpp:171
 msgid "Change game options"
@@ -704,7 +707,7 @@ msgstr ""
 
 #: gui/launcher.cpp:163
 msgid "~R~emove Game"
-msgstr ""
+msgstr "ゲームを削除(R)"
 
 #: gui/launcher.cpp:163 gui/launcher.cpp:173
 msgid "Remove game from the list. The game data files stay intact"
