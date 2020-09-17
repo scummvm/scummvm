@@ -3617,6 +3617,38 @@ static const uint16 gk1ExitFeatureCursorPatch[] = {
 	PATCH_END
 };
 
+// The Windows CD version never plays its AVI videos during the bayou ritual,
+//  instead it runs the view-based slide shows for the floppy versions. The
+//  ritual script contains the normal code for playing its AVI and SEQ files
+//  depending on kPlatform, just like every video script in the game, except
+//  that the initial floppy flag test has been replaced with another kPlatform
+//  call which prevents the real platform test from executing.
+//
+// It's unclear if this is a script bug or why it would be intentional, but
+//  the end result is that selecting Windows as the platform excludes videos
+//  from this one scene whereas selecting DOS doesn't, so we patch the platform
+//  tests back to floppy tests like everywhere else and enable the AVI videos.
+//
+// Applies to: All CD versions, though only English versions support Windows
+// Responsible method: roomScript:changeState
+// Fixes bug: #9807
+static const uint16 gk1BayouRitualAviSignature[] = {
+	0x76,                                   // push0
+	0x43, 0x68, SIG_UINT16(0x0000),         // callk Platform
+	SIG_MAGICDWORD,
+	0x36,                                   // push
+	0x35, 0x01,                             // ldi 01 [ DOS ]
+	0x1c,                                   // ne?
+	SIG_END
+};
+
+static const uint16 gk1BayouRitualAviPatch[] = {
+	0x78,                                   // push1
+	0x38, PATCH_UINT16(0x01d6),             // pushi 01d6     [ flag 470 ]
+	0x47, 0x0d, 0x00, PATCH_UINT16(0x0002), // calle proc13_0 [ is floppy flag set? ]
+	PATCH_END
+};
+
 // GK1 Mac is missing view 56, which is the close-up of the talisman. Clicking
 //  Look on the talisman from inventory is supposed to display an inset with
 //  view 56 and say a message, but instead this would crash the Mac interpreter.
@@ -3702,6 +3734,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   410, "fix day 2 binoculars lockup",                 1, gk1Day2BinocularsLockupSignature, gk1Day2BinocularsLockupPatch },
 	{  true,   420, "fix day 6 empty booth message",               6, gk1EmptyBoothMessageSignature,    gk1EmptyBoothMessagePatch },
 	{  true,   420, "fix lorelei dance timer",                     1, gk1LoreleiDanceTimerSignature,    gk1LoreleiDanceTimerPatch },
+	{  true,   480, "win: play day 6 bayou ritual avi videos",     3, gk1BayouRitualAviSignature,       gk1BayouRitualAviPatch },
 	{  true,   710, "fix day 9 vine swing speech playing",         1, gk1Day9VineSwingSignature,        gk1Day9VineSwingPatch },
 	{  true,   710, "fix day 9 mummy animation (floppy)",          1, gk1MummyAnimateFloppySignature,   gk1MummyAnimateFloppyPatch },
 	{  true,   710, "fix day 9 mummy animation (cd)",              1, gk1MummyAnimateCDSignature,       gk1MummyAnimateCDPatch },
