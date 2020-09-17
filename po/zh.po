@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
-"PO-Revision-Date: 2020-09-17 11:24+0000\n"
+"PO-Revision-Date: 2020-09-17 14:14+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/zh/>\n"
@@ -119,7 +119,7 @@ msgstr ""
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
-msgstr ""
+msgstr "您的连接似乎受到限制。 您真的要下载文件吗？"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
@@ -149,7 +149,7 @@ msgstr ""
 msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
-msgstr ""
+msgstr "无法创建要下载的目录-指定的目录具有相同名称的文件。"
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:351
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:43 gui/launcher.cpp:487
@@ -176,6 +176,8 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
+"指定目录中已经存在“%s”。\n"
+"您是否真的要将文件下载到该目录？"
 
 #: gui/downloaddialog.cpp:215
 #, c-format
@@ -277,11 +279,11 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:214 gui/options.cpp:1709
 msgid "Shader"
-msgstr ""
+msgstr "着色器"
 
 #: gui/editgamedialog.cpp:217
 msgid "Override global shader settings"
-msgstr ""
+msgstr "覆盖全局着色器设置"
 
 #: gui/editgamedialog.cpp:219
 msgctxt "lowres"
