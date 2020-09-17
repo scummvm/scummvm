@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
-"PO-Revision-Date: 2020-09-17 11:15+0000\n"
+"PO-Revision-Date: 2020-09-17 13:45+0000\n"
 "Last-Translator: Matthew Duggan <mgithub@guarana.org>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -23,37 +23,37 @@ msgstr ""
 #: gui/about.cpp:102
 #, c-format
 msgid "(built on %s)"
-msgstr ""
+msgstr "(ビルドの日時：%s)"
 
 #: gui/about.cpp:109
 msgid "Features compiled in:"
-msgstr ""
+msgstr "含まれた機能："
 
 #: gui/about.cpp:118
 msgid "Available engines:"
-msgstr ""
+msgstr "使用可能エンジン："
 
 #: gui/browser.cpp:75 backends/dialogs/macosx/macosx-dialogs.mm:78
 msgid "Show hidden files"
-msgstr ""
+msgstr "隠しファイルを表示する"
 
 #: gui/browser.cpp:75
 msgid "Show files marked with the hidden attribute"
-msgstr ""
+msgstr "隠し属性のあるファイルも表示する"
 
 #: gui/browser.cpp:79 gui/remotebrowser.cpp:57
 msgid "Go up"
-msgstr ""
+msgstr "上へ"
 
 #: gui/browser.cpp:79 gui/browser.cpp:81 gui/remotebrowser.cpp:57
 #: gui/remotebrowser.cpp:59
 msgid "Go to previous directory level"
-msgstr ""
+msgstr "上のフォルダーへ移動"
 
 #: gui/browser.cpp:81 gui/remotebrowser.cpp:59
 msgctxt "lowres"
 msgid "Go up"
-msgstr ""
+msgstr "上へ"
 
 #: gui/browser.cpp:82 gui/chooser.cpp:46 gui/editgamedialog.cpp:350
 #: gui/editrecorddialog.cpp:67 gui/filebrowser-dialog.cpp:65
@@ -89,19 +89,19 @@ msgstr "選択"
 
 #: gui/downloaddialog.cpp:49
 msgid "Select directory where to download game data"
-msgstr ""
+msgstr "ダウンロードされたゲームデータを保存するフォルダーを選択する"
 
 #: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:529 gui/launcher.cpp:207
 msgid "Select directory with game data"
-msgstr ""
+msgstr "ゲームデータのフォルダーを選択する"
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:227
 msgid "From: "
-msgstr ""
+msgstr "元： "
 
 #: gui/downloaddialog.cpp:53 gui/downloaddialog.cpp:228
 msgid "To: "
-msgstr ""
+msgstr "先： "
 
 #: gui/downloaddialog.cpp:64
 msgid "Cancel download"
@@ -120,7 +120,7 @@ msgstr "非表示"
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
-msgstr ""
+msgstr "インターネットの接続に制限があるようです。ダウンロードを続けてもよろしいですか？"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
@@ -169,7 +169,7 @@ msgstr ""
 #: engines/sword2/animation.cpp:465 engines/sword2/animation.cpp:475
 #: engines/zvision/file/save_manager.cpp:226 gui/saveload-dialog.cpp:1166
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: gui/downloaddialog.cpp:152
 #, c-format
@@ -194,7 +194,7 @@ msgstr "ゲーム"
 
 #: gui/editgamedialog.cpp:139
 msgid "ID:"
-msgstr ""
+msgstr "ID："
 
 #: gui/editgamedialog.cpp:139 gui/editgamedialog.cpp:141
 #: gui/editgamedialog.cpp:142
@@ -206,7 +206,7 @@ msgstr ""
 #: gui/editgamedialog.cpp:141
 msgctxt "lowres"
 msgid "ID:"
-msgstr ""
+msgstr "ID："
 
 #: gui/editgamedialog.cpp:146 gui/editrecorddialog.cpp:59
 msgid "Name:"
@@ -6912,11 +6912,11 @@ msgstr ""
 
 #: engines/zvision/detection.cpp:150
 msgid "Look Up"
-msgstr ""
+msgstr "上を見る"
 
 #: engines/zvision/detection.cpp:156
 msgid "Look Down"
-msgstr ""
+msgstr "下を見る"
 
 #: engines/zvision/detection.cpp:174
 msgid "Show FPS"
