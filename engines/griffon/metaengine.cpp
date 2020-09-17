@@ -22,6 +22,7 @@
 
 #include "base/plugins.h"
 #include "common/config-manager.h"
+#include "common/translation.h"
 #include "engines/advancedDetector.h"
 
 #include "backends/keymapper/action.h"
