@@ -150,7 +150,7 @@ enum Opcode {
 	kSetCycles						= 130,
 	kSetRandom						= 131,
 	kSetPeriodic					= 132,
-	kStub133						= 133,
+	kSetPanAndVolume				= 133,
 	kSetAnimationPosition			= 134,
 	kSetPhaseVar					= 135,
 	kSetAnimationLoop				= 136,

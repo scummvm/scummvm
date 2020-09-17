@@ -237,7 +237,7 @@ private:
 	void resetState();
 	void setCycles();
 	void setRandom();
-	void stub133();
+	void setPanAndVolume();
 	void stub138();
 	void getPictureBaseX();
 	void getPictureBaseY();

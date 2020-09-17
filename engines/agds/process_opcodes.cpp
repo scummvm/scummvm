@@ -552,10 +552,10 @@ void Process::setAnimationZ() {
 	_animationZ = z;
 }
 
-void Process::stub133() {
+void Process::setPanAndVolume() {
 	int pan = pop();
 	int volume = pop();
-	debug("stub133: pan? %d volume? %d", pan, volume);
+	debug("setPanAndVolume: pan %d volume %d", pan, volume);
 }
 
 void Process::setAnimationLoop() {
@@ -1465,7 +1465,7 @@ ProcessExitCode Process::resume() {
 			OP(kSetAnimationZ, setAnimationZ);
 			OP(kSetCycles, setCycles);
 			OP(kSetRandom, setRandom);
-			OP(kStub133, stub133);
+			OP(kSetPanAndVolume, setPanAndVolume);
 			OP(kSetAnimationPosition, setAnimationPosition);
 			OP(kSetPhaseVar, setPhaseVar);
 			OP(kSetAnimationLoop, setAnimationLoop);
