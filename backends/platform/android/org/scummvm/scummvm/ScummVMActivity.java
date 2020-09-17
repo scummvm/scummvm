@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.graphics.Rect;
 import android.media.AudioManager;
 import android.net.Uri;
@@ -58,6 +59,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	private static boolean _hoverAvailable;
 
 	private ClipboardManager _clipboard;
+	private Version _currentScummVMVersion;
 	private File _configScummvmFile;
 	private File _actualScummVMDataDir;
 	private File _defaultScummVMSavesDir;
@@ -231,6 +233,11 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 		main_surface.requestFocus();
 
+		_clipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+
+		_currentScummVMVersion = new Version(BuildConfig.VERSION_NAME);
+		Log.d(ScummVM.LOG_TAG, "Current ScummVM version being installed is: " + _currentScummVMVersion.getDescription() + " (" + _currentScummVMVersion.get() + ")");
+
 		// REMOVED: Since getFilesDir() is guaranteed to exist, getFilesDir().mkdirs() might be related to crashes in Android version 9+ (Pie or above, API 28+)!
 
 		// REMOVED: Setting savePath to Environment.getExternalStorageDirectory() + "/ScummVM/Saves/"
@@ -248,48 +255,45 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		// seekAndInitScummvmConfiguration() returns false if something went wrong
 		// when initializing configuration (or when seeking and trying to use an existing ini file) for ScummVM
 		if (!seekAndInitScummvmConfiguration()) {
-			Log.e(ScummVM.LOG_TAG, "Error while trying to find and/or initialize scummvm configuration file!");
-			// TODO error prompt (popup to user)
+			Log.e(ScummVM.LOG_TAG, "Error while trying to find and/or initialize ScummVM configuration file!");
+			// in fact in all the cases where we return false, we also called finish()
+		} else {
+			// We should have a valid path to a configuration file here
+
+			// Start ScummVM
+			_scummvm = new MyScummVM(main_surface.getHolder());
+
+			_scummvm.setArgs(new String[]{
+				"ScummVM",
+				"--config=" + _configScummvmFile.getPath(),
+				"--path=" + _actualScummVMDataDir.getPath(),
+				"--savepath=" + _defaultScummVMSavesDir.getPath()
+			});
+
+			Log.d(ScummVM.LOG_TAG, "Hover available: " + _hoverAvailable);
+			if (_hoverAvailable) {
+				_mouseHelper = new MouseHelper(_scummvm);
+				_mouseHelper.attach(main_surface);
+			}
+
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1) {
+				_events = new ScummVMEvents(this, _scummvm, _mouseHelper);
+			} else {
+				_events = new ScummVMEventsHoneycomb(this, _scummvm, _mouseHelper);
+			}
+
+			// On screen button listener
+			findViewById(R.id.show_keyboard).setOnClickListener(keyboardBtnOnClickListener);
+
+			// Keyboard visibility listener
+			setKeyboardVisibilityListener(this);
+
+			main_surface.setOnKeyListener(_events);
+			main_surface.setOnTouchListener(_events);
+
+			_scummvm_thread = new Thread(_scummvm, "ScummVM");
+			_scummvm_thread.start();
 		}
-
-		_clipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
-
-		// Start ScummVM
-		_scummvm = new MyScummVM(main_surface.getHolder());
-
-		_scummvm.setArgs(new String[] {
-		    "ScummVM",
-		    "--config=" + _configScummvmFile.getPath(),
-		    "--path=" + _actualScummVMDataDir.getPath(),
-		    "--savepath=" + _defaultScummVMSavesDir.getPath()
-		});
-
-		Log.d(ScummVM.LOG_TAG, "Hover available: " + _hoverAvailable);
-		if (_hoverAvailable) {
-			_mouseHelper = new MouseHelper(_scummvm);
-			_mouseHelper.attach(main_surface);
-		}
-
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1)
-		{
-			_events = new ScummVMEvents(this, _scummvm, _mouseHelper);
-		}
-		else
-		{
-			_events = new ScummVMEventsHoneycomb(this, _scummvm, _mouseHelper);
-		}
-
-		// On screen button listener
-		findViewById(R.id.show_keyboard).setOnClickListener(keyboardBtnOnClickListener);
-
-		// Keyboard visibility listener
-		setKeyboardVisibilityListener(this);
-
-		main_surface.setOnKeyListener(_events);
-		main_surface.setOnTouchListener(_events);
-
-		_scummvm_thread = new Thread(_scummvm, "ScummVM");
-		_scummvm_thread.start();
 	}
 
 	@Override
@@ -524,11 +528,15 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	@RequiresApi(api = Build.VERSION_CODES.KITKAT)
 	private static void copyFileUsingStream(File source, File dest) throws IOException {
 		try (InputStream is = new FileInputStream(source); OutputStream os = new FileOutputStream(dest)) {
-			byte[] buffer = new byte[1024];
-			int length;
-			while ((length = is.read(buffer)) > 0) {
-				os.write(buffer, 0, length);
-			}
+			copyStreamToStream(is, os);
+		}
+	}
+
+	private static void copyStreamToStream(InputStream is, OutputStream os) throws IOException {
+		byte[] buffer = new byte[1024];
+		int length;
+		while ((length = is.read(buffer)) > 0) {
+			os.write(buffer, 0, length);
 		}
 	}
 
@@ -649,6 +657,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 						}
 					})
 				.show();
+			return false;
 		}
 
 		LinkedHashMap<String, File> candidateOldLocationsOfScummVMConfigMap = new LinkedHashMap<>();
@@ -746,6 +755,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 						}
 					})
 				.show();
+			return false;
 		}
 
 		if (maxOldVersionFound.compareTo(new Version("0")) != 0) {
@@ -754,6 +764,15 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			Log.d(ScummVM.LOG_TAG, "No viable existing ScummVM config version found");
 		}
 
+		//
+		// TODO The assets cleanup upgrading system is not perfect but it will have to do
+		//      A more efficient way would be to compare hash (when we deem that an upgrade is happening, so we will also still have to compare versions)
+		// Note that isSideUpgrading is also true each time we re-launch the app
+		// Also even during a side-upgrade we cleanup any redundant files (no longer part of our assets)
+		boolean isSideUpgrading = (maxOldVersionFound.compareTo(_currentScummVMVersion) == 0);
+		copyAssetsToInternalMemory(isSideUpgrading);
+
+		//
 		// Set global savepath
 		// TODO what if the old save-game path is no longer accessible (due to missing SD card, or newer Android API/OS version more strict restrictions)
 		// TODO changing the save path to this, app specific location we should consider:
@@ -783,9 +802,103 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 						}
 					})
 				.show();
+			return false;
 		}
 
 		return true;
+	}
+
+
+	private boolean containsStringEntry(@NonNull String[] stringItenary, String targetEntry) {
+		for (String sourceEntry : stringItenary) {
+			// Log.d(ScummVM.LOG_TAG, "Comparing filename: " + sourceEntry + " to filename: " + targetEntry);
+			if (sourceEntry.compareToIgnoreCase(targetEntry) == 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	// clear up any possibly deprecated assets (when upgrading to a new version)
+	// Don't remove the scummvm.ini file!
+	// Remove any files not in the filesItenary, even in a sideUpgrade
+	// Remove any files in the filesItenary only if not a sideUpgrade
+	private void internalAppFolderCleanup(String[] filesItenary, boolean sideUpgrade) {
+		if (_actualScummVMDataDir != null) {
+			File[] extfiles = _actualScummVMDataDir.listFiles();
+			if (extfiles != null) {
+				Log.d(ScummVM.LOG_TAG, "Cleaning up files in internal app space");
+				for (File extfile : extfiles) {
+					if (extfile.isFile()) {
+						if (extfile.getName().compareToIgnoreCase("scummvm.ini") != 0
+							&& (!containsStringEntry(filesItenary, extfile.getName())
+								|| !sideUpgrade)
+						) {
+								Log.d(ScummVM.LOG_TAG, "Deleting file:" + extfile.getName());
+								if (!extfile.delete()) {
+									Log.e(ScummVM.LOG_TAG, "Failed to delete file:" + extfile.getName());
+								}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// code based on https://stackoverflow.com/a/4530294
+	// Note, the following assumptions are made (since they are true as of yet)
+	// - We don't need to copy (sub)folders
+	// - We copy all the files from our assets (not a subset of them)
+	// Otherwise we would probably need to create a specifically named zip file with the selection of files we'd need to extract to the internal memory
+	@RequiresApi(api = Build.VERSION_CODES.KITKAT)
+	private void copyAssetsToInternalMemory(boolean sideUpgrade) {
+		// sideUpgrade is set to true, if we upgrade to the same version -- just check for the files existence before copying
+		if (_actualScummVMDataDir != null) {
+			AssetManager assetManager = getAssets();
+			String[] files = null;
+			try {
+				files = assetManager.list("");
+			} catch (IOException e) {
+				Log.e(ScummVM.LOG_TAG, "Failed to get asset file list.", e);
+			}
+
+			internalAppFolderCleanup(files, sideUpgrade);
+
+			if (files != null) {
+				for (String filename : files) {
+					InputStream in = null;
+					OutputStream out = null;
+					try {
+						in = assetManager.open(filename);
+						File outFile = new File(_actualScummVMDataDir, filename);
+						if (sideUpgrade && outFile.exists() && outFile.isFile()) {
+							Log.d(ScummVM.LOG_TAG, "Side-upgrade. No need to update asset file: " + filename);
+						} else {
+							Log.d(ScummVM.LOG_TAG, "Copying asset file: " + filename);
+							out = new FileOutputStream(outFile);
+							copyStreamToStream(in, out);
+						}
+					} catch (IOException e) {
+						Log.e(ScummVM.LOG_TAG, "Failed to copy asset file: " + filename);
+					} finally {
+						if (in != null) {
+							try {
+								in.close();
+							} catch (IOException e) {
+								// NOOP
+							}
+						}
+						if (out != null) {
+							try {
+								out.close();
+							} catch (IOException e) {
+								// NOOP
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 }
