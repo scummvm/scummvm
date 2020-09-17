@@ -56,7 +56,7 @@ void SoundManager::stopAll() {
 	}
 }
 
-void SoundManager::play(const Common::String &resource, const Common::String &phaseVar) {
+int SoundManager::play(const Common::String &resource, const Common::String &phaseVar) {
 	Common::File *file = new Common::File();
 	if (!file->open(resource))
 		error("no sound %s", resource.c_str());
@@ -73,12 +73,14 @@ void SoundManager::play(const Common::String &resource, const Common::String &ph
 	if (!stream) {
 		warning("could not play sound %s", resource.c_str());
 		delete file;
-		return;
+		return -1;
 	}
 	Audio::SoundHandle handle;
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, stream);
+	int id = _nextId++;
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, stream, id);
 
-	_sounds.push_back(Sound(resource, phaseVar, handle));
+	_sounds.push_back(Sound(id, resource, phaseVar, handle));
+	return id;
 }
 
 } // namespace AGDS
