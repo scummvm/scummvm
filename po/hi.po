@@ -8,18 +8,21 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2020-09-17 11:44+0000\n"
+"Last-Translator: Aryan Rawlani <aryanrawlani007@gmail.com>\n"
+"Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/hi/>\n"
 "Language: hi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 4.0.4\n"
 
 #: gui/about.cpp:102
 #, c-format
 msgid "(built on %s)"
-msgstr ""
+msgstr "(बनाया गया %s को)"
 
 #: gui/about.cpp:109
 msgid "Features compiled in:"
