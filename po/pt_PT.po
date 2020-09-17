@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
-"PO-Revision-Date: 2020-09-16 01:43+0000\n"
+"PO-Revision-Date: 2020-09-18 03:43+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_PT/>\n"
@@ -636,7 +636,7 @@ msgstr "Selecione uma acção e clique em 'Definir'"
 #: gui/KeysDialog.cpp:81 gui/KeysDialog.cpp:103 gui/KeysDialog.cpp:138
 #, c-format
 msgid "Associated key : %s"
-msgstr "Teclas associada : %s"
+msgstr "Tecla associada : %s"
 
 #: gui/KeysDialog.cpp:83 gui/KeysDialog.cpp:105 gui/KeysDialog.cpp:140
 msgid "Associated key : none"
