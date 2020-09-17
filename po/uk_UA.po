@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
-"PO-Revision-Date: 2020-09-13 23:16+0000\n"
+"PO-Revision-Date: 2020-09-17 13:45+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -1753,7 +1753,7 @@ msgstr "Завантажую збереження гри..."
 
 #: gui/saveload-dialog.cpp:61
 msgid "Run in background"
-msgstr "Бігти у фоні"
+msgstr "Працювати у фоні"
 
 #: gui/saveload-dialog.cpp:343
 msgid "List view"
@@ -3408,7 +3408,7 @@ msgstr "Поміняти екрани місцями"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:75
 msgid "Indiana Jones Fight controls:"
-msgstr "Керування боями в Indy:"
+msgstr "Керування бійками в Indiana Jones:"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:76
 #: engines/hdb/detection.cpp:321
@@ -6438,7 +6438,7 @@ msgid ""
 "Failed to save temporary game state. Make sure your save game directory is "
 "set in ScummVM and that you can write to it."
 msgstr ""
-"Не вдалося завантажити тимчасове збереження гри. Упевніться в тому, що папка "
+"Не вдалося зберегти тимчасове збереження гри. Упевніться в тому, що папка "
 "для збережень правильно вказана у ScummVM, і ви можете туди писати."
 
 #: engines/supernova/supernova.cpp:828
