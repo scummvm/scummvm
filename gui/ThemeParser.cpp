@@ -211,6 +211,10 @@ bool ThemeParser::parserCallback_language(ParserNode *node) {
 		file = getParentNode(node)->values["file"];
 	}
 
+	if (file.empty()) {
+		return parserError("Missing required property 'file' in either <font> or <language>");
+	}
+
 	Common::String scalableFile;
 	if (node->values.contains("scalable_file")) {
 		scalableFile = node->values["scalable_file"];
