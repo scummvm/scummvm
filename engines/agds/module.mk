@@ -19,7 +19,8 @@ MODULE_OBJS := \
 	resourceManager.o \
 	screen.o \
 	soundManager.o \
-	systemVariable.o
+	systemVariable.o \
+	textLayout.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_AGDS), DYNAMIC_PLUGIN)
