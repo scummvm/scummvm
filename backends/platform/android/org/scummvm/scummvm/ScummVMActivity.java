@@ -181,7 +181,8 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 		@Override
 		protected String[] getSysArchives() {
-			return new String[0];
+			Log.d(ScummVM.LOG_TAG, "Adding to Search Archive: " + _actualScummVMDataDir.getPath());
+			return new String[] {_actualScummVMDataDir.getPath()};
 		}
 
 		@Override
