@@ -54,7 +54,6 @@ AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Eng
                                                                              _soundManager(this, system->getMixer()),
 																			 _dialog(this),
 																			 _tellPlayer(true),
-																			 _tellFontId(0),
 																			 _tellTextTimer(0),
 																			 _syncSoundId(-1),
                                                                              _fastMode(true) {
@@ -448,10 +447,8 @@ Common::Error AGDSEngine::run() {
 		for (CharactersType::iterator i = _characters.begin(); i != _characters.end(); ++i)
 			i->_value->paint(*this, *backbuffer);
 
-		if (!_tellText.empty()) {
-			Font *font = getFont(_tellFontId);
-			int w = getSystemVariable("subtitle_width")->getInteger();
-			font->drawString(backbuffer, _tellText, _tellPos.x, _tellPos.y, backbuffer->w, 0);
+		if (_textLayout.valid()) {
+			_textLayout.paint(*this, *backbuffer);
 		}
 
 		_system->unlockScreen();
@@ -484,7 +481,7 @@ void AGDSEngine::skipFilm() {
 		_mixer->stopID(_syncSoundId);
 		_syncSoundId = -1;
 	}
-	_tellText.clear();
+	_textLayout.reset();
 }
 
 int AGDSEngine::appendToSharedStorage(const Common::String &value) {
@@ -614,21 +611,17 @@ void AGDSEngine::addSystemVar(const Common::String &name, SystemVariable *var) {
 
 void AGDSEngine::tell(const Common::String &regionName, const Common::String &text, const Common::String &sound, const Common::String &soundPhaseVar, bool npc) {
 	_tellPlayer = !npc;
-	_tellText = text;
-	_tellFontId = getSystemVariable(npc? "npc_tell_font": "tell_font")->getInteger();
-	int cx, cy;
+	int font_id = getSystemVariable(npc? "npc_tell_font": "tell_font")->getInteger();
+	Common::Point pos;
+
 	if (regionName.empty()) {
-		cx = getSystemVariable("subtitle_x")->getInteger();
-		cy = getSystemVariable("subtitle_y")->getInteger();
+		pos.x = getSystemVariable("subtitle_x")->getInteger();
+		pos.y = getSystemVariable("subtitle_y")->getInteger();
 	} else {
 		RegionPtr region = loadRegion(regionName);
-		cx = region->center.x;
-		cy = region->center.y;
+		pos = region->center;
 	}
-	Font *font = getFont(_tellFontId);
-	int w = font->getStringWidth(text), h = font->getFontHeight();
-	_tellPos.x = (cx - w / 2);
-	_tellPos.y = (cy - h / 2);
+	_textLayout.layout(*this, text, pos, font_id);
 	if (!sound.empty())
 		playSoundSync(sound, soundPhaseVar);
 }

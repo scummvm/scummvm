@@ -1,0 +1,68 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#ifndef AGDS_TEXT_LAYOUT_H
+#define AGDS_TEXT_LAYOUT_H
+
+#include "common/scummsys.h"
+#include "common/array.h"
+#include "common/str.h"
+#include "common/rect.h"
+
+namespace Graphics {
+	class Surface;
+}
+
+namespace AGDS {
+
+class AGDSEngine;
+
+class TextLayout {
+	int				_fontId;
+	Common::Point 	_pos;
+	bool 			_valid;
+
+	struct Line {
+		Common::Point pos;
+		Common::String text;
+		Common::Point size;
+	};
+
+	Common::Array<Line> _lines;
+
+public:
+	TextLayout(): _fontId(-1), _valid(false) {}
+
+	bool valid() const {
+		return _valid;
+	}
+	void reset() {
+		_valid = false;
+		_lines.clear();
+	}
+	void paint(AGDSEngine &engine, Graphics::Surface &backbuffer);
+	void layout(AGDSEngine &engine, const Common::String &text, Common::Point pos, int fontId);
+};
+
+} // End of namespace AGDS
+
+#endif /* AGDS_TEXT_LAYOUT_H */

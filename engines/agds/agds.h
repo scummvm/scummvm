@@ -37,6 +37,7 @@
 #include "agds/processExitCode.h"
 #include "agds/resourceManager.h"
 #include "agds/screen.h"
+#include "agds/textLayout.h"
 #include "graphics/pixelformat.h"
 #include "video/flic_decoder.h"
 
@@ -270,11 +271,9 @@ private:
 	Dialog						_dialog;
 
 	// Original engine use weird names for the vars, I keep them.
-	Common::Point				_tellPos;
-	Common::String				_tellText;
 	int							_tellTextTimer;
 	bool						_tellPlayer;
-	int							_tellFontId;
+	TextLayout					_textLayout;
 
 	int							_syncSoundId;
 
