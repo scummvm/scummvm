@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
-"PO-Revision-Date: 2020-09-17 13:45+0000\n"
+"PO-Revision-Date: 2020-09-18 12:35+0000\n"
 "Last-Translator: Matthew Duggan <mgithub@guarana.org>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -144,13 +144,13 @@ msgstr "いいえ"
 
 #: gui/downloaddialog.cpp:137 gui/launcher.cpp:537
 msgid "ScummVM couldn't open the specified directory!"
-msgstr ""
+msgstr "指定されたフォルダーを開ませんでした！"
 
 #: gui/downloaddialog.cpp:147
 msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
-msgstr ""
+msgstr "ダウンロード用のフォルダーを作成できませんでした。指定されたフォルダーに同じ名前のファイルがあります。"
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:351
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:43 gui/launcher.cpp:487
@@ -177,6 +177,8 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
+"指定されたフォルダーに「%s」が既にあります。\n"
+"ダウンロード続けてもよろしいですか？"
 
 #: gui/downloaddialog.cpp:215
 #, c-format
@@ -186,7 +188,7 @@ msgstr "%s %S / %s %Sダウンロード済み"
 #: gui/downloaddialog.cpp:222
 #, c-format
 msgid "Download speed: %s %S"
-msgstr ""
+msgstr "ダウンロード速度：%s %S"
 
 #: gui/editgamedialog.cpp:135 engines/dialogs.cpp:285
 msgid "Game"
@@ -201,7 +203,7 @@ msgstr "ID："
 msgid ""
 "Short game identifier used for referring to saved games and running the game "
 "from the command line"
-msgstr ""
+msgstr "セーブデータ、コマンドラインから起動時などに使われる短縮のゲームID"
 
 #: gui/editgamedialog.cpp:141
 msgctxt "lowres"
@@ -215,7 +217,7 @@ msgstr "名前："
 #: gui/editgamedialog.cpp:146 gui/editgamedialog.cpp:148
 #: gui/editgamedialog.cpp:149
 msgid "Full title of the game"
-msgstr ""
+msgstr "ゲームのフルネーム"
 
 #: gui/editgamedialog.cpp:148
 msgctxt "lowres"
@@ -231,7 +233,7 @@ msgstr "言語："
 msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
-msgstr ""
+msgstr "ゲームの言語。英語のゲームを日本語に変身することではありません"
 
 #: gui/editgamedialog.cpp:154 gui/editgamedialog.cpp:168 gui/options.cpp:1203
 #: gui/options.cpp:1223 gui/options.cpp:1236 gui/options.cpp:1250
@@ -246,7 +248,7 @@ msgstr "プラットフォーム："
 #: gui/editgamedialog.cpp:164 gui/editgamedialog.cpp:166
 #: gui/editgamedialog.cpp:167
 msgid "Platform the game was originally designed for"
-msgstr ""
+msgstr "ゲームの元々のプラットフォーム"
 
 #: gui/editgamedialog.cpp:166
 msgctxt "lowres"
@@ -255,7 +257,7 @@ msgstr "プラットフォーム："
 
 #: gui/editgamedialog.cpp:180
 msgid "Engine"
-msgstr ""
+msgstr "エンジン"
 
 #: gui/editgamedialog.cpp:196 gui/options.cpp:1567 gui/options.cpp:1698
 #: backends/graphics/sdl/sdl-graphics.cpp:365
@@ -265,16 +267,16 @@ msgstr "画像"
 
 #: gui/editgamedialog.cpp:196 gui/options.cpp:1567 gui/options.cpp:1698
 msgid "GFX"
-msgstr ""
+msgstr "GFX"
 
 #: gui/editgamedialog.cpp:202
 msgid "Override global graphic settings"
-msgstr ""
+msgstr "全般の画像設定を上書きする"
 
 #: gui/editgamedialog.cpp:204
 msgctxt "lowres"
 msgid "Override global graphic settings"
-msgstr ""
+msgstr "全般の画像設定を上書きする"
 
 #: gui/editgamedialog.cpp:214 gui/options.cpp:1709
 msgid "Shader"
@@ -282,12 +284,12 @@ msgstr "シェーダー"
 
 #: gui/editgamedialog.cpp:217
 msgid "Override global shader settings"
-msgstr ""
+msgstr "全般のシェーダー設定を上書きする"
 
 #: gui/editgamedialog.cpp:219
 msgctxt "lowres"
 msgid "Override global shader settings"
-msgstr ""
+msgstr "全般のシェーダー設定を上書きする"
 
 #: gui/editgamedialog.cpp:233 gui/options.cpp:1743 engines/dialogs.cpp:326
 msgid "Keymaps"
@@ -299,12 +301,12 @@ msgstr "オーディオ"
 
 #: gui/editgamedialog.cpp:243
 msgid "Override global audio settings"
-msgstr "グローバルオーディオ設定を上書きする"
+msgstr "全般のオーディオ設定を上書きする"
 
 #: gui/editgamedialog.cpp:245
 msgctxt "lowres"
 msgid "Override global audio settings"
-msgstr "グローバルオーディオ設定を上書きする"
+msgstr "全般のオーディオ設定を上書きする"
 
 #: gui/editgamedialog.cpp:254 gui/options.cpp:1755
 msgid "Volume"
@@ -317,38 +319,38 @@ msgstr "音量"
 
 #: gui/editgamedialog.cpp:259
 msgid "Override global volume settings"
-msgstr ""
+msgstr "全般の音量設定を上書きする"
 
 #: gui/editgamedialog.cpp:261
 msgctxt "lowres"
 msgid "Override global volume settings"
-msgstr ""
+msgstr "全般の音量設定を上書きする"
 
 #: gui/editgamedialog.cpp:272 gui/options.cpp:1765
 msgid "MIDI"
-msgstr ""
+msgstr "MIDI"
 
 #: gui/editgamedialog.cpp:275
 msgid "Override global MIDI settings"
-msgstr ""
+msgstr "全般のMIDI設定を上書きする"
 
 #: gui/editgamedialog.cpp:277
 msgctxt "lowres"
 msgid "Override global MIDI settings"
-msgstr ""
+msgstr "全般のMIDI設定を上書きする"
 
 #: gui/editgamedialog.cpp:287 gui/options.cpp:1771
 msgid "MT-32"
-msgstr ""
+msgstr "MT-32"
 
 #: gui/editgamedialog.cpp:290
 msgid "Override global MT-32 settings"
-msgstr ""
+msgstr "全般のMT-32設定を上書きする"
 
 #: gui/editgamedialog.cpp:292
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
-msgstr ""
+msgstr "全般のMT-32設定を上書きする"
 
 #: gui/editgamedialog.cpp:301 gui/options.cpp:1778
 msgid "Paths"
@@ -375,7 +377,7 @@ msgstr "追加フォルダー："
 #: gui/editgamedialog.cpp:317 gui/editgamedialog.cpp:319
 #: gui/editgamedialog.cpp:320
 msgid "Specifies path to additional data used by the game"
-msgstr ""
+msgstr "指定されたフォルダーからゲームの追加データが使えます"
 
 #: gui/editgamedialog.cpp:319 gui/options.cpp:1958
 msgctxt "lowres"
@@ -390,16 +392,16 @@ msgstr "セーブのフォルダー："
 #: gui/editgamedialog.cpp:329 gui/options.cpp:1940 gui/options.cpp:1942
 #: gui/options.cpp:1943
 msgid "Specifies where your saved games are put"
-msgstr ""
+msgstr "指定されたフォルダーにセーブデータが保存されます"
 
 #: gui/editgamedialog.cpp:328 gui/options.cpp:1942
 msgctxt "lowres"
 msgid "Save Path:"
-msgstr ""
+msgstr "セーブのフォルダー："
 
 #: gui/editgamedialog.cpp:340 engines/dialogs.cpp:335
 msgid "Achievements"
-msgstr ""
+msgstr "実績"
 
 #: gui/editgamedialog.cpp:364 gui/editgamedialog.cpp:454
 #: gui/editgamedialog.cpp:516 gui/editgamedialog.cpp:577 gui/options.cpp:1865
@@ -420,25 +422,25 @@ msgstr "デフォルト"
 
 #: gui/editgamedialog.cpp:509 gui/options.cpp:2488
 msgid "Select SoundFont"
-msgstr "SoundFontを選ぶ"
+msgstr "SoundFontファイルを選択してください"
 
 #: gui/editgamedialog.cpp:548
 msgid "Select additional game directory"
-msgstr ""
+msgstr "ゲームの追加データのフォルダーを選択してください"
 
 #: gui/editgamedialog.cpp:561 gui/options.cpp:2402
 msgid "Select directory for saved games"
-msgstr ""
+msgstr "セーブデータのフォルダーを選択してください"
 
 #: gui/editgamedialog.cpp:567
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
-msgstr ""
+msgstr "セーブデータの同期機能はデフォルトのフォルダー以外使えません。使用するにはデフォルトのフォルダーを選択してください。"
 
 #: gui/editgamedialog.cpp:593
 msgid "This game ID is already taken. Please choose another one."
-msgstr ""
+msgstr "入力されたIDが使用済み。別のIDを使ってください。"
 
 #: gui/editrecorddialog.cpp:58
 msgid "Author:"
@@ -450,19 +452,19 @@ msgstr "メモ："
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:74
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 #: gui/filebrowser-dialog.cpp:50
 msgid "Choose file for loading"
-msgstr ""
+msgstr "ロードするファイルを選択してください"
 
 #: gui/filebrowser-dialog.cpp:50
 msgid "Enter filename for saving"
-msgstr ""
+msgstr "セーブデータの名前を入力してください"
 
 #: gui/filebrowser-dialog.cpp:133
 msgid "Do you really want to overwrite the file?"
-msgstr ""
+msgstr "このファイルを上書きしてもよろしいですか？"
 
 #: gui/fluidsynth-dialog.cpp:69
 msgid "Reverb"
@@ -470,77 +472,77 @@ msgstr "残響"
 
 #: gui/fluidsynth-dialog.cpp:71 gui/fluidsynth-dialog.cpp:103
 msgid "Active"
-msgstr ""
+msgstr "自発的"
 
 #: gui/fluidsynth-dialog.cpp:73
 msgid "Room:"
-msgstr ""
+msgstr "部屋："
 
 #: gui/fluidsynth-dialog.cpp:80
 msgid "Damp:"
-msgstr ""
+msgstr "減衰："
 
 #: gui/fluidsynth-dialog.cpp:87
 msgid "Width:"
-msgstr ""
+msgstr "拡がり："
 
 #: gui/fluidsynth-dialog.cpp:94 gui/fluidsynth-dialog.cpp:112
 msgid "Level:"
-msgstr ""
+msgstr "レベル："
 
 #: gui/fluidsynth-dialog.cpp:101
 msgid "Chorus"
-msgstr ""
+msgstr "コーラス："
 
 #: gui/fluidsynth-dialog.cpp:105
 msgid "N:"
-msgstr ""
+msgstr "N："
 
 #: gui/fluidsynth-dialog.cpp:119
 msgid "Speed:"
-msgstr ""
+msgstr "速さ："
 
 #: gui/fluidsynth-dialog.cpp:126
 msgid "Depth:"
-msgstr ""
+msgstr "深さ："
 
 #: gui/fluidsynth-dialog.cpp:133
 msgid "Type:"
-msgstr ""
+msgstr "種類："
 
 #: gui/fluidsynth-dialog.cpp:136
 msgid "Sine"
-msgstr ""
+msgstr "サイン"
 
 #: gui/fluidsynth-dialog.cpp:137 backends/platform/sdl/ps3/ps3.cpp:44
 #: backends/platform/sdl/psp2/psp2.cpp:48 engines/dragons/detection.cpp:307
 #: engines/dragons/detection.cpp:289
 msgid "Triangle"
-msgstr ""
+msgstr "三角"
 
 #: gui/fluidsynth-dialog.cpp:139 gui/options.cpp:1787
 msgid "Misc"
-msgstr ""
+msgstr "その他"
 
 #: gui/fluidsynth-dialog.cpp:141
 msgid "Interpolation:"
-msgstr ""
+msgstr "補間："
 
 #: gui/fluidsynth-dialog.cpp:144
 msgid "None (fastest)"
-msgstr ""
+msgstr "なし（早い）"
 
 #: gui/fluidsynth-dialog.cpp:145
 msgid "Linear"
-msgstr ""
+msgstr "線形補間"
 
 #: gui/fluidsynth-dialog.cpp:146
 msgid "Fourth-order"
-msgstr ""
+msgstr "４次補間"
 
 #: gui/fluidsynth-dialog.cpp:147
 msgid "Seventh-order"
-msgstr ""
+msgstr "７次補間"
 
 #. I18N: Button to reset keymap mappings to defaults
 #: gui/fluidsynth-dialog.cpp:151 backends/keymapper/remap-widget.cpp:314
@@ -558,12 +560,12 @@ msgstr "FluidSynthの設定を全てリセットしてもよろしいですか�
 
 #: gui/gui-manager.cpp:122
 msgid "GUI"
-msgstr ""
+msgstr "GUI"
 
 #: gui/gui-manager.cpp:126 engines/mohawk/myst.cpp:585
 #: engines/mohawk/riven.cpp:858
 msgid "Interact"
-msgstr ""
+msgstr "作用"
 
 #: gui/gui-manager.cpp:131 gui/unknown-game-dialog.cpp:54
 #: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
@@ -616,28 +618,28 @@ msgstr "マップ"
 
 #: gui/KeysDialog.cpp:50
 msgid "Select an action and click 'Map'"
-msgstr ""
+msgstr "動作を選択して「マップ」をクリックしてください"
 
 #: gui/KeysDialog.cpp:81 gui/KeysDialog.cpp:103 gui/KeysDialog.cpp:138
 #, c-format
 msgid "Associated key : %s"
-msgstr ""
+msgstr "マップされたキー：%s"
 
 #: gui/KeysDialog.cpp:83 gui/KeysDialog.cpp:105 gui/KeysDialog.cpp:140
 msgid "Associated key : none"
-msgstr ""
+msgstr "マップされたキー：なし"
 
 #: gui/KeysDialog.cpp:91
 msgid "Please select an action"
-msgstr ""
+msgstr "動作を選択してください"
 
 #: gui/KeysDialog.cpp:107
 msgid "Press the key to associate"
-msgstr ""
+msgstr "マップするキーを押してください"
 
 #: gui/KeysDialog.cpp:142 gui/KeysDialog.h:41
 msgid "Choose an action to map"
-msgstr ""
+msgstr "マップする動作を選択してください"
 
 #: gui/launcher.cpp:140 engines/dialogs.cpp:99
 msgid "~Q~uit"
@@ -661,7 +663,7 @@ msgstr "設定(~O~)..."
 
 #: gui/launcher.cpp:142
 msgid "Change global ScummVM options"
-msgstr ""
+msgstr "全般のScummVMの設定を変える"
 
 #: gui/launcher.cpp:144
 msgid "~S~tart"
@@ -677,11 +679,11 @@ msgstr "ロード(~L~)..."
 
 #: gui/launcher.cpp:147
 msgid "Load saved game for selected game"
-msgstr ""
+msgstr "選択されたゲームのセーブデータをロードする"
 
 #: gui/launcher.cpp:149
 msgid "Record..."
-msgstr ""
+msgstr "記録..."
 
 #: gui/launcher.cpp:156
 msgid "~A~dd Game..."
@@ -689,7 +691,7 @@ msgstr "ゲームを追加(~A~)..."
 
 #: gui/launcher.cpp:156 gui/launcher.cpp:166
 msgid "Add games to the list"
-msgstr ""
+msgstr "リストにゲームを追加する"
 
 #: gui/launcher.cpp:157
 msgid "Mass Add..."
@@ -701,7 +703,7 @@ msgstr "ゲームを編集(~E~)..."
 
 #: gui/launcher.cpp:161 gui/launcher.cpp:171
 msgid "Change game options"
-msgstr ""
+msgstr "ゲームの設定を変える"
 
 #: gui/launcher.cpp:163
 msgid "~R~emove Game"
@@ -709,7 +711,7 @@ msgstr "ゲームを削除(~R~)"
 
 #: gui/launcher.cpp:163 gui/launcher.cpp:173
 msgid "Remove game from the list. The game data files stay intact"
-msgstr ""
+msgstr "リストからゲームを削除する。ゲームのデータファイルは削除されません"
 
 #: gui/launcher.cpp:166
 msgctxt "lowres"
@@ -754,21 +756,21 @@ msgstr "ロート"
 
 #: gui/launcher.cpp:362
 msgid "This directory cannot be used yet, it is being downloaded into!"
-msgstr ""
+msgstr "このフォルダーはダウンロード中の為使えません！"
 
 #: gui/launcher.cpp:373
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
-msgstr ""
+msgstr "一括にゲームを追加してもよろしいですか？大量に追加することもあります。"
 
 #: gui/launcher.cpp:395
 msgid "Do you really want to remove this game configuration?"
-msgstr ""
+msgstr "このゲームはリストから削除してもよろしいですか？"
 
 #: gui/launcher.cpp:437
 msgid "Do you want to load saved game?"
-msgstr ""
+msgstr "セーブデータをロードしますか？"
 
 #: gui/launcher.cpp:487
 msgid "This game does not support loading games from the launcher."
@@ -788,7 +790,7 @@ msgstr ""
 
 #: gui/launcher.cpp:577
 msgid "Pick the game:"
-msgstr ""
+msgstr "ゲームを選択してください："
 
 #: gui/massadd.cpp:76 gui/massadd.cpp:79
 msgid "... progress ..."
@@ -815,7 +817,7 @@ msgstr ""
 
 #: gui/message.cpp:148 gui/message.cpp:152 gui/options.cpp:2121
 msgid "Open URL"
-msgstr ""
+msgstr "URLを開く"
 
 #: gui/onscreendialog.cpp:101 gui/onscreendialog.cpp:103
 msgid "Stop"
@@ -2402,7 +2404,7 @@ msgstr "終了"
 
 #: backends/events/default/default-events.cpp:293
 msgid "Global"
-msgstr "グローバル"
+msgstr "全般"
 
 #: backends/events/default/default-events.cpp:296
 msgid "Global Main Menu"
