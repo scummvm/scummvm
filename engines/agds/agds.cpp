@@ -55,6 +55,7 @@ AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Eng
 																			 _dialog(this),
 																			 _tellPlayer(true),
 																			 _tellTextTimer(0),
+																			 _resetTextLayoutIfSyncSoundStops(false),
 																			 _syncSoundId(-1),
                                                                              _fastMode(true) {
 }
@@ -447,6 +448,9 @@ Common::Error AGDSEngine::run() {
 		for (CharactersType::iterator i = _characters.begin(); i != _characters.end(); ++i)
 			i->_value->paint(*this, *backbuffer);
 
+		if (_resetTextLayoutIfSyncSoundStops && _textLayout.valid() && !_soundManager.playing(_syncSoundId))
+			_textLayout.reset();
+
 		if (_textLayout.valid()) {
 			_textLayout.paint(*this, *backbuffer);
 		}
@@ -622,8 +626,10 @@ void AGDSEngine::tell(const Common::String &regionName, const Common::String &te
 		pos = region->center;
 	}
 	_textLayout.layout(*this, text, pos, font_id);
-	if (!sound.empty())
+	if (!sound.empty()) {
 		playSoundSync(sound, soundPhaseVar);
+		_resetTextLayoutIfSyncSoundStops = true;
+	}
 }
 
 
