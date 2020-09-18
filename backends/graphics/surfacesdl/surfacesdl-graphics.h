@@ -316,7 +316,6 @@ protected:
 
 	const PluginList &_scalerPlugins;
 	ScalerPluginObject *_scalerPlugin;
-	ScalerPluginObject *_normalPlugin;
 	uint _scalerIndex;
 	uint _maxExtraPixels;
 	uint _extraPixels;
