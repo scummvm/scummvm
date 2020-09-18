@@ -35,6 +35,7 @@
 #ifdef USE_RGB_COLOR
 #include "common/list.h"
 #endif
+#include "graphics/conversion.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/scaler.h"
@@ -159,8 +160,6 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_videoMode.aspectRatioCorrection = false;
 #endif
 
-	_normalPlugin = &ScalerMan.findScalerPlugin("normal")->get<ScalerPluginObject>();
-	assert(_normalPlugin);
 	_scalerPlugin = NULL;
 	_scalerIndex = 0;
 	_maxExtraPixels = ScalerMan.getMaxExtraPixels();
@@ -687,10 +686,6 @@ void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 		if (_scalerPlugin)
 			_scalerPlugin->deinitialize();
 
-		if (&_scalerPlugins[_scalerIndex]->get<ScalerPluginObject>() != _normalPlugin) {
-			// _normalPlugin might be needed and needs to be initialized
-			_normalPlugin->initialize(format);
-		}
 		_scalerPlugin = &_scalerPlugins[_scalerIndex]->get<ScalerPluginObject>();
 		_scalerPlugin->initialize(format);
 	}
@@ -2108,34 +2103,29 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 	// If possible, use the same scaler for the cursor as for the rest of
 	// the game. This only works well with the non-blurring scalers so we
 	// otherwise use the Normal scaler
-#ifdef USE_SCALERS
 	if (!_cursorDontScale) {
+#ifdef USE_SCALERS
 		// HACK: AdvMame4x requires a height of at least 4 pixels, so we
 		// fall back on the Normal scaler when a smaller cursor is supplied.
 		if (_scalerPlugin->canDrawCursor() && (uint)_mouseCurState.h >= _extraPixels) {
-#endif
             _scalerPlugin->scale(
                     (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * _mouseOrigSurface->format->BytesPerPixel,
                     _mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
                     _mouseCurState.w, _mouseCurState.h, 0, 0);
-#ifdef USE_SCALERS
-		} else {
-			int oldFactor = _normalPlugin->setFactor(_videoMode.scaleFactor);
-			_normalPlugin->scale(
-				(byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * _mouseOrigSurface->format->BytesPerPixel,
-				_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
-				_mouseCurState.w, _mouseCurState.h, 0, 0);
-			_normalPlugin->setFactor(oldFactor);
+		} else
+#endif
+		{
+			Graphics::scaleBlit((byte *)_mouseSurface->pixels, (const byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * _mouseOrigSurface->format->BytesPerPixel,
+			                    _mouseSurface->pitch, _mouseOrigSurface->pitch,
+				                _mouseCurState.w * _videoMode.scaleFactor, _mouseCurState.h * _videoMode.scaleFactor,
+			                    _mouseCurState.w, _mouseCurState.h, convertSDLPixelFormat(_mouseSurface->format));
+
 		}
 	} else {
-		int oldScaleFactor = _scalerPlugin->setFactor(1);
-		_scalerPlugin->scale(
-			(byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * _mouseOrigSurface->format->BytesPerPixel,
-			_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
-			_mouseCurState.w, _mouseCurState.h, 0, 0);
-		_scalerPlugin->setFactor(oldScaleFactor);
+		Graphics::copyBlit((byte *)_mouseSurface->pixels, (const byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * _mouseOrigSurface->format->BytesPerPixel,
+		                   _mouseSurface->pitch, _mouseOrigSurface->pitch,
+		                   _mouseCurState.w, _mouseCurState.h, _mouseSurface->format->BytesPerPixel);
 	}
-#endif
 
 #ifdef USE_ASPECT
 	if (!_cursorDontScale && _videoMode.aspectRatioCorrection)
