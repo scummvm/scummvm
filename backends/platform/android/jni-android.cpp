@@ -378,11 +378,15 @@ void JNI::showKeyboardControl(bool enable) {
 	}
 }
 
+// The following adds assets folder to search set.
+// However searching and retrieving from "assets" on Android this is slow
+// so we also make sure to add the "path" directory, with a higher priority
+// This is done via a call to ScummVMActivity's (java) getSysArchives
 void JNI::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	JNIEnv *env = JNI::getEnv();
 
-	s.add("ASSET", _asset_archive, priority, false);
-
+	// get any additional specified paths (from ScummVMActivity code)
+	// Insert them with "priority" priority.
 	jobjectArray array =
 		(jobjectArray)env->CallObjectMethod(_jobj, _MID_getSysArchives);
 
@@ -407,6 +411,15 @@ void JNI::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 
 		env->DeleteLocalRef(path_obj);
 	}
+
+	// add the internal asset (android's structure) with a lower priority,
+	// since:
+	// 1. It is very slow in accessing large files (eg our growing fonts.dat)
+	// 2. we extract the asset contents anyway to the internal app path
+	// 3. we pass the internal app path in the process above (via _MID_getSysArchives)
+	// However, we keep android APK's "assets" as a fall back, in case something went wrong with the extraction process
+	//          and since we had the code anyway
+	s.add("ASSET", _asset_archive, priority - 1, false);
 }
 
 char *JNI::convertEncoding(const char *to, const char *from, const char *string, size_t length) {
