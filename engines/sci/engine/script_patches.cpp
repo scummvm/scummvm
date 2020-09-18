@@ -3649,6 +3649,47 @@ static const uint16 gk1BayouRitualAviPatch[] = {
 	PATCH_END
 };
 
+// On day 6, an envelope is dropped off in the bookstore after 20 seconds, but
+//  if the game is in the middle of a message sequence then it can lockup.
+//  When a timer expires, bookstore:cue tests a number of properties to make
+//  sure that it's not interrupting anything, but unlike other rooms such as
+//  nwJackson:cue it doesn't test if a message is being said. Looking at Grace
+//  triggers one of many message sequences which can prevent ego from completing
+//  his turn to face the door, leaving dropTheEnvelope stuck in handsOff mode.
+//
+// We fix this by adding a test to bookstore:cue to verify that a message isn't
+//  being said, just like nwJackson:cue. We make room for this by overwriting a
+//  redundant handsOff call. This also prevents the florist script from starting
+//  in the middle of a message, as this could have similar conflicts.
+//
+// Applies to: All versions
+// Responsible method: bookstore:cue
+static const uint16 gk1Day6EnvelopeSignature[] = {
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(state),             // pushi state
+	0x76,                                   // push0
+	0x51, SIG_ADDTOOFFSET(+1),              // class CueObj
+	0x4a, SIG_UINT16(0x0004),               // send 04 [ CueObj state? ]
+	0x18,                                   // not
+	0x31, SIG_ADDTOOFFSET(+1),              // bnt [ reset timer ]
+	0x38, SIG_SELECTOR16(handsOff),         // pushi handsOff
+	0x76,                                   // push0
+	0x81, 0x01,                             // lag 01
+	0x4a, SIG_UINT16(0x0004),               // send 04 [ GK1 handsOff: ]
+	SIG_END
+};
+
+static const uint16 gk1Day6EnvelopePatch[] = {
+	PATCH_ADDTOOFFSET(+8),
+	0x2f, PATCH_GETORIGINALBYTEADJUST(+10, +1), // bt [ reset timer ]
+	0x39, PATCH_SELECTOR8(size),                // pushi size
+	0x76,                                       // push0
+	0x81, 0x54,                                 // lag 54
+	0x4a, PATCH_UINT16(0x0004),                 // send 04 [ talkers size? ]
+	0x2f, PATCH_GETORIGINALBYTEADJUST(+10, -9), // bt [ reset timer ]
+	PATCH_END
+};
+
 // GK1 Mac is missing view 56, which is the close-up of the talisman. Clicking
 //  Look on the talisman from inventory is supposed to display an inset with
 //  view 56 and say a message, but instead this would crash the Mac interpreter.
@@ -3716,6 +3757,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  false,   24, "mac: fix missing talisman view",              1, gk1MacTalismanInsetSignature,     gk1MacTalismanInsetPatch },
 	{  true,    51, "fix interrogation bug",                       1, gk1InterrogationBugSignature,     gk1InterrogationBugPatch },
 	{  true,    93, "fix inventory on restart",                    1, gk1RestartInventorySignature,     gk1RestartInventoryPatch },
+	{  true,   210, "fix day 6 envelope lockup",                   2, gk1Day6EnvelopeSignature,         gk1Day6EnvelopePatch },
 	{  true,   211, "fix day 1 grace phone speech timing",         1, gk1Day1GracePhoneSignature,       gk1Day1GracePhonePatch },
 	{  true,   212, "fix day 5 drum book dialogue error",          1, gk1Day5DrumBookDialogueSignature, gk1Day5DrumBookDialoguePatch },
 	{  true,   212, "fix day 5 phone softlock",                    1, gk1Day5PhoneFreezeSignature,      gk1Day5PhoneFreezePatch },
