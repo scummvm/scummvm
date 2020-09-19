@@ -285,6 +285,7 @@ static Director::DirectorGameDescription s_fallbackDesc = {
 };
 
 static char s_fallbackFileNameBuffer[51];
+static char s_fallbackExtraBuf[256];
 
 ADDetectedGame DirectorMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 	// TODO: Handle Mac fallback
@@ -374,9 +375,21 @@ ADDetectedGame DirectorMetaEngine::fallbackDetect(const FileMap &allFiles, const
 		s_fallbackFileNameBuffer[50] = '\0';
 		desc->desc.filesDescriptions[0].fileName = s_fallbackFileNameBuffer;
 
-		warning("Director fallback detection D%d", desc->version);
+		Common::String extra = Common::String::format("v%d.%02d", desc->version / 100, desc->version % 100);
+		Common::strlcpy(s_fallbackExtraBuf, extra.c_str(), sizeof(s_fallbackExtraBuf) - 1);
+		desc->desc.extra = s_fallbackExtraBuf;
 
-		return ADDetectedGame(&desc->desc);
+		warning("Director fallback detection %s", extra.c_str());
+
+		ADDetectedGame game(&desc->desc);
+
+		FileProperties tmp;
+		if (getFileProperties(file->getParent(), allFiles, desc->desc, file->getName(), tmp)) {
+			game.hasUnknownFiles = true;
+			game.matchedFiles[file->getName()] = tmp;
+		}
+
+		return game;
 	}
 
 	return ADDetectedGame();
