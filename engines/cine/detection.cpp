@@ -111,7 +111,7 @@ public:
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
 	void removeSaveState(const char *target, int slot) const override;
-	const char *getSavegameFile(int saveGameIdx, const char *target = nullptr) const override;
+	Common::String getSavegameFile(int saveGameIdx, const char *target = nullptr) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
@@ -220,12 +220,8 @@ SaveStateList CineMetaEngine::listSaves(const char *target) const {
 
 int CineMetaEngine::getMaximumSaveSlot() const { return MAX_SAVEGAMES - 1; }
 
-const char *CineMetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
-	static char buffer[200];
-
-	snprintf(buffer, sizeof(buffer), "%s.%d", target == nullptr ? getEngineId() : target, saveGameIdx);
-
-	return buffer;
+Common::String CineMetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
+	return Common::String::format("%s.%d", target == nullptr ? getEngineId() : target, saveGameIdx);
 }
 
 SaveStateDescriptor CineMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
@@ -331,7 +327,7 @@ void CineMetaEngine::removeSaveState(const char *target, int slot) const {
 	delete out;
 
 	// Delete save file
-	const char *saveFileName = getSavegameFile(slot, target);
+	Common::String saveFileName = getSavegameFile(slot, target);
 
 	g_system->getSavefileManager()->removeSavefile(saveFileName);
 }

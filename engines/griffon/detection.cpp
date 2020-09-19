@@ -78,25 +78,19 @@ public:
 	virtual int getAutosaveSlot() const override {
 		return 4;
 	}
-	const char *getSavegameFile(int saveGameIdx, const char *target = nullptr) const override;
-	const char *getSavegamePattern(const char *target = nullptr) const override;
+	Common::String getSavegameFile(int saveGameIdx, const char *target = nullptr) const override;
 
 	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
-
-const char *GriffonMetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
-	static char buffer[200];
-	snprintf(buffer, sizeof(buffer), "%s.s%02d", target == nullptr ? getEngineId() : target, saveGameIdx);
-
-	return buffer;
-}
-
-const char *GriffonMetaEngine::getSavegamePattern(const char *target) const {
-	static char buffer[200];
-	snprintf(buffer, sizeof(buffer), "%s.s##", target == nullptr ? getEngineId() : target);
-
-	return buffer;
+Common::String GriffonMetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
+	if (saveGameIdx == kSavegameFilePattern) {
+		// Pattern requested
+		return Common::String::format("%s.s##", target == nullptr ? getEngineId() : target);
+	} else {
+		// Specific filename requested
+		return Common::String::format("%s.s%02d", target == nullptr ? getEngineId() : target, saveGameIdx);
+	}
 }
 
 bool Griffon::GriffonEngine::hasFeature(EngineFeature f) const {
