@@ -83,9 +83,6 @@ public:
 		return "Ultima Games (C) 1980-1995 Origin Systems Inc.";
 	}
 
-	const char *getSavegamePattern(const char *target = nullptr) const override;
-	const char *getSavegameFile(int saveGameIdx, const char *target = nullptr) const override;
-
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	int getMaximumSaveSlot() const override;
 

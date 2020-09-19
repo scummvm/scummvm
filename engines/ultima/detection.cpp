@@ -101,20 +101,6 @@ int UltimaMetaEngine::getMaximumSaveSlot() const {
 	return MAX_SAVES;
 }
 
-const char *UltimaMetaEngine::getSavegamePattern(const char *target) const {
-	static char buffer[100];
-	snprintf(buffer, 100, "%s.###", target == nullptr ? getEngineId() : target);
-
-	return buffer;
-}
-
-const char *UltimaMetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
-	static char buffer[100];
-	snprintf(buffer, 100, "%s.%.3d", target == nullptr ? getEngineId() : target, saveGameIdx);
-
-	return buffer;
-}
-
 SaveStateList UltimaMetaEngine::listSaves(const char *target) const {
 	SaveStateList saveList = AdvancedMetaEngine::listSaves(target);
 
