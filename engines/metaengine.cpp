@@ -39,8 +39,9 @@
 
 const char *MetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
 	static char buffer[200];
+	const char *pattern = hasFeature(kSavesUseExtendedFormat) ?  "%s.%03d" : "%s.s%02d";
 
-	snprintf(buffer, sizeof(buffer), "%s.s%02d", target == nullptr ? getEngineId() : target, saveGameIdx);
+	snprintf(buffer, sizeof(buffer), pattern, target == nullptr ? getEngineId() : target, saveGameIdx);
 
 	return buffer;
 }
