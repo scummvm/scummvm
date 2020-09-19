@@ -53,7 +53,6 @@ AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Eng
                                                                              _inventoryRegion(),
                                                                              _soundManager(this, system->getMixer()),
 																			 _dialog(this),
-																			 _tellPlayer(true),
 																			 _tellTextTimer(0),
 																			 _resetTextLayoutIfSyncSoundStops(false),
 																			 _syncSoundId(-1),
@@ -449,7 +448,7 @@ Common::Error AGDSEngine::run() {
 			i->_value->paint(*this, *backbuffer);
 
 		if (_resetTextLayoutIfSyncSoundStops && _textLayout.valid() && !_soundManager.playing(_syncSoundId))
-			_textLayout.reset();
+			_textLayout.reset(*this);
 
 		if (_textLayout.valid()) {
 			_textLayout.paint(*this, *backbuffer);
@@ -485,7 +484,7 @@ void AGDSEngine::skipFilm() {
 		_mixer->stopID(_syncSoundId);
 		_syncSoundId = -1;
 	}
-	_textLayout.reset();
+	_textLayout.reset(*this);
 }
 
 int AGDSEngine::appendToSharedStorage(const Common::String &value) {
@@ -614,7 +613,6 @@ void AGDSEngine::addSystemVar(const Common::String &name, SystemVariable *var) {
 }
 
 void AGDSEngine::tell(const Common::String &regionName, const Common::String &text, const Common::String &sound, const Common::String &soundPhaseVar, bool npc) {
-	_tellPlayer = !npc;
 	int font_id = getSystemVariable(npc? "npc_tell_font": "tell_font")->getInteger();
 	Common::Point pos;
 
@@ -625,7 +623,7 @@ void AGDSEngine::tell(const Common::String &regionName, const Common::String &te
 		RegionPtr region = loadRegion(regionName);
 		pos = region->center;
 	}
-	_textLayout.layout(*this, text, pos, font_id);
+	_textLayout.layout(*this, text, pos, font_id, npc);
 	if (!sound.empty()) {
 		playSoundSync(sound, soundPhaseVar);
 		_resetTextLayoutIfSyncSoundStops = true;
