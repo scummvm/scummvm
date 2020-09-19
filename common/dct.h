@@ -50,7 +50,7 @@ namespace Common {
  * (Inverse) Discrete Cosine Transforms.
  *
  * Used in engines:
- *  - scumm
+ *  - Scumm
  */
 class DCT {
 public:
