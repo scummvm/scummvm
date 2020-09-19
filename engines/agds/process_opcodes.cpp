@@ -921,7 +921,8 @@ void Process::loadDialog() {
 void Process::setNPCTellNotifyVar() {
 	Common::String name = popString();
 	debug("setNPCTellNotifyVar %s", name.c_str());
-	_engine->dialog().setNPCNotifyVar(name);
+	_engine->textLayout().setNPCNotifyVar(name);
+	_engine->setGlobal(name, 0);
 }
 
 void Process::getObjectPictureWidth() {
@@ -1310,7 +1311,9 @@ void Process::setCharacterNotifyVars() {
 
 	debug("setCharacterNotifyVars, tell: %s, direction: %s", arg1.c_str(), arg2.c_str());
 	_engine->setGlobal(arg1, 0);
-	_engine->setGlobal(arg2, 1); //FIXME: pass current direction
+	_engine->setGlobal(arg2, 0); //FIXME: pass current direction
+	_engine->textLayout().setCharNotifyVar(arg1);
+	_engine->textLayout().setCharDirectionNotifyVar(arg2);
 }
 
 //fixme: add trace here

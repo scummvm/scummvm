@@ -7,6 +7,7 @@
 namespace AGDS {
 
 void Dialog::run(const Common::String & dialogProcess) {
+	debug("runDialog: %s", dialogProcess.c_str());
 	_dialogProcessName = dialogProcess;
 	_engine->runObject(dialogProcess);
 }
@@ -103,7 +104,6 @@ bool Dialog::tick() {
 		_dialogProcessName.clear();
 
 		debug("end of dialog, running %s", process.c_str());
-		_engine->runObject(process);
 		_engine->getSystemVariable("dialog_var")->setInteger(-2);
 		return false;
 	}

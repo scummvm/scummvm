@@ -16,13 +16,26 @@ void TextLayout::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 	}
 }
 
-void TextLayout::layout(AGDSEngine &engine, const Common::String &text, Common::Point pos, int fontId) {
+void TextLayout::reset(AGDSEngine &engine) {
+	bool valid = _valid;
+	_valid = false;
+	_lines.clear();
+	if (valid) {
+		Common::String &var = _npc? _npcNotifyVar: _charNotifyVar;
+		if (!var.empty()) {
+			engine.setGlobal(var, 0);
+		}
+	}
+}
+
+void TextLayout::layout(AGDSEngine &engine, const Common::String &text, Common::Point pos, int fontId, bool npc) {
 	if (text.empty()) {
 		_valid = false;
 		return;
 	}
 
 	_fontId = fontId;
+	_npc = npc;
 	Font *font = engine.getFont(fontId);
 
 	_lines.clear();
@@ -63,6 +76,11 @@ void TextLayout::layout(AGDSEngine &engine, const Common::String &text, Common::
 	}
 
 	_valid = true;
+
+	Common::String &var = _npc? _npcNotifyVar: _charNotifyVar;
+	if (!var.empty()) {
+		engine.setGlobal(var, 1);
+	}
 }
 
 }

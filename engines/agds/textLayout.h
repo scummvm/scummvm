@@ -39,6 +39,7 @@ class AGDSEngine;
 class TextLayout {
 	int				_fontId;
 	Common::Point 	_pos;
+	bool			_npc;
 	bool 			_valid;
 
 	struct Line {
@@ -49,18 +50,33 @@ class TextLayout {
 
 	Common::Array<Line> _lines;
 
+	Common::String		_charNotifyVar;
+	Common::String		_charDirectionNotifyVar;
+	Common::String		_npcNotifyVar;
+
 public:
-	TextLayout(): _fontId(-1), _valid(false) {}
+	TextLayout(): _fontId(-1), _npc(true), _valid(false) {}
 
 	bool valid() const {
 		return _valid;
 	}
-	void reset() {
-		_valid = false;
-		_lines.clear();
+
+	void reset(AGDSEngine &engine);
+
+	void setCharNotifyVar(const Common::String &name) {
+		_charNotifyVar = name;
 	}
+
+	void setCharDirectionNotifyVar(const Common::String &name) {
+		_charDirectionNotifyVar = name;
+	}
+
+	void setNPCNotifyVar(const Common::String &name) {
+		_npcNotifyVar = name;
+	}
+
 	void paint(AGDSEngine &engine, Graphics::Surface &backbuffer);
-	void layout(AGDSEngine &engine, const Common::String &text, Common::Point pos, int fontId);
+	void layout(AGDSEngine &engine, const Common::String &text, Common::Point pos, int fontId, bool npc);
 };
 
 } // End of namespace AGDS

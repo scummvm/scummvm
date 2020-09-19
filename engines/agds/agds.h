@@ -132,6 +132,10 @@ public:
 		return _dialog;
 	}
 
+	TextLayout & textLayout() {
+		return _textLayout;
+	}
+
 	Screen * getCurrentScreen() {
 		return _currentScreen;
 	}
@@ -272,7 +276,6 @@ private:
 
 	// Original engine use weird names for the vars, I keep them.
 	int							_tellTextTimer;
-	bool						_tellPlayer;
 	TextLayout					_textLayout;
 
 	bool						_resetTextLayoutIfSyncSoundStops;
