@@ -130,27 +130,31 @@ int SmushFont::draw2byte(byte *buffer, int dst_width, int x, int y, int idx) {
 	enum ShadowMode {
 		kNone,
 		kNormalShadowMode,
-		kKoreanV7ShadowMode,
+		kCJKv7ShadowMode,
 		kKoreanV8ShadowMode
 	};
 
 	ShadowMode shadowMode = kNone;
 
-	if (_vm->_language == Common::KO_KOR) {
-		if (_vm->_game.version == 8)
+	if (_vm->_useCJKMode) {
+		// TODO: Check Chinese and Japanese COMI
+		// For now the kKoreanV8ShadowMode is limited to Korean, because it isn't known yet
+		// how Chinese and Japanese COMI is supposed to look like (I suspect that this gets
+		// rendered the same way, just as it is done in DIG).
+		if (_vm->_game.version == 8 && _vm->_language == Common::KO_KOR)
 			shadowMode = kKoreanV8ShadowMode;
-		else
-			shadowMode = kKoreanV7ShadowMode;
+		else if (_vm->_game.version != 8)
+			shadowMode = kCJKv7ShadowMode;
 	}
 
-	int shadowOffsetXTable[4] = {-1, 0, 1, 0};
-	int shadowOffsetYTable[4] = {0, 1, 0, 0};
-	int shadowOffsetColorTable[4] = {0, 0, 0, color};
+	int shadowOffsetXTable[4] = { -1, 0, 1, 0 };
+	int shadowOffsetYTable[4] = { 0, 1, 0, 0 };
+	int shadowOffsetColorTable[4] = { 0, 0, 0, color };
 
 	int shadowIdx = 3;
 	if (shadowMode == kKoreanV8ShadowMode)
 		shadowIdx = 0;
-	else if (shadowMode == kKoreanV7ShadowMode)
+	else if (shadowMode == kCJKv7ShadowMode)
 		shadowIdx = 2;
 
 	const byte *origSrc = src;
