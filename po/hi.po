@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
-"PO-Revision-Date: 2020-09-17 13:45+0000\n"
+"PO-Revision-Date: 2020-09-19 15:43+0000\n"
 "Last-Translator: Aryan Rawlani <aryanrawlani007@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hi/>\n"
@@ -34,7 +34,7 @@ msgstr ""
 
 #: gui/browser.cpp:75 backends/dialogs/macosx/macosx-dialogs.mm:78
 msgid "Show hidden files"
-msgstr ""
+msgstr "छिपी हुई files दिखाये"
 
 #: gui/browser.cpp:75
 msgid "Show files marked with the hidden attribute"
@@ -42,7 +42,7 @@ msgstr ""
 
 #: gui/browser.cpp:79 gui/remotebrowser.cpp:57
 msgid "Go up"
-msgstr ""
+msgstr "ऊपर जाओ"
 
 #: gui/browser.cpp:79 gui/browser.cpp:81 gui/remotebrowser.cpp:57
 #: gui/remotebrowser.cpp:59
@@ -52,7 +52,7 @@ msgstr ""
 #: gui/browser.cpp:81 gui/remotebrowser.cpp:59
 msgctxt "lowres"
 msgid "Go up"
-msgstr ""
+msgstr "ऊपर जाओ"
 
 #: gui/browser.cpp:82 gui/chooser.cpp:46 gui/editgamedialog.cpp:350
 #: gui/editrecorddialog.cpp:67 gui/filebrowser-dialog.cpp:65
@@ -76,7 +76,7 @@ msgstr ""
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:184
 #: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:199
 msgid "Cancel"
-msgstr ""
+msgstr "रद्द करदो"
 
 #: gui/browser.cpp:83 gui/chooser.cpp:47 gui/filebrowser-dialog.cpp:66
 #: gui/remotebrowser.cpp:61 gui/themebrowser.cpp:56
@@ -84,7 +84,7 @@ msgstr ""
 #: backends/dialogs/macosx/macosx-dialogs.mm:132
 #: backends/dialogs/win32/win32-dialogs.cpp:138
 msgid "Choose"
-msgstr ""
+msgstr "चुनें"
 
 #: gui/downloaddialog.cpp:49
 msgid "Select directory where to download game data"
@@ -104,16 +104,16 @@ msgstr ""
 
 #: gui/downloaddialog.cpp:64
 msgid "Cancel download"
-msgstr ""
+msgstr "Download रद्द करदो"
 
 #: gui/downloaddialog.cpp:66
 msgctxt "lowres"
 msgid "Cancel download"
-msgstr ""
+msgstr "Download रद्द करदो"
 
 #: gui/downloaddialog.cpp:68
 msgid "Hide"
-msgstr ""
+msgstr "छिपादो"
 
 #: gui/downloaddialog.cpp:118
 msgid ""
@@ -129,7 +129,7 @@ msgstr ""
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
 #: engines/sci/graphics/controls32.cpp:928
 msgid "Yes"
-msgstr ""
+msgstr "हाँ"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
@@ -139,11 +139,11 @@ msgstr ""
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
 #: engines/sci/graphics/controls32.cpp:928
 msgid "No"
-msgstr ""
+msgstr "नहीं"
 
 #: gui/downloaddialog.cpp:137 gui/launcher.cpp:537
 msgid "ScummVM couldn't open the specified directory!"
-msgstr ""
+msgstr "ScummVM ये directory खोल नहीं पाया!"
 
 #: gui/downloaddialog.cpp:147
 msgid ""
@@ -168,7 +168,7 @@ msgstr ""
 #: engines/sword2/animation.cpp:465 engines/sword2/animation.cpp:475
 #: engines/zvision/file/save_manager.cpp:226
 msgid "OK"
-msgstr ""
+msgstr "ठीक है"
 
 #: gui/downloaddialog.cpp:152
 #, c-format
@@ -180,7 +180,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:215
 #, c-format
 msgid "Downloaded %s %S / %s %S"
-msgstr ""
+msgstr "डौन्लोडे कर दिया %s %S / %s %S"
 
 #: gui/downloaddialog.cpp:222
 #, c-format
@@ -189,7 +189,7 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:135 engines/dialogs.cpp:285
 msgid "Game"
-msgstr ""
+msgstr "खेल"
 
 #: gui/editgamedialog.cpp:139
 msgid "ID:"
@@ -209,22 +209,22 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:146 gui/editrecorddialog.cpp:59
 msgid "Name:"
-msgstr ""
+msgstr "नाम:"
 
 #: gui/editgamedialog.cpp:146 gui/editgamedialog.cpp:148
 #: gui/editgamedialog.cpp:149
 msgid "Full title of the game"
-msgstr ""
+msgstr "खेल का पूरा नाम"
 
 #: gui/editgamedialog.cpp:148
 msgctxt "lowres"
 msgid "Name:"
-msgstr ""
+msgstr "नाम:"
 
 #: gui/editgamedialog.cpp:152 engines/mohawk/dialogs.cpp:138
 #: engines/mohawk/dialogs.cpp:339
 msgid "Language:"
-msgstr ""
+msgstr "भाषा:"
 
 #: gui/editgamedialog.cpp:152 gui/editgamedialog.cpp:153
 msgid ""
@@ -236,7 +236,7 @@ msgstr ""
 #: gui/options.cpp:1223 gui/options.cpp:1236 gui/options.cpp:1250
 #: gui/options.cpp:2012 gui/options.cpp:2186 audio/null.cpp:41
 msgid "<default>"
-msgstr ""
+msgstr "<अनुपस्थिति>"
 
 #: gui/editgamedialog.cpp:164
 msgid "Platform:"
@@ -260,7 +260,7 @@ msgstr ""
 #: backends/graphics/sdl/sdl-graphics.cpp:365
 #: backends/platform/ds/arm9/source/dsoptions.cpp:97
 msgid "Graphics"
-msgstr ""
+msgstr "ग्राफिक्स"
 
 #: gui/editgamedialog.cpp:196 gui/options.cpp:1567 gui/options.cpp:1698
 msgid "GFX"
@@ -268,7 +268,7 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:202
 msgid "Override global graphic settings"
-msgstr ""
+msgstr "वैश्विक ग्राफिक्स विकल्प अधिलेखित करे"
 
 #: gui/editgamedialog.cpp:204
 msgctxt "lowres"
@@ -294,7 +294,7 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:240 gui/options.cpp:1750 engines/dialogs.cpp:301
 msgid "Audio"
-msgstr ""
+msgstr "ऑडियो"
 
 #: gui/editgamedialog.cpp:243
 msgid "Override global audio settings"
@@ -409,7 +409,7 @@ msgstr ""
 #: gui/options.cpp:2477 gui/options.cpp:2483 gui/options.cpp:2494
 msgctxt "path"
 msgid "None"
-msgstr ""
+msgstr "कोई नहीं"
 
 #: gui/editgamedialog.cpp:369 gui/editgamedialog.cpp:460
 #: gui/editgamedialog.cpp:581 gui/options.cpp:1859 gui/options.cpp:2204
@@ -441,15 +441,15 @@ msgstr ""
 
 #: gui/editrecorddialog.cpp:58
 msgid "Author:"
-msgstr ""
+msgstr "लेखक:"
 
 #: gui/editrecorddialog.cpp:60
 msgid "Notes:"
-msgstr ""
+msgstr "टिप्पणियाँ:"
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:74
 msgid "Ok"
-msgstr ""
+msgstr "ठीक है"
 
 #: gui/filebrowser-dialog.cpp:50
 msgid "Choose file for loading"
@@ -568,7 +568,7 @@ msgstr ""
 #: engines/scumm/help.cpp:165 engines/scumm/help.cpp:191
 #: engines/scumm/help.cpp:209
 msgid "Close"
-msgstr ""
+msgstr "बंद करे"
 
 #: gui/gui-manager.cpp:137 engines/metaengine.cpp:112
 #: backends/platform/symbian/src/SymbianActions.cpp:40
@@ -579,7 +579,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1409
 #: engines/wintermute/keymapper_tables.h:1639
 msgid "Up"
-msgstr ""
+msgstr "ऊपर"
 
 #: gui/gui-manager.cpp:142 engines/metaengine.cpp:117
 #: backends/platform/symbian/src/SymbianActions.cpp:41
@@ -590,7 +590,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1415
 #: engines/wintermute/keymapper_tables.h:1645
 msgid "Down"
-msgstr ""
+msgstr "नीचे"
 
 #: gui/gui-manager.cpp:147 engines/metaengine.cpp:122
 #: backends/platform/symbian/src/SymbianActions.cpp:42
@@ -600,7 +600,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1505
 #: engines/wintermute/keymapper_tables.h:1627
 msgid "Left"
-msgstr ""
+msgstr "बाएं"
 
 #: gui/gui-manager.cpp:152 engines/metaengine.cpp:127
 #: backends/platform/symbian/src/SymbianActions.cpp:43
@@ -610,7 +610,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1513
 #: engines/wintermute/keymapper_tables.h:1633
 msgid "Right"
-msgstr ""
+msgstr "दाहिने"
 
 #: gui/KeysDialog.cpp:42
 msgid "Map"
@@ -651,27 +651,27 @@ msgstr ""
 
 #: gui/launcher.cpp:141
 msgid "A~b~out..."
-msgstr ""
+msgstr "जानकारी... (B)"
 
 #: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:210
 msgid "About ScummVM"
-msgstr ""
+msgstr "ScummVM के बारे में जानकारी"
 
 #: gui/launcher.cpp:142
 msgid "~O~ptions..."
-msgstr ""
+msgstr "विकल्प... (O)"
 
 #: gui/launcher.cpp:142
 msgid "Change global ScummVM options"
-msgstr ""
+msgstr "ScummVM के सारे विकल्प बदले"
 
 #: gui/launcher.cpp:144
 msgid "~S~tart"
-msgstr "शुरू(S)"
+msgstr "शुरू करे(S)"
 
 #: gui/launcher.cpp:144
 msgid "Start selected game"
-msgstr ""
+msgstr "इस चयनित खेल को शुरू करें"
 
 #: gui/launcher.cpp:147
 msgid "~L~oad..."
@@ -703,15 +703,15 @@ msgstr ""
 
 #: gui/launcher.cpp:161 gui/launcher.cpp:171
 msgid "Change game options"
-msgstr ""
+msgstr "खेल के विकल्प चुनें"
 
 #: gui/launcher.cpp:163
 msgid "~R~emove Game"
-msgstr ""
+msgstr "खेल हटा डे (R)"
 
 #: gui/launcher.cpp:163 gui/launcher.cpp:173
 msgid "Remove game from the list. The game data files stay intact"
-msgstr ""
+msgstr "खेल list से हटा दे. गेम की फाइलें बरकरार रहे गी"
 
 #: gui/launcher.cpp:166
 msgctxt "lowres"
@@ -739,7 +739,7 @@ msgstr ""
 
 #: gui/launcher.cpp:185 gui/launcher.cpp:756
 msgid "Search:"
-msgstr ""
+msgstr "तलाश:"
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:785
 #: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
@@ -794,7 +794,7 @@ msgstr ""
 
 #: gui/massadd.cpp:76 gui/massadd.cpp:79
 msgid "... progress ..."
-msgstr ""
+msgstr "... प्रगति ..."
 
 #: gui/massadd.cpp:266
 msgid "Scan complete!"
@@ -837,23 +837,23 @@ msgstr ""
 
 #: gui/options.cpp:132 common/updates.cpp:56
 msgid "Never"
-msgstr ""
+msgstr "कभी नहीँ"
 
 #: gui/options.cpp:132
 msgid "Every 5 mins"
-msgstr ""
+msgstr "हर 5 मिनट में"
 
 #: gui/options.cpp:132
 msgid "Every 10 mins"
-msgstr ""
+msgstr "हर 10 मिनट में"
 
 #: gui/options.cpp:132
 msgid "Every 15 mins"
-msgstr ""
+msgstr "हर 15 मिनट में"
 
 #: gui/options.cpp:132
 msgid "Every 30 mins"
-msgstr ""
+msgstr "हर 30 मिनट में"
 
 #: gui/options.cpp:395 gui/options.cpp:748 gui/options.cpp:886
 #: gui/options.cpp:992 gui/options.cpp:1352
@@ -1112,7 +1112,7 @@ msgstr ""
 
 #: gui/options.cpp:1422
 msgid "Both"
-msgstr ""
+msgstr "दोनों"
 
 #: gui/options.cpp:1424
 msgid "Subtitle speed:"
@@ -4522,7 +4522,7 @@ msgstr ""
 #: engines/kyra/engine/eobcommon.cpp:372 engines/kyra/engine/lol.cpp:479
 #: engines/pegasus/pegasus.cpp:2497 engines/zvision/detection.cpp:162
 msgid "Turn Left"
-msgstr ""
+msgstr "बांए मुड़िए"
 
 #: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:480
 #: engines/pegasus/pegasus.cpp:2504 engines/zvision/detection.cpp:168
@@ -4890,15 +4890,15 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1613
 #: engines/wintermute/keymapper_tables.h:1717
 msgid "Turn right"
-msgstr ""
+msgstr "दायें मुड़िए"
 
 #: engines/mohawk/riven.cpp:918
 msgid "Look up"
-msgstr ""
+msgstr "ऊपर देखो"
 
 #: engines/mohawk/riven.cpp:923
 msgid "Look down"
-msgstr ""
+msgstr "नीचे देखो"
 
 #: engines/mohawk/riven.cpp:929
 msgid "Play intro videos"
@@ -5402,12 +5402,12 @@ msgstr ""
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:281
 msgid "~P~revious"
-msgstr ""
+msgstr "पिछला (P)"
 
 #. I18N: Next page button
 #: engines/scumm/dialogs.cpp:283
 msgid "~N~ext"
-msgstr ""
+msgstr "अगला (N)"
 
 #: engines/scumm/dialogs.cpp:602
 msgid "Speech Only"
