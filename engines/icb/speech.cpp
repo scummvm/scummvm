@@ -493,7 +493,7 @@ void _game_session::Service_speech() {
 		M = 0;
 
 		// run the script
-		ret = RunScript((const char *&)speech_info[CONV_ID].script_pc, speech_object);
+		ret = RunScript(const_cast<const char *&>(speech_info[CONV_ID].script_pc), speech_object);
 
 		if (ret == 1) {
 			// speech script has finished

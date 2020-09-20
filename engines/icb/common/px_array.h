@@ -207,7 +207,7 @@ const Type *&T_MYPTRARRAY::operator[](uint n) const {
 		(const_cast<rcAutoPtrArray<Type> *>(this))->m_userPosition = n + 1;
 	}
 
-	return (const Type *&)(m_contents[n]);
+	return const_cast<const Type *&>(m_contents[n]);
 }
 
 MY_TEMPLATE T_MYPTRARRAY::~rcAutoPtrArray() { Reset(); }

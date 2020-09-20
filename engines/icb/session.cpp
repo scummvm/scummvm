@@ -1108,7 +1108,7 @@ void _game_session::Pre_logic_event_check() {
 
 			// run script - context chooser MAY pick a new L 1 logic
 			// we call this now so the new script will be setup and ready to run
-			RunScript((const char *&)L->logic[0], object);
+			RunScript(const_cast<const char *&>(L->logic[0]), object);
 
 			// reset the crude switch
 			L->context_request = FALSE8;
@@ -1135,7 +1135,7 @@ void _game_session::Script_cycle() {
 			script_owner = object; // object running its own script
 		}
 
-		ret = RunScript((const char *&)L->logic[L->logic_level], script_owner);
+		ret = RunScript(const_cast<const char *&>(L->logic[L->logic_level]), script_owner);
 
 		// ret is:
 		// 0 done enough this cycle
@@ -1162,7 +1162,7 @@ void _game_session::Script_cycle() {
 				L->logic[0] = (char *)scripts->Try_fetch_item_by_hash(object->GetScriptNameFullHash(OB_LOGIC_CONTEXT));
 
 				// run script - context chooser will pick a new L 1 logic
-				RunScript((const char *&)L->logic[0], object);
+				RunScript(const_cast<const char *&>(L->logic[0]), object);
 
 				// if still on base then nothing chosen - shut down the object and log a warning somewhere
 				if (!L->logic_level) {
