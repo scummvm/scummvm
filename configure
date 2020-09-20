@@ -210,6 +210,7 @@ _nasm=auto
 _optimization_level=
 _default_optimization_level=-O2
 _nuked_opl=yes
+_builtin_resources=yes
 # Default commands
 _ranlib=ranlib
 _strip=strip
@@ -1064,6 +1065,8 @@ Optional Features:
                                             gles2 for forcing OpenGL ES 2
                            WARNING: only specify this manually if you know what
                            you are doing!
+  --no-builtin-resources   do not include additional resources (e.g. engine data, fonts)
+                           into the ScummVM binary
 
 Optional Libraries:
   --with-alsa-prefix=DIR   prefix where alsa is installed (optional)
@@ -1483,6 +1486,9 @@ for ac_option in $@; do
 		;;
 	--enable-tsan)
 		_enable_tsan=yes
+		;;
+	--no-builtin-resources)
+		_builtin_resources=no
 		;;
 	--with-sdl-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -5644,6 +5650,11 @@ else
 	echo "$_updates"
 fi
 define_in_config_if_yes $_updates 'USE_UPDATES'
+
+#
+# Check whether to create a build with all resources files linked into the binary
+#
+define_in_config_if_yes "$_builtin_resources" 'BUILTIN_RESOURCES'
 
 #
 # Figure out installation directories
