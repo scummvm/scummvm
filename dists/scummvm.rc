@@ -115,7 +115,7 @@ BEGIN
         BEGIN
             VALUE "Comments", "Look! A three headed monkey (TM)! .. Nice use of the TM!\0"
             VALUE "CompanyName", "scummvm.org\0"
-            VALUE "FileDescription", "ScummVM: A free implementation of various adventure game engines\0"
+            VALUE "FileDescription", "ScummVM: A free interpreter for numerous adventure games and role-playing games\0"
             VALUE "FileVersion", SCUMMVM_VERSION "\0"
             VALUE "InternalName", "scummvm\0"
             VALUE "LegalCopyright", "Copyright \xA9 2001-2020 The ScummVM Team\0"
