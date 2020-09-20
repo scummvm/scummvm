@@ -120,7 +120,6 @@ void Process::activate() {
 
 
 void Process::run() {
-	activate();
 	while(status() == kStatusActive) {
 		ProcessExitCode code = resume();
 		switch (code) {

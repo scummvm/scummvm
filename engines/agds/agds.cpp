@@ -224,14 +224,18 @@ void AGDSEngine::resetCurrentScreen() {
 
 void AGDSEngine::runProcesses() {
 	for (ProcessListType::iterator i = _processes.begin(); i != _processes.end(); ) {
-		Process & process = *i;
-		if (process.active() || process.passive()) {
+		Process &process = *i;
+		process.checkTimers();
+		if (process.active()) {
 			process.run();
 			++i;
-		} else {
+		} else if (process.finished()) {
 			debug("deleting process %s", process.getName().c_str());
 			i = _processes.erase(i);
 			//FIXME: when the last process exits, remove object from scene
+		} else {
+			debug("suspended process %s", process.getName().c_str());
+			++i;
 		}
 	}
 
@@ -432,6 +436,7 @@ Common::Error AGDSEngine::run() {
 			if (_mjpgPlayer->eos()) {
 				delete _mjpgPlayer;
 				_mjpgPlayer = NULL;
+				reactivate(_filmProcess);
 			}
 		} else if (_currentScreen) {
 			_currentScreen->paint(*this, *backbuffer);
@@ -470,8 +475,15 @@ Common::Error AGDSEngine::run() {
 	return Common::kNoError;
 }
 
-void AGDSEngine::playFilm(const Common::String &video, const Common::String &audio) {
+void AGDSEngine::playFilm(Process &process, const Common::String &video, const Common::String &audio) {
 	delete _mjpgPlayer;
+	if (_fastMode) {
+		debug("fast mode, skipping film");
+		process.activate();
+		return;
+	}
+
+	_filmProcess = process.getName();
 	_mjpgPlayer = new MJPGPlayer(_resourceManager.getResource(video));
 }
 
@@ -485,6 +497,7 @@ void AGDSEngine::skipFilm() {
 		_syncSoundId = -1;
 	}
 	_textLayout.reset(*this);
+	reactivate(_filmProcess);
 }
 
 int AGDSEngine::appendToSharedStorage(const Common::String &value) {
@@ -851,6 +864,15 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 	}
 
 	return Common::kNoError;
+}
+
+void AGDSEngine::reactivate(const Common::String &name) {
+	for(ProcessListType::iterator i = _processes.begin(); i != _processes.end(); ++i) {
+		Process &process = *i;
+		if (process.getName() == name) {
+			process.activate();
+		}
+	}
 }
 
 Common::Error AGDSEngine::saveGameStream(Common::WriteStream *file, bool isAutosave) { return Common::Error(Common::kNoError); }
