@@ -77,7 +77,7 @@ void AddDynamicLight(PSXLampList &lamplist, _logic *log);
 typedef struct {
 	uint16 x0, y0, z0;
 	uint16 x1, y1, z1;
-	uint16 map[0];
+//	uint16 map[0];
 } _px_prop_zmap_;
 #ifdef _MSC_VER
 #pragma warning(default : 4200)
