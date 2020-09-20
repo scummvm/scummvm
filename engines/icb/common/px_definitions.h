@@ -39,9 +39,6 @@ namespace ICB {
 #define NMAKE_LOCAL_ROOT_MACRO "$(LOCALROOT)"
 #define NMAKE_COMMON_ROOT_MACRO "$(COMMONROOT)"
 
-// Converter locations
-#define WRAPCONVERTER "Converters\\WrapConverter\\WrapConverter.exe"
-
 // Resource gauge definitions
 #define RESOURCE_VARIABLE_SEARCH_PATTERN "Resource Value:"
 #define RESOURCE_VARIABLE_SEARCH_PATTERN_LEN 15
