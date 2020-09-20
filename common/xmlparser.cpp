@@ -169,7 +169,7 @@ bool XMLParser::parseActiveKey(bool closed) {
 	if (layout->children.contains(key->name)) {
 		key->layout = layout->children[key->name];
 
-		StringMap localMap = key->values;
+		const StringMap &localMap = key->values;
 		int keyCount = localMap.size();
 
 		for (List<XMLKeyLayout::XMLKeyProperty>::const_iterator i = key->layout->properties.begin(); i != key->layout->properties.end(); ++i) {
