@@ -49,8 +49,7 @@ typedef struct {
 } vertex2D;
 
 typedef struct {
-	u_int *palette;   /*[256]*/
-	;                 // windows 32-bit RGB with 1 byte of padding
+	u_int *palette;   /*[256]*/ // windows 32-bit RGB with 1 byte of padding
 	u_int width;      // must be power of 2
 	u_int height;     // must be power of 2
 	u_char *level[9]; // width/1 * height/1 -> width/256 * height/256
