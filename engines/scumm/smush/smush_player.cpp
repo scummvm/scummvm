@@ -613,6 +613,8 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 					error("invalid escape code in text string");
 				}
 			} else {
+				if (SmushFont::is2ByteCharacter(_vm->_language, *sptr))
+					*sptr2++ = *sptr++;
 				*sptr2++ = *sptr++;
 			}
 		}
