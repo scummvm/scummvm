@@ -71,17 +71,11 @@ namespace ICB {
 
 void AddDynamicLight(PSXLampList &lamplist, _logic *log);
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4200)
-#endif
 typedef struct {
 	uint16 x0, y0, z0;
 	uint16 x1, y1, z1;
 //	uint16 map[0];
 } _px_prop_zmap_;
-#ifdef _MSC_VER
-#pragma warning(default : 4200)
-#endif
 /* Local Defines */
 #define ACTORSORTBUFFERSIZE (256 * 1024)
 #define MAXACTORQTY MAXIMUM_POTENTIAL_ON_SCREEN_ACTOR_QUANTITY

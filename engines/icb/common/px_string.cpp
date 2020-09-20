@@ -243,21 +243,9 @@ const pxString &pxString::Format(const char *format, ...) {
 		// According to VC5 release mode this code is unreachable
 		// I can't see why, so I shall turn the warning off for this bit of code
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4702) // unreachable code
-#endif
-
 		// If the sllocation failed return an empty string
 		if (s == NULL)
 			return (*this);
-
-#ifndef _PSX
-
-#ifdef _MSC_VER
-#pragma warning(default : 4702) // unreachable code
-#endif
-
-#endif // #ifndef _PSX
 	}
 
 	// Tidy up and finish

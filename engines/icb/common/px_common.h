@@ -230,17 +230,6 @@ inline uint32 READ_LE_U32(const void *p) {
 
 #define MKTAG(a0, a1, a2, a3) ((uint32)((a3) | ((a2) << 8) | ((a1) << 16) | ((a0) << 24)))
 
-#ifdef _MSC_VER
-
-#define snprintf _snprintf
-#define vsnprintf _vsnprintf
-#define strcasecmp _stricmp
-#define strncasecmp _strnicmp
-#define getcwd _getcwd
-#define mkdir _mkdir
-
-#endif
-
 } // End of namespace ICB
 
 #endif // #ifndef _PX_INC_PROJECT_X_COMMON_H

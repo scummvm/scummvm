@@ -870,14 +870,6 @@ void _game_session::Pre_initialise_objects() {
 	player.has_weapon = TRUE8; // called before players init script
 }
 
-#ifdef _PC
-
-#ifdef _MSC_VER
-#pragma warning(disable : 4702) //: warning C4702: unreachable code
-#endif
-
-#endif // #ifdef _PC
-
 extern int32 john_number_traces;
 extern int32 john_total_traces;
 

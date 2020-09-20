@@ -32,10 +32,6 @@
 #define STRICT // Force strict useage of handle definitions and other things
 #endif         // STRICT
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4201) // C4201: nonstandard extension used : nameless struct/union
-#endif
-
 #ifdef _WIN32
 #include <windows.h>
 #else

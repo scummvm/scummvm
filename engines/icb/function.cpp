@@ -3376,14 +3376,6 @@ mcodeFunctionReturnCodes _game_session::fn_snap_to_ladder_top(int32 &, int32 *) 
 	return IR_CONT;
 }
 
-// Moved here by CJJ to limit scope of warning disable
-
-// DISABLE WARNING to inhibit inexplicable FALSE8 position on line
-//      floor = (_floor*) floor_def->Fetch_named_floor((char*)params[0]);
-#ifdef _MSC_VER
-#pragma warning(disable : 4702) //: warning C4702: unreachable code
-#endif
-
 mcodeFunctionReturnCodes _game_session::fn_set_to_floor(int32 &, int32 *params) {
 	// locate a character onto a specified floor
 	// crudely sticks the character in the middle of the first floor RECT

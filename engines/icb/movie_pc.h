@@ -34,22 +34,11 @@
 
 #include "engines/icb/common/px_rccommon.h"
 
-#ifdef _MSC_VER
-// NOTE: The second of these warnings does not get re-enabled due to it's nature
-#pragma warning(disable : 4201) // Warning C4201: nonstandard extension used : nameless struct/union
-#pragma warning(disable : 4514) // Warning C4514: unreferenced inline function has been removed
-#endif
-
 // The main Bink include for handling bink sequence files (extension 'bik')
 #if defined(_WIN32) && defined(ENABLE_BINK)
 #include "../BinkSDK/bink.h"
 #else
 #include "bink_stub.h"
-#endif
-
-#ifdef _MSC_VER
-// Turn this warning back on now that Bink is included and happy
-#pragma warning(default : 4201)
 #endif
 
 // For access to surface_manager
