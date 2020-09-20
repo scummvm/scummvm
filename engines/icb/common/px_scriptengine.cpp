@@ -158,11 +158,7 @@ int stackPointer = 0;  // Position within stack
 
 void Zdebug(const char *, ...); // Debug logging functions
 
-#if defined(_MSC_VER) && (_MSC_VER <= 1200) // 1200 = MSVC6.0
-#define ScriptTrace ((void)0)
-#else
-#define ScriptTrace(...)
-#endif
+#define ScriptTrace Zdebug
 
 void SetScriptDebugging(bool8) {}
 
