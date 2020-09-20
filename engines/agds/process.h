@@ -352,11 +352,16 @@ public:
 		return _status == kStatusPassive;
 	}
 	void activate();
+	void checkTimers();
 	void done() {
 		_status = kStatusDone;
 	}
 	void fail() {
 		_status = kStatusError;
+	}
+
+	bool finished() const {
+		return _status == kStatusDone || _status == kStatusError;
 	}
 
 	void run();
@@ -386,6 +391,9 @@ public:
 	}
 	void updateWithCurrentMousePosition();
 
+	const Common::String & phaseVar() const {
+		return _phaseVar;
+	}
 };
 
 

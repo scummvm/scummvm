@@ -117,7 +117,7 @@ public:
 	const Common::String & getSharedStorage(int id) const;
 
 	bool active() const { return !_mjpgPlayer && !(_soundManager.playing(_syncSoundId) || _tellTextTimer > 0); }
-	void playFilm(const Common::String &video, const Common::String &audio);
+	void playFilm(Process &process, const Common::String &video, const Common::String &audio);
 	void skipFilm();
 
 	ResourceManager & resourceManager() {
@@ -225,6 +225,8 @@ public:
 		return _mouse;
 	}
 
+	void reactivate(const Common::String &name);
+
 private:
 	void loadPatches(Common::SeekableReadStream *file, Database & db);
 
@@ -258,6 +260,7 @@ private:
 	SystemVariablesType			_systemVars;
 	Graphics::PixelFormat		_pixelFormat;
 	MJPGPlayer *				_mjpgPlayer;
+	Common::String				_filmProcess;
 	Screen *					_currentScreen;
 	Common::String				_currentScreenName;
 	Common::String				_nextScreenName;

@@ -211,7 +211,7 @@ enum Opcode {
 	kStub191						= 191,
 	kStub192						= 192,
 	kStub193						= 193,
-	kStub194						= 194,
+	kMute							= 194,
 	kGetObjectPictureWidth			= 195,
 	kGetObjectPictureHeight			= 196,
 	kStub197						= 197,

@@ -139,13 +139,10 @@ void Process::loadAnimation() {
 
 void Process::loadSample() {
 	Common::String name = popText();
-	debug("loadSample %s", name.c_str());
-	if (_phaseVar.empty()) {
-		warning("playing sample %s without phase var", _phaseVar.c_str());
-		return;
-	}
+	debug("loadSample %s, phaseVar: %s", name.c_str(), _phaseVar.c_str());
 	_engine->playSound(name, _phaseVar);
-	suspend();
+	if (!_phaseVar.empty())
+		suspend();
 }
 
 void Process::getSampleVolume() {
@@ -703,7 +700,7 @@ void Process::disableMouseAreas() {
 }
 
 void Process::stub194() {
-	debug("stub194: mute?");
+	debug("stub194: mute");
 }
 
 void Process::stub199() {
@@ -960,10 +957,8 @@ void Process::playFilm() {
 	Common::String video = popText();
 
 	debug("playFilm %s %s", video.c_str(), audio.c_str());
-	if (!_engine->fastMode()) {
-		_engine->playFilm(video, audio);
-	}
 	suspend();
+	_engine->playFilm(*this, video, audio);
 }
 
 void Process::inventoryClear() {
@@ -1062,9 +1057,9 @@ void Process::call(uint16 addr) {
 	debug("call %04x", addr);
 	//original engine just create new process, save exit code in screen object
 	//and on stack, then just ignore return code, fixme?
-	Process process(_engine, _object, _ip + addr);
-	process.run();
 	suspend();
+	_engine->runProcess(_object, _ip + addr);
+	activate();
 }
 
 void Process::onKey(unsigned size) {
@@ -1365,14 +1360,17 @@ void Process::setCharacterNotifyVars() {
 		METHOD(arg1 | (arg2 << 16)); \
 	} break
 
-ProcessExitCode Process::resume() {
+
+void Process::checkTimers() {
 	if (_timer > 0) {
 		debug("waiting for timer (%d)...", _timer);
 		--_timer;
-		_status = kStatusPassive;
-		_exitCode = kExitCodeSuspend;
-		return _exitCode;
+		if (_timer == 0)
+			activate();
 	}
+}
+
+ProcessExitCode Process::resume() {
 	_exitCode = kExitCodeDestroy;
 
 	const Object::CodeType &code = _object->getCode();
@@ -1525,7 +1523,7 @@ ProcessExitCode Process::resume() {
 			OP(kSetObjectScale, setObjectScale);
 			OP(kStub191, disableMouseAreas);
 			OP(kStub193, stub193);
-			OP(kStub194, stub194);
+			OP(kMute, stub194);
 			OP(kGetObjectPictureWidth, getObjectPictureWidth);
 			OP(kGetObjectPictureHeight, getObjectPictureHeight);
 			OP(kLoadPicture, loadPicture);
