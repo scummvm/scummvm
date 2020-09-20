@@ -203,8 +203,8 @@ MY_TEMPLATE
 const Type *&T_MYPTRARRAY::operator[](uint n) const {
 	// It is permissable to look at an element that has not been defined, as it will be defined as NULL
 	if (n >= m_userPosition) {
-		((rcAutoPtrArray<Type> *)this)->ResizeArray(n);
-		((rcAutoPtrArray<Type> *)this)->m_userPosition = n + 1;
+		(const_cast<rcAutoPtrArray<Type> *>(this))->ResizeArray(n);
+		(const_cast<rcAutoPtrArray<Type> *>(this))->m_userPosition = n + 1;
 	}
 
 	return (const Type *&)(m_contents[n]);
