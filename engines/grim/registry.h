@@ -93,6 +93,7 @@ private:
 	Value _joystick;
 	Value _spewOnError;
 	Value _transcript;
+	Value _dummy;
 
 	bool _dirty;
 

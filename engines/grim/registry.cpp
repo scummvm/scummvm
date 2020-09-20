@@ -156,6 +156,7 @@ Registry::Value &Registry::value(const Common::String &key) {
 	}
 
 	assert(0);
+	return _dummy; // Silence warning
 }
 
 const Registry::Value &Registry::value(const Common::String &key) const {
@@ -194,6 +195,7 @@ const Registry::Value &Registry::value(const Common::String &key) const {
 	}
 
 	assert(0);
+	return _dummy; // Silence warning
 }
 
 const Common::String &Registry::getString(const Common::String &key) const {
