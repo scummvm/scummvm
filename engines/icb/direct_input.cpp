@@ -477,7 +477,7 @@ const char *GetKeyName(uint32 key) {
 		case Common::KEYCODE_EQUALS:
 			return "Egal";
 		case Common::KEYCODE_BACKSPACE:
-			return "Retour arriиre";
+			return "Retour arri" "\xe8" "re";
 		case Common::KEYCODE_TAB:
 			return "Tabulation";
 		case Common::KEYCODE_q:
@@ -501,11 +501,11 @@ const char *GetKeyName(uint32 key) {
 		case Common::KEYCODE_p:
 			return "P";
 		case Common::KEYCODE_LEFTBRACKET:
-			return "Parenthиse g";
+			return "Parenth" "\xe8" "se g";
 		case Common::KEYCODE_RIGHTBRACKET:
-			return "Parenthиse d";
+			return "Parenth" "\xe8" "se d";
 		case Common::KEYCODE_RETURN:
-			return "Entrйe";
+			return "Entr" "\xe9" "e";
 		case Common::KEYCODE_LCTRL:
 			return "Ctrl gauche";
 		case Common::KEYCODE_a:
@@ -531,11 +531,11 @@ const char *GetKeyName(uint32 key) {
 		case Common::KEYCODE_QUOTE:
 			return "Apostrophe";
 		case Common::KEYCODE_BACKQUOTE:
-			return "Carrй";
+			return "Carr" "\xe9";
 		case Common::KEYCODE_LSHIFT:
 			return "Maj gauche";
 		case Common::KEYCODE_BACKSLASH:
-			return "Diиse";
+			return "Di" "\xe8" "se";
 		case Common::KEYCODE_z:
 			return "Z";
 		case Common::KEYCODE_x:
@@ -613,7 +613,7 @@ const char *GetKeyName(uint32 key) {
 		case Common::KEYCODE_KP0:
 			return "Num 0";
 		case Common::KEYCODE_KP_PERIOD:
-			return "Dйcimal num.";
+			return "D" "\xe9" "cimal num.";
 		case Common::KEYCODE_KP_ENTER:
 			return "Entr";
 		case Common::KEYCODE_RCTRL:
@@ -623,17 +623,17 @@ const char *GetKeyName(uint32 key) {
 		case Common::KEYCODE_HOME:
 			return "Origine";
 		case Common::KEYCODE_UP:
-			return "Flиche haut";
+			return "Fl" "\xe8" "che haut";
 		case Common::KEYCODE_PAGEUP:
-			return "Pg prйc.";
+			return "Pg pr" "\xe9" "c.";
 		case Common::KEYCODE_LEFT:
-			return "Flиche gauche";
+			return "Fl" "\xe8" "che gauche";
 		case Common::KEYCODE_RIGHT:
-			return "Flиche droite";
+			return "Fl" "\xe8" "che droite";
 		case Common::KEYCODE_END:
 			return "Fin";
 		case Common::KEYCODE_DOWN:
-			return "Flиche bas";
+			return "Fl" "\xe8" "che bas";
 		case Common::KEYCODE_PAGEDOWN:
 			return "Pg Suiv.";
 		case Common::KEYCODE_INSERT:
@@ -1037,9 +1037,9 @@ const char *GetKeyName(uint32 key) {
 		case Common::KEYCODE_END:
 			return "fine";
 		case Common::KEYCODE_DOWN:
-			return "freccia in giщ";
+			return "freccia in gi" "\xf9";
 		case Common::KEYCODE_PAGEDOWN:
-			return "pagina in giщ";
+			return "pagina in gi" "\xf9";
 		case Common::KEYCODE_INSERT:
 			return "inserisci";
 		case Common::KEYCODE_DELETE:
@@ -1079,9 +1079,9 @@ const char *GetKeyName(uint32 key) {
 		case Common::KEYCODE_0:
 			return "0";
 		case Common::KEYCODE_MINUS:
-			return "Apуstrofo";
+			return "Ap" "\xf3" "strofo";
 		case Common::KEYCODE_EQUALS:
-			return "Admiraciуn";
+			return "Admiraci" "\xf3" "n";
 		case Common::KEYCODE_BACKSPACE:
 			return "Retroceso";
 		case Common::KEYCODE_TAB:
@@ -1133,13 +1133,13 @@ const char *GetKeyName(uint32 key) {
 		case Common::KEYCODE_l:
 			return "L";
 		case Common::KEYCODE_SEMICOLON:
-			return "С";
+			return "\xd1";
 		case Common::KEYCODE_QUOTE:
 			return "Tilde Invertida";
 		case Common::KEYCODE_BACKQUOTE:
 			return "O Altilla";
 		case Common::KEYCODE_LSHIFT:
-			return "Mayъsculas Izquierda";
+			return "May\xfasculas Izquierda";
 		case Common::KEYCODE_BACKSLASH:
 			return "Barra Invertida";
 		case Common::KEYCODE_z:
@@ -1163,13 +1163,13 @@ const char *GetKeyName(uint32 key) {
 		case Common::KEYCODE_SLASH:
 			return "Menos";
 		case Common::KEYCODE_RSHIFT:
-			return "Mayъsculas Derecha";
+			return "May\xfasculas Derecha";
 		case Common::KEYCODE_KP_MULTIPLY:
 			return "Asterisco";
 		case Common::KEYCODE_SPACE:
 			return "Barra Espaciadora";
 		case Common::KEYCODE_CAPSLOCK:
-			return "Bloqueo Mayъsculas";
+			return "Bloqueo May\xfasculas";
 		case Common::KEYCODE_F1:
 			return "F1";
 		case Common::KEYCODE_F2:
@@ -1209,7 +1209,7 @@ const char *GetKeyName(uint32 key) {
 		case Common::KEYCODE_KP6:
 			return "Num 6";
 		case Common::KEYCODE_KP_PLUS:
-			return "Mбs";
+			return "M\xe1s";
 		case Common::KEYCODE_KP1:
 			return "Num 1";
 		case Common::KEYCODE_KP2:
@@ -1231,7 +1231,7 @@ const char *GetKeyName(uint32 key) {
 		case Common::KEYCODE_UP:
 			return "Flecha Arriba";
 		case Common::KEYCODE_PAGEUP:
-			return "Avance Pбgina";
+			return "Avance P\xe1gina";
 		case Common::KEYCODE_LEFT:
 			return "Flecha Izquierda";
 		case Common::KEYCODE_RIGHT:
@@ -1241,7 +1241,7 @@ const char *GetKeyName(uint32 key) {
 		case Common::KEYCODE_DOWN:
 			return "Flecha Abajo";
 		case Common::KEYCODE_PAGEDOWN:
-			return "Retroceder Pбgina";
+			return "Retroceder P" "\xe1" "gina";
 		case Common::KEYCODE_INSERT:
 			return "Insertar";
 		case Common::KEYCODE_DELETE:
@@ -1281,9 +1281,9 @@ const char *GetKeyName(uint32 key) {
 		case Common::KEYCODE_0:
 			return "0";
 		case Common::KEYCODE_MINUS:
-			return "Минус";
+			return "\xCC\xE8\xED\xF3\xF1";
 		case Common::KEYCODE_EQUALS:
-			return "Равно";
+			return "\xD0\xE0\xE2\xED\xEE";
 		case Common::KEYCODE_BACKSPACE:
 			return "Backspace";
 		case Common::KEYCODE_TAB:
@@ -1309,13 +1309,13 @@ const char *GetKeyName(uint32 key) {
 		case Common::KEYCODE_p:
 			return "P";
 		case Common::KEYCODE_LEFTBRACKET:
-			return "Л.кв.скоб.";
+			return "\xCB.\xEA\xE2.\xF1\xEA\xEE\xE1.";
 		case Common::KEYCODE_RIGHTBRACKET:
-			return "П.кв.cкоб.";
+			return "\xCF.\xEA\xE2.c\xEA\xEE\xE1.";
 		case Common::KEYCODE_RETURN:
-			return "Ввод";
+			return "\xC2\xE2\xEE\xE4";
 		case Common::KEYCODE_LCTRL:
-			return "Левый Ctrl";
+			return "\xCB\xE5\xE2\xFB\xE9 Ctrl";
 		case Common::KEYCODE_a:
 			return "A";
 		case Common::KEYCODE_s:
@@ -1335,15 +1335,15 @@ const char *GetKeyName(uint32 key) {
 		case Common::KEYCODE_l:
 			return "L";
 		case Common::KEYCODE_SEMICOLON:
-			return "Точка с запятой";
+			return "\xD2\xEE\xF7\xEA\xE0 \xF1 \xE7\xE0\xEF\xFF\xF2\xEE\xE9";
 		case Common::KEYCODE_QUOTE:
-			return "Апостроф";
+			return "\xC0\xEF\xEE\xF1\xF2\xF0\xEE\xF4";
 		case Common::KEYCODE_BACKQUOTE:
-			return "Ударение";
+			return "\xD3\xE4\xE0\xF0\xE5\xED\xE8\xE5";
 		case Common::KEYCODE_LSHIFT:
-			return "Левый Shift";
+			return "\xCB\xE5\xE2\xFB\xE9 Shift";
 		case Common::KEYCODE_BACKSLASH:
-			return "Решетка";
+			return "\xD0\xE5\xF8\xE5\xF2\xEA\xE0";
 		case Common::KEYCODE_z:
 			return "Z";
 		case Common::KEYCODE_x:
@@ -1359,17 +1359,17 @@ const char *GetKeyName(uint32 key) {
 		case Common::KEYCODE_m:
 			return "M";
 		case Common::KEYCODE_COMMA:
-			return "Запятая";
+			return "\xC7\xE0\xEF\xFF\xF2\xE0\xFF";
 		case Common::KEYCODE_PERIOD:
-			return "Точка";
+			return "\xD2\xEE\xF7\xEA\xE0";
 		case Common::KEYCODE_SLASH:
-			return "Слэш";
+			return "\xD1\xEB\xFD\xF8";
 		case Common::KEYCODE_RSHIFT:
-			return "Правый Shift";
+			return "\xCF\xF0\xE0\xE2\xFB\xE9 Shift";
 		case Common::KEYCODE_KP_MULTIPLY:
-			return "Зв.";
+			return "\xC7\xE2.";
 		case Common::KEYCODE_SPACE:
-			return "Пробел";
+			return "\xCF\xF0\xEE\xE1\xE5\xEB";
 		case Common::KEYCODE_CAPSLOCK:
 			return "Caps Lock";
 		case Common::KEYCODE_F1:
@@ -1403,7 +1403,7 @@ const char *GetKeyName(uint32 key) {
 		case Common::KEYCODE_KP9:
 			return "Num 9";
 		case Common::KEYCODE_KP_MINUS:
-			return "Минус на доп. кл ";
+			return "\xCC\xE8\xED\xF3\xF1 \xED\xE0 \xE4\xEE\xEF. \xEA\xEB ";
 		case Common::KEYCODE_KP4:
 			return "Num 4";
 		case Common::KEYCODE_KP5:
@@ -1411,7 +1411,7 @@ const char *GetKeyName(uint32 key) {
 		case Common::KEYCODE_KP6:
 			return "Num 6";
 		case Common::KEYCODE_KP_PLUS:
-			return "Плюс на доп. кл ";
+			return "\xCF\xEB\xFE\xF1 \xED\xE0 \xE4\xEE\xEF. \xEA\xEB ";
 		case Common::KEYCODE_KP1:
 			return "Num 1";
 		case Common::KEYCODE_KP2:
@@ -1421,27 +1421,27 @@ const char *GetKeyName(uint32 key) {
 		case Common::KEYCODE_KP0:
 			return "Num 0";
 		case Common::KEYCODE_KP_PERIOD:
-			return "Тчк.";
+			return "\xD2\xF7\xEA.";
 		case Common::KEYCODE_KP_ENTER:
 			return "Enter";
 		case Common::KEYCODE_RCTRL:
-			return "Правый Ctrl";
+			return "\xCF\xF0\xE0\xE2\xFB\xE9 Ctrl";
 		case Common::KEYCODE_KP_DIVIDE:
-			return "Слэш на доп. кл";
+			return "\xD1\xEB\xFD\xF8 \xED\xE0 \xE4\xEE\xEF. \xEA\xEB";
 		case Common::KEYCODE_HOME:
 			return "Home";
 		case Common::KEYCODE_UP:
-			return "Стрелка вверх";
+			return "\xD1\xF2\xF0\xE5\xEB\xEA\xE0 \xE2\xE2\xE5\xF0\xF5";
 		case Common::KEYCODE_PAGEUP:
 			return "Page Up";
 		case Common::KEYCODE_LEFT:
-			return "Стрелка влево";
+			return "\xD1\xF2\xF0\xE5\xEB\xEA\xE0 \xE2\xEB\xE5\xE2\xEE";
 		case Common::KEYCODE_RIGHT:
-			return "Стрелка вправо";
+			return "\xD1\xF2\xF0\xE5\xEB\xEA\xE0 \xE2\xEF\xF0\xE0\xE2\xEE";
 		case Common::KEYCODE_END:
 			return "End";
 		case Common::KEYCODE_DOWN:
-			return "Стрелка вниз";
+			return "\xD1\xF2\xF0\xE5\xEB\xEA\xE0 \xE2\xED\xE8\xE7";
 		case Common::KEYCODE_PAGEDOWN:
 			return "Page Down";
 		case Common::KEYCODE_INSERT:
@@ -1449,9 +1449,9 @@ const char *GetKeyName(uint32 key) {
 		case Common::KEYCODE_DELETE:
 			return "Delete";
 		case Common::KEYCODE_LALT:
-			return "Левый Alt";
+			return "\xCB\xE5\xE2\xFB\xE9 Alt";
 		case Common::KEYCODE_RALT:
-			return "Правый Alt";
+			return "\xCF\xF0\xE0\xE2\xFB\xE9 Alt";
 
 		default:
 			return NULL;
@@ -1485,7 +1485,7 @@ const char *GetKeyName(uint32 key) {
 		case Common::KEYCODE_MINUS:
 			return "Minus";
 		case Common::KEYCODE_EQUALS:
-			return "Rуwna sie";
+			return "R\xF3wna sie";
 		case Common::KEYCODE_BACKSPACE:
 			return "Wstecz";
 		case Common::KEYCODE_TAB:
@@ -1633,7 +1633,7 @@ const char *GetKeyName(uint32 key) {
 		case Common::KEYCODE_HOME:
 			return "Home";
 		case Common::KEYCODE_UP:
-			return "Kursor do gуry";
+			return "Kursor do g\xF3ry";
 		case Common::KEYCODE_PAGEUP:
 			return "Page Up";
 		case Common::KEYCODE_LEFT:
