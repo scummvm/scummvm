@@ -41,7 +41,6 @@ static inline bool checkSJISCode(byte c) {
 	return false;
 }
 
-
 class CharsetRenderer {
 public:
 
