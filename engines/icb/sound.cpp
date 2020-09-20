@@ -856,6 +856,8 @@ void CRegisteredSound::Register(const cstr sndName, const cstr sfxName, uint32 s
 	m_xoffset = m_yoffset = m_zoffset = (PXreal)0;
 
 	m_volume_offset = volume;
+
+	padding1 = 0;
 }
 
 // register a sound and take position from the position of the object registering the sound

@@ -178,7 +178,7 @@ public:
 
 	enum ScreenSymbol {
 		DO_NOT_DISPLAY = 0,
-		REMORA = 1,
+		SS_REMORA = 1,
 		ALIVE_ROBOT = 2,
 		DEAD_ROBOT = 3,
 		ALIVE_HUMAN = 4,

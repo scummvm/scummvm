@@ -191,7 +191,7 @@ _TSrtn text_sprite::MakeTextSprite(bool8 analysisAlreadyDone, int32 stopAtLine, 
 					Fatal_error("Found line number [%s] with no text", params.textLine);
 
 				// Write the modified pointer back into the text block.
-				params.textLine = (unsigned char *)pcTextLine;
+				params.textLine = (unsigned char *)const_cast<char *>(pcTextLine);
 			}
 		}
 
@@ -367,7 +367,7 @@ void text_sprite::CopyChar(_pxSprite *charPtr, uint8 *spritePtr, uint8 *pal) { /
 }
 
 _pxBitmap *text_sprite::LoadFont(const char *fontRes, uint32 fontRes_hash) {
-	_pxBitmap *font = (_pxBitmap *)rs_font->Res_open((char *)fontRes, fontRes_hash, font_cluster, font_cluster_hash); // open font file
+	_pxBitmap *font = (_pxBitmap *)rs_font->Res_open(const_cast<char *>(fontRes), fontRes_hash, font_cluster, font_cluster_hash); // open font file
 
 	return (font);
 }

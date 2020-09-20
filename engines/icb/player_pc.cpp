@@ -643,9 +643,9 @@ void _player::DrawCompass() {
 #define COMPASS_OX 60
 #define COMPASS_OY 420
 
-			_rgb purple = {250, 60, 200};
-			_rgb turq = {0, 250, 250};
-			_rgb yellow = {250, 250, 0};
+			_rgb purple = {250, 60, 200, 0};
+			_rgb turq = {0, 250, 250, 0};
+			_rgb yellow = {250, 250, 0, 0};
 
 			ad = surface_manager->Lock_surface(working_buffer_id);
 			pitch = surface_manager->Get_pitch(working_buffer_id);

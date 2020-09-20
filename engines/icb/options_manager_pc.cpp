@@ -1438,6 +1438,8 @@ void OptionsManager::DrawGameOverScreen() {
 		DrawQuitGameConfirmScreen();
 
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1703,6 +1705,8 @@ void OptionsManager::DrawInGameOptionsScreen() {
 			surface_manager->Unlock_surface(working_buffer_id);
 
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -1895,6 +1899,8 @@ void OptionsManager::DrawMainOptionsScreen(uint32 surface_id) {
 
 		DrawQuitGameConfirmScreen(surface_id);
 
+		break;
+	default:
 		break;
 	}
 }
@@ -2672,6 +2678,8 @@ void OptionsManager::AlterSelected(bool8 _right_) {
 			PlayChosenFX();
 			Poll_Sound_Engine();
 			return;
+		default:
+			break;
 		}
 		break;
 
@@ -2715,6 +2723,8 @@ void OptionsManager::AlterSelected(bool8 _right_) {
 				if (GetSfxVolume() > 0)
 					SetSfxVolume(GetSfxVolume() - 1);
 			}
+			break;
+		default:
 			break;
 		}
 		break;
@@ -2787,6 +2797,8 @@ void OptionsManager::AlterSelected(bool8 _right_) {
 
 		PlayChosenFX();
 		Poll_Sound_Engine();
+		break;
+	default:
 		break;
 	}
 }
@@ -6668,7 +6680,7 @@ const char *OptionsManager::GetTextFromReference(uint32 hashRef) {
 				Fatal_error("Found line number [%s] with no text", textLine);
 
 			// Write the modified pointer back into the text block
-			textLine = (char *)pcTextLine;
+			textLine = const_cast<char *>(pcTextLine);
 		}
 	}
 

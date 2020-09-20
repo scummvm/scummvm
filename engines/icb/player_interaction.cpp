@@ -240,7 +240,7 @@ void _player::Render_crude_interact_highlight() {
 	uint32 pitch; // backbuffer pitch
 	uint8 *ad;
 
-	_rgb pen = {255, 0, 0};
+	_rgb pen = {255, 0, 0, 0};
 
 	// anything highlighted?
 	if (interact_selected == FALSE8)

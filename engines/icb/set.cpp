@@ -136,7 +136,7 @@ void _game_session::Render_3d_nicos() {
 	uint8 *ad;
 
 	_rgb pen = {// rgb
-	            0, 230, 255};
+	            0, 230, 255, 0};
 
 	// is this mode switched on
 	if (px.nicos_displayed == FALSE8)

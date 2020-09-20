@@ -1047,7 +1047,7 @@ void _set::Set_draw(bool8 helper) {
 		// Get this prop
 		pcPropRGB *pProp = propFile->GetProp(p);
 		// Get the state for this prop
-		uint32 state = g_mission->session->Fetch_prop_state((char *)pProp->GetName());
+		uint32 state = g_mission->session->Fetch_prop_state(const_cast<char *>(pProp->GetName()));
 		// Get the state
 		pcPropRGBState *pState = pProp->GetState(state);
 		// Find the surface id for this state
@@ -1097,7 +1097,7 @@ void _set::Set_draw(bool8 helper) {
 		// Get this prop
 		pcPropRGB *pProp = propFile->GetProp(p);
 		// Get the state for this prop
-		uint32 state = g_mission->session->Fetch_prop_state((char *)pProp->GetName());
+		uint32 state = g_mission->session->Fetch_prop_state(const_cast<char *>(pProp->GetName()));
 		// Get the state
 		pcPropRGBState *pState = pProp->GetState(state);
 		// Which surface is it in ?
@@ -1109,7 +1109,7 @@ void _set::Set_draw(bool8 helper) {
 			// Get a pointer to the foreground tile rectangles
 			RECT *pTileRects = pState->GetTileRects() + ((pState->GetHRBgTileQty() + pState->GetLRBgTileQty() + pState->GetLRFgTileQty()) << 1);
 			// Is this prop selected
-			if ((tileQty != 0) && MS->IsPropSelected((char *)pProp->GetName())) {
+			if ((tileQty != 0) && MS->IsPropSelected(const_cast<char *>(pProp->GetName()))) {
 				// Get the rgb highlite multipliers ready for mmx ing
 				u_char multiplier[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 				MS->GetSelectedPropRGB(multiplier[0], multiplier[2], multiplier[4]);
@@ -1214,7 +1214,7 @@ void _set::Set_draw(bool8 helper) {
 			RECT *pTileRects = pState->GetTileRects() + (pState->GetLRBgTileQty() << 1);
 
 			// Is this prop selected
-			if ((tileQty != 0) && MS->IsPropSelected((char *)pProp->GetName())) {
+			if ((tileQty != 0) && MS->IsPropSelected(const_cast<char *>(pProp->GetName()))) {
 				// Get the rgb highlite multipliers ready for mmx ing
 				u_char multiplier[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 				MS->GetSelectedPropRGB(multiplier[0], multiplier[2], multiplier[4]);

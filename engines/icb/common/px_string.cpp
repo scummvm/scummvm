@@ -49,9 +49,9 @@ const char *pxString::operator=(const char *str) {
 		delete[] s;
 	if (str) {
 		// We are not assigning a null string
-		uint len = strlen((char *)str) + 1;
+		uint len = strlen(const_cast<char *>(str)) + 1;
 		s = new char[len];
-		memcpy((unsigned char *)s, (unsigned char *)str, len);
+		memcpy((unsigned char *)s, (unsigned char *)const_cast<char *>(str), len);
 	} else
 		s = NULL; // Just the null string
 	return (s);
@@ -63,7 +63,7 @@ void pxString::operator=(const pxString &str) {
 		delete[] s;
 	if (str.s) {
 		// We are not assigning a null string
-		uint len = strlen((char *)str.s) + 1;
+		uint len = strlen((char *)(str.s)) + 1;
 		s = new char[len];
 		memcpy((unsigned char *)s, (unsigned char *)str.s, len);
 	} else
@@ -75,12 +75,12 @@ const char *pxString::operator+=(const char *adder) {
 
 	if (adder) {
 		uint slen = s ? strlen(s) : 0;             // Get original string length
-		uint adderlen = strlen((char *)adder);     // Get additional string length
+		uint adderlen = strlen(const_cast<char *>(adder));     // Get additional string length
 		char *buf = new char[slen + adderlen + 1]; // Create a buffer
 		if (s)
 			memcpy((unsigned char *)buf, (unsigned char *)s, slen); // Move the original string in
 
-		memcpy((unsigned char *)buf + slen, (unsigned char *)adder, adderlen + 1); // And put the additional string in
+		memcpy((unsigned char *)buf + slen, (unsigned char *)const_cast<char *>(adder), adderlen + 1); // And put the additional string in
 
 		// Tidy up
 		delete[] s;
@@ -104,7 +104,7 @@ bool pxString::operator==(cstr string) const {
 		return ((bool)(string == NULL));
 	if (string == NULL)
 		return (false);
-	return ((bool)(strcmp(s, (char *)string) == 0));
+	return ((bool)(strcmp(s, const_cast<char *>(string)) == 0));
 }
 
 void pxString::SetString(cstr data, uint len) {
@@ -118,7 +118,7 @@ void pxString::SetString(cstr data, uint len) {
 	if (data) {
 		// Copy in the data
 		s = new char[len + 1];
-		memcpy((unsigned char *)s, (unsigned char *)data, len);
+		memcpy((unsigned char *)s, (unsigned char *)const_cast<char *>(data), len);
 		// And null terminate it
 		s[len] = 0;
 	} else
@@ -234,7 +234,7 @@ const pxString &pxString::Format(const char *format, ...) {
 	uint slen;
 
 	// Keep doubling the size of the buffer until it fits
-	while (va_start(arglist, format), slen = vsnprintf(s, startBufferSize, (char *)format, arglist), SLEN_CHECK) {
+	while (va_start(arglist, format), slen = vsnprintf(s, startBufferSize, const_cast<char *>(format), arglist), SLEN_CHECK) {
 		delete[] s;
 
 		startBufferSize += startBufferSize;
@@ -334,15 +334,15 @@ void pxFlexiCharBuffer::CheckSize(uint size) {
 
 void pxFlexiCharBuffer::StrCpy(uint offset, const char *string) {
 	// Add a string
-	uint slen = strlen((char *)string);
+	uint slen = strlen(const_cast<char *>(string));
 	CheckSize(offset + slen);
-	memcpy((unsigned char *)(m_buffer + offset), (unsigned char *)string, slen);
+	memcpy((unsigned char *)(m_buffer + offset), (unsigned char *)const_cast<char *>(string), slen);
 }
 
 void pxFlexiCharBuffer::StrnCpy(uint offset, const char *string, uint len) {
 	// Copy a number of characters to the buffer
 	CheckSize(offset + len);
-	memcpy((unsigned char *)(m_buffer + offset), (unsigned char *)string, len);
+	memcpy((unsigned char *)(m_buffer + offset), (unsigned char *)const_cast<char *>(string), len);
 }
 
 } // End of namespace ICB

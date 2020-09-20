@@ -754,7 +754,7 @@ void _remora::DrawObjects() {
 
 				// Make a string to display.
 				switch (eSymbol) {
-				case REMORA:
+				case SS_REMORA:
 					DrawTriangleSymbol(nX, nZ, CI_PLAYER, REMORA_SYMBOL_SIZE_BIG);
 					break;
 
@@ -803,6 +803,8 @@ void _remora::DrawObjects() {
 					MS->Create_remora_text(nX, nZ, pcSymbolString, 0, PIN_AT_CENTRE, 0, 0, REMORA_DISPLAY_WIDTH);
 					MS->Render_speech(MS->text_bloc);
 					MS->Kill_remora_text();
+					break;
+				default:
 					break;
 				}
 			} // end if
@@ -1513,7 +1515,7 @@ void _remora::DrawM08LockControlObjects() {
 				eSymbol = GetSymbolToDrawObject(pGameObject, i);
 
 				switch (eSymbol) {
-				case REMORA:
+				case SS_REMORA:
 					// Fudge drawing player symbol at correct angle 'cos it's fixed.
 					DrawGouraudTriangle(nX + (REMORA_SYMBOL_SIZE_NORMAL >> 1), nZ - REMORA_SYMBOL_SIZE_NORMAL, nX + (REMORA_SYMBOL_SIZE_NORMAL << 1),
 					                    nZ + REMORA_SYMBOL_SIZE_NORMAL, nX - (REMORA_SYMBOL_SIZE_NORMAL >> 1), nZ + REMORA_SYMBOL_SIZE_NORMAL,
@@ -1551,6 +1553,8 @@ void _remora::DrawM08LockControlObjects() {
 						DrawSquareSymbol(nX, nZ, CI_RECHARGE_ARMED, REMORA_SYMBOL_SIZE_NORMAL);
 						bArmedRechargeFlash = TRUE8;
 					}
+					break;
+				default:
 					break;
 				} // end switch
 			} // end if

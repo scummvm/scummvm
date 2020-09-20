@@ -441,7 +441,7 @@ bool8 _game_session::Process_wa_list() {
 				}
 
 				if (hit) { // hey we hit the closed poly
-					name = (char *)&wa->points[wa->noPoints];
+					name = (char *)const_cast<ICB::__point *>(&wa->points[wa->noPoints]);
 
 					Tdebug("cam_changes.txt", " WA camera name %s cluster %s", name, wa->cameraCluster);
 

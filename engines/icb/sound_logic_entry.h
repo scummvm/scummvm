@@ -92,7 +92,7 @@ private:
 	void operator=(const _sound_logic_entry &) { ; }
 };
 
-inline _sound_logic_entry::_sound_logic_entry() { memset(m_nHashedSoundIDs, 0, SL_MAX_SOUND_REGISTRATIONS * sizeof(uint32)); }
+inline _sound_logic_entry::_sound_logic_entry() { memset(m_nHashedSoundIDs, 0, SL_MAX_SOUND_REGISTRATIONS * sizeof(uint32)); m_nPad2 = 0; }
 
 inline bool8 _sound_logic_entry::HeardSound() { return (m_bHeardSomething); }
 

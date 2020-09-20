@@ -742,7 +742,7 @@ void _game_session::Format_remora_text(const char *pcText, int32 nLineSpacing, i
 	psTextParams = text_bloc->GetParams();
 
 	// Set the parameters required by text_sprite::AnalyseSentence().
-	psTextParams->textLine = (uint8 *)pcText;
+	psTextParams->textLine = (uint8 *)const_cast<char *>(pcText);
 	psTextParams->fontResource = (const char *)remora_font;
 	psTextParams->fontResource_hash = remora_font_hash;
 	psTextParams->maxWidth = nMaxWidth;
@@ -772,7 +772,7 @@ void _game_session::Create_remora_text(uint32 x, uint32 y, const char *ascii,
 	// build text block
 	_TSparams *text_params;
 	text_params = text_bloc->GetParams();
-	text_params->textLine = (uint8 *)ascii; // print id instead of real text for now
+	text_params->textLine = (uint8 *)const_cast<char *>(ascii); // print id instead of real text for now
 	// set font
 	text_params->fontResource = (const char *)remora_font;
 	// Jake for clustering

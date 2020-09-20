@@ -147,7 +147,7 @@ void Init_play_movie(const char *param0, bool8 param1) {
 
 	if (g_theSequenceManager->registerMovie(fullname, param1, FALSE8)) {
 		// Is this movie part of the title screen library
-		int32 mvid = Movie_name_to_ID((char *)moviename);
+		int32 mvid = Movie_name_to_ID(const_cast<char *>(moviename));
 
 		if (mvid != -1) {
 			// We can now consider this movie viewable in the title screen library

@@ -60,8 +60,8 @@ extern uint8 selPAlpha;
 #else // #if _PSX_ON_PC == 1
 
 unsigned int selFace = 65537;
-CVECTOR unlitPoly = {255, 255, 255};
-CVECTOR deadObjectColour = {0, 0, 0};
+CVECTOR unlitPoly = {255, 255, 255, 0};
+CVECTOR deadObjectColour = {0, 0, 0, 0};
 unsigned int deadObject = 0;
 
 unsigned int _drawBface = 0;
@@ -1656,7 +1656,7 @@ void drawFTL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *p
 
 	// Base colour for shading computation
 	// Could easily be specified per polygon
-	CVECTOR rgbIn = {128, 128, 128};
+	CVECTOR rgbIn = {128, 128, 128, 0};
 	CVECTOR rgb0 = {0, 0, 0, 0};
 
 	pPoly = polyStart;
@@ -1973,7 +1973,7 @@ void drawGTL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *p
 
 	// Base colour for gouraud shading computation
 	// Could easily be specified per polygon
-	CVECTOR rgbIn = {128, 128, 128};
+	CVECTOR rgbIn = {128, 128, 128, 0};
 	CVECTOR rgb0 = {0, 0, 0, 0};
 	CVECTOR rgb1 = {0, 0, 0, 0};
 	CVECTOR rgb2 = {0, 0, 0, 0};
@@ -3158,7 +3158,7 @@ void fastDrawGUL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTO
 
 	// Base colour for gouraud shading computation
 	// Could easily be specified per polygon
-	CVECTOR rgbIn = {128, 128, 128};
+	CVECTOR rgbIn = {128, 128, 128, 0};
 	CVECTOR rgb0, rgb1, rgb2;
 
 	pPoly = polyStart;
@@ -3267,7 +3267,7 @@ void fastDrawFTL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTO
 
 	// Base colour for shading computation
 	// Could easily be specified per polygon
-	CVECTOR rgbIn = {128, 128, 128};
+	CVECTOR rgbIn = {128, 128, 128, 0};
 	CVECTOR rgb0;
 
 	pPoly = polyStart;
@@ -3391,7 +3391,7 @@ void fastDrawGTL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTO
 
 	// Base colour for gouraud shading computation
 	// Could easily be specified per polygon
-	CVECTOR rgbIn = {128, 128, 128};
+	CVECTOR rgbIn = {128, 128, 128, 0};
 	CVECTOR rgb0, rgb1, rgb2;
 
 	int my_minUsedZpos;

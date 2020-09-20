@@ -33,19 +33,13 @@
 
 namespace ICB {
 
-#ifdef _MSC_VER
-#define STUB_FUNC(...) warning("STUB: %s", __FUNCDNAME__)
-#else
-#define STUB_FUNC(...) warning("STUB: %s", __PRETTY_FUNCTION__)
-#endif
-
 HBINK BinkOpen(const char * /*name*/, uint32 /*flags*/) {
-	STUB_FUNC();
+	warning("STUB: BinkOpen");
 	return new BINK();
 }
 
 void BinkClose(HBINK handle) {
-	STUB_FUNC();
+	warning("STUB: BinkClose");
 
 	if (handle) {
 		delete handle;
@@ -53,7 +47,7 @@ void BinkClose(HBINK handle) {
 }
 
 const char *BinkGetError() {
-	STUB_FUNC();
+	warning("STUB: BinkGetError");
 	return "BinkGetError() stub";
 }
 
@@ -85,8 +79,12 @@ void BinkGoto(HBINK /*handle*/, uint32 /*frame*/, int32 /*flags*/) {
 	// STUB_FUNC();
 }
 
-void BinkSoundUseDirectSound(uint32 /*flags*/) { STUB_FUNC(); }
+void BinkSoundUseDirectSound(uint32 /*flags*/) {
+	warning("STUB: BinkSoundUseDirectSound");
+}
 
-void BinkSetVolume(HBINK /*handle*/, int /*volume*/) { STUB_FUNC(); }
+void BinkSetVolume(HBINK /*handle*/, int /*volume*/) {
+	warning("STUB: BinkSetVolume");
+}
 
 } // End of namespace ICB

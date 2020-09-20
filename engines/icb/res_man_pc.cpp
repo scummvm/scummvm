@@ -265,7 +265,7 @@ async_PacketType res_man::async_shiftArray() {
 // Add item to list
 void res_man::async_addFile(const int8 *fn, uint8 *p, int32 size, int32 zipped, int32 memListNo) {
 	async_PacketType a;
-	a.fn = (char *)fn;
+	a.fn = const_cast<char *>(fn);
 	a.p = p;
 	a.size = size;
 	a.zipped = zipped;
@@ -571,7 +571,7 @@ HEADER_NORMAL *res_man::GetFileHeader(int32 &cluster_search, RMParams *params) {
 	// and get the position and length to get the data from
 
 	// Check the schema value and the ID
-	if ((clu->schema != CLUSTER_API_SCHEMA) || (*(int *)clu->ID != *(int *)CLUSTER_API_ID)) {
+	if ((clu->schema != CLUSTER_API_SCHEMA) || (*(int *)clu->ID != *(int *)const_cast<char *>(CLUSTER_API_ID))) {
 		// Big error unknown cluster filetype
 		Fatal_error("res_man::GetFileHeader unknown cluster schema or ID %d %s for %s::0x%X", clu->schema, clu->ID, params->cluster, params->url_hash);
 	}

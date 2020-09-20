@@ -36,7 +36,7 @@ namespace ICB {
 
 #define BUFLEN 65536
 
-static char buf[BUFLEN];
+//static char buf[BUFLEN];
 
 uint32 fileGetZipLength(const char *inFn) {
 	Common::SeekableReadStream *fileStream = openDiskFileForBinaryStreamRead(inFn);

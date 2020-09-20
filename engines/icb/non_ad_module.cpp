@@ -42,7 +42,7 @@ void WorldToFilm(const PXvector_PC &worldpos, const PCcamera &camera, bool8 &is_
 	vWorldPos.vy = (int)worldpos.y;
 	vWorldPos.vz = (int)worldpos.z;
 
-	pcApplyMatrixLV((MATRIX *)&camera.view, &vWorldPos, &scrn);
+	pcApplyMatrixLV(const_cast<MATRIX *>(&camera.view), &vWorldPos, &scrn);
 	scrn.vx += camera.view.t[0];
 	scrn.vy += camera.view.t[1];
 	scrn.vz += camera.view.t[2];

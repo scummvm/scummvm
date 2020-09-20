@@ -86,7 +86,7 @@ void _game_session::Show_lit_unlit_diagnostics() {
 	uint8 *ad;
 
 	_rgb pen = {// rgb
-	            255, 0, 0};
+	            255, 0, 0, 0};
 
 	// cross hair is now a development option
 	if (px.cross_hair == FALSE8)
@@ -124,10 +124,10 @@ void _game_session::Show_lit_unlit_diagnostics() {
 	// Unlock to use Fill_rect !
 	surface_manager->Unlock_surface(working_buffer_id);
 
-	_rgb tiecolour = {0xFF, 0x70, 0x80};
-	_rgb dcolour = {0x00, 0x00, 0xFF};
-	_rgb tcol = {0xFF, 0xFF, 0xFF};
-	_rgb lcol = {0xFF, 0x70, 0x80};
+	_rgb tiecolour = {0xFF, 0x70, 0x80, 0};
+	_rgb dcolour = {0x00, 0x00, 0xFF, 0};
+	_rgb tcol = {0xFF, 0xFF, 0xFF, 0};
+	_rgb lcol = {0xFF, 0x70, 0x80, 0};
 
 	// Draw the lights at their screen positions and with their base colours
 	if (SetOK()) {

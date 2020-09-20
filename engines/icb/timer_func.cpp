@@ -135,9 +135,9 @@ void DrawSegment(int x, int y, int dx, int dy, int danger) {
 
 	_rgb drawColour;
 
-	_rgb red = {255, 64, 64};
-	_rgb green = {64, 255, 64};
-	_rgb black = {0, 0, 0};
+	_rgb red = {255, 64, 64, 0};
+	_rgb green = {64, 255, 64, 0};
+	_rgb black = {0, 0, 0, 0};
 
 	if (danger)
 		drawColour = red;

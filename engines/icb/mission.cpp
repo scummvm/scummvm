@@ -80,7 +80,7 @@ void _mission::Set_new_session_name(const char *ascii) {
 		if (Common::isUpper(*(ascii + j)))
 			tolower(*(ascii + j));
 
-	Set_string((char *)ascii, new_session_name, TINY_NAME_LEN);
+	Set_string(const_cast<char *>(ascii), new_session_name, TINY_NAME_LEN);
 
 	new_session = TRUE8; // trigger a new session
 }
@@ -88,7 +88,7 @@ void _mission::Set_new_session_name(const char *ascii) {
 void _mission::Set_init_nico_name(const char *ascii) {
 	// record the name of the init nico
 
-	Set_string((char *)ascii, init_nico_name, TINY_NAME_LEN);
+	Set_string(const_cast<char *>(ascii), init_nico_name, TINY_NAME_LEN);
 
 	init_nico = TRUE8; // trigger a new session
 }

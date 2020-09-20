@@ -46,6 +46,7 @@ IcbEngine::IcbEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 	_randomSource = new Common::RandomSource("icb");
 	g_icb = this;
+	(void)_gameDescription; // silence warning
 }
 
 IcbEngine::~IcbEngine() {

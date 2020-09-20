@@ -151,10 +151,10 @@ void InitActorView(const char *name, const char *outfit, const char *weapon, con
 
 	sprintf(raj_name, "%s\\%s.raj", weapon, anim);
 
-	anim_name = (char *)anim;
-	weapon_name = (char *)weapon;
-	outfit_name = (char *)outfit;
-	character_name = (char *)name;
+	anim_name = const_cast<char *>(anim);
+	weapon_name = const_cast<char *>(weapon);
+	outfit_name = const_cast<char *>(outfit);
+	character_name = const_cast<char *>(name);
 
 	// Animate the shape from frame to frame, looping
 	framenum = 0;
@@ -182,7 +182,7 @@ void ChangeAnimPlaying(const char *pose, const char *anim, bool8 forwards, int32
 	// Set pose
 	if (pose) {
 		// New pose
-		weapon_name = (char *)pose;
+		weapon_name = const_cast<char *>(pose);
 	} else {
 		// Default is unarmed
 		weapon_name = "unarmed";
@@ -198,7 +198,7 @@ void ChangeAnimPlaying(const char *pose, const char *anim, bool8 forwards, int32
 	sprintf(raj_name, "%s\\%s.raj", weapon_name, anim);
 
 	// Change animation to use
-	anim_name = (char *)anim;
+	anim_name = const_cast<char *>(anim);
 
 	// Set direction to run the anim
 	if (forwards)
@@ -433,19 +433,19 @@ void DrawFrame(const int frame) {
 	ConvertRAP(mesh);
 
 	// Some error checking
-	if (*(int *)mesh->id != *(int *)RAP_API_ID) {
+	if (*(int *)mesh->id != *(int *)const_cast<char *>(RAP_API_ID)) {
 		Fatal_error("Wrong rap id value file %d api %d file:%s", mesh->id, RAP_API_ID, mesh_name);
 	}
 	if (mesh->schema != RAP_API_SCHEMA) {
 		Fatal_error("Wrong rap schema value file %d rap_api %d file:%s", mesh->schema, RAP_API_SCHEMA, mesh_name);
 	}
-	if (*(int *)pose->id != *(int *)RAP_API_ID) {
+	if (*(int *)pose->id != *(int *)const_cast<char *>(RAP_API_ID)) {
 		Fatal_error("Wrong rap id value file %d api %d file:%s", pose->id, RAP_API_ID, pose_name);
 	}
 	if (pose->schema != RAP_API_SCHEMA) {
 		Fatal_error("Wrong rap schema value file %d rap_api %d file:%s", pose->schema, RAP_API_SCHEMA, pose_name);
 	}
-	if (*(int *)rab->id != *(int *)RAB_API_ID) {
+	if (*(int *)rab->id != *(int *)const_cast<char *>(RAB_API_ID)) {
 		Fatal_error("Wrong rab id value file %d rab_api %d file:%s", rab->id, RAB_API_ID, bone_name);
 	}
 	if (rab->schema != RAB_API_SCHEMA) {
@@ -687,7 +687,7 @@ int my_sprintf(char *buf, const char *format...) {
 	va_list arglist;
 	va_start(arglist, format);
 
-	int slen = vsnprintf(lbuf, 256, (char *)format, arglist);
+	int slen = vsnprintf(lbuf, 256, const_cast<char *>(format), arglist);
 
 	strncpy(buf, lbuf, slen);
 	buf[slen] = '\0';

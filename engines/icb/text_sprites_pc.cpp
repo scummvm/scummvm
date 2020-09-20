@@ -81,10 +81,10 @@ _TSrtn text_sprite::BuildTextSprite(int32 stopAtLine, bool8 bRemoraLeftFormattin
 
 	_pxBitmap *charSet;
 
-	charSet = (_pxBitmap *)rs_font->Res_open((char *)params.fontResource, params.fontResource_hash, font_cluster, font_cluster_hash); // open font file
+	charSet = (_pxBitmap *)rs_font->Res_open(const_cast<char *>(params.fontResource), params.fontResource_hash, font_cluster, font_cluster_hash); // open font file
 
 	if (charSet->schema != PC_BITMAP_SCHEMA)
-		Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", (char *)params.fontResource, PC_BITMAP_SCHEMA, charSet->schema);
+		Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", const_cast<char *>(params.fontResource), PC_BITMAP_SCHEMA, charSet->schema);
 
 	pal = (uint8 *)charSet->Fetch_palette_pointer();
 

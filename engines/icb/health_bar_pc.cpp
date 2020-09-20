@@ -52,17 +52,17 @@ void _game_session::Draw_health_bar() {
 	static int barEnd;
 	static int barTarget;
 	static int healthStep = 0;
-	static _rgb healthColours[MAX_HEALTH + 1] = {{254, 0, 0},   //  0
-	                                             {254, 0, 0},   //  1
-	                                             {254, 0, 0},   //  2
-	                                             {254, 64, 0},  //  3
-	                                             {254, 128, 0}, //  4
-	                                             {254, 196, 0}, //  5
-	                                             {254, 254, 0}, //  6
-	                                             {196, 254, 0}, //  7
-	                                             {128, 254, 0}, //  8
-	                                             {32, 254, 0},  //  9
-	                                             {0, 254, 0}};  // 10
+	static _rgb healthColours[MAX_HEALTH + 1] = {{254, 0, 0, 0},   //  0
+	                                             {254, 0, 0, 0},   //  1
+	                                             {254, 0, 0, 0},   //  2
+	                                             {254, 64, 0, 0},  //  3
+	                                             {254, 128, 0, 0}, //  4
+	                                             {254, 196, 0, 0}, //  5
+	                                             {254, 254, 0, 0}, //  6
+	                                             {196, 254, 0, 0}, //  7
+	                                             {128, 254, 0, 0}, //  8
+	                                             {32, 254, 0, 0},  //  9
+	                                             {0, 254, 0, 0}};  // 10
 
 	// Lock the surface
 	uint8 *ad = (uint8 *)surface_manager->Lock_surface(working_buffer_id);

@@ -92,7 +92,7 @@ int stackPointer = 0;  // Position within stack
 // Macros for fetching data from the script file
 #define Fetch8(var)                                                                                                                                                                \
 	{                                                                                                                                                                          \
-		var = *((char *)actualScript);                                                                                                                                     \
+		var = *((char *)const_cast<char *>(actualScript));                                                                                                                                     \
 		actualScript += sizeof(char);                                                                                                                                      \
 	}
 
@@ -139,18 +139,18 @@ int stackPointer = 0;  // Position within stack
 #else
 #define Fetch32(param)                                                                                                                                                             \
 	{                                                                                                                                                                          \
-		param = *((int32 *)actualScript);                                                                                                                                  \
+		param = *((int32 *)const_cast<char *>(actualScript));                                                                                                                                  \
 		actualScript += sizeof(int32);                                                                                                                                     \
 	}
 #define Read32ipLeaveip(var)                                                                                                                                                       \
-	{ var = *((int32 *)(actualScript)); }
+	{ var = *((int32 *)const_cast<char *>(actualScript)); }
 #define Fetch16(param)                                                                                                                                                             \
 	{                                                                                                                                                                          \
-		param = *((int16 *)actualScript);                                                                                                                                  \
+		param = *((int16 *)const_cast<char *>(actualScript));                                                                                                                                  \
 		actualScript += sizeof(int16);                                                                                                                                     \
 	}
 #define Read16ipLeaveip(var)                                                                                                                                                       \
-	{ var = *((int16 *)(actualScript)); }
+	{ var = *((int16 *)const_cast<char *>(actualScript)); }
 #endif // #ifdef _PSX
 
 #define UpdatePC                                                                                                                                                                   \
@@ -357,7 +357,7 @@ scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to 
 			Fetch8(value); // the length of the string
 			ScriptTrace("Push string \"%s\"", actualScript);
 			// printf("push \"%s\"\n",actualScript);
-			PushOnStack(MemoryUtil::encodePtr((uint8 *)actualScript)); // The pointer to the string
+			PushOnStack(MemoryUtil::encodePtr((uint8 *)const_cast<char *>(actualScript))); // The pointer to the string
 			actualScript += value;
 			break;
 
@@ -365,13 +365,13 @@ scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to 
 			Fetch32(parameter1); // lookup (backwards)
 			ScriptTrace("Push string reference \"%s\"", actualScript + parameter1 - 4);
 			// printf("push reference \"%s\"\n",actualScript+parameter1-4);
-			PushOnStack(MemoryUtil::encodePtr((uint8 *)(actualScript + parameter1 - 4)));
+			PushOnStack(MemoryUtil::encodePtr((uint8 *)const_cast<char *>(actualScript + parameter1 - 4)));
 			break;
 
 		case CP_PUSH_STRING_PLAYER:
 			ScriptTrace("Push special string \"player\"");
 			// printf("push special \"player\"\n");
-			PushOnStack(MemoryUtil::encodePtr((uint8 *)playerString));
+			PushOnStack(MemoryUtil::encodePtr((uint8 *)const_cast<char *>(playerString)));
 			break;
 
 		case CP_CALL_VSCRIPT_ON_TRUE: { // 14:  Call a virtual script if a result is true
@@ -441,7 +441,7 @@ scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to 
 				_SCRIPT_ENGINE_ERROR("Unknown variable (string)??");
 
 			ScriptTrace("Push local string variable %d = \"%s\"", value, object->GetStringVariable(value));
-			PushOnStack(MemoryUtil::encodePtr((uint8 *)object->GetStringVariable(value)));
+			PushOnStack(MemoryUtil::encodePtr((uint8 *)const_cast<char *>(object->GetStringVariable(value))));
 			break;
 
 		case CP_DEBUG: {       // 19: Debug options

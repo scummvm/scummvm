@@ -176,6 +176,7 @@ inline _line_of_sight::_line_of_sight() {
 	m_nNumObjects = 0;
 	m_nTotalCurrentSubscribers = 0;
 	m_bHandleShadows = TRUE8;
+	m_nPad = 0;
 }
 
 inline _line_of_sight::~_line_of_sight() {

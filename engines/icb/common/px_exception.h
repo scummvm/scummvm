@@ -34,10 +34,6 @@
 
 namespace ICB {
 
-#if _MSC_VER < 1100 // Version 5
-#define explicit
-#endif
-
 class pxException {
 	pxString m_reason; // A text reason
 	int m_errno;       // An integer error number

@@ -568,7 +568,7 @@ void _remora::SetText(const char *pcText, uint8 nAttribute, uint8 nIndent, _pin_
 		nLineLength = MS->text_bloc->GetLineInfo()->line[i].length;
 
 		// Copy one line.
-		strncpy(m_pDisplayBuffer[m_nNextAvailableRow].s_pcText, (char *)pcParsePos, nLineLength);
+		strncpy(m_pDisplayBuffer[m_nNextAvailableRow].s_pcText, const_cast<char *>(pcParsePos), nLineLength);
 
 		// Make sure we haven't lost the terminator (but I'm sure he'll be back, if we have).
 		m_pDisplayBuffer[m_nNextAvailableRow].s_pcText[nLineLength] = '\0';
@@ -1051,7 +1051,7 @@ _remora::ScreenSymbol _remora::GetSymbolToDrawObject(_logic *pObject, uint32 nID
 
 	// If it's player, always return same symbol.
 	if (nID == MS->player.Fetch_player_id())
-		return (REMORA);
+		return (SS_REMORA);
 
 	// Get the type field stored in the object.
 	eObjectType = pObject->object_type;

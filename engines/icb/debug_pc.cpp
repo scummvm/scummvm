@@ -58,7 +58,7 @@ void Fatal_error(const char *format...) {
 	char buf[256];
 	va_list args;
 	va_start(args, format);
-	vsnprintf(buf, 256, (char *)format, args);
+	vsnprintf(buf, 256, const_cast<char *>(format), args);
 	warning("%s", buf);
 	assert(0); // To trap the debugger
 }

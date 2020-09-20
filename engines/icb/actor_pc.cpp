@@ -489,10 +489,10 @@ void DrawActor4PC(psxActor *actor, psxCamera *camera, Bone_Frame *frame, rap_API
 	actor->sPos.vy = (short)sxy0.vy;
 
 #if CD_MODE == 0
-	CVECTOR bboxColour = {(u_char)bboxRed, (u_char)bboxGreen, (u_char)bboxBlue};
+	CVECTOR bboxColour = {(u_char)bboxRed, (u_char)bboxGreen, (u_char)bboxBlue, 0};
 	if (_drawBbox)
 		drawBboxPC(actor->bboxScrn, bboxColour);
-	CVECTOR sbColour = {240, 240, 240};
+	CVECTOR sbColour = {240, 240, 240, 0};
 	if (_drawSolidBbox)
 		drawSolidBboxPC(actor->bboxScrn, &sbColour);
 

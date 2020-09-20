@@ -36,7 +36,7 @@ const char *global_deleted_list = "DELETED_LIST";
 const char *iconListEmptyIcon = "empty";
 
 _icon_list::_icon_list() {
-	m_pcListName = (char *)ICON_LIST_DELETED_PLACEHOLDER;
+	m_pcListName = const_cast<char *>(ICON_LIST_DELETED_PLACEHOLDER);
 	m_eScope = CURRENT_LOGIC;
 	m_nItemCount = 0;
 	m_bAllowDuplicates = TRUE8;
@@ -61,7 +61,7 @@ void _icon_list::Clone(const _icon_list &oSource) {
 
 	for (i = 0; i < m_nItemCount; ++i) {
 #ifdef _PC
-		Set_string((char *)oSource.m_ppcIconList[i], m_ppcIconList[i], MAXLEN_ICON_NAME);
+		Set_string(const_cast<char *>(oSource.m_ppcIconList[i]), m_ppcIconList[i], MAXLEN_ICON_NAME);
 #endif
 		m_pnIconListHash[i] = oSource.m_pnIconListHash[i];
 		m_pnDuplicateCount[i] = oSource.m_pnDuplicateCount[i];
@@ -117,7 +117,7 @@ void _icon_list::SetAbsoluteIconCount(const char *pcIconName, uint32 nCount) {
 
 // Add a fresh entry.
 #ifdef _PC
-		Set_string((char *)pcIconName, m_ppcIconList[i], MAXLEN_ICON_NAME);
+		Set_string(const_cast<char *>(pcIconName), m_ppcIconList[i], MAXLEN_ICON_NAME);
 #endif
 
 		m_pnIconListHash[i] = nHash;
@@ -149,7 +149,7 @@ void _icon_list::AddIcon(const char *pcIconName, const uint32 nIconNameHash) {
 
 // Add a fresh entry.
 #ifdef _PC
-		Set_string((char *)pcIconName, m_ppcIconList[i], MAXLEN_ICON_NAME);
+		Set_string(const_cast<char *>(pcIconName), m_ppcIconList[i], MAXLEN_ICON_NAME);
 #endif
 		m_pnIconListHash[i] = nIconNameHash;
 		m_pnDuplicateCount[i] = 1;

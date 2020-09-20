@@ -40,7 +40,7 @@ uint32 EngineHashString(const char *fn) {
 	char c;
 	uint32 n;
 	n = 0;
-	f = (char *)fn;
+	f = const_cast<char *>(fn);
 	while ((c = *f) != 0) {
 		n = (n << 7) + (n << 1) + n + c; // n=128n+2n+n+c -> n=131n+c
 		                                 // n=131*n+c;                  // n=131n+c

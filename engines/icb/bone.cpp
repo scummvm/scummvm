@@ -479,7 +479,7 @@ mcodeFunctionReturnCodes _game_session::fn_simple_look(int32 &, int32 *params) {
 
 	int32 callingParams[2];
 
-	callingParams[0] = MemoryUtil::encodePtr((uint8 *)L->GetName());
+	callingParams[0] = MemoryUtil::encodePtr((uint8 *)const_cast<char *>(L->GetName()));
 	callingParams[1] = l;
 
 	int32 ret;
@@ -553,7 +553,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_neck_vector(int32 &, int32 *param
 
 	int32 callingParams[5];
 
-	callingParams[0] = MemoryUtil::encodePtr((uint8 *)L->GetName());
+	callingParams[0] = MemoryUtil::encodePtr((uint8 *)const_cast<char *>(L->GetName()));
 	callingParams[1] = x;
 	callingParams[2] = y;
 	callingParams[3] = z;

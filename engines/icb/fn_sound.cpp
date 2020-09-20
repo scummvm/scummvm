@@ -163,7 +163,7 @@ mcodeFunctionReturnCodes _game_session::fn_stop_sfx(int32 &, int32 *params) {
 	const char *snd = (const char *)MemoryUtil::resolvePtr(params[0]);
 
 	// see if :: in filename...
-	const char *sub = strstr((char *)snd, "::");
+	const char *sub = strstr(const_cast<char *>(snd), "::");
 
 	// if object name is given in form obj::snd then extract both parts
 	if (sub != NULL) {
@@ -171,7 +171,7 @@ mcodeFunctionReturnCodes _game_session::fn_stop_sfx(int32 &, int32 *params) {
 		char tempSnd[64];
 
 		// first part (obj)
-		strncpy(tempObj, (char *)snd, sub - snd);
+		strncpy(tempObj, const_cast<char *>(snd), sub - snd);
 		tempObj[sub - snd] = 0; // null terminate
 
 		strcpy(tempSnd, sub + strlen("::"));

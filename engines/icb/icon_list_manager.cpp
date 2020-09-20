@@ -161,7 +161,7 @@ uint32 _icon_list_manager::GetList(const char *pcListName, char *pNames[ICON_LIS
 
 	// Loop for each icon in the list.
 	for (i = 0; i < nNumIconsInList; ++i) {
-		pNames[i] = (char *)m_pListOfLists[nListIndex].GetIcon(i);
+		pNames[i] = const_cast<char *>(m_pListOfLists[nListIndex].GetIcon(i));
 		pnHashes[i] = m_pListOfLists[nListIndex].GetIconHash(i);
 		pnCounts[i] = m_pListOfLists[nListIndex].GetDuplicateCount(i);
 	}

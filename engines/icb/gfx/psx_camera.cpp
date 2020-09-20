@@ -52,7 +52,7 @@ void makeLSmatrix(MATRIX *ws, MATRIX *lw, MATRIX *ls) {
 // with y & z
 void psxWorldToFilm(const PXvector_PSX &worldpos, const psxCamera &camera, bool8 &is_onfilm, PXvector_PSX &filmpos) {
 	VECTOR scrn;
-	ApplyMatrixLV((MATRIX *)&camera.view, (VECTOR *)&worldpos, &scrn);
+	ApplyMatrixLV(const_cast<MATRIX *>(&camera.view), (VECTOR *)const_cast<PXvector_PSX *>(&worldpos), &scrn);
 	scrn.vx += camera.view.t[0];
 	scrn.vy += camera.view.t[1];
 	scrn.vz += camera.view.t[2];

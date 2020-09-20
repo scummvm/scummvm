@@ -110,7 +110,7 @@ void _event_list::AddEventForObject(const char *pcEventName) {
 	if (strcmp(m_pNamedEventList[i].s_pcEventName, pcEventName)) {
 		// Setting up a new event.
 		// Set_string( pcEventName, m_pNamedEventList[ i ].s_pcEventName, MAXLEN_EVENT_NAME );
-		m_pNamedEventList[i].s_pcEventName = (char *)pcEventName;
+		m_pNamedEventList[i].s_pcEventName = const_cast<char *>(pcEventName);
 		m_pNamedEventList[i].s_bPending = FALSE8;
 		m_pNamedEventList[i].s_nLastSenderID = EVENT_INVALID_SENDER_ID;
 	}

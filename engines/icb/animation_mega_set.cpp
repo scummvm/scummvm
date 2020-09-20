@@ -477,7 +477,7 @@ bool8 _game_session::Start_generic_ascii_anim(const char *ascii_name) {
 	for (k = 0; k < __TOTAL_ANIMS; k++) {
 		// we must search the table
 
-		if (!strcmp((char *)ascii_name, master_anim_name_table[k].name)) {
+		if (!strcmp(const_cast<char *>(ascii_name), master_anim_name_table[k].name)) {
 			Zdebug("  Start_generic_ascii_anim found [%s]", ascii_name);
 
 			L->cur_anim_type = master_anim_name_table[k].ref;
@@ -504,7 +504,7 @@ __mega_set_names _game_session::Fetch_generic_anim_from_ascii(const char *ascii_
 
 	// search for the named generic anim - cant use __ANIM_NAME from script unfortunately
 	for (k = 0; k < __TOTAL_ANIMS; k++) {
-		if (!strcmp((char *)ascii_name, master_anim_name_table[k].name)) {
+		if (!strcmp(const_cast<char *>(ascii_name), master_anim_name_table[k].name)) {
 			// found!
 			if (I->IsAnimTable(L->cur_anim_type) == (int8)-1)
 				Fatal_error("Fetch_generic_anim_from_ascii cant find on drive %s", ascii_name);

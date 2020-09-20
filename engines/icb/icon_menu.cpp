@@ -116,7 +116,7 @@ bool8 _icon_menu::CycleIconMenu(const _input &sKeyboardState) {
 	// also only if we are not scrolling
 	if ((found != -1) && (inventoryPress) && (m_nSelectedIcon != (uint)found) && (m_nScrollDirection == ICON_MENU_SCROLL_NONE)) {
 		m_nSelectedIcon = found;
-		m_pcSelectedIconName = (char *)m_pIconList->GetIcon(m_nSelectedIcon);
+		m_pcSelectedIconName = const_cast<char *>(m_pIconList->GetIcon(m_nSelectedIcon));
 		m_nSelectedIconHash = m_pIconList->GetIconHash(m_nSelectedIcon);
 	}
 
@@ -202,7 +202,7 @@ bool8 _icon_menu::CycleIconMenu(const _input &sKeyboardState) {
 
 			// Set the name & hash value of the currently selected icon.
 			// Set_string( m_pIconList->GetIcon( m_nSelectedIcon ), m_pcSelectedIconName, MAXLEN_ICON_NAME );
-			m_pcSelectedIconName = (char *)m_pIconList->GetIcon(m_nSelectedIcon);
+			m_pcSelectedIconName = const_cast<char *>(m_pIconList->GetIcon(m_nSelectedIcon));
 			m_nSelectedIconHash = m_pIconList->GetIconHash(m_nSelectedIcon);
 
 			// Lock the keypress so it can't be repeated.
@@ -224,7 +224,7 @@ bool8 _icon_menu::CycleIconMenu(const _input &sKeyboardState) {
 
 			// Set the name & hash value of the currently selected icon.
 			// Set_string( m_pIconList->GetIcon( m_nSelectedIcon ), m_pcSelectedIconName, MAXLEN_ICON_NAME );
-			m_pcSelectedIconName = (char *)m_pIconList->GetIcon(m_nSelectedIcon);
+			m_pcSelectedIconName = const_cast<char *>(m_pIconList->GetIcon(m_nSelectedIcon));
 			m_nSelectedIconHash = m_pIconList->GetIconHash(m_nSelectedIcon);
 
 			// Lock the keypress so it can't be repeated.
