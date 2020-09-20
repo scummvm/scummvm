@@ -265,7 +265,7 @@ async_PacketType res_man::async_shiftArray() {
 // Add item to list
 void res_man::async_addFile(const int8 *fn, uint8 *p, int32 size, int32 zipped, int32 memListNo) {
 	async_PacketType a;
-	a.fn = const_cast<char *>(fn);
+	a.fn = (char *)const_cast<int8 *>(fn);
 	a.p = p;
 	a.size = size;
 	a.zipped = zipped;
