@@ -78,7 +78,7 @@ void _mission::Set_new_session_name(const char *ascii) {
 	// name to lower
 	for (uint32 j = 0; j < strlen(ascii); j++)
 		if (Common::isUpper(*(ascii + j)))
-			tolower(*(ascii + j));
+			*(ascii + j) = tolower(*(ascii + j));
 
 	Set_string(const_cast<char *>(ascii), new_session_name, TINY_NAME_LEN);
 
@@ -123,11 +123,11 @@ bool8 Setup_new_mission(const char *mission_name, const char *session_name) {
 	uint32 j;
 	for (j = 0; j < strlen(mission_name); j++)
 		if (Common::isUpper(*(mission_name + j)))
-			tolower(*(mission_name + j));
+			*(mission_name + j) = tolower(*(mission_name + j));
 
 	for (j = 0; j < strlen(session_name); j++)
 		if (Common::isUpper(*(session_name + j)))
-			tolower(*(session_name + j));
+			*(session_name + j) = tolower(*(session_name + j));
 #endif // #ifdef _PC
 
 	// check if session exists
