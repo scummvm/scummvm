@@ -45,6 +45,7 @@ BaseRenderOpenGL3D::BaseRenderOpenGL3D(BaseGame *inGame)
 
 	_lightPositions.resize(maximumLightsCount());
 	_lightDirections.resize(maximumLightsCount());
+	(void)_spriteBatchMode; // silence warning
 }
 
 BaseRenderOpenGL3D::~BaseRenderOpenGL3D() {
