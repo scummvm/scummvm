@@ -40,6 +40,8 @@ _icon_list::_icon_list() {
 	m_eScope = CURRENT_LOGIC;
 	m_nItemCount = 0;
 	m_bAllowDuplicates = TRUE8;
+	m_nPad1 = 0;
+	m_nPad2 = 0;
 
 	// Note, a hash of 0 means unknown HASH value i.e. NULL_HASH = 0.
 	_ASSERT(NULL_HASH == 0);

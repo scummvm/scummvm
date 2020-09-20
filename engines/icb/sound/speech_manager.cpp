@@ -52,6 +52,7 @@ SpeechManager::SpeechManager() {
 	m_paused = FALSE8;
 	m_lengthInCycles = 0;
 	_audioStream = NULL;
+	m_speechVol = 0;
 }
 
 SpeechManager::~SpeechManager() { KillBuffer(); }

@@ -70,6 +70,10 @@ void _game_volume::SetUpParameters(_linked_data_file *pyLOSData) {
 
 	// The object is now valid.
 	m_bValid = TRUE8;
+
+	m_nPadding[0] = 0;
+	m_nPadding[1] = 0;
+	m_nPadding[2] = 0;
 }
 
 bool8 _game_volume::GetCubeAndIndices(const px3DRealPoint &oPoint, // IN:  The current point in space.

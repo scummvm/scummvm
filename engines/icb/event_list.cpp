@@ -49,6 +49,7 @@ _event_list::_event_list(const _event_list &oX) {
 	m_nNumNamedEventsPending = oX.m_nNumNamedEventsPending;
 	m_nNumRegisteredEvents = oX.m_nNumRegisteredEvents;
 	m_bEventPending = oX.m_bEventPending;
+	m_nPad1 = 0;
 
 	for (i = 0; i < m_nNumRegisteredEvents; ++i)
 		m_pNamedEventList[i] = oX.m_pNamedEventList[i];

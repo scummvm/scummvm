@@ -18,7 +18,7 @@ public:
 	enum FaceID { NO_FACE, LEFT, RIGHT, FRONT, BACK, TOP, BOTTOM };
 
 	// Default constructor and destructor.
-	inline _tracer() { m_pyBarrierMemFile = NULL; }
+	inline _tracer() { m_pyBarrierMemFile = NULL; m_nPadding[0] = 0; }
 	virtual inline ~_tracer() { ; }
 
 	// This checks a line through game-world space and returns the point of its first impact.

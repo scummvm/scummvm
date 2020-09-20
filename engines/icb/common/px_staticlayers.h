@@ -62,6 +62,9 @@ class pcStaticLayers {
 		else
 			return schema;
 	}
+	pcStaticLayers () {
+		(void)mapping; // shutup warning
+	}
 };
 
 } // End of namespace ICB

@@ -202,7 +202,12 @@ public:
 		m_blinedist = (x2 * blpx()) + (z2 * blpz());
 	}
 
-	_barrier_collision_maths() {}
+	_barrier_collision_maths() {
+		(void)m_alpx; // shutup warning
+		(void)m_alpz; // shutup warning
+		(void)m_blpx; // shutup warning
+		(void)m_blpz; // shutup warning
+	}
 };
 
 class _route_barrier {
