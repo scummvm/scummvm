@@ -3428,6 +3428,16 @@ static const WMEGameDescription gameDescriptions[] = {
 					"xlanguage_zh_t.dcp", "c3cf601669aee770a40f7a995fe2b7fa", 8464532,
 					"Mac.dcp", "0b8d95dcb1f7e8c7c2c49e58db2764b6", 1728476), Common::ZH_TWN, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
 
+	// Reversion: The Meeting (Steam, March 2020) (English)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "5b1f360d29a650ea202a89903412e539", 272211168,
+					"xlanguage_en.dcp", "ea35ab390497427ff308cc696553a8c8", 8534328), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Meeting (Steam, March 2020) (Russian)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "5b1f360d29a650ea202a89903412e539", 272211168,
+					"xlanguage_ru.dcp", "5fe33043ce644890ef0cccf5d41681fb", 17511868), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_2),
+
 	// Reversion: The Meeting (Steam, March 2020) (Spanish)
 	WME_PLATENTRY("reversion2", "",
 		WME_ENTRY3s("data.dcp", "90d95f3415e1c33ea76de75c329f14ca", 272228827,
