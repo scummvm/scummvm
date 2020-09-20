@@ -7,7 +7,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Switched ScummVM GUI output to UTF-32.
 
  SAGA:
-   - Adde support for ITE GOG Mac CD v1.1.
+   - Added support for ITE GOG Mac CD v1.1.
 
  Supernova:
    - Added Italian translation for part 1.
