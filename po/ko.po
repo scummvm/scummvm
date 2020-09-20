@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
-"PO-Revision-Date: 2020-09-17 10:58+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2020-09-21 00:05+0000\n"
+"Last-Translator: starfall909 <starfall909@naver.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
 "Language: ko\n"
@@ -22,37 +22,37 @@ msgstr ""
 #: gui/about.cpp:102
 #, c-format
 msgid "(built on %s)"
-msgstr ""
+msgstr "(빌드 일자: %s)"
 
 #: gui/about.cpp:109
 msgid "Features compiled in:"
-msgstr ""
+msgstr "포함된 기능:"
 
 #: gui/about.cpp:118
 msgid "Available engines:"
-msgstr ""
+msgstr "사용 가능한 엔진:"
 
 #: gui/browser.cpp:75 backends/dialogs/macosx/macosx-dialogs.mm:78
 msgid "Show hidden files"
-msgstr ""
+msgstr "숨겨진 파일 표시"
 
 #: gui/browser.cpp:75
 msgid "Show files marked with the hidden attribute"
-msgstr ""
+msgstr "숨김 속성이 있는 파일을 표시합니다"
 
 #: gui/browser.cpp:79 gui/remotebrowser.cpp:57
 msgid "Go up"
-msgstr ""
+msgstr "위로"
 
 #: gui/browser.cpp:79 gui/browser.cpp:81 gui/remotebrowser.cpp:57
 #: gui/remotebrowser.cpp:59
 msgid "Go to previous directory level"
-msgstr ""
+msgstr "상위 디렉토리로 이동합니다"
 
 #: gui/browser.cpp:81 gui/remotebrowser.cpp:59
 msgctxt "lowres"
 msgid "Go up"
-msgstr ""
+msgstr "위로"
 
 #: gui/browser.cpp:82 gui/chooser.cpp:46 gui/editgamedialog.cpp:350
 #: gui/editrecorddialog.cpp:67 gui/filebrowser-dialog.cpp:65
@@ -76,7 +76,7 @@ msgstr ""
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:184
 #: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:199
 msgid "Cancel"
-msgstr ""
+msgstr "취소"
 
 #: gui/browser.cpp:83 gui/chooser.cpp:47 gui/filebrowser-dialog.cpp:66
 #: gui/remotebrowser.cpp:61 gui/themebrowser.cpp:56
@@ -84,42 +84,42 @@ msgstr ""
 #: backends/dialogs/macosx/macosx-dialogs.mm:132
 #: backends/dialogs/win32/win32-dialogs.cpp:138
 msgid "Choose"
-msgstr ""
+msgstr "선택"
 
 #: gui/downloaddialog.cpp:49
 msgid "Select directory where to download game data"
-msgstr ""
+msgstr "게임 데이터를 다운로드 할 디텍토리를 선택하세요"
 
 #: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:529 gui/launcher.cpp:207
 msgid "Select directory with game data"
-msgstr ""
+msgstr "게임 데이터가 있는 디렉토리를 선택하세요"
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:227
 msgid "From: "
-msgstr ""
+msgstr "보낸사람:"
 
 #: gui/downloaddialog.cpp:53 gui/downloaddialog.cpp:228
 msgid "To: "
-msgstr ""
+msgstr "받는사람:"
 
 #: gui/downloaddialog.cpp:64
 msgid "Cancel download"
-msgstr ""
+msgstr "다운로드 취소"
 
 #: gui/downloaddialog.cpp:66
 msgctxt "lowres"
 msgid "Cancel download"
-msgstr ""
+msgstr "다운로드 취소"
 
 #: gui/downloaddialog.cpp:68
 msgid "Hide"
-msgstr ""
+msgstr "숨김"
 
 #: gui/downloaddialog.cpp:118
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
-msgstr ""
+msgstr "인터넷 연결에 제한이 있는 것 같습니다. 다운로드를 계속 하시겠습니까?"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
@@ -129,7 +129,7 @@ msgstr ""
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
 #: engines/sci/graphics/controls32.cpp:928
 msgid "Yes"
-msgstr ""
+msgstr "예"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
@@ -139,17 +139,17 @@ msgstr ""
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
 #: engines/sci/graphics/controls32.cpp:928
 msgid "No"
-msgstr ""
+msgstr "아니오"
 
 #: gui/downloaddialog.cpp:137 gui/launcher.cpp:537
 msgid "ScummVM couldn't open the specified directory!"
-msgstr ""
+msgstr "ScummVM이 지정된 디렉토리를 열 수 없습니다!"
 
 #: gui/downloaddialog.cpp:147
 msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
-msgstr ""
+msgstr "다운로드를 위한 디렉토리를 생성할 수 없습니다 - 지정된 디렉토리와 같은 이름의 파일이 있습니다."
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:351
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:43 gui/launcher.cpp:487
@@ -168,7 +168,7 @@ msgstr ""
 #: engines/sword2/animation.cpp:465 engines/sword2/animation.cpp:475
 #: engines/zvision/file/save_manager.cpp:226
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: gui/downloaddialog.cpp:152
 #, c-format
@@ -180,20 +180,20 @@ msgstr ""
 #: gui/downloaddialog.cpp:215
 #, c-format
 msgid "Downloaded %s %S / %s %S"
-msgstr ""
+msgstr "%s %S / %s %S 다운로드 됨"
 
 #: gui/downloaddialog.cpp:222
 #, c-format
 msgid "Download speed: %s %S"
-msgstr ""
+msgstr "다운로드 속도: %s %S"
 
 #: gui/editgamedialog.cpp:135 engines/dialogs.cpp:285
 msgid "Game"
-msgstr ""
+msgstr "게임"
 
 #: gui/editgamedialog.cpp:139
 msgid "ID:"
-msgstr ""
+msgstr "ID:"
 
 #: gui/editgamedialog.cpp:139 gui/editgamedialog.cpp:141
 #: gui/editgamedialog.cpp:142
@@ -205,7 +205,7 @@ msgstr ""
 #: gui/editgamedialog.cpp:141
 msgctxt "lowres"
 msgid "ID:"
-msgstr ""
+msgstr "ID:"
 
 #: gui/editgamedialog.cpp:146 gui/editrecorddialog.cpp:59
 msgid "Name:"
@@ -236,11 +236,11 @@ msgstr ""
 #: gui/options.cpp:1223 gui/options.cpp:1236 gui/options.cpp:1250
 #: gui/options.cpp:2012 gui/options.cpp:2186 audio/null.cpp:41
 msgid "<default>"
-msgstr ""
+msgstr "<기본값>"
 
 #: gui/editgamedialog.cpp:164
 msgid "Platform:"
-msgstr ""
+msgstr "플랫폼:"
 
 #: gui/editgamedialog.cpp:164 gui/editgamedialog.cpp:166
 #: gui/editgamedialog.cpp:167
@@ -250,43 +250,43 @@ msgstr ""
 #: gui/editgamedialog.cpp:166
 msgctxt "lowres"
 msgid "Platform:"
-msgstr ""
+msgstr "플랫폼:"
 
 #: gui/editgamedialog.cpp:180
 msgid "Engine"
-msgstr ""
+msgstr "엔진"
 
 #: gui/editgamedialog.cpp:196 gui/options.cpp:1567 gui/options.cpp:1698
 #: backends/graphics/sdl/sdl-graphics.cpp:365
 #: backends/platform/ds/arm9/source/dsoptions.cpp:97
 msgid "Graphics"
-msgstr ""
+msgstr "그래픽"
 
 #: gui/editgamedialog.cpp:196 gui/options.cpp:1567 gui/options.cpp:1698
 msgid "GFX"
-msgstr ""
+msgstr "GFX"
 
 #: gui/editgamedialog.cpp:202
 msgid "Override global graphic settings"
-msgstr ""
+msgstr "전역 그래픽 설정 사용"
 
 #: gui/editgamedialog.cpp:204
 msgctxt "lowres"
 msgid "Override global graphic settings"
-msgstr ""
+msgstr "전역 그래픽 설정 사용"
 
 #: gui/editgamedialog.cpp:214 gui/options.cpp:1709
 msgid "Shader"
-msgstr ""
+msgstr "쉐이더"
 
 #: gui/editgamedialog.cpp:217
 msgid "Override global shader settings"
-msgstr ""
+msgstr "전역 쉐이더 설정 사용"
 
 #: gui/editgamedialog.cpp:219
 msgctxt "lowres"
 msgid "Override global shader settings"
-msgstr ""
+msgstr "전역 쉐이더 설정 사용"
 
 #: gui/editgamedialog.cpp:233 gui/options.cpp:1743 engines/dialogs.cpp:326
 msgid "Keymaps"
@@ -643,7 +643,7 @@ msgstr ""
 
 #: gui/launcher.cpp:140 engines/dialogs.cpp:99
 msgid "~Q~uit"
-msgstr "떠나다"
+msgstr "종료(~Q~)"
 
 #: gui/launcher.cpp:140 backends/platform/sdl/macosx/appmenu_osx.mm:216
 msgid "Quit ScummVM"
@@ -651,7 +651,7 @@ msgstr "ScummVM 종료"
 
 #: gui/launcher.cpp:141
 msgid "A~b~out..."
-msgstr "약..."
+msgstr "프로그램 정보(~b~)"
 
 #: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:210
 msgid "About ScummVM"
@@ -659,7 +659,7 @@ msgstr "ScummVM 정보"
 
 #: gui/launcher.cpp:142
 msgid "~O~ptions..."
-msgstr "옵션 ..."
+msgstr "옵션(~O~)"
 
 #: gui/launcher.cpp:142
 msgid "Change global ScummVM options"
@@ -667,19 +667,19 @@ msgstr ""
 
 #: gui/launcher.cpp:144
 msgid "~S~tart"
-msgstr "스타트"
+msgstr "시작(~S~)"
 
 #: gui/launcher.cpp:144
 msgid "Start selected game"
-msgstr ""
+msgstr "선택된 게임 시작합니다"
 
 #: gui/launcher.cpp:147
 msgid "~L~oad..."
-msgstr "하중..."
+msgstr "불러오기(~L~)..."
 
 #: gui/launcher.cpp:147
 msgid "Load saved game for selected game"
-msgstr ""
+msgstr "선택된 게임의 저장 데이터를 불러옵니다"
 
 #: gui/launcher.cpp:149
 msgid "Record..."
@@ -687,31 +687,31 @@ msgstr ""
 
 #: gui/launcher.cpp:156
 msgid "~A~dd Game..."
-msgstr "게임 추가 ..."
+msgstr "게임 추가(~A~)..."
 
 #: gui/launcher.cpp:156 gui/launcher.cpp:166
 msgid "Add games to the list"
-msgstr ""
+msgstr "게임을 목록에 추가합니다"
 
 #: gui/launcher.cpp:157
 msgid "Mass Add..."
-msgstr ""
+msgstr "대량 추가..."
 
 #: gui/launcher.cpp:161
 msgid "~E~dit Game..."
-msgstr "게임 편집 ..."
+msgstr "게임 편집(~E~)..."
 
 #: gui/launcher.cpp:161 gui/launcher.cpp:171
 msgid "Change game options"
-msgstr ""
+msgstr "게임 옵션을 변경합니다"
 
 #: gui/launcher.cpp:163
 msgid "~R~emove Game"
-msgstr "게임 제거"
+msgstr "게임 제거(~R~)"
 
 #: gui/launcher.cpp:163 gui/launcher.cpp:173
 msgid "Remove game from the list. The game data files stay intact"
-msgstr ""
+msgstr "목록에서 게임을 제거합니다. 게임 데이터 파일은 남겨둡니다"
 
 #: gui/launcher.cpp:166
 msgctxt "lowres"
