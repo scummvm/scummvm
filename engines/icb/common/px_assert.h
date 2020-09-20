@@ -28,65 +28,22 @@
 #ifndef PX_ASSERT_H_INCLUDED
 #define PX_ASSERT_H_INCLUDED
 
+#include "common/scummsys.h"
+
 #ifdef _DEBUG
-
-#include <crtdbg.h>
-
-// _ASSERT uses a do while(0) construct to prevent a problem with ending ';'s.
-
-// For example, if _ASSERT was simply: if (!expr) ... then
-//      if (obj)
-//          _ASSERT(expr)
-//      else
-//          DoSomething()
-// would expand to
-//      if (obj)
-//          if (!expr)
-//              ...
-//          else
-//              DoSomething()
-//
-// Using {} so that _ASSERT was: { if (!expr) ... } would produce
-//      if (obj)
-//      {   if (!expr)
-//              ....
-//      }; <-------------------------- semi colon here does not go down too well
-//      else
-//              DoSomething()
-//
-// Microsoft make _ASSERT to be: do { if (!expr) ... } while(0)
-// This fixes the problem but produces a "conditional expression is constant" warning.
-// I have removed this by copying their ASSERT and using pxReturnFalse() instead of 0
 
 #undef _ASSERT
 #undef ASSERT
 #undef VERIFY
 
-#ifdef USE_CUSTOM_ASSERT
-
-int CUSTOM_ASSERT(int reportType, const char *filename, int linenumber, const char *moduleName, const char *format, ...);
-
-#define _CrtDbgReport CUSTOM_ASSERT
-#endif // USE_CUSTOM_ASSERT
-
-inline bool pxReturnFalse() { return (false); }
-
-#define _ASSERT(expr)                                                                                                                                                              \
-	do {                                                                                                                                                                       \
-		if (!(expr) && (1 == _CrtDbgReport(_CRT_ASSERT, __FILE__, __LINE__, NULL, "%s", #expr)))                                                                           \
-			_CrtDbgBreak();                                                                                                                                            \
-	} while (pxReturnFalse())
+#define _ASSERT(expr) assert(expr)
 
 // Another ASSERT with the ability to display a user message
 #ifdef _ASSERT_MESSAGE
 #undef _ASSERT_MESSAGE
 #endif // #ifdef _ASSERT_MESSAGE
 
-#define _ASSERT_MESSAGE(expr, message)                                                                                                                                             \
-	do {                                                                                                                                                                       \
-		if (!(expr) && (1 == _CrtDbgReport(_CRT_ASSERT, __FILE__, __LINE__, NULL, "%s\n%s", #expr, message)))                                                              \
-			_CrtDbgBreak();                                                                                                                                            \
-	} while (pxReturnFalse())
+#define _ASSERT_MESSAGE(expr, message) assert(expr, message)
 
 #ifndef ASSERT0
 #define ASSERT0(x, msg) _ASSERT_MESSAGE(x, pxVString("Assertion failed: file %s, line %d", __FILE__, __LINE__));
@@ -116,11 +73,7 @@ inline bool pxReturnFalse() { return (false); }
 #undef _ASSERT_ALLWAYS
 #endif // #ifdef define _ASSERT_ALLWAYS
 
-#define _ASSERT_ALLWAYS                                                                                                                                                            \
-	do {                                                                                                                                                                       \
-		if (1 == _CrtDbgReport(_CRT_ASSERT, __FILE__, __LINE__, NULL, "Assert always"))                                                                                    \
-			_CrtDbgBreak();                                                                                                                                            \
-	} while (pxReturnFalse())
+#define _ASSERT_ALLWAYS assert(false)
 
 #define ASSERT(x) _ASSERT(x)
 
