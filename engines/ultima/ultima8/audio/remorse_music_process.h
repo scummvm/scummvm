@@ -77,9 +77,6 @@ public:
 	//! Bring back the track state from before it was put on hold
 	void restoreTrackState() override;
 
-	INTRINSIC(I_playMusic);
-	INTRINSIC(I_musicStop);
-
 	void run() override;
 
 	bool loadData(Common::ReadStream *rs, uint32 version);

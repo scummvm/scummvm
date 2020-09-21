@@ -73,7 +73,9 @@ public:
 	virtual void restoreTrackState() = 0;
 
 	INTRINSIC(I_playMusic);
-	INTRINSIC(I_musicStop);
+	INTRINSIC(I_stopMusic);
+	INTRINSIC(I_pauseMusic);
+	INTRINSIC(I_unpauseMusic);
 
 };
 

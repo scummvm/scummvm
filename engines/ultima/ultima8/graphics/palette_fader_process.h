@@ -58,8 +58,11 @@ public:
 	INTRINSIC(I_fadeFromBlack);
 	INTRINSIC(I_lightningBolt);
 	INTRINSIC(I_fadeToGreyScale);
+	INTRINSIC(I_fadeToGivenColor);
 	INTRINSIC(I_jumpToGreyScale);
 	INTRINSIC(I_jumpToAllBlack);
+	INTRINSIC(I_jumpToAllGrey);
+	INTRINSIC(I_jumpToAllGivenColor);
 	INTRINSIC(I_jumpToNormalPalette);
 
 	bool loadData(Common::ReadStream *rs, uint32 version);

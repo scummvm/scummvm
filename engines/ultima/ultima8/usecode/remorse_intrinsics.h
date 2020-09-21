@@ -188,7 +188,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	PaletteFaderProcess::I_jumpToAllBlack, // TODO: should also resume cycle process.
 	// 0x090
-	MusicProcess::I_musicStop, // void Intrinsic090(void)
+	MusicProcess::I_stopMusic, // void Intrinsic090(void)
 	0, // void Intrinsic091(void)
 	0, // TODO: I_playFlic(char *)? void Intrinsic092(void)
 	0, // void Intrinsic093(void)
@@ -200,10 +200,10 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_andStatus, // void Intrinsic099(6 bytes)
 	PaletteFaderProcess::I_jumpToNormalPalette, // TODO: should also stop cycle process?
 	PaletteFaderProcess::I_fadeFromBlack, // fade to game pal with number of steps
-	0, // TODO: PaletteFaderProcess::I_fadeFromBlackWithParam
+	PaletteFaderProcess::I_fadeFromBlack, // fade from black with nsteps and another unknown param
 	PaletteFaderProcess::I_fadeToBlack, // fade to black with number of steps
-	0, // TODO: PaletteFaderProcess::I_fadeToBlackWithParam
-	0, // TODO: PaletteFaderProcess::I_fadeToColor
+	PaletteFaderProcess::I_fadeToBlack, // fade to black with nsteps and another unknown param
+	PaletteFaderProcess::I_fadeToGivenColor,
 	// 0x0A0
 	Actor::I_setDead,
 	Item::I_getQLo, // based on same coff set as 02B
@@ -266,7 +266,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Actor::I_getLastAnimSet, // void Intrinsic0D7(4 bytes)
 	Actor::I_setDead,
 	Item::I_getQLo, // based on same coff set as 02B
-	0, // TODO: PaletteFaderProcess::I_setPalToAllGrey // sets all colors to 0x3F3F3F
+	PaletteFaderProcess::I_jumpToAllGrey,
 	Actor::I_setActivity, // void Intrinsic0DB(6 bytes)
 	Item::I_isOn,
 	Actor::I_getLastActivityNo, // void Intrinsic0DD(4 bytes)

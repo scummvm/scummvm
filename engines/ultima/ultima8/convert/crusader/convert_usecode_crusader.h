@@ -194,7 +194,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Item::I_getNPCNum(Item *)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
 	"void PaletteFaderProcess::I_jumpToAllBlack(void)",
 	// 0090
-	"void MusicProcess::I_musicStop(void)",
+	"void MusicProcess::I_stopMusic(void)",
 	"void I_setSomeMovieGlobal(void)", // sets some global (cleared by 93)
 	"void I_playFlic092(char *)", // same coff as 0A9
 	"void I_clearSomeMovieGlobal(void)", // clears some global (set by 91)
