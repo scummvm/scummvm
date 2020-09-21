@@ -31,7 +31,6 @@
 #endif
 
 #include "engines/icb/common/px_rccommon.h"
-#include "engines/icb/common/px_windows.h"
 #include "engines/icb/common/px_string.h"
 #include "engines/icb/res_man_pc.h"
 #include "debug_pc.h"

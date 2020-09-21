@@ -26,7 +26,6 @@
  */
 
 #include "engines/icb/common/px_rccommon.h"
-#include "engines/icb/common/px_windows.h"
 #include "movie_pc.h"
 #include "direct_input.h"
 #include "engines/icb/sound/music_manager.h"

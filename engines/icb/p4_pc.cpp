@@ -25,7 +25,6 @@
  *
  */
 
-#include "engines/icb/common/px_windows.h"
 #ifdef _WIN32
 #include <direct.h> // _getcwd()
 #else
@@ -53,8 +52,8 @@
 
 namespace ICB {
 
-BOOL gRegainedFocus = false;
-BOOL gotTheFocus = false;
+bool gRegainedFocus = false;
+bool gotTheFocus = false;
 
 pxString font_cluster = FONT_CLUSTER_PATH;
 
@@ -632,7 +631,7 @@ void _stub::Fix_time() {
 
 int WhichCD(const char * /* mission */) { return 1; }
 
-BOOL HasMMXTechnology() { return true; }
+bool HasMMXTechnology() { return true; }
 
 void _mission::LoadPlatformSpecific(Common::SeekableReadStream * /* fh */) {
 	// No PC specific stuff in here (at the moment)

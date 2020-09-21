@@ -25,7 +25,6 @@
  *
  */
 
-#include "engines/icb/common/px_windows.h"
 #include "res_man.h"
 #include "game_script.h"
 #include "debug.h"

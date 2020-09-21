@@ -53,7 +53,7 @@ void Clear_key_buffer() {
 	keyPointer = 0;
 }
 
-BOOL KeyWaiting() {
+bool KeyWaiting() {
 	if (keyBacklog)
 		return (true);
 	else

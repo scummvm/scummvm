@@ -32,7 +32,6 @@
 #include <time.h>
 
 #include "engines/icb/common/px_rccommon.h"
-#include "engines/icb/common/px_windows.h"
 #include "engines/icb/icb.h"
 
 #include "options_manager_pc.h"

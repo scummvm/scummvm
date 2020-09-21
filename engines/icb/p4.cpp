@@ -29,7 +29,6 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_localtime
 #define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 
-#include "engines/icb/common/px_windows.h"
 #include <math.h>
 
 #ifdef _WIN32

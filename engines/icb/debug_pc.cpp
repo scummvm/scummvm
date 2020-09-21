@@ -25,8 +25,6 @@
  *
  */
 
-#include "engines/icb/common/px_windows.h"
-
 #include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_common.h"
 #include "p4_generic.h"

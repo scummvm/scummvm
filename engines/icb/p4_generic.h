@@ -29,7 +29,6 @@
 #define INCLUDED_P4_GENERIC_H
 
 #include "engines/icb/common/px_rccommon.h"
-#include "engines/icb/common/px_windows.h"
 
 #include "p4.h"
 

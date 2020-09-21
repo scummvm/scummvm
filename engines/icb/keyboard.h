@@ -40,7 +40,7 @@ typedef struct {
 
 void WriteKey(char key); // Adds a keypress to the buffer
 
-extern BOOL KeyWaiting();
+extern bool KeyWaiting();
 
 extern int32 ReadKey(char *key);
 extern void GetKeyStatus(_drvKeyStatus *s);

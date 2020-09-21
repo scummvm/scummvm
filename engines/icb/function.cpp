@@ -25,10 +25,6 @@
  *
  */
 
-#ifdef _PC
-#include "engines/icb/common/px_windows.h"
-#endif
-
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/ptr_util.h"
 

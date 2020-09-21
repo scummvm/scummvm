@@ -455,9 +455,6 @@ void _surface_manager::Kill_surface(uint32 s_id) {
 }
 
 uint8 *_surface_manager::Lock_surface(uint32 s_id) {
-#if 0
-	HRESULT hr;
-#endif
 	_surface *pSurface = m_Surfaces[s_id];
 
 	if (pSurface->m_locked)

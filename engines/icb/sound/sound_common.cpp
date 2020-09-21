@@ -42,7 +42,7 @@ bool8 openWav(Common::SeekableReadStream *stream, _wavHeader &header, uint32 &le
 	// TODO: fopen must happen before
 	int bytesRead;
 	char buff[1024];
-	BOOL bMore = true;
+	bool bMore = true;
 
 	// Read the wave header
 	if (stream->read(&header, sizeof(_wavHeader)) != sizeof(_wavHeader))

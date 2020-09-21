@@ -63,7 +63,7 @@ extern uint32 sys_font_hash;     // Res_open will compute the hash value and sto
 #define RESOURCE_IS_COMPRESSED 1
 
 #if _PC
-extern BOOL gRegainedFocus; // Set when we regain the focus.  Cleared by the graphics reloading functions
+extern bool gRegainedFocus; // Set when we regain the focus.  Cleared by the graphics reloading functions
 
 } // End of namespace ICB (To avoid including inside the namespace
 

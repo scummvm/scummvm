@@ -26,7 +26,6 @@
  */
 
 #include "engines/icb/common/px_rccommon.h"
-#include "engines/icb/common/px_windows.h"
 
 #if defined (SDL_BACKEND)
 #include <SDL/SDL_joystick.h>
@@ -236,7 +235,7 @@ int NTJoystickHandler::GetJoystick(int joynum, JoyInfo *joypos) {
 
 NTJoystickHandler ntJoystick;
 
-BOOL PollNTJoystick() {
+bool PollNTJoystick() {
 	ntJoystick.UpdateJoystick();
 
 	// State structre
