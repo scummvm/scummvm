@@ -1055,11 +1055,7 @@ void Process::loadTextFromObject() {
 
 void Process::call(uint16 addr) {
 	debug("call %04x", addr);
-	//original engine just create new process, save exit code in screen object
-	//and on stack, then just ignore return code, fixme?
-	suspend();
 	_engine->runProcess(_object, _ip + addr);
-	activate();
 }
 
 void Process::onKey(unsigned size) {

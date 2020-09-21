@@ -238,12 +238,6 @@ void AGDSEngine::runProcesses() {
 			++i;
 		}
 	}
-
-	while (!_nextScreenName.empty()) {
-		Common::String nextScreenName = _nextScreenName;
-		_nextScreenName.clear();
-		loadScreen(nextScreenName);
-	}
  }
 
 void AGDSEngine::newGame() {
@@ -261,6 +255,11 @@ void AGDSEngine::newGame() {
 }
 
 void AGDSEngine::tick() {
+	while (!_nextScreenName.empty()) {
+		Common::String nextScreenName = _nextScreenName;
+		_nextScreenName.clear();
+		loadScreen(nextScreenName);
+	}
 	if (_dialog.tick()) {
 		runProcesses();
 		return;
