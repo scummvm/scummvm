@@ -28,7 +28,6 @@
 #ifndef __STAGE_DRAW_MODULE_H__
 #define __STAGE_DRAW_MODULE_H__
 
-#undef RECT16
 #include "engines/icb/gfx/psx_pxactor.h"
 
 namespace ICB {

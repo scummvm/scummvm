@@ -28,10 +28,6 @@
 #ifndef PX_WINDOWS_H_INCLUDED
 #define PX_WINDOWS_H_INCLUDED
 
-#ifndef STRICT
-#define STRICT // Force strict useage of handle definitions and other things
-#endif         // STRICT
-
 #ifdef _WIN32
 #include <windows.h>
 #else
