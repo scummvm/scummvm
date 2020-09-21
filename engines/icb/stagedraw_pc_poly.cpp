@@ -384,7 +384,6 @@ void drawObjects(SDactor &act, PSXLampList &lamplist, PSXrgb *pAmbient, PSXShade
 
 	selFace = 65535;
 
-	SVECTOR scrn;
 	_drawLit = 1;
 	_drawTxture = 1;
 	_drawWfrm = 0;

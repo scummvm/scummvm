@@ -28,12 +28,6 @@
 #ifndef DEBUG_PC_H
 #define DEBUG_PC_H
 
-#ifdef _WIN32
-#include <windows.h>
-#else
-//#include <sys/time.h>
-#endif
-
 #include "common/system.h"
 
 namespace ICB {
@@ -56,19 +50,6 @@ void Tdebug(const char *file, const char *format, ...);
 inline unsigned int GetMicroTimer(void) {
 	static int first = 1;
 
-#ifdef _WIN32
-	static LARGE_INTEGER qpt_start;
-	static LARGE_INTEGER qpt_freq;
-	if (first) {
-		QueryPerformanceCounter(&qpt_start);
-		QueryPerformanceFrequency(&qpt_freq);
-		first = 0;
-	}
-	LARGE_INTEGER qpt_end;
-	QueryPerformanceCounter(&qpt_end);
-	unsigned int QPTus = (int)((qpt_end.QuadPart - qpt_start.QuadPart) * 1000000 / qpt_freq.QuadPart);
-	return QPTus;
-#else
 	static TimeDate startTime;
 	if (first) {
 		g_system->getTimeAndDate(startTime);
@@ -78,7 +59,6 @@ inline unsigned int GetMicroTimer(void) {
 	TimeDate curTime;
 	g_system->getTimeAndDate(curTime);
 	return (uint32)(((curTime.tm_sec - startTime.tm_sec) * 1000000));// + (curTime.tv_usec - startTime.tv_usec)); // TODO: Fix micro-second-precision.
-#endif
 }
 
 } // End of namespace ICB

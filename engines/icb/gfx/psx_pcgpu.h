@@ -34,11 +34,6 @@ namespace ICB {
 #error "DONT USE PSX_PCGPU.H ON THE PSX"
 #endif // #if _PSX && !defined _PSX_ON_PC
 
-#ifdef LoadImage
-
-#undef LoadImage
-
-#endif
 
 // For storing user data in the OT entry e.g. texture pointer
 extern void *OTusrData;
@@ -627,132 +622,11 @@ typedef struct {
 	uint32 *paddr; /* texture image address on main memory */
 } TIM_IMAGE;
 
-/*
- * Prototypes
- */
-#if defined(_LANGUAGE_C_PLUS_PLUS) || defined(__cplusplus) || defined(c_plusplus)
-extern "C" {
-#ifndef _FNTPRINT_
-#define _FNTPRINT_
-extern int FntPrint(...);
-#endif /* _FNTPRINT_ */
-#ifndef _KANJIFNTPRINT_
-#define _KANJIFNTPRINT_
-extern int KanjiFntPrint(...);
-#endif /* _KANJIFNTPRINT_ */
-#else
-#ifndef _FNTPRINT_
-#define _FNTPRINT_
-extern int FntPrint();
-#endif /* _FNTPRINT_ */
-#ifndef _KANJIFNTPRINT_
-#define _KANJIFNTPRINT_
-extern int KanjiFntPrint();
-#endif /* _KANJIFNTPRINT_ */
-#endif
-
-extern DISPENV *GetDispEnv(DISPENV *env);
-extern DISPENV *PutDispEnv(DISPENV *env);
-extern DISPENV *SetDefDispEnv(DISPENV *env, int x, int y, int w, int h);
-extern DRAWENV *GetDrawEnv(DRAWENV *env);
-extern DRAWENV *PutDrawEnv(DRAWENV *env);
-extern DRAWENV *SetDefDrawEnv(DRAWENV *env, int x, int y, int w, int h);
-extern TIM_IMAGE *ReadTIM(TIM_IMAGE *timimg);
-extern TMD_PRIM *ReadTMD(TMD_PRIM *tmdprim);
-extern int CheckPrim(char *s, uint32 *p);
-extern int ClearImage(RECT16 *rect, u_char r, u_char g, u_char b);
-extern int ClearImage2(RECT16 *rect, u_char r, u_char g, u_char b);
-extern int DrawSync(int mode);
-extern int FntOpen(int x, int y, int w, int h, int isbg, int n);
-extern int GetGraphDebug(void);
-extern int GetTimSize(u_char *sjis);
-extern int IsEndPrim(void *p);
-extern int KanjiFntOpen(int x, int y, int w, int h, int dx, int dy, int cx, int cy, int isbg, int n);
-extern void KanjiFntClose(void);
-extern int Krom2Tim(u_char *sjis, uint32 *taddr, int dx, int dy, int cdx, int cdy, uint fg, uint bg);
 extern int LoadImage(RECT16 *rect, uint32 *p);
-extern int MargePrim(void *p0, void *p1);
-extern int MoveImage(RECT16 *rect, int x, int y);
-extern int OpenTIM(uint32 *addr);
-extern int OpenTMD(uint32 *tmd, int obj_no);
-extern int ResetGraph(int mode);
-extern int SetGraphDebug(int level);
-extern int StoreImage(RECT16 *rect, uint32 *p);
 extern OT_tag *ClearOTag(OT_tag *ot, uint n);
 extern OT_tag *ClearOTagR(OT_tag *ot, uint n);
-extern uint32 *FntFlush(int id);
-extern uint32 *KanjiFntFlush(int id);
-extern uint32 DrawSyncCallback(void (*func)());
-extern u_short GetClut(int x, int y);
-extern u_short GetTPage(int tp, int abr, int x, int y);
-extern u_short LoadClut(uint32 *clut, int x, int y);
-extern u_short LoadClut2(uint32 *clut, int x, int y);
-extern u_short LoadTPage(uint32 *pix, int tp, int abr, int x, int y, int w, int h);
-extern void *NextPrim(void *p);
-extern void AddPrim(void *ot, void *p);
-extern void AddPrims(void *ot, void *p0, void *p1);
-extern void CatPrim(void *p0, void *p1);
 extern void DrawOTag(OT_tag *p);
-extern void DrawOTagIO(uint32 *p);
-extern void DrawOTagEnv(uint32 *p, DRAWENV *env);
 extern void DrawPrim(void *p);
-extern void DumpClut(u_short clut);
-extern void DumpDispEnv(DISPENV *env);
-extern void DumpDrawEnv(DRAWENV *env);
-extern void DumpOTag(uint32 *p);
-extern void DumpTPage(u_short tpage);
-extern void FntLoad(int tx, int ty);
-extern void SetDispMask(int mask);
-extern void SetDrawArea(DR_AREA *p, RECT16 *r);
-extern void SetDrawEnv(DR_ENV *dr_env, DRAWENV *env);
-extern void SetDrawLoad(DR_LOAD *p, RECT16 *rect);
-extern void SetDrawMode(DR_MODE *p, int dfe, int dtd, int tpage, RECT16 *tw);
-extern void SetDrawTPage(DR_TPAGE *p, int dfe, int dtd, int tpage);
-extern void SetDrawMove(DR_MOVE *p, RECT16 *rect, int x, int y);
-extern void SetDrawOffset(DR_OFFSET *p, u_short *ofs);
-extern void SetDrawStp(DR_STP *p, int pbw);
-extern void SetDumpFnt(int id);
-extern void SetLineF2(LINE_F2 *p);
-extern void SetLineF3(LINE_F3 *p);
-extern void SetLineF4(LINE_F4 *p);
-extern void SetLineG2(LINE_G2 *p);
-extern void SetLineG3(LINE_G3 *p);
-extern void SetLineG4(LINE_G4 *p);
-extern void SetPolyF3(POLY_F3 *p);
-extern void SetPolyF4(POLY_F4 *p);
-extern void SetPolyFT3(POLY_FT3 *p);
-extern void SetPolyFT4(POLY_FT4 *p);
-extern void SetPolyG3(POLY_G3 *p);
-extern void SetPolyG4(POLY_G4 *p);
-extern void SetPolyGT3(POLY_GT3 *p);
-extern void SetPolyGT4(POLY_GT4 *p);
-extern void SetSemiTrans(void *p, int abe);
-extern void SetShadeTex(void *p, int tge);
-extern void SetSprt(SPRT *p);
-extern void SetSprt16(SPRT_16 *p);
-extern void SetSprt8(SPRT_8 *p);
-extern void SetTexWindow(DR_TWIN *p, RECT16 *tw);
-extern void SetTile(TILE *p);
-extern void SetTile1(TILE_1 *p);
-extern void SetTile16(TILE_16 *p);
-extern void SetTile8(TILE_8 *p);
-extern void TermPrim(void *p);
-extern uint32 *BreakDraw(void);
-extern void ContinueDraw(uint32 *insaddr, uint32 *contaddr);
-extern int IsIdleGPU(int max_count);
-extern int GetODE(void);
-extern int LoadImage2(RECT16 *rect, uint32 *p);
-extern int StoreImage2(RECT16 *rect, uint32 *p);
-extern int MoveImage2(RECT16 *rect, int x, int y);
-extern int DrawOTag2(uint32 *p);
-extern void GetDrawMode(DR_MODE *p);
-extern void GetTexWindow(DR_TWIN *p);
-extern void GetDrawArea(DR_AREA *p);
-extern void GetDrawOffset(DR_OFFSET *p);
-
-#if defined(_LANGUAGE_C_PLUS_PLUS) || defined(__cplusplus) || defined(c_plusplus)
-}
-#endif
 
 } // End of namespace ICB
 
