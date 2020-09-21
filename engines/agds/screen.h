@@ -56,6 +56,7 @@ class Screen {
 	ChildrenType	_children;
 	AnimationsType	_animations;
 	RegionPtr		_region;
+	bool			_applyingPatch;
 
 public:
 	struct KeyHandler {
@@ -68,6 +69,10 @@ public:
 
 	Screen(ObjectPtr object);
 	~Screen();
+
+	bool applyingPatch() const {
+		return _applyingPatch;
+	}
 
 	ObjectPtr getObject() {
 		return _object;
