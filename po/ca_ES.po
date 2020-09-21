@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
 "PO-Revision-Date: 2020-09-21 00:05+0000\n"
-"Last-Translator: montxovs <montxovs@gmail.com>\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
 "Language: ca_ES\n"
@@ -979,7 +979,7 @@ msgstr "Mode gràfic:"
 
 #: gui/options.cpp:1234
 msgid "Render mode:"
-msgstr "Mode de pintat:"
+msgstr "Mode de dibuixat."
 
 #: gui/options.cpp:1234 gui/options.cpp:1235
 msgid "Special dithering modes supported by some games"
@@ -1301,16 +1301,15 @@ msgstr "Tecles"
 
 #: gui/options.cpp:2009
 msgid "GUI language:"
-msgstr "Idioma de la  interfície:"
+msgstr "Idioma de la interfície:"
 
 #: gui/options.cpp:2009
 msgid "Language of ScummVM GUI"
 msgstr "Idioma de la interfície d'usuari de ScummVM"
 
 #: gui/options.cpp:2035
-#, fuzzy
 msgid "Switch the ScummVM GUI language to the game language"
-msgstr "Canvia l'idioma de la  interfície a l'idioma del joc"
+msgstr "Canvia l'idioma de la interfície a l'idioma del joc"
 
 #: gui/options.cpp:2036
 msgid ""
@@ -1318,16 +1317,21 @@ msgid ""
 "That way, if a game uses the ScummVM save and load dialogs, they are in the "
 "same language as the game."
 msgstr ""
+"Quan començi un joc, canvia la interfície d'usuari de ScummVM al idioma del "
+"joc. D'aquesta manera, si el joc fa servir les opcions de guardar i carregar "
+"de pròpies de ScummVM, aquestes seran en el mateix idioma del joc."
 
 #: gui/options.cpp:2049
 msgid "Use native system file browser"
-msgstr ""
+msgstr "Fer servir l'explorador d'arxius del sistema"
 
 #: gui/options.cpp:2050
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
 msgstr ""
+"Fer servir l'explorador d'arxius del sistema en lloc del propi de ScummVM "
+"per seleccionar un fitxer o carpeta."
 
 #: gui/options.cpp:2057 gui/updates-dialog.cpp:86
 msgid "Update check:"
@@ -1335,7 +1339,7 @@ msgstr "Comprovació d'actualitzacions:"
 
 #: gui/options.cpp:2057
 msgid "How often to check ScummVM updates"
-msgstr ""
+msgstr "Cada quan ScummVM comprova les actualitzacions"
 
 #: gui/options.cpp:2069
 msgid "Check now"
@@ -5444,15 +5448,16 @@ msgid "Upscale videos to double their size"
 msgstr ""
 
 #: engines/sci/detection.cpp:545
-#, fuzzy
 msgid "MIDI mode:"
-msgstr "Guany MIDI:"
+msgstr "mode MIDI:"
 
 #: engines/sci/detection.cpp:546
 msgid ""
 "When using external MIDI devices (e.g. through USB-MIDI), select your device "
 "here"
 msgstr ""
+"Al utilitzar dispositius externs MIDI (ex: per USB-MIDI), tria el teu "
+"dispositiu aqui"
 
 #: engines/sci/detection.cpp:551
 msgid "Standard (GM / MT-32)"
@@ -7215,9 +7220,8 @@ msgid "Player 2: Left"
 msgstr "Temps de joc: "
 
 #: engines/wintermute/keymapper_tables.h:1559
-#, fuzzy
 msgid "Player 2: Down"
-msgstr "Temps de joc: "
+msgstr "Temps de joc:"
 
 #: engines/wintermute/keymapper_tables.h:1564
 #, fuzzy
@@ -7288,7 +7292,7 @@ msgstr ""
 
 #: engines/zvision/detection_tables.h:90
 msgid "Use high resolution MPEG video"
-msgstr ""
+msgstr "Fer servir MPEG video d'alta resolució"
 
 #: engines/zvision/detection_tables.h:91
 #, fuzzy
@@ -7318,7 +7322,7 @@ msgstr ""
 
 #: engines/zvision/detection.cpp:197
 msgid "Score"
-msgstr ""
+msgstr "Puntuació"
 
 #: engines/zvision/detection.cpp:203
 msgid "Put away object"
