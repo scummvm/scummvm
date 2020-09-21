@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
-"PO-Revision-Date: 2020-08-31 12:24+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2020-09-22 04:43+0000\n"
+"Last-Translator: Rafał Rzepecki <divided.mind@gmail.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
 "Language: pl_PL\n"
@@ -1301,20 +1301,17 @@ msgid "Language of ScummVM GUI"
 msgstr "Język interfejsu ScummVM"
 
 #: gui/options.cpp:2035
-#, fuzzy
 msgid "Switch the ScummVM GUI language to the game language"
-msgstr "Zmień język interfejsu do języka gry"
+msgstr "Użyj języka gry w interfejsie ScummVM"
 
 #: gui/options.cpp:2036
-#, fuzzy
 msgid ""
 "When starting a game, change the ScummVM GUI language to the game language. "
 "That way, if a game uses the ScummVM save and load dialogs, they are in the "
 "same language as the game."
 msgstr ""
-"Podczas włączania gry zmień język interfejsu na język gry. W ten sposób "
-"jeżeli gra używa ScummVM zapisze i załaduje dialogi w tym samym języku co "
-"gra."
+"Przy uruchamianiu gry zmień język interfejsu ScummVM na taki jak w grze; "
+"dzięki temu okna zapisu stanu gry będą w tym samym języku."
 
 #: gui/options.cpp:2049
 msgid "Use native system file browser"
@@ -1544,7 +1541,8 @@ msgstr "Wyłączenie dialogu z opcjami zatrzyma serwer."
 
 #: gui/options.cpp:2158
 msgid "Run server to manage files with browser (in the same network)."
-msgstr "Uruchom serwer aby zarządzać plikami ( w tej samej sieci)."
+msgstr ""
+"Uruchom serwer aby zarządzać plikami z przeglądarki (w tej samej sieci)."
 
 #: gui/options.cpp:2159
 msgid "Closing options dialog will stop the server."
