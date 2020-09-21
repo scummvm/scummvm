@@ -192,6 +192,9 @@ bool SdlGraphicsManager::showMouse(bool visible) {
 }
 
 bool SdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
+	mouse.x = CLIP<int16>(mouse.x, 0, _windowWidth - 1);
+	mouse.y = CLIP<int16>(mouse.y, 0, _windowHeight - 1);
+
 	int showCursor = SDL_DISABLE;
 	bool valid = true;
 	if (_activeArea.drawRect.contains(mouse)) {
