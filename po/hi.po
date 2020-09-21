@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
-"PO-Revision-Date: 2020-09-19 15:43+0000\n"
+"PO-Revision-Date: 2020-09-21 00:05+0000\n"
 "Last-Translator: Aryan Rawlani <aryanrawlani007@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hi/>\n"
@@ -623,15 +623,15 @@ msgstr ""
 #: gui/KeysDialog.cpp:81 gui/KeysDialog.cpp:103 gui/KeysDialog.cpp:138
 #, c-format
 msgid "Associated key : %s"
-msgstr ""
+msgstr "संबंधी key : %s"
 
 #: gui/KeysDialog.cpp:83 gui/KeysDialog.cpp:105 gui/KeysDialog.cpp:140
 msgid "Associated key : none"
-msgstr ""
+msgstr "संबंधी key : कुछ नहीं"
 
 #: gui/KeysDialog.cpp:91
 msgid "Please select an action"
-msgstr ""
+msgstr "कृप्या एक action चुने"
 
 #: gui/KeysDialog.cpp:107
 msgid "Press the key to associate"
@@ -643,11 +643,11 @@ msgstr ""
 
 #: gui/launcher.cpp:140 engines/dialogs.cpp:99
 msgid "~Q~uit"
-msgstr ""
+msgstr "बाहर जाइये (Q)"
 
 #: gui/launcher.cpp:140 backends/platform/sdl/macosx/appmenu_osx.mm:216
 msgid "Quit ScummVM"
-msgstr ""
+msgstr "ScummVM छोड़ डे"
 
 #: gui/launcher.cpp:141
 msgid "A~b~out..."
@@ -687,7 +687,7 @@ msgstr ""
 
 #: gui/launcher.cpp:156
 msgid "~A~dd Game..."
-msgstr ""
+msgstr "खेल add करे..."
 
 #: gui/launcher.cpp:156 gui/launcher.cpp:166
 msgid "Add games to the list"
@@ -695,7 +695,7 @@ msgstr ""
 
 #: gui/launcher.cpp:157
 msgid "Mass Add..."
-msgstr ""
+msgstr "अनेक खेल add करे..."
 
 #: gui/launcher.cpp:161
 msgid "~E~dit Game..."
