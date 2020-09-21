@@ -208,8 +208,8 @@ mcodeFunctionReturnCodes _game_session::fn_preload_basics(int32 &, int32 *) {
 		if (ptim == NULL)
 			Fatal_error("ahh, texture not found in preload_basics");
 
-		RECT imgRect;
-		RECT clutRect;
+		LRECT imgRect;
+		LRECT clutRect;
 		u_short clutID;
 		uint32 *imgPtr = NULL;
 		uint32 *clutPtr = NULL;

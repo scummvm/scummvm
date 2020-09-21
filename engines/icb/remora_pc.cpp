@@ -337,7 +337,7 @@ void _remora::CloseDownRemora() {
 }
 
 void _remora::DrawRemora() {
-	RECT sBlankingRect;
+	LRECT sBlankingRect;
 	RemoraMode eModeToDraw;
 	uint8 nRed, nGreen, nBlue;
 
@@ -1022,7 +1022,7 @@ void _remora::DrawHeaderAndFooterLines() {
 
 void _remora::ClipTopAndBottom() {
 	uint32 i;
-	RECT sBlankingRect;
+	LRECT sBlankingRect;
 	_rgb oLineColour;
 
 	// Left and right coordinates are same for both rectangles we have to draw.

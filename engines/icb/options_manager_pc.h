@@ -74,7 +74,7 @@ private:
 	bool8 m_logoAttached;
 
 	uint32 m_movieSurfaceID;
-	RECT m_movieRect;
+	LRECT m_movieRect;
 	bool8 m_movieBackdrop;
 
 	bool8 m_loopingMovie;
@@ -299,12 +299,12 @@ private:
 
 	int32 m_autoAnimating; // Animating flags
 	int32 m_autoAnimating2;
-	RECT m_optionsBox;        // Top level screen bounding box
+	LRECT m_optionsBox;       // Top level screen bounding box
 	int32 m_over_n_Frames;    // Animating variable
 	int32 m_grower;           // Animating variable
 	uint32 m_lipLength;       // Length of top-level box lips
-	RECT m_box;               // Animating variable
-	RECT m_targetBox;         // Child screen title box
+	LRECT m_box;              // Animating variable
+	LRECT m_targetBox;        // Child screen title box
 	int32 m_interFrames;      // Animating variable
 	int32 m_widthIncrements;  // Animating variable
 	int32 m_bottomIncrements; // Animating variable
@@ -356,8 +356,8 @@ private:
 	uint32 m_grayMovieSurfaceIDs[24];
 	uint32 m_profileSurface;
 
-	RECT m_fullscreen;  // Useful rectangle
-	RECT m_movieRect;   // Paging rectangle
+	LRECT m_fullscreen; // Useful rectangle
+	LRECT m_movieRect;  // Paging rectangle
 	uint32 m_colourKey; // Blitting colour key
 
 	bool8 m_moveLimiter;        // Vertical input flag
@@ -384,12 +384,12 @@ private:
 	// For animating and handling slot pages
 	bool8 m_paging;              // Are we currently paging (animating)
 	bool8 m_pageleft;            // Left or right paging
-	RECT m_slotBoundingRect;     // Box containing the 10 visible slots
+	LRECT m_slotBoundingRect;    // Box containing the 10 visible slots
 	int32 m_slotsFuckOffBy;      // Animation step incrementer
-	RECT m_pageOn_from;          // Source blit rect for slots entering the screen
-	RECT m_pageOn_dest;          // Target blit rect for slots entering the screen
-	RECT m_pageOff_from;         // Source blit rect for slots leaving the screen
-	RECT m_pageOff_dest;         // Target blit rect for slots leaving the screen
+	LRECT m_pageOn_from;         // Source blit rect for slots entering the screen
+	LRECT m_pageOn_dest;         // Target blit rect for slots entering the screen
+	LRECT m_pageOff_from;        // Source blit rect for slots leaving the screen
+	LRECT m_pageOff_dest;        // Target blit rect for slots leaving the screen
 	bool8 m_letJoystickQuitEdit; // Flag to restrain joystick presses
 
 	bool8 m_awaitingKeyPress; // For control assignment
@@ -406,7 +406,7 @@ private:
 	uint32 m_slideFillColour;
 
 	uint32 m_margin; // Profile screen variables
-	RECT m_profileRect;
+	LRECT m_profileRect;
 	int32 m_profileScrollingOffset;
 	int32 m_profileScrollingLine;
 	bool8 m_lastLineDisplayed;
@@ -516,7 +516,7 @@ private:
 	void LoadGlobalTextFile();
 	bool8 SetCharacterSprite(char c);
 	void RenderCharacter(uint8 *ad, uint32 pitch, int32 nX, int32 nY, uint32 col);
-	void GetCentredRectFotText(const char *str, RECT &r, int32 height);
+	void GetCentredRectFotText(const char *str, LRECT &r, int32 height);
 
 	// Option screen sound functions
 	void InitialiseSounds();

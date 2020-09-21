@@ -45,7 +45,7 @@ enum MISSION_ID { MISSION1 = 0, MISSION2 = 1, MISSION3 = 2, MISSION4 = 3, MISSIO
 #define NUMBER_OF_PROGRESS_BITS 32
 
 typedef struct {
-	RECT r;
+	LRECT r;
 	int32 state;
 } PROGRESS_BIT;
 

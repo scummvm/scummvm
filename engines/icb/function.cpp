@@ -3378,7 +3378,7 @@ mcodeFunctionReturnCodes _game_session::fn_snap_to_ladder_top(int32 &, int32 *) 
 
 mcodeFunctionReturnCodes _game_session::fn_set_to_floor(int32 &, int32 *params) {
 	// locate a character onto a specified floor
-	// crudely sticks the character in the middle of the first floor RECT
+	// crudely sticks the character in the middle of the first floor LRECT
 
 	//	params[0]    ascii name of floor
 

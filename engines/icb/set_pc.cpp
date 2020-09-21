@@ -60,7 +60,7 @@ namespace ICB {
 extern char *pZ;
 
 // 640*480 global rect - SCREEN_WIDTH*SCREEN_DEPTH !!!!!!!
-RECT full_rect; // used for blting from safe to working buffer, etc
+LRECT full_rect; // used for blting from safe to working buffer, etc
 
 //-----------  Bookyakasha Rydem and Sparkles !!!!!
 uint32 sparkle_bmp[6 * 32 * 32] = {
@@ -504,7 +504,7 @@ uint32 sparkle_bmp[6 * 32 * 32] = {
     0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
     0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000};
 
-void ShakeRects(RECT &sourceRect, RECT &destRect) {
+void ShakeRects(LRECT &sourceRect, LRECT &destRect) {
 	int xShift = GetShakeX();
 	int yShift = GetShakeY();
 
@@ -525,7 +525,7 @@ void ShakeRects(RECT &sourceRect, RECT &destRect) {
 	}
 }
 
-int ShakePropRects(RECT &rect, RECT &source) {
+int ShakePropRects(LRECT &rect, LRECT &source) {
 	int xShift = GetShakeX();
 	int yShift = GetShakeY();
 
@@ -1016,8 +1016,8 @@ void _set::Load_props() {
 }
 
 void _set::RefreshBackdrop() {
-	RECT destRect = full_rect;
-	RECT sourceRect = full_rect;
+	LRECT destRect = full_rect;
+	LRECT sourceRect = full_rect;
 	// Update the screen rects for shake screen
 	ShakeRects(sourceRect, destRect);
 	// And blit
@@ -1034,7 +1034,7 @@ void _set::Set_draw(bool8 helper) {
 	// Make sure the selected prop id thingy is up to date
 	MS->GetSelectedPropId();
 	// Rectangles
-	RECT sourceRect, destRect;
+	LRECT sourceRect, destRect;
 	// Load the prop file
 	pcPropFile *propFile = GetProps();
 	// Check if we are using the sexy new file format
@@ -1057,7 +1057,7 @@ void _set::Set_draw(bool8 helper) {
 			// How many tiles to draw ?
 			uint32 tileQty = pState->GetHRBgTileQty();
 			// Get a pointer to the tile rectangles
-			RECT *pTileRects = pState->GetTileRects() + ((pState->GetLRBgTileQty() + pState->GetLRFgTileQty()) << 1);
+			LRECT *pTileRects = pState->GetTileRects() + ((pState->GetLRBgTileQty() + pState->GetLRFgTileQty()) << 1);
 			// Draw the background tiles first
 			for (uint32 t = 0; (sid != 0) && (t < tileQty); t++) {
 				// Sort out transparent blit flag - no transparency if frag view is on
@@ -1075,7 +1075,7 @@ void _set::Set_draw(bool8 helper) {
 			// How many tiles to draw ?
 			uint32 tileQty = pState->GetLRBgTileQty();
 			// Get a pointer to the tile rectangles
-			RECT *pTileRects = pState->GetTileRects();
+			LRECT *pTileRects = pState->GetTileRects();
 			// Draw the background tiles first
 			for (uint32 t = 0; (sid != 0) && (t < tileQty); t++) {
 				// Sort out transparent blit flag - no transparency if frag view is on
@@ -1107,7 +1107,7 @@ void _set::Set_draw(bool8 helper) {
 			// How many tiles to draw ?
 			uint32 tileQty = pState->GetHRFgTileQty();
 			// Get a pointer to the foreground tile rectangles
-			RECT *pTileRects = pState->GetTileRects() + ((pState->GetHRBgTileQty() + pState->GetLRBgTileQty() + pState->GetLRFgTileQty()) << 1);
+			LRECT *pTileRects = pState->GetTileRects() + ((pState->GetHRBgTileQty() + pState->GetLRBgTileQty() + pState->GetLRFgTileQty()) << 1);
 			// Is this prop selected
 			if ((tileQty != 0) && MS->IsPropSelected(const_cast<char *>(pProp->GetName()))) {
 				// Get the rgb highlite multipliers ready for mmx ing
@@ -1211,7 +1211,7 @@ void _set::Set_draw(bool8 helper) {
 			// How many tiles to draw ?
 			uint32 tileQty = pState->GetLRFgTileQty();
 			// Get a pointer to the foreground tile rectangles
-			RECT *pTileRects = pState->GetTileRects() + (pState->GetLRBgTileQty() << 1);
+			LRECT *pTileRects = pState->GetTileRects() + (pState->GetLRBgTileQty() << 1);
 
 			// Is this prop selected
 			if ((tileQty != 0) && MS->IsPropSelected(const_cast<char *>(pProp->GetName()))) {
@@ -1835,7 +1835,7 @@ void _set::HackMakeCamera() {
 // read in init values for set from file
 void _set::LoadGFXInfo(Common::SeekableReadStream *stream) {
 	// TODO: Add a proper stream-read of the rects.
-	stream->read(&surface_manager->BorderRect(), sizeof(RECT)); // FIXME endian and alignment
+	stream->read(&surface_manager->BorderRect(), sizeof(LRECT)); // FIXME endian and alignment
 	// FIXME: Plug a deserializer into surface-manager directly instead of exposing these.
 	surface_manager->BorderRed() = stream->readByte();
 	surface_manager->BorderGreen() = stream->readByte();
@@ -1856,7 +1856,7 @@ void _set::LoadGFXInfo(Common::SeekableReadStream *stream) {
 void _set::SaveGFXInfo(Common::WriteStream *stream) {
 	// TODO: Refactor.
 	// FIXME HACK TODO: Don't write rects this way:
-	stream->write(&surface_manager->BorderRect(), sizeof(RECT));
+	stream->write(&surface_manager->BorderRect(), sizeof(LRECT));
 	stream->writeByte(surface_manager->BorderRed());
 	stream->writeByte(surface_manager->BorderGreen());
 	stream->writeByte(surface_manager->BorderBlue());

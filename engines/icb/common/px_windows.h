@@ -49,17 +49,8 @@ typedef void *PVOID;
 typedef PVOID HANDLE;
 typedef HANDLE HWND;
 
-typedef struct _RECT {
-	LONG left;
-	LONG top;
-	LONG right;
-	LONG bottom;
-} RECT, *PRECT;
-
 } // End of namespace ICB
 
 #endif
-
-#include "px_rccommon.h" // To restore our level for warning 4237 because windows.h
 
 #endif // PX_WINDOWS_H_INCLUDED

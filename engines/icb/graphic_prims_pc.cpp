@@ -134,7 +134,7 @@ void Fill_rect(int32 x, int32 y, int32 x2, int32 y2, uint32 pen, int32 /*z*/) {
 	// put a filled rectangle on the screen
 	// backbuffer must be unlocked
 
-	RECT blank;
+	LRECT blank;
 
 	// completely off screen
 	if ((x2 <= 0) || (x >= 640) || (y >= 480) || (y2 <= 0))
@@ -153,7 +153,7 @@ void Fill_rect(int32 x, int32 y, int32 x2, int32 y2, uint32 pen, int32 /*z*/) {
 	if (y2 > 480)
 		y2 = 480;
 
-	// setup RECT for bottom line of the screen
+	// setup LRECT for bottom line of the screen
 	blank.left = x;
 	blank.right = x2;
 	blank.top = y;
@@ -1095,8 +1095,8 @@ void RawSpriteDraw(uint8 *pSurfaceBitmap,    // IN:  Pointer to the surface's dr
 	}
 }
 
-RECT ConvertPxBitmapRectToRECT(const _PxBitmapRect &sBitmapRect) {
-	RECT sRect;
+LRECT ConvertPxBitmapRectToRECT(const _PxBitmapRect &sBitmapRect) {
+	LRECT sRect;
 
 	sRect.left = sBitmapRect.nX;
 	sRect.right = (sBitmapRect.nX + sBitmapRect.nWidth) - 1;

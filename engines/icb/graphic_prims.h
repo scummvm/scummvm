@@ -29,6 +29,7 @@
 #define _GRAPIC_PRIMS
 
 #include "engines/icb/common/px_bitmap.h"
+#include "engines/icb/common/px_types.h"
 
 #include "p4_generic.h"
 
@@ -68,7 +69,7 @@ typedef struct {
 	uint32 nWidth, nHeight;
 } _PxBitmapRect;
 
-typedef RECT DXrect;
+typedef LRECT DXrect;
 
 int32 twabs(int32 val);
 
@@ -88,8 +89,8 @@ void SpriteFrameDraw(uint8 *pSurfaceBitmap, uint32 nPitch, uint32 nSurfaceWidth,
 void SpriteXYFrameDraw(uint8 *pSurfaceBitmap, uint32 nPitch, uint32 nSurfaceWidth, uint32 nSurfaceHeight, _pxBitmap *pBitmap, int32 nX, int32 nY, uint32 nFrameNumber,
                        bool8 bCentre, uint32 *nTransparencyRef, uint8 nOpacity);
 
-// These all make RECTs (needed by Direct-X) from various sources.
-RECT ConvertPxBitmapRectToRECT(const _PxBitmapRect &sBitmapRect);
+// These all make LRECTs (needed by Direct-X) from various sources.
+LRECT ConvertPxBitmapRectToRECT(const _PxBitmapRect &sBitmapRect);
 
 // Additive gouraud line .... what else ?
 void AdditiveGouraudLine(int16 x0, int16 y0, _rgb c0, int16 x1, int16 y1, _rgb c1, uint32 surface_id);

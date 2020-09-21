@@ -209,7 +209,7 @@ uint32 _floor_world::Fetch_floor_number_by_name(const char *name) {
 }
 
 uint32 _floor_world::Return_floor_rect(PXreal x, PXreal z, PXreal y, uint32 rubber) {
-	// find the floor RECT that point x,y,z lies within
+	// find the floor LRECT that point x,y,z lies within
 	// returns   rect number and pointer to _rect
 	//				or PXNULL
 	uint32 j;

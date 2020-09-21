@@ -53,7 +53,7 @@ namespace ICB {
 #define WEATHER_SNOW 2
 
 extern uint32 bg_buffer_id;
-extern RECT full_rect;
+extern LRECT full_rect;
 
 class _set {
 	friend void sv_WeatherControls();

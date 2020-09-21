@@ -40,6 +40,13 @@ typedef uint32 DWORD;
 
 #endif
 
+typedef struct {
+	int32 left;
+	int32 top;
+	int32 right;
+	int32 bottom;
+} LRECT;
+
 } // End of namespace ICB
 
 #endif

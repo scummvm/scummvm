@@ -51,7 +51,7 @@ mcodeFunctionReturnCodes _game_session::fx_narrow_screen(int32 &, int32 *params)
 	static int cycleCount = 0;
 
 	// Get access to the border rectangle
-	RECT &border = surface_manager->BorderRect();
+	LRECT &border = surface_manager->BorderRect();
 
 	// Check if there is a set loaded.  If not we want to ignore the cycles param
 	if (!MSS.OK())

@@ -29,6 +29,7 @@
 #define PC_PROPS_H
 
 #include "px_staticlayers.h" // for types + defines
+#include "engines/icb/common/px_types.h"
 
 namespace ICB {
 
@@ -66,7 +67,7 @@ private:
 	uint8 *fgLRRleDataPtr;
 	uint8 *bgHRRleDataPtr;
 	uint8 *fgHRRleDataPtr;
-	RECT *tileRects;
+	LRECT *tileRects;
 public:
 	pcPropRGBState(uint8 *propBasePtr, uint32 dataOffset) {
 		uint8 *ptr = propBasePtr + dataOffset;
@@ -138,7 +139,7 @@ public:
 		fgHRRleDataPtr = propBasePtr + READ_LE_U32(ptr);
 		ptr += 4;
 
-		tileRects = (RECT *)ptr;
+		tileRects = (LRECT *)ptr;
 	}
 
 	uint16 *GetZTileTable(int t) { return zPtrs[t]; }
@@ -160,7 +161,7 @@ public:
 	uint8 *GetLRFgRlePtr() { return fgLRRleDataPtr; }
 	uint8 *GetHRBgRlePtr() { return bgHRRleDataPtr; }
 	uint8 *GetHRFgRlePtr() { return fgHRRleDataPtr; }
-	RECT *GetTileRects() { return tileRects; }
+	LRECT *GetTileRects() { return tileRects; }
 };
 
 class pcPropRGB {

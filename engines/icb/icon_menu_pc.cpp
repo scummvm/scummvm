@@ -40,8 +40,8 @@ namespace ICB {
 #define ICON_ARMED_MENU_PIXEL_X (ICON_MENU_PIXEL_X)
 #define ICON_ARMED_MENU_PIXEL_Y (10)
 
-RECT ICON_BITMAP_RECT = {0, 0, ICON_X_SIZE - 1, ICON_Y_SIZE - 1};
-RECT ICON_ADDING_RECT = {ICON_ADDING_X, ICON_ADDING_Y, ICON_ADDING_X + ICON_X_SIZE - 1, ICON_ADDING_Y + ICON_Y_SIZE - 1};
+LRECT ICON_BITMAP_RECT = {0, 0, ICON_X_SIZE - 1, ICON_Y_SIZE - 1};
+LRECT ICON_ADDING_RECT = {ICON_ADDING_X, ICON_ADDING_Y, ICON_ADDING_X + ICON_X_SIZE - 1, ICON_ADDING_Y + ICON_Y_SIZE - 1};
 
 void _icon_menu::Activate(const _icon_list *pIconList, const _icon_menu_duplicates &sDuplicates, bool8 bAllowEscape, uint32 nSelected) {
 	uint32 i;
@@ -246,8 +246,8 @@ void _icon_menu::DrawIconMenu() {
 	uint32 nIconIndex;
 	uint32 nItemCount;
 	int32 nStartX;
-	RECT sToRectangle;
-	RECT sFromRectangle;
+	LRECT sToRectangle;
+	LRECT sFromRectangle;
 	uint32 nIconCount;
 	uint32 nMaxDrawableIcons, nIconsToDraw;
 	int scrolling = 0;
@@ -570,7 +570,7 @@ void _icon_menu::DrawArmedMenu(const int nBullets, const int maxBullets, const i
 	SetupAdding(ARMS_GUN_NAME, gunSurface);
 	SetupAdding(ARMS_AMMO_NAME, clipSurface);
 	// Icon positioning
-	RECT destRect;
+	LRECT destRect;
 	destRect.left = ICON_ARMED_MENU_PIXEL_X + 10;
 	destRect.top = ICON_ARMED_MENU_PIXEL_Y;
 	destRect.right = destRect.left + ICON_BITMAP_RECT.right - ICON_BITMAP_RECT.left;

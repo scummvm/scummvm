@@ -31,6 +31,7 @@
 #include "engines/icb/p4_generic.h"
 #include "engines/icb/common/px_array.h"
 #include "engines/icb/common/px_assert.h"
+#include "engines/icb/common/px_types.h"
 
 #ifdef ENABLE_OPENGL
 #include <SDL/SDL_opengl.h>
@@ -90,7 +91,7 @@ private:
 	GLuint renderBuffer;
 	GLuint sdlTextureId;
 #endif
-	RECT m_screen_rect; // The screen rectangle
+	LRECT m_screen_rect; // The screen rectangle
 public:
 	rcAutoPtrArray<_surface> m_Surfaces; // List of client surface
 private:
@@ -120,8 +121,8 @@ public:
 	inline uint32 Get_BytesPP(uint32 nSurfaceID) const;
 	void Clear_surface(uint32 s_id) { Fill_surface(s_id, 0x00000000); }
 	void Fill_surface(uint32 s_id, uint32 rgb_value);
-	void Blit_fillfx(uint32 surface_id, RECT *rect, uint32 col);
-	void Blit_surface_to_surface(uint32 from_id, uint32 to_id, RECT *rect_from, RECT *rect_to, uint32 nFlags = 0);
+	void Blit_fillfx(uint32 surface_id, LRECT *rect, uint32 col);
+	void Blit_surface_to_surface(uint32 from_id, uint32 to_id, LRECT *rect_from, LRECT *rect_to, uint32 nFlags = 0);
 	void Set_transparent_colour_key(uint32 nSurfaceID, uint32 nKey);
 	bool8 &HasMMX() { return m_hasMMX; }
 	void RecordFrame(const char *path);
@@ -130,7 +131,7 @@ public:
 public:
 	void DrawEffects(uint32 surface_id);
 
-	RECT &BorderRect() {
+	LRECT &BorderRect() {
 		return m_borders; // Access to the border rect
 	}
 	uint8 &BorderRed() {
@@ -148,7 +149,7 @@ public:
 	uint32 &BorderMode() { return m_borderMode; }
 
 private:
-	RECT m_borders;      // The border to add to the screen
+	LRECT m_borders;     // The border to add to the screen
 	uint8 m_borderRed;   // The colour of the border
 	uint8 m_borderGreen; // The colour of the border
 	uint8 m_borderBlue;  // The colour of the border

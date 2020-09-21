@@ -505,7 +505,7 @@ void _surface_manager::Fill_surface(uint32 s_id, uint32 rgb_value) {
 	m_Surfaces[s_id]->m_dds->fillRect(Common::Rect(0, 0, m_Surfaces[s_id]->m_dds->h, m_Surfaces[s_id]->m_dds->w), rgb_value);
 }
 
-void _surface_manager::Blit_surface_to_surface(uint32 from_id, uint32 to_id, RECT *pSrcRect, RECT *pDestRect, uint32 dwFlags) {
+void _surface_manager::Blit_surface_to_surface(uint32 from_id, uint32 to_id, LRECT *pSrcRect, LRECT *pDestRect, uint32 dwFlags) {
 	Common::Rect srcRect, dstRect;
 	if (pSrcRect) {
 		if ((pSrcRect->right - pSrcRect->left) < 1)
@@ -550,7 +550,7 @@ void _surface_manager::Blit_surface_to_surface(uint32 from_id, uint32 to_id, REC
 	//SDL_BlitSurface(srcSurface, pSrcRect ? &srcRect : NULL, destSurface, pDestRect ? &dstRect : NULL);
 }
 
-void _surface_manager::Blit_fillfx(uint32 surface_id, RECT *rect, uint32 col) {
+void _surface_manager::Blit_fillfx(uint32 surface_id, LRECT *rect, uint32 col) {
 	Common::Rect r;
 	if (rect) {
 		r.left = rect->left;
@@ -784,7 +784,7 @@ void _surface_manager::DrawEffects(uint32 surface_id) {
 	/* ADD Top/Bottom/Left/Right BORDERS */
 	if (BorderMode() == 0) {
 		// Add the borders ( if there are any )
-		RECT rect;
+		LRECT rect;
 		rect.top = 0;
 		rect.left = 0;
 		rect.right = 640;
