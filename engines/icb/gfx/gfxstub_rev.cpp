@@ -28,6 +28,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+
+#include "common/scummsys.h"
 #include "gfxstub.h"
 #include "gfxstub_dutch.h"
 
@@ -47,10 +49,6 @@ u_char pcRGBA[TEMP_TEXTURE_WIDTH * TEMP_TEXTURE_HEIGHT * BYTES_PER_COLOUR];
 
 int bpp = 0;
 
-#ifndef _WIN32
-typedef int64_t __int64;
-#endif
-
 // The big screen bitmap to draw everything into
 extern char *pRGB;
 extern int RGBWidth;
@@ -67,13 +65,13 @@ vertex2D verts[8];
 vertex2D clipverts[8];
 
 int SimpleReject(vertex2D *vertices) {
-	__int64 l0x = (verts[0].x - vertices[1].x);
-	__int64 l0y = (verts[0].y - vertices[1].y);
-	__int64 l1x = (verts[2].x - vertices[1].x);
-	__int64 l1y = (verts[2].y - vertices[1].y);
+	int64 l0x = (verts[0].x - vertices[1].x);
+	int64 l0y = (verts[0].y - vertices[1].y);
+	int64 l1x = (verts[2].x - vertices[1].x);
+	int64 l1y = (verts[2].y - vertices[1].y);
 
-	__int64 prod1 = (l0x * l1y) >> 32;
-	__int64 prod2 = (l1x * l0y) >> 32;
+	int64 prod1 = (l0x * l1y) >> 32;
+	int64 prod2 = (l1x * l0y) >> 32;
 
 	if (prod1 >= prod2) {
 		return 1;
