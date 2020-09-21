@@ -296,9 +296,13 @@ uint32 PaletteFaderProcess::I_jumpToAllGivenColor(const uint8 *args,
 	ARG_UINT8(g);
 	ARG_UINT8(b);
 
-	const int16 color_matrix[] = {0, 0, 0, r << 4,
-						0, 0, 0, g << 4,
-						0, 0, 0, b << 4
+	const int16 r16 = static_cast<int16>(r) << 4;
+	const int16 g16 = static_cast<int16>(g) << 4;
+	const int16 b16 = static_cast<int16>(b) << 4;
+
+	const int16 color_matrix[] = {0, 0, 0, r16,
+						0, 0, 0, g16,
+						0, 0, 0, b16
 	};
 
 	PaletteManager::get_instance()->transformPalette(PaletteManager::Pal_Game,
