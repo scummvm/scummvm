@@ -37,7 +37,8 @@ int Screen::AnimationZCompare(const Animation *a, const Animation *b) {
 	return b->z() - a->z();
 }
 
-Screen::Screen(ObjectPtr object) : _object(object), _name(object->getName()), _children(&ObjectZCompare), _animations(&AnimationZCompare) {
+Screen::Screen(ObjectPtr object) : _object(object), _name(object->getName()),
+	_children(&ObjectZCompare), _animations(&AnimationZCompare), _applyingPatch(false) {
 	add(object);
 }
 
@@ -158,6 +159,7 @@ Screen::KeyHandler Screen::findKeyHandler(const Common::String &keyName) {
 
 void Screen::load(AGDSEngine & engine, const PatchPtr &patch) {
 	debug("applying patch with %u objects", patch->objects.size());
+	_applyingPatch = true;
 	for(uint i = 0; i < patch->objects.size(); ++i) {
 		const Patch::Object &object = patch->objects[i];
 		debug("patch object %s %d", object.name.c_str(), object.flag);
@@ -167,6 +169,7 @@ void Screen::load(AGDSEngine & engine, const PatchPtr &patch) {
 			engine.runObject(object.name);
 		}
 	}
+	_applyingPatch = false;
 }
 
 void Screen::save(AGDSEngine & engine, const PatchPtr &patch) {
