@@ -36,13 +36,15 @@ void SoundManager::tick() {
 	for (SoundList::iterator i = _sounds.begin(); i != _sounds.end();) {
 		Sound &sound = *i;
 		if (!_mixer->isSoundHandleActive(sound.handle)) {
-			//FIXME: re-enable me later
-			// if (!sound.phaseVar.empty())
-			// 	_engine->setGlobal(sound.phaseVar, -1);
+			if (!sound.phaseVar.empty())
+				_engine->setGlobal(sound.phaseVar, 0);
+			else if (!sound.process.empty()) {
+				_engine->reactivate(sound.process);
+			}
 			i = _sounds.erase(i);
 		} else {
-			// if (!sound.phaseVar.empty())
-			// 	_engine->setGlobal(sound.phaseVar, _engine->getGlobal(sound.phaseVar) + 1);
+			if (!sound.phaseVar.empty())
+				_engine->setGlobal(sound.phaseVar, 1);
 			++i;
 		}
 	}
@@ -56,7 +58,7 @@ void SoundManager::stopAll() {
 	}
 }
 
-int SoundManager::play(const Common::String &resource, const Common::String &phaseVar) {
+int SoundManager::play(const Common::String &process, const Common::String &resource, const Common::String &phaseVar) {
 	Common::File *file = new Common::File();
 	if (!file->open(resource))
 		error("no sound %s", resource.c_str());
@@ -73,13 +75,14 @@ int SoundManager::play(const Common::String &resource, const Common::String &pha
 	if (!stream) {
 		warning("could not play sound %s", resource.c_str());
 		delete file;
+		_engine->reactivate(process);
 		return -1;
 	}
 	Audio::SoundHandle handle;
 	int id = _nextId++;
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, stream, id);
 
-	_sounds.push_back(Sound(id, resource, phaseVar, handle));
+	_sounds.push_back(Sound(id, process, resource, phaseVar, handle));
 	return id;
 }
 

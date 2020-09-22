@@ -37,12 +37,13 @@ namespace AGDS {
 
 	struct Sound {
 		int 				id;
+		Common::String		process;
 		Common::String		name;
 		Common::String		phaseVar;
 		Audio::SoundHandle	handle;
 		int					group;
-		Sound(int id_, const Common::String & res, const Common::String & var, Audio::SoundHandle h, int g = 0):
-			id(id_), name(res), phaseVar(var), handle(h), group(g) {
+		Sound(int id_, const Common::String &p, const Common::String & res, const Common::String & var, Audio::SoundHandle h, int g = 0):
+			id(id_), process(p), name(res), phaseVar(var), handle(h), group(g) {
 		}
 	};
 
@@ -56,7 +57,7 @@ namespace AGDS {
 	public:
 		SoundManager(AGDSEngine *engine, Audio::Mixer *mixer): _nextId(1), _engine(engine), _mixer(mixer) { }
 		void tick();
-		int play(const Common::String &file, const Common::String &phaseVar);
+		int play(const Common::String &process, const Common::String &file, const Common::String &phaseVar);
 		bool playing(int id) const;
 		void stopAll();
 	};

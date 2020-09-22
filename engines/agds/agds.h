@@ -207,12 +207,12 @@ public:
 
 	void tickInventory();
 
-	int playSound(const Common::String &resource, const Common::String &phaseVar) {
-		return _soundManager.play(resource, phaseVar);
+	int playSound(const Common::String &process, const Common::String &resource, const Common::String &phaseVar) {
+		return _soundManager.play(process, resource, phaseVar);
 	}
 
 	void playSoundSync(const Common::String &resource, const Common::String &phaseVar) {
-		_syncSoundId = playSound(resource, phaseVar);
+		_syncSoundId = playSound(Common::String(), resource, phaseVar);
 	}
 
 	void tell(const Common::String &region, const Common::String &text, const Common::String &sound, const Common::String &soundPhaseVar, bool npc);

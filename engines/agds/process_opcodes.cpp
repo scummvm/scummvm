@@ -140,7 +140,7 @@ void Process::loadAnimation() {
 void Process::loadSample() {
 	Common::String name = popText();
 	debug("loadSample %s, phaseVar: %s", name.c_str(), _phaseVar.c_str());
-	_engine->playSound(name, _phaseVar);
+	_engine->playSound(getName(), name, _phaseVar);
 	if (!_phaseVar.empty())
 		suspend();
 }
@@ -158,11 +158,10 @@ void Process::setSampleVolumeAndPan() {
 	debug("setSampleVolumeAndPan %s %d %d", name.c_str(), volume, pan);
 }
 
-void Process::playSound() {
+void Process::addSampleToSoundGroup() {
 	Common::String name = popText();
 	int arg = pop();
-	debug("playSound %s %d", name.c_str(), arg);
-	_engine->playSound(name, _phaseVar);
+	debug("addSampleToSoundGroup stub: %s sound group: %d", name.c_str(), arg);
 }
 
 void Process::updatePhaseVarOr2() {
@@ -1524,7 +1523,7 @@ ProcessExitCode Process::resume() {
 			OP(kLoadPicture, loadPicture);
 			OP(kStub199, stub199);
 			OP(kSetSampleVolumeAndPan, setSampleVolumeAndPan);
-			OP(kPlaySound, playSound);
+			OP(kAddSampleToSoundGroup, addSampleToSoundGroup);
 			OP(kStub215, stub215);
 			OP(kStub216, stub216);
 			OP(kStub217, stub217);
