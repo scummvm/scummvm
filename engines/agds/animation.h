@@ -39,6 +39,7 @@ class Animation {
 	Video::FlicDecoder *_flic;
 	int					_frames;
 	Common::Point		_position;
+	Common::String		_process;
 	Common::String 		_phaseVar;
 	bool				_loop;
 	int					_cycles;
@@ -61,6 +62,10 @@ public:
 
 	void phaseVar(const Common::String & phaseVar) {
 		_phaseVar = phaseVar;
+	}
+
+	void process(const Common::String & process) {
+		_process = process;
 	}
 
 	void loop(bool loop) {

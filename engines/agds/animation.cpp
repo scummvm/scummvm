@@ -54,6 +54,8 @@ bool Animation::load(Common::SeekableReadStream *stream) {
 void Animation::updatePhaseVar(AGDSEngine &engine) {
 	if (!_phaseVar.empty())
 		engine.setGlobal(_phaseVar, _phase);
+	else if (_phase == -1)
+		engine.reactivate(_process);
 }
 
 void Animation::paint(AGDSEngine &engine, Graphics::Surface &backbuffer, Common::Point dst) {

@@ -126,6 +126,7 @@ void Process::loadAnimation() {
 	if (animation) {
 		animation->position(_animationPosition);
 		animation->z(_animationZ);
+		animation->process(getName());
 		animation->phaseVar(_phaseVar);
 		animation->loop(_animationLoop);
 		animation->cycles(_animationCycles);
@@ -1248,6 +1249,7 @@ void Process::loadAnimationFromObject() {
 	Animation *animation = _engine->loadAnimation(name);
 	if (animation) {
 		animation->phaseVar(_phaseVar);
+		animation->process(getName());
 		animation->loop(_animationLoop);
 		animation->cycles(_animationCycles);
 		if (_animationPaused)
