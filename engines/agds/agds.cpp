@@ -115,7 +115,7 @@ bool AGDSEngine::load() {
 		return false;
 
 	initSystemVariables();
-	loadScreen("main");
+	_nextScreenName = "main";
 
 	Common::File file;
 	file.open("patch.adb");
@@ -156,15 +156,20 @@ ObjectPtr AGDSEngine::loadObject(const Common::String &name, const Common::Strin
 }
 
 void AGDSEngine::runObject(ObjectPtr object) {
+	if (object->inScene()) {
+		debug("object is %s scene, skip running...", object->getName().c_str());
+		return;
+	}
+	if (_currentScreen)
+		_currentScreen->add(object);
+	else
+		warning("object %s has been loaded, but was not added to any screen", object->getName().c_str());
+
 	runProcess(object);
 }
 
 void AGDSEngine::runProcess(ObjectPtr object, uint ip) {
 	debug("starting process %s:%04x", object->getName().c_str(), ip);
-	if (_currentScreen)
-		_currentScreen->add(object);
-	else
-		warning("object %s has been loaded, but was not added to any screen", object->getName().c_str());
 	_processes.push_front(Process(this, object, ip));
 	_processes.front().run();
 }

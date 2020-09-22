@@ -121,7 +121,7 @@ void Process::loadPicture() {
 
 void Process::loadAnimation() {
 	Common::String name = popText();
-	debug("loadAnimation %s", name.c_str());
+	debug("loadAnimation %s (phase: %s)", name.c_str(), _phaseVar.c_str());
 	Animation *animation = _engine->loadAnimation(name);
 	if (animation) {
 		animation->position(_animationPosition);
@@ -441,16 +441,15 @@ void Process::changeScreenPatch() {
 	}
 
 	if (!screenName.empty()) {
-		debug("stub, returning 0");
+		debug("changeScreenPatch: stub, returning 0");
 		//check that patch exist
 		push(0);
 		return;
 	} else {
 		//change screen patch (load and return 1)
 		ObjectPtr object = screen->find(objectName);
-		int value = object && object->inScene();
-		debug("\t%d", value);
-		push(value);
+		debug("changeScreenPatch: recover/inventory stub, returning 0");
+		push(0);
 	}
 }
 
