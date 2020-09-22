@@ -73,17 +73,17 @@ public:
 	IMAGE *GetImageFromReel(const FREEL *pfr, const MULTI_INIT **ppmi = nullptr);
 	IMAGE *GetImageFromFilm(SCNHANDLE hFilm, int reel, const FREEL **ppfr = nullptr, const MULTI_INIT **ppmi = nullptr, const FILM **ppfilm = nullptr);
 
-	bool CursorIsFrozen() { return g_bFrozenCursor; }
-	int NumTrails() { return g_numTrails; }
-	bool IsHidden() { return g_bHiddenCursor; }
-	bool ShouldBeHidden() { return g_bHiddenCursor || g_bTempHide; }
-	bool HasReelData() { return g_hCursorFilm != 0; }
+	bool CursorIsFrozen() { return _frozenCursor; }
+	int NumTrails() { return _numTrails; }
+	bool IsHidden() { return _hiddenCursor; }
+	bool ShouldBeHidden() { return _hiddenCursor || _tempHiddenCursor; }
+	bool HasReelData() { return _cursorFilm != 0; }
 
-	bool g_bWhoa; // Set by DropCursor() at the end of a scene
+	bool _cursorProcessesStopped; // Set by DropCursor() at the end of a scene
 	    // - causes cursor processes to do nothing
 	    // Reset when main cursor has re-initialized
 
-	bool g_restart; // When main cursor has been bWhoa-ed, it waits
+	bool _cursorProcessesRestarted; // When main cursor has been bWhoa-ed, it waits
 	                // for this to be true.
 	                // Main cursor sets this to true after a re-start
 
@@ -91,33 +91,33 @@ private:
 	void InitCurTrailObj(int i, int x, int y);
 	bool GetDriverPosition(int *x, int *y);
 
-	OBJECT *g_McurObj; // Main cursor object
-	OBJECT *g_AcurObj; // Auxiliary cursor object
+	OBJECT *_mainCursor; // Main cursor object
+	OBJECT *_auxCursor; // Auxiliary cursor object
 
-	ANIM g_McurAnim; // Main cursor animation structure
-	ANIM g_AcurAnim; // Auxiliary cursor animation structure
+	ANIM _mainCursorAnim; // Main cursor animation structure
+	ANIM _auxCursorAnim; // Auxiliary cursor animation structure
 
-	bool g_bHiddenCursor;   // Set when cursor is hidden
-	bool g_bTempNoTrailers; // Set when cursor trails are hidden
-	bool g_bTempHide;       // Set when cursor is hidden
+	bool _hiddenCursor;   // Set when cursor is hidden
+	bool _hiddenTrails; // Set when cursor trails are hidden
+	bool _tempHiddenCursor;       // Set when cursor is hidden
 
-	bool g_bFrozenCursor; // Set when cursor position is frozen
+	bool _frozenCursor; // Set when cursor position is frozen
 
-	frac_t g_IterationSize;
+	frac_t _iterationSize;
 
-	SCNHANDLE g_hCursorFilm; // Handle to cursor reel data
+	SCNHANDLE _cursorFilm; // Handle to cursor reel data
 
-	int g_numTrails;
-	int g_nextTrail;
+	int _numTrails;
+	int _nextTrail;
 
-	short g_ACoX = 0, g_ACoY; // Auxillary cursor image's animation offsets
+	short _auxCursorOffsetX = 0, _auxCursorOffsetY; // Auxillary cursor image's animation offsets
 
 	struct {
 		ANIM trailAnim;   // Animation structure
 		OBJECT *trailObj; // This trailer's object
-	} g_ntrailData[MAX_TRAILERS];
+	} _trailData[MAX_TRAILERS];
 
-	int g_lastCursorX, g_lastCursorY;
+	int _lastCursorX, _lastCursorY;
 };
 
 } // End of namespace Tinsel
