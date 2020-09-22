@@ -83,21 +83,12 @@ void setTopScreenTarget(int x, int y) {
 	subScTargetY <<=8;
 }
 
-void setGameSize(int width, int height) {
+void setGameSize(int width, int height, bool isRGB) {
 	gameWidth = width;
 	gameHeight = height;
-}
 
-int getGameWidth() {
-	return gameWidth;
-}
-
-int getGameHeight() {
-	return gameHeight;
-}
-
-void displayMode8Bit() {
 	vramSetBankB(VRAM_B_MAIN_BG_0x06020000);
+	vramSetBankD(VRAM_D_MAIN_BG_0x06040000);
 
 	if (g_system->getGraphicsMode() == GFX_SWSCALE) {
 		REG_BG3CNT = BG_BMP16_256x256 | BG_BMP_BASE(8);
@@ -108,7 +99,7 @@ void displayMode8Bit() {
 		REG_BG3PD = (int) ((200.0f / 192.0f) * 256);
 
 	} else {
-		REG_BG3CNT = BG_BMP8_512x256 | BG_BMP_BASE(8);
+		REG_BG3CNT = (isRGB ? BG_BMP16_512x256 :BG_BMP8_512x256) | BG_BMP_BASE(8);
 
 		REG_BG3PA = (int) (((float) (gameWidth) / 256.0f) * 256);
 		REG_BG3PB = 0;
@@ -124,12 +115,6 @@ void displayMode8Bit() {
 	REG_BG3PC_SUB = 0;
 	REG_BG3PD_SUB = (int) (subScreenHeight / 192.0f * 256);
 #endif
-
-	if (gameScreenSwap) {
-		lcdMainOnTop();
-	} else {
-		lcdMainOnBottom();
-	}
 }
 
 void setShakePos(int shakeXOffset, int shakeYOffset) {
@@ -411,8 +396,21 @@ int OSystem_DS::getStretchMode() const {
 	return _stretchMode;
 }
 
+Graphics::PixelFormat OSystem_DS::getScreenFormat() const {
+	return _framebuffer.format;
+}
+
+Common::List<Graphics::PixelFormat> OSystem_DS::getSupportedFormats() const {
+	Common::List<Graphics::PixelFormat> res;
+	res.push_back(_pfABGR1555);
+	res.push_back(_pfCLUT8);
+
+	return res;
+}
+
 void OSystem_DS::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
-	_framebuffer.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+	Graphics::PixelFormat actualFormat = format ? *format : _pfCLUT8;
+	_framebuffer.create(width, height, actualFormat);
 
 	// For Lost in Time, the title screen is displayed in 640x400.
 	// In order to support this game, the screen mode is set, but
@@ -421,7 +419,7 @@ void OSystem_DS::initSize(uint width, uint height, const Graphics::PixelFormat *
 		_graphicsEnable = false;
 	} else {
 		_graphicsEnable = true;
-		DS::setGameSize(width, height);
+		DS::setGameSize(width, height, (actualFormat != _pfCLUT8));
 	}
 }
 
@@ -494,29 +492,31 @@ void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int 
 }
 
 void OSystem_DS::dmaBlit(uint16 *dst, const uint dstPitch, const uint16 *src, const uint srcPitch,
-                         const uint w, const uint h) {
+                         const uint w, const uint h, const uint bytesPerPixel) {
 	// The DS video RAM doesn't support 8-bit writes because Nintendo wanted
 	// to save a few pennies/euro cents on the hardware.
+
+	uint row = w * bytesPerPixel;
 
 	for (uint dy = 0; dy < h; dy += 2) {
 		const u16 *src1 = src;
 		src += (srcPitch >> 1);
-		DC_FlushRange(src1, w << 1);
+		DC_FlushRange(src1, row << 1);
 
 		const u16 *src2 = src;
 		src += (srcPitch >> 1);
-		DC_FlushRange(src2, w << 1);
+		DC_FlushRange(src2, row << 1);
 
 		u16 *dest1 = dst;
 		dst += (dstPitch >> 1);
-		DC_FlushRange(dest1, w << 1);
+		DC_FlushRange(dest1, row << 1);
 
 		u16 *dest2 = dst;
 		dst += (dstPitch >> 1);
-		DC_FlushRange(dest2, w << 1);
+		DC_FlushRange(dest2, row << 1);
 
-		dmaCopyHalfWordsAsynch(2, src1, dest1, w);
-		dmaCopyHalfWordsAsynch(3, src2, dest2, w);
+		dmaCopyHalfWordsAsynch(2, src1, dest1, row);
+		dmaCopyHalfWordsAsynch(3, src2, dest2, row);
 
 		while (dmaBusy(2) || dmaBusy(3));
 	}
@@ -533,19 +533,29 @@ void OSystem_DS::updateScreen() {
 	} else if (_graphicsEnable) {
 		u16 *base = BG_GFX + 0x10000;
 		if (_graphicsMode == GFX_SWSCALE) {
-			Rescale_320x256xPAL8_To_256x256x1555(
-				base,
-				(const u8 *)_framebuffer.getPixels(),
-				256,
-				_framebuffer.pitch,
-				BG_PALETTE,
-				_framebuffer.h );
+			if (_framebuffer.format == _pfCLUT8) {
+				Rescale_320x256xPAL8_To_256x256x1555(
+					base,
+					(const u8 *)_framebuffer.getPixels(),
+					256,
+					_framebuffer.pitch,
+					BG_PALETTE,
+					_framebuffer.h );
+			} else {
+				Rescale_320x256x1555_To_256x256x1555(
+					base,
+					(const u16 *)_framebuffer.getPixels(),
+					256,
+					_framebuffer.pitch / 2 );
+			}
 		} else {
-			dmaBlit(base, 512, (const u16 *)_framebuffer.getPixels(), _framebuffer.pitch,
-				_framebuffer.w, _framebuffer.h);
+			dmaBlit(base, 512 * _framebuffer.format.bytesPerPixel,
+				(const u16 *)_framebuffer.getPixels(), _framebuffer.pitch,
+				_framebuffer.w, _framebuffer.h, _framebuffer.format.bytesPerPixel);
 
 #ifdef DISABLE_TEXT_CONSOLE
-			dmaCopy(base, BG_GFX_SUB, 512 * 256);
+			if (_framebuffer.format == _pfCLUT8)
+				dmaCopy(base, BG_GFX_SUB, 512 * 256);
 #endif
 		}
 	}
@@ -564,8 +574,13 @@ void OSystem_DS::showOverlay() {
 
 void OSystem_DS::hideOverlay() {
 	videoBgDisable(2);
-	DS::displayMode8Bit();
 	_isOverlayShown = false;
+
+	if (DS::gameScreenSwap) {
+		lcdMainOnTop();
+	} else {
+		lcdMainOnBottom();
+	}
 }
 
 bool OSystem_DS::isOverlayVisible() const {
