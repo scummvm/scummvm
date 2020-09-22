@@ -59,7 +59,7 @@ protected:
 	void initGraphics();
 
 	void dmaBlit(uint16 *dst, const uint dstPitch, const uint16 *src, const uint srcPitch,
-	             const uint w, const uint h);
+	             const uint w, const uint h, const uint bytesPerPixel);
 
 	bool _disableCursorPalette;
 
@@ -84,6 +84,9 @@ public:
 	virtual int getDefaultStretchMode() const;
 	virtual bool setStretchMode(int mode);
 	virtual int getStretchMode() const;
+
+	virtual Graphics::PixelFormat getScreenFormat() const;
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
 
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format);
 	virtual int16 getHeight();
