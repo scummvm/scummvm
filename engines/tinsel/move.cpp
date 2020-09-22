@@ -485,7 +485,7 @@ static void GotThereWithoutMoving(PMOVER pActor) {
 	DIRECTION	reel;
 
 	if (!pActor->bSpecReel) {
-		GetCursorXYNoWait(&curX, &curY, true);
+		_vm->_cursor->GetCursorXYNoWait(&curX, &curY, true);
 
 		reel = GetDirection(pActor->objX, pActor->objY, curX, curY, pActor->direction, pActor->hCpath);
 
@@ -512,7 +512,7 @@ static void GotThere(PMOVER pMover) {
 			int curX, curY;
 			DIRECTION direction;
 
-			GetCursorXY(&curX, &curY, true);
+			_vm->_cursor->GetCursorXY(&curX, &curY, true);
 			direction = GetDirection(pMover->objX, pMover->objY,
 						curX, curY,
 						pMover->direction,

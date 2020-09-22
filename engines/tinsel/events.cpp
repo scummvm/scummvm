@@ -135,10 +135,10 @@ void ControlOn() {
 		if (g_bStartOff == true)
 			g_bStartOff = false;
 		else
-			SetCursorXY(g_controlX, g_controlY);
+			_vm->_cursor->SetCursorXY(g_controlX, g_controlY);
 
 		// Re-instate cursor
-		UnHideCursor();
+		_vm->_cursor->UnHideCursor();
 
 		// Turn tags back on
 		if (!InventoryActive())
@@ -162,10 +162,10 @@ void ControlOff() {
 		g_controlState = CONTROL_OFF;
 
 		// Store cursor position
-		GetCursorXY(&g_controlX, &g_controlY, true);
+		_vm->_cursor->GetCursorXY(&g_controlX, &g_controlY, true);
 
 		// Blank out cursor
-		DwHideCursor();
+		_vm->_cursor->DwHideCursor();
 
 		// Switch off tags
 		DisableTags();
@@ -187,7 +187,7 @@ void ControlStartOff() {
 	g_controlState = CONTROL_OFF;
 
 	// Blank out cursor
-	DwHideCursor();
+	_vm->_cursor->DwHideCursor();
 
 	// Switch off tags
 	DisableTags();
@@ -306,7 +306,7 @@ static void ProcessUserEvent(TINSEL_EVENT uEvent, const Common::Point &coOrds, P
 			PolygonEvent(Common::nullContext, hPoly, uEvent, 0, false, 0);
 
 	} else {
-		GetCursorXY(&aniX, &aniY, true);
+		_vm->_cursor->GetCursorXY(&aniX, &aniY, true);
 
 		// There could be a poly involved which has no tag.
 		if ((hPoly = InPolygon(aniX, aniY, TAG)) != NOPOLY ||
@@ -369,7 +369,7 @@ void ProcessButEvent(PLR_EVENT be) {
 void ProcessKeyEvent(PLR_EVENT ke) {
 	// Pass the keyboard event to the player event handler
 	int xp, yp;
-	GetCursorXYNoWait(&xp, &yp, true);
+	_vm->_cursor->GetCursorXYNoWait(&xp, &yp, true);
 	const Common::Point mousePos(xp, yp);
 
 	PlayerEvent(ke, mousePos);

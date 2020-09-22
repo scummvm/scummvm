@@ -308,7 +308,7 @@ static void MouseProcess(CORO_PARAM, const void *) {
 		_vm->_mouseButtons.pop_front();
 
 		int xp, yp;
-		GetCursorXYNoWait(&xp, &yp, true);
+		_vm->_cursor->GetCursorXYNoWait(&xp, &yp, true);
 		const Common::Point mousePos(xp, yp);
 
 		switch (type) {
@@ -849,6 +849,7 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 
 TinselEngine::~TinselEngine() {
 	_system->getAudioCDManager()->stop();
+	delete _cursor;
 	delete _bg;
 	delete _font;
 	delete _bmv;
@@ -896,6 +897,7 @@ Common::Error TinselEngine::run() {
 	_bmv = new BMVPlayer();
 	_font = new Font();
 	_bg = new Background(_font);
+	_cursor = new Cursor();
 
 	// Initialize backend
 	if (getGameID() == GID_DW2) {
@@ -927,7 +929,7 @@ Common::Error TinselEngine::run() {
 	// It may have to be adjusted a bit
 	CountOut = 1;
 
-	RebootCursor();
+	_vm->_cursor->RebootCursor();
 	RebootDeadTags();
 	RebootMovers();
 	resetUserEventTime();
@@ -1109,7 +1111,7 @@ void TinselEngine::RestartGame() {
 	// -> reset the count used by ChangeScene
 	CountOut = 1;
 
-	RebootCursor();
+	_vm->_cursor->RebootCursor();
 	RebootDeadTags();
 	RebootMovers();
 	RebootTimers();

@@ -23,6 +23,7 @@
 
 #include "tinsel/anim.h"
 #include "tinsel/background.h"
+#include "tinsel/cursor.h"
 #include "tinsel/dw.h"
 #include "tinsel/faders.h"
 #include "tinsel/film.h"
@@ -171,7 +172,7 @@ void Background::StartupBackground(CORO_PARAM, SCNHANDLE hFilm) {
 
 	_hBackground = hFilm;		// Save handle in case of Save_Scene()
 
-	pim = GetImageFromFilm(hFilm, 0, NULL, NULL, &pfilm);
+	pim = _vm->_cursor->GetImageFromFilm(hFilm, 0, NULL, NULL, &pfilm);
 
 	SetBackPal(FROM_32(pim->hImgPal));
 

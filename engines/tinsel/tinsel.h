@@ -59,6 +59,7 @@ class Music;
 class SoundManager;
 class Background;
 class Font;
+class Cursor;
 
 typedef Common::List<Common::Rect> RectList;
 
@@ -202,6 +203,7 @@ public:
 	BMVPlayer *_bmv;
 	Background* _bg;
 	Font *_font;
+	Cursor *_cursor;
 
 	Config *_config;
 

@@ -408,7 +408,7 @@ static bool ActorTag(int curX, int curY, HotSpotTag *pTag, OBJECT **ppText) {
 				LoadStringRes(GetActorTagHandle(actor), g_tagBuffer, sizeof(g_tagBuffer));
 
 				// May have buggered cursor
-				EndCursorFollowed();
+				_vm->_cursor->EndCursorFollowed();
 				*ppText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), g_tagBuffer,
 						0, tagX, tagY, _vm->_font->GetTagFontHandle(), TXT_CENTER, 0);
 				assert(*ppText);
@@ -556,7 +556,7 @@ static bool PolyTag(HotSpotTag *pTag, OBJECT **ppText) {
 					ppText = nullptr;
 				else if (TinselV2 && !PolyTagFollowsCursor(hp)) {
 					// May have buggered cursor
-					EndCursorFollowed();
+					_vm->_cursor->EndCursorFollowed();
 
 					*ppText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS),
 							_vm->_font->TextBufferAddr(), 0, tagx - Loffset, tagy - Toffset,
@@ -565,9 +565,9 @@ static bool PolyTag(HotSpotTag *pTag, OBJECT **ppText) {
 					// Bugger cursor
 					const char *tagPtr = _vm->_font->TextBufferAddr();
 					if (tagPtr[0] < ' ' && tagPtr[1] == EOS_CHAR)
-						StartCursorFollowed();
+						_vm->_cursor->StartCursorFollowed();
 
-					GetCursorXYNoWait(&curX, &curY, false);
+					_vm->_cursor->GetCursorXYNoWait(&curX, &curY, false);
 					*ppText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(),
 							0, curX, curY, _vm->_font->GetTagFontHandle(), TXT_CENTER, 0);
 				} else {
@@ -604,7 +604,7 @@ static bool PolyTag(HotSpotTag *pTag, OBJECT **ppText) {
 						Toffset = nToff;
 					}
 				} else {
-					GetCursorXY(&tagx, &tagy, false);
+					_vm->_cursor->GetCursorXY(&tagx, &tagy, false);
 					if (tagx != curX || tagy != curY) {
 						MultiMoveRelXY(*ppText, tagx - curX, tagy - curY);
 						curX = tagx;
@@ -655,7 +655,7 @@ void TagProcess(CORO_PARAM, const void *) {
 	while (1) {
 		if (g_bTagsActive) {
 			int	curX, curY;	// cursor position
-			while (!GetCursorXYNoWait(&curX, &curY, true))
+			while (!_vm->_cursor->GetCursorXYNoWait(&curX, &curY, true))
 				CORO_SLEEP(1);
 
 			if (!ActorTag(curX, curY, &_ctx->Tag, &_ctx->pText)
@@ -667,7 +667,7 @@ void TagProcess(CORO_PARAM, const void *) {
 
 					if (TinselV2)
 						// May have buggered cursor
-						EndCursorFollowed();
+						_vm->_cursor->EndCursorFollowed();
 				}
 			}
 		} else {
@@ -750,7 +750,7 @@ void PointProcess(CORO_PARAM, const void *) {
 		EnablePointing();
 
 	while (1) {
-		while (!GetCursorXYNoWait(&_ctx->curX, &_ctx->curY, true))
+		while (!_vm->_cursor->GetCursorXYNoWait(&_ctx->curX, &_ctx->curY, true))
 			CORO_SLEEP(1);
 
 		/*----------------------------------*\

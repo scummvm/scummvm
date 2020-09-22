@@ -760,7 +760,7 @@ void Control(int param) {
 	case CONTROL_STARTOFF:
 		GetControlToken();	// Take control
 		DisableTags();			// Switch off tags
-		DwHideCursor();			// Blank out cursor
+		_vm->_cursor->DwHideCursor(); // Blank out cursor
 		g_offtype = param;
 		break;
 
@@ -771,7 +771,7 @@ void Control(int param) {
 			GetControlToken();	// Take control
 
 			DisableTags();			// Switch off tags
-			GetCursorXYNoWait(&g_controlX, &g_controlY, true);	// Store cursor position
+			_vm->_cursor->GetCursorXYNoWait(&g_controlX, &g_controlY, true); // Store cursor position
 
 			// There may be a button timing out
 			GetToken(TOKEN_LEFT_BUT);
@@ -779,30 +779,30 @@ void Control(int param) {
 		}
 
 		if (g_offtype == CONTROL_STARTOFF)
-			GetCursorXYNoWait(&g_controlX, &g_controlY, true);	// Store cursor position
+			_vm->_cursor->GetCursorXYNoWait(&g_controlX, &g_controlY, true); // Store cursor position
 
 		g_offtype = param;
 
 		if (param == CONTROL_OFF)
-			DwHideCursor();		// Blank out cursor
+			_vm->_cursor->DwHideCursor(); // Blank out cursor
 		else if (param == CONTROL_OFFV) {
-			UnHideCursor();
-			FreezeCursor();
+			_vm->_cursor->UnHideCursor();
+			_vm->_cursor->FreezeCursor();
 		} else if (param == CONTROL_OFFV2) {
-			UnHideCursor();
+			_vm->_cursor->UnHideCursor();
 		}
 		break;
 
 	case CONTROL_ON:
 		if (g_offtype != CONTROL_OFFV2 && g_offtype != CONTROL_STARTOFF)
-			SetCursorXY(g_controlX, g_controlY);// ... where it was
+			_vm->_cursor->SetCursorXY(g_controlX, g_controlY); // ... where it was
 
 		FreeControlToken();	// Release control
 
 		if (!InventoryActive())
 			EnableTags();		// Tags back on
 
-		RestoreMainCursor();		// Re-instate cursor...
+		_vm->_cursor->RestoreMainCursor(); // Re-instate cursor...
 		break;
 
 	default:
@@ -878,10 +878,10 @@ static void ConvTopic(int icon) {
 void Cursor(int onoff) {
 	if (onoff) {
 		// Re-instate cursor
-		UnHideCursor();
+		_vm->_cursor->UnHideCursor();
 	} else {
 		// Blank out cursor
-		DwHideCursor();
+		_vm->_cursor->DwHideCursor();
 	}
 }
 
@@ -891,7 +891,7 @@ void Cursor(int onoff) {
 static int CursorPos(int xory) {
 	int x, y;
 
-	GetCursorXY(&x, &y, true);
+	_vm->_cursor->GetCursorXY(&x, &y, true);
 	return (xory == CURSORXPOS) ? x : y;
 }
 
@@ -915,7 +915,7 @@ static void DecCStrings(SCNHANDLE *tp) {
  * Declare cursor's reels.
  */
 static void DecCursor(SCNHANDLE hFilm) {
-	DwInitCursor(hFilm);
+	_vm->_cursor->DwInitCursor(hFilm);
 }
 
 /**
@@ -1148,7 +1148,7 @@ static void FadeMidi(CORO_PARAM, int inout) {
  * Freeze the cursor, or not.
  */
 static void FreezeCursor(bool bFreeze) {
-	DoFreezeCursor(bFreeze);
+	_vm->_cursor->DoFreezeCursor(bFreeze);
 }
 
 /**
@@ -1383,7 +1383,7 @@ static int LToffset(int lort) {
  * Set new cursor position.
  */
 static void MoveCursor(int x, int y) {
-	SetCursorXY(x, y);
+	_vm->_cursor->SetCursorXY(x, y);
 
 	g_controlX = x;		// Save these values so that
 	g_controlY = y;		// control(on) doesn't undo this
@@ -1631,8 +1631,8 @@ static void PlayMovie(CORO_PARAM, SCNHANDLE hFileStem, int myEscape) {
 
 	// Get rid of the cursor
 	for (_ctx->i = 0; _ctx->i < 3; _ctx->i++) {
-		DwHideCursor();
-		DropCursor();
+		_vm->_cursor->DwHideCursor();
+		_vm->_cursor->DropCursor();
 		CORO_SLEEP(1);
 	}
 
@@ -2041,7 +2041,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 	/*
 	* Find out which icon the cursor is over, and where to put the text.
 	*/
-	GetCursorXY(&_ctx->textx, &_ctx->texty, false);	// Cursor position..
+	_vm->_cursor->GetCursorXY(&_ctx->textx, &_ctx->texty, false); // Cursor position..
 	_ctx->item = InvItem(&_ctx->textx, &_ctx->texty, true);	// ..to text position
 	if (_ctx->item == INV_NOICON)
 		return;
@@ -2129,7 +2129,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 						while (g_bNotPointedRunning)
 							CORO_SLEEP(1);
 
-						GetCursorXY(&x, &y, false);
+						_vm->_cursor->GetCursorXY(&x, &y, false);
 						if (InvItem(&x, &y, false) != _ctx->item)
 							break;
 
@@ -2147,7 +2147,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 					CORO_SLEEP(1);
 
 					// Carry on until the cursor leaves this icon
-					GetCursorXY(&x, &y, false);
+					_vm->_cursor->GetCursorXY(&x, &y, false);
 
 				} while (InvItemId(x, y) == pinvo->id);
 			} else {
@@ -2246,7 +2246,7 @@ static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const INV_OBJECT *
 				while (g_bNotPointedRunning)
 					CORO_SLEEP(1);
 
-				GetCursorXY(&x, &y, false);
+				_vm->_cursor->GetCursorXY(&x, &y, false);
 				if (InvItem(&x, &y, false) != item)
 					break;
 
@@ -2261,7 +2261,7 @@ static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const INV_OBJECT *
 			CORO_SLEEP(1);
 
 			// Carry on until the cursor leaves this icon
-			GetCursorXY(&x, &y, false);
+		    _vm->_cursor->GetCursorXY(&x, &y, false);
 		} while (InvItemId(x, y) == pinvo->id);
 
 	CORO_END_CODE;
@@ -3039,7 +3039,7 @@ static void Swalk(CORO_PARAM, int actor, int x1, int y1, int x2, int y2, SCNHAND
 	if (actor == GetLeadId() || actor == LEAD_ACTOR) {
 		_ctx->bTookControl = GetControl(CONTROL_OFFV2);
 		if (TinselV2 && _ctx->bTookControl)
-			RestoreMainCursor();
+			_vm->_cursor->RestoreMainCursor();
 	} else {
 		_ctx->bTookControl = false;
 	}
@@ -3707,7 +3707,7 @@ static void WaitKey(CORO_PARAM, bool escOn, int myEscape) {
 		_ctx->startEvent = getUserEvents();
 		if (TinselV1) {
 			// Store cursor position
-			while (!GetCursorXYNoWait(&_ctx->startX, &_ctx->startY, false))
+			while (!_vm->_cursor->GetCursorXYNoWait(&_ctx->startX, &_ctx->startY, false))
 				CORO_SLEEP(1);
 		}
 
@@ -3717,7 +3717,7 @@ static void WaitKey(CORO_PARAM, bool escOn, int myEscape) {
 			// Not necessary to monitor escape as it's an event anyway
 			if (TinselV1) {
 				int curX, curY;
-				GetCursorXY(&curX, &curY, false);	// Store cursor position
+				_vm->_cursor->GetCursorXY(&curX, &curY, false); // Store cursor position
 				if (curX != _ctx->startX || curY != _ctx->startY)
 					break;
 			}

@@ -316,7 +316,7 @@ void EndScene() {
 	DropScroll();	// No no-scrolls
 	_vm->_bg->DropBackground();	// No background
 	DropMovers();		// No moving actors
-	DropCursor();		// No cursor
+	_vm->_cursor->DropCursor(); // No cursor
 	DropActors();		// No actor reels running
 	FreeAllTokens();	// No-one has tokens
 	FreeMostInterpretContexts();	// Only master script still interpreting
@@ -353,7 +353,7 @@ void PrimeScene() {
 	SetNoBlocking(false);
 	SetSysVar(SYS_SceneFxDimFactor, SysVar(SYS_DefaultFxDimFactor));
 
-	RestartCursor();	// Restart the cursor
+	_vm->_cursor->RestartCursor(); // Restart the cursor
 	if (!TinselV2)
 		EnableTags();		// Next scene with tags enabled
 

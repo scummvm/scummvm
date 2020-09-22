@@ -207,21 +207,6 @@ OBJECT *TranslucentObject(	// create a translucent rectangle object of the given
 	int width,		// width of rectangle
 	int height);		// height of rectangle
 
-void ResizeRectangle(		// resizes a rectangle object
-	OBJECT *pRect,		// rectangle object pointer
-	int width,		// new width of rectangle
-	int height);		// new height of rectangle
-
-
-// FIXME: This does not belong here
-struct FILM;
-struct FREEL;
-struct MULTI_INIT;
-IMAGE *GetImageFromReel(const FREEL *pfreel, const MULTI_INIT **ppmi = 0);
-IMAGE *GetImageFromFilm(SCNHANDLE hFilm, int reel, const FREEL **ppfr = 0,
-					const MULTI_INIT **ppmi = 0, const FILM **ppfilm = 0);
-
-
 } // End of namespace Tinsel
 
 #endif	// TINSEL_OBJECT_H

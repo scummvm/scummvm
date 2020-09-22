@@ -1340,10 +1340,10 @@ extern void InventoryIconCursor(bool bNewItem) {
 				int	objIndex = GetObjectIndex(g_heldItem);
 				g_heldFilm = g_invFilms[objIndex];
 			}
-			SetAuxCursor(g_heldFilm);
+			_vm->_cursor->SetAuxCursor(g_heldFilm);
 		} else {
 			INV_OBJECT *invObj = GetInvObject(g_heldItem);
-			SetAuxCursor(invObj->hIconFilm);
+			_vm->_cursor->SetAuxCursor(invObj->hIconFilm);
 		}
 	}
 }
@@ -1401,7 +1401,7 @@ static void ObjectProcess(CORO_PARAM, const void *param) {
 		while (1) {
 			CORO_SLEEP(1);
 			int	x, y;
-			GetCursorXY(&x, &y, false);
+			_vm->_cursor->GetCursorXY(&x, &y, false);
 			if (InvItemId(x, y) != to->pinvo->id)
 				break;
 
@@ -1722,7 +1722,7 @@ static void Select(int i, bool force) {
 extern void DropItem(int item) {
 	if (g_heldItem == item) {
 		g_heldItem = INV_NOICON;		// Item not held
-		DelAuxCursor();			// no longer aux cursor
+		_vm->_cursor->DelAuxCursor(); // no longer aux cursor
 	}
 
 	// Redraw contents - held item was not displayed as a content.
@@ -1883,7 +1883,7 @@ extern void HoldItem(int item, bool bKeepFilm) {
 	if (g_heldItem != item) {
 		if (TinselV2 && (g_heldItem != NOOBJECT)) {
 			// No longer holding previous item
-			DelAuxCursor();	 // no longer aux cursor
+			_vm->_cursor->DelAuxCursor(); // no longer aux cursor
 
 			// If old held object is not in an inventory, and
 			// has a default, stick it in its default inventory.
@@ -1901,11 +1901,11 @@ extern void HoldItem(int item, bool bKeepFilm) {
 
 		} else if (!TinselV2) {
 			if (item == INV_NOICON && g_heldItem != INV_NOICON)
-				DelAuxCursor();			// no longer aux cursor
+				_vm->_cursor->DelAuxCursor(); // no longer aux cursor
 
 			if (item != INV_NOICON) {
 				invObj = GetInvObject(item);
-				SetAuxCursor(invObj->hIconFilm);	// and is aux. cursor
+				_vm->_cursor->SetAuxCursor(invObj->hIconFilm); // and is aux. cursor
 			}
 
 			// WORKAROUND: If a held item is being removed that's not in either inventory (i.e. it was picked up
@@ -2570,7 +2570,7 @@ static OBJECT *AddInvObject(int num, const FREEL **pfreel, const FILM **pfilm) {
 	invObj = GetInvObject(num);
 
 	// Get pointer to image
-	pim = GetImageFromFilm(invObj->hIconFilm, 0, pfreel, &pmi, pfilm);
+	pim = _vm->_cursor->GetImageFromFilm(invObj->hIconFilm, 0, pfreel, &pmi, pfilm);
 
 	// Poke in the background palette
 	pim->hImgPal = TO_32(_vm->_bg->BgPal());
@@ -2699,7 +2699,7 @@ static OBJECT *AddObject(const FREEL *pfreel, int num) {
 	OBJECT *pPlayObj;
 
 	// Get pointer to image
-	pim = GetImageFromReel(pfreel, &pmi);
+	pim = _vm->_cursor->GetImageFromReel(pfreel, &pmi);
 
 	// Poke in the background palette
 	pim->hImgPal = TO_32(_vm->_bg->BgPal());
@@ -3408,12 +3408,12 @@ static void AlterCursor(int num) {
 	IMAGE *pim;
 
 	// Get pointer to image
-	pim = GetImageFromFilm(g_hWinParts, num, &pfreel);
+	pim = _vm->_cursor->GetImageFromFilm(g_hWinParts, num, &pfreel);
 
 	// Poke in the background palette
 	pim->hImgPal = TO_32(_vm->_bg->BgPal());
 
-	SetTempCursor(FROM_32(pfreel->script));
+	_vm->_cursor->SetTempCursor(FROM_32(pfreel->script));
 }
 
 enum InvCursorFN {IC_AREA, IC_DROP};
@@ -3449,9 +3449,9 @@ static void InvCursor(InvCursorFN fn, int CurX, int CurY) {
 
 		// No cursor trails while within inventory window
 		if (area == I_NOTIN)
-			UnHideCursorTrails();
+			_vm->_cursor->UnHideCursorTrails();
 		else
-			HideCursorTrails();
+			_vm->_cursor->HideCursorTrails();
 
 		switch (area) {
 		case I_NOTIN:
@@ -3520,7 +3520,7 @@ static void InvCursor(InvCursorFN fn, int CurX, int CurY) {
 	}
 
 	if (restoreMain && ICursor != IC_NORMAL) {
-		RestoreMainCursor();
+		_vm->_cursor->RestoreMainCursor();
 		ICursor = IC_NORMAL;
 	}
 }
@@ -3807,7 +3807,7 @@ extern void HideConversation(bool bHide) {
 				}
 			}
 
-			GetCursorXY(&aniX, &aniY, false);
+			_vm->_cursor->GetCursorXY(&aniX, &aniY, false);
 			InvLabels(true, aniX, aniY);
 		}
 	}
@@ -3911,7 +3911,7 @@ extern void OpenMenu(CONFTYPE menuType) {
 	case SAVE_MENU:
 		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);	// Show VK when saving a game
 		if (!TinselV2)
-			SetCursorScreenXY(262, 91);
+			_vm->_cursor->SetCursorScreenXY(262, 91);
 		SetMenuGlobals(&ciSave);
 		cd.editableRgroup = true;
 		FirstFile(0);
@@ -3925,11 +3925,11 @@ extern void OpenMenu(CONFTYPE menuType) {
 
 	case RESTART_MENU:
 		if (TinselV2)
-			SetCursorScreenXY(360, 153);
+			_vm->_cursor->SetCursorScreenXY(360, 153);
 		else if (_vm->getLanguage() == Common::JA_JPN)
-			SetCursorScreenXY(180, 106);
+			_vm->_cursor->SetCursorScreenXY(180, 106);
 		else
-			SetCursorScreenXY(180, 90);
+			_vm->_cursor->SetCursorScreenXY(180, 90);
 
 		SetMenuGlobals(&ciRestart);
 		break;
@@ -3965,11 +3965,11 @@ extern void OpenMenu(CONFTYPE menuType) {
 
 	case QUIT_MENU:
 		if (TinselV2)
-			SetCursorScreenXY(360, 153);
+			_vm->_cursor->SetCursorScreenXY(360, 153);
 		else if (_vm->getLanguage() == Common::JA_JPN)
-			SetCursorScreenXY(180, 106);
+			_vm->_cursor->SetCursorScreenXY(180, 106);
 		else
-			SetCursorScreenXY(180, 90);
+			_vm->_cursor->SetCursorScreenXY(180, 90);
 
 		SetMenuGlobals(&ciQuit);
 		break;
@@ -4034,7 +4034,7 @@ extern void OpenMenu(CONFTYPE menuType) {
 	}
 
 	if (g_heldItem != INV_NOICON)
-		DelAuxCursor();			// no longer aux cursor
+		_vm->_cursor->DelAuxCursor(); // no longer aux cursor
 
 	PopUpInventory(INV_CONF);
 
@@ -4058,7 +4058,7 @@ extern void OpenMenu(CONFTYPE menuType) {
 		}
 	}
 
-	GetCursorXY(&curX, &curY, false);
+	_vm->_cursor->GetCursorXY(&curX, &curY, false);
 	InvCursor(IC_AREA, curX, curY);
 }
 
@@ -4079,7 +4079,7 @@ extern void KillInventory() {
 
 		g_InvD[g_ino].bMax = g_InventoryMaximised;
 
-		UnHideCursorTrails();
+		_vm->_cursor->UnHideCursorTrails();
 		_vm->divertKeyInput(NULL);
 	}
 
@@ -4118,7 +4118,7 @@ extern void CloseInventory() {
 
 	KillInventory();
 
-	RestoreMainCursor();
+	_vm->_cursor->RestoreMainCursor();
 }
 
 
@@ -4149,7 +4149,7 @@ extern void InventoryProcess(CORO_PARAM, const void *) {
 
 				// Needed when clicking on scroll bar.
 				int	curX, curY;
-				GetCursorXY(&curX, &curY, false);
+				_vm->_cursor->GetCursorXY(&curX, &curY, false);
 				InvCursor(IC_AREA, curX, curY);
 
 				g_ItemsChanged = false;
@@ -4652,7 +4652,7 @@ extern void Xmovement(int x) {
 			break;
 
 		case ID_NONE:
-			GetCursorXY(&aniX, &aniY, false);
+			_vm->_cursor->GetCursorXY(&aniX, &aniY, false);
 			InvCursor(IC_AREA, aniX, aniY);
 			break;
 
@@ -4708,7 +4708,7 @@ extern void Ymovement(int y) {
 			break;
 
 		case ID_NONE:
-			GetCursorXY(&aniX, &aniY, false);
+			_vm->_cursor->GetCursorXY(&aniX, &aniY, false);
 			InvCursor(IC_AREA, aniX, aniY);
 			break;
 
@@ -4724,7 +4724,7 @@ extern void Ymovement(int y) {
 static void InvDragStart() {
 	int curX, curY;		// cursor's animation position
 
-	GetCursorXY(&curX, &curY, false);
+	_vm->_cursor->GetCursorXY(&curX, &curY, false);
 
 	/*
 	 * Do something different for Save/Restore screens
@@ -4843,7 +4843,7 @@ static void InvDragStart() {
 static void InvDragEnd() {
 	int curX, curY;		// cursor's animation position
 
-	GetCursorXY(&curX, &curY, false);
+	_vm->_cursor->GetCursorXY(&curX, &curY, false);
 
 	if (g_InvDragging != ID_NONE) {
 		if (g_InvDragging == ID_SLIDE) {
@@ -5162,9 +5162,9 @@ static void InvPutDown(int index) {
 
 	g_heldItem = INV_NOICON;
 	g_ItemsChanged = true;
-	DelAuxCursor();
-	RestoreMainCursor();
-	GetCursorXY(&aniX, &aniY, false);
+	_vm->_cursor->DelAuxCursor();
+	_vm->_cursor->RestoreMainCursor();
+	_vm->_cursor->GetCursorXY(&aniX, &aniY, false);
 	InvCursor(IC_DROP, aniX, aniY);
 }
 
@@ -5316,7 +5316,7 @@ static void InvAction() {
 	int aniX, aniY;
 	int i;
 
-	GetCursorXY(&aniX, &aniY, false);
+	_vm->_cursor->GetCursorXY(&aniX, &aniY, false);
 
 	switch (InvArea(aniX, aniY)) {
 	case I_BODY:

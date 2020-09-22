@@ -253,7 +253,7 @@ static void ScrollImage() {
 	 * Keeping cursor on a tag?
 	 */
 	if (g_ScrollCursor) {
-		GetCursorXYNoWait(&curX, &curY, true);
+		_vm->_cursor->GetCursorXYNoWait(&curX, &curY, true);
 		if (InPolygon(curX, curY, TAG) != NOPOLY || InPolygon(curX, curY, EXIT) != NOPOLY) {
 			OldLoffset = Loffset;
 			OldToffset = Toffset;
@@ -331,7 +331,7 @@ static void ScrollImage() {
 	 * Move cursor if keeping cursor on a tag.
 	 */
 	if (g_ScrollCursor)
-		AdjustCursorXY(OldLoffset - Loffset, OldToffset - Toffset);
+		_vm->_cursor->AdjustCursorXY(OldLoffset - Loffset, OldToffset - Toffset);
 
 	_vm->_bg->PlayfieldSetPos(FIELD_WORLD, Loffset, Toffset);
 }
