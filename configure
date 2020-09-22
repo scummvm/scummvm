@@ -3003,6 +3003,7 @@ EOF
 		append_var CXXFLAGS "-fdata-sections"
 		append_var CXXFLAGS "-fno-strict-aliasing"
 		append_var CXXFLAGS "-fuse-cxa-atexit"
+		append_var LDFLAGS "-mthumb"
 		append_var LDFLAGS "-mthumb-interwork"
 		append_var LDFLAGS "-mfloat-abi=soft"
 		append_var LDFLAGS "-Wl,-Map,map.txt"
@@ -4158,7 +4159,7 @@ POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 		append_var DEFINES "-DUNCACHED_PLUGINS"
 		append_var DEFINES "-DELF_NO_MEM_MANAGER"
 _mak_plugins='
-PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/ds/plugin.ld -mthumb-interwork -mfloat-abi=soft
+PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/ds/plugin.ld -mthumb -mthumb-interwork -mfloat-abi=soft
 '
 		;;
 	freebsd* | openbsd*)
