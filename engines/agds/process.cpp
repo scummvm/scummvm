@@ -132,7 +132,7 @@ void Process::run() {
 		case kExitCodeLoadScreenObject:
 			_engine->runObject(getExitArg1(), getExitArg2());
 			activate();
-			break;
+			continue;
 		case kExitCodeRunDialog:
 			_engine->runDialog(getExitArg1());
 			break;
@@ -149,11 +149,11 @@ void Process::run() {
 		case kExitCodeMouseAreaChange:
 			_engine->changeMouseArea(getExitIntArg1(), getExitIntArg2());
 			activate();
-			break;
+			continue;
 		case kExitCodeLoadInventoryObject:
 			_engine->inventory().add(_engine->loadObject(getExitArg1()));
 			activate();
-			break;
+			continue;
 		case kExitCodeCloseInventory:
 			_engine->inventory().enable(false);
 			updateWithCurrentMousePosition();
