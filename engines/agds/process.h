@@ -147,7 +147,7 @@ private:
 	void loadAnimation();
 	void setAnimationPosition();
 	void loadSample();
-	void playSound();
+	void addSampleToSoundGroup();
 	void playFilm();
 	void getSampleVolume();
 	void setSampleVolumeAndPan();

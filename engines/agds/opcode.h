@@ -231,7 +231,7 @@ enum Opcode {
 	kStub211						= 211,
 	kSetSampleVolumeAndPan			= 212,
 	kStub213						= 213,
-	kPlaySound						= 214,
+	kAddSampleToSoundGroup			= 214,
 	kStub215						= 215,
 	kStub216						= 216,
 	kStub217						= 217,

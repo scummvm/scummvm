@@ -830,7 +830,7 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 		uint unk0 = agds_a->readUint32LE();
 		uint unk1 = agds_a->readUint32LE();
 		debug("saved audio state: sample: %s, var: %s %u %u", sample.c_str(), phaseVar.c_str(), unk0, unk1);
-		playSound(sample, phaseVar);
+		playSound(Common::String(), sample, phaseVar); //fixme: double check
 	}
 
 	{
@@ -871,6 +871,10 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 }
 
 void AGDSEngine::reactivate(const Common::String &name) {
+	if (name.empty())
+		return;
+
+	debug("reactivate %s", name.c_str());
 	for(ProcessListType::iterator i = _processes.begin(); i != _processes.end(); ++i) {
 		Process &process = *i;
 		if (process.getName() == name) {
