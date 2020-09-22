@@ -493,6 +493,35 @@ void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int 
 	_framebuffer.copyRectToSurface(buf, pitch, x, y, w, h);
 }
 
+void OSystem_DS::dmaBlit(uint16 *dst, const uint dstPitch, const uint16 *src, const uint srcPitch,
+                         const uint w, const uint h) {
+	// The DS video RAM doesn't support 8-bit writes because Nintendo wanted
+	// to save a few pennies/euro cents on the hardware.
+
+	for (uint dy = 0; dy < h; dy += 2) {
+		const u16 *src1 = src;
+		src += (srcPitch >> 1);
+		DC_FlushRange(src1, w << 1);
+
+		const u16 *src2 = src;
+		src += (srcPitch >> 1);
+		DC_FlushRange(src2, w << 1);
+
+		u16 *dest1 = dst;
+		dst += (dstPitch >> 1);
+		DC_FlushRange(dest1, w << 1);
+
+		u16 *dest2 = dst;
+		dst += (dstPitch >> 1);
+		DC_FlushRange(dest2, w << 1);
+
+		dmaCopyHalfWordsAsynch(2, src1, dest1, w);
+		dmaCopyHalfWordsAsynch(3, src2, dest2, w);
+
+		while (dmaBusy(2) || dmaBusy(3));
+	}
+}
+
 void OSystem_DS::updateScreen() {
 	oamSet(&oamMain, 0, _cursorPos.x - _cursorHotX, _cursorPos.y - _cursorHotY, 0, 15, SpriteSize_64x64,
 	       SpriteColorFormat_Bmp, _cursorSprite, 0, false, !_cursorVisible, false, false, false);
@@ -500,44 +529,24 @@ void OSystem_DS::updateScreen() {
 
 	if (_isOverlayShown) {
 		u16 *back = (u16 *)_overlay.getPixels();
-		dmaCopyHalfWords(3, back, BG_GFX, 256 * 192 * 2);
-	} else if (!_graphicsEnable) {
-		return;
-	} else if (_graphicsMode == GFX_SWSCALE) {
+		dmaCopy(back, BG_GFX, 256 * 192 * 2);
+	} else if (_graphicsEnable) {
 		u16 *base = BG_GFX + 0x10000;
-		Rescale_320x256xPAL8_To_256x256x1555(
-			base,
-			(const u8 *)_framebuffer.getPixels(),
-			256,
-			_framebuffer.pitch,
-			BG_PALETTE,
-			_framebuffer.h );
-	} else {
-		// The DS video RAM doesn't support 8-bit writes because Nintendo wanted
-		// to save a few pennies/euro cents on the hardware.
-
-		u16 *bg = BG_GFX + 0x10000;
-		s32 stride = 512;
-
-		u16 *src = (u16 *)_framebuffer.getPixels();
-
-		for (int dy = 0; dy < _framebuffer.h; dy++) {
-			DC_FlushRange(src, _framebuffer.w << 1);
-
-			u16 *dest1 = bg + (dy * (stride >> 1));
-			DC_FlushRange(dest1, _framebuffer.w << 1);
+		if (_graphicsMode == GFX_SWSCALE) {
+			Rescale_320x256xPAL8_To_256x256x1555(
+				base,
+				(const u8 *)_framebuffer.getPixels(),
+				256,
+				_framebuffer.pitch,
+				BG_PALETTE,
+				_framebuffer.h );
+		} else {
+			dmaBlit(base, 512, (const u16 *)_framebuffer.getPixels(), _framebuffer.pitch,
+				_framebuffer.w, _framebuffer.h);
 
 #ifdef DISABLE_TEXT_CONSOLE
-			u16 *dest2 = (u16 *)BG_GFX_SUB + (dy << 8);
-			DC_FlushRange(dest2, _framebuffer.w << 1);
-
-			dmaCopyHalfWordsAsynch(2, src, dest2, _framebuffer.w);
+			dmaCopy(base, BG_GFX_SUB, 512 * 256);
 #endif
-			dmaCopyHalfWordsAsynch(3, src, dest1, _framebuffer.w);
-
-			while (dmaBusy(2) || dmaBusy(3));
-
-			src += _framebuffer.pitch >> 1;
 		}
 	}
 }

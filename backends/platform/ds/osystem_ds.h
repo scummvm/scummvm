@@ -58,7 +58,9 @@ protected:
 
 	void initGraphics();
 
-	Graphics::Surface *createTempFrameBuffer();
+	void dmaBlit(uint16 *dst, const uint dstPitch, const uint16 *src, const uint srcPitch,
+	             const uint w, const uint h);
+
 	bool _disableCursorPalette;
 
 	const Graphics::PixelFormat _pfCLUT8, _pfABGR1555;
