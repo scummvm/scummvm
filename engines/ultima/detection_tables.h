@@ -380,6 +380,21 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		0
 	},
 
+	// Crusader - No Regret - German V1.07NV
+	{
+		{
+			"regret",
+			"",
+			AD_ENTRY1s("eusecode.flx", "1824d9725de45a8b49f058c12c6cf5c3", 484445),
+			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GAME_CRUSADER_REG,
+		0
+	},
+
 	// Crusader - No Regret - Demo V1.08
 	{
 		{
