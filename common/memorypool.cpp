@@ -128,9 +128,11 @@ bool MemoryPool::isPointerInAnyPage(void *ptr) const {
 	return false;
 }
 
-// Technically not compliant C++ to compare unrelated pointers. In practice...
 bool MemoryPool::isPointerInPage(void *ptr, const Page &page) const {
-	return (ptr >= page.start) && (ptr < (char *)page.start + page.numChunks * _chunkSize);
+	uintptr ownBuffStart = (uintptr)page.start;
+	uintptr ownBuffEnd = ownBuffStart+(uintptr)(page.numChunks * _chunkSize);
+	uintptr candidateAddr = (uintptr)ptr;
+	return ownBuffStart <= candidateAddr && candidateAddr <= ownBuffEnd;
 }
 
 void MemoryPool::freeUnusedPages() {
