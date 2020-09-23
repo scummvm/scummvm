@@ -58,13 +58,8 @@ bool Dialog::tick() {
 		return false;
 
 	int dialog_var = _engine->getSystemVariable("dialog_var")->getInteger();
-	if (dialog_var > 0) {
-		_engine->getSystemVariable("dialog_var")->setInteger(-3);
+	if (dialog_var != 0)
 		return false;
-	} else if (dialog_var < 0) {
-		_engine->getSystemVariable("dialog_var")->setInteger(0);
-		return true;
-	}
 
 	uint n = _dialogScript.size();
 	if (_dialogScriptPos >= n)
