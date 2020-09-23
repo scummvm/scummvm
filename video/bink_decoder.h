@@ -73,6 +73,8 @@ public:
 	bool loadStream(Common::SeekableReadStream *stream);
 	void close();
 
+	Common::Rational getFrameRate();
+
 protected:
 	void readNextPacket();
 	bool supportsAudioTrackSwitching() const { return true; }
@@ -155,7 +157,6 @@ private:
 		/** Decode a video packet. */
 		void decodePacket(VideoFrame &frame);
 
-	protected:
 		Common::Rational getFrameRate() const { return _frameRate; }
 
 	private:

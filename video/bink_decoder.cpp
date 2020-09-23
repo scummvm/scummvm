@@ -332,6 +332,11 @@ BinkDecoder::BinkVideoTrack::~BinkVideoTrack() {
 	_surface.free();
 }
 
+Common::Rational BinkDecoder::getFrameRate() {
+	BinkVideoTrack *videoTrack = (BinkVideoTrack *)getTrack(0);
+
+	return videoTrack->getFrameRate();
+}
 void BinkDecoder::BinkVideoTrack::decodePacket(VideoFrame &frame) {
 	assert(frame.bits);
 
