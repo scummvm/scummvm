@@ -149,21 +149,21 @@ private:
 		BinkVideoTrack(uint32 width, uint32 height, const Graphics::PixelFormat &format, uint32 frameCount, const Common::Rational &frameRate, bool swapPlanes, bool hasAlpha, uint32 id);
 		~BinkVideoTrack();
 
-		uint16 getWidth() const { return _surface.w; }
-		uint16 getHeight() const { return _surface.h; }
-		Graphics::PixelFormat getPixelFormat() const { return _surface.format; }
-		int getCurFrame() const { return _curFrame; }
-		int getFrameCount() const { return _frameCount; }
-		const Graphics::Surface *decodeNextFrame() { return &_surface; }
-		bool isSeekable() const { return true; }
-		bool seek(const Audio::Timestamp &time) { return true; }
+		uint16 getWidth() const override { return _surface.w; }
+		uint16 getHeight() const  override{ return _surface.h; }
+		Graphics::PixelFormat getPixelFormat() const override { return _surface.format; }
+		int getCurFrame() const override { return _curFrame; }
+		int getFrameCount() const override { return _frameCount; }
+		const Graphics::Surface *decodeNextFrame() override { return &_surface; }
+		bool isSeekable() const  override{ return true; }
+		bool seek(const Audio::Timestamp &time) override { return true; }
 		bool rewind() override;
 		void setCurFrame(uint32 frame) { _curFrame = frame; }
 
 		/** Decode a video packet. */
 		void decodePacket(VideoFrame &frame);
 
-		Common::Rational getFrameRate() const { return _frameRate; }
+		Common::Rational getFrameRate() const override { return _frameRate; }
 
 	private:
 		/** A decoder state. */
