@@ -119,7 +119,7 @@ void MemoryPool::freeChunk(void *ptr) {
 	_next = ptr;
 }
 
-bool MemoryPool::isPointerInAnyPage(void *ptr) {
+bool MemoryPool::isPointerInAnyPage(void *ptr) const {
 	for (size_t i = 0; i < _pages.size(); ++i) {
 		if (isPointerInPage(ptr, _pages[i])) {
 			return true;
@@ -129,7 +129,7 @@ bool MemoryPool::isPointerInAnyPage(void *ptr) {
 }
 
 // Technically not compliant C++ to compare unrelated pointers. In practice...
-bool MemoryPool::isPointerInPage(void *ptr, const Page &page) {
+bool MemoryPool::isPointerInPage(void *ptr, const Page &page) const {
 	return (ptr >= page.start) && (ptr < (char *)page.start + page.numChunks * _chunkSize);
 }
 

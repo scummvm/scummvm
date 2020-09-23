@@ -64,8 +64,8 @@ protected:
 
 	void	allocPage();
 	void	addPageToPool(const Page &page);
-	bool	isPointerInPage(void *ptr, const Page &page);
-	bool	isPointerInAnyPage(void *ptr);
+	bool	isPointerInPage(void *ptr, const Page &page) const;
+	bool	isPointerInAnyPage(void *ptr) const;
 
 public:
 	/**
