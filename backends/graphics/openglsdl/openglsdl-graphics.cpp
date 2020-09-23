@@ -742,10 +742,11 @@ bool OpenGLSdlGraphicsManager::saveScreenshot(const Common::String &filename) co
 #endif
 	Graphics::Surface data;
 	data.init(width, height, lineSize, &pixels.front(), format);
+	data.flipVertical(Common::Rect(width, height));
 #ifdef USE_PNG
-	return Image::writePNG(out, data, true);
+	return Image::writePNG(out, data);
 #else
-	return Image::writeBMP(out, data, true);
+	return Image::writeBMP(out, data);
 #endif
 }
 

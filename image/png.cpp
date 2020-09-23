@@ -255,8 +255,7 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 #endif
 }
 
-// ResidualVM specific argument: bottomUp
-bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const bool bottomUp) {
+bool writePNG(Common::WriteStream &out, const Graphics::Surface &input) {
 #ifdef USE_PNG
 #ifdef SCUMM_LITTLE_ENDIAN
 	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 0, 8, 16, 0);
@@ -309,15 +308,8 @@ bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const bo
 
 	Common::Array<const uint8 *> rows;
 	rows.reserve(surface->h);
-// ResidualVM specific
-	if (bottomUp) {
-		for (uint y = surface->h; y-- > 0;) {
-			rows.push_back((const uint8 *)surface->getBasePtr(0, y));
-		}
-	} else {
-		for (uint y = 0; y < surface->h; ++y) {
-			rows.push_back((const uint8 *)surface->getBasePtr(0, y));
-		}
+	for (uint y = 0; y < surface->h; ++y) {
+		rows.push_back((const uint8 *)surface->getBasePtr(0, y));
 	}
 
 	png_set_rows(pngPtr, infoPtr, const_cast<uint8 **>(&rows.front()));

@@ -79,8 +79,7 @@ private:
 /**
  * Outputs a compressed PNG stream of the given input surface.
  */
-// ResidualVM specific argument: bottomUp
-bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const bool bottomUp = false);
+bool writePNG(Common::WriteStream &out, const Graphics::Surface &input);
 
 } // End of namespace Image
 
