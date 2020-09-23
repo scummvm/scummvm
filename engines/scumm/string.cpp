@@ -180,7 +180,7 @@ void ScummEngine_v6::drawBlastTexts() {
 
 				// Some localizations may override colors
 				// See credits in Chinese COMI
-				if (_game.id == GID_CMI &&	_language == Common::ZH_TWN &&
+				if (_game.id == GID_CMI && _language == Common::ZH_TWN &&
 				      c == '^' && (buf == _blastTextQueue[i].text + 1)) {
 					if (*buf == 'c') {
 						int color = buf[3] - '0' + 10 *(buf[2] - '0');
@@ -191,7 +191,7 @@ void ScummEngine_v6::drawBlastTexts() {
 					}
 				}
 
-				if (c != 0 && c != 0xFF && c != '\n') {
+				if (c != 0 && c != 0xFF && c != '\n' && c != _newLineCharacter) {
 					if (c & 0x80 && _useCJKMode) {
 						if (_language == Common::JA_JPN && !checkSJISCode(c)) {
 							c = 0x20; //not in S-JIS
@@ -1302,7 +1302,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 				num += (_game.version == 8) ? 4 : 2;
 			}
 		} else {
-			if ((chr != '@') || (_game.id == GID_CMI && _language == Common::ZH_TWN) ||
+			if ((chr != '@') || (_game.version >= 7 && is2ByteCharacter(_language, lastChr)) ||
 				(_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && _language == Common::JA_JPN) ||
 				(_game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN && checkSJISCode(lastChr))) {
 				*dst++ = chr;

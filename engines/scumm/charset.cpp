@@ -331,8 +331,11 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 	int code = (_vm->_game.heversion >= 80) ? 127 : 64;
 
 	while ((chr = text[pos++]) != 0) {
-		if (chr == '\n' || chr == '\r' || chr == _vm->_newLineCharacter)
+		if (_vm->_game.version == 7 && chr == _vm->_newLineCharacter)
+			continue;
+		else if (chr == '\n' || chr == '\r' || chr == _vm->_newLineCharacter)
 			break;
+			
 		if (_vm->_game.heversion >= 72) {
 			if (chr == code) {
 				chr = text[pos++];
@@ -488,7 +491,7 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 				if (_vm->_language == Common::KO_KOR || _vm->_language == Common::ZH_TWN) {
 					curw++;
 				}
-			} else {
+			} else if (chr != _vm->_newLineCharacter) {
 				curw += getCharWidth(chr);
 			}
 		} else {
