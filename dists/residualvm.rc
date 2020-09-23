@@ -26,6 +26,7 @@ scummremastered.zip    FILE    "gui/themes/scummremastered.zip"
 // ResidualVM specific START
 modern.zip             FILE    "gui/themes/modern.zip"
 
+#ifdef BUILTIN_RESOURCES
 #if PLUGIN_ENABLED_STATIC(GRIM)
 residualvm-grim-patch.lab       FILE    "dists/engine-data/residualvm-grim-patch.lab"
 residualvm-emi-patch.m4b        FILE    "dists/engine-data/residualvm-emi-patch.m4b"
@@ -65,6 +66,9 @@ kyra.dat               FILE    "dists/engine-data/kyra.dat"
 #endif
 #if PLUGIN_ENABLED_STATIC(LURE)
 lure.dat               FILE    "dists/engine-data/lure.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(MACVENTURE)
+macventure.dat         FILE    "dists/engine-data/macventure.dat"
 #endif
 #if PLUGIN_ENABLED_STATIC(MORTEVIELLE)
 mort.dat               FILE    "dists/engine-data/mort.dat"
@@ -152,8 +156,27 @@ shaders/stark_fade.vertex        FILE    "engines/stark/shaders/stark_fade.verte
 shaders/stark_shadow.fragment    FILE    "engines/stark/shaders/stark_shadow.fragment"
 shaders/stark_shadow.vertex      FILE    "engines/stark/shaders/stark_shadow.vertex"
 #endif
+#if PLUGIN_ENABLED_STATIC(WINTERMUTE)
+shaders/fade.fragment            FILE    "engines/wintermute/base/gfx/opengl/fade.fragment"
+shaders/fade.vertex              FILE    "engines/wintermute/base/gfx/opengl/fade.vertex"
+shaders/geometry.fragment        FILE    "engines/wintermute/base/gfx/opengl/geometry.fragment"
+shaders/geometry.vertex          FILE    "engines/wintermute/base/gfx/opengl/geometry.vertex"
+shaders/line.fragment            FILE    "engines/wintermute/base/gfx/opengl/line.fragment"
+shaders/line.vertex              FILE    "engines/wintermute/base/gfx/opengl/line.vertex"
+shaders/fade.fragment            FILE    "engines/wintermute/base/gfx/opengl/fade.fragment"
+shaders/fade.vertex              FILE    "engines/wintermute/base/gfx/opengl/fade.vertex"
+shaders/modelx.fragment          FILE    "engines/wintermute/base/gfx/opengl/modelx.fragment"
+shaders/modelx.vertex            FILE    "engines/wintermute/base/gfx/opengl/modelx.vertex"
+shaders/shadow_mask.fragment     FILE    "engines/wintermute/base/gfx/opengl/shadow_mask.fragment"
+shaders/shadow_mask.vertex       FILE    "engines/wintermute/base/gfx/opengl/shadow_mask.vertex"
+shaders/shadow_volume.fragment   FILE    "engines/wintermute/base/gfx/opengl/shadow_volume.fragment"
+shaders/shadow_volume.vertex     FILE    "engines/wintermute/base/gfx/opengl/shadow_volume.vertex"
+shaders/sprite.fragment          FILE    "engines/wintermute/base/gfx/opengl/sprite.fragment"
+shaders/sprite.vertex            FILE    "engines/wintermute/base/gfx/opengl/sprite.vertex"
+#endif
 #endif
 // ResidualVM specific END
+#endif
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION     SCUMMVM_VER_MAJOR,SCUMMVM_VER_MINOR,SCUMMVM_VER_PATCH,0
