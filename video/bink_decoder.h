@@ -74,8 +74,8 @@ public:
 	bool loadStream(Common::SeekableReadStream *stream);
 	void close();
 
-	// ResidualVM-specific:
 	Common::Rational getFrameRate();
+
 protected:
 	void readNextPacket();
 	bool supportsAudioTrackSwitching() const { return true; }
@@ -168,7 +168,6 @@ private:
 		/** Decode a video packet. */
 		void decodePacket(VideoFrame &frame);
 
-	public: // ResidualVM
 		Common::Rational getFrameRate() const { return _frameRate; }
 
 	private:

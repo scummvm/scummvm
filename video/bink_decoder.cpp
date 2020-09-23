@@ -356,7 +356,6 @@ private:
 	bool _isStereo;
 };
 
-// ResidualVM-specific function
 Common::Rational BinkDecoder::getFrameRate() {
 	BinkVideoTrack *videoTrack = (BinkVideoTrack *)getTrack(0);
 
