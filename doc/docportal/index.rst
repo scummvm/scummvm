@@ -9,7 +9,7 @@
       getting_started/windows
       getting_started/ios
       getting_started/android
-      getting_started/adding_games 
+       
    
 
 .. toctree::
