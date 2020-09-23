@@ -79,6 +79,8 @@ protected:
 	void readNextPacket();
 	bool supportsAudioTrackSwitching() const { return true; }
 	AudioTrack *getAudioTrack(int index);
+	bool seekIntern(const Audio::Timestamp &time);
+	uint32 findKeyFrame(uint32 frame) const;
 
 private:
 	static const int kAudioChannelsMax  = 2;
@@ -153,6 +155,10 @@ private:
 		int getCurFrame() const { return _curFrame; }
 		int getFrameCount() const { return _frameCount; }
 		const Graphics::Surface *decodeNextFrame() { return &_surface; }
+		bool isSeekable() const { return true; }
+		bool seek(const Audio::Timestamp &time) { return true; }
+		bool rewind() override;
+		void setCurFrame(uint32 frame) { _curFrame = frame; }
 
 		/** Decode a video packet. */
 		void decodePacket(VideoFrame &frame);
@@ -332,6 +338,11 @@ private:
 
 		/** Decode an audio packet. */
 		void decodePacket();
+
+		bool seek(const Audio::Timestamp &time);
+		bool isSeekable() const { return true; }
+		void skipSamples(const Audio::Timestamp &length);
+		int getRate();
 
 	protected:
 		Audio::AudioStream *getAudioStream() const;
