@@ -872,4 +872,10 @@ SmackerDecoder::SmackerVideoTrack *SmackerDecoder::createVideoTrack(uint32 width
 	return new SmackerVideoTrack(width, height, frameCount, frameRate, flags, signature);
 }
 
+Common::Rational SmackerDecoder::getFrameRate() const {
+	const SmackerVideoTrack *videoTrack = (const SmackerVideoTrack *)getTrack(0);
+
+	return videoTrack->getFrameRate();
+}
+
 } // End of namespace Video
