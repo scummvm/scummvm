@@ -332,9 +332,6 @@ BinkDecoder::BinkVideoTrack::~BinkVideoTrack() {
 	_surface.free();
 }
 
-// ResidualVM-specific class -- Duplicated from audio/decoders/quicktime.cpp
-// If the Bink seeking code ever makes it to ScummVM, move SilentAudioStream
-// out of quicktime.cpp so that it can be shared.
 /**
  * An AudioStream that just returns silent samples and runs infinitely.
  */
@@ -362,7 +359,6 @@ Common::Rational BinkDecoder::getFrameRate() {
 	return videoTrack->getFrameRate();
 }
 
-// ResidualVM-specific function
 bool BinkDecoder::seekIntern(const Audio::Timestamp &time) {
 	BinkVideoTrack *videoTrack = (BinkVideoTrack *)getTrack(0);
 
@@ -403,7 +399,6 @@ bool BinkDecoder::seekIntern(const Audio::Timestamp &time) {
 	return true;
 }
 
-// ResidualVM-specific function
 uint32 BinkDecoder::findKeyFrame(uint32 frame) const {
 	assert(frame < _frames.size());
 
@@ -416,12 +411,10 @@ uint32 BinkDecoder::findKeyFrame(uint32 frame) const {
 	return frame;
 }
 
-// ResidualVM-specific function
 int BinkDecoder::BinkAudioTrack::getRate() {
 	return _audioStream->getRate();
 }
 
-// ResidualVM-specific function
 void BinkDecoder::BinkAudioTrack::skipSamples(const Audio::Timestamp &length) {
 	int32 sampleCount = length.totalNumberOfFrames();
 
@@ -436,7 +429,6 @@ void BinkDecoder::BinkAudioTrack::skipSamples(const Audio::Timestamp &length) {
 	delete[] tempBuffer;
 }
 
-// ResidualVM-specific function
 bool BinkDecoder::BinkAudioTrack::seek(const Audio::Timestamp &time) {
 	// Don't window the output with the previous frame -- there is no output from the previous frame
 	_audioInfo->first = true;
@@ -458,7 +450,6 @@ bool BinkDecoder::BinkAudioTrack::seek(const Audio::Timestamp &time) {
 	return true;
 }
 
-// ResidualVM-specific function
 bool BinkDecoder::BinkVideoTrack::rewind() {
 	if (!VideoTrack::rewind()) {
 		return false;
