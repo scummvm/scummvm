@@ -39,11 +39,13 @@ Transferring game files to your device
 
 You will need to transfer all the required game data files to your device, into a folder accessible by the ScummVM app. 
 
-There are a few options:
+ScummVM has built-in Cloud functionality, which allows you to connect your Google Drive, OneDrive, Box or Dropbox account. For more information, see the :doc:`cloud_and_lan` page. 
+
+There are a few other options for transferring the game files:
+
  - Copying the files directly onto the microSD card, if your device has one.
  - USB transfer from a computer. To complete file transfer via USB cable, tap the **Charging this device via USB notification** when the device is connected. Select **Use USB for** and then **File Transfer**. An Android File Transfer window will open.   
- - Uploading the files to a cloud service such as Dropbox, and then downloading them to your device.
- - Downloading games such as freeware games or those from digital distributors such `GOG.com <gog.com>`_  or `Steam <steam.steampowered.com>`_ directly to the device.
+ - Downloading games such as freeware games or those from digital distributors such `GOG.com <gog.com>`_  or `Steam <steam.steampowered.com>`_ directly to your device.
 
 For more information on which files ScummVM requires, and how to add and play games, see `adding and playing games <adding_games>`_.
 
