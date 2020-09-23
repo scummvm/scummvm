@@ -107,17 +107,6 @@ In the upper left-hand corner, press the play button to start building ScummVM. 
    :class: with-shadow
 
 
-Transferring game files to your device
-*****************************************
-
-The easiest way to transfer files to your device is by using the Finder. In the Finder app on your Mac, navigate to **Locations** in the left pane, and click on the connected device. Click on **Files**, then drag and drop the folder containing the game files into the **ScummVM** folder. 
-
-.. image:: ../images/ios/ios_transfer_files.gif
-   :class: with-shadow
-
-Alternatively, upload game folders to your iCloud Drive, or to any other cloud sharing service. On your iOS device, use the Files app to copy these folders into the ScummVM folder located on the device. 
-
-For more information on which files ScummVM requires, and how to add and play games, see `adding and playing games <adding_games>`_.
 
 
 Jailbreak
@@ -130,8 +119,7 @@ Prerequisites
 
 - A jailbroken iOS device
 - A file manager app such as Filza on your iOS device
-- The openSSH app on your iOS device
-- An SFTP client such as Cyberduck, installed on your computer
+
 
 Installing ScummVM
 *******************
@@ -145,15 +133,22 @@ The .ipa package can be installed in the same way.
 You will need to restart your device for the install to complete. 
 
 Transferring game files to your device
-**************************************
+=======================================
+There are multiple ways to transfer game files to your iOS device. 
 
-Open Cyberduck on your computer. Click on **Open Connection** at the top left corner of the window. Select **SFTP (SSH File Transfer Protocol)** from the dropdown menu.  Next to **Server:**, type in the IP address of your iOS device. You can find this information on your iOS device by going to **Settings > Wi-Fi** and then tapping on the **i** symbol next to your Wi-Fi network name. The IP address is listed next to **IP Address**.
+ScummVM has built-in Cloud functionality, which allows you to connect your Google Drive, OneDrive, Box or Dropbox account. For more information, see the :doc:`cloud_and_lan` page. 
 
-Enter ``root`` as the Username, and unless you have changed it, ``Alpine`` as the Password. Click **Connect**. Once you are connected, you will be able to see all the files and directories on your connected device.
+.. note:
+ ScummVM's Cloud functionality does not currently support iCloud, however it is possible to upload game folders to your iCloud and then use the Files app on your iOS device to copy these folders into the local ScummVM folder.
 
-ScummVM on the iOS device can access the directory containing its Savegames, which in this case should be ``/var/mobile/Documents``. Drag and drop folders containing game files into this directory. 
+Another way to transfer files to your device is by using the Finder while your device is connected to your Mac. In the Finder app on your Mac, navigate to **Locations** in the left pane, and click on the connected device. Click on **Files**, then drag and drop the folder containing the game files into the **ScummVM** folder. 
 
-For more information on which files ScummVM requires, and how to add and play games, see :doc:`adding_games`.
+.. image:: ../images/ios/ios_transfer_files.gif
+   :class: with-shadow
+
+For more information on which files ScummVM requires, and how to add and play games, see `adding and playing games <adding_games>`_.
+
+
 
 
 
