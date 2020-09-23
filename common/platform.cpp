@@ -51,6 +51,8 @@ const PlatformDescription g_platforms[] = {
 	{ "segacd", "segacd", "sega", "SegaCD", kPlatformSegaCD },
 	{ "windows", "win", "win", "Windows", kPlatformWindows },
 	{ "playstation", "psx", "psx", "Sony PlayStation", kPlatformPSX },
+	{ "playstation2", "ps2", "ps2", "Sony PlayStation 2", kPlatformPS2 },
+	{ "xbox", "xbox", "xbox", "Microsoft Xbox", kPlatformXbox },
 	{ "cdi", "cdi", "cdi", "Philips CD-i", kPlatformCDi },
 	{ "ios", "ios", "ios", "Apple iOS", kPlatformIOS },
 	{ "os2", "os2", "os2", "OS/2", kPlatformOS2 },
