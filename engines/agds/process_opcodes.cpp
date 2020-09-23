@@ -261,7 +261,7 @@ void Process::hasGlobal() {
 void Process::postIncrementGlobal() {
 	Common::String name = popString();
 	int value = _engine->getGlobal(name);
-	debug("increment global %s %d", name.c_str(), value);
+	debug("post-increment global %s %d", name.c_str(), value);
 	push(value);
 	_engine->setGlobal(name, value + 1);
 }
@@ -269,7 +269,7 @@ void Process::postIncrementGlobal() {
 void Process::postDecrementGlobal() {
 	Common::String name = popString();
 	int value = _engine->getGlobal(name);
-	debug("decrement global %s %d", name.c_str(), value);
+	debug("post-decrement global %s %d", name.c_str(), value);
 	push(value);
 	_engine->setGlobal(name, value - 1);
 }
@@ -277,14 +277,14 @@ void Process::postDecrementGlobal() {
 void Process::incrementGlobal(int inc) {
 	Common::String name = popString();
 	int value = _engine->getGlobal(name);
-	debug("increment global %s %d", name.c_str(), value);
+	debug("increment global %s %d by %d", name.c_str(), value, inc);
 	_engine->setGlobal(name, value + inc);
 }
 
 void Process::decrementGlobal(int dec) {
 	Common::String name = popString();
 	int value = _engine->getGlobal(name);
-	debug("decrement global %s %d", name.c_str(), value);
+	debug("decrement global %s %d by %d", name.c_str(), value, dec);
 	_engine->setGlobal(name, value - dec);
 }
 
@@ -355,7 +355,7 @@ void Process::xorGlobalByTop() {
 void Process::appendToSharedStorage() {
 	Common::String value = popString();
 	int index = _engine->appendToSharedStorage(value);
-	debug("appendToSharedStorage %s -> %d", value.c_str(), index);
+	//debug("appendToSharedStorage %s -> %d", value.c_str(), index);
 	push(index);
 }
 
