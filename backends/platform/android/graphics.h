@@ -61,6 +61,7 @@ public:
 	virtual int16 getOverlayHeight() const override;
 	virtual int16 getOverlayWidth() const override;
 	virtual Graphics::PixelFormat getOverlayFormat() const override;
+	virtual bool isOverlayVisible() const override { return _show_overlay; }
 
 	virtual int16 getHeight() const override;
 	virtual int16 getWidth() const override;
