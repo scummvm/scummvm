@@ -131,7 +131,7 @@ void glopLight(GLContext *c, GLParam *p) {
 		assert(a == 180 || (a >= 0 && a <= 90));
 		l->spot_cutoff = a;
 		if (a != 180)
-			l->cos_spot_cutoff = (float)(cos(a * LOCAL_PI / 180.0));
+			l->cos_spot_cutoff = (float)(cos(a * (float)M_PI / 180.0));
 	}
 	break;
 	case TGL_CONSTANT_ATTENUATION:

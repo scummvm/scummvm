@@ -479,8 +479,8 @@ ProjectorMovie::ProjectorMovie(Myst3Engine *vm, uint16 id, Graphics::Surface *ba
 	_enabled = true;
 
 	for (uint i = 0; i < kBlurIterations; i++) {
-		_blurTableX[i] = (uint8)(sin(2 * LOCAL_PI * i / (float)kBlurIterations) * 256.0);
-		_blurTableY[i] = (uint8)(cos(2 * LOCAL_PI * i / (float)kBlurIterations) * 256.0);
+		_blurTableX[i] = (uint8)(sin(2 * (float)M_PI * i / (float)kBlurIterations) * 256.0);
+		_blurTableY[i] = (uint8)(cos(2 * (float)M_PI * i / (float)kBlurIterations) * 256.0);
 	}
 }
 

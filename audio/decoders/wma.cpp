@@ -514,7 +514,7 @@ WMACodec::HuffmanDecoder *WMACodec::initCoefHuffman(uint16 *&runTable, float *&l
 }
 
 void WMACodec::initLSPToCurve() {
-	float wdel = M_PI / _frameLen;
+	float wdel = (float)M_PI / _frameLen;
 
 	for (int i = 0; i < _frameLen; i++)
 		_lspCosTable[i] = 2.0f * cosf(wdel * i);

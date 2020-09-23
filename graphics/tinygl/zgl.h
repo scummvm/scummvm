@@ -33,6 +33,7 @@
 #include "common/textconsole.h"
 #include "common/array.h"
 #include "common/list.h"
+#include "common/scummsys.h"
 
 #include "graphics/tinygl/gl.h"
 #include "graphics/tinygl/zbuffer.h"
@@ -446,10 +447,6 @@ void glClose();
 #define dprintf fprintf
 #else
 #define dprintf
-#endif
-
-#ifndef LOCAL_PI
-#define LOCAL_PI    (3.14159265358979323846)
 #endif
 
 // glopXXX functions

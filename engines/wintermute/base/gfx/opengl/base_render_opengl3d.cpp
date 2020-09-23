@@ -128,7 +128,7 @@ void BaseRenderOpenGL3D::setLightParameters(int index, const Math::Vector3d &pos
 		glLightf(GL_LIGHT0 + index, GL_SPOT_EXPONENT, 0.0f);
 		// wme sets the phi angle to 1.0 (in radians)
 		// so either 180/pi or (180/pi)/2 should give the same result
-		glLightf(GL_LIGHT0 + index, GL_SPOT_CUTOFF, (180.0f / M_PI));
+		glLightf(GL_LIGHT0 + index, GL_SPOT_CUTOFF, (180.0f / (float)M_PI));
 	} else {
 		glLightf(GL_LIGHT0 + index, GL_SPOT_CUTOFF, 180.0f);
 	}

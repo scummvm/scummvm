@@ -552,8 +552,8 @@ FORCEINLINE void BlitImage::tglBlitRotoScale(int dstX, int dstY, int width, int 
 		clampHeight = destinationRectangle.height();
 	
 	uint32 invAngle = 360 - (rotation % 360);
-	float invCos = cos(invAngle * M_PI / 180.0f);
-	float invSin = sin(invAngle * M_PI / 180.0f);
+	float invCos = cos(invAngle * (float)M_PI / 180.0f);
+	float invSin = sin(invAngle * (float)M_PI / 180.0f);
 	
 	int icosx = (int)(invCos * (65536.0f * srcWidth / width));
 	int isinx = (int)(invSin * (65536.0f * srcWidth / width));
@@ -736,7 +736,7 @@ void tglBlitResetScissorRect(void) {
 } // end of namespace Internal
 
 Common::Point transformPoint(float x, float y, int rotation) {
-	float rotateRad = rotation * M_PI / 180.0f;
+	float rotateRad = rotation * (float)M_PI / 180.0f;
 	Common::Point newPoint;
 	newPoint.x = x * cos(rotateRad) - y * sin(rotateRad);
 	newPoint.y = x * sin(rotateRad) + y * cos(rotateRad);

@@ -112,8 +112,8 @@ void VisualExplodingImage::ExplosionUnit::setPosition(int x, int y) {
 void VisualExplodingImage::ExplosionUnit::setExplosionSettings(const Common::Point &center, const Common::Point &amplitude, float scale) {
 	_center = Math::Vector2d(center.x, center.y);
 
-	_speed.setX(cos(StarkRandomSource->getRandomNumber(M_PI * 100)) * (float)amplitude.x);
-	_speed.setY(sin(StarkRandomSource->getRandomNumber(M_PI * 100)) * (float)amplitude.y);
+	_speed.setX(cos(StarkRandomSource->getRandomNumber((float)M_PI * 100)) * (float)amplitude.x);
+	_speed.setY(sin(StarkRandomSource->getRandomNumber((float)M_PI * 100)) * (float)amplitude.y);
 
 	// WTF, ensuring all fragments go in the same direction?
 	float magnitude = _position.getDistanceTo(_speed);

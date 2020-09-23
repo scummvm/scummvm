@@ -88,7 +88,7 @@ void Scene::scrollCamera(const Common::Rect &viewport) {
 
 void Scene::computeClippingRect(float *xmin, float *xmax, float *ymin, float *ymax) {
 	float aspectRatio = _viewSize.width() / (float) _viewSize.height();
-	float xmaxValue = _nearClipPlane * tan(_fov * M_PI / 360.0);
+	float xmaxValue = _nearClipPlane * tan(_fov * (float)M_PI / 360.0);
 	float ymaxValue = xmaxValue / aspectRatio;
 
 	float xminValue = xmaxValue - 2 * xmaxValue * (_viewport.width() / (float) _viewSize.width());

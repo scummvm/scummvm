@@ -129,7 +129,7 @@ void glopRotate(GLContext *c, GLParam *p) {
 	float angle;
 	int dir_code;
 
-	angle = (float)(p[1].f * LOCAL_PI / 180.0);
+	angle = (float)(p[1].f * (float)M_PI / 180.0);
 	u[0] = p[2].f;
 	u[1] = p[3].f;
 	u[2] = p[4].f;

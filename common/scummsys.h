@@ -404,11 +404,6 @@
 	#else
 		#define STRINGBUFLEN 1024
 	#endif
-
-// ResidualVM specific:
-#ifndef LOCAL_PI
-#define LOCAL_PI 3.14159265358979323846
-#endif
 #endif
 
 #ifndef MAXPATHLEN

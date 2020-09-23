@@ -6,18 +6,16 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_rand
 #define FORBIDDEN_SYMBOL_EXCEPTION_srand
 
+#include "common/scummsys.h"
+
 #include "engines/grim/lua/lauxlib.h"
 #include "engines/grim/lua/lua.h"
 #include "engines/grim/lua/lualib.h"
 
 namespace Grim {
 
-#ifndef LOCAL_PI
-#define LOCAL_PI          (3.14159265358979323846)
-#endif
-
-#define FROMRAD(a) ((a) * (180.0 / LOCAL_PI))
-#define TORAD(a)    ((a) * (LOCAL_PI / 180.0))
+#define FROMRAD(a) ((a) * (180.0 / (float)M_PI))
+#define TORAD(a)    ((a) * ((float)M_PI / 180.0))
 
 static void math_abs() {
 	float d = luaL_check_number(1);
@@ -71,11 +69,11 @@ static void math_pow() {
 }
 
 static void math_deg() {
-	lua_pushnumber(luaL_check_number(1) * (180.0/LOCAL_PI));
+	lua_pushnumber(luaL_check_number(1) * (180.0 / (float)M_PI));
 }
 
 static void math_rad() {
-	lua_pushnumber(luaL_check_number(1) * (LOCAL_PI / 180.0));
+	lua_pushnumber(luaL_check_number(1) * ((float)M_PI / 180.0));
 }
 
 static void math_min() {
@@ -148,7 +146,7 @@ void lua_mathlibopen() {
 	lua_pushcfunction(math_pow);
 	lua_pushnumber(0);  // to get its tag
 	lua_settagmethod(lua_tag(lua_pop()), "pow");
-	lua_pushnumber((float)LOCAL_PI);
+	lua_pushnumber((float)M_PI);
 	lua_setglobal("PI");
 }
 

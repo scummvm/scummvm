@@ -114,7 +114,7 @@ void Location::onGameLoop() {
 			_floatPosition -= 1.0;
 		}
 
-		float floatOffset = sinf(_floatPosition * 2.0f * M_PI) * _floatAmplitude;
+		float floatOffset = sinf(_floatPosition * 2.0f * (float)M_PI) * _floatAmplitude;
 		StarkScene->setFloatOffset(floatOffset);
 	}
 
@@ -124,7 +124,7 @@ void Location::onGameLoop() {
 			_swayPosition -= 1.0;
 		}
 
-		float sway = sinf((_swayOffset + _swayPosition) * 2.0f * M_PI) * _swayAmplitude;
+		float sway = sinf((_swayOffset + _swayPosition) * 2.0f * (float)M_PI) * _swayAmplitude;
 		StarkScene->setSwayAngle(_swayAngle * sway);
 	}
 

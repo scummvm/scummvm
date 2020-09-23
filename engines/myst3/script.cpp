@@ -922,7 +922,7 @@ void Script::polarToRectSimple(Context &c, const Opcode &cmd)	{
 	debugC(kDebugScript, "Opcode %d: Polar to rect transformation for angle in var %d", cmd.op, cmd.args[5]);
 
 	int32 angleDeg = _vm->_state->getVar(cmd.args[5]);
-	float angleRad = 2 * LOCAL_PI / cmd.args[6] * angleDeg;
+	float angleRad = 2 * (float)M_PI / cmd.args[6] * angleDeg;
 	float angleSin = sin(angleRad);
 	float angleCos = cos(angleRad);
 
@@ -946,7 +946,7 @@ void Script::polarToRect(Context &c, const Opcode &cmd)	{
 	debugC(kDebugScript, "Opcode %d: Complex polar to rect transformation for angle in var %d", cmd.op, cmd.args[8]);
 
 	int32 angleDeg = _vm->_state->getVar(cmd.args[8]);
-	float angleRad = 2 * LOCAL_PI / cmd.args[9] * angleDeg;
+	float angleRad = 2 * (float)M_PI / cmd.args[9] * angleDeg;
 	float angleSin = sin(angleRad);
 	float angleCos = cos(angleRad);
 

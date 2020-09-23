@@ -541,12 +541,12 @@ void Set::Setup::setRoll(Math::Angle roll) {
 
 void Light::setUmbra(float angle) {
 	_umbraangle = angle;
-	_cosumbraangle = cosf(angle * M_PI / 180.0f);
+	_cosumbraangle = cosf(angle * (float)M_PI / 180.0f);
 }
 
 void Light::setPenumbra(float angle) {
 	_penumbraangle = angle;
-	_cospenumbraangle = cosf(angle * M_PI / 180.0f);
+	_cospenumbraangle = cosf(angle * (float)M_PI / 180.0f);
 }
 
 void Light::setIntensity(float intensity) {
@@ -1053,7 +1053,7 @@ void Set::calculateSoundPosition(const Math::Vector3d &pos, int minVol, int maxV
 	Math::Vector3d up(0, 0, 1);
 	Math::Vector3d right;
 	cameraVector.normalize();
-	float roll = -_currSetup->_roll * LOCAL_PI / 180.f;
+	float roll = -_currSetup->_roll * (float)M_PI / 180.f;
 	float cosr = cos(roll);
 	// Rotate the up vector by roll.
 	up = up * cosr + Math::Vector3d::crossProduct(cameraVector, up) * sin(roll) +

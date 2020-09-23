@@ -1816,7 +1816,7 @@ void _set::HackMakeCamera() {
 	float fpan;
 	int scrnPan;
 	if (ctheta != 0) {
-		fpan = (float)atan((float)stheta / (float)ctheta) / (2.0f * M_PI);
+		fpan = (float)atan((float)stheta / (float)ctheta) / (2.0f * (float)M_PI);
 		scrnPan = (int)(fpan * ONE);
 		// second & third quadrant (90-270 degrees) : pan += 180 (pan is -ve(90-180), (180-270)+ve)
 		if (ctheta < 0)
