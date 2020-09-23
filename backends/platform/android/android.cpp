@@ -342,6 +342,7 @@ void OSystem_Android::initBackend() {
 	// BUG: "transient" ConfMan settings get nuked by the options
 	// screen. Passing the savepath in this way makes it stick
 	// (via ConfMan.registerDefault)
+	// TODO is this right to save full path?
 	_savefileManager = new DefaultSaveFileManager(ConfMan.get("savepath"));
 	// TODO remove the debug message eventually
 	LOGD("Setting DefaultSaveFileManager path to: %s", ConfMan.get("savepath").c_str());
