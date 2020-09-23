@@ -106,6 +106,7 @@ public:
 	 * Keymaps with the global type are always enabled
 	 */
 	void setEnabledKeymapType(Keymap::KeymapType type);
+	Keymap::KeymapType enabledKeymapType() const { return _enabledKeymapType; }
 
 	/**
 	 * Enable/disable the keymapper
@@ -157,6 +158,27 @@ private:
 
 	void hardcodedEventMapping(Event ev);
 	void resetInputState();
+};
+
+/**
+ * RAII helper to temporarily enable a keymap type
+ */
+class KeymapTypeEnabler {
+public:
+	KeymapTypeEnabler(Keymapper *keymapper, Keymap::KeymapType keymapType) :
+			_keymapper(keymapper) {
+		assert(keymapper);
+		_previousKeymapType = keymapper->enabledKeymapType();
+		keymapper->setEnabledKeymapType(keymapType);
+	}
+
+	~KeymapTypeEnabler() {
+		_keymapper->setEnabledKeymapType(_previousKeymapType);
+	}
+
+private:
+	Keymapper *_keymapper;
+	Keymap::KeymapType _previousKeymapType;
 };
 
 class DelayedEventSource : public EventSource {

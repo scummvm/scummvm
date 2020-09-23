@@ -26,6 +26,8 @@
 
 #include "backends/vkeybd/virtual-keyboard.h"
 
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/keymap.h"
 #include "backends/vkeybd/virtual-keyboard-gui.h"
 #include "backends/vkeybd/virtual-keyboard-parser.h"
 #include "backends/vkeybd/keycode-descriptions.h"
@@ -230,7 +232,11 @@ void VirtualKeyboard::show() {
 	}
 
 	switchMode(_initialMode);
-	_kbdGUI->run();
+
+	{
+		KeymapTypeEnabler guiKeymap(_system->getEventManager()->getKeymapper(), Keymap::kKeymapTypeGui);
+		_kbdGUI->run();
+	}
 
 	if (_submitKeys) {
 		EventManager *eventMan = _system->getEventManager();

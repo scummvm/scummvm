@@ -29,6 +29,25 @@ namespace Graphics {
 
 // TODO: YUV to RGB conversion function
 
+// Function to blit a rect
+void copyBlit(byte *dst, const byte *src,
+               const uint dstPitch, const uint srcPitch,
+               const uint w, const uint h,
+               const uint bytesPerPixel) {
+	if (dst == src)
+		return;
+
+	if (dstPitch == srcPitch && ((w * bytesPerPixel) == dstPitch)) {
+		memcpy(dst, src, dstPitch * h);
+	} else {
+		for (uint i = 0; i < h; ++i) {
+			memcpy(dst, src, w * bytesPerPixel);
+			dst += dstPitch;
+			src += srcPitch;
+		}
+	}
+}
+
 namespace {
 
 template<typename SrcColor, typename DstColor, bool backward>
@@ -111,18 +130,7 @@ bool crossBlit(byte *dst, const byte *src,
 
 	// Don't perform unnecessary conversion
 	if (srcFmt == dstFmt) {
-		if (dst != src) {
-			if (dstPitch == srcPitch && ((w * dstFmt.bytesPerPixel) == dstPitch)) {
-				memcpy(dst, src, dstPitch * h);
-			} else {
-				for (uint i = 0; i < h; ++i) {
-					memcpy(dst, src, w * dstFmt.bytesPerPixel);
-					dst += dstPitch;
-					src += srcPitch;
-				}
-			}
-		}
-
+		copyBlit(dst, src, dstPitch, srcPitch, w, h, dstFmt.bytesPerPixel);
 		return true;
 	}
 

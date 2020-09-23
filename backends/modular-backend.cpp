@@ -219,6 +219,10 @@ void ModularGraphicsBackend::hideOverlay() {
 	_graphicsManager->hideOverlay();
 }
 
+bool ModularGraphicsBackend::isOverlayVisible() const {
+	return _graphicsManager->isOverlayVisible();
+}
+
 Graphics::PixelFormat ModularGraphicsBackend::getOverlayFormat() const {
 	return _graphicsManager->getOverlayFormat();
 }

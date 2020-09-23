@@ -106,6 +106,7 @@ public:
 
 	virtual void showOverlay() override final;
 	virtual void hideOverlay() override final;
+	virtual bool isOverlayVisible() const override final;
 	virtual Graphics::PixelFormat getOverlayFormat() const override final;
 	virtual void clearOverlay() override final;
 	virtual void grabOverlay(void *buf, int pitch) override final;

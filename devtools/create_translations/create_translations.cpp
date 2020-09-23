@@ -122,6 +122,12 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
+	if (!numLangs) {
+		fprintf(stderr, "ERROR: No valid translation files\n");
+		fprintf(stderr, "usage: create_translations lang1.po [lang2.po ...]\n");
+		return -1;
+	}
+
 	for (int i = 0; i < numLangs; i++) {
 		if (!translations[i]->useUTF8()) {
 			fprintf(stderr, "ERROR: Po Language file for: \"%s\", named as \"%s\" is not encoded in UTF-8\n", translations[i]->languageName(), translations[i]->language());

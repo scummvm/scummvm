@@ -67,6 +67,8 @@ struct ExtraGuiOption {
 
 typedef Common::Array<ExtraGuiOption> ExtraGuiOptions;
 
+enum { kSavegameFilePattern = -99 };
+
 #define EXTENDED_SAVE_VERSION 4
 
 struct ExtendedSavegameHeader {
@@ -244,7 +246,8 @@ public:
 	 * @return			maximum save slot number supported
 	 */
 	virtual int getMaximumSaveSlot() const {
-		return 0;
+		// For games using the new save format, assume 99 slots by default
+		return hasFeature(kSavesUseExtendedFormat) ? 99 : 0;
 	}
 
 	/**
@@ -273,19 +276,23 @@ public:
 	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 
 	/**
-	 * Returns name of the save file for given slot and optional target.
+	 * Returns name of the save file for given slot and optional target,
+	 * or a pattern for matching filenames against
 	 *
-	 * @param saveGameIdx	index of the save
+	 * @param saveGameIdx	index of the save, or kSavegameFilePattern
+	 *						for returning a filename pattern
 	 * @param target		game target. If omitted, then the engine id is used
 	 */
-	virtual const char *getSavegameFile(int saveGameIdx, const char *target = nullptr) const;
+	virtual Common::String getSavegameFile(int saveGameIdx, const char *target = nullptr) const;
 
 	/**
 	 * Returns pattern for save files.
 	 *
 	 * @param target		game target. If omitted, then the engine id is used
 	 */
-	virtual const char *getSavegamePattern(const char *target = nullptr) const;
+	Common::String getSavegameFilePattern(const char *target = nullptr) const {
+		return getSavegameFile(kSavegameFilePattern, target);
+	}
 
 	/**
 	 * Return the keymap used by the target.

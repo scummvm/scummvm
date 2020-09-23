@@ -37,20 +37,16 @@
 #include "graphics/managed_surface.h"
 #include "graphics/thumbnail.h"
 
-const char *MetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
-	static char buffer[200];
-
-	snprintf(buffer, sizeof(buffer), "%s.s%02d", target == nullptr ? getEngineId() : target, saveGameIdx);
-
-	return buffer;
-}
-
-const char *MetaEngine::getSavegamePattern(const char *target) const {
-	static char buffer[200];
-
-	snprintf(buffer, sizeof(buffer), "%s.s##", target == nullptr ? getEngineId() : target);
-
-	return buffer;
+Common::String MetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
+	if (saveGameIdx == kSavegameFilePattern) {
+		// Pattern requested
+		const char *pattern = hasFeature(kSavesUseExtendedFormat) ? "%s.###" : "%s.s##";
+		return Common::String::format(pattern, target == nullptr ? getEngineId() : target);
+	} else {
+		// Specific filename requested
+		const char *pattern = hasFeature(kSavesUseExtendedFormat) ? "%s.%03d" : "%s.s%02d";
+		return Common::String::format(pattern, target == nullptr ? getEngineId() : target, saveGameIdx);
+	}
 }
 
 Common::KeymapArray MetaEngine::initKeymaps(const char *target) const {
@@ -274,7 +270,7 @@ SaveStateList MetaEngine::listSaves(const char *target) const {
 
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
-	Common::String pattern(getSavegamePattern(target));
+	Common::String pattern(getSavegameFilePattern(target));
 
 	filenames = saveFileMan->listSavefiles(pattern);
 

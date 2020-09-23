@@ -84,6 +84,7 @@ public:
 	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override;
 	int16 getOverlayWidth() const override;
 	int16 getOverlayHeight() const override;
+	virtual bool isOverlayVisible() const override { return _overlayVisible; }
 
 	/* Render the passed Surfaces besides the game texture.
 	 * This is used for widescreen support in the Grim engine.

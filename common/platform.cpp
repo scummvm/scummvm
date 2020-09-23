@@ -59,6 +59,7 @@ const PlatformDescription g_platforms[] = {
 	{ "os2", "os2", "os2", "OS/2", kPlatformOS2 },
 	{ "beos", "beos", "beos", "BeOS", kPlatformBeOS },
 	{ "ppc", "ppc", "ppc", "PocketPC", kPlatformPocketPC },
+	{ "megadrive", "genesis", "md", "Mega Drive/Genesis", kPlatformMegaDrive },
 
 	{ nullptr, nullptr, nullptr, "Default", kPlatformUnknown }
 };

@@ -28,6 +28,7 @@
 #include "common/tokenizer.h"
 #include "common/translation.h"
 
+#include "graphics/conversion.h"
 #include "graphics/cursorman.h"
 #include "graphics/fontman.h"
 #include "graphics/surface.h"
@@ -224,7 +225,11 @@ ThemeEngine::ThemeEngine(Common::String id, GraphicsMode mode) :
 
 	_cursorHotspotX = _cursorHotspotY = 0;
 	_cursorWidth = _cursorHeight = 0;
+#ifndef USE_RGB_COLOR
+	_cursorFormat = Graphics::PixelFormat::createFormatCLUT8();
+	_cursorTransparent = 255;
 	_cursorPalSize = 0;
+#endif
 
 	// We prefer files in archive bundles over the common search paths.
 	_themeFiles.add("default", &SearchMan, 0, false);
@@ -398,8 +403,10 @@ void ThemeEngine::refresh() {
 		_system->showOverlay();
 
 		if (_useCursor) {
+#ifndef USE_RGB_COLOR
 			CursorMan.replaceCursorPalette(_cursorPal, 0, _cursorPalSize);
-			CursorMan.replaceCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, true);
+#endif
+			CursorMan.replaceCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, _cursorTransparent, true, &_cursorFormat);
 		}
 	}
 }
@@ -518,9 +525,22 @@ bool ThemeEngine::addTextData(const Common::String &drawDataId, TextData textId,
 	return true;
 }
 
-bool ThemeEngine::addFont(TextData textId, const Common::String &file, const Common::String &scalableFile, const int pointsize) {
+bool ThemeEngine::addFont(TextData textId, const Common::String &language, const Common::String &file, const Common::String &scalableFile, const int pointsize) {
 	if (textId == -1)
 		return false;
+
+	if (!language.empty() && !language.equals("*")) {
+#ifdef USE_TRANSLATION
+		Common::String cl = TransMan.getCurrentLanguage();
+		if (!cl.matchString(language, true))
+			return true;	// Skip
+
+		if (_texts[textId] != nullptr)	// We already loaded something
+			return true;
+#else
+		return true;	// Safely ignore
+#endif
+	}
 
 	if (_texts[textId] != nullptr)
 		delete _texts[textId];
@@ -1481,19 +1501,10 @@ void ThemeEngine::applyScreenShading(ShadingStyle style) {
 }
 
 bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int hotspotY) {
-	if (!_system->hasFeature(OSystem::kFeatureCursorPalette))
-		return true;
-
 	// Try to locate the specified file among all loaded bitmaps
 	const Graphics::Surface *cursor = _bitmaps[filename];
 	if (!cursor)
 		return false;
-
-#ifdef USE_RGB_COLOR
-	_cursorFormat.bytesPerPixel = 1;
-	_cursorFormat.rLoss = _cursorFormat.gLoss = _cursorFormat.bLoss = _cursorFormat.aLoss = 8;
-	_cursorFormat.rShift = _cursorFormat.gShift = _cursorFormat.bShift = _cursorFormat.aShift = 0;
-#endif
 
 	// Set up the cursor parameters
 	_cursorHotspotX = hotspotX;
@@ -1501,6 +1512,23 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 
 	_cursorWidth = cursor->w;
 	_cursorHeight = cursor->h;
+
+#ifdef USE_RGB_COLOR
+	_cursorFormat = cursor->format;
+	_cursorTransparent = _cursorFormat.RGBToColor(0xFF, 0, 0xFF);
+
+	// Allocate a new buffer for the cursor
+	delete[] _cursor;
+	_cursor = new byte[_cursorWidth * _cursorHeight * _cursorFormat.bytesPerPixel];
+	assert(_cursor);
+	Graphics::copyBlit(_cursor, (const byte *)cursor->getPixels(),
+	                   _cursorWidth * _cursorFormat.bytesPerPixel, cursor->pitch,
+	                   _cursorWidth, _cursorHeight, _cursorFormat.bytesPerPixel);
+
+	_useCursor = true;
+#else
+	if (!_system->hasFeature(OSystem::kFeatureCursorPalette))
+		return true;
 
 	// Allocate a new buffer for the cursor
 	delete[] _cursor;
@@ -1559,6 +1587,7 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 
 	_useCursor = true;
 	_cursorPalSize = colorsFound;
+#endif
 
 	return true;
 }
@@ -2008,15 +2037,19 @@ Common::String ThemeEngine::getThemeId(const Common::String &filename) {
 
 void ThemeEngine::showCursor() {
 	if (_useCursor) {
+#ifndef USE_RGB_COLOR
 		CursorMan.pushCursorPalette(_cursorPal, 0, _cursorPalSize);
-		CursorMan.pushCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, true);
+#endif
+		CursorMan.pushCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, _cursorTransparent, true, &_cursorFormat);
 		CursorMan.showMouse(true);
 	}
 }
 
 void ThemeEngine::hideCursor() {
 	if (_useCursor) {
+#ifndef USE_RGB_COLOR
 		CursorMan.popCursorPalette();
+#endif
 		CursorMan.popCursor();
 	}
 }

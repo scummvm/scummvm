@@ -116,15 +116,20 @@ String MacResManager::computeResForkMD5AsString(uint32 length) const {
 }
 
 bool MacResManager::open(const String &fileName) {
+	return open(fileName, SearchMan);
+}
+
+bool MacResManager::open(const String &fileName, Archive &archive) {
 	close();
 
 #ifdef MACOSX
 	// Check the actual fork on a Mac computer
-	String fullPath = ConfMan.get("path") + "/" + fileName + "/..namedfork/rsrc";
-	FSNode resFsNode = FSNode(fullPath);
-	if (resFsNode.exists()) {
+	const ArchiveMemberPtr archiveMember = archive.getMember(fileName);
+	const Common::FSNode *plainFsNode = dynamic_cast<const Common::FSNode *>(archiveMember.get());
+	if (plainFsNode) {
+		String fullPath = plainFsNode->getPath() + "/..namedfork/rsrc";
+		FSNode resFsNode = FSNode(fullPath);
 		SeekableReadStream *macResForkRawStream = resFsNode.createReadStream();
-
 		if (macResForkRawStream && loadFromRawFork(*macResForkRawStream)) {
 			_baseFileName = fileName;
 			return true;
@@ -134,111 +139,37 @@ bool MacResManager::open(const String &fileName) {
 	}
 #endif
 
-	File *file = new File();
-
 	// Prefer standalone files first, starting with raw forks
-	if (file->open(fileName + ".rsrc") && loadFromRawFork(*file)) {
+	SeekableReadStream *stream = archive.createReadStreamForMember(fileName + ".rsrc");
+	if (stream && loadFromRawFork(*stream)) {
 		_baseFileName = fileName;
 		return true;
 	}
-	file->close();
+	delete stream;
 
 	// Then try for AppleDouble using Apple's naming
-	if (file->open(constructAppleDoubleName(fileName)) && loadFromAppleDouble(*file)) {
+	stream = archive.createReadStreamForMember(constructAppleDoubleName(fileName));
+	if (stream && loadFromAppleDouble(*stream)) {
 		_baseFileName = fileName;
 		return true;
 	}
-	file->close();
+	delete stream;
 
 	// Check .bin for MacBinary next
-	if (file->open(fileName + ".bin") && loadFromMacBinary(*file)) {
+	stream = archive.createReadStreamForMember(fileName + ".bin");
+	if (stream && loadFromMacBinary(*stream)) {
 		_baseFileName = fileName;
 		return true;
 	}
-	file->close();
+	delete stream;
 
 	// As a last resort, see if just the data fork exists
-	if (file->open(fileName)) {
+	stream = archive.createReadStreamForMember(fileName);
+	if (stream) {
 		_baseFileName = fileName;
 
 		// Maybe file is in MacBinary but without .bin extension?
 		// Check it here
-		if (isMacBinary(*file)) {
-			file->seek(0);
-			if (loadFromMacBinary(*file))
-				return true;
-		}
-
-		file->seek(0);
-		_stream = file;
-		return true;
-	}
-
-	delete file;
-
-	// The file doesn't exist
-	return false;
-}
-
-bool MacResManager::open(const FSNode &path, const String &fileName) {
-	close();
-
-#ifdef MACOSX
-	// Check the actual fork on a Mac computer
-	String fullPath = path.getPath() + "/" + fileName + "/..namedfork/rsrc";
-	FSNode resFsNode = FSNode(fullPath);
-	if (resFsNode.exists()) {
-		SeekableReadStream *macResForkRawStream = resFsNode.createReadStream();
-
-		if (macResForkRawStream && loadFromRawFork(*macResForkRawStream)) {
-			_baseFileName = fileName;
-			return true;
-		}
-
-		delete macResForkRawStream;
-	}
-#endif
-
-	// Prefer standalone files first, starting with raw forks
-	FSNode fsNode = path.getChild(fileName + ".rsrc");
-	if (fsNode.exists() && !fsNode.isDirectory()) {
-		SeekableReadStream *stream = fsNode.createReadStream();
-		if (loadFromRawFork(*stream)) {
-			_baseFileName = fileName;
-			return true;
-		}
-		delete stream;
-	}
-
-	// Then try for AppleDouble using Apple's naming
-	fsNode = path.getChild(constructAppleDoubleName(fileName));
-	if (fsNode.exists() && !fsNode.isDirectory()) {
-		SeekableReadStream *stream = fsNode.createReadStream();
-		if (loadFromAppleDouble(*stream)) {
-			_baseFileName = fileName;
-			return true;
-		}
-		delete stream;
-	}
-
-	// Check .bin for MacBinary next
-	fsNode = path.getChild(fileName + ".bin");
-	if (fsNode.exists() && !fsNode.isDirectory()) {
-		SeekableReadStream *stream = fsNode.createReadStream();
-		if (loadFromMacBinary(*stream)) {
-			_baseFileName = fileName;
-			return true;
-		}
-		delete stream;
-	}
-
-	// As a last resort, see if just the data fork exists
-	fsNode = path.getChild(fileName);
-	if (fsNode.exists() && !fsNode.isDirectory()) {
-		SeekableReadStream *stream = fsNode.createReadStream();
-		_baseFileName = fileName;
-
-		// FIXME: Is this really needed?
 		if (isMacBinary(*stream)) {
 			stream->seek(0);
 			if (loadFromMacBinary(*stream))

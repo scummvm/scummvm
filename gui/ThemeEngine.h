@@ -37,7 +37,7 @@
 #include "graphics/pixelformat.h"
 
 
-#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.38"
+#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.39"
 
 class OSystem;
 
@@ -513,11 +513,12 @@ public:
 	 * filename.
 	 *
 	 * @param textId            Identifier name for the font.
+	 * @param language          Wildcard for the language(s) to use.
 	 * @param file              Filename of the non-scalable font version.
 	 * @param scalableFile      Filename of the scalable version. (Optional)
 	 * @param pointsize         Point size for the scalable font. (Optional)
 	 */
-	bool addFont(TextData textId, const Common::String &file, const Common::String &scalableFile, const int pointsize);
+	bool addFont(TextData textId, const Common::String &language, const Common::String &file, const Common::String &scalableFile, const int pointsize);
 
 	/**
 	 * Interface for the ThemeParser class: adds a text color value.
@@ -743,9 +744,7 @@ protected:
 	ImagesMap _bitmaps;
 	AImagesMap _abitmaps;
 	Graphics::PixelFormat _overlayFormat;
-#ifdef USE_RGB_COLOR
 	Graphics::PixelFormat _cursorFormat;
-#endif
 
 	/** List of all the dirty screens that must be blitted to the overlay. */
 	Common::List<Common::Rect> _dirtyScreen;
@@ -762,13 +761,16 @@ protected:
 
 	bool _useCursor;
 	int _cursorHotspotX, _cursorHotspotY;
+	uint32 _cursorTransparent;
+	byte *_cursor;
+	uint _cursorWidth, _cursorHeight;
+#ifndef USE_RGB_COLOR
 	enum {
 		MAX_CURS_COLORS = 255
 	};
-	byte *_cursor;
-	uint _cursorWidth, _cursorHeight;
 	byte _cursorPal[3 * MAX_CURS_COLORS];
 	byte _cursorPalSize;
+#endif
 
 	Common::Rect _clip;
 };

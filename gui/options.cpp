@@ -2459,12 +2459,12 @@ void GlobalOptionsDialog::apply() {
 			else {
 				ttsMan->setLanguage(newLang);
 			}
+			_ttsVoiceSelectionPopUp->setSelected(0);
 		}
 #else
 		ttsMan->setLanguage("en");
 #endif // USE_TRANSLATION
 
-		_ttsVoiceSelectionPopUp->setSelected(0);
 		int volume = (ConfMan.getInt("speech_volume", "residualvm") * 100) / 256;
 		if (ConfMan.hasKey("mute", "residualvm") && ConfMan.getBool("mute", "residualvm"))
 			volume = 0;
@@ -2914,7 +2914,7 @@ void GlobalOptionsDialog::setupCloudTab() {
 		uint64 usedSpace = CloudMan.getStorageUsedSpace(_selectedStorageIndex);
 		Common::String usedSpaceNumber, usedSpaceUnits;
 		usedSpaceNumber = Common::getHumanReadableBytes(usedSpace, usedSpaceUnits);
-		_storageUsedSpace->setLabel(Common::U32String::format(Common::U32String("%s %S"), usedSpaceNumber.c_str(), _(usedSpaceUnits).c_str()));
+		_storageUsedSpace->setLabel(Common::U32String::format("%s %S", usedSpaceNumber.c_str(), _(usedSpaceUnits).c_str()));
 		_storageUsedSpace->setVisible(shownConnectedInfo);
 	}
 	if (_storageSyncHint) {
