@@ -65,7 +65,7 @@ protected:
 	void	allocPage();
 	void	addPageToPool(const Page &page);
 	bool	isPointerInPage(void *ptr, const Page &page) const;
-	bool	isPointerInAnyPage(void *ptr) const;
+	virtual bool isPointerInAnyPage(void *ptr) const;
 
 public:
 	/**
@@ -124,6 +124,20 @@ public:
 		// Insert some static storage
 		Page internalPage = { _storage, NUM_INTERNAL_CHUNKS };
 		addPageToPool(internalPage);
+	}
+
+	bool isPointerInAnyPage(void *ptr) const override {
+		if (isPointerInInternalStorage(ptr))
+			return true;
+		return MemoryPool::isPointerInAnyPage(ptr);
+	}
+
+private:
+	bool isPointerInInternalStorage(void *ptr) const {
+		uintptr ownBuffStart = (uintptr)_storage;
+		uintptr ownBuffEnd = ownBuffStart + (uintptr)(NUM_INTERNAL_CHUNKS * REAL_CHUNK_SIZE);
+		uintptr candidateAddr = (uintptr)ptr;
+		return ownBuffStart <= candidateAddr && candidateAddr <= ownBuffEnd;
 	}
 };
 
