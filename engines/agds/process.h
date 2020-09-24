@@ -295,6 +295,7 @@ private:
 	BINARY_OP(sub, -)
 	BINARY_OP(mul, *)
 	BINARY_OP(div, /)
+	BINARY_OP(mod, %)
 	BINARY_OP(bitAnd, &)
 	BINARY_OP(bitOr, |)
 	BINARY_OP(bitXor, ^)

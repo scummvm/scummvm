@@ -51,7 +51,7 @@ enum Opcode {
 	kSub							= 29,
 	kMul							= 30,
 	kDiv							= 31,
-	kStub32							= 32,
+	kMod							= 32,
 	kAnd							= 33,
 	kOr								= 34,
 	kXor							= 35,
