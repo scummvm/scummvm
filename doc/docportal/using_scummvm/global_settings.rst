@@ -74,18 +74,18 @@ For more information including comprehensive explanation of the audio settings, 
 
 ,,,,,,,,,,,,,,,,
 
-**Music device**
-	The method ScummVM uses to output MIDI music. 
+**Preferred device**
+	Specifies the device ScummVM uses to output audio. When set to <default>, ScummVM will automatically choose the most appropriate option for the played game. If set to an MT-32 or a MIDI device, or if ScummVM chooses one of these automatically, the settings on the MT-32 or MIDI tabs also apply.
 
 	*music_driver* (string)
 
 **AdLib Emulator**
-	The emulator used by ScummVM to generate the music when the AdLib music driver is selected. 
+	Chooses which emulator is used by ScummVM when the AdLib emulator is chosen as the preferred device.
 
 	*opl_driver* (string)
 
 **Text and Speech**
-	For games with digitized speech, this setting allows the user to decide whether to play the game with speech and without any subtitles, or with subtitles displaying the words spoken in the digitized speech but without the speech, or with both.
+	For games with digitized speech, this setting allows the user to decide whether to play the game with speech only, subtitles only, or both. 
 
 	*speech_mute* (boolean)
 
@@ -131,28 +131,28 @@ Use the volume tab to set the relative volumes for various sounds.
 _`MIDI tab`
 ----------------
 
-Use the MIDI tab to change settings about the MIDI music.
+Use the MIDI tab to change the settings of General MIDI devices.
 
 ,,,,,,,,,,,,,
 
 **GM Device**
-	Choose which software synthesizer (general midi device) to use to play midi music. 
+	Specifies a preferred General MIDI (GM) device, which ScummVM uses whenever General MIDI playback is required.   
 
 	*gm_device* 
 
 **Soundfont**
-	Some midi devices require you to provide a soundfont, which contains samples of instruments for the device to play back. This setting allows you to choose a soundfont. 
+	Specifies the path to a soundfont file, if this is required by the GM device. 
 
 	*soundfont* (string - path)
 
 
 **Mixed AdLib/MIDI mode**
-	Some games contain sound effects that are exclusive to the AdLib soundtrack. For these games, use this mode to combine MIDI music with AdLib sound effects.
+	Combines MIDI music with AdLib sound effects. 
 
 	*multi_midi* (boolean)
 
 **MIDI gain**
-	Adjusts the relative volume of the general MIDI music. This is only supported by some music devices.
+	Adjusts the relative volume of the MIDI music. This is only supported by some music devices.
 	 
 	*midi_gain* (number)
 
@@ -224,7 +224,7 @@ Depth
 	*fluidsynth_chorus_depth* (number)
 
 Type
-	++Find reference for this
+	Specifies the chorus modulation waveform type. 
 
 	*fluidsynth_chorus_waveform* (string)
 
@@ -241,16 +241,19 @@ Interpolation
 
 _`MT-32 tab`
 ---------------
+Use the MT-32 tab to change the settings of MT-32 devices.
+
+,,,,,,,,,,,,,
 
 MT-32 Device
-	++Clarify? Would an external MIDI synthesizer listed below show up here??
+	Specifies a preferred MT-32 device, which ScummVM uses whenever MT-32 playback is required.  
 
 **True Roland MT-32 (disable GM emulation)**
-	Enable this option if you are using an actual Roland MT-32, LAPC-I, CM-64, CM-32L, CM-500, or a GS device with an MT-32 map.
+	Enable this option only if you are using an actual Roland MT-32, LAPC-I, CM-64, CM-32L, CM-500 or other MT-32 compatible device. Note that this cannot be used in conjuntion with the Roland GS device option. 
 
 
 **Roland GS device (enable MT-32 mappings)**
-	 Enable this if you are using a GS device that has an MT-32 map, such as a SC-55, SC-88 or SC-8820. Roland GS mode may be disabled for games that use General MIDI natively. 
+	 Enable this option if you are using a GS device that has an MT-32 map, such as an SC-55, SC-88 or SC-8820. Note that this cannot be used in conjunction with the True Roland MT-32 option. 
 
 ,,,,,
 
