@@ -5136,8 +5136,11 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD, GUIO5(GUIO_MIDIGM, GAMEOPTION_SQ4_SILVER_CURSORS, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE)	},
 
-	// Space Quest 4 - English DOS CD patch 1.2 (unofficial - NRS) - THIS VERSION IS PIRATED/CRACKED AND REPACKAGED =DO NOT RE-ADD=
-	// In essence, this "patch" includes a mixture the CD and floppy versions (the whole game), without the speech file
+	// Space Quest 4 - English DOS CD "NRS SQ4 Update 1.2" (unofficial patch)
+	// This patch set was distributed as a mixture the CD and floppy versions (the whole game)
+	// without the speech files, at least initially, and so it is not allowed.
+	// Version 1.3 is instead distributed as a set of patches and diffs which require the user
+	// to provide the full CD and floppy versions, and so it is happily supported.
 	{"sq4", "CD", {
 		{"resource.map", 0, "38287a646458a1dabded55d094407793", 7139},
 		{"resource.000", 0, "231fd8421e1f211e1bcf9d7b8b6408e7", 9525849},
