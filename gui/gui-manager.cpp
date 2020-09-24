@@ -87,7 +87,7 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled), _stateIsSaved(false),
 	initTextToSpeech();
 #endif // USE_TTS
 
-	ConfMan.registerDefault("gui_theme", "modern");
+	ConfMan.registerDefault("gui_theme", "residualvm");
 	Common::String themefile(ConfMan.get("gui_theme"));
 
 	ConfMan.registerDefault("gui_renderer", ThemeEngine::findModeConfigName(ThemeEngine::_defaultRendererMode));
