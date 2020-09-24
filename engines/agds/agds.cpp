@@ -23,6 +23,7 @@
 #include "agds/agds.h"
 #include "agds/animation.h"
 #include "agds/character.h"
+#include "agds/console.h"
 #include "agds/database.h"
 #include "agds/font.h"
 #include "agds/mjpgPlayer.h"
@@ -156,10 +157,6 @@ ObjectPtr AGDSEngine::loadObject(const Common::String &name, const Common::Strin
 }
 
 void AGDSEngine::runObject(const ObjectPtr &object) {
-	if (object->inScene()) {
-		debug("object is %s scene, skip running...", object->getName().c_str());
-		return;
-	}
 	if (_currentScreen)
 		_currentScreen->add(object);
 	else
@@ -325,6 +322,8 @@ void AGDSEngine::changeMouseArea(int id, int enabled) {
 Common::Error AGDSEngine::run() {
 	if (!load())
 		return Common::kNoGameDataFoundError;
+
+	setDebugger(new Console(this));
 
 	int loadSlot = ConfMan.getInt("save_slot");
 	if (loadSlot >= 0)

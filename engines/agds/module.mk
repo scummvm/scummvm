@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	agds.o \
 	animation.o \
 	character.o \
+	console.o \
 	database.o \
 	detection.o \
 	dialog.o \
