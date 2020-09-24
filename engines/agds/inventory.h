@@ -58,11 +58,9 @@ public:
 		_visible = visible;
 	}
 
-	int add(ObjectPtr object);
+	int add(const ObjectPtr & object);
 
-	ObjectPtr get(int index) const {
-		return index >= 0 && index < kMaxSize? _entries[index]: ObjectPtr();
-	}
+	ObjectPtr get(int index) const;
 	int find(const Common::String &name) const;
 
 	int free() const;

@@ -38,7 +38,11 @@ int Inventory::free() const {
 	return free;
 }
 
-int Inventory::add(ObjectPtr object) {
+ObjectPtr Inventory::get(int index) const {
+	return index >= 0 && index < kMaxSize? _entries[index]: ObjectPtr();
+}
+
+int Inventory::add(const ObjectPtr & object) {
 	for (uint i = 0; i < _entries.size(); ++i) {
 		if (!_entries[i]) {
 			_entries[i] = object;

@@ -103,9 +103,9 @@ public:
 	bool canSaveGameStateCurrently() { return _userEnabled; }
 
 	ObjectPtr loadObject(const Common::String & name, const Common::String & prototype = Common::String());
-	void runObject(ObjectPtr object);
+	void runObject(const ObjectPtr &object);
 	void runObject(const Common::String & name, const Common::String &prototype = Common::String());
-	void runProcess(ObjectPtr object, uint ip = 0);
+	void runProcess(const ObjectPtr &object, uint ip = 0);
 
 	void resetCurrentScreen();
 	void loadScreen(const Common::String & name);
@@ -140,13 +140,10 @@ public:
 		return _currentScreen;
 	}
 
-	ObjectPtr getCurrentScreenObject(const Common::String &name) {
-		return _currentScreen? _currentScreen->find(name): ObjectPtr();
-	}
-
 	Common::String & getCurrentScreenName() {
 		return _currentScreenName;
 	}
+	ObjectPtr getCurrentScreenObject(const Common::String &name);
 
 	const Graphics::PixelFormat & pixelFormat() const {
 		return _pixelFormat;

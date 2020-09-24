@@ -155,7 +155,7 @@ ObjectPtr AGDSEngine::loadObject(const Common::String &name, const Common::Strin
 	return object;
 }
 
-void AGDSEngine::runObject(ObjectPtr object) {
+void AGDSEngine::runObject(const ObjectPtr &object) {
 	if (object->inScene()) {
 		debug("object is %s scene, skip running...", object->getName().c_str());
 		return;
@@ -168,11 +168,16 @@ void AGDSEngine::runObject(ObjectPtr object) {
 	runProcess(object);
 }
 
-void AGDSEngine::runProcess(ObjectPtr object, uint ip) {
+void AGDSEngine::runProcess(const ObjectPtr &object, uint ip) {
 	debug("starting process %s:%04x", object->getName().c_str(), ip);
 	_processes.push_front(Process(this, object, ip));
 	_processes.front().run();
 }
+
+ObjectPtr AGDSEngine::getCurrentScreenObject(const Common::String &name) {
+	return _currentScreen? _currentScreen->find(name): ObjectPtr();
+}
+
 
 void AGDSEngine::runObject(const Common::String &name, const Common::String &prototype) {
 	ObjectPtr object = getCurrentScreenObject(name);
