@@ -11,7 +11,7 @@ game is added to the Launcher.
 
 There are many settings, and they are separated into tabs:
 
-`Game tab`_ | `Engine tab`_ | `Graphics tab`_ | `Audio tab`_ | `Volume tab`_ | `Midi tab`_ | `Paths tab`_ |
+`Game tab`_ | `Engine tab`_ | `Graphics tab`_ | `Audio tab`_ | `Volume tab`_ | `Midi tab`_ | `MT-32 tab`_ | `Paths tab`_ |
 
 Settings may also be edited directly in the configuration file. These configuration keywords are listed below in italics. For more information, see :doc:`../advanced_options/configuration_file` .
 
@@ -40,7 +40,7 @@ identified by ScummVM.
 
 
 **Platform**
-	Specify the original platform of the game.
+	Specifies the original platform of the game.
 
 	*platform* (string)
 ,,,,,,,
@@ -108,7 +108,7 @@ For more information including comprehensive explanation of the audio settings, 
 	Check this box to make the game use custom settings instead of global settings.
 
 **Music device**
-	Specifies the device ScummVM uses to output audio. When set to <default>, ScummVM will automatically choose the most appropriate option for the played game. If set to an MT-32 or a MIDI device, or if ScummVM chooses one of these automatically, the global settings on the MT-32 or MIDI tabs also apply. See the :doc:`global_settings` page for more information. 
+	Specifies the device ScummVM uses to output audio. When set to <default>, ScummVM will automatically choose the most appropriate option for the played game. If set to an MT-32 or a General MIDI device, or if ScummVM chooses one of these automatically, the settings on the MT-32 or MIDI tabs also apply. 
 
 	*music_driver* (string)
 
@@ -169,7 +169,7 @@ Use the volume tab to set the relative volumes for various sounds in the game.
 _`MIDI tab`
 ---------------
 
-Use the MIDI tab to change settings of the MIDI music in the game.
+Use the MIDI tab to change the settings of General MIDI devices. This tab will only be available for games that use MIDI. 
 
 ,,,,,,,
 
@@ -177,44 +177,44 @@ Use the MIDI tab to change settings of the MIDI music in the game.
 	Check this box to make the game use custom settings instead of the global settings.
 
 **GM Device**
-	Choose which software synthesizer (general midi device) to use to play midi music. 
+	Specifies the preferred General MIDI (GM) device for the game. 
 
 	*gm_device* 
 
 **Soundfont**
-	Some midi devices require you to provide a soundfont, which contains samples of instruments for the device to play back. This setting allows you to choose a soundfont. 
+	Specifies the path to a soundfont file, if this is required by the GM device. 
 
 	*soundfont* (string - path)
 
 
 **Mixed AdLib/MIDI mode**
-	Some games contain sound effects that are exclusive to the AdLib soundtrack. For these games, use this mode to combine MIDI music with AdLib sound effects.
+	Combines MIDI music with AdLib sound effects. 
 
 	*multi_midi* (boolean)
 
 **MIDI gain**
-	Adjusts the relative volume of the general MIDI music. This is only supported by some music devices.
+	Adjusts the relative volume of the MIDI audio. This is only supported by some music devices.
 	 
 	*midi_gain* (number)
-
 
 
 
 _`MT-32 tab`
 ---------------
 
-Override global MT-32 settings
-	Check this box to make the game use custom settings instead of the global settings.
+Use the MT-32 tab to change the settings of MT-32 devices. This tab will only be available for games that use MIDI. 
+
+,,,,,,,,,,,,,
 
 MT-32 Device
-	++Find reference for this
+	Specifies the preferred MT-32 device for the game. 
 
 **True Roland MT-32 (disable GM emulation)**
-	Enable this option if you are using an actual Roland MT-32, LAPC-I, CM-64, CM-32L, CM-500, or a GS device with an MT-32 map.
+	Enable this option only if you are using an actual Roland MT-32, LAPC-I, CM-64, CM-32L, CM-500 or other MT-32 compatible device. Note that this cannot be used in conjuntion with the Roland GS device option. 
 
 
 **Roland GS device (enable MT-32 mappings)**
-	 Enable this if you are using a GS device that has an MT-32 map, such as a SC-55, SC-88 or SC-8820. Roland GS mode may be disabled for games that use General MIDI natively. 
+	 Enable this option if you are using a GS device that has an MT-32 map, such as an SC-55, SC-88 or SC-8820. Note that this cannot be used in conjunction with the True Roland MT-32 option. 
 
 ,,,,,
 
@@ -227,12 +227,12 @@ Use the paths tab to tell ScummVM where to look for particular game files.
 ,,,,,,,
 
 **Save Path**
-	The folder in which ScummVM will store the saved games. If this is not set, the saved games will be stored in the default directory.
+	Chooses the folder in which ScummVM will store the saved games. If this is not set, the saved games will be stored in the default directory.
 
 	*savepath* (string)
 
 **Extra Path**
-	This is the folder that ScummVM will look for various extra files. These could include one or more of:
+	Chooses the folder that ScummVM will in look for various extra files. These could include one or more of:
 
 	* Additional datafiles required for certain games 
 	* Soundfonts 
@@ -241,7 +241,7 @@ Use the paths tab to tell ScummVM where to look for particular game files.
 	*extrapath* (string)
 
 **Game Path**
-	The folder in which the game’s data files are stored.
+	Chooses folder in which the game’s data files are stored.
 
 	*gamepath* (string)
 ,,,,,,,
@@ -722,4 +722,4 @@ More durable armor
 	Armor won't break until character is at -80HP, rather than merely -10HP
 
 	*DurableArmor* (boolean)
-,,,,,,,,,,
+
