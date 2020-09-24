@@ -8,10 +8,12 @@ To open the game settings window, highlight a game in the main Launcher
 window, and click on **Edit Game**. This window also opens any time a
 game is added to the Launcher.
 
+
 There are many settings, and they are separated into tabs:
 
 `Game tab`_ | `Engine tab`_ | `Graphics tab`_ | `Audio tab`_ | `Volume tab`_ | `Midi tab`_ | `Paths tab`_ |
 
+Settings may also be edited directly in the configuration file. These configuration keywords are listed below in italics. For more information, see :doc:`../advanced_options/configuration_file` .
 
 _`Game tab`
 ------------
@@ -22,17 +24,25 @@ identified by ScummVM.
 ,,,,,,,
 
 **ID**
-	This field shows the short name of the game. This ID can be used for launching the game from Fullscreen modethe command line.
+	This field shows the short name of the game. This ID can be used for launching the game from the command line.
+
+	*gameid* (string)
 
 **Name**
 	This field shows the full title of the game, as well as some basic information such as original platform and language.
+	 
+	*description* (string)
 
 **Language**
-	This option is only applicable to Maniac Mansion, Zak McKracken, The Dig, The Curse of Monkey Island, Beneath a Steel Sky, Broken Sword 1, and Simon the Sorcerer 1 and 2. With the exception of Beneath a Steel Sky, Broken Sword 1, and multilanguage versions of Goblins games and Nippon Safes Inc., using this option does not change the language of the game, which is usually hardcoded, but rather is only used to select the appropriate font. For example, for a German version of a game, a font with umlauts. The Dig and The Curse of Monkey Island are another exception: the non-English versions of these games can be set to English, which only affect the language of subtitles. The game speech will remain the same.
+	For multi-language games, this option changes the language of the game. However, for games that have the language hardcoded, this option only changes the font of the subtitles. For instance, selecting German will add an umlaut to German subtitles, and selecting Spanish will add the tilde in Spanish subtitles. 
+
+	*language* (string)
+
 
 **Platform**
 	Specify the original platform of the game.
 
+	*platform* (string)
 ,,,,,,,
 
 
@@ -40,7 +50,7 @@ identified by ScummVM.
 _`Graphics tab`
 -----------------
 
-Use the graphics tab to change how the game looks when it is played.
+Use the graphics tab to change how the game looks when it is played. For more information including comprehensive explanation of the graphics settings, see the :doc:`../advanced_options/graphics` page. 
 
 ,,,,,,,
 
@@ -50,20 +60,37 @@ Use the graphics tab to change how the game looks when it is played.
 
 
 **Graphics mode**
-	Changes the graphic filter the game uses. This option has to be used to enable a graphic filter for a game with an original resolution higher than 320x200 or 320x240, because the corresponding global settings does not apply.
+	Changes the resolution of the game. For example, a 2x graphics mode will take a 320x200 resolution game and scale it up to 640x400. 
 
+	*gfx_mode* (string)
 
+		
 
 **Render mode**
-	Changes the render mode the game uses.
+	Changes how the game is rendered, which affects how the game looks. 
 
+	*render_mode* (string)
+			
+
+**Stretch mode**
+	Changes the way the game is displayed in relation to the window size.
+
+	*stretch_mode* (string)
 
 **Aspect ratio correction**
-	Most games supported by ScummVM were designed to be played at a screen resolution of 320x200 using rectangular pixels (higher than they were wide). Most modern systems use square pixels, which means that the image appears to be squeezed vertically and the characters look wider and shorter than they should. If this option is checked, ScummVM corrects for this by stretching the game window to a resolution of 320x240, which looks the same as 320x200 on old monitors. As with Graphic filters, this takes a little processing power to achieve. Aspect ratio correction can be combined with a Graphic filter.
+	If ticked, corrects the aspect ratio so that games appear the same as they would on original 320x200 resolution displays. 
+
+	*aspect_ratio* (boolean)
 
 **Fullscreen mode**
 	Switches between playing games in a window, or playing them in fullscreen mode. Switch between the two by using :kbd:`Alt + F5` while in a game.
 
+	*fullscreen* (boolean)
+
+**Filter graphics**
+	If ticked, uses bilinear interpolation instead of nearest neighbor resampling for the aspect ratio correction and stretch mode. It does not affect the graphics mode. 
+
+	*filtering* (boolean)
 ,,,,,
 
 
@@ -72,8 +99,8 @@ _`Audio tab`
 
 Use the audio tab to change the sound output in the game.
 
-For more information about any of the audio settings, see the `Music and
-sound <page>`__ page.
+For more information including comprehensive explanation of the audio settings, see the :doc:`../advanced_options/audio` page. 
+
 
 ,,,,,,,
 
@@ -82,24 +109,27 @@ sound <page>`__ page.
 
 
 
-**Music driver**
-	The method ScummVM uses to output MIDI music. For more details, see the section on music drivers.
+**Music device**
+	The method ScummVM uses to output MIDI music. 
 
-
+	*music_driver* (string)
 
 **AdLib Emulator**
-	The emulator used by ScummVM to generate the music when the AdLib music driver is selected. Two emulators are currently available: MAME OPL emulator was the emulator that was used up to version 0.13.1, and the DOSBox OPL emulator has been added but is still experimental.
+	The emulator used by ScummVM to generate the music when the AdLib music driver is selected. 
 
-**Output rate**
-	The sample rate at which ScummVM plays sounds, including music if using an emulation music driver such as the AdLib music driver.
+	*opl_driver* (string)
 
 **Text and Speech**
-	For games with digitized speech, setting allows the user to decide whether to play the game with speech and without any subtitles, or with subtitles displaying the words spoken in the digitized speech but not the speech, or with both.
+	For games with digitized speech, this setting allows the user to decide whether to play the game with speech and without any subtitles, or with subtitles displaying the words spoken in the digitized speech but without the speech, or with both.
 
+	*speech_mute* (boolean)
 
-
+	*subtitles* (boolean)
+	
 **Subtitle speed**
-	Adjusts the length of time that the subtitles are displayed on screen: the lower the speed is set, the longer the subtitles are displayed.
+	Adjusts the length of time that the subtitles are displayed on screen. The lower the speed is set, the longer the subtitles are displayed.
+
+	*talkspeed* (number)
 
 ,,,,,,
 
@@ -115,15 +145,25 @@ Use the volume tab to set the relative volumes for various sounds in the game.
 
 
 **Music volume**
-	Adjusts the volume of the music played back in the game. This is usually MIDI music played back with one of the music drivers, but some games use digitized music.
+	Adjusts the volume of the music played back in the game. 
 
+	*music_volume* (number)
 
 **SFX volume**
 	Adjusts the volume of the sound effects within the game.
 
+	*sfx_volume* (number)
+
 
 **Speech volume**
 	Adjusts the volume of the digitized speech in the game, if it has any.
+
+	*speech_volume* (number)
+
+**Mute All**
+	Mutes all game audio. 
+
+	*mute* (boolean)
 
 ,,,,,,
 
@@ -131,24 +171,35 @@ Use the volume tab to set the relative volumes for various sounds in the game.
 _`MIDI tab`
 ---------------
 
-Use the MIDI tab to change settings about the MIDI music in the game.
+Use the MIDI tab to change settings of the MIDI music in the game.
 
 ,,,,,,,
 
 **Override global MIDI settings**
 	Check this box to make the game use custom settings instead of the global settings.
 
+**GM Device**
+	Choose which software synthesizer (general midi device) to use to play midi music. 
+
+	*gm_device* 
 
 **Soundfont**
-	Some music drivers require you to provide them with a Soundfont, which contains samples of instruments for the device to play back. This setting allows you to choose one.
+	Some midi devices require you to provide a soundfont, which contains samples of instruments for the device to play back. This setting allows you to choose a soundfont. 
+
+	*soundfont* (string - path)
 
 
 **Mixed AdLib/MIDI mode**
-	Some games contain sound effects that are exclusive to the AdLib soundtrack. For these games, you may wish to use this mode in order to combine MIDI music with AdLib sound effects.
+	Some games contain sound effects that are exclusive to the AdLib soundtrack. For these games, use this mode to combine MIDI music with AdLib sound effects.
 
+	*multi_midi* (boolean)
 
 **MIDI gain**
-	Adjusts the relative volume of the general MIDI music. This is only supported by some of the music drivers.
+	Adjusts the relative volume of the general MIDI music. This is only supported by some music devices.
+	 
+	*midi_gain* (number)
+
+
 
 
 _`MT-32 tab`
@@ -158,17 +209,14 @@ Override global MT-32 settings
 	Check this box to make the game use custom settings instead of the global settings.
 
 MT-32 Device
-	**Find out about this?**
+	++Find reference for this
 
 **True Roland MT-32 (disable GM emulation)**
-	ScummVM will treat your device as a real MT-32. Because the instrument mappings and system exclusive commands of the MT-32 vary from those of General MIDI devices, you should only enable this option if you are using an actual Roland MT-32, LAPC-I, CM-64, CM-32L, CM-500, or GS device with an MT-32 map.
-
+	Enable this option if you are using an actual Roland MT-32, LAPC-I, CM-64, CM-32L, CM-500, or a GS device with an MT-32 map.
 
 
 **Roland GS device (enable MT-32 mappings)**
-	ScummVM will initialize your GS-compatible device with settings that mimic the MT-32's reverb, (lack of) chorus, pitch bend sensitivity, etc. If it is specified in conjunction with True Roland MT-32 (above), ScummVM will select the MT-32-compatible map and drumset on your GS device. This setting works better than default GM or GS emulation with games that do not have custom instrument mappings (Loom and The Secret of Monkey Island). You should only specify both settings if you are using a GS device that has an MT-32 map, e.g. SC-55, SC-88, SC-8820, etc. Please note that Roland GS Mode is automatically disabled in both Day of the Tentacle and Sam & Max Hit the Road, since they use General MIDI natively. If neither of the above settings is enabled, ScummVM will initialize your device in General MIDI mode and use GM emulation in games with MT-32 soundtracks
-
-
+	 Enable this if you are using a GS device that has an MT-32 map, such as a SC-55, SC-88 or SC-8820. Roland GS mode may be disabled for games that use General MIDI natively. 
 
 ,,,,,
 
@@ -176,29 +224,28 @@ MT-32 Device
 _`Paths tab`
 --------------
 
-Use the paths tab to tell ScummVM where to look for particular files of
-the game.
+Use the paths tab to tell ScummVM where to look for particular game files. 
 
 ,,,,,,,
 
 **Save Path**
-	The folder in which ScummVM will store the game's saved games. If this is not set, the saved games will be stored in the default directory.
+	The folder in which ScummVM will store the saved games. If this is not set, the saved games will be stored in the default directory.
 
-
+	*savepath* (string)
 
 **Extra Path**
-	This is the folder that ScummVM will look in for various extra files. These could include one or more of:
+	This is the folder that ScummVM will look for various extra files. These could include one or more of:
 
-	* Additional datafiles required for certain games (for example, kyra.dat)
-	* Soundfonts (see MIDI tab)
-	* MT-32 ROMs (see MT-32 emulation)
+	* Additional datafiles required for certain games 
+	* Soundfonts 
+	* MT-32 ROMs 
 
-
+	*extrapath* (string)
 
 **Game Path**
 	The folder in which the game’s data files are stored.
 
-
+	*gamepath* (string)
 ,,,,,,,
 
 _`Engine tab`
@@ -215,21 +262,25 @@ Engines: ADL_ | AGI_ | BLADERUNNER_ | CGE_ | CINE_ | DRASCULA_ | DREAMWEB_ | HDB
 
 .. _ADL:
 
-**ADL**
-=================
+ADL
+******
 
 TV emulation
 	Emulate composite output to an NTSC TV.
 
+	*ntsc* (boolean)
 Color Graphics
 	Use color graphics instead of monochrome.
 
+	*color* (boolean)
 Show scanlines
 	Darken every other scanline to mimic the look of CRT.
 
+	*scanlines* (boolean)
 Always use sharp monochrome text
 	Do not emulate NTSC artifacts for text
 
+	*monotext* (boolean)
 ,,,,,,,,,
 
 .. _AGI:
@@ -240,22 +291,32 @@ Always use sharp monochrome text
 Use original save/load screens
 	Use the original save/load screens instead of the ScummVM ones
 
+	*originalsaveload* (boolean)
+
 Use an alternative palette
 	Use an alternative palette, common for all Amiga games. This was the old behavior
+
+	*altamigapalette* (boolean)
 
 Mouse support
 	Enables mouse support. Allows to use mouse for movement and in game menus.
 
+	*mousesupport* (boolean)
+
 Use Hercules hires font
-	Uses Hercules hires font, when font file is available.
+	Uses Hercules hi-res font, when font file is available.
+
+	*herculesfont*
 
 Pause when entering commands
 	Shows a command prompt window and pauses the game (like in SCI) instead of a real-time prompt.
 
+	*commandpromptwindow* (boolean)
 Add speed menu
 	Add game speed menu (similar to PC version)
 
-,,,,,,
+	*apple2gs_speedmenu* (boolean)
+,,,,,,	
 
 .. _BLADERUNNER:
 
@@ -265,18 +326,26 @@ Add speed menu
 Sitcom mode
 	Game will add laughter after actor's line or narration
 
+	*sitcom* (boolean)
+
 Shorty mode
 	Game will shrink the actors and make their voices high pitched
 
+	*shorty* (boolean)
 Frame limiter high performance mode
 	This mode may result in high CPU usage! It avoids use of delayMillis() function.
+
+	*nodelaymillisfl* (boolean)
 
 Max frames per second limit
 	This mode targets a maximum of 120 fps. When disabled, the game targets 60 fps
 
+	*frames_per_secondfl* (boolean)
+
 Disable McCoy's quick stamina drain
 	When running, McCoy won't start slowing down as soon as the player stops clicking the mouse
 
+	*disable_stamina_drain* (boolean)
 ,,,,,,,,
 
 .. _CGE:
@@ -287,6 +356,7 @@ Disable McCoy's quick stamina drain
 Color Blind Mode
 	Enable Color Blind Mode by default
 
+	*enable_color_blind* (boolean)
 ,,,,,,
 
 .. _CINE:
@@ -297,9 +367,11 @@ Color Blind Mode
 Use original save/load screen
 	Use the original save/load screens instead of the ScummVM one
 
+	*originalsaveload* (boolean)
 Use transparent dialog boxes in 16 color scenes
 	Use transparent dialog boxes in 16 color scenes even if the original game version did not support them
 
+	*transparentdialogboxes* (boolean)
 ,,,,,,,,,
 
 .. _DRASCULA:
@@ -310,6 +382,7 @@ Use transparent dialog boxes in 16 color scenes
 Use original save/load screens
 	Use the original save/load screens instead of the ScummVM ones
 
+	*originalsaveload* (boolean)
 ,,,,,,,,,,
 
 .. _DREAMWEB:
@@ -320,9 +393,12 @@ Use original save/load screens
 Use original save/load screens
 	Use the original save/load screens instead of the ScummVM ones
 
+	*originalsaveload* (boolean)
+
 Use bright palette mode
 	Display graphics using the game's bright palette
 
+	*bright_palette* (boolean)
 ,,,,,,,,,,
 
 .. _HDB:
@@ -333,6 +409,7 @@ Use bright palette mode
 Enable cheat mode
 	Debug info and level selection becomes available
 
+	*hypercheat* (boolean)
 ,,,,,,,,,,
 
 .. _HOPKINS:
@@ -343,6 +420,7 @@ Enable cheat mode
 Gore Mode
 	Enable Gore Mode when available
 
+	*enable_gore* (boolean)
 ,,,,,,,,,,
 
 .. _KYRA:
@@ -353,27 +431,36 @@ Gore Mode
 Enable studio audience
 	Studio audience adds an applause and cheering sounds whenever Malcolm makes a joke
 
+	*studio_audience* (boolean)
 Skip support
 	This option allows the user to skip text and cutscenes.
 
+	*skip_support* (boolean)
 Enable helium mode
 	Helium mode makes people sound like they've inhaled Helium.
 
+	*helium_mode* (boolean)
 Enable smooth scrolling when walking
 	When enabled, this option makes scrolling smoother when changing from one screen to another.
+
+	*smooth_scrolling* (boolean)
 
 Enable floating cursors
 	When enabled, this option changes the cursor when it floats to the  edge of the screen to a directional arrow. The player can then click to walk towards that direction.
 
+	*floating_cursors* (boolean)
 Suggest save names
 	When enabled, this option will fill in an autogenerated savegame escription into the input prompt.
 
+	*auto_savenames* (boolean)
 HP bar graphs
 	Enable hit point bar graphs
 
+	*hpbargraphs* (boolean)
 Fight Button L/R Swap
 	Left button to attack, right button to pick up items
 
+	*mousebtswap* (boolean)
 ,,,,,,,,,,
 
 .. _LURE:
@@ -382,7 +469,9 @@ Fight Button L/R Swap
 =================
 
 TTS Narrator
-	Use TTS to read the descriptions (if TTS is available)
+	Use text-to-speech to read the descriptions, if test-to-speech is available)
+
+	*tts_narrator* (boolean)
 
 ,,,,,,,,,,
 
@@ -394,18 +483,25 @@ TTS Narrator
 Easy mouse interface
 	Shows object names when hovering the mouse over them
 
+	*EasyMouse* (boolean)
 Animated inventory items
 	Animated inventory items
 
+	*InvObjectsAnimated* (boolean)
 Animated game interface
 	Animated game interface
+
+	*TextWindowAnimated* (boolean)
 
 Naughty game mode
 	Naughty game mode
 
+	*NaughtyMode* (boolean)
+
 Graphics dithering
 	Graphics dithering
 
+	*GraphicsDithering* (boolean)
 ,,,,,,,,,,
 
 .. _NEVERHOOD:
@@ -416,14 +512,28 @@ Graphics dithering
 Use original save/load screens
 	Use the original save/load screens instead of the ScummVM ones
 
+	*originalsaveload* (boolean)
+
 Skip the Hall of Records storyboard scenes
 	Allows the player to skip past the Hall of Records storyboard scenes
 
+	*skiphallofrecordsscenes* (boolean)
 Scale the making of videos to full screen
 	Scale the making of videos, so that they use the whole screen
 
+	*scalemakingofvideos* (boolean)
 ,,,,,,,,,,
 
+.. _QUEEN:
+**QUEEN**
+==========
+
+Alternate intro
+	Plays the alternate intro for Flight of the Amazon Queen.
+	
+	*alt_intro* (boolean)
+
+,,,,,,,,,,,,,,,
 .. _SCI:
 
 **SCI**
@@ -432,39 +542,66 @@ Scale the making of videos to full screen
 Skip EGA dithering pass (full color backgrounds)
 	Skip dithering pass in EGA games, graphics are shown with full colors
 
+	*disable_dithering* (boolean)
+
 Enable high resolution graphics
 	Enable high resolution graphics/content
+
+	*enable_high_resolution_graphics* (boolean)
 
 Enable black-lined video
 	Draw black lines over videos to increase their apparent sharpness
 
+	*enable_black_lined_video* (boolean)
+
 Use high-quality video scaling
 	Use linear interpolation when upscaling videos, where possible
 
+	*enable_hq_video* (boolean)
 Use high-quality "LarryScale" cel scaling
 	Use special cartoon scaler for drawing character sprites
+
+	*enable_larryscale*
 
 Prefer digital sound effects
 	Prefer digital sound effects instead of synthesized ones
 
+	*prefer_digitalsfx*
+
 Use original save/load screens
 	Use the original save/load screens instead of the ScummVM ones
+
+	*originalsaveload* (boolean)
 
 Use IMF/Yamaha FB-01 for MIDI output
 	Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI output
 
+	*native_fb01* (boolean)
+
 Use CD audio
 	Use CD audio instead of in-game audio, if available
+
+	*use_cdaudio* (boolean)
 
 Use Windows cursors
 	Use the Windows cursors (smaller and monochrome) instead of the DOS ones
 
+	*windows_cursors* (boolean)
+
 Use silver cursors
 	Use the alternate set of silver cursors instead of the normal golden ones
+
+	*silver_cursors* (boolean)
 
 Upscale videos
 	Upscale videos to double their size
 
+	*enable_video_upscale* (boolean)
+
+Enable content censoring	
+	Enable the game's built-in optional content censoring"),
+		
+	*enable_censoring* (boolean)
 ,,,,,,,,,,
 
 .. _SCUMM:
@@ -475,40 +612,52 @@ Upscale videos
 Show Object Line
 	Show the names of objects at the bottom of the screen
 
+	*object_labels* (boolean)
+
 Use NES Classic Palette
 	Use a more neutral color palette that closely emulates the NES Classic
 
+	*mm_nes_classic_palette* (boolean)
 ,,,,,,,,,,
 
 .. _SHERLOCK:
 
 **SHERLOCK**
 =================
-
-Enable content censoring
-	Enable the game's built-in optional content censoring
-
-Upscale videos
-	Upscale videos to double their size
+Use original load/save screens
+	Use the original save/load screens instead of the ScummVM ones"),
+	
+	*originalsaveload* (boolean)
 
 Pixellated scene transitions
 	When changing scenes, a randomized pixel transition is done
 
+	*fade_style* (boolean)
+
 Don't show hotspots when moving mouse
 	Only show hotspot names after you actually click on a hotspot or action button
+
+	*help_style* (boolean)
 
 Show character portraits
 	Show portraits for the characters when conversing
 
+	*portraits_on* (boolean)
+
 Slide dialogs into view
 	Slide UI dialogs into view, rather than simply showing them immediately
+
+	*window_style* (boolean)
 
 Transparent windows
 	Show windows with a partially transparent background
 
-TTS Narrator
-	Use TTS to read the descriptions (if TTS is available)
+	*transparent_windows* (boolean)
 
+TTS Narrator
+	Use text-to-speech to read the descriptions, if text-to-speech is available.
+
+	*tts_narrator*
 ,,,,,,,,,,
 
 .. _SKY:
@@ -519,6 +668,7 @@ TTS Narrator
 Floppy intro
 	Use the floppy version's intro (CD version only)
 
+	*alt_intro* (boolean)
 ,,,,,,,,,,
 
 .. _SUPERNOVA:
@@ -527,8 +677,9 @@ Floppy intro
 =================
 
 Improved mode
-	Improved mode
+	Removes some repetitive actions, adds possibility to change verbs by keyboard.
 
+	*improved* (boolean)
 ,,,,,,,,,,
 
 .. _TOLTECS:
@@ -539,6 +690,7 @@ Improved mode
 Use original save/load screens
 	Use the original save/load screens instead of the ScummVM ones
 
+	*originalsaveload* (boolean)
 ,,,,,,,,,,
 
 .. _WINTERMUTE:
@@ -549,8 +701,12 @@ Use original save/load screens
 Show FPS-counter
 	Show the current number of frames per second in the upper left corner
 
+	*show_fps* (boolean)
+
 Sprite bilinear filtering (SLOW)
 	Apply bilinear filtering to individual sprites
+
+	*bilinear_filtering* (boolean)
 
 ,,,,,,,,,,
 
@@ -562,7 +718,10 @@ Sprite bilinear filtering (SLOW)
 Show item costs in standard inventory mode
 	Shows item costs in standard inventory mode, allowing the value of items to be compared
 
+	*ShowItemCosts* (boolean)
+
 More durable armor
 	Armor won't break until character is at -80HP, rather than merely -10HP
 
+	*DurableArmor* (boolean)
 ,,,,,,,,,,
