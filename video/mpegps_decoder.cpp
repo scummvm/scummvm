@@ -21,13 +21,13 @@
  */
 
 #include "audio/audiostream.h"
-#include "audio/decoders/raw.h" // ResidualVM
+#include "audio/decoders/raw.h"
 #include "audio/decoders/ac3.h"
 #include "audio/decoders/mp3.h"
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/stream.h"
-#include "common/memstream.h" // ResidualVM
+#include "common/memstream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 
@@ -120,10 +120,8 @@ MPEGPSDecoder::MPEGStream *MPEGPSDecoder::getStream(uint32 startCode, Common::Se
 			case kPrivateStreamDVDPCM:
 				typeName = "DVD PCM";
 				break;
-			// ResidualVM start
 			case kPrivateStreamPS2Audio: {
 				typeName = "PS2 Audio";
-
 				handled = true;
 				PS2AudioTrack *audioTrack = new PS2AudioTrack(packet, getSoundType());
 				stream = audioTrack;
@@ -131,7 +129,6 @@ MPEGPSDecoder::MPEGStream *MPEGPSDecoder::getStream(uint32 startCode, Common::Se
 				addTrack(audioTrack);
 				break;
 			}
-			// ResidualVM end
 			default:
 				typeName = "Unknown";
 				break;
@@ -745,7 +742,6 @@ Audio::AudioStream *MPEGPSDecoder::AC3AudioTrack::getAudioStream() const {
 
 #endif
 
-// ResidualVM specific start
 MPEGPSDecoder::PS2AudioTrack::PS2AudioTrack(Common::SeekableReadStream *firstPacket, Audio::Mixer::SoundType soundType) :
 		AudioTrack(soundType) {
 	firstPacket->seek(12); // unknown data (4), 'SShd', header size (4)
@@ -857,6 +853,4 @@ uint32 MPEGPSDecoder::PS2AudioTrack::calculateSampleCount(uint32 packetSize) con
 
 	return result * _channels;
 }
-// ResidualVM specific end
-
 } // End of namespace Video
