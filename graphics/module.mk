@@ -29,7 +29,6 @@ MODULE_OBJS := \
 	VectorRendererSpec.o \
 	wincursor.o \
 	yuv_to_rgb.o \
-	yuva_to_rgba.o \
 	pixelbuffer.o \
 	opengl/context.o \
 	opengl/framebuffer.o \
