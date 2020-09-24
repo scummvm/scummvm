@@ -1409,6 +1409,7 @@ ProcessExitCode Process::resume() {
 			OP(kSub, sub);
 			OP(kMul, mul);
 			OP(kDiv, div);
+			OP(kMod, mod);
 			OP(kSetGlobal, setGlobal);
 			OP(kBoolOr, boolOr);
 			OP(kBoolAnd, boolAnd);
