@@ -245,7 +245,12 @@ void AGDSEngine::runProcesses() {
 			++i;
 		}
 	}
- }
+}
+
+Console *AGDSEngine::getConsole() {
+	return static_cast<Console *>(getDebugger());
+}
+
 
 void AGDSEngine::newGame() {
 	SystemVariable *doneVar = getSystemVariable("done_resources");
@@ -255,6 +260,9 @@ void AGDSEngine::newGame() {
 	_patches.clear();
 	_inventory.clear();
 	_globals.clear();
+	Console *console = getConsole();
+	if (console)
+		console->clearVars();
 
 	SystemVariable *initVar = getSystemVariable("init_resources");
 	Common::String init = initVar->getString();
@@ -521,6 +529,16 @@ const Common::String &AGDSEngine::getSharedStorage(int id) const {
 	if (index < 0 || index >= 10)
 		error("shared storage id is out of range");
 	return _sharedStorage[index];
+}
+
+void AGDSEngine::setGlobal(const Common::String &name, int value) {
+	bool create = !_globals.contains(name);
+	_globals.setVal(name, value);
+	if (create) {
+		Console *console = getConsole();
+		if (console)
+			console->registerVar(name, &_globals[name]);
+	}
 }
 
 int AGDSEngine::getGlobal(const Common::String &name) const {

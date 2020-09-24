@@ -68,6 +68,7 @@ struct MouseRegion;
 class MJPGPlayer;
 class Screen;
 class SystemVariable;
+class Console;
 
 class AGDSEngine : public Engine {
 	friend class Process;
@@ -79,13 +80,11 @@ public:
 
 	Common::Error run() override;
 
-	void setGlobal(const Common::String &name, int value) {
-		_globals.setVal(name, value);
-	}
-	bool hasGlobal(const Common::String &name) const {
-		return _globals.find(name) != _globals.end();
-	}
+	void setGlobal(const Common::String &name, int value);
 	int getGlobal(const Common::String &name) const;
+	bool hasGlobal(const Common::String &name) const {
+		return _globals.contains(name);
+	}
 
 private:
 	void addSystemVar(const Common::String &name, SystemVariable *var);
@@ -139,6 +138,7 @@ public:
 	Screen * getCurrentScreen() {
 		return _currentScreen;
 	}
+	Console * getConsole();
 
 	Common::String & getCurrentScreenName() {
 		return _currentScreenName;
