@@ -52,7 +52,7 @@ install -m644 -D dists/residualvm.6 %{buildroot}%{_mandir}/man6/residualvm.6
 install -m644 -D icons/residualvm.xpm %{buildroot}%{_datadir}/pixmaps/residualvm.xpm
 install -m644 -D icons/residualvm.svg %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/residualvm.svg
 install -m644 -D dists/redhat/residualvm48.png %{buildroot}%{_datadir}/icons/hicolor/48x48/apps/residualvm.png
-install -m644 -D gui/themes/modern.zip %{buildroot}%{_datadir}/residualvm/modern.zip
+install -m644 -D gui/themes/residualvm.zip %{buildroot}%{_datadir}/residualvm/residualvm.zip
 install -m644 -D dists/engine-data/residualvm-grim-patch.lab %{buildroot}%{_datadir}/residualvm/residualvm-grim-patch.lab
 install -m644 -D dists/engine-data/residualvm-emi-patch.m4b %{buildroot}%{_datadir}/residualvm/residualvm-emi-patch.m4b
 install -m644 -D dists/engine-data/myst3.dat %{buildroot}%{_datadir}/residualvm/myst3.dat

@@ -296,7 +296,7 @@ DIST_FILES_DOCS+=README$(PANDOCEXT) NEWS$(PANDOCEXT)
 endif
 
 # Themes files
-DIST_FILES_THEMES=modern.zip
+DIST_FILES_THEMES=residualvm.zip
 ifdef USE_TRANSLATION
 DIST_FILES_THEMES+=translations.dat
 endif

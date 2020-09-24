@@ -24,7 +24,7 @@ scummmodern.zip        FILE    "gui/themes/scummmodern.zip"
 scummremastered.zip    FILE    "gui/themes/scummremastered.zip"
 #endif
 // ResidualVM specific START
-modern.zip             FILE    "gui/themes/modern.zip"
+residualvm.zip             FILE    "gui/themes/residualvm.zip"
 
 #ifdef BUILTIN_RESOURCES
 #if PLUGIN_ENABLED_STATIC(GRIM)
