@@ -107,20 +107,18 @@ For more information including comprehensive explanation of the audio settings, 
 **Override global audio settings**
 	Check this box to make the game use custom settings instead of global settings.
 
-
-
 **Music device**
-	The method ScummVM uses to output MIDI music. 
+	Specifies the device ScummVM uses to output audio. When set to <default>, ScummVM will automatically choose the most appropriate option for the played game. If set to an MT-32 or a MIDI device, or if ScummVM chooses one of these automatically, the global settings on the MT-32 or MIDI tabs also apply. See the :doc:`global_settings` page for more information. 
 
 	*music_driver* (string)
 
 **AdLib Emulator**
-	The emulator used by ScummVM to generate the music when the AdLib music driver is selected. 
+	Chooses which emulator is used by ScummVM when the AdLib emulator is chosen as the preferred device.
 
 	*opl_driver* (string)
 
 **Text and Speech**
-	For games with digitized speech, this setting allows the user to decide whether to play the game with speech and without any subtitles, or with subtitles displaying the words spoken in the digitized speech but without the speech, or with both.
+	For games with digitized speech, this setting allows the user to decide whether to play the game with speech only, subtitles only, or both.
 
 	*speech_mute* (boolean)
 
