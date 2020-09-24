@@ -1276,6 +1276,8 @@ for ac_option in $@; do
 	--force-opengles2)            _opengles2=yes         ;; #ResidualVM specific option
 	--enable-bink)                _bink=yes              ;;
 	--disable-bink)               _bink=no               ;;
+	--enable-discord)             _discord=yes           ;;
+	--disable-discord)            _discord=no            ;;
 #	--opengl-mode=*)
 #		_opengl_mode=`echo $ac_option | cut -d '=' -f 2`
 #		;; #ResidualVM: not supported
