@@ -172,7 +172,7 @@ void OSystem_Wii::initEvents() {
 									TIMER_THREAD_PRIO);
 
 		if (res) {
-			printf("ERROR creating timer thread: %ld\n", res);
+			printf("ERROR creating timer thread: %d\n", res);
 			LWP_CloseQueue(timer_queue);
 		}
 
