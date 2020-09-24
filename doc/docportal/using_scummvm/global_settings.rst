@@ -10,97 +10,252 @@ Launcher window.
 
 There are many settings, and they are separated into tabs:
 
-Graphics tab
+`Graphics tab`_ | `Audio tab`_ | `Volume tab`_ | `Midi tab`_ | `MT-32 tab`_ | `Paths tab`_ | `Misc tab`_ | `Cloud tab`_ | `LAN tab`_ | `Accessibility tab`_ |
+
+Settings may also be edited directly in the configuration file. These configuration keywords are listed below in italics. For more information, see :doc:`../advanced_options/configuration_file` .
+
+_`Graphics tab`
 ---------------
 
 Use the graphics tab to change how games look when they are played.
 
 ,,,,,,,
 
-Graphics mode
-	Changes the graphics filter that ScummVM uses, for example, to scale the game to a higher resolution. The option has no effect on games with an original resolution higher than 320x200 or 320x240. Such games should be configured separately.
+Use the graphics tab to change how the game looks when it is played. For more information including comprehensive explanation of the graphics settings, see the :doc:`../advanced_options/graphics` page. 
 
-Render mode
-	Changes the render mode that ScummVM uses.
+,,,,,,,
 
-Aspect ratio correction
-	Most games supported by ScummVM were designed to be played at a screen resolution of 320x200 using rectangular pixels (higher than they were wide). Most modern systems use square pixels, which means that the image appears to be squeezed vertically and the characters look wider and shorter than they should. If this option is checked, ScummVM corrects for this by stretching the game window to a resolution of 320x240, which looks the same as 320x200 on old monitors. As with Graphic filters, this takes a little processing power to achieve. Aspect ratio correction can be combined with a Graphic filter.
+**Override global graphic settings**
+	Check this box to make the game use custom settings instead of global settings.
 
-Fullscreen mode
-	Switches between playing games in a window, or playing them in fullscreen mode. Switch between the two by using :kbd:`Alt+Enter` while in a game.
+
+**Graphics mode**
+	Changes the resolution of the game. For example, a 2x graphics mode will take a 320x200 resolution game and scale it up to 640x400. 
+
+	*gfx_mode* (string)
+
+		
+
+**Render mode**
+	Changes how the game is rendered, which affects how the game looks. 
+
+	*render_mode* (string)
+			
+
+**Stretch mode**
+	Changes the way the game is displayed in relation to the window size.
+
+	*stretch_mode* (string)
+
+**Aspect ratio correction**
+	If ticked, corrects the aspect ratio so that games appear the same as they would on original 320x200 resolution displays. 
+
+	*aspect_ratio* (boolean)
+
+**Fullscreen mode**
+	Switches between playing games in a window, or playing them in fullscreen mode. Switch between the two by using :kbd:`Alt + F5` while in a game.
+
+	*fullscreen* (boolean)
+
+**Filter graphics**
+	If ticked, uses bilinear interpolation instead of nearest neighbor resampling for the aspect ratio correction and stretch mode. It does not affect the graphics mode. 
+
+	*filtering* (boolean)
 
 
 ,,,,,,,,,,,,,,,,,,
 
-Audio tab
+_`Audio tab`
 -------------------
 
-Use the audio tab to change the sound output for games. For more
-information about any of the audio settings, see the `Music and
-sound <page>`__ page.
+Use the audio tab to change the sound output for games.
+
+For more information including comprehensive explanation of the audio settings, see the :doc:`../advanced_options/audio` page.
 
 ,,,,,,,,,,,,,,,,
 
-Music driver
-	The method that ScummVM uses to output MIDI music.
-AdLib Emulator
-	The emulator used by ScummVM to generate the music when the AdLib music driver is selected. Two emulators are currently available: MAME OPL emulator was the emulator that was used up to version 0.13.1, and the DOSBox OPL emulator has been added, but is still experimental.
-Output rate
-	The sample rate at which ScummVM plays sounds, including music if using an emulation music driver such as the AdLib music driver)
+**Music device**
+	The method ScummVM uses to output MIDI music. 
 
-Text and Speech
-	For games with digitized speech, this setting allows the user to decide whether to play the game with speech and without any subtitles, or with subtitles displaying the words spoken in the digitized speech but not the speech, or with both.
-Subtitle speed
+	*music_driver* (string)
+
+**AdLib Emulator**
+	The emulator used by ScummVM to generate the music when the AdLib music driver is selected. 
+
+	*opl_driver* (string)
+
+**Text and Speech**
+	For games with digitized speech, this setting allows the user to decide whether to play the game with speech and without any subtitles, or with subtitles displaying the words spoken in the digitized speech but without the speech, or with both.
+
+	*speech_mute* (boolean)
+
+	*subtitles* (boolean)
+	
+**Subtitle speed**
 	Adjusts the length of time that the subtitles are displayed on screen. The lower the speed is set, the longer the subtitles are displayed.
 
+	*talkspeed* (number)
 ,,,,,,,,,,,,,,,
 
-Volume tab
------------
+_`Volume tab`
+---------------
 
 Use the volume tab to set the relative volumes for various sounds.
 
 ,,,,,,,,,,,,,
 
-Music volume
-	Adjusts the volume of the music played back in games. This is usually MIDI music played back with one of the music drivers, but some games use digitized music.
+**Music volume**
+	Adjusts the volume of the music played back in the game. 
 
-SFX volume
-	Adjusts the volume of the sound effects within the games.
+	*music_volume* (number)
 
-Speech volume
+**SFX volume**
+	Adjusts the volume of the sound effects within the game.
+
+	*sfx_volume* (number)
+
+
+**Speech volume**
 	Adjusts the volume of the digitized speech in the game, if it has any.
 
-Mute All
-	Mutes all sounds.
+	*speech_volume* (number)
+
+**Mute All**
+	Mutes all game audio. 
+
+	*mute* (boolean)
 
 ,,,,,,,,,,,,,,,,,,
 
 
-MIDI tab
+_`MIDI tab`
 ----------------
 
 Use the MIDI tab to change settings about the MIDI music.
 
 ,,,,,,,,,,,,,
 
-Soundfont
-	Some music drivers require you to provide them with a Soundfont, which contains samples of instruments for the device to play back. This setting allows you to choose one.|
-Mixed AdLib/MIDI mode
-	Some games contain sound effects that are exclusive to the AdLib soundtrack. For these games, you may wish to use this mode in order to combine MIDI music with AdLib sound effects.
-True Roland MT-32 (disable GM emulation)
-	ScummVM will treat your device as a real MT-32. Because the instrument mappings and system exclusive commands of the MT-32 vary from those of general MIDI devices, you should only enable this option if you are using an actual Roland MT-32, LAPC-I, CM-64, CM-32L, CM-500, or GS device with an MT-32 map.
+**GM Device**
+	Choose which software synthesizer (general midi device) to use to play midi music. 
 
-Enable Roland GS Mode
-	ScummVM will initialize your GS-compatible device with settings that mimic the MT-32's reverb, (lack of) chorus, pitch bend sensitivity, etc. If it is specified in conjunction with True Roland MT-32 (above), ScummVM will select the MT-32-compatible map and drumset on your GS device. This setting works better than default GM or GS emulation with games that do not have custom instrument mappings (Loom and The Secret of Monkey Island). You should only specify both settings if you are using a GS device that has an MT-32 map, e.g. SC-55, SC-88, SC-8820, etc. Please note that Roland GS Mode is automatically disabled in both Day of the Tentacle and Sam & Max Hit the Road, since they use General MIDI natively.If neither of the above settings is enabled, ScummVM will initialize your device in General MIDI mode and use GM emulation in games with MT-32 soundtracks.
+	*gm_device* 
 
-MIDI gain
-	Adjusts the relative volume of the general MIDI music. This is only supported by some of the music drivers.|
+**Soundfont**
+	Some midi devices require you to provide a soundfont, which contains samples of instruments for the device to play back. This setting allows you to choose a soundfont. 
 
+	*soundfont* (string - path)
+
+
+**Mixed AdLib/MIDI mode**
+	Some games contain sound effects that are exclusive to the AdLib soundtrack. For these games, use this mode to combine MIDI music with AdLib sound effects.
+
+	*multi_midi* (boolean)
+
+**MIDI gain**
+	Adjusts the relative volume of the general MIDI music. This is only supported by some music devices.
+	 
+	*midi_gain* (number)
+
+FluidSynth settings	
+	Opens a new dialog, with three further tabs:
+	`Reverb`_ | `Chorus`_ | `Misc`_
+
+,,,,,,,,,,,,,,,,,,
+
+_`Reverb`
+*************
+
+Reverberation, or reverb, describes the pattern of echoes and reflections that occur when a sound is heard in an enclosed closed space, such as a room or a concert hall. 
+
+Active
+	If ticked, reverb is added to the software synthesizer output. 
+
+	*fluidsynth_reverb_activate* (boolean)
+
+Room
+	Sets the room size, which determines how much reverb there is. 
+
+	*fluidsynth_reverb_roomsize* (number)
+
+Damp
+	Dampens higher-frequency reverb, which produces a warmer sound. 
+
+	*fluidsynth_reverb_damping* (number)
+
+Width
+	Sets the stereo spread of the reverb signal. 
+
+	*fluidsynth_reverb_width* (number)
+
+Level	
+	Sets the reverb output amplitude. 
+
+	*fluidsynth_reverb_level*
+
+,,,,,,,,,,,,,,,,,
+
+_`Chorus`
+**********
+The chorus effect thickens and colors the audio signal so that it sounds as if there are a chorus of instruments playing one part. 
+
+Active	
+	If ticked, chorus effects are added to the software synthesizer output. 
+
+	*fluidsynth_chorus_activate* (boolean)
+
+N
+	Sets the voice count of the chorus, in other words, how many instruments are playing one part.
+
+	*fluidsynth_chorus_nr* (number)
+
+Level
+	Specifies the output amplitude of the chorus signal.
+
+	*fluidsynth_chorus_level* (number)
+
+Speed
+	Sets the modulation speed of the output, in Hz.
+
+	*fluidsynth_chorus_speed* (number)
+
+Depth
+	Specifies the modulation depth of the chorus.
+
+	*fluidsynth_chorus_depth* (number)
+
+Type
+	++Find reference for this
+
+	*fluidsynth_chorus_waveform* (string)
+
+,,,,,,,,,,,,,
+
+_`Misc`
+*********
+Interpolation
+	Sets the interpolation method used by the software synthesizer. 
+
+	*fluidsynth_misc_interpolation* (string)
 ,,,,,,,,,,,,,,,
 
-Paths tab
------------
+
+_`MT-32 tab`
+---------------
+
+MT-32 Device
+	++Clarify? Would an external MIDI synthesizer listed below show up here??
+
+**True Roland MT-32 (disable GM emulation)**
+	Enable this option if you are using an actual Roland MT-32, LAPC-I, CM-64, CM-32L, CM-500, or a GS device with an MT-32 map.
+
+
+**Roland GS device (enable MT-32 mappings)**
+	 Enable this if you are using a GS device that has an MT-32 map, such as a SC-55, SC-88 or SC-8820. Roland GS mode may be disabled for games that use General MIDI natively. 
+
+,,,,,
+
+_`Paths tab`
+--------------------
 
 Use the paths tab to tell ScummVM where to look for particular files.
 
@@ -118,20 +273,26 @@ Save Path
 	* Other UNIX variants ``$HOME/.scummvm/``
 
 	* iPhone ``/private/var/mobile/Library/ScummVM/Savegames``
-
-Extra Path
-	This is the folder that ScummVM will look in for various extra files. These could include one or more of:
-
-	* Additional datafiles required for certain games (e.g. kyra.dat)
-	* Soundfonts (see MIDI tab)
-	* MT-32 ROMs (see MT-32 emulation)
+	
+	*savepath* (string - path)
 
 Theme Path
 	The folder that additional themes for the ScummVM Launcher are stored in.
 
+	*themepath* (string - path)
+
+Extra Path
+	This is the folder that ScummVM will look in for various extra files. These could include one or more of:
+
+	* Additional datafiles required for certain games
+	* Soundfonts 
+	* MT-32 ROMs 
+
+	*extrapath* (string - path)
+
 ,,,,,,,,,,,,,,
 
-Misc tab
+_`Misc tab`
 ----------------------
 
 The Misc tab contains options that don’t belong on any of the other tabs.
@@ -141,10 +302,85 @@ The Misc tab contains options that don’t belong on any of the other tabs.
 Theme
 	Changes the visual appearance of the ScummVM Launcher
 
+	*gui_theme* (string)
+
 GUI Renderer
 	Defines how the ScummVM GUI is rendered; normal or antialiased.
 
+	*gui_renderer* (string)
+
 Autosave
-	In some games (namely Beneath a Steel Sky, Flight of the Amazon Queen, and all SCUMM games), Adjusts the time period that ScummVM waits between autosaves. The default setting is 5 minutes. Note that this is only available in some games (Beneath a Steel Sky, Flight of the Amazon Queen, and all SCUMM games)
+	Adjusts the time period that ScummVM waits between autosaves. The default setting is 5 minutes. This is not available for all games. 
+
+	*autosave_period* (number)
+
+GUI Language
+	Choose the language of the ScummVM Launcher
+
+	*gui_language* (string)
+
+Switch the GUI language to the game language
+	If ticked, the Launcher language will be the same as the game language. 
+
+	*gui_use_game_language* (boolean)
 
 ,,,,,,,,,,,,,
+
+_`Cloud tab`
+--------------
+
+The Cloud tab contains options for connecting Cloud-based services to enable a sync of games and saved states across multiple devices. This tab may not be available on all platforms. 
+
+,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+Active storage
+	Choose from Dropbox, OneDrive, Google Drive, or Box. 
+
+For more information on how to connect a Cloud storage service to ScummVM, see the :doc:`cloud_and_lan` page. 
+
+Once a Cloud service has been selected, further options are available. 
+
+Sync Now
+	Manually sync saved games with the Cloud service. Saved games automatically sync on launch, after saving, on on game load. 
+
+Download game files
+	Use this option to download game files from your Cloud ScummVM folder.
+
+Disconnect
+	Use this option to disconnect the Cloud storage account. To change accounts, disconnect and connect again. 
+
+,,,,,,,,,,,,,,,,,,,,,,,
+
+_`LAN tab`
+----------
+
+The LAN tab contains options for starting a local network web server which allows browser-based file management, including uploading and downloading game files. The web server will only run while the Options window remains open.
+
+For more information, see the :doc:`cloud_and_lan` page. 
+
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+Run server
+	Starts the web server. Once running, this displays the URL at which the web server can be accessed. 
+
+Server's port
+	The port on which the web server is available. 
+	
+	*local_server_port* (number)
+
+/root/ Path	
+	Allows you to specify the root path. Any sub-directories will be accessible. 
+
+	*rootpath* (string - path)
+
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+_`Accessibility tab`
+--------------------
+
+Use Text to Speech
+	If ticked, enables text to speech. As the cursor hovers over any text field in the Launcher it is converted to speech. Choose from a variety of voices. 
+
+	*tts_enabled* (boolean)
+
+,,,,,,,,,,,,,,,,,,,,,
