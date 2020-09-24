@@ -1,0 +1,46 @@
+#!/usr/bin/env python3
+
+from argparse import ArgumentParser
+from struct import unpack
+import sys
+import os.path
+from decrypt import decrypt
+
+argparser = ArgumentParser('Unpack ADB file')
+argparser.add_argument('file')
+args = argparser.parse_args()
+
+with open(args.file, "rb") as f:
+	data = bytearray(f.read())
+
+size = len(data)
+magic, h1, h2, h3, h4 = unpack('<IIIII', data[:0x14])
+if magic != 666:
+	raise Exception('invalid db magic', magic)
+
+db_name, _ = os.path.splitext(os.path.basename(args.file))
+try:
+	os.makedirs(db_name)
+except:
+	pass
+
+print('header', h1, h2, h3, h4)
+
+data_offset = h2 * 0x28 + 0x14
+print('data offset: 0x%08x' %(data_offset))
+for i in range(h3):
+	offset = 0x14 + i * 0x28
+	entry = data[offset: offset + 0x28]
+	name_end = entry.index(bytes([0]), 4)
+	name = str(entry[4: name_end], 'utf-8')
+	index, = unpack('<I', entry[0:4])
+	size, = unpack('<I', entry[0x24:])
+	print(repr(name), hex(index), hex(data_offset + index), size)
+
+	entry_data = data[data_offset + index: data_offset + index + size]
+	with open(os.path.join(db_name, name + '.dec'), 'wb') as fo:
+		fo.write(decrypt(entry_data))
+
+	with open(os.path.join(db_name, name), 'wb') as fo:
+		fo.write(entry_data)
+
