@@ -630,18 +630,23 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 	}
 
 	// flags:
-	// bit 0 - center       1
-	// bit 1 - not used     2
-	// bit 2 - ???          4
-	// bit 3 - wrap around  8
-	switch (flags & 9) {
+	// bit 0 - center                  0x01
+	// bit 1 - not used (align right)  0x02
+	// bit 2 - word wrap               0x04
+	// bit 3 - switchable              0x08
+	// bit 4 - fill background         0x10
+	// bit 5 - outline/shadow          0x20        (apparently only set by the text renderer itself, not from the smush data)
+	// bit 6 - vertical fix (COMI)     0x40
+	// bit 7 - skip ^ codes (COMI)     0x80
+	// bit 8 - no vertical fix (COMI)  0x100
+	switch (flags & 5) {
 	case 0:
 		sf->drawString(str, _dst, _width, _height, pos_x, pos_y, false);
 		break;
 	case 1:
 		sf->drawString(str, _dst, _width, _height, pos_x, MAX(pos_y, top), true);
 		break;
-	case 8:
+	case 4:
 		// FIXME: Is 'right' the maximum line width here, just
 		// as it is in the next case? It's used several times
 		// in The Dig's intro, where 'left' and 'right' are
@@ -649,7 +654,7 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 		// handle that correctly.
 		sf->drawStringWrap(str, _dst, _width, _height, pos_x, MAX(pos_y, top), left, right, false);
 		break;
-	case 9:
+	case 5:
 		// In this case, the 'right' parameter is actually the
 		// maximum line width. This explains why it's sometimes
 		// smaller than 'left'.
