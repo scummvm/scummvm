@@ -32,9 +32,12 @@ class AGDSEngine;
 class Console : public GUI::Debugger {
 public:
 	Console(AGDSEngine *engine);
+	using GUI::Debugger::registerVar;
+	using GUI::Debugger::clearVars;
 
 private:
 	bool run(int argc, const char **argv);
+	bool activate(int argc, const char **argv);
 
 	AGDSEngine *_engine;
 };
