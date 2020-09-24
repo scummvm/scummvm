@@ -113,31 +113,35 @@ private:
 	 * @param type		the type of the variable (byte, int, bool, ...)
 	 * @param arraySize	for type DVAR_INTARRAY this specifies the size of the array
 	 */
-	void registerVar(const Common::String &varname, void *variable, VarType type, int arraySize);
+	void registerVarImpl(const Common::String &varname, void *variable, VarType type, int arraySize);
 
 protected:
 	void registerVar(const Common::String &varname, byte *variable) {
-		registerVar(varname, variable, DVAR_BYTE, 0);
+		registerVarImpl(varname, variable, DVAR_BYTE, 0);
 	}
 
 	void registerVar(const Common::String &varname, int *variable) {
-		registerVar(varname, variable, DVAR_INT, 0);
+		registerVarImpl(varname, variable, DVAR_INT, 0);
 	}
 
 	void registerVar(const Common::String &varname, bool *variable) {
-		registerVar(varname, variable, DVAR_BOOL, 0);
+		registerVarImpl(varname, variable, DVAR_BOOL, 0);
 	}
 
 	void registerVar(const Common::String &varname, int32 **variable, int arraySize) {
-		registerVar(varname, variable, DVAR_INTARRAY, arraySize);
+		registerVarImpl(varname, variable, DVAR_INTARRAY, arraySize);
 	}
 
 	void registerVar(const Common::String &varname, Common::String *variable) {
-		registerVar(varname, variable, DVAR_STRING, 0);
+		registerVarImpl(varname, variable, DVAR_STRING, 0);
 	}
 
 	void registerCmd(const Common::String &cmdname, Debuglet *debuglet);
 
+	/**
+	 * Remove all vars except default "debug_countdown"
+	 */
+	void clearVars();
 
 private:
 	/**
