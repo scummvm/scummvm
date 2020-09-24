@@ -38,7 +38,7 @@ class DiscordPresence;
 #endif
 // ResidualVM - Start
 #ifdef USE_OPENGL
-#include "backends/graphics/openglsdl/openglsdl-graphics.h"
+#include "backends/graphics/resvmopenglsdl/resvmopenglsdl-graphics.h"
 #endif
 // ResidualVM - End
 
@@ -137,7 +137,7 @@ protected:
 	// Graphics capabilities
 	void detectFramebufferSupport();
 	void detectAntiAliasingSupport();
-	OpenGLSdlGraphicsManager::Capabilities _capabilities;
+	ResVmOpenGLSdlGraphicsManager::Capabilities _capabilities;
 #endif
 	// End of ResidualVM specific code
 

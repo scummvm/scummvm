@@ -20,25 +20,47 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS_SURFACESDL_GRAPHICS_H
-#define BACKENDS_GRAPHICS_SURFACESDL_GRAPHICS_H
+#ifndef BACKENDS_GRAPHICS_RESVMOPENGLSDL_GRAPHICS_H
+#define BACKENDS_GRAPHICS_RESVMOPENGLSDL_GRAPHICS_H
 
 #include "backends/graphics/sdl/resvm-sdl-graphics.h"
 
+namespace OpenGL {
+	class FrameBuffer;
+	class SurfaceRenderer;
+	class Texture;
+	class TiledSurface;
+}
+
 /**
- * SDL Surface based graphics manager
+ * SDL OpenGL based graphics manager
  *
- * Used when rendering the launcher, or games with TinyGL
+ * Used when rendering games with OpenGL
  */
-class SurfaceSdlGraphicsManager : public ResVmSdlGraphicsManager {
+class ResVmOpenGLSdlGraphicsManager : public ResVmSdlGraphicsManager {
 public:
-	SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
-	virtual ~SurfaceSdlGraphicsManager();
+	/**
+	 * Capabilities of the current device
+	 */
+	struct Capabilities {
+		/**
+		 * Is the device capable of rendering to OpenGL framebuffers
+		 */
+		bool openGLFrameBuffer;
+
+		/** Supported levels of MSAA when using the OpenGL renderers */
+		Common::Array<uint> openGLAntiAliasLevels;
+
+		Capabilities() : openGLFrameBuffer(false) {}
+	};
+
+	ResVmOpenGLSdlGraphicsManager(SdlEventSource *eventSource, SdlWindow *window, const Capabilities &capabilities);
+	virtual ~ResVmOpenGLSdlGraphicsManager();
 
 	// GraphicsManager API - Features
 	virtual bool hasFeature(OSystem::Feature f) const override;
-	virtual void setFeatureState(OSystem::Feature f, bool enable) override;
 	virtual bool getFeatureState(OSystem::Feature f) const override;
+	virtual void setFeatureState(OSystem::Feature f, bool enable) override;
 
 	// GraphicsManager API - Graphics mode
 #ifdef USE_RGB_COLOR
@@ -51,7 +73,7 @@ public:
 	virtual int16 getWidth() const override;
 
 	// GraphicsManager API - Draw methods
-	virtual void updateScreen() override;
+	virtual void updateScreen();
 
 	// GraphicsManager API - Overlay
 	virtual void showOverlay() override;
@@ -60,8 +82,8 @@ public:
 	virtual void clearOverlay() override;
 	virtual void grabOverlay(void *buf, int pitch) const override;
 	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override;
-	virtual int16 getOverlayWidth() const override { return _overlayscreen->w; }
-	virtual int16 getOverlayHeight() const override { return _overlayscreen->h; }
+	int16 getOverlayWidth() const override;
+	int16 getOverlayHeight() const override;
 	virtual bool isOverlayVisible() const override { return _overlayVisible; }
 
 	/* Render the passed Surfaces besides the game texture.
@@ -76,44 +98,78 @@ public:
 	// SdlGraphicsManager API
 	virtual void transformMouseCoordinates(Common::Point &point) override;
 
+	void notifyResize(const int width, const int height) override;
+
 protected:
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	SDL_Renderer *_renderer;
-	SDL_Texture *_screenTexture;
+	SDL_GLContext _glContext;
 	void deinitializeRenderer();
-	SDL_Surface *SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags);
 #endif
 
-	SDL_Surface *_screen;
-	SDL_Surface *_subScreen;
+	const Capabilities &_capabilities;
+
+	Math::Rect2d _gameRect;
+
+	struct OpenGLPixelFormat {
+		uint bytesPerPixel;
+		uint redSize;
+		uint blueSize;
+		uint greenSize;
+		uint alphaSize;
+		int multisampleSamples;
+
+		OpenGLPixelFormat(uint screenBytesPerPixel, uint red, uint blue, uint green, uint alpha, int samples);
+	};
+
+	/**
+	 * Initialize an OpenGL window matching as closely as possible the required properties
+	 *
+	 * When unable to create a context with anti-aliasing this tries without.
+	 * When unable to create a context with the desired pixel depth this tries lower values.
+	 */
+	bool createOrUpdateGLContext(uint gameWidth, uint gameHeight, uint effectiveWidth, uint effectiveHeight,
+	                             bool renderToFramebuffer, bool engineSupportsArbitraryResolutions);
+
 	void createOrUpdateScreen();
 
-	SDL_Surface *_overlayscreen;
-	bool _overlayDirty;
+	/** Compute the size and position of the game rectangle in the screen */
+	Math::Rect2d computeGameRect(bool renderToFrameBuffer, uint gameWidth, uint gameHeight,
+	                             uint screenWidth, uint screenHeight);
+
+	// ResVmSdlGraphicsManager API
+	virtual bool saveScreenshot(const Common::String &filename) const override;
+
+	virtual int getGraphicsModeScale(int mode) const override { return 1; }
+
+	uint _engineRequestedWidth, _engineRequestedHeight;
+
+	int _screenChangeCount;
+	int _antialiasing;
+	bool _vsync;
+	bool _fullscreen;
+	bool _lockAspectRatio;
 	bool _overlayVisible;
+
+	OpenGL::TiledSurface *_overlayScreen;
+	OpenGL::TiledSurface *_overlayBackground;
+	OpenGL::Texture *_sideTextures[2];
+	OpenGL::SurfaceRenderer *_surfaceRenderer;
 
 	Graphics::PixelFormat _overlayFormat;
 #ifdef USE_RGB_COLOR
 	Graphics::PixelFormat _screenFormat;
 #endif
-	uint _engineRequestedWidth, _engineRequestedHeight;
 
-	bool _fullscreen;
-	bool _lockAspectRatio;
-	int _screenChangeCount;
-
-	Math::Rect2d _gameRect;
-
-	SDL_Surface *_sideSurfaces[2];
-
+	void initializeOpenGLContext() const;
 	void drawOverlay();
 	void drawSideTextures();
 	void closeOverlay();
 
-	// ResVmSdlGraphicsManager API
-	virtual bool saveScreenshot(const Common::String &filename) const override;
+	OpenGL::FrameBuffer *_frameBuffer;
+	OpenGL::FrameBuffer *createFramebuffer(uint width, uint height);
+	bool shouldRenderToFramebuffer() const;
 
-	virtual int getGraphicsModeScale(int mode) const override;
+	bool isVSyncEnabled() const;
 };
 
 #endif

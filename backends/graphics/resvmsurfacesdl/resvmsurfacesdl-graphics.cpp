@@ -24,7 +24,7 @@
 
 #if defined(SDL_BACKEND)
 
-#include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
+#include "backends/graphics/resvmsurfacesdl/resvmsurfacesdl-graphics.h"
 #include "backends/events/sdl/resvm-sdl-events.h"
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -40,7 +40,7 @@
 #define SDL_FULLSCREEN  0x40000000
 #endif
 
-SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
+ResVmSurfaceSdlGraphicsManager::ResVmSurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
 	:
 	ResVmSdlGraphicsManager(sdlEventSource, window),
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -62,7 +62,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 		_sideSurfaces[0] = _sideSurfaces[1] = nullptr;
 }
 
-SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
+ResVmSurfaceSdlGraphicsManager::~ResVmSurfaceSdlGraphicsManager() {
 	closeOverlay();
 
 	if (_subScreen) {
@@ -75,7 +75,7 @@ SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
 #endif
 }
 
-bool SurfaceSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
+bool ResVmSurfaceSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 	return
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		(f == OSystem::kFeatureFullscreenToggleKeepsContext) ||
@@ -84,7 +84,7 @@ bool SurfaceSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 		(f == OSystem::kFeatureFullscreenMode);
 }
 
-bool SurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
+bool ResVmSurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 	switch (f) {
 		case OSystem::kFeatureFullscreenMode:
 			return _fullscreen;
@@ -95,7 +95,7 @@ bool SurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 	}
 }
 
-void SurfaceSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
+void ResVmSurfaceSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 	switch (f) {
 		case OSystem::kFeatureFullscreenMode:
 			if (_fullscreen != enable) {
@@ -111,7 +111,7 @@ void SurfaceSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable)
 	}
 }
 
-void SurfaceSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, bool fullscreen, bool accel3d) {
+void ResVmSurfaceSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, bool fullscreen, bool accel3d) {
 	assert(!accel3d);
 
 	if (_subScreen) {
@@ -138,7 +138,7 @@ void SurfaceSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, boo
 #endif // SDL_VERSION_ATLEAST(2, 0, 0)
 }
 
-void SurfaceSdlGraphicsManager::createOrUpdateScreen() {
+void ResVmSurfaceSdlGraphicsManager::createOrUpdateScreen() {
 	closeOverlay();
 
 	// Choose the effective window size or fullscreen mode
@@ -192,11 +192,11 @@ void SurfaceSdlGraphicsManager::createOrUpdateScreen() {
 	dynamic_cast<ResVmSdlEventSource *>(_eventSource)->resetKeyboardEmulation(_gameRect.getWidth() - 1, _gameRect.getHeight() - 1);
 }
 
-Graphics::PixelBuffer SurfaceSdlGraphicsManager::getScreenPixelBuffer() {
+Graphics::PixelBuffer ResVmSurfaceSdlGraphicsManager::getScreenPixelBuffer() {
 	return Graphics::PixelBuffer(_screenFormat, (byte *)_subScreen->pixels);
 }
 
-void SurfaceSdlGraphicsManager::drawSideTextures() {
+void ResVmSurfaceSdlGraphicsManager::drawSideTextures() {
 	if (_fullscreen && _lockAspectRatio) {
 		if (_sideSurfaces[0]) {
 			SDL_Rect dstrect;
@@ -217,14 +217,14 @@ void SurfaceSdlGraphicsManager::drawSideTextures() {
 	}
 }
 
-void SurfaceSdlGraphicsManager::drawOverlay() {
+void ResVmSurfaceSdlGraphicsManager::drawOverlay() {
 	if (!_overlayscreen)
 		return;
 
 	SDL_BlitSurface(_overlayscreen, NULL, _screen, NULL);
 }
 
-void SurfaceSdlGraphicsManager::updateScreen() {
+void ResVmSurfaceSdlGraphicsManager::updateScreen() {
 	SDL_Rect dstrect;
 	dstrect.x = _gameRect.getTopLeft().getX();
 	dstrect.y = _gameRect.getTopLeft().getY();
@@ -248,12 +248,12 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 #endif
 }
 
-int16 SurfaceSdlGraphicsManager::getHeight() const {
+int16 ResVmSurfaceSdlGraphicsManager::getHeight() const {
 	// ResidualVM specific
 	return _subScreen->h;
 }
 
-int16 SurfaceSdlGraphicsManager::getWidth() const {
+int16 ResVmSurfaceSdlGraphicsManager::getWidth() const {
 	// ResidualVM specific
 	return _subScreen->w;
 }
@@ -262,7 +262,7 @@ int16 SurfaceSdlGraphicsManager::getWidth() const {
 #pragma mark --- Overlays ---
 #pragma mark -
 
-void SurfaceSdlGraphicsManager::clearOverlay() {
+void ResVmSurfaceSdlGraphicsManager::clearOverlay() {
 	if (!_overlayscreen)
 		return;
 
@@ -274,7 +274,7 @@ void SurfaceSdlGraphicsManager::clearOverlay() {
 	_overlayDirty = true;
 }
 
-void SurfaceSdlGraphicsManager::suggestSideTextures(Graphics::Surface *left, Graphics::Surface *right) {
+void ResVmSurfaceSdlGraphicsManager::suggestSideTextures(Graphics::Surface *left, Graphics::Surface *right) {
 	delete _sideSurfaces[0];
 	_sideSurfaces[0] = nullptr;
 	delete _sideSurfaces[1];
@@ -289,7 +289,7 @@ void SurfaceSdlGraphicsManager::suggestSideTextures(Graphics::Surface *left, Gra
 	}
 }
 
-void SurfaceSdlGraphicsManager::showOverlay() {
+void ResVmSurfaceSdlGraphicsManager::showOverlay() {
 	if (_overlayVisible)
 		return;
 
@@ -300,7 +300,7 @@ void SurfaceSdlGraphicsManager::showOverlay() {
 	dynamic_cast<ResVmSdlEventSource *>(_eventSource)->resetKeyboardEmulation(getOverlayWidth() - 1, getOverlayHeight() - 1);
 }
 
-void SurfaceSdlGraphicsManager::hideOverlay() {
+void ResVmSurfaceSdlGraphicsManager::hideOverlay() {
 	if (!_overlayVisible)
 		return;
 
@@ -311,7 +311,7 @@ void SurfaceSdlGraphicsManager::hideOverlay() {
 	dynamic_cast<ResVmSdlEventSource *>(_eventSource)->resetKeyboardEmulation(_gameRect.getWidth() - 1, _gameRect.getHeight() - 1);
 }
 
-void SurfaceSdlGraphicsManager::grabOverlay(void *buf, int pitch) const {
+void ResVmSurfaceSdlGraphicsManager::grabOverlay(void *buf, int pitch) const {
 	if (_overlayscreen == NULL)
 		return;
 
@@ -330,7 +330,7 @@ void SurfaceSdlGraphicsManager::grabOverlay(void *buf, int pitch) const {
 	SDL_UnlockSurface(_overlayscreen);
 }
 
-void SurfaceSdlGraphicsManager::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
+void ResVmSurfaceSdlGraphicsManager::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
 	if (_overlayscreen == NULL)
 		return;
 
@@ -373,7 +373,7 @@ void SurfaceSdlGraphicsManager::copyRectToOverlay(const void *buf, int pitch, in
 	SDL_UnlockSurface(_overlayscreen);
 }
 
-void SurfaceSdlGraphicsManager::closeOverlay() {
+void ResVmSurfaceSdlGraphicsManager::closeOverlay() {
 	SDL_FreeSurface(_sideSurfaces[0]);
 	SDL_FreeSurface(_sideSurfaces[1]);
 	_sideSurfaces[0] = _sideSurfaces[1] = nullptr;
@@ -389,7 +389,7 @@ void SurfaceSdlGraphicsManager::closeOverlay() {
 	}
 }
 
-void SurfaceSdlGraphicsManager::warpMouse(int x, int y) {
+void ResVmSurfaceSdlGraphicsManager::warpMouse(int x, int y) {
 	//ResidualVM specific
 	// Scale from game coordinates to screen coordinates
 	x = (x * _gameRect.getWidth()) / _subScreen->w;
@@ -401,7 +401,7 @@ void SurfaceSdlGraphicsManager::warpMouse(int x, int y) {
 	_window->warpMouseInWindow(x, y);
 }
 
-void SurfaceSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
+void ResVmSurfaceSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
 	if (_overlayVisible)
 		return;
 
@@ -418,7 +418,7 @@ void SurfaceSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) 
 }
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-void SurfaceSdlGraphicsManager::deinitializeRenderer() {
+void ResVmSurfaceSdlGraphicsManager::deinitializeRenderer() {
 	SDL_DestroyTexture(_screenTexture);
 	_screenTexture = nullptr;
 
@@ -426,7 +426,7 @@ void SurfaceSdlGraphicsManager::deinitializeRenderer() {
 	_renderer = nullptr;
 }
 
-SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags) {
+SDL_Surface *ResVmSurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags) {
 	deinitializeRenderer();
 
 	uint32 createWindowFlags = 0;
@@ -498,7 +498,7 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 }
 #endif // SDL_VERSION_ATLEAST(2, 0, 0)
 
-bool SurfaceSdlGraphicsManager::saveScreenshot(const Common::String &filename) const {
+bool ResVmSurfaceSdlGraphicsManager::saveScreenshot(const Common::String &filename) const {
 	// Based on the implementation from ScummVM
 	bool success;
 	SDL_Surface *screen = nullptr;
@@ -555,7 +555,7 @@ bool SurfaceSdlGraphicsManager::saveScreenshot(const Common::String &filename) c
 	return success;
 }
 
-int SurfaceSdlGraphicsManager::getGraphicsModeScale(int mode) const {
+int ResVmSurfaceSdlGraphicsManager::getGraphicsModeScale(int mode) const {
 	return 1;
 }
 

@@ -52,11 +52,11 @@
 #include "backends/keymapper/hardware-input.h"
 #include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/timer/sdl/sdl-timer.h"
-#include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
+#include "backends/graphics/resvmsurfacesdl/resvmsurfacesdl-graphics.h" // ResidualVM specific
 
 #ifdef USE_OPENGL
-#include "backends/graphics/openglsdl/openglsdl-graphics.h"
-//#include "graphics/cursorman.h" // ResidualVM
+#include "backends/graphics/resvmopenglsdl/resvmopenglsdl-graphics.h" // ResidualVM specific
+//#include "graphics/cursorman.h" // ResidualVM specific
 #include "graphics/opengl/context.h" // ResidualVM specific
 #endif
 #include "graphics/renderer.h" // ResidualVM specific
@@ -263,7 +263,7 @@ void OSystem_SDL::initBackend() {
 #endif
 
 		if (_graphicsManager == 0) {
-			_graphicsManager = new SurfaceSdlGraphicsManager(_eventSource, _window);
+			_graphicsManager = new ResVmSurfaceSdlGraphicsManager(_eventSource, _window); // ResidualVM specific
 		}
 	}
 
@@ -489,9 +489,9 @@ void OSystem_SDL::setWindowCaption(const char *caption) {
 #ifdef USE_OPENGL
 void OSystem_SDL::setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) {
 	bool switchedManager = false;
-	if (accel3d && !dynamic_cast<OpenGLSdlGraphicsManager *>(_graphicsManager)) {
+	if (accel3d && !dynamic_cast<ResVmOpenGLSdlGraphicsManager *>(_graphicsManager)) {
 		switchedManager = true;
-	} else if (!accel3d && !dynamic_cast<SurfaceSdlGraphicsManager *>(_graphicsManager)) {
+	} else if (!accel3d && !dynamic_cast<ResVmSurfaceSdlGraphicsManager *>(_graphicsManager)) {
 		switchedManager = true;
 	}
 
@@ -501,9 +501,9 @@ void OSystem_SDL::setupScreen(uint screenW, uint screenH, bool fullscreen, bool 
 		delete _graphicsManager;
 
 		if (accel3d) {
-			_graphicsManager = sdlGraphicsManager = new OpenGLSdlGraphicsManager(_eventSource, _window, _capabilities);
+			_graphicsManager = sdlGraphicsManager = new ResVmOpenGLSdlGraphicsManager(_eventSource, _window, _capabilities);
 		} else {
-			_graphicsManager = sdlGraphicsManager = new SurfaceSdlGraphicsManager(_eventSource, _window);
+			_graphicsManager = sdlGraphicsManager = new ResVmSurfaceSdlGraphicsManager(_eventSource, _window);
 		}
 		sdlGraphicsManager->activateManager();
 	}

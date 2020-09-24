@@ -24,7 +24,7 @@
 
 #if defined(SDL_BACKEND)
 
-#include "backends/graphics/openglsdl/openglsdl-graphics.h"
+#include "backends/graphics/resvmopenglsdl/resvmopenglsdl-graphics.h"
 
 #include "backends/events/sdl/resvm-sdl-events.h"
 #include "common/config-manager.h"
@@ -44,7 +44,7 @@
 #include "image/bmp.h"
 #endif
 
-OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, SdlWindow *window, const Capabilities &capabilities)
+ResVmOpenGLSdlGraphicsManager::ResVmOpenGLSdlGraphicsManager(SdlEventSource *eventSource, SdlWindow *window, const Capabilities &capabilities)
 	: ResVmSdlGraphicsManager(eventSource, window),
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	_glContext(nullptr),
@@ -69,14 +69,14 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, 
 	_screenChangeCount = 1 << (sizeof(int) * 8 - 2);
 }
 
-OpenGLSdlGraphicsManager::~OpenGLSdlGraphicsManager() {
+ResVmOpenGLSdlGraphicsManager::~ResVmOpenGLSdlGraphicsManager() {
 	closeOverlay();
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	deinitializeRenderer();
 #endif
 }
 
-bool OpenGLSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
+bool ResVmOpenGLSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 	return
 		(f == OSystem::kFeatureFullscreenMode) ||
 		(f == OSystem::kFeatureOpenGL) ||
@@ -88,7 +88,7 @@ bool OpenGLSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 		(f == OSystem::kFeatureOverlaySupportsAlpha && _overlayFormat.aBits() > 3);
 }
 
-bool OpenGLSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
+bool ResVmOpenGLSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 	switch (f) {
 		case OSystem::kFeatureVSync:
 			return isVSyncEnabled();
@@ -101,7 +101,7 @@ bool OpenGLSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 	}
 }
 
-void OpenGLSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
+void ResVmOpenGLSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 	switch (f) {
 		case OSystem::kFeatureFullscreenMode:
 			if (_fullscreen != enable) {
@@ -117,7 +117,7 @@ void OpenGLSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) 
 	}
 }
 
-void OpenGLSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, bool fullscreen, bool accel3d) {
+void ResVmOpenGLSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, bool fullscreen, bool accel3d) {
 	assert(accel3d);
 	closeOverlay();
 
@@ -187,7 +187,7 @@ void OpenGLSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, bool
 #endif
 }
 
-void OpenGLSdlGraphicsManager::createOrUpdateScreen() {
+void ResVmOpenGLSdlGraphicsManager::createOrUpdateScreen() {
 	closeOverlay();
 
 	// If the game can't adapt to any resolution, render it to a framebuffer
@@ -260,7 +260,7 @@ void OpenGLSdlGraphicsManager::createOrUpdateScreen() {
 #endif
 }
 
-Math::Rect2d OpenGLSdlGraphicsManager::computeGameRect(bool renderToFrameBuffer, uint gameWidth, uint gameHeight,
+Math::Rect2d ResVmOpenGLSdlGraphicsManager::computeGameRect(bool renderToFrameBuffer, uint gameWidth, uint gameHeight,
                                                       uint screenWidth, uint screenHeight) {
 	if (renderToFrameBuffer) {
 		if (_lockAspectRatio) {
@@ -281,7 +281,7 @@ Math::Rect2d OpenGLSdlGraphicsManager::computeGameRect(bool renderToFrameBuffer,
 	}
 }
 
-void OpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
+void ResVmOpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	// Get the updated size directly from SDL, in case there are multiple
 	// resize events in the message queue.
@@ -311,11 +311,11 @@ void OpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
 #endif
 }
 
-Graphics::PixelBuffer OpenGLSdlGraphicsManager::getScreenPixelBuffer() {
+Graphics::PixelBuffer ResVmOpenGLSdlGraphicsManager::getScreenPixelBuffer() {
 	error("Direct screen buffer access is not allowed when using OpenGL");
 }
 
-void OpenGLSdlGraphicsManager::initializeOpenGLContext() const {
+void ResVmOpenGLSdlGraphicsManager::initializeOpenGLContext() const {
 	OpenGL::ContextType type;
 
 #ifdef USE_GLES2
@@ -333,7 +333,7 @@ void OpenGLSdlGraphicsManager::initializeOpenGLContext() const {
 #endif
 }
 
-OpenGLSdlGraphicsManager::OpenGLPixelFormat::OpenGLPixelFormat(uint screenBytesPerPixel, uint red, uint blue, uint green, uint alpha, int samples) :
+ResVmOpenGLSdlGraphicsManager::OpenGLPixelFormat::OpenGLPixelFormat(uint screenBytesPerPixel, uint red, uint blue, uint green, uint alpha, int samples) :
 		bytesPerPixel(screenBytesPerPixel),
 		redSize(red),
 		blueSize(blue),
@@ -343,7 +343,7 @@ OpenGLSdlGraphicsManager::OpenGLPixelFormat::OpenGLPixelFormat(uint screenBytesP
 
 }
 
-bool OpenGLSdlGraphicsManager::createOrUpdateGLContext(uint gameWidth, uint gameHeight,
+bool ResVmOpenGLSdlGraphicsManager::createOrUpdateGLContext(uint gameWidth, uint gameHeight,
                                                        uint effectiveWidth, uint effectiveHeight,
                                                        bool renderToFramebuffer,
                                                        bool engineSupportsArbitraryResolutions) {
@@ -464,12 +464,12 @@ bool OpenGLSdlGraphicsManager::createOrUpdateGLContext(uint gameWidth, uint game
 	return it != pixelFormats.end();
 }
 
-bool OpenGLSdlGraphicsManager::shouldRenderToFramebuffer() const {
+bool ResVmOpenGLSdlGraphicsManager::shouldRenderToFramebuffer() const {
 	bool engineSupportsArbitraryResolutions = !g_engine || g_engine->hasFeature(Engine::kSupportsArbitraryResolutions);
 	return !engineSupportsArbitraryResolutions && _capabilities.openGLFrameBuffer;
 }
 
-bool OpenGLSdlGraphicsManager::isVSyncEnabled() const {
+bool ResVmOpenGLSdlGraphicsManager::isVSyncEnabled() const {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	return SDL_GL_GetSwapInterval() != 0;
 #else
@@ -479,7 +479,7 @@ bool OpenGLSdlGraphicsManager::isVSyncEnabled() const {
 #endif
 }
 
-void OpenGLSdlGraphicsManager::drawOverlay() {
+void ResVmOpenGLSdlGraphicsManager::drawOverlay() {
 	glViewport(0, 0, _overlayScreen->getWidth(), _overlayScreen->getHeight());
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -496,7 +496,7 @@ void OpenGLSdlGraphicsManager::drawOverlay() {
 	_surfaceRenderer->restorePreviousState();
 }
 
-void OpenGLSdlGraphicsManager::drawSideTextures() {
+void ResVmOpenGLSdlGraphicsManager::drawSideTextures() {
 	if (_fullscreen && _lockAspectRatio) {
 		_surfaceRenderer->setFlipY(true);
 
@@ -518,7 +518,7 @@ void OpenGLSdlGraphicsManager::drawSideTextures() {
 }
 
 #ifndef AMIGAOS
-OpenGL::FrameBuffer *OpenGLSdlGraphicsManager::createFramebuffer(uint width, uint height) {
+OpenGL::FrameBuffer *ResVmOpenGLSdlGraphicsManager::createFramebuffer(uint width, uint height) {
 #if !defined(USE_GLES2)
 	if (_antialiasing && OpenGLContext.framebufferObjectMultisampleSupported) {
 		return new OpenGL::MultiSampleFrameBuffer(width, height, _antialiasing);
@@ -530,7 +530,7 @@ OpenGL::FrameBuffer *OpenGLSdlGraphicsManager::createFramebuffer(uint width, uin
 }
 #endif // AMIGAOS
 
-void OpenGLSdlGraphicsManager::updateScreen() {
+void ResVmOpenGLSdlGraphicsManager::updateScreen() {
 	if (_frameBuffer) {
 		_frameBuffer->detach();
 		glViewport(0, 0, _overlayScreen->getWidth(), _overlayScreen->getHeight());
@@ -562,7 +562,7 @@ void OpenGLSdlGraphicsManager::updateScreen() {
 	}
 }
 
-int16 OpenGLSdlGraphicsManager::getHeight() const {
+int16 ResVmOpenGLSdlGraphicsManager::getHeight() const {
 	// ResidualVM specific
 	if (_frameBuffer)
 		return _frameBuffer->getHeight();
@@ -570,7 +570,7 @@ int16 OpenGLSdlGraphicsManager::getHeight() const {
 		return _overlayScreen->getHeight();
 }
 
-int16 OpenGLSdlGraphicsManager::getWidth() const {
+int16 ResVmOpenGLSdlGraphicsManager::getWidth() const {
 	// ResidualVM specific
 	if (_frameBuffer)
 		return _frameBuffer->getWidth();
@@ -582,7 +582,7 @@ int16 OpenGLSdlGraphicsManager::getWidth() const {
 #pragma mark --- Overlays ---
 #pragma mark -
 
-void OpenGLSdlGraphicsManager::suggestSideTextures(Graphics::Surface *left, Graphics::Surface *right) {
+void ResVmOpenGLSdlGraphicsManager::suggestSideTextures(Graphics::Surface *left, Graphics::Surface *right) {
 	delete _sideTextures[0];
 	_sideTextures[0] = nullptr;
 	delete _sideTextures[1];
@@ -595,7 +595,7 @@ void OpenGLSdlGraphicsManager::suggestSideTextures(Graphics::Surface *left, Grap
 	}
 }
 
-void OpenGLSdlGraphicsManager::showOverlay() {
+void ResVmOpenGLSdlGraphicsManager::showOverlay() {
 	if (_overlayVisible) {
 		return;
 	}
@@ -616,7 +616,7 @@ void OpenGLSdlGraphicsManager::showOverlay() {
 	}
 }
 
-void OpenGLSdlGraphicsManager::hideOverlay() {
+void ResVmOpenGLSdlGraphicsManager::hideOverlay() {
 	if (!_overlayVisible) {
 		return;
 	}
@@ -626,15 +626,15 @@ void OpenGLSdlGraphicsManager::hideOverlay() {
 	_overlayBackground = nullptr;
 }
 
-void OpenGLSdlGraphicsManager::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
+void ResVmOpenGLSdlGraphicsManager::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
 	_overlayScreen->copyRectToSurface(buf, pitch, x, y, w, h);
 }
 
-void OpenGLSdlGraphicsManager::clearOverlay() {
+void ResVmOpenGLSdlGraphicsManager::clearOverlay() {
 	_overlayScreen->fill(0);
 }
 
-void OpenGLSdlGraphicsManager::grabOverlay(void *buf, int pitch) const {
+void ResVmOpenGLSdlGraphicsManager::grabOverlay(void *buf, int pitch) const {
 	const Graphics::Surface *overlayData = _overlayScreen->getBackingSurface();
 
 	const byte *src = (const byte *)overlayData->getPixels();
@@ -647,7 +647,7 @@ void OpenGLSdlGraphicsManager::grabOverlay(void *buf, int pitch) const {
 	}
 }
 
-void OpenGLSdlGraphicsManager::closeOverlay() {
+void ResVmOpenGLSdlGraphicsManager::closeOverlay() {
 	delete _sideTextures[0];
 	delete _sideTextures[1];
 	_sideTextures[0] = _sideTextures[1] = nullptr;
@@ -666,15 +666,15 @@ void OpenGLSdlGraphicsManager::closeOverlay() {
 	OpenGL::Context::destroy();
 }
 
-int16 OpenGLSdlGraphicsManager::getOverlayHeight() const {
+int16 ResVmOpenGLSdlGraphicsManager::getOverlayHeight() const {
 	return _overlayScreen->getHeight();
 }
 
-int16 OpenGLSdlGraphicsManager::getOverlayWidth() const {
+int16 ResVmOpenGLSdlGraphicsManager::getOverlayWidth() const {
 	return _overlayScreen->getWidth();
 }
 
-void OpenGLSdlGraphicsManager::warpMouse(int x, int y) {
+void ResVmOpenGLSdlGraphicsManager::warpMouse(int x, int y) {
 	//ResidualVM specific
 	if (_frameBuffer) {
 		// Scale from game coordinates to screen coordinates
@@ -688,7 +688,7 @@ void OpenGLSdlGraphicsManager::warpMouse(int x, int y) {
 	_window->warpMouseInWindow(x, y);
 }
 
-void OpenGLSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
+void ResVmOpenGLSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
 	if (_overlayVisible || !_frameBuffer)
 		return;
 
@@ -705,13 +705,13 @@ void OpenGLSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
 }
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-void OpenGLSdlGraphicsManager::deinitializeRenderer() {
+void ResVmOpenGLSdlGraphicsManager::deinitializeRenderer() {
 	SDL_GL_DeleteContext(_glContext);
 	_glContext = nullptr;
 }
 #endif // SDL_VERSION_ATLEAST(2, 0, 0)
 
-bool OpenGLSdlGraphicsManager::saveScreenshot(const Common::String &filename) const {
+bool ResVmOpenGLSdlGraphicsManager::saveScreenshot(const Common::String &filename) const {
 	// Largely based on the implementation from ScummVM
 	uint width = _overlayScreen->getWidth();
 	uint height = _overlayScreen->getHeight();
