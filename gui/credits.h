@@ -566,6 +566,7 @@ static const char *credits[] = {
 "",
 "C1""Wii",
 "C0""Andre Heider",
+"C0""Alexander Reim",
 "",
 "C1""Raspberry Pi",
 "C0""Manuel Alfayate",

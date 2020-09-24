@@ -1108,6 +1108,7 @@ begin_credits("Credits");
 
 			begin_section("Wii");
 				add_person("Andre Heider", "dhewg", "");
+				add_person("Alexander Reim", "AReim1982", "");
 			end_section();
 
 			begin_section("Raspberry Pi");
