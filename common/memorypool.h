@@ -73,7 +73,7 @@ public:
 	 * @param chunkSize		the chunk size of this memory pool
 	 */
 	explicit MemoryPool(size_t chunkSize);
-	~MemoryPool();
+	virtual ~MemoryPool();
 
 	/**
 	 * Allocate a new chunk from the memory pool.
