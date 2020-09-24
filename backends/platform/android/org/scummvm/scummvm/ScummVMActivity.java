@@ -64,7 +64,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	private File _configScummvmFile;
 	private File _actualScummVMDataDir;
 	private File _usingScummVMSavesDir;
-	private File _usingLogFile;
+//	private File _usingLogFile;
 
 
 	/**
@@ -272,6 +272,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 //			Log.d(ScummVM.LOG_TAG, "SAVEPATH: " +  _usingScummVMSavesDir.getPath());
 
 			// TODO log file setting via "--logfile=" + _usingLogFile.getPath() causes crash
+			//      probably because this option is specific to SDL_BACKEND (see: base/commandLine.cpp)
 			_scummvm.setArgs(new String[]{
 				"ScummVM",
 				"--config=" + _configScummvmFile.getPath(),
@@ -679,51 +680,51 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			}
 		}
 
-		File internalScummVMLogsDir = new File(_actualScummVMDataDir, ".cache/scummvm/logs");
-		if (!internalScummVMLogsDir.exists() && internalScummVMLogsDir.mkdirs()) {
-			Log.d(ScummVM.LOG_TAG, "Created ScummVM Logs path: " + internalScummVMLogsDir.getPath());
-		} else if (internalScummVMLogsDir.isDirectory()) {
-			Log.d(ScummVM.LOG_TAG, "ScummVM Logs path already exists: " + internalScummVMLogsDir.getPath());
-		} else {
-			Log.e(ScummVM.LOG_TAG, "Could not create folder for ScummVM Logs path: " + internalScummVMLogsDir.getPath());
-			new AlertDialog.Builder(this)
-				.setTitle(R.string.no_log_file_title)
-				.setIcon(android.R.drawable.ic_dialog_alert)
-				.setMessage(R.string.no_log_file)
-				.setNegativeButton(R.string.quit,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							finish();
-						}
-					})
-				.show();
-			return false;
-		}
-
-		_usingLogFile = new File(internalScummVMLogsDir, "scummvm.log");
-		try {
-			if (_usingLogFile.exists() || !_usingLogFile.createNewFile()) {
-				Log.d(ScummVM.LOG_TAG, "ScummVM Log file already exists!");
-				Log.d(ScummVM.LOG_TAG, "Existing ScummVM Log: " + _usingLogFile.getPath());
-			} else {
-				Log.d(ScummVM.LOG_TAG, "An empty ScummVM log file was created!");
-				Log.d(ScummVM.LOG_TAG, "New ScummVM Log: " + _usingLogFile.getPath());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			new AlertDialog.Builder(this)
-				.setTitle(R.string.no_log_file_title)
-				.setIcon(android.R.drawable.ic_dialog_alert)
-				.setMessage(R.string.no_log_file)
-				.setNegativeButton(R.string.quit,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							finish();
-						}
-					})
-				.show();
-			return false;
-		}
+//		File internalScummVMLogsDir = new File(_actualScummVMDataDir, ".cache/scummvm/logs");
+//		if (!internalScummVMLogsDir.exists() && internalScummVMLogsDir.mkdirs()) {
+//			Log.d(ScummVM.LOG_TAG, "Created ScummVM Logs path: " + internalScummVMLogsDir.getPath());
+//		} else if (internalScummVMLogsDir.isDirectory()) {
+//			Log.d(ScummVM.LOG_TAG, "ScummVM Logs path already exists: " + internalScummVMLogsDir.getPath());
+//		} else {
+//			Log.e(ScummVM.LOG_TAG, "Could not create folder for ScummVM Logs path: " + internalScummVMLogsDir.getPath());
+//			new AlertDialog.Builder(this)
+//				.setTitle(R.string.no_log_file_title)
+//				.setIcon(android.R.drawable.ic_dialog_alert)
+//				.setMessage(R.string.no_log_file)
+//				.setNegativeButton(R.string.quit,
+//					new DialogInterface.OnClickListener() {
+//						public void onClick(DialogInterface dialog, int which) {
+//							finish();
+//						}
+//					})
+//				.show();
+//			return false;
+//		}
+//
+//		_usingLogFile = new File(internalScummVMLogsDir, "scummvm.log");
+//		try {
+//			if (_usingLogFile.exists() || !_usingLogFile.createNewFile()) {
+//				Log.d(ScummVM.LOG_TAG, "ScummVM Log file already exists!");
+//				Log.d(ScummVM.LOG_TAG, "Existing ScummVM Log: " + _usingLogFile.getPath());
+//			} else {
+//				Log.d(ScummVM.LOG_TAG, "An empty ScummVM log file was created!");
+//				Log.d(ScummVM.LOG_TAG, "New ScummVM Log: " + _usingLogFile.getPath());
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			new AlertDialog.Builder(this)
+//				.setTitle(R.string.no_log_file_title)
+//				.setIcon(android.R.drawable.ic_dialog_alert)
+//				.setMessage(R.string.no_log_file)
+//				.setNegativeButton(R.string.quit,
+//					new DialogInterface.OnClickListener() {
+//						public void onClick(DialogInterface dialog, int which) {
+//							finish();
+//						}
+//					})
+//				.show();
+//			return false;
+//		}
 
 		File internalScummVMConfigDir = new File(_actualScummVMDataDir, ".config/scummvm");
 		if (!internalScummVMConfigDir.exists() && internalScummVMConfigDir.mkdirs()) {
