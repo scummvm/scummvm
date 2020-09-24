@@ -461,9 +461,11 @@ bool BinkDecoder::BinkVideoTrack::rewind() {
 	memset(_curPlanes[0],   0, _yBlockWidth  * 8 * _yBlockHeight  * 8);
 	memset(_curPlanes[1],   0, _uvBlockWidth * 8 * _uvBlockHeight * 8);
 	memset(_curPlanes[2],   0, _uvBlockWidth * 8 * _uvBlockHeight * 8);
+	memset(_curPlanes[3], 255, _yBlockWidth  * 8 * _yBlockHeight  * 8);
 	memset(_oldPlanes[0],   0, _yBlockWidth  * 8 * _yBlockHeight  * 8);
 	memset(_oldPlanes[1],   0, _uvBlockWidth * 8 * _uvBlockHeight * 8);
 	memset(_oldPlanes[2],   0, _uvBlockWidth * 8 * _uvBlockHeight * 8);
+	memset(_oldPlanes[3], 255, _yBlockWidth  * 8 * _yBlockHeight  * 8);
 
 	return true;
 }
@@ -491,12 +493,17 @@ void BinkDecoder::BinkVideoTrack::decodePacket(VideoFrame &frame) {
 	}
 
 	// Convert the YUV data we have to our format
-	// We're ignoring alpha for now
 	// The width used here is the surface-width, and not the video-width
 	// to allow for odd-sized videos.
-	assert(_curPlanes[0] && _curPlanes[1] && _curPlanes[2]);
-	YUVToRGBMan.convert420(&_surface, Graphics::YUVToRGBManager::kScaleITU, _curPlanes[0], _curPlanes[1], _curPlanes[2],
-			_surfaceWidth, _surfaceHeight, _yBlockWidth * 8, _uvBlockWidth * 8);
+	if (_hasAlpha) {
+		assert(_curPlanes[0] && _curPlanes[1] && _curPlanes[2] && _curPlanes[3]);
+		YUVToRGBMan.convert420Alpha(&_surface, Graphics::YUVToRGBManager::kScaleITU, _curPlanes[0], _curPlanes[1], _curPlanes[2], _curPlanes[3],
+				_surfaceWidth, _surfaceHeight, _yBlockWidth * 8, _uvBlockWidth * 8);
+	} else {
+		assert(_curPlanes[0] && _curPlanes[1] && _curPlanes[2]);
+		YUVToRGBMan.convert420(&_surface, Graphics::YUVToRGBManager::kScaleITU, _curPlanes[0], _curPlanes[1], _curPlanes[2],
+				_surfaceWidth, _surfaceHeight, _yBlockWidth * 8, _uvBlockWidth * 8);
+	}
 
 	// And swap the planes with the reference planes
 	for (int i = 0; i < 4; i++)
