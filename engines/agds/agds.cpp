@@ -195,13 +195,7 @@ void AGDSEngine::loadScreen(const Common::String &name) {
 	}
 	_mouseMap.hideAll(this);
 	resetCurrentScreen();
-	for(ProcessListType::iterator i = _processes.begin(); i != _processes.end(); ++i) {
-		Process &process = *i;
-		if (process.parentScreenName() != _currentScreenName) {
-			debug("process %s from different screen, destroy", process.getName().c_str());
-			process.done();
-		}
-	}
+	_processes.clear();
 
 	_soundManager.stopAll();
 	_currentScreenName = name;
