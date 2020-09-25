@@ -52,10 +52,10 @@
 #include "backends/keymapper/hardware-input.h"
 #include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/timer/sdl/sdl-timer.h"
-#include "backends/graphics/resvmsurfacesdl/resvmsurfacesdl-graphics.h" // ResidualVM specific
+#include "backends/graphics/resvm-surfacesdl/resvm-surfacesdl-graphics.h" // ResidualVM specific
 
 #ifdef USE_OPENGL
-#include "backends/graphics/resvmopenglsdl/resvmopenglsdl-graphics.h" // ResidualVM specific
+#include "backends/graphics/resvm-openglsdl/resvm-openglsdl-graphics.h" // ResidualVM specific
 //#include "graphics/cursorman.h" // ResidualVM specific
 #include "graphics/opengl/context.h" // ResidualVM specific
 #endif

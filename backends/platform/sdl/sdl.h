@@ -38,7 +38,7 @@ class DiscordPresence;
 #endif
 // ResidualVM - Start
 #ifdef USE_OPENGL
-#include "backends/graphics/resvmopenglsdl/resvmopenglsdl-graphics.h"
+#include "backends/graphics/resvm-openglsdl/resvm-openglsdl-graphics.h"
 #endif
 // ResidualVM - End
 

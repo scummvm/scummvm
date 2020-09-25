@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS_RESVMOPENGLSDL_GRAPHICS_H
-#define BACKENDS_GRAPHICS_RESVMOPENGLSDL_GRAPHICS_H
+#ifndef BACKENDS_GRAPHICS_RESVM_OPENGLSDL_GRAPHICS_H
+#define BACKENDS_GRAPHICS_RESVM_OPENGLSDL_GRAPHICS_H
 
-#include "backends/graphics/sdl/resvm-sdl-graphics.h"
+#include "backends/graphics/resvm-sdl/resvm-sdl-graphics.h"
 
 namespace OpenGL {
 	class FrameBuffer;

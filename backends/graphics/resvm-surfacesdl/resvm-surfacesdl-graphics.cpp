@@ -24,7 +24,7 @@
 
 #if defined(SDL_BACKEND)
 
-#include "backends/graphics/resvmsurfacesdl/resvmsurfacesdl-graphics.h"
+#include "backends/graphics/resvm-surfacesdl/resvm-surfacesdl-graphics.h"
 #include "backends/events/sdl/resvm-sdl-events.h"
 #include "common/config-manager.h"
 #include "common/file.h"

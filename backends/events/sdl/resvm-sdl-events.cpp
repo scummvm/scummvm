@@ -25,7 +25,7 @@
 #if defined(SDL_BACKEND)
 
 #include "backends/events/sdl/resvm-sdl-events.h"
-#include "backends/graphics/sdl/resvm-sdl-graphics.h"
+#include "backends/graphics/resvm-sdl/resvm-sdl-graphics.h"
 #include "engines/engine.h"
 #include "gui/gui-manager.h"
 #include "common/config-manager.h"

@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS_SDL_RESVMSDLGRAPHICS_H
-#define BACKENDS_GRAPHICS_SDL_RESVMSDLGRAPHICS_H
+#ifndef BACKENDS_GRAPHICS_SDL_RESVM_SDLGRAPHICS_H
+#define BACKENDS_GRAPHICS_SDL_RESVM_SDLGRAPHICS_H
 
-#include "backends/graphics/sdl/sdl-graphics.h"
+#include "backends/graphics/resvm-sdl/sdl-graphics.h"
 
 #include "common/events.h"
 #include "common/rect.h"
