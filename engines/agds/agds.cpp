@@ -196,6 +196,7 @@ void AGDSEngine::loadScreen(const Common::String &name) {
 	_mouseMap.hideAll(this);
 	resetCurrentScreen();
 	_processes.clear();
+	_animations.clear();
 
 	_soundManager.stopAll();
 	_currentScreenName = name;
