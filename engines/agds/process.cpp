@@ -67,8 +67,29 @@ void Process::error(const char *str, ...) {
 	_status = kStatusError;
 }
 
-void Process::push(int32 value) {
-	_stack.push(value);
+void Process::jump(int16 delta) {
+	debug("jump %+d", delta);
+	_ip += delta;
+}
+
+void Process::jumpz(int16 delta) {
+	int value = pop();
+	if (value == 0) {
+		debug("jumpz %d %+d", value, delta);
+		_ip += delta;
+	}
+}
+
+void Process::incrementGlobalByTop() {
+	incrementGlobal(top());
+}
+void Process::decrementGlobalByTop() {
+	decrementGlobal(top());
+}
+
+
+void Process::suspend() {
+	suspend(kExitCodeSuspend);
 }
 
 int32 Process::pop() {
@@ -180,6 +201,32 @@ void Process::run() {
 		}
 	}
 }
+
+#define UNARY_OP(NAME, OP) void Process:: NAME () { int arg = pop(); debug(#NAME " %d", arg); push( OP arg ); }
+#define BINARY_OP(NAME, OP) void Process:: NAME () { int arg2 = pop(); int arg1 = pop(); debug(#NAME " %d " #OP " %d", arg1, arg2); push(arg1 OP arg2); }
+
+	UNARY_OP(boolNot, !)
+	UNARY_OP(bitNot, ~)
+	UNARY_OP(negate, -)
+	BINARY_OP(boolOr, ||)
+	BINARY_OP(boolAnd, &&)
+	BINARY_OP(equals, ==)
+	BINARY_OP(notEquals, !=)
+	BINARY_OP(greater, >)
+	BINARY_OP(greaterOrEquals, >=)
+	BINARY_OP(less, <)
+	BINARY_OP(lessOrEquals, <=)
+	BINARY_OP(add, +)
+	BINARY_OP(sub, -)
+	BINARY_OP(mul, *)
+	BINARY_OP(div, /)
+	BINARY_OP(mod, %)
+	BINARY_OP(bitAnd, &)
+	BINARY_OP(bitOr, |)
+	BINARY_OP(bitXor, ^)
+
+#undef UNARY_OP
+#undef BINARY_OP
 
 
 } // namespace AGDS

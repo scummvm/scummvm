@@ -36,6 +36,38 @@
 
 namespace AGDS {
 
+void Process::dup() {
+	push(top());
+}
+
+void Process::popNoResult() {
+	pop();
+}
+
+void Process::push(bool value) {
+	_stack.push(value);
+}
+
+void Process::push(int8 value) {
+	_stack.push(value);
+}
+
+void Process::push(int16 value) {
+	_stack.push(value);
+}
+
+void Process::push(int32 value) {
+	_stack.push(value);
+}
+
+void Process::push2(int8 value) {
+	_stack.push(value);
+}
+
+void Process::push2(int16 value) {
+	_stack.push(value);
+}
+
 void Process::enter(uint16 magic, uint16 size) {
 	if (magic != 0xdead || size != 0x0c)
 		error("invalid enter() magic: 0x%04x or size: %u", magic, size);
@@ -244,7 +276,7 @@ void Process::setPhaseVar() {
 	debug("setPhaseVar %s", name.c_str());
 }
 
-void Process::getGlobal(unsigned index) {
+void Process::getGlobal(uint8 index) {
 	const Common::String &name = _object->getString(index).string;
 	int value = _engine->getGlobal(name);
 	debug("get global %u %s -> %d", index, name.c_str(), value);
@@ -471,14 +503,14 @@ void Process::fadeObject() {
 		warning("fadeObject: object %s not found", name.c_str());
 }
 
-void Process::onObjectUse(unsigned size) {
+void Process::onObjectUse(uint16 size) {
 	Common::String arg = popString();
 	debug("register use object handler %s -> %u", arg.c_str(), _ip);
 	_object->setUseHandler(arg, _ip);
 	_ip += size;
 }
 
-void Process::onObjectUserUse(unsigned size) {
+void Process::onObjectUserUse(uint16 size) {
 	debug("register user use handler %u", _ip);
 	_object->setUserUseHandler(_ip);
 	_ip += size;
@@ -713,12 +745,12 @@ void Process::setTileIndex() {
 	debug("setTileIndex: index: %d, resource id: %d ", _tileIndex, _tileResource);
 }
 
-void Process::stub201(unsigned size) {
+void Process::stub201(uint16 size) {
 	debug("stub201, [handler] %u instructions", size);
 	_ip += size;
 }
 
-void Process::stub202(unsigned size) {
+void Process::stub202(uint16 size) {
 	debug("stub202, [handler] %u instructions", size);
 	_ip += size;
 }
@@ -1057,36 +1089,36 @@ void Process::call(uint16 addr) {
 	_engine->runProcess(_object, _ip + addr);
 }
 
-void Process::onKey(unsigned size) {
+void Process::onKey(uint16 size) {
 	Common::String key = popString();
 	debug("onKey %s [handler], %u instructions", key.c_str(), size);
 	_object->setKeyHandler(key, _ip);
 	_ip += size;
 }
 
-void Process::onUse(unsigned size) {
+void Process::onUse(uint16 size) {
 	debug("lclick [handler], %u instructions", size);
 	_object->setClickHandler(_ip);
 	_ip += size;
 }
 
-void Process::onObjectC1(unsigned size) {
+void Process::onObjectC1(uint16 size) {
 	debug("unknown (0xc1) [handler], %u instructions", size);
 	_ip += size;
 }
 
-void Process::onLook(unsigned size) {
+void Process::onLook(uint16 size) {
 	debug("look? [handler], %u instructions", size);
 	_object->setExamineHandler(_ip);
 	_ip += size;
 }
 
-void Process::onObjectB9(unsigned size) {
+void Process::onObjectB9(uint16 size) {
 	debug("onObject(+B9) [handler], %u instructions", size);
 	_ip += size;
 }
 
-void Process::onObjectBD(unsigned size) {
+void Process::onObjectBD(uint16 size) {
 	debug("onObject(+BD) [handler], %u instructions", size);
 	_ip += size;
 }
@@ -1135,6 +1167,14 @@ void Process::moveCharacter(bool usermove) {
 	debug("moveCharacter %s %s %d, usermove: %d", arg1.c_str(), arg2.c_str(), arg3, usermove);
 	if (_status == kStatusPassive)
 		suspend();
+}
+
+void Process::moveCharacterUserMove() {
+	moveCharacter(true);
+}
+
+void Process::moveCharacterNoUserMove() {
+	moveCharacter(false);
 }
 
 void Process::animateCharacter() {
@@ -1326,53 +1366,48 @@ void Process::setCharacterNotifyVars() {
 }
 
 //fixme: add trace here
-#define OP(NAME, METHOD) \
+#define AGDS_OP(NAME, METHOD) \
 	case NAME:           \
 		METHOD();        \
-		break
+		break;
 
-#define OP_I(NAME, METHOD, IMM) \
-	case NAME: {                \
-		METHOD(IMM);            \
-	} break
-
-#define OP_C(NAME, METHOD) \
+#define AGDS_OP_C(NAME, METHOD) \
 	case NAME: {           \
 		int8 arg = next(); \
 		METHOD(arg);       \
-	} break
+	} break;
 
-#define OP_B(NAME, METHOD)  \
+#define AGDS_OP_B(NAME, METHOD)  \
 	case NAME: {            \
 		uint8 arg = next(); \
 		METHOD(arg);        \
-	} break
+	} break;
 
-#define OP_W(NAME, METHOD)    \
+#define AGDS_OP_W(NAME, METHOD)    \
 	case NAME: {              \
 		int16 arg = next16(); \
 		METHOD(arg);          \
-	} break
+	} break;
 
-#define OP_U(NAME, METHOD)     \
+#define AGDS_OP_U(NAME, METHOD)     \
 	case NAME: {               \
 		uint16 arg = next16(); \
 		METHOD(arg);           \
-	} break
+	} break;
 
-#define OP_UU(NAME, METHOD)     \
+#define AGDS_OP_UU(NAME, METHOD)     \
 	case NAME: {                \
 		uint16 arg1 = next16(); \
 		uint16 arg2 = next16(); \
 		METHOD(arg1, arg2);     \
-	} break
+	} break;
 
-#define OP_D(NAME, METHOD)           \
+#define AGDS_OP_UD(NAME, METHOD)           \
 	case NAME: {                     \
 		uint16 arg1 = next16();      \
 		uint32 arg2 = next16();      \
-		METHOD(arg1 | (arg2 << 16)); \
-	} break
+		METHOD(static_cast<int32>(arg1 | (arg2 << 16))); \
+	} break;
 
 
 void Process::checkTimers() {
@@ -1391,193 +1426,14 @@ ProcessExitCode Process::resume() {
 	while (active() && _ip < code.size()) {
 		_lastIp = _ip;
 		uint8 op = next();
+		//debug("CODE %04x: %u", _lastIp, (uint)op);
 		switch (op) {
-			OP_UU(kEnter, enter);
-			OP_W(kJumpZImm16, jumpz);
-			OP_W(kJumpImm16, jump);
-			OP(kPop, pop);
-			OP(kDup, dup);
-			OP(kExitProcess, exitProcess);
-			OP(kSuspendProcess, suspend);
-			OP_D(kPushImm32, push);
-			OP_C(kPushImm8, push);
-			OP_W(kPushImm16, push);
-			OP_C(kPushImm8_2, push);
-			OP_W(kPushImm16_2, push);
-			OP_B(kGetGlobalImm8, getGlobal);
-			OP(kPostIncrementGlobal, postIncrementGlobal);
-			OP(kPostDecrementGlobal, postDecrementGlobal);
-			OP(kIncrementGlobalByTop, incrementGlobalByTop);
-			OP(kDecrementGlobalByTop, decrementGlobalByTop);
-			OP(kMultiplyGlobalByTop, multiplyGlobalByTop);
-			OP(kDivideGlobalByTop, divideGlobalByTop);
-			OP(kModGlobalByTop, modGlobalByTop);
-			OP(kShlGlobalByTop, shlGlobalByTop);
-			OP(kShrGlobalByTop, shrGlobalByTop);
-			OP(kAndGlobalByTop, andGlobalByTop);
-			OP(kOrGlobalByTop, orGlobalByTop);
-			OP(kXorGlobalByTop, xorGlobalByTop);
-			OP(kEquals, equals);
-			OP(kNotEquals, notEquals);
-			OP(kGreater, greater);
-			OP(kLess, less);
-			OP(kGreaterOrEquals, greaterOrEquals);
-			OP(kLessOrEquals, lessOrEquals);
-			OP(kAdd, add);
-			OP(kSub, sub);
-			OP(kMul, mul);
-			OP(kDiv, div);
-			OP(kMod, mod);
-			OP(kSetGlobal, setGlobal);
-			OP(kBoolOr, boolOr);
-			OP(kBoolAnd, boolAnd);
-			OP(kAnd, bitAnd);
-			OP(kOr, bitOr);
-			OP(kXor, bitXor);
-			OP(kNot, bitNot);
-			OP(kBoolNot, boolNot);
-			OP(kNegate, negate);
-			OP_U(kCallImm16, call);
-			OP_U(kObjectRegisterLookHandler, onLook);
-			OP_U(kObjectRegisterUseHandler, onUse);
-			OP_U(kObjectRegisterHandlerC1, onObjectC1);
-			OP_U(kObjectRegisterHandlerB9, onObjectB9);
-			OP_U(kObjectRegisterHandlerBD, onObjectBD);
-			OP(kLoadMouseCursorFromObject, loadMouseCursorFromObject);
-			OP(kLoadRegionFromObject, loadRegionFromObject);
-			OP(kLoadPictureFromObject, loadPictureFromObject);
-			OP(kLoadAnimationFromObject, loadAnimationFromObject);
-			OP(kShowCharacter, showCharacter);
-			OP(kEnableCharacter, enableCharacter);
-			OP_I(kMoveCharacterUserMove, moveCharacter, true);
-			OP(kLeaveCharacter, leaveCharacter);
-			OP(kSetCharacter, setCharacter);
-			OP(kPointCharacter, pointCharacter);
-			OP(kDisableUser, disableUser);
-			OP(kEnableUser, enableUser);
-			OP(kUpdatePhaseVarOr2, updatePhaseVarOr2);
-			OP(kUpdatePhaseVarOr4, updatePhaseVarOr4);
-			OP(kStub102, stub102);
-			OP(kClearScreen, clearScreen);
-			OP(kInventoryClear, inventoryClear);
-			OP(kLoadMouse, loadMouse);
-			OP(kInventoryAddObject, inventoryAddObject);
-			OP(kSetNextScreenSaveInHistory, setNextScreenSaveInHistory);
-			OP_U(kObjectRegisterUseObjectHandler, onObjectUse);
-			OP(kStub82, stub82);
-			OP(kStub83, stub83);
-			OP(kAnimateCharacter, animateCharacter);
-			OP(kLoadCharacter, loadCharacter);
-			OP(kSetObjectZ, setObjectZ);
-			OP(kUpdateScreenHeightToDisplay, updateScreenHeightToDisplay);
-			OP(kLoadTextFromObject, loadTextFromObject);
-			OP(kScreenSetHeight, setScreenHeight);
-			OP(kScreenLoadObject, loadScreenObject);
-			OP(kScreenLoadRegion, loadScreenRegion);
-			OP(kScreenCloneObject, cloneObject);
-			OP(kSetNextScreen, setNextScreen);
-			OP(kScreenRemoveObject, removeScreenObject);
-			OP(kLoadAnimation, loadAnimation);
-			OP(kLoadSample, loadSample);
-			OP(kSetAnimationPaused, setAnimationPaused);
-			OP(kPlayerSay, playerSay);
-			OP(kNPCSay, npcSay);
-			OP(kSetTimer, setTimer);
-			OP(kProcessResetState, resetState);
-			OP(kSetAnimationZ, setAnimationZ);
-			OP(kSetCycles, setCycles);
-			OP(kSetRandom, setRandom);
-			OP(kSetPanAndVolume, setPanAndVolume);
-			OP(kSetAnimationPosition, setAnimationPosition);
-			OP(kSetPhaseVar, setPhaseVar);
-			OP(kSetAnimationLoop, setAnimationLoop);
-			OP(kSetAnimationSpeed, setAnimationSpeed);
-			OP(kStub138, stub138);
-			OP(kGetSavedMouseX, getSavedMouseX);
-			OP(kGetSavedMouseY, getSavedMouseY);
-			OP(kScreenChangeScreenPatch, changeScreenPatch);
-			OP(kGetFreeInventorySpace, getInventoryFreeSpace);
-			OP(kSetStringSystemVariable, setStringSystemVariable);
-			OP(kSetSystemIntegerVariable, setIntegerSystemVariable);
-			OP(kGetRegionCenterX, getRegionCenterX);
-			OP(kGetRegionCenterY, getRegionCenterY);
-			OP(kGetCharacterAnimationPhase, getCharacterAnimationPhase);
-			OP(kGetIntegerSystemVariable, getIntegerSystemVariable);
-			OP(kGetRandomNumber, getRandomNumber);
-			OP(kAppendToSharedStorage, appendToSharedStorage);
-			OP(kAppendNameToSharedStorage, appendNameToSharedStorage);
-			OP(kCloneName, cloneName);
-			OP(kGetCloneVar, getCloneVar);
-			OP(kSetCloneVar, setCloneVar);
-			OP(kGetPictureBaseX, getPictureBaseX);
-			OP(kGetPictureBaseY, getPictureBaseY);
-			OP(kGetObjectSurfaceX, getObjectSurfaceX);
-			OP(kGetObjectSurfaceY, getObjectSurfaceX);
-			OP(kLoadGame, loadGame);
-			OP(kLoadSaveSlotNamePicture, loadSaveSlotNamePicture);
-			OP(kStub166, stub166);
-			OP(kSetDelay, setDelay);
-			OP(kStub172, stub172);
-			OP(kStub173, stub173);
-			OP(kStub174, stub174);
-			OP(kStub192, stub192);
-			OP(kQuit, quit);
-			OP(kExitProcessCreatePatch, exitProcessCreatePatch);
-			OP(kDisableInventory, disableInventory);
-			OP(kEnableInventory, enableInventory);
-			OP(kLoadPreviousScreen, loadPreviousScreen);
-			OP(kMoveScreenObject, moveScreenObject);
-			OP(kGetObjectId, getObjectId);
-			OP(kSetTileSize, setTileSize);
-			OP(kGenerateRegion, generateRegion);
-			OP(kGetMaxInventorySize, getMaxInventorySize);
-			OP(kAppendInventoryObjectNameToSharedSpace, appendInventoryObjectNameToSharedSpace);
-			OP(kSetObjectTile, setObjectTile);
-			OP(kInventoryHasObject, inventoryHasObject);
-			OP(kSetObjectText, setObjectText);
-			OP(kSetObjectScale, setObjectScale);
-			OP(kStub191, disableMouseAreas);
-			OP(kStub193, stub193);
-			OP(kMute, stub194);
-			OP(kGetObjectPictureWidth, getObjectPictureWidth);
-			OP(kGetObjectPictureHeight, getObjectPictureHeight);
-			OP(kLoadPicture, loadPicture);
-			OP(kStub199, stub199);
-			OP(kSetSampleVolumeAndPan, setSampleVolumeAndPan);
-			OP(kAddSampleToSoundGroup, addSampleToSoundGroup);
-			OP(kStub215, stub215);
-			OP(kStub216, stub216);
-			OP(kStub217, stub217);
-			OP(kStopCharacter, stopCharacter);
-			OP(kLeaveCharacterEx, leaveCharacterEx);
-			OP(kPlayAnimationWithPhaseVar, playAnimationWithPhaseVar);
-			OP(kStub223, stub223);
-			OP(kSetNPCTellNotifyVar, setNPCTellNotifyVar);
-			OP(kStub225, stub225);
-			OP(kFadeObject, fadeObject);
-			OP(kLoadFont, loadFont);
-			OP_U(kStub201Handler, stub201);
-			OP_U(kStub202ScreenHandler, stub202);
-			OP(kPlayFilm, playFilm);
-			OP(kAddMouseArea, addMouseArea);
-			OP(kSetRain, setRain);
-			OP(kSetRainDensity, setRainDensity);
-			OP(kFogOnCharacter, fogOnCharacter);
-			OP(kSetTileIndex, setTileIndex);
-			OP(kModifyMouseArea, modifyMouseArea);
-			OP_U(kObjectRegisterUserUseHandler, onObjectUserUse);
-			OP_I(kMoveCharacterNoUserMove, moveCharacter, false);
-			OP_U(kOnKey, onKey);
-			OP(kGetSampleVolume, getSampleVolume);
-			OP(kStub231, stub231);
-			OP(kStub233, stub233);
-			OP(kStub235, stub235);
-			OP(kUserEnabled, userEnabled);
-			OP(kSetCharacterNotifyVars, setCharacterNotifyVars);
-			OP(kInventoryFindObjectByName, inventoryFindObjectByName);
-			OP(kLoadDialog, loadDialog);
-			OP(kHasGlobal, hasGlobal);
-			OP(kSetDialogForNextFilm, setDialogForNextFilm);
+			AGDS_OPCODE_LIST(
+				AGDS_OP,
+				AGDS_OP_C, AGDS_OP_B,
+				AGDS_OP_W, AGDS_OP_U,
+				AGDS_OP_UD, AGDS_OP_UU
+			)
 		default:
 			error("%s: %08x: unknown opcode 0x%02x (%u)", _object->getName().c_str(), _ip - 1, (unsigned)op, (unsigned)op);
 			fail();
