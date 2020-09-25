@@ -2807,8 +2807,8 @@ bool EoBEngine::seq_segaPlaySequence(int sequenceId, bool setupScreen) {
 void EoBEngine::seq_segaPausePlayer(bool pause) {
 	if (_flags.platform != Common::kPlatformSegaCD)
 		return;
-
-	_seqPlayer->pause(pause);
+	if (_seqPlayer)
+		_seqPlayer->pause(pause);
 }
 
 #undef updateScrollState
