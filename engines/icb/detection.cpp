@@ -75,17 +75,17 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
-	virtual const char *getName() const { return "In Cold Blood Engine"; }
+	virtual const char *getName() const override { return "In Cold Blood Engine"; }
 
 	const char *getEngineId() const override {
 		return "icb";
 	}
 
-	virtual const char *getOriginalCopyright() const { return "(C) 2000 Revolution Software Ltd"; }
+	virtual const char *getOriginalCopyright() const override { return "(C) 2000 Revolution Software Ltd"; }
 
-	virtual bool hasFeature(MetaEngineFeature f) const { return false; }
+	virtual bool hasFeature(MetaEngineFeature f) const override { return false; }
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
 bool IcbMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
