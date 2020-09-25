@@ -937,10 +937,10 @@ int32 luaY_lex(YYSTYPE *l);
 #define YYINITDEPTH 1000
 
 int yyparse() {
-	register int yystate;
-	register int yyn;
-	register short *yyssp;
-	register YYSTYPE *yyvsp;
+	int yystate;
+	int yyn;
+	short *yyssp;
+	YYSTYPE *yyvsp;
 	int yyerrstatus;	/*  number of tokens to shift before error messages enabled */
 	int yychar1 = 0;		/*  lookahead token as an internal (translated) token number */
 

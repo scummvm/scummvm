@@ -108,13 +108,13 @@ public:
 	 * Checks if mouse is locked or not.
 	 * Avoid to emulate a mouse movement from joystick if locked.
 	 */
-	virtual bool isMouseLocked() const;
+	virtual bool isMouseLocked() const override;
 
 	virtual bool saveScreenshot(const Common::String &filename) const { return false; }
-	void saveScreenshot();
+	void saveScreenshot() override;
 
 	// Override from Common::EventObserver
-	virtual bool notifyEvent(const Common::Event &event) { return false; };
+	virtual bool notifyEvent(const Common::Event &event) override { return false; };
 
 	/** Obtain the user configured fullscreen resolution, or default to the desktop resolution */
 	virtual Common::Rect getPreferredFullscreenResolution();

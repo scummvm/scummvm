@@ -73,7 +73,7 @@ public:
 	virtual int16 getWidth() const override;
 
 	// GraphicsManager API - Draw methods
-	virtual void updateScreen();
+	virtual void updateScreen() override;
 
 	// GraphicsManager API - Overlay
 	virtual void showOverlay() override;

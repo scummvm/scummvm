@@ -44,7 +44,7 @@ public:
 	VimaTrack();
 	virtual ~VimaTrack();
 
-	bool isPlaying();
+	bool isPlaying() override;
 	bool openSound(const Common::String &filename, const Common::String &soundName, const Audio::Timestamp *start = nullptr) override;
 	void playTrack(const Audio::Timestamp *start);
 	Audio::Timestamp getPos() override;

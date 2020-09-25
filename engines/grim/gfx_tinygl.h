@@ -125,7 +125,7 @@ public:
 	void setBlendMode(bool additive) override;
 
 protected:
-	void createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height);
+	void createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height) override;
 
 private:
 	TinyGL::FrameBuffer *_zb;

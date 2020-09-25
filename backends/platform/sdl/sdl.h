@@ -95,7 +95,7 @@ public:
 	// ResidualVM - Start
 #ifdef USE_OPENGL
 	virtual void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) override;
-	Common::Array<uint> getSupportedAntiAliasingLevels() const;
+	Common::Array<uint> getSupportedAntiAliasingLevels() const override;
 #endif
 	virtual void launcherInitSize(uint w, uint h) override;
 	// ResidualVM - End

@@ -35,7 +35,7 @@ public:
 	KeyframeComponent(Component *parent, int parentID, const char *filename, tag32 tag);
 	~KeyframeComponent();
 	void init() override;
-	void fade(Animation::FadeMode, int fadeLength);
+	void fade(Animation::FadeMode, int fadeLength) override;
 	void setKey(int val) override;
 	int update(uint time) override;
 	void reset() override;
