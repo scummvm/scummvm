@@ -44,26 +44,23 @@ Background::Background(Font* font) : _font(font), _pCurBgnd(nullptr), _hBgPal(0)
  * Called to initialize a background.
  */
 void Background::InitBackground() {
-	// FIXME: Avoid non-const global vars
-	static PLAYFIELD playfield[] = {
-		{	// FIELD WORLD
-			NULL,		// display list
-			0,			// init field x
-			0,			// init field y
-			0,			// x vel
-			0,			// y vel
-			Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),	// clip rect
-			false		// moved flag
-		},
-		{	// FIELD STATUS
-			NULL,		// display list
-			0,			// init field x
-			0,			// init field y
-			0,			// x vel
-			0,			// y vel
-			Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),	// clip rect
-			false		// moved flag
-		}
+	PLAYFIELD worldPlayfield = {
+	    NULL,                                            // display list
+	    0,                                               // init field x
+	    0,                                               // init field y
+	    0,                                               // x vel
+	    0,                                               // y vel
+	    Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), // clip rect
+	    false                                            // moved flag
+	};
+	PLAYFIELD statusPlayfield = {
+	    NULL,                                            // display list
+	    0,                                               // init field x
+	    0,                                               // init field y
+	    0,                                               // x vel
+	    0,                                               // y vel
+	    Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), // clip rect
+	    false                                            // moved flag
 	};
 
 	// set current background
@@ -74,31 +71,29 @@ void Background::InitBackground() {
 	_pCurBgnd->refreshRate = 0;	// no background update process
 	_pCurBgnd->pXscrollTable = nullptr;
 	_pCurBgnd->pYscrollTable = nullptr;
-	_pCurBgnd->numPlayfields = 2;
-	_pCurBgnd->fieldArray = playfield;
+	_pCurBgnd->fieldArray.push_back(worldPlayfield);
+	_pCurBgnd->fieldArray.push_back(statusPlayfield);
 	_pCurBgnd->bAutoErase = false;
 
 	// init background sky color
 	SetBgndColor(_pCurBgnd->rgbSkyColor);
 
-	// start of playfield array
-	PLAYFIELD* pPlayfield = _pCurBgnd->fieldArray;
-
 	// for each background playfield
-	for (int i = 0; i < _pCurBgnd->numPlayfields; i++, pPlayfield++) {
+	for (int i = 0; i < _pCurBgnd->fieldArray.size(); i++) {
+		PLAYFIELD cur = _pCurBgnd->fieldArray[i];
 		// init playfield pos
-		pPlayfield->fieldX = intToFrac(_pCurBgnd->ptInitWorld.x);
-		pPlayfield->fieldY = intToFrac(_pCurBgnd->ptInitWorld.y);
+		cur.fieldX = intToFrac(_pCurBgnd->ptInitWorld.x);
+		cur.fieldY = intToFrac(_pCurBgnd->ptInitWorld.y);
 
 		// no scrolling
-		pPlayfield->fieldXvel = intToFrac(0);
-		pPlayfield->fieldYvel = intToFrac(0);
+		cur.fieldXvel = intToFrac(0);
+		cur.fieldYvel = intToFrac(0);
 
 		// clear playfield display list
-		pPlayfield->pDispList = nullptr;
+		cur.pDispList = nullptr;
 
 		// clear playfield moved flag
-		pPlayfield->bMoved = false;
+		cur.bMoved = false;
 	}
 }
 
@@ -116,10 +111,10 @@ void Background::PlayfieldSetPos(int which, int newXpos, int newYpos) {
 	assert(_pCurBgnd != NULL);
 
 	// make sure the playfield number is in range
-	assert(which >= 0 && which < _pCurBgnd->numPlayfields);
+	assert(which >= 0 && which < _pCurBgnd->fieldArray.size());
 
 	// get playfield pointer
-	pPlayfield = _pCurBgnd->fieldArray + which;
+	pPlayfield = &_pCurBgnd->fieldArray[which];
 
 	// set new integer position
 	pPlayfield->fieldX = intToFrac(newXpos);
@@ -143,10 +138,10 @@ void Background::PlayfieldGetPos(int which, int *pXpos, int *pYpos) {
 	assert(_pCurBgnd != NULL);
 
 	// make sure the playfield number is in range
-	assert(which >= 0 && which < _pCurBgnd->numPlayfields);
+	assert(which >= 0 && which < _pCurBgnd->fieldArray.size());
 
 	// get playfield pointer
-	pPlayfield = _pCurBgnd->fieldArray + which;
+	pPlayfield = &_pCurBgnd->fieldArray[which];
 
 	// get current integer position
 	*pXpos = fracToInt(pPlayfield->fieldX);
@@ -165,10 +160,10 @@ int Background::PlayfieldGetCenterX(int which) {
 	assert(_pCurBgnd != NULL);
 
 	// make sure the playfield number is in range
-	assert(which >= 0 && which < _pCurBgnd->numPlayfields);
+	assert(which >= 0 && which < _pCurBgnd->fieldArray.size());
 
 	// get playfield pointer
-	pPlayfield = _pCurBgnd->fieldArray + which;
+	pPlayfield = &_pCurBgnd->fieldArray[which];
 
 	// get current integer position
 	return fracToInt(pPlayfield->fieldX) + SCREEN_WIDTH/2;
@@ -186,10 +181,10 @@ OBJECT **Background::GetPlayfieldList(int which) {
 	assert(_pCurBgnd != NULL);
 
 	// make sure the playfield number is in range
-	assert(which >= 0 && which < _pCurBgnd->numPlayfields);
+	assert(which >= 0 && which < _pCurBgnd->fieldArray.size());
 
 	// get playfield pointer
-	pPlayfield = _pCurBgnd->fieldArray + which;
+	pPlayfield = &_pCurBgnd->fieldArray[which];
 
 	// return the display list pointer for this playfield
 	return &pPlayfield->pDispList;
@@ -211,9 +206,9 @@ void Background::DrawBackgnd() {
 		return;		// no current background
 
 	// scroll each background playfield
-	for (i = 0; i < _pCurBgnd->numPlayfields; i++) {
+	for (i = 0; i < _pCurBgnd->fieldArray.size(); i++) {
 		// get pointer to correct playfield
-		pPlay = _pCurBgnd->fieldArray + i;
+		pPlay = &_pCurBgnd->fieldArray[i];
 
 		// save integer part of position
 		prevX = fracToInt(pPlay->fieldX);
@@ -250,11 +245,11 @@ void Background::DrawBackgnd() {
 	for (RectList::const_iterator r = clipRects.begin(); r != clipRects.end(); ++r) {
 		// clear the clip rectangle on the virtual screen
 		// for each background playfield
-		for (i = 0; i < _pCurBgnd->numPlayfields; i++) {
+		for (i = 0; i < _pCurBgnd->fieldArray.size(); i++) {
 			Common::Rect rcPlayClip;	// clip rect for this playfield
 
 			// get pointer to correct playfield
-			pPlay = _pCurBgnd->fieldArray + i;
+			pPlay = &_pCurBgnd->fieldArray[i];
 
 			// convert fixed point window pos to a int
 			ptWin.x = fracToInt(pPlay->fieldX);
