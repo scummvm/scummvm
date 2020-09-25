@@ -52,18 +52,19 @@ bool Animation::load(Common::SeekableReadStream *stream) {
 }
 
 void Animation::updatePhaseVar(AGDSEngine &engine) {
+	debug("animation %d, phase var: %s, process: %s", _phase, _phaseVar.c_str(), _process.c_str());
 	if (_phase == -1)
 		debug("animation ended, phase var: %s, process: %s", _phaseVar.c_str(), _process.c_str());
 
-	if (!_phaseVar.empty()) {
+	if (!_phaseVar.empty())
 		engine.setGlobal(_phaseVar, _phase);
-	}
-	else if (_phase == -1)
+	else
 		engine.reactivate(_process);
 }
 
 void Animation::paint(AGDSEngine &engine, Graphics::Surface &backbuffer, Common::Point dst) {
 	if (_paused || _phase == -1) {
+		updatePhaseVar(engine);
 		return;
 	}
 	if (!_phaseVar.empty() && engine.getGlobal(_phaseVar) == -2) {
