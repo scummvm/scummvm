@@ -20,26 +20,25 @@
  *
  */
 
-#include "backends/graphics/resvm-sdl/sdl-graphics.h"
-
+#include "backends/graphics/resvm-sdl/resvm-sdl-graphics.h"
 #include "backends/platform/sdl/sdl-sys.h"
 #include "backends/events/sdl/resvm-sdl-events.h"
 #include "backends/platform/sdl/sdl.h"
-
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
 #include "common/config-manager.h"
+#include "common/fs.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 #include "common/file.h"
 
 ResVmSdlGraphicsManager::ResVmSdlGraphicsManager(SdlEventSource *source, SdlWindow *window) :
-		SdlGraphicsManager(source, window)  {
+		_eventSource(source), _window(window) {
 	ConfMan.registerDefault("fullscreen_res", "desktop");
 }
 
-ResVmSdlGraphicsManager::~ResVmSdlGraphicsManager() {
-}
-
 void ResVmSdlGraphicsManager::activateManager() {
-	SdlGraphicsManager::activateManager();
+	_eventSource->setGraphicsManager(this);
 
 	// Register the graphics manager as a event observer
 	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
@@ -51,7 +50,61 @@ void ResVmSdlGraphicsManager::deactivateManager() {
 		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
 	}
 
-	SdlGraphicsManager::deactivateManager();
+	_eventSource->setGraphicsManager(0);
+}
+
+ResVmSdlGraphicsManager::State ResVmSdlGraphicsManager::getState() const {
+	State state;
+
+	state.screenWidth   = getWidth();
+	state.screenHeight  = getHeight();
+	state.aspectRatio   = getFeatureState(OSystem::kFeatureAspectRatioCorrection);
+	state.fullscreen    = getFeatureState(OSystem::kFeatureFullscreenMode);
+	state.cursorPalette = getFeatureState(OSystem::kFeatureCursorPalette);
+#ifdef USE_RGB_COLOR
+	state.pixelFormat   = getScreenFormat();
+#endif
+	return state;
+}
+
+bool ResVmSdlGraphicsManager::setState(const State &state) {
+	beginGFXTransaction();
+#ifdef USE_RGB_COLOR
+		initSize(state.screenWidth, state.screenHeight, &state.pixelFormat);
+#else
+		initSize(state.screenWidth, state.screenHeight, nullptr);
+#endif
+		setFeatureState(OSystem::kFeatureAspectRatioCorrection, state.aspectRatio);
+		setFeatureState(OSystem::kFeatureFullscreenMode, state.fullscreen);
+		setFeatureState(OSystem::kFeatureCursorPalette, state.cursorPalette);
+
+	if (endGFXTransaction() != OSystem::kTransactionSuccess) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
+Common::Keymap *ResVmSdlGraphicsManager::getKeymap() {
+	using namespace Common;
+
+	Keymap *keymap = new Keymap(Keymap::kKeymapTypeGlobal, "sdl-graphics", _("Graphics"));
+	Action *act;
+
+	if (g_system->hasFeature(OSystem::kFeatureFullscreenMode)) {
+		act = new Action("FULS", _("Toggle fullscreen"));
+		act->addDefaultInputMapping("A+RETURN");
+		act->addDefaultInputMapping("A+KP_ENTER");
+		act->setCustomBackendActionEvent(kActionToggleFullscreen);
+		keymap->addAction(act);
+	}
+
+	act = new Action("SCRS", _("Save screenshot"));
+	act->addDefaultInputMapping("A+s");
+	act->setCustomBackendActionEvent(kActionSaveScreenshot);
+	keymap->addAction(act);
+
+	return keymap;
 }
 
 Common::Rect ResVmSdlGraphicsManager::getPreferredFullscreenResolution() {
@@ -101,23 +154,6 @@ bool ResVmSdlGraphicsManager::isMouseLocked() const {
 #else
 	return SDL_GrabMode() == SDL_GRAB_ON;
 #endif
-}
-
-bool ResVmSdlGraphicsManager::notifyEvent(const Common::Event &event) {
-	switch ((int)event.type) {
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.hasFlags(Common::KBD_ALT) && event.kbd.keycode == Common::KEYCODE_s) {
-				saveScreenshot();
-				return true;
-			}
-			break;
-		case Common::EVENT_KEYUP:
-			break;
-		default:
-			break;
-	}
-
-	return false;
 }
 
 bool ResVmSdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {

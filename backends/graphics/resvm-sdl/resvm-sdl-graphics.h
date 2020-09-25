@@ -20,10 +20,11 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS_SDL_RESVM_SDLGRAPHICS_H
-#define BACKENDS_GRAPHICS_SDL_RESVM_SDLGRAPHICS_H
+#ifndef BACKENDS_GRAPHICS_RESVM_SDL_SDLGRAPHICS_H
+#define BACKENDS_GRAPHICS_RESVM_SDL_SDLGRAPHICS_H
 
-#include "backends/graphics/resvm-sdl/sdl-graphics.h"
+#include "backends/graphics/resvm-graphics.h"
+#include "backends/platform/sdl/sdl-window.h"
 
 #include "common/events.h"
 #include "common/rect.h"
@@ -33,47 +34,207 @@
 class SdlEventSource;
 
 /**
- * Base class for a ResidualVM SDL based graphics manager.
- *
- * Used to share reusable methods between SDL graphics managers
+ * Base class for a SDL based graphics manager.
  */
-class ResVmSdlGraphicsManager : public SdlGraphicsManager {
+class ResVmSdlGraphicsManager : virtual public ResVmGraphicsManager, public Common::EventObserver {
 public:
 	ResVmSdlGraphicsManager(SdlEventSource *source, SdlWindow *window);
-	~ResVmSdlGraphicsManager() override;
+	virtual ~ResVmSdlGraphicsManager() {}
 
-	// SdlGraphicsManager API
-	void activateManager() override;
-	void deactivateManager() override;
-	void notifyVideoExpose() override {}
-	bool notifyMousePosition(Common::Point &mouse) override;
+	/**
+	 * Makes this graphics manager active. That means it should be ready to
+	 * process inputs now. However, even without being active it should be
+	 * able to query the supported modes and other bits.
+	 */
+	virtual void activateManager();
 
-public:
-	// GraphicsManager API - Draw methods
-	void saveScreenshot() override;
+	/**
+	 * Makes this graphics manager inactive. This should allow another
+	 * graphics manager to become active again.
+	 */
+	virtual void deactivateManager();
 
-	// GraphicsManager API - Mouse
-	bool showMouse(bool visible) override;
-	bool lockMouse(bool lock) override; // ResidualVM specific method
+	/**
+	 * Notify the graphics manager that the graphics needs to be redrawn, since
+	 * the application window was modified.
+	 *
+	 * This is basically called when SDL_VIDEOEXPOSE was received.
+	 */
+	virtual void notifyVideoExpose() {};
 
-	// Common::EventObserver API
-	bool notifyEvent(const Common::Event &event) override;
+	/**
+	 * Notify the graphics manager about a resize event.
+	 *
+	 * It is noteworthy that the requested width/height should actually be set
+	 * up as is and not changed by the graphics manager, since otherwise it may
+	 * lead to odd behavior for certain window managers.
+	 *
+	 * It is only required to overwrite this method in case you want a
+	 * resizable window. The default implementation just does nothing.
+	 *
+	 * @param width Requested window width.
+	 * @param height Requested window height.
+	 */
+	virtual void notifyResize(const int width, const int height) {};
+
+	/**
+	 * Transforms real screen coordinates into the current active screen
+	 * coordinates (may be either game screen or overlay).
+	 *
+	 * @param point Mouse coordinates to transform.
+	 * !! ResidualVM specific:
+	 */
+	virtual void transformMouseCoordinates(Common::Point &point) = 0;
+
+	/**
+	 * Notifies the graphics manager about a mouse position change.
+	 *
+	 * The passed point *must* be converted from window coordinates to virtual
+	 * coordinates in order for the event to be processed correctly by the game
+	 * engine. Just use `convertWindowToVirtual` for this unless you need to do
+	 * something special.
+	 *
+	 * @param mouse The mouse position in window coordinates, which must be
+	 * converted synchronously to virtual coordinates.
+	 * @returns true if the mouse was in a valid position for the game and
+	 * should cause the event to be sent to the game.
+	 */
+	virtual bool notifyMousePosition(Common::Point &mouse);
+
+	virtual bool showMouse(bool visible) override;
+	virtual bool lockMouse(bool lock) override; // ResidualVM specific method
 
 	/**
 	 * Checks if mouse is locked or not.
 	 * Avoid to emulate a mouse movement from joystick if locked.
 	 */
-	bool isMouseLocked() const;
+	virtual bool isMouseLocked() const;
 
-protected:
+	virtual bool saveScreenshot(const Common::String &filename) const { return false; }
+	void saveScreenshot();
+
+	// Override from Common::EventObserver
+	virtual bool notifyEvent(const Common::Event &event) { return false; };
 
 	/** Obtain the user configured fullscreen resolution, or default to the desktop resolution */
-	Common::Rect getPreferredFullscreenResolution();
+	virtual Common::Rect getPreferredFullscreenResolution();
+
+	/**
+	 * A (subset) of the graphic manager's state. This is used when switching
+	 * between different SDL graphic managers at runtime.
+	 */
+	struct State {
+		int screenWidth, screenHeight;
+		bool aspectRatio;
+		bool fullscreen;
+		bool cursorPalette;
+
+#ifdef USE_RGB_COLOR
+		Graphics::PixelFormat pixelFormat;
+#endif
+	};
+
+	/**
+	 * Gets the current state of the graphics manager.
+	 */
+	State getState() const;
+
+	/**
+	 * Sets up a basic state of the graphics manager.
+	 */
+	bool setState(const State &state);
+
+	/**
+	 * @returns the SDL window.
+	 */
+	SdlWindow *getWindow() const { return _window; }
+
+#if 0 // ResidualVM - not used
+	virtual void initSizeHint(const Graphics::ModeList &modes) override;
+#endif
+	Common::Keymap *getKeymap();
+
+protected:
+	enum CustomEventAction {
+		kActionToggleFullscreen = 100,
+		kActionToggleMouseCapture,
+		kActionSaveScreenshot,
+		kActionToggleAspectRatioCorrection
+#if 0 // ResidualVM - not used
+		kActionToggleFilteredScaling,
+		kActionCycleStretchMode,
+		kActionIncreaseScaleFactor,
+		kActionDecreaseScaleFactor,
+		kActionSetScaleFilter1,
+		kActionSetScaleFilter2,
+		kActionSetScaleFilter3,
+		kActionSetScaleFilter4,
+		kActionSetScaleFilter5,
+		kActionSetScaleFilter6,
+		kActionSetScaleFilter7,
+		kActionSetScaleFilter8
+#endif
+	};
 
 	virtual int getGraphicsModeScale(int mode) const = 0;
+#if 0 // ResidualVM - not used
 
-	/** Save a screenshot to the specified file */
-	virtual bool saveScreenshot(const Common::String &file) const  = 0;
+	bool defaultGraphicsModeConfig() const;
+	int getGraphicsModeIdByName(const Common::String &name) const;
+
+	/**
+	 * Gets the dimensions of the window directly from SDL instead of from the
+	 * values stored by the graphics manager.
+	 */
+	void getWindowSizeFromSdl(int *width, int *height) const {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		assert(_window);
+		SDL_GetWindowSize(_window->getSDLWindow(), width, height);
+#else
+		assert(_hwScreen);
+
+		if (width) {
+			*width = _hwScreen->w;
+		}
+
+		if (height) {
+			*height = _hwScreen->h;
+		}
+#endif
+	}
+
+	virtual void setSystemMousePosition(const int x, const int y) override;
+
+	virtual void handleResizeImpl(const int width, const int height, const int xdpi, const int ydpi) override;
+#endif
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+public:
+	void unlockWindowSize() {
+#if 0 // ResidualVM - not used
+		_allowWindowSizeReset = true;
+		_hintedWidth = 0;
+		_hintedHeight = 0;
+#endif
+	}
+
+protected:
+#if 0 // ResidualVM - not used
+	Uint32 _lastFlags;
+	bool _allowWindowSizeReset;
+	int _hintedWidth, _hintedHeight;
+
+	bool createOrUpdateWindow(const int width, const int height, const Uint32 flags);
+#endif
+#endif
+
+	SDL_Surface *_hwScreen; // ResidualVM - not used
+	SdlEventSource *_eventSource;
+	SdlWindow *_window;
+#if 0 // ResidualVM - not used
+private:
+	void toggleFullScreen();
+#endif
 };
 
 #endif

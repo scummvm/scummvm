@@ -136,7 +136,6 @@ protected:
 	Math::Rect2d computeGameRect(bool renderToFrameBuffer, uint gameWidth, uint gameHeight,
 	                             uint screenWidth, uint screenHeight);
 
-	// ResVmSdlGraphicsManager API
 	virtual bool saveScreenshot(const Common::String &filename) const override;
 
 	virtual int getGraphicsModeScale(int mode) const override { return 1; }

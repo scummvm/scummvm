@@ -134,7 +134,7 @@ protected:
 	/** @name Managers variables */
 	//@{
 
-	ResVmGraphicsManager *_graphicsManager; // ResidualVM: was GraphicsManager
+	GraphicsManager *_graphicsManager;
 
 	//@}
 };

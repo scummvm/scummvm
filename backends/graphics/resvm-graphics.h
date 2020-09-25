@@ -59,13 +59,6 @@ public:
 	virtual void clearFocusRectangle() {}
 	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL) {}
 	virtual void setCursorPalette(const byte *colors, uint start, uint num) {}
-
-	// ResidualVM specific methods
-	virtual void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) = 0;
-	virtual Graphics::PixelBuffer getScreenPixelBuffer() = 0;
-	virtual void suggestSideTextures(Graphics::Surface *left, Graphics::Surface *right) = 0;
-	virtual void saveScreenshot() {}
-	virtual bool lockMouse(bool lock) = 0;
 };
 
 #endif

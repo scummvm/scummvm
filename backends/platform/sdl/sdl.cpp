@@ -109,7 +109,7 @@ OSystem_SDL::~OSystem_SDL() {
 	delete _savefileManager;
 	_savefileManager = 0;
 	if (_graphicsManager) {
-		dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->deactivateManager();
+		dynamic_cast<ResVmSdlGraphicsManager *>(_graphicsManager)->deactivateManager();
 	}
 	delete _graphicsManager;
 	_graphicsManager = 0;
@@ -263,7 +263,7 @@ void OSystem_SDL::initBackend() {
 #endif
 
 		if (_graphicsManager == 0) {
-			_graphicsManager = new ResVmSurfaceSdlGraphicsManager(_eventSource, _window); // ResidualVM specific
+			_graphicsManager = dynamic_cast<GraphicsManager *>(new ResVmSurfaceSdlGraphicsManager(_eventSource, _window)); // ResidualVM specific
 		}
 	}
 
@@ -302,7 +302,7 @@ void OSystem_SDL::initBackend() {
 	// so the virtual keyboard can be initialized, but we have to add the
 	// graphics manager as an event observer after initializing the event
 	// manager.
-	dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->activateManager();
+	dynamic_cast<ResVmSdlGraphicsManager *>(_graphicsManager)->activateManager();
 }
 
 // ResidualVM specific code - Start
@@ -387,7 +387,7 @@ void OSystem_SDL::detectAntiAliasingSupport() {
 
 void OSystem_SDL::engineInit() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->unlockWindowSize();
+	dynamic_cast<ResVmSdlGraphicsManager *>(_graphicsManager)->unlockWindowSize();
 	// Disable screen saver when engine starts
 	SDL_DisableScreenSaver();
 #endif
@@ -409,7 +409,7 @@ void OSystem_SDL::engineInit() {
 
 void OSystem_SDL::engineDone() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->unlockWindowSize();
+	dynamic_cast<ResVmSdlGraphicsManager *>(_graphicsManager)->unlockWindowSize();
 	SDL_EnableScreenSaver();
 #endif
 #ifdef USE_TASKBAR
@@ -496,7 +496,7 @@ void OSystem_SDL::setupScreen(uint screenW, uint screenH, bool fullscreen, bool 
 	}
 
 	if (switchedManager) {
-		SdlGraphicsManager *sdlGraphicsManager = dynamic_cast<SdlGraphicsManager *>(_graphicsManager);
+		ResVmSdlGraphicsManager *sdlGraphicsManager = dynamic_cast<ResVmSdlGraphicsManager *>(_graphicsManager);
 		sdlGraphicsManager->deactivateManager();
 		delete _graphicsManager;
 
@@ -541,7 +541,7 @@ void OSystem_SDL::fatalError() {
 Common::KeymapArray OSystem_SDL::getGlobalKeymaps() {
 	Common::KeymapArray globalMaps = BaseBackend::getGlobalKeymaps();
 
-	SdlGraphicsManager *graphicsManager = dynamic_cast<SdlGraphicsManager *>(_graphicsManager);
+	ResVmSdlGraphicsManager *graphicsManager = dynamic_cast<ResVmSdlGraphicsManager *>(_graphicsManager);
 	globalMaps.push_back(graphicsManager->getKeymap());
 
 	return globalMaps;

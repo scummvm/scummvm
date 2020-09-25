@@ -555,8 +555,4 @@ bool ResVmSurfaceSdlGraphicsManager::saveScreenshot(const Common::String &filena
 	return success;
 }
 
-int ResVmSurfaceSdlGraphicsManager::getGraphicsModeScale(int mode) const {
-	return 1;
-}
-
 #endif

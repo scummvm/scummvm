@@ -119,7 +119,6 @@ ifdef SDL_BACKEND
 MODULE_OBJS += \
 	events/sdl/sdl-events.o \
 	events/sdl/resvm-sdl-events.o \
-	graphics/resvm-sdl/sdl-graphics.o \
 	graphics/resvm-sdl/resvm-sdl-graphics.o \
 	graphics/resvm-surfacesdl/resvm-surfacesdl-graphics.o \
 	mixer/sdl/sdl-mixer.o \
