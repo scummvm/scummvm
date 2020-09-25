@@ -36,8 +36,9 @@ class AGDSEngine;
 class Object;
 
 class Character {
-	Common::String _name;
-	Common::String _object;
+	Common::String 	_name;
+	Common::String 	_object;
+	Common::Point	_pos;
 	bool _enabled;
 	int _phase;
 	int _frames;
@@ -64,6 +65,10 @@ public:
 
 	const Common::String & object() const {
 		return _object;
+	}
+
+	Common::Point position() const {
+		return _pos;
 	}
 
 	void load(Common::SeekableReadStream* stream);

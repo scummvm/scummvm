@@ -176,6 +176,8 @@ private:
 	void pointCharacter();
 	void animateCharacter();
 	void getCharacterAnimationPhase();
+	void getCharacterX();
+	void getCharacterY();
 	void stopCharacter();
 	void quit();
 
