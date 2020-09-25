@@ -91,6 +91,11 @@ Common::Error ComposerEngine::run() {
 		}
 	}
 
+	Common::String gameId(getGameId());
+	if (getPlatform() == Common::kPlatformMacintosh && (gameId == "darby" || gameId == "gregory")) {
+		_directoriesToStrip = 0;
+	}
+
 	uint width = 640;
 	if (_bookIni.hasKey("Width", "Common"))
 		width = atoi(getStringFromConfig("Common", "Width").c_str());
