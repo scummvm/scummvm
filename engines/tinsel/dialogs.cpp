@@ -2259,7 +2259,7 @@ static int WhichMenuBox(int curX, int curY, bool bSlides) {
  * InvBoxes
  */
 static void InvBoxes(bool InBody, int curX, int curY) {
-	static int rotateIndex = -1;	// FIXME: Avoid non-const global vars
+	int rotateIndex = -1;
 	int	index;			// Box pointed to on this call
 	const FILM *pfilm;
 
