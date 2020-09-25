@@ -801,7 +801,7 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles() const {
 //		files.push_back("gui/themes/scummclassic.zip"); // ResidualVM specific
 //		files.push_back("gui/themes/scummmodern.zip"); // ResidualVM specific
 //		files.push_back("gui/themes/scummremastered.zip"); // ResidualVM specific
-		files.push_back("gui/themes/modern.zip"); // ResidualVM specific
+		files.push_back("gui/themes/residualvm.zip"); // ResidualVM specific
 		files.push_back("gui/themes/translations.dat");
 /*		files.push_back("dists/engine-data/access.dat"); // ResidualVM specific
 		files.push_back("dists/engine-data/cryo.dat");
