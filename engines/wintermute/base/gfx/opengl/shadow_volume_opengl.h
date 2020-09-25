@@ -44,7 +44,7 @@ public:
 private:
 	bool render();
 	ShadowVertex _shadowMask[4];
-	bool initMask();
+	bool initMask() override;
 };
 
 } // namespace Wintermute
