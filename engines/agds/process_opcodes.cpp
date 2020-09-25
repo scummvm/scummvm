@@ -1194,6 +1194,24 @@ void Process::getCharacterAnimationPhase() {
 	debug("animation phase = %d", phase);
 	push(phase);
 }
+void Process::getCharacterX() {
+	Common::String name = popString();
+	debug("getCharacterX: %s", name.c_str());
+	Character *character = _engine->getCharacter(name);
+	if (!character)
+		warning("no character %s", name.c_str());
+	int value = character? character->position().x: -1;
+	push(value);
+}
+void Process::getCharacterY() {
+	Common::String name = popString();
+	debug("getCharacterY: %s", name.c_str());
+	Character *character = _engine->getCharacter(name);
+	if (!character)
+		warning("no character %s", name.c_str());
+	int value = character? character->position().y: -1;
+	push(value);
+}
 
 void Process::stopCharacter() {
 	int arg = pop();
