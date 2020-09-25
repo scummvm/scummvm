@@ -29,6 +29,7 @@
 #include "common/list.h" // For OSystem::getSupportedFormats()
 #include "common/ustr.h"
 #include "graphics/pixelformat.h"
+#include "graphics/pixelbuffer.h" // ResidualVM specific
 #include "graphics/mode.h"
 
 namespace Audio {
@@ -37,8 +38,6 @@ class Mixer;
 
 namespace Graphics {
 struct Surface;
-//ResidualVM specific:
-class PixelBuffer;
 }
 
 namespace Common {
@@ -856,7 +855,7 @@ public:
 	 * @param width		the new virtual screen width
 	 * @param height	the new virtual screen height
 	 */
-	virtual void launcherInitSize(uint width, uint height) = 0;
+	virtual void launcherInitSize(uint width, uint height) {};
 
 	/**
 	 * !!! Not used in ResidualVM !!!
@@ -936,7 +935,7 @@ public:
 	 * @param fullscreen	the new screen will be displayed in fullscreeen mode
 	 */
 
-	virtual void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) = 0;
+	virtual void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) {};
 
 	/**
 	 * Return a Graphics::PixelBuffer representing the framebuffer.
@@ -944,7 +943,7 @@ public:
 	 * on the framebuffer (blitting, scrolling, etc.).
 	 * !!! ResidualVM specific method: !!!
 	 */
-	virtual Graphics::PixelBuffer getScreenPixelBuffer() = 0;
+	virtual Graphics::PixelBuffer getScreenPixelBuffer() { return Graphics::PixelBuffer(); }
 
 	/**
 	 * Suggest textures to render at the side of the game window.
@@ -1220,7 +1219,7 @@ public:
 	 *
 	 * ResidualVM specific method
 	 */
-	virtual bool lockMouse(bool lock) = 0;
+	virtual bool lockMouse(bool lock) { return false; }
 
 	/**
 	 * Move ("warp") the mouse cursor to the specified position in virtual
