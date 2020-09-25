@@ -24,6 +24,7 @@
 #define AGDS_PROCESS_H
 
 #include "agds/object.h"
+#include "agds/opcode.h"
 #include "agds/processExitCode.h"
 #include "common/scummsys.h"
 #include "common/stack.h"
@@ -64,6 +65,11 @@ private:
 	Common::Point	_mousePosition;
 
 private:
+	void debug(const char *str, ...);
+	void error(const char *str, ...);
+
+	void push(bool);
+
 	uint8 next() {
 		const Object::CodeType & code = _object->getCode();
 		if (_ip < code.size()) {
@@ -80,25 +86,8 @@ private:
 		return (h << 8) | l;
 	}
 
-	void push(int32 value);
 	int32 pop();
 	int32 top();
-
-	void dup() {
-		push(top());
-	}
-
-	void jump(int delta)
-	{ debug("jump %+d", delta); _ip += delta; }
-
-	void jumpz(int delta)
-	{
-		int value = pop();
-		if (value == 0) {
-			debug("jumpz %d %+d", value, delta);
-			_ip += delta;
-		}
-	}
 
 	Common::String getString(int id);
 	Common::String popString() {
@@ -106,204 +95,32 @@ private:
 	}
 	Common::String popText();
 
-	void enter(uint16 magic, uint16 size);
-	void exitProcess();
-	void exitProcessCreatePatch();
-	void setNextScreen();
-	void setNextScreenSaveInHistory();
-	void loadPreviousScreen();
-	void call(uint16 addr);
+#define AGDS_PROCESS_METHOD(opcode, method) \
+	void method () ;
+#define AGDS_PROCESS_METHOD_C(opcode, method) \
+	void method (int8) ;
+#define AGDS_PROCESS_METHOD_B(opcode, method) \
+	void method (uint8) ;
+#define AGDS_PROCESS_METHOD_W(opcode, method) \
+	void method (int16) ;
+#define AGDS_PROCESS_METHOD_U(opcode, method) \
+	void method (uint16) ;
+#define AGDS_PROCESS_METHOD_UD(opcode, method) \
+	void method (int32) ;
+#define AGDS_PROCESS_METHOD_UU(opcode, method) \
+	void method (uint16, uint16) ;
 
-	void disableInventory();
-	void enableInventory();
-	void inventoryClear();
-	void inventoryAddObject();
-	void inventoryHasObject();
-	void inventoryFindObjectByName();
-	void getMaxInventorySize();
-	void getInventoryFreeSpace();
-	void appendInventoryObjectNameToSharedSpace();
+	void incrementGlobal(int inc);
+	void decrementGlobal(int inc);
 
-	void getObjectId();
-	void clearScreen();
-	void loadPicture();
-	void loadMouse();
-	void loadMouseCursorFromObject();
-	void loadScreenRegion();
-	void loadScreenObject();
-	void loadFont();
-	void removeScreenObject();
-	void changeScreenPatch();
-	void setObjectZ();
-	void setScreenHeight();
-	void updateScreenHeightToDisplay();
-	void addMouseArea();
-	void loadRegionFromObject();
-	void generateRegion();
-	void loadPictureFromObject();
-	void setObjectTile();
-	void loadAnimationFromObject();
-	void loadTextFromObject();
-	void loadAnimation();
-	void setAnimationPosition();
-	void loadSample();
-	void addSampleToSoundGroup();
-	void playFilm();
-	void getSampleVolume();
-	void setSampleVolumeAndPan();
-	void updatePhaseVarOr2();
-	void updatePhaseVarOr4();
-	void cloneObject();
-	void setTimer();
-	void getRegionCenterX();
-	void getRegionCenterY();
-	void fadeObject();
-	void moveScreenObject();
-	void setTileSize();
-	void setTileIndex();
-	void getObjectPictureWidth();
-	void getObjectPictureHeight();
-	void loadCharacter();
-	void enableCharacter();
+	AGDS_OPCODE_LIST(AGDS_PROCESS_METHOD,
+		AGDS_PROCESS_METHOD_C, AGDS_PROCESS_METHOD_B, AGDS_PROCESS_METHOD_W,
+		AGDS_PROCESS_METHOD_U, AGDS_PROCESS_METHOD_UD, AGDS_PROCESS_METHOD_UU)
+
 	void moveCharacter(bool usermove);
-	void showCharacter();
-	void fogOnCharacter();
-	void setRain();
-	void setRainDensity();
-	void leaveCharacter();
-	void leaveCharacterEx();
-	void setCharacter();
-	void pointCharacter();
-	void animateCharacter();
-	void getCharacterAnimationPhase();
-	void getCharacterX();
-	void getCharacterY();
-	void stopCharacter();
-	void quit();
-
-	void setDialogForNextFilm();
-	void npcSay();
-	void playerSay();
 	void tell(bool npc);
-	void loadDialog();
-	void setObjectText();
-	void setNPCTellNotifyVar();
 
-	void getRandomNumber();
-	void setStringSystemVariable();
-	void getIntegerSystemVariable();
-	void setIntegerSystemVariable();
-	void getGlobal(unsigned index);
-	void setGlobal();
-	void setPhaseVar();
-	void hasGlobal();
-	void postIncrementGlobal();
-	void postDecrementGlobal();
-	void incrementGlobal(int value);
-	void incrementGlobalByTop() { incrementGlobal(top()); }
-	void decrementGlobal(int value);
-	void decrementGlobalByTop() { decrementGlobal(top()); }
-	void multiplyGlobalByTop();
-	void divideGlobalByTop();
-	void modGlobalByTop();
-	void shlGlobalByTop();
-	void shrGlobalByTop();
-	void andGlobalByTop();
-	void orGlobalByTop();
-	void xorGlobalByTop();
-
-	void appendToSharedStorage();
-	void appendNameToSharedStorage();
 	Common::String getCloneVarName(const Common::String & arg1, const Common::String & arg2);
-	void getCloneVar();
-	void setCloneVar();
-	void cloneName();
-	void setDelay();
-
-	void disableUser();
-	void enableUser();
-	void disableMouseAreas();
-	void modifyMouseArea();
-	void onKey(unsigned size);
-	void onUse(unsigned size);
-	void onLook(unsigned size);
-	void onObjectC1(unsigned size);
-	void onObjectB9(unsigned size);
-	void onObjectBD(unsigned size);
-	void onObjectUse(unsigned size);
-	void onObjectUserUse(unsigned size);
-
-
-	void stub82();
-	void stub83();
-	void stub102();
-	void resetState();
-	void setCycles();
-	void setRandom();
-	void setPanAndVolume();
-	void stub138();
-	void getPictureBaseX();
-	void getPictureBaseY();
-	void getObjectSurfaceX();
-	void getObjectSurfaceY();
-	void getSavedMouseX();
-	void getSavedMouseY();
-	void loadGame();
-	void loadSaveSlotNamePicture();
-	void stub166();
-	void stub172();
-	void stub173();
-	void stub174();
-	void setObjectScale();
-	void stub192();
-	void stub193();
-	void stub194();
-	void stub199();
-	void stub201(unsigned size);
-	void stub202(unsigned size);
-	void stub215();
-	void stub216();
-	void stub217();
-	void playAnimationWithPhaseVar();
-	void setAnimationLoop();
-	void setAnimationPaused();
-	void setAnimationSpeed();
-	void setAnimationZ();
-	void stub223();
-	void stub225();
-	void stub231();
-	void stub233();
-	void stub235();
-	void userEnabled();
-	void setCharacterNotifyVars();
-	void debug(const char *str, ...);
-	void error(const char *str, ...);
-
-#define UNARY_OP(NAME, OP) void NAME () { int arg = pop(); debug(#NAME " %d", arg); push( OP arg ); }
-#define BINARY_OP(NAME, OP) void NAME () { int arg2 = pop(); int arg1 = pop(); debug(#NAME " %d " #OP " %d", arg1, arg2); push(arg1 OP arg2); }
-
-	UNARY_OP(boolNot, !)
-	UNARY_OP(bitNot, ~)
-	UNARY_OP(negate, -)
-	BINARY_OP(boolOr, ||)
-	BINARY_OP(boolAnd, &&)
-	BINARY_OP(equals, ==)
-	BINARY_OP(notEquals, !=)
-	BINARY_OP(greater, >)
-	BINARY_OP(greaterOrEquals, >=)
-	BINARY_OP(less, <)
-	BINARY_OP(lessOrEquals, <=)
-	BINARY_OP(add, +)
-	BINARY_OP(sub, -)
-	BINARY_OP(mul, *)
-	BINARY_OP(div, /)
-	BINARY_OP(mod, %)
-	BINARY_OP(bitAnd, &)
-	BINARY_OP(bitOr, |)
-	BINARY_OP(bitXor, ^)
-
-#undef UNARY_OP
-#undef BINARY_OP
 
 	void suspend(ProcessExitCode exitCode, const Common::String &arg1, const Common::String &arg2 = Common::String()) {
 		debug("suspend %d", exitCode);
@@ -316,7 +133,7 @@ private:
 		_exitArg2 = arg2;
 	}
 
-	void suspend(ProcessExitCode exitCode = kExitCodeSuspend, int arg1 = 0, int arg2 = 0) {
+	void suspend(ProcessExitCode exitCode, int arg1 = 0, int arg2 = 0) {
 		debug("suspend %d", exitCode);
 		if (active())
 			_status = kStatusPassive;
