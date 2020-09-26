@@ -2329,6 +2329,7 @@ if test "$_release_build" = yes; then
 	# Add a define, which indicates we are doing
 	# an build for a release version.
 	append_var DEFINES "-DRELEASE_BUILD"
+	append_var DEFINES "-DNDEBUG"
 fi
 
 # By default, we add -pedantic to the CXXFLAGS to catch some potentially

@@ -985,6 +985,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	REMOVE_SETTING(scummvm_Release, "GCC_PREPROCESSOR_DEFINITIONS");
 	ValueList scummvm_Release_defines(scummvm_defines);
 	ADD_DEFINE(scummvm_Release_defines, "RELEASE_BUILD");
+	ADD_DEFINE(scummvm_Release_defines, "NDEBUG");
 	ADD_SETTING_LIST(scummvm_Release, "GCC_PREPROCESSOR_DEFINITIONS", scummvm_Release_defines, kSettingsNoQuote | kSettingsAsList, 5);
 
 	scummvm_Release_Object->addProperty("name", "Release", "", kSettingsNoValue);
