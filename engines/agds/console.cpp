@@ -23,6 +23,8 @@
 #include "agds/console.h"
 #include "agds/agds.h"
 #include "agds/object.h"
+#include "agds/process.h"
+#include "agds/screen.h"
 
 namespace AGDS {
 
@@ -39,7 +41,7 @@ bool Console::run(int argc, const char **argv) {
 	}
 	ObjectPtr object = _engine->getCurrentScreenObject(argv[1]);
 	if (!object) {
-		debugPrintf("no object %s", argv[1]);
+		debugPrintf("no object %s\n", argv[1]);
 		return true;
 	}
 	_engine->runObject(object);
@@ -58,7 +60,20 @@ bool Console::activate(int argc, const char **argv) {
 }
 
 bool Console::info(int argc, const char **argv) {
-	debugPrintf("processes:");
+	auto screen = _engine->getCurrentScreen();
+	if (screen) {
+		debugPrintf("screen %s:\n", screen->getName().c_str());
+		auto & children = screen->children();
+		for(auto & object : children) {
+			auto pos = object->getPosition();
+			debugPrintf("object %s [inscene: %d] at %d,%d\n", object->getName().c_str(), object->inScene(), pos.x, pos.y);
+		}
+	}
+	debugPrintf("processes:\n");
+	auto & processes = _engine->processes();
+	for(auto & process : processes) {
+		debugPrintf("%s\n", process.getName().c_str());
+	}
 	return true;
 }
 

@@ -90,6 +90,10 @@ public:
 		_region = region;
 	}
 
+	const ChildrenType & children() const {
+		return _children;
+	}
+
 	bool add(ObjectPtr object);
 	void add(Animation * animation) {
 		_animations.insert(animation);
