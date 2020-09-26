@@ -186,6 +186,7 @@ void Process::run() {
 			{
 				debug("exitProcessCreatePatch");
 				_engine->newGame();
+				activate();
 			}
 			break;
 		case kExitCodeLoadSaveGame:
