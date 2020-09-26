@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
-"PO-Revision-Date: 2020-08-31 12:24+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2020-09-26 12:37+0000\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/cs/>\n"
 "Language: cs_CZ\n"
@@ -187,14 +187,14 @@ msgstr ""
 "Opravdu chcete soubory do tohoto adresáře stáhnout?"
 
 #: gui/downloaddialog.cpp:215
-#, fuzzy, c-format
+#, c-format
 msgid "Downloaded %s %S / %s %S"
-msgstr "Staženo %s %s / %s %s"
+msgstr "Staženo %s %S / %s %S"
 
 #: gui/downloaddialog.cpp:222
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %S"
-msgstr "Rychlost stahování: %s %s"
+msgstr "Rychlost stahování: %s %S"
 
 #: gui/editgamedialog.cpp:135 engines/dialogs.cpp:285
 msgid "Game"
@@ -291,15 +291,13 @@ msgid "Shader"
 msgstr "Shader"
 
 #: gui/editgamedialog.cpp:217
-#, fuzzy
 msgid "Override global shader settings"
-msgstr "Potlačit globální nastavení zvuku"
+msgstr "Potlačit globální nastavení vykreslovacího shaderu"
 
 #: gui/editgamedialog.cpp:219
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global shader settings"
-msgstr "Potlačit globální nastavení zvuku"
+msgstr "Potlačit globální nastavení vykreslovacího shaderu"
 
 #: gui/editgamedialog.cpp:233 gui/options.cpp:1743 engines/dialogs.cpp:326
 msgid "Keymaps"
@@ -1301,19 +1299,17 @@ msgid "Language of ScummVM GUI"
 msgstr "Jazyk GUI ScummVM"
 
 #: gui/options.cpp:2035
-#, fuzzy
 msgid "Switch the ScummVM GUI language to the game language"
 msgstr "Přepnout jazyk GUI do jazyka hry"
 
 #: gui/options.cpp:2036
-#, fuzzy
 msgid ""
 "When starting a game, change the ScummVM GUI language to the game language. "
 "That way, if a game uses the ScummVM save and load dialogs, they are in the "
 "same language as the game."
 msgstr ""
-"Při spouštění hry změňte jazyk GUI na jazyk hry. Tímto způsobem jsou ve hře "
-"při ukládání a nahrávání dialogy ScummVM ve stejném jazyce."
+"Při spouštění hry přepne jazyk GUI do jazyka hry. Čímž zajistí, že dialogová "
+"okna ScummVM budou zobrazena ve stejném jazyce."
 
 #: gui/options.cpp:2049
 msgid "Use native system file browser"
@@ -1527,7 +1523,7 @@ msgstr "Port serveru:"
 
 #: gui/options.cpp:2150
 msgid "Port for server to use"
-msgstr ""
+msgstr "Port užívaný serverem"
 
 #: gui/options.cpp:2155
 msgctxt "lowres"
@@ -1737,14 +1733,12 @@ msgid "ScummVM could not access the directory!"
 msgstr "ScummVM nemá k tomuto adresáři přístup!"
 
 #: gui/saveload-dialog.cpp:52
-#, fuzzy
 msgid "Downloading saves..."
-msgstr "Nahrávání hry..."
+msgstr "Stažení uložených pozic..."
 
 #: gui/saveload-dialog.cpp:61
-#, fuzzy
 msgid "Run in background"
-msgstr "Vpřed"
+msgstr "Spustit na pozadí"
 
 #: gui/saveload-dialog.cpp:343
 msgid "List view"
@@ -1907,9 +1901,8 @@ msgid "Could not find any engine capable of running the selected game"
 msgstr "Nelze nalézt žádné jádro schopné vybranou hru spustit"
 
 #: common/achievements.cpp:93
-#, fuzzy
 msgid "Achievement unlocked!"
-msgstr "Úkolů splněno: %d/%d"
+msgstr "Achievement dosažen!"
 
 #: common/error.cpp:38
 msgid "No error"
@@ -2250,7 +2243,7 @@ msgstr "Odpovídající herní ID pro engine %s:"
 
 #: engines/metaengine.cpp:59
 msgid "Default game keymap"
-msgstr ""
+msgstr "Výchozí rozložení kláves"
 
 #: engines/metaengine.cpp:63 backends/platform/maemo/maemo.cpp:174
 #: backends/platform/symbian/src/SymbianActions.cpp:44
@@ -2281,9 +2274,8 @@ msgid "Pause"
 msgstr "Pauza"
 
 #: engines/metaengine.cpp:85
-#, fuzzy
 msgid "Game menu"
-msgstr "Menu Hry"
+msgstr "Menu hry"
 
 #: engines/metaengine.cpp:91
 #: backends/platform/symbian/src/SymbianActions.cpp:47
@@ -2307,7 +2299,7 @@ msgstr ""
 #: engines/metaengine.cpp:107 engines/griffon/detection.cpp:112
 #: engines/sky/detection.cpp:228 engines/wintermute/keymapper_tables.h:55
 msgid "Confirm"
-msgstr ""
+msgstr "Potvrdit"
 
 #: audio/adlib.cpp:2293
 msgid "AdLib emulator"
@@ -2335,7 +2327,7 @@ msgstr "OPL2LPT"
 
 #: audio/fmopl.cpp:84
 msgid "OPL3LPT"
-msgstr ""
+msgstr "OPL3LPT"
 
 #: audio/mididrv.cpp:259
 #, c-format
