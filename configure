@@ -2296,6 +2296,9 @@ echo $_use_cxx11
 #
 # Determine extra build flags for debug and/or release builds
 #
+if test "$_debug_build" = auto && test "$_release_build" = yes; then
+	_debug_build=no
+fi
 if test "$_debug_build" != no; then
 	# debug mode not explicitly disabled -> compile with debug information
 	echo_n "Checking best debug mode... "
