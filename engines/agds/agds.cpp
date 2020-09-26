@@ -237,7 +237,7 @@ void AGDSEngine::runProcesses() {
 			i = _processes.erase(i);
 			//FIXME: when the last process exits, remove object from scene
 		} else {
-			debug("suspended process %s", process.getName().c_str());
+			//debug("suspended process %s", process.getName().c_str());
 			++i;
 		}
 	}
