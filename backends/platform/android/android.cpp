@@ -320,6 +320,13 @@ void OSystem_Android::initBackend() {
 	ConfMan.setBool("FM_high_quality", false);
 	ConfMan.setBool("FM_medium_quality", true);
 
+	// we need a relaxed delay for the remapping timeout since handling touch interface and virtual keyboard can be slow
+	// and especially in some occasions when we need to pull down (hide) the keyboard and map a system key (like the AC_Back) button.
+	// 8 seconds should be enough
+	ConfMan.registerDefault("remap_timeout_delay_ms", 8000);
+	if (!ConfMan.hasKey("remap_timeout_delay_ms")) {
+		ConfMan.setInt("remap_timeout_delay_ms", 8000);
+	}
 
 	if (!ConfMan.hasKey("browser_lastpath")) {
 		// TODO remove the debug message eventually
