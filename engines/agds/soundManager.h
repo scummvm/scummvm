@@ -57,9 +57,11 @@ namespace AGDS {
 	public:
 		SoundManager(AGDSEngine *engine, Audio::Mixer *mixer): _nextId(1), _engine(engine), _mixer(mixer) { }
 		void tick();
-		int play(const Common::String &process, const Common::String &file, const Common::String &phaseVar);
+		int play(const Common::String &process, const Common::String &file, const Common::String &phaseVar, int id = -1);
 		bool playing(int id) const;
 		void stopAll();
+	private:
+		void setPhaseVar(const Sound &sound, int value);
 	};
 
 } // End of namespace AGDS

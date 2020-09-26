@@ -174,8 +174,6 @@ void Process::loadSample() {
 	Common::String name = popText();
 	debug("loadSample %s, phaseVar: %s", name.c_str(), _phaseVar.c_str());
 	_engine->playSound(getName(), name, _phaseVar);
-	if (!_phaseVar.empty())
-		suspend();
 }
 
 void Process::getSampleVolume() {
