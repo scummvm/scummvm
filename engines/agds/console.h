@@ -38,6 +38,7 @@ public:
 private:
 	bool run(int argc, const char **argv);
 	bool activate(int argc, const char **argv);
+	bool info(int argc, const char **argv);
 
 	AGDSEngine *_engine;
 };

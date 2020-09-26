@@ -27,8 +27,9 @@
 namespace AGDS {
 
 Console::Console(AGDSEngine *engine) : _engine(engine) {
-	registerCmd("run",			WRAP_METHOD(Console, run));
 	registerCmd("activate",		WRAP_METHOD(Console, activate));
+	registerCmd("info",			WRAP_METHOD(Console, info));
+	registerCmd("run",			WRAP_METHOD(Console, run));
 }
 
 bool Console::run(int argc, const char **argv) {
@@ -54,6 +55,11 @@ bool Console::activate(int argc, const char **argv) {
 	_engine->reactivate(argv[1]);
 	detach();
 	return false;
+}
+
+bool Console::info(int argc, const char **argv) {
+	debugPrintf("processes:");
+	return true;
 }
 
 }
