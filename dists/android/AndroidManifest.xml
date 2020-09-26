@@ -51,7 +51,7 @@
 			android:allowBackup="true"
 			android:isGame="true"
 			android:resizeableActivity="false"
-			android:icon="@drawable/scummvm">
+			android:icon="@mipmap/scummvm">
 		<activity android:name=".ScummVMActivity"
 				android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
 				android:banner="@drawable/leanback_icon"
