@@ -131,6 +131,10 @@ public:
 		return _dialog;
 	}
 
+	const ProcessListType & processes() const {
+		return _processes;
+	}
+
 	TextLayout & textLayout() {
 		return _textLayout;
 	}
