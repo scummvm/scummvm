@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
-"PO-Revision-Date: 2020-09-22 04:43+0000\n"
+"PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/be/>\n"
@@ -3414,9 +3414,8 @@ msgid "Swap screens"
 msgstr "Захаваць скрыншот"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:75
-#, fuzzy
 msgid "Indiana Jones Fight controls:"
-msgstr "~К~іраванне баямі ў Indy"
+msgstr "Кіраванне баямі ў Indiana Jones:"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:76
 #: engines/hdb/detection.cpp:321
@@ -4231,9 +4230,8 @@ msgid "Untitled Savegame"
 msgstr "Захаваная гульня без назвы"
 
 #: engines/glk/adrift/os_glk.cpp:2814
-#, fuzzy
 msgid "Loading game...\n"
-msgstr "Загружаю гульню..."
+msgstr "Загружаю гульню...\n"
 
 #: engines/glk/advsys/advsys.cpp:35
 msgid "Could not start AdvSys game"
