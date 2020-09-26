@@ -51,27 +51,32 @@ static const int kCabInputmax = kCabBlockSize + 12;
 
 static byte *DecompressMsZipData(byte *buffer, uint32 inputSize, uint32 &decompressedSize) {
 #ifdef USE_ZLIB
-    bool error = false;
+	bool error = false;
 
-    Common::MemoryReadStream data(buffer, inputSize);
+	Common::MemoryReadStream data(buffer, inputSize);
 	byte *compressedBlock = new byte[kCabInputmax];
 	byte *decompressedBlock = new byte[kCabBlockSize];
 
-    // Read decompressed size of compressed data and minus 16 bytes of xof header
-    decompressedSize = data.readUint32LE() - 16;
+	// Read decompressed size of compressed data and minus 16 bytes of xof header
+	decompressedSize = data.readUint32LE() - 16;
 
-    uint32 remainingData = inputSize;
-    uint32 decompressedPos = 0;
-    byte *decompressedData = new byte[decompressedSize];
-    if (!decompressedData)
-        error = true;
+	uint32 remainingData = inputSize;
+	uint32 decompressedPos = 0;
+	byte *decompressedData = new byte[decompressedSize];
+	if (!decompressedData)
+		error = true;
 
-    while (!error && remainingData) {
-        uint16 uncompressedLen = data.readUint16LE();
-        uint16 compressedLen = data.readUint16LE();
+	while (!error && remainingData) {
+		uint16 uncompressedLen = data.readUint16LE();
+		uint16 compressedLen = data.readUint16LE();
+		remainingData -= 4;
 
 		if (data.err()) {
 			error = true;
+			break;
+		}
+
+		if (uncompressedLen == 0 && compressedLen == 0 && remainingData == 0) {
 			break;
 		}
 
@@ -85,6 +90,7 @@ static byte *DecompressMsZipData(byte *buffer, uint32 inputSize, uint32 &decompr
 			error = true;
 			break;
 		}
+		remainingData -= compressedLen;
 
 		// Check the CK header
 		if (compressedBlock[0] != 'C' || compressedBlock[1] != 'K') {
@@ -101,22 +107,21 @@ static byte *DecompressMsZipData(byte *buffer, uint32 inputSize, uint32 &decompr
 		}
 
 		// Copy the decompressed data
-        memcpy(decompressedData + decompressedPos, decompressedBlock, uncompressedLen);
-        decompressedPos += uncompressedLen;
-        remainingData -= compressedLen;
+		memcpy(decompressedData + decompressedPos, decompressedBlock, uncompressedLen);
+		decompressedPos += uncompressedLen;
 	}
-    if (decompressedSize != decompressedPos)
-        error = true;
+	if (decompressedSize != decompressedPos)
+		error = true;
 
 	delete[] compressedBlock;
 	delete[] decompressedBlock;
 
 	if (!error)
-        return decompressedData;
+		return decompressedData;
 #endif
-    warning("DecompressMsZipData: Error decompressing data!");
-    decompressedSize = 0;
-    return new byte[0];
+	warning("DecompressMsZipData: Error decompressing data!");
+	decompressedSize = 0;
+	return new byte[0];
 }
 
 static XFileLexer createXFileLexer(byte *&buffer, uint32 fileSize) {
@@ -129,11 +134,11 @@ static XFileLexer createXFileLexer(byte *&buffer, uint32 fileSize) {
 	bool textMode = (strcmp((char *)dataFormatBlock, "txt ") == 0 || strcmp((char *)dataFormatBlock, "tzip") == 0);
 
 	if (strcmp((char *)dataFormatBlock, "bzip") == 0 || strcmp((char *)dataFormatBlock, "tzip") == 0) {
-        uint32 decompressedSize;
-        // we skip the 16 bytes xof header of the file
+		uint32 decompressedSize;
+		// we skip the 16 bytes xof header of the file
 		byte *buf = DecompressMsZipData(buffer + 16, fileSize - 16, decompressedSize);
-        delete[] buffer;
-        buffer = buf;
+		delete[] buffer;
+		buffer = buf;
 		return XFileLexer(buffer, decompressedSize, textMode);
 	} else {
 		// we skip the 16 bytes xof header of the file
