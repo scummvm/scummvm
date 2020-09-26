@@ -1,7 +1,7 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.2.0 (2020-09-27)
+#### 2.2.0 "Interactive Fantasy" (2020-09-27)
 
  New games:
    - Added support for Blazing Dragons.
