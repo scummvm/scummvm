@@ -697,7 +697,7 @@ bool IMuseInternal::startSound_internal(int sound, int offset) {
 	//
 	// Tunes involved
 	// 100 - Captain Dread's map
-	// 113 - Guard Kiosk / Mardi Grass 
+	// 113 - Guard Kiosk / Mardi Grass
 	// 115 - Map of Booty Island / Ville de la Booty
 	// 118 - Ville de la Booty
 	//

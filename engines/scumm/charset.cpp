@@ -335,7 +335,7 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 			continue;
 		else if (chr == '\n' || chr == '\r' || chr == _vm->_newLineCharacter)
 			break;
-			
+
 		if (_vm->_game.heversion >= 72) {
 			if (chr == code) {
 				chr = text[pos++];
