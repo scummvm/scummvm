@@ -26,6 +26,7 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
+#include "common/zlib.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_parser.h"
@@ -45,8 +46,81 @@
 
 namespace Wintermute {
 
-XFileLexer createXFileLexer(byte *buffer, uint32 fileSize) {
-	// the header of an .X file consists of 16 bytes
+static const int kCabBlockSize = 0x8000;
+static const int kCabInputmax = kCabBlockSize + 12;
+
+static byte *DecompressMsZipData(byte *buffer, uint32 inputSize, uint32 &decompressedSize) {
+#ifdef USE_ZLIB
+    bool error = false;
+
+    Common::MemoryReadStream data(buffer, inputSize);
+	byte *compressedBlock = new byte[kCabInputmax];
+	byte *decompressedBlock = new byte[kCabBlockSize];
+
+    // Read decompressed size of compressed data and minus 16 bytes of xof header
+    decompressedSize = data.readUint32LE() - 16;
+
+    uint32 remainingData = inputSize;
+    uint32 decompressedPos = 0;
+    byte *decompressedData = new byte[decompressedSize];
+    if (!decompressedData)
+        error = true;
+
+    while (!error && remainingData) {
+        uint16 uncompressedLen = data.readUint16LE();
+        uint16 compressedLen = data.readUint16LE();
+
+		if (data.err()) {
+			error = true;
+			break;
+		}
+
+		if (compressedLen > kCabInputmax || uncompressedLen > kCabBlockSize) {
+			error = true;
+			break;
+		}
+
+		// Read the compressed block
+		if (data.read(compressedBlock, compressedLen) != compressedLen) {
+			error = true;
+			break;
+		}
+
+		// Check the CK header
+		if (compressedBlock[0] != 'C' || compressedBlock[1] != 'K') {
+			error = true;
+			break;
+		}
+
+		// Decompress the block. If it isn't the first, provide the previous block as dictonary
+		byte *dict = decompressedPos ? decompressedBlock : nullptr;
+		bool decRes = Common::inflateZlibHeaderless(decompressedBlock, uncompressedLen, compressedBlock + 2, compressedLen - 2, dict, kCabBlockSize);
+		if (!decRes) {
+			error = true;
+			break;
+		}
+
+		// Copy the decompressed data
+        memcpy(decompressedData + decompressedPos, decompressedBlock, uncompressedLen);
+        decompressedPos += uncompressedLen;
+        remainingData -= compressedLen;
+	}
+    if (decompressedSize != decompressedPos)
+        error = true;
+
+	delete[] compressedBlock;
+	delete[] decompressedBlock;
+
+	if (!error)
+        return decompressedData;
+#endif
+    warning("DecompressMsZipData: Error decompressing data!");
+    decompressedSize = 0;
+    return new byte[0];
+}
+
+static XFileLexer createXFileLexer(byte *&buffer, uint32 fileSize) {
+	// xof header of an .X file consists of 16 bytes
 	// bytes 9 to 12 contain a string which can be 'txt ', 'bin ', 'bzip, 'tzip', depending on the format
 	byte dataFormatBlock[5];
 	Common::copy(buffer + 8, buffer + 12, dataFormatBlock);
@@ -55,11 +129,16 @@ XFileLexer createXFileLexer(byte *buffer, uint32 fileSize) {
 	bool textMode = (strcmp((char *)dataFormatBlock, "txt ") == 0 || strcmp((char *)dataFormatBlock, "tzip") == 0);
 
 	if (strcmp((char *)dataFormatBlock, "bzip") == 0 || strcmp((char *)dataFormatBlock, "tzip") == 0) {
-		warning("ModelX::loadFromFile compressed .X files are not supported yet");
+        uint32 decompressedSize;
+        // we skip the 16 bytes xof header of the file
+		byte *buf = DecompressMsZipData(buffer + 16, fileSize - 16, decompressedSize);
+        delete[] buffer;
+        buffer = buf;
+		return XFileLexer(buffer, decompressedSize, textMode);
+	} else {
+		// we skip the 16 bytes xof header of the file
+		return XFileLexer(buffer + 16, fileSize - 16, textMode);
 	}
-
-	// we skip the 16 byte header of the file
-	return XFileLexer(buffer + 16, fileSize - 16, textMode);
 }
 
 IMPLEMENT_PERSISTENT(ModelX, false)
