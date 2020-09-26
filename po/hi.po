@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
-"PO-Revision-Date: 2020-09-21 00:05+0000\n"
-"Last-Translator: Aryan Rawlani <aryanrawlani007@gmail.com>\n"
+"PO-Revision-Date: 2020-09-26 21:13+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hi/>\n"
 "Language: hi\n"
@@ -651,7 +651,7 @@ msgstr "ScummVM छोड़ डे"
 
 #: gui/launcher.cpp:141
 msgid "A~b~out..."
-msgstr "जानकारी... (B)"
+msgstr "जानकारी(B)..."
 
 #: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:210
 msgid "About ScummVM"
@@ -659,7 +659,7 @@ msgstr "ScummVM के बारे में जानकारी"
 
 #: gui/launcher.cpp:142
 msgid "~O~ptions..."
-msgstr "विकल्प... (O)"
+msgstr "विकल्प(O)..."
 
 #: gui/launcher.cpp:142
 msgid "Change global ScummVM options"
