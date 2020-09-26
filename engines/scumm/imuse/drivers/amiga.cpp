@@ -175,7 +175,7 @@ private:
 	IMuseDriver_Amiga *_driver;
 };
 
-SoundChannel_Amiga::SoundChannel_Amiga(IMuseDriver_Amiga *driver, int id, Instrument_Amiga *instruments) : _driver(driver), _id(id), _instruments(instruments), 
+SoundChannel_Amiga::SoundChannel_Amiga(IMuseDriver_Amiga *driver, int id, Instrument_Amiga *instruments) : _driver(driver), _id(id), _instruments(instruments),
 	_assign(0), _next(0), _prev(0), _sustain(false), _note(0) {
 	assert(id > -1 && id < 4);
 	_channels[id] = this;
@@ -194,7 +194,7 @@ SoundChannel_Amiga::~SoundChannel_Amiga() {
 	delete[] _volTable;
 	_volTable = 0;
 }
- 
+
 SoundChannel_Amiga *SoundChannel_Amiga::allocate(int prio) {
 	SoundChannel_Amiga *res = 0;
 
@@ -276,10 +276,10 @@ void SoundChannel_Amiga::noteOn(byte note, byte volume, byte program, int8 trans
 	_driver->disableChannel(_id);
 	setVelocity(0, 0);
 	setVolume(volume);
-	
+
 	if (s->type > 1)
 		return;
-	
+
 	uint16 period = calculatePeriod(pitchBend + ((_note + transpose) << 7), s->baseNote, s->rate);
 
 	if (s->type == 1) {
@@ -412,7 +412,7 @@ void SoundChannel_Amiga::setVelocity(uint8 velo, int delay) {
 	} else {
 		_driver->setChannelVolume(_id, _volTable[(_ioUnit.volume << 5) + velo]);
 		_ioUnit.currentLevel = _ioUnit.fadeTargetLevel = velo;
-		_ioUnit.fadeLevelMod = 0;		
+		_ioUnit.fadeLevelMod = 0;
 	}
 }
 
@@ -751,7 +751,7 @@ void IMuseDriver_Amiga::interrupt() {
 	if (!_isOpen)
 		return;
 
-	for (_ticker += _internalTempo; _ticker >= _baseTempo; _ticker -= _baseTempo) {	
+	for (_ticker += _internalTempo; _ticker >= _baseTempo; _ticker -= _baseTempo) {
 		updateParser();
 		updateSounds();
 	}
@@ -831,12 +831,12 @@ void IMuseDriver_Amiga::loadInstrument(int program) {
 
 		if (size <= 0)
 			break;
-			
+
 		size -= 38;
 		Instrument_Amiga::Samples *s = &_instruments[program].samples[block];
 		ims.seek(594 + offset + header[block], SEEK_SET);
 		int8 *buf = new int8[size];
-		
+
 		s->rate = ims.readUint16BE();
 		s->baseNote = ims.readUint16BE();
 		s->noteRangeMin = ims.readSint16BE();

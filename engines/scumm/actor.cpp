@@ -755,9 +755,9 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 
 	} else if (_vm->_game.version <= 2) {
 		_moving = (_moving & ~(MF_LAST_LEG | MF_IN_LEG)) | MF_NEW_LEG;
- 	} else {
- 		_moving = (_moving & MF_IN_LEG) | MF_NEW_LEG;
- 	}
+	} else {
+		_moving = (_moving & MF_IN_LEG) | MF_NEW_LEG;
+	}
 
 }
 
@@ -1071,8 +1071,8 @@ UpdateActorDirection:;
 				directionUpdate();
 				animateActor(newDirToOldDir(_facing));
 
-				// FIXME: During the hands-free-demo in the library (room 5), Purple Tentacle gets stuck following Sandy due to the corner of the stairs, 
-				//        This is due to distance, and walkbox gap/layout. This works fine with the original engine, because it 'brute forces' 
+				// FIXME: During the hands-free-demo in the library (room 5), Purple Tentacle gets stuck following Sandy due to the corner of the stairs,
+				//        This is due to distance, and walkbox gap/layout. This works fine with the original engine, because it 'brute forces'
 				//        another pixel move in the walk direction before giving up, allowing us to move enough pixels to hit the next walkbox.
 				//        Why this fails with the return is because script-10 is executing a 'walkActorToActor' every cycle, which restarts the movement process
 				//        As a work around, we implement the original engine behaviour only for Purple Tentacle in the Demo. Doing this for other actors
