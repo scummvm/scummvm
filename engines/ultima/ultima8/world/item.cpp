@@ -1160,6 +1160,9 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 	if (!GAME_IS_CRUSADER)
 		return 0;
 
+	if (GAME_IS_REGRET)
+		warning("Item::fireWeapon: TODO: Update for Regret (different firetypes)");
+
 	static const uint32 BULLET_SPLASH_SHAPE = 0x1d9;
 
 	ix += x;

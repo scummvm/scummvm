@@ -47,7 +47,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Item::I_getMapArray(Item *)", // See TRIGGER::ordinal21 - stored in a variable 'mapNum'
 	"int16 Item::I_getStatus(Item *)",
 	"void Item::I_orStatus(Item *, uint16 flags)",
-	"int16 Item::I_equip(6 bytes)", // same coff as 0B5 - TODO: confirm this
+	"int16 Item::I_equip(6 bytes)", // same coff as 0B5
 	"byte Item::I_isOnScreen(Item *)", // called for gattling guns and camera
 	"byte Actor::I_isNPC(Item *)", // proably - actually checks is itemno < 256?
 	"byte Item::I_getZ(Item *)",

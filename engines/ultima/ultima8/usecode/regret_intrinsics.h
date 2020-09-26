@@ -57,7 +57,7 @@ Intrinsic RegretIntrinsics[] = {
 	World::I_getControlledNPCNum, // Intrinsic016()
 	Actor::I_getDir, // Intrinsic017()
 	Actor::I_getLastAnimSet, // Intrinsic018()
-	0, // Intrinsic019()
+	Item::I_fireWeapon, // Intrinsic019()
 	Item::I_create, // Intrinsic01A()
 	Item::I_popToCoords, // Intrinsic01B()
 	Actor::I_setDead, // Intrinsic01C()
@@ -85,10 +85,10 @@ Intrinsic RegretIntrinsics[] = {
 	MainActor::I_getMana, // Intrinsic030()
 	Item::I_getFamily, // Intrinsic031()
 	Actor::I_destroyContents, // Intrinsic032()
-	0, // Intrinsic033()
+	0, // Intrinsic033() Item::I_SetVolumeForItemSFX
 	Item::I_getDirToItem, // Intrinsic034()
 	0, // Intrinsic035()
-	0, // Intrinsic036()
+	Item::I_getRangeIfVisible, // Intrinsic036()
 	AudioProcess::I_playSFXCru, // Intrinsic037() TODO: Not exactly the same.
 	Item::I_andStatus, // Intrinsic038()
 	Kernel::I_resetRef, // Intrinsic039()
@@ -121,7 +121,7 @@ Intrinsic RegretIntrinsics[] = {
 	Actor::I_setDefaultActivity2, // Intrinsic052()
 	Actor::I_setActivity, // Intrinsic053()
 	World::I_setControlledNPCNum, // Intrinsic054()
-	0, // Intrinsic055()
+	Item::I_receiveHit, // Intrinsic055()
 	UCMachine::I_true, // Actually Game::I_isReleaseBuild
 	MainActor::I_setMana, // Intrinsic057()
 	Item::I_use, // Intrinsic058()
@@ -243,7 +243,7 @@ Intrinsic RegretIntrinsics[] = {
 	Item::I_setQuality, // Intrinsic0C5()
 	Item::I_hurl, // Intrinsic0C6()
 	Actor::I_addHp, // Intrinsic0C7()
-	0, // Intrinsic0C8()
+	CruHealerProcess::I_create, // Intrinsic0C8()
 	Item::I_equip, // Intrinsic0C9()
 	Item::I_setBroken, // Intrinsic0CA()
 	Item::I_isOn, // Intrinsic0CB()
@@ -300,7 +300,7 @@ Intrinsic RegretIntrinsics[] = {
 	0, // DTable::I_getMaxHPForNPC()
 	Actor::I_setHp, // Intrinsic0FC()
 	Item::I_getQLo, // Intrinsic0FD()
-	0, // Intrinsic0FE()
+	BatteryChargerProcess::I_create, // Intrinsic0FE()
 	Item::I_hurl, // Intrinsic0FF()
 	// 0100
 	Item::I_andStatus, // Intrinsic100()
@@ -355,7 +355,7 @@ Intrinsic RegretIntrinsics[] = {
 	Item::I_andStatus, // Intrinsic12F()
 	// 0130
 	Actor::I_getNpcNum, // Intrinsic130()
-	0, // Intrinsic131()
+	0, // Intrinsic131() - same as Intrinsic 116 in No Remorse
 	Item::I_andStatus, // Intrinsic132()
 	Item::I_hurl, // Intrinsic133()
 	Item::I_andStatus, // Intrinsic134()
