@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
 "PO-Revision-Date: 2020-09-26 21:06+0000\n"
-"Last-Translator: Joohan Lee <losernator@gmail.com>\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
 "Language: ko\n"
@@ -96,11 +96,11 @@ msgstr "게임 데이터가 있는 디렉토리를 선택하세요"
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:227
 msgid "From: "
-msgstr "보낸사람:"
+msgstr "보낸사람: "
 
 #: gui/downloaddialog.cpp:53 gui/downloaddialog.cpp:228
 msgid "To: "
-msgstr "받는사람:"
+msgstr "받는사람: "
 
 #: gui/downloaddialog.cpp:64
 msgid "Cancel download"
@@ -653,7 +653,7 @@ msgstr "ScummVM 종료"
 
 #: gui/launcher.cpp:141
 msgid "A~b~out..."
-msgstr "프로그램 정보(~b~)"
+msgstr "프로그램 정보(~b~)..."
 
 #: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:210
 msgid "About ScummVM"
@@ -661,7 +661,7 @@ msgstr "ScummVM 정보"
 
 #: gui/launcher.cpp:142
 msgid "~O~ptions..."
-msgstr "옵션(~O~)"
+msgstr "옵션(~O~)..."
 
 #: gui/launcher.cpp:142
 msgid "Change global ScummVM options"
