@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
-"PO-Revision-Date: 2020-09-21 00:05+0000\n"
-"Last-Translator: anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2020-09-26 12:37+0000\n"
+"Last-Translator: Matan Bareket <mataniko@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/he/>\n"
 "Language: he\n"
@@ -182,14 +182,14 @@ msgstr ""
 "האם באמת להוריד קבצים אל תוך התיקייה?"
 
 #: gui/downloaddialog.cpp:215
-#, fuzzy, c-format
+#, c-format
 msgid "Downloaded %s %S / %s %S"
-msgstr "הורדו %s %s / %s %s"
+msgstr "הורדו %s %S / %s %S"
 
 #: gui/downloaddialog.cpp:222
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %S"
-msgstr "מהירות הורדה: %s %s"
+msgstr "מהירות הורדה: %s %S"
 
 #: gui/editgamedialog.cpp:135 engines/dialogs.cpp:285
 msgid "Game"
@@ -2693,7 +2693,7 @@ msgstr "הדמו את לחצן העכבר השמאלי"
 
 #: backends/keymapper/hardware-input.cpp:248
 msgid "Mouse Wheel Up"
-msgstr ""
+msgstr "גלגל עכבר למעלה"
 
 #: backends/keymapper/hardware-input.cpp:249
 msgid "Mouse Wheel Down"
