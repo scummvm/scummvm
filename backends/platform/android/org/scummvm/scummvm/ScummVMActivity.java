@@ -484,8 +484,10 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 	private void showMouseCursor(boolean show) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+			// Android N (Nougat) is Android 7.0
 			SurfaceView main_surface = findViewById(R.id.main_surface);
 			int type = show ? PointerIcon.TYPE_DEFAULT : PointerIcon.TYPE_NULL;
+			// https://stackoverflow.com/a/55482761
 			main_surface.setPointerIcon(PointerIcon.getSystemIcon(this, type));
 		} else {
 			/* Currently hiding the system mouse cursor is only
