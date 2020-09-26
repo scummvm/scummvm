@@ -200,6 +200,7 @@ void AGDSEngine::loadScreen(const Common::String &name) {
 
 	_soundManager.stopAll();
 	_currentScreenName = name;
+	//SAVE CURRENT OBJECTS IN PATCH see save_screen_patch
 	_currentScreen = new Screen(loadObject(name));
 	runProcess(_currentScreen->getObject());
 
