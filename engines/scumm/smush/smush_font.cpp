@@ -193,8 +193,7 @@ int SmushFont::draw2byte(byte *buffer, int dst_width, int x, int y, int idx) {
 		byte drawColor = shadowOffsetColorTable[shadowIdx];
 
 		src = origSrc;
-
-		byte *dst = buffer + dst_width * (offY + (_vm->_game.id == GID_CMI ? 7 : (_vm->_game.id == GID_DIG ? 2 : 0))) + offX;
+		byte *dst = buffer + dst_width * offY + offX;
 
 		for (int j = 0; j < h; j++) {
 			for (int i = 0; i < w; i++) {
@@ -252,9 +251,14 @@ void SmushFont::drawString(const char *str, byte *buffer, int dst_width, int dst
 	int totalLen = (int)strlen(str);
 	int lineStart = 0;
 
-	// This can be found i COMI. No idea whether it is actually used. We currently don't handle these flags.
-	/*if (_vm->_game.id == GID_CMI && (flags & 0x40))
-		y -= (getStringHeight(str, totalLen) / 2);*/
+	// COMI always does this for CJK strings (before any other possible yPos fixes).
+	if (_vm->_game.id == GID_CMI) {
+		if (_vm->_useCJKMode)
+			y += 2;
+		// No idea whether it is actually used. We currently don't handle this flag.
+		/*if (flags & 0x40)
+			y -= (getStringHeight(str, totalLen) / 2);*/
+	}
 
 	for (int pos = 0; pos <= totalLen; ++pos) {
 		if (str[pos] != '\0' && str[pos] != '\n')
@@ -297,6 +301,10 @@ void SmushFont::drawStringWrap(const char *str, byte *buffer, int dst_width, int
 	int maxWidth = 0;
 	int curWidth = 0;
 	int curPos = -1;
+
+	// COMI does this for CJK strings (before any other possible yPos fixes, see lines 348 - 356).
+	if (_vm->_game.id == GID_CMI && _vm->_useCJKMode)
+		y += 2;
 
 	while (curPos < len) {
 		int textStart = curPos + 1;
