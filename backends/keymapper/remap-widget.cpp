@@ -216,7 +216,12 @@ void RemapWidget::startRemapping(uint actionIndex) {
 
 	_remapKeymap = _actions[actionIndex].keymap;
 	_remapAction = _actions[actionIndex].action;
-	_remapTimeout = g_system->getMillis() + kRemapTimeoutDelay;
+
+	uint32 remapTimeoutDelay = kRemapMinTimeoutDelay;
+	if (ConfMan.hasKey("remap_timeout_delay_ms") && (ConfMan.getInt("remap_timeout_delay_ms") > kRemapMinTimeoutDelay)) {
+		remapTimeoutDelay = (uint32)ConfMan.getInt("remap_timeout_delay_ms");
+	}
+	_remapTimeout = g_system->getMillis() + remapTimeoutDelay;
 	_remapInputWatcher->startWatching();
 
 	_actions[actionIndex].keyButton->setLabel("...");
