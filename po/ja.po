@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
-"PO-Revision-Date: 2020-09-19 09:17+0000\n"
+"PO-Revision-Date: 2020-09-26 12:37+0000\n"
 "Last-Translator: Matthew Duggan <mgithub@guarana.org>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -1295,7 +1295,7 @@ msgstr "システムのファイルブラウザを使う"
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
-msgstr ""
+msgstr "ファイルやフォルダーを選ぶ時、ScummVMのファイルブラウザの代わりにシステムのファイルブラウザを使う。"
 
 #: gui/options.cpp:2057 gui/updates-dialog.cpp:86
 msgid "Update check:"
@@ -1311,38 +1311,39 @@ msgstr "今すぐ確認"
 
 #: gui/options.cpp:2076
 msgid "Active storage:"
-msgstr ""
+msgstr "使用中ストレージ："
 
 #: gui/options.cpp:2076
 msgid "Active cloud storage"
-msgstr ""
+msgstr "使用中のクラウドストレージ"
 
 #: gui/options.cpp:2085
 msgctxt "lowres"
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
-msgstr ""
+msgstr "４。ストレージが無効です。ユーザー名を確かめて有効にしてください："
 
 #: gui/options.cpp:2087
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
-msgstr ""
+msgstr "４。ストレージが無効です。ユーザー名を確かめて有効にしてください："
 
 #: gui/options.cpp:2088
 msgid "Enable storage"
-msgstr ""
+msgstr "有効にする"
 
 #: gui/options.cpp:2088
+#, fuzzy
 msgid "Confirm you want to use this account for this storage"
-msgstr ""
+msgstr "このアカウントを使うことを確認する"
 
 #: gui/options.cpp:2090 backends/platform/wii/options.cpp:114
 msgid "Username:"
-msgstr "ユーサー名："
+msgstr "ユーザー名："
 
 #: gui/options.cpp:2090
 msgid "Username used by this storage"
-msgstr ""
+msgstr "このストーレジのユーザー名"
 
 #: gui/options.cpp:2091
 msgid "<none>"
@@ -1353,8 +1354,9 @@ msgid "Used space:"
 msgstr "使用容量："
 
 #: gui/options.cpp:2093
+#, fuzzy
 msgid "Space used by ScummVM's saved games on this storage"
-msgstr ""
+msgstr "ScummVMのセーブデータの現在使用中容量"
 
 #: gui/options.cpp:2096
 msgid "Last sync:"
@@ -1362,20 +1364,22 @@ msgstr "前回の同期："
 
 #: gui/options.cpp:2096
 msgid "When was the last time saved games were synced with this storage"
-msgstr ""
+msgstr "前回クラウドストーレジにセーブデータを同期した時"
 
 #: gui/options.cpp:2097 gui/options.cpp:2827
 msgid "<never>"
 msgstr "＜無い＞"
 
 #: gui/options.cpp:2099
+#, fuzzy
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
-msgstr ""
+msgstr "セーブデータはゲームを起動する時とロード／セーブする時に自動に同期されます。"
 
 #: gui/options.cpp:2101
+#, fuzzy
 msgid "Saved games sync automatically on launch, after saving and on loading."
-msgstr ""
+msgstr "セーブデータはゲームを起動する時とロード／セーブする時に自動に同期されます。"
 
 #: gui/options.cpp:2102
 msgid "Sync now"
@@ -1388,11 +1392,11 @@ msgstr "セーブデータの同期を始まる"
 #: gui/options.cpp:2105
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr ""
+msgstr "ScummVMのクラウドフォルダーからセーブデータをダウンロードすることができます："
 
 #: gui/options.cpp:2107
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr ""
+msgstr "ScummVMのクラウドフォルダーからセーブデータをダウンロードすることができます："
 
 #: gui/options.cpp:2108
 msgid "Download game files"
@@ -1405,11 +1409,11 @@ msgstr "ダウンロード管理のダイアログを開く"
 #: gui/options.cpp:2111
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
-msgstr ""
+msgstr "アカウントを変えるには一旦切断してから再接続してください："
 
 #: gui/options.cpp:2113
 msgid "To change account for this storage, disconnect and connect again:"
-msgstr ""
+msgstr "アカウントを変えるには一旦切断してから再接続してください："
 
 #: gui/options.cpp:2114
 msgid "Disconnect"
@@ -1417,29 +1421,29 @@ msgstr "切断"
 
 #: gui/options.cpp:2114
 msgid "Stop using this storage on this device"
-msgstr ""
+msgstr "このデバイスでストーレジの使用を停止する"
 
 #: gui/options.cpp:2117
 msgctxt "lowres"
 msgid "This storage is not connected yet! To connect,"
-msgstr ""
+msgstr "まだ接続していません！接続するには、"
 
 #: gui/options.cpp:2119
 msgid "This storage is not connected yet! To connect,"
-msgstr ""
+msgstr "まだ接続していません！接続するには、"
 
 #: gui/options.cpp:2120
 msgid "1. Open this link:"
-msgstr ""
+msgstr "１。このリンクを開いて："
 
 #: gui/options.cpp:2123
 msgctxt "lowres"
 msgid "2. Get the code and enter it here:"
-msgstr ""
+msgstr "２。コードを取得して、ここに入力して："
 
 #: gui/options.cpp:2125
 msgid "2. Get the code and enter it here:"
-msgstr ""
+msgstr "２。コードを取得して、ここに入力して："
 
 #: gui/options.cpp:2127
 msgid "Paste"
@@ -1451,11 +1455,11 @@ msgstr "クリップボードから貼り付ける"
 
 #: gui/options.cpp:2128
 msgid "3. Connect"
-msgstr "3. 接続"
+msgstr "３。接続する"
 
 #: gui/options.cpp:2128
 msgid "Connect your cloud storage account"
-msgstr ""
+msgstr "クラウドストーレジを接続する"
 
 #: gui/options.cpp:2137
 msgid "Run server"
@@ -1463,7 +1467,7 @@ msgstr "サーバーを起動"
 
 #: gui/options.cpp:2137
 msgid "Run local webserver"
-msgstr ""
+msgstr "ローカルサーバーを起動する"
 
 #: gui/options.cpp:2138 gui/options.cpp:2942
 msgid "Not running"
@@ -1476,7 +1480,7 @@ msgstr "/root/ フォルダー:"
 
 #: gui/options.cpp:2142 gui/options.cpp:2144 gui/options.cpp:2145
 msgid "Select which directory will be shown as /root/ in the Files Manager"
-msgstr ""
+msgstr "ファイルマネジャーの/root/に使うフォルダーを選択する"
 
 #: gui/options.cpp:2144
 msgid "/root/ Path:"
