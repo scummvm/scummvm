@@ -38,6 +38,7 @@ Animation::~Animation() {
 }
 
 bool Animation::load(Common::SeekableReadStream *stream) {
+	delete _flic;
 	Video::FlicDecoder *flic = new Video::FlicDecoder;
 	if (flic->loadStream(stream)) {
 		_frames = flic->getFrameCount();
