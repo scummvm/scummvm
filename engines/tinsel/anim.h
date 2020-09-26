@@ -32,6 +32,9 @@ struct OBJECT;
 
 /** animation structure */
 struct ANIM {
+	ANIM() : aniRate(0), aniDelta(0), pObject(nullptr),
+		hScript(0), scriptIndex(0) {};
+
 	int aniRate;		///< animation speed
 	int aniDelta;		///< animation speed delta counter
 	OBJECT *pObject;	///< object to animate (assumed to be multi-part)
