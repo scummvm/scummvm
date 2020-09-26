@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-09-13 22:06+0100\n"
-"PO-Revision-Date: 2020-09-21 00:05+0000\n"
-"Last-Translator: starfall909 <starfall909@naver.com>\n"
+"PO-Revision-Date: 2020-09-26 21:06+0000\n"
+"Last-Translator: Joohan Lee <losernator@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
 "Language: ko\n"
@@ -176,6 +176,8 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
+"지정된 디렉토리에 \"%s\" 파일이 이미 존재합니다.\n"
+"정말로 해당 디렉토리에 파일을 다운로드 받으시겠습니까?"
 
 #: gui/downloaddialog.cpp:215
 #, c-format
@@ -200,7 +202,7 @@ msgstr "ID:"
 msgid ""
 "Short game identifier used for referring to saved games and running the game "
 "from the command line"
-msgstr ""
+msgstr "게임 저장에 참조하거나 명령줄에서 실행하는데 사용하는 짧은 게임 인식자"
 
 #: gui/editgamedialog.cpp:141
 msgctxt "lowres"
@@ -209,28 +211,28 @@ msgstr "ID:"
 
 #: gui/editgamedialog.cpp:146 gui/editrecorddialog.cpp:59
 msgid "Name:"
-msgstr ""
+msgstr "제목:"
 
 #: gui/editgamedialog.cpp:146 gui/editgamedialog.cpp:148
 #: gui/editgamedialog.cpp:149
 msgid "Full title of the game"
-msgstr ""
+msgstr "게임의 전체 이름"
 
 #: gui/editgamedialog.cpp:148
 msgctxt "lowres"
 msgid "Name:"
-msgstr ""
+msgstr "제목:"
 
 #: gui/editgamedialog.cpp:152 engines/mohawk/dialogs.cpp:138
 #: engines/mohawk/dialogs.cpp:339
 msgid "Language:"
-msgstr ""
+msgstr "언어:"
 
 #: gui/editgamedialog.cpp:152 gui/editgamedialog.cpp:153
 msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
-msgstr ""
+msgstr "게임의 언어. 선택하는 언어로 번역되지는 않음"
 
 #: gui/editgamedialog.cpp:154 gui/editgamedialog.cpp:168 gui/options.cpp:1203
 #: gui/options.cpp:1223 gui/options.cpp:1236 gui/options.cpp:1250
