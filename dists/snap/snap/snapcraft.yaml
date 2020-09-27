@@ -30,6 +30,7 @@ plugs:
   network:
   network-bind:
   removable-media:
+  joystick:
 
 apps:
   scummvm:
@@ -50,6 +51,9 @@ apps:
       - home
       - gsettings
       - mount-observe
+      - system-observe
+      - network-observe
+      - joystick
     environment:
       LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/libunity/:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/pulseaudio/:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/speech-dispatcher/"
       ESPEAK_DATA_PATH: "$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/espeak-ng-data"
@@ -69,6 +73,7 @@ apps:
       - network
       - network-bind
       - removable-media
+      - joystick
     environment:
       SDL_VIDEODRIVER: wayland
       LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/libunity/:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/pulseaudio/:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/speech-dispatcher/"
@@ -92,8 +97,12 @@ layout:
 
 parts:
   scummvm:
-    after: [alsa-mixin]
+    after: [alsa-mixin, discord-rpc]
     source: https://github.com/scummvm/scummvm.git
+    build-environment:
+      - CXXFLAGS: "$CXXFLAGS -fuse-ld=gold -flto=$(nproc) -ffunction-sections -fdata-sections"
+      - LDFLAGS:  "$LDFLAGS  -fuse-ld=gold -flto=$(nproc) -Wl,--gc-sections"
+
     override-build: |
       last_committed_tag="$(git tag --list | tac | head -n1)"
       trimmed_tag="$(echo $last_committed_tag | sed 's/desc\///' | sed 's/git//' | sed 's/^v//')"
@@ -102,18 +111,20 @@ parts:
       # beta, build that tag instead of master.
       if [ "${trimmed_tag}" != "${last_released_tag}" ]; then
         git fetch
-        git checkout "${last_committed_tag}"
+        git checkout -f "${last_committed_tag}"
         snapcraftctl set-version $(git -C ../src tag --list | tac | head -n1 | sed 's/desc\///' | sed 's/git//' | sed 's/^v//')
       else
-        snapcraftctl set-version $(git -C ../src describe | sed 's/desc\///')
-      fi    
+        snapcraftctl set-version $(git describe | sed 's/desc\///')
+      fi
       snapcraftctl build
+      strip --strip-all $SNAPCRAFT_PART_INSTALL/bin/scummvm
       
     plugin: autotools
     configflags:
       - --enable-release
       - --enable-tts
       - --enable-opl2lpt
+      - --enable-discord
       - --enable-c++11
       - --disable-debug
 
@@ -122,7 +133,7 @@ parts:
       - libgtk-3-dev
       - libjpeg62-dev
       - libmpeg2-4-dev
-      - liba52-dev
+      - liba52-0.7.4-dev
       - libogg-dev
       - libvorbis-dev
       - libflac-dev
@@ -237,6 +248,12 @@ parts:
     stage-packages:
       - libasound2
       - libasound2-plugins
+
+  discord-rpc:
+    plugin: cmake
+    source: https://github.com/discord/discord-rpc.git
+    configflags:
+      - -DBUILD_SHARED_LIBS=ON
 
   scripts:
     plugin: dump
