@@ -20,7 +20,7 @@
  *
  */
 
-#include "backends/graphics/resvm-sdl/resvm-sdl-graphics.h"
+#include "backends/graphics3d/sdl/sdl-graphics3d.h"
 #include "backends/platform/sdl/sdl-sys.h"
 #include "backends/events/sdl/resvm-sdl-events.h"
 #include "backends/platform/sdl/sdl.h"
@@ -32,19 +32,19 @@
 #include "common/translation.h"
 #include "common/file.h"
 
-ResVmSdlGraphicsManager::ResVmSdlGraphicsManager(SdlEventSource *source, SdlWindow *window) :
+SdlGraphics3dManager::SdlGraphics3dManager(SdlEventSource *source, SdlWindow *window) :
 		_eventSource(source), _window(window) {
 	ConfMan.registerDefault("fullscreen_res", "desktop");
 }
 
-void ResVmSdlGraphicsManager::activateManager() {
+void SdlGraphics3dManager::activateManager() {
 	_eventSource->setGraphicsManager(this);
 
 	// Register the graphics manager as a event observer
 	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
 }
 
-void ResVmSdlGraphicsManager::deactivateManager() {
+void SdlGraphics3dManager::deactivateManager() {
 	// Unregister the event observer
 	if (g_system->getEventManager()->getEventDispatcher()) {
 		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
@@ -53,7 +53,7 @@ void ResVmSdlGraphicsManager::deactivateManager() {
 	_eventSource->setGraphicsManager(0);
 }
 
-ResVmSdlGraphicsManager::State ResVmSdlGraphicsManager::getState() const {
+SdlGraphics3dManager::State SdlGraphics3dManager::getState() const {
 	State state;
 
 	state.screenWidth   = getWidth();
@@ -67,7 +67,7 @@ ResVmSdlGraphicsManager::State ResVmSdlGraphicsManager::getState() const {
 	return state;
 }
 
-bool ResVmSdlGraphicsManager::setState(const State &state) {
+bool SdlGraphics3dManager::setState(const State &state) {
 	beginGFXTransaction();
 #ifdef USE_RGB_COLOR
 		initSize(state.screenWidth, state.screenHeight, &state.pixelFormat);
@@ -85,7 +85,7 @@ bool ResVmSdlGraphicsManager::setState(const State &state) {
 	}
 }
 
-Common::Keymap *ResVmSdlGraphicsManager::getKeymap() {
+Common::Keymap *SdlGraphics3dManager::getKeymap() {
 	using namespace Common;
 
 	Keymap *keymap = new Keymap(Keymap::kKeymapTypeGlobal, "sdl-graphics", _("Graphics"));
@@ -107,7 +107,7 @@ Common::Keymap *ResVmSdlGraphicsManager::getKeymap() {
 	return keymap;
 }
 
-Common::Rect ResVmSdlGraphicsManager::getPreferredFullscreenResolution() {
+Common::Rect SdlGraphics3dManager::getPreferredFullscreenResolution() {
 	// Default to the desktop resolution, unless the user has set a
 	// resolution in the configuration file
 	const Common::String &fsres = ConfMan.get("fullscreen_res");
@@ -128,12 +128,12 @@ Common::Rect ResVmSdlGraphicsManager::getPreferredFullscreenResolution() {
 #pragma mark --- Mouse ---
 #pragma mark -
 
-bool ResVmSdlGraphicsManager::showMouse(bool visible) {
+bool SdlGraphics3dManager::showMouse(bool visible) {
 	SDL_ShowCursor(visible);
 	return true;
 }
 
-bool ResVmSdlGraphicsManager::lockMouse(bool lock) {
+bool SdlGraphics3dManager::lockMouse(bool lock) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	if (lock)
 		SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -148,7 +148,7 @@ bool ResVmSdlGraphicsManager::lockMouse(bool lock) {
 	return true;
 }
 
-bool ResVmSdlGraphicsManager::isMouseLocked() const {
+bool SdlGraphics3dManager::isMouseLocked() const {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	return SDL_GetRelativeMouseMode() == SDL_TRUE;
 #else
@@ -156,13 +156,13 @@ bool ResVmSdlGraphicsManager::isMouseLocked() const {
 #endif
 }
 
-bool ResVmSdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
+bool SdlGraphics3dManager::notifyMousePosition(Common::Point &mouse) {
 	transformMouseCoordinates(mouse);
 
 	return true;
 }
 
-void ResVmSdlGraphicsManager::saveScreenshot() {
+void SdlGraphics3dManager::saveScreenshot() {
 	Common::String filename;
 
 	Common::String screenshotsPath;
@@ -202,6 +202,6 @@ void ResVmSdlGraphicsManager::saveScreenshot() {
 	}
 }
 
-int ResVmSdlGraphicsManager::getGraphicsModeScale(int mode) const {
+int SdlGraphics3dManager::getGraphicsModeScale(int mode) const {
 	return -1;
 }

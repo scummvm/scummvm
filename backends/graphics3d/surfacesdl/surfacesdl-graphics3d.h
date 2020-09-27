@@ -20,20 +20,20 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS_RESVM_SURFACESDL_GRAPHICS_H
-#define BACKENDS_GRAPHICS_RESVM_SURFACESDL_GRAPHICS_H
+#ifndef BACKENDS_GRAPHICS3D_SURFACESDL_GRAPHICS_H
+#define BACKENDS_GRAPHICS3D_SURFACESDL_GRAPHICS_H
 
-#include "backends/graphics/resvm-sdl/resvm-sdl-graphics.h"
+#include "backends/graphics3d/sdl/sdl-graphics3d.h"
 
 /**
  * SDL Surface based graphics manager
  *
  * Used when rendering the launcher, or games with TinyGL
  */
-class ResVmSurfaceSdlGraphicsManager : public ResVmSdlGraphicsManager {
+class SurfaceSdlGraphics3dManager : public SdlGraphics3dManager {
 public:
-	ResVmSurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
-	virtual ~ResVmSurfaceSdlGraphicsManager();
+	SurfaceSdlGraphics3dManager(SdlEventSource *sdlEventSource, SdlWindow *window);
+	virtual ~SurfaceSdlGraphics3dManager();
 
 	// GraphicsManager API - Features
 	virtual bool hasFeature(OSystem::Feature f) const override;

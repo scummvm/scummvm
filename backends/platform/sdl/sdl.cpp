@@ -52,11 +52,11 @@
 #include "backends/keymapper/hardware-input.h"
 #include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/timer/sdl/sdl-timer.h"
-#include "backends/graphics/resvm-surfacesdl/resvm-surfacesdl-graphics.h" // ResidualVM specific
+#include "backends/graphics3d/surfacesdl/surfacesdl-graphics3d.h" // ResidualVM specific
 
 #ifdef USE_OPENGL
-#include "backends/graphics/resvm-openglsdl/resvm-openglsdl-graphics.h" // ResidualVM specific
 //#include "graphics/cursorman.h" // ResidualVM specific
+#include "backends/graphics3d/openglsdl/openglsdl-graphics3d.h" // ResidualVM specific
 #include "graphics/opengl/context.h" // ResidualVM specific
 #endif
 #include "graphics/renderer.h" // ResidualVM specific
@@ -109,7 +109,7 @@ OSystem_SDL::~OSystem_SDL() {
 	delete _savefileManager;
 	_savefileManager = 0;
 	if (_graphicsManager) {
-		dynamic_cast<ResVmSdlGraphicsManager *>(_graphicsManager)->deactivateManager();
+		dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)->deactivateManager();
 	}
 	delete _graphicsManager;
 	_graphicsManager = 0;
@@ -263,7 +263,7 @@ void OSystem_SDL::initBackend() {
 #endif
 
 		if (_graphicsManager == 0) {
-			_graphicsManager = dynamic_cast<GraphicsManager *>(new ResVmSurfaceSdlGraphicsManager(_eventSource, _window)); // ResidualVM specific
+			_graphicsManager = dynamic_cast<GraphicsManager *>(new SurfaceSdlGraphics3dManager(_eventSource, _window)); // ResidualVM specific
 		}
 	}
 
@@ -302,7 +302,7 @@ void OSystem_SDL::initBackend() {
 	// so the virtual keyboard can be initialized, but we have to add the
 	// graphics manager as an event observer after initializing the event
 	// manager.
-	dynamic_cast<ResVmSdlGraphicsManager *>(_graphicsManager)->activateManager();
+	dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)->activateManager();
 }
 
 // ResidualVM specific code - Start
@@ -387,7 +387,7 @@ void OSystem_SDL::detectAntiAliasingSupport() {
 
 void OSystem_SDL::engineInit() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	dynamic_cast<ResVmSdlGraphicsManager *>(_graphicsManager)->unlockWindowSize();
+	dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)->unlockWindowSize();
 	// Disable screen saver when engine starts
 	SDL_DisableScreenSaver();
 #endif
@@ -409,7 +409,7 @@ void OSystem_SDL::engineInit() {
 
 void OSystem_SDL::engineDone() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	dynamic_cast<ResVmSdlGraphicsManager *>(_graphicsManager)->unlockWindowSize();
+	dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)->unlockWindowSize();
 	SDL_EnableScreenSaver();
 #endif
 #ifdef USE_TASKBAR
@@ -489,21 +489,21 @@ void OSystem_SDL::setWindowCaption(const char *caption) {
 #ifdef USE_OPENGL
 void OSystem_SDL::setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) {
 	bool switchedManager = false;
-	if (accel3d && !dynamic_cast<ResVmOpenGLSdlGraphicsManager *>(_graphicsManager)) {
+	if (accel3d && !dynamic_cast<OpenGLSdlGraphics3dManager *>(_graphicsManager)) {
 		switchedManager = true;
-	} else if (!accel3d && !dynamic_cast<ResVmSurfaceSdlGraphicsManager *>(_graphicsManager)) {
+	} else if (!accel3d && !dynamic_cast<SurfaceSdlGraphics3dManager *>(_graphicsManager)) {
 		switchedManager = true;
 	}
 
 	if (switchedManager) {
-		ResVmSdlGraphicsManager *sdlGraphicsManager = dynamic_cast<ResVmSdlGraphicsManager *>(_graphicsManager);
+		SdlGraphics3dManager *sdlGraphicsManager = dynamic_cast<SdlGraphics3dManager *>(_graphicsManager);
 		sdlGraphicsManager->deactivateManager();
 		delete _graphicsManager;
 
 		if (accel3d) {
-			_graphicsManager = sdlGraphicsManager = new ResVmOpenGLSdlGraphicsManager(_eventSource, _window, _capabilities);
+			_graphicsManager = sdlGraphicsManager = new OpenGLSdlGraphics3dManager(_eventSource, _window, _capabilities);
 		} else {
-			_graphicsManager = sdlGraphicsManager = new ResVmSurfaceSdlGraphicsManager(_eventSource, _window);
+			_graphicsManager = sdlGraphicsManager = new SurfaceSdlGraphics3dManager(_eventSource, _window);
 		}
 		sdlGraphicsManager->activateManager();
 	}
@@ -541,7 +541,7 @@ void OSystem_SDL::fatalError() {
 Common::KeymapArray OSystem_SDL::getGlobalKeymaps() {
 	Common::KeymapArray globalMaps = BaseBackend::getGlobalKeymaps();
 
-	ResVmSdlGraphicsManager *graphicsManager = dynamic_cast<ResVmSdlGraphicsManager *>(_graphicsManager);
+	SdlGraphics3dManager *graphicsManager = dynamic_cast<SdlGraphics3dManager *>(_graphicsManager);
 	globalMaps.push_back(graphicsManager->getKeymap());
 
 	return globalMaps;
@@ -777,14 +777,14 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 		debug(1, "switching to plain SDL graphics");
 		sdlGraphicsManager->deactivateManager();
 		delete _graphicsManager;
-		_graphicsManager = sdlGraphicsManager = new SurfaceSdlGraphicsManager(_eventSource, _window);
+		_graphicsManager = sdlGraphicsManager = new SurfaceSdlGraphics3dManager(_eventSource, _window);
 
 		switchedManager = true;
 	} else if (_graphicsMode < _firstGLMode && mode >= _firstGLMode) {
 		debug(1, "switching to OpenGL graphics");
 		sdlGraphicsManager->deactivateManager();
 		delete _graphicsManager;
-		_graphicsManager = sdlGraphicsManager = new OpenGLSdlGraphicsManager(_eventSource, _window);
+		_graphicsManager = sdlGraphicsManager = new OpenGLSdlGraphics3dManager(_eventSource, _window);
 
 		switchedManager = true;
 	}
@@ -834,7 +834,7 @@ void OSystem_SDL::setupGraphicsModes() {
 	const OSystem::GraphicsMode *srcMode;
 	int defaultMode;
 
-	GraphicsManager *manager = new SurfaceSdlGraphicsManager(_eventSource, _window);
+	GraphicsManager *manager = new SurfaceSdlGraphics3dManager(_eventSource, _window);
 	srcMode = manager->getSupportedGraphicsModes();
 	defaultMode = manager->getDefaultGraphicsMode();
 	while (srcMode->name) {

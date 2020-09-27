@@ -119,8 +119,8 @@ ifdef SDL_BACKEND
 MODULE_OBJS += \
 	events/sdl/sdl-events.o \
 	events/sdl/resvm-sdl-events.o \
-	graphics/resvm-sdl/resvm-sdl-graphics.o \
-	graphics/resvm-surfacesdl/resvm-surfacesdl-graphics.o \
+	graphics3d/sdl/sdl-graphics3d.o \
+	graphics3d/surfacesdl/surfacesdl-graphics3d.o \
 	mixer/sdl/sdl-mixer.o \
 	mutex/sdl/sdl-mutex.o \
 	plugins/sdl/sdl-provider.o \
@@ -134,7 +134,7 @@ endif
 
 ifdef USE_OPENGL
 MODULE_OBJS += \
-	graphics/resvm-openglsdl/resvm-openglsdl-graphics.o
+	graphics3d/openglsdl/openglsdl-graphics3d.o
 endif
 
 ifdef USE_DISCORD

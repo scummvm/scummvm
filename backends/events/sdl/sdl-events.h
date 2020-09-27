@@ -24,7 +24,7 @@
 #define BACKEND_EVENTS_SDL_H
 
 #include "backends/platform/sdl/sdl-sys.h"
-#include "backends/graphics/resvm-sdl/resvm-sdl-graphics.h"
+#include "backends/graphics3d/sdl/sdl-graphics3d.h"
 
 #include "common/events.h"
 
@@ -43,7 +43,7 @@ public:
 	SdlEventSource();
 	virtual ~SdlEventSource();
 
-	void setGraphicsManager(ResVmSdlGraphicsManager *gMan) { _graphicsManager = gMan; }
+	void setGraphicsManager(SdlGraphics3dManager *gMan) { _graphicsManager = gMan; }
 
 	/**
 	 * Gets and processes SDL events.
@@ -85,7 +85,7 @@ protected:
 	/**
 	 * The associated graphics manager.
 	 */
-	ResVmSdlGraphicsManager *_graphicsManager;
+	SdlGraphics3dManager *_graphicsManager;
 
 	/**
 	 * Search for a game controller db file and load it.

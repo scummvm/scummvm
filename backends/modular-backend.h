@@ -26,7 +26,6 @@
 #include "backends/base-backend.h"
 
 class GraphicsManager;
-class ResVmGraphicsManager; // ResidualVM specific
 class MixerManager;
 class MutexManager;
 

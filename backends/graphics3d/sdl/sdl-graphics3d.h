@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS_RESVM_SDL_SDLGRAPHICS_H
-#define BACKENDS_GRAPHICS_RESVM_SDL_SDLGRAPHICS_H
+#ifndef BACKENDS_GRAPHICS3D_SDL_SDLGRAPHICS_H
+#define BACKENDS_GRAPHICS3D_SDL_SDLGRAPHICS_H
 
-#include "backends/graphics/resvm-graphics.h"
+#include "backends/graphics3d/graphics3d.h"
 #include "backends/platform/sdl/sdl-window.h"
 
 #include "common/events.h"
@@ -36,10 +36,10 @@ class SdlEventSource;
 /**
  * Base class for a SDL based graphics manager.
  */
-class ResVmSdlGraphicsManager : virtual public ResVmGraphicsManager, public Common::EventObserver {
+class SdlGraphics3dManager : virtual public Graphics3dManager, public Common::EventObserver {
 public:
-	ResVmSdlGraphicsManager(SdlEventSource *source, SdlWindow *window);
-	virtual ~ResVmSdlGraphicsManager() {}
+	SdlGraphics3dManager(SdlEventSource *source, SdlWindow *window);
+	virtual ~SdlGraphics3dManager() {}
 
 	/**
 	 * Makes this graphics manager active. That means it should be ready to

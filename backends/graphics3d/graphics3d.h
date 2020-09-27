@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS_RESVM_ABSTRACT_H
-#define BACKENDS_GRAPHICS_RESVM_ABSTRACT_H
+#ifndef BACKENDS_GRAPHICS3D_ABSTRACT_H
+#define BACKENDS_GRAPHICS3D_ABSTRACT_H
 
 #include "common/system.h"
 #include "common/noncopyable.h"
@@ -36,7 +36,7 @@
  * Abstract class for graphics manager. Subclasses
  * implement the real functionality.
  */
-class ResVmGraphicsManager : public GraphicsManager {
+class Graphics3dManager : public GraphicsManager {
 public:
 	// Methods not used by ResidualVM
 #ifdef USE_RGB_COLOR

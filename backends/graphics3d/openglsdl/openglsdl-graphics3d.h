@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS_RESVM_OPENGLSDL_GRAPHICS_H
-#define BACKENDS_GRAPHICS_RESVM_OPENGLSDL_GRAPHICS_H
+#ifndef BACKENDS_GRAPHICS3D_OPENGLSDL_GRAPHICS3D_H
+#define BACKENDS_GRAPHICS3D_OPENGLSDL_GRAPHICS3D_H
 
-#include "backends/graphics/resvm-sdl/resvm-sdl-graphics.h"
+#include "backends/graphics3d/sdl/sdl-graphics3d.h"
 
 namespace OpenGL {
 	class FrameBuffer;
@@ -37,7 +37,7 @@ namespace OpenGL {
  *
  * Used when rendering games with OpenGL
  */
-class ResVmOpenGLSdlGraphicsManager : public ResVmSdlGraphicsManager {
+class OpenGLSdlGraphics3dManager : public SdlGraphics3dManager {
 public:
 	/**
 	 * Capabilities of the current device
@@ -54,8 +54,8 @@ public:
 		Capabilities() : openGLFrameBuffer(false) {}
 	};
 
-	ResVmOpenGLSdlGraphicsManager(SdlEventSource *eventSource, SdlWindow *window, const Capabilities &capabilities);
-	virtual ~ResVmOpenGLSdlGraphicsManager();
+	OpenGLSdlGraphics3dManager(SdlEventSource *eventSource, SdlWindow *window, const Capabilities &capabilities);
+	virtual ~OpenGLSdlGraphics3dManager();
 
 	// GraphicsManager API - Features
 	virtual bool hasFeature(OSystem::Feature f) const override;

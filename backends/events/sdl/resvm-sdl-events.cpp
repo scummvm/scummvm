@@ -25,7 +25,7 @@
 #if defined(SDL_BACKEND)
 
 #include "backends/events/sdl/resvm-sdl-events.h"
-#include "backends/graphics/resvm-sdl/resvm-sdl-graphics.h"
+#include "backends/graphics3d/sdl/sdl-graphics3d.h"
 #include "engines/engine.h"
 #include "gui/gui-manager.h"
 #include "common/config-manager.h"
@@ -271,7 +271,7 @@ bool ResVmSdlEventSource::handleKbdMouse(Common::Event &event) {
 	updateKbdMouse();
 
 	if (_km.x != oldKmX || _km.y != oldKmY) {
-		ResVmSdlGraphicsManager *graphicsManager = dynamic_cast<ResVmSdlGraphicsManager *>(_graphicsManager);
+		SdlGraphics3dManager *graphicsManager = dynamic_cast<SdlGraphics3dManager *>(_graphicsManager);
 
 		int32 relX = _km.x - oldKmX;
 		int32 relY = _km.y - oldKmY;
