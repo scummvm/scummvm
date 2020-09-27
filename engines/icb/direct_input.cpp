@@ -28,7 +28,7 @@
 #include "engines/icb/common/px_rccommon.h"
 
 #if defined (SDL_BACKEND)
-#include <SDL/SDL_joystick.h>
+#include <SDL_joystick.h>
 #endif
 #include "p4_generic.h"
 #include "debug.h"

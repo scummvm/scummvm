@@ -34,7 +34,7 @@
 #include "engines/icb/common/px_types.h"
 
 #ifdef ENABLE_OPENGL
-#include <SDL/SDL_opengl.h>
+#include <SDL_opengl.h>
 #endif
 
 #include "graphics/surface.h"

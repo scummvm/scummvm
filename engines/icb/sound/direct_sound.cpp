@@ -26,7 +26,7 @@
  */
 
 #if defined (SDL_BACKEND)
-#include <SDL/SDL.h>
+#include <SDL.h>
 #endif
 
 #include "engines/icb/sound/direct_sound.h"

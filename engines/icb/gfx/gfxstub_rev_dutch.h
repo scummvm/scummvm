@@ -31,7 +31,7 @@
 #include "gfxstub_dutch.h"
 
 #if defined (SDL_BACKEND) && defined (ENABLE_OPENGL)
-#include <SDL/SDL_opengl.h>
+#include <SDL_opengl.h>
 #endif
 
 namespace ICB {
