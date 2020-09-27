@@ -528,6 +528,7 @@ const Common::String &AGDSEngine::getSharedStorage(int id) const {
 }
 
 void AGDSEngine::setGlobal(const Common::String &name, int value) {
+	debug("setting global %s -> %d", name.c_str(), value);
 	bool create = !_globals.contains(name);
 	_globals.setVal(name, value);
 	if (create) {
