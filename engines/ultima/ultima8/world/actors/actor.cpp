@@ -2231,6 +2231,7 @@ uint32 Actor::I_turnToward(const uint8 *args, unsigned int /*argsize*/) {
 
 	ARG_UINT16(dir);
 	ARG_UINT16(unk);
+	warning("Actor::I_turnToward: Ignoring unknown param %d", unk);
 
 	return actor->turnTowardDir(Direction_FromUsecodeDir(dir));
 }

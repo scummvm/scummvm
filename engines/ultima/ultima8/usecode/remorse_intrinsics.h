@@ -41,7 +41,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_getMapArray, // See TRIGGER::ordinal21 - stored in a variable 'mapNum'
 	Item::I_getStatus,
 	Item::I_orStatus,
-	Item::I_equip, // void Intrinsic006(6 bytes) - TODO: confirm this
+	Item::I_equip, // void Intrinsic006(6 bytes)
 	Item::I_isOnScreen, //
 	Actor::I_isNPC, // byte Intrinsic008(Item *)
 	Item::I_getZ, // byte Intrinsic009(Item *)
@@ -49,12 +49,12 @@ Intrinsic RemorseIntrinsics[] = {
 	Actor::I_getUnkByte, // get something about npcdata - struct byte 0x63 (99)
 	Ultima8Engine::I_setAvatarInStasis, // void Intrinsic00C(2 bytes)
 	Item::I_getDirToItem, // byte Intrinsic00D(6 bytes)
-	Actor::I_turnToward, // TODO: Actor::I_turnToward(Actor *, direction, unk)
+	Actor::I_turnToward,
 	0, // TODO: VideoGump::I_playVideo(item, vidname, int16 sizex, int16 sizey)
 	// 0x010
 	Item::I_getQLo, // Based on having same coff as 02B
 	Actor::I_getMap, // int Intrinsic011(4 bytes)
-	MusicProcess::I_playMusic, // void Intrinsic012(2 bytes) TODO: Make sure the track list order is right (I don't think it is..)
+	MusicProcess::I_playMusic, // void Intrinsic012(2 bytes)
 	Item::I_getX, //int Intrinsic013(4 bytes)
 	Item::I_getY, //int Intrinsic014(4 bytes)
 	AudioProcess::I_playSFXCru,

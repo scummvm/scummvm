@@ -33,12 +33,12 @@
 namespace Ultima {
 namespace Ultima8 {
 
-static const int MAX_TRACK = 21;
+static const int MAX_TRACK_REMORSE = 21;
+static const int MAX_TRACK_REGRET = 22;
 
-// TODO: Ensure this is the right order for the uses of this from Usecode.
-static const char *TRACK_FILE_NAMES[] = {
+// NOTE: This order is chosen to match the list in Crusader: No Remorse.
+static const char *TRACK_FILE_NAMES_REMORSE[] = {
 	nullptr,
-	"cred",
 	"M01",
 	"M02",
 	"M03",
@@ -57,14 +57,45 @@ static const char *TRACK_FILE_NAMES[] = {
 	"M16A",
 	"M16B",
 	"M16C",
+	"cred",
 	"menu",
 	"buyme" // for demo
 };
 
+static const char *TRACK_FILE_NAMES_REGRET[] = {
+	nullptr,
+	"ninth",
+	"phil",
+	"straight",
+	"party",
+	"demo",
+	"stint",
+	"mk",
+	"space2",
+	"d3",
+	"space",
+	"rhythm",
+	"intent",
+	"m03",
+	"silver",
+	"m01",
+	"techno",
+	"cred",
+	"regret",
+	"m13",
+	"retro",
+	"metal",
+	"xmas" // for demo
+};
+
+
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(RemorseMusicProcess)
 
-RemorseMusicProcess::RemorseMusicProcess() : MusicProcess(), _currentTrack(0), _savedTrack(0), _combatMusicActive(false) {
+RemorseMusicProcess::RemorseMusicProcess() : MusicProcess(), _currentTrack(0), _savedTrack(0), _m16offset(0), _combatMusicActive(false) {
+	_maxTrack = (GAME_IS_REMORSE ? MAX_TRACK_REMORSE : MAX_TRACK_REGRET);
+	_trackNames = (GAME_IS_REMORSE ? TRACK_FILE_NAMES_REMORSE
+				   : TRACK_FILE_NAMES_REGRET);
 }
 
 RemorseMusicProcess::~RemorseMusicProcess() {
@@ -104,9 +135,15 @@ void RemorseMusicProcess::restoreTrackState() {
 }
 
 void RemorseMusicProcess::playMusic_internal(int track) {
-	if (track < 0 || track > MAX_TRACK) {
+	if (track < 0 || track > _maxTrack) {
 		playMusic_internal(0);
 		return;
+	}
+
+	if (GAME_IS_REMORSE && track == 16) {
+		// Loop through m16a / m16b / m16c
+		track += _m16offset;
+		_m16offset = (_m16offset + 1) % 4;
 	}
 
 	Audio::Mixer *mixer = Ultima8Engine::get_instance()->_mixer;
@@ -121,7 +158,7 @@ void RemorseMusicProcess::playMusic_internal(int track) {
 
 	if (track > 0) {
 		// TODO: It's a bit ugly having this here.  Should be in GameData.
-		const Std::string fname = Std::string::format("@game/sound/%s.amf", TRACK_FILE_NAMES[track]);
+		const Std::string fname = Std::string::format("@game/sound/%s.amf", _trackNames[track]);
 		FileSystem *filesystem = FileSystem::get_instance();
 		assert(filesystem);
 		Common::SeekableReadStream *rs = filesystem->ReadFile(fname);

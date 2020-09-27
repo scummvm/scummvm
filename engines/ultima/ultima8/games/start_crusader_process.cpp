@@ -122,7 +122,7 @@ void StartCrusaderProcess::run() {
 		Kernel::get_instance()->addProcess(fader);
 	}
 
-	MusicProcess::get_instance()->playMusic(2);
+	MusicProcess::get_instance()->playMusic(1);
 
 	Ultima8Engine::get_instance()->setAvatarInStasis(false);
 

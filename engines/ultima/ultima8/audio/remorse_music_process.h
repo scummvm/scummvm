@@ -52,7 +52,12 @@ private:
 
 	int _savedTrack;
 
+	uint8 _m16offset;
+
 	Audio::SoundHandle _soundHandle;
+
+	int _maxTrack;
+	const char **_trackNames;
 
 public:
 	RemorseMusicProcess();
