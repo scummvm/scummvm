@@ -53,36 +53,70 @@ void SdlGraphics3dManager::deactivateManager() {
 	_eventSource->setGraphicsManager(0);
 }
 
-SdlGraphics3dManager::State SdlGraphics3dManager::getState() const {
-	State state;
+void SdlGraphics3dManager::saveScreenshot() {
+	Common::String filename;
 
-	state.screenWidth   = getWidth();
-	state.screenHeight  = getHeight();
-	state.aspectRatio   = getFeatureState(OSystem::kFeatureAspectRatioCorrection);
-	state.fullscreen    = getFeatureState(OSystem::kFeatureFullscreenMode);
-	state.cursorPalette = getFeatureState(OSystem::kFeatureCursorPalette);
-#ifdef USE_RGB_COLOR
-	state.pixelFormat   = getScreenFormat();
+	Common::String screenshotsPath;
+	OSystem_SDL *sdl_g_system = dynamic_cast<OSystem_SDL*>(g_system);
+	if (sdl_g_system)
+		screenshotsPath = sdl_g_system->getScreenshotsPath();
+
+	// Use the name of the running target as a base for screenshot file names
+	Common::String currentTarget = ConfMan.getActiveDomainName();
+
+#ifdef USE_PNG
+	const char *extension = "png";
+#else
+	const char *extension = "bmp";
 #endif
-	return state;
+
+	for (int n = 0;; n++) {
+		filename = Common::String::format("residualvm%s%s-%05d.%s", currentTarget.empty() ? "" : "-",
+		                                  currentTarget.c_str(), n, extension);
+
+		Common::FSNode file = Common::FSNode(screenshotsPath + filename);
+		if (!file.exists()) {
+			break;
+		}
+	}
+
+	if (saveScreenshot(screenshotsPath + filename)) {
+		if (screenshotsPath.empty())
+			debug("Saved screenshot '%s' in current directory", filename.c_str());
+		else
+			debug("Saved screenshot '%s' in directory '%s'", filename.c_str(), screenshotsPath.c_str());
+	} else {
+		if (screenshotsPath.empty())
+			warning("Could not save screenshot in current directory");
+		else
+			warning("Could not save screenshot in directory '%s'", screenshotsPath.c_str());
+	}
 }
 
-bool SdlGraphics3dManager::setState(const State &state) {
-	beginGFXTransaction();
-#ifdef USE_RGB_COLOR
-		initSize(state.screenWidth, state.screenHeight, &state.pixelFormat);
-#else
-		initSize(state.screenWidth, state.screenHeight, nullptr);
-#endif
-		setFeatureState(OSystem::kFeatureAspectRatioCorrection, state.aspectRatio);
-		setFeatureState(OSystem::kFeatureFullscreenMode, state.fullscreen);
-		setFeatureState(OSystem::kFeatureCursorPalette, state.cursorPalette);
-
-	if (endGFXTransaction() != OSystem::kTransactionSuccess) {
+bool SdlGraphics3dManager::notifyEvent(const Common::Event &event) {
+	if (event.type != Common::EVENT_CUSTOM_BACKEND_ACTION_START) {
 		return false;
-	} else {
-		return true;
 	}
+
+	switch ((CustomEventAction) event.customType) {
+	case kActionToggleFullscreen:
+		toggleFullScreen();
+		return true;
+
+	case kActionSaveScreenshot:
+		saveScreenshot();
+		return true;
+
+	default:
+		return false;
+	}
+}
+
+void SdlGraphics3dManager::toggleFullScreen() {
+	if (!g_system->hasFeature(OSystem::kFeatureFullscreenMode))
+		return;
+
+	setFeatureState(OSystem::kFeatureFullscreenMode, !getFeatureState(OSystem::kFeatureFullscreenMode));
 }
 
 Common::Keymap *SdlGraphics3dManager::getKeymap() {
@@ -160,48 +194,4 @@ bool SdlGraphics3dManager::notifyMousePosition(Common::Point &mouse) {
 	transformMouseCoordinates(mouse);
 
 	return true;
-}
-
-void SdlGraphics3dManager::saveScreenshot() {
-	Common::String filename;
-
-	Common::String screenshotsPath;
-	OSystem_SDL *sdl_g_system = dynamic_cast<OSystem_SDL*>(g_system);
-	if (sdl_g_system)
-		screenshotsPath = sdl_g_system->getScreenshotsPath();
-
-	// Use the name of the running target as a base for screenshot file names
-	Common::String currentTarget = ConfMan.getActiveDomainName();
-
-#ifdef USE_PNG
-	const char *extension = "png";
-#else
-	const char *extension = "bmp";
-#endif
-
-	for (int n = 0;; n++) {
-		filename = Common::String::format("residualvm%s%s-%05d.%s", currentTarget.empty() ? "" : "-",
-		                                  currentTarget.c_str(), n, extension);
-
-		Common::FSNode file = Common::FSNode(screenshotsPath + filename);
-		if (!file.exists()) {
-			break;
-		}
-	}
-
-	if (saveScreenshot(screenshotsPath + filename)) {
-		if (screenshotsPath.empty())
-			debug("Saved screenshot '%s' in current directory", filename.c_str());
-		else
-			debug("Saved screenshot '%s' in directory '%s'", filename.c_str(), screenshotsPath.c_str());
-	} else {
-		if (screenshotsPath.empty())
-			warning("Could not save screenshot in current directory");
-		else
-			warning("Could not save screenshot in directory '%s'", screenshotsPath.c_str());
-	}
-}
-
-int SdlGraphics3dManager::getGraphicsModeScale(int mode) const {
-	return -1;
 }
