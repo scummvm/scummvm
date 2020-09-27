@@ -40,8 +40,13 @@ For full release notes see http://scummvm.org/frs/scummvm/2.0.0/ReleaseNotes.htm
 
 *** Beta release notes:
 <en-US>
-- Rewrote whole port from the scratch.
-- Number of new engines and games.
-- Folder navigation is fixed.
-- Fixes for working on modern Android.
+- Rewrote a major portion of the port from scratch
+- Support for new engines and games, matching the ones in the current official version of ScummVM
+- Fluidsynth support
+- Cloud saves support
+- LAN file access support
+- Keymapper support
+- Fixes for any reported major issues
+- Improved folder navigation
+- Tested on modern Android devices
 </en-US>
