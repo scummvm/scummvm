@@ -52,6 +52,7 @@ Debugger *g_debugger;
 Debugger::Debugger() : Shared::Debugger() {
 	g_debugger = this;
 	_collisionOverride = false;
+	_disableCombat = false;
 	_disableHunger = false;
 	_dontEndTurn = false;
 
@@ -92,6 +93,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("3d", WRAP_METHOD(Debugger, cmd3d));
 	registerCmd("abyss", WRAP_METHOD(Debugger, cmdAbyss));
 	registerCmd("collisions", WRAP_METHOD(Debugger, cmdCollisions));
+	registerCmd("combat", WRAP_METHOD(Debugger, cmdCombat));
 	registerCmd("companions", WRAP_METHOD(Debugger, cmdCompanions));
 	registerCmd("destroy", WRAP_METHOD(Debugger, cmdDestroy));
 	registerCmd("destroy_creatures", WRAP_METHOD(Debugger, cmdDestroyCreatures));
@@ -1270,6 +1272,14 @@ bool Debugger::cmdCompanions(int argc, const char **argv) {
 
 	g_context->_stats->update();
 	print("Joined by companions");
+	return isDebuggerActive();
+}
+
+bool Debugger::cmdCombat(int argc, const char **argv) {
+	_disableCombat = !_disableCombat;
+	print("Combat encounters %s",
+		_disableCombat ? "off" : "on");
+
 	return isDebuggerActive();
 }
 

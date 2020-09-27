@@ -746,6 +746,10 @@ void GameController::checkRandomCreatures() {
 	        xu4_random(spawnDivisor) != 0)
 		return;
 
+	// If combat is turned off, then don't spawn any creator
+	if (g_debugger->_disableCombat)
+		return;
+
 	gameSpawnCreature(nullptr);
 }
 
