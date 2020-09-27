@@ -24,7 +24,7 @@
 #define ANDROID_GRAPHICS_H
 
 #include "common/scummsys.h"
-#include "backends/graphics/resvm-graphics.h"
+#include "backends/graphics3d/graphics3d.h"
 
 class AndroidGraphicsManager : public ResVmGraphicsManager {
 public:
