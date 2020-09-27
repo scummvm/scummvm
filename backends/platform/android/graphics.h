@@ -26,7 +26,7 @@
 #include "common/scummsys.h"
 #include "backends/graphics3d/graphics3d.h"
 
-class AndroidGraphicsManager : public ResVmGraphicsManager {
+class AndroidGraphicsManager : public Graphics3dManager {
 public:
 	AndroidGraphicsManager();
 	virtual ~AndroidGraphicsManager();
