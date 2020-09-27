@@ -238,7 +238,7 @@ enum Opcode {
 	kSetRainDensity					= 218,
 	kLeaveCharacterEx				= 219,
 	kStopCharacter					= 220,
-	kPlayAnimationWithPhaseVar		= 221,
+	kSyncAnimationWithPhaseVar		= 221,
 	kStub222						= 222,
 	kStub223						= 223,
 	kSetNPCTellNotifyVar			= 224,
@@ -428,7 +428,7 @@ enum Opcode {
 	OP(kStub217, stub217) \
 	OP(kStopCharacter, stopCharacter) \
 	OP(kLeaveCharacterEx, leaveCharacterEx) \
-	OP(kPlayAnimationWithPhaseVar, playAnimationWithPhaseVar) \
+	OP(kSyncAnimationWithPhaseVar, syncAnimationWithPhaseVar) \
 	OP(kStub223, stub223) \
 	OP(kSetNPCTellNotifyVar, setNPCTellNotifyVar) \
 	OP(kStub225, stub225) \

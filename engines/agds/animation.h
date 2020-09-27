@@ -85,7 +85,12 @@ public:
 		_phase = 0;
 	}
 
+	void pause() {
+		_paused = true;
+	}
+
 	void stop() {
+		_phase = -1;
 		_paused = true;
 	}
 

@@ -163,7 +163,7 @@ void Process::loadAnimation() {
 		animation->loop(_animationLoop);
 		animation->cycles(_animationCycles);
 		if (_animationPaused)
-			animation->stop();
+			animation->pause();
 		else
 			animation->play();
 		_engine->getCurrentScreen()->add(animation);
@@ -263,7 +263,6 @@ void Process::getRandomNumber() {
 void Process::setGlobal() {
 	Common::String name = popString();
 	int value = pop();
-	debug("setting global %s -> %d", name.c_str(), value);
 	_engine->setGlobal(name, value);
 }
 
@@ -779,16 +778,23 @@ void Process::stub217() {
 	debug("stub217: animation? id: %d, frame: %d, soundGroup: %d", id, frame, soundGroup);
 }
 
-void Process::playAnimationWithPhaseVar() {
+void Process::syncAnimationWithPhaseVar() {
 	Common::String phaseVar = popString();
-	debug("playAnimationWithPhaseVar %s", phaseVar.c_str());
+	debug("syncAnimationWithPhaseVar %s", phaseVar.c_str());
+	if (phaseVar.empty()) {
+		warning("no phaseVar");
+		return;
+	}
 	Animation *animation = _engine->findAnimationByPhaseVar(phaseVar);
 	if (animation) {
-		animation->phaseVar(phaseVar);
-		animation->play();
-		_engine->setGlobal(phaseVar, 0);
-	} else
+		if (_engine->getGlobal(phaseVar) == -1) {
+			animation->stop();
+		}
+		_engine->setGlobal(phaseVar, animation->phase());
+	} else {
 		warning("no animation with phase var %s found", phaseVar.c_str());
+		_engine->setGlobal(phaseVar, -1);
+	}
 }
 
 void Process::stub223() {
@@ -1309,7 +1315,7 @@ void Process::loadAnimationFromObject() {
 		animation->loop(_animationLoop);
 		animation->cycles(_animationCycles);
 		if (_animationPaused)
-			animation->stop();
+			animation->pause();
 	}
 }
 
@@ -1338,8 +1344,9 @@ void Process::stub233() {
 	Common::String name = popString();
 	debug("stub233 %s unload picture?", name.c_str());
 	ObjectPtr object = _engine->getCurrentScreenObject(name);
-	if (object)
+	if (object) {
 		object->setPicture(NULL);
+	}
 }
 
 void Process::stub235() {
