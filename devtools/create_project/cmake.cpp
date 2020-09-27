@@ -258,7 +258,6 @@ void CMakeProvider::writeDefines(const BuildSetup &setup, std::ofstream &output)
 	output << "endif()\n";
 
 	output << "add_definitions(-DSDL_BACKEND)\n\n";
-	output << "add_definitions(-DHAVE_INT64)\n\n"; // ResidualVM specific
 }
 
 void CMakeProvider::writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,

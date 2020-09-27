@@ -90,7 +90,7 @@ protected:
 	Action *_remapAction;
 	uint32 _remapTimeout;
 
-	static const uint32 kRemapTimeoutDelay = 3000;
+	static const uint32 kRemapMinTimeoutDelay = 3000;
 
 	bool _changes;
 
