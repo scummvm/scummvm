@@ -646,12 +646,9 @@ OptionsManager::OptionsManager() {
 
 	m_movieRect.left = m_movieRect.right = m_movieRect.top = m_movieRect.bottom = 0;
 
-#ifdef _WIN32
-	m_colourKey = RGB(255, 0, 255);
-#else
+	//m_colourKey = RGB(255, 0, 255); // WIN32
 	warning("TODO: Use a pixelformat and SDL_MapRGB here, m_colourKey set by hand for now");
 	m_colourKey = 0xFF00FF00;
-#endif
 
 	m_moveLimiter = FALSE8;
 	m_alterLimiter = FALSE8;
