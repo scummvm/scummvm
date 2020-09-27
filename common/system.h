@@ -364,9 +364,20 @@ public:
 		 */
 		kFeatureIconifyWindow,
 
-		//ResidualVM specific
+		/**
+		 * This feature flag can be used to check if hardware accelerated
+		 * OpenGl is supported.
+		 *
+		 * ResidualVM specific
+		 */
 		kFeatureOpenGL,
-		// Can side textures be rendered on the side for widescreen support?
+
+		/**
+		 * This feature flag can be used to check if rendering side textures
+		 * on the both sides of widescreen is supported.
+		 *
+		 * ResidualVM specific
+		 */
 		kFeatureSideTextures,
 
 		/**
