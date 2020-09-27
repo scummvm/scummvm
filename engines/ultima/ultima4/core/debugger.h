@@ -292,6 +292,11 @@ private:
 	bool cmdFullStats(int argc, const char **argv);
 
 	/**
+	 * Toggle hunger on or off
+	 */
+	bool cmdHunger(int argc, const char **argv);
+
+	/**
 	 * Moongate teleportation
 	 */
 	bool cmdGate(int argc, const char **argv);
@@ -392,6 +397,7 @@ private:
 	bool cmdListTriggers(int argc, const char **argv);
 public:
 	bool _collisionOverride;
+	bool _disableHunger;
 public:
 	Debugger();
 	~Debugger() override;

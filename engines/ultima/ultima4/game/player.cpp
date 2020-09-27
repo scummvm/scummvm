@@ -27,6 +27,7 @@
 #include "ultima/ultima4/game/names.h"
 #include "ultima/ultima4/game/weapon.h"
 #include "ultima/ultima4/controllers/combat_controller.h"
+#include "ultima/ultima4/core/debugger.h"
 #include "ultima/ultima4/core/types.h"
 #include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/map/annotation.h"
@@ -647,6 +648,10 @@ Common::String Party::translate(Std::vector<Common::String> &parts) {
 }
 
 void Party::adjustFood(int food) {
+	// Check for cheat that disables party hunger
+	if (food < 0 && g_debugger->_disableHunger)
+		return;
+
 	int oldFood = _saveGame->_food;
 	AdjustValue(_saveGame->_food, food, 999900, 0);
 	if ((_saveGame->_food / 100) != (oldFood / 100)) {

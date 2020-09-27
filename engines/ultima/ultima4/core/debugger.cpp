@@ -52,6 +52,7 @@ Debugger *g_debugger;
 Debugger::Debugger() : Shared::Debugger() {
 	g_debugger = this;
 	_collisionOverride = false;
+	_disableHunger = false;
 	_dontEndTurn = false;
 
 	registerCmd("move", WRAP_METHOD(Debugger, cmdMove));
@@ -101,6 +102,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("fullstats", WRAP_METHOD(Debugger, cmdFullStats));
 	registerCmd("gate", WRAP_METHOD(Debugger, cmdGate));
 	registerCmd("goto", WRAP_METHOD(Debugger, cmdGoto));
+	registerCmd("hunger", WRAP_METHOD(Debugger, cmdHunger));
 	registerCmd("items", WRAP_METHOD(Debugger, cmdItems));
 	registerCmd("karma", WRAP_METHOD(Debugger, cmdKarma));
 	registerCmd("leave", WRAP_METHOD(Debugger, cmdLeave));
@@ -1631,6 +1633,14 @@ bool Debugger::cmdFullStats(int argc, const char **argv) {
 
 	g_context->_stats->update();
 	print("Full Stats given");
+	return isDebuggerActive();
+}
+
+bool Debugger::cmdHunger(int argc, const char **argv) {
+	_disableHunger = !_disableHunger;
+	print("Party hunger %s",
+		_disableHunger ? "off" : "on");
+
 	return isDebuggerActive();
 }
 
