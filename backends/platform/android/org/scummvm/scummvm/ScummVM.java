@@ -9,6 +9,7 @@ import android.view.SurfaceHolder;
 
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -86,12 +87,12 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 		// the orientation may reset on standby mode and the theme manager
 		// could assert when using a portrait resolution. so lets not do that.
 		if (height > width) {
-			Log.d(LOG_TAG, String.format("Ignoring surfaceChanged: %dx%d (%d)",
+			Log.d(LOG_TAG, String.format(Locale.ROOT, "Ignoring surfaceChanged: %dx%d (%d)",
 											width, height, format));
 			return;
 		}
 
-		Log.d(LOG_TAG, String.format("surfaceChanged: %dx%d (%d)",
+		Log.d(LOG_TAG, String.format(Locale.ROOT, "surfaceChanged: %dx%d (%d)",
 										width, height, format));
 
 		// store values for the native code
@@ -178,7 +179,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 											EGL10.EGL_NO_CONTEXT, null);
 
 		if (_egl_context == EGL10.EGL_NO_CONTEXT)
-			throw new Exception(String.format("Failed to create context: 0x%x",
+			throw new Exception(String.format(Locale.ROOT, "Failed to create context: 0x%x",
 												_egl.eglGetError()));
 	}
 
@@ -188,15 +189,15 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 													_surface_holder, null);
 
 		if (_egl_surface == EGL10.EGL_NO_SURFACE)
-			throw new Exception(String.format(
-					"eglCreateWindowSurface failed: 0x%x", _egl.eglGetError()));
+			throw new Exception(String.format(Locale.ROOT,
+				"eglCreateWindowSurface failed: 0x%x", _egl.eglGetError()));
 
 		_egl.eglMakeCurrent(_egl_display, _egl_surface, _egl_surface,
 							_egl_context);
 
 		GL10 gl = (GL10)_egl_context.getGL();
 
-		Log.i(LOG_TAG, String.format("Using EGL %s (%s); GL %s/%s (%s)",
+		Log.i(LOG_TAG, String.format(Locale.ROOT, "Using EGL %s (%s); GL %s/%s (%s)",
 						_egl.eglQueryString(_egl_display, EGL10.EGL_VERSION),
 						_egl.eglQueryString(_egl_display, EGL10.EGL_VENDOR),
 						gl.glGetString(GL10.GL_VERSION),
@@ -251,13 +252,13 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 		int buffer_size_want = (_sample_rate * 2 * 2 / 20) & ~1023;
 
 		if (_buffer_size < buffer_size_want) {
-			Log.w(LOG_TAG, String.format(
+			Log.w(LOG_TAG, String.format(Locale.ROOT,
 				"adjusting audio buffer size (was: %d)", _buffer_size));
 
 			_buffer_size = buffer_size_want;
 		}
 
-		Log.i(LOG_TAG, String.format("Using %d bytes buffer for %dHz audio",
+		Log.i(LOG_TAG, String.format(Locale.ROOT, "Using %d bytes buffer for %dHz audio",
 										_buffer_size, _sample_rate));
 
 		_audio_track = new AudioTrack(AudioManager.STREAM_MUSIC,
@@ -269,7 +270,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 
 		if (_audio_track.getState() != AudioTrack.STATE_INITIALIZED)
 			throw new Exception(
-				String.format("Error initializing AudioTrack: %d",
+				String.format(Locale.ROOT, "Error initializing AudioTrack: %d",
 								_audio_track.getState()));
 	}
 
@@ -359,27 +360,27 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 			String s;
 
 			if (get(EGL10.EGL_ALPHA_SIZE) > 0)
-				s = String.format("[%d] RGBA%d%d%d%d",
+				s = String.format(Locale.ROOT, "[%d] RGBA%d%d%d%d",
 									get(EGL10.EGL_CONFIG_ID),
 									get(EGL10.EGL_RED_SIZE),
 									get(EGL10.EGL_GREEN_SIZE),
 									get(EGL10.EGL_BLUE_SIZE),
 									get(EGL10.EGL_ALPHA_SIZE));
 			else
-				s = String.format("[%d] RGB%d%d%d",
+				s = String.format(Locale.ROOT, "[%d] RGB%d%d%d",
 									get(EGL10.EGL_CONFIG_ID),
 									get(EGL10.EGL_RED_SIZE),
 									get(EGL10.EGL_GREEN_SIZE),
 									get(EGL10.EGL_BLUE_SIZE));
 
 			if (get(EGL10.EGL_DEPTH_SIZE) > 0)
-				s += String.format(" D%d", get(EGL10.EGL_DEPTH_SIZE));
+				s += String.format(Locale.ROOT, " D%d", get(EGL10.EGL_DEPTH_SIZE));
 
 			if (get(EGL10.EGL_STENCIL_SIZE) > 0)
-				s += String.format(" S%d", get(EGL10.EGL_STENCIL_SIZE));
+				s += String.format(Locale.ROOT, " S%d", get(EGL10.EGL_STENCIL_SIZE));
 
 			if (get(EGL10.EGL_SAMPLES) > 0)
-				s += String.format(" MSAAx%d", get(EGL10.EGL_SAMPLES));
+				s += String.format(Locale.ROOT, " MSAAx%d", get(EGL10.EGL_SAMPLES));
 
 			if ((get(EGL10.EGL_SURFACE_TYPE) & EGL10.EGL_WINDOW_BIT) > 0)
 				s += " W";
@@ -400,7 +401,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 				s += " NON_CONFORMANT";
 
 			default:
-				s += String.format(" unknown CAVEAT 0x%x",
+				s += String.format(Locale.ROOT, " unknown CAVEAT 0x%x",
 									get(EGL10.EGL_CONFIG_CAVEAT));
 			}
 
@@ -423,7 +424,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 
 			int score = attr.weight();
 
-			Log.d(LOG_TAG, String.format("%s (%d)", attr.toString(), score));
+			Log.d(LOG_TAG, String.format(Locale.ROOT, "%s (%d)", attr.toString(), score));
 
 			if (score > bestScore) {
 				res = config;
@@ -435,7 +436,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 			Log.e(LOG_TAG,
 					"Unable to find an acceptable EGL config, expect badness.");
 
-		Log.d(LOG_TAG, String.format("Chosen EGL config: %s",
+		Log.d(LOG_TAG, String.format(Locale.ROOT, "Chosen EGL config: %s",
 										new EglAttribs(res).toString()));
 
 		return res;

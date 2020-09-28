@@ -284,7 +284,7 @@ public class ScummVMEvents implements
 	@Override
 	final public boolean onFling(MotionEvent e1, MotionEvent e2,
 									float velocityX, float velocityY) {
-		//Log.d(ScummVM.LOG_TAG, String.format("onFling: %s -> %s (%.3f %.3f)",
+		//Log.d(ScummVM.LOG_TAG, String.format(Locale.ROOT, "onFling: %s -> %s (%.3f %.3f)",
 		//										e1.toString(), e2.toString(),
 		//										velocityX, velocityY));
 

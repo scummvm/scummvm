@@ -2,7 +2,7 @@
 <resources>
 	<string name="app_name">ScummVM</string>
 	<string name="app_desc">Graphic adventure game engine</string>
-	<string name="ok">Ok</string>
+	<string name="ok">OK</string>
 	<string name="quit">Quit</string>
 	<string name="scummvm_perm_plugin_label">ScummVM plugin</string>
 	<string name="scummvm_perm_plugin_desc">Allows the application to
@@ -31,4 +31,5 @@
 		engine</i> to be useful. Engines are available as separate plugin
 		packages, from wherever you found ScummVM.</string>
 	<string name="to_market">To Market</string>
+	<string name="keyboard_toggle_btn_desc">Toggle virtual keyboard</string>
 </resources>
