@@ -117,8 +117,8 @@ enum Opcode {
 	kPointCharacter					= 97,
 	kDisableUser					= 98,
 	kEnableUser						= 99,
-	kUpdatePhaseVarOr2				= 100,
-	kUpdatePhaseVarOr4				= 101,
+	kRestartSample					= 100,
+	kStopSample						= 101,
 	kStub102						= 102,
 	kStub103						= 103,
 	kStub104						= 104,
@@ -232,7 +232,7 @@ enum Opcode {
 	kSetSampleVolumeAndPan			= 212,
 	kStub213						= 213,
 	kAddSampleToSoundGroup			= 214,
-	kStub215						= 215,
+	kClearSoundGroup				= 215,
 	kStub216						= 216,
 	kStub217						= 217,
 	kSetRainDensity					= 218,
@@ -242,7 +242,7 @@ enum Opcode {
 	kStub222						= 222,
 	kStub223						= 223,
 	kSetNPCTellNotifyVar			= 224,
-	kStub225						= 225,
+	kModifyAnimationWithPhaseVar	= 225,
 	kFadeObject						= 226,
 	kLoadFont						= 227,
 	kMoveCharacterNoUserMove		= 228,
@@ -331,8 +331,8 @@ enum Opcode {
 	OP(kPointCharacter, pointCharacter) \
 	OP(kDisableUser, disableUser) \
 	OP(kEnableUser, enableUser) \
-	OP(kUpdatePhaseVarOr2, updatePhaseVarOr2) \
-	OP(kUpdatePhaseVarOr4, updatePhaseVarOr4) \
+	OP(kRestartSample, restartSample) \
+	OP(kStopSample, stopSample) \
 	OP(kStub102, stub102) \
 	OP(kClearScreen, clearScreen) \
 	OP(kInventoryClear, inventoryClear) \
@@ -423,7 +423,7 @@ enum Opcode {
 	OP(kStub199, stub199) \
 	OP(kSetSampleVolumeAndPan, setSampleVolumeAndPan) \
 	OP(kAddSampleToSoundGroup, addSampleToSoundGroup) \
-	OP(kStub215, stub215) \
+	OP(kClearSoundGroup, clearSoundGroup) \
 	OP(kStub216, stub216) \
 	OP(kStub217, stub217) \
 	OP(kStopCharacter, stopCharacter) \
@@ -431,7 +431,7 @@ enum Opcode {
 	OP(kSyncAnimationWithPhaseVar, syncAnimationWithPhaseVar) \
 	OP(kStub223, stub223) \
 	OP(kSetNPCTellNotifyVar, setNPCTellNotifyVar) \
-	OP(kStub225, stub225) \
+	OP(kModifyAnimationWithPhaseVar, modifyAnimationWithPhaseVar) \
 	OP(kFadeObject, fadeObject) \
 	OP(kLoadFont, loadFont) \
 	OP_U(kStub201Handler, stub201) \

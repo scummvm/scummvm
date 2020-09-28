@@ -85,6 +85,10 @@ public:
 		_phase = 0;
 	}
 
+	void resume() {
+		_paused = false;
+	}
+
 	void pause() {
 		_paused = true;
 	}

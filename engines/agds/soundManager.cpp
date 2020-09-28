@@ -35,47 +35,50 @@ namespace AGDS {
 void SoundManager::setPhaseVar(const Sound &sound, int value) {
 	if (!sound.phaseVar.empty())
 		_engine->setGlobal(sound.phaseVar, value);
+	_engine->reactivate(sound.process, true);
 }
 
 void SoundManager::tick() {
-	for (SoundList::iterator i = _sounds.begin(); i != _sounds.end();) {
+	for (SoundList::iterator i = _sounds.begin(); i != _sounds.end(); ++i) {
 		Sound &sound = *i;
-		_engine->reactivate(sound.process);
 
 		bool active = _mixer->isSoundHandleActive(sound.handle);
-		if (sound.phaseVar.empty()) {
-			if (!active) {
-				i = _sounds.erase(i);
-			} else {
-				++i;
-			}
-		} else {
+		if (!sound.phaseVar.empty()) {
 			int value = _engine->getGlobal(sound.phaseVar);
 			if (value <= 1) {
-				if (value == 1 && !active)
+				if (value == 1 && !active) {
 					setPhaseVar(sound, 0);
-				if (!active)
-					i = _sounds.erase(i);
-				else
-					++i;
+				} else if (value == 0 && active)
+					setPhaseVar(sound, 1);
 			} else if (value & 2) {
+				debug("sample %s restarts (via phase var)", sound.name.c_str());
 				setPhaseVar(sound, 1);
 				_mixer->stopID(sound.id);
 				play(sound.process, sound.name, sound.phaseVar, sound.id);
-				i = _sounds.erase(i);
 			} else if (value & 4) {
+				debug("sample %s stops (via phase var)", sound.name.c_str());
 				_mixer->stopID(sound.id);
 				setPhaseVar(sound, 0);
-				i = _sounds.erase(i);
 			}
 		}
 	}
 }
 
+Sound *SoundManager::findSampleByPhaseVar(const Common::String &phaseVar) {
+	for (auto i = _sounds.begin(); i != _sounds.end(); ++i) {
+		auto &sound = *i;
+		if (sound.phaseVar == phaseVar) {
+			return &sound;
+		}
+	}
+	return nullptr;
+}
+
+
 void SoundManager::stopAll() {
 	_mixer->stopAll();
-	for (SoundList::iterator i = _sounds.begin(); i != _sounds.end(); ++i) {
-		Sound &sound = *i;
+	for (auto i = _sounds.begin(); i != _sounds.end(); ++i) {
+		auto &sound = *i;
 		setPhaseVar(sound, 0);
 	}
 	_sounds.clear();
@@ -103,9 +106,9 @@ int SoundManager::play(const Common::String &process, const Common::String &reso
 	if (!stream) {
 		warning("could not play sound %s", resource.c_str());
 		delete file;
-		_engine->reactivate(process);
 		if (!phaseVar.empty())
 			_engine->setGlobal(phaseVar, 0);
+		_engine->reactivate(process, true);
 		return -1;
 	}
 	Audio::SoundHandle handle;

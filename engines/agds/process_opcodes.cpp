@@ -153,7 +153,7 @@ void Process::loadPicture() {
 
 void Process::loadAnimation() {
 	Common::String name = popText();
-	debug("loadAnimation %s (phase: %s)", name.c_str(), _phaseVar.c_str());
+	debug("loadAnimation %s (phase: %s) %s", name.c_str(), _phaseVar.c_str(), _animationPaused? "(paused)": "");
 	Animation *animation = _engine->loadAnimation(name);
 	if (animation) {
 		animation->position(_animationPosition);
@@ -178,15 +178,47 @@ void Process::loadSample() {
 
 void Process::getSampleVolume() {
 	Common::String name = popString();
-	debug("getSampleVolume: stub %s", name.c_str());
-	push(100);
+	debug("getSampleVolume: %s", name.c_str());
+	auto sound = _engine->soundManager().findSampleByPhaseVar(name);
+	if (sound) {
+		debug("\treturning %d", sound->leftVolume);
+		push(sound->leftVolume);
+	} else {
+		warning("could not find sample %s", name.c_str());
+		push(-1);
+	}
 }
 
 void Process::setSampleVolumeAndPan() {
 	int pan = pop();
 	int volume = pop();
+	if (volume < 0)
+		volume = 0;
+	else if (volume > 100)
+		volume = 100;
+	if (pan < -100)
+		pan = -100;
+	if (pan > 100)
+		pan = 100;
 	Common::String name = popString();
-	debug("setSampleVolumeAndPan %s %d %d", name.c_str(), volume, pan);
+	auto sound = _engine->soundManager().findSampleByPhaseVar(name);
+	if (!sound) {
+		warning("can't find sample with phase var %s", name.c_str());
+		return;
+	}
+
+	debug("setSampleVolumeAndPan %s, volume: %d, pan: %d", name.c_str(), volume, pan);
+	int l, r;
+	if (pan < 0) {
+		l = volume;
+		r = volume * (100 + pan) / 100;
+	} else {
+		l = volume * (100 - pan) / 100;
+		r = volume;
+	}
+	debug("\tleft: %d, right: %d", l, r);
+	sound->leftVolume = l;
+	sound->rightVolume = r;
 }
 
 void Process::addSampleToSoundGroup() {
@@ -195,18 +227,30 @@ void Process::addSampleToSoundGroup() {
 	debug("addSampleToSoundGroup stub: %s sound group: %d", name.c_str(), arg);
 }
 
-void Process::updatePhaseVarOr2() {
+void Process::restartSample() {
 	Common::String name = popString();
-	debug("updatePhaseVarOr2 stub %s", name.c_str());
-	int value = _engine->getGlobal(name);
-	_engine->setGlobal(name, value | 2);
+	debug("restartSample %s", name.c_str());
+	auto sound = _engine->soundManager().findSampleByPhaseVar(name);
+	if (sound) {
+		debug("sample found (%s)", sound->name.c_str());
+		int value = _engine->getGlobal(name);
+		_engine->setGlobal(name, value | 2);
+	} else {
+		debug("sample not found");
+	}
 }
 
-void Process::updatePhaseVarOr4() {
+void Process::stopSample() {
 	Common::String name = popString();
-	debug("updatePhaseVarOr4 stub %s", name.c_str());
-	int value = _engine->getGlobal(name);
-	_engine->setGlobal(name, value | 4);
+	debug("restartSample %s", name.c_str());
+	auto sound = _engine->soundManager().findSampleByPhaseVar(name);
+	if (sound) {
+		debug("sample found (%s)", sound->name.c_str());
+		int value = _engine->getGlobal(name);
+		_engine->setGlobal(name, value | 4);
+	} else {
+		debug("sample not found");
+	}
 }
 
 void Process::loadScreenObject() {
@@ -695,7 +739,7 @@ void Process::stub166() {
 
 void Process::stub172() {
 	int value = pop();
-	debug("stub172: %d", value);
+	debug("stub172: setMusicVolume? %d", value);
 }
 
 void Process::stub173() {
@@ -733,7 +777,7 @@ void Process::stub194() {
 
 void Process::stub199() {
 	int value = pop();
-	debug("stub199: %d", value);
+	debug("stub199: (free cached surface?) %d", value);
 }
 
 void Process::setTileIndex() {
@@ -759,16 +803,16 @@ void Process::modifyMouseArea() {
 	suspend(kExitCodeMouseAreaChange, id, enabled);
 }
 
-void Process::stub215() {
+void Process::clearSoundGroup() {
 	int id = pop();
-	debug("stub215: sound group %d", id);
+	debug("clearSoundGroup stub: %d", id);
 }
 
 void Process::stub216() {
 	int soundGroup = pop();
 	int frame = pop();
 	int id = pop();
-	debug("stub216: animation? id: %d, frame: %d, soundGroup: %d", id, frame, soundGroup);
+	debug("stub216: setCharacterWalkSound? id: %d, frame: %d, soundGroup: %d", id, frame, soundGroup);
 }
 
 void Process::stub217() {
@@ -802,10 +846,20 @@ void Process::stub223() {
 	debug("stub223: %d", value);
 }
 
-void Process::stub225() {
+void Process::modifyAnimationWithPhaseVar() {
 	int arg = pop();
 	Common::String phaseVar = popString();
-	debug("stub225: animation related, phaseVar %s, arg %d", phaseVar.c_str(), arg);
+	Animation *animation = _engine->findAnimationByPhaseVar(phaseVar);
+	debug("modifyAnimationWithPhaseVar: phaseVar %s, arg %d", phaseVar.c_str(), arg);
+	if (animation) {
+		if (arg > 0) {
+			//1, 2 stop (2 with rewind?)
+			animation->stop();
+			_engine->setGlobal(phaseVar, 0);
+		}
+		else
+			animation->resume();
+	}
 }
 
 void Process::setTileSize() {
@@ -1273,8 +1327,6 @@ void Process::fogOnCharacter() {
 	int arg1 = pop();
 	Common::String name = popText();
 	debug("fogOnCharacter %s %d %d", name.c_str(), arg1, arg2);
-	debug("fixme: some script commands call enableUser again");
-	enableUser();
 }
 
 void Process::setRain() {
@@ -1304,7 +1356,7 @@ void Process::loadPictureFromObject() {
 
 void Process::loadAnimationFromObject() {
 	Common::String name = popText();
-	debug("loadAnimationFromObject %s", name.c_str());
+	debug("loadAnimationFromObject %s %s", name.c_str(), _animationPaused? "(paused)": "");
 	if (!_phaseVar.empty()) {
 		_engine->setGlobal(_phaseVar, -2);
 	}
