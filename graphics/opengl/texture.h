@@ -29,12 +29,12 @@
 
 namespace OpenGL {
 
-class Texture {
+class TextureGL {
 public:
-	Texture(const Graphics::Surface &srf);
-	Texture(uint width, uint height);
-	Texture(GLuint texture_name, uint width, uint height, uint texture_width, uint texture_height);
-	virtual ~Texture();
+	TextureGL(const Graphics::Surface &srf);
+	TextureGL(uint width, uint height);
+	TextureGL(GLuint texture_name, uint width, uint height, uint texture_width, uint texture_height);
+	virtual ~TextureGL();
 
 	GLuint getTextureName() const { return _texture; }
 	uint getWidth() const { return _width; }

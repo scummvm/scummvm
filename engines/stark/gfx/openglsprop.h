@@ -32,7 +32,7 @@
 #include "graphics/opengl/system_headers.h"
 
 namespace OpenGL {
-	class Shader;
+	class ShaderGL;
 }
 
 namespace Stark {
@@ -52,7 +52,7 @@ protected:
 	typedef Common::HashMap<const Face *, GLuint> FaceBufferMap;
 
 	Driver *_gfx;
-	OpenGL::Shader *_shader;
+	OpenGL::ShaderGL *_shader;
 
 	bool _modelIsDirty;
 	GLuint _faceVBO;

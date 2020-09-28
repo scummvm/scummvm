@@ -119,7 +119,7 @@ void AndroidGraphicsManager::initSurface() {
 	_screenChangeID = JNI::surface_changeid;
 
 	// Initialize OpenGLES context.
-	OpenGLContext.initialize(OpenGL::kContextGLES2);
+	OpenGLContext.initialize(OpenGL::kOGLContextGLES2);
 	logExtensions();
 	GLESTexture::initGL();
 
@@ -159,7 +159,7 @@ void AndroidGraphicsManager::deinitSurface() {
 	if (_mouse_texture)
 		_mouse_texture->release();
 
-	OpenGL::Context::destroy();
+	OpenGL::ContextGL::destroy();
 
 	JNI::deinitSurface();
 }

@@ -222,20 +222,20 @@ private:
 	float _alpha;
 	int _maxLights;
 	GLuint _emergTexture;
-	OpenGL::Shader* _emergProgram;
+	OpenGL::ShaderGL* _emergProgram;
 
-	OpenGL::Shader* _backgroundProgram;
-	OpenGL::Shader* _actorProgram;
-	OpenGL::Shader* _spriteProgram;
-	OpenGL::Shader* _dimProgram;
-	OpenGL::Shader* _dimPlaneProgram;
-	OpenGL::Shader* _dimRegionProgram;
-	OpenGL::Shader* _smushProgram;
+	OpenGL::ShaderGL* _backgroundProgram;
+	OpenGL::ShaderGL* _actorProgram;
+	OpenGL::ShaderGL* _spriteProgram;
+	OpenGL::ShaderGL* _dimProgram;
+	OpenGL::ShaderGL* _dimPlaneProgram;
+	OpenGL::ShaderGL* _dimRegionProgram;
+	OpenGL::ShaderGL* _smushProgram;
 	GLuint _smushVBO, _quadEBO;
-	OpenGL::Shader* _textProgram;
-	OpenGL::Shader* _primitiveProgram;
-	OpenGL::Shader* _irisProgram;
-	OpenGL::Shader* _shadowPlaneProgram;
+	OpenGL::ShaderGL* _textProgram;
+	OpenGL::ShaderGL* _primitiveProgram;
+	OpenGL::ShaderGL* _irisProgram;
+	OpenGL::ShaderGL* _shadowPlaneProgram;
 
 	int _smushWidth;
 	int _smushHeight;

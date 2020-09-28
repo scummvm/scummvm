@@ -27,9 +27,9 @@
 
 namespace OpenGL {
 
-enum ContextType {
-	kContextGL,
-	kContextGLES2
+enum ContextOGLType {
+	kOGLContextGL,
+	kOGLContextGLES2
 };
 
 /**
@@ -37,9 +37,9 @@ enum ContextType {
  *
  * This class is based on LordHoto's OpenGL backend for ScummVM
  */
-class Context : public Common::Singleton<Context> {
+class ContextGL : public Common::Singleton<ContextGL> {
 public:
-	Context();
+	ContextGL();
 
 	/**
 	 * Initialize the context description from currently active context.
@@ -47,7 +47,7 @@ public:
 	 * The extensions and features are marked as available according
 	 * to the current context capabilities.
 	 */
-	void initialize(ContextType contextType);
+	void initialize(ContextOGLType contextType);
 
 	/**
 	 * Reset context.
@@ -57,7 +57,7 @@ public:
 	void reset();
 
 	/** The type of the active context. */
-	ContextType type;
+	ContextOGLType type;
 
 	/** The maximum texture size supported by the context. */
 	int maxTextureSize;
@@ -95,6 +95,6 @@ public:
 } // End of namespace OpenGL
 
 /** Shortcut for accessing the active OpenGL context. */
-#define OpenGLContext OpenGL::Context::instance()
+#define OpenGLContext OpenGL::ContextGL::instance()
 
 #endif

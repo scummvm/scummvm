@@ -28,7 +28,7 @@
 #include "math/vector2d.h"
 
 namespace OpenGL {
-class Shader;
+class ShaderGL;
 }
 
 namespace Stark {
@@ -54,7 +54,7 @@ private:
 	Math::Vector2d normalizeCurrentCoordinates(int x, int y) const;
 
 	OpenGLSDriver *_gfx;
-	OpenGL::Shader *_shader;
+	OpenGL::ShaderGL *_shader;
 };
 
 } // End of namespace Gfx

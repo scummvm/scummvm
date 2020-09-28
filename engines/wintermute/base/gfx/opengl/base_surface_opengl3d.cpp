@@ -176,7 +176,7 @@ bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK,
 	bool needsColorKey = false;
 	bool replaceAlpha = true;
 
-	Graphics::Surface *surf = img.getSurface()->convertTo(OpenGL::Texture::getRGBAPixelFormat(), img.getPalette());
+	Graphics::Surface *surf = img.getSurface()->convertTo(OpenGL::TextureGL::getRGBAPixelFormat(), img.getPalette());
 
 	if (_filename.hasSuffix(".bmp") && img.getSurface()->format.bytesPerPixel == 4) {
 		// 32 bpp BMPs have nothing useful in their alpha-channel -> color-key

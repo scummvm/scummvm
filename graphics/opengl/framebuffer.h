@@ -28,7 +28,7 @@
 
 namespace OpenGL {
 
-class FrameBuffer : public Texture {
+class FrameBuffer : public TextureGL {
 public:
 	FrameBuffer(uint width, uint height);
 	FrameBuffer(GLuint texture_name, uint width, uint height, uint texture_width, uint texture_height);

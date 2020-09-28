@@ -127,7 +127,7 @@ bool BaseRenderOpenGLTexture::initRenderer(int width, int height, bool windowed)
 
 	_windowed = !ConfMan.getBool("fullscreen");
 
-	Graphics::PixelFormat format = OpenGL::Texture::getRGBAPixelFormat();
+	Graphics::PixelFormat format = OpenGL::TextureGL::getRGBAPixelFormat();
 
 	g_system->showMouse(false);
 
@@ -497,7 +497,7 @@ void BaseRenderOpenGLTexture::drawRenderSurface() {
 		}
 	}
 
-	OpenGL::Texture tex(*_renderSurface);
+	OpenGL::TextureGL tex(*_renderSurface);
 
 	OpenGL::SurfaceRenderer* renderer = OpenGL::createBestSurfaceRenderer();
 

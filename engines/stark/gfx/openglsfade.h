@@ -26,7 +26,7 @@
 #include "engines/stark/gfx/faderenderer.h"
 
 namespace OpenGL {
-class Shader;
+class ShaderGL;
 }
 
 namespace Stark {
@@ -47,7 +47,7 @@ public:
 
 private:
 	OpenGLSDriver *_gfx;
-	OpenGL::Shader *_shader;
+	OpenGL::ShaderGL *_shader;
 };
 
 } // End of namespace Gfx

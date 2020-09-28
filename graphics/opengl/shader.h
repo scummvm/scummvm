@@ -59,13 +59,13 @@ struct VertexAttrib {
 	float _const[4];
 };
 
-class Shader {
+class ShaderGL {
 	typedef Common::HashMap<Common::String, GLint> UniformsMap;
 
 public:
-	~Shader();
-	Shader* clone() {
-		return new Shader(*this);
+	~ShaderGL();
+	ShaderGL* clone() {
+		return new ShaderGL(*this);
 	}
 
 	void use(bool forceReload = false);
@@ -137,17 +137,17 @@ public:
 	static GLuint createBuffer(GLenum target, GLsizeiptr size, const GLvoid* data, GLenum usage = GL_STATIC_DRAW);
 	static void freeBuffer(GLuint vbo);
 
-	static Shader* fromFiles(const char *vertex, const char *fragment, const char **attributes);
-	static Shader* fromFiles(const char *shared, const char **attributes) {
+	static ShaderGL *fromFiles(const char *vertex, const char *fragment, const char **attributes);
+	static ShaderGL *fromFiles(const char *shared, const char **attributes) {
 		return fromFiles(shared, shared, attributes);
 	}
 
-	static Shader* fromStrings(const Common::String &name, const char *vertex, const char *fragment, const char **attributes);
+	static ShaderGL *fromStrings(const Common::String &name, const char *vertex, const char *fragment, const char **attributes);
 
 	void unbind();
 
 private:
-	Shader(const Common::String &name, GLuint vertexShader, GLuint fragmentShader, const char **attributes);
+	ShaderGL(const Common::String &name, GLuint vertexShader, GLuint fragmentShader, const char **attributes);
 
 	// Since this class is cloned using the implicit copy constructor,
 	// a reference counting pointer is used to ensure deletion of the OpenGL
@@ -159,7 +159,7 @@ private:
 	Common::Array<VertexAttrib> _attributes;
 	Common::SharedPtr<UniformsMap> _uniforms;
 
-	static Shader *_previousShader;
+	static ShaderGL *_previousShader;
 };
 
 } // End of namespace OpenGL

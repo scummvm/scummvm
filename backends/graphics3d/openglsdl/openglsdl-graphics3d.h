@@ -28,7 +28,7 @@
 namespace OpenGL {
 	class FrameBuffer;
 	class SurfaceRenderer;
-	class Texture;
+	class TextureGL;
 	class TiledSurface;
 }
 
@@ -149,7 +149,7 @@ protected:
 
 	OpenGL::TiledSurface *_overlayScreen;
 	OpenGL::TiledSurface *_overlayBackground;
-	OpenGL::Texture *_sideTextures[2];
+	OpenGL::TextureGL *_sideTextures[2];
 	OpenGL::SurfaceRenderer *_surfaceRenderer;
 
 	Graphics::PixelFormat _overlayFormat;

@@ -42,7 +42,7 @@ static T nextHigher2(T k) {
 	return k + 1;
 }
 
-const Graphics::PixelFormat Texture::getRGBAPixelFormat() {
+const Graphics::PixelFormat TextureGL::getRGBAPixelFormat() {
 #ifdef SCUMM_BIG_ENDIAN
 	return Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 #else
@@ -50,11 +50,11 @@ const Graphics::PixelFormat Texture::getRGBAPixelFormat() {
 #endif
 }
 
-const Graphics::PixelFormat Texture::get565PixelFormat() {
+const Graphics::PixelFormat TextureGL::get565PixelFormat() {
 	return Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 }
 
-Texture::Texture(const Graphics::Surface &srf) :
+TextureGL::TextureGL(const Graphics::Surface &srf) :
 		_managedTexture(true), _width(srf.w), _height(srf.h) {
 	if (OpenGLContext.NPOTSupported) {
 		_texWidth  = _width;
@@ -120,7 +120,7 @@ Texture::Texture(const Graphics::Surface &srf) :
 	}
 }
 
-Texture::Texture(uint width, uint height) :
+TextureGL::TextureGL(uint width, uint height) :
 		_managedTexture(true), _width(width), _height(height) {
 	if (OpenGLContext.NPOTSupported) {
 		_texWidth  = _width;
@@ -138,12 +138,12 @@ Texture::Texture(uint width, uint height) :
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _texWidth, _texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 }
 
-Texture::Texture(GLuint texture_name, uint width, uint height, uint texture_width, uint texture_height) :
+TextureGL::TextureGL(GLuint texture_name, uint width, uint height, uint texture_width, uint texture_height) :
 		_managedTexture(false), _texture(texture_name), _width(width), _height(height),
 		_texWidth(texture_width), _texHeight(texture_height) {
 }
 
-Texture::~Texture() {
+TextureGL::~TextureGL() {
 	if (_managedTexture) {
 		glDeleteTextures(1, &_texture);
 	}

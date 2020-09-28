@@ -242,7 +242,7 @@ void OpenGLSdlGraphics3dManager::createOrUpdateScreen() {
 	initializeOpenGLContext();
 	_surfaceRenderer = OpenGL::createBestSurfaceRenderer();
 
-	_overlayFormat = OpenGL::Texture::getRGBAPixelFormat();
+	_overlayFormat = OpenGL::TextureGL::getRGBAPixelFormat();
 	_overlayScreen = new OpenGL::TiledSurface(obtainedWidth, obtainedHeight, _overlayFormat);
 
 	_screenFormat = _overlayFormat;
@@ -316,12 +316,12 @@ Graphics::PixelBuffer OpenGLSdlGraphics3dManager::getScreenPixelBuffer() {
 }
 
 void OpenGLSdlGraphics3dManager::initializeOpenGLContext() const {
-	OpenGL::ContextType type;
+	OpenGL::ContextOGLType type;
 
 #ifdef USE_GLES2
-	type = OpenGL::kContextGLES2;
+	type = OpenGL::kOGLContextGLES2;
 #else
-	type = OpenGL::kContextGL;
+	type = OpenGL::kOGLContextGL;
 #endif
 
 	OpenGLContext.initialize(type);
@@ -588,10 +588,10 @@ void OpenGLSdlGraphics3dManager::suggestSideTextures(Graphics::Surface *left, Gr
 	delete _sideTextures[1];
 	_sideTextures[1] = nullptr;
 	if (left) {
-		_sideTextures[0] = new OpenGL::Texture(*left);
+		_sideTextures[0] = new OpenGL::TextureGL(*left);
 	}
 	if (right) {
-		_sideTextures[1] = new OpenGL::Texture(*right);
+		_sideTextures[1] = new OpenGL::TextureGL(*right);
 	}
 }
 
@@ -663,7 +663,7 @@ void OpenGLSdlGraphics3dManager::closeOverlay() {
 	delete _frameBuffer;
 	_frameBuffer = nullptr;
 
-	OpenGL::Context::destroy();
+	OpenGL::ContextGL::destroy();
 }
 
 int16 OpenGLSdlGraphics3dManager::getOverlayHeight() const {

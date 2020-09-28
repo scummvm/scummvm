@@ -319,7 +319,7 @@ void OSystem_SDL::detectFramebufferSupport() {
 	if (window) {
 		SDL_GLContext glContext = SDL_GL_CreateContext(window);
 		if (glContext) {
-			OpenGLContext.initialize(OpenGL::kContextGL);
+			OpenGLContext.initialize(OpenGL::kOGLContextGL);
 			_capabilities.openGLFrameBuffer = OpenGLContext.framebufferObjectSupported;
 			OpenGLContext.reset();
 			SDL_GL_DeleteContext(glContext);
@@ -330,7 +330,7 @@ void OSystem_SDL::detectFramebufferSupport() {
 	SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=9000,9000"));
 	SDL_SetVideoMode(32, 32, 0, SDL_OPENGL);
 	SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=center"));
-	OpenGLContext.initialize(OpenGL::kContextGL);
+	OpenGLContext.initialize(OpenGL::kOGLContextGL);
 	_capabilities.openGLFrameBuffer = OpenGLContext.framebufferObjectSupported;
 	OpenGLContext.reset();
 #endif

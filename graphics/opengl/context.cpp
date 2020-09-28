@@ -32,16 +32,16 @@
 #ifdef USE_OPENGL
 
 namespace Common {
-DECLARE_SINGLETON(OpenGL::Context);
+DECLARE_SINGLETON(OpenGL::ContextGL);
 }
 
 namespace OpenGL {
 
-Context::Context() {
+ContextGL::ContextGL() {
 	reset();
 }
 
-void Context::reset() {
+void ContextGL::reset() {
 	maxTextureSize = 0;
 
 	NPOTSupported = false;
@@ -54,7 +54,7 @@ void Context::reset() {
 	multisampleMaxSamples = -1;
 }
 
-void Context::initialize(ContextType contextType) {
+void ContextGL::initialize(ContextOGLType contextType) {
 	// Initialize default state.
 	reset();
 
@@ -106,7 +106,7 @@ void Context::initialize(ContextType contextType) {
 	int glslVersion = getGLSLVersion();
 	debug(5, "OpenGL GLSL version: %d", glslVersion);
 
-	if (type == kContextGLES2) {
+	if (type == kOGLContextGLES2) {
 		// GLES2 always has (limited) NPOT support.
 		NPOTSupported = true;
 
@@ -134,11 +134,11 @@ void Context::initialize(ContextType contextType) {
 
 	// Log context type.
 	switch (type) {
-		case kContextGL:
+		case kOGLContextGL:
 			debug(5, "OpenGL: GL context initialized");
 			break;
 
-		case kContextGLES2:
+		case kOGLContextGLES2:
 			debug(5, "OpenGL: GLES2 context initialized");
 			break;
 	}
@@ -151,7 +151,7 @@ void Context::initialize(ContextType contextType) {
 	debug(5, "OpenGL: Unpack subimage support: %d", unpackSubImageSupported);
 }
 
-int Context::getGLSLVersion() const {
+int ContextGL::getGLSLVersion() const {
 	const char *glslVersionString = (const char *)glGetString(GL_SHADING_LANGUAGE_VERSION);
 	if (!glslVersionString) {
 		warning("Could not get GLSL version");
@@ -159,7 +159,7 @@ int Context::getGLSLVersion() const {
 	}
 
 	const char *glslVersionFormat;
-	if (type == kContextGL) {
+	if (type == kOGLContextGL) {
 		glslVersionFormat = "%d.%d";
 	} else {
 		glslVersionFormat = "OpenGL ES GLSL ES %d.%d";

@@ -67,8 +67,8 @@ OpenGLSDriver::OpenGLSDriver() :
 }
 
 OpenGLSDriver::~OpenGLSDriver() {
-	OpenGL::Shader::freeBuffer(_surfaceVBO);
-	OpenGL::Shader::freeBuffer(_fadeVBO);
+	OpenGL::ShaderGL::freeBuffer(_surfaceVBO);
+	OpenGL::ShaderGL::freeBuffer(_fadeVBO);
 	delete _surfaceShader;
 	delete _actorShader;
 	delete _fadeShader;
@@ -79,20 +79,20 @@ void OpenGLSDriver::init() {
 	computeScreenViewport();
 
 	static const char* attributes[] = { "position", "texcoord", nullptr };
-	_surfaceShader = OpenGL::Shader::fromFiles("stark_surface", attributes);
-	_surfaceVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(surfaceVertices), surfaceVertices);
+	_surfaceShader = OpenGL::ShaderGL::fromFiles("stark_surface", attributes);
+	_surfaceVBO = OpenGL::ShaderGL::createBuffer(GL_ARRAY_BUFFER, sizeof(surfaceVertices), surfaceVertices);
 	_surfaceShader->enableVertexAttribute("position", _surfaceVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 	_surfaceShader->enableVertexAttribute("texcoord", _surfaceVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 
 	static const char* actorAttributes[] = { "position1", "position2", "bone1", "bone2", "boneWeight", "normal", "texcoord", nullptr };
-	_actorShader = OpenGL::Shader::fromFiles("stark_actor", actorAttributes);
+	_actorShader = OpenGL::ShaderGL::fromFiles("stark_actor", actorAttributes);
 
 	static const char* shadowAttributes[] = { "position1", "position2", "bone1", "bone2", "boneWeight", nullptr };
-	_shadowShader = OpenGL::Shader::fromFiles("stark_shadow", shadowAttributes);
+	_shadowShader = OpenGL::ShaderGL::fromFiles("stark_shadow", shadowAttributes);
 
 	static const char* fadeAttributes[] = { "position", nullptr };
-	_fadeShader = OpenGL::Shader::fromFiles("stark_fade", fadeAttributes);
-	_fadeVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(fadeVertices), fadeVertices);
+	_fadeShader = OpenGL::ShaderGL::fromFiles("stark_fade", fadeAttributes);
+	_fadeVBO = OpenGL::ShaderGL::createBuffer(GL_ARRAY_BUFFER, sizeof(fadeVertices), fadeVertices);
 	_fadeShader->enableVertexAttribute("position", _fadeVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 }
 
@@ -199,19 +199,19 @@ Common::Rect OpenGLSDriver::getUnscaledViewport() const {
 	return _unscaledViewport;
 }
 
-OpenGL::Shader *OpenGLSDriver::createActorShaderInstance() {
+OpenGL::ShaderGL *OpenGLSDriver::createActorShaderInstance() {
 	return _actorShader->clone();
 }
 
-OpenGL::Shader *OpenGLSDriver::createSurfaceShaderInstance() {
+OpenGL::ShaderGL *OpenGLSDriver::createSurfaceShaderInstance() {
 	return _surfaceShader->clone();
 }
 
-OpenGL::Shader *OpenGLSDriver::createFadeShaderInstance() {
+OpenGL::ShaderGL *OpenGLSDriver::createFadeShaderInstance() {
 	return _fadeShader->clone();
 }
 
-OpenGL::Shader *OpenGLSDriver::createShadowShaderInstance() {
+OpenGL::ShaderGL *OpenGLSDriver::createShadowShaderInstance() {
 	return _shadowShader->clone();
 }
 

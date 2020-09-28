@@ -77,7 +77,7 @@ void TiledSurface::update() {
 			Graphics::Surface subSurface = _backingSurface.getSubArea(tile.rect);
 
 			delete tile.texture;
-			tile.texture = new Texture(subSurface);
+			tile.texture = new TextureGL(subSurface);
 
 			tile.dirty = false;
 		}

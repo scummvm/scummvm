@@ -34,7 +34,7 @@
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-MeshXOpenGLShader::MeshXOpenGLShader(BaseGame *inGame, OpenGL::Shader *shader) :
+MeshXOpenGLShader::MeshXOpenGLShader(BaseGame *inGame, OpenGL::ShaderGL *shader) :
 	MeshX(inGame), _shader(shader) {
 	glGenBuffers(1, &_vertexBuffer);
 	glGenBuffers(1, &_indexBuffer);

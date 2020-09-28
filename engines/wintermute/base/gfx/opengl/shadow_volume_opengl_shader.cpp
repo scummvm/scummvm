@@ -44,7 +44,7 @@ struct ShadowVertexShader {
 #include "common/pack-end.h"
 
 //////////////////////////////////////////////////////////////////////////
-ShadowVolumeOpenGLShader::ShadowVolumeOpenGLShader(BaseGame *inGame, OpenGL::Shader *volumeShader, OpenGL::Shader *maskShader)
+ShadowVolumeOpenGLShader::ShadowVolumeOpenGLShader(BaseGame *inGame, OpenGL::ShaderGL *volumeShader, OpenGL::ShaderGL *maskShader)
 	: ShadowVolume(inGame), _color(0x7f000000), _volumeShader(volumeShader), _maskShader(maskShader) {
 	ShadowVertexShader shadowMask[4];
 	Rect32 viewport = _gameRef->_renderer->getViewPort();

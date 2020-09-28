@@ -101,7 +101,7 @@ void FixedSurfaceRenderer::prepareState() {
 	glDepthMask(GL_FALSE);
 }
 
-void FixedSurfaceRenderer::render(const Texture *tex, const Math::Rect2d &dest) {
+void FixedSurfaceRenderer::render(const TextureGL *tex, const Math::Rect2d &dest) {
 	float texcropX = tex->getWidth() / float(tex->getTexWidth());
 	float texcropY = tex->getHeight() / float(tex->getTexHeight());
 	float texTop    = _flipY ? 0.0f : texcropY;
@@ -157,8 +157,8 @@ ShaderSurfaceRenderer::ShaderSurfaceRenderer() {
 
 	// Setup the box shader used to render the overlay
 	const char *attributes[] = { "position", "texcoord", nullptr };
-	_boxShader = Shader::fromStrings("box", BuiltinShaders::boxVertex, BuiltinShaders::boxFragment, attributes);
-	_boxVerticesVBO = Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(vertices), vertices);
+	_boxShader = ShaderGL::fromStrings("box", BuiltinShaders::boxVertex, BuiltinShaders::boxFragment, attributes);
+	_boxVerticesVBO = ShaderGL::createBuffer(GL_ARRAY_BUFFER, sizeof(vertices), vertices);
 	_boxShader->enableVertexAttribute("position", _boxVerticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 	_boxShader->enableVertexAttribute("texcoord", _boxVerticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 }
@@ -170,7 +170,7 @@ void ShaderSurfaceRenderer::prepareState() {
 	glDepthMask(GL_FALSE);
 }
 
-void ShaderSurfaceRenderer::render(const Texture *tex, const Math::Rect2d &dest) {
+void ShaderSurfaceRenderer::render(const TextureGL *tex, const Math::Rect2d &dest) {
 	glBindTexture(GL_TEXTURE_2D, tex->getTextureName());
 
 	float texcropX = tex->getWidth() / float(tex->getTexWidth());
@@ -198,7 +198,7 @@ void ShaderSurfaceRenderer::restorePreviousState() {
 }
 
 ShaderSurfaceRenderer::~ShaderSurfaceRenderer() {
-	Shader::freeBuffer(_boxVerticesVBO);
+	ShaderGL::freeBuffer(_boxVerticesVBO);
 
 	delete _boxShader;
 }

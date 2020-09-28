@@ -121,7 +121,7 @@ static bool useDepthComponent24() {
 }
 
 FrameBuffer::FrameBuffer(uint width, uint height) :
-		Texture(width, height) {
+		TextureGL(width, height) {
 	if (!OpenGLContext.framebufferObjectSupported) {
 		error("FrameBuffer Objects are not supported by the current OpenGL context");
 	}
@@ -134,7 +134,7 @@ FrameBuffer::FrameBuffer(uint width, uint height) :
 }
 
 FrameBuffer::FrameBuffer(GLuint texture_name, uint width, uint height, uint texture_width, uint texture_height) :
-		Texture(texture_name, width, height, texture_width, texture_height) {
+		TextureGL(texture_name, width, height, texture_width, texture_height) {
 	init();
 }
 

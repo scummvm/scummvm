@@ -32,7 +32,7 @@
 #include "graphics/opengl/system_headers.h"
 
 namespace OpenGL {
-	class Shader;
+	class ShaderGL;
 }
 
 namespace Stark {
@@ -51,7 +51,7 @@ protected:
 	typedef Common::HashMap<Face *, GLuint> FaceBufferMap;
 
 	OpenGLSDriver *_gfx;
-	OpenGL::Shader *_shader, *_shadowShader;
+	OpenGL::ShaderGL *_shader, *_shadowShader;
 
 	GLuint _faceVBO;
 	FaceBufferMap _faceEBO;
@@ -60,8 +60,8 @@ protected:
 	void uploadVertices();
 	GLuint createModelVBO(const Model *model);
 	GLuint createFaceEBO(const Face *face);
-	void setBonePositionArrayUniform(OpenGL::Shader *shader, const char *uniform);
-	void setBoneRotationArrayUniform(OpenGL::Shader *shader, const char *uniform);
+	void setBonePositionArrayUniform(OpenGL::ShaderGL *shader, const char *uniform);
+	void setBoneRotationArrayUniform(OpenGL::ShaderGL *shader, const char *uniform);
 	void setLightArrayUniform(const LightEntryArray &lights);
 
 	void setShadowUniform(const LightEntryArray &lights, const Math::Vector3d &actorPosition, Math::Matrix3 worldToModelRot);

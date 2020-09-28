@@ -36,7 +36,7 @@ namespace Wintermute {
 
 class MeshXOpenGLShader : public MeshX {
 public:
-	MeshXOpenGLShader(BaseGame *inGame, OpenGL::Shader *shader);
+	MeshXOpenGLShader(BaseGame *inGame, OpenGL::ShaderGL *shader);
 	~MeshXOpenGLShader() override;
 
 	bool loadFromX(const Common::String &filename, XFileLexer &lexer, Common::Array<MaterialReference> &materialReferences) override;
@@ -47,7 +47,7 @@ protected:
 	GLuint _vertexBuffer;
 	GLuint _indexBuffer;
 
-	OpenGL::Shader *_shader;
+	OpenGL::ShaderGL *_shader;
 };
 
 } // namespace Wintermute
