@@ -270,13 +270,15 @@ KeyBinder::KeyBinder(Configuration *config) {
 	config->value("config/keys", keyfilename, "(default)");
 	bool key_file_exists = fileExists(keyfilename.c_str());
 
-	if (keyfilename != "(default)" && !key_file_exists)
-		::error("Couldn't find the default key setting at %s - trying defaultkeys.txt in the data directory\n", keyfilename.c_str());
-	if (keyfilename == "(default)" || !key_file_exists) {
-		config->value("config/datadir", dir, "./data");
-		keyfilename = dir + "/defaultkeys.txt";
+	if (keyfilename != "(default)" && !key_file_exists) {
+		::warning("Couldn't find the default key setting at %s - trying defaultkeys.txt in the data directory\n", keyfilename.c_str());
+	} else {
+		if (keyfilename == "(default)" || !key_file_exists)
+			keyfilename = "defaultkeys.txt";
+
+		if (fileExists(keyfilename.c_str()))
+			LoadFromFile(keyfilename.c_str());
 	}
-	LoadFromFile(keyfilename.c_str());
 
 	LoadGameSpecificKeys(); // won't load if file isn't found
 	LoadFromPatch(); // won't load if file isn't found
