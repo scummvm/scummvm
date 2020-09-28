@@ -84,7 +84,7 @@ fi
 %{_datadir}/pixmaps/residualvm.xpm
 %{_datadir}/icons/hicolor/48x48/apps/residualvm.png
 %{_datadir}/icons/hicolor/scalable/apps/residualvm.svg
-%{_datadir}/residualvm/modern.zip
+%{_datadir}/residualvm/residualvm.zip
 %{_datadir}/residualvm/residualvm-grim-patch.lab
 %{_datadir}/residualvm/residualvm-emi-patch.m4b
 %{_datadir}/residualvm/myst3.dat
