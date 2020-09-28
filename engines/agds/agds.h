@@ -123,6 +123,10 @@ public:
 		return _resourceManager;
 	}
 
+	SoundManager & soundManager() {
+		return _soundManager;
+	}
+
 	Inventory & inventory() {
 		return _inventory;
 	}
@@ -226,7 +230,7 @@ public:
 		return _mouse;
 	}
 
-	void reactivate(const Common::String &name);
+	void reactivate(const Common::String &name, bool runNow);
 
 private:
 	void loadPatches(Common::SeekableReadStream *file, Database & db);

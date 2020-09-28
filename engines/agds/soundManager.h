@@ -42,8 +42,10 @@ namespace AGDS {
 		Common::String		phaseVar;
 		Audio::SoundHandle	handle;
 		int					group;
+		int					leftVolume;
+		int					rightVolume;
 		Sound(int id_, const Common::String &p, const Common::String & res, const Common::String & var, Audio::SoundHandle h, int g = 0):
-			id(id_), process(p), name(res), phaseVar(var), handle(h), group(g) {
+			id(id_), process(p), name(res), phaseVar(var), handle(h), group(g), leftVolume(100), rightVolume(100) {
 		}
 	};
 
@@ -60,6 +62,7 @@ namespace AGDS {
 		int play(const Common::String &process, const Common::String &file, const Common::String &phaseVar, int id = -1);
 		bool playing(int id) const;
 		void stopAll();
+		Sound *findSampleByPhaseVar(const Common::String &phaseVar);
 	private:
 		void setPhaseVar(const Sound &sound, int value);
 	};
