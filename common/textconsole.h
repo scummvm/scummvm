@@ -99,4 +99,16 @@ void warning(MSVC_PRINTF const char *s, ...) GCC_PRINTF(1, 2);
 #endif
 /** @} */
 
+/**
+ * Test the given expression and call error() with the file, line, and expression
+ * if it is false.
+ *
+ * Unlike assert(), scumm_assert() is not disabled when NDEBUG is defined. Also
+ * the message is visible to the user (or at least logged) on all platforms.
+ */
+#define scumm_assert(expr) \
+	if (expr) {} \
+	else \
+		error("Assertion \"%s\" failed: file \"%s\", line %d", #expr, __FILE__, __LINE__)
+
 #endif
