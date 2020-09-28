@@ -7043,6 +7043,46 @@ static const SciScriptPatcherEntry larry2Signatures[] = {
 };
 
 // ===========================================================================
+// Leisure Suit Larry 3
+
+// The LSL3 volume dialog initialize its slider to the current volume by calling
+//  kDoSoundMasterVolume, but it passes an uninitialized variable as an extra
+//  parameter. This changes the volume instead of just querying it, leaving the
+//  slider out of sync with the abruptly changed volume.
+//
+// We remove the uninitialized parameter so that this code correctly queries the
+//  volume instead of setting it. This was fixed in later versions but the buggy
+//  one was used as the basis for SCI Studio's template script, which is also
+//  included with SCI Companion, and so this bug lives on in fan games.
+//
+// Applies to: English PC, English Amiga, English Atari ST
+// Responsible method: TheMenuBar:handleEvent
+static const uint16 larry3SignatureVolumeSlider[] = {
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(doit),       // pushi doit
+	0x78,                            // push1
+	0x7a,                            // push2
+	0x39, 0x08,                      // pushi 08 [ volume ]
+	0x8d, 0x01,                      // lst 01   [ uninitialized variable ]
+	0x43, 0x31, 0x04,                // callk DoSound 04 [ set volume and return previous ]
+	SIG_END
+};
+
+static const uint16 larry3PatchVolumeSlider[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x39, 0x01,                      // pushi 01
+	0x38, PATCH_UINT16(0x0008),      // pushi 0008 [ volume ]
+	0x43, 0x31, 0x02,                // callk DoSound 02 [ return volume ]
+	PATCH_END
+};
+
+//          script, description,                                      signature                     patch
+static const SciScriptPatcherEntry larry3Signatures[] = {
+	{  true,   997, "fix volume slider",                           1, larry3SignatureVolumeSlider,  larry3PatchVolumeSlider },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
 // Leisure Suit Larry 5
 // In Miami the player can call the green card telephone number and get
 //  green card including limo at the same time in the English 1.000 PC release.
@@ -20326,6 +20366,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 		break;
 	case GID_LSL2:
 		signatureTable = larry2Signatures;
+		break;
+	case GID_LSL3:
+		signatureTable = larry3Signatures;
 		break;
 	case GID_LSL5:
 		signatureTable = larry5Signatures;
