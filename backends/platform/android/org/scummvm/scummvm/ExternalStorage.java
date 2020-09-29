@@ -1,5 +1,6 @@
 package org.scummvm.scummvm;
 
+import android.content.Context;
 import android.os.Environment;
 import java.io.File;
 import java.util.ArrayList;
@@ -25,7 +26,9 @@ import android.os.Build;
 public class ExternalStorage {
 	public static final String SD_CARD = "sdCard";
 	public static final String EXTERNAL_SD_CARD = "externalSdCard";
-	public static final String DATA_DIRECTORY = "ScummVM data directory";
+	public static final String DATA_DIRECTORY = "ScummVM data";
+	public static final String DATA_DIRECTORY_INT = "ScummVM data (Int)";
+	public static final String DATA_DIRECTORY_EXT = "ScummVM data (Ext))";
 
 
 	// Find candidate removable sd card paths
@@ -215,14 +218,20 @@ public class ExternalStorage {
 		//   /storage/sdcard1/Android/data/com.mybackuparchives.android/files
 		// so we want the great-great-grandparent folder.
 
+		// TODO Note, This method was deprecated in API level 29.
+		//      To improve user privacy, direct access to shared/external storage devices is deprecated.
+		//      When an app targets Build.VERSION_CODES.Q, the path returned from this method is no longer directly accessible to apps.
+		//      Apps can continue to access content stored on shared/external storage by migrating to
+		//      alternatives such as Context#getExternalFilesDir(String), MediaStore, or Intent#ACTION_OPEN_DOCUMENT.
+		//
 		// This may be non-removable.
 		Log.d(ScummVM.LOG_TAG, "Environment.getExternalStorageDirectory():");
 		addPath(ancestor(Environment.getExternalStorageDirectory()), candidatePaths);
 
-		// TODO maybe: use getExternalStorageState(File path), with and without an argument, when
-		// available. With an argument is available since API level 21.
-		// This may not be necessary, since we also check whether a directory exists,
-		// which would fail if the external storage state is neither MOUNTED nor MOUNTED_READ_ONLY.
+		// TODO maybe use getExternalStorageState(File path), with and without an argument,
+		//      when available. With an argument is available since API level 21.
+		//      This may not be necessary, since we also check whether a directory exists,
+		//      which would fail if the external storage state is neither MOUNTED nor MOUNTED_READ_ONLY.
 
 		// A "public" external storage directory. But in my experience it doesn't add anything helpful.
 		// Note that you can't pass null, or you'll get an NPE.
@@ -353,7 +362,7 @@ public class ExternalStorage {
 	/**
 	 * @return list of locations available. Odd elements are names, even are paths
 	 */
-	public static List<String> getAllStorageLocations() {
+	public static List<String> getAllStorageLocations(Context ctx) {
 		List<String> map = new ArrayList<>(20);
 
 		List<String> mMounts = new ArrayList<>(10);
@@ -440,15 +449,25 @@ public class ExternalStorage {
 
 		mMounts.clear();
 
-		map.add(DATA_DIRECTORY);
-		map.add(Environment.getDataDirectory().getAbsolutePath());
+		if (Environment.getDataDirectory() != null
+		    && !"".equals(Environment.getDataDirectory().getAbsolutePath())) {
+			File dataFilePath = new File(Environment.getDataDirectory().getAbsolutePath());
+			if (dataFilePath.exists() && dataFilePath.isDirectory()) {
+				map.add(DATA_DIRECTORY);
+				map.add(Environment.getDataDirectory().getAbsolutePath());
+			}
+		}
+		map.add(DATA_DIRECTORY_INT);
+		map.add(ctx.getFilesDir().getPath());
+		map.add(DATA_DIRECTORY_EXT);
+		map.add(ctx.getExternalFilesDir(null).getPath());
 
 		// Now go through the external storage
 		if (isAvailable()) {  // we can read the External Storage...
 			// Retrieve the primary External Storage:
 			File primaryExternalStorage = Environment.getExternalStorageDirectory();
 
-			//Retrieve the External Storages root directory:
+			// Retrieve the External Storages root directory:
 			String externalStorageRootDir;
 			if ((externalStorageRootDir = primaryExternalStorage.getParent()) == null) {  // no parent...
 				String key = primaryExternalStorage.getAbsolutePath();

@@ -32,4 +32,8 @@
 		packages, from wherever you found ScummVM.</string>
 	<string name="to_market">To Market</string>
 	<string name="keyboard_toggle_btn_desc">Toggle virtual keyboard</string>
+	<string name="title_activity_splash">ScummVM Logo Activity</string>
+	<string name="title_activity_main">ScummVM Main Activity</string>
+	<string name="dummy_button">Dummy Button</string>
+	<string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>

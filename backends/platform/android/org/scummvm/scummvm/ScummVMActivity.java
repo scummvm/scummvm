@@ -17,6 +17,7 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.text.ClipboardManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -47,9 +48,12 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+
+import static org.scummvm.scummvm.ExternalStorage.getAllStorageLocations;
 
 //import android.os.Environment;
 //import java.util.List;
@@ -66,11 +70,20 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	private File _usingScummVMSavesDir;
 //	private File _usingLogFile;
 
-
 	/**
-	* Id to identify an external storage read request.
-	*/
-	private static final int MY_PERMISSIONS_REQUEST_READ_EXT_STORAGE = 100; // is an app-defined int constant. The callback method gets the result of the request.
+	 * Ids to identify an external storage read (and write) request.
+	 * They are app-defined int constants. The callback method gets the result of the request.
+	 * Ie. returned in the Activity's onRequestPermissionsResult()
+	 */
+
+	private static final int MY_PERMISSIONS_REQUEST_READ_EXT_STORAGE = 100;
+	private static final int MY_PERMISSIONS_REQUEST_WRITE_EXT_STORAGE = 101;
+	private static final int MY_PERMISSION_ALL = 110;
+
+	private static final String[] MY_PERMISSIONS_STR_LIST = {
+		Manifest.permission.READ_EXTERNAL_STORAGE,
+		Manifest.permission.WRITE_EXTERNAL_STORAGE,
+	};
 
 	static {
 		try {
@@ -85,10 +98,10 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		@Override
 		public void onClick(View v) {
 			runOnUiThread(new Runnable() {
-					public void run() {
-						toggleKeyboard();
-					}
-				});
+				public void run() {
+					toggleKeyboard();
+				}
+			});
 		}
 	};
 
@@ -157,28 +170,28 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		@Override
 		protected void setWindowCaption(final String caption) {
 			runOnUiThread(new Runnable() {
-					public void run() {
-						setTitle(caption);
-					}
-				});
+				public void run() {
+					setTitle(caption);
+				}
+			});
 		}
 
 		@Override
 		protected void showVirtualKeyboard(final boolean enable) {
 			runOnUiThread(new Runnable() {
-					public void run() {
-						showKeyboard(enable);
-					}
-				});
+				public void run() {
+					showKeyboard(enable);
+				}
+			});
 		}
 
 		@Override
 		protected void showKeyboardControl(final boolean enable) {
 			runOnUiThread(new Runnable() {
-					public void run() {
-						showKeyboardView(enable);
-					}
-				});
+				public void run() {
+					showKeyboardView(enable);
+				}
+			});
 		}
 
 		@Override
@@ -196,15 +209,26 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		@Override
 		protected String[] getAllStorageLocations() {
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-			    && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+				&& checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
 			) {
 				requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_EXT_STORAGE);
 			} else {
-				return ExternalStorage.getAllStorageLocations().toArray(new String[0]);
+				return ExternalStorage.getAllStorageLocations(getApplicationContext()).toArray(new String[0]);
 			}
 			return new String[0]; // an array of zero length
 		}
 
+		@Override
+		protected String[] getAllStorageLocationsNoPermissionRequest() {
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M
+				|| checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+			) {
+				return ExternalStorage.getAllStorageLocations(getApplicationContext()).toArray(new String[0]);
+			}
+			// TODO we might be able to return something even if READ_EXTERNAL_STORAGE was not granted
+			//      but for now, just return nothing
+			return new String[0]; // an array of zero length
+		}
 	}
 
 	private MyScummVM _scummvm;
@@ -224,14 +248,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		setContentView(R.layout.main);
 		takeKeyEvents(true);
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-			&& checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-		) {
-			requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_EXT_STORAGE);
-		}
-
-		// REMOVED: Dialogue prompt with only option to Quit the app if !Environment.getExternalStorageDirectory().canRead()
-
 		SurfaceView main_surface = findViewById(R.id.main_surface);
 
 		main_surface.requestFocus();
@@ -239,7 +255,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		_clipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
 
 		_currentScummVMVersion = new Version(BuildConfig.VERSION_NAME);
-		Log.d(ScummVM.LOG_TAG, "Current ScummVM version being installed is: " + _currentScummVMVersion.getDescription() + " (" + _currentScummVMVersion.get() + ")");
+		Log.d(ScummVM.LOG_TAG, "Current ScummVM version running is: " + _currentScummVMVersion.getDescription() + " (" + _currentScummVMVersion.get() + ")");
 
 		// REMOVED: Since getFilesDir() is guaranteed to exist, getFilesDir().mkdirs() might be related to crashes in Android version 9+ (Pie or above, API 28+)!
 
@@ -254,6 +270,8 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		//                            so app's internal space (which would be deleted on uninstall) was set as WORLD_READABLE which is no longer supported in newer versions of Android API
 		//                            In newer APIs we can set that path as Context.MODE_PRIVATE which is the default - but this makes the files inaccessible to other apps
 
+		_scummvm = new MyScummVM(main_surface.getHolder());
+
 		//
 		// seekAndInitScummvmConfiguration() returns false if something went wrong
 		// when initializing configuration (or when seeking and trying to use an existing ini file) for ScummVM
@@ -264,8 +282,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			// We should have a valid path to a configuration file here
 
 			// Start ScummVM
-			_scummvm = new MyScummVM(main_surface.getHolder());
-
 //			Log.d(ScummVM.LOG_TAG, "CONFIG: " +  _configScummvmFile.getPath());
 //			Log.d(ScummVM.LOG_TAG, "PATH: " +  _actualScummVMDataDir.getPath());
 //			Log.d(ScummVM.LOG_TAG, "LOG: " +  _usingLogFile.getPath());
@@ -366,7 +382,26 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 	@Override
 	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-		if (requestCode == MY_PERMISSIONS_REQUEST_READ_EXT_STORAGE) {
+		if (requestCode == MY_PERMISSION_ALL) {
+			int numOfReqPermsGranted = 0;
+			// If request is cancelled, the result arrays are empty.
+			if (grantResults.length > 0) {
+				for (int iterGrantResult: grantResults) {
+					if (iterGrantResult == PackageManager.PERMISSION_GRANTED) {
+						Log.i(ScummVM.LOG_TAG, permissions[0] + " permission was granted at Runtime");
+						++numOfReqPermsGranted;
+					} else {
+						Log.i(ScummVM.LOG_TAG, permissions[0] + " permission was denied at Runtime");
+					}
+				}
+			}
+
+			if (numOfReqPermsGranted != grantResults.length) {
+				// permission denied! We won't be able to make use of functionality depending on this permission.
+				Toast.makeText(this, "Until permission is granted, some storage locations may be inaccessible for r/w!", Toast.LENGTH_SHORT)
+					.show();
+			}
+		} else if (requestCode == MY_PERMISSIONS_REQUEST_READ_EXT_STORAGE) {
 			// If request is cancelled, the result arrays are empty.
 			if (grantResults.length > 0
 				&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -375,6 +410,17 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			} else {
 				// permission denied! We won't be able to make use of functionality depending on this permission.
 				Toast.makeText(this, "Until permission is granted, some storage locations may be inaccessible!", Toast.LENGTH_SHORT)
+					.show();
+			}
+		} else if (requestCode == MY_PERMISSIONS_REQUEST_WRITE_EXT_STORAGE) {
+			// If request is cancelled, the result arrays are empty.
+			if (grantResults.length > 0
+				&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+				// permission was granted
+				Log.i(ScummVM.LOG_TAG, "Write External Storage permission was granted at Runtime");
+			} else {
+				// permission denied! We won't be able to make use of functionality depending on this permission.
+				Toast.makeText(this, "Until permission is granted, it might be impossible to write to some locations!", Toast.LENGTH_SHORT)
 					.show();
 			}
 		}
@@ -400,10 +446,10 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
-	    super.onWindowFocusChanged(hasFocus);
-	    if (hasFocus) {
-		hideSystemUI();
-	    }
+		super.onWindowFocusChanged(hasFocus);
+		if (hasFocus) {
+			hideSystemUI();
+		}
 	}
 
 
@@ -420,15 +466,15 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		// Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
 		View decorView = getWindow().getDecorView();
 		decorView.setSystemUiVisibility(
-		View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-		// Set the content to appear under the system bars so that the
-		// content doesn't resize when the system bars hide and show.
-		| View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-		| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-		| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-		// Hide the nav bar and status bar
-		| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-		| View.SYSTEM_UI_FLAG_FULLSCREEN);
+			View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+				// Set the content to appear under the system bars so that the
+				// content doesn't resize when the system bars hide and show.
+				| View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+				| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+				| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+				// Hide the nav bar and status bar
+				| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+				| View.SYSTEM_UI_FLAG_FULLSCREEN);
 	}
 
 //	// Shows the system bars by removing all the flags
@@ -466,8 +512,8 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			getSystemService(INPUT_METHOD_SERVICE);
 
 		imm.toggleSoftInputFromWindow(main_surface.getWindowToken(),
-		                              InputMethodManager.SHOW_IMPLICIT,
-		                              InputMethodManager.HIDE_IMPLICIT_ONLY);
+			InputMethodManager.SHOW_IMPLICIT,
+			InputMethodManager.HIDE_IMPLICIT_ONLY);
 	}
 
 	// Show or hide the semi-transparent keyboard btn (which is used to explicitly bring up the android keyboard).
@@ -495,8 +541,8 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			   intents, please add them here as well */
 			Intent intent =
 				new Intent(show?
-					   "tv.ouya.controller.action.SHOW_CURSOR" :
-					   "tv.ouya.controller.action.HIDE_CURSOR");
+					"tv.ouya.controller.action.SHOW_CURSOR" :
+					"tv.ouya.controller.action.HIDE_CURSOR");
 			sendBroadcast(intent);
 		}
 	}
@@ -515,17 +561,17 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			@TargetApi(Build.VERSION_CODES.CUPCAKE)
 			@Override
 			public void onGlobalLayout() {
-				    int estimatedKeyboardHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, EstimatedKeyboardDP, parentView.getResources().getDisplayMetrics());
-				    parentView.getWindowVisibleDisplayFrame(rect);
-				    int heightDiff = parentView.getRootView().getHeight() - (rect.bottom - rect.top);
-				    boolean isShown = heightDiff >= estimatedKeyboardHeight;
+				int estimatedKeyboardHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, EstimatedKeyboardDP, parentView.getResources().getDisplayMetrics());
+				parentView.getWindowVisibleDisplayFrame(rect);
+				int heightDiff = parentView.getRootView().getHeight() - (rect.bottom - rect.top);
+				boolean isShown = heightDiff >= estimatedKeyboardHeight;
 
-				    if (isShown == alreadyOpen) {
+				if (isShown == alreadyOpen) {
 					Log.i("Keyboard state", "Ignoring global layout change...");
 					return;
-				    }
-				    alreadyOpen = isShown;
-				    onKeyboardVisibilityListener.onVisibilityChanged(isShown);
+				}
+				alreadyOpen = isShown;
+				onKeyboardVisibilityListener.onVisibilityChanged(isShown);
 			}
 		});
 	}
@@ -758,10 +804,47 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		candidateOldLocationsOfScummVMConfigMap.put("(scummvm.ini) (SDL port - B)", new File(_actualScummVMDataDir, "../.config/scummvm/scummvm.ini"));
 		candidateOldLocationsOfScummVMConfigMap.put("(scummvm.ini) (SDL port - C)", new File(externalPossibleAlternateScummVMFilesDir, ".config/scummvm/scummvm.ini"));
 		candidateOldLocationsOfScummVMConfigMap.put("(scummvm.ini) (SDL port - D)", new File(externalPossibleAlternateScummVMFilesDir, "../.config/scummvm/scummvm.ini"));
+		candidateOldLocationsOfScummVMConfigMap.put("(scummvm.ini) (SDL port - E)", new File(Environment.getExternalStorageDirectory(), ".config/scummvm/scummvm.ini"));
 		candidateOldLocationsOfScummVMConfigMap.put("(scummvmrc) (version 1.8.1- or PlayStore 2.1.0) - Internal", new File(_actualScummVMDataDir, "scummvmrc"));
-		candidateOldLocationsOfScummVMConfigMap.put("(scummvmrc) (version 1.8.1- or PlayStore 2.1.0) - External", new File(externalPossibleAlternateScummVMFilesDir, "scummvmrc"));
+		candidateOldLocationsOfScummVMConfigMap.put("(scummvmrc) (version 1.8.1- or PlayStore 2.1.0) - Ext Emu", new File(externalPossibleAlternateScummVMFilesDir, "scummvmrc"));
+		candidateOldLocationsOfScummVMConfigMap.put("(scummvmrc) (version 1.8.1- or PlayStore 2.1.0) - Ext SD", new File(Environment.getExternalStorageDirectory(), "scummvmrc"));
 		candidateOldLocationsOfScummVMConfigMap.put("(.scummvmrc) (POSIX conformance) - Internal", new File(_actualScummVMDataDir, ".scummvmrc"));
-		candidateOldLocationsOfScummVMConfigMap.put("(.scummvmrc) (POSIX conformance) - External", new File(externalPossibleAlternateScummVMFilesDir, ".scummvmrc"));
+		candidateOldLocationsOfScummVMConfigMap.put("(.scummvmrc) (POSIX conformance) - Ext Emu", new File(externalPossibleAlternateScummVMFilesDir, ".scummvmrc"));
+		candidateOldLocationsOfScummVMConfigMap.put("(.scummvmrc) (POSIX conformance) - Ext SD)", new File(Environment.getExternalStorageDirectory(), ".scummvmrc"));
+
+		String[] listOfAuxExtStoragePaths = _scummvm.getAllStorageLocationsNoPermissionRequest();
+
+		int incKeyId = 0;
+		for (int incIndx = 0; incIndx + 1 < listOfAuxExtStoragePaths.length; incIndx += 2) {
+			// exclude identical matches for internal and emulated external app dir, since we take them into account below explicitly
+			if (listOfAuxExtStoragePaths[incIndx + 1].compareToIgnoreCase(_actualScummVMDataDir.getPath()) != 0
+				&& listOfAuxExtStoragePaths[incIndx + 1].compareToIgnoreCase(externalPossibleAlternateScummVMFilesDir.getPath()) != 0
+			) {
+				//
+				// Possible for Config file locations on top of paths returned by getAllStorageLocationsNoPermissionRequest
+				//
+				candidateOldLocationsOfScummVMConfigMap.put("A-" + (++incKeyId) + "-" + listOfAuxExtStoragePaths[incIndx],
+					new File(listOfAuxExtStoragePaths[incIndx + 1] + "/Android/data/" + getPackageName() + "/files/.config/scummvm/scummvm.ini"));
+				candidateOldLocationsOfScummVMConfigMap.put("A-" + (++incKeyId) + "-" + listOfAuxExtStoragePaths[incIndx],
+					new File(listOfAuxExtStoragePaths[incIndx + 1] + "/Android/data/" + getPackageName() + "/files/../.config/scummvm/scummvm.ini"));
+				candidateOldLocationsOfScummVMConfigMap.put("A-" + (++incKeyId) + "-" + listOfAuxExtStoragePaths[incIndx],
+					new File(listOfAuxExtStoragePaths[incIndx + 1] + "/scummvm.ini"));
+
+				candidateOldLocationsOfScummVMConfigMap.put("A-" + (++incKeyId) + "-" + listOfAuxExtStoragePaths[incIndx],
+					new File(listOfAuxExtStoragePaths[incIndx + 1] + "/Android/data/" + getPackageName() + "/files/scummvmrc"));
+				candidateOldLocationsOfScummVMConfigMap.put("A-" + (++incKeyId) + "-" + listOfAuxExtStoragePaths[incIndx],
+					new File(listOfAuxExtStoragePaths[incIndx + 1] + "/Android/data/" + getPackageName() + "/files/../scummvmrc"));
+				candidateOldLocationsOfScummVMConfigMap.put("A-" + (++incKeyId) + "-" + listOfAuxExtStoragePaths[incIndx],
+					new File(listOfAuxExtStoragePaths[incIndx + 1] + "/scummvmrc"));
+
+				candidateOldLocationsOfScummVMConfigMap.put("A-" + (++incKeyId) + "-" + listOfAuxExtStoragePaths[incIndx],
+					new File(listOfAuxExtStoragePaths[incIndx + 1] + "/Android/data/" + getPackageName() + "/files/.scummvmrc"));
+				candidateOldLocationsOfScummVMConfigMap.put("A-" + (++incKeyId) + "-" + listOfAuxExtStoragePaths[incIndx],
+					new File(listOfAuxExtStoragePaths[incIndx + 1] + "/Android/data/" + getPackageName() + "/files/../.scummvmrc"));
+				candidateOldLocationsOfScummVMConfigMap.put("A-" + (++incKeyId) + "-" + listOfAuxExtStoragePaths[incIndx],
+					new File(listOfAuxExtStoragePaths[incIndx + 1] + "/.scummvmrc"));
+			}
+		}
 
 		boolean scummVMConfigHandled = false;
 		Version maxOldVersionFound = new Version("0"); // dummy initializer
@@ -924,7 +1007,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		File[] defaultSaveDirFiles = defaultScummVMSavesPath.listFiles();
 		if (defaultSaveDirFiles != null) {
 			Log.d(ScummVM.LOG_TAG, "Size: "+ defaultSaveDirFiles.length);
-
+			// TODO remove debug listing of files
 			if (defaultSaveDirFiles.length > 0 ) {
 				Log.d(ScummVM.LOG_TAG, "Listing ScummVM save files in default saves path...");
 				for (File savfile : defaultSaveDirFiles) {
@@ -970,6 +1053,40 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				candidateOldLocationsOfScummVMSavesMap.put("A16", new File(externalPossibleAlternateScummVMFilesDir, "../scummvm/saves"));
 				// this was for old Android plain port
 				candidateOldLocationsOfScummVMSavesMap.put("A17", new File(Environment.getExternalStorageDirectory(), "ScummVM/Saves"));
+
+				incKeyId = 0;
+				for (int incIndx = 0; incIndx + 1 < listOfAuxExtStoragePaths.length; incIndx += 2) {
+					// exclude identical matches for internal and emulated external app dir, since we take them into account below explicitly
+					if (listOfAuxExtStoragePaths[incIndx + 1].compareToIgnoreCase(_actualScummVMDataDir.getPath()) != 0
+						&& listOfAuxExtStoragePaths[incIndx + 1].compareToIgnoreCase(externalPossibleAlternateScummVMFilesDir.getPath()) != 0
+					) {
+						//
+						// Possible for Saves dirs locations on top of paths returned by getAllStorageLocationsNoPermissionRequest
+						//
+						candidateOldLocationsOfScummVMSavesMap.put("A-" + (++incKeyId) + "-" + listOfAuxExtStoragePaths[incIndx],
+							new File(listOfAuxExtStoragePaths[incIndx + 1] + "/ScummVM/Saves"));
+						candidateOldLocationsOfScummVMSavesMap.put("A-" + (++incKeyId) + "-" + listOfAuxExtStoragePaths[incIndx],
+							new File(listOfAuxExtStoragePaths[incIndx + 1] + "/Android/data/" +  getPackageName() + "/files/.local/share/scummvm/saves"));
+						candidateOldLocationsOfScummVMSavesMap.put("A-" + (++incKeyId) + "-" + listOfAuxExtStoragePaths[incIndx],
+							new File(listOfAuxExtStoragePaths[incIndx + 1] + "/Android/data/" +  getPackageName() + "/files/.local/scummvm/saves"));
+
+						candidateOldLocationsOfScummVMSavesMap.put("A-" + (++incKeyId) + "-" + listOfAuxExtStoragePaths[incIndx],
+							new File(listOfAuxExtStoragePaths[incIndx + 1] + "/Android/data/" +  getPackageName() + "/files/saves"));
+						candidateOldLocationsOfScummVMSavesMap.put("A-" + (++incKeyId) + "-" + listOfAuxExtStoragePaths[incIndx],
+							new File(listOfAuxExtStoragePaths[incIndx + 1] + "/Android/data/" +  getPackageName() + "/files/scummvm/saves"));
+						candidateOldLocationsOfScummVMSavesMap.put("A-" + (++incKeyId) + "-" + listOfAuxExtStoragePaths[incIndx],
+							new File(listOfAuxExtStoragePaths[incIndx + 1] + "/Android/data/" +  getPackageName() + "/files/../.local/share/scummvm/saves"));
+						candidateOldLocationsOfScummVMSavesMap.put("A-" + (++incKeyId) + "-" + listOfAuxExtStoragePaths[incIndx],
+							new File(listOfAuxExtStoragePaths[incIndx + 1] + "/Android/data/" +  getPackageName() + "/files/../.local/scummvm/saves"));
+
+						candidateOldLocationsOfScummVMSavesMap.put("A-" + (++incKeyId) + "-" + listOfAuxExtStoragePaths[incIndx],
+							new File(listOfAuxExtStoragePaths[incIndx + 1] + "/Android/data/" +  getPackageName() + "/files/../saves"));
+						candidateOldLocationsOfScummVMSavesMap.put("A-" + (++incKeyId) + "-" + listOfAuxExtStoragePaths[incIndx],
+							new File(listOfAuxExtStoragePaths[incIndx + 1] + "/Android/data/" +  getPackageName() + "/files/../scummvm/saves"));
+						candidateOldLocationsOfScummVMSavesMap.put("A-" + (++incKeyId) + "-" + listOfAuxExtStoragePaths[incIndx],
+							new File(listOfAuxExtStoragePaths[incIndx + 1] + "/.scummvmrc"));
+					}
+				}
 
 				for (String oldSavesPathDescription : candidateOldLocationsOfScummVMSavesMap.keySet()) {
 					File iterCandidateScummVMSavesPath = candidateOldLocationsOfScummVMSavesMap.get(oldSavesPathDescription);
@@ -1114,12 +1231,12 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 					if (extfile.isFile()) {
 						if (extfile.getName().compareToIgnoreCase("scummvm.ini") != 0
 							&& (!containsStringEntry(filesItenary, extfile.getName())
-								|| !sideUpgrade)
+							|| !sideUpgrade)
 						) {
-								Log.d(ScummVM.LOG_TAG, "Deleting file:" + extfile.getName());
-								if (!extfile.delete()) {
-									Log.e(ScummVM.LOG_TAG, "Failed to delete file:" + extfile.getName());
-								}
+							Log.d(ScummVM.LOG_TAG, "Deleting file:" + extfile.getName());
+							if (!extfile.delete()) {
+								Log.e(ScummVM.LOG_TAG, "Failed to delete file:" + extfile.getName());
+							}
 						}
 					}
 				}

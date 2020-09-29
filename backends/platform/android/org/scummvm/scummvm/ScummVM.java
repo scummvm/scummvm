@@ -66,6 +66,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	abstract protected String[] getSysArchives();
 	abstract protected byte[] convertEncoding(String to, String from, byte[] string) throws UnsupportedEncodingException;
 	abstract protected String[] getAllStorageLocations();
+	abstract protected String[] getAllStorageLocationsNoPermissionRequest();
 
 	public ScummVM(AssetManager asset_manager, SurfaceHolder holder) {
 		_asset_manager = asset_manager;
