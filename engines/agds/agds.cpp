@@ -228,7 +228,6 @@ void AGDSEngine::resetCurrentScreen() {
 void AGDSEngine::runProcesses() {
 	for (ProcessListType::iterator i = _processes.begin(); i != _processes.end(); ) {
 		Process &process = *i;
-		process.checkTimers();
 		if (process.active()) {
 			process.run();
 			++i;

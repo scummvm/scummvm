@@ -172,7 +172,6 @@ public:
 		return _status == kStatusPassive;
 	}
 	void activate();
-	void checkTimers();
 	void done() {
 		_status = kStatusDone;
 	}
