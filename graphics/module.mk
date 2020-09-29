@@ -18,6 +18,7 @@ MODULE_OBJS := \
 	pixelformat.o \
 	primitives.o \
 	renderer.o \
+	scaler.o \
 	screen.o \
 	sjis.o \
 	surface.o \

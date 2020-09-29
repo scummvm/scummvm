@@ -157,7 +157,6 @@ protected:
 	virtual Common::WriteStream *createLogFile();
 	Backends::Log::Log *_logger;
 
-#if 0 // ResidualVM - not used
 #ifdef USE_OPENGL
 	typedef Common::Array<GraphicsMode> GraphicsModeArray;
 	GraphicsModeArray _graphicsModes;
@@ -171,13 +170,13 @@ protected:
 	 * Creates the merged graphics modes list
 	 */
 	void setupGraphicsModes();
-
-	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
-	virtual int getDefaultGraphicsMode() const override;
-	virtual bool setGraphicsMode(int mode) override;
-	virtual int getGraphicsMode() const override;
+// ResidualVM - Start
+	//virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
+	//virtual int getDefaultGraphicsMode() const override;
+	//virtual bool setGraphicsMode(int mode) override;
+	//virtual int getGraphicsMode() const override;
+// ResidualVM - End
 #endif
-#endif // ResidulVM
 protected:
 	virtual char *convertEncoding(const char *to, const char *from, const char *string, size_t length) override;
 };

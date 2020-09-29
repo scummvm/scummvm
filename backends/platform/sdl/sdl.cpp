@@ -55,9 +55,9 @@
 #include "backends/graphics3d/surfacesdl/surfacesdl-graphics3d.h" // ResidualVM specific
 
 #ifdef USE_OPENGL
-//#include "graphics/cursorman.h" // ResidualVM specific
 #include "backends/graphics3d/openglsdl/openglsdl-graphics3d.h" // ResidualVM specific
 #include "graphics/opengl/context.h" // ResidualVM specific
+#include "graphics/cursorman.h"
 #endif
 #include "graphics/renderer.h" // ResidualVM specific
 
@@ -79,14 +79,12 @@
 
 OSystem_SDL::OSystem_SDL()
 	:
-#if 0 // ResidualVM - not used
 #ifdef USE_OPENGL
 	_graphicsModes(),
 	_graphicsMode(0),
 	_firstGLMode(0),
 	_defaultSDLMode(0),
 	_defaultGLMode(0),
-#endif // ResidualVM
 #endif
 	_inited(false),
 	_initedSDL(false),

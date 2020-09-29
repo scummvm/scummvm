@@ -250,12 +250,11 @@ void registerDefaults() {
 	ConfMan.registerDefault("fullscreen", false);
 	ConfMan.registerDefault("filtering", false);
 	ConfMan.registerDefault("aspect_ratio", false);
-/* ResidualVM - not used
 	ConfMan.registerDefault("gfx_mode", "normal");
 	ConfMan.registerDefault("render_mode", "default");
 	ConfMan.registerDefault("desired_screen_aspect_ratio", "auto");
 	ConfMan.registerDefault("stretch_mode", "default");
-	ConfMan.registerDefault("shader", "default");*/
+	ConfMan.registerDefault("shader", "default");
 // ResidualVM specific start
 	ConfMan.registerDefault("show_fps", false);
 	ConfMan.registerDefault("dirtyrects", true);
@@ -275,7 +274,6 @@ void registerDefaults() {
 
 	ConfMan.registerDefault("multi_midi", false);
 	ConfMan.registerDefault("native_mt32", false);
-/* ResidualVM - not used
 	ConfMan.registerDefault("dump_midi", false);
 	ConfMan.registerDefault("enable_gs", false);
 	ConfMan.registerDefault("midi_gain", 100);
@@ -283,7 +281,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("music_driver", "auto");
 	ConfMan.registerDefault("mt32_device", "null");
 	ConfMan.registerDefault("gm_device", "null");
-	ConfMan.registerDefault("opl2lpt_parport", "null");*/
+	ConfMan.registerDefault("opl2lpt_parport", "null");
 
 	ConfMan.registerDefault("cdrom", 0);
 
@@ -303,8 +301,8 @@ void registerDefaults() {
 	ConfMan.registerDefault("object_labels", true);
 #endif
 
-/* ResidualVM - not used
 	ConfMan.registerDefault("copy_protection", false);
+/* ResidualVM - not used
 	ConfMan.registerDefault("talkspeed", 60);*/
 
 #if defined(ENABLE_SCUMM) || defined(ENABLE_GROOVIE)
