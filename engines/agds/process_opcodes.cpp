@@ -743,7 +743,7 @@ void Process::stub172() {
 }
 
 void Process::stub173() {
-	debug("stub173: delAnimations?");
+	debug("stub173: remove currentCursor");
 }
 
 void Process::stub174() {
@@ -1402,13 +1402,13 @@ void Process::stub233() {
 }
 
 void Process::stub235() {
-	int arg3 = pop();
-	int arg2 = pop();
-	int arg1 = pop();
-	debug("stub235 (fadeScreen?) %d %d %d", arg1, arg2, arg3);
-	enableUser();
-	if (_status == kStatusPassive)
-		suspend();
+	int fadeMusic = pop();
+	int fadeSound = pop();
+	int fadeScreen = pop();
+	debug("stub235 (fadeScreen) screen: %d, sound: %d music: %d", fadeScreen, fadeSound, fadeMusic);
+	_engine->getSystemVariable("screen_curtain")->setInteger(fadeScreen);
+	_engine->getSystemVariable("sound_curtain")->setInteger(fadeSound);
+	_engine->getSystemVariable("music_curtain")->setInteger(fadeMusic);
 }
 
 void Process::setCharacterNotifyVars() {
