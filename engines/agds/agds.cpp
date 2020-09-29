@@ -226,10 +226,12 @@ void AGDSEngine::resetCurrentScreen() {
 
 
 void AGDSEngine::runProcesses() {
+	bool idle = true;
 	for (ProcessListType::iterator i = _processes.begin(); i != _processes.end(); ) {
 		Process &process = *i;
 		if (process.active()) {
 			process.run();
+			idle = false;
 			++i;
 		} else if (process.finished()) {
 			debug("deleting process %s", process.getName().c_str());
@@ -239,6 +241,11 @@ void AGDSEngine::runProcesses() {
 			//debug("suspended process %s", process.getName().c_str());
 			++i;
 		}
+	}
+	if (idle && !_processes.empty()) {
+		auto & last = _processes.front();
+		last.activate();
+		last.run();
 	}
 }
 
