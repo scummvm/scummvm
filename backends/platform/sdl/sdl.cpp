@@ -49,9 +49,10 @@
 #include "backends/keymapper/hardware-input.h"
 #include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/timer/sdl/sdl-timer.h"
+#include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 #include "backends/graphics3d/surfacesdl/surfacesdl-graphics3d.h" // ResidualVM specific
-
 #ifdef USE_OPENGL
+#include "backends/graphics/openglsdl/openglsdl-graphics.h"
 #include "backends/graphics3d/openglsdl/openglsdl-graphics3d.h" // ResidualVM specific
 #include "graphics/opengl/context.h" // ResidualVM specific
 #include "graphics/cursorman.h"
@@ -233,7 +234,6 @@ void OSystem_SDL::initBackend() {
 	}
 
 	if (_graphicsManager == 0) {
-#if 0 // ResidualVM - not used
 #ifdef USE_OPENGL
 		// Setup a list with both SDL and OpenGL graphics modes. We only do
 		// this whenever the subclass did not already set up an graphics
@@ -254,7 +254,6 @@ void OSystem_SDL::initBackend() {
 				}
 			}
 		}
-#endif // ResidualVM
 #endif
 
 		if (_graphicsManager == 0) {
@@ -723,7 +722,6 @@ Common::String OSystem_SDL::getScreenshotsPath() {
 	return path;
 }
 
-#if 0 // ResidualVM - not used
 #ifdef USE_OPENGL
 
 const OSystem::GraphicsMode *OSystem_SDL::getSupportedGraphicsModes() const {
@@ -772,14 +770,14 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 		debug(1, "switching to plain SDL graphics");
 		sdlGraphicsManager->deactivateManager();
 		delete _graphicsManager;
-		_graphicsManager = sdlGraphicsManager = new SurfaceSdlGraphics3dManager(_eventSource, _window);
+		_graphicsManager = sdlGraphicsManager = new SurfaceSdlGraphicsManager(_eventSource, _window);
 
 		switchedManager = true;
 	} else if (_graphicsMode < _firstGLMode && mode >= _firstGLMode) {
 		debug(1, "switching to OpenGL graphics");
 		sdlGraphicsManager->deactivateManager();
 		delete _graphicsManager;
-		_graphicsManager = sdlGraphicsManager = new OpenGLSdlGraphics3dManager(_eventSource, _window);
+		_graphicsManager = sdlGraphicsManager = new OpenGLSdlGraphicsManager(_eventSource, _window);
 
 		switchedManager = true;
 	}
@@ -829,7 +827,7 @@ void OSystem_SDL::setupGraphicsModes() {
 	const OSystem::GraphicsMode *srcMode;
 	int defaultMode;
 
-	GraphicsManager *manager = new SurfaceSdlGraphics3dManager(_eventSource, _window);
+	GraphicsManager *manager = new SurfaceSdlGraphicsManager(_eventSource, _window);
 	srcMode = manager->getSupportedGraphicsModes();
 	defaultMode = manager->getDefaultGraphicsMode();
 	while (srcMode->name) {
@@ -872,7 +870,6 @@ void OSystem_SDL::setupGraphicsModes() {
 	}
 }
 #endif
-#endif // ResidualVM
 
 char *OSystem_SDL::convertEncoding(const char *to, const char *from, const char *string, size_t length) {
 #if SDL_VERSION_ATLEAST(1, 2, 10) && !defined(__MORPHOS__)

@@ -170,12 +170,11 @@ protected:
 	 * Creates the merged graphics modes list
 	 */
 	void setupGraphicsModes();
-// ResidualVM - Start
-	//virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
-	//virtual int getDefaultGraphicsMode() const override;
-	//virtual bool setGraphicsMode(int mode) override;
-	//virtual int getGraphicsMode() const override;
-// ResidualVM - End
+
+	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
+	virtual int getDefaultGraphicsMode() const override;
+	virtual bool setGraphicsMode(int mode) override;
+	virtual int getGraphicsMode() const override;
 #endif
 protected:
 	virtual char *convertEncoding(const char *to, const char *from, const char *string, size_t length) override;

@@ -112,6 +112,21 @@ MODULE_OBJS += \
 	vkeybd/virtual-keyboard-parser.o
 endif
 
+# OpenGL specific source files.
+ifdef USE_OPENGL
+MODULE_OBJS += \
+	graphics/opengl/context.o \
+	graphics/opengl/debug.o \
+	graphics/opengl/framebuffer.o \
+	graphics/opengl/opengl-graphics.o \
+	graphics/opengl/shader.o \
+	graphics/opengl/texture.o \
+	graphics/opengl/pipelines/clut8.o \
+	graphics/opengl/pipelines/fixed.o \
+	graphics/opengl/pipelines/pipeline.o \
+	graphics/opengl/pipelines/shader.o
+endif
+
 # SDL specific source files.
 # We cannot just check $BACKEND = sdl, as various other backends
 # derive from the SDL backend, and they all need the following files.
@@ -120,6 +135,8 @@ MODULE_OBJS += \
 	events/sdl/legacy-sdl-events.o \
 	events/sdl/sdl-events.o \
 	events/sdl/resvm-sdl-events.o \
+	graphics/sdl/sdl-graphics.o \
+	graphics/surfacesdl/surfacesdl-graphics.o \
 	graphics3d/sdl/sdl-graphics3d.o \
 	graphics3d/surfacesdl/surfacesdl-graphics3d.o \
 	mixer/sdl/sdl-mixer.o \
@@ -135,6 +152,7 @@ endif
 
 ifdef USE_OPENGL
 MODULE_OBJS += \
+	graphics/openglsdl/openglsdl-graphics.o \
 	graphics3d/openglsdl/openglsdl-graphics3d.o
 endif
 

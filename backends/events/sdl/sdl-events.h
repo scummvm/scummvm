@@ -24,6 +24,7 @@
 #define BACKEND_EVENTS_SDL_H
 
 #include "backends/platform/sdl/sdl-sys.h"
+#include "backends/graphics/sdl/sdl-graphics.h"
 #include "backends/graphics3d/sdl/sdl-graphics3d.h"
 
 #include "common/events.h"
