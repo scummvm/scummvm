@@ -1467,20 +1467,18 @@ void Process::setCharacterNotifyVars() {
 	} break;
 
 
-void Process::checkTimers() {
-	if (_timer > 0) {
-		debug("waiting for timer (%d)...", _timer);
-		--_timer;
-		if (_timer == 0)
-			activate();
-	}
-}
-
 ProcessExitCode Process::resume() {
 	_exitCode = kExitCodeDestroy;
+	if (_timer) {
+		--_timer;
+		return kExitCodeSuspend;
+	}
 
 	const Object::CodeType &code = _object->getCode();
 	while (active() && _ip < code.size()) {
+		if (_timer) {
+			return kExitCodeSuspend;
+		}
 		_lastIp = _ip;
 		uint8 op = next();
 		//debug("CODE %04x: %u", _lastIp, (uint)op);
