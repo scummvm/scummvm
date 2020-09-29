@@ -904,8 +904,8 @@ void AGDSEngine::reactivate(const Common::String &name, bool runNow) {
 		if (process.getName() == name) {
 			debug("reactivate %s %s", name.c_str(), runNow? "(now)": "");
 			process.activate();
-			if (runNow)
-				process.run();
+			// if (runNow)
+			// 	process.run();
 		}
 	}
 }
