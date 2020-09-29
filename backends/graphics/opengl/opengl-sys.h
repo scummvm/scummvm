@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 
 #include "backends/graphics/opengl/debug.h"
+#include "backends/graphics/opengl/opengl-defs.h" // ResidualVM specific
 #ifdef SDL_BACKEND
 #include "backends/platform/sdl/sdl-sys.h"
 #endif
