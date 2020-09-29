@@ -26,7 +26,6 @@
 #include "common/scummsys.h"
 
 #include "backends/graphics/opengl/debug.h"
-#include "backends/graphics/opengl/opengl-defs.h" // ResidualVM specific
 #ifdef SDL_BACKEND
 #include "backends/platform/sdl/sdl-sys.h"
 #endif
@@ -61,7 +60,10 @@
 
 #ifdef __ANDROID__
 	#include <GLES/gl.h>
-	#define USE_BUILTIN_OPENGL
+	// ResidualVM start:
+	// #define USE_BUILTIN_OPENGL
+	#include "backends/graphics/opengl/opengl-defs.h"
+	// ResidualVM end
 #else
 	#include "backends/graphics/opengl/opengl-defs.h"
 #endif
