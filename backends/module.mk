@@ -117,6 +117,7 @@ endif
 # derive from the SDL backend, and they all need the following files.
 ifdef SDL_BACKEND
 MODULE_OBJS += \
+	events/sdl/legacy-sdl-events.o \
 	events/sdl/sdl-events.o \
 	events/sdl/resvm-sdl-events.o \
 	graphics3d/sdl/sdl-graphics3d.o \

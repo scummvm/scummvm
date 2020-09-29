@@ -28,7 +28,7 @@
 #include "common/rect.h"
 #include "common/config-manager.h"
 #include "common/textconsole.h"
-//#include "graphics/scaler/aspect.h" // ResidualVM: not use
+#include "graphics/scaler/aspect.h"
 
 enum {
 	STRETCH_CENTER = 0,

@@ -26,6 +26,7 @@
 #include "common/system.h"
 #include "common/noncopyable.h"
 #include "common/keyboard.h"
+#include "common/config-manager.h"
 
 #include "graphics/mode.h"
 #include "graphics/palette.h"
@@ -59,6 +60,8 @@ public:
 	virtual void clearFocusRectangle() {}
 	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL) {}
 	virtual void setCursorPalette(const byte *colors, uint start, uint num) {}
+	int getWindowWidth() const { return 0; }
+	int getWindowHeight() const { return 0; }
 };
 
 #endif

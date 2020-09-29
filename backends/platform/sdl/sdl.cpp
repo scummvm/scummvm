@@ -44,11 +44,8 @@
 #endif
 
 #include "backends/events/default/default-events.h"
-// ResidualVM:
-// #include "backends/events/sdl/sdl-events.h"
-// ResidualVM:
-// #include "backends/events/sdl/legacy-sdl-events.h"
-#include "backends/events/sdl/resvm-sdl-events.h"
+#include "backends/events/sdl/resvm-sdl-events.h" // ResidualVM
+#include "backends/events/sdl/legacy-sdl-events.h"
 #include "backends/keymapper/hardware-input.h"
 #include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/timer/sdl/sdl-timer.h"
