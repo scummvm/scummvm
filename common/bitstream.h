@@ -302,7 +302,7 @@ private:
 	uint32 _pos;
 	DisposeAfterUse::Flag _disposeMemory;
 	bool _eos;
-
+/** @overload */
 public:
 	BitStreamMemoryStream(const byte *dataPtr, uint32 dataSize, DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO) :
 		_ptrOrig(dataPtr),

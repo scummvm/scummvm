@@ -55,9 +55,9 @@ class SeekableReadStream;
 class ArchiveMember {
 public:
 	virtual ~ArchiveMember() { }
-	virtual SeekableReadStream *createReadStream() const = 0;
-	virtual String getName() const = 0;
-	virtual String getDisplayName() const { return getName(); }
+	virtual SeekableReadStream *createReadStream() const = 0; /*!< Create a read stream. */
+	virtual String getName() const = 0; /*!< Get the name of a read stream. */
+	virtual String getDisplayName() const { return getName(); } /*!< Get display name of a read stream. */
 };
 
 typedef SharedPtr<ArchiveMember> ArchiveMemberPtr;
@@ -84,8 +84,8 @@ class GenericArchiveMember : public ArchiveMember {
 	const Archive *_parent;
 	const String _name;
 public:
-	GenericArchiveMember(const String &name, const Archive *parent);
-	String getName() const;
+	GenericArchiveMember(const String &name, const Archive *parent); /*!< Create a generic archive member. */
+	String getName() const; /*!< Get the name of a generic archive member. */
 	SeekableReadStream *createReadStream() const;
 };
 

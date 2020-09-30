@@ -305,6 +305,13 @@ void sort(T *first, T *last) {
 	sort(first, last, Less<T>());
 }
 
+/**
+ * Simple sorting function, modeled after std::sort.
+ *
+ * @param[in] first First element to sort.
+ * @param[in] last  Last element to sort.
+ */
+
 template<class T>
 void sort(T first, T last) {
 	sort(first, last, Less<typename T::ValueType>());

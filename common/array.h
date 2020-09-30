@@ -140,6 +140,7 @@ public:
 			insert_aux(end(), &element, &element + 1);
 	}
 
+    /** Append an element to the end of the array. */
 	void push_back(const Array<T> &array) {
 		if (_size + array.size() <= _capacity) {
 			uninitialized_copy(array.begin(), array.end(), end());
