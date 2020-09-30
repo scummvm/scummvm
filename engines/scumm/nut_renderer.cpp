@@ -32,6 +32,7 @@ NutRenderer::NutRenderer(ScummEngine *vm, const char *filename) :
 	_vm(vm),
 	_numChars(0),
 	_maxCharSize(0),
+	_fontHeight(0),
 	_charBuffer(0),
 	_decodedData(0) {
 	memset(_chars, 0, sizeof(_chars));
@@ -125,8 +126,8 @@ void NutRenderer::loadFont(const char *filename) {
 	for (l = 0; l < _numChars; l++) {
 		offset += READ_BE_UINT32(dataSrc + offset + 4) + 16;
 		int width = READ_LE_UINT16(dataSrc + offset + 14);
-		int height = READ_LE_UINT16(dataSrc + offset + 16);
-		int size = width * height;
+		_fontHeight = READ_LE_UINT16(dataSrc + offset + 16);
+		int size = width * _fontHeight;
 		decodedLength += size;
 		if (size > _maxCharSize)
 			_maxCharSize = size;

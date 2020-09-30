@@ -35,11 +35,11 @@ protected:
 	bool _original;
 
 
-	int getStringWidth(const char *str);
-	int getStringHeight(const char *str);
+	int getStringWidth(const char *str, uint numBytesMax);
+	int getStringHeight(const char *str, uint numBytesMax);
 	int draw2byte(byte *buffer, int dst_width, int x, int y, int idx);
 	int drawChar(byte *buffer, int dst_width, int x, int y, byte chr);
-	void drawSubstring(const char *str, byte *buffer, int dst_width, int x, int y);
+	void drawSubstring(const char *str, uint numBytesMax, byte *buffer, int dst_width, int x, int y);
 
 public:
 	SmushFont(ScummEngine *vm, const char *filename, bool use_original_colors, bool new_colors);
