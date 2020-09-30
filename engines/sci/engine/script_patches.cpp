@@ -1735,9 +1735,35 @@ static const uint16 fanmadePatchDemoQuestInfiniteLoop[] = {
 	PATCH_END
 };
 
+// This patch is for a bug that first appeared in the LSL3 volume dialog and was
+//  then copied into the templates included with SCI Studio and SCI Companion,
+//  causing it to appear in fan games. See larry3SignatureVolumeSlider.
+//
+// Applies to: Fan games built with the SCI Studio / SCI Companion SCI0 template
+// Responsible method: TheMenuBar:handleEvent
+static const uint16 fangameSignatureVolumeSlider[] = {
+	0x39, SIG_SELECTOR8(doit),       // pushi doit
+	SIG_ADDTOOFFSET(+1),             // push1 [ opcode 79 instead of 78 in some games ]
+	SIG_ADDTOOFFSET(+1),             // push2 [ opcode 7b instead of 7a in some games ]
+	SIG_MAGICDWORD,
+	0x39, 0x08,                      // pushi 08 [ volume ]
+	0x8d, 0x03,                      // lst 03   [ uninitialized variable ]
+	0x43, 0x31, 0x04,                // callk DoSound 04 [ set volume and return previous ]
+	SIG_END
+};
+
+static const uint16 fangamePatchVolumeSlider[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x39, 0x01,                      // pushi 01
+	0x38, PATCH_UINT16(0x0008),      // pushi 0008 [ volume ]
+	0x43, 0x31, 0x02,                // callk DoSound 02 [ return volume ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                  patch
 static const SciScriptPatcherEntry fanmadeSignatures[] = {
 	{  true,   994, "Cascade Quest: fix auto-saving",              1, fanmadeSignatureCascadeQuestFixAutoSaving, fanmadePatchCascadeQuestFixAutoSaving },
+	{  true,   997, "SCI Template: fix volume slider",             1, fangameSignatureVolumeSlider,              fangamePatchVolumeSlider },
 	{  true,   999, "Demo Quest: infinite loop on typo",           1, fanmadeSignatureDemoQuestInfiniteLoop,     fanmadePatchDemoQuestInfiniteLoop },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
