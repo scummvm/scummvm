@@ -92,12 +92,12 @@ Walk::~Walk() { // CHECKED
 	clearBackground();
 	reset();
 	for (int i = 0; i < 8; ++i) {
-		free(_leg1[i]);
-		free(_leg2[i]);
-		free(_off1[i]);
-		free(_off2[i]);
-		free(_offleg1[i]);
-		free(_offleg2[i]);
+		delete[] _leg1[i];
+		delete[] _leg2[i];
+		delete[] _off1[i];
+		delete[] _off2[i];
+		delete[] _offleg1[i];
+		delete[] _offleg2[i];
 
 		_leg1[i] = nullptr;
 		_leg2[i] = nullptr;
@@ -510,7 +510,7 @@ int Walk::sub_423600(Point p) {
 
 		double v12 = angle(p, _bkg1[v11], _bkg1[v31]);
 		if (p == _bkg1[v11] || p == _bkg1[v31]) {
-			free(v4);
+			delete[] v4;
 			return i;
 		}
 
@@ -522,7 +522,7 @@ int Walk::sub_423600(Point p) {
 
 			v12 += angle(p, _bkg1[v16], _bkg1[v32]);
 			if (p == _bkg1[v16] || p == _bkg1[v32]) {
-				free(v4);
+				delete[] v4;
 				return i;
 			}
 		}
@@ -530,7 +530,7 @@ int Walk::sub_423600(Point p) {
 		int v19 = commonPoint(v4[k - 1], v4[k]);
 		int v20 = commonPoint(v4[k], v4[0]);
 
-		free(v4);
+		delete[] v4;
 
 		double v23 = angle(p, _bkg1[v19], _bkg2[v20]);
 		v12 += v23;
