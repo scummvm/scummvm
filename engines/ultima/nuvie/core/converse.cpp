@@ -121,8 +121,10 @@ Converse::~Converse() {
 void Converse::reset() {
 	delete conv_i;
 	conv_i = NULL;
-	set_input(""); // delete
-	set_output(""); // clear output
+	set_input("");	// delete
+	set_output("");	// clear output
+	_name = "";		// clear name
+
 	if (script) {
 		delete script;
 		script = NULL;
