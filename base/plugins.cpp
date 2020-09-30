@@ -271,7 +271,7 @@ void PluginManager::addPluginProvider(PluginProvider *pp) {
 	_providers.push_back(pp);
 }
 
-Plugin *PluginManager::giveEngineFromMetaEngine(const Plugin *plugin) {
+Plugin *PluginManager::getEngineFromMetaEngine(const Plugin *plugin) {
 	assert(plugin->getType() == PLUGIN_TYPE_METAENGINE);
 
 	Plugin *enginePlugin = nullptr;
@@ -305,7 +305,7 @@ Plugin *PluginManager::giveEngineFromMetaEngine(const Plugin *plugin) {
 	return nullptr;
 }
 
-Plugin *PluginManager::giveMetaEngineFromEngine(const Plugin *plugin) {
+Plugin *PluginManager::getMetaEngineFromEngine(const Plugin *plugin) {
 	assert(plugin->getType() == PLUGIN_TYPE_ENGINE);
 
 	Plugin *metaEngine = nullptr;

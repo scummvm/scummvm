@@ -347,7 +347,7 @@ public:
 	 *
 	 * @return A plugin of type METAENGINE.
 	 */
-	Plugin *giveMetaEngineFromEngine(const Plugin *plugin);
+	Plugin *getMetaEngineFromEngine(const Plugin *plugin);
 
 	/**
 	 * A method which takes in a plugin of type METAENGINE,
@@ -359,7 +359,7 @@ public:
 	 *
 	 * @return A plugin of type ENGINE.
 	 */
-	Plugin *giveEngineFromMetaEngine(const Plugin *plugin);
+	Plugin *getEngineFromMetaEngine(const Plugin *plugin);
 
 	// Functions used by the uncached PluginManager
 	virtual void init()	{}
