@@ -93,6 +93,7 @@ OSystem_SDL::OSystem_SDL()
 	_eventSource(0),
 	_eventSourceWrapper(nullptr),
 	_window(0) {
+		_gfxManagerState = {};
 }
 
 OSystem_SDL::~OSystem_SDL() {
@@ -105,7 +106,13 @@ OSystem_SDL::~OSystem_SDL() {
 	delete _savefileManager;
 	_savefileManager = 0;
 	if (_graphicsManager) {
-		dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)->deactivateManager();
+// ResidualVM start:
+		if (dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)) {
+			dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)->deactivateManager();
+		} else {
+			dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->deactivateManager();
+		}
+// ResidualVM end
 	}
 	delete _graphicsManager;
 	_graphicsManager = 0;
@@ -257,7 +264,14 @@ void OSystem_SDL::initBackend() {
 #endif
 
 		if (_graphicsManager == 0) {
-			_graphicsManager = dynamic_cast<GraphicsManager *>(new SurfaceSdlGraphics3dManager(_eventSource, _window)); // ResidualVM specific
+// ResidualVM start:
+#ifdef USE_OPENGL
+			_graphicsManager = new OpenGLSdlGraphicsManager(_eventSource, _window);
+			_graphicsMode = _firstGLMode;
+#else
+			_graphicsManager = new SurfaceSdlGraphicsManager(_eventSource, _window);
+#endif
+// ResidualVM end
 		}
 	}
 
@@ -296,7 +310,13 @@ void OSystem_SDL::initBackend() {
 	// so the virtual keyboard can be initialized, but we have to add the
 	// graphics manager as an event observer after initializing the event
 	// manager.
-	dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)->activateManager();
+// ResidualVM start:
+	if (dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)) {
+		dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)->activateManager();
+	} else {
+		dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->activateManager();
+	}
+// ResidualVM end
 }
 
 // ResidualVM specific code - Start
@@ -381,7 +401,13 @@ void OSystem_SDL::detectAntiAliasingSupport() {
 
 void OSystem_SDL::engineInit() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)->unlockWindowSize();
+// ResidualVM start:
+	if (dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)) {
+		dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)->unlockWindowSize();
+	} else {
+		dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->unlockWindowSize();
+	}
+// ResidualVM end
 	// Disable screen saver when engine starts
 	SDL_DisableScreenSaver();
 #endif
@@ -403,7 +429,13 @@ void OSystem_SDL::engineInit() {
 
 void OSystem_SDL::engineDone() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)->unlockWindowSize();
+// ResidualVM start:
+	if (dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)) {
+		dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)->unlockWindowSize();
+	} else {
+		dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->unlockWindowSize();
+	}
+// ResidualVM end
 	SDL_EnableScreenSaver();
 #endif
 #ifdef USE_TASKBAR
@@ -489,9 +521,17 @@ void OSystem_SDL::setupScreen(uint screenW, uint screenH, bool fullscreen, bool 
 		switchedManager = true;
 	}
 
+	if (dynamic_cast<SdlGraphicsManager *>(_graphicsManager)) {
+		_gfxManagerState = dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->getState();
+	}
+
 	if (switchedManager) {
-		SdlGraphics3dManager *sdlGraphicsManager = dynamic_cast<SdlGraphics3dManager *>(_graphicsManager);
-		sdlGraphicsManager->deactivateManager();
+		SdlGraphics3dManager *sdlGraphicsManager;
+		if (dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)) {
+			dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)->deactivateManager();
+		} else {
+			dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->deactivateManager();
+		}
 		delete _graphicsManager;
 
 		if (accel3d) {
@@ -510,16 +550,6 @@ Common::Array<uint> OSystem_SDL::getSupportedAntiAliasingLevels() const {
 }
 #endif
 
-void OSystem_SDL::launcherInitSize(uint w, uint h) {
-	Common::String rendererConfig = ConfMan.get("renderer");
-	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
-	Graphics::RendererType matchingRendererType = Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
-
-	bool fullscreen = ConfMan.getBool("fullscreen");
-
-	setupScreen(w, h, fullscreen, matchingRendererType != Graphics::kRendererTypeTinyGL);
-}
-
 // End of ResidualVM specific code
 
 void OSystem_SDL::quit() {
@@ -535,8 +565,15 @@ void OSystem_SDL::fatalError() {
 Common::KeymapArray OSystem_SDL::getGlobalKeymaps() {
 	Common::KeymapArray globalMaps = BaseBackend::getGlobalKeymaps();
 
-	SdlGraphics3dManager *graphicsManager = dynamic_cast<SdlGraphics3dManager *>(_graphicsManager);
-	globalMaps.push_back(graphicsManager->getKeymap());
+// ResidualVM start:
+	Common::Keymap *keymap;
+	if (dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)) {
+		keymap = dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)->getKeymap();
+	} else {
+		keymap = dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->getKeymap();
+	}
+	globalMaps.push_back(keymap);
+// ResidualVM end
 
 	return globalMaps;
 }
@@ -745,6 +782,52 @@ int OSystem_SDL::getDefaultGraphicsMode() const {
 }
 
 bool OSystem_SDL::setGraphicsMode(int mode) {
+	// ResidualVM start:
+	if (dynamic_cast<OpenGLSdlGraphics3dManager *>(_graphicsManager) ||
+		dynamic_cast<SurfaceSdlGraphics3dManager *>(_graphicsManager)) {
+		if (dynamic_cast<OpenGLSdlGraphics3dManager *>(_graphicsManager)) {
+			dynamic_cast<OpenGLSdlGraphics3dManager *>(_graphicsManager)->deactivateManager();
+		}
+		if (dynamic_cast<SurfaceSdlGraphics3dManager *>(_graphicsManager)) {
+			dynamic_cast<SurfaceSdlGraphics3dManager *>(_graphicsManager)->deactivateManager();
+		}
+		delete _graphicsManager;
+
+		SdlGraphicsManager *sdlGraphicsManager = nullptr;
+		if (mode < _firstGLMode) {
+			debug(1, "switching to plain SDL graphics");
+			_graphicsManager = sdlGraphicsManager = new SurfaceSdlGraphicsManager(_eventSource, _window);
+		} else if (mode >= _firstGLMode) {
+			debug(1, "switching to OpenGL graphics");
+			_graphicsManager = sdlGraphicsManager = new OpenGLSdlGraphicsManager(_eventSource, _window);
+		}
+
+		_graphicsMode = mode;
+
+		assert(sdlGraphicsManager);
+		sdlGraphicsManager->activateManager();
+
+		// This failing will probably have bad consequences...
+		if (!sdlGraphicsManager->setState(_gfxManagerState)) {
+			return false;
+		}
+
+		// Next setup the cursor again
+		CursorMan.pushCursor(0, 0, 0, 0, 0, 0);
+		CursorMan.popCursor();
+
+		// Next setup cursor palette if needed
+		if (_graphicsManager->getFeatureState(kFeatureCursorPalette)) {
+			CursorMan.pushCursorPalette(0, 0, 0);
+			CursorMan.popCursorPalette();
+		}
+
+		_graphicsManager->beginGFXTransaction();
+		// Oh my god if this failed the client code might just explode.
+		return _graphicsManager->setGraphicsMode(_graphicsModeIds[mode]);
+	}
+	// ResidualVM end
+
 	if (_graphicsModes.empty()) {
 		return _graphicsManager->setGraphicsMode(mode);
 	}

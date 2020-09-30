@@ -134,8 +134,7 @@ done
 # Default settings
 #
 #ResidualVM defaults: sdlnet=no libcurl=no flac=no seq_midi=no sndio=no timidity=no
-# a52=no faad=no fluidsynth=no mt32emu=no lua=no build_scalers=no
-# build_hq_scalers=no nuked_opl=no tts=no osxdockplugin=no discord=no
+# a52=no faad=no fluidsynth=no mt32emu=no lua=no nuked_opl=no tts=no osxdockplugin=no discord=no
 #
 # Default lib behavior yes/no/auto
 _sdl=no
@@ -189,8 +188,8 @@ _verbose_build=no
 _text_console=no
 _mt32emu=no
 _lua=no
-_build_scalers=no
-_build_hq_scalers=no
+_build_scalers=yes
+_build_hq_scalers=yes
 _enable_prof=no
 _enable_asan=no
 _enable_tsan=no

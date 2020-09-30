@@ -45,7 +45,7 @@ SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *source, SdlWindow *window
 }
 
 void SdlGraphicsManager::activateManager() {
-	_eventSource->setGraphicsManager(dynamic_cast<SdlGraphics3dManager *>(this));
+	_eventSource->setGraphicsManager(this);
 
 	// Register the graphics manager as a event observer
 	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);

@@ -97,7 +97,6 @@ public:
 	virtual void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) override;
 	Common::Array<uint> getSupportedAntiAliasingLevels() const override;
 #endif
-	virtual void launcherInitSize(uint w, uint h) override;
 	// ResidualVM - End
 
 protected:
@@ -131,6 +130,8 @@ protected:
 	 * The SDL output window.
 	 */
 	SdlWindow *_window;
+
+	SdlGraphicsManager::State _gfxManagerState; // ResidualVM
 
 	// ResidualVM specific code - start
 #ifdef USE_OPENGL

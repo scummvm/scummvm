@@ -270,6 +270,9 @@ bool ResVmSdlEventSource::handleKbdMouse(Common::Event &event) {
 
 	updateKbdMouse();
 
+	if (!dynamic_cast<SdlGraphics3dManager *>(_graphicsManager))
+		return false;
+
 	if (_km.x != oldKmX || _km.y != oldKmY) {
 		SdlGraphics3dManager *graphicsManager = dynamic_cast<SdlGraphics3dManager *>(_graphicsManager);
 

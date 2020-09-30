@@ -412,7 +412,6 @@ void GUIErrorMessage(const Common::U32String &msg, const char *url) {
 	g_system->beginGFXTransaction();
 		initCommonGFX();
 		g_system->initSize(320, 200);
-		g_system->launcherInitSize(640, 480);//ResidualVM specific
 	if (g_system->endGFXTransaction() == OSystem::kTransactionSuccess) {
 		if (url) {
 			GUI::MessageDialogWithURL dialog(msg, url);

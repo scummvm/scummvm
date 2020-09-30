@@ -463,11 +463,6 @@ Common::KeymapperDefaultBindings *OSystem_Android::getKeymapperDefaultBindings()
 	return keymapperDefaultBindings;
 }
 
-// ResidualVM specific method
-void OSystem_Android::launcherInitSize(uint w, uint h) {
-	dynamic_cast<AndroidGraphicsManager *>(_graphicsManager)->setupScreen(w, h, true, true, false);
-}
-
 uint32 OSystem_Android::getMillis(bool skipRecord) {
 	timeval curTime;
 

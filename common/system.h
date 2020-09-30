@@ -860,15 +860,6 @@ public:
 	virtual void initSizeHint(const Graphics::ModeList &modes) {}
  
 	/**
-	 * !!! ResidualVM specific method !!!
-	 * Set the size of the launcher virtual screen.
-	 *
-	 * @param width		the new virtual screen width
-	 * @param height	the new virtual screen height
-	 */
-	virtual void launcherInitSize(uint width, uint height) {};
-
-	/**
 	 * !!! Not used in ResidualVM !!!
 	 *
 	 * Return an int value which is changed whenever any screen

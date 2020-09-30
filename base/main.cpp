@@ -159,8 +159,7 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 	Common::Error err = Common::kNoError;
 	Engine *engine = 0;
 
-// Disabled in ResidualVM:
-#if 0//defined(SDL_BACKEND) && defined(USE_OPENGL) && defined(USE_RGB_COLOR)
+#if defined(SDL_BACKEND) && defined(USE_OPENGL) && defined(USE_RGB_COLOR)
 	// HACK: We set up the requested graphics mode setting here to allow the
 	// backend to switch from Surface SDL to OpenGL if necessary. This is
 	// needed because otherwise the g_system->getSupportedFormats might return
@@ -328,7 +327,6 @@ static void setupGraphics(OSystem &system) {
 		system.setGraphicsMode(ConfMan.get("gfx_mode").c_str());
 
 		system.initSize(320, 200);
-		system.launcherInitSize(640, 480); //ResidualVM specific
 
 		if (ConfMan.hasKey("aspect_ratio"))
 			system.setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));

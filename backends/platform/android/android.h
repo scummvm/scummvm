@@ -193,7 +193,6 @@ public:
 	virtual char *convertEncoding(const char *to, const char *from, const char *string, size_t length);
 
 	// ResidualVM specific method
-	virtual void launcherInitSize(uint w, uint h);
 	void updateEventScale(const GLESBaseTexture *tex);
 	TouchControls* getTouchControls() { return &_touchControls; }
 };
