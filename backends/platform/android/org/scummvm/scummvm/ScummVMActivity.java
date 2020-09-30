@@ -904,10 +904,10 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 						//          and old version found is lower than 2.2.1
 						//       Then: replace our current config ini and remove the recovered ini from the aux external storage
 						if ((tmpOldVersionFound.compareTo(maxOldVersionFound) > 0)
-						     || (existingVersionFoundInScummVMDataDir.compareTo(version2_2_1_forPatch) == 0
+						     || (existingConfigInScummVMDataDirReplacedOnce == false
+						         && existingVersionFoundInScummVMDataDir.compareTo(version2_2_1_forPatch) == 0
 						         && tmpOldVersionFound.compareTo(version2_2_1_forPatch) < 0
-						         && oldConfigFileDescription.startsWith("A-")
-						         && existingConfigInScummVMDataDirReplacedOnce == false)
+						         && oldConfigFileDescription.startsWith("A-"))
 						) {
 							maxOldVersionFound = tmpOldVersionFound;
 							scummVMConfigHandled = false; // invalidate the handled flag, since we found a new great(er) version so we should re-use that one
@@ -1047,11 +1047,11 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			//       Then: Scan for previous usable ScummVM folder (it will still only copy the larger one found)
 			boolean scanOnlyInAuxExternalStorage = false;
 			if (defaultSaveDirFiles.length == 0
-			    || (existingVersionFoundInScummVMDataDir.compareTo(version2_2_1_forPatch) == 0
-			        && existingConfigInScummVMDataDirReplacedOnce == true)
+			    || (existingConfigInScummVMDataDirReplacedOnce == true
+			        && existingVersionFoundInScummVMDataDir.compareTo(version2_2_1_forPatch) == 0)
 			) {
-				if (existingVersionFoundInScummVMDataDir.compareTo(version2_2_1_forPatch) == 0
-					&& existingConfigInScummVMDataDirReplacedOnce == true) {
+				if (existingConfigInScummVMDataDirReplacedOnce == true
+					&& existingVersionFoundInScummVMDataDir.compareTo(version2_2_1_forPatch) == 0) {
 					scanOnlyInAuxExternalStorage = true;
 				}
 
