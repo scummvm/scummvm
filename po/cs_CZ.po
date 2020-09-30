@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-09-13 22:06+0100\n"
+"POT-Creation-Date: 2020-10-01 01:55+0200\n"
 "PO-Revision-Date: 2020-09-26 12:37+0000\n"
 "Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -268,7 +268,7 @@ msgid "Engine"
 msgstr "Jádro"
 
 #: gui/editgamedialog.cpp:196 gui/options.cpp:1567 gui/options.cpp:1698
-#: backends/graphics/sdl/sdl-graphics.cpp:365
+#: backends/graphics/sdl/sdl-graphics.cpp:368
 #: backends/platform/ds/arm9/source/dsoptions.cpp:97
 msgid "Graphics"
 msgstr "Obraz"
@@ -554,7 +554,7 @@ msgid "Seventh-order"
 msgstr "Interpolace sedmého řádu"
 
 #. I18N: Button to reset keymap mappings to defaults
-#: gui/fluidsynth-dialog.cpp:151 backends/keymapper/remap-widget.cpp:314
+#: gui/fluidsynth-dialog.cpp:151 backends/keymapper/remap-widget.cpp:319
 msgid "Reset"
 msgstr "Resetovat"
 
@@ -585,31 +585,29 @@ msgstr "Interakce"
 msgid "Close"
 msgstr "Zavřít"
 
-#: gui/gui-manager.cpp:137 engines/metaengine.cpp:112
+#: gui/gui-manager.cpp:137 engines/metaengine.cpp:108
 #: backends/platform/symbian/src/SymbianActions.cpp:40
 #: engines/dragons/detection.cpp:277 engines/glk/scott/scott.cpp:412
-#: engines/griffon/detection.cpp:118
-#: engines/wintermute/keymapper_tables.h:1011
+#: engines/griffon/detection.cpp:129 engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
 #: engines/wintermute/keymapper_tables.h:1409
 #: engines/wintermute/keymapper_tables.h:1639
 msgid "Up"
 msgstr "Nahoru"
 
-#: gui/gui-manager.cpp:142 engines/metaengine.cpp:117
+#: gui/gui-manager.cpp:142 engines/metaengine.cpp:113
 #: backends/platform/symbian/src/SymbianActions.cpp:41
 #: engines/dragons/detection.cpp:283 engines/glk/scott/scott.cpp:412
-#: engines/griffon/detection.cpp:124
-#: engines/wintermute/keymapper_tables.h:1017
+#: engines/griffon/detection.cpp:135 engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
 #: engines/wintermute/keymapper_tables.h:1415
 #: engines/wintermute/keymapper_tables.h:1645
 msgid "Down"
 msgstr "Dolů"
 
-#: gui/gui-manager.cpp:147 engines/metaengine.cpp:122
+#: gui/gui-manager.cpp:147 engines/metaengine.cpp:118
 #: backends/platform/symbian/src/SymbianActions.cpp:42
-#: engines/dragons/detection.cpp:289 engines/griffon/detection.cpp:130
+#: engines/dragons/detection.cpp:289 engines/griffon/detection.cpp:141
 #: engines/wintermute/keymapper_tables.h:1023
 #: engines/wintermute/keymapper_tables.h:1397
 #: engines/wintermute/keymapper_tables.h:1505
@@ -617,9 +615,9 @@ msgstr "Dolů"
 msgid "Left"
 msgstr "Doleva"
 
-#: gui/gui-manager.cpp:152 engines/metaengine.cpp:127
+#: gui/gui-manager.cpp:152 engines/metaengine.cpp:123
 #: backends/platform/symbian/src/SymbianActions.cpp:43
-#: engines/dragons/detection.cpp:295 engines/griffon/detection.cpp:136
+#: engines/dragons/detection.cpp:295 engines/griffon/detection.cpp:147
 #: engines/wintermute/keymapper_tables.h:1029
 #: engines/wintermute/keymapper_tables.h:1403
 #: engines/wintermute/keymapper_tables.h:1513
@@ -983,7 +981,7 @@ msgstr "Speciální režimy chvění podporované některými hrami"
 msgid "Stretch mode:"
 msgstr "Režim protažení:"
 
-#: gui/options.cpp:1258 backends/graphics/sdl/sdl-graphics.cpp:356
+#: gui/options.cpp:1258 backends/graphics/sdl/sdl-graphics.cpp:359
 msgid "Fullscreen mode"
 msgstr "Režim celé obrazovky"
 
@@ -1809,28 +1807,28 @@ msgstr "Zadejte popis pro pozici %d:"
 msgid "Select a Theme"
 msgstr "Vyberte Vzhled"
 
-#: gui/ThemeEngine.cpp:271
+#: gui/ThemeEngine.cpp:276
 msgid "Disabled GFX"
 msgstr "GFX zakázáno"
 
-#: gui/ThemeEngine.cpp:271
+#: gui/ThemeEngine.cpp:276
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "GFX zakázáno"
 
-#: gui/ThemeEngine.cpp:272
+#: gui/ThemeEngine.cpp:277
 msgid "Standard renderer"
 msgstr "Standardní vykreslovač"
 
-#: gui/ThemeEngine.cpp:272 engines/scumm/dialogs.cpp:663
+#: gui/ThemeEngine.cpp:277 engines/scumm/dialogs.cpp:663
 msgid "Standard"
 msgstr "Standardní"
 
-#: gui/ThemeEngine.cpp:274
+#: gui/ThemeEngine.cpp:279
 msgid "Antialiased renderer"
 msgstr "Vykreslovač s vyhlazenými hranami"
 
-#: gui/ThemeEngine.cpp:274
+#: gui/ThemeEngine.cpp:279
 msgid "Antialiased"
 msgstr "S vyhlazenými hranami"
 
@@ -2015,7 +2013,7 @@ msgstr "Měsíčně"
 msgid "<Bad value>"
 msgstr "<Špatná hodnota>"
 
-#: engines/advancedDetector.cpp:139
+#: engines/advancedDetector.cpp:178
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr ""
 "Rozpoznána nelegální kopie hry. V těchto případech žádnou podporu nenabízíme"
@@ -2063,11 +2061,10 @@ msgstr "~N~ávrat do Spouštěče"
 #: engines/neverhood/menumodule.cpp:890 engines/pegasus/pegasus.cpp:374
 #: engines/prince/saveload.cpp:55 engines/sci/engine/guest_additions.cpp:698
 #: engines/sci/engine/kfile.cpp:1074 engines/sherlock/scalpel/scalpel.cpp:1250
-#: engines/sherlock/tattoo/widget_files.cpp:75
-#: engines/startrek/saveload.cpp:43 engines/toltecs/menu.cpp:292
-#: engines/toon/toon.cpp:3362 engines/tsage/scenes.cpp:599
-#: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
-#: engines/zvision/file/save_manager.cpp:49
+#: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
+#: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
+#: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
+#: engines/xeen/saves.cpp:277 engines/zvision/file/save_manager.cpp:49
 msgid "Save game:"
 msgstr "Uložit hru:"
 
@@ -2082,14 +2079,13 @@ msgstr "Uložit hru:"
 #: engines/lab/savegame.cpp:243 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/neverhood/menumodule.cpp:890 engines/parallaction/saveload.cpp:209
 #: engines/pegasus/pegasus.cpp:374 engines/prince/saveload.cpp:55
-#: engines/sci/engine/guest_additions.cpp:699
-#: engines/sci/engine/kfile.cpp:1074 engines/scumm/dialogs.cpp:181
-#: engines/sherlock/scalpel/scalpel.cpp:1250
-#: engines/sherlock/tattoo/widget_files.cpp:75
-#: engines/startrek/saveload.cpp:43 engines/toltecs/menu.cpp:292
-#: engines/toon/toon.cpp:3362 engines/tsage/scenes.cpp:599
-#: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
-#: engines/zvision/detection.cpp:215 engines/zvision/file/save_manager.cpp:49
+#: engines/sci/engine/guest_additions.cpp:699 engines/sci/engine/kfile.cpp:1074
+#: engines/scumm/dialogs.cpp:181 engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
+#: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
+#: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
+#: engines/xeen/saves.cpp:277 engines/zvision/detection.cpp:215
+#: engines/zvision/file/save_manager.cpp:49
 msgid "Save"
 msgstr "Uložit"
 
@@ -2183,7 +2179,7 @@ msgstr ""
 "abyste mohli poslouchat hudbu ve hře.\n"
 "Pro podrobnosti si přečtěte README."
 
-#: engines/engine.cpp:539 engines/metaengine.cpp:331 engines/savestate.cpp:81
+#: engines/engine.cpp:539 engines/metaengine.cpp:327 engines/savestate.cpp:81
 #: engines/sky/detection.cpp:316 engines/xeen/saves.cpp:290
 msgid "Autosave"
 msgstr "Automatické ukládání"
@@ -2241,31 +2237,31 @@ msgstr ""
 msgid "Matched game IDs for the %s engine:"
 msgstr "Odpovídající herní ID pro engine %s:"
 
-#: engines/metaengine.cpp:59
+#: engines/metaengine.cpp:55
 msgid "Default game keymap"
 msgstr "Výchozí rozložení kláves"
 
-#: engines/metaengine.cpp:63 backends/platform/maemo/maemo.cpp:174
+#: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:174
 #: backends/platform/symbian/src/SymbianActions.cpp:44
 #: engines/hdb/detection.cpp:303 engines/wintermute/keymapper_tables.h:43
 #: engines/zvision/detection.cpp:136
 msgid "Left Click"
 msgstr "Levé Kliknutí"
 
-#: engines/metaengine.cpp:69 backends/platform/maemo/maemo.cpp:178
+#: engines/metaengine.cpp:65 backends/platform/maemo/maemo.cpp:178
 #: engines/wintermute/keymapper_tables.h:249
 #: engines/wintermute/keymapper_tables.h:293
 #: engines/wintermute/keymapper_tables.h:1651
 msgid "Middle Click"
 msgstr "Kliknutí prostředním tlačítkem"
 
-#: engines/metaengine.cpp:74 backends/platform/maemo/maemo.cpp:182
+#: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:182
 #: backends/platform/symbian/src/SymbianActions.cpp:45
 #: engines/wintermute/keymapper_tables.h:49 engines/zvision/detection.cpp:142
 msgid "Right Click"
 msgstr "Pravé kliknutí"
 
-#: engines/metaengine.cpp:80
+#: engines/metaengine.cpp:76
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: engines/hdb/detection.cpp:354 engines/mohawk/myst.cpp:608
 #: engines/mohawk/riven.cpp:881 engines/sky/detection.cpp:253
@@ -2273,11 +2269,11 @@ msgstr "Pravé kliknutí"
 msgid "Pause"
 msgstr "Pauza"
 
-#: engines/metaengine.cpp:85
+#: engines/metaengine.cpp:81
 msgid "Game menu"
 msgstr "Menu hry"
 
-#: engines/metaengine.cpp:91
+#: engines/metaengine.cpp:87
 #: backends/platform/symbian/src/SymbianActions.cpp:47
 #: engines/mohawk/myst.cpp:579 engines/mohawk/riven.cpp:852
 #: engines/wintermute/keymapper_tables.h:217
@@ -2288,15 +2284,15 @@ msgstr "Menu hry"
 msgid "Skip"
 msgstr "Přeskočit"
 
-#: engines/metaengine.cpp:97 engines/sky/detection.cpp:248
+#: engines/metaengine.cpp:93 engines/sky/detection.cpp:248
 msgid "Skip line"
 msgstr "Přeskočit řádek"
 
-#: engines/metaengine.cpp:103
+#: engines/metaengine.cpp:99
 msgid "Predictive input dialog"
 msgstr ""
 
-#: engines/metaengine.cpp:107 engines/griffon/detection.cpp:112
+#: engines/metaengine.cpp:103 engines/griffon/detection.cpp:123
 #: engines/sky/detection.cpp:228 engines/wintermute/keymapper_tables.h:55
 msgid "Confirm"
 msgstr "Potvrdit"
@@ -2634,20 +2630,20 @@ msgstr "Normální (bez změny velikosti)"
 msgid "Active graphics filter:"
 msgstr "Aktivní grafický filtr:"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:358
+#: backends/graphics/sdl/sdl-graphics.cpp:361
 msgid "Windowed mode"
 msgstr "Režim do okna"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:369 engines/scumm/help.cpp:86
+#: backends/graphics/sdl/sdl-graphics.cpp:372 engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
 msgstr "Přepnout celou obrazovku"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:376 engines/scumm/help.cpp:99
+#: backends/graphics/sdl/sdl-graphics.cpp:379 engines/scumm/help.cpp:99
 #: engines/wintermute/keymapper_tables.h:710
 msgid "Toggle mouse capture"
 msgstr "Povolit zachycování myši"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:381
+#: backends/graphics/sdl/sdl-graphics.cpp:384
 #: engines/wintermute/keymapper_tables.h:478
 #: engines/wintermute/keymapper_tables.h:847
 #: engines/wintermute/keymapper_tables.h:1061
@@ -2659,55 +2655,55 @@ msgstr "Povolit zachycování myši"
 msgid "Save screenshot"
 msgstr "Uložit snímek obrazovky"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:387
+#: backends/graphics/sdl/sdl-graphics.cpp:390
 msgid "Toggle aspect ratio correction"
 msgstr "Přepnout korekci poměru stran"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:394
+#: backends/graphics/sdl/sdl-graphics.cpp:397
 msgid "Toggle linear filtered scaling"
 msgstr "Použít lineární škálování"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:401
+#: backends/graphics/sdl/sdl-graphics.cpp:404
 msgid "Cycle through stretch modes"
 msgstr "Přepínat mezi režimy roztažení"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:407
+#: backends/graphics/sdl/sdl-graphics.cpp:410
 msgid "Increase the scale factor"
 msgstr "Zvětšit faktor změny velikosti"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:413
+#: backends/graphics/sdl/sdl-graphics.cpp:416
 msgid "Decrease the scale factor"
 msgstr "Zmenšit faktor změny velikosti"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:425
+#: backends/graphics/sdl/sdl-graphics.cpp:428
 msgid "Switch to nearest neighbour scaling"
 msgstr "Přepnout na nejbližší škálování"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:426
+#: backends/graphics/sdl/sdl-graphics.cpp:429
 msgid "Switch to AdvMame 2x/3x scaling"
 msgstr "Přepnout na velikost AdvMama 2x/3x"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:428
+#: backends/graphics/sdl/sdl-graphics.cpp:431
 msgid "Switch to HQ 2x/3x scaling"
 msgstr "Přepnout na škálování HQ 2x/3x"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:430
+#: backends/graphics/sdl/sdl-graphics.cpp:433
 msgid "Switch to 2xSai scaling"
 msgstr "Přepnout na škálování 2xSai"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:431
+#: backends/graphics/sdl/sdl-graphics.cpp:434
 msgid "Switch to Super2xSai scaling"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:432
+#: backends/graphics/sdl/sdl-graphics.cpp:435
 msgid "Switch to SuperEagle scaling"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:433
+#: backends/graphics/sdl/sdl-graphics.cpp:436
 msgid "Switch to TV 2x scaling"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:434
+#: backends/graphics/sdl/sdl-graphics.cpp:437
 msgid "Switch to DotMatrix scaling"
 msgstr ""
 
@@ -2858,12 +2854,12 @@ msgstr "Pravé kliknutí"
 msgid "Right Stick Y"
 msgstr "Pravé kliknutí"
 
-#: backends/keymapper/remap-widget.cpp:285
-#: backends/keymapper/remap-widget.cpp:315
+#: backends/keymapper/remap-widget.cpp:290
+#: backends/keymapper/remap-widget.cpp:320
 msgid "Reset to defaults"
 msgstr ""
 
-#: backends/keymapper/remap-widget.cpp:286
+#: backends/keymapper/remap-widget.cpp:291
 msgid "Clear mapping"
 msgstr ""
 
@@ -3469,18 +3465,15 @@ msgstr ""
 msgid "Guard middle"
 msgstr "Udeřit doprostřed"
 
-#: backends/platform/ds/arm9/source/scummhelp.cpp:81
-#: engines/scumm/help.cpp:312
+#: backends/platform/ds/arm9/source/scummhelp.cpp:81 engines/scumm/help.cpp:312
 msgid "Punch high"
 msgstr "Udeřit nahoru"
 
-#: backends/platform/ds/arm9/source/scummhelp.cpp:82
-#: engines/scumm/help.cpp:313
+#: backends/platform/ds/arm9/source/scummhelp.cpp:82 engines/scumm/help.cpp:313
 msgid "Punch middle"
 msgstr "Udeřit doprostřed"
 
-#: backends/platform/ds/arm9/source/scummhelp.cpp:83
-#: engines/scumm/help.cpp:314
+#: backends/platform/ds/arm9/source/scummhelp.cpp:83 engines/scumm/help.cpp:314
 msgid "Punch low"
 msgstr "Udeřit dolů"
 
@@ -3937,11 +3930,11 @@ msgstr ""
 #: engines/illusions/menusystem.cpp:680 engines/kingdom/kingdom.cpp:749
 #: engines/lab/savegame.cpp:258 engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:903 engines/prince/saveload.cpp:64
-#: engines/sci/engine/guest_additions.cpp:701
-#: engines/sci/engine/kfile.cpp:1186 engines/sherlock/scalpel/scalpel.cpp:1263
-#: engines/sherlock/tattoo/widget_files.cpp:94
-#: engines/startrek/saveload.cpp:68 engines/toltecs/menu.cpp:267
-#: engines/toon/toon.cpp:3456 engines/zvision/file/save_manager.cpp:62
+#: engines/sci/engine/guest_additions.cpp:701 engines/sci/engine/kfile.cpp:1186
+#: engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:68
+#: engines/toltecs/menu.cpp:267 engines/toon/toon.cpp:3456
+#: engines/zvision/file/save_manager.cpp:62
 msgid "Restore game:"
 msgstr "Obnovit hru:"
 
@@ -3954,12 +3947,11 @@ msgstr "Obnovit hru:"
 #: engines/lab/savegame.cpp:238 engines/lab/savegame.cpp:258
 #: engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:903 engines/prince/saveload.cpp:64
-#: engines/sci/engine/guest_additions.cpp:702
-#: engines/sci/engine/kfile.cpp:1186 engines/sherlock/scalpel/scalpel.cpp:1263
-#: engines/sherlock/tattoo/widget_files.cpp:94
-#: engines/startrek/saveload.cpp:68 engines/toltecs/menu.cpp:267
-#: engines/toon/toon.cpp:3456 engines/zvision/detection.cpp:220
-#: engines/zvision/file/save_manager.cpp:62
+#: engines/sci/engine/guest_additions.cpp:702 engines/sci/engine/kfile.cpp:1186
+#: engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:68
+#: engines/toltecs/menu.cpp:267 engines/toon/toon.cpp:3456
+#: engines/zvision/detection.cpp:220 engines/zvision/file/save_manager.cpp:62
 msgid "Restore"
 msgstr "Obnovit"
 
@@ -4093,11 +4085,11 @@ msgid ""
 "clicking the mouse"
 msgstr ""
 
-#: engines/cge/detection.cpp:115
+#: engines/cge/detection.cpp:115 engines/cge2/detection.cpp:111
 msgid "Color Blind Mode"
 msgstr "Režim pro barvoslepé"
 
-#: engines/cge/detection.cpp:116
+#: engines/cge/detection.cpp:116 engines/cge2/detection.cpp:112
 msgid "Enable Color Blind Mode by default"
 msgstr "Standardně zapínat režim pro barvoslepé"
 
@@ -4116,12 +4108,12 @@ msgstr ""
 msgid "Unnamed autosave"
 msgstr "Bezejmenná uložená hra"
 
-#: engines/cine/detection.cpp:192 engines/cine/detection.cpp:271
+#: engines/cine/detection.cpp:192 engines/cine/detection.cpp:267
 #, fuzzy
 msgid "Unnamed savegame"
 msgstr "Bezejmenná uložená hra"
 
-#: engines/cine/detection.cpp:210 engines/cine/detection.cpp:284
+#: engines/cine/detection.cpp:210 engines/cine/detection.cpp:280
 #, fuzzy
 msgid "Empty autosave"
 msgstr "Automatické ukládání"
@@ -4157,7 +4149,7 @@ msgstr "Aktivní"
 msgid "Change Command"
 msgstr ""
 
-#: engines/dragons/detection.cpp:266 engines/griffon/detection.cpp:149
+#: engines/dragons/detection.cpp:266 engines/griffon/detection.cpp:160
 #: engines/hdb/detection.cpp:347 engines/scumm/help.cpp:225
 #: engines/scumm/help.cpp:234 engines/scumm/help.cpp:241
 #: engines/scumm/help.cpp:249 engines/zvision/detection.cpp:185
@@ -4288,7 +4280,7 @@ msgstr ""
 msgid "Savegame"
 msgstr "Uložit hru"
 
-#: engines/glk/comprehend/game.cpp:1373
+#: engines/glk/comprehend/game.cpp:1381
 msgid "Picture window toggled\n"
 msgstr ""
 
@@ -4557,16 +4549,16 @@ msgstr "Uložení hry do souboru selhalo."
 msgid "Failed to delete file."
 msgstr "Nelze smazat soubor."
 
-#: engines/griffon/detection.cpp:106
+#: engines/griffon/detection.cpp:117
 msgid "Menu / Skip"
 msgstr ""
 
-#: engines/griffon/detection.cpp:142
+#: engines/griffon/detection.cpp:153
 #, fuzzy
 msgid "Attack"
 msgstr "Útok 1"
 
-#: engines/griffon/detection.cpp:156
+#: engines/griffon/detection.cpp:167
 #, fuzzy
 msgid "Speed Up Cutscene"
 msgstr "Přeskočit video"
@@ -4710,14 +4702,14 @@ msgid "Left button to attack, right button to pick up items"
 msgstr ""
 
 #: engines/kyra/engine/eobcommon.cpp:366 engines/kyra/engine/lol.cpp:469
-#: engines/ultima/ultima4/meta_engine.cpp:232
+#: engines/ultima/ultima4/meta_engine.cpp:233
 #: engines/ultima/ultima8/meta_engine.cpp:130
 #, fuzzy
 msgid "Interact via Left Click"
 msgstr "Levé Kliknutí"
 
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:470
-#: engines/ultima/ultima4/meta_engine.cpp:238
+#: engines/ultima/ultima4/meta_engine.cpp:239
 #: engines/ultima/ultima8/meta_engine.cpp:136
 #, fuzzy
 msgid "Interact via Right Click"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-09-13 22:06+0100\n"
+"POT-Creation-Date: 2020-10-01 01:55+0200\n"
 "PO-Revision-Date: 2020-09-16 01:43+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -268,7 +268,7 @@ msgid "Engine"
 msgstr "Μηχανή"
 
 #: gui/editgamedialog.cpp:196 gui/options.cpp:1567 gui/options.cpp:1698
-#: backends/graphics/sdl/sdl-graphics.cpp:365
+#: backends/graphics/sdl/sdl-graphics.cpp:368
 #: backends/platform/ds/arm9/source/dsoptions.cpp:97
 msgid "Graphics"
 msgstr "Γραφικά"
@@ -558,7 +558,7 @@ msgid "Seventh-order"
 msgstr "Έβδομης-τάξης"
 
 #. I18N: Button to reset keymap mappings to defaults
-#: gui/fluidsynth-dialog.cpp:151 backends/keymapper/remap-widget.cpp:314
+#: gui/fluidsynth-dialog.cpp:151 backends/keymapper/remap-widget.cpp:319
 msgid "Reset"
 msgstr "Επαναφορά"
 
@@ -590,31 +590,29 @@ msgstr "Αλληλεπίδραση"
 msgid "Close"
 msgstr "Κλείσιμο"
 
-#: gui/gui-manager.cpp:137 engines/metaengine.cpp:112
+#: gui/gui-manager.cpp:137 engines/metaengine.cpp:108
 #: backends/platform/symbian/src/SymbianActions.cpp:40
 #: engines/dragons/detection.cpp:277 engines/glk/scott/scott.cpp:412
-#: engines/griffon/detection.cpp:118
-#: engines/wintermute/keymapper_tables.h:1011
+#: engines/griffon/detection.cpp:129 engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
 #: engines/wintermute/keymapper_tables.h:1409
 #: engines/wintermute/keymapper_tables.h:1639
 msgid "Up"
 msgstr "Πάνω"
 
-#: gui/gui-manager.cpp:142 engines/metaengine.cpp:117
+#: gui/gui-manager.cpp:142 engines/metaengine.cpp:113
 #: backends/platform/symbian/src/SymbianActions.cpp:41
 #: engines/dragons/detection.cpp:283 engines/glk/scott/scott.cpp:412
-#: engines/griffon/detection.cpp:124
-#: engines/wintermute/keymapper_tables.h:1017
+#: engines/griffon/detection.cpp:135 engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
 #: engines/wintermute/keymapper_tables.h:1415
 #: engines/wintermute/keymapper_tables.h:1645
 msgid "Down"
 msgstr "Κάτω"
 
-#: gui/gui-manager.cpp:147 engines/metaengine.cpp:122
+#: gui/gui-manager.cpp:147 engines/metaengine.cpp:118
 #: backends/platform/symbian/src/SymbianActions.cpp:42
-#: engines/dragons/detection.cpp:289 engines/griffon/detection.cpp:130
+#: engines/dragons/detection.cpp:289 engines/griffon/detection.cpp:141
 #: engines/wintermute/keymapper_tables.h:1023
 #: engines/wintermute/keymapper_tables.h:1397
 #: engines/wintermute/keymapper_tables.h:1505
@@ -622,9 +620,9 @@ msgstr "Κάτω"
 msgid "Left"
 msgstr "Αριστερά"
 
-#: gui/gui-manager.cpp:152 engines/metaengine.cpp:127
+#: gui/gui-manager.cpp:152 engines/metaengine.cpp:123
 #: backends/platform/symbian/src/SymbianActions.cpp:43
-#: engines/dragons/detection.cpp:295 engines/griffon/detection.cpp:136
+#: engines/dragons/detection.cpp:295 engines/griffon/detection.cpp:147
 #: engines/wintermute/keymapper_tables.h:1029
 #: engines/wintermute/keymapper_tables.h:1403
 #: engines/wintermute/keymapper_tables.h:1513
@@ -1001,7 +999,7 @@ msgstr ""
 msgid "Stretch mode:"
 msgstr "Λειτουργία επέκτασης:"
 
-#: gui/options.cpp:1258 backends/graphics/sdl/sdl-graphics.cpp:356
+#: gui/options.cpp:1258 backends/graphics/sdl/sdl-graphics.cpp:359
 msgid "Fullscreen mode"
 msgstr "Λειτουργία πλήρους οθόνης"
 
@@ -1856,28 +1854,28 @@ msgstr "Εισάγετε περιγραφή για τη θυρίδα %d:"
 msgid "Select a Theme"
 msgstr "Επιλέξτε θέμα"
 
-#: gui/ThemeEngine.cpp:271
+#: gui/ThemeEngine.cpp:276
 msgid "Disabled GFX"
 msgstr "Απενεργοποιημένα γραφικά"
 
-#: gui/ThemeEngine.cpp:271
+#: gui/ThemeEngine.cpp:276
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "Απενεργ. γραφικά"
 
-#: gui/ThemeEngine.cpp:272
+#: gui/ThemeEngine.cpp:277
 msgid "Standard renderer"
 msgstr "Κανονική απόδοση"
 
-#: gui/ThemeEngine.cpp:272 engines/scumm/dialogs.cpp:663
+#: gui/ThemeEngine.cpp:277 engines/scumm/dialogs.cpp:663
 msgid "Standard"
 msgstr "Κανονικό"
 
-#: gui/ThemeEngine.cpp:274
+#: gui/ThemeEngine.cpp:279
 msgid "Antialiased renderer"
 msgstr "Εξομαλυμένη απόδοση"
 
-#: gui/ThemeEngine.cpp:274
+#: gui/ThemeEngine.cpp:279
 msgid "Antialiased"
 msgstr "Εξομαλυμένη"
 
@@ -2067,7 +2065,7 @@ msgstr "Μηνιαία"
 msgid "<Bad value>"
 msgstr "<Εσφαλμένη τιμή>"
 
-#: engines/advancedDetector.cpp:139
+#: engines/advancedDetector.cpp:178
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr ""
 "Ανιχνεύτηκε μη νόμιμο αντίγραφο παιχνιδιού. Δεν παρέχουμε υποστήριξη σε "
@@ -2116,11 +2114,10 @@ msgstr "Επισ~τ~ρ. στο Launcher"
 #: engines/neverhood/menumodule.cpp:890 engines/pegasus/pegasus.cpp:374
 #: engines/prince/saveload.cpp:55 engines/sci/engine/guest_additions.cpp:698
 #: engines/sci/engine/kfile.cpp:1074 engines/sherlock/scalpel/scalpel.cpp:1250
-#: engines/sherlock/tattoo/widget_files.cpp:75
-#: engines/startrek/saveload.cpp:43 engines/toltecs/menu.cpp:292
-#: engines/toon/toon.cpp:3362 engines/tsage/scenes.cpp:599
-#: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
-#: engines/zvision/file/save_manager.cpp:49
+#: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
+#: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
+#: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
+#: engines/xeen/saves.cpp:277 engines/zvision/file/save_manager.cpp:49
 msgid "Save game:"
 msgstr "Αποθήκευση παιχνιδιού:"
 
@@ -2135,14 +2132,13 @@ msgstr "Αποθήκευση παιχνιδιού:"
 #: engines/lab/savegame.cpp:243 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/neverhood/menumodule.cpp:890 engines/parallaction/saveload.cpp:209
 #: engines/pegasus/pegasus.cpp:374 engines/prince/saveload.cpp:55
-#: engines/sci/engine/guest_additions.cpp:699
-#: engines/sci/engine/kfile.cpp:1074 engines/scumm/dialogs.cpp:181
-#: engines/sherlock/scalpel/scalpel.cpp:1250
-#: engines/sherlock/tattoo/widget_files.cpp:75
-#: engines/startrek/saveload.cpp:43 engines/toltecs/menu.cpp:292
-#: engines/toon/toon.cpp:3362 engines/tsage/scenes.cpp:599
-#: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
-#: engines/zvision/detection.cpp:215 engines/zvision/file/save_manager.cpp:49
+#: engines/sci/engine/guest_additions.cpp:699 engines/sci/engine/kfile.cpp:1074
+#: engines/scumm/dialogs.cpp:181 engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
+#: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
+#: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
+#: engines/xeen/saves.cpp:277 engines/zvision/detection.cpp:215
+#: engines/zvision/file/save_manager.cpp:49
 msgid "Save"
 msgstr "Αποθήκευση"
 
@@ -2238,7 +2234,7 @@ msgstr ""
 "να ακούσετε τη μουσική του παιχνιδιού.\n"
 "Δείτε το αρχείο README για λεπτομέρειες."
 
-#: engines/engine.cpp:539 engines/metaengine.cpp:331 engines/savestate.cpp:81
+#: engines/engine.cpp:539 engines/metaengine.cpp:327 engines/savestate.cpp:81
 #: engines/sky/detection.cpp:316 engines/xeen/saves.cpp:290
 msgid "Autosave"
 msgstr "Αυτόματη αποθήκευση"
@@ -2299,31 +2295,31 @@ msgstr ""
 msgid "Matched game IDs for the %s engine:"
 msgstr "Αντιστοιχισμένα αναγνωριστικά παιχνιδιού για την μηχανή %s:"
 
-#: engines/metaengine.cpp:59
+#: engines/metaengine.cpp:55
 msgid "Default game keymap"
 msgstr "Προκαθορισμένες αντιστοιχίες"
 
-#: engines/metaengine.cpp:63 backends/platform/maemo/maemo.cpp:174
+#: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:174
 #: backends/platform/symbian/src/SymbianActions.cpp:44
 #: engines/hdb/detection.cpp:303 engines/wintermute/keymapper_tables.h:43
 #: engines/zvision/detection.cpp:136
 msgid "Left Click"
 msgstr "Αριστερό Click"
 
-#: engines/metaengine.cpp:69 backends/platform/maemo/maemo.cpp:178
+#: engines/metaengine.cpp:65 backends/platform/maemo/maemo.cpp:178
 #: engines/wintermute/keymapper_tables.h:249
 #: engines/wintermute/keymapper_tables.h:293
 #: engines/wintermute/keymapper_tables.h:1651
 msgid "Middle Click"
 msgstr "Μεσαίο Click"
 
-#: engines/metaengine.cpp:74 backends/platform/maemo/maemo.cpp:182
+#: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:182
 #: backends/platform/symbian/src/SymbianActions.cpp:45
 #: engines/wintermute/keymapper_tables.h:49 engines/zvision/detection.cpp:142
 msgid "Right Click"
 msgstr "Δεξί Click"
 
-#: engines/metaengine.cpp:80
+#: engines/metaengine.cpp:76
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: engines/hdb/detection.cpp:354 engines/mohawk/myst.cpp:608
 #: engines/mohawk/riven.cpp:881 engines/sky/detection.cpp:253
@@ -2331,11 +2327,11 @@ msgstr "Δεξί Click"
 msgid "Pause"
 msgstr "Παύση"
 
-#: engines/metaengine.cpp:85
+#: engines/metaengine.cpp:81
 msgid "Game menu"
 msgstr "Μενού παιχνιδιού"
 
-#: engines/metaengine.cpp:91
+#: engines/metaengine.cpp:87
 #: backends/platform/symbian/src/SymbianActions.cpp:47
 #: engines/mohawk/myst.cpp:579 engines/mohawk/riven.cpp:852
 #: engines/wintermute/keymapper_tables.h:217
@@ -2346,15 +2342,15 @@ msgstr "Μενού παιχνιδιού"
 msgid "Skip"
 msgstr "Παράλειψη"
 
-#: engines/metaengine.cpp:97 engines/sky/detection.cpp:248
+#: engines/metaengine.cpp:93 engines/sky/detection.cpp:248
 msgid "Skip line"
 msgstr "Παράλειψη γραμμής"
 
-#: engines/metaengine.cpp:103
+#: engines/metaengine.cpp:99
 msgid "Predictive input dialog"
 msgstr "Παράθυρο διαλόγου με πρόβλεψη κειμένου"
 
-#: engines/metaengine.cpp:107 engines/griffon/detection.cpp:112
+#: engines/metaengine.cpp:103 engines/griffon/detection.cpp:123
 #: engines/sky/detection.cpp:228 engines/wintermute/keymapper_tables.h:55
 msgid "Confirm"
 msgstr "Επιβεβαίωση"
@@ -2695,20 +2691,20 @@ msgstr "Κανονικό (χωρίς κλιμάκωση)"
 msgid "Active graphics filter:"
 msgstr "Ενεργό φίλτρο γραφικών:"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:358
+#: backends/graphics/sdl/sdl-graphics.cpp:361
 msgid "Windowed mode"
 msgstr "Λειτουργία παραθύρου"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:369 engines/scumm/help.cpp:86
+#: backends/graphics/sdl/sdl-graphics.cpp:372 engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
 msgstr "Λειτουργία πλήρους οθόνης"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:376 engines/scumm/help.cpp:99
+#: backends/graphics/sdl/sdl-graphics.cpp:379 engines/scumm/help.cpp:99
 #: engines/wintermute/keymapper_tables.h:710
 msgid "Toggle mouse capture"
 msgstr "Εναλλαγή κράτησης ποντικιού"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:381
+#: backends/graphics/sdl/sdl-graphics.cpp:384
 #: engines/wintermute/keymapper_tables.h:478
 #: engines/wintermute/keymapper_tables.h:847
 #: engines/wintermute/keymapper_tables.h:1061
@@ -2720,55 +2716,55 @@ msgstr "Εναλλαγή κράτησης ποντικιού"
 msgid "Save screenshot"
 msgstr "Αποθήκευση στιγμιότυπου"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:387
+#: backends/graphics/sdl/sdl-graphics.cpp:390
 msgid "Toggle aspect ratio correction"
 msgstr "Εναλλαγή διόρθωσης αναλογίας διαστάσεων"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:394
+#: backends/graphics/sdl/sdl-graphics.cpp:397
 msgid "Toggle linear filtered scaling"
 msgstr "Εναλλαγή χρήσης γραμμικού φίλτρου σε κλιμάκωση εικόνας"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:401
+#: backends/graphics/sdl/sdl-graphics.cpp:404
 msgid "Cycle through stretch modes"
 msgstr "Κυκλική περιήγηση στις λειτουργίες εξάπλωσης εικόνας"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:407
+#: backends/graphics/sdl/sdl-graphics.cpp:410
 msgid "Increase the scale factor"
 msgstr "Αύξηση συντελεστή κλίμακας"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:413
+#: backends/graphics/sdl/sdl-graphics.cpp:416
 msgid "Decrease the scale factor"
 msgstr "Μείωση συντελεστή κλίμακας"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:425
+#: backends/graphics/sdl/sdl-graphics.cpp:428
 msgid "Switch to nearest neighbour scaling"
 msgstr "Χρήση κλιμάκωσης nearest neighbour"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:426
+#: backends/graphics/sdl/sdl-graphics.cpp:429
 msgid "Switch to AdvMame 2x/3x scaling"
 msgstr "Χρήση κλιμάκωσης AdvMame 2x/3x"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:428
+#: backends/graphics/sdl/sdl-graphics.cpp:431
 msgid "Switch to HQ 2x/3x scaling"
 msgstr "Χρήση κλιμάκωσης HQ 2x/3x"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:430
+#: backends/graphics/sdl/sdl-graphics.cpp:433
 msgid "Switch to 2xSai scaling"
 msgstr "Χρήση κλιμάκωσης 2xSai"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:431
+#: backends/graphics/sdl/sdl-graphics.cpp:434
 msgid "Switch to Super2xSai scaling"
 msgstr "Χρήση κλιμάκωσης Super2xSai"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:432
+#: backends/graphics/sdl/sdl-graphics.cpp:435
 msgid "Switch to SuperEagle scaling"
 msgstr "Χρήση κλιμάκωσης SuperEagle"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:433
+#: backends/graphics/sdl/sdl-graphics.cpp:436
 msgid "Switch to TV 2x scaling"
 msgstr "Χρήση κλιμάκωσης TV 2x"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:434
+#: backends/graphics/sdl/sdl-graphics.cpp:437
 msgid "Switch to DotMatrix scaling"
 msgstr "Χρήση κλιμάκωσης DotMatrix"
 
@@ -2904,12 +2900,12 @@ msgstr "X άξονας Δεξιού Μοχλού"
 msgid "Right Stick Y"
 msgstr "Υ άξονας Δεξιού Μοχλού"
 
-#: backends/keymapper/remap-widget.cpp:285
-#: backends/keymapper/remap-widget.cpp:315
+#: backends/keymapper/remap-widget.cpp:290
+#: backends/keymapper/remap-widget.cpp:320
 msgid "Reset to defaults"
 msgstr "Επαναφορά αρχικών ρυθμίσεων"
 
-#: backends/keymapper/remap-widget.cpp:286
+#: backends/keymapper/remap-widget.cpp:291
 msgid "Clear mapping"
 msgstr "Διαγραφή αντιστοίχισης"
 
@@ -3483,18 +3479,15 @@ msgstr "Άμυνα χαμηλά"
 msgid "Guard middle"
 msgstr "Άμυνα στη μέση"
 
-#: backends/platform/ds/arm9/source/scummhelp.cpp:81
-#: engines/scumm/help.cpp:312
+#: backends/platform/ds/arm9/source/scummhelp.cpp:81 engines/scumm/help.cpp:312
 msgid "Punch high"
 msgstr "Μπουνιά ψηλά"
 
-#: backends/platform/ds/arm9/source/scummhelp.cpp:82
-#: engines/scumm/help.cpp:313
+#: backends/platform/ds/arm9/source/scummhelp.cpp:82 engines/scumm/help.cpp:313
 msgid "Punch middle"
 msgstr "Μπουνιά στη μέση"
 
-#: backends/platform/ds/arm9/source/scummhelp.cpp:83
-#: engines/scumm/help.cpp:314
+#: backends/platform/ds/arm9/source/scummhelp.cpp:83 engines/scumm/help.cpp:314
 msgid "Punch low"
 msgstr "Μπουνιά χαμηλά"
 
@@ -3956,11 +3949,11 @@ msgstr ""
 #: engines/illusions/menusystem.cpp:680 engines/kingdom/kingdom.cpp:749
 #: engines/lab/savegame.cpp:258 engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:903 engines/prince/saveload.cpp:64
-#: engines/sci/engine/guest_additions.cpp:701
-#: engines/sci/engine/kfile.cpp:1186 engines/sherlock/scalpel/scalpel.cpp:1263
-#: engines/sherlock/tattoo/widget_files.cpp:94
-#: engines/startrek/saveload.cpp:68 engines/toltecs/menu.cpp:267
-#: engines/toon/toon.cpp:3456 engines/zvision/file/save_manager.cpp:62
+#: engines/sci/engine/guest_additions.cpp:701 engines/sci/engine/kfile.cpp:1186
+#: engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:68
+#: engines/toltecs/menu.cpp:267 engines/toon/toon.cpp:3456
+#: engines/zvision/file/save_manager.cpp:62
 msgid "Restore game:"
 msgstr "Επαναφορά παιχνιδιού:"
 
@@ -3973,12 +3966,11 @@ msgstr "Επαναφορά παιχνιδιού:"
 #: engines/lab/savegame.cpp:238 engines/lab/savegame.cpp:258
 #: engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:903 engines/prince/saveload.cpp:64
-#: engines/sci/engine/guest_additions.cpp:702
-#: engines/sci/engine/kfile.cpp:1186 engines/sherlock/scalpel/scalpel.cpp:1263
-#: engines/sherlock/tattoo/widget_files.cpp:94
-#: engines/startrek/saveload.cpp:68 engines/toltecs/menu.cpp:267
-#: engines/toon/toon.cpp:3456 engines/zvision/detection.cpp:220
-#: engines/zvision/file/save_manager.cpp:62
+#: engines/sci/engine/guest_additions.cpp:702 engines/sci/engine/kfile.cpp:1186
+#: engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:68
+#: engines/toltecs/menu.cpp:267 engines/toon/toon.cpp:3456
+#: engines/zvision/detection.cpp:220 engines/zvision/file/save_manager.cpp:62
 msgid "Restore"
 msgstr "Επαναφορά"
 
@@ -4130,11 +4122,11 @@ msgstr ""
 "Όταν τρέχει, ο McCoy δεν θα αρχίσει να επιβραδύνει αμέσως μόλις ο παίκτης "
 "σταματήσει να κάνει κλικ με το ποντίκι"
 
-#: engines/cge/detection.cpp:115
+#: engines/cge/detection.cpp:115 engines/cge2/detection.cpp:111
 msgid "Color Blind Mode"
 msgstr "Λειτουργία για Άτομα με Αχρωματοψία"
 
-#: engines/cge/detection.cpp:116
+#: engines/cge/detection.cpp:116 engines/cge2/detection.cpp:112
 msgid "Enable Color Blind Mode by default"
 msgstr "Ενεργοποίηση λειτουργίας για Άτομα με Αχρωματοψία εξ'ορισμού"
 
@@ -4154,11 +4146,11 @@ msgstr ""
 msgid "Unnamed autosave"
 msgstr "Ανώνυμη αυτόματη αποθήκευση"
 
-#: engines/cine/detection.cpp:192 engines/cine/detection.cpp:271
+#: engines/cine/detection.cpp:192 engines/cine/detection.cpp:267
 msgid "Unnamed savegame"
 msgstr "Αποθηκευμένο παιχνίδι χωρίς όνομα"
 
-#: engines/cine/detection.cpp:210 engines/cine/detection.cpp:284
+#: engines/cine/detection.cpp:210 engines/cine/detection.cpp:280
 msgid "Empty autosave"
 msgstr "Κενή αυτόματη αποθήκευση"
 
@@ -4202,7 +4194,7 @@ msgstr "Πράξη"
 msgid "Change Command"
 msgstr "Αλλαγή Εντολής"
 
-#: engines/dragons/detection.cpp:266 engines/griffon/detection.cpp:149
+#: engines/dragons/detection.cpp:266 engines/griffon/detection.cpp:160
 #: engines/hdb/detection.cpp:347 engines/scumm/help.cpp:225
 #: engines/scumm/help.cpp:234 engines/scumm/help.cpp:241
 #: engines/scumm/help.cpp:249 engines/zvision/detection.cpp:185
@@ -4328,7 +4320,7 @@ msgstr "Αυτό δεν είναι ένα έγκυρο αρχείο Alan2."
 msgid "Savegame"
 msgstr "Αποθηκευμένο παιχνίδι"
 
-#: engines/glk/comprehend/game.cpp:1373
+#: engines/glk/comprehend/game.cpp:1381
 msgid "Picture window toggled\n"
 msgstr "Εναλλαγή παραθύρου εικόνας\n"
 
@@ -4593,15 +4585,15 @@ msgstr "Η εγγραφή αποθηκευμένου παιχνιδιού σε �
 msgid "Failed to delete file."
 msgstr "Η διαγραφή του αρχείου απέτυχε."
 
-#: engines/griffon/detection.cpp:106
+#: engines/griffon/detection.cpp:117
 msgid "Menu / Skip"
 msgstr "Μενού / Παράκαμψη"
 
-#: engines/griffon/detection.cpp:142
+#: engines/griffon/detection.cpp:153
 msgid "Attack"
 msgstr "Επίθεση"
 
-#: engines/griffon/detection.cpp:156
+#: engines/griffon/detection.cpp:167
 msgid "Speed Up Cutscene"
 msgstr "Επιτάχυνση Αναπαραγωγής Ταινίας"
 
@@ -4739,13 +4731,13 @@ msgid "Left button to attack, right button to pick up items"
 msgstr "Αριστερό κουμπί για επίθεση, δεξί κουμπί για να πάρετε αντικείμενα"
 
 #: engines/kyra/engine/eobcommon.cpp:366 engines/kyra/engine/lol.cpp:469
-#: engines/ultima/ultima4/meta_engine.cpp:232
+#: engines/ultima/ultima4/meta_engine.cpp:233
 #: engines/ultima/ultima8/meta_engine.cpp:130
 msgid "Interact via Left Click"
 msgstr "Αλληλεπίδραση με Αριστερό Click"
 
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:470
-#: engines/ultima/ultima4/meta_engine.cpp:238
+#: engines/ultima/ultima4/meta_engine.cpp:239
 #: engines/ultima/ultima8/meta_engine.cpp:136
 msgid "Interact via Right Click"
 msgstr "Αλληλεπίδραση με Δεξί Click"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-09-13 22:06+0100\n"
+"POT-Creation-Date: 2020-10-01 01:55+0200\n"
 "PO-Revision-Date: 2020-09-26 12:37+0000\n"
 "Last-Translator: Matthew Duggan <mgithub@guarana.org>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -62,7 +62,7 @@ msgstr "上へ"
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:60
 #: gui/saveload-dialog.cpp:60 gui/saveload-dialog.cpp:393
 #: gui/saveload-dialog.cpp:465 gui/saveload-dialog.cpp:767
-#: gui/saveload-dialog.cpp:1165 gui/themebrowser.cpp:55
+#: gui/saveload-dialog.cpp:1163 gui/themebrowser.cpp:55
 #: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:642
 #: backends/dialogs/gtk/gtk-dialogs.cpp:47
 #: backends/events/default/default-events.cpp:176
@@ -83,7 +83,7 @@ msgstr "キャンセル"
 #: gui/remotebrowser.cpp:61 gui/themebrowser.cpp:56
 #: backends/dialogs/gtk/gtk-dialogs.cpp:46
 #: backends/dialogs/macosx/macosx-dialogs.mm:132
-#: backends/dialogs/win32/win32-dialogs.cpp:137
+#: backends/dialogs/win32/win32-dialogs.cpp:138
 msgid "Choose"
 msgstr "選択"
 
@@ -120,7 +120,9 @@ msgstr "非表示"
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
-msgstr "インターネットの接続に制限があるようです。ダウンロードを続けてもよろしいですか？"
+msgstr ""
+"インターネットの接続に制限があるようです。ダウンロードを続けてもよろしいです"
+"か？"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
@@ -150,7 +152,9 @@ msgstr "指定されたフォルダーを開ませんでした！"
 msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
-msgstr "ダウンロード用のフォルダーを作成できませんでした。指定されたフォルダーに同じ名前のファイルがあります。"
+msgstr ""
+"ダウンロード用のフォルダーを作成できませんでした。指定されたフォルダーに同じ"
+"名前のファイルがあります。"
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:351
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:43 gui/launcher.cpp:487
@@ -167,7 +171,7 @@ msgstr "ダウンロード用のフォルダーを作成できませんでした
 #: engines/sword1/control.cpp:889 engines/sword1/logic.cpp:1635
 #: engines/sword2/animation.cpp:429 engines/sword2/animation.cpp:449
 #: engines/sword2/animation.cpp:465 engines/sword2/animation.cpp:475
-#: engines/zvision/file/save_manager.cpp:226 gui/saveload-dialog.cpp:1166
+#: engines/zvision/file/save_manager.cpp:226
 msgid "OK"
 msgstr "OK"
 
@@ -260,7 +264,7 @@ msgid "Engine"
 msgstr "エンジン"
 
 #: gui/editgamedialog.cpp:196 gui/options.cpp:1567 gui/options.cpp:1698
-#: backends/graphics/sdl/sdl-graphics.cpp:365
+#: backends/graphics/sdl/sdl-graphics.cpp:368
 #: backends/platform/ds/arm9/source/dsoptions.cpp:97
 msgid "Graphics"
 msgstr "画像"
@@ -436,7 +440,9 @@ msgstr "セーブデータのフォルダーを選択してください"
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
-msgstr "セーブデータの同期機能はデフォルトのフォルダー以外使えません。使用するにはデフォルトのフォルダーを選択してください。"
+msgstr ""
+"セーブデータの同期機能はデフォルトのフォルダー以外使えません。使用するにはデ"
+"フォルトのフォルダーを選択してください。"
 
 #: gui/editgamedialog.cpp:593
 msgid "This game ID is already taken. Please choose another one."
@@ -516,7 +522,6 @@ msgstr "サイン"
 
 #: gui/fluidsynth-dialog.cpp:137 backends/platform/sdl/ps3/ps3.cpp:44
 #: backends/platform/sdl/psp2/psp2.cpp:48 engines/dragons/detection.cpp:307
-#: engines/dragons/detection.cpp:289
 msgid "Triangle"
 msgstr "三角"
 
@@ -545,7 +550,7 @@ msgid "Seventh-order"
 msgstr "７次補間"
 
 #. I18N: Button to reset keymap mappings to defaults
-#: gui/fluidsynth-dialog.cpp:151 backends/keymapper/remap-widget.cpp:314
+#: gui/fluidsynth-dialog.cpp:151 backends/keymapper/remap-widget.cpp:319
 msgid "Reset"
 msgstr "リセット"
 
@@ -574,38 +579,40 @@ msgstr "作用"
 msgid "Close"
 msgstr "閉じる"
 
-#: gui/gui-manager.cpp:137 engines/metaengine.cpp:112
+#: gui/gui-manager.cpp:137 engines/metaengine.cpp:108
 #: backends/platform/symbian/src/SymbianActions.cpp:40
-#: engines/dragons/detection.cpp:259 engines/glk/scott/scott.cpp:412
-#: engines/wintermute/keymapper_tables.h:1011
+#: engines/dragons/detection.cpp:277 engines/glk/scott/scott.cpp:412
+#: engines/griffon/detection.cpp:129 engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
 #: engines/wintermute/keymapper_tables.h:1409
 #: engines/wintermute/keymapper_tables.h:1639
 msgid "Up"
 msgstr "上"
 
-#: gui/gui-manager.cpp:142 engines/metaengine.cpp:117
+#: gui/gui-manager.cpp:142 engines/metaengine.cpp:113
 #: backends/platform/symbian/src/SymbianActions.cpp:41
-#: engines/dragons/detection.cpp:265 engines/glk/scott/scott.cpp:412
-#: engines/wintermute/keymapper_tables.h:1017
+#: engines/dragons/detection.cpp:283 engines/glk/scott/scott.cpp:412
+#: engines/griffon/detection.cpp:135 engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
 #: engines/wintermute/keymapper_tables.h:1415
 #: engines/wintermute/keymapper_tables.h:1645
 msgid "Down"
 msgstr "下"
 
-#: gui/gui-manager.cpp:147 engines/metaengine.cpp:122
+#: gui/gui-manager.cpp:147 engines/metaengine.cpp:118
 #: backends/platform/symbian/src/SymbianActions.cpp:42
-#: engines/dragons/detection.cpp:271 engines/wintermute/keymapper_tables.h:1023
+#: engines/dragons/detection.cpp:289 engines/griffon/detection.cpp:141
+#: engines/wintermute/keymapper_tables.h:1023
 #: engines/wintermute/keymapper_tables.h:1397
 #: engines/wintermute/keymapper_tables.h:1505
 #: engines/wintermute/keymapper_tables.h:1627
 msgid "Left"
 msgstr "左"
 
-#: gui/gui-manager.cpp:152 engines/metaengine.cpp:127
+#: gui/gui-manager.cpp:152 engines/metaengine.cpp:123
 #: backends/platform/symbian/src/SymbianActions.cpp:43
-#: engines/dragons/detection.cpp:277 engines/wintermute/keymapper_tables.h:1029
+#: engines/dragons/detection.cpp:295 engines/griffon/detection.cpp:147
+#: engines/wintermute/keymapper_tables.h:1029
 #: engines/wintermute/keymapper_tables.h:1403
 #: engines/wintermute/keymapper_tables.h:1513
 #: engines/wintermute/keymapper_tables.h:1633
@@ -803,7 +810,9 @@ msgstr "スキャン完了！"
 #: gui/massadd.cpp:269
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games."
-msgstr "新しくゲーム%d件をリストに追加しました。他にゲーム%d件が既に追加されています。"
+msgstr ""
+"新しくゲーム%d件をリストに追加しました。他にゲーム%d件が既に追加されていま"
+"す。"
 
 #: gui/massadd.cpp:273
 #, c-format
@@ -813,7 +822,9 @@ msgstr "フォルダー%d件スキャン済み..."
 #: gui/massadd.cpp:276
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games ..."
-msgstr "新しくゲーム%d件をリストに追加しました。他にゲーム%d件が既に追加されています..."
+msgstr ""
+"新しくゲーム%d件をリストに追加しました。他にゲーム%d件が既に追加されていま"
+"す..."
 
 #: gui/message.cpp:148 gui/message.cpp:152 gui/options.cpp:2121
 msgid "Open URL"
@@ -966,7 +977,7 @@ msgstr "ゲームによって使える特別なディザリングモード"
 msgid "Stretch mode:"
 msgstr "拡大モード："
 
-#: gui/options.cpp:1258 backends/graphics/sdl/sdl-graphics.cpp:356
+#: gui/options.cpp:1258 backends/graphics/sdl/sdl-graphics.cpp:359
 msgid "Fullscreen mode"
 msgstr "全面モード"
 
@@ -1042,7 +1053,9 @@ msgstr "SoundFont："
 
 #: gui/options.cpp:1349 gui/options.cpp:1351 gui/options.cpp:1352
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
-msgstr "SoundFontファイルはある音楽デバイスとFluidSynthとTimidityが利用することができます"
+msgstr ""
+"SoundFontファイルはある音楽デバイスとFluidSynthとTimidityが利用することができ"
+"ます"
 
 #: gui/options.cpp:1351
 msgctxt "lowres"
@@ -1077,7 +1090,8 @@ msgstr "実物のローランドMT-32（エミュレーターを無効にする�
 msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
-msgstr "コンピューターに接続されてる実物のローランドMT-32があればチェックしてください"
+msgstr ""
+"コンピューターに接続されてる実物のローランドMT-32があればチェックしてください"
 
 #: gui/options.cpp:1377
 msgctxt "lowres"
@@ -1092,7 +1106,9 @@ msgstr "ローランドGSデバイス（MT-32マッピングを有効にする�
 msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
-msgstr "ローランドGSでMT-32をエミュレートするパッチマッピングを使う時はチェックしてください"
+msgstr ""
+"ローランドGSでMT-32をエミュレートするパッチマッピングを使う時はチェックしてく"
+"ださい"
 
 #: gui/options.cpp:1389
 msgid "Don't use Roland MT-32 music"
@@ -1285,7 +1301,8 @@ msgid ""
 "That way, if a game uses the ScummVM save and load dialogs, they are in the "
 "same language as the game."
 msgstr ""
-"ゲームを起動する時、ScummVMのGUIをゲームの言語に合わせます。そうするとロード／セーブなどのダイアログがゲームと同じ言語に表示されます。"
+"ゲームを起動する時、ScummVMのGUIをゲームの言語に合わせます。そうするとロード"
+"／セーブなどのダイアログがゲームと同じ言語に表示されます。"
 
 #: gui/options.cpp:2049
 msgid "Use native system file browser"
@@ -1295,7 +1312,9 @@ msgstr "システムのファイルブラウザを使う"
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
-msgstr "ファイルやフォルダーを選ぶ時、ScummVMのファイルブラウザの代わりにシステムのファイルブラウザを使う。"
+msgstr ""
+"ファイルやフォルダーを選ぶ時、ScummVMのファイルブラウザの代わりにシステムの"
+"ファイルブラウザを使う。"
 
 #: gui/options.cpp:2057 gui/updates-dialog.cpp:86
 msgid "Update check:"
@@ -1374,12 +1393,14 @@ msgstr "＜無い＞"
 #, fuzzy
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
-msgstr "セーブデータはゲームを起動する時とロード／セーブする時に自動に同期されます。"
+msgstr ""
+"セーブデータはゲームを起動する時とロード／セーブする時に自動に同期されます。"
 
 #: gui/options.cpp:2101
 #, fuzzy
 msgid "Saved games sync automatically on launch, after saving and on loading."
-msgstr "セーブデータはゲームを起動する時とロード／セーブする時に自動に同期されます。"
+msgstr ""
+"セーブデータはゲームを起動する時とロード／セーブする時に自動に同期されます。"
 
 #: gui/options.cpp:2102
 msgid "Sync now"
@@ -1392,11 +1413,13 @@ msgstr "セーブデータの同期を始まる"
 #: gui/options.cpp:2105
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr "ScummVMのクラウドフォルダーからセーブデータをダウンロードすることができます："
+msgstr ""
+"ScummVMのクラウドフォルダーからセーブデータをダウンロードすることができます："
 
 #: gui/options.cpp:2107
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr "ScummVMのクラウドフォルダーからセーブデータをダウンロードすることができます："
+msgstr ""
+"ScummVMのクラウドフォルダーからセーブデータをダウンロードすることができます："
 
 #: gui/options.cpp:2108
 msgid "Download game files"
@@ -1761,7 +1784,7 @@ msgstr "新しいセーブデータを作成する"
 msgid "Name: "
 msgstr "名前： "
 
-#: gui/saveload-dialog.cpp:1183 gui/saveload-dialog.cpp:1185
+#: gui/saveload-dialog.cpp:1183
 #, c-format
 msgid "Enter a description for slot %d:"
 msgstr ""
@@ -1770,28 +1793,28 @@ msgstr ""
 msgid "Select a Theme"
 msgstr "テーマを選ぶ"
 
-#: gui/ThemeEngine.cpp:271
+#: gui/ThemeEngine.cpp:276
 msgid "Disabled GFX"
 msgstr "レンダラー無効"
 
-#: gui/ThemeEngine.cpp:271
+#: gui/ThemeEngine.cpp:276
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "レンダラー無効"
 
-#: gui/ThemeEngine.cpp:272
+#: gui/ThemeEngine.cpp:277
 msgid "Standard renderer"
 msgstr "標準レンダラー"
 
-#: gui/ThemeEngine.cpp:272 engines/scumm/dialogs.cpp:663
+#: gui/ThemeEngine.cpp:277 engines/scumm/dialogs.cpp:663
 msgid "Standard"
 msgstr "標準"
 
-#: gui/ThemeEngine.cpp:274
+#: gui/ThemeEngine.cpp:279
 msgid "Antialiased renderer"
 msgstr "アンチエイリアスレンダラー"
 
-#: gui/ThemeEngine.cpp:274
+#: gui/ThemeEngine.cpp:279
 msgid "Antialiased"
 msgstr "アンチエイリアス"
 
@@ -1970,7 +1993,7 @@ msgstr "毎月"
 msgid "<Bad value>"
 msgstr ""
 
-#: engines/advancedDetector.cpp:139
+#: engines/advancedDetector.cpp:178
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr ""
 
@@ -2017,7 +2040,7 @@ msgstr ""
 #: engines/neverhood/menumodule.cpp:890 engines/pegasus/pegasus.cpp:374
 #: engines/prince/saveload.cpp:55 engines/sci/engine/guest_additions.cpp:698
 #: engines/sci/engine/kfile.cpp:1074 engines/sherlock/scalpel/scalpel.cpp:1250
-#: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:42
+#: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
 #: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
 #: engines/xeen/saves.cpp:277 engines/zvision/file/save_manager.cpp:49
@@ -2037,7 +2060,7 @@ msgstr "ゲームをセーブ："
 #: engines/pegasus/pegasus.cpp:374 engines/prince/saveload.cpp:55
 #: engines/sci/engine/guest_additions.cpp:699 engines/sci/engine/kfile.cpp:1074
 #: engines/scumm/dialogs.cpp:181 engines/sherlock/scalpel/scalpel.cpp:1250
-#: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:42
+#: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
 #: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
 #: engines/xeen/saves.cpp:277 engines/zvision/detection.cpp:215
@@ -2120,7 +2143,7 @@ msgid ""
 "See the README file for details."
 msgstr ""
 
-#: engines/engine.cpp:539 engines/metaengine.cpp:331 engines/savestate.cpp:81
+#: engines/engine.cpp:539 engines/metaengine.cpp:327 engines/savestate.cpp:81
 #: engines/sky/detection.cpp:316 engines/xeen/saves.cpp:290
 msgid "Autosave"
 msgstr "自動セーブ"
@@ -2169,31 +2192,31 @@ msgstr ""
 msgid "Matched game IDs for the %s engine:"
 msgstr ""
 
-#: engines/metaengine.cpp:59
+#: engines/metaengine.cpp:55
 msgid "Default game keymap"
 msgstr ""
 
-#: engines/metaengine.cpp:63 backends/platform/maemo/maemo.cpp:174
+#: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:174
 #: backends/platform/symbian/src/SymbianActions.cpp:44
 #: engines/hdb/detection.cpp:303 engines/wintermute/keymapper_tables.h:43
 #: engines/zvision/detection.cpp:136
 msgid "Left Click"
 msgstr "左クリック"
 
-#: engines/metaengine.cpp:69 backends/platform/maemo/maemo.cpp:178
+#: engines/metaengine.cpp:65 backends/platform/maemo/maemo.cpp:178
 #: engines/wintermute/keymapper_tables.h:249
 #: engines/wintermute/keymapper_tables.h:293
 #: engines/wintermute/keymapper_tables.h:1651
 msgid "Middle Click"
 msgstr "中クリック"
 
-#: engines/metaengine.cpp:74 backends/platform/maemo/maemo.cpp:182
+#: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:182
 #: backends/platform/symbian/src/SymbianActions.cpp:45
 #: engines/wintermute/keymapper_tables.h:49 engines/zvision/detection.cpp:142
 msgid "Right Click"
 msgstr "右クリック"
 
-#: engines/metaengine.cpp:80
+#: engines/metaengine.cpp:76
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: engines/hdb/detection.cpp:354 engines/mohawk/myst.cpp:608
 #: engines/mohawk/riven.cpp:881 engines/sky/detection.cpp:253
@@ -2201,11 +2224,11 @@ msgstr "右クリック"
 msgid "Pause"
 msgstr "一時停止"
 
-#: engines/metaengine.cpp:85
+#: engines/metaengine.cpp:81
 msgid "Game menu"
 msgstr "ゲームメニュー"
 
-#: engines/metaengine.cpp:91
+#: engines/metaengine.cpp:87
 #: backends/platform/symbian/src/SymbianActions.cpp:47
 #: engines/mohawk/myst.cpp:579 engines/mohawk/riven.cpp:852
 #: engines/wintermute/keymapper_tables.h:217
@@ -2216,16 +2239,16 @@ msgstr "ゲームメニュー"
 msgid "Skip"
 msgstr ""
 
-#: engines/metaengine.cpp:97 engines/sky/detection.cpp:248
+#: engines/metaengine.cpp:93 engines/sky/detection.cpp:248
 msgid "Skip line"
 msgstr ""
 
-#: engines/metaengine.cpp:103
+#: engines/metaengine.cpp:99
 msgid "Predictive input dialog"
 msgstr ""
 
-#: engines/metaengine.cpp:107 engines/sky/detection.cpp:228
-#: engines/wintermute/keymapper_tables.h:55
+#: engines/metaengine.cpp:103 engines/griffon/detection.cpp:123
+#: engines/sky/detection.cpp:228 engines/wintermute/keymapper_tables.h:55
 msgid "Confirm"
 msgstr "確認"
 
@@ -2430,47 +2453,34 @@ msgstr ""
 #: backends/events/gph/gph-events.cpp:417
 #: backends/events/gph/gph-events.cpp:460
 #: backends/events/openpandora/op-events.cpp:157
-#: backends/events/gph/gph-events.cpp:423
-#: backends/events/gph/gph-events.cpp:466
-#: backends/events/openpandora/op-events.cpp:165
 msgid "Touchscreen 'Tap Mode' - Left Click"
 msgstr ""
 
 #: backends/events/gph/gph-events.cpp:419
 #: backends/events/gph/gph-events.cpp:462
 #: backends/events/openpandora/op-events.cpp:159
-#: backends/events/gph/gph-events.cpp:425
-#: backends/events/gph/gph-events.cpp:468
-#: backends/events/openpandora/op-events.cpp:167
 msgid "Touchscreen 'Tap Mode' - Right Click"
 msgstr ""
 
 #: backends/events/gph/gph-events.cpp:421
 #: backends/events/gph/gph-events.cpp:464
 #: backends/events/openpandora/op-events.cpp:161
-#: backends/events/gph/gph-events.cpp:427
-#: backends/events/gph/gph-events.cpp:470
-#: backends/events/openpandora/op-events.cpp:169
 msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
 msgstr ""
 
 #: backends/events/gph/gph-events.cpp:441
-#: backends/events/gph/gph-events.cpp:447
 msgid "Maximum Volume"
 msgstr ""
 
 #: backends/events/gph/gph-events.cpp:443
-#: backends/events/gph/gph-events.cpp:449
 msgid "Increasing Volume"
 msgstr ""
 
 #: backends/events/gph/gph-events.cpp:449
-#: backends/events/gph/gph-events.cpp:455
 msgid "Minimal Volume"
 msgstr ""
 
 #: backends/events/gph/gph-events.cpp:451
-#: backends/events/gph/gph-events.cpp:457
 msgid "Decreasing Volume"
 msgstr ""
 
@@ -2483,7 +2493,6 @@ msgid "Clicking Disabled"
 msgstr ""
 
 #: backends/events/openpandora/op-events.cpp:163
-#: backends/events/openpandora/op-events.cpp:171
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
 msgstr ""
 
@@ -2563,20 +2572,20 @@ msgstr "標準比率"
 msgid "Active graphics filter:"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:358
+#: backends/graphics/sdl/sdl-graphics.cpp:361
 msgid "Windowed mode"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:369 engines/scumm/help.cpp:86
+#: backends/graphics/sdl/sdl-graphics.cpp:372 engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:376 engines/scumm/help.cpp:99
+#: backends/graphics/sdl/sdl-graphics.cpp:379 engines/scumm/help.cpp:99
 #: engines/wintermute/keymapper_tables.h:710
 msgid "Toggle mouse capture"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:381
+#: backends/graphics/sdl/sdl-graphics.cpp:384
 #: engines/wintermute/keymapper_tables.h:478
 #: engines/wintermute/keymapper_tables.h:847
 #: engines/wintermute/keymapper_tables.h:1061
@@ -2588,55 +2597,55 @@ msgstr ""
 msgid "Save screenshot"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:387
+#: backends/graphics/sdl/sdl-graphics.cpp:390
 msgid "Toggle aspect ratio correction"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:394
+#: backends/graphics/sdl/sdl-graphics.cpp:397
 msgid "Toggle linear filtered scaling"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:401
+#: backends/graphics/sdl/sdl-graphics.cpp:404
 msgid "Cycle through stretch modes"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:407
+#: backends/graphics/sdl/sdl-graphics.cpp:410
 msgid "Increase the scale factor"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:413
+#: backends/graphics/sdl/sdl-graphics.cpp:416
 msgid "Decrease the scale factor"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:425
+#: backends/graphics/sdl/sdl-graphics.cpp:428
 msgid "Switch to nearest neighbour scaling"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:426
+#: backends/graphics/sdl/sdl-graphics.cpp:429
 msgid "Switch to AdvMame 2x/3x scaling"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:428
+#: backends/graphics/sdl/sdl-graphics.cpp:431
 msgid "Switch to HQ 2x/3x scaling"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:430
+#: backends/graphics/sdl/sdl-graphics.cpp:433
 msgid "Switch to 2xSai scaling"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:431
+#: backends/graphics/sdl/sdl-graphics.cpp:434
 msgid "Switch to Super2xSai scaling"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:432
+#: backends/graphics/sdl/sdl-graphics.cpp:435
 msgid "Switch to SuperEagle scaling"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:433
+#: backends/graphics/sdl/sdl-graphics.cpp:436
 msgid "Switch to TV 2x scaling"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:434
+#: backends/graphics/sdl/sdl-graphics.cpp:437
 msgid "Switch to DotMatrix scaling"
 msgstr ""
 
@@ -2705,12 +2714,10 @@ msgid "Right Stick"
 msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:265 engines/dragons/detection.cpp:325
-#: engines/dragons/detection.cpp:307
 msgid "Left Shoulder"
 msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:266 engines/dragons/detection.cpp:331
-#: engines/dragons/detection.cpp:313
 msgid "Right Shoulder"
 msgstr ""
 
@@ -2774,12 +2781,12 @@ msgstr ""
 msgid "Right Stick Y"
 msgstr ""
 
-#: backends/keymapper/remap-widget.cpp:285
-#: backends/keymapper/remap-widget.cpp:315
+#: backends/keymapper/remap-widget.cpp:290
+#: backends/keymapper/remap-widget.cpp:320
 msgid "Reset to defaults"
 msgstr ""
 
-#: backends/keymapper/remap-widget.cpp:286
+#: backends/keymapper/remap-widget.cpp:291
 msgid "Clear mapping"
 msgstr ""
 
@@ -3353,32 +3360,24 @@ msgstr ""
 #: backends/platform/ios7/ios7_osys_events.cpp:327
 #: backends/platform/ios7/ios7_osys_events.cpp:455
 #: backends/platform/iphone/osys_events.cpp:300
-#: backends/platform/ios7/ios7_osys_events.cpp:315
-#: backends/platform/ios7/ios7_osys_events.cpp:443
 msgid "Mouse-click-and-drag mode enabled."
 msgstr ""
 
 #: backends/platform/ios7/ios7_osys_events.cpp:329
 #: backends/platform/ios7/ios7_osys_events.cpp:457
 #: backends/platform/iphone/osys_events.cpp:302
-#: backends/platform/ios7/ios7_osys_events.cpp:317
-#: backends/platform/ios7/ios7_osys_events.cpp:445
 msgid "Mouse-click-and-drag mode disabled."
 msgstr ""
 
 #: backends/platform/ios7/ios7_osys_events.cpp:340
 #: backends/platform/ios7/ios7_osys_events.cpp:476
 #: backends/platform/iphone/osys_events.cpp:313
-#: backends/platform/ios7/ios7_osys_events.cpp:328
-#: backends/platform/ios7/ios7_osys_events.cpp:464
 msgid "Touchpad mode enabled."
 msgstr ""
 
 #: backends/platform/ios7/ios7_osys_events.cpp:342
 #: backends/platform/ios7/ios7_osys_events.cpp:478
 #: backends/platform/iphone/osys_events.cpp:315
-#: backends/platform/ios7/ios7_osys_events.cpp:330
-#: backends/platform/ios7/ios7_osys_events.cpp:466
 msgid "Touchpad mode disabled."
 msgstr ""
 
@@ -3448,17 +3447,17 @@ msgid "BSD License"
 msgstr "BSDライセンス"
 
 #: backends/platform/sdl/ps3/ps3.cpp:41 backends/platform/sdl/psp2/psp2.cpp:45
-#: engines/dragons/detection.cpp:301
+#: engines/dragons/detection.cpp:319
 msgid "Cross"
 msgstr "バツ"
 
 #: backends/platform/sdl/ps3/ps3.cpp:42 backends/platform/sdl/psp2/psp2.cpp:46
-#: engines/dragons/detection.cpp:295
+#: engines/dragons/detection.cpp:313
 msgid "Circle"
 msgstr "マル"
 
 #: backends/platform/sdl/ps3/ps3.cpp:43 backends/platform/sdl/psp2/psp2.cpp:47
-#: engines/dragons/detection.cpp:283
+#: engines/dragons/detection.cpp:301
 msgid "Square"
 msgstr "四角"
 
@@ -3804,7 +3803,7 @@ msgstr ""
 #: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:68
 #: engines/toltecs/menu.cpp:267 engines/toon/toon.cpp:3456
-#: engines/zvision/file/save_manager.cpp:62 engines/startrek/saveload.cpp:67
+#: engines/zvision/file/save_manager.cpp:62
 msgid "Restore game:"
 msgstr ""
 
@@ -3822,7 +3821,6 @@ msgstr ""
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:68
 #: engines/toltecs/menu.cpp:267 engines/toon/toon.cpp:3456
 #: engines/zvision/detection.cpp:220 engines/zvision/file/save_manager.cpp:62
-#: engines/startrek/saveload.cpp:67
 msgid "Restore"
 msgstr ""
 
@@ -3869,17 +3867,14 @@ msgid ""
 msgstr ""
 
 #: engines/bladerunner/bladerunner.cpp:363
-#: engines/bladerunner/bladerunner.cpp:359
 msgid "Failed to initialize resources"
 msgstr ""
 
 #: engines/bladerunner/bladerunner.cpp:1067
-#: engines/bladerunner/bladerunner.cpp:1063
 msgid "A required game resource was not found"
 msgstr ""
 
 #: engines/bladerunner/bladerunner.cpp:2271
-#: engines/bladerunner/bladerunner.cpp:2265
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -3887,14 +3882,13 @@ msgid ""
 msgstr ""
 
 #: engines/bladerunner/bladerunner.cpp:2273
-#: engines/bladerunner/bladerunner.cpp:2267
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
 "mode for this session until you completely Quit the game."
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:2269
+#: engines/bladerunner/bladerunner.cpp:2275
 msgid "Continue"
 msgstr "つづく"
 
@@ -3966,11 +3960,11 @@ msgstr ""
 msgid "Unnamed autosave"
 msgstr ""
 
-#: engines/cine/detection.cpp:192 engines/cine/detection.cpp:271
+#: engines/cine/detection.cpp:192 engines/cine/detection.cpp:267
 msgid "Unnamed savegame"
 msgstr ""
 
-#: engines/cine/detection.cpp:210 engines/cine/detection.cpp:284
+#: engines/cine/detection.cpp:210 engines/cine/detection.cpp:280
 msgid "Empty autosave"
 msgstr ""
 
@@ -3985,7 +3979,7 @@ msgstr ""
 msgid "Load anyway"
 msgstr ""
 
-#: engines/dragons/detection.cpp:236 engines/dragons/detection.cpp:218
+#: engines/dragons/detection.cpp:236
 msgid ""
 "Error: It appears that the game data files were extracted incorrectly.\n"
 "\n"
@@ -3995,36 +3989,35 @@ msgid ""
 " See https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
 msgstr ""
 
-#: engines/dragons/detection.cpp:254 engines/dragons/detection.cpp:236
+#: engines/dragons/detection.cpp:254
 msgid "Action"
 msgstr ""
 
-#: engines/dragons/detection.cpp:260 engines/dragons/detection.cpp:242
+#: engines/dragons/detection.cpp:260
 msgid "Change Command"
 msgstr ""
 
-#: engines/dragons/detection.cpp:266 engines/griffon/detection.cpp:149
+#: engines/dragons/detection.cpp:266 engines/griffon/detection.cpp:160
 #: engines/hdb/detection.cpp:347 engines/scumm/help.cpp:225
 #: engines/scumm/help.cpp:234 engines/scumm/help.cpp:241
 #: engines/scumm/help.cpp:249 engines/zvision/detection.cpp:185
-#: engines/dragons/detection.cpp:248
 msgid "Inventory"
 msgstr ""
 
 #: engines/dragons/detection.cpp:271 engines/scumm/help.cpp:86
-#: engines/scumm/help.cpp:89 engines/dragons/detection.cpp:253
+#: engines/scumm/help.cpp:89
 msgid "Enter"
 msgstr ""
 
-#: engines/dragons/detection.cpp:337 engines/dragons/detection.cpp:319
+#: engines/dragons/detection.cpp:337
 msgid "Debug Graphics"
 msgstr ""
 
-#: engines/dragons/detection.cpp:324
+#: engines/dragons/detection.cpp:342
 msgid "Quit Game"
 msgstr "ゲームを終了する"
 
-#: engines/dragons/dragons.cpp:1803 engines/dragons/dragons.cpp:1796
+#: engines/dragons/dragons.cpp:1803
 #, c-format
 msgid ""
 "Error: The file '%s' hasn't been extracted properly.\n"
@@ -4053,19 +4046,19 @@ msgstr ""
 msgid "Display graphics using the game's bright palette"
 msgstr ""
 
-#: engines/glk/detection.cpp:354
+#: engines/glk/detection.cpp:370
 msgid "Enable Text to Speech"
 msgstr "音声合成をオンにする"
 
-#: engines/glk/detection.cpp:371 engines/glk/detection.cpp:355
+#: engines/glk/detection.cpp:371
 msgid "Use TTS to read the text"
 msgstr "音声合成で文章を読み上げる"
 
-#: engines/glk/detection.cpp:376 engines/glk/detection.cpp:360
+#: engines/glk/detection.cpp:376
 msgid "Also read input text"
 msgstr ""
 
-#: engines/glk/detection.cpp:377 engines/glk/detection.cpp:361
+#: engines/glk/detection.cpp:377
 msgid "Use TTS to read the input text"
 msgstr ""
 
@@ -4118,7 +4111,7 @@ msgstr ""
 msgid "Savegame"
 msgstr "セーブ"
 
-#: engines/glk/comprehend/game.cpp:1373 engines/glk/comprehend/game.cpp:1333
+#: engines/glk/comprehend/game.cpp:1381
 msgid "Picture window toggled\n"
 msgstr ""
 
@@ -4351,7 +4344,7 @@ msgstr ""
 msgid "It's beyond my power to do that.\n"
 msgstr ""
 
-#: engines/glk/zcode/zcode.cpp:145 engines/glk/zcode/zcode.cpp:144
+#: engines/glk/zcode/zcode.cpp:145
 msgid "Error writing save file\n"
 msgstr ""
 
@@ -4377,15 +4370,15 @@ msgstr ""
 msgid "Failed to delete file."
 msgstr ""
 
-#: engines/griffon/detection.cpp:106
+#: engines/griffon/detection.cpp:117
 msgid "Menu / Skip"
 msgstr ""
 
-#: engines/griffon/detection.cpp:142
+#: engines/griffon/detection.cpp:153
 msgid "Attack"
 msgstr ""
 
-#: engines/griffon/detection.cpp:156
+#: engines/griffon/detection.cpp:167
 msgid "Speed Up Cutscene"
 msgstr ""
 
@@ -4523,13 +4516,13 @@ msgid "Left button to attack, right button to pick up items"
 msgstr ""
 
 #: engines/kyra/engine/eobcommon.cpp:366 engines/kyra/engine/lol.cpp:469
-#: engines/ultima/ultima4/meta_engine.cpp:232
+#: engines/ultima/ultima4/meta_engine.cpp:233
 #: engines/ultima/ultima8/meta_engine.cpp:130
 msgid "Interact via Left Click"
 msgstr ""
 
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:470
-#: engines/ultima/ultima4/meta_engine.cpp:238
+#: engines/ultima/ultima4/meta_engine.cpp:239
 #: engines/ultima/ultima8/meta_engine.cpp:136
 msgid "Interact via Right Click"
 msgstr ""
@@ -6197,11 +6190,11 @@ msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
 msgstr ""
 
-#: engines/sword2/sword2.cpp:80 engines/sword2/sword2.cpp:79
+#: engines/sword2/sword2.cpp:80
 msgid "Show object labels"
 msgstr ""
 
-#: engines/sword2/sword2.cpp:81 engines/sword2/sword2.cpp:80
+#: engines/sword2/sword2.cpp:81
 msgid "Show labels for objects on mouse hover"
 msgstr ""
 
@@ -6251,7 +6244,6 @@ msgid "Unable to locate the '%s' data file."
 msgstr ""
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
-#: engines/ultima/shared/early/ultima_early.cpp:67
 msgid "Could not find correct ultima.dat datafile"
 msgstr ""
 
@@ -6265,12 +6257,12 @@ msgstr ""
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr ""
 
-#: engines/ultima/nuvie/nuvie.cpp:382 engines/ultima/nuvie/nuvie.cpp:362
+#: engines/ultima/nuvie/nuvie.cpp:382
 #, c-format
 msgid "loading quick save %d"
 msgstr ""
 
-#: engines/ultima/nuvie/nuvie.cpp:387 engines/ultima/nuvie/nuvie.cpp:367
+#: engines/ultima/nuvie/nuvie.cpp:387
 #, c-format
 msgid "saving quick save %d"
 msgstr ""

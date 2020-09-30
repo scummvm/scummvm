@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-09-13 22:06+0100\n"
+"POT-Creation-Date: 2020-10-01 01:55+0200\n"
 "PO-Revision-Date: 2020-09-17 13:45+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -17,8 +17,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
-"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Українська\n"
 
@@ -270,7 +270,7 @@ msgid "Engine"
 msgstr "Движок"
 
 #: gui/editgamedialog.cpp:196 gui/options.cpp:1567 gui/options.cpp:1698
-#: backends/graphics/sdl/sdl-graphics.cpp:365
+#: backends/graphics/sdl/sdl-graphics.cpp:368
 #: backends/platform/ds/arm9/source/dsoptions.cpp:97
 msgid "Graphics"
 msgstr "Графіка"
@@ -557,7 +557,7 @@ msgid "Seventh-order"
 msgstr "Сьомого порядку"
 
 #. I18N: Button to reset keymap mappings to defaults
-#: gui/fluidsynth-dialog.cpp:151 backends/keymapper/remap-widget.cpp:314
+#: gui/fluidsynth-dialog.cpp:151 backends/keymapper/remap-widget.cpp:319
 msgid "Reset"
 msgstr "Скинути"
 
@@ -588,31 +588,29 @@ msgstr "Взаємодія"
 msgid "Close"
 msgstr "Закрити"
 
-#: gui/gui-manager.cpp:137 engines/metaengine.cpp:112
+#: gui/gui-manager.cpp:137 engines/metaengine.cpp:108
 #: backends/platform/symbian/src/SymbianActions.cpp:40
 #: engines/dragons/detection.cpp:277 engines/glk/scott/scott.cpp:412
-#: engines/griffon/detection.cpp:118
-#: engines/wintermute/keymapper_tables.h:1011
+#: engines/griffon/detection.cpp:129 engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
 #: engines/wintermute/keymapper_tables.h:1409
 #: engines/wintermute/keymapper_tables.h:1639
 msgid "Up"
 msgstr "Догори"
 
-#: gui/gui-manager.cpp:142 engines/metaengine.cpp:117
+#: gui/gui-manager.cpp:142 engines/metaengine.cpp:113
 #: backends/platform/symbian/src/SymbianActions.cpp:41
 #: engines/dragons/detection.cpp:283 engines/glk/scott/scott.cpp:412
-#: engines/griffon/detection.cpp:124
-#: engines/wintermute/keymapper_tables.h:1017
+#: engines/griffon/detection.cpp:135 engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
 #: engines/wintermute/keymapper_tables.h:1415
 #: engines/wintermute/keymapper_tables.h:1645
 msgid "Down"
 msgstr "Донизу"
 
-#: gui/gui-manager.cpp:147 engines/metaengine.cpp:122
+#: gui/gui-manager.cpp:147 engines/metaengine.cpp:118
 #: backends/platform/symbian/src/SymbianActions.cpp:42
-#: engines/dragons/detection.cpp:289 engines/griffon/detection.cpp:130
+#: engines/dragons/detection.cpp:289 engines/griffon/detection.cpp:141
 #: engines/wintermute/keymapper_tables.h:1023
 #: engines/wintermute/keymapper_tables.h:1397
 #: engines/wintermute/keymapper_tables.h:1505
@@ -620,9 +618,9 @@ msgstr "Донизу"
 msgid "Left"
 msgstr "Наліво"
 
-#: gui/gui-manager.cpp:152 engines/metaengine.cpp:127
+#: gui/gui-manager.cpp:152 engines/metaengine.cpp:123
 #: backends/platform/symbian/src/SymbianActions.cpp:43
-#: engines/dragons/detection.cpp:295 engines/griffon/detection.cpp:136
+#: engines/dragons/detection.cpp:295 engines/griffon/detection.cpp:147
 #: engines/wintermute/keymapper_tables.h:1029
 #: engines/wintermute/keymapper_tables.h:1403
 #: engines/wintermute/keymapper_tables.h:1513
@@ -986,7 +984,7 @@ msgstr "Спеціальні режими растрування, які під�
 msgid "Stretch mode:"
 msgstr "Режим розтягування:"
 
-#: gui/options.cpp:1258 backends/graphics/sdl/sdl-graphics.cpp:356
+#: gui/options.cpp:1258 backends/graphics/sdl/sdl-graphics.cpp:359
 msgid "Fullscreen mode"
 msgstr "Повноекранний режим"
 
@@ -1824,28 +1822,28 @@ msgstr "Введіть опис для слоту %d:"
 msgid "Select a Theme"
 msgstr "Виберіть тему"
 
-#: gui/ThemeEngine.cpp:271
+#: gui/ThemeEngine.cpp:276
 msgid "Disabled GFX"
 msgstr "Без графіки"
 
-#: gui/ThemeEngine.cpp:271
+#: gui/ThemeEngine.cpp:276
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "Без графіки"
 
-#: gui/ThemeEngine.cpp:272
+#: gui/ThemeEngine.cpp:277
 msgid "Standard renderer"
 msgstr "Стандартний растеризатор"
 
-#: gui/ThemeEngine.cpp:272 engines/scumm/dialogs.cpp:663
+#: gui/ThemeEngine.cpp:277 engines/scumm/dialogs.cpp:663
 msgid "Standard"
 msgstr "Стандартний"
 
-#: gui/ThemeEngine.cpp:274
+#: gui/ThemeEngine.cpp:279
 msgid "Antialiased renderer"
 msgstr "Растеризатор зі згладжуванням"
 
-#: gui/ThemeEngine.cpp:274
+#: gui/ThemeEngine.cpp:279
 msgid "Antialiased"
 msgstr "Зі згладжуванням"
 
@@ -2032,7 +2030,7 @@ msgstr "Щомісяця"
 msgid "<Bad value>"
 msgstr "<Невірне значення>"
 
-#: engines/advancedDetector.cpp:139
+#: engines/advancedDetector.cpp:178
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr "Знайдено нелегальну копію. В такому разі ми не надаємо підтримку"
 
@@ -2079,11 +2077,10 @@ msgstr "~П~овер.в головне меню"
 #: engines/neverhood/menumodule.cpp:890 engines/pegasus/pegasus.cpp:374
 #: engines/prince/saveload.cpp:55 engines/sci/engine/guest_additions.cpp:698
 #: engines/sci/engine/kfile.cpp:1074 engines/sherlock/scalpel/scalpel.cpp:1250
-#: engines/sherlock/tattoo/widget_files.cpp:75
-#: engines/startrek/saveload.cpp:43 engines/toltecs/menu.cpp:292
-#: engines/toon/toon.cpp:3362 engines/tsage/scenes.cpp:599
-#: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
-#: engines/zvision/file/save_manager.cpp:49
+#: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
+#: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
+#: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
+#: engines/xeen/saves.cpp:277 engines/zvision/file/save_manager.cpp:49
 msgid "Save game:"
 msgstr "Зберегти гру:"
 
@@ -2098,14 +2095,13 @@ msgstr "Зберегти гру:"
 #: engines/lab/savegame.cpp:243 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/neverhood/menumodule.cpp:890 engines/parallaction/saveload.cpp:209
 #: engines/pegasus/pegasus.cpp:374 engines/prince/saveload.cpp:55
-#: engines/sci/engine/guest_additions.cpp:699
-#: engines/sci/engine/kfile.cpp:1074 engines/scumm/dialogs.cpp:181
-#: engines/sherlock/scalpel/scalpel.cpp:1250
-#: engines/sherlock/tattoo/widget_files.cpp:75
-#: engines/startrek/saveload.cpp:43 engines/toltecs/menu.cpp:292
-#: engines/toon/toon.cpp:3362 engines/tsage/scenes.cpp:599
-#: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
-#: engines/zvision/detection.cpp:215 engines/zvision/file/save_manager.cpp:49
+#: engines/sci/engine/guest_additions.cpp:699 engines/sci/engine/kfile.cpp:1074
+#: engines/scumm/dialogs.cpp:181 engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
+#: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
+#: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
+#: engines/xeen/saves.cpp:277 engines/zvision/detection.cpp:215
+#: engines/zvision/file/save_manager.cpp:49
 msgid "Save"
 msgstr "Записати"
 
@@ -2199,7 +2195,7 @@ msgstr ""
 "того, щоб можна було слухати музику у грі.\n"
 "Дивіться файл README для подальших інструкцій."
 
-#: engines/engine.cpp:539 engines/metaengine.cpp:331 engines/savestate.cpp:81
+#: engines/engine.cpp:539 engines/metaengine.cpp:327 engines/savestate.cpp:81
 #: engines/sky/detection.cpp:316 engines/xeen/saves.cpp:290
 msgid "Autosave"
 msgstr "Автозбереження"
@@ -2257,31 +2253,31 @@ msgstr ""
 msgid "Matched game IDs for the %s engine:"
 msgstr "Можливі ідентифікатори гри для движка %s:"
 
-#: engines/metaengine.cpp:59
+#: engines/metaengine.cpp:55
 msgid "Default game keymap"
 msgstr "Мапа клавіш за замовчунням"
 
-#: engines/metaengine.cpp:63 backends/platform/maemo/maemo.cpp:174
+#: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:174
 #: backends/platform/symbian/src/SymbianActions.cpp:44
 #: engines/hdb/detection.cpp:303 engines/wintermute/keymapper_tables.h:43
 #: engines/zvision/detection.cpp:136
 msgid "Left Click"
 msgstr "Лівий клік"
 
-#: engines/metaengine.cpp:69 backends/platform/maemo/maemo.cpp:178
+#: engines/metaengine.cpp:65 backends/platform/maemo/maemo.cpp:178
 #: engines/wintermute/keymapper_tables.h:249
 #: engines/wintermute/keymapper_tables.h:293
 #: engines/wintermute/keymapper_tables.h:1651
 msgid "Middle Click"
 msgstr "Середній клік"
 
-#: engines/metaengine.cpp:74 backends/platform/maemo/maemo.cpp:182
+#: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:182
 #: backends/platform/symbian/src/SymbianActions.cpp:45
 #: engines/wintermute/keymapper_tables.h:49 engines/zvision/detection.cpp:142
 msgid "Right Click"
 msgstr "Правий клік"
 
-#: engines/metaengine.cpp:80
+#: engines/metaengine.cpp:76
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: engines/hdb/detection.cpp:354 engines/mohawk/myst.cpp:608
 #: engines/mohawk/riven.cpp:881 engines/sky/detection.cpp:253
@@ -2289,11 +2285,11 @@ msgstr "Правий клік"
 msgid "Pause"
 msgstr "Пауза"
 
-#: engines/metaengine.cpp:85
+#: engines/metaengine.cpp:81
 msgid "Game menu"
 msgstr "Меню гри"
 
-#: engines/metaengine.cpp:91
+#: engines/metaengine.cpp:87
 #: backends/platform/symbian/src/SymbianActions.cpp:47
 #: engines/mohawk/myst.cpp:579 engines/mohawk/riven.cpp:852
 #: engines/wintermute/keymapper_tables.h:217
@@ -2304,15 +2300,15 @@ msgstr "Меню гри"
 msgid "Skip"
 msgstr "Пропустити"
 
-#: engines/metaengine.cpp:97 engines/sky/detection.cpp:248
+#: engines/metaengine.cpp:93 engines/sky/detection.cpp:248
 msgid "Skip line"
 msgstr "Пропустити рядок"
 
-#: engines/metaengine.cpp:103
+#: engines/metaengine.cpp:99
 msgid "Predictive input dialog"
 msgstr "Діалог предиктивного вводу"
 
-#: engines/metaengine.cpp:107 engines/griffon/detection.cpp:112
+#: engines/metaengine.cpp:103 engines/griffon/detection.cpp:123
 #: engines/sky/detection.cpp:228 engines/wintermute/keymapper_tables.h:55
 msgid "Confirm"
 msgstr "Підтвердити"
@@ -2649,20 +2645,20 @@ msgstr "Без збільшення"
 msgid "Active graphics filter:"
 msgstr "Поточний графічний фільтр:"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:358
+#: backends/graphics/sdl/sdl-graphics.cpp:361
 msgid "Windowed mode"
 msgstr "Віконний режим"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:369 engines/scumm/help.cpp:86
+#: backends/graphics/sdl/sdl-graphics.cpp:372 engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
 msgstr "Перемикання повноекранного режиму"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:376 engines/scumm/help.cpp:99
+#: backends/graphics/sdl/sdl-graphics.cpp:379 engines/scumm/help.cpp:99
 #: engines/wintermute/keymapper_tables.h:710
 msgid "Toggle mouse capture"
 msgstr "Перемикання захоплення миші"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:381
+#: backends/graphics/sdl/sdl-graphics.cpp:384
 #: engines/wintermute/keymapper_tables.h:478
 #: engines/wintermute/keymapper_tables.h:847
 #: engines/wintermute/keymapper_tables.h:1061
@@ -2674,55 +2670,55 @@ msgstr "Перемикання захоплення миші"
 msgid "Save screenshot"
 msgstr "Зберегти екран"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:387
+#: backends/graphics/sdl/sdl-graphics.cpp:390
 msgid "Toggle aspect ratio correction"
 msgstr "Перемикання корекції співвідношення сторін"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:394
+#: backends/graphics/sdl/sdl-graphics.cpp:397
 msgid "Toggle linear filtered scaling"
 msgstr "Перемикання фільтра лінийний"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:401
+#: backends/graphics/sdl/sdl-graphics.cpp:404
 msgid "Cycle through stretch modes"
 msgstr "Перемикання між режимів розтягування"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:407
+#: backends/graphics/sdl/sdl-graphics.cpp:410
 msgid "Increase the scale factor"
 msgstr "Збільшити масштаб"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:413
+#: backends/graphics/sdl/sdl-graphics.cpp:416
 msgid "Decrease the scale factor"
 msgstr "Зменшити масштаб"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:425
+#: backends/graphics/sdl/sdl-graphics.cpp:428
 msgid "Switch to nearest neighbour scaling"
 msgstr "Перемикання до фільтра nearest neighbour"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:426
+#: backends/graphics/sdl/sdl-graphics.cpp:429
 msgid "Switch to AdvMame 2x/3x scaling"
 msgstr "Перемикання до фільтра AdvMame 2x/3x scaling"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:428
+#: backends/graphics/sdl/sdl-graphics.cpp:431
 msgid "Switch to HQ 2x/3x scaling"
 msgstr "Перемикання до фільтра HQ 2x/3x"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:430
+#: backends/graphics/sdl/sdl-graphics.cpp:433
 msgid "Switch to 2xSai scaling"
 msgstr "Перемикання до фільтра 2xSai"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:431
+#: backends/graphics/sdl/sdl-graphics.cpp:434
 msgid "Switch to Super2xSai scaling"
 msgstr "Перемикання до фільтра Super2xSai"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:432
+#: backends/graphics/sdl/sdl-graphics.cpp:435
 msgid "Switch to SuperEagle scaling"
 msgstr "Перемикання до фільтра SuperEagle"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:433
+#: backends/graphics/sdl/sdl-graphics.cpp:436
 msgid "Switch to TV 2x scaling"
 msgstr "Перемикання до фільтра TV 2x"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:434
+#: backends/graphics/sdl/sdl-graphics.cpp:437
 msgid "Switch to DotMatrix scaling"
 msgstr "Перемикання до фільтра DotMatrix"
 
@@ -2858,12 +2854,12 @@ msgstr "Правий стік вісь X"
 msgid "Right Stick Y"
 msgstr "Правий стік вісь Y"
 
-#: backends/keymapper/remap-widget.cpp:285
-#: backends/keymapper/remap-widget.cpp:315
+#: backends/keymapper/remap-widget.cpp:290
+#: backends/keymapper/remap-widget.cpp:320
 msgid "Reset to defaults"
 msgstr "Повернутись до початкових значень"
 
-#: backends/keymapper/remap-widget.cpp:286
+#: backends/keymapper/remap-widget.cpp:291
 msgid "Clear mapping"
 msgstr "Очистити призначення клавіш"
 
@@ -3432,18 +3428,15 @@ msgstr "Захист знизу"
 msgid "Guard middle"
 msgstr "Захист посередині"
 
-#: backends/platform/ds/arm9/source/scummhelp.cpp:81
-#: engines/scumm/help.cpp:312
+#: backends/platform/ds/arm9/source/scummhelp.cpp:81 engines/scumm/help.cpp:312
 msgid "Punch high"
 msgstr "Бити зверху"
 
-#: backends/platform/ds/arm9/source/scummhelp.cpp:82
-#: engines/scumm/help.cpp:313
+#: backends/platform/ds/arm9/source/scummhelp.cpp:82 engines/scumm/help.cpp:313
 msgid "Punch middle"
 msgstr "Бити посередині"
 
-#: backends/platform/ds/arm9/source/scummhelp.cpp:83
-#: engines/scumm/help.cpp:314
+#: backends/platform/ds/arm9/source/scummhelp.cpp:83 engines/scumm/help.cpp:314
 msgid "Punch low"
 msgstr "Бити знизу"
 
@@ -3902,11 +3895,11 @@ msgstr ""
 #: engines/illusions/menusystem.cpp:680 engines/kingdom/kingdom.cpp:749
 #: engines/lab/savegame.cpp:258 engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:903 engines/prince/saveload.cpp:64
-#: engines/sci/engine/guest_additions.cpp:701
-#: engines/sci/engine/kfile.cpp:1186 engines/sherlock/scalpel/scalpel.cpp:1263
-#: engines/sherlock/tattoo/widget_files.cpp:94
-#: engines/startrek/saveload.cpp:68 engines/toltecs/menu.cpp:267
-#: engines/toon/toon.cpp:3456 engines/zvision/file/save_manager.cpp:62
+#: engines/sci/engine/guest_additions.cpp:701 engines/sci/engine/kfile.cpp:1186
+#: engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:68
+#: engines/toltecs/menu.cpp:267 engines/toon/toon.cpp:3456
+#: engines/zvision/file/save_manager.cpp:62
 msgid "Restore game:"
 msgstr "Відновити гру:"
 
@@ -3919,12 +3912,11 @@ msgstr "Відновити гру:"
 #: engines/lab/savegame.cpp:238 engines/lab/savegame.cpp:258
 #: engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:903 engines/prince/saveload.cpp:64
-#: engines/sci/engine/guest_additions.cpp:702
-#: engines/sci/engine/kfile.cpp:1186 engines/sherlock/scalpel/scalpel.cpp:1263
-#: engines/sherlock/tattoo/widget_files.cpp:94
-#: engines/startrek/saveload.cpp:68 engines/toltecs/menu.cpp:267
-#: engines/toon/toon.cpp:3456 engines/zvision/detection.cpp:220
-#: engines/zvision/file/save_manager.cpp:62
+#: engines/sci/engine/guest_additions.cpp:702 engines/sci/engine/kfile.cpp:1186
+#: engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:68
+#: engines/toltecs/menu.cpp:267 engines/toon/toon.cpp:3456
+#: engines/zvision/detection.cpp:220 engines/zvision/file/save_manager.cpp:62
 msgid "Restore"
 msgstr "Відновити"
 
@@ -4068,11 +4060,11 @@ msgstr ""
 "Під час бігу МакКой не буде уповільнюватися коли гравець припиняє клікати "
 "мишею"
 
-#: engines/cge/detection.cpp:115
+#: engines/cge/detection.cpp:115 engines/cge2/detection.cpp:111
 msgid "Color Blind Mode"
 msgstr "Режим без кольору"
 
-#: engines/cge/detection.cpp:116
+#: engines/cge/detection.cpp:116 engines/cge2/detection.cpp:112
 msgid "Enable Color Blind Mode by default"
 msgstr "Включає режим для людей з погіршенним сприяттям кольору"
 
@@ -4092,11 +4084,11 @@ msgstr ""
 msgid "Unnamed autosave"
 msgstr "Автозбереження без імені"
 
-#: engines/cine/detection.cpp:192 engines/cine/detection.cpp:271
+#: engines/cine/detection.cpp:192 engines/cine/detection.cpp:267
 msgid "Unnamed savegame"
 msgstr "Збережена гра без імені"
 
-#: engines/cine/detection.cpp:210 engines/cine/detection.cpp:284
+#: engines/cine/detection.cpp:210 engines/cine/detection.cpp:280
 msgid "Empty autosave"
 msgstr "Порожнє автозбереження"
 
@@ -4138,7 +4130,7 @@ msgstr "Дія"
 msgid "Change Command"
 msgstr "Змінити команду"
 
-#: engines/dragons/detection.cpp:266 engines/griffon/detection.cpp:149
+#: engines/dragons/detection.cpp:266 engines/griffon/detection.cpp:160
 #: engines/hdb/detection.cpp:347 engines/scumm/help.cpp:225
 #: engines/scumm/help.cpp:234 engines/scumm/help.cpp:241
 #: engines/scumm/help.cpp:249 engines/zvision/detection.cpp:185
@@ -4263,7 +4255,7 @@ msgstr "Це недійсний файл Alan2."
 msgid "Savegame"
 msgstr "Збережена гра"
 
-#: engines/glk/comprehend/game.cpp:1373
+#: engines/glk/comprehend/game.cpp:1381
 msgid "Picture window toggled\n"
 msgstr "Вікно з ілюстрацією перемкнено\n"
 
@@ -4528,15 +4520,15 @@ msgstr "Не вдалося зберегти гру у файл."
 msgid "Failed to delete file."
 msgstr "Не вдалося видалити файл."
 
-#: engines/griffon/detection.cpp:106
+#: engines/griffon/detection.cpp:117
 msgid "Menu / Skip"
 msgstr "Меню / Пропустити"
 
-#: engines/griffon/detection.cpp:142
+#: engines/griffon/detection.cpp:153
 msgid "Attack"
 msgstr "Атака"
 
-#: engines/griffon/detection.cpp:156
+#: engines/griffon/detection.cpp:167
 msgid "Speed Up Cutscene"
 msgstr "Прискорити ролік"
 
@@ -4674,13 +4666,13 @@ msgid "Left button to attack, right button to pick up items"
 msgstr "Ліва кнопка для атаки, права кнопка для підбору предметів"
 
 #: engines/kyra/engine/eobcommon.cpp:366 engines/kyra/engine/lol.cpp:469
-#: engines/ultima/ultima4/meta_engine.cpp:232
+#: engines/ultima/ultima4/meta_engine.cpp:233
 #: engines/ultima/ultima8/meta_engine.cpp:130
 msgid "Interact via Left Click"
 msgstr "Взаємодія через лівий клік"
 
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:470
-#: engines/ultima/ultima4/meta_engine.cpp:238
+#: engines/ultima/ultima4/meta_engine.cpp:239
 #: engines/ultima/ultima8/meta_engine.cpp:136
 msgid "Interact via Right Click"
 msgstr "Взаємодія через правий клік"
