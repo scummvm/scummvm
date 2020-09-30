@@ -81,7 +81,7 @@ int SaveLoadChooser::runModalWithCurrentTarget() {
 	if (!plugin) {
 		error("SaveLoadChooser::runModalWithCurrentTarget(): Cannot find plugin");
 	} else {
-		enginePlugin = PluginMan.giveEngineFromMetaEngine(plugin);
+		enginePlugin = PluginMan.getEngineFromMetaEngine(plugin);
 
 		if (!enginePlugin) {
 			error("SaveLoadChooser::runModalWithCurrentTarget(): Couldn't match a Engine from the MetaEngine. \

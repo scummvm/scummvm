@@ -895,7 +895,7 @@ static Common::Error listSaves(const Common::String &singleTarget) {
 			printf("MetaEnginePlugin could not be loaded for target '%s'\n", i->c_str());
 			continue;
 		} else {
-			enginePlugin = PluginMan.giveEngineFromMetaEngine(metaEnginePlugin);
+			enginePlugin = PluginMan.getEngineFromMetaEngine(metaEnginePlugin);
 
 			if (!enginePlugin) {
 				// If the target was specified, treat this as an error, and otherwise skip it.

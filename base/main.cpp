@@ -192,7 +192,7 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 
 	// Right now we have a MetaEngine plugin. We must find the matching engine plugin to
 	// call createInstance and other connecting functions.
-	Plugin *enginePluginToLaunchGame = PluginMan.giveEngineFromMetaEngine(plugin);
+	Plugin *enginePluginToLaunchGame = PluginMan.getEngineFromMetaEngine(plugin);
 
 	if (!enginePluginToLaunchGame) {
 		err = Common::kEnginePluginNotFound;
@@ -550,7 +550,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 			// Right now, we have a MetaEngine plugin, and we want to unload all except Engine.
 			// First, get the relevant Engine plugin from MetaEngine.
-			const Plugin *enginePlugin = PluginMan.giveEngineFromMetaEngine(plugin);
+			const Plugin *enginePlugin = PluginMan.getEngineFromMetaEngine(plugin);
 
 			// Then, pass in the pointer to enginePlugin, with the matching type, so our function behaves as-is.
 			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE, enginePlugin);

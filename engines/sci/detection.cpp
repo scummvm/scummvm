@@ -453,7 +453,7 @@ ADDetectedGame SciMetaEngine::fallbackDetect(const FileMap &allFiles, const Comm
 	const Plugin *metaEnginePlugin = EngineMan.findPlugin(getEngineId());
 
 	if (metaEnginePlugin) {
-		const Plugin *enginePlugin = PluginMan.giveEngineFromMetaEngine(metaEnginePlugin);
+		const Plugin *enginePlugin = PluginMan.getEngineFromMetaEngine(metaEnginePlugin);
 		if (enginePlugin) {
 			return enginePlugin->get<AdvancedMetaEngineConnect>().fallbackDetectExtern(_md5Bytes, allFiles, fslist);
 		} else {

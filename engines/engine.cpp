@@ -875,7 +875,7 @@ MetaEngineConnect &Engine::getMetaEngineConnect() {
 	const Plugin *metaEnginePlugin = EngineMan.findPlugin(ConfMan.get("engineid"));
 	assert(metaEnginePlugin);
 
-	const Plugin *enginePlugin = PluginMan.giveEngineFromMetaEngine(metaEnginePlugin);
+	const Plugin *enginePlugin = PluginMan.getEngineFromMetaEngine(metaEnginePlugin);
 	assert(enginePlugin);
 
 	return enginePlugin->get<MetaEngineConnect>();

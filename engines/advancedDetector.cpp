@@ -681,7 +681,7 @@ void AdvancedMetaEngine::initSubSystems(const ADGameDescription *gameDesc) const
 Common::Error AdvancedMetaEngineConnect::createInstance(OSystem *syst, Engine **engine) const {
 	PluginList pl = PluginMan.getPlugins(PLUGIN_TYPE_ENGINE);
 	if (pl.size() == 1) {
-		Plugin *metaEnginePlugin = PluginMan.giveMetaEngineFromEngine(pl[0]);
+		Plugin *metaEnginePlugin = PluginMan.getMetaEngineFromEngine(pl[0]);
 		if (metaEnginePlugin) {
 			return metaEnginePlugin->get<AdvancedMetaEngine>().createInstance(syst, engine);
 		}
