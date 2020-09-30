@@ -279,21 +279,27 @@ void GfxFontFromResource::draw(uint16 chr, int16 top, int16 left, byte color, bo
 	uint16 screenWidth = _screen->fontIsUpscaled() ? _screen->getDisplayWidth() : _screen->getWidth();
 	uint16 screenHeight = _screen->fontIsUpscaled() ? _screen->getDisplayHeight() : _screen->getHeight();
 
-	int charWidth = MIN<int>(getCharWidth(chr), screenWidth - left);
-	int charHeight = MIN<int>(getCharHeight(chr), screenHeight - top);
+	int charWidth = getCharWidth(chr);
+	int charHeight = getCharHeight(chr);
 	byte b = 0, mask = 0xFF;
-	int y = 0;
 	int16 greyedTop = top;
 
 	SciSpan<const byte> charData = getCharData(chr);
-	for (int i = 0; i < charHeight; i++, y++) {
+	for (int y = 0; y < charHeight; y++) {
 		if (greyedOutput)
 			mask = ((greyedTop++) % 2) ? 0xAA : 0x55;
-		for (int done = 0; done < charWidth; done++) {
-			if ((done & 7) == 0) // fetching next data byte
+		for (int x = 0; x < charWidth; x++) {
+			if ((x & 7) == 0) // fetching next data byte
 				b = *(charData++) & mask;
-			if (b & 0x80) // if MSB is set - paint it
-				_screen->putFontPixel(top, left + done, y, color);
+			if (b & 0x80) { // if MSB is set - paint it
+				int screenX = left + x;
+				int screenY = top + y;
+				if (0 <= screenX && screenX < screenWidth && 0 <= screenY && screenY < screenHeight) {
+					_screen->putFontPixel(top, screenX, y, color);
+				} else {
+					warning("%s glpyh %d drawn out of bounds: %d, %d", _resource->name().c_str(), chr, screenX, screenY);
+				}
+			}
 			b = b << 1;
 		}
 	}
@@ -309,22 +315,27 @@ void GfxFontFromResource::drawToBuffer(uint16 chr, int16 top, int16 left, byte c
 		return;
 	}
 
-	int charWidth = MIN<int>(getCharWidth(chr), bufWidth - left);
-	int charHeight = MIN<int>(getCharHeight(chr), bufHeight - top);
+	int charWidth = getCharWidth(chr);
+	int charHeight = getCharHeight(chr);
 	byte b = 0, mask = 0xFF;
-	int y = 0;
 	int16 greyedTop = top;
 
 	SciSpan<const byte> charData = getCharData(chr);
-	for (int i = 0; i < charHeight; i++, y++) {
+	for (int y = 0; y < charHeight; y++) {
 		if (greyedOutput)
 			mask = ((greyedTop++) % 2) ? 0xAA : 0x55;
-		for (int done = 0; done < charWidth; done++) {
-			if ((done & 7) == 0) // fetching next data byte
+		for (int x = 0; x < charWidth; x++) {
+			if ((x & 7) == 0) // fetching next data byte
 				b = *(charData++) & mask;
 			if (b & 0x80) {	// if MSB is set - paint it
-				int offset = (top + y) * bufWidth + (left + done);
-				buffer[offset] = color;
+				int bufX = left + x;
+				int bufY = top + y;
+				if (0 <= bufX && bufX < bufWidth && 0 <= bufY && bufY < bufHeight) {
+					int offset = bufY * bufWidth + bufX;
+					buffer[offset] = color;
+				} else {
+					warning("%s glpyh %d drawn out of bounds: %d, %d", _resource->name().c_str(), chr, bufX, bufY);
+				}
 			}
 			b = b << 1;
 		}
