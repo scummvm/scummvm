@@ -45,7 +45,7 @@ Walk::Walk(int id) { // CHECKED
 	res.toLowercase();
 	res = res.substr(0, res.find(wayPrefixes[0]));
 	for (int i = 0; i < 8; ++i) {
-		waysSizes[i] = readWayFile(res + Common::String(wayPrefixes[i]) + "off", &_off1[i], &_off2[i]);
+		waysSizes[i] = readWayFile(res + Common::String(wayPrefixes[i]) + "off", &_off1[i], &_off2[i]) - 1;
 		readWayFile(res + Common::String(wayPrefixes[i]) + "leg", &_leg1[i], &_leg2[i]);
 	}
 
@@ -363,14 +363,14 @@ int Walk::sub_422EA0(Point p1, Point p2) {
 	if (v39 == 0.0)
 		field_140 = v28 / v12;
 	else
-		field_140 =  (field_D0[resId] - -1.0 / (v26 / v28)) * (v26 / v12) * v39;
+		field_140 = (field_D0[resId] - -1.0 / (v26 / v28)) * (v26 / v12) * v39;
 
 	DBLPoint a1;
 	DBLPoint a2;
 	DBLPoint a3;
 
-	a1.x = p2.x;
-	a1.y = p2.y;
+	a1.x = p1.x;
+	a1.y = p1.y;
 
 	a2.x = p2.x;
 	a2.y = p2.y;
@@ -544,6 +544,7 @@ int Walk::sub_423600(Point p) {
 		if (v12 > kPI)
 			return i;
 	}
+	debug("Walk bug: Point doesn't belong to any convex");
 
 	return 0;
 }
@@ -750,20 +751,16 @@ int Walk::sub_424320(Point *p1, Point *p2) { // CHECKED
 int Walk::moveInside(Point *p) { // CHECKED
 	DBLPoint dp = sub_424610(_bkg1[_bkg2->x], _bkg1[_bkg2->y].x, _bkg1[_bkg2->y].y, *p);
 
-	int v7 = 0;
-	int v23 = 0;
+	int index = 0;
 
 	double min = (dp.y - p->y) * (dp.y - p->y) + (dp.x - p->x) * (dp.x - p->x);
 	for (int i = 1; i < _bkg1Count; ++i) {
 		DBLPoint dp1 = sub_424610(_bkg1[_bkg2[i].x], _bkg1[_bkg2[i].y].x, _bkg1[_bkg2[i].y].y, *p);
 		double curr = (dp1.y - p->y) * (dp1.y - p->y) + (dp1.x - p->x) * (dp1.x - p->x);
-		if (curr >= min) {
-			v7 = v23;
-		} else {
+		if (curr < min) {
 			dp = dp1;
 			min = curr;
-			v7 = i;
-			v23 = i;
+			index = i;
 		}
 
 	}
@@ -774,7 +771,7 @@ int Walk::moveInside(Point *p) { // CHECKED
 
 	for (int i = 0; i < _bkg1Count; ++i) {
 		for (int j = 0; j < _bkg3_1[i]; ++j) {
-			if (_bkg3_2[i][j] == v7)
+			if (_bkg3_2[i][j] == index)
 				return i;
 		}
 	}
