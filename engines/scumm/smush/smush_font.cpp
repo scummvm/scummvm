@@ -37,30 +37,58 @@ SmushFont::SmushFont(ScummEngine *vm, const char *filename, bool use_original_co
 	_original(use_original_colors) {
 }
 
-int SmushFont::getStringWidth(const char *str) {
+int SmushFont::getStringWidth(const char *str, uint numBytesMax) {
 	assert(str);
-
+	int maxWidth = 0;
 	int width = 0;
-	while (*str) {
-		if (*str & 0x80 && _vm->_useCJKMode) {
-			width += _vm->_2byteWidth + 1;
-			str += 2;
-		} else
-			width += getCharWidth(*str++);
+
+	if (!numBytesMax)
+		return 0;
+
+	while (*str && numBytesMax) {
+		// No treatment of the ^ commands here, since they're handled/removed in handleTextResource().
+		if (is2ByteCharacter(_vm->_language, *str)) {
+			width += _vm->_2byteWidth + (_vm->_language != Common::JA_JPN ? 1 : 0);
+			++str;
+			--numBytesMax;
+		} else if (*str == '\n') {
+			maxWidth = MAX<int>(width, maxWidth);
+			width = 0;
+		} else if (*str != '\r' && *str != _vm->_newLineCharacter) {
+			width += getCharWidth(*str);
+		}
+		++str;
+		--numBytesMax;
 	}
-	return width;
+
+	return MAX<int>(width, maxWidth);
 }
 
-int SmushFont::getStringHeight(const char *str) {
+int SmushFont::getStringHeight(const char *str, uint numBytesMax) {
 	assert(str);
+	int totalHeight = 0;
+	int lineHeight = 0;
 
-	int height = 0;
-	while (*str) {
-		int charHeight = getCharHeight(*str++);
-		if (height < charHeight)
-			height = charHeight;
+	if (!numBytesMax)
+		return 0;
+
+	while (*str && numBytesMax) {
+		// No treatment of the ^ commands here, since they're handled/removed in handleTextResource().
+		if (*str == '\n') {
+			totalHeight += (lineHeight ? lineHeight : _fontHeight) + 1;
+			lineHeight = 0;
+		} else if (*str != '\r' || *str != _vm->_newLineCharacter) {
+			lineHeight = MAX<int>(lineHeight, getCharHeight(*str));
+			if (is2ByteCharacter(_vm->_language, *str)) {
+				++str;
+				--numBytesMax;
+			}
+		}
+		++str;
+		--numBytesMax;
 	}
-	return height;
+
+	return totalHeight + (lineHeight ? lineHeight : _fontHeight) + 1;
 }
 
 int SmushFont::drawChar(byte *buffer, int dst_width, int x, int y, byte chr) {
@@ -189,7 +217,7 @@ int SmushFont::draw2byte(byte *buffer, int dst_width, int x, int y, int idx) {
 	return w + 1;
 }
 
-void SmushFont::drawSubstring(const char *str, byte *buffer, int dst_width, int x, int y) {
+void SmushFont::drawSubstring(const char *str, uint numBytesMax, byte *buffer, int dst_width, int x, int y) {
 	// This happens in the Full Throttle intro. I don't know if our
 	// text-drawing functions are buggy, or if this function is supposed
 	// to have to check for it.
@@ -197,125 +225,164 @@ void SmushFont::drawSubstring(const char *str, byte *buffer, int dst_width, int 
 		x = 0;
 
 	if (_vm->_language == Common::HE_ISR) {
-		for (int i = strlen(str); i >= 0; i--) {
+		for (int i = strlen(str); i >= 0 && numBytesMax; i--) {
 			x += drawChar(buffer, dst_width, x, y, str[i]);
+			--numBytesMax;
 		}
 	} else {
-		for (int i = 0; str[i] != 0; i++) {
-			if ((byte)str[i] >= 0x80 && _vm->_useCJKMode) {
-				x += draw2byte(buffer, dst_width, x, y, (byte)str[i] + 256 * (byte)str[i+1]);
-				i++;
-			} else
+		for (int i = 0; str[i] != 0 && numBytesMax; ++i) {
+			if (is2ByteCharacter(_vm->_language, str[i])) {
+				x += draw2byte(buffer, dst_width, x, y, (byte)str[i] + 256 * (byte)str[i + 1]);
+				++i;
+				--numBytesMax;
+			} else if (str[i] != '\n' && str[i] != _vm->_newLineCharacter) {
 				x += drawChar(buffer, dst_width, x, y, str[i]);
+			}
+			--numBytesMax;
 		}
 	}
 }
 
-#define MAX_WORDS	60
+#define MAX_STRINGS		80
 
 
 void SmushFont::drawString(const char *str, byte *buffer, int dst_width, int dst_height, int x, int y, bool center) {
 	debugC(DEBUG_SMUSH, "SmushFont::drawString(%s, %d, %d, %d)", str, x, y, center);
 
-	while (str) {
-		char line[256];
-		char separators[] = "\n ";
+	int totalLen = (int)strlen(str);
+	int lineStart = 0;
 
-		if (_vm->_language == Common::ZH_TWN)
-			separators[1] = '!';
-		else
-			separators[1] = '\0';
+	// This can be found i COMI. No idea whether it is actually used. We currently don't handle these flags.
+	/*if (_vm->_game.id == GID_CMI && (flags & 0x40))
+		y -= (getStringHeight(str, totalLen) / 2);*/
 
-		const char *pos = strpbrk(str, separators);
-		if (pos) {
-			memcpy(line, str, pos - str - 1);
-			line[pos - str - 1] = 0;
-			str = pos + 1;
-		} else {
-			strcpy(line, str);
-			str = 0;
+	for (int pos = 0; pos <= totalLen; ++pos) {
+		if (str[pos] != '\0' && str[pos] != '\n')
+			continue;
+
+		int len = pos - lineStart;
+		int height = getStringHeight(str + lineStart, len);
+		if (y < dst_height) {
+			drawSubstring(str + lineStart, len, buffer, dst_width, center ? (x - getStringWidth(str + lineStart, len) / 2) : x, y);
+			y += height;
 		}
-		drawSubstring(line, buffer, dst_width, center ? (x - getStringWidth(line) / 2) : x, y);
-		y += getStringHeight(line);
+
+		lineStart = pos + 1;
 	}
 }
 
 void SmushFont::drawStringWrap(const char *str, byte *buffer, int dst_width, int dst_height, int x, int y, int left, int right, bool center) {
 	debugC(DEBUG_SMUSH, "SmushFont::drawStringWrap(%s, %d, %d, %d, %d, %d)", str, x, y, left, right, center);
 
+	// This implementation is from COMI. Things are done a bit differently than in the older implementations.
+	// In particular, the older version would insert '\0' chars into the string to cut off the sub strings
+	// before calling getStringWidth(), getStringHeight() or drawSubstring() and replace these chars with the
+	// original values afterwards. COMI allows a byte length limitation in all the functions so that the sub
+	// string length can be passed and no cut off '\0' chars are needed.
 	const int width = right - left;
-	Common::String s(str);
-	char *words[MAX_WORDS];
-	int word_count = 0;
-	char separators[] = " \t\r\n ";
+	int len = (int)strlen(str);
+	Common::String spaceSeparators(Common::String::format(" %c", (char)_vm->_newLineCharacter));
+	Common::String breakSeparators(Common::String::format(" \n%c", (char)_vm->_newLineCharacter));
 
-	if (_vm->_language == Common::ZH_TWN)
-		separators[4] = '!';
-	else
-		separators[4] = '\0';
+	int16 substrByteLength[MAX_STRINGS];
+	memset(substrByteLength, 0, sizeof(substrByteLength));
+	int16 substrWidths[MAX_STRINGS];
+	memset(substrWidths, 0, sizeof(substrWidths));
+	int16 substrStart[MAX_STRINGS];
+	memset(substrStart, 0, sizeof(substrStart));
 
-	Common::String::iterator tmp = s.begin();
-	while (tmp) {
-		assert(word_count < MAX_WORDS);
-		words[word_count++] = tmp;
-		tmp = strpbrk(tmp, separators);
-		if (tmp == 0)
-			break;
-		*tmp++ = 0;
-	}
+	int16 numSubstrings = 0;
+	int height = 0;
+	int lastSubstrHeight = 0;
+	int maxWidth = 0;
+	int curWidth = 0;
+	int curPos = -1;
 
-	int i = 0, max_width = 0, height = 0, line_count = 0;
+	while (curPos < len) {
+		int textStart = curPos + 1;
+		while (str[textStart] && spaceSeparators.contains(str[textStart]))
+			++textStart;
 
-	char *substrings[MAX_WORDS];
-	int substr_widths[MAX_WORDS];
-	const int space_width = getCharWidth(' ');
+		int separatorWidth = curPos > 0 ? getStringWidth(str + curPos, textStart - curPos) : 0;
 
-	i = 0;
-	while (i < word_count) {
-		char *substr = words[i++];
-		int substr_width = getStringWidth(substr);
-
-		while (i < word_count) {
-			int word_width = getStringWidth(words[i]);
-			if ((substr_width + space_width + word_width) >= width)
+		int nextSeparatorPos = textStart;
+		while (!breakSeparators.contains(str[nextSeparatorPos])) {
+			if (++nextSeparatorPos == len)
 				break;
-			substr_width += word_width + space_width;
-			*(words[i]-1) = ' ';	// Convert 0 byte back to space
-			i++;
 		}
 
-		substrings[line_count] = substr;
-		substr_widths[line_count++] = substr_width;
-		if (max_width < substr_width)
-			max_width = substr_width;
-		height += getStringHeight(substr);
+		int wordWidth = getStringWidth(str + textStart, nextSeparatorPos - textStart);
+		int newWidth = curWidth + separatorWidth + wordWidth;
+
+		if (newWidth > width) {
+			if (numSubstrings < MAX_STRINGS) {
+				substrWidths[numSubstrings] = curWidth;
+				substrByteLength[numSubstrings] = curPos - substrStart[numSubstrings];
+				numSubstrings++;
+			}
+			newWidth = wordWidth;
+			substrStart[numSubstrings] = textStart;
+		}
+		curWidth = newWidth;
+
+		curPos = nextSeparatorPos;
+		if (!spaceSeparators.contains(str[nextSeparatorPos])) {
+			// This one is only triggered by '\n' (which frequently happens in COMI/English).
+			if (numSubstrings < MAX_STRINGS) {
+				substrWidths[numSubstrings] = curWidth;
+				substrByteLength[numSubstrings] = nextSeparatorPos - substrStart[numSubstrings];
+				numSubstrings++;
+				substrStart[numSubstrings] = nextSeparatorPos + 1;
+			}
+			curWidth = 0;
+		}
 	}
 
-	if (y > dst_height - height) {
-		y = dst_height - height;
+	if (curWidth && numSubstrings < MAX_STRINGS) {
+		substrWidths[numSubstrings] = curWidth;
+		substrByteLength[numSubstrings] = curPos - substrStart[numSubstrings];
+		numSubstrings++;
 	}
+
+	for (int i = 0; i < numSubstrings; ++i) {
+		maxWidth = MAX<int>(maxWidth, substrWidths[i]);
+		lastSubstrHeight = substrByteLength[i] > 0 ? getStringHeight(str + substrStart[i], substrByteLength[i]) : 0;
+		height += lastSubstrHeight;
+	}
+
+	// I have verified this for DIG and COMI (English and Chinese), so I limit this fix to that. In
+	// COMI this is actually more complicated, since there seem to be more text flags which we don't
+	// support. E. g. for a flag of 0x40 we'd substract another (lastHeight / 2) from y here (without
+	// any condition). And for flag 0x100 we'd actually skip this step. No idea yet whether the flags
+	// are relevant (they can't be too relevant or someone would have implemented them, but I'll check).
+	int clipHeight = height;
+	if (_vm->_game.id == GID_DIG || (_vm->_game.id == GID_CMI))
+		clipHeight += (lastSubstrHeight / 2);
+
+	/*if (_vm->_game.id == GID_CMI && (flags & 0x40))
+		y -= (lastSubstrHeight / 2);*/
+
+	if (y > dst_height - clipHeight /*&& !(_vm->_game.id == GID_CMI && (flags & 0x100))*/)
+		y = dst_height - clipHeight;
 
 	if (center) {
-		max_width = (max_width + 1) / 2;
+		maxWidth = (maxWidth + 1) / 2;
 		x = left + width / 2;
 
-		if (x < left + max_width)
-			x = left + max_width;
-		if (x > right - max_width)
-			x = right - max_width;
-
-		for (i = 0; i < line_count; i++) {
-			drawSubstring(substrings[i], buffer, dst_width, x - substr_widths[i] / 2, y);
-			y += getStringHeight(substrings[i]);
-		}
+		if (x < left + maxWidth)
+			x = left + maxWidth;
+		if (x > right - maxWidth)
+			x = right - maxWidth;
 	} else {
-		if (x > dst_width - max_width)
-			x = dst_width - max_width;
+		if (x > dst_width - maxWidth)
+			x = dst_width - maxWidth;
+	}
 
-		for (i = 0; i < line_count; i++) {
-			drawSubstring(substrings[i], buffer, dst_width, x, y);
-			y += getStringHeight(substrings[i]);
-		}
+	for (int i = 0; i < numSubstrings; i++) {
+		int xpos = center ? x - substrWidths[i] / 2 : x;
+		len = substrByteLength[i] > 0 ? substrByteLength[i] : 0;
+		drawSubstring(str + substrStart[i], len, buffer, dst_width, xpos, y);
+		y += getStringHeight(str + substrStart[i], len);
 	}
 }
 
