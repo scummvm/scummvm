@@ -3,7 +3,7 @@
 #
 ###############################################
 
-ifeq "$(USE_RULES)" "1"
+ifeq "$(LOAD_RULES_MK)" "1"
 
 # Copy the list of objects to a new variable. The name of the new variable
 # contains the module name, a trick we use so we can keep multiple different
@@ -105,4 +105,4 @@ endif
 
 .PHONY: clean-$(MODULE) $(MODULE)
 
-endif # USE_RULES
+endif # LOAD_RULES_MK
