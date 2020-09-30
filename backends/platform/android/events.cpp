@@ -89,6 +89,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		// map special keys to 'our' ascii codes
 		switch (e.kbd.keycode) {
 		case Common::KEYCODE_BACKSPACE:
+			LOGD("received BACKSPACE");
 			e.kbd.ascii = Common::ASCII_BACKSPACE;
 			break;
 		case Common::KEYCODE_TAB:

@@ -114,6 +114,12 @@ public class ScummVMEvents implements
 	final public boolean onKey(View v, int keyCode, KeyEvent e) {
 		final int action = e.getAction();
 
+		if (e.getUnicodeChar() == (int)EditableAccommodatingLatinIMETypeNullIssues.ONE_UNPROCESSED_CHARACTER.charAt(0)) {
+			//We are ignoring this character, and we want everyone else to ignore it, too, so
+			// we return true indicating that we have handled it (by ignoring it).
+			return true;
+		}
+
 		if (keyCode == 238) {
 			// this (undocumented) event is sent when ACTION_HOVER_ENTER or ACTION_HOVER_EXIT occurs
 			return false;
