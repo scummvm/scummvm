@@ -57,8 +57,8 @@ MODULES_ORIG:= $(MODULES)
 MODULE_DIRS_ORIG := $(MODULE_DIRS)
 KYRARPG_COMMON_OBJ_ORIG := $(KYRARPG_COMMON_OBJ)
 
-# Skip rules for these files, by resetting the use_rules
-USE_RULES :=
+# Skip rules for these files, by resetting the LOAD_RULES_MK
+LOAD_RULES_MK :=
 
 # Reset detection objects, which uptill now are filled with only
 # enabled engines.
@@ -76,7 +76,7 @@ PLUGIN :=
 KYRARPG_COMMON_OBJ := $(KYRARPG_COMMON_OBJ_ORIG)
 
 # Enable-rules again
-USE_RULES := 1
+LOAD_RULES_MK := 1
 
 ifneq "$(DETECTION_STATIC)" "1"
 -include $(srcdir)/engines/detect_modules.mk
