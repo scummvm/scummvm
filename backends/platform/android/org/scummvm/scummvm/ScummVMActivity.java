@@ -813,7 +813,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		candidateOldLocationsOfScummVMConfigMap.put("(.scummvmrc) (POSIX conformance) - Ext SD)", new File(Environment.getExternalStorageDirectory(), ".scummvmrc"));
 
 		String[] listOfAuxExtStoragePaths = _scummvm.getAllStorageLocationsNoPermissionRequest();
-
+		// Add AUX external storage locations
 		int incKeyId = 0;
 		for (int incIndx = 0; incIndx + 1 < listOfAuxExtStoragePaths.length; incIndx += 2) {
 			// exclude identical matches for internal and emulated external app dir, since we take them into account below explicitly
@@ -848,8 +848,13 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 		boolean scummVMConfigHandled = false;
 		Version maxOldVersionFound = new Version("0"); // dummy initializer
+		Version existingVersionFoundInScummVMDataDir = new Version("0"); // dummy initializer
+
+		final Version version2_2_1_forPatch = new Version("2.2.1"); // patch for 2.2.1 Beta1 purposes
+		boolean existingConfigInScummVMDataDirReplacedOnce = false; // patch for 2.2.1 Beta1 purposes
 
 		_configScummvmFile = new File(_actualScummVMDataDir, "scummvm.ini");
+
 		try {
 			if (_configScummvmFile.exists() || !_configScummvmFile.createNewFile()) {
 				Log.d(ScummVM.LOG_TAG, "ScummVM Config file already exists!");
@@ -860,6 +865,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 					Version tmpOldVersionFound = new Version(existingVersionInfo.trim());
 					if (tmpOldVersionFound.compareTo(maxOldVersionFound) > 0) {
 						maxOldVersionFound = tmpOldVersionFound;
+						existingVersionFoundInScummVMDataDir = tmpOldVersionFound;
 						scummVMConfigHandled = false; // invalidate the handled flag
 					}
 				} else {
@@ -888,7 +894,21 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 					if (!"".equals(existingVersionInfo.trim())) {
 						Log.d(ScummVM.LOG_TAG, "Old config's ScummVM version: " + existingVersionInfo.trim());
 						Version tmpOldVersionFound = new Version(existingVersionInfo.trim());
-						if (tmpOldVersionFound.compareTo(maxOldVersionFound) > 0) {
+						//
+						// Replace the current config.ini with another recovered,
+						//         if the recovered one is of higher version.
+						//
+						// patch for 2.2.1 Beta1: (additional check)
+						//       if current version max is 2.2.1 and existingVersionFoundInScummVMDataDir is 2.2.1 (meaning we have a config.ini created for 2.2.1)
+						//          and file location key starts with "A-" (aux external storage locations)
+						//          and old version found is lower than 2.2.1
+						//       Then: replace our current config ini and remove the recovered ini from the aux external storage
+						if ((tmpOldVersionFound.compareTo(maxOldVersionFound) > 0)
+						     || (existingVersionFoundInScummVMDataDir.compareTo(version2_2_1_forPatch) == 0
+						         && tmpOldVersionFound.compareTo(version2_2_1_forPatch) < 0
+						         && oldConfigFileDescription.startsWith("A-")
+						         && existingConfigInScummVMDataDirReplacedOnce == false)
+						) {
 							maxOldVersionFound = tmpOldVersionFound;
 							scummVMConfigHandled = false; // invalidate the handled flag, since we found a new great(er) version so we should re-use that one
 						}
@@ -902,6 +922,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 						copyFileUsingStream(oldCandidateScummVMConfig, _configScummvmFile);
 						Log.d(ScummVM.LOG_TAG, "Old config " + oldConfigFileDescription + " ScummVM file was renamed and overwrote the new (empty) scummvm.ini");
 						scummVMConfigHandled = true;
+						existingConfigInScummVMDataDirReplacedOnce = true;
 					}
 
 					// Here we remove the old config
@@ -1007,18 +1028,34 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		File[] defaultSaveDirFiles = defaultScummVMSavesPath.listFiles();
 		if (defaultSaveDirFiles != null) {
 			Log.d(ScummVM.LOG_TAG, "Size: "+ defaultSaveDirFiles.length);
-			// TODO remove debug listing of files
-			if (defaultSaveDirFiles.length > 0 ) {
-				Log.d(ScummVM.LOG_TAG, "Listing ScummVM save files in default saves path...");
-				for (File savfile : defaultSaveDirFiles) {
-					smallNodeDesc = "(F)";
-					if (savfile.isDirectory()) {
-						smallNodeDesc = "(D)";
-					}
-					Log.d(ScummVM.LOG_TAG, "Name: " + smallNodeDesc + " " + savfile.getName());
+			// Commented out listing of files in the default saves folder for debug purposes
+			//if (defaultSaveDirFiles.length > 0) {
+			//	Log.d(ScummVM.LOG_TAG, "Listing ScummVM save files in default saves path...");
+			//	for (File savfile : defaultSaveDirFiles) {
+			//		smallNodeDesc = "(F)";
+			//		if (savfile.isDirectory()) {
+			//			smallNodeDesc = "(D)";
+			//		}
+			//		Log.d(ScummVM.LOG_TAG, "Name: " + smallNodeDesc + " " + savfile.getName());
+			//	}
+			//}
+
+			// patch for 2.2.1 Beta1: (additional check)
+			//       if defaultSaveDirFiles size (num of files) is not 0
+			//          and there was a config ini in the ScummVM data dir, with version 2.2.1
+			//          and that config ini was replaced during the above process of recovering another ini
+			//       Then: Scan for previous usable ScummVM folder (it will still only copy the larger one found)
+			boolean scanOnlyInAuxExternalStorage = false;
+			if (defaultSaveDirFiles.length == 0
+			    || (existingVersionFoundInScummVMDataDir.compareTo(version2_2_1_forPatch) == 0
+			        && existingConfigInScummVMDataDirReplacedOnce == true)
+			) {
+				if (existingVersionFoundInScummVMDataDir.compareTo(version2_2_1_forPatch) == 0
+					&& existingConfigInScummVMDataDirReplacedOnce == true) {
+					scanOnlyInAuxExternalStorage = true;
 				}
-			} else {
-				Log.d(ScummVM.LOG_TAG, "Default ScummVM save path is empty. Scanning for a previous usable one...");
+
+				Log.d(ScummVM.LOG_TAG, "Scanning for a previous usable ScummVM Saves folder...");
 				// Note: A directory named "Saves" is NOT the same as "saves" in internal storage.
 				//       ie. paths and filenames in internal storage (including emulated external) are case sensitive!
 				//       BUT: It could be the same in external SD card or other FAT formatted storage
@@ -1031,29 +1068,31 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				LinkedHashMap<String, File> candidateOldLocationsOfScummVMSavesMap = new LinkedHashMap<>();
 
 				// TODO some of these entries are an overkill, but better safe than sorry
+				if (!scanOnlyInAuxExternalStorage) {
+					// due to case sensitivity this is different than "saves"
+					candidateOldLocationsOfScummVMSavesMap.put("A01", new File(_actualScummVMDataDir, "Saves"));
+					// This is a potential one, when internal storage for app was used
+					candidateOldLocationsOfScummVMSavesMap.put("A02", new File(_actualScummVMDataDir, ".local/share/scummvm/saves"));
+					candidateOldLocationsOfScummVMSavesMap.put("A03", new File(_actualScummVMDataDir, ".local/scummvm/saves"));
+					candidateOldLocationsOfScummVMSavesMap.put("A04", new File(_actualScummVMDataDir, "scummvm/saves"));
+					candidateOldLocationsOfScummVMSavesMap.put("A05", new File(_actualScummVMDataDir, "../.local/share/scummvm/saves"));
+					candidateOldLocationsOfScummVMSavesMap.put("A06", new File(_actualScummVMDataDir, "../.local/scummvm/saves"));
+					candidateOldLocationsOfScummVMSavesMap.put("A07", new File(_actualScummVMDataDir, "../saves"));
+					candidateOldLocationsOfScummVMSavesMap.put("A08", new File(_actualScummVMDataDir, "../scummvm/saves"));
+					// this is a popular one
+					candidateOldLocationsOfScummVMSavesMap.put("A09", new File(externalPossibleAlternateScummVMFilesDir, ".local/share/scummvm/saves"));
+					candidateOldLocationsOfScummVMSavesMap.put("A10", new File(externalPossibleAlternateScummVMFilesDir, ".local/scummvm/saves"));
+					candidateOldLocationsOfScummVMSavesMap.put("A11", new File(externalPossibleAlternateScummVMFilesDir, "saves"));
+					candidateOldLocationsOfScummVMSavesMap.put("A12", new File(externalPossibleAlternateScummVMFilesDir, "scummvm/saves"));
+					candidateOldLocationsOfScummVMSavesMap.put("A13", new File(externalPossibleAlternateScummVMFilesDir, "../.local/share/scummvm/saves"));
+					candidateOldLocationsOfScummVMSavesMap.put("A14", new File(externalPossibleAlternateScummVMFilesDir, "../.local/scummvm/saves"));
+					candidateOldLocationsOfScummVMSavesMap.put("A15", new File(externalPossibleAlternateScummVMFilesDir, "../saves"));
+					candidateOldLocationsOfScummVMSavesMap.put("A16", new File(externalPossibleAlternateScummVMFilesDir, "../scummvm/saves"));
+					// this was for old Android plain port
+					candidateOldLocationsOfScummVMSavesMap.put("A17", new File(Environment.getExternalStorageDirectory(), "ScummVM/Saves"));
+				}
 
-				// due to case sensitivity this is different than "saves"
-				candidateOldLocationsOfScummVMSavesMap.put("A01", new File(_actualScummVMDataDir, "Saves"));
-				// This is a potential one, when internal storage for app was used
-				candidateOldLocationsOfScummVMSavesMap.put("A02", new File(_actualScummVMDataDir, ".local/share/scummvm/saves"));
-				candidateOldLocationsOfScummVMSavesMap.put("A03", new File(_actualScummVMDataDir, ".local/scummvm/saves"));
-				candidateOldLocationsOfScummVMSavesMap.put("A04", new File(_actualScummVMDataDir, "scummvm/saves"));
-				candidateOldLocationsOfScummVMSavesMap.put("A05", new File(_actualScummVMDataDir, "../.local/share/scummvm/saves"));
-				candidateOldLocationsOfScummVMSavesMap.put("A06", new File(_actualScummVMDataDir, "../.local/scummvm/saves"));
-				candidateOldLocationsOfScummVMSavesMap.put("A07", new File(_actualScummVMDataDir, "../saves"));
-				candidateOldLocationsOfScummVMSavesMap.put("A08", new File(_actualScummVMDataDir, "../scummvm/saves"));
-				// this is a popular one
-				candidateOldLocationsOfScummVMSavesMap.put("A09", new File(externalPossibleAlternateScummVMFilesDir, ".local/share/scummvm/saves"));
-				candidateOldLocationsOfScummVMSavesMap.put("A10", new File(externalPossibleAlternateScummVMFilesDir, ".local/scummvm/saves"));
-				candidateOldLocationsOfScummVMSavesMap.put("A11", new File(externalPossibleAlternateScummVMFilesDir, "saves"));
-				candidateOldLocationsOfScummVMSavesMap.put("A12", new File(externalPossibleAlternateScummVMFilesDir, "scummvm/saves"));
-				candidateOldLocationsOfScummVMSavesMap.put("A13", new File(externalPossibleAlternateScummVMFilesDir, "../.local/share/scummvm/saves"));
-				candidateOldLocationsOfScummVMSavesMap.put("A14", new File(externalPossibleAlternateScummVMFilesDir, "../.local/scummvm/saves"));
-				candidateOldLocationsOfScummVMSavesMap.put("A15", new File(externalPossibleAlternateScummVMFilesDir, "../saves"));
-				candidateOldLocationsOfScummVMSavesMap.put("A16", new File(externalPossibleAlternateScummVMFilesDir, "../scummvm/saves"));
-				// this was for old Android plain port
-				candidateOldLocationsOfScummVMSavesMap.put("A17", new File(Environment.getExternalStorageDirectory(), "ScummVM/Saves"));
-
+				// Add AUX external storage locations
 				incKeyId = 0;
 				for (int incIndx = 0; incIndx + 1 < listOfAuxExtStoragePaths.length; incIndx += 2) {
 					// exclude identical matches for internal and emulated external app dir, since we take them into account below explicitly
