@@ -27,6 +27,8 @@
 
 namespace Petka {
 
+class Walk;
+
 class QObjectPetka : public QObject {
 public:
 	QObjectPetka();
@@ -47,6 +49,8 @@ public:
 
 	void updateZ() override;
 
+	void sub_408940();
+
 public:
 	int _field7C;
 	int _surfW;
@@ -56,7 +60,7 @@ public:
 	// int _surfId;
 	int _imageId;
 	double _k;
-	// walkObj
+	Walk *_walk;
 	int _destX;
 	int _destY;
 	bool _isWalking;

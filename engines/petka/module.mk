@@ -11,6 +11,7 @@ MODULE_OBJS = \
     q_system.o \
     sound.o \
     video.o \
+    walk.o \
     interfaces/dialog_interface.o \
     interfaces/interface.o \
     interfaces/main.o \

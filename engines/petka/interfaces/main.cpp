@@ -38,6 +38,7 @@
 #include "petka/objects/object_case.h"
 #include "petka/objects/heroes.h"
 #include "petka/objects/text.h"
+#include "petka/walk.h"
 
 namespace Petka {
 
@@ -98,6 +99,10 @@ void InterfaceMain::loadRoom(int id, bool fromSave) {
 			g_vm->resMgr()->loadFlic(obj->_resourceId);
 		_objs.push_back(obj);
 	}
+
+	sys->getPetka()->_walk->setBackground(g_vm->resMgr()->findResourceName(room->_resourceId));
+	sys->getChapay()->_walk->setBackground(g_vm->resMgr()->findResourceName(room->_resourceId));
+
 	playSound(room->_musicId, Audio::Mixer::kMusicSoundType);
 	playSound(room->_fxId, Audio::Mixer::kSFXSoundType);
 	if (!fromSave)
