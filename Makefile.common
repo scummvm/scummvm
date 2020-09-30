@@ -78,7 +78,7 @@ KYRARPG_COMMON_OBJ := $(KYRARPG_COMMON_OBJ_ORIG)
 # Enable-rules again
 LOAD_RULES_MK := 1
 
-ifneq "$(DETECTION_STATIC)" "1"
+ifneq ($(DETECTION_STATIC), 1)
 -include $(srcdir)/engines/detect_modules.mk
 endif
 
