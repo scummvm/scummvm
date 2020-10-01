@@ -102,6 +102,8 @@ void QObjectCase::draw() {
 		FlicDecoder *flc = g_vm->resMgr()->loadFlic(kFirstButtonResourceId + _clickedObjIndex);
 		Graphics::Surface *s = flc->getCurrentFrame()->convertTo(g_system->getScreenFormat(), flc->getPalette());
 
+		QSystem *sys = g_vm->getQSystem();
+
 		const Common::List<Common::Rect> &dirty = g_vm->videoSystem()->rects();
 		const Common::Array<Common::Rect> &mskRects = flc->getMskRects();
 
@@ -109,7 +111,7 @@ void QObjectCase::draw() {
 			for (uint i = 0; i < mskRects.size(); ++i) {
 				Common::Rect destRect = mskRects[i].findIntersectingRect(*it);
 				Common::Rect srcRect = destRect;
-				srcRect.translate(-flc->getPos().x - _x, -flc->getPos().y - _y);
+				srcRect.translate(-flc->getPos().x - _x + sys->_xOffset, -flc->getPos().y - _y);
 				g_vm->videoSystem()->transBlitFrom(*s, srcRect, destRect, flc->getTransColor(s->format));
 			}
 		}
@@ -120,19 +122,20 @@ void QObjectCase::draw() {
 }
 
 void QObjectCase::show(bool v) {
-	_x = 0; // sys->xOffset
+	QSystem *sys = g_vm->getQSystem();
+	_x = sys->_xOffset;
 	QObject::show(v);
 	if (v) {
 		addItemObjects();
 
-		QMessageObject *obj = g_vm->getQSystem()->findObject(kPoloska);
+		QMessageObject *obj = sys->findObject(kPoloska);
 		obj->_z = kPoloskaZ;
-		obj->_x = 0; // sys->xOffset
+		obj->_x = sys->_xOffset;
 
-		g_vm->getQSystem()->_mainInterface->_objs.push_back(obj);
+		sys->_mainInterface->_objs.push_back(obj);
 	} else {
 		removeObjects(true);
-		g_vm->getQSystem()->_currInterface->_startIndex = 0;
+		sys->_currInterface->_startIndex = 0;
 	}
 }
 
@@ -141,8 +144,9 @@ bool QObjectCase::isInPoint(Common::Point p) {
 }
 
 void QObjectCase::onMouseMove(Common::Point p) {
+	p.x -= _x;
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(kExitCaseResourceId);
-	if (*(const byte *)flc->getCurrentFrame()->getBasePtr(p.x - _x, p.y - _y) != 0) {
+	if (*(const byte *)flc->getCurrentFrame()->getBasePtr(p.x - flc->getPos().x, p.y - flc->getPos().y) != 0) {
 		if (_clickedObjIndex != kCloseButton && _clickedObjIndex != kInvalidButton) {
 			flc = g_vm->resMgr()->loadFlic(kFirstButtonResourceId + _clickedObjIndex);
 			flc->setFrame(1);
@@ -153,7 +157,7 @@ void QObjectCase::onMouseMove(Common::Point p) {
 		uint i;
 		for (i = 0; i < kButtonsCount; ++i) {
 			flc = g_vm->resMgr()->loadFlic(kFirstButtonResourceId + i);
-			if (flc->getMskRects()[0].contains(Common::Point(p.x - _x, p.y))) {
+			if (flc->getMskRects()[0].contains(p)) {
 				break;
 			}
 		}
@@ -204,19 +208,20 @@ void QObjectCase::onClick(Common::Point p) {
 }
 
 void QObjectCase::addItemObjects() {
-	Common::Array<QVisibleObject *> &objs = g_vm->getQSystem()->_mainInterface->_objs;
+	QSystem *sys = g_vm->getQSystem();
+	Common::Array<QVisibleObject *> &objs = sys->_mainInterface->_objs;
 	removeObjects(false);
 
 	for (uint i = 0; i < objs.size(); ++i) {
 		if (objs[i]->_resourceId == kCaseResourceId) {
-			g_vm->getQSystem()->_currInterface->_startIndex = i;
+			sys->_currInterface->_startIndex = i;
 		}
 	}
 
 	const uint size = (_itemIndex + kItemsOnPage >= _items.size()) ? _items.size() : (_itemIndex + kItemsOnPage);
 	for (uint i = _itemIndex; i < size; ++i) {
-		QMessageObject *obj = g_vm->getQSystem()->findObject(_items[i]);
-		obj->_x = _itemsLocation[i - _itemIndex].x;
+		QMessageObject *obj = sys->findObject(_items[i]);
+		obj->_x = sys->_xOffset + _itemsLocation[i - _itemIndex].x;
 		obj->_y = _itemsLocation[i - _itemIndex].y;
 		obj->_z = kItemZ;
 		g_vm->resMgr()->loadFlic(obj->_resourceId);

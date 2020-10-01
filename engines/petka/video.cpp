@@ -100,6 +100,7 @@ void VideoSystem::addDirtyRect(Common::Point pos, Common::Rect rect) {
 }
 
 void VideoSystem::addDirtyRect(Common::Point pos, FlicDecoder &flc) {
+	pos.x = pos.x - g_vm->getQSystem()->_xOffset;
 	addDirtyRect(pos, flc.getBounds());
 }
 
