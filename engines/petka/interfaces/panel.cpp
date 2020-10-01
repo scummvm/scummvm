@@ -88,6 +88,11 @@ InterfacePanel::InterfacePanel() {
 	_objectPoints[22] = Common::Point(0, 0);
 	_objectPoints[23] = Common::Point(0, 0);
 
+	_subtitles = false;
+	_speechFrame = 1;
+	_musicFrame = 1;
+	_sfxFrame = 1;
+	_speedFrame = 1;
 }
 
 void InterfacePanel::start(int id) {
