@@ -13,7 +13,7 @@ There are many settings, and they are separated into tabs:
 
 `Game tab`_ | `Engine tab`_ | `Graphics tab`_ | `Audio tab`_ | `Volume tab`_ | `Midi tab`_ | `MT-32 tab`_ | `Paths tab`_ |
 
-Settings may also be edited directly in the configuration file. These configuration keywords are listed below in italics. For more information, see :doc:`../advanced_options/configuration_file` .
+Settings may also be edited directly in the configuration file. These configuration keywords are listed below in italics. For more information, including a complete list of configuration keywords, see the :doc:`../advanced_options/configuration_file` .
 
 _`Game tab`
 ------------
@@ -29,6 +29,8 @@ identified by ScummVM.
 	This field shows the short name of the game. This ID can be used for launching the game from the command line.
 
 	*gameid* 
+
+.. _description:
 
 **Name**
 	This field shows the full title of the game, as well as some basic information such as original platform and language.
@@ -808,7 +810,7 @@ TTS Narrator
 Floppy intro
 	Use the floppy version's intro (CD version only)
 
-	*alt_intro* 
+	*alt_intro*
 ,,,,,,,,,,
 
 .. _SUPERNOVA:
