@@ -122,11 +122,14 @@ Use the volume tab to set the relative volumes for various sounds.
 
 	*music_volume* 
 
+.. _sfx:
+
 **SFX volume**
 	Adjusts the volume of the sound effects within the game.
 
 	*sfx_volume* 
 
+.. _speechvol:
 
 **Speech volume**
 	Adjusts the volume of the digitized speech in the game, if it has any.
@@ -156,6 +159,8 @@ Use the MIDI tab to change the settings of General MIDI devices.
 	Specifies a preferred General MIDI (GM) device, which ScummVM uses whenever General MIDI playback is required.   
 
 	*gm_device* 
+
+.. _soundfont:
 
 **Soundfont**
 	Specifies the path to a soundfont file, if this is required by the GM device. 
@@ -361,6 +366,8 @@ _`Misc tab`
 The Misc tab contains options that don’t belong on any of the other tabs.
 
 ,,,,,,,,,,,,,,,
+
+.. _theme:
 
 Theme
 	Changes the visual appearance of the ScummVM Launcher
