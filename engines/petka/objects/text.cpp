@@ -99,7 +99,7 @@ QTextPhrase::QTextPhrase(const Common::U32String &text, uint16 textColor, uint16
 	: QText(text, textColor, outlineColor), _phrase(text), _time(0) {}
 
 void QTextPhrase::draw() {
-	if (g_vm->getQSystem()->_panelInterface->_subtitles) {
+	if (g_vm->getQSystem()->_panelInterface->showSubtitles()) {
 		QText::draw();
 	}
 }
@@ -113,7 +113,7 @@ void QTextPhrase::update(int time) {
 			_time = 0;
 			dialog.next(-1);
 		}
-	} else if (_time > _phrase.size() * 30 + 1000 || !g_vm->getQSystem()->_panelInterface->_subtitles) {
+	} else if (_time > _phrase.size() * 30 + 1000 || !g_vm->getQSystem()->_panelInterface->showSubtitles()) {
 		_time = 0;
 		dialog.next(-1);
 	}

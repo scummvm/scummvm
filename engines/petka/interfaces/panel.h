@@ -38,6 +38,7 @@ public:
 	void onMouseMove(Common::Point p) override;
 
 	int getHeroSpeed();
+	bool showSubtitles() const { return _subtitles; }
 
 private:
 	void readSettings();
