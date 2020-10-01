@@ -529,7 +529,7 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &language, const
 	if (textId == -1)
 		return false;
 
-	if (!language.empty() && !language.equals("*")) {
+	if (!language.empty()) {
 #ifdef USE_TRANSLATION
 		Common::String cl = TransMan.getCurrentLanguage();
 		if (!cl.matchString(language, true))
