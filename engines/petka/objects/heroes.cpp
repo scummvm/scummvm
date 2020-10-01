@@ -29,6 +29,7 @@
 #include "petka/video.h"
 #include "petka/sound.h"
 #include "petka/objects/heroes.h"
+#include "petka/interfaces/panel.h"
 #include "petka/walk.h"
 
 namespace Petka {
@@ -307,7 +308,10 @@ void QObjectPetka::stopWalk() {
 void QObjectPetka::update(int time) {
 	if (!_animate || !_isShown)
 		return;
-	_time += time;
+	if (_isWalking)
+		_time += time * (g_vm->getQSystem()->_panelInterface->getHeroSpeed() + 50) / 50;
+	else
+		_time += time;
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
 	if (flc && flc->getFrameCount() != 1) {
 		while (_time >= (int)flc->getDelay()) {

@@ -296,4 +296,8 @@ void InterfacePanel::onRightButtonDown(Common::Point p) {
 	stop();
 }
 
+int InterfacePanel::getHeroSpeed() {
+	return (_speedFrame * 100 - 100) / 25;
+}
+
 } // End of namespace Petka
