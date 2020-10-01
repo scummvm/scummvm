@@ -278,10 +278,10 @@ void InterfacePanel::readSettings() {
 }
 
 void InterfacePanel::applySettings() {
-	_speechFrame = MIN(MAX(1, _speechFrame), 31);
-	_musicFrame = MIN(MAX(1, _musicFrame), 41);
-	_sfxFrame = MIN(MAX(1, _sfxFrame), 31);
-	_speedFrame = MIN(MAX(1, _speedFrame), 26);
+	_speechFrame = CLIP(_speechFrame, 1, 31);
+	_musicFrame = CLIP(_musicFrame, 1, 41);
+	_sfxFrame = CLIP(_sfxFrame, 1, 31);
+	_speedFrame = CLIP(_speedFrame, 1, 26);
 
 	ConfMan.setInt("speech_volume", 255 * (_speechFrame - 1) / (31 - 1));
 	ConfMan.setInt("music_volume", 255 * (_musicFrame - 1) / (41 - 1));
