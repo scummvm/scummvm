@@ -32,11 +32,11 @@ namespace Petka {
 
 const char *const wayPrefixes[] = {"-w-n.", "-w-ne.", "-w-e.", "-w-se.", "-w-s.", "-w-sw.", "-w-w.", "-w-nw."};
 
-const double kPI = 3.14159265;
-const double k2PI = kPI + kPI;
-const double kHalfPI = kPI / 2;
+const double kPI = M_PI;
+const double k2PI = M_PI * 2;
+const double kHalfPI = M_PI_2;
 
-const double kPiArray[] = {kPI * 0.5, kPI * 0.25, 0.0, kPI * -0.25, kPI * -0.5, kPI * -0.75, kPI, kPI * 0.75};
+const double kPiArray[] = {M_PI_2, M_PI_4, 0.0, -M_PI_4, -M_PI_2, -3 * M_PI_4, M_PI, 3 * M_PI_4};
 
 Walk::Walk(int id) { // CHECKED
 	QManager *mgr = g_vm->resMgr();
