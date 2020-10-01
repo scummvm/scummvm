@@ -165,7 +165,7 @@ bool WiiFilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hi
 
 		Common::String newPath(_path);
 		if (newPath.lastChar() != '/')
-		  newPath += '/';
+			newPath += '/';
 		newPath += pent->d_name;
 
 		bool isDir = ( pent->d_type == DT_DIR );
@@ -221,7 +221,15 @@ Common::WriteStream *WiiFilesystemNode::createWriteStream() {
 }
 
 bool WiiFilesystemNode::createDirectory() {
-	warning("WiiFilesystemNode::createDirectory(): Not supported");
+	if(!_exists) {
+ 		if (mkdir(_path.c_str(), 0755) == 0) {
+			_exists = true;
+			_isDirectory = true;
+			_isReadable = true;
+			_isWritable = true;
+		}
+	}
+
 	return _exists && _isDirectory;
 }
 
