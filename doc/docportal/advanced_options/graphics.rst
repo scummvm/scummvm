@@ -88,6 +88,14 @@ The next setting applied to the image is the aspect ratio correction.
 
 Older games were designed to be run at 320x200 pixels, but on systems where each pixel was rectangular instead of square. This means that on modern systems these games look wider and flatter than they are supposed to. Aspect ratio correction duplicates lines of pixels to correct this. 
 
+.. figure:: ../images/graphics/aspect_ratio/no_aspect_ratio.png
+
+    No aspect ratio correction applied.
+
+.. figure:: ../images/graphics/aspect_ratio/aspect_ratio.png
+
+    Aspect ratio correction applied. 
+
 Stretch mode
 ----------------
 
