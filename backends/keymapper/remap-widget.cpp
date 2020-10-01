@@ -218,7 +218,7 @@ void RemapWidget::startRemapping(uint actionIndex) {
 	_remapAction = _actions[actionIndex].action;
 
 	uint32 remapTimeoutDelay = kRemapMinTimeoutDelay;
-	if (ConfMan.hasKey("remap_timeout_delay_ms") && (ConfMan.getInt("remap_timeout_delay_ms") > kRemapMinTimeoutDelay)) {
+	if (ConfMan.hasKey("remap_timeout_delay_ms") && ((uint32)ConfMan.getInt("remap_timeout_delay_ms") > kRemapMinTimeoutDelay)) {
 		remapTimeoutDelay = (uint32)ConfMan.getInt("remap_timeout_delay_ms");
 	}
 	_remapTimeout = g_system->getMillis() + remapTimeoutDelay;
