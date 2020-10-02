@@ -45,7 +45,7 @@ uint16 MadeEngine::getVersion() const {
 
 } // End of namespace Made
 
-class MadeMetaEngineConnect : public AdvancedMetaEngineConnect {
+class MadeMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "made";
@@ -55,7 +55,7 @@ public:
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
-bool MadeMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool MadeMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		false;
 }
@@ -65,7 +65,7 @@ bool Made::MadeEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsReturnToLauncher);
 }
 
-bool MadeMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool MadeMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Made::MadeGameDescription *gd = (const Made::MadeGameDescription *)desc;
 	if (gd) {
 		*engine = new Made::MadeEngine(syst, gd);
@@ -74,7 +74,7 @@ bool MadeMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(MADE)
-	REGISTER_PLUGIN_DYNAMIC(MADE, PLUGIN_TYPE_ENGINE, MadeMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(MADE, PLUGIN_TYPE_ENGINE, MadeMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(MADE, PLUGIN_TYPE_ENGINE, MadeMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(MADE, PLUGIN_TYPE_ENGINE, MadeMetaEngine);
 #endif

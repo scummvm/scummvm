@@ -37,9 +37,9 @@ static const PlainGameDescriptor sagaGames[] = {
 
 #include "saga/detection_tables.h"
 
-class SagaMetaEngine : public AdvancedMetaEngine {
+class SagaMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	SagaMetaEngine() : AdvancedMetaEngine(Saga::gameDescriptions, sizeof(Saga::SAGAGameDescription), sagaGames) {
+	SagaMetaEngineStatic() : AdvancedMetaEngineStatic(Saga::gameDescriptions, sizeof(Saga::SAGAGameDescription), sagaGames) {
 	}
 
 	const char *getEngineId() const override {
@@ -73,4 +73,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(SAGA_DETECTION, PLUGIN_TYPE_METAENGINE, SagaMetaEngine);
+REGISTER_PLUGIN_STATIC(SAGA_DETECTION, PLUGIN_TYPE_METAENGINE, SagaMetaEngineStatic);

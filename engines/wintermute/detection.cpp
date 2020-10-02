@@ -66,9 +66,9 @@ static const char *directoryGlobs[] = {
 	0
 };
 
-class WintermuteMetaEngine : public AdvancedMetaEngine {
+class WintermuteMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	WintermuteMetaEngine() : AdvancedMetaEngine(Wintermute::gameDescriptions, sizeof(WMEGameDescription), Wintermute::wintermuteGames, gameGuiOptions) {
+	WintermuteMetaEngineStatic() : AdvancedMetaEngineStatic(Wintermute::gameDescriptions, sizeof(WMEGameDescription), Wintermute::wintermuteGames, gameGuiOptions) {
 		// Use kADFlagUseExtraAsHint to distinguish between SD and HD versions
 		// of J.U.L.I.A. when their datafiles sit in the same directory (e.g. in Steam distribution).
 		_flags = kADFlagUseExtraAsHint;
@@ -99,7 +99,7 @@ public:
 		if (metaEnginePlugin) {
 			const Plugin *enginePlugin = PluginMan.getEngineFromMetaEngine(metaEnginePlugin);
 			if (enginePlugin) {
-				return enginePlugin->get<AdvancedMetaEngineConnect>().fallbackDetectExtern(_md5Bytes, allFiles, fslist);
+				return enginePlugin->get<AdvancedMetaEngine>().fallbackDetectExtern(_md5Bytes, allFiles, fslist);
 			} else {
 				static bool warn = true;
 				if (warn) {
@@ -115,4 +115,4 @@ public:
 
 } // End of namespace Wintermute
 
-REGISTER_PLUGIN_STATIC(WINTERMUTE_DETECTION, PLUGIN_TYPE_METAENGINE, Wintermute::WintermuteMetaEngine);
+REGISTER_PLUGIN_STATIC(WINTERMUTE_DETECTION, PLUGIN_TYPE_METAENGINE, Wintermute::WintermuteMetaEngineStatic);

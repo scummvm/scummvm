@@ -164,7 +164,7 @@ void NuvieIOFileWrite::close() {
 	} else if (_saveFile) {
 		// Writing using savefile interface, so flush out data
 		_saveFile->write(_saveFileData.getData(), _saveFileData.size());
-		MetaEngineConnect::appendExtendedSave(_saveFile, Shared::g_ultima->getTotalPlayTime(), _description, _isAutosave);
+		MetaEngine::appendExtendedSave(_saveFile, Shared::g_ultima->getTotalPlayTime(), _description, _isAutosave);
 
 		_saveFile->finalize();
 		delete _saveFile;

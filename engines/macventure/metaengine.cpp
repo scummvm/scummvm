@@ -40,7 +40,7 @@ namespace MacVenture {
 
 SaveStateDescriptor loadMetaData(Common::SeekableReadStream *s, int slot, bool skipThumbnail = true);
 
-class MacVentureMetaEngineConnect : public AdvancedMetaEngineConnect {
+class MacVentureMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "macventure";
@@ -56,7 +56,7 @@ protected:
 
 };
 
-bool MacVentureMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool MacVentureMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -74,7 +74,7 @@ bool MacVentureEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-SaveStateList MacVentureMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList MacVentureMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String pattern = target;
@@ -111,21 +111,21 @@ SaveStateList MacVentureMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-int MacVentureMetaEngineConnect::getMaximumSaveSlot() const { return 999; }
+int MacVentureMetaEngine::getMaximumSaveSlot() const { return 999; }
 
-bool MacVentureMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *game) const {
+bool MacVentureMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *game) const {
 	if (game) {
 		*engine = new MacVenture::MacVentureEngine(syst, game);
 	}
 	return game != 0;
 }
 
-void MacVentureMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void MacVentureMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(Common::String::format("%s.%03d", target, slot));
 }
 
 
-SaveStateDescriptor MacVentureMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor MacVentureMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	SaveStateDescriptor desc;
 	Common::String saveFileName;
@@ -151,7 +151,7 @@ SaveStateDescriptor MacVentureMetaEngineConnect::querySaveMetaInfos(const char *
 } // End of namespace MacVenture
 
 #if PLUGIN_ENABLED_DYNAMIC(MACVENTURE)
-	REGISTER_PLUGIN_DYNAMIC(MACVENTURE, PLUGIN_TYPE_ENGINE, MacVenture::MacVentureMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(MACVENTURE, PLUGIN_TYPE_ENGINE, MacVenture::MacVentureMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(MACVENTURE, PLUGIN_TYPE_ENGINE, MacVenture::MacVentureMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(MACVENTURE, PLUGIN_TYPE_ENGINE, MacVenture::MacVentureMetaEngine);
 #endif

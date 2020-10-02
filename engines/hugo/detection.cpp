@@ -113,9 +113,9 @@ static const HugoGameDescription gameDescriptions[] = {
 	{AD_TABLE_END_MARKER, kGameTypeNone}
 };
 
-class HugoMetaEngine : public AdvancedMetaEngine {
+class HugoMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	HugoMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(HugoGameDescription), hugoGames) {
+	HugoMetaEngineStatic() : AdvancedMetaEngineStatic(gameDescriptions, sizeof(HugoGameDescription), hugoGames) {
 	}
 
 	const char *getEngineId() const override {
@@ -133,4 +133,4 @@ public:
 
 } // End of namespace Hugo
 
-REGISTER_PLUGIN_STATIC(HUGO_DETECTION, PLUGIN_TYPE_METAENGINE, Hugo::HugoMetaEngine);
+REGISTER_PLUGIN_STATIC(HUGO_DETECTION, PLUGIN_TYPE_METAENGINE, Hugo::HugoMetaEngineStatic);

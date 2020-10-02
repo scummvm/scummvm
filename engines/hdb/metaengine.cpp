@@ -63,7 +63,7 @@ bool HDBGame::isHandango() const {
 
 } // End of namespace HDB
 
-class HDBMetaEngineConnect : public AdvancedMetaEngineConnect {
+class HDBMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "hdb";
@@ -79,7 +79,7 @@ public:
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
-bool HDBMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool HDBMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsListSaves) ||
@@ -95,14 +95,14 @@ bool HDB::HDBGame::hasFeature(Engine::EngineFeature f) const {
 		   (f == kSupportsSavingDuringRuntime);
 }
 
-void HDBMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void HDBMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
-int HDBMetaEngineConnect::getMaximumSaveSlot() const { return 99; }
+int HDBMetaEngine::getMaximumSaveSlot() const { return 99; }
 
-SaveStateList HDBMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList HDBMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String pattern = target;
@@ -150,7 +150,7 @@ SaveStateList HDBMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-SaveStateDescriptor HDBMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor HDBMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::ScopedPtr<Common::InSaveFile> in(g_system->getSavefileManager()->openForLoading(Common::String::format("%s.%03d", target, slot)));
 
 	if (in) {
@@ -176,7 +176,7 @@ SaveStateDescriptor HDBMetaEngineConnect::querySaveMetaInfos(const char *target,
 	return SaveStateDescriptor();
 }
 
-Common::KeymapArray HDBMetaEngineConnect::initKeymaps(const char *target) const {
+Common::KeymapArray HDBMetaEngine::initKeymaps(const char *target) const {
 	using namespace Common;
 	using namespace HDB;
 
@@ -260,7 +260,7 @@ Common::KeymapArray HDBMetaEngineConnect::initKeymaps(const char *target) const 
 	return Keymap::arrayOf(engineKeyMap);
 }
 
-bool HDBMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool HDBMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc) {
 		*engine = new HDB::HDBGame(syst, desc);
 	}
@@ -269,7 +269,7 @@ bool HDBMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const 
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(HDB)
-	REGISTER_PLUGIN_DYNAMIC(HDB, PLUGIN_TYPE_ENGINE, HDBMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(HDB, PLUGIN_TYPE_ENGINE, HDBMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(HDB, PLUGIN_TYPE_ENGINE, HDBMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(HDB, PLUGIN_TYPE_ENGINE, HDBMetaEngine);
 #endif

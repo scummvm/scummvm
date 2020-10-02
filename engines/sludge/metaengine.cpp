@@ -40,7 +40,7 @@ const char *SludgeEngine::getGameFile() const {
 
 } // End of namespace Sludge
 
-class SludgeMetaEngineConnect : public AdvancedMetaEngineConnect {
+class SludgeMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "sludge";
@@ -56,7 +56,7 @@ public:
 };
 
 #if PLUGIN_ENABLED_DYNAMIC(SLUDGE)
-	REGISTER_PLUGIN_DYNAMIC(SLUDGE, PLUGIN_TYPE_ENGINE, SludgeMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(SLUDGE, PLUGIN_TYPE_ENGINE, SludgeMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(SLUDGE, PLUGIN_TYPE_ENGINE, SludgeMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(SLUDGE, PLUGIN_TYPE_ENGINE, SludgeMetaEngine);
 #endif

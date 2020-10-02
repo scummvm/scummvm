@@ -36,7 +36,7 @@
 #include "sword2/saveload.h"
 #include "sword2/detection_internal.h"
 
-class Sword2MetaEngineConnect : public MetaEngineConnect {
+class Sword2MetaEngine : public MetaEngine {
 public:
     const char *getName() const override {
 		return "sword2";
@@ -51,7 +51,7 @@ public:
 	Common::Error createInstance(OSystem *syst, Engine **engine) const override;
 };
 
-bool Sword2MetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool Sword2MetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -67,7 +67,7 @@ bool Sword2::Sword2Engine::hasFeature(EngineFeature f) const {
 		(f == kSupportsLoadingDuringRuntime);
 }
 
-SaveStateList Sword2MetaEngineConnect::listSaves(const char *target) const {
+SaveStateList Sword2MetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	char saveDesc[SAVE_DESCRIPTION_LEN];
@@ -97,16 +97,16 @@ SaveStateList Sword2MetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-int Sword2MetaEngineConnect::getMaximumSaveSlot() const { return 999; }
+int Sword2MetaEngine::getMaximumSaveSlot() const { return 999; }
 
-void Sword2MetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void Sword2MetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = target;
 	filename += Common::String::format(".%03d", slot);
 
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
-Common::Error Sword2MetaEngineConnect::createInstance(OSystem *syst, Engine **engine) const {
+Common::Error Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine) const {
 	assert(syst);
 	assert(engine);
 
@@ -131,7 +131,7 @@ Common::Error Sword2MetaEngineConnect::createInstance(OSystem *syst, Engine **en
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SWORD2)
-	REGISTER_PLUGIN_DYNAMIC(SWORD2, PLUGIN_TYPE_ENGINE, Sword2MetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(SWORD2, PLUGIN_TYPE_ENGINE, Sword2MetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(SWORD2, PLUGIN_TYPE_ENGINE, Sword2MetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(SWORD2, PLUGIN_TYPE_ENGINE, Sword2MetaEngine);
 #endif

@@ -31,7 +31,7 @@
 
 namespace Groovie {
 
-class GroovieMetaEngineConnect : public AdvancedMetaEngineConnect {
+class GroovieMetaEngine : public AdvancedMetaEngine {
 public:
     const char *getName() const override {
 		return "groovie";
@@ -46,14 +46,14 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-bool GroovieMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
+bool GroovieMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
 	if (gd) {
 		*engine = new GroovieEngine(syst, (const GroovieGameDescription *)gd);
 	}
 	return gd != 0;
 }
 
-bool GroovieMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool GroovieMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -61,15 +61,15 @@ bool GroovieMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportMetaInfo);
 }
 
-SaveStateList GroovieMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList GroovieMetaEngine::listSaves(const char *target) const {
 	return SaveLoad::listValidSaves(target);
 }
 
-int GroovieMetaEngineConnect::getMaximumSaveSlot() const {
+int GroovieMetaEngine::getMaximumSaveSlot() const {
 	return SaveLoad::getMaximumSlot();
 }
 
-void GroovieMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void GroovieMetaEngine::removeSaveState(const char *target, int slot) const {
 	if (!SaveLoad::isSlotValid(slot)) {
 		// Invalid slot, do nothing
 		return;
@@ -79,7 +79,7 @@ void GroovieMetaEngineConnect::removeSaveState(const char *target, int slot) con
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
-SaveStateDescriptor GroovieMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor GroovieMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	SaveStateDescriptor desc;
 
 	Common::InSaveFile *savefile = SaveLoad::openForLoading(target, slot, &desc);
@@ -91,7 +91,7 @@ SaveStateDescriptor GroovieMetaEngineConnect::querySaveMetaInfos(const char *tar
 } // End of namespace Groovie
 
 #if PLUGIN_ENABLED_DYNAMIC(GROOVIE)
-	REGISTER_PLUGIN_DYNAMIC(GROOVIE, PLUGIN_TYPE_ENGINE, Groovie::GroovieMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(GROOVIE, PLUGIN_TYPE_ENGINE, Groovie::GroovieMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(GROOVIE, PLUGIN_TYPE_ENGINE, Groovie::GroovieMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(GROOVIE, PLUGIN_TYPE_ENGINE, Groovie::GroovieMetaEngine);
 #endif

@@ -29,7 +29,7 @@
 #include "testbed/testbed.h"
 #include "testbed/testsuite.h"
 
-class TestbedMetaEngineConnect : public AdvancedMetaEngineConnect {
+class TestbedMetaEngine : public AdvancedMetaEngine {
 public:
     const char *getName() const override {
 		return "testbed";
@@ -65,7 +65,7 @@ public:
 };
 
 #if PLUGIN_ENABLED_DYNAMIC(TESTBED)
-	REGISTER_PLUGIN_DYNAMIC(TESTBED, PLUGIN_TYPE_ENGINE, TestbedMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(TESTBED, PLUGIN_TYPE_ENGINE, TestbedMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(TESTBED, PLUGIN_TYPE_ENGINE, TestbedMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(TESTBED, PLUGIN_TYPE_ENGINE, TestbedMetaEngine);
 #endif

@@ -46,9 +46,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class CryOmni3DMetaEngine : public AdvancedMetaEngine {
+class CryOmni3DMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	CryOmni3DMetaEngine() : AdvancedMetaEngine(CryOmni3D::gameDescriptions,
+	CryOmni3DMetaEngineStatic() : AdvancedMetaEngineStatic(CryOmni3D::gameDescriptions,
 				sizeof(CryOmni3DGameDescription), cryomni3DGames, optionsList) {
 		_directoryGlobs = directoryGlobs;
 		_maxScanDepth = 5;
@@ -74,4 +74,4 @@ public:
 
 } // End of Namespace CryOmni3D
 
-REGISTER_PLUGIN_STATIC(CRYOMNI3D_DETECTION, PLUGIN_TYPE_METAENGINE, CryOmni3D::CryOmni3DMetaEngine);
+REGISTER_PLUGIN_STATIC(CRYOMNI3D_DETECTION, PLUGIN_TYPE_METAENGINE, CryOmni3D::CryOmni3DMetaEngineStatic);

@@ -44,9 +44,9 @@ static const ExtraGuiOption sword25ExtraGuiOption = {
 	false
 };
 
-class Sword25MetaEngine : public AdvancedMetaEngine {
+class Sword25MetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	Sword25MetaEngine() : AdvancedMetaEngine(Sword25::gameDescriptions, sizeof(ADGameDescription), sword25Game) {
+	Sword25MetaEngineStatic() : AdvancedMetaEngineStatic(Sword25::gameDescriptions, sizeof(ADGameDescription), sword25Game) {
 		_guiOptions = GUIO1(GUIO_NOMIDI);
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
@@ -67,10 +67,10 @@ public:
 	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 };
 
-const ExtraGuiOptions Sword25MetaEngine::getExtraGuiOptions(const Common::String &target) const {
+const ExtraGuiOptions Sword25MetaEngineStatic::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	options.push_back(sword25ExtraGuiOption);
 	return options;
 }
 
-REGISTER_PLUGIN_STATIC(SWORD25_DETECTION, PLUGIN_TYPE_METAENGINE, Sword25MetaEngine);
+REGISTER_PLUGIN_STATIC(SWORD25_DETECTION, PLUGIN_TYPE_METAENGINE, Sword25MetaEngineStatic);

@@ -35,7 +35,7 @@ Common::Platform CryoEngine::getPlatform() const { return _gameDescription->plat
 
 } // End of namespace Cryo
 
-class CryoMetaEngineConnect : public AdvancedMetaEngineConnect {
+class CryoMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "cryo";
@@ -45,11 +45,11 @@ public:
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
-bool CryoMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool CryoMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return false;
 }
 
-bool CryoMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool CryoMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc) {
 		*engine = new Cryo::CryoEngine(syst, desc);
 	}
@@ -57,8 +57,8 @@ bool CryoMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(CRYO)
-	REGISTER_PLUGIN_DYNAMIC(CRYO, PLUGIN_TYPE_ENGINE, CryoMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(CRYO, PLUGIN_TYPE_ENGINE, CryoMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(CRYO, PLUGIN_TYPE_ENGINE, CryoMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(CRYO, PLUGIN_TYPE_ENGINE, CryoMetaEngine);
 #endif
 

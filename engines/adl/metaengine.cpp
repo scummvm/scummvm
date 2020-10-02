@@ -67,7 +67,7 @@ Common::Platform getPlatform(const AdlGameDescription &adlDesc) {
 	return adlDesc.desc.platform;
 }
 
-class AdlMetaEngineConnect : public AdvancedMetaEngineConnect {
+class AdlMetaEngine : public AdvancedMetaEngine {
 public:
     const char *getName() const override {
 		return "adl";
@@ -82,7 +82,7 @@ public:
     bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 };
 
-bool AdlMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool AdlMetaEngine::hasFeature(MetaEngineFeature f) const {
 	switch(f) {
 	case kSupportsListSaves:
 	case kSupportsLoadingDuringStartup:
@@ -98,7 +98,7 @@ bool AdlMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
 	}
 }
 
-SaveStateDescriptor AdlMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor AdlMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.s%02d", target, slot);
 	Common::InSaveFile *inFile = g_system->getSavefileManager()->openForLoading(fileName);
 
@@ -155,7 +155,7 @@ SaveStateDescriptor AdlMetaEngineConnect::querySaveMetaInfos(const char *target,
 	return sd;
 }
 
-SaveStateList AdlMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList AdlMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray files = saveFileMan->listSavefiles(Common::String(target) + ".s##");
 
@@ -196,7 +196,7 @@ SaveStateList AdlMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-void AdlMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void AdlMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.s%02d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
@@ -209,7 +209,7 @@ Engine *HiRes4Engine_create(OSystem *syst, const AdlGameDescription *gd);
 Engine *HiRes5Engine_create(OSystem *syst, const AdlGameDescription *gd);
 Engine *HiRes6Engine_create(OSystem *syst, const AdlGameDescription *gd);
 
-bool AdlMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
+bool AdlMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
 	if (!gd)
 		return false;
 
@@ -247,8 +247,8 @@ bool AdlMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const 
 } // End of namespace Adl
 
 #if PLUGIN_ENABLED_DYNAMIC(ADL)
-	REGISTER_PLUGIN_DYNAMIC(ADL, PLUGIN_TYPE_ENGINE, Adl::AdlMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(ADL, PLUGIN_TYPE_ENGINE, Adl::AdlMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(ADL, PLUGIN_TYPE_ENGINE, Adl::AdlMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(ADL, PLUGIN_TYPE_ENGINE, Adl::AdlMetaEngine);
 #endif
 

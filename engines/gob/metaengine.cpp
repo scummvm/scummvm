@@ -27,7 +27,7 @@
 // For struct GOBGameDescription.
 #include "gob/detection/detection.h"
 
-class GobMetaEngineConnect : public AdvancedMetaEngineConnect {
+class GobMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "gob";
@@ -39,7 +39,7 @@ public:
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
-bool GobMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool GobMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return false;
 }
 
@@ -48,11 +48,11 @@ bool Gob::GobEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsReturnToLauncher);
 }
 
-Common::Error GobMetaEngineConnect::createInstance(OSystem *syst, Engine **engine) const {
-	return AdvancedMetaEngineConnect::createInstance(syst, engine);
+Common::Error GobMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
+	return AdvancedMetaEngine::createInstance(syst, engine);
 }
 
-bool GobMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool GobMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Gob::GOBGameDescription *gd = (const Gob::GOBGameDescription *)desc;
 	if (gd) {
 		*engine = new Gob::GobEngine(syst);
@@ -63,9 +63,9 @@ bool GobMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const 
 
 
 #if PLUGIN_ENABLED_DYNAMIC(GOB)
-	REGISTER_PLUGIN_DYNAMIC(GOB, PLUGIN_TYPE_ENGINE, GobMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(GOB, PLUGIN_TYPE_ENGINE, GobMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(GOB, PLUGIN_TYPE_ENGINE, GobMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(GOB, PLUGIN_TYPE_ENGINE, GobMetaEngine);
 #endif
 
 namespace Gob {

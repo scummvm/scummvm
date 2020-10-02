@@ -54,7 +54,7 @@ Common::Platform AvalancheEngine::getPlatform() const {
 
 namespace Avalanche {
 
-class AvalancheMetaEngineConnect : public AdvancedMetaEngineConnect {
+class AvalancheMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "avalanche";
@@ -69,13 +69,13 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-bool AvalancheMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
+bool AvalancheMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
 	if (gd)
 		*engine = new AvalancheEngine(syst, (const AvalancheGameDescription *)gd);
 	return gd != 0;
 }
 
-bool AvalancheMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool AvalancheMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsDeleteSave) ||
@@ -85,7 +85,7 @@ bool AvalancheMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
 		(f == kSimpleSavesNames);
 }
 
-SaveStateList AvalancheMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList AvalancheMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String pattern = target;
@@ -139,12 +139,12 @@ SaveStateList AvalancheMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-void AvalancheMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void AvalancheMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
-SaveStateDescriptor AvalancheMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor AvalancheMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(fileName);
 
@@ -192,7 +192,7 @@ SaveStateDescriptor AvalancheMetaEngineConnect::querySaveMetaInfos(const char *t
 } // End of namespace Avalanche
 
 #if PLUGIN_ENABLED_DYNAMIC(AVALANCHE)
-	REGISTER_PLUGIN_DYNAMIC(AVALANCHE, PLUGIN_TYPE_ENGINE, Avalanche::AvalancheMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(AVALANCHE, PLUGIN_TYPE_ENGINE, Avalanche::AvalancheMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(AVALANCHE, PLUGIN_TYPE_ENGINE, Avalanche::AvalancheMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(AVALANCHE, PLUGIN_TYPE_ENGINE, Avalanche::AvalancheMetaEngine);
 #endif

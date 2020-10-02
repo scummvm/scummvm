@@ -38,9 +38,9 @@ static const char *directoryGlobs[] = {
 };
 
 
-class PinkMetaEngine : public AdvancedMetaEngine {
+class PinkMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	PinkMetaEngine() : AdvancedMetaEngine(Pink::gameDescriptions, sizeof(ADGameDescription), pinkGames) {
+	PinkMetaEngineStatic() : AdvancedMetaEngineStatic(Pink::gameDescriptions, sizeof(ADGameDescription), pinkGames) {
 		_gameIds = pinkGames;
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
@@ -59,4 +59,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(PINK_DETECTION, PLUGIN_TYPE_METAENGINE, PinkMetaEngine);
+REGISTER_PLUGIN_STATIC(PINK_DETECTION, PLUGIN_TYPE_METAENGINE, PinkMetaEngineStatic);

@@ -31,7 +31,7 @@
 
 #include "engines/metaengine.h"
 
-class SwordMetaEngineConnect : public MetaEngineConnect {
+class SwordMetaEngine : public MetaEngine {
 public:
     const char *getName() const override {
 		return "sword1";
@@ -47,7 +47,7 @@ public:
 	Common::Error createInstance(OSystem *syst, Engine **engine) const override;
 };
 
-bool SwordMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool SwordMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 	    (f == kSupportsListSaves) ||
 	    (f == kSupportsLoadingDuringStartup) ||
@@ -65,13 +65,13 @@ bool Sword1::SwordEngine::hasFeature(EngineFeature f) const {
 	    (f == kSupportsLoadingDuringRuntime);
 }
 
-Common::Error SwordMetaEngineConnect::createInstance(OSystem *syst, Engine **engine) const {
+Common::Error SwordMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
 	assert(engine);
 	*engine = new Sword1::SwordEngine(syst);
 	return Common::kNoError;
 }
 
-SaveStateList SwordMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList SwordMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	SaveStateList saveList;
 	char saveName[40];
@@ -99,13 +99,13 @@ SaveStateList SwordMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-int SwordMetaEngineConnect::getMaximumSaveSlot() const { return 999; }
+int SwordMetaEngine::getMaximumSaveSlot() const { return 999; }
 
-void SwordMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void SwordMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(Common::String::format("sword1.%03d", slot));
 }
 
-SaveStateDescriptor SwordMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor SwordMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("sword1.%03d", slot);
 	char name[40];
 	uint32 playTime = 0;
@@ -163,9 +163,9 @@ SaveStateDescriptor SwordMetaEngineConnect::querySaveMetaInfos(const char *targe
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SWORD1)
-	REGISTER_PLUGIN_DYNAMIC(SWORD1, PLUGIN_TYPE_ENGINE, SwordMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(SWORD1, PLUGIN_TYPE_ENGINE, SwordMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(SWORD1, PLUGIN_TYPE_ENGINE, SwordMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(SWORD1, PLUGIN_TYPE_ENGINE, SwordMetaEngine);
 #endif
 
 namespace Sword1 {

@@ -37,7 +37,7 @@ bool BbvsEngine::isLoogieDemo() const {
 
 } // End of namespace Bbvs
 
-class BbvsMetaEngineConnect : public AdvancedMetaEngineConnect {
+class BbvsMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "bbvs";
@@ -52,7 +52,7 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 };
 
-bool BbvsMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool BbvsMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 	    (f == kSupportsListSaves) ||
 	    (f == kSupportsDeleteSave) ||
@@ -63,16 +63,16 @@ bool BbvsMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
 		(f == kSimpleSavesNames);
 }
 
-void BbvsMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void BbvsMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
-int BbvsMetaEngineConnect::getMaximumSaveSlot() const {
+int BbvsMetaEngine::getMaximumSaveSlot() const {
 	return 999;
 }
 
-SaveStateList BbvsMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList BbvsMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Bbvs::BbvsEngine::SaveHeader header;
 	Common::String pattern = target;
@@ -98,7 +98,7 @@ SaveStateList BbvsMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-SaveStateDescriptor BbvsMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor BbvsMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Bbvs::BbvsEngine::getSavegameFilename(target, slot);
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
 	if (in) {
@@ -121,7 +121,7 @@ SaveStateDescriptor BbvsMetaEngineConnect::querySaveMetaInfos(const char *target
 	return SaveStateDescriptor();
 }
 
-bool BbvsMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool BbvsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc) {
 		*engine = new Bbvs::BbvsEngine(syst, desc);
 	}
@@ -129,7 +129,7 @@ bool BbvsMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(BBVS)
-	REGISTER_PLUGIN_DYNAMIC(BBVS, PLUGIN_TYPE_ENGINE, BbvsMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(BBVS, PLUGIN_TYPE_ENGINE, BbvsMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(BBVS, PLUGIN_TYPE_ENGINE, BbvsMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(BBVS, PLUGIN_TYPE_ENGINE, BbvsMetaEngine);
 #endif

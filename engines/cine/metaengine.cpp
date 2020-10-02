@@ -48,14 +48,14 @@ Common::Platform CineEngine::getPlatform() const { return _gameDescription->desc
 
 } // End of namespace Cine
 
-class CineMetaEngineConnect : public AdvancedMetaEngineConnect {
+class CineMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "cine";
 	}
 
     Common::Error createInstance(OSystem *syst, Engine **engine) const override {
-		return AdvancedMetaEngineConnect::createInstance(syst, engine);
+		return AdvancedMetaEngine::createInstance(syst, engine);
 	}
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
@@ -67,7 +67,7 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-bool CineMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool CineMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -86,7 +86,7 @@ bool Cine::CineEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool CineMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool CineMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Cine::CINEGameDescription *gd = (const Cine::CINEGameDescription *)desc;
 	if (gd) {
 		*engine = new Cine::CineEngine(syst, gd);
@@ -94,7 +94,7 @@ bool CineMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const
 	return gd != 0;
 }
 
-SaveStateList CineMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList CineMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	SaveStateList saveList;
 
@@ -170,13 +170,13 @@ SaveStateList CineMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-int CineMetaEngineConnect::getMaximumSaveSlot() const { return MAX_SAVEGAMES - 1; }
+int CineMetaEngine::getMaximumSaveSlot() const { return MAX_SAVEGAMES - 1; }
 
-Common::String CineMetaEngineConnect::getSavegameFile(int saveGameIdx, const char *target) const {
+Common::String CineMetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
 	return Common::String::format("%s.%d", target == nullptr ? getEngineId() : target, saveGameIdx);
 }
 
-SaveStateDescriptor CineMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor CineMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	if (slot < 0 || slot > getMaximumSaveSlot()) {
 		// HACK: Try to make SaveLoadChooserGrid::open() not use save slot
 		// numbers over the maximum save slot number for "New save".
@@ -239,7 +239,7 @@ SaveStateDescriptor CineMetaEngineConnect::querySaveMetaInfos(const char *target
 	return SaveStateDescriptor();
 }
 
-void CineMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void CineMetaEngine::removeSaveState(const char *target, int slot) const {
 	if (slot < 0 || slot >= MAX_SAVEGAMES) {
 		return;
 	}
@@ -285,9 +285,9 @@ void CineMetaEngineConnect::removeSaveState(const char *target, int slot) const 
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(CINE)
-	REGISTER_PLUGIN_DYNAMIC(CINE, PLUGIN_TYPE_ENGINE, CineMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(CINE, PLUGIN_TYPE_ENGINE, CineMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(CINE, PLUGIN_TYPE_ENGINE, CineMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(CINE, PLUGIN_TYPE_ENGINE, CineMetaEngine);
 #endif
 
 namespace Cine {

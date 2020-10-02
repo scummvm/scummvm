@@ -61,7 +61,7 @@ bool PegasusEngine::isWindows() const {
 
 } // End of namespace Pegasus
 
-class PegasusMetaEngineConnect : public AdvancedMetaEngineConnect {
+class PegasusMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "pegasus";
@@ -76,14 +76,14 @@ public:
 	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
-bool PegasusMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool PegasusMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves)
 		|| (f == kSupportsLoadingDuringStartup)
 		|| (f == kSupportsDeleteSave);
 }
 
-SaveStateList PegasusMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList PegasusMetaEngine::listSaves(const char *target) const {
 	// The original had no pattern, so the user must rename theirs
 	// Note that we ignore the target because saves are compatible between
 	// all versions
@@ -102,17 +102,17 @@ SaveStateList PegasusMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-void PegasusMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void PegasusMetaEngine::removeSaveState(const char *target, int slot) const {
 	// See listSaves() for info on the pattern
 	Common::StringArray fileNames = Pegasus::PegasusEngine::listSaveFiles();
 	g_system->getSavefileManager()->removeSavefile(fileNames[slot].c_str());
 }
 
-Common::KeymapArray PegasusMetaEngineConnect::initKeymaps(const char *target) const {
+Common::KeymapArray PegasusMetaEngine::initKeymaps(const char *target) const {
 	return Pegasus::PegasusEngine::initKeymaps();
 }
 
-bool PegasusMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool PegasusMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Pegasus::PegasusGameDescription *gd = (const Pegasus::PegasusGameDescription *)desc;
 
 	if (gd)
@@ -122,7 +122,7 @@ bool PegasusMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, co
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(PEGASUS)
-	REGISTER_PLUGIN_DYNAMIC(PEGASUS, PLUGIN_TYPE_ENGINE, PegasusMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(PEGASUS, PLUGIN_TYPE_ENGINE, PegasusMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(PEGASUS, PLUGIN_TYPE_ENGINE, PegasusMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(PEGASUS, PLUGIN_TYPE_ENGINE, PegasusMetaEngine);
 #endif

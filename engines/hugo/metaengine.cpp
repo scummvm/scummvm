@@ -40,7 +40,7 @@ const char *HugoEngine::getGameId() const {
 	return _gameDescription->desc.gameId;
 }
 
-class HugoMetaEngineConnect : public AdvancedMetaEngineConnect {
+class HugoMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "hugo";
@@ -56,7 +56,7 @@ public:
 
 };
 
-bool HugoMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
+bool HugoMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
 	if (gd) {
 		*engine = new HugoEngine(syst, (const HugoGameDescription *)gd);
 		((HugoEngine *)*engine)->initGame((const HugoGameDescription *)gd);
@@ -64,7 +64,7 @@ bool HugoMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const
 	return gd != 0;
 }
 
-bool HugoMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool HugoMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 	    (f == kSupportsListSaves) ||
 	    (f == kSupportsLoadingDuringStartup) ||
@@ -74,9 +74,9 @@ bool HugoMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
 	    (f == kSavesSupportCreationDate);
 }
 
-int HugoMetaEngineConnect::getMaximumSaveSlot() const { return 99; }
+int HugoMetaEngine::getMaximumSaveSlot() const { return 99; }
 
-SaveStateList HugoMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList HugoMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String pattern = target;
@@ -124,7 +124,7 @@ SaveStateList HugoMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-SaveStateDescriptor HugoMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor HugoMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s-%02d.SAV", target, slot);
 	Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(fileName);
 
@@ -177,7 +177,7 @@ SaveStateDescriptor HugoMetaEngineConnect::querySaveMetaInfos(const char *target
 	return SaveStateDescriptor();
 }
 
-void HugoMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void HugoMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s-%02d.SAV", target, slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
@@ -185,9 +185,9 @@ void HugoMetaEngineConnect::removeSaveState(const char *target, int slot) const 
 } // End of namespace Hugo
 
 #if PLUGIN_ENABLED_DYNAMIC(HUGO)
-	REGISTER_PLUGIN_DYNAMIC(HUGO, PLUGIN_TYPE_ENGINE, Hugo::HugoMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(HUGO, PLUGIN_TYPE_ENGINE, Hugo::HugoMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(HUGO, PLUGIN_TYPE_ENGINE, Hugo::HugoMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(HUGO, PLUGIN_TYPE_ENGINE, Hugo::HugoMetaEngine);
 #endif
 
 namespace Hugo {

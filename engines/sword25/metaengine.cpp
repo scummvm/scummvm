@@ -31,7 +31,7 @@ uint32 Sword25Engine::getGameFlags() const { return _gameDescription->flags; }
 
 } // End of namespace Sword25
 
-class Sword25MetaEngineConnect : public AdvancedMetaEngineConnect {
+class Sword25MetaEngine : public AdvancedMetaEngine {
 public:
     const char *getName() const override {
 		return "sword25";
@@ -44,19 +44,19 @@ public:
 	SaveStateList listSaves(const char *target) const override;
 };
 
-bool Sword25MetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool Sword25MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc) {
 		*engine = new Sword25::Sword25Engine(syst, desc);
 	}
 	return desc != 0;
 }
 
-bool Sword25MetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool Sword25MetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves);
 }
 
-SaveStateList Sword25MetaEngineConnect::listSaves(const char *target) const {
+SaveStateList Sword25MetaEngine::listSaves(const char *target) const {
 	Common::String pattern = target;
 	pattern = pattern + ".###";
 	SaveStateList saveList;
@@ -77,7 +77,7 @@ SaveStateList Sword25MetaEngineConnect::listSaves(const char *target) const {
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SWORD25)
-	REGISTER_PLUGIN_DYNAMIC(SWORD25, PLUGIN_TYPE_ENGINE, Sword25MetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(SWORD25, PLUGIN_TYPE_ENGINE, Sword25MetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(SWORD25, PLUGIN_TYPE_ENGINE, Sword25MetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(SWORD25, PLUGIN_TYPE_ENGINE, Sword25MetaEngine);
 #endif

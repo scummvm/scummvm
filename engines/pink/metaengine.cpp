@@ -34,7 +34,7 @@ Common::Language PinkEngine::getLanguage() const {
 
 } // End of Namespace Pink
 
-class PinkMetaEngineConnect : public AdvancedMetaEngineConnect {
+class PinkMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "pink";
@@ -50,7 +50,7 @@ public:
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
-bool PinkMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool PinkMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsDeleteSave) ||
@@ -62,7 +62,7 @@ bool PinkMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
 		(f == kSimpleSavesNames);
 }
 
-SaveStateList PinkMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList PinkMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::String pattern = Common::String::format("%s.s##", target);
 	Common::StringArray filenames = saveFileMan->listSavefiles(pattern);
@@ -87,11 +87,11 @@ SaveStateList PinkMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-void PinkMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void PinkMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(Pink::generateSaveName(slot, target));
 }
 
-SaveStateDescriptor PinkMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor PinkMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::ScopedPtr<Common::InSaveFile> f(g_system->getSavefileManager()->openForLoading(Pink::generateSaveName(slot, target)));
 
 	if (f) {
@@ -105,7 +105,7 @@ SaveStateDescriptor PinkMetaEngineConnect::querySaveMetaInfos(const char *target
 	return SaveStateDescriptor();
 }
 
-bool PinkMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool PinkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc)
 		*engine = new Pink::PinkEngine(syst, desc);
 
@@ -113,8 +113,8 @@ bool PinkMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(PINK)
-	REGISTER_PLUGIN_DYNAMIC(PINK, PLUGIN_TYPE_ENGINE, PinkMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(PINK, PLUGIN_TYPE_ENGINE, PinkMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(PINK, PLUGIN_TYPE_ENGINE, PinkMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(PINK, PLUGIN_TYPE_ENGINE, PinkMetaEngine);
 #endif
 

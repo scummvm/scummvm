@@ -48,7 +48,7 @@ Common::Language SherlockEngine::getLanguage() const {
 } // End of namespace Sherlock
 
 
-class SherlockMetaEngineConnect : public AdvancedMetaEngineConnect {
+class SherlockMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "sherlock";
@@ -85,7 +85,7 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-bool SherlockMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool SherlockMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Sherlock::SherlockGameDescription *gd = (const Sherlock::SherlockGameDescription *)desc;
 	if (gd) {
 		switch (gd->gameID) {
@@ -103,7 +103,7 @@ bool SherlockMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, c
 	return gd != 0;
 }
 
-bool SherlockMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool SherlockMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -126,20 +126,20 @@ bool Sherlock::SherlockEngine::isDemo() const {
 	return _gameDescription->desc.flags & ADGF_DEMO;
 }
 
-SaveStateList SherlockMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList SherlockMetaEngine::listSaves(const char *target) const {
 	return Sherlock::SaveManager::getSavegameList(target);
 }
 
-int SherlockMetaEngineConnect::getMaximumSaveSlot() const {
+int SherlockMetaEngine::getMaximumSaveSlot() const {
 	return MAX_SAVEGAME_SLOTS;
 }
 
-void SherlockMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void SherlockMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = Sherlock::SaveManager(nullptr, target).generateSaveName(slot);
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
-SaveStateDescriptor SherlockMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor SherlockMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Sherlock::SaveManager(nullptr, target).generateSaveName(slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
 
@@ -165,7 +165,7 @@ SaveStateDescriptor SherlockMetaEngineConnect::querySaveMetaInfos(const char *ta
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SHERLOCK)
-	REGISTER_PLUGIN_DYNAMIC(SHERLOCK, PLUGIN_TYPE_ENGINE, SherlockMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(SHERLOCK, PLUGIN_TYPE_ENGINE, SherlockMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(SHERLOCK, PLUGIN_TYPE_ENGINE, SherlockMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(SHERLOCK, PLUGIN_TYPE_ENGINE, SherlockMetaEngine);
 #endif

@@ -327,9 +327,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class GroovieMetaEngine : public AdvancedMetaEngine {
+class GroovieMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	GroovieMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(GroovieGameDescription), groovieGames, optionsList) {
+	GroovieMetaEngineStatic() : AdvancedMetaEngineStatic(gameDescriptions, sizeof(GroovieGameDescription), groovieGames, optionsList) {
 		// Use kADFlagUseExtraAsHint in order to distinguish the 11th hour from
 		// its "Making of" as well as the Clandestiny Trailer; they all share
 		// the same MD5.
@@ -361,4 +361,4 @@ public:
 
 } // End of namespace Groovie
 
-REGISTER_PLUGIN_STATIC(GROOVIE_DETECTION, PLUGIN_TYPE_METAENGINE, Groovie::GroovieMetaEngine);
+REGISTER_PLUGIN_STATIC(GROOVIE_DETECTION, PLUGIN_TYPE_METAENGINE, Groovie::GroovieMetaEngineStatic);

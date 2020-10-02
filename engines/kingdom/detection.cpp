@@ -72,9 +72,9 @@ static const ADGameDescription gameDescriptions[] = {
 
 } // End of namespace Kingdom
 
-class KingdomMetaEngine : public AdvancedMetaEngine {
+class KingdomMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	KingdomMetaEngine() : AdvancedMetaEngine(Kingdom::gameDescriptions, sizeof(ADGameDescription), kingdomGames) {
+	KingdomMetaEngineStatic() : AdvancedMetaEngineStatic(Kingdom::gameDescriptions, sizeof(ADGameDescription), kingdomGames) {
 	}
 
 	const char *getEngineId() const override {
@@ -90,4 +90,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(KINGDOM_DETECTION, PLUGIN_TYPE_METAENGINE, KingdomMetaEngine);
+REGISTER_PLUGIN_STATIC(KINGDOM_DETECTION, PLUGIN_TYPE_METAENGINE, KingdomMetaEngineStatic);

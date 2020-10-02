@@ -31,7 +31,7 @@ const char *PlumbersGame::getGameId() const { return _gameDescription->gameId; }
 Common::Platform PlumbersGame::getPlatform() const { return _gameDescription->platform; }
 } // End of namespace Plumbers
 
-class PlumbersMetaEngineConnect : public AdvancedMetaEngineConnect {
+class PlumbersMetaEngine : public AdvancedMetaEngine {
 	const char *getName() const override {
 		return "plumbers";
 	}
@@ -40,19 +40,19 @@ class PlumbersMetaEngineConnect : public AdvancedMetaEngineConnect {
 	bool hasFeature(MetaEngineFeature f) const override;
 };
 
-bool PlumbersMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool PlumbersMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc)
 		*engine = new Plumbers::PlumbersGame(syst, desc);
 
 	return desc != nullptr;
 }
 
-bool PlumbersMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool PlumbersMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return false;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(PLUMBERS)
-	REGISTER_PLUGIN_DYNAMIC(PLUMBERS, PLUGIN_TYPE_ENGINE, PlumbersMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(PLUMBERS, PLUGIN_TYPE_ENGINE, PlumbersMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(PLUMBERS, PLUGIN_TYPE_ENGINE, PlumbersMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(PLUMBERS, PLUGIN_TYPE_ENGINE, PlumbersMetaEngine);
 #endif

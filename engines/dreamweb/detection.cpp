@@ -61,10 +61,10 @@ static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class DreamWebMetaEngine : public AdvancedMetaEngine {
+class DreamWebMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	DreamWebMetaEngine():
-	AdvancedMetaEngine(DreamWeb::gameDescriptions,
+	DreamWebMetaEngineStatic():
+	AdvancedMetaEngineStatic(DreamWeb::gameDescriptions,
 	sizeof(DreamWeb::DreamWebGameDescription), dreamWebGames,
 	gameGuiOptions) {
 		_guiOptions = GUIO1(GUIO_NOMIDI);
@@ -83,4 +83,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(DREAMWEB_DETECTION, PLUGIN_TYPE_METAENGINE, DreamWebMetaEngine);
+REGISTER_PLUGIN_STATIC(DREAMWEB_DETECTION, PLUGIN_TYPE_METAENGINE, DreamWebMetaEngineStatic);

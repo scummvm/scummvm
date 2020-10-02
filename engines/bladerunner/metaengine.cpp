@@ -32,7 +32,7 @@
 
 #include "engines/advancedDetector.h"
 
-class BladeRunnerMetaEngineConnect : public AdvancedMetaEngineConnect {
+class BladeRunnerMetaEngine : public AdvancedMetaEngine {
 public:
     const char *getName() const override;
 
@@ -45,17 +45,17 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-const char *BladeRunnerMetaEngineConnect::getName() const {
+const char *BladeRunnerMetaEngine::getName() const {
 	return "bladerunner";
 }
 
-bool BladeRunnerMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool BladeRunnerMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	*engine = new BladeRunner::BladeRunnerEngine(syst, desc);
 
 	return true;
 }
 
-bool BladeRunnerMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool BladeRunnerMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		f == kSupportsListSaves ||
 		f == kSupportsLoadingDuringStartup ||
@@ -67,24 +67,24 @@ bool BladeRunnerMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
 		f == kSimpleSavesNames;
 }
 
-SaveStateList BladeRunnerMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList BladeRunnerMetaEngine::listSaves(const char *target) const {
 	return BladeRunner::SaveFileManager::list(target);
 }
 
-int BladeRunnerMetaEngineConnect::getMaximumSaveSlot() const {
+int BladeRunnerMetaEngine::getMaximumSaveSlot() const {
 	return 999;
 }
 
-void BladeRunnerMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void BladeRunnerMetaEngine::removeSaveState(const char *target, int slot) const {
 	BladeRunner::SaveFileManager::remove(target, slot);
 }
 
-SaveStateDescriptor BladeRunnerMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor BladeRunnerMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	return BladeRunner::SaveFileManager::queryMetaInfos(target, slot);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(BLADERUNNER)
-	REGISTER_PLUGIN_DYNAMIC(BLADERUNNER, PLUGIN_TYPE_ENGINE, BladeRunnerMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(BLADERUNNER, PLUGIN_TYPE_ENGINE, BladeRunnerMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(BLADERUNNER, PLUGIN_TYPE_ENGINE, BladeRunnerMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(BLADERUNNER, PLUGIN_TYPE_ENGINE, BladeRunnerMetaEngine);
 #endif

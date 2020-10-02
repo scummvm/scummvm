@@ -44,7 +44,7 @@ Common::Platform CruiseEngine::getPlatform() const {
 
 } // End of namespace Cruise
 
-class CruiseMetaEngineConnect : public AdvancedMetaEngineConnect {
+class CruiseMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "cruise";
@@ -59,7 +59,7 @@ public:
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
-bool CruiseMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool CruiseMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsDeleteSave) ||
@@ -68,7 +68,7 @@ bool CruiseMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsLoadingDuringStartup);
 }
 
-SaveStateList CruiseMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList CruiseMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String pattern("cruise.s##");
@@ -96,11 +96,11 @@ SaveStateList CruiseMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-void CruiseMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void CruiseMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(Cruise::CruiseEngine::getSavegameFile(slot));
 }
 
-SaveStateDescriptor CruiseMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor CruiseMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(
 		Cruise::CruiseEngine::getSavegameFile(slot));
 
@@ -123,7 +123,7 @@ SaveStateDescriptor CruiseMetaEngineConnect::querySaveMetaInfos(const char *targ
 	return SaveStateDescriptor();
 }
 
-bool CruiseMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool CruiseMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Cruise::CRUISEGameDescription *gd = (const Cruise::CRUISEGameDescription *)desc;
 	if (gd) {
 		*engine = new Cruise::CruiseEngine(syst, gd);
@@ -132,7 +132,7 @@ bool CruiseMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, con
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(CRUISE)
-	REGISTER_PLUGIN_DYNAMIC(CRUISE, PLUGIN_TYPE_ENGINE, CruiseMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(CRUISE, PLUGIN_TYPE_ENGINE, CruiseMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(CRUISE, PLUGIN_TYPE_ENGINE, CruiseMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(CRUISE, PLUGIN_TYPE_ENGINE, CruiseMetaEngine);
 #endif

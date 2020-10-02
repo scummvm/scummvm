@@ -68,7 +68,7 @@ Common::Platform AccessEngine::getPlatform() const {
 
 } // End of namespace Access
 
-class AccessMetaEngineConnect : public AdvancedMetaEngineConnect {
+class AccessMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "access";
@@ -84,7 +84,7 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-bool AccessMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool AccessMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 	    (f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -101,7 +101,7 @@ bool Access::AccessEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool AccessMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool AccessMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Access::AccessGameDescription *gd = (const Access::AccessGameDescription *)desc;
 	if (gd) {
 		switch (gd->gameID) {
@@ -118,7 +118,7 @@ bool AccessMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, con
 	return gd != 0;
 }
 
-SaveStateList AccessMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList AccessMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
@@ -149,16 +149,16 @@ SaveStateList AccessMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-int AccessMetaEngineConnect::getMaximumSaveSlot() const {
+int AccessMetaEngine::getMaximumSaveSlot() const {
 	return MAX_SAVES;
 }
 
-void AccessMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void AccessMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
-SaveStateDescriptor AccessMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor AccessMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
 
@@ -185,7 +185,7 @@ SaveStateDescriptor AccessMetaEngineConnect::querySaveMetaInfos(const char *targ
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(ACCESS)
-	REGISTER_PLUGIN_DYNAMIC(ACCESS, PLUGIN_TYPE_ENGINE, AccessMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(ACCESS, PLUGIN_TYPE_ENGINE, AccessMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(ACCESS, PLUGIN_TYPE_ENGINE, AccessMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(ACCESS, PLUGIN_TYPE_ENGINE, AccessMetaEngine);
 #endif

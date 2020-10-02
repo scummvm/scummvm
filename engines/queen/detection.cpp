@@ -468,9 +468,9 @@ static const QueenGameDescription gameDescriptions[] = {
 
 } // End of namespace Queen
 
-class QueenMetaEngine : public AdvancedMetaEngine {
+class QueenMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	QueenMetaEngine() : AdvancedMetaEngine(Queen::gameDescriptions, sizeof(Queen::QueenGameDescription), queenGames, optionsList) {
+	QueenMetaEngineStatic() : AdvancedMetaEngineStatic(Queen::gameDescriptions, sizeof(Queen::QueenGameDescription), queenGames, optionsList) {
 	}
 
 	const char *getEngineId() const override {
@@ -488,7 +488,7 @@ public:
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
 };
 
-ADDetectedGame QueenMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+ADDetectedGame QueenMetaEngineStatic::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 	static ADGameDescription desc;
 
 	// Iterate over all files in the given directory
@@ -532,4 +532,4 @@ ADDetectedGame QueenMetaEngine::fallbackDetect(const FileMap &allFiles, const Co
 	return ADDetectedGame();
 }
 
-REGISTER_PLUGIN_STATIC(QUEEN_DETECTION, PLUGIN_TYPE_METAENGINE, QueenMetaEngine);
+REGISTER_PLUGIN_STATIC(QUEEN_DETECTION, PLUGIN_TYPE_METAENGINE, QueenMetaEngineStatic);

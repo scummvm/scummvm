@@ -37,7 +37,7 @@ const char *WageEngine::getGameFile() const {
 
 } // End of namespace Wage
 
-class WageMetaEngineConnect : public AdvancedMetaEngineConnect {
+class WageMetaEngine : public AdvancedMetaEngine {
 public:
     const char *getName() const override {
 		return "wage";
@@ -51,7 +51,7 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 };
 
-bool WageMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool WageMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -66,14 +66,14 @@ bool Wage::WageEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool WageMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool WageMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc) {
 		*engine = new Wage::WageEngine(syst, desc);
 	}
 	return desc != 0;
 }
 
-SaveStateList WageMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList WageMetaEngine::listSaves(const char *target) const {
 	const uint32 WAGEflag = MKTAG('W','A','G','E');
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
@@ -114,16 +114,16 @@ SaveStateList WageMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-int WageMetaEngineConnect::getMaximumSaveSlot() const { return 999; }
+int WageMetaEngine::getMaximumSaveSlot() const { return 999; }
 
-void WageMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void WageMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(Common::String::format("%s.%03d", target, slot));
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(WAGE)
-	REGISTER_PLUGIN_DYNAMIC(WAGE, PLUGIN_TYPE_ENGINE, WageMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(WAGE, PLUGIN_TYPE_ENGINE, WageMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(WAGE, PLUGIN_TYPE_ENGINE, WageMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(WAGE, PLUGIN_TYPE_ENGINE, WageMetaEngine);
 #endif
 
 namespace Wage {

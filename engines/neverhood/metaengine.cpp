@@ -57,7 +57,7 @@ bool NeverhoodEngine::applyResourceFixes() const {
 
 } // End of namespace Neverhood
 
-class NeverhoodMetaEngineConnect : public AdvancedMetaEngineConnect {
+class NeverhoodMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "neverhood";
@@ -72,7 +72,7 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-bool NeverhoodMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool NeverhoodMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -91,14 +91,14 @@ bool Neverhood::NeverhoodEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool NeverhoodMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool NeverhoodMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc) {
 		*engine = new Neverhood::NeverhoodEngine(syst, desc);
 	}
 	return desc != 0;
 }
 
-SaveStateList NeverhoodMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList NeverhoodMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Neverhood::NeverhoodEngine::SaveHeader header;
 	Common::String pattern = target;
@@ -127,17 +127,17 @@ SaveStateList NeverhoodMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-int NeverhoodMetaEngineConnect::getMaximumSaveSlot() const {
+int NeverhoodMetaEngine::getMaximumSaveSlot() const {
 	return 999;
 }
 
-void NeverhoodMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void NeverhoodMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::String filename = Neverhood::NeverhoodEngine::getSavegameFilename(target, slot);
 	saveFileMan->removeSavefile(filename.c_str());
 }
 
-SaveStateDescriptor NeverhoodMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor NeverhoodMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Neverhood::NeverhoodEngine::getSavegameFilename(target, slot);
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
 
@@ -170,7 +170,7 @@ SaveStateDescriptor NeverhoodMetaEngineConnect::querySaveMetaInfos(const char *t
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(NEVERHOOD)
-	REGISTER_PLUGIN_DYNAMIC(NEVERHOOD, PLUGIN_TYPE_ENGINE, NeverhoodMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(NEVERHOOD, PLUGIN_TYPE_ENGINE, NeverhoodMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(NEVERHOOD, PLUGIN_TYPE_ENGINE, NeverhoodMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(NEVERHOOD, PLUGIN_TYPE_ENGINE, NeverhoodMetaEngine);
 #endif

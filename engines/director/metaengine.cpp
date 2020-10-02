@@ -86,7 +86,7 @@ bool DirectorEngine::hasFeature(EngineFeature f) const {
 
 } // End of Namespace Director
 
-class DirectorMetaEngineConnect : public AdvancedMetaEngineConnect {
+class DirectorMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "director";
@@ -95,7 +95,7 @@ public:
     bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
-bool DirectorMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool DirectorMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Director::DirectorGameDescription *gd = (const Director::DirectorGameDescription *)desc;
 
 	if (gd)
@@ -105,7 +105,7 @@ bool DirectorMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, c
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(DIRECTOR)
-	REGISTER_PLUGIN_DYNAMIC(DIRECTOR, PLUGIN_TYPE_ENGINE, DirectorMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(DIRECTOR, PLUGIN_TYPE_ENGINE, DirectorMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(DIRECTOR, PLUGIN_TYPE_ENGINE, DirectorMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(DIRECTOR, PLUGIN_TYPE_ENGINE, DirectorMetaEngine);
 #endif

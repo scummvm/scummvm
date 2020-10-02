@@ -29,7 +29,7 @@
 
 #include "touche/touche.h"
 
-class ToucheMetaEngineConnect : public AdvancedMetaEngineConnect {
+class ToucheMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "touche";
@@ -42,7 +42,7 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 };
 
-bool ToucheMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool ToucheMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -57,14 +57,14 @@ bool Touche::ToucheEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSubtitleOptions);
 }
 
-bool ToucheMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool ToucheMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc) {
 		*engine = new Touche::ToucheEngine(syst, desc->language);
 	}
 	return desc != 0;
 }
 
-SaveStateList ToucheMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList ToucheMetaEngine::listSaves(const char *target) const {
 	Common::String pattern = Touche::generateGameStateFileName(target, 0, true);
 	Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles(pattern);
 	bool slotsTable[Touche::kMaxSaveStates];
@@ -93,17 +93,17 @@ SaveStateList ToucheMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-int ToucheMetaEngineConnect::getMaximumSaveSlot() const {
+int ToucheMetaEngine::getMaximumSaveSlot() const {
 	return Touche::kMaxSaveStates - 1;
 }
 
-void ToucheMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void ToucheMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = Touche::generateGameStateFileName(target, slot);
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(TOUCHE)
-	REGISTER_PLUGIN_DYNAMIC(TOUCHE, PLUGIN_TYPE_ENGINE, ToucheMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(TOUCHE, PLUGIN_TYPE_ENGINE, ToucheMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(TOUCHE, PLUGIN_TYPE_ENGINE, ToucheMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(TOUCHE, PLUGIN_TYPE_ENGINE, ToucheMetaEngine);
 #endif

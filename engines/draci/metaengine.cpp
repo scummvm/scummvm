@@ -28,7 +28,7 @@
 #include "engines/advancedDetector.h"
 #include "engines/metaengine.h"
 
-class DraciMetaEngineConnect : public AdvancedMetaEngineConnect {
+class DraciMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "draci";
@@ -42,7 +42,7 @@ public:
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
-bool DraciMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool DraciMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsDeleteSave) ||
@@ -53,7 +53,7 @@ bool DraciMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsLoadingDuringStartup);
 }
 
-SaveStateList DraciMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList DraciMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String pattern("draci.s##");
@@ -82,11 +82,11 @@ SaveStateList DraciMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-void DraciMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void DraciMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(Draci::DraciEngine::getSavegameFile(slot));
 }
 
-SaveStateDescriptor DraciMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor DraciMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(
 		Draci::DraciEngine::getSavegameFile(slot));
 
@@ -120,7 +120,7 @@ SaveStateDescriptor DraciMetaEngineConnect::querySaveMetaInfos(const char *targe
 	return SaveStateDescriptor();
 }
 
-bool DraciMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool DraciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc) {
 		*engine = new Draci::DraciEngine(syst, desc);
 	}
@@ -128,7 +128,7 @@ bool DraciMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, cons
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(DRACI)
-	REGISTER_PLUGIN_DYNAMIC(DRACI, PLUGIN_TYPE_ENGINE, DraciMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(DRACI, PLUGIN_TYPE_ENGINE, DraciMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(DRACI, PLUGIN_TYPE_ENGINE, DraciMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(DRACI, PLUGIN_TYPE_ENGINE, DraciMetaEngine);
 #endif

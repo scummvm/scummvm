@@ -69,7 +69,7 @@ bool XeenEngine::getIsCD() const {
 
 } // End of namespace Xeen
 
-class XeenMetaEngineConnect : public AdvancedMetaEngineConnect {
+class XeenMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "xeen";
@@ -83,7 +83,7 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-bool XeenMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool XeenMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -102,7 +102,7 @@ bool Xeen::XeenEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool XeenMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool XeenMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Xeen::XeenGameDescription *gd = (const Xeen::XeenGameDescription *)desc;
 
 	switch (gd->gameID) {
@@ -121,7 +121,7 @@ bool XeenMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const
 	return true;
 }
 
-SaveStateList XeenMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList XeenMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
@@ -151,16 +151,16 @@ SaveStateList XeenMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-int XeenMetaEngineConnect::getMaximumSaveSlot() const {
+int XeenMetaEngine::getMaximumSaveSlot() const {
 	return MAX_SAVES;
 }
 
-void XeenMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void XeenMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
-SaveStateDescriptor XeenMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor XeenMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
 
@@ -187,7 +187,7 @@ SaveStateDescriptor XeenMetaEngineConnect::querySaveMetaInfos(const char *target
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(XEEN)
-	REGISTER_PLUGIN_DYNAMIC(XEEN, PLUGIN_TYPE_ENGINE, XeenMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(XEEN, PLUGIN_TYPE_ENGINE, XeenMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(XEEN, PLUGIN_TYPE_ENGINE, XeenMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(XEEN, PLUGIN_TYPE_ENGINE, XeenMetaEngine);
 #endif

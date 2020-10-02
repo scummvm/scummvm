@@ -403,9 +403,9 @@ bool OptionsWidget::save() {
 	return true;
 }
 
-class SciMetaEngine : public AdvancedMetaEngine {
+class SciMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	SciMetaEngine() : AdvancedMetaEngine(Sci::SciGameDescriptions, sizeof(ADGameDescription), s_sciGameTitles, optionsList) {
+	SciMetaEngineStatic() : AdvancedMetaEngineStatic(Sci::SciGameDescriptions, sizeof(ADGameDescription), s_sciGameTitles, optionsList) {
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 		_matchFullPaths = true;
@@ -434,18 +434,18 @@ public:
 	GUI::OptionsContainerWidget *buildEngineOptionsWidgetStatic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 };
 
-void SciMetaEngine::registerDefaultSettings(const Common::String &target) const {
-	AdvancedMetaEngine::registerDefaultSettings(target);
+void SciMetaEngineStatic::registerDefaultSettings(const Common::String &target) const {
+	AdvancedMetaEngineStatic::registerDefaultSettings(target);
 
 	for (const PopUpOptionsMap *entry = popUpOptionsList; entry->guioFlag; ++entry)
 		ConfMan.registerDefault(entry->configOption, entry->defaultState);
 }
 
-GUI::OptionsContainerWidget *SciMetaEngine::buildEngineOptionsWidgetStatic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+GUI::OptionsContainerWidget *SciMetaEngineStatic::buildEngineOptionsWidgetStatic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
 	return new OptionsWidget(boss, name, target);
 }
 
-ADDetectedGame SciMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+ADDetectedGame SciMetaEngineStatic::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 	/**
 	 * Fallback detection for Sci heavily depends on engine resources, so it's not possible
 	 * to use them without the engine present in a clean way.
@@ -455,7 +455,7 @@ ADDetectedGame SciMetaEngine::fallbackDetect(const FileMap &allFiles, const Comm
 	if (metaEnginePlugin) {
 		const Plugin *enginePlugin = PluginMan.getEngineFromMetaEngine(metaEnginePlugin);
 		if (enginePlugin) {
-			return enginePlugin->get<AdvancedMetaEngineConnect>().fallbackDetectExtern(_md5Bytes, allFiles, fslist);
+			return enginePlugin->get<AdvancedMetaEngine>().fallbackDetectExtern(_md5Bytes, allFiles, fslist);
 		} else {
 			static bool warn = true;
 			if (warn) {
@@ -470,4 +470,4 @@ ADDetectedGame SciMetaEngine::fallbackDetect(const FileMap &allFiles, const Comm
 
 } // End of namespace Sci
 
-REGISTER_PLUGIN_STATIC(SCI_DETECTION, PLUGIN_TYPE_METAENGINE, Sci::SciMetaEngine);
+REGISTER_PLUGIN_STATIC(SCI_DETECTION, PLUGIN_TYPE_METAENGINE, Sci::SciMetaEngineStatic);

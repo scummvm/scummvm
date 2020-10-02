@@ -38,7 +38,7 @@ Common::Platform KingdomGame::getPlatform() const { return _gameDescription->pla
 } // End of namespace Kingdom
 
 
-class KingdomMetaEngineConnect : public AdvancedMetaEngineConnect {
+class KingdomMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "kingdom";
@@ -53,7 +53,7 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-bool KingdomMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool KingdomMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 	    (f == kSupportsListSaves) ||
 	    (f == kSupportsLoadingDuringStartup) ||
@@ -63,18 +63,18 @@ bool KingdomMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
 	    (f == kSavesSupportCreationDate);
 }
 
-bool KingdomMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool KingdomMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc)
 		*engine = new Kingdom::KingdomGame(syst, desc);
 
 	return desc != nullptr;
 }
 
-int KingdomMetaEngineConnect::getMaximumSaveSlot() const {
+int KingdomMetaEngine::getMaximumSaveSlot() const {
 	return MAX_SAVES;
 }
 
-SaveStateList KingdomMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList KingdomMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
@@ -110,12 +110,12 @@ SaveStateList KingdomMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-void KingdomMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void KingdomMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
-SaveStateDescriptor KingdomMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor KingdomMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
 
@@ -137,7 +137,7 @@ SaveStateDescriptor KingdomMetaEngineConnect::querySaveMetaInfos(const char *tar
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(KINGDOM)
-	REGISTER_PLUGIN_DYNAMIC(KINGDOM, PLUGIN_TYPE_ENGINE, KingdomMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(KINGDOM, PLUGIN_TYPE_ENGINE, KingdomMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(KINGDOM, PLUGIN_TYPE_ENGINE, KingdomMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(KINGDOM, PLUGIN_TYPE_ENGINE, KingdomMetaEngine);
 #endif

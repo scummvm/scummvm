@@ -59,7 +59,7 @@ const Common::String &HopkinsEngine::getTargetName() const {
 
 } // End of namespace Hopkins
 
-class HopkinsMetaEngineConnect : public AdvancedMetaEngineConnect {
+class HopkinsMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "hopkins";
@@ -74,7 +74,7 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-bool HopkinsMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool HopkinsMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 	    (f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -91,7 +91,7 @@ bool Hopkins::HopkinsEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool HopkinsMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool HopkinsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Hopkins::HopkinsGameDescription *gd = (const Hopkins::HopkinsGameDescription *)desc;
 	if (gd) {
 		*engine = new Hopkins::HopkinsEngine(syst, gd);
@@ -99,7 +99,7 @@ bool HopkinsMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, co
 	return gd != 0;
 }
 
-SaveStateList HopkinsMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList HopkinsMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
@@ -132,16 +132,16 @@ SaveStateList HopkinsMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-int HopkinsMetaEngineConnect::getMaximumSaveSlot() const {
+int HopkinsMetaEngine::getMaximumSaveSlot() const {
 	return MAX_SAVES;
 }
 
-void HopkinsMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void HopkinsMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
-SaveStateDescriptor HopkinsMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor HopkinsMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
 
@@ -168,7 +168,7 @@ SaveStateDescriptor HopkinsMetaEngineConnect::querySaveMetaInfos(const char *tar
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(HOPKINS)
-	REGISTER_PLUGIN_DYNAMIC(HOPKINS, PLUGIN_TYPE_ENGINE, HopkinsMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(HOPKINS, PLUGIN_TYPE_ENGINE, HopkinsMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(HOPKINS, PLUGIN_TYPE_ENGINE, HopkinsMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(HOPKINS, PLUGIN_TYPE_ENGINE, HopkinsMetaEngine);
 #endif

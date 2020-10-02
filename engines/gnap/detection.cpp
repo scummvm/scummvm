@@ -83,9 +83,9 @@ static const ADGameDescription gameDescriptions[] = {
 
 } // End of namespace Gnap
 
-class GnapMetaEngine : public AdvancedMetaEngine {
+class GnapMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	GnapMetaEngine() : AdvancedMetaEngine(Gnap::gameDescriptions, sizeof(ADGameDescription), gnapGames) {
+	GnapMetaEngineStatic() : AdvancedMetaEngineStatic(Gnap::gameDescriptions, sizeof(ADGameDescription), gnapGames) {
 		_maxScanDepth = 3;
 	}
 
@@ -102,4 +102,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(GNAP_DETECTION, PLUGIN_TYPE_METAENGINE, GnapMetaEngine);
+REGISTER_PLUGIN_STATIC(GNAP_DETECTION, PLUGIN_TYPE_METAENGINE, GnapMetaEngineStatic);

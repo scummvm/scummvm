@@ -51,7 +51,7 @@ bool TonyEngine::isCompressed() const {
 
 } // End of namespace Tony
 
-class TonyMetaEngineConnect : public AdvancedMetaEngineConnect {
+class TonyMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "tony";
@@ -66,7 +66,7 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-bool TonyMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool TonyMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -82,7 +82,7 @@ bool Tony::TonyEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool TonyMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool TonyMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Tony::TonyGameDescription *gd = (const Tony::TonyGameDescription *)desc;
 	if (gd) {
 		*engine = new Tony::TonyEngine(syst, gd);
@@ -90,7 +90,7 @@ bool TonyMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const
 	return gd != 0;
 }
 
-SaveStateList TonyMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList TonyMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
@@ -120,17 +120,17 @@ SaveStateList TonyMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-int TonyMetaEngineConnect::getMaximumSaveSlot() const {
+int TonyMetaEngine::getMaximumSaveSlot() const {
 	return 99;
 }
 
-void TonyMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void TonyMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = Tony::TonyEngine::getSaveStateFileName(slot);
 
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
-SaveStateDescriptor TonyMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor TonyMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String saveName;
 	byte difficulty;
 
@@ -157,7 +157,7 @@ SaveStateDescriptor TonyMetaEngineConnect::querySaveMetaInfos(const char *target
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(TONY)
-	REGISTER_PLUGIN_DYNAMIC(TONY, PLUGIN_TYPE_ENGINE, TonyMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(TONY, PLUGIN_TYPE_ENGINE, TonyMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(TONY, PLUGIN_TYPE_ENGINE, TonyMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(TONY, PLUGIN_TYPE_ENGINE, TonyMetaEngine);
 #endif

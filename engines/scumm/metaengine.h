@@ -25,7 +25,7 @@
 
 #include "engines/metaengine.h"
 
-class ScummMetaEngineConnect : public MetaEngineConnect {
+class ScummMetaEngine : public MetaEngine {
     virtual const char *getName() const override;
 
     bool hasFeature(MetaEngineFeature f) const override;

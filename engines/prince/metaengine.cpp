@@ -44,7 +44,7 @@ Common::Language PrinceEngine::getLanguage() const {
 
 } // End of namespace Prince
 
-class PrinceMetaEngineConnect : public AdvancedMetaEngineConnect {
+class PrinceMetaEngine : public AdvancedMetaEngine {
 public:
     const char *getName() const override {
 		return "prince";
@@ -59,7 +59,7 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 };
 
-bool PrinceMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool PrinceMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsDeleteSave) ||
 		(f == kSavesSupportMetaInfo) ||
@@ -78,7 +78,7 @@ bool Prince::PrinceEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsReturnToLauncher);
 }
 
-SaveStateList PrinceMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList PrinceMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String pattern = target;
@@ -120,7 +120,7 @@ SaveStateList PrinceMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-SaveStateDescriptor PrinceMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor PrinceMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(fileName);
 
@@ -154,12 +154,12 @@ SaveStateDescriptor PrinceMetaEngineConnect::querySaveMetaInfos(const char *targ
 	return SaveStateDescriptor();
 }
 
-void PrinceMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void PrinceMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
-bool PrinceMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool PrinceMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	using namespace Prince;
 	const PrinceGameDescription *gd = (const PrinceGameDescription *)desc;
 	if (gd) {
@@ -169,7 +169,7 @@ bool PrinceMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, con
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(PRINCE)
-	REGISTER_PLUGIN_DYNAMIC(PRINCE, PLUGIN_TYPE_ENGINE, PrinceMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(PRINCE, PLUGIN_TYPE_ENGINE, PrinceMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(PRINCE, PLUGIN_TYPE_ENGINE, PrinceMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(PRINCE, PLUGIN_TYPE_ENGINE, PrinceMetaEngine);
 #endif

@@ -121,9 +121,9 @@ const static char *directoryGlobs[] = {
 	0
 };
 
-class PrinceMetaEngine : public AdvancedMetaEngine {
+class PrinceMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	PrinceMetaEngine() : AdvancedMetaEngine(Prince::gameDescriptions, sizeof(Prince::PrinceGameDescription), princeGames) {
+	PrinceMetaEngineStatic() : AdvancedMetaEngineStatic(Prince::gameDescriptions, sizeof(Prince::PrinceGameDescription), princeGames) {
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
@@ -141,4 +141,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(PRINCE_DETECTION, PLUGIN_TYPE_METAENGINE, PrinceMetaEngine);
+REGISTER_PLUGIN_STATIC(PRINCE_DETECTION, PLUGIN_TYPE_METAENGINE, PrinceMetaEngineStatic);

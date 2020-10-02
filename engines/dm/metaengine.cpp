@@ -36,7 +36,7 @@
 
 namespace DM {
 
-class DMMetaEngineConnect : public AdvancedMetaEngineConnect {
+class DMMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "dm";
@@ -116,7 +116,7 @@ public:
 } // End of namespace DM
 
 #if PLUGIN_ENABLED_DYNAMIC(DM)
-	REGISTER_PLUGIN_DYNAMIC(DM, PLUGIN_TYPE_ENGINE, DM::DMMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(DM, PLUGIN_TYPE_ENGINE, DM::DMMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(DM, PLUGIN_TYPE_ENGINE, DM::DMMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(DM, PLUGIN_TYPE_ENGINE, DM::DMMetaEngine);
 #endif

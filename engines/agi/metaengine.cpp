@@ -106,7 +106,7 @@ bool AgiBase::hasFeature(EngineFeature f) const {
 
 using namespace Agi;
 
-class AgiMetaEngineConnect : public AdvancedMetaEngineConnect {
+class AgiMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "agi";
@@ -122,7 +122,7 @@ public:
 	bool hasFeature(MetaEngineFeature f) const override;
 };
 
-bool AgiMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool AgiMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 	    (f == kSupportsListSaves) ||
 	    (f == kSupportsLoadingDuringStartup) ||
@@ -134,7 +134,7 @@ bool AgiMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
 		(f == kSimpleSavesNames);
 }
 
-bool AgiMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Agi::AGIGameDescription *gd = (const Agi::AGIGameDescription *)desc;
 	bool res = true;
 
@@ -169,7 +169,7 @@ bool AgiMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const 
 	return res;
 }
 
-SaveStateList AgiMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList AgiMetaEngine::listSaves(const char *target) const {
 	const uint32 AGIflag = MKTAG('A', 'G', 'I', ':');
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
@@ -219,14 +219,14 @@ SaveStateList AgiMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-void AgiMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void AgiMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
-int AgiMetaEngineConnect::getMaximumSaveSlot() const { return 999; }
+int AgiMetaEngine::getMaximumSaveSlot() const { return 999; }
 
-SaveStateDescriptor AgiMetaEngineConnect::querySaveMetaInfos(const char *target, int slotNr) const {
+SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int slotNr) const {
 	const uint32 AGIflag = MKTAG('A', 'G', 'I', ':');
 	Common::String fileName = Common::String::format("%s.%03d", target, slotNr);
 
@@ -317,9 +317,9 @@ SaveStateDescriptor AgiMetaEngineConnect::querySaveMetaInfos(const char *target,
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(AGI)
-	REGISTER_PLUGIN_DYNAMIC(AGI, PLUGIN_TYPE_ENGINE, AgiMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(AGI, PLUGIN_TYPE_ENGINE, AgiMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(AGI, PLUGIN_TYPE_ENGINE, AgiMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(AGI, PLUGIN_TYPE_ENGINE, AgiMetaEngine);
 #endif
 
 namespace Agi {

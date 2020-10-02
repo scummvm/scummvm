@@ -46,7 +46,7 @@ Common::Language FullpipeEngine::getLanguage() const {
 
 } // End of namspace Fullpipe
 
-class FullpipeMetaEngineConnect : public AdvancedMetaEngineConnect {
+class FullpipeMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "fullpipe";
@@ -62,7 +62,7 @@ public:
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
-bool FullpipeMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool FullpipeMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsDeleteSave) ||
@@ -81,7 +81,7 @@ bool Fullpipe::FullpipeEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-SaveStateList FullpipeMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList FullpipeMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String pattern("fullpipe.s##");
@@ -117,11 +117,11 @@ SaveStateList FullpipeMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-void FullpipeMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void FullpipeMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(Fullpipe::getSavegameFile(slot));
 }
 
-SaveStateDescriptor FullpipeMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor FullpipeMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::ScopedPtr<Common::InSaveFile> f(g_system->getSavefileManager()->openForLoading(
 		Fullpipe::getSavegameFile(slot)));
 
@@ -145,7 +145,7 @@ SaveStateDescriptor FullpipeMetaEngineConnect::querySaveMetaInfos(const char *ta
 	return SaveStateDescriptor();
 }
 
-bool FullpipeMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool FullpipeMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc) {
 		*engine = new Fullpipe::FullpipeEngine(syst, desc);
 	}
@@ -153,7 +153,7 @@ bool FullpipeMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, c
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(FULLPIPE)
-	REGISTER_PLUGIN_DYNAMIC(FULLPIPE, PLUGIN_TYPE_ENGINE, FullpipeMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(FULLPIPE, PLUGIN_TYPE_ENGINE, FullpipeMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(FULLPIPE, PLUGIN_TYPE_ENGINE, FullpipeMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(FULLPIPE, PLUGIN_TYPE_ENGINE, FullpipeMetaEngine);
 #endif

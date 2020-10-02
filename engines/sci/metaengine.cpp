@@ -296,7 +296,7 @@ static Common::String convertSierraGameId(Common::String sierraId, uint32 *gameF
 
 namespace Sci {
 
-class SciMetaEngineConnect : public AdvancedMetaEngineConnect {
+class SciMetaEngine : public AdvancedMetaEngine {
 public:
     const char *getName() const override {
 		return "sci";
@@ -315,7 +315,7 @@ public:
 	virtual ADDetectedGame fallbackDetectExtern(uint md5Bytes, const FileMap &allFiles, const Common::FSList &fslist) const override;
 };
 
-bool SciMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool SciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const GameIdStrToEnum *g = s_gameIdStrToEnum;
 	for (; g->gameidStr; ++g) {
 		if (0 == strcmp(desc->gameId, g->gameidStr)) {
@@ -327,7 +327,7 @@ bool SciMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const 
 	return false;
 }
 
-bool SciMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool SciMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -352,7 +352,7 @@ bool SciEngine::hasFeature(EngineFeature f) const {
 		//  and some other times it won't work.
 }
 
-SaveStateList SciMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList SciMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String pattern = target;
@@ -403,7 +403,7 @@ SaveStateList SciMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-SaveStateDescriptor SciMetaEngineConnect::querySaveMetaInfos(const char *target, int slotNr) const {
+SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int slotNr) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slotNr);
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);
 	SaveStateDescriptor descriptor(slotNr, "");
@@ -465,9 +465,9 @@ SaveStateDescriptor SciMetaEngineConnect::querySaveMetaInfos(const char *target,
 	return descriptor;
 }
 
-int SciMetaEngineConnect::getMaximumSaveSlot() const { return 99; }
+int SciMetaEngine::getMaximumSaveSlot() const { return 99; }
 
-void SciMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void SciMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
@@ -548,7 +548,7 @@ static ADGameDescription s_fallbackDesc = {
 	GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE)
 };
 
-ADDetectedGame SciMetaEngineConnect::fallbackDetectExtern(uint md5Bytes, const FileMap &allFiles, const Common::FSList &fslist) const {
+ADDetectedGame SciMetaEngine::fallbackDetectExtern(uint md5Bytes, const FileMap &allFiles, const Common::FSList &fslist) const {
 	bool foundResMap = false;
 	bool foundRes000 = false;
 
@@ -716,7 +716,7 @@ ADDetectedGame SciMetaEngineConnect::fallbackDetectExtern(uint md5Bytes, const F
 } // End of namespace Sci
 
 #if PLUGIN_ENABLED_DYNAMIC(SCI)
-	REGISTER_PLUGIN_DYNAMIC(SCI, PLUGIN_TYPE_ENGINE, Sci::SciMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(SCI, PLUGIN_TYPE_ENGINE, Sci::SciMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(SCI, PLUGIN_TYPE_ENGINE, Sci::SciMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(SCI, PLUGIN_TYPE_ENGINE, Sci::SciMetaEngine);
 #endif

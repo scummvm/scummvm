@@ -92,9 +92,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class DMMetaEngine : public AdvancedMetaEngine {
+class DMMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	DMMetaEngine() : AdvancedMetaEngine(DM::gameDescriptions, sizeof(DMADGameDescription), DMGames, optionsList) {
+	DMMetaEngineStatic() : AdvancedMetaEngineStatic(DM::gameDescriptions, sizeof(DMADGameDescription), DMGames, optionsList) {
 	}
 
 	const char *getEngineId() const override {
@@ -114,4 +114,4 @@ public:
 
 } // End of namespace DM
 
-REGISTER_PLUGIN_STATIC(DM_DETECTION, PLUGIN_TYPE_METAENGINE, DM::DMMetaEngine);
+REGISTER_PLUGIN_STATIC(DM_DETECTION, PLUGIN_TYPE_METAENGINE, DM::DMMetaEngineStatic);

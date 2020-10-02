@@ -63,7 +63,7 @@ Common::Platform MADSEngine::getPlatform() const {
 
 } // End of namespace MADS
 
-class MADSMetaEngineConnect : public AdvancedMetaEngineConnect {
+class MADSMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "mads";
@@ -78,7 +78,7 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-bool MADSMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool MADSMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 	    (f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -95,7 +95,7 @@ bool MADS::MADSEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool MADSMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool MADSMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const MADS::MADSGameDescription *gd = (const MADS::MADSGameDescription *)desc;
 	if (gd) {
 		*engine = new MADS::MADSEngine(syst, gd);
@@ -103,7 +103,7 @@ bool MADSMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const
 	return gd != 0;
 }
 
-SaveStateList MADSMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList MADSMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
@@ -133,16 +133,16 @@ SaveStateList MADSMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-int MADSMetaEngineConnect::getMaximumSaveSlot() const {
+int MADSMetaEngine::getMaximumSaveSlot() const {
 	return MAX_SAVES;
 }
 
-void MADSMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void MADSMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
-SaveStateDescriptor MADSMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor MADSMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
 
@@ -168,7 +168,7 @@ SaveStateDescriptor MADSMetaEngineConnect::querySaveMetaInfos(const char *target
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(MADS)
-	REGISTER_PLUGIN_DYNAMIC(MADS, PLUGIN_TYPE_ENGINE, MADSMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(MADS, PLUGIN_TYPE_ENGINE, MADSMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(MADS, PLUGIN_TYPE_ENGINE, MADSMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(MADS, PLUGIN_TYPE_ENGINE, MADSMetaEngine);
 #endif

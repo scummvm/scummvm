@@ -64,9 +64,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class XeenMetaEngine : public AdvancedMetaEngine {
+class XeenMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	XeenMetaEngine() : AdvancedMetaEngine(Xeen::gameDescriptions, sizeof(Xeen::XeenGameDescription),
+	XeenMetaEngineStatic() : AdvancedMetaEngineStatic(Xeen::gameDescriptions, sizeof(Xeen::XeenGameDescription),
 			XeenGames, optionsList) {
 		_maxScanDepth = 3;
 	}
@@ -84,4 +84,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(XEEN_DETECTION, PLUGIN_TYPE_METAENGINE, XeenMetaEngine);
+REGISTER_PLUGIN_STATIC(XEEN_DETECTION, PLUGIN_TYPE_METAENGINE, XeenMetaEngineStatic);

@@ -29,9 +29,9 @@
 /**
  * ScummVM Meta Engine interface
  */
-class GlkMetaEngine : public MetaEngine {
+class GlkMetaEngineStatic : public MetaEngineStatic {
 public:
-	GlkMetaEngine() : MetaEngine() {}
+	GlkMetaEngineStatic() : MetaEngineStatic() {}
 
 	const char *getName() const override {
 		return "Glk";

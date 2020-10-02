@@ -90,9 +90,9 @@ static const ChewyGameDescription gameDescriptions[] = {
 
 } // End of namespace Chewy
 
-class ChewyMetaEngine : public AdvancedMetaEngine {
+class ChewyMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	ChewyMetaEngine() : AdvancedMetaEngine(Chewy::gameDescriptions, sizeof(Chewy::ChewyGameDescription), chewyGames) {
+	ChewyMetaEngineStatic() : AdvancedMetaEngineStatic(Chewy::gameDescriptions, sizeof(Chewy::ChewyGameDescription), chewyGames) {
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
@@ -110,4 +110,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(CHEWY_DETECTION, PLUGIN_TYPE_METAENGINE, ChewyMetaEngine);
+REGISTER_PLUGIN_STATIC(CHEWY_DETECTION, PLUGIN_TYPE_METAENGINE, ChewyMetaEngineStatic);

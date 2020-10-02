@@ -34,9 +34,9 @@ static const PlainGameDescriptor voyeurGames[] = {
 
 #include "voyeur/detection_tables.h"
 
-class VoyeurMetaEngine : public AdvancedMetaEngine {
+class VoyeurMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	VoyeurMetaEngine() : AdvancedMetaEngine(Voyeur::gameDescriptions, sizeof(Voyeur::VoyeurGameDescription), voyeurGames) {
+	VoyeurMetaEngineStatic() : AdvancedMetaEngineStatic(Voyeur::gameDescriptions, sizeof(Voyeur::VoyeurGameDescription), voyeurGames) {
 		_maxScanDepth = 3;
 	}
 
@@ -53,4 +53,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(VOYEUR_DETECTION, PLUGIN_TYPE_METAENGINE, VoyeurMetaEngine);
+REGISTER_PLUGIN_STATIC(VOYEUR_DETECTION, PLUGIN_TYPE_METAENGINE, VoyeurMetaEngineStatic);

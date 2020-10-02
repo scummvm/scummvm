@@ -170,9 +170,9 @@ static const CRUISEGameDescription gameDescriptions[] = {
 
 }
 
-class CruiseMetaEngine : public AdvancedMetaEngine {
+class CruiseMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	CruiseMetaEngine() : AdvancedMetaEngine(Cruise::gameDescriptions, sizeof(Cruise::CRUISEGameDescription), cruiseGames) {
+	CruiseMetaEngineStatic() : AdvancedMetaEngineStatic(Cruise::gameDescriptions, sizeof(Cruise::CRUISEGameDescription), cruiseGames) {
 		_guiOptions = GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI);
 	}
 
@@ -189,4 +189,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(CRUISE_DETECTION, PLUGIN_TYPE_METAENGINE, CruiseMetaEngine);
+REGISTER_PLUGIN_STATIC(CRUISE_DETECTION, PLUGIN_TYPE_METAENGINE, CruiseMetaEngineStatic);

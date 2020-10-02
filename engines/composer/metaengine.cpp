@@ -65,7 +65,7 @@ bool ComposerEngine::loadDetectedConfigFile(Common::INIFile &configFile) const {
 
 } // End of namespace Composer
 
-class ComposerMetaEngineConnect : public AdvancedMetaEngineConnect {
+class ComposerMetaEngine : public AdvancedMetaEngine {
 public:
     const char *getName() const override {
 		return "composer";
@@ -78,7 +78,7 @@ public:
 	SaveStateList listSaves(const char* target) const override;
 };
 
-bool ComposerMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool ComposerMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Composer::ComposerGameDescription *gd = (const Composer::ComposerGameDescription *)desc;
 	if (gd) {
 		*engine = new Composer::ComposerEngine(syst, gd);
@@ -86,7 +86,7 @@ bool ComposerMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, c
 	return gd != 0;
 }
 
-bool ComposerMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool ComposerMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return ((f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup));
 }
 
@@ -99,10 +99,10 @@ Common::String getSaveName(Common::InSaveFile *in) {
 	ser.syncString(name);
 	return name;
 }
-int ComposerMetaEngineConnect::getMaximumSaveSlot() const {
+int ComposerMetaEngine::getMaximumSaveSlot() const {
 	return 99;
 }
-SaveStateList ComposerMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList ComposerMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
@@ -136,7 +136,7 @@ bool Composer::ComposerEngine::hasFeature(EngineFeature f) const {
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(COMPOSER)
-	REGISTER_PLUGIN_DYNAMIC(COMPOSER, PLUGIN_TYPE_ENGINE, ComposerMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(COMPOSER, PLUGIN_TYPE_ENGINE, ComposerMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(COMPOSER, PLUGIN_TYPE_ENGINE, ComposerMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(COMPOSER, PLUGIN_TYPE_ENGINE, ComposerMetaEngine);
 #endif

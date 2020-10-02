@@ -116,9 +116,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class CGE2MetaEngine : public AdvancedMetaEngine {
+class CGE2MetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	CGE2MetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(ADGameDescription), CGE2Games, optionsList) {
+	CGE2MetaEngineStatic() : AdvancedMetaEngineStatic(gameDescriptions, sizeof(ADGameDescription), CGE2Games, optionsList) {
 	}
 
 	const char *getEngineId() const override {
@@ -153,19 +153,19 @@ static const ADFileBasedFallback fileBasedFallback[] = {
 
 // This fallback detection looks identical to the one used for CGE. In fact, the difference resides
 // in the ResourceManager which handles a different archive format. The rest of the detection is identical.
-ADDetectedGame CGE2MetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+ADDetectedGame CGE2MetaEngineStatic::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 	ADDetectedGame game = detectGameFilebased(allFiles, CGE2::fileBasedFallback);
 
 	if (!game.desc)
 		return ADDetectedGame();
 
-	SearchMan.addDirectory("CGE2MetaEngine::fallbackDetect", fslist.begin()->getParent());
+	SearchMan.addDirectory("CGE2MetaEngineStatic::fallbackDetect", fslist.begin()->getParent());
 	ResourceManager *resman;
 	resman = new ResourceManager();
 	bool sayFileFound = resman->exist("CGE.SAY");
 	delete resman;
 
-	SearchMan.remove("CGE2MetaEngine::fallbackDetect");
+	SearchMan.remove("CGE2MetaEngineStatic::fallbackDetect");
 
 	if (!sayFileFound)
 		return ADDetectedGame();
@@ -175,4 +175,4 @@ ADDetectedGame CGE2MetaEngine::fallbackDetect(const FileMap &allFiles, const Com
 
 } // End of namespace CGE2
 
-REGISTER_PLUGIN_STATIC(CGE2_DETECTION, PLUGIN_TYPE_METAENGINE, CGE2::CGE2MetaEngine);
+REGISTER_PLUGIN_STATIC(CGE2_DETECTION, PLUGIN_TYPE_METAENGINE, CGE2::CGE2MetaEngineStatic);

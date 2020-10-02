@@ -53,7 +53,7 @@ bool VoyeurEngine::getIsDemo() const {
 
 } // End of namespace Voyeur
 
-class VoyeurMetaEngineConnect : public AdvancedMetaEngineConnect {
+class VoyeurMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "voyeur";
@@ -67,7 +67,7 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-bool VoyeurMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool VoyeurMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 	    (f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -84,7 +84,7 @@ bool Voyeur::VoyeurEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool VoyeurMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool VoyeurMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Voyeur::VoyeurGameDescription *gd = (const Voyeur::VoyeurGameDescription *)desc;
 	if (gd) {
 		*engine = new Voyeur::VoyeurEngine(syst, gd);
@@ -92,7 +92,7 @@ bool VoyeurMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, con
 	return gd != 0;
 }
 
-SaveStateList VoyeurMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList VoyeurMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
@@ -124,16 +124,16 @@ SaveStateList VoyeurMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-int VoyeurMetaEngineConnect::getMaximumSaveSlot() const {
+int VoyeurMetaEngine::getMaximumSaveSlot() const {
 	return MAX_SAVES;
 }
 
-void VoyeurMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void VoyeurMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
-SaveStateDescriptor VoyeurMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor VoyeurMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
 
@@ -156,7 +156,7 @@ SaveStateDescriptor VoyeurMetaEngineConnect::querySaveMetaInfos(const char *targ
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(VOYEUR)
-	REGISTER_PLUGIN_DYNAMIC(VOYEUR, PLUGIN_TYPE_ENGINE, VoyeurMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(VOYEUR, PLUGIN_TYPE_ENGINE, VoyeurMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(VOYEUR, PLUGIN_TYPE_ENGINE, VoyeurMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(VOYEUR, PLUGIN_TYPE_ENGINE, VoyeurMetaEngine);
 #endif

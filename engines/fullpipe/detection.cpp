@@ -106,9 +106,9 @@ static const ADGameDescription gameDescriptions[] = {
 
 } // End of namespace Fullpipe
 
-class FullpipeMetaEngine : public AdvancedMetaEngine {
+class FullpipeMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	FullpipeMetaEngine() : AdvancedMetaEngine(Fullpipe::gameDescriptions, sizeof(ADGameDescription), fullpipeGames) {
+	FullpipeMetaEngineStatic() : AdvancedMetaEngineStatic(Fullpipe::gameDescriptions, sizeof(ADGameDescription), fullpipeGames) {
 	}
 
 	const char *getEngineId() const override {
@@ -124,4 +124,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(FULLPIPE_DETECTION, PLUGIN_TYPE_METAENGINE, FullpipeMetaEngine);
+REGISTER_PLUGIN_STATIC(FULLPIPE_DETECTION, PLUGIN_TYPE_METAENGINE, FullpipeMetaEngineStatic);

@@ -65,7 +65,7 @@ static const SkyVersion skyVersions[] = {
 	{ 0, 0, 0, 0, 0 }
 };
 
-class SkyMetaEngine : public MetaEngine {
+class SkyMetaEngineStatic : public MetaEngineStatic {
 public:
 	const char *getName() const override;
 	const char *getOriginalCopyright() const override;
@@ -80,21 +80,21 @@ public:
 	DetectedGames detectGames(const Common::FSList &fslist) const override;
 };
 
-const char *SkyMetaEngine::getName() const {
+const char *SkyMetaEngineStatic::getName() const {
 	return "Beneath a Steel Sky";
 }
 
-const char *SkyMetaEngine::getOriginalCopyright() const {
+const char *SkyMetaEngineStatic::getOriginalCopyright() const {
 	return "Beneath a Steel Sky (C) Revolution";
 }
 
-PlainGameList SkyMetaEngine::getSupportedGames() const {
+PlainGameList SkyMetaEngineStatic::getSupportedGames() const {
 	PlainGameList games;
 	games.push_back(skySetting);
 	return games;
 }
 
-const ExtraGuiOptions SkyMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+const ExtraGuiOptions SkyMetaEngineStatic::getExtraGuiOptions(const Common::String &target) const {
 	Common::String guiOptions;
 	ExtraGuiOptions options;
 
@@ -113,13 +113,13 @@ const ExtraGuiOptions SkyMetaEngine::getExtraGuiOptions(const Common::String &ta
 	return options;
 }
 
-PlainGameDescriptor SkyMetaEngine::findGame(const char *gameid) const {
+PlainGameDescriptor SkyMetaEngineStatic::findGame(const char *gameid) const {
 	if (0 == scumm_stricmp(gameid, skySetting.gameId))
 		return skySetting;
 	return PlainGameDescriptor::empty();
 }
 
-DetectedGames SkyMetaEngine::detectGames(const Common::FSList &fslist) const {
+DetectedGames SkyMetaEngineStatic::detectGames(const Common::FSList &fslist) const {
 	DetectedGames detectedGames;
 	bool hasSkyDsk = false;
 	bool hasSkyDnr = false;
@@ -175,4 +175,4 @@ DetectedGames SkyMetaEngine::detectGames(const Common::FSList &fslist) const {
 	return detectedGames;
 }
 
-REGISTER_PLUGIN_STATIC(SKY_DETECTION, PLUGIN_TYPE_METAENGINE, SkyMetaEngine);
+REGISTER_PLUGIN_STATIC(SKY_DETECTION, PLUGIN_TYPE_METAENGINE, SkyMetaEngineStatic);

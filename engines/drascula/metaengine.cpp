@@ -58,7 +58,7 @@ namespace Drascula {
 
 SaveStateDescriptor loadMetaData(Common::ReadStream *s, int slot, bool setPlayTime);
 
-class DrasculaMetaEngineConnect : public AdvancedMetaEngineConnect {
+class DrasculaMetaEngine : public AdvancedMetaEngine {
 public:
     const char *getName() const override {
 		return "drascula";
@@ -73,7 +73,7 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-bool DrasculaMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool DrasculaMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -85,7 +85,7 @@ bool DrasculaMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
 		(f == kSimpleSavesNames);
 }
 
-SaveStateList DrasculaMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList DrasculaMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String pattern = target;
@@ -119,7 +119,7 @@ SaveStateList DrasculaMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-SaveStateDescriptor DrasculaMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor DrasculaMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);
@@ -150,14 +150,14 @@ SaveStateDescriptor DrasculaMetaEngineConnect::querySaveMetaInfos(const char *ta
 	return desc;
 }
 
-int DrasculaMetaEngineConnect::getMaximumSaveSlot() const { return 999; }
+int DrasculaMetaEngine::getMaximumSaveSlot() const { return 999; }
 
-void DrasculaMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void DrasculaMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
-bool DrasculaMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool DrasculaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Drascula::DrasculaGameDescription *gd = (const Drascula::DrasculaGameDescription *)desc;
 	if (gd) {
 		*engine = new Drascula::DrasculaEngine(syst, gd);
@@ -168,7 +168,7 @@ bool DrasculaMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, c
 } // End of namespace Drascula
 
 #if PLUGIN_ENABLED_DYNAMIC(DRASCULA)
-	REGISTER_PLUGIN_DYNAMIC(DRASCULA, PLUGIN_TYPE_ENGINE, Drascula::DrasculaMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(DRASCULA, PLUGIN_TYPE_ENGINE, Drascula::DrasculaMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(DRASCULA, PLUGIN_TYPE_ENGINE, Drascula::DrasculaMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(DRASCULA, PLUGIN_TYPE_ENGINE, Drascula::DrasculaMetaEngine);
 #endif

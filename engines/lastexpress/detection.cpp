@@ -223,9 +223,9 @@ static const ADGameDescription gameDescriptions[] = {
 };
 
 
-class LastExpressMetaEngine : public AdvancedMetaEngine {
+class LastExpressMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	LastExpressMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(ADGameDescription), lastExpressGames) {
+	LastExpressMetaEngineStatic() : AdvancedMetaEngineStatic(gameDescriptions, sizeof(ADGameDescription), lastExpressGames) {
 		_guiOptions = GUIO2(GUIO_NOSUBTITLES, GUIO_NOSFX);
 	}
 
@@ -244,4 +244,4 @@ public:
 
 } // End of namespace LastExpress
 
-REGISTER_PLUGIN_STATIC(LASTEXPRESS_DETECTION, PLUGIN_TYPE_METAENGINE, LastExpress::LastExpressMetaEngine);
+REGISTER_PLUGIN_STATIC(LASTEXPRESS_DETECTION, PLUGIN_TYPE_METAENGINE, LastExpress::LastExpressMetaEngineStatic);

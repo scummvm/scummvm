@@ -29,7 +29,7 @@
 #include "dreamweb/dreamweb.h"
 #include "dreamweb/detection.h"
 
-class DreamWebMetaEngineConnect : public AdvancedMetaEngineConnect {
+class DreamWebMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "dreamweb";
@@ -45,7 +45,7 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-bool DreamWebMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool DreamWebMetaEngine::hasFeature(MetaEngineFeature f) const {
 	switch(f) {
 	case kSupportsListSaves:
 	case kSupportsLoadingDuringStartup:
@@ -71,7 +71,7 @@ bool DreamWeb::DreamWebEngine::hasFeature(EngineFeature f) const {
 	}
 }
 
-bool DreamWebMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool DreamWebMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const DreamWeb::DreamWebGameDescription *gd = (const DreamWeb::DreamWebGameDescription *)desc;
 	if (gd) {
 		*engine = new DreamWeb::DreamWebEngine(syst, gd);
@@ -79,7 +79,7 @@ bool DreamWebMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, c
 	return gd != 0;
 }
 
-SaveStateList DreamWebMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList DreamWebMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray files = saveFileMan->listSavefiles("DREAMWEB.D##");
 
@@ -104,14 +104,14 @@ SaveStateList DreamWebMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-int DreamWebMetaEngineConnect::getMaximumSaveSlot() const { return 99; }
+int DreamWebMetaEngine::getMaximumSaveSlot() const { return 99; }
 
-void DreamWebMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void DreamWebMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("DREAMWEB.D%02d", slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
-SaveStateDescriptor DreamWebMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor DreamWebMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Common::String::format("DREAMWEB.D%02d", slot);
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
 
@@ -178,9 +178,9 @@ SaveStateDescriptor DreamWebMetaEngineConnect::querySaveMetaInfos(const char *ta
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(DREAMWEB)
-	REGISTER_PLUGIN_DYNAMIC(DREAMWEB, PLUGIN_TYPE_ENGINE, DreamWebMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(DREAMWEB, PLUGIN_TYPE_ENGINE, DreamWebMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(DREAMWEB, PLUGIN_TYPE_ENGINE, DreamWebMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(DREAMWEB, PLUGIN_TYPE_ENGINE, DreamWebMetaEngine);
 #endif
 
 namespace DreamWeb {
