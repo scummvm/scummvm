@@ -35,7 +35,7 @@
 #include "sky/control.h"
 #include "sky/sky.h"
 
-class SkyMetaEngineConnect : public MetaEngineConnect {
+class SkyMetaEngine : public MetaEngine {
     const char *getName() const override {
         return "sky";
     }
@@ -51,7 +51,7 @@ class SkyMetaEngineConnect : public MetaEngineConnect {
     Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
-bool SkyMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool SkyMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -65,7 +65,7 @@ bool Sky::SkyEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-Common::KeymapArray SkyMetaEngineConnect::initKeymaps(const char *target) const {
+Common::KeymapArray SkyMetaEngine::initKeymaps(const char *target) const {
 	using namespace Common;
 	using namespace Sky;
 
@@ -132,13 +132,13 @@ Common::KeymapArray SkyMetaEngineConnect::initKeymaps(const char *target) const 
 	return keymaps;
 }
 
-Common::Error SkyMetaEngineConnect::createInstance(OSystem *syst, Engine **engine) const {
+Common::Error SkyMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
 	assert(engine);
 	*engine = new Sky::SkyEngine(syst);
 	return Common::kNoError;
 }
 
-SaveStateList SkyMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	SaveStateList saveList;
 
@@ -183,9 +183,9 @@ SaveStateList SkyMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-int SkyMetaEngineConnect::getMaximumSaveSlot() const { return MAX_SAVE_GAMES; }
+int SkyMetaEngine::getMaximumSaveSlot() const { return MAX_SAVE_GAMES; }
 
-void SkyMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void SkyMetaEngine::removeSaveState(const char *target, int slot) const {
 	if (slot == 0)	// do not delete the auto save
 		return;
 
@@ -233,9 +233,9 @@ void SkyMetaEngineConnect::removeSaveState(const char *target, int slot) const {
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SKY)
-	REGISTER_PLUGIN_DYNAMIC(SKY, PLUGIN_TYPE_ENGINE, SkyMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(SKY, PLUGIN_TYPE_ENGINE, SkyMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(SKY, PLUGIN_TYPE_ENGINE, SkyMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(SKY, PLUGIN_TYPE_ENGINE, SkyMetaEngine);
 #endif
 
 namespace Sky {

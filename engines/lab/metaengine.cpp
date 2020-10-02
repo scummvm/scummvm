@@ -43,7 +43,7 @@ uint32 LabEngine::getFeatures() const {
 
 } // End of namespace Lab
 
-class LabMetaEngineConnect : public AdvancedMetaEngineConnect {
+class LabMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "lab";
@@ -62,7 +62,7 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-bool LabMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool LabMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -81,7 +81,7 @@ bool Lab::LabEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-SaveStateList LabMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList LabMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Lab::SaveGameHeader header;
 	Common::String pattern = target;
@@ -111,16 +111,16 @@ SaveStateList LabMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-int LabMetaEngineConnect::getMaximumSaveSlot() const {
+int LabMetaEngine::getMaximumSaveSlot() const {
 	return 999;
 }
 
-void LabMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void LabMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	saveFileMan->removeSavefile(Common::String::format("%s.%03u", target, slot));
 }
 
-SaveStateDescriptor LabMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor LabMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%03u", target, slot);
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
 
@@ -145,7 +145,7 @@ SaveStateDescriptor LabMetaEngineConnect::querySaveMetaInfos(const char *target,
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(LAB)
-	REGISTER_PLUGIN_DYNAMIC(LAB, PLUGIN_TYPE_ENGINE, LabMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(LAB, PLUGIN_TYPE_ENGINE, LabMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(LAB, PLUGIN_TYPE_ENGINE, LabMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(LAB, PLUGIN_TYPE_ENGINE, LabMetaEngine);
 #endif

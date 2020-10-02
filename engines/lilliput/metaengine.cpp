@@ -44,7 +44,7 @@ const char *LilliputEngine::getGameId() const {
 
 namespace Lilliput {
 
-class LilliputMetaEngineConnect : public AdvancedMetaEngineConnect {
+class LilliputMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "lilliput";
@@ -59,7 +59,7 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 };
 
-bool LilliputMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
+bool LilliputMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
 	if (gd) {
 		*engine = new LilliputEngine(syst, (const LilliputGameDescription *)gd);
 		((LilliputEngine *)*engine)->initGame((const LilliputGameDescription *)gd);
@@ -67,7 +67,7 @@ bool LilliputMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, c
 	return gd != 0;
 }
 
-bool LilliputMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool LilliputMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -77,11 +77,11 @@ bool LilliputMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportCreationDate);
 }
 
-int LilliputMetaEngineConnect::getMaximumSaveSlot() const {
+int LilliputMetaEngine::getMaximumSaveSlot() const {
 	return 99;
 }
 
-SaveStateList LilliputMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList LilliputMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String pattern = target;
@@ -129,7 +129,7 @@ SaveStateList LilliputMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-SaveStateDescriptor LilliputMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor LilliputMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s-%02d.SAV", target, slot);
 	Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(fileName);
 
@@ -186,7 +186,7 @@ SaveStateDescriptor LilliputMetaEngineConnect::querySaveMetaInfos(const char *ta
 	return SaveStateDescriptor();
 }
 
-void LilliputMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void LilliputMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s-%02d.SAV", target, slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
@@ -194,9 +194,9 @@ void LilliputMetaEngineConnect::removeSaveState(const char *target, int slot) co
 } // End of namespace Lilliput
 
 #if PLUGIN_ENABLED_DYNAMIC(LILLIPUT)
-	REGISTER_PLUGIN_DYNAMIC(LILLIPUT, PLUGIN_TYPE_ENGINE, Lilliput::LilliputMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(LILLIPUT, PLUGIN_TYPE_ENGINE, Lilliput::LilliputMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(LILLIPUT, PLUGIN_TYPE_ENGINE, Lilliput::LilliputMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(LILLIPUT, PLUGIN_TYPE_ENGINE, Lilliput::LilliputMetaEngine);
 #endif
 
 namespace Lilliput {

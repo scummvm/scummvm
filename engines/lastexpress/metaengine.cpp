@@ -25,7 +25,7 @@
 
 namespace LastExpress {
 
-class LastExpressMetaEngineConnect : public AdvancedMetaEngineConnect {
+class LastExpressMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "lastexpress";
@@ -35,7 +35,7 @@ protected:
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 };
 
-bool LastExpressMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
+bool LastExpressMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
 	if (gd) {
 		*engine = new LastExpressEngine(syst, (const ADGameDescription *)gd);
 	}
@@ -49,7 +49,7 @@ bool LastExpressEngine::isDemo() const {
 } // End of namespace LastExpress
 
 #if PLUGIN_ENABLED_DYNAMIC(LASTEXPRESS)
-	REGISTER_PLUGIN_DYNAMIC(LASTEXPRESS, PLUGIN_TYPE_ENGINE, LastExpress::LastExpressMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(LASTEXPRESS, PLUGIN_TYPE_ENGINE, LastExpress::LastExpressMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(LASTEXPRESS, PLUGIN_TYPE_ENGINE, LastExpress::LastExpressMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(LASTEXPRESS, PLUGIN_TYPE_ENGINE, LastExpress::LastExpressMetaEngine);
 #endif

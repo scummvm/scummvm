@@ -73,7 +73,7 @@
 
 #define MAX_SAVES 99
 
-class GlkMetaEngineConnect : public MetaEngineConnect {
+class GlkMetaEngine : public MetaEngine {
 private:
 	Common::String findFileByGameId(const Common::String &gameId) const;
 public:
@@ -90,7 +90,7 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-bool GlkMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool GlkMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 	    (f == kSupportsListSaves) ||
 	    (f == kSupportsLoadingDuringStartup) ||
@@ -138,14 +138,14 @@ template<class META, class ENG>bool create(OSystem *syst,
 	}
 }
 
-Common::String GlkMetaEngineConnect::findFileByGameId(const Common::String &gameId) const {
+Common::String GlkMetaEngine::findFileByGameId(const Common::String &gameId) const {
 	// Get the list of files in the folder and return detection against them
 	Common::FSNode folder = Common::FSNode(ConfMan.get("path"));
 	Common::FSList fslist;
 	folder.getChildren(fslist, Common::FSNode::kListFilesOnly);
 
 	// Get the matching MetaEngine for this Engine.
-	const MetaEngine &metaEngine = g_engine->getMetaEngine();
+	const MetaEngineStatic &metaEngine = g_engine->getMetaEngine();
 
 	// Iterate over the files
 	for (Common::FSList::iterator i = fslist.begin(); i != fslist.end(); ++i) {
@@ -163,7 +163,7 @@ Common::String GlkMetaEngineConnect::findFileByGameId(const Common::String &game
 	return Common::String();
 }
 
-Common::Error GlkMetaEngineConnect::createInstance(OSystem *syst, Engine **engine) const {
+Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
 #ifndef RELEASE_BUILD
 	Glk::GameDescriptor td = Glk::GameDescriptor::empty();
 #endif
@@ -231,7 +231,7 @@ Common::Error GlkMetaEngineConnect::createInstance(OSystem *syst, Engine **engin
 	return *engine ? Common::kNoError : Common::kUserCanceled;
 }
 
-SaveStateList GlkMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList GlkMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
@@ -262,16 +262,16 @@ SaveStateList GlkMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-int GlkMetaEngineConnect::getMaximumSaveSlot() const {
+int GlkMetaEngine::getMaximumSaveSlot() const {
 	return MAX_SAVES;
 }
 
-void GlkMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void GlkMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
-SaveStateDescriptor GlkMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor GlkMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename);
 	SaveStateDescriptor ssd;
@@ -290,7 +290,7 @@ SaveStateDescriptor GlkMetaEngineConnect::querySaveMetaInfos(const char *target,
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(GLK)
-	REGISTER_PLUGIN_DYNAMIC(GLK, PLUGIN_TYPE_ENGINE, GlkMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(GLK, PLUGIN_TYPE_ENGINE, GlkMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(GLK, PLUGIN_TYPE_ENGINE, GlkMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(GLK, PLUGIN_TYPE_ENGINE, GlkMetaEngine);
 #endif

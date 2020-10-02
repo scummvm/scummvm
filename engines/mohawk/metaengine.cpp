@@ -119,7 +119,7 @@ bool MohawkEngine_Riven::hasFeature(EngineFeature f) const {
 
 } // End of Namespace Mohawk
 
-class MohawkMetaEngineConnect : public AdvancedMetaEngineConnect {
+class MohawkMetaEngine : public AdvancedMetaEngine {
 public:
     const char *getName() const override {
 		return "mohawk";
@@ -139,7 +139,7 @@ public:
 	GUI::OptionsContainerWidget *buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 };
 
-bool MohawkMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool MohawkMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves)
 		|| (f == kSupportsLoadingDuringStartup)
@@ -150,7 +150,7 @@ bool MohawkMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
 		|| (f == kSavesSupportPlayTime);
 }
 
-SaveStateList MohawkMetaEngineConnect::listSavesForPrefix(const char *prefix, const char *extension) const {
+SaveStateList MohawkMetaEngine::listSavesForPrefix(const char *prefix, const char *extension) const {
 	Common::String pattern = Common::String::format("%s-###.%s", prefix, extension);
 	Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles(pattern);
 	size_t prefixLen = strlen(prefix);
@@ -174,7 +174,7 @@ SaveStateList MohawkMetaEngineConnect::listSavesForPrefix(const char *prefix, co
 	return saveList;
 }
 
-SaveStateList MohawkMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList MohawkMetaEngine::listSaves(const char *target) const {
 	Common::String gameId = ConfMan.get("gameid", target);
 	SaveStateList saveList;
 
@@ -207,7 +207,7 @@ SaveStateList MohawkMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-void MohawkMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void MohawkMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String gameId = ConfMan.get("gameid", target);
 
 	// Removing saved games is only supported in Myst/Riven currently.
@@ -223,7 +223,7 @@ void MohawkMetaEngineConnect::removeSaveState(const char *target, int slot) cons
 #endif
 }
 
-SaveStateDescriptor MohawkMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor MohawkMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String gameId = ConfMan.get("gameid", target);
 
 #ifdef ENABLE_MYST
@@ -241,7 +241,7 @@ SaveStateDescriptor MohawkMetaEngineConnect::querySaveMetaInfos(const char *targ
 	}
 }
 
-Common::KeymapArray MohawkMetaEngineConnect::initKeymaps(const char *target) const {
+Common::KeymapArray MohawkMetaEngine::initKeymaps(const char *target) const {
 	Common::String gameId = ConfMan.get("gameid", target);
 
 #ifdef ENABLE_MYST
@@ -255,10 +255,10 @@ Common::KeymapArray MohawkMetaEngineConnect::initKeymaps(const char *target) con
 	}
 #endif
 
-	return AdvancedMetaEngineConnect::initKeymaps(target);
+	return AdvancedMetaEngine::initKeymaps(target);
 }
 
-bool MohawkMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool MohawkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Mohawk::MohawkGameDescription *gd = (const Mohawk::MohawkGameDescription *)desc;
 
 	if (gd) {
@@ -309,7 +309,7 @@ bool MohawkMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, con
 	return (gd != nullptr);
 }
 
-GUI::OptionsContainerWidget *MohawkMetaEngineConnect::buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+GUI::OptionsContainerWidget *MohawkMetaEngine::buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
 	Common::String gameId = ConfMan.get("gameid", target);
 
 #ifdef ENABLE_MYST
@@ -323,11 +323,11 @@ GUI::OptionsContainerWidget *MohawkMetaEngineConnect::buildEngineOptionsWidgetDy
 	}
 #endif
 
-	return MetaEngineConnect::buildEngineOptionsWidgetDynamic(boss, name, target);
+	return MetaEngine::buildEngineOptionsWidgetDynamic(boss, name, target);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(MOHAWK)
-	REGISTER_PLUGIN_DYNAMIC(MOHAWK, PLUGIN_TYPE_ENGINE, MohawkMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(MOHAWK, PLUGIN_TYPE_ENGINE, MohawkMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(MOHAWK, PLUGIN_TYPE_ENGINE, MohawkMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(MOHAWK, PLUGIN_TYPE_ENGINE, MohawkMetaEngine);
 #endif

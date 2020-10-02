@@ -54,7 +54,7 @@ Common::Language StarTrekEngine::getLanguage() const {
 
 } // End of Namespace StarTrek
 
-class StarTrekMetaEngineConnect : public AdvancedMetaEngineConnect {
+class StarTrekMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "startrek";
@@ -69,7 +69,7 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-bool StarTrekMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool StarTrekMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 	    (f == kSupportsListSaves) ||
 	    (f == kSupportsLoadingDuringStartup) ||
@@ -81,7 +81,7 @@ bool StarTrekMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
 	    (f == kSimpleSavesNames);
 }
 
-bool StarTrekMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool StarTrekMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const StarTrek::StarTrekGameDescription *gd = (const StarTrek::StarTrekGameDescription *)desc;
 
 	*engine = new StarTrek::StarTrekEngine(syst, gd);
@@ -89,7 +89,7 @@ bool StarTrekMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, c
 	return (gd != 0);
 }
 
-SaveStateList StarTrekMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList StarTrekMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String pattern = target;
@@ -132,16 +132,16 @@ SaveStateList StarTrekMetaEngineConnect::listSaves(const char *target) const {
 }
 
 
-int StarTrekMetaEngineConnect::getMaximumSaveSlot() const {
+int StarTrekMetaEngine::getMaximumSaveSlot() const {
 	return 999;
 }
 
-void StarTrekMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void StarTrekMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
-SaveStateDescriptor StarTrekMetaEngineConnect::querySaveMetaInfos(const char *target, int slotNr) const {
+SaveStateDescriptor StarTrekMetaEngine::querySaveMetaInfos(const char *target, int slotNr) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slotNr);
 
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);
@@ -200,7 +200,7 @@ SaveStateDescriptor StarTrekMetaEngineConnect::querySaveMetaInfos(const char *ta
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(STARTREK)
-    REGISTER_PLUGIN_DYNAMIC(STARTREK, PLUGIN_TYPE_ENGINE, StarTrekMetaEngineConnect);
+    REGISTER_PLUGIN_DYNAMIC(STARTREK, PLUGIN_TYPE_ENGINE, StarTrekMetaEngine);
 #else
-    REGISTER_PLUGIN_STATIC(STARTREK, PLUGIN_TYPE_ENGINE, StarTrekMetaEngineConnect);
+    REGISTER_PLUGIN_STATIC(STARTREK, PLUGIN_TYPE_ENGINE, StarTrekMetaEngine);
 #endif

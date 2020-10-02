@@ -51,7 +51,7 @@ static ADGameDescription s_fallbackDesc = {
 
 static char s_fallbackExtraBuf[256];
 
-class WintermuteMetaEngineConnect : public AdvancedMetaEngineConnect {
+class WintermuteMetaEngine : public AdvancedMetaEngine {
 public:
     const char *getName() const override {
 		return "wintermute";
@@ -67,17 +67,17 @@ public:
 
 	bool hasFeature(MetaEngineFeature f) const override {
 		switch (f) {
-		case MetaEngineConnect::kSupportsListSaves:
+		case MetaEngine::kSupportsListSaves:
 			return true;
-		case MetaEngineConnect::kSupportsLoadingDuringStartup:
+		case MetaEngine::kSupportsLoadingDuringStartup:
 			return true;
-		case MetaEngineConnect::kSupportsDeleteSave:
+		case MetaEngine::kSupportsDeleteSave:
 			return true;
-		case MetaEngineConnect::kSavesSupportCreationDate:
+		case MetaEngine::kSavesSupportCreationDate:
 			return true;
-		case MetaEngineConnect::kSavesSupportMetaInfo:
+		case MetaEngine::kSavesSupportMetaInfo:
 			return true;
-		case MetaEngineConnect::kSavesSupportThumbnail:
+		case MetaEngine::kSavesSupportThumbnail:
 			return true;
 		default:
 			return false;
@@ -190,7 +190,7 @@ public:
 			if (!file->getName().hasSuffixIgnoreCase(".dcp")) continue;
 
 			FileProperties tmp;
-			if (AdvancedMetaEngineConnect::getFilePropertiesExtern(md5Bytes, allFiles, s_fallbackDesc, file->getName(), tmp)) {
+			if (AdvancedMetaEngine::getFilePropertiesExtern(md5Bytes, allFiles, s_fallbackDesc, file->getName(), tmp)) {
 				game.hasUnknownFiles = true;
 				game.matchedFiles[file->getName()] = tmp;
 			}
@@ -203,7 +203,7 @@ public:
 } // End of namespace Wintermute
 
 #if PLUGIN_ENABLED_DYNAMIC(WINTERMUTE)
-	REGISTER_PLUGIN_DYNAMIC(WINTERMUTE, PLUGIN_TYPE_ENGINE, Wintermute::WintermuteMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(WINTERMUTE, PLUGIN_TYPE_ENGINE, Wintermute::WintermuteMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(WINTERMUTE, PLUGIN_TYPE_ENGINE, Wintermute::WintermuteMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(WINTERMUTE, PLUGIN_TYPE_ENGINE, Wintermute::WintermuteMetaEngine);
 #endif

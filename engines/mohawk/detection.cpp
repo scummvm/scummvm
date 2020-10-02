@@ -76,9 +76,9 @@ static const char *directoryGlobs[] = {
 	nullptr
 };
 
-class MohawkMetaEngine : public AdvancedMetaEngine {
+class MohawkMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	MohawkMetaEngine() : AdvancedMetaEngine(Mohawk::gameDescriptions, sizeof(Mohawk::MohawkGameDescription), mohawkGames) {
+	MohawkMetaEngineStatic() : AdvancedMetaEngineStatic(Mohawk::gameDescriptions, sizeof(Mohawk::MohawkGameDescription), mohawkGames) {
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
@@ -104,8 +104,8 @@ public:
 	void registerDefaultSettings(const Common::String &target) const override;
 };
 
-DetectedGame MohawkMetaEngine::toDetectedGame(const ADDetectedGame &adGame) const {
-	DetectedGame game = AdvancedMetaEngine::toDetectedGame(adGame);
+DetectedGame MohawkMetaEngineStatic::toDetectedGame(const ADDetectedGame &adGame) const {
+	DetectedGame game = AdvancedMetaEngineStatic::toDetectedGame(adGame);
 
 	// The AdvancedDetector model only allows specifying a single supported
 	// game language. The 25th anniversary edition Myst games are multilanguage.
@@ -132,7 +132,7 @@ DetectedGame MohawkMetaEngine::toDetectedGame(const ADDetectedGame &adGame) cons
 	return game;
 }
 
-void MohawkMetaEngine::registerDefaultSettings(const Common::String &target) const {
+void MohawkMetaEngineStatic::registerDefaultSettings(const Common::String &target) const {
 	Common::String gameId = ConfMan.get("gameid", target);
 
 	if (gameId == "myst" || gameId == "makingofmyst") {
@@ -143,7 +143,7 @@ void MohawkMetaEngine::registerDefaultSettings(const Common::String &target) con
 		return Mohawk::MohawkMetaEngine_Riven::registerDefaultSettings();
 	}
 
-	return AdvancedMetaEngine::registerDefaultSettings(target);
+	return AdvancedMetaEngineStatic::registerDefaultSettings(target);
 }
 
-REGISTER_PLUGIN_STATIC(MOHAWK_DETECTION, PLUGIN_TYPE_METAENGINE, MohawkMetaEngine);
+REGISTER_PLUGIN_STATIC(MOHAWK_DETECTION, PLUGIN_TYPE_METAENGINE, MohawkMetaEngineStatic);

@@ -174,9 +174,9 @@ static const char *directoryGlobs[] = {
 	0
 };
 
-class DirectorMetaEngine : public AdvancedMetaEngine {
+class DirectorMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	DirectorMetaEngine() : AdvancedMetaEngine(Director::gameDescriptions, sizeof(Director::DirectorGameDescription), directorGames) {
+	DirectorMetaEngineStatic() : AdvancedMetaEngineStatic(Director::gameDescriptions, sizeof(Director::DirectorGameDescription), directorGames) {
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
@@ -213,7 +213,7 @@ static Director::DirectorGameDescription s_fallbackDesc = {
 static char s_fallbackFileNameBuffer[51];
 static char s_fallbackExtraBuf[256];
 
-ADDetectedGame DirectorMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+ADDetectedGame DirectorMetaEngineStatic::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 	// TODO: Handle Mac fallback
 
 	// reset fallback description
@@ -321,4 +321,4 @@ ADDetectedGame DirectorMetaEngine::fallbackDetect(const FileMap &allFiles, const
 	return ADDetectedGame();
 }
 
-REGISTER_PLUGIN_STATIC(DIRECTOR_DETECTION, PLUGIN_TYPE_METAENGINE, DirectorMetaEngine);
+REGISTER_PLUGIN_STATIC(DIRECTOR_DETECTION, PLUGIN_TYPE_METAENGINE, DirectorMetaEngineStatic);

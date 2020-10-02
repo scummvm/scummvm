@@ -302,9 +302,9 @@ static const ExtraGuiOption drasculaExtraGuiOption = {
 	false
 };
 
-class DrasculaMetaEngine : public AdvancedMetaEngine {
+class DrasculaMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	DrasculaMetaEngine() : AdvancedMetaEngine(Drascula::gameDescriptions, sizeof(Drascula::DrasculaGameDescription), drasculaGames) {
+	DrasculaMetaEngineStatic() : AdvancedMetaEngineStatic(Drascula::gameDescriptions, sizeof(Drascula::DrasculaGameDescription), drasculaGames) {
 		_guiOptions = GUIO1(GUIO_NOMIDI);
 	}
 
@@ -323,7 +323,7 @@ public:
 	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 };
 
-const ExtraGuiOptions DrasculaMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+const ExtraGuiOptions DrasculaMetaEngineStatic::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	options.push_back(drasculaExtraGuiOption);
 	return options;
@@ -331,4 +331,4 @@ const ExtraGuiOptions DrasculaMetaEngine::getExtraGuiOptions(const Common::Strin
 
 } // End of namespace Drascula
 
-REGISTER_PLUGIN_STATIC(DRASCULA_DETECTION, PLUGIN_TYPE_METAENGINE, Drascula::DrasculaMetaEngine);
+REGISTER_PLUGIN_STATIC(DRASCULA_DETECTION, PLUGIN_TYPE_METAENGINE, Drascula::DrasculaMetaEngineStatic);

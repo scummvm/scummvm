@@ -45,7 +45,7 @@ Common::Language IllusionsEngine::getGameLanguage() const {
 
 } // End of namespace Illusions
 
-class IllusionsMetaEngineConnect : public AdvancedMetaEngineConnect {
+class IllusionsMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "illusions";
@@ -60,7 +60,7 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 };
 
-bool IllusionsMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool IllusionsMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsDeleteSave) ||
@@ -70,16 +70,16 @@ bool IllusionsMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportCreationDate);
 }
 
-void IllusionsMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void IllusionsMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
-int IllusionsMetaEngineConnect::getMaximumSaveSlot() const {
+int IllusionsMetaEngine::getMaximumSaveSlot() const {
 	return 999;
 }
 
-SaveStateList IllusionsMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList IllusionsMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Illusions::IllusionsEngine::SaveHeader header;
 	Common::String pattern = target;
@@ -104,7 +104,7 @@ SaveStateList IllusionsMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-SaveStateDescriptor IllusionsMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor IllusionsMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Illusions::IllusionsEngine::getSavegameFilename(target, slot);
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
 	if (in) {
@@ -127,7 +127,7 @@ SaveStateDescriptor IllusionsMetaEngineConnect::querySaveMetaInfos(const char *t
 	return SaveStateDescriptor();
 }
 
-bool IllusionsMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool IllusionsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Illusions::IllusionsGameDescription *gd = (const Illusions::IllusionsGameDescription *)desc;
 	if (gd) {
 		switch (gd->gameId) {
@@ -146,7 +146,7 @@ bool IllusionsMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, 
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(ILLUSIONS)
-	REGISTER_PLUGIN_DYNAMIC(ILLUSIONS, PLUGIN_TYPE_ENGINE, IllusionsMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(ILLUSIONS, PLUGIN_TYPE_ENGINE, IllusionsMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(ILLUSIONS, PLUGIN_TYPE_ENGINE, IllusionsMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(ILLUSIONS, PLUGIN_TYPE_ENGINE, IllusionsMetaEngine);
 #endif

@@ -37,11 +37,11 @@
 
 #include "ultima/metaengine.h"
 
-const char *UltimaMetaEngineConnect::getName() const {
+const char *UltimaMetaEngine::getName() const {
 	return "ultima";
 }
 
-bool UltimaMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool UltimaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Ultima::UltimaGameDescription *gd = (const Ultima::UltimaGameDescription *)desc;
 	if (gd) {
 		switch (gd->gameId) {
@@ -71,12 +71,12 @@ bool UltimaMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, con
 	return gd != 0;
 }
 
-int UltimaMetaEngineConnect::getMaximumSaveSlot() const {
+int UltimaMetaEngine::getMaximumSaveSlot() const {
 	return MAX_SAVES;
 }
 
-SaveStateList UltimaMetaEngineConnect::listSaves(const char *target) const {
-	SaveStateList saveList = AdvancedMetaEngineConnect::listSaves(target);
+SaveStateList UltimaMetaEngine::listSaves(const char *target) const {
+	SaveStateList saveList = AdvancedMetaEngine::listSaves(target);
 
 	Common::String gameId = getGameId(target);
 	if (gameId == "ultima6" || gameId == "ultima6_enh")
@@ -85,7 +85,7 @@ SaveStateList UltimaMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-Common::KeymapArray UltimaMetaEngineConnect::initKeymaps(const char *target) const {
+Common::KeymapArray UltimaMetaEngine::initKeymaps(const char *target) const {
 	const Common::String gameId = getGameId(target);
 	if (gameId == "ultima4" || gameId == "ultima4_enh")
 		return Ultima::Ultima4::MetaEngine::initKeymaps();
@@ -95,7 +95,7 @@ Common::KeymapArray UltimaMetaEngineConnect::initKeymaps(const char *target) con
 	return Common::KeymapArray();
 }
 
-Common::String UltimaMetaEngineConnect::getGameId(const char *target) {
+Common::String UltimaMetaEngine::getGameId(const char *target) {
 	// Store a copy of the active domain
 	Common::String currDomain = ConfMan.getActiveDomainName();
 
@@ -109,7 +109,7 @@ Common::String UltimaMetaEngineConnect::getGameId(const char *target) {
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(ULTIMA)
-	REGISTER_PLUGIN_DYNAMIC(ULTIMA, PLUGIN_TYPE_ENGINE, UltimaMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(ULTIMA, PLUGIN_TYPE_ENGINE, UltimaMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(ULTIMA, PLUGIN_TYPE_ENGINE, UltimaMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(ULTIMA, PLUGIN_TYPE_ENGINE, UltimaMetaEngine);
 #endif

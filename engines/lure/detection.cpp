@@ -202,9 +202,9 @@ static const LureGameDescription gameDescriptions[] = {
 
 } // End of namespace Lure
 
-class LureMetaEngine : public AdvancedMetaEngine {
+class LureMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	LureMetaEngine() : AdvancedMetaEngine(Lure::gameDescriptions, sizeof(Lure::LureGameDescription), lureGames
+	LureMetaEngineStatic() : AdvancedMetaEngineStatic(Lure::gameDescriptions, sizeof(Lure::LureGameDescription), lureGames
 #ifdef USE_TTS
 			, optionsList
 #endif
@@ -230,4 +230,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(LURE_DETECTION, PLUGIN_TYPE_METAENGINE, LureMetaEngine);
+REGISTER_PLUGIN_STATIC(LURE_DETECTION, PLUGIN_TYPE_METAENGINE, LureMetaEngineStatic);

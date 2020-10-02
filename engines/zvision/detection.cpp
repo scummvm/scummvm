@@ -32,9 +32,9 @@
 #include "zvision/detection.h"
 #include "zvision/detection_tables.h"
 
-class ZVisionMetaEngine : public AdvancedMetaEngine {
+class ZVisionMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	ZVisionMetaEngine() : AdvancedMetaEngine(ZVision::gameDescriptions, sizeof(ZVision::ZVisionGameDescription), ZVision::zVisionGames, ZVision::optionsList) {
+	ZVisionMetaEngineStatic() : AdvancedMetaEngineStatic(ZVision::gameDescriptions, sizeof(ZVision::ZVisionGameDescription), ZVision::zVisionGames, ZVision::optionsList) {
 		_maxScanDepth = 2;
 		_directoryGlobs = ZVision::directoryGlobs;
 	}
@@ -52,4 +52,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(ZVISION_DETECTION, PLUGIN_TYPE_METAENGINE, ZVisionMetaEngine);
+REGISTER_PLUGIN_STATIC(ZVISION_DETECTION, PLUGIN_TYPE_METAENGINE, ZVisionMetaEngineStatic);

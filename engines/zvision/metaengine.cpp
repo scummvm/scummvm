@@ -51,7 +51,7 @@ uint32 ZVision::getFeatures() const {
 
 } // End of namespace ZVision
 
-class ZVisionMetaEngineConnect : public AdvancedMetaEngineConnect {
+class ZVisionMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "zvision";
@@ -67,7 +67,7 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-bool ZVisionMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool ZVisionMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -104,7 +104,7 @@ bool ZVision::ZVision::canSaveGameStateCurrently() {
 	return !_videoIsPlaying && currentLocation.world != 'g' && !(currentLocation.room == 'j' || currentLocation.room == 'a');
 }
 
-Common::KeymapArray ZVisionMetaEngineConnect::initKeymaps(const char *target) const {
+Common::KeymapArray ZVisionMetaEngine::initKeymaps(const char *target) const {
 	using namespace Common;
 	using namespace ZVision;
 
@@ -232,7 +232,7 @@ Common::KeymapArray ZVisionMetaEngineConnect::initKeymaps(const char *target) co
 	return keymaps;
 }
 
-bool ZVisionMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool ZVisionMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const ZVision::ZVisionGameDescription *gd = (const ZVision::ZVisionGameDescription *)desc;
 	if (gd) {
 		*engine = new ZVision::ZVision(syst, gd);
@@ -240,7 +240,7 @@ bool ZVisionMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, co
 	return gd != 0;
 }
 
-SaveStateList ZVisionMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList ZVisionMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	ZVision::SaveGameHeader header;
 	Common::String pattern = target;
@@ -275,16 +275,16 @@ SaveStateList ZVisionMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-int ZVisionMetaEngineConnect::getMaximumSaveSlot() const {
+int ZVisionMetaEngine::getMaximumSaveSlot() const {
 	return 999;
 }
 
-void ZVisionMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void ZVisionMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	saveFileMan->removeSavefile(Common::String::format("%s.%03u", target, slot));
 }
 
-SaveStateDescriptor ZVisionMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor ZVisionMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%03u", target, slot);
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
 
@@ -332,7 +332,7 @@ SaveStateDescriptor ZVisionMetaEngineConnect::querySaveMetaInfos(const char *tar
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(ZVISION)
-	REGISTER_PLUGIN_DYNAMIC(ZVISION, PLUGIN_TYPE_ENGINE, ZVisionMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(ZVISION, PLUGIN_TYPE_ENGINE, ZVisionMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(ZVISION, PLUGIN_TYPE_ENGINE, ZVisionMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(ZVISION, PLUGIN_TYPE_ENGINE, ZVisionMetaEngine);
 #endif

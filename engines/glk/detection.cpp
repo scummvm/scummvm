@@ -114,7 +114,7 @@ GlkDetectedGame::GlkDetectedGame(const char *id, const char *desc, const Common:
 
 } // End of namespace Glk
 
-PlainGameList GlkMetaEngine::getSupportedGames() const {
+PlainGameList GlkMetaEngineStatic::getSupportedGames() const {
 	PlainGameList list;
 	Glk::Adrift::AdriftMetaEngine::getSupportedGames(list);
 	Glk::AdvSys::AdvSysMetaEngine::getSupportedGames(list);
@@ -142,7 +142,7 @@ PlainGameList GlkMetaEngine::getSupportedGames() const {
 	Glk::GameDescriptor gd##SUBENGINE = Glk::SUBENGINE::SUBENGINE##MetaEngine::findGame(gameId); \
 	if (gd##SUBENGINE._description) return gd##SUBENGINE
 
-PlainGameDescriptor GlkMetaEngine::findGame(const char *gameId) const {
+PlainGameDescriptor GlkMetaEngineStatic::findGame(const char *gameId) const {
 	FIND_GAME(Adrift);
 	FIND_GAME(AdvSys);
 	FIND_GAME(Alan2);
@@ -167,7 +167,7 @@ PlainGameDescriptor GlkMetaEngine::findGame(const char *gameId) const {
 
 #undef FIND_GAME
 
-DetectedGames GlkMetaEngine::detectGames(const Common::FSList &fslist) const {
+DetectedGames GlkMetaEngineStatic::detectGames(const Common::FSList &fslist) const {
 	// This is as good a place as any to detect multiple sub-engines using the same Ids
 	detectClashes();
 
@@ -194,7 +194,7 @@ DetectedGames GlkMetaEngine::detectGames(const Common::FSList &fslist) const {
 	return detectedGames;
 }
 
-void GlkMetaEngine::detectClashes() const {
+void GlkMetaEngineStatic::detectClashes() const {
 	Common::StringMap map;
 	Glk::Adrift::AdriftMetaEngine::detectClashes(map);
 	Glk::AdvSys::AdvSysMetaEngine::detectClashes(map);
@@ -216,7 +216,7 @@ void GlkMetaEngine::detectClashes() const {
 #endif
 }
 
-const ExtraGuiOptions GlkMetaEngine::getExtraGuiOptions(const Common::String &) const {
+const ExtraGuiOptions GlkMetaEngineStatic::getExtraGuiOptions(const Common::String &) const {
 	ExtraGuiOptions  options;
 #if defined(USE_TTS)
 	static const ExtraGuiOption ttsSpeakOptions = {
@@ -237,4 +237,4 @@ const ExtraGuiOptions GlkMetaEngine::getExtraGuiOptions(const Common::String &) 
 	return options;
 }
 
-REGISTER_PLUGIN_STATIC(GLK_DETECTION, PLUGIN_TYPE_METAENGINE, GlkMetaEngine);
+REGISTER_PLUGIN_STATIC(GLK_DETECTION, PLUGIN_TYPE_METAENGINE, GlkMetaEngineStatic);

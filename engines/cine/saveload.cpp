@@ -879,7 +879,7 @@ bool CineEngine::makeLoad(const Common::String &saveName) {
 		}
 
 		ExtendedSavegameHeader header;
-		if (MetaEngineConnect::readSavegameHeader(saveFile.get(), &header)) {
+		if (MetaEngine::readSavegameHeader(saveFile.get(), &header)) {
 			setTotalPlayTime(header.playtime * 1000); // Seconds to milliseconds
 		}
 	}
@@ -1030,7 +1030,7 @@ void CineEngine::makeSave(const Common::String &saveFileName, uint32 playtime,
 		renderer->popSavedBackBuffer(BEFORE_OPENING_MENU);
 	}
 
-	MetaEngineConnect::appendExtendedSave(fHandle.get(), playtime, desc, isAutosave);
+	MetaEngine::appendExtendedSave(fHandle.get(), playtime, desc, isAutosave);
 
 	renderer->restoreSavedBackBuffer(BEFORE_TAKING_THUMBNAIL);
 

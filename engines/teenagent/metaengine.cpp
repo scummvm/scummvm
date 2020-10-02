@@ -35,7 +35,7 @@ enum {
 	MAX_SAVES = 20
 };
 
-class TeenAgentMetaEngineConnect : public AdvancedMetaEngineConnect {
+class TeenAgentMetaEngine : public AdvancedMetaEngine {
 public:
     const char *getName() const override {
 		return "teenagent";
@@ -131,7 +131,7 @@ public:
 };
 
 #if PLUGIN_ENABLED_DYNAMIC(TEENAGENT)
-	REGISTER_PLUGIN_DYNAMIC(TEENAGENT, PLUGIN_TYPE_ENGINE, TeenAgentMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(TEENAGENT, PLUGIN_TYPE_ENGINE, TeenAgentMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(TEENAGENT, PLUGIN_TYPE_ENGINE, TeenAgentMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(TEENAGENT, PLUGIN_TYPE_ENGINE, TeenAgentMetaEngine);
 #endif

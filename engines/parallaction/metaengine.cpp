@@ -39,7 +39,7 @@ Common::Platform Parallaction::getPlatform() const { return _gameDescription->de
 
 } // End of namespace Parallaction
 
-class ParallactionMetaEngineConnect : public AdvancedMetaEngineConnect {
+class ParallactionMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "parallaction";
@@ -53,7 +53,7 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 };
 
-bool ParallactionMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool ParallactionMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsDeleteSave);
@@ -64,7 +64,7 @@ bool Parallaction::Parallaction::hasFeature(EngineFeature f) const {
 		(f == kSupportsReturnToLauncher);
 }
 
-bool ParallactionMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool ParallactionMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Parallaction::PARALLACTIONGameDescription *gd = (const Parallaction::PARALLACTIONGameDescription *)desc;
 	bool res = true;
 
@@ -83,7 +83,7 @@ bool ParallactionMetaEngineConnect::createInstance(OSystem *syst, Engine **engin
 	return res;
 }
 
-SaveStateList ParallactionMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList ParallactionMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 
 	Common::String pattern(ConfMan.getDomain(target)->getVal("gameid") + ".0##");
@@ -109,9 +109,9 @@ SaveStateList ParallactionMetaEngineConnect::listSaves(const char *target) const
 	return saveList;
 }
 
-int ParallactionMetaEngineConnect::getMaximumSaveSlot() const { return 99; }
+int ParallactionMetaEngine::getMaximumSaveSlot() const { return 99; }
 
-void ParallactionMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void ParallactionMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = ConfMan.getDomain(target)->getVal("gameid");
 	filename += Common::String::format(".0%02d", slot);
 
@@ -119,7 +119,7 @@ void ParallactionMetaEngineConnect::removeSaveState(const char *target, int slot
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(PARALLACTION)
-	REGISTER_PLUGIN_DYNAMIC(PARALLACTION, PLUGIN_TYPE_ENGINE, ParallactionMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(PARALLACTION, PLUGIN_TYPE_ENGINE, ParallactionMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(PARALLACTION, PLUGIN_TYPE_ENGINE, ParallactionMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(PARALLACTION, PLUGIN_TYPE_ENGINE, ParallactionMetaEngine);
 #endif

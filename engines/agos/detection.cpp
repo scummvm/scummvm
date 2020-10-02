@@ -65,9 +65,9 @@ static const char *const directoryGlobs[] = {
 
 using namespace AGOS;
 
-class AgosMetaEngine : public AdvancedMetaEngine {
+class AgosMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	AgosMetaEngine() : AdvancedMetaEngine(AGOS::gameDescriptions, sizeof(AGOS::AGOSGameDescription), agosGames) {
+	AgosMetaEngineStatic() : AdvancedMetaEngineStatic(AGOS::gameDescriptions, sizeof(AGOS::AGOSGameDescription), agosGames) {
 		_guiOptions = GUIO1(GUIO_NOLAUNCHLOAD);
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
@@ -90,4 +90,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(AGOS_DETECTION, PLUGIN_TYPE_METAENGINE, AgosMetaEngine);
+REGISTER_PLUGIN_STATIC(AGOS_DETECTION, PLUGIN_TYPE_METAENGINE, AgosMetaEngineStatic);

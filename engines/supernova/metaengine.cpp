@@ -31,7 +31,7 @@
 
 #include "supernova/supernova.h"
 
-class SupernovaMetaEngineConnect : public AdvancedMetaEngineConnect {
+class SupernovaMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "supernova";
@@ -48,7 +48,7 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-bool SupernovaMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool SupernovaMetaEngine::hasFeature(MetaEngineFeature f) const {
 	switch (f) {
 	case kSupportsLoadingDuringStartup:
 	case kSupportsListSaves:
@@ -63,7 +63,7 @@ bool SupernovaMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
 	}
 }
 
-bool SupernovaMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool SupernovaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc) {
 		*engine = new Supernova::SupernovaEngine(syst);
 	}
@@ -71,7 +71,7 @@ bool SupernovaMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, 
 	return desc != nullptr;
 }
 
-SaveStateList SupernovaMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList SupernovaMetaEngine::listSaves(const char *target) const {
 	Common::StringArray filenames;
 	Common::String pattern;
 	if (!strncmp(target, "msn1", 4))
@@ -109,7 +109,7 @@ SaveStateList SupernovaMetaEngineConnect::listSaves(const char *target) const {
 	return saveFileList;
 }
 
-void SupernovaMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void SupernovaMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename;
 	if (!strncmp(target, "msn1", 4))
 		filename = Common::String::format("msn_save.%03d", slot);
@@ -118,7 +118,7 @@ void SupernovaMetaEngineConnect::removeSaveState(const char *target, int slot) c
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
-SaveStateDescriptor SupernovaMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor SupernovaMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String fileName;
 	if (!strncmp(target, "msn1", 4))
 		fileName = Common::String::format("msn_save.%03d", slot);
@@ -177,7 +177,7 @@ SaveStateDescriptor SupernovaMetaEngineConnect::querySaveMetaInfos(const char *t
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SUPERNOVA)
-    REGISTER_PLUGIN_DYNAMIC(SUPERNOVA, PLUGIN_TYPE_ENGINE, SupernovaMetaEngineConnect);
+    REGISTER_PLUGIN_DYNAMIC(SUPERNOVA, PLUGIN_TYPE_ENGINE, SupernovaMetaEngine);
 #else
-    REGISTER_PLUGIN_STATIC(SUPERNOVA, PLUGIN_TYPE_ENGINE, SupernovaMetaEngineConnect);
+    REGISTER_PLUGIN_STATIC(SUPERNOVA, PLUGIN_TYPE_ENGINE, SupernovaMetaEngine);
 #endif

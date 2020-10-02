@@ -33,7 +33,7 @@
 
 namespace CGE2 {
 
-class CGE2MetaEngineConnect : public AdvancedMetaEngineConnect {
+class CGE2MetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "cge2";
@@ -47,14 +47,14 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 };
 
-bool CGE2MetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool CGE2MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc)
 		*engine = new CGE2::CGE2Engine(syst, desc);
 
 	return desc != 0;
 }
 
-bool CGE2MetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool CGE2MetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsDeleteSave) ||
 		(f == kSavesSupportMetaInfo) ||
@@ -66,11 +66,11 @@ bool CGE2MetaEngineConnect::hasFeature(MetaEngineFeature f) const {
 		(f == kSimpleSavesNames);
 }
 
-int CGE2MetaEngineConnect::getMaximumSaveSlot() const {
+int CGE2MetaEngine::getMaximumSaveSlot() const {
 	return 99;
 }
 
-SaveStateList CGE2MetaEngineConnect::listSaves(const char *target) const {
+SaveStateList CGE2MetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String pattern = target;
@@ -113,7 +113,7 @@ SaveStateList CGE2MetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-SaveStateDescriptor CGE2MetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor CGE2MetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(fileName);
 
@@ -155,7 +155,7 @@ SaveStateDescriptor CGE2MetaEngineConnect::querySaveMetaInfos(const char *target
 	return SaveStateDescriptor();
 }
 
-void CGE2MetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void CGE2MetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
@@ -163,7 +163,7 @@ void CGE2MetaEngineConnect::removeSaveState(const char *target, int slot) const 
 } // End of namespace CGE2
 
 #if PLUGIN_ENABLED_DYNAMIC(CGE2)
-	REGISTER_PLUGIN_DYNAMIC(CGE2, PLUGIN_TYPE_ENGINE, CGE2::CGE2MetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(CGE2, PLUGIN_TYPE_ENGINE, CGE2::CGE2MetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(CGE2, PLUGIN_TYPE_ENGINE, CGE2::CGE2MetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(CGE2, PLUGIN_TYPE_ENGINE, CGE2::CGE2MetaEngine);
 #endif

@@ -116,9 +116,9 @@ static const ADGameDescription tuckerDemoGameDescription = {
 	GUIO1(GUIO_NOMIDI)
 };
 
-class TuckerMetaEngine : public AdvancedMetaEngine {
+class TuckerMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	TuckerMetaEngine() : AdvancedMetaEngine(tuckerGameDescriptions, sizeof(ADGameDescription), tuckerGames) {
+	TuckerMetaEngineStatic() : AdvancedMetaEngineStatic(tuckerGameDescriptions, sizeof(ADGameDescription), tuckerGames) {
 		_md5Bytes = 512;
 	}
 
@@ -151,4 +151,4 @@ public:
 
 };
 
-REGISTER_PLUGIN_STATIC(TUCKER_DETECTION, PLUGIN_TYPE_METAENGINE, TuckerMetaEngine);
+REGISTER_PLUGIN_STATIC(TUCKER_DETECTION, PLUGIN_TYPE_METAENGINE, TuckerMetaEngineStatic);

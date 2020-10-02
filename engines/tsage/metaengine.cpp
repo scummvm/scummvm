@@ -55,7 +55,7 @@ enum {
 	MAX_SAVES = 100
 };
 
-class TSageMetaEngineConnect : public AdvancedMetaEngineConnect {
+class TSageMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "tsage";
@@ -156,7 +156,7 @@ public:
 };
 
 #if PLUGIN_ENABLED_DYNAMIC(TSAGE)
-	REGISTER_PLUGIN_DYNAMIC(TSAGE, PLUGIN_TYPE_ENGINE, TSageMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(TSAGE, PLUGIN_TYPE_ENGINE, TSageMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(TSAGE, PLUGIN_TYPE_ENGINE, TSageMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(TSAGE, PLUGIN_TYPE_ENGINE, TSageMetaEngine);
 #endif

@@ -67,7 +67,7 @@ bool CryOmni3DEngine::hasFeature(EngineFeature f) const {
 }
 
 
-class CryOmni3DMetaEngineConnect : public AdvancedMetaEngineConnect {
+class CryOmni3DMetaEngine : public AdvancedMetaEngine {
 public:
     const char *getName() const override {
 		return "cryomni3d";
@@ -81,7 +81,7 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 };
 
-bool CryOmni3DMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool CryOmni3DMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves)
 		|| (f == kSupportsLoadingDuringStartup)
@@ -89,7 +89,7 @@ bool CryOmni3DMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
 		|| (f == kSimpleSavesNames);
 }
 
-SaveStateList CryOmni3DMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList CryOmni3DMetaEngine::listSaves(const char *target) const {
 	// Replicate constant here to shorten lines
 	static const uint kSaveDescriptionLen = CryOmni3DEngine::kSaveDescriptionLen;
 	SaveStateList saveList;
@@ -123,13 +123,13 @@ SaveStateList CryOmni3DMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-void CryOmni3DMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void CryOmni3DMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%04d", target, slot + 1);
 
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
-bool CryOmni3DMetaEngineConnect::createInstance(OSystem *syst, Engine **engine,
+bool CryOmni3DMetaEngine::createInstance(OSystem *syst, Engine **engine,
 		const ADGameDescription *desc) const {
 	const CryOmni3DGameDescription *gd = (const CryOmni3DGameDescription *)desc;
 
@@ -154,7 +154,7 @@ bool CryOmni3DMetaEngineConnect::createInstance(OSystem *syst, Engine **engine,
 } // End of namespace CryOmni3D
 
 #if PLUGIN_ENABLED_DYNAMIC(CRYOMNI3D)
-	REGISTER_PLUGIN_DYNAMIC(CRYOMNI3D, PLUGIN_TYPE_ENGINE, CryOmni3D::CryOmni3DMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(CRYOMNI3D, PLUGIN_TYPE_ENGINE, CryOmni3D::CryOmni3DMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(CRYOMNI3D, PLUGIN_TYPE_ENGINE, CryOmni3D::CryOmni3DMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(CRYOMNI3D, PLUGIN_TYPE_ENGINE, CryOmni3D::CryOmni3DMetaEngine);
 #endif

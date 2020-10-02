@@ -45,7 +45,7 @@ Common::Language TitanicEngine::getLanguage() const {
 
 } // End of namespace Titanic
 
-class TitanicMetaEngineConnect : public AdvancedMetaEngineConnect {
+class TitanicMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "titanic";
@@ -60,7 +60,7 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-bool TitanicMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool TitanicMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -79,14 +79,14 @@ bool Titanic::TitanicEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool TitanicMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool TitanicMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Titanic::TitanicGameDescription *gd = (const Titanic::TitanicGameDescription *)desc;
 	*engine = new Titanic::TitanicEngine(syst, gd);
 
 	return gd != 0;
 }
 
-SaveStateList TitanicMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList TitanicMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
@@ -120,16 +120,16 @@ SaveStateList TitanicMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-int TitanicMetaEngineConnect::getMaximumSaveSlot() const {
+int TitanicMetaEngine::getMaximumSaveSlot() const {
 	return MAX_SAVES;
 }
 
-void TitanicMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void TitanicMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
-SaveStateDescriptor TitanicMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor TitanicMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
 
@@ -162,7 +162,7 @@ SaveStateDescriptor TitanicMetaEngineConnect::querySaveMetaInfos(const char *tar
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(TITANIC)
-	REGISTER_PLUGIN_DYNAMIC(TITANIC, PLUGIN_TYPE_ENGINE, TitanicMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(TITANIC, PLUGIN_TYPE_ENGINE, TitanicMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(TITANIC, PLUGIN_TYPE_ENGINE, TitanicMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(TITANIC, PLUGIN_TYPE_ENGINE, TitanicMetaEngine);
 #endif

@@ -44,7 +44,7 @@ Common::Language ToltecsEngine::getLanguage() const {
 
 } // End of namespace Toltecs
 
-class ToltecsMetaEngineConnect : public AdvancedMetaEngineConnect {
+class ToltecsMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "toltecs";
@@ -59,7 +59,7 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-bool ToltecsMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool ToltecsMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -78,7 +78,7 @@ bool Toltecs::ToltecsEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool ToltecsMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool ToltecsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Toltecs::ToltecsGameDescription *gd = (const Toltecs::ToltecsGameDescription *)desc;
 	if (gd) {
 		*engine = new Toltecs::ToltecsEngine(syst, gd);
@@ -86,7 +86,7 @@ bool ToltecsMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, co
 	return gd != 0;
 }
 
-SaveStateList ToltecsMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList ToltecsMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Toltecs::ToltecsEngine::SaveHeader header;
 	Common::String pattern = target;
@@ -116,11 +116,11 @@ SaveStateList ToltecsMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-int ToltecsMetaEngineConnect::getMaximumSaveSlot() const {
+int ToltecsMetaEngine::getMaximumSaveSlot() const {
 	return 999;
 }
 
-void ToltecsMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void ToltecsMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::String filename = Toltecs::ToltecsEngine::getSavegameFilename(target, slot);
 
@@ -144,7 +144,7 @@ void ToltecsMetaEngineConnect::removeSaveState(const char *target, int slot) con
 	}
 }
 
-SaveStateDescriptor ToltecsMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor ToltecsMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Toltecs::ToltecsEngine::getSavegameFilename(target, slot);
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
 
@@ -183,8 +183,8 @@ SaveStateDescriptor ToltecsMetaEngineConnect::querySaveMetaInfos(const char *tar
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(TOLTECS)
-	REGISTER_PLUGIN_DYNAMIC(TOLTECS, PLUGIN_TYPE_ENGINE, ToltecsMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(TOLTECS, PLUGIN_TYPE_ENGINE, ToltecsMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(TOLTECS, PLUGIN_TYPE_ENGINE, ToltecsMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(TOLTECS, PLUGIN_TYPE_ENGINE, ToltecsMetaEngine);
 #endif
 

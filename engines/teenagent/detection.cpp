@@ -78,9 +78,9 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 
 
 
-class TeenAgentMetaEngine : public AdvancedMetaEngine {
+class TeenAgentMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	TeenAgentMetaEngine() : AdvancedMetaEngine(teenAgentGameDescriptions, sizeof(ADGameDescription), teenAgentGames) {
+	TeenAgentMetaEngineStatic() : AdvancedMetaEngineStatic(teenAgentGameDescriptions, sizeof(ADGameDescription), teenAgentGames) {
 	}
 
 	const char *getEngineId() const override {
@@ -96,4 +96,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(TEENAGENT_DETECTION, PLUGIN_TYPE_METAENGINE, TeenAgentMetaEngine);
+REGISTER_PLUGIN_STATIC(TEENAGENT_DETECTION, PLUGIN_TYPE_METAENGINE, TeenAgentMetaEngineStatic);

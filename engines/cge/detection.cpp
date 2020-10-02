@@ -120,9 +120,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class CGEMetaEngine : public AdvancedMetaEngine {
+class CGEMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	CGEMetaEngine() : AdvancedMetaEngine(CGE::gameDescriptions, sizeof(ADGameDescription), CGEGames, optionsList) {
+	CGEMetaEngineStatic() : AdvancedMetaEngineStatic(CGE::gameDescriptions, sizeof(ADGameDescription), CGEGames, optionsList) {
 	}
 
 	const char *getEngineId() const override {
@@ -155,19 +155,19 @@ static const ADFileBasedFallback fileBasedFallback[] = {
 	{ 0, { 0 } }
 };
 
-ADDetectedGame CGEMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+ADDetectedGame CGEMetaEngineStatic::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 	ADDetectedGame game = detectGameFilebased(allFiles, CGE::fileBasedFallback);
 
 	if (!game.desc)
 		return ADDetectedGame();
 
-	SearchMan.addDirectory("CGEMetaEngine::fallbackDetect", fslist.begin()->getParent());
+	SearchMan.addDirectory("CGEMetaEngineStatic::fallbackDetect", fslist.begin()->getParent());
 	ResourceManager *resman;
 	resman = new ResourceManager();
 	bool sayFileFound = resman->exist("CGE.SAY");
 	delete resman;
 
-	SearchMan.remove("CGEMetaEngine::fallbackDetect");
+	SearchMan.remove("CGEMetaEngineStatic::fallbackDetect");
 
 	if (!sayFileFound)
 		return ADDetectedGame();
@@ -177,4 +177,4 @@ ADDetectedGame CGEMetaEngine::fallbackDetect(const FileMap &allFiles, const Comm
 
 } // End of namespace CGE
 
-REGISTER_PLUGIN_STATIC(CGE_DETECTION, PLUGIN_TYPE_METAENGINE, CGE::CGEMetaEngine);
+REGISTER_PLUGIN_STATIC(CGE_DETECTION, PLUGIN_TYPE_METAENGINE, CGE::CGEMetaEngineStatic);

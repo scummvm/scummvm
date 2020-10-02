@@ -29,7 +29,7 @@
 
 #include "engines/advancedDetector.h"
 
-class MutationOfJBMetaEngineConnect : public AdvancedMetaEngineConnect {
+class MutationOfJBMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "mutationofjb";
@@ -83,7 +83,7 @@ public:
 };
 
 #if PLUGIN_ENABLED_DYNAMIC(MUTATIONOFJB)
-	REGISTER_PLUGIN_DYNAMIC(MUTATIONOFJB, PLUGIN_TYPE_ENGINE, MutationOfJBMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(MUTATIONOFJB, PLUGIN_TYPE_ENGINE, MutationOfJBMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(MUTATIONOFJB, PLUGIN_TYPE_ENGINE, MutationOfJBMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(MUTATIONOFJB, PLUGIN_TYPE_ENGINE, MutationOfJBMetaEngine);
 #endif

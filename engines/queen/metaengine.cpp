@@ -29,7 +29,7 @@
 #include "queen/resource.h"
 #include "queen/detection.h"
 
-class QueenMetaEngineConnect : public AdvancedMetaEngineConnect {
+class QueenMetaEngine : public AdvancedMetaEngine {
 public:
     const char *getName() const override {
 		return "queen";
@@ -43,14 +43,14 @@ public:
 	int getAutosaveSlot() const override { return 99; }
 };
 
-bool QueenMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool QueenMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave);
 }
 
-SaveStateList QueenMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList QueenMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	char saveDesc[32];
@@ -80,13 +80,13 @@ SaveStateList QueenMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-void QueenMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void QueenMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = Common::String::format("queen.s%02d", slot);
 
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
-bool QueenMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool QueenMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Queen::QueenGameDescription *gd = (const Queen::QueenGameDescription *)desc;
 
 	if (gd)
@@ -96,8 +96,8 @@ bool QueenMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, cons
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(QUEEN)
-	REGISTER_PLUGIN_DYNAMIC(QUEEN, PLUGIN_TYPE_ENGINE, QueenMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(QUEEN, PLUGIN_TYPE_ENGINE, QueenMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(QUEEN, PLUGIN_TYPE_ENGINE, QueenMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(QUEEN, PLUGIN_TYPE_ENGINE, QueenMetaEngine);
 #endif
 

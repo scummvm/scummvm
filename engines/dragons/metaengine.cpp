@@ -31,7 +31,7 @@
 #include "base/plugins.h"
 #include "graphics/thumbnail.h"
 
-class DragonsMetaEngineConnect : public AdvancedMetaEngineConnect {
+class DragonsMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const {
 		return "dragons";
@@ -46,7 +46,7 @@ public:
 	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
-bool DragonsMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool DragonsMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 			(f == kSupportsListSaves) ||
 			(f == kSupportsDeleteSave) ||
@@ -56,16 +56,16 @@ bool DragonsMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
 			(f == kSavesSupportCreationDate);
 }
 
-void DragonsMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void DragonsMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
-int DragonsMetaEngineConnect::getMaximumSaveSlot() const {
+int DragonsMetaEngine::getMaximumSaveSlot() const {
 	return 999;
 }
 
-SaveStateList DragonsMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList DragonsMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Dragons::SaveHeader header;
 	Common::String pattern = target;
@@ -90,7 +90,7 @@ SaveStateList DragonsMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-SaveStateDescriptor DragonsMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor DragonsMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Dragons::DragonsEngine::getSavegameFilename(target, slot);
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
 	if (in) {
@@ -113,7 +113,7 @@ SaveStateDescriptor DragonsMetaEngineConnect::querySaveMetaInfos(const char *tar
 	return SaveStateDescriptor();
 }
 
-bool DragonsMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool DragonsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Dragons::DragonsGameDescription *gd = (const Dragons::DragonsGameDescription *)desc;
 	if (gd) {
 		switch (gd->gameId) {
@@ -132,7 +132,7 @@ bool DragonsMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, co
 	return desc != 0;
 }
 
-Common::KeymapArray DragonsMetaEngineConnect::initKeymaps(const char *target) const {
+Common::KeymapArray DragonsMetaEngine::initKeymaps(const char *target) const {
 	using namespace Common;
 
 	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "dragons", "Blazing Dragons");
@@ -236,7 +236,7 @@ Common::KeymapArray DragonsMetaEngineConnect::initKeymaps(const char *target) co
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(DRAGONS)
-	REGISTER_PLUGIN_DYNAMIC(DRAGONS, PLUGIN_TYPE_ENGINE, DragonsMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(DRAGONS, PLUGIN_TYPE_ENGINE, DragonsMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(DRAGONS, PLUGIN_TYPE_ENGINE, DragonsMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(DRAGONS, PLUGIN_TYPE_ENGINE, DragonsMetaEngine);
 #endif

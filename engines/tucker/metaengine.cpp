@@ -29,7 +29,7 @@
 
 #include "tucker/tucker.h"
 
-class TuckerMetaEngineConnect : public AdvancedMetaEngineConnect {
+class TuckerMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "tucker";
@@ -150,7 +150,7 @@ public:
 };
 
 #if PLUGIN_ENABLED_DYNAMIC(TUCKER)
-	REGISTER_PLUGIN_DYNAMIC(TUCKER, PLUGIN_TYPE_ENGINE, TuckerMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(TUCKER, PLUGIN_TYPE_ENGINE, TuckerMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(TUCKER, PLUGIN_TYPE_ENGINE, TuckerMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(TUCKER, PLUGIN_TYPE_ENGINE, TuckerMetaEngine);
 #endif

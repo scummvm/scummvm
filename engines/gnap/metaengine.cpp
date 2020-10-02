@@ -29,7 +29,7 @@
 #include "base/plugins.h"
 #include "graphics/thumbnail.h"
 
-class GnapMetaEngineConnect : public AdvancedMetaEngineConnect {
+class GnapMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "gnap";
@@ -44,7 +44,7 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 };
 
-bool GnapMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool GnapMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -62,14 +62,14 @@ bool Gnap::GnapEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-void GnapMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void GnapMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
-int GnapMetaEngineConnect::getMaximumSaveSlot() const { return 99; }
+int GnapMetaEngine::getMaximumSaveSlot() const { return 99; }
 
-SaveStateList GnapMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList GnapMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
@@ -99,7 +99,7 @@ SaveStateList GnapMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-SaveStateDescriptor GnapMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor GnapMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(fileName);
 	if (file) {
@@ -144,7 +144,7 @@ SaveStateDescriptor GnapMetaEngineConnect::querySaveMetaInfos(const char *target
 	return SaveStateDescriptor();
 }
 
-bool GnapMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool GnapMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc) {
 		*engine = new Gnap::GnapEngine(syst, desc);
 	}
@@ -152,7 +152,7 @@ bool GnapMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(GNAP)
-	REGISTER_PLUGIN_DYNAMIC(GNAP, PLUGIN_TYPE_ENGINE, GnapMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(GNAP, PLUGIN_TYPE_ENGINE, GnapMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(GNAP, PLUGIN_TYPE_ENGINE, GnapMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(GNAP, PLUGIN_TYPE_ENGINE, GnapMetaEngine);
 #endif

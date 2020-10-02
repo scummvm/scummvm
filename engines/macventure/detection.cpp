@@ -50,9 +50,9 @@ namespace MacVenture {
 
 SaveStateDescriptor loadMetaData(Common::SeekableReadStream *s, int slot, bool skipThumbnail = true);
 
-class MacVentureMetaEngine : public AdvancedMetaEngine {
+class MacVentureMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	MacVentureMetaEngine() : AdvancedMetaEngine(MacVenture::gameDescriptions, sizeof(ADGameDescription), macventureGames) {
+	MacVentureMetaEngineStatic() : AdvancedMetaEngineStatic(MacVenture::gameDescriptions, sizeof(ADGameDescription), macventureGames) {
 		_guiOptions = GUIO1(GUIO_NOMIDI);
 		_md5Bytes = 5000000; // TODO: Upper limit, adjust it once all games are added
 	}
@@ -72,4 +72,4 @@ public:
 
 } // End of namespace MacVenture
 
-REGISTER_PLUGIN_STATIC(MACVENTURE_DETECTION, PLUGIN_TYPE_METAENGINE, MacVenture::MacVentureMetaEngine);
+REGISTER_PLUGIN_STATIC(MACVENTURE_DETECTION, PLUGIN_TYPE_METAENGINE, MacVenture::MacVentureMetaEngineStatic);

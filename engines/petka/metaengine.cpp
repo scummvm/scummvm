@@ -27,7 +27,7 @@
 
 #include "petka/petka.h"
 
-class PetkaMetaEngineConnect : public AdvancedMetaEngineConnect {
+class PetkaMetaEngine : public AdvancedMetaEngine {
 public:
     const char *getName() const override {
 		return "petka";
@@ -41,7 +41,7 @@ public:
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
-bool PetkaMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool PetkaMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsDeleteSave) ||
@@ -51,7 +51,7 @@ bool PetkaMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportPlayTime);
 }
 
-SaveStateList PetkaMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList PetkaMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::String pattern = Common::String::format("%s.s##", target);
 	Common::StringArray filenames = saveFileMan->listSavefiles(pattern);
@@ -76,11 +76,11 @@ SaveStateList PetkaMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-void PetkaMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void PetkaMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(Petka::generateSaveName(slot, target));
 }
 
-SaveStateDescriptor PetkaMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor PetkaMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::ScopedPtr<Common::InSaveFile> f(g_system->getSavefileManager()->openForLoading(Petka::generateSaveName(slot, target)));
 
 	if (f) {
@@ -94,7 +94,7 @@ SaveStateDescriptor PetkaMetaEngineConnect::querySaveMetaInfos(const char *targe
 	return SaveStateDescriptor();
 }
 
-bool PetkaMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool PetkaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc)
 		*engine = new Petka::PetkaEngine(syst, desc);
 
@@ -102,7 +102,7 @@ bool PetkaMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, cons
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(PETKA)
-	REGISTER_PLUGIN_DYNAMIC(PETKA, PLUGIN_TYPE_ENGINE, PetkaMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(PETKA, PLUGIN_TYPE_ENGINE, PetkaMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(PETKA, PLUGIN_TYPE_ENGINE, PetkaMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(PETKA, PLUGIN_TYPE_ENGINE, PetkaMetaEngine);
 #endif

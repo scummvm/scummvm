@@ -52,9 +52,9 @@ static const char *directoryGlobs[] = {
 	0
 };
 
-class ComposerMetaEngine : public AdvancedMetaEngine {
+class ComposerMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	ComposerMetaEngine() : AdvancedMetaEngine(Composer::gameDescriptions, sizeof(Composer::ComposerGameDescription), composerGames) {
+	ComposerMetaEngineStatic() : AdvancedMetaEngineStatic(Composer::gameDescriptions, sizeof(Composer::ComposerGameDescription), composerGames) {
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
@@ -72,4 +72,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(COMPOSER_DETECTION, PLUGIN_TYPE_METAENGINE, ComposerMetaEngine);
+REGISTER_PLUGIN_STATIC(COMPOSER_DETECTION, PLUGIN_TYPE_METAENGINE, ComposerMetaEngineStatic);

@@ -119,9 +119,9 @@ static const ADGameDescription gameDescriptions[] = {
 
 } // End of namespace Cryo
 
-class CryoMetaEngine : public AdvancedMetaEngine {
+class CryoMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	CryoMetaEngine() : AdvancedMetaEngine(Cryo::gameDescriptions, sizeof(ADGameDescription), cryoGames) {
+	CryoMetaEngineStatic() : AdvancedMetaEngineStatic(Cryo::gameDescriptions, sizeof(ADGameDescription), cryoGames) {
 	}
 
 	const char *getEngineId() const override {
@@ -137,4 +137,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(CRYO_DETECTION, PLUGIN_TYPE_METAENGINE, CryoMetaEngine);
+REGISTER_PLUGIN_STATIC(CRYO_DETECTION, PLUGIN_TYPE_METAENGINE, CryoMetaEngineStatic);

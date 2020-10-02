@@ -36,9 +36,9 @@ static const PlainGameDescriptor tSageGameTitles[] = {
 
 #include "tsage/detection_tables.h"
 
-class TSageMetaEngine : public AdvancedMetaEngine {
+class TSageMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	TSageMetaEngine() : AdvancedMetaEngine(TsAGE::gameDescriptions, sizeof(TsAGE::tSageGameDescription), tSageGameTitles) {
+	TSageMetaEngineStatic() : AdvancedMetaEngineStatic(TsAGE::gameDescriptions, sizeof(TsAGE::tSageGameDescription), tSageGameTitles) {
 	}
 
 	const char *getEngineId() const override {
@@ -54,4 +54,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(TSAGE_DETECTION, PLUGIN_TYPE_METAENGINE, TSageMetaEngine);
+REGISTER_PLUGIN_STATIC(TSAGE_DETECTION, PLUGIN_TYPE_METAENGINE, TSageMetaEngineStatic);

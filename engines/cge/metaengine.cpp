@@ -31,7 +31,7 @@
 
 namespace CGE {
 
-class CGEMetaEngineConnect : public AdvancedMetaEngineConnect {
+class CGEMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "cge";
@@ -47,7 +47,7 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 };
 
-bool CGEMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool CGEMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -59,16 +59,16 @@ bool CGEMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
 		(f == kSimpleSavesNames);
 }
 
-void CGEMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void CGEMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
-int CGEMetaEngineConnect::getMaximumSaveSlot() const {
+int CGEMetaEngine::getMaximumSaveSlot() const {
 	return 99;
 }
 
-SaveStateList CGEMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList CGEMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String pattern = target;
@@ -111,7 +111,7 @@ SaveStateList CGEMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-SaveStateDescriptor CGEMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor CGEMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(fileName);
 
@@ -153,7 +153,7 @@ SaveStateDescriptor CGEMetaEngineConnect::querySaveMetaInfos(const char *target,
 	return SaveStateDescriptor();
 }
 
-bool CGEMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool CGEMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc) {
 		*engine = new CGE::CGEEngine(syst, desc);
 	}
@@ -163,7 +163,7 @@ bool CGEMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const 
 } // End of namespace CGE
 
 #if PLUGIN_ENABLED_DYNAMIC(CGE)
-REGISTER_PLUGIN_DYNAMIC(CGE, PLUGIN_TYPE_ENGINE, CGE::CGEMetaEngineConnect);
+REGISTER_PLUGIN_DYNAMIC(CGE, PLUGIN_TYPE_ENGINE, CGE::CGEMetaEngine);
 #else
-REGISTER_PLUGIN_STATIC(CGE, PLUGIN_TYPE_ENGINE, CGE::CGEMetaEngineConnect);
+REGISTER_PLUGIN_STATIC(CGE, PLUGIN_TYPE_ENGINE, CGE::CGEMetaEngine);
 #endif

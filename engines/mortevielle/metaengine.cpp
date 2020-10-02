@@ -39,7 +39,7 @@ bool MortevielleEngine::useOriginalData() const { return _gameDescription->dataF
 
 } // End of namespace Mortevielle
 
-class MortevielleMetaEngineConnect : public AdvancedMetaEngineConnect {
+class MortevielleMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "mortevielle";
@@ -53,14 +53,14 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-bool MortevielleMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool MortevielleMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc) {
 		*engine = new Mortevielle::MortevielleEngine(syst, (const Mortevielle::MortevielleGameDescription *)desc);
 	}
 	return desc != 0;
 }
 
-bool MortevielleMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool MortevielleMetaEngine::hasFeature(MetaEngineFeature f) const {
 	switch (f) {
 	case kSupportsListSaves:
 	case kSupportsDeleteSave:
@@ -75,19 +75,19 @@ bool MortevielleMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
 	}
 }
 
-int MortevielleMetaEngineConnect::getMaximumSaveSlot() const { return 99; }
+int MortevielleMetaEngine::getMaximumSaveSlot() const { return 99; }
 
-SaveStateList MortevielleMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList MortevielleMetaEngine::listSaves(const char *target) const {
 	return Mortevielle::SavegameManager::listSaves(target);
 }
 
-SaveStateDescriptor MortevielleMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor MortevielleMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Mortevielle::MortevielleEngine::generateSaveFilename(target, slot);
 	return Mortevielle::SavegameManager::querySaveMetaInfos(filename);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(MORTEVIELLE)
-	REGISTER_PLUGIN_DYNAMIC(MORTEVIELLE, PLUGIN_TYPE_ENGINE, MortevielleMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(MORTEVIELLE, PLUGIN_TYPE_ENGINE, MortevielleMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(MORTEVIELLE, PLUGIN_TYPE_ENGINE, MortevielleMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(MORTEVIELLE, PLUGIN_TYPE_ENGINE, MortevielleMetaEngine);
 #endif

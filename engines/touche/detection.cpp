@@ -119,9 +119,9 @@ static const char *directoryGlobs[] = {
 	0
 };
 
-class ToucheMetaEngine : public AdvancedMetaEngine {
+class ToucheMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	ToucheMetaEngine() : AdvancedMetaEngine(Touche::gameDescriptions, sizeof(ADGameDescription), toucheGames) {
+	ToucheMetaEngineStatic() : AdvancedMetaEngineStatic(Touche::gameDescriptions, sizeof(ADGameDescription), toucheGames) {
 		_md5Bytes = 4096;
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
@@ -144,4 +144,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(TOUCHE_DETECTION, PLUGIN_TYPE_METAENGINE, ToucheMetaEngine);
+REGISTER_PLUGIN_STATIC(TOUCHE_DETECTION, PLUGIN_TYPE_METAENGINE, ToucheMetaEngineStatic);

@@ -31,7 +31,7 @@
 
 #include "griffon/griffon.h"
 
-class GriffonMetaEngineConnect: public AdvancedMetaEngineConnect {
+class GriffonMetaEngine: public AdvancedMetaEngine {
 public:
     const char *getName() const override {
 		return "griffon";
@@ -52,7 +52,7 @@ public:
 
 };
 
-Common::String GriffonMetaEngineConnect::getSavegameFile(int saveGameIdx, const char *target) const {
+Common::String GriffonMetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
 	if (saveGameIdx == kSavegameFilePattern) {
 		// Pattern requested
 		return Common::String::format("%s.s##", target == nullptr ? getEngineId() : target);
@@ -69,14 +69,14 @@ bool Griffon::GriffonEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool GriffonMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool GriffonMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc)
 		*engine = new Griffon::GriffonEngine(syst);
 
 	return desc != nullptr;
 }
 
-Common::KeymapArray GriffonMetaEngineConnect::initKeymaps(const char *target) const {
+Common::KeymapArray GriffonMetaEngine::initKeymaps(const char *target) const {
 	using namespace Common;
 
 	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "griffon", "The Griffon Legend");
@@ -143,7 +143,7 @@ Common::KeymapArray GriffonMetaEngineConnect::initKeymaps(const char *target) co
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(GRIFFON)
-	REGISTER_PLUGIN_DYNAMIC(GRIFFON, PLUGIN_TYPE_ENGINE, GriffonMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(GRIFFON, PLUGIN_TYPE_ENGINE, GriffonMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(GRIFFON, PLUGIN_TYPE_ENGINE, GriffonMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(GRIFFON, PLUGIN_TYPE_ENGINE, GriffonMetaEngine);
 #endif

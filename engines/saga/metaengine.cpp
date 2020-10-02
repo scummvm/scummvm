@@ -69,7 +69,7 @@ const ADGameFileDescription *SagaEngine::getFilesDescriptions() const { return _
 
 } // End of namespace Saga
 
-class SagaMetaEngineConnect : public AdvancedMetaEngineConnect {
+class SagaMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "saga";
@@ -78,7 +78,7 @@ public:
     bool hasFeature(MetaEngineFeature f) const override;
 
 	Common::Error createInstance(OSystem *syst, Engine **engine) const override {
-		return AdvancedMetaEngineConnect::createInstance(syst, engine);
+		return AdvancedMetaEngine::createInstance(syst, engine);
 	}
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
@@ -88,7 +88,7 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-bool SagaMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool SagaMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -107,7 +107,7 @@ bool Saga::SagaEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool SagaMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool SagaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Saga::SAGAGameDescription *gd = (const Saga::SAGAGameDescription *)desc;
 	if (gd) {
 		*engine = new Saga::SagaEngine(syst, gd);
@@ -115,7 +115,7 @@ bool SagaMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const
 	return gd != 0;
 }
 
-SaveStateList SagaMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList SagaMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	char saveDesc[SAVE_TITLE_SIZE];
@@ -147,16 +147,16 @@ SaveStateList SagaMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-int SagaMetaEngineConnect::getMaximumSaveSlot() const { return MAX_SAVES - 1; }
+int SagaMetaEngine::getMaximumSaveSlot() const { return MAX_SAVES - 1; }
 
-void SagaMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void SagaMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = target;
 	filename += Common::String::format(".s%02d", slot);
 
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
-SaveStateDescriptor SagaMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor SagaMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	static char fileName[MAX_FILE_NAME];
 	sprintf(fileName, "%s.s%02d", target, slot);
 	char title[TITLESIZE];
@@ -231,9 +231,9 @@ SaveStateDescriptor SagaMetaEngineConnect::querySaveMetaInfos(const char *target
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SAGA)
-	REGISTER_PLUGIN_DYNAMIC(SAGA, PLUGIN_TYPE_ENGINE, SagaMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(SAGA, PLUGIN_TYPE_ENGINE, SagaMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(SAGA, PLUGIN_TYPE_ENGINE, SagaMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(SAGA, PLUGIN_TYPE_ENGINE, SagaMetaEngine);
 #endif
 
 namespace Saga {

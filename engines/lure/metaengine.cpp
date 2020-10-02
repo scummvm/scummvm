@@ -50,7 +50,7 @@ LureLanguage LureEngine::getLureLanguage() const {
 
 } // End of namespace Lure
 
-class LureMetaEngineConnect : public AdvancedMetaEngineConnect {
+class LureMetaEngine : public AdvancedMetaEngine {
 public:
     const char *getName() const override {
 		return "lure";
@@ -64,7 +64,7 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 };
 
-bool LureMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool LureMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -78,7 +78,7 @@ bool Lure::LureEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool LureMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool LureMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Lure::LureGameDescription *gd = (const Lure::LureGameDescription *)desc;
 	if (gd) {
 		*engine = new Lure::LureEngine(syst, gd);
@@ -86,7 +86,7 @@ bool LureMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const
 	return gd != 0;
 }
 
-SaveStateList LureMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList LureMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
@@ -114,9 +114,9 @@ SaveStateList LureMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-int LureMetaEngineConnect::getMaximumSaveSlot() const { return 999; }
+int LureMetaEngine::getMaximumSaveSlot() const { return 999; }
 
-void LureMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void LureMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = target;
 	filename += Common::String::format(".%03d", slot);
 
@@ -124,7 +124,7 @@ void LureMetaEngineConnect::removeSaveState(const char *target, int slot) const 
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(LURE)
-	REGISTER_PLUGIN_DYNAMIC(LURE, PLUGIN_TYPE_ENGINE, LureMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(LURE, PLUGIN_TYPE_ENGINE, LureMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(LURE, PLUGIN_TYPE_ENGINE, LureMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(LURE, PLUGIN_TYPE_ENGINE, LureMetaEngine);
 #endif

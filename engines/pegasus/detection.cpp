@@ -91,9 +91,9 @@ static const PegasusGameDescription gameDescriptions[] = {
 } // End of namespace Pegasus
 
 
-class PegasusMetaEngine : public AdvancedMetaEngine {
+class PegasusMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	PegasusMetaEngine() : AdvancedMetaEngine(Pegasus::gameDescriptions, sizeof(Pegasus::PegasusGameDescription), pegasusGames) {
+	PegasusMetaEngineStatic() : AdvancedMetaEngineStatic(Pegasus::gameDescriptions, sizeof(Pegasus::PegasusGameDescription), pegasusGames) {
 	}
 
 	const char *getEngineId() const override {
@@ -109,4 +109,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(PEGASUS_DETECTION, PLUGIN_TYPE_METAENGINE, PegasusMetaEngine);
+REGISTER_PLUGIN_STATIC(PEGASUS_DETECTION, PLUGIN_TYPE_METAENGINE, PegasusMetaEngineStatic);

@@ -28,7 +28,7 @@
 
 #define MAX_SAVES 99
 
-class UltimaMetaEngineConnect : public AdvancedMetaEngineConnect {
+class UltimaMetaEngine : public AdvancedMetaEngine {
 private:
 	/**
 	 * Gets the game Id given a target string

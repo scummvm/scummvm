@@ -33,7 +33,7 @@
 #include "agos/detection.h"
 #include "agos/obsolete.h"
 
-class AgosMetaEngineConnect : public AdvancedMetaEngineConnect {
+class AgosMetaEngine : public AdvancedMetaEngine {
 public:
     const char *getName() const override {
 		return "agos";
@@ -43,7 +43,7 @@ public:
 
 	Common::Error createInstance(OSystem *syst, Engine **engine) const override {
 		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
-		return AdvancedMetaEngineConnect::createInstance(syst, engine);
+		return AdvancedMetaEngine::createInstance(syst, engine);
 	}
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
@@ -51,7 +51,7 @@ public:
 	int getMaximumSaveSlot() const override;
 };
 
-bool AgosMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool AgosMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSimpleSavesNames);
@@ -62,7 +62,7 @@ bool AGOS::AGOSEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsReturnToLauncher);
 }
 
-bool AgosMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool AgosMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const AGOS::AGOSGameDescription *gd = (const AGOS::AGOSGameDescription *)desc;
 	bool res = true;
 
@@ -107,7 +107,7 @@ bool AgosMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const
 	return res;
 }
 
-SaveStateList AgosMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList AgosMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
@@ -136,12 +136,12 @@ SaveStateList AgosMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-int AgosMetaEngineConnect::getMaximumSaveSlot() const { return 999; }
+int AgosMetaEngine::getMaximumSaveSlot() const { return 999; }
 
 #if PLUGIN_ENABLED_DYNAMIC(AGOS)
-	REGISTER_PLUGIN_DYNAMIC(AGOS, PLUGIN_TYPE_ENGINE, AgosMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(AGOS, PLUGIN_TYPE_ENGINE, AgosMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(AGOS, PLUGIN_TYPE_ENGINE, AgosMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(AGOS, PLUGIN_TYPE_ENGINE, AgosMetaEngine);
 #endif
 
 namespace AGOS {

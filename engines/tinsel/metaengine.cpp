@@ -63,7 +63,7 @@ bool TinselEngine::isV1CD() const {
 
 } // End of namespace Tinsel
 
-class TinselMetaEngineConnect : public AdvancedMetaEngineConnect {
+class TinselMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const  override{
 		return "tinsel";
@@ -78,7 +78,7 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 };
 
-bool TinselMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool TinselMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -105,7 +105,7 @@ bool Tinsel::TinselEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsLoadingDuringRuntime);
 }
 
-SaveStateDescriptor TinselMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor TinselMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String fileName;
 	fileName = Common::String::format("%s.%03u", target, slot);
 
@@ -147,7 +147,7 @@ namespace Tinsel {
 extern int getList(Common::SaveFileManager *saveFileMan, const Common::String &target);
 }
 
-SaveStateList TinselMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList TinselMetaEngine::listSaves(const char *target) const {
 	Common::String pattern = target;
 	pattern = pattern + ".###";
 	Common::StringArray files = g_system->getSavefileManager()->listSavefiles(pattern);
@@ -179,7 +179,7 @@ SaveStateList TinselMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-bool TinselMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool TinselMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Tinsel::TinselGameDescription *gd = (const Tinsel::TinselGameDescription *)desc;
 	if (gd) {
 		*engine = new Tinsel::TinselEngine(syst, gd);
@@ -187,9 +187,9 @@ bool TinselMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, con
 	return gd != 0;
 }
 
-int TinselMetaEngineConnect::getMaximumSaveSlot() const { return 99; }
+int TinselMetaEngine::getMaximumSaveSlot() const { return 99; }
 
-void TinselMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void TinselMetaEngine::removeSaveState(const char *target, int slot) const {
 	Tinsel::setNeedLoad();
 	// Same issue here as with loadGameState(): we need the physical savegame
 	// slot. Refer to bug #3387551.
@@ -211,9 +211,9 @@ void TinselMetaEngineConnect::removeSaveState(const char *target, int slot) cons
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(TINSEL)
-	REGISTER_PLUGIN_DYNAMIC(TINSEL, PLUGIN_TYPE_ENGINE, TinselMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(TINSEL, PLUGIN_TYPE_ENGINE, TinselMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(TINSEL, PLUGIN_TYPE_ENGINE, TinselMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(TINSEL, PLUGIN_TYPE_ENGINE, TinselMetaEngine);
 #endif
 
 namespace Tinsel {

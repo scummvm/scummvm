@@ -130,9 +130,9 @@ static const ExtraGuiOption neverhoodExtraGuiOption3 = {
 };
 
 
-class NeverhoodMetaEngine : public AdvancedMetaEngine {
+class NeverhoodMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	NeverhoodMetaEngine() : AdvancedMetaEngine(Neverhood::gameDescriptions, sizeof(ADGameDescription), neverhoodGames) {
+	NeverhoodMetaEngineStatic() : AdvancedMetaEngineStatic(Neverhood::gameDescriptions, sizeof(ADGameDescription), neverhoodGames) {
 		_guiOptions = GUIO2(GUIO_NOSUBTITLES, GUIO_NOMIDI);
 	}
 
@@ -151,7 +151,7 @@ public:
 	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 };
 
-const ExtraGuiOptions NeverhoodMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+const ExtraGuiOptions NeverhoodMetaEngineStatic::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	options.push_back(neverhoodExtraGuiOption1);
 	options.push_back(neverhoodExtraGuiOption2);
@@ -159,4 +159,4 @@ const ExtraGuiOptions NeverhoodMetaEngine::getExtraGuiOptions(const Common::Stri
 	return options;
 }
 
-REGISTER_PLUGIN_STATIC(NEVERHOOD_DETECTION, PLUGIN_TYPE_METAENGINE, NeverhoodMetaEngine);
+REGISTER_PLUGIN_STATIC(NEVERHOOD_DETECTION, PLUGIN_TYPE_METAENGINE, NeverhoodMetaEngineStatic);

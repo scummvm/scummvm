@@ -38,7 +38,7 @@
 
 #include "kyra/detection.h"
 
-class KyraMetaEngineConnect : public AdvancedMetaEngineConnect {
+class KyraMetaEngine : public AdvancedMetaEngine {
 public:
     const char *getName() const override {
 		return "kyra";
@@ -56,7 +56,7 @@ public:
 	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
-bool KyraMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool KyraMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 	    (f == kSupportsListSaves) ||
 	    (f == kSupportsLoadingDuringStartup) ||
@@ -74,7 +74,7 @@ bool Kyra::KyraEngine_v1::hasFeature(EngineFeature f) const {
 	    (f == kSupportsSubtitleOptions);
 }
 
-bool KyraMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const KYRAGameDescription *gd = (const KYRAGameDescription *)desc;
 	bool res = true;
 
@@ -134,7 +134,7 @@ bool KyraMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const
 	return res;
 }
 
-SaveStateList KyraMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Kyra::KyraEngine_v1::SaveHeader header;
 	Common::String pattern = target;
@@ -169,11 +169,11 @@ SaveStateList KyraMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-int KyraMetaEngineConnect::getMaximumSaveSlot() const {
+int KyraMetaEngine::getMaximumSaveSlot() const {
 	return 999;
 }
 
-void KyraMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void KyraMetaEngine::removeSaveState(const char *target, int slot) const {
 	// In Kyra games slot 0 can't be deleted, it's for restarting the game(s).
 	// An exception makes Lands of Lore here, it does not have any way to restart the
 	// game except via its main menu.
@@ -184,7 +184,7 @@ void KyraMetaEngineConnect::removeSaveState(const char *target, int slot) const 
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
-SaveStateDescriptor KyraMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Kyra::KyraEngine_v1::getSavegameFilename(target, slot);
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename);
 	const bool nonKyraGame = ConfMan.getDomain(target)->getVal("gameid").equalsIgnoreCase("lol") || ConfMan.getDomain(target)->getVal("gameid").equalsIgnoreCase("eob") || ConfMan.getDomain(target)->getVal("gameid").equalsIgnoreCase("eob2");
@@ -223,7 +223,7 @@ SaveStateDescriptor KyraMetaEngineConnect::querySaveMetaInfos(const char *target
 	return desc;
 }
 
-Common::KeymapArray KyraMetaEngineConnect::initKeymaps(const char *target) const {
+Common::KeymapArray KyraMetaEngine::initKeymaps(const char *target) const {
 	Common::String gameId = ConfMan.get("gameid", target);
 
 #ifdef ENABLE_LOL
@@ -238,11 +238,11 @@ Common::KeymapArray KyraMetaEngineConnect::initKeymaps(const char *target) const
 	}
 #endif
 
-	return AdvancedMetaEngineConnect::initKeymaps(target);
+	return AdvancedMetaEngine::initKeymaps(target);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(KYRA)
-	REGISTER_PLUGIN_DYNAMIC(KYRA, PLUGIN_TYPE_ENGINE, KyraMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(KYRA, PLUGIN_TYPE_ENGINE, KyraMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(KYRA, PLUGIN_TYPE_ENGINE, KyraMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(KYRA, PLUGIN_TYPE_ENGINE, KyraMetaEngine);
 #endif

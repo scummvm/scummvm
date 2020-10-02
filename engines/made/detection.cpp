@@ -35,9 +35,9 @@ static const PlainGameDescriptor madeGames[] = {
 
 #include "made/detection_tables.h"
 
-class MadeMetaEngine : public AdvancedMetaEngine {
+class MadeMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	MadeMetaEngine() : AdvancedMetaEngine(Made::gameDescriptions, sizeof(Made::MadeGameDescription), madeGames) {
+	MadeMetaEngineStatic() : AdvancedMetaEngineStatic(Made::gameDescriptions, sizeof(Made::MadeGameDescription), madeGames) {
 	}
 
 	const char *getEngineId() const override {
@@ -55,7 +55,7 @@ public:
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
 };
 
-ADDetectedGame MadeMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+ADDetectedGame MadeMetaEngineStatic::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 	// Set the default values for the fallback descriptor's ADGameDescription part.
 	Made::g_fallbackDesc.desc.language = Common::UNK_LANG;
 	Made::g_fallbackDesc.desc.platform = Common::kPlatformDOS;
@@ -70,4 +70,4 @@ ADDetectedGame MadeMetaEngine::fallbackDetect(const FileMap &allFiles, const Com
 	return ADDetectedGame();
 }
 
-REGISTER_PLUGIN_STATIC(MADE_DETECTION, PLUGIN_TYPE_METAENGINE, MadeMetaEngine);
+REGISTER_PLUGIN_STATIC(MADE_DETECTION, PLUGIN_TYPE_METAENGINE, MadeMetaEngineStatic);

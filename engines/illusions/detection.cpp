@@ -110,9 +110,9 @@ static const char * const directoryGlobs[] = {
 	0
 };
 
-class IllusionsMetaEngine : public AdvancedMetaEngine {
+class IllusionsMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	IllusionsMetaEngine() : AdvancedMetaEngine(Illusions::gameDescriptions, sizeof(Illusions::IllusionsGameDescription), illusionsGames) {
+	IllusionsMetaEngineStatic() : AdvancedMetaEngineStatic(Illusions::gameDescriptions, sizeof(Illusions::IllusionsGameDescription), illusionsGames) {
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
@@ -130,4 +130,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(ILLUSIONS_DETECTION, PLUGIN_TYPE_METAENGINE, IllusionsMetaEngine);
+REGISTER_PLUGIN_STATIC(ILLUSIONS_DETECTION, PLUGIN_TYPE_METAENGINE, IllusionsMetaEngineStatic);

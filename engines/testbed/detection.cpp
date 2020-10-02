@@ -42,9 +42,9 @@ static const ADGameDescription testbedDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
-class TestbedMetaEngine : public AdvancedMetaEngine {
+class TestbedMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	TestbedMetaEngine() : AdvancedMetaEngine(testbedDescriptions, sizeof(ADGameDescription), testbed_setting) {
+	TestbedMetaEngineStatic() : AdvancedMetaEngineStatic(testbedDescriptions, sizeof(ADGameDescription), testbed_setting) {
 		_md5Bytes = 512;
 	}
 
@@ -61,4 +61,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(TESTBED_DETECTION, PLUGIN_TYPE_METAENGINE, TestbedMetaEngine);
+REGISTER_PLUGIN_STATIC(TESTBED_DETECTION, PLUGIN_TYPE_METAENGINE, TestbedMetaEngineStatic);

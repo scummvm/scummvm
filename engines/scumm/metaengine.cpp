@@ -216,11 +216,11 @@ bool ScummEngine::isMacM68kIMuse() const {
 
 using namespace Scumm;
 
-const char *ScummMetaEngineConnect::getName() const {
+const char *ScummMetaEngine::getName() const {
     return "Scumm";
 }
 
-bool ScummMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool ScummMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -246,7 +246,7 @@ bool ScummEngine::hasFeature(EngineFeature f) const {
  *
  * This is heavily based on our MD5 detection scheme.
  */
-Common::Error ScummMetaEngineConnect::createInstance(OSystem *syst, Engine **engine) const {
+Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
 	assert(syst);
 	assert(engine);
 	const char *gameid = ConfMan.get("gameid").c_str();
@@ -440,13 +440,13 @@ Common::Error ScummMetaEngineConnect::createInstance(OSystem *syst, Engine **eng
 	return Common::kNoError;
 }
 
-int ScummMetaEngineConnect::getMaximumSaveSlot() const { return 99; }
+int ScummMetaEngine::getMaximumSaveSlot() const { return 99; }
 
 namespace Scumm {
 bool getSavegameName(Common::InSaveFile *in, Common::String &desc, int heversion);
 } // End of namespace Scumm
 
-SaveStateList ScummMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList ScummMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
@@ -475,12 +475,12 @@ SaveStateList ScummMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-void ScummMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void ScummMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = ScummEngine::makeSavegameName(target, slot, false);
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
-SaveStateDescriptor ScummMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor ScummMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String saveDesc;
 	Graphics::Surface *thumbnail = nullptr;
 	SaveStateMetaInfos infos;
@@ -521,7 +521,7 @@ SaveStateDescriptor ScummMetaEngineConnect::querySaveMetaInfos(const char *targe
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SCUMM)
-	REGISTER_PLUGIN_DYNAMIC(SCUMM, PLUGIN_TYPE_ENGINE, ScummMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(SCUMM, PLUGIN_TYPE_ENGINE, ScummMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(SCUMM, PLUGIN_TYPE_ENGINE, ScummMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(SCUMM, PLUGIN_TYPE_ENGINE, ScummMetaEngine);
 #endif

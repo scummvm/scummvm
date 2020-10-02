@@ -41,7 +41,7 @@ Common::Language ChewyEngine::getLanguage() const {
 
 } // End of namespace Chewy
 
-class ChewyMetaEngineConnect : public AdvancedMetaEngineConnect {
+class ChewyMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "chewy";
@@ -56,7 +56,7 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-bool ChewyMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool ChewyMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -74,7 +74,7 @@ bool Chewy::ChewyEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool ChewyMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool ChewyMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Chewy::ChewyGameDescription *gd = (const Chewy::ChewyGameDescription *)desc;
 	if (gd) {
 		*engine = new Chewy::ChewyEngine(syst, gd);
@@ -82,25 +82,25 @@ bool ChewyMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, cons
 	return gd != 0;
 }
 
-SaveStateList ChewyMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList ChewyMetaEngine::listSaves(const char *target) const {
 	SaveStateList saveList;
 
 	return saveList;
 }
 
-int ChewyMetaEngineConnect::getMaximumSaveSlot() const {
+int ChewyMetaEngine::getMaximumSaveSlot() const {
 	return 999;
 }
 
-void ChewyMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void ChewyMetaEngine::removeSaveState(const char *target, int slot) const {
 }
 
-SaveStateDescriptor ChewyMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor ChewyMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	return SaveStateDescriptor();
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(CHEWY)
-	REGISTER_PLUGIN_DYNAMIC(CHEWY, PLUGIN_TYPE_ENGINE, ChewyMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(CHEWY, PLUGIN_TYPE_ENGINE, ChewyMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(CHEWY, PLUGIN_TYPE_ENGINE, ChewyMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(CHEWY, PLUGIN_TYPE_ENGINE, ChewyMetaEngine);
 #endif

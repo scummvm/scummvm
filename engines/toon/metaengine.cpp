@@ -28,7 +28,7 @@
 #include "graphics/thumbnail.h"
 #include "toon/toon.h"
 
-class ToonMetaEngineConnect : public AdvancedMetaEngineConnect {
+class ToonMetaEngine : public AdvancedMetaEngine {
 public:
     const char *getName() const override {
 		return "toon";
@@ -43,7 +43,7 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 };
 
-bool ToonMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
+bool ToonMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 	    (f == kSupportsListSaves) ||
 	    (f == kSupportsLoadingDuringStartup) ||
@@ -55,14 +55,14 @@ bool ToonMetaEngineConnect::hasFeature(MetaEngineFeature f) const {
 		(f == kSimpleSavesNames);
 }
 
-void ToonMetaEngineConnect::removeSaveState(const char *target, int slot) const {
+void ToonMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
-int ToonMetaEngineConnect::getMaximumSaveSlot() const { return MAX_SAVE_SLOT; }
+int ToonMetaEngine::getMaximumSaveSlot() const { return MAX_SAVE_SLOT; }
 
-SaveStateList ToonMetaEngineConnect::listSaves(const char *target) const {
+SaveStateList ToonMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String pattern = target;
@@ -105,7 +105,7 @@ SaveStateList ToonMetaEngineConnect::listSaves(const char *target) const {
 	return saveList;
 }
 
-SaveStateDescriptor ToonMetaEngineConnect::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor ToonMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(fileName);
 
@@ -157,7 +157,7 @@ SaveStateDescriptor ToonMetaEngineConnect::querySaveMetaInfos(const char *target
 	return SaveStateDescriptor();
 }
 
-bool ToonMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool ToonMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc) {
 		*engine = new Toon::ToonEngine(syst, desc);
 	}
@@ -165,7 +165,7 @@ bool ToonMetaEngineConnect::createInstance(OSystem *syst, Engine **engine, const
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(TOON)
-	REGISTER_PLUGIN_DYNAMIC(TOON, PLUGIN_TYPE_ENGINE, ToonMetaEngineConnect);
+	REGISTER_PLUGIN_DYNAMIC(TOON, PLUGIN_TYPE_ENGINE, ToonMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(TOON, PLUGIN_TYPE_ENGINE, ToonMetaEngineConnect);
+	REGISTER_PLUGIN_STATIC(TOON, PLUGIN_TYPE_ENGINE, ToonMetaEngine);
 #endif

@@ -48,7 +48,7 @@ namespace Graphics {
 struct Surface;
 }
 
-class KyraMetaEngineConnect;
+class KyraMetaEngine;
 
 /**
  * This is the namespace of the Kyra engine.
@@ -147,7 +147,7 @@ struct Button;
 
 class KyraEngine_v1 : public Engine {
 friend class Debugger;
-friend class ::KyraMetaEngineConnect;
+friend class ::KyraMetaEngine;
 friend class GUI;
 friend class GUI_v1;
 friend class GUI_EoB;

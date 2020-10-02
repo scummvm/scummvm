@@ -33,9 +33,9 @@ static const PlainGameDescriptor petkaGames[] = {
 
 #include "petka/detection_tables.h"
 
-class PetkaMetaEngine : public AdvancedMetaEngine {
+class PetkaMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	PetkaMetaEngine() : AdvancedMetaEngine(Petka::gameDescriptions, sizeof(ADGameDescription), petkaGames) {
+	PetkaMetaEngineStatic() : AdvancedMetaEngineStatic(Petka::gameDescriptions, sizeof(ADGameDescription), petkaGames) {
 		_gameIds = petkaGames;
 		_maxScanDepth = 2;
 	}
@@ -53,4 +53,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(PETKA_DETECTION, PLUGIN_TYPE_METAENGINE, PetkaMetaEngine);
+REGISTER_PLUGIN_STATIC(PETKA_DETECTION, PLUGIN_TYPE_METAENGINE, PetkaMetaEngineStatic);
