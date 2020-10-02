@@ -197,6 +197,7 @@ const YUVToRGBLookup *YUVToRGBManager::getLookup(Graphics::PixelFormat format, Y
 	if (_lookup && _lookup->getFormat() == format && _lookup->getScale() == scale && _alphaMode == alphaMode)
 		return _lookup;
 
+	_alphaMode = alphaMode;
 	delete _lookup;
 	_lookup = new YUVToRGBLookup(format, scale, alphaMode);
 	return _lookup;
