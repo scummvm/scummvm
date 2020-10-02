@@ -48,7 +48,7 @@ void MouseRegion::show(AGDSEngine *engine) {
 		return;
 
 	visible = true;
-	debug("calling mouseArea[%d].onEnter...", id);
+	debug("calling mouseArea[%d].onEnter: %s", id, onEnter.c_str());
 	engine->runObject(onEnter);
 }
 
@@ -57,7 +57,7 @@ void MouseRegion::hide(AGDSEngine *engine) {
 		return;
 
 	visible = false;
-	debug("calling mouseArea[%d].onLeave...", id);
+	debug("calling mouseArea[%d].onLeave: %s...", id, onLeave.c_str());
 	engine->runObject(onLeave);
 }
 
