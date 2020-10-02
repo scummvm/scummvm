@@ -244,13 +244,18 @@ void OSystem_Wii::initSize(uint width, uint height,
 #endif
 
 	uint newWidth, newHeight;
+
+#ifdef USE_RGB_COLOR
 	if (_pfGame.bytesPerPixel > 1) {
 		newWidth = ROUNDUP(width, 4);
 		newHeight = ROUNDUP(height, 4);
 	} else {
+#endif
 		newWidth = ROUNDUP(width, 8);
 		newHeight = ROUNDUP(height, 4);
+#ifdef USE_RGB_COLOR
 	}
+#endif
 
 	if (_gameWidth != newWidth || _gameHeight != newHeight) {
 		assert((newWidth <= 640) && (newHeight <= 480));
@@ -670,6 +675,7 @@ void OSystem_Wii::setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
 		_mouseKeyColor = keycolor & 0xff;
 		tw = ROUNDUP(w, 8);
 		th = ROUNDUP(h, 4);
+
 #ifdef USE_RGB_COLOR
 	}
 #endif
@@ -723,9 +729,9 @@ void OSystem_Wii::setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
 		const byte *s = (const byte *)buf;
 		byte *d = (byte *) tmp;
 		for (u16 y = 0; y < h; ++y) {
-			for (u16 x = 0; x < w; ++x)
+			for (u16 x = 0; x < w; ++x) {
 				*d++ = *s++;
-
+			}
 			d += tw - w;
 		}
 
