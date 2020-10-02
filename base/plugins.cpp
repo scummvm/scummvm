@@ -340,6 +340,7 @@ Plugin *PluginManager::getMetaEngineFromEngine(const Plugin *plugin) {
 void PluginManagerUncached::init() {
 	unloadAllPlugins();
 	_allEnginePlugins.clear();
+	ConfMan.setBool("always_run_fallback_detection_extern", false);
 
 	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false); // empty the engine plugins
 

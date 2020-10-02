@@ -436,6 +436,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		gDebugChannelsOnly = true;
 
 
+	ConfMan.registerDefault("always_run_fallback_detection_extern", true);
 	PluginManager::instance().init();
  	PluginManager::instance().loadAllPlugins(); // load plugins for cached plugin manager
 	PluginManager::instance().loadDetectionPlugin(); // load detection plugin for uncached plugin manager

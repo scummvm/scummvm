@@ -450,6 +450,14 @@ ADDetectedGame SciMetaEngineStatic::fallbackDetect(const FileMap &allFiles, cons
 	 * Fallback detection for Sci heavily depends on engine resources, so it's not possible
 	 * to use them without the engine present in a clean way.
 	 */
+
+	if (ConfMan.hasKey("always_run_fallback_detection_extern")) {
+		if (ConfMan.getBool("always_run_fallback_detection_extern") == false) {
+			warning("SCI: Fallback detection is disabled.");
+			return ADDetectedGame();
+		}
+	}
+
 	const Plugin *metaEnginePlugin = EngineMan.findPlugin(getEngineId());
 
 	if (metaEnginePlugin) {
@@ -459,7 +467,7 @@ ADDetectedGame SciMetaEngineStatic::fallbackDetect(const FileMap &allFiles, cons
 		} else {
 			static bool warn = true;
 			if (warn) {
-				warning("Engine plugin for Sci not found. Some games will fail to be detected until an engine plugin is present.");
+				warning("Engine plugin for Sci not present. Fallback detection is disabled.");
 				warn = false;
 			}
 		}
