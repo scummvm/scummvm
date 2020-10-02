@@ -66,7 +66,7 @@ OpenGLSdlGraphics3dManager::OpenGLSdlGraphics3dManager(SdlEventSource *eventSour
 	_sideTextures[0] = _sideTextures[1] = nullptr;
 
 	// Don't start at zero so that the value is never the same as the surface graphics manager
-	_screenChangeCount = 1 << (sizeof(int) * 8 - 2);
+	_screenChangeCount = 1 << (sizeof(int) * 5 - 2);
 }
 
 OpenGLSdlGraphics3dManager::~OpenGLSdlGraphics3dManager() {

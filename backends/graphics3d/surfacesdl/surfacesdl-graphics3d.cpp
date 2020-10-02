@@ -53,7 +53,7 @@ SurfaceSdlGraphics3dManager::SurfaceSdlGraphics3dManager(SdlEventSource *sdlEven
 	_overlayVisible(false),
 	_fullscreen(false),
 	_lockAspectRatio(true),
-	_screenChangeCount(0),
+	_screenChangeCount(1 << (sizeof(int) * 6 - 2)),
 	_gameRect(),
 	_engineRequestedWidth(0),
 	_engineRequestedHeight(0) {
