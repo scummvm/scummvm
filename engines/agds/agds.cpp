@@ -454,7 +454,7 @@ Common::Error AGDSEngine::run() {
 			if (_mjpgPlayer->eos()) {
 				delete _mjpgPlayer;
 				_mjpgPlayer = NULL;
-				reactivate(_filmProcess, false);
+				reactivate(_filmProcess);
 			}
 		} else if (_currentScreen) {
 			_currentScreen->paint(*this, *backbuffer);
@@ -515,7 +515,7 @@ void AGDSEngine::skipFilm() {
 		_syncSoundId = -1;
 	}
 	_textLayout.reset(*this);
-	reactivate(_filmProcess, false);
+	reactivate(_filmProcess);
 }
 
 int AGDSEngine::appendToSharedStorage(const Common::String &value) {
@@ -895,17 +895,15 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 	return Common::kNoError;
 }
 
-void AGDSEngine::reactivate(const Common::String &name, bool runNow) {
+void AGDSEngine::reactivate(const Common::String &name) {
 	if (name.empty())
 		return;
 
 	for(ProcessListType::iterator i = _processes.begin(); i != _processes.end(); ++i) {
 		Process &process = *i;
 		if (process.getName() == name) {
-			debug("reactivate %s %s", name.c_str(), runNow? "(now)": "");
+			debug("reactivate %s %s", name.c_str());
 			process.activate();
-			// if (runNow)
-			// 	process.run();
 		}
 	}
 }

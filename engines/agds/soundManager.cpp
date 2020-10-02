@@ -35,7 +35,7 @@ namespace AGDS {
 void SoundManager::setPhaseVar(const Sound &sound, int value) {
 	if (!sound.phaseVar.empty())
 		_engine->setGlobal(sound.phaseVar, value);
-	_engine->reactivate(sound.process, true);
+	_engine->reactivate(sound.process);
 }
 
 void SoundManager::tick() {
@@ -46,10 +46,8 @@ void SoundManager::tick() {
 		if (!sound.phaseVar.empty()) {
 			int value = _engine->getGlobal(sound.phaseVar);
 			if (value <= 1) {
-				if (value == 1 && !active) {
+				if (value == 1 && !active)
 					setPhaseVar(sound, 0);
-				} else if (value == 0 && active)
-					setPhaseVar(sound, 1);
 			} else if (value & 2) {
 				debug("sample %s restarts (via phase var)", sound.name.c_str());
 				setPhaseVar(sound, 1);
@@ -108,7 +106,7 @@ int SoundManager::play(const Common::String &process, const Common::String &reso
 		delete file;
 		if (!phaseVar.empty())
 			_engine->setGlobal(phaseVar, 0);
-		_engine->reactivate(process, true);
+		_engine->reactivate(process);
 		return -1;
 	}
 	Audio::SoundHandle handle;

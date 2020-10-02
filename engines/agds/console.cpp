@@ -54,7 +54,7 @@ bool Console::activate(int argc, const char **argv) {
 		debugPrintf("usage: %s object_id\n", argv[0]);
 		return true;
 	}
-	_engine->reactivate(argv[1], false);
+	_engine->reactivate(argv[1]);
 	detach();
 	return false;
 }
