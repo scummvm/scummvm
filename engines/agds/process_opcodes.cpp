@@ -519,10 +519,10 @@ void Process::changeScreenPatch() {
 		push(0);
 		return;
 	} else {
-		//change screen patch (load and return 1)
 		ObjectPtr object = screen->find(objectName);
-		debug("changeScreenPatch: recover/inventory stub, returning 0");
-		push(0);
+		int value = object && object->recovering();
+		debug("changeScreenPatch: current screen object recovering: %d", value);
+		push(value);
 	}
 }
 
