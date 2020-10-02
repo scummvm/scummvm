@@ -42,9 +42,12 @@ public:
 	Common::Point getMousePosition() { return Common::Point(_cursorX, _cursorY); }
 	void setMousePosition(int x, int y) { _cursorX = x; _cursorY = y; }
 
+	virtual void beginGFXTransaction() {}
+	virtual OSystem::TransactionError endGFXTransaction() { return OSystem::kTransactionSuccess; }
+
 	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
 	virtual int getDefaultGraphicsMode() const override;
-	virtual bool setGraphicsMode(int mode) override;
+	virtual bool setGraphicsMode(int mode, uint flags = OSystem::kGfxModeNoFlags) override;
 	virtual void resetGraphicsScale() override;
 	virtual int getGraphicsMode() const override;
 
@@ -89,7 +92,7 @@ public:
 	virtual void setCursorPalette(const byte *colors, uint start, uint num) override;
 
 
-	void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) override;
+	void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d);
 
 	// ResidualVM specific method
 	void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d, bool isGame);
@@ -120,6 +123,7 @@ private:
 	void initOverlay();
 	void initViewport();
 	void updateEventScale();
+	void initSizeIntern(uint width, uint height, const Graphics::PixelFormat *format);
 
 	enum FixupType {
 		kClear = 0,		// glClear

@@ -69,8 +69,8 @@ int ModularGraphicsBackend::getDefaultGraphicsMode() const {
 	return _graphicsManager->getDefaultGraphicsMode();
 }
 
-bool ModularGraphicsBackend::setGraphicsMode(int mode) {
-	return _graphicsManager->setGraphicsMode(mode);
+bool ModularGraphicsBackend::setGraphicsMode(int mode, uint flags) { // ResidualVM
+	return _graphicsManager->setGraphicsMode(mode, flags); // ResidualVM
 }
 
 int ModularGraphicsBackend::getGraphicsMode() const {
@@ -124,11 +124,6 @@ Common::List<Graphics::PixelFormat> ModularGraphicsBackend::getSupportedFormats(
 }
 
 #endif
-
-// ResidualVM specific method
-void ModularGraphicsBackend::setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) {
-	_graphicsManager->setupScreen(screenW, screenH, fullscreen, accel3d);
-}
 
 // ResidualVM specific method
 Graphics::PixelBuffer ModularGraphicsBackend::getScreenPixelBuffer() {

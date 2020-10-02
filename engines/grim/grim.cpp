@@ -47,6 +47,7 @@
 #include "image/png.h"
 
 #include "engines/engine.h"
+#include "engines/util.h"
 
 #include "engines/grim/md5check.h"
 #include "engines/grim/md5checkdialog.h"
@@ -237,7 +238,7 @@ GfxBase *GrimEngine::createRenderer(int screenW, int screenH, bool fullscreen) {
 	Graphics::RendererType matchingRendererType = Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
 
 	_softRenderer = matchingRendererType == Graphics::kRendererTypeTinyGL;
-	_system->setupScreen(screenW, screenH, fullscreen, !_softRenderer);
+	initGraphics3d(screenW, screenH, fullscreen, !_softRenderer);
 
 #if defined(USE_OPENGL)
 	// Check the OpenGL context actually supports shaders

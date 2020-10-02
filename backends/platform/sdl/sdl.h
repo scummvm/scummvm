@@ -94,7 +94,6 @@ public:
 
 	// ResidualVM - Start
 #ifdef USE_OPENGL
-	virtual void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) override;
 	Common::Array<uint> getSupportedAntiAliasingLevels() const override;
 #endif
 	// ResidualVM - End
@@ -131,9 +130,9 @@ protected:
 	 */
 	SdlWindow *_window;
 
-	SdlGraphicsManager::State _gfxManagerState; // ResidualVM
-
 	// ResidualVM specific code - start
+	SdlGraphicsManager::State _gfxManagerState;
+
 #ifdef USE_OPENGL
 	// Graphics capabilities
 	void detectFramebufferSupport();
@@ -174,7 +173,7 @@ protected:
 
 	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
 	virtual int getDefaultGraphicsMode() const override;
-	virtual bool setGraphicsMode(int mode) override;
+	virtual bool setGraphicsMode(int mode, uint flags) override; // ResidualVM
 	virtual int getGraphicsMode() const override;
 #endif
 protected:

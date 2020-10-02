@@ -40,12 +40,20 @@ public:
 	virtual void setFeatureState(OSystem::Feature f, bool enable) override;
 	virtual bool getFeatureState(OSystem::Feature f) const override;
 
+	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
+	virtual int getDefaultGraphicsMode() const override;
+	virtual bool setGraphicsMode(int mode, uint flags = OSystem::kGfxModeNoFlags) override;
+	virtual int getGraphicsMode() const override;
+
+	virtual void beginGFXTransaction() override;
+	virtual OSystem::TransactionError endGFXTransaction() override;
+
 	// GraphicsManager API - Graphics mode
 #ifdef USE_RGB_COLOR
 	virtual Graphics::PixelFormat getScreenFormat() const override { return _screenFormat; }
 #endif
 	virtual int getScreenChangeID() const override { return _screenChangeCount; }
-	virtual void setupScreen(uint gameWidth, uint gameHeight, bool fullscreen, bool accel3d) override;
+	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format) override;
 	virtual Graphics::PixelBuffer getScreenPixelBuffer() override;
 	virtual int16 getHeight() const override;
 	virtual int16 getWidth() const override;
@@ -87,6 +95,7 @@ protected:
 	SDL_Surface *_screen;
 	SDL_Surface *_subScreen;
 	void createOrUpdateScreen();
+	void setupScreen();
 
 	SDL_Surface *_overlayscreen;
 	bool _overlayDirty;
@@ -111,6 +120,19 @@ protected:
 	void closeOverlay();
 
 	virtual bool saveScreenshot(const Common::String &filename) const override;
+
+protected:
+
+	enum TransactionMode {
+		kTransactionNone = 0,
+		kTransactionActive = 1,
+		kTransactionRollback = 2
+	};
+
+	/**
+	 * The current transaction mode.
+	 */
+	TransactionMode _transactionMode;
 };
 
 #endif

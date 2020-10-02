@@ -238,7 +238,6 @@ bool AndroidGraphicsManager::notifyMousePosition(Common::Point &mouse) {
 const OSystem::GraphicsMode *AndroidGraphicsManager::getSupportedGraphicsModes() const {
 	static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 		{ "default", "Default", 0 },
-		{ "filter", "Linear filtering", 1 },
 		{ 0, 0, 0 },
 	};
 
@@ -249,20 +248,7 @@ int AndroidGraphicsManager::getDefaultGraphicsMode() const {
 	return 0;
 }
 
-bool AndroidGraphicsManager::setGraphicsMode(int mode) {
-	ENTER("%d", mode);
-
-	if (_game_texture)
-		_game_texture->setLinearFilter(mode == 1);
-
-	if (_overlay_texture)
-		_overlay_texture->setLinearFilter(mode == 1);
-
-	if (_mouse_texture)
-		_mouse_texture->setLinearFilter(mode == 1);
-
-	_graphicsMode = mode;
-
+bool AndroidGraphicsManager::setGraphicsMode(int mode, uint flags) {
 	return true;
 }
 
@@ -471,6 +457,11 @@ void AndroidGraphicsManager::copyRectToScreen(const void *buf, int pitch,
 }
 
 void AndroidGraphicsManager::initSize(uint width, uint height,
+								const Graphics::PixelFormat *format) {
+	setupScreen(width, height, true, true);
+}
+
+void AndroidGraphicsManager::initSizeIntern(uint width, uint height,
 								const Graphics::PixelFormat *format) {
 	ENTER("%d, %d, %p", width, height, format);
 
@@ -682,7 +673,7 @@ void AndroidGraphicsManager::setupScreen(uint screenW, uint screenH, bool fullsc
 
 	if (_opengl) {
 		// resize game texture
-		initSize(screenW, screenH, 0);
+		initSizeIntern(screenW, screenH, 0);
 		if (isGame)
 			_game_texture->setGameTexture();
 		// format is not used by the gfx_opengl driver, use fake format
@@ -690,7 +681,7 @@ void AndroidGraphicsManager::setupScreen(uint screenW, uint screenH, bool fullsc
 
 	} else {
 		Graphics::PixelFormat format = GLES565Texture::pixelFormat();
-		initSize(screenW, screenH, &format);
+		initSizeIntern(screenW, screenH, &format);
 		// as there is no support for the texture surface's lock/unlock mechanism in gfx_tinygl/...
 		// do not use _game_texture->surface()->pixels directly
 		_game_pbuf.create(_game_texture->getPixelFormat(),

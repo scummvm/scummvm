@@ -169,7 +169,7 @@ int OpenGLGraphicsManager::getDefaultGraphicsMode() const {
 	return GFX_OPENGL;
 }
 
-bool OpenGLGraphicsManager::setGraphicsMode(int mode) {
+bool OpenGLGraphicsManager::setGraphicsMode(int mode, uint flags) { // ResidualVM
 	assert(_transactionMode != kTransactionNone);
 
 	switch (mode) {

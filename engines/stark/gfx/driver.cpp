@@ -30,13 +30,15 @@
 #include "graphics/opengl/context.h"
 #endif
 
+#include "engines/util.h"
+
 namespace Stark {
 namespace Gfx {
 
 Driver *Driver::create() {
 #if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 	bool fullscreen = ConfMan.getBool("fullscreen");
-	g_system->setupScreen(kOriginalWidth, kOriginalHeight, fullscreen, true);
+	initGraphics3d(kOriginalWidth, kOriginalHeight, fullscreen, true);
 
 	if (OpenGLContext.shadersSupported) {
 		return new OpenGLSDriver();

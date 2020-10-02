@@ -452,6 +452,13 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		ConfMan.registerDefault("dump_midi", true);
 	}
 
+// ResidualVM start:
+#if defined(USE_OPENGL)
+	ConfMan.set("gfx_mode", "opengl");
+#else
+	ConfMan.set("gfx_mode", "normal");
+#endif
+// ResidualVM end
 
 	// Init the backend. Must take place after all config data (including
 	// the command line params) was read.

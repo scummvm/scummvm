@@ -60,5 +60,6 @@ void initGraphicsModes(const Graphics::ModeList &modes);
 void initGraphics(int width, int height);
 void initGraphics(int width, int height, const Graphics::PixelFormat *format);
 void initGraphics(int width, int height, const Common::List<Graphics::PixelFormat> &formatList);
+void initGraphics3d(int width, int height, bool fullscreen, bool accel3d); // ResidualVM
 
 #endif

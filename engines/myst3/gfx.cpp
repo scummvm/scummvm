@@ -28,6 +28,8 @@
 
 #include "engines/myst3/gfx.h"
 
+#include "engines/util.h"
+
 #include "common/config-manager.h"
 
 #include "graphics/renderer.h"
@@ -208,7 +210,7 @@ Renderer *createRenderer(OSystem *system) {
 		width = Renderer::kOriginalWidth;
 	}
 
-	system->setupScreen(width, height, fullscreen, isAccelerated);
+	initGraphics3d(width, height, fullscreen, isAccelerated);
 
 #if defined(USE_OPENGL)
 	// Check the OpenGL context actually supports shaders

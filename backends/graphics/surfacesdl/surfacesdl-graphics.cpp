@@ -617,7 +617,7 @@ int SurfaceSdlGraphicsManager::getGraphicsModeScale(int mode) const {
 	return scale;
 }
 
-bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
+bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode, uint flags) { // ResidualVM
 	Common::StackLock lock(_graphicsMutex);
 
 	assert(_transactionMode == kTransactionActive);

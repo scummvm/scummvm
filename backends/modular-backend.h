@@ -66,7 +66,7 @@ public:
 	GraphicsManager *getGraphicsManager();
 	virtual const GraphicsMode *getSupportedGraphicsModes() const override;
 	virtual int getDefaultGraphicsMode() const override;
-	virtual bool setGraphicsMode(int mode) override;
+	virtual bool setGraphicsMode(int mode, uint flags = kGfxModeNoFlags) override; // ResidualVM
 	virtual int getGraphicsMode() const override;
 	virtual const GraphicsMode *getSupportedShaders() const override final;
 	virtual int getDefaultShader() const override final;
@@ -82,7 +82,6 @@ public:
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const override final;
 #endif
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL) override final;
-	virtual void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) override; // ResidualVM specific method
 	virtual Graphics::PixelBuffer getScreenPixelBuffer() override; // ResidualVM specific method
 	virtual void suggestSideTextures(Graphics::Surface *left, Graphics::Surface *right) override; // ResidualVM specific method
 	virtual void initSizeHint(const Graphics::ModeList &modes) override final;

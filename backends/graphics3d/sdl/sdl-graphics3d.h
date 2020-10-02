@@ -116,6 +116,20 @@ public:
 	// Override from Common::EventObserver
 	virtual bool notifyEvent(const Common::Event &event) override;
 
+	/**
+	 * A (subset) of the graphic manager's state. This is used when switching
+	 * between different SDL graphic managers at runtime.
+	 */
+	struct State {
+		bool aspectRatio;
+		bool fullscreen;
+	};
+
+	/**
+	 * Gets the default feature state of the graphics manager.
+	 */
+	virtual void setDefaultFeatureState();
+
 	/** Obtain the user configured fullscreen resolution, or default to the desktop resolution */
 	virtual Common::Rect getPreferredFullscreenResolution();
 
@@ -129,13 +143,9 @@ public:
 protected:
 	enum CustomEventAction {
 		kActionToggleFullscreen = 100,
-		kActionSaveScreenshot,
+		kActionSaveScreenshot
 	};
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-public:
-	void unlockWindowSize() {}
-#endif
 protected:
 
 	SdlEventSource *_eventSource;

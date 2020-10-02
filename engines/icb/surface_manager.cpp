@@ -34,6 +34,9 @@
 #include "common/rect.h"
 #include "common/textconsole.h"
 #include "common/system.h"
+
+#include "engines/util.h"
+
 #include "graphics/tinygl/zgl.h"
 #include "graphics/tinygl/zblit.h"
 
@@ -190,7 +193,7 @@ unsigned int _surface_manager::Init_direct_draw() {
 	Zdebug("*SURFACE_MANAGER* Initalizing the SDL video interface");
 
 	g_system->setWindowCaption("In Cold Blood (C)2000 Revolution Software Ltd");
-	g_system->setupScreen(640, 480, ConfMan.getBool("fullscreen"), false);
+	initGraphics3d(640, 480, ConfMan.getBool("fullscreen"), false);
 
 	Graphics::PixelBuffer pixBuff = g_system->getScreenPixelBuffer();
 	_zb = new TinyGL::FrameBuffer(640, 480, pixBuff); // TODO: delete

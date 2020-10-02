@@ -59,7 +59,8 @@ OpenGLSdlGraphics3dManager::OpenGLSdlGraphics3dManager(SdlEventSource *eventSour
 	_frameBuffer(nullptr),
 	_surfaceRenderer(nullptr),
 	_engineRequestedWidth(0),
-	_engineRequestedHeight(0) {
+	_engineRequestedHeight(0),
+	_transactionMode(kTransactionNone) {
 	ConfMan.registerDefault("antialiasing", 0);
 	ConfMan.registerDefault("aspect_ratio", true);
 
@@ -106,7 +107,8 @@ void OpenGLSdlGraphics3dManager::setFeatureState(OSystem::Feature f, bool enable
 		case OSystem::kFeatureFullscreenMode:
 			if (_fullscreen != enable) {
 				_fullscreen = enable;
-				createOrUpdateScreen();
+				if (_transactionMode == kTransactionNone)
+					createOrUpdateScreen();
 			}
 			break;
 		case OSystem::kFeatureAspectRatioCorrection:
@@ -117,14 +119,59 @@ void OpenGLSdlGraphics3dManager::setFeatureState(OSystem::Feature f, bool enable
 	}
 }
 
-void OpenGLSdlGraphics3dManager::setupScreen(uint gameWidth, uint gameHeight, bool fullscreen, bool accel3d) {
-	assert(accel3d);
+void OpenGLSdlGraphics3dManager::beginGFXTransaction() {
+	assert(_transactionMode == kTransactionNone);
+
+	_transactionMode = kTransactionActive;
+}
+
+OSystem::TransactionError OpenGLSdlGraphics3dManager::endGFXTransaction() {
+	assert(_transactionMode != kTransactionNone);
+
+	setupScreen();
+
+	_transactionMode = kTransactionNone;
+	return OSystem::kTransactionSuccess;
+}
+
+const OSystem::GraphicsMode glGraphicsModes[] = {
+	{ "opengl3d", "OpenGL 3D", 0 },
+	{ nullptr, nullptr, 0 }
+};
+
+const OSystem::GraphicsMode *OpenGLSdlGraphics3dManager::getSupportedGraphicsModes() const {
+	return glGraphicsModes;
+}
+
+int OpenGLSdlGraphics3dManager::getDefaultGraphicsMode() const {
+	return 0;
+}
+
+bool OpenGLSdlGraphics3dManager::setGraphicsMode(int mode, uint flags) {
+	assert(_transactionMode != kTransactionNone);
+	assert(flags & OSystem::kGfxModeRender3d);
+	assert(flags & OSystem::kGfxModeAcceleration3d);
+
+	return true;
+}
+
+int OpenGLSdlGraphics3dManager::getGraphicsMode() const {
+	return 0;
+}
+
+void OpenGLSdlGraphics3dManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
+	_engineRequestedWidth = w;
+	_engineRequestedHeight = h;
+	if (_transactionMode == kTransactionNone)
+		setupScreen();
+}
+
+void OpenGLSdlGraphics3dManager::setupScreen() {
+	assert(_transactionMode == kTransactionActive);
+
 	closeOverlay();
 
-	_engineRequestedWidth = gameWidth;
-	_engineRequestedHeight = gameHeight;
 	_antialiasing = ConfMan.getInt("antialiasing");
-	_fullscreen = fullscreen;
 	_lockAspectRatio = ConfMan.getBool("aspect_ratio");
 	_vsync = ConfMan.getBool("vsync");
 

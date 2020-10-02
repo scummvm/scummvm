@@ -83,6 +83,7 @@
 
 #ifdef ENABLE_WME3D
 #include "graphics/renderer.h"
+#include "engines/util.h"
 #endif
 
 namespace Wintermute {
@@ -499,7 +500,7 @@ bool BaseGame::initialize1() {
 bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 #ifdef ENABLE_WME3D
 	bool fullscreen = ConfMan.getBool("fullscreen");
-	g_system->setupScreen(_settings->getResWidth(), _settings->getResHeight(), fullscreen, true);
+	initGraphics3d(_settings->getResWidth(), _settings->getResHeight(), fullscreen, true);
 
 	Common::String rendererConfig = ConfMan.get("renderer");
 	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);

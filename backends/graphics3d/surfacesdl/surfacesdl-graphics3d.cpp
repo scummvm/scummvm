@@ -56,7 +56,8 @@ SurfaceSdlGraphics3dManager::SurfaceSdlGraphics3dManager(SdlEventSource *sdlEven
 	_screenChangeCount(1 << (sizeof(int) * 6 - 2)),
 	_gameRect(),
 	_engineRequestedWidth(0),
-	_engineRequestedHeight(0) {
+	_engineRequestedHeight(0),
+	_transactionMode(kTransactionNone) {
 		ConfMan.registerDefault("aspect_ratio", true);
 
 		_sideSurfaces[0] = _sideSurfaces[1] = nullptr;
@@ -100,7 +101,8 @@ void SurfaceSdlGraphics3dManager::setFeatureState(OSystem::Feature f, bool enabl
 		case OSystem::kFeatureFullscreenMode:
 			if (_fullscreen != enable) {
 				_fullscreen = enable;
-				createOrUpdateScreen();
+				if (_transactionMode == kTransactionNone)
+					createOrUpdateScreen();
 			}
 			break;
 		case OSystem::kFeatureAspectRatioCorrection:
@@ -111,8 +113,56 @@ void SurfaceSdlGraphics3dManager::setFeatureState(OSystem::Feature f, bool enabl
 	}
 }
 
-void SurfaceSdlGraphics3dManager::setupScreen(uint gameWidth, uint gameHeight, bool fullscreen, bool accel3d) {
-	assert(!accel3d);
+void SurfaceSdlGraphics3dManager::beginGFXTransaction() {
+	assert(_transactionMode == kTransactionNone);
+
+	_transactionMode = kTransactionActive;
+}
+
+OSystem::TransactionError SurfaceSdlGraphics3dManager::endGFXTransaction() {
+	assert(_transactionMode != kTransactionNone);
+
+	setupScreen();
+
+	_transactionMode = kTransactionNone;
+	return OSystem::kTransactionSuccess;
+}
+
+const OSystem::GraphicsMode glGraphicsModes[] = {
+	{ "tinygl", "TinyGL", 0 },
+	{ nullptr, nullptr, 0 }
+};
+
+const OSystem::GraphicsMode *SurfaceSdlGraphics3dManager::getSupportedGraphicsModes() const {
+	return glGraphicsModes;
+}
+
+int SurfaceSdlGraphics3dManager::getDefaultGraphicsMode() const {
+	return 0;
+}
+
+bool SurfaceSdlGraphics3dManager::setGraphicsMode(int mode, uint flags) {
+	assert(_transactionMode != kTransactionNone);
+	assert(flags & OSystem::kGfxModeRender3d);
+	assert(!(flags & OSystem::kGfxModeAcceleration3d));
+
+	return true;
+}
+
+int SurfaceSdlGraphics3dManager::getGraphicsMode() const {
+	return 0;
+}
+
+void SurfaceSdlGraphics3dManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
+	_engineRequestedWidth = w;
+	_engineRequestedHeight = h;
+
+	if (_transactionMode == kTransactionNone)
+		setupScreen();
+}
+
+void SurfaceSdlGraphics3dManager::setupScreen() {
+	assert(_transactionMode == kTransactionActive);
 
 	if (_subScreen) {
 		SDL_FreeSurface(_subScreen);
@@ -123,15 +173,11 @@ void SurfaceSdlGraphics3dManager::setupScreen(uint gameWidth, uint gameHeight, b
 	deinitializeRenderer();
 #endif
 
-	_engineRequestedWidth = gameWidth;
-	_engineRequestedHeight = gameHeight;
-	_fullscreen = fullscreen;
 	_lockAspectRatio = ConfMan.getBool("aspect_ratio");
-
 	createOrUpdateScreen();
 
 	SDL_PixelFormat *f = _screen->format;
-	_subScreen = SDL_CreateRGBSurface(SDL_SWSURFACE, gameWidth, gameHeight, f->BitsPerPixel, f->Rmask, f->Gmask, f->Bmask, f->Amask);
+	_subScreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _engineRequestedWidth, _engineRequestedHeight, f->BitsPerPixel, f->Rmask, f->Gmask, f->Bmask, f->Amask);
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_SetSurfaceBlendMode(_subScreen, SDL_BLENDMODE_NONE);

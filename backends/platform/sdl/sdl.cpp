@@ -263,14 +263,7 @@ void OSystem_SDL::initBackend() {
 #endif
 
 		if (_graphicsManager == 0) {
-// ResidualVM start:
-#ifdef USE_OPENGL
-			_graphicsManager = new OpenGLSdlGraphicsManager(_eventSource, _window);
-			_graphicsMode = _firstGLMode;
-#else
 			_graphicsManager = new SurfaceSdlGraphicsManager(_eventSource, _window);
-#endif
-// ResidualVM end
 		}
 	}
 
@@ -401,9 +394,7 @@ void OSystem_SDL::detectAntiAliasingSupport() {
 void OSystem_SDL::engineInit() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 // ResidualVM start:
-	if (dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)) {
-		dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)->unlockWindowSize();
-	} else {
+	if (dynamic_cast<SdlGraphicsManager *>(_graphicsManager)) {
 		dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->unlockWindowSize();
 	}
 // ResidualVM end
@@ -429,9 +420,7 @@ void OSystem_SDL::engineInit() {
 void OSystem_SDL::engineDone() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 // ResidualVM start:
-	if (dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)) {
-		dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)->unlockWindowSize();
-	} else {
+	if (dynamic_cast<SdlGraphicsManager *>(_graphicsManager)) {
 		dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->unlockWindowSize();
 	}
 // ResidualVM end
@@ -511,39 +500,8 @@ void OSystem_SDL::setWindowCaption(const char *caption) {
 }
 
 // ResidualVM specific code
+
 #ifdef USE_OPENGL
-void OSystem_SDL::setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) {
-	bool switchedManager = false;
-	if (accel3d && !dynamic_cast<OpenGLSdlGraphics3dManager *>(_graphicsManager)) {
-		switchedManager = true;
-	} else if (!accel3d && !dynamic_cast<SurfaceSdlGraphics3dManager *>(_graphicsManager)) {
-		switchedManager = true;
-	}
-
-	if (dynamic_cast<SdlGraphicsManager *>(_graphicsManager)) {
-		_gfxManagerState = dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->getState();
-	}
-
-	if (switchedManager) {
-		SdlGraphics3dManager *sdlGraphicsManager;
-		if (dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)) {
-			dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)->deactivateManager();
-		} else {
-			dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->deactivateManager();
-		}
-		delete _graphicsManager;
-
-		if (accel3d) {
-			_graphicsManager = sdlGraphicsManager = new OpenGLSdlGraphics3dManager(_eventSource, _window, _capabilities);
-		} else {
-			_graphicsManager = sdlGraphicsManager = new SurfaceSdlGraphics3dManager(_eventSource, _window);
-		}
-		sdlGraphicsManager->activateManager();
-	}
-
-	ModularGraphicsBackend::setupScreen(screenW, screenH, fullscreen, accel3d);
-}
-
 Common::Array<uint> OSystem_SDL::getSupportedAntiAliasingLevels() const {
 	return _capabilities.openGLAntiAliasLevels;
 }
@@ -780,54 +738,13 @@ int OSystem_SDL::getDefaultGraphicsMode() const {
 	}
 }
 
-bool OSystem_SDL::setGraphicsMode(int mode) {
-	// ResidualVM start:
-	if (dynamic_cast<OpenGLSdlGraphics3dManager *>(_graphicsManager) ||
-		dynamic_cast<SurfaceSdlGraphics3dManager *>(_graphicsManager)) {
-		if (dynamic_cast<OpenGLSdlGraphics3dManager *>(_graphicsManager)) {
-			dynamic_cast<OpenGLSdlGraphics3dManager *>(_graphicsManager)->deactivateManager();
-		}
-		if (dynamic_cast<SurfaceSdlGraphics3dManager *>(_graphicsManager)) {
-			dynamic_cast<SurfaceSdlGraphics3dManager *>(_graphicsManager)->deactivateManager();
-		}
-		delete _graphicsManager;
+// ResidualVM start:
+bool OSystem_SDL::setGraphicsMode(int mode, uint flags) {
+	bool render3d = flags & OSystem::kGfxModeRender3d;
+	bool accel3d = flags & OSystem::kGfxModeAcceleration3d;
 
-		SdlGraphicsManager *sdlGraphicsManager = nullptr;
-		if (mode < _firstGLMode) {
-			debug(1, "switching to plain SDL graphics");
-			_graphicsManager = sdlGraphicsManager = new SurfaceSdlGraphicsManager(_eventSource, _window);
-		} else if (mode >= _firstGLMode) {
-			debug(1, "switching to OpenGL graphics");
-			_graphicsManager = sdlGraphicsManager = new OpenGLSdlGraphicsManager(_eventSource, _window);
-		}
-
-		_graphicsMode = mode;
-
-		assert(sdlGraphicsManager);
-		sdlGraphicsManager->activateManager();
-
-		// This failing will probably have bad consequences...
-		if (!sdlGraphicsManager->setState(_gfxManagerState)) {
-			return false;
-		}
-
-		// Next setup the cursor again
-		CursorMan.pushCursor(0, 0, 0, 0, 0, 0);
-		CursorMan.popCursor();
-
-		// Next setup cursor palette if needed
-		if (_graphicsManager->getFeatureState(kFeatureCursorPalette)) {
-			CursorMan.pushCursorPalette(0, 0, 0);
-			CursorMan.popCursorPalette();
-		}
-
-		_graphicsManager->beginGFXTransaction();
-		// Oh my god if this failed the client code might just explode.
-		return _graphicsManager->setGraphicsMode(_graphicsModeIds[mode]);
-	}
-	// ResidualVM end
-
-	if (_graphicsModes.empty()) {
+	// In 3d render mode gfx mode param is ignored.
+	if (_graphicsModes.empty() && !render3d) {
 		return _graphicsManager->setGraphicsMode(mode);
 	}
 
@@ -836,42 +753,95 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 		return false;
 	}
 
-	// Very hacky way to set up the old graphics manager state, in case we
-	// switch from SDL->OpenGL or OpenGL->SDL.
-	//
-	// This is a probably temporary workaround to fix bugs like #3368143
-	// "SDL/OpenGL: Crash when switching renderer backend".
-	SdlGraphicsManager *sdlGraphicsManager = dynamic_cast<SdlGraphicsManager *>(_graphicsManager);
-	SdlGraphicsManager::State state = sdlGraphicsManager->getState();
-
 	bool switchedManager = false;
+	SdlGraphicsManager *sdlGraphicsManager = dynamic_cast<SdlGraphicsManager *>(_graphicsManager);
+	SdlGraphics3dManager *sdlGraphics3dManager = dynamic_cast<SdlGraphics3dManager *>(_graphicsManager);
+	assert(sdlGraphicsManager || sdlGraphics3dManager);
+
+	if (sdlGraphicsManager) {
+		// Very hacky way to set up the old graphics manager state, in case we
+		// switch from SDL->OpenGL or OpenGL->SDL.
+		//
+		// This is a probably temporary workaround to fix bugs like #3368143
+		// "SDL/OpenGL: Crash when switching renderer backend".
+		//
+		// It's also used to restore state from 3D to 2D GFX manager
+		_gfxManagerState = sdlGraphicsManager->getState();
+	}
 
 	// If the new mode and the current mode are not from the same graphics
 	// manager, delete and create the new mode graphics manager
-	if (_graphicsMode >= _firstGLMode && mode < _firstGLMode) {
-		debug(1, "switching to plain SDL graphics");
-		sdlGraphicsManager->deactivateManager();
-		delete _graphicsManager;
-		_graphicsManager = sdlGraphicsManager = new SurfaceSdlGraphicsManager(_eventSource, _window);
+	if (!render3d) {
+		if (sdlGraphics3dManager) {
+			sdlGraphics3dManager->deactivateManager();
+			delete sdlGraphics3dManager;
+		}
 
-		switchedManager = true;
-	} else if (_graphicsMode < _firstGLMode && mode >= _firstGLMode) {
-		debug(1, "switching to OpenGL graphics");
-		sdlGraphicsManager->deactivateManager();
-		delete _graphicsManager;
-		_graphicsManager = sdlGraphicsManager = new OpenGLSdlGraphicsManager(_eventSource, _window);
+		if ((sdlGraphics3dManager || _graphicsMode >= _firstGLMode) && mode < _firstGLMode) {
+			debug(1, "switching to plain SDL graphics");
+			if (sdlGraphicsManager) {
+				sdlGraphicsManager->deactivateManager();
+				delete sdlGraphicsManager;
+			}
+			_graphicsManager = sdlGraphicsManager = new SurfaceSdlGraphicsManager(_eventSource, _window);
+			switchedManager = true;
+		} else if ((sdlGraphics3dManager || _graphicsMode < _firstGLMode) && mode >= _firstGLMode) {
+			debug(1, "switching to OpenGL graphics");
+			if (sdlGraphicsManager) {
+				sdlGraphicsManager->deactivateManager();
+				delete sdlGraphicsManager;
+			}
+			_graphicsManager = sdlGraphicsManager = new OpenGLSdlGraphicsManager(_eventSource, _window);
+			switchedManager = true;
+		}
 
-		switchedManager = true;
+		if (sdlGraphics3dManager) {
+			sdlGraphics3dManager = nullptr;
+		}
+	} else {
+		if (sdlGraphicsManager) {
+			sdlGraphicsManager->deactivateManager();
+			delete sdlGraphicsManager;
+		}
+
+		if (accel3d && !dynamic_cast<OpenGLSdlGraphics3dManager *>(_graphicsManager)) {
+			if (sdlGraphics3dManager) {
+				sdlGraphics3dManager->deactivateManager();
+				delete sdlGraphics3dManager;
+			}
+			_graphicsManager = sdlGraphics3dManager = new OpenGLSdlGraphics3dManager(_eventSource, _window, _capabilities);
+			// Setup feature defaults for 3D gfx while switching from 2D
+			if (sdlGraphicsManager)
+				sdlGraphics3dManager->setDefaultFeatureState();
+			switchedManager = true;
+		} else if (!accel3d && !dynamic_cast<SurfaceSdlGraphics3dManager *>(_graphicsManager)) {
+			if (sdlGraphics3dManager) {
+				sdlGraphics3dManager->deactivateManager();
+				delete _graphicsManager;
+			}
+			_graphicsManager = sdlGraphics3dManager = new SurfaceSdlGraphics3dManager(_eventSource, _window);
+			// Setup feature defaults for 3D gfx while switching from 2D
+			if (sdlGraphicsManager)
+				sdlGraphics3dManager->setDefaultFeatureState();
+			switchedManager = true;
+		}
+
+		if (sdlGraphicsManager) {
+			sdlGraphicsManager = nullptr;
+		}
 	}
 
 	_graphicsMode = mode;
 
 	if (switchedManager) {
-		sdlGraphicsManager->activateManager();
-
-		// This failing will probably have bad consequences...
-		if (!sdlGraphicsManager->setState(state)) {
-			return false;
+		if (sdlGraphicsManager) {
+			sdlGraphicsManager->activateManager();
+			// This failing will probably have bad consequences...
+			if (!sdlGraphicsManager->setState(_gfxManagerState)) {
+				return false;
+			}
+		} else if (sdlGraphics3dManager) {
+			sdlGraphics3dManager->activateManager();
 		}
 
 		// Next setup the cursor again
@@ -886,11 +856,12 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 
 		_graphicsManager->beginGFXTransaction();
 		// Oh my god if this failed the client code might just explode.
-		return _graphicsManager->setGraphicsMode(_graphicsModeIds[mode]);
+		return _graphicsManager->setGraphicsMode(_graphicsModeIds[mode], flags);
 	} else {
-		return _graphicsManager->setGraphicsMode(_graphicsModeIds[mode]);
+		return _graphicsManager->setGraphicsMode(_graphicsModeIds[mode], flags);
 	}
 }
+// ResidualVM end
 
 int OSystem_SDL::getGraphicsMode() const {
 	if (_graphicsModes.empty()) {

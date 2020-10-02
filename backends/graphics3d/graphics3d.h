@@ -39,16 +39,13 @@
  */
 class Graphics3dManager : public GraphicsManager {
 public:
-	// Methods not used by ResidualVM
+	// Following methods are not used by 3D graphics managers
 #ifdef USE_RGB_COLOR
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const {
 		Common::List<Graphics::PixelFormat> supportedFormats;
 		return supportedFormats;
 	}
 #endif
-	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL) {}
-	virtual void beginGFXTransaction() {}
-	virtual OSystem::TransactionError endGFXTransaction() { return OSystem::kTransactionSuccess; }
 	virtual void setPalette(const byte *colors, uint start, uint num) {}
 	virtual void grabPalette(byte *colors, uint start, uint num) const {}
 	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {}
@@ -60,8 +57,11 @@ public:
 	virtual void clearFocusRectangle() {}
 	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL) {}
 	virtual void setCursorPalette(const byte *colors, uint start, uint num) {}
+
+	// Stubs for windowed gfx manager calls
 	int getWindowWidth() const { return 0; }
 	int getWindowHeight() const { return 0; }
+	virtual void unlockWindowSize() {}
 };
 
 #endif

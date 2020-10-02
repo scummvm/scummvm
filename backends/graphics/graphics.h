@@ -47,7 +47,7 @@ public:
 		return noGraphicsModes;
 	};
 	virtual int getDefaultGraphicsMode() const { return 0; }
-	virtual bool setGraphicsMode(int mode) { return (mode == 0); }
+	virtual bool setGraphicsMode(int mode, uint flags = OSystem::kGfxModeNoFlags) { return (mode == 0); } // ResidualVM
 	virtual void resetGraphicsScale() {}
 	virtual int getGraphicsMode() const { return 0; }
 	virtual const OSystem::GraphicsMode *getSupportedShaders() const {
@@ -113,7 +113,6 @@ public:
 	//virtual void grabPalette(byte *colors, uint start, uint num) const = 0;
 
 	// ResidualVM specific methods:
-	virtual void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) {}
 	virtual Graphics::PixelBuffer getScreenPixelBuffer() { return Graphics::PixelBuffer(); }
 	virtual void suggestSideTextures(Graphics::Surface *left, Graphics::Surface *right) {}
 	virtual void saveScreenshot() {}
