@@ -297,11 +297,11 @@ Plugin *PluginManager::getEngineFromMetaEngine(const Plugin *plugin) {
 	} while (!found && PluginMan.loadNextPlugin());
 
 	if (enginePlugin) {
-		warning("MetaEngine: %s \t matched to \t Engine: %s", plugin->getName(), enginePlugin->getFileName());
+		debug(9, "MetaEngine: %s \t matched to \t Engine: %s", plugin->getName(), enginePlugin->getFileName());
 		return enginePlugin;
 	}
 
-	warning("MetaEngine: %s couldn't find a match for an engine plugin.", plugin->getName());
+	debug(9, "MetaEngine: %s couldn't find a match for an engine plugin.", plugin->getName());
 	return nullptr;
 }
 
@@ -326,11 +326,11 @@ Plugin *PluginManager::getMetaEngineFromEngine(const Plugin *plugin) {
 	}
 
 	if (metaEngine) {
-		warning("Engine: %s matched to MetaEngine: %s", plugin->getFileName(), metaEngine->getName());
+		debug(9, "Engine: %s matched to MetaEngine: %s", plugin->getFileName(), metaEngine->getName());
 		return metaEngine;
 	}
 
-	warning("Engine: %s couldn't find a match for an MetaEngine plugin.", plugin->getFileName());
+	debug(9, "Engine: %s couldn't find a match for an MetaEngine plugin.", plugin->getFileName());
 	return nullptr;
 }
 
@@ -366,6 +366,7 @@ void PluginManagerUncached::init() {
 				if (pName.hasSuffix(detectPluginName)) {
 					_detectionPlugin = (*p);
 					foundDetectPlugin = true;
+					debug(9, "Detection plugin found!");
 					continue;
 				}
 			}
@@ -446,7 +447,7 @@ void PluginManagerUncached::loadDetectionPlugin() {
 	bool linkMetaEngines = false;
 
 	if (_isDetectionLoaded) {
-		warning("Detection plugin is already loaded. Adding each available engines to the memory.");
+		debug(9, "Detection plugin is already loaded. Adding each available engines to the memory.");
 		linkMetaEngines = true;
 	} else {
 		if (_detectionPlugin) {
@@ -456,11 +457,11 @@ void PluginManagerUncached::loadDetectionPlugin() {
 				linkMetaEngines = true;
 				_isDetectionLoaded = true;
 			} else {
-				warning("Detection plugin was not loaded correctly.");
+				debug(9, "Detection plugin was not loaded correctly.");
 				return;
 			}
 		} else {
-			warning("Detection plugin not found.");
+			debug(9, "Detection plugin not found.");
 			return;
 		}
 	}
@@ -480,7 +481,7 @@ void PluginManagerUncached::unloadDetectionPlugin() {
 		_detectionPlugin->unloadPlugin();
 		_isDetectionLoaded = false;
 	} else {
-		warning("Detection plugin is already unloaded.");
+		debug(9, "Detection plugin is already unloaded.");
 	}
 }
 
