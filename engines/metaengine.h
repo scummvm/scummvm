@@ -94,13 +94,13 @@ struct ExtendedSavegameHeader {
 };
 
 /**
- * A meta engine is essentially a factory for Engine instances with the
+ * A meta engine static is essentially a factory for Engine instances with the
  * added ability of listing and detecting supported games.
- * Every engine "plugin" provides a hook to get an instance of a MetaEngine
- * subclass for that "engine plugin". E.g. SCUMM povides ScummMetaEngine.
+ * Every engine "plugin" provides a hook to get an instance of a MetaEngineStatic
+ * subclass for that "engine plugin". E.g. SCUMM povides ScummMetaEngineStatic.
  * This is then in turn used by the frontend code to detect games,
  * and other useful functionality. To instantiate actual Engine objects,
- * See the class MetaEngineConnect below.
+ * See the class MetaEngine below.
  */
 class MetaEngineStatic : public PluginObject {
 public:
@@ -168,11 +168,11 @@ public:
 };
 
 /**
- * A MetaEngineConnect is another factory for Engine instances, and is very
+ * A MetaEngine is another factory for Engine instances, and is very
  * similiar to meta engines. This class, however, composes of bridged functionalities
  * that can be used to connect an actual Engine with a MetaEngine.
- * Every engine "plugin" provides a hook to get an instance of MetaEngineConnector subclass
- * for that "engine plugin.". E.g. SCUMM provides a ScummMetaEngineConnect.
+ * Every engine "plugin" provides a hook to get an instance of MetaEngine subclass
+ * for that "engine plugin.". E.g. SCUMM provides a ScummMetaEngine.
  * This is then in turn used for things like instantiating engine objects, listing savefiles,
  * querying save metadata, etc.
  * Since engine plugins can be used a external runtime libraries, these can live and build inside

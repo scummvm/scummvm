@@ -166,7 +166,7 @@ struct ADExtraGuiOptionsMap {
 #define AD_EXTRA_GUI_OPTIONS_TERMINATOR { 0, { 0, 0, 0, 0 } }
 
 /**
- * A MetaEngine implementation based around the advanced detector code.
+ * A MetaEngineStatic implementation based around the advanced detector code.
  */
 class AdvancedMetaEngineStatic : public MetaEngineStatic {
 protected:
@@ -325,7 +325,7 @@ protected:
 };
 
 /**
- * A MetaEngineConnect implementation of AdvancedMetaEngine.
+ * A MetaEngine implementation of AdvancedMetaEngine.
  */
 class AdvancedMetaEngine : public MetaEngine {
 public:
