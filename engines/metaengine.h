@@ -102,9 +102,9 @@ struct ExtendedSavegameHeader {
  * and other useful functionality. To instantiate actual Engine objects,
  * See the class MetaEngineConnect below.
  */
-class MetaEngine : public PluginObject {
+class MetaEngineStatic : public PluginObject {
 public:
-	virtual ~MetaEngine() {}
+	virtual ~MetaEngineStatic() {}
 
 	/** Get the engine ID */
 	virtual const char *getEngineId() const = 0;
@@ -178,14 +178,14 @@ public:
  * Since engine plugins can be used a external runtime libraries, these can live and build inside
  * the engine, while a MetaEngine will always build into the executable to be able to detect code.
  */
-class MetaEngineConnect : public PluginObject {
+class MetaEngine : public PluginObject {
 private:
 	/**
 	 * Converts the current screen contents to a thumbnail, and saves it
 	 */
 	static void saveScreenThumbnail(Common::OutSaveFile *saveFile);
 public:
-	virtual ~MetaEngineConnect() {}
+	virtual ~MetaEngine() {}
 
 	/**
 	 * Name of the engine plugin.

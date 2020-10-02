@@ -40,7 +40,7 @@ protected:
 	const U32String _buttonLabel;
 	const bool _saveMode;
 
-	void selectChooser(const MetaEngineConnect &engine);
+	void selectChooser(const MetaEngine &engine);
 public:
 	SaveLoadChooser(const U32String &title, const U32String &buttonLabel, bool saveMode);
 	~SaveLoadChooser();

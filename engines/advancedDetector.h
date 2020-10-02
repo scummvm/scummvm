@@ -168,7 +168,7 @@ struct ADExtraGuiOptionsMap {
 /**
  * A MetaEngine implementation based around the advanced detector code.
  */
-class AdvancedMetaEngine : public MetaEngine {
+class AdvancedMetaEngineStatic : public MetaEngineStatic {
 protected:
 	/**
 	 * Pointer to an array of objects which are either ADGameDescription
@@ -246,7 +246,7 @@ protected:
 	bool _matchFullPaths;
 
 public:
-	AdvancedMetaEngine(const void *descs, uint descItemSize, const PlainGameDescriptor *gameIds, const ADExtraGuiOptionsMap *extraGuiOptions = 0);
+	AdvancedMetaEngineStatic(const void *descs, uint descItemSize, const PlainGameDescriptor *gameIds, const ADExtraGuiOptionsMap *extraGuiOptions = 0);
 
 	/**
 	 * Returns list of targets supported by the engine.
@@ -327,7 +327,7 @@ protected:
 /**
  * A MetaEngineConnect implementation of AdvancedMetaEngine.
  */
-class AdvancedMetaEngineConnect : public MetaEngineConnect {
+class AdvancedMetaEngine : public MetaEngine {
 public:
 	/**
 	 * Base createInstance for AMEC.

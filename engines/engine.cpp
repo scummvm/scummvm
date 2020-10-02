@@ -731,7 +731,7 @@ Common::Error Engine::loadGameState(int slot) {
 	Common::Error result = loadGameStream(saveFile);
 	if (result.getCode() == Common::kNoError) {
 		ExtendedSavegameHeader header;
-		if (MetaEngineConnect::readSavegameHeader(saveFile, &header))
+		if (MetaEngine::readSavegameHeader(saveFile, &header))
 			setTotalPlayTime(header.playtime);
 	}
 
@@ -757,7 +757,7 @@ Common::Error Engine::saveGameState(int slot, const Common::String &desc, bool i
 
 	Common::Error result = saveGameStream(saveFile, isAutosave);
 	if (result.getCode() == Common::kNoError) {
-		MetaEngineConnect::appendExtendedSave(saveFile, getTotalPlayTime() / 1000, desc, isAutosave);
+		MetaEngine::appendExtendedSave(saveFile, getTotalPlayTime() / 1000, desc, isAutosave);
 
 		saveFile->finalize();
 	}
@@ -865,20 +865,20 @@ EnginePlugin *Engine::getMetaEnginePlugin() const {
 
 */
 
-MetaEngine &Engine::getMetaEngine() {
+MetaEngineStatic &Engine::getMetaEngine() {
 	const Plugin *plugin = EngineMan.findPlugin(ConfMan.get("engineid"));
 	assert(plugin);
-	return plugin->get<MetaEngine>();
+	return plugin->get<MetaEngineStatic>();
 }
 
-MetaEngineConnect &Engine::getMetaEngineConnect() {
+MetaEngine &Engine::getMetaEngineConnect() {
 	const Plugin *metaEnginePlugin = EngineMan.findPlugin(ConfMan.get("engineid"));
 	assert(metaEnginePlugin);
 
 	const Plugin *enginePlugin = PluginMan.getEngineFromMetaEngine(metaEnginePlugin);
 	assert(enginePlugin);
 
-	return enginePlugin->get<MetaEngineConnect>();
+	return enginePlugin->get<MetaEngine>();
 }
 
 PauseToken::PauseToken() : _engine(nullptr) {}
