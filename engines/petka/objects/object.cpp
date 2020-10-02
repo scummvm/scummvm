@@ -215,7 +215,7 @@ void QMessageObject::processMessage(const QMessage &msg) {
 				if (r) {
 					for (uint i = 0; i < r->messages.size(); ++i) {
 						if (r->messages[i].opcode == kGoTo) {
-							g_vm->getQSystem()->getChapay()->walk(_walkX, _walkY);
+							g_vm->getQSystem()->getChapay()->walk(destX, destY);
 							break;
 						}
 					}
