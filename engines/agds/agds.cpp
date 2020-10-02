@@ -902,7 +902,7 @@ void AGDSEngine::reactivate(const Common::String &name) {
 	for(ProcessListType::iterator i = _processes.begin(); i != _processes.end(); ++i) {
 		Process &process = *i;
 		if (process.getName() == name) {
-			debug("reactivate %s %s", name.c_str());
+			debug("reactivate %s", name.c_str());
 			process.activate();
 		}
 	}
