@@ -1,5 +1,6 @@
 package org.scummvm.scummvm;
 
+import android.annotation.SuppressLint;
 import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -20,10 +21,10 @@ public class MouseHelper {
 	private boolean _srmbPressed;
 	private boolean _smmbPressed;
 
-	/**
-	 * Class initialization fails when this throws an exception.
-	 * Checking hover availability is done on static class initialization for Android 1.6 compatibility.
-	 */
+	//
+	// Class initialization fails when this throws an exception.
+	// Checking hover availability is done on static class initialization for Android 1.6 compatibility.
+	//
 	static {
 		try {
 			Class.forName("android.view.View$OnHoverListener");
@@ -100,6 +101,7 @@ public class MouseHelper {
 		}
 	}
 
+	@SuppressLint("InlinedApi")
 	public boolean onMouseEvent(MotionEvent e, boolean hover) {
 		_scummvm.pushEvent(ScummVMEvents.JE_MOUSE_MOVE, (int)e.getX(), (int)e.getY(), 0, 0, 0, 0);
 
@@ -132,6 +134,12 @@ public class MouseHelper {
 		_mmbPressed = handleButton(e, _mmbPressed, MotionEvent.BUTTON_TERTIARY, ScummVMEvents.JE_MMB_DOWN, ScummVMEvents.JE_MMB_UP);
 		_bmbPressed = handleButton(e, _bmbPressed, MotionEvent.BUTTON_BACK, ScummVMEvents.JE_BMB_DOWN, ScummVMEvents.JE_BMB_UP);
 		_fmbPressed = handleButton(e, _fmbPressed, MotionEvent.BUTTON_FORWARD, ScummVMEvents.JE_FMB_DOWN, ScummVMEvents.JE_FMB_UP);
+		// Lint warning for BUTTON_STYLUS... "
+		//  Field requires API level 23 (current min is 16): android.view.MotionEvent#BUTTON_STYLUS_PRIMARY"
+		//  Field requires API level 23 (current min is 16): android.view.MotionEvent#BUTTON_STYLUS_SECONDARY"
+		// We suppress it:
+		//
+		// https://stackoverflow.com/a/48588149
 		_srmbPressed = handleButton(e, _srmbPressed, MotionEvent.BUTTON_STYLUS_PRIMARY, ScummVMEvents.JE_RMB_DOWN, ScummVMEvents.JE_RMB_UP);
 		_smmbPressed = handleButton(e, _smmbPressed, MotionEvent.BUTTON_STYLUS_SECONDARY, ScummVMEvents.JE_MMB_DOWN, ScummVMEvents.JE_MMB_UP);
 

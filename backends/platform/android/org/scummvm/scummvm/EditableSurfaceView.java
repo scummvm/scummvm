@@ -35,6 +35,13 @@ public class EditableSurfaceView extends SurfaceView {
 		_context = context;
 	}
 
+	// Deal with LINT warning: Custom view `SurfaceView` has setOnTouchListener called on it but does not override performClick (in ScummVMActivity.java)
+	@Override
+	public boolean performClick() {
+		super.performClick();
+		return true;
+	}
+
 	@Override
 	public boolean onCheckIsTextEditor() {
 		return false;
