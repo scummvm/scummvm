@@ -33,6 +33,8 @@
 
 namespace Petka {
 
+// COMPLETED
+
 const uint kShakeTime = 30;
 const int kShakeOffset = 3;
 
@@ -44,9 +46,27 @@ VideoSystem::VideoSystem(PetkaEngine &vm) :
 }
 
 void VideoSystem::update() {
-	Interface *interface = _vm.getQSystem()->_currInterface;
+	QSystem *sys = _vm.getQSystem();
+	Interface *interface = sys->_currInterface;
 	uint32 time = g_system->getMillis();
 	if (interface) {
+		if (sys->_currInterface == sys->_mainInterface.get()) {
+			int xOff = sys->_xOffset;
+			int field6C = sys->_field6C;
+			if (xOff != field6C && ((xOff != sys->_sceneWidth - 640 && xOff < field6C ) || (xOff > 0 && xOff > field6C))) {
+				if (xOff <= field6C) {
+					xOff += 8;
+					xOff = MIN<int>(xOff, field6C);
+				} else {
+					xOff -= 8;
+					xOff = MAX<int>(xOff, field6C);
+				}
+				sys->_xOffset = CLIP(xOff, 0, sys->_sceneWidth - 640);
+			}
+			makeAllDirty();
+		}
+
+
 		for (uint i = interface->_startIndex; i < interface->_objs.size(); ++i) {
 			interface->_objs[i]->update(time - _time);
 		}
