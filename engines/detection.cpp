@@ -28,10 +28,10 @@
 #include "engines/detection.h"
 
 
-class DetectionConnect : public Detection {
+class DetectionDynamic : public Detection {
 public:
-    DetectionConnect() {}
-    ~DetectionConnect() {}
+    DetectionDynamic() {}
+    ~DetectionDynamic() {}
 
     const char *getName() const override {
         return "detection";
@@ -51,6 +51,6 @@ public:
     }
 };
 
-REGISTER_PLUGIN_DYNAMIC(DETECTION_DYNAMIC, PLUGIN_TYPE_DETECTION, DetectionConnect);
+REGISTER_PLUGIN_DYNAMIC(DETECTION_DYNAMIC, PLUGIN_TYPE_DETECTION, DetectionDynamic);
 
 #endif // !DETECTION_STATIC
