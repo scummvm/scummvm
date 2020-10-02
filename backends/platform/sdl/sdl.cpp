@@ -93,7 +93,6 @@ OSystem_SDL::OSystem_SDL()
 	_eventSource(0),
 	_eventSourceWrapper(nullptr),
 	_window(0) {
-		_gfxManagerState = {};
 }
 
 OSystem_SDL::~OSystem_SDL() {
