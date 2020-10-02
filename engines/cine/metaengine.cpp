@@ -331,7 +331,7 @@ Common::Error CineEngine::saveGameState(int slot, const Common::String &desc, bo
 }
 
 Common::String CineEngine::getSaveStateName(int slot) const {
-	return getMetaEngineConnect().getSavegameFile(slot, _targetName.c_str());
+	return getMetaEngine().getSavegameFile(slot, _targetName.c_str());
 }
 
 bool CineEngine::canLoadGameStateCurrently() {

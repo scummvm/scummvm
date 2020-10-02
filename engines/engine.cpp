@@ -531,7 +531,7 @@ void Engine::saveAutosaveIfEnabled() {
 
 		if (saveFlag) {
 			// First check for an existing savegame in the slot, and if present, if it's an autosave
-			SaveStateDescriptor desc = getMetaEngineConnect().querySaveMetaInfos(
+			SaveStateDescriptor desc = getMetaEngine().querySaveMetaInfos(
 				_targetName.c_str(), getAutosaveSlot());
 			saveFlag = desc.getSaveSlot() == -1 || desc.isAutosave();
 		}
@@ -865,13 +865,13 @@ EnginePlugin *Engine::getMetaEnginePlugin() const {
 
 */
 
-MetaEngineStatic &Engine::getMetaEngine() {
+MetaEngineStatic &Engine::getMetaEngineStatic() {
 	const Plugin *plugin = EngineMan.findPlugin(ConfMan.get("engineid"));
 	assert(plugin);
 	return plugin->get<MetaEngineStatic>();
 }
 
-MetaEngine &Engine::getMetaEngineConnect() {
+MetaEngine &Engine::getMetaEngine() {
 	const Plugin *metaEnginePlugin = EngineMan.findPlugin(ConfMan.get("engineid"));
 	assert(metaEnginePlugin);
 

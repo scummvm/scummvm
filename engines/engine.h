@@ -379,8 +379,8 @@ public:
 	 */
 	static bool shouldQuit();
 
-	static MetaEngineStatic &getMetaEngine();
-	static MetaEngine &getMetaEngineConnect();
+	static MetaEngineStatic &getMetaEngineStatic();
+	static MetaEngine &getMetaEngine();
 
 	/**
 	 * Pause the engine. This should stop any audio playback
