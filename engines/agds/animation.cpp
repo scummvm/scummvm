@@ -53,14 +53,16 @@ bool Animation::load(Common::SeekableReadStream *stream) {
 }
 
 void Animation::updatePhaseVar(AGDSEngine &engine) {
-	if (!_process.empty() || !_phaseVar.empty()) //ignore mouse cursors
-		debug("animation %s %s %d, phase var: %s", _process.c_str(), _paused? "paused": "playing", _phase, _phaseVar.c_str());
-
 	if (!_phaseVar.empty()) {
-		if (!_paused)
-			engine.setGlobal(_phaseVar, _phase);
+		if (!_paused) {
+			int phase = engine.getGlobal(_phaseVar);
+			if (phase != _phase) {
+				debug("%s: animation (%s) %d setting phase var: %s", _process.c_str(), _paused? "paused": "playing", _phase, _phaseVar.c_str());
+				engine.setGlobal(_phaseVar, _phase);
+				engine.reactivate(_process);
+			}
+		}
 	}
-	engine.reactivate(_process, true);
 }
 
 void Animation::paint(AGDSEngine &engine, Graphics::Surface &backbuffer, Common::Point dst) {

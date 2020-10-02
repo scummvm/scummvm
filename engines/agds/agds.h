@@ -230,7 +230,7 @@ public:
 		return _mouse;
 	}
 
-	void reactivate(const Common::String &name, bool runNow);
+	void reactivate(const Common::String &name);
 
 private:
 	void loadPatches(Common::SeekableReadStream *file, Database & db);

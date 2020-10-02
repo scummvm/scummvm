@@ -58,8 +58,10 @@ bool Dialog::tick() {
 		return false;
 
 	int dialog_var = _engine->getSystemVariable("dialog_var")->getInteger();
-	if (dialog_var != 0)
+	if (dialog_var != 0) {
+		debug("dialog_var = %d, skipping tick", dialog_var);
 		return false;
+	}
 
 	uint n = _dialogScript.size();
 	if (_dialogScriptPos >= n)
@@ -74,6 +76,7 @@ bool Dialog::tick() {
 	if (line.empty())
 		return true;
 
+	debug("dialog line: %s", line.c_str());
 	if (line[0] == '@') {
 		if (line[1] == '@') //comment
 			return true;
@@ -88,6 +91,7 @@ bool Dialog::tick() {
 				int value = it->_value;
 				debug("dialog value %d (0x%04x)", value, value);
 				_engine->getSystemVariable("dialog_var")->setInteger(value);
+				_engine->reactivate(_dialogProcessName);
 			} else
 				warning("invalid dialog directive: %s", line.c_str());
 		}
@@ -100,6 +104,7 @@ bool Dialog::tick() {
 
 		debug("end of dialog, running %s", process.c_str());
 		_engine->getSystemVariable("dialog_var")->setInteger(-2);
+		_engine->reactivate(_dialogProcessName);
 		return false;
 	}
 	return true;
