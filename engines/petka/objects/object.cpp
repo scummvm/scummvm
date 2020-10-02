@@ -538,7 +538,12 @@ void QObject::setPos(Common::Point p, bool) {
 }
 
 void QObject::onClick(Common::Point p) {
+	QSystem *sys = g_vm->getQSystem();
 	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
+
+	sys->getPetka()->stopWalk();
+	sys->getChapay()->stopWalk();
+
 	switch (cursor->_actionType) {
 	case kActionLook:
 		g_vm->getQSystem()->addMessage(_id, kLook, 0, 0, 0, 0, this);
