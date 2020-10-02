@@ -273,7 +273,7 @@ ConfigDialog::ConfigDialog() :
 	assert(g_engine);
 
 	const Common::String &gameDomain = ConfMan.getActiveDomainName();
-	const MetaEngineConnect &metaEngineConnect = g_engine->getMetaEngineConnect();
+	const MetaEngine &metaEngineConnect = g_engine->getMetaEngineConnect();
 
 	// GUI:  Add tab widget
 	GUI::TabWidget *tab = new GUI::TabWidget(this, "GlobalConfig.TabWidget");

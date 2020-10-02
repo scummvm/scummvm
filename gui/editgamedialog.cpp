@@ -185,7 +185,7 @@ EditGameDialog::EditGameDialog(const String &domain)
 	if (metaEnginePlugin) {
 		int tabId = tab->addTab(_("Engine"), "GameOptions_Engine");
 
-		const MetaEngine &metaEngine = metaEnginePlugin->get<MetaEngine>();
+		const MetaEngineStatic &metaEngine = metaEnginePlugin->get<MetaEngineStatic>();
 		metaEngine.registerDefaultSettings(_domain);
 		_engineOptions = metaEngine.buildEngineOptionsWidgetStatic(tab, "GameOptions_Engine.Container", _domain);
 
@@ -232,7 +232,7 @@ EditGameDialog::EditGameDialog(const String &domain)
 	//
 	Common::KeymapArray keymaps;
 	if (enginePlugin) {
-		keymaps = enginePlugin->get<MetaEngineConnect>().initKeymaps(domain.c_str());
+		keymaps = enginePlugin->get<MetaEngine>().initKeymaps(domain.c_str());
 	}
 
 	if (!keymaps.empty()) {
@@ -340,7 +340,7 @@ EditGameDialog::EditGameDialog(const String &domain)
 	// 9) The Achievements tab
 	//
 	if (enginePlugin) {
-		const MetaEngineConnect &metaEngineConnect = enginePlugin->get<MetaEngineConnect>();
+		const MetaEngine &metaEngineConnect = enginePlugin->get<MetaEngine>();
 		Common::AchievementsInfo achievementsInfo = metaEngineConnect.getAchievementsInfo(domain);
 		if (achievementsInfo.descriptions.size() > 0) {
 			tab->addTab(_("Achievements"), "GameOptions_Achievements");

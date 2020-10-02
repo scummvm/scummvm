@@ -784,7 +784,7 @@ static void listGames() {
 
 	const PluginList &plugins = EngineMan.getPlugins();
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		const MetaEngine &metaengine = (*iter)->get<MetaEngine>();
+		const MetaEngineStatic &metaengine = (*iter)->get<MetaEngineStatic>();
 
 		PlainGameList list = metaengine.getSupportedGames();
 		for (PlainGameList::const_iterator v = list.begin(); v != list.end(); ++v) {
@@ -800,7 +800,7 @@ static void listEngines() {
 
 	const PluginList &plugins = EngineMan.getPlugins();
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		const MetaEngine &metaEngine = (*iter)->get<MetaEngine>();
+		const MetaEngineStatic &metaEngine = (*iter)->get<MetaEngineStatic>();
 		printf("%-15s %s\n", metaEngine.getEngineId(), metaEngine.getName());
 	}
 }
@@ -907,10 +907,10 @@ static Common::Error listSaves(const Common::String &singleTarget) {
 			}
 		}
 
-		const MetaEngineConnect &metaEngine = enginePlugin->get<MetaEngineConnect>();
+		const MetaEngine &metaEngine = enginePlugin->get<MetaEngine>();
 		Common::String qualifiedGameId = buildQualifiedGameName(game.engineId, game.gameId);
 
-		if (!metaEngine.hasFeature(MetaEngineConnect::kSupportsListSaves)) {
+		if (!metaEngine.hasFeature(MetaEngine::kSupportsListSaves)) {
 			// If the target was specified, treat this as an error, and otherwise skip it.
 			if (!singleTarget.empty())
 				// TODO: Include more info about the target (desc, engine name, ...) ???

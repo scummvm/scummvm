@@ -103,7 +103,7 @@ void SaveLoadCloudSyncProgressDialog::handleTickle() {
 #endif
 
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
-SaveLoadChooserType getRequestedSaveLoadDialog(const MetaEngineConnect &metaEngine) {
+SaveLoadChooserType getRequestedSaveLoadDialog(const MetaEngine &metaEngine) {
 	const Common::String &userConfig = ConfMan.get("gui_saveload_chooser", Common::ConfigManager::kApplicationDomain);
 
 	// Check (and update if necessary) the theme config here. This catches
@@ -114,8 +114,8 @@ SaveLoadChooserType getRequestedSaveLoadDialog(const MetaEngineConnect &metaEngi
 	g_gui.checkScreenChange();
 
 	if (g_gui.getWidth() >= 640 && g_gui.getHeight() >= 400
-		&& metaEngine.hasFeature(MetaEngineConnect::kSavesSupportMetaInfo)
-		&& metaEngine.hasFeature(MetaEngineConnect::kSavesSupportThumbnail)
+		&& metaEngine.hasFeature(MetaEngine::kSavesSupportMetaInfo)
+		&& metaEngine.hasFeature(MetaEngine::kSavesSupportThumbnail)
 		&& userConfig.equalsIgnoreCase("grid")) {
 		// In case we are 640x400 or higher, this dialog is not in save mode,
 		// the user requested the grid dialog and the engines supports it we
@@ -182,14 +182,14 @@ void SaveLoadChooserDialog::close() {
 	Dialog::close();
 }
 
-int SaveLoadChooserDialog::run(const Common::String &target, const MetaEngineConnect *metaEngine) {
+int SaveLoadChooserDialog::run(const Common::String &target, const MetaEngine *metaEngine) {
 	_metaEngine = metaEngine;
 	_target = target;
-	_delSupport = _metaEngine->hasFeature(MetaEngineConnect::kSupportsDeleteSave);
-	_metaInfoSupport = _metaEngine->hasFeature(MetaEngineConnect::kSavesSupportMetaInfo);
-	_thumbnailSupport = _metaInfoSupport && _metaEngine->hasFeature(MetaEngineConnect::kSavesSupportThumbnail);
-	_saveDateSupport = _metaInfoSupport && _metaEngine->hasFeature(MetaEngineConnect::kSavesSupportCreationDate);
-	_playTimeSupport = _metaInfoSupport && _metaEngine->hasFeature(MetaEngineConnect::kSavesSupportPlayTime);
+	_delSupport = _metaEngine->hasFeature(MetaEngine::kSupportsDeleteSave);
+	_metaInfoSupport = _metaEngine->hasFeature(MetaEngine::kSavesSupportMetaInfo);
+	_thumbnailSupport = _metaInfoSupport && _metaEngine->hasFeature(MetaEngine::kSavesSupportThumbnail);
+	_saveDateSupport = _metaInfoSupport && _metaEngine->hasFeature(MetaEngine::kSavesSupportCreationDate);
+	_playTimeSupport = _metaInfoSupport && _metaEngine->hasFeature(MetaEngine::kSavesSupportPlayTime);
 
 	return runIntern();
 }
@@ -248,7 +248,7 @@ void SaveLoadChooserDialog::handleTickle() {
 		Common::Array<Common::String> files = CloudMan.getSyncingFiles();
 		if (!files.empty()) {
 			{
-				SaveLoadCloudSyncProgressDialog dialog(_metaEngine ? _metaEngine->hasFeature(MetaEngineConnect::kSimpleSavesNames) : false);
+				SaveLoadCloudSyncProgressDialog dialog(_metaEngine ? _metaEngine->hasFeature(MetaEngine::kSimpleSavesNames) : false);
 				CloudMan.setSyncTarget(&dialog);
 				int result = dialog.runModal();
 				if (result == kCancelSyncCmd) {
@@ -302,7 +302,7 @@ void SaveLoadChooserDialog::listSaves() {
 
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 	//if there is Cloud support, add currently synced files as "locked" saves in the list
-	if (_metaEngine->hasFeature(MetaEngineConnect::kSimpleSavesNames)) {
+	if (_metaEngine->hasFeature(MetaEngine::kSimpleSavesNames)) {
 		Common::String pattern = _target + ".###";
 		Common::Array<Common::String> files = CloudMan.getSyncingFiles(); //returns empty array if not syncing
 		for (uint32 i = 0; i < files.size(); ++i) {

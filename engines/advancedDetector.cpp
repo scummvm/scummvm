@@ -40,7 +40,7 @@
  */
 class FileMapArchive : public Common::Archive {
 public:
-	FileMapArchive(const AdvancedMetaEngine::FileMap &fileMap) : _fileMap(fileMap) {}
+	FileMapArchive(const AdvancedMetaEngineStatic::FileMap &fileMap) : _fileMap(fileMap) {}
 
 	bool hasFile(const Common::String &name) const override {
 		return _fileMap.contains(name);
@@ -48,7 +48,7 @@ public:
 
 	int listMembers(Common::ArchiveMemberList &list) const override {
 		int files = 0;
-		for (AdvancedMetaEngine::FileMap::const_iterator it = _fileMap.begin(); it != _fileMap.end(); ++it) {
+		for (AdvancedMetaEngineStatic::FileMap::const_iterator it = _fileMap.begin(); it != _fileMap.end(); ++it) {
 			list.push_back(Common::ArchiveMemberPtr(new Common::FSNode(it->_value)));
 			++files;
 		}
@@ -57,7 +57,7 @@ public:
 	}
 
 	const Common::ArchiveMemberPtr getMember(const Common::String &name) const override {
-		AdvancedMetaEngine::FileMap::const_iterator it = _fileMap.find(name);
+		AdvancedMetaEngineStatic::FileMap::const_iterator it = _fileMap.find(name);
 		if (it == _fileMap.end()) {
 			return Common::ArchiveMemberPtr();
 		}
@@ -71,7 +71,7 @@ public:
 	}
 
 private:
-	const AdvancedMetaEngine::FileMap &_fileMap;
+	const AdvancedMetaEngineStatic::FileMap &_fileMap;
 };
 
 static Common::String sanitizeName(const char *name) {
@@ -120,7 +120,7 @@ static Common::String generatePreferredTarget(const ADGameDescription *desc) {
 	return res;
 }
 
-DetectedGame AdvancedMetaEngine::toDetectedGame(const ADDetectedGame &adGame) const {
+DetectedGame AdvancedMetaEngineStatic::toDetectedGame(const ADDetectedGame &adGame) const {
 	const ADGameDescription *desc = adGame.desc;
 
 	const char *title;
@@ -186,7 +186,7 @@ bool cleanupPirated(ADDetectedGames &matched) {
 }
 
 
-DetectedGames AdvancedMetaEngine::detectGames(const Common::FSList &fslist) const {
+DetectedGames AdvancedMetaEngineStatic::detectGames(const Common::FSList &fslist) const {
 	FileMap allFiles;
 
 	if (fslist.empty())
@@ -232,7 +232,7 @@ DetectedGames AdvancedMetaEngine::detectGames(const Common::FSList &fslist) cons
 	return detectedGames;
 }
 
-const ExtraGuiOptions AdvancedMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+const ExtraGuiOptions AdvancedMetaEngineStatic::getExtraGuiOptions(const Common::String &target) const {
 	if (!_extraGuiOptions)
 		return ExtraGuiOptions();
 
@@ -260,7 +260,7 @@ const ExtraGuiOptions AdvancedMetaEngine::getExtraGuiOptions(const Common::Strin
 	return options;
 }
 
-Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
+Common::Error AdvancedMetaEngineStatic::createInstance(OSystem *syst, Engine **engine) const {
 	assert(engine);
 
 	Common::Language language = Common::UNK_LANG;
@@ -359,7 +359,7 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 
 	if (plugin) {
 		// Call child class's createInstanceMethod.
-		if (plugin->get<AdvancedMetaEngineConnect>().createInstance(syst, engine, agdDesc.desc)) {
+		if (plugin->get<AdvancedMetaEngine>().createInstance(syst, engine, agdDesc.desc)) {
 			return Common::Error(Common::kNoError);
 		}
 	}
@@ -367,7 +367,7 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 	return Common::Error(Common::kNoGameDataFoundError);
 }
 
-void AdvancedMetaEngine::composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth, const Common::String &parentName) const {
+void AdvancedMetaEngineStatic::composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth, const Common::String &parentName) const {
 	if (depth <= 0)
 		return;
 
@@ -407,7 +407,7 @@ void AdvancedMetaEngine::composeFileHashMap(FileMap &allFiles, const Common::FSL
 	}
 }
 
-bool AdvancedMetaEngine::getFileProperties(const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps) const {
+bool AdvancedMetaEngineStatic::getFileProperties(const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps) const {
 	// FIXME/TODO: We don't handle the case that a file is listed as a regular
 	// file and as one with resource fork.
 
@@ -439,7 +439,7 @@ bool AdvancedMetaEngine::getFileProperties(const FileMap &allFiles, const ADGame
 	return true;
 }
 
-bool AdvancedMetaEngineConnect::getFilePropertiesExtern(uint md5Bytes, const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps) const {
+bool AdvancedMetaEngine::getFilePropertiesExtern(uint md5Bytes, const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps) const {
 	// FIXME/TODO: We don't handle the case that a file is listed as a regular
 	// file and as one with resource fork.
 
@@ -471,7 +471,7 @@ bool AdvancedMetaEngineConnect::getFilePropertiesExtern(uint md5Bytes, const Fil
 	return true;
 }
 
-ADDetectedGames AdvancedMetaEngine::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const {
+ADDetectedGames AdvancedMetaEngineStatic::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const {
 	FilePropertiesMap filesProps;
 	ADDetectedGames matched;
 
@@ -596,7 +596,7 @@ ADDetectedGames AdvancedMetaEngine::detectGame(const Common::FSNode &parent, con
 	return matched;
 }
 
-ADDetectedGame AdvancedMetaEngine::detectGameFilebased(const FileMap &allFiles, const ADFileBasedFallback *fileBasedFallback) const {
+ADDetectedGame AdvancedMetaEngineStatic::detectGameFilebased(const FileMap &allFiles, const ADFileBasedFallback *fileBasedFallback) const {
 	const ADFileBasedFallback *ptr;
 	const char* const* filenames;
 
@@ -644,11 +644,11 @@ ADDetectedGame AdvancedMetaEngine::detectGameFilebased(const FileMap &allFiles, 
 	return result;
 }
 
-PlainGameList AdvancedMetaEngine::getSupportedGames() const {
+PlainGameList AdvancedMetaEngineStatic::getSupportedGames() const {
 	return PlainGameList(_gameIds);
 }
 
-PlainGameDescriptor AdvancedMetaEngine::findGame(const char *gameId) const {
+PlainGameDescriptor AdvancedMetaEngineStatic::findGame(const char *gameId) const {
 	// First search the list of supported gameids for a match.
 	const PlainGameDescriptor *g = findPlainGameDescriptor(gameId, _gameIds);
 	if (g)
@@ -658,7 +658,7 @@ PlainGameDescriptor AdvancedMetaEngine::findGame(const char *gameId) const {
 	return PlainGameDescriptor::empty();
 }
 
-AdvancedMetaEngine::AdvancedMetaEngine(const void *descs, uint descItemSize, const PlainGameDescriptor *gameIds, const ADExtraGuiOptionsMap *extraGuiOptions)
+AdvancedMetaEngineStatic::AdvancedMetaEngineStatic(const void *descs, uint descItemSize, const PlainGameDescriptor *gameIds, const ADExtraGuiOptionsMap *extraGuiOptions)
 	: _gameDescriptors((const byte *)descs), _descItemSize(descItemSize), _gameIds(gameIds),
 	  _extraGuiOptions(extraGuiOptions) {
 
@@ -670,7 +670,7 @@ AdvancedMetaEngine::AdvancedMetaEngine(const void *descs, uint descItemSize, con
 	_matchFullPaths = false;
 }
 
-void AdvancedMetaEngine::initSubSystems(const ADGameDescription *gameDesc) const {
+void AdvancedMetaEngineStatic::initSubSystems(const ADGameDescription *gameDesc) const {
 #ifdef ENABLE_EVENTRECORDER
 	if (gameDesc) {
 		g_eventRec.processGameDescription(gameDesc);
@@ -678,12 +678,12 @@ void AdvancedMetaEngine::initSubSystems(const ADGameDescription *gameDesc) const
 #endif
 }
 
-Common::Error AdvancedMetaEngineConnect::createInstance(OSystem *syst, Engine **engine) const {
+Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
 	PluginList pl = PluginMan.getPlugins(PLUGIN_TYPE_ENGINE);
 	if (pl.size() == 1) {
 		Plugin *metaEnginePlugin = PluginMan.getMetaEngineFromEngine(pl[0]);
 		if (metaEnginePlugin) {
-			return metaEnginePlugin->get<AdvancedMetaEngine>().createInstance(syst, engine);
+			return metaEnginePlugin->get<AdvancedMetaEngineStatic>().createInstance(syst, engine);
 		}
 	}
 

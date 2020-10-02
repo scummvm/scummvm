@@ -39,7 +39,7 @@ SaveLoadChooser::~SaveLoadChooser() {
 	_impl = nullptr;
 }
 
-void SaveLoadChooser::selectChooser(const MetaEngineConnect &engine) {
+void SaveLoadChooser::selectChooser(const MetaEngine &engine) {
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 	const SaveLoadChooserType requestedType = getRequestedSaveLoadDialog(engine);
 	if (!_impl || _impl->getType() != requestedType) {
@@ -94,7 +94,7 @@ int SaveLoadChooser::runModalWithCurrentTarget() {
 int SaveLoadChooser::runModalWithPluginAndTarget(const Plugin *plugin, const String &target) {
 	assert(plugin->getType() == PLUGIN_TYPE_ENGINE);
 
-	selectChooser(plugin->get<MetaEngineConnect>());
+	selectChooser(plugin->get<MetaEngine>());
 	if (!_impl)
 		return -1;
 
@@ -109,10 +109,10 @@ int SaveLoadChooser::runModalWithPluginAndTarget(const Plugin *plugin, const Str
 
 	int ret;
 	do {
-		ret = _impl->run(target, &plugin->get<MetaEngineConnect>());
+		ret = _impl->run(target, &plugin->get<MetaEngine>());
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 		if (ret == kSwitchSaveLoadDialog) {
-			selectChooser(plugin->get<MetaEngineConnect>());
+			selectChooser(plugin->get<MetaEngine>());
 		}
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
 	} while (ret < -1);
