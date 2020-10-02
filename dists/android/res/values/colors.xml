@@ -5,10 +5,10 @@
 
 	<!--   a darker variant of the primary color, used for
            the status bar (on Android 5.0+) and contextual app bars -->
-	<color name="colorPrimaryDark">#FFCC4400</color>
+	<!-- <color name="colorPrimaryDark">#FFCC4400</color> -->
 
 	<!--   a secondary color for controls like checkboxes and text fields -->
-	<color name="colorAccent">#FFCC5500</color>
+	<!-- <color name="colorAccent">#FFCC5500</color> -->
 
     <color name="colorBackground">#FFCC6600</color>
 </resources>

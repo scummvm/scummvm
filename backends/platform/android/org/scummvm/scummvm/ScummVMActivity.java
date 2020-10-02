@@ -248,7 +248,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		setContentView(R.layout.main);
 		takeKeyEvents(true);
 
-		SurfaceView main_surface = findViewById(R.id.main_surface);
+		EditableSurfaceView main_surface = findViewById(R.id.main_surface);
 
 		main_surface.requestFocus();
 

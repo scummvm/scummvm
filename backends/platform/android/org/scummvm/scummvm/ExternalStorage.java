@@ -73,7 +73,7 @@ public class ExternalStorage {
 		// These are roughly in order such that the earlier ones, if they exist, are more sure
 		// to be removable storage than the later ones.
 		"/mnt/Removable/MicroSD",
-		"/storage/removable/sdcard1", // !< Sony Xperia Z1
+		"/storage/removable/" + SD_CARD + "1", // !< Sony Xperia Z1
 		"/Removable/MicroSD", // Asus ZenPad C
 		"/removable/microsd",
 		"/external_sd", // Samsung
@@ -81,25 +81,25 @@ public class ExternalStorage {
 		"/storage/extSdCard", // later Samsung
 		"/storage/extsdcard", // Main filesystem is case-sensitive; FAT isn't.
 		"/mnt/extsd", // some Chinese tablets, e.g. Zeki
-		"/storage/sdcard1", // If this exists it's more likely than sdcard0 to be removable.
+		"/storage/" + SD_CARD + "1", // If this exists it's more likely than sdcard0 to be removable.
 		"/mnt/extSdCard",
-		"/mnt/sdcard/external_sd",
+		"/mnt/" + SD_CARD + "/external_sd",
 		"/mnt/external_sd",
 		"/storage/external_SD",
 		"/storage/ext_sd", // HTC One Max
-		"/mnt/sdcard/_ExternalSD",
-		"/mnt/sdcard-ext",
+		"/mnt/" + SD_CARD + "/_ExternalSD",
+		"/mnt/" + SD_CARD + "-ext",
 
-		"/sdcard2", // HTC One M8s
-		"/sdcard1", // Sony Xperia Z
-		"/mnt/media_rw/sdcard1",   // 4.4.2 on CyanogenMod S3
-		"/mnt/sdcard", // This can be built-in storage (non-removable).
-		"/sdcard",
-		"/storage/sdcard0",
+		"/" + SD_CARD + "2", // HTC One M8s
+		"/" + SD_CARD + "1", // Sony Xperia Z
+		"/mnt/media_rw/" + SD_CARD + "1",   // 4.4.2 on CyanogenMod S3
+		"/mnt/" + SD_CARD, // This can be built-in storage (non-removable).
+		"/" + SD_CARD,
+		"/storage/" + SD_CARD +"0",
 		"/emmc",
 		"/mnt/emmc",
-		"/sdcard/sd",
-		"/mnt/sdcard/bpemmctest",
+		"/" + SD_CARD + "/sd",
+		"/mnt/" + SD_CARD + "/bpemmctest",
 		"/mnt/external1",
 		"/data/sdext4",
 		"/data/sdext3",
