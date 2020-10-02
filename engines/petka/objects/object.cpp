@@ -223,13 +223,17 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			}
 			break;
 		}
-		case kWalkVich:
-			if (msg.arg1 == 0xffff || msg.arg2 == -1) {
-				g_vm->getQSystem()->getChapay()->walk(msg.arg1, msg.arg2);
-			} else if (_walkX != -1) {
-				g_vm->getQSystem()->getChapay()->walk(_walkX, _walkY);
+		case kWalkVich: {
+			int destX = msg.arg1;
+			int destY = msg.arg2;
+			if (destX == -1 || destY  == -1) {
+				destX = _walkX;
+				destY = _walkY;
 			}
+			if (destX != -1)
+				g_vm->getQSystem()->getChapay()->walk(destX, destY);
 			break;
+		}
 		case kDescription: {
 			Common::ScopedPtr<Common::SeekableReadStream> invStream(g_vm->openFile("invntr.txt", true));
 			if (invStream) {
