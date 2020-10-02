@@ -116,7 +116,7 @@ void QObjectPetka::walk(int x, int y) {
 	}
 
 
-	if (currPos.sqrDist(walkPos) >= 25 * 25) {
+	if (currPos.sqrDist(walkPos) >= 25) {
 		_walk->init(currPos, walkPos);
 		_destX = x;
 		_destY = y;
