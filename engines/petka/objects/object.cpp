@@ -189,7 +189,7 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			Common::Point p;
 			p.x = (msg.arg1 == 0xffff ? _walkX : msg.arg1);
 			p.y = (msg.arg2 == -1 ? _walkY : msg.arg2);
-			g_vm->getQSystem()->getPetka()->setPos(p, false);
+			g_vm->getQSystem()->getChapay()->setPos(p, false);
 			break;
 		}
 		case kWalk:
