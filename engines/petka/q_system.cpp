@@ -43,7 +43,7 @@ namespace Petka {
 
 QSystem::QSystem(PetkaEngine &vm)
 	: _vm(vm), _mainInterface(nullptr), _currInterface(nullptr), _prevInterface(nullptr),
-	_totalInit(false), _sceneWidth(640), _room(nullptr) {}
+	_totalInit(false), _sceneWidth(640), _room(nullptr), _xOffset(0), _reqOffset(0) {}
 
 QSystem::~QSystem() {
 	for (uint i = 0; i < _allObjects.size(); ++i) {

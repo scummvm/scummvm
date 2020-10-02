@@ -137,7 +137,7 @@ void QObjectBG::setEntrance(const Common::String &name) {
 		sys->getChapay()->setPos(Common::Point(entrance->_walkX, entrance->_walkY - 2), false);
 
 		sys->_xOffset = CLIP<int32>(entrance->_walkX - 320, 0, sys->_sceneWidth - 640);
-		sys->_field6C = sys->_xOffset;
+		sys->_reqOffset = sys->_xOffset;
 	}
 	g_vm->videoSystem()->makeAllDirty();
 }

@@ -52,14 +52,14 @@ void VideoSystem::update() {
 	if (interface) {
 		if (sys->_currInterface == sys->_mainInterface.get()) {
 			int xOff = sys->_xOffset;
-			int field6C = sys->_field6C;
-			if (xOff != field6C && ((xOff != sys->_sceneWidth - 640 && xOff < field6C ) || (xOff > 0 && xOff > field6C))) {
-				if (xOff <= field6C) {
+			int reqOffset = sys->_reqOffset;
+			if (xOff != reqOffset && ((xOff != sys->_sceneWidth - 640 && xOff < reqOffset) || (xOff > 0 && xOff > reqOffset))) {
+				if (xOff <= reqOffset) {
 					xOff += 8;
-					xOff = MIN<int>(xOff, field6C);
+					xOff = MIN<int>(xOff, reqOffset);
 				} else {
 					xOff -= 8;
-					xOff = MAX<int>(xOff, field6C);
+					xOff = MAX<int>(xOff, reqOffset);
 				}
 				sys->_xOffset = CLIP(xOff, 0, sys->_sceneWidth - 640);
 			}
