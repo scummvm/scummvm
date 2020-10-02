@@ -46,6 +46,7 @@ Common::Error Adrift::readSaveData(Common::SeekableReadStream *rs) {
 
 Common::Error Adrift::writeGameData(Common::WriteStream *ws) {
 	SaveSerializer ser((sc_gameref_t)gsc_game, if_write_saved_game, ws);
+	ser.save();
 	return Common::kNoError;
 }
 
