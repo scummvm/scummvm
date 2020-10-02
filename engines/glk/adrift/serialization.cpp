@@ -188,10 +188,6 @@ void SaveSerializer::flush(sc_bool is_final) {
 }
 
 void SaveSerializer::writeChar(sc_char character) {
-	// Validate the buffer hasn't exceeded the maximum allowable size
-	if (_buffer.size() == BUFFER_SIZE)
-		sc_error("Ran out of serialization buffer");
-
 	// Add to the buffer
 	_buffer.writeByte(character);
 }
