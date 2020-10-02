@@ -39,10 +39,9 @@ QObjectPetka::QObjectPetka() {
 	_reaction = nullptr;
 	_heroReaction = nullptr;
 	_sender = nullptr;
-	_isPetka = true;
 	_isWalking = false;
 	_x = 574;
-	_y = 44;
+	_y = 444;
 	_z = 200;
 	// _surfId  = -5;
 	_surfH = 0;
@@ -75,7 +74,7 @@ void QObjectPetka::processMessage(const QMessage &arg) {
 		msg.arg2 = 1;
 	}
 	if (msg.opcode == kSet || msg.opcode == kPlay) {
-		_field7C = msg.arg2 == _imageId || msg.opcode == kPlay;
+		_field7C = msg.arg1 == _imageId || msg.opcode == kPlay;
 	}
 	if (msg.opcode != kWalk) {
 		if (msg.opcode == kWalked && _heroReaction) {
@@ -102,38 +101,40 @@ void QObjectPetka::initSurface() {
 
 void QObjectPetka::walk(int x, int y) {
 	Common::Point walkPos(x, y);
-	if (_isShown) {
-		Common::Point currPos;
-		if (_isWalking) {
-			currPos = _walk->currPos();
-		} else {
-			currPos.x = _x_;
-			currPos.y = _y_;
-		}
+	if (!_isShown) {
+		setPos(walkPos, false);
+		return;
+	}
 
 
-		if (currPos.sqrDist(walkPos) >= 25 * 25) {
-			_walk->init(currPos, walkPos);
-			_destX = x;
-			_destY = y;
-			_resourceId = _imageId + _walk->getSpriteId() + 10;
-			_isWalking = true;
-			_animate = true;
-
-			initSurface();
-			FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
-			flc->setFrame(1);
-
-			sub_408940();
-
-			g_vm->videoSystem()->makeAllDirty();
-
-			_field7C = 0;
-			_time = 0;
-			_holdMessages = true;
-		}
+	Common::Point currPos;
+	if (_isWalking) {
+		currPos = _walk->currPos();
 	} else {
-		setPos(Common::Point(x, y), false);
+		currPos.x = _x_;
+		currPos.y = _y_;
+	}
+
+
+	if (currPos.sqrDist(walkPos) >= 25 * 25) {
+		_walk->init(currPos, walkPos);
+		_destX = x;
+		_destY = y;
+		_resourceId = _imageId + _walk->getSpriteId() + 10;
+		_isWalking = true;
+		_animate = true;
+
+		initSurface();
+		FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+		flc->setFrame(1);
+
+		sub_408940();
+
+		g_vm->videoSystem()->makeAllDirty();
+
+		_field7C = 0;
+		_time = 0;
+		_holdMessages = true;
 	}
 }
 
@@ -160,7 +161,7 @@ void QObjectPetka::draw() {
 
 	Common::Rect srcRect(0, 0, conv->w, conv->h);
 	Common::Rect dstRect(0, 0, _surfW, _surfH);
-	dstRect.translate(_x, _y);
+	dstRect.translate(_x - g_vm->getQSystem()->_xOffset, _y);
 
 	g_vm->videoSystem()->transBlitFrom(*conv, srcRect, dstRect, flc->getTransColor(conv->format));
 	conv->free();
@@ -168,6 +169,12 @@ void QObjectPetka::draw() {
 }
 
 void QObjectPetka::setPos(Common::Point p, bool) {
+	QSystem *sys = g_vm->getQSystem();
+
+	int xOff = sys->_xOffset;
+	Common::Rect dirty(_x - xOff, _y, _surfW + _x - xOff, _surfH + _y);
+	g_vm->videoSystem()->addDirtyRect(dirty);
+
 	p.y = MIN<int16>(p.y, 480);
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
 
@@ -182,7 +189,9 @@ void QObjectPetka::setPos(Common::Point p, bool) {
 	_x = p.x - _surfW / 2;
 	_y = p.y - _surfH;
 
-	g_vm->videoSystem()->makeAllDirty();
+	recalcOffset();
+
+	g_vm->videoSystem()->addDirtyRect(Common::Rect(_x - xOff, _y, _surfW + _x - xOff, _surfH + _y));
 }
 
 double QObjectPetka::calcPerspective(int y) {
@@ -372,7 +381,8 @@ void QObjectPetka::sub_408940() {
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
 	QSystem *sys = g_vm->getQSystem();
 
-	Common::Rect dirty(_x - sys->_xOffset, _y, _surfW + _x - sys->_xOffset, _surfH + _y);
+	int xOff = sys->_xOffset;
+	Common::Rect dirty(_x - xOff, _y, _surfW + _x - xOff, _surfH + _y);
 	g_vm->videoSystem()->addDirtyRect(dirty);
 
 	Common::Point currPos = _walk->currPos();
@@ -384,18 +394,28 @@ void QObjectPetka::sub_408940() {
 	_x = p.x;
 	_y = p.y;
 
-	Common::Point curr = _walk->currPos();
-	_x_ = curr.x;
-	_y_ = curr.y;
+	_x_ = currPos.x;
+	_y_ = currPos.y;
 
-	// todo
+	recalcOffset();
+
+	g_vm->videoSystem()->addDirtyRect(Common::Rect(_x - xOff, _y, _surfW + _x - xOff, _surfH + _y));
+}
+
+void QObjectPetka::recalcOffset() {
+	QSystem *sys = g_vm->getQSystem();
+	int xOff = sys->_xOffset;
+
+	if (_x_ < xOff + 160 || _x_ > xOff + 480) {
+		sys->_reqOffset = _x_ - 320;
+	}
+	sys->_reqOffset = CLIP<int>(sys->_reqOffset, 0, sys->_sceneWidth - 640);
 }
 
 QObjectChapayev::QObjectChapayev() {
 	_x = 477;
 	_y = 350;
 	// _surfId = -6;
-	_isPetka = false;
 }
 
 }

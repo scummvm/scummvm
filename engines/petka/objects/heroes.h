@@ -51,6 +51,9 @@ public:
 
 	void sub_408940();
 
+private:
+	virtual void recalcOffset();
+
 public:
 	int _field7C;
 	int _surfW;
@@ -64,7 +67,6 @@ public:
 	int _destX;
 	int _destY;
 	bool _isWalking;
-	bool _isPetka;
 	QReaction *_heroReaction;
 	QMessageObject *_sender;
 	int _fieldB4;
@@ -73,6 +75,8 @@ public:
 class QObjectChapayev : public QObjectPetka {
 public:
 	QObjectChapayev();
+
+	void recalcOffset() override {}
 
 };
 
