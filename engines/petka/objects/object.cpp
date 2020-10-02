@@ -145,7 +145,7 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			g_vm->getQSystem()->getStar()->_isActive = msg.arg1;
 			break;
 		case kShow:
-			show(true);
+			show(msg.arg1);
 			break;
 		case kShake:
 			g_vm->videoSystem()->setShake(msg.arg1);
