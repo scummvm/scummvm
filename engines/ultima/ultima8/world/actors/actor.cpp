@@ -21,45 +21,46 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
-#include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/kernel/delay_process.h"
+#include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/usecode/uc_list.h"
-#include "ultima/ultima8/world/world.h"
-#include "ultima/ultima8/world/actors/actor_anim_process.h"
-#include "ultima/ultima8/world/actors/animation_tracker.h"
-#include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
-#include "ultima/ultima8/world/actors/anim_action.h"
 #include "ultima/ultima8/graphics/shape_info.h"
-#include "ultima/ultima8/world/actors/pathfinder.h"
+#include "ultima/ultima8/graphics/shape.h"
+#include "ultima/ultima8/world/actors/actor.h"
+#include "ultima/ultima8/world/actors/actor_anim_process.h"
+#include "ultima/ultima8/world/actors/animation_tracker.h"
+#include "ultima/ultima8/world/actors/anim_action.h"
 #include "ultima/ultima8/world/actors/animation.h"
 #include "ultima/ultima8/world/actors/npc_dat.h"
-#include "ultima/ultima8/kernel/delay_process.h"
-#include "ultima/ultima8/kernel/core_app.h"
+#include "ultima/ultima8/world/actors/pathfinder.h"
 #include "ultima/ultima8/world/actors/resurrection_process.h"
-#include "ultima/ultima8/world/destroy_item_process.h"
 #include "ultima/ultima8/world/actors/clear_feign_death_process.h"
 #include "ultima/ultima8/world/actors/pathfinder_process.h"
-#include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/world/actors/loiter_process.h"
 #include "ultima/ultima8/world/actors/guard_process.h"
 #include "ultima/ultima8/world/actors/combat_process.h"
+#include "ultima/ultima8/world/actors/pace_process.h"
 #include "ultima/ultima8/world/actors/surrender_process.h"
-#include "ultima/ultima8/audio/audio_process.h"
+#include "ultima/ultima8/world/world.h"
+#include "ultima/ultima8/world/current_map.h"
+#include "ultima/ultima8/world/destroy_item_process.h"
 #include "ultima/ultima8/world/sprite_process.h"
 #include "ultima/ultima8/world/target_reticle_process.h"
 #include "ultima/ultima8/world/item_selection_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/loop_script.h"
 #include "ultima/ultima8/world/fire_type.h"
+#include "ultima/ultima8/audio/audio_process.h"
+#include "ultima/ultima8/audio/music_process.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -659,8 +660,7 @@ uint16 Actor::setActivityCru(int activity) {
 	case 1: // stand
 		return doAnim(Animation::stand, dir_current);
 	case 3: // pace
-		perr << "Actor::setActivityCru TODO: Implement new PaceProcess(this);" << Std::endl;
-		return Kernel::get_instance()->addProcess(new LoiterProcess(this));
+		return Kernel::get_instance()->addProcess(new PaceProcess(this));
 	case 2: // loiter
 		Kernel::get_instance()->addProcess(new LoiterProcess(this));
 		return Kernel::get_instance()->addProcess(new DelayProcess(1));
