@@ -2401,7 +2401,6 @@ void GlobalOptionsDialog::apply() {
 		ConfMan.set("gui_language", newLang);
 		newCharset = TransMan.getCurrentCharset();
 		isRebuildNeeded = true;
-		g_gui.setLanguageRTL();
 	}
 
 	bool guiUseGameLanguage = _guiLanguageUseGameLanguageCheckbox->getState();
