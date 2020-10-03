@@ -23,7 +23,7 @@
 #ifndef FULLPIPE_ANIHANDLER_H
 #define FULLPIPE_ANIHANDLER_H
 
-namespace Fullpipe {
+namespace NGI {
 
 class ExCommand2;
 class Movement;
@@ -113,6 +113,6 @@ public:
 	int getNumMovements(int objectId, int idx1, int idx2);
 };
 
-} // End of namespace Fullpipe
+} // End of namespace NGI
 
 #endif /* FULLPIPE_ANIHANDLER_H */

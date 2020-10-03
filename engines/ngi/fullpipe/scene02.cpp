@@ -35,7 +35,7 @@
 #include "ngi/floaters.h"
 
 
-namespace Fullpipe {
+namespace NGI {
 
 void scene02_initScene(Scene *sc) {
 	g_vars->scene02_guvTheDrawer = sc->getStaticANIObject1ById(ANI_DADAYASHIK, -1);
@@ -139,4 +139,4 @@ int sceneHandler02(ExCommand *ex) {
 	return res;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

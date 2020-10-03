@@ -29,7 +29,7 @@
 #include "ngi/modal.h"
 #include "ngi/statics.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 int sceneIntro_updateCursor() {
 	g_fp->_cursorId = 0;
@@ -107,4 +107,4 @@ int sceneHandlerIntro(ExCommand *ex) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

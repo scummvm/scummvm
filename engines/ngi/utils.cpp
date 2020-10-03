@@ -32,7 +32,7 @@
 #include "ngi/messages.h"
 #include "ngi/interaction.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 bool CObject::loadFile(const Common::String &fname) {
 	Common::File file;
@@ -569,4 +569,4 @@ Common::String FullpipeEngine::gameIdToStr(uint16 id) {
 	return Common::String::format("%d", id);
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

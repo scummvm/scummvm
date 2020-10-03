@@ -35,7 +35,7 @@
 
 #define DBG 0
 
-namespace Fullpipe {
+namespace NGI {
 
 struct Bat {
 	StaticANIObject *ani;
@@ -703,4 +703,4 @@ int sceneHandler27(ExCommand *cmd) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

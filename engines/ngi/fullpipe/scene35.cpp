@@ -35,7 +35,7 @@
 
 #include "ngi/floaters.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 void scene35_initScene(Scene *sc) {
 	g_vars->scene35_hose = sc->getStaticANIObject1ById(ANI_HOSE, -1);
@@ -265,4 +265,4 @@ int sceneHandler35(ExCommand *cmd) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

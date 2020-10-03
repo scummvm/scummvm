@@ -42,7 +42,7 @@ namespace Audio {
 class SoundHandle;
 }
 
-namespace Fullpipe {
+namespace NGI {
 
 enum FullpipeGameFeatures {
 };
@@ -383,6 +383,6 @@ public:
 extern FullpipeEngine *g_fp;
 extern Vars *g_vars;
 
-} // End of namespace Fullpipe
+} // End of namespace NGI
 
 #endif /* FULLPIPE_FULLPIPE_H */

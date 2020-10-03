@@ -34,7 +34,7 @@
 #include "ngi/behavior.h"
 
 
-namespace Fullpipe {
+namespace NGI {
 
 void scene38_setBottleState(Scene *sc) {
 	ExCommand *ex = sc->getMessageQueueById(QU_SC38_SHOWBOTTLE_ONTABLE)->getExCommandByIndex(0);
@@ -409,4 +409,4 @@ int sceneHandler38(ExCommand *cmd) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

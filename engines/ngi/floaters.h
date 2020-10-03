@@ -26,7 +26,7 @@
 #include "common/array.h"
 #include "common/ptr.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 class StaticANIObject;
 class Scene;
@@ -71,6 +71,6 @@ public:
 	void stopAll();
 };
 
-} // End of namespace Fullpipe
+} // End of namespace NGI
 
 #endif /* FULLPIPE_FLOATERS_H */

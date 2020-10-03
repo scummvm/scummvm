@@ -27,7 +27,7 @@
 #include "ngi/statics.h"
 #include "ngi/motion.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 int handleObjectInteraction(StaticANIObject *subject, GameObject *object, int invId) {
 	return getGameLoaderInteractionController()->handleInteraction(subject, object, invId);
@@ -549,4 +549,4 @@ bool EntranceInfo::load(MfcArchive &file) {
 	return true;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

@@ -37,7 +37,7 @@
 
 #include "audio/mixer.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 static const int scene04_speakerPhases[] = {
 	0, 1,  2,  3, -1, -1,
@@ -1644,4 +1644,4 @@ int sceneHandler04(ExCommand *ex) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

@@ -27,7 +27,7 @@
 #include "ngi/statics.h"
 #include "ngi/messages.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 BehaviorManager::BehaviorManager() {
 	_scene = 0;
@@ -350,4 +350,4 @@ BehaviorMove::BehaviorMove(GameVar *subvar, Scene *sc, int *delay) {
 		_flags |= 2;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

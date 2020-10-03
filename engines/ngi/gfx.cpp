@@ -32,7 +32,7 @@
 #include "common/memstream.h"
 #include "graphics/transparent_surface.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 Background::Background() {
 	_x = 0;
@@ -1207,4 +1207,4 @@ void FullpipeEngine::sceneFade(Scene *sc, bool direction) {
 	}
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

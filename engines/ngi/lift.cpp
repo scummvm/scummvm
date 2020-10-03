@@ -32,7 +32,7 @@
 #include "ngi/gameloader.h"
 #include "ngi/motion.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 int FullpipeEngine::lift_getButtonIdP(int objid) {
 	switch (objid) {
@@ -518,4 +518,4 @@ void FullpipeEngine::lift_setButtonStatics(Scene *sc, int buttonId) {
 }
 
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

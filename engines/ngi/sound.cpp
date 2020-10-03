@@ -36,7 +36,7 @@
 #include "audio/decoders/vorbis.h"
 #include "audio/decoders/wave.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 bool SoundList::load(MfcArchive &file, const Common::String &fname) {
 	debugC(5, kDebugLoading, "SoundList::load()");
@@ -529,4 +529,4 @@ void FullpipeEngine::setMusicVolume(int vol) {
 	syncSoundSettings();
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

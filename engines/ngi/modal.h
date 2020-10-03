@@ -25,7 +25,7 @@
 
 #include "video/avi_decoder.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 class PictureObject;
 class Picture;
@@ -349,6 +349,6 @@ class ModalDemo : public BaseModalObject {
 };
 
 
-} // End of namespace Fullpipe
+} // End of namespace NGI
 
 #endif /* FULLPIPE_MODAL_H */

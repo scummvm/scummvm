@@ -31,7 +31,7 @@
 
 #include "ngi/constants.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 void global_messageHandler_KickStucco() {
 	Movement *mov = g_fp->_aniMan->getMovementById(MV_MAN_HMRKICK);
@@ -809,4 +809,4 @@ int MovGraph::messageHandler(ExCommand *cmd) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

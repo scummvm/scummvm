@@ -32,7 +32,7 @@
 #include "ngi/messages.h"
 #include "ngi/behavior.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 void scene07_initScene(Scene *sc) {
 	g_vars->scene07_lukeAnim = 0;
@@ -176,4 +176,4 @@ int sceneHandler07(ExCommand *ex) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

@@ -25,7 +25,7 @@
 
 #include "gui/debugger.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 class FullpipeEngine;
 
@@ -39,6 +39,6 @@ private:
 	bool Cmd_Scene(int argc, const char **argv);
 };
 
-} // End of namespace Fullpipe
+} // End of namespace NGI
 
 #endif /* FULLPIPE_CONSOLE_H */

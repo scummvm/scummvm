@@ -25,7 +25,7 @@
 #ifndef FULLPIPE_OBJECTNAMES_H
 #define FULLPIPE_OBJECTNAMES_H
 
-namespace Fullpipe {
+namespace NGI {
 
 #define sO_Grandma "\xc1\xe0\xe1\xf3\xeb\xff"	// "Бабуля"
 #define sO_Jar_4 "\xc1\xe0\xed\xea\xe0_4"	// "Банка_4"
@@ -255,6 +255,6 @@ namespace Fullpipe {
 #define sO_Egg2 "\xdf\xe9\xf6\xee\x32"	// "Яйцо2"
 #define sO_Egg3 "\xdf\xe9\xf6\xee\x33"	// "Яйцо3"
 
-} // End of namespace Fullpipe
+} // End of namespace NGI
 
 #endif /* FULLPIPE_OBJECTNAMES_H */

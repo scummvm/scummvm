@@ -31,7 +31,7 @@
 
 #include "ngi/ngiarchive.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 NGIArchive::NGIArchive(const Common::String &filename) : _ngiFilename(filename) {
 	Common::File ngiFile;
@@ -147,4 +147,4 @@ NGIArchive *makeNGIArchive(const Common::String &name) {
 	return new NGIArchive(name);
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

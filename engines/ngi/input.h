@@ -23,7 +23,7 @@
 #ifndef FULLPIPE_INPUT_H
 #define FULLPIPE_INPUT_H
 
-namespace Fullpipe {
+namespace NGI {
 
 class Picture;
 
@@ -71,6 +71,6 @@ class InputController {
 	void setCursorItemPicture(Picture *pic) { _cursorItemPicture = pic; }
 };
 
-} // End of namespace Fullpipe
+} // End of namespace NGI
 
 #endif /* FULLPIPE_INPUT_H */

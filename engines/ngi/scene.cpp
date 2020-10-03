@@ -33,7 +33,7 @@
 #include "common/algorithm.h"
 #include "graphics/surface.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 Scene *FullpipeEngine::accessScene(int sceneId) {
 	SceneTag *t = 0;
@@ -818,4 +818,4 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 	}
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

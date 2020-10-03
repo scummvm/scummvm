@@ -34,7 +34,7 @@
 #include "ngi/behavior.h"
 
 
-namespace Fullpipe {
+namespace NGI {
 
 void scene26_initScene(Scene *sc) {
 	g_vars->scene26_chhi = sc->getStaticANIObject1ById(ANI_CHHI, -1);
@@ -360,4 +360,4 @@ int sceneHandler26(ExCommand *cmd) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

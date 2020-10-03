@@ -34,7 +34,7 @@
 #include "ngi/behavior.h"
 
 
-namespace Fullpipe {
+namespace NGI {
 
 void scene30_enablePass(Scene *sc) {
 	MovGraphLink *lnk = getSc2MctlCompoundBySceneId(sc->_sceneId)->getLinkByName(sO_WayToPipe);
@@ -152,4 +152,4 @@ int sceneHandler30(ExCommand *cmd) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

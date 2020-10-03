@@ -28,7 +28,7 @@
 #include "ngi/statics.h"
 #include "ngi/gameloader.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 ExCommand::ExCommand() {
 	_field_3C = 1;
@@ -963,4 +963,4 @@ void postExCommand(int parentId, int keyCode, int x, int y, int f20, int f14) {
 	ex->postMessage();
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

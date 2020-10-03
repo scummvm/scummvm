@@ -26,7 +26,7 @@
 #include "common/ptr.h"
 #include "common/str.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 class Archive;
 
@@ -65,6 +65,6 @@ public:
  */
 NGIArchive *makeNGIArchive(const Common::String &name);
 
-} // End of namespace Fullpipe
+} // End of namespace NGI
 
 #endif

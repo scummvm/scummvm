@@ -23,7 +23,7 @@
 #ifndef FULLPIPE_BEHAVIOR_H
 #define FULLPIPE_BEHAVIOR_H
 
-namespace Fullpipe {
+namespace NGI {
 
 struct BehaviorMove {
 	MessageQueue *_messageQueue;
@@ -84,6 +84,6 @@ class BehaviorManager : public CObject {
 	BehaviorMove *getBehaviorMoveByMessageQueueDataId(StaticANIObject *ani, int id1, int id2);
 };
 
-} // End of namespace Fullpipe
+} // End of namespace NGI
 
 #endif /* FULLPIPE_BEHAVIOR_H */

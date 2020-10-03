@@ -34,7 +34,7 @@
 #include "ngi/behavior.h"
 
 
-namespace Fullpipe {
+namespace NGI {
 
 Ring::Ring() {
 	ani = 0;
@@ -330,4 +330,4 @@ int sceneHandler37(ExCommand *cmd) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

@@ -34,7 +34,7 @@
 #include "ngi/behavior.h"
 #include "ngi/floaters.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 bool sceneHandler23_testCalendar() {
 	int cal0, cal1, cal2, cal3;
@@ -555,4 +555,4 @@ int sceneHandler23(ExCommand *cmd) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

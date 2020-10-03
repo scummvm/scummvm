@@ -34,7 +34,7 @@
 #include "ngi/behavior.h"
 
 
-namespace Fullpipe {
+namespace NGI {
 
 void scene22_initScene(Scene *sc) {
 	g_vars->scene22_bag = sc->getStaticANIObject1ById(ANI_MESHOK, -1);
@@ -397,4 +397,4 @@ int sceneHandler22(ExCommand *cmd) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

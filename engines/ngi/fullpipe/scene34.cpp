@@ -34,7 +34,7 @@
 #include "ngi/behavior.h"
 #include "ngi/floaters.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 void sceneHandler34_setExits() {
 	int state;
@@ -478,4 +478,4 @@ int sceneHandler34(ExCommand *cmd) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

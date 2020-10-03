@@ -30,7 +30,7 @@
 #include "ngi/ngi.h"
 #include "ngi/gameloader.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 uint32 FullpipeEngine::getFeatures() const {
 	return _gameDescription->flags;
@@ -78,7 +78,7 @@ bool FullpipeMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSimpleSavesNames);
 }
 
-bool Fullpipe::FullpipeEngine::hasFeature(EngineFeature f) const {
+bool NGI::FullpipeEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
@@ -100,14 +100,14 @@ SaveStateList FullpipeMetaEngine::listSaves(const char *target) const {
 		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
 			Common::ScopedPtr<Common::InSaveFile> in(saveFileMan->openForLoading(*file));
 			if (in) {
-				Fullpipe::FullpipeSavegameHeader header;
-				if (!Fullpipe::readSavegameHeader(in.get(), header)) {
+				NGI::FullpipeSavegameHeader header;
+				if (!NGI::readSavegameHeader(in.get(), header)) {
 					continue;
 				}
 
 				SaveStateDescriptor desc;
 
-				Fullpipe::parseSavegameHeader(header, desc);
+				NGI::parseSavegameHeader(header, desc);
 
 				desc.setSaveSlot(slotNum);
 
@@ -122,23 +122,23 @@ SaveStateList FullpipeMetaEngine::listSaves(const char *target) const {
 }
 
 void FullpipeMetaEngine::removeSaveState(const char *target, int slot) const {
-	g_system->getSavefileManager()->removeSavefile(Fullpipe::getSavegameFile(slot));
+	g_system->getSavefileManager()->removeSavefile(NGI::getSavegameFile(slot));
 }
 
 SaveStateDescriptor FullpipeMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::ScopedPtr<Common::InSaveFile> f(g_system->getSavefileManager()->openForLoading(
-		Fullpipe::getSavegameFile(slot)));
+		NGI::getSavegameFile(slot)));
 
 	if (f) {
-		Fullpipe::FullpipeSavegameHeader header;
-		if (!Fullpipe::readSavegameHeader(f.get(), header, false)) {
+		NGI::FullpipeSavegameHeader header;
+		if (!NGI::readSavegameHeader(f.get(), header, false)) {
 			return SaveStateDescriptor();
 		}
 
 		// Create the return descriptor
 		SaveStateDescriptor desc;
 
-		Fullpipe::parseSavegameHeader(header, desc);
+		NGI::parseSavegameHeader(header, desc);
 
 		desc.setSaveSlot(slot);
 		desc.setThumbnail(header.thumbnail);
@@ -151,7 +151,7 @@ SaveStateDescriptor FullpipeMetaEngine::querySaveMetaInfos(const char *target, i
 
 bool FullpipeMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc) {
-		*engine = new Fullpipe::FullpipeEngine(syst, desc);
+		*engine = new NGI::FullpipeEngine(syst, desc);
 	}
 	return desc != 0;
 }

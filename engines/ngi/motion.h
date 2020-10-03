@@ -25,7 +25,7 @@
 
 #include "ngi/anihandler.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 class MctlConnectionPoint;
 class MovGraphLink;
@@ -411,6 +411,6 @@ public:
 	MctlConnectionPoint();
 };
 
-} // End of namespace Fullpipe
+} // End of namespace NGI
 
 #endif /* FULLPIPE_MOTION_H */

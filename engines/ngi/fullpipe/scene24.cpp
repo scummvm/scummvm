@@ -33,7 +33,7 @@
 #include "ngi/interaction.h"
 #include "ngi/behavior.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 void scene24_initScene(Scene *sc) {
 	g_vars->scene24_water = sc->getStaticANIObject1ById(ANI_WATER24, -1);
@@ -125,4 +125,4 @@ int sceneHandler24(ExCommand *cmd) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

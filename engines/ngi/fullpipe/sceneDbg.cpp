@@ -32,7 +32,7 @@
 
 #include "ngi/interaction.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 void sceneDbgMenu_initScene(Scene *sc) {
 	g_vars->selector = sc->getPictureObjectById(PIC_SCD_SEL, 0);
@@ -104,4 +104,4 @@ int sceneHandlerDbgMenu(ExCommand *ex) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

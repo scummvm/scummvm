@@ -25,7 +25,7 @@
 
 #include "ngi/utils.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 class GameObject;
 class MessageQueue;
@@ -97,6 +97,6 @@ struct EntranceInfo {
 	bool load(MfcArchive &file);
 };
 
-} // End of namespace Fullpipe
+} // End of namespace NGI
 
 #endif /* FULLPIPE_INTERACTION_H */

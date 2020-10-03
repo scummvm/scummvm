@@ -27,7 +27,7 @@
 #include "ngi/gameloader.h"
 #include "ngi/motion.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 bool MotionController::load(MfcArchive &file) {
 	// Is originally empty	file.readClass();
@@ -3103,4 +3103,4 @@ bool doSomeAnimation2(int objId, int objKey) {
 	return doSomeAnimation(objId, objKey, 0);
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

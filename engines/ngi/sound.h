@@ -30,7 +30,7 @@ namespace Audio {
 class SoundHandle;
 }
 
-namespace Fullpipe {
+namespace NGI {
 
 class Sound : public MemoryObject {
 	int _id;
@@ -73,6 +73,6 @@ class SoundList : public CObject {
 	Sound *getSoundItemById(int id);
 };
 
-} // End of namespace Fullpipe
+} // End of namespace NGI
 
 #endif /* FULLPIPE_SOUND_H */

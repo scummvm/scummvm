@@ -33,7 +33,7 @@
 #include "ngi/statics.h"
 #include "ngi/behavior.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 void scene12_initScene(Scene *sc) {
 	GameVar *var = g_fp->getGameLoaderGameVar()->getSubVarByName("SC_12");
@@ -82,4 +82,4 @@ int sceneHandler12(ExCommand *cmd) {
 	return res;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

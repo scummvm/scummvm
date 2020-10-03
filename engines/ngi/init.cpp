@@ -29,7 +29,7 @@
 
 #include "ngi/constants.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 void FullpipeEngine::initObjectStates() {
 	setLevelStates();
@@ -247,4 +247,4 @@ void FullpipeEngine::loadAllScenes() {
 	accessScene(5222);
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

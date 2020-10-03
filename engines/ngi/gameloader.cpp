@@ -32,7 +32,7 @@
 #include "ngi/scenes.h"
 #include "ngi/floaters.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 Inventory2 *getGameLoaderInventory() {
 	return &g_fp->_gameLoader->_inventory;
@@ -678,4 +678,4 @@ MctlCompound *getCurrSceneSc2MotionController() {
 	return getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId);
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

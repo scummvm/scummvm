@@ -23,7 +23,7 @@
 #ifndef FULLPIPE_SCENES_H
 #define FULLPIPE_SCENES_H
 
-namespace Fullpipe {
+namespace NGI {
 
 struct Bat;
 struct BehaviorMove;
@@ -685,6 +685,6 @@ struct Ring {
 	Ring();
 };
 
-} // End of namespace Fullpipe
+} // End of namespace NGI
 
 #endif /* FULLPIPE_SCENES_H */

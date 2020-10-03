@@ -29,7 +29,7 @@
 #include "ngi/gameloader.h"
 #include "ngi/objects.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 bool GameLoader::writeSavegame(Scene *sc, const char *fname, const Common::String &description) {
 	GameVar *v = _gameVar->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME");
@@ -218,4 +218,4 @@ void GameVar::save(MfcArchive &file) {
 	file.writeObject(_subVars);
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

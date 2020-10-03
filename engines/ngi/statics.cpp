@@ -32,7 +32,7 @@
 #include "ngi/constants.h"
 #include "ngi/objectnames.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 StepArray::StepArray() {
 	_currPointIndex = 0;
@@ -2196,4 +2196,4 @@ bool StaticPhase::load(MfcArchive &file) {
 	return true;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

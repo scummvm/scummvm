@@ -36,7 +36,7 @@
 
 #include "graphics/thumbnail.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 bool GameLoader::readSavegame(const char *fname) {
 	SaveHeader header;
@@ -68,7 +68,7 @@ bool GameLoader::readSavegame(const char *fname) {
 	saveFile->read(map.data(), 800);
 
 	FullpipeSavegameHeader header2;
-	if (Fullpipe::readSavegameHeader(saveFile.get(), header2)) {
+	if (NGI::readSavegameHeader(saveFile.get(), header2)) {
 		g_fp->setTotalPlayTime(header2.playtime * 1000);
 	}
 
@@ -171,7 +171,7 @@ bool GameLoader::readSavegame(const char *fname) {
 	return true;
 }
 
-void parseSavegameHeader(Fullpipe::FullpipeSavegameHeader &header, SaveStateDescriptor &desc) {
+void parseSavegameHeader(NGI::FullpipeSavegameHeader &header, SaveStateDescriptor &desc) {
 	int day = (header.date >> 24) & 0xFF;
 	int month = (header.date >> 16) & 0xFF;
 	int year = header.date & 0xFFFF;
@@ -184,7 +184,7 @@ void parseSavegameHeader(Fullpipe::FullpipeSavegameHeader &header, SaveStateDesc
 	desc.setDescription(header.description);
 }
 
-void fillDummyHeader(Fullpipe::FullpipeSavegameHeader &header) {
+void fillDummyHeader(NGI::FullpipeSavegameHeader &header) {
 	// This is wrong header, perhaps it is original savegame. Thus fill out dummy values
 	header.date = (20 << 24) | (9 << 16) | 2016;
 	header.time = (9 << 8) | 56;
@@ -604,4 +604,4 @@ bool PicAniInfo::load(MfcArchive &file) {
 	return true;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

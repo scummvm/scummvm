@@ -43,7 +43,7 @@
 #include "ngi/console.h"
 #include "ngi/constants.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 FullpipeEngine *g_fp = nullptr;
 Vars *g_vars = nullptr;
@@ -592,4 +592,4 @@ bool FullpipeEngine::isSaveAllowed() {
 }
 
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

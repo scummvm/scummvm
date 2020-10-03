@@ -36,7 +36,7 @@
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 ModalIntro::ModalIntro() {
 	_field_8 = 0;
@@ -2143,20 +2143,20 @@ char *ModalSaveGame::getSaveName() {
 
 bool ModalSaveGame::getFileInfo(int slot, FileInfo *fileinfo) {
 	Common::ScopedPtr<Common::InSaveFile> f(g_system->getSavefileManager()->openForLoading(
-		Fullpipe::getSavegameFile(slot)));
+		NGI::getSavegameFile(slot)));
 
 	if (!f)
 		return false;
 
-	Fullpipe::FullpipeSavegameHeader header;
-	if (!Fullpipe::readSavegameHeader(f.get(), header))
+	NGI::FullpipeSavegameHeader header;
+	if (!NGI::readSavegameHeader(f.get(), header))
 		return false;
 
 	// Create the return descriptor
 	SaveStateDescriptor desc(slot, header.saveName);
 	char res[17];
 
-	Fullpipe::parseSavegameHeader(header, desc);
+	NGI::parseSavegameHeader(header, desc);
 
 	snprintf(res, sizeof(res), "%s %s", desc.getSaveDate().c_str(), desc.getSaveTime().c_str());
 
@@ -2502,4 +2502,4 @@ void FullpipeEngine::openMainMenu() {
 	g_fp->_modalObject = menu;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

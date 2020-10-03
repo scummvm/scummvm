@@ -30,7 +30,7 @@
 #include "ngi/inventory.h"
 #include "ngi/messages.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 #define FULLPIPE_SAVEGAME_VERSION 2
 
@@ -143,7 +143,7 @@ class GameLoader : public CObject {
 
 const char *getSavegameFile(int saveGameIdx);
 WARN_UNUSED_RESULT bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header, bool skipThumbnail = true);
-void parseSavegameHeader(Fullpipe::FullpipeSavegameHeader &header, SaveStateDescriptor &desc);
+void parseSavegameHeader(NGI::FullpipeSavegameHeader &header, SaveStateDescriptor &desc);
 
 Inventory2 *getGameLoaderInventory();
 InteractionController *getGameLoaderInteractionController();
@@ -151,6 +151,6 @@ MctlCompound *getSc2MctlCompoundBySceneId(int16 sceneId);
 MovGraph *getSc2MovGraphBySceneId(int16 sceneId);
 MctlCompound *getCurrSceneSc2MotionController();
 
-} // End of namespace Fullpipe
+} // End of namespace NGI
 
 #endif /* FULLPIPE_GAMELOADER_H */

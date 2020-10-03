@@ -34,7 +34,7 @@
 #include "ngi/behavior.h"
 
 
-namespace Fullpipe {
+namespace NGI {
 
 void scene01_fixEntrance() {
 	GameVar *var = g_fp->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME");
@@ -115,4 +115,4 @@ int sceneHandler01(ExCommand *cmd) {
 	return res;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

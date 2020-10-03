@@ -28,7 +28,7 @@
 #include "ngi/statics.h"
 #include "ngi/input.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 bool Inventory::load(MfcArchive &file) {
 	debugC(5, kDebugLoading | kDebugInventory, "Inventory::load()");
@@ -506,4 +506,4 @@ void FullpipeEngine::getAllInventory() {
 	inv->rebuildItemRects();
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

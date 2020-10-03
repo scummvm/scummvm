@@ -23,7 +23,7 @@
 #ifndef FULLPIPE_INVENTORY_H
 #define FULLPIPE_INVENTORY_H
 
-namespace Fullpipe {
+namespace NGI {
 
 class Scene;
 class BigPicture;
@@ -129,6 +129,6 @@ class Inventory2 : public Inventory {
 	void clear();
 };
 
-} // End of namespace Fullpipe
+} // End of namespace NGI
 
 #endif /* FULLPIPE_INVENTORY_H */

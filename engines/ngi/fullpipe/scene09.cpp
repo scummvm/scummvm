@@ -33,7 +33,7 @@
 #include "ngi/interaction.h"
 #include "ngi/behavior.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 struct Hanger {
 	StaticANIObject *ani;
@@ -589,4 +589,4 @@ int sceneHandler09(ExCommand *cmd) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

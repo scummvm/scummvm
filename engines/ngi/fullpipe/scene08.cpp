@@ -35,7 +35,7 @@
 #include "ngi/interaction.h"
 #include "ngi/modal.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 void scene08_clockCallback(int *phase) {
 	// do nothing
@@ -558,4 +558,4 @@ int sceneHandler08(ExCommand *cmd) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

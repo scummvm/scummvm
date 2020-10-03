@@ -34,7 +34,7 @@
 #include "ngi/floaters.h"
 #include "ngi/behavior.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 void scene05_initScene(Scene *sc) {
 	debugC(1, kDebugSceneLogic, "scene05_initScene()");
@@ -407,4 +407,4 @@ int sceneHandler05(ExCommand *ex) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

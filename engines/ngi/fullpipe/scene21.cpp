@@ -34,7 +34,7 @@
 #include "ngi/behavior.h"
 
 
-namespace Fullpipe {
+namespace NGI {
 
 void scene21_initScene(Scene *sc) {
 	Scene *oldsc = g_fp->_currentScene;
@@ -149,4 +149,4 @@ int sceneHandler21(ExCommand *cmd) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

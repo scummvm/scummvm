@@ -35,7 +35,7 @@
 
 #include "common/math.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 struct Swinger {
 	StaticANIObject *ani;
@@ -935,4 +935,4 @@ int sceneHandler19(ExCommand *cmd) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

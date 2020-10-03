@@ -28,7 +28,7 @@
 #include "common/array.h"
 #include "common/file.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 class CObject;
 class NGIArchive;
@@ -195,6 +195,6 @@ class DWordArray : public Common::Array<int32>, public CObject {
 Common::String genFileName(int superId, int sceneId, const char *ext);
 byte *transCyrillic(const Common::String &str);
 
-} // End of namespace Fullpipe
+} // End of namespace NGI
 
 #endif /* FULLPIPE_UTILS_H */

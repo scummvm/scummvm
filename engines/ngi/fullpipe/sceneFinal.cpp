@@ -37,7 +37,7 @@
 
 #include "audio/mixer.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 void sceneFinal_initScene() {
 	g_fp->_gameLoader->loadScene(SC_FINAL2);
@@ -185,4 +185,4 @@ int sceneHandlerFinal(ExCommand *cmd) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

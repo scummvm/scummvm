@@ -34,7 +34,7 @@
 #include "ngi/behavior.h"
 
 
-namespace Fullpipe {
+namespace NGI {
 
 void scene15_initScene(Scene *sc) {
 	g_vars->scene15_chantingCountdown = 0;
@@ -210,4 +210,4 @@ int sceneHandler15(ExCommand *cmd) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

@@ -34,7 +34,7 @@
 #include "ngi/behavior.h"
 #include "ngi/floaters.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 void scene17_initScene(Scene *sc) {
 	g_vars->scene17_flyState = 1;
@@ -284,4 +284,4 @@ int sceneHandler17(ExCommand *cmd) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

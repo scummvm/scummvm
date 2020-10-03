@@ -30,7 +30,7 @@
 #include "ngi/constants.h"
 #include "ngi/objectnames.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 void Floaters::init(GameVar *var) {
 	_array1.clear();
@@ -236,4 +236,4 @@ void Floaters::stopAll() {
 }
 
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

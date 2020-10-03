@@ -29,7 +29,7 @@
 #include "ngi/sound.h"
 #include "ngi/scene.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 enum QueueFlags {
 	kInGlobalQueue = 2
@@ -202,6 +202,6 @@ bool chainQueue(int queueId, int flags);
 bool chainObjQueue(StaticANIObject *obj, int queueId, int flags);
 void postExCommand(int parentId, int keyCode, int x, int y, int f20, int f16);
 
-} // End of namespace Fullpipe
+} // End of namespace NGI
 
 #endif /* FULLPIPE_MESSAGEQUEUE_H */

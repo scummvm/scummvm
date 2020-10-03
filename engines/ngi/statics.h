@@ -25,7 +25,7 @@
 
 #include "ngi/gfx.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 class ExCommand;
 
@@ -263,6 +263,6 @@ public:
 	bool isPixelHitAtPos(int x, int y);
 };
 
-} // End of namespace Fullpipe
+} // End of namespace NGI
 
 #endif /* FULLPIPE_STATICS_H */

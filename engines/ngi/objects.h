@@ -26,7 +26,7 @@
 #include "common/ptr.h"
 #include "ngi/utils.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 class MessageQueue;
 class SceneTagList;
@@ -100,6 +100,6 @@ class GameVar : public CObject {
 	GameVar *getSubVarByIndex(int idx);
 };
 
-} // End of namespace Fullpipe
+} // End of namespace NGI
 
 #endif /* FULLPIPE_OBJECTS_H */

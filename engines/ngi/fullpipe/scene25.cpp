@@ -33,7 +33,7 @@
 #include "ngi/interaction.h"
 #include "ngi/behavior.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 void scene25_showBoardOnRightFar() {
 	g_vars->scene25_board->show1(453, 557, MV_BRD25_RIGHT, 0);
@@ -727,4 +727,4 @@ int sceneHandler25(ExCommand *cmd) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

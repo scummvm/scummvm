@@ -34,7 +34,7 @@
 #include "ngi/behavior.h"
 #include "ngi/input.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 void scene14_initScene(Scene *sc) {
 	g_vars->scene14_grandma = sc->getStaticANIObject1ById(ANI_GRANDMA, -1);
@@ -849,4 +849,4 @@ int sceneHandler14(ExCommand *cmd) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

@@ -30,7 +30,7 @@ namespace Graphics {
 	struct TransparentSurface;
 }
 
-namespace Fullpipe {
+namespace NGI {
 
 class DynamicPhase;
 class Movement;
@@ -238,6 +238,6 @@ class Shadows : public CObject {
 	DynamicPhase *findSize(int width, int height);
 };
 
-} // End of namespace Fullpipe
+} // End of namespace NGI
 
 #endif /* FULLPIPE_GFX_H */

@@ -26,7 +26,7 @@
 #include "ngi/gameloader.h"
 #include "ngi/scene.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 Console::Console(FullpipeEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("scene",			WRAP_METHOD(Console, Cmd_Scene));
@@ -50,4 +50,4 @@ bool Console::Cmd_Scene(int argc, const char **argv) {
 	}
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

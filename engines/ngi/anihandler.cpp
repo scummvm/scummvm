@@ -27,7 +27,7 @@
 #include "ngi/motion.h"
 #include "ngi/messages.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 void AniHandler::detachAllObjects() {
 	_items.clear();
@@ -748,4 +748,4 @@ ExCommand2 *AniHandler::createCommand(Movement *mov, int objId, int x1, int y1, 
 	return ex;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

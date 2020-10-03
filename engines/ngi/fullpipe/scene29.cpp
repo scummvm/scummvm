@@ -36,7 +36,7 @@
 
 #define DEBUG 0
 
-namespace Fullpipe {
+namespace NGI {
 
 struct WalkingBearder {
 	StaticANIObject *ani;
@@ -848,4 +848,4 @@ int scene29_updateCursor() {
 	return g_fp->_cursorId;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

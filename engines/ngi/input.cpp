@@ -31,7 +31,7 @@
 #include "ngi/interaction.h"
 #include "ngi/constants.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 InputController::InputController() {
 	g_fp->_inputController = this;
@@ -346,4 +346,4 @@ int FullpipeEngine::drawArcadeOverlay(int adjust) {
 	return 1;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

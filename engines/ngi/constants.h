@@ -23,7 +23,7 @@
 #ifndef FULLPIPE_CONSTANTS_H
 #define FULLPIPE_CONSTANTS_H
 
-namespace Fullpipe {
+namespace NGI {
 
 // Common
 #define ANI_FLY 4916
@@ -1732,6 +1732,6 @@ namespace Fullpipe {
 #define PIC_SCD_FIN 5026
 #define PIC_SCD_SEL 734
 
-} // End of namespace Fullpipe
+} // End of namespace NGI
 
 #endif /* FULLPIPE_CONSTANTS_H */

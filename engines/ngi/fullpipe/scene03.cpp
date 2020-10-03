@@ -33,7 +33,7 @@
 #include "ngi/interaction.h"
 #include "ngi/behavior.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 void FullpipeEngine::setSwallowedEggsState() {
 	GameVar *v = _gameLoader->_gameVar->getSubVarByName("OBJSTATES")->getSubVarByName(sO_GulpedEggs);
@@ -330,4 +330,4 @@ int sceneHandler03(ExCommand *ex) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

@@ -34,7 +34,7 @@
 #include "ngi/behavior.h"
 
 
-namespace Fullpipe {
+namespace NGI {
 
 void scene16_initScene(Scene *sc) {
 	g_vars->scene16_figures.clear();
@@ -486,4 +486,4 @@ int sceneHandler16(ExCommand *cmd) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

@@ -35,7 +35,7 @@
 #include "ngi/behavior.h"
 #include "ngi/interaction.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 void scene06_initMumsy() {
 	g_vars->scene06_mumsyJumpFw = g_fp->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene06_mumsy, ST_MOM_STANDS, QU_MOM_JUMPFW);
@@ -769,4 +769,4 @@ int sceneHandler06(ExCommand *ex) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

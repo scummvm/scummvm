@@ -32,7 +32,7 @@ static const PlainGameDescriptor fullpipeGames[] = {
 	{0, 0}
 };
 
-namespace Fullpipe {
+namespace NGI {
 
 static const ADGameDescription gameDescriptions[] = {
 
@@ -105,11 +105,11 @@ static const ADGameDescription gameDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
-} // End of namespace Fullpipe
+} // End of namespace NGI
 
 class FullpipeMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	FullpipeMetaEngineStatic() : AdvancedMetaEngineStatic(Fullpipe::gameDescriptions, sizeof(ADGameDescription), fullpipeGames) {
+	FullpipeMetaEngineStatic() : AdvancedMetaEngineStatic(NGI::gameDescriptions, sizeof(ADGameDescription), fullpipeGames) {
 	}
 
 	const char *getEngineId() const override {

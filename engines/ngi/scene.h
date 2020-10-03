@@ -26,7 +26,7 @@
 #include "common/ptr.h"
 #include "ngi/gfx.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 class MessageQueue;
 
@@ -115,6 +115,6 @@ class SceneTagList : public Common::List<SceneTag>, public CObject {
 	bool load(MfcArchive &file) override;
 };
 
-} // End of namespace Fullpipe
+} // End of namespace NGI
 
 #endif /* FULLPIPE_SCENE_H */

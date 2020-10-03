@@ -34,7 +34,7 @@
 #include "ngi/behavior.h"
 
 
-namespace Fullpipe {
+namespace NGI {
 
 void scene13_whirlgigCallback(int *phase) {
 	// Do nothing
@@ -390,4 +390,4 @@ int sceneHandler13(ExCommand *cmd) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

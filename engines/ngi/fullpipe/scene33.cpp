@@ -34,7 +34,7 @@
 #include "ngi/behavior.h"
 
 
-namespace Fullpipe {
+namespace NGI {
 
 const int ventsInit[9] = { 0, 0, 1, 0, 0, 1, 0, 0, 1 };
 
@@ -316,4 +316,4 @@ int sceneHandler33(ExCommand *cmd) {
 	return 0;
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI

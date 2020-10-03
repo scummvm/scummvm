@@ -35,7 +35,7 @@
 #include "ngi/scenes.h"
 #include "ngi/interaction.h"
 
-namespace Fullpipe {
+namespace NGI {
 
 Vars::Vars() {
 	sceneIntro_aniin1man = 0;
@@ -1466,4 +1466,4 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	}
 }
 
-} // End of namespace Fullpipe
+} // End of namespace NGI
