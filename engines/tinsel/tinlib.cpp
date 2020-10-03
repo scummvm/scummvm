@@ -661,7 +661,7 @@ void Blocking(bool onOrOff) {
  * Sets focus of the scroll process.
  */
 static void Camera(int actor) {
-	ScrollFocus(actor);
+	_vm->_scroll->ScrollFocus(actor);
 }
 
 /**
@@ -1461,7 +1461,7 @@ static void NoBlocking() {
  * Define a no-scroll boundary for the current scene.
  */
 static void NoScroll(int x1, int y1, int x2, int y2) {
-	SetNoScroll(x1, y1, x2, y2);
+	_vm->_scroll->SetNoScroll(x1, y1, x2, y2);
 }
 
 /**
@@ -1475,7 +1475,7 @@ static void ObjectHeld(int object) {
  * Set the top left offset of the screen.
  */
 void Offset(EXTREME extreme, int x, int y) {
-	KillScroll();
+	_vm->_scroll->KillScroll();
 
 	if (TinselV2)
 		DecodeExtreme(extreme, &x, &y);
@@ -2535,7 +2535,7 @@ static void Scroll(CORO_PARAM, EXTREME extreme, int xp, int yp, int xIter, int y
 		if (TinselV2)
 			DecodeExtreme(extreme, &_ctx->x, &_ctx->y);
 
-		ScrollTo(_ctx->x, _ctx->y, xIter, yIter);
+		_vm->_scroll->ScrollTo(_ctx->x, _ctx->y, xIter, yIter);
 
 		if (bComp) {
 			int	Loffset, Toffset;
@@ -2574,7 +2574,7 @@ static void Scroll(CORO_PARAM, EXTREME extreme, int xp, int yp, int xIter, int y
  */
 static void ScrollParameters(int xTrigger, int xDistance, int xSpeed, int yTriggerTop,
 		int yTriggerBottom, int yDistance, int ySpeed) {
-	SetScrollParameters(xTrigger, xDistance, xSpeed,
+	_vm->_scroll->SetScrollParameters(xTrigger, xDistance, xSpeed,
 			yTriggerTop, yTriggerBottom, yDistance, ySpeed);
 }
 
@@ -3760,7 +3760,7 @@ void WaitScroll(CORO_PARAM, int myescEvent) {
 	CORO_BEGIN_CODE(_ctx);
 
 	// wait for ongoing scroll
-	while (IsScrolling()) {
+	while (_vm->_scroll->IsScrolling()) {
 		if (myescEvent && myescEvent != GetEscEvents())
 			break;
 
@@ -3842,7 +3842,7 @@ void Walk(CORO_PARAM, int actor, int x, int y, SCNHANDLE hFilm, int hold, bool i
 
 		_ctx->thisWalk = SetActorDest(pMover, x, y, igPath, hFilm);
 		SetMoverZoverride(pMover, zOverride);
-		DontScrollCursor();
+		_vm->_scroll->DontScrollCursor();
 
 		if (!bQuick) {
 			while (MoverMoving(pMover)) {
@@ -3864,7 +3864,7 @@ void Walk(CORO_PARAM, int actor, int x, int y, SCNHANDLE hFilm, int hold, bool i
 
 		GetToken(pMover->actorToken);
 		SetActorDest(pMover, x, y, igPath, hFilm);
-		DontScrollCursor();
+		_vm->_scroll->DontScrollCursor();
 
 		if (hold == 2) {
 			;
@@ -3934,7 +3934,7 @@ static void Walked(CORO_PARAM, int actor, int x, int y, SCNHANDLE film, bool esc
 	}
 
 	_ctx->thisWalk = SetActorDest(pMover, x, y, false, film);
-	DontScrollCursor();
+	_vm->_scroll->DontScrollCursor();
 
 	while (MoverMoving(pMover) && (_ctx->thisWalk == GetWalkNumber(pMover))) {
 		// Straight there if escaped
@@ -4025,7 +4025,7 @@ static void WalkPoly(CORO_PARAM, int actor, SCNHANDLE film, HPOLYGON hp, bool es
 
 	GetPolyNode(hp, &pnodex, &pnodey);
 	_ctx->thisWalk = SetActorDest(pMover, pnodex, pnodey, false, film);
-	DoScrollCursor();
+	_vm->_scroll->DoScrollCursor();
 
 	while (!MoverIsInPolygon(pMover, hp) && MoverMoving(pMover)) {
 		CORO_SLEEP(1);
@@ -4083,7 +4083,7 @@ static void WalkTag(CORO_PARAM, int actor, SCNHANDLE film, HPOLYGON hp, bool esc
 	GetPolyNode(hp, &pnodex, &pnodey);
 
 	_ctx->thisWalk = SetActorDest(pMover, pnodex, pnodey, false, film);
-	DoScrollCursor();
+	_vm->_scroll->DoScrollCursor();
 
 	while (MoverMoving(pMover)) {
 		if (escOn && myEscape != GetEscEvents()) {

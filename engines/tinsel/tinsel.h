@@ -63,6 +63,7 @@ class Font;
 class Cursor;
 class Actor;
 class Handle;
+class Scroll;
 
 typedef Common::List<Common::Rect> RectList;
 
@@ -173,6 +174,7 @@ public:
 	Actor *_actor;
 	Handle *_handle;
 	Config *_config;
+	Scroll *_scroll;
 
 	KEYFPTR _keyHandler;
 

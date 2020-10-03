@@ -42,69 +42,55 @@ namespace Tinsel {
 #define UP	'U'
 #define DOWN	'D'
 
+Scroll::Scroll() {
+	g_LeftScroll = 0;
+	g_DownScroll = 0;
+	g_scrollActor = 0;
+	g_pScrollMover = nullptr;
+	g_oldx = 0;
+	g_oldy = 0;
 
+	g_sd = {
+	    {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
+	    {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
+	    0,
+	    0,
+	    // DW2 fields
+	    0,
+	    0,
+	    0,
+	    0,
+	    0,
+	    0,
+	    0};
 
-//----------------- LOCAL GLOBAL DATA --------------------
+	g_ImageH = 0;
+	g_ImageW = 0;
 
-// FIXME: Avoid non-const global vars
+	g_ScrollCursor = 0;
 
-
-static int g_LeftScroll = 0, g_DownScroll = 0;	// Number of iterations outstanding
-
-static int g_scrollActor = 0;
-static PMOVER g_pScrollMover = 0;
-static int g_oldx = 0, g_oldy = 0;
-
-/** Boundaries and numbers of boundaries */
-static SCROLLDATA g_sd = {
-		{
-			{0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0},
-			{0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}
-		},
-		{
-			{0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0},
-			{0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}
-		},
-		0,
-		0,
-		// DW2 fields
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0
-	};
-
-static int g_ImageH = 0, g_ImageW = 0;
-
-static bool g_ScrollCursor = 0;	// If a TAG or EXIT polygon is clicked on,
-				// the cursor is kept over that polygon
-				// whilst scrolling
-
-static int g_scrollPixelsX = SCROLLPIXELS;
-static int g_scrollPixelsY = SCROLLPIXELS;
-
+	g_scrollPixelsX = SCROLLPIXELS;
+	g_scrollPixelsY = SCROLLPIXELS;
+}
 
 /**
  * Reset the ScrollCursor flag
  */
-void DontScrollCursor() {
+void Scroll::DontScrollCursor() {
 	g_ScrollCursor = false;
 }
 
 /**
  * Set the ScrollCursor flag
  */
-void DoScrollCursor() {
+void Scroll::DoScrollCursor() {
 	g_ScrollCursor = true;
 }
 
 /**
  * Configure a no-scroll boundary for a scene.
  */
-void SetNoScroll(int x1, int y1, int x2, int y2) {
+void Scroll::SetNoScroll(int x1, int y1, int x2, int y2) {
 	if (x1 == x2) {
 		/* Vertical line */
 		assert(g_sd.NumNoH < MAX_HNOSCROLL);
@@ -130,7 +116,7 @@ void SetNoScroll(int x1, int y1, int x2, int y2) {
  * Called from scroll process when it thinks that a scroll is in order.
  * Checks for no-scroll boundaries and sets off a scroll if allowed.
  */
-static void NeedScroll(int direction) {
+void Scroll::NeedScroll(int direction) {
 	uint	i;
 	int	BottomLine, RightCol;
 	int	Loffset, Toffset;
@@ -241,10 +227,13 @@ static void NeedScroll(int direction) {
 /**
  * Called from scroll process - Scrolls the image as appropriate.
  */
-static void ScrollImage() {
+void Scroll::ScrollImage() {
 	int OldLoffset = 0, OldToffset = 0;	// Used when keeping cursor on a tag
 	int Loffset, Toffset;
 	int curX, curY;
+
+	if (!g_LeftScroll && !g_DownScroll) // Only scroll if required
+		return;
 
 	// get background offsets
 	_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
@@ -341,7 +330,7 @@ static void ScrollImage() {
  * See if the actor on whom the camera is is approaching an edge.
  * Request a scroll if he is.
  */
-static void MonitorScroll() {
+void Scroll::MonitorScroll() {
 	int newx, newy;
 	int Loffset, Toffset;
 
@@ -384,7 +373,7 @@ static void MonitorScroll() {
 	g_oldy = newy;
 }
 
-static void RestoreScrollDefaults() {
+void Scroll::RestoreScrollDefaults() {
 	g_sd.xTrigger		= SysVar(SV_SCROLL_XTRIGGER);
 	g_sd.xDistance	= SysVar(SV_SCROLL_XDISTANCE);
 	g_sd.xSpeed		= SysVar(SV_SCROLL_XSPEED);
@@ -397,7 +386,7 @@ static void RestoreScrollDefaults() {
 /**
  * Does the obvious - called at the end of a scene.
  */
-void DropScroll() {
+void Scroll::DropScroll() {
 	g_sd.NumNoH = g_sd.NumNoV = 0;
 	if (TinselV2) {
 		g_LeftScroll = g_DownScroll = 0;		// No iterations outstanding
@@ -409,54 +398,9 @@ void DropScroll() {
 }
 
 /**
- * Decide when to scroll and scroll when decided to.
- */
-void ScrollProcess(CORO_PARAM, const void *) {
-	// COROUTINE
-	CORO_BEGIN_CONTEXT;
-	CORO_END_CONTEXT(_ctx);
-
-	CORO_BEGIN_CODE(_ctx);
-
-	// In Tinsel v2, scenes may play movies, so the background may not always
-	// already be initialized like it is in v1
-	while (!_vm->_bg->GetBgObject())
-		CORO_SLEEP(1);
-
-	g_ImageH = _vm->_bg->BgHeight();		// Dimensions
-	g_ImageW = _vm->_bg->BgWidth();		//  of this scene.
-
-	// Give up if there'll be no purpose in this process
-	if (g_ImageW == SCREEN_WIDTH  &&  g_ImageH == SCREEN_HEIGHT)
-		CORO_KILL_SELF();
-
-	if (!TinselV2) {
-		g_LeftScroll = g_DownScroll = 0;		// No iterations outstanding
-		g_oldx = g_oldy = 0;
-		g_scrollPixelsX = g_scrollPixelsY = SCROLLPIXELS;
-	}
-
-	if (!g_scrollActor)
-		g_scrollActor = _vm->_actor->GetLeadId();
-
-	g_pScrollMover = GetMover(g_scrollActor);
-
-	while (1) {
-		MonitorScroll();		// Set scroll requirement
-
-		if (g_LeftScroll || g_DownScroll)	// Scroll if required
-			ScrollImage();
-
-		CORO_SLEEP(1);		// allow re-scheduling
-	}
-
-	CORO_END_CODE;
-}
-
-/**
  * Change which actor the camera is following.
  */
-void ScrollFocus(int ano) {
+void Scroll::ScrollFocus(int ano) {
 	if (g_scrollActor != ano) {
 		g_oldx = g_oldy = 0;
 		g_scrollActor = ano;
@@ -468,15 +412,14 @@ void ScrollFocus(int ano) {
 /**
  * Returns the actor which the camera is following
  */
-int GetScrollFocus() {
+int Scroll::GetScrollFocus() {
 	return g_scrollActor;
 }
-
 
 /**
  * Scroll to abslote position.
  */
-void ScrollTo(int x, int y, int xIter, int yIter) {
+void Scroll::ScrollTo(int x, int y, int xIter, int yIter) {
 	int Loffset, Toffset;		// for background offsets
 
 	g_scrollPixelsX = xIter != 0 ? xIter : (TinselV2 ? g_sd.xSpeed : SCROLLPIXELS);
@@ -491,23 +434,22 @@ void ScrollTo(int x, int y, int xIter, int yIter) {
 /**
  * Kill of any current scroll.
  */
-void KillScroll() {
+void Scroll::KillScroll() {
 	g_LeftScroll = g_DownScroll = 0;
 }
 
-
-void GetNoScrollData(SCROLLDATA *ssd) {
+void Scroll::GetNoScrollData(SCROLLDATA *ssd) {
 	memcpy(ssd, &g_sd, sizeof(SCROLLDATA));
 }
 
-void RestoreNoScrollData(SCROLLDATA *ssd) {
+void Scroll::RestoreNoScrollData(SCROLLDATA *ssd) {
 	memcpy(&g_sd, ssd, sizeof(SCROLLDATA));
 }
 
 /**
  * SetScrollParameters
  */
-void SetScrollParameters(int xTrigger, int xDistance, int xSpeed, int yTriggerTop,
+void Scroll::SetScrollParameters(int xTrigger, int xDistance, int xSpeed, int yTriggerTop,
 		int yTriggerBottom, int yDistance, int ySpeed) {
 	if (xTrigger == 0 && xDistance == 0 && xSpeed == 0
 	 && yTriggerTop == 0 && yTriggerBottom && yDistance == 0 && ySpeed == 0) {
@@ -531,8 +473,60 @@ void SetScrollParameters(int xTrigger, int xDistance, int xSpeed, int yTriggerTo
 	}
 }
 
-bool IsScrolling() {
+bool Scroll::IsScrolling() {
 	return (g_LeftScroll || g_DownScroll);
+}
+
+void Scroll::InitScroll(int width, int height) {
+	g_ImageH = height; // Dimensions
+	g_ImageW = width;  //  of this scene.
+
+	if (!TinselV2) {
+		g_LeftScroll = g_DownScroll = 0; // No iterations outstanding
+		g_oldx = g_oldy = 0;
+		g_scrollPixelsX = g_scrollPixelsY = SCROLLPIXELS;
+	}
+
+	if (!g_scrollActor)
+		g_scrollActor = _vm->_actor->GetLeadId();
+
+	g_pScrollMover = GetMover(g_scrollActor);
+}
+
+/**
+ * Decide when to scroll and scroll when decided to.
+ */
+void ScrollProcess(CORO_PARAM, const void *) {
+	int width, height;
+
+	// COROUTINE
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	// In Tinsel v2, scenes may play movies, so the background may not always
+	// already be initialized like it is in v1
+	while (!_vm->_bg->GetBgObject())
+		CORO_SLEEP(1);
+
+	width = _vm->_bg->BgWidth();   // Dimensions
+	height = _vm->_bg->BgHeight(); // of this scene.
+
+	// Give up if there'll be no purpose in this process
+	if (width == SCREEN_WIDTH && height == SCREEN_HEIGHT)
+		CORO_KILL_SELF();
+
+	_vm->_scroll->InitScroll(width, height);
+
+	while (1) {
+		_vm->_scroll->MonitorScroll(); // Set scroll requirement
+		_vm->_scroll->ScrollImage();
+
+		CORO_SLEEP(1); // allow re-scheduling
+	}
+
+	CORO_END_CODE;
 }
 
 } // End of namespace Tinsel

@@ -271,7 +271,7 @@ static void WalkProcess(CORO_PARAM, const void *param) {
 		assert(_ctx->pMover->hCpath != NOPOLY); // Lead actor is not in a path
 
 		_ctx->thisWalk = SetActorDest(_ctx->pMover, to->x, to->y, false, 0);
-		DontScrollCursor();
+		_vm->_scroll->DontScrollCursor();
 
 		while (MoverMoving(_ctx->pMover) && (_ctx->thisWalk == GetWalkNumber(_ctx->pMover)))
 			CORO_SLEEP(1);
@@ -281,7 +281,7 @@ static void WalkProcess(CORO_PARAM, const void *param) {
 
 		GetToken(TOKEN_LEAD);
 		SetActorDest(_ctx->pMover, to->x, to->y, false, 0);
-		DontScrollCursor();
+		_vm->_scroll->DontScrollCursor();
 
 		while (MoverMoving(_ctx->pMover))
 			CORO_SLEEP(1);

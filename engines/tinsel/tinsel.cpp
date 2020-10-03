@@ -873,6 +873,7 @@ TinselEngine::~TinselEngine() {
 	FreeGlobalProcesses();
 	FreeGlobals();
 
+	delete _scroll;
 	delete _handle;
 	delete _actor;
 	delete _config;
@@ -897,7 +898,6 @@ TinselEngine::~TinselEngine() {
 	// TODO: savescn.cpp
 	// TODO: scene.cpp
 	// TODO: sched.cpp
-	// TODO: scroll.cpp
 	// TODO: strres.cpp
 	FreeTextBuffer();     // strres.cpp
 	// TODO: sysvar.cpp
@@ -936,6 +936,7 @@ Common::Error TinselEngine::run() {
 	_cursor = new Cursor();
 	_actor = new Actor();
 	_handle = new Handle();
+	_scroll = new Scroll();
 
 	// Initialize backend
 	if (getGameID() == GID_DW2) {

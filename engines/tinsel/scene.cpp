@@ -313,7 +313,7 @@ void EndScene() {
 	KillInventory();	// Close down any open inventory
 
 	DropPolygons();		// No polygons
-	DropScroll();	// No no-scrolls
+	_vm->_scroll->DropScroll(); // No no-scrolls
 	_vm->_bg->DropBackground();	// No background
 	DropMovers();		// No moving actors
 	_vm->_cursor->DropCursor(); // No cursor

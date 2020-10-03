@@ -110,7 +110,7 @@ void DoSaveScene(SAVED_DATA *sd) {
 	SaveInterpretContexts(sd->SavedICInfo);
 	sd->SavedControl = ControlIsOn();
 	sd->SavedNoBlocking = GetNoBlocking();
-	GetNoScrollData(&sd->SavedNoScrollData);
+	_vm->_scroll->GetNoScrollData(&sd->SavedNoScrollData);
 
 	if (TinselV2) {
 		// Tinsel 2 specific data save
@@ -119,7 +119,7 @@ void DoSaveScene(SAVED_DATA *sd) {
 		SavePolygonStuff(sd->SavedPolygonStuff);
 		_vm->_pcmMusic->getTunePlaying(sd->SavedTune, sizeof(sd->SavedTune));
 		sd->bTinselDim = _vm->_pcmMusic->getMusicTinselDimmed();
-		sd->SavedScrollFocus = GetScrollFocus();
+		sd->SavedScrollFocus = _vm->_scroll->GetScrollFocus();
 		SaveSysVars(sd->SavedSystemVars);
 		SaveSoundReels(sd->SavedSoundReels);
 
@@ -341,12 +341,12 @@ static int DoRestoreSceneFrame(SAVED_DATA *sd, int n) {
 		if (TinselV2) {
 			Offset(EX_USEXY, sd->SavedLoffset, sd->SavedToffset);
 		} else {
-			KillScroll();
+			_vm->_scroll->KillScroll();
 			_vm->_bg->PlayfieldSetPos(FIELD_WORLD, sd->SavedLoffset, sd->SavedToffset);
 			SetNoBlocking(sd->SavedNoBlocking);
 		}
 
-		RestoreNoScrollData(&sd->SavedNoScrollData);
+		_vm->_scroll->RestoreNoScrollData(&sd->SavedNoScrollData);
 
 		if (TinselV2) {
 			// create process to sort out the moving actors
@@ -377,7 +377,7 @@ static int DoRestoreSceneFrame(SAVED_DATA *sd, int n) {
 			if (sd->bTinselDim)
 				_vm->_pcmMusic->dim(true);
 			_vm->_pcmMusic->restoreThatTune(sd->SavedTune);
-			ScrollFocus(sd->SavedScrollFocus);
+			_vm->_scroll->ScrollFocus(sd->SavedScrollFocus);
 		} else {
 			_vm->_music->RestoreMidiFacts(sd->SavedMidi, sd->SavedLoop);
 		}
