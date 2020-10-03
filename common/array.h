@@ -29,7 +29,7 @@
 #include "common/memory.h"
 
 #ifdef USE_CXX11
-#include <initializer_list>
+#include "common/initializer_list.h"
 #endif
 
 namespace Common {
