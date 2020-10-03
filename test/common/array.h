@@ -322,6 +322,16 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		Common::Array<Common::NonCopyable> nonCopyable(1);
 	}
 
+	void test_array_constructor_list() {
+#ifdef USE_CXX11
+		Common::Array<int> array = {1, 42, 255};
+		TS_ASSERT_EQUALS(array.size(), 3U);
+		TS_ASSERT_EQUALS(array[0], 1);
+		TS_ASSERT_EQUALS(array[1], 42);
+		TS_ASSERT_EQUALS(array[2], 255);
+#endif
+	}
+
 	void test_array_constructor_count_copy_value() {
 		Common::Array<int> trivial(5, 1);
 		TS_ASSERT_EQUALS(trivial.size(), 5U);
