@@ -59,9 +59,10 @@ How do I...?
 
 If you have ScummVM installed, but you have questions about how to use it, our **Using ScummVM** section has lots of useful information to help you out:
 
-- **Understanding the interface**: :doc:`using_scummvm/the_launcher`
-- **Changing settings**: :doc:`using_scummvm/global_settings` | :doc:`using_scummvm/game_settings`
-- **Shortcuts**: :doc:`using_scummvm/keyboard_shortcuts`
+- **Understanding the interface**: :doc:`using_scummvm/the_launcher` 
+- **Playing games**: :doc:`using_scummvm/adding_games` | :doc:`using_scummvm/save_load_games` 
+- **Changing settings**: :doc:`using_scummvm/global_settings` | :doc:`using_scummvm/game_settings` | :doc:`advanced_options/configuration_file`
+- **In-game shortcuts**: :doc:`using_scummvm/keyboard_shortcuts`
 
 
 Advanced features
@@ -70,7 +71,7 @@ Advanced features
 For our more experienced users, ScummVM has many cool advanced options.
 But don't worry, even if you're a beginner, our documentation will take you through how to optimize your game playing experience.
 
--  **Advanced settings**: :doc:`advanced_options/configuration_file` | :doc:`advanced_options/render_modes` | :doc:`advanced_options/graphic_filters`
+-  **Advanced settings**: :doc:`advanced_options/graphics` | :doc:`advanced_options/audio`
 -  **The command line interface**: :doc:`advanced_options/command_line`
 
 
