@@ -36,16 +36,11 @@
 #include "engines/engine.h"
 #include "ngi/console.h"
 
-struct ADGameDescription;
-
 namespace Audio {
 class SoundHandle;
 }
 
 namespace NGI {
-
-enum FullpipeGameFeatures {
-};
 
 enum {
 	kDebugPathfinding	= 1 << 0,
@@ -62,6 +57,9 @@ enum {
 };
 
 #define MAXGAMEOBJH 10000
+
+struct NGIGameDescription;
+
 
 class BehaviorManager;
 class BaseModalObject;
@@ -119,7 +117,7 @@ protected:
 	Common::Error run() override;
 
 public:
-	NGIEngine(OSystem *syst, const ADGameDescription *gameDesc);
+	NGIEngine(OSystem *syst, const NGIGameDescription *gameDesc);
 	~NGIEngine() override;
 
 	void initialize();
@@ -129,7 +127,7 @@ public:
 	void setMusicAllowed(int val) { _musicAllowed = val; }
 
 	// Detection related functions
-	const ADGameDescription *_gameDescription;
+	const NGIGameDescription *_gameDescription;
 	uint32 getFeatures() const;
 	bool isDemo();
 	Common::Language getLanguage() const;

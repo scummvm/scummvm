@@ -28,24 +28,25 @@
 #include "graphics/surface.h"
 
 #include "ngi/ngi.h"
+#include "ngi/detection.h"
 #include "ngi/gameloader.h"
 
 namespace NGI {
 
 uint32 NGIEngine::getFeatures() const {
-	return _gameDescription->flags;
+	return _gameDescription->desc.flags;
 }
 
 bool NGIEngine::isDemo() {
-	return _gameDescription->flags & ADGF_DEMO;
+	return _gameDescription->desc.flags & ADGF_DEMO;
 }
 
 Common::Language NGIEngine::getLanguage() const {
-	return _gameDescription->language;
+	return _gameDescription->desc.language;
 }
 
 const char *NGIEngine::getGameId() const {
-	return _gameDescription->gameId;
+	return _gameDescription->desc.gameId;
 }
 
 } // End of namspace Fullpipe
@@ -150,8 +151,10 @@ SaveStateDescriptor NGIMetaEngine::querySaveMetaInfos(const char *target, int sl
 }
 
 bool NGIMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc) {
-		*engine = new NGI::NGIEngine(syst, desc);
+	const NGI::NGIGameDescription *gd = (const NGI::NGIGameDescription *)desc;
+
+	if (gd) {
+		*engine = new NGI::NGIEngine(syst, gd);
 	}
 	return desc != 0;
 }

@@ -48,7 +48,7 @@ namespace NGI {
 NGIEngine *g_fp = nullptr;
 Vars *g_vars = nullptr;
 
-NGIEngine::NGIEngine(OSystem *syst, const ADGameDescription *gameDesc) :
+NGIEngine::NGIEngine(OSystem *syst, const NGIGameDescription *gameDesc) :
 	Engine(syst),
 	_gameDescription(gameDesc),
 	_rnd("ngi"),

@@ -25,84 +25,103 @@
 #include "engines/advancedDetector.h"
 #include "common/file.h"
 
+#include "ngi/detection.h"
 
 static const PlainGameDescriptor fullpipeGames[] = {
-	{"ngi", "Nikita Game Interface game"},
-	{"fullpipe", "Full Pipe"},
+	{"ngi", 		"Nikita Game Interface game"},
+	{"fullpipe",	"Full Pipe"},
 	{0, 0}
 };
 
 namespace NGI {
 
-static const ADGameDescription gameDescriptions[] = {
+static const NGIGameDescription gameDescriptions[] = {
 
 	// Full Pipe Russian version
 	{
-		"fullpipe",
-		0,
-		AD_ENTRY1s("4620.sc2", "a1a8f3ed731b0dfea43beaa3016fdc71", 554),
-		Common::RU_RUS,
-		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NOMIDI)
+		{
+			"fullpipe",
+			0,
+			AD_ENTRY1s("4620.sc2", "a1a8f3ed731b0dfea43beaa3016fdc71", 554),
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			ADGF_DROPPLATFORM,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GID_FULLPIPE
 	},
 
 	// Full Pipe German version
 	{
-		"fullpipe",
-		0,
-		AD_ENTRY1s("4620.sc2", "e4f24ffe4dc84cafc648b951e66c1fb3", 554),
-		Common::DE_DEU,
-		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NOMIDI)
+		{
+			"fullpipe",
+			0,
+			AD_ENTRY1s("4620.sc2", "e4f24ffe4dc84cafc648b951e66c1fb3", 554),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_DROPPLATFORM,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GID_FULLPIPE
 	},
 
 	// Full Pipe Estonian version
 	{
-		"fullpipe",
-		0,
-		AD_ENTRY1s("4620.sc2", "571f6b4b68b02003e35bc12c1a1d3fe3", 466),
-		Common::ET_EST,
-		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NOMIDI)
+		{
+			"fullpipe",
+			0,
+			AD_ENTRY1s("4620.sc2", "571f6b4b68b02003e35bc12c1a1d3fe3", 466),
+			Common::ET_EST,
+			Common::kPlatformWindows,
+			ADGF_DROPPLATFORM,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GID_FULLPIPE
 	},
 
 	// Full Pipe English version
 	{
-		"fullpipe",
-		0,
-		AD_ENTRY1s("4620.sc2", "bffea807345fece14089768fc141af83", 510),
-		Common::EN_ANY,
-		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NOMIDI)
+		{
+			"fullpipe",
+			0,
+			AD_ENTRY1s("4620.sc2", "bffea807345fece14089768fc141af83", 510),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DROPPLATFORM,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GID_FULLPIPE
 	},
 
 	// Full Pipe Russian Demo version
 	{
-		"fullpipe",
-		0,
-		AD_ENTRY1s("4620.sc2", "a0c71b47fc35a5e163fcd8d0972639bb", 70),
-		Common::RU_RUS,
-		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_DEMO,
-		GUIO1(GUIO_NOMIDI)
+		{
+			"fullpipe",
+			0,
+			AD_ENTRY1s("4620.sc2", "a0c71b47fc35a5e163fcd8d0972639bb", 70),
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			ADGF_DROPPLATFORM | ADGF_DEMO,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GID_FULLPIPE
 	},
 
 	// Full Pipe German Demo version
 	{
-		"fullpipe",
-		0,
-		AD_ENTRY1s("4620.sc2", "e5e98df537e56b39c33ae1d5c90976fe", 510),
-		Common::DE_DEU,
-		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_DEMO,
-		GUIO1(GUIO_NOMIDI)
+		{
+			"fullpipe",
+			0,
+			AD_ENTRY1s("4620.sc2", "e5e98df537e56b39c33ae1d5c90976fe", 510),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_DROPPLATFORM | ADGF_DEMO,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GID_FULLPIPE
 	},
 
-	AD_TABLE_END_MARKER
+	{ AD_TABLE_END_MARKER, 0 }
 };
 
 } // End of namespace NGI
