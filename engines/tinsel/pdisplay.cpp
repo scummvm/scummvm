@@ -71,7 +71,7 @@ enum HotSpotTag {
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
-// FIXME: Avoid non-const global vars
+// These vars are reset upon engine destruction
 
 static bool g_DispPath = false;
 static bool g_bShowString = false;
@@ -82,8 +82,25 @@ static HPOLYGON	g_hTaggedPolygon = NOPOLY;
 static bool g_bTagsActive = true;
 
 static bool g_bPointingActive = true;
+static int tagX = 0, tagY = 0; // Values when tag was displayed
+static int Loffset = 0, Toffset = 0; // Values when tag was displayed
+static int curX = 0, curY = 0;
 
-static char g_tagBuffer[64];
+void ResetVarsPDisplay() {
+	g_DispPath = false;
+	g_bShowString = false;
+
+	g_TaggedActor = 0;
+	g_hTaggedPolygon = NOPOLY;
+
+	g_bTagsActive = true;
+
+	g_bPointingActive = true;
+
+	tagX = tagY = 0;
+	Loffset = Toffset = 0;
+	curX = curY = 0;
+}
 
 #ifdef DEBUG
 /**
@@ -376,12 +393,11 @@ static bool InHotSpot(int ano, int aniX, int aniY, int *pxtext, int *pytext) {
  * the screen.
  */
 static bool ActorTag(int curX, int curY, HotSpotTag *pTag, OBJECT **ppText) {
-	// FIXME: Avoid non-const global vars
-	static int tagX = 0, tagY = 0;	// Values when tag was displayed
 	int	newX, newY;		// new values, to keep tag in place
 	int	ano;
 	int	xtext, ytext;
 	bool	newActor;
+	char tagBuffer[64];
 
 	if (TinselV2) {
 		// Tinsel 2 version
@@ -405,11 +421,11 @@ static bool ActorTag(int curX, int curY, HotSpotTag *pTag, OBJECT **ppText) {
 
 			if (_vm->_actor->ActorTagIsWanted(actor)) {
 				_vm->_actor->GetActorTagPos(actor, &tagX, &tagY, false);
-				LoadStringRes(_vm->_actor->GetActorTagHandle(actor), g_tagBuffer, sizeof(g_tagBuffer));
+				LoadStringRes(_vm->_actor->GetActorTagHandle(actor), tagBuffer, sizeof(tagBuffer));
 
 				// May have buggered cursor
 				_vm->_cursor->EndCursorFollowed();
-				*ppText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), g_tagBuffer,
+				*ppText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), tagBuffer,
 						0, tagX, tagY, _vm->_font->GetTagFontHandle(), TXT_CENTER, 0);
 				assert(*ppText);
 				MultiSetZPosition(*ppText, Z_TAG_TEXT);
@@ -488,9 +504,6 @@ static bool ActorTag(int curX, int curY, HotSpotTag *pTag, OBJECT **ppText) {
  * code contains a printtag() call, its tagState flag gets set to TAG_ON.
  */
 static bool PolyTag(HotSpotTag *pTag, OBJECT **ppText) {
-	// FIXME: Avoid non-const global vars
-	static int	Loffset = 0, Toffset = 0;	// Values when tag was displayed
-	static int curX = 0, curY = 0;
 	int		nLoff, nToff;		// new values, to keep tag in place
 	HPOLYGON	hp;
 	bool	newPoly;

@@ -49,16 +49,18 @@ struct VIDEO_DAC_Q {
 };
 
 
+/** video DAC transfer Q length */
+#define VDACQLENGTH (NUM_PALETTES + 2)
+
+/** color index of the 4 colors used for the translucent palette */
+#define COL_HILIGHT TBLUE1
+
 //----------------- LOCAL GLOBAL DATA --------------------
 
-// FIXME: Avoid non-const global vars
+// These vars are reset upon engine destruction
 
 /** palette allocator data */
 static PALQ g_palAllocData[NUM_PALETTES];
-
-
-/** video DAC transfer Q length */
-#define VDACQLENGTH (NUM_PALETTES+2)
 
 /** video DAC transfer Q */
 static VIDEO_DAC_Q g_vidDACdata[VDACQLENGTH];
@@ -66,19 +68,14 @@ static VIDEO_DAC_Q g_vidDACdata[VDACQLENGTH];
 /** video DAC transfer Q head pointer */
 static VIDEO_DAC_Q *g_pDAChead;
 
-/** color index of the 4 colors used for the translucent palette */
-#define COL_HILIGHT	TBLUE1
-
 /** the translucent palette lookup table */
 uint8 g_transPalette[MAX_COLORS];	// used in graphics.cpp
 
 static int g_translucentIndex	= 228;
-
 static int g_talkIndex		= 233;
 
-static COLORREF g_talkColRef;
-
-static COLORREF g_tagColRef;
+static COLORREF g_talkColRef = 0;
+static COLORREF g_tagColRef = 0;
 
 
 #ifdef DEBUG
@@ -87,6 +84,20 @@ static int numPals = 0;
 static int maxPals = 0;
 static int maxDACQ = 0;
 #endif
+
+void ResetVarsPalette() {
+	memset(g_palAllocData, 0, sizeof(g_palAllocData));
+
+	g_pDAChead = g_vidDACdata;
+
+	memset(g_transPalette, 0, sizeof(g_transPalette));
+
+	g_translucentIndex = 228;
+	g_talkIndex = 233;
+
+	g_talkColRef = 0;
+	g_tagColRef = 0;
+}
 
 /**
  * Map PSX palettes to original palette from resource file

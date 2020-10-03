@@ -60,14 +60,28 @@ struct PPINIT {
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
-// FIXME: Avoid non-const global vars
+// These vars are reset upon engine destruction
 
 static SOUNDREELS g_soundReels[MAX_SOUNDREELS];
 static int g_soundReelNumbers[MAX_SOUNDREELS];
 
 static int g_soundReelWait;
+static int firstColZ = 0;     // Z-position of column zero
+static int32 fColZfactor = 0; // Z-factor of column zero's actor
+static int baseZposn;         // Z-position of column zero
+static uint32 baseZfact;      // Z-factor of column zero's actor
 
 //-------------------- METHODS ----------------------
+
+void ResetVarsPlay() {
+	memset(g_soundReels, 0, sizeof(g_soundReels));
+	memset(g_soundReelNumbers, 0, sizeof(g_soundReelNumbers));
+	g_soundReelWait = 0;
+	firstColZ = 0;
+	fColZfactor = 0;
+	baseZposn = 0;
+	baseZfact = 0;
+}
 
 /**
  * Poke the background palette into an image.
@@ -433,10 +447,6 @@ static void t1PlayReel(CORO_PARAM, const PPINIT *ppi) {
 		PMOVER	pActor;
 		int tmpX, tmpY;
 	CORO_END_CONTEXT(_ctx);
-
-	// FIXME: Avoid non-const global vars
-	static int	firstColZ = 0;	// Z-position of column zero
-	static int32	fColZfactor = 0;	// Z-factor of column zero's actor
 
 	CORO_BEGIN_CODE(_ctx);
 
@@ -821,10 +831,6 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 
 		SoundReelWaitCheck();
 	} else {
-		// FIXME: Avoid non-const global vars
-		static int baseZposn;		// Z-position of column zero
-		static uint32 baseZfact;	// Z-factor of column zero's actor
-
 		// N.B. It HAS been ensured that the first column gets here first
 
 		if ((int32)FROM_32(_ctx->pmi->mulZ) != -1) {

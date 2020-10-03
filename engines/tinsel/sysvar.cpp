@@ -107,8 +107,6 @@ static int g_systemVars[SV_TOPVALID] = {
 
 static SCNHANDLE g_systemStrings[SS_MAX_VALID];	// FIXME: Avoid non-const global vars
 
-//static bool bFlagNoBlocking = false;
-
 //----------------- FUNCTIONS --------------------------------
 
 /**

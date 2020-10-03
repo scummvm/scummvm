@@ -77,7 +77,7 @@ extern SRSTATE g_SRstate;
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
-// FIXME: Avoid non-const global vars
+// These vars are reset upon engine destruction
 
 bool g_ASceneIsSaved = false;
 
@@ -85,17 +85,30 @@ static int g_savedSceneCount = 0;
 
 static bool g_bNotDoneYet = false;
 
-//static SAVED_DATA ssData[MAX_NEST];
 static SAVED_DATA *g_ssData = nullptr;
 static SAVED_DATA g_sgData;
-
-static SAVED_DATA *g_rsd = 0;
+static SAVED_DATA *g_rsd = nullptr;
 
 static int g_RestoreSceneCount = 0;
 
 static bool g_bNoFade = false;
 
-//----------------- FORWARD REFERENCES --------------------
+void ResetVarsSaveScn() {
+	g_ASceneIsSaved = false;
+
+	g_savedSceneCount = 0;
+
+	g_bNotDoneYet = false;
+
+	free(g_ssData);
+	g_ssData = nullptr;
+
+	memset(&g_sgData, 0, sizeof(g_sgData));
+	g_rsd = nullptr;
+
+	g_RestoreSceneCount = 0;
+	g_bNoFade = false;
+}
 
 /**
  * Save current scene.

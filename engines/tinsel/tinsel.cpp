@@ -76,7 +76,13 @@ extern SCNHANDLE GetSceneHandle();
 extern void ResetVarsDrives();
 extern void ResetVarsEvents();
 extern void RebootScalingReels();
+extern void ResetVarsPalette();
+extern void ResetVarsPCode();
+extern void ResetVarsPDisplay();
+extern void ResetVarsPlay();
 extern void RebootMovers();
+extern void ResetVarsSaveLoad();
+extern void ResetVarsSaveScn();
 extern void ResetVarsScene();
 extern void ResetVarsSched();
 extern void ResetVarsStrRes();
@@ -911,14 +917,14 @@ TinselEngine::~TinselEngine() {
 	RebootScalingReels(); // mareels.cpp
 	// TODO: move.cpp
 	// TODO: object.cpp
-	// TODO: palette.cpp
-	// TODO: pcode.cpp
-	// TODO: pdisplay.cpp
-	// TODO: play.cpp
+	ResetVarsPalette();	// palette.cpp
+	ResetVarsPCode();
+	ResetVarsPDisplay();	// pdisplay.cpp
+	ResetVarsPlay();	// play.cpp
 	// TODO: polygons.cpp
 	RebootMovers();       // rince.cpp
-	// TODO: saveload.cpp
-	// TODO: savescn.cpp
+	ResetVarsSaveLoad();
+	ResetVarsSaveScn();	// savescn.cpp
 	ResetVarsScene();	// scene.cpp
 	ResetVarsSched();	// sched.cpp
 	ResetVarsStrRes();	// strres.cpp
@@ -936,7 +942,7 @@ Common::String TinselEngine::getSavegameFilename(int16 saveNum) const {
 
 void TinselEngine::initializePath(const Common::FSNode &gamePath) {
 	if (TinselV1PSX) {
-		// Add subfolders needed for psx versions of Discworld 1
+		// Add subfolders needed for PSX versions of Discworld 1
 		SearchMan.addDirectory(gamePath.getPath(), gamePath, 0, 3, true);
 	} else {
 		// Add DW2 subfolder to search path in case user is running directly from the CDs

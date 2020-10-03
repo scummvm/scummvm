@@ -57,12 +57,6 @@ namespace Tinsel {
  */
 #define CURRENT_VER 3
 
-//----------------- GLOBAL GLOBAL DATA --------------------
-
-int	g_thingHeld = 0;
-int	g_restoreCD = 0;
-SRSTATE g_SRstate = SR_IDLE;
-
 //----------------- EXTERN FUNCTIONS --------------------
 
 // in DOS_DW.C
@@ -112,23 +106,47 @@ struct SFILES {
 	TimeDate dateTime;
 };
 
+//----------------- GLOBAL GLOBAL DATA --------------------
+
+int g_thingHeld = 0;
+int g_restoreCD = 0;
+SRSTATE g_SRstate = SR_IDLE;
+
 //----------------- LOCAL GLOBAL DATA --------------------
 
-// FIXME: Avoid non-const global vars
+// These vars are reset upon engine destruction
 
 static int	g_numSfiles = 0;
 static SFILES	g_savedFiles[MAX_SAVED_FILES];
 
 static bool g_NeedLoad = true;
 
-static SAVED_DATA *g_srsd = 0;
+static SAVED_DATA *g_srsd = nullptr;
 static int g_RestoreGameNumber = 0;
-static char *g_SaveSceneName = 0;
-static const char *g_SaveSceneDesc = 0;
+static char *g_SaveSceneName = nullptr;
+static const char *g_SaveSceneDesc = nullptr;
 static int *g_SaveSceneSsCount = 0;
-static SAVED_DATA *g_SaveSceneSsData = 0;	// points to 'SAVED_DATA ssdata[MAX_NEST]'
+static SAVED_DATA *g_SaveSceneSsData = nullptr;	// points to 'SAVED_DATA ssdata[MAX_NEST]'
 
 //------------- SAVE/LOAD SUPPORT METHODS ----------------
+
+void ResetVarsSaveLoad() {
+	g_thingHeld = 0;
+	g_restoreCD = 0;
+	g_SRstate = SR_IDLE;
+
+	g_numSfiles = 0;
+	memset(g_savedFiles, 0, sizeof(g_savedFiles));
+
+	g_NeedLoad = true;
+
+	g_srsd = nullptr;
+	g_RestoreGameNumber = 0;
+	g_SaveSceneName = nullptr;
+	g_SaveSceneDesc = nullptr;
+	g_SaveSceneSsCount = 0;
+	g_SaveSceneSsData = nullptr;
+}
 
 void setNeedLoad() {
 	g_NeedLoad = true;
