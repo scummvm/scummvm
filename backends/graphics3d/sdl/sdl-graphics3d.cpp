@@ -22,8 +22,8 @@
 
 #include "backends/graphics/sdl/sdl-graphics.h"
 #include "backends/graphics3d/sdl/sdl-graphics3d.h"
+#include "backends/events/sdl/sdl-events.h"
 #include "backends/platform/sdl/sdl-sys.h"
-#include "backends/events/sdl/resvm-sdl-events.h"
 #include "backends/platform/sdl/sdl.h"
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"

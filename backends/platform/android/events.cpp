@@ -286,38 +286,6 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		case JKEYCODE_DPAD_DOWN:
 		case JKEYCODE_DPAD_LEFT:
 		case JKEYCODE_DPAD_RIGHT:
-			if (!shouldGenerateMouseEvents()) {
-				switch (arg1) {
-				case JACTION_DOWN:
-					e.type = Common::EVENT_KEYDOWN;
-					break;
-				case JACTION_UP:
-					e.type = Common::EVENT_KEYUP;
-					break;
-				default:
-					LOGE("unhandled jaction on dpad key: %d", arg1);
-					return;
-				}
-
-				switch (arg2) {
-				case JKEYCODE_DPAD_UP:
-					e.kbd.keycode = Common::KEYCODE_UP;
-					break;
-				case JKEYCODE_DPAD_DOWN:
-					e.kbd.keycode = Common::KEYCODE_DOWN;
-					break;
-				case JKEYCODE_DPAD_LEFT:
-					e.kbd.keycode = Common::KEYCODE_LEFT;
-					break;
-				case JKEYCODE_DPAD_RIGHT:
-					e.kbd.keycode = Common::KEYCODE_RIGHT;
-					break;
-				}
-
-				pushEvent(e);
-				return;
-			}
-
 			if (arg1 != JACTION_DOWN)
 				return;
 
@@ -380,9 +348,6 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		break;
 
 	case JE_SCROLL:
-		if (!shouldGenerateMouseEvents())
-			return;
-
 		e.type = Common::EVENT_MOUSEMOVE;
 
 		if (_touchpad_mode) {
@@ -410,15 +375,6 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			_fingersDown = 0;
 			return;
 		}
-
-		// ResidualVM specific code start
-		if (!shouldGenerateMouseEvents()) {
-			Common::Event ev;
-			ev.kbd.keycode = Common::KEYCODE_RETURN;
-			pushKeyPressEvent(ev);
-			return;
-		}
-		// ResidualVM specific code end
 
 		e.type = Common::EVENT_MOUSEMOVE;
 
@@ -464,14 +420,6 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		return;
 
 	case JE_DOUBLE_TAP:
-		// ResidualVM specific code start
-		if (!shouldGenerateMouseEvents()) {
-			Common::Event ev;
-			ev.kbd.keycode = Common::KEYCODE_u;
-			pushKeyPressEvent(ev);
-		}
-		// ResidualVM specific code end
-
 		e.type = Common::EVENT_MOUSEMOVE;
 
 		if (_touchpad_mode) {
@@ -526,10 +474,6 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 	case JE_TOUCH:
 	case JE_MULTI:
-		if (!shouldGenerateMouseEvents()) {
-			_touchControls.update(arg1, arg2, arg3, arg4);
-			return;
-		}
 		switch (arg2) {
 		case JACTION_POINTER_DOWN:
 			if (arg1 > _fingersDown)
@@ -736,21 +680,6 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 	}
 
 	return true;
-}
-
-bool OSystem_Android::shouldGenerateMouseEvents() {
-	// Engine doesn't support joystick -> emulate mouse events
-	// TODO: Provide dedicated feature for handling touchscreen events
-	if (g_engine && !g_engine->hasFeature(Engine::kSupportsJoystick)) {
-		return true;
-	}
-
-	// Even if engine supports joystick, emulate mouse events if in GUI or in virtual keyboard
-	if (g_gui.isActive() || g_engine->isPaused()) {
-		return true;
-	}
-
-	return false;
 }
 
 void OSystem_Android::pushEvent(const Common::Event &event) {

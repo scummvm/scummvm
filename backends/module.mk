@@ -134,7 +134,6 @@ ifdef SDL_BACKEND
 MODULE_OBJS += \
 	events/sdl/legacy-sdl-events.o \
 	events/sdl/sdl-events.o \
-	events/sdl/resvm-sdl-events.o \
 	graphics/sdl/sdl-graphics.o \
 	graphics/surfacesdl/surfacesdl-graphics.o \
 	graphics3d/sdl/sdl-graphics3d.o \

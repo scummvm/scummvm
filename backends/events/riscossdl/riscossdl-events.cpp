@@ -32,7 +32,7 @@
 #include <swis.h>
 
 RISCOSSdlEventSource::RISCOSSdlEventSource()
-    : ResVmSdlEventSource() { // ResidualVM: was SdlEventSource
+    : SdlEventSource() {
 	int messages[2];
 	messages[0] = 3; // Message_DataLoad
 	messages[1] = 0;

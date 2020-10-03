@@ -136,12 +136,6 @@ const Action *Keymap::findAction(const char *id) const {
 }
 
 Keymap::KeymapMatch Keymap::getMappedActions(const Event &event, ActionArray &actions) const {
-	// ResidualVM specific START
-	if (event.type == EVENT_JOYAXIS_MOTION) {
-		return kKeymapMatchNone;
-	}
-	// ResidualVM specific END
-
 	switch (event.type) {
 	case EVENT_KEYDOWN:
 	case EVENT_KEYUP: {
