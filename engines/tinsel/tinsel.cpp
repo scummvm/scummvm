@@ -914,7 +914,6 @@ TinselEngine::~TinselEngine() {
 	MemoryDeinit();
 
 	// Reset global vars
-	// TODO: dialogs.cpp
 	ResetVarsDrives();	// drives.cpp
 	ResetVarsEvents();	// events.cpp
 	RebootScalingReels(); // mareels.cpp
