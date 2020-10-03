@@ -803,7 +803,7 @@ bool OSystem_SDL::setGraphicsMode(int mode, uint flags) {
 			delete sdlGraphicsManager;
 		}
 
-		if (accel3d && !dynamic_cast<OpenGLSdlGraphics3dManager *>(_graphicsManager)) {
+		if (accel3d && !dynamic_cast<OpenGLSdlGraphics3dManager *>(sdlGraphics3dManager)) {
 			if (sdlGraphics3dManager) {
 				sdlGraphics3dManager->deactivateManager();
 				delete sdlGraphics3dManager;
@@ -813,10 +813,10 @@ bool OSystem_SDL::setGraphicsMode(int mode, uint flags) {
 			if (sdlGraphicsManager)
 				sdlGraphics3dManager->setDefaultFeatureState();
 			switchedManager = true;
-		} else if (!accel3d && !dynamic_cast<SurfaceSdlGraphics3dManager *>(_graphicsManager)) {
+		} else if (!accel3d && !dynamic_cast<SurfaceSdlGraphics3dManager *>(sdlGraphics3dManager)) {
 			if (sdlGraphics3dManager) {
 				sdlGraphics3dManager->deactivateManager();
-				delete _graphicsManager;
+				delete sdlGraphics3dManager;
 			}
 			_graphicsManager = sdlGraphics3dManager = new SurfaceSdlGraphics3dManager(_eventSource, _window);
 			// Setup feature defaults for 3D gfx while switching from 2D
