@@ -860,8 +860,6 @@ TinselEngine::~TinselEngine() {
 	_screenSurface.free();
 	FreeSaveScenes();
 	FreeTextBuffer();
-	_handle->FreeHandleTable();
-	_actor->FreeActors();
 	FreeObjectList();
 	FreeGlobalProcesses();
 	FreeGlobals();

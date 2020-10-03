@@ -87,7 +87,9 @@ typedef SAVED_ACTOR *PSAVED_ACTOR;
 
 class Actor {
 public:
-	Actor(): _actorInfo(nullptr), _defaultColor(0), _actorsOn(false), ti(0), _numTaggedActors(0), _zFactors(nullptr), _leadActorId(0), _numActors(0) {}
+	Actor();
+	virtual ~Actor();
+
 	int GetLeadId();
 	SCNHANDLE GetActorTagHandle(int ano);
 	void ToggleActor(int ano, bool show);
@@ -97,7 +99,6 @@ public:
 	int GetCount() { return _numActors; }
 
 	void RegisterActors(int num);
-	void FreeActors();
 	void SetLeadId(int rid);
 	bool ActorIsGhost(int actor);
 	void StartTaggedActors(SCNHANDLE ah, int numActors, bool bRunScript);

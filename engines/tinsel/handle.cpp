@@ -58,6 +58,17 @@ enum {
 };
 #define	FSIZE_MASK	0x00FFFFFFL	///< mask to isolate the filesize
 
+Handle::Handle() : _handleTable(0), _numHandles(0), _cdPlayHandle((uint32)-1), _cdBaseHandle(0), _cdTopHandle(0), _cdGraphStream(nullptr) {
+}
+
+Handle::~Handle() {
+	free(_handleTable);
+	_handleTable = nullptr;
+
+	delete _cdGraphStream;
+	_cdGraphStream = nullptr;
+}
+
 /**
  * Loads the graphics handle table index file and preloads all the
  * permanent graphics etc.
@@ -143,14 +154,6 @@ void Handle::SetupHandleTable() {
 			assert(pH->_node);
 		}
 	}
-}
-
-void Handle::FreeHandleTable() {
-	free(_handleTable);
-	_handleTable= nullptr;
-
-	delete _cdGraphStream;
-	_cdGraphStream= nullptr;
 }
 
 /**

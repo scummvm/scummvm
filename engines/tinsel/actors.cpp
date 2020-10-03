@@ -113,6 +113,18 @@ struct RATP_INIT {
 
 //-------------------- METHOD LIST -----------------------
 
+Actor::Actor() : _actorInfo(nullptr), _defaultColor(0), _actorsOn(false), ti(0), _numTaggedActors(0), _zFactors(nullptr), _leadActorId(0), _numActors(0) {
+}
+
+Actor::~Actor() {
+	free(_actorInfo);
+	_actorInfo = nullptr;
+	if (TinselV2) {
+		free(_zFactors);
+		_zFactors = nullptr;
+	}
+}
+
 /**
  * Called once at start-up time, and again at restart time.
  * Registers the total number of actors in the game.
@@ -151,15 +163,6 @@ void Actor::RegisterActors(int num) {
 	// All actors start off alive.
 	while (num--)
 		_actorInfo[num].bAlive = true;
-}
-
-void Actor::FreeActors() {
-	free(_actorInfo);
-	_actorInfo = nullptr;
-	if (TinselV2) {
-		free(_zFactors);
-		_zFactors = nullptr;
-	}
 }
 
 /**
