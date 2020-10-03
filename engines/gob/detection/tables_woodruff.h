@@ -377,6 +377,20 @@
 	kFeatures640x480,
 	0, 0, 0
 },
+{ // Russian fanmade translation by PRCA
+	{
+		"woodruff",
+		"Fanmade",
+		AD_ENTRY1s("intro.stk", "8d2533aea7bb6bae2ae02bf2a1f315f2", 20653992),
+		RU_RUS,
+		kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
+	},
+	kGameTypeWoodruff,
+	kFeatures640x480,
+	0, 0, 0
+},
 
 // -- Demos --
 
