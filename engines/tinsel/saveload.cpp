@@ -458,25 +458,25 @@ static bool DoSync(Common::Serializer &s, int numInterp) {
 	}
 
 	if (TinselV2 && s.isLoading())
-		HoldItem(INV_NOICON);
+		_vm->_dialogs->HoldItem(INV_NOICON);
 
 	syncSavedData(s, *g_srsd, numInterp);
 	syncGlobInfo(s);		// Glitter globals
-	syncInvInfo(s);			// Inventory data
+	_vm->_dialogs->syncInvInfo(s); // Inventory data
 
 	// Held object
 	if (s.isSaving())
-		sg = WhichItemHeld();
+		sg = _vm->_dialogs->WhichItemHeld();
 	s.syncAsSint32LE(sg);
 	if (s.isLoading()) {
-		if (sg != -1 && !GetIsInvObject(sg))
+		if (sg != -1 && !_vm->_dialogs->GetIsInvObject(sg))
 			// Not a valid inventory object, so return false
 			return false;
 
 		if (TinselV2)
 			g_thingHeld = sg;
 		else
-			HoldItem(sg);
+			_vm->_dialogs->HoldItem(sg);
 	}
 
 	syncTimerInfo(s);		// Timer data

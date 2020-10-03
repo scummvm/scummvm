@@ -1492,7 +1492,7 @@ static void ActorTinselProcess(CORO_PARAM, const void *param) {
 		// Take control for CONVERSE events
 		if (atp->event == CONVERSE) {
 			_ctx->bTookControl = GetControl();
-			HideConversation(true);
+			_vm->_dialogs->HideConversation(true);
 		} else
 			_ctx->bTookControl = false;
 
@@ -1505,7 +1505,7 @@ static void ActorTinselProcess(CORO_PARAM, const void *param) {
 			if (_ctx->bTookControl)
 				ControlOn();
 
-			HideConversation(false);
+			_vm->_dialogs->HideConversation(false);
 		}
 	} else {
 		CORO_INVOKE_1(AllowDclick, atp->bev); // May kill us if single click

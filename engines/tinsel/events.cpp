@@ -160,7 +160,7 @@ void ControlOn() {
 		_vm->_cursor->UnHideCursor();
 
 		// Turn tags back on
-		if (!InventoryActive())
+		if (!_vm->_dialogs->InventoryActive())
 			EnableTags();
 	}
 }
@@ -433,32 +433,32 @@ void PlayerEvent(PLR_EVENT pEvent, const Common::Point &coOrds) {
 	if (!ControlIsOn() && (pEvent != PLR_DRAG1_END))
 		return;
 
-	if (TinselV2 && InventoryActive()) {
+	if (TinselV2 && _vm->_dialogs->InventoryActive()) {
 		int x, y;
 		_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &x, &y);
-		EventToInventory(pEvent, Common::Point(coOrds.x - x, coOrds.y - y));
+		_vm->_dialogs->EventToInventory(pEvent, Common::Point(coOrds.x - x, coOrds.y - y));
 		return;
 	}
 
 	switch (pEvent) {
 	case PLR_QUIT:
-		OpenMenu(QUIT_MENU);
+		_vm->_dialogs->OpenMenu(QUIT_MENU);
 		break;
 
 	case PLR_MENU:
-		OpenMenu(MAIN_MENU);
+		_vm->_dialogs->OpenMenu(MAIN_MENU);
 		break;
 
 	case PLR_JUMP:
-		OpenMenu(HOPPER_MENU1);
+		_vm->_dialogs->OpenMenu(HOPPER_MENU1);
 		break;
 
 	case PLR_SAVE:
-		OpenMenu(SAVE_MENU);
+		_vm->_dialogs->OpenMenu(SAVE_MENU);
 		break;
 
 	case PLR_LOAD:
-		OpenMenu(LOAD_MENU);
+		_vm->_dialogs->OpenMenu(LOAD_MENU);
 		break;
 
 	case PLR_PROV_WALKTO:		// Provisional WALKTO !
@@ -468,33 +468,33 @@ void PlayerEvent(PLR_EVENT pEvent, const Common::Point &coOrds) {
 	case PLR_WALKTO:
 		REAL_ACTION_CHECK;
 
-		if (TinselV2 || !InventoryActive())
+		if (TinselV2 || !_vm->_dialogs->InventoryActive())
 			ProcessUserEvent(WALKTO, coOrds, PLR_SLEFT);
 		else
-			EventToInventory(PLR_SLEFT, coOrds);
+			_vm->_dialogs->EventToInventory(PLR_SLEFT, coOrds);
 		break;
 
 	case PLR_ACTION:
 		REAL_ACTION_CHECK;
 
-		if (TinselV2 || !InventoryActive())
+		if (TinselV2 || !_vm->_dialogs->InventoryActive())
 			ProcessUserEvent(ACTION, coOrds, PLR_DLEFT);
 		else
-			EventToInventory(PLR_DLEFT, coOrds);
+			_vm->_dialogs->EventToInventory(PLR_DLEFT, coOrds);
 		break;
 
 	case PLR_LOOK:
 		REAL_ACTION_CHECK;
 
-		if (TinselV2 || !InventoryActive())
+		if (TinselV2 || !_vm->_dialogs->InventoryActive())
 			ProcessUserEvent(LOOK, coOrds, PLR_SRIGHT);
 		else
-			EventToInventory(PLR_SRIGHT, coOrds);
+			_vm->_dialogs->EventToInventory(PLR_SRIGHT, coOrds);
 		break;
 
 	default:
-		if (InventoryActive())
-			EventToInventory(pEvent, coOrds);
+		if (_vm->_dialogs->InventoryActive())
+			_vm->_dialogs->EventToInventory(pEvent, coOrds);
 		break;
 	}
 }
@@ -567,7 +567,7 @@ void PolyTinselProcess(CORO_PARAM, const void *param) {
 		// Take control for CONVERSE events
 		if (to->event == CONVERSE) {
 			_ctx->bTookControl = GetControl();
-			HideConversation(true);
+			_vm->_dialogs->HideConversation(true);
 		} else
 			_ctx->bTookControl = false;
 
@@ -579,7 +579,7 @@ void PolyTinselProcess(CORO_PARAM, const void *param) {
 			if (_ctx->bTookControl)
 				ControlOn();
 
-			HideConversation(false);
+			_vm->_dialogs->HideConversation(false);
 		}
 
 	} else {
@@ -599,7 +599,7 @@ void PolyTinselProcess(CORO_PARAM, const void *param) {
 
 		// Hide conversation if appropriate
 		if (to->event == CONVERSE)
-			HideConversation(true);
+			_vm->_dialogs->HideConversation(true);
 
 		// Run the code
 		_ctx->pic = InitInterpretContext(GS_POLYGON, GetPolyScript(to->hPoly), to->event, to->hPoly, to->actor, NULL);
@@ -611,7 +611,7 @@ void PolyTinselProcess(CORO_PARAM, const void *param) {
 
 		// Restore conv window if applicable
 		if (to->event == CONVERSE)
-			HideConversation(false);
+			_vm->_dialogs->HideConversation(false);
 	}
 
 	CORO_END_CODE;
