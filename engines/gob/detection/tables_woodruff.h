@@ -381,7 +381,7 @@
 	{
 		"woodruff",
 		"Fanmade",
-		AD_ENTRY1s("intro.stk", "8d2533aea7bb6bae2ae02bf2a1f315f2", 20653992),
+		AD_ENTRY1s("intro.stk", "3767f779996d64e8413fc1e2300ba032", 20651291),
 		RU_RUS,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
