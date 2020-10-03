@@ -46,10 +46,8 @@ struct SCIdataStruct {
 	SCNHANDLE reels[4];
 };
 
-// FIXME: Avoid non-const global vars
-
+// These vars are reset upon engine destruction
 static SCIdataStruct g_SCIdata[MAX_SCRENTRIES];
-
 static int g_scrEntries = 0;
 
 /**

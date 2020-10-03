@@ -49,7 +49,8 @@ struct TIMER {
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
-static TIMER g_timers[MAX_TIMERS];	// FIXME: Avoid non-const global vars
+// These vars are reset upon engine destruction
+static TIMER g_timers[MAX_TIMERS];
 
 
 //--------------------------------------------------------

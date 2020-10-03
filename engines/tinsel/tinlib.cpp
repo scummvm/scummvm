@@ -112,16 +112,6 @@ extern void UnSuspendHook();
 SCNHANDLE GetSceneHandle();
 #endif
 
-//----------------- GLOBAL GLOBAL DATA --------------------
-
-// FIXME: Avoid non-const global vars
-
-bool g_bEnableMenu;
-
-static bool g_bInstantScroll = false;
-static bool g_bEscapedCdPlay = false;
-
-
 //----------------- LOCAL DEFINES --------------------
 
 #define JAP_TEXT_TIME	(2*ONE_SECOND)
@@ -284,9 +274,18 @@ static const MASTER_LIB_CODES DW2_CODES[] = {
 	HIGHEST_LIBCODE
 };
 
+//----------------- GLOBAL GLOBAL DATA --------------------
+
+// These vars are reset upon engine destruction
+
+bool g_bEnableMenu;
+
+static bool g_bInstantScroll = false;
+static bool g_bEscapedCdPlay = false;
+
 //----------------- LOCAL GLOBAL DATA --------------------
 
-// FIXME: Avoid non-const global vars
+// These vars are reset upon engine destruction
 
 // Saved cursor co-ordinates for control(on) to restore cursor position
 // as it was at control(off).
@@ -315,6 +314,21 @@ void Walk(CORO_PARAM, int actor, int x, int y, SCNHANDLE film, int hold, bool ig
 		  int zOverride, bool escOn, int myescTime);
 
 //----------------- SUPPORT FUNCTIONS --------------------
+
+void ResetVarsTinlib() {
+	g_bEnableMenu = false;
+
+	g_bInstantScroll = false;
+	g_bEscapedCdPlay = false;
+	g_controlX = 0;
+	g_controlY = 0;
+
+	g_offtype = 0;
+	g_lastValue = 0;
+	g_scrollNumber = 0;
+
+	g_bNotPointedRunning = false;
+}
 
 /**
  * For Scroll() and Offset(), work out top left for a

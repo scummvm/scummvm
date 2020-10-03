@@ -30,7 +30,7 @@
 
 namespace Tinsel {
 
-// FIXME: Avoid non-const global vars
+// These vars are reset upon engine destruction
 
 char g_currentCD = '1';
 
@@ -40,6 +40,14 @@ static char g_nextCD = '\0';
 static uint32 g_lastTime = 0;
 extern LANGUAGE g_sampleLanguage;
 
+void ResetVarsDrives() {
+	g_currentCD = '1';
+
+	g_bChangingCD = false;
+	g_nextCD = '\0';
+
+	g_lastTime = 0;
+}
 
 void CdCD(CORO_PARAM) {
 	CORO_BEGIN_CONTEXT;

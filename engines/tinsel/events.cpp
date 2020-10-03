@@ -58,9 +58,9 @@ extern bool g_bEnableMenu;
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
-// FIXME: Avoid non-const global vars
+// These vars are reset upon engine destruction
 
-static uint32 g_lastUserEvent = 0;	// Time it hapenned
+static uint32 g_lastUserEvent = 0;	// Time it happened
 static int g_leftEvents = 0;		// Single or double, left or right. Or escape key.
 static int g_escEvents = 1;		// Escape key
 static int g_userEvents = 0;		// Whenever a button or a key comes in
@@ -73,6 +73,26 @@ static bool g_bStartOff;
 static int g_controlX, g_controlY;
 static bool g_bProvNotProcessed = false;
 
+static uint32 lastRealAction = 0;
+
+void ResetVarsEvents() {
+	g_lastUserEvent = 0;
+	g_leftEvents = 0;       // Single or double, left or right. Or escape key.
+	g_escEvents = 1;        // Escape key
+	g_userEvents = 0;       // Whenever a button or a key comes in
+
+	g_eCount = 0;
+
+	g_controlState = 0;
+	g_bStartOff = false;
+
+	g_controlX = 0;
+	g_controlY = 0;
+	g_bProvNotProcessed = false;
+
+	lastRealAction = 0;
+}
+
 /**
  * Gets called before each schedule, only 1 user action per schedule
  * is allowed.
@@ -80,7 +100,6 @@ static bool g_bProvNotProcessed = false;
 void ResetEcount() {
 	g_eCount = 0;
 }
-
 
 void IncUserEvents() {
 	g_userEvents++;
@@ -393,7 +412,6 @@ void PlayerEvent(PLR_EVENT pEvent, const Common::Point &coOrds) {
 		"PLR_WHEEL_DOWN"};
 	debugC(DEBUG_BASIC, kTinselDebugActions, "%s - (%d,%d)",
 		actionList[pEvent], coOrds.x, coOrds.y);
-	static uint32 lastRealAction = 0;	// FIXME: Avoid non-const global vars
 
 	// This stuff to allow F1 key during startup.
 	if (g_bEnableMenu && pEvent == PLR_MENU)

@@ -73,6 +73,15 @@ extern void InventoryProcess(CORO_PARAM, const void *);
 // In SCENE.CPP
 extern SCNHANDLE GetSceneHandle();
 
+extern void ResetVarsDrives();
+extern void ResetVarsEvents();
+extern void RebootScalingReels();
+extern void RebootMovers();
+extern void FreeTextBuffer();
+extern void FreeAllTokens();
+extern void RebootTimers();
+extern void ResetVarsTinlib();
+
 //----------------- FORWARD DECLARATIONS  ---------------------
 void SetNewScene(SCNHANDLE scene, int entrance, int transition);
 
@@ -869,6 +878,33 @@ TinselEngine::~TinselEngine() {
 	delete _config;
 
 	MemoryDeinit();
+
+	// Reset global vars
+	// TODO: dialogs.cpp
+	ResetVarsDrives();	// drives.cpp
+	ResetVarsEvents();	// events.cpp
+	// TODO: heapmem.cpp
+	RebootScalingReels(); // mareels.cpp
+	// TODO: move.cpp
+	// TODO: object.cpp
+	// TODO: palette.cpp
+	// TODO: pcode.cpp
+	// TODO: pdisplay.cpp
+	// TODO: play.cpp
+	// TODO: polygons.cpp
+	RebootMovers();       // rince.cpp
+	// TODO: saveload.cpp
+	// TODO: savescn.cpp
+	// TODO: scene.cpp
+	// TODO: sched.cpp
+	// TODO: scroll.cpp
+	// TODO: strres.cpp
+	FreeTextBuffer();     // strres.cpp
+	// TODO: sysvar.cpp
+	FreeAllTokens();	// token.cpp
+	RebootTimers();       // timers.cpp
+	ResetVarsTinlib();	// tinlib.cpp
+	// TODO: tinsel.cpp
 }
 
 Common::String TinselEngine::getSavegameFilename(int16 saveNum) const {

@@ -51,7 +51,8 @@ namespace Tinsel {
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
-static MOVER g_Movers[MAX_MOVERS];	// FIXME: Avoid non-const global vars
+// These vars are reset upon engine destruction
+static MOVER g_Movers[MAX_MOVERS];
 
 //----------------- FUNCTIONS ----------------------------
 
