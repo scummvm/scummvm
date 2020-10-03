@@ -972,6 +972,7 @@ SegaAnimator::SegaAnimator(SegaRenderer *renderer) : _renderer(renderer), _needU
 
 SegaAnimator::~SegaAnimator() {
 	delete[] _sprites;
+	delete[] _tempBuffer;
 }
 
 void SegaAnimator::initSprite(int id, int16 x, int16 y, uint16 nameTbl, uint16 hw) {

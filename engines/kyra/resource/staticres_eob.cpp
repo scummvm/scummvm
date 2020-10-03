@@ -1791,18 +1791,18 @@ void DarkMoonEngine::initSpells() {
 
 	int temp;
 	const uint8 *data = _staticres->loadRawData(kEoBBaseSpellProperties, temp);
-	Common::MemoryReadStreamEndian *src = new Common::MemoryReadStreamEndian(data, temp, _flags.platform == Common::kPlatformAmiga);
+	Common::MemoryReadStreamEndian src(data, temp, _flags.platform == Common::kPlatformAmiga);
 
 	for (int i = 0; i < _numSpells; i++) {
 		EoBSpell *s = &_spells[i];
-		src->skip(8);
-		s->flags = src->readUint16();
-		src->skip(8);
-		s->sound = src->readByte();
+		src.skip(8);
+		s->flags = src.readUint16();
+		src.skip(8);
+		s->sound = src.readByte();
 		if (_flags.platform == Common::kPlatformAmiga)
-			src->skip(1);
-		s->effectFlags = src->readUint32();
-		s->damageFlags = src->readUint16();
+			src.skip(1);
+		s->effectFlags = src.readUint32();
+		s->damageFlags = src.readUint16();
 	}
 }
 
