@@ -428,13 +428,13 @@ bool QObject::isInPoint(Common::Point p) {
 			return false;
 		const Graphics::Surface *s = flc->getCurrentFrame();
 		if (s->format.bytesPerPixel == 1) {
-			byte index = *(const byte *) flc->getCurrentFrame()->getBasePtr(p.x - _x - flc->getPos().x,
-																			p.y - _y - flc->getPos().y);
+			byte index = *(const byte *) flc->getCurrentFrame()->getBasePtr(p.x - _x,
+																			p.y - _y);
 			const byte *pal = flc->getPalette();
 			return (pal[0] != pal[index * 3] || pal[1] != pal[index * 3 + 1] || pal[2] != pal[index * 3 + 2]);
 		}
 		if (s->format.bytesPerPixel == 2)
-			return *(const uint16*)flc->getCurrentFrame()->getBasePtr(p.x - _x - flc->getPos().x, p.y - _y - flc->getPos().y) != flc->getTransColor(s->format);
+			return *(const uint16*)flc->getCurrentFrame()->getBasePtr(p.x - _x, p.y - _y) != flc->getTransColor(s->format);
 	}
 	return false;
 }
@@ -457,31 +457,39 @@ void QObject::draw() {
 		_startSound = false;
 	}
 
-	QSystem *sys = g_vm->getQSystem();
-	Common::Rect screen(640 + sys->_xOffset, 480);
-	Common::Rect dest(flc->getBounds());
-	dest.translate(_x, _y);
+	int xOff = g_vm->getQSystem()->_xOffset;
+	VideoSystem *videoSys = g_vm->videoSystem();
 
-	Common::Rect intersect(screen.findIntersectingRect(dest));
+	Common::Rect screen(640 + xOff, 480);
+	Common::Rect flcBounds(flc->getBounds());
+	Common::Rect objBounds(flcBounds);
+
+	objBounds.translate(_x, _y);
+
+	Common::Rect intersect(screen.findIntersectingRect(objBounds));
 	if (intersect.isEmpty())
 		return;
 
-	const Graphics::Surface *frame = flc->getCurrentFrame();
-	Graphics::Surface *s = frame->convertTo(g_system->getScreenFormat(), flc->getPalette());
-	const Common::List<Common::Rect> &dirtyRects = g_vm->videoSystem()->rects();
-	for (Common::List<Common::Rect>::const_iterator it = dirtyRects.begin(); it != dirtyRects.end(); ++it) {
-		Common::Rect dirty = *it;
-		dirty.translate(sys->_xOffset, 0);
+	Graphics::Surface *surface = flc->getCurrentFrame()->getSubArea(flcBounds).convertTo(g_system->getScreenFormat(), flc->getPalette());
+
+	for (Common::Rect dirty : videoSys->rects()) {
+		dirty.translate(xOff, 0);
+
 		Common::Rect destRect(intersect.findIntersectingRect(dirty));
 		if (destRect.isEmpty())
 			continue;
+
 		Common::Rect srcRect(destRect);
-		srcRect.translate(-_x - flc->getPos().x, -_y - flc->getPos().y);
-		destRect.translate(-sys->_xOffset, 0);
-		g_vm->videoSystem()->transBlitFrom(*s, srcRect, destRect, flc->getTransColor(s->format));
+
+		srcRect.translate(-_x, -_y);
+		srcRect.translate(-flcBounds.left, -flcBounds.top);
+
+		destRect.translate(-xOff, 0);
+		videoSys->transBlitFrom(*surface, srcRect, destRect, flc->getTransColor(surface->format));
 	}
-	s->free();
-	delete s;
+
+	surface->free();
+	delete surface;
 }
 
 void QObject::updateZ() {
@@ -490,7 +498,7 @@ void QObject::updateZ() {
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
 	if (flc) {
 		_z = 1;
-		const Common::Array<Common::Rect> rects = flc->getMskRects();
+		const Common::Array<Common::Rect> &rects = flc->getMskRects();
 		for (uint i = 0; i < rects.size(); ++i) {
 			if (_y + rects[i].bottom > _z)
 				_z = _y + rects[i].bottom;

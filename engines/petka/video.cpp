@@ -62,8 +62,8 @@ void VideoSystem::update() {
 					xOff = MAX<int>(xOff, reqOffset);
 				}
 				sys->_xOffset = CLIP(xOff, 0, sys->_sceneWidth - 640);
+				makeAllDirty();
 			}
-			makeAllDirty();
 		}
 
 
@@ -76,7 +76,6 @@ void VideoSystem::update() {
 		}
 
 		sort();
-
 		mergeDirtyRects();
 
 		_allowAddingRects = false;
@@ -135,7 +134,7 @@ void VideoSystem::addDirtyMskRects(FlicDecoder &flc) {
 	addDirtyMskRects(Common::Point(0, 0), flc);
 }
 
-const Common::List<Common::Rect> VideoSystem::rects() const {
+const Common::List<Common::Rect> &VideoSystem::rects() const {
 	return _dirtyRects;
 }
 

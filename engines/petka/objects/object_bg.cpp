@@ -89,10 +89,10 @@ void QObjectBG::draw() {
 	Graphics::Surface *s = g_vm->resMgr()->loadBitmap(_resourceId);
 	if (!s)
 		return;
-	for (auto r : g_vm->videoSystem()->rects()) {
-		Common::Rect srcRect = r;
-		srcRect.translate(g_vm->getQSystem()->_xOffset, 0);
-		g_vm->videoSystem()->blitFrom(*s, srcRect, Common::Point(r.left, r.top));
+	int xOffset = g_vm->getQSystem()->_xOffset;
+	for (auto rect : g_vm->videoSystem()->rects()) {
+		rect.translate(xOffset, 0);
+		g_vm->videoSystem()->blitFrom(*s, rect, Common::Point(rect.left - xOffset, rect.top));
 	}
 }
 

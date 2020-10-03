@@ -47,7 +47,7 @@ public:
 
 	void setShake(bool shake);
 
-	const Common::List<Common::Rect> rects() const;
+	const Common::List<Common::Rect> &rects() const;
 
 private:
 	void sort();

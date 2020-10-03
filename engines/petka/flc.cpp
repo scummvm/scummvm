@@ -74,14 +74,6 @@ const Common::Rect &FlicDecoder::getBounds() const {
 	return *(new Common::Rect(0, 0));
 }
 
-Common::Point FlicDecoder::getPos() const {
-	const Track *track = getTrack(0);
-	if (track)
-		return ((const FlicVideoTrack *)track)->getPos();
-
-	return Common::Point(0, 0);
-}
-
 const Common::Array<Common::Rect> &FlicDecoder::getMskRects() const {
 	const Track *track = getTrack(0);
 	if (track)
@@ -166,25 +158,6 @@ bool FlicDecoder::FlicVideoTrack::loadMsk(Common::SeekableReadStream &stream) {
 	_bounds.right++;
 	_bounds.bottom++;
 
-	_pos.x = 0;
-	_pos.y = 0;
-
-	if (_frameCount == 1 && _surface->w > 630 && _surface->h > 470 && (_bounds.width() < 620 || _bounds.height() < 460)) {
-		Graphics::Surface *s = new Graphics::Surface();
-		s->create(_bounds.width(), _bounds.height(), g_system->getScreenFormat());
-
-		_surface->convertToInPlace(s->format, _palette);
-		s->copyRectToSurface(*_surface, 0, 0, _bounds);
-
-		_surface->free();
-		delete _surface;
-
-		_pos.x = _bounds.left;
-		_pos.y = _bounds.top;
-
-		_surface = s;
-	}
-
 	return true;
 }
 
@@ -203,10 +176,6 @@ const Common::Array<Common::Rect> &FlicDecoder::FlicVideoTrack::getMskRects() co
 
 uint FlicDecoder::FlicVideoTrack::getDelay() const {
 	return _frameDelay;
-}
-
-Common::Point FlicDecoder::FlicVideoTrack::getPos() const {
-	return _pos;
 }
 
 } // End of namespace Petka

@@ -111,7 +111,7 @@ void QObjectCase::draw() {
 			for (uint i = 0; i < mskRects.size(); ++i) {
 				Common::Rect destRect = mskRects[i].findIntersectingRect(*it);
 				Common::Rect srcRect = destRect;
-				srcRect.translate(-flc->getPos().x - _x + sys->_xOffset, -flc->getPos().y - _y);
+				srcRect.translate(-_x + sys->_xOffset, -_y);
 				g_vm->videoSystem()->transBlitFrom(*s, srcRect, destRect, flc->getTransColor(s->format));
 			}
 		}
@@ -146,7 +146,7 @@ bool QObjectCase::isInPoint(Common::Point p) {
 void QObjectCase::onMouseMove(Common::Point p) {
 	p.x -= _x;
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(kExitCaseResourceId);
-	if (*(const byte *)flc->getCurrentFrame()->getBasePtr(p.x - flc->getPos().x, p.y - flc->getPos().y) != 0) {
+	if (*(const byte *)flc->getCurrentFrame()->getBasePtr(p.x, p.y) != 0) {
 		if (_clickedObjIndex != kCloseButton && _clickedObjIndex != kInvalidButton) {
 			flc = g_vm->resMgr()->loadFlic(kFirstButtonResourceId + _clickedObjIndex);
 			flc->setFrame(1);
@@ -290,4 +290,4 @@ void QObjectCase::reshow() {
 	}
 }
 
-}
+} // End of namespace Petka
