@@ -17,7 +17,7 @@ Settings may also be edited directly in the configuration file. These configurat
 _`Graphics tab`
 ---------------
 
-Use the graphics tab to change how games look when they are played.
+Use the graphics tab to change how games look when they are played. For more information including comprehensive explanation of the graphics settings, see the :doc:`../advanced_options/graphics` page. 
 
 ,,,,,,,
 
