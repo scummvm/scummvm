@@ -20,7 +20,7 @@
  *
  */
 
-#include "ngi/fullpipe.h"
+#include "ngi/ngi.h"
 
 #include "ngi/utils.h"
 #include "ngi/statics.h"

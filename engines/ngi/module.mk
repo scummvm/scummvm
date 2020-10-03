@@ -5,7 +5,6 @@ MODULE_OBJS = \
 	behavior.o \
 	console.o \
 	floaters.o \
-	fullpipe.o \
 	gameloader.o \
 	gfx.o \
 	init.o \
@@ -18,6 +17,7 @@ MODULE_OBJS = \
 	metaengine.o \
 	modal.o \
 	motion.o \
+	ngi.o \
 	ngiarchive.o \
 	scene.o \
 	scenes.o \

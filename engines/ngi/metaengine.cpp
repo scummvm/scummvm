@@ -27,7 +27,7 @@
 
 #include "graphics/surface.h"
 
-#include "ngi/fullpipe.h"
+#include "ngi/ngi.h"
 #include "ngi/gameloader.h"
 
 namespace Fullpipe {

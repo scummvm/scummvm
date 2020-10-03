@@ -20,7 +20,7 @@
  *
  */
 
-#include "ngi/fullpipe.h"
+#include "ngi/ngi.h"
 
 #include "ngi/objects.h"
 #include "ngi/scene.h"

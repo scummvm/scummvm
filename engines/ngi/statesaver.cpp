@@ -24,7 +24,7 @@
 
 #include "graphics/thumbnail.h"
 
-#include "ngi/fullpipe.h"
+#include "ngi/ngi.h"
 
 #include "ngi/gameloader.h"
 #include "ngi/objects.h"

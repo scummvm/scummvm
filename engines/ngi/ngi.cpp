@@ -30,7 +30,7 @@
 #include "engines/util.h"
 #include "graphics/surface.h"
 
-#include "ngi/fullpipe.h"
+#include "ngi/ngi.h"
 #include "ngi/gameloader.h"
 #include "ngi/messages.h"
 #include "ngi/behavior.h"
