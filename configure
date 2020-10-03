@@ -2302,6 +2302,30 @@ echo $_use_cxx11
 define_in_config_if_yes "$_use_cxx11" 'USE_CXX11'
 
 #
+# Additional tests for C++11 features that may not be present
+#
+if test "$_use_cxx11" = "yes" ; then
+	# Check if initializer list is available
+	echo_n "Checking if C++11 initializer list is available... "
+	cat > $TMPC << EOF
+#include <initializer_list>
+class FOO {
+public:
+	FOO(std::initializer_list<int> list) : _size(list.size()) {}
+	size_t _size;
+};
+int main(int argc, char *argv[]) { return 0; }
+EOF
+	cc_check
+	if test "$TMPR" -eq 0; then
+		echo yes
+	else
+		echo no
+		define_in_config_if_yes yes 'NO_CXX11_INITIALIZER_LIST'
+	fi
+fi
+
+#
 # Determine extra build flags for debug and/or release builds
 #
 if test "$_debug_build" = auto && test "$_release_build" = yes; then
