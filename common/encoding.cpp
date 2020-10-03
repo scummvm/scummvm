@@ -55,7 +55,7 @@ Encoding::Encoding(const String &to, const String &from)
 char *Encoding::switchEndian(const char *string, int length, int bitCount) {
 	assert(bitCount % 8 == 0);
 	assert(length % (bitCount / 8) == 0);
-	char *newString = (char *)malloc(length);
+	char *newString = (char *)calloc(sizeof(char), length + 4);
 	if (!newString) {
 		warning("Could not allocate memory for string conversion");
 		return nullptr;
