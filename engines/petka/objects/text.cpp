@@ -188,7 +188,7 @@ QTextChoice::QTextChoice(const Common::Array<Common::U32String> &choices, uint16
 }
 
 void QTextChoice::onMouseMove(Common::Point p) {
-	p.x = p.x - _rect.left;
+	p.x = p.x - _rect.left - g_vm->getQSystem()->_xOffset;
 	p.y = p.y - _rect.top;
 	uint newChoice;
 	for (newChoice = 0; newChoice < _rects.size(); ++newChoice) {
@@ -201,12 +201,13 @@ void QTextChoice::onMouseMove(Common::Point p) {
 		Graphics::Surface *s = g_vm->resMgr()->loadBitmap(-2);
 		Common::ScopedPtr<Graphics::Font> font(Graphics::loadTTFFontFromArchive("FreeSans.ttf", 18));
 
-		if (_activeChoice < _choices.size()) {
-			font->drawString(s, _choices[_activeChoice], _rects[_activeChoice].left, _rects[_activeChoice].top, _rects[_activeChoice].width(), _choiceColor);
-		}
-
-		if (newChoice < _choices.size()) {
-			font->drawString(s, _choices[newChoice], _rects[newChoice].left, _rects[newChoice].top, _rects[newChoice].width(), _selectedColor);
+		s->fillRect(Common::Rect(s->w, s->h), 0);
+		for (uint i = 0; i < _choices.size(); ++i) {
+			if (i == newChoice) {
+				font->drawString(s, _choices[newChoice], _rects[newChoice].left, _rects[newChoice].top, s->w, _selectedColor);
+			} else {
+				font->drawString(s, _choices[i], _rects[i].left, _rects[i].top, s->w, _choiceColor);
+			}
 		}
 
 		_activeChoice = newChoice;
