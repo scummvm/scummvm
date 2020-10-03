@@ -225,7 +225,7 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 		assert(i < 512);
 		cptr = FindChunk(scene, CHUNK_CDPLAY_FILENAME);
 		assert(cptr);
-		_vm->_handle->SetCdPlaySceneDetails(i, (const char *)cptr);
+		_vm->_handle->SetCdPlaySceneDetails((const char *)cptr);
 	}
 
 	// Find scene structure

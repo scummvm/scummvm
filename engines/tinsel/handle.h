@@ -24,6 +24,7 @@
 #ifndef TINSEL_HANDLE_H
 #define TINSEL_HANDLE_H
 
+#include "common/str.h"
 #include "tinsel/dw.h"			// new data types
 
 namespace Common {
@@ -36,7 +37,7 @@ struct MEMHANDLE;
 
 class Handle {
 public:
-	Handle() : g_handleTable(0), g_numHandles(0), g_cdPlayHandle((uint32)-1), g_cdBaseHandle(0), g_cdTopHandle(0), g_cdGraphStream(nullptr) {}
+	Handle() : _handleTable(0), _numHandles(0), _cdPlayHandle((uint32)-1), _cdBaseHandle(0), _cdTopHandle(0), _cdGraphStream(nullptr) {}
 
 	/**
 	 * Loads the graphics handle table index file and preloads all the permanent graphics etc.
@@ -54,7 +55,7 @@ public:
 	void TouchMem(SCNHANDLE offset);
 
 	// Called at scene startup
-	void SetCdPlaySceneDetails(int sceneNum, const char *fileName);
+	void SetCdPlaySceneDetails(const char *fileName);
 
 	// Called at game startup
 	void SetCdPlayHandle(int	fileNum);
@@ -75,17 +76,17 @@ private:
 	void LoadCDGraphData(MEMHANDLE *pH);
 
 	// handle table gets loaded from index file at runtime
-	MEMHANDLE *g_handleTable;
+	MEMHANDLE *_handleTable;
 
 	// number of handles in the handle table
-	uint g_numHandles;
+	uint _numHandles;
 
-	uint32 g_cdPlayHandle;
+	uint32 _cdPlayHandle;
 
-	SCNHANDLE g_cdBaseHandle, g_cdTopHandle;
-	Common::File *g_cdGraphStream;
+	SCNHANDLE _cdBaseHandle, _cdTopHandle;
+	Common::File *_cdGraphStream;
 
-	char g_szCdPlayFile[100];
+	Common::String _szCdPlayFile;
 };
 
 } // End of namespace Tinsel
