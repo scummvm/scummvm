@@ -118,10 +118,10 @@ SaveStateDescriptor TinselMetaEngine::querySaveMetaInfos(const char *target, int
 	file->readUint32LE();		// skip id
 	file->readUint32LE();		// skip size
 	uint32 ver = file->readUint32LE();
-	char saveDesc[Tinsel::SG_DESC_LEN];
+	char saveDesc[SG_DESC_LEN];
 	file->read(saveDesc, sizeof(saveDesc));
 
-	saveDesc[Tinsel::SG_DESC_LEN - 1] = 0;
+	saveDesc[SG_DESC_LEN - 1] = 0;
 	SaveStateDescriptor desc(slot, saveDesc);
 
 	int8 tm_year = file->readUint16LE();
@@ -164,10 +164,10 @@ SaveStateList TinselMetaEngine::listSaves(const char *target) const {
 			in->readUint32LE();		// skip id
 			in->readUint32LE();		// skip size
 			in->readUint32LE();		// skip version
-			char saveDesc[Tinsel::SG_DESC_LEN];
+			char saveDesc[SG_DESC_LEN];
 			in->read(saveDesc, sizeof(saveDesc));
 
-			saveDesc[Tinsel::SG_DESC_LEN - 1] = 0;
+			saveDesc[SG_DESC_LEN - 1] = 0;
 
 			saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
 			delete in;
