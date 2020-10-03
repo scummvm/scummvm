@@ -86,7 +86,7 @@ enum InvCursorFN { IC_AREA,
 #define DEFINV2 0x10
 #define PERMACONV 0x20
 #define CONVENDITEM 0x40
-#define sliderRange (g_sliderYmax - g_sliderYmin)
+#define sliderRange (_sliderYmax - _sliderYmin)
 #define MAXSLIDES 4
 #define MAX_PERMICONS 10 // Max permanent conversation icons
 #define MAXHICONS 10     // Max dimensions of
@@ -346,23 +346,23 @@ public:
 	void InvCursor(InvCursorFN fn, int CurX, int CurY);
 	INV_OBJECT *GetInvObject(int id);
 	bool UpdateString(const Common::KeyState &kbd);
-	bool InventoryIsActive() { return g_InventoryState == ACTIVE_INV; }
-	bool IsMixingDeskControl() { return g_InvDragging == ID_MDCONT; }
-	int CurrentInventoryX() { return g_InvD[g_ino].inventoryX; }
-	int CurrentInventoryY() { return g_InvD[g_ino].inventoryY; }
-	bool ConfigurationIsActive() { return g_ino == INV_CONF; }
-	bool DisplayObjectsActive() { return g_objArray[0] != NULL; }
-	bool InventoryIsHidden() { return g_InventoryHidden; }
+	bool InventoryIsActive() { return _inventoryState == ACTIVE_INV; }
+	bool IsMixingDeskControl() { return _invDragging == ID_MDCONT; }
+	int CurrentInventoryX() { return _invD[_activeInv].inventoryX; }
+	int CurrentInventoryY() { return _invD[_activeInv].inventoryY; }
+	bool ConfigurationIsActive() { return _activeInv == INV_CONF; }
+	bool DisplayObjectsActive() { return _objArray[0] != NULL; }
+	bool InventoryIsHidden() { return _InventoryHidden; }
 	const FILM *GetWindowData();
 	void Redraw();
 
-	bool g_bNoLanguage;
-	int g_GlitterIndex;
-	volatile int g_PointedWaitCount; // used by ObjectProcess - fix the 'repeated pressing bug'
+	bool _noLanguage;
+	int _glitterIndex;
+	volatile int _pointedWaitCount; // used by ObjectProcess - fix the 'repeated pressing bug'
 	// For editing save game names
-	char g_sedit[SG_DESC_LEN + 2];
+	char _saveGameDesc[SG_DESC_LEN + 2];
 
-	OBJECT *g_iconArray[MAX_ICONS]; // Current display objects (icons)
+	OBJECT *_iconArray[MAX_ICONS]; // Current display objects (icons)
 
 private:
 	int WhichMenuBox(int curX, int curY, bool bSlides);
@@ -429,99 +429,99 @@ private:
 	              int startx, int starty, bool moveable);
 
 	//----- Permanent data (set once) -----
-	SCNHANDLE g_flagFilm;  // Window members and cursors' graphic data
-	SCNHANDLE g_configStrings[20];
+	SCNHANDLE _flagFilm;  // Window members and cursors' graphic data
+	SCNHANDLE _configStrings[20];
 
-	INV_DEF g_InvD[NUM_INV];        // Conversation + 2 inventories + ...
-	int g_ino;                      // Which inventory is currently active
-	INV_OBJECT *g_invObjects; // Inventory objects' data
-	int g_numObjects;               // Number of inventory objects
-	SCNHANDLE *g_invFilms;
-	DIRECTION g_initialDirection;
+	INV_DEF _invD[NUM_INV];        // Conversation + 2 inventories + ...
+	int _activeInv;                      // Which inventory is currently active
+	INV_OBJECT *_invObjects; // Inventory objects' data
+	int _numObjects;               // Number of inventory objects
+	SCNHANDLE *_invFilms;
+	DIRECTION _initialDirection;
 
 	//----- Permanent data (updated, valid while inventory closed) -----
-	int g_heldItem = INV_NOICON; // Current held item
+	int _heldItem = INV_NOICON; // Current held item
 
-	SCNHANDLE g_heldFilm;
-	SCNHANDLE g_hWinParts; // Window members and cursors' graphic data
+	SCNHANDLE _heldFilm;
+	SCNHANDLE _hWinParts; // Window members and cursors' graphic data
 
 	// Permanent contents of conversation inventory
-	int g_permIcons[MAX_PERMICONS]; // Basic items i.e. permanent contents
-	int g_numPermIcons;         // - copy to conv. inventory at pop-up time
-	int g_numEndIcons;
+	int _permIcons[MAX_PERMICONS]; // Basic items i.e. permanent contents
+	int _numPermIcons;         // - copy to conv. inventory at pop-up time
+	int _numEndIcons;
 
 	//----- Data pertinant to current active inventory -----
 
-	bool g_InventoryHidden;
-	bool g_InventoryMaximised;
-	bool g_ItemsChanged; // When set, causes items to be re-drawn
+	bool _InventoryHidden;
+	bool _InventoryMaximised;
+	bool _ItemsChanged; // When set, causes items to be re-drawn
 
-	int g_SuppH; // 'Linear' element of
-	int g_SuppV; // dimensions during re-sizing
+	int _SuppH; // 'Linear' element of
+	int _SuppV; // dimensions during re-sizing
 
-	int g_Ychange;     //
-	int g_Ycompensate; // All to do with re-sizing.
-	int g_Xchange;     //
-	int g_Xcompensate; //
+	int _yChange;     //
+	int _yCompensate; // All to do with re-sizing.
+	int _xChange;     //
+	int _xCompensate; //
 
-	bool g_bReOpenMenu;
+	bool _reOpenMenu;
 
-	int g_TL, g_TR, g_BL, g_BR; // Used during window construction
-	int g_TLwidth, g_TLheight;          //
-	int g_TRwidth;                          //
-	int g_BLheight;                         //
+	int _TL, _TR, _BL, _BR; // Used during window construction
+	int _TLwidth, _TLheight;          //
+	int _TRwidth;                          //
+	int _BLheight;                         //
 
-	LANGUAGE g_displayedLanguage;
+	LANGUAGE _displayedLanguage;
 
-	OBJECT *g_objArray[MAX_WCOMP];  // Current display objects (window)
-	OBJECT *g_DobjArray[MAX_WCOMP]; // Current display objects (re-sizing window)
-	ANIM g_iconAnims[MAX_ICONS];
+	OBJECT *_objArray[MAX_WCOMP];  // Current display objects (window)
+	OBJECT *_dispObjArray[MAX_WCOMP]; // Current display objects (re-sizing window)
+	ANIM _iconAnims[MAX_ICONS];
 
-	OBJECT *g_RectObject, *g_SlideObject; // Current display objects, for reference
+	OBJECT *_rectObject, *_slideObject; // Current display objects, for reference
 	                                                     // objects are in objArray.
 
-	int g_sliderYpos;                   // For positioning the slider
-	int g_sliderYmax, g_sliderYmin; //
+	int _sliderYpos;                   // For positioning the slider
+	int _sliderYmax, _sliderYmin; //
 
 	// Also to do with the slider
 	struct {
 		int n;
 		int y;
-	} g_slideStuff[MAX_ININV_TOT + 1];
+	} _slideStuff[MAX_ININV_TOT + 1];
 
 	struct MDSLIDES {
 		int num;
 		OBJECT *obj;
 		int min, max;
 	};
-	MDSLIDES g_mdSlides[MAXSLIDES];
-	int g_numMdSlides;
+	MDSLIDES _mdSlides[MAXSLIDES];
+	int _numMdSlides;
 
 	// Icon clicked on to cause an event
 	// - Passed to conversation polygon or actor code via Topic()
 	// - (sometimes) Passed to inventory icon code via OtherObject()
-	int g_thisIcon = 0;
+	int _thisIcon = 0;
 
-	CONV_PARAM g_thisConvFn;             // Top, 'Middle' or Bottom
-	HPOLYGON g_thisConvPoly;         // Conversation code is in a polygon code block
-	int g_thisConvActor;                 // ...or an actor's code block.
-	int g_pointedIcon;      // used by InvLabels - icon pointed to on last call
-	int g_sX;                        // used by SlideMSlider() - current x-coordinate
-	int g_lX;                        // used by SlideMSlider() - last x-coordinate
+	CONV_PARAM _thisConvFn;             // Top, 'Middle' or Bottom
+	HPOLYGON _thisConvPoly;         // Conversation code is in a polygon code block
+	int _thisConvActor;                 // ...or an actor's code block.
+	int _pointedIcon;      // used by InvLabels - icon pointed to on last call
+	int _sX;                        // used by SlideMSlider() - current x-coordinate
+	int _lX;                        // used by SlideMSlider() - last x-coordinate
 
-	bool g_bMoveOnUnHide; // Set before start of conversation
+	bool _bMoveOnUnHide; // Set before start of conversation
 	    // - causes conversation to be started in a sensible place
 
-	PHOPPER g_pHopper;
-	PHOPENTRY g_pEntries;
-	int g_numScenes;
+	PHOPPER _pHopper;
+	PHOPENTRY _pEntries;
+	int _numScenes;
 
-	int g_numEntries;
+	int _numEntries;
 
-	PHOPPER g_pChosenScene;
+	PHOPPER _pChosenScene;
 
-	int g_lastChosenScene;
-	bool g_bRemember;
+	int _lastChosenScene;
+	bool _bRemember;
 	enum { IC_NORMAL,
 		          IC_DR,
 		          IC_UR,
@@ -534,7 +534,7 @@ private:
 	enum { NO_INV,
 		   IDLE_INV,
 		   ACTIVE_INV,
-		   BOGUS_INV } g_InventoryState;
+		   BOGUS_INV } _inventoryState;
 
 	enum { ID_NONE,
 		   ID_MOVE,
@@ -548,7 +548,7 @@ private:
 		   ID_BLEFT,
 		   ID_BRIGHT,
 		   ID_CSLIDE,
-		   ID_MDCONT } g_InvDragging;
+		   ID_MDCONT } _invDragging;
 };
 
 void ObjectEvent(CORO_PARAM, int objId, TINSEL_EVENT event, bool bWait, int myEscape, bool *result = NULL);
