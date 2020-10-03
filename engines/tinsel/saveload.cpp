@@ -246,8 +246,6 @@ static void syncSavedActor(Common::Serializer &s, SAVED_ACTOR &sa) {
 	s.syncAsUint16LE(sa.presPlayY);
 }
 
-extern void syncAllActorsAlive(Common::Serializer &s);
-
 static void syncNoScrollB(Common::Serializer &s, NOSCROLLB &ns) {
 	s.syncAsSint32LE(ns.ln);
 	s.syncAsSint32LE(ns.c1);
@@ -482,7 +480,7 @@ static bool DoSync(Common::Serializer &s, int numInterp) {
 	}
 
 	if (!TinselV2)
-		syncAllActorsAlive(s);
+		_vm->_actor->syncAllActorsAlive(s);
 
 	return true;
 }

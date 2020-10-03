@@ -126,7 +126,7 @@ PMOVER GetMover(int ano) {
 	int i;
 
 	// Slot 0 is reserved for lead actor
-	if (ano == GetLeadId() || ano == LEAD_ACTOR)
+	if (ano == _vm->_actor->GetLeadId() || ano == LEAD_ACTOR)
 		return &g_Movers[0];
 
 	for (i = 1; i < MAX_MOVERS; i++)
@@ -143,9 +143,9 @@ PMOVER RegisterMover(int ano) {
 	int i;
 
 	// Slot 0 is reserved for lead actor
-	if (ano == GetLeadId() || ano == LEAD_ACTOR) {
+	if (ano == _vm->_actor->GetLeadId() || ano == LEAD_ACTOR) {
 		g_Movers[0].actorToken = TOKEN_LEAD;
-		g_Movers[0].actorID = GetLeadId();
+		g_Movers[0].actorID = _vm->_actor->GetLeadId();
 		return &g_Movers[0];
 	}
 
@@ -229,10 +229,10 @@ void HideMover(PMOVER pMover, int sf) {
 		pMover->SlowFactor = sf;
 	} else {
 		// Tinsel 2 specific code
-		if (IsTaggedActor(pMover->actorID)) {
+		if (_vm->_actor->IsTaggedActor(pMover->actorID)) {
 			// It may be pointed to
-			SetActorPointedTo(pMover->actorID, false);
-			SetActorTagWanted(pMover->actorID, false, false, 0);
+			_vm->_actor->SetActorPointedTo(pMover->actorID, false);
+			_vm->_actor->SetActorTagWanted(pMover->actorID, false, false, 0);
 		}
 	}
 
@@ -299,7 +299,9 @@ int GetMoverId(PMOVER pMover) {
  */
 void SetMoverZ(PMOVER pMover, int y, uint32 zFactor) {
 	if (!pMover->bHidden) {
-		if (MoverIsSWalking(pMover) && pMover->zOverride != -1) {
+		if (!TinselV2)
+			_vm->_actor->AsetZPos(pMover->actorObj, y, zFactor);
+		else if (MoverIsSWalking(pMover) && pMover->zOverride != -1) {
 			// Special for SWalk()
 			MultiSetZPosition(pMover->actorObj, (pMover->zOverride << ZSHIFT) + y);
 		} else {
@@ -618,7 +620,7 @@ void SetMoverWalkReel(PMOVER pMover, DIRECTION reel, int scale, bool force) {
 
 	// Kill off any play that may be going on for this actor
 	// and restore the real actor
-	storeActorReel(pMover->actorID, NULL, 0, NULL, 0, 0, 0);
+	_vm->_actor->storeActorReel(pMover->actorID, NULL, 0, NULL, 0, 0, 0);
 	UnHideMover(pMover);
 
 	// Don't do it if using a special walk reel
@@ -720,7 +722,7 @@ static void MoverProcessHelper(int X, int Y, int id, PMOVER pMover) {
 
 	// add it to display list
 	MultiInsertObject(_vm->_bg->GetPlayfieldList(FIELD_WORLD), pMover->actorObj);
-	storeActorReel(id, NULL, 0, pMover->actorObj, 0, 0, 0);
+	_vm->_actor->storeActorReel(id, NULL, 0, pMover->actorObj, 0, 0, 0);
 
 	InitStepAnimScript(&pMover->actorAnim, pMover->actorObj, FROM_32(pfilm->reels[0].script), ONE_SECOND / FROM_32(pfilm->frate));
 	pMover->stepCount = 0;

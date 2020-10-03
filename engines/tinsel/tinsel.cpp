@@ -711,7 +711,7 @@ void LoadBasicChunks() {
 	// CHUNK_TOTAL_ACTORS seems to be missing in the released version, hard coding a value
 	// TODO: Would be nice to just change 511 to MAX_SAVED_ALIVES
 	cptr = FindChunk(MASTER_SCNHANDLE, CHUNK_TOTAL_ACTORS);
-	RegisterActors((cptr != NULL) ? READ_32(cptr) : 511);
+	_vm->_actor->RegisterActors((cptr != NULL) ? READ_32(cptr) : 511);
 
 	// CHUNK_TOTAL_GLOBALS seems to be missing in some versions.
 	// So if it is missing, set a reasonably high value for the number of globals.
@@ -861,11 +861,12 @@ TinselEngine::~TinselEngine() {
 	FreeSaveScenes();
 	FreeTextBuffer();
 	FreeHandleTable();
-	FreeActors();
+	_actor->FreeActors();
 	FreeObjectList();
 	FreeGlobalProcesses();
 	FreeGlobals();
 
+	delete _actor;
 	delete _config;
 
 	MemoryDeinit();
@@ -898,6 +899,7 @@ Common::Error TinselEngine::run() {
 	_font = new Font();
 	_bg = new Background(_font);
 	_cursor = new Cursor();
+	_actor = new Actor();
 
 	// Initialize backend
 	if (getGameID() == GID_DW2) {

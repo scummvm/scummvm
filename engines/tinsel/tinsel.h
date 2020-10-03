@@ -61,6 +61,7 @@ class SoundManager;
 class Background;
 class Font;
 class Cursor;
+class Actor;
 
 typedef Common::List<Common::Rect> RectList;
 
@@ -168,6 +169,7 @@ public:
 	Background* _bg;
 	Font *_font;
 	Cursor *_cursor;
+	Actor *_actor;
 
 	Config *_config;
 

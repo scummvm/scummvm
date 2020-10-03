@@ -3538,7 +3538,7 @@ static void InvCursor(InvCursorFN fn, int CurX, int CurY) {
 
 extern void ConvAction(int index) {
 	assert(g_ino == INV_CONV); // not conv. window!
-	PMOVER pMover = TinselV2 ? GetMover(GetLeadId()) : NULL;
+	PMOVER pMover = TinselV2 ? GetMover(_vm->_actor->GetLeadId()) : NULL;
 
 	switch (index) {
 	case INV_NOICON:
@@ -3598,7 +3598,7 @@ extern void SetConvDetails(CONV_PARAM fn, HPOLYGON hPoly, int ano) {
 		int x, y;
 		GetTagTag(hPoly, &g_InvD[INV_CONV].hInvTitle, &x, &y);
 	} else {
-		g_InvD[INV_CONV].hInvTitle = GetActorTagHandle(ano);
+		g_InvD[INV_CONV].hInvTitle = _vm->_actor->GetActorTagHandle(ano);
 	}
 }
 
@@ -3717,7 +3717,7 @@ extern void HideConversation(bool bHide) {
 				if (g_thisConvActor) {
 					int Loffset, Toffset;
 
-					GetActorMidTop(g_thisConvActor, &x, &y);
+					_vm->_actor->GetActorMidTop(g_thisConvActor, &x, &y);
 					_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 					x -= Loffset;
 					y -= Toffset;
@@ -3774,7 +3774,7 @@ extern void HideConversation(bool bHide) {
 					int Loffset, Toffset;
 
 					_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
-					y = GetActorBottom(g_thisConvActor) - MultiHighest(g_RectObject) +
+					y = _vm->_actor->GetActorBottom(g_thisConvActor) - MultiHighest(g_RectObject) +
 						SysVar(SV_CONV_BELOW_Y);
 					y -= Toffset;
 				}

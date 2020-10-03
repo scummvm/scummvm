@@ -246,7 +246,7 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 		InitPolygons(FROM_32(ss->hPoly), FROM_32(ss->numPoly), true);
 
 		// Initialize the actors for this scene
-		StartTaggedActors(FROM_32(ss->hTaggedActor), FROM_32(ss->numTaggedActor), false);
+		_vm->_actor->StartTaggedActors(FROM_32(ss->hTaggedActor), FROM_32(ss->numTaggedActor), false);
 
 		if (TinselV2)
 			// Returning from cutscene
@@ -259,7 +259,7 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 		InitPolygons(FROM_32(ss->hPoly), FROM_32(ss->numPoly), false);
 
 		// Initialize the actors for this scene
-		StartTaggedActors(FROM_32(ss->hTaggedActor), FROM_32(ss->numTaggedActor), true);
+		_vm->_actor->StartTaggedActors(FROM_32(ss->hTaggedActor), FROM_32(ss->numTaggedActor), true);
 
 		// Run the appropriate entrance code (if any)
 		es = (const ENTRANCE_STRUC *)LockMem(FROM_32(ss->hEntrance));
@@ -317,7 +317,7 @@ void EndScene() {
 	_vm->_bg->DropBackground();	// No background
 	DropMovers();		// No moving actors
 	_vm->_cursor->DropCursor(); // No cursor
-	DropActors();		// No actor reels running
+	_vm->_actor->DropActors();      // No actor reels running
 	FreeAllTokens();	// No-one has tokens
 	FreeMostInterpretContexts();	// Only master script still interpreting
 

@@ -523,7 +523,7 @@ void TinGetVersion(WHICH_VER which, char *buffer, int length) {
  * - currently only the text color.
  */
 static void ActorAttr(int actor, int r1, int g1, int b1) {
-	storeActorAttr(actor, r1, g1, b1);
+	_vm->_actor->storeActorAttr(actor, r1, g1, b1);
 }
 
 /**
@@ -562,14 +562,14 @@ void ActorPalette(int actor, int startColor, int length) {
  * Set actor's Z-factor.
  */
 static void ActorPriority(int actor, int zFactor) {
-	SetActorZfactor(actor, zFactor);
+	_vm->_actor->SetActorZfactor(actor, zFactor);
 }
 
 /**
  * Set actor's text color.
  */
 static void ActorRGB(int actor, COLORREF color) {
-	SetActorRGB(actor, color);
+	_vm->_actor->SetActorRGB(actor, color);
 }
 
 /**
@@ -588,7 +588,7 @@ static int ActorScale(int actor) {
 static int ActorPos(int xory, int actor) {
 	int x, y;
 
-	GetActorPos(actor, &x, &y);
+	_vm->_actor->GetActorPos(actor, &x, &y);
 	return (xory == ACTORXPOS) ? x : y;
 }
 
@@ -596,7 +596,7 @@ static int ActorPos(int xory, int actor) {
  * Make all actors alive at the start of each scene.
  */
 static void ActorsOn() {
-	setactorson();
+	_vm->_actor->SetActorsOn();
 }
 
 /**
@@ -689,7 +689,7 @@ void CdEndActor(int	actor, int	myEscape) {
 	// Only do it if escaped!
 	if (myEscape && myEscape != GetEscEvents()) {
 		// End current graphic
-		dwEndActor(actor);
+		_vm->_actor->dwEndActor(actor);
 
 		// un-hide movers
 		pMover = GetMover(actor);
@@ -972,13 +972,13 @@ static void DecLead(uint32 id, SCNHANDLE *rp = 0, SCNHANDLE text = 0) {
 
 	if (TinselV2) {
 		// Tinsel 2 only specifies the lead actor Id
-		SetLeadId(id);
+		_vm->_actor->SetLeadId(id);
 		RegisterMover(id);
 
 	} else {
 
-		Tag_Actor(id, text, TAG_DEF);	// The lead actor is automatically tagged
-		SetLeadId(id);			// Establish this as the lead
+		_vm->_actor->Tag_Actor(id, text, TAG_DEF); // The lead actor is automatically tagged
+		_vm->_actor->SetLeadId(id);                // Establish this as the lead
 		RegisterMover(id);			// Establish as a moving actor
 
 		pMover = GetMover(id);		// Get moving actor structure
@@ -1080,7 +1080,7 @@ static void EnableMenu() {
  * Kill an actor's current graphics.
  */
 static void EndActor(int actor) {
-	dwEndActor(actor);
+	_vm->_actor->dwEndActor(actor);
 }
 
 /**
@@ -1112,7 +1112,7 @@ static void FaceTag(int actor, HPOLYGON hp) {
 	 */
 	// See where node is and where actor is
 	GetPolyNode(hp, &nodex, &nodey);
-	GetActorPos(actor, &nowx, &nowy);
+	_vm->_actor->GetActorPos(actor, &nowx, &nowy);
 
 	if (nowx == nodex && nowy == nodey) {
 		// Stood at the tag, don't face in silly direction
@@ -1331,7 +1331,7 @@ static int InWhichInv(int object) {
  * Kill an actor.
  */
 static void KillActor(int actor) {
-	DisableActor(actor);
+	_vm->_actor->DisableActor(actor);
 }
 
 /**
@@ -1517,7 +1517,7 @@ static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int compit, int acto
 		return;
 
 	// If this actor is dead, call a stop to the calling process
-	if (actorid && !actorAlive(actorid))
+	if (actorid && !_vm->_actor->actorAlive(actorid))
 		CORO_KILL_SELF();
 
 	// 7/4/95
@@ -1559,7 +1559,7 @@ static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, bool bComplete, int 
 		if (hPoly == NOPOLY) {
 			// Must be a tagged actor
 
-			assert(taggedActor && IsTaggedActor(taggedActor));
+			assert(taggedActor && _vm->_actor->IsTaggedActor(taggedActor));
 			actor = taggedActor;
 		} else if (taggedActor == 0) {
 			// Must be a polygon with an actor ID
@@ -1571,8 +1571,8 @@ static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, bool bComplete, int 
 			return;
 		}
 
-		SetActorTalking(actor, true);
-		SetActorTalkFilm(actor, hFilm);
+		_vm->_actor->SetActorTalking(actor, true);
+		_vm->_actor->SetActorTalkFilm(actor, hFilm);
 	}
 
 	if (bComplete) {
@@ -1757,9 +1757,9 @@ void PointActor(int actor) {
 	if (!SysVar(SV_ENABLEPOINTTAG))
 		return;
 
-	assert(IsTaggedActor(actor));
+	assert(_vm->_actor->IsTaggedActor(actor));
 
-	GetActorTagPos(actor, &x, &y, true);
+	_vm->_actor->GetActorTagPos(actor, &x, &y, true);
 
 	_vm->setMousePosition(Common::Point(x, y));
 }
@@ -1792,10 +1792,10 @@ static void PostActor(CORO_PARAM, int actor, TINSEL_EVENT event, HPOLYGON hp,
 	if (actor == -1) {
 		actor = taggedActor;
 		assert(hp == NOPOLY && taggedActor);
-		assert(IsTaggedActor(actor));
+		assert(_vm->_actor->IsTaggedActor(actor));
 	}
 
-	if (IsTaggedActor(actor)) {
+	if (_vm->_actor->IsTaggedActor(actor)) {
 		assert(actor);
 		ActorEvent(coroParam, actor, event, false, myEscape);
 	} else {
@@ -2358,7 +2358,7 @@ static void PrintTag(HPOLYGON hp, SCNHANDLE text, int actor = 0, bool bCursor = 
 		}
 	} else {
 		// Moving actor handling
-		SetActorTagWanted(actor, true, bCursor, text);
+		_vm->_actor->SetActorTagWanted(actor, true, bCursor, text);
 	}
 }
 
@@ -2573,7 +2573,7 @@ static void ScrollParameters(int xTrigger, int xDistance, int xSpeed, int yTrigg
 int SendActor(CORO_PARAM, int actor, TINSEL_EVENT event, HPOLYGON hp, int myEscape) {
 	bool result;
 
-	if (IsTaggedActor(actor)) {
+	if (_vm->_actor->IsTaggedActor(actor)) {
 		assert(actor);
 		ActorEvent(coroParam, actor, event, true, myEscape, &result);
 	} else {
@@ -2628,7 +2628,7 @@ static void SendTag(CORO_PARAM, int tagno, TINSEL_EVENT event, HPOLYGON hp, int 
  * Un-kill an actor.
  */
 static void SetActor(int actor) {
-	EnableActor(actor);
+	_vm->_actor->EnableActor(actor);
 }
 
 /**
@@ -2822,13 +2822,13 @@ void Stand(CORO_PARAM, int actor, int x, int y, SCNHANDLE hFilm) {
 
 			// Another new special.
 			// If lead actor, and TalkVia, ignore
-			if ((actor == GetLeadId() || actor == LEAD_ACTOR) && SysVar(ISV_DIVERT_ACTOR))
+			if ((actor == _vm->_actor->GetLeadId() || actor == LEAD_ACTOR) && SysVar(ISV_DIVERT_ACTOR))
 				return;
 		}
 
 		if (!MoverIs(_ctx->pMover)) {
 			// create a moving actor process
-			MoverProcessCreate(x, y, (actor == LEAD_ACTOR) ? GetLeadId() : actor, _ctx->pMover);
+			MoverProcessCreate(x, y, (actor == LEAD_ACTOR) ? _vm->_actor->GetLeadId() : actor, _ctx->pMover);
 
 			if (hFilm == TF_NONE) {
 				// Make sure there is an assigned actorObj
@@ -2928,14 +2928,14 @@ static void StandTag(int actor, HPOLYGON hp) {
 
 	// other actors can use direction
 	if (TinselV2) {
-		if (actor != LEAD_ACTOR && actor != GetLeadId()
+		if (actor != LEAD_ACTOR && actor != _vm->_actor->GetLeadId()
 				&& hFilm != TF_UP && hFilm != TF_DOWN
 				&& hFilm != TF_LEFT && hFilm != TF_RIGHT)
 			hFilm = 0;
 
 		Stand(Common::nullContext, actor, pnodex, pnodey, hFilm);
 
-	} else if (hFilm && (actor == LEAD_ACTOR || actor == GetLeadId()))
+	} else if (hFilm && (actor == LEAD_ACTOR || actor == _vm->_actor->GetLeadId()))
 		Stand(Common::nullContext, actor, pnodex, pnodey, hFilm);
 	else
 		Stand(Common::nullContext, actor, pnodex, pnodey, 0);
@@ -3036,7 +3036,7 @@ static void Swalk(CORO_PARAM, int actor, int x1, int y1, int x2, int y2, SCNHAND
 	}
 
 	// For lead actor, lock out the user (if not already locked out)
-	if (actor == GetLeadId() || actor == LEAD_ACTOR) {
+	if (actor == _vm->_actor->GetLeadId() || actor == LEAD_ACTOR) {
 		_ctx->bTookControl = GetControl(CONTROL_OFFV2);
 		if (TinselV2 && _ctx->bTookControl)
 			_vm->_cursor->RestoreMainCursor();
@@ -3093,7 +3093,7 @@ static int SystemVar(int varId) {
  * Define a tagged actor.
  */
 static void TagActor(int actor, SCNHANDLE text, int tp) {
-	Tag_Actor(actor, text, tp);
+	_vm->_actor->Tag_Actor(actor, text, tp);
 }
 
 /**
@@ -3133,8 +3133,8 @@ static void FinishTalkingReel(CORO_PARAM, PMOVER pMover, int actor) {
 		SetMoverStanding(pMover);
 		AlterMover(pMover, 0, AR_POPREEL);
 	} else {
-		SetActorTalking(actor, false);
-		CORO_INVOKE_ARGS(PlayFilm, (CORO_SUBCTX, GetActorPlayFilm(actor), -1, -1, 0, false, 0, false, 0, false));
+		_vm->_actor->SetActorTalking(actor, false);
+		CORO_INVOKE_ARGS(PlayFilm, (CORO_SUBCTX, _vm->_actor->GetActorPlayFilm(actor), -1, -1, 0, false, 0, false, 0, false));
 	}
 
 	CORO_END_CODE;
@@ -3186,7 +3186,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 	_ctx->myLeftEvent = GetLeftEvents();
 
 	// If this actor is dead, call a stop to the calling process
-	if (!TinselV2 && (actorId && !actorAlive(actorId)))
+	if (!TinselV2 && (actorId && !_vm->_actor->actorAlive(actorId)))
 		CORO_KILL_SELF();
 
 	if (!TinselV2 || (speechType == IS_TALK)) {
@@ -3200,7 +3200,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 		case TF_DOWN:
 		case TF_LEFT:
 		case TF_RIGHT:
-			_ctx->actor = GetLeadId();	// If no film, actor is lead actor
+			_ctx->actor = _vm->_actor->GetLeadId(); // If no film, actor is lead actor
 			_ctx->direction = (TFTYPE)hFilm;
 			break;
 
@@ -3218,7 +3218,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 	 * Lock out the user (for lead actor, if not already locked out)
 	 * May need to disable tags for other actors
 	 */
-	if (_ctx->actor == GetLeadId() || (TinselV2 && (_ctx->actor == LEAD_ACTOR)))
+	if (_ctx->actor == _vm->_actor->GetLeadId() || (TinselV2 && (_ctx->actor == LEAD_ACTOR)))
 		_ctx->bTookControl = GetControl(CONTROL_OFF);
 	else
 		_ctx->bTookControl = false;
@@ -3228,7 +3228,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 		/*
 		 * Divert stuff
 		 */
-		if (SysVar(ISV_DIVERT_ACTOR) && (_ctx->actor == GetLeadId() || _ctx->actor == LEAD_ACTOR)) {
+		if (SysVar(ISV_DIVERT_ACTOR) && (_ctx->actor == _vm->_actor->GetLeadId() || _ctx->actor == LEAD_ACTOR)) {
 			_ctx->actor = SysVar(ISV_DIVERT_ACTOR);
 			if (_ctx->whatSort == IS_TALK)
 				_ctx->whatSort = IS_SAY;
@@ -3259,8 +3259,8 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 				hFilm = GetMoverTalkReel(_ctx->pActor, _ctx->direction);
 			AlterMover(_ctx->pActor, hFilm, AR_PUSHREEL);
 		} else {
-			SetActorTalking(_ctx->actor, true);
-			SetActorTalkFilm(_ctx->actor, hFilm);
+			_vm->_actor->SetActorTalking(_ctx->actor, true);
+			_vm->_actor->SetActorTalkFilm(_ctx->actor, hFilm);
 			CORO_INVOKE_ARGS(PlayFilm, (CORO_SUBCTX, hFilm, -1, -1, 0, false, 0, escOn, myEscape, false));
 		}
 		_ctx->bTalkReel = true;
@@ -3271,7 +3271,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 
 	} else if ((_ctx->whatSort == IS_SAY) || (_ctx->whatSort == IS_SAYAT)) {
 		_ctx->bTalkReel = false;
-		if (IsTaggedActor(_ctx->actor)) {
+		if (_vm->_actor->IsTaggedActor(_ctx->actor)) {
 			CORO_INVOKE_ARGS(ActorEvent, (CORO_SUBCTX, _ctx->actor, TALKING, false, 0));
 		} else if (IsTagPolygon(_ctx->actor | ACTORTAG_KEY)) {
 			CORO_INVOKE_ARGS(PolygonEvent, (CORO_SUBCTX, GetTagHandle(_ctx->actor | ACTORTAG_KEY),
@@ -3309,10 +3309,10 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 
 			_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &_ctx->Loffset, &_ctx->Toffset);
 			if ((_ctx->whatSort == IS_SAY) || (_ctx->whatSort == IS_TALK))
-				GetActorMidTop(_ctx->actor, &_ctx->x, &_ctx->y);
+				_vm->_actor->GetActorMidTop(_ctx->actor, &_ctx->x, &_ctx->y);
 
 			if (!TinselV0)
-				SetTextPal(GetActorRGB(_ctx->actor));
+				SetTextPal(_vm->_actor->GetActorRGB(_ctx->actor));
 			if (TinselV2)
 				LoadSubString(hText, _ctx->sub, _vm->_font->TextBufferAddr(), TBUFSZ);
 			else {
@@ -3461,8 +3461,8 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 
 	if (TinselV2) {
 		if ((_ctx->whatSort == IS_SAY) || (_ctx->whatSort == IS_SAYAT)) {
-			SetActorTalking(_ctx->actor, false);
-			if (IsTaggedActor(_ctx->actor))
+			_vm->_actor->SetActorTalking(_ctx->actor, false);
+			if (_vm->_actor->IsTaggedActor(_ctx->actor))
 				CORO_INVOKE_ARGS(ActorEvent, (CORO_SUBCTX, _ctx->actor, ENDTALK, false, 0));
 			else if (IsTagPolygon(_ctx->actor | ACTORTAG_KEY))
 				CORO_INVOKE_ARGS(PolygonEvent, (CORO_SUBCTX,
@@ -3497,7 +3497,7 @@ static void TalkAt(CORO_PARAM, int actor, int x, int y, SCNHANDLE text, bool esc
 			return;
 
 		if (!_vm->_config->isJapanMode() && (_vm->_config->_useSubtitles || !_vm->_sound->sampleExists(text)))
-			SetTextPal(GetActorRGB(actor));
+			SetTextPal(_vm->_actor->GetActorRGB(actor));
 	}
 
 	Print(coroParam, x, y, text, 0, false, escOn, myEscape);
@@ -3515,7 +3515,7 @@ static void TalkAtS(CORO_PARAM, int actor, int x, int y, SCNHANDLE text, int sus
 			return;
 
 		if (!_vm->_config->isJapanMode())
-			SetTextPal(GetActorRGB(actor));
+			SetTextPal(_vm->_actor->GetActorRGB(actor));
 	}
 
 	Print(coroParam, x, y, text, 0, sustain == 2, escOn, myEscape);
@@ -3659,7 +3659,7 @@ static void TryPlaySample(CORO_PARAM, int sample, bool bComplete, bool escOn, in
  * Un-define an actor as tagged.
  */
 static void UnTagActorFn(int actor) {
-	UnTagActor(actor);
+	_vm->_actor->UnTagActor(actor);
 }
 
 /**
@@ -3677,7 +3677,7 @@ static void WaitFrame(CORO_PARAM, int actor, int frameNumber, bool escOn, int my
 
 	CORO_BEGIN_CODE(_ctx);
 
-	while (GetActorSteps(actor) < frameNumber) {
+	while (_vm->_actor->GetActorSteps(actor) < frameNumber) {
 		// Don't do it if it's not wanted
 		if (escOn && myEscape != GetEscEvents())
 			break;
@@ -4115,7 +4115,7 @@ static void WalkTag(CORO_PARAM, int actor, SCNHANDLE film, HPOLYGON hp, bool esc
 		break;
 
 	default:
-		if (actor == LEAD_ACTOR || actor == GetLeadId())
+		if (actor == LEAD_ACTOR || actor == _vm->_actor->GetLeadId())
 			AlterMover(pMover, pFilm, AR_NORMAL);
 		else
 			SetMoverStanding(pMover);

@@ -65,7 +65,7 @@ void Font::FettleFontPal(SCNHANDLE fontPal) {
 		pImg->hImgPal = 0;
 
 	if (TinselV2 && SysVar(SV_TAGCOLOR)) {
-		const COLORREF c = GetActorRGB(-1);
+		const COLORREF c = _vm->_actor->GetActorRGB(-1);
 		SetTagColorRef(c);
 		UpdateDACqueue(SysVar(SV_TAGCOLOR), c);
 	}

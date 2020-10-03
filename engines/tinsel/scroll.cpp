@@ -351,7 +351,7 @@ static void MonitorScroll() {
 	if (!g_pScrollMover || MoverHidden(g_pScrollMover) || !MoverIs(g_pScrollMover))
 		return;
 
-	GetActorPos(g_scrollActor, &newx, &newy);
+	_vm->_actor->GetActorPos(g_scrollActor, &newx, &newy);
 
 	if (g_oldx == newx && g_oldy == newy)
 		return;
@@ -375,7 +375,7 @@ static void MonitorScroll() {
 	if (newy > Toffset+SCREEN_HEIGHT-DDISTANCE && Toffset < g_ImageH-SCREEN_HEIGHT) {
 		if (newy > g_oldy)
 				NeedScroll(UP);
-	} else if (Toffset && newy < Toffset + UDISTANCE + GetActorBottom(g_scrollActor) - GetActorTop(g_scrollActor)) {
+	} else if (Toffset && newy < Toffset + UDISTANCE + _vm->_actor->GetActorBottom(g_scrollActor) - _vm->_actor->GetActorTop(g_scrollActor)) {
 		if (newy < g_oldy)
 				NeedScroll(DOWN);
 	}
@@ -437,7 +437,7 @@ void ScrollProcess(CORO_PARAM, const void *) {
 	}
 
 	if (!g_scrollActor)
-		g_scrollActor = GetLeadId();
+		g_scrollActor = _vm->_actor->GetLeadId();
 
 	g_pScrollMover = GetMover(g_scrollActor);
 

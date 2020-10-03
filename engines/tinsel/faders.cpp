@@ -209,7 +209,7 @@ void FadeInFast() {
 
 void PokeInTagColor() {
 	if (SysVar(SV_TAGCOLOR)) {
-		const COLORREF c = GetActorRGB(-1);
+		const COLORREF c = _vm->_actor->GetActorRGB(-1);
 		UpdateDACqueue(SysVar(SV_TAGCOLOR), c);
 	}
 }

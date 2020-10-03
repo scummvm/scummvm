@@ -105,7 +105,7 @@ void DoSaveScene(SAVED_DATA *sd) {
 	sd->SavedSceneHandle = GetSceneHandle();
 	sd->SavedBgroundHandle = _vm->_bg->GetBgroundHandle();
 	SaveMovers(sd->SavedMoverInfo);
-	sd->NumSavedActors = SaveActors(sd->SavedActorInfo);
+	sd->NumSavedActors = _vm->_actor->SaveActors(sd->SavedActorInfo);
 	_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &sd->SavedLoffset, &sd->SavedToffset);
 	SaveInterpretContexts(sd->SavedICInfo);
 	sd->SavedControl = ControlIsOn();
@@ -114,8 +114,8 @@ void DoSaveScene(SAVED_DATA *sd) {
 
 	if (TinselV2) {
 		// Tinsel 2 specific data save
-		SaveActorZ(sd->savedActorZ);
-		SaveZpositions(sd->zPositions);
+		_vm->_actor->SaveActorZ(sd->savedActorZ);
+		_vm->_actor->SaveZpositions(sd->zPositions);
 		SavePolygonStuff(sd->SavedPolygonStuff);
 		_vm->_pcmMusic->getTunePlaying(sd->SavedTune, sizeof(sd->SavedTune));
 		sd->bTinselDim = _vm->_pcmMusic->getMusicTinselDimmed();
@@ -171,11 +171,11 @@ void FreeSaveScenes() {
 void sortActors(SAVED_DATA *sd) {
 	assert(!TinselV2);
 	for (int i = 0; i < sd->NumSavedActors; i++) {
-		ActorsLife(sd->SavedActorInfo[i].actorID, sd->SavedActorInfo[i].bAlive);
+		_vm->_actor->ActorsLife(sd->SavedActorInfo[i].actorID, sd->SavedActorInfo[i].bAlive);
 
 		// Should be playing the same reel.
 		if (sd->SavedActorInfo[i].presFilm != 0) {
-			if (!actorAlive(sd->SavedActorInfo[i].actorID))
+			if (!_vm->_actor->actorAlive(sd->SavedActorInfo[i].actorID))
 				continue;
 
 			RestoreActorReels(sd->SavedActorInfo[i].presFilm, sd->SavedActorInfo[i].presRnum, sd->SavedActorInfo[i].zFactor,
@@ -353,10 +353,10 @@ static int DoRestoreSceneFrame(SAVED_DATA *sd, int n) {
 			CoroScheduler.createProcess(PID_MOVER, SortMAProcess, NULL, 0);
 			g_bNotDoneYet = true;
 
-			RestoreActorZ(sd->savedActorZ);
-			RestoreZpositions(sd->zPositions);
+			_vm->_actor->RestoreActorZ(sd->savedActorZ);
+			_vm->_actor->RestoreZpositions(sd->zPositions);
 			RestoreSysVars(sd->SavedSystemVars);
-			RestoreActors(sd->NumSavedActors, sd->SavedActorInfo);
+			_vm->_actor->RestoreActors(sd->NumSavedActors, sd->SavedActorInfo);
 			RestoreSoundReels(sd->SavedSoundReels);
 			return 1;
 		}

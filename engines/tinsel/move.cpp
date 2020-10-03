@@ -525,7 +525,7 @@ static void GotThere(PMOVER pMover) {
 	}
 
 	if (!TinselV2)
-		ReTagActor(pMover->actorID);	// Tag allowed while stationary
+		_vm->_actor->ReTagActor(pMover->actorID);	// Tag allowed while stationary
 
 	SetMoverStanding(pMover);
 	pMover->bMoving = false;
@@ -1338,8 +1338,8 @@ int SetActorDest(PMOVER pMover, int clickX, int clickY, bool igPath, SCNHANDLE h
 		// Fix interrupted-walking-to-wardrobe bug in mortuary
 		StopMover(pMover);
 	} else {
-		if (pMover->actorID == GetLeadId())		// Now only for lead actor
-			UnTagActor(pMover->actorID);	// Tag not allowed while moving
+		if (pMover->actorID == _vm->_actor->GetLeadId()) // Now only for lead actor
+			_vm->_actor->UnTagActor(pMover->actorID);    // Tag not allowed while moving
 	}
 
 	pMover->walkNumber++;
@@ -1364,14 +1364,14 @@ int SetActorDest(PMOVER pMover, int clickX, int clickY, bool igPath, SCNHANDLE h
 		targetX = clickX;
 		targetY = clickY;
 
-		if (pMover->actorID == GetLeadId()) {
+		if (pMover->actorID == _vm->_actor->GetLeadId()) {
 			g_lastLeadXdest = targetX;
 			g_lastLeadYdest = targetY;
 		}
 	} else {
 		int wodResult = WorkOutDestination(clickX, clickY, &targetX, &targetY);
 
-		if (pMover->actorID == GetLeadId()) {
+		if (pMover->actorID == _vm->_actor->GetLeadId()) {
 			g_lastLeadXdest = targetX;
 			g_lastLeadYdest = targetY;
 		}
