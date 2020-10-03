@@ -91,7 +91,7 @@ Use the graphics tab to change how the game looks when it is played. For more in
 	*aspect_ratio* 
 
 **Fullscreen mode**
-	Switches between playing games in a window, or playing them in fullscreen mode. Switch between the two by using :kbd:`Alt + F5` while in a game.
+	Switches between playing games in a window, or playing them in fullscreen mode. Switch between the two by using :kbd:`Alt + Enter`.
 
 	*fullscreen* 
 
