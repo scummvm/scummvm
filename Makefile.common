@@ -80,6 +80,8 @@ LOAD_RULES_MK := 1
 
 ifneq ($(DETECTION_STATIC), 1)
 -include $(srcdir)/engines/detect_modules.mk
+else
+MODULE_DIRS += $(sort $(dir $(DETECT_OBJS)))
 endif
 
 # Depdir information
