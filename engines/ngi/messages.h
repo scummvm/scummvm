@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef FULLPIPE_MESSAGEQUEUE_H
-#define FULLPIPE_MESSAGEQUEUE_H
+#ifndef NGI_MESSAGEQUEUE_H
+#define NGI_MESSAGEQUEUE_H
 
 #include "ngi/utils.h"
 #include "ngi/inventory.h"
@@ -204,4 +204,4 @@ void postExCommand(int parentId, int keyCode, int x, int y, int f20, int f16);
 
 } // End of namespace NGI
 
-#endif /* FULLPIPE_MESSAGEQUEUE_H */
+#endif /* NGI_MESSAGEQUEUE_H */

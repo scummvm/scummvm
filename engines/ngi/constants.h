@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef FULLPIPE_CONSTANTS_H
-#define FULLPIPE_CONSTANTS_H
+#ifndef NGI_CONSTANTS_H
+#define NGI_CONSTANTS_H
 
 namespace NGI {
 
@@ -1734,4 +1734,4 @@ namespace NGI {
 
 } // End of namespace NGI
 
-#endif /* FULLPIPE_CONSTANTS_H */
+#endif /* NGI_CONSTANTS_H */

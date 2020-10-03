@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef FULLPIPE_SCENE_H
-#define FULLPIPE_SCENE_H
+#ifndef NGI_SCENE_H
+#define NGI_SCENE_H
 
 #include "common/ptr.h"
 #include "ngi/gfx.h"
@@ -117,4 +117,4 @@ class SceneTagList : public Common::List<SceneTag>, public CObject {
 
 } // End of namespace NGI
 
-#endif /* FULLPIPE_SCENE_H */
+#endif /* NGI_SCENE_H */

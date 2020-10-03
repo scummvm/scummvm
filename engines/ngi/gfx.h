@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef FULLPIPE_GFX_H
-#define FULLPIPE_GFX_H
+#ifndef NGI_GFX_H
+#define NGI_GFX_H
 
 #include "common/ptr.h"
 
@@ -240,4 +240,4 @@ class Shadows : public CObject {
 
 } // End of namespace NGI
 
-#endif /* FULLPIPE_GFX_H */
+#endif /* NGI_GFX_H */

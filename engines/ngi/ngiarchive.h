@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef FULLPIPE_NGIARCHIVE_H
-#define FULLPIPE_NGIARCHIVE_H
+#ifndef NGI_NGIARCHIVE_H
+#define NGI_NGIARCHIVE_H
 
 #include "common/ptr.h"
 #include "common/str.h"

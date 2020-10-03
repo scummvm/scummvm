@@ -22,8 +22,8 @@
 
 // This file is used in order to avoid usage of constants in Russian accross the code
 
-#ifndef FULLPIPE_OBJECTNAMES_H
-#define FULLPIPE_OBJECTNAMES_H
+#ifndef NGI_OBJECTNAMES_H
+#define NGI_OBJECTNAMES_H
 
 namespace NGI {
 
@@ -257,4 +257,4 @@ namespace NGI {
 
 } // End of namespace NGI
 
-#endif /* FULLPIPE_OBJECTNAMES_H */
+#endif /* NGI_OBJECTNAMES_H */

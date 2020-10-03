@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef FULLPIPE_SCENES_H
-#define FULLPIPE_SCENES_H
+#ifndef NGI_SCENES_H
+#define NGI_SCENES_H
 
 namespace NGI {
 
@@ -687,4 +687,4 @@ struct Ring {
 
 } // End of namespace NGI
 
-#endif /* FULLPIPE_SCENES_H */
+#endif /* NGI_SCENES_H */

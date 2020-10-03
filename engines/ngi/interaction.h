@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef FULLPIPE_INTERACTION_H
-#define FULLPIPE_INTERACTION_H
+#ifndef NGI_INTERACTION_H
+#define NGI_INTERACTION_H
 
 #include "ngi/utils.h"
 
@@ -99,4 +99,4 @@ struct EntranceInfo {
 
 } // End of namespace NGI
 
-#endif /* FULLPIPE_INTERACTION_H */
+#endif /* NGI_INTERACTION_H */

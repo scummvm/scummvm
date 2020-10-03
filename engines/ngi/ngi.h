@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef FULLPIPE_FULLPIPE_H
-#define FULLPIPE_FULLPIPE_H
+#ifndef NGI_FULLPIPE_H
+#define NGI_FULLPIPE_H
 
 #include "audio/mixer.h"
 #include "common/scummsys.h"
@@ -385,4 +385,4 @@ extern Vars *g_vars;
 
 } // End of namespace NGI
 
-#endif /* FULLPIPE_FULLPIPE_H */
+#endif /* NGI_FULLPIPE_H */

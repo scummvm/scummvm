@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef FULLPIPE_FLOATERS_H
-#define FULLPIPE_FLOATERS_H
+#ifndef NGI_FLOATERS_H
+#define NGI_FLOATERS_H
 
 #include "common/array.h"
 #include "common/ptr.h"
@@ -73,4 +73,4 @@ public:
 
 } // End of namespace NGI
 
-#endif /* FULLPIPE_FLOATERS_H */
+#endif /* NGI_FLOATERS_H */

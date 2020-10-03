@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef FULLPIPE_OBJECTS_H
-#define FULLPIPE_OBJECTS_H
+#ifndef NGI_OBJECTS_H
+#define NGI_OBJECTS_H
 
 #include "common/ptr.h"
 #include "ngi/utils.h"
@@ -102,4 +102,4 @@ class GameVar : public CObject {
 
 } // End of namespace NGI
 
-#endif /* FULLPIPE_OBJECTS_H */
+#endif /* NGI_OBJECTS_H */

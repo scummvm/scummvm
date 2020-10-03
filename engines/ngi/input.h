@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef FULLPIPE_INPUT_H
-#define FULLPIPE_INPUT_H
+#ifndef NGI_INPUT_H
+#define NGI_INPUT_H
 
 namespace NGI {
 
@@ -73,4 +73,4 @@ class InputController {
 
 } // End of namespace NGI
 
-#endif /* FULLPIPE_INPUT_H */
+#endif /* NGI_INPUT_H */

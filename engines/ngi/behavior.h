@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef FULLPIPE_BEHAVIOR_H
-#define FULLPIPE_BEHAVIOR_H
+#ifndef NGI_BEHAVIOR_H
+#define NGI_BEHAVIOR_H
 
 namespace NGI {
 
@@ -86,4 +86,4 @@ class BehaviorManager : public CObject {
 
 } // End of namespace NGI
 
-#endif /* FULLPIPE_BEHAVIOR_H */
+#endif /* NGI_BEHAVIOR_H */

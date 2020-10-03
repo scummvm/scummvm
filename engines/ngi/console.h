@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef FULLPIPE_CONSOLE_H
-#define FULLPIPE_CONSOLE_H
+#ifndef NGI_CONSOLE_H
+#define NGI_CONSOLE_H
 
 #include "gui/debugger.h"
 
@@ -41,4 +41,4 @@ private:
 
 } // End of namespace NGI
 
-#endif /* FULLPIPE_CONSOLE_H */
+#endif /* NGI_CONSOLE_H */

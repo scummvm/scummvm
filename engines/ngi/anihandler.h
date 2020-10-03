@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef FULLPIPE_ANIHANDLER_H
-#define FULLPIPE_ANIHANDLER_H
+#ifndef NGI_ANIHANDLER_H
+#define NGI_ANIHANDLER_H
 
 namespace NGI {
 
@@ -115,4 +115,4 @@ public:
 
 } // End of namespace NGI
 
-#endif /* FULLPIPE_ANIHANDLER_H */
+#endif /* NGI_ANIHANDLER_H */

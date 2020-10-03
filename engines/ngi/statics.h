@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef FULLPIPE_STATICS_H
-#define FULLPIPE_STATICS_H
+#ifndef NGI_STATICS_H
+#define NGI_STATICS_H
 
 #include "ngi/gfx.h"
 
@@ -265,4 +265,4 @@ public:
 
 } // End of namespace NGI
 
-#endif /* FULLPIPE_STATICS_H */
+#endif /* NGI_STATICS_H */

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef FULLPIPE_SOUND_H
-#define FULLPIPE_SOUND_H
+#ifndef NGI_SOUND_H
+#define NGI_SOUND_H
 
 #include "common/array.h"
 #include "common/ptr.h"
@@ -75,4 +75,4 @@ class SoundList : public CObject {
 
 } // End of namespace NGI
 
-#endif /* FULLPIPE_SOUND_H */
+#endif /* NGI_SOUND_H */

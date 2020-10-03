@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef FULLPIPE_GAMELOADER_H
-#define FULLPIPE_GAMELOADER_H
+#ifndef NGI_GAMELOADER_H
+#define NGI_GAMELOADER_H
 
 #include "common/ptr.h"
 #include "engines/savestate.h"
@@ -32,7 +32,7 @@
 
 namespace NGI {
 
-#define FULLPIPE_SAVEGAME_VERSION 2
+#define NGI_SAVEGAME_VERSION 2
 
 class SceneTag;
 class MctlCompound;
@@ -153,4 +153,4 @@ MctlCompound *getCurrSceneSc2MotionController();
 
 } // End of namespace NGI
 
-#endif /* FULLPIPE_GAMELOADER_H */
+#endif /* NGI_GAMELOADER_H */

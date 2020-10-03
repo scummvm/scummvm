@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef FULLPIPE_MODAL_H
-#define FULLPIPE_MODAL_H
+#ifndef NGI_MODAL_H
+#define NGI_MODAL_H
 
 #include "video/avi_decoder.h"
 
@@ -351,4 +351,4 @@ class ModalDemo : public BaseModalObject {
 
 } // End of namespace NGI
 
-#endif /* FULLPIPE_MODAL_H */
+#endif /* NGI_MODAL_H */

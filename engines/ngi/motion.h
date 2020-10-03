@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef FULLPIPE_MOTION_H
-#define FULLPIPE_MOTION_H
+#ifndef NGI_MOTION_H
+#define NGI_MOTION_H
 
 #include "ngi/anihandler.h"
 
@@ -413,4 +413,4 @@ public:
 
 } // End of namespace NGI
 
-#endif /* FULLPIPE_MOTION_H */
+#endif /* NGI_MOTION_H */

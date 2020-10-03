@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef FULLPIPE_UTILS_H
-#define FULLPIPE_UTILS_H
+#ifndef NGI_UTILS_H
+#define NGI_UTILS_H
 
 #include "common/hash-ptr.h"
 #include "common/hash-str.h"
@@ -197,4 +197,4 @@ byte *transCyrillic(const Common::String &str);
 
 } // End of namespace NGI
 
-#endif /* FULLPIPE_UTILS_H */
+#endif /* NGI_UTILS_H */

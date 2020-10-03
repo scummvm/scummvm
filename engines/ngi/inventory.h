@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef FULLPIPE_INVENTORY_H
-#define FULLPIPE_INVENTORY_H
+#ifndef NGI_INVENTORY_H
+#define NGI_INVENTORY_H
 
 namespace NGI {
 
@@ -131,4 +131,4 @@ class Inventory2 : public Inventory {
 
 } // End of namespace NGI
 
-#endif /* FULLPIPE_INVENTORY_H */
+#endif /* NGI_INVENTORY_H */

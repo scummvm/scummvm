@@ -130,7 +130,7 @@ bool GameLoader::writeSavegame(Scene *sc, const char *fname, const Common::Strin
 	FullpipeSavegameHeader header2;
 
 	strcpy(header2.id, "SVMCR");
-	header2.version = FULLPIPE_SAVEGAME_VERSION;
+	header2.version = NGI_SAVEGAME_VERSION;
 
 	TimeDate curTime;
 	g_system->getTimeAndDate(curTime);
