@@ -9,6 +9,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  SAGA:
    - Added support for ITE GOG Mac CD v1.1.
 
+ Tinsel:
+   - Enabled the Return to Launcher feature.
+
  Supernova:
    - Added Italian translation for part 1.
 
