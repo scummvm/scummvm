@@ -76,10 +76,12 @@ extern SCNHANDLE GetSceneHandle();
 extern void ResetVarsDrives();
 extern void ResetVarsEvents();
 extern void RebootScalingReels();
+extern void ResetVarsMove();
 extern void ResetVarsPalette();
 extern void ResetVarsPCode();
 extern void ResetVarsPDisplay();
 extern void ResetVarsPlay();
+extern void ResetVarsPolygons();
 extern void RebootMovers();
 extern void ResetVarsSaveLoad();
 extern void ResetVarsSaveScn();
@@ -915,13 +917,12 @@ TinselEngine::~TinselEngine() {
 	ResetVarsEvents();	// events.cpp
 	// TODO: heapmem.cpp
 	RebootScalingReels(); // mareels.cpp
-	// TODO: move.cpp
-	// TODO: object.cpp
+	ResetVarsMove();
 	ResetVarsPalette();	// palette.cpp
 	ResetVarsPCode();
 	ResetVarsPDisplay();	// pdisplay.cpp
 	ResetVarsPlay();	// play.cpp
-	// TODO: polygons.cpp
+	ResetVarsPolygons();	// polygons.cpp
 	RebootMovers();       // rince.cpp
 	ResetVarsSaveLoad();
 	ResetVarsSaveScn();	// savescn.cpp

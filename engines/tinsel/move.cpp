@@ -74,7 +74,7 @@ HPOLYGON InitExtraBlock(PMOVER ca, PMOVER ta);
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
-// FIXME: Avoid non-const global vars
+// These vars are reset upon engine destruction
 
 #if SLOW_RINCE_DOWN
 static int g_Interlude = 0;	// For slowing down walking, for testing
@@ -106,6 +106,12 @@ void AddInterlude(int n) {
 		g_Interlude = 0;
 }
 #endif
+
+void ResetVarsMove() {
+	g_DefaultRefer = 0;
+	g_lastLeadXdest = g_lastLeadYdest = 0;
+	g_hSlowVar = 0;
+}
 
 /**
  * Given (x, y) of a click within a path polygon, checks that the

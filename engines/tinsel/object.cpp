@@ -35,13 +35,13 @@
 
 namespace Tinsel {
 
-// FIXME: Avoid non-const global vars
+// These vars are reset upon engine destruction
 
 // list of all objects
-static OBJECT *objectList = 0;
+static OBJECT *objectList = nullptr;
 
 // pointer to free object list
-static OBJECT *pFreeObjects = 0;
+static OBJECT *pFreeObjects = nullptr;
 
 #ifdef DEBUG
 // diagnostic object counters

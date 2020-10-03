@@ -287,7 +287,7 @@ void Poly::nextPoly() {
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
-// FIXME: Avoid non-const global vars
+// These vars are reset upon engine destruction
 
 static int MaxPolys = MAX_POLY;
 
@@ -319,6 +319,16 @@ static POLY_VOLATILE volatileStuff[MAX_POLY];
 #define CHECK_HP(mvar, str)	assert(mvar >= 0 && mvar <= noofPolys);
 
 //-------------------- METHODS ----------------------
+
+void ResetVarsPolygons() {
+	DropPolygons();
+
+	MaxPolys = MAX_POLY;
+	pHandle = 0;
+
+	memset(&extraBlock, 0, sizeof(extraBlock));
+	memset(volatileStuff, 0, sizeof(volatileStuff));
+}
 
 static HPOLYGON PolygonIndex(const POLYGON *pp) {
 	for (int i = 0; i <= MAX_POLY; ++i) {
