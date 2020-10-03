@@ -468,10 +468,6 @@ void EoBCoreEngine::initStaticResource() {
 	_coneOfColdDest4 = (const int8 *)_staticres->loadRawData(kEoBBaseConeOfColdDest4, temp);
 	_coneOfColdGfxTbl = _staticres->loadRawData(kEoBBaseConeOfColdGfxTbl, _coneOfColdGfxTblSize);
 
-	void *sndInfo_ingame = 0;
-	void *sndInfo_intro = 0;
-	void *sndInfo_finale = 0;
-
 	if (_flags.platform == Common::kPlatformAmiga) {
 		const char *const *map = _staticres->loadStrings(kEoBBaseSoundMap, temp2);
 		_amigaSoundMap = new const char*[temp2];
@@ -485,41 +481,42 @@ void EoBCoreEngine::initStaticResource() {
 
 		const char *const *files = _staticres->loadStrings(kEoBBaseSoundFilesIngame, temp);
 		SoundResourceInfo_AmigaEoB ingame(files, temp, _amigaSoundMap, temp2);
-		sndInfo_ingame = &ingame;
 		files = _staticres->loadStrings(kEoBBaseSoundFilesIntro, temp);
 		SoundResourceInfo_AmigaEoB intro(files, temp, 0, 0);
-		sndInfo_intro = &intro;
 		files = _staticres->loadStrings(kEoBBaseSoundFilesFinale, temp);
 		SoundResourceInfo_AmigaEoB finale(files, temp, 0, 0);
-		sndInfo_finale = &finale;
+
+		_sound->initAudioResourceInfo(kMusicIngame, &ingame);
+		_sound->initAudioResourceInfo(kMusicIntro, &intro);
+		_sound->initAudioResourceInfo(kMusicFinale, &finale);
+
 	} else if (_flags.platform == Common::kPlatformFMTowns) {
 		const char *const *files = _staticres->loadStrings(kEoBBaseSoundFilesIngame, temp);
 		const uint8 *data = _staticres->loadRawData(kEoB2PcmSoundEffectsIngame, temp2);
 		SoundResourceInfo_TownsEoB ingame(files, temp, data, temp2, 127);
-		sndInfo_ingame = &ingame;
 		files = _staticres->loadStrings(kEoBBaseSoundFilesIntro, temp);
 		data = _staticres->loadRawData(kEoB2PcmSoundEffectsIntro, temp2);
 		SoundResourceInfo_TownsEoB intro(files, temp, data, temp2, 40);
-		sndInfo_intro = &intro;
 		files = _staticres->loadStrings(kEoBBaseSoundFilesFinale, temp);
 		data = _staticres->loadRawData(kEoB2PcmSoundEffectsFinale, temp2);
 		SoundResourceInfo_TownsEoB finale(files, temp, data, temp2, 40);
-		sndInfo_finale = &finale;
+
+		_sound->initAudioResourceInfo(kMusicIngame, &ingame);
+		_sound->initAudioResourceInfo(kMusicIntro, &intro);
+		_sound->initAudioResourceInfo(kMusicFinale, &finale);
+
 	} else if (_flags.platform != Common::kPlatformPC98) {
 		const char *const *files = _staticres->loadStrings(kEoBBaseSoundFilesIngame, temp);
 		SoundResourceInfo_PC ingame(files, temp);
-		sndInfo_ingame = &ingame;
 		files = _staticres->loadStrings(kEoBBaseSoundFilesIntro, temp);
 		SoundResourceInfo_PC intro(files, temp);
-		sndInfo_intro = &intro;
 		files = _staticres->loadStrings(kEoBBaseSoundFilesFinale, temp);
 		SoundResourceInfo_PC finale(files, temp);
-		sndInfo_finale = &finale;
-	}
 
-	_sound->initAudioResourceInfo(kMusicIngame, sndInfo_ingame);
-	_sound->initAudioResourceInfo(kMusicIntro, sndInfo_intro);
-	_sound->initAudioResourceInfo(kMusicFinale, sndInfo_finale);
+		_sound->initAudioResourceInfo(kMusicIngame, &ingame);
+		_sound->initAudioResourceInfo(kMusicIntro, &intro);
+		_sound->initAudioResourceInfo(kMusicFinale, &finale);
+	}
 
 	// Hard code the following strings, since EOB I doesn't have them in the original.
 	// EOB I doesn't have load and save menus, because there is only one single
