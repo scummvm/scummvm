@@ -101,14 +101,14 @@ struct ENTRANCE_STRUC {
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
-// FIXME: Avoid non-const global vars
+// These vars are reset upon engine destruction
 
 #ifdef DEBUG
 static bool g_ShowPosition = false;	// Set when showpos() has been called
 #endif
 
 int g_sceneCtr = 0;
-static int g_initialMyEscape;
+static int g_initialMyEscape = 0;
 
 static SCNHANDLE g_SceneHandle = 0;	// Current scene handle - stored in case of Save_Scene()
 
@@ -118,6 +118,15 @@ struct TP_INIT {
 	SCNHANDLE hTinselCode;		// Code
 	TINSEL_EVENT event;			// Triggering event
 };
+
+void ResetVarsScene() {
+	g_sceneCtr = 0;
+	g_initialMyEscape = 0;
+
+	g_SceneHandle = 0;
+
+	memset(&g_tempStruc, 0, sizeof(SCENE_STRUC));
+}
 
 const SCENE_STRUC *GetSceneStruc(const byte *pStruc) {
 	if (TinselVersion == TINSEL_V2)

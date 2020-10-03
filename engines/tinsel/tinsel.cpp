@@ -77,6 +77,9 @@ extern void ResetVarsDrives();
 extern void ResetVarsEvents();
 extern void RebootScalingReels();
 extern void RebootMovers();
+extern void ResetVarsScene();
+extern void ResetVarsSched();
+extern void ResetVarsStrRes();
 extern void FreeTextBuffer();
 extern void FreeAllTokens();
 extern void RebootTimers();
@@ -916,9 +919,9 @@ TinselEngine::~TinselEngine() {
 	RebootMovers();       // rince.cpp
 	// TODO: saveload.cpp
 	// TODO: savescn.cpp
-	// TODO: scene.cpp
-	// TODO: sched.cpp
-	// TODO: strres.cpp
+	ResetVarsScene();	// scene.cpp
+	ResetVarsSched();	// sched.cpp
+	ResetVarsStrRes();	// strres.cpp
 	FreeTextBuffer();     // strres.cpp
 	// TODO: sysvar.cpp
 	FreeAllTokens();	// token.cpp

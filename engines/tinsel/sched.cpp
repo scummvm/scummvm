@@ -43,18 +43,26 @@ struct PROCESS_STRUC {
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
-// FIXME: Avoid non-const global vars
+// These vars are reset upon engine destruction
 
-static uint32 g_numSceneProcess;
-static SCNHANDLE g_hSceneProcess;
+static uint32 g_numSceneProcess = 0;
+static SCNHANDLE g_hSceneProcess = 0;
 
-static uint32 g_numGlobalProcess;
-static PROCESS_STRUC *g_pGlobalProcess;
+static uint32 g_numGlobalProcess = 0;
+static PROCESS_STRUC *g_pGlobalProcess = nullptr;
 
 
 /**************************************************************************\
 |***********    Stuff to do with scene and global processes    ************|
 \**************************************************************************/
+
+void ResetVarsSched() {
+	g_numSceneProcess = 0;
+	g_hSceneProcess = 0;
+
+	g_numGlobalProcess = 0;
+	g_pGlobalProcess = nullptr;
+}
 
 /**
  * The code for for restored scene processes.
