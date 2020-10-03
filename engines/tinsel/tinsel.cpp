@@ -87,7 +87,7 @@ void SetNewScene(SCNHANDLE scene, int entrance, int transition);
 
 //----------------- GLOBAL GLOBAL DATA --------------------
 
-// FIXME: Avoid non-const global vars
+// These vars are reset upon engine destruction
 
 bool g_bRestart = false;
 bool g_bHasRestarted = false;
@@ -96,6 +96,9 @@ bool g_loadingFromGMM = false;
 static bool g_bCuttingScene = false;
 
 static bool g_bChangingForRestore = false;
+
+// FIXME: CountOut is used by ChangeScene
+static int CountOut = 1; // == 1 for immediate start of first scene
 
 #ifdef DEBUG
 bool g_bFast;		// set to make it go ludicrously fast
@@ -113,8 +116,8 @@ static Scene g_NextScene = { 0, 0, 0 };
 static Scene g_HookScene = { 0, 0, 0 };
 static Scene g_DelayedScene = { 0, 0, 0 };
 
-static Common::PROCESS *g_pMouseProcess = 0;
-static Common::PROCESS *g_pKeyboardProcess = 0;
+static Common::PROCESS *g_pMouseProcess = nullptr;
+static Common::PROCESS *g_pKeyboardProcess = nullptr;
 
 static SCNHANDLE g_hCdChangeScene;
 
@@ -633,10 +636,6 @@ void RestoreMasterProcess(INT_CONTEXT *pic) {
 	CoroScheduler.createProcess(PID_MASTER_SCR, RestoredProcess, &pic, sizeof(pic));
 }
 
-// FIXME: CountOut is used by ChangeScene
-// FIXME: Avoid non-const global vars
-static int CountOut = 1;	// == 1 for immediate start of first scene
-
 /**
  * If a scene restore is going on, just return (we don't update the
  * screen during this time).
@@ -764,6 +763,27 @@ void LoadBasicChunks() {
 		assert(playHandle < 512);
 		_vm->_handle->SetCdPlayHandle(playHandle);
 	}
+}
+
+void ResetVarsTinsel() {
+	g_bRestart = false;
+	g_bHasRestarted = false;
+	g_loadingFromGMM = false;
+
+	g_bCuttingScene = false;
+
+	g_bChangingForRestore = false;
+
+	CountOut = 1;
+
+	g_NextScene = {0, 0, 0};
+	g_HookScene = {0, 0, 0};
+	g_DelayedScene = {0, 0, 0};
+
+	g_pMouseProcess = nullptr;
+	g_pKeyboardProcess = nullptr;
+
+	g_hCdChangeScene = 0;
 }
 
 //----------------- TinselEngine --------------------
@@ -904,7 +924,7 @@ TinselEngine::~TinselEngine() {
 	FreeAllTokens();	// token.cpp
 	RebootTimers();       // timers.cpp
 	ResetVarsTinlib();	// tinlib.cpp
-	// TODO: tinsel.cpp
+	ResetVarsTinsel();	// tinsel.cpp
 }
 
 Common::String TinselEngine::getSavegameFilename(int16 saveNum) const {
