@@ -27,15 +27,30 @@
 
 #include "ngi/detection.h"
 
-static const PlainGameDescriptor fullpipeGames[] = {
+static const PlainGameDescriptor ngiGames[] = {
 	{"ngi", 		"Nikita Game Interface game"},
 	{"fullpipe",	"Full Pipe"},
+	{"mdream",		"Magic Dream"},
 	{0, 0}
 };
 
 namespace NGI {
 
 static const NGIGameDescription gameDescriptions[] = {
+
+	// Full Pipe Russian version
+	{
+		{
+			"mdream",
+			0,
+			AD_ENTRY1s("0001.nl", "079d02921a938ec9740598316450d526", 11848423),
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			ADGF_DROPPLATFORM,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GID_MDREAM
+	},
 
 	// Full Pipe Russian version
 	{
@@ -128,7 +143,7 @@ static const NGIGameDescription gameDescriptions[] = {
 
 class NGIMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	NGIMetaEngineStatic() : AdvancedMetaEngineStatic(NGI::gameDescriptions, sizeof(ADGameDescription), fullpipeGames) {
+	NGIMetaEngineStatic() : AdvancedMetaEngineStatic(NGI::gameDescriptions, sizeof(NGI::NGIGameDescription), ngiGames) {
 	}
 
 	const char *getEngineId() const override {
