@@ -1145,7 +1145,7 @@ DarkmoonSequenceHelper::~DarkmoonSequenceHelper() {
 	for (int i = 0; i < 7; i++)
 		delete[] _fadingTables[i];
 
-	for (int i = 0; i < 30; i++)
+	for (int i = 0; i < 54; i++)
 		delete[] _shapes[i];
 	delete[] _shapes;
 
@@ -1626,7 +1626,7 @@ void DarkmoonSequenceHelper::init(DarkmoonSequenceHelper::Mode mode) {
 	delete[] fadeData;
 
 	_shapes = new const uint8*[54];
-	memset(_shapes, 0, 54 * sizeof(uint8 *));
+	memset(_shapes, 0, 54 * sizeof(uint8*));
 
 	_fadePalTimer = 0;
 	_fadePalRate = 0;
