@@ -53,7 +53,7 @@ struct Z_POSITIONS;
 #define NUM_ZPOSITIONS 200 // Reasonable-sounding number
 #define MAX_REELS 6
 
-struct TAGACTOR {
+struct TAGACTORDATA {
 	// Copies of compiled data
 	int id;
 	SCNHANDLE hTagText;   // handle to tag text
@@ -81,21 +81,20 @@ struct Z_POSITIONS {
 	int z;
 };
 
-typedef TAGACTOR *PTAGACTOR;
 typedef SAVED_ACTOR *PSAVED_ACTOR;
 
 /*----------------------------------------------------------------------*/
 
 class Actor {
 public:
-	Actor(): actorInfo(nullptr), defaultColor(0), bActorsOn(false), ti(0), numTaggedActors(0), zFactors(nullptr), LeadActorId(0), NumActors(0) {}
+	Actor(): _actorInfo(nullptr), _defaultColor(0), _actorsOn(false), ti(0), _numTaggedActors(0), _zFactors(nullptr), _leadActorId(0), _numActors(0) {}
 	int GetLeadId();
 	SCNHANDLE GetActorTagHandle(int ano);
 	void ToggleActor(int ano, bool show);
 	SCNHANDLE GetActorCode(int ano);
 	SCNHANDLE GetTaggedActorCode(int ano);
 	void RunCodeToCompletion(int ano);
-	int GetCount() { return NumActors; }
+	int GetCount() { return _numActors; }
 
 	void RegisterActors(int num);
 	void FreeActors();
@@ -198,16 +197,16 @@ private:
 	void StartActor(const T1_ACTOR_STRUC *as, bool bRunScript);
 	void GetActorTagPortion(int ano, unsigned *top, unsigned *bottom, unsigned *left, unsigned *right);
 
-	ACTORINFO *actorInfo;
-	COLORREF defaultColor; // Text color
-	bool bActorsOn;
+	ACTORINFO *_actorInfo;
+	COLORREF _defaultColor; // Text color
+	bool _actorsOn;
 	int ti;
-	TAGACTOR taggedActors[MAX_TAGACTORS];
-	int numTaggedActors;
-	uint8 *zFactors;
-	Z_POSITIONS zPositions[NUM_ZPOSITIONS];
-	int LeadActorId; // The lead actor
-	int NumActors; // The total number of actors in the game
+	TAGACTORDATA _taggedActors[MAX_TAGACTORS];
+	int _numTaggedActors;
+	uint8 *_zFactors;
+	Z_POSITIONS _zPositions[NUM_ZPOSITIONS];
+	int _leadActorId; // The lead actor
+	int _numActors; // The total number of actors in the game
 };
 
 /*----------------------------------------------------------------------*/

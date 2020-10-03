@@ -65,7 +65,7 @@ struct T2_ACTOR_STRUC {
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 
-#define RANGE_CHECK(num)	assert(num > 0 && num <= NumActors);
+#define RANGE_CHECK(num)	assert(num > 0 && num <= _numActors);
 
 struct ACTORINFO {
 	bool		bAlive;		// TRUE == alive
@@ -119,46 +119,46 @@ struct RATP_INIT {
  * @param num			Chunk Id
  */
 void Actor::RegisterActors(int num) {
-	if (actorInfo == NULL)	{
+	if (_actorInfo == NULL)	{
 		// Store the total number of actors in the game
-		NumActors = num;
+		_numActors = num;
 
 		// Check we can save so many
-		assert(NumActors <= MAX_SAVED_ALIVES);
+		assert(_numActors <= MAX_SAVED_ALIVES);
 
 		// Allocate RAM for actor structures
 
 		// FIXME: For now, we always allocate MAX_SAVED_ALIVES blocks,
 		//   as this makes the save/load code simpler
 		// size of ACTORINFO is 148, so this allocates 512 * 148 = 75776 bytes, about 74KB
-		actorInfo = (ACTORINFO *)calloc(MAX_SAVED_ALIVES, sizeof(ACTORINFO));
+		_actorInfo = (ACTORINFO *)calloc(MAX_SAVED_ALIVES, sizeof(ACTORINFO));
 		if (TinselV2)
-			zFactors = (uint8 *)malloc(MAX_SAVED_ALIVES);
+			_zFactors = (uint8 *)malloc(MAX_SAVED_ALIVES);
 
 		// make sure memory allocated
-		if (actorInfo == NULL) {
+		if (_actorInfo == NULL) {
 			error("Cannot allocate memory for actors");
 		}
 	} else {
 		// Check the total number of actors is still the same
-		assert(num == NumActors);
+		assert(num == _numActors);
 
-		memset(actorInfo, 0, MAX_SAVED_ALIVES * sizeof(ACTORINFO));
+		memset(_actorInfo, 0, MAX_SAVED_ALIVES * sizeof(ACTORINFO));
 		if (TinselV2)
-			memset(zFactors, 0, MAX_SAVED_ALIVES);
+			memset(_zFactors, 0, MAX_SAVED_ALIVES);
 	}
 
 	// All actors start off alive.
 	while (num--)
-		actorInfo[num].bAlive = true;
+		_actorInfo[num].bAlive = true;
 }
 
 void Actor::FreeActors() {
-	free(actorInfo);
-	actorInfo = nullptr;
+	free(_actorInfo);
+	_actorInfo = nullptr;
 	if (TinselV2) {
-		free(zFactors);
-		zFactors = nullptr;
+		free(_zFactors);
+		_zFactors = nullptr;
 	}
 }
 
@@ -167,15 +167,15 @@ void Actor::FreeActors() {
  * @param leadID			Lead Id
  */
 void Actor::SetLeadId(int leadID) {
-	LeadActorId = leadID;
-	actorInfo[leadID-1].mtype = ACT_MASK;
+	_leadActorId = leadID;
+	_actorInfo[leadID-1].mtype = ACT_MASK;
 }
 
 /**
  * No comment.
  */
 int Actor::GetLeadId() {
-	return LeadActorId;
+	return _leadActorId;
 }
 
 bool Actor::ActorIsGhost(int actor) {
@@ -196,8 +196,8 @@ struct ATP_INIT {
 int Actor::TaggedActorIndex(int actor) {
 	int i;
 
-	for (i = 0; i < numTaggedActors; i++) {
-		if (taggedActors[i].id == actor)
+	for (i = 0; i < _numTaggedActors; i++) {
+		if (_taggedActors[i].id == actor)
 			return i;
 	}
 
@@ -215,24 +215,24 @@ void Actor::StartActor(const T1_ACTOR_STRUC *as, bool bRunScript) {
 	SCNHANDLE hActorId = FROM_32(as->hActorId);
 
 	// Zero-out many things
-	actorInfo[hActorId - 1].bHidden = false;
-	actorInfo[hActorId - 1].completed = false;
-	actorInfo[hActorId - 1].x = 0;
-	actorInfo[hActorId - 1].y = 0;
-	actorInfo[hActorId - 1].presReel = nullptr;
-	actorInfo[hActorId - 1].presFilm = 0;
-	actorInfo[hActorId - 1].presObj = nullptr;
+	_actorInfo[hActorId - 1].bHidden = false;
+	_actorInfo[hActorId - 1].completed = false;
+	_actorInfo[hActorId - 1].x = 0;
+	_actorInfo[hActorId - 1].y = 0;
+	_actorInfo[hActorId - 1].presReel = nullptr;
+	_actorInfo[hActorId - 1].presFilm = 0;
+	_actorInfo[hActorId - 1].presObj = nullptr;
 
 	// Store current scene's parameters for this actor
-	actorInfo[hActorId - 1].mtype = FROM_32(as->masking);
-	actorInfo[hActorId - 1].actorCode = FROM_32(as->hActorCode);
+	_actorInfo[hActorId - 1].mtype = FROM_32(as->masking);
+	_actorInfo[hActorId - 1].actorCode = FROM_32(as->hActorCode);
 
 	// Run actor's script for this scene
 	if (bRunScript) {
-		if (bActorsOn)
-			actorInfo[hActorId - 1].bAlive = true;
+		if (_actorsOn)
+			_actorInfo[hActorId - 1].bAlive = true;
 
-		if (actorInfo[hActorId - 1].bAlive && FROM_32(as->hActorCode))
+		if (_actorInfo[hActorId - 1].bAlive && FROM_32(as->hActorCode))
 			ActorEvent(hActorId, STARTUP, PLR_NOEVENT);
 	}
 }
@@ -248,13 +248,13 @@ void Actor::StartTaggedActors(SCNHANDLE ah, int numActors, bool bRunScript) {
 
 	if (TinselV2) {
 		// Clear it all out for a fresh start
-		memset(taggedActors, 0, sizeof(taggedActors));
-		numTaggedActors = numActors;
+		memset(_taggedActors, 0, sizeof(_taggedActors));
+		_numTaggedActors = numActors;
 	} else {
 		// Only actors with code blocks got (x, y) re-initialized, so...
-		for (i = 0; i < NumActors; i++) {
-			actorInfo[i].x = actorInfo[i].y = 0;
-			actorInfo[i].mtype = 0;
+		for (i = 0; i < _numActors; i++) {
+			_actorInfo[i].x = _actorInfo[i].y = 0;
+			_actorInfo[i].mtype = 0;
 		}
 	}
 
@@ -271,17 +271,17 @@ void Actor::StartTaggedActors(SCNHANDLE ah, int numActors, bool bRunScript) {
 			assert(as->hActorCode);
 
 			// Store current scene's parameters for this tagged actor
-			taggedActors[i].id			= FROM_32(as->hActorId);
-			taggedActors[i].hTagText	= FROM_32(as->hTagText);
-			taggedActors[i].tagPortionV	= FROM_32(as->tagPortionV);
-			taggedActors[i].tagPortionH	= FROM_32(as->tagPortionH);
-			taggedActors[i].hActorCode	= FROM_32(as->hActorCode);
+			_taggedActors[i].id			= FROM_32(as->hActorId);
+			_taggedActors[i].hTagText	= FROM_32(as->hTagText);
+			_taggedActors[i].tagPortionV	= FROM_32(as->tagPortionV);
+			_taggedActors[i].tagPortionH	= FROM_32(as->tagPortionH);
+			_taggedActors[i].hActorCode	= FROM_32(as->hActorCode);
 
 			// Run actor's script for this scene
 			if (bRunScript) {
 				// Send in reverse order - they get swapped round in the scheduler
-				ActorEvent(taggedActors[i].id, SHOWEVENT, false, 0);
-				ActorEvent(taggedActors[i].id, STARTUP, false, 0);
+				ActorEvent(_taggedActors[i].id, SHOWEVENT, false, 0);
+				ActorEvent(_taggedActors[i].id, STARTUP, false, 0);
 			}
 		}
 	}
@@ -292,32 +292,32 @@ void Actor::StartTaggedActors(SCNHANDLE ah, int numActors, bool bRunScript) {
  */
 void Actor::DropActors() {
 
-	for (int i = 0; i < NumActors; i++) {
+	for (int i = 0; i < _numActors; i++) {
 		if (TinselV2) {
 			// Save text color
-			COLORREF tColor = actorInfo[i].textColor;
+			COLORREF tColor = _actorInfo[i].textColor;
 
-			memset(&actorInfo[i], 0, sizeof(ACTORINFO));
+			memset(&_actorInfo[i], 0, sizeof(ACTORINFO));
 
 			// Restor text color
-			actorInfo[i].textColor = tColor;
+			_actorInfo[i].textColor = tColor;
 
 			// Clear extra arrays
-			memset(zFactors, 0, NumActors);
-			memset(zPositions, 0, sizeof(zPositions));
+			memset(_zFactors, 0, _numActors);
+			memset(_zPositions, 0, sizeof(_zPositions));
 		} else {
 			// In Tinsel v1, only certain fields get reset
-			actorInfo[i].actorCode = 0;		// No script
-			actorInfo[i].presReel = nullptr;	// No reel running
-			actorInfo[i].presFilm = 0;		//   ditto
-			actorInfo[i].presObj = nullptr;	// No object
-			actorInfo[i].x = 0;				// No position
-			actorInfo[i].y = 0;				//   ditto
+			_actorInfo[i].actorCode = 0;		// No script
+			_actorInfo[i].presReel = nullptr;	// No reel running
+			_actorInfo[i].presFilm = 0;		//   ditto
+			_actorInfo[i].presObj = nullptr;	// No object
+			_actorInfo[i].x = 0;				// No position
+			_actorInfo[i].y = 0;				//   ditto
 
-			actorInfo[i].talkFilm = 0;
-			actorInfo[i].latestFilm = 0;
-			actorInfo[i].playFilm = 0;
-			actorInfo[i].bTalking = false;
+			_actorInfo[i].talkFilm = 0;
+			_actorInfo[i].latestFilm = 0;
+			_actorInfo[i].playFilm = 0;
+			_actorInfo[i].bTalking = false;
 		}
 	}
 }
@@ -329,10 +329,10 @@ void Actor::DropActors() {
 void Actor::DisableActor(int ano) {
 	PMOVER	pActor;
 
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
-	actorInfo[ano - 1].bAlive = false;	// Record as dead
-	actorInfo[ano - 1].x = actorInfo[ano - 1].y = 0;
+	_actorInfo[ano - 1].bAlive = false;	// Record as dead
+	_actorInfo[ano - 1].x = _actorInfo[ano - 1].y = 0;
 
 	// Kill off moving actor properly
 	pActor = GetMover(ano);
@@ -345,16 +345,16 @@ void Actor::DisableActor(int ano) {
  * @param ano			Actor Id
  */
 void Actor::EnableActor(int ano) {
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
 	// Re-incarnate only if it's dead, or it's script ran to completion
-	if (!actorInfo[ano - 1].bAlive || actorInfo[ano - 1].completed) {
-		actorInfo[ano - 1].bAlive = true;
-		actorInfo[ano - 1].bHidden = false;
-		actorInfo[ano - 1].completed = false;
+	if (!_actorInfo[ano - 1].bAlive || _actorInfo[ano - 1].completed) {
+		_actorInfo[ano - 1].bAlive = true;
+		_actorInfo[ano - 1].bHidden = false;
+		_actorInfo[ano - 1].completed = false;
 
 		// Re-run actor's script for this scene
-		if (actorInfo[ano-1].actorCode)
+		if (_actorInfo[ano-1].actorCode)
 			ActorEvent(ano, STARTUP, PLR_NOEVENT);
 	}
 }
@@ -364,9 +364,9 @@ void Actor::EnableActor(int ano) {
  * @param ano			Actor Id
  */
 bool Actor::actorAlive(int ano) {
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
-	return actorInfo[ano - 1].bAlive;
+	return _actorInfo[ano - 1].bAlive;
 }
 
 /**
@@ -376,11 +376,11 @@ bool Actor::actorAlive(int ano) {
  * @param tp			tType
  */
 void Actor::Tag_Actor(int ano, SCNHANDLE tagtext, int tp) {
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
-	actorInfo[ano-1].tagged = true;
-	actorInfo[ano-1].hTag = tagtext;
-	actorInfo[ano-1].tType = tp;
+	_actorInfo[ano-1].tagged = true;
+	_actorInfo[ano-1].hTag = tagtext;
+	_actorInfo[ano-1].tType = tp;
 }
 
 /**
@@ -390,9 +390,9 @@ void Actor::Tag_Actor(int ano, SCNHANDLE tagtext, int tp) {
  * @param tp			tType
  */
 void Actor::UnTagActor(int ano) {
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
-	actorInfo[ano-1].tagged = false;
+	_actorInfo[ano-1].tagged = false;
 }
 
 /**
@@ -402,10 +402,10 @@ void Actor::UnTagActor(int ano) {
  * @param tp			tType
  */
 void Actor::ReTagActor(int ano) {
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
-	if (actorInfo[ano-1].hTag)
-		actorInfo[ano-1].tagged = true;
+	if (_actorInfo[ano-1].hTag)
+		_actorInfo[ano-1].tagged = true;
 }
 
 /**
@@ -413,9 +413,9 @@ void Actor::ReTagActor(int ano) {
  * @param ano			Actor Id
  */
 int Actor::TagType(int ano) {
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
-	return actorInfo[ano-1].tType;
+	return _actorInfo[ano-1].tType;
 }
 
 /**
@@ -423,9 +423,9 @@ int Actor::TagType(int ano) {
  * @param ano			Actor Id
  */
 SCNHANDLE Actor::GetActorTag(int ano) {
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
-	return actorInfo[ano - 1].hTag;
+	return _actorInfo[ano - 1].hTag;
 }
 
 /**
@@ -446,13 +446,13 @@ int Actor::NextTaggedActor() {
 	PMOVER	pActor;
 	bool	hid;
 
-	while (ti < NumActors) {
-		if (actorInfo[ti].tagged) {
+	while (ti < _numActors) {
+		if (_actorInfo[ti].tagged) {
 			pActor = GetMover(ti+1);
 			if (pActor)
 				hid = MoverHidden(pActor);
 			else
-				hid = actorInfo[ti].bHidden;
+				hid = _actorInfo[ti].bHidden;
 
 			if (!hid) {
 				return ++ti;
@@ -478,12 +478,12 @@ int Actor::NextTaggedActor(int previous) {
 	else
 		previous = TaggedActorIndex(previous);
 
-	while (++previous < numTaggedActors) {
-		pMover = GetMover(taggedActors[previous].id);
+	while (++previous < _numTaggedActors) {
+		pMover = GetMover(_taggedActors[previous].id);
 
 		// No tag on lead actor while he's moving
-		if ((taggedActors[previous].id) == GetLeadId() && MoverMoving(pMover)) {
-			taggedActors[previous].tagFlags &= ~(POINTING | TAGWANTED);
+		if ((_taggedActors[previous].id) == GetLeadId() && MoverMoving(pMover)) {
+			_taggedActors[previous].tagFlags &= ~(POINTING | TAGWANTED);
 			continue;
 		}
 
@@ -491,8 +491,8 @@ int Actor::NextTaggedActor(int previous) {
 		if (pMover && !MoverIs(pMover))
 			continue;
 
-		if (!(pMover ? MoverHidden(pMover) : ActorHidden(taggedActors[previous].id))) {
-			return taggedActors[previous].id;
+		if (!(pMover ? MoverHidden(pMover) : ActorHidden(_taggedActors[previous].id))) {
+			return _taggedActors[previous].id;
 		}
 	}
 
@@ -504,9 +504,9 @@ int Actor::NextTaggedActor(int previous) {
  * @param ano			Actor Id
  */
 int32 Actor::actorMaskType(int ano) {
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
-	return actorInfo[ano - 1].mtype;
+	return _actorInfo[ano - 1].mtype;
 }
 
 /**
@@ -517,45 +517,45 @@ int32 Actor::actorMaskType(int ano) {
  * @param y				Y position
  */
 void Actor::StoreActorPos(int ano, int x, int y) {
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
-	actorInfo[ano - 1].x = x;
-	actorInfo[ano - 1].y = y;
+	_actorInfo[ano - 1].x = x;
+	_actorInfo[ano - 1].y = y;
 }
 
 void Actor::StoreActorSteps(int ano, int steps) {
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
-	actorInfo[ano - 1].steps = steps;
+	_actorInfo[ano - 1].steps = steps;
 }
 
 int Actor::GetActorSteps(int ano) {
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
-	return actorInfo[ano - 1].steps;
+	return _actorInfo[ano - 1].steps;
 }
 
 void Actor::StoreActorZpos(int ano, int z, int column) {
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
 	if (!TinselV2) {
 		// Prior to Tinsel 2, only a single z value was stored
-		actorInfo[ano - 1].z = z;
+		_actorInfo[ano - 1].z = z;
 	} else {
 		// Alter existing entry, if there is one
 		for (int i = 0; i < NUM_ZPOSITIONS; i++) {
-			if (zPositions[i].actor == ano && zPositions[i].column == column) {
-				zPositions[i].z = z;
+			if (_zPositions[i].actor == ano && _zPositions[i].column == column) {
+				_zPositions[i].z = z;
 				return;
 			}
 		}
 
 		// No existing entry found, so find an empty slot
 		for (int i = 0; i < NUM_ZPOSITIONS; i++) {
-			if (zPositions[i].actor == 0) {
-				zPositions[i].actor = (short)ano;
-				zPositions[i].column = (short)column;
-				zPositions[i].z = z;
+			if (_zPositions[i].actor == 0) {
+				_zPositions[i].actor = (short)ano;
+				_zPositions[i].column = (short)column;
+				_zPositions[i].z = z;
 				return;
 			}
 		}
@@ -569,8 +569,8 @@ int Actor::GetActorZpos(int ano, int column) {
 
 	// Find entry, there should be one
 	for (int i = 0; i < NUM_ZPOSITIONS; i++) {
-		if (zPositions[i].actor == ano && zPositions[i].column == column) {
-			return zPositions[i].z;
+		if (_zPositions[i].actor == ano && _zPositions[i].column == column) {
+			return _zPositions[i].z;
 		}
 	}
 
@@ -580,27 +580,27 @@ int Actor::GetActorZpos(int ano, int column) {
 void Actor::IncLoopCount(int ano) {
 	RANGE_CHECK(ano);
 
-	actorInfo[ano - 1].loopCount++;
+	_actorInfo[ano - 1].loopCount++;
 }
 
 int Actor::GetLoopCount(int ano) {
 	RANGE_CHECK(ano);
 
-	return actorInfo[ano - 1].loopCount;
+	return _actorInfo[ano - 1].loopCount;
 }
 
 void Actor::GetActorPos(int ano, int *x, int *y) {
 	PMOVER pActor;
 
-	assert((ano > 0 && ano <= NumActors) || ano == LEAD_ACTOR); // unknown actor
+	assert((ano > 0 && ano <= _numActors) || ano == LEAD_ACTOR); // unknown actor
 
 	pActor = GetMover(ano);
 
 	if (pActor)
 		GetMoverPosition(pActor, x, y);
 	else {
-		*x = actorInfo[ano - 1].x;
-		*y = actorInfo[ano - 1].y;
+		*x = _actorInfo[ano - 1].x;
+		*y = _actorInfo[ano - 1].y;
 	}
 }
 
@@ -615,7 +615,7 @@ void Actor::GetActorMidTop(int ano, int *x, int *y) {
 	// Not used in JAPAN version
 	PMOVER pActor;
 
-	assert((ano > 0 && ano <= NumActors) || ano == LEAD_ACTOR); // unknown actor
+	assert((ano > 0 && ano <= _numActors) || ano == LEAD_ACTOR); // unknown actor
 
 	pActor = GetMover(ano);
 
@@ -624,10 +624,10 @@ void Actor::GetActorMidTop(int ano, int *x, int *y) {
 	else if (TinselV2) {
 		*x = (GetActorLeft(ano) + GetActorRight(ano)) / 2;
 		*y = GetActorTop(ano);
-	} else if (actorInfo[ano - 1].presObj) {
-		*x = (MultiLeftmost(actorInfo[ano - 1].presObj)
-		      + MultiRightmost(actorInfo[ano - 1].presObj)) / 2;
-		*y = MultiHighest(actorInfo[ano - 1].presObj);
+	} else if (_actorInfo[ano - 1].presObj) {
+		*x = (MultiLeftmost(_actorInfo[ano - 1].presObj)
+		      + MultiRightmost(_actorInfo[ano - 1].presObj)) / 2;
+		*y = MultiHighest(_actorInfo[ano - 1].presObj);
 	} else
 		GetActorPos(ano, x, y);		// The best we can do!
 }
@@ -637,14 +637,14 @@ void Actor::GetActorMidTop(int ano, int *x, int *y) {
  * @param ano			Actor Id
  */
 int Actor::GetActorLeft(int ano) {
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
 	if (!TinselV2) {
 		// Tinsel 1 version
-		if (!actorInfo[ano - 1].presObj)
+		if (!_actorInfo[ano - 1].presObj)
 			return 0;
 
-		return MultiLeftmost(actorInfo[ano - 1].presObj);
+		return MultiLeftmost(_actorInfo[ano - 1].presObj);
 	}
 
 	// Tinsel 2 version
@@ -659,13 +659,13 @@ int Actor::GetActorLeft(int ano) {
 		for (i = 0, bIsObj = false; i < MAX_REELS; i++) {
 			// If there's an object
 			// and it is not a blank frame for it...
-			if (actorInfo[ano-1].presObjs[i] && MultiHasShape(actorInfo[ano - 1].presObjs[i])) {
+			if (_actorInfo[ano-1].presObjs[i] && MultiHasShape(_actorInfo[ano - 1].presObjs[i])) {
 				if (!bIsObj) {
 					bIsObj = true;
-					left = MultiLeftmost(actorInfo[ano - 1].presObjs[i]);
+					left = MultiLeftmost(_actorInfo[ano - 1].presObjs[i]);
 				} else {
-					if (MultiLeftmost(actorInfo[ano - 1].presObjs[i]) < left)
-						left = MultiLeftmost(actorInfo[ano - 1].presObjs[i]);
+					if (MultiLeftmost(_actorInfo[ano - 1].presObjs[i]) < left)
+						left = MultiLeftmost(_actorInfo[ano - 1].presObjs[i]);
 				}
 			}
 		}
@@ -679,14 +679,14 @@ int Actor::GetActorLeft(int ano) {
  * @param ano			Actor Id
  */
 int Actor::GetActorRight(int ano) {
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
 	if (!TinselV2) {
 		// Tinsel 1 version
-		if (!actorInfo[ano - 1].presObj)
+		if (!_actorInfo[ano - 1].presObj)
 			return 0;
 
-		return MultiRightmost(actorInfo[ano - 1].presObj);
+		return MultiRightmost(_actorInfo[ano - 1].presObj);
 	}
 
 	// Tinsel 2 version
@@ -701,13 +701,13 @@ int Actor::GetActorRight(int ano) {
 		for (i = 0, bIsObj = false; i < MAX_REELS; i++) {
 			// If there's an object
 			// and it is not a blank frame for it...
-			if (actorInfo[ano-1].presObjs[i] && MultiHasShape(actorInfo[ano-1].presObjs[i])) {
+			if (_actorInfo[ano-1].presObjs[i] && MultiHasShape(_actorInfo[ano-1].presObjs[i])) {
 				if (!bIsObj) {
 					bIsObj = true;
-					right = MultiRightmost(actorInfo[ano-1].presObjs[i]);
+					right = MultiRightmost(_actorInfo[ano-1].presObjs[i]);
 				} else {
-					if (MultiRightmost(actorInfo[ano-1].presObjs[i]) > right)
-						right = MultiRightmost(actorInfo[ano-1].presObjs[i]);
+					if (MultiRightmost(_actorInfo[ano-1].presObjs[i]) > right)
+						right = MultiRightmost(_actorInfo[ano-1].presObjs[i]);
 				}
 			}
 		}
@@ -720,14 +720,14 @@ int Actor::GetActorRight(int ano) {
  * @param ano			Actor Id
  */
 int Actor::GetActorTop(int ano) {
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
 	if (!TinselV2) {
 		// Tinsel 1 version
-		if (!actorInfo[ano - 1].presObj)
+		if (!_actorInfo[ano - 1].presObj)
 			return 0;
 
-		return MultiHighest(actorInfo[ano - 1].presObj);
+		return MultiHighest(_actorInfo[ano - 1].presObj);
 	}
 
 	// Tinsel 2 version
@@ -742,13 +742,13 @@ int Actor::GetActorTop(int ano) {
 		for (i = 0, bIsObj = false; i < MAX_REELS; i++) {
 			// If there's an object
 			// and it is not a blank frame for it...
-			if (actorInfo[ano-1].presObjs[i] && MultiHasShape(actorInfo[ano-1].presObjs[i])) {
+			if (_actorInfo[ano-1].presObjs[i] && MultiHasShape(_actorInfo[ano-1].presObjs[i])) {
 				if (!bIsObj) {
 					bIsObj = true;
-					top = MultiHighest(actorInfo[ano-1].presObjs[i]);
+					top = MultiHighest(_actorInfo[ano-1].presObjs[i]);
 				} else {
-					if (MultiHighest(actorInfo[ano-1].presObjs[i]) < top)
-						top = MultiHighest(actorInfo[ano-1].presObjs[i]);
+					if (MultiHighest(_actorInfo[ano-1].presObjs[i]) < top)
+						top = MultiHighest(_actorInfo[ano-1].presObjs[i]);
 				}
 			}
 		}
@@ -761,14 +761,14 @@ int Actor::GetActorTop(int ano) {
  * Return the appropriate co-ordinate of the actor.
  */
 int Actor::GetActorBottom(int ano) {
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
 	if (!TinselV2) {
 		// Tinsel 1 version
-		if (!actorInfo[ano - 1].presObj)
+		if (!_actorInfo[ano - 1].presObj)
 			return 0;
 
-		return MultiLowest(actorInfo[ano - 1].presObj);
+		return MultiLowest(_actorInfo[ano - 1].presObj);
 	}
 
 	// Tinsel 2 version
@@ -783,13 +783,13 @@ int Actor::GetActorBottom(int ano) {
 		for (i = 0, bIsObj = false; i < MAX_REELS; i++) {
 			// If there's an object
 			// and it is not a blank frame for it...
-			if (actorInfo[ano-1].presObjs[i] && MultiHasShape(actorInfo[ano-1].presObjs[i])) {
+			if (_actorInfo[ano-1].presObjs[i] && MultiHasShape(_actorInfo[ano-1].presObjs[i])) {
 				if (!bIsObj) {
 					bIsObj = true;
-					bottom = MultiLowest(actorInfo[ano-1].presObjs[i]);
+					bottom = MultiLowest(_actorInfo[ano-1].presObjs[i]);
 				} else {
-					if (MultiLowest(actorInfo[ano-1].presObjs[i]) > bottom)
-						bottom = MultiLowest(actorInfo[ano-1].presObjs[i]);
+					if (MultiLowest(_actorInfo[ano-1].presObjs[i]) > bottom)
+						bottom = MultiLowest(_actorInfo[ano-1].presObjs[i]);
 				}
 			}
 		}
@@ -803,7 +803,7 @@ int Actor::GetActorBottom(int ano) {
 bool Actor::ActorHidden(int ano) {
 	RANGE_CHECK(ano);
 
-	return actorInfo[ano - 1].bHidden;
+	return _actorInfo[ano - 1].bHidden;
 }
 
 /**
@@ -814,7 +814,7 @@ bool Actor::ActorHidden(int ano) {
 bool Actor::HideMovingActor(int ano, int sf) {
 	PMOVER pActor;
 
-	assert((ano > 0 && ano <= NumActors) || ano == LEAD_ACTOR); // illegal actor
+	assert((ano > 0 && ano <= _numActors) || ano == LEAD_ACTOR); // illegal actor
 
 	// Get moving actor involved
 	pActor = GetMover(ano);
@@ -823,8 +823,8 @@ bool Actor::HideMovingActor(int ano, int sf) {
 		HideMover(pActor, sf);
 		return true;
 	} else {
-		if (actorInfo[ano - 1].presObj != NULL)
-			MultiHideObject(actorInfo[ano - 1].presObj);	// Hidee object
+		if (_actorInfo[ano - 1].presObj != NULL)
+			MultiHideObject(_actorInfo[ano - 1].presObj);	// Hidee object
 		return false;
 	}
 }
@@ -836,7 +836,7 @@ bool Actor::HideMovingActor(int ano, int sf) {
 void Actor::unHideMovingActor(int ano) {
 	PMOVER pActor;
 
-	assert((ano > 0 && ano <= NumActors) || ano == LEAD_ACTOR); // illegal actor
+	assert((ano > 0 && ano <= _numActors) || ano == LEAD_ACTOR); // illegal actor
 
 	// Get moving actor involved
 	pActor = GetMover(ano);
@@ -854,18 +854,18 @@ void Actor::unHideMovingActor(int ano) {
 void Actor::restoreMovement(int ano) {
 	PMOVER pActor;
 
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
 	// Get moving actor involved
 	pActor = GetMover(ano);
 
 	assert(pActor); // not a moving actor
 
-	if (pActor->objX == actorInfo[ano - 1].x && pActor->objY == actorInfo[ano - 1].y)
+	if (pActor->objX == _actorInfo[ano - 1].x && pActor->objY == _actorInfo[ano - 1].y)
 		return;
 
-	pActor->objX = actorInfo[ano - 1].x;
-	pActor->objY = actorInfo[ano - 1].y;
+	pActor->objX = _actorInfo[ano - 1].x;
+	pActor->objY = _actorInfo[ano - 1].y;
 
 	if (pActor->actorObj)
 		SSetActorDest(pActor);
@@ -878,7 +878,7 @@ void Actor::restoreMovement(int ano) {
 void Actor::storeActorReel(int ano, const FREEL *reel, SCNHANDLE hFilm, OBJECT *pobj, int reelnum, int x, int y) {
 	PMOVER pActor;
 
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
 	pActor = GetMover(ano);
 
@@ -886,18 +886,18 @@ void Actor::storeActorReel(int ano, const FREEL *reel, SCNHANDLE hFilm, OBJECT *
 	// (MoverProcess() calls with reel=film=NULL, pobj not NULL)
 	if (!pActor
 	|| !(reel == NULL && hFilm == 0 && pobj != NULL)) {
-		actorInfo[ano - 1].presReel = reel;	// Store reel
-		actorInfo[ano - 1].presRnum = reelnum;	// Store reel number
-		actorInfo[ano - 1].presFilm = hFilm;	// Store film
-		actorInfo[ano - 1].presPlayX = x;
-		actorInfo[ano - 1].presPlayY = y;
+		_actorInfo[ano - 1].presReel = reel;	// Store reel
+		_actorInfo[ano - 1].presRnum = reelnum;	// Store reel number
+		_actorInfo[ano - 1].presFilm = hFilm;	// Store film
+		_actorInfo[ano - 1].presPlayX = x;
+		_actorInfo[ano - 1].presPlayY = y;
 	}
 
 	// Only store the object for a moving actor if called from MoverProcess()
 	if (!pActor) {
-		actorInfo[ano - 1].presObj = pobj;	// Store object
+		_actorInfo[ano - 1].presObj = pobj;	// Store object
 	} else if (reel == NULL && hFilm == 0 && pobj != NULL) {
-		actorInfo[ano - 1].presObj = pobj;	// Store object
+		_actorInfo[ano - 1].presObj = pobj;	// Store object
 	}
 }
 
@@ -905,94 +905,94 @@ void Actor::storeActorReel(int ano, const FREEL *reel, SCNHANDLE hFilm, OBJECT *
  * Return the present reel/film of the actor.
  */
 const FREEL *Actor::actorReel(int ano) {
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
-	return actorInfo[ano - 1].presReel;	// the present reel
+	return _actorInfo[ano - 1].presReel;	// the present reel
 }
 
 /***************************************************************************/
 
 void Actor::SetActorPlayFilm(int ano, SCNHANDLE hFilm) {
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
-	actorInfo[ano - 1].playFilm = hFilm;
+	_actorInfo[ano - 1].playFilm = hFilm;
 }
 
 SCNHANDLE Actor::GetActorPlayFilm(int ano) {
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
-	return actorInfo[ano - 1].playFilm;
+	return _actorInfo[ano - 1].playFilm;
 }
 
 void Actor::SetActorTalkFilm(int ano, SCNHANDLE hFilm) {
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
-	actorInfo[ano - 1].talkFilm = hFilm;
+	_actorInfo[ano - 1].talkFilm = hFilm;
 }
 
 SCNHANDLE Actor::GetActorTalkFilm(int ano) {
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
-	return actorInfo[ano - 1].talkFilm;
+	return _actorInfo[ano - 1].talkFilm;
 }
 
 void Actor::SetActorTalking(int ano, bool tf) {
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
-	actorInfo[ano - 1].bTalking = tf;
+	_actorInfo[ano - 1].bTalking = tf;
 }
 
 bool Actor::ActorIsTalking(int ano) {
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
-	return actorInfo[ano - 1].bTalking;
+	return _actorInfo[ano - 1].bTalking;
 }
 
 void Actor::SetActorLatestFilm(int ano, SCNHANDLE hFilm) {
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
-	actorInfo[ano - 1].latestFilm = hFilm;
-	actorInfo[ano - 1].steps = 0;
+	_actorInfo[ano - 1].latestFilm = hFilm;
+	_actorInfo[ano - 1].steps = 0;
 }
 
 SCNHANDLE Actor::GetActorLatestFilm(int ano) {
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
-	return actorInfo[ano - 1].latestFilm;
+	return _actorInfo[ano - 1].latestFilm;
 }
 
 /***************************************************************************/
 
 void Actor::UpdateActorEsc(int ano, bool escOn, int escEvent) {
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
-	actorInfo[ano - 1].bEscOn = escOn;
-	actorInfo[ano - 1].escEvent = escEvent;
+	_actorInfo[ano - 1].bEscOn = escOn;
+	_actorInfo[ano - 1].escEvent = escEvent;
 }
 
 void Actor::UpdateActorEsc(int ano, int escEvent) {
 	RANGE_CHECK(ano);
 
 	if (escEvent) {
-		actorInfo[ano - 1].bEscOn = true;
-		actorInfo[ano - 1].escEvent = escEvent;
+		_actorInfo[ano - 1].bEscOn = true;
+		_actorInfo[ano - 1].escEvent = escEvent;
 	} else {
-		actorInfo[ano - 1].bEscOn = false;
-		actorInfo[ano - 1].escEvent = GetEscEvents();
+		_actorInfo[ano - 1].bEscOn = false;
+		_actorInfo[ano - 1].escEvent = GetEscEvents();
 	}
 
 }
 
 bool Actor::ActorEsc(int ano) {
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
-	return actorInfo[ano - 1].bEscOn;
+	return _actorInfo[ano - 1].bEscOn;
 }
 
 int Actor::ActorEev(int ano) {
-	assert(ano > 0 && ano <= NumActors); // illegal actor number
+	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
-	return actorInfo[ano - 1].escEvent;
+	return _actorInfo[ano - 1].escEvent;
 }
 
 /**
@@ -1013,16 +1013,16 @@ int Actor::AsetZPos(OBJECT *pObj, int y, int32 z) {
  * Currently only the speech colors.
  */
 void Actor::storeActorAttr(int ano, int r1, int g1, int b1) {
-	assert((ano > 0 && ano <= NumActors) || ano == -1); // illegal actor number
+	assert((ano > 0 && ano <= _numActors) || ano == -1); // illegal actor number
 
 	if (r1 > MAX_INTENSITY)	r1 = MAX_INTENSITY;	// } Ensure
 	if (g1 > MAX_INTENSITY)	g1 = MAX_INTENSITY;	// } within limits
 	if (b1 > MAX_INTENSITY)	b1 = MAX_INTENSITY;	// }
 
 	if (ano == -1)
-		defaultColor = TINSEL_RGB(r1, g1, b1);
+		_defaultColor = TINSEL_RGB(r1, g1, b1);
 	else
-		actorInfo[ano - 1].textColor = TINSEL_RGB(r1, g1, b1);
+		_actorInfo[ano - 1].textColor = TINSEL_RGB(r1, g1, b1);
 }
 
 /**
@@ -1030,12 +1030,12 @@ void Actor::storeActorAttr(int ano, int r1, int g1, int b1) {
  */
 
 void Actor::SetActorRGB(int ano, COLORREF color) {
-	assert(ano >= 0 && ano <= NumActors);
+	assert(ano >= 0 && ano <= _numActors);
 
 	if (ano)
-		actorInfo[ano - 1].textColor = TO_32(color);
+		_actorInfo[ano - 1].textColor = TO_32(color);
 	else
-		defaultColor = TO_32(color);
+		_defaultColor = TO_32(color);
 }
 
 /**
@@ -1044,12 +1044,12 @@ void Actor::SetActorRGB(int ano, COLORREF color) {
  */
 COLORREF Actor::GetActorRGB(int ano) {
 	// Not used in JAPAN version
-	assert((ano >= -1) && (ano <= NumActors)); // illegal actor number
+	assert((ano >= -1) && (ano <= _numActors)); // illegal actor number
 
-	if ((ano == -1) || !actorInfo[ano - 1].textColor)
-		return defaultColor;
+	if ((ano == -1) || !_actorInfo[ano - 1].textColor)
+		return _defaultColor;
 	else
-		return actorInfo[ano - 1].textColor;
+		return _actorInfo[ano - 1].textColor;
 }
 
 /**
@@ -1058,13 +1058,13 @@ COLORREF Actor::GetActorRGB(int ano) {
 void Actor::SetActorZfactor(int ano, uint32 zFactor) {
 	RANGE_CHECK(ano);
 
-	zFactors[ano - 1] = (uint8)zFactor;
+	_zFactors[ano - 1] = (uint8)zFactor;
 }
 
 uint32 Actor::GetActorZfactor(int ano) {
 	RANGE_CHECK(ano);
 
-	return zFactors[ano - 1];
+	return _zFactors[ano - 1];
 }
 
 /**
@@ -1073,29 +1073,29 @@ uint32 Actor::GetActorZfactor(int ano) {
 int Actor::SaveActors(PSAVED_ACTOR sActorInfo) {
 	int	i, j, k;
 
-	for (i = 0, j = 0; i < NumActors; i++) {
+	for (i = 0, j = 0; i < _numActors; i++) {
 		for (k = 0; k < (TinselV2 ? MAX_REELS : 1); ++k) {
-			bool presFlag = !TinselV2 ? actorInfo[i].presObj != NULL :
-				(actorInfo[i].presObjs[k] != NULL) && !IsCdPlayHandle(actorInfo[i].presFilm);
+			bool presFlag = !TinselV2 ? _actorInfo[i].presObj != NULL :
+				(_actorInfo[i].presObjs[k] != NULL) && !IsCdPlayHandle(_actorInfo[i].presFilm);
 			if (presFlag) {
 
 				assert(j < MAX_SAVED_ACTORS); // Saving too many actors
 
 				if (!TinselV2) {
-					sActorInfo[j].bAlive	= actorInfo[i].bAlive;
-					sActorInfo[j].zFactor	= (short)actorInfo[i].z;
-					sActorInfo[j].presRnum	= (short)actorInfo[i].presRnum;
+					sActorInfo[j].bAlive	= _actorInfo[i].bAlive;
+					sActorInfo[j].zFactor	= (short)_actorInfo[i].z;
+					sActorInfo[j].presRnum	= (short)_actorInfo[i].presRnum;
 				}
 
 				sActorInfo[j].actorID	= (short)(i+1);
 				if (TinselV2)
-					sActorInfo[j].bHidden	= actorInfo[i].bHidden;
+					sActorInfo[j].bHidden	= _actorInfo[i].bHidden;
 	//			sActorInfo[j].x		= (short)actorInfo[i].x;
 	//			sActorInfo[j].y		= (short)actorInfo[i].y;
 	//			sActorInfo[j].presReel	= actorInfo[i].presReel;
-				sActorInfo[j].presFilm	= actorInfo[i].presFilm;
-				sActorInfo[j].presPlayX	= (short)actorInfo[i].presPlayX;
-				sActorInfo[j].presPlayY	= (short)actorInfo[i].presPlayY;
+				sActorInfo[j].presFilm	= _actorInfo[i].presFilm;
+				sActorInfo[j].presPlayX	= (short)_actorInfo[i].presPlayX;
+				sActorInfo[j].presPlayY	= (short)_actorInfo[i].presPlayY;
 				j++;
 
 				break;
@@ -1115,7 +1115,7 @@ void Actor::RestoreActors(int numActors, PSAVED_ACTOR sActorInfo) {
 	for (i = 0; i < numActors; i++) {
 		aIndex = sActorInfo[i].actorID - 1;
 
-		actorInfo[aIndex].bHidden = sActorInfo[i].bHidden;
+		_actorInfo[aIndex].bHidden = sActorInfo[i].bHidden;
 
 		// Play the same reel.
 		if (sActorInfo[i].presFilm != 0) {
@@ -1126,57 +1126,57 @@ void Actor::RestoreActors(int numActors, PSAVED_ACTOR sActorInfo) {
 }
 
 void Actor::SaveZpositions(void *zpp) {
-	memcpy(zpp, zPositions, sizeof(zPositions));
+	memcpy(zpp, _zPositions, sizeof(_zPositions));
 }
 
 void Actor::RestoreZpositions(void *zpp) {
-	memcpy(zPositions, zpp, sizeof(zPositions));
+	memcpy(_zPositions, zpp, sizeof(_zPositions));
 }
 
 void Actor::SaveActorZ(byte *saveActorZ) {
-	assert(NumActors <= MAX_SAVED_ACTOR_Z);
+	assert(_numActors <= MAX_SAVED_ACTOR_Z);
 
-	memcpy(saveActorZ, zFactors, NumActors);
+	memcpy(saveActorZ, _zFactors, _numActors);
 }
 
 void Actor::RestoreActorZ(byte *saveActorZ) {
-	memcpy(zFactors, saveActorZ, NumActors);
+	memcpy(_zFactors, saveActorZ, _numActors);
 }
 
 void Actor::SetActorsOn() {
-	bActorsOn = true;
+	_actorsOn = true;
 }
 
 void Actor::ToggleActor(int ano, bool show) {
-	assert((ano > 0 && ano <= NumActors) || ano == -1); // illegal actor number
-	actorInfo[ano - 1].bHidden = !show;
+	assert((ano > 0 && ano <= _numActors) || ano == -1); // illegal actor number
+	_actorInfo[ano - 1].bHidden = !show;
 }
 
 SCNHANDLE Actor::GetActorCode(int ano) {
-	assert((ano > 0 && ano <= NumActors) || ano == -1); // illegal actor number
-	return actorInfo[ano - 1].actorCode;
+	assert((ano > 0 && ano <= _numActors) || ano == -1); // illegal actor number
+	return _actorInfo[ano - 1].actorCode;
 }
 
 SCNHANDLE Actor::GetTaggedActorCode(int ano) {
-	return taggedActors[ano - 1].hActorCode;
+	return _taggedActors[ano - 1].hActorCode;
 }
 
 void Actor::RunCodeToCompletion(int ano) {
-	assert((ano > 0 && ano <= NumActors) || ano == -1); // illegal actor number
-	actorInfo[ano - 1].completed = true;
+	assert((ano > 0 && ano <= _numActors) || ano == -1); // illegal actor number
+	_actorInfo[ano - 1].completed = true;
 }
 
 void Actor::ActorsLife(int ano, bool bAlive) {
-	assert((ano > 0 && ano <= NumActors) || ano == -1); // illegal actor number
-	actorInfo[ano - 1].bAlive = bAlive;
+	assert((ano > 0 && ano <= _numActors) || ano == -1); // illegal actor number
+	_actorInfo[ano - 1].bAlive = bAlive;
 }
 
 void Actor::syncAllActorsAlive(Common::Serializer &s) {
 	for (int i = 0; i < MAX_SAVED_ALIVES; i++) {
-		s.syncAsByte(actorInfo[i].bAlive);
-		s.syncAsByte(actorInfo[i].tagged);
-		s.syncAsByte(actorInfo[i].tType);
-		s.syncAsUint32LE(actorInfo[i].hTag);
+		s.syncAsByte(_actorInfo[i].bAlive);
+		s.syncAsByte(_actorInfo[i].tagged);
+		s.syncAsByte(_actorInfo[i].tType);
+		s.syncAsUint32LE(_actorInfo[i].hTag);
 	}
 }
 
@@ -1193,14 +1193,14 @@ void Actor::dwEndActor(int ano) {
 //	actorInfo[ano - 1].presFilm = nullptr;
 // but things were returning after a cut scene.
 // so re-instate it and de-register the object
-	actorInfo[ano - 1].presFilm = 0;
-	actorInfo[ano-1].filmNum++;
+	_actorInfo[ano - 1].presFilm = 0;
+	_actorInfo[ano-1].filmNum++;
 
 	for (i = 0; i < MAX_REELS; i++) {
 		// It may take a frame to remove this, so make it invisible
-		if (actorInfo[ano-1].presObjs[i] != NULL) {
-			MultiHideObject(actorInfo[ano-1].presObjs[i]);
-			actorInfo[ano-1].presObjs[i] = nullptr;
+		if (_actorInfo[ano-1].presObjs[i] != NULL) {
+			MultiHideObject(_actorInfo[ano-1].presObjs[i]);
+			_actorInfo[ano-1].presObjs[i] = nullptr;
 		}
 	}
 }
@@ -1213,10 +1213,10 @@ void Actor::GetActorTagPortion(int ano, unsigned *top, unsigned *bottom, unsigne
 	// Convert actor number to index
 	ano = TaggedActorIndex(ano);
 
-	*top = taggedActors[ano].tagPortionV >> 16;
-	*bottom = taggedActors[ano].tagPortionV & 0xffff;
-	*left = taggedActors[ano].tagPortionH >> 16;
-	*right = taggedActors[ano].tagPortionH & 0xffff;
+	*top = _taggedActors[ano].tagPortionV >> 16;
+	*bottom = _taggedActors[ano].tagPortionV & 0xffff;
+	*left = _taggedActors[ano].tagPortionH >> 16;
+	*right = _taggedActors[ano].tagPortionH & 0xffff;
 
 	// ensure validity
 	assert(*top >= 1 && *top <= 8);
@@ -1232,8 +1232,8 @@ SCNHANDLE Actor::GetActorTagHandle(int ano) {
 	// Convert actor number to index
 	ano = TaggedActorIndex(ano);
 
-	return taggedActors[ano].hOverrideTag ?
-		taggedActors[ano].hOverrideTag : taggedActors[ano].hTagText;
+	return _taggedActors[ano].hOverrideTag ?
+		_taggedActors[ano].hOverrideTag : _taggedActors[ano].hTagText;
 }
 
 void Actor::SetActorPointedTo(int actor, bool bPointedTo) {
@@ -1241,16 +1241,16 @@ void Actor::SetActorPointedTo(int actor, bool bPointedTo) {
 	actor = TaggedActorIndex(actor);
 
 	if (bPointedTo)
-		taggedActors[actor].tagFlags |= POINTING;
+		_taggedActors[actor].tagFlags |= POINTING;
 	else
-		taggedActors[actor].tagFlags &= ~POINTING;
+		_taggedActors[actor].tagFlags &= ~POINTING;
 }
 
 bool Actor::ActorIsPointedTo(int actor) {
 	// Convert actor number to index
 	actor = TaggedActorIndex(actor);
 
-	return (taggedActors[actor].tagFlags & POINTING);
+	return (_taggedActors[actor].tagFlags & POINTING);
 }
 
 void Actor::SetActorTagWanted(int actor, bool bTagWanted, bool bCursor, SCNHANDLE hOverrideTag) {
@@ -1258,24 +1258,24 @@ void Actor::SetActorTagWanted(int actor, bool bTagWanted, bool bCursor, SCNHANDL
 	actor = TaggedActorIndex(actor);
 
 	if (bTagWanted) {
-		taggedActors[actor].tagFlags |= TAGWANTED;
-		taggedActors[actor].hOverrideTag = hOverrideTag;
+		_taggedActors[actor].tagFlags |= TAGWANTED;
+		_taggedActors[actor].hOverrideTag = hOverrideTag;
 	} else {
-		taggedActors[actor].tagFlags &= ~TAGWANTED;
-		taggedActors[actor].hOverrideTag = 0;
+		_taggedActors[actor].tagFlags &= ~TAGWANTED;
+		_taggedActors[actor].hOverrideTag = 0;
 	}
 
 	if (bCursor)
-		taggedActors[actor].tagFlags |= FOLLOWCURSOR;
+		_taggedActors[actor].tagFlags |= FOLLOWCURSOR;
 	else
-		taggedActors[actor].tagFlags &= ~FOLLOWCURSOR;
+		_taggedActors[actor].tagFlags &= ~FOLLOWCURSOR;
 }
 
 bool Actor::ActorTagIsWanted(int actor) {
 	// Convert actor number to index
 	actor = TaggedActorIndex(actor);
 
-	return (taggedActors[actor].tagFlags & TAGWANTED);
+	return (_taggedActors[actor].tagFlags & TAGWANTED);
 }
 
 /**
@@ -1324,9 +1324,9 @@ bool Actor::InHotSpot(int ano, int curX, int curY) {
 int Actor::FrontTaggedActor() {
 	int i;
 
-	for (i = 0; i < numTaggedActors; i++) {
-		if (taggedActors[i].tagFlags & POINTING)
-			return taggedActors[i].id;
+	for (i = 0; i < _numTaggedActors; i++) {
+		if (_taggedActors[i].tagFlags & POINTING)
+			return _taggedActors[i].id;
 	}
 	return 0;
 }
@@ -1362,8 +1362,8 @@ void Actor::GetActorTagPos(int actor, int *pTagX, int *pTagY, bool bAbsolute) {
 bool Actor::IsTaggedActor(int actor) {
 	int i;
 
-	for (i = 0; i < numTaggedActors; i++) {
-		if (taggedActors[i].id == actor)
+	for (i = 0; i < _numTaggedActors; i++) {
+		if (_taggedActors[i].id == actor)
 			return true;
 	}
 	return false;
@@ -1377,18 +1377,18 @@ void Actor::StoreActorPresFilm(int ano, SCNHANDLE hFilm, int x, int y) {
 
 	RANGE_CHECK(ano);
 
-	actorInfo[ano-1].presFilm = hFilm;
-	actorInfo[ano-1].presPlayX = x;
-	actorInfo[ano-1].presPlayY = y;
-	actorInfo[ano-1].filmNum++;
+	_actorInfo[ano-1].presFilm = hFilm;
+	_actorInfo[ano-1].presPlayX = x;
+	_actorInfo[ano-1].presPlayY = y;
+	_actorInfo[ano-1].filmNum++;
 
 	for (i = 0; i < MAX_REELS; i++) {
 		// It may take a frame to remove this, so make it invisible
-		if (actorInfo[ano - 1].presObjs[i] != NULL)
-			MultiHideObject(actorInfo[ano - 1].presObjs[i]);
+		if (_actorInfo[ano - 1].presObjs[i] != NULL)
+			MultiHideObject(_actorInfo[ano - 1].presObjs[i]);
 
-		actorInfo[ano - 1].presColumns[i] = -1;
-		actorInfo[ano - 1].presObjs[i] = nullptr;
+		_actorInfo[ano - 1].presColumns[i] = -1;
+		_actorInfo[ano - 1].presObjs[i] = nullptr;
 	}
 }
 
@@ -1398,7 +1398,7 @@ void Actor::StoreActorPresFilm(int ano, SCNHANDLE hFilm, int x, int y) {
 SCNHANDLE Actor::GetActorPresFilm(int ano) {
 	RANGE_CHECK(ano);
 
-	return actorInfo[ano - 1].presFilm;
+	return _actorInfo[ano - 1].presFilm;
 }
 
 
@@ -1408,7 +1408,7 @@ SCNHANDLE Actor::GetActorPresFilm(int ano) {
 int Actor::GetActorFilmNumber(int ano) {
 	RANGE_CHECK(ano);
 
-	return actorInfo[ano - 1].filmNum;
+	return _actorInfo[ano - 1].filmNum;
 }
 
 /**
@@ -1420,10 +1420,10 @@ void Actor::StoreActorReel(int actor, int column, OBJECT *pObj) {
 	int i;
 
 	for (i = 0; i < MAX_REELS; i++) {
-		if (actorInfo[actor-1].presColumns[i] == -1) {
+		if (_actorInfo[actor-1].presColumns[i] == -1) {
 			// Store reel and object
-			actorInfo[actor - 1].presColumns[i] = column;
-			actorInfo[actor - 1].presObjs[i] = pObj;
+			_actorInfo[actor - 1].presColumns[i] = column;
+			_actorInfo[actor - 1].presObjs[i] = pObj;
 			break;
 		}
 	}
@@ -1439,32 +1439,32 @@ void Actor::NotPlayingReel(int actor, int filmNumber, int column) {
 
 	RANGE_CHECK(actor);
 
-	if (actorInfo[actor-1].filmNum != filmNumber)
+	if (_actorInfo[actor-1].filmNum != filmNumber)
 		return;
 
 	// De-register this reel
 	for (i = 0; i < MAX_REELS; i++) {
-		if (actorInfo[actor-1].presColumns[i] == column) {
-			actorInfo[actor-1].presObjs[i] = nullptr;
-			actorInfo[actor-1].presColumns[i] = -1;
+		if (_actorInfo[actor-1].presColumns[i] == column) {
+			_actorInfo[actor-1].presObjs[i] = nullptr;
+			_actorInfo[actor-1].presColumns[i] = -1;
 			break;
 		}
 	}
 
 	// De-register the film if this was the last reel
 	for (i = 0; i < MAX_REELS; i++) {
-		if (actorInfo[actor-1].presColumns[i] != -1)
+		if (_actorInfo[actor-1].presColumns[i] != -1)
 			break;
 	}
 	if (i == MAX_REELS)
-		actorInfo[actor-1].presFilm = 0;
+		_actorInfo[actor-1].presFilm = 0;
 }
 
 bool Actor::ActorReelPlaying(int actor, int column) {
 	RANGE_CHECK(actor);
 
 	for (int i = 0; i < MAX_REELS; i++) {
-		if (actorInfo[actor - 1].presColumns[i] == column)
+		if (_actorInfo[actor - 1].presColumns[i] == column)
 			return true;
 	}
 	return false;
