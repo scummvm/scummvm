@@ -23,6 +23,7 @@
 #include "glk/level9/os_glk.h"
 #include "glk/level9/level9_main.h"
 #include "glk/level9/level9.h"
+#include "common/config-manager.h"
 #include "common/textconsole.h"
 
 namespace Glk {
@@ -4278,92 +4279,6 @@ static void gln_event_wait(glui32 wait_type, event_t *event) {
 	gln_event_wait_2(wait_type, evtype_None, event);
 }
 
-
-/*---------------------------------------------------------------------*/
-/*  Glk port file functions                                            */
-/*---------------------------------------------------------------------*/
-
-/*
- * os_save_file ()
- * os_load_file ()
- *
- * Save the current game state to a file, and load a game state.
- */
-gln_bool os_save_file(gln_byte *ptr, int bytes) {
-	frefid_t fileref;
-	strid_t stream;
-	assert(ptr);
-
-	/* Flush any pending buffered output. */
-	gln_output_flush();
-
-	fileref = g_vm->glk_fileref_create_by_prompt(fileusage_SavedGame,
-	          filemode_Write, 0);
-	if (!fileref) {
-		gln_watchdog_tick();
-		return FALSE;
-	}
-
-	stream = g_vm->glk_stream_open_file(fileref, filemode_Write, 0);
-	if (!stream) {
-		g_vm->glk_fileref_destroy(fileref);
-		gln_watchdog_tick();
-		return FALSE;
-	}
-
-	/* Write game state. */
-	g_vm->glk_put_buffer_stream(stream, (const char *)ptr, bytes);
-
-	g_vm->glk_stream_close(stream, nullptr);
-	g_vm->glk_fileref_destroy(fileref);
-
-	gln_watchdog_tick();
-	return TRUE;
-}
-
-gln_bool os_load_file(gln_byte *ptr, int *bytes, int max) {
-	frefid_t fileref;
-	strid_t stream;
-	assert(ptr && bytes);
-
-	/* Flush any pending buffered output. */
-	gln_output_flush();
-
-	fileref = g_vm->glk_fileref_create_by_prompt(fileusage_SavedGame,
-	          filemode_Read, 0);
-	if (!fileref) {
-		gln_watchdog_tick();
-		return FALSE;
-	}
-
-	/*
-	 * Reject the file reference if we're expecting to read from it, and the
-	 * referenced file doesn't exist.
-	 */
-	if (!g_vm->glk_fileref_does_file_exist(fileref)) {
-		g_vm->glk_fileref_destroy(fileref);
-		gln_watchdog_tick();
-		return FALSE;
-	}
-
-	stream = g_vm->glk_stream_open_file(fileref, filemode_Read, 0);
-	if (!stream) {
-		g_vm->glk_fileref_destroy(fileref);
-		gln_watchdog_tick();
-		return FALSE;
-	}
-
-	/* Restore saved game data. */
-	*bytes = g_vm->glk_get_buffer_stream(stream, (char *)ptr, max);
-
-	g_vm->glk_stream_close(stream, nullptr);
-	g_vm->glk_fileref_destroy(fileref);
-
-	gln_watchdog_tick();
-	return TRUE;
-}
-
-
 /*---------------------------------------------------------------------*/
 /*  Glk port multi-file game functions                                 */
 /*---------------------------------------------------------------------*/
@@ -4729,6 +4644,7 @@ int gln_startup_code(int argc, char *argv[]) {
 void gln_main(const char *filename) {
 	char *graphics_file = nullptr;
 	int is_running;
+	int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 
 	/* Create the main Glk window, and set its stream as current. */
 	gln_main_window = g_vm->glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
@@ -4819,6 +4735,16 @@ void gln_main(const char *filename) {
 
 		/* Start, or restart, watchdog checking. */
 		gln_watchdog_start(GLN_WATCHDOG_TIMEOUT, GLN_WATCHDOG_PERIOD);
+
+		/* Load any savegame selected directly from the ScummVM launcher */
+		if (saveSlot != -1) {
+			if (g_vm->loadGameState(saveSlot).getCode() == Common::kNoError)
+				printstring("\rGame restored.\r");
+			else
+				printstring("\rUnable to restore game.\r");
+
+			saveSlot = -1;
+		}
 
 		/* Run the game until StopGame called, or RunGame() returns FALSE. */
 		do {

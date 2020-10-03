@@ -254,7 +254,11 @@ void QuetzalWriter::addCommonChunks(const Common::String &saveName) {
 		// Write out intrepreter type, language, and game Id
 		ws.writeUint32BE(getInterpreterTag(g_vm->getInterpreterType()));
 		const char *langCode = getLanguageCode(g_vm->getLanguage());
-		ws.write(langCode, strlen(langCode) + 1);
+		if (langCode)
+			ws.write(langCode, strlen(langCode) + 1);
+		else
+			ws.writeByte('\0');
+
 		Common::String md5 = g_vm->getGameMD5();
 		ws.write(md5.c_str(), md5.size());
 		ws.writeByte('\0');
