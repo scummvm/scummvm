@@ -439,8 +439,35 @@ Common::KeymapperDefaultBindings *OSystem_Android::getKeymapperDefaultBindings()
 
 	// The swap_menu_and_back is a legacy configuration key
 	// We now ignore it entirely (it as always false -- ie. back short press is AC_BACK)
+
+	//
+	// Note: setDefaultBinding maps a hw input to a keymapId_actionId combo.
+	//
+	// Clarifications/Quote by developer bgK (via Discord, Oct 3, 2020)
+	// bgK: [With the introduction of the ScummVM keymapper we have] "standard actions" defined in "standard-actions.h".
+	//      The engines use those as much as possible when defining keymaps.
+	//      Then, the backends can override the default bindings to make use of the platform specific keys.
+	//
+	//
 	keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, "MENU", "MENU");
-	keymapperDefaultBindings->setDefaultBinding("engine-default", Common::kStandardActionSkip, "AC_BACK");
+	//
+	// We want the AC_BACK key to be the default (until overridden explicitly by the user or a game engine)
+	// mapped key for the standard SKIP action.
+	//
+	// bgK: "engine-default" is for the default keymap used by games that don't define their own keymap.
+	//      [We] want Common::kStandardActionsKeymapName to override the action for all the keymaps
+	//      Common::kStandardActionsKeymapName is used as a fallback if there are no keymap specific bindings defined.
+	//      So it should be enough on its own.
+	// [ie. we don't have to set default binding for "engine-default", as well]
+	// ["engine-default" is used for to create a Keymap sequence of type kKeymapTypeGame in engines/metaengine.cpp initKeymaps() for an engine]
+	// [In initKeymaps() is where the default key Esc is mapped to Skip action for game engines]
+	//
+	// [kStandardActionsKeymapName is defined  as (constant char*) in ./backends/keymapper/keymap, and utilised in getActionDefaultMappings()]
+	// ["If no keymap-specific default mapping was found, look for a standard action binding"]
+	keymapperDefaultBindings->setDefaultBinding(Common::kStandardActionsKeymapName, Common::kStandardActionSkip, "AC_BACK");
+
+	// The "CLOS" action ID is not a typo.
+	// See: backends/keymapper/remap-widget.cpp:	kCloseCmd        = 'CLOS'
 	keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, "CLOS", "AC_BACK");
 
 	return keymapperDefaultBindings;
