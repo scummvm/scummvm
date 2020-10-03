@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/endian.h"
 #include "common/stream.h"
+#include "common/serializer.h"
 
 namespace Glk {
 namespace Level9 {
@@ -48,11 +49,15 @@ typedef bool L9BOOL;
 
 struct GameState {
 	L9UINT32 Id;
-	L9UINT16 codeptr, stackptr, listsize, stacksize, filenamesize, checksum;
+	L9UINT16 codeptr, stackptr, listsize, stacksize;
 	L9UINT16 vartable[256];
 	L9BYTE listarea[LISTAREASIZE];
 	L9UINT16 stack[STACKSIZE];
-	char filename[MAX_PATH];
+	uint16 checksum;
+
+	void synchronize(Common::Serializer &s);
+
+	void calculateChecksum();
 };
 
 enum BitmapType {
@@ -90,6 +95,7 @@ extern byte *startdata;
 extern uint32 FileSize;
 
 extern void level9_initialize();
+extern void printstring(const char *buf);
 
 /* routines provided by os dependent code */
 extern void os_printchar(char c);
@@ -97,8 +103,6 @@ extern L9BOOL os_input(char *ibuff, int size);
 extern char os_readchar(int millis);
 extern L9BOOL os_stoplist(void);
 extern void os_flush(void);
-extern L9BOOL os_save_file(L9BYTE *Ptr, int Bytes);
-extern L9BOOL os_load_file(L9BYTE *Ptr, int *Bytes, int Max);
 extern L9BOOL os_get_game_file(char *NewName, int Size);
 extern void os_set_filenumber(char *NewName, int Size, int n);
 extern void os_graphics(int mode);
