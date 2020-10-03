@@ -2299,6 +2299,7 @@ if test "$_use_cxx11" = "yes" ; then
 	append_var CXXFLAGS "-std=c++11"
 fi
 echo $_use_cxx11
+define_in_config_if_yes "$_use_cxx11" 'USE_CXX11'
 
 #
 # Determine extra build flags for debug and/or release builds
