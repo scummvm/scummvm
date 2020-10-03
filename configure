@@ -2309,6 +2309,7 @@ if test "$_use_cxx11" = "yes" ; then
 	echo_n "Checking if C++11 initializer list is available... "
 	cat > $TMPC << EOF
 #include <initializer_list>
+#include <cstddef>
 class FOO {
 public:
 	FOO(std::initializer_list<int> list) : _size(list.size()) {}
