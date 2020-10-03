@@ -34,7 +34,7 @@
 
 namespace NGI {
 
-int FullpipeEngine::lift_getButtonIdP(int objid) {
+int NGIEngine::lift_getButtonIdP(int objid) {
 	switch (objid) {
 	case ST_LBN_0N:
 		return ST_LBN_0P;
@@ -71,7 +71,7 @@ int FullpipeEngine::lift_getButtonIdP(int objid) {
 	}
 }
 
-int FullpipeEngine::lift_getButtonIdH(int objid) {
+int NGIEngine::lift_getButtonIdH(int objid) {
 	switch (objid) {
 	case ST_LBN_0P:
 		return ST_LBN_0H;
@@ -108,7 +108,7 @@ int FullpipeEngine::lift_getButtonIdH(int objid) {
 	}
 }
 
-int FullpipeEngine::lift_getButtonIdN(int objid) {
+int NGIEngine::lift_getButtonIdN(int objid) {
 	switch (objid) {
 	case ST_LBN_0H:
 	case ST_LBN_0N:
@@ -165,14 +165,14 @@ int FullpipeEngine::lift_getButtonIdN(int objid) {
 	}
 }
 
-void FullpipeEngine::lift_setButton(const char *name, int state) {
+void NGIEngine::lift_setButton(const char *name, int state) {
 	GameVar *var = g_fp->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName(sO_LiftButtons);
 
 	if (var)
 		var->setSubVarAsInt(name, state);
 }
 
-void FullpipeEngine::lift_init(Scene *sc, int enterSeq, int exitSeq) {
+void NGIEngine::lift_init(Scene *sc, int enterSeq, int exitSeq) {
 	_lastLiftButton = 0;
 
 	_liftEnterMQ = sc->getMessageQueueById(enterSeq);
@@ -219,7 +219,7 @@ void FullpipeEngine::lift_init(Scene *sc, int enterSeq, int exitSeq) {
 	}
 }
 
-void FullpipeEngine::lift_exitSeq(ExCommand *cmd) {
+void NGIEngine::lift_exitSeq(ExCommand *cmd) {
 	if (cmd) {
 		MessageQueue *mq = _globalMessageQueueList->getMessageQueueById(cmd->_parId);
 
@@ -282,7 +282,7 @@ void FullpipeEngine::lift_exitSeq(ExCommand *cmd) {
 	mq->chain(0);
 }
 
-void FullpipeEngine::lift_closedoorSeq() {
+void NGIEngine::lift_closedoorSeq() {
 	if (_lift->_movement) {
 		if (_lift->_movement->_id == MV_LFT_CLOSE) {
 			_lift->queueMessageQueue(0);
@@ -319,7 +319,7 @@ void FullpipeEngine::lift_closedoorSeq() {
 		delete mq;
 }
 
-void FullpipeEngine::lift_walkAndGo() {
+void NGIEngine::lift_walkAndGo() {
 	MessageQueue *mq;
 	ExCommand *ex;
 
@@ -362,7 +362,7 @@ void FullpipeEngine::lift_walkAndGo() {
 	}
 }
 
-void FullpipeEngine::lift_openLift() {
+void NGIEngine::lift_openLift() {
 	if (_lift->_movement) {
 		if (_lift->_movement->_id == MV_LFT_OPEN) {
 			_lift->queueMessageQueue(0);
@@ -387,12 +387,12 @@ void FullpipeEngine::lift_openLift() {
 	}
 }
 
-void FullpipeEngine::lift_clickButton() {
+void NGIEngine::lift_clickButton() {
 	if (_lastLiftButton)
 		lift_walkAndGo();
 }
 
-void FullpipeEngine::lift_goAnimation() {
+void NGIEngine::lift_goAnimation() {
 	if (_lastLiftButton) {
 		int parentId = _currentScene->_sceneId;
 		int buttonId = lift_getButtonIdN(_lastLiftButton->_statics->_staticsId);
@@ -443,7 +443,7 @@ void FullpipeEngine::lift_goAnimation() {
 	}
 }
 
-void FullpipeEngine::lift_animateButton(StaticANIObject *button) {
+void NGIEngine::lift_animateButton(StaticANIObject *button) {
 	int butId = lift_getButtonIdP(button->_statics->_staticsId);
 
 	if (butId && butId != button->_statics->_staticsId) {
@@ -480,13 +480,13 @@ void FullpipeEngine::lift_animateButton(StaticANIObject *button) {
 	}
 }
 
-void FullpipeEngine::lift_startExitQueue() {
+void NGIEngine::lift_startExitQueue() {
 	MessageQueue *mq = new MessageQueue(_liftExitMQ, 0, 0);
 
 	mq->chain(0);
 }
 
-void FullpipeEngine::lift_hoverButton(ExCommand *cmd) {
+void NGIEngine::lift_hoverButton(ExCommand *cmd) {
 	if (_lastLiftButton) {
 		if (!(cmd->_param & 2) || _liftX != cmd->_x || _liftY != cmd->_y) {
 			_lastLiftButton->_statics = _lastLiftButton->getStaticsById(lift_getButtonIdN(_lastLiftButton->_statics->_staticsId));
@@ -495,7 +495,7 @@ void FullpipeEngine::lift_hoverButton(ExCommand *cmd) {
 	}
 }
 
-bool FullpipeEngine::lift_checkButton(const char *varName) {
+bool NGIEngine::lift_checkButton(const char *varName) {
 	GameVar *var = g_fp->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName(sO_LiftButtons);
 
 	if (var)
@@ -504,7 +504,7 @@ bool FullpipeEngine::lift_checkButton(const char *varName) {
 	return false;
 }
 
-void FullpipeEngine::lift_setButtonStatics(Scene *sc, int buttonId) {
+void NGIEngine::lift_setButtonStatics(Scene *sc, int buttonId) {
 	for (uint i = 0; i < sc->_staticANIObjectList1.size(); i++) {
 		StaticANIObject *ani = sc->_staticANIObjectList1[i];
 

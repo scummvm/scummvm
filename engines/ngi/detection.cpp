@@ -107,9 +107,9 @@ static const ADGameDescription gameDescriptions[] = {
 
 } // End of namespace NGI
 
-class FullpipeMetaEngineStatic : public AdvancedMetaEngineStatic {
+class NGIMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	FullpipeMetaEngineStatic() : AdvancedMetaEngineStatic(NGI::gameDescriptions, sizeof(ADGameDescription), fullpipeGames) {
+	NGIMetaEngineStatic() : AdvancedMetaEngineStatic(NGI::gameDescriptions, sizeof(ADGameDescription), fullpipeGames) {
 	}
 
 	const char *getEngineId() const override {
@@ -125,4 +125,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(NGI_DETECTION, PLUGIN_TYPE_METAENGINE, FullpipeMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(NGI_DETECTION, PLUGIN_TYPE_METAENGINE, NGIMetaEngineStatic);

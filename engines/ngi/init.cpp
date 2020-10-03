@@ -31,7 +31,7 @@
 
 namespace NGI {
 
-void FullpipeEngine::initObjectStates() {
+void NGIEngine::initObjectStates() {
 	setLevelStates();
 
 	setObjectState(sO_Dude, getObjectEnumState(sO_Dude, sO_NotCarryingEgg));
@@ -125,7 +125,7 @@ void FullpipeEngine::initObjectStates() {
 	setObjectState(sO_Boss, getObjectEnumState(sO_Boss, sO_WithHammer));
 }
 
-void FullpipeEngine::setLevelStates() {
+void NGIEngine::setLevelStates() {
 	GameVar *v = _gameLoader->_gameVar->getSubVarByName("OBJSTATES")->getSubVarByName(sO_LiftButtons);
 
 	if (v) {
@@ -142,7 +142,7 @@ void FullpipeEngine::setLevelStates() {
 	}
 }
 
-void FullpipeEngine::addCursor(CursorInfo *cursorInfo, Scene *inv, int pictureId, int hotspotX, int hotspotY, int itemPictureOffsX, int itemPictureOffsY) {
+void NGIEngine::addCursor(CursorInfo *cursorInfo, Scene *inv, int pictureId, int hotspotX, int hotspotY, int itemPictureOffsX, int itemPictureOffsY) {
 	cursorInfo->pictureId = pictureId;
 	cursorInfo->picture = inv->getPictureObjectById(pictureId, 0)->_picture;
 	cursorInfo->hotspotX = hotspotX;
@@ -153,7 +153,7 @@ void FullpipeEngine::addCursor(CursorInfo *cursorInfo, Scene *inv, int pictureId
 	getGameLoaderInputController()->addCursor(cursorInfo);
 }
 
-void FullpipeEngine::initCursors() {
+void NGIEngine::initCursors() {
 	CursorInfo crs;
 	Scene *inv = accessScene(SC_INV);
 
@@ -185,14 +185,14 @@ void FullpipeEngine::initCursors() {
 	getGameLoaderInputController()->setCursorMode(0);
 }
 
-void FullpipeEngine::initMap() {
+void NGIEngine::initMap() {
 	memset(_mapTable, 0, sizeof(_mapTable));
 
 	updateMapPiece(PIC_MAP_S01, 1);
 	updateMapPiece(PIC_MAP_A13, 1u);
 }
 
-void FullpipeEngine::loadAllScenes() {
+void NGIEngine::loadAllScenes() {
 	accessScene(301);
 	accessScene(302);
 	accessScene(303);

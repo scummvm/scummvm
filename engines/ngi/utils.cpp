@@ -530,7 +530,7 @@ byte *transCyrillic(const Common::String &str) {
 	return tmp;
 }
 
-void FullpipeEngine::loadGameObjH() {
+void NGIEngine::loadGameObjH() {
 	Common::File file;
 
 	if (!file.open("gameobj.h"))
@@ -562,7 +562,7 @@ void FullpipeEngine::loadGameObjH() {
 	}
 }
 
-Common::String FullpipeEngine::gameIdToStr(uint16 id) {
+Common::String NGIEngine::gameIdToStr(uint16 id) {
 	if (_gameObjH.contains(id))
 		return _gameObjH[id];
 

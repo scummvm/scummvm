@@ -222,7 +222,7 @@ void Sound::stop() {
 	g_fp->_mixer->stopHandle(*_handle);
 }
 
-void FullpipeEngine::setSceneMusicParameters(GameVar *gvar) {
+void NGIEngine::setSceneMusicParameters(GameVar *gvar) {
 	stopSoundStream2();
 
 	if (_mixer->isSoundHandleActive(_soundStream3))
@@ -278,12 +278,12 @@ void FullpipeEngine::setSceneMusicParameters(GameVar *gvar) {
 		_trackStartDelay = var->getSubVarAsInt("STARTDELAY");
 }
 
-void FullpipeEngine::updateTrackDelay() {
+void NGIEngine::updateTrackDelay() {
 	_sceneTrackIsPlaying = false;
 	_trackStartDelay = _musicMinDelay + (_musicMaxDelay - _musicMinDelay) * (_updateTicks % 10) / 9;
 }
 
-void FullpipeEngine::startSceneTrack() {
+void NGIEngine::startSceneTrack() {
 	if (_sceneTrackIsPlaying) {
 		if (!_mixer->isSoundHandleActive(_soundStream1)) { // Simulate end of sound callback
 			updateTrackDelay();
@@ -312,7 +312,7 @@ void FullpipeEngine::startSceneTrack() {
 	}
 }
 
-int FullpipeEngine::getSceneTrack() {
+int NGIEngine::getSceneTrack() {
 	int res;
 
 	if (_sceneTrackHasSequence) {
@@ -340,13 +340,13 @@ int FullpipeEngine::getSceneTrack() {
 	return res;
 }
 
-void FullpipeEngine::startSoundStream1(const Common::String &trackName) {
+void NGIEngine::startSoundStream1(const Common::String &trackName) {
 	stopAllSoundStreams();
 
 	playOggSound(trackName, _soundStream1);
 }
 
-void FullpipeEngine::playOggSound(const Common::String &trackName, Audio::SoundHandle &stream) {
+void NGIEngine::playOggSound(const Common::String &trackName, Audio::SoundHandle &stream) {
 #ifdef USE_VORBIS
 	if (_mixer->isSoundHandleActive(stream))
 		return;
@@ -362,14 +362,14 @@ void FullpipeEngine::playOggSound(const Common::String &trackName, Audio::SoundH
 #endif
 }
 
-void FullpipeEngine::stopAllSounds() {
+void NGIEngine::stopAllSounds() {
 	for (int i = 0; i < _currSoundListCount; i++)
 		for (int j = 0; j < _currSoundList1[i]->getCount(); j++) {
 			_currSoundList1[i]->getSoundByIndex(j).stop();
 		}
 }
 
-void FullpipeEngine::toggleMute() {
+void NGIEngine::toggleMute() {
 	if (_soundEnabled) {
 		_sfxVolume = _sfxVolume != -10000 ? -10000 : 0;
 
@@ -377,7 +377,7 @@ void FullpipeEngine::toggleMute() {
 	}
 }
 
-void FullpipeEngine::playSound(int id, int flag) {
+void NGIEngine::playSound(int id, int flag) {
 	Sound *sound = 0;
 
 	for (int i = 0; i < _currSoundListCount; i++) {
@@ -395,7 +395,7 @@ void FullpipeEngine::playSound(int id, int flag) {
 	sound->play(flag);
 }
 
-void FullpipeEngine::playTrack(GameVar *sceneVar, const char *name, bool delayed) {
+void NGIEngine::playTrack(GameVar *sceneVar, const char *name, bool delayed) {
 	if (_mixer->isSoundHandleActive(_soundStream3))
 		_mixer->stopHandle(_soundStream4);
 
@@ -485,7 +485,7 @@ void global_messageHandler_handleSound(ExCommand *cmd) {
 	}
 }
 
-void FullpipeEngine::stopSoundStream2() {
+void NGIEngine::stopSoundStream2() {
 	_stream2playing = false;
 
 	if (_mixer->isSoundHandleActive(_soundStream3)) {
@@ -494,7 +494,7 @@ void FullpipeEngine::stopSoundStream2() {
 	}
 }
 
-void FullpipeEngine::stopAllSoundStreams() {
+void NGIEngine::stopAllSoundStreams() {
 	_mixer->stopHandle(_soundStream1);
 	_mixer->stopHandle(_soundStream2);
 	_mixer->stopHandle(_soundStream3);
@@ -503,7 +503,7 @@ void FullpipeEngine::stopAllSoundStreams() {
 	_stream2playing = false;
 }
 
-void FullpipeEngine::stopAllSoundInstances(int id) {
+void NGIEngine::stopAllSoundInstances(int id) {
 	for (int i = 0; i < _currSoundListCount; i++) {
 		Sound *sound = _currSoundList1[i]->getSoundItemById(id);
 
@@ -512,7 +512,7 @@ void FullpipeEngine::stopAllSoundInstances(int id) {
 	}
 }
 
-void FullpipeEngine::updateSoundVolume() {
+void NGIEngine::updateSoundVolume() {
 	ConfMan.setInt("sfx_volume", MAX((_sfxVolume + 10000) / 39, 255));
 	syncSoundSettings();
 
@@ -522,7 +522,7 @@ void FullpipeEngine::updateSoundVolume() {
 		}
 }
 
-void FullpipeEngine::setMusicVolume(int vol) {
+void NGIEngine::setMusicVolume(int vol) {
 	_musicVolume = vol;
 
 	ConfMan.setInt("music_volume", _musicVolume);

@@ -492,7 +492,7 @@ static int scenesD[] = {
 	PIC_SCD_31, PIC_SCD_32, PIC_SCD_33, PIC_SCD_34, PIC_SCD_35, PIC_SCD_36, PIC_SCD_37, PIC_SCD_38, PIC_SCD_FIN, 0
 };
 
-int FullpipeEngine::convertScene(int scene) {
+int NGIEngine::convertScene(int scene) {
 	if (!scene || scene >= SC_1)
 		return scene;
 
@@ -502,7 +502,7 @@ int FullpipeEngine::convertScene(int scene) {
 	return scenes[scene - 1];
 }
 
-int FullpipeEngine::getSceneEntrance(int scene) {
+int NGIEngine::getSceneEntrance(int scene) {
 	for (int i = 0; i < 40; i++)
 		if (scenes[i] == scene)
 			return scenesD[i];
@@ -510,7 +510,7 @@ int FullpipeEngine::getSceneEntrance(int scene) {
 	return 0;
 }
 
-int FullpipeEngine::getSceneFromTag(int tag) {
+int NGIEngine::getSceneFromTag(int tag) {
 	for (int i = 0; i < ARRAYSIZE(scenes); i++) {
 		if (scenes[i] == tag)
 			return i + 1;
@@ -519,7 +519,7 @@ int FullpipeEngine::getSceneFromTag(int tag) {
 	return 1;
 }
 
-void FullpipeEngine::sceneAutoScrolling() {
+void NGIEngine::sceneAutoScrolling() {
 	if (_aniMan2 == _aniMan && _currentScene && !_currentScene->_messageQueueId) {
 		if (800 - _mouseScreenPos.x >= 47 || _sceneRect.right >= _sceneWidth - 1 || _aniMan->_ox <= _sceneRect.left + 230) {
 			if (_mouseScreenPos.x < 47 && _sceneRect.left > 0 && _aniMan->_ox < _sceneRect.right - 230)
@@ -530,7 +530,7 @@ void FullpipeEngine::sceneAutoScrolling() {
 	}
 }
 
-bool FullpipeEngine::sceneSwitcher(const EntranceInfo &entrance) {
+bool NGIEngine::sceneSwitcher(const EntranceInfo &entrance) {
 	GameVar *sceneVar;
 	Common::Point sceneDim;
 
@@ -1128,7 +1128,7 @@ int defaultUpdateCursor() {
 	return g_fp->_cursorId;
 }
 
-void FullpipeEngine::updateMapPiece(int mapId, int update) {
+void NGIEngine::updateMapPiece(int mapId, int update) {
 	for (int i = 0; i < 200; i++) {
 		int hiWord = (_mapTable[i] >> 16) & 0xffff;
 
@@ -1143,7 +1143,7 @@ void FullpipeEngine::updateMapPiece(int mapId, int update) {
 	}
 }
 
-void FullpipeEngine::updateMap(PreloadItem *pre) {
+void NGIEngine::updateMap(PreloadItem *pre) {
 	switch (pre->sceneId) {
 	case SC_1:
 		updateMapPiece(PIC_MAP_S01, 1);

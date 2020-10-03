@@ -45,10 +45,10 @@
 
 namespace NGI {
 
-FullpipeEngine *g_fp = nullptr;
+NGIEngine *g_fp = nullptr;
 Vars *g_vars = nullptr;
 
-FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc) :
+NGIEngine::NGIEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 	Engine(syst),
 	_gameDescription(gameDesc),
 	_rnd("ngi"),
@@ -185,12 +185,12 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	g_vars = new Vars;
 }
 
-FullpipeEngine::~FullpipeEngine() {
+NGIEngine::~NGIEngine() {
 	delete g_vars;
 	g_vars = nullptr;
 }
 
-void FullpipeEngine::restartGame() {
+void NGIEngine::restartGame() {
 	_floaters->stopAll();
 
 	clearGlobalMessageQueueList();
@@ -226,11 +226,11 @@ void FullpipeEngine::restartGame() {
 	}
 }
 
-bool FullpipeEngine::shouldQuit() {
+bool NGIEngine::shouldQuit() {
 	return !_gameContinue || Engine::shouldQuit();
 }
 
-Common::Error FullpipeEngine::loadGameState(int slot) {
+Common::Error NGIEngine::loadGameState(int slot) {
 	deleteModalObject();
 
 	if (_gameLoader->readSavegame(getSavegameFile(slot)))
@@ -239,18 +239,18 @@ Common::Error FullpipeEngine::loadGameState(int slot) {
 		return Common::kUnknownError;
 }
 
-Common::Error FullpipeEngine::saveGameState(int slot, const Common::String &description, bool isAutosave) {
+Common::Error NGIEngine::saveGameState(int slot, const Common::String &description, bool isAutosave) {
 	if (_gameLoader->writeSavegame(_currentScene, getSavegameFile(slot), description))
 		return Common::kNoError;
 	else
 		return Common::kUnknownError;
 }
 
-Common::String FullpipeEngine::getSaveStateName(int slot) const {
+Common::String NGIEngine::getSaveStateName(int slot) const {
 	return Common::String::format("%s.s%02d", getGameId(), slot);
 }
 
-Common::Error FullpipeEngine::run() {
+Common::Error NGIEngine::run() {
 	const Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	// Initialize backend
 	initGraphics(800, 600, &format);
@@ -336,7 +336,7 @@ Common::Error FullpipeEngine::run() {
 	return Common::kNoError;
 }
 
-void FullpipeEngine::updateEvents() {
+void NGIEngine::updateEvents() {
 	Common::Event event;
 	Common::EventManager *eventMan = _system->getEventManager();
 	ExCommand *ex;
@@ -450,7 +450,7 @@ void FullpipeEngine::updateEvents() {
 	//}
 }
 
-void FullpipeEngine::freeGameLoader() {
+void NGIEngine::freeGameLoader() {
 	setCursor(0);
 	_floaters->stopAll();
 	_gameLoader.reset();
@@ -459,7 +459,7 @@ void FullpipeEngine::freeGameLoader() {
 	_loaderScene = 0;
 }
 
-void FullpipeEngine::cleanup() {
+void NGIEngine::cleanup() {
 	//cleanRecorder();
 	clearMessageHandlers();
 	clearMessages();
@@ -471,7 +471,7 @@ void FullpipeEngine::cleanup() {
 	stopAllSoundStreams();
 }
 
-void FullpipeEngine::deleteModalObject() {
+void NGIEngine::deleteModalObject() {
 	if (!_modalObject)
 		return;
 
@@ -483,8 +483,8 @@ void FullpipeEngine::deleteModalObject() {
 	_modalObject = tmp;
 }
 
-void FullpipeEngine::updateScreen() {
-	debugC(4, kDebugDrawing, "FullpipeEngine::updateScreen()");
+void NGIEngine::updateScreen() {
+	debugC(4, kDebugDrawing, "NGIEngine::updateScreen()");
 
 	_mouseVirtX = _mouseScreenPos.x + _sceneRect.left;
 	_mouseVirtY = _mouseScreenPos.y + _sceneRect.top;
@@ -521,7 +521,7 @@ void FullpipeEngine::updateScreen() {
 	++_updateTicks;
 }
 
-int FullpipeEngine::getObjectEnumState(const Common::String &name, const char *state) {
+int NGIEngine::getObjectEnumState(const Common::String &name, const char *state) {
 	GameVar *var = _gameLoader->_gameVar->getSubVarByName("OBJSTATES");
 
 	if (!var) {
@@ -538,7 +538,7 @@ int FullpipeEngine::getObjectEnumState(const Common::String &name, const char *s
 	return 0;
 }
 
-int FullpipeEngine::getObjectState(const Common::String &objname) {
+int NGIEngine::getObjectState(const Common::String &objname) {
 	GameVar *var = _gameLoader->_gameVar->getSubVarByName("OBJSTATES");
 
 	if (var)
@@ -547,7 +547,7 @@ int FullpipeEngine::getObjectState(const Common::String &objname) {
   return 0;
 }
 
-void FullpipeEngine::setObjectState(const Common::String &name, int state) {
+void NGIEngine::setObjectState(const Common::String &name, int state) {
 	GameVar *var = _gameLoader->_gameVar->getSubVarByName("OBJSTATES");
 
 	if (!var) {
@@ -557,7 +557,7 @@ void FullpipeEngine::setObjectState(const Common::String &name, int state) {
 	var->setSubVarAsInt(name, state);
 }
 
-void FullpipeEngine::disableSaves(ExCommand *ex) {
+void NGIEngine::disableSaves(ExCommand *ex) {
 	if (_isSaveAllowed) {
 		_isSaveAllowed = false;
 
@@ -577,7 +577,7 @@ void FullpipeEngine::disableSaves(ExCommand *ex) {
 	}
 }
 
-bool FullpipeEngine::isSaveAllowed() {
+bool NGIEngine::isSaveAllowed() {
 	if (!g_fp->_isSaveAllowed)
 		return false;
 

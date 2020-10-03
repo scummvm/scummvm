@@ -660,14 +660,14 @@ void GameLoader::restoreDefPicAniInfos() {
 	}
 }
 
-GameVar *FullpipeEngine::getGameLoaderGameVar() {
+GameVar *NGIEngine::getGameLoaderGameVar() {
 	if (_gameLoader)
 		return _gameLoader->_gameVar;
 	else
 		return 0;
 }
 
-InputController *FullpipeEngine::getGameLoaderInputController() {
+InputController *NGIEngine::getGameLoaderInputController() {
 	if (_gameLoader)
 		return _gameLoader->_inputController;
 	else

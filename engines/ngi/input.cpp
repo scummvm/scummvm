@@ -119,7 +119,7 @@ void InputController::setCursor(int cursorId) {
 	}
 }
 
-void FullpipeEngine::setCursor(int id) {
+void NGIEngine::setCursor(int id) {
 	if (_inputController)
 		_inputController->setCursor(id);
 }
@@ -133,7 +133,7 @@ const char *input_cheats[] = {
 	""
 };
 
-void FullpipeEngine::defHandleKeyDown(int key) {
+void NGIEngine::defHandleKeyDown(int key) {
 	if (_currentCheat == -1) {
 		for (int i = 0; input_cheats[i][0]; i++)
 			if (toupper(key) == input_cheats[i][0]) {
@@ -182,7 +182,7 @@ void FullpipeEngine::defHandleKeyDown(int key) {
 	}
 }
 
-void FullpipeEngine::winArcade() {
+void NGIEngine::winArcade() {
 	ExCommand *ex = new ExCommand(0, 17, MSG_CMN_WINARCADE, 0, 0, 0, 1, 0, 0, 0);
 	ex->_excFlags |= 3;
 
@@ -190,7 +190,7 @@ void FullpipeEngine::winArcade() {
 
 }
 
-void FullpipeEngine::updateCursorCommon() {
+void NGIEngine::updateCursorCommon() {
 	GameObject *ani = _currentScene->getStaticANIObjectAtPos(_mouseVirtX, _mouseVirtY);
 
 	PictureObject *pic = _currentScene->getPictureObjectAtPos(_mouseVirtX, _mouseVirtY);
@@ -253,7 +253,7 @@ void FullpipeEngine::updateCursorCommon() {
 	_cursorId = PIC_CSR_DEFAULT;
 }
 
-void FullpipeEngine::initArcadeKeys(const char *varname) {
+void NGIEngine::initArcadeKeys(const char *varname) {
 	_arcadeKeys.clear();
 
 	GameVar *var = getGameLoaderGameVar()->getSubVarByName(varname)->getSubVarByName("KEYPOS");
@@ -271,7 +271,7 @@ void FullpipeEngine::initArcadeKeys(const char *varname) {
 	}
 }
 
-void FullpipeEngine::processArcade(ExCommand *cmd) {
+void NGIEngine::processArcade(ExCommand *cmd) {
 	if (!g_fp->_aniMan2)
 		return;
 
@@ -302,7 +302,7 @@ void FullpipeEngine::processArcade(ExCommand *cmd) {
 	cmd->_y = cmd->_sceneClickY - g_fp->_sceneRect.top;
 }
 
-void FullpipeEngine::setArcadeOverlay(int picId) {
+void NGIEngine::setArcadeOverlay(int picId) {
 	_arcadeOverlayX = 800;
 	_arcadeOverlayY = 545;
 
@@ -317,7 +317,7 @@ void FullpipeEngine::setArcadeOverlay(int picId) {
 	_arcadeOverlayMidY = abs(dims2.y - dims.y) / 2;
 }
 
-int FullpipeEngine::drawArcadeOverlay(int adjust) {
+int NGIEngine::drawArcadeOverlay(int adjust) {
 	_arcadeOverlayHelper->drawAt(_sceneRect.left + _arcadeOverlayX, _sceneRect.top + _arcadeOverlayY);
 	_arcadeOverlay->drawAt(_sceneRect.left + _arcadeOverlayX + _arcadeOverlayMidX, _sceneRect.top + _arcadeOverlayY + _arcadeOverlayMidY);
 

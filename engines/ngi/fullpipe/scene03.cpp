@@ -35,7 +35,7 @@
 
 namespace NGI {
 
-void FullpipeEngine::setSwallowedEggsState() {
+void NGIEngine::setSwallowedEggsState() {
 	GameVar *v = _gameLoader->_gameVar->getSubVarByName("OBJSTATES")->getSubVarByName(sO_GulpedEggs);
 
 	g_vars->swallowedEgg1 = v->getSubVarByName(sO_Egg1);

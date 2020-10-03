@@ -493,7 +493,7 @@ void Inventory2::clear() {
 	_inventoryItems.clear();
 }
 
-void FullpipeEngine::getAllInventory() {
+void NGIEngine::getAllInventory() {
 	Inventory2 *inv = getGameLoaderInventory();
 
 	for (uint i = 0; i < inv->getItemsPoolCount(); ++i ) {

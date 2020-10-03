@@ -113,14 +113,14 @@ int global_messageHandler4(ExCommand *cmd);
 void global_messageHandler_handleSound(ExCommand *cmd);
 
 
-class FullpipeEngine : public ::Engine {
+class NGIEngine : public ::Engine {
 protected:
 
 	Common::Error run() override;
 
 public:
-	FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	~FullpipeEngine() override;
+	NGIEngine(OSystem *syst, const ADGameDescription *gameDesc);
+	~NGIEngine() override;
 
 	void initialize();
 	void restartGame();
@@ -380,7 +380,7 @@ public:
 
 };
 
-extern FullpipeEngine *g_fp;
+extern NGIEngine *g_fp;
 extern Vars *g_vars;
 
 } // End of namespace NGI

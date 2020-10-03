@@ -32,25 +32,25 @@
 
 namespace NGI {
 
-uint32 FullpipeEngine::getFeatures() const {
+uint32 NGIEngine::getFeatures() const {
 	return _gameDescription->flags;
 }
 
-bool FullpipeEngine::isDemo() {
+bool NGIEngine::isDemo() {
 	return _gameDescription->flags & ADGF_DEMO;
 }
 
-Common::Language FullpipeEngine::getLanguage() const {
+Common::Language NGIEngine::getLanguage() const {
 	return _gameDescription->language;
 }
 
-const char *FullpipeEngine::getGameId() const {
+const char *NGIEngine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
 } // End of namspace Fullpipe
 
-class FullpipeMetaEngine : public AdvancedMetaEngine {
+class NGIMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "ngi";
@@ -66,7 +66,7 @@ public:
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
-bool FullpipeMetaEngine::hasFeature(MetaEngineFeature f) const {
+bool NGIMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsDeleteSave) ||
@@ -78,14 +78,14 @@ bool FullpipeMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSimpleSavesNames);
 }
 
-bool NGI::FullpipeEngine::hasFeature(EngineFeature f) const {
+bool NGI::NGIEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }
 
-SaveStateList FullpipeMetaEngine::listSaves(const char *target) const {
+SaveStateList NGIMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String pattern("fullpipe.s##");
@@ -121,11 +121,11 @@ SaveStateList FullpipeMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-void FullpipeMetaEngine::removeSaveState(const char *target, int slot) const {
+void NGIMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(NGI::getSavegameFile(slot));
 }
 
-SaveStateDescriptor FullpipeMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor NGIMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::ScopedPtr<Common::InSaveFile> f(g_system->getSavefileManager()->openForLoading(
 		NGI::getSavegameFile(slot)));
 
@@ -149,15 +149,15 @@ SaveStateDescriptor FullpipeMetaEngine::querySaveMetaInfos(const char *target, i
 	return SaveStateDescriptor();
 }
 
-bool FullpipeMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool NGIMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc) {
-		*engine = new NGI::FullpipeEngine(syst, desc);
+		*engine = new NGI::NGIEngine(syst, desc);
 	}
 	return desc != 0;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(NGI)
-	REGISTER_PLUGIN_DYNAMIC(NGI, PLUGIN_TYPE_ENGINE, FullpipeMetaEngine);
+	REGISTER_PLUGIN_DYNAMIC(NGI, PLUGIN_TYPE_ENGINE, NGIMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(NGI, PLUGIN_TYPE_ENGINE, FullpipeMetaEngine);
+	REGISTER_PLUGIN_STATIC(NGI, PLUGIN_TYPE_ENGINE, NGIMetaEngine);
 #endif

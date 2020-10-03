@@ -1175,7 +1175,7 @@ DynamicPhase *Shadows::findSize(int width, int height) {
 	return _items[idx].dynPhase;
 }
 
-void FullpipeEngine::drawAlphaRectangle(int x1, int y1, int x2, int y2, int alpha) {
+void NGIEngine::drawAlphaRectangle(int x1, int y1, int x2, int y2, int alpha) {
 	for (int y = y1; y < y2; y++) {
 		uint32 *ptr = (uint32 *)g_fp->_backgroundSurface.getBasePtr(x1, y);
 
@@ -1191,7 +1191,7 @@ void FullpipeEngine::drawAlphaRectangle(int x1, int y1, int x2, int y2, int alph
 	}
 }
 
-void FullpipeEngine::sceneFade(Scene *sc, bool direction) {
+void NGIEngine::sceneFade(Scene *sc, bool direction) {
 	for (int dim = 0; dim < 255; dim += 20) {
 		int ticks = g_fp->_system->getMillis();
 		sc->draw();

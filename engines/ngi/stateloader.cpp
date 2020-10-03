@@ -275,7 +275,7 @@ void gameLoaderSavegameCallback(MfcArchive *archive, bool mode) {
 			g_fp->_mapTable[i] = archive->readUint32LE();
 }
 
-bool FullpipeEngine::loadGam(const char *fname, int scene) {
+bool NGIEngine::loadGam(const char *fname, int scene) {
 	_gameLoader.reset(new GameLoader());
 
 	if (!_gameLoader->loadFile(fname))

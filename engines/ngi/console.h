@@ -27,14 +27,14 @@
 
 namespace NGI {
 
-class FullpipeEngine;
+class NGIEngine;
 
 class Console : public GUI::Debugger {
 public:
-	Console(FullpipeEngine *vm);
+	Console(NGIEngine *vm);
 
 private:
-	FullpipeEngine *_vm;
+	NGIEngine *_vm;
 
 	bool Cmd_Scene(int argc, const char **argv);
 };

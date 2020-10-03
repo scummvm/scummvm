@@ -28,7 +28,7 @@
 
 namespace NGI {
 
-Console::Console(FullpipeEngine *vm) : GUI::Debugger(), _vm(vm) {
+Console::Console(NGIEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("scene",			WRAP_METHOD(Console, Cmd_Scene));
 }
 

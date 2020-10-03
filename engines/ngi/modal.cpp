@@ -1047,7 +1047,7 @@ bool ModalMap::checkScenePass(PreloadItem *item) {
 	return res;
 }
 
-void FullpipeEngine::openMap() {
+void NGIEngine::openMap() {
 	if (!_modalObject) {
 		ModalMap *map = new ModalMap;
 
@@ -2473,7 +2473,7 @@ bool ModalDemo::handleMessage(ExCommand *cmd) {
 	return false;
 }
 
-void FullpipeEngine::openHelp() {
+void NGIEngine::openHelp() {
 	if (!_modalObject) {
 		ModalHelp *help = new ModalHelp;
 
@@ -2483,7 +2483,7 @@ void FullpipeEngine::openHelp() {
 	}
 }
 
-void FullpipeEngine::openMainMenu() {
+void NGIEngine::openMainMenu() {
 	if (isDemo() && getLanguage() == Common::RU_RUS) {
 		ModalQuery *q = new ModalQuery;
 
