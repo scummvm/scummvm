@@ -25,16 +25,8 @@
 
 namespace Tinsel {
 
-#define SCROLLPIXELS 8 // Number of pixels to scroll per iteration
-
-// Distance from edge that triggers a scroll
-#define RLDISTANCE (TinselV2 ? g_sd.xTrigger : 50)
-#define UDISTANCE (TinselV2 ? g_sd.yTriggerTop : 20)
-#define DDISTANCE (TinselV2 ? g_sd.yTriggerBottom : 20)
-
-// Number of iterations to make
-#define RLSCROLL 160 // 20*8 = 160 = half a screen
-#define UDSCROLL 100 // 12.5*8 = 100 = half a screen
+#define MAX_HNOSCROLL 10
+#define MAX_VNOSCROLL 10
 
 // These structures defined here so boundaries can be saved
 struct NOSCROLLB {
@@ -42,9 +34,6 @@ struct NOSCROLLB {
 	int c1;
 	int c2;
 };
-
-#define MAX_HNOSCROLL 10
-#define MAX_VNOSCROLL 10
 
 struct SCROLLDATA {
 	NOSCROLLB NoVScroll[MAX_VNOSCROLL]; // Vertical no-scroll boundaries
@@ -93,23 +82,22 @@ private:
 	void NeedScroll(int direction);
 	void RestoreScrollDefaults();
 
-	int g_LeftScroll, g_DownScroll; // Number of iterations outstanding
+	int _leftScroll, _downScroll; // Number of iterations outstanding
 
-	int g_scrollActor;
-	PMOVER g_pScrollMover;
-	int g_oldx, g_oldy;
+	int _scrollActor;
+	PMOVER _pScrollMover;
+	int _oldx, _oldy;
 
 	/** Boundaries and numbers of boundaries */
-	SCROLLDATA g_sd;
+	SCROLLDATA _scrollData;
 
-	int g_ImageH, g_ImageW;
+	int _imageW, _imageH;
 
-	bool g_ScrollCursor; // If a TAG or EXIT polygon is clicked on,
+	bool _scrollCursor; // If a TAG or EXIT polygon is clicked on,
 	    // the cursor is kept over that polygon
 	    // whilst scrolling
 
-	int g_scrollPixelsX;
-	int g_scrollPixelsY;
+	int _scrollPixelsX, _scrollPixelsY;
 };
 
 void ScrollProcess(CORO_PARAM, const void *);
