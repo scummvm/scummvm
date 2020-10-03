@@ -54,8 +54,7 @@ struct MEM_NODE {
 // If the memory is not enough, the engine throws an "Out of memory" error in handle.cpp inside LockMem()
 static const uint32 MemoryPoolSize[3] = {5 * 1024 * 1024, 5 * 1024 * 1024, 10 * 1024 * 1024};
 
-// FIXME: Avoid non-const global vars
-
+// These vars are reset upon engine destruction
 
 // list of all memory nodes
 MEM_NODE g_mnodeList[NUM_MNODES];
@@ -149,6 +148,10 @@ void MemoryDeinit() {
 		free(pCur->pBaseAddr);
 		pCur->pBaseAddr = 0;
 	}
+
+	memset(g_mnodeList, 0, sizeof(g_mnodeList));
+	memset(g_s_fixedMnodesList, 0, sizeof(g_s_fixedMnodesList));
+	g_pFreeMemNodes = nullptr;
 }
 
 

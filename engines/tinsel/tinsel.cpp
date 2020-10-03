@@ -89,6 +89,7 @@ extern void ResetVarsScene();
 extern void ResetVarsSched();
 extern void ResetVarsStrRes();
 extern void FreeTextBuffer();
+extern void ResetVarsSysVar();
 extern void FreeAllTokens();
 extern void RebootTimers();
 extern void ResetVarsTinlib();
@@ -915,22 +916,21 @@ TinselEngine::~TinselEngine() {
 	// TODO: dialogs.cpp
 	ResetVarsDrives();	// drives.cpp
 	ResetVarsEvents();	// events.cpp
-	// TODO: heapmem.cpp
 	RebootScalingReels(); // mareels.cpp
-	ResetVarsMove();
+	ResetVarsMove();	// move.cpp
 	ResetVarsPalette();	// palette.cpp
-	ResetVarsPCode();
+	ResetVarsPCode();	// pcode.cpp
 	ResetVarsPDisplay();	// pdisplay.cpp
 	ResetVarsPlay();	// play.cpp
 	ResetVarsPolygons();	// polygons.cpp
 	RebootMovers();       // rince.cpp
-	ResetVarsSaveLoad();
+	ResetVarsSaveLoad();	// saveload.cpp
 	ResetVarsSaveScn();	// savescn.cpp
 	ResetVarsScene();	// scene.cpp
 	ResetVarsSched();	// sched.cpp
 	ResetVarsStrRes();	// strres.cpp
 	FreeTextBuffer();     // strres.cpp
-	// TODO: sysvar.cpp
+	ResetVarsSysVar();	// sysvar.cpp
 	FreeAllTokens();	// token.cpp
 	RebootTimers();       // timers.cpp
 	ResetVarsTinlib();	// tinlib.cpp
