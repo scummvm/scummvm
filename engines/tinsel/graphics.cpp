@@ -835,11 +835,11 @@ void DrawObject(DRAWOBJECT *pObj) {
 	// If writing constant data, don't bother locking the data pointer and reading src details
 	if ((pObj->flags & DMA_CONST) == 0) {
 		if (TinselV2) {
-			srcPtr  = (byte *)LockMem(pObj->hBits);
+			srcPtr = (byte *)_vm->_handle->LockMem(pObj->hBits);
 			pObj->charBase = nullptr;
 			pObj->transOffset = 0;
 		} else {
-			byte *p = (byte *)LockMem(pObj->hBits & HANDLEMASK);
+			byte *p = (byte *)_vm->_handle->LockMem(pObj->hBits & HANDLEMASK);
 
 			srcPtr = p + (pObj->hBits & OFFSETMASK);
 			pObj->charBase = (char *)p + READ_LE_UINT32(p + 0x10);

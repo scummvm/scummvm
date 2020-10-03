@@ -108,9 +108,6 @@ extern void SuspendHook();
 extern void UnSuspendHook();
 
 #ifdef BODGE
-// In HANDLE.CPP
-bool ValidHandle(SCNHANDLE offset);
-
 // In SCENE.CPP
 SCNHANDLE GetSceneHandle();
 #endif
@@ -710,7 +707,7 @@ static void CDload(SCNHANDLE start, SCNHANDLE next, int myEscape) {
 			return;
 		}
 
-		LoadExtraGraphData(start, next);
+		_vm->_handle->LoadExtraGraphData(start, next);
 	}
 }
 
@@ -1843,7 +1840,7 @@ static void PostTag(CORO_PARAM, int tagno, TINSEL_EVENT event, HPOLYGON hp, int 
  */
 static void PrepareScene(SCNHANDLE scene) {
 #ifdef BODGE
-	if (!ValidHandle(scene))
+	if (!_vm->_handle->ValidHandle(scene))
 		return;
 #endif
 }
@@ -4869,7 +4866,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		// Common to both DW1 & DW2
 		if (TinselV2) {
 			pp -= 3;			// 4 parameters
-			if (*pResumeState == RES_1 && IsCdPlayHandle(pp[0]))
+			if (*pResumeState == RES_1 && _vm->_handle->IsCdPlayHandle(pp[0]))
 				*pResumeState = RES_NOT;
 			else {
 				Play(coroParam, pp[0], pp[1], pp[2], pp[3], pic->myEscape, false,

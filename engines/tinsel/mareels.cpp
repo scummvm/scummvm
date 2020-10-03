@@ -185,7 +185,7 @@ void TouchMoverReels() {
 
 	do {
 		for (scale = 0; scale < TOTAL_SCALES; scale++) {
-			TouchMem(pMover->walkReels[scale][LEFTREEL]);
+			_vm->_handle->TouchMem(pMover->walkReels[scale][LEFTREEL]);
 		}
 	} while ((pMover = NextMover(pMover)) != NULL);
 }

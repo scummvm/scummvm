@@ -50,15 +50,15 @@ void Font::FettleFontPal(SCNHANDLE fontPal) {
 	assert(_hTagFont); // Tag font not declared
 	assert(_hTalkFont); // Talk font not declared
 
-	pFont = (const FONT *)LockMem(_hTagFont);
-	pImg = (IMAGE *)LockMem(FROM_32(pFont->fontInit.hObjImg));	// get image for char 0
+	pFont = (const FONT *)_vm->_handle->LockMem(_hTagFont);
+	pImg = (IMAGE *)_vm->_handle->LockMem(FROM_32(pFont->fontInit.hObjImg)); // get image for char 0
 	if (!TinselV2)
 		pImg->hImgPal = TO_32(fontPal);
 	else
 		pImg->hImgPal = 0;
 
-	pFont = (const FONT *)LockMem(_hTalkFont);
-	pImg = (IMAGE *)LockMem(FROM_32(pFont->fontInit.hObjImg));	// get image for char 0
+	pFont = (const FONT *)_vm->_handle->LockMem(_hTalkFont);
+	pImg = (IMAGE *)_vm->_handle->LockMem(FROM_32(pFont->fontInit.hObjImg)); // get image for char 0
 	if (!TinselV2)
 		pImg->hImgPal = TO_32(fontPal);
 	else

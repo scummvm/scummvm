@@ -50,7 +50,7 @@ int StringLengthPix(char *szStr, const FONT *pFont) {
 
 		if (hImg) {
 			// there is a IMAGE for this character
-			const IMAGE *pChar = (const IMAGE *)LockMem(hImg);
+			const IMAGE *pChar = (const IMAGE *)_vm->_handle->LockMem(hImg);
 
 			// add width of font bitmap
 			strLen += FROM_16(pChar->imgWidth);
@@ -118,14 +118,14 @@ OBJECT *ObjectTextOut(OBJECT **pList, char *szStr, int color,
 	assert(pList);
 
 	// get font pointer
-	const FONT *pFont = (const FONT *)LockMem(hFont);
+	const FONT *pFont = (const FONT *)_vm->_handle->LockMem(hFont);
 
 	// init head of text list
 	pFirst = nullptr;
 
 	// get image for capital W
 	assert(pFont->fontDef[(int)'W']);
-	pImg = (const IMAGE *)LockMem(FROM_32(pFont->fontDef[(int)'W']));
+	pImg = (const IMAGE *)_vm->_handle->LockMem(FROM_32(pFont->fontDef[(int)'W']));
 
 	// get height of capital W for offset to next line
 	yOffset = FROM_16(pImg->imgHeight) & ~C16_FLAG_MASK;
@@ -168,7 +168,7 @@ OBJECT *ObjectTextOut(OBJECT **pList, char *szStr, int color,
 					pChar = pChar->pSlave = InitObject(&oi);	// FIXME: endian issue using fontInit!!!
 
 				// convert image handle to pointer
-				pImg = (const IMAGE *)LockMem(hImg);
+				pImg = (const IMAGE *)_vm->_handle->LockMem(hImg);
 
 				// fill in character object
 				pChar->hImg   = hImg;			// image def
@@ -269,7 +269,7 @@ bool IsCharImage(SCNHANDLE hFont, char c) {
 		return false;
 
 	// get font pointer
-	const FONT *pFont = (const FONT *)LockMem(hFont);
+	const FONT *pFont = (const FONT *)_vm->_handle->LockMem(hFont);
 
 	return pFont->fontDef[c2] != 0;
 }

@@ -62,6 +62,7 @@ class Background;
 class Font;
 class Cursor;
 class Actor;
+class Handle;
 
 typedef Common::List<Common::Rect> RectList;
 
@@ -170,7 +171,7 @@ public:
 	Font *_font;
 	Cursor *_cursor;
 	Actor *_actor;
-
+	Handle *_handle;
 	Config *_config;
 
 	KEYFPTR _keyHandler;

@@ -242,11 +242,11 @@ void LockCode(INT_CONTEXT *ic) {
 	if (ic->GSort == GS_MASTER) {
 		if (TinselV2)
 			// Get the srcipt handle from a specific global chunk
-			ic->code = (byte *)LockMem(g_hMasterScript);
+			ic->code = (byte *)_vm->_handle->LockMem(g_hMasterScript);
 		else
 			ic->code = (byte *)FindChunk(MASTER_SCNHANDLE, CHUNK_PCODE);
 	} else
-		ic->code = (byte *)LockMem(ic->hCode);
+		ic->code = (byte *)_vm->_handle->LockMem(ic->hCode);
 }
 
 /**

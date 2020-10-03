@@ -92,7 +92,7 @@ static int maxDACQ = 0;
  * Map PSX palettes to original palette from resource file
  */
 void psxPaletteMapper(PALQ *originalPal, uint8 *psxClut, byte *mapperTable) {
-	PALETTE *pal = (PALETTE *)LockMem(originalPal->hPal);
+	PALETTE *pal = (PALETTE *)_vm->_handle->LockMem(originalPal->hPal);
 	bool colorFound = false;
 	uint16 clutEntry = 0;
 
@@ -152,7 +152,7 @@ void PalettesToVideoDAC() {
 			// we are using a palette handle
 
 			// get hardware palette pointer
-			pPalette = (const PALETTE *)LockMem(pDACtail->pal.hRGBarray);
+			pPalette = (const PALETTE *)_vm->_handle->LockMem(pDACtail->pal.hRGBarray);
 
 			// get RGB pointer
 			pColors = pPalette->palRGB;
@@ -308,7 +308,7 @@ PALQ *AllocPalette(SCNHANDLE hNewPal) {
 	PALETTE *pNewPal;
 
 	// get pointer to new palette
-	pNewPal = (PALETTE *)LockMem(hNewPal);
+	pNewPal = (PALETTE *)_vm->_handle->LockMem(hNewPal);
 
 	// search all structs in palette allocator - see if palette already allocated
 	for (p = g_palAllocData; p < g_palAllocData + NUM_PALETTES; p++) {
@@ -435,7 +435,7 @@ PALQ *FindPalette(SCNHANDLE hSrchPal) {
  */
 void SwapPalette(PALQ *pPalQ, SCNHANDLE hNewPal) {
 	// convert handle to palette pointer
-	PALETTE *pNewPal = (PALETTE *)LockMem(hNewPal);
+	PALETTE *pNewPal = (PALETTE *)_vm->_handle->LockMem(hNewPal);
 
 	// validate palette Q pointer
 	assert(pPalQ >= g_palAllocData && pPalQ <= g_palAllocData + NUM_PALETTES - 1);
@@ -551,7 +551,7 @@ void NoFadingPalettes() {
  */
 void CreateTranslucentPalette(SCNHANDLE hPalette) {
 	// get a pointer to the palette
-	PALETTE *pPal = (PALETTE *)LockMem(hPalette);
+	PALETTE *pPal = (PALETTE *)_vm->_handle->LockMem(hPalette);
 
 	// leave background color alone
 	g_transPalette[0] = 0;
@@ -611,7 +611,7 @@ void DimPartPalette(SCNHANDLE hDimPal, int startColor, int length, int brightnes
 	assert(pPalQ);
 
 	// get pointer to dim palette
-	pDimPal = (PALETTE *)LockMem(hDimPal);
+	pDimPal = (PALETTE *)_vm->_handle->LockMem(hDimPal);
 
 	// Adjust for the fact that palettes don't contain color 0
 	startColor -= 1;

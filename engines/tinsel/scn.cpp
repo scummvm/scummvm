@@ -37,7 +37,7 @@ namespace Tinsel {
  * @param chunk				Chunk Id
  */
 byte *FindChunk(SCNHANDLE handle, uint32 chunk) {
-	byte *bptr = LockMem(handle);
+	byte *bptr = _vm->_handle->LockMem(handle);
 	uint32 *lptr = (uint32 *)bptr;
 	uint32 add;
 

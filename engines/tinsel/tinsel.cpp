@@ -473,14 +473,14 @@ void SetNewScene(SCNHANDLE scene, int entrance, int transition) {
 	}
 
 	// If CD change will be required, stick in the scene change scene
-	if (CdNumber(scene) != GetCurrentCD()) {
+	if (_vm->_handle->CdNumber(scene) != GetCurrentCD()) {
 		// This scene gets delayed
 		g_DelayedScene.scene = scene;
 		g_DelayedScene.entry = entrance;
 		g_DelayedScene.trans = transition;
 
 		g_NextScene.scene = g_hCdChangeScene;
-		g_NextScene.entry = CdNumber(scene) - '0';
+		g_NextScene.entry = _vm->_handle->CdNumber(scene) - '0';
 		g_NextScene.trans = TRANS_FADE;
 
 		return;
@@ -753,7 +753,7 @@ void LoadBasicChunks() {
 		assert(cptr);
 		uint32 playHandle = READ_32(cptr);
 		assert(playHandle < 512);
-		SetCdPlayHandle(playHandle);
+		_vm->_handle->SetCdPlayHandle(playHandle);
 	}
 }
 
@@ -860,12 +860,13 @@ TinselEngine::~TinselEngine() {
 	_screenSurface.free();
 	FreeSaveScenes();
 	FreeTextBuffer();
-	FreeHandleTable();
+	_handle->FreeHandleTable();
 	_actor->FreeActors();
 	FreeObjectList();
 	FreeGlobalProcesses();
 	FreeGlobals();
 
+	delete _handle;
 	delete _actor;
 	delete _config;
 
@@ -900,6 +901,7 @@ Common::Error TinselEngine::run() {
 	_bg = new Background(_font);
 	_cursor = new Cursor();
 	_actor = new Actor();
+	_handle = new Handle();
 
 	// Initialize backend
 	if (getGameID() == GID_DW2) {
@@ -948,7 +950,7 @@ Common::Error TinselEngine::run() {
 	RestartDrivers();
 
 	// load in graphics info
-	SetupHandleTable();
+	_vm->_handle->SetupHandleTable();
 
 	// Actors, globals and inventory icons
 	LoadBasicChunks();

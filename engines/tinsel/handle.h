@@ -26,38 +26,67 @@
 
 #include "tinsel/dw.h"			// new data types
 
+namespace Common {
+class File;
+}
+
 namespace Tinsel {
 
-/*----------------------------------------------------------------------*\
-|*                              Function Prototypes                     *|
-\*----------------------------------------------------------------------*/
+struct MEMHANDLE;
 
-/**
- * Loads the graphics handle table index file and preloads all the permanent graphics etc.
- */
-void SetupHandleTable();
-void FreeHandleTable();
+class Handle {
+public:
+	Handle() : g_handleTable(0), g_numHandles(0), g_cdPlayHandle((uint32)-1), g_cdBaseHandle(0), g_cdTopHandle(0), g_cdGraphStream(nullptr) {}
 
-byte *LockMem(SCNHANDLE offset);
+	/**
+	 * Loads the graphics handle table index file and preloads all the permanent graphics etc.
+	 */
+	void SetupHandleTable();
+	void FreeHandleTable();
 
-void LockScene(SCNHANDLE offset);
-void UnlockScene(SCNHANDLE offset);
+	byte *LockMem(SCNHANDLE offset);
 
-bool IsCdPlayHandle(SCNHANDLE offset);
+	void LockScene(SCNHANDLE offset);
+	void UnlockScene(SCNHANDLE offset);
 
-void TouchMem(SCNHANDLE offset);
+	bool IsCdPlayHandle(SCNHANDLE offset);
 
-// Called at scene startup
-void SetCdPlaySceneDetails(int sceneNum, const char *fileName);
+	void TouchMem(SCNHANDLE offset);
 
-// Called at game startup
-void SetCdPlayHandle(int	fileNum);
+	// Called at scene startup
+	void SetCdPlaySceneDetails(int sceneNum, const char *fileName);
 
-void LoadExtraGraphData(
-	SCNHANDLE start,		// Handle of start of range
-	SCNHANDLE next);		// Handle of end of range + 1
+	// Called at game startup
+	void SetCdPlayHandle(int	fileNum);
 
-int CdNumber(SCNHANDLE offset);
+	void LoadExtraGraphData(
+		SCNHANDLE start,		// Handle of start of range
+		SCNHANDLE next);		// Handle of end of range + 1
+
+	int CdNumber(SCNHANDLE offset);
+
+#ifdef BODGE
+	bool ValidHandle(SCNHANDLE offset);
+#endif
+
+private:
+	void LoadFile(MEMHANDLE *pH); // load a memory block as a file
+	void OpenCDGraphFile();
+	void LoadCDGraphData(MEMHANDLE *pH);
+
+	// handle table gets loaded from index file at runtime
+	MEMHANDLE *g_handleTable;
+
+	// number of handles in the handle table
+	uint g_numHandles;
+
+	uint32 g_cdPlayHandle;
+
+	SCNHANDLE g_cdBaseHandle, g_cdTopHandle;
+	Common::File *g_cdGraphStream;
+
+	char g_szCdPlayFile[100];
+};
 
 } // End of namespace Tinsel
 

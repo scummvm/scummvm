@@ -2303,7 +2303,7 @@ static void InvBoxes(bool InBody, int curX, int curY) {
 				cd.box[cd.pointBox].boxType == TOGGLE ||
 				cd.box[cd.pointBox].boxType == TOGGLE1 ||
 				cd.box[cd.pointBox].boxType == TOGGLE2) {
-			pfilm = (const FILM *)LockMem(g_hWinParts);
+			pfilm = (const FILM *)_vm->_handle->LockMem(g_hWinParts);
 
 			g_iconArray[HL1] = AddObject(&pfilm->reels[cd.box[cd.pointBox].bi+HIGRAPH], -1);
 			MultiSetAniXY(g_iconArray[HL1],
@@ -2314,7 +2314,7 @@ static void InvBoxes(bool InBody, int curX, int curY) {
 			if (g_bNoLanguage)
 				return;
 
-			pfilm = (const FILM *)LockMem(g_hWinParts);
+			pfilm = (const FILM *)_vm->_handle->LockMem(g_hWinParts);
 
 			rotateIndex = cd.box[cd.pointBox].bi;
 			if (rotateIndex == IX2_LEFT1) {
@@ -2345,10 +2345,10 @@ static void ButtonPress(CORO_PARAM, CONFBOX *box) {
 	assert(box->boxType == AAGBUT || box->boxType == ARSGBUT);
 
 	// Replace highlight image with normal image
-	pfilm = (const FILM *)LockMem(g_hWinParts);
+	pfilm = (const FILM *)_vm->_handle->LockMem(g_hWinParts);
 	if (g_iconArray[HL1] != NULL)
 		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), g_iconArray[HL1]);
-	pfilm = (const FILM *)LockMem(g_hWinParts);
+	pfilm = (const FILM *)_vm->_handle->LockMem(g_hWinParts);
 	g_iconArray[HL1] = AddObject(&pfilm->reels[box->bi+NORMGRAPH], -1);
 	MultiSetAniXY(g_iconArray[HL1], g_InvD[g_ino].inventoryX + box->xpos, g_InvD[g_ino].inventoryY + box->ypos);
 	MultiSetZPosition(g_iconArray[HL1], Z_INV_ICONS+1);
@@ -2359,7 +2359,7 @@ static void ButtonPress(CORO_PARAM, CONFBOX *box) {
 		return;
 
 	// Replace normal image with depresses image
-	pfilm = (const FILM *)LockMem(g_hWinParts);
+	pfilm = (const FILM *)_vm->_handle->LockMem(g_hWinParts);
 	MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), g_iconArray[HL1]);
 	g_iconArray[HL1] = AddObject(&pfilm->reels[box->bi+DOWNGRAPH], -1);
 	MultiSetAniXY(g_iconArray[HL1], g_InvD[g_ino].inventoryX + box->xpos, g_InvD[g_ino].inventoryY + box->ypos);
@@ -2371,7 +2371,7 @@ static void ButtonPress(CORO_PARAM, CONFBOX *box) {
 		return;
 
 	// Replace depressed image with normal image
-	pfilm = (const FILM *)LockMem(g_hWinParts);
+	pfilm = (const FILM *)_vm->_handle->LockMem(g_hWinParts);
 	MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), g_iconArray[HL1]);
 	g_iconArray[HL1] = AddObject(&pfilm->reels[box->bi+NORMGRAPH], -1);
 	MultiSetAniXY(g_iconArray[HL1], g_InvD[g_ino].inventoryX + box->xpos, g_InvD[g_ino].inventoryY + box->ypos);
@@ -2405,7 +2405,7 @@ static void ButtonToggle(CORO_PARAM, CONFBOX *box) {
 		return;
 
 	// Add depressed image
-	pfilm = (const FILM *)LockMem(g_hWinParts);
+	pfilm = (const FILM *)_vm->_handle->LockMem(g_hWinParts);
 	g_iconArray[HL1] = AddObject(&pfilm->reels[box->bi+DOWNGRAPH], -1);
 	MultiSetAniXY(g_iconArray[HL1], g_InvD[g_ino].inventoryX + box->xpos, g_InvD[g_ino].inventoryY + box->ypos);
 	MultiSetZPosition(g_iconArray[HL1], Z_INV_ICONS+1);
@@ -2424,7 +2424,7 @@ static void ButtonToggle(CORO_PARAM, CONFBOX *box) {
 		Select(cd.selBox, true);
 
 	// New state, depressed image
-	pfilm = (const FILM *)LockMem(g_hWinParts);
+	pfilm = (const FILM *)_vm->_handle->LockMem(g_hWinParts);
 	if (g_iconArray[HL1] != NULL)
 		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), g_iconArray[HL1]);
 	g_iconArray[HL1] = AddObject(&pfilm->reels[box->bi+DOWNGRAPH], -1);
@@ -2446,7 +2446,7 @@ static void ButtonToggle(CORO_PARAM, CONFBOX *box) {
 		return;
 
 	// New state, highlighted
-	pfilm = (const FILM *)LockMem(g_hWinParts);
+	pfilm = (const FILM *)_vm->_handle->LockMem(g_hWinParts);
 	if (g_iconArray[HL1] != NULL)
 		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), g_iconArray[HL1]);
 	g_iconArray[HL1] = AddObject(&pfilm->reels[box->bi+HIGRAPH], -1);
@@ -2812,7 +2812,7 @@ static void AddBox(int *pi, const int i) {
 
 	case AAGBUT:
 	case ARSGBUT:
-		pFilm = (const FILM *)LockMem(g_hWinParts);
+		pFilm = (const FILM *)_vm->_handle->LockMem(g_hWinParts);
 
 		g_iconArray[*pi] = AddObject(&pFilm->reels[cd.box[i].bi + NORMGRAPH], -1);
 		MultiSetAniXY(g_iconArray[*pi], x, y);
@@ -2824,7 +2824,7 @@ static void AddBox(int *pi, const int i) {
 	case FRGROUP:
 		assert(g_flagFilm != 0); // Language flags not declared!
 
-		pFilm = (const FILM *)LockMem(g_flagFilm);
+		pFilm = (const FILM *)_vm->_handle->LockMem(g_flagFilm);
 
 		if (_vm->_config->_isAmericanEnglishVersion && cd.box[i].bi == FIX_UK)
 			cd.box[i].bi = FIX_USA;
@@ -2837,7 +2837,7 @@ static void AddBox(int *pi, const int i) {
 		break;
 
 	case FLIP:
-		pFilm = (const FILM *)LockMem(g_hWinParts);
+		pFilm = (const FILM *)_vm->_handle->LockMem(g_hWinParts);
 
 		if (*pival)
 			g_iconArray[*pi] = AddObject(&pFilm->reels[cd.box[i].bi], -1);
@@ -2864,7 +2864,7 @@ static void AddBox(int *pi, const int i) {
 	case TOGGLE:
 	case TOGGLE1:
 	case TOGGLE2:
-		pFilm = (const FILM *)LockMem(g_hWinParts);
+		pFilm = (const FILM *)_vm->_handle->LockMem(g_hWinParts);
 
 		cd.box[i].bi = *pival ? IX_TICK1 : IX_CROSS1;
 		g_iconArray[*pi] = AddObject(&pFilm->reels[cd.box[i].bi + NORMGRAPH], -1);
@@ -2896,7 +2896,7 @@ static void AddBox(int *pi, const int i) {
 		break;
 
 	case SLIDER:
-		pFilm = (const FILM *)LockMem(g_hWinParts);
+		pFilm = (const FILM *)_vm->_handle->LockMem(g_hWinParts);
 		xdisp = SLIDE_RANGE*(*pival)/cd.box[i].w;
 
 		g_iconArray[*pi] = AddObject(&pFilm->reels[IX_MDGROOVE], -1);
@@ -2928,7 +2928,7 @@ static void AddBox(int *pi, const int i) {
 		break;
 
 	case ROTATE:
-		pFilm = (const FILM *)LockMem(g_hWinParts);
+		pFilm = (const FILM *)_vm->_handle->LockMem(g_hWinParts);
 
 		// Left one
 		if (!g_bNoLanguage) {
@@ -2964,7 +2964,7 @@ static void AddBox(int *pi, const int i) {
 		*pi += 1;
 
 		// Current language's flag
-		pFilm = (const FILM *)LockMem(LanguageFlag(g_displayedLanguage));
+		pFilm = (const FILM *)_vm->_handle->LockMem(LanguageFlag(g_displayedLanguage));
 		g_iconArray[*pi] = AddObject(&pFilm->reels[0], -1);
 		MultiSetAniXY(g_iconArray[*pi], x + FLAGX, y + FLAGY);
 		MultiSetZPosition(g_iconArray[*pi], Z_INV_BRECT + 1);
@@ -3036,7 +3036,7 @@ static int AddExtraWindow(int x, int y, OBJECT **retObj) {
 	const FILM *pfilm;
 
 	// Get the frame's data
-	pfilm = (const FILM *)LockMem(g_hWinParts);
+	pfilm = (const FILM *)_vm->_handle->LockMem(g_hWinParts);
 
 	x += TinselV2 ? 30 : 20;
 	y += TinselV2 ? 38 : 24;
@@ -3137,7 +3137,7 @@ static void ConstructInventory(InventoryType filling) {
 	}
 
 	// Get the frame's data
-	pfilm = (const FILM *)LockMem(g_hWinParts);
+	pfilm = (const FILM *)_vm->_handle->LockMem(g_hWinParts);
 
 	// Standard window is of granular dimensions
 	if (filling == FULL) {

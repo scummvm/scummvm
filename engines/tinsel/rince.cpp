@@ -549,7 +549,7 @@ void AlterMover(PMOVER pMover, SCNHANDLE film, AR_FUNCTION fn) {
 		// Remember this one in case the actor talks
 		pMover->hLastFilm = film;
 
-		pfilm = (const FILM *)LockMem(film);
+		pfilm = (const FILM *)_vm->_handle->LockMem(film);
 		assert(pfilm != NULL);
 
 		InitStepAnimScript(&pMover->actorAnim, pMover->actorObj, FROM_32(pfilm->reels[0].script), ONE_SECOND / FROM_32(pfilm->frate));
@@ -642,7 +642,7 @@ void SetMoverWalkReel(PMOVER pMover, DIRECTION reel, int scale, bool force) {
 			assert(whichReel); // no reel
 		}
 
-		pfilm = (const FILM *)LockMem(whichReel);
+		pfilm = (const FILM *)_vm->_handle->LockMem(whichReel);
 		assert(pfilm != NULL); // no film
 
 		InitStepAnimScript(&pMover->actorAnim, pMover->actorObj, FROM_32(pfilm->reels[0].script), 1);
@@ -705,14 +705,14 @@ static void MoverProcessHelper(int X, int Y, int id, PMOVER pMover) {
 	InitMover(pMover);
 	InitialPathChecks(pMover, X, Y);
 
-	pfilm = (const FILM *)LockMem(pMover->walkReels[0][FORWARD]);
-	pmi = (const MULTI_INIT *)LockMem(FROM_32(pfilm->reels[0].mobj));
+	pfilm = (const FILM *)_vm->_handle->LockMem(pMover->walkReels[0][FORWARD]);
+	pmi = (const MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pfilm->reels[0].mobj));
 
 //---
-	pFrame = (const FRAME *)LockMem(FROM_32(pmi->hMulFrame));
+	pFrame = (const FRAME *)_vm->_handle->LockMem(FROM_32(pmi->hMulFrame));
 
 	// get pointer to image
-	pim = (IMAGE *)LockMem(READ_32(pFrame));	// handle to image
+	pim = (IMAGE *)_vm->_handle->LockMem(READ_32(pFrame)); // handle to image
 	pim->hImgPal = TO_32(_vm->_bg->BgPal());
 //---
 	pMover->actorObj = MultiInitObject(pmi);
@@ -803,8 +803,8 @@ void T2MoverProcess(CORO_PARAM, const void *param) {
 	InitMover(pMover);
 	InitialPathChecks(pMover, rpos->X, rpos->Y);
 
-	pFilm = (FILM *)LockMem(pMover->walkReels[i][FORWARD]);	// Any old reel
-	pmi = (PMULTI_INIT)LockMem(FROM_32(pFilm->reels[0].mobj));
+	pFilm = (FILM *)_vm->_handle->LockMem(pMover->walkReels[i][FORWARD]); // Any old reel
+	pmi = (PMULTI_INIT)_vm->_handle->LockMem(FROM_32(pFilm->reels[0].mobj));
 
 	// Poke in the background palette
 	PokeInPalette(pmi);

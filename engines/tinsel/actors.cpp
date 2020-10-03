@@ -260,13 +260,13 @@ void Actor::StartTaggedActors(SCNHANDLE ah, int numActors, bool bRunScript) {
 
 	if (!TinselV2) {
 		// Tinsel 1 load variation
-		const T1_ACTOR_STRUC *as = (const T1_ACTOR_STRUC *)LockMem(ah);
+		const T1_ACTOR_STRUC *as = (const T1_ACTOR_STRUC *)_vm->_handle->LockMem(ah);
 		for (i = 0; i < numActors; i++, as++) {
 			StartActor(as, bRunScript);
 		}
 	} else if (numActors > 0) {
 		// Tinsel 2 load variation
-		const T2_ACTOR_STRUC *as = (T2_ACTOR_STRUC *)LockMem(ah);
+		const T2_ACTOR_STRUC *as = (T2_ACTOR_STRUC *)_vm->_handle->LockMem(ah);
 		for (i = 0; i < numActors; i++, as++) {
 			assert(as->hActorCode);
 
@@ -1076,7 +1076,7 @@ int Actor::SaveActors(PSAVED_ACTOR sActorInfo) {
 	for (i = 0, j = 0; i < _numActors; i++) {
 		for (k = 0; k < (TinselV2 ? MAX_REELS : 1); ++k) {
 			bool presFlag = !TinselV2 ? _actorInfo[i].presObj != NULL :
-				(_actorInfo[i].presObjs[k] != NULL) && !IsCdPlayHandle(_actorInfo[i].presFilm);
+				(_actorInfo[i].presObjs[k] != NULL) && !_vm->_handle->IsCdPlayHandle(_actorInfo[i].presFilm);
 			if (presFlag) {
 
 				assert(j < MAX_SAVED_ACTORS); // Saving too many actors

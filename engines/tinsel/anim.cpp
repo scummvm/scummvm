@@ -39,7 +39,7 @@ namespace Tinsel {
  */
 SCRIPTSTATE DoNextFrame(ANIM *pAnim) {
 	// get a pointer to the script
-	const ANI_SCRIPT *pAni = (const ANI_SCRIPT *)LockMem(pAnim->hScript);
+	const ANI_SCRIPT *pAni = (const ANI_SCRIPT *)_vm->_handle->LockMem(pAnim->hScript);
 
 	while (1) {	// repeat until a real image
 		debugC(DEBUG_DETAILED, kTinselDebugAnimations,
@@ -265,7 +265,7 @@ SCRIPTSTATE StepAnimScript(ANIM *pAnim) {
  */
 void SkipFrames(ANIM *pAnim, int numFrames) {
 	// get a pointer to the script
-	const ANI_SCRIPT *pAni = (const ANI_SCRIPT *)LockMem(pAnim->hScript);
+	const ANI_SCRIPT *pAni = (const ANI_SCRIPT *)_vm->_handle->LockMem(pAnim->hScript);
 
 	if (!TinselV2 && (numFrames <= 0))
 		// do nothing
@@ -409,7 +409,7 @@ void SkipFrames(ANIM *pAnim, int numFrames) {
 bool AboutToJumpOrEnd(PANIM pAnim) {
 	if (pAnim->aniDelta == 1) {
 		// get a pointer to the script
-		ANI_SCRIPT *pAni = (ANI_SCRIPT *)LockMem(pAnim->hScript);
+		ANI_SCRIPT *pAni = (ANI_SCRIPT *)_vm->_handle->LockMem(pAnim->hScript);
 		int	zzz = pAnim->scriptIndex;
 
 		for (;;) {

@@ -42,7 +42,7 @@ OBJECT *MultiInitObject(const MULTI_INIT *pInitTbl) {
 
 	if (FROM_32(pInitTbl->hMulFrame)) {
 		// we have a frame handle
-		pFrame = (FRAME *)LockMem(FROM_32(pInitTbl->hMulFrame));
+		pFrame = (FRAME *)_vm->_handle->LockMem(FROM_32(pInitTbl->hMulFrame));
 
 		obj_init.hObjImg  = READ_32(pFrame);	// first objects shape
 	} else {	// this must be a animation list for a NULL object
@@ -370,7 +370,7 @@ void MultiReshape(OBJECT *pMultiObj) {
 		// a valid shape frame which is different from previous
 
 		// get pointer to frame
-		const FRAME *pFrame = (const FRAME *)LockMem(hFrame);
+		const FRAME *pFrame = (const FRAME *)_vm->_handle->LockMem(hFrame);
 
 		// update previous
 		pMultiObj->hMirror = hFrame;
