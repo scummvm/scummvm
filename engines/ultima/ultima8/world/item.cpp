@@ -592,7 +592,6 @@ bool Item::isCentreOn(const Item &item2) const {
 }
 
 bool Item::isOnScreen() const {
-	// TODO: would be cleaner to have this logic inside GameMapGump itself.
 	GameMapGump *game_map = Ultima8Engine::get_instance()->getGameMapGump();
 
 	if (!game_map)
