@@ -1442,7 +1442,7 @@ void CharacterGenerator::finish() {
 
 			for (int ii = 0; ii < 4; ii++) {
 				int l = classDefaultItemsListIndex[(c->cClass << 2) + ii] << 1;
-				if (classDefaultItemsList[l] == -1)
+				if (l < 0 || classDefaultItemsList[l] == -1)
 					continue;
 
 				int d = classDefaultItemsList[l];
