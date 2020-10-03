@@ -230,7 +230,7 @@ void LoLEngine::showIntro() {
 
 	_screen->loadFont(Screen::FID_8_FNT, "NEW8P.FNT");
 	_screen->loadFont(Screen::FID_INTRO_FNT, "INTRO.FNT");
-	_screen->setFont((_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
+	_screen->setFont((_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_TEXTMODE_FNT : Screen::FID_8_FNT);
 
 	_tim->resetFinishedFlag();
 	_tim->setLangData("LOLINTRO.DIP");
