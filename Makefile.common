@@ -118,7 +118,7 @@ endif
 endif
 
 # The build rule for the ScummVM executable
-$(EXECUTABLE): $(OBJS) $(DETECT_OBJS)
+$(EXECUTABLE): $(DETECT_OBJS) $(OBJS)
 	$(QUIET_LINK)$(LD) $(LDFLAGS) $(PRE_OBJS_FLAGS) $+ $(POST_OBJS_FLAGS) $(LIBS) -o $@
 
 ifdef SPLIT_DWARF
