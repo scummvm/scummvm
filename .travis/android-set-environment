@@ -1,8 +1,8 @@
 #!/bin/sh
 if uname -s | grep -qi linux; then
-	export TOOLCHAIN=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64
+	export TOOLCHAIN=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64
 elif uname -s | grep -qi darwin; then
-	export TOOLCHAIN=$ANDROID_NDK/toolchains/llvm/prebuilt/darwin-x86_64
+	export TOOLCHAIN=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/darwin-x86_64
 fi
 export ANDROID_LEVEL=${ANDROID_LEVEL:-26}
 export ANDROID_TARGET_VERSION=${ANDROID_LEVEL}
