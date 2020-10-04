@@ -29,6 +29,8 @@
 #ifndef WINTERMUTE_MESH_X_OPENGL_SHADER_H
 #define WINTERMUTE_MESH_X_OPENGL_SHADER_H
 
+#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+
 #include "engines/wintermute/base/gfx/x/meshx.h"
 #include "graphics/opengl/shader.h"
 
@@ -51,5 +53,7 @@ protected:
 };
 
 } // namespace Wintermute
+
+#endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
 #endif

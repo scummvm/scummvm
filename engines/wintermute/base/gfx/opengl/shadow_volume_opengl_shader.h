@@ -29,6 +29,8 @@
 #ifndef WINTERMUTE_SHADOW_VOLUME_OPENGL_SHADER_H
 #define WINTERMUTE_SHADOW_VOLUME_OPENGL_SHADER_H
 
+#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+
 #include "engines/wintermute/base/gfx/shadow_volume.h"
 #include "graphics/opengl/shader.h"
 #include "graphics/opengl/system_headers.h"
@@ -54,5 +56,7 @@ private:
 };
 
 } // namespace Wintermute
+
+#endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
 #endif

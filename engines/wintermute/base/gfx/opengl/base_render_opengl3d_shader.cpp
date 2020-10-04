@@ -33,6 +33,8 @@
 #include "graphics/opengl/system_headers.h"
 #include "math/glmath.h"
 
+#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+
 namespace Wintermute {
 BaseRenderer3D *makeOpenGL3DShaderRenderer(BaseGame *inGame) {
 	return new BaseRenderOpenGL3DShader(inGame);
@@ -694,3 +696,5 @@ ShadowVolume *BaseRenderOpenGL3DShader::createShadowVolume() {
 }
 
 } // namespace Wintermute
+
+#endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)

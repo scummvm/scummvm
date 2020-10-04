@@ -24,6 +24,8 @@
 #include "engines/wintermute/wintypes.h"
 #include "graphics/opengl/system_headers.h"
 
+#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+
 namespace Wintermute {
 
 Mesh3DSOpenGLShader::Mesh3DSOpenGLShader(OpenGL::ShaderGL *shader) : _shader(shader) {
@@ -66,3 +68,5 @@ void Mesh3DSOpenGLShader::render() {
 }
 
 } // namespace Wintermute
+
+#endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)

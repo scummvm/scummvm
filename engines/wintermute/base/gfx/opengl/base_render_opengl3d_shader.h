@@ -23,6 +23,8 @@
 #ifndef WINTERMUTE_BASE_RENDER_OPENGL3D_H
 #define WINTERMUTE_BASE_RENDER_OPENGL3D_H
 
+#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+
 #include "engines/wintermute/base/gfx/base_renderer3d.h"
 #include "engines/wintermute/dctypes.h"
 #include "engines/wintermute/math/rect32.h"
@@ -148,5 +150,7 @@ private:
 };
 
 } // namespace Wintermute
+
+#endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
 #endif

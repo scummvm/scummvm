@@ -26,6 +26,8 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
+#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+
 #include "engines/wintermute/base/gfx/opengl/base_surface_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/meshx_opengl_shader.h"
 #include "engines/wintermute/base/gfx/x/material.h"
@@ -113,3 +115,5 @@ bool MeshXOpenGLShader::update(FrameNode *parentFrame) {
 }
 
 } // namespace Wintermute
+
+#endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
