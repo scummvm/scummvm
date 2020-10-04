@@ -178,4 +178,44 @@ uint FlicDecoder::FlicVideoTrack::getDelay() const {
 	return _frameDelay;
 }
 
+#define FRAME_TYPE            0xF1FA
+#define FLC_FILE_HEADER       0xAF12
+#define FLC_FILE_HEADER_SIZE  0x80
+
+const Graphics::Surface *FlicDecoder::FlicVideoTrack::decodeNextFrame() {
+	// attempt to fix broken flics
+	while (true) {
+		/*uint32 frameSize = */_fileStream->readUint32LE();
+		uint16 frameType = _fileStream->readUint16LE();
+
+		bool processed = true;
+		switch (frameType) {
+		case FRAME_TYPE:
+			handleFrame();
+			break;
+		case FLC_FILE_HEADER:
+			// Skip 0x80 bytes of file header subtracting 6 bytes of header
+			_fileStream->skip(FLC_FILE_HEADER_SIZE - 6);
+			break;
+		default:
+			processed = false;
+			_fileStream->seek(-5, SEEK_CUR);
+			break;
+		}
+		if (processed)
+			break;
+	}
+
+	_curFrame++;
+	_nextFrameStartTime += _frameDelay;
+
+	if (_atRingFrame) {
+		// If we decoded the ring frame, seek to the second frame
+		_atRingFrame = false;
+		_fileStream->seek(_offsetFrame2);
+	}
+
+	return _surface;
+}
+
 } // End of namespace Petka

@@ -44,6 +44,8 @@ protected:
 	public:
 		FlicVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, bool skipHeader = false);
 
+		const Graphics::Surface *decodeNextFrame() override;
+
 		bool loadMsk(Common::SeekableReadStream &stream);
 
 		uint getDelay() const;
