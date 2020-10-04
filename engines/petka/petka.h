@@ -39,11 +39,8 @@
  *
  *  Games using this engine:
  *  - Red Comrades Demo
- *  - Red Comrades Save the Galaxy
- *  	- Part 1: can be completed
- *  	- Part 2: error: unsupported flc
- *  	- Part 3: script bug
- *  - Red Comrades 2: For the Great Justice
+ *  - Red Comrades Save the Galaxy - Fully playable
+ *  - Red Comrades 2: For the Great Justice - Not tested
  */
 
 struct ADGameDescription;
