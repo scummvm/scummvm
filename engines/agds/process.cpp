@@ -160,9 +160,11 @@ void Process::run() {
 		case kExitCodeSetNextScreen:
 			debug("process %s launches screen: %s", getName().c_str(), getExitArg1().c_str());
 			_engine->setNextScreenName(getExitArg1(), false);
+			done();
 			break;
 		case kExitCodeSetNextScreenSaveInHistory:
 			_engine->setNextScreenName(getExitArg1(), true);
+			done();
 			break;
 		case kExitCodeLoadPreviousScreenObject:
 			_engine->returnToPreviousScreen();
@@ -178,10 +180,12 @@ void Process::run() {
 		case kExitCodeCloseInventory:
 			_engine->inventory().enable(false);
 			updateWithCurrentMousePosition();
-			break;
+			activate();
+			return; //some codes are special, they needed to exit loop and keep process active
 		case kExitCodeSuspend:
 			updateWithCurrentMousePosition();
-			break;
+			activate();
+			return; //some codes are special, they needed to exit loop and keep process active
 		case kExitCodeCreatePatchLoadResources:
 			{
 				debug("exitProcessCreatePatch");
