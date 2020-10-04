@@ -132,6 +132,7 @@ public:
 	bool isDemo();
 	Common::Language getLanguage() const;
 	const char *getGameId() const;
+	int getGameGID() const;
 
 	Common::RandomSource _rnd;
 

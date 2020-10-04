@@ -31,6 +31,7 @@
 #include "graphics/surface.h"
 
 #include "ngi/ngi.h"
+#include "ngi/detection.h"
 #include "ngi/gameloader.h"
 #include "ngi/messages.h"
 #include "ngi/behavior.h"
@@ -282,8 +283,19 @@ Common::Error NGIEngine::run() {
 	if (ConfMan.hasKey("save_slot"))
 		scene = -1;
 
-	if (!loadGam("fullpipe.gam", scene))
-		return Common::kNoGameDataFoundError;
+	switch (getGameGID()) {
+	case GID_FULLPIPE:
+		if (!loadGam("fullpipe.gam", scene))
+			return Common::kNoGameDataFoundError;
+		break;
+	case GID_MDREAM:
+		if (!loadGam("new.gam", scene))
+			return Common::kNoGameDataFoundError;
+		break;
+	default:
+		warning("Unknown GID");
+		return Common::kUnsupportedGameidError;
+	}
 
 	if (ConfMan.hasKey("save_slot")) {
 		loadGameState(ConfMan.getInt("save_slot"));

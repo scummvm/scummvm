@@ -49,6 +49,10 @@ const char *NGIEngine::getGameId() const {
 	return _gameDescription->desc.gameId;
 }
 
+int NGIEngine::getGameGID() const {
+	return _gameDescription->gameId;
+}
+
 } // End of namspace Fullpipe
 
 class NGIMetaEngine : public AdvancedMetaEngine {
