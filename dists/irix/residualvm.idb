@@ -6,7 +6,6 @@ f 0644 root sys usr/ResidualVM/COPYING.ISC COPYING.ISC residualvm.man.readme
 f 0644 root sys usr/ResidualVM/COPYING.LUA COPYING.LUA residualvm.man.readme
 f 0644 root sys usr/ResidualVM/COPYING.TINYGL COPYING.TINYGL residualvm.man.readme
 f 0644 root sys usr/ResidualVM/COPYRIGHT COPYRIGHT residualvm.man.readme
-f 0644 root sys usr/ResidualVM/KNOWN_BUGS KNOWN_BUGS residualvm.man.readme
 f 0644 root sys usr/ResidualVM/NEWS.md NEWS.md residualvm.man.readme
 f 0644 root sys usr/ResidualVM/README.md README.md residualvm.man.readme
 f 0755 root sys usr/ResidualVM/residualvm residualvm residualvm.sw.eoe tag('0x5260dbec')

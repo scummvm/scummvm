@@ -342,9 +342,7 @@ Setting           | Values                   | Effect
 ## 7. Troubleshooting, known bugs, issues
 Grim Fandango had a few issues when it came out and a few new and
 exciting issues when you try to run it on newer hardware. Some of these
-have been fixed in ResidualVM, but ResidualVM itself also has a few new
-issues that we know about:
-https://github.com/residualvm/residualvm/blob/master/KNOWN_BUGS
+have been fixed in ResidualVM.
 
 Look below for help with these issues and if you can't find help here,
 try contacting us at [Contact](#10-contact) section.

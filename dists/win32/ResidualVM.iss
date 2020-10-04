@@ -37,7 +37,6 @@ Name: {group}\Copying.LUA; Filename: {app}\COPYING.LUA.txt; WorkingDir: {app}; C
 Name: {group}\Copying.MIT; Filename: {app}\COPYING.MIT.txt; WorkingDir: {app}; Comment: COPYING.TINYGL; Flags: createonlyiffileexists
 Name: {group}\Copying.TINYGL; Filename: {app}\COPYING.TINYGL.txt; WorkingDir: {app}; Comment: COPYING.TINYGL; Flags: createonlyiffileexists
 Name: {group}\Copyright; Filename: {app}\COPYRIGHT.txt; WorkingDir: {app}; Comment: COPYRIGHT; Flags: createonlyiffileexists
-Name: {group}\KnownBugs; Filename: {app}\KNOWN_BUGS.txt; WorkingDir: {app}; Comment: KNOWN_BUGS; Flags: createonlyiffileexists
 ;NEWS
 Name: {group}\News; Filename: {app}\NEWS.txt; WorkingDir: {app}; Comment: NEWS; Flags: createonlyiffileexists
 ;QUICKSTART
@@ -68,7 +67,6 @@ Source: COPYING.LUA.txt; DestDir: {app}; Flags: ignoreversion
 Source: COPYING.MIT.txt; DestDir: {app}; Flags: ignoreversion
 Source: COPYING.TINYGL.txt; DestDir: {app}; Flags: ignoreversion
 Source: COPYRIGHT.txt; DestDir: {app}; Flags: ignoreversion
-Source: KNOWN_BUGS.txt; DestDir: {app}; Flags: ignoreversion
 ;NEWS
 Source: NEWS.txt; DestDir: {app}; Flags: ignoreversion
 ;QUICKSTART

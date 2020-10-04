@@ -75,7 +75,6 @@ endif
 	cp $(srcdir)/COPYING.MIT ResidualVM/COPYING.MIT.txt
 	cp $(srcdir)/COPYING.TINYGL ResidualVM/COPYING.TINYGL.txt
 	cp $(srcdir)/COPYRIGHT ResidualVM/COPYRIGHT.txt
-	cp $(srcdir)/KNOWN_BUGS ResidualVM/KNOWN_BUGS.txt
 	cp $(srcdir)/NEWS.md ResidualVM/NEWS.txt
 	cp $(srcdir)/doc/QuickStart ResidualVM/QuickStart.txt
 	cp $(srcdir)/README.md ResidualVM/README.txt
