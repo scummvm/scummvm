@@ -67,7 +67,9 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	private Version _currentScummVMVersion;
 	private File _configScummvmFile;
 	private File _actualScummVMDataDir;
+	private File _possibleExternalScummVMDir;
 	private File _usingScummVMSavesDir;
+	boolean _externalPathAvailableForReadAccess;
 //	private File _usingLogFile;
 
 	/**
@@ -197,7 +199,10 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		@Override
 		protected String[] getSysArchives() {
 			Log.d(ScummVM.LOG_TAG, "Adding to Search Archive: " + _actualScummVMDataDir.getPath());
-			return new String[] {_actualScummVMDataDir.getPath()};
+			if (_externalPathAvailableForReadAccess) {
+				Log.d(ScummVM.LOG_TAG, "Adding to Search Archive: " + _possibleExternalScummVMDir.getPath());
+				return new String[]{_actualScummVMDataDir.getPath(), _possibleExternalScummVMDir.getPath()};
+			} else return new String[]{_actualScummVMDataDir.getPath()};
 		}
 
 		@Override
@@ -690,7 +695,20 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		// So, if your device has two sdcard paths, it will produce two dirs. If one is not available, the warning will come up.
 		// ----
 
-		File externalPossibleAlternateScummVMFilesDir = getExternalFilesDir(null);
+		_possibleExternalScummVMDir = getExternalFilesDir(null);
+		_externalPathAvailableForReadAccess = false;
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState(_possibleExternalScummVMDir))
+				|| Environment.MEDIA_UNKNOWN.equals(Environment.getExternalStorageState(_possibleExternalScummVMDir))
+				|| Environment.MEDIA_MOUNTED_READ_ONLY.equals(Environment.getExternalStorageState(_possibleExternalScummVMDir))
+			) {
+				_externalPathAvailableForReadAccess = true;
+			}
+		} else {
+			// before Lollipop just set it to true
+			// TODO maybe check if this would cause issues
+			_externalPathAvailableForReadAccess = true;
+		}
 
 		// Unlike getExternalFilesDir, this is guaranteed to ALWAYS be available
 		//
@@ -802,14 +820,20 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		// We want to re-use the more recent ScummVM old version too
 		// TODO try getDir too without a path? just "." ??
 		candidateOldLocationsOfScummVMConfigMap.put("(scummvm.ini) (SDL port - B)", new File(_actualScummVMDataDir, "../.config/scummvm/scummvm.ini"));
-		candidateOldLocationsOfScummVMConfigMap.put("(scummvm.ini) (SDL port - C)", new File(externalPossibleAlternateScummVMFilesDir, ".config/scummvm/scummvm.ini"));
-		candidateOldLocationsOfScummVMConfigMap.put("(scummvm.ini) (SDL port - D)", new File(externalPossibleAlternateScummVMFilesDir, "../.config/scummvm/scummvm.ini"));
+		if (_externalPathAvailableForReadAccess) {
+			candidateOldLocationsOfScummVMConfigMap.put("(scummvm.ini) (SDL port - C)", new File(_possibleExternalScummVMDir, ".config/scummvm/scummvm.ini"));
+			candidateOldLocationsOfScummVMConfigMap.put("(scummvm.ini) (SDL port - D)", new File(_possibleExternalScummVMDir, "../.config/scummvm/scummvm.ini"));
+		}
 		candidateOldLocationsOfScummVMConfigMap.put("(scummvm.ini) (SDL port - E)", new File(Environment.getExternalStorageDirectory(), ".config/scummvm/scummvm.ini"));
 		candidateOldLocationsOfScummVMConfigMap.put("(scummvmrc) (version 1.8.1- or PlayStore 2.1.0) - Internal", new File(_actualScummVMDataDir, "scummvmrc"));
-		candidateOldLocationsOfScummVMConfigMap.put("(scummvmrc) (version 1.8.1- or PlayStore 2.1.0) - Ext Emu", new File(externalPossibleAlternateScummVMFilesDir, "scummvmrc"));
+		if (_externalPathAvailableForReadAccess) {
+			candidateOldLocationsOfScummVMConfigMap.put("(scummvmrc) (version 1.8.1- or PlayStore 2.1.0) - Ext Emu", new File(_possibleExternalScummVMDir, "scummvmrc"));
+		}
 		candidateOldLocationsOfScummVMConfigMap.put("(scummvmrc) (version 1.8.1- or PlayStore 2.1.0) - Ext SD", new File(Environment.getExternalStorageDirectory(), "scummvmrc"));
 		candidateOldLocationsOfScummVMConfigMap.put("(.scummvmrc) (POSIX conformance) - Internal", new File(_actualScummVMDataDir, ".scummvmrc"));
-		candidateOldLocationsOfScummVMConfigMap.put("(.scummvmrc) (POSIX conformance) - Ext Emu", new File(externalPossibleAlternateScummVMFilesDir, ".scummvmrc"));
+		if (_externalPathAvailableForReadAccess) {
+			candidateOldLocationsOfScummVMConfigMap.put("(.scummvmrc) (POSIX conformance) - Ext Emu", new File(_possibleExternalScummVMDir, ".scummvmrc"));
+		}
 		candidateOldLocationsOfScummVMConfigMap.put("(.scummvmrc) (POSIX conformance) - Ext SD)", new File(Environment.getExternalStorageDirectory(), ".scummvmrc"));
 
 		String[] listOfAuxExtStoragePaths = _scummvm.getAllStorageLocationsNoPermissionRequest();
@@ -818,7 +842,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		for (int incIndx = 0; incIndx + 1 < listOfAuxExtStoragePaths.length; incIndx += 2) {
 			// exclude identical matches for internal and emulated external app dir, since we take them into account below explicitly
 			if (listOfAuxExtStoragePaths[incIndx + 1].compareToIgnoreCase(_actualScummVMDataDir.getPath()) != 0
-				&& listOfAuxExtStoragePaths[incIndx + 1].compareToIgnoreCase(externalPossibleAlternateScummVMFilesDir.getPath()) != 0
+				&& listOfAuxExtStoragePaths[incIndx + 1].compareToIgnoreCase(_possibleExternalScummVMDir.getPath()) != 0
 			) {
 				//
 				// Possible for Config file locations on top of paths returned by getAllStorageLocationsNoPermissionRequest
@@ -1079,15 +1103,17 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 					candidateOldLocationsOfScummVMSavesMap.put("A06", new File(_actualScummVMDataDir, "../.local/scummvm/saves"));
 					candidateOldLocationsOfScummVMSavesMap.put("A07", new File(_actualScummVMDataDir, "../saves"));
 					candidateOldLocationsOfScummVMSavesMap.put("A08", new File(_actualScummVMDataDir, "../scummvm/saves"));
-					// this is a popular one
-					candidateOldLocationsOfScummVMSavesMap.put("A09", new File(externalPossibleAlternateScummVMFilesDir, ".local/share/scummvm/saves"));
-					candidateOldLocationsOfScummVMSavesMap.put("A10", new File(externalPossibleAlternateScummVMFilesDir, ".local/scummvm/saves"));
-					candidateOldLocationsOfScummVMSavesMap.put("A11", new File(externalPossibleAlternateScummVMFilesDir, "saves"));
-					candidateOldLocationsOfScummVMSavesMap.put("A12", new File(externalPossibleAlternateScummVMFilesDir, "scummvm/saves"));
-					candidateOldLocationsOfScummVMSavesMap.put("A13", new File(externalPossibleAlternateScummVMFilesDir, "../.local/share/scummvm/saves"));
-					candidateOldLocationsOfScummVMSavesMap.put("A14", new File(externalPossibleAlternateScummVMFilesDir, "../.local/scummvm/saves"));
-					candidateOldLocationsOfScummVMSavesMap.put("A15", new File(externalPossibleAlternateScummVMFilesDir, "../saves"));
-					candidateOldLocationsOfScummVMSavesMap.put("A16", new File(externalPossibleAlternateScummVMFilesDir, "../scummvm/saves"));
+					if (_externalPathAvailableForReadAccess) {
+						// this is a popular one
+						candidateOldLocationsOfScummVMSavesMap.put("A09", new File(_possibleExternalScummVMDir, ".local/share/scummvm/saves"));
+						candidateOldLocationsOfScummVMSavesMap.put("A10", new File(_possibleExternalScummVMDir, ".local/scummvm/saves"));
+						candidateOldLocationsOfScummVMSavesMap.put("A11", new File(_possibleExternalScummVMDir, "saves"));
+						candidateOldLocationsOfScummVMSavesMap.put("A12", new File(_possibleExternalScummVMDir, "scummvm/saves"));
+						candidateOldLocationsOfScummVMSavesMap.put("A13", new File(_possibleExternalScummVMDir, "../.local/share/scummvm/saves"));
+						candidateOldLocationsOfScummVMSavesMap.put("A14", new File(_possibleExternalScummVMDir, "../.local/scummvm/saves"));
+						candidateOldLocationsOfScummVMSavesMap.put("A15", new File(_possibleExternalScummVMDir, "../saves"));
+						candidateOldLocationsOfScummVMSavesMap.put("A16", new File(_possibleExternalScummVMDir, "../scummvm/saves"));
+					}
 					// this was for old Android plain port
 					candidateOldLocationsOfScummVMSavesMap.put("A17", new File(Environment.getExternalStorageDirectory(), "ScummVM/Saves"));
 				}
@@ -1097,7 +1123,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				for (int incIndx = 0; incIndx + 1 < listOfAuxExtStoragePaths.length; incIndx += 2) {
 					// exclude identical matches for internal and emulated external app dir, since we take them into account below explicitly
 					if (listOfAuxExtStoragePaths[incIndx + 1].compareToIgnoreCase(_actualScummVMDataDir.getPath()) != 0
-						&& listOfAuxExtStoragePaths[incIndx + 1].compareToIgnoreCase(externalPossibleAlternateScummVMFilesDir.getPath()) != 0
+						&& listOfAuxExtStoragePaths[incIndx + 1].compareToIgnoreCase(_possibleExternalScummVMDir.getPath()) != 0
 					) {
 						//
 						// Possible for Saves dirs locations on top of paths returned by getAllStorageLocationsNoPermissionRequest
