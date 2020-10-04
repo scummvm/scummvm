@@ -55,6 +55,9 @@ Cursor::Cursor() {
 	_mainCursor = nullptr;
 	_auxCursor = nullptr;
 
+	_mainCursorAnim = {0, 0, 0, 0, 0};
+	_auxCursorAnim = {0, 0, 0, 0, 0};
+
 	_hiddenCursor = false;
 	_hiddenTrails = false;
 	_tempHiddenCursor = false;
