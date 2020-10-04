@@ -21,10 +21,6 @@
  */
 
 #include "engines/advancedDetector.h"
-#include "engines/icb/icb.h"
-
-#include "common/savefile.h"
-#include "common/system.h"
 
 namespace ICB {
 
@@ -67,9 +63,9 @@ static const ADGameDescription gameDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
-class IcbMetaEngine : public AdvancedMetaEngine {
+class IcbMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	IcbMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(ADGameDescription), icbGames) {
+	IcbMetaEngineStatic() : AdvancedMetaEngineStatic(gameDescriptions, sizeof(ADGameDescription), icbGames) {
 		_guiOptions = GUIO_NOMIDI;
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
@@ -82,23 +78,8 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const override { return "(C) 2000 Revolution Software Ltd"; }
-
-	virtual bool hasFeature(MetaEngineFeature f) const override { return false; }
-
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
-
-bool IcbMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc)
-		*engine = new IcbEngine(syst, desc);
-
-	return desc != nullptr;
-}
 
 } // End of namespace ICB
 
-#if PLUGIN_ENABLED_DYNAMIC(ICB)
-REGISTER_PLUGIN_DYNAMIC(ICB, PLUGIN_TYPE_ENGINE, ICB::IcbMetaEngine);
-#else
-REGISTER_PLUGIN_STATIC(ICB, PLUGIN_TYPE_ENGINE, ICB::IcbMetaEngine);
-#endif
+REGISTER_PLUGIN_STATIC(ICB_DETECTION, PLUGIN_TYPE_METAENGINE, ICB::IcbMetaEngineStatic);
