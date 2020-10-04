@@ -267,6 +267,7 @@ add_feature freetype2 "FreeType2" "_freetype2"
 add_feature highres "high resolution" "_highres"
 add_feature mad "MAD" "_mad"
 add_feature jpeg "JPEG" "_jpeg"
+add_feature mpeg2 "mpeg2" "_mpeg2" #ResidualVM specific
 add_feature opengl_shaders "OpenGL with shaders" "_opengl_shaders" #ResidualVM specific
 add_feature png "PNG" "_png"
 add_feature theoradec "libtheoradec" "_theoradec"
@@ -5764,13 +5765,6 @@ define_in_config_if_yes $_updates 'USE_UPDATES'
 # Check whether to create a build with all resources files linked into the binary
 #
 define_in_config_if_yes "$_builtin_resources" 'BUILTIN_RESOURCES'
-
-#
-# Check whether to activate engines (ResidualVM specific)
-#
-if test `get_engine_build monkey4` = yes && test ! "$_mpeg2" = yes ; then
-	echo "...disabling support for video cutscenes in PS2 version of Escape from Monkey Island. mpeg2dec is required"
-fi
 
 # Added define for ICB - ResidualVM specific
 # TODO: remove it
