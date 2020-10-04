@@ -78,8 +78,6 @@ GfxTinyGL::~GfxTinyGL() {
 }
 
 void GfxTinyGL::setupScreen(int screenW, int screenH, bool fullscreen) {
-	Graphics::PixelBuffer buf = g_system->getScreenPixelBuffer();
-
 	_screenWidth = screenW;
 	_screenHeight = screenH;
 	_scaleW = _screenWidth / (float)_gameWidth;
@@ -87,9 +85,9 @@ void GfxTinyGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	g_system->showMouse(!fullscreen);
 
-	_pixelFormat = buf.getFormat();
+	_pixelFormat = g_system->getScreenFormat();
 	debug("INFO: TinyGL front buffer pixel format: %s", _pixelFormat.toString().c_str());
-	_zb = new TinyGL::FrameBuffer(screenW, screenH, buf);
+	_zb = new TinyGL::FrameBuffer(screenW, screenH, _pixelFormat);
 	TinyGL::glInit(_zb, 256);
 	tglEnableDirtyRects(ConfMan.getBool("dirtyrects"));
 
@@ -176,6 +174,8 @@ void GfxTinyGL::clearDepthBuffer() {
 
 void GfxTinyGL::flipBuffer() {
 	TinyGL::tglPresentBuffer();
+	g_system->copyRectToScreen(_zb->getPixelBuffer(), _zb->linesize,
+	                           0, 0, _zb->xsize, _zb->ysize);
 	g_system->updateScreen();
 }
 
