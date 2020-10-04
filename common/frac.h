@@ -26,6 +26,15 @@
 #include "common/scummsys.h"
 
 /**
+ * @defgroup common_frac Fixed-point fractions
+ * @ingroup common
+ *
+ * @brief  API for fixed-point fractions.
+ *
+ * @{
+ */
+
+/**
  * The precision of the fractional (fixed point) type we define below.
  * Normally you should never have to modify this value.
  */
@@ -48,5 +57,7 @@ inline double fracToDouble(frac_t value) { return ((double)value) / FRAC_ONE; }
 
 inline frac_t intToFrac(int16 value) { return value * (1 << FRAC_BITS); }
 inline int16 fracToInt(frac_t value) { return value / (1 << FRAC_BITS); }
+
+/** @} */
 
 #endif

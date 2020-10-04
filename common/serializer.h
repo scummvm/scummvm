@@ -28,6 +28,15 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_serializer Serializer
+ * @ingroup common
+ *
+ * @brief API for serializing data.
+ *
+ * @{
+ */
+
 #define VER(x) Common::Serializer::Version(x)
 
 #define SYNC_AS(SUFFIX,TYPE,SIZE) \
@@ -280,6 +289,7 @@ public:
 	virtual void saveLoadWithSerializer(Serializer &ser) = 0;
 };
 
+/** @} */
 
 } // End of namespace Common
 

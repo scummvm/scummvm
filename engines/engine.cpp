@@ -875,10 +875,20 @@ EnginePlugin *Engine::getMetaEnginePlugin() const {
 
 */
 
-MetaEngine &Engine::getMetaEngine() {
+MetaEngineStatic &Engine::getMetaEngineStatic() {
 	const Plugin *plugin = EngineMan.findPlugin(ConfMan.get("engineid"));
 	assert(plugin);
-	return plugin->get<MetaEngine>();
+	return plugin->get<MetaEngineStatic>();
+}
+
+MetaEngine &Engine::getMetaEngine() {
+	const Plugin *metaEnginePlugin = EngineMan.findPlugin(ConfMan.get("engineid"));
+	assert(metaEnginePlugin);
+
+	const Plugin *enginePlugin = PluginMan.getEngineFromMetaEngine(metaEnginePlugin);
+	assert(enginePlugin);
+
+	return enginePlugin->get<MetaEngine>();
 }
 
 PauseToken::PauseToken() : _engine(nullptr) {}

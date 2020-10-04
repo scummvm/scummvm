@@ -258,10 +258,13 @@ void LauncherDialog::updateListing() {
 	U32StringArray l;
 	ListWidget::ColorList colors;
 	ThemeEngine::FontColor color;
+	int numEntries = ConfMan.getInt("gui_list_max_scan_entries");
 
 	// Retrieve a list of all games defined in the config file
 	_domains.clear();
 	const ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
+	bool scanEntries = numEntries == -1 ? true : (domains.size() <= numEntries);
+
 	ConfigManager::DomainMap::const_iterator iter;
 	for (iter = domains.begin(); iter != domains.end(); ++iter) {
 #ifdef __DS__
@@ -274,7 +277,6 @@ void LauncherDialog::updateListing() {
 
 		String gameid(iter->_value.getVal("gameid"));
 		String description(iter->_value.getVal("description"));
-		Common::FSNode path(iter->_value.getVal("path"));
 
 		if (gameid.empty())
 			gameid = iter->_key;
@@ -297,13 +299,17 @@ void LauncherDialog::updateListing() {
 				pos++;
 
 			color = ThemeEngine::kFontColorNormal;
-			if (!path.isDirectory()) {
-				color = ThemeEngine::kFontColorAlternate;
-				// If more conditions which grey out entries are added we should consider
-				// enabling this so that it is easy to spot why a certain game entry cannot
-				// be started.
 
-				// description += Common::String::format(" (%s)", _("Not found"));
+			if (scanEntries) {
+				Common::FSNode path(iter->_value.getVal("path"));
+				if (!path.isDirectory()) {
+					color = ThemeEngine::kFontColorAlternate;
+					// If more conditions which grey out entries are added we should consider
+					// enabling this so that it is easy to spot why a certain game entry cannot
+					// be started.
+
+					// description += Common::String::format(" (%s)", _("Not found"));
+				}
 			}
 
 			l.insert_at(pos, description);
@@ -469,14 +475,20 @@ void LauncherDialog::loadGame(int item) {
 	EngineMan.upgradeTargetIfNecessary(target);
 
 	// Look for the plugin
-	const Plugin *plugin = nullptr;
-	EngineMan.findTarget(target, &plugin);
+	const Plugin *metaEnginePlugin = nullptr;
+	const Plugin *enginePlugin = nullptr;
+	EngineMan.findTarget(target, &metaEnginePlugin);
 
-	if (plugin) {
-		const MetaEngine &metaEngine = plugin->get<MetaEngine>();
-		if (metaEngine.hasFeature(MetaEngine::kSupportsListSaves) &&
-			metaEngine.hasFeature(MetaEngine::kSupportsLoadingDuringStartup)) {
-			int slot = _loadDialog->runModalWithPluginAndTarget(plugin, target);
+	// If we found a relevant plugin, find the matching engine plugin.
+	if (metaEnginePlugin) {
+		enginePlugin = PluginMan.getEngineFromMetaEngine(metaEnginePlugin);
+	}
+
+	if (enginePlugin) {
+		const MetaEngine &metaEngineConnect = enginePlugin->get<MetaEngine>();
+		if (metaEngineConnect.hasFeature(MetaEngine::kSupportsListSaves) &&
+			metaEngineConnect.hasFeature(MetaEngine::kSupportsLoadingDuringStartup)) {
+			int slot = _loadDialog->runModalWithPluginAndTarget(enginePlugin, target);
 			if (slot >= 0) {
 				ConfMan.setActiveDomain(_domains[item]);
 				ConfMan.setInt("save_slot", slot, Common::ConfigManager::kTransientDomain);

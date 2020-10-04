@@ -36,6 +36,15 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_xmlparser XML parser
+ * @ingroup common
+ *
+ * @brief The XML parser allows for parsing XML-like files.
+ * 
+ * @{
+ */
+
 class SeekableReadStream;
 
 #define MAX_XML_DEPTH 8
@@ -348,6 +357,8 @@ private:
 
 	Stack<ParserNode *> _activeKey; /** Node stack of the parsed keys */
 };
+
+/** @} */
 
 } // End of namespace Common
 

@@ -3,6 +3,7 @@
 #
 ###############################################
 
+ifeq ($(LOAD_RULES_MK), 1)
 
 # Copy the list of objects to a new variable. The name of the new variable
 # contains the module name, a trick we use so we can keep multiple different
@@ -103,3 +104,5 @@ ifdef SPLIT_DWARF
 endif
 
 .PHONY: clean-$(MODULE) $(MODULE)
+
+endif # LOAD_RULES_MK

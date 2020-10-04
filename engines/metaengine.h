@@ -94,21 +94,17 @@ struct ExtendedSavegameHeader {
 };
 
 /**
- * A meta engine is essentially a factory for Engine instances with the
+ * A meta engine static is essentially a factory for Engine instances with the
  * added ability of listing and detecting supported games.
- * Every engine "plugin" provides a hook to get an instance of a MetaEngine
- * subclass for that "engine plugin". E.g. SCUMM povides ScummMetaEngine.
+ * Every engine "plugin" provides a hook to get an instance of a MetaEngineStatic
+ * subclass for that "engine plugin". E.g. SCUMM povides ScummMetaEngineStatic.
  * This is then in turn used by the frontend code to detect games,
- * and instantiate actual Engine objects.
+ * and other useful functionality. To instantiate actual Engine objects,
+ * See the class MetaEngine below.
  */
-class MetaEngine : public PluginObject {
-private:
-	/**
-	 * Converts the current screen contents to a thumbnail, and saves it
-	 */
-	static void saveScreenThumbnail(Common::OutSaveFile *saveFile);
+class MetaEngineStatic : public PluginObject {
 public:
-	virtual ~MetaEngine() {}
+	virtual ~MetaEngineStatic() {}
 
 	/** Get the engine ID */
 	virtual const char *getEngineId() const = 0;
@@ -128,6 +124,78 @@ public:
 	 * to detect amongst the given files.
 	 */
 	virtual DetectedGames detectGames(const Common::FSList &fslist) const = 0;
+
+	/**
+	 * Return a list of extra GUI options for the specified target.
+	 * If no target is specified, all of the available custom GUI options are
+	 * Returned for the plugin (used to set default values).
+	 *
+	 * Currently, this only supports options with checkboxes.
+	 *
+	 * The default implementation returns an empty list.
+	 *
+	 * @param target    name of a config manager target
+	 * @return          a list of extra GUI options for an engine plugin and
+	 *                  target
+	 */
+	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const {
+		return ExtraGuiOptions();
+	}
+
+	/**
+	 * Register the default values for the settings the engine uses into the
+	 * configuration manager.
+	 *
+	 * @param target    name of a config manager target
+	 */
+	virtual void registerDefaultSettings(const Common::String &target) const;
+
+	/**
+	 * Return a GUI widget container for configuring the specified target options.
+	 *
+	 * The returned widget is shown in the Engine tab in the edit game dialog.
+	 * Engines can build custom options dialogs, but by default a simple widget
+	 * allowing to configure the extra GUI options is used.
+	 *
+	 * Engines that don't want to have an Engine tab in the edit game dialog
+	 * can return nullptr.
+	 *
+	 * @param boss     the widget / dialog the returned widget is a child of
+	 * @param name     the name the returned widget must use
+	 * @param target   name of a config manager target
+	 */
+	virtual GUI::OptionsContainerWidget *buildEngineOptionsWidgetStatic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const;
+};
+
+/**
+ * A MetaEngine is another factory for Engine instances, and is very
+ * similiar to meta engines. This class, however, composes of bridged functionalities
+ * that can be used to connect an actual Engine with a MetaEngine.
+ * Every engine "plugin" provides a hook to get an instance of MetaEngine subclass
+ * for that "engine plugin.". E.g. SCUMM provides a ScummMetaEngine.
+ * This is then in turn used for things like instantiating engine objects, listing savefiles,
+ * querying save metadata, etc.
+ * Since engine plugins can be used a external runtime libraries, these can live and build inside
+ * the engine, while a MetaEngine will always build into the executable to be able to detect code.
+ */
+class MetaEngine : public PluginObject {
+private:
+	/**
+	 * Converts the current screen contents to a thumbnail, and saves it
+	 */
+	static void saveScreenThumbnail(Common::OutSaveFile *saveFile);
+public:
+	virtual ~MetaEngine() {}
+
+	/**
+	 * Name of the engine plugin.
+	 * Classes inheriting a MetaEngineConnect must provide a engineID here,
+	 * which can then be used to match an Engine with MetaEngine.
+	 * E.g. ScummMetaEngine inherits MetaEngine & provides a engineID of "Scumm".
+	 * 		ScummMetaEngineConnect inherits MetaEngineConnect & provides the name "Scumm".
+	 * This way, we can easily match a Engine with a MetaEngine.
+	 */
+	virtual const char *getName() const = 0;
 
 	/**
 	 * Tries to instantiate an engine instance based on the settings of
@@ -179,60 +247,6 @@ public:
 	 */
 	virtual int getAutosaveSlot() const {
 		return 0;
-	}
-
-	/**
-	 * Return a list of extra GUI options for the specified target.
-	 * If no target is specified, all of the available custom GUI options are
-	 * Returned for the plugin (used to set default values).
-	 *
-	 * Currently, this only supports options with checkboxes.
-	 *
-	 * The default implementation returns an empty list.
-	 *
-	 * @param target    name of a config manager target
-	 * @return          a list of extra GUI options for an engine plugin and
-	 *                  target
-	 */
-	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const {
-		return ExtraGuiOptions();
-	}
-
-	/**
-	 * Register the default values for the settings the engine uses into the
-	 * configuration manager.
-	 *
-	 * @param target    name of a config manager target
-	 */
-	virtual void registerDefaultSettings(const Common::String &target) const;
-
-	/**
-	 * Return a GUI widget container for configuring the specified target options.
-	 *
-	 * The returned widget is shown in the Engine tab in the edit game dialog.
-	 * Engines can build custom options dialogs, but by default a simple widget
-	 * allowing to configure the extra GUI options is used.
-	 *
-	 * Engines that don't want to have an Engine tab in the edit game dialog
-	 * can return nullptr.
-	 *
-	 * @param boss     the widget / dialog the returned widget is a child of
-	 * @param name     the name the returned widget must use
-	 * @param target   name of a config manager target
-	 */
-	virtual GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const;
-
-	/**
-	 * Return a list of achievement descriptions for the specified target.
-	 *
-	 * The default implementation returns an empty list.
-	 *
-	 * @param target    name of a config manager target
-	 * @return          a list of achievement descriptions for an engine plugin
-	 *                  and target
-	 */
-	virtual const Common::AchievementsInfo getAchievementsInfo(const Common::String &target) const {
-		return Common::AchievementsInfo();
 	}
 
 	/**
@@ -298,6 +312,28 @@ public:
 	 * Return the keymap used by the target.
 	 */
 	virtual Common::Array<Common::Keymap *> initKeymaps(const char *target) const;
+
+	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const {
+		return ExtraGuiOptions();
+	}
+
+	/**
+	 * Return a GUI widget container for configuring the specified target options.
+	 *
+	 * Engines can build custom options dialogs from here, but by default a simple widget
+	 * allowing to configure the extra GUI options is used.
+	 *
+	 * A engine that builds the "Engines" tab in "Edit Game" uses a MetaEngine.
+	 * A engine that specifies a custom dialog, when a game is running, uses a MetaEngineConnect.
+	 *
+	 * Engines that don't want to have an Engine tab in the edit game dialog
+	 * can return nullptr.
+	 *
+	 * @param boss     the widget / dialog the returned widget is a child of
+	 * @param name     the name the returned widget must use
+	 * @param target   name of a config manager target
+	 */
+	virtual GUI::OptionsContainerWidget *buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const;
 
 	/** @name MetaEngineFeature flags */
 	//@{
@@ -386,19 +422,31 @@ public:
 		kSavesUseExtendedFormat
 	};
 
+	//@}
+
+	/**
+	 * Return a list of achievement descriptions for the specified target.
+	 *
+	 * The default implementation returns an empty list.
+	 *
+	 * @param target    name of a config manager target
+	 * @return          a list of achievement descriptions for an engine plugin
+	 *                  and target
+	 */
+	virtual const Common::AchievementsInfo getAchievementsInfo(const Common::String &target) const {
+		return Common::AchievementsInfo();
+	}
+
 	/**
 	 * Determine whether the engine supports the specified MetaEngine feature.
 	 * Used by e.g. the launcher to determine whether to enable the "Load" button.
 	 */
 	virtual bool hasFeature(MetaEngineFeature f) const;
 
-	static void appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playtime,
-		Common::String desc, bool isAutosave);
+	static void appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playtime, Common::String desc, bool isAutosave);
 	static void parseSavegameHeader(ExtendedSavegameHeader *header, SaveStateDescriptor *desc);
 	static void fillDummyHeader(ExtendedSavegameHeader *header);
 	static WARN_UNUSED_RESULT bool readSavegameHeader(Common::InSaveFile *in, ExtendedSavegameHeader *header, bool skipThumbnail = true);
-
-	//@}
 };
 
 /**
@@ -416,8 +464,14 @@ public:
 	/** Find a plugin by its engine ID */
 	const Plugin *findPlugin(const Common::String &engineId) const;
 
-	/** Get the list of all engine plugins */
-	const PluginList &getPlugins() const;
+	/**
+	 * Get the list of all plugins for the type specified.
+	 * By default, it will get METAENGINES, for now.
+	 * If usage of actual engines never occurs, we can skip
+	 * the default arguments, and always have it return
+	 * PLUGIN_TYPE_METAENGINE.
+	 */
+	const PluginList &getPlugins(const PluginType fetchPluginType = PLUGIN_TYPE_METAENGINE) const;
 
 	/** Find a target */
 	QualifiedGameDescriptor findTarget(const Common::String &target, const Plugin **plugin = NULL) const;

@@ -30,6 +30,14 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_ptr Pointers
+ * @ingroup common
+ *
+ * @brief API and templates for pointers.
+ * @{
+ */
+
 class SharedPtrDeletionInternal {
 public:
 	virtual ~SharedPtrDeletionInternal() {}
@@ -328,6 +336,8 @@ private:
 	PointerType           _pointer;
 	DisposeAfterUse::Flag _dispose;
 };
+
+/** @} */
 
 } // End of namespace Common
 

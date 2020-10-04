@@ -110,16 +110,16 @@ protected:
 	*/
 	virtual void listSaves();
 
-	const bool				_saveMode;
-	const MetaEngine		*_metaEngine;
-	bool					_delSupport;
-	bool					_metaInfoSupport;
-	bool					_thumbnailSupport;
-	bool					_saveDateSupport;
-	bool					_playTimeSupport;
-	Common::String			_target;
+	const bool					_saveMode;
+	const MetaEngine		    *_metaEngine;
+	bool						_delSupport;
+	bool						_metaInfoSupport;
+	bool						_thumbnailSupport;
+	bool						_saveDateSupport;
+	bool						_playTimeSupport;
+	Common::String				_target;
 	bool _dialogWasShown;
-	SaveStateList			_saveList;
+	SaveStateList				_saveList;
 
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 	ButtonWidget *_listButton;

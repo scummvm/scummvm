@@ -50,7 +50,7 @@ SXWMEGalaxyAPI::SXWMEGalaxyAPI(BaseGame *inGame, ScStack *stack) : BaseScriptabl
 
 //////////////////////////////////////////////////////////////////////////
 void SXWMEGalaxyAPI::init() {
-	MetaEngine &meta = ((WintermuteEngine *)g_engine)->getMetaEngine();
+	const MetaEngine &meta = ((WintermuteEngine *)g_engine)->getMetaEngine();
 	const Common::String target = BaseEngine::instance().getGameTargetName();
 	_achievementsInfo = meta.getAchievementsInfo(target);
 

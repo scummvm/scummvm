@@ -28,6 +28,14 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_mutex Mutex
+ * @ingroup common
+ *
+ * @brief API for managing the mutex.
+ * @{
+ */
+
 class Mutex;
 
 /**
@@ -62,6 +70,7 @@ public:
 	void unlock();
 };
 
+/** @} */
 
 } // End of namespace Common
 

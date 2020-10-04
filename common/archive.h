@@ -30,6 +30,18 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_arch Archive
+ * @ingroup common
+ *
+ * @brief  The Archive module allows managing the member of arbitrary containers in a uniform
+ * fashion. 
+ * It also supports looking up by names and file names, opening a file, and returning usable input stream.
+ *
+ * @{
+ */
+
+
 class FSNode;
 class SeekableReadStream;
 
@@ -275,6 +287,8 @@ private:
 
 /** Shortcut for accessing the search manager. */
 #define SearchMan		Common::SearchManager::instance()
+
+/** @} */
 
 } // namespace Common
 

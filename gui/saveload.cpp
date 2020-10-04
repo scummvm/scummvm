@@ -77,13 +77,23 @@ Common::String SaveLoadChooser::createDefaultSaveDescription(const int slot) con
 
 int SaveLoadChooser::runModalWithCurrentTarget() {
 	const Plugin *plugin = EngineMan.findPlugin(ConfMan.get("engineid"));
+	const Plugin *enginePlugin = nullptr;
 	if (!plugin) {
 		error("SaveLoadChooser::runModalWithCurrentTarget(): Cannot find plugin");
+	} else {
+		enginePlugin = PluginMan.getEngineFromMetaEngine(plugin);
+
+		if (!enginePlugin) {
+			error("SaveLoadChooser::runModalWithCurrentTarget(): Couldn't match a Engine from the MetaEngine. \
+				You will not be able to see savefiles until you have the necessary plugins.");
+		}
 	}
-	return runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+	return runModalWithPluginAndTarget(enginePlugin, ConfMan.getActiveDomainName());
 }
 
 int SaveLoadChooser::runModalWithPluginAndTarget(const Plugin *plugin, const String &target) {
+	assert(plugin->getType() == PLUGIN_TYPE_ENGINE);
+
 	selectChooser(plugin->get<MetaEngine>());
 	if (!_impl)
 		return -1;

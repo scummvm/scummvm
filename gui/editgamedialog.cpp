@@ -109,10 +109,16 @@ EditGameDialog::EditGameDialog(const String &domain)
 
 	// Retrieve the plugin, since we need to access the engine's MetaEngine
 	// implementation.
-	const Plugin *plugin = nullptr;
-	QualifiedGameDescriptor qgd = EngineMan.findTarget(domain, &plugin);
-	if (!plugin) {
-		warning("Plugin for target \"%s\" not found! Game specific settings might be missing", domain.c_str());
+	const Plugin *metaEnginePlugin = nullptr;
+	const Plugin *enginePlugin = nullptr;
+	QualifiedGameDescriptor qgd = EngineMan.findTarget(domain, &metaEnginePlugin);
+	if (!metaEnginePlugin) {
+		warning("MetaEnginePlugin for target \"%s\" not found!", domain.c_str());
+	} else {
+		enginePlugin = PluginMan.getEngineFromMetaEngine(metaEnginePlugin);
+		if (!enginePlugin) {
+			warning("Engine Plugin for target \"%s\" not found! Game specific settings might be missing.", domain.c_str());
+		}
 	}
 
 	// GAME: Path to game data (r/o), extra data (r/o), and save data (r/w)
@@ -176,12 +182,12 @@ EditGameDialog::EditGameDialog(const String &domain)
 	// 2) The engine tab (shown only if the engine implements one or there are custom engine options)
 	//
 
-	if (plugin) {
+	if (metaEnginePlugin) {
 		int tabId = tab->addTab(_("Engine"), "GameOptions_Engine");
 
-		const MetaEngine &metaEngine = plugin->get<MetaEngine>();
+		const MetaEngineStatic &metaEngine = metaEnginePlugin->get<MetaEngineStatic>();
 		metaEngine.registerDefaultSettings(_domain);
-		_engineOptions = metaEngine.buildEngineOptionsWidget(tab, "GameOptions_Engine.Container", _domain);
+		_engineOptions = metaEngine.buildEngineOptionsWidgetStatic(tab, "GameOptions_Engine.Container", _domain);
 
 		if (_engineOptions) {
 			_engineOptions->setParentDialog(this);
@@ -225,8 +231,8 @@ EditGameDialog::EditGameDialog(const String &domain)
 	// The Keymap tab
 	//
 	Common::KeymapArray keymaps;
-	if (plugin) {
-		keymaps = plugin->get<MetaEngine>().initKeymaps(domain.c_str());
+	if (enginePlugin) {
+		keymaps = enginePlugin->get<MetaEngine>().initKeymaps(domain.c_str());
 	}
 
 	if (!keymaps.empty()) {
@@ -333,9 +339,9 @@ EditGameDialog::EditGameDialog(const String &domain)
 	//
 	// 9) The Achievements tab
 	//
-	if (plugin) {
-		const MetaEngine &metaEngine = plugin->get<MetaEngine>();
-		Common::AchievementsInfo achievementsInfo = metaEngine.getAchievementsInfo(domain);
+	if (enginePlugin) {
+		const MetaEngine &metaEngineConnect = enginePlugin->get<MetaEngine>();
+		Common::AchievementsInfo achievementsInfo = metaEngineConnect.getAchievementsInfo(domain);
 		if (achievementsInfo.descriptions.size() > 0) {
 			tab->addTab(_("Achievements"), "GameOptions_Achievements");
 			addAchievementsControls(tab, "GameOptions_Achievements.", achievementsInfo);

@@ -285,7 +285,7 @@ ConfigDialog::ConfigDialog() :
 	int tabId = tab->addTab(_("Game"), "GlobalConfig_Engine");
 
 	if (g_engine->hasFeature(Engine::kSupportsChangingOptionsDuringRuntime)) {
-		_engineOptions = metaEngine.buildEngineOptionsWidget(tab, "GlobalConfig_Engine.Container", gameDomain);
+		_engineOptions = metaEngine.buildEngineOptionsWidgetDynamic(tab, "GlobalConfig_Engine.Container", gameDomain);
 	}
 
 	if (_engineOptions) {

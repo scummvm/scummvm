@@ -32,6 +32,15 @@
 namespace Common {
 
 /**
+ * @defgroup common_rect Rectangular zones
+ * @ingroup common
+ *
+ * @brief API for operations on rectangular zones.
+ *
+ * @{
+ */
+
+/**
  * Simple class for handling both 2D position and size.
  */
 struct Point {
@@ -296,6 +305,8 @@ struct Rect {
 		return !rect.isEmpty();
 	}
 };
+
+/** @} */
 
 } // End of namespace Common
 

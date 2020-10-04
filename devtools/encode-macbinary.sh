@@ -104,6 +104,11 @@ for parm in "$@" ; do
 	fi
 done  # for parm in ...
 
+if [[ $# -eq 0 ]] ; then
+	usage
+	exit 0
+fi
+
 if [[ $1 == "macbinary" ]] ; then
 	if ! `command -v macbinary >/dev/null 2>/dev/null` ; then
 		echo "macbinary not found. Exiting"

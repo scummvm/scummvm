@@ -33,6 +33,14 @@
 namespace Common {
 
 /**
+ * @defgroup common_osd_message_queue OSD message queue
+ * @ingroup common
+ *
+ * @brief API for managing the queue of On Screen Display (OSD) messages.
+ * @{
+ */
+
+/**
  * Queue OSD messages from any thread to be displayed by the graphic thread.
  */
 class OSDMessageQueue : public Singleton<OSDMessageQueue>, public EventSource {
@@ -67,6 +75,8 @@ private:
 	Queue<U32String> _messages;
 	uint32 _lastUpdate;
 };
+
+/** @} */
 
 } // End of namespace Common
 

@@ -29,6 +29,15 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_winexe_ne Windows New Executable resources
+ * @ingroup common_winexe
+ *
+ * @brief API for managing Windows New Executable resources.
+ *
+ * @{
+ */
+
 template<class T> class Array;
 class SeekableReadStream;
 
@@ -89,6 +98,8 @@ private:
 	/** Read a resource string. */
 	static String getResourceString(SeekableReadStream &exe, uint32 offset);
 };
+
+/** @} */
 
 } // End of namespace Common
 

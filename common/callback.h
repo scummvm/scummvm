@@ -26,6 +26,15 @@
 namespace Common {
 
 /**
+ * @defgroup common_callback Callbacks
+ * @ingroup common
+ *
+ * @brief  Callback templates.
+ *
+ * @{
+ */
+
+/**
  * BaseCallback<S> is a simple base class for object-oriented callbacks.
  *
  * Object-oriented callbacks are such callbacks that know exact instance
@@ -132,6 +141,8 @@ public:
 	virtual ~CallbackBridge() {}
 	void operator()(S data) { (_object->*_method)(_outerCallback, data); }
 };
+
+/** @} */
 
 } // End of namespace Common
 

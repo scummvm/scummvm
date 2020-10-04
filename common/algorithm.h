@@ -30,6 +30,15 @@
 namespace Common {
 
 /**
+ * @defgroup common_alg Algorithms
+ * @ingroup common
+ *
+ * @brief Templates for algorithms used to manipulate data.
+ *
+ * @{
+ */
+
+/**
  * Copies data from the range [first, last) to [dst, dst + (last - first)).
  * It requires the range [dst, dst + (last - first)) to be valid.
  * It also requires dst not to be in the range [first, last).
@@ -308,5 +317,9 @@ void replace(It begin, It end, const Dat &original, const Dat &replaced) {
     }
 }
 
+/** @} */
+
+
 } // End of namespace Common
+
 #endif

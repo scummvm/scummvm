@@ -31,6 +31,15 @@
 namespace Common {
 
 /**
+ * @defgroup common_encoding Text encoding
+ * @ingroup common
+ *
+ * @brief  Functions for managing text encoding.
+ *
+ * @{
+ */
+
+/**
  * A class, that allows conversion between different text encoding,
  * the encodings available depend on the current backend and if the
  * ScummVM is compiled with or without iconv.
@@ -220,6 +229,8 @@ class Encoding {
 		 */
 		static uint32 *transliterateUTF32(const uint32 *string, size_t length);
 };
+
+/** @} */
 
 }
 

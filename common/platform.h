@@ -27,6 +27,14 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_platform Game platforms
+ * @ingroup common
+ *
+ * @brief API for managing game platforms.
+ * @{
+ */
+
 class String;
 
 /**
@@ -83,6 +91,8 @@ extern Platform parsePlatform(const String &str);
 extern const char *getPlatformCode(Platform id);
 extern const char *getPlatformAbbrev(Platform id);
 extern const char *getPlatformDescription(Platform id);
+
+/** @} */
 
 } // End of namespace Common
 

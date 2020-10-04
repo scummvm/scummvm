@@ -166,9 +166,9 @@ struct ADExtraGuiOptionsMap {
 #define AD_EXTRA_GUI_OPTIONS_TERMINATOR { 0, { 0, 0, 0, 0 } }
 
 /**
- * A MetaEngine implementation based around the advanced detector code.
+ * A MetaEngineStatic implementation based around the advanced detector code.
  */
-class AdvancedMetaEngine : public MetaEngine {
+class AdvancedMetaEngineStatic : public MetaEngineStatic {
 protected:
 	/**
 	 * Pointer to an array of objects which are either ADGameDescription
@@ -246,7 +246,7 @@ protected:
 	bool _matchFullPaths;
 
 public:
-	AdvancedMetaEngine(const void *descs, uint descItemSize, const PlainGameDescriptor *gameIds, const ADExtraGuiOptionsMap *extraGuiOptions = 0);
+	AdvancedMetaEngineStatic(const void *descs, uint descItemSize, const PlainGameDescriptor *gameIds, const ADExtraGuiOptionsMap *extraGuiOptions = 0);
 
 	/**
 	 * Returns list of targets supported by the engine.
@@ -258,14 +258,16 @@ public:
 
 	DetectedGames detectGames(const Common::FSList &fslist) const override;
 
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const override;
+	/**
+	 * A generic createInstance.
+	 * For instantiating engine objects, this method is called first,
+	 * and then the subclass implemented createInstance is called from within.
+	 */
+	Common::Error createInstance(OSystem *syst, Engine **engine) const;
 
 	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 
 protected:
-	// To be implemented by subclasses
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const = 0;
-
 	typedef Common::HashMap<Common::String, Common::FSNode, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
 
 	/**
@@ -320,6 +322,59 @@ protected:
 	virtual DetectedGame toDetectedGame(const ADDetectedGame &adGame) const;
 
 	friend class FileMapArchive; // for FileMap
+};
+
+/**
+ * A MetaEngine implementation of AdvancedMetaEngine.
+ */
+class AdvancedMetaEngine : public MetaEngine {
+public:
+	/**
+	 * Base createInstance for AMEC.
+	 * The AME provides a default createInstance which is called first, so we should invoke that
+	 * first.
+	 * By the point of time we call this, we assume that we only have one
+	 * plugin engine loaded in memory.
+	 */
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const override;
+
+	/**
+	 * To be implemented by subclasses, which is called after we call the base
+	 * createInstance function above.
+	 */
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const = 0;
+
+	/**
+	 * Provide the engineID here, must match the one from MetaEngine.
+	 *
+	 * @see MetaEngineConnect::getName().
+	 */
+	virtual const char *getName() const override = 0;
+
+public:
+	typedef Common::HashMap<Common::String, Common::FSNode, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
+
+	/**
+	 * An (optional) generic fallback detect function which is invoked
+	 * if the regular MD5 based detection failed to detect anything.
+	 * NOTE: This is only meant to be used if fallback detection is heavily dependant on engine resources.
+	 *
+	 * To use this, implement the intended fallbackDetectExtern inside the relevant MetaEngineConnect class.
+	 * Then, override the method "fallbackDetect" inside your MetaEngine class.
+	 * Finally, provide a "hook" to fetch the relevant MetaEngineConnect class and then use the orignal detection
+	 * method.
+	 *
+	 * An example for the way this is used can be found in the Wintermute Engine.
+	 */
+	virtual ADDetectedGame fallbackDetectExtern(uint md5Bytes, const FileMap &allFiles, const Common::FSList &fslist) const {
+		return ADDetectedGame();
+	}
+
+	/**
+	 * Get the properties (size and MD5) of this file.
+	 * Based on MetaEngine::getFileProperties.
+	 */
+	bool getFilePropertiesExtern(uint md5Bytes, const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps) const;
 };
 
 #endif

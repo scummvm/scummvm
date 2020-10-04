@@ -30,6 +30,14 @@
 namespace Common {
 
 /**
+ * @defgroup common_memory_pool Memory pool
+ * @ingroup common_memory
+ *
+ * @brief API for managing the memory pool.
+ * @{
+ */
+
+/**
  * This class provides a pool of memory 'chunks' of identical size.
  * The size of a chunk is determined when creating the memory pool.
  *
@@ -140,6 +148,8 @@ public:
 		this->freeChunk(ptr);
 	}
 };
+
+/** @} */
 
 } // End of namespace Common
 

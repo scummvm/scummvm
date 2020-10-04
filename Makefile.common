@@ -54,6 +54,38 @@ CPPFLAGS := $(DEFINES) $(INCLUDES)
 # Include the build instructions for all modules
 -include $(addprefix $(srcdir)/, $(addsuffix /module.mk,$(MODULES)))
 
+# Store original info
+MODULES_ORIG:= $(MODULES)
+MODULE_DIRS_ORIG := $(MODULE_DIRS)
+KYRARPG_COMMON_OBJ_ORIG := $(KYRARPG_COMMON_OBJ)
+
+# Skip rules for these files, by resetting the LOAD_RULES_MK
+LOAD_RULES_MK :=
+
+# Reset detection objects, which uptill now are filled with only
+# enabled engines.
+DETECT_OBJS :=
+
+# Include all engine's module files, which populate DETECT_OBJS
+-include $(srcdir)/engines/*/module.mk
+
+# Reset stuff
+MODULES := $(MODULES_ORIG)
+MODULE :=
+MODULE_OBJS :=
+MODULE_DIRS := $(MODULE_DIRS_ORIG)
+PLUGIN :=
+KYRARPG_COMMON_OBJ := $(KYRARPG_COMMON_OBJ_ORIG)
+
+# Enable-rules again
+LOAD_RULES_MK := 1
+
+ifneq ($(DETECTION_STATIC), 1)
+-include $(srcdir)/engines/detect_modules.mk
+else
+MODULE_DIRS += $(sort $(dir $(DETECT_OBJS)))
+endif
+
 # Depdir information
 DEPDIRS = $(addsuffix $(DEPDIR),$(MODULE_DIRS))
 DEPFILES =
@@ -88,7 +120,7 @@ endif
 endif
 
 # The build rule for the ResidualVM executable
-$(EXECUTABLE): $(OBJS)
+$(EXECUTABLE): $(DETECT_OBJS) $(OBJS)
 	$(QUIET_LINK)$(LD) $(LDFLAGS) $(PRE_OBJS_FLAGS) $+ $(POST_OBJS_FLAGS) $(LIBS) -o $@
 
 ifdef SPLIT_DWARF
@@ -101,7 +133,7 @@ distclean: clean clean-devtools
 
 clean:
 	$(RM_REC) $(DEPDIRS)
-	$(RM) $(OBJS) $(EXECUTABLE)
+	$(RM) $(OBJS) $(DETECT_OBJS) $(EXECUTABLE)
 ifdef SPLIT_DWARF
 	$(RM) $(OBJS:.o=.dwo)
 	$(RM) $(EXECUTABLE).dwp

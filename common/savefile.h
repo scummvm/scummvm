@@ -31,6 +31,14 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_savefile Save files
+ * @ingroup common
+ *
+ * @brief API for managing save files.
+ *
+ * @{
+ */
 
 /**
  * A class which allows game engines to load game state data.
@@ -208,6 +216,8 @@ public:
 	 */
 	virtual void updateSavefilesList(StringArray &lockedFiles) = 0;
 };
+
+/** @} */
 
 } // End of namespace Common
 

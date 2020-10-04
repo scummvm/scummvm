@@ -31,6 +31,15 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_files Files
+ * @ingroup common
+ *
+ * @brief  API for operations on files.
+ *
+ * @{
+ */
+
 class Archive;
 
 /**
@@ -167,6 +176,8 @@ public:
 	virtual bool seek(int32 offset, int whence = SEEK_SET) override;
 	virtual int32 size() const override;
 };
+
+/** @} */
 
 } // End of namespace Common
 

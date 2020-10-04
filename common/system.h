@@ -69,6 +69,15 @@ class Encoding;
 typedef Array<Keymap *> KeymapArray;
 }
 
+/**
+ * @defgroup common_system System
+ * @ingroup common
+ *
+ * @brief Operating system related API.
+ *
+ * @{
+ */
+
 class AudioCDManager;
 class FilesystemFactory;
 class PaletteManager;
@@ -821,6 +830,7 @@ public:
 	 * @return the ID of the active stretch mode
 	 */
 	virtual int getStretchMode() const { return 0; }
+
 
 	/**
 	 * Set the size and color format of the virtual screen. Typical sizes include:
@@ -1698,5 +1708,7 @@ protected:
 
 /** The global OSystem instance. Initialized in main(). */
 extern OSystem *g_system;
+
+/** @} */
 
 #endif

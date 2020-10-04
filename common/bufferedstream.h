@@ -29,6 +29,15 @@
 namespace Common {
 
 /**
+ * @defgroup common_buffstream Buffered stream
+ * @ingroup common
+ *
+ * @brief  API for implementing a buffered stream.
+ *
+ * @{
+ */
+
+/**
  * Take an arbitrary ReadStream and wrap it in a custom stream which
  * transparently provides buffering.
  * Users can specify how big the buffer should be, and whether the wrapped
@@ -60,6 +69,8 @@ SeekableReadStream *wrapBufferedSeekableReadStream(SeekableReadStream *parentStr
  * returned).
  */
 WriteStream *wrapBufferedWriteStream(WriteStream *parentStream, uint32 bufSize);
+
+/** @} */
 
 } // End of namespace Common
 

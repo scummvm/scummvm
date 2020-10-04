@@ -28,6 +28,16 @@
 namespace Common {
 
 /**
+ * @defgroup common_list Lists
+ * @ingroup common
+ *
+ * @brief API and templates for managing lists.
+ *
+ *		
+ * @{
+ */
+
+/**
  * Simple double linked list, modeled after the list template of the standard
  * C++ library.
  */
@@ -254,6 +264,8 @@ protected:
 		newNode->_next->_prev = newNode;
 	}
 };
+
+/** @} */
 
 } // End of namespace Common
 

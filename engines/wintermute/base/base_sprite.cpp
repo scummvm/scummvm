@@ -41,7 +41,7 @@
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
-#include "engines/wintermute/game_description.h"
+#include "engines/wintermute/detection.h"
 
 namespace Wintermute {
 

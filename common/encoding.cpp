@@ -44,7 +44,7 @@ String addUtfEndianness(const String &str) {
 		return str + "LE";
 #endif
 	} else
-		return String(str);
+		return str;
 }
 
 Encoding::Encoding(const String &to, const String &from)
@@ -55,7 +55,7 @@ Encoding::Encoding(const String &to, const String &from)
 char *Encoding::switchEndian(const char *string, int length, int bitCount) {
 	assert(bitCount % 8 == 0);
 	assert(length % (bitCount / 8) == 0);
-	char *newString = (char *)malloc(length);
+	char *newString = (char *)calloc(sizeof(char), length + 4);
 	if (!newString) {
 		warning("Could not allocate memory for string conversion");
 		return nullptr;
@@ -98,19 +98,33 @@ char *Encoding::convertWithTransliteration(const String &to, const String &from,
 		return result;
 	}
 
-	if ((addUtfEndianness(to).equalsIgnoreCase("utf-16be") &&
-			addUtfEndianness(from).equalsIgnoreCase("utf-16le")) ||
-			(addUtfEndianness(to).equalsIgnoreCase("utf-16le") &&
-			addUtfEndianness(from).equalsIgnoreCase("utf-16be")) ||
-			(addUtfEndianness(to).equalsIgnoreCase("utf-32be") &&
-			addUtfEndianness(from).equalsIgnoreCase("utf-32le")) ||
-			(addUtfEndianness(to).equalsIgnoreCase("utf-32le") &&
-			addUtfEndianness(from).equalsIgnoreCase("utf-32be"))) {
-		// The encoding is the same, we just need to switch the endianness
-		if (to.hasPrefixIgnoreCase("utf-16"))
-			return switchEndian(string, length, 16);
-		else
-			return switchEndian(string, length, 32);
+	if ((to.hasPrefixIgnoreCase("utf-16") && from.hasPrefixIgnoreCase("utf-16")) ||
+		(to.hasPrefixIgnoreCase("utf-32") && from.hasPrefixIgnoreCase("utf-32"))) {
+		// Since the two strings are not equal as this is already checked above,
+		// this likely mean that one or both has an endianness suffix, and we
+		// just need to switch the endianess.
+#ifdef SCUMM_BIG_ENDIAN
+		bool fromBigEndian = !from.hasSuffixIgnoreCase("le");
+		bool toBigEndian = !to.hasSuffixIgnoreCase("le");
+#else
+		bool fromBigEndian = from.hasSuffixIgnoreCase("be");
+		bool toBigEndian = to.hasSuffixIgnoreCase("be");
+#endif
+		if (fromBigEndian == toBigEndian) {
+			// don't convert, just copy the string and return it
+			char *result = (char *)calloc(sizeof(char), length + 4);
+			if (!result) {
+				warning("Could not allocate memory for string conversion");
+				return nullptr;
+			}
+			memcpy(result, string, length);
+			return result;
+		} else {
+			if (to.hasPrefixIgnoreCase("utf-16"))
+				return switchEndian(string, length, 16);
+			else
+				return switchEndian(string, length, 32);
+		}
 	}
 
 	char *newString = nullptr;

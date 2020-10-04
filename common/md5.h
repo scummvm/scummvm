@@ -27,6 +27,15 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_md5 MD5 checksum
+ * @ingroup common
+ *
+ * @brief API for computing the MD5 checksum.
+ *
+ * @{
+ */
+
 class ReadStream;
 class String;
 
@@ -53,6 +62,8 @@ bool computeStreamMD5(ReadStream &stream, uint8 digest[16], uint32 length = 0);
  * @return the MD5 as a hex string on success, and an empty string if an error occurred
  */
 String computeStreamMD5AsString(ReadStream &stream, uint32 length = 0);
+
+/** @} */
 
 } // End of namespace Common
 

@@ -133,7 +133,7 @@ static const Plugin *detectPlugin() {
 
 	// Query the plugin for the game descriptor
 	printf("   Looking for a plugin supporting this target... %s\n", plugin->getName());
-	PlainGameDescriptor game = plugin->get<MetaEngine>().findGame(gameId.c_str());
+	PlainGameDescriptor game = plugin->get<MetaEngineStatic>().findGame(gameId.c_str());
 	if (!game.gameId) {
 		warning("'%s' is an invalid game ID for the engine '%s'. Use the --list-games option to list supported game IDs", gameId.c_str(), engineId.c_str());
 		return 0;
@@ -153,6 +153,8 @@ void saveLastLaunchedTarget(const Common::String &target) {
 
 // TODO: specify the possible return values here
 static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common::String &edebuglevels) {
+	assert(plugin);
+
 	// Determine the game data path, for validation and error messages
 	Common::FSNode dir(ConfMan.get("path"));
 	Common::String target = ConfMan.getActiveDomainName();
@@ -179,16 +181,27 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 		err = Common::kPathNotDirectory;
 	}
 
-	// Create the game engine
-	const MetaEngine &metaEngine = plugin->get<MetaEngine>();
+	// Create the game's MetaEngine.
+	const MetaEngineStatic &metaEngine = plugin->get<MetaEngineStatic>();
 	if (err.getCode() == Common::kNoError) {
 		// Set default values for all of the custom engine options
 		// Apparently some engines query them in their constructor, thus we
 		// need to set this up before instance creation.
 		metaEngine.registerDefaultSettings(target);
-
-		err = metaEngine.createInstance(&system, &engine);
 	}
+
+	// Right now we have a MetaEngine plugin. We must find the matching engine plugin to
+	// call createInstance and other connecting functions.
+	Plugin *enginePluginToLaunchGame = PluginMan.getEngineFromMetaEngine(plugin);
+
+	if (!enginePluginToLaunchGame) {
+		err = Common::kEnginePluginNotFound;
+		return err;
+	}
+
+	// Create the game's MetaEngineConnect.
+	const MetaEngine &metaEngineConnect = enginePluginToLaunchGame->get<MetaEngine>();
+	err = metaEngineConnect.createInstance(&system, &engine);
 
 	// Check for errors
 	if (!engine || err.getCode() != Common::kNoError) {
@@ -279,7 +292,7 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 #endif // USE_TRANSLATION
 
 	// Initialize any game-specific keymaps
-	Common::KeymapArray gameKeymaps = metaEngine.initKeymaps(target.c_str());
+	Common::KeymapArray gameKeymaps = metaEngineConnect.initKeymaps(target.c_str());
 	Common::Keymapper *keymapper = system.getEventManager()->getKeymapper();
 	for (uint i = 0; i < gameKeymaps.size(); i++) {
 		keymapper->addGameKeymap(gameKeymaps[i]);
@@ -423,8 +436,10 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		gDebugChannelsOnly = true;
 
 
+	ConfMan.registerDefault("always_run_fallback_detection_extern", true);
 	PluginManager::instance().init();
  	PluginManager::instance().loadAllPlugins(); // load plugins for cached plugin manager
+	PluginManager::instance().loadDetectionPlugin(); // load detection plugin for uncached plugin manager
 
 	// If we received an invalid music parameter via command line we check this here.
 	// We can't check this before loading the music plugins.
@@ -536,12 +551,23 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 		EngineMan.upgradeTargetIfNecessary(ConfMan.getActiveDomainName());
 
-		// Try to find a plugin which feels responsible for the specified game.
+		// Try to find a MetaEnginePlugin which feels responsible for the specified game.
 		const Plugin *plugin = detectPlugin();
 		if (plugin) {
-			// Unload all plugins not needed for this game,
-			// to save memory
-			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE, plugin);
+			// Unload all plugins not needed for this game, to save memory
+
+			// Right now, we have a MetaEngine plugin, and we want to unload all except Engine.
+			// First, get the relevant Engine plugin from MetaEngine.
+			const Plugin *enginePlugin = PluginMan.getEngineFromMetaEngine(plugin);
+
+			// Then, pass in the pointer to enginePlugin, with the matching type, so our function behaves as-is.
+			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE, enginePlugin);
+
+#if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES)
+			// Unload all MetaEngines not needed for the current engine, if we're using uncached plugins
+			// to save extra memory.
+			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_METAENGINE, plugin);
+#endif
 
 #ifdef ENABLE_EVENTRECORDER
 			Common::String recordMode = ConfMan.get("record_mode");
@@ -582,6 +608,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 #if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES)
 			// do our best to prevent fragmentation by unloading as soon as we can
 			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);
+			PluginManager::instance().unloadDetectionPlugin();
 			// reallocate the config manager to get rid of any fragmentation
 			ConfMan.defragment();
 			// The keymapper keeps pointers to the configuration domains. It needs to be reinitialized.
@@ -637,6 +664,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			}
 
 			PluginManager::instance().loadAllPluginsOfType(PLUGIN_TYPE_ENGINE); // only for cached manager
+			PluginManager::instance().loadDetectionPlugin(); // only for uncached manager
 		} else {
 			GUI::displayErrorDialog(_("Could not find any engine capable of running the selected game"));
 
@@ -660,6 +688,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	Cloud::CloudManager::destroy();
 #endif
 #endif
+	PluginManager::instance().unloadDetectionPlugin();
 	PluginManager::instance().unloadAllPlugins();
 	PluginManager::destroy();
 	GUI::GuiManager::destroy();

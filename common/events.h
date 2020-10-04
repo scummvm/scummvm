@@ -34,14 +34,18 @@
 namespace Common {
 
 /**
- * The types of events backends may generate.
- * @see Event
+ * @defgroup common_events Events
+ * @ingroup common
+ *
+ * @brief  The types of events backends may generate.
  *
  * @todo Merge EVENT_LBUTTONDOWN, EVENT_RBUTTONDOWN and EVENT_WHEELDOWN;
  *       likewise EVENT_LBUTTONUP, EVENT_RBUTTONUP, EVENT_WHEELUP.
  *       To do that, we just have to add a field to the Event which
  *       indicates which button was pressed.
+ * @{
  */
+
 enum EventType {
 	EVENT_INVALID = 0,
 	/** A key was pressed, details in Event::kbd. */
@@ -554,6 +558,8 @@ protected:
  * Does not take ownership of the wrapped EventSource.
  */
 EventSource *makeKeyboardRepeatingEventSource(EventSource *eventSource);
+
+/** @} */
 
 } // End of namespace Common
 

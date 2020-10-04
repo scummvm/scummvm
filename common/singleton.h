@@ -28,6 +28,15 @@
 namespace Common {
 
 /**
+ * @defgroup common_singleton Singleton
+ * @ingroup common
+ *
+ * @brief API for managing singletons.
+ *
+ * @{
+ */
+
+/**
  * Generic template base class for implementing the singleton design pattern.
  */
 template<class T>
@@ -100,6 +109,8 @@ protected:
  */
 #define DECLARE_SINGLETON(T) \
 	template<> T *Singleton<T>::_singleton = 0
+
+/** @} */
 
 } // End of namespace Common
 

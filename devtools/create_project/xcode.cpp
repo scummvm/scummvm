@@ -455,6 +455,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	DEF_SYSTBD("libiconv");
 
 	// Local libraries
+	if (CONTAINS_DEFINE(setup.defines, "USE_FAAD")) {
+		DEF_LOCALLIB_STATIC("libfaad");
+	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_FLAC")) {
 		DEF_LOCALLIB_STATIC("libFLAC");
 	}
@@ -476,6 +479,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	if (CONTAINS_DEFINE(setup.defines, "USE_MAD")) {
 		DEF_LOCALLIB_STATIC("libmad");
 	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_MPEG2")) {
+		DEF_LOCALLIB_STATIC("libmpeg2");
+	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_FRIBIDI")) {
 		DEF_LOCALLIB_STATIC("libfribidi");
 	}
@@ -494,12 +500,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_THEORADEC")) {
 		DEF_LOCALLIB_STATIC("libtheoradec");
-	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_GLEW")) { // ResidualVM specific
 		DEF_LOCALLIB_STATIC("libGLEW");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_MPEG2")) { // ResidualVM specific
-		DEF_LOCALLIB_STATIC("libmpeg2");
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_ZLIB")) {
 		DEF_SYSTBD("libz");
@@ -554,6 +557,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	frameworks_iOS.push_back("QuartzCore.framework");
 	frameworks_iOS.push_back("OpenGLES.framework");
 
+	if (CONTAINS_DEFINE(setup.defines, "USE_FAAD")) {
+		frameworks_iOS.push_back("libfaad.a");
+	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_FLAC")) {
 		frameworks_iOS.push_back("libFLAC.a");
 	}
@@ -581,6 +587,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_MAD")) {
 		frameworks_iOS.push_back("libmad.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_MPEG2")) {
+		frameworks_iOS.push_back("libmpeg2.a");
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_FRIBIDI")) {
 		frameworks_iOS.push_back("libfribidi.a");
@@ -645,6 +654,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	frameworks_osx.push_back("OpenGL.framework"); // ResidualVM specific
 	frameworks_osx.push_back("AudioUnit.framework");
 
+	if (CONTAINS_DEFINE(setup.defines, "USE_FAAD")) {
+		frameworks_osx.push_back("libfaad.a");
+	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_FLAC")) {
 		frameworks_osx.push_back("libFLAC.a");
 	}
@@ -664,6 +676,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_MAD")) {
 		frameworks_osx.push_back("libmad.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_MPEG2")) {
+		frameworks_osx.push_back("libmpeg2.a");
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_FRIBIDI")) {
 		frameworks_osx.push_back("libfribidi.a");
@@ -687,11 +702,11 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	if (CONTAINS_DEFINE(setup.defines, "USE_GLEW")) { // ResidualVM specific
 		frameworks_osx.push_back("libGLEW.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_MPEG2")) { // ResidualVM specific
-		frameworks_osx.push_back("libmpeg2.a");
-	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_ZLIB")) {
 		frameworks_osx.push_back("libz.tbd");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_DISCORD")) {
+		frameworks_osx.push_back("libdiscord-rpc.a");
 	}
 
 	if (setup.useSDL2) {
@@ -939,6 +954,9 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING(scummvm_Debug, "ALWAYS_SEARCH_USER_PATHS", "NO");
 	ADD_SETTING_QUOTE(scummvm_Debug, "USER_HEADER_SEARCH_PATHS", "$(SRCROOT) $(SRCROOT)/engines");
 	ADD_SETTING(scummvm_Debug, "CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED", "YES");
+	if (CONTAINS_DEFINE(setup.defines, "USE_CXX11")) {
+		ADD_SETTING(scummvm_Debug, "CLANG_CXX_LANGUAGE_STANDARD", "\"c++0x\"");
+	}
 	ADD_SETTING(scummvm_Debug, "CLANG_WARN_BOOL_CONVERSION", "YES");
 	ADD_SETTING(scummvm_Debug, "CLANG_WARN_CONSTANT_CONVERSION", "YES");
 	ADD_SETTING(scummvm_Debug, "CLANG_WARN_EMPTY_BODY", "YES");
@@ -1097,6 +1115,9 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING(scummvmOSX_Debug, "COPY_PHASE_STRIP", "NO");
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "DEBUG_INFORMATION_FORMAT", "dwarf");
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "FRAMEWORK_SEARCH_PATHS", "");
+	if (CONTAINS_DEFINE(setup.defines, "USE_CXX11")) {
+		ADD_SETTING(scummvmOSX_Debug, "CLANG_CXX_LANGUAGE_STANDARD", "\"c++0x\"");
+	}
 	ADD_SETTING(scummvmOSX_Debug, "GCC_C_LANGUAGE_STANDARD", "c99");
 	ADD_SETTING(scummvmOSX_Debug, "GCC_ENABLE_CPP_EXCEPTIONS", "NO");
 	ADD_SETTING(scummvmOSX_Debug, "GCC_ENABLE_CPP_RTTI", "YES");

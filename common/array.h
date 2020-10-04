@@ -28,7 +28,21 @@
 #include "common/textconsole.h" // For error()
 #include "common/memory.h"
 
+#ifdef USE_CXX11
+#include "common/initializer_list.h"
+#endif
+
 namespace Common {
+
+/**
+ * @defgroup common_array Arrays
+ * @ingroup common
+ *
+ * @brief  Functions for working on arrays.
+ *
+ * @{
+ */
+
 
 /**
  * This class implements a dynamically sized container, which
@@ -83,6 +97,26 @@ public:
 			uninitialized_copy(array._storage, array._storage + _size, _storage);
 		}
 	}
+
+#ifdef USE_CXX11
+	/**
+	 * Constructs an array as a copy of the given array using the c++11 move semantic.
+	 */
+	Array(Array<T> &&old) : _capacity(old._capacity), _size(old._size), _storage(old._storage) {
+		old._storage = nullptr;
+		old._capacity = 0;
+		old._size = 0;
+	}
+
+	/**
+	 * Constructs an array using list initialization.
+	 */
+	Array(std::initializer_list<T> list) : _size(list.size()) {
+		allocCapacity(list.size());
+		if (_storage)
+			Common::uninitialized_copy(list.begin(), list.end(), _storage);
+	}
+#endif
 
 	/**
 	 * Construct an array by copying data from a regular array.
@@ -209,6 +243,24 @@ public:
 
 		return *this;
 	}
+
+#ifdef USE_CXX11
+	Array &operator=(Array<T> &&old) {
+		if (this == &old)
+			return *this;
+
+		freeStorage(_storage, _size);
+		_capacity = old._capacity;
+		_size = old._size;
+		_storage = old._storage;
+
+		old._storage = nullptr;
+		old._capacity = 0;
+		old._size = 0;
+
+		return *this;
+	}
+#endif
 
 	size_type size() const {
 		return _size;
@@ -455,6 +507,8 @@ private:
 
 	Comparator _comparator;
 };
+
+/** @} */
 
 } // End of namespace Common
 

@@ -28,6 +28,15 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_ustr UTF-32 strings
+ * @ingroup common_str
+ *
+ * @brief API for working with UTF-32 strings.
+ *
+ * @{
+ */
+ 
 class String;
 class UnicodeBiDiText;
 
@@ -280,6 +289,9 @@ private:
 };
 
 U32String operator+(const U32String &x, const U32String &y);
+
+/** @} */
+
 } // End of namespace Common
 
 #endif
