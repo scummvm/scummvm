@@ -26,13 +26,13 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
-
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/shadow_volume_opengl_shader.h"
 #include "engines/wintermute/dcgf.h"
 #include "graphics/opengl/system_headers.h"
+
+#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
 namespace Wintermute {
 

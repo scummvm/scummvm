@@ -505,15 +505,16 @@ bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 	Common::String rendererConfig = ConfMan.get("renderer");
 	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
 
-#if defined(USE_OPENGL)
-	if (desiredRendererType == Graphics::kRendererTypeOpenGLShaders) {
 #if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+	if (desiredRendererType == Graphics::kRendererTypeOpenGLShaders) {
 		_renderer3D = makeOpenGL3DShaderRenderer(this);
+	}
 #endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
-	} else {
+#if defined(USE_OPENGL) && !defined(USE_GLES2)
+	if (desiredRendererType == Graphics::kRendererTypeOpenGLShaders) {
 		_renderer3D = makeOpenGL3DRenderer(this);
 	}
-#endif
+#endif // defined(USE_OPENGL) && !defined(USE_GLES2)
 
 	_renderer = _renderer3D;
 #else

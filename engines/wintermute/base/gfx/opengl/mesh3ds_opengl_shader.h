@@ -23,9 +23,10 @@
 #ifndef WINTERMUTE_MESH_OPENGL_H
 #define WINTERMUTE_MESH_OPENGL_H
 
+#include "engines/wintermute/base/gfx/3ds/mesh3ds.h"
+
 #if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
-#include "engines/wintermute/base/gfx/3ds/mesh3ds.h"
 #include "graphics/opengl/shader.h"
 
 namespace Wintermute {

@@ -23,18 +23,19 @@
 #ifndef WINTERMUTE_BASE_RENDER_OPENGL3D_H
 #define WINTERMUTE_BASE_RENDER_OPENGL3D_H
 
-#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
-
 #include "engines/wintermute/base/gfx/base_renderer3d.h"
 #include "engines/wintermute/dctypes.h"
 #include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/math/vector2.h"
-#include "graphics/opengl/shader.h"
 #include "graphics/opengl/system_headers.h"
 #include "graphics/opengl/texture.h"
 #include "graphics/transform_struct.h"
 #include "math/matrix4.h"
 #include "math/ray.h"
+
+#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+
+#include "graphics/opengl/shader.h"
 
 namespace Wintermute {
 
