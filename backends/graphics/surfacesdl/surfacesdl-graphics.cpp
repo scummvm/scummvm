@@ -2633,6 +2633,14 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 		return nullptr;
 	}
 
+#if defined(MACOSX) && SDL_VERSION_ATLEAST(2, 0, 10)
+	// WORKAROUND: Bug #11430: "macOS: blurry content on Retina displays"
+	// Since SDL 2.0.10, Metal takes priority over OpenGL rendering on macOS,
+	// but this causes blurriness issues on Retina displays. Just switch
+	// back to OpenGL for now.
+	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
+#endif
+
 	_renderer = SDL_CreateRenderer(_window->getSDLWindow(), -1, 0);
 	if (!_renderer) {
 		deinitializeRenderer();
