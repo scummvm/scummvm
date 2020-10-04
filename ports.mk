@@ -316,7 +316,7 @@ endif
 # We use -force_cpusubtype_ALL to ensure the binary runs on every
 # PowerPC machine.
 residualvm-static: $(OBJS) $(DETECT_OBJS)
-	$(CXX) $(LDFLAGS) -force_cpusubtype_ALL -o residualvm-static $(OBJS) \
+	$(CXX) $(LDFLAGS) -force_cpusubtype_ALL -o residualvm-static $(OBJS) $(DETECT_OBJS) \
 		-framework CoreMIDI \
 		$(OSX_STATIC_LIBS) \
 		$(OSX_ZLIB)
