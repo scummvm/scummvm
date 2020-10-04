@@ -66,10 +66,6 @@
 	<string>Copyright 2001-2020 The ScummVM Team</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
-	<dict>
-		<key>SDL_RENDER_DRIVER</key>
-		<string>opengl</string>
-	</dict>
 	<key>SUFeedURL</key>
 	<string>https://www.scummvm.org/appcasts/macosx/release.xml</string>
 	<key>SUPublicEDKey</key>
