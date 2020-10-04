@@ -24,7 +24,7 @@
 
 #include "base/plugins.h"
 #include "engines/metaengine.h"
-#include "engines/advanceddetector.h"
+#include "engines/advancedDetector.h"
 #include "engines/detection.h"
 
 

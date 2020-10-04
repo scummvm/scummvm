@@ -66,6 +66,7 @@ MODULE_OBJS := \
 	map_marker.o \
 	map_marker_pc.o \
 	mega_interaction.o \
+	metaengine.o \
 	mission.o \
 	mission_functions.o \
 	mouse.o \

@@ -32,11 +32,11 @@ namespace Stark {
 
 class StarkMetaEngine : public AdvancedMetaEngine {
 public:
-    const char *getName() const override {
+	const char *getName() const override {
 		return "stark";
 	}
 
-    bool hasFeature(MetaEngineFeature f) const override {
+	bool hasFeature(MetaEngineFeature f) const override {
 		return
 			(f == kSupportsListSaves) ||
 			(f == kSupportsLoadingDuringStartup) ||

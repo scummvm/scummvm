@@ -22,6 +22,7 @@ MODULE_OBJS := \
 	formats/xarc.o \
 	formats/xmg.o \
 	formats/xrc.o \
+	metaengine.o \
 	model/animhandler.o \
 	model/model.o \
 	model/skeleton_anim.o \

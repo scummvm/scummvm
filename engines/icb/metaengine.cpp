@@ -28,10 +28,10 @@ namespace ICB {
 
 class IcbMetaEngine : public AdvancedMetaEngine {
 public:
-    const char *getName() const override {
+	const char *getName() const override {
 		return "icb";
 	}
-    virtual bool hasFeature(MetaEngineFeature f) const override { return false; }
+	virtual bool hasFeature(MetaEngineFeature f) const override { return false; }
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };

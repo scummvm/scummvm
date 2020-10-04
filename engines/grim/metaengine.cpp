@@ -33,11 +33,11 @@ namespace Grim {
 
 class GrimMetaEngine : public AdvancedMetaEngine {
 public:
-    const char *getName() const override {
-        return "Grim";
-    }
+	const char *getName() const override {
+		return "Grim";
+	}
 
-    Common::Error createInstance(OSystem *syst, Engine **engine) const override {
+	Common::Error createInstance(OSystem *syst, Engine **engine) const override {
 		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
 		return AdvancedMetaEngine::createInstance(syst, engine);
 	}
@@ -62,12 +62,6 @@ bool GrimMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 	}
 
 	return gd != nullptr;
-}
-
-bool GrimMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup);
 }
 
 bool GrimMetaEngine::hasFeature(MetaEngineFeature f) const {

@@ -35,11 +35,11 @@ namespace Myst3{
 
 class Myst3MetaEngine : public AdvancedMetaEngine {
 public:
-    const char *getName() const override {
+	const char *getName() const override {
 		return "myst3";
 	}
 
-    bool hasFeature(MetaEngineFeature f) const override {
+	bool hasFeature(MetaEngineFeature f) const override {
 		return
 			(f == kSupportsListSaves) ||
 			(f == kSupportsDeleteSave) ||

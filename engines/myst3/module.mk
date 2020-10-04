@@ -17,6 +17,7 @@ MODULE_OBJS := \
 	hotspot.o \
 	inventory.o \
 	menu.o \
+	metaengine.o \
 	movie.o \
 	myst3.o \
 	node.o \
