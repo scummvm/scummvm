@@ -42,15 +42,15 @@ void scene36_initScene(Scene *sc) {
 }
 
 int scene36_updateCursor() {
-	g_fp->updateCursorCommon();
+	g_nmi->updateCursorCommon();
 
-	if (g_fp->_cursorId != PIC_CSR_ITN || g_fp->_objectIdAtCursor != ANI_ROTOHRUST) {
-		if (g_fp->_objectIdAtCursor == PIC_SC36_MASK && g_fp->_cursorId == PIC_CSR_DEFAULT && (g_vars->scene36_scissors->_flags & 4))
-			g_fp->_cursorId = PIC_CSR_ITN;
+	if (g_nmi->_cursorId != PIC_CSR_ITN || g_nmi->_objectIdAtCursor != ANI_ROTOHRUST) {
+		if (g_nmi->_objectIdAtCursor == PIC_SC36_MASK && g_nmi->_cursorId == PIC_CSR_DEFAULT && (g_vars->scene36_scissors->_flags & 4))
+			g_nmi->_cursorId = PIC_CSR_ITN;
 	} else if (g_vars->scene36_rotohrust->_statics->_staticsId == ST_RHT_OPEN)
-		g_fp->_cursorId = PIC_CSR_GOL;
+		g_nmi->_cursorId = PIC_CSR_GOL;
 
-	return g_fp->_cursorId;
+	return g_nmi->_cursorId;
 }
 
 int sceneHandler36(ExCommand *cmd) {
@@ -59,12 +59,12 @@ int sceneHandler36(ExCommand *cmd) {
 
 	switch (cmd->_messageNum) {
 	case 29:
-		if (g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY) == PIC_SC36_MASK)
+		if (g_nmi->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY) == PIC_SC36_MASK)
 			if (g_vars->scene36_scissors)
 				if (g_vars->scene36_scissors->_flags & 4)
-					if (g_fp->_aniMan->isIdle())
-						if (!(g_fp->_aniMan->_flags & 0x100) && g_fp->_msgObjectId2 != g_vars->scene36_scissors->_id ) {
-							handleObjectInteraction(g_fp->_aniMan, g_vars->scene36_scissors, cmd->_param);
+					if (g_nmi->_aniMan->isIdle())
+						if (!(g_nmi->_aniMan->_flags & 0x100) && g_nmi->_msgObjectId2 != g_vars->scene36_scissors->_id ) {
+							handleObjectInteraction(g_nmi->_aniMan, g_vars->scene36_scissors, cmd->_param);
 
 							cmd->_messageKind = 0;
 						}
@@ -72,18 +72,18 @@ int sceneHandler36(ExCommand *cmd) {
 		break;
 
 	case 33:
-		if (g_fp->_aniMan2) {
-			int x = g_fp->_aniMan2->_ox;
+		if (g_nmi->_aniMan2) {
+			int x = g_nmi->_aniMan2->_ox;
 
-			if (x < g_fp->_sceneRect.left + 200)
-				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
+			if (x < g_nmi->_sceneRect.left + 200)
+				g_nmi->_currentScene->_x = x - 300 - g_nmi->_sceneRect.left;
 
-			if (x > g_fp->_sceneRect.right - 200)
-				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
+			if (x > g_nmi->_sceneRect.right - 200)
+				g_nmi->_currentScene->_x = x + 300 - g_nmi->_sceneRect.right;
 		}
 
-		g_fp->_behaviorManager->updateBehaviors();
-		g_fp->startSceneTrack();
+		g_nmi->_behaviorManager->updateBehaviors();
+		g_nmi->startSceneTrack();
 
 		break;
 

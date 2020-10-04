@@ -52,28 +52,28 @@ void scene08_initScene(Scene *sc) {
 	g_vars->scene08_stairsOffset = -37;
 	g_vars->scene08_snoringCountdown = -1;
 
-	Scene *oldsc = g_fp->_currentScene;
-	g_fp->_currentScene = sc;
+	Scene *oldsc = g_nmi->_currentScene;
+	g_nmi->_currentScene = sc;
 
-	int batuta = g_fp->getObjectState(sO_TummyTrampie);
+	int batuta = g_nmi->getObjectState(sO_TummyTrampie);
 	MovGraphLink *lock = getSc2MctlCompoundBySceneId(sc->_sceneId)->getLinkByName(sO_CloseThing);
 
 	if (lock)
 		lock->_flags &= 0xDFFFFFFF;
 
-	if (batuta == g_fp->getObjectEnumState(sO_TummyTrampie, sO_IsEating)) {
+	if (batuta == g_nmi->getObjectEnumState(sO_TummyTrampie, sO_IsEating)) {
 		g_vars->scene08_batuta->changeStatics2(ST_BTT_SPOON);
-	} else if (batuta == g_fp->getObjectEnumState(sO_TummyTrampie, sO_IsDrinking)) {
+	} else if (batuta == g_nmi->getObjectEnumState(sO_TummyTrampie, sO_IsDrinking)) {
 		g_vars->scene08_batuta->changeStatics2(ST_BTT_NOSPOON);
 
 		g_vars->scene08_clock->startAnim(MV_CLK8_GO, 0, -1);
 		g_vars->scene08_clock->_movement->setDynamicPhaseIndex(3);
-	} else if (batuta== g_fp->getObjectEnumState(sO_TummyTrampie, sO_IsScratchingBelly)) {
+	} else if (batuta== g_nmi->getObjectEnumState(sO_TummyTrampie, sO_IsScratchingBelly)) {
 		g_vars->scene08_batuta->changeStatics2(ST_BTT_CHESHET);
 
 		g_vars->scene08_clock->startAnim(MV_CLK8_GO, 0, -1);
 		g_vars->scene08_clock->_movement->setDynamicPhaseIndex(8);
-	} else if (batuta == g_fp->getObjectEnumState(sO_TummyTrampie, sO_IsSleeping)) {
+	} else if (batuta == g_nmi->getObjectEnumState(sO_TummyTrampie, sO_IsSleeping)) {
 		g_vars->scene08_batuta->changeStatics2(ST_BTT_SLEEPS);
 
 		g_vars->scene08_clock->startAnim(MV_CLK8_GO, 0, -1);
@@ -87,7 +87,7 @@ void scene08_initScene(Scene *sc) {
 
 	g_vars->scene08_clock->_callback2 = scene08_clockCallback;
 
-	if (g_fp->getObjectState(sO_StairsUp_8) == g_fp->getObjectEnumState(sO_StairsUp_8, sO_Broken)) {
+	if (g_nmi->getObjectState(sO_StairsUp_8) == g_nmi->getObjectEnumState(sO_StairsUp_8, sO_Broken)) {
 		g_vars->scene08_stairsVisible = false;
 
 		sc->getPictureObjectById(PIC_SC8_LADDER, 0)->_flags &= 0xFFFB;
@@ -99,52 +99,52 @@ void scene08_initScene(Scene *sc) {
 
 	sc->getPictureObjectById(PIC_SC8_ARCADENOW, 0)->_flags &= 0xFFFB;
 
-	g_fp->_currentScene = oldsc;
+	g_nmi->_currentScene = oldsc;
 
-	g_fp->_floaters->init(g_fp->getGameLoaderGameVar()->getSubVarByName("SC_8"));
-	g_fp->_floaters->genFlies(sc, 100, 100, 0, 0);
+	g_nmi->_floaters->init(g_nmi->getGameLoaderGameVar()->getSubVarByName("SC_8"));
+	g_nmi->_floaters->genFlies(sc, 100, 100, 0, 0);
 
-	g_fp->setArcadeOverlay(PIC_CSR_ARCADE3);
+	g_nmi->setArcadeOverlay(PIC_CSR_ARCADE3);
 }
 
 void scene08_setupMusic() {
-	if (g_fp->getObjectState(sO_TummyTrampie) == g_fp->getObjectEnumState(sO_TummyTrampie, sO_IsSleeping))
-		g_fp->playTrack(g_fp->getGameLoaderGameVar()->getSubVarByName("SC_8"), "MUSIC_ARCADE", 1);
+	if (g_nmi->getObjectState(sO_TummyTrampie) == g_nmi->getObjectEnumState(sO_TummyTrampie, sO_IsSleeping))
+		g_nmi->playTrack(g_nmi->getGameLoaderGameVar()->getSubVarByName("SC_8"), "MUSIC_ARCADE", 1);
 }
 
 int scene08_updateCursor() {
-	g_fp->updateCursorCommon();
+	g_nmi->updateCursorCommon();
 
 	if (g_vars->scene08_inArcade) {
 		if (g_vars->scene08_onBelly) {
-			if (g_fp->_objectIdAtCursor == PIC_SC8_LADDERD && g_fp->_cursorId == PIC_CSR_ITN)
-				g_fp->_cursorId = PIC_CSR_GOU;
+			if (g_nmi->_objectIdAtCursor == PIC_SC8_LADDERD && g_nmi->_cursorId == PIC_CSR_ITN)
+				g_nmi->_cursorId = PIC_CSR_GOU;
 		} else {
-			g_fp->_cursorId = -1;
+			g_nmi->_cursorId = -1;
 		}
 	} else {
-		if (g_fp->_objectIdAtCursor == PIC_SC8_LADDERD && g_fp->_cursorId == PIC_CSR_ITN) {
-			if (g_fp->_aniMan2->_oy >= 520) {
-				if (g_fp->_aniMan2->_oy <= 750)
-					g_fp->_cursorId = PIC_CSR_GOU;
+		if (g_nmi->_objectIdAtCursor == PIC_SC8_LADDERD && g_nmi->_cursorId == PIC_CSR_ITN) {
+			if (g_nmi->_aniMan2->_oy >= 520) {
+				if (g_nmi->_aniMan2->_oy <= 750)
+					g_nmi->_cursorId = PIC_CSR_GOU;
 			} else {
-				g_fp->_cursorId = PIC_CSR_GOD;
+				g_nmi->_cursorId = PIC_CSR_GOD;
 			}
 		}
 	}
 
-	return g_fp->_cursorId;
+	return g_nmi->_cursorId;
 }
 
 void sceneHandler08_enterUp() {
-	g_fp->_currentScene->getPictureObjectById(PIC_SC8_LADDER, 0)->_flags &= 0xFFFB;
+	g_nmi->_currentScene->getPictureObjectById(PIC_SC8_LADDER, 0)->_flags &= 0xFFFB;
 
-	g_fp->_aniMan->changeStatics2(ST_MAN8_HANDSUP);
-	g_fp->_aniMan->setOXY(386, 236);
-	g_fp->_aniMan->_priority = 10;
-	g_fp->_aniMan->_flags = 4;
+	g_nmi->_aniMan->changeStatics2(ST_MAN8_HANDSUP);
+	g_nmi->_aniMan->setOXY(386, 236);
+	g_nmi->_aniMan->_priority = 10;
+	g_nmi->_aniMan->_flags = 4;
 
-	chainObjQueue(g_fp->_aniMan, QU_SC8_FINISH, 1);
+	chainObjQueue(g_nmi->_aniMan, QU_SC8_FINISH, 1);
 
 	g_vars->scene08_inAir = false;
 }
@@ -152,21 +152,21 @@ void sceneHandler08_enterUp() {
 void sceneHandler08_winArcade() {
 	if (g_vars->scene08_inArcade) {
 		g_vars->scene08_inArcade = false;
-		g_fp->_sceneRect.top = 0;
-		g_fp->_sceneRect.bottom = 600;
+		g_nmi->_sceneRect.top = 0;
+		g_nmi->_sceneRect.bottom = 600;
 
 		sceneHandler08_enterUp();
 	}
 }
 
 void sceneHandler08_hideLadder() {
-	g_fp->_currentScene->getPictureObjectById(PIC_SC8_LADDER_D, 0)->_flags &= 0xFFFB;
+	g_nmi->_currentScene->getPictureObjectById(PIC_SC8_LADDER_D, 0)->_flags &= 0xFFFB;
 }
 
 void sceneHandler08_arcadeNow() {
 	MovGraphLink *lnk = getCurrSceneSc2MotionController()->getLinkByName(sO_Stairway);
 
-	g_fp->setObjectState(sO_TummyTrampie, g_fp->getObjectEnumState(sO_TummyTrampie, sO_IsSleeping));
+	g_nmi->setObjectState(sO_TummyTrampie, g_nmi->getObjectEnumState(sO_TummyTrampie, sO_IsSleeping));
 
 	g_vars->scene08_batuta->changeStatics2(ST_BTT_SLEEPS);
 
@@ -193,9 +193,9 @@ int sceneHandler08_calcOffset(int off, int flag) {
 }
 
 void sceneHandler08_pushCallback(int *par) {
-	int y = g_fp->_aniMan->_oy + g_fp->_aniMan->getSomeXY().y;
+	int y = g_nmi->_aniMan->_oy + g_nmi->_aniMan->getSomeXY().y;
 
-	if (g_fp->_aniMan->_statics && g_fp->_aniMan->_statics->_staticsId == ST_MAN8_FLYDOWN)
+	if (g_nmi->_aniMan->_statics && g_nmi->_aniMan->_statics->_staticsId == ST_MAN8_FLYDOWN)
 		y -= 25;
 
 	*par = (y - 703) / 10;
@@ -212,10 +212,10 @@ void sceneHandler08_pushCallback(int *par) {
 int sceneHandler08_updateScreenCallback() {
 	int res;
 
-	res = g_fp->drawArcadeOverlay(g_vars->scene08_inArcade);
+	res = g_nmi->drawArcadeOverlay(g_vars->scene08_inArcade);
 
 	if (!res)
-		g_fp->_updateScreenCallback = 0;
+		g_nmi->_updateScreenCallback = 0;
 
 	return res;
 }
@@ -236,40 +236,40 @@ void sceneHandler08_startArcade() {
 	g_vars->scene08_vmyats->_priority = 29;
 	g_vars->scene08_vmyats->_callback2 = sceneHandler08_pushCallback;
 
-	g_fp->_aniMan = g_fp->_currentScene->getStaticANIObject1ById(ANI_MAN, -1);
+	g_nmi->_aniMan = g_nmi->_currentScene->getStaticANIObject1ById(ANI_MAN, -1);
 
 	g_vars->scene08_manOffsetY = 15;
 
-	g_fp->_currentScene->_y = 0;
+	g_nmi->_currentScene->_y = 0;
 
-	g_fp->_updateScreenCallback = sceneHandler08_updateScreenCallback;
+	g_nmi->_updateScreenCallback = sceneHandler08_updateScreenCallback;
 }
 
 void sceneHandler08_airMoves() {
-	if (g_fp->_aniMan->isIdle() && !(g_fp->_aniMan->_flags & 0x100)) {
-		int x = g_fp->_aniMan->_ox;
-		int y = g_fp->_aniMan->_oy;
+	if (g_nmi->_aniMan->isIdle() && !(g_nmi->_aniMan->_flags & 0x100)) {
+		int x = g_nmi->_aniMan->_ox;
+		int y = g_nmi->_aniMan->_oy;
 		Common::Point point;
 
-		if (703 - g_fp->_aniMan->getSomeXY().y - y < 150) {
-			if (g_fp->_aniMan->_statics) {
-				if (g_fp->_aniMan->_statics->_staticsId == ST_MAN8_FLYDOWN) {
+		if (703 - g_nmi->_aniMan->getSomeXY().y - y < 150) {
+			if (g_nmi->_aniMan->_statics) {
+				if (g_nmi->_aniMan->_statics->_staticsId == ST_MAN8_FLYDOWN) {
 					y -= 25;
 
-					g_fp->_aniMan->setOXY(x, y);
+					g_nmi->_aniMan->setOXY(x, y);
 				}
 			}
 
-			g_fp->_aniMan->changeStatics2(ST_MAN8_STAND);
-			g_fp->_aniMan->setOXY(380, y);
-			g_fp->_aniMan->startAnim(MV_MAN8_JUMP, 0, -1);
+			g_nmi->_aniMan->changeStatics2(ST_MAN8_STAND);
+			g_nmi->_aniMan->setOXY(380, y);
+			g_nmi->_aniMan->startAnim(MV_MAN8_JUMP, 0, -1);
 
-		} else if (g_fp->_aniMan->_statics) {
-			if (g_fp->_aniMan->_statics->_staticsId == ST_MAN8_FLYUP) {
-				g_fp->_aniMan->startAnim(MV_MAN8_DRYGUP, 0, -1);
+		} else if (g_nmi->_aniMan->_statics) {
+			if (g_nmi->_aniMan->_statics->_staticsId == ST_MAN8_FLYUP) {
+				g_nmi->_aniMan->startAnim(MV_MAN8_DRYGUP, 0, -1);
 
-			} else if (g_fp->_aniMan->_statics->_staticsId == ST_MAN8_FLYDOWN) {
-				g_fp->_aniMan->startAnim(MV_MAN8_DRYGDOWN, 0, -1);
+			} else if (g_nmi->_aniMan->_statics->_staticsId == ST_MAN8_FLYDOWN) {
+				g_nmi->_aniMan->startAnim(MV_MAN8_DRYGDOWN, 0, -1);
 			}
 		}
 	}
@@ -283,14 +283,14 @@ void sceneHandler08_finishArcade() {
 }
 
 void sceneHandler08_jumpOff(ExCommand *cmd) {
-	MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
+	MessageQueue *mq = new MessageQueue(g_nmi->_globalMessageQueueList->compact());
 
 	mq->addExCommandToEnd(cmd->createClone());
 	mq->setFlags(mq->getFlags() | 1);
 
-	g_fp->_globalMessageQueueList->addMessageQueue(mq);
+	g_nmi->_globalMessageQueueList->addMessageQueue(mq);
 
-	g_fp->_aniMan->startAnim(MV_MAN8_JUMPOFF, mq->_id, -1);
+	g_nmi->_aniMan->startAnim(MV_MAN8_JUMPOFF, mq->_id, -1);
 
 	sceneHandler08_finishArcade();
 }
@@ -301,7 +301,7 @@ void sceneHandler08_standUp() {
 }
 
 void sceneHandler08_jumpLogic(ExCommand *cmd) {
-	if (g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY) == PIC_SC8_LADDERD) {
+	if (g_nmi->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY) == PIC_SC8_LADDERD) {
 		sceneHandler08_jumpOff(cmd);
 
 		cmd->_messageKind = 0;
@@ -311,32 +311,32 @@ void sceneHandler08_jumpLogic(ExCommand *cmd) {
 }
 
 void sceneHandler08_badLuck() {
-	g_fp->_currentScene->getPictureObjectById(PIC_SC8_LADDER, 0)->_flags &= 0xFFFB;
+	g_nmi->_currentScene->getPictureObjectById(PIC_SC8_LADDER, 0)->_flags &= 0xFFFB;
 
-	g_fp->_aniMan->changeStatics2(ST_MAN8_HANDSUP);
-	g_fp->_aniMan->setOXY(376, 280);
-	g_fp->_aniMan->_priority = 10;
+	g_nmi->_aniMan->changeStatics2(ST_MAN8_HANDSUP);
+	g_nmi->_aniMan->setOXY(376, 280);
+	g_nmi->_aniMan->_priority = 10;
 
-	MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
+	MessageQueue *mq = new MessageQueue(g_nmi->_globalMessageQueueList->compact());
 
-	ExCommand *ex = new ExCommand(g_fp->_aniMan->_id, 1, MV_MAN8_BADLUCK, 0, 0, 0, 1, 0, 0, 0);
+	ExCommand *ex = new ExCommand(g_nmi->_aniMan->_id, 1, MV_MAN8_BADLUCK, 0, 0, 0, 1, 0, 0, 0);
 	ex->_excFlags |= 2;
-	ex->_param = g_fp->_aniMan->_odelay;
+	ex->_param = g_nmi->_aniMan->_odelay;
 	mq->addExCommandToEnd(ex);
 
 	mq->setFlags(mq->getFlags() | 1);
 	mq->chain(0);
 
-	g_fp->setObjectState(sO_StairsUp_8, g_fp->getObjectEnumState(sO_StairsUp_8, sO_NotBroken));
+	g_nmi->setObjectState(sO_StairsUp_8, g_nmi->getObjectEnumState(sO_StairsUp_8, sO_NotBroken));
 
 	g_vars->scene08_inAir = false;
 }
 
 void sceneHandler08_sitDown() {
-	g_fp->_aniMan->setOXY(380, g_fp->_aniMan->_oy);
+	g_nmi->_aniMan->setOXY(380, g_nmi->_aniMan->_oy);
 
-	g_fp->_aniMan->changeStatics2(ST_MAN8_FLYDOWN);
-	g_fp->_aniMan->startAnim(MV_MAN8_SITDOWN, 0, -1);
+	g_nmi->_aniMan->changeStatics2(ST_MAN8_FLYDOWN);
+	g_nmi->_aniMan->startAnim(MV_MAN8_SITDOWN, 0, -1);
 
 	g_vars->scene08_vmyats->changeStatics2(ST_VMT_MIN);
 	g_vars->scene08_vmyats->hide();
@@ -347,18 +347,18 @@ void sceneHandler08_sitDown() {
 
 void sceneHandler08_calcFlight() {
 	Common::Point point;
-	int y = g_vars->scene08_manOffsetY + g_fp->_aniMan->_oy;
+	int y = g_vars->scene08_manOffsetY + g_nmi->_aniMan->_oy;
 
-	g_fp->_aniMan->setOXY(g_fp->_aniMan->_ox, y);
+	g_nmi->_aniMan->setOXY(g_nmi->_aniMan->_ox, y);
 
 	g_vars->scene08_manOffsetY += 2;
 
 	if (g_vars->scene08_manOffsetY < g_vars->scene08_stairsOffset)
 		g_vars->scene08_manOffsetY = g_vars->scene08_stairsOffset;
 
-	y = y + g_fp->_aniMan->getSomeXY().y;
+	y = y + g_nmi->_aniMan->getSomeXY().y;
 
-	if (g_fp->_aniMan->_statics && g_fp->_aniMan->_statics->_staticsId == ST_MAN8_FLYDOWN)
+	if (g_nmi->_aniMan->_statics && g_nmi->_aniMan->_statics->_staticsId == ST_MAN8_FLYDOWN)
 		y -= 25;
 
 	if (y <= g_vars->scene08_vmyats->_oy) {
@@ -370,23 +370,23 @@ void sceneHandler08_calcFlight() {
 			g_vars->scene08_vmyats->startAnim(MV_VMT_DEF, 0, -1);
 	}
 
-	if (g_fp->_aniMan->_oy <= 280 && g_vars->scene08_stairsVisible
-		&& g_fp->_aniMan->_statics && g_fp->_aniMan->_statics->_staticsId == ST_MAN8_HANDSUP) {
+	if (g_nmi->_aniMan->_oy <= 280 && g_vars->scene08_stairsVisible
+		&& g_nmi->_aniMan->_statics && g_nmi->_aniMan->_statics->_staticsId == ST_MAN8_HANDSUP) {
 		sceneHandler08_badLuck();
-	} else if (g_fp->_aniMan->_oy > 236 || g_vars->scene08_stairsVisible
-				|| !g_fp->_aniMan->_statics || g_fp->_aniMan->_statics->_staticsId != ST_MAN8_HANDSUP) {
-		if (g_fp->_aniMan->_movement || g_fp->_aniMan->_oy < 660
+	} else if (g_nmi->_aniMan->_oy > 236 || g_vars->scene08_stairsVisible
+				|| !g_nmi->_aniMan->_statics || g_nmi->_aniMan->_statics->_staticsId != ST_MAN8_HANDSUP) {
+		if (g_nmi->_aniMan->_movement || g_nmi->_aniMan->_oy < 660
 			|| (g_vars->scene08_vmyats->_movement && g_vars->scene08_vmyats->_movement->_currDynamicPhaseIndex > 0)
 			|| abs(g_vars->scene08_manOffsetY) > 2) {
-			if (g_vars->scene08_manOffsetY >= 0 && !g_fp->_aniMan->_movement) {
-				if (g_fp->_aniMan->_statics->_staticsId == ST_MAN8_HANDSUP)
-					g_fp->_aniMan->startAnim(MV_MAN8_HANDSDOWN, 0, -1);
+			if (g_vars->scene08_manOffsetY >= 0 && !g_nmi->_aniMan->_movement) {
+				if (g_nmi->_aniMan->_statics->_staticsId == ST_MAN8_HANDSUP)
+					g_nmi->_aniMan->startAnim(MV_MAN8_HANDSDOWN, 0, -1);
 				else
-					g_fp->_aniMan->changeStatics2(ST_MAN8_FLYDOWN);
+					g_nmi->_aniMan->changeStatics2(ST_MAN8_FLYDOWN);
 			}
 
-			if (g_fp->_aniMan->_oy < 500 && !g_fp->_aniMan->_movement && g_fp->_aniMan->_statics->_staticsId == ST_MAN8_FLYUP && g_vars->scene08_manOffsetY < 0)
-				g_fp->_aniMan->startAnim(MV_MAN8_HANDSUP, 0, -1);
+			if (g_nmi->_aniMan->_oy < 500 && !g_nmi->_aniMan->_movement && g_nmi->_aniMan->_statics->_staticsId == ST_MAN8_FLYUP && g_vars->scene08_manOffsetY < 0)
+				g_nmi->_aniMan->startAnim(MV_MAN8_HANDSUP, 0, -1);
 		} else {
 			sceneHandler08_sitDown();
 		}
@@ -397,22 +397,22 @@ void sceneHandler08_calcFlight() {
 
 void sceneHandler08_checkEndArcade() {
 	if (g_vars->scene08_flyingUp) {
-		int x = g_fp->_aniMan->_ox;
-		int y = g_vars->scene08_manOffsetY + g_fp->_aniMan->_oy;
+		int x = g_nmi->_aniMan->_ox;
+		int y = g_vars->scene08_manOffsetY + g_nmi->_aniMan->_oy;
 
-		if (!((g_vars->scene08_manOffsetY + g_fp->_aniMan->_oy) % 3))
+		if (!((g_vars->scene08_manOffsetY + g_nmi->_aniMan->_oy) % 3))
 			g_vars->scene08_manOffsetY--;
 
-		g_fp->_aniMan->setOXY(x, y);
+		g_nmi->_aniMan->setOXY(x, y);
 
 		if (y < 80) {
 			sceneHandler08_finishArcade();
 
-			if (g_fp->isDemo() && g_fp->getLanguage() == Common::DE_DEU) {
+			if (g_nmi->isDemo() && g_nmi->getLanguage() == Common::DE_DEU) {
 				ModalDemo *demo = new ModalDemo;
 				demo->launch();
 
-				g_fp->_modalObject = demo;
+				g_nmi->_modalObject = demo;
 
 				return;
 			}
@@ -487,52 +487,52 @@ int sceneHandler08(ExCommand *cmd) {
 		{
 			int res = 0;
 
-			if (g_fp->_aniMan2) {
+			if (g_nmi->_aniMan2) {
 				if (g_vars->scene08_inArcade) {
-					int scHeight = g_fp->_sceneRect.bottom - g_fp->_sceneRect.top;
+					int scHeight = g_nmi->_sceneRect.bottom - g_nmi->_sceneRect.top;
 
-					if (g_fp->_aniMan2->_oy < g_fp->_sceneRect.top + 200) {
-						g_fp->_sceneRect.top = g_fp->_aniMan2->_oy - 200;
+					if (g_nmi->_aniMan2->_oy < g_nmi->_sceneRect.top + 200) {
+						g_nmi->_sceneRect.top = g_nmi->_aniMan2->_oy - 200;
 
-						if (g_fp->_sceneRect.top < 0)
-							g_fp->_sceneRect.top = 0;
+						if (g_nmi->_sceneRect.top < 0)
+							g_nmi->_sceneRect.top = 0;
 
-						g_fp->_sceneRect.bottom = scHeight + g_fp->_sceneRect.top;
+						g_nmi->_sceneRect.bottom = scHeight + g_nmi->_sceneRect.top;
 					}
 
-					if (g_fp->_aniMan2->_oy > g_fp->_sceneRect.bottom - 350) {
-						g_fp->_sceneRect.bottom = g_fp->_aniMan2->_oy + 350;
-						g_fp->_sceneRect.top = g_fp->_aniMan2->_oy + 350 - scHeight;
+					if (g_nmi->_aniMan2->_oy > g_nmi->_sceneRect.bottom - 350) {
+						g_nmi->_sceneRect.bottom = g_nmi->_aniMan2->_oy + 350;
+						g_nmi->_sceneRect.top = g_nmi->_aniMan2->_oy + 350 - scHeight;
 					}
 				} else {
-					if (g_fp->_aniMan2->_ox < g_fp->_sceneRect.left + 200)
-						g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.left - 300;
+					if (g_nmi->_aniMan2->_ox < g_nmi->_sceneRect.left + 200)
+						g_nmi->_currentScene->_x = g_nmi->_aniMan2->_ox - g_nmi->_sceneRect.left - 300;
 
-					if (g_fp->_aniMan2->_ox > g_fp->_sceneRect.right - 200)
-						g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.right + 300;
+					if (g_nmi->_aniMan2->_ox > g_nmi->_sceneRect.right - 200)
+						g_nmi->_currentScene->_x = g_nmi->_aniMan2->_ox - g_nmi->_sceneRect.right + 300;
 
 					res = 1;
 				}
 			}
 
-			g_fp->_floaters->update();
+			g_nmi->_floaters->update();
 
 			if (g_vars->scene08_inArcade) {
 				if (g_vars->scene08_inAir)
 					sceneHandler08_calcFlight();
 			} else {
-				Movement *mov = g_fp->_aniMan->_movement;
+				Movement *mov = g_nmi->_aniMan->_movement;
 
 				if (mov) {
 					if (mov->_id == MV_MAN_TOLADDERD && mov->_currDynamicPhaseIndex == 8)
-						g_fp->_aniMan->_priority = 2;
+						g_nmi->_aniMan->_priority = 2;
 
 					if (mov && mov->_id == MV_MAN_FROMLADDERUP && mov->_currDynamicPhaseIndex == 13)
-						g_fp->_aniMan->_priority = 20;
+						g_nmi->_aniMan->_priority = 20;
 				}
 
-				g_fp->_behaviorManager->updateBehaviors();
-				g_fp->startSceneTrack();
+				g_nmi->_behaviorManager->updateBehaviors();
+				g_nmi->startSceneTrack();
 			}
 
 			if (g_vars->scene08_flyingUp)
@@ -542,7 +542,7 @@ int sceneHandler08(ExCommand *cmd) {
 				g_vars->scene08_snoringCountdown--;
 
 				if (!g_vars->scene08_snoringCountdown) {
-					g_fp->playSound(SND_8_014, 0);
+					g_nmi->playSound(SND_8_014, 0);
 
 					g_vars->scene08_snoringCountdown = 71;
 				}

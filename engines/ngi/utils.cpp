@@ -131,9 +131,9 @@ bool MemoryObject::load(MfcArchive &file) {
 		_memfilename.deleteChar(0);
 	}
 
-	if (g_fp->_currArchive) {
+	if (g_nmi->_currArchive) {
 		_mfield_14 = 0;
-		_libHandle = g_fp->_currArchive;
+		_libHandle = g_nmi->_currArchive;
 	}
 
 	return true;
@@ -146,12 +146,12 @@ void MemoryObject::loadFile(const Common::String &filename) {
 		return;
 
 	if (!_data) {
-		NGIArchive *arr = g_fp->_currArchive;
+		NGIArchive *arr = g_nmi->_currArchive;
 
-		if (g_fp->_currArchive != _libHandle && _libHandle)
-			g_fp->_currArchive = _libHandle;
+		if (g_nmi->_currArchive != _libHandle && _libHandle)
+			g_nmi->_currArchive = _libHandle;
 
-		Common::SeekableReadStream *s = g_fp->_currArchive->createReadStreamForMember(filename);
+		Common::SeekableReadStream *s = g_nmi->_currArchive->createReadStreamForMember(filename);
 
 		if (s) {
 			assert(s->size() > 0);
@@ -165,7 +165,7 @@ void MemoryObject::loadFile(const Common::String &filename) {
 			// We have no object to read. This is fine
 		}
 
-		g_fp->_currArchive = arr;
+		g_nmi->_currArchive = arr;
 	}
 }
 

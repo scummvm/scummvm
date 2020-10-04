@@ -79,7 +79,7 @@ void Floaters::init(GameVar *var) {
 }
 
 void Floaters::genFlies(Scene *sc, int x, int y, int priority, int flags) {
-	StaticANIObject *ani = new StaticANIObject(g_fp->accessScene(SC_COMMON)->getStaticANIObject1ById(ANI_FLY, -1));
+	StaticANIObject *ani = new StaticANIObject(g_nmi->accessScene(SC_COMMON)->getStaticANIObject1ById(ANI_FLY, -1));
 
 	ani->_statics = ani->getStaticsById(ST_FLY_FLY);
 	ani->_movement = 0;
@@ -98,7 +98,7 @@ void Floaters::genFlies(Scene *sc, int x, int y, int priority, int flags) {
 	else
 		nummoves = ani->_movement->_dynamicPhases.size();
 
-	ani->_movement->setDynamicPhaseIndex(g_fp->_rnd.getRandomNumber(nummoves - 1));
+	ani->_movement->setDynamicPhaseIndex(g_nmi->_rnd.getRandomNumber(nummoves - 1));
 
 	_array2.push_back(FloaterArray2());
 	FloaterArray2 &arr2 = _array2.back();
@@ -151,10 +151,10 @@ void Floaters::update() {
 				if (a2.val4 == a2.val2 && a2.val5 == a2.val3) {
 					a2.val9 = 0.0;
 
-					a2.val13 = g_fp->_rnd.getRandomNumber(200) + 20;
+					a2.val13 = g_nmi->_rnd.getRandomNumber(200) + 20;
 
 					if (a2.fflags & 1) {
-						g_fp->_currentScene->deleteStaticANIObject(a2.ani);
+						g_nmi->_currentScene->deleteStaticANIObject(a2.ani);
 
 						if (a2.ani)
 							delete a2.ani;
@@ -164,7 +164,7 @@ void Floaters::update() {
 						i--;
 
 						if (!_array2.size())
-							g_fp->stopAllSoundInstances(SND_CMN_060);
+							g_nmi->stopAllSoundInstances(SND_CMN_060);
 
 						continue;
 					}
@@ -176,7 +176,7 @@ void Floaters::update() {
 					a2.val3 = a2.val7;
 				} else {
 					if (a2.fflags & 2) {
-						int idx1 = g_fp->_rnd.getRandomNumber(_array1.size() - 1);
+						int idx1 = g_nmi->_rnd.getRandomNumber(_array1.size() - 1);
 
 						a2.val2 = _array1[idx1].val1;
 						a2.val3 = _array1[idx1].val2;
@@ -186,8 +186,8 @@ void Floaters::update() {
 
 						const Common::Rect rect = _hRgn->getBBox();
 
-						int x2 = rect.left + g_fp->_rnd.getRandomNumber(rect.right - rect.left);
-						int y2 = rect.top + g_fp->_rnd.getRandomNumber(rect.bottom - rect.top);
+						int x2 = rect.left + g_nmi->_rnd.getRandomNumber(rect.right - rect.left);
+						int y2 = rect.top + g_nmi->_rnd.getRandomNumber(rect.bottom - rect.top);
 
 						if (_hRgn->pointInRegion(x2, y2)) {
 							int dx = a2.val2 - x2;
@@ -201,7 +201,7 @@ void Floaters::update() {
 						}
 					}
 
-					g_fp->playSound(SND_CMN_061, 0);
+					g_nmi->playSound(SND_CMN_061, 0);
 
 					if (a2.fflags & 4)
 						a2.countdown--;
@@ -213,7 +213,7 @@ void Floaters::update() {
 
 		if (!a2.ani->_movement && a2.ani->_statics->_staticsId == ST_FLY_FLY) {
 			if (!a2.val15) {
-				g_fp->playSound(SND_CMN_060, 1);
+				g_nmi->playSound(SND_CMN_060, 1);
 
 				a2.val15 = 1;
 			}
@@ -226,13 +226,13 @@ void Floaters::update() {
 void Floaters::stopAll() {
 	for (uint i = 0; i < _array2.size(); i++) {
 		FloaterArray2 &a2 = _array2[i];
-		g_fp->_currentScene->deleteStaticANIObject(a2.ani);
+		g_nmi->_currentScene->deleteStaticANIObject(a2.ani);
 		delete a2.ani;
 	}
 
 	_array2.clear();
 
-	g_fp->stopAllSoundInstances(SND_CMN_060);
+	g_nmi->stopAllSoundInstances(SND_CMN_060);
 }
 
 

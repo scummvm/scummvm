@@ -34,7 +34,7 @@
 namespace NGI {
 
 InputController::InputController() {
-	g_fp->_inputController = this;
+	g_nmi->_inputController = this;
 
 	_flag = 0;
 	_cursorHandle = 0;
@@ -55,7 +55,7 @@ InputController::InputController() {
 InputController::~InputController() {
 	removeMessageHandler(126, -1);
 
-	g_fp->_inputController = 0;
+	g_nmi->_inputController = 0;
 
 	for (uint i = 0; i < _cursorsArray.size(); i++)
 		delete _cursorsArray[i];
@@ -63,11 +63,11 @@ InputController::~InputController() {
 
 void InputController::setInputDisabled(bool state) {
 	_flag = state;
-	g_fp->_inputDisabled = state;
+	g_nmi->_inputDisabled = state;
 }
 
 void setInputDisabled(bool state) {
-	g_fp->_inputController->setInputDisabled(state);
+	g_nmi->_inputController->setInputDisabled(state);
 }
 
 void InputController::addCursor(CursorInfo *cursor) {
@@ -94,8 +94,8 @@ void InputController::drawCursor(int x, int y) {
 	if (_cursorIndex == -1)
 		return;
 
-	_cursorBounds.left = g_fp->_sceneRect.left + x - _cursorsArray[_cursorIndex]->hotspotX;
-	_cursorBounds.top = g_fp->_sceneRect.top + y - _cursorsArray[_cursorIndex]->hotspotY;
+	_cursorBounds.left = g_nmi->_sceneRect.left + x - _cursorsArray[_cursorIndex]->hotspotX;
+	_cursorBounds.top = g_nmi->_sceneRect.top + y - _cursorsArray[_cursorIndex]->hotspotY;
 	_cursorBounds.right = _cursorBounds.left + _cursorsArray[_cursorIndex]->width;
 	_cursorBounds.bottom = _cursorBounds.top + _cursorsArray[_cursorIndex]->height;
 
@@ -272,14 +272,14 @@ void NGIEngine::initArcadeKeys(const char *varname) {
 }
 
 void NGIEngine::processArcade(ExCommand *cmd) {
-	if (!g_fp->_aniMan2)
+	if (!g_nmi->_aniMan2)
 		return;
 
 	int idx;
 
-	if (cmd->_sceneClickX <= g_fp->_aniMan2->_ox) {
+	if (cmd->_sceneClickX <= g_nmi->_aniMan2->_ox) {
 		for (idx = (int)_arcadeKeys.size() - 1; idx >= 0; idx--) {
-			if (_arcadeKeys[idx].x < g_fp->_aniMan2->_ox)
+			if (_arcadeKeys[idx].x < g_nmi->_aniMan2->_ox)
 				break;
 		}
 
@@ -287,7 +287,7 @@ void NGIEngine::processArcade(ExCommand *cmd) {
 			return;
 	} else {
 		for (idx = 0; idx < (int)_arcadeKeys.size(); idx++) {
-			if (_arcadeKeys[idx].x > g_fp->_aniMan2->_ox)
+			if (_arcadeKeys[idx].x > g_nmi->_aniMan2->_ox)
 				break;
 		}
 
@@ -298,8 +298,8 @@ void NGIEngine::processArcade(ExCommand *cmd) {
 	cmd->_sceneClickX = _arcadeKeys[idx].x;
 	cmd->_sceneClickY = _arcadeKeys[idx].y;
 
-	cmd->_x = cmd->_sceneClickX - g_fp->_sceneRect.left;
-	cmd->_y = cmd->_sceneClickY - g_fp->_sceneRect.top;
+	cmd->_x = cmd->_sceneClickX - g_nmi->_sceneRect.left;
+	cmd->_y = cmd->_sceneClickY - g_nmi->_sceneRect.top;
 }
 
 void NGIEngine::setArcadeOverlay(int picId) {

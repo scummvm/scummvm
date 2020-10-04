@@ -49,16 +49,16 @@ void scene13_initScene(Scene *sc) {
 	g_vars->scene13_guardDirection = true;
 
 	MovGraphLink *lnk = getSc2MctlCompoundBySceneId(sc->_sceneId)->getLinkByName(sO_Bridge);
-	Scene *oldsc = g_fp->_currentScene;
+	Scene *oldsc = g_nmi->_currentScene;
 
-	g_fp->_currentScene = sc;
+	g_nmi->_currentScene = sc;
 
-	if (g_fp->getObjectState(sO_Bridge) == g_fp->getObjectEnumState(sO_Bridge, sO_Convoluted)) {
+	if (g_nmi->getObjectState(sO_Bridge) == g_nmi->getObjectEnumState(sO_Bridge, sO_Convoluted)) {
 		g_vars->scene13_bridge->changeStatics2(ST_BDG_CLOSED);
 
 		lnk->_flags |= 0x20000000u;
 
-		g_fp->playSound(SND_13_018, 1);
+		g_nmi->playSound(SND_13_018, 1);
 
 		g_vars->scene13_whirlgig->_callback2 = 0; // Really NULL
 	} else {
@@ -73,14 +73,14 @@ void scene13_initScene(Scene *sc) {
 		if (g_vars->scene13_whirlgig->_movement)
 			g_vars->scene13_whirlgig->_movement->setDynamicPhaseIndex(30);
 
-		g_fp->playSound(SND_13_037, 1);
+		g_nmi->playSound(SND_13_037, 1);
 	}
 
 	g_vars->scene13_bridge->_flags &= 0xFFFD;
 
-	g_fp->_currentScene = oldsc;
+	g_nmi->_currentScene = oldsc;
 
-	g_fp->initArcadeKeys("SC_13");
+	g_nmi->initArcadeKeys("SC_13");
 }
 
 void sceneHandler13_openBridge() {
@@ -164,18 +164,18 @@ void sceneHandler13_closeFast() {
 void sceneHandler13_stopWhirlgig() {
 	g_vars->scene13_whirlgig->_callback2 = scene13_whirlgigCallback;
 
-	g_fp->stopAllSoundInstances(SND_13_018);
-	g_fp->playSound(SND_13_033, 0);
-	g_fp->playSound(SND_13_037, 1);
+	g_nmi->stopAllSoundInstances(SND_13_018);
+	g_nmi->playSound(SND_13_033, 0);
+	g_nmi->playSound(SND_13_037, 1);
 }
 
 void sceneHandler13_startWhirlgig() {
 	g_vars->scene13_whirlgig->_callback2 = 0; // Really NULL
 
-	g_fp->playSound(SND_13_018, 1);
-	g_fp->playSound(SND_13_034, 0);
+	g_nmi->playSound(SND_13_018, 1);
+	g_nmi->playSound(SND_13_034, 0);
 
-	g_fp->stopAllSoundInstances(SND_13_037);
+	g_nmi->stopAllSoundInstances(SND_13_037);
 }
 
 void sceneHandler13_openFast() {
@@ -185,14 +185,14 @@ void sceneHandler13_openFast() {
 }
 
 void sceneHandler13_uneatGum() {
-	BehaviorMove *beh = g_fp->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene13_guard, ST_STR_RIGHT, QU_STR_CHEW);
+	BehaviorMove *beh = g_nmi->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene13_guard, ST_STR_RIGHT, QU_STR_CHEW);
 
 	if (beh) {
 		beh->_percent = 0;
 		beh->_delay = 36;
 	}
 
-	beh = g_fp->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene13_guard, ST_STR_RIGHT, QU_STR_PLUU);
+	beh = g_nmi->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene13_guard, ST_STR_RIGHT, QU_STR_PLUU);
 	if (beh) {
 		beh->_percent = 0;
 		beh->_delay = 36;
@@ -200,7 +200,7 @@ void sceneHandler13_uneatGum() {
 }
 
 void sceneHandler13_eatGum() {
-	BehaviorMove *beh = g_fp->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene13_guard, ST_STR_RIGHT, QU_STR_CHEW);
+	BehaviorMove *beh = g_nmi->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene13_guard, ST_STR_RIGHT, QU_STR_CHEW);
 
 	if (beh) {
 		beh->_percent = 10922;
@@ -212,7 +212,7 @@ void sceneHandler13_updateBridge() {
 	MovGraphLink *lnk = getCurrSceneSc2MotionController()->getLinkByName(sO_Bridge);
 
 	if (lnk) {
-		if (g_fp->getObjectState(sO_Bridge) == g_fp->getObjectEnumState(sO_Bridge, sO_Convoluted))
+		if (g_nmi->getObjectState(sO_Bridge) == g_nmi->getObjectEnumState(sO_Bridge, sO_Convoluted))
 			lnk->_flags |= 0x20000000;
 		else
 			lnk->_flags &= 0xDFFFFFFF;
@@ -236,11 +236,11 @@ void sceneHandler13_setBehFlag(BehaviorMove *beh, bool flag) {
 }
 
 void sceneHandler13_walkForward(bool flag) {
-	BehaviorMove *beh = g_fp->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene13_guard, ST_STR_RIGHT, QU_STR_RTOL);
+	BehaviorMove *beh = g_nmi->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene13_guard, ST_STR_RIGHT, QU_STR_RTOL);
 
 	sceneHandler13_setBehFlag(beh, flag);
 
-	beh = g_fp->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene13_guard, ST_STR_LEFT, QU_STR_TURNR);
+	beh = g_nmi->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene13_guard, ST_STR_LEFT, QU_STR_TURNR);
 
 	sceneHandler13_setBehFlag(beh, flag);
 
@@ -248,11 +248,11 @@ void sceneHandler13_walkForward(bool flag) {
 }
 
 void sceneHandler13_walkBackward(bool flag) {
-	BehaviorMove *beh = g_fp->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene13_guard, ST_STR_RIGHT|0x4000, QU_STR_LTOR);
+	BehaviorMove *beh = g_nmi->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene13_guard, ST_STR_RIGHT|0x4000, QU_STR_LTOR);
 
 	sceneHandler13_setBehFlag(beh, flag);
 
-	beh = g_fp->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene13_guard, ST_STR_LEFT|0x4000, QU_STR_TURNR_L);
+	beh = g_nmi->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene13_guard, ST_STR_LEFT|0x4000, QU_STR_TURNR_L);
 
 	sceneHandler13_setBehFlag(beh, flag);
 
@@ -318,17 +318,17 @@ int sceneHandler13(ExCommand *cmd) {
 
 	case 29:
 		{
-			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
-			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
-				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
+			if (!ani || !canInteractAny(g_nmi->_aniMan, ani, cmd->_param)) {
+				int picId = g_nmi->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+				PictureObject *pic = g_nmi->_currentScene->getPictureObjectById(picId, 0);
 
-				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
-					if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47
-						 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
-						|| (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
-						g_fp->processArcade(cmd);
+				if (!pic || !canInteractAny(g_nmi->_aniMan, pic, cmd->_param)) {
+					if ((g_nmi->_sceneRect.right - cmd->_sceneClickX < 47
+						 && g_nmi->_sceneRect.right < g_nmi->_sceneWidth - 1)
+						|| (cmd->_sceneClickX - g_nmi->_sceneRect.left < 47 && g_nmi->_sceneRect.left > 0)) {
+						g_nmi->processArcade(cmd);
 					}
 				}
 			}
@@ -340,19 +340,19 @@ int sceneHandler13(ExCommand *cmd) {
 			int res = 0;
 			int x;
 
-			if (g_fp->_aniMan2) {
-				x = g_fp->_aniMan2->_ox;
+			if (g_nmi->_aniMan2) {
+				x = g_nmi->_aniMan2->_ox;
 				g_vars->scene13_dudeX = x;
 
-				if (x < g_fp->_sceneRect.left + 200)
-					g_fp->_currentScene->_x = x - g_fp->_sceneRect.left - 300;
+				if (x < g_nmi->_sceneRect.left + 200)
+					g_nmi->_currentScene->_x = x - g_nmi->_sceneRect.left - 300;
 
-				if (x > g_fp->_sceneRect.right - 200)
-					g_fp->_currentScene->_x = x - g_fp->_sceneRect.right + 300;
+				if (x > g_nmi->_sceneRect.right - 200)
+					g_nmi->_currentScene->_x = x - g_nmi->_sceneRect.right + 300;
 
 				res = 1;
 
-				g_fp->sceneAutoScrolling();
+				g_nmi->sceneAutoScrolling();
 			} else {
 				x = g_vars->scene13_dudeX;
 			}
@@ -364,8 +364,8 @@ int sceneHandler13(ExCommand *cmd) {
 
 					g_vars->scene13_guardDirection = false;
 
-					g_fp->_behaviorManager->updateBehaviors();
-					g_fp->startSceneTrack();
+					g_nmi->_behaviorManager->updateBehaviors();
+					g_nmi->startSceneTrack();
 
 					return res;
 				}
@@ -376,8 +376,8 @@ int sceneHandler13(ExCommand *cmd) {
 				g_vars->scene13_guardDirection = true;
 			}
 
-			g_fp->_behaviorManager->updateBehaviors();
-			g_fp->startSceneTrack();
+			g_nmi->_behaviorManager->updateBehaviors();
+			g_nmi->startSceneTrack();
 
 			return res;
 		}

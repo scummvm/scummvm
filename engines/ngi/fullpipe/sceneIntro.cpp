@@ -32,13 +32,13 @@
 namespace NGI {
 
 int sceneIntro_updateCursor() {
-	g_fp->_cursorId = 0;
+	g_nmi->_cursorId = 0;
 
 	return 0;
 }
 
 void sceneIntro_initScene(Scene *sc) {
-	g_fp->_gameLoader->loadScene(SC_INTRO2);
+	g_nmi->_gameLoader->loadScene(SC_INTRO2);
 
 	g_vars->sceneIntro_aniin1man = sc->getStaticANIObject1ById(ANI_IN1MAN, -1);
 	g_vars->sceneIntro_needSleep = true;
@@ -46,19 +46,19 @@ void sceneIntro_initScene(Scene *sc) {
 	g_vars->sceneIntro_playing = true;
 	g_vars->sceneIntro_needBlackout = false;
 
-	if (g_fp->_recordEvents || g_fp->_inputArFlag)
+	if (g_nmi->_recordEvents || g_nmi->_inputArFlag)
 		g_vars->sceneIntro_skipIntro = false;
 
-	g_fp->_modalObject = new ModalIntro;
+	g_nmi->_modalObject = new ModalIntro;
 }
 
 void sceneHandlerIntro_part1() {
-	g_fp->_currentScene = g_fp->accessScene(SC_INTRO1);
+	g_nmi->_currentScene = g_nmi->accessScene(SC_INTRO1);
 	chainQueue(QU_INTR_FINISH, 0);
 }
 
 void sceneHandlerIntro_part2() {
-	g_fp->_currentScene = g_fp->accessScene(SC_INTRO2);
+	g_nmi->_currentScene = g_nmi->accessScene(SC_INTRO2);
 	chainQueue(QU_IN2_DO, 0);
 }
 
@@ -102,7 +102,7 @@ int sceneHandlerIntro(ExCommand *ex) {
 		chainQueue(QU_INTR_GETUPMAN, 0);
 	}
 
-	g_fp->startSceneTrack();
+	g_nmi->startSceneTrack();
 
 	return 0;
 }

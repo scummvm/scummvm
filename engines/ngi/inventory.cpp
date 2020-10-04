@@ -162,7 +162,7 @@ void Inventory2::removeItem2(Scene *sceneObj, int itemId, int x, int y, int prio
 		if (_inventoryItems[idx].count) {
 			removeItem(itemId, 1);
 
-			Scene *sc = g_fp->accessScene(_sceneId);
+			Scene *sc = g_nmi->accessScene(_sceneId);
 
 			if (sc) {
 				StaticANIObject *ani = new StaticANIObject(sc->getStaticANIObject1ById(itemId, -1));
@@ -222,7 +222,7 @@ int Inventory2::getItemFlags(int itemId) {
 void Inventory2::rebuildItemRects() {
 	debugC(2, kDebugInventory, "rebuildItemRects()");
 
-	_scene = g_fp->accessScene(_sceneId);
+	_scene = g_nmi->accessScene(_sceneId);
 
 	if (!_scene)
 		return;
@@ -286,11 +286,11 @@ void Inventory2::draw() {
 	if (!_scene)
 		return;
 
-	int oldScLeft = g_fp->_sceneRect.left;
-	int oldScTop = g_fp->_sceneRect.top;
+	int oldScLeft = g_nmi->_sceneRect.left;
+	int oldScTop = g_nmi->_sceneRect.top;
 
-	g_fp->_sceneRect.top = -_topOffset;
-	g_fp->_sceneRect.left = 0;
+	g_nmi->_sceneRect.top = -_topOffset;
+	g_nmi->_sceneRect.left = 0;
 
 	_picture->draw(-1, -1, 0, 0);
 
@@ -350,8 +350,8 @@ LABEL_25:
 
 reset:
 
-	g_fp->_sceneRect.top = oldScTop;
-	g_fp->_sceneRect.left = oldScLeft;
+	g_nmi->_sceneRect.top = oldScTop;
+	g_nmi->_sceneRect.left = oldScLeft;
 
 }
 
@@ -426,7 +426,7 @@ int Inventory2::selectItem(int itemId) {
 		int idx = getInventoryPoolItemIndexById(itemId);
 
 		Picture *pic = _scene->getPictureObjectById(_itemsPool[idx].pictureObjectId1, 0)->_picture;
-		g_fp->getGameLoaderInputController()->setCursorItemPicture(pic);
+		g_nmi->getGameLoaderInputController()->setCursorItemPicture(pic);
 	}
 
 	return _selectedId;
@@ -443,7 +443,7 @@ bool Inventory2::unselectItem(bool flag) {
 			_inventoryIcons[i].isSelected = false;
 	}
 
-	g_fp->getGameLoaderInputController()->setCursorItemPicture(0);
+	g_nmi->getGameLoaderInputController()->setCursorItemPicture(0);
 
 	return true;
 }

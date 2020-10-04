@@ -53,33 +53,33 @@ void scene25_initScene(Scene *sc, int entranceId) {
 	g_vars->scene25_drop->setAlpha(0xa0);
 	g_vars->scene25_dudeIsOnBoard = false;
 
-	if (g_fp->getObjectState(sO_Pool) < g_fp->getObjectEnumState(sO_Pool, sO_HalfFull)) {
+	if (g_nmi->getObjectState(sO_Pool) < g_nmi->getObjectEnumState(sO_Pool, sO_HalfFull)) {
 		g_vars->scene25_waterIsPresent = false;
 
 		g_vars->scene25_water->hide();
 	} else {
 		g_vars->scene25_waterIsPresent = true;
 
-		g_fp->playSound(SND_25_006, 1);
+		g_nmi->playSound(SND_25_006, 1);
 	}
 
-	int boardState = g_fp->getObjectState(sO_Board_25);
+	int boardState = g_nmi->getObjectState(sO_Board_25);
 
 	if (entranceId == TrubaRight) {
-		if (boardState == g_fp->getObjectEnumState(sO_Board_25, sO_FarAway)) {
+		if (boardState == g_nmi->getObjectEnumState(sO_Board_25, sO_FarAway)) {
 			scene25_showBoardOnRightFar();
 
-			g_fp->playSound(SND_25_029, 0);
+			g_nmi->playSound(SND_25_029, 0);
 
 			g_vars->scene25_boardIsSelectable = false;
 		} else {
-			if (boardState == g_fp->getObjectEnumState(sO_Board_25, sO_Nearby)
-				|| boardState == g_fp->getObjectEnumState(sO_Board_25, sO_WithDudeOnRight))
+			if (boardState == g_nmi->getObjectEnumState(sO_Board_25, sO_Nearby)
+				|| boardState == g_nmi->getObjectEnumState(sO_Board_25, sO_WithDudeOnRight))
 				scene25_showBoardOnRightClose();
 			g_vars->scene25_boardIsSelectable = false;
 		}
 	} else {
-		if (boardState == g_fp->getObjectEnumState(sO_Board_25, sO_WithDudeOnLeft)) {
+		if (boardState == g_nmi->getObjectEnumState(sO_Board_25, sO_WithDudeOnLeft)) {
 			if (!getGameLoaderInventory()->getCountItemsWithId(ANI_INV_BOARD)) {
 				getGameLoaderInventory()->addItem(ANI_INV_BOARD, 1);
 				getGameLoaderInventory()->rebuildItemRects();
@@ -94,32 +94,32 @@ void scene25_initScene(Scene *sc, int entranceId) {
 }
 
 int scene25_updateCursor() {
-	g_fp->updateCursorCommon();
+	g_nmi->updateCursorCommon();
 
 	if (g_vars->scene25_waterIsPresent) {
 		int inv = getGameLoaderInventory()->getSelectedItemId();
 
-		if (g_fp->_objectIdAtCursor == ANI_WATER25) {
+		if (g_nmi->_objectIdAtCursor == ANI_WATER25) {
 			if ((g_vars->scene25_boardIsSelectable && (!inv || inv == ANI_INV_BOARD)) || (g_vars->scene25_dudeIsOnBoard && (inv == ANI_INV_LOPAT || !inv)))
-				g_fp->_cursorId = (g_fp->_cursorId != PIC_CSR_DEFAULT) ? PIC_CSR_ITN_INV : PIC_CSR_ITN;
-		} else if (g_fp->_objectIdAtCursor == ANI_BOARD25 && (!inv || inv == ANI_INV_SWAB || inv == ANI_INV_BROOM || inv == ANI_INV_LOPAT)) {
-			g_fp->_cursorId = (g_fp->_cursorId != PIC_CSR_DEFAULT) ? PIC_CSR_ITN_INV : PIC_CSR_ITN;
+				g_nmi->_cursorId = (g_nmi->_cursorId != PIC_CSR_DEFAULT) ? PIC_CSR_ITN_INV : PIC_CSR_ITN;
+		} else if (g_nmi->_objectIdAtCursor == ANI_BOARD25 && (!inv || inv == ANI_INV_SWAB || inv == ANI_INV_BROOM || inv == ANI_INV_LOPAT)) {
+			g_nmi->_cursorId = (g_nmi->_cursorId != PIC_CSR_DEFAULT) ? PIC_CSR_ITN_INV : PIC_CSR_ITN;
 		}
 	}
 
-	return g_fp->_cursorId;
+	return g_nmi->_cursorId;
 }
 
 void scene25_setupWater(Scene *a1, int entranceId) {
 	if (g_vars->scene25_waterIsPresent) {
-		g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene25_drop, ST_DRP25_EMPTY, QU_DRP25_TOFLOOR, 0);
-		g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene25_drop, ST_DRP25_EMPTY, QU_DRP25_TOWATER, 1);
+		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene25_drop, ST_DRP25_EMPTY, QU_DRP25_TOFLOOR, 0);
+		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene25_drop, ST_DRP25_EMPTY, QU_DRP25_TOWATER, 1);
 
 		if (entranceId != TrubaRight)
-			g_fp->playTrack(g_fp->getGameLoaderGameVar()->getSubVarByName("SC_25"), "MUSIC2", 0);
+			g_nmi->playTrack(g_nmi->getGameLoaderGameVar()->getSubVarByName("SC_25"), "MUSIC2", 0);
 	} else {
-		g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene25_drop, ST_DRP25_EMPTY, QU_DRP25_TOFLOOR, 1);
-		g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene25_drop, ST_DRP25_EMPTY, QU_DRP25_TOWATER, 0);
+		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene25_drop, ST_DRP25_EMPTY, QU_DRP25_TOFLOOR, 1);
+		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene25_drop, ST_DRP25_EMPTY, QU_DRP25_TOWATER, 0);
 	}
 }
 
@@ -133,7 +133,7 @@ void sceneHandler25_startBearders() {
 	g_vars->scene25_bearders.clear();
 	g_vars->scene25_beardersCounter = 0;
 
-	StaticANIObject *bearded = g_fp->accessScene(SC_COMMON)->getStaticANIObject1ById(ANI_BEARDED_CMN, -1);
+	StaticANIObject *bearded = g_nmi->accessScene(SC_COMMON)->getStaticANIObject1ById(ANI_BEARDED_CMN, -1);
 
 	for (int i = 0; i < 3; i++) {
 		StaticANIObject *ani = new StaticANIObject(bearded);
@@ -142,7 +142,7 @@ void sceneHandler25_startBearders() {
 
 		ani->_statics = ani->getStaticsById(ST_BRDCMN_EMPTY);
 
-		g_fp->_currentScene->addStaticANIObject(ani, 1);
+		g_nmi->_currentScene->addStaticANIObject(ani, 1);
 	}
 
 	g_vars->scene25_beardersAreThere = true;
@@ -161,24 +161,24 @@ void sceneHandler25_enterMan() {
 void sceneHandler25_enterTruba() {
 	PicAniInfo info;
 
-	g_fp->_aniMan->getPicAniInfo(info);
-	g_fp->_aniMan->_messageQueueId = 0;
-	g_fp->_aniMan->changeStatics2(g_fp->_aniMan->_statics->_staticsId);
+	g_nmi->_aniMan->getPicAniInfo(info);
+	g_nmi->_aniMan->_messageQueueId = 0;
+	g_nmi->_aniMan->changeStatics2(g_nmi->_aniMan->_statics->_staticsId);
 
-	int x = g_fp->_aniMan->_ox;
-	int y = g_fp->_aniMan->_oy;
+	int x = g_nmi->_aniMan->_ox;
+	int y = g_nmi->_aniMan->_oy;
 
-	g_fp->_aniMan->setPicAniInfo(info);
+	g_nmi->_aniMan->setPicAniInfo(info);
 
-	int id = g_fp->_aniMan->_statics->_staticsId;
+	int id = g_nmi->_aniMan->_statics->_staticsId;
 	int qid = 0;
 
 	if (id == ST_MAN25_ONBOARD && x == 634 && y == 502) {
-		g_fp->_aniMan->changeStatics2(ST_MAN25_ONBOARD);
+		g_nmi->_aniMan->changeStatics2(ST_MAN25_ONBOARD);
 
 		qid = QU_SC25_MANTOTRUBA;
 	} else if (id == (ST_MAN25_ONBOARD|0x4000) && x == 632 && y == 502) {
-		g_fp->_aniMan->changeStatics2(ST_MAN25_ONBOARD|0x4000);
+		g_nmi->_aniMan->changeStatics2(ST_MAN25_ONBOARD|0x4000);
 
 		qid = QU_SC25_MANTOTRUBA_R;
 	}
@@ -190,30 +190,30 @@ void sceneHandler25_enterTruba() {
 }
 
 void sceneHandler25_saveEntrance(int value) {
-	g_fp->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME")->setSubVarAsInt("Entrance", value);
+	g_nmi->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME")->setSubVarAsInt("Entrance", value);
 }
 
 void sceneHandler25_toLadder() {
 	PicAniInfo info;
 
-	g_fp->_aniMan->getPicAniInfo(info);
-	g_fp->_aniMan->_messageQueueId = 0;
-	g_fp->_aniMan->changeStatics2(g_fp->_aniMan->_statics->_staticsId);
+	g_nmi->_aniMan->getPicAniInfo(info);
+	g_nmi->_aniMan->_messageQueueId = 0;
+	g_nmi->_aniMan->changeStatics2(g_nmi->_aniMan->_statics->_staticsId);
 
-	int x = g_fp->_aniMan->_ox;
-	int y = g_fp->_aniMan->_oy;
+	int x = g_nmi->_aniMan->_ox;
+	int y = g_nmi->_aniMan->_oy;
 
-	g_fp->_aniMan->setPicAniInfo(info);
+	g_nmi->_aniMan->setPicAniInfo(info);
 
-	int id = g_fp->_aniMan->_statics->_staticsId;
+	int id = g_nmi->_aniMan->_statics->_staticsId;
 	int qid = 0;
 
 	if (id == ST_MAN25_ONBOARD && x == 307 && y == 502) {
-		g_fp->_aniMan->changeStatics2(ST_MAN25_ONBOARD);
+		g_nmi->_aniMan->changeStatics2(ST_MAN25_ONBOARD);
 
 		qid = QU_SC25_BACKTOLADDER;
 	} else if (id == (ST_MAN25_ONBOARD|0x4000) && x == 192 && y == 502) {
-		g_fp->_aniMan->changeStatics2(ST_MAN25_ONBOARD|0x4000);
+		g_nmi->_aniMan->changeStatics2(ST_MAN25_ONBOARD|0x4000);
 
 		qid = QU_SC25_BOARDTOLADDER;
 	}
@@ -229,29 +229,29 @@ void sceneHandler25_toLadder() {
 }
 
 void sceneHandler25_animateBearders() {
-	if (g_fp->_rnd.getRandomNumber(32767) < 218) {
+	if (g_nmi->_rnd.getRandomNumber(32767) < 218) {
 		MessageQueue *mq;
 
-		mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC25_BEARDED), 0, 1);
+		mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC25_BEARDED), 0, 1);
 
 		mq->setParamInt(-1, g_vars->scene25_bearders[0]->_odelay);
-		mq->getExCommandByIndex(0)->_x = g_fp->_rnd.getRandomNumber(650) + 100;
+		mq->getExCommandByIndex(0)->_x = g_nmi->_rnd.getRandomNumber(650) + 100;
 		mq->chain(0);
 
 		g_vars->scene25_beardersCounter = 0;
 
-		if (g_fp->_rnd.getRandomNumber(32767) < 0x1FFF) {
-			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC25_BEARDED2), 0, 1);
+		if (g_nmi->_rnd.getRandomNumber(32767) < 0x1FFF) {
+			mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC25_BEARDED2), 0, 1);
 
 			mq->setParamInt(-1, g_vars->scene25_bearders[1]->_odelay);
-			mq->getExCommandByIndex(0)->_x = g_fp->_rnd.getRandomNumber(650) + 100;
+			mq->getExCommandByIndex(0)->_x = g_nmi->_rnd.getRandomNumber(650) + 100;
 			mq->chain(0);
 
-			if (g_fp->_rnd.getRandomNumber(32767) < 8191) {
-				mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC25_BEARDED3), 0, 1);
+			if (g_nmi->_rnd.getRandomNumber(32767) < 8191) {
+				mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC25_BEARDED3), 0, 1);
 
 				mq->setParamInt(-1, g_vars->scene25_bearders[2]->_odelay);
-				mq->getExCommandByIndex(0)->_x = g_fp->_rnd.getRandomNumber(650) + 100;
+				mq->getExCommandByIndex(0)->_x = g_nmi->_rnd.getRandomNumber(650) + 100;
 				mq->chain(0);
 			}
 		}
@@ -259,44 +259,44 @@ void sceneHandler25_animateBearders() {
 }
 
 void sceneHandler25_sneeze() {
-	if (g_fp->_rnd.getRandomNumber(32767) % 10) {
-		if (g_fp->_aniMan->_statics->_staticsId == ST_MAN25_ONBOARD) {
-			g_fp->_aniMan->startAnim(MV_MAN25_ONBOARD, 0, -1);
-		} else if (g_fp->_aniMan->_statics->_staticsId == (ST_MAN25_ONBOARD|0x4000)) {
-			g_fp->_aniMan->startAnim(rMV_MAN25_ONBOARD, 0, -1);
+	if (g_nmi->_rnd.getRandomNumber(32767) % 10) {
+		if (g_nmi->_aniMan->_statics->_staticsId == ST_MAN25_ONBOARD) {
+			g_nmi->_aniMan->startAnim(MV_MAN25_ONBOARD, 0, -1);
+		} else if (g_nmi->_aniMan->_statics->_staticsId == (ST_MAN25_ONBOARD|0x4000)) {
+			g_nmi->_aniMan->startAnim(rMV_MAN25_ONBOARD, 0, -1);
 		}
-	} else if (g_fp->_aniMan->_statics->_staticsId == ST_MAN25_ONBOARD) {
-		g_fp->_aniMan->startAnim(MV_MAN25_CHIH, 0, -1);
-	} else if (g_fp->_aniMan->_statics->_staticsId == (ST_MAN25_ONBOARD|0x4000)) {
-		g_fp->_aniMan->startAnim(rMV_MAN25_CHIH, 0, -1);
+	} else if (g_nmi->_aniMan->_statics->_staticsId == ST_MAN25_ONBOARD) {
+		g_nmi->_aniMan->startAnim(MV_MAN25_CHIH, 0, -1);
+	} else if (g_nmi->_aniMan->_statics->_staticsId == (ST_MAN25_ONBOARD|0x4000)) {
+		g_nmi->_aniMan->startAnim(rMV_MAN25_CHIH, 0, -1);
 	}
 }
 
 void sceneHandler25_rowShovel() {
 	PicAniInfo info;
 
-	g_fp->_aniMan->getPicAniInfo(info);
-	g_fp->_aniMan->_messageQueueId = 0;
-	g_fp->_aniMan->changeStatics2(g_fp->_aniMan->_statics->_staticsId);
+	g_nmi->_aniMan->getPicAniInfo(info);
+	g_nmi->_aniMan->_messageQueueId = 0;
+	g_nmi->_aniMan->changeStatics2(g_nmi->_aniMan->_statics->_staticsId);
 
-	int x = g_fp->_aniMan->_ox;
-	int y = g_fp->_aniMan->_oy;
+	int x = g_nmi->_aniMan->_ox;
+	int y = g_nmi->_aniMan->_oy;
 
-	g_fp->_aniMan->setPicAniInfo(info);
+	g_nmi->_aniMan->setPicAniInfo(info);
 
-	int id = g_fp->_aniMan->_statics->_staticsId;
+	int id = g_nmi->_aniMan->_statics->_staticsId;
 	int qid = 0;
 
 	if (id == ST_MAN25_ONBOARD && x == 370 && y == 502) {
-		g_fp->_aniMan->changeStatics2(ST_MAN25_ONBOARD);
+		g_nmi->_aniMan->changeStatics2(ST_MAN25_ONBOARD);
 
 		qid = QU_SC25_ROWTOTRUBA;
 	} else if (id == (ST_MAN25_ONBOARD|0x4000) && x == 632 && y == 502) {
-		g_fp->_aniMan->changeStatics2(ST_MAN25_ONBOARD|0x4000);
+		g_nmi->_aniMan->changeStatics2(ST_MAN25_ONBOARD|0x4000);
 
 		qid = QU_SC25_ROWTOLADDER;
 
-		g_fp->playSound(SND_25_030, 0);
+		g_nmi->playSound(SND_25_030, 0);
 	}
 
 	if (qid) {
@@ -309,39 +309,39 @@ void sceneHandler25_rowShovel() {
 void sceneHandler25_rowHand() {
 	PicAniInfo info;
 
-	g_fp->_aniMan->getPicAniInfo(info);
-	g_fp->_aniMan->_messageQueueId = 0;
-	g_fp->_aniMan->changeStatics2(g_fp->_aniMan->_statics->_staticsId);
+	g_nmi->_aniMan->getPicAniInfo(info);
+	g_nmi->_aniMan->_messageQueueId = 0;
+	g_nmi->_aniMan->changeStatics2(g_nmi->_aniMan->_statics->_staticsId);
 
-	int x = g_fp->_aniMan->_ox;
-	int y = g_fp->_aniMan->_oy;
+	int x = g_nmi->_aniMan->_ox;
+	int y = g_nmi->_aniMan->_oy;
 
-	g_fp->_aniMan->setPicAniInfo(info);
+	g_nmi->_aniMan->setPicAniInfo(info);
 
-	int id = g_fp->_aniMan->_statics->_staticsId;
+	int id = g_nmi->_aniMan->_statics->_staticsId;
 	int qid = 0;
 
 	if (id == ST_MAN25_ONBOARD && x == 370 && y == 502) {
-		g_fp->_aniMan->changeStatics2(ST_MAN25_ONBOARD);
+		g_nmi->_aniMan->changeStatics2(ST_MAN25_ONBOARD);
 
 		qid = QU_SC25_TRYROWHAND;
 	} else if (id == (ST_MAN25_ONBOARD|0x4000) && x == 632 && y == 502) {
-		g_fp->_aniMan->changeStatics2(ST_MAN25_ONBOARD|0x4000);
+		g_nmi->_aniMan->changeStatics2(ST_MAN25_ONBOARD|0x4000);
 
 		qid = QU_SC25_TRYROWHAND_R;
 	}
 
 	if (qid) {
-		chainObjQueue(g_fp->_aniMan, qid, 1);
+		chainObjQueue(g_nmi->_aniMan, qid, 1);
 		g_vars->scene25_sneezeFlipper = false;
 	}
 }
 
 void sceneHandler25_putBoard() {
-	if (g_fp->_aniMan->_statics->_staticsId == ST_MAN_STANDLADDER
-		|| g_fp->_aniMan->_statics->_staticsId == ST_MAN_LADDERDOWN_R) {
-		g_fp->_aniMan->changeStatics2(ST_MAN_STANDLADDER);
-		g_fp->_aniMan->setOXY(281, 481);
+	if (g_nmi->_aniMan->_statics->_staticsId == ST_MAN_STANDLADDER
+		|| g_nmi->_aniMan->_statics->_staticsId == ST_MAN_LADDERDOWN_R) {
+		g_nmi->_aniMan->changeStatics2(ST_MAN_STANDLADDER);
+		g_nmi->_aniMan->setOXY(281, 481);
 
 		chainQueue(QU_SC25_PUTBOARD, 1);
 
@@ -352,9 +352,9 @@ void sceneHandler25_putBoard() {
 }
 
 void sceneHandler25_tryWater() {
-	if (g_fp->_aniMan->_statics->_staticsId == ST_MAN_STANDLADDER
-		|| g_fp->_aniMan->_statics->_staticsId == ST_MAN_LADDERDOWN_R) {
-		g_fp->_aniMan->changeStatics2(ST_MAN_STANDLADDER);
+	if (g_nmi->_aniMan->_statics->_staticsId == ST_MAN_STANDLADDER
+		|| g_nmi->_aniMan->_statics->_staticsId == ST_MAN_LADDERDOWN_R) {
+		g_nmi->_aniMan->changeStatics2(ST_MAN_STANDLADDER);
 
 		chainQueue(QU_SC25_TRYWATER, 1);
 	}
@@ -363,26 +363,26 @@ void sceneHandler25_tryWater() {
 void sceneHandler25_tryRow(int obj) {
 	PicAniInfo info;
 
-	g_fp->_aniMan->getPicAniInfo(info);
-	g_fp->_aniMan->_messageQueueId = 0;
-	g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
+	g_nmi->_aniMan->getPicAniInfo(info);
+	g_nmi->_aniMan->_messageQueueId = 0;
+	g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
 
-	int x = g_fp->_aniMan->_ox;
-	int y = g_fp->_aniMan->_oy;
+	int x = g_nmi->_aniMan->_ox;
+	int y = g_nmi->_aniMan->_oy;
 
-	g_fp->_aniMan->setPicAniInfo(info);
+	g_nmi->_aniMan->setPicAniInfo(info);
 
 	int qid = 0;
 
 	if (x == 788 && y == 468) {
 		if (g_vars->scene25_board->_statics->_staticsId == ST_BRD25_RIGHT2) {
 			if (obj == ANI_INV_BROOM) {
-				g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
+				g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
 
 				qid = QU_SC25_TRYBROOM;
 			}
 			if (obj == ANI_INV_LOPAT) {
-				g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
+				g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
 
 				qid = QU_SC25_TRYSPADE;
 			}
@@ -390,24 +390,24 @@ void sceneHandler25_tryRow(int obj) {
 			if (qid) {
 				chainQueue(qid, 1);
 
-				g_fp->playSound(SND_25_028, 0);
+				g_nmi->playSound(SND_25_028, 0);
 
 				return;
 			}
 
 			if (obj == ANI_INV_SWAB) {
-				g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
+				g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
 
 				chainQueue(QU_SC25_TRYSWAB, 1);
 			} else if (!obj) {
-				g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
+				g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
 
-				chainObjQueue(g_fp->_aniMan, QU_SC25_TRYHAND, 1);
+				chainObjQueue(g_nmi->_aniMan, QU_SC25_TRYHAND, 1);
 
-				g_fp->playSound(SND_25_028, 0);
+				g_nmi->playSound(SND_25_028, 0);
 			}
 		} else if (g_vars->scene25_board->_statics->_staticsId == (ST_BRD25_RIGHT2 | 0x4000) && !obj) {
-			g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
+			g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
 
 			chainQueue(QU_SC25_TRUBATOBOARD, 1);
 
@@ -417,17 +417,17 @@ void sceneHandler25_tryRow(int obj) {
 }
 
 void sceneHandler25_ladderUp() {
-	if (g_fp->_aniMan->_statics->_staticsId == ST_MAN_STANDLADDER
-		|| g_fp->_aniMan->_statics->_staticsId == ST_MAN_LADDERDOWN_R) {
-		g_fp->_aniMan->changeStatics2(ST_MAN_STANDLADDER);
+	if (g_nmi->_aniMan->_statics->_staticsId == ST_MAN_STANDLADDER
+		|| g_nmi->_aniMan->_statics->_staticsId == ST_MAN_LADDERDOWN_R) {
+		g_nmi->_aniMan->changeStatics2(ST_MAN_STANDLADDER);
 
 		chainQueue(QU_SC25_LADDERUP, 1);
 	}
 }
 
 void sceneHandler25_backToPipe() {
-	if (!g_fp->_aniMan->_movement && g_fp->_aniMan->_statics->_staticsId == (ST_MAN_RIGHT|0x4000)) {
-		g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT|0x4000);
+	if (!g_nmi->_aniMan->_movement && g_nmi->_aniMan->_statics->_staticsId == (ST_MAN_RIGHT|0x4000)) {
+		g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT|0x4000);
 
 		chainQueue(QU_SC25_BACKTOTRUBA, 1);
 	}
@@ -520,15 +520,15 @@ void sceneHandler25_walkOnLadder(StaticANIObject *ani, Common::Point *pnt, Messa
 }
 
 bool sceneHandler25_isOnLadder(ExCommand *cmd) {
-	if ((g_fp->_aniMan->_movement && g_fp->_aniMan->_movement->_id == MV_MAN_GOLADDERDOWN)
-		|| g_fp->_aniMan->_statics->_staticsId == ST_MAN_GOLADDERD) {
+	if ((g_nmi->_aniMan->_movement && g_nmi->_aniMan->_movement->_id == MV_MAN_GOLADDERDOWN)
+		|| g_nmi->_aniMan->_statics->_staticsId == ST_MAN_GOLADDERD) {
 		Interaction *inter = getGameLoaderInteractionController()->getInteractionByObjectIds(PIC_SC25_LADDERDOWN, ANI_MAN, cmd->_param);
 
 		if (!inter)
 			return 0;
 
 		MessageQueue *mq = new MessageQueue(inter->_messageQueue, 0, 1);
-		PictureObject *pic = g_fp->_currentScene->getPictureObjectById(PIC_SC25_LADDERDOWN, 0);
+		PictureObject *pic = g_nmi->_currentScene->getPictureObjectById(PIC_SC25_LADDERDOWN, 0);
 		Common::Point point;
 
 		point.x = inter->_xOffs + pic->_ox;
@@ -536,7 +536,7 @@ bool sceneHandler25_isOnLadder(ExCommand *cmd) {
 
 		mq->setFlags(mq->getFlags() | 1);
 
-		sceneHandler25_walkOnLadder(g_fp->_aniMan, &point, mq, 0);
+		sceneHandler25_walkOnLadder(g_nmi->_aniMan, &point, mq, 0);
 
 		return true;
 	} else {
@@ -570,39 +570,39 @@ int sceneHandler25(ExCommand *cmd) {
 		break;
 
 	case MSG_BRD_TURN:
-		switch (g_fp->_rnd.getRandomNumber(3)) {
+		switch (g_nmi->_rnd.getRandomNumber(3)) {
 		case 0:
-			g_fp->playSound(SND_25_025, 0);
+			g_nmi->playSound(SND_25_025, 0);
 			break;
 
 		case 1:
-			g_fp->playSound(SND_25_026, 0);
+			g_nmi->playSound(SND_25_026, 0);
 			break;
 
 		case 2:
 		default:
-			g_fp->playSound(SND_25_027, 0);
+			g_nmi->playSound(SND_25_027, 0);
 			break;
 		}
 		break;
 
 	case 33:
-		if (g_fp->_aniMan2) {
-			int x = g_fp->_aniMan2->_ox;
-			int y = g_fp->_aniMan2->_oy;
+		if (g_nmi->_aniMan2) {
+			int x = g_nmi->_aniMan2->_ox;
+			int y = g_nmi->_aniMan2->_oy;
 
-			if (x < g_fp->_sceneRect.left + 200)
-				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
+			if (x < g_nmi->_sceneRect.left + 200)
+				g_nmi->_currentScene->_x = x - 300 - g_nmi->_sceneRect.left;
 
-			if (x > g_fp->_sceneRect.right - 200)
-				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
+			if (x > g_nmi->_sceneRect.right - 200)
+				g_nmi->_currentScene->_x = x + 300 - g_nmi->_sceneRect.right;
 
 			if (!g_vars->scene25_waterIsPresent) {
-				if (y < g_fp->_sceneRect.top + 200)
-					g_fp->_currentScene->_y = y - 300 - g_fp->_sceneRect.top;
+				if (y < g_nmi->_sceneRect.top + 200)
+					g_nmi->_currentScene->_y = y - 300 - g_nmi->_sceneRect.top;
 
-				if (y > g_fp->_sceneRect.bottom - 200)
-					g_fp->_currentScene->_y = y + 300 - g_fp->_sceneRect.bottom;
+				if (y > g_nmi->_sceneRect.bottom - 200)
+					g_nmi->_currentScene->_y = y + 300 - g_nmi->_sceneRect.bottom;
 			}
 		}
 
@@ -613,13 +613,13 @@ int sceneHandler25(ExCommand *cmd) {
 				sceneHandler25_animateBearders();
 		}
 
-		g_fp->_behaviorManager->updateBehaviors();
-		g_fp->startSceneTrack();
+		g_nmi->_behaviorManager->updateBehaviors();
+		g_nmi->startSceneTrack();
 
 		if (g_vars->scene25_waterIsPresent && !g_vars->scene25_water->_movement)
 			g_vars->scene25_water->startAnim(MV_WTR25_FLOW, 0, -1);
 
-		if (g_vars->scene25_dudeIsOnBoard && !g_fp->_aniMan->_movement && g_vars->scene25_sneezeFlipper)
+		if (g_vars->scene25_dudeIsOnBoard && !g_nmi->_aniMan->_movement && g_vars->scene25_sneezeFlipper)
 			sceneHandler25_sneeze();
 
 		g_vars->scene25_sneezeFlipper = true;
@@ -636,7 +636,7 @@ int sceneHandler25(ExCommand *cmd) {
 
 	case 29:
 		{
-			int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			int picId = g_nmi->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (!g_vars->scene25_waterIsPresent) {
 				if ((picId == PIC_SC25_LADDERUP || picId == PIC_SC25_LADDERDOWN) && sceneHandler25_isOnLadder(cmd))
@@ -645,12 +645,12 @@ int sceneHandler25(ExCommand *cmd) {
 				return 0;
 			}
 
-			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (ani) {
-				if (g_fp->_aniMan != ani) {
-					if (g_fp->_aniMan->isIdle()) {
-						if (!(g_fp->_aniMan->_flags & 0x100)) {
+				if (g_nmi->_aniMan != ani) {
+					if (g_nmi->_aniMan->isIdle()) {
+						if (!(g_nmi->_aniMan->_flags & 0x100)) {
 							if (ani->_id == ANI_WATER25) {
 								if (g_vars->scene25_dudeIsOnBoard) {
 									if (cmd->_param == ANI_INV_LOPAT) {
@@ -686,7 +686,7 @@ int sceneHandler25(ExCommand *cmd) {
 			if (picId == PIC_SC25_LADDERUP && sceneHandler25_isOnLadder(cmd))
 				cmd->_messageKind = 0;
 
-			if (!g_fp->_aniMan->isIdle() || (g_fp->_aniMan->_flags & 0x100))
+			if (!g_nmi->_aniMan->isIdle() || (g_nmi->_aniMan->_flags & 0x100))
 				return 0;
 
 			if (g_vars->scene25_dudeIsOnBoard) {

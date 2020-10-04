@@ -100,7 +100,7 @@ bool ExCommand::load(MfcArchive &file) {
 
 	_field_3C = 0;
 
-	if (g_fp->_gameProjectVersion >= 12) {
+	if (g_nmi->_gameProjectVersion >= 12) {
 		_excFlags = file.readUint32LE();
 		_parId = file.readUint32LE();
 	}
@@ -116,12 +116,12 @@ bool ExCommand::load(MfcArchive &file) {
 
 bool ExCommand::handleMessage() {
 	int cnt = 0;
-	for (MessageHandler *m = g_fp->_messageHandlers; m; m = m->nextItem)
+	for (MessageHandler *m = g_nmi->_messageHandlers; m; m = m->nextItem)
 		cnt += m->callback(this);
 
 	if (_messageKind == 17 || (_excFlags & 1)) {
 		if (_parId) {
-			MessageQueue *mq = g_fp->_globalMessageQueueList->getMessageQueueById(_parId);
+			MessageQueue *mq = g_nmi->_globalMessageQueueList->getMessageQueueById(_parId);
 			if (mq)
 				mq->update();
 		}
@@ -134,18 +134,18 @@ bool ExCommand::handleMessage() {
 }
 
 void ExCommand::sendMessage() {
-	g_fp->_exCommandList.push_back(this);
+	g_nmi->_exCommandList.push_back(this);
 
 	processMessages();
 }
 
 void ExCommand::postMessage() {
-	g_fp->_exCommandList.push_back(this);
+	g_nmi->_exCommandList.push_back(this);
 }
 
 void ExCommand::handle() {
-	if (g_fp->_modalObject) {
-		g_fp->_modalObject->handleMessage(this);
+	if (g_nmi->_modalObject) {
+		g_nmi->_modalObject->handleMessage(this);
 
 		delete this;
 	} else {
@@ -265,7 +265,7 @@ MessageQueue::MessageQueue(int dataId) {
 	_field_14 = 0;
 	_parId = 0;
 	_dataId = dataId;
-	_id = g_fp->_globalMessageQueueList->compact();
+	_id = g_nmi->_globalMessageQueueList->compact();
 	_isFinished = 0;
 	_flags = 0;
 	_counter = 0;
@@ -290,12 +290,12 @@ MessageQueue::MessageQueue(MessageQueue *src, int parId, int field_38) {
 	else
 		_parId = src->_parId;
 
-	_id = g_fp->_globalMessageQueueList->compact();
+	_id = g_nmi->_globalMessageQueueList->compact();
 	_dataId = src->_dataId;
 	_flags = src->_flags & ~kInGlobalQueue;
 	_queueName = "";
 
-	g_fp->_globalMessageQueueList->addMessageQueue(this);
+	g_nmi->_globalMessageQueueList->addMessageQueue(this);
 
 	_isFinished = 0;
 	_flag1 = 0;
@@ -313,7 +313,7 @@ MessageQueue::~MessageQueue() {
 		delete _field_14;
 
 	if (_flags & kInGlobalQueue) {
-		g_fp->_globalMessageQueueList->removeQueueById(_id);
+		g_nmi->_globalMessageQueueList->removeQueueById(_id);
 	}
 
 	finish();
@@ -326,7 +326,7 @@ bool MessageQueue::load(MfcArchive &file) {
 
 	int count = file.readUint16LE();
 
-	assert(g_fp->_gameProjectVersion >= 12);
+	assert(g_nmi->_gameProjectVersion >= 12);
 
 	_queueName = file.readPascalString();
 
@@ -347,7 +347,7 @@ bool MessageQueue::load(MfcArchive &file) {
 bool MessageQueue::chain(StaticANIObject *ani) {
 	if (checkGlobalExCommandList1() && checkGlobalExCommandList2()) {
 		if (!(getFlags() & kInGlobalQueue)) {
-			g_fp->_globalMessageQueueList->addMessageQueue(this);
+			g_nmi->_globalMessageQueueList->addMessageQueue(this);
 		}
 		if (ani) {
 			ani->queueMessageQueue(this);
@@ -372,17 +372,17 @@ void MessageQueue::update() {
 }
 
 void MessageQueue::messageQueueCallback1(int par) {
-	if (g_fp->_isSaveAllowed && par == 16) {
-		if (g_fp->_globalMessageQueueList->size() && (*g_fp->_globalMessageQueueList)[0] != 0) {
-			for (uint i = 0; i < g_fp->_globalMessageQueueList->size(); i++) {
-				if ((*g_fp->_globalMessageQueueList)[i]->_flags & 1)
-					if ((*g_fp->_globalMessageQueueList)[i] != this && !(*g_fp->_globalMessageQueueList)[i]->_isFinished)
+	if (g_nmi->_isSaveAllowed && par == 16) {
+		if (g_nmi->_globalMessageQueueList->size() && (*g_nmi->_globalMessageQueueList)[0] != 0) {
+			for (uint i = 0; i < g_nmi->_globalMessageQueueList->size(); i++) {
+				if ((*g_nmi->_globalMessageQueueList)[i]->_flags & 1)
+					if ((*g_nmi->_globalMessageQueueList)[i] != this && !(*g_nmi->_globalMessageQueueList)[i]->_isFinished)
 						return;
 			}
 		}
 
-		if (g_fp->_currentScene)
-			g_fp->_gameLoader->writeSavegame(g_fp->_currentScene, "savetmp.sav", "");
+		if (g_nmi->_currentScene)
+			g_nmi->_gameLoader->writeSavegame(g_nmi->_currentScene, "savetmp.sav", "");
 	}
 }
 
@@ -471,7 +471,7 @@ bool MessageQueue::checkGlobalExCommandList1() {
 		if (ex->_messageKind != 1 && ex->_messageKind != 20 && ex->_messageKind != 5 && ex->_messageKind != 27)
 			continue;
 
-		for (Common::List<ExCommand *>::iterator it = g_fp->_exCommandList.begin(); it != g_fp->_exCommandList.end(); it++) {
+		for (Common::List<ExCommand *>::iterator it = g_nmi->_exCommandList.begin(); it != g_nmi->_exCommandList.end(); it++) {
 			ex1 = *it;
 
 			if (ex1->_messageKind != 1 && ex1->_messageKind != 20 && ex1->_messageKind != 5 && ex1->_messageKind != 27)
@@ -483,7 +483,7 @@ bool MessageQueue::checkGlobalExCommandList1() {
 			if (ex1->_param != ex->_param && ex1->_param != -1 && ex->_param != -1)
 				continue;
 
-			MessageQueue *mq = g_fp->_globalMessageQueueList->getMessageQueueById(ex1->_parId);
+			MessageQueue *mq = g_nmi->_globalMessageQueueList->getMessageQueueById(ex1->_parId);
 
 			if (mq) {
 				if (mq->getFlags() & 1)
@@ -503,7 +503,7 @@ bool MessageQueue::checkGlobalExCommandList2() {
 		if (ex->_messageKind != 1 && ex->_messageKind != 20 && ex->_messageKind != 5 && ex->_messageKind != 27)
 			continue;
 
-		for (Common::List<ExCommand *>::iterator it = g_fp->_exCommandList.begin(); it != g_fp->_exCommandList.end();) {
+		for (Common::List<ExCommand *>::iterator it = g_nmi->_exCommandList.begin(); it != g_nmi->_exCommandList.end();) {
 			ex1 = *it;
 
 			if (ex1->_messageKind != 1 && ex1->_messageKind != 20 && ex1->_messageKind != 5 && ex1->_messageKind != 27) {
@@ -521,7 +521,7 @@ bool MessageQueue::checkGlobalExCommandList2() {
 				continue;
 			}
 
-			MessageQueue *mq = g_fp->_globalMessageQueueList->getMessageQueueById(ex1->_parId);
+			MessageQueue *mq = g_nmi->_globalMessageQueueList->getMessageQueueById(ex1->_parId);
 
 			if (mq) {
 				if (mq->getFlags() & 1)
@@ -530,7 +530,7 @@ bool MessageQueue::checkGlobalExCommandList2() {
 				delete mq;
 			}
 
-			it = g_fp->_exCommandList.erase(it);
+			it = g_nmi->_exCommandList.erase(it);
 
 			if (ex1->_excFlags & 2) {
 				delete ex1;
@@ -544,7 +544,7 @@ void MessageQueue::finish() {
 	if (!_parId)
 		return;
 
-	MessageQueue *mq = g_fp->_globalMessageQueueList->getMessageQueueById(_parId);
+	MessageQueue *mq = g_nmi->_globalMessageQueueList->getMessageQueueById(_parId);
 
 	_parId = 0;
 
@@ -704,20 +704,20 @@ void GlobalMessageQueueList::clear() {
 }
 
 void clearGlobalMessageQueueList() {
-	g_fp->_globalMessageQueueList->clear();
+	g_nmi->_globalMessageQueueList->clear();
 }
 
 void clearGlobalMessageQueueList1() {
 	clearMessages();
 
-	g_fp->_globalMessageQueueList->clear();
+	g_nmi->_globalMessageQueueList->clear();
 }
 
 void clearMessages() {
-	while (g_fp->_exCommandList.size()) {
-		ExCommand *ex = g_fp->_exCommandList.front();
+	while (g_nmi->_exCommandList.size()) {
+		ExCommand *ex = g_nmi->_exCommandList.front();
 
-		g_fp->_exCommandList.pop_front();
+		g_nmi->_exCommandList.pop_front();
 
 		if (ex->_excFlags & 2)
 			delete ex;
@@ -725,8 +725,8 @@ void clearMessages() {
 }
 
 bool removeMessageHandler(int16 id, int pos) {
-	if (g_fp->_messageHandlers) {
-		MessageHandler *curItem = g_fp->_messageHandlers;
+	if (g_nmi->_messageHandlers) {
+		MessageHandler *curItem = g_nmi->_messageHandlers;
 		MessageHandler *prevItem = 0;
 		int curPos = 0;
 
@@ -760,13 +760,13 @@ void addMessageHandler(int (*callback)(ExCommand *), int16 id) {
 	if (getMessageHandlerById(id))
 		return;
 
-	MessageHandler *curItem = g_fp->_messageHandlers;
+	MessageHandler *curItem = g_nmi->_messageHandlers;
 
 	if (!curItem)
 		return;
 
 	int index = 0;
-	for (MessageHandler *i = g_fp->_messageHandlers->nextItem; i; i = i->nextItem) {
+	for (MessageHandler *i = g_nmi->_messageHandlers->nextItem; i; i = i->nextItem) {
 		curItem = i;
 		index++;
 	}
@@ -778,7 +778,7 @@ void addMessageHandler(int (*callback)(ExCommand *), int16 id) {
 }
 
 MessageHandler *getMessageHandlerById(int16 id) {
-	MessageHandler *curItem = g_fp->_messageHandlers;
+	MessageHandler *curItem = g_nmi->_messageHandlers;
 
 	if (!curItem)
 		return 0;
@@ -808,7 +808,7 @@ bool allocMessageHandler(MessageHandler *where, int16 id, int (*callback)(ExComm
 		msg->callback = callback;
 		msg->index = 0;
 
-		g_fp->_messageHandlers = msg;
+		g_nmi->_messageHandlers = msg;
 	}
 
 	return true;
@@ -816,7 +816,7 @@ bool allocMessageHandler(MessageHandler *where, int16 id, int (*callback)(ExComm
 
 int getMessageHandlersCount() {
 	int result;
-	MessageHandler *curItem = g_fp->_messageHandlers;
+	MessageHandler *curItem = g_nmi->_messageHandlers;
 
 	for (result = 0; curItem; result++)
 		curItem = curItem->nextItem;
@@ -829,7 +829,7 @@ bool addMessageHandlerByIndex(int (*callback)(ExCommand *), int index, int16 id)
 		return false;
 
 	if (index) {
-		MessageHandler *curItem = g_fp->_messageHandlers;
+		MessageHandler *curItem = g_nmi->_messageHandlers;
 
 		for (int i = index - 1; i > 0; i--)
 			if (curItem)
@@ -847,13 +847,13 @@ bool addMessageHandlerByIndex(int (*callback)(ExCommand *), int index, int16 id)
 	} else {
 		MessageHandler *newItem = new MessageHandler;
 
-		newItem->nextItem = g_fp->_messageHandlers;
+		newItem->nextItem = g_nmi->_messageHandlers;
 		newItem->id = id;
 		newItem->callback = callback;
 		newItem->index = 0;
 
-		updateMessageHandlerIndex(g_fp->_messageHandlers, 1);
-		g_fp->_messageHandlers = newItem;
+		updateMessageHandlerIndex(g_nmi->_messageHandlers, 1);
+		g_nmi->_messageHandlers = newItem;
 
 		return true;
 	}
@@ -863,7 +863,7 @@ bool insertMessageHandler(int (*callback)(ExCommand *), int index, int16 id) {
 	if (getMessageHandlerById(id))
 		return false;
 
-	MessageHandler *curItem = g_fp->_messageHandlers;
+	MessageHandler *curItem = g_nmi->_messageHandlers;
 
 	for (int i = index; i > 0; i--)
 		if (curItem)
@@ -880,7 +880,7 @@ void clearMessageHandlers() {
 	MessageHandler *curItem;
 	MessageHandler *nextItem;
 
-	curItem = g_fp->_messageHandlers;
+	curItem = g_nmi->_messageHandlers;
 	if (curItem) {
 		do {
 			nextItem = curItem->nextItem;
@@ -890,32 +890,32 @@ void clearMessageHandlers() {
 			curItem = nextItem;
 		} while (nextItem);
 
-		g_fp->_messageHandlers = 0;
+		g_nmi->_messageHandlers = 0;
 	}
 }
 
 void processMessages() {
-	if (!g_fp->_isProcessingMessages) {
-		g_fp->_isProcessingMessages = true;
+	if (!g_nmi->_isProcessingMessages) {
+		g_nmi->_isProcessingMessages = true;
 
-		while (g_fp->_exCommandList.size()) {
-			ExCommand *ex = g_fp->_exCommandList.front();
-			g_fp->_exCommandList.pop_front();
+		while (g_nmi->_exCommandList.size()) {
+			ExCommand *ex = g_nmi->_exCommandList.front();
+			g_nmi->_exCommandList.pop_front();
 			ex->handleMessage();
 		}
-		g_fp->_isProcessingMessages = false;
+		g_nmi->_isProcessingMessages = false;
 	}
 }
 
 void updateGlobalMessageQueue(int id, int objid) {
-	MessageQueue *m = g_fp->_globalMessageQueueList->getMessageQueueById(id);
+	MessageQueue *m = g_nmi->_globalMessageQueueList->getMessageQueueById(id);
 	if (m) {
 		m->update();
 	}
 }
 
 bool chainQueue(int queueId, int flags) {
-	MessageQueue *mq = g_fp->_currentScene->getMessageQueueById(queueId);
+	MessageQueue *mq = g_nmi->_currentScene->getMessageQueueById(queueId);
 
 	if (!mq)
 		return false;
@@ -925,7 +925,7 @@ bool chainQueue(int queueId, int flags) {
 	nmq->_flags |= flags;
 
 	if (!nmq->chain(nullptr)) {
-		g_fp->_globalMessageQueueList->deleteQueueById(nmq->_id);
+		g_nmi->_globalMessageQueueList->deleteQueueById(nmq->_id);
 		return false;
 	}
 
@@ -933,7 +933,7 @@ bool chainQueue(int queueId, int flags) {
 }
 
 bool chainObjQueue(StaticANIObject *obj, int queueId, int flags) {
-	MessageQueue *mq = g_fp->_currentScene->getMessageQueueById(queueId);
+	MessageQueue *mq = g_nmi->_currentScene->getMessageQueueById(queueId);
 
 	if (!mq)
 		return false;
@@ -943,7 +943,7 @@ bool chainObjQueue(StaticANIObject *obj, int queueId, int flags) {
 	nmq->_flags |= flags;
 
 	if (!nmq->chain(obj)) {
-		g_fp->_globalMessageQueueList->deleteQueueById(nmq->_id);
+		g_nmi->_globalMessageQueueList->deleteQueueById(nmq->_id);
 		return false;
 	}
 

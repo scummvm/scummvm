@@ -138,7 +138,7 @@ bool GameLoader::writeSavegame(Scene *sc, const char *fname, const Common::Strin
 	header2.date = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
 	header2.time = ((curTime.tm_hour & 0xFF) << 8) | ((curTime.tm_min) & 0xFF);
 
-	header2.playtime = g_fp->getTotalPlayTime() / 1000;
+	header2.playtime = g_nmi->getTotalPlayTime() / 1000;
 
 	saveFile->write(header2.id, 6);
 	saveFile->writeByte(header2.version);
@@ -151,7 +151,7 @@ bool GameLoader::writeSavegame(Scene *sc, const char *fname, const Common::Strin
 	saveFile->writeByte(desc.size());
 	saveFile->writeString(desc);
 
-	g_fp->_currentScene->draw();
+	g_nmi->_currentScene->draw();
 
 	Graphics::saveThumbnail(*saveFile); // FIXME. Render proper screen
 

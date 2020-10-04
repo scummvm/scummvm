@@ -39,11 +39,11 @@ namespace NGI {
 void scene20_setExits(Scene *sc) {
 	int thingpar;
 
-	if (g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_OnStool)
-		|| g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_OnTheFloor))
+	if (g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_OnStool)
+		|| g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_OnTheFloor))
 		thingpar = 1;
-	else if (g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_NearPipe)
-			 || g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_NearPipeWithStool)) {
+	else if (g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_NearPipe)
+			 || g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_NearPipeWithStool)) {
 		getSc2MctlCompoundBySceneId(sc->_sceneId)->enableLinks(sO_CloseThing, 1);
 		getSc2MctlCompoundBySceneId(sc->_sceneId)->enableLinks(sO_CloseThing2, 1);
 		getSc2MctlCompoundBySceneId(sc->_sceneId)->enableLinks(sO_CloseThing3, 0);
@@ -59,21 +59,21 @@ void scene20_setExits(Scene *sc) {
 }
 
 void scene20_initScene(Scene *sc) {
-	Scene *oldsc = g_fp->_currentScene;
+	Scene *oldsc = g_nmi->_currentScene;
 
 	g_vars->scene20_grandma = sc->getStaticANIObject1ById(ANI_GRANDMA_20, -1);
 
-	g_fp->_currentScene = sc;
+	g_nmi->_currentScene = sc;
 
-	if (g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_OnTheFloor))
-		g_fp->setObjectState(sO_Grandma, g_fp->getObjectEnumState(sO_Grandma, sO_NearPipe));
+	if (g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_OnTheFloor))
+		g_nmi->setObjectState(sO_Grandma, g_nmi->getObjectEnumState(sO_Grandma, sO_NearPipe));
 
-	if (g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_OnStool)) {
+	if (g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_OnStool)) {
 		g_vars->scene20_grandma->changeStatics2(ST_GMA20_STOOL);
-	} else if (g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_OnTheFloor)) {
+	} else if (g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_OnTheFloor)) {
 		g_vars->scene20_grandma->changeStatics2(ST_GMA20_FLOOR);
-	} else if (g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_NearPipe)
-				|| g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_NearPipeWithStool)) {
+	} else if (g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_NearPipe)
+				|| g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_NearPipeWithStool)) {
 		g_vars->scene20_grandma->changeStatics2(ST_GMA20_STAND);
 	} else {
 		g_vars->scene20_grandma->hide();
@@ -81,38 +81,38 @@ void scene20_initScene(Scene *sc) {
 
 	scene20_setExits(sc);
 
-	g_fp->_floaters->init(g_fp->getGameLoaderGameVar()->getSubVarByName("SC_20"));
+	g_nmi->_floaters->init(g_nmi->getGameLoaderGameVar()->getSubVarByName("SC_20"));
 
 	for (int i = 0; i < 3; i++) {
-		g_fp->_floaters->genFlies(sc, g_fp->_rnd.getRandomNumber(101) + 70, g_fp->_rnd.getRandomNumber(51) + 175, 100, 0);
-		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1].val13 = g_fp->_rnd.getRandomNumber(9);
+		g_nmi->_floaters->genFlies(sc, g_nmi->_rnd.getRandomNumber(101) + 70, g_nmi->_rnd.getRandomNumber(51) + 175, 100, 0);
+		g_nmi->_floaters->_array2[g_nmi->_floaters->_array2.size() - 1].val13 = g_nmi->_rnd.getRandomNumber(9);
 	}
 
-	g_fp->_currentScene = oldsc;
+	g_nmi->_currentScene = oldsc;
 
-	g_vars->scene20_fliesCountdown = g_fp->_rnd.getRandomNumber(200) + 400;
+	g_vars->scene20_fliesCountdown = g_nmi->_rnd.getRandomNumber(200) + 400;
 }
 
 void sceneHandler20_updateFlies() {
-	int sz = g_fp->_floaters->_array2.size();
+	int sz = g_nmi->_floaters->_array2.size();
 
 	if (sz < 3) {
-		g_fp->_floaters->genFlies(g_fp->_currentScene, 253, 650, 200, 0);
-		g_fp->_floaters->_array2[sz - 1].val2 = 250;
-		g_fp->_floaters->_array2[sz - 1].val3 = 200;
+		g_nmi->_floaters->genFlies(g_nmi->_currentScene, 253, 650, 200, 0);
+		g_nmi->_floaters->_array2[sz - 1].val2 = 250;
+		g_nmi->_floaters->_array2[sz - 1].val3 = 200;
 	} else {
-		int idx = g_fp->_rnd.getRandomNumber(sz);
+		int idx = g_nmi->_rnd.getRandomNumber(sz);
 
-		g_fp->_floaters->_array2[idx].countdown = 0;
-		g_fp->_floaters->_array2[idx].fflags |= 4u;
-		g_fp->_floaters->_array2[idx].val2 = 250;
-		g_fp->_floaters->_array2[idx].val3 = 200;
-		g_fp->_floaters->_array2[idx].val6 = 253;
-		g_fp->_floaters->_array2[idx].val7 = 650;
-		g_fp->_floaters->_array2[idx].ani->_priority = 200;
+		g_nmi->_floaters->_array2[idx].countdown = 0;
+		g_nmi->_floaters->_array2[idx].fflags |= 4u;
+		g_nmi->_floaters->_array2[idx].val2 = 250;
+		g_nmi->_floaters->_array2[idx].val3 = 200;
+		g_nmi->_floaters->_array2[idx].val6 = 253;
+		g_nmi->_floaters->_array2[idx].val7 = 650;
+		g_nmi->_floaters->_array2[idx].ani->_priority = 200;
 	}
 
-	g_vars->scene20_fliesCountdown = g_fp->_rnd.getRandomNumber(200) + 400;
+	g_vars->scene20_fliesCountdown = g_nmi->_rnd.getRandomNumber(200) + 400;
 }
 
 int sceneHandler20(ExCommand *cmd) {
@@ -121,18 +121,18 @@ int sceneHandler20(ExCommand *cmd) {
 
 	switch (cmd->_messageNum) {
 	case MSG_SC20_UPDATELOCKABLE:
-		scene20_setExits(g_fp->_currentScene);
+		scene20_setExits(g_nmi->_currentScene);
 		break;
 
 	case 33:
-		if (g_fp->_aniMan2) {
-			int x = g_fp->_aniMan2->_ox;
+		if (g_nmi->_aniMan2) {
+			int x = g_nmi->_aniMan2->_ox;
 
-			if (x < g_fp->_sceneRect.left + 200)
-				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
+			if (x < g_nmi->_sceneRect.left + 200)
+				g_nmi->_currentScene->_x = x - 300 - g_nmi->_sceneRect.left;
 
-			if (x > g_fp->_sceneRect.right - 200)
-				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
+			if (x > g_nmi->_sceneRect.right - 200)
+				g_nmi->_currentScene->_x = x + 300 - g_nmi->_sceneRect.right;
 		}
 
 		--g_vars->scene20_fliesCountdown;
@@ -140,11 +140,11 @@ int sceneHandler20(ExCommand *cmd) {
 		if (g_vars->scene20_fliesCountdown <= 0)
 			sceneHandler20_updateFlies();
 
-		g_fp->_floaters->update();
+		g_nmi->_floaters->update();
 
-		g_fp->_behaviorManager->updateBehaviors();
+		g_nmi->_behaviorManager->updateBehaviors();
 
-		g_fp->startSceneTrack();
+		g_nmi->startSceneTrack();
 
 		break;
 

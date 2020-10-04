@@ -37,7 +37,7 @@
 namespace NGI {
 
 void scene01_fixEntrance() {
-	GameVar *var = g_fp->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME");
+	GameVar *var = g_nmi->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME");
 	if (var->getSubVarAsInt("Entrance") == TrubaLeft)
 		var->setSubVarAsInt("Entrance", TrubaRight);
 }
@@ -49,7 +49,7 @@ void scene01_initScene(Scene *sc, int entrance) {
 	g_vars->scene01_picSc01Osk2 = sc->getPictureObjectById(PIC_SC1_OSK2, 0);
 	g_vars->scene01_picSc01Osk2->_flags &= 0xFFFB;
 
-	if (g_fp->getObjectState(sO_EggCracker) == g_fp->getObjectEnumState(sO_EggCracker, sO_DidNotCrackEgg)) {
+	if (g_nmi->getObjectState(sO_EggCracker) == g_nmi->getObjectEnumState(sO_EggCracker, sO_DidNotCrackEgg)) {
 		PictureObject *pic = sc->getPictureObjectById(PIC_SC1_KUCHKA, 0);
 		if (pic)
 			pic->_flags &= 0xFFFB;
@@ -61,7 +61,7 @@ void scene01_initScene(Scene *sc, int entrance) {
 			bootAnim->_flags &= ~0x04;
 	}
 
-	g_fp->lift_setButton(sO_Level2, ST_LBN_2N);
+	g_nmi->lift_setButton(sO_Level2, ST_LBN_2N);
 }
 
 int sceneHandler01(ExCommand *cmd) {
@@ -72,7 +72,7 @@ int sceneHandler01(ExCommand *cmd) {
 
 	if (cmd->_messageNum > MSG_SC1_SHOWOSK) {
 		if (cmd->_messageNum == MSG_SC1_UTRUBACLICK)
-			handleObjectInteraction(g_fp->_aniMan, g_fp->_currentScene->getPictureObjectById(PIC_SC1_LADDER, 0), 0);
+			handleObjectInteraction(g_nmi->_aniMan, g_nmi->_currentScene->getPictureObjectById(PIC_SC1_LADDER, 0), 0);
 
 		return 0;
 	}
@@ -98,19 +98,19 @@ int sceneHandler01(ExCommand *cmd) {
 		return 0;
 	}
 
-	if (g_fp->_aniMan2) {
-		if (g_fp->_aniMan2->_ox < g_fp->_sceneRect.left + 200) {
-			g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.left - 300;
+	if (g_nmi->_aniMan2) {
+		if (g_nmi->_aniMan2->_ox < g_nmi->_sceneRect.left + 200) {
+			g_nmi->_currentScene->_x = g_nmi->_aniMan2->_ox - g_nmi->_sceneRect.left - 300;
 		}
 
-		if (g_fp->_aniMan2->_ox > g_fp->_sceneRect.right - 200)
-			g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.right + 300;
+		if (g_nmi->_aniMan2->_ox > g_nmi->_sceneRect.right - 200)
+			g_nmi->_currentScene->_x = g_nmi->_aniMan2->_ox - g_nmi->_sceneRect.right + 300;
 
 		res = 1;
 	}
-	g_fp->_behaviorManager->updateBehaviors();
+	g_nmi->_behaviorManager->updateBehaviors();
 
-	g_fp->startSceneTrack();
+	g_nmi->startSceneTrack();
 
 	return res;
 }

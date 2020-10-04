@@ -36,35 +36,35 @@
 namespace NGI {
 
 void scene12_initScene(Scene *sc) {
-	GameVar *var = g_fp->getGameLoaderGameVar()->getSubVarByName("SC_12");
-	g_fp->_floaters->init(var);
+	GameVar *var = g_nmi->getGameLoaderGameVar()->getSubVarByName("SC_12");
+	g_nmi->_floaters->init(var);
 
-	g_vars->scene12_fly = g_fp->getObjectState(sO_Fly_12);
+	g_vars->scene12_fly = g_nmi->getObjectState(sO_Fly_12);
 
 	if (g_vars->scene12_fly)
-		g_vars->scene12_flyCountdown = g_fp->_rnd.getRandomNumber(600) + 600;
+		g_vars->scene12_flyCountdown = g_nmi->_rnd.getRandomNumber(600) + 600;
 
-	g_fp->setObjectState(sO_Fly_12, g_fp->_rnd.getRandomNumber(1));
+	g_nmi->setObjectState(sO_Fly_12, g_nmi->_rnd.getRandomNumber(1));
 }
 
 void sceneHandler12_updateFloaters() {
-	g_fp->_floaters->genFlies(g_fp->_currentScene, 397, -50, 100, 6);
+	g_nmi->_floaters->genFlies(g_nmi->_currentScene, 397, -50, 100, 6);
 
-	g_fp->_floaters->_array2[0].countdown = g_fp->_rnd.getRandomNumber(6) + 4;
-	g_fp->_floaters->_array2[0].val6 = 397;
-	g_fp->_floaters->_array2[0].val7 = -50;
+	g_nmi->_floaters->_array2[0].countdown = g_nmi->_rnd.getRandomNumber(6) + 4;
+	g_nmi->_floaters->_array2[0].val6 = 397;
+	g_nmi->_floaters->_array2[0].val7 = -50;
 }
 
 int sceneHandler12(ExCommand *cmd) {
 	int res = 0;
 
 	if (cmd->_messageKind == 17 && cmd->_messageNum == 33) {
-		if (g_fp->_aniMan2) {
-			if (g_fp->_aniMan2->_ox < g_fp->_sceneRect.left + 200)
-				g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.left - 300;
+		if (g_nmi->_aniMan2) {
+			if (g_nmi->_aniMan2->_ox < g_nmi->_sceneRect.left + 200)
+				g_nmi->_currentScene->_x = g_nmi->_aniMan2->_ox - g_nmi->_sceneRect.left - 300;
 
-			if (g_fp->_aniMan2->_ox > g_fp->_sceneRect.right - 200)
-				g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.right + 300;
+			if (g_nmi->_aniMan2->_ox > g_nmi->_sceneRect.right - 200)
+				g_nmi->_currentScene->_x = g_nmi->_aniMan2->_ox - g_nmi->_sceneRect.right + 300;
 
 			res = 1;
 		}
@@ -74,9 +74,9 @@ int sceneHandler12(ExCommand *cmd) {
 		if (!g_vars->scene12_flyCountdown)
 			sceneHandler12_updateFloaters();
 
-		g_fp->_floaters->update();
+		g_nmi->_floaters->update();
 
-		g_fp->_behaviorManager->updateBehaviors();
+		g_nmi->_behaviorManager->updateBehaviors();
 	}
 
 	return res;

@@ -41,11 +41,11 @@ void sceneDbgMenu_initScene(Scene *sc) {
 }
 
 GameObject *sceneHandlerDbgMenu_getObjectAtXY(int x, int y) {
-	if (!g_fp->_currentScene)
+	if (!g_nmi->_currentScene)
 		return 0;
 
-	for (uint i = 1; i < g_fp->_currentScene->_picObjList.size(); i++) {
-		PictureObject *pic = g_fp->_currentScene->_picObjList[i];
+	for (uint i = 1; i < g_nmi->_currentScene->_picObjList.size(); i++) {
+		PictureObject *pic = g_nmi->_currentScene->_picObjList[i];
 
 		if (x >= pic->_ox && y >= pic->_oy) {
 			const Dims dims = pic->getDimensions();
@@ -61,8 +61,8 @@ int sceneHandlerDbgMenu(ExCommand *ex) {
 	if (ex->_messageKind != 17)
 		return 0;
 
-	int mx = g_fp->_mouseScreenPos.x + g_fp->_sceneRect.left;
-	int my = g_fp->_mouseScreenPos.y + g_fp->_sceneRect.top;
+	int mx = g_nmi->_mouseScreenPos.x + g_nmi->_sceneRect.left;
+	int my = g_nmi->_mouseScreenPos.y + g_nmi->_sceneRect.top;
 
 	if (ex->_messageNum == 29) {
 		GameObject *obj = sceneHandlerDbgMenu_getObjectAtXY(mx, my);
@@ -74,18 +74,18 @@ int sceneHandlerDbgMenu(ExCommand *ex) {
 	}
 	if (ex->_messageNum != 33) {
 		if (ex->_messageNum == MSG_RESTARTGAME) {
-			g_fp->_needRestart = true;
+			g_nmi->_needRestart = true;
 			return 0;
 		}
 		return 0;
 	}
 
-	g_fp->_cursorId = PIC_CSR_DEFAULT;
-	GameObject *obj = g_fp->_currentScene->getStaticANIObjectAtPos(mx, my);
+	g_nmi->_cursorId = PIC_CSR_DEFAULT;
+	GameObject *obj = g_nmi->_currentScene->getStaticANIObjectAtPos(mx, my);
 	if (obj) {
 		if (canInteractAny(0, obj, -3)) {
-			g_fp->_cursorId = PIC_CSR_DEFAULT;
-			g_fp->setCursor(PIC_CSR_DEFAULT);
+			g_nmi->_cursorId = PIC_CSR_DEFAULT;
+			g_nmi->setCursor(PIC_CSR_DEFAULT);
 			return 0;
 		}
 	} else {
@@ -93,13 +93,13 @@ int sceneHandlerDbgMenu(ExCommand *ex) {
 		if (obj && canInteractAny(0, obj, -3) ) {
 			g_vars->selector->_flags |= 4;
 			g_vars->selector->setOXY(obj->_ox, obj->_oy);
-			g_fp->_cursorId = PIC_CSR_DEFAULT;
-			g_fp->setCursor(PIC_CSR_DEFAULT);
+			g_nmi->_cursorId = PIC_CSR_DEFAULT;
+			g_nmi->setCursor(PIC_CSR_DEFAULT);
 			return 0;
 		}
 		g_vars->selector->_flags &= 0xFFFB;
 	}
-	g_fp->setCursor(g_fp->_cursorId);
+	g_nmi->setCursor(g_nmi->_cursorId);
 
 	return 0;
 }

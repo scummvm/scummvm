@@ -617,7 +617,7 @@ bool NGIEngine::sceneSwitcher(const EntranceInfo &entrance) {
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_INTRO1");
 		scene->preloadMovements(sceneVar);
 
-		if (!(g_fp->isDemo() && g_fp->getLanguage() == Common::RU_RUS))
+		if (!(g_nmi->isDemo() && g_nmi->getLanguage() == Common::RU_RUS))
 			sceneIntro_initScene(scene);
 		else
 			sceneIntroDemo_initScene(scene);
@@ -626,7 +626,7 @@ bool NGIEngine::sceneSwitcher(const EntranceInfo &entrance) {
 		scene->initObjectCursors("SC_INTRO1");
 		setSceneMusicParameters(sceneVar);
 
-		if (!(g_fp->isDemo() && g_fp->getLanguage() == Common::RU_RUS)) {
+		if (!(g_nmi->isDemo() && g_nmi->getLanguage() == Common::RU_RUS)) {
 			addMessageHandler(sceneHandlerIntro, 2);
 			_updateCursorCallback = sceneIntro_updateCursor;
 		} else {
@@ -833,7 +833,7 @@ bool NGIEngine::sceneSwitcher(const EntranceInfo &entrance) {
 		scene18_setupEntrance();
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_18");
 		scene->preloadMovements(sceneVar);
-		g_fp->stopAllSounds();
+		g_nmi->stopAllSounds();
 
 		if (g_vars->scene18_inScene18p1)
 			scene18_initScene1(scene);
@@ -848,13 +848,13 @@ bool NGIEngine::sceneSwitcher(const EntranceInfo &entrance) {
 		break;
 
 	case SC_19:
-		if (!g_fp->_scene3) {
-			g_fp->_scene3 = accessScene(SC_18);
-			g_fp->_gameLoader->loadScene(SC_18);
+		if (!g_nmi->_scene3) {
+			g_nmi->_scene3 = accessScene(SC_18);
+			g_nmi->_gameLoader->loadScene(SC_18);
 
-			scene18_initScene2(g_fp->_scene3);
+			scene18_initScene2(g_nmi->_scene3);
 			scene18_preload();
-			scene19_setMovements(g_fp->_scene3, entrance._field_4);
+			scene19_setMovements(g_nmi->_scene3, entrance._field_4);
 
 			g_vars->scene18_inScene18p1 = true;
 		}
@@ -862,7 +862,7 @@ bool NGIEngine::sceneSwitcher(const EntranceInfo &entrance) {
 		scene19_preload();
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_19");
 		scene->preloadMovements(sceneVar);
-		g_fp->stopAllSounds();
+		g_nmi->stopAllSounds();
 
 		if (g_vars->scene18_inScene18p1)
 			scene18_initScene1(scene);
@@ -1123,9 +1123,9 @@ bool NGIEngine::sceneSwitcher(const EntranceInfo &entrance) {
 }
 
 int defaultUpdateCursor() {
-	g_fp->updateCursorCommon();
+	g_nmi->updateCursorCommon();
 
-	return g_fp->_cursorId;
+	return g_nmi->_cursorId;
 }
 
 void NGIEngine::updateMapPiece(int mapId, int update) {

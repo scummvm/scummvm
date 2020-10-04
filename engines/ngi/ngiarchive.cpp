@@ -90,14 +90,14 @@ NGIArchive::NGIArchive(const Common::String &filename) : _ngiFilename(filename) 
 
 	free(fat);
 
-	g_fp->_currArchive = this;
+	g_nmi->_currArchive = this;
 
 	debug(4, "NGIArchive::NGIArchive(%s): Located %d files", filename.c_str(), _headers.size());
 }
 
 NGIArchive::~NGIArchive() {
 	debugC(0, kDebugLoading, "NGIArchive Destructor Called");
-	g_fp->_currArchive = nullptr;
+	g_nmi->_currArchive = nullptr;
 }
 
 bool NGIArchive::hasFile(const Common::String &name) const {

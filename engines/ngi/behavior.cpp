@@ -130,7 +130,7 @@ void BehaviorManager::updateBehavior(BehaviorInfo &behaviorInfo, BehaviorAnim &e
 				mq->sendNextCommand();
 
 				bhi._flags &= 0xFFFFFFFD;
-			} else if (behaviorInfo._counter >= bhi._delay && bhi._percent && g_fp->_rnd.getRandomNumber(32767) <= entry._behaviorMoves[i]._percent) {
+			} else if (behaviorInfo._counter >= bhi._delay && bhi._percent && g_nmi->_rnd.getRandomNumber(32767) <= entry._behaviorMoves[i]._percent) {
 				MessageQueue *mq = new MessageQueue(bhi._messageQueue, 0, 1);
 
 				mq->sendNextCommand();
@@ -147,7 +147,7 @@ void BehaviorManager::updateStaticAniBehavior(StaticANIObject &ani, int delay, c
 	MessageQueue *mq = 0;
 
 	if (beh._flags & 1) {
-		uint rnd = g_fp->_rnd.getRandomNumber(32767);
+		uint rnd = g_nmi->_rnd.getRandomNumber(32767);
 		uint runPercent = 0;
 		for (uint i = 0; i < beh._behaviorMoves.size(); i++) {
 			if (!(beh._behaviorMoves[i]._flags & 1) && beh._behaviorMoves[i]._percent) {
@@ -162,7 +162,7 @@ void BehaviorManager::updateStaticAniBehavior(StaticANIObject &ani, int delay, c
 		for (uint i = 0; i < beh._behaviorMoves.size(); i++) {
 			if (!(beh._behaviorMoves[i]._flags & 1) && delay >= beh._behaviorMoves[i]._delay) {
 				if (beh._behaviorMoves[i]._percent) {
-					if (g_fp->_rnd.getRandomNumber(32767) <= beh._behaviorMoves[i]._percent) {
+					if (g_nmi->_rnd.getRandomNumber(32767) <= beh._behaviorMoves[i]._percent) {
 						mq = new MessageQueue(beh._behaviorMoves[i]._messageQueue, 0, 1);
 						break;
 					}
@@ -174,7 +174,7 @@ void BehaviorManager::updateStaticAniBehavior(StaticANIObject &ani, int delay, c
 	if (mq) {
 		mq->setParamInt(-1, ani._odelay);
 		if (!mq->chain(&ani)) {
-			g_fp->_globalMessageQueueList->deleteQueueById(mq->_id);
+			g_nmi->_globalMessageQueueList->deleteQueueById(mq->_id);
 		}
 	}
 }
@@ -269,11 +269,11 @@ void BehaviorInfo::initObjectBehavior(GameVar *var, Scene *sc, StaticANIObject *
 		if (strcmp(var->_value.stringValue, "ROOT"))
 			break;
 
-		GameVar *v1 = g_fp->getGameLoaderGameVar()->getSubVarByName("BEHAVIOR")->getSubVarByName(ani->getName());
+		GameVar *v1 = g_nmi->getGameLoaderGameVar()->getSubVarByName("BEHAVIOR")->getSubVarByName(ani->getName());
 		if (v1 == var)
 			return;
 
-		sc = g_fp->accessScene(ani->_sceneId);
+		sc = g_nmi->accessScene(ani->_sceneId);
 		clear();
 		var = v1;
 		_animsCount = var->getSubVarsCount();

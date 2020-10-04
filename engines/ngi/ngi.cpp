@@ -46,7 +46,7 @@
 
 namespace NGI {
 
-NGIEngine *g_fp = nullptr;
+NGIEngine *g_nmi = nullptr;
 Vars *g_vars = nullptr;
 
 NGIEngine::NGIEngine(OSystem *syst, const NGIGameDescription *gameDesc) :
@@ -182,7 +182,7 @@ NGIEngine::NGIEngine(OSystem *syst, const NGIGameDescription *gameDesc) :
 
 	_isSaveAllowed = true;
 
-	g_fp = this;
+	g_nmi = this;
 	g_vars = new Vars;
 }
 
@@ -305,7 +305,7 @@ Common::Error NGIEngine::run() {
 	loadAllScenes();
 #endif
 
-	int time1 = g_fp->_system->getMillis();
+	int time1 = g_nmi->_system->getMillis();
 
 	// Center mouse
 	_system->warpMouse(400, 300);
@@ -316,7 +316,7 @@ Common::Error NGIEngine::run() {
 			break;
 		}
 
-		int time2 = g_fp->_system->getMillis();
+		int time2 = g_nmi->_system->getMillis();
 
 		// 30fps
 		if (time2 - time1 >= 33 || !_normalSpeed) {
@@ -590,12 +590,12 @@ void NGIEngine::disableSaves(ExCommand *ex) {
 }
 
 bool NGIEngine::isSaveAllowed() {
-	if (!g_fp->_isSaveAllowed)
+	if (!g_nmi->_isSaveAllowed)
 		return false;
 
 	bool allowed = true;
 
-	for (Common::Array<MessageQueue *>::iterator s = g_fp->_globalMessageQueueList->begin(); s != g_fp->_globalMessageQueueList->end(); ++s) {
+	for (Common::Array<MessageQueue *>::iterator s = g_nmi->_globalMessageQueueList->begin(); s != g_nmi->_globalMessageQueueList->end(); ++s) {
 		if (!(*s)->_isFinished && ((*s)->getFlags() & 1))
 			allowed = false;
 	}

@@ -49,17 +49,17 @@ ModalIntro::ModalIntro() {
 		_introFlags = 33;
 		_countDown = 150;
 
-		PictureObject *pict = g_fp->accessScene(SC_INTRO1)->getPictureObjectById(PIC_IN1_PIPETITLE, 0);
+		PictureObject *pict = g_nmi->accessScene(SC_INTRO1)->getPictureObjectById(PIC_IN1_PIPETITLE, 0);
 		pict->setFlags(pict->_flags & 0xFFFB);
 	}
 
 	g_vars->sceneIntro_skipIntro = false;
-	_sfxVolume = g_fp->_sfxVolume;
+	_sfxVolume = g_nmi->_sfxVolume;
 }
 
 ModalIntro::~ModalIntro() {
-	g_fp->stopAllSounds();
-	g_fp->_sfxVolume = _sfxVolume;
+	g_nmi->stopAllSounds();
+	g_nmi->_sfxVolume = _sfxVolume;
 }
 
 bool ModalIntro::handleMessage(ExCommand *message) {
@@ -93,7 +93,7 @@ bool ModalIntro::init(int counterdiff) {
 		}
 
 		if (_introFlags & 0x10)
-			g_fp->_gameLoader->updateSystems(42);
+			g_nmi->_gameLoader->updateSystems(42);
 
 		_introFlags |= 2;
 
@@ -103,7 +103,7 @@ bool ModalIntro::init(int counterdiff) {
 	if (_introFlags & 4) {
 		ModalVideoPlayer *player = new ModalVideoPlayer();
 
-		g_fp->_modalObject = player;
+		g_nmi->_modalObject = player;
 		player->_parentObj = this;
 		player->play("intro.avi");
 
@@ -127,7 +127,7 @@ bool ModalIntro::init(int counterdiff) {
 	if (_introFlags & 0x40) {
 		ModalVideoPlayer *player = new ModalVideoPlayer();
 
-		g_fp->_modalObject = player;
+		g_nmi->_modalObject = player;
 		player->_parentObj = this;
 		player->play("intro2.avi");
 
@@ -160,7 +160,7 @@ bool ModalIntro::init(int counterdiff) {
 
 		_countDown = 150;
 		_introFlags = (_introFlags & 0xf7) | 0x21;
-		g_fp->accessScene(SC_INTRO1)->getPictureObjectById(PIC_IN1_PIPETITLE, 0)->_flags &= 0xfffb;
+		g_nmi->accessScene(SC_INTRO1)->getPictureObjectById(PIC_IN1_PIPETITLE, 0)->_flags &= 0xfffb;
 	}
 
 	if (!(_introFlags & 0x20)) {
@@ -168,12 +168,12 @@ bool ModalIntro::init(int counterdiff) {
 			if (!_stillRunning) {
 				_introFlags |= 1;
 
-				g_fp->accessScene(SC_INTRO1)->getPictureObjectById(PIC_IN1_PIPETITLE, 0)->_flags &= 0xfffb;
-				g_fp->accessScene(SC_INTRO1)->getPictureObjectById(PIC_IN1_GAMETITLE, 0)->_flags &= 0xfffb;
+				g_nmi->accessScene(SC_INTRO1)->getPictureObjectById(PIC_IN1_PIPETITLE, 0)->_flags &= 0xfffb;
+				g_nmi->accessScene(SC_INTRO1)->getPictureObjectById(PIC_IN1_GAMETITLE, 0)->_flags &= 0xfffb;
 
 				chainQueue(QU_INTR_STARTINTRO, 1);
 			}
-			g_fp->_gameLoader->updateSystems(42);
+			g_nmi->_gameLoader->updateSystems(42);
 		}
 		return true;
 	}
@@ -189,7 +189,7 @@ bool ModalIntro::init(int counterdiff) {
 
 		_introFlags = (_introFlags & 0xdf) | 0x10;
 
-		g_fp->accessScene(SC_INTRO1)->getPictureObjectById(PIC_IN1_GAMETITLE, 0)->_flags &= 0xfffb;
+		g_nmi->accessScene(SC_INTRO1)->getPictureObjectById(PIC_IN1_GAMETITLE, 0)->_flags &= 0xfffb;
 
 		_stillRunning = 0;
 	}
@@ -198,39 +198,39 @@ bool ModalIntro::init(int counterdiff) {
 }
 
 void ModalIntro::update() {
-	if (g_fp->_currentScene) {
+	if (g_nmi->_currentScene) {
 		if (_introFlags & 1) {
-			g_fp->sceneFade(g_fp->_currentScene, true);
+			g_nmi->sceneFade(g_nmi->_currentScene, true);
 			_stillRunning = 255;
 			_introFlags &= 0xfe;
 
 			if (_introFlags & 0x20)
-				g_fp->playSound(SND_INTR_019, 0);
+				g_nmi->playSound(SND_INTR_019, 0);
 		} else if (_introFlags & 2) {
 			if (g_vars->sceneIntro_needBlackout) {
-				g_fp->drawAlphaRectangle(0, 0, 800, 600, 0);
+				g_nmi->drawAlphaRectangle(0, 0, 800, 600, 0);
 				g_vars->sceneIntro_needBlackout = 0;
 				_stillRunning = 0;
 				_introFlags &= 0xfd;
 			} else {
-				g_fp->sceneFade(g_fp->_currentScene, false);
+				g_nmi->sceneFade(g_nmi->_currentScene, false);
 				_stillRunning = 0;
 				_introFlags &= 0xfd;
 			}
 		} else if (_stillRunning) {
-			g_fp->_currentScene->draw();
+			g_nmi->_currentScene->draw();
 		}
 	}
 }
 
 void ModalIntro::finish() {
-	g_fp->_gameLoader->unloadScene(SC_INTRO2);
+	g_nmi->_gameLoader->unloadScene(SC_INTRO2);
 
-	g_fp->_currentScene = g_fp->accessScene(SC_INTRO1);
-	g_fp->_gameLoader->preloadScene(SC_INTRO1, TrubaDown);
+	g_nmi->_currentScene = g_nmi->accessScene(SC_INTRO1);
+	g_nmi->_gameLoader->preloadScene(SC_INTRO1, TrubaDown);
 
-	if (g_fp->_currentScene)
-		g_fp->_gameLoader->updateSystems(42);
+	if (g_nmi->_currentScene)
+		g_nmi->_gameLoader->updateSystems(42);
 }
 
 ModalIntroDemo::ModalIntroDemo() {
@@ -239,12 +239,12 @@ ModalIntroDemo::ModalIntroDemo() {
 	_stillRunning = 0;
 	_introFlags = 9;
 	g_vars->sceneIntro_skipIntro = false;
-	_sfxVolume = g_fp->_sfxVolume;
+	_sfxVolume = g_nmi->_sfxVolume;
 }
 
 ModalIntroDemo::~ModalIntroDemo() {
-	g_fp->stopAllSounds();
-	g_fp->_sfxVolume = _sfxVolume;
+	g_nmi->stopAllSounds();
+	g_nmi->_sfxVolume = _sfxVolume;
 }
 
 bool ModalIntroDemo::handleMessage(ExCommand *message) {
@@ -277,7 +277,7 @@ bool ModalIntroDemo::init(int counterdiff) {
 		}
 
 		if (_introFlags & 0x10)
-			g_fp->_gameLoader->updateSystems(42);
+			g_nmi->_gameLoader->updateSystems(42);
 
 		_introFlags |= 2;
 
@@ -297,7 +297,7 @@ bool ModalIntroDemo::init(int counterdiff) {
 
 		_countDown = 150;
 		_introFlags = (_introFlags & 0xf7) | 0x21;
-		g_fp->accessScene(SC_INTRO1)->getPictureObjectById(522, 0)->_flags &= 0xfffb;
+		g_nmi->accessScene(SC_INTRO1)->getPictureObjectById(522, 0)->_flags &= 0xfffb;
 	} else {
 		if (!(_introFlags & 0x20))
 			return true;
@@ -322,42 +322,42 @@ bool ModalIntroDemo::init(int counterdiff) {
 }
 
 void ModalIntroDemo::update() {
-	if (g_fp->_currentScene) {
+	if (g_nmi->_currentScene) {
 		if (_introFlags & 1) {
 			if (g_vars->sceneIntro_needBlackout) {
-				g_fp->drawAlphaRectangle(0, 0, 800, 600, 0);
+				g_nmi->drawAlphaRectangle(0, 0, 800, 600, 0);
 				g_vars->sceneIntro_needBlackout = 0;
 			} else {
-				g_fp->sceneFade(g_fp->_currentScene, true);
+				g_nmi->sceneFade(g_nmi->_currentScene, true);
 			}
 			_stillRunning = 255;
 			_introFlags &= 0xfe;
 
 			if (_introFlags & 0x20)
-				g_fp->playSound(SND_INTR_019, 0);
+				g_nmi->playSound(SND_INTR_019, 0);
 		} else if (_introFlags & 2) {
 			if (g_vars->sceneIntro_needBlackout) {
-				g_fp->drawAlphaRectangle(0, 0, 800, 600, 0);
+				g_nmi->drawAlphaRectangle(0, 0, 800, 600, 0);
 				g_vars->sceneIntro_needBlackout = 0;
 				_stillRunning = 0;
 				_introFlags &= 0xfd;
 			} else {
-				g_fp->sceneFade(g_fp->_currentScene, false);
+				g_nmi->sceneFade(g_nmi->_currentScene, false);
 				_stillRunning = 0;
 				_introFlags &= 0xfd;
 			}
 		} else if (_stillRunning) {
-			g_fp->_currentScene->draw();
+			g_nmi->_currentScene->draw();
 		}
 	}
 }
 
 void ModalIntroDemo::finish() {
-	g_fp->_currentScene = g_fp->accessScene(SC_INTRO1);
-	g_fp->_gameLoader->preloadScene(SC_INTRO1, TrubaDown);
+	g_nmi->_currentScene = g_nmi->accessScene(SC_INTRO1);
+	g_nmi->_gameLoader->preloadScene(SC_INTRO1, TrubaDown);
 
-	if (g_fp->_currentScene)
-		g_fp->_gameLoader->updateSystems(42);
+	if (g_nmi->_currentScene)
+		g_nmi->_gameLoader->updateSystems(42);
 }
 
 static bool checkSkipVideo(const Common::Event &event) {
@@ -388,7 +388,7 @@ void ModalVideoPlayer::play(const char *filename) {
 
 	_decoder.start();
 
-	while (!g_fp->shouldQuit() && !_decoder.endOfVideo()) {
+	while (!g_nmi->shouldQuit() && !_decoder.endOfVideo()) {
 		if (_decoder.needsUpdate()) {
 			const Graphics::Surface *frame = _decoder.decodeNextFrame();
 			if (frame) {
@@ -397,24 +397,24 @@ void ModalVideoPlayer::play(const char *filename) {
 					tmpFrame.reset(frame->convertTo(g_system->getScreenFormat()));
 					frame = tmpFrame.get();
 				}
-				g_fp->_system->copyRectToScreen(frame->getPixels(), frame->pitch,
+				g_nmi->_system->copyRectToScreen(frame->getPixels(), frame->pitch,
 					x, y, frame->w, frame->h);
 
 				if (_decoder.hasDirtyPalette())
-					g_fp->_system->getPaletteManager()->setPalette(_decoder.getPalette(), 0, 256);
+					g_nmi->_system->getPaletteManager()->setPalette(_decoder.getPalette(), 0, 256);
 
-				g_fp->_system->updateScreen();
+				g_nmi->_system->updateScreen();
 			}
 		}
 
 		Common::Event event;
-		while (g_fp->_system->getEventManager()->pollEvent(event)) {
+		while (g_nmi->_system->getEventManager()->pollEvent(event)) {
 			if (checkSkipVideo(event)) {
 				goto finish;
 			}
 		}
 
-		g_fp->_system->delayMillis(_decoder.getTimeToNextFrame());
+		g_nmi->_system->delayMillis(_decoder.getTimeToNextFrame());
 	}
 
 finish:
@@ -427,9 +427,9 @@ ModalMap::ModalMap() {
 	_picI03 = NULL;
 	_highlightedPic = NULL;
 	_isRunning = false;
-	_rect1 = g_fp->_sceneRect;
-	_x = g_fp->_currentScene->_x;
-	_y = g_fp->_currentScene->_y;
+	_rect1 = g_nmi->_sceneRect;
+	_x = g_nmi->_currentScene->_x;
+	_y = g_nmi->_currentScene->_y;
 	_flag = 0;
 	_mouseX = 0;
 	_mouseY = 0;
@@ -443,31 +443,31 @@ ModalMap::ModalMap() {
 }
 
 ModalMap::~ModalMap() {
-	g_fp->_gameLoader->unloadScene(SC_MAP);
+	g_nmi->_gameLoader->unloadScene(SC_MAP);
 
-	g_fp->_sceneRect = _rect1;
+	g_nmi->_sceneRect = _rect1;
 
-	g_fp->_currentScene->_x = _x;
-	g_fp->_currentScene->_y = _y;
+	g_nmi->_currentScene->_x = _x;
+	g_nmi->_currentScene->_y = _y;
 }
 
 bool ModalMap::init(int counterdiff) {
 	if (_picI03)
 		return init2(counterdiff);
 
-	g_fp->setCursor(PIC_CSR_ITN);
+	g_nmi->setCursor(PIC_CSR_ITN);
 
 	if (_flag) {
-		_rect2.left = _mouseX + _dragX - g_fp->_mouseScreenPos.x;
-		_rect2.top = _mouseY + _dragY - g_fp->_mouseScreenPos.y;
+		_rect2.left = _mouseX + _dragX - g_nmi->_mouseScreenPos.x;
+		_rect2.top = _mouseY + _dragY - g_nmi->_mouseScreenPos.y;
 		_rect2.right = _rect2.left + 800;
 		_rect2.bottom = _rect2.top + 600;
 
-		g_fp->_sceneRect = _rect2;
+		g_nmi->_sceneRect = _rect2;
 
 		_mapScene->updateScrolling2();
 
-		_rect2 = g_fp->_sceneRect;
+		_rect2 = g_nmi->_sceneRect;
 	}
 
 	_hotSpotDelay--;
@@ -483,44 +483,44 @@ bool ModalMap::init(int counterdiff) {
 }
 
 bool ModalMap::init2(int counterdiff) {
-	g_fp->setCursor(PIC_CSR_DEFAULT);
+	g_nmi->setCursor(PIC_CSR_DEFAULT);
 
 	_dragX = (int)((double)_dragX * 0.6666666666666666);
 	_dragY = (int)((double)_dragY * 0.6666666666666666);
 
-	if (800 - g_fp->_mouseScreenPos.x < 67) {
-		g_fp->setCursor(PIC_CSR_GOR);
+	if (800 - g_nmi->_mouseScreenPos.x < 67) {
+		g_nmi->setCursor(PIC_CSR_GOR);
 
-		_dragX = g_fp->_mouseScreenPos.x - 733;
+		_dragX = g_nmi->_mouseScreenPos.x - 733;
 		_dragY = (int)((double)_dragY * 0.6666666666666666);
 	}
 
-	if (g_fp->_mouseScreenPos.x < 67) {
-		g_fp->setCursor(PIC_CSR_GOL);
+	if (g_nmi->_mouseScreenPos.x < 67) {
+		g_nmi->setCursor(PIC_CSR_GOL);
 
-		this->_dragX = g_fp->_mouseScreenPos.x - 67;
+		this->_dragX = g_nmi->_mouseScreenPos.x - 67;
 		this->_dragY = (int)((double)_dragY * 0.6666666666666666);
 	}
 
-	if (g_fp->_mouseScreenPos.y < 67) {
-		g_fp->setCursor(PIC_CSR_GOU);
+	if (g_nmi->_mouseScreenPos.y < 67) {
+		g_nmi->setCursor(PIC_CSR_GOU);
 
 		_dragX = (int)((double)_dragX * 0.6666666666666666);
-		_dragY = g_fp->_mouseScreenPos.y - 67;
+		_dragY = g_nmi->_mouseScreenPos.y - 67;
 	}
 
-	if (600 - g_fp->_mouseScreenPos.y < 87) {
-		g_fp->setCursor(PIC_CSR_GOD);
+	if (600 - g_nmi->_mouseScreenPos.y < 87) {
+		g_nmi->setCursor(PIC_CSR_GOD);
 
 		_dragX = (int)((double)_dragX * 0.6666666666666666);
-		_dragY = g_fp->_mouseScreenPos.y - 513;
+		_dragY = g_nmi->_mouseScreenPos.y - 513;
 	}
 
-	g_fp->_sceneRect.translate(_dragX, _dragY);
+	g_nmi->_sceneRect.translate(_dragX, _dragY);
 	_mapScene->updateScrolling2();
-	_rect2 = g_fp->_sceneRect;
+	_rect2 = g_nmi->_sceneRect;
 
-	PictureObject *hpic = getSceneHPicture(_mapScene->getPictureObjectAtPos(g_fp->_mouseVirtX, g_fp->_mouseVirtY));
+	PictureObject *hpic = getSceneHPicture(_mapScene->getPictureObjectAtPos(g_nmi->_mouseVirtX, g_nmi->_mouseVirtY));
 
 	if (hpic != _highlightedPic) {
 		if (_highlightedPic) {
@@ -533,13 +533,13 @@ bool ModalMap::init2(int counterdiff) {
 		if (hpic) {
 			PreloadItem pitem;
 
-			pitem.preloadId1 = g_fp->_currentScene->_sceneId;
+			pitem.preloadId1 = g_nmi->_currentScene->_sceneId;
 			pitem.sceneId = findMapSceneId(hpic->_id);
 
 			if (pitem.preloadId1 == pitem.sceneId || checkScenePass(&pitem)) {
 				_highlightedPic->_flags |= 4;
 
-				g_fp->playSound(SND_CMN_070, 0);
+				g_nmi->playSound(SND_CMN_070, 0);
 			} else {
 				const Dims d1 = _picI03->getDimensions();
 				const Dims d2 = _highlightedPic->getDimensions();
@@ -551,7 +551,7 @@ bool ModalMap::init2(int counterdiff) {
 	}
 
 	if (this->_highlightedPic) {
-		g_fp->setCursor(PIC_CSR_ITN);
+		g_nmi->setCursor(PIC_CSR_ITN);
 
 		_hotSpotDelay--;
 
@@ -567,8 +567,8 @@ bool ModalMap::init2(int counterdiff) {
 }
 
 int ModalMap::findMapSceneId(int picId) {
-	for (uint i = 0; i < g_fp->_gameLoader->_preloadItems.size(); i++) {
-		PreloadItem &pitem = g_fp->_gameLoader->_preloadItems[i];
+	for (uint i = 0; i < g_nmi->_gameLoader->_preloadItems.size(); i++) {
+		PreloadItem &pitem = g_nmi->_gameLoader->_preloadItems[i];
 
 		if (pitem.preloadId1 == SC_MAP && pitem.preloadId2 == picId) {
 			return pitem.sceneId;
@@ -580,11 +580,11 @@ int ModalMap::findMapSceneId(int picId) {
 
 
 void ModalMap::update() {
-	g_fp->_sceneRect = _rect2;
+	g_nmi->_sceneRect = _rect2;
 
 	_mapScene->draw();
 
-	g_fp->drawArcadeOverlay(1);
+	g_nmi->drawArcadeOverlay(1);
 }
 
 bool ModalMap::handleMessage(ExCommand *cmd) {
@@ -601,8 +601,8 @@ bool ModalMap::handleMessage(ExCommand *cmd) {
 		}
 
 		_flag = 1;
-		_mouseX = g_fp->_mouseScreenPos.x;
-		_mouseY = g_fp->_mouseScreenPos.y;
+		_mouseX = g_nmi->_mouseScreenPos.x;
+		_mouseY = g_nmi->_mouseScreenPos.y;
 
 		_dragX = _rect2.left;
 		_dragY = _rect2.top;
@@ -637,7 +637,7 @@ bool ModalMap::handleMessage(ExCommand *cmd) {
 void ModalMap::initMap() {
 	_isRunning = 1;
 
-	_mapScene = g_fp->accessScene(SC_MAP);
+	_mapScene = g_nmi->accessScene(SC_MAP);
 
 	if (!_mapScene)
 		error("ModalMap::initMap(): error accessing scene SC_MAP");
@@ -645,18 +645,18 @@ void ModalMap::initMap() {
 	PictureObject *pic;
 
 	for (int i = 0; i < 200; i++) {
-		if (!(g_fp->_mapTable[i] >> 16))
+		if (!(g_nmi->_mapTable[i] >> 16))
 			break;
 
-		pic = _mapScene->getPictureObjectById(g_fp->_mapTable[i] >> 16, 0);
+		pic = _mapScene->getPictureObjectById(g_nmi->_mapTable[i] >> 16, 0);
 
-		if ((g_fp->_mapTable[i] & 0xffff) == 1)
+		if ((g_nmi->_mapTable[i] & 0xffff) == 1)
 			pic->_flags |= 4;
 		else
 			pic->_flags &= 0xfffb;
 	}
 
-	pic = getScenePicture(g_fp->_currentScene->_sceneId);
+	pic = getScenePicture(g_nmi->_currentScene->_sceneId);
 
 	if (pic) {
 		const Dims dims = pic->getDimensions();
@@ -667,7 +667,7 @@ void ModalMap::initMap() {
 		_rect2.right = _rect2.left + 800;
 		_rect2.bottom = _rect2.top + 600;
 
-		g_fp->_sceneRect = _rect2;
+		g_nmi->_sceneRect = _rect2;
 
 		_mapScene->updateScrolling2();
 
@@ -691,23 +691,23 @@ void ModalMap::initMap() {
 	}
 
 	g_system->warpMouse(400, 300);
-	g_fp->_mouseScreenPos.x = 400;
-	g_fp->_mouseScreenPos.y = 300;
+	g_nmi->_mouseScreenPos.x = 400;
+	g_nmi->_mouseScreenPos.y = 300;
 
-	g_fp->setArcadeOverlay(PIC_CSR_MAP);
+	g_nmi->setArcadeOverlay(PIC_CSR_MAP);
 }
 
 void ModalMap::clickButton(PictureObject *pic) {
-	if (g_fp->_currentScene == g_fp->_loaderScene) {
+	if (g_nmi->_currentScene == g_nmi->_loaderScene) {
 		_isRunning = 0;
 		return;
 	}
 
 	PreloadItem *pitem = nullptr;
 
-	for (uint i = 0; i < g_fp->_gameLoader->_preloadItems.size(); i++)
-		if (g_fp->_gameLoader->_preloadItems[i].preloadId2 == SC_MAP) {
-			pitem = &g_fp->_gameLoader->_preloadItems[i];
+	for (uint i = 0; i < g_nmi->_gameLoader->_preloadItems.size(); i++)
+		if (g_nmi->_gameLoader->_preloadItems[i].preloadId2 == SC_MAP) {
+			pitem = &g_nmi->_gameLoader->_preloadItems[i];
 			break;
 		}
 
@@ -715,21 +715,21 @@ void ModalMap::clickButton(PictureObject *pic) {
 		PreloadItem preload;
 
 		preload.preloadId2 = SC_MAP;
-		g_fp->_gameLoader->addPreloadItem(preload);
-		pitem = &g_fp->_gameLoader->_preloadItems[g_fp->_gameLoader->_preloadItems.size() - 1];
+		g_nmi->_gameLoader->addPreloadItem(preload);
+		pitem = &g_nmi->_gameLoader->_preloadItems[g_nmi->_gameLoader->_preloadItems.size() - 1];
 	}
 
 	PreloadItem *pitem2 = nullptr;
 
-	for (uint i = 0; i < g_fp->_gameLoader->_preloadItems.size(); i++)
-		if (g_fp->_gameLoader->_preloadItems[i].preloadId1 == SC_MAP &&
-				g_fp->_gameLoader->_preloadItems[i].preloadId2 == pic->_id) {
-			pitem2 = &g_fp->_gameLoader->_preloadItems[i];
+	for (uint i = 0; i < g_nmi->_gameLoader->_preloadItems.size(); i++)
+		if (g_nmi->_gameLoader->_preloadItems[i].preloadId1 == SC_MAP &&
+				g_nmi->_gameLoader->_preloadItems[i].preloadId2 == pic->_id) {
+			pitem2 = &g_nmi->_gameLoader->_preloadItems[i];
 			break;
 		}
 
 	if (pitem && pitem2) {
-		pitem->preloadId1 = g_fp->_currentScene->_sceneId;
+		pitem->preloadId1 = g_nmi->_currentScene->_sceneId;
 		pitem->sceneId = pitem2->sceneId;
 		pitem->param = pitem2->param;
 
@@ -738,12 +738,12 @@ void ModalMap::clickButton(PictureObject *pic) {
 		} else if (checkScenePass(pitem)) {
 			_isRunning = 0;
 
-			if (!g_fp->isSaveAllowed()) {
-				//g_fp->_gameLoader->loadAndDecryptSave("savetmp.sav");
+			if (!g_nmi->isSaveAllowed()) {
+				//g_nmi->_gameLoader->loadAndDecryptSave("savetmp.sav");
 			}
-			g_fp->_gameLoader->preloadScene(pitem->preloadId1, SC_MAP);
+			g_nmi->_gameLoader->preloadScene(pitem->preloadId1, SC_MAP);
 		} else {
-			g_fp->playSound(SND_CMN_056, 0);
+			g_nmi->playSound(SND_CMN_056, 0);
 		}
 	}
 }
@@ -874,7 +874,7 @@ PictureObject *ModalMap::getScenePicture(int sceneId) {
 	if (picId)
 		return _mapScene->getPictureObjectById(picId, 0);
 
-	error("ModalMap::getScenePicture(): Unknown scene id: %d", g_fp->_currentScene->_sceneId);
+	error("ModalMap::getScenePicture(): Unknown scene id: %d", g_nmi->_currentScene->_sceneId);
 }
 
 PictureObject *ModalMap::getSceneHPicture(PictureObject *obj) {
@@ -968,12 +968,12 @@ bool ModalMap::isSceneEnabled(int sceneId) {
 	int id = getScenePicture(sceneId)->_id;
 
 	for (int i = 0; i < 200; i++) {
-		int mapPic = g_fp->_mapTable[i] >> 16;
+		int mapPic = g_nmi->_mapTable[i] >> 16;
 		if (!mapPic)
 			return false;
 
 		if (mapPic == id)
-			return (g_fp->_mapTable[i] & 0xffff) == 1;
+			return (g_nmi->_mapTable[i] & 0xffff) == 1;
 	}
 
 	return false;
@@ -997,7 +997,7 @@ bool ModalMap::checkScenePass(PreloadItem *item) {
 		break;
 
 	case SC_25:
-		if (g_fp->getObjectState(sO_Board_25) != g_fp->getObjectEnumState(sO_Board_25, sO_NearDudesStairs)) {
+		if (g_nmi->getObjectState(sO_Board_25) != g_nmi->getObjectEnumState(sO_Board_25, sO_NearDudesStairs)) {
 			res = false;
 		}
 		break;
@@ -1020,8 +1020,8 @@ bool ModalMap::checkScenePass(PreloadItem *item) {
 		break;
 
 	case SC_25:
-		if (g_fp->getObjectState(sO_Pool) != g_fp->getObjectEnumState(sO_Pool, sO_Empty)) {
-			if (g_fp->getObjectState(sO_Pool) != g_fp->getObjectEnumState(sO_Pool, sO_HalfFull))
+		if (g_nmi->getObjectState(sO_Pool) != g_nmi->getObjectEnumState(sO_Pool, sO_Empty)) {
+			if (g_nmi->getObjectState(sO_Pool) != g_nmi->getObjectEnumState(sO_Pool, sO_HalfFull))
 				res = false;
 		}
 		break;
@@ -1039,7 +1039,7 @@ bool ModalMap::checkScenePass(PreloadItem *item) {
 	}
 
 	if ((item->sceneId != SC_37 && item->preloadId1 != SC_37)
-		|| (g_fp->getObjectState(sO_Jawcrucnher) != g_fp->getObjectEnumState(sO_Jawcrucnher, sO_WithoutCarpet))) {
+		|| (g_nmi->getObjectState(sO_Jawcrucnher) != g_nmi->getObjectEnumState(sO_Jawcrucnher, sO_WithoutCarpet))) {
 			return res;
 	} else {
 		res = false;
@@ -1060,28 +1060,28 @@ void NGIEngine::openMap() {
 ModalFinal::ModalFinal() {
 	_flags = 0;
 	_counter = 255;
-	_sfxVolume = g_fp->_sfxVolume;
+	_sfxVolume = g_nmi->_sfxVolume;
 }
 
 ModalFinal::~ModalFinal() {
 	if (g_vars->sceneFinal_var01) {
-		g_fp->_gameLoader->unloadScene(SC_FINAL2);
-		g_fp->_gameLoader->unloadScene(SC_FINAL3);
-		g_fp->_gameLoader->unloadScene(SC_FINAL4);
+		g_nmi->_gameLoader->unloadScene(SC_FINAL2);
+		g_nmi->_gameLoader->unloadScene(SC_FINAL3);
+		g_nmi->_gameLoader->unloadScene(SC_FINAL4);
 
-		g_fp->_currentScene = g_fp->accessScene(SC_FINAL1);
+		g_nmi->_currentScene = g_nmi->accessScene(SC_FINAL1);
 
-		g_fp->stopAllSounds();
+		g_nmi->stopAllSounds();
 
 		g_vars->sceneFinal_var01 = 0;
 	}
 
-	g_fp->_sfxVolume = _sfxVolume;
+	g_nmi->_sfxVolume = _sfxVolume;
 }
 
 bool ModalFinal::init(int counterdiff) {
 	if (g_vars->sceneFinal_var01) {
-		g_fp->_gameLoader->updateSystems(42);
+		g_nmi->_gameLoader->updateSystems(42);
 
 		return true;
 	}
@@ -1089,32 +1089,32 @@ bool ModalFinal::init(int counterdiff) {
 	if (_counter > 0) {
 		_flags |= 2u;
 
-		g_fp->_gameLoader->updateSystems(42);
+		g_nmi->_gameLoader->updateSystems(42);
 
 		return true;
 	}
 
 	unloadScenes();
 
-	g_fp->_modalObject = new ModalCredits();
+	g_nmi->_modalObject = new ModalCredits();
 
 	return true;
 }
 
 void ModalFinal::unloadScenes() {
-	g_fp->_gameLoader->unloadScene(SC_FINAL2);
-	g_fp->_gameLoader->unloadScene(SC_FINAL3);
-	g_fp->_gameLoader->unloadScene(SC_FINAL4);
+	g_nmi->_gameLoader->unloadScene(SC_FINAL2);
+	g_nmi->_gameLoader->unloadScene(SC_FINAL3);
+	g_nmi->_gameLoader->unloadScene(SC_FINAL4);
 
-	g_fp->_currentScene = g_fp->accessScene(SC_FINAL1);
+	g_nmi->_currentScene = g_nmi->accessScene(SC_FINAL1);
 
-	g_fp->stopAllSounds();
+	g_nmi->stopAllSounds();
 }
 
 bool ModalFinal::handleMessage(ExCommand *cmd) {
 	if (cmd->_messageKind == 17 && cmd->_messageNum == 36 && cmd->_param == 27) {
-		g_fp->_modalObject = new ModalMainMenu();
-		g_fp->_modalObject->_parentObj = this;
+		g_nmi->_modalObject = new ModalMainMenu();
+		g_nmi->_modalObject->_parentObj = this;
 
 		return true;
 	}
@@ -1123,11 +1123,11 @@ bool ModalFinal::handleMessage(ExCommand *cmd) {
 }
 
 void ModalFinal::update() {
-	if (g_fp->_currentScene) {
-		g_fp->_currentScene->draw();
+	if (g_nmi->_currentScene) {
+		g_nmi->_currentScene->draw();
 
 		if (_flags & 1) {
-			g_fp->drawAlphaRectangle(0, 0, 800, 600, 0xff - _counter);
+			g_nmi->drawAlphaRectangle(0, 0, 800, 600, 0xff - _counter);
 
 			_counter += 10;
 
@@ -1139,7 +1139,7 @@ void ModalFinal::update() {
 			if (!(_flags & 2))
 				return;
 
-			g_fp->drawAlphaRectangle(0, 0, 800, 600, 0xff - _counter);
+			g_nmi->drawAlphaRectangle(0, 0, 800, 600, 0xff - _counter);
 			_counter -= 10;
 
 			if (_counter <= 0) {
@@ -1148,14 +1148,14 @@ void ModalFinal::update() {
 			}
 		}
 
-		g_fp->_sfxVolume = _counter * (_sfxVolume + 3000) / 255 - 3000;
+		g_nmi->_sfxVolume = _counter * (_sfxVolume + 3000) / 255 - 3000;
 
-		g_fp->updateSoundVolume();
+		g_nmi->updateSoundVolume();
 	}
 }
 
 ModalCredits::ModalCredits() {
-	_sceneTitles = g_fp->accessScene(SC_TITLES);
+	_sceneTitles = g_nmi->accessScene(SC_TITLES);
 
 	_creditsPic = _sceneTitles->getPictureObjectById(PIC_TTL_CREDITS, 0);
 	_creditsPic->_flags |= 4;
@@ -1166,7 +1166,7 @@ ModalCredits::ModalCredits() {
 	const Dims dims = _creditsPic->getDimensions();
 
 	_countdown = dims.y / 2 + 470;
-	_sfxVolume = g_fp->_sfxVolume;
+	_sfxVolume = g_nmi->_sfxVolume;
 
 	_currY = 630;
 	_maxY = -1000 - dims.y;
@@ -1177,9 +1177,9 @@ ModalCredits::ModalCredits() {
 }
 
 ModalCredits::~ModalCredits() {
-	g_fp->_gameLoader->unloadScene(SC_TITLES);
+	g_nmi->_gameLoader->unloadScene(SC_TITLES);
 
-	g_fp->_sfxVolume = _sfxVolume;
+	g_nmi->_sfxVolume = _sfxVolume;
 }
 
 bool ModalCredits::handleMessage(ExCommand *cmd) {
@@ -1209,7 +1209,7 @@ bool ModalCredits::init(int counterdiff) {
 
 		ModalMainMenu *menu = new ModalMainMenu;
 
-		g_fp->_modalObject = menu;
+		g_nmi->_modalObject = menu;
 
 		menu->_mfield_34 = 1;
 	}
@@ -1225,14 +1225,14 @@ void ModalCredits::update() {
 			return;
 		}
 	} else if (_fadeIn) {
-		g_fp->sceneFade(_sceneTitles, true);
+		g_nmi->sceneFade(_sceneTitles, true);
 		_fadeOut = 1;
 
 		return;
 	}
 
 	if (_fadeOut) {
-		g_fp->sceneFade(_sceneTitles, false);
+		g_nmi->sceneFade(_sceneTitles, false);
 		_fadeOut = 0;
 		return;
 	}
@@ -1244,26 +1244,26 @@ ModalMainMenu::ModalMainMenu() {
 	_lastArea = 0;
 	_hoverAreaId = 0;
 	_mfield_34 = 0;
-	_scene = g_fp->accessScene(SC_MAINMENU);
+	_scene = g_nmi->accessScene(SC_MAINMENU);
 	_debugKeyCount = 0;
 	_sliderOffset = 0;
-	_screct.left = g_fp->_sceneRect.left;
-	_screct.top = g_fp->_sceneRect.top;
-	_screct.right = g_fp->_sceneRect.right;
-	_screct.bottom = g_fp->_sceneRect.bottom;
+	_screct.left = g_nmi->_sceneRect.left;
+	_screct.top = g_nmi->_sceneRect.top;
+	_screct.right = g_nmi->_sceneRect.right;
+	_screct.bottom = g_nmi->_sceneRect.bottom;
 
-	if (g_fp->_currentScene) {
-		_bgX = g_fp->_currentScene->_x;
-		_bgY = g_fp->_currentScene->_y;
+	if (g_nmi->_currentScene) {
+		_bgX = g_nmi->_currentScene->_x;
+		_bgY = g_nmi->_currentScene->_y;
 	} else {
 		_bgX = 0;
 		_bgY = 0;
 	}
 
-	g_fp->_sceneRect.top = 0;
-	g_fp->_sceneRect.left = 0;
-	g_fp->_sceneRect.right = 800;
-	g_fp->_sceneRect.bottom = 600;
+	g_nmi->_sceneRect.top = 0;
+	g_nmi->_sceneRect.left = 0;
+	g_nmi->_sceneRect.right = 800;
+	g_nmi->_sceneRect.bottom = 600;
 
 	MenuArea *area;
 
@@ -1331,7 +1331,7 @@ ModalMainMenu::ModalMainMenu() {
 
 	_musicSliderIdx = _areas.size() - 1;
 
-	if (g_fp->_mainMenu_debugEnabled)
+	if (g_nmi->_mainMenu_debugEnabled)
 		enableDebugMenuButton();
 
 	setSliderPos();
@@ -1398,9 +1398,9 @@ bool ModalMainMenu::handleMessage(ExCommand *message) {
 bool ModalMainMenu::init(int counterdiff) {
 	switch (_hoverAreaId) {
 	case PIC_MNU_RESTART_L:
-		g_fp->restartGame();
+		g_nmi->restartGame();
 
-		if (this == g_fp->_modalObject)
+		if (this == g_nmi->_modalObject)
 			return false;
 
 		delete this;
@@ -1410,7 +1410,7 @@ bool ModalMainMenu::init(int counterdiff) {
 		{
 			ModalQuery *mq = new ModalQuery();
 
-			g_fp->_modalObject = mq;
+			g_nmi->_modalObject = mq;
 
 			mq->_parentObj = this;
 			mq->create(_scene, _scene, PIC_MEX_BGR);
@@ -1421,46 +1421,46 @@ bool ModalMainMenu::init(int counterdiff) {
 		}
 
 	case PIC_MNU_DEBUG_L:
-		g_fp->_gameLoader->unloadScene(SC_MAINMENU);
+		g_nmi->_gameLoader->unloadScene(SC_MAINMENU);
 		_scene = nullptr;
-		g_fp->_sceneRect = _screct;
+		g_nmi->_sceneRect = _screct;
 
-		if (!g_fp->_currentScene)
+		if (!g_nmi->_currentScene)
 			error("ModalMainMenu::init: Bad state");
 
-		g_fp->_currentScene->_x = _bgX;
-		g_fp->_currentScene->_y = _bgY;
+		g_nmi->_currentScene->_x = _bgX;
+		g_nmi->_currentScene->_y = _bgY;
 
-		g_fp->_gameLoader->preloadScene(g_fp->_currentScene->_sceneId, SC_DBGMENU);
+		g_nmi->_gameLoader->preloadScene(g_nmi->_currentScene->_sceneId, SC_DBGMENU);
 
 		return false;
 
 	case PIC_MNU_CONTINUE_L:
 		if (!_mfield_34) {
-			g_fp->_gameLoader->unloadScene(SC_MAINMENU);
+			g_nmi->_gameLoader->unloadScene(SC_MAINMENU);
 			_areas.clear();
 			_scene = nullptr;
-			g_fp->_sceneRect = _screct;
+			g_nmi->_sceneRect = _screct;
 
-			if (g_fp->_currentScene) {
-				g_fp->_currentScene->_x = _bgX;
-				g_fp->_currentScene->_y = _bgY;
+			if (g_nmi->_currentScene) {
+				g_nmi->_currentScene->_x = _bgX;
+				g_nmi->_currentScene->_y = _bgY;
 			}
 
 			return false;
 		}
 
-		g_fp->restartGame();
+		g_nmi->restartGame();
 
-		if (this == g_fp->_modalObject)
+		if (this == g_nmi->_modalObject)
 			return false;
 
 		delete this;
 		break;
 
 	case PIC_MNU_AUTHORS_L:
-		g_fp->_modalObject = new ModalCredits();
-		g_fp->_modalObject->_parentObj = this;
+		g_nmi->_modalObject = new ModalCredits();
+		g_nmi->_modalObject->_parentObj = this;
 
 		_hoverAreaId = 0;
 
@@ -1471,15 +1471,15 @@ bool ModalMainMenu::init(int counterdiff) {
 		{
 			ModalSaveGame *sg = new ModalSaveGame();
 
-			g_fp->_modalObject = sg;
-			g_fp->_modalObject->_parentObj = _parentObj;
+			g_nmi->_modalObject = sg;
+			g_nmi->_modalObject->_parentObj = _parentObj;
 
 			int mode = 0;
 			if (_hoverAreaId == PIC_MNU_SAVE_L)
 				mode = 1;
 
-			sg->setup(g_fp->accessScene(SC_MAINMENU), mode);
-			sg->setScene(g_fp->accessScene(SC_MAINMENU));
+			sg->setup(g_nmi->accessScene(SC_MAINMENU), mode);
+			sg->setScene(g_nmi->accessScene(SC_MAINMENU));
 
 			sg->_rect = _screct;
 			sg->_oldBgX = _bgX;
@@ -1494,23 +1494,23 @@ bool ModalMainMenu::init(int counterdiff) {
 		if (_lastArea) {
 			updateSliderPos();
 		} else {
-			g_fp->_cursorId = PIC_CSR_DEFAULT;
+			g_nmi->_cursorId = PIC_CSR_DEFAULT;
 
-			int idx = checkHover(g_fp->_mouseScreenPos);
+			int idx = checkHover(g_nmi->_mouseScreenPos);
 
 			if (idx < 0)
 				goto LABEL_40;
 
-			g_fp->_cursorId = PIC_CSR_DEFAULT;
+			g_nmi->_cursorId = PIC_CSR_DEFAULT;
 
 			if (idx != this->_menuSliderIdx && idx != this->_musicSliderIdx )
 				goto LABEL_40;
 		}
 
-		g_fp->_cursorId = PIC_CSR_LIFT;
+		g_nmi->_cursorId = PIC_CSR_LIFT;
 
 	LABEL_40:
-		g_fp->setCursor(g_fp->_cursorId);
+		g_nmi->setCursor(g_nmi->_cursorId);
 
 		updateVolume();
 
@@ -1521,10 +1521,10 @@ bool ModalMainMenu::init(int counterdiff) {
 }
 
 void ModalMainMenu::updateVolume() {
-	if (g_fp->_soundEnabled) {
-		for (int s = 0; s < g_fp->_currSoundListCount; s++)
-			for (int i = 0; i < g_fp->_currSoundList1[s]->getCount(); i++) {
-				updateSoundVolume(g_fp->_currSoundList1[s]->getSoundByIndex(i));
+	if (g_nmi->_soundEnabled) {
+		for (int s = 0; s < g_nmi->_currSoundListCount; s++)
+			for (int i = 0; i < g_nmi->_currSoundList1[s]->getCount(); i++) {
+				updateSoundVolume(g_nmi->_currSoundList1[s]->getSoundByIndex(i));
 			}
 	}
 }
@@ -1533,7 +1533,7 @@ void ModalMainMenu::updateSoundVolume(Sound &snd) {
 	if (!snd._objectId)
 		return;
 
-	StaticANIObject *ani = g_fp->_currentScene->getStaticANIObject1ById(snd._objectId, -1);
+	StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(snd._objectId, -1);
 	if (!ani)
 		return;
 
@@ -1547,7 +1547,7 @@ void ModalMainMenu::updateSoundVolume(Sound &snd) {
 
 			if (ani->_oy <= _screct.bottom) {
 				if (ani->_oy >= _screct.top) {
-					snd.setPanAndVolume(g_fp->_sfxVolume, 0);
+					snd.setPanAndVolume(g_nmi->_sfxVolume, 0);
 
 					return;
 				}
@@ -1564,7 +1564,7 @@ void ModalMainMenu::updateSoundVolume(Sound &snd) {
 			}
 
 			pan = -3500;
-			a = g_fp->_sfxVolume - (-3500);
+			a = g_nmi->_sfxVolume - (-3500);
 			b = 800 - dx;
 		} else {
 			int dx = ani->_ox - _screct.right;
@@ -1576,7 +1576,7 @@ void ModalMainMenu::updateSoundVolume(Sound &snd) {
 
 			pan = -3500;
 			par = dx * (-3500) / -800;
-			a = g_fp->_sfxVolume - (-3500);
+			a = g_nmi->_sfxVolume - (-3500);
 			b = 800 - dx;
 		}
 
@@ -1589,11 +1589,11 @@ void ModalMainMenu::updateSoundVolume(Sound &snd) {
 
 	int dx = _screct.left - ani->_ox;
 	if (dx <= 800) {
-		int32 s = (800 - dx) * (g_fp->_sfxVolume - (-3500));
+		int32 s = (800 - dx) * (g_nmi->_sfxVolume - (-3500));
 		int32 p = -3500 + s / 800;
 
-		if (p > g_fp->_sfxVolume)
-			p = g_fp->_sfxVolume;
+		if (p > g_nmi->_sfxVolume)
+			p = g_nmi->_sfxVolume;
 
 		snd.setPanAndVolume(p, dx * (-3500) / 800);
 	} else {
@@ -1603,7 +1603,7 @@ void ModalMainMenu::updateSoundVolume(Sound &snd) {
 
 void ModalMainMenu::updateSliderPos() {
 	if (_lastArea->picIdL == PIC_MNU_SLIDER_L) {
-		int x = g_fp->_mouseScreenPos.x + _sliderOffset;
+		int x = g_nmi->_mouseScreenPos.x + _sliderOffset;
 
 		if (x >= 65) {
 			if (x > 238)
@@ -1616,14 +1616,14 @@ void ModalMainMenu::updateSliderPos() {
 		_lastArea->picObjL->setOXY(x, _lastArea->picObjD->_oy);
 
 		int vol = 1000 * (3 * x - 195);
-		g_fp->_sfxVolume = vol / 173 - 3000;
+		g_nmi->_sfxVolume = vol / 173 - 3000;
 
 		if (!(vol / 173))
-			g_fp->_sfxVolume = -10000;
+			g_nmi->_sfxVolume = -10000;
 
-		g_fp->updateSoundVolume();
+		g_nmi->updateSoundVolume();
 	} else if (_lastArea->picIdL == PIC_MNU_MUSICSLIDER_L) {
-		int x = g_fp->_mouseScreenPos.x + _sliderOffset;
+		int x = g_nmi->_mouseScreenPos.x + _sliderOffset;
 
 		if (x >= 65) {
 			if (x > 238)
@@ -1635,7 +1635,7 @@ void ModalMainMenu::updateSliderPos() {
 		_lastArea->picObjD->setOXY(x, _lastArea->picObjD->_oy);
 		_lastArea->picObjL->setOXY(x, _lastArea->picObjD->_oy);
 
-		g_fp->setMusicVolume(255 * (x - 65) / 173);
+		g_nmi->setMusicVolume(255 * (x - 65) / 173);
 	}
 }
 
@@ -1680,13 +1680,13 @@ bool ModalMainMenu::isOverArea(PictureObject *obj, Common::Point *point) {
 }
 
 bool ModalMainMenu::isSaveAllowed() {
-	if (!g_fp->_isSaveAllowed)
+	if (!g_nmi->_isSaveAllowed)
 		return false;
 
-	if (g_fp->_aniMan->_flags & 0x100)
+	if (g_nmi->_aniMan->_flags & 0x100)
 		return false;
 
-	for (Common::Array<MessageQueue *>::iterator s = g_fp->_globalMessageQueueList->begin(); s != g_fp->_globalMessageQueueList->end(); ++s) {
+	for (Common::Array<MessageQueue *>::iterator s = g_nmi->_globalMessageQueueList->begin(); s != g_nmi->_globalMessageQueueList->end(); ++s) {
 		if (!(*s)->_isFinished && ((*s)->getFlags() & 1))
 			return false;
 	}
@@ -1721,11 +1721,11 @@ void ModalMainMenu::enableDebugMenuButton() {
 	area->picObjL = _scene->getPictureObjectById(area->picIdL, 0);
 	area->picObjL->_flags &= 0xFFFB;
 
-	g_fp->_mainMenu_debugEnabled = true;
+	g_nmi->_mainMenu_debugEnabled = true;
 }
 
 void ModalMainMenu::setSliderPos() {
-	int x = 173 * (g_fp->_sfxVolume + 3000) / 3000 + 65;
+	int x = 173 * (g_nmi->_sfxVolume + 3000) / 3000 + 65;
 	PictureObject *obj = _areas[_menuSliderIdx].picObjD;
 
 	if (x >= 65) {
@@ -1738,7 +1738,7 @@ void ModalMainMenu::setSliderPos() {
 	obj->setOXY(x, obj->_oy);
 	_areas[_menuSliderIdx].picObjL->setOXY(x, obj->_oy);
 
-	x = 173 * g_fp->_musicVolume / 255 + 65;
+	x = 173 * g_nmi->_musicVolume / 255 + 65;
 	obj = _areas[_musicSliderIdx].picObjD;
 
 	if (x >= 65) {
@@ -1756,23 +1756,23 @@ ModalHelp::ModalHelp() {
 	_mainMenuScene = 0;
 	_bg = 0;
 	_isRunning = false;
-	_rect = g_fp->_sceneRect;
-	_hx = g_fp->_currentScene->_x;
-	_hy = g_fp->_currentScene->_y;
+	_rect = g_nmi->_sceneRect;
+	_hx = g_nmi->_currentScene->_x;
+	_hy = g_nmi->_currentScene->_y;
 
-	g_fp->_sceneRect.left = 0;
-	g_fp->_sceneRect.bottom = 600;
-	g_fp->_sceneRect.top = 0;
-	g_fp->_sceneRect.right = 800;
+	g_nmi->_sceneRect.left = 0;
+	g_nmi->_sceneRect.bottom = 600;
+	g_nmi->_sceneRect.top = 0;
+	g_nmi->_sceneRect.right = 800;
 }
 
 ModalHelp::~ModalHelp() {
-	g_fp->_gameLoader->unloadScene(SC_MAINMENU);
+	g_nmi->_gameLoader->unloadScene(SC_MAINMENU);
 
-	g_fp->_sceneRect = _rect;
+	g_nmi->_sceneRect = _rect;
 
-	g_fp->_currentScene->_x = _hx;
-	g_fp->_currentScene->_y = _hy;
+	g_nmi->_currentScene->_x = _hx;
+	g_nmi->_currentScene->_y = _hy;
 }
 
 bool ModalHelp::handleMessage(ExCommand *cmd) {
@@ -1790,25 +1790,25 @@ bool ModalHelp::handleMessage(ExCommand *cmd) {
 }
 
 bool ModalHelp::init(int counterdiff) {
-	g_fp->setCursor(PIC_CSR_DEFAULT);
+	g_nmi->setCursor(PIC_CSR_DEFAULT);
 
 	return _isRunning;
 }
 
 void ModalHelp::update() {
-	g_fp->_sceneRect.left = 0;
-	g_fp->_sceneRect.top = 0;
-	g_fp->_sceneRect.right = 800;
-	g_fp->_sceneRect.bottom = 600;
+	g_nmi->_sceneRect.left = 0;
+	g_nmi->_sceneRect.top = 0;
+	g_nmi->_sceneRect.right = 800;
+	g_nmi->_sceneRect.bottom = 600;
 
 	_bg->draw(0, 0, 0, 0);
 }
 
 void ModalHelp::launch() {
-	_mainMenuScene = g_fp->accessScene(SC_MAINMENU);
+	_mainMenuScene = g_nmi->accessScene(SC_MAINMENU);
 
 	if (_mainMenuScene) {
-		if (g_fp->isDemo() && g_fp->getLanguage() == Common::RU_RUS)
+		if (g_nmi->isDemo() && g_nmi->getLanguage() == Common::RU_RUS)
 			_bg = _mainMenuScene->getPictureObjectById(364, 0)->_picture;
 		else
 			_bg = _mainMenuScene->getPictureObjectById(PIC_HLP_BGR, 0)->_picture;
@@ -1831,7 +1831,7 @@ ModalQuery::~ModalQuery() {
 }
 
 bool ModalQuery::create(Scene *sc, Scene *bgScene, int id) {
-	if (g_fp->isDemo() && g_fp->getLanguage() == Common::RU_RUS) {
+	if (g_nmi->isDemo() && g_nmi->getLanguage() == Common::RU_RUS) {
 		_bg = sc->getPictureObjectById(386, 0);
 
 		if (!_bg)
@@ -1910,13 +1910,13 @@ void ModalQuery::update() {
 bool ModalQuery::handleMessage(ExCommand *cmd) {
 	if (cmd->_messageKind == 17) {
 		if (cmd->_messageNum == 29) {
-			if (_okBtn->isPointInside(g_fp->_mouseScreenPos.x, g_fp->_mouseScreenPos.y)) {
+			if (_okBtn->isPointInside(g_nmi->_mouseScreenPos.x, g_nmi->_mouseScreenPos.y)) {
 				_queryResult = 1;
 
 				return false;
 			}
 
-			if (_cancelBtn->isPointInside(g_fp->_mouseScreenPos.x, g_fp->_mouseScreenPos.y))
+			if (_cancelBtn->isPointInside(g_nmi->_mouseScreenPos.x, g_nmi->_mouseScreenPos.y))
 				_queryResult = 0;
 		} else if (cmd->_messageNum == 36 && cmd->_param == 27) {
 			_queryResult = 0;
@@ -1929,12 +1929,12 @@ bool ModalQuery::handleMessage(ExCommand *cmd) {
 }
 
 bool ModalQuery::init(int counterdiff) {
-	if (_okBtn->isPointInside(g_fp->_mouseScreenPos.x, g_fp->_mouseScreenPos.y))
+	if (_okBtn->isPointInside(g_nmi->_mouseScreenPos.x, g_nmi->_mouseScreenPos.y))
 		_okBtn->_flags |= 4;
 	else
 		_okBtn->_flags &= 0xFFFB;
 
-	if (_cancelBtn->isPointInside(g_fp->_mouseScreenPos.x, g_fp->_mouseScreenPos.y))
+	if (_cancelBtn->isPointInside(g_nmi->_mouseScreenPos.x, g_nmi->_mouseScreenPos.y))
 		_cancelBtn->_flags |= 4;
 	else
 		_cancelBtn->_flags &= 0xFFFB;
@@ -1942,14 +1942,14 @@ bool ModalQuery::init(int counterdiff) {
 	if (_queryResult == -1) {
 		return true;
 	} else {
-		if (g_fp->isDemo() && g_fp->getLanguage() == Common::RU_RUS) {
+		if (g_nmi->isDemo() && g_nmi->getLanguage() == Common::RU_RUS) {
 			if (!_queryResult)
 				return false;
 
 			ModalDemo *demo = new ModalDemo;
 			demo->launch();
 
-			g_fp->_modalObject = demo;
+			g_nmi->_modalObject = demo;
 
 			return true;
 		}
@@ -1960,9 +1960,9 @@ bool ModalQuery::init(int counterdiff) {
 
 			if (_queryResult == 1) {
 				if (_bgScene)
-					g_fp->sceneFade(_bgScene, false);
+					g_nmi->sceneFade(_bgScene, false);
 
-				g_fp->_gameContinue = false;
+				g_nmi->_gameContinue = false;
 
 				return false;
 			}
@@ -1987,7 +1987,7 @@ ModalSaveGame::ModalSaveGame() {
 	_fullL = 0;
 	_menuScene = 0;
 	_queryRes = -1;
-	_rect = g_fp->_sceneRect;
+	_rect = g_nmi->_sceneRect;
 	_queryDlg = 0;
 	_mode = 1;
 
@@ -1995,7 +1995,7 @@ ModalSaveGame::ModalSaveGame() {
 }
 
 ModalSaveGame::~ModalSaveGame() {
-	g_fp->_sceneRect = _rect;
+	g_nmi->_sceneRect = _rect;
 }
 
 void ModalSaveGame::setScene(Scene *sc) {
@@ -2024,17 +2024,17 @@ bool ModalSaveGame::init(int counterdiff) {
 	if (_queryRes == -1)
 		return true;
 
-	g_fp->_sceneRect = _rect;
+	g_nmi->_sceneRect = _rect;
 
-	if (g_fp->_currentScene) {
-		g_fp->_currentScene->_x = _oldBgX;
-		g_fp->_currentScene->_y = _oldBgY;
+	if (g_nmi->_currentScene) {
+		g_nmi->_currentScene->_x = _oldBgX;
+		g_nmi->_currentScene->_y = _oldBgY;
 	}
 
 	if (!_queryRes) {
 		ModalMainMenu *m = new ModalMainMenu;
 
-		g_fp->_modalObject = m;
+		g_nmi->_modalObject = m;
 
 		m->_parentObj = _parentObj;
 		m->_screct = _rect;
@@ -2204,13 +2204,13 @@ void ModalSaveGame::update() {
 		return;
 	}
 
-	g_fp->_cursorId = PIC_CSR_DEFAULT;
+	g_nmi->_cursorId = PIC_CSR_DEFAULT;
 
-	g_fp->setCursor(g_fp->_cursorId);
+	g_nmi->setCursor(g_nmi->_cursorId);
 
 	for (uint i = 0; i < _files.size(); i++) {
-		if (g_fp->_mouseScreenPos.x < _files[i].fx1 || g_fp->_mouseScreenPos.x > _files[i].fx2 ||
-			g_fp->_mouseScreenPos.y < _files[i].fy1 || g_fp->_mouseScreenPos.y > _files[i].fy2 ) {
+		if (g_nmi->_mouseScreenPos.x < _files[i].fx1 || g_nmi->_mouseScreenPos.x > _files[i].fx2 ||
+			g_nmi->_mouseScreenPos.y < _files[i].fy1 || g_nmi->_mouseScreenPos.y > _files[i].fy2 ) {
 			if (_files[i].empty) {
 				_emptyD->setOXY(_files[i].fx1, _files[i].fy1);
 				_emptyD->draw();
@@ -2240,9 +2240,9 @@ void ModalSaveGame::update() {
 			}
 		}
 	}
-	if (_cancelL->isPixelHitAtPos(g_fp->_mouseScreenPos.x, g_fp->_mouseScreenPos.y))
+	if (_cancelL->isPixelHitAtPos(g_nmi->_mouseScreenPos.x, g_nmi->_mouseScreenPos.y))
 		_cancelL->draw();
-	else if (_okL->isPixelHitAtPos(g_fp->_mouseScreenPos.x, g_fp->_mouseScreenPos.y))
+	else if (_okL->isPixelHitAtPos(g_nmi->_mouseScreenPos.x, g_nmi->_mouseScreenPos.y))
 		_okL->draw();
 }
 
@@ -2287,13 +2287,13 @@ void ModalSaveGame::saveload() {
 		if (getSaveName()) {
 			bool allowed = true;
 
-			for (Common::Array<MessageQueue *>::iterator s = g_fp->_globalMessageQueueList->begin(); s != g_fp->_globalMessageQueueList->end(); ++s) {
+			for (Common::Array<MessageQueue *>::iterator s = g_nmi->_globalMessageQueueList->begin(); s != g_nmi->_globalMessageQueueList->end(); ++s) {
 				if (!(*s)->_isFinished && ((*s)->getFlags() & 1))
 					allowed = false;
 			}
 
-			if (g_fp->_isSaveAllowed && allowed)
-				g_fp->_gameLoader->writeSavegame(g_fp->_currentScene, getSaveName(), "");
+			if (g_nmi->_isSaveAllowed && allowed)
+				g_nmi->_gameLoader->writeSavegame(g_nmi->_currentScene, getSaveName(), "");
 		}
 	} else {
 		if (getSaveName()) {
@@ -2303,10 +2303,10 @@ void ModalSaveGame::saveload() {
 				_parentObj = 0;
 			}
 
-			g_fp->stopAllSoundStreams();
-			g_fp->stopSoundStream2();
+			g_nmi->stopAllSoundStreams();
+			g_nmi->stopSoundStream2();
 
-			g_fp->_gameLoader->readSavegame(getSaveName());
+			g_nmi->_gameLoader->readSavegame(getSaveName());
 		}
 	}
 }
@@ -2316,7 +2316,7 @@ ModalDemo::ModalDemo() {
 	_button = 0;
 	_text = 0;
 
-	if (g_fp->getLanguage() == Common::RU_RUS) {
+	if (g_nmi->getLanguage() == Common::RU_RUS) {
 		_clickedQuit = 0;
 		_countdown = -10;
 	} else {
@@ -2335,9 +2335,9 @@ ModalDemo::~ModalDemo() {
 }
 
 bool ModalDemo::launch() {
-	Scene *sc = g_fp->accessScene(SC_MAINMENU);
+	Scene *sc = g_nmi->accessScene(SC_MAINMENU);
 
-	if (g_fp->getLanguage() == Common::RU_RUS) {
+	if (g_nmi->getLanguage() == Common::RU_RUS) {
 		_scene = sc;
 
 		for (uint i = 1; i < sc->_picObjList.size(); i++) {
@@ -2369,32 +2369,32 @@ bool ModalDemo::launch() {
 	warning("STUB: ModelDemo: fadeout");
 	update();
 
-	g_fp->stopAllSoundStreams();
-	g_fp->stopAllSounds();
-	g_fp->playSound(SND_CMN_056, 0);
-	g_fp->playSound(SND_CMN_069, 1);
+	g_nmi->stopAllSoundStreams();
+	g_nmi->stopAllSounds();
+	g_nmi->playSound(SND_CMN_056, 0);
+	g_nmi->playSound(SND_CMN_069, 1);
 
 	return true;
 }
 
 bool ModalDemo::init(int counterDiff) {
-	if (g_fp->getLanguage() == Common::RU_RUS)
+	if (g_nmi->getLanguage() == Common::RU_RUS)
 		return init2(counterDiff);
 
-	g_fp->_cursorId = PIC_CSR_DEFAULT;
+	g_nmi->_cursorId = PIC_CSR_DEFAULT;
 
-	if (_button->isPointInside(g_fp->_mouseScreenPos.x, g_fp->_mouseScreenPos.y)) {
+	if (_button->isPointInside(g_nmi->_mouseScreenPos.x, g_nmi->_mouseScreenPos.y)) {
 		if (!(_button->_flags & 4))
-			g_fp->playSound(SND_CMN_070, 0);
+			g_nmi->playSound(SND_CMN_070, 0);
 
 		_button->_flags |= 4;
 
-		g_fp->_cursorId = PIC_CSR_ITN;
+		g_nmi->_cursorId = PIC_CSR_ITN;
 	} else {
 		_button->_flags &= 0xFFFB;
 	}
 
-	g_fp->setCursor(g_fp->_cursorId);
+	g_nmi->setCursor(g_nmi->_cursorId);
 
 	_countdown -= counterDiff;
 
@@ -2406,7 +2406,7 @@ bool ModalDemo::init(int counterDiff) {
 
 	g_system->openUrl("http://www.amazon.de/EuroVideo-Bildprogramm-GmbH-Full-Pipe/dp/B003TO51YE/ref=sr_1_1");
 
-	g_fp->_gameContinue = false;
+	g_nmi->_gameContinue = false;
 
 	return false;
 }
@@ -2415,7 +2415,7 @@ bool ModalDemo::init2(int counterDiff) {
 	if (_clickedQuit) {
 		g_system->openUrl("http://pipestudio.ru/fullpipe/");
 
-		g_fp->_gameContinue = false;
+		g_nmi->_gameContinue = false;
 
 		return false;
 	}
@@ -2427,23 +2427,23 @@ bool ModalDemo::init2(int counterDiff) {
 		_countdown = 24;
 	}
 
-	if (_button->isPointInside(g_fp->_mouseScreenPos.x, g_fp->_mouseScreenPos.y)) {
+	if (_button->isPointInside(g_nmi->_mouseScreenPos.x, g_nmi->_mouseScreenPos.y)) {
 		_button->_flags |= 4;
 
-		g_fp->_cursorId = PIC_CSR_ITN;
+		g_nmi->_cursorId = PIC_CSR_ITN;
 	} else {
 		_button->_flags &= 0xFFFB;
 
-		g_fp->_cursorId = PIC_CSR_DEFAULT;
+		g_nmi->_cursorId = PIC_CSR_DEFAULT;
 	}
 
 	return true;
 }
 
 void ModalDemo::update() {
-	if (g_fp->getLanguage() == Common::RU_RUS) {
+	if (g_nmi->getLanguage() == Common::RU_RUS) {
 		if (_countdown == -10)
-			g_fp->sceneFade(_scene, true);
+			g_nmi->sceneFade(_scene, true);
 
 		_scene->draw();
 
@@ -2464,9 +2464,9 @@ bool ModalDemo::handleMessage(ExCommand *cmd) {
 		return false;
 
 	if (cmd->_messageNum == 29) {
-		if (_button->isPointInside(g_fp->_mouseScreenPos.x, g_fp->_mouseScreenPos.y))
+		if (_button->isPointInside(g_nmi->_mouseScreenPos.x, g_nmi->_mouseScreenPos.y))
 			_clickedQuit = 1;
-	} else if (cmd->_messageNum == 36 && (cmd->_param == 27 || g_fp->getLanguage() == Common::RU_RUS)) {
+	} else if (cmd->_messageNum == 36 && (cmd->_param == 27 || g_nmi->getLanguage() == Common::RU_RUS)) {
 		_clickedQuit = 1;
 	}
 
@@ -2491,15 +2491,15 @@ void NGIEngine::openMainMenu() {
 
 		q->create(sc, 0, 0);
 
-		g_fp->_modalObject = q;
+		g_nmi->_modalObject = q;
 
 		return;
 	}
 	ModalMainMenu *menu = new ModalMainMenu;
 
-	menu->_parentObj = g_fp->_modalObject;
+	menu->_parentObj = g_nmi->_modalObject;
 
-	g_fp->_modalObject = menu;
+	g_nmi->_modalObject = menu;
 }
 
 } // End of namespace NGI

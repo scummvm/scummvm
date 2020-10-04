@@ -166,7 +166,7 @@ int NGIEngine::lift_getButtonIdN(int objid) {
 }
 
 void NGIEngine::lift_setButton(const char *name, int state) {
-	GameVar *var = g_fp->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName(sO_LiftButtons);
+	GameVar *var = g_nmi->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName(sO_LiftButtons);
 
 	if (var)
 		var->setSubVarAsInt(name, state);
@@ -496,7 +496,7 @@ void NGIEngine::lift_hoverButton(ExCommand *cmd) {
 }
 
 bool NGIEngine::lift_checkButton(const char *varName) {
-	GameVar *var = g_fp->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName(sO_LiftButtons);
+	GameVar *var = g_nmi->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName(sO_LiftButtons);
 
 	if (var)
 		return lift_getButtonIdP(var->getSubVarByName(varName)->_value.intValue) > 0;

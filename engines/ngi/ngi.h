@@ -379,7 +379,7 @@ public:
 
 };
 
-extern NGIEngine *g_fp;
+extern NGIEngine *g_nmi;
 extern Vars *g_vars;
 
 } // End of namespace NGI

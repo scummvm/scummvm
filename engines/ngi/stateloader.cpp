@@ -69,7 +69,7 @@ bool GameLoader::readSavegame(const char *fname) {
 
 	FullpipeSavegameHeader header2;
 	if (NGI::readSavegameHeader(saveFile.get(), header2)) {
-		g_fp->setTotalPlayTime(header2.playtime * 1000);
+		g_nmi->setTotalPlayTime(header2.playtime * 1000);
 	}
 
 	{
@@ -132,8 +132,8 @@ bool GameLoader::readSavegame(const char *fname) {
 	v = _gameVar->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME");
 
 	if (v) {
-		if (g_fp->_currentScene)
-			preloadItem.preloadId1 = g_fp->_currentScene->_sceneId & 0xffff;
+		if (g_nmi->_currentScene)
+			preloadItem.preloadId1 = g_nmi->_currentScene->_sceneId & 0xffff;
 		else
 			preloadItem.preloadId1 = 0;
 
@@ -148,10 +148,10 @@ bool GameLoader::readSavegame(const char *fname) {
 
 		clearGlobalMessageQueueList1();
 
-		if (g_fp->_currentScene)
-			unloadScene(g_fp->_currentScene->_sceneId);
+		if (g_nmi->_currentScene)
+			unloadScene(g_nmi->_currentScene->_sceneId);
 
-		g_fp->_currentScene = 0;
+		g_nmi->_currentScene = 0;
 
 		if (_preloadCallback)
 			_preloadCallback(preloadItem, 50);
@@ -269,10 +269,10 @@ void GameLoader::addVar(GameVar *var, GameVar *subvar) {
 void gameLoaderSavegameCallback(MfcArchive *archive, bool mode) {
 	if (mode)
 		for (int i = 0; i < 200; i++)
-			archive->writeUint32LE(g_fp->_mapTable[i]);
+			archive->writeUint32LE(g_nmi->_mapTable[i]);
 	else
 		for (int i = 0; i < 200; i++)
-			g_fp->_mapTable[i] = archive->readUint32LE();
+			g_nmi->_mapTable[i] = archive->readUint32LE();
 }
 
 bool NGIEngine::loadGam(const char *fname, int scene) {
@@ -338,7 +338,7 @@ bool NGIEngine::loadGam(const char *fname, int scene) {
 			_gameLoader->loadScene(SC_INTRO1);
 			_gameLoader->gotoScene(SC_INTRO1, TrubaUp);
 		} else {
-			if (g_fp->isDemo() && g_fp->getLanguage() == Common::RU_RUS) {
+			if (g_nmi->isDemo() && g_nmi->getLanguage() == Common::RU_RUS) {
 				_gameLoader->loadScene(SC_9);
 				_gameLoader->gotoScene(SC_9, TrubaDown);
 			} else {
@@ -365,25 +365,25 @@ bool GameProject::load(MfcArchive &file) {
 	_field_4 = 0;
 	_field_10 = 12;
 
-	g_fp->_gameProjectVersion = file.readUint32LE();
-	g_fp->_pictureScale = file.readUint16LE();
-	g_fp->_scrollSpeed = file.readUint32LE();
+	g_nmi->_gameProjectVersion = file.readUint32LE();
+	g_nmi->_pictureScale = file.readUint16LE();
+	g_nmi->_scrollSpeed = file.readUint32LE();
 
 	_headerFilename = file.readPascalString();
 
-	debugC(1, kDebugLoading, "_gameProjectVersion = %d", g_fp->_gameProjectVersion);
-	debugC(1, kDebugLoading, "_pictureScale = %d", g_fp->_pictureScale);
-	debugC(1, kDebugLoading, "_scrollSpeed = %d", g_fp->_scrollSpeed);
+	debugC(1, kDebugLoading, "_gameProjectVersion = %d", g_nmi->_gameProjectVersion);
+	debugC(1, kDebugLoading, "_pictureScale = %d", g_nmi->_pictureScale);
+	debugC(1, kDebugLoading, "_scrollSpeed = %d", g_nmi->_scrollSpeed);
 	debugC(1, kDebugLoading, "_headerFilename = %s", _headerFilename.c_str());
 
 	_sceneTagList.reset(new SceneTagList());
 
 	_sceneTagList->load(file);
 
-	if (g_fp->_gameProjectVersion >= 3)
+	if (g_nmi->_gameProjectVersion >= 3)
 		_field_4 = file.readUint32LE();
 
-	if (g_fp->_gameProjectVersion >= 5) {
+	if (g_nmi->_gameProjectVersion >= 5) {
 		file.readUint32LE();
 		file.readUint32LE();
 	}

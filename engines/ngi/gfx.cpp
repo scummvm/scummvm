@@ -58,7 +58,7 @@ bool Background::load(MfcArchive &file) {
 		addPictureObject(pct);
 	}
 
-	assert(g_fp->_gameProjectVersion >= 5);
+	assert(g_nmi->_gameProjectVersion >= 5);
 
 	_bigPictureXDim = file.readUint32LE();
 	_bigPictureYDim = file.readUint32LE();
@@ -237,7 +237,7 @@ GameObject::GameObject(GameObject *src) {
 
 Common::String GameObject::toXML() {
 	return Common::String::format("id=\"%s\" name=\"%s\" x=%d y=%d priority=%d f8=%d",
-		g_fp->gameIdToStr(_id).c_str(), transCyrillic(_objectName), _ox, _oy, _priority, _field_8);
+		g_nmi->gameIdToStr(_id).c_str(), transCyrillic(_objectName), _ox, _oy, _priority, _field_8);
 }
 
 bool GameObject::load(MfcArchive &file) {
@@ -253,7 +253,7 @@ bool GameObject::load(MfcArchive &file) {
 	_oy = file.readSint32LE();
 	_priority = file.readUint16LE();
 
-	if (g_fp->_gameProjectVersion >= 11) {
+	if (g_nmi->_gameProjectVersion >= 11) {
 		_field_8 = file.readUint32LE();
 	}
 
@@ -440,7 +440,7 @@ bool Picture::load(MfcArchive &file) {
 	_y = file.readSint32LE();
 	_field_44 = file.readUint16LE();
 
-	assert(g_fp->_gameProjectVersion >= 2);
+	assert(g_nmi->_gameProjectVersion >= 2);
 
 	_width = file.readUint32LE();
 	_height = file.readUint32LE();
@@ -456,7 +456,7 @@ bool Picture::load(MfcArchive &file) {
 		setAOIDs();
 	}
 
-	assert(g_fp->_gameProjectVersion >= 12);
+	assert(g_nmi->_gameProjectVersion >= 12);
 
 	_alpha = file.readUint32LE() & 0xff;
 
@@ -478,8 +478,8 @@ bool Picture::load(MfcArchive &file) {
 }
 
 void Picture::setAOIDs() {
-	int w = (g_fp->_pictureScale + _width - 1) / g_fp->_pictureScale;
-	int h = (g_fp->_pictureScale + _height - 1) / g_fp->_pictureScale;
+	int w = (g_nmi->_pictureScale + _width - 1) / g_nmi->_pictureScale;
+	int h = (g_nmi->_pictureScale + _height - 1) / g_nmi->_pictureScale;
 
 	_memoryObject2->_rows = (byte **)malloc(w * sizeof(int *));
 
@@ -530,7 +530,7 @@ void Picture::getDibInfo() {
 	_bitmap->load(s);
 	delete s;
 
-	_bitmap->decode(_data, _paletteData.size ? _paletteData : *g_fp->_globalPalette);
+	_bitmap->decode(_data, _paletteData.size ? _paletteData : *g_nmi->_globalPalette);
 }
 
 const Bitmap *Picture::getPixelData() {
@@ -567,7 +567,7 @@ void Picture::draw(int x, int y, int style, int angle) {
 		pal = &_paletteData;
 	} else {
 		//warning("Picture:draw: using global palette");
-		pal = g_fp->_globalPalette;
+		pal = g_nmi->_globalPalette;
 	}
 
 	switch (style) {
@@ -598,7 +598,7 @@ void Picture::drawRotated(int x, int y, int angle) {
 }
 
 void Picture::displayPicture() {
-	if (g_fp->shouldQuit())
+	if (g_nmi->shouldQuit())
 		return;
 
 	getData();
@@ -607,22 +607,22 @@ void Picture::displayPicture() {
 	if (!_dataSize)
 		return;
 
-	g_fp->_backgroundSurface.fillRect(Common::Rect(0, 0, 800, 600), 0);
-	g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface.getBasePtr(0, 0), g_fp->_backgroundSurface.pitch, 0, 0, 800, 600);
+	g_nmi->_backgroundSurface.fillRect(Common::Rect(0, 0, 800, 600), 0);
+	g_nmi->_system->copyRectToScreen(g_nmi->_backgroundSurface.getBasePtr(0, 0), g_nmi->_backgroundSurface.pitch, 0, 0, 800, 600);
 
 	draw(0, 0, 0, 0);
 
-	g_fp->updateEvents();
-	g_fp->_system->delayMillis(10);
-	g_fp->_system->updateScreen();
+	g_nmi->updateEvents();
+	g_nmi->_system->delayMillis(10);
+	g_nmi->_system->updateScreen();
 
-	while (!g_fp->shouldQuit()) {
-		g_fp->updateEvents();
-		g_fp->_system->delayMillis(10);
-		g_fp->_system->updateScreen();
+	while (!g_nmi->shouldQuit()) {
+		g_nmi->updateEvents();
+		g_nmi->_system->delayMillis(10);
+		g_nmi->_system->updateScreen();
 
-		if (g_fp->_keyState == ' ') {
-			g_fp->_keyState = Common::KEYCODE_INVALID;
+		if (g_nmi->_keyState == ' ') {
+			g_nmi->_keyState = Common::KEYCODE_INVALID;
 			break;
 		}
 	}
@@ -668,7 +668,7 @@ bool Picture::isPixelHitAtPos(int x, int y) {
 }
 
 int Picture::getPixelAtPos(int x, int y) {
-	return getPixelAtPosEx(x / g_fp->_pictureScale, y / g_fp->_pictureScale);
+	return getPixelAtPosEx(x / g_nmi->_pictureScale, y / g_nmi->_pictureScale);
 
 	return false;
 }
@@ -680,8 +680,8 @@ int Picture::getPixelAtPosEx(int x, int y) {
 	warning("STUB: Picture::getPixelAtPosEx(%d, %d)", x, y);
 
 	// TODO: It looks like this doesn't really work.
-	if (x < (g_fp->_pictureScale + _width - 1) / g_fp->_pictureScale &&
-			y < (g_fp->_pictureScale + _height - 1) / g_fp->_pictureScale &&
+	if (x < (g_nmi->_pictureScale + _width - 1) / g_nmi->_pictureScale &&
+			y < (g_nmi->_pictureScale + _height - 1) / g_nmi->_pictureScale &&
 			_memoryObject2 != 0 && _memoryObject2->_rows != 0)
 		return _memoryObject2->_rows[x][2 * y];
 
@@ -758,15 +758,15 @@ void Bitmap::decode(byte *pixels, const Palette &palette) {
 void Bitmap::putDib(int x, int y, const Palette &palette, byte alpha) {
 	debugC(7, kDebugDrawing, "Bitmap::putDib(%d, %d)", x, y);
 
-	int x1 = x - g_fp->_sceneRect.left;
-	int y1 = y - g_fp->_sceneRect.top;
+	int x1 = x - g_nmi->_sceneRect.left;
+	int y1 = y - g_nmi->_sceneRect.top;
 
 	if (!_width || !_height || !_surface)
 		return;
 
 	Common::Rect sub(0, 0, _width, _height);
 	sub.translate(x, y);
-	sub.clip(g_fp->_sceneRect);
+	sub.clip(g_nmi->_sceneRect);
 	sub.translate(-x, -y);
 
 	if (sub.isEmpty())
@@ -780,8 +780,8 @@ void Bitmap::putDib(int x, int y, const Palette &palette, byte alpha) {
 
 	int alphac = TS_ARGB(0xff, alpha, 0xff, 0xff);
 
-	_surface->blit(g_fp->_backgroundSurface, x1, y1, _flipping, &sub, alphac);
-	g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface.getBasePtr(x1, y1), g_fp->_backgroundSurface.pitch, x1, y1, sub.width(), sub.height());
+	_surface->blit(g_nmi->_backgroundSurface, x1, y1, _flipping, &sub, alphac);
+	g_nmi->_system->copyRectToScreen(g_nmi->_backgroundSurface.getBasePtr(x1, y1), g_nmi->_backgroundSurface.pitch, x1, y1, sub.width(), sub.height());
 }
 
 bool Bitmap::putDibRB(byte *pixels, const Palette &palette) {
@@ -941,7 +941,7 @@ void Bitmap::colorFill(uint32 *dest, int len, int32 color) {
 #endif
 	byte r, g, b;
 
-	g_fp->_origFormat.colorToRGB(color, r, g, b);
+	g_nmi->_origFormat.colorToRGB(color, r, g, b);
 
 	uint32 c = TS_ARGB(0xff, r, g, b);
 
@@ -964,7 +964,7 @@ void Bitmap::paletteFill(uint32 *dest, byte *src, int len, const Palette &palett
 	byte r, g, b;
 
 	for (int i = 0; i < len; i++) {
-		g_fp->_origFormat.colorToRGB(palette.pal[*src++] & 0xffff, r, g, b);
+		g_nmi->_origFormat.colorToRGB(palette.pal[*src++] & 0xffff, r, g, b);
 
 		*dest++ = TS_ARGB(0xff, r, g, b);
 	}
@@ -993,7 +993,7 @@ void Bitmap::copierKeyColor(uint32 *dest, byte *src, int len, int keyColor, cons
 	if (!cb05_format) {
 		for (int i = 0; i < len; i++) {
 			if (*src != keyColor) {
-				g_fp->_origFormat.colorToRGB(palette.pal[*src] & 0xffff, r, g, b);
+				g_nmi->_origFormat.colorToRGB(palette.pal[*src] & 0xffff, r, g, b);
 				*dest = TS_ARGB(0xff, r, g, b);
 			}
 
@@ -1005,7 +1005,7 @@ void Bitmap::copierKeyColor(uint32 *dest, byte *src, int len, int keyColor, cons
 
 		for (int i = 0; i < len; i++) {
 			if (*src16 != 0) {
-				g_fp->_origFormat.colorToRGB(READ_LE_UINT16(src16), r, g, b);
+				g_nmi->_origFormat.colorToRGB(READ_LE_UINT16(src16), r, g, b);
 				*dest = TS_ARGB(0xff, r, g, b);
 			}
 
@@ -1037,7 +1037,7 @@ void Bitmap::copier(uint32 *dest, byte *src, int len, const Palette &palette, bo
 
 	if (!cb05_format) {
 		for (int i = 0; i < len; i++) {
-			g_fp->_origFormat.colorToRGB(palette.pal[*src++] & 0xffff, r, g, b);
+			g_nmi->_origFormat.colorToRGB(palette.pal[*src++] & 0xffff, r, g, b);
 
 			*dest++ = TS_ARGB(0xff, r, g, b);
 		}
@@ -1045,7 +1045,7 @@ void Bitmap::copier(uint32 *dest, byte *src, int len, const Palette &palette, bo
 		int16 *src16 = (int16 *)src;
 
 		for (int i = 0; i < len; i++) {
-			g_fp->_origFormat.colorToRGB(READ_LE_UINT16(src16++), r, g, b);
+			g_nmi->_origFormat.colorToRGB(READ_LE_UINT16(src16++), r, g, b);
 			*dest++ = TS_ARGB(0xff, r, g, b);
 		}
 	}
@@ -1124,7 +1124,7 @@ bool Shadows::load(MfcArchive &file) {
 }
 
 void Shadows::init() {
-	Scene *scene = g_fp->accessScene(_sceneId);
+	Scene *scene = g_nmi->accessScene(_sceneId);
 
 	StaticANIObject *st;
 	Movement *mov;
@@ -1177,7 +1177,7 @@ DynamicPhase *Shadows::findSize(int width, int height) {
 
 void NGIEngine::drawAlphaRectangle(int x1, int y1, int x2, int y2, int alpha) {
 	for (int y = y1; y < y2; y++) {
-		uint32 *ptr = (uint32 *)g_fp->_backgroundSurface.getBasePtr(x1, y);
+		uint32 *ptr = (uint32 *)g_nmi->_backgroundSurface.getBasePtr(x1, y);
 
 		for (int x = x1; x < x2; x++) {
 			uint32 color = *ptr;
@@ -1193,17 +1193,17 @@ void NGIEngine::drawAlphaRectangle(int x1, int y1, int x2, int y2, int alpha) {
 
 void NGIEngine::sceneFade(Scene *sc, bool direction) {
 	for (int dim = 0; dim < 255; dim += 20) {
-		int ticks = g_fp->_system->getMillis();
+		int ticks = g_nmi->_system->getMillis();
 		sc->draw();
 
-		drawAlphaRectangle(0, 0, g_fp->_backgroundSurface.w, g_fp->_backgroundSurface.h, direction ? dim : 255 - dim);
-		g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface.getBasePtr(0, 0), g_fp->_backgroundSurface.pitch, 0, 0, 800, 600);
+		drawAlphaRectangle(0, 0, g_nmi->_backgroundSurface.w, g_nmi->_backgroundSurface.h, direction ? dim : 255 - dim);
+		g_nmi->_system->copyRectToScreen(g_nmi->_backgroundSurface.getBasePtr(0, 0), g_nmi->_backgroundSurface.pitch, 0, 0, 800, 600);
 
-		g_fp->_system->updateScreen();
-		ticks = g_fp->_system->getMillis() - ticks;
+		g_nmi->_system->updateScreen();
+		ticks = g_nmi->_system->getMillis() - ticks;
 
 		if (ticks < 42)
-			g_fp->_system->delayMillis(42 - ticks);
+			g_nmi->_system->delayMillis(42 - ticks);
 	}
 }
 

@@ -51,14 +51,14 @@ struct Swinger {
 
 
 void scene18_preload() {
-	g_fp->_scene3 = 0;
+	g_nmi->_scene3 = 0;
 
-	for (SceneTagList::iterator s = g_fp->_gameProject->_sceneTagList->begin(); s != g_fp->_gameProject->_sceneTagList->end(); ++s) {
+	for (SceneTagList::iterator s = g_nmi->_gameProject->_sceneTagList->begin(); s != g_nmi->_gameProject->_sceneTagList->end(); ++s) {
 		if (s->_sceneId == SC_18) {
-			g_fp->_scene3 = s->_scene;
+			g_nmi->_scene3 = s->_scene;
 			s->_scene = 0;
 
-			g_fp->_scene3->getStaticANIObject1ById(ANI_WHIRLIGIG_18, -1)->freeMovementsPixelData();
+			g_nmi->_scene3->getStaticANIObject1ById(ANI_WHIRLIGIG_18, -1)->freeMovementsPixelData();
 
 			break;
 		}
@@ -66,19 +66,19 @@ void scene18_preload() {
 }
 
 void scene18_setupEntrance() {
-	GameVar *var = g_fp->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME");
+	GameVar *var = g_nmi->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME");
 
 	if (var->getSubVarAsInt("Entrance") == TrubaRight)
 		var->setSubVarAsInt("Entrance", TrubaLeft);
 }
 
 void scene19_setSugarState(Scene *sc) {
-	if (g_fp->getObjectState(sO_Sugar) != g_fp->getObjectEnumState(sO_Sugar, sO_Present)) {
-		Scene *oldsc = g_fp->_currentScene;
+	if (g_nmi->getObjectState(sO_Sugar) != g_nmi->getObjectEnumState(sO_Sugar, sO_Present)) {
+		Scene *oldsc = g_nmi->_currentScene;
 
-		g_fp->_currentScene = sc;
+		g_nmi->_currentScene = sc;
 		sc->getStaticANIObject1ById(ANI_CORDIE, -1)->changeStatics2(ST_CDI_EMPTY2);
-		g_fp->_currentScene = oldsc;
+		g_nmi->_currentScene = oldsc;
 	}
 }
 
@@ -92,14 +92,14 @@ void scene19_setMovements(Scene *sc, int entranceId) {
 
 	for (uint i = 0; i < g_vars->scene18_swingers.size(); i++) {
 		if (!g_vars->scene18_enteredTrubaRight && (g_vars->scene18_swingers[i]->sflags & 0x20)) {
-			Scene *oldsc = g_fp->_currentScene;
+			Scene *oldsc = g_nmi->_currentScene;
 
 			g_vars->scene18_swingers[i]->sflags = 1;
 
-			g_fp->_currentScene = sc;
+			g_nmi->_currentScene = sc;
 			g_vars->scene18_swingers[i]->ani->changeStatics2(ST_KSL_NORM);
 			g_vars->scene18_swingers[i]->ani->_priority = 30;
-			g_fp->_currentScene = oldsc;
+			g_nmi->_currentScene = oldsc;
 		}
 
 		sc->deleteStaticANIObject(g_vars->scene18_swingers[i]->ani);
@@ -127,10 +127,10 @@ void scene19_setMovements(Scene *sc, int entranceId) {
 }
 
 void scene19_preload() {
-	for (SceneTagList::iterator s = g_fp->_gameProject->_sceneTagList->begin(); s != g_fp->_gameProject->_sceneTagList->end(); ++s) {
+	for (SceneTagList::iterator s = g_nmi->_gameProject->_sceneTagList->begin(); s != g_nmi->_gameProject->_sceneTagList->end(); ++s) {
 		if (s->_sceneId == SC_18) {
 			delete s->_scene;
-			s->_scene = g_fp->_scene3;
+			s->_scene = g_nmi->_scene3;
 
 			break;
 		}
@@ -142,8 +142,8 @@ void scene18_setupSwingers(StaticANIObject *ani, Scene *sc) {
 
 	g_vars->scene18_swingers.clear();
 
-	Scene *oldsc = g_fp->_currentScene;
-	g_fp->_currentScene = sc;
+	Scene *oldsc = g_nmi->_currentScene;
+	g_nmi->_currentScene = sc;
 
 	for (int i = 0; i < 8; i++) {
 		swinger = new Swinger;
@@ -181,12 +181,12 @@ void scene18_setupSwingers(StaticANIObject *ani, Scene *sc) {
 		else
 			ani->startAnim(MV_KSL_SWING, 0, -1);
 
-		ani->_movement->setDynamicPhaseIndex(g_fp->_rnd.getRandomNumber(17));
+		ani->_movement->setDynamicPhaseIndex(g_nmi->_rnd.getRandomNumber(17));
 
 		g_vars->scene18_swingers.push_back(swinger);
 	}
 
-	g_fp->_currentScene = oldsc;
+	g_nmi->_currentScene = oldsc;
 }
 
 void scene18_initScene1(Scene *sc) {
@@ -195,7 +195,7 @@ void scene18_initScene1(Scene *sc) {
 	int oldx = g_vars->scene18_wheelCenterX;
 	int oldy = g_vars->scene18_wheelCenterY;
 
-	g_vars->scene18_girlIsSwinging = (g_fp->getObjectState(sO_Girl) == g_fp->getObjectEnumState(sO_Girl, sO_IsSwinging));
+	g_vars->scene18_girlIsSwinging = (g_nmi->getObjectState(sO_Girl) == g_nmi->getObjectEnumState(sO_Girl, sO_IsSwinging));
 
 	if (sc->_sceneId == SC_18) {
 		g_vars->scene18_whirlgig = sc->getStaticANIObject1ById(ANI_WHIRLIGIG_18, -1);
@@ -254,7 +254,7 @@ void scene18_initScene1(Scene *sc) {
 			sndid = SND_18_010;
 	}
 
-	g_fp->playSound(sndid, 1);
+	g_nmi->playSound(sndid, 1);
 
 	g_vars->scene18_boy->getPicAniInfo(info);
 	sc->addStaticANIObject(g_vars->scene18_boy, 1);
@@ -292,11 +292,11 @@ void scene18_initScene1(Scene *sc) {
 
 	if (g_vars->scene18_enteredTrubaRight) {
 		if (sc->_sceneId == SC_19)
-			g_fp->_aniMan2 = 0;
+			g_nmi->_aniMan2 = 0;
 		else
-			g_fp->_aniMan2 = g_vars->scene18_swingers[g_vars->scene18_manWheelPosTo]->ani;
+			g_nmi->_aniMan2 = g_vars->scene18_swingers[g_vars->scene18_manWheelPosTo]->ani;
 	} else {
-		g_fp->_aniMan2 = g_fp->_aniMan;
+		g_nmi->_aniMan2 = g_nmi->_aniMan;
 	}
 }
 
@@ -309,14 +309,14 @@ void scene18_initScene2(Scene *sc) {
 
 	armchair->loadMovementsPixelData();
 
-	g_vars->scene18_girlIsSwinging = (g_fp->getObjectState(sO_Girl) == g_fp->getObjectEnumState(sO_Girl, sO_IsSwinging));
+	g_vars->scene18_girlIsSwinging = (g_nmi->getObjectState(sO_Girl) == g_nmi->getObjectEnumState(sO_Girl, sO_IsSwinging));
 
-	if (g_fp->getObjectState(sO_Bridge) == g_fp->getObjectEnumState(sO_Bridge, sO_Convoluted)) {
+	if (g_nmi->getObjectState(sO_Bridge) == g_nmi->getObjectEnumState(sO_Bridge, sO_Convoluted)) {
 		g_vars->scene18_bridgeIsConvoluted = true;
-		g_fp->playSound(SND_18_006, 1);
+		g_nmi->playSound(SND_18_006, 1);
 	} else {
 		g_vars->scene18_bridgeIsConvoluted = false;
-		g_fp->playSound(SND_18_010, 1);
+		g_nmi->playSound(SND_18_010, 1);
 	}
 
 	scene18_setupSwingers(armchair, sc);
@@ -341,61 +341,61 @@ void scene18_initScene2(Scene *sc) {
 	g_vars->scene18_girlJumpX = 283;
 	g_vars->scene18_girlJumpY = -350;
 
-	g_fp->initArcadeKeys("SC_18");
+	g_nmi->initArcadeKeys("SC_18");
 }
 
 void scene19_initScene2() {
-	g_fp->_aniMan2 = 0;
+	g_nmi->_aniMan2 = 0;
 }
 
 int scene18_updateCursor() {
 	if (g_vars->scene18_enteredTrubaRight) {
-		g_fp->_cursorId = PIC_CSR_DEFAULT;
+		g_nmi->_cursorId = PIC_CSR_DEFAULT;
 	} else {
-		g_fp->updateCursorCommon();
+		g_nmi->updateCursorCommon();
 
-		if (g_fp->_cursorId == PIC_CSR_ITN) {
-			if (g_fp->_objectIdAtCursor == PIC_SC18_LADDER1) {
-				g_fp->_cursorId = (g_vars->scene18_manY <= 250) ? PIC_CSR_GOD : PIC_CSR_GOU;
-			} else if (g_fp->_objectIdAtCursor == PIC_SC18_LADDER2 || g_fp->_objectIdAtCursor == PIC_SC18_LADDER3) {
-				g_fp->_cursorId = PIC_CSR_GOU;
+		if (g_nmi->_cursorId == PIC_CSR_ITN) {
+			if (g_nmi->_objectIdAtCursor == PIC_SC18_LADDER1) {
+				g_nmi->_cursorId = (g_vars->scene18_manY <= 250) ? PIC_CSR_GOD : PIC_CSR_GOU;
+			} else if (g_nmi->_objectIdAtCursor == PIC_SC18_LADDER2 || g_nmi->_objectIdAtCursor == PIC_SC18_LADDER3) {
+				g_nmi->_cursorId = PIC_CSR_GOU;
 			}
-		} else if (g_fp->_cursorId == PIC_CSR_DEFAULT && g_fp->_objectIdAtCursor == PIC_SC18_DOMIN && g_vars->scene18_domino && (g_vars->scene18_domino->_flags & 4)) {
-			g_fp->_cursorId = PIC_CSR_ITN;
+		} else if (g_nmi->_cursorId == PIC_CSR_DEFAULT && g_nmi->_objectIdAtCursor == PIC_SC18_DOMIN && g_vars->scene18_domino && (g_vars->scene18_domino->_flags & 4)) {
+			g_nmi->_cursorId = PIC_CSR_ITN;
 		}
 	}
 
-	return g_fp->_cursorId;
+	return g_nmi->_cursorId;
 }
 
 int scene19_updateCursor() {
-	g_fp->updateCursorCommon();
+	g_nmi->updateCursorCommon();
 
-	if (g_fp->_objectIdAtCursor == PIC_SC19_RTRUBA31)
-		g_fp->_cursorId = g_vars->scene19_enteredTruba3 ? PIC_CSR_GOR : PIC_CSR_DEFAULT;
+	if (g_nmi->_objectIdAtCursor == PIC_SC19_RTRUBA31)
+		g_nmi->_cursorId = g_vars->scene19_enteredTruba3 ? PIC_CSR_GOR : PIC_CSR_DEFAULT;
 
-	return g_fp->_cursorId;
+	return g_nmi->_cursorId;
 }
 
 void sceneHandler18_clickBoard() {
-	if (ABS(967 - g_fp->_aniMan->_ox) > 1 || ABS(379 - g_fp->_aniMan->_oy) > 1 || g_fp->_aniMan->_statics->_staticsId != ST_MAN_RIGHT) {
-		MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, 967, 379, 1, ST_MAN_RIGHT);
+	if (ABS(967 - g_nmi->_aniMan->_ox) > 1 || ABS(379 - g_nmi->_aniMan->_oy) > 1 || g_nmi->_aniMan->_statics->_staticsId != ST_MAN_RIGHT) {
+		MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_nmi->_aniMan, 967, 379, 1, ST_MAN_RIGHT);
 		ExCommand *ex = new ExCommand(0, 17, MSG_SC18_MANREADY, 0, 0, 0, 1, 0, 0, 0);
 
 		ex->_excFlags = 2;
 
 		mq->addExCommandToEnd(ex);
 
-		postExCommand(g_fp->_aniMan->_id, 2, 967, 379, 0, -1);
+		postExCommand(g_nmi->_aniMan->_id, 2, 967, 379, 0, -1);
 	} else {
 		g_vars->scene18_manIsReady = true;
 	}
 }
 
 void sceneHandler18_showManJumpTo() {
-	g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT);
-	g_fp->_aniMan->_flags &= 0xFFFB;
-	g_fp->_aniMan->_flags &= 0xFEFF;
+	g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT);
+	g_nmi->_aniMan->_flags &= 0xFFFB;
+	g_nmi->_aniMan->_flags &= 0xFEFF;
 	g_vars->scene18_swingers[g_vars->scene18_manWheelPosTo]->sflags = 0x20;
 
 	g_vars->scene18_swingers[g_vars->scene18_manWheelPosTo]->ani->changeStatics2(ST_KSL_JUMPMAN);
@@ -405,7 +405,7 @@ void sceneHandler18_showManJumpTo() {
 	g_vars->scene18_manIsReady = false;
 	g_vars->scene18_enteredTrubaRight = true;
 
-	g_fp->_aniMan2 = g_vars->scene18_swingers[g_vars->scene18_manWheelPosTo]->ani;
+	g_nmi->_aniMan2 = g_vars->scene18_swingers[g_vars->scene18_manWheelPosTo]->ani;
 }
 
 void sceneHandler18and19_showManJump() {
@@ -419,8 +419,8 @@ void sceneHandler18and19_showManJump() {
 		y = g_vars->scene18_swingers[g_vars->scene18_manWheelPos]->ani->_oy;
 	}
 
-	g_fp->_aniMan->show1(x + 62, y + 5, MV_MAN18_JUMPTOTRUBA, 0);
-	g_fp->_aniMan->_priority = 35;
+	g_nmi->_aniMan->show1(x + 62, y + 5, MV_MAN18_JUMPTOTRUBA, 0);
+	g_nmi->_aniMan->_priority = 35;
 
 	int mqid = 0;
 
@@ -433,9 +433,9 @@ void sceneHandler18and19_showManJump() {
 	}
 
 	if (mqid) {
-		MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(mqid), 0, 0);
+		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(mqid), 0, 0);
 
-		g_fp->_aniMan2 = g_fp->_aniMan;
+		g_nmi->_aniMan2 = g_nmi->_aniMan;
 		g_vars->scene18_enteredTrubaRight = false;
 
 		mq->setFlags(mq->getFlags() | 1);
@@ -537,10 +537,10 @@ void sceneHandler18and19_girlJumpTo() {
 }
 
 void sceneHandler18and19_manStandArmchair() {
-	g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT);
-	g_fp->_aniMan->_flags |= 0x100;
-	g_fp->_aniMan->_priority = 35;
-	g_fp->_aniMan->startAnim(MV_MAN18_STANDKRESLO, 0, -1);
+	g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT);
+	g_nmi->_aniMan->_flags |= 0x100;
+	g_nmi->_aniMan->_priority = 35;
+	g_nmi->_aniMan->startAnim(MV_MAN18_STANDKRESLO, 0, -1);
 }
 
 void sceneHandler18and19_drawRiders() {
@@ -637,11 +637,11 @@ void sceneHandler18and19_drawRiders() {
 
 		if ((int)i == g_vars->scene18_manWheelPosTo) {
 			if (swinger->angle >= Common::deg2rad<double>(170.0) && oldangle < Common::deg2rad<double>(170.0)) {
-				g_fp->_gameLoader->preloadScene(SC_18, TrubaRight);
+				g_nmi->_gameLoader->preloadScene(SC_18, TrubaRight);
 			} else if (swinger->angle >= Common::deg2rad<double>(25.0) && oldangle < Common::deg2rad<double>(25.0)) {
-				g_fp->_gameLoader->preloadScene(SC_19, TrubaRight);
+				g_nmi->_gameLoader->preloadScene(SC_19, TrubaRight);
 			} else if (swinger->angle >= Common::deg2rad<double>(270.0) && oldangle < Common::deg2rad<double>(270.0)) {
-				g_fp->_sceneRect.translate(1200, 0);
+				g_nmi->_sceneRect.translate(1200, 0);
 			}
 		}
 
@@ -732,26 +732,26 @@ int sceneHandler18(ExCommand *cmd) {
 				break;
 			}
 
-			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
-			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
-				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
+			if (!ani || !canInteractAny(g_nmi->_aniMan, ani, cmd->_param)) {
+				int picId = g_nmi->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+				PictureObject *pic = g_nmi->_currentScene->getPictureObjectById(picId, 0);
 
 				if (pic && pic->_id == PIC_SC18_DOMIN && g_vars->scene18_domino
-					&& (g_vars->scene18_domino->_flags & 4) && g_fp->_aniMan->isIdle()) {
-					if (!(g_fp->_aniMan->_flags & 0x100) && g_fp->_msgObjectId2 != g_vars->scene18_domino->_id) {
-						handleObjectInteraction(g_fp->_aniMan, g_vars->scene18_domino, cmd->_param);
+					&& (g_vars->scene18_domino->_flags & 4) && g_nmi->_aniMan->isIdle()) {
+					if (!(g_nmi->_aniMan->_flags & 0x100) && g_nmi->_msgObjectId2 != g_vars->scene18_domino->_id) {
+						handleObjectInteraction(g_nmi->_aniMan, g_vars->scene18_domino, cmd->_param);
 						cmd->_messageKind = 0;
 
 						break;
 					}
 				}
 
-				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
-					if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
-						|| (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
-						g_fp->processArcade(cmd);
+				if (!pic || !canInteractAny(g_nmi->_aniMan, pic, cmd->_param)) {
+					if ((g_nmi->_sceneRect.right - cmd->_sceneClickX < 47 && g_nmi->_sceneRect.right < g_nmi->_sceneWidth - 1)
+						|| (cmd->_sceneClickX - g_nmi->_sceneRect.left < 47 && g_nmi->_sceneRect.left > 0)) {
+						g_nmi->processArcade(cmd);
 
 						g_vars->scene18_manIsReady = false;
 
@@ -763,21 +763,21 @@ int sceneHandler18(ExCommand *cmd) {
 		break;
 
 	case 33:
-		if (g_fp->_aniMan2) {
-			int x = g_fp->_aniMan2->_ox;
+		if (g_nmi->_aniMan2) {
+			int x = g_nmi->_aniMan2->_ox;
 
-			g_vars->scene18_manY = g_fp->_aniMan2->_oy;
+			g_vars->scene18_manY = g_nmi->_aniMan2->_oy;
 
-			if (x < g_fp->_sceneRect.left + 200)
-				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
+			if (x < g_nmi->_sceneRect.left + 200)
+				g_nmi->_currentScene->_x = x - 300 - g_nmi->_sceneRect.left;
 
-			if (x > g_fp->_sceneRect.right - 200)
-				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
+			if (x > g_nmi->_sceneRect.right - 200)
+				g_nmi->_currentScene->_x = x + 300 - g_nmi->_sceneRect.right;
 
-			g_fp->sceneAutoScrolling();
+			g_nmi->sceneAutoScrolling();
 		}
 
-		if (g_vars->scene18_manIsReady && g_fp->_aniMan->_movement)
+		if (g_vars->scene18_manIsReady && g_nmi->_aniMan->_movement)
 			g_vars->scene18_manIsReady = false;
 
 		if (g_vars->scene18_bridgeIsConvoluted) {
@@ -788,7 +788,7 @@ int sceneHandler18(ExCommand *cmd) {
 
 			if (!g_vars->scene18_whirlgig->_movement) {
 				g_vars->scene18_whirlgig->startAnim(MV_WHR18_SPIN, 0, -1);
-				g_fp->_behaviorManager->updateBehaviors();
+				g_nmi->_behaviorManager->updateBehaviors();
 
 				break;
 			}
@@ -796,7 +796,7 @@ int sceneHandler18(ExCommand *cmd) {
 			sceneHandler18and19_animateRiders();
 		}
 
-		g_fp->_behaviorManager->updateBehaviors();
+		g_nmi->_behaviorManager->updateBehaviors();
 
 		break;
 
@@ -808,10 +808,10 @@ int sceneHandler18(ExCommand *cmd) {
 }
 
 void sceneHandler19_updateNumRides() {
-	int numRides = g_fp->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarAsInt(sO_DudeSwinged) + 1;
+	int numRides = g_nmi->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarAsInt(sO_DudeSwinged) + 1;
 
 	if (numRides > 1) {
-		g_fp->setObjectState(sO_Girl, g_fp->getObjectEnumState(sO_Girl, sO_IsSwinging));
+		g_nmi->setObjectState(sO_Girl, g_nmi->getObjectEnumState(sO_Girl, sO_IsSwinging));
 
 		g_vars->scene18_kidIsOnWheel = 1;
 		g_vars->scene18_girlIsOnWheel++;
@@ -819,7 +819,7 @@ void sceneHandler19_updateNumRides() {
 		numRides = 0;
 	}
 
-	g_fp->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->setSubVarAsInt(sO_DudeSwinged, numRides);
+	g_nmi->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->setSubVarAsInt(sO_DudeSwinged, numRides);
 }
 
 int sceneHandler19(ExCommand *cmd) {
@@ -853,7 +853,7 @@ int sceneHandler19(ExCommand *cmd) {
 
 	case 29:
 		if (g_vars->scene18_enteredTrubaRight) {
-			switch (g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY)) {
+			switch (g_nmi->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY)) {
 			case PIC_SC19_RTRUBA1:
 				g_vars->scene18_jumpDistance = 1;
 				g_vars->scene18_jumpAngle = 331;
@@ -880,12 +880,12 @@ int sceneHandler19(ExCommand *cmd) {
 			}
 		} else {
 			if (g_vars->scene19_enteredTruba3) {
-				if (g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY) == PIC_SC19_RTRUBA3) {
-					if (g_fp->_aniMan->isIdle()) {
-						if (!(g_fp->_aniMan->_flags & 0x100)) {
-							PictureObject *pic = g_fp->_currentScene->getPictureObjectById(PIC_SC19_RTRUBA31, 0);
+				if (g_nmi->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY) == PIC_SC19_RTRUBA3) {
+					if (g_nmi->_aniMan->isIdle()) {
+						if (!(g_nmi->_aniMan->_flags & 0x100)) {
+							PictureObject *pic = g_nmi->_currentScene->getPictureObjectById(PIC_SC19_RTRUBA31, 0);
 
-							handleObjectInteraction(g_fp->_aniMan, pic, cmd->_param);
+							handleObjectInteraction(g_nmi->_aniMan, pic, cmd->_param);
 							break;
 						}
 					}
@@ -895,16 +895,16 @@ int sceneHandler19(ExCommand *cmd) {
 		break;
 
 	case 33:
-		if (g_fp->_aniMan2) {
-			int x = g_fp->_aniMan2->_ox;
+		if (g_nmi->_aniMan2) {
+			int x = g_nmi->_aniMan2->_ox;
 
-			g_vars->scene18_manY = g_fp->_aniMan2->_oy;
+			g_vars->scene18_manY = g_nmi->_aniMan2->_oy;
 
-			if (x < g_fp->_sceneRect.left + 200)
-				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
+			if (x < g_nmi->_sceneRect.left + 200)
+				g_nmi->_currentScene->_x = x - 300 - g_nmi->_sceneRect.left;
 
-			if (x > g_fp->_sceneRect.right - 200)
-				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
+			if (x > g_nmi->_sceneRect.right - 200)
+				g_nmi->_currentScene->_x = x + 300 - g_nmi->_sceneRect.right;
 		}
 
 		if (g_vars->scene18_bridgeIsConvoluted) {
@@ -916,7 +916,7 @@ int sceneHandler19(ExCommand *cmd) {
 			if (!g_vars->scene18_whirlgig->_movement) {
 				g_vars->scene18_whirlgig->startAnim(MV_WHR19_SPIN, 0, -1);
 
-				g_fp->_behaviorManager->updateBehaviors();
+				g_nmi->_behaviorManager->updateBehaviors();
 
 				break;
 			}
@@ -924,7 +924,7 @@ int sceneHandler19(ExCommand *cmd) {
 			sceneHandler18and19_animateRiders();
 		}
 
-		g_fp->_behaviorManager->updateBehaviors();
+		g_nmi->_behaviorManager->updateBehaviors();
 
 		break;
 

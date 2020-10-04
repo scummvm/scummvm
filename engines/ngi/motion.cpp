@@ -387,7 +387,7 @@ int MctlLadder::findObjectPos(StaticANIObject *obj) {
 bool MctlLadder::initMovement(StaticANIObject *ani, MctlLadderMovement *movement) {
 	debugC(4, kDebugPathfinding, "MctlLadder::initMovement(*%d, ...)", ani->_id);
 
-	GameVar *v = g_fp->getGameLoaderGameVar()->getSubVarByName(ani->getName());
+	GameVar *v = g_nmi->getGameLoaderGameVar()->getSubVarByName(ani->getName());
 
 	if (!v)
 		return false;
@@ -945,7 +945,7 @@ MessageQueue *MovGraph::startMove(StaticANIObject *ani, int xpos, int ypos, int 
 
 		if ((ex->_messageKind != 1 && ex->_messageKind != 20) || ex->_messageNum != ani->_movement->_id ||
 			(ex->_z >= 1 && ex->_z <= ani->_movement->_currDynamicPhaseIndex)) {
-			mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
+			mq = new MessageQueue(g_nmi->_globalMessageQueueList->compact());
 
 			ex = new ExCommand(ani->_id, 21, 0, 0, 0, 0, 1, 0, 0, 0);
 			ex->_param = ani->_odelay;
@@ -1708,7 +1708,7 @@ bool MctlGraph::fillData(StaticANIObject *obj, MctlAni &item) {
 	item._obj = obj;
 	item._objectId = obj->_id;
 
-	GameVar *var = g_fp->getGameLoaderGameVar()->getSubVarByName(obj->_objectName);
+	GameVar *var = g_nmi->getGameLoaderGameVar()->getSubVarByName(obj->_objectName);
 	if (!var)
 		return false;
 
@@ -1968,7 +1968,7 @@ MessageQueue *MctlGraph::makeWholeQueue(MctlMQ &mctlMQ) {
 	int curY = mctlMQ.pt1.y;
 	int curDistance = mctlMQ.distance1;
 
-	MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
+	MessageQueue *mq = new MessageQueue(g_nmi->_globalMessageQueueList->compact());
 
 	int numItems = mctlMQ.items.size();
 
@@ -2214,7 +2214,7 @@ MessageQueue *MctlGraph::makeQueue(StaticANIObject *obj, int xpos, int ypos, int
 	}
 
 	if (obj->_ox == xpos && obj->_oy == ypos) {
-		MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
+		MessageQueue *mq = new MessageQueue(g_nmi->_globalMessageQueueList->compact());
 
 		if (staticsId && obj->_statics->_staticsId != staticsId) {
 			int idxwalk = getDirByStatics(idx, staticsId);
@@ -2568,7 +2568,7 @@ MessageQueue *MctlGraph::makeLineQueue(MctlMQ *info) {
 	else
 		x2.y = 0;
 
-	MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
+	MessageQueue *mq = new MessageQueue(g_nmi->_globalMessageQueueList->compact());
 	ExCommand *ex;
 
 	if (info->flags & 2) {
@@ -3084,13 +3084,13 @@ int startWalkTo(int objId, int objKey, int x, int y, int fuzzyMatch) {
 	MctlCompound *mc = getCurrSceneSc2MotionController();
 
 	if (mc)
-		return (mc->startMove(g_fp->_currentScene->getStaticANIObject1ById(objId, objKey), x, y, fuzzyMatch, 0) != 0);
+		return (mc->startMove(g_nmi->_currentScene->getStaticANIObject1ById(objId, objKey), x, y, fuzzyMatch, 0) != 0);
 
 	return 0;
 }
 
 bool doSomeAnimation(int objId, int objKey, int a3) {
-	StaticANIObject *ani = g_fp->_currentScene->getStaticANIObject1ById(objId, objKey);
+	StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(objId, objKey);
 	MctlCompound *cmp = getCurrSceneSc2MotionController();
 
 	if (ani && cmp)

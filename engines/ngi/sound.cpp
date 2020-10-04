@@ -95,7 +95,7 @@ bool Sound::load(MfcArchive &file, NGIArchive *archive) {
 	_id = file.readUint32LE();
 	/*_description = */file.readPascalString();
 
-	assert(g_fp->_gameProjectVersion >= 6);
+	assert(g_nmi->_gameProjectVersion >= 6);
 
 	_objectId = file.readUint16LE();
 
@@ -120,27 +120,27 @@ void Sound::setPanAndVolumeByStaticAni() {
 	if (!_objectId)
 		return;
 
-	StaticANIObject *ani = g_fp->_currentScene->getStaticANIObject1ById(_objectId, -1);
+	StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(_objectId, -1);
 	if (!ani)
 		return;
 
 	int a, b;
 
-	if (ani->_ox >= g_fp->_sceneRect.left) {
+	if (ani->_ox >= g_nmi->_sceneRect.left) {
 		int par, pan;
 
-		if (ani->_ox <= g_fp->_sceneRect.right) {
+		if (ani->_ox <= g_nmi->_sceneRect.right) {
 			int dx;
 
-			if (ani->_oy <= g_fp->_sceneRect.bottom) {
-				if (ani->_oy >= g_fp->_sceneRect.top) {
-					setPanAndVolume(g_fp->_sfxVolume, 0);
+			if (ani->_oy <= g_nmi->_sceneRect.bottom) {
+				if (ani->_oy >= g_nmi->_sceneRect.top) {
+					setPanAndVolume(g_nmi->_sfxVolume, 0);
 
 					return;
 				}
-				dx = g_fp->_sceneRect.top - ani->_oy;
+				dx = g_nmi->_sceneRect.top - ani->_oy;
 			} else {
-				dx = ani->_oy - g_fp->_sceneRect.bottom;
+				dx = ani->_oy - g_nmi->_sceneRect.bottom;
 			}
 
 			par = 0;
@@ -151,10 +151,10 @@ void Sound::setPanAndVolumeByStaticAni() {
 			}
 
 			pan = -3500;
-			a = g_fp->_sfxVolume - (-3500);
+			a = g_nmi->_sfxVolume - (-3500);
 			b = 800 - dx;
 		} else {
-			int dx = ani->_ox - g_fp->_sceneRect.right;
+			int dx = ani->_ox - g_nmi->_sceneRect.right;
 
 			if (dx > 800) {
 				setPanAndVolume(-3500, 0);
@@ -163,7 +163,7 @@ void Sound::setPanAndVolumeByStaticAni() {
 
 			pan = -3500;
 			par = dx * (-3500) / -800;
-			a = g_fp->_sfxVolume - (-3500);
+			a = g_nmi->_sfxVolume - (-3500);
 			b = 800 - dx;
 		}
 
@@ -174,13 +174,13 @@ void Sound::setPanAndVolumeByStaticAni() {
 		return;
 	}
 
-	int dx = g_fp->_sceneRect.left - ani->_ox;
+	int dx = g_nmi->_sceneRect.left - ani->_ox;
 	if (dx <= 800) {
-		int32 s = (800 - dx) * (g_fp->_sfxVolume - (-3500));
+		int32 s = (800 - dx) * (g_nmi->_sfxVolume - (-3500));
 		int32 p = -3500 + s / 800;
 
-		if (p > g_fp->_sfxVolume)
-			p = g_fp->_sfxVolume;
+		if (p > g_nmi->_sfxVolume)
+			p = g_nmi->_sfxVolume;
 
 		setPanAndVolume(p, dx * (-3500) / 800);
 	} else {
@@ -189,15 +189,15 @@ void Sound::setPanAndVolumeByStaticAni() {
 }
 
 void Sound::setPanAndVolume(int vol, int pan) {
-	g_fp->_mixer->setChannelVolume(*_handle, MIN((vol + 10000) / 39, 255)); // -10000..0
-	g_fp->_mixer->setChannelBalance(*_handle, CLIP(pan / 78, -127, 127)); // -10000..10000
+	g_nmi->_mixer->setChannelVolume(*_handle, MIN((vol + 10000) / 39, 255)); // -10000..0
+	g_nmi->_mixer->setChannelBalance(*_handle, CLIP(pan / 78, -127, 127)); // -10000..10000
 }
 
 void Sound::play(int flag) {
 	Audio::SoundHandle *handle = getHandle();
 
-	if (g_fp->_mixer->isSoundHandleActive(*handle)) { // We need to restart the music
-		g_fp->_mixer->stopHandle(*handle);
+	if (g_nmi->_mixer->isSoundHandleActive(*handle)) { // We need to restart the music
+		g_nmi->_mixer->stopHandle(*handle);
 	}
 
 	byte *soundData = loadData();
@@ -205,7 +205,7 @@ void Sound::play(int flag) {
 	Audio::RewindableAudioStream *wav = Audio::makeWAVStream(dataStream, DisposeAfterUse::YES);
 	Audio::AudioStream *audioStream = new Audio::LoopingAudioStream(wav, (flag == 1) ? 0 : 1);
 
-	g_fp->_mixer->playStream(Audio::Mixer::kSFXSoundType, handle, audioStream);
+	g_nmi->_mixer->playStream(Audio::Mixer::kSFXSoundType, handle, audioStream);
 }
 
 void Sound::freeSound() {
@@ -215,11 +215,11 @@ void Sound::freeSound() {
 }
 
 int Sound::getVolume() {
-	return g_fp->_mixer->getChannelVolume(*_handle) * 39;  // 0..10000
+	return g_nmi->_mixer->getChannelVolume(*_handle) * 39;  // 0..10000
 }
 
 void Sound::stop() {
-	g_fp->_mixer->stopHandle(*_handle);
+	g_nmi->_mixer->stopHandle(*_handle);
 }
 
 void NGIEngine::setSceneMusicParameters(GameVar *gvar) {
@@ -455,28 +455,28 @@ void NGIEngine::playTrack(GameVar *sceneVar, const char *name, bool delayed) {
 }
 
 void global_messageHandler_handleSound(ExCommand *cmd) {
-	if (!g_fp->_soundEnabled)
+	if (!g_nmi->_soundEnabled)
 		return;
 
 	Sound *snd = 0;
 
-	for (int i = 0; i < g_fp->_currSoundListCount; i++)
-		if ((snd = g_fp->_currSoundList1[i]->getSoundItemById(cmd->_messageNum)) != NULL)
+	for (int i = 0; i < g_nmi->_currSoundListCount; i++)
+		if ((snd = g_nmi->_currSoundList1[i]->getSoundItemById(cmd->_messageNum)) != NULL)
 			break;
 
 	if (!snd)
 		return;
 
 	if (cmd->_z & 1) {
-		if (!g_fp->_flgSoundList && (cmd->_z & 4))
+		if (!g_nmi->_flgSoundList && (cmd->_z & 4))
 			snd->freeSound();
 
 		snd->updateVolume();
 
-		if (snd->_objectId && g_fp->_currentScene->getStaticANIObject1ById(snd->_objectId, -1))
+		if (snd->_objectId && g_nmi->_currentScene->getStaticANIObject1ById(snd->_objectId, -1))
 			snd->setPanAndVolumeByStaticAni();
 		else
-			snd->setPanAndVolume(g_fp->_sfxVolume, 0);
+			snd->setPanAndVolume(g_nmi->_sfxVolume, 0);
 
 		if (snd->getVolume() > -3500)
 			snd->play(cmd->_param);

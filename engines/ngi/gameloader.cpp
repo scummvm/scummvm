@@ -35,13 +35,13 @@
 namespace NGI {
 
 Inventory2 *getGameLoaderInventory() {
-	return &g_fp->_gameLoader->_inventory;
+	return &g_nmi->_gameLoader->_inventory;
 }
 
 static MotionController *getMotionControllerBySceneId(int16 sceneId) {
-	for (uint i = 0; i < g_fp->_gameLoader->_sc2array.size(); i++) {
-		if (g_fp->_gameLoader->_sc2array[i]._sceneId == sceneId) {
-			return g_fp->_gameLoader->_sc2array[i]._motionController;
+	for (uint i = 0; i < g_nmi->_gameLoader->_sc2array.size(); i++) {
+		if (g_nmi->_gameLoader->_sc2array[i]._sceneId == sceneId) {
+			return g_nmi->_gameLoader->_sc2array[i]._motionController;
 		}
 	}
 
@@ -67,7 +67,7 @@ MctlCompound *getSc2MctlCompoundBySceneId(int16 sceneId) {
 }
 
 InteractionController *getGameLoaderInteractionController() {
-	return g_fp->_gameLoader->_interactionController;
+	return g_nmi->_gameLoader->_interactionController;
 }
 
 GameLoader::GameLoader() {
@@ -88,10 +88,10 @@ GameLoader::GameLoader() {
 	_preloadEntranceId = 0;
 	_updateCounter = 0;
 
-	g_fp->_msgX = 0;
-	g_fp->_msgY = 0;
-	g_fp->_msgObjectId2 = 0;
-	g_fp->_msgId = 0;
+	g_nmi->_msgX = 0;
+	g_nmi->_msgY = 0;
+	g_nmi->_msgObjectId2 = 0;
+	g_nmi->_msgId = 0;
 }
 
 GameLoader::~GameLoader() {
@@ -110,10 +110,10 @@ bool GameLoader::load(MfcArchive &file) {
 
 	_gameProject->load(file);
 
-	g_fp->_gameProject = _gameProject.get();
+	g_nmi->_gameProject = _gameProject.get();
 
-	if (g_fp->_gameProjectVersion < 12) {
-		error("Old gameProjectVersion: %d", g_fp->_gameProjectVersion);
+	if (g_nmi->_gameProjectVersion < 12) {
+		error("Old gameProjectVersion: %d", g_nmi->_gameProjectVersion);
 	}
 
 	_gameName = file.readPascalString();
@@ -188,7 +188,7 @@ bool GameLoader::gotoScene(int sceneId, int entranceId) {
 		return false;
 
 	if (_sc2array[sc2idx]._entranceData.size() < 1) {
-		g_fp->_currentScene = st->_scene;
+		g_nmi->_currentScene = st->_scene;
 		return true;
 	}
 
@@ -207,20 +207,20 @@ bool GameLoader::gotoScene(int sceneId, int entranceId) {
 	if (sg || (sg = _gameVar->getSubVarByName("OBJSTATES")->addSubVarAsInt("SAVEGAME", 0)) != 0)
 		sg->setSubVarAsInt("Entrance", entranceId);
 
-	if (!g_fp->sceneSwitcher(_sc2array[sc2idx]._entranceData[entranceIdx]))
+	if (!g_nmi->sceneSwitcher(_sc2array[sc2idx]._entranceData[entranceIdx]))
 		return false;
 
-	g_fp->_msgObjectId2 = 0;
-	g_fp->_msgY = -1;
-	g_fp->_msgX = -1;
+	g_nmi->_msgObjectId2 = 0;
+	g_nmi->_msgY = -1;
+	g_nmi->_msgX = -1;
 
-	g_fp->_currentScene = st->_scene;
+	g_nmi->_currentScene = st->_scene;
 
-	MessageQueue *mq1 = g_fp->_currentScene->getMessageQueueById(_sc2array[sc2idx]._entranceData[entranceIdx]._messageQueueId);
+	MessageQueue *mq1 = g_nmi->_currentScene->getMessageQueueById(_sc2array[sc2idx]._entranceData[entranceIdx]._messageQueueId);
 	if (mq1) {
 		MessageQueue *mq = new MessageQueue(mq1, 0, 0);
 
-		StaticANIObject *stobj = g_fp->_currentScene->getStaticANIObject1ById(_field_FA, -1);
+		StaticANIObject *stobj = g_nmi->_currentScene->getStaticANIObject1ById(_field_FA, -1);
 		if (stobj) {
 			stobj->_flags &= 0x100;
 
@@ -241,7 +241,7 @@ bool GameLoader::gotoScene(int sceneId, int entranceId) {
 			return false;
 		}
 	} else {
-		StaticANIObject *stobj = g_fp->_currentScene->getStaticANIObject1ById(_field_FA, -1);
+		StaticANIObject *stobj = g_nmi->_currentScene->getStaticANIObject1ById(_field_FA, -1);
 		if (stobj)
 			stobj->_flags &= 0xfeff;
 	}
@@ -252,9 +252,9 @@ bool GameLoader::gotoScene(int sceneId, int entranceId) {
 bool preloadCallback(PreloadItem &pre, int flag) {
 	if (flag) {
 		if (flag == 50)
-			g_fp->_aniMan->preloadMovements(g_fp->_movTable.get());
+			g_nmi->_aniMan->preloadMovements(g_nmi->_movTable.get());
 
-		StaticANIObject *pbar = g_fp->_loaderScene->getStaticANIObject1ById(ANI_PBAR, -1);
+		StaticANIObject *pbar = g_nmi->_loaderScene->getStaticANIObject1ById(ANI_PBAR, -1);
 
 		if (pbar) {
 			int sz;
@@ -267,43 +267,43 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 			pbar->_movement->setDynamicPhaseIndex(flag * (sz - 1) / 100);
 		}
 
-		g_fp->updateMap(&pre);
+		g_nmi->updateMap(&pre);
 
-		g_fp->_currentScene = g_fp->_loaderScene;
+		g_nmi->_currentScene = g_nmi->_loaderScene;
 
-		g_fp->_loaderScene->draw();
+		g_nmi->_loaderScene->draw();
 
-		g_fp->_system->updateScreen();
+		g_nmi->_system->updateScreen();
 	} else {
-		if (g_fp->_scene2) {
-			g_fp->_aniMan = g_fp->_scene2->getAniMan();
-			g_fp->_scene2 = 0;
+		if (g_nmi->_scene2) {
+			g_nmi->_aniMan = g_nmi->_scene2->getAniMan();
+			g_nmi->_scene2 = 0;
 			setInputDisabled(1);
 		}
 
-		g_fp->_floaters->stopAll();
+		g_nmi->_floaters->stopAll();
 
-		if (g_fp->_soundEnabled) {
-			g_fp->_currSoundListCount = 1;
-			g_fp->_currSoundList1[0] = g_fp->accessScene(SC_COMMON)->_soundList.get();
+		if (g_nmi->_soundEnabled) {
+			g_nmi->_currSoundListCount = 1;
+			g_nmi->_currSoundList1[0] = g_nmi->accessScene(SC_COMMON)->_soundList.get();
 		}
 
 		g_vars->scene18_inScene18p1 = false;
 
 		if ((pre.preloadId1 != SC_18 || pre.sceneId != SC_19) && (pre.preloadId1 != SC_19 || (pre.sceneId != SC_18 && pre.sceneId != SC_19))) {
-			if (g_fp->_scene3) {
+			if (g_nmi->_scene3) {
 				if (pre.preloadId1 != SC_18)
-					g_fp->_gameLoader->unloadScene(SC_18);
+					g_nmi->_gameLoader->unloadScene(SC_18);
 
-				g_fp->_scene3 = 0;
+				g_nmi->_scene3 = 0;
 			}
 		} else {
-			scene19_setMovements(g_fp->accessScene(pre.preloadId1), pre.param);
+			scene19_setMovements(g_nmi->accessScene(pre.preloadId1), pre.param);
 
 			g_vars->scene18_inScene18p1 = true;
 
 			if (pre.preloadId1 == SC_18) {
-				g_fp->_gameLoader->saveScenePicAniInfos(SC_18);
+				g_nmi->_gameLoader->saveScenePicAniInfos(SC_18);
 
 				scene18_preload();
 			}
@@ -314,34 +314,34 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 			pre.param = TrubaLeft;
 		}
 
-		if (!g_fp->_loaderScene) {
-			g_fp->_gameLoader->loadScene(SC_LDR);
-			g_fp->_loaderScene = g_fp->accessScene(SC_LDR);
+		if (!g_nmi->_loaderScene) {
+			g_nmi->_gameLoader->loadScene(SC_LDR);
+			g_nmi->_loaderScene = g_nmi->accessScene(SC_LDR);
 		}
 
-		StaticANIObject *pbar = g_fp->_loaderScene->getStaticANIObject1ById(ANI_PBAR, -1);
+		StaticANIObject *pbar = g_nmi->_loaderScene->getStaticANIObject1ById(ANI_PBAR, -1);
 
 		if (pbar) {
 			pbar->show1(ST_EGTR_SLIMSORROW, ST_MAN_GOU, MV_PBAR_RUN, 0);
 			pbar->startAnim(MV_PBAR_RUN, 0, -1);
 		}
 
-		g_fp->_inventoryScene = 0;
-		g_fp->_updateCursorCallback = 0;
+		g_nmi->_inventoryScene = 0;
+		g_nmi->_updateCursorCallback = 0;
 
-		g_fp->_sceneRect.translate(-g_fp->_sceneRect.left, -g_fp->_sceneRect.top);
+		g_nmi->_sceneRect.translate(-g_nmi->_sceneRect.left, -g_nmi->_sceneRect.top);
 
-		g_fp->_system->delayMillis(10);
+		g_nmi->_system->delayMillis(10);
 
-		Scene *oldsc = g_fp->_currentScene;
+		Scene *oldsc = g_nmi->_currentScene;
 
-		g_fp->_currentScene = g_fp->_loaderScene;
+		g_nmi->_currentScene = g_nmi->_loaderScene;
 
-		g_fp->_loaderScene->draw();
+		g_nmi->_loaderScene->draw();
 
-		g_fp->_system->updateScreen();
+		g_nmi->_system->updateScreen();
 
-		g_fp->_currentScene = oldsc;
+		g_nmi->_currentScene = oldsc;
 	}
 
 	return true;
@@ -379,8 +379,8 @@ bool GameLoader::preloadScene(int sceneId, int entranceId) {
 			return false;
 	}
 
-	if (g_fp->_currentScene && g_fp->_currentScene->_sceneId == sceneId)
-		g_fp->_currentScene = 0;
+	if (g_nmi->_currentScene && g_nmi->_currentScene->_sceneId == sceneId)
+		g_nmi->_currentScene = 0;
 
 	saveScenePicAniInfos(sceneId);
 	clearGlobalMessageQueueList1();
@@ -476,7 +476,7 @@ void GameLoader::applyPicAniInfos(Scene *sc, const PicAniInfoList &picAniInfo) {
 			if (!(info.type & 1))
 				continue;
 
-			Scene *scNew = g_fp->accessScene(info.sceneId);
+			Scene *scNew = g_nmi->accessScene(info.sceneId);
 			if (!scNew)
 				continue;
 
@@ -555,8 +555,8 @@ PicAniInfoList GameLoader::savePicAniInfos(Scene *sc, int flag1, int flag2) {
 }
 
 void GameLoader::updateSystems(int counterdiff) {
-	if (g_fp->_currentScene) {
-		g_fp->_currentScene->update(counterdiff);
+	if (g_nmi->_currentScene) {
+		g_nmi->_currentScene->update(counterdiff);
 
 		_exCommand._messageKind = 17;
 		_updateCounter++;
@@ -675,7 +675,7 @@ InputController *NGIEngine::getGameLoaderInputController() {
 }
 
 MctlCompound *getCurrSceneSc2MotionController() {
-	return getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId);
+	return getSc2MctlCompoundBySceneId(g_nmi->_currentScene->_sceneId);
 }
 
 } // End of namespace NGI

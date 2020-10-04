@@ -61,7 +61,7 @@ MessageQueue *AniHandler::makeQueue(StaticANIObject *ani, int staticsIndex, int,
 #endif
 
 	if (stid == staticsIndex)
-		return new MessageQueue(g_fp->_globalMessageQueueList->compact());
+		return new MessageQueue(g_nmi->_globalMessageQueueList->compact());
 
 	int startidx = getStaticsIndexById(idx, stid);
 	int endidx = getStaticsIndexById(idx, staticsIndex);
@@ -75,7 +75,7 @@ MessageQueue *AniHandler::makeQueue(StaticANIObject *ani, int staticsIndex, int,
 	if (!_items[idx].subItems[subidx].movement)
 		return 0;
 
-	MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
+	MessageQueue *mq = new MessageQueue(g_nmi->_globalMessageQueueList->compact());
 	Common::Point point;
 	ExCommand *ex;
 
@@ -166,7 +166,7 @@ void AniHandler::resetData(int objId) {
 	_items[idx].movements1.clear();
 	_items[idx].movements2.clear();
 
-	StaticANIObject *obj = g_fp->_currentScene->getStaticANIObject1ById(objId, -1);
+	StaticANIObject *obj = g_nmi->_currentScene->getStaticANIObject1ById(objId, -1);
 
 	if (!obj)
 		return;
@@ -350,7 +350,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 	else
 		x2.y = (dy1 - py * y1) / abs(dy1 - py * y1);
 
-	MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
+	MessageQueue *mq = new MessageQueue(g_nmi->_globalMessageQueueList->compact());
 	ExCommand2 *ex2;
 
 	for (int i = subIdx; i != st2idx;) {

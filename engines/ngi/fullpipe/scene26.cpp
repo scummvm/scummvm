@@ -42,9 +42,9 @@ void scene26_initScene(Scene *sc) {
 	g_vars->scene26_sockPic = sc->getPictureObjectById(PIC_SC26_SOCK, 0);
 	g_vars->scene26_sock = sc->getStaticANIObject1ById(ANI_SOCK_26, -1);
 
-	if (g_fp->getObjectState(sO_Hatch_26) == g_fp->getObjectEnumState(sO_Hatch_26, sO_WithSock)) {
-		g_fp->setObjectState(sO_Hatch_26, g_fp->getObjectEnumState(sO_Hatch_26, sO_Closed));
-		g_fp->setObjectState(sO_Sock_26, g_fp->getObjectEnumState(sO_Sock_26, sO_HangsOnPipe));
+	if (g_nmi->getObjectState(sO_Hatch_26) == g_nmi->getObjectEnumState(sO_Hatch_26, sO_WithSock)) {
+		g_nmi->setObjectState(sO_Hatch_26, g_nmi->getObjectEnumState(sO_Hatch_26, sO_Closed));
+		g_nmi->setObjectState(sO_Sock_26, g_nmi->getObjectEnumState(sO_Sock_26, sO_HangsOnPipe));
 	}
 
 	Interaction *inter = getGameLoaderInteractionController()->getInteractionByObjectIds(ANI_LUK26, ANI_MAN, ANI_INV_SOCK);
@@ -54,38 +54,38 @@ void scene26_initScene(Scene *sc) {
 	else
 		inter->_flags |= 0x20000;
 
-	if (g_fp->getObjectState(sO_Sock_26) == g_fp->getObjectEnumState(sO_Sock_26, sO_HangsOnPipe))
+	if (g_nmi->getObjectState(sO_Sock_26) == g_nmi->getObjectEnumState(sO_Sock_26, sO_HangsOnPipe))
 		g_vars->scene26_sockPic->_flags |= 4;
 	else
 		g_vars->scene26_sockPic->_flags &= 0xFFFB;
 
-	if (g_fp->getObjectState(sO_Valve1_26) == g_fp->getObjectEnumState(sO_Valve1_26, sO_Opened))
-		g_fp->playSound(SND_26_018, 1);
+	if (g_nmi->getObjectState(sO_Valve1_26) == g_nmi->getObjectEnumState(sO_Valve1_26, sO_Opened))
+		g_nmi->playSound(SND_26_018, 1);
 }
 
 int scene26_updateCursor() {
-	g_fp->updateCursorCommon();
+	g_nmi->updateCursorCommon();
 
-	if (g_fp->_objectIdAtCursor != ANI_VENT || g_fp->_cursorId != PIC_CSR_DEFAULT) {
-		if (g_fp->_cursorId == PIC_CSR_ITN && g_fp->_objectIdAtCursor == PIC_SC26_LTRUBA)
-			g_fp->_cursorId = PIC_CSR_GOL;
+	if (g_nmi->_objectIdAtCursor != ANI_VENT || g_nmi->_cursorId != PIC_CSR_DEFAULT) {
+		if (g_nmi->_cursorId == PIC_CSR_ITN && g_nmi->_objectIdAtCursor == PIC_SC26_LTRUBA)
+			g_nmi->_cursorId = PIC_CSR_GOL;
 
 		// WORKAROUND: Fixing cursor
-		if (g_fp->_objectIdAtCursor == PIC_SC26_LTRUBA &&
-			(g_fp->_cursorId == PIC_CSR_GOU || g_fp->_cursorId == PIC_CSR_GOD || g_fp->_cursorId == PIC_CSR_GOR))
-				g_fp->_cursorId = PIC_CSR_GOL;
+		if (g_nmi->_objectIdAtCursor == PIC_SC26_LTRUBA &&
+			(g_nmi->_cursorId == PIC_CSR_GOU || g_nmi->_cursorId == PIC_CSR_GOD || g_nmi->_cursorId == PIC_CSR_GOR))
+				g_nmi->_cursorId = PIC_CSR_GOL;
 	} else {
-		g_fp->_cursorId = PIC_CSR_ITN;
+		g_nmi->_cursorId = PIC_CSR_ITN;
 	}
 
-  return g_fp->_cursorId;
+  return g_nmi->_cursorId;
 }
 
 void sceneHandler26_updateDrop() {
-	if (g_fp->getObjectState(sO_Valve5_26) == g_fp->getObjectEnumState(sO_Valve5_26, sO_Closed))
-		g_fp->_behaviorManager->setFlagByStaticAniObject(g_vars->scene26_drop, 0);
+	if (g_nmi->getObjectState(sO_Valve5_26) == g_nmi->getObjectEnumState(sO_Valve5_26, sO_Closed))
+		g_nmi->_behaviorManager->setFlagByStaticAniObject(g_vars->scene26_drop, 0);
 	else
-		g_fp->_behaviorManager->setFlagByStaticAniObject(g_vars->scene26_drop, 1);
+		g_nmi->_behaviorManager->setFlagByStaticAniObject(g_vars->scene26_drop, 1);
 }
 
 void scene26_setupDrop(Scene *sc) {
@@ -99,19 +99,19 @@ void sceneHandler26_showChi() {
 }
 
 void sceneHandler26_updatePool() {
-	if (g_fp->getObjectState(sO_Valve1_26) == g_fp->getObjectEnumState(sO_Valve1_26, sO_Opened))
-		g_fp->setObjectState(sO_Pool, g_fp->getObjectEnumState(sO_Pool, sO_Overfull));
-	else if (g_fp->getObjectState(sO_Pool) == g_fp->getObjectEnumState(sO_Pool, sO_Overfull))
-		g_fp->setObjectState(sO_Pool, g_fp->getObjectEnumState(sO_Pool, sO_Full));
+	if (g_nmi->getObjectState(sO_Valve1_26) == g_nmi->getObjectEnumState(sO_Valve1_26, sO_Opened))
+		g_nmi->setObjectState(sO_Pool, g_nmi->getObjectEnumState(sO_Pool, sO_Overfull));
+	else if (g_nmi->getObjectState(sO_Pool) == g_nmi->getObjectEnumState(sO_Pool, sO_Overfull))
+		g_nmi->setObjectState(sO_Pool, g_nmi->getObjectEnumState(sO_Pool, sO_Full));
 
-	if (g_fp->getObjectState(sO_Valve2_26) == g_fp->getObjectEnumState(sO_Valve2_26, sO_Opened)) {
-		if (g_fp->getObjectState(sO_Pool) >= g_fp->getObjectEnumState(sO_Pool, sO_Full))
-			g_fp->setObjectState(sO_Pool, g_fp->getObjectEnumState(sO_Pool, sO_HalfFull));
+	if (g_nmi->getObjectState(sO_Valve2_26) == g_nmi->getObjectEnumState(sO_Valve2_26, sO_Opened)) {
+		if (g_nmi->getObjectState(sO_Pool) >= g_nmi->getObjectEnumState(sO_Pool, sO_Full))
+			g_nmi->setObjectState(sO_Pool, g_nmi->getObjectEnumState(sO_Pool, sO_HalfFull));
 	}
 
-	if (g_fp->getObjectState(sO_Valve3_26) == g_fp->getObjectEnumState(sO_Valve3_26, sO_Opened)) {
-		if (g_fp->getObjectState(sO_Pool) >= g_fp->getObjectEnumState(sO_Pool, sO_HalfFull))
-			g_fp->setObjectState(sO_Pool, g_fp->getObjectEnumState(sO_Pool, sO_Empty));
+	if (g_nmi->getObjectState(sO_Valve3_26) == g_nmi->getObjectEnumState(sO_Valve3_26, sO_Opened)) {
+		if (g_nmi->getObjectState(sO_Pool) >= g_nmi->getObjectEnumState(sO_Pool, sO_HalfFull))
+			g_nmi->setObjectState(sO_Pool, g_nmi->getObjectEnumState(sO_Pool, sO_Empty));
 	}
 }
 
@@ -126,50 +126,50 @@ void sceneHandler26_testVent() {
 		return;
 
 	if (g_vars->scene26_activeVent->_odelay == 0) {
-		if (g_fp->getObjectState(sO_Valve1_26) == g_fp->getObjectEnumState(sO_Valve1_26, sO_Opened))
-			g_fp->stopAllSoundInstances(SND_26_018);
+		if (g_nmi->getObjectState(sO_Valve1_26) == g_nmi->getObjectEnumState(sO_Valve1_26, sO_Opened))
+			g_nmi->stopAllSoundInstances(SND_26_018);
 		else
-			g_fp->playSound(SND_26_018, 1);
+			g_nmi->playSound(SND_26_018, 1);
 
-		if (g_fp->getObjectState(sO_Valve2_26) == g_fp->getObjectEnumState(sO_Valve2_26, sO_Opened)) {
+		if (g_nmi->getObjectState(sO_Valve2_26) == g_nmi->getObjectEnumState(sO_Valve2_26, sO_Opened)) {
 			chainQueue(QU_SC26_AUTOCLOSE2, 0);
 
-			g_fp->playSound(SND_26_020, 0);
+			g_nmi->playSound(SND_26_020, 0);
 		}
 
-		if (g_fp->getObjectState(sO_Valve3_26) == g_fp->getObjectEnumState(sO_Valve3_26, sO_Opened)) {
+		if (g_nmi->getObjectState(sO_Valve3_26) == g_nmi->getObjectEnumState(sO_Valve3_26, sO_Opened)) {
 			chainQueue(QU_SC26_AUTOCLOSE3, 0);
 
-			g_fp->playSound(SND_26_020, 0);
+			g_nmi->playSound(SND_26_020, 0);
 		}
 	} else if (g_vars->scene26_activeVent->_odelay == 1) {
-		if (g_fp->getObjectState(sO_Valve2_26) == g_fp->getObjectEnumState(sO_Valve2_26, sO_Opened))
-			g_fp->playSound(SND_26_020, 0);
+		if (g_nmi->getObjectState(sO_Valve2_26) == g_nmi->getObjectEnumState(sO_Valve2_26, sO_Opened))
+			g_nmi->playSound(SND_26_020, 0);
 		else
-			g_fp->playSound(SND_26_019, 0);
+			g_nmi->playSound(SND_26_019, 0);
 
-		if (g_fp->getObjectState(sO_Pool) == g_fp->getObjectEnumState(sO_Pool, sO_Overfull)
-			|| g_fp->getObjectState(sO_Pool) == g_fp->getObjectEnumState(sO_Pool, sO_Full))
-			g_fp->playSound(SND_26_003, 0);
+		if (g_nmi->getObjectState(sO_Pool) == g_nmi->getObjectEnumState(sO_Pool, sO_Overfull)
+			|| g_nmi->getObjectState(sO_Pool) == g_nmi->getObjectEnumState(sO_Pool, sO_Full))
+			g_nmi->playSound(SND_26_003, 0);
 
-		if (g_fp->getObjectState(sO_Valve1_26) == g_fp->getObjectEnumState(sO_Valve1_26, sO_Opened)) {
-			g_fp->stopAllSoundInstances(SND_26_018);
+		if (g_nmi->getObjectState(sO_Valve1_26) == g_nmi->getObjectEnumState(sO_Valve1_26, sO_Opened)) {
+			g_nmi->stopAllSoundInstances(SND_26_018);
 
 			chainQueue(QU_SC26_AUTOCLOSE1, 0);
 		}
 	} else if (g_vars->scene26_activeVent->_odelay == 2) {
-		if (g_fp->getObjectState(sO_Valve3_26) == g_fp->getObjectEnumState(sO_Valve3_26, sO_Opened))
-			g_fp->playSound(SND_26_020, 0);
+		if (g_nmi->getObjectState(sO_Valve3_26) == g_nmi->getObjectEnumState(sO_Valve3_26, sO_Opened))
+			g_nmi->playSound(SND_26_020, 0);
 		else
-			g_fp->playSound(SND_26_019, 0);
+			g_nmi->playSound(SND_26_019, 0);
 
-		if (g_fp->getObjectState(sO_Pool) == g_fp->getObjectEnumState(sO_Pool, sO_Overfull)
-			 || g_fp->getObjectState(sO_Pool) == g_fp->getObjectEnumState(sO_Pool, sO_Full)
-			 || g_fp->getObjectState(sO_Pool) == g_fp->getObjectEnumState(sO_Pool, sO_HalfFull))
-			g_fp->playSound(SND_26_003, 0);
+		if (g_nmi->getObjectState(sO_Pool) == g_nmi->getObjectEnumState(sO_Pool, sO_Overfull)
+			 || g_nmi->getObjectState(sO_Pool) == g_nmi->getObjectEnumState(sO_Pool, sO_Full)
+			 || g_nmi->getObjectState(sO_Pool) == g_nmi->getObjectEnumState(sO_Pool, sO_HalfFull))
+			g_nmi->playSound(SND_26_003, 0);
 
-		if (g_fp->getObjectState(sO_Valve1_26) == g_fp->getObjectEnumState(sO_Valve1_26, sO_Opened)) {
-			g_fp->stopAllSoundInstances(SND_26_018);
+		if (g_nmi->getObjectState(sO_Valve1_26) == g_nmi->getObjectEnumState(sO_Valve1_26, sO_Opened)) {
+			g_nmi->stopAllSoundInstances(SND_26_018);
 
 			chainQueue(QU_SC26_AUTOCLOSE1, 0);
 		}
@@ -202,7 +202,7 @@ void sceneHandler26_animateVents(StaticANIObject *ani) {
 
 	switch (ani->_odelay) {
 	case 0:
-		if (g_fp->getObjectState(sO_Valve1_26) == g_fp->getObjectEnumState(sO_Valve1_26, sO_Closed)) {
+		if (g_nmi->getObjectState(sO_Valve1_26) == g_nmi->getObjectEnumState(sO_Valve1_26, sO_Closed)) {
 			qId = QU_SC26_OPEN1;
 		} else {
 			qId = QU_SC26_CLOSE1;
@@ -210,7 +210,7 @@ void sceneHandler26_animateVents(StaticANIObject *ani) {
 		break;
 
 	case 1:
-		if (g_fp->getObjectState(sO_Valve2_26) == g_fp->getObjectEnumState(sO_Valve2_26, sO_Closed)) {
+		if (g_nmi->getObjectState(sO_Valve2_26) == g_nmi->getObjectEnumState(sO_Valve2_26, sO_Closed)) {
 			qId = QU_SC26_OPEN2;
 		} else {
 			qId = QU_SC26_CLOSE2;
@@ -218,7 +218,7 @@ void sceneHandler26_animateVents(StaticANIObject *ani) {
 		break;
 
 	case 2:
-		if (g_fp->getObjectState(sO_Valve3_26) == g_fp->getObjectEnumState(sO_Valve3_26, sO_Closed)) {
+		if (g_nmi->getObjectState(sO_Valve3_26) == g_nmi->getObjectEnumState(sO_Valve3_26, sO_Closed)) {
 			qId = QU_SC26_OPEN3;
 		} else {
 			qId = QU_SC26_CLOSE3;
@@ -226,7 +226,7 @@ void sceneHandler26_animateVents(StaticANIObject *ani) {
 		break;
 
 	case 3:
-		if (g_fp->getObjectState(sO_Valve4_26) == g_fp->getObjectEnumState(sO_Valve4_26, sO_Closed)) {
+		if (g_nmi->getObjectState(sO_Valve4_26) == g_nmi->getObjectEnumState(sO_Valve4_26, sO_Closed)) {
 			qId = QU_SC26_OPEN4;
 		} else {
 			qId = QU_SC26_CLOSE4;
@@ -234,7 +234,7 @@ void sceneHandler26_animateVents(StaticANIObject *ani) {
 		break;
 
 	case 4:
-		if (g_fp->getObjectState(sO_Valve5_26) == g_fp->getObjectEnumState(sO_Valve5_26, sO_Closed)) {
+		if (g_nmi->getObjectState(sO_Valve5_26) == g_nmi->getObjectEnumState(sO_Valve5_26, sO_Closed)) {
 			qId = QU_SC26_OPEN5;
 		} else {
 			qId = QU_SC26_CLOSE5;
@@ -246,7 +246,7 @@ void sceneHandler26_animateVents(StaticANIObject *ani) {
 	}
 
 	if (qId) {
-		MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(qId), 0, 0);
+		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(qId), 0, 0);
 
 		mq->setFlags(mq->getFlags() | 1);
 		mq->chain(0);
@@ -254,15 +254,15 @@ void sceneHandler26_animateVents(StaticANIObject *ani) {
 }
 
 void sceneHandler26_clickVent(StaticANIObject *ani, ExCommand *cmd) {
-	if (ani->_odelay || g_fp->getObjectState(sO_Hatch_26) != g_fp->getObjectEnumState(sO_Hatch_26, sO_Opened)) {
-		if (g_fp->_aniMan->isIdle() && !(g_fp->_aniMan->_flags & 0x100)) {
+	if (ani->_odelay || g_nmi->getObjectState(sO_Hatch_26) != g_nmi->getObjectEnumState(sO_Hatch_26, sO_Opened)) {
+		if (g_nmi->_aniMan->isIdle() && !(g_nmi->_aniMan->_flags & 0x100)) {
 			g_vars->scene26_activeVent = ani;
 
 			int x = ani->_ox - 20;
 			int y = ani->_oy + 61;
 
-			if (abs(x - g_fp->_aniMan->_ox) > 1 || abs(y - g_fp->_aniMan->_oy) > 1 || g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != ST_MAN_UP) {
-				MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, x, y, 1, ST_MAN_UP);
+			if (abs(x - g_nmi->_aniMan->_ox) > 1 || abs(y - g_nmi->_aniMan->_oy) > 1 || g_nmi->_aniMan->_movement || g_nmi->_aniMan->_statics->_staticsId != ST_MAN_UP) {
+				MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_nmi->_aniMan, x, y, 1, ST_MAN_UP);
 
 				if (mq) {
 					ExCommand *ex = new ExCommand(0, 17, MSG_SC26_CLICKVENT, 0, 0, 0, 1, 0, 0, 0);
@@ -272,7 +272,7 @@ void sceneHandler26_clickVent(StaticANIObject *ani, ExCommand *cmd) {
 
 					mq->addExCommandToEnd(ex);
 
-					postExCommand(g_fp->_aniMan->_id, 2, x, y, 0, -1);
+					postExCommand(g_nmi->_aniMan->_id, 2, x, y, 0, -1);
 				}
 			} else {
 				sceneHandler26_animateVents(ani);
@@ -314,7 +314,7 @@ int sceneHandler26(ExCommand *cmd) {
 
 	case MSG_SC26_CLICKVENT:
 		{
-			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObject1ById(ANI_VENT, cmd->_param);
+			StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(ANI_VENT, cmd->_param);
 
 			if (ani && ani->_id == ANI_VENT) {
 				sceneHandler26_clickVent(ani, cmd);
@@ -328,7 +328,7 @@ int sceneHandler26(ExCommand *cmd) {
 
 	case 29:
 		{
-			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (ani && ani->_id == ANI_VENT) {
 				sceneHandler26_clickVent(ani, cmd);
@@ -337,19 +337,19 @@ int sceneHandler26(ExCommand *cmd) {
 		break;
 
 	case 33:
-		if (g_fp->_aniMan2) {
-			int x = g_fp->_aniMan2->_ox;
+		if (g_nmi->_aniMan2) {
+			int x = g_nmi->_aniMan2->_ox;
 
-			if (x < g_fp->_sceneRect.left + 200)
-				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
+			if (x < g_nmi->_sceneRect.left + 200)
+				g_nmi->_currentScene->_x = x - 300 - g_nmi->_sceneRect.left;
 
-			if (x > g_fp->_sceneRect.right - 200)
-				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
+			if (x > g_nmi->_sceneRect.right - 200)
+				g_nmi->_currentScene->_x = x + 300 - g_nmi->_sceneRect.right;
 		}
 
-		g_fp->_behaviorManager->updateBehaviors();
+		g_nmi->_behaviorManager->updateBehaviors();
 
-		g_fp->startSceneTrack();
+		g_nmi->startSceneTrack();
 
 		break;
 

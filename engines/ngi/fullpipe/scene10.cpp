@@ -42,10 +42,10 @@ void scene10_initScene(Scene *sc) {
 	g_vars->scene10_inflater = sc->getStaticANIObject1ById(ANI_NADUVATEL, -1);
 	g_vars->scene10_ladder = sc->getPictureObjectById(PIC_SC10_LADDER, 0);
 
-	g_fp->lift_setButton(sO_Level1, ST_LBN_1N);
-	g_fp->lift_init(sc, QU_SC10_ENTERLIFT, QU_SC10_EXITLIFT);
+	g_nmi->lift_setButton(sO_Level1, ST_LBN_1N);
+	g_nmi->lift_init(sc, QU_SC10_ENTERLIFT, QU_SC10_EXITLIFT);
 
-	if (g_fp->getObjectState(sO_Inflater) == g_fp->getObjectEnumState(sO_Inflater, sO_WithGum)) {
+	if (g_nmi->getObjectState(sO_Inflater) == g_nmi->getObjectEnumState(sO_Inflater, sO_WithGum)) {
 		g_vars->scene10_hasGum = 1;
 	} else {
 		g_vars->scene10_hasGum = 0;
@@ -60,18 +60,18 @@ bool sceneHandler10_inflaterIsBlind() {
 }
 
 int scene10_updateCursor() {
-	g_fp->updateCursorCommon();
+	g_nmi->updateCursorCommon();
 
-	if (g_fp->_objectIdAtCursor == ANI_PACHKA || g_fp->_objectIdAtCursor == ANI_GUM) {
-		if (g_fp->_cursorId == PIC_CSR_ITN) {
+	if (g_nmi->_objectIdAtCursor == ANI_PACHKA || g_nmi->_objectIdAtCursor == ANI_GUM) {
+		if (g_nmi->_cursorId == PIC_CSR_ITN) {
 			if (g_vars->scene10_hasGum)
-				g_fp->_cursorId = (sceneHandler10_inflaterIsBlind() != 0) ? PIC_CSR_ITN_GREEN : PIC_CSR_ITN_RED;
+				g_nmi->_cursorId = (sceneHandler10_inflaterIsBlind() != 0) ? PIC_CSR_ITN_GREEN : PIC_CSR_ITN_RED;
 			else
-				g_fp->_cursorId = PIC_CSR_DEFAULT;
+				g_nmi->_cursorId = PIC_CSR_DEFAULT;
 		}
 	}
 
-	return g_fp->_cursorId;
+	return g_nmi->_cursorId;
 }
 
 void sceneHandler10_clickGum() {
@@ -81,14 +81,14 @@ void sceneHandler10_clickGum() {
 				int x = g_vars->scene10_gum->_ox - 139;
 				int y = g_vars->scene10_gum->_oy - 48;
 
-				if (abs(x - g_fp->_aniMan->_ox) > 1 || abs(y - g_fp->_aniMan->_oy) > 1) {
-					MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, x, y, 1, ST_MAN_RIGHT);
+				if (abs(x - g_nmi->_aniMan->_ox) > 1 || abs(y - g_nmi->_aniMan->_oy) > 1) {
+					MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_nmi->_aniMan, x, y, 1, ST_MAN_RIGHT);
 					if (mq) {
 						ExCommand *ex = new ExCommand(0, 17, MSG_SC10_CLICKGUM, 0, 0, 0, 1, 0, 0, 0);
 						ex->_excFlags = 2;
 						mq->addExCommandToEnd(ex);
 
-						postExCommand(g_fp->_aniMan->_id, 2, x, y, 0, -1);
+						postExCommand(g_nmi->_aniMan->_id, 2, x, y, 0, -1);
 					}
 				} else {
 					g_vars->scene10_hasGum = 0;
@@ -99,7 +99,7 @@ void sceneHandler10_clickGum() {
 		} else {
 			g_vars->scene10_inflater->changeStatics2(ST_NDV_SIT);
 
-			if (g_fp->getObjectState(sO_Inflater) == g_fp->getObjectEnumState(sO_Inflater, sO_WithGum))
+			if (g_nmi->getObjectState(sO_Inflater) == g_nmi->getObjectEnumState(sO_Inflater, sO_WithGum))
 				g_vars->scene10_inflater->startAnim(MV_NDV_DENIES, 0, -1);
 			else
 				g_vars->scene10_inflater->startAnim(MV_NDV_DENY_NOGUM, 0, -1);
@@ -128,19 +128,19 @@ int sceneHandler10(ExCommand *ex) {
 
 	switch(ex->_messageNum) {
 	case MSG_LIFT_CLOSEDOOR:
-		g_fp->lift_closedoorSeq();
+		g_nmi->lift_closedoorSeq();
 		break;
 
 	case MSG_LIFT_EXITLIFT:
-		g_fp->lift_exitSeq(ex);
+		g_nmi->lift_exitSeq(ex);
 		break;
 
 	case MSG_LIFT_STARTEXITQUEUE:
-		g_fp->lift_startExitQueue();
+		g_nmi->lift_startExitQueue();
 		break;
 
 	case MSG_LIFT_CLICKBUTTON:
-		g_fp->lift_clickButton();
+		g_nmi->lift_clickButton();
 		break;
 
 	case MSG_SC10_LADDERTOBACK:
@@ -152,7 +152,7 @@ int sceneHandler10(ExCommand *ex) {
 		break;
 
 	case MSG_LIFT_GO:
-		g_fp->lift_goAnimation();
+		g_nmi->lift_goAnimation();
 		break;
 
 	case MSG_SC10_CLICKGUM:
@@ -170,22 +170,22 @@ int sceneHandler10(ExCommand *ex) {
 		break;
 
 	case 64:
-		g_fp->lift_hoverButton(ex);
+		g_nmi->lift_hoverButton(ex);
 		break;
 
 	case 29:
 		{
-			if (g_fp->_currentScene->getPictureObjectIdAtPos(ex->_sceneClickX, ex->_sceneClickY) == PIC_SC10_LADDER) {
-				handleObjectInteraction(g_fp->_aniMan, g_fp->_currentScene->getPictureObjectById(PIC_SC10_DTRUBA, 0), ex->_param);
+			if (g_nmi->_currentScene->getPictureObjectIdAtPos(ex->_sceneClickX, ex->_sceneClickY) == PIC_SC10_LADDER) {
+				handleObjectInteraction(g_nmi->_aniMan, g_nmi->_currentScene->getPictureObjectById(PIC_SC10_DTRUBA, 0), ex->_param);
 				ex->_messageKind = 0;
 
 				return 0;
 			}
 
-			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
+			StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
 
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
-				g_fp->lift_animateButton(ani);
+				g_nmi->lift_animateButton(ani);
 				ex->_messageKind = 0;
 
 				return 0;
@@ -197,18 +197,18 @@ int sceneHandler10(ExCommand *ex) {
 		{
 			int res = 0;
 
-			if (g_fp->_aniMan2) {
-				if (g_fp->_aniMan2->_ox < g_fp->_sceneRect.left + 200)
-					g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.left - 300;
+			if (g_nmi->_aniMan2) {
+				if (g_nmi->_aniMan2->_ox < g_nmi->_sceneRect.left + 200)
+					g_nmi->_currentScene->_x = g_nmi->_aniMan2->_ox - g_nmi->_sceneRect.left - 300;
 
-				if (g_fp->_aniMan2->_ox > g_fp->_sceneRect.right - 200)
-					g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.right + 300;
+				if (g_nmi->_aniMan2->_ox > g_nmi->_sceneRect.right - 200)
+					g_nmi->_currentScene->_x = g_nmi->_aniMan2->_ox - g_nmi->_sceneRect.right + 300;
 
 				res = 1;
 			}
 
-			g_fp->_behaviorManager->updateBehaviors();
-			g_fp->startSceneTrack();
+			g_nmi->_behaviorManager->updateBehaviors();
+			g_nmi->startSceneTrack();
 
 			return res;
 		}

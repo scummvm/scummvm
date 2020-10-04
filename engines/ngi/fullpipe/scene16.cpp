@@ -48,7 +48,7 @@ void scene16_initScene(Scene *sc) {
 	g_vars->scene16_girlIsLaughing = false;
 	g_vars->scene16_sound = SND_16_034;
 
-	if (g_fp->getObjectState(sO_Bridge) == g_fp->getObjectEnumState(sO_Bridge, sO_Convoluted)) {
+	if (g_nmi->getObjectState(sO_Bridge) == g_nmi->getObjectEnumState(sO_Bridge, sO_Convoluted)) {
 		g_vars->scene16_placeIsOccupied = true;
 
 		StaticANIObject *boy[2];
@@ -80,24 +80,24 @@ void scene16_initScene(Scene *sc) {
 				idx = 0;
 		}
 	} else {
-		g_fp->setObjectState(sO_Girl, g_fp->getObjectEnumState(sO_Girl, sO_IsSwinging));
+		g_nmi->setObjectState(sO_Girl, g_nmi->getObjectEnumState(sO_Girl, sO_IsSwinging));
 
 		g_vars->scene16_placeIsOccupied = false;
 
-		StaticANIObject *ani = new StaticANIObject(g_fp->accessScene(SC_COMMON)->getStaticANIObject1ById(ANI_BEARDED_CMN, -1));
+		StaticANIObject *ani = new StaticANIObject(g_nmi->accessScene(SC_COMMON)->getStaticANIObject1ById(ANI_BEARDED_CMN, -1));
 		ani->_movement = 0;
 		ani->_statics = ani->_staticsList[0];
 		sc->addStaticANIObject(ani, 1);
 	}
 
-	if (g_fp->getObjectState(sO_Girl) == g_fp->getObjectEnumState(sO_Girl, sO_IsLaughing)) {
+	if (g_nmi->getObjectState(sO_Girl) == g_nmi->getObjectEnumState(sO_Girl, sO_IsLaughing)) {
 		StaticANIObject *girl = sc->getStaticANIObject1ById(ANI_GIRL, -1);
 
 		girl->show1(554, 432, MV_GRL_LAUGH_POPA, 0);
 		girl->_priority = 20;
 	}
 
-	if (g_fp->getObjectState(sO_Cup) == g_fp->getObjectEnumState(sO_Cup, sO_In_16)) {
+	if (g_nmi->getObjectState(sO_Cup) == g_nmi->getObjectEnumState(sO_Cup, sO_In_16)) {
 		g_vars->scene16_mug->_statics = g_vars->scene16_mug->getStaticsById(ST_MUG_EMPTY);
 		g_vars->scene16_mug->_movement = 0;
 		g_vars->scene16_mug->setOXY(409, 459);
@@ -107,17 +107,17 @@ void scene16_initScene(Scene *sc) {
 }
 
 int scene16_updateCursor() {
-	g_fp->updateCursorCommon();
+	g_nmi->updateCursorCommon();
 
-	if (g_fp->_objectIdAtCursor == PIC_SC16_TUMBA) {
-		if (g_fp->_cursorId == PIC_CSR_DEFAULT)
-			g_fp->_cursorId = PIC_CSR_ITN;
+	if (g_nmi->_objectIdAtCursor == PIC_SC16_TUMBA) {
+		if (g_nmi->_cursorId == PIC_CSR_DEFAULT)
+			g_nmi->_cursorId = PIC_CSR_ITN;
 	} else {
-		if (g_fp->_objectIdAtCursor == ANI_MUG && g_fp->_cursorId == PIC_CSR_ITN && g_vars->scene16_mug->_statics->_staticsId == ST_MUG_FULL)
-			g_fp->_cursorId = PIC_CSR_ITN_GREEN;
+		if (g_nmi->_objectIdAtCursor == ANI_MUG && g_nmi->_cursorId == PIC_CSR_ITN && g_vars->scene16_mug->_statics->_staticsId == ST_MUG_FULL)
+			g_nmi->_cursorId = PIC_CSR_ITN_GREEN;
 	}
 
-	return g_fp->_cursorId;
+	return g_nmi->_cursorId;
 }
 
 void sceneHandler16_laughSound() {
@@ -140,12 +140,12 @@ void sceneHandler16_laughSound() {
 
 	g_vars->scene16_sound = snd;
 
-	g_fp->playSound(snd, 0);
+	g_nmi->playSound(snd, 0);
 }
 
 void sceneHandler16_showBearded() {
-	if (g_fp->getObjectState(sO_Bridge) == g_fp->getObjectEnumState(sO_Bridge, sO_Unconvoluted)) {
-		StaticANIObject *brd = g_fp->_currentScene->getStaticANIObject1ById(ANI_BEARDED_CMN, -1);
+	if (g_nmi->getObjectState(sO_Bridge) == g_nmi->getObjectEnumState(sO_Bridge, sO_Unconvoluted)) {
+		StaticANIObject *brd = g_nmi->_currentScene->getStaticANIObject1ById(ANI_BEARDED_CMN, -1);
 
 		if (!brd || !(brd->_flags & 4))
 			chainQueue(QU_BRD16_STARTBEARDED, 0);
@@ -161,13 +161,13 @@ void sceneHandler16_fillMug() {
 		g_vars->scene16_jettie->_priority = 2;
 		g_vars->scene16_jettie->startAnim(MV_JTI_FLOWIN, 0, -1);
 
-		if (g_fp->_aniMan->_movement) {
-			if (g_fp->_aniMan->_movement->_id == MV_MAN16_TAKEMUG) {
-				g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT);
+		if (g_nmi->_aniMan->_movement) {
+			if (g_nmi->_aniMan->_movement->_id == MV_MAN16_TAKEMUG) {
+				g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT);
 
 				g_vars->scene16_mug->show1(-1, -1, -1, 0);
 
-				g_fp->setObjectState(sO_Cup, g_fp->getObjectEnumState(sO_Cup, sO_DudeHas));
+				g_nmi->setObjectState(sO_Cup, g_nmi->getObjectEnumState(sO_Cup, sO_DudeHas));
 			}
 		}
 		return;
@@ -180,7 +180,7 @@ void sceneHandler16_fillMug() {
 		g_vars->scene16_jettie->startAnim(MV_JTI_FLOWBY, 0, -1);
 
 		if (g_vars->scene16_walkingBoy) {
-			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_BOYOUT), 0, 1);
+			mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC16_BOYOUT), 0, 1);
 
 			mq->setParamInt(-1, g_vars->scene16_walkingBoy->_odelay);
 			if (mq->chain(g_vars->scene16_walkingBoy))
@@ -189,7 +189,7 @@ void sceneHandler16_fillMug() {
 			if (!g_vars->scene16_walkingGirl)
 				return;
 
-			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_GIRLOUT), 0, 1);
+			mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC16_GIRLOUT), 0, 1);
 
 			mq->setParamInt(-1, g_vars->scene16_walkingGirl->_odelay);
 			if (mq->chain(g_vars->scene16_walkingGirl))
@@ -207,7 +207,7 @@ void sceneHandler16_fillMug() {
 	StaticANIObject *ani;
 
 	if (g_vars->scene16_walkingBoy) {
-		mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_BOYOUT), 0, 1);
+		mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC16_BOYOUT), 0, 1);
 
 		mq->setParamInt(-1, g_vars->scene16_walkingBoy->_odelay);
 
@@ -216,7 +216,7 @@ void sceneHandler16_fillMug() {
 		if (!g_vars->scene16_walkingGirl)
 			return;
 
-		mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_GIRLOUT), 0, 1);
+		mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC16_GIRLOUT), 0, 1);
 
 		mq->setParamInt(-1, g_vars->scene16_walkingGirl->_odelay);
 		ani = g_vars->scene16_walkingGirl;
@@ -227,17 +227,17 @@ void sceneHandler16_fillMug() {
 }
 
 void sceneHandler16_startLaugh() {
-	StaticANIObject *girl = g_fp->_currentScene->getStaticANIObject1ById(ANI_GIRL, -1);
+	StaticANIObject *girl = g_nmi->_currentScene->getStaticANIObject1ById(ANI_GIRL, -1);
 
 	girl->changeStatics2(ST_GRL_STAND);
 
-	MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_GIRLLAUGH), 0, 1);
+	MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC16_GIRLLAUGH), 0, 1);
 
 	mq->setParamInt(-1, girl->_odelay);
 	mq->setFlags(mq->getFlags() | 1);
 	mq->chain(0);
 
-	g_fp->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->setSubVarAsInt(sO_DudeSwinged, 0);
+	g_nmi->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->setSubVarAsInt(sO_DudeSwinged, 0);
 
 	g_vars->scene16_girlIsLaughing = true;
 }
@@ -252,12 +252,12 @@ void sceneHandler16_drink() {
 						ExCommand *ex;
 
 						if (g_vars->scene16_walkingBoy) {
-							g_fp->_aniMan->_flags |= 0x180;
+							g_nmi->_aniMan->_flags |= 0x180;
 
 							g_vars->scene16_walkingBoy->changeStatics2(ST_BOY_STAND);
 							g_vars->scene16_walkingBoy->queueMessageQueue(0);
 
-							mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_BOYKICK), 0, 1);
+							mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC16_BOYKICK), 0, 1);
 
 							mq->setParamInt(-1, g_vars->scene16_walkingBoy->_odelay);
 
@@ -270,9 +270,9 @@ void sceneHandler16_drink() {
 							mq->setFlags(mq->getFlags() | 1);
 							mq->chain(0);
 						} else {
-							g_fp->_aniMan->_flags |= 0x100;
+							g_nmi->_aniMan->_flags |= 0x100;
 
-							mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_MANDRINK), 0, 1);
+							mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC16_MANDRINK), 0, 1);
 
 							ex = new ExCommand(ANI_MAN, 34, 256, 0, 0, 0, 1, 0, 0, 0);
 							ex->_excFlags |= 3u;
@@ -283,12 +283,12 @@ void sceneHandler16_drink() {
 							mq->setFlags(mq->getFlags() | 1);
 							mq->chain(0);
 
-							g_fp->_currentScene->getStaticANIObject1ById(ANI_GIRL, -1)->changeStatics2(ST_GRL_STAND);
+							g_nmi->_currentScene->getStaticANIObject1ById(ANI_GIRL, -1)->changeStatics2(ST_GRL_STAND);
 						}
 
-						g_fp->_currentScene->getStaticANIObject1ById(ANI_WIRE16, -1)->show1(-1, -1, -1, 0);
+						g_nmi->_currentScene->getStaticANIObject1ById(ANI_WIRE16, -1)->show1(-1, -1, -1, 0);
 					} else {
-						chainObjQueue(g_fp->_aniMan, QU_SC16_TAKEMUG, 1);
+						chainObjQueue(g_nmi->_aniMan, QU_SC16_TAKEMUG, 1);
 					}
 				}
 			}
@@ -297,16 +297,16 @@ void sceneHandler16_drink() {
 }
 
 void sceneHandler16_mugClick() {
-	if (abs(310 - g_fp->_aniMan->_ox) >= 1 || abs(449 - g_fp->_aniMan->_oy) >= 1
-		|| g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != ST_MAN_RIGHT) {
-		MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, 310, 449, 1, ST_MAN_RIGHT);
+	if (abs(310 - g_nmi->_aniMan->_ox) >= 1 || abs(449 - g_nmi->_aniMan->_oy) >= 1
+		|| g_nmi->_aniMan->_movement || g_nmi->_aniMan->_statics->_staticsId != ST_MAN_RIGHT) {
+		MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_nmi->_aniMan, 310, 449, 1, ST_MAN_RIGHT);
 
 		if (mq) {
 			ExCommand *ex = new ExCommand(0, 17, MSG_SC16_MUGCLICK, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags = 2;
 			mq->addExCommandToEnd(ex);
 
-			postExCommand(g_fp->_aniMan->_id, 2, 310, 449, 0, -1);
+			postExCommand(g_nmi->_aniMan->_id, 2, 310, 449, 0, -1);
 		}
 	} else {
 		sceneHandler16_drink();
@@ -314,8 +314,8 @@ void sceneHandler16_mugClick() {
 }
 
 void sceneHandler16_showMan() {
-	g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT);
-	g_fp->_aniMan->show1(-1, -1, -1, 0);
+	g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT);
+	g_nmi->_aniMan->show1(-1, -1, -1, 0);
 
 	g_vars->scene16_mug->show1(-1, -1, -1, 0);
 }
@@ -325,8 +325,8 @@ void sceneHandler16_showMug() {
 }
 
 void sceneHandler16_hideMan() {
-	g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT);
-	g_fp->_aniMan->hide();
+	g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT);
+	g_nmi->_aniMan->hide();
 
 	g_vars->scene16_mug->hide();
 }
@@ -360,7 +360,7 @@ void sceneHandler16_putOnWheel() {
 		MessageQueue *mq;
 
 		if (ani->_id == ANI_BOY) {
-			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_GOBOY), 0, 1);
+			mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC16_GOBOY), 0, 1);
 
 			mq->setParamInt(-1, ani->_odelay);
 			mq->chain(0);
@@ -368,8 +368,8 @@ void sceneHandler16_putOnWheel() {
 			g_vars->scene16_walkingBoy = ani;
 			g_vars->scene16_walkingGirl = 0;
 		} else if (ani->_id == ANI_GIRL) {
-			if (g_fp->getObjectState(sO_Girl) == g_fp->getObjectEnumState(sO_Girl, sO_IsSwinging)) {
-				mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_GOGIRL), 0, 1);
+			if (g_nmi->getObjectState(sO_Girl) == g_nmi->getObjectEnumState(sO_Girl, sO_IsSwinging)) {
+				mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC16_GOGIRL), 0, 1);
 
 				mq->setParamInt(-1, ani->_odelay);
 				mq->chain(0);
@@ -382,7 +382,7 @@ void sceneHandler16_putOnWheel() {
 }
 
 void sceneHandler16_girlROTFL() {
-	StaticANIObject *girl = g_fp->_currentScene->getStaticANIObject1ById(ANI_GIRL, -1);
+	StaticANIObject *girl = g_nmi->_currentScene->getStaticANIObject1ById(ANI_GIRL, -1);
 
 	girl->changeStatics2(ST_GRL_LAUGH);
 	girl->startAnim(MV_GRL_FALL, 0, -1);
@@ -416,7 +416,7 @@ int sceneHandler16(ExCommand *cmd) {
 		break;
 
 	case MSG_SC16_MUGCLICK:
-		if (!g_fp->_aniMan->isIdle() || g_fp->_aniMan->_flags & 0x100) {
+		if (!g_nmi->_aniMan->isIdle() || g_nmi->_aniMan->_flags & 0x100) {
 			cmd->_messageKind = 0;
 		} else {
 			sceneHandler16_mugClick();
@@ -448,14 +448,14 @@ int sceneHandler16(ExCommand *cmd) {
 		break;
 
 	case 33:
-		if (g_fp->_aniMan2) {
-			int x = g_fp->_aniMan2->_ox;
+		if (g_nmi->_aniMan2) {
+			int x = g_nmi->_aniMan2->_ox;
 
-			if (x < g_fp->_sceneRect.left + 200)
-				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
+			if (x < g_nmi->_sceneRect.left + 200)
+				g_nmi->_currentScene->_x = x - 300 - g_nmi->_sceneRect.left;
 
-			if (x > g_fp->_sceneRect.right - 200)
-				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
+			if (x > g_nmi->_sceneRect.right - 200)
+				g_nmi->_currentScene->_x = x + 300 - g_nmi->_sceneRect.right;
 		}
 
 		if (g_vars->scene16_placeIsOccupied) {
@@ -469,13 +469,13 @@ int sceneHandler16(ExCommand *cmd) {
 		}
 
 		if (g_vars->scene16_girlIsLaughing) {
-			if (g_fp->_aniMan->_movement)
-				if (g_fp->_aniMan->_movement->_id == MV_MAN_TURN_RL)
+			if (g_nmi->_aniMan->_movement)
+				if (g_nmi->_aniMan->_movement->_id == MV_MAN_TURN_RL)
 					sceneHandler16_girlROTFL();
 		}
 
-		g_fp->_behaviorManager->updateBehaviors();
-		g_fp->startSceneTrack();
+		g_nmi->_behaviorManager->updateBehaviors();
+		g_nmi->startSceneTrack();
 
 		break;
 

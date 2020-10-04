@@ -114,7 +114,7 @@ StaticANIObject::StaticANIObject() {
 StaticANIObject::~StaticANIObject() {
 	Common::for_each(_staticsList.begin(), _staticsList.end(), Common::DefaultDeleter<Statics>());
 	Common::for_each(_movements.begin(), _movements.end(), Common::DefaultDeleter<Movement>());
-	g_fp->_aniHandler->detachAllObjects();
+	g_nmi->_aniHandler->detachAllObjects();
 }
 
 StaticANIObject::StaticANIObject(StaticANIObject *src) : GameObject(src) {
@@ -182,7 +182,7 @@ bool StaticANIObject::load(MfcArchive &file) {
 
 		Common::String movname = genFileName(_id, movNum, "mov");
 
-		Common::ScopedPtr<Common::SeekableReadStream> f(g_fp->_currArchive->createReadStreamForMember(movname));
+		Common::ScopedPtr<Common::SeekableReadStream> f(g_nmi->_currArchive->createReadStreamForMember(movname));
 
 		Movement *mov = new Movement();
 		_movements.push_back(mov);
@@ -238,11 +238,11 @@ void StaticANIObject::setFlags40(bool state) {
 
 void StaticANIObject::deleteFromGlobalMessageQueue() {
 	while (_messageQueueId) {
-		if (g_fp->_globalMessageQueueList->getMessageQueueById(_messageQueueId)) {
+		if (g_nmi->_globalMessageQueueList->getMessageQueueById(_messageQueueId)) {
 			if (!isIdle())
 				return;
 
-			g_fp->_globalMessageQueueList->deleteQueueById(_messageQueueId);
+			g_nmi->_globalMessageQueueList->deleteQueueById(_messageQueueId);
 		} else {
 			_messageQueueId = 0;
 		}
@@ -302,7 +302,7 @@ MessageQueue *StaticANIObject::getMessageQueue() {
 	if (this->_messageQueueId <= 0)
 		return 0;
 
-	return g_fp->_globalMessageQueueList->getMessageQueueById(_messageQueueId);
+	return g_nmi->_globalMessageQueueList->getMessageQueueById(_messageQueueId);
 }
 
 bool StaticANIObject::trySetMessageQueue(int msgNum, int qId) {
@@ -320,7 +320,7 @@ bool StaticANIObject::trySetMessageQueue(int msgNum, int qId) {
 }
 
 void StaticANIObject::startMQIfIdle(int qId, int flag) {
-	MessageQueue *msg = g_fp->_currentScene->getMessageQueueById(qId);
+	MessageQueue *msg = g_nmi->_currentScene->getMessageQueueById(qId);
 
 	if (msg && isIdle() && !(_flags & 0x100)) {
 		MessageQueue *mq = new MessageQueue(msg, 0, 0);
@@ -355,7 +355,7 @@ bool StaticANIObject::isIdle() {
 	assert(_objtype == kObjTypeStaticANIObject);
 
 	if (_messageQueueId) {
-		MessageQueue *m = g_fp->_globalMessageQueueList->getMessageQueueById(_messageQueueId);
+		MessageQueue *m = g_nmi->_globalMessageQueueList->getMessageQueueById(_messageQueueId);
 
 		if (m && m->getFlags() & 1)
 			return false;
@@ -487,7 +487,7 @@ void Movement::draw(bool flipFlag, int angle) {
 	int y = _oy - point.y;
 
 	if (_currDynamicPhase->getPaletteData().size)
-		g_fp->_globalPalette = &_currDynamicPhase->getPaletteData();
+		g_nmi->_globalPalette = &_currDynamicPhase->getPaletteData();
 
 	Common::ScopedPtr<Bitmap> bmp;
 	if (_currMovement) {
@@ -555,7 +555,7 @@ void StaticANIObject::draw() {
 
 	debugC(6, kDebugDrawing, "StaticANIObject::draw() (%s) [%d] [%d, %d]", transCyrillic(_objectName), _id, _ox, _oy);
 
-	if (_shadowsOn && g_fp->_currentScene && g_fp->_currentScene->_shadows
+	if (_shadowsOn && g_nmi->_currentScene && g_nmi->_currentScene->_shadows
 		&& (getCurrDimensions().x != 1 || getCurrDimensions().y != 1)) {
 
 		DynamicPhase *dyn;
@@ -573,7 +573,7 @@ void StaticANIObject::draw() {
 		if (dyn->getDynFlags() & 4) {
 			const Common::Rect &rect = dyn->_rect;
 
-			DynamicPhase *shd = g_fp->_currentScene->_shadows->findSize(rect.width(), rect.height());
+			DynamicPhase *shd = g_nmi->_currentScene->_shadows->findSize(rect.width(), rect.height());
 			if (shd) {
 				const Dims dims = shd->getDimensions();
 				int midx = _ox - dims.x / 2 - dyn->_someX;
@@ -626,7 +626,7 @@ void StaticANIObject::draw2() {
 }
 
 MovTable *StaticANIObject::countMovements() {
-	GameVar *preloadSubVar = g_fp->getGameLoaderGameVar()->getSubVarByName(getName())->getSubVarByName("PRELOAD");
+	GameVar *preloadSubVar = g_nmi->getGameLoaderGameVar()->getSubVarByName(getName())->getSubVarByName("PRELOAD");
 
 	if (!preloadSubVar || preloadSubVar->getSubVarsCount() == 0)
 		return nullptr;
@@ -648,7 +648,7 @@ MovTable *StaticANIObject::countMovements() {
 }
 
 void StaticANIObject::setSpeed(int speed) {
-	GameVar *var = g_fp->getGameLoaderGameVar()->getSubVarByName(getName())->getSubVarByName("SpeedUp");
+	GameVar *var = g_nmi->getGameLoaderGameVar()->getSubVarByName(getName())->getSubVarByName("SpeedUp");
 
 	if (!var)
 		return;
@@ -984,15 +984,15 @@ void StaticANIObject::adjustSomeXY() {
 }
 
 MessageQueue *StaticANIObject::changeStatics1(int msgNum) {
-	g_fp->_aniHandler->attachObject(_id);
+	g_nmi->_aniHandler->attachObject(_id);
 
-	MessageQueue *mq = g_fp->_aniHandler->makeQueue(this, msgNum, 0, 0, 0);
+	MessageQueue *mq = g_nmi->_aniHandler->makeQueue(this, msgNum, 0, 0, 0);
 
 	if (!mq)
 		return 0;
 
 	if (mq->getCount() <= 0) {
-		g_fp->_globalMessageQueueList->addMessageQueue(mq);
+		g_nmi->_globalMessageQueueList->addMessageQueue(mq);
 
 		if (_flags & 1)
 			_messageQueueId = mq->_id;
@@ -1003,7 +1003,7 @@ MessageQueue *StaticANIObject::changeStatics1(int msgNum) {
 			return 0;
 		}
 
-		g_fp->_globalMessageQueueList->addMessageQueue(mq);
+		g_nmi->_globalMessageQueueList->addMessageQueue(mq);
 	}
 
 	return mq;
@@ -1015,15 +1015,15 @@ void StaticANIObject::changeStatics2(int objId) {
 	deleteFromGlobalMessageQueue();
 
 	if (_movement || _statics) {
-		g_fp->_aniHandler->attachObject(_id);
-		g_fp->_aniHandler->putObjectToStatics(this, objId);
+		g_nmi->_aniHandler->attachObject(_id);
+		g_nmi->_aniHandler->putObjectToStatics(this, objId);
 	} else {
 		_statics = getStaticsById(objId);
 	}
 
 	if (_messageQueueId) {
-		if (g_fp->_globalMessageQueueList->getMessageQueueById(_messageQueueId))
-			g_fp->_globalMessageQueueList->deleteQueueById(_messageQueueId);
+		if (g_nmi->_globalMessageQueueList->getMessageQueueById(_messageQueueId))
+			g_nmi->_globalMessageQueueList->deleteQueueById(_messageQueueId);
 
 		_messageQueueId = 0;
 	}
@@ -1376,7 +1376,7 @@ bool Statics::load(MfcArchive &file) {
 
 	_staticsName = file.readPascalString();
 	debugC(6, kDebugXML, "%% <STATICS id=\"%s\" name=\"%s\" %s />",
-		g_fp->gameIdToStr(_staticsId).c_str(), transCyrillic(_staticsName), DynamicPhase::toXML().c_str());
+		g_nmi->gameIdToStr(_staticsId).c_str(), transCyrillic(_staticsName), DynamicPhase::toXML().c_str());
 
 	_picture.load(file);
 
@@ -1623,7 +1623,7 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 		}
 
 		debugC(6, kDebugXML, "%% <MOVEMENT %s staticsId=\"%s\" mX=%d my=%d staticsId2=\"%s\" m2x=%d m2y=%d>",
-			GameObject::toXML().c_str(), g_fp->gameIdToStr(staticsid).c_str(), _mx, _my, g_fp->gameIdToStr(staticsid2).c_str(), _m2x, _m2y);
+			GameObject::toXML().c_str(), g_nmi->gameIdToStr(staticsid).c_str(), _mx, _my, g_nmi->gameIdToStr(staticsid2).c_str(), _m2x, _m2y);
 
 		for (int i = 0; i < dynCount; i++)
 			debugC(6, kDebugXML, "%% <PHASE %s />", _dynamicPhases[i]->toXML().c_str());
@@ -1645,10 +1645,10 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 			_flipFlag = 1;
 	}
 
-	if (g_fp->_gameProjectVersion >= 8)
+	if (g_nmi->_gameProjectVersion >= 8)
 		_field_50 = file.readUint32LE();
 
-	if (g_fp->_gameProjectVersion < 12)
+	if (g_nmi->_gameProjectVersion < 12)
 		_counterMax = 83;
 	else
 		_counterMax = file.readUint32LE();
@@ -2091,9 +2091,9 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 		_bitmap.reset(src->_bitmap->reverseImage());
 		_dataSize = src->_dataSize;
 
-		if (g_fp->_currArchive) {
+		if (g_nmi->_currArchive) {
 			_mfield_14 = 0;
-			_libHandle = g_fp->_currArchive;
+			_libHandle = g_nmi->_currArchive;
 		}
 
 		_mflags |= 1;
@@ -2158,12 +2158,12 @@ bool DynamicPhase::load(MfcArchive &file) {
 	_rect.right = file.readSint32LE();
 	_rect.bottom = file.readSint32LE();
 
-	assert(g_fp->_gameProjectVersion >= 1);
+	assert(g_nmi->_gameProjectVersion >= 1);
 
 	_someX = file.readSint32LE();
 	_someY = file.readSint32LE();
 
-	assert(g_fp->_gameProjectVersion >= 12);
+	assert(g_nmi->_gameProjectVersion >= 12);
 
 	_dynFlags = file.readUint32LE();
 
@@ -2189,7 +2189,7 @@ bool StaticPhase::load(MfcArchive &file) {
 	_initialCountdown = file.readUint16LE();
 	_field_6A = file.readUint16LE();
 
-	assert(g_fp->_gameProjectVersion >= 12);
+	assert(g_nmi->_gameProjectVersion >= 12);
 
 	_exCommand.reset(file.readClass<ExCommand>());
 
