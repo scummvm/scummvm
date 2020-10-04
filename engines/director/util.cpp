@@ -246,7 +246,7 @@ Common::String convertPath(Common::String &path) {
 	if (path.empty())
 		return path;
 
-	if (!path.contains(':') && !path.contains('/') && !path.contains('\\')) {
+	if (!path.contains(':') && !path.contains('/') && !path.contains('\\') && !path.contains('@')) {
 		return path;
 	}
 
@@ -255,6 +255,9 @@ Common::String convertPath(Common::String &path) {
 
 	if (path.hasPrefix("::")) {
 		res = "..\\";
+		idx = 2;
+	} else if (path.hasPrefix("@:")) {
+		res = ".\\";
 		idx = 2;
 	} else {
 		res = ".\\";
