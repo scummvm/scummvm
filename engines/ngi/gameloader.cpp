@@ -108,7 +108,8 @@ bool GameLoader::load(MfcArchive &file) {
 
 	_gameProject.reset(new GameProject());
 
-	_gameProject->load(file);
+	if (!_gameProject->load(file))
+		error("Cannot load project");
 
 	g_nmi->_gameProject = _gameProject.get();
 

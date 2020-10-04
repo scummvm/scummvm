@@ -23,6 +23,7 @@
 #include "ngi/ngi.h"
 
 #include "ngi/constants.h"
+#include "ngi/detection.h"
 #include "ngi/gameloader.h"
 #include "ngi/interaction.h"
 #include "ngi/objects.h"
@@ -375,6 +376,9 @@ bool GameProject::load(MfcArchive &file) {
 	debugC(1, kDebugLoading, "_pictureScale = %d", g_nmi->_pictureScale);
 	debugC(1, kDebugLoading, "_scrollSpeed = %d", g_nmi->_scrollSpeed);
 	debugC(1, kDebugLoading, "_headerFilename = %s", _headerFilename.c_str());
+
+	if (g_nmi->getGameGID() == GID_MDREAM)
+		return false;
 
 	_sceneTagList.reset(new SceneTagList());
 
