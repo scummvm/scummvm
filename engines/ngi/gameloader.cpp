@@ -114,7 +114,7 @@ bool GameLoader::load(MfcArchive &file) {
 	g_nmi->_gameProject = _gameProject.get();
 
 	if (g_nmi->_gameProjectVersion < 12) {
-		error("Old gameProjectVersion: %d", g_nmi->_gameProjectVersion);
+		error("GameLoader::load(): old gameProjectVersion: %d", g_nmi->_gameProjectVersion);
 	}
 
 	_gameName = file.readPascalString();

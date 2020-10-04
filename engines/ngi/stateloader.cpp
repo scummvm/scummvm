@@ -366,7 +366,11 @@ bool GameProject::load(MfcArchive &file) {
 	_field_4 = 0;
 	_field_10 = 12;
 
-	g_nmi->_gameProjectVersion = file.readUint32LE();
+	if (g_nmi->getGameGID() == GID_MDREAM)
+		g_nmi->_gameProjectVersion = 1;
+	else
+		g_nmi->_gameProjectVersion = file.readUint32LE();
+
 	g_nmi->_pictureScale = file.readUint16LE();
 	g_nmi->_scrollSpeed = file.readUint32LE();
 
@@ -376,9 +380,6 @@ bool GameProject::load(MfcArchive &file) {
 	debugC(1, kDebugLoading, "_pictureScale = %d", g_nmi->_pictureScale);
 	debugC(1, kDebugLoading, "_scrollSpeed = %d", g_nmi->_scrollSpeed);
 	debugC(1, kDebugLoading, "_headerFilename = %s", _headerFilename.c_str());
-
-	if (g_nmi->getGameGID() == GID_MDREAM)
-		return false;
 
 	_sceneTagList.reset(new SceneTagList());
 
