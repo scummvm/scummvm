@@ -47,6 +47,7 @@ Common::Error PetkaEngine::loadGameState(int slot) {
 	_nextPart = in->readUint32LE();
 	_chapter = in->readUint32LE();
 	if (_nextPart == _part) {
+		loadChapter(_chapter);
 		_qsystem->load(in);
 	} else {
 		_shouldChangePart = true;

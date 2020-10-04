@@ -38,6 +38,8 @@
 #include "petka/big_dialogue.h"
 #include "petka/q_system.h"
 #include "petka/video.h"
+#include "petka/q_manager.h"
+#include "petka/flc.h"
 
 namespace Petka {
 
@@ -215,7 +217,7 @@ void QSystem::load(Common::ReadStream *s) {
 		obj->_holdMessages = s->readUint32LE();
 		obj->_status = s->readUint32LE();
 		obj->_resourceId = s->readUint32LE();
-		obj->_z = s->readUint32LE();
+		/*obj->_z =*/ s->readUint32LE();
 		obj->_x = s->readUint32LE();
 		obj->_y = s->readUint32LE();
 		obj->_isShown = s->readUint32LE();
@@ -235,6 +237,22 @@ void QSystem::load(Common::ReadStream *s) {
 		_mainInterface->loadRoom(_room->_id, true);
 	}
 
+	QObjectPetka *petka = getPetka();
+	QObjectChapayev *chapayev = getChapay();
+
+	Common::Point pos;
+	pos.x = s->readSint32LE();
+	pos.y = s->readSint32LE();
+
+	petka->setPos(pos, false);
+
+	_xOffset = CLIP<int>(pos.x - 320, 0, _sceneWidth - 640);
+
+	pos.x = s->readSint32LE();
+	pos.y = s->readSint32LE();
+
+	chapayev->setPos(pos, false);
+
 	_vm.getBigDialogue()->load(s);
 
 	QObjectCursor *cursor = getCursor();
@@ -246,6 +264,18 @@ void QSystem::load(Common::ReadStream *s) {
 	} else {
 		cursor->_invObj = nullptr;
 	}
+
+	int imageId = s->readSint32LE();
+	if (imageId != -1 && !(imageId % 100)) {
+		addMessage(petka->_id, kImage, imageId, 1);
+	}
+
+	imageId = s->readSint32LE();
+	if (imageId != -1 && !(imageId % 100)) {
+		addMessage(chapayev->_id, kImage, imageId, 1);
+	}
+
+	getStar()->_isActive = true;
 
 	_vm.videoSystem()->makeAllDirty();
 }
@@ -273,7 +303,17 @@ void QSystem::save(Common::WriteStream *s) {
 
 	writeString(s, _room->_name);
 
-	// heroes (no impl)
+	QObjectPetka *petka = getPetka();
+	QObjectChapayev *chapayev = getChapay();
+
+	FlicDecoder *petkaFlc = _vm.resMgr()->loadFlic(petka->_resourceId);
+	FlicDecoder *chapayFlc = _vm.resMgr()->loadFlic(chapayev->_resourceId);
+
+	s->writeSint32LE(petka->_x - petkaFlc->getCurrentFrame()->w * petka->_k * -0.5);
+	s->writeSint32LE(petka->_y + petkaFlc->getCurrentFrame()->h * petka->_k);
+
+	s->writeSint32LE(chapayev->_x - chapayFlc->getCurrentFrame()->w * chapayev->_k * -0.5);
+	s->writeSint32LE(chapayev->_y + chapayFlc->getCurrentFrame()->h * chapayev->_k);
 
 	_vm.getBigDialogue()->save(s);
 
@@ -281,10 +321,13 @@ void QSystem::save(Common::WriteStream *s) {
 	s->writeUint32LE(cursor->_resourceId);
 	s->writeUint32LE(cursor->_actionType);
 	if (cursor->_invObj) {
-		s->writeSint32LE(cursor->_invObj->_resourceId);
+		s->writeSint32LE(cursor->_invObj->_id);
 	} else {
 		s->writeSint32LE(-1);
 	}
+
+	s->writeSint32LE(petka->_imageId);
+	s->writeSint32LE(chapayev->_imageId);
 }
 
 QObjectPetka *QSystem::getPetka() const {
