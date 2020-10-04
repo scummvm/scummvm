@@ -353,7 +353,7 @@ void OptionsDialog::build() {
 
 		// Aspect ratio setting
 		if (_guioptions.contains(GUIO_NOASPECT)) {
-			_aspectCheckbox->setState(true); // ResidualVM specific change
+			_aspectCheckbox->setState(false);
 			_aspectCheckbox->setEnabled(false);
 		} else {
 			_aspectCheckbox->setEnabled(true);
@@ -594,11 +594,9 @@ void OptionsDialog::apply() {
 			ConfMan.removeKey("fullscreen", _domain);
 			ConfMan.removeKey("filtering", _domain);
 			ConfMan.removeKey("aspect_ratio", _domain);
-#if 0 // ResidualVM specific
 			ConfMan.removeKey("gfx_mode", _domain);
 			ConfMan.removeKey("stretch_mode", _domain);
 			ConfMan.removeKey("render_mode", _domain);
-#endif
 			ConfMan.removeKey("renderer", _domain); // ResidualVM specific
 			ConfMan.removeKey("antialiasing", _domain); // ResidualVM specific
 			ConfMan.removeKey("vsync", _domain); // ResidualVM specific
