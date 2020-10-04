@@ -832,6 +832,7 @@ void Process::syncAnimationWithPhaseVar() {
 	Animation *animation = _engine->findAnimationByPhaseVar(phaseVar);
 	if (animation) {
 		if (_engine->getGlobal(phaseVar) == -1) {
+			debug("stopping animation...");
 			animation->stop();
 		}
 		_engine->setGlobal(phaseVar, animation->phase());
