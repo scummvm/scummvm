@@ -6,7 +6,6 @@ MODULE_OBJS := \
 	console.o \
 	cursor.o \
 	database.o \
-	detection.o \
 	effects.o \
 	gfx.o \
 	gfx_opengl.o \
@@ -38,3 +37,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o

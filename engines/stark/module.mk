@@ -2,7 +2,6 @@ MODULE := engines/stark
 
 MODULE_OBJS := \
 	console.o \
-	detection.o \
 	gfx/driver.o \
 	gfx/framelimiter.o \
 	gfx/opengls.o \
@@ -123,3 +122,6 @@ MODULE_OBJS := \
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
