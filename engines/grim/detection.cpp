@@ -21,23 +21,11 @@
  */
 
 #include "engines/advancedDetector.h"
-#include "engines/obsolete.h"
+#include "engines/grim/detection.h"
 
-#include "engines/grim/grim.h"
-#include "engines/grim/savegame.h"
-#include "engines/grim/emi/emi.h"
-
-#include "common/config-manager.h"
-#include "common/system.h"
-#include "common/savefile.h"
 #include "common/translation.h"
 
 namespace Grim {
-
-struct GrimGameDescription {
-	ADGameDescription desc;
-	GrimGameType gameType;
-};
 
 static const PlainGameDescriptor grimGames[] = {
 	{"grim", "Grim Fandango"},
@@ -585,14 +573,9 @@ static const GrimGameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER, GType_GRIM }
 };
 
-static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
-	{"grimdemo", "grim", Common::kPlatformWindows},
-	{nullptr, nullptr, Common::kPlatformUnknown}
-};
-
-class GrimMetaEngine : public AdvancedMetaEngine {
+class GrimMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	GrimMetaEngine() : AdvancedMetaEngine(Grim::gameDescriptions, sizeof(Grim::GrimGameDescription), grimGames, gameGuiOptions) {
+	GrimMetaEngineStatic() : AdvancedMetaEngineStatic(Grim::gameDescriptions, sizeof(Grim::GrimGameDescription), grimGames, gameGuiOptions) {
 		_guiOptions = GUIO_NOMIDI;
 	}
 
@@ -612,81 +595,9 @@ public:
 		return "LucasArts GrimE Games (C) LucasArts";
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine) const override {
-		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
-		return AdvancedMetaEngine::createInstance(syst, engine);
-	}
-
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-
-	bool hasFeature(MetaEngineFeature f) const override;
-
-	SaveStateList listSaves(const char *target) const override;
 };
-
-bool GrimMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const GrimGameDescription *gd = (const GrimGameDescription *)desc;
-
-	if (gd) {
-		if (gd->gameType == GType_MONKEY4) {
-			*engine = new EMIEngine(syst, gd->desc.flags, gd->gameType, gd->desc.platform, gd->desc.language);
-		} else {
-			*engine = new GrimEngine(syst, gd->desc.flags, gd->gameType, gd->desc.platform, gd->desc.language);
-		}
-	}
-
-	return gd != nullptr;
-}
-
-bool GrimMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup);
-}
-
-SaveStateList GrimMetaEngine::listSaves(const char *target) const {
-	Common::String gameId = ConfMan.get("gameid", target);
-	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringArray filenames;
-	Common::String pattern = gameId == "monkey4" ? "efmi###.gsv" : "grim##.gsv";
-	
-	if (platform == Common::kPlatformPS2)
-		pattern = "efmi###.ps2";
-
-	filenames = saveFileMan->listSavefiles(pattern);
-
-	SaveStateList saveList;
-	char str[256];
-	int32 strSize;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		// Obtain the last digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(file->c_str() + 4);
-
-		if (slotNum >= 0) {
-			SaveGame *savedState = SaveGame::openForLoading(*file);
-			if (savedState && savedState->isCompatible()) {
-				if (platform == Common::kPlatformPS2)
-					savedState->beginSection('PS2S');
-				else
-					savedState->beginSection('SUBS');
-				strSize = savedState->readLESint32();
-				savedState->read(str, strSize);
-				savedState->endSection();
-				saveList.push_back(SaveStateDescriptor(slotNum, str));
-			}
-			delete savedState;
-		}
-	}
-
-	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
-	return saveList;
-}
 
 } // End of namespace Grim
 
-#if PLUGIN_ENABLED_DYNAMIC(GRIM)
-	REGISTER_PLUGIN_DYNAMIC(GRIM, PLUGIN_TYPE_ENGINE, Grim::GrimMetaEngine);
-#else
-	REGISTER_PLUGIN_STATIC(GRIM, PLUGIN_TYPE_ENGINE, Grim::GrimMetaEngine);
-#endif
+
+REGISTER_PLUGIN_STATIC(GRIM_DETECTION, PLUGIN_TYPE_METAENGINE, Grim::GrimMetaEngineStatic);

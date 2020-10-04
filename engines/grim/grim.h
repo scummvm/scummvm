@@ -33,6 +33,7 @@
 
 #include "engines/grim/textobject.h"
 #include "engines/grim/iris.h"
+#include "engines/grim/detection.h"
 
 namespace Grim {
 
@@ -47,13 +48,6 @@ class TextObject;
 class PrimitiveObject;
 class LuaBase;
 class GfxBase;
-
-enum GrimGameType {
-	GType_GRIM,
-	GType_MONKEY4
-};
-
-struct GrimGameDescription;
 
 struct ControlDescriptor {
 	const char *name;
