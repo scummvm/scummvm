@@ -94,8 +94,8 @@ enum InvCursorFN { IC_AREA,
 #define SG_DESC_LEN 40   // Max. saved game description length
 
 // Number of objects that makes up an empty window
-#define MAX_WCOMP 21 // 4 corners + (3+3) sides + (2+2) extra sides \
-	                 // + Bground + title + slider                  \
+#define MAX_WCOMP 21 // 4 corners + (3+3) sides + (2+2) extra sides
+	                 // + Bground + title + slider
 	                 // + more Needed for save game window
 
 #define MAX_ICONS MAXHICONS *MAXVICONS
@@ -254,11 +254,11 @@ struct CONFBOX {
 };
 
 // Data for button press/toggle effects
-struct {
+struct BUTTONEFFECT {
 	bool bButAnim;
 	CONFBOX *box;
 	bool press; // true = button press; false = button toggle
-} g_buttonEffect;
+};
 
 class Dialogs {
 public:
@@ -363,6 +363,7 @@ public:
 	char _saveGameDesc[SG_DESC_LEN + 2];
 
 	OBJECT *_iconArray[MAX_ICONS]; // Current display objects (icons)
+	BUTTONEFFECT _buttonEffect;
 
 private:
 	int WhichMenuBox(int curX, int curY, bool bSlides);
@@ -440,7 +441,7 @@ private:
 	DIRECTION _initialDirection;
 
 	//----- Permanent data (updated, valid while inventory closed) -----
-	int _heldItem = INV_NOICON; // Current held item
+	int _heldItem; // Current held item
 
 	SCNHANDLE _heldFilm;
 	SCNHANDLE _hWinParts; // Window members and cursors' graphic data
@@ -500,7 +501,7 @@ private:
 	// Icon clicked on to cause an event
 	// - Passed to conversation polygon or actor code via Topic()
 	// - (sometimes) Passed to inventory icon code via OtherObject()
-	int _thisIcon = 0;
+	int _thisIcon;
 
 	CONV_PARAM _thisConvFn;             // Top, 'Middle' or Bottom
 	HPOLYGON _thisConvPoly;         // Conversation code is in a polygon code block
@@ -529,7 +530,7 @@ private:
 		          IC_LR,
 		          IC_INV,
 		          IC_UP,
-		          IC_DN } ICursor = IC_NORMAL;
+		          IC_DN } _invCursor;
 
 	enum { NO_INV,
 		   IDLE_INV,

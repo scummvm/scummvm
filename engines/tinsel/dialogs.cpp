@@ -746,7 +746,9 @@ static void InvTinselEvent(INV_OBJECT *pinvo, TINSEL_EVENT event, PLR_EVENT be, 
 static void InvPdProcess(CORO_PARAM, const void *param);
 
 Dialogs::Dialogs() {
-	g_buttonEffect = {false, 0, false};
+	_buttonEffect.bButAnim = false;
+	_buttonEffect.box = nullptr;
+	_buttonEffect.press = false;
 
 	_hWinParts = 0;
 	_flagFilm = 0;
@@ -831,6 +833,10 @@ Dialogs::Dialogs() {
 
 	_lastChosenScene = 0;
 	_bRemember = false;
+
+	_invCursor = IC_NORMAL;
+	_inventoryState = IDLE_INV;
+	_invDragging = ID_NONE;
 
 	*_saveGameDesc = 0;
 }
@@ -3010,7 +3016,7 @@ void Dialogs::InvCursor(InvCursorFN fn, int CurX, int CurY) {
 
 	switch (fn) {
 	case IC_DROP:
-		ICursor = IC_NORMAL;
+		_invCursor = IC_NORMAL;
 		InvCursor(IC_AREA, CurX, CurY);
 		break;
 
@@ -3038,9 +3044,9 @@ void Dialogs::InvCursor(InvCursorFN fn, int CurX, int CurY) {
 		case I_BRIGHT:
 			if (!_invD[_activeInv].resizable)
 				restoreMain = true;
-			else if (ICursor != IC_DR) {
+			else if (_invCursor != IC_DR) {
 				AlterCursor(IX_CURDD);
-				ICursor = IC_DR;
+				_invCursor = IC_DR;
 			}
 			break;
 
@@ -3048,9 +3054,9 @@ void Dialogs::InvCursor(InvCursorFN fn, int CurX, int CurY) {
 		case I_BLEFT:
 			if (!_invD[_activeInv].resizable)
 				restoreMain = true;
-			else if (ICursor != IC_UR) {
+			else if (_invCursor != IC_UR) {
 				AlterCursor(IX_CURDU);
-				ICursor = IC_UR;
+				_invCursor = IC_UR;
 			}
 			break;
 
@@ -3060,9 +3066,9 @@ void Dialogs::InvCursor(InvCursorFN fn, int CurX, int CurY) {
 				restoreMain = true;
 				break;
 			}
-			if (ICursor != IC_TB) {
+			if (_invCursor != IC_TB) {
 				AlterCursor(IX_CURUD);
-				ICursor = IC_TB;
+				_invCursor = IC_TB;
 			}
 			break;
 
@@ -3070,9 +3076,9 @@ void Dialogs::InvCursor(InvCursorFN fn, int CurX, int CurY) {
 		case I_RIGHT:
 			if (!_invD[_activeInv].resizable)
 				restoreMain = true;
-			else if (ICursor != IC_LR) {
+			else if (_invCursor != IC_LR) {
 				AlterCursor(IX_CURLR);
-				ICursor = IC_LR;
+				_invCursor = IC_LR;
 			}
 			break;
 
@@ -3095,9 +3101,9 @@ void Dialogs::InvCursor(InvCursorFN fn, int CurX, int CurY) {
 		break;
 	}
 
-	if (restoreMain && ICursor != IC_NORMAL) {
+	if (restoreMain && _invCursor != IC_NORMAL) {
 		_vm->_cursor->RestoreMainCursor();
-		ICursor = IC_NORMAL;
+		_invCursor = IC_NORMAL;
 	}
 }
 
@@ -4409,10 +4415,10 @@ void Dialogs::MenuAction(int i, bool dbl) {
 		case TOGGLE:
 		case TOGGLE1:
 		case TOGGLE2:
-			if (!g_buttonEffect.bButAnim) {
-				g_buttonEffect.bButAnim = true;
-				g_buttonEffect.box = &cd.box[i];
-				g_buttonEffect.press = false;
+			if (!_buttonEffect.bButAnim) {
+				_buttonEffect.bButAnim = true;
+				_buttonEffect.box = &cd.box[i];
+				_buttonEffect.press = false;
 			}
 			break;
 
@@ -4459,12 +4465,12 @@ void Dialogs::MenuAction(int i, bool dbl) {
 		case ARSBUT:
 		case AABUT:
 		case AATBUT:
-			if (g_buttonEffect.bButAnim)
+			if (_buttonEffect.bButAnim)
 				break;
 
-			g_buttonEffect.bButAnim = true;
-			g_buttonEffect.box = &cd.box[i];
-			g_buttonEffect.press = true;
+			_buttonEffect.bButAnim = true;
+			_buttonEffect.box = &cd.box[i];
+			_buttonEffect.press = true;
 			break;
 		default:
 			break;
@@ -5542,16 +5548,16 @@ extern void InventoryProcess(CORO_PARAM, const void *) {
 
 		_vm->_dialogs->Redraw();
 
-		if (g_buttonEffect.bButAnim) {
-			assert(g_buttonEffect.box);
-			if (g_buttonEffect.press) {
-				if (g_buttonEffect.box->boxType == AAGBUT || g_buttonEffect.box->boxType == ARSGBUT)
-					CORO_INVOKE_1(ButtonPress, g_buttonEffect.box);
-				_vm->_dialogs->CallFunction(g_buttonEffect.box->boxFunc);
+		if (_vm->_dialogs->_buttonEffect.bButAnim) {
+			assert(_vm->_dialogs->_buttonEffect.box);
+			if (_vm->_dialogs->_buttonEffect.press) {
+				if (_vm->_dialogs->_buttonEffect.box->boxType == AAGBUT || _vm->_dialogs->_buttonEffect.box->boxType == ARSGBUT)
+					CORO_INVOKE_1(ButtonPress, _vm->_dialogs->_buttonEffect.box);
+				_vm->_dialogs->CallFunction(_vm->_dialogs->_buttonEffect.box->boxFunc);
 			} else
-				CORO_INVOKE_1(ButtonToggle, g_buttonEffect.box);
+				CORO_INVOKE_1(ButtonToggle, _vm->_dialogs->_buttonEffect.box);
 
-			g_buttonEffect.bButAnim = false;
+			_vm->_dialogs->_buttonEffect.bButAnim = false;
 		}
 	}
 	CORO_END_CODE;
