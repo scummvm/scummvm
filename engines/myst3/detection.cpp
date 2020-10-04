@@ -20,24 +20,13 @@
  *
  */
 
-#include "engines/advancedDetector.h"
-
-#include "engines/myst3/database.h"
-#include "engines/myst3/gfx.h"
-#include "engines/myst3/state.h"
-
-#include "common/config-manager.h"
-#include "common/savefile.h"
 #include "common/translation.h"
 
-#include "graphics/scaler.h"
+#include "engines/advancedDetector.h"
+#include "engines/myst3/detection.h"
+
 
 namespace Myst3 {
-
-struct Myst3GameDescription {
-	ADGameDescription desc;
-	uint32 localizationType;
-};
 
 static const PlainGameDescriptor myst3Games[] = {
 	{ "myst3", "Myst III Exile" },
@@ -200,9 +189,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class Myst3MetaEngine : public AdvancedMetaEngine {
+class Myst3MetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	Myst3MetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(Myst3GameDescription), myst3Games, optionsList) {
+	Myst3MetaEngineStatic() : AdvancedMetaEngineStatic(gameDescriptions, sizeof(Myst3GameDescription), myst3Games, optionsList) {
 		_guiOptions = GUIO5(GUIO_NOMIDI, GUIO_NOSFX, GUIO_NOSPEECH, GUIO_NOSUBTITLES, GAMEOPTION_WIDESCREEN_MOD);
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
@@ -219,126 +208,8 @@ public:
 	const char *getOriginalCopyright() const override {
 		return "Myst III Exile (C) Presto Studios";
 	}
-
-	bool hasFeature(MetaEngineFeature f) const override {
-		return
-			(f == kSupportsListSaves) ||
-			(f == kSupportsDeleteSave) ||
-			(f == kSupportsLoadingDuringStartup) ||
-			(f == kSavesSupportMetaInfo) ||
-			(f == kSavesSupportThumbnail) ||
-			(f == kSavesSupportCreationDate) ||
-			(f == kSavesSupportPlayTime);
-	}
-
-	SaveStateList listSaves(const char *target) const override {
-		Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
-		Common::StringArray filenames = Saves::list(g_system->getSavefileManager(), platform);
-
-		SaveStateList saveList;
-		for (uint32 i = 0; i < filenames.size(); i++)
-			saveList.push_back(SaveStateDescriptor(i, filenames[i]));
-
-		return saveList;
-	}
-
-	SaveStateDescriptor getSaveDescription(const char *target, int slot) const {
-		SaveStateList saves = listSaves(target);
-
-		SaveStateDescriptor description;
-		for (uint32 i = 0; i < saves.size(); i++) {
-			if (saves[i].getSaveSlot() == slot) {
-				description = saves[i];
-			}
-		}
-
-		return description;
-	}
-
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override {
-		SaveStateDescriptor saveInfos = getSaveDescription(target, slot);
-
-		if (saveInfos.getDescription().empty()) {
-			// Unused slot
-			return SaveStateDescriptor();
-		}
-
-		// Open save
-		Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(saveInfos.getDescription());
-		if (!saveFile) {
-			warning("Unable to open file %s for reading, slot %d", saveInfos.getDescription().encode().c_str(), slot);
-			return SaveStateDescriptor();
-		}
-
-		// Read state data
-		Common::Serializer s = Common::Serializer(saveFile, 0);
-		GameState::StateData data;
-		data.syncWithSaveGame(s);
-
-		// Read and resize the thumbnail
-		Graphics::Surface *saveThumb = GameState::readThumbnail(saveFile);
-		Graphics::Surface *guiThumb = GameState::resizeThumbnail(saveThumb, kThumbnailWidth, kThumbnailHeight1);
-		saveThumb->free();
-		delete saveThumb;
-
-		// Set metadata
-		saveInfos.setThumbnail(guiThumb);
-		saveInfos.setPlayTime(data.secondsPlayed * 1000);
-
-		if (data.saveYear != 0) {
-			saveInfos.setSaveDate(data.saveYear, data.saveMonth, data.saveDay);
-			saveInfos.setSaveTime(data.saveHour, data.saveMinute);
-		}
-
-		if (data.saveDescription != "") {
-			saveInfos.setDescription(data.saveDescription);
-		}
-
-		if (s.getVersion() >= 150) {
-			saveInfos.setAutosave(data.isAutosave);
-		}
-
-		delete saveFile;
-
-		return saveInfos;
-	}
-
-	void removeSaveState(const char *target, int slot) const override {
-		SaveStateDescriptor saveInfos = getSaveDescription(target, slot);
-		g_system->getSavefileManager()->removeSavefile(saveInfos.getDescription());
-	}
-
-	int getMaximumSaveSlot() const override {
-		return 999;
-	}
-
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
-
-bool Myst3MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Myst3GameDescription *gd = (const Myst3GameDescription *)desc;
-	if (gd) {
-		*engine = new Myst3Engine(syst, gd);
-	}
-	return gd != 0;
-}
-
-Common::Platform Myst3Engine::getPlatform() const {
-	return _gameDescription->desc.platform;
-}
-
-Common::Language Myst3Engine::getGameLanguage() const {
-	return _gameDescription->desc.language;
-}
-
-uint32 Myst3Engine::getGameLocalizationType() const {
-	return _gameDescription->localizationType;
-}
 
 } // End of namespace Myst3
 
-#if PLUGIN_ENABLED_DYNAMIC(MYST3)
-	REGISTER_PLUGIN_DYNAMIC(MYST3, PLUGIN_TYPE_ENGINE, Myst3::Myst3MetaEngine);
-#else
-	REGISTER_PLUGIN_STATIC(MYST3, PLUGIN_TYPE_ENGINE, Myst3::Myst3MetaEngine);
-#endif
+REGISTER_PLUGIN_STATIC(MYST3_DETECTION, PLUGIN_TYPE_METAENGINE, Myst3::Myst3MetaEngineStatic);

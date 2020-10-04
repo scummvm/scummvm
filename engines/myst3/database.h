@@ -24,6 +24,7 @@
 #define DATABASE_H_
 
 #include "engines/myst3/hotspot.h"
+#include "engines/myst3/detection.h"
 
 #include "common/scummsys.h"
 #include "common/str.h"
@@ -35,12 +36,6 @@
 #include "common/stream.h"
 
 namespace Myst3 {
-
-enum GameLocalizationType {
-	kLocMonolingual,
-	kLocMulti2,
-	kLocMulti6
-};
 
 enum MystLanguage {
 	kEnglish = 0,
