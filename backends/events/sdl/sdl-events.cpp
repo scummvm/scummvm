@@ -185,6 +185,8 @@ bool SdlEventSource::processMouseEvent(Common::Event &event, int x, int y, int r
 
 	event.mouse.x = x;
 	event.mouse.y = y;
+	event.relMouse.x = relx; // ResidualVM
+	event.relMouse.y = rely; // ResidualVM
 
 	if (_graphicsManager) {
 // ResidualVM start:
