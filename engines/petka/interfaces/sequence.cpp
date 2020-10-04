@@ -66,8 +66,12 @@ void InterfaceSequence::start(int id) {
 void InterfaceSequence::stop() {
 	removeObjects();
 
-	g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(_fxId));
-	g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(_musicId));
+	// original bug fix
+	QObjectBG *room = g_vm->getQSystem()->_room;
+	if (!room || room->_fxId != _fxId)
+		g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(_fxId));
+	if (!room || room->_musicId != _musicId)
+		g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(_musicId));
 
 	_fxId = 0;
 	_musicId = 0;
