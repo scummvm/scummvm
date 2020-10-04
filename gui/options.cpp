@@ -1309,20 +1309,14 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 		_stretchPopUp->appendEntry(_c(sm->description, context), sm->id);
 		sm++;
 	}
-
-	// Fullscreen checkbox
-	_fullscreenCheckbox = new CheckboxWidget(boss, prefix + "grFullscreenCheckbox", _("Fullscreen mode"));
 #endif
 	// Fullscreen checkbox
-	_fullscreenCheckbox = new CheckboxWidget(boss, prefix + "grFullscreenCheckbox", _("Fullscreen mode"), Common::U32String(""), kFullscreenToggled);
-
-	// ResidualVM specific description
-	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", _("Preserve aspect ratio"), _("Preserve the aspect ratio in fullscreen mode"));
+	_fullscreenCheckbox = new CheckboxWidget(boss, prefix + "grFullscreenCheckbox", _("Fullscreen mode"), Common::U32String(""), kFullscreenToggled); // ResidualVM
 
 	// ResidualVM specific -- Start
-	_vsyncCheckbox = new CheckboxWidget(boss, prefix + "grVSyncCheckbox", _("V-Sync"), _("Wait for the vertical sync to refresh the screen"));
+	_vsyncCheckbox = new CheckboxWidget(boss, prefix + "grVSyncCheckbox", _("V-Sync in 3D Games"), _("Wait for the vertical sync to refresh the screen in 3D renderer"));
 
-	_rendererTypePopUpDesc = new StaticTextWidget(boss, prefix + "grRendererTypePopupDesc", _("Game Renderer:"));
+	_rendererTypePopUpDesc = new StaticTextWidget(boss, prefix + "grRendererTypePopupDesc", _("Game 3D Renderer:"));
 	_rendererTypePopUp = new PopUpWidget(boss, prefix + "grRendererTypePopup");
 	_rendererTypePopUp->appendEntry(_("<default>"), Graphics::kRendererTypeDefault);
 	_rendererTypePopUp->appendEntry("");
@@ -1331,7 +1325,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 		_rendererTypePopUp->appendEntry(_(rt->description), rt->id);
 	}
 
-	_antiAliasPopUpDesc = new StaticTextWidget(boss, prefix + "grAntiAliasPopupDesc", _("Anti-aliasing:"));
+	_antiAliasPopUpDesc = new StaticTextWidget(boss, prefix + "grAntiAliasPopupDesc", _("3D Anti-aliasing:"));
 	_antiAliasPopUp = new PopUpWidget(boss, prefix + "grAntiAliasPopup");
 	_antiAliasPopUp->appendEntry(_("<default>"), -1);
 	_antiAliasPopUp->appendEntry("");
@@ -1350,10 +1344,9 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	// Filtering checkbox
 	_filteringCheckbox = new CheckboxWidget(boss, prefix + "grFilteringCheckbox", _("Filter graphics"), _("Use linear filtering when scaling graphics"));
 
-#if 0 // not used by ResidualVM
 	// Aspect ratio checkbox
-	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", _("Aspect ratio correction"), _("Correct aspect ratio for 320x200 games"));
-#endif
+	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", _("Aspect ratio correction"), _("Correct aspect ratio for games")); // ResidualVM
+
 	_enableGraphicSettings = true;
 }
 
