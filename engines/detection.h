@@ -20,19 +20,13 @@
  *
  */
 
-#ifndef WINTERMUTE_GAME_DESCRIPTION_H
-#define WINTERMUTE_GAME_DESCRIPTION_H
+#include "base/plugins.h"
 
-#include "engines/advancedDetector.h"
-#include "engines/wintermute/base/base_engine.h"
+class Detection : public PluginObject {
+public:
+    Detection() {}
+    virtual ~Detection() {}
 
-namespace Wintermute {
-
-struct WMEGameDescription {
-	ADGameDescription adDesc;
-	WMETargetExecutable targetExecutable;
+    virtual const char *getName() const = 0;
+    virtual PluginList getPlugins() const = 0;
 };
-
-}
-
-#endif  /* WINTERMUTE_GAME_DESCRIPTION_H_ */
