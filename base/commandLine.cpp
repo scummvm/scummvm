@@ -155,17 +155,15 @@ static const char HELP_STRING[] =
                                                                               ")\n"
 #endif
 #if 1 // ResidulVM specific
-	"  --talkspeed=NUM          Set talk speed for games (default: 179)\n"
-	"  --show-fps               Set the turn on display FPS info\n"
-	"  --no-show-fps            Set the turn off display FPS info\n"
-	"  --renderer=RENDERER      Select renderer (software, opengl, opengl_shaders)\n"
+	"  --show-fps               Set the turn on display FPS info in 3D games\n"
+	"  --no-show-fps            Set the turn off display FPS info in 3D games\n"
+	"  --renderer=RENDERER      Select 3D renderer (software, opengl, opengl_shaders)\n"
 	"  --aspect-ratio           Enable aspect ratio correction\n"
 	"  --bpp=NUM                Select number of bits per pixel, 0 (auto-detect), 16, 32\n"
-	"                           (default: 0) (only supported by software renderer)\n"
+	"                           (default: 0) (only supported by software 3D renderer)\n"
 	"  --[no-]dirtyrects        Enable dirty rectangles optimisation in software renderer\n"
 	"                           (default: enabled)\n"
 #endif
-	"  --aspect-ratio           Enable aspect ratio correction\n"
 #if 0 // ResidulVM - not used
 	"  --render-mode=MODE       Enable additional render modes (hercGreen, hercAmber,\n"
 	"                           cga, ega, vga, amiga, fmtowns, pc9821, pc9801, 2gs,\n"
@@ -186,7 +184,10 @@ static const char HELP_STRING[] =
 #if 0 // ResidulVM - not used
 	"  --copy-protection        Enable copy protection in games, when\n"
 	"                           ScummVM disables it by default.\n"
+#endif
 	"  --talkspeed=NUM          Set talk speed for games (default: 60)\n"
+#if 1 // ResidulVM specific
+	"                           Grim Fandango or EMI (default: 179).\n"
 #endif
 #if defined(ENABLE_SCUMM) || defined(ENABLE_GROOVIE)
 	"  --demo-mode              Start demo mode of Maniac Mansion or The 7th Guest\n"
@@ -195,18 +196,19 @@ static const char HELP_STRING[] =
 	"  --start-movie=NAME@NUM   Start movie at frame for Director\n"
 	"							Either can be specified without the other.\n"
 #endif
-//#ifdef ENABLE_SCUMM // ResidualVM not used
+#ifdef ENABLE_SCUMM
 	"  --tempo=NUM              Set music tempo (in percent, 50-200) for SCUMM games\n"
 	"                           (default: 100)\n"
-//#ifdef ENABLE_SCUMM_7_8 // ResidualVM not used
-#ifdef ENABLE_GRIM // ResidualVM specific
+#endif // ResidualVM
+#if (defined(ENABLE_SCUMM) && defined(ENABLE_SCUMM_7_8)) || defined(ENABLE_GRIM) // ResidualVM
 	"  --dimuse-tempo=NUM       Set internal Digital iMuse tempo (10 - 100) per second\n"
 	"                           (default: 10)\n"
+//#endif // ResidualVM
 #endif
-//#endif // ResidualVM - not used
 #if 1 // ResidulVM specific
 	"  --engine-speed=NUM       Set frame per second limit (0 - 100), 0 = no limit\n"
 	"                           (default: 60)\n"
+	"                           Grim Fandango or Escape from Monkey Island\n"
 #endif
 	"\n"
 	"The meaning of boolean long options can be inverted by prefixing them with\n"
@@ -302,27 +304,21 @@ void registerDefaults() {
 #endif
 
 	ConfMan.registerDefault("copy_protection", false);
-/* ResidualVM - not used
-	ConfMan.registerDefault("talkspeed", 60);*/
+	ConfMan.registerDefault("talkspeed", 60);
 
 #if defined(ENABLE_SCUMM) || defined(ENABLE_GROOVIE)
 	ConfMan.registerDefault("demo_mode", false);
 #endif
 #ifdef ENABLE_SCUMM
 	ConfMan.registerDefault("tempo", 0);
-#ifdef ENABLE_SCUMM_7_8
+#endif // ResidualVM
+#if (defined(ENABLE_SCUMM) && defined(ENABLE_SCUMM_7_8)) || defined(ENABLE_GRIM) // ResidualVM
 	ConfMan.registerDefault("dimuse_tempo", 10);
 #endif
-#endif
+//#endif // ResidualVM
 
 #if defined(ENABLE_SKY) || defined(ENABLE_QUEEN)
 	ConfMan.registerDefault("alt_intro", false);
-#endif
-#ifdef ENABLE_GRIM // ResidualVM specific
-	ConfMan.registerDefault("dimuse_tempo", 10);
-#endif
-#if 1 // ResidualVM specific
-	ConfMan.registerDefault("talkspeed", 179);
 #endif
 
 	// Miscellaneous
@@ -737,7 +733,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 
 			DO_LONG_OPTION("gamma")
 			END_OPTION
-// ResidualVM specific start
+
 			DO_LONG_OPTION("renderer")
 				Graphics::RendererType renderer = Graphics::parseRendererTypeCode(option);
 				if (renderer == Graphics::kRendererTypeDefault)
@@ -769,9 +765,8 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_OPTION_INT("talkspeed")
 			END_OPTION
 
-/* ResidualVM - not used
 			DO_LONG_OPTION_BOOL("copy-protection")
-			END_OPTION*/
+			END_OPTION
 
 			DO_LONG_OPTION("gui-theme")
 			END_OPTION
@@ -800,11 +795,12 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 #ifdef ENABLE_SCUMM
 			DO_LONG_OPTION_INT("tempo")
 			END_OPTION
-#ifdef ENABLE_SCUMM_7_8
+#endif // ResidualVM
+#if (defined(ENABLE_SCUMM) && defined(ENABLE_SCUMM_7_8)) || defined(ENABLE_GRIM) // ResidualVM
 			DO_LONG_OPTION_INT("dimuse-tempo")
 			END_OPTION
 #endif
-#endif
+//#endif // ResidualVM
 #if defined(ENABLE_SCUMM) || defined(ENABLE_GROOVIE)
 			DO_LONG_OPTION_BOOL("demo-mode")
 			END_OPTION
@@ -817,10 +813,6 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 
 
 // ResidualVM specific start
-#ifdef ENABLE_GRIM
-			DO_LONG_OPTION_INT("dimuse-tempo")
-			END_OPTION
-#endif
 			DO_LONG_OPTION_INT("engine-speed")
 			END_OPTION
 // ResidualVM specific end
