@@ -48,7 +48,7 @@ class SeekableReadStream;
  * The (singleton) configuration manager, used to query & set configuration
  * values using string keys.
  *
- * @todo Implement the callback based notification system (outlined below)
+ * TBD: Implement the callback based notification system (outlined below)
  *       which sends out notifications to interested parties whenever the value
  *       of some specific (or any) configuration key changes.
  */
@@ -107,55 +107,64 @@ public:
 	static char const *const kCloudDomain;
 #endif
 
-	void				loadDefaultConfigFile();
-	void				loadConfigFile(const String &filename);
+	void				loadDefaultConfigFile(); /*!< Load the default configuration file. */
+	void				loadConfigFile(const String &filename); /*!< Load a specific configuration file. */
 
 	/**
 	 * Retrieve the config domain with the given name.
-	 * @param domName	the name of the domain to retrieve
-	 * @return pointer to the domain, or 0 if the domain doesn't exist.
+	 * @param domName Name of the domain to retrieve.
+	 * @return Pointer to the domain, or 0 if the domain does not exist.
 	 */
 	Domain *			getDomain(const String &domName);
-	const Domain *		getDomain(const String &domName) const;
+	const Domain *		getDomain(const String &domName) const; /*!< @overload */
 
 
-	//
-	// Generic access methods: No domain specified, use the values from the
-	// various domains in the order of their priority.
-	//
+    /**
+	 * @name Generic access methods
+	 * @brief No domain specified, use the values from the
+	 *        various domains in the order of their priority.
+	 * @{
+	 */
 
 	bool				hasKey(const String &key) const;
 	const String &		get(const String &key) const;
 	void				set(const String &key, const String &value);
-
+    /** @} */
+	
 	/**
 	 * Update a configuration entry for the active domain and flush
-	 * the configuration file to disk if the value changed
+	 * the configuration file to disk if the value changed.
 	 */
 	void				setAndFlush(const String &key, const Common::String &value);
 
 #if 1
-	//
-	// Domain specific access methods: Acces *one specific* domain and modify it.
-	// TODO: I'd like to get rid of most of those if possible, or at least reduce
-	// their usage, by using getDomain as often as possible. For example in the
-	// options dialog code...
-	//
+    /**
+	 * @name Domain-specific access methods
+	 * @brief Access one specific domain and modify it.
+	 *
+	 * TBD: Get rid of most of those if possible, or at least reduce
+	 * their usage, by using getDomain as often as possible. For example in the
+	 * options dialog code.
+	 * @{
+	 */
 
 	bool				hasKey(const String &key, const String &domName) const;
 	const String &		get(const String &key, const String &domName) const;
 	void				set(const String &key, const String &value, const String &domName);
 
 	void				removeKey(const String &key, const String &domName);
+	/** @} */
 #endif
 
-	//
-	// Some additional convenience accessors.
-	//
-	int					getInt(const String &key, const String &domName = String()) const;
-	bool				getBool(const String &key, const String &domName = String()) const;
-	void				setInt(const String &key, int value, const String &domName = String());
-	void				setBool(const String &key, bool value, const String &domName = String());
+    /**
+	 * @name Additional convenience accessors
+	 * @{
+	 */
+
+	int					getInt(const String &key, const String &domName = String()) const; /*!< Get integer value. */
+	bool				getBool(const String &key, const String &domName = String()) const; /*!< Get Boolean value. */
+	void				setInt(const String &key, int value, const String &domName = String()); /*!< Set integer value. */
+	void				setBool(const String &key, bool value, const String &domName = String()); /*!< Set integer value. */
 
 
 	void				registerDefault(const String &key, const String &value);
@@ -163,20 +172,20 @@ public:
 	void				registerDefault(const String &key, int value);
 	void				registerDefault(const String &key, bool value);
 
-	void				flushToDisk();
+	void				flushToDisk(); /*!< Flush configuration to disk. */
 
-	void				setActiveDomain(const String &domName);
-	Domain *			getActiveDomain() { return _activeDomain; }
-	const Domain *		getActiveDomain() const { return _activeDomain; }
-	const String &		getActiveDomainName() const { return _activeDomainName; }
+	void				setActiveDomain(const String &domName); /*!< Set the given domain as active. */
+	Domain *			getActiveDomain() { return _activeDomain; } /*!< Get the active domain. */
+	const Domain *		getActiveDomain() const { return _activeDomain; } /*!< @overload */
+	const String &		getActiveDomainName() const { return _activeDomainName; } /*!< Get the name of the active domain. */
 
-	void				addGameDomain(const String &domName);
-	void				removeGameDomain(const String &domName);
-	void				renameGameDomain(const String &oldName, const String &newName);
+	void				addGameDomain(const String &domName); /*!< Add a new game domain. */
+	void				removeGameDomain(const String &domName); /*!< Remove a game domain. */
+	void				renameGameDomain(const String &oldName, const String &newName); /*!< Rename a game domain. */
 
-	void				addMiscDomain(const String &domName);
-	void				removeMiscDomain(const String &domName);
-	void				renameMiscDomain(const String &oldName, const String &newName);
+	void				addMiscDomain(const String &domName); /*!< Add a miscellaneous domain. */
+	void				removeMiscDomain(const String &domName); /*!< Remove a miscellaneous domain. */
+	void				renameMiscDomain(const String &oldName, const String &newName); /*!< Rename a miscellaneous domain. */
 
 	bool				hasGameDomain(const String &domName) const;
 	bool				hasMiscDomain(const String &domName) const;
@@ -187,7 +196,7 @@ public:
 
 	static void			defragment(); // move in memory to reduce fragmentation
 	void 				copyFrom(ConfigManager &source);
-
+	/** @} */
 private:
 	friend class Singleton<SingletonBaseType>;
 	ConfigManager();

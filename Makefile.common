@@ -37,7 +37,8 @@ MODULES += \
 	audio \
 	math \
 	common \
-	po
+	po \
+	doc
 
 ifdef USE_MT32EMU
 MODULES += audio/softsynth/mt32
