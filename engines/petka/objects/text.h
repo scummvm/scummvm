@@ -38,6 +38,7 @@ public:
 	QText(const Common::U32String &text, uint16 textColor, uint16 outlineColor);
 
 	void draw();
+	void update(int time);
 	const Common::Rect &getRect();
 
 protected:

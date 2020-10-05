@@ -95,6 +95,10 @@ QText::QText() {
 	_z = 3000;
 }
 
+void QText::update(int) {
+	g_vm->videoSystem()->addDirtyRect(_rect);
+}
+
 QTextPhrase::QTextPhrase(const Common::U32String &text, uint16 textColor, uint16 outlineColor)
 	: QText(text, textColor, outlineColor), _phrase(text), _time(0) {}
 
@@ -107,6 +111,7 @@ void QTextPhrase::draw() {
 void QTextPhrase::update(int time) {
 	DialogInterface &dialog = g_vm->getQSystem()->_mainInterface->_dialog;
 	_time += time;
+	QText::update(time);
 	Sound *sound = dialog.findSound();
 	if (sound) {
 		if (!sound->isPlaying()) {
@@ -170,6 +175,8 @@ QTextChoice::QTextChoice(const Common::Array<Common::U32String> &choices, uint16
 	_rects.resize(choices.size());
 	for (uint i = 0; i < _choices.size(); ++i) {
 		_rects[i] = font->getBoundingBox(_choices[i]);
+		_rects[i].bottom += 5;
+		_rects[i].right += 15;
 		if (_rects[i].width() > w)
 			w = _rects[i].width();
 		h += _rects[i].height();
