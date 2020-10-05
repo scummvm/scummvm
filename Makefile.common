@@ -430,7 +430,6 @@ endif
 
 # ResidualVM specific
 # Shaders
-# DIST_FILES_SHADERS=
 DIST_FILES_SHADERS=
 ifdef USE_OPENGL_SHADERS
 ifdef ENABLE_GRIM
