@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS3D_SDL_SDLGRAPHICS_H
-#define BACKENDS_GRAPHICS3D_SDL_SDLGRAPHICS_H
+#ifndef BACKENDS_GRAPHICS3D_SDL_SDLGRAPHICS3D_H
+#define BACKENDS_GRAPHICS3D_SDL_SDLGRAPHICS3D_H
 
 #include "backends/graphics3d/graphics3d.h"
 #include "backends/platform/sdl/sdl-window.h"

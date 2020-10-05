@@ -93,7 +93,7 @@ template<class T, typename S = void *> class Callback: public BaseCallback<S> {
 protected:
 	typedef void(T::*TMethod)(S);
 	T *_object;
-		;
+	TMethod _method;
 public:
 	Callback(T *object, TMethod method): _object(object), _method(method) {}
 	virtual ~Callback() {}
