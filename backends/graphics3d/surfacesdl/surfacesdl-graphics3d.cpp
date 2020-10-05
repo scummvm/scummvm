@@ -209,7 +209,7 @@ void SurfaceSdlGraphics3dManager::createOrUpdateScreen() {
 	if (_fullscreen)
 		sdlflags |= SDL_FULLSCREEN;
 
-	_screen = SDL_SetVideoMode(effectiveWidth, effectiveHeight, ConfMan.getInt("bpp"), sdlflags);
+	_screen = SDL_SetVideoMode(effectiveWidth, effectiveHeight, 0, sdlflags);
 	if (!_screen) {
 		warning("SDL_SetVideoMode failed: %s", SDL_GetError());
 		g_system->quit();

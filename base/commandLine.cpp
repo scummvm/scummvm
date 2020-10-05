@@ -159,8 +159,6 @@ static const char HELP_STRING[] =
 	"  --no-show-fps            Set the turn off display FPS info in 3D games\n"
 	"  --renderer=RENDERER      Select 3D renderer (software, opengl, opengl_shaders)\n"
 	"  --aspect-ratio           Enable aspect ratio correction\n"
-	"  --bpp=NUM                Select number of bits per pixel, 0 (auto-detect), 16, 32\n"
-	"                           (default: 0) (only supported by software 3D renderer)\n"
 	"  --[no-]dirtyrects        Enable dirty rectangles optimisation in software renderer\n"
 	"                           (default: enabled)\n"
 #endif
@@ -260,7 +258,6 @@ void registerDefaults() {
 // ResidualVM specific start
 	ConfMan.registerDefault("show_fps", false);
 	ConfMan.registerDefault("dirtyrects", true);
-	ConfMan.registerDefault("bpp", 0);
 	ConfMan.registerDefault("vsync", true);
 // ResidualVM specific end
 
@@ -729,9 +726,6 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 					usage("Unrecognized render mode '%s'", option);*/
 
 // ResidualVM specific start
-			DO_LONG_OPTION_INT("bpp")
-			END_OPTION
-
 			DO_LONG_OPTION_BOOL("dirtyrects")
 			END_OPTION
 
