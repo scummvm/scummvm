@@ -406,7 +406,7 @@ void GfxOpenGLS::setupShaders() {
 	}
 }
 
-byte *GfxOpenGLS::setupScreen(int screenW, int screenH, bool fullscreen) {
+void GfxOpenGLS::setupScreen(int screenW, int screenH, bool fullscreen) {
 	_screenWidth = screenW;
 	_screenHeight = screenH;
 	_scaleW = _screenWidth / (float)_gameWidth;
@@ -430,7 +430,6 @@ byte *GfxOpenGLS::setupScreen(int screenW, int screenH, bool fullscreen) {
 		// color map and the following are using textures.
 		glDepthFunc(GL_LEQUAL);
 	}
-	return NULL;
 }
 
 void GfxOpenGLS::setupCameraFrustum(float fov, float nclip, float fclip) {

@@ -43,7 +43,7 @@ public:
 	 * @param screenH		the height of the context
 	 * @param fullscreen	true if fullscreen is desired, false otherwise.
 	 */
-	virtual byte *setupScreen(int screenW, int screenH, bool fullscreen) override;
+	virtual void setupScreen(int screenW, int screenH, bool fullscreen) override;
 
 	/**
 	 * Query whether the current context is hardware-accelerated

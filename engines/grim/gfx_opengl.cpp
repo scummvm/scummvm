@@ -129,7 +129,7 @@ GfxOpenGL::~GfxOpenGL() {
 	}
 }
 
-byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
+void GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 	_screenWidth = screenW;
 	_screenHeight = screenH;
 	_scaleW = _screenWidth / (float)_gameWidth;
@@ -159,8 +159,6 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	initExtensions();
 	glGetIntegerv(GL_MAX_LIGHTS, &_maxLights);
-
-	return nullptr;
 }
 
 void GfxOpenGL::initExtensions() {

@@ -77,9 +77,8 @@ GfxTinyGL::~GfxTinyGL() {
 	}
 }
 
-byte *GfxTinyGL::setupScreen(int screenW, int screenH, bool fullscreen) {
+void GfxTinyGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 	Graphics::PixelBuffer buf = g_system->getScreenPixelBuffer();
-	byte *buffer = buf.getRawBuffer();
 
 	_screenWidth = screenW;
 	_screenHeight = screenH;
@@ -103,8 +102,6 @@ byte *GfxTinyGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 	tglLightModelfv(TGL_LIGHT_MODEL_AMBIENT, ambientSource);
 	TGLfloat diffuseReflectance[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	tglMaterialfv(TGL_FRONT, TGL_DIFFUSE, diffuseReflectance);
-
-	return buffer;
 }
 
 const char *GfxTinyGL::getVideoDeviceName() {
