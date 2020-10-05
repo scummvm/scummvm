@@ -65,9 +65,9 @@
 #include "backends/keymapper/keymapper-defaults.h"
 #include "backends/keymapper/standard-actions.h"
 
-#include "backends/platform/android/jni-android.h"
-#include "backends/platform/android/android.h"
-#include "backends/platform/android/graphics.h"
+#include "backends/platform/android3d/jni-android.h"
+#include "backends/platform/android3d/android.h"
+#include "backends/platform/android3d/graphics.h"
 
 const char *android_log_tag = "ResidualVM";
 

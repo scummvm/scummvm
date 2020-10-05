@@ -4,14 +4,14 @@
 ANDROID_VERSIONCODE ?= 50000
 ANDROID_VERSIONNAME ?= 0.4
 
-PATH_DIST = $(srcdir)/dists/android
+PATH_DIST = $(srcdir)/dists/android3d
 
 PORT_DISTFILES = $(PATH_DIST)/README.Android
 DIST_ANDROID_CONTROLS = $(PATH_DIST)/assets/arrows.tga
 GRADLE = $(PATH_DIST)/gradlew
 
 
-PATH_BUILD = ./android
+PATH_BUILD = ./android3d
 PATH_BUILD_ASSETS = $(PATH_BUILD)/assets
 PATH_BUILD_JNI = $(PATH_BUILD)/jni/$(ABI)/libresidualvm.so
 PATH_BUILD_GRADLE = $(PATH_BUILD)/settings.gradle

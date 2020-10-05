@@ -25,7 +25,7 @@
 
 #if defined(__ANDROID__)
 
-#include "backends/platform/android/portdefs.h"
+#include "backends/platform/android3d/portdefs.h"
 #include "common/fs.h"
 #include "common/archive.h"
 #include "common/mutex.h"
@@ -40,10 +40,10 @@
 #include "backends/plugins/posix/posix-provider.h"
 #include "backends/fs/posix/posix-fs-factory.h"
 
-#include "backends/platform/android/events.h"
-#include "backends/platform/android/texture.h"
-#include "backends/platform/android/graphics.h"
-#include "backends/platform/android/touchcontrols.h"
+#include "backends/platform/android3d/events.h"
+#include "backends/platform/android3d/texture.h"
+#include "backends/platform/android3d/graphics.h"
+#include "backends/platform/android3d/touchcontrols.h"
 
 #include <pthread.h>
 

@@ -32,8 +32,8 @@
 #include "common/debug.h"
 #include "common/textconsole.h"
 
-#include "backends/platform/android/jni-android.h"
-#include "backends/platform/android/asset-archive.h"
+#include "backends/platform/android3d/jni-android.h"
+#include "backends/platform/android3d/asset-archive.h"
 
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>

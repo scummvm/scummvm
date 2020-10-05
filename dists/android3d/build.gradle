@@ -14,7 +14,7 @@ allprojects {
 		google()
 		jcenter()
 	}
-	buildDir = "${gradle.buildDir}/android/build"
+	buildDir = "${gradle.buildDir}/android3d/build"
 }
 
 apply plugin: 'com.android.application'
@@ -41,11 +41,11 @@ android {
 
 	sourceSets {
 		main {
-			assets.srcDirs = ["${gradle.buildDir}/android/assets"]
-			java.srcDirs = ["${gradle.sourceDir}/backends/platform/android"]
-			res.srcDirs = ["${gradle.sourceDir}/dists/android/res"]
-			manifest.srcFile "${gradle.sourceDir}/dists/android/AndroidManifest.xml"
-			jniLibs.srcDirs = ["${gradle.buildDir}/android/jni"]
+			assets.srcDirs = ["${gradle.buildDir}/android3d/assets"]
+			java.srcDirs = ["${gradle.sourceDir}/backends/platform/android3d"]
+			res.srcDirs = ["${gradle.sourceDir}/dists/android3d/res"]
+			manifest.srcFile "${gradle.sourceDir}/dists/android3d/AndroidManifest.xml"
+			jniLibs.srcDirs = ["${gradle.buildDir}/android3d/jni"]
 		}
 	}
 	if ("KEYSTORE" in System.env) {

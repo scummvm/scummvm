@@ -1,4 +1,4 @@
-MODULE := backends/platform/android
+MODULE := backends/platform/android3d
 
 MODULE_OBJS := \
 	jni-android.o \

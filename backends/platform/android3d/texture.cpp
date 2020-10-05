@@ -48,9 +48,9 @@
 #include "common/array.h"
 #include "common/util.h"
 
-#include "backends/platform/android/texture.h"
-#include "backends/platform/android/android.h"
-#include "backends/platform/android/jni-android.h"
+#include "backends/platform/android3d/texture.h"
+#include "backends/platform/android3d/android.h"
+#include "backends/platform/android3d/jni-android.h"
 
 // Supported GL extensions
 static bool npot_supported = false;

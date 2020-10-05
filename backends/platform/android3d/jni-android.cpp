@@ -49,9 +49,9 @@
 #include "common/encoding.h"
 #include "engines/engine.h"
 
-#include "backends/platform/android/android.h"
-#include "backends/platform/android/asset-archive.h"
-#include "backends/platform/android/jni-android.h"
+#include "backends/platform/android3d/android.h"
+#include "backends/platform/android3d/asset-archive.h"
+#include "backends/platform/android3d/jni-android.h"
 
 __attribute__ ((visibility("default")))
 jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {

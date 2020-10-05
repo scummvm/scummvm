@@ -39,10 +39,10 @@
 // for the Android port
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
-#include "backends/platform/android/android.h"
-#include "backends/platform/android/graphics.h"
-#include "backends/platform/android/events.h"
-#include "backends/platform/android/jni-android.h"
+#include "backends/platform/android3d/android.h"
+#include "backends/platform/android3d/graphics.h"
+#include "backends/platform/android3d/events.h"
+#include "backends/platform/android3d/jni-android.h"
 
 #include "engines/engine.h"
 #include "gui/gui-manager.h"

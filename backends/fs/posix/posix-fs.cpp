@@ -56,7 +56,7 @@
 #endif
 
 #if defined(__ANDROID__) && !defined(ANDROIDSDL)
-#include "backends/platform/android/jni-android.h"
+#include "backends/platform/android3d/jni-android.h" // ResidualVM
 #endif
 
 bool POSIXFilesystemNode::exists() const {

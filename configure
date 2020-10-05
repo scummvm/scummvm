@@ -1972,7 +1972,7 @@ if test "$_host_os" = android; then
 
 	# Check that we have the correct NDK version
 	echo_n "Checking NDK version... "
-	_ndk_gradle=$(grep "^[[:space:]]*ndkVersion" $_srcdir/dists/android/build.gradle | sed 's/[^0-9\.]//g')
+	_ndk_gradle=$(grep "^[[:space:]]*ndkVersion" $_srcdir/dists/android3d/build.gradle | sed 's/[^0-9\.]//g') # ResidualVM
 	_ndk_version=$(grep "Pkg.Revision" $ANDROID_NDK_ROOT/source.properties | sed 's/[^0-9\.]//g' | sed 's/.//')
 	if test "$_ndk_version" = "$_ndk_gradle"; then
 		echo "$_ndk_version"
@@ -3212,7 +3212,7 @@ if test -n "$_host"; then
 			HOSTEXEPRE=lib
 			HOSTEXEEXT=.so
 			_backend="android"
-			_port_mk="backends/platform/android/android.mk"
+			_port_mk="backends/platform/android3d/android.mk" # ResidualVM
 			_build_scalers=no
 			_seq_midi=no
 			_timidity=no
@@ -3614,7 +3614,7 @@ case $_backend in
 	android)
 		append_var DEFINES "-DREDUCE_MEMORY_USAGE"
 		append_var DEFINES "-DNONSTANDARD_PORT"
-		append_var INCLUDES '-I$(srcdir)/backends/platform/android'
+		append_var INCLUDES '-I$(srcdir)/backends/platform/android3d' # ResidualVM
 		append_var CXXFLAGS "-Wa,--noexecstack"
 		append_var LDFLAGS "-Wl,-z,noexecstack"
 		# removed the following directive - was causing compilation issues when not also explicitly using --disable-mt32emu
@@ -3623,6 +3623,7 @@ case $_backend in
 		if test "$_host" = ouya; then
 			_sdlnet=no
 		fi
+		append_var MODULES "backends/platform/android3d" # ResidualVM
 		;;
 	androidsdl)
 		_sdl=auto

@@ -27,8 +27,8 @@
 
 #include "common/events.h"
 
-#include "backends/platform/android/events.h"
-#include "backends/platform/android/texture.h"
+#include "backends/platform/android3d/events.h"
+#include "backends/platform/android3d/texture.h"
 
 class TouchControls {
 public:

@@ -44,10 +44,10 @@
 #include "graphics/opengl/shader.h"
 #include "graphics/opengl/context.h"
 
-#include "backends/platform/android/android.h"
-#include "backends/platform/android/events.h"
-#include "backends/platform/android/graphics.h"
-#include "backends/platform/android/jni-android.h"
+#include "backends/platform/android3d/android.h"
+#include "backends/platform/android3d/events.h"
+#include "backends/platform/android3d/graphics.h"
+#include "backends/platform/android3d/jni-android.h"
 
 AndroidGraphicsManager::AndroidGraphicsManager() :
 	_screenChangeID(0),

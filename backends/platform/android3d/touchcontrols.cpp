@@ -45,10 +45,10 @@
 #include "common/archive.h"
 #include "image/tga.h"
 
-#include "backends/platform/android/android.h"
-#include "backends/platform/android/events.h"
-#include "backends/platform/android/texture.h"
-#include "backends/platform/android/touchcontrols.h"
+#include "backends/platform/android3d/android.h"
+#include "backends/platform/android3d/events.h"
+#include "backends/platform/android3d/texture.h"
+#include "backends/platform/android3d/touchcontrols.h"
 
 static Common::Rect clipFor(const Common::KeyCode &cs) {
 	switch (cs) {

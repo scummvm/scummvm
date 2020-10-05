@@ -203,7 +203,7 @@
 // for the Android port
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
-#include "backends/platform/android/portdefs.h"
+#include "backends/platform/android3d/portdefs.h"
 
 #include <errno.h>	/* For ERANGE and errno. */
 #include <limits.h>	/* For *_MAX. */
