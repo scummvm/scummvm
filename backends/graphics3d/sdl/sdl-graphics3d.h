@@ -104,12 +104,6 @@ public:
 	virtual bool showMouse(bool visible) override;
 	virtual bool lockMouse(bool lock) override; // ResidualVM specific method
 
-	/**
-	 * Checks if mouse is locked or not.
-	 * Avoid to emulate a mouse movement from joystick if locked.
-	 */
-	virtual bool isMouseLocked() const override;
-
 	virtual bool saveScreenshot(const Common::String &filename) const { return false; }
 	void saveScreenshot() override;
 

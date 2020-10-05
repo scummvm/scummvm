@@ -117,13 +117,6 @@ public:
 	virtual void suggestSideTextures(Graphics::Surface *left, Graphics::Surface *right) {}
 	virtual void saveScreenshot() {}
 	virtual bool lockMouse(bool lock) { return false; }
-	/**
-	 * Checks if mouse is locked or not.
-	 * Avoid to emulate a mouse movement from joystick if locked.
-	 * A (subset) of the graphic manager's state. This is used when switching
-	 * between different SDL graphic managers at runtime.
-	 */
-	virtual bool isMouseLocked() const { return false; }
 };
 
 #endif

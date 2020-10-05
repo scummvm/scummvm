@@ -188,13 +188,6 @@ bool SdlGraphics3dManager::lockMouse(bool lock) {
 	return true;
 }
 
-bool SdlGraphics3dManager::isMouseLocked() const {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	return SDL_GetRelativeMouseMode() == SDL_TRUE;
-#else
-	return SDL_GrabMode() == SDL_GRAB_ON;
-#endif
-}
 
 bool SdlGraphics3dManager::notifyMousePosition(Common::Point &mouse) {
 	transformMouseCoordinates(mouse);
