@@ -152,6 +152,8 @@ QTextDescription::QTextDescription(const Common::U32String &desc, uint32 frame) 
 	auto textSurface = s->getSubArea(textArea);
 
 	drawText(textSurface, 0, textArea.width(), desc, 0, *font);
+
+	g_vm->videoSystem()->addDirtyRect(_rect);
 }
 
 void QTextDescription::onClick(Common::Point p) {
@@ -159,10 +161,14 @@ void QTextDescription::onClick(Common::Point p) {
 }
 
 void QTextDescription::draw() {
-	Graphics::Surface *s = g_vm->resMgr()->loadBitmap(-2);
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(6008);
-	g_vm->videoSystem()->transBlitFrom(*s, flc->getTransColor(s->format));
-	// todo dirty rects
+	QManager *resMgr = g_vm->resMgr();
+	VideoSystem *videoSys = g_vm->videoSystem();
+	Graphics::Surface *s = resMgr->loadBitmap(-2);
+	FlicDecoder *flc = resMgr->loadFlic(6008);
+
+	for (auto dirty : videoSys->rects()) {
+		videoSys->transBlitFrom(*s, dirty, dirty, flc->getTransColor(s->format));
+	}
 }
 
 QTextChoice::QTextChoice(const Common::Array<Common::U32String> &choices, uint16 color, uint16 selectedColor) {

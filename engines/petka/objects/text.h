@@ -73,6 +73,7 @@ public:
 	void draw() override;
 	void onClick(Common::Point p) override;
 	bool isInPoint(Common::Point p) override { return true; }
+	void update(int t) override {}
 };
 
 class QTextChoice : public QText {
