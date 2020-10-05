@@ -88,8 +88,6 @@ byte *GfxTinyGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	g_system->showMouse(!fullscreen);
 
-	g_system->setWindowCaption("ResidualVM: Software 3D Renderer");
-
 	_pixelFormat = buf.getFormat();
 	debug("INFO: TinyGL front buffer pixel format: %s", _pixelFormat.toString().c_str());
 	_zb = new TinyGL::FrameBuffer(screenW, screenH, buf);

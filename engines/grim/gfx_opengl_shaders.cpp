@@ -414,8 +414,6 @@ byte *GfxOpenGLS::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	g_system->showMouse(false);
 
-	g_system->setWindowCaption("ResidualVM: OpenGL Renderer with shaders");
-
 	setupZBuffer();
 	setupShaders();
 
