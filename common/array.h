@@ -441,7 +441,7 @@ protected:
 };
 
 /**
- * Doubly linked list with sorted nodes.
+ * Array with sorted nodes.
  */
 template<class T, typename CompareArgType = const void *>
 class SortedArray : public Array<T> {
