@@ -83,7 +83,6 @@ public:
 #endif
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL) override final;
 	virtual Graphics::PixelBuffer getScreenPixelBuffer() override; // ResidualVM specific method
-	virtual void suggestSideTextures(Graphics::Surface *left, Graphics::Surface *right) override; // ResidualVM specific method
 	virtual void initSizeHint(const Graphics::ModeList &modes) override final;
 	virtual int getScreenChangeID() const override final;
 

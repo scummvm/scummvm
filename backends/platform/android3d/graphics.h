@@ -97,7 +97,6 @@ public:
 	// ResidualVM specific method
 	void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d, bool isGame);
 	virtual Graphics::PixelBuffer getScreenPixelBuffer() override;
-	virtual void suggestSideTextures(Graphics::Surface *left, Graphics::Surface *right) override;
 	void updateScreenRect();
 	const GLESBaseTexture *getActiveTexture() const;
 	void clipMouse(Common::Point &p) const;

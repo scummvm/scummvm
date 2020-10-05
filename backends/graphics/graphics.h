@@ -114,7 +114,6 @@ public:
 
 	// ResidualVM specific methods:
 	virtual Graphics::PixelBuffer getScreenPixelBuffer() { return Graphics::PixelBuffer(); }
-	virtual void suggestSideTextures(Graphics::Surface *left, Graphics::Surface *right) {}
 	virtual void saveScreenshot() {}
 	virtual bool lockMouse(bool lock) { return false; }
 };

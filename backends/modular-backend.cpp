@@ -130,11 +130,6 @@ Graphics::PixelBuffer ModularGraphicsBackend::getScreenPixelBuffer() {
 	return _graphicsManager->getScreenPixelBuffer();
 }
 
-// ResidualVM specific method
-void ModularGraphicsBackend::suggestSideTextures(Graphics::Surface *left, Graphics::Surface *right) {
-	_graphicsManager->suggestSideTextures(left, right);
-}
-
 void ModularGraphicsBackend::initSize(uint w, uint h, const Graphics::PixelFormat *format ) {
 	_graphicsManager->initSize(w, h, format);
 }

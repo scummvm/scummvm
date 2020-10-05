@@ -64,8 +64,6 @@ OpenGLSdlGraphics3dManager::OpenGLSdlGraphics3dManager(SdlEventSource *eventSour
 	ConfMan.registerDefault("antialiasing", 0);
 	ConfMan.registerDefault("aspect_ratio", true);
 
-	_sideTextures[0] = _sideTextures[1] = nullptr;
-
 	// Don't start at zero so that the value is never the same as the surface graphics manager
 	_screenChangeCount = 1 << (sizeof(int) * 5 - 2);
 }
@@ -539,27 +537,6 @@ void OpenGLSdlGraphics3dManager::drawOverlay() {
 	_surfaceRenderer->restorePreviousState();
 }
 
-void OpenGLSdlGraphics3dManager::drawSideTextures() {
-	if (_fullscreen && _lockAspectRatio) {
-		_surfaceRenderer->setFlipY(true);
-
-		const Math::Vector2d nudge(1.0 / float(_overlayScreen->getWidth()), 0);
-		if (_sideTextures[0] != nullptr) {
-			float left = _gameRect.getBottomLeft().getX() - (float(_overlayScreen->getHeight()) / float(_sideTextures[0]->getHeight())) * _sideTextures[0]->getWidth() / float(_overlayScreen->getWidth());
-			Math::Rect2d leftRect(Math::Vector2d(left, 0.0), _gameRect.getBottomLeft() + nudge);
-			_surfaceRenderer->render(_sideTextures[0], leftRect);
-		}
-
-		if (_sideTextures[1] != nullptr) {
-			float right = _gameRect.getTopRight().getX() + (float(_overlayScreen->getHeight()) / float(_sideTextures[1]->getHeight())) * _sideTextures[1]->getWidth() / float(_overlayScreen->getWidth());
-			Math::Rect2d rightRect(_gameRect.getTopRight() - nudge, Math::Vector2d(right, 1.0));
-			_surfaceRenderer->render(_sideTextures[1], rightRect);
-		}
-
-		_surfaceRenderer->setFlipY(false);
-	}
-}
-
 #ifndef AMIGAOS
 OpenGL::FrameBuffer *OpenGLSdlGraphics3dManager::createFramebuffer(uint width, uint height) {
 #if !defined(USE_GLES2)
@@ -579,7 +556,6 @@ void OpenGLSdlGraphics3dManager::updateScreen() {
 		glViewport(0, 0, _overlayScreen->getWidth(), _overlayScreen->getHeight());
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		_surfaceRenderer->prepareState();
-		drawSideTextures();
 		_surfaceRenderer->render(_frameBuffer, _gameRect);
 		_surfaceRenderer->restorePreviousState();
 	}
@@ -624,19 +600,6 @@ int16 OpenGLSdlGraphics3dManager::getWidth() const {
 #pragma mark -
 #pragma mark --- Overlays ---
 #pragma mark -
-
-void OpenGLSdlGraphics3dManager::suggestSideTextures(Graphics::Surface *left, Graphics::Surface *right) {
-	delete _sideTextures[0];
-	_sideTextures[0] = nullptr;
-	delete _sideTextures[1];
-	_sideTextures[1] = nullptr;
-	if (left) {
-		_sideTextures[0] = new OpenGL::TextureGL(*left);
-	}
-	if (right) {
-		_sideTextures[1] = new OpenGL::TextureGL(*right);
-	}
-}
 
 void OpenGLSdlGraphics3dManager::showOverlay() {
 	if (_overlayVisible) {
@@ -691,10 +654,6 @@ void OpenGLSdlGraphics3dManager::grabOverlay(void *buf, int pitch) const {
 }
 
 void OpenGLSdlGraphics3dManager::closeOverlay() {
-	delete _sideTextures[0];
-	delete _sideTextures[1];
-	_sideTextures[0] = _sideTextures[1] = nullptr;
-
 	if (_overlayScreen) {
 		delete _overlayScreen;
 		_overlayScreen = nullptr;

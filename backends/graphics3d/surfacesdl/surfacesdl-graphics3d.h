@@ -72,12 +72,6 @@ public:
 	virtual int16 getOverlayHeight() const override { return _overlayscreen->h; }
 	virtual bool isOverlayVisible() const override { return _overlayVisible; }
 
-	/* Render the passed Surfaces besides the game texture.
-	 * This is used for widescreen support in the Grim engine.
-	 * Note: we must copy the Surfaces, as they are free()d after this call.
-	 */
-	virtual void suggestSideTextures(Graphics::Surface *left, Graphics::Surface *right) override;
-
 	// GraphicsManager API - Mouse
 	virtual void warpMouse(int x, int y) override;
 
@@ -113,10 +107,7 @@ protected:
 
 	Math::Rect2d _gameRect;
 
-	SDL_Surface *_sideSurfaces[2];
-
 	void drawOverlay();
-	void drawSideTextures();
 	void closeOverlay();
 
 	virtual bool saveScreenshot(const Common::String &filename) const override;

@@ -693,11 +693,6 @@ Graphics::PixelBuffer AndroidGraphicsManager::getScreenPixelBuffer() {
 	return _game_pbuf;
 }
 
-
-void AndroidGraphicsManager::suggestSideTextures(Graphics::Surface *left, Graphics::Surface *right) {
-	// TODO
-}
-
 void AndroidGraphicsManager::clipMouse(Common::Point &p) const {
 	const GLESBaseTexture *tex = getActiveTexture();
 
