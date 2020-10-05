@@ -190,8 +190,12 @@ void QSystem::toggleMapInterface() {
 
 void QSystem::setCursorAction(int action) {
 	if (getStar()->_isActive && _currInterface == _mainInterface.get()) {
-		if (action != kActionObjUseChapayev || getChapay()->_isShown)
+		if (action != kActionObjUseChapayev || getChapay()->_isShown) {
 			getCursor()->setAction(action);
+
+			// original bug fix
+			_mainInterface->onMouseMove(g_system->getEventManager()->getMousePos());
+		}
 	}
 }
 

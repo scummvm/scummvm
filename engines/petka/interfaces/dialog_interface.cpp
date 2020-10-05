@@ -74,7 +74,7 @@ void DialogInterface::initCursor() {
 	_wasCursorAnim = cursor->_animate;
 	_wasCursorShown = cursor->_isShown;
 
-	cursor->_isShown = false;
+	cursor->show(false);
 	cursor->_animate = true;
 	cursor->_resourceId = 5006;
 	cursor->_actionType = kActionTalk;
@@ -86,6 +86,12 @@ void DialogInterface::restoreCursor() {
 	cursor->_animate = _wasCursorAnim;
 	cursor->_resourceId = _savedCursorId;
 	cursor->_actionType = _savedCursorActType;
+
+	// original bug fix
+	Common::Event ev;
+	ev.type = Common::EVENT_MOUSEMOVE;
+	ev.mouse = g_system->getEventManager()->getMousePos();
+	_qsys->onEvent(ev);
 }
 
 void DialogInterface::next(int choice) {
