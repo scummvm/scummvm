@@ -30,12 +30,22 @@
 
 namespace AGDS {
 
-Animation::Animation() : _flic(), _frames(0), _loop(false), _cycles(1), _phase(0), _paused(true), _speed(100), _z(0) {
+Animation::Animation() : _flic(), _frame(), _frames(0), _loop(false), _cycles(1), _phase(0), _paused(true), _speed(100), _z(0) {
 }
 
 Animation::~Animation() {
+	freeFrame();
 	delete _flic;
 }
+
+void Animation::freeFrame() {
+	if (_frame) {
+		_frame->free();
+		delete _frame;
+		_frame = nullptr;
+	}
+}
+
 
 bool Animation::load(Common::SeekableReadStream *stream) {
 	delete _flic;
@@ -54,51 +64,59 @@ bool Animation::load(Common::SeekableReadStream *stream) {
 
 void Animation::updatePhaseVar(AGDSEngine &engine) {
 	if (!_phaseVar.empty()) {
+		int phase = engine.getGlobal(_phaseVar);
 		if (!_paused) {
-			int phase = engine.getGlobal(_phaseVar);
 			if (phase != _phase) {
 				debug("%s: animation (%s) %d setting phase var: %s", _process.c_str(), _paused? "paused": "playing", _phase, _phaseVar.c_str());
-				engine.setGlobal(_phaseVar, _phase);
+				if (!_loop && _phase + 1 == _frames)
+					engine.setGlobal(_phaseVar, -1);
+				else
+					engine.setGlobal(_phaseVar, _phase);
 				engine.reactivate(_process);
 			}
+		} else if (phase != 0) {
+			debug("%s: animation (%s) %d setting phase var: %s", _process.c_str(), _paused? "paused": "playing", _phase, _phaseVar.c_str());
+			engine.setGlobal(_phaseVar, 0);
 		}
 	}
 }
 
-void Animation::paint(AGDSEngine &engine, Graphics::Surface &backbuffer, Common::Point dst) {
-	if (_paused || _phase == -1) {
-		updatePhaseVar(engine);
+void Animation::decodeNextFrame(AGDSEngine &engine) {
+	if (_paused)
 		return;
-	}
-	if (!_phaseVar.empty() && engine.getGlobal(_phaseVar) == -2) {
-		_phase = -1;
-		updatePhaseVar(engine);
-		return;
-	}
 
-	const Graphics::Surface *frame = _flic->decodeNextFrame();
+	auto frame = _flic->decodeNextFrame();
 	if (!frame) {
 		if (!_loop && _phase >= _cycles * _frames) {
-			_phase = -1; //end of animation
 			updatePhaseVar(engine);
 			return;
 		}
-		_flic->rewind();
+		rewind();
 		frame = _flic->decodeNextFrame();
 		if (!frame)
 			error("failed decoding frame after rewind");
 	}
-
 	++_phase;
+	freeFrame();
+	_frame = engine.convertToTransparent(frame->convertTo(engine.pixelFormat(), _flic->getPalette()));
 	updatePhaseVar(engine);
+}
 
-	Graphics::TransparentSurface *c = engine.convertToTransparent(frame->convertTo(engine.pixelFormat(), _flic->getPalette()));
+void Animation::rewind() {
+	freeFrame();
+	_phase = 0;
+	_flic->rewind();
+}
+
+
+void Animation::paint(AGDSEngine &engine, Graphics::Surface &backbuffer, Common::Point dst) {
+	decodeNextFrame(engine);
 	dst += _position;
-	Common::Rect srcRect = c->getRect();
-	if (Common::Rect::getBlitRect(dst, srcRect, backbuffer.getRect()))
-		c->blit(backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect);
-	c->free();
-	delete c;
+	if (_frame) {
+		Common::Rect srcRect = _frame->getRect();
+		if (Common::Rect::getBlitRect(dst, srcRect, backbuffer.getRect()))
+			_frame->blit(backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect);
+	}
 }
 
 int Animation::width() const {

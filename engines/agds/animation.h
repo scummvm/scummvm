@@ -27,7 +27,7 @@
 #include "common/rect.h"
 
 namespace Common	{ class SeekableReadStream; }
-namespace Graphics	{ struct Surface; }
+namespace Graphics	{ struct Surface; struct TransparentSurface; }
 namespace Video		{ class FlicDecoder; }
 
 namespace AGDS {
@@ -37,6 +37,7 @@ class Object;
 
 class Animation {
 	Video::FlicDecoder *_flic;
+	Graphics::TransparentSurface *_frame;
 	int					_frames;
 	Common::Point		_position;
 	Common::String		_process;
@@ -51,6 +52,9 @@ class Animation {
 public:
 	Animation();
 	~Animation();
+
+	void freeFrame();
+	void decodeNextFrame(AGDSEngine &engine);
 
 	const Common::Point & position() const {
 		return _position;
@@ -105,10 +109,7 @@ public:
 		_paused = true;
 	}
 
-	void stop() {
-		_phase = -1;
-		_paused = true;
-	}
+	void rewind();
 
 	void speed(int speed) {
 		_speed = speed;
