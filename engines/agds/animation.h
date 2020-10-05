@@ -52,6 +52,10 @@ public:
 	Animation();
 	~Animation();
 
+	const Common::Point & position() const {
+		return _position;
+	}
+
 	void position(Common::Point position) {
 		_position = position;
 	}
@@ -62,6 +66,10 @@ public:
 
 	void phaseVar(const Common::String & phaseVar) {
 		_phaseVar = phaseVar;
+	}
+
+	const Common::String & process() const {
+		return _process;
 	}
 
 	void process(const Common::String & process) {
@@ -87,6 +95,10 @@ public:
 
 	void resume() {
 		_paused = false;
+	}
+
+	bool paused() const {
+		return _paused;
 	}
 
 	void pause() {
