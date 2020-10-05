@@ -162,10 +162,12 @@ void Process::loadAnimation() {
 		animation->phaseVar(_phaseVar);
 		animation->loop(_animationLoop);
 		animation->cycles(_animationCycles);
-		if (_animationPaused)
+		if (_phaseVar.empty()) {
+			suspend();
+		} else if (_animationPaused) {
 			animation->pause();
-		else
-			animation->play();
+			_engine->setGlobal(_phaseVar, 0);
+		}
 		_engine->getCurrentScreen()->add(animation);
 	}
 }
@@ -822,20 +824,17 @@ void Process::stub217() {
 	debug("stub217: animation? id: %d, frame: %d, soundGroup: %d", id, frame, soundGroup);
 }
 
-void Process::syncAnimationWithPhaseVar() {
+void Process::restartAnimation() {
 	Common::String phaseVar = popString();
-	debug("syncAnimationWithPhaseVar %s", phaseVar.c_str());
+	debug("restartAnimation %s", phaseVar.c_str());
 	if (phaseVar.empty()) {
 		warning("no phaseVar");
 		return;
 	}
 	Animation *animation = _engine->findAnimationByPhaseVar(phaseVar);
 	if (animation) {
-		if (_engine->getGlobal(phaseVar) == -1) {
-			debug("stopping animation...");
-			animation->stop();
-		}
-		_engine->setGlobal(phaseVar, animation->phase());
+		animation->rewind();
+		animation->updatePhaseVar(*_engine);
 	} else {
 		warning("no animation with phase var %s found", phaseVar.c_str());
 		_engine->setGlobal(phaseVar, -1);
@@ -853,13 +852,15 @@ void Process::modifyAnimationWithPhaseVar() {
 	Animation *animation = _engine->findAnimationByPhaseVar(phaseVar);
 	debug("modifyAnimationWithPhaseVar: phaseVar %s, arg %d", phaseVar.c_str(), arg);
 	if (animation) {
+		animation->resume();
 		if (arg > 0) {
 			//1, 2 stop (2 with rewind?)
-			animation->stop();
-			_engine->setGlobal(phaseVar, 0);
+			animation->freeFrame();
+			if (arg == 2) {
+				animation->rewind();
+				_engine->setGlobal(phaseVar, 0);
+			}
 		}
-		else
-			animation->resume();
 	}
 }
 
