@@ -424,16 +424,6 @@ void QSystem::onEvent(const Common::Event &event) {
 				_mainInterface->_dialog.fixCursor(); // Buggy in original
 			}
 			break;
-#if 1
-		case Common::KEYCODE_RIGHT:
-			_xOffset += 6;
-			_vm.videoSystem()->makeAllDirty();
-			break;
-		case Common::KEYCODE_LEFT:
-			_xOffset -= 6;
-			_vm.videoSystem()->makeAllDirty();
-			break;
-#endif
 		default:
 			break;
 		}
