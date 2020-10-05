@@ -27,6 +27,7 @@
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/platform/sdl/sdl.h"
 #include "backends/graphics/graphics.h"
+#include "backends/graphics3d/sdl/sdl-graphics3d.h" // ResidualVM
 #include "common/config-manager.h"
 #include "common/textconsole.h"
 #include "common/fs.h"

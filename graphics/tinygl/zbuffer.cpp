@@ -81,27 +81,46 @@ void memset_l(void *adr, int val, int count) {
 }
 
 FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelBuffer &frame_buffer) : _depthWrite(true), _enableScissor(false) {
-	int size;
-
 	this->xsize = width;
 	this->ysize = height;
 	this->cmode = frame_buffer.getFormat();
 	this->pixelbytes = this->cmode.bytesPerPixel;
 	this->linesize = (xsize * this->pixelbytes + 3) & ~3;
 
-	size = this->xsize * this->ysize * sizeof(unsigned int);
+	int size = this->xsize * this->ysize * sizeof(unsigned int);
 
 	this->_zbuf = (unsigned int *)gl_malloc(size);
 	memset(this->_zbuf, 0, size);
 
-	if (!frame_buffer) {
-		byte *pixelBuffer = (byte *)gl_malloc(this->ysize * this->linesize);
-		this->pbuf.set(this->cmode, pixelBuffer);
-		this->frame_buffer_allocated = 1;
-	} else {
-		this->frame_buffer_allocated = 0;
-		this->pbuf = frame_buffer;
-	}
+	this->frame_buffer_allocated = 0;
+	this->pbuf = frame_buffer;
+
+	this->current_texture = NULL;
+	this->shadow_mask_buf = NULL;
+
+	this->buffer.pbuf = this->pbuf.getRawBuffer();
+	this->buffer.zbuf = this->_zbuf;
+	_blendingEnabled = false;
+	_alphaTestEnabled = false;
+	_depthTestEnabled = false;
+	_depthFunc = TGL_LESS;
+}
+
+FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelFormat &format) : _depthWrite(true), _enableScissor(false) {
+	this->xsize = width;
+	this->ysize = height;
+	this->cmode = format;
+	this->pixelbytes = this->cmode.bytesPerPixel;
+	this->linesize = (xsize * this->pixelbytes + 3) & ~3;
+
+	int size = this->xsize * this->ysize * sizeof(unsigned int);
+
+	this->_zbuf = (unsigned int *)gl_malloc(size);
+	memset(this->_zbuf, 0, size);
+
+	byte *pixelBuffer = (byte *)gl_malloc(this->ysize * this->linesize);
+	this->pbuf.set(this->cmode, pixelBuffer);
+	this->frame_buffer_allocated = 1;
 
 	this->current_texture = NULL;
 	this->shadow_mask_buf = NULL;

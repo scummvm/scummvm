@@ -101,6 +101,7 @@ struct ZBufferPoint {
 
 struct FrameBuffer {
 	FrameBuffer(int xsize, int ysize, const Graphics::PixelBuffer &frame_buffer);
+	FrameBuffer(int xsize, int ysize, const Graphics::PixelFormat &format);
 	~FrameBuffer();
 
 	Buffer *genOffscreenBuffer();
