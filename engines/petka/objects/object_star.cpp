@@ -60,7 +60,7 @@ void QObjectStar::onMouseMove(Common::Point p) {
 	uint frame = (findButtonIndex(p.x - _x, p.y - _y) + 1) % 7 + 1;
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
 	if (flc && flc->getCurFrame() + 1 != (int32)frame) {
-		g_vm->videoSystem()->addDirtyRect(Common::Point(_x - g_vm->getQSystem()->_xOffset, _y), *flc);
+		g_vm->videoSystem()->addDirtyRect(Common::Point(_x, _y), *flc);
 		flc->setFrame(frame);
 	}
 }
