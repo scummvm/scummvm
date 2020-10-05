@@ -22,6 +22,7 @@
 
 #include "agds/console.h"
 #include "agds/agds.h"
+#include "agds/animation.h"
 #include "agds/object.h"
 #include "agds/process.h"
 #include "agds/screen.h"
@@ -63,10 +64,15 @@ bool Console::info(int argc, const char **argv) {
 	auto screen = _engine->getCurrentScreen();
 	if (screen) {
 		debugPrintf("screen %s:\n", screen->getName().c_str());
-		auto & children = screen->children();
-		for(auto & object : children) {
+		for(auto & object : screen->children()) {
 			auto pos = object->getPosition();
 			debugPrintf("object %s [inscene: %d] at %d,%d\n", object->getName().c_str(), object->inScene(), pos.x, pos.y);
+		}
+		for(auto & animation : screen->animations()) {
+			auto pos = animation->position();
+			debugPrintf("animation %s (process: %s, %s) at %d,%d,%d, frame: %d\n",
+				animation->phaseVar().c_str(), animation->process().c_str(), animation->paused()? "paused": "running",
+				pos.x, pos.y, animation->z(), animation->phase());
 		}
 	}
 	debugPrintf("processes:\n");

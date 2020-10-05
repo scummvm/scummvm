@@ -94,6 +94,10 @@ public:
 		return _children;
 	}
 
+	const AnimationsType & animations() const {
+		return _animations;
+	}
+
 	bool add(ObjectPtr object);
 	void add(Animation * animation) {
 		_animations.insert(animation);
