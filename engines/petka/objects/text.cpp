@@ -39,15 +39,16 @@ QText::QText(const Common::U32String &text, uint16 textColor, uint16 outlineColo
 	_resourceId = -2;
 	_z = 3000;
 
-	Common::ScopedPtr<Graphics::Font> font(Graphics::loadTTFFontFromArchive("FreeSans.ttf", 18));
-	Common::Rect rect = font->getBoundingBox(text, 0, 0, 0);
+	Common::ScopedPtr<Graphics::Font> font(Graphics::loadTTFFontFromArchive("FreeSans.ttf", 20));
+
+	Common::Rect rect = calculateBoundingBoxForText(text, *font);
 	rect.right += 10;
-	rect.bottom += 4;
+	rect.bottom += 10;
 
 	_rect = Common::Rect((640 - rect.width()) / 2, 479 - rect.height(), 639 - (640 - rect.width()) / 2, 479);
 	Graphics::Surface *s = g_vm->resMgr()->findOrCreateSurface(-2, _rect.width(), _rect.height());
-	font->drawString(s, text, 0, 0, s->w, textColor);
 
+	drawText(*s, 0, 630, text, textColor, *font);
 	drawOutline(s, outlineColor);
 }
 
@@ -145,11 +146,12 @@ QTextDescription::QTextDescription(const Common::U32String &desc, uint32 frame) 
 	convS->free();
 	delete convS;
 
-
 	Common::Rect textArea(160, 275, 598, 376);
 	Common::ScopedPtr<Graphics::Font> font(Graphics::loadTTFFontFromArchive("FreeSans.ttf", 16));
 
-	font->drawString(s, desc, textArea.left, textArea.top, textArea.width(), 0);
+	auto textSurface = s->getSubArea(textArea);
+
+	drawText(textSurface, 0, textArea.width(), desc, 0, *font);
 }
 
 void QTextDescription::onClick(Common::Point p) {
@@ -171,16 +173,17 @@ QTextChoice::QTextChoice(const Common::Array<Common::U32String> &choices, uint16
 
 	int w = 0;
 	int h = 0;
-	Common::ScopedPtr<Graphics::Font> font(Graphics::loadTTFFontFromArchive("FreeSans.ttf", 18));
+
+	Common::ScopedPtr<Graphics::Font> font(Graphics::loadTTFFontFromArchive("FreeSans.ttf", 20));
 	_rects.resize(choices.size());
 	for (uint i = 0; i < _choices.size(); ++i) {
-		_rects[i] = font->getBoundingBox(_choices[i]);
-		_rects[i].bottom += 5;
-		_rects[i].right += 15;
-		if (_rects[i].width() > w)
-			w = _rects[i].width();
+		_rects[i] = calculateBoundingBoxForText(_choices[i], *font);
+		w = MAX<int>(w, _rects[i].width());
 		h += _rects[i].height();
 	}
+
+	w += 10;
+	h += 5;
 
 	_rect = Common::Rect((640 - w) / 2, 479 - h, 639 - (640 - w) / 2, 479);
 
@@ -188,7 +191,8 @@ QTextChoice::QTextChoice(const Common::Array<Common::U32String> &choices, uint16
 
 	int y = 0;
 	for (uint i = 0; i < _choices.size(); ++i) {
-		font->drawString(s, _choices[i], 0, y, s->w, color);
+		drawText(*s, y, 630, _choices[i], _choiceColor, *font);
+
 		_rects[i].moveTo(0, y);
 		y += _rects[i].height();
 	}
@@ -206,15 +210,12 @@ void QTextChoice::onMouseMove(Common::Point p) {
 
 	if (newChoice != _activeChoice) {
 		Graphics::Surface *s = g_vm->resMgr()->loadBitmap(-2);
-		Common::ScopedPtr<Graphics::Font> font(Graphics::loadTTFFontFromArchive("FreeSans.ttf", 18));
+		Common::ScopedPtr<Graphics::Font> font(Graphics::loadTTFFontFromArchive("FreeSans.ttf", 20));
 
 		s->fillRect(Common::Rect(s->w, s->h), 0);
 		for (uint i = 0; i < _choices.size(); ++i) {
-			if (i == newChoice) {
-				font->drawString(s, _choices[newChoice], _rects[newChoice].left, _rects[newChoice].top, s->w, _selectedColor);
-			} else {
-				font->drawString(s, _choices[i], _rects[i].left, _rects[i].top, s->w, _choiceColor);
-			}
+			uint color = (i == newChoice) ? _selectedColor : _choiceColor;
+			drawText(*s, _rects[i].top, 630, _choices[i], color, *font);
 		}
 
 		_activeChoice = newChoice;
@@ -224,6 +225,35 @@ void QTextChoice::onMouseMove(Common::Point p) {
 void QTextChoice::onClick(Common::Point p) {
 	if (_activeChoice < _choices.size()) {
 		g_vm->getQSystem()->_mainInterface->_dialog.next(_activeChoice);
+	}
+}
+
+Common::Rect QText::calculateBoundingBoxForText(const Common::U32String &text, Graphics::Font &font) {
+	if (text.empty())
+		return {};
+
+	Common::Array<Common::U32String> lines;
+	font.wordWrapText(text, 630, lines);
+
+	Common::Rect rect = font.getBoundingBox(lines[0]);
+	for (uint j = 1; j < lines.size(); ++j) {
+		auto box = font.getBoundingBox(lines[j]);
+		rect.setHeight(rect.height() + box.height());
+		if (box.width() > rect.width())
+			rect.setWidth(box.width());
+	}
+
+	return rect;
+}
+
+void QText::drawText(Graphics::Surface &s, int y, int maxWidth, const Common::U32String &text, uint color, Graphics::Font &font) {
+	Common::Array<Common::U32String> lines;
+	font.wordWrapText(text, maxWidth, lines);
+
+	int h = 0;
+	for (uint i = 0; i < lines.size(); ++i) {
+		font.drawString(&s, lines[i], 0, y + h, s.w, color);
+		h += font.getBoundingBox(lines[i]).height();
 	}
 }
 
