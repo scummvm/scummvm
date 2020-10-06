@@ -84,7 +84,7 @@ Sound *SoundMgr::addSound(const Common::String &name, Audio::Mixer::SoundType ty
 	Common::SeekableReadStream *s = _vm.openFile(name, false);
 	if (s) {
 		debug("SoundMgr: added sound %s", name.c_str());
-		sound = new Sound(_vm.openFile(name, false), type);
+		sound = new Sound(s, type);
 		_sounds.getVal(name).reset(sound);
 	}
 	return sound;
