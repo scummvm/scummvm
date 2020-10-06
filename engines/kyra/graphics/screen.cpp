@@ -3879,7 +3879,7 @@ void Palette::loadEGAPalette(Common::ReadStream &stream, int startIndex, int col
 void Palette::setCGAPalette(int palIndex, CGAIntensity intensity) {
 	assert(_numColors >= _cgaNumColors);
 	assert(!(palIndex & ~1));
-	memcpy(_palData, _cgaColors[palIndex * 2 + intensity], _numColors * 3);
+	memcpy(_palData, _cgaColors[palIndex * 2 + intensity], _cgaNumColors * 3);
 }
 
 void Palette::loadAmigaPalette(Common::ReadStream &stream, int startIndex, int colors) {
