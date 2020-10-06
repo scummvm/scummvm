@@ -15,6 +15,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Supernova:
    - Added Italian translation for part 1.
 
+ Sword25:
+   - Made the extracted version working.
+
  Xeen:
    - Fixed occasional border corruption during fights.
 
