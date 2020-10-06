@@ -33,6 +33,7 @@
 // TODO: Complete refactor
 
 #include "common/textconsole.h"
+#include "common/config-manager.h"
 
 namespace ICB {
 
@@ -53,10 +54,11 @@ Common::String ConfigFile::readSetting(const Common::String &section, const Comm
 }
 
 void ConfigFile::readFile(const Common::String &filename) {
+	Common::String path = ConfMan.get("path") + "/" + filename;
 	std::string currentSection = "";
-	std::ifstream file(filename.c_str());
+	std::ifstream file(path.c_str());
 	if (!file.is_open() || file.fail()) {
-		// assert(0);
+		assert(0);
 	}
 
 	std::string line;
