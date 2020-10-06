@@ -33,6 +33,8 @@
 #include "math/matrix4.h"
 #include "math/ray.h"
 
+#if defined(USE_OPENGL) && !defined(USE_GLES2)
+
 namespace Wintermute {
 
 class BaseSurfaceOpenGL3D;
@@ -151,5 +153,7 @@ private:
 };
 
 } // wintermute namespace
+
+#endif // defined(USE_OPENGL) && !defined(USE_GLES2)
 
 #endif

@@ -28,10 +28,13 @@
 
 
 #include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/gfx/opengl/render_ticket.h"
-#include "engines/wintermute/base/gfx/opengl/base_surface_opengl_texture.h"
 #include "graphics/transform_tools.h"
 #include "common/textconsole.h"
+
+#if defined(USE_OPENGL) && !defined(USE_GLES2)
+
+#include "engines/wintermute/base/gfx/opengl/render_ticket.h"
+#include "engines/wintermute/base/gfx/opengl/base_surface_opengl_texture.h"
 
 namespace Wintermute {
 
@@ -204,3 +207,5 @@ void RenderTicketOpenGL::drawToSurface(Graphics::Surface *_targetSurface, Common
 }
 
 } // End of namespace Wintermute
+
+#endif // defined(USE_OPENGL) && !defined(USE_GLES2)

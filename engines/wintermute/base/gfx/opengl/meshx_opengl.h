@@ -31,6 +31,8 @@
 
 #include "engines/wintermute/base/gfx/x/meshx.h"
 
+#if defined(USE_OPENGL) && !defined(USE_GLES2)
+
 namespace Wintermute {
 
 class MeshXOpenGL : public MeshX {
@@ -42,5 +44,7 @@ public:
 };
 
 } // namespace Wintermute
+
+#endif // defined(USE_OPENGL) && !defined(USE_GLES2)
 
 #endif

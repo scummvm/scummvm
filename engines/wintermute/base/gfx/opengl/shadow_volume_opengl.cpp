@@ -27,10 +27,13 @@
  */
 
 #include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
-#include "engines/wintermute/base/gfx/opengl/shadow_volume_opengl.h"
 #include "engines/wintermute/dcgf.h"
 #include "graphics/opengl/system_headers.h"
+
+#if defined(USE_OPENGL) && !defined(USE_GLES2)
+
+#include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
+#include "engines/wintermute/base/gfx/opengl/shadow_volume_opengl.h"
 
 namespace Wintermute {
 
@@ -45,9 +48,9 @@ ShadowVolumeOpenGL::~ShadowVolumeOpenGL() {
 //////////////////////////////////////////////////////////////////////////
 bool ShadowVolumeOpenGL::render() {
 	glBindTexture(GL_TEXTURE_2D, 0);
-#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#if defined(USE_OPENGL_SHADERS)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-#endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#endif // defined(USE_OPENGL_SHADERS)
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
@@ -123,9 +126,9 @@ bool ShadowVolumeOpenGL::renderToScene() {
 	_gameRef->_renderer3D->setProjection2D();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
-#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#if defined(USE_OPENGL_SHADERS)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-#endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#endif // defined(USE_OPENGL_SHADERS)
 
 	glEnableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_VERTEX_ARRAY);
@@ -184,3 +187,6 @@ bool ShadowVolumeOpenGL::initMask() {
 }
 
 } // namespace Wintermute
+
+#endif // defined(USE_OPENGL) && !defined(USE_GLES2)
+

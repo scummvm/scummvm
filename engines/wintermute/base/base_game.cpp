@@ -511,10 +511,18 @@ bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 	}
 #endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 #if defined(USE_OPENGL) && !defined(USE_GLES2)
-	if (desiredRendererType == Graphics::kRendererTypeOpenGLShaders) {
+	if (desiredRendererType == Graphics::kRendererTypeOpenGL) {
 		_renderer3D = makeOpenGL3DRenderer(this);
 	}
 #endif // defined(USE_OPENGL) && !defined(USE_GLES2)
+	if (desiredRendererType == Graphics::kRendererTypeTinyGL) {
+		// TODO
+		//_renderer3D = makeTinyGL3DRenderer(this);
+	}
+	if (!_renderer3D) {
+		error("Unable to create a 3D renderer");
+		return STATUS_FAILED;
+	}
 
 	_renderer = _renderer3D;
 #else

@@ -31,6 +31,8 @@
 
 #include "engines/wintermute/base/gfx/shadow_volume.h"
 
+#if defined(USE_OPENGL) && !defined(USE_GLES2)
+
 namespace Wintermute {
 
 class ShadowVolumeOpenGL : public ShadowVolume {
@@ -48,5 +50,7 @@ private:
 };
 
 } // namespace Wintermute
+
+#endif // defined(USE_OPENGL) && !defined(USE_GLES2)
 
 #endif

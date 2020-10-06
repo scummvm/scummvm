@@ -26,6 +26,8 @@
 #include "engines/wintermute/base/gfx/base_surface.h"
 #include "graphics/opengl/texture.h"
 
+#if defined(USE_OPENGL) && !defined(USE_GLES2)
+
 namespace Wintermute {
 
 class BaseGame;
@@ -72,6 +74,8 @@ private:
 	uint _texHeight;
 };
 
-}
+} // End of namespace Wintermute
+
+#endif // defined(USE_OPENGL) && !defined(USE_GLES2)
 
 #endif

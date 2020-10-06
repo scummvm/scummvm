@@ -35,6 +35,8 @@
 #include "common/list.h"
 #include "graphics/transform_struct.h"
 
+#if defined(USE_OPENGL) && !defined(USE_GLES2)
+
 namespace Wintermute {
 class BaseSurfaceOpenGLTexture;
 class RenderTicketOpenGL;
@@ -156,5 +158,7 @@ private:
 };
 
 } // End of namespace Wintermute
+
+#endif // defined(USE_OPENGL) && !defined(USE_GLES2)
 
 #endif

@@ -29,8 +29,6 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/gfx/opengl/base_surface_opengl_texture.h"
-#include "engines/wintermute/base/gfx/opengl/base_render_opengl_texture.h"
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "graphics/transparent_surface.h"
@@ -39,6 +37,11 @@
 #include "graphics/surface.h"
 #include "common/stream.h"
 #include "common/system.h"
+
+#if defined(USE_OPENGL) && !defined(USE_GLES2)
+
+#include "engines/wintermute/base/gfx/opengl/base_surface_opengl_texture.h"
+#include "engines/wintermute/base/gfx/opengl/base_render_opengl_texture.h"
 
 namespace Wintermute {
 
@@ -483,3 +486,5 @@ bool BaseSurfaceOpenGLTexture::putSurface(const Graphics::Surface &surface, bool
 }
 
 } // End of namespace Wintermute
+
+#endif // defined(USE_OPENGL) && !defined(USE_GLES2)

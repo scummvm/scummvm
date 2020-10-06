@@ -20,9 +20,12 @@
  *
  */
 
-#include "engines/wintermute/base/gfx/opengl/mesh3ds_opengl.h"
 #include "engines/wintermute/wintypes.h"
 #include "graphics/opengl/system_headers.h"
+
+#if defined(USE_OPENGL) && !defined(USE_GLES2)
+
+#include "engines/wintermute/base/gfx/opengl/mesh3ds_opengl.h"
 
 namespace Wintermute {
 
@@ -47,3 +50,5 @@ void Mesh3DSOpenGL::render() {
 }
 
 } // namespace Wintermute
+
+#endif // defined(USE_OPENGL) && !defined(USE_GLES2)

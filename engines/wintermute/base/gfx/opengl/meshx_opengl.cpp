@@ -26,10 +26,13 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-#include "engines/wintermute/base/gfx/opengl/base_surface_opengl3d.h"
-#include "engines/wintermute/base/gfx/opengl/meshx_opengl.h"
 #include "engines/wintermute/base/gfx/x/material.h"
 #include "graphics/opengl/system_headers.h"
+
+#if defined(USE_OPENGL) && !defined(USE_GLES2)
+
+#include "engines/wintermute/base/gfx/opengl/base_surface_opengl3d.h"
+#include "engines/wintermute/base/gfx/opengl/meshx_opengl.h"
 
 namespace Wintermute {
 
@@ -55,9 +58,9 @@ bool MeshXOpenGL::render(ModelX *model) {
 		glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, _materials[materialIndex]->_emissive.data);
 		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, _materials[materialIndex]->_shininess);
 
-#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#if defined(USE_OPENGL_SHADERS)
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
-#endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#endif // defined(USE_OPENGL_SHADERS)
 
 		if (_materials[materialIndex]->getSurface()) {
 			glEnable(GL_TEXTURE_2D);
@@ -78,3 +81,5 @@ bool MeshXOpenGL::render(ModelX *model) {
 }
 
 } // namespace Wintermute
+
+#endif // defined(USE_OPENGL) && !defined(USE_GLES2)

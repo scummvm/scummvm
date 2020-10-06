@@ -25,6 +25,8 @@
 
 #include "engines/wintermute/base/gfx/3ds/mesh3ds.h"
 
+#if defined(USE_OPENGL) && !defined(USE_GLES2)
+
 namespace Wintermute {
 
 class Mesh3DSOpenGL : public Mesh3DS {
@@ -36,5 +38,7 @@ public:
 };
 
 } // namespace Wintermute
+
+#endif // defined(USE_OPENGL) && !defined(USE_GLES2)
 
 #endif

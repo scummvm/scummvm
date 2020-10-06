@@ -33,6 +33,8 @@
 #include "graphics/surface.h"
 #include "common/rect.h"
 
+#if defined(USE_OPENGL) && !defined(USE_GLES2)
+
 namespace Wintermute {
 
 class BaseSurfaceOpenGLTexture;
@@ -76,5 +78,7 @@ private:
 };
 
 } // End of namespace Wintermute
+
+#endif // defined(USE_OPENGL) && !defined(USE_GLES2)
 
 #endif

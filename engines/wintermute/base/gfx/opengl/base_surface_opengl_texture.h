@@ -34,6 +34,8 @@
 #include "engines/wintermute/base/gfx/base_surface.h"
 #include "common/list.h"
 
+#if defined(USE_OPENGL) && !defined(USE_GLES2)
+
 namespace Wintermute {
 struct TransparentSurface;
 class BaseImage;
@@ -110,5 +112,7 @@ private:
 };
 
 } // End of namespace Wintermute
+
+#endif // defined(USE_OPENGL) && !defined(USE_GLES2)
 
 #endif
