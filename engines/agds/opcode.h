@@ -140,7 +140,7 @@ enum Opcode {
 	kStub120						= 120,
 	kStub121						= 121,
 	kPlayerSay						= 122,
-	kStub123						= 123,
+	kNPCSayNoSound					= 123,
 	kNPCSay							= 124,
 	kStub125						= 125,
 	kStub126						= 126,
@@ -358,6 +358,7 @@ enum Opcode {
 	OP(kSetAnimationPaused, setAnimationPaused) \
 	OP(kPlayerSay, playerSay) \
 	OP(kNPCSay, npcSay) \
+	OP(kNPCSayNoSound, npcSayNoSound) \
 	OP(kSetTimer, setTimer) \
 	OP(kProcessResetState, resetState) \
 	OP(kSetAnimationZ, setAnimationZ) \
