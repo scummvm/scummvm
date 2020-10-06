@@ -973,8 +973,7 @@ void Process::setDialogForNextFilm() {
 	debug("setDialogForNextFilm %d", value);
 }
 
-void Process::tell(bool npc) {
-	Common::String sound = popText();
+void Process::tell(bool npc, const Common::String &sound) {
 	Common::String text = popText();
 	Common::String region = popString();
 	debug("%s '%s' '%s' '%s'", npc? "npcSay": "playerSay", region.c_str(), text.c_str(), sound.c_str());
@@ -986,11 +985,15 @@ void Process::tell(bool npc) {
 }
 
 void Process::npcSay() {
+	tell(true, popText());
+}
+
+void Process::npcSayNoSound() {
 	tell(true);
 }
 
 void Process::playerSay() {
-	tell(false);
+	tell(false, popText());
 }
 
 void Process::loadDialog() {

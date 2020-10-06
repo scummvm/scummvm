@@ -118,7 +118,8 @@ private:
 		AGDS_PROCESS_METHOD_U, AGDS_PROCESS_METHOD_UD, AGDS_PROCESS_METHOD_UU)
 
 	void moveCharacter(bool usermove);
-	void tell(bool npc);
+	void tell(bool npc, const Common::String &sound);
+	void tell(bool npc) { tell(npc, Common::String()); }
 
 	Common::String getCloneVarName(const Common::String & arg1, const Common::String & arg2);
 
