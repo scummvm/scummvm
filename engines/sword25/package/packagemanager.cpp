@@ -57,7 +57,8 @@ static Common::String normalizePath(const Common::String &path, const Common::St
 PackageManager::PackageManager(Kernel *pKernel) : Service(pKernel),
 	_currentDirectory(PATH_SEPARATOR),
 	_rootFolder(ConfMan.get("path")),
-	_useEnglishSpeech(ConfMan.getBool("english_speech")) {
+	_useEnglishSpeech(ConfMan.getBool("english_speech")),
+	_extractedFiles(false) {
 	if (!registerScriptBindings())
 		error("Script bindings could not be registered.");
 	else
@@ -142,7 +143,7 @@ bool PackageManager::loadPackage(const Common::String &fileName, const Common::S
 
 bool PackageManager::loadDirectoryAsPackage(const Common::String &directoryName, const Common::String &mountPosition) {
 	Common::FSNode directory(directoryName);
-	Common::Archive *folderArchive = new Common::FSDirectory(directory, 6);
+	Common::Archive *folderArchive = new Common::FSDirectory(directory, 6, false, false, true);
 	if (!directory.exists() || (folderArchive == NULL)) {
 		error("Unable to mount directory \"%s\" to \"%s\".", directoryName.c_str(), mountPosition.c_str());
 		return false;
@@ -154,6 +155,9 @@ bool PackageManager::loadDirectoryAsPackage(const Common::String &directoryName,
 		debug(0, "Capacity %d", files.size());
 
 		_archiveList.push_front(new ArchiveEntry(folderArchive, mountPosition));
+
+		_extractedFiles = true;
+		_directoryName = directoryName;
 
 		return true;
 	}
@@ -270,20 +274,37 @@ int PackageManager::doSearch(Common::ArchiveMemberList &list, const Common::Stri
 
 		// Create a list of the matching names
 		for (Common::ArchiveMemberList::iterator it = memberList.begin(); it != memberList.end(); ++it) {
-			if (((typeFilter & PackageManager::FT_DIRECTORY) && (*it)->getName().hasSuffix("/")) ||
-				((typeFilter & PackageManager::FT_FILE) && !(*it)->getName().hasSuffix("/"))) {
+			Common::String name;
+			bool matchType;
+
+			// FSNode->getName() returns only name of the file, without the directory
+			// getPath() returns full path in the FS. Thus, we're getting it and
+			// removing the root from it.
+			if (_extractedFiles) {
+				Common::FSNode *node = (Common::FSNode *)(it->get());
+
+				name = node->getPath().substr(_directoryName.size());
+
+				matchType = (((typeFilter & PackageManager::FT_DIRECTORY) && node->isDirectory()) ||
+					((typeFilter & PackageManager::FT_FILE) && !node->isDirectory()));
+			} else {
+				matchType = ((typeFilter & PackageManager::FT_DIRECTORY) && name.hasSuffix("/")) ||
+				((typeFilter & PackageManager::FT_FILE) && !name.hasSuffix("/"));
+			}
+
+			if (matchType) {
 
 				// Do not add duplicate files
 				bool found = false;
 				for (Common::ArchiveMemberList::iterator it1 = list.begin(); it1 != list.end(); ++it1) {
-					if ((*it1)->getName() == (*it)->getName()) {
+					if ((*it1)->getName() == name) {
 						found = true;
 						break;
 					}
 				}
 
 				if (!found)
-					list.push_back(*it);
+					list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(name, (*i)->archive)));
 				num++;
 			}
 		}
