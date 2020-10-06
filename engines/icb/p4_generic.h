@@ -29,10 +29,8 @@
 #define INCLUDED_P4_GENERIC_H
 
 #include "engines/icb/common/px_rccommon.h"
-
-#include "p4.h"
-
-#include "p4_generic_pc.h"
+#include "engines/icb/p4.h"
+#include "engines/icb/p4_generic_pc.h"
 
 namespace ICB {
 

@@ -27,28 +27,23 @@
 
 #include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_common.h"
-
-#include "p4.h"
-
-#include "p4_generic.h"
-#include "debug.h"
-#include "mission.h"
-#include "direct_input.h"
-#include "global_objects.h"
-#include "global_objects_psx.h"
-#include "p4.h"
-#include "actor.h"
-#include "actor_pc.h"
-#include "drawpoly_pc.h"
-
+#include "engines/icb/p4.h"
+#include "engines/icb/p4_generic.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/mission.h"
+#include "engines/icb/direct_input.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/global_objects_psx.h"
+#include "engines/icb/p4.h"
+#include "engines/icb/actor.h"
+#include "engines/icb/actor_pc.h"
+#include "engines/icb/drawpoly_pc.h"
 #include "engines/icb/common/px_capri_maths.h"
-
 #include "engines/icb/gfx/gfxstub.h"
 #include "engines/icb/gfx/gfxstub_dutch.h"
 #include "engines/icb/gfx/gfxstub_rev_dutch.h"
-
-#include "actor_view_pc.h"
-#include "res_man.h"
+#include "engines/icb/actor_view_pc.h"
+#include "engines/icb/res_man.h"
 
 #include "common/keyboard.h"
 

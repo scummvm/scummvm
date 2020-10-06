@@ -25,12 +25,12 @@
  *
  */
 
-#include "remora.h"
-#include "line_of_sight.h"
-#include "sound.h"
-#include "global_switches.h"
-#include "custom_logics.h"
-#include "mission.h"
+#include "engines/icb/remora.h"
+#include "engines/icb/line_of_sight.h"
+#include "engines/icb/sound.h"
+#include "engines/icb/global_switches.h"
+#include "engines/icb/custom_logics.h"
+#include "engines/icb/mission.h"
 
 #include "common/stream.h"
 

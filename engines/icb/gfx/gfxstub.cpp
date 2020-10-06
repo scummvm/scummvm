@@ -25,8 +25,8 @@
  *
  */
 
-#include "gfxstub.h"
-#include "psx_scrn.h"
+#include "engines/icb/gfx/gfxstub.h"
+#include "engines/icb/gfx/psx_scrn.h"
 
 namespace ICB {
 

@@ -29,13 +29,13 @@
 
 #include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_common.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/global_vars.h"
+#include "engines/icb/global_switches.h"
+#include "engines/icb/mission.h"
+#include "engines/icb/mission_functions.h"
+#include "engines/icb/res_man.h"
 
-#include "global_objects.h"
-#include "global_vars.h"
-#include "global_switches.h"
-#include "mission.h"
-#include "mission_functions.h"
-#include "res_man.h"
 #include "common/textconsole.h"
 
 namespace ICB {

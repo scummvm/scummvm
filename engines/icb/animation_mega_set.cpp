@@ -26,23 +26,21 @@
  */
 
 #include "engines/icb/common/px_rccommon.h"
-
-#include "global_switches.h"
-#include "session.h"
-#include "animation_mega_set.h"
-#include "object_structs.h"
-#include "debug.h"
-#include "p4_generic.h"
-#include "mission.h"
-#include "p4.h"
-#include "player.h"
-
-#include "global_objects.h"
-#include "floors.h"
+#include "engines/icb/global_switches.h"
+#include "engines/icb/session.h"
+#include "engines/icb/animation_mega_set.h"
+#include "engines/icb/object_structs.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/p4_generic.h"
+#include "engines/icb/mission.h"
+#include "engines/icb/p4.h"
+#include "engines/icb/player.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/floors.h"
 #include "engines/icb/common/px_scriptengine.h"
 #include "engines/icb/common/px_floor_map.h"
 #include "engines/icb/common/px_features.h"
-#include "res_man.h"
+#include "engines/icb/res_man.h"
 
 #include "common/util.h"
 

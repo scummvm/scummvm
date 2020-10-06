@@ -25,9 +25,9 @@
  *
  */
 
-#include "event_manager.h"
-#include "global_objects.h"
-#include "mission.h"
+#include "engines/icb/event_manager.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/mission.h"
 
 #include "common/stream.h"
 

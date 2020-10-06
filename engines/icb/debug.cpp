@@ -25,25 +25,20 @@
  *
  */
 
-#include "p4.h"
-
-#include "p4_generic.h"
-
-#include "direct_input.h"
-#include "keyboard.h"
-
-#include "debug.h"
-#include "global_objects.h"
-#include "global_switches.h"
-#include "session.h"
-#include "p4_generic.h"
-#include "mouse.h"
-
+#include "engines/icb/p4.h"
+#include "engines/icb/p4_generic.h"
+#include "engines/icb/direct_input.h"
+#include "engines/icb/keyboard.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/global_switches.h"
+#include "engines/icb/session.h"
+#include "engines/icb/p4_generic.h"
+#include "engines/icb/mouse.h"
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_string.h"
 #include "engines/icb/common/px_array.h"
-
-#include "text.h"
+#include "engines/icb/text.h"
 
 namespace ICB {
 

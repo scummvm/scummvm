@@ -25,29 +25,23 @@
  *
  */
 
-#ifdef _WIN32
-#include <direct.h>
-#endif
-
 #include "engines/icb/common/px_common.h"
-
-#include "mission.h"
-#include "global_objects.h"
-#include "global_switches.h"
-
-#include "direct_input.h"
-#include "p4.h"
-#include "remora.h"
-#include "icon_list_manager.h"
-#include "sound.h"
-#include "string_vest.h"
-#include "sound_logic.h"
-#include "timer_func.h"
-#include "mission_functions.h"
+#include "engines/icb/mission.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/global_switches.h"
+#include "engines/icb/direct_input.h"
+#include "engines/icb/p4.h"
+#include "engines/icb/remora.h"
+#include "engines/icb/icon_list_manager.h"
+#include "engines/icb/sound.h"
+#include "engines/icb/string_vest.h"
+#include "engines/icb/sound_logic.h"
+#include "engines/icb/timer_func.h"
+#include "engines/icb/mission_functions.h"
 #include "engines/icb/common/datapacker.h"
-#include "res_man.h"
-#include "options_manager_pc.h"
-#include "cluster_manager_pc.h"
+#include "engines/icb/res_man.h"
+#include "engines/icb/options_manager_pc.h"
+#include "engines/icb/cluster_manager_pc.h"
 
 #include "common/util.h"
 #include "common/textconsole.h"

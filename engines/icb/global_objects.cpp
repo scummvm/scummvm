@@ -26,8 +26,8 @@
  */
 
 // global objects are in here - this makes it easier to see what there is
-#include "global_objects.h"
-#include "sound_logic.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/sound_logic.h"
 
 namespace ICB {
 

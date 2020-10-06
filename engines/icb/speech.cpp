@@ -36,9 +36,7 @@
 #include "engines/icb/mission.h"
 #include "engines/icb/sound_lowlevel.h"
 #include "engines/icb/res_man.h"
-
 #include "engines/icb/common/ptr_util.h"
-
 #include "engines/icb/sound/music_manager.h"
 
 namespace ICB {

@@ -2,7 +2,6 @@
 #define __JPEG_H
 
 #include "engines/icb/common/px_common.h"
-#include <stdio.h>
 
 namespace ICB {
 

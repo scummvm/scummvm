@@ -25,9 +25,9 @@
  *
  */
 
-#include "icon_list_manager.h"
-#include "global_objects.h"
-#include "mission.h"
+#include "engines/icb/icon_list_manager.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/mission.h"
 
 namespace ICB {
 

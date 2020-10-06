@@ -25,18 +25,18 @@
  *
  */
 
-#include "p4.h"
-#include "remora.h"
-#include "surface_manager.h"
-#include "global_objects.h"
-#include "sound.h"
+#include "engines/icb/p4.h"
+#include "engines/icb/remora.h"
+#include "engines/icb/surface_manager.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/sound.h"
 #include "engines/icb/sound/music_manager.h"
-#include "direct_input.h"
-#include "res_man.h"
-#include "floors.h"
-#include "mission.h"
-
+#include "engines/icb/direct_input.h"
+#include "engines/icb/res_man.h"
+#include "engines/icb/floors.h"
+#include "engines/icb/mission.h"
 #include "engines/icb/icb.h"
+
 #include "common/util.h"
 
 namespace ICB {

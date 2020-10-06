@@ -26,8 +26,8 @@
  */
 
 #include "engines/icb/common/px_common.h"
-#include "global_objects.h"
-#include "p4_generic_pc.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/p4_generic_pc.h"
 
 namespace ICB {
 

@@ -35,14 +35,12 @@
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_bitmap.h"
 #include "engines/icb/common/px_mapfile.h"
-
-#include "p4.h"
-#include "debug.h"
-#include "player.h"
-#include "global_objects.h"
-#include "remora_sprite.h"
-
-#include "icon_list_manager.h"
+#include "engines/icb/p4.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/player.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/remora_sprite.h"
+#include "engines/icb/icon_list_manager.h"
 
 namespace ICB {
 

@@ -29,7 +29,6 @@
 #define __DIRECT_SOUND_H__
 
 #include "engines/icb/common/px_common.h"
-
 #include "engines/icb/common/px_types.h"
 
 namespace ICB {

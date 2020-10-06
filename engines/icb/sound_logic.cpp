@@ -29,6 +29,7 @@
 #include "engines/icb/global_objects.h"
 #include "engines/icb/sound.h"
 #include "engines/icb/floors.h"
+
 #include "common/util.h"
 
 namespace ICB {

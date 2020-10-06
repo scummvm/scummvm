@@ -26,10 +26,9 @@
  */
 
 #include "engines/icb/common/px_common.h"
-
-#include "surface_manager.h"
-#include "global_objects.h"
-#include "graphic_prims.h"
+#include "engines/icb/surface_manager.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/graphic_prims.h"
 
 namespace ICB {
 

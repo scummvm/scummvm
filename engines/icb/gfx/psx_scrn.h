@@ -28,12 +28,11 @@
 #ifndef PSX_SCRN_H
 #define PSX_SCRN_H
 
-#include "psx_pcgpu.h"
+#include "engines/icb/gfx/psx_pcgpu.h"
 #include "engines/icb/gfx/psx_pcdefines.h"
-
 #include "engines/icb/common/px_assert.h"
 #include "engines/icb/common/px_maths.h"
-#include "psx_ot.h"
+#include "engines/icb/gfx/psx_ot.h"
 
 namespace ICB {
 

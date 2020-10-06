@@ -28,13 +28,13 @@
 #ifndef PSX_PROPS_H
 #define PSX_PROPS_H
 
-#include "psx_pcdefines.h"
+#include "engines/icb/gfx/psx_pcdefines.h"
 
 #define PSXPL_SCHEMA 4
 #define PSXPL_ID "PLF"
 
-#include "psx_zlayers.h"
-#include "psx_bg.h"
+#include "engines/icb/gfx/psx_zlayers.h"
+#include "engines/icb/gfx/psx_bg.h"
 #include "engines/icb/common/px_bitmap_psx.h"
 
 namespace ICB {

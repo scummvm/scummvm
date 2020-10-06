@@ -25,7 +25,7 @@
  *
  */
 
-#include "psx_pcdefines.h"
+#include "engines/icb/gfx/psx_pcdefines.h"
 
 namespace ICB {
 

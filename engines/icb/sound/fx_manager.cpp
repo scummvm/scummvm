@@ -26,11 +26,11 @@
  */
 
 #include "engines/icb/sound/fx_manager.h"
-
 #include "engines/icb/p4.h"
 #include "engines/icb/res_man_pc.h"
 #include "engines/icb/sound/sound_common.h"
 #include "engines/icb/icb.h"
+
 #include "common/textconsole.h"
 
 #include "audio/decoders/wave.h"

@@ -26,7 +26,6 @@
  */
 
 #include "engines/icb/common/px_common.h"
-#include <cstring>
 #include "engines/icb/p4.h"
 #include "engines/icb/zsupport.h"
 #include "engines/icb/res_man_pc.h"

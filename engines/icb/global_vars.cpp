@@ -25,26 +25,22 @@
  *
  */
 
-#include "p4.h"
-
+#include "engines/icb/p4.h"
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_globalvariables.h"
 #include "engines/icb/common/px_scriptengine.h"
-
-#include <cstring>
-
-#include "session.h"
-#include "mission.h"
-#include "object_structs.h"
-#include "global_objects.h"
-#include "debug.h"
-#include "res_man.h"
-#include "movie_pc.h"
-#include "cluster_manager_pc.h"
-#include "sound_logic.h"
-#include "options_manager_pc.h"
-#include "floors.h"
-#include "remora.h"
+#include "engines/icb/session.h"
+#include "engines/icb/mission.h"
+#include "engines/icb/object_structs.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/res_man.h"
+#include "engines/icb/movie_pc.h"
+#include "engines/icb/cluster_manager_pc.h"
+#include "engines/icb/sound_logic.h"
+#include "engines/icb/options_manager_pc.h"
+#include "engines/icb/floors.h"
+#include "engines/icb/remora.h"
 
 namespace ICB {
 

@@ -25,10 +25,10 @@
  *
  */
 
-#include "remora_sprite.h"
-#include "global_objects.h"
-#include "res_man.h"
-#include "remora.h"
+#include "engines/icb/remora_sprite.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/res_man.h"
+#include "engines/icb/remora.h"
 
 namespace ICB {
 

@@ -26,15 +26,13 @@
  */
 
 #include "engines/icb/common/px_rcutypes.h"
-
-#include "debug.h"
-
-#include "line_of_sight.h"
-#include "global_objects.h"
-#include "mission.h"
-#include "tracer.h"
-#include "event_manager.h"
-#include "res_man.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/line_of_sight.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/mission.h"
+#include "engines/icb/tracer.h"
+#include "engines/icb/event_manager.h"
+#include "engines/icb/res_man.h"
 
 namespace ICB {
 

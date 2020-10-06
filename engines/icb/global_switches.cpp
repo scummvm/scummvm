@@ -26,8 +26,7 @@
  */
 
 #include "engines/icb/common/px_rccommon.h"
-
-#include "global_switches.h"
+#include "engines/icb/global_switches.h"
 
 namespace ICB {
 

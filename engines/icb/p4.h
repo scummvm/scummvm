@@ -30,7 +30,7 @@
 
 // Silly codewarrior doesn't understand relative paths
 #include "engines/icb/common/px_common.h"
-#include "string_vest.h"
+#include "engines/icb/string_vest.h"
 
 namespace ICB {
 

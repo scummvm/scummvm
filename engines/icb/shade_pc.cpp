@@ -27,11 +27,9 @@
 
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_rcutypes.h"
-
 #include "engines/icb/gfx/psx_pcdefines.h"
-
-#include "shade.h"
-#include "shade_pc.h"
+#include "engines/icb/shade.h"
+#include "engines/icb/shade_pc.h"
 
 namespace ICB {
 

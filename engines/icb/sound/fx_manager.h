@@ -28,7 +28,8 @@
 #ifndef _FXMANAGER_H__INCLUDED_
 #define _FXMANAGER_H__INCLUDED_
 
-#include "direct_sound.h"
+#include "engines/icb/sound/direct_sound.h"
+
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 

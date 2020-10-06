@@ -26,13 +26,12 @@
  */
 
 #include "engines/icb/common/px_rccommon.h"
-#include "debug.h"
-#include "session.h"
-#include "actor.h"
-#include "global_objects.h"
-#include "res_man.h"
-
-#include "mission.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/session.h"
+#include "engines/icb/actor.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/res_man.h"
+#include "engines/icb/mission.h"
 
 namespace ICB {
 

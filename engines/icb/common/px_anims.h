@@ -28,7 +28,7 @@
 #ifndef _library__PX_ANIMS_H_
 #define _library__PX_ANIMS_H_
 
-#include "px_common.h"
+#include "engines/icb/common/px_common.h"
 
 namespace ICB {
 

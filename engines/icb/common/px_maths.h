@@ -59,7 +59,7 @@ static inline int fastMAXc(int a, int b) {
 	return r5;
 }
 
-#include "px_maths_pc.h"
+#include "engines/icb/common/px_maths_pc.h"
 
 #define PXmin(a, b) PCfastMIN(a, b)
 #define PXmax(a, b) PCfastMAX(a, b)

@@ -29,13 +29,13 @@
 #define _PLAYER
 
 #include "engines/icb/common/px_common.h"
-#include "debug.h"
-#include "object_structs.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/object_structs.h"
 #include "engines/icb/common/px_route_barriers.h"
 #include "engines/icb/common/px_scriptengine.h"
-#include "animation_mega_set.h"
-#include "fn_routines.h"
-#include "bone.h"
+#include "engines/icb/animation_mega_set.h"
+#include "engines/icb/fn_routines.h"
+#include "engines/icb/bone.h"
 
 namespace ICB {
 

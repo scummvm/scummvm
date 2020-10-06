@@ -29,10 +29,8 @@
 #define INCLUDED_TEXT_SPRITES_H
 
 #include "engines/icb/p4_generic.h"
-
 #include "engines/icb/common/px_bitmap.h"
 #include "engines/icb/common/px_game_object.h"
-
 #include "engines/icb/debug.h"
 
 namespace ICB {

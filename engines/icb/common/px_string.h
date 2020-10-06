@@ -28,10 +28,10 @@
 #ifndef _PX_pxString_H
 #define _PX_pxString_H
 
-#include "px_rccommon.h"
 #include <cstring>
 
-#include "px_rcutypes.h"
+#include "engines/icb/common/px_rccommon.h"
+#include "engines/icb/common/px_rcutypes.h"
 
 namespace ICB {
 

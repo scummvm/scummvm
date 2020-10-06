@@ -26,8 +26,7 @@
  */
 
 #include "engines/icb/p4.h"
-
-#include "px_globalvariables.h"
+#include "engines/icb/common/px_globalvariables.h"
 
 namespace ICB {
 

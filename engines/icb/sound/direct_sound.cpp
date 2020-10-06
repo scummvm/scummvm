@@ -34,6 +34,7 @@
 #include "engines/icb/sound/speech_manager.h"
 #include "engines/icb/sound/fx_manager.h"
 #include "engines/icb/icb.h"
+
 #include "audio/mixer.h"
 
 namespace ICB {

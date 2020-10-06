@@ -27,11 +27,10 @@
 
 #include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/res_man_pc.h"
-
-#include "p4.h"
-#include "global_objects.h"
-#include "options_manager_pc.h"
-#include "cluster_manager_pc.h"
+#include "engines/icb/p4.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/options_manager_pc.h"
+#include "engines/icb/cluster_manager_pc.h"
 
 #include "common/system.h"
 

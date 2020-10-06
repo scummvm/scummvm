@@ -26,16 +26,14 @@
  */
 
 #include "engines/icb/common/px_rccommon.h"
-#include "debug.h"
-#include "mission.h"
-#include "global_objects.h"
-
+#include "engines/icb/debug.h"
+#include "engines/icb/mission.h"
+#include "engines/icb/global_objects.h"
 #include "engines/icb/common/ptr_util.h"
-
-#include "bone.h"
-#include "sound.h"
-
+#include "engines/icb/bone.h"
+#include "engines/icb/sound.h"
 #include "engines/icb/icb.h"
+
 #include "common/textconsole.h"
 
 namespace ICB {

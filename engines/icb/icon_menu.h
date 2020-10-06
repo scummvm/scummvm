@@ -34,11 +34,9 @@
 #include "engines/icb/common/px_assert.h"
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_bitmap.h"
-
-#include "player.h"
-#include "icon_list.h"
-
-#include "icon_menu_pc.h"
+#include "engines/icb/player.h"
+#include "engines/icb/icon_list.h"
+#include "engines/icb/icon_menu_pc.h"
 
 namespace ICB {
 

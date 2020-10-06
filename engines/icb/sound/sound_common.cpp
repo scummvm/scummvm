@@ -26,7 +26,6 @@
  */
 
 #include "engines/icb/p4.h"
-
 #include "engines/icb/sound/direct_sound.h"
 #include "engines/icb/sound/sound_common.h"
 

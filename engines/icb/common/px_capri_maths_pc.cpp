@@ -28,7 +28,7 @@
 #include "engines/icb/gfx/psx_pcdefines.h"
 
 #if _PSX_ON_PC == 1
-#include "px_capri_maths_pc.h"
+#include "engines/icb/common/px_capri_maths_pc.h"
 #endif
 
 namespace ICB {

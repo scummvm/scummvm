@@ -28,6 +28,6 @@
 #ifndef SET_H
 #define SET_H
 
-#include "set_pc.h"
+#include "engines/icb/set_pc.h"
 
 #endif

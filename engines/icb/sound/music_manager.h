@@ -29,8 +29,8 @@
 #define _MUSICMANAGER_H_INCLUDED_
 
 #include "engines/icb/common/px_common.h"
+#include "engines/icb/sound/direct_sound.h"
 
-#include "direct_sound.h"
 #include "common/stream.h"
 
 #include "audio/audiostream.h"

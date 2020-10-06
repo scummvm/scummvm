@@ -25,18 +25,17 @@
  *
  */
 
-#include "p4.h"
-
+#include "engines/icb/p4.h"
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_floor_map.h"
 #include "engines/icb/common/px_linkeddatafile.h"
-#include "mission.h"
-#include "session.h"
-#include "object_structs.h"
-#include "debug.h"
-#include "floors.h"
-#include "global_objects.h"
-#include "res_man.h"
+#include "engines/icb/mission.h"
+#include "engines/icb/session.h"
+#include "engines/icb/object_structs.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/floors.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/res_man.h"
 
 namespace ICB {
 

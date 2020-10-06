@@ -26,25 +26,16 @@
  */
 
 #include "engines/icb/common/px_common.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "engines/icb/common/px_array.h"
-
-#include "p4_generic.h"
-#include "res_man.h"
-#include "debug.h"
-#include "protocol.h"
-
-#include "keyboard.h"
-#include "global_objects.h"
-#include "global_switches.h"
-
-#include "zsupport.h"
-
-#include "mission.h"
+#include "engines/icb/p4_generic.h"
+#include "engines/icb/res_man.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/protocol.h"
+#include "engines/icb/keyboard.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/global_switches.h"
+#include "engines/icb/zsupport.h"
+#include "engines/icb/mission.h"
 
 #include "common/textconsole.h"
 

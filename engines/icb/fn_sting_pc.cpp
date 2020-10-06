@@ -26,16 +26,13 @@
  */
 
 #include "engines/icb/common/px_rccommon.h"
-
-#include "debug.h"
-
-#include "global_objects.h"
-#include "mission.h"
-#include "session.h"
-
+#include "engines/icb/debug.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/mission.h"
+#include "engines/icb/session.h"
 #include "engines/icb/sound/direct_sound.h"
 #include "engines/icb/sound/music_manager.h"
-#include "sound.h"
+#include "engines/icb/sound.h"
 
 namespace ICB {
 

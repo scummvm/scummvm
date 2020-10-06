@@ -30,8 +30,7 @@
 
 #include "engines/icb/common/px_bitmap.h"
 #include "engines/icb/common/px_types.h"
-
-#include "p4_generic.h"
+#include "engines/icb/p4_generic.h"
 
 namespace ICB {
 

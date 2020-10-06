@@ -30,9 +30,7 @@
 #include "engines/icb/mission.h"
 #include "engines/icb/global_objects.h"
 #include "engines/icb/global_vars.h"
-
 #include "engines/icb/timer_func.h"
-
 #include "engines/icb/common/ptr_util.h"
 
 namespace ICB {

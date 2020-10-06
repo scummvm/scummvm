@@ -10,9 +10,8 @@
 // info@colosseumbuilders.com
 //
 
-#include "jpeg.h"
-#include "global_objects_pc.h"
-#include <math.h>
+#include "engines/icb/jpeg.h"
+#include "engines/icb/global_objects_pc.h"
 
 #ifndef _WIN32
 #define _flushall() fflush(NULL)

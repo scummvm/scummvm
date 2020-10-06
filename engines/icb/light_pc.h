@@ -28,7 +28,7 @@
 #ifndef LIGHT_PC_H
 #define LIGHT_PC_H
 
-#include "light.h"
+#include "engines/icb/light.h"
 
 namespace ICB {
 

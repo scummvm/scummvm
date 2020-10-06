@@ -25,12 +25,9 @@
  *
  */
 
-#include <cstring>
-
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_rcutypes.h"
-
-#include "rab_api.h"
+#include "engines/icb/gfx/rab_api.h"
 
 namespace ICB {
 

@@ -28,7 +28,7 @@
 #ifndef GFXSTUB_REV_DUTCH_HH
 #define GFXSTUB_REV_DUTCH_HH
 
-#include "gfxstub_dutch.h"
+#include "engines/icb/gfx/gfxstub_dutch.h"
 
 #if defined (SDL_BACKEND) && defined (ENABLE_OPENGL)
 #include <SDL_opengl.h>

@@ -30,9 +30,7 @@
 
 #include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_string.h"
-
 #include "engines/icb/common/px_game_object.h"
-
 #include "engines/icb/common/px_globalvariables.h"
 
 namespace ICB {

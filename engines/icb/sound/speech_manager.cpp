@@ -28,20 +28,17 @@
 #include "engines/icb/sound/speech_manager.h"
 #include "engines/icb/sound/music_manager.h"
 #include "engines/icb/sound/fx_manager.h"
-
 #include "engines/icb/sound/direct_sound.h"
-
 #include "engines/icb/res_man_pc.h"
 #include "engines/icb/debug.h"
 #include "engines/icb/p4.h"
-
 #include "engines/icb/sound/sound_common.h"
+#include "engines/icb/icb.h"
 
 #include "common/textconsole.h"
+
 #include "audio/mixer.h"
 #include "audio/decoders/wave.h"
-
-#include "engines/icb/icb.h"
 
 namespace ICB {
 

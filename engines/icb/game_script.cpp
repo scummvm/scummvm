@@ -25,18 +25,16 @@
  *
  */
 
-#include "res_man.h"
-#include "game_script.h"
-#include "debug.h"
-#include "mission.h"
-#include "p4.h"
-#include "global_objects.h"
-#include "global_switches.h"
-#include "sound.h"
-#include "global_vars.h"
-
-// for checking we have correct disk on psx
-#include "main_menu.h"
+#include "engines/icb/res_man.h"
+#include "engines/icb/game_script.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/mission.h"
+#include "engines/icb/p4.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/global_switches.h"
+#include "engines/icb/sound.h"
+#include "engines/icb/global_vars.h"
+#include "engines/icb/main_menu.h"
 
 #include "common/events.h"
 #include "common/textconsole.h"

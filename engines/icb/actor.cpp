@@ -25,8 +25,8 @@
  *
  */
 
-#include "global_objects.h"
-#include "actor.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/actor.h"
 #include "engines/icb/gfx/psx_scrn.h"
 #include "engines/icb/gfx/psx_poly.h"
 #include "engines/icb/common/px_capri_maths.h"

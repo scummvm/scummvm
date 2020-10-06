@@ -25,24 +25,16 @@
  *
  */
 
-#ifdef _WIN32
-#include <sys/types.h>
-#include <sys/stat.h>
-#endif
-
 #include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_string.h"
 #include "engines/icb/res_man_pc.h"
-#include "debug_pc.h"
-#include "global_objects.h"
-
-#include "cluster_manager_pc.h"
-#include "options_manager_pc.h"
+#include "engines/icb/debug_pc.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/cluster_manager_pc.h"
+#include "engines/icb/options_manager_pc.h"
+#include "engines/icb/movie_pc.h"
 
 #include "common/textconsole.h"
-
-// For the bink includes
-#include "movie_pc.h"
 
 namespace ICB {
 

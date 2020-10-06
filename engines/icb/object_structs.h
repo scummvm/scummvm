@@ -34,16 +34,12 @@
 #include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_array.h"
 #include "engines/icb/common/px_string.h"
-
-#include "animation_mega_set.h"
-#include "p4_generic.h"
-#include "string_vest.h"
-#include "route_manager.h"
-#include "breath.h"
-
-// for the dynamic lights...
+#include "engines/icb/animation_mega_set.h"
+#include "engines/icb/p4_generic.h"
+#include "engines/icb/string_vest.h"
+#include "engines/icb/route_manager.h"
+#include "engines/icb/breath.h"
 #include "engines/icb/gfx/rlp_api.h"
-
 #include "engines/icb/common/px_bones.h"
 
 // depth of script logic tree for game objects - 3 is same as Broken Sword games

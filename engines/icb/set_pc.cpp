@@ -28,27 +28,21 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_rand
 
 #include "engines/icb/common/px_rccommon.h"
-
-#include "p4_generic.h"
-#include "set.h"
-#include "global_objects.h"
-#include "global_switches.h"
-#include "surface_manager.h"
-#include "shake.h"
-#include "res_man.h"
-#include "mission.h"
-#include "jpeg.h"
-
+#include "engines/icb/p4_generic.h"
+#include "engines/icb/set.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/global_switches.h"
+#include "engines/icb/surface_manager.h"
+#include "engines/icb/shake.h"
+#include "engines/icb/res_man.h"
+#include "engines/icb/mission.h"
+#include "engines/icb/jpeg.h"
 #include "engines/icb/common/px_capri_maths.h"
 #include "engines/icb/common/pc_props.h"
-
 #include "engines/icb/sound/direct_sound.h"
 #include "engines/icb/sound/fx_manager.h"
-
 #include "engines/icb/icb.h"
-
-// Types to be deleted soon
-#include "direct_input.h"
+#include "engines/icb/direct_input.h"
 
 namespace ICB {
 

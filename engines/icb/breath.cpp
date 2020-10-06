@@ -28,14 +28,13 @@
 #include "engines/icb/common/px_rccommon.h"
 
 #if !defined(_PSX_ON_PC)
-#include "debug.h"
-#include "mission.h"
-#include "global_objects.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/mission.h"
+#include "engines/icb/global_objects.h"
 #endif
 
 #include "engines/icb/icb.h"
-
-#include "breath.h"
+#include "engines/icb/breath.h"
 
 namespace ICB {
 

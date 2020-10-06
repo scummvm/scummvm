@@ -25,20 +25,16 @@
  *
  */
 
-#include <math.h>
-
-#include "p4.h"
-
+#include "engines/icb/p4.h"
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_floor_map.h"
 #include "engines/icb/common/px_linkeddatafile.h"
 #include "engines/icb/common/px_route_barriers.h"
-
-#include "floors.h"
-#include "debug.h"
-#include "prim_route_builder.h"
-#include "remora.h"
-#include "global_objects.h"
+#include "engines/icb/floors.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/prim_route_builder.h"
+#include "engines/icb/remora.h"
+#include "engines/icb/global_objects.h"
 
 #include "common/system.h"
 #include "common/math.h"

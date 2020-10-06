@@ -28,24 +28,17 @@
 #ifndef ACTOR_PC_H
 #define ACTOR_PC_H
 
-#include "sys/types.h"
 #include "engines/icb/gfx/psx_pcdefines.h"
 #include "engines/icb/gfx/psx_pcgpu.h"
-
-#include "light_pc.h"
-
+#include "engines/icb/light_pc.h"
 #include "engines/icb/gfx/psx_camera.h"
 #include "engines/icb/gfx/psx_pxactor.h"
 #include "engines/icb/gfx/psx_tman.h"
-
-// The RAP_API header file
-// defines the file format the .rap file
 #include "engines/icb/gfx/rap_api.h"
 #include "engines/icb/gfx/rab_api.h"
 #include "engines/icb/gfx/rlp_api.h"
-
 #include "engines/icb/common/px_bones.h"
-#include "breath.h"
+#include "engines/icb/breath.h"
 
 namespace ICB {
 

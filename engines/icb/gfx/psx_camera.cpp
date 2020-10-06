@@ -25,8 +25,8 @@
  *
  */
 
-#include "psx_camera.h"
-#include "psx_scrn.h"
+#include "engines/icb/gfx/psx_camera.h"
+#include "engines/icb/gfx/psx_scrn.h"
 #include "engines/icb/common/px_capri_maths.h"
 
 namespace ICB {

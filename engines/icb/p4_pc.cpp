@@ -25,25 +25,19 @@
  *
  */
 
-#ifdef _WIN32
-#include <direct.h> // _getcwd()
-#else
-
-#endif
-
-#include "keyboard.h"
-#include "mouse.h"
-#include "debug.h"
-#include "res_man.h"
-#include "options_manager_pc.h"
-#include "p4.h"
-#include "global_vars.h"
+#include "engines/icb/keyboard.h"
+#include "engines/icb/mouse.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/res_man.h"
+#include "engines/icb/options_manager_pc.h"
+#include "engines/icb/p4.h"
+#include "engines/icb/global_vars.h"
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_bitmap.h"
-#include "stage_draw.h"
-#include "mission.h"
-#include "cluster_manager_pc.h"
-#include "configfile.h"
+#include "engines/icb/stage_draw.h"
+#include "engines/icb/mission.h"
+#include "engines/icb/cluster_manager_pc.h"
+#include "engines/icb/configfile.h"
 
 #include "common/str.h"
 #include "common/config-manager.h"

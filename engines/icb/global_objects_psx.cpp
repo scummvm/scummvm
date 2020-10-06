@@ -25,8 +25,8 @@
  *
  */
 
-#include "global_objects_psx.h"
-#include "animation_mega_set.h"
+#include "engines/icb/global_objects_psx.h"
+#include "engines/icb/animation_mega_set.h"
 #include "engines/icb/common/px_clu_api.h"
 
 namespace ICB {

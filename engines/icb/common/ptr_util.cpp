@@ -25,9 +25,8 @@
  *
  */
 
-#include <stddef.h> //ptrdiff_t
-
 #include "engines/icb/common/px_common.h"
+
 #include "common/array.h"
 
 namespace ICB {

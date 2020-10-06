@@ -28,9 +28,8 @@
 #ifndef _PXLIBRARY_pxException_H
 #define _PXLIBRARY_pxException_H
 
-#include "px_rccommon.h" // This should be included in every file before anything else
-
-#include "px_string.h"
+#include "engines/icb/common/px_rccommon.h" // This should be included in every file before anything else
+#include "engines/icb/common/px_string.h"
 
 namespace ICB {
 

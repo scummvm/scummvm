@@ -25,16 +25,12 @@
  *
  */
 
-#include "p4.h"
-
+#include "engines/icb/p4.h"
 #include "engines/icb/common/px_common.h"
-
-#include "debug.h"
-#include "protocol.h"
-
-#include "res_man.h"
-
-#include "global_objects.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/protocol.h"
+#include "engines/icb/res_man.h"
+#include "engines/icb/global_objects.h"
 
 namespace ICB {
 

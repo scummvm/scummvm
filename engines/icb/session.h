@@ -28,22 +28,19 @@
 #ifndef SESSION_H
 #define SESSION_H
 
-#include "p4_generic.h"
-#include "object_structs.h"
-
+#include "engines/icb/p4_generic.h"
+#include "engines/icb/object_structs.h"
 #include "engines/icb/common/px_linkeddatafile.h"
 #include "engines/icb/common/px_game_object.h"
 #include "engines/icb/common/px_walkarea_integer.h"
-
-#include "barriers.h"
-#include "player.h"
-#include "map_marker.h"
-#include "prim_route_builder.h"
-#include "speech.h"
-#include "text_sprites.h"
-
-#include "string_vest.h"
-#include "set.h"
+#include "engines/icb/barriers.h"
+#include "engines/icb/player.h"
+#include "engines/icb/map_marker.h"
+#include "engines/icb/prim_route_builder.h"
+#include "engines/icb/speech.h"
+#include "engines/icb/text_sprites.h"
+#include "engines/icb/string_vest.h"
+#include "engines/icb/set.h"
 
 namespace ICB {
 

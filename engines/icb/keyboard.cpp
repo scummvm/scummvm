@@ -25,11 +25,8 @@
  *
  */
 
-#define WIN32_LEAN_AND_MEAN
-
 #include "engines/icb/common/px_common.h"
-
-#include "keyboard.h"
+#include "engines/icb/keyboard.h"
 
 namespace ICB {
 

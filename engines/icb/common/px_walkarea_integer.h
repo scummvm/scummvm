@@ -28,7 +28,7 @@
 #ifndef WALKAREA_H
 #define WALKAREA_H
 
-#include "px_rcutypes.h"
+#include "engines/icb/common/px_rcutypes.h"
 
 namespace ICB {
 

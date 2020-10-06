@@ -32,11 +32,10 @@
 #include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_string.h"
 #include "engines/icb/common/px_assert.h"
-
-#include "p4.h"
-#include "event_timer.h"
-#include "event_list.h"
-#include "session.h"
+#include "engines/icb/p4.h"
+#include "engines/icb/event_timer.h"
+#include "engines/icb/event_list.h"
+#include "engines/icb/session.h"
 
 namespace ICB {
 

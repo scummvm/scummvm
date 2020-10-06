@@ -25,12 +25,12 @@
  *
  */
 
-#include "map_marker.h"
-#include "debug.h"
-#include "mission.h"
-#include "global_objects.h"
-#include "string_vest.h"
-#include "res_man.h"
+#include "engines/icb/map_marker.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/mission.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/string_vest.h"
+#include "engines/icb/res_man.h"
 
 namespace ICB {
 

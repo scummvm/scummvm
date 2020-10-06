@@ -26,14 +26,12 @@
  */
 
 #include "engines/icb/common/px_rccommon.h"
-#include "movie_pc.h"
-#include "direct_input.h"
+#include "engines/icb/movie_pc.h"
+#include "engines/icb/direct_input.h"
 #include "engines/icb/sound/music_manager.h"
-#include "cluster_manager_pc.h"
-
+#include "engines/icb/cluster_manager_pc.h"
 #include "engines/icb/res_man_pc.h"
-
-#include "global_objects.h"
+#include "engines/icb/global_objects.h"
 
 #include "common/system.h"
 #include "common/keyboard.h"

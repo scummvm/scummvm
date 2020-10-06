@@ -27,11 +27,8 @@
 
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/debug.h"
-
-#include <cstring>
-
-#include "psx_tman.h"
-#include "psx_clut.h"
+#include "engines/icb/gfx/psx_tman.h"
+#include "engines/icb/gfx/psx_clut.h"
 
 namespace ICB {
 

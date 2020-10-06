@@ -26,10 +26,8 @@
  */
 
 #include "engines/icb/gfx/psx_pcdefines.h"
-
-#include "px_common.h"
-
-#include "px_bones.h"
+#include "engines/icb/common/px_common.h"
+#include "engines/icb/common/px_bones.h"
 
 namespace ICB {
 

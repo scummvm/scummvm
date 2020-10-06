@@ -28,15 +28,10 @@
 #ifndef __PC_CAPRI_MATHS_H
 #define __PC_CAPRI_MATHS_H
 
-#include "px_capri_maths_pc.h"
-
+#include "engines/icb/common/px_capri_maths_pc.h"
 #include "engines/icb/common/px_rccommon.h"
 
 namespace ICB {
-
-#if (_PSX == 1) && (_PSX_ON_PC == 0)
-#error PX_CAPRI_MATHS should not be used on the PSX
-#endif
 
 #if (_PSX_ON_PC == 0) && !defined __PSX_PcDefines_H__
 

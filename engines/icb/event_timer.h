@@ -28,12 +28,10 @@
 #if !defined(EVENTTIMER_H_INCLUDED)
 #define EVENTTIMER_H_INCLUDED
 
-#include "string_vest.h"
-
+#include "engines/icb/string_vest.h"
 #include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_string.h"
-
-#include "event_list.h"
+#include "engines/icb/event_list.h"
 
 namespace ICB {
 

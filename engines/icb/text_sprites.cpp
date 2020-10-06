@@ -26,9 +26,7 @@
  */
 
 #include "engines/icb/common/px_common.h"
-
 #include "engines/icb/text_sprites.h"
-
 #include "engines/icb/global_objects.h"
 #include "engines/icb/global_switches.h"
 #include "engines/icb/res_man.h"

@@ -27,14 +27,12 @@
 
 #include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_rcutypes.h"
-
 #include "engines/icb/common/ptr_util.h"
-
-#include "global_objects.h"
-#include "event_manager.h"
-#include "line_of_sight.h"
-#include "sound_logic.h"
-#include "mission.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/event_manager.h"
+#include "engines/icb/line_of_sight.h"
+#include "engines/icb/sound_logic.h"
+#include "engines/icb/mission.h"
 
 #define EVENT_FNS_LOG "event_functions_log.txt"
 

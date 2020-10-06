@@ -27,9 +27,9 @@
 
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/icb.h"
-#include "debug.h"
-#include "shake.h"
-#include "fn_routines.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/shake.h"
+#include "engines/icb/fn_routines.h"
 
 namespace ICB {
 

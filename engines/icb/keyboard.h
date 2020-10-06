@@ -28,7 +28,7 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
-#include "p4_generic.h"
+#include "engines/icb/p4_generic.h"
 
 namespace ICB {
 

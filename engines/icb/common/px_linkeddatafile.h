@@ -28,13 +28,11 @@
 #ifndef _PX_LINKED_DATA_FILE_H
 #define _PX_LINKED_DATA_FILE_H
 
-#include "px_rccommon.h" // This is required to be included before anything else
-#include "px_rcutypes.h"
-#include "px_assert.h"
-#include "px_common.h"
-#include "px_clu_api.h"
-
-// Forward definition of fatal_error
+#include "engines/icb/common/px_rccommon.h" // This is required to be included before anything else
+#include "engines/icb/common/px_rcutypes.h"
+#include "engines/icb/common/px_assert.h"
+#include "engines/icb/common/px_common.h"
+#include "engines/icb/common/px_clu_api.h"
 #include "engines/icb/debug.h"
 
 namespace ICB {

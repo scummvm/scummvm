@@ -29,8 +29,7 @@
 #define _BONE_H
 
 #include "engines/icb/common/px_bones.h"
-#include "object_structs.h"
-
+#include "engines/icb/object_structs.h"
 #include "engines/icb/gfx/rap_api.h"
 
 namespace ICB {

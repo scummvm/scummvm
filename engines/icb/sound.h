@@ -30,7 +30,6 @@
 
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_clu_api.h"
-
 #include "engines/icb/sound_lowlevel.h"
 
 namespace ICB {

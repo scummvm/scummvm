@@ -29,6 +29,7 @@
 #define _SOUNDCOMMON_H__INCLUDED_
 
 #include "engines/icb/sound/direct_sound.h"
+
 #include "common/stream.h"
 
 namespace ICB {

@@ -33,20 +33,16 @@
 
 #include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/icb.h"
-
-#include "options_manager_pc.h"
-#include "movie_pc.h"
-#include "cluster_manager_pc.h"
-
-// So we can close the window down
-#include "keyboard.h"
-
-#include "actor_view_pc.h"
-#include "mission_functions.h"
-#include "text_sprites.h"
-#include "mission.h"
-#include "global_objects_psx.h"
-#include "res_man.h"
+#include "engines/icb/options_manager_pc.h"
+#include "engines/icb/movie_pc.h"
+#include "engines/icb/cluster_manager_pc.h"
+#include "engines/icb/keyboard.h"
+#include "engines/icb/actor_view_pc.h"
+#include "engines/icb/mission_functions.h"
+#include "engines/icb/text_sprites.h"
+#include "engines/icb/mission.h"
+#include "engines/icb/global_objects_psx.h"
+#include "engines/icb/res_man.h"
 
 #include "common/keyboard.h"
 #include "common/system.h"

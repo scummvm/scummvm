@@ -29,21 +29,10 @@
 #define __MOVIE_PC_H__
 
 #include "engines/icb/common/px_rccommon.h"
-
-// The main Bink include for handling bink sequence files (extension 'bik')
-#if defined(_WIN32) && defined(ENABLE_BINK)
-#include "../BinkSDK/bink.h"
-#else
-#include "bink_stub.h"
-#endif
-
-// For access to surface_manager
-#include "global_objects_pc.h"
-
-// For access to DirectSound includes
+#include "engines/icb/bink_stub.h"
+#include "engines/icb/global_objects_pc.h"
 #include "engines/icb/sound/direct_sound.h"
-// So we can control the game sound state
-#include "sound.h"
+#include "engines/icb/sound.h"
 
 #include "video/bink_decoder.h"
 

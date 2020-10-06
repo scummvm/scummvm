@@ -28,10 +28,11 @@
 #ifndef P4_GENERIC_PC_H
 #define P4_GENERIC_PC_H
 
-#include "non_ad_module.h"
-#include "debug_pc.h"
+#include "engines/icb/non_ad_module.h"
+#include "engines/icb/debug_pc.h"
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_anims.h"
+
 #include "common/textconsole.h"
 
 namespace ICB {

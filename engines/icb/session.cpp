@@ -25,34 +25,29 @@
  *
  */
 
-#include "p4.h"
-
+#include "engines/icb/p4.h"
 #include "engines/icb/common/px_rccommon.h"
-
-#include "debug.h"
-#include "p4_generic.h"
-#include "res_man.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/p4_generic.h"
+#include "engines/icb/res_man.h"
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_game_object.h"
 #include "engines/icb/common/px_scriptengine.h"
 #include "engines/icb/common/px_prop_anims.h"
 #include "engines/icb/common/px_walkarea_integer.h"
-#include "object_structs.h"
-
-#include "session.h"
-#include "mission.h"
-
+#include "engines/icb/object_structs.h"
+#include "engines/icb/session.h"
+#include "engines/icb/mission.h"
 #include "engines/icb/common/px_linkeddatafile.h"
-#include "floors.h"
-#include "barriers.h"
-#include "global_objects.h"
-#include "global_switches.h"
-#include "remora.h"
-#include "sound_logic.h"
-#include "loadscrn.h"
-
-#include "sound.h"
-#include "sound_lowlevel.h"
+#include "engines/icb/floors.h"
+#include "engines/icb/barriers.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/global_switches.h"
+#include "engines/icb/remora.h"
+#include "engines/icb/sound_logic.h"
+#include "engines/icb/loadscrn.h"
+#include "engines/icb/sound.h"
+#include "engines/icb/sound_lowlevel.h"
 
 namespace ICB {
 

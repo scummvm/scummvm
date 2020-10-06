@@ -25,29 +25,22 @@
  *
  */
 
-#include "p4.h"
-
+#include "engines/icb/p4.h"
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_sfx_description.h"
 #include "engines/icb/common/px_linkeddatafile.h"
 #include "engines/icb/common/px_clu_api.h"
 #include "engines/icb/icb.h"
-
-#include "debug.h"
-#include "sound.h"
-
-#include "sound_lowlevel.h"
-
-#include "global_objects.h"
-#include "res_man.h"
-#include "session.h"
-#include "mission.h"
-
+#include "engines/icb/debug.h"
+#include "engines/icb/sound.h"
+#include "engines/icb/sound_lowlevel.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/res_man.h"
+#include "engines/icb/session.h"
+#include "engines/icb/mission.h"
 #include "engines/icb/common/px_sound_constants.h"
-
-#include "sound_logic.h"
-
-#include "remora.h"
+#include "engines/icb/sound_logic.h"
+#include "engines/icb/remora.h"
 
 #include "common/textconsole.h"
 

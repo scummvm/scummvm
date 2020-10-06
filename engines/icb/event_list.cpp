@@ -25,8 +25,8 @@
  *
  */
 
-#include "event_list.h"
-#include "debug.h"
+#include "engines/icb/event_list.h"
+#include "engines/icb/debug.h"
 
 namespace ICB {
 

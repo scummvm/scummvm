@@ -25,8 +25,8 @@
  *
  */
 
-#include "game_volume.h"
-#include "debug.h"
+#include "engines/icb/game_volume.h"
+#include "engines/icb/debug.h"
 
 namespace ICB {
 

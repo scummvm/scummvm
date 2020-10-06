@@ -28,14 +28,11 @@
 #ifndef D_DEBUG
 #define D_DEBUG
 
-#include "p4_generic.h"
-
+#include "engines/icb/p4_generic.h"
 #include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_string.h"
 #include "engines/icb/common/px_array.h"
-
-// PC specifics
-#include "debug_pc.h"
+#include "engines/icb/debug_pc.h"
 
 namespace ICB {
 

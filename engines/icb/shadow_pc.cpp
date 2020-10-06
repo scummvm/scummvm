@@ -26,13 +26,12 @@
  */
 
 #include "engines/icb/common/px_common.h"
-
-#include "debug.h"
-#include "shadow_pc.h"
-#include "softskin_pc.h"
-#include "drawpoly_pc.h"
-#include "global_objects_psx.h"
-#include "actor_pc.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/shadow_pc.h"
+#include "engines/icb/softskin_pc.h"
+#include "engines/icb/drawpoly_pc.h"
+#include "engines/icb/global_objects_psx.h"
+#include "engines/icb/actor_pc.h"
 #include "engines/icb/common/px_capri_maths.h"
 
 #include "common/system.h"

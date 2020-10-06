@@ -28,9 +28,8 @@
 #ifndef RAB_API_HH
 #define RAB_API_HH
 
-#include "psx_pcdefines.h"
-
-#include "rap_api.h"
+#include "engines/icb/gfx/psx_pcdefines.h"
+#include "engines/icb/gfx/rap_api.h"
 
 namespace ICB {
 

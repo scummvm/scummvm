@@ -25,15 +25,11 @@
  *
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-
 #include "common/scummsys.h"
-#include "gfxstub.h"
-#include "gfxstub_dutch.h"
 
-#include "gfxstub_rev_dutch.h"
+#include "engines/icb/gfx/gfxstub.h"
+#include "engines/icb/gfx/gfxstub_dutch.h"
+#include "engines/icb/gfx/gfxstub_rev_dutch.h"
 
 namespace ICB {
 

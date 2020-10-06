@@ -28,11 +28,10 @@
 #if !defined(LINEOFSIGHT_H_INCLUDED)
 #define LINEOFSIGHT_H_INCLUDED
 
-#include "p4.h"
-#include "debug.h"
-#include "event_list.h"
-#include "event_manager.h"
-
+#include "engines/icb/p4.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/event_list.h"
+#include "engines/icb/event_manager.h"
 #include "engines/icb/common/px_linkeddatafile.h"
 #include "engines/icb/common/px_route_barriers.h"
 #include "engines/icb/common/px_string.h"

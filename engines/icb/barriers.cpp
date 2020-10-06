@@ -25,24 +25,19 @@
  *
  */
 
-#include <limits.h>
-#include <math.h>
-
-#include "p4.h"
-
+#include "engines/icb/p4.h"
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_floor_map.h"
 #include "engines/icb/common/px_linkeddatafile.h"
 #include "engines/icb/common/px_route_barriers.h"
 #include "engines/icb/common/px_prop_anims.h"
-
-#include "mission.h"
-#include "session.h"
-#include "debug.h"
-#include "floors.h"
-#include "barriers.h"
-#include "global_objects.h"
-#include "res_man.h"
+#include "engines/icb/mission.h"
+#include "engines/icb/session.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/floors.h"
+#include "engines/icb/barriers.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/res_man.h"
 
 #include "common/textconsole.h"
 

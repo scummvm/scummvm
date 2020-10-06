@@ -27,30 +27,22 @@
 
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/ptr_util.h"
-
 #include "engines/icb/icb.h"
-
-#include <ctype.h>
-#include <math.h>
-
-#include "p4_generic.h"
-#include "debug.h"
-#include "mission.h"
-#include "global_objects.h"
-#include "global_switches.h"
-#include "floors.h"
-#include "fn_routines.h"
-#include "p4_generic.h"
-#include "sound.h" // to get PauseSounds()
-
+#include "engines/icb/p4_generic.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/mission.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/global_switches.h"
+#include "engines/icb/floors.h"
+#include "engines/icb/fn_routines.h"
+#include "engines/icb/p4_generic.h"
+#include "engines/icb/sound.h" // to get PauseSounds()
 #include "engines/icb/common/px_scriptengine.h"
 #include "engines/icb/common/px_floor_map.h"
 #include "engines/icb/common/px_features.h"
-
-#include "direct_input.h"
-
-#include "actor.h"
-#include "remora.h"
+#include "engines/icb/direct_input.h"
+#include "engines/icb/actor.h"
+#include "engines/icb/remora.h"
 
 #include "common/keyboard.h"
 

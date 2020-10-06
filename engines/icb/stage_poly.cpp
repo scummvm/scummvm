@@ -26,8 +26,6 @@
  */
 
 #include "engines/icb/common/px_common.h"
-
-#include <math.h>
 #include "engines/icb/p4_generic.h"
 #include "engines/icb/debug.h"
 #include "engines/icb/mission.h"
@@ -41,7 +39,6 @@
 #include "engines/icb/actor_pc.h"
 #include "engines/icb/res_man.h"
 #include "engines/icb/common/px_capri_maths.h"
-
 #include "engines/icb/gfx/psx_anims.h"
 
 namespace ICB {

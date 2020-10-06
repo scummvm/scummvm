@@ -28,7 +28,6 @@
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/p4_generic.h"
 #include "engines/icb/debug.h"
-
 #include "engines/icb/protocol.h"
 #include "engines/icb/res_man.h"
 #include "engines/icb/global_objects.h"

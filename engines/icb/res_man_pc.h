@@ -28,8 +28,9 @@
 #ifndef RES_MAN_PC_H
 #define RES_MAN_PC_H
 
-#include "debug.h"
+#include "engines/icb/debug.h"
 #include "engines/icb/common/px_string.h"
+
 #include "common/stream.h"
 
 namespace ICB {

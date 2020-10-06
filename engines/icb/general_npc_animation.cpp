@@ -25,18 +25,15 @@
  *
  */
 
-#include <math.h>
-#include "p4.h"
-
+#include "engines/icb/p4.h"
 #include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_anims.h"
-
-#include "session.h"
-#include "animation_mega_set.h"
-#include "global_objects.h"
-#include "debug.h"
-#include "player.h"
-#include "res_man.h"
+#include "engines/icb/session.h"
+#include "engines/icb/animation_mega_set.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/player.h"
+#include "engines/icb/res_man.h"
 
 namespace ICB {
 

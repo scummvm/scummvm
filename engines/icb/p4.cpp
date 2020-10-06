@@ -29,39 +29,23 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_localtime
 #define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 
-#include <math.h>
-
-#ifdef _WIN32
-#include <direct.h> // _getcwd()
-#else
-
-#endif
 #include <time.h>
 
-#include "p4.h"
-
-#include "keyboard.h"
-#include "mouse.h"
-#include "debug.h"
-
-#include "res_man.h"
-
-#include "direct_input.h"
-
-#include "main_menu.h"
-#include "gameover.h"
-
+#include "engines/icb/p4.h"
+#include "engines/icb/keyboard.h"
+#include "engines/icb/mouse.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/res_man.h"
+#include "engines/icb/direct_input.h"
+#include "engines/icb/main_menu.h"
+#include "engines/icb/gameover.h"
 #include "engines/icb/common/px_common.h"
-
-#include "stage_view.h"
-#include "game_script.h"
-
-#include "global_switches.h"
-
-#include "movie_pc.h"
-#include "options_manager_pc.h"
-
-#include "mission.h"
+#include "engines/icb/stage_view.h"
+#include "engines/icb/game_script.h"
+#include "engines/icb/global_switches.h"
+#include "engines/icb/movie_pc.h"
+#include "engines/icb/options_manager_pc.h"
+#include "engines/icb/mission.h"
 
 #include "common/keyboard.h"
 #include "common/textconsole.h"

@@ -25,29 +25,27 @@
  *
  */
 
-#include <math.h>
-
-#include "p4.h" //for machine version
+#include "engines/icb/p4.h" //for machine version
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_linkeddatafile.h"
-#include "mission.h"
-#include "session.h"
-#include "object_structs.h"
-#include "debug.h"
-#include "player.h"
-#include "direct_input.h"
-#include "barriers.h"
+#include "engines/icb/mission.h"
+#include "engines/icb/session.h"
+#include "engines/icb/object_structs.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/player.h"
+#include "engines/icb/direct_input.h"
+#include "engines/icb/barriers.h"
 #include "engines/icb/common/px_route_barriers.h"
-#include "global_objects.h"
-#include "animation_mega_set.h"
-#include "mission.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/animation_mega_set.h"
+#include "engines/icb/mission.h"
 #include "engines/icb/common/px_scriptengine.h"
 #include "engines/icb/icb.h"
-#include "global_switches.h"
-#include "res_man.h"
-#include "sound.h"
-#include "floors.h"
-#include "remora.h"
+#include "engines/icb/global_switches.h"
+#include "engines/icb/res_man.h"
+#include "engines/icb/sound.h"
+#include "engines/icb/floors.h"
+#include "engines/icb/remora.h"
 
 #include "common/textconsole.h"
 

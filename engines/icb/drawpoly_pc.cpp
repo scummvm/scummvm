@@ -27,15 +27,12 @@
 
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/gfx/psx_pcdefines.h"
-
-// GTE inline macros
-#include "sys/types.h"
 #include "engines/icb/gfx/psx_pcdefines.h"
 #include "engines/icb/gfx/psx_scrn.h"
 #include "engines/icb/common/px_capri_maths.h"
 #include "engines/icb/gfx/psx_poly.h"
-#include "global_objects_psx.h"
-#include "light_pc.h"
+#include "engines/icb/global_objects_psx.h"
+#include "engines/icb/light_pc.h"
 
 namespace ICB {
 

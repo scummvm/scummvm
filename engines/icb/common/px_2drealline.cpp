@@ -25,9 +25,10 @@
  *
  */
 
-#include "px_2drealline.h"
-#include "common/math.h"
+#include "engines/icb/common/px_2drealline.h"
 #include "engines/icb/common/px_assert.h"
+
+#include "common/math.h"
 
 namespace ICB {
 

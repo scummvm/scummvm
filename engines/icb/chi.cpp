@@ -26,20 +26,15 @@
  */
 
 #include "engines/icb/common/px_common.h"
-
 #include "engines/icb/common/ptr_util.h"
-
 #include "engines/icb/icb.h"
-
-#include <math.h>
-
-#include "session.h"
-#include "mission.h"
-#include "p4.h"
-#include "object_structs.h"
-#include "global_objects.h"
-#include "sound.h"
-#include "res_man.h"
+#include "engines/icb/session.h"
+#include "engines/icb/mission.h"
+#include "engines/icb/p4.h"
+#include "engines/icb/object_structs.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/sound.h"
+#include "engines/icb/res_man.h"
 
 namespace ICB {
 

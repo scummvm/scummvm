@@ -29,7 +29,7 @@
 #define _GLOBAL_OBJECTS_PSX_H
 
 #include "engines/icb/common/px_rcutypes.h"
-#include "surface_manager.h"
+#include "engines/icb/surface_manager.h"
 #include "engines/icb/gfx/psx_light.h"
 #include "engines/icb/gfx/psx_tman.h"
 

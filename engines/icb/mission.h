@@ -29,9 +29,8 @@
 #define _MISSION
 
 #include "engines/icb/common/px_common.h"
-#include "session.h"
-
-#include "string_vest.h"
+#include "engines/icb/session.h"
+#include "engines/icb/string_vest.h"
 
 namespace ICB {
 

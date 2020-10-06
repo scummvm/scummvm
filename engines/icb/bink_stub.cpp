@@ -25,9 +25,7 @@
  *
  */
 
-#include <cstring> //for memset()
-
-#include "bink_stub.h"
+#include "engines/icb/bink_stub.h"
 
 #include "common/textconsole.h"
 

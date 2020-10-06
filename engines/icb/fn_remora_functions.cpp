@@ -28,13 +28,12 @@
 #include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_rcutypes.h"
 #include "engines/icb/common/ptr_util.h"
-
-#include "global_objects.h"
-#include "remora.h"
-#include "text_sprites.h"
-#include "icon_list_manager.h"
-#include "global_switches.h"
-#include "mission.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/remora.h"
+#include "engines/icb/text_sprites.h"
+#include "engines/icb/icon_list_manager.h"
+#include "engines/icb/global_switches.h"
+#include "engines/icb/mission.h"
 
 namespace ICB {
 

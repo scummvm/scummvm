@@ -25,7 +25,7 @@
  *
  */
 
-#include "px_common.h"
+#include "engines/icb/common/px_common.h"
 
 #include "common/system.h"
 

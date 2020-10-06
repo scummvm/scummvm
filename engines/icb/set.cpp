@@ -26,24 +26,18 @@
  */
 
 #include "engines/icb/common/px_common.h"
-
-#include "p4_generic.h"
-#include "set.h"
-#include "debug.h"
-
-#include "mission.h"
-#include "session.h"
-
+#include "engines/icb/p4_generic.h"
+#include "engines/icb/set.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/mission.h"
+#include "engines/icb/session.h"
 #include "engines/icb/common/px_string.h"
-
-#include "res_man.h"
-#include "global_objects.h"
-#include "global_switches.h"
-#include "surface_manager.h"
-
-#include "p4.h"
-
-#include "text.h"
+#include "engines/icb/res_man.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/global_switches.h"
+#include "engines/icb/surface_manager.h"
+#include "engines/icb/p4.h"
+#include "engines/icb/text.h"
 
 namespace ICB {
 

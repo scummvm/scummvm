@@ -28,7 +28,6 @@
 #ifndef SHADE_PC_H
 #define SHADE_PC_H
 
-#include "sys/types.h"
 #include "engines/icb/gfx/psx_pcdefines.h"
 #include "engines/icb/gfx/rlp_api.h"
 

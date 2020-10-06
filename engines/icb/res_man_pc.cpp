@@ -44,27 +44,21 @@
 #endif
 
 #include "engines/icb/common/px_common.h"
-
-#include <stdlib.h>
-#include <string.h>
-
 #include "engines/icb/common/px_array.h"
-
-#include "p4_generic.h"
-#include "res_man.h"
-#include "debug.h"
-#include "protocol.h"
-
-#include "keyboard.h"
-#include "global_objects.h"
-
-#include "zsupport.h"
+#include "engines/icb/p4_generic.h"
+#include "engines/icb/res_man.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/protocol.h"
+#include "engines/icb/keyboard.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/zsupport.h"
 
 #include "common/archive.h"
 #include "common/mutex.h"
 #include "common/textconsole.h"
 #include "common/config-manager.h"
 #include "common/memstream.h"
+
 namespace ICB {
 
 uint32 MAX_MEM_BLOCKS = 0;

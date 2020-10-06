@@ -27,14 +27,13 @@
 
 #include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/ptr_util.h"
-
-#include "mission.h"
-#include "global_objects.h"
-#include "global_switches.h"
-#include "options_manager_pc.h"
-#include "cluster_manager_pc.h"
+#include "engines/icb/mission.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/global_switches.h"
+#include "engines/icb/options_manager_pc.h"
+#include "engines/icb/cluster_manager_pc.h"
 #include "engines/icb/res_man_pc.h"
-#include "movie_pc.h"
+#include "engines/icb/movie_pc.h"
 
 #include "common/util.h"
 

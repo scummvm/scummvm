@@ -26,11 +26,10 @@
  */
 
 #include <stdio.h>
-
-#include "psx_pcdefines.h"
-#include "psx_pcgpu.h"
-#include "psx_poly.h"
-#include "gfxstub.h"
+#include "engines/icb/gfx/psx_pcdefines.h"
+#include "engines/icb/gfx/psx_pcgpu.h"
+#include "engines/icb/gfx/psx_poly.h"
+#include "engines/icb/gfx/gfxstub.h"
 
 namespace ICB {
 

@@ -25,7 +25,7 @@
  *
  */
 
-#include "p4.h"
+#include "engines/icb/p4.h"
 
 namespace ICB {
 

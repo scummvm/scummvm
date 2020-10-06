@@ -27,7 +27,7 @@
 
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_maths.h"
-#include "softskin_pc.h"
+#include "engines/icb/softskin_pc.h"
 #include "engines/icb/common/px_capri_maths.h"
 
 namespace ICB {

@@ -28,7 +28,6 @@
 #ifndef SOFTSKIN_PC_H
 #define SOFTSKIN_PC_H
 
-#include "sys/types.h"
 #include "engines/icb/gfx/psx_pcdefines.h"
 #include "engines/icb/gfx/rap_api.h"
 

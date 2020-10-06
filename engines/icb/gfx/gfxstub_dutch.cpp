@@ -26,11 +26,8 @@
  */
 
 #include "engines/icb/common/px_common.h"
-
-#include <math.h>
-#include <cstring>
-#include "gfxstub_dutch.h"
-#include "gfxstub_rev_dutch.h"
+#include "engines/icb/gfx/gfxstub_dutch.h"
+#include "engines/icb/gfx/gfxstub_rev_dutch.h"
 
 namespace ICB {
 

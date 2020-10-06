@@ -25,13 +25,12 @@
  *
  */
 
-#include "icon_menu.h"
-#include "global_objects.h"
-#include "sound.h"
-#include "res_man.h"
-#include "remora.h"
-
-#include "mission.h"
+#include "engines/icb/icon_menu.h"
+#include "engines/icb/global_objects.h"
+#include "engines/icb/sound.h"
+#include "engines/icb/res_man.h"
+#include "engines/icb/remora.h"
+#include "engines/icb/mission.h"
 
 namespace ICB {
 

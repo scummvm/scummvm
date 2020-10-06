@@ -25,20 +25,16 @@
  *
  */
 
-#include <math.h>
-
-#include "p4.h" //for machine version
-
+#include "engines/icb/p4.h" //for machine version
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_linkeddatafile.h"
-#include "player.h"
-#include "direct_input.h"
+#include "engines/icb/player.h"
+#include "engines/icb/direct_input.h"
 #include "engines/icb/common/px_route_barriers.h"
-#include "global_objects.h"
+#include "engines/icb/global_objects.h"
 #include "engines/icb/common/px_scriptengine.h"
-#include "mission.h"
-
-#include "global_switches.h"
+#include "engines/icb/mission.h"
+#include "engines/icb/global_switches.h"
 
 namespace ICB {
 

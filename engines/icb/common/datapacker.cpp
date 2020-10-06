@@ -25,7 +25,7 @@
  *
  */
 
-#include "datapacker.h"
+#include "engines/icb/common/datapacker.h"
 
 #include "common/stream.h"
 #include "common/textconsole.h"

@@ -28,8 +28,7 @@
 #ifndef RES_MAN_H
 #define RES_MAN_H
 
-#include "p4.h"
-
+#include "engines/icb/p4.h"
 #include "engines/icb/common/px_array.h"
 #include "engines/icb/common/px_string.h"
 #include "engines/icb/common/px_rccommon.h"
@@ -50,8 +49,9 @@ namespace ICB {
 inline int32 SameUrl(const char *urla, const uint32 urla_hash, const uint32 clustera_hash, const char *urlb, const uint32 urlb_hash, const uint32 clusterb_hash);
 
 } // End of namespace ICB (To avoid nesting during includes)
-// PC specifics
-#include "res_man_pc.h"
+
+#include "engines/icb/res_man_pc.h"
+
 namespace ICB {
 
 // Generic stuff

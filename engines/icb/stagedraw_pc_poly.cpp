@@ -26,11 +26,7 @@
  */
 
 #include "engines/icb/common/px_common.h"
-
-#include <math.h>
-
 #include "engines/icb/global_objects.h"
-
 #include "engines/icb/stage_draw.h"
 #include "engines/icb/debug.h"
 #include "engines/icb/mission.h"
@@ -40,8 +36,7 @@
 #include "engines/icb/session.h"
 #include "engines/icb/common/px_staticlayers.h"
 #include "engines/icb/shake.h"
-
-#include "global_objects_psx.h"
+#include "engines/icb/global_objects_psx.h"
 #include "engines/icb/gfx/psx_pcdefines.h"
 #include "engines/icb/gfx/psx_scrn.h"
 #include "engines/icb/common/px_capri_maths.h"
@@ -49,7 +44,6 @@
 #include "engines/icb/gfx/gfxstub.h"
 #include "engines/icb/gfx/psx_camera.h"
 #include "engines/icb/gfx/psx_tman.h"
-
 #include "engines/icb/gfx/rap_api.h"
 #include "engines/icb/gfx/rab_api.h"
 #include "engines/icb/gfx/psx_pchmd.h"
@@ -57,10 +51,8 @@
 #include "engines/icb/actor_pc.h"
 #include "engines/icb/drawpoly_pc.h"
 #include "engines/icb/shadow_pc.h"
-
 #include "engines/icb/gfx/gfxstub_dutch.h"
 #include "engines/icb/gfx/gfxstub_rev_dutch.h"
-
 #include "engines/icb/common/px_bones.h"
 #include "engines/icb/common/revtex_api.h"
 #include "engines/icb/common/pc_props.h"

@@ -27,15 +27,11 @@
 
 #include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_exception.h"
-
 #include "engines/icb/common/ptr_util.h"
-
 #include "engines/icb/p4.h"
-
-#include "px_scriptengine.h"
-#include "px_common.h"          // common defs for tools & engine
-#include "px_globalvariables.h" // The global variable class
-
+#include "engines/icb/common/px_scriptengine.h"
+#include "engines/icb/common/px_common.h"          // common defs for tools & engine
+#include "engines/icb/common/px_globalvariables.h" // The global variable class
 #include "engines/icb/fn_routines.h"
 
 namespace ICB {

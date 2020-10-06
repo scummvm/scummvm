@@ -28,7 +28,7 @@
 #ifndef _PX_STATIC_LAYERS_H
 #define _PX_STATIC_LAYERS_H
 
-#include "px_common.h"
+#include "engines/icb/common/px_common.h"
 
 namespace ICB {
 

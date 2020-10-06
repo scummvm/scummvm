@@ -28,11 +28,10 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_strncasecmp
 
 #include "engines/icb/common/px_common.h"
-
-#include "map_marker.h"
-#include "debug.h"
-#include "mission.h"
-#include "global_objects.h"
+#include "engines/icb/map_marker.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/mission.h"
+#include "engines/icb/global_objects.h"
 
 namespace ICB {
 

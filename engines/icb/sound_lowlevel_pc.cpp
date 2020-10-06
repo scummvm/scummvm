@@ -26,16 +26,13 @@
  */
 
 #include "engines/icb/p4.h"
-
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_sfx_description.h"
 #include "engines/icb/common/px_linkeddatafile.h"
 #include "engines/icb/debug.h"
-
 #include "engines/icb/sound/music_manager.h"
 #include "engines/icb/sound/speech_manager.h"
 #include "engines/icb/sound/fx_manager.h"
-
 #include "engines/icb/sound.h"
 #include "engines/icb/res_man_pc.h"
 #include "engines/icb/global_objects.h"

@@ -28,13 +28,10 @@
 #ifndef _GLOBAL_OBJECTS
 #define _GLOBAL_OBJECTS
 
-#include "p4.h"
-#include "line_of_sight.h"
-
-#include "game_script.h"
-
-// PC specifics
-#include "global_objects_pc.h"
+#include "engines/icb/p4.h"
+#include "engines/icb/line_of_sight.h"
+#include "engines/icb/game_script.h"
+#include "engines/icb/global_objects_pc.h"
 
 namespace ICB {
 

@@ -33,10 +33,9 @@
 #include "engines/icb/common/px_string.h"
 #include "engines/icb/common/px_assert.h"
 #include "engines/icb/common/px_clu_api.h"
-
-#include "p4.h"
-#include "debug.h"
-#include "string_vest.h"
+#include "engines/icb/p4.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/string_vest.h"
 
 namespace ICB {
 

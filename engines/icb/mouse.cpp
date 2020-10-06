@@ -26,9 +26,8 @@
  */
 
 #include "engines/icb/common/px_common.h"
-
-#include "mouse.h"
-#include "debug.h"
+#include "engines/icb/mouse.h"
+#include "engines/icb/debug.h"
 
 namespace ICB {
 

@@ -25,14 +25,10 @@
  *
  */
 
-#include <math.h>
-
-#include "../Library/px_common.h"
-#include "../Library/px_rcutypes.h"
-
-#include "../psxLibrary/psx_pcdefines.h"
-
-#include "shade.h"
+#include "engines/icb/px_common.h"
+#include "engines/icb/px_rcutypes.h"
+#include "engines/icb/psx_pcdefines.h"
+#include "engines/icb/shade.h"
 
 namespace ICB {
 

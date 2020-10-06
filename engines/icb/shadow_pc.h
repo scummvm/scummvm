@@ -29,14 +29,13 @@
 #define SHADOW_PC_H
 
 #include "engines/icb/common/px_common.h"
-#include "sys/types.h"
 #include "engines/icb/gfx/psx_pcdefines.h"
-#include "light_pc.h"
+#include "engines/icb/light_pc.h"
 #include "engines/icb/gfx/psx_pxactor.h"
 #include "engines/icb/gfx/psx_camera.h"
 #include "engines/icb/gfx/rap_api.h"
 #include "engines/icb/gfx/rab_api.h"
-#include "shadow.h"
+#include "engines/icb/shadow.h"
 
 namespace ICB {
 

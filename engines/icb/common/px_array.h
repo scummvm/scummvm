@@ -28,9 +28,9 @@
 #ifndef _LIBRARY_CMYACTARRAY
 #define _LIBRARY_CMYACTARRAY
 
-#include "px_rccommon.h"
-#include "px_rcutypes.h"
 #include <cstring>
+#include "engines/icb/common/px_rccommon.h"
+#include "engines/icb/common/px_rcutypes.h"
 
 namespace ICB {
 

@@ -28,7 +28,7 @@
 #ifndef PSX_PCHMD_H
 #define PSX_PCHMD_H
 
-#include "psx_pcdefines.h"
+#include "engines/icb/gfx/psx_pcdefines.h"
 
 namespace ICB {
 

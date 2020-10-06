@@ -25,9 +25,9 @@
  *
  */
 
-#include "p4.h"
-#include "icon_list.h"
-#include "debug.h"
+#include "engines/icb/p4.h"
+#include "engines/icb/icon_list.h"
+#include "engines/icb/debug.h"
 
 namespace ICB {
 

@@ -30,8 +30,7 @@
 
 #include "engines/icb/common/px_array.h"
 #include "engines/icb/common/px_features.h"
-
-#include "p4_generic.h"
+#include "engines/icb/p4_generic.h"
 
 namespace ICB {
 

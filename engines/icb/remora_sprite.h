@@ -28,11 +28,9 @@
 #if !defined(REMORA_SPRITE_H_INCLUDED)
 #define REMORA_SPRITE_H_INCLUDED
 
-#include "p4.h"
-#include "debug.h"
-#include "string_vest.h"
-
-// Include headers needed by this class.
+#include "engines/icb/p4.h"
+#include "engines/icb/debug.h"
+#include "engines/icb/string_vest.h"
 #include "engines/icb/common/px_clu_api.h"
 #include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_string.h"
