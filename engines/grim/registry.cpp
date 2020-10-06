@@ -116,7 +116,8 @@ Registry::Registry() :
 	// Right, they do string comparisons. doh!
 	_voiceEffects.setString(ConfMan.get("voice_effects"));
 	_movement.setString(ConfMan.get("movement"));
-	_joystick.setString(ConfMan.get("joystick"));
+	//_joystick.setString(ConfMan.get("joystick"));
+	_joystick.setString("false");
 	_transcript.setString(ConfMan.get("transcript"));
 }
 

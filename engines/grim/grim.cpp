@@ -33,6 +33,10 @@
 #include "common/config-manager.h"
 #include "common/translation.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "graphics/pixelbuffer.h"
 #include "graphics/renderer.h"
 
@@ -399,6 +403,185 @@ Common::Error GrimEngine::run() {
 	g_grim->mainLoop();
 
 	return Common::kNoError;
+}
+
+Common::KeymapArray GrimEngine::initKeymapsGrim(const char *target) {
+	using namespace Common;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "grim", "Grim Fandango");
+	Action *act;
+
+	act = new Action(kStandardActionMoveUp, _("Up"));
+	act->setKeyEvent(KEYCODE_UP);
+	act->addDefaultInputMapping("JOY_UP");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveDown, _("Down"));
+	act->setKeyEvent(KEYCODE_DOWN);
+	act->addDefaultInputMapping("JOY_DOWN");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveLeft, _("Left"));
+	act->setKeyEvent(KEYCODE_LEFT);
+	act->addDefaultInputMapping("JOY_LEFT");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveRight, _("Right"));
+	act->setKeyEvent(KEYCODE_RIGHT);
+	act->addDefaultInputMapping("JOY_RIGHT");
+	engineKeyMap->addAction(act);
+
+	act = new Action("BRUN", _("Run"));
+	act->setKeyEvent(KeyState(KEYCODE_LSHIFT));
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	engineKeyMap->addAction(act);
+
+	act = new Action("EXAM", _("Examine"));
+	act->setKeyEvent(KeyState(KEYCODE_s, 'e'));
+	act->addDefaultInputMapping("JOY_X");
+	engineKeyMap->addAction(act);
+
+	act = new Action("BUSE", _("Use/Talk"));
+	act->setKeyEvent(KeyState(KEYCODE_w, 'u'));
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action("PICK", _("Pick up/Put away"));
+	act->setKeyEvent(KeyState(KEYCODE_a, 'p'));
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Action("INVT", _("Invetory"));
+	act->setKeyEvent(KeyState(KEYCODE_d, 'i'));
+	act->addDefaultInputMapping("JOY_Y");
+	engineKeyMap->addAction(act);
+
+	act = new Action("SKLI", _("Skip dialog lines"));
+	act->setKeyEvent(KeyState(KEYCODE_PERIOD, '.'));
+	act->addDefaultInputMapping("PERIOD");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionSkip, _("Skip"));
+	act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE));
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Action("RETURN", _("Confirm"));
+	act->setKeyEvent(KeyState(KEYCODE_RETURN, ASCII_RETURN));
+	act->addDefaultInputMapping("RETURN");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action("GMNU", _("Menu"));
+	act->setKeyEvent(KeyState(KEYCODE_F1));
+	act->addDefaultInputMapping("JOY_GUIDE");
+	engineKeyMap->addAction(act);
+
+	act = new Action("QUIT", _("Quit"));
+	act->setKeyEvent(KeyState(KEYCODE_q, 'q'));
+	act->addDefaultInputMapping("JOY_BACK");
+	engineKeyMap->addAction(act);
+
+	return Keymap::arrayOf(engineKeyMap);
+}
+
+Common::KeymapArray GrimEngine::initKeymapsEMI(const char *target) {
+	using namespace Common;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "monkey4", "Escape from the Monkey Island");
+	Action *act;
+
+	act = new Action(kStandardActionMoveUp, _("Up"));
+	act->setKeyEvent(KEYCODE_UP);
+	act->addDefaultInputMapping("JOY_UP");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveDown, _("Down"));
+	act->setKeyEvent(KEYCODE_DOWN);
+	act->addDefaultInputMapping("JOY_DOWN");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveLeft, _("Left"));
+	act->setKeyEvent(KEYCODE_LEFT);
+	act->addDefaultInputMapping("JOY_LEFT");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveRight, _("Right"));
+	act->setKeyEvent(KEYCODE_RIGHT);
+	act->addDefaultInputMapping("JOY_RIGHT");
+	engineKeyMap->addAction(act);
+
+	act = new Action("COUP", _("Cycle Objects Up"));
+	act->setKeyEvent(KeyState(KEYCODE_PAGEUP));
+	act->addDefaultInputMapping("JOY_LEFT_TRIGGER");
+	engineKeyMap->addAction(act);
+
+	act = new Action("CODW", _("Cycle Objects Down"));
+	act->setKeyEvent(KeyState(KEYCODE_PAGEDOWN));
+	act->addDefaultInputMapping("JOY_RIGHT_TRIGGER");
+	engineKeyMap->addAction(act);
+
+	act = new Action("BRUN", _("Run"));
+	act->setKeyEvent(KeyState(KEYCODE_LSHIFT));
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	engineKeyMap->addAction(act);
+
+	act = new Action("QEXT", _("Quick Room Exit"));
+	act->setKeyEvent(KeyState(KEYCODE_o, 'o'));
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	engineKeyMap->addAction(act);
+
+	act = new Action("EXAM", _("Examine/Look"));
+	act->setKeyEvent(KeyState(KEYCODE_s, 'e'));
+	act->addDefaultInputMapping("JOY_X");
+	engineKeyMap->addAction(act);
+
+	act = new Action("BUSE", _("Use/Talk"));
+	act->setKeyEvent(KeyState(KEYCODE_w, 'u'));
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action("PICK", _("Pick up/Put away"));
+	act->setKeyEvent(KeyState(KEYCODE_a, 'p'));
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Action("INVT", _("Invetory"));
+	act->setKeyEvent(KeyState(KEYCODE_d, 'i'));
+	act->addDefaultInputMapping("JOY_Y");
+	engineKeyMap->addAction(act);
+
+	act = new Action("SKLI", _("Skip dialog lines"));
+	act->setKeyEvent(KeyState(KEYCODE_PERIOD, '.'));
+	act->addDefaultInputMapping("PERIOD");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionSkip, _("Skip"));
+	act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE));
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Action("RETURN", _("Confirm"));
+	act->setKeyEvent(KeyState(KEYCODE_RETURN, ASCII_RETURN));
+	act->addDefaultInputMapping("RETURN");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action("GMNU", _("Menu"));
+	act->setKeyEvent(KeyState(KEYCODE_F1, 0));
+	act->addDefaultInputMapping("JOY_GUIDE");
+	engineKeyMap->addAction(act);
+
+	act = new Action("QUIT", _("Quit"));
+	act->setKeyEvent(KeyState(KEYCODE_q, 'q'));
+	act->addDefaultInputMapping("JOY_BACK");
+	engineKeyMap->addAction(act);
+
+	return Keymap::arrayOf(engineKeyMap);
 }
 
 void GrimEngine::playAspyrLogo() {

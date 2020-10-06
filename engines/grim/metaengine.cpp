@@ -28,6 +28,7 @@
 #include "common/system.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
+#include "common/translation.h"
 
 namespace Grim {
 
@@ -45,6 +46,8 @@ public:
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	bool hasFeature(MetaEngineFeature f) const override;
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 
@@ -68,6 +71,23 @@ bool GrimMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup);
+}
+
+Common::KeymapArray GrimMetaEngine::initKeymaps(const char *target) const {
+	Common::String gameId = ConfMan.get("gameid", target);
+
+#ifdef ENABLE_GRIM
+	if (gameId == "grim") {
+		return Grim::GrimEngine::initKeymapsGrim(target);
+	}
+#endif
+#ifdef ENABLE_MONKEY4
+	if (gameId == "monkey4") {
+		return Grim::GrimEngine::initKeymapsEMI(target);
+	}
+#endif
+
+	return AdvancedMetaEngine::initKeymaps(target);
 }
 
 SaveStateList GrimMetaEngine::listSaves(const char *target) const {

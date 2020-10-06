@@ -167,6 +167,9 @@ public:
 	// Engine APIs
 	bool hasFeature(EngineFeature f) const override;
 
+	static Common::Array<Common::Keymap *> initKeymapsGrim(const char *target);
+	static Common::Array<Common::Keymap *> initKeymapsEMI(const char *target);
+
 	Common::StringArray _listFiles;
 	Common::StringArray::const_iterator _listFilesIter;
 

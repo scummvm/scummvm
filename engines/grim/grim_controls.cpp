@@ -263,7 +263,7 @@ const ControlDescriptor controls[] = {
 	{ "KEY_JOY2_RMUSHROOM", KEYCODE_JOY2_RIGHTSTICK },
 
 // tell EMI that the joystick can be used
-	{ "joy_selected", 1 },
+	{ "joy_selected", 0 },
 
 	{ nullptr, 0 }
 };
