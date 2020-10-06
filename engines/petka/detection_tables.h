@@ -29,7 +29,7 @@ static const ADGameDescription gameDescriptions[] = {
 
 	// Red Comrades Demo
 	{
-		"petka_demo",
+		"petka1",
 		0,
 		AD_ENTRY1s("DEMO.EXE", "5ef1ceaba05413d04fd733a81e6adbae", 888832),
 		Common::RU_RUS,
