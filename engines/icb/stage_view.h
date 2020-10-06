@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef __STAGE_VIEW_H__
-#define __STAGE_VIEW_H__
+#ifndef ICB_STAGE_VIEW_H__
+#define ICB_STAGE_VIEW_H__
 
 #include "engines/icb/common/px_rcutypes.h"
 #include "engines/icb/common/px_rccommon.h"

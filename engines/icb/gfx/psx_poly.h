@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef __DEANPOLY_H
-#define __DEANPOLY_H
+#ifndef ICB_DEANPOLY_H
+#define ICB_DEANPOLY_H
 
 namespace ICB {
 

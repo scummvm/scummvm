@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef PTR_UTIL_H
-#define PTR_UTIL_H
+#ifndef ICB_PTR_UTIL_H
+#define ICB_PTR_UTIL_H
 
 #include "engines/icb/common/px_common.h"
 

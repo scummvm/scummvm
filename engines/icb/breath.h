@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef BREATH_H
-#define BREATH_H
+#ifndef ICB_BREATH_H
+#define ICB_BREATH_H
 
 #include "engines/icb/common/px_common.h"
 

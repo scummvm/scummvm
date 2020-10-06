@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef SHADOW_H
-#define SHADOW_H
+#ifndef ICB_SHADOW_H
+#define ICB_SHADOW_H
 
 namespace ICB {
 

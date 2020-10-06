@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _PX_SFX_DESCRIPTION_H
-#define _PX_SFX_DESCRIPTION_H
+#ifndef ICB_PX_SFX_DESCRIPTION_H
+#define ICB_PX_SFX_DESCRIPTION_H
 
 namespace ICB {
 

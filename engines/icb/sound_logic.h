@@ -25,8 +25,8 @@
  *
  */
 
-#if !defined(SOUND_LOGIC_H_INCLUDED)
-#define SOUND_LOGIC_H_INCLUDED
+#ifndef ICB_SOUND_LOGIC_H_INCLUDED
+#define ICB_SOUND_LOGIC_H_INCLUDED
 
 #include "engines/icb/p4.h"
 #include "engines/icb/debug.h"

@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef SPEECH_H
-#define SPEECH_H
+#ifndef ICB_SPEECH_H
+#define ICB_SPEECH_H
 
 #include "engines/icb/common/px_array.h"
 #include "engines/icb/common/px_string.h"

@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _MISSION
-#define _MISSION
+#ifndef ICB_MISSION
+#define ICB_MISSION
 
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/session.h"

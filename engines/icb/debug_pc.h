@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef DEBUG_PC_H
-#define DEBUG_PC_H
+#ifndef ICB_DEBUG_PC_H
+#define ICB_DEBUG_PC_H
 
 #include "common/system.h"
 

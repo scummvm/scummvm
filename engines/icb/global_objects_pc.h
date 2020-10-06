@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _GLOBAL_OBJECTS_PC_H
-#define _GLOBAL_OBJECTS_PC_H
+#ifndef ICB_GLOBAL_OBJECTS_PC_H
+#define ICB_GLOBAL_OBJECTS_PC_H
 
 #include "engines/icb/surface_manager.h"
 

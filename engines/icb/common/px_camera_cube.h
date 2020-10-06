@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _PX_CAMERA_CUBE
-#define _PX_CAMERA_CUBE
+#ifndef ICB_PX_CAMERA_CUBE
+#define ICB_PX_CAMERA_CUBE
 
 #include "engines/icb/common/px_common.h"
 

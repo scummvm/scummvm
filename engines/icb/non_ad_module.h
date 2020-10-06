@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _NON_AD_MODULE_INCLUDED_
-#define _NON_AD_MODULE_INCLUDED_
+#ifndef ICB_NON_AD_MODULE_INCLUDED_
+#define ICB_NON_AD_MODULE_INCLUDED_
 
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/gfx/psx_pcdefines.h"

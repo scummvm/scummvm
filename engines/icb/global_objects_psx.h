@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _GLOBAL_OBJECTS_PSX_H
-#define _GLOBAL_OBJECTS_PSX_H
+#ifndef ICB_GLOBAL_OBJECTS_PSX_H
+#define ICB_GLOBAL_OBJECTS_PSX_H
 
 #include "engines/icb/common/px_rcutypes.h"
 #include "engines/icb/surface_manager.h"

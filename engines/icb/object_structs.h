@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _OBSTRUCTS
-#define _OBSTRUCTS
+#ifndef ICB_OBSTRUCTS
+#define ICB_OBSTRUCTS
 
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_game_object.h"

@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _LIBGPU_H_
-#define _LIBGPU_H_
+#ifndef ICB_LIBGPU_H_
+#define ICB_LIBGPU_H_
 
 namespace ICB {
 

@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef CONFIGFILE_H
-#define CONFIGFILE_H
+#ifndef ICB_CONFIGFILE_H
+#define ICB_CONFIGFILE_H
 
 #include "common/str.h"
 #include "common/hash-str.h"

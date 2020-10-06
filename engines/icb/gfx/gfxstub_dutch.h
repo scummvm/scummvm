@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef GFXSTUB_DUTCH_HH
-#define GFXSTUB_DUTCH_HH
+#ifndef ICB_GFXSTUB_DUTCH_HH
+#define ICB_GFXSTUB_DUTCH_HH
 
 namespace ICB {
 

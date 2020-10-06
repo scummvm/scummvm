@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef CLU_API_H
-#define CLU_API_H
+#ifndef ICB_CLU_API_H
+#define ICB_CLU_API_H
 
 namespace ICB {
 

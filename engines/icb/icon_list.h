@@ -25,8 +25,8 @@
  *
  */
 
-#if !defined(ICON_LIST_H_INCLUDED)
-#define ICON_LIST_H_INCLUDED
+#ifndef ICB_ICON_LIST_H_INCLUDED
+#define ICB_ICON_LIST_H_INCLUDED
 
 // Include headers needed by this class.
 #include "engines/icb/common/px_rccommon.h"

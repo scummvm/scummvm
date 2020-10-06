@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef REVTEX_API_H
-#define REVTEX_API_H
+#ifndef ICB_REVTEX_API_H
+#define ICB_REVTEX_API_H
 
 namespace ICB {
 

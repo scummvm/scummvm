@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _LIBRARY_CMYACTARRAY
-#define _LIBRARY_CMYACTARRAY
+#ifndef ICB_LIBRARY_CMYACTARRAY
+#define ICB_LIBRARY_CMYACTARRAY
 
 #include <cstring>
 #include "engines/icb/common/px_rccommon.h"

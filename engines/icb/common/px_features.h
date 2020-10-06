@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _PX_FEATURES_H_INCLUDED
-#define _PX_FEATURES_H_INCLUDED
+#ifndef ICB_PX_FEATURES_H_INCLUDED
+#define ICB_PX_FEATURES_H_INCLUDED
 
 #include "engines/icb/common/px_common.h"
 

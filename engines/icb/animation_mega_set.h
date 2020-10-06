@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef __ANIMATION_MEGA_SET
-#define __ANIMATION_MEGA_SET
+#ifndef ICB_ANIMATION_MEGA_SET
+#define ICB_ANIMATION_MEGA_SET
 
 #include "engines/icb/common/px_string.h"
 #include "engines/icb/common/px_rccommon.h"

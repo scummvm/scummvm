@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef ACTOR_H
-#define ACTOR_H
+#ifndef ICB_ACTOR_H
+#define ICB_ACTOR_H
 
 #include "engines/icb/gfx/psx_camera.h"
 

@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef BINK_STUB_H
-#define BINK_STUB_H
+#ifndef ICB_BINK_STUB_H
+#define ICB_BINK_STUB_H
 
 #include "engines/icb/common/px_rcutypes.h"
 

@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _PX_LINKED_DATA_FILE_H
-#define _PX_LINKED_DATA_FILE_H
+#ifndef ICB_PX_LINKED_DATA_FILE_H
+#define ICB_PX_LINKED_DATA_FILE_H
 
 #include "engines/icb/common/px_rccommon.h" // This is required to be included before anything else
 #include "engines/icb/common/px_rcutypes.h"

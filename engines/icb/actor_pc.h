@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef ACTOR_PC_H
-#define ACTOR_PC_H
+#ifndef ICB_ACTOR_PC_H
+#define ICB_ACTOR_PC_H
 
 #include "engines/icb/gfx/psx_pcdefines.h"
 #include "engines/icb/gfx/psx_pcgpu.h"

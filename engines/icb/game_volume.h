@@ -25,8 +25,8 @@
  *
  */
 
-#if !defined(GAMEVOLUME_H_INCLUDED)
-#define GAMEVOLUME_H_INCLUDED
+#ifndef ICB_GAMEVOLUME_H_INCLUDED
+#define ICB_GAMEVOLUME_H_INCLUDED
 
 #include "engines/icb/p4.h"
 #include "engines/icb/common/px_rccommon.h"

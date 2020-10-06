@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _SURFACE_MANAGER
-#define _SURFACE_MANAGER
+#ifndef ICB_SURFACE_MANAGER
+#define ICB_SURFACE_MANAGER
 
 #include "engines/icb/p4_generic.h"
 #include "engines/icb/common/px_array.h"

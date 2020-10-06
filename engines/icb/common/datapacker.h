@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef DATAPACKER_HH
-#define DATAPACKER_HH
+#ifndef ICB_DATAPACKER_HH
+#define ICB_DATAPACKER_HH
 
 #include "common/stream.h"
 

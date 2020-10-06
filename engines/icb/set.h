@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef SET_H
-#define SET_H
+#ifndef ICB_SET_H
+#define ICB_SET_H
 
 #include "engines/icb/set_pc.h"
 

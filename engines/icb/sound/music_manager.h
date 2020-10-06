@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _MUSICMANAGER_H_INCLUDED_
-#define _MUSICMANAGER_H_INCLUDED_
+#ifndef ICB_MUSICMANAGER_H_INCLUDED_
+#define ICB_MUSICMANAGER_H_INCLUDED_
 
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/sound/direct_sound.h"

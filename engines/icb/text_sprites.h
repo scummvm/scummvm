@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef INCLUDED_TEXT_SPRITES_H
-#define INCLUDED_TEXT_SPRITES_H
+#ifndef ICB_INCLUDED_TEXT_SPRITES_H
+#define ICB_INCLUDED_TEXT_SPRITES_H
 
 #include "engines/icb/p4_generic.h"
 #include "engines/icb/common/px_bitmap.h"

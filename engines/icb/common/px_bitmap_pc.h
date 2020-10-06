@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _PX_BITMAP_PC_H_INCLUDED
-#define _PX_BITMAP_PC_H_INCLUDED
+#ifndef ICB_PX_BITMAP_PC_H_INCLUDED
+#define ICB_PX_BITMAP_PC_H_INCLUDED
 
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_assert.h"

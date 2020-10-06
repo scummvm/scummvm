@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef RES_MAN_PC_H
-#define RES_MAN_PC_H
+#ifndef ICB_RES_MAN_PC_H
+#define ICB_RES_MAN_PC_H
 
 #include "engines/icb/debug.h"
 #include "engines/icb/common/px_string.h"

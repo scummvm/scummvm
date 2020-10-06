@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef SESSION_H
-#define SESSION_H
+#ifndef ICB_SESSION_H
+#define ICB_SESSION_H
 
 #include "engines/icb/p4_generic.h"
 #include "engines/icb/object_structs.h"

@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef PXTYPES_H
-#define PXTYPES_H
+#ifndef ICB_PXTYPES_H
+#define ICB_PXTYPES_H
 
 namespace ICB {
 

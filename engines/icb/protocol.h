@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _PROTOCOL
-#define _PROTOCOL
+#ifndef ICB_PROTOCOL_H
+#define ICB_PROTOCOL_H
 
 #include "engines/icb/common/px_common.h"
 

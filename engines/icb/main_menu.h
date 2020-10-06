@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef MAIN_MENU_H
-#define MAIN_MENU_H
+#ifndef ICB_MAIN_MENU_H
+#define ICB_MAIN_MENU_H
 
 namespace ICB {
 

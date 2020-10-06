@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef FLOORS_H
-#define FLOORS_H
+#ifndef ICB_FLOORS_H
+#define ICB_FLOORS_H
 
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_linkeddatafile.h"

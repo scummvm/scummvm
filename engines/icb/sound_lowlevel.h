@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef SOUND_LOWLEVEL_H
-#define SOUND_LOWLEVEL_H
+#ifndef ICB_SOUND_LOWLEVEL_H
+#define ICB_SOUND_LOWLEVEL_H
 
 #include "engines/icb/common/px_string.h"
 

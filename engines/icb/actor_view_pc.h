@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _ACTOR_VIEW_PC_H_INCLUDED
-#define _ACTOR_VIEW_PC_H_INCLUDED
+#ifndef ICB_ACTOR_VIEW_PC_H_INCLUDED
+#define ICB_ACTOR_VIEW_PC_H_INCLUDED
 
 #include "engines/icb/common/px_rccommon.h"
 

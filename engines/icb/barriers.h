@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef BARRIERS_H
-#define BARRIERS_H
+#ifndef ICB_BARRIERS_H
+#define ICB_BARRIERS_H
 
 #include "engines/icb/common/px_rcutypes.h"
 #include "engines/icb/common/px_linkeddatafile.h"

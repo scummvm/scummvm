@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef GFXSTUB_REV_DUTCH_HH
-#define GFXSTUB_REV_DUTCH_HH
+#ifndef ICB_GFXSTUB_REV_DUTCH_HH
+#define ICB_GFXSTUB_REV_DUTCH_HH
 
 #include "engines/icb/gfx/gfxstub_dutch.h"
 

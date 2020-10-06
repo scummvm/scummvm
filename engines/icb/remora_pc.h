@@ -25,8 +25,8 @@
  *
  */
 
-#if !defined(REMORA_PC_H_INCLUDED)
-#define REMORA_PC_H_INCLUDED
+#ifndef ICB_REMORA_PC_H_INCLUDED
+#define ICB_REMORA_PC_H_INCLUDED
 
 namespace ICB {
 

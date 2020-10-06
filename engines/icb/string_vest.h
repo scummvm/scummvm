@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef __STRING_VEST_H
-#define __STRING_VEST_H
+#ifndef ICB_STRING_VEST_H
+#define ICB_STRING_VEST_H
 
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/debug.h"

@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef LOADSCRN_H
-#define LOADSCRN_H
+#ifndef ICB_LOADSCRN_H
+#define ICB_LOADSCRN_H
 
 namespace ICB {
 

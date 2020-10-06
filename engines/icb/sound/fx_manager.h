@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _FXMANAGER_H__INCLUDED_
-#define _FXMANAGER_H__INCLUDED_
+#ifndef ICB_FXMANAGER_H__INCLUDED_
+#define ICB_FXMANAGER_H__INCLUDED_
 
 #include "engines/icb/sound/direct_sound.h"
 

@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef __PC_CAPRI_MATHS_PC_H
-#define __PC_CAPRI_MATHS_PC_H
+#ifndef ICB_PX_CAPRI_MATHS_PC_H
+#define ICB_PX_CAPRI_MATHS_PC_H
 
 #include "engines/icb/common/px_rccommon.h"
 
@@ -34,7 +34,7 @@
 
 namespace ICB {
 
-#if (_PSX_ON_PC == 0) && !defined __PSX_PcDefines_H__
+#if (_PSX_ON_PC == 0) && !defined ICB_PX_CAPRI_MATHS_PC_H
 
 // make our own equivalents
 typedef struct MATRIXPC {

@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _GAME_ENGINE_SCRIPTENGINE_H
-#define _GAME_ENGINE_SCRIPTENGINE_H
+#ifndef ICB_GAME_ENGINE_SCRIPTENGINE_H
+#define ICB_GAME_ENGINE_SCRIPTENGINE_H
 
 #include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_string.h"

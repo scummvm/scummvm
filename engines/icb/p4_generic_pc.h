@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef P4_GENERIC_PC_H
-#define P4_GENERIC_PC_H
+#ifndef ICB_P4_GENERIC_PC_H
+#define ICB_P4_GENERIC_PC_H
 
 #include "engines/icb/non_ad_module.h"
 #include "engines/icb/debug_pc.h"

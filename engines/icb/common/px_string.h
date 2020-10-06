@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _PX_pxString_H
-#define _PX_pxString_H
+#ifndef ICB_PX_STRING_H
+#define ICB_PX_STRING_H
 
 #include <cstring>
 

@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef PSX_CLUT_H
-#define PSX_CLUT_H
+#ifndef ICB_PSX_CLUT_H
+#define ICB_PSX_CLUT_H
 
 namespace ICB {
 

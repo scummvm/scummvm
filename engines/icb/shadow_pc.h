@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef SHADOW_PC_H
-#define SHADOW_PC_H
+#ifndef ICB_SHADOW_PC_H
+#define ICB_SHADOW_PC_H
 
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/gfx/psx_pcdefines.h"

@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _GLOBAL_OBJECTS
-#define _GLOBAL_OBJECTS
+#ifndef ICB_GLOBAL_OBJECTS
+#define ICB_GLOBAL_OBJECTS
 
 #include "engines/icb/p4.h"
 #include "engines/icb/line_of_sight.h"

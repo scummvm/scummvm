@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _MAP_MARKERR
-#define _MAP_MARKERR
+#ifndef ICB_MAP_MARKERR
+#define ICB_MAP_MARKERR
 
 #include "engines/icb/common/px_array.h"
 #include "engines/icb/common/px_features.h"

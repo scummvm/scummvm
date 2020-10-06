@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _DINPUTH
-#define _DINPUTH
+#ifndef ICB_DINPUTH
+#define ICB_DINPUTH
 
 #include "engines/icb/common/px_rccommon.h"
 

@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef RES_MAN_H
-#define RES_MAN_H
+#ifndef ICB_RES_MAN_H
+#define ICB_RES_MAN_H
 
 #include "engines/icb/p4.h"
 #include "engines/icb/common/px_array.h"

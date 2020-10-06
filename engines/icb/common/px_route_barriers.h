@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _PX_ROUTE_BARRIERS_H_INCLUDED
-#define _PX_ROUTE_BARRIERS_H_INCLUDED
+#ifndef ICB_PX_ROUTE_BARRIERS_H_INCLUDED
+#define ICB_PX_ROUTE_BARRIERS_H_INCLUDED
 
 // Include headers needed by this file.
 

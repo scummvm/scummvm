@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef PSX_LIGHT_H
-#define PSX_LIGHT_H
+#ifndef ICB_PSX_LIGHT_H
+#define ICB_PSX_LIGHT_H
 
 namespace ICB {
 

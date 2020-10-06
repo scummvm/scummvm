@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef RLP_API_H
-#define RLP_API_H
+#ifndef ICB_RLP_API_H
+#define ICB_RLP_API_H
 
 namespace ICB {
 

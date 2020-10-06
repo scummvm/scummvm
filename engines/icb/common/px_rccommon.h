@@ -27,8 +27,9 @@
 
 // All the rest of the definitions want defining just the once
 
-#ifndef PXCOMMON_H_INCLUDED
-#define PXCOMMON_H_INCLUDED
+#ifndef ICB_PXCOMMON_H_INCLUDED
+#define ICB_PXCOMMON_H_INCLUDED
+
 namespace ICB {
 
 // For certain classes the copy constructor and assignment is not a legal operation

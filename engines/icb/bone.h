@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _BONE_H
-#define _BONE_H
+#ifndef ICB_BONE_H
+#define ICB_BONE_H
 
 #include "engines/icb/common/px_bones.h"
 #include "engines/icb/object_structs.h"

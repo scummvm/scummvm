@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef PX_2DREALPOINT_H_INCLUDED
-#define PX_2DREALPOINT_H_INCLUDED
+#ifndef ICB_PX_2DREALPOINT_H_INCLUDED
+#define ICB_PX_2DREALPOINT_H_INCLUDED
 
 #include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_rcutypes.h"

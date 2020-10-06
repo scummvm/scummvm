@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _MISSION_FUNCTIONS_H_INCLUDED
-#define _MISSION_FUNCTIONS_H_INCLUDED
+#ifndef ICB_MISSION_FUNCTIONS_H_INCLUDED
+#define ICB_MISSION_FUNCTIONS_H_INCLUDED
 
 #include "engines/icb/common/px_rccommon.h"
 

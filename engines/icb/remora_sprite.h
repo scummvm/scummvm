@@ -25,8 +25,8 @@
  *
  */
 
-#if !defined(REMORA_SPRITE_H_INCLUDED)
-#define REMORA_SPRITE_H_INCLUDED
+#ifndef ICB_REMORA_SPRITE_H_INCLUDED
+#define ICB_REMORA_SPRITE_H_INCLUDED
 
 #include "engines/icb/p4.h"
 #include "engines/icb/debug.h"

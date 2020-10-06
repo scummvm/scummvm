@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef MOUSE_H
-#define MOUSE_H
+#ifndef ICB_MOUSE_H
+#define ICB_MOUSE_H
 
 #include "engines/icb/p4_generic.h"
 

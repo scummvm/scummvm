@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef PX_MATHS_PC_H
-#define PX_MATHS_PC_H
+#ifndef ICB_PX_MATHS_PC_H
+#define ICB_PX_MATHS_PC_H
 
 namespace ICB {
 

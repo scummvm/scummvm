@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef SHADE_H
-#define SHADE_H
+#ifndef ICB_SHADE_H
+#define ICB_SHADE_H
 
 #include "engines/icb/gfx/psx_pcdefines.h"
 #include "engines/icb/gfx/rlp_api.h"

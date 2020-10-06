@@ -38,8 +38,8 @@
 //		the map is stored half-scale.
 
 // Make sure this header gets included only once.
-#if !defined(_PX_MAPFILE_H_INCLUDED)
-#define _PX_MAPFILE_H_INCLUDED
+#ifndef ICB_PX_MAPFILE_H_INCLUDED
+#define ICB_PX_MAPFILE_H_INCLUDED
 
 // Include headers needed by this file.
 #include "engines/icb/common/px_common.h"

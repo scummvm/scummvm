@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef __PX_APIROUTINES_H__
-#define __PX_APIROUTINES_H__
+#ifndef ICB_PX_APIROUTINES_H__
+#define ICB_PX_APIROUTINES_H__
 
 #include "engines/icb/common/px_rcutypes.h"
 // Interpreter return codes

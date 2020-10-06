@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef SOUND_H
-#define SOUND_H
+#ifndef ICB_SOUND_H
+#define ICB_SOUND_H
 
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_clu_api.h"

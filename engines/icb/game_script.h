@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _GAME_SCRIPT
-#define _GAME_SCRIPT
+#ifndef ICB_GAME_SCRIPT
+#define ICB_GAME_SCRIPT
 
 #include "engines/icb/common/px_common.h"
 

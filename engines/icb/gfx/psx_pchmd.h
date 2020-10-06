@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef PSX_PCHMD_H
-#define PSX_PCHMD_H
+#ifndef ICB_PSX_PCHMD_H
+#define ICB_PSX_PCHMD_H
 
 #include "engines/icb/gfx/psx_pcdefines.h"
 

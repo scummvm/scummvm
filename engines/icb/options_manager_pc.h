@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _OPTIONS_MANAGER_PC_H_INCLUDED
-#define _OPTIONS_MANAGER_PC_H_INCLUDED
+#ifndef ICB_OPTIONS_MANAGER_PC_H_INCLUDED
+#define ICB_OPTIONS_MANAGER_PC_H_INCLUDED
 
 #include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/p4.h"

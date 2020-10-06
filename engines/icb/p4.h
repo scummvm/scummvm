@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef __P4_H
-#define __P4_H
+#ifndef ICB_P4_H
+#define ICB_P4_H
 
 // Silly codewarrior doesn't understand relative paths
 #include "engines/icb/common/px_common.h"

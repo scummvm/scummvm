@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef ICONMENU_PC_H_INCLUDED
-#define ICONMENU_PC_H_INCLUDED
+#ifndef ICB_ICONMENU_PC_H_INCLUDED
+#define ICB_ICONMENU_PC_H_INCLUDED
 
 namespace ICB {
 

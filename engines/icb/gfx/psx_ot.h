@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef PSX_OT_H
-#define PSX_OT_H
+#ifndef ICB_PSX_OT_H
+#define ICB_PSX_OT_H
 
 namespace ICB {
 

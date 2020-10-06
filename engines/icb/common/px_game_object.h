@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _GAME_OBJECT_H
-#define _GAME_OBJECT_H
+#ifndef ICB_GAME_OBJECT_H
+#define ICB_GAME_OBJECT_H
 
 #include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_rcutypes.h"

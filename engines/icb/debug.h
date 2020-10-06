@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef D_DEBUG
-#define D_DEBUG
+#ifndef ICB_D_DEBUG
+#define ICB_D_DEBUG
 
 #include "engines/icb/p4_generic.h"
 #include "engines/icb/common/px_rccommon.h"

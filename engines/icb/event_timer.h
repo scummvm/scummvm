@@ -25,8 +25,8 @@
  *
  */
 
-#if !defined(EVENTTIMER_H_INCLUDED)
-#define EVENTTIMER_H_INCLUDED
+#ifndef ICB_EVENTTIMER_H_INCLUDED
+#define ICB_EVENTTIMER_H_INCLUDED
 
 #include "engines/icb/string_vest.h"
 #include "engines/icb/common/px_rccommon.h"

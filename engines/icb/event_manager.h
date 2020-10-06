@@ -25,8 +25,8 @@
  *
  */
 
-#if !defined(EVENTMANAGER_H_INCLUDED)
-#define EVENTMANAGER_H_INCLUDED
+#ifndef ICB_EVENTMANAGER_H_INCLUDED
+#define ICB_EVENTMANAGER_H_INCLUDED
 
 // Include files with relative paths
 #include "engines/icb/common/px_rccommon.h"

@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _PXGLOBALVARIABLES
-#define _PXGLOBALVARIABLES
+#ifndef ICB_PXGLOBALVARIABLES
+#define ICB_PXGLOBALVARIABLES
 
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_clu_api.h"

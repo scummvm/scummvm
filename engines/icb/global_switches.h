@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef GLOBAL_SWITCHES_H
-#define GLOBAL_SWITCHES_H
+#ifndef ICB_GLOBAL_SWITCHES_H
+#define ICB_GLOBAL_SWITCHES_H
 
 #include "engines/icb/common/px_common.h"
 

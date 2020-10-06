@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef PX_ASSERT_H_INCLUDED
-#define PX_ASSERT_H_INCLUDED
+#ifndef ICB_PX_ASSERT_H_INCLUDED
+#define ICB_PX_ASSERT_H_INCLUDED
 
 #include "common/scummsys.h"
 

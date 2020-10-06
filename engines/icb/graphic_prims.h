@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _GRAPIC_PRIMS
-#define _GRAPIC_PRIMS
+#ifndef ICB_GRAPIC_PRIMS
+#define ICB_GRAPIC_PRIMS
 
 #include "engines/icb/common/px_bitmap.h"
 #include "engines/icb/common/px_types.h"

@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _PX_PROP_ANIMS_H_INCLUDED
-#define _PX_PROP_ANIMS_H_INCLUDED
+#ifndef ICB_PX_PROP_ANIMS_H_INCLUDED
+#define ICB_PX_PROP_ANIMS_H_INCLUDED
 
 // Include headers needed by this file.
 #include "engines/icb/common/px_common.h"

@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef ROUTE_MANAGER_H
-#define ROUTE_MANAGER_H
+#ifndef ICB_ROUTE_MANAGER_H
+#define ICB_ROUTE_MANAGER_H
 
 #include "engines/icb/common/px_rcutypes.h"
 #include "engines/icb/common/px_array.h"

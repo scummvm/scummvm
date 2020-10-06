@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef EVENTLIST_H_INCLUDED
-#define EVENTLIST_H_INCLUDED
+#ifndef ICB_EVENTLIST_H_INCLUDED
+#define ICB_EVENTLIST_H_INCLUDED
 
 #include "engines/icb/string_vest.h"
 #include "engines/icb/common/px_rccommon.h"

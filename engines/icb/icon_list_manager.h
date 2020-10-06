@@ -25,8 +25,8 @@
  *
  */
 
-#if !defined(ICON_LIST_MANAGER_H_INCLUDED)
-#define ICON_LIST_MANAGER_H_INCLUDED
+#ifndef ICB_ICON_LIST_MANAGER_H_INCLUDED
+#define ICB_ICON_LIST_MANAGER_H_INCLUDED
 
 #include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_string.h"

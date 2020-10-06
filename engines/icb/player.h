@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _PLAYER
-#define _PLAYER
+#ifndef ICB_PLAYER
+#define ICB_PLAYER
 
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/debug.h"

@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef PSX_BG_H
-#define PSX_BG_H
+#ifndef ICB_PSX_BG_H
+#define ICB_PSX_BG_H
 
 #include "engines/icb/gfx/psx_zlayers.h"
 

@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _PX_FLOOR_MAP_H_INCLUDED
-#define _PX_FLOOR_MAP_H_INCLUDED
+#ifndef ICB_PX_FLOOR_MAP_H_INCLUDED
+#define ICB_PX_FLOOR_MAP_H_INCLUDED
 
 #include "engines/icb/common/px_common.h"
 

@@ -25,8 +25,8 @@
  *
  */
 
-#if !defined(LINEOFSIGHT_H_INCLUDED)
-#define LINEOFSIGHT_H_INCLUDED
+#ifndef ICB_LINEOFSIGHT_H_INCLUDED
+#define ICB_LINEOFSIGHT_H_INCLUDED
 
 #include "engines/icb/p4.h"
 #include "engines/icb/debug.h"

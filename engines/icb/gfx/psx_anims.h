@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef PSX_ANIMS_HH
-#define PSX_ANIMS_HH
+#ifndef ICB_PSX_ANIMS_HH
+#define ICB_PSX_ANIMS_HH
 
 #include "engines/icb/debug.h"
 #include "engines/icb/common/px_common.h"

@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _library__PX_ANIMS_H_
-#define _library__PX_ANIMS_H_
+#ifndef ICB_PX_ANIMS_H_
+#define ICB_PX_ANIMS_H_
 
 #include "engines/icb/common/px_common.h"
 

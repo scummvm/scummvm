@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef RAP_API_HH
-#define RAP_API_HH
+#ifndef ICB_RAP_API_HH
+#define ICB_RAP_API_HH
 
 #include "engines/icb/gfx/psx_pcdefines.h"
 

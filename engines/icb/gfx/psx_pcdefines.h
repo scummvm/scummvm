@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef __PSX_PcDefines_H__
-#define __PSX_PcDefines_H__
+#ifndef ICB_PSX_PCDEFINES_H
+#define ICB_PSX_PCDEFINES_H
 
 #include "engines/icb/common/px_rccommon.h"
 

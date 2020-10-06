@@ -25,8 +25,8 @@
  *
  */
 
-#if !defined(REMORA_H_INCLUDED)
-#define REMORA_H_INCLUDED
+#ifndef ICB_REMORA_H_INCLUDED
+#define ICB_REMORA_H_INCLUDED
 
 // Include headers needed by this class.
 #include "engines/icb/common/px_rccommon.h"
