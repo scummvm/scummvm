@@ -1263,6 +1263,13 @@ void ScrollManager::updateScrollTimers() {
 	_renderer->writeUint16VRAM(0xD802, _hScrollTimers[1]._offsCur);
 }
 
+void ScrollManager::fastForward() {
+	_renderer->writeUint16VSRAM(0, _vScrollTimers[0]._offsDest);
+	_renderer->writeUint16VSRAM(2, _vScrollTimers[1]._offsDest);
+	_renderer->writeUint16VRAM(0xD800, _hScrollTimers[0]._offsDest);
+	_renderer->writeUint16VRAM(0xD802, _hScrollTimers[1]._offsDest);
+}
+
 } // End of namespace Kyra
 
 #endif // ENABLE_EOB
