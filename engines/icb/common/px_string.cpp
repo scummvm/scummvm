@@ -198,7 +198,6 @@ void pxString::ToLower() {
 }
 
 void pxString::ConvertPath() {
-#ifndef _WIN32
 	if (s) {
 		char *sp = s;
 		while (*sp) {
@@ -206,7 +205,6 @@ void pxString::ConvertPath() {
 			sp++;
 		}
 	}
-#endif
 }
 
 const pxString &pxString::Format(const char *format, ...) {

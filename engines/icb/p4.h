@@ -43,8 +43,6 @@ void Terminate_ap(); // call this to end the game and return to windows
 
 // variables
 extern int gameCycle; // for head-up display
-extern char root[];
-extern char croot[];
 extern char gamelanguage[];
 extern bool8 camera_hack;
 extern uint32 font_cluster_hash; // Res_open will compute the hash value and store it
@@ -63,16 +61,16 @@ extern char g_characters[];
 
 #define REMORA_GRAPHICS_PATH "remora\\pc\\"
 #define FONT_PATH "fonts\\pc\\%s"
-#define REMORA_CLUSTER_PATH "\\A\\2DART"
+#define REMORA_CLUSTER_PATH "A\\2DART"
 
 // Using psx style cluster paths
-#define ICON_CLUSTER_PATH "\\A\\2DART"                  // icon cluster path
-#define FONT_CLUSTER_PATH "\\A\\2DART"                  // font cluster path
-#define GLOBAL_CLUSTER_PATH "\\G\\G"                    // global cluster path
-#define SESSION_TEST_PATH "%sm\\%s\\%s.sex", (cstr)root // File to test for a sessions existence
-#define SESSION_CLUSTER_PATH "\\M\\%s\\%s.SEX"          // Path to the session cluster
-#define CHR_PATH "\\C\\%s\\%s.OFT"
-#define SET_PATH "\\M\\%s\\%s.CAM" // path to the set
+#define ICON_CLUSTER_PATH "A\\2DART"                  // icon cluster path
+#define FONT_CLUSTER_PATH "A\\2DART"                  // font cluster path
+#define GLOBAL_CLUSTER_PATH "G\\G"                    // global cluster path
+#define SESSION_TEST_PATH "m\\%s\\%s.sex"             // File to test for a sessions existence
+#define SESSION_CLUSTER_PATH "M\\%s\\%s.SEX"          // Path to the session cluster
+#define CHR_PATH "C\\%s\\%s.OFT"
+#define SET_PATH "M\\%s\\%s.CAM" // path to the set
 
 #define SYS_FONT "fonts\\font.tdw"       // default font name
 #define ICON_PATH "inventory_icon\\pc\\" // path for inventory objects
@@ -85,7 +83,7 @@ extern char g_characters[];
 #define FILENAME_VOTEXT "remora.ctf"
 #define GLOBAL_VOTEXT_NAME "remora.ctf"
 #define ICON_LABELS_FILENAME "iconlabels.ctf"
-#define CONFIG_INI_FILENAME "%sengine\\icb.ini", (const char *)root
+#define CONFIG_INI_FILENAME "engine\\icb.ini"
 
 // Resource Manager Sizes -- Initalize in Memory_stats
 extern uint32 BACKGROUND_BUFFER_SIZE;

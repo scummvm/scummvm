@@ -108,7 +108,7 @@ void LoadMissionSounds(const cstr cluster) { Tdebug("sounds.txt", "Setting up mi
 int32 GetSamplePitch(const cstr sampleName, bool8 isInSession) {
 	if (g_theFxManager) {
 		Tdebug("sounds.txt", "Getting sample rate for %s (isInSession=%d) = %d", sampleName, isInSession,
-		       g_theFxManager->GetDefaultRate(pxVString("%ssamples\\pc\\%s.wav", root, sampleName)));
+		       g_theFxManager->GetDefaultRate(pxVString("samples\\pc\\%s.wav", sampleName)));
 
 		int rate = 0;
 		pxString smp;
@@ -116,7 +116,7 @@ int32 GetSamplePitch(const cstr sampleName, bool8 isInSession) {
 
 		uint32 b_offset, sz;
 
-		if (!DoesClusterContainFile(pxVString("%sg\\samples.clu", root), HashString(smp), b_offset, sz))
+		if (!DoesClusterContainFile(pxVString("g\\samples.clu"), HashString(smp), b_offset, sz))
 			Fatal_error(pxVString("Couldn't find %s in global sample cluster", (const char *)smp));
 
 		// Pass sample name only if we're running from clusters
@@ -142,7 +142,7 @@ void StartSample(int32 ch, const cstr sampleName, bool8 isInSession, int looping
 
 		uint32 b_offset, sz;
 
-		if (!DoesClusterContainFile(pxVString("%sg\\samples.clu", root), HashString(smp), b_offset, sz))
+		if (!DoesClusterContainFile(pxVString("g\\samples.clu"), HashString(smp), b_offset, sz))
 			Fatal_error(pxVString("Couldn't find %s in global sample cluster", (const char *)smp));
 
 		// Pass sample name only if we're running from clusters
@@ -234,12 +234,12 @@ int SayLineOfSpeech(uint32 speechHash) {
 		pxString sessionHash(g_mission->session->Fetch_session_h_name());
 		sessionHash.ToLower();
 
-		clustername.Format("%s\\m\\%s\\%s\\speech.clu", root, missionHash.c_str(), sessionHash.c_str());
+		clustername.Format("m\\%s\\%s\\speech.clu", missionHash.c_str(), sessionHash.c_str());
 
 		uint32 file_offset, file_size;
 		if (!DoesClusterContainFile(clustername, speechHash, file_offset, file_size)) {
 
-			clustername.Format("%s\\g\\speech.clu", root);
+			clustername.Format("g\\speech.clu");
 
 			// Take a look
 			if (!DoesClusterContainFile(clustername, speechHash, file_offset, file_size)) {

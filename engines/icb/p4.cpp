@@ -25,12 +25,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_time
-#define FORBIDDEN_SYMBOL_EXCEPTION_localtime
-#define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
-
-#include <time.h>
-
 #include "engines/icb/p4.h"
 #include "engines/icb/keyboard.h"
 #include "engines/icb/mouse.h"
@@ -227,27 +221,22 @@ void _stub::Update_screen() {
 	// Record the next frame of the video if any
 	static uint32 frameNumber = 0;
 	if (px.recordingVideo)
-		surface_manager->RecordFrame(pxVString("c:\\temp\\icb%05d.bmp", frameNumber++));
+		surface_manager->RecordFrame(pxVString("icb%05d.bmp", frameNumber++));
 
 	// Grab screen shots if required
 	if (Read_DI_keys(Common::KEYCODE_LCTRL) || Read_DI_keys(Common::KEYCODE_RCTRL)) {
 		if (Read_DI_keys(Common::KEYCODE_s)) {
 			// Take a screen grab
-			struct tm *newtime;
-			time_t int32_time;
-			time(&int32_time);                                      /* Get time as int32 integer. */
-			newtime = localtime(&int32_time);                       /* Convert to local time. */
-			if (!checkFileExists(pxVString("%sScreenShots", root))) // TODO: Had amode = 0
-				error("ICB wants to create folder %sScreenShots", root);
+			if (!checkFileExists(pxVString("ScreenShots"))) // TODO: Had amode = 0
+				error("ICB wants to create folder ScreenShots");
 			/*
 #ifdef _WIN32
-				mkdir(pxVString("%sScreenShots", root));
+				mkdir(pxVString("ScreenShots"));
 #else
-				mkdir(pxVString("%sScreenShots", root), 0755);
+				mkdir(pxVString("ScreenShots"), 0755);
 #endif
 			*/
-			surface_manager->RecordFrame(pxVString("%sScreenShots\\%02d_%02d_%04d__%02d_%02d_%02d.bmp", root, newtime->tm_mday, 1 + newtime->tm_mon,
-			                                       1900 + newtime->tm_year, newtime->tm_hour, newtime->tm_min, newtime->tm_sec));
+			surface_manager->RecordFrame(pxVString("ScreenShots\\%08d.bmp", g_system->getMillis()));
 		}
 	}
 

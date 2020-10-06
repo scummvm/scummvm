@@ -91,7 +91,7 @@ void Init_play_movie(const char *param0, bool8 param1) {
 	pxString fullname;
 
 	// Non-global movies are streamed from the CD
-	char *_root = root;
+	char *_root;
 
 #ifndef PC_DEMO
 #if 1 // was #ifdef FROM_PC_CD
@@ -100,7 +100,7 @@ void Init_play_movie(const char *param0, bool8 param1) {
 #endif
 
 	// All in one directory, which is nice
-	fullname.Format("%smovies\\%s.bik", _root, moviename);
+	fullname.Format("movies\\%s.bik", moviename);
 	fullname.ConvertPath();
 	// Ensure correct CD is in the drive (can't assume this because of movie library)
 	switch (moviename[2]) {
@@ -137,7 +137,7 @@ void Init_play_movie(const char *param0, bool8 param1) {
 	if (!checkFileExists(fullname)) {
 		// File is not present in the mission directory so check the global directory
 
-		fullname.Format("%sgmovies\\%s.bik", root, moviename);
+		fullname.Format("gmovies\\%s.bik", moviename);
 		fullname.ConvertPath();
 
 		if (!checkFileExists(fullname))

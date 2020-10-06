@@ -222,7 +222,7 @@ bool8 ClusterManager::StartMissionInstall(MISSION_ID /*mission*/) {
 
 	// Full path to the torture movie (from hard disk at the moment)
 	pxString loadingMovie;
-	loadingMovie.Format("%sgmovies\\loading.bik", root);
+	loadingMovie.Format("gmovies\\loading.bik");
 	loadingMovie.ConvertPath();
 	// Load the movie into memory for playback
 	uint32 movieSize = GetFileSize(loadingMovie);
@@ -298,8 +298,8 @@ bool8 ClusterManager::InstallMission() {
 		// Have we finished
 		if (filename != NULL) {
 			// Construct the new source and destination names
-			sprintf(sourcePath, "%sm\\%s\\%s", GetCDRoot(), m_missionDir, filename);
-			sprintf(destPath, "%sm\\%s\\%s", root, m_missionDir, filename);
+			sprintf(sourcePath, "m\\%s\\%s", m_missionDir, filename);
+			sprintf(destPath, "m\\%s\\%s", m_missionDir, filename);
 
 			// Get size
 			m_currentFileSize = GetFileSize(sourcePath);
@@ -475,8 +475,8 @@ int ClusterManager::WhichCD(MISSION_ID mission) {
 
 bool8 ClusterManager::CheckForCD(int /*number*/) {
 #if 1 // was #ifdef FROM_PC_CD
-	strcpy(m_cdroot1, root);
-	strcpy(m_cdroot2, root);
+	strcpy(m_cdroot1, "");
+	strcpy(m_cdroot2, "");
 	return TRUE8;
 #else // FROM_PC_CD
 
@@ -549,7 +549,7 @@ bool8 ClusterManager::IsMissionDataInstalled(MISSION_ID &m) {
 		HashFile(g_mission_names[i], h_mission);
 
 		pxString missionDirectory;
-		missionDirectory.Format("%sm\\%s\\", root, h_mission);
+		missionDirectory.Format("m\\%s\\", h_mission);
 
 		if (checkFileExists(missionDirectory)) {
 			m = (MISSION_ID)i;
@@ -578,7 +578,7 @@ void ClusterManager::CleanHardDisk() {
 		HashFile(mission_names[i], h_mission);
 
 		pxString missionDirectory;
-		missionDirectory.Format("%sm\\%s\\", root, h_mission);
+		missionDirectory.Format("m\\%s\\", h_mission);
 
 		// First determine if this mission is on the hard disk
 		if (!checkFileExists(missionDirectory)) // amode = 0
@@ -1070,21 +1070,21 @@ void RecursivelyDeleteDirectory(const char * /*path*/) {
 }
 
 void ValidateDirectoryToDelete(const char *path) {
-	if (strcmp(path, pxVString("%sm\\FP3YNHA\\", root)) == 0)
+	if (strcmp(path, pxVString("m\\FP3YNHA\\")) == 0)
 		return;
-	else if (strcmp(path, pxVString("%sm\\HWYIPVA\\", root)) == 0)
+	else if (strcmp(path, pxVString("m\\HWYIPVA\\")) == 0)
 		return;
-	else if (strcmp(path, pxVString("%sm\\TPQUB4D\\", root)) == 0)
+	else if (strcmp(path, pxVString("m\\TPQUB4D\\")) == 0)
 		return;
-	else if (strcmp(path, pxVString("%sm\\RIGABTB\\", root)) == 0)
+	else if (strcmp(path, pxVString("m\\RIGABTB\\")) == 0)
 		return;
-	else if (strcmp(path, pxVString("%sm\\GAIYO3A\\", root)) == 0)
+	else if (strcmp(path, pxVString("m\\GAIYO3A\\")) == 0)
 		return;
-	else if (strcmp(path, pxVString("%sm\\NMUFF0B\\", root)) == 0)
+	else if (strcmp(path, pxVString("m\\NMUFF0B\\")) == 0)
 		return;
-	else if (strcmp(path, pxVString("%sm\\1QYUOAA\\", root)) == 0)
+	else if (strcmp(path, pxVString("m\\1QYUOAA\\")) == 0)
 		return;
-	else if (strcmp(path, pxVString("%sm\\TT3WADD\\", root)) == 0)
+	else if (strcmp(path, pxVString("m\\TT3WADD\\")) == 0)
 		return;
 	else
 		Fatal_error(pxVString("ValidateDirectoryToDelete() failed on: %s", path));
@@ -1135,7 +1135,7 @@ void MakeDirectoryTree(MISSION_ID /*mission*/) {
 	char missionDir[8];
 	HashFile(mission_names[mission], missionDir);
 
-	sprintf(pathToMake, "%sm\\%s", root, missionDir);
+	sprintf(pathToMake, "m\\%s", missionDir);
 	if (_mkdir(pathToMake) != 0)
 		Fatal_error(pxVString("MakeDirectoryTree(): Failed to make directory: %s", pathToMake));
 
@@ -1149,7 +1149,7 @@ void MakeDirectoryTree(MISSION_ID /*mission*/) {
 			char sessionDir[8];
 			HashFile(sessions[i + 1], sessionDir);
 
-			sprintf(pathToMake, "%sm\\%s\\%s", root, missionDir, sessionDir);
+			sprintf(pathToMake, "m\\%s\\%s", missionDir, sessionDir);
 			if (_mkdir(pathToMake) != 0)
 				Fatal_error(pxVString("MakeDirectoryTree(): Failed to make directory: %s", pathToMake));
 		}

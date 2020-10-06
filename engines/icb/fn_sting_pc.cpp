@@ -72,7 +72,7 @@ void LoadSting(uint32 looking_for_hash) {
 	if (looking_for_hash == 0)
 		return;
 
-	clustername.Format("%s\\g\\music.clu", root);
+	clustername.Format("g\\music.clu");
 
 	// To store offsets in cluster
 	uint32 file_offset, file_size;
@@ -105,7 +105,7 @@ void PlaySting(uint32 looking_for_hash) {
 	// Just so that the game can be run from non-clustered data
 	/*const char* cluster_root = "thegame\\english\\pc\\everything\\cd1";*/
 
-	clustername.Format("%s\\g\\music.clu", root);
+	clustername.Format("g\\music.clu");
 
 	// To store offsets in cluster
 	uint32 file_offset, file_size;

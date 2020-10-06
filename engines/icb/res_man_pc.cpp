@@ -25,24 +25,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_fopen
-#define FORBIDDEN_SYMBOL_EXCEPTION_fclose
-#define FORBIDDEN_SYMBOL_EXCEPTION_fseek
-#define FORBIDDEN_SYMBOL_EXCEPTION_fread
-#define FORBIDDEN_SYMBOL_EXCEPTION_ftell
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-#define FORBIDDEN_SYMBOL_EXCEPTION_stderr
-#define FORBIDDEN_SYMBOL_EXCEPTION_getwd
-#define FORBIDDEN_SYMBOL_EXCEPTION_getcwd
-#define FORBIDDEN_SYMBOL_EXCEPTION_chdir
-#define FORBIDDEN_SYMBOL_EXCEPTION_unlink
-
-#ifdef _WIN32
-#include <io.h>
-#else
-#include <unistd.h>
-#endif
-
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_array.h"
 #include "engines/icb/p4_generic.h"
@@ -63,13 +45,14 @@ namespace ICB {
 
 uint32 MAX_MEM_BLOCKS = 0;
 
-FILE *openDiskFileForBinaryRead(const char *filename) {
+Common::File *openDiskFileForBinaryRead(const char *filename) {
 	pxString path = filename;
 	path.ConvertPath();
-	FILE *result = fopen(path, "rb");
-	if (result != NULL) {
+	Common::File *result = new Common::File();
+	if (result->open(path.c_str())) {
 		return result;
 	} else {
+		delete result;
 		warning("openDiskFileForBinaryRead(%s) - FAILED", path.c_str());
 		return NULL;
 	}
@@ -77,16 +60,15 @@ FILE *openDiskFileForBinaryRead(const char *filename) {
 
 Common::SeekableReadStream *openDiskFileForBinaryStreamRead(const Common::String &filename) {
 	// Quick-fix to start replacing FILE with Stream.
-	FILE *f = openDiskFileForBinaryRead(filename.c_str());
+	Common::File *f = openDiskFileForBinaryRead(filename.c_str());
 	if (!f) {
 		return nullptr;
 	}
-	fseek(f, 0, SEEK_END);
-	int size = ftell(f);
-	fseek(f, 0, SEEK_SET);
+	int size = f->size();
 	byte *data = new byte[size];
-	fread(data, 1, size, f);
-	fclose(f);
+	f->read(data, size);
+	f->close();
+	delete f;
 	Common::MemoryReadStream *stream = new Common::MemoryReadStream(data, size, DisposeAfterUse::YES);
 	return stream;
 }
@@ -94,11 +76,12 @@ Common::SeekableReadStream *openDiskFileForBinaryStreamRead(const Common::String
 Common::WriteStream *openDiskWriteStream(const Common::String &filename) { error("TODO: Connect up the savegame-handler and friends"); }
 
 bool checkFileExists(const char *fullpath) {
-	if (access(fullpath, 0) == -1) {
-		return false;
-	}
-	return true;
+	Common::File file;
+
+	return file.exists(fullpath);
 }
+
+#if 0
 
 FILE *openDiskFileForBinaryWrite(const char *filename) {
 	pxString path = filename;
@@ -114,9 +97,11 @@ FILE *openDiskFileForBinaryWrite(const char *filename) {
 	}
 }
 
+#endif
+
 // Thread procedure take files and load them
 int async_loadThread(void *v) {
-	FILE *in;
+	Common::File *in;
 	res_man *rm = (res_man *)v;
 
 	int8 *fn = NULL;
@@ -147,16 +132,17 @@ int async_loadThread(void *v) {
 					newSize = size;
 					while (newSize != 0) {
 						if (newSize > 1024) {
-							fread(p, 1, 1024, in);
+							in->read(p, 1024);
 							p += 1024;
 							newSize -= 1024;
 						} else {
-							fread(p, 1, newSize, in);
+							in->read(p, newSize);
 							p += newSize;
 							newSize = 0;
 						}
 					}
-					fclose(in);
+					in->close();
+					delete in;
 
 					timer = g_system->getMillis() - timer;
 					Zdebug(100, "%d", timer);
@@ -424,12 +410,10 @@ bool8 res_man::Test_file(const char *url, uint32 url_hash, const char *cluster, 
 bool8 res_man::Test_file(const char *url) {
 	pxString path(url);
 	path.ConvertPath();
-	// test to see if a file exists
-	if (!access(path, 0)) // see if the file exists
-		return (TRUE8); // exists
 
-	// doesnt exist
-	return (FALSE8);
+	Common::File file;
+
+	return (bool8)file.exists(path.c_str());
 }
 
 void res_man::ReadFile(const char * /*url*/, RMParams *params) {
@@ -475,7 +459,7 @@ void res_man::ReadFile(const char * /*url*/, RMParams *params) {
 }
 
 const char *res_man::OpenFile(int32 &cluster_search, RMParams *params) {
-	pxString rootPath(root);
+	pxString rootPath("");
 	pxString clusterName(params->cluster);
 	clusterName.ToLower();
 
@@ -571,8 +555,8 @@ HEADER_NORMAL *res_man::GetFileHeader(int32 &cluster_search, RMParams *params) {
 	if (clu->ho.cluster_hash != params->cluster_hash) {
 		// Big error this cluster has a different internal hash value to the one
 		// we are looking for
-		Fatal_error("res_man::GetFileHeader different internal cluster_hash value %x file %x for %s::0x%X", params->cluster_hash, clu->ho.cluster_hash, params->cluster,
-		            params->url_hash);
+//		Fatal_error("res_man::GetFileHeader different internal cluster_hash value %x file %x for %s::0x%X", params->cluster_hash, clu->ho.cluster_hash, params->cluster,
+//		            params->url_hash);
 	}
 
 	HEADER_NORMAL *hn = clu->hn;
@@ -644,7 +628,7 @@ void res_man::Res_open_mini_cluster(const char *cluster_url, uint32 &cluster_has
 
 	// DiscRead(mem_list[mem_block].ad,(clu->hn)->offset,mem_needed,NULL,clu->ho.cdpos);
 
-	pxString rootPath(root);
+	pxString rootPath("");
 	pxString clusterName(fake_cluster_url);
 	clusterName.ToLower();
 

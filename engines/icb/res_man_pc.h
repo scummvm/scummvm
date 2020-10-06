@@ -32,6 +32,7 @@
 #include "engines/icb/common/px_string.h"
 
 #include "common/stream.h"
+#include "common/file.h"
 
 namespace ICB {
 

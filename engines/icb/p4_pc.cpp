@@ -52,8 +52,6 @@ bool gotTheFocus = false;
 pxString font_cluster = FONT_CLUSTER_PATH;
 
 char g_characters[] = "characters\\";
-char root[ENGINE_STRING_LEN];
-char croot[ENGINE_STRING_LEN];
 char gamelanguage[ENGINE_STRING_LEN] = "english";
 bool8 camera_hack;
 uint32 BACKGROUND_BUFFER_SIZE;
@@ -366,18 +364,7 @@ void Save_config_file() {
 void InitEngine(const char *lpCmdLine) {
 	CreateGlobalObjects();
 
-	{ // TODO: Get rid of this when refactoring to SearchMan
-		Common::String path = ConfMan.get("path");
-#ifdef _WIN32
-		sprintf(root, "%s\\", path.c_str());
-#else
-		sprintf(root, "%s/", path.c_str());
-#endif
-		warning("Root: %s", root);
-	}
-
 	// Set the character root directory to be the same as the normal root directory
-	Set_string(root, croot);
 	camera_hack = false; // defaults to off
 
 #ifdef USE_SDL_DIRECTLY

@@ -72,7 +72,7 @@ void Credits() {
 
 void InitisliaseScrollingText(const char *textFileName, const char *movieFileName, int frameStart) {
 	// Movies are streamed from the CD
-	char *_root = root;
+	char *_root;
 
 #if 1 // was ifdef FROM_PC_CD
 #ifndef PC_DEMO
@@ -87,10 +87,10 @@ void InitisliaseScrollingText(const char *textFileName, const char *movieFileNam
 
 #ifdef PC_DEMO
 	// All in one directory, which is nice
-	sprintf(fullMovieName, "%sgmovies\\%s.bik", _root, movieFileName);
+	sprintf(fullMovieName, "gmovies\\%s.bik", movieFileName);
 #else
 	// All in one directory, which is nice
-	sprintf(fullMovieName, "%smovies\\%s.bik", _root, movieFileName);
+	sprintf(fullMovieName, "movies\\%s.bik", movieFileName);
 #endif
 
 	// Ensure correct CD is in the drive (can't assume this because of movie library)
@@ -132,7 +132,7 @@ void InitisliaseScrollingText(const char *textFileName, const char *movieFileNam
 	if (!checkFileExists(fullMovieName)) { // amode = 0
 		// File is not present in the mission directory so check the global directory
 
-		sprintf(fullMovieName, "%sgmovies\\%s.bik", _root, movieFileName);
+		sprintf(fullMovieName, "gmovies\\%s.bik", movieFileName);
 
 		if (!checkFileExists(fullMovieName))
 			Fatal_error(pxVString("Movie %s.bik does not exist in mission or global movie directory", movieFileName));

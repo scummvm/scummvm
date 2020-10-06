@@ -25,11 +25,12 @@
  *
  */
 
-#include <stdio.h>
 #include "engines/icb/gfx/psx_pcdefines.h"
 #include "engines/icb/gfx/psx_pcgpu.h"
 #include "engines/icb/gfx/psx_poly.h"
 #include "engines/icb/gfx/gfxstub.h"
+
+#include "common/textconsole.h"
 
 namespace ICB {
 
@@ -202,7 +203,7 @@ void DrawPrim(void *prim) {
 	case GPUCODE_TILE: {
 		TILE *pr = (TILE *)p;
 		if (len != GPUSIZE_TILE) {
-			fprintf(stderr, "Primitive %p length %d != TILE length %d\n", prim, (uint32)len, GPUSIZE_TILE);
+			warning("Primitive %p length %d != TILE length %d\n", prim, (uint32)len, GPUSIZE_TILE);
 			return;
 		}
 		DrawTile(pr->x0, pr->y0, pr->w, pr->h, pr->r0, pr->g0, pr->b0, alpha, z0);
@@ -213,7 +214,7 @@ void DrawPrim(void *prim) {
 	case GPUCODE_TILE_1: {
 		TILE_1 *pr = (TILE_1 *)p;
 		if (len != GPUSIZE_TILE_1) {
-			fprintf(stderr, "Primitive %p length %d != TILE_1 length %d\n", prim, (uint32)len, GPUSIZE_TILE_1);
+			warning("Primitive %p length %d != TILE_1 length %d\n", prim, (uint32)len, GPUSIZE_TILE_1);
 			return;
 		}
 		DrawTile(pr->x0, pr->y0, 1, 1, pr->r0, pr->g0, pr->b0, alpha, z0);
@@ -224,7 +225,7 @@ void DrawPrim(void *prim) {
 	case GPUCODE_TILE_8: {
 		TILE_8 *pr = (TILE_8 *)p;
 		if (len != GPUSIZE_TILE_8) {
-			fprintf(stderr, "Primitive %p length %d != TILE_8 length %d\n", prim, (uint32)len, GPUSIZE_TILE_8);
+			warning("Primitive %p length %d != TILE_8 length %d\n", prim, (uint32)len, GPUSIZE_TILE_8);
 			return;
 		}
 		DrawTile(pr->x0, pr->y0, 8, 8, pr->r0, pr->g0, pr->b0, alpha, z0);
@@ -235,7 +236,7 @@ void DrawPrim(void *prim) {
 	case GPUCODE_TILE_16: {
 		TILE_16 *pr = (TILE_16 *)p;
 		if (len != GPUSIZE_TILE_16) {
-			fprintf(stderr, "Primitive %p length %d != TILE_16 length %d\n", prim, (uint32)len, GPUSIZE_TILE_16);
+			warning("Primitive %p length %d != TILE_16 length %d\n", prim, (uint32)len, GPUSIZE_TILE_16);
 			return;
 		}
 		DrawTile(pr->x0, pr->y0, 16, 16, pr->r0, pr->g0, pr->b0, alpha, z0);
@@ -246,7 +247,7 @@ void DrawPrim(void *prim) {
 	case GPUCODE_LINE_F2: {
 		LINE_F2 *pr = (LINE_F2 *)p;
 		if (len != GPUSIZE_LINE_F2) {
-			fprintf(stderr, "Primitive %p length %d != LineF2 length %d\n", prim, (uint32)len, GPUSIZE_LINE_F2);
+			warning("Primitive %p length %d != LineF2 length %d\n", prim, (uint32)len, GPUSIZE_LINE_F2);
 			return;
 		}
 		/*
@@ -261,7 +262,7 @@ void DrawPrim(void *prim) {
 	case GPUCODE_LINE_F3: {
 		LINE_F3 *pr = (LINE_F3 *)p;
 		if (len != GPUSIZE_LINE_F3) {
-			fprintf(stderr, "Primitive %p length %d != LineF3 length %d\n", prim, (uint32)len, GPUSIZE_LINE_F3);
+			warning("Primitive %p length %d != LineF3 length %d\n", prim, (uint32)len, GPUSIZE_LINE_F3);
 			return;
 		}
 		/*
@@ -277,7 +278,7 @@ void DrawPrim(void *prim) {
 	case GPUCODE_LINE_F4: {
 		LINE_F4 *pr = (LINE_F4 *)p;
 		if (len != GPUSIZE_LINE_F4) {
-			fprintf(stderr, "Primitive %p length %d != LineF4 length %d\n", prim, (uint32)len, GPUSIZE_LINE_F4);
+			warning("Primitive %p length %d != LineF4 length %d\n", prim, (uint32)len, GPUSIZE_LINE_F4);
 			return;
 		}
 		/*
@@ -295,7 +296,7 @@ void DrawPrim(void *prim) {
 	case GPUCODE_LINE_G2: {
 		LINE_G2 *pr = (LINE_G2 *)p;
 		if (len != GPUSIZE_LINE_G2) {
-			fprintf(stderr, "Primitive %p length %d != LineG2 length %d\n", prim, (uint32)len, GPUSIZE_LINE_G2);
+			warning("Primitive %p length %d != LineG2 length %d\n", prim, (uint32)len, GPUSIZE_LINE_G2);
 			return;
 		}
 		/*
@@ -311,7 +312,7 @@ void DrawPrim(void *prim) {
 	case GPUCODE_LINE_G3: {
 		LINE_G3 *pr = (LINE_G3 *)p;
 		if (len != GPUSIZE_LINE_G3) {
-			fprintf(stderr, "Primitive %p length %d != LineG3 length %d\n", prim, (uint32)len, GPUSIZE_LINE_G3);
+			warning("Primitive %p length %d != LineG3 length %d\n", prim, (uint32)len, GPUSIZE_LINE_G3);
 			return;
 		}
 		/*
@@ -327,7 +328,7 @@ void DrawPrim(void *prim) {
 	case GPUCODE_LINE_G4: {
 		LINE_G4 *pr = (LINE_G4 *)p;
 		if (len != GPUSIZE_LINE_G4) {
-			fprintf(stderr, "Primitive %p length %d != LineG4 length %d\n", prim, (uint32)len, GPUSIZE_LINE_G4);
+			warning("Primitive %p length %d != LineG4 length %d\n", prim, (uint32)len, GPUSIZE_LINE_G4);
 			return;
 		}
 		/*
@@ -348,7 +349,7 @@ void DrawPrim(void *prim) {
 	case GPUCODE_POLY_F3: {
 		POLY_F3 *pr = (POLY_F3 *)p;
 		if (len != GPUSIZE_POLY_F3) {
-			fprintf(stderr, "Primitive %p length %d != PolyF3 length %d\n", prim, (uint32)len, GPUSIZE_POLY_F3);
+			warning("Primitive %p length %d != PolyF3 length %d\n", prim, (uint32)len, GPUSIZE_POLY_F3);
 			return;
 		}
 		/*
@@ -365,7 +366,7 @@ void DrawPrim(void *prim) {
 	case GPUCODE_POLY_F4: {
 		POLY_F4 *pr = (POLY_F4 *)p;
 		if (len != GPUSIZE_POLY_F4) {
-			fprintf(stderr, "Primitive %p length %d != PolyF4 length %d\n", prim, (uint32)len, GPUSIZE_POLY_F4);
+			warning("Primitive %p length %d != PolyF4 length %d\n", prim, (uint32)len, GPUSIZE_POLY_F4);
 			return;
 		}
 		/*
@@ -383,7 +384,7 @@ void DrawPrim(void *prim) {
 	case GPUCODE_POLY_G3: {
 		POLY_G3 *pr = (POLY_G3 *)p;
 		if (len != GPUSIZE_POLY_G3) {
-			fprintf(stderr, "Primitive %p length %d != PolyG3 length %d\n", prim, (uint32)len, GPUSIZE_POLY_G3);
+			warning("Primitive %p length %d != PolyG3 length %d\n", prim, (uint32)len, GPUSIZE_POLY_G3);
 			return;
 		}
 		/*
@@ -401,7 +402,7 @@ void DrawPrim(void *prim) {
 	case GPUCODE_POLY_G4: {
 		POLY_G4 *pr = (POLY_G4 *)p;
 		if (len != GPUSIZE_POLY_G4) {
-			fprintf(stderr, "Primitive %p length %d != PolyG4 length %d\n", prim, (uint32)len, GPUSIZE_POLY_G4);
+			warning("Primitive %p length %d != PolyG4 length %d\n", prim, (uint32)len, GPUSIZE_POLY_G4);
 			return;
 		}
 		/*
@@ -421,7 +422,7 @@ void DrawPrim(void *prim) {
 	case GPUCODE_POLY_FT3: {
 		POLY_FT3 *pr = (POLY_FT3 *)p;
 		if (len != GPUSIZE_POLY_FT3) {
-			fprintf(stderr, "Primitive %p length %d != PolyFT3 length %d\n", prim, (uint32)len, GPUSIZE_POLY_FT3);
+			warning("Primitive %p length %d != PolyFT3 length %d\n", prim, (uint32)len, GPUSIZE_POLY_FT3);
 			return;
 		}
 		/*
@@ -438,7 +439,7 @@ void DrawPrim(void *prim) {
 	case GPUCODE_POLY_FT4: {
 		POLY_FT4 *pr = (POLY_FT4 *)p;
 		if (len != GPUSIZE_POLY_FT4) {
-			fprintf(stderr, "Primitive %p length %d != PolyFT4 length %d\n", prim, (uint32)len, GPUSIZE_POLY_FT4);
+			warning("Primitive %p length %d != PolyFT4 length %d\n", prim, (uint32)len, GPUSIZE_POLY_FT4);
 			return;
 		}
 		/*
@@ -459,7 +460,7 @@ void DrawPrim(void *prim) {
 	case GPUCODE_POLY_GT3: {
 		POLY_GT3 *pr = (POLY_GT3 *)p;
 		if (len != GPUSIZE_POLY_GT3) {
-			fprintf(stderr, "Primitive %p length %d != PolyGT3 length %d\n", prim, (uint32)len, GPUSIZE_POLY_GT3);
+			warning("Primitive %p length %d != PolyGT3 length %d\n", prim, (uint32)len, GPUSIZE_POLY_GT3);
 			return;
 		}
 		/*
@@ -479,7 +480,7 @@ void DrawPrim(void *prim) {
 	case GPUCODE_POLY_GT4: {
 		POLY_GT4 *pr = (POLY_GT4 *)p;
 		if (len != GPUSIZE_POLY_GT4) {
-			fprintf(stderr, "Primitive %p length %d != PolyGT4 length %d\n", prim, (uint32)len, GPUSIZE_POLY_GT4);
+			warning("Primitive %p length %d != PolyGT4 length %d\n", prim, (uint32)len, GPUSIZE_POLY_GT4);
 			return;
 		}
 		/*
@@ -502,7 +503,7 @@ void DrawPrim(void *prim) {
 	case GPUCODE_SPRT: {
 		SPRT *pr = (SPRT *)p;
 		if (len != GPUSIZE_SPRT) {
-			fprintf(stderr, "Primitive %p length %d != SPRT length %d\n", prim, (uint32)len, GPUSIZE_SPRT);
+			warning("Primitive %p length %d != SPRT length %d\n", prim, (uint32)len, GPUSIZE_SPRT);
 			return;
 		}
 		DrawSprite(pr->x0, pr->y0, pr->w, pr->h, pr->r0, pr->g0, pr->b0, pr->u0, pr->v0, alpha, z0, usr);
@@ -513,7 +514,7 @@ void DrawPrim(void *prim) {
 	case GPUCODE_SPRT_8: {
 		SPRT_8 *pr = (SPRT_8 *)p;
 		if (len != GPUSIZE_SPRT_8) {
-			fprintf(stderr, "Primitive %p length %d != SPRT_8 length %d\n", prim, (uint32)len, GPUSIZE_SPRT_8);
+			warning("Primitive %p length %d != SPRT_8 length %d\n", prim, (uint32)len, GPUSIZE_SPRT_8);
 			return;
 		}
 		DrawSprite(pr->x0, pr->y0, 8, 8, pr->r0, pr->g0, pr->b0, pr->u0, pr->v0, alpha, z0, usr);
@@ -524,14 +525,14 @@ void DrawPrim(void *prim) {
 	case GPUCODE_SPRT_16: {
 		SPRT_16 *pr = (SPRT_16 *)p;
 		if (len != GPUSIZE_SPRT_16) {
-			fprintf(stderr, "Primitive %p length %d != SPRT_16 length %d\n", prim, (uint32)len, GPUSIZE_SPRT_16);
+			warning("Primitive %p length %d != SPRT_16 length %d\n", prim, (uint32)len, GPUSIZE_SPRT_16);
 			return;
 		}
 		DrawSprite(pr->x0, pr->y0, 16, 16, pr->r0, pr->g0, pr->b0, pr->u0, pr->v0, alpha, z0, usr);
 		break;
 	}
 	default: {
-		printf("Unknown Primitive\n");
+		warning("Unknown Primitive\n");
 		break;
 	}
 	}
