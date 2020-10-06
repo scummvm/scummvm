@@ -99,6 +99,9 @@ bool VirtualMouse::pollEvent(Event &event) {
 	event.mouse.x = CLIP<int16>(event.mouse.x, 0, screenSize.width());
 	event.mouse.y = CLIP<int16>(event.mouse.y, 0, screenSize.height());
 
+	event.relMouse.x = delta.x; // ResidualVM
+	event.relMouse.y = delta.y; // ResidualVM
+
 	g_system->warpMouse(event.mouse.x, event.mouse.y);
 
 	return true;
