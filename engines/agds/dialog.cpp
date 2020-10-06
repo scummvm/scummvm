@@ -57,9 +57,10 @@ bool Dialog::tick() {
 	if (_dialogProcessName.empty())
 		return false;
 
-	int dialog_var = _engine->getSystemVariable("dialog_var")->getInteger();
-	if (dialog_var != 0) {
-		debug("dialog_var = %d, skipping tick", dialog_var);
+	auto dialog_var = _engine->getSystemVariable("dialog_var");
+	int dialog_var_value = dialog_var->getInteger();
+	if (dialog_var_value != 0) {
+		debug("dialog_var = %d, skipping tick", dialog_var_value);
 		return false;
 	}
 
@@ -67,7 +68,8 @@ bool Dialog::tick() {
 	if (_dialogScriptPos >= n)
 		return false;
 
-	Common::String line;
+	Common::String &line = _dialogLine;
+	line.clear();
 	while (_dialogScriptPos < n && _dialogScript[_dialogScriptPos] != '\n' && _dialogScript[_dialogScriptPos] != '\r') {
 		line += _dialogScript[_dialogScriptPos++];
 	}
@@ -97,6 +99,7 @@ bool Dialog::tick() {
 		}
 	} else if (line[0] == ' ') {
 		debug("text: %s", line.c_str() + 1);
+		dialog_var->setInteger(-3);
 	}
 	if (_dialogScriptPos >= n && !_dialogProcessName.empty()) {
 		Common::String process = _dialogProcessName;
