@@ -114,7 +114,7 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 	if (slot == -1) {
 		// Skip all settings which aren't necessary for party transfer.
 		// Jump directly to the items list.
-		in.skip(108);
+		in.skip(header.version > 18 ? 124 : 108);
 	} else {
 		_currentLevel = in.readByte();
 		_currentSub = in.readSByte();
@@ -140,7 +140,7 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 		_activeSpell = in.readByte();
 		_returnAfterSpellCallback = in.readByte() ? true : false;
 
-		if (_flags.platform == Common::kPlatformSegaCD) {
+		if (_flags.platform == Common::kPlatformSegaCD || header.version > 18) {
 			_totalPlaySecs = in.readUint32BE();
 			_totalEnemiesKilled = in.readUint32BE();
 			_totalSteps = in.readUint32BE();
@@ -419,12 +419,11 @@ Common::Error EoBCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 	out->writeByte(_activeSpell);
 	out->writeByte(_returnAfterSpellCallback ? 1 : 0);
 
-	if (_flags.platform == Common::kPlatformSegaCD) {
-		out->writeUint32BE(_totalPlaySecs);
-		out->writeUint32BE(_totalEnemiesKilled);
-		out->writeUint32BE(_totalSteps);
-		out->writeUint32BE(_levelMaps);
-	}
+	// SegaCD specific
+	out->writeUint32BE(_totalPlaySecs);
+	out->writeUint32BE(_totalEnemiesKilled);
+	out->writeUint32BE(_totalSteps);
+	out->writeUint32BE(_levelMaps);
 
 	_inf->saveState(out);
 

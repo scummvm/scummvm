@@ -29,7 +29,7 @@
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
 
-#define CURRENT_SAVE_VERSION 18
+#define CURRENT_SAVE_VERSION 19
 
 #define GF_FLOPPY  (1 <<  0)
 #define GF_TALKIE  (1 <<  1)
