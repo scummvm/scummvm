@@ -33,7 +33,9 @@
 namespace Petka {
 
 Sound::Sound(Common::SeekableReadStream *stream, Audio::Mixer::SoundType type)
-	: _stream(stream), _type(type) {}
+	: _type(type), _stream(stream->readStream(stream->size())) {
+	delete stream;
+}
 
 Sound::~Sound() {
 	stop();
