@@ -143,6 +143,8 @@ RegionPtr AGDSEngine::loadRegion(const Common::String &name) {
 }
 
 Common::String AGDSEngine::loadText(const Common::String &entryName) {
+	if (entryName.empty())
+		return Common::String();
 	return ResourceManager::loadText(_data.getEntry(entryName));
 }
 
