@@ -49,7 +49,9 @@ AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Eng
                                                                              _gameDescription(gameDesc), _pictureCacheId(1), _sharedStorageIndex(-2),
                                                                              _mjpgPlayer(), _currentScreen(),
                                                                              _defaultMouseCursor(),
-                                                                             _mouse(400, 300), _userEnabled(false), _currentRegion(),
+                                                                             _mouse(400, 300),
+																			 _userEnabled(true), _systemUserEnabled(true),
+																			 _currentRegion(),
                                                                              _random("agds"),
                                                                              _inventoryRegion(),
                                                                              _soundManager(this, system->getMixer()),
@@ -373,7 +375,7 @@ Common::Error AGDSEngine::run() {
 					if (event.kbd.ascii)
 						key = Common::String(static_cast<char>(event.kbd.ascii));
 				};
-				if (_userEnabled && !key.empty()) {
+				if (userEnabled() && !key.empty()) {
 					Screen::KeyHandler handler = _currentScreen->findKeyHandler(key);
 					if (handler.object) {
 						debug("found handler for key %s: %s %08x", key.c_str(), handler.object->getName().c_str(), handler.ip + 7);
@@ -383,7 +385,7 @@ Common::Error AGDSEngine::run() {
 			} break;
 			case Common::EVENT_MOUSEMOVE:
 				_mouse = event.mouse;
-				if (_userEnabled) {
+				if (userEnabled()) {
 					MouseRegion *region = _mouseMap.find(_mouse);
 					if (region != _currentRegion) {
 						if (_currentRegion) {
@@ -403,7 +405,7 @@ Common::Error AGDSEngine::run() {
 			case Common::EVENT_LBUTTONDOWN:
 			case Common::EVENT_RBUTTONDOWN:
 				_mouse = event.mouse;
-				if (_userEnabled) {
+				if (userEnabled()) {
 					bool lclick = event.type == Common::EVENT_LBUTTONDOWN;
 					debug("%s %d, %d", lclick ? "lclick" : "rclick", _mouse.x, _mouse.y);
 					ObjectPtr object = _currentScreen->find(_mouse);
@@ -423,7 +425,7 @@ Common::Error AGDSEngine::run() {
 
 		Animation *mouseCursor = NULL;
 
-		if (_userEnabled && _currentScreen) {
+		if (userEnabled() && _currentScreen) {
 			ObjectPtr object = _currentScreen->find(_mouse);
 			Animation *cursor = object ? object->getMouseCursor() : NULL;
 			if (cursor)
@@ -462,7 +464,7 @@ Common::Error AGDSEngine::run() {
 		if (!mouseCursor)
 			mouseCursor = _defaultMouseCursor;
 
-		if (_userEnabled && mouseCursor) {
+		if (userEnabled() && mouseCursor) {
 			mouseCursor->paint(*this, *backbuffer, _mouse);
 		}
 
