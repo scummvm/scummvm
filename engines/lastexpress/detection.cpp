@@ -203,11 +203,17 @@ static const ADGameDescription gameDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
+static const char *const directoryGlobs[] = {
+        "data", // GOG release
+        0
+};
 
 class LastExpressMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
 	LastExpressMetaEngineStatic() : AdvancedMetaEngineStatic(gameDescriptions, sizeof(ADGameDescription), lastExpressGames) {
 		_guiOptions = GUIO2(GUIO_NOSUBTITLES, GUIO_NOSFX);
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
 	}
 
 	const char *getEngineId() const override {
