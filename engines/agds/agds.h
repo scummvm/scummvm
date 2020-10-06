@@ -184,8 +184,11 @@ public:
 	void enableUser(bool enabled) {
 		_userEnabled = enabled;
 	}
+	void enableSystemUser(bool enabled) {
+		_systemUserEnabled = enabled;
+	}
 	bool userEnabled() const {
-		return _userEnabled;
+		return _userEnabled && _systemUserEnabled;
 	}
 
 	void newGame();
@@ -274,6 +277,7 @@ private:
 	Common::Point				_mouse;
 	MouseRegion *				_currentRegion;
 	bool						_userEnabled;
+	bool						_systemUserEnabled;
 	MouseMap					_mouseMap;
 	Common::RandomSource		_random;
 	Inventory					_inventory;
