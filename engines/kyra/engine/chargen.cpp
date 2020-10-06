@@ -1819,6 +1819,9 @@ bool TransferPartyWiz::start() {
 			ch++;
 		}
 	}
+
+	delete[] _vm->_characters[4].faceShape;
+	delete[] _vm->_characters[5].faceShape;
 	memset(&_vm->_characters[4], 0, sizeof(EoBCharacter) * 2);
 
 	convertInventory();
