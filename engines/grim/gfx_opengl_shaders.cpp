@@ -375,22 +375,22 @@ void GfxOpenGLS::setupShaders() {
 
 	static const char* commonAttributes[] = {"position", "texcoord", NULL};
 	_backgroundProgram = OpenGL::ShaderGL::fromFiles(isEMI ? "emi_background" : "grim_background", commonAttributes);
-	_smushProgram = OpenGL::ShaderGL::fromFiles("smush", commonAttributes);
-	_textProgram = OpenGL::ShaderGL::fromFiles("text", commonAttributes);
-	_emergProgram = OpenGL::ShaderGL::fromFiles("emerg", commonAttributes);
+	_smushProgram = OpenGL::ShaderGL::fromFiles("grim_smush", commonAttributes);
+	_textProgram = OpenGL::ShaderGL::fromFiles("grim_text", commonAttributes);
+	_emergProgram = OpenGL::ShaderGL::fromFiles("grim_emerg", commonAttributes);
 
 	static const char* actorAttributes[] = {"position", "texcoord", "color", "normal", NULL};
 	_actorProgram = OpenGL::ShaderGL::fromFiles(isEMI ? "emi_actor" : "grim_actor", actorAttributes);
 	_spriteProgram = OpenGL::ShaderGL::fromFiles(isEMI ? "emi_actor" : "grim_actor", actorAttributes);
 
 	static const char* primAttributes[] = { "position", NULL };
-	_shadowPlaneProgram = OpenGL::ShaderGL::fromFiles("shadowplane", primAttributes);
+	_shadowPlaneProgram = OpenGL::ShaderGL::fromFiles("grim_shadowplane", primAttributes);
 	_primitiveProgram = OpenGL::ShaderGL::fromFiles("grim_primitive", primAttributes);
 
 	if (!isEMI) {
 		_irisProgram = _primitiveProgram->clone();
 
-		_dimProgram = OpenGL::ShaderGL::fromFiles("dim", commonAttributes);
+		_dimProgram = OpenGL::ShaderGL::fromFiles("grim_dim", commonAttributes);
 		_dimRegionProgram = _dimProgram->clone();
 	} else {
 		_dimPlaneProgram = OpenGL::ShaderGL::fromFiles("emi_dimplane", primAttributes);
