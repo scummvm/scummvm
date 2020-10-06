@@ -189,6 +189,7 @@ public:
 	void setVScrollTimers(uint16 destA, int incrA, int delayA, uint16 destB, int incrB, int delayB);
 	void setHScrollTimers(uint16 destA, int incrA, int delayA, uint16 destB, int incrB, int delayB);
 	void updateScrollTimers();
+	void fastForward();
 
 private:
 	struct ScrollTimer {

@@ -75,6 +75,7 @@ private:
 	uint16 _speechAnimDrawOps[14];
 	uint32 _frameTimer;
 	uint32 _pauseStart;
+	bool _fastForward;
 
 	int _waterdeepSceneTimer, _speechAnimTimer;
 	uint16 _speechAnimNo, _speechAnimFrame;

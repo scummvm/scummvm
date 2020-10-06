@@ -34,7 +34,7 @@ namespace Kyra {
 
 SegaSequencePlayer::SegaSequencePlayer(EoBEngine *vm, Screen_EoB *screen, SegaCDResource *res) : _vm(vm), _screen(screen), _res(res), _tileSets(0), _debugResyncCnt(0), _speechAnimType(0),
 	_playingID(1), _waterdeepScene(0), _playSpeechAnimation(0), _frameTimer(0), _waterdeepSceneTimer(0), _speechAnimTimer(0), _speechAnimNo(0), _speechAnimFrame(0),
-	_newTrack(-1), _pauseStart(0), _renderer(_screen->sega_getRenderer()), _animator(_screen->sega_getAnimator()) {
+	_newTrack(-1), _pauseStart(0), _fastForward(false), _renderer(_screen->sega_getRenderer()), _animator(_screen->sega_getAnimator()) {
 #define SQOPC(x) _opcodes.push_back(new SQOpcode(this, &SegaSequencePlayer::x, #x))
 	SQOPC(s_initDrawObject);
 	SQOPC(s_drawTileSet);
@@ -218,8 +218,6 @@ bool SegaSequencePlayer::play(int id) {
 	if (_vm->shouldQuit() || _vm->skipFlag()) {
 		if (!(_playingID == 55 || _playingID == 56))
 			_vm->snd_stopSound();
-		_screen->clearPage(0);
-		_screen->sega_paletteOps(4, 0, 0);
 	}
 
 	_vm->_allowSkip = false;
@@ -239,8 +237,12 @@ void SegaSequencePlayer::pause(bool pause) {
 void SegaSequencePlayer::run(const uint8 *data) {
 	_waterdeepScene = _playSpeechAnimation = false;
 	_frameTimer = _vm->_system->getMillis();
+	_fastForward = false;
 
-	for (bool runLoop = true; runLoop && !(_vm->shouldQuit() || _vm->skipFlag()); ) {
+	for (bool runLoop = true; runLoop; ) {
+		// In case of a skip or shouldQuit event we fastforward through the sequence instead of just aborting. This way
+		// we ensure that we have the same palettes and scroll offsets as if the sequence had been played normally.
+		_fastForward = _vm->shouldQuit() || _vm->skipFlag();
 		uint16 frameSize = READ_BE_UINT16(data);
 		if (!frameSize)
 			return;
@@ -250,7 +252,7 @@ void SegaSequencePlayer::run(const uint8 *data) {
 		uint32 nextFrame = _frameTimer + (timeStamp * 16667) / 1000;
 		bool insertDelay = false;
 
-		if (_vm->_system->getMillis() >= nextFrame) {
+		if (_vm->_system->getMillis() >= nextFrame || _fastForward) {
 			debugC(5, kDebugLevelSequence, "SeqPlayer: Timestamp %08d", timeStamp);
 			for (uint16 timeStamp2 = timeStamp; timeStamp2 == timeStamp; ) {
 				uint16 op = READ_BE_UINT16(data + 4);
@@ -272,11 +274,16 @@ void SegaSequencePlayer::run(const uint8 *data) {
 		if (_playSpeechAnimation)
 			updateSpeechAnimations();
 
-		_scrollManager->updateScrollTimers();
 		_animator->update();
-		_renderer->render(0);
-		_screen->sega_updatePaletteFaders(-1);
-		_screen->updateScreen();
+
+		if (_fastForward) {
+			_scrollManager->fastForward();
+		} else {
+			_scrollManager->updateScrollTimers();
+			_renderer->render(0);
+			_screen->sega_updatePaletteFaders(-1);
+			_screen->updateScreen();
+		}
 
 		if (insertDelay) {
 			int diff = _vm->_system->getMillis() - (frameStart + 16);
@@ -555,9 +562,13 @@ void SegaSequencePlayer::s_orbZoomEffect(const uint8*) {
 		memset(_scaleOutBuffer, 0, 0x5800);
 		_screen->sega_gfxScale(_scaleOutBuffer, 256, 176, 21, _scaleSrcBuffer, _scaleStampMap, _scaleTraceVectors);
 		_renderer->loadToVRAM(_scaleOutBuffer, 0x5800, 0x2AA0);
-		_renderer->render(0);
-		_screen->updateScreen();
-		_vm->delayUntil(nextFrame);
+
+		if (!_fastForward) {
+			_renderer->render(0);
+			_screen->updateScreen();
+			_vm->delayUntil(nextFrame);
+		}
+
 		step += 16;
 	}
 }
@@ -608,7 +619,8 @@ void SegaSequencePlayer::s_loadCustomPalettes(const uint8 *pos) {
 }
 
 void SegaSequencePlayer::s_playSoundEffect(const uint8 *pos) {
-	_vm->snd_playSoundEffect(ARG(0));
+	if (!_fastForward)
+		_vm->snd_playSoundEffect(ARG(0));
 }
 
 #undef S_ARG
