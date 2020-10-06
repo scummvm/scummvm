@@ -5126,7 +5126,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Sunrise: The game (Demo) (German)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
-	WME_WINENTRY("sunrise", "",
+	WME_WINENTRY("sunrise", "Demo",
 		WME_ENTRY1s("data.dcp", "3bac4da87472d2e7676e9548970d521a", 52095549), Common::DE_DEU, ADGF_UNSTABLE | ADGF_DEMO | GF_3D, WME_1_7_93),
 
 	// Tanya Grotter and the Magical Double Bass
