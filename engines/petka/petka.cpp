@@ -197,7 +197,7 @@ void PetkaEngine::playVideo(Common::SeekableReadStream *stream) {
 		if (decoder.needsUpdate()) {
 			const Graphics::Surface *frame = decoder.decodeNextFrame();
 			if (frame) {
-				Common::ScopedPtr<Graphics::Surface> f(frame->convertTo(fmt));
+				Common::ScopedPtr<Graphics::Surface, Graphics::SurfaceDeleter> f(frame->convertTo(fmt));
 				_system->copyRectToScreen(f->getPixels(), f->pitch, 0, 0, f->w, f->h);
 			}
 		}
