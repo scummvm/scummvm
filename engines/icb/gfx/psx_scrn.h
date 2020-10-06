@@ -42,13 +42,8 @@ typedef struct DoubleBuffer {
 	DISPENV disp; /* display environment */
 } DoubleBuffer;
 
-#if _PSX
-#define SCREEN_W 512
-#define SCREEN_H 240
-#else
 #define SCREEN_W 640
 #define SCREEN_H 480
-#endif // #if _PSX
 
 #define MIN_SCREEN_X (0)
 #define MAX_SCREEN_X (SCREEN_W - 1)
@@ -61,11 +56,7 @@ typedef struct DoubleBuffer {
 #define MSG_H 10
 
 // Length of the OT
-#if _PSX && (_PSX_ON_PC == 0)
-#define OT_LENGTH 10 // bit length of OT
-#else
 #define OT_LENGTH 16 // bit length of OT
-#endif               // #if _PSX
 
 #define OT_SIZE (1 << OT_LENGTH)
 
@@ -88,9 +79,6 @@ void Init_display(int w, int h, int x1, int y1, int x2, int y2, int ox, int oy, 
 void RenderCycle(void);
 
 // Global double buffer and drawing variables
-#if (_PC == 0) && (_PSX_ON_PC == 0)
-typedef uint32 OT_tag;
-#endif // #if _PSX_ON_PC == 0
 
 extern OT_tag *otarray[2];
 extern OT_tag *drawot;

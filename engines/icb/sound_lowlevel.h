@@ -41,19 +41,12 @@ void StopSample(int32 ch);
 void SetChannelVolumeAndPan(int32 ch, int32 volume, int32 pan);
 void SetChannelPitch(int32 ch, int32 pitch);
 
-#if _PSX
-void LoadSessionSounds(const cstr cluster, uint32 clusterHash, const cstr snddata_cluster, uint32 snddata_clusterHash);
-void LoadMissionSounds(const cstr cluster, uint32 clusterHash, const cstr snddata_cluster, uint32 snddata_clusterHash, uint32 mission_hash);
-#else
 void LoadSessionSounds(const cstr cluster);
 void LoadMissionSounds(const cstr cluster);
-#endif
 
-#if _PC
 // Prototype for useful cluster managing function
 bool8 DoesClusterContainFile(pxString clustername, uint32 hash_to_find, uint32 &fileoffset, uint32 &filesize);
 bool8 IsSpeechPlaying(void);
-#endif
 
 // returns length of sound in 12ths of second
 int PreloadSpeech(uint32 hash); // does nothing on psx

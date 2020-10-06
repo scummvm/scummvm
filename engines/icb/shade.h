@@ -34,7 +34,6 @@
 
 namespace ICB {
 
-#if (_PSX == 0) || _PC || _PSX_ON_PC
 typedef struct FVECTOR {
 	float vx;
 	float vy;
@@ -47,8 +46,6 @@ void makePlaneEquation(FVECTOR *v0, FVECTOR *v1, FVECTOR *v2, int32 *d, FVECTOR 
 void preprocessShadeData(FVECTOR v[3], ShadeTriangle *s);
 
 void preprocessShadeData(FVECTOR v[4], ShadeQuad *s);
-
-#endif // #if (_PSX==0) || _PC || _PSX_ON_PC
 
 #define DOT_PRODUCT(v0x, v0y, v0z, v1x, v1y, v1z) (((v0x) * (v1x)) + ((v0y) * (v1y)) + ((v0z) * (v1z)))
 

@@ -42,9 +42,7 @@ text_sprite::text_sprite() {
 	spriteWidth = 0;  // width of text sprite
 	spriteHeight = 0; // height of text sprite
 	size = 0;         // in bytes (= width * height * bit_depth)
-#ifdef _PC
 	surfaceId = working_buffer_id;
-#endif
 }
 
 text_sprite::~text_sprite() { Zdebug("**destructing text sprite**"); }
@@ -297,41 +295,15 @@ _TSrtn text_sprite::AnalyseSentence() {
 }
 
 uint32 text_sprite::CharWidth(const uint8 ch, const char *fontRes, uint32 fontRes_hash) {
-#if _PC == 1
 	_pxBitmap *charSet = LoadFont(fontRes, fontRes_hash);
 	_pxSprite *spr = (_pxSprite *)charSet->Fetch_item_by_number(ch - ' ');
 	return (spr->width);
-#endif // #if _PC == 1
-
-#if _PSX == 1
-	int c = (ch - ' ');
-	if (cPos[c] == CHAR_NOT_LOADED) {
-		_pxBitmap *font = LoadFont(fontRes, fontRes_hash);
-		_pxSprite *spr = (_pxSprite *)font->Fetch_item_by_number(c);
-		return spr->width;
-	} else {
-		return cWidth[c];
-	}
-#endif // #if _PSX == 1
 }
 
 uint32 text_sprite::CharHeight(const char *fontRes, uint32 fontRes_hash) { // assume all chars the same height!
-#if _PC == 1
 	_pxBitmap *charSet = LoadFont(fontRes, fontRes_hash);
 	_pxSprite *spr = (_pxSprite *)charSet->Fetch_item_by_number(0);
 	return spr->height;
-
-#endif // #if _PC == 1
-
-#if _PSX == 1
-	if (cPos[0] == CHAR_NOT_LOADED) {
-		_pxBitmap *font = LoadFont(fontRes, fontRes_hash);
-		_pxSprite *spr = (_pxSprite *)font->Fetch_item_by_number(0);
-		return spr->height;
-	} else {
-		return cHeight[0];
-	}
-#endif // #if _PSX == 1
 }
 
 _pxSprite *text_sprite::FindChar(uint8 ch, _pxBitmap *charSet) { return ((_pxSprite *)charSet->Fetch_item_by_number(ch - ' ')); }

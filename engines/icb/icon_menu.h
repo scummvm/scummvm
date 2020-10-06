@@ -38,11 +38,7 @@
 #include "player.h"
 #include "icon_list.h"
 
-#if _PSX
-#include "icon_menu_psx.h"
-#else
 #include "icon_menu_pc.h"
-#endif // #if _PSX
 
 namespace ICB {
 
@@ -115,10 +111,8 @@ public:
 	// This is the main function for running a menu selection.
 	void Activate(const _icon_list *pIconList, const _icon_menu_duplicates &sDuplicates, bool8 bAllowEscape, uint32 nSelected);
 
-#ifdef _PC
 	// A funstion to recreate/load the icon surfaces after task switching
 	void ReActivate();
-#endif
 
 	// This reports whether or not the icon menu is active.
 	bool8 IsActive() const { return ((m_eIconMenuGameState == ACTIVE) ? TRUE8 : FALSE8); }
@@ -147,14 +141,8 @@ public:
 	// This clears the selection.
 	void ClearSelection() { m_bValidSelection = FALSE8; }
 
-#if defined(_PC)
 	uint32 GetTransparencyKey() const { return (m_nTransparentKey); }
 	void SetTransparencyColourKey();
-#endif
-
-#if defined(_PSX)
-	void DrawIcon(const int x, const int y, const uint32 hash, const int drawText, const int count, const int maxCount, const int drawHiLite);
-#endif // #if defined( _PSX )
 
 	// These are used for PSX smoothing.  (Won't do any harm on the PC.)
 	void PreloadIcon(const char *pcIconPath, const char *pcIconName);
@@ -175,7 +163,6 @@ public:
 	_icon_menu_duplicates m_sDuplicates;    // Count of any duplicate items.
 	uint32 m_nGlobalClusterHash;            // Hash value for the global cluster.
 
-#if defined(_PC)
 	uint32 m_pnIconSurfaceIDs[ICON_MENU_MAX_ICONS];   // IDs of surfaces where non-highlighted icons are stored.
 	uint32 m_pnHiLiteSurfaceIDs[ICON_MENU_MAX_ICONS]; // IDs of surfaces for storing highlighted versions.
 	uint32 m_nLeftArrowID;                            // The left-off screen arrow.
@@ -189,13 +176,6 @@ public:
 	uint32 m_nTransparentKey;                         // Use this colour for transparency in blitting.
 	char m_pcGlobalClusterFile[MAXLEN_CLUSTER_URL];   // The global cluster file.
 	char m_pcIconCluster[MAXLEN_CLUSTER_URL];         // Icon cluster name.
-#endif
-
-#if defined(_PSX)
-	char *m_pcIconLabelFile;     // File for the icon labels.
-	char *m_pcGlobalClusterFile; // The global cluster file.
-	char *m_pcIconCluster;       // Icon cluster name.
-#endif
 
 	bool8 m_bValidSelection;   // Gets set true when a selection is made and false when it is read.
 	bool8 m_nKeyLock;          // Stops key-repeat.
@@ -225,11 +205,9 @@ public:
 	// Private functions used only in this class.
 	void CloseDownIconMenuDisplay();
 
-#if defined(_PC)
 	void SetUpOffScreenArrows();
 	void SetupAdding(const char *pcIconName, uint32 &nSurfaceID);
 	void CloseDownAdding();
-#endif
 };
 
 extern _icon_menu *g_oIconMenu;

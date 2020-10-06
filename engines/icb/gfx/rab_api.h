@@ -130,12 +130,10 @@ typedef struct MatrixHierarchy {
 	MatrixHierarchy *parent;
 } MatrixHierarchy;
 
-#if _PC || (_PSX_ON_PC == 1)
 typedef struct MatrixHierarchyPC {
 	MATRIXPC matrix;
 	MatrixHierarchyPC *parent;
 } MatrixHierarchyPC;
-#endif // #if _PC || (_PSX_ON_PC==1)
 
 typedef uint32 CompTriplet;
 

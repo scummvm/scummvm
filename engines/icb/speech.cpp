@@ -39,32 +39,6 @@
 
 #include "engines/icb/common/ptr_util.h"
 
-#ifdef _PSX
-
-#include "engines/icb/gfx/psx_snd_engine.h"
-
-namespace ICB {
-
-#define TEXT_MAX_WIDTH 220
-
-#define IS_SPEECH_STARTED (1)
-#define SPEECH_ERROR (0)
-#define IS_SPEECH_ALREADY_PLAYING (0)
-extern int spareVSyncCount;
-
-uint GetCountReduction() {
-	uint c = (uint)spareVSyncCount;
-	spareVSyncCount = 0;
-
-	// make sure speech_info[CONV_ID].count won't go negative
-	if (MS->speech_info[CONV_ID].count < c)
-		c = MS->speech_info[CONV_ID].count;
-
-	return c;
-}
-
-#else
-
 #include "engines/icb/sound/music_manager.h"
 
 namespace ICB {
@@ -75,16 +49,11 @@ namespace ICB {
 #define IS_SPEECH_ALREADY_PLAYING 0
 
 uint GetCountReduction() { return 1; }
-#endif
 
 // This colour is used to display voice over text (normally player's speech colour).
 uint8 voice_over_red = VOICE_OVER_DEFAULT_RED;
 uint8 voice_over_green = VOICE_OVER_DEFAULT_GREEN;
 uint8 voice_over_blue = VOICE_OVER_DEFAULT_BLUE;
-
-#ifdef _PSX
-#else
-#endif // #ifdef _PSX
 
 mcodeFunctionReturnCodes fn_request_speech(int32 &result, int32 *params) { return (MS->fn_request_speech(result, params)); }
 mcodeFunctionReturnCodes fn_add_talker(int32 &result, int32 *params) { return (MS->fn_add_talker(result, params)); }
@@ -675,9 +644,6 @@ mcodeFunctionReturnCodes _game_session::fn_speak(int32 &, int32 *params) {
 
 		speech_info[CONV_ID].count = SayLineOfSpeech(speechHash);
 
-#if _PSX
-		spareVSyncCount = 0;
-#endif
 
 		if (!speech_info[CONV_ID].count)
 			Fatal_error("Speech xa file is 0 game cycles see, int32");
@@ -1061,12 +1027,7 @@ void _game_session::End_conversation(uint32 uid) {
 	// end music
 	int32 r, p[1];
 
-#if _PSX
-	while (speak_end_music(r, p) == IR_REPEAT)
-		VSync(0);
-#else
 	speak_end_music(r, p);
-#endif
 
 	// reset list of subscribers
 	speech_info[uid].total_subscribers = 0;

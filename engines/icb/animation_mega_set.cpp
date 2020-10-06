@@ -150,11 +150,9 @@ bool8 crouch_state_table[__TOTAL_WEAPONS] = {FALSE8, FALSE8, TRUE8, TRUE8};
 
 void _vox_image::___init(const char *chr, const char *set, __weapon weapon) {
 // store these things temporarily so we can recall this function when swapping voxel -> polygon and vice verse...
-#if _PC
 	strcpy(temp_chr, chr);
 	strcpy(temp_set, set);
 	temp_weapon = weapon;
-#endif
 
 	// constructor for mega-set-caps class
 	// resolve the path of the voxel image directory
@@ -176,36 +174,6 @@ void _vox_image::___init(const char *chr, const char *set, __weapon weapon) {
 	palette_hash = NULL_HASH;
 
 // get base path
-#ifdef _PSX
-	// Make hash filename of the character
-	char chr_hash[8];
-	HashFile(chr, chr_hash);
-
-	// Make hash filename of the outfit
-	char set_hash[8];
-	HashFile(set, set_hash);
-
-	// set the pose name
-	len = sprintf(image_path, "%s\\", weapon_text[weapon]);
-	if (len > IMAGE_PATH_STR_LEN)
-		Fatal_error("_vox_image::___init image_path string too long");
-
-	shadow_mesh_hash = HashString("mesh_shadow.rap");
-
-	// Use base_path string as a temporary string
-	len = sprintf(base_path, "%spose.rap", image_path);
-	if (len > BASE_PATH_STR_LEN)
-		Fatal_error("_vox_image::___init pose mesh string too long");
-	pose_hash = HashString(base_path);
-
-	// Make the cluster name "\c\<#character>\<#outfit>\outfit.clu"
-	len = sprintf(base_path, CHR_PATH, chr_hash, set_hash);
-	if (len > BASE_PATH_STR_LEN)
-		Fatal_error("_vox_image::___init base_path string too long");
-	base_path_hash = NULL_HASH;
-
-#else // #ifdef _PSX
-
 	// Make hash filename of the character
 	char chr_hash[8];
 	HashFile(chr, chr_hash);
@@ -242,8 +210,6 @@ void _vox_image::___init(const char *chr, const char *set, __weapon weapon) {
 	// Make the hash value for this cluster name
 	base_path_hash = HashString(base_path);
 
-#endif // #ifdef _PSX
-
 	// Make the hash value for this cluster name
 	base_path_hash = HashString(base_path);
 
@@ -266,7 +232,6 @@ void _vox_image::___init(const char *chr, const char *set, __weapon weapon) {
 
 void _vox_image::MakeAnimEntry(int i) {
 // make name
-#if _PC
 
 	char name[ANIM_NAME_STR_LEN];
 	int len;
@@ -277,18 +242,9 @@ void _vox_image::MakeAnimEntry(int i) {
 		Fatal_error("_vox_image::___init [%s] string too long", name);
 	strcpy(anim_name[i], name);
 
-#else
-	char name[128];
-
-	strcpy(name, (const char *)image_path);
-	strcat(name, (const char *)master_anim_name_table[i].name);
-	strcat(name, ".rab");
-
-#endif
 
 	anim_name_hash[i] = HashString(name);
 
-#if _PC
 
 	len = sprintf(name, "%s%s.raj", (const char *)image_path, (const char *)master_anim_name_table[i].name);
 
@@ -296,11 +252,6 @@ void _vox_image::MakeAnimEntry(int i) {
 		Fatal_error("_vox_image::___init [%s] string too long", name);
 	strcpy(info_name[i], name);
 
-#else
-
-	name[strlen(name) - 1] = 'j'; // use last name only raj instead of rab
-
-#endif
 
 	info_name_hash[i] = HashString(name);
 
@@ -313,26 +264,16 @@ bool8 _vox_image::Init_custom_animation(const char *anim) {
 	// this does not ensure the anim exists
 	bool8 custom;
 
-#if _PC
 	char custom_image_path_rav[128];
 	char custom_image_path_rai[128];
-#else
-	char custom_image_path[128];
-#endif
 
 	uint32 len;
 
-#if _PSX
-	char name[128];
-#endif
-
-#if _PC
 	len = strlen(anim);
 	uint32 j;
 	for (j = 0; j < len; j++)
 		if (Common::isUpper(*(anim + j)))
 			Fatal_error("Init_custom_animation finds [%s] has upper case letters - implementor must edit the script", anim);
-#endif
 
 	// has anyone been and built the path before?
 	if (has_custom_path_built) {
@@ -345,17 +286,6 @@ bool8 _vox_image::Init_custom_animation(const char *anim) {
 	// check for no weapon being set
 	if (custom == FALSE8 /*__NONE*/) {
 // custom must be in the current weapon set - bah, shouldnt have done it like this - its daft
-#ifdef _PSX
-		len = sprintf(custom_image_path, "%s\\", weapon_text[MS->Fetch_cur_megas_pose()]);
-		if (len > 128)
-			Fatal_error("Init_custom_animation string error");
-
-		len = sprintf(name, "%spose.rap", custom_image_path);
-		if (len > 128)
-			Fatal_error("_vox_image::Init_custom pose mesh string too long");
-		custom_pose_hash = HashString(name);
-#else
-
 		// rav (or equiverlant always come from pcp directory...
 		len = sprintf(custom_image_path_rav, "%s\\", weapon_text[MS->Fetch_cur_megas_pose()]);
 
@@ -366,19 +296,8 @@ bool8 _vox_image::Init_custom_animation(const char *anim) {
 		len = sprintf(custom_pose_name, "%s\\pose.rap", weapon_text[MS->Fetch_cur_megas_pose()]);
 
 		custom_pose_hash = HashString(custom_pose_name);
-#endif
 	} else {
 // we have specified a custom type - i.e. the anim is not part of the current weapon set, but instead sits parallel to weapon directory
-#ifdef _PSX
-		len = sprintf(custom_image_path, "%s\\", MS->Fetch_cur_megas_custom_text());
-		if (len > 128)
-			Fatal_error("Init_custom_animation string error");
-		// Use base_path string as a temporary string
-		len = sprintf(name, "%spose.rap", custom_image_path);
-		if (len > 128)
-			Fatal_error("_vox_image::Init_custom pose mesh string too long");
-		custom_pose_hash = HashString(name);
-#else
 		len = sprintf(custom_image_path_rav, "%s\\", MS->Fetch_cur_megas_custom_text());
 		len = sprintf(custom_image_path_rai, "%s\\", MS->Fetch_cur_megas_custom_text());
 		len = sprintf(custom_pose_name, "%s\\pose.rap", MS->Fetch_cur_megas_custom_text());
@@ -387,15 +306,8 @@ bool8 _vox_image::Init_custom_animation(const char *anim) {
 			Fatal_error("Init_custom_animation string error");
 		custom_pose_hash = HashString(custom_pose_name);
 
-#endif
 	}
 
-#ifdef _PSX
-	len = sprintf(name, "%s%s.rab", (const char *)custom_image_path, (const char *)anim);
-	anim_name_hash[__NON_GENERIC] = HashString(name);
-	name[len - 1] = 'j';
-	info_name_hash[__NON_GENERIC] = HashString(name);
-#else
 	len = sprintf(anim_name[__NON_GENERIC], "%s%s.rab", (const char *)custom_image_path_rav, (const char *)anim);
 
 	if (len > ANIM_NAME_STR_LEN)
@@ -407,39 +319,17 @@ bool8 _vox_image::Init_custom_animation(const char *anim) {
 		Fatal_error("Init_custom_animation string error");
 	info_name_hash[__NON_GENERIC] = HashString(info_name[__NON_GENERIC]);
 
-#endif // #ifdef _PSX
-
 	anim_table[__NON_GENERIC] = 1;
 
 	if (!rs_anims->Test_file(get_anim_name(__NON_GENERIC), anim_name_hash[__NON_GENERIC], base_path, base_path_hash)) {
-#if _PSX
-		Real_Fatal_error("custom anim [%s,%08x] is not available", name, anim_name_hash[__NON_GENERIC]);
-#else
 		Fatal_error("custom anim [%s,%08x] not found in cluster %s", (const char *)anim_name[__NON_GENERIC], anim_name_hash[__NON_GENERIC], base_path);
-#endif
 	}
 
-#if _PSX
-	Zdebug(" created [%s]", name);
-#else
 	Zdebug(" created [%s]", (const char *)anim_name[__NON_GENERIC]);
-#endif
 
 	return (TRUE8);
 }
 
-#if _PSX
-void _vox_image::Promote_non_generic() {
-	// copy non-generic path to safe __PROMOTED_NON_GENERIC slot
-	// this is all for psx asyncing
-
-	info_name_hash[__PROMOTED_NON_GENERIC] = info_name_hash[__NON_GENERIC];
-	anim_name_hash[__PROMOTED_NON_GENERIC] = anim_name_hash[__NON_GENERIC];
-	anim_table[__PROMOTED_NON_GENERIC] = 1; // hack this
-}
-#endif
-
-#if _PC
 void _vox_image::Promote_non_generic() {
 	// copy non-generic path to safe __PROMOTED_NON_GENERIC slot
 	// this is all for psx asyncing
@@ -452,7 +342,6 @@ void _vox_image::Promote_non_generic() {
 
 	anim_table[__PROMOTED_NON_GENERIC] = 1; // hack this
 }
-#endif
 
 bool8 _vox_image::Find_anim_type(__mega_set_names *anim, const char *name) {
 	uint32 k;
@@ -516,41 +405,6 @@ __mega_set_names _game_session::Fetch_generic_anim_from_ascii(const char *ascii_
 	return __NON_GENERIC;
 }
 
-#if _PSX
-
-bool8 _vox_image::Set_mesh(const char *m_name) {
-	char name[32];
-
-	strcpy(name, m_name);
-	strcat(name, ".rap");
-	mesh_hash = HashString(name);
-	return TRUE8;
-}
-
-bool8 _vox_image::Set_texture(const char *tex_name) {
-	char name[32];
-
-	strcpy(name, tex_name);
-	strcat(name, ".tim");
-	texture_hash = HashString(name);
-	return TRUE8;
-}
-
-bool8 _vox_image::Set_palette(const char *pal_name) {
-	// Ignore the default_palette : this is yucky and hacky but it is the end of the project so tough luck
-	if (strcmp(pal_name, "default") == 0) {
-		palette_hash = NULL_HASH;
-		return TRUE8;
-	}
-	char name[32];
-	strcpy(name, pal_name);
-	strcat(name, ".pal");
-	palette_hash = HashString(name);
-	return TRUE8;
-}
-
-#else
-
 void PreRegisterTexture(const char *, uint32, const char *, uint32, const char *, uint32);
 
 bool8 _vox_image::Set_texture(const char *tex_name) {
@@ -610,7 +464,5 @@ bool8 _vox_image::Set_palette(const char *pal_name) {
 
 	return TRUE8;
 }
-
-#endif
 
 } // End of namespace ICB

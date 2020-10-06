@@ -28,10 +28,6 @@
 #ifndef SET_H
 #define SET_H
 
-#ifdef _PSX
-#include "set_psx.h"
-#else
 #include "set_pc.h"
-#endif // #ifdef _PSX
 
 #endif

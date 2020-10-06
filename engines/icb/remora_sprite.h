@@ -87,9 +87,7 @@ public:
 	inline void DrawSprite(const _rs_params *pParams = NULL);
 	inline void DrawXYSprite(int32 nX, int32 nY, const _rs_params *pParams = NULL);
 
-#if defined(_PC)
 	inline bool8 FitsOnScreen(int32 nX, int32 nZ, int32 nScreenWidth, int32 nScreenHeight) const;
-#endif
 
 private:
 	char m_pcName[MAXLEN_URL]; // The full path and name of the sprite.
@@ -101,10 +99,8 @@ private:
 	uint32 m_nFramePC;   // Frame counter for running animations.
 	uint32 m_nNumFrames; // Number of frames in the animation.
 
-#if defined(_PC)
 	int32 m_nHalfSpriteWidth;  // These two store half the sprite's width and height
 	int32 m_nHalfSpriteHeight; // so we can work out an area that they can legally be plotted.
-#endif
 
 	// Private functions used only in this class.
 	void GenericSpriteDraw(int32 nX, int32 nY, bool8 bPosition, const _rs_params *pParams);
@@ -114,7 +110,6 @@ inline void _remora_sprite::DrawSprite(const _rs_params *pParams) { GenericSprit
 
 inline void _remora_sprite::DrawXYSprite(int32 nX, int32 nY, const _rs_params *pParams) { GenericSpriteDraw(nX, nY, TRUE8, pParams); }
 
-#if defined(_PC)
 inline bool8 _remora_sprite::FitsOnScreen(int32 nX, int32 nZ, int32 nScreenWidth, int32 nScreenHeight) const {
 	if ((nX > m_nHalfSpriteWidth) && (nX < (nScreenWidth - m_nHalfSpriteWidth)) && (nZ > m_nHalfSpriteHeight) && (nZ < (nScreenHeight - m_nHalfSpriteHeight)))
 		return (TRUE8);
@@ -122,7 +117,6 @@ inline bool8 _remora_sprite::FitsOnScreen(int32 nX, int32 nZ, int32 nScreenWidth
 		return (FALSE8);
 
 }
-#endif
 
 } // End of namespace ICB
 

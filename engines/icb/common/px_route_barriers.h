@@ -34,9 +34,6 @@
 
 namespace ICB {
 
-#if _PSX
-#endif
-
 // These define the filenames for files containing barrier maps and routing maps.
 #define PX_FILENAME_LINEOFSIGHT "pxwglineofsight"
 #define PX_FILENAME_ROUTING "pxwgrouting"
@@ -54,11 +51,7 @@ namespace ICB {
 #undef PX_EXT_LINKED
 #endif
 
-#ifdef _PSX
-#define PX_EXT_LINKED PSX_EXT_LINKED
-#else
 #define PX_EXT_LINKED PC_EXT_LINKED
-#endif // #ifdef _PSX
 
 // This is the version for these files.  The engine checks this runtime to know that it is running with
 // the correct version of file.
@@ -126,13 +119,9 @@ private:
 	// these are in both versions
 	PXfloat m_linedist, m_alinedist, m_blinedist;
 
-#if _PSX
-	short m_lpx16, m_lpz16;
-#else
 	PXfloat m_lpx, m_lpz;   // Main barrier
 	PXfloat m_alpx, m_alpz; // End A.
 	PXfloat m_blpx, m_blpz; // End B.
-#endif
 
 public:
 	inline PXfloat linedist() { return m_linedist; }
@@ -140,22 +129,10 @@ public:
 	inline PXfloat alinedist() { return m_alinedist; }
 	inline PXfloat blinedist() { return m_blinedist; }
 
-#if _PSX
-
-	// on psx these are shorts
-
-	inline PXfloat lpx() { return (PXfloat)m_lpx16; }
-
-	inline PXfloat lpz() { return (PXfloat)m_lpz16; }
-
-#else
-
 	// on pc these are pxfloats
 
 	inline PXfloat lpx() { return m_lpx; }
 	inline PXfloat lpz() { return m_lpz; }
-
-#endif
 
 	inline PXfloat alpx() {
 		// return m_alpx;
@@ -186,14 +163,8 @@ public:
 		PXfloat xunit = PXreal2PXfloat(dx) / nLength;
 		PXfloat zunit = PXreal2PXfloat(dz) / nLength;
 
-#if _PSX
-		m_lpx16 = (short)(-zunit);
-		m_lpz16 = (short)(xunit);
-#else
 		m_lpx = -zunit;
 		m_lpz = xunit;
-
-#endif
 
 		m_linedist = (x1 * lpx()) + (z1 * lpz());
 
@@ -212,15 +183,6 @@ public:
 
 class _route_barrier {
 
-#if _PSX
-	PXreal m_x1, m_z1;              // these are 32 bit values
-	_barrier_collision_maths m_bcm; // Some extra figures to speed up barrier collision detection.
-	short m_dx, m_dz;               // delta from x1,z1 to x2,z2
-	short m_bottom16, m_top16;      // 16 bit values now (giving theoretical maximum height of +-320 metres
-	short m_pan16;                  // pan is 16 bit...
-	uint8 m_material8;              // 8 bits for material
-	uint8 PADDING;
-#else
 	PXreal m_x1, m_z1;        // Looking down on the model, the position of the first vertical edge of the barrier.
 	PXreal m_x2, m_z2;        // Looking down on the model, the position of the second vertical edge.
 	PXreal m_bottom;          // The bottom of the barrier.
@@ -228,36 +190,16 @@ class _route_barrier {
 	_barrier_type m_material; // The material the barrier is made of.
 	PXfloat m_pan;            // The barrier's pan value.
 	_barrier_collision_maths m_bcm; // Some extra figures to speed up barrier collision detection.
-#endif
 
 public:
-#if _PSX
-	void Create_pan() { m_pan16 = (short)PXAngleOfVector(-m_dz, -m_dx); }
-#else
 
 	void Create_pan() { m_pan = PXAngleOfVector(m_z1 - m_z2, m_x1 - m_x2); }
-
-#endif
 
 	void x1(PXreal x) { m_x1 = x; }
 	void z1(PXreal z) { m_z1 = z; }
 
 	inline PXreal x1() const { return m_x1; }
 	inline PXreal z1() const { return m_z1; }
-
-#if _PSX
-
-	void x2(PXreal x) { m_dx = x - m_x1; }
-	void z2(PXreal z) { m_dz = z - m_z1; }
-	inline const PXreal x2() const { return m_x1 + m_dx; }
-	inline const PXreal z2() const { return m_z1 + m_dz; }
-	inline const PXreal bottom() const { return (PXreal)m_bottom16; }
-	inline const PXreal top() const { return (PXreal)m_top16; }
-	inline const _barrier_type material() const { return (_barrier_type)m_material8; }
-
-	inline const PXfloat pan() const { return (PXfloat)m_pan16; }
-
-#else
 
 	void x2(PXreal x) { m_x2 = x; }
 	void z2(PXreal z) { m_z2 = z; }
@@ -269,23 +211,10 @@ public:
 
 	inline PXfloat pan() const { return m_pan; }
 
-#endif
-
 	inline _barrier_collision_maths &bcm() { return m_bcm; }
 
 	_route_barrier() {}
 
-#if _PSX
-	_route_barrier(PXreal inX1, PXreal inZ1, PXreal inX2, PXreal inZ2, PXreal inBottom, PXreal inTop, _barrier_type inMaterial) {
-		m_x1 = inX1;
-		m_z1 = inZ1;
-		m_dx = inX2 - inX1;
-		m_dz = inZ2 - inZ1;
-		m_bottom16 = (short)inBottom;
-		m_top16 = (short)inTop;
-		m_material8 = (uint8)inMaterial;
-	}
-#else
 	_route_barrier(PXreal inX1, PXreal inZ1, PXreal inX2, PXreal inZ2, PXreal inBottom, PXreal inTop, _barrier_type inMaterial) {
 		m_x1 = inX1;
 		m_z1 = inZ1;
@@ -295,7 +224,6 @@ public:
 		m_top = inTop;
 		m_material = inMaterial;
 	}
-#endif
 };
 
 // This holds several barriers.  These barriers all at least partly occupy a given cube in space.  If one barrier passes

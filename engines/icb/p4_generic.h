@@ -32,15 +32,7 @@
 
 #include "p4.h"
 
-#ifdef _PSX
-
-#include "p4_generic_psx.h"
-
-#else
-
 #include "p4_generic_pc.h"
-
-#endif // #ifdef _PSX
 
 namespace ICB {
 

@@ -44,27 +44,6 @@ uint8 fontNcolours = 0;
 // Global instances of common strings, as GCC seems to make
 // multiple copies wasting all of the rdata section !
 
-#if _PSX && !_PSX_ON_PC
-
-// Hey it is the PSX product codes
-#if defined ENGLISH
-const char *productCode = "BESCES-02149";
-#elif defined FRENCH
-const char *productCode = "BESCES-02150";
-#elif defined GERMAN
-const char *productCode = "BESCES-02151";
-#elif defined ITALIAN
-const char *productCode = "BESCES-02152";
-#elif defined SPANISH
-const char *productCode = "BESCES-02153";
-#elif defined NTSC
-const char *productCode = "BASLUS-01294";
-#else
-#error "UNKNOWN LANGUAGE"
-#endif
-
-#endif
-
 const char *global_null_path = "";
 
 // The different fonts we have available
@@ -101,9 +80,6 @@ const char *session_speech_cluster_path = "\\M\\%s.SPK;1";
 TextureManager *tman;
 
 // This does nothing but makes PC & PSX code more compatible the surface manager
-#if _PSX
-_surface_manager *surface_manager;
-#endif
 
 // The 3 directional lights and the ambient light
 psxLight Lights[4];

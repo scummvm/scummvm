@@ -35,9 +35,7 @@ namespace ICB {
 
 // These define the filenames for files containing prop animations.
 // The PSX definition is in engine\p4_psx.h
-#ifndef _PSX
 #define PX_FILENAME_PROPANIMS "pxwgpropanims"
-#endif // #ifndef _PSX
 
 #ifndef PC_EXT_LINKED
 #define PC_EXT_LINKED "linked"
@@ -51,11 +49,7 @@ namespace ICB {
 #undef PX_EXT_LINKED
 #endif
 
-#ifdef _PSX
-#define PX_EXT_LINKED PSX_EXT_LINKED
-#else
 #define PX_EXT_LINKED PC_EXT_LINKED
-#endif
 
 #define VERSION_PXWGPROPANIMS 300
 

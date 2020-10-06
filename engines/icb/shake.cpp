@@ -47,21 +47,13 @@ int32 rangeY = 0;
 int GetShakeX() { return shakeX; }
 
 int GetShakeY() {
-#ifdef _PC
 	return (shakeY << 1);
-#else
-	return shakeY;
-#endif
 }
 
 int GetNextShakeX() { return nextShakeX; }
 
 int GetNextShakeY() {
-#ifdef _PC
 	return nextShakeY << 1;
-#else
-	return nextShakeY;
-#endif
 }
 
 mcodeFunctionReturnCodes fn_set_screen_offset(int32 &, int32 *params) {

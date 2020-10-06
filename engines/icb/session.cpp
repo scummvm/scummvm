@@ -54,29 +54,18 @@
 #include "sound.h"
 #include "sound_lowlevel.h"
 
-#if _PSX
-#include "engines/icb/gfx/psx_disc.h"
-#include "fn_sting_psx.h"
-#endif
-
 namespace ICB {
 
-#ifdef _PC
 
 // Translation tweaks
 
 _linked_data_file *LoadTranslatedFile(cstr session, cstr mission);
 
-#endif
 
 // prototypes
 int32 Fetch_token_value(uint8 *file, uint32 length, uint8 *token);
 
-#if _PC
 void ClearTextures();
-#else
-extern int _loadScreenNoSound;
-#endif
 
 void _game_session::___init(const char *mission, const char *new_session_name) {
 	// session object constructor
@@ -88,11 +77,6 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 	// a camera will be choosen after the first logic cycle based upon the player objects position
 	set.Reset();
 
-#ifdef _PSX
-	// Reset the PSX music & speech player
-	ResetStings(1);
-#endif // #ifdef _PSX
-
 	// no special footsteps set
 
 	numFloorFootSfx = 0;
@@ -102,11 +86,7 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 
 	// setup speech text block pointer
 	text_bloc = g_text_bloc1;
-#if _PC
 	text_speech_bloc = g_text_bloc2; // pc has second bloc
-#else
-	text_speech_bloc = text_bloc1; // psx reuses first
-#endif
 
 	// If you die when you have an unread email and restart the mission, the email icon continues
 	// to flash.  The Remora should reset this when it initialises but since that happens after all
@@ -119,18 +99,7 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 	// tell it that the resources cannot be moved about
 	private_session_resman->Set_to_no_defrag();
 
-#if _PC
 	ClearTextures();
-#endif
-
-#if _PSX
-	// Purge the res_man's to prevent them getting confused
-	rs_anims->Res_purge_all();
-	rs_bg->Res_purge_all();
-	tman->PurgeAll();
-	printf("rs_anims %d files %dKB rs_bg %d files %dKB", rs_anims->Fetch_files_open(), (rs_anims->Fetch_mem_used() / 1024), rs_bg->Fetch_files_open(),
-	       (rs_bg->Fetch_mem_used() / 1024));
-#endif
 
 	if (camera_hack == TRUE8) {
 		total_objects = 0;
@@ -144,13 +113,8 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 	char h_mission_name[8];
 	HashFile(mission, h_mission_name);
 
-#ifdef _PSX
-	sprintf(speech_font_one, "font");
-	sprintf(remora_font, "font");
-#else
 	sprintf(speech_font_one, FONT_PATH, "font.pcfont");
 	sprintf(remora_font, FONT_PATH, "futura.pcfont");
-#endif
 
 	if (sprintf(session_name, "%s\\%s\\", mission, new_session_name) > ENGINE_STRING_LEN)
 		Fatal_error("_game_session::_game_session [%s] string overflow", session_name);
@@ -158,27 +122,13 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 	if (sprintf(h_session_name, "%s\\%s", h_mission_name, session_h_name) > ENGINE_STRING_LEN)
 		Fatal_error("_game_session::_game_session [%s] string overflow", h_session_name);
 
-#ifdef _PC
 	if (sprintf(session_cluster, SESSION_CLUSTER_PATH, h_mission_name, session_h_name) > ENGINE_STRING_LEN)
 		Fatal_error("_game_session::_game_session [%s] string overflow", session_cluster);
-#endif // _PC
-#if _PSX
-	if (sprintf(session_cluster, SESSION_CLUSTER_PATH, h_session_name) > ENGINE_STRING_LEN)
-		Fatal_error("_game_session::_game_session [%s] string overflow", session_cluster);
-#endif // #if _PC
 
 	session_cluster_hash = HashString(session_cluster);
 	speech_font_one_hash = HashString(speech_font_one);
 	remora_font_hash = HashString(remora_font);
 	Zdebug("_game_session %s", (const char *)session_name);
-
-#if _PSX
-	// speech
-
-	sprintf(session_speech_cluster, SESSION_SPEECH_CLUSTER_PATH, h_session_name);
-	session_speech_cluster_hash = HashString(session_speech_cluster);
-
-#endif
 
 // now setup the session
 // load all the fixed name files
@@ -191,10 +141,6 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 //			session.RVanims
 //			camera-name<
 
-#ifdef _PSX
-	_loadScreenNoSound = 1;
-#endif
-
 	// Jake : so PSX can have nice session loading screen and details (for timing and to stop player getting bored)
 	StartLoading(new_session_name);
 
@@ -203,67 +149,20 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 	// right, on the psx for the between session sound we need to make sure the
 	// resman has the mission sound stuff in memory BEFORE we do the
 	// StartLoading...
-#ifdef _PSX
-
-	private_session_resman->Res_purge_all();
-	// now load in all the files
-	private_session_resman->Res_open_cluster(session_cluster, session_cluster_hash, private_session_resman->Fetch_total_pool_size() - 8);
-
-	uint32 hash;
-	Cluster_API *clu = NULL;
-
-	// Load the global music cluster header in
-	hash = NULL_HASH;
-	clu = (Cluster_API *)private_session_resman->Res_open(NULL, hash, global_music_cluster, global_music_cluster_hash);
-
-	// Load the global speech cluster header in
-	hash = NULL_HASH;
-	clu = (Cluster_API *)private_session_resman->Res_open(NULL, hash, global_speech_cluster, global_speech_cluster_hash);
-
-	// Load the session speech cluster header in
-	hash = NULL_HASH;
-	clu = (Cluster_API *)private_session_resman->Res_open(NULL, hash, Fetch_session_speech_cluster(), session_speech_cluster_hash);
-
-#endif
 
 	LoadMsg("Session Sound");
 
 	// setup sound data cluster on psx...
-#ifdef _PSX
-
-	// we need to generate the snddata cluster name ourselves
-	// so we do so now.
-	// it's only used once so we're not going to store
-	// it anywhere, we just use it for loading to sram...
-	char snddata_cluster[128];
-	uint32 snddata_cluster_hash;
-
-	sprintf(snddata_cluster, SESSION_SNDDATA_CLUSTER_PATH, h_session_name);
-
-	snddata_cluster_hash = HashString(snddata_cluster);
-
-	LoadSessionSounds(session_cluster, session_cluster_hash, snddata_cluster, snddata_cluster_hash);
-
-	// all sound loaded so safe to start making bleeps witgh the drips
-
-	_loadScreenNoSound = 0;
-
-#else
 
 	LoadSessionSounds(session_cluster);
 
-#endif
 
 	// initialise the session game objects
 	// we can assume all of these in here will be of the game object class!
-#ifdef _PSX
-	strcpy(temp_buf, PX_FILENAME_LINKEDOBJECTS);
-#else
 
 	// When clustered the session files have the base stripped
 	strcpy(temp_buf, "objects");
 
-#endif // #ifdef _PSX
 	// so PSX can have nice session loading screen and details (for timing and to stop player getting bored)
 	LoadMsg("Session Objects");
 
@@ -287,14 +186,10 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 		prop_state_table[j] = 0;
 
 	// inititialise the session scripts
-#ifdef _PSX
-	strcpy(temp_buf, PX_FILENAME_LINKEDSCRIPTS);
-#else
 
 	// When clustered the session files have the base stripped
 	strcpy(temp_buf, "scripts");
 
-#endif // #ifdef _PSX
 	// so PSX can have nice session loading screen and details (for timing and to stop player getting bored)
 	LoadMsg("Session Scripts");
 	buf_hash = NULL_HASH;
@@ -305,14 +200,9 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 	Script_version_check();
 
 	// initialise prop animation file
-#ifdef _PSX
-	strcpy(temp_buf, PX_FILENAME_PROPANIMS);
-#else
 
 	// When clustered the session files have the base stripped
 	strcpy(temp_buf, PX_FILENAME_PROPANIMS);
-
-#endif // #ifdef _PSX
 
 	// so PSX can have nice session loading screen and details (for timing and to stop player getting bored)
 	LoadMsg("Session PropAnims");
@@ -325,14 +215,10 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 
 	// init features file
 	// we stick this in the private cache so it hangs around and later in-game references wont cause a main pool reload
-#ifdef _PSX
-	strcpy(temp_buf, PX_FILENAME_FEATURES);
-#else
 
 	// When clustered the session files have the base stripped
 	strcpy(temp_buf, "pxwgfeatures");
 
-#endif
 	// so PSX can have nice session loading screen and details (for timing and to stop player getting bored)
 	LoadMsg("Session Features");
 	buf_hash = NULL_HASH;
@@ -355,16 +241,10 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 	// text
 	text = NULL; // game can exist with this file
 
-#ifdef _PSX
-	strcpy(temp_buf, PX_FILENAME_SESSION_TEXT);
-#else
-
 	char textFileName[100];
 
 	// When clustered the session files have the base stripped
 	strcpy(temp_buf, "text");
-
-#endif // #ifdef _PSX
 
 	buf_hash = HashString(temp_buf);
 	if (private_session_resman->Test_file(temp_buf, buf_hash, session_cluster, session_cluster_hash)) {
@@ -372,26 +252,16 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 		LoadMsg("Session Text");
 
 		// Special text loading code so the translators can test their stuff
-#ifdef _PC
 
 		if (tt) {
 			// Ok, translators mode has been activated
 			text = LoadTranslatedFile(mission, session_name);
 		} else
 			text = (_linked_data_file *)private_session_resman->Res_open(temp_buf, buf_hash, session_cluster, session_cluster_hash);
-
-#else // _PC
-
-		text = (_linked_data_file *)private_session_resman->Res_open(temp_buf, buf_hash, session_cluster, session_cluster_hash);
-
-#endif //_PC
-
 	} else
 		Fatal_error("Missing Text File \"%s\"", temp_buf);
 
 	Tdebug("session.txt", "text lines END");
-
-#ifdef _PC
 
 	// A copy of the code above to open the global text file.  Feel free to edit this if I've ballsed up
 	// anywhere.
@@ -410,31 +280,19 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 	if (private_session_resman->Test_file(textFileName, buf_hash, global_cluster, global_cluster_hash)) {
 		LoadMsg(temp_buf);
 
-#ifdef _PC
-
 		if (tt) {
 			// Ok, translators mode has been activated
 			global_text = LoadTranslatedFile("global", "global\\global\\");
 		} else
 			global_text = (_linked_data_file *)private_session_resman->Res_open(textFileName, buf_hash, global_cluster, global_cluster_hash);
 
-#else // _PC
-
-		global_text = (_linked_data_file *)private_session_resman->Res_open(textFileName, buf_hash, global_cluster, global_cluster_hash);
-
-#endif //_PC
-
 	} else {
 		Fatal_error("Failed to find global text file [%s][%s]", textFileName, global_cluster);
 	}
 
-#endif
-
-#if defined(_PC)
 	// The surface manager needs to know what colour to use for transparency.  This comes from a fixed
 	// reference file which is opened here so the global reference can be set.
 	g_oIconMenu->SetTransparencyColourKey();
-#endif
 
 	// Initialise the remora
 	g_oRemora->InitialiseRemora();
@@ -457,14 +315,9 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 	// setup walkareas
 	total_was = 0;
 
-#ifdef _PSX
-	strcpy(temp_buf, PX_FILENAME_WALKAREA);
-#else
-
 	// When clustered the session files have the base stripped
 	strcpy(temp_buf, "walkarea");
 
-#endif
 	buf_hash = HashString(temp_buf);
 
 	// Jake : so PSX can have nice session loading screen and details (for timing and to stop player getting bored)
@@ -557,11 +410,6 @@ void _game_session::___destruct() {
 		SetReset();
 		return;
 	}
-
-#ifdef _PSX
-	// Reset the PSX music & speech player
-	ResetStings(1);
-#endif // #ifdef _PSX
 
 	// trash resources
 	private_session_resman->Reset();
@@ -738,9 +586,6 @@ void _game_session::Init_objects() {
 			}
 		}
 
-#if _PSX
-		DiscUpdateQueue();
-#endif
 	}
 
 	Tdebug("objects_init.txt", "\n\n\ncreating mega list");
@@ -1353,8 +1198,6 @@ void _game_session::Set_init_voxel_floors() {
 	Prepare_megas_route_barriers(TRUE8); // update barriers
 }
 
-#ifdef _PC
-
 _linked_data_file *LoadTranslatedFile(cstr mission, cstr session) {
 	// Get the actual session name
 	cstr sessionstart = session + strlen(mission) + 1;
@@ -1387,7 +1230,5 @@ _linked_data_file *LoadTranslatedFile(cstr mission, cstr session) {
 
 	return ((_linked_data_file *)mem);
 }
-
-#endif
 
 } // End of namespace ICB

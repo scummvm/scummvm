@@ -5882,12 +5882,6 @@ define_in_config_if_yes $_updates 'USE_UPDATES'
 #
 define_in_config_if_yes "$_builtin_resources" 'BUILTIN_RESOURCES'
 
-# Added define for ICB - ResidualVM specific
-# TODO: remove it
-if test `get_engine_build icb` = yes ; then
-	append_var DEFINES "-D_PC=1"
-fi
-
 #
 # Figure out installation directories
 #

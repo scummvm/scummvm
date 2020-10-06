@@ -470,9 +470,6 @@ void _game_session::Shut_down_object() {
 	prop_state_table[cur_id] = 0; // set to state 0 - in case killed because of illegal frame
 
 	Tdebug("objects_that_died.txt", "**OBJECT '%s' [id=%d] has been shut down**", object->GetName(), cur_id);
-#if _PSX
-	printf("**OBJECT '%s' [id=%d] has been shut down**", object->GetName(), cur_id);
-#endif // #if _PSX
 }
 
 mcodeFunctionReturnCodes _game_session::fn_kill_me(int32 &, int32 *) {
@@ -921,13 +918,8 @@ void AddDynamicLight(PSXLampList &lamplist, _logic *log) {
 	cc = (PXfloat)PXcos(angle);
 
 // rotate xx and zz around act.trueRot.vy       ONE
-#if _PSX
-	mega->dynLight.states[0].pos.vx = (int32)(xx * cc - zz * ss) / 4096;
-	mega->dynLight.states[0].pos.vz = (int32)(xx * ss + zz * cc) / 4096;
-#else
 	mega->dynLight.states[0].pos.vx = (int32)(xx * cc - zz * ss);
 	mega->dynLight.states[0].pos.vz = (int32)(xx * ss + zz * cc);
-#endif
 	mega->dynLight.states[0].pos.vy = (int32)yy; // no rotation
 
 	// and add the players position

@@ -28,16 +28,6 @@
 #ifndef _PX_BITMAP_H_INCLUDED
 #define _PX_BITMAP_H_INCLUDED
 
-#if _PSX
-#include "px_bitmap_psx.h"
-namespace ICB {
-typedef _pxPSXBitmap _pxBitmap;
-typedef _pxPSXSprite _pxSprite;
-#define PX_BITMAP_EXT PX_BITMAP_PSX_EXT
-#define PX_BITMAP_SCHEMA PSX_BITMAP_SCHEMA
-#define PX_BITMAP_ID PSX_BITMAP_ID
-} // End of namespace ICB
-#else
 #include "px_bitmap_pc.h"
 namespace ICB {
 typedef _pxPCBitmap _pxBitmap;
@@ -46,6 +36,5 @@ typedef _pxPCSprite _pxSprite;
 #define PX_BITMAP_SCHEMA PC_BITMAP_SCHEMA
 #define PX_BITMAP_ID PC_BITMAP_ID
 } // End of namespace ICB
-#endif // #if _PSX
 
 #endif // #ifndef _PX_BITMAP_H_INCLUDED

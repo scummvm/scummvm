@@ -34,24 +34,6 @@ namespace ICB {
 
 #define PSX_ZTRANSP 0
 
-#ifdef _PSX
-
-// holds the primitives for drawing the background set
-// e.g. background image, any lines (e.g. barriers),
-// bounding box cuboid for currently selected actor
-// Each primitive has to have 2 copies : 1 for each draw buffer
-typedef struct psxBGinfo {
-	TSPRT bgImg[2][2];
-	u_int nBGimgSprites;
-
-	u_int nBGzfragments; // the current number being used
-	u_short CLUTid;
-	u_short bgTP[2];
-	u_short x0, y0; // where in VRAM the origin of the image is stored
-} psxBGinfo;
-
-#endif
-
 } // End of namespace ICB
 
 #endif // #ifndef PSX_BG_H

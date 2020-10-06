@@ -30,10 +30,6 @@
 
 namespace ICB {
 
-#if _PSX && !defined _PSX_ON_PC
-#error "DONT USE PSX_PCGPU.H ON THE PSX"
-#endif // #if _PSX && !defined _PSX_ON_PC
-
 
 // For storing user data in the OT entry e.g. texture pointer
 extern void *OTusrData;

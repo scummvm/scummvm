@@ -110,15 +110,7 @@ namespace ICB {
 
 #define setTcode(p, tc) (*(uint32 *)&(((P_TAG *)(p))->r0) = (uint32)(tc))
 
-#if _PC || _PSX_ON_PC
-
 #define zeroTagPoly(p) (setaddr((&(p)->tag_poly), 0), setlen((&(p)->tag_poly), 0) = 0)
-
-#else
-
-#define zeroTagPoly(p) ((p)->tag_poly = 0)
-
-#endif
 
 #define setlen(p, _len) (((P_TAG *)(p))->len = (u_char)(_len))
 

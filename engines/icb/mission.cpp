@@ -46,17 +46,8 @@
 #include "mission_functions.h"
 #include "engines/icb/common/datapacker.h"
 #include "res_man.h"
-#if _PC
 #include "options_manager_pc.h"
 #include "cluster_manager_pc.h"
-#endif
-
-#ifdef _PSX
-#include "engines/icb/gfx/psx_disc.h"
-#include "engines/icb/gfx/psx_snd_engine.h"
-#include "options_menu_psx.h"
-#include "fn_sting_psx.h"
-#endif
 
 #include "common/util.h"
 #include "common/textconsole.h"
@@ -119,7 +110,6 @@ bool8 Setup_new_mission(const char *mission_name, const char *session_name) {
 	// create a new mission object deleting any current one
 
 	// fix names to lowercase on the PC ONLY
-#ifdef _PC
 /*	uint32 j;
 	for (j = 0; j < strlen(mission_name); j++)
 		if (Common::isUpper(*(mission_name + j)))
@@ -128,24 +118,8 @@ bool8 Setup_new_mission(const char *mission_name, const char *session_name) {
 	for (j = 0; j < strlen(session_name); j++)
 		if (Common::isUpper(*(session_name + j)))
 			*(session_name + j) = tolower(*(session_name + j));*/
-#endif // #ifdef _PC
 
 	// check if session exists
-#ifdef _PSX
-	// Work out which CD we should be using
-	px.current_cd = WhichCD(mission_name);
-
-	// Make sure the correct CD is in the drive
-	DiscCheckInserted();
-
-	// Make the session cluster name
-	// Make the filename equivalent of the hash'ed version of mission name
-	char h_mission_name[8];
-	HashFile(mission_name, h_mission_name);
-	char h_session_name[8];
-	HashFile(session_name, h_session_name);
-	sprintf(temp_buf, SESSION_TEST_PATH, h_mission_name, h_session_name);
-#else
 
 	// If we are using the straight paths check for the cluster
 	// Otherwise make up the path to the psx name format cluster
@@ -185,7 +159,6 @@ bool8 Setup_new_mission(const char *mission_name, const char *session_name) {
 	}
 #endif
 
-#endif
 	if (rs_bg->Test_file(temp_buf)) {
 		if (g_mission)
 			g_icb_mission->___delete_mission();
@@ -206,11 +179,6 @@ void _mission::___init_mission(const char *new_mission_name, const char *session
 
 	Zdebug("___init_mission %s %s", new_mission_name, session_name);
 
-#ifdef _PSX
-	// Reset the PSX music & speech player
-	ResetStings(1);
-#endif // #ifdef _PSX
-
 	// camview mode
 	if (camera_hack)
 		return;
@@ -229,12 +197,6 @@ void _mission::___init_mission(const char *new_mission_name, const char *session
 	// Work out which CD we should be using
 	px.current_cd = WhichCD(new_mission_name);
 
-#if _PSX
-	// Make sure the correct CD is in the drive
-	DiscCheckInserted();
-
-#else
-
 	// Need a mission id number fist of all
 	MISSION_ID m = (MISSION_ID)FindMissionNumber(new_mission_name);
 
@@ -247,20 +209,9 @@ void _mission::___init_mission(const char *new_mission_name, const char *session
 			;
 	}
 
-#endif
-
-#ifdef _PSX
-	if (strlen(new_mission_name) > ENGINE_STRING_LEN) {
-		Fatal_error("mission name %s is too int32", new_mission_name);
-	}
-	Set_string(new_mission_name, mission_name);
-#else
-
 	// When using clusters keep items withouth the root so the correct hashing
 	// start point can be maintained
 	strcpy(mission_name, new_mission_name);
-
-#endif // #ifdef _PSX
 
 	Set_string(new_mission_name, tiny_mission_name, TINY_NAME_LEN);
 	Set_string(session_name, tiny_session_name, TINY_NAME_LEN);
@@ -272,38 +223,10 @@ void _mission::___init_mission(const char *new_mission_name, const char *session
 
 	//  setup mission sound
 
-#if _PSX
-	printf("loading mission sounds...\n");
-	// temp...
-	char snddata_cluster[128]; // snddata full path
-	// char session_cluster[128];    // session full path
-	char h_session_name[128]; // temp h_session path for getting snddata block
-	char session_h_name[8];   // temp h_file of session
-
-	uint32 snddata_cluster_hash;
-
-	HashFile(session_name, session_h_name);
-
-	if (sprintf(h_session_name, "%s\\%s", h_mission_name, session_h_name) > ENGINE_STRING_LEN)
-		Fatal_error("_game_session::_game_session [%s] string overflow", h_session_name);
-
-	if (sprintf(snddata_cluster, SESSION_SNDDATA_CLUSTER_PATH, h_session_name) > 128)
-		Fatal_error("_mission::___init_mission(%s,%s) snddata filename too int32", new_mission_name, session_name);
-
-	snddata_cluster_hash = HashString(snddata_cluster);
-	// session_cluster_hash=HashString(session_cluster);
-
-	// don't preload so NULL,0 as session cluster,clusterHash
-	LoadMissionSounds(NULL, 0, snddata_cluster, snddata_cluster_hash, HashString(mission_name));
-
-#else
 	LoadMissionSounds(new_mission_name);
-#endif
 
-#ifdef _PC
 	// Reset the widescreen and fade effects
 	surface_manager->Reset_Effects();
-#endif
 	// set pointer :this is so things inside session->__init can use MS e.g. remora & inventory initialisation
 	g_mission = g_icb_mission;
 
@@ -338,11 +261,6 @@ void _mission::___delete_mission() {
 	// mission object deconstructor
 
 	Zdebug("deleting mission");
-
-#ifdef _PSX
-	// Reset the PSX music & speech player
-	ResetStings(1);
-#endif // #ifdef _PSX
 
 	// kill the pointer which doubles as an inited yes/no flag
 	g_mission = NULL;
@@ -444,11 +362,6 @@ uint32 _mission::Game_cycle() {
 
 		UnpauseSounds();
 	}
-
-#if _PSX
-	// update psx prefetch queue
-	DiscUpdateQueue();
-#endif
 
 	// help out rs_anims
 
@@ -562,11 +475,8 @@ void _mission::Save_micro_session() {
 
 				if ((value < packMin) || (value > packMax)) {
 					// Don't do a message box for a CD build of the game!
-#if _PSX && CD_MODE
-#else
 					Message_box("Object '%s' lvar %d '%s' is too big to pack please try and reduce %d range is %d->%d", object->GetName(), k,
 					            object->GetScriptVariableName(k), value, packMin, packMax);
-#endif // #if _PSX && CD_MODE
 					packData = 0;
 				}
 
@@ -743,11 +653,9 @@ void _mission::Save_game_position(const char *filename, const char *slot_label, 
 
 #endif
 
-#if _PC
 	// specific stuff for pc save game menu
 	stream->write(slot_label, MAX_LABEL_LENGTH);
 	stream->writeSint32LE(timeplayed);
-#endif
 
 	atinyvalue = SR_VERSION;
 	stream->writeByte(atinyvalue);
@@ -937,7 +845,6 @@ void _mission::Save_game_position(const char *filename, const char *slot_label, 
 	// Save the Remora's locations-visited information.
 	g_oRemora->Save(stream);
 
-#ifdef _PC
 	// Need to guard against NULL pointer in use by debug autosave.
 #if 0 // TODO: Do we actually need to do this? We don't have a max size...
 	if (stream) {
@@ -946,7 +853,6 @@ void _mission::Save_game_position(const char *filename, const char *slot_label, 
 			Message_box("Warning : save game is greater than %d bytes (is %d bytes)\nthis will not work on the PSX please tell Jake",
 			            SAVE_GAME_MAX_SIZE, ftell(fh));
 	}
-#endif
 #endif
 
 	// save gfx init info for initing a set...
@@ -1071,11 +977,9 @@ __load_result Load_game(const char *filename) {
 	if (stream == NULL)
 		return __NO_SUCH_FILE;
 
-#if _PC
 	char label[MAX_LABEL_LENGTH];           // load into here cause i'm too thick to know how to skip it (tw)
 	fvar = stream->readUint32LE();          // load and discard time played
 	stream->read(&label, MAX_LABEL_LENGTH); // load and discard user label name
-#endif
 
 	// load schema and check
 	atinyvalue = stream->readByte();
@@ -1248,15 +1152,6 @@ __load_result Load_game(const char *filename) {
 }
 
 void _mission::Create_display() {
-#if _PSX
-	// Reset all the timers
-	ad_time = 0;
-	set_time = 0;
-	lt_time = 0;
-	nActorsDrawn = 0;
-	nActorsConsidered = 0;
-#endif
-
 	switch (px.display_mode) {
 	case THREED:
 		// Need this for development safey - but is redundant in final (console-less) game
@@ -1266,7 +1161,6 @@ void _mission::Create_display() {
 			// Save the actor's control mode
 			session->player.Push_control_mode(ACTOR_RELATIVE);
 		} else {
-#ifdef _PC
 			// Check if we have just regain the focus after task switching
 			if (gRegainedFocus) {
 				session->set.ReInit();
@@ -1276,7 +1170,6 @@ void _mission::Create_display() {
 
 				gRegainedFocus = false;
 			}
-#endif //_PC
 			// To get on,off camera events in REMORA mode
 			// this function is less accurate than stage_draw computation of same events
 			session->UpdateOnOffCamera();
@@ -1288,11 +1181,7 @@ void _mission::Create_display() {
 				g_oRemora->DrawRemora();
 			} else {
 //  full 3d stage draw NOT in REMORA mode
-#if _PC
 				session->Stage_draw_poly();
-#else //_PC
-				session->Stage_draw();
-#endif
 
 				// Only render speech when not in REMORA mode
 				// (as REMORA uses speech system to draw its own text)

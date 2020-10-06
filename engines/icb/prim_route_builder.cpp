@@ -38,9 +38,7 @@
 #include "debug.h"
 #include "prim_route_builder.h"
 #include "remora.h"
-#if defined(_PC)
 #include "global_objects.h"
-#endif
 
 #include "common/system.h"
 #include "common/math.h"
@@ -77,11 +75,6 @@ void _prim_route_builder::Give_barrier_list(_route_description *route) {
 
 	// Turn off the new's for PSX under certain conditions
 	// i.e. a CD 2MB build
-#if defined _PSX && (NO_DIAG_BARS == 1)
-	route->number_of_diag_bars = 0;
-	route->diag_bars = NULL;
-#else
-
 	// set passed number of points
 	route->number_of_diag_bars = total_points;
 
@@ -92,8 +85,6 @@ void _prim_route_builder::Give_barrier_list(_route_description *route) {
 
 	// move
 	memcpy((unsigned char *)route->diag_bars, (unsigned char *)barrier_list, ((total_points) * sizeof(_point)));
-
-#endif // #if defined _PSX && ( NO_DIAG_BARS == 1 )
 }
 
 void _prim_route_builder::Give_route(_route_description *route) {
@@ -395,23 +386,6 @@ uint32 _prim_route_builder::ExtrapolateLine(_point *pSrc0, _point *pSrc1, _point
 	delta.x = (p1.x - p0.x);
 	delta.z = (p1.z - p0.z);
 
-#if _PSX
-	uint32 val = delta.x * delta.x + delta.z * delta.z;
-	// This is only trying to test for a zero length line
-	if (val == 0)
-		return 0;
-	// #define EXT_SCALE_VALUE 1
-	// val = val << (EXT_SCALE_VALUE*2); // remember val = r*r
-	PXdouble l = PXsqrt(val); // e.g. SquareRoot0
-	PXdouble dx = (delta.x * d) / l;
-	PXdouble dz = (delta.z * d) / l;
-
-	// float vf = (float)val;
-	// float lf = sqrt( vf );
-	// PXdouble dx = (int)( (float)( (int)d * delta.x ) / lf );
-	// PXdouble dz = (int)( (float)( (int)d * delta.z ) / lf );
-	// printf("dx %d dz %d d %d delta.x %d delta.z %d val %d", dx, dz, d, delta.x, delta.z, val );
-#else
 	PXdouble val = delta.x * delta.x + delta.z * delta.z;
 	// This is only trying to test for a zero length line
 	if (val <= 0.0)
@@ -419,7 +393,6 @@ uint32 _prim_route_builder::ExtrapolateLine(_point *pSrc0, _point *pSrc1, _point
 	PXdouble l = sqrt(val);
 	PXdouble dx = (d * delta.x) / l;
 	PXdouble dz = (d * delta.z) / l;
-#endif
 
 	if (swapped) {
 		pDst0->x = (PXreal)(p1.x + dx);
@@ -523,10 +496,8 @@ int32 _prim_route_builder::Get_intersect(PXreal x0, PXreal y0, PXreal x1, PXreal
 	return 1;
 }
 
-#if defined(_PC)
 bool8 _prim_route_builder::LineIntersectsRect(DXrect oRect, int32 nX1, int32 nY1, int32 nX2, int32 nY2) const {
 	return (g_oRemora->CohenSutherland(oRect, nX1, nY1, nX2, nY2, FALSE8));
 }
-#endif // #if defined( _PC )
 
 } // End of namespace ICB

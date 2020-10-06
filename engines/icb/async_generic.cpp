@@ -31,9 +31,6 @@
 #include "actor.h"
 #include "global_objects.h"
 #include "res_man.h"
-#if _PSX
-#include "engines/icb/gfx/psx_tim.h"
-#endif
 
 #include "mission.h"
 
@@ -180,62 +177,7 @@ mcodeFunctionReturnCodes _game_session::fn_preload_basics(int32 &, int32 *) {
 	// if this is init script, then I is not set yet, so do so now...
 	I = L->voxel_info;
 
-#if _PSX
-
-	char mini_cluster[BASE_PATH_STR_LEN];
-	uint32 mini_cluster_hash;
-
-	strcpy(mini_cluster, I->base_path);
-
-	// now go from "\C\XXXXXXX\XXXXXXX.OFT;1" to "\C\XXXXXXX\XXXXXXX.MIN;1"
-
-	mini_cluster[strlen(mini_cluster) - 5] = 'M';
-	mini_cluster[strlen(mini_cluster) - 4] = 'I';
-	mini_cluster[strlen(mini_cluster) - 3] = 'N';
-
-	// work out hash...
-
-	mini_cluster_hash = HashString(mini_cluster);
-
-	rs_anims->Res_open_mini_cluster(mini_cluster, mini_cluster_hash, I->base_path, I->base_path_hash);
-
-	uint32 thandle = ((I->base_path_hash) << 16) | (I->texture_hash);
-	TextureInfo *tinfo = tman->FindTexture(thandle, gameCycle);
-	// The texture wasn't found : oops
-	if (tinfo == NULL) {
-		// Open the texture and load it into VRAM
-		uint32 *ptim = (uint32 *)rs_anims->Res_open(NULL, I->texture_hash, I->base_path, I->base_path_hash);
-		if (ptim == NULL)
-			Fatal_error("ahh, texture not found in preload_basics");
-
-		LRECT imgRect;
-		LRECT clutRect;
-		u_short clutID;
-		uint32 *imgPtr = NULL;
-		uint32 *clutPtr = NULL;
-		if (!LoadTim(ptim, &imgRect, &clutRect, &clutID, 0, 0, &imgPtr, &clutPtr)) {
-			Fatal_error("Couldn't load texture %s %X\n", I->base_path, I->texture_hash);
-		}
-
-		tinfo = tman->AddTexture(NULL, thandle, gameCycle, imgRect.w, imgRect.h);
-		if (tinfo == NULL) {
-			Fatal_error("AddTexture NULL %s", L->GetName());
-		}
-
-		clutRect.x = (tinfo->cba & 0x3F) << 4;
-		clutRect.y = (tinfo->cba >> 6);
-		LoadImage(&(tinfo->r), imgPtr);
-		clutID = LoadClut(clutPtr, clutRect.x, clutRect.y);
-		DrawSync(0);
-
-		rs_anims->Res_purge(NULL, I->texture_hash, I->base_path, I->base_path_hash, 0);
-	}
-
-#else
-
 	rs_anims->Res_open_mini_cluster(I->base_path, I->base_path_hash, I->base_path, I->base_path_hash);
-
-#endif
 
 	// okay
 	return (IR_CONT);
@@ -359,11 +301,6 @@ void _game_session::Service_generic_async() {
 		// its the player
 
 		// check the icons are loaded in
-#if _PSX
-		g_oIconMenu->PreloadIcon(ICON_PATH, ARMS_HEALTH_NAME);
-		g_oIconMenu->PreloadIcon(ICON_PATH, ARMS_AMMO_NAME);
-		g_oIconMenu->PreloadIcon(ICON_PATH, ARMS_GUN_NAME);
-#endif
 
 #define SPECIAL_PLAYER_FILE player_generic_anim_async_table[list_pos][depth_pos]
 		// now service the other sets

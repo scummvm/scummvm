@@ -47,7 +47,6 @@ namespace ICB {
 #define MAX_HEALTH 10
 
 void _game_session::Draw_health_bar() {
-#ifdef _PC
 	static int targetHealth = -1;
 	static int barEnd;
 	static int barTarget;
@@ -143,7 +142,6 @@ void _game_session::Draw_health_bar() {
 
 	// Unlock the surface
 	surface_manager->Unlock_surface(working_buffer_id);
-#endif
 }
 
 } // End of namespace ICB

@@ -37,28 +37,17 @@
 
 namespace ICB {
 
-#ifdef _PSX
-
-// PSX limit
-#define TEXT_SPRITE_SIZE (4)
-
-#else
-
 // PC limit
 #define TEXT_SPRITE_SIZE (300 * 150 * 4)
-
-#endif // #ifdef _PSX
 
 #define TS_NON_SPOKEN_LINE '&'
 #define TS_SPOKEN_LINE '*'
 #define TS_LINENO_OPEN '{'
 #define TS_LINENO_CLOSE '}'
 
-#ifdef _PC
 // This pointer can be set to force a different RGB to be used for speech text.  Remora uses
 // this to do text colouring.
 extern _rgb *psTempSpeechColour;
-#endif
 
 // return codes for text sprite functions
 enum _TSrtn {
@@ -128,9 +117,7 @@ class text_sprite {
 	uint32 spriteWidth;  // width of text sprite
 	uint32 spriteHeight; // height of text sprite
 	uint32 size;         // in bytes (= width * height * bit_depth)      NOT SURE WE NEED THIS FOR ANYTHING
-#ifdef _PC
 	uint32 surfaceId; // The surface we want to eventually draw this sprite on
-#endif
 	_lineInfo lineInfo; // infomation about the lines in the text_block
 	_TSparams params;
 
@@ -184,10 +171,8 @@ public:
 	_TSparams *GetParams(void) {
 		return &params; // infomation about the lines in the text_block
 	}
-#ifdef _PC
 	void SetSurface(uint32 sid) { surfaceId = sid; }
 	uint32 GetSurface() const { return surfaceId; }
-#endif
 
 	// This a variable stuck way down here on it's little lonesome ?
 	bool8 please_render; // draw yes/no

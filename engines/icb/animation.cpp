@@ -344,9 +344,7 @@ mcodeFunctionReturnCodes _game_session::fn_inherit_prop_anim_height_id(int32 &, 
 				int16 *heights = (int16 *)(((char *)index) + anim->offset_heights);
 				PXreal one_height = (PXreal)(heights[L->list[0]]);
 				M->actor_xyz.y = one_height;
-#ifdef _PC
 				Zdebug("new height %3.1f", M->actor_xyz.y);
-#endif
 				// come back again next cycle
 				return (IR_REPEAT);
 			}

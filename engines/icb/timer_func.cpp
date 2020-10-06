@@ -49,23 +49,11 @@ int32 timerMultiplier;
 // below this value we display in red...
 int32 timerDanger;
 
-#if _PSX
-
-#define BAR_WIDTH 5
-#define BAR_HEIGHT 3
-#define DIG_SPACING (BAR_WIDTH + 4)
-#define TIME_X (SCREEN_W / 2 - 100)
-#define TIME_Y (SCREEN_H / 2 - 30)
-
-#else
-
 #define BAR_WIDTH 8
 #define BAR_HEIGHT 6
 #define DIG_SPACING (BAR_WIDTH + 4)
 #define TIME_X (320 + 250)
 #define TIME_Y (240 + 220)
-
-#endif
 
 // generic digits..............
 #define TOP_BIT 1
@@ -102,27 +90,6 @@ const short barXY[7][2] = {
 };
 
 // DRAW THE SEGMENT - different for psx and pc at the moment -----------------
-#if _PSX
-void DrawSegment(int x, int y, int dx, int dy, int danger) {
-	LINE_F2 *line;
-	line = (LINE_F2 *)drawpacket;
-
-	setLineF2(line);
-	setXY2(line, x, y, x + dx, y + dy);
-
-	if (danger)
-		setRGB0(line, 255, 64, 64);
-	else
-		setRGB0(line, 64, 255, 64);
-
-	myAddPacket(sizeof(LINE_F2));
-
-	if (global_use_otlist == 0)
-		DrawPrim(line);
-	else
-		addPrim(drawot + OT_TEXT, line);
-}
-#else
 
 #include "surface_manager.h"
 
@@ -155,7 +122,6 @@ void DrawSegment(int x, int y, int dx, int dy, int danger) {
 	}
 	surface_manager->Unlock_surface(working_buffer_id);
 }
-#endif
 
 // draw a digit using lcd display, -1 for the :
 void DrawDigit(int x, int y, int d, int danger) {

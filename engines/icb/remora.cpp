@@ -61,14 +61,8 @@ _remora::_remora() {
 	m_nCurrentZoom = REMORA_SCAN_START_ZOOM;
 
 	// Name of the cluster which holds remora graphics.
-#if defined(_PC)
 	strcpy(m_pcRemoraCluster, REMORA_CLUSTER_PATH);
 	m_nScanPan = 0;
-#endif // #if defined(_PC)
-
-#if defined(_PSX)
-	m_pcRemoraCluster = REMORA_CLUSTER_PATH;
-#endif // #if defined(_PSX)
 
 	// Make the hash name of the remora graphics cluster.
 	m_nRemoraClusterHash = EngineHashString(m_pcRemoraCluster);
@@ -187,18 +181,7 @@ void _remora::DisplayCharacterSpeech(uint32 nHash) {
 	}
 
 	// Initialise the counter for how int32 it will be displayed.
-#if _PSX
-#if defined PAL
-#define VSYNCS_PER_SECOND 50
-#elif defined NTSC
-#define VSYNCS_PER_SECOND 60
-#else
-#error "UNKNOWN VIDEOTYPE"
-#endif
-	m_nSpeechTimer = (SayLineOfSpeech(nHash) * 12) / VSYNCS_PER_SECOND;
-#else
 	m_nSpeechTimer = SayLineOfSpeech(nHash);
-#endif
 }
 
 void _remora::SetCurrentZoom(uint32 nZoom) {
@@ -392,14 +375,12 @@ void _remora::CycleRemoraLogic(const _input &sKeyboardState) {
 					ProcessUpDownZoomKeys(sKeyboardState);
 				}
 
-#if defined(_PC)
 				// Check for the palette-change key.
 				if (sKeyboardState.IsButtonSet(__ATTACK))
 					m_nCurrentPalette = (uint8)(((int32)m_nCurrentPalette + 1) % REMORA_NUM_COLOUR_SCHEMES);
 
 				// Update the beam position.
 				m_nScanPan = (m_nScanPan + REMORA_SCAN_SPEED) % 360;
-#endif
 
 				break;
 
@@ -426,10 +407,8 @@ void _remora::CycleRemoraLogic(const _input &sKeyboardState) {
 		} // end if
 
 		// Fire button quits the speech timer.
-#if defined(_PC)
 		if (sKeyboardState.IsButtonSet(__ATTACK))
 			m_nSpeechTimer = 0;
-#endif
 
 		break;
 
@@ -599,9 +578,7 @@ void _remora::SetupPicture(uint32 nXPixelOffset, const char *pcPictureName) {
 	uint32 nPictureHeight, nPictureWidth;
 	uint32 nNumPictureRows;
 
-#if defined(_PC)
 	const char *pcFullPictureNameAndPath;
-#endif
 
 	// Ignore the function call if the Remora is not active.
 	if (m_eGameState == INACTIVE)
@@ -619,12 +596,8 @@ void _remora::SetupPicture(uint32 nXPixelOffset, const char *pcPictureName) {
 		Fatal_error("You cannot put a picture in the Remora until a heading has been set for the screen.");
 
 	// Load the picture.
-#if defined(_PC)
 	pcFullPictureNameAndPath = MakeRemoraGraphicsPath(pcPictureName);
 	m_oTextPicture.InitialiseFromBitmapName(pcFullPictureNameAndPath, m_pcRemoraCluster, m_nRemoraClusterHash);
-#else
-	m_oTextPicture.InitialiseFromBitmapName(pcPictureName, m_pcRemoraCluster, m_nRemoraClusterHash);
-#endif
 
 	// Get the size of the image.
 	nPictureHeight = m_oTextPicture.GetHeight();
@@ -883,11 +856,7 @@ void _remora::DrawEmailWaiting() {
 		nHashRef = HashString("email_waiting");
 		pcEmailWaitingText = LocateTextFromReference(nHashRef);
 
-#if _PSX
-		MS->Create_remora_text(REMORA_EMAIL_WAITING_X + 120, REMORA_EMAIL_WAITING_Y, pcEmailWaitingText, 0, PIN_AT_TOP_RIGHT, 0, 0, REMORA_DISPLAY_WIDTH);
-#else
 		MS->Create_remora_text(REMORA_EMAIL_WAITING_X, REMORA_EMAIL_WAITING_Y, pcEmailWaitingText, 0, PIN_AT_TOP_LEFT, 0, 0, REMORA_DISPLAY_WIDTH);
-#endif
 		MS->Render_speech(MS->text_bloc);
 		MS->Kill_remora_text();
 	}

@@ -67,9 +67,7 @@
 #include "common/memstream.h"
 namespace ICB {
 
-#ifdef _PC
 uint32 MAX_MEM_BLOCKS = 0;
-#endif
 
 FILE *openDiskFileForBinaryRead(const char *filename) {
 	pxString path = filename;

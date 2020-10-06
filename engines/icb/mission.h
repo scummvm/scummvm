@@ -37,11 +37,9 @@ namespace ICB {
 
 #define SR_VERSION 17
 
-#ifdef _PC
 // save_game_max is :
 // 8192 (1 memory card block) - 256 (PSX system data) - 8 (PSX engine data)
 #define SAVE_GAME_MAX_SIZE (8192 - 256 - 8)
-#endif
 
 // total number of sessions allowed per mission
 #define MAX_sessions 5

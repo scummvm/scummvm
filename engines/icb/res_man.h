@@ -50,23 +50,13 @@ namespace ICB {
 inline int32 SameUrl(const char *urla, const uint32 urla_hash, const uint32 clustera_hash, const char *urlb, const uint32 urlb_hash, const uint32 clusterb_hash);
 
 } // End of namespace ICB (To avoid nesting during includes)
-#ifdef _PSX
-// PSX specific
-#include "res_man_psx.h"
-#else
 // PC specifics
 #include "res_man_pc.h"
-#endif
 namespace ICB {
 
 // Generic stuff
-#ifdef _PSX
-#define MAX_MEM_BLOCKS (500)
-#endif
 
-#ifdef _PC
 extern uint32 MAX_MEM_BLOCKS;
-#endif
 
 #define MEM_null 0
 #define MEM_free 1
@@ -109,12 +99,7 @@ typedef struct RMParams {
 	int zipped;
 	int search;
 	int compressed; // No zero if the resource is compressed
-#ifdef _PSX
-	const char *fh;
-	int cdpos;
-#else
 	Common::SeekableReadStream *_stream;
-#endif
 	uint8 not_ready_yet; // are not ready yet
 } RMParams;
 
@@ -135,16 +120,12 @@ class res_man {
 
 	uint32 hasThread;
 
-#ifdef _PC
 	rcActArray<async_PacketType> async_fnArray;
-#endif
 
 public:
 	int amount_of_defrags;
 
-#ifdef _PC
 	async_PacketType async_data;
-#endif
 	int32 async_loading;
 	int32 async_done;
 	//SDL_Thread *hThread; // TODO: Fix threading
@@ -172,10 +153,8 @@ public:
 
 	int32 async_checkArray();
 	void async_flush();
-#ifdef _PC
 	void async_addFile(const int8 *fn, uint8 *p, int32 size, int32 zipped, int32 memListNo);
 	void RegisterAsync(const int32 n);
-#endif
 
 	int16 find_oldest_file();
 	void Garbage_removal();
@@ -261,11 +240,9 @@ public:
 	void OpenAsync();
 	void CloseAsync();
 
-#ifdef _PC
 	//              async
 	async_PacketType async_shiftArray();
 	void async_setLoading(async_PacketType s);
-#endif
 
 	bool8 auto_time_advance; // if true then time stamp is automatically imcremented as a file is opened
 	bool8 no_defrag; // this manager is a static one so resources cannot be purged, shuffled or aged out

@@ -60,9 +60,7 @@ void _icon_list::Clone(const _icon_list &oSource) {
 	m_bAllowDuplicates = oSource.m_bAllowDuplicates;
 
 	for (i = 0; i < m_nItemCount; ++i) {
-#ifdef _PC
 		Set_string(const_cast<char *>(oSource.m_ppcIconList[i]), m_ppcIconList[i], MAXLEN_ICON_NAME);
-#endif
 		m_pnIconListHash[i] = oSource.m_pnIconListHash[i];
 		m_pnDuplicateCount[i] = oSource.m_pnDuplicateCount[i];
 	}
@@ -116,9 +114,7 @@ void _icon_list::SetAbsoluteIconCount(const char *pcIconName, uint32 nCount) {
 			Fatal_error("_icon_list::SetAbsoluteIconCount(): Icon list %s full adding %s", m_pcListName, pcIconName);
 
 // Add a fresh entry.
-#ifdef _PC
 		Set_string(const_cast<char *>(pcIconName), m_ppcIconList[i], MAXLEN_ICON_NAME);
-#endif
 
 		m_pnIconListHash[i] = nHash;
 		m_pnDuplicateCount[i] = (uint8)nCount;
@@ -148,9 +144,7 @@ void _icon_list::AddIcon(const char *pcIconName, const uint32 nIconNameHash) {
 			Fatal_error("_icon_list::AddItem(): Icon list %s full", m_pcListName);
 
 // Add a fresh entry.
-#ifdef _PC
 		Set_string(const_cast<char *>(pcIconName), m_ppcIconList[i], MAXLEN_ICON_NAME);
-#endif
 		m_pnIconListHash[i] = nIconNameHash;
 		m_pnDuplicateCount[i] = 1;
 		++m_nItemCount;

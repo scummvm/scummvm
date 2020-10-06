@@ -36,8 +36,6 @@
 
 namespace ICB {
 
-#if (_PSX == 0) || _PC || _PSX_ON_PC
-
 // Handy maths function
 void makePlaneEquation(FVECTOR *v0, FVECTOR *v1, FVECTOR *v2, int32 *d, FVECTOR *pn) {
 	FVECTOR l01, l02;
@@ -258,7 +256,5 @@ void preprocessShadeData(FVECTOR v[4], ShadeQuad *s) {
 	s->n23dots2 = (int)n23dots2;
 	s->n30dots3 = (int)n30dots3;
 }
-
-#endif // #if (_PSX==0) || _PC || _PSX_ON_PC
 
 } // End of namespace ICB

@@ -28,13 +28,7 @@
 #ifndef PSX_PROPS_H
 #define PSX_PROPS_H
 
-#ifdef _PSX
-
-#else //#ifdef _PSX
-
 #include "psx_pcdefines.h"
-
-#endif //#ifdef _PSX
 
 #define PSXPL_SCHEMA 4
 #define PSXPL_ID "PLF"
@@ -285,14 +279,12 @@ typedef struct psxPropState {
 	inline psxZMicroFrag *GetZMicroFragPtr(void);
 	inline _pxPSXBitmap *GetPropBitmapPtr(void);
 
-#if _PC
 	psxPropState() { ; }
 
 private:
 	// Make '=' and copy constructor private to stop accidental assignment.
 	psxPropState(const psxPropState &) { ; }
 	void operator=(const psxPropState &) { ; }
-#endif
 
 } psxPropState;
 

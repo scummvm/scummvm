@@ -403,8 +403,6 @@ inline void _player::Pop_control_mode() {}
 inline __Actor_control_mode _player::Get_control_mode() { return focus_mode; }
 
 
-#ifdef _PC
-
 extern uint32 fire_key;
 extern uint32 interact_key;
 extern uint32 inventory_key;
@@ -419,7 +417,6 @@ extern uint32 down_key;
 extern uint32 left_key;
 extern uint32 right_key;
 
-#endif
 
 } // End of namespace ICB
 

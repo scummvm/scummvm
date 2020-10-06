@@ -140,9 +140,7 @@ void CreateGlobalObjects() {
 	g_icb_session = new _game_session;
 	g_icb_session_floors = new _floor_world;
 	g_text_bloc1 = new text_sprite;
-#if _PC
 	g_text_bloc2 = new text_sprite;
-#endif
 	// The order of creation matters:
 	g_oEventManager = new _event_manager;
 	g_oLineOfSight = new _line_of_sight;
@@ -162,9 +160,7 @@ void DestroyGlobalObjects() {
 	delete g_icb_session;
 	delete g_icb_session_floors;
 	delete g_text_bloc1;
-#if _PC
 	delete g_text_bloc2;
-#endif
 	delete g_oEventManager;
 	delete g_oLineOfSight;
 	delete g_oIconMenu;

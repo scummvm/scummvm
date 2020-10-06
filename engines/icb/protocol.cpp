@@ -39,16 +39,7 @@
 namespace ICB {
 
 _animHeader *FetchAnimHeader(uint8 *animFile) {
-#ifdef _PSX
-	_animHeader *ah;
-	// can't do this as not DWORD aligned
-	// int ls = sizeof(_standardHeader);
-	int ls = 0x2C;
-	ah = (_animHeader *)(animFile + ls);
-	return ah;
-#else
 	return (_animHeader *)(animFile + sizeof(_standardHeader));
-#endif
 }
 
 _cdtEntry *FetchCdtEntry(uint8 *animFile, uint16 frameNo) {
@@ -56,47 +47,12 @@ _cdtEntry *FetchCdtEntry(uint8 *animFile, uint16 frameNo) {
 
 	animHead = FetchAnimHeader(animFile);
 
-#ifdef _PSX
-	_cdtEntry *cdte;
-	// can't do this as not DWORD aligned
-	// int la = sizeof(_animHeader);
-	// int lc = sizeof(_cdtEntry );
-	int la = 15;
-	int lc = 9;
-	int l3 = frameNo * lc;
-	cdte = (_cdtEntry *)((uint8 *)animHead + la + l3);
-	return cdte;
-#else
 	return (_cdtEntry *)((uint8 *)animHead + sizeof(_animHeader) + frameNo * sizeof(_cdtEntry));
-#endif
 }
 
 _frameHeader *FetchFrameHeader(uint8 *animFile, uint16 frameNo) {
 	// required address = (address of the start of the anim header) + frameOffset
-#ifdef _PSX
-	_frameHeader *fh;
-	// can't do this as not DWORD aligned
-	// int ls = sizeof(_standardHeader);
-	int ls = 0x2C;
-	_cdtEntry *cdte = FetchCdtEntry(animFile, frameNo);
-	int fo;
-	// Only do memcpy when necessary
-	int *ptr = (int *)cdte + 1;
-
-	// memcpy( (unsigned char*)&fo, from, 4 );
-	uint8 *from = (uint8 *)ptr;
-	uint8 *to = (uint8 *)&fo;
-	// 4 byte memcpy
-	*to++ = *from++;
-	*to++ = *from++;
-	*to++ = *from++;
-	*to = *from;
-
-	fh = (_frameHeader *)(animFile + ls + fo);
-	return fh;
-#else
 	return (_frameHeader *)(animFile + sizeof(_standardHeader) + (FetchCdtEntry(animFile, frameNo)->frameOffset));
-#endif
 }
 
 } // End of namespace ICB

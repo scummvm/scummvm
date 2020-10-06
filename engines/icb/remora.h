@@ -232,16 +232,12 @@ public:
 	void DrawEmailWaiting();
 
 	// This toggles the PC's formatting of text between normal mode and PSX emulation.
-#if defined(_PC)
 	void ToggleTextFormattingPlatform() { m_bFormatForPSX = (m_bFormatForPSX == FALSE8) ? TRUE8 : FALSE8; }
 	bool8 FormatForPSX() const { return (m_bFormatForPSX); }
 	uint32 GetRemoraSurfaceId() { return (m_nRemoraSurfaceID); }
-#endif
 
-#if defined(_PC)
 	// This is public so prim route builder can access it.
 	bool8 CohenSutherland(DXrect oRect, int32 &nX1, int32 &nY1, int32 &nX2, int32 &nY2, bool8 bnClip) const;
-#endif
 
 	// These functions have script counterparts.
 	bool8 IsActive() const { return ((m_eGameState == INACTIVE) ? FALSE8 : TRUE8); }
@@ -285,7 +281,6 @@ private:
 	RemoraMode m_eModeOverride;   // Used to set a mode from script.
 
 	// General graphics.
-#if defined(_PC)
 	DXrect m_sScreenRectangle;         // The drawable area of the Remora's screen.
 	DXrect m_sBackgroundRectangle;     // Actually this is the size of the whole screen.
 	DXrect m_sCasingSourceRectangle;   // The rectangle to blit the casing from.
@@ -304,7 +299,6 @@ private:
 	uint32 m_nDisplayedTextRows;
 	uint32 m_nCharacterSpacing;
 	uint32 m_nRowSpacing;
-#endif
 
 #if defined(_PSX)
 	DXrect m_sCasingTargetRectangle; // The rectangle to blit the casing to.
@@ -403,14 +397,12 @@ private:
 
 	void DrawGrid();
 
-#if defined(_PC)
 	inline const char *MakeRemoraGraphicsPath(const char *pcBitmapName) const;
 	void SetUpSurfaceForBitmap(const char *pcBitmapName, DXrect &sSourceRect, DXrect &sTargetRect, uint32 &nSurfaceID);
 	void DrawHeaderAndFooterLines();
 	void ClipTopAndBottom();
 	uint32 ComputeOutcode(DXrect oRect, int32 nX, int32 nY) const;
 	inline bool8 TestOutcode(uint32 nOutcode, Outcode enCodeToTest) const;
-#endif
 #if defined(_PSX)
 	void DrawWideScanMask(const int xc, const int yc, const int x1, const int y1, const int x2, const int y2);
 	void DrawBlip(int32 x, int32 z, _rgb sColour, uint32 size, uint32 pulse) const;
@@ -439,7 +431,6 @@ private:
 	void DrawM08LockControlObjects();
 	void DrawFloorRectangles() const;
 
-#if defined(_PC)
 	void DrawObjects(void);
 	void AddInterference() const;
 	void DrawScanBeam() const;
@@ -449,7 +440,6 @@ private:
 	void DrawTriangleSymbol(int32 nX, int32 nY, uint32 nPal, uint32 nSize);
 	void DrawOctagonSymbol(int32 nX, int32 nY, uint32 nPal, uint32 nSize);
 	void DrawCrosshairs() const;
-#endif
 #if defined(_PSX)
 	void DrawObjects(const int32 x1, const int32 y1, const int32 x2, const int32 y2);
 #endif

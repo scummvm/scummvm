@@ -46,10 +46,6 @@
 
 #include "mission.h"
 
-#if _PSX
-#include "engines/icb/gfx/psx_disc.h"
-#endif
-
 #include "common/textconsole.h"
 
 namespace ICB {
@@ -159,10 +155,7 @@ void res_man::Defrag() {
 	int16 child, grandchild;
 
 	bool8 debug_state = zdebug;
-#ifdef _PSX
-#else
 	zdebug = TRUE8;
-#endif
 
 	Tdebug("defrag.txt", "\ndefrag");
 
@@ -226,13 +219,7 @@ void res_man::Defrag() {
 				child = mem_list[cur_block].child; // for readability
 
 //                      physically move memory
-#if _PC
 				memcpy(mem_list[cur_block].ad, mem_list[child].ad, mem_list[child].size); // dest, src, len
-#endif
-#if _PSX
-				// Copy 8 bytes at a time
-				memcpy((uint32 *)mem_list[cur_block].ad, (uint32 *)mem_list[child].ad, mem_list[child].size);
-#endif
 
 				mem_list[cur_block].state = MEM_in_use; // we now have memory
 				mem_list[child].state = MEM_free; // child is now free
@@ -390,9 +377,7 @@ uint8 *res_man::Res_open(const char *url, uint32 &url_hash, const char *cluster,
 // is computed and stored in hash/cluster_hash
 uint8 *res_man::Res_async_open(const char *url, uint32 &url_hash, const char *cluster, uint32 &cluster_hash, int compressed) {
 	// pc does not have async for now (well i know it does but i'm switching it off)
-#if _PC
 	return Res_open(url, url_hash, cluster, cluster_hash, compressed);
-#endif
 
 	// if this is a cluster then fatal error (cant res_async_open a cluster directly like you can open one)
 	if ((url_hash == NULL_HASH) && (url == NULL)) {
@@ -490,15 +475,6 @@ void res_man::Res_purge(const char *url, uint32 url_hash, const char *cluster, u
 	search = FindFile(&params);
 
 	if (search != -1) {
-
-#if _PSX
-		// just to check we're not preloading it...
-		while (mem_list[search].protect) {
-			if (!IsQueued(mem_list[search].protect))
-				mem_list[search].protect = 0;
-			DiscUpdateQueue();
-		}
-#endif
 
 		//  one less file open
 		number_files_open--; // one less file in memory
@@ -665,16 +641,6 @@ void res_man::Res_purge_all() {
 	do {
 		if (mem_list[search].state == MEM_in_use) { // if a used block with a file...
 
-#if _PSX
-
-			// just to check we're not preloading it...
-			while (mem_list[search].protect) {
-				if (!IsQueued(mem_list[search].protect))
-					mem_list[search].protect = 0;
-				DiscUpdateQueue();
-			}
-#endif
-
 			//          search is number of mem block to remove
 
 			Zdebug(" search == %d", search);
@@ -774,25 +740,6 @@ uint8 *res_man::Internal_open(RMParams *params, int *ret_len) {
 
 	// Hey the file was found : good news
 	if (search != -1) {
-#if _PSX
-		// if preloading and is not in async queue then we are okay, it has finished...
-		if ((mem_list[search].protect) && (!IsQueued(mem_list[search].protect))) {
-			mem_list[search].protect = 0; // set to zero, no int32er preloading...
-		}
-
-		// if preloading (still) then either wait for it to finish (if mode is now) or return 0x00000000 (if mode is async)
-		if (mem_list[search].protect) {
-			if (params->mode == RM_ASYNCLOAD) {
-				return (uint8 *)0x00000000; // not finished return 0
-			} else {
-				do { // keep updating disc until this file is loaded
-					DiscUpdateQueue();
-				} while (IsQueued(mem_list[search].protect));
-			}
-
-			mem_list[search].protect = 0; // no int32er preloading because it's done...
-		}
-#endif
 		if (ret_len)
 			*ret_len = mem_list[search].size;
 
@@ -815,11 +762,7 @@ uint8 *res_man::Internal_open(RMParams *params, int *ret_len) {
 		// we are preloading the header but we are doing a loadnow so wait till it's loaded...
 		if (params->mode == RM_LOADNOW) {
 			while (params->not_ready_yet) {
-#if _PSX
-				DiscUpdateQueue();
-#else
 				Fatal_error("This async shit should not happen on pc");
-#endif
 				ptr = LoadFile(cluster_search, params);
 			}
 		}
@@ -926,32 +869,11 @@ uint32 res_man::FindMemBlock(uint32 adj_len, RMParams *params) {
 		} else { // not enough space free so chuck resources out until there is
 
 			bool8 debug_state = zdebug;
-#ifdef _PSX
-#else
 			zdebug = TRUE8;
-#endif // #ifdef _PSX
 
 			async_flush();
 
-#ifdef _PSX
-
-#if MAX_MEM_BLOCKS > 512
-
-#error "CANT USE SCRATCHPAD ON PSX WITH THIS MANY MAX_MEM_BLOCKS"
-
-#endif
-			uint16 age_table_data[MAX_MEM_BLOCKS];
-			uint16 *age_table;
-			extern int tutorialMode;
-			if (tutorialMode == 0) {
-				age_table = (uint16 *)getScratchAddr(0);
-			} else {
-				age_table = age_table_data;
-			}
-#endif
-#ifdef _PC
 			uint16 *age_table = new uint16[MAX_MEM_BLOCKS];
-#endif
 			uint32 total_age = 0;
 			uint32 cur_age = 0; // index in trash loop to current age to remove
 			uint32 j, k;
@@ -1072,9 +994,7 @@ uint32 res_man::FindMemBlock(uint32 adj_len, RMParams *params) {
 
 			} while (total_free_memory < adj_len);
 
-#ifdef _PC
 			delete[] age_table;
-#endif
 
 			//       ok, we've made enough space
 			Tdebug("make_space.txt", "made space - doing a defrag");

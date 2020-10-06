@@ -47,19 +47,10 @@
 
 namespace ICB {
 
-#if _PC
 #define LIGHT_RECT_WIDTH (16)
 #define LIGHT_RECT_HEIGHT (16)
 #define LIGHT_TIE_WIDTH (10)
 #define LIGHT_TIE_HEIGHT (10)
-#endif // #if _PC
-
-#if _PSX
-#define LIGHT_RECT_WIDTH (8)
-#define LIGHT_RECT_HEIGHT (5)
-#define LIGHT_TIE_WIDTH (6)
-#define LIGHT_TIE_HEIGHT (4)
-#endif // #if _PSX
 
 // Pink
 #define LIGHT_TIE_PEN (0xFF7080)

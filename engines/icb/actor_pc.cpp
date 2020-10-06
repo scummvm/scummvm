@@ -410,15 +410,9 @@ void DrawActor4PC(psxActor *actor, psxCamera *camera, Bone_Frame *frame, rap_API
 		ldirs[0].vx = 0;
 		ldirs[0].vy = -4096;
 		ldirs[0].vz = 0;
-#ifdef _PC // Switch back to white when the dutch dll is fixed and the shadows are again subtractve
 		lcolours[0].r = 0x80;
 		lcolours[0].g = 0x80;
 		lcolours[0].b = 0x80;
-#else
-		lcolours[0].r = 0;
-		lcolours[0].g = 0;
-		lcolours[0].b = 0;
-#endif
 	}
 
 	// In complex mode add a top-down BLACK shadow if no shadows are being
@@ -428,15 +422,9 @@ void DrawActor4PC(psxActor *actor, psxCamera *camera, Bone_Frame *frame, rap_API
 		ldirs[0].vx = 0;
 		ldirs[0].vy = -4096;
 		ldirs[0].vz = 0;
-#ifdef _PC
 		lcolours[0].r = 0x80;
 		lcolours[0].g = 0x80;
 		lcolours[0].b = 0x80;
-#else
-		lcolours[0].r = 0;
-		lcolours[0].g = 0;
-		lcolours[0].b = 0;
-#endif
 	}
 
 	// draw the shadow

@@ -96,47 +96,6 @@ int stackPointer = 0;  // Position within stack
 		actualScript += sizeof(char);                                                                                                                                      \
 	}
 
-// Different versions for PSX & PC
-// PSX data is expected to be aligned, so int32 on a four byte boundary
-#ifdef _PSX
-
-#define Fetch32(param)                                                                                                                                                             \
-	{                                                                                                                                                                          \
-		uint8 *from = (uint8 *)actualScript;                                                                                                                               \
-		uint8 *to = (uint8 *)&param;                                                                                                                                       \
-		*to++ = *from++;                                                                                                                                                   \
-		*to++ = *from++;                                                                                                                                                   \
-		*to++ = *from++;                                                                                                                                                   \
-		*to = *from;                                                                                                                                                       \
-		actualScript += sizeof(int32);                                                                                                                                     \
-	}
-#define Read32ipLeaveip(var)                                                                                                                                                       \
-	{                                                                                                                                                                          \
-		uint8 *from = (uint8 *)actualScript;                                                                                                                               \
-		uint8 *to = (uint8 *)&var;                                                                                                                                         \
-		*to++ = *from++;                                                                                                                                                   \
-		*to++ = *from++;                                                                                                                                                   \
-		*to++ = *from++;                                                                                                                                                   \
-		*to = *from;                                                                                                                                                       \
-	}
-
-#define Fetch16(param)                                                                                                                                                             \
-	{                                                                                                                                                                          \
-		uint8 *from = (uint8 *)actualScript;                                                                                                                               \
-		uint8 *to = (uint8 *)&param;                                                                                                                                       \
-		*to++ = *from++;                                                                                                                                                   \
-		*to = *from;                                                                                                                                                       \
-		actualScript += sizeof(int16);                                                                                                                                     \
-	}
-#define Read16ipLeaveip(var)                                                                                                                                                       \
-	{                                                                                                                                                                          \
-		uint8 *from = (uint8 *)actualScript;                                                                                                                               \
-		uint8 *to = (uint8 *)&var;                                                                                                                                         \
-		*to++ = *from++;                                                                                                                                                   \
-		*to = *from;                                                                                                                                                       \
-	}
-
-#else
 #define Fetch32(param)                                                                                                                                                             \
 	{                                                                                                                                                                          \
 		param = *((int32 *)const_cast<char *>(actualScript));                                                                                                                                  \
@@ -151,7 +110,6 @@ int stackPointer = 0;  // Position within stack
 	}
 #define Read16ipLeaveip(var)                                                                                                                                                       \
 	{ var = *((int16 *)const_cast<char *>(actualScript)); }
-#endif // #ifdef _PSX
 
 #define UpdatePC                                                                                                                                                                   \
 	{ scriptData = actualScript; }

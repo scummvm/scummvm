@@ -34,9 +34,7 @@ namespace ICB {
 void _remora_sprite::InitialiseFromBitmapName(const char *pcBitmapName, const char *pcClusterName, uint32 nClusterHash) {
 	_pxBitmap *psBitmap;
 
-#if defined(_PC)
 	_pxSprite *psSprite;
-#endif
 
 	// Set name.
 	strcpy(m_pcName, pcBitmapName);
@@ -52,8 +50,6 @@ void _remora_sprite::InitialiseFromBitmapName(const char *pcBitmapName, const ch
 	if (m_nNumFrames == 0)
 		Fatal_error("Bitmap %s has no frames.", pcBitmapName);
 
-#if defined(_PC)
-
 	// Here we work out half the sprite's width and height so we can avoid plotting it in positions where it
 	// would run off the edge of a surface.  Note that this is based on the first frame; it would need to be
 	// made more sophisticated to deal with sprites that change in size as they are played.
@@ -61,8 +57,6 @@ void _remora_sprite::InitialiseFromBitmapName(const char *pcBitmapName, const ch
 
 	m_nHalfSpriteWidth = psSprite->width / 2;
 	m_nHalfSpriteHeight = psSprite->height / 2;
-
-#endif
 
 	// Frame PC starts at 0.
 	m_nFramePC = 0;
@@ -79,10 +73,8 @@ _remora_sprite::_remora_sprite() {
 
 	m_nClusterHash = NULL_HASH;
 
-#if defined(_PC)
 	m_nHalfSpriteWidth = 0;
 	m_nHalfSpriteHeight = 0;
-#endif
 }
 
 _remora_sprite::_remora_sprite(const _remora_sprite &oX) {

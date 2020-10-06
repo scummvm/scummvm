@@ -36,12 +36,7 @@
 #include "global_vars.h"
 
 // for checking we have correct disk on psx
-#if _PSX
-#include "engines/icb/gfx/psx_disc.h"
-#include "credits_psx.h"
-#else
 #include "main_menu.h"
-#endif
 
 #include "common/events.h"
 #include "common/textconsole.h"
@@ -59,11 +54,9 @@ bool8 _game_script::Init_game_script() {
 	// assume
 	running_from_game_script = FALSE8;
 
-#ifdef _PC
 	// If we are running tt mode (translator mode) then ignore any game scripts
 	if (tt)
 		return FALSE8;
-#endif //_PC
 
 	// build name
 
@@ -94,14 +87,8 @@ void Init_play_movie(const char *param0, bool8 param1);
 // so the pc is set to the correct place for a mission....
 void _game_script::Run_to_bookmark(const char *name) {
 	if ((g_mission) && (g_mission->session)) {
-#ifdef _PSX
-		// session
-		uint32 cluster_hash = MS->Fetch_session_cluster_hash();
-		buf = private_session_resman->Res_open(fname, fn_hash, MS->Fetch_session_cluster(), cluster_hash);
-#else
 		// global
 		buf = private_session_resman->Res_open(fname, fn_hash, cluster, cluster_hash);
-#endif
 	} else {
 		// global
 		buf = private_session_resman->Res_open(fname, fn_hash, cluster, cluster_hash);
@@ -152,19 +139,8 @@ void _game_script::Process_game_script() {
 	char p2[ENGINE_STRING_LEN];
 	char p3[ENGINE_STRING_LEN];
 
-#ifdef _PSX
-	if ((mission) && (mission->session)) {
-		// session
-		uint32 cluster_hash = MS->Fetch_session_cluster_hash();
-		buf = private_session_resman->Res_open(fname, fn_hash, MS->Fetch_session_cluster(), cluster_hash);
-	} else {
-		// global
-		buf = private_session_resman->Res_open(fname, fn_hash, cluster, cluster_hash);
-	}
-#else
 	// global
 	buf = private_session_resman->Res_open(fname, fn_hash, cluster, cluster_hash);
-#endif
 
 	// get next command
 	command = buf[pc];
@@ -172,13 +148,11 @@ void _game_script::Process_game_script() {
 	switch (command) {
 	case 0:
 		Message_box("thank you for playing In Cold Blood (c) Revolution Software Ltd 1999");
-#ifdef _PC
 		{
 			Common::Event event;
 			event.type = Common::EVENT_QUIT;
 			g_system->getEventManager()->pushEvent(event);
 		}
-#endif
 		break;
 
 	// bookmark
@@ -197,11 +171,7 @@ void _game_script::Process_game_script() {
 
 	case 'W':
 		Fetch_next_line();
-#if _PC
 		Fatal_error("midWay legal screen not supported on PC!");
-#else
-		DisplayLegalScreen();
-#endif
 		break;
 
 	case 'M':
@@ -213,11 +183,7 @@ void _game_script::Process_game_script() {
 
 		if (Setup_new_mission(p1, p2)) { // mission_name, session_name
 			// only do actor relative on pc
-#if _PC
 			MS->player.Set_control_mode(ACTOR_RELATIVE);
-#else
-			printf("mission/session loaded/started\n");
-#endif
 			stub.Push_stub_mode(__mission_and_console);
 		} else {
 			Fatal_error("no such mission-session [%s][%s]", p1, p2);
@@ -243,14 +209,7 @@ void _game_script::Process_game_script() {
 
 	case 'P':
 		Fetch_next_line();
-#if _PC
 		MS->player.Set_control_mode(ACTOR_RELATIVE);
-#else
-		// enable sounds...
-		UnpauseSounds();
-
-		printf("play...\n");
-#endif
 		stub.Push_stub_mode(__mission_and_console);
 		break;
 
@@ -264,12 +223,8 @@ void _game_script::Process_game_script() {
 
 		warning("text scrolly %s over movie/screen %s starting frame %d", p1, p2, atoi(p3));
 
-#if _PC
 		InitisliaseScrollingText(p1, p2, atoi(p3));
 		stub.Push_stub_mode(__scrolling_text);
-#else
-		DoScrollingText(p1, p2, atoi(p3));
-#endif
 		break;
 
 	case 'G':
@@ -304,18 +259,13 @@ void _game_script::Process_game_script() {
 		Fetch_next_line();
 		px.current_cd = atoi(p1);
 
-#if _PSX
-		DiscCheckInserted();
-#endif
 		if ((!px.current_cd) || (px.current_cd > 3))
 			Fatal_error("gamescript tried to set silly cd number %d", px.current_cd);
 		break;
 
 	case 'Z': // Signify that the game has been completed
 		Fetch_next_line();
-#if _PC
 		GameCompleted();
-#endif
 		break;
 
 	default:

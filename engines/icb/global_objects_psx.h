@@ -35,13 +35,6 @@
 
 namespace ICB {
 
-#if _PSX && !_PSX_ON_PC
-
-extern const char *productCode;
-#define PRODUCT_CODE productCode
-
-#endif // #if _PSX && !_PSX_ON_PC
-
 #define DECOMPRESSION_BUFFER_SIZE (64 * 64)
 // A piece of memory for decompressing sprites into
 // extern uint8 decompBuffer[DECOMPRESSION_BUFFER_SIZE];

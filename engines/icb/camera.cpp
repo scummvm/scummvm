@@ -499,15 +499,9 @@ mcodeFunctionReturnCodes _game_session::fn_switch_to_manual_camera(int32 &, int3
 
 	manual_camera = TRUE8;
 
-#ifdef _PC
 	len = sprintf(manual_camera_name, "%s\\pc\\%s", room_name, camera_name);
 	if (len > ENGINE_STRING_LEN)
 		Fatal_error("fn_switch_to_manual_camera string len error");
-#else
-	len = sprintf(manual_camera_name, "%s\\psx\\%s", room_name, camera_name);
-	if (len > ENGINE_STRING_LEN)
-		Fatal_error("fn_switch_to_manual_camera string len error");
-#endif
 
 	HashFile(manual_camera_name, h_buf);
 
@@ -549,15 +543,9 @@ mcodeFunctionReturnCodes _game_session::fn_is_current_location(int32 &result, in
 
 	Message_box("is %s current location?", location_name);
 
-#ifdef _PC
 	len = sprintf(manual_camera_name, "%s\\pc\\%s", location_name, set.GetSetName());
 	if (len > ENGINE_STRING_LEN)
 		Fatal_error("fn_is_current_location string len error");
-#else
-	len = sprintf(manual_camera_name, "%s\\psx\\%s", location_name, set.GetSetName());
-	if (len > ENGINE_STRING_LEN)
-		Fatal_error("fn_is_current_location string len error");
-#endif
 
 	HashFile(manual_camera_name, h_buf);
 	result = 1;

@@ -34,17 +34,8 @@
 #include "engines/icb/common/px_string.h"
 #include "engines/icb/common/px_array.h"
 
-#if defined(_PSX) && (_PSX_ON_PC == 0)
-
-// PSX specifics
-#include "debug_psx.h"
-
-#else
-
 // PC specifics
 #include "debug_pc.h"
-
-#endif // #if defined(_PSX) && ( _PSX_ON_PC == 0 )
 
 namespace ICB {
 

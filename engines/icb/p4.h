@@ -28,11 +28,6 @@
 #ifndef __P4_H
 #define __P4_H
 
-// check the machine version
-#if ((_PSX != 1) && (_PC != 1))
-#error " p4.h : unknown machine version : _PSX !=1 && _PC !=1"
-#endif
-
 // Silly codewarrior doesn't understand relative paths
 #include "engines/icb/common/px_common.h"
 #include "string_vest.h"
@@ -55,14 +50,8 @@ extern bool8 camera_hack;
 extern uint32 font_cluster_hash; // Res_open will compute the hash value and store it
 extern uint32 sys_font_hash;     // Res_open will compute the hash value and store it
 
-#if _PSX
-#include "p4_psx.h"
-#else
-#endif
-
 #define RESOURCE_IS_COMPRESSED 1
 
-#if _PC
 extern bool gRegainedFocus; // Set when we regain the focus.  Cleared by the graphics reloading functions
 
 } // End of namespace ICB (To avoid including inside the namespace
@@ -106,7 +95,6 @@ extern uint32 SONICS_BUFFER_SIZE;
 
 // globals for the font cluster name and hash value
 extern pxString font_cluster;
-#endif
 
 #define ANIM_CHECK(a)                                                                                                                                                              \
 	if (!I->IsAnimTable(a))                                                                                                                                                    \
@@ -158,9 +146,7 @@ class _stub {
 
 	__stub_modes mode[TOTAL_STUBS];
 	int32 stub; // stub level number
-#ifdef _PC
 	int cycle_speed;
-#endif
 private:
 	uint32 stub_timer_time;
 	bool8 timer; // on off

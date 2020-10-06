@@ -36,11 +36,6 @@
 #include "mission.h"
 #include "mission_functions.h"
 #include "res_man.h"
-#if _PSX
-#include "engines/icb/gfx/psx_disc.h"
-#include "engines/icb/gfx/psx_profile.h"
-#endif
-
 #include "common/textconsole.h"
 
 namespace ICB {
@@ -80,19 +75,8 @@ int LoadMission(int m, void *usr) {
 		return 0;
 	}
 
-#ifdef _PSX
-
-	_drawText = 0;
-	_profile = 0;
-
-#endif // #ifdef _PSX
 
 	// Go straight into mission not the console
-#ifdef _PSX
-
-	reloadFont = 1;
-
-#endif // #ifdef _PSX
 
 	zdebug = FALSE8;
 
@@ -107,11 +91,7 @@ void RestartMission(void) {
 	// Get the mission name for the current mission
 	const char *mission_name;
 
-#ifdef _PC
 	mission_name = g_mission->Fetch_tiny_mission_name();
-#else
-	mission_name = g_mission->Fetch_mission_name();
-#endif
 
 	// Find which mission number the current mission is
 	int m = FindMissionNumber(mission_name);

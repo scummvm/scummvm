@@ -200,9 +200,7 @@ public:
 	inline void SetReset();
 
 	void Stage_draw();
-#if _PC
 	void Stage_draw_poly();
-#endif
 	void Display_mega_times();
 
 	void UpdateMegaFX();
@@ -255,11 +253,6 @@ public:
 	void Awaken_doors();
 
 	// speech on psx
-#if _PSX
-	const char *Fetch_session_speech_cluster() { return (const char *)session_speech_cluster; }
-
-	uint32 Fetch_session_speech_cluster_hash() { return session_speech_cluster_hash; }
-#endif
 
 	bool8 can_save, prev_save_state;
 	void Set_can_save(bool8 stat) {
@@ -1009,12 +1002,6 @@ private:
 	uint32 total_props; // holds number of props in current session
 
 	// speech
-
-	// only needed on psx, not sure what the pc does for this!
-#if _PSX
-	char session_speech_cluster[ENGINE_STRING_LEN];
-	uint32 session_speech_cluster_hash;
-#endif
 
 	// logic cycle stuff
 	// all these are of course available to fn_functions and associated engine modules

@@ -98,15 +98,9 @@ void _player::___init() {
 	walk_turn_amount = (FULL_TURN * 2 / 100);       // 2% of a turn per game cycle
 	run_turn_amount = (FULL_TURN * 4 / 100);        // 2% of a turn per game cycle
 
-#if _PC
 	// push it twice to fill up the stack : just in case someone does a pop before a push
 	// Push_control_mode( ACTOR_RELATIVE );
 	// Push_control_mode( ACTOR_RELATIVE );
-#else
-	// push it twice to fill up the stack : just in case someone does a pop before a push
-	Push_control_mode(SCREEN_RELATIVE);
-	Push_control_mode(SCREEN_RELATIVE);
-#endif
 
 	being_shot = (int8)0;
 
@@ -2280,9 +2274,7 @@ __mode_return _player::Player_crouching() {
 	if (log->mega->Fetch_armed_status()) {
 		MS->Set_pose(__CROUCH_NOT_ARMED);
 		MS->Change_pose_in_current_anim_set();
-#ifdef _PC
 		Message_box("just caught crouching player in armed set!");
-#endif
 	}
 
 	if (!cur_state.IsButtonSet(__CROUCH)) { // crouch down
@@ -2371,9 +2363,7 @@ __mode_return _player::Player_stood() {
 	if (log->mega->Fetch_armed_status()) {
 		MS->Set_pose(__NOT_ARMED);
 		MS->Change_pose_in_current_anim_set();
-#ifdef _PC
 		Message_box("just caught player in armed set!");
-#endif
 	}
 
 	// starting to walk again?
@@ -2557,9 +2547,7 @@ __mode_return _player::Player_walking() {
 	if (log->mega->Fetch_armed_status()) {
 		MS->Set_pose(__NOT_ARMED);
 		MS->Change_pose_in_current_anim_set();
-#ifdef _PC
 		Message_box("player_walking  - just caught player in armed set!");
-#endif
 	}
 
 	walk_count++; // up the walk count
@@ -2650,9 +2638,7 @@ __mode_return _player::Player_running() {
 	if (log->mega->Fetch_armed_status()) {
 		MS->Set_pose(__NOT_ARMED);
 		MS->Change_pose_in_current_anim_set();
-#ifdef _PC
 		Message_box("player_running  - just caught player in armed set!");
-#endif
 	}
 
 	MS->Process_guard_alert(__ARUNNING);

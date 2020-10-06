@@ -6706,7 +6706,6 @@ void OptionsManager::LoadGlobalTextFile() {
 	sprintf(textFileName, GLOBAL_TEXT_FILE);
 
 	// Special text loading code so the translators can test their stuff
-#ifdef _PC
 
 	if (tt) {
 		// Ok, translators mode has been activated
@@ -6715,10 +6714,6 @@ void OptionsManager::LoadGlobalTextFile() {
 			m_global_text = LoadTranslatedFile("global", "global\\global\\");
 	} else
 		m_global_text = (_linked_data_file *)rs1->Res_open(textFileName, buf_hash, globalClusterFile, globalClusterHash);
-
-#else
-	m_global_text = (_linked_data_file *)rs1->Res_open(textFileName, buf_hash, globalClusterFile, globalClusterHash);
-#endif
 
 	m_global_text = (_linked_data_file *)rs1->Res_open(textFileName, buf_hash, globalClusterFile, globalClusterHash);
 }

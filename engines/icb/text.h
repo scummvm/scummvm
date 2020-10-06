@@ -30,12 +30,6 @@
 
 #include "engines/icb/p4_generic.h"
 
-#ifdef _PSX
-
-#include "engines/icb/text_psx.h"
-
-#endif // #ifdef _PSX
-
 namespace ICB {
 
 // print general text to back-buffer in any colour mode

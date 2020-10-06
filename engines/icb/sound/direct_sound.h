@@ -28,10 +28,6 @@
 #ifndef __DIRECT_SOUND_H__
 #define __DIRECT_SOUND_H__
 
-#ifdef _PSX
-#error "DirectSound.h only for pc builds"
-#endif
-
 #include "engines/icb/common/px_common.h"
 
 #include "engines/icb/common/px_types.h"

@@ -176,11 +176,7 @@ void SetPlayerShotBone(int obj_id) {
 
 // get direction got shot from...
 
-#if _PSX
-	direction = (int)(PXAngleOfVector(-dz, -dx) - player_pan);
-#else
 	direction = (int)(4096.0 * (PXAngleOfVector(-dz, -dx) - player_pan));
-#endif
 
 	// make sure it is -2048 - 2048
 	if (direction > 2047)
@@ -330,13 +326,8 @@ void UpdatePlayerLook() {
 
 // Now find angles for neck bone...
 
-#if _PSX
-		b->boneTarget.vz = (short)(PXAngleOfVector(-dz, -dx) - player_pan);
-		b->boneTarget.vx = (short)(PXAngleOfVector((PXfloat)PXsqrt(dx * dx + dz * dz), dy));
-#else
 		b->boneTarget.vz = (short)(4096.0 * (PXAngleOfVector(-dz, -dx) - player_pan));
 		b->boneTarget.vx = (short)(4096.0 * PXAngleOfVector((PXfloat)PXsqrt(dx * dx + dz * dz), dy));
-#endif
 
 		// make sure vz is in range -2048 - 2048... this might not be because of subtracting off player_pan
 

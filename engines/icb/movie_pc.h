@@ -28,10 +28,6 @@
 #ifndef __MOVIE_PC_H__
 #define __MOVIE_PC_H__
 
-#ifdef _PSX
-#error "Movie_pc.h only for pc builds"
-#endif
-
 #include "engines/icb/common/px_rccommon.h"
 
 // The main Bink include for handling bink sequence files (extension 'bik')

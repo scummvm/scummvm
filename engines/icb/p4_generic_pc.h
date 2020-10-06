@@ -28,10 +28,6 @@
 #ifndef P4_GENERIC_PC_H
 #define P4_GENERIC_PC_H
 
-#ifndef _PC
-#define _PC 1
-#endif
-
 #include "non_ad_module.h"
 #include "debug_pc.h"
 #include "engines/icb/common/px_common.h"

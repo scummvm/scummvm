@@ -35,11 +35,7 @@ namespace ICB {
 #define PSX_PXANIM_SCHEMA 5
 #define PC_PXANIM_SCHEMA 5
 
-#ifdef _PSX
-#define PXANIM_SCHEMA PSX_PXANIM_SCHEMA
-#else
 #define PXANIM_SCHEMA PC_PXANIM_SCHEMA
-#endif
 
 #define PXANIM_TAG "Peas"
 #define ORG_POS 0
@@ -126,15 +122,8 @@ public:
 
 	uint8 GetType(void) const { return m_type; }
 
-#if _PSX
-	void GetPan(int *pan) const;
-	void GetXYZ(int *x, int *y, int *z) const;
-#endif
-
-#if _PC
 	void GetPan(float *pan) const;
 	void GetXYZ(float *x, float *y, float *z) const;
-#endif
 };
 
 inline void PXmarker_PSX::SetPackedXYZPan(uint8 _x8, uint16 _x7y9, uint32 _y6z15pan11) {
@@ -143,26 +132,6 @@ inline void PXmarker_PSX::SetPackedXYZPan(uint8 _x8, uint16 _x7y9, uint32 _y6z15
 	y6z15pan11 = _y6z15pan11;
 }
 
-#if _PSX
-
-inline void PXmarker_PSX::GetPan(int *pan) const { *pan = ((y6z15pan11 & 0x7FF) << 1); }
-
-inline void PXmarker_PSX::GetXYZ(int *x, int *y, int *z) const {
-	*x = ((x8 << 7) | (x7y9 >> 9));
-	if (*x >= 16384)
-		*x = *x - 32768;
-
-	*y = (((x7y9 & 0x1FF) << 6) | (y6z15pan11 >> 26));
-	if (*y >= 16384)
-		*y = *y - 32768;
-
-	*z = ((y6z15pan11 >> 11) & 0x7FFF);
-	if (*z >= 16384)
-		*z = *z - 32768;
-}
-#endif
-
-#if _PC
 inline void PXmarker_PSX::GetPan(float *pan) const { *pan = (float)(((y6z15pan11 & 0x7FF) << 1)) / 4096.0f; }
 
 inline void PXmarker_PSX::GetXYZ(float *x, float *y, float *z) const {
@@ -184,7 +153,6 @@ inline void PXmarker_PSX::GetXYZ(float *x, float *y, float *z) const {
 	*y = (float)iy;
 	*z = (float)iz;
 }
-#endif
 
 // PXframe_PSX : the PSX version //
 typedef struct {

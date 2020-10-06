@@ -59,15 +59,11 @@ static inline int fastMAXc(int a, int b) {
 	return r5;
 }
 
-#if defined(_PC)
-
 #include "px_maths_pc.h"
 
 #define PXmin(a, b) PCfastMIN(a, b)
 #define PXmax(a, b) PCfastMAX(a, b)
 #define PXabs(a) PCfastABS(a)
-
-#endif // #ifdef _PC
 
 } // End of namespace ICB
 

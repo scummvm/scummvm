@@ -48,9 +48,7 @@ typedef struct {
 	uint16 r;
 	uint16 g;
 	uint16 b;
-#if _PC
 	_logic *log;
-#endif
 } SDactor;
 
 void StageDrawPoly(SDactor *actors, uint32 actorQty);

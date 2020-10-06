@@ -31,11 +31,7 @@
 
 namespace ICB {
 
-#if _PSX
-int globalCharSpacing = 1;
-#else
 int globalCharSpacing = 0;
-#endif
 
 // Prop sprite brightness to use when highlighting a prop that the player could interact with
 int g_prop_select_r = 200;
@@ -79,9 +75,7 @@ _linked_data_file *global_text;
 text_sprite *g_text_bloc1;
 
 // pc has extra bloc for remora, etc.
-#if _PC
 text_sprite *g_text_bloc2;
-#endif
 
 _mission *g_icb_mission;
 _game_session *g_icb_session;
@@ -116,65 +110,51 @@ _sound_logic *g_oSoundLogicEngine;
 const char *test_mission = "test_mission";
 const char *test_session = "test_session";
 
-#if defined(_PC)
 const char *test_session_2 = "test_session_2";
-#endif
 
 // For m01_investigate_mine
 const char *g_m01 = "m01_investigate_mine";
 const char *office_building = "office_building";
 
-#if defined(_PC)
 const char *mine = "mine";
 const char *mineworkings = "mineworkings";
-#endif
 
 // For m02_security_hq
 const char *g_m02 = "m02_security_hq";
 const char *basement = "basement";
 
-#if defined(_PC)
 const char *ground_floor = "ground_floor";
 const char *first_floor = "first_floor";
-#endif
 
 // For m03_land_train
 const char *g_m03 = "m03_land_train";
 const char *car_5 = "car_5";
 
-#if defined(_PC)
 const char *car_1 = "car_1";
 const char *car_2 = "car_2";
 const char *car_3 = "car_3";
 const char *car_4 = "car_4";
-#endif
 
 // For m04_raid_on_containment
 const char *g_m04 = "m04_raid_on_containment";
 const char *level_alphabeta = "level_alphabeta";
 
-#if defined(_PC)
 const char *level_kappa = "level_kappa";
 const char *level_omega = "level_omega";
-#endif
 
 // For m05_sabotage_refinery
 const char *g_m05 = "m05_sabotage_refinery";
 const char *m5_mine = "m5_mine";
 
-#if defined(_PC)
 const char *m5_office_building = "m5_office_building";
 const char *m5_refinery = "refinery";
-#endif
 
 // For m07_mainland_base
 const char *g_m07 = "m07_mainland_base";
 const char *compound = "compound";
 
-#if defined(_PC)
 const char *monorail_station = "monorail__station";
 const char *cable_car_building = "cable_car_building";
-#endif
 
 // For m08_entering_island_base
 const char *g_m08 = "m08_entering_island_base";
@@ -184,11 +164,9 @@ const char *cable_car_dock = "cable_car_dock";
 const char *g_m09 = "m09_escape_island_base";
 const char *security = "security";
 
-#if defined(_PC)
 const char *manufacturing = "manufacturing";
 const char *quayside = "quayside";
 const char *reactor = "reactor";
-#endif
 
 const char *m_ed = "m_ed";
 const char *a2_ship = "2_ship";
@@ -203,7 +181,6 @@ const char *g_mission_startup_names[MAX_MISSIONS] = {g_m01, office_building, g_m
 
 const char *g_mission_names[NUMBER_OF_MISSIONS] = {g_m01, g_m02, g_m03, g_m04, g_m05, g_m07, g_m08, g_m08, g_m10, m_ed, test_mission};
 
-#if defined(_PC)
 const char *g_sessions[MAX_SESSIONS] = {g_m01,        mine,
                                         g_m01,        mineworkings,
                                         g_m01,        office_building,
@@ -233,6 +210,5 @@ const char *g_sessions[MAX_SESSIONS] = {g_m01,        mine,
                                         test_mission, test_session,
                                         test_mission, test_session_2,
                                         m_ed,         a2_ship};
-#endif
 
 } // End of namespace ICB

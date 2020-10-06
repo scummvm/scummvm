@@ -28,11 +28,6 @@
 #ifndef _OPTIONS_MANAGER_PC_H_INCLUDED
 #define _OPTIONS_MANAGER_PC_H_INCLUDED
 
-// Stop inclusion in psx build
-#ifdef _PSX
-#error "options_manager_pc.h only for pc builds"
-#endif
-
 #include "engines/icb/common/px_rccommon.h"
 
 #include "p4.h"

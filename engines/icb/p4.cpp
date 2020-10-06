@@ -58,16 +58,8 @@
 
 #include "global_switches.h"
 
-#if _PSX
-#include "pause_menu_psx.h"
-#include "options_menu_psx.h"
-#include "load_save_psx.h"
-#endif // #if   _PSX
-
-#if _PC
 #include "movie_pc.h"
 #include "options_manager_pc.h"
-#endif // #if   _PC
 
 #include "mission.h"
 
@@ -97,9 +89,7 @@ _stub::_stub() {
 	mode[0] = __no_stub_mode; // engine MUST set a real mode depending upon environment
 
 	Timer_on();
-#ifdef _PC
 	cycle_speed = 100;
-#endif
 }
 
 _stub::~_stub() {
@@ -122,7 +112,6 @@ void _stub::Set_current_stub_mode(__stub_modes new_mode) {
 void _stub::Process_stub() {
 	// call the mode!
 
-#if _PC
 	// update current keys
 	Poll_direct_input();
 
@@ -137,7 +126,6 @@ void _stub::Process_stub() {
 			}
 		}
 	}
-#endif
 
 	// reset the time equaliser
 	Reset_timer();
@@ -155,9 +143,7 @@ void _stub::Process_stub() {
 
 		Mission_and_console();
 
-#if _PC
 		Fix_time();
-#endif
 		Update_screen();
 		break;
 
@@ -190,7 +176,6 @@ void _stub::Process_stub() {
 
 	case __sequence:
 
-#if _PC
 		// Ask to bink to display a frame of the movie
 		int32 ret;
 		ret = g_theSequenceManager->drawFrame();
@@ -210,9 +195,6 @@ void _stub::Process_stub() {
 			// This smooths the playback framerate
 			Fix_time();
 		}
-#else
-		Fatal_error("Sequence stub mode not used for PSX");
-#endif
 		Update_screen();
 		break;
 
@@ -228,47 +210,24 @@ void _stub::Process_stub() {
 
 	case __options_menu:
 
-#if _PC
 		Fatal_error("__options_menu stub not supported on PC");
-#endif
 
-#if _PSX
-		Options_menu();
-#endif
 		break;
 
 	case __load_save_menu:
 
-#if _PC
 		Fatal_error("__load_save_menu stub not supported on PC");
-#endif
-
-#if _PSX
-		LoadSaveMenu();
-#endif
 
 		break;
 
 	case __credits:
 
-#if _PC
 		Credits();
-#endif
-
-#if _PSX
-		Fatal_error("__credits stub not supported on PSX");
-#endif
 		break;
 
 	case __scrolling_text:
 
-#if _PC
 		ScrollingText();
-#endif
-
-#if _PSX
-		Fatal_error("__scrolling_text stub not supported on PSX");
-#endif
 		break;
 
 	default:
@@ -280,7 +239,6 @@ void _stub::Process_stub() {
 
 void _stub::Update_screen() {
 	// had to be split off to stop screen updates between stub cycles - i.e. sequence to game...
-#if _PC
 
 	// Record the next frame of the video if any
 	static uint32 frameNumber = 0;
@@ -313,13 +271,6 @@ void _stub::Update_screen() {
 	// FLIP
 	surface_manager->Flip();
 	g_icb_mission->flip_time = GetMicroTimer() - g_icb_mission->flip_time;
-
-#endif
-
-#if _PSX
-	if (mode[stub] != __mission_and_console)
-		Flip();
-#endif
 }
 
 void _stub::Push_stub_mode(__stub_modes new_mode) {
