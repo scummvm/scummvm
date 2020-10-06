@@ -1757,7 +1757,7 @@ void DarkMoonEngine::initStaticResource() {
 		{
 			"\r No se ha encontrado ninguna partida\r de EOB. Comprueba que el fichero de la partida que quieres\r transferir se encuentra en el\r directorio de ScummVM para los\r juegos guardados. Si tienes\r varios de estos directorios debes\r copiar el fichero en tu directorio\r de guardado de EOB II.\r Quieres volver a intentarlo?",
 			"Game ID",
-			"\r Parece que ya se ha vencido\r Xanathar aqui. Deseas transferir\r el grupo que ha\r finalizado el juego? En caso contrario\r puedes seleccionar otra partida\r de las anteriores guardadas.",
+			"\r Parece que ya se ha vencido\r Xanathar aqui. Deseas transferir\r el grupo que ha finalizado el\r juego? En caso contrario puedes\r seleccionar otra partida de las\r anteriores guardadas.",
 			"Escoge Fichero",
 			"\r\r   Un momento\r   por favor..."
 		},
