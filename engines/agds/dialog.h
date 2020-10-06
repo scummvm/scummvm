@@ -40,6 +40,7 @@ private:
 	Common::String				_dialogScript;
 	uint32						_dialogScriptPos;
 	Common::String				_dialogProcessName;
+	Common::String				_dialogLine;
 
 	void parseDialogDefs(const Common::String &defs);
 
