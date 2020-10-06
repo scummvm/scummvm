@@ -23,6 +23,7 @@
 #ifndef PETKA_HEROES_H
 #define PETKA_HEROES_H
 
+#include "common/ptr.h"
 #include "petka/objects/object.h"
 
 namespace Petka {
@@ -63,7 +64,7 @@ public:
 	// int _surfId;
 	int _imageId;
 	double _k;
-	Walk *_walk;
+	Common::ScopedPtr<Walk> _walk;
 	int _destX;
 	int _destY;
 	bool _isWalking;

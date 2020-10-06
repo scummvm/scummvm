@@ -34,7 +34,8 @@
 
 namespace Petka {
 
-QObjectPetka::QObjectPetka() {
+QObjectPetka::QObjectPetka()
+	: _walk(nullptr) {
 	_field7C = 1;
 	_reaction = nullptr;
 	_heroReaction = nullptr;
@@ -47,7 +48,6 @@ QObjectPetka::QObjectPetka() {
 	_surfH = 0;
 	_surfW = 0;
 	_k = 1.0;
-	_walk = nullptr;
 }
 
 void QObjectPetka::processMessage(const QMessage &arg) {
@@ -56,8 +56,7 @@ void QObjectPetka::processMessage(const QMessage &arg) {
 		msg.opcode = kSet;
 		_imageId = msg.arg1;
 
-		delete _walk;
-		_walk = new Walk(_imageId + 10);
+		_walk.reset(new Walk(_imageId + 10));
 
 		QObjectBG *room = g_vm->getQSystem()->_room;
 		if (room)
