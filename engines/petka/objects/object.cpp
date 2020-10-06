@@ -374,6 +374,7 @@ static Common::String readString(Common::ReadStream &readStream) {
 	readStream.read(data, stringSize);
 	data[stringSize] = '\0';
 	Common::String str((char *)data);
+	free(data);
 	return str;
 }
 
