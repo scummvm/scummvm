@@ -25,11 +25,6 @@
  *
  */
 
-#ifdef _WIN32
-#include <sys/types.h>
-#include <sys/stat.h>
-#endif
-
 #include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_string.h"
 #include "engines/icb/res_man_pc.h"
@@ -40,6 +35,7 @@
 #include "engines/icb/movie_pc.h"
 
 #include "common/textconsole.h"
+#include "common/file.h"
 
 namespace ICB {
 
@@ -1095,17 +1091,13 @@ void ValidateDirectoryToDelete(const char *path) {
 }
 
 uint32 GetFileSize(const char *path) {
-#ifdef _WIN32
-	struct _stat buf;
+	Common::File file;
 
-	if (_stat(path, &buf) == 0) {
-		return (uint32)(buf.st_size);
+	if (!file.open(path)) {
+		return 0;
 	}
-#else
-	Fatal_error("GetFileSize not implemented on non-win32 yet");
-#endif
-	// On error
-	return 0;
+
+	return (uint32)file.size();
 }
 
 const char *MissionIdToName(MISSION_ID mission) {
