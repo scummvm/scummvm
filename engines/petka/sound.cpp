@@ -112,7 +112,7 @@ void SoundMgr::removeSoundsWithType(Audio::Mixer::SoundType type) {
 	for (it = _sounds.begin(); it != _sounds.end(); ++it) {
 		Sound *s = it->_value.get();
 		if (s->type() == type) {
-			_sounds.erase(it);
+			_sounds.erase(it); // it is safe to inc iterator after erasing in our hashmap impl
 		}
 	}
 }
