@@ -51,6 +51,28 @@ void Dialog::load(const Common::String &dialogScript, const Common::String &defs
 	_engine->getSystemVariable("dialog_var")->setInteger(-1);
 }
 
+int Dialog::textDelay(const Common::String &str) {
+	int speed = _engine->getSystemVariable("text_speed")->getInteger();
+	if (speed < 0)
+		speed = 0;
+	else if (speed > 100)
+		speed = 100;
+	speed /= 10;
+
+	int delay = str.size();
+	if (delay < 20)
+		delay = 20;
+
+	//this looks like an error in original code
+	//original first value in this table is 0x0FFFFFEB4 (-332)
+	//0x0FFFFFEB4 * 20 and then 16-to-32 conversion gives 0xffffe610
+	// 0xe610 / 20 = 2944
+	static const int delays[] = {
+		2944, 631, 398, 251, 158,
+		100, 63, 40, 25, 16, 10
+	};
+	return delays[speed] * delay / 41 + 1;
+}
 
 
 bool Dialog::tick() {
