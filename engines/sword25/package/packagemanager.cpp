@@ -287,6 +287,11 @@ int PackageManager::doSearch(Common::ArchiveMemberList &list, const Common::Stri
 
 				name = node->getPath().substr(_directoryName.size());
 
+				for (uint c = 0; c < name.size(); c++) {
+					if (name[c] == '\\')
+						name.replace(c, 1, "/");
+				}
+
 				matchType = (((typeFilter & PackageManager::FT_DIRECTORY) && node->isDirectory()) ||
 					((typeFilter & PackageManager::FT_FILE) && !node->isDirectory()));
 			} else {
