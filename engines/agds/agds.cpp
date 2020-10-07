@@ -57,7 +57,6 @@ AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Eng
                                                                              _soundManager(this, system->getMixer()),
 																			 _dialog(this),
 																			 _tellTextTimer(0),
-																			 _resetTextLayoutIfSyncSoundStops(false),
 																			 _syncSoundId(-1),
                                                                              _fastMode(true) {
 }
@@ -473,8 +472,20 @@ Common::Error AGDSEngine::run() {
 		for (CharactersType::iterator i = _characters.begin(); i != _characters.end(); ++i)
 			i->_value->paint(*this, *backbuffer);
 
-		if (_resetTextLayoutIfSyncSoundStops && _textLayout.valid() && !_soundManager.playing(_syncSoundId))
-			_textLayout.reset(*this);
+		if (_textLayout.valid()) {
+			if (_syncSoundId >= 0) {
+				if (!_soundManager.playing(_syncSoundId)) {
+					_textLayout.reset(*this);
+					_syncSoundId = -1;
+					_tellTextTimer = 0;
+				}
+			} else if (_tellTextTimer > 0) {
+				--_tellTextTimer;
+			} else {
+				_tellTextTimer = 0;
+				_textLayout.reset(*this);
+			}
+		}
 
 		if (_textLayout.valid()) {
 			_textLayout.paint(*this, *backbuffer);
@@ -517,6 +528,7 @@ void AGDSEngine::skipFilm() {
 		_mixer->stopID(_syncSoundId);
 		_syncSoundId = -1;
 	}
+	_tellTextTimer = 0;
 	_textLayout.reset(*this);
 	reactivate(_filmProcess);
 }
@@ -657,7 +669,7 @@ void AGDSEngine::addSystemVar(const Common::String &name, SystemVariable *var) {
 	_systemVars[name] = var;
 }
 
-void AGDSEngine::tell(const Common::String &regionName, const Common::String &text, const Common::String &sound, const Common::String &soundPhaseVar, bool npc) {
+void AGDSEngine::tell(const Common::String &regionName, const Common::String &text_, const Common::String &sound, const Common::String &soundPhaseVar, bool npc) {
 	int font_id = getSystemVariable(npc? "npc_tell_font": "tell_font")->getInteger();
 	Common::Point pos;
 
@@ -668,10 +680,13 @@ void AGDSEngine::tell(const Common::String &regionName, const Common::String &te
 		RegionPtr region = loadRegion(regionName);
 		pos = region->center;
 	}
+	auto text = text_.empty()? _dialog.getNextDialogLine(): text_;
+	_tellTextTimer = _dialog.textDelay(text);
 	_textLayout.layout(*this, text, pos, font_id, npc);
 	if (!sound.empty()) {
 		playSoundSync(sound, soundPhaseVar);
-		_resetTextLayoutIfSyncSoundStops = true;
+	} else {
+		_syncSoundId = -1;
 	}
 }
 

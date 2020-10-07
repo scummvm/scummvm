@@ -289,7 +289,6 @@ private:
 	int							_tellTextTimer;
 	TextLayout					_textLayout;
 
-	bool						_resetTextLayoutIfSyncSoundStops;
 	int							_syncSoundId;
 
 	bool						_fastMode;
