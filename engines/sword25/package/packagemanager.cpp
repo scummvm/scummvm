@@ -295,6 +295,7 @@ int PackageManager::doSearch(Common::ArchiveMemberList &list, const Common::Stri
 				matchType = (((typeFilter & PackageManager::FT_DIRECTORY) && node->isDirectory()) ||
 					((typeFilter & PackageManager::FT_FILE) && !node->isDirectory()));
 			} else {
+				name = (*it)->getName();
 				matchType = ((typeFilter & PackageManager::FT_DIRECTORY) && name.hasSuffix("/")) ||
 				((typeFilter & PackageManager::FT_FILE) && !name.hasSuffix("/"));
 			}
