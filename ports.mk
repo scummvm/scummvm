@@ -315,7 +315,7 @@ endif
 # Special target to create a static linked binary for Mac OS X.
 # We use -force_cpusubtype_ALL to ensure the binary runs on every
 # PowerPC machine.
-residualvm-static: $(DETECT_OBJS)
+residualvm-static: $(DETECT_OBJS) $(OBJS)
 	$(CXX) $(LDFLAGS) -force_cpusubtype_ALL -o residualvm-static $(DETECT_OBJS) $(OBJS) \
 		-framework CoreMIDI \
 		$(OSX_STATIC_LIBS) \
