@@ -256,6 +256,8 @@ int PackageManager::doSearch(Common::ArchiveMemberList &list, const Common::Stri
 	if (path.size() > 0)
 		warning("STUB: PackageManager::doSearch(<%s>, <%s>, %d)", filter.c_str(), path.c_str(), typeFilter);
 
+	debug(9, "PackageManager::doSearch(..., \"%s\", \"%s\", %d)", filter.c_str(), path.c_str(), typeFilter);
+
 	// Loop through checking each archive
 	Common::List<ArchiveEntry *>::iterator i;
 	for (i = _archiveList.begin(); i != _archiveList.end(); ++i) {
@@ -303,8 +305,10 @@ int PackageManager::doSearch(Common::ArchiveMemberList &list, const Common::Stri
 					}
 				}
 
-				if (!found)
+				if (!found) {
 					list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(name, (*i)->archive)));
+					debug(9, "> %s", name.c_str());
+				}
 				num++;
 			}
 		}
