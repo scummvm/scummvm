@@ -1493,6 +1493,9 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 	glColor3ub(color.getRed(), color.getGreen(), color.getBlue());
 	const FontUserData *userData = (const FontUserData *)font->getUserData();
 	if (!userData) {
+		if (g_grim->getGameType() != GType_GRIM || !(g_grim->getGameFlags() & ADGF_REMASTERED))
+			error("Could not get font userdata");
+
 		const FontTTF *f = static_cast<const FontTTF *>(font);
 		Graphics::Font *gf = f->_font;
 
@@ -1591,6 +1594,9 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 }
 
 void GfxOpenGL::destroyTextObject(TextObject *text) {
+	if (g_grim->getGameType() != GType_GRIM || !(g_grim->getGameFlags() & ADGF_REMASTERED))
+		return;
+
 	TextObjectUserData *ud = (TextObjectUserData *)const_cast<void *>(text->getUserData());
 	glDeleteTextures(text->getNumLines(), ud->_texids);
 	delete ud;
