@@ -29,6 +29,11 @@ void TextLayout::reset(AGDSEngine &engine) {
 }
 
 void TextLayout::layout(AGDSEngine &engine, const Common::String &text, Common::Point pos, int fontId, bool npc) {
+	if (text.empty()) {
+		_valid = false;
+		return;
+	}
+
 	_fontId = fontId;
 	_npc = npc;
 	Font *font = engine.getFont(fontId);
@@ -36,47 +41,46 @@ void TextLayout::layout(AGDSEngine &engine, const Common::String &text, Common::
 	_lines.clear();
 	int w = 0;
 
-	if (!text.empty()) {
-		Common::Point basePos;
-		size_t begin = 0;
-		while(begin < text.size()) {
-			while(begin < text.size() && text[begin]== '\r')
-				++begin;
-			size_t end = text.find('\n', begin);
-			if (end == text.npos)
-				end = text.size();
+	Common::Point basePos;
+	size_t begin = 0;
+	while(begin < text.size()) {
+		while(begin < text.size() && text[begin]== '\r')
+			++begin;
+		size_t end = text.find('\n', begin);
+		if (end == text.npos)
+			end = text.size();
 
-			Common::String line = text.substr(begin, end - begin);
-			debug("parsed line: %s", line.c_str());
-			begin = end + 1;
-			Common::Point size;
-			size.x = font->getStringWidth(line);
-			size.y = font->getFontHeight();
-			_lines.push_back(Line());
+		Common::String line = text.substr(begin, end - begin);
+		debug("parsed line: %s", line.c_str());
+		begin = end + 1;
+		Common::Point size;
+		size.x = font->getStringWidth(line);
+		size.y = font->getFontHeight();
+		_lines.push_back(Line());
 
-			Line & l = _lines.back();
-			l.pos = basePos;
-			l.text = line;
-			l.size = size;
+		Line & l = _lines.back();
+		l.pos = basePos;
+		l.text = line;
+		l.size = size;
 
-			basePos.y += size.y;
-			if (size.x > w)
-				w = size.x;
-		}
-
-		int dy = -basePos.y / 2;
-		for(uint i = 0; i < _lines.size(); ++i) {
-			Line & line = _lines[i];
-			line.pos.x += pos.x - line.size.x / 2;
-			line.pos.y += pos.y + dy;
-		}
-
-		_valid = true;
+		basePos.y += size.y;
+		if (size.x > w)
+			w = size.x;
 	}
+
+	int dy = -basePos.y / 2;
+	for(uint i = 0; i < _lines.size(); ++i) {
+		Line & line = _lines[i];
+		line.pos.x += pos.x - line.size.x / 2;
+		line.pos.y += pos.y + dy;
+	}
+
+	_valid = true;
 
 	Common::String &var = _npc? _npcNotifyVar: _charNotifyVar;
 	if (!var.empty()) {
-		engine.setGlobal(var, 1);
+		if (!engine.getGlobal(var))
+			engine.setGlobal(var, 1);
 	}
 }
 

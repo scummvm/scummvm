@@ -48,6 +48,9 @@ public:
 	Dialog(AGDSEngine *engine): _engine(engine), _dialogScriptPos(0) { }
 	void run(const Common::String &dialogProcess);
 	int textDelay(const Common::String &str);
+	const Common::String &getNextDialogLine() const {
+		return _dialogLine;
+	}
 
 	void load(const Common::String &dialogScript, const Common::String & defs);
 	bool tick();
