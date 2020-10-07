@@ -25,7 +25,7 @@
 
 #include "engines/grim/movie/movie.h"
 
-#include "video/theora_decoder.h"
+#include "video/video_decoder.h"
 
 namespace Grim {
 
@@ -45,7 +45,7 @@ private:
 	bool _demo;
 	bool _currentVideoIsTheora;
 	SmushDecoder *_smushDecoder;
-	Video::TheoraDecoder *_theoraDecoder; // HACK for now, move to other class later?
+	Video::VideoDecoder *_theoraDecoder; // HACK for now, move to other class later?
 };
 
 } // end of namespace Grim

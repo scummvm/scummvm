@@ -26,6 +26,8 @@
 #include "engines/grim/resource.h"
 #include "engines/grim/grim.h"
 
+#include "video/theora_decoder.h"
+
 namespace Grim {
 
 MoviePlayer *CreateSmushPlayer(bool demo) {
@@ -39,7 +41,12 @@ SmushPlayer::~SmushPlayer() {
 SmushPlayer::SmushPlayer(bool demo) : MoviePlayer(), _demo(demo) {
 	_smushDecoder = new SmushDecoder();
 	_videoDecoder = _smushDecoder;
+#if defined (USE_THEORADEC)
 	_theoraDecoder = new Video::TheoraDecoder();
+#else
+	warning("VideoTheoraPlayer::initialize - Theora support not compiled in, video will be skipped");
+	_theoraDecoder = nullptr;
+#endif
 	//_smushDecoder->setDemo(_demo);
 }
 
@@ -53,6 +60,7 @@ bool SmushPlayer::loadFile(const Common::String &filename) {
 		success = _videoDecoder->loadFile(filename);
 
 	if (!success) {
+#if defined (USE_THEORADEC)
 		Common::String theoraFilename = "MoviesHD/" + filename;
 		theoraFilename.erase(theoraFilename.size() - 4);
 		theoraFilename += ".ogv";
@@ -60,6 +68,9 @@ bool SmushPlayer::loadFile(const Common::String &filename) {
 		success = _theoraDecoder->loadFile(theoraFilename);
 		_videoDecoder = _theoraDecoder;
 		_currentVideoIsTheora = true;
+#else
+		success = false;
+#endif
 	} else {
 		_videoDecoder = _smushDecoder;
 		_currentVideoIsTheora = false;
