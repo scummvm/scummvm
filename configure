@@ -5214,7 +5214,7 @@ else
 	case $_host_os in
 	mingw*)
 		_GLEW_CFLAGS="-DGLEW_STATIC"
-		_GLEW_LIBS="-lglew32"
+		_GLEW_LIBS="-lglew32 -lopengl32"
 		;;
 	*)
 		_GLEW_LIBS="-lGLEW"
