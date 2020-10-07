@@ -76,6 +76,9 @@
 #include "engines/grim/sound.h"
 #include "engines/grim/stuffit.h"
 #include "engines/grim/debugger.h"
+#include "engines/grim/remastered/overlay.h"
+#include "engines/grim/remastered/lua_remastered.h"
+#include "engines/grim/remastered/commentary.h"
 
 #include "engines/grim/imuse/imuse.h"
 #include "engines/grim/emi/sound/emisound.h"
@@ -89,7 +92,7 @@ GfxBase *g_driver = nullptr;
 int g_imuseState = -1;
 
 GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, Common::Platform platform, Common::Language language) :
-		Engine(syst), _currSet(nullptr), _selectedActor(nullptr), _pauseStartTime(0) {
+		Engine(syst), _currSet(nullptr), _selectedActor(nullptr), _pauseStartTime(0), _language(0) {
 	g_grim = this;
 
 	setDebugger(new Debugger());
@@ -183,6 +186,22 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	SearchMan.addSubDirectoryMatching(gameDataDir, "widescreen");
 
 	Debug::registerDebugChannels();
+	
+	
+	//Remastered:
+	if (getGameFlags() & ADGF_REMASTERED) {
+		for (int i = 0; i < kNumCutscenes; i++) {
+			_cutsceneEnabled[i] = false;
+		}
+		for (int i = 0; i < kNumConcepts; i++) {
+			_conceptEnabled[i] = false;
+		}
+		
+		_saveMeta1 = "";
+		_saveMeta2 = 0;
+		_saveMeta3 = "";
+	}
+	_commentary = nullptr;
 }
 
 GrimEngine::~GrimEngine() {
@@ -214,6 +233,9 @@ GrimEngine::~GrimEngine() {
 	g_driver = nullptr;
 	delete _iris;
 
+	// Remastered:
+	delete _commentary;
+
 	ConfMan.flushToDisk();
 	DebugMan.clearAllDebugChannels();
 
@@ -233,7 +255,11 @@ void GrimEngine::clearPools() {
 }
 
 LuaBase *GrimEngine::createLua() {
-	return new Lua_V1();
+	if (getGameFlags() == ADGF_REMASTERED) {
+		return new Lua_Remastered();
+	} else {
+		return new Lua_V1();
+	}
 }
 
 GfxBase *GrimEngine::createRenderer(int screenW, int screenH, bool fullscreen) {
@@ -311,7 +337,7 @@ Common::Error GrimEngine::run() {
 	}
 
 	ConfMan.registerDefault("check_gamedata", true);
-	if (ConfMan.getBool("check_gamedata")) {
+	if (ConfMan.getBool("check_gamedata") && getGameFlags() != ADGF_REMASTERED) {
 		MD5CheckDialog d;
 		if (!d.runModal()) {
 			Common::U32String confirmString = Common::U32String::format(_(
@@ -343,6 +369,10 @@ Common::Error GrimEngine::run() {
 	if (getGameType() == GType_GRIM) {
 		g_imuse = new Imuse(20, demo);
 		g_emiSound = nullptr;
+		if (g_grim->getGameFlags() & ADGF_REMASTERED) {
+			// This must happen here, since we need the resource loader set up.
+			_commentary = new Commentary();
+		}
 	} else if (getGameType() == GType_MONKEY4) {
 		g_emiSound = new EMISound(20);
 		g_imuse = nullptr;
@@ -350,7 +380,7 @@ Common::Error GrimEngine::run() {
 	g_sound = new SoundPlayer();
 
 	bool fullscreen = ConfMan.getBool("fullscreen");
-	g_driver = createRenderer(640, 480, fullscreen);
+	g_driver->setupScreen(640, 480, fullscreen);
 
 	if (getGameType() == GType_MONKEY4 && SearchMan.hasFile("AMWI.m4b")) {
 		// Play EMI Mac Aspyr logo
@@ -874,6 +904,10 @@ void GrimEngine::drawNormalMode() {
 		p->draw();
 	}
 
+	foreach (Overlay *p, Overlay::getPool()) {
+		p->draw();
+	}
+
 	_currSet->setupCamera();
 
 	g_driver->set3DMode();
@@ -1054,10 +1088,33 @@ void GrimEngine::mainLoop() {
 				handleJoyAxis(event.joystick.axis, event.joystick.position);
 			if (type == Common::EVENT_JOYBUTTON_DOWN || type == Common::EVENT_JOYBUTTON_UP)
 				handleJoyButton(type, event.joystick.button);
+
+			if (type == Common::EVENT_LBUTTONUP) {
+				_cursorX = event.mouse.x;
+				_cursorY = event.mouse.y;
+				Common::KeyState k;
+				k.keycode = (Common::KeyCode)KEYCODE_MOUSE_B1;
+				handleControls(Common::EVENT_KEYUP, k);
+			}
+			if (type == Common::EVENT_LBUTTONDOWN) {
+				_cursorX = event.mouse.x;
+				_cursorY = event.mouse.y;
+				Common::KeyState k;
+				k.keycode = (Common::KeyCode)KEYCODE_MOUSE_B1;
+				handleControls(Common::EVENT_KEYDOWN, k);
+			}
+			if (type == Common::EVENT_MOUSEMOVE) {
+				_cursorX = event.mouse.x;
+				_cursorY = event.mouse.y;
+				handleMouseAxis(0, _cursorX);
+				handleMouseAxis(1, _cursorY);
+			}
 			if (type == Common::EVENT_SCREEN_CHANGED) {
 				handleUserPaint();
 			}
 		}
+
+
 
 		if (_mode != PauseMode) {
 			// Draw the display scene before doing the luaUpdate.
@@ -1243,6 +1300,17 @@ void GrimEngine::restoreGRIM() {
 	_savedState->endSection();
 }
 
+void GrimEngine::storeSaveGameMetadata(SaveGame *state) {
+	if (!g_grim->getGameFlags() & ADGF_REMASTERED) {
+		return;
+	}
+	state->beginSection('META');
+	state->writeString(_saveMeta1);
+	state->writeLEUint32(_saveMeta2);
+	state->writeString(_saveMeta3);
+	state->endSection();
+}
+
 void GrimEngine::storeSaveGameImage(SaveGame *state) {
 	const Graphics::PixelFormat image_format = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	int width = 250, height = 188;
@@ -1286,6 +1354,7 @@ void GrimEngine::savegameSave() {
 		GUI::displayErrorDialog(_("Error: the game could not be saved."));
 		return;
 	}
+	storeSaveGameMetadata(_savedState);
 
 	storeSaveGameImage(_savedState);
 
@@ -1597,6 +1666,51 @@ Graphics::Surface *loadPNG(const Common::String &filename) {
 
 void GrimEngine::debugLua(const Common::String &str) {
 	lua_dostring(str.c_str());
+}
+
+Common::String GrimEngine::getLanguagePrefix() const {
+	switch (getLanguage()) {
+		case 0:
+			return Common::String("en");
+		case 1:
+			return Common::String("de");
+		case 2:
+			return Common::String("es");
+		case 3:
+			return Common::String("fr");
+		case 4:
+			return Common::String("it");
+		case 5:
+			return Common::String("pt");
+		default:
+			error("Unknown language id %d", getLanguage());
+	}
+}
+
+bool GrimEngine::isConceptEnabled(uint32 number) const {
+	assert (number < kNumConcepts);
+	return _conceptEnabled[number];
+}
+
+void GrimEngine::enableConcept(uint32 number) {
+	assert (number < kNumConcepts);
+	_conceptEnabled[number] = true;
+}
+	
+bool GrimEngine::isCutsceneEnabled(uint32 number) const {
+	assert (number < kNumCutscenes);
+	return _cutsceneEnabled[number];
+}
+
+void GrimEngine::enableCutscene(uint32 number) {
+	assert (number < kNumCutscenes);
+	_cutsceneEnabled[number] = true;
+}
+
+void GrimEngine::setSaveMetaData(const char *meta1, int meta2, const char *meta3) {
+	_saveMeta1 = meta1;
+	_saveMeta2 = meta2;
+	_saveMeta3 = meta3;
 }
 
 } // end of namespace Grim

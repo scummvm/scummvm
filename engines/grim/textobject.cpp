@@ -33,7 +33,7 @@ namespace Grim {
 
 TextObjectCommon::TextObjectCommon() :
 		_x(0), _y(0), _fgColor(0), _justify(0), _width(0), _height(0),
-		_font(nullptr), _duration(0), _layer(0) {
+		_font(nullptr), _duration(0), _layer(0), _coords(0) {
 	if (g_grim)
 		g_grim->invalidateTextObjectsSortOrder();
 }
@@ -263,6 +263,10 @@ void TextObject::setupText() {
 	}
 
 	_lines = new Common::String[_numberLines];
+
+
+	// Reset the max width so it can be recalculated
+	_maxLineWidth = 0;
 
 	for (int j = 0; j < _numberLines; j++) {
 		int nextLinePos, cutLen;

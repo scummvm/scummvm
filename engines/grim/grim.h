@@ -47,6 +47,7 @@ class Set;
 class TextObject;
 class PrimitiveObject;
 class LuaBase;
+class Commentary;
 class GfxBase;
 
 struct ControlDescriptor {
@@ -159,6 +160,21 @@ public:
 	void setMovieSubtitle(TextObject *to);
 	void setMovieSetup();
 
+	int getLanguage() const { return _language; }
+	void setLanguage(int langId) { _language = langId; }
+	Common::String getLanguagePrefix() const;
+	
+	bool isConceptEnabled(uint32 number) const;
+	void enableConcept(uint32 number);
+	
+	bool isCutsceneEnabled(uint32 number) const;
+	void enableCutscene(uint32 number);
+
+	Commentary *getCommentary() { return _commentary; }
+
+	// TODO: Refactor.
+	void setSaveMetaData(const char*, int, const char*);
+
 	void saveGame(const Common::String &file);
 	void loadGame(const Common::String &file);
 
@@ -183,6 +199,7 @@ protected:
 	void handleControls(Common::EventType type, const Common::KeyState &key);
 	void handleChars(Common::EventType type, const Common::KeyState &key);
 	void handleJoyAxis(byte axis, int16 position);
+	void handleMouseAxis(byte axis, int16 position);
 	void handleJoyButton(Common::EventType type, byte button);
 	void handleExit();
 	void handlePause();
@@ -204,6 +221,7 @@ protected:
 	void savegameRestore();
 	void restoreGRIM();
 
+	virtual void storeSaveGameMetadata(SaveGame *state);
 	virtual void storeSaveGameImage(SaveGame *savedState);
 
 	bool _savegameLoadRequest;
@@ -252,6 +270,23 @@ protected:
 	Common::Platform _gamePlatform;
 	Common::Language _gameLanguage;
 	uint32 _pauseStartTime;
+
+	// Remastered;
+	uint32 _language;
+	static const uint32 kNumConcepts = 98;
+	static const uint32 kNumCutscenes = 40;
+	bool _cutsceneEnabled[kNumCutscenes]; // TODO, could probably use a different data structure
+	bool _conceptEnabled[kNumConcepts];
+	
+	Common::String _saveMeta1;
+	int _saveMeta2;
+	Common::String _saveMeta3;
+	
+	Commentary *_commentary;
+
+public:
+	int _cursorX;
+	int _cursorY;
 };
 
 extern GrimEngine *g_grim;

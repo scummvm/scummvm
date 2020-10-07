@@ -361,7 +361,6 @@ void Lua_V1::ChangePrimitive() {
 		if (lua_isnumber(height))
 			/*y = (int)*/lua_getnumber(height);
 		// TODO pmodify->setSize(x, y);
-		assert(0);
 	}
 }
 

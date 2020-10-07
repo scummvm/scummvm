@@ -119,6 +119,17 @@ Registry::Registry() :
 	//_joystick.setString(ConfMan.get("joystick"));
 	_joystick.setString("false");
 	_transcript.setString(ConfMan.get("transcript"));
+
+	// Remastered
+	_widescreen.setInt(ConfMan.getInt("widescreen"));
+	_directorsCommentary.setInt(ConfMan.getInt("directors_commentary"));
+	_directorsCommentaryVolume.setInt(convertVolumeFromMixer(ConfMan.getInt("directors_commentary_volume")));
+	_language.setInt(ConfMan.getInt("grim_language")); // Avoid overlap with confman
+	_resolutionScaling.setInt(ConfMan.getInt("resolution_scaling"));
+	_mouseSpeed.setInt(ConfMan.getInt("mouse_speed"));
+	_advancedLighting.setInt(ConfMan.getInt("advanced_lighting"));
+	_renderingMode.setInt(ConfMan.getInt("rendering_mode"));
+	_fullScreen.setInt(ConfMan.getInt("grim_fullscreen")); // TODO: Should probably map against normal fullscreen, but this may have issues with alt-enter, so leaving it like this for now.
 }
 
 Registry::Value &Registry::value(const Common::String &key) {
@@ -154,6 +165,27 @@ Registry::Value &Registry::value(const Common::String &key) {
 		return _spewOnError;
 	} else if (scumm_stricmp("Transcript", key.c_str()) == 0) {
 		return _transcript;
+	} else if (scumm_stricmp("DirectorsCommentary", key.c_str()) == 0) {
+		return _directorsCommentary;
+	} else if (scumm_stricmp("Widescreen", key.c_str()) == 0) {
+		return _widescreen;
+	} else if (scumm_stricmp("Language", key.c_str()) == 0) {
+		return _language;
+	} else if (scumm_stricmp("ResolutionScaling", key.c_str()) == 0) {
+		return _resolutionScaling;
+	} else if (scumm_stricmp("MouseSpeed", key.c_str()) == 0) {
+		return _mouseSpeed;
+	} else if (scumm_stricmp("AdvancedLighting", key.c_str()) == 0) {
+		return _advancedLighting;
+	} else if (scumm_stricmp("DirectorsCommentaryVolume", key.c_str()) == 0) {
+		return _directorsCommentaryVolume;
+	} else if (scumm_stricmp("RenderingMode", key.c_str()) == 0) {
+		return _renderingMode;
+	} else if (scumm_stricmp("Fullscreen", key.c_str()) == 0) {
+		return _fullScreen;
+	} else {
+		warning("write unknown regisry value %s", key.c_str());
+		return _musicVolume;
 	}
 
 	assert(0);
@@ -193,6 +225,27 @@ const Registry::Value &Registry::value(const Common::String &key) const {
 		return _spewOnError;
 	} else if (scumm_stricmp("Transcript", key.c_str()) == 0) {
 		return _transcript;
+	} else if (scumm_stricmp("DirectorsCommentary", key.c_str()) == 0) {
+		return _directorsCommentary;
+	} else if (scumm_stricmp("Widescreen", key.c_str()) == 0) {
+		return _widescreen;
+	} else if (scumm_stricmp("Language", key.c_str()) == 0) {
+		return _language;
+	} else if (scumm_stricmp("ResolutionScaling", key.c_str()) == 0) {
+		return _resolutionScaling;
+	} else if (scumm_stricmp("MouseSpeed", key.c_str()) == 0) {
+		return _mouseSpeed;
+	} else if (scumm_stricmp("AdvancedLighting", key.c_str()) == 0) {
+		return _advancedLighting;
+	} else if (scumm_stricmp("DirectorsCommentaryVolume", key.c_str()) == 0) {
+		return _directorsCommentaryVolume;
+	} else if (scumm_stricmp("RenderingMode", key.c_str()) == 0) {
+		return _renderingMode;
+	} else if (scumm_stricmp("Fullscreen", key.c_str()) == 0) {
+		return _fullScreen;
+	} else {
+		warning("unknown regisry value %s", key.c_str());
+		return _musicVolume;
 	}
 
 	assert(0);
@@ -253,6 +306,16 @@ void Registry::save() {
 	ConfMan.set("voice_effects", _voiceEffects.getString());
 	ConfMan.set("transcript", _transcript.getString());
 
+	// Remastered (TODO: These are handled as string for now)
+	ConfMan.setInt("widescreen", _widescreen.getInt());
+	ConfMan.setInt("directors_commentary", _directorsCommentary.getInt());
+	ConfMan.setInt("grim_language", _language.getInt());
+	ConfMan.setInt("resolution_scaling", _resolutionScaling.getInt());
+	ConfMan.setInt("mouse_speed", _mouseSpeed.getInt());
+	ConfMan.setInt("advanced_lighting", _advancedLighting.getInt());
+	ConfMan.setInt("directors_commentary_volume", convertVolumeToMixer(_directorsCommentaryVolume.getInt()));
+	ConfMan.setInt("rendering_mode", _renderingMode.getInt());
+	ConfMan.setInt("grim_fullscreen", _fullScreen.getInt());
 	_dirty = false;
 }
 

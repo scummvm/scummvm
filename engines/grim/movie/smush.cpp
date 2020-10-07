@@ -23,6 +23,8 @@
 #include "engines/grim/movie/codecs/smush_decoder.h"
 #include "engines/grim/movie/smush.h"
 
+#include "video/theora_decoder.h"
+
 #include "engines/grim/resource.h"
 #include "engines/grim/grim.h"
 
@@ -32,25 +34,49 @@ MoviePlayer *CreateSmushPlayer(bool demo) {
 	return new SmushPlayer(demo);
 }
 
+SmushPlayer::~SmushPlayer() {
+	delete _theoraDecoder;
+}
+
 SmushPlayer::SmushPlayer(bool demo) : MoviePlayer(), _demo(demo) {
 	_smushDecoder = new SmushDecoder();
 	_videoDecoder = _smushDecoder;
+	_theoraDecoder = new Video::TheoraDecoder();
 	//_smushDecoder->setDemo(_demo);
 }
 
 bool SmushPlayer::loadFile(const Common::String &filename) {
+	warning("Play video %s\n", filename.c_str());
+	bool success = false;
+	_videoDecoder = _smushDecoder;
 	if (!_demo)
-		return _videoDecoder->loadStream(g_resourceloader->openNewStreamFile(filename.c_str()));
+		success = _videoDecoder->loadStream(g_resourceloader->openNewStreamFile(filename.c_str()));
 	else
-		return _videoDecoder->loadFile(filename);
+		success = _videoDecoder->loadFile(filename);
+
+	if (!success) {
+		Common::String theoraFilename = "MoviesHD/" + filename;
+		theoraFilename.erase(theoraFilename.size() - 4);
+		theoraFilename += ".ogv";
+		warning("Trying to open %s", theoraFilename.c_str());
+		success = _theoraDecoder->loadFile(theoraFilename);
+		_videoDecoder = _theoraDecoder;
+		_currentVideoIsTheora = true;
+	} else {
+		_videoDecoder = _smushDecoder;
+		_currentVideoIsTheora = false;
+	}
+	return success;
 }
 
 void SmushPlayer::init() {
-	if (_demo) {
-		_x = _smushDecoder->getX();
-		_y = _smushDecoder->getY();
-	} else {
-		_smushDecoder->setLooping(_videoLooping);
+	if (!_currentVideoIsTheora) {
+		if (_demo) {
+			_x = _smushDecoder->getX();
+			_y = _smushDecoder->getY();
+		} else {
+			_smushDecoder->setLooping(_videoLooping);
+		}
 	}
 	MoviePlayer::init();
 }
@@ -65,21 +91,23 @@ void SmushPlayer::handleFrame() {
 			deinit();
 			return;
 		} else {
-			_smushDecoder->rewind(); // This doesnt handle if looping fails.
-			_smushDecoder->start();
+			if (!_currentVideoIsTheora) {
+				_smushDecoder->rewind(); // This doesnt handle if looping fails.
+				_smushDecoder->start();
+			}
 		}
 	}
 }
 
 void SmushPlayer::postHandleFrame() {
-	if (_demo) {
+	if (_demo && !_currentVideoIsTheora) {
 		_x = _smushDecoder->getX();
 		_y = _smushDecoder->getY();
 	}
 }
 
 void SmushPlayer::restore(SaveGame *state) {
-	if (isPlaying()) {
+	if (isPlaying() && !_currentVideoIsTheora) {
 		_smushDecoder->seek((uint32)_movieTime);
 		_smushDecoder->start();
 		timerCallback(this);

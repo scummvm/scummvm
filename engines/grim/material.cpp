@@ -22,6 +22,7 @@
 
 #include "common/endian.h"
 #include "image/tga.h"
+#include "image/png.h"
 #include "graphics/surface.h"
 
 #include "engines/grim/grim.h"
@@ -46,7 +47,43 @@ MaterialData::MaterialData(const Common::String &filename, Common::SeekableReadS
 	}
 }
 
+void loadPNG(Common::SeekableReadStream *data, Texture *t) {
+	Image::PNGDecoder *pngDecoder = new Image::PNGDecoder();
+	pngDecoder->loadStream(*data);
+
+	Graphics::Surface *pngSurface =pngDecoder->getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), pngDecoder->getPalette());
+	
+	t->_width = pngSurface->w;
+	t->_height = pngSurface->h;
+	t->_texture = nullptr;
+
+	int bpp = pngSurface->format.bytesPerPixel;
+	assert(bpp == 4); // Assure we have 32 bpp
+
+	t->_colorFormat = BM_RGBA;
+	t->_bpp = 4;
+	t->_hasAlpha = true;
+
+
+	// Allocate room for the texture.
+	t->_data = new uint8[t->_width * t->_height * (bpp)];
+
+	// Copy the texture data, as the decoder owns the current copy.
+	memcpy(t->_data, pngSurface->getPixels(), t->_width * t->_height * (bpp));
+
+	pngSurface->free();
+	delete pngSurface;
+	delete pngDecoder;
+}
+
 void MaterialData::initGrim(Common::SeekableReadStream *data) {
+	 if (_fname.hasSuffix(".png")) {
+		_numImages = 1;
+		_textures = new Texture*[1];
+		_textures[0] = new Texture();
+		loadPNG(data, _textures[0]);
+		return;
+	}
 	uint32 tag = data->readUint32BE();
 	if (tag != MKTAG('M','A','T',' '))
 		error("Invalid header for texture %s. Expected 'MAT ', got '%c%c%c%c'", _fname.c_str(),
@@ -201,7 +238,8 @@ MaterialData *MaterialData::getMaterialData(const Common::String &filename, Comm
 			++m->_refCount;
 			return m;
 		}
-		if (m->_fname == filename && m->_cmap->getFilename() == cmap->getFilename()) {
+		// We need to allow null cmaps for remastered overlays
+		if (m->_fname == filename && (!(m->_cmap || cmap) || m->_cmap->getFilename() == cmap->getFilename())) {
 			++m->_refCount;
 			return m;
 		}

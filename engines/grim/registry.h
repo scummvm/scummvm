@@ -94,6 +94,17 @@ private:
 	Value _spewOnError;
 	Value _transcript;
 	Value _dummy;
+	
+	// Remastered (TODO: Fix the type-handling), TODO: Disable for original
+	Value _directorsCommentary;
+	Value _widescreen;
+	Value _language;
+	Value _resolutionScaling;
+	Value _mouseSpeed;
+	Value _advancedLighting;
+	Value _directorsCommentaryVolume;
+	Value _renderingMode;
+	Value _fullScreen;
 
 	bool _dirty;
 

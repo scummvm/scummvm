@@ -46,6 +46,7 @@ class Sprite;
 class EMICostume;
 class Lab;
 class Actor;
+class Overlay;
 
 typedef ObjectPtr<Material> MaterialPtr;
 typedef ObjectPtr<Model> ModelPtr;
@@ -71,6 +72,7 @@ public:
 	Skeleton *loadSkeleton(const Common::String &fname);
 	Sprite *loadSprite(const Common::String &fname, EMICostume *costume);
 	AnimationEmi *loadAnimationEmi(const Common::String &filename);
+	Overlay *loadOverlay(const Common::String &filename);
 	Common::SeekableReadStream *openNewStreamFile(Common::String fname, bool cache = false) const;
 
 	ModelPtr getModel(const Common::String &fname, CMap *c);

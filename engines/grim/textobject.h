@@ -62,6 +62,9 @@ public:
 	void setLayer(int layer);
 	int getLayer() const { return _layer; }
 
+	void setCoords(int coords) { _coords = coords; }
+	int getCoords() const { return _coords; }
+
 protected:
 	TextObjectCommon();
 
@@ -71,6 +74,7 @@ protected:
 	int _justify;
 	int _duration;
 	int _layer;
+	int _coords;
 	Color _fgColor;
 };
 

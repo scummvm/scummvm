@@ -20,36 +20,36 @@
  *
  */
 
-#ifndef GRIM_SMUSH_PLAYER_H
-#define GRIM_SMUSH_PLAYER_H
 
-#include "engines/grim/movie/movie.h"
-
-namespace Video {
-	class TheoraDecoder;
-}
+#include "image/png.h"
+#include "graphics/surface.h"
+#include "engines/grim/remastered/overlay.h"
+#include "engines/grim/resource.h"
+#include "engines/grim/material.h"
+#include "engines/grim/gfx_base.h"
 
 namespace Grim {
 
-class SmushDecoder;
+Overlay::Overlay(const Common::String &filename, Common::SeekableReadStream *data) :
+		_x(0), _y(0) {
+	_material = g_resourceloader->loadMaterial(filename, NULL, true);
+}
 
-class SmushPlayer : public MoviePlayer {
-public:
-	SmushPlayer(bool demo);
-	virtual ~SmushPlayer();
-	void restore(SaveGame *state) override;
+Overlay::~Overlay() {
 
-private:
-	bool loadFile(const Common::String &filename) override;
-	void handleFrame() override;
-	void postHandleFrame() override;
-	void init() override;
-	bool _demo;
-	bool _currentVideoIsTheora;
-	SmushDecoder *_smushDecoder;
-	Video::TheoraDecoder *_theoraDecoder; // HACK for now, move to other class later?
-};
+}
 
-} // end of namespace Grim
+void Overlay::draw() {
+	_material->select();
+	g_driver->drawOverlay(this);
+}
 
-#endif
+int Overlay::getWidth() const {
+	return _material->getData()->_textures[0]->_width;
+}
+
+int Overlay::getHeight() const {
+	return _material->getData()->_textures[0]->_height;
+}
+
+}

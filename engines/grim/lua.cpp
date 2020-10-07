@@ -232,6 +232,8 @@ void LuaBase::registerLua() {
 	refTextObjectBackground = lua_ref(true);
 	lua_pushstring("layer");
 	refTextObjectLayer = lua_ref(true);
+	lua_pushstring("coords");
+	refTextObjectCoords = lua_ref(true);
 }
 
 void LuaBase::forceDemo() {
@@ -627,6 +629,18 @@ void LuaBase::setTextObjectParams(TextObjectCommon *textObject, lua_Object table
 		}
 	}
 
+	// FIXME: remove check once the major save version is updated
+	// currently it is needed for backward compatibility of old savegames
+	if (lua_getref(refTextObjectCoords) == LUA_NOOBJECT)
+		return;
+	lua_pushobject(tableObj);
+	lua_pushobject(lua_getref(refTextObjectCoords));
+	keyObj = lua_gettable();
+	if (keyObj) {
+		if (lua_isnumber(keyObj)) {
+			textObject->setCoords(lua_getnumber(keyObj));
+		}
+	}
 }
 
 void LuaBase::typeOverride() {

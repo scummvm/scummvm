@@ -20,36 +20,21 @@
  *
  */
 
-#ifndef GRIM_SMUSH_PLAYER_H
-#define GRIM_SMUSH_PLAYER_H
 
-#include "engines/grim/movie/movie.h"
+#include "engines/grim/remastered/hotspot.h"
 
-namespace Video {
-	class TheoraDecoder;
-}
 
 namespace Grim {
 
-class SmushDecoder;
+Hotspot::Hotspot(const Common::String &name, int x, int y, int width, int height) :
+		_name(name), _x(x), _y(y), _width(width), _height(height), _rect(Math::Vector2d(_x, _y), Math::Vector2d(_x + _width, _y + _height)) {
 
-class SmushPlayer : public MoviePlayer {
-public:
-	SmushPlayer(bool demo);
-	virtual ~SmushPlayer();
-	void restore(SaveGame *state) override;
+}
 
-private:
-	bool loadFile(const Common::String &filename) override;
-	void handleFrame() override;
-	void postHandleFrame() override;
-	void init() override;
-	bool _demo;
-	bool _currentVideoIsTheora;
-	SmushDecoder *_smushDecoder;
-	Video::TheoraDecoder *_theoraDecoder; // HACK for now, move to other class later?
-};
+Hotspot::~Hotspot() {
 
-} // end of namespace Grim
+}
 
-#endif
+
+
+}

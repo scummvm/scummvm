@@ -20,34 +20,27 @@
  *
  */
 
-#ifndef GRIM_SMUSH_PLAYER_H
-#define GRIM_SMUSH_PLAYER_H
+#ifndef GRIM_COMMENTARY
+#define GRIM_COMMENTARY
 
-#include "engines/grim/movie/movie.h"
-
-namespace Video {
-	class TheoraDecoder;
-}
-
+#include "common/str.h"
+#include "common/hash-str.h"
 namespace Grim {
 
-class SmushDecoder;
+class Comment;
 
-class SmushPlayer : public MoviePlayer {
+class Commentary {
+	// TODO: Case sensitivity
+	Common::HashMap<Common::String, Comment*> _comments;
+	Comment *_currentCommentary;
+	Comment *findCommentary(const Common::String &name);
+	void loadCommentary();
 public:
-	SmushPlayer(bool demo);
-	virtual ~SmushPlayer();
-	void restore(SaveGame *state) override;
-
-private:
-	bool loadFile(const Common::String &filename) override;
-	void handleFrame() override;
-	void postHandleFrame() override;
-	void init() override;
-	bool _demo;
-	bool _currentVideoIsTheora;
-	SmushDecoder *_smushDecoder;
-	Video::TheoraDecoder *_theoraDecoder; // HACK for now, move to other class later?
+	Commentary();
+	~Commentary();
+	void playCurrentCommentary();
+	void setCurrentCommentary(const Common::String &name);
+	bool hasHeardCommentary(const Common::String &name) const;
 };
 
 } // end of namespace Grim

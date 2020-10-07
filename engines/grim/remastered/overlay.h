@@ -20,36 +20,40 @@
  *
  */
 
-#ifndef GRIM_SMUSH_PLAYER_H
-#define GRIM_SMUSH_PLAYER_H
+#ifndef GRIM_OVERLAY_H
+#define GRIM_OVERLAY_H
 
-#include "engines/grim/movie/movie.h"
+#include "common/endian.h"
 
-namespace Video {
-	class TheoraDecoder;
-}
+#include "engines/grim/pool.h"
+
 
 namespace Grim {
 
-class SmushDecoder;
+class Material;
 
-class SmushPlayer : public MoviePlayer {
+class Overlay : public PoolObject<Overlay> {
 public:
-	SmushPlayer(bool demo);
-	virtual ~SmushPlayer();
-	void restore(SaveGame *state) override;
+	Overlay(const Common::String &filename, Common::SeekableReadStream *data);
+	~Overlay();
 
-private:
-	bool loadFile(const Common::String &filename) override;
-	void handleFrame() override;
-	void postHandleFrame() override;
-	void init() override;
-	bool _demo;
-	bool _currentVideoIsTheora;
-	SmushDecoder *_smushDecoder;
-	Video::TheoraDecoder *_theoraDecoder; // HACK for now, move to other class later?
+	void draw();
+	void setPos(float x, float y) { _x = x; _y = y; }
+	void setLayer(int layer) { _layer = layer; }
+	int getWidth() const;
+	int getHeight() const;
+	
+	static int32 getStaticTag() { return MKTAG('O','V','E','R'); }
+
+	
+
+//private:
+	Material *_material;
+	float _x;
+	float _y;
+	int _layer;
 };
 
-} // end of namespace Grim
+}
 
 #endif

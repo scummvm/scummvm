@@ -56,6 +56,7 @@ class Mesh;
 class MeshFace;
 class Sprite;
 class Texture;
+class Overlay;
 
 /**
  * The Color-formats used for bitmaps in Grim Fandango/Escape From Monkey Island
@@ -142,6 +143,8 @@ public:
 	virtual void drawModelFace(const Mesh *mesh, const MeshFace *face) = 0;
 	virtual void drawSprite(const Sprite *sprite) = 0;
 	virtual void drawMesh(const Mesh *mesh);
+
+	virtual void drawOverlay(const Overlay *overlay) { };
 
 	virtual void enableLights() = 0;
 	virtual void disableLights() = 0;
@@ -278,7 +281,10 @@ protected:
 	Texture _specialtyTextures[_numSpecialtyTextures];
 	static const int _gameHeight = 480;
 	static const int _gameWidth = 640;
+	static const int _globalHeight = 1080;
+	static const int _globalWidth = 1920;
 	float _scaleW, _scaleH;
+	float _globalScaleW, _globalScaleH;
 	int _screenWidth, _screenHeight;
 	Shadow *_currentShadowArray;
 	unsigned char _shadowColorR;

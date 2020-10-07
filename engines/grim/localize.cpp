@@ -23,6 +23,7 @@
 #include "common/file.h"
 #include "common/str.h"
 #include "common/endian.h"
+#include "common/tokenizer.h"
 
 #include "engines/grim/localize.h"
 #include "engines/grim/grim.h"
@@ -31,6 +32,7 @@
 namespace Grim {
 
 Localizer *g_localizer = nullptr;
+
 
 Localizer::Localizer() {
 	// To avoid too wide lines further below, we just name these here.
@@ -42,6 +44,7 @@ Localizer::Localizer() {
 	bool isSpanish = g_grim->getGameLanguage() == Common::ES_ESP;
 	bool isTranslatedGrimDemo = (isGerman || isFrench || isItalian || isSpanish) && isGrimDemo;
 	bool isPS2 = g_grim->getGamePlatform() == Common::kPlatformPS2;
+	bool isRemastered = g_grim->getGameFlags() & ADGF_REMASTERED; // TODO: Add handling of this from g_grim.
 
 	if (isGrimDemo && !isTranslatedGrimDemo)
 		return;
@@ -50,7 +53,9 @@ Localizer::Localizer() {
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		filename = "script.tab";
 	} else {
-		if (isTranslatedGrimDemo) {
+		if (isRemastered) {
+			filename = Common::String("grim.") + g_grim->getLanguagePrefix() + Common::String(".tab"); // TODO: Detect based on language.
+		} else if (isTranslatedGrimDemo) {
 			filename = "language.tab";
 		} else {
 			filename = "grim.tab";
@@ -70,6 +75,11 @@ Localizer::Localizer() {
 	f->read(data, filesize);
 	data[filesize] = '\0';
 	delete f;
+
+	if (isRemastered) {
+		parseRemasteredData(Common::String(data));
+		return;
+	}
 
 	// Explicitly white-list german demo, as it has a .tab-file
 	if ((isTranslatedGrimDemo) || (!isAnyDemo && !isPS2)) {
@@ -140,6 +150,22 @@ Localizer::Localizer() {
 		}
 	}
 	delete[] data;
+}
+
+void Localizer::parseRemasteredData(const Common::String &data) {
+	// This is probably cleaner implemented using a read line-by-line, but for now this works.
+	Common::StringTokenizer tokens(data, "\t\n");
+	while (!tokens.empty()) {
+		Common::String key = tokens.nextToken();
+		// Not sure if this is right, but it is necessary to get by the second line
+		key.trim();
+		// Handle comments
+		if (!(key.size() > 0 && !(key[0] == '#'))) {
+			continue;
+		}
+		Common::String string = tokens.nextToken();
+		_entries[key] = string;
+	}
 }
 
 Common::String Localizer::localize(const char *str) const {

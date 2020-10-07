@@ -41,6 +41,7 @@
 #include "engines/grim/emi/costumeemi.h"
 #include "engines/grim/emi/modelemi.h"
 #include "engines/grim/emi/skeleton.h"
+#include "engines/grim/remastered/overlay.h"
 #include "engines/grim/patchr.h"
 #include "engines/grim/md5check.h"
 #include "engines/grim/update/update.h"
@@ -79,7 +80,7 @@ ResourceLoader::ResourceLoader() {
 	Common::ArchiveMemberList files, updFiles;
 
 	//Load the update from the executable, if needed
-	const char *updateFilename = g_grim->getUpdateFilename();
+	const char *updateFilename = NULL;//g_grim->getUpdateFilename();
 	if (updateFilename) {
 		Common::File *updStream = new Common::File();
 		if (updStream && updStream->open(updateFilename)) {
@@ -133,6 +134,10 @@ ResourceLoader::ResourceLoader() {
 			SearchMan.listMatchingMembers(files, "local.lab");
 			SearchMan.listMatchingMembers(files, "credits.lab");
 
+			if (g_grim->getGameFlags() & ADGF_REMASTERED) {
+				SearchMan.listMatchingMembers(files, "commentary.lab");
+				SearchMan.listMatchingMembers(files, "images.lab");
+			}
 			//Sort the archives in order to ensure that they are loaded with the correct order
 			Common::sort(files.begin(), files.end(), LabListComperator());
 
@@ -360,6 +365,27 @@ Costume *ResourceLoader::loadCostume(const Common::String &filename, Actor *owne
 Font *ResourceLoader::loadFont(const Common::String &filename) {
 	Common::SeekableReadStream *stream;
 
+	Common::String name = "FontsHD/" + filename + ".txt";
+	stream = openNewStreamFile(name, true);
+	if (stream) {
+		Common::String line = stream->readLine();
+		Common::String font;
+		Common::String size;
+		for (int i = 0; i < line.size(); ++i) {
+			if (line[i] == ' ') {
+				font = "FontsHD/" + Common::String(line.c_str(), i);
+				size = Common::String(line.c_str() + i + 1, line.size() - i - 2);
+			}
+		}
+
+		int s = atoi(size.c_str());
+		delete stream;
+		stream = openNewStreamFile(font.c_str(), true);
+		FontTTF *result = new FontTTF();
+		result->loadTTF(font, stream, s);
+		return result;
+	}
+
 	stream = openNewStreamFile(filename.c_str(), true);
 	if (!stream)
 		error("Could not find font file %s", filename.c_str());
@@ -510,6 +536,22 @@ AnimationEmi *ResourceLoader::loadAnimationEmi(const Common::String &filename) {
 
 	AnimationEmi *result = new AnimationEmi(filename, stream);
 	_emiAnims.push_back(result);
+	delete stream;
+
+	return result;
+}
+
+Overlay *ResourceLoader::loadOverlay(const Common::String &filename) {
+	Common::String fname = fixFilename(filename);
+	Common::SeekableReadStream *stream;
+
+	stream = openNewStreamFile(fname.c_str(), true);
+	if (!stream) {
+		warning("Could not find overlay %s", filename.c_str());
+		return nullptr;
+	}
+
+	Overlay *result = new Overlay(filename, stream);
 	delete stream;
 
 	return result;

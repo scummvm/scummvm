@@ -20,36 +20,35 @@
  *
  */
 
-#ifndef GRIM_SMUSH_PLAYER_H
-#define GRIM_SMUSH_PLAYER_H
+#ifndef GRIM_HOTSPOT_H
+#define GRIM_HOTSPOT_H
 
-#include "engines/grim/movie/movie.h"
+#include "common/endian.h"
 
-namespace Video {
-	class TheoraDecoder;
-}
+#include "engines/grim/pool.h"
+
+#include "math/rect2d.h"
 
 namespace Grim {
 
-class SmushDecoder;
 
-class SmushPlayer : public MoviePlayer {
+class Hotspot : public PoolObject<Hotspot> {
 public:
-	SmushPlayer(bool demo);
-	virtual ~SmushPlayer();
-	void restore(SaveGame *state) override;
+	Hotspot(const Common::String &name, int x, int y, int width, int height);
+	~Hotspot();
 
-private:
-	bool loadFile(const Common::String &filename) override;
-	void handleFrame() override;
-	void postHandleFrame() override;
-	void init() override;
-	bool _demo;
-	bool _currentVideoIsTheora;
-	SmushDecoder *_smushDecoder;
-	Video::TheoraDecoder *_theoraDecoder; // HACK for now, move to other class later?
+
+	static int32 getStaticTag() { return MKTAG('H','O','T','S'); }
+
+//private:
+	Common::String _name;
+	int _x;
+	int _y;
+	int _width;
+	int _height;
+	Math::Rect2d _rect;
 };
 
-} // end of namespace Grim
+}
 
 #endif
