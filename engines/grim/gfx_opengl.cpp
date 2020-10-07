@@ -1435,6 +1435,7 @@ void GfxOpenGL::createTextObject(TextObject *text) {
 	if (g_grim->getGameType() != GType_GRIM || !(g_grim->getGameFlags() & ADGF_REMASTERED))
 		return;
 
+#ifdef USE_FREETYPE2
 	//error("Could not get font userdata");
 	const Font *font = text->getFont();
 	const FontTTF *f = static_cast<const FontTTF *>(font);
@@ -1466,6 +1467,7 @@ void GfxOpenGL::createTextObject(TextObject *text) {
 
 	ud->_texids = texids;
 	text->setUserData(ud);
+#endif
 }
 
 void GfxOpenGL::drawTextObject(const TextObject *text) {
@@ -1495,7 +1497,7 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 	if (!userData) {
 		if (g_grim->getGameType() != GType_GRIM || !(g_grim->getGameFlags() & ADGF_REMASTERED))
 			error("Could not get font userdata");
-
+#ifdef USE_FREETYPE2
 		const FontTTF *f = static_cast<const FontTTF *>(font);
 		Graphics::Font *gf = f->_font;
 
@@ -1546,6 +1548,7 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_LIGHTING);
 		glDepthMask(GL_TRUE);
+#endif
 		return;
 	}
 

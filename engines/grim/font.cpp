@@ -164,9 +164,11 @@ void Font::restoreState(SaveGame *state) {
 }
 
 void FontTTF::loadTTF(const Common::String &filename, Common::SeekableReadStream *data, int size) {
+#ifdef USE_FREETYPE2
 	_font = Graphics::loadTTFFont(*data, size);
-
-	//f->
+#else
+	_font = nullptr;
+#endif
 }
 
 // Hardcoded default font for FPS, GUI, etc
