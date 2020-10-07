@@ -46,10 +46,10 @@ namespace Common {
 class CosineTable;
 
 /**
- * (Inverse) Fast Fourier Transform
+ * (Inverse) Fast Fourier Transform.
  *
  * Used in engines:
- *  - scumm
+ *  - SCUMM
  */
 class FFT {
 public:
@@ -58,10 +58,10 @@ public:
 
 	const uint16 *getRevTab() const;
 
-	/** Do the permutation needed BEFORE calling calc(). */
+	/** Perform the permutation needed BEFORE calling calc(). */
 	void permute(Complex *z);
 
-	/** Do a complex FFT.
+	/** Perform a complex FFT.
 	 *
 	 *  The input data must be permuted before.
 	 *  No 1.0/sqrt(n) normalization is done.

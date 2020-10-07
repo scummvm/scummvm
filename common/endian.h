@@ -30,22 +30,21 @@
  * @defgroup common_endian Endian conversions
  * @ingroup common
  *
- * @brief  Endian conversion and byteswap conversion functions and macros.
+ * @brief  Functions and macros for endian conversions and byteswap conversions.
  *
  * @details 
- *  SWAP_BYTES_??(a)      - inverse byte order
- *  SWAP_CONSTANT_??(a)   - inverse byte order, implemented as macro.
- *                              Use with compiletime-constants only, the result will be a compiletime-constant aswell.
- *                              Unlike most other functions these can be used for eg. switch-case labels
- *
- *  READ_UINT??(a)        - read native value from pointer a
- *  READ_??_UINT??(a)     - read LE/BE value from pointer a and convert it to native
- *  WRITE_??_UINT??(a, v) - write native value v to pointer a with LE/BE encoding
- *  TO_??_??(a)           - convert native value v to LE/BE
- *  FROM_??_??(a)         - convert LE/BE value v to native
- *  CONSTANT_??_??(a)     - convert LE/BE value v to native, implemented as macro.
- *                              Use with compiletime-constants only, the result will be a compiletime-constant aswell.
- *                              Unlike most other functions these can be used for eg. switch-case labels
+ *  - SWAP_BYTES_??(a) - Reverse byte order
+ *  - SWAP_CONSTANT_??(a) - Reverse byte order, implemented as a macro.
+ *                          Use with compile-time constants only, the result will be a compile-time constant as well.
+ *                          Unlike most other functions, these can be used for e.g. switch-case labels.
+ *  - READ_UINT??(a)   - Read native value from pointer @p a.
+ *  - READ_??_UINT??(a) - Read LE/BE value from pointer @p a and convert it to native.
+ *  - WRITE_??_UINT??(a, v) - Write a native value @p v to pointer @p a with LE/BE encoding.
+ *  - TO_??_??(a) - Convert native value @p v to LE/BE.
+ *  - FROM_??_??(a) - Convert LE/BE value @p v to native.
+ *  - CONSTANT_??_??(a) - Convert LE/BE value @p v to native, implemented as a macro.
+ *                        Use with compile-time constants only, the result will be a compile-time constant as well.
+ *                        Unlike most other functions these, can be used for e.g. switch-case labels.
  *
  * @{
  */
@@ -55,6 +54,10 @@
 #	error No endianness defined
 #endif
 
+/**
+ * Swap the bytes in a 64-bit word in order to convert LE encoded data to BE
+ * and vice versa. Use with compile-time constants only.
+ */
 #define SWAP_CONSTANT_64(a) \
 	((uint64)((((a) >> 56) & 0x000000FF) | \
 	          (((a) >> 40) & 0x0000FF00) | \
@@ -65,12 +68,20 @@
 	          (((a) & 0x0000FF00) << 40) | \
 	          (((a) & 0x000000FF) << 56) ))
 
+/**
+ * Swap the bytes in a 32-bit word in order to convert LE encoded data to BE
+ * and vice versa. Use with compile-time constants only.
+ */
 #define SWAP_CONSTANT_32(a) \
 	((uint32)((((a) >> 24) & 0x00FF) | \
 	          (((a) >>  8) & 0xFF00) | \
 	          (((a) & 0xFF00) <<  8) | \
 	          (((a) & 0x00FF) << 24) ))
 
+/**
+ * Swap the bytes in a 16-bit word in order to convert LE encoded data to BE
+ * and vice versa. Use with compile-time constants only.
+ */
 #define SWAP_CONSTANT_16(a) \
 	((uint16)((((a) >>  8) & 0x00FF) | \
 	          (((a) <<  8) & 0xFF00) ))
@@ -78,7 +89,7 @@
 
 
 /**
- * Swap the bytes in a 16 bit word in order to convert LE encoded data to BE
+ * Swap the bytes in a 16-bit word in order to convert LE encoded data to BE
  * and vice versa.
  */
 
@@ -106,7 +117,7 @@
 
 
 /**
- * Swap the bytes in a 32 bit word in order to convert LE encoded data to BE
+ * Swap the bytes in a 32-bit word in order to convert LE encoded data to BE
  * and vice versa.
  */
 
@@ -155,7 +166,7 @@
 #endif
 
 /**
- * Swap the bytes in a 64 bit word in order to convert LE encoded data to BE
+ * Swap the bytes in a 64-bit word in order to convert LE encoded data to BE
  * and vice versa.
  */
 
@@ -211,8 +222,8 @@
  * A wrapper macro used around four character constants, like 'DATA', to
  * ensure portability. Typical usage: MKTAG('D','A','T','A').
  *
- * Why is this necessary? The C/C++ standard does not define the endianess to
- * be used for character constants. Hence if one uses multi-byte character
+ * This is required because the C/C++ standard does not define the endianess to
+ * be used for character constants. Hence, if one uses multi-byte character
  * constants, a potential portability problem opens up.
  */
 #define MKTAG(a0,a1,a2,a3) ((uint32)((a3) | ((a2) << 8) | ((a1) << 16) | ((a0) << 24)))
@@ -223,8 +234,11 @@
  */
 #define MKTAG16(a0,a1) ((uint16)((a1) | ((a0) << 8)))
 
-// Functions for reading/writing native integers.
-// They also transparently handle the need for alignment.
+/** @name Functions for reading and writing native integers
+ *  @brief Functions for reading and writing native integer values.
+ *         They also transparently handle the need for alignment.
+ *  @{
+ */
 
 // Test for GCC >= 4.0. These implementations will automatically use
 // CPU-specific instructions for unaligned data when they are available (eg.
@@ -372,11 +386,14 @@
 		}
 
 #	endif
-
+/** @} */
 #endif
 
 
-//  Map Funtions for reading/writing BE/LE integers depending on native endianess
+/** @name  Map functions for reading/writing BE/LE integers depending on native endianess
+ * @{
+ */
+	 
 #if defined(SCUMM_LITTLE_ENDIAN)
 
 	#define READ_LE_UINT16(a) READ_UINT16(a)
@@ -411,8 +428,13 @@
 	#define TO_BE_64(a) SWAP_BYTES_64(a)
 	#define CONSTANT_LE_64(a) ((uint64)(a))
 	#define CONSTANT_BE_64(a) SWAP_CONSTANT_64(a)
+/** @} */
 
-// if the unaligned load and the byteswap take alot instructions its better to directly read and invert
+/** @name  Functions for directly reading/writing and inverting
+ *  @brief Use these in case the unaligned load and byteswap take
+ *         a lot of instructions.
+ * @{
+ */
 #	if defined(SCUMM_NEED_ALIGNMENT) && !defined(__mips__)
 
 		inline uint16 READ_BE_UINT16(const void *ptr) {
@@ -637,7 +659,7 @@ inline int32 READ_BE_INT32(const void *ptr) {
 inline void WRITE_BE_INT32(void *ptr, int32 value) {
 	WRITE_BE_UINT32(ptr, static_cast<uint32>(value));
 }
-
+/** @} */
 /** @} */
 
 #endif

@@ -35,8 +35,8 @@
  */
 
 /**
- * The precision of the fractional (fixed point) type we define below.
- * Normally you should never have to modify this value.
+ * The precision of the fractional (fixed-point) type that is defined below.
+ * Normally, you should never need to modify this value.
  */
 enum {
 	FRAC_BITS = 16,

@@ -32,13 +32,13 @@
 namespace Common {
 
 /**
- * @defgroup common_huffmann Huffman bitstream decoding
+ * @defgroup common_huffmann Huffman bit stream decoding
  * @ingroup common
  *
- * @brief API for operations related to Huffman bitstream decoding.
+ * @brief API for operations related to Huffman bit stream decoding.
  * 
  * @details Used in engines:
- *          - scumm
+ *          - SCUMM
  *		
  * @{
  */
@@ -53,7 +53,7 @@ inline uint32 REVERSEBITS(uint32 x) {
 }
 
 /**
- * Huffman bitstream decoding
+ * Huffman bit stream decoding.
  *
  */
 template<class BITSTREAM>
@@ -61,15 +61,15 @@ class Huffman {
 public:
 	/** Construct a Huffman decoder.
 	 *
-	 *  @param maxLength Maximal code length. If 0, it's searched for.
+	 *  @param maxLength Maximal code length. If 0, it is searched for.
 	 *  @param codeCount Number of codes.
-	 *  @param codes The actual codes.
-	 *  @param lengths Lengths of the individual codes.
-	 *  @param symbols The symbols. If 0, assume they are identical to the code indices.
+	 *  @param codes     The actual codes.
+	 *  @param lengths   Lengths of the individual codes.
+	 *  @param symbols   The symbols. If 0, assume they are identical to the code indices.
 	 */
 	Huffman(uint8 maxLength, uint32 codeCount, const uint32 *codes, const uint8 *lengths, const uint32 *symbols = nullptr);
 
-	/** Return the next symbol in the bitstream. */
+	/** Return the next symbol in the bit stream. */
 	uint32 getSymbol(BITSTREAM &bits) const;
 
 private:
@@ -111,13 +111,13 @@ Huffman<BITSTREAM>::Huffman(uint8 maxLength, uint32 codeCount, const uint32 *cod
 
 	assert(maxLength <= 32);
 
-	// Codes that don't fit in the prefix table are stored in the _codes array
+	// Codes that do not fit in the prefix table are stored in the _codes array.
 	_codes.resize(MAX(maxLength - _prefixTableBits, 0));
 
 	for (uint i = 0; i < codeCount; i++) {
 		uint8 length = lengths[i];
 
-		// The symbol. If none were specified, just assume it's identical to the code index
+		// The symbol. If none was specified, assume it is identical to the code index.
 		uint32 symbol = symbols ? symbols[i] : i;
 
 		if (length <= _prefixTableBits) {
@@ -138,7 +138,7 @@ Huffman<BITSTREAM>::Huffman(uint8 maxLength, uint32 codeCount, const uint32 *cod
 				_prefixTable[index].length = length;
 			}
 		} else {
-			// Put the code and symbol into the correct list for the length
+			// Put the code and symbol into the correct list for the length.
 			_codes[lengths[i] - 1 - _prefixTableBits].push_back(Symbol(codes[i], symbol));
 		}
 	}

@@ -80,8 +80,11 @@ void debugN(int level, const char *s, ...) GCC_PRINTF(2, 3);
  * if the specified special debug level is active.
  * As a rule of thumb, the more important the message, the lower the level.
  * Automatically appends a newline.
- *
  * @see enableDebugChannel
+ *
+ * @param level         Debug level that must be active for the message to be printed.
+ * @param debugChannels Bitfield of channels to check against.
+ * @param s             Message to print.
  */
 void debugC(int level, uint32 debugChannels, const char *s, ...) GCC_PRINTF(3, 4);
 
@@ -91,8 +94,12 @@ void debugC(int level, uint32 debugChannels, const char *s, ...) GCC_PRINTF(3, 4
  * if the specified special debug level is active.
  * As a rule of thumb, the more important the message, the lower the level.
  * Does not append a newline automatically.
- *
  * @see enableDebugChannel
+ *
+ * @param level         Debug level that must be active for the message to be printed.
+ * @param debugChannels Bitfield of channels to check against.
+ * @param s             Message to print.
+ * 
  */
 void debugCN(int level, uint32 debugChannels, const char *s, ...) GCC_PRINTF(3, 4);
 
@@ -100,8 +107,10 @@ void debugCN(int level, uint32 debugChannels, const char *s, ...) GCC_PRINTF(3, 
  * Print a debug message to the text console (stdout), but only if
  * the specified special debug level is active.
  * Automatically appends a newline.
- *
  * @see enableDebugChannel
+ *
+ * @param debugChannels Bitfield of channels to check against.
+ * @param s             Message to print.
  */
 void debugC(uint32 debugChannels, const char *s, ...) GCC_PRINTF(2, 3);
 
@@ -109,8 +118,10 @@ void debugC(uint32 debugChannels, const char *s, ...) GCC_PRINTF(2, 3);
  * Print a debug message to the text console (stdout), but only if
  * the specified special debug level is active.
  * Does not append a newline automatically.
- *
  * @see enableDebugChannel
+ *
+ * @param debugChannels Bitfield of channels to check against.
+ * @param s             Message to print.
  */
 void debugCN(uint32 debugChannels, const char *s, ...) GCC_PRINTF(2, 3);
 
@@ -125,7 +136,7 @@ bool debugLevelSet(int level);
  * Check whether the debug level and channel are active.
  *
  * @param level         Debug level to check against. If set to -1, only channel check is active.
- * @param debugChannels Debug channel to check against.
+ * @param debugChannels Bitfield of channels to check against.
  * @see enableDebugChannel
  */
 bool debugChannelSet(int level, uint32 debugChannels);

@@ -111,8 +111,8 @@ String parseGameGUIOptions(const String &str);
 const String getGameGUIOptionsDescription(const String &options);
 
 /**
- * Updates the GUI options of the current config manager
- * domain, when they differ to the ones passed as
+ * Update the GUI options of the current config manager
+ * domain when they differ to the ones passed as
  * parameter.
  */
 void updateGameGUIOptions(const String &options, const String &langOption);
