@@ -85,8 +85,6 @@ void Font::load(const Common::String &filename, Common::SeekableReadStream *data
 	g_driver->createFont(this);
 }
 
-
-
 uint16 Font::getCharIndex(unsigned char c) const {
 	uint16 c2 = uint16(c);
 

@@ -33,7 +33,6 @@ namespace Grim {
 
 Localizer *g_localizer = nullptr;
 
-
 Localizer::Localizer() {
 	// To avoid too wide lines further below, we just name these here.
 	bool isAnyDemo = g_grim->getGameFlags() & ADGF_DEMO;

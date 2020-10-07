@@ -80,7 +80,10 @@ ResourceLoader::ResourceLoader() {
 	Common::ArchiveMemberList files, updFiles;
 
 	//Load the update from the executable, if needed
-	const char *updateFilename = NULL;//g_grim->getUpdateFilename();
+	const char *updateFilename = nullptr;
+	if (g_grim->getGameType() == GType_GRIM && !(g_grim->getGameFlags() & ADGF_REMASTERED)) {
+		updateFilename = g_grim->getUpdateFilename();
+	}
 	if (updateFilename) {
 		Common::File *updStream = new Common::File();
 		if (updStream && updStream->open(updateFilename)) {
@@ -365,25 +368,27 @@ Costume *ResourceLoader::loadCostume(const Common::String &filename, Actor *owne
 Font *ResourceLoader::loadFont(const Common::String &filename) {
 	Common::SeekableReadStream *stream;
 
-	Common::String name = "FontsHD/" + filename + ".txt";
-	stream = openNewStreamFile(name, true);
-	if (stream) {
-		Common::String line = stream->readLine();
-		Common::String font;
-		Common::String size;
-		for (int i = 0; i < line.size(); ++i) {
-			if (line[i] == ' ') {
-				font = "FontsHD/" + Common::String(line.c_str(), i);
-				size = Common::String(line.c_str() + i + 1, line.size() - i - 2);
+	if (g_grim->getGameType() == GType_GRIM && (g_grim->getGameFlags() & ADGF_REMASTERED)) {
+		Common::String name = "FontsHD/" + filename + ".txt";
+		stream = openNewStreamFile(name, true);
+		if (stream) {
+			Common::String line = stream->readLine();
+			Common::String font;
+			Common::String size;
+			for (int i = 0; i < line.size(); ++i) {
+				if (line[i] == ' ') {
+					font = "FontsHD/" + Common::String(line.c_str(), i);
+					size = Common::String(line.c_str() + i + 1, line.size() - i - 2);
+				}
 			}
-		}
 
-		int s = atoi(size.c_str());
-		delete stream;
-		stream = openNewStreamFile(font.c_str(), true);
-		FontTTF *result = new FontTTF();
-		result->loadTTF(font, stream, s);
-		return result;
+			int s = atoi(size.c_str());
+			delete stream;
+			stream = openNewStreamFile(font.c_str(), true);
+			FontTTF *result = new FontTTF();
+			result->loadTTF(font, stream, s);
+			return result;
+		}
 	}
 
 	stream = openNewStreamFile(filename.c_str(), true);

@@ -93,8 +93,7 @@ private:
 	void *_userData;
 };
 
-class FontTTF : public Font
-{
+class FontTTF : public Font {
 public:
 	void loadTTF(const Common::String &filename, Common::SeekableReadStream *data, int size);
 

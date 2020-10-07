@@ -333,7 +333,7 @@ static const GrimGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_REMASTERED,
-			GUIO1(GAMEOPTION_LOAD_DATAUSR)
+			GUI_OPTIONS_GRIME
 		},
 		GType_GRIM
 	},

@@ -36,10 +36,10 @@ public:
 protected:
 
 	// Overrides from Lua_V1
-	DECLARE_LUA_OPCODE(GetFontDimensions);
-	DECLARE_LUA_OPCODE(GetTextObjectDimensions);
-	DECLARE_LUA_OPCODE(Load);
-	DECLARE_LUA_OPCODE(Save);
+	DECLARE_LUA_OPCODE(GetFontDimensions) override;
+	DECLARE_LUA_OPCODE(GetTextObjectDimensions) override;
+	DECLARE_LUA_OPCODE(Load) override;
+	DECLARE_LUA_OPCODE(Save) override;
 
 	// Remastered
 	DECLARE_LUA_OPCODE(GetPlatform);

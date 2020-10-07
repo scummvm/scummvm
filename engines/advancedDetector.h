@@ -67,6 +67,7 @@ struct ADGameFileDescription {
 
 enum ADGameFlags {
 	ADGF_NO_FLAGS        =  0,
+	ADGF_REMASTERED      = (1 << 19), ///< add "-remastered' to gameid // ResidualVM
 	ADGF_AUTOGENTARGET   = (1 << 20), ///< automatically generate gameid from extra
 	ADGF_UNSTABLE        = (1 << 21), ///< flag to designate not yet officially-supported games that are not fit for public testing
 	ADGF_TESTING         = (1 << 22), ///< flag to designate not yet officially-supported games that are fit for public testing
@@ -77,8 +78,7 @@ enum ADGameFlags {
 	ADGF_DROPLANGUAGE    = (1 << 27), ///< don't add language to gameid
 	ADGF_DROPPLATFORM    = (1 << 28), ///< don't add platform to gameid
 	ADGF_CD              = (1 << 29), ///< add "-cd" to gameid
-	ADGF_DEMO            = (1 << 30), ///< add "-demo" to gameid
-	ADGF_REMASTERED      = (1 << 31)  ///< remastered
+	ADGF_DEMO            = (1 << 30)  ///< add "-demo" to gameid
 };
 
 struct ADGameDescription {

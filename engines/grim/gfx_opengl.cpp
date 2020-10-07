@@ -1432,6 +1432,9 @@ struct TextObjectUserData {
 };
 
 void GfxOpenGL::createTextObject(TextObject *text) {
+	if (g_grim->getGameType() != GType_GRIM || !(g_grim->getGameFlags() & ADGF_REMASTERED))
+		return;
+
 	//error("Could not get font userdata");
 	const Font *font = text->getFont();
 	const FontTTF *f = static_cast<const FontTTF *>(font);
@@ -1463,7 +1466,6 @@ void GfxOpenGL::createTextObject(TextObject *text) {
 
 	ud->_texids = texids;
 	text->setUserData(ud);
-
 }
 
 void GfxOpenGL::drawTextObject(const TextObject *text) {
@@ -1589,7 +1591,7 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 }
 
 void GfxOpenGL::destroyTextObject(TextObject *text) {
-	TextObjectUserData *ud = (TextObjectUserData *)text->getUserData();
+	TextObjectUserData *ud = (TextObjectUserData *)const_cast<void *>(text->getUserData());
 	glDeleteTextures(text->getNumLines(), ud->_texids);
 	delete ud;
 }

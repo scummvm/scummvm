@@ -174,7 +174,7 @@ void Lua_Remastered::QueryActiveHotspots() {
 
 	assert(lua_isnumber(param));
 
-	warning("Stub function: QueryActiveHotspots(%d)", lua_getnumber(param));
+	warning("Stub function: QueryActiveHotspots(%f)", lua_getnumber(param));
 
 	// TODO: Handle coord scaling better
 	float scaleX = 1920.0f/1600;
@@ -239,7 +239,7 @@ void Lua_Remastered::SetCursor() {
 
 	assert(lua_isnumber(param1));
 
-	warning("Stub function: SetCursor(%d)", lua_getnumber(param1));
+	warning("Stub function: SetCursor(%f)", lua_getnumber(param1));
 }
 
 void Lua_Remastered::GetPlatform() {
@@ -469,7 +469,7 @@ void Lua_Remastered::FindSaveGames() {
 		Common::String str1;
 		Common::String str2;
 		int x;
-		int32 dataSize = savedState->beginSection('META');
+		/*int32 dataSize = */savedState->beginSection('META');
 		char str[200] = {};
 		int32 strSize = 0;
 		
@@ -582,10 +582,10 @@ void Lua_Remastered::ReadRegistryIntValue() {
 static void stubWarning(const char *funcName) {
     warning("Stub function: %s", funcName);
 }
-
+/*
 static void stubError(const char *funcName) {
 	error("Stub function: %s", funcName);
-}
+}*/
 
 #define STUB_FUNC(name) void name() { stubWarning(#name); }
 #define STUB_FUNC2(name) void name() { stubError(#name); }

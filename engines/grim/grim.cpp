@@ -380,7 +380,11 @@ Common::Error GrimEngine::run() {
 	g_sound = new SoundPlayer();
 
 	bool fullscreen = ConfMan.getBool("fullscreen");
-	g_driver->setupScreen(640, 480, fullscreen);
+	if (getGameType() == GType_GRIM && (g_grim->getGameFlags() & ADGF_REMASTERED)) {
+		g_driver = createRenderer(1600, 900, fullscreen);
+	} else {
+		g_driver = createRenderer(640, 480, fullscreen);
+	}
 
 	if (getGameType() == GType_MONKEY4 && SearchMan.hasFile("AMWI.m4b")) {
 		// Play EMI Mac Aspyr logo
@@ -1114,8 +1118,6 @@ void GrimEngine::mainLoop() {
 			}
 		}
 
-
-
 		if (_mode != PauseMode) {
 			// Draw the display scene before doing the luaUpdate.
 			// This give a large performance boost as OpenGL stores commands
@@ -1301,7 +1303,7 @@ void GrimEngine::restoreGRIM() {
 }
 
 void GrimEngine::storeSaveGameMetadata(SaveGame *state) {
-	if (!g_grim->getGameFlags() & ADGF_REMASTERED) {
+	if (!(g_grim->getGameFlags() & ADGF_REMASTERED)) {
 		return;
 	}
 	state->beginSection('META');
