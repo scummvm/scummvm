@@ -324,7 +324,7 @@ int Quetzal::restore(Common::SeekableReadStream *sv, Processor *proc) {
 					return fatal;
 				
 				for (i = 0; i < tmpw; ++i)
-					--*p._sp = s->readUint16BE();
+					*--p._sp = s->readUint16BE();
 				currlen -= tmpw * 2;
 			}
 
