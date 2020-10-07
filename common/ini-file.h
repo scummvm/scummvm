@@ -43,48 +43,51 @@ class SeekableReadStream;
 class WriteStream;
 
 /**
- * This class allows reading/writing INI style config files.
+ * This class allows for reading and writing INI-style config files.
  *
  * Lines starting with a '#' are ignored (i.e. treated as comments).
  * Some effort is made to preserve comments, though.
  *
  * This class makes no attempts to provide fast access to key/value pairs.
- * In particular, it stores all sections and k/v pairs in lists, not
+ * In particular, it stores all sections and key/value pairs in lists, not
  * in dictionaries/maps. This makes it very easy to read/write the data
  * from/to files, but of course is not appropriate for fast access.
  * The main reason is that this class is indeed geared toward doing precisely
- * that!
+ * that.
  */
 class INIFile {
 public:
 	struct KeyValue {
-		String key;
-		String value;
-		String comment;
+		String key;     /*!< Key of the configuration entry. */
+		String value;   /*!< Value of the configuration entry. */
+		String comment; /*!< Comment within an INI file. */
 	};
 
-	typedef List<KeyValue> SectionKeyList;
+	typedef List<KeyValue> SectionKeyList; /*!< A list of all key/value pairs in this section. */
 
-	/** A section in a ini file. I.e. corresponds to something like this:
-	 *   [mySection]
-	 *   key=value
+	/** A section in an INI file.
 	 *
-	 * Comments are also stored, to keep users happy who like editing their
-	 * ini files manually.
+	 * Corresponds to the following:
+	 * @code
+	 * [mySection]
+	 * key=value
+	 * @endcode
+	 * Comments are also stored, for convenience of users who prefer to edit
+	 * INI files manually.
 	 */
 	struct Section {
-		String name;
-		List<KeyValue> keys;
-		String comment;
+		String name;         /*!< Name of the section. */
+		List<KeyValue> keys; /*!< List of all keys in this section. */
+		String comment;      /*!< Comment within the section. */
 
-		bool hasKey(const String &key) const;
-		const KeyValue* getKey(const String &key) const;
-		void setKey(const String &key, const String &value);
-		void removeKey(const String &key);
-		const SectionKeyList getKeys() const { return keys; }
+		bool hasKey(const String &key) const; /*!< Check whether the section has a @p key. */
+		const KeyValue* getKey(const String &key) const; /*!< Get the value assigned to a @p key. */
+		void setKey(const String &key, const String &value); /*!< Assign a @p value to a @p key. */
+		void removeKey(const String &key); /*!< Remove a @p key from this section. */
+		const SectionKeyList getKeys() const { return keys; } /*!< Get a list of all keys in the section. */
 	};
 
-	typedef List<Section> SectionList;
+	typedef List<Section> SectionList; /*!< A list of all sections in this INI file. */
 
 public:
 	INIFile();
@@ -94,40 +97,40 @@ public:
 
 	/**
 	 * Check whether the given string is a valid section or key name.
-	 * For that, it must only consist of letters, numbers, dashes and
-	 * underscores. In particular, white space and "#", "=", "[", "]"
-	 * are not valid!
+	 * For that, it must only consist of letters, numbers, dashes, and
+	 * underscores. In particular, whitespace and "#", "=", "[", "]"
+	 * are not valid.
 	 */
 	bool isValidName(const String &name) const;
 
-	/** Reset everything stored in this ini file. */
+	/** Reset everything stored in this INI file. */
 	void	clear();
 
-	bool	loadFromFile(const String &filename);
-	bool	loadFromSaveFile(const String &filename);
-	bool	loadFromStream(SeekableReadStream &stream);
-	bool	saveToFile(const String &filename);
-	bool	saveToSaveFile(const String &filename);
-	bool	saveToStream(WriteStream &stream);
+	bool	loadFromFile(const String &filename); /*!< Load configuration from a file. */
+	bool	loadFromSaveFile(const String &filename); /*!< Load configuration from a save file. */
+	bool	loadFromStream(SeekableReadStream &stream); /*!< Load configuration from a @ref SeekableReadStream. */
+	bool	saveToFile(const String &filename); /*!< Save the current configuration to a file. */
+	bool	saveToSaveFile(const String &filename); /*!< Save the current configuration to a save file. */
+	bool	saveToStream(WriteStream &stream); /*!< Save the current configuration to a @ref WriteStream. */
 
-	bool	hasSection(const String &section) const;
-	void	addSection(const String &section);
-	void	removeSection(const String &section);
-	void	renameSection(const String &oldName, const String &newName);
+	bool	hasSection(const String &section) const; /*!< Check whether the INI file has a section with the specified name. */
+	void	addSection(const String &section); /*!< Add a section with the specified name to the INI file. */
+	void	removeSection(const String &section); /*!< Remove the @p section from the INI file. */
+	void	renameSection(const String &oldName, const String &newName); /*!< Rename the INI file from @p oldName to @p newName. */
 
-	void	setDefaultSectionName(const String &name); ///< sets initial section name for section-less ini files
+	void	setDefaultSectionName(const String &name); /*!< Set initial section name for section-less INI files. */
 
-	bool	hasKey(const String &key, const String &section) const;
-	bool	getKey(const String &key, const String &section, String &value) const;
-	void	setKey(const String &key, const String &section, const String &value);
-	void	removeKey(const String &key, const String &section);
+	bool	hasKey(const String &key, const String &section) const; /*!< Check whether the @p section has a @p key. */
+	bool	getKey(const String &key, const String &section, String &value) const; /*!< Get the @p value of a @p key in a @p section. */
+	void	setKey(const String &key, const String &section, const String &value); /*!< Assign a @p value to a @p key in a @p section. */
+	void	removeKey(const String &key, const String &section); /*!< Remove a @p key from this @p section. */
 
-	const SectionList getSections() const { return _sections; }
-	const SectionKeyList getKeys(const String &section) const;
+	const SectionList getSections() const { return _sections; } /*!< Get a list of sections in this INI file. */
+	const SectionKeyList getKeys(const String &section) const; /*!< Get a list of keys in a @p section. */
 
-	void listKeyValues(StringMap &kv);
+	void listKeyValues(StringMap &kv); /*!< Get a list of all key/value pairs in this INI file. */
 
-	void allowNonEnglishCharacters();
+	void allowNonEnglishCharacters(); /*!< Allow non-English characters in this INI file. */
 
 private:
 	String		_defaultSectionName;

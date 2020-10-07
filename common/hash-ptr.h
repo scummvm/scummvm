@@ -37,7 +37,7 @@ namespace Common {
  */
 
 /**
- * Partial specialization of the Hash functor to be able to use pointers as HashMap keys
+ * Partial specialization of the Hash functor allowing to use pointers as HashMap keys.
  */
 template<typename T>
 struct Hash<T *> {

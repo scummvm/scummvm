@@ -48,24 +48,24 @@ namespace Common {
 class DialogManager {
 public:
 	/**
-	 * Values representing the user response to a dialog
+	 * Values representing the user response to a dialog.
 	 */
 	enum DialogResult {
-		kDialogError = -1,	///< Dialog couldn't be displayed
-		kDialogCancel = 0,	///< User cancelled the dialog (Cancel/No/Close buttons)
-		kDialogOk = 1		///< User confirmed the dialog (OK/Yes buttons)
+		kDialogError = -1,	///< Dialog could not be displayed.
+		kDialogCancel = 0,	///< User cancelled the dialog (Cancel/No/Close buttons).
+		kDialogOk = 1		///< User confirmed the dialog (OK/Yes buttons).
 	};
 
 	DialogManager() : _wasFullscreen(false) {}
 	virtual ~DialogManager() {}
 
 	/**
-	 * Displays a dialog for selecting a file or folder in the filesystem.
+	 * Display a dialog for selecting a file or folder in the file system.
 	 *
-	 * @param title The dialog title
-	 * @param choice The path selected by the user
-	 * @param isDirBrowser Restrict selection to directories
-	 * @return The dialog result
+	 * @param title        Dialog title.
+	 * @param choice       Path selected by the user.
+	 * @param isDirBrowser Restrict selection to directories.
+	 * @return The dialog result.
 	 */
 	virtual DialogResult showFileBrowser(const Common::U32String &title, FSNode &choice, bool isDirBrowser = false) { return kDialogError; }
 
