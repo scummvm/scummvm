@@ -131,6 +131,7 @@ void InterfacePanel::onLeftButtonDown(Common::Point p) {
 		g_vm->loadPart(1);
 		break;
 	case kLoadButtonIndex:
+		stop();
 		g_vm->getQSystem()->_saveLoadInterface->start(kLoadMode);
 		break;
 	case kContinueButtonIndex:
@@ -140,6 +141,7 @@ void InterfacePanel::onLeftButtonDown(Common::Point p) {
 		g_system->quit();
 		break;
 	case kSaveButtonIndex:
+		stop();
 		g_vm->getQSystem()->_saveLoadInterface->start(kSaveMode);
 		break;
 	case kSubtitleButtonIndex:
