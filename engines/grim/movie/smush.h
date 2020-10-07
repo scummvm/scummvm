@@ -25,9 +25,7 @@
 
 #include "engines/grim/movie/movie.h"
 
-namespace Video {
-	class TheoraDecoder;
-}
+#include "video/theora_decoder.h"
 
 namespace Grim {
 

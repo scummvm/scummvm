@@ -23,8 +23,6 @@
 #include "engines/grim/movie/codecs/smush_decoder.h"
 #include "engines/grim/movie/smush.h"
 
-#include "video/theora_decoder.h"
-
 #include "engines/grim/resource.h"
 #include "engines/grim/grim.h"
 
