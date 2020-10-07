@@ -1,6 +1,7 @@
 #!/bin/sh
 
-root=$(realpath $(dirname $0)/..)
+#root=$(realpath $(dirname $0)/..)
+root=$(dirname $0)/..
 
 for flag in "$@"; do
 	case "$flag" in
