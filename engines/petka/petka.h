@@ -49,6 +49,10 @@ namespace Common {
 class SeekableReadStream;
 }
 
+namespace Video {
+class VideoDecoder;
+}
+
 namespace Petka {
 
 class Console;
@@ -118,6 +122,7 @@ private:
 	Common::ScopedPtr<QSystem> _qsystem;
 	Common::ScopedPtr<VideoSystem> _vsys;
 	Common::ScopedPtr<BigDialogue> _dialogMan;
+	Common::ScopedPtr<Video::VideoDecoder> _videoDec;
 	const ADGameDescription *_desc;
 
 	Common::RandomSource _rnd;

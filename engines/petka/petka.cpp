@@ -50,7 +50,7 @@ PetkaEngine *g_vm;
 
 PetkaEngine::PetkaEngine(OSystem *system, const ADGameDescription *desc)
 	: Engine(system), _console(nullptr), _fileMgr(nullptr), _resMgr(nullptr),
-	_qsystem(nullptr), _vsys(nullptr), _desc(desc), _rnd("petka") {
+	_qsystem(nullptr), _vsys(nullptr), _desc(desc), _videoDec(nullptr), _rnd("petka") {
 
 	DebugMan.addDebugChannel(kPetkaDebugGeneral, "general", "General issues");
 	DebugMan.addDebugChannel(kPetkaDebugMessagingSystem, "resources", "Resources");
@@ -79,12 +79,11 @@ Common::Error PetkaEngine::run() {
 
 	const char *const videos[] = {"buka.avi", "skif.avi", "adv.avi"};
 	for (uint i = 0; i < sizeof(videos) / sizeof(char *); ++i) {
-		Common::File *file = new Common::File;
+		Common::ScopedPtr<Common::File> file(new Common::File);
 		if (file->open(videos[i])) {
-			playVideo(file);
+			playVideo(file.release());
 		} else {
 			debugC(kPetkaDebugResources, "Video file %s can't be opened", videos[i]);
-			delete file;
 		}
 	}
 
@@ -171,31 +170,35 @@ Common::RandomSource &PetkaEngine::getRnd() {
 }
 
 void PetkaEngine::playVideo(Common::SeekableReadStream *stream) {
-	Video::AVIDecoder decoder;
-	if (stream && !decoder.loadStream(stream)) {
+	PauseToken token = pauseEngine();
+	Graphics::PixelFormat fmt = _system->getScreenFormat();
+
+	_videoDec.reset(new Video::AVIDecoder);
+	if (!_videoDec->loadStream(stream)) {
+		_videoDec.reset();
 		return;
 	}
 
-	g_system->getMixer()->pauseAll(true);
-	Graphics::PixelFormat fmt = _system->getScreenFormat();
+	_videoDec->start();
 
-	decoder.start();
-	while (!decoder.endOfVideo()) {
+	while (!_videoDec->endOfVideo() && !shouldQuit()) {
 		Common::Event event;
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
+			case Common::EVENT_RETURN_TO_LAUNCHER:
+			case Common::EVENT_QUIT:
 			case Common::EVENT_LBUTTONDOWN:
 			case Common::EVENT_RBUTTONDOWN:
 			case Common::EVENT_KEYDOWN:
-				decoder.close();
-				break;
+				_videoDec.reset();
+				return;
 			default:
 				break;
 			}
 		}
 
-		if (decoder.needsUpdate()) {
-			const Graphics::Surface *frame = decoder.decodeNextFrame();
+		if (_videoDec->needsUpdate()) {
+			const Graphics::Surface *frame = _videoDec->decodeNextFrame();
 			if (frame) {
 				Common::ScopedPtr<Graphics::Surface, Graphics::SurfaceDeleter> f(frame->convertTo(fmt));
 				_system->copyRectToScreen(f->getPixels(), f->pitch, 0, 0, f->w, f->h);
@@ -205,7 +208,8 @@ void PetkaEngine::playVideo(Common::SeekableReadStream *stream) {
 		_system->updateScreen();
 		_system->delayMillis(15);
 	}
-	g_system->getMixer()->pauseAll(false);
+
+	_videoDec.reset();
 }
 
 bool PetkaEngine::isDemo() const {
@@ -304,8 +308,12 @@ bool PetkaEngine::hasFeature(EngineFeature f) const {
 }
 
 void PetkaEngine::pauseEngineIntern(bool pause) {
-	if (!pause)
+	if (!pause && _vsys)
 		_vsys->updateTime();
+
+	if (_videoDec)
+		_videoDec->pauseVideo(pause);
+
 	Engine::pauseEngineIntern(pause);
 }
 
