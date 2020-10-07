@@ -54,6 +54,7 @@ namespace Video {
  * Decoder for AVI videos.
  *
  * Video decoder used in engines:
+ *  - petka
  *  - sci
  *  - sword1
  *  - sword2
