@@ -7,6 +7,13 @@ Programmcodes finden Sie auf Englisch unter:
  Allgemein:
    - Die ScummVM-Benutzeroberfläche unterstützt nun UTF-32.
 
+ GLK:
+   - Probleme mit Spielständen in mehreren Sub-Engines behoben.
+   - Speicherüberlauf im Erkennungsmechanismus für Level9-Spiele behoben.
+
+ Lure:
+   - Die Feuer-Animation im ersten Raum wird nun auch nach dem Laden eines Spielstands abgespielt.
+
  SAGA:
    - Unterstützung für ITE GOG Mac CD v1.1 hinzugefügt.
 
@@ -15,6 +22,13 @@ Programmcodes finden Sie auf Englisch unter:
 
  Supernova:
    - Teil 1 von Supernova ist nun in einer italienischen Übersetzung verfügbar.
+
+ Sword25:
+   - Unterstützung für die entpackte Version hinzugefügt.
+
+ Ultima:
+   - Ultima 4: Erweiterung des Debuggers um mehrere Befehle.
+   - Ultima 4: Die Return-Taste kann nun dazu genutzt werden, die ZStats-Anzeige zu verlassen.
 
  Xeen:
    - Gelegentliche Grafikfehler in Kampf-Szenen korrigiert.
