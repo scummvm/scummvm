@@ -6,6 +6,13 @@ For a more comprehensive changelog of the latest experimental code, see:
  General:
    - Switched ScummVM GUI output to UTF-32.
 
+ GLK:
+   - Fix savegame issues with several subengines
+   - Fix memory overrun in Level9 game detector
+
+ Lure:
+   - Fix fire animation in first room when loading saves
+
  SAGA:
    - Added support for ITE GOG Mac CD v1.1.
 
@@ -17,6 +24,10 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Sword25:
    - Made the extracted version working.
+
+ Ultima:
+   - Ultima 4: Added several debugger commands
+   - Ultima 4: Allow Enter key to exit ZStats display
 
  Xeen:
    - Fixed occasional border corruption during fights.
