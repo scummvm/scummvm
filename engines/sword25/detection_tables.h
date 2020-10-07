@@ -124,7 +124,7 @@ static const ADGameDescription gameDescriptions[] = {
 		 {"boot.lua", 0, 0, -1},
 		 {"kernel.lua", 0, 0, -1},
 		 AD_LISTEND},
-		Common::EN_ANY,
+		Common::UNK_LANG,
 		Common::kPlatformUnknown,
 		GF_EXTRACTED | ADGF_NO_FLAGS,
 		GUIO1(GUIO_NOASPECT)
