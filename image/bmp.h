@@ -25,6 +25,7 @@
  * Image decoder used in engines:
  *  - hugo
  *  - mohawk
+ *  - petka
  *  - wintermute
  */
 

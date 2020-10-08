@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-09-02 12:38+0200\n"
-"PO-Revision-Date: 2020-08-29 16:30+0000\n"
-"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
+"POT-Creation-Date: 2020-10-01 01:55+0200\n"
+"PO-Revision-Date: 2020-09-15 18:44+0000\n"
+"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -62,7 +62,7 @@ msgstr "Remonter"
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:60
 #: gui/saveload-dialog.cpp:60 gui/saveload-dialog.cpp:393
 #: gui/saveload-dialog.cpp:465 gui/saveload-dialog.cpp:767
-#: gui/saveload-dialog.cpp:1165 gui/themebrowser.cpp:55
+#: gui/saveload-dialog.cpp:1163 gui/themebrowser.cpp:55
 #: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:642
 #: backends/dialogs/gtk/gtk-dialogs.cpp:47
 #: backends/events/default/default-events.cpp:176
@@ -83,7 +83,7 @@ msgstr "Annuler"
 #: gui/remotebrowser.cpp:61 gui/themebrowser.cpp:56
 #: backends/dialogs/gtk/gtk-dialogs.cpp:46
 #: backends/dialogs/macosx/macosx-dialogs.mm:132
-#: backends/dialogs/win32/win32-dialogs.cpp:137
+#: backends/dialogs/win32/win32-dialogs.cpp:138
 msgid "Choose"
 msgstr "Choisir"
 
@@ -159,7 +159,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:351
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:43 gui/launcher.cpp:487
 #: gui/launcher.cpp:491 gui/massadd.cpp:89 gui/options.cpp:1840
-#: gui/saveload-dialog.cpp:1166 engines/engine.cpp:502 engines/engine.cpp:513
+#: gui/saveload-dialog.cpp:1164 engines/engine.cpp:502 engines/engine.cpp:513
 #: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
 #: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
@@ -185,14 +185,14 @@ msgstr ""
 "Êtes-vous sûr de vouloir télécharger dans ce répertoire ?"
 
 #: gui/downloaddialog.cpp:215
-#, fuzzy, c-format
+#, c-format
 msgid "Downloaded %s %S / %s %S"
-msgstr "Téléchargé %s %s / %s %s"
+msgstr "Téléchargé %s %S / %s %S"
 
 #: gui/downloaddialog.cpp:222
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %S"
-msgstr "Vitesse de téléchargement : %s %s"
+msgstr "Vitesse de téléchargement : %s %S"
 
 #: gui/editgamedialog.cpp:135 engines/dialogs.cpp:285
 msgid "Game"
@@ -268,7 +268,7 @@ msgid "Engine"
 msgstr "Moteur"
 
 #: gui/editgamedialog.cpp:196 gui/options.cpp:1567 gui/options.cpp:1698
-#: backends/graphics/sdl/sdl-graphics.cpp:365
+#: backends/graphics/sdl/sdl-graphics.cpp:368
 #: backends/platform/ds/arm9/source/dsoptions.cpp:97
 msgid "Graphics"
 msgstr "Graphique"
@@ -371,12 +371,12 @@ msgstr "Chemins"
 
 #: gui/editgamedialog.cpp:310
 msgid "Game Path:"
-msgstr "Chemin du Jeu :"
+msgstr "Chemin du jeu :"
 
 #: gui/editgamedialog.cpp:312
 msgctxt "lowres"
 msgid "Game Path:"
-msgstr "Chemin du Jeu :"
+msgstr "Chemin du jeu :"
 
 #: gui/editgamedialog.cpp:317 gui/options.cpp:1956
 msgid "Extra Path:"
@@ -527,7 +527,7 @@ msgid "Sine"
 msgstr "Sinus"
 
 #: gui/fluidsynth-dialog.cpp:137 backends/platform/sdl/ps3/ps3.cpp:44
-#: backends/platform/sdl/psp2/psp2.cpp:48 engines/dragons/detection.cpp:289
+#: backends/platform/sdl/psp2/psp2.cpp:48 engines/dragons/detection.cpp:307
 msgid "Triangle"
 msgstr "Triangle"
 
@@ -556,7 +556,7 @@ msgid "Seventh-order"
 msgstr "Septième degré"
 
 #. I18N: Button to reset keymap mappings to defaults
-#: gui/fluidsynth-dialog.cpp:151 backends/keymapper/remap-widget.cpp:314
+#: gui/fluidsynth-dialog.cpp:151 backends/keymapper/remap-widget.cpp:319
 msgid "Reset"
 msgstr "Réinitialiser"
 
@@ -587,38 +587,40 @@ msgstr "Interagir"
 msgid "Close"
 msgstr "Fermer"
 
-#: gui/gui-manager.cpp:137 engines/metaengine.cpp:112
+#: gui/gui-manager.cpp:137 engines/metaengine.cpp:108
 #: backends/platform/symbian/src/SymbianActions.cpp:40
-#: engines/dragons/detection.cpp:259 engines/glk/scott/scott.cpp:412
-#: engines/wintermute/keymapper_tables.h:1011
+#: engines/dragons/detection.cpp:277 engines/glk/scott/scott.cpp:412
+#: engines/griffon/detection.cpp:129 engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
 #: engines/wintermute/keymapper_tables.h:1409
 #: engines/wintermute/keymapper_tables.h:1639
 msgid "Up"
 msgstr "Haut"
 
-#: gui/gui-manager.cpp:142 engines/metaengine.cpp:117
+#: gui/gui-manager.cpp:142 engines/metaengine.cpp:113
 #: backends/platform/symbian/src/SymbianActions.cpp:41
-#: engines/dragons/detection.cpp:265 engines/glk/scott/scott.cpp:412
-#: engines/wintermute/keymapper_tables.h:1017
+#: engines/dragons/detection.cpp:283 engines/glk/scott/scott.cpp:412
+#: engines/griffon/detection.cpp:135 engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
 #: engines/wintermute/keymapper_tables.h:1415
 #: engines/wintermute/keymapper_tables.h:1645
 msgid "Down"
 msgstr "Bas"
 
-#: gui/gui-manager.cpp:147 engines/metaengine.cpp:122
+#: gui/gui-manager.cpp:147 engines/metaengine.cpp:118
 #: backends/platform/symbian/src/SymbianActions.cpp:42
-#: engines/dragons/detection.cpp:271 engines/wintermute/keymapper_tables.h:1023
+#: engines/dragons/detection.cpp:289 engines/griffon/detection.cpp:141
+#: engines/wintermute/keymapper_tables.h:1023
 #: engines/wintermute/keymapper_tables.h:1397
 #: engines/wintermute/keymapper_tables.h:1505
 #: engines/wintermute/keymapper_tables.h:1627
 msgid "Left"
 msgstr "Gauche"
 
-#: gui/gui-manager.cpp:152 engines/metaengine.cpp:127
+#: gui/gui-manager.cpp:152 engines/metaengine.cpp:123
 #: backends/platform/symbian/src/SymbianActions.cpp:43
-#: engines/dragons/detection.cpp:277 engines/wintermute/keymapper_tables.h:1029
+#: engines/dragons/detection.cpp:295 engines/griffon/detection.cpp:147
+#: engines/wintermute/keymapper_tables.h:1029
 #: engines/wintermute/keymapper_tables.h:1403
 #: engines/wintermute/keymapper_tables.h:1513
 #: engines/wintermute/keymapper_tables.h:1633
@@ -986,7 +988,7 @@ msgstr "Mode spécial de tramage supporté par certains jeux"
 msgid "Stretch mode:"
 msgstr "Mode d'étirement :"
 
-#: gui/options.cpp:1258 backends/graphics/sdl/sdl-graphics.cpp:356
+#: gui/options.cpp:1258 backends/graphics/sdl/sdl-graphics.cpp:359
 msgid "Fullscreen mode"
 msgstr "Plein écran"
 
@@ -1311,7 +1313,7 @@ msgstr "Langue de l'interface graphique de ScummVM"
 
 #: gui/options.cpp:2035
 msgid "Switch the ScummVM GUI language to the game language"
-msgstr "Utiliser la langue du jeu pour l'interface graphique"
+msgstr "Adapter la langue de l'interface ScummVM à celle du jeu"
 
 #: gui/options.cpp:2036
 msgid ""
@@ -1320,7 +1322,7 @@ msgid ""
 "same language as the game."
 msgstr ""
 "La langue de l'interface de ScummVM s'adapte à celle du jeu courant, par "
-"exemple pour les dialogues de sauvegarde et de chargement."
+"exemple pour les écrans de sauvegarde et de chargement."
 
 #: gui/options.cpp:2049
 msgid "Use native system file browser"
@@ -1580,7 +1582,7 @@ msgstr "Aucune"
 
 #: gui/options.cpp:2259
 msgid "Failed to change cloud storage!"
-msgstr "Echec du changement de service de stockage !"
+msgstr "Échec du changement de service de stockage !"
 
 #: gui/options.cpp:2262
 msgid "Another cloud storage is already active."
@@ -1757,14 +1759,12 @@ msgid "ScummVM could not access the directory!"
 msgstr "ScummVM n'a pas pu accéder au répertoire !"
 
 #: gui/saveload-dialog.cpp:52
-#, fuzzy
 msgid "Downloading saves..."
-msgstr "Chargement en cours..."
+msgstr "Téléchargement des sauvegardes en cours..."
 
 #: gui/saveload-dialog.cpp:61
-#, fuzzy
 msgid "Run in background"
-msgstr "Courir en arrière"
+msgstr "Exécuter en arrière-plan"
 
 #: gui/saveload-dialog.cpp:343
 msgid "List view"
@@ -1816,7 +1816,7 @@ msgstr "Précédent"
 
 #: gui/saveload-dialog.cpp:978
 msgid "New Save"
-msgstr "Nouvelle Sauvegarde"
+msgstr "Nouvelle sauvegarde"
 
 #: gui/saveload-dialog.cpp:978
 msgid "Create a new saved game"
@@ -1826,7 +1826,7 @@ msgstr "Crée une nouvelle sauvegarde"
 msgid "Name: "
 msgstr "Nom: "
 
-#: gui/saveload-dialog.cpp:1185
+#: gui/saveload-dialog.cpp:1183
 #, c-format
 msgid "Enter a description for slot %d:"
 msgstr "Entrez une description pour l'emplacement %d :"
@@ -1835,28 +1835,28 @@ msgstr "Entrez une description pour l'emplacement %d :"
 msgid "Select a Theme"
 msgstr "Sélectionnez un Thème"
 
-#: gui/ThemeEngine.cpp:271
+#: gui/ThemeEngine.cpp:276
 msgid "Disabled GFX"
 msgstr "GFX désactivé"
 
-#: gui/ThemeEngine.cpp:271
+#: gui/ThemeEngine.cpp:276
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "GFX désactivé"
 
-#: gui/ThemeEngine.cpp:272
+#: gui/ThemeEngine.cpp:277
 msgid "Standard renderer"
 msgstr "Rendu standard"
 
-#: gui/ThemeEngine.cpp:272 engines/scumm/dialogs.cpp:663
+#: gui/ThemeEngine.cpp:277 engines/scumm/dialogs.cpp:663
 msgid "Standard"
 msgstr "Normal"
 
-#: gui/ThemeEngine.cpp:274
+#: gui/ThemeEngine.cpp:279
 msgid "Antialiased renderer"
 msgstr "Rendu anti-crénelé"
 
-#: gui/ThemeEngine.cpp:274
+#: gui/ThemeEngine.cpp:279
 msgid "Antialiased"
 msgstr "Anti-crénelé"
 
@@ -1913,7 +1913,7 @@ msgid ""
 "in the Options dialog."
 msgstr ""
 "Vous pouvez changer ce réglage plus tard dans\n"
-"le tab Divers du dialogue d'Options."
+"l'onglet Divers des options ScummVM."
 
 #: gui/updates-dialog.cpp:116
 msgid "Proceed"
@@ -2046,7 +2046,7 @@ msgstr "Une fois par mois"
 msgid "<Bad value>"
 msgstr "<Valeur invalide>"
 
-#: engines/advancedDetector.cpp:139
+#: engines/advancedDetector.cpp:178
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr ""
 "Une copie illicite du jeu a été détectée. Nous ne fournissons aucune "
@@ -2095,7 +2095,7 @@ msgstr "Retour au ~L~anceur"
 #: engines/neverhood/menumodule.cpp:890 engines/pegasus/pegasus.cpp:374
 #: engines/prince/saveload.cpp:55 engines/sci/engine/guest_additions.cpp:698
 #: engines/sci/engine/kfile.cpp:1074 engines/sherlock/scalpel/scalpel.cpp:1250
-#: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:42
+#: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
 #: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
 #: engines/xeen/saves.cpp:277 engines/zvision/file/save_manager.cpp:49
@@ -2115,7 +2115,7 @@ msgstr "Sauvegarde :"
 #: engines/pegasus/pegasus.cpp:374 engines/prince/saveload.cpp:55
 #: engines/sci/engine/guest_additions.cpp:699 engines/sci/engine/kfile.cpp:1074
 #: engines/scumm/dialogs.cpp:181 engines/sherlock/scalpel/scalpel.cpp:1250
-#: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:42
+#: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
 #: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
 #: engines/xeen/saves.cpp:277 engines/zvision/detection.cpp:215
@@ -2139,7 +2139,7 @@ msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"Echec de la sauvegarde (%s) ! Lisez le fichier README pour les informations "
+"Échec de la sauvegarde (%s) ! Lisez le fichier README pour les informations "
 "de base et les instructions pour obtenir de l'aide supplémentaire."
 
 #: engines/dialogs.cpp:346
@@ -2213,7 +2213,7 @@ msgstr ""
 "logiciel approprié.\n"
 "Lisez le fichier README pour plus de détails."
 
-#: engines/engine.cpp:539 engines/metaengine.cpp:331 engines/savestate.cpp:81
+#: engines/engine.cpp:539 engines/metaengine.cpp:327 engines/savestate.cpp:81
 #: engines/sky/detection.cpp:316 engines/xeen/saves.cpp:290
 msgid "Autosave"
 msgstr "Sauvegarde auto"
@@ -2228,7 +2228,7 @@ msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
 "information, and for instructions on how to obtain further assistance."
 msgstr ""
-"Echec du chargement (%s) ! Lisez le fichier README pour les informations de "
+"Échec du chargement (%s) ! Lisez le fichier README pour les informations de "
 "base et les instructions pour obtenir de l'aide supplémentaire."
 
 #: engines/engine.cpp:639
@@ -2272,31 +2272,31 @@ msgstr ""
 msgid "Matched game IDs for the %s engine:"
 msgstr "Jeux possibles pour le moteur %s :"
 
-#: engines/metaengine.cpp:59
+#: engines/metaengine.cpp:55
 msgid "Default game keymap"
 msgstr "Contrôles par défaut du jeu"
 
-#: engines/metaengine.cpp:63 backends/platform/maemo/maemo.cpp:174
+#: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:174
 #: backends/platform/symbian/src/SymbianActions.cpp:44
 #: engines/hdb/detection.cpp:303 engines/wintermute/keymapper_tables.h:43
 #: engines/zvision/detection.cpp:136
 msgid "Left Click"
 msgstr "Clic Gauche"
 
-#: engines/metaengine.cpp:69 backends/platform/maemo/maemo.cpp:178
+#: engines/metaengine.cpp:65 backends/platform/maemo/maemo.cpp:178
 #: engines/wintermute/keymapper_tables.h:249
 #: engines/wintermute/keymapper_tables.h:293
 #: engines/wintermute/keymapper_tables.h:1651
 msgid "Middle Click"
 msgstr "Clic Milieu"
 
-#: engines/metaengine.cpp:74 backends/platform/maemo/maemo.cpp:182
+#: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:182
 #: backends/platform/symbian/src/SymbianActions.cpp:45
 #: engines/wintermute/keymapper_tables.h:49 engines/zvision/detection.cpp:142
 msgid "Right Click"
 msgstr "Clic Droit"
 
-#: engines/metaengine.cpp:80
+#: engines/metaengine.cpp:76
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: engines/hdb/detection.cpp:354 engines/mohawk/myst.cpp:608
 #: engines/mohawk/riven.cpp:881 engines/sky/detection.cpp:253
@@ -2304,11 +2304,11 @@ msgstr "Clic Droit"
 msgid "Pause"
 msgstr "Mettre en pause"
 
-#: engines/metaengine.cpp:85
+#: engines/metaengine.cpp:81
 msgid "Game menu"
-msgstr "Menu du Jeu"
+msgstr "Menu du jeu"
 
-#: engines/metaengine.cpp:91
+#: engines/metaengine.cpp:87
 #: backends/platform/symbian/src/SymbianActions.cpp:47
 #: engines/mohawk/myst.cpp:579 engines/mohawk/riven.cpp:852
 #: engines/wintermute/keymapper_tables.h:217
@@ -2319,16 +2319,16 @@ msgstr "Menu du Jeu"
 msgid "Skip"
 msgstr "Passer"
 
-#: engines/metaengine.cpp:97 engines/sky/detection.cpp:248
+#: engines/metaengine.cpp:93 engines/sky/detection.cpp:248
 msgid "Skip line"
 msgstr "Passer la phrase"
 
-#: engines/metaengine.cpp:103
+#: engines/metaengine.cpp:99
 msgid "Predictive input dialog"
 msgstr "Dialogue de saisie prédictive"
 
-#: engines/metaengine.cpp:107 engines/sky/detection.cpp:228
-#: engines/wintermute/keymapper_tables.h:55
+#: engines/metaengine.cpp:103 engines/griffon/detection.cpp:123
+#: engines/sky/detection.cpp:228 engines/wintermute/keymapper_tables.h:55
 msgid "Confirm"
 msgstr "Confirmer"
 
@@ -2422,19 +2422,19 @@ msgid "Creative Music System emulator"
 msgstr "Émulateur Creative Music System"
 
 #: audio/softsynth/fluidsynth.cpp:178
-#, fuzzy
 msgid ""
 "FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI "
 "on MIDI tab. Music is off."
 msgstr ""
-"Une banque de sons est nécessaire pour utiliser Fluidsynth. Veuillez en "
-"spécifier une dans le tab MIDI des options ScummVM. Musique désactivée"
+"Une banque de sons est nécessaire pour utiliser FluidSynth. Veuillez en "
+"spécifier une dans l'onglet MIDI des options ScummVM. Musique désactivée."
 
 #: audio/softsynth/fluidsynth.cpp:279
-#, fuzzy, c-format
+#, c-format
 msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
 msgstr ""
-"Fluidsynth : échec du chargement de la banque de son '%s'. Musique désactivée"
+"FluidSynth : Impossible de charger la banque de son personnalisée '%s'. "
+"Musique désactivée."
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:32
 msgid "FM-Towns Audio"
@@ -2544,37 +2544,37 @@ msgstr "Act./Désact. Muet"
 msgid "Open Debugger"
 msgstr "Ouvrir Débuggeur"
 
-#: backends/events/gph/gph-events.cpp:423
-#: backends/events/gph/gph-events.cpp:466
-#: backends/events/openpandora/op-events.cpp:165
+#: backends/events/gph/gph-events.cpp:417
+#: backends/events/gph/gph-events.cpp:460
+#: backends/events/openpandora/op-events.cpp:157
 msgid "Touchscreen 'Tap Mode' - Left Click"
 msgstr "Touchscreen 'Tap Mode' - Clic Gauche"
 
-#: backends/events/gph/gph-events.cpp:425
-#: backends/events/gph/gph-events.cpp:468
-#: backends/events/openpandora/op-events.cpp:167
+#: backends/events/gph/gph-events.cpp:419
+#: backends/events/gph/gph-events.cpp:462
+#: backends/events/openpandora/op-events.cpp:159
 msgid "Touchscreen 'Tap Mode' - Right Click"
 msgstr "Touchscreen 'Tap Mode' - Clic Droit"
 
-#: backends/events/gph/gph-events.cpp:427
-#: backends/events/gph/gph-events.cpp:470
-#: backends/events/openpandora/op-events.cpp:169
+#: backends/events/gph/gph-events.cpp:421
+#: backends/events/gph/gph-events.cpp:464
+#: backends/events/openpandora/op-events.cpp:161
 msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
 msgstr "Touchscreen 'Tap Mode' - Déplacer sans cliquer"
 
-#: backends/events/gph/gph-events.cpp:447
+#: backends/events/gph/gph-events.cpp:441
 msgid "Maximum Volume"
 msgstr "Volume Maximum"
 
-#: backends/events/gph/gph-events.cpp:449
+#: backends/events/gph/gph-events.cpp:443
 msgid "Increasing Volume"
 msgstr "Augmentation Volume"
 
-#: backends/events/gph/gph-events.cpp:455
+#: backends/events/gph/gph-events.cpp:449
 msgid "Minimal Volume"
 msgstr "Volume Minimum"
 
-#: backends/events/gph/gph-events.cpp:457
+#: backends/events/gph/gph-events.cpp:451
 msgid "Decreasing Volume"
 msgstr "Diminution Volume"
 
@@ -2586,7 +2586,7 @@ msgstr "Clic Activé"
 msgid "Clicking Disabled"
 msgstr "Clic Désactivé"
 
-#: backends/events/openpandora/op-events.cpp:171
+#: backends/events/openpandora/op-events.cpp:163
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
 msgstr "Touchscreen 'Tap Mode' - Déplacer sans cliquer"
 
@@ -2666,20 +2666,20 @@ msgstr "Normal"
 msgid "Active graphics filter:"
 msgstr "Mode graphique actif :"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:358
+#: backends/graphics/sdl/sdl-graphics.cpp:361
 msgid "Windowed mode"
 msgstr "Mode Fenêtre"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:369 engines/scumm/help.cpp:86
+#: backends/graphics/sdl/sdl-graphics.cpp:372 engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
 msgstr "Basculer en plein écran"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:376 engines/scumm/help.cpp:99
+#: backends/graphics/sdl/sdl-graphics.cpp:379 engines/scumm/help.cpp:99
 #: engines/wintermute/keymapper_tables.h:710
 msgid "Toggle mouse capture"
 msgstr "Capturer/Libérer la souris"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:381
+#: backends/graphics/sdl/sdl-graphics.cpp:384
 #: engines/wintermute/keymapper_tables.h:478
 #: engines/wintermute/keymapper_tables.h:847
 #: engines/wintermute/keymapper_tables.h:1061
@@ -2691,55 +2691,55 @@ msgstr "Capturer/Libérer la souris"
 msgid "Save screenshot"
 msgstr "Capture d'écran"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:387
+#: backends/graphics/sdl/sdl-graphics.cpp:390
 msgid "Toggle aspect ratio correction"
 msgstr "Act./Désact. correction du rapport d'aspect"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:394
+#: backends/graphics/sdl/sdl-graphics.cpp:397
 msgid "Toggle linear filtered scaling"
 msgstr "Act./Désact. interpolation lors du changement d'échelle"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:401
+#: backends/graphics/sdl/sdl-graphics.cpp:404
 msgid "Cycle through stretch modes"
 msgstr "Changer le mode d'étirement"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:407
+#: backends/graphics/sdl/sdl-graphics.cpp:410
 msgid "Increase the scale factor"
 msgstr "Augmenter le facteur d'échelle"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:413
+#: backends/graphics/sdl/sdl-graphics.cpp:416
 msgid "Decrease the scale factor"
 msgstr "Diminuer le facteur d'échelle"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:425
+#: backends/graphics/sdl/sdl-graphics.cpp:428
 msgid "Switch to nearest neighbour scaling"
 msgstr "Basculer vers l'échelle voisine la plus proche"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:426
+#: backends/graphics/sdl/sdl-graphics.cpp:429
 msgid "Switch to AdvMame 2x/3x scaling"
 msgstr "Basculer vers l'échelle AdvMame 2x/3x"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:428
+#: backends/graphics/sdl/sdl-graphics.cpp:431
 msgid "Switch to HQ 2x/3x scaling"
 msgstr "Basculer vers l'échelle HQ 2x/3x"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:430
+#: backends/graphics/sdl/sdl-graphics.cpp:433
 msgid "Switch to 2xSai scaling"
 msgstr "Basculer vers l'échelle 2xSai"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:431
+#: backends/graphics/sdl/sdl-graphics.cpp:434
 msgid "Switch to Super2xSai scaling"
 msgstr "Basculer vers l'échelle Super2xSai"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:432
+#: backends/graphics/sdl/sdl-graphics.cpp:435
 msgid "Switch to SuperEagle scaling"
 msgstr "Basculer vers l'échelle SuperEagle"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:433
+#: backends/graphics/sdl/sdl-graphics.cpp:436
 msgid "Switch to TV 2x scaling"
 msgstr "Basculer vers l'échelle TV 2x"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:434
+#: backends/graphics/sdl/sdl-graphics.cpp:437
 msgid "Switch to DotMatrix scaling"
 msgstr "Basculer vers l'échelle DotMatrix"
 
@@ -2807,11 +2807,11 @@ msgstr "Stick Gauche"
 msgid "Right Stick"
 msgstr "Stick Droit"
 
-#: backends/keymapper/hardware-input.cpp:265 engines/dragons/detection.cpp:307
+#: backends/keymapper/hardware-input.cpp:265 engines/dragons/detection.cpp:325
 msgid "Left Shoulder"
 msgstr "Tranche Gauche"
 
-#: backends/keymapper/hardware-input.cpp:266 engines/dragons/detection.cpp:313
+#: backends/keymapper/hardware-input.cpp:266 engines/dragons/detection.cpp:331
 msgid "Right Shoulder"
 msgstr "Tranche Droite"
 
@@ -2875,12 +2875,12 @@ msgstr "Stick droit X"
 msgid "Right Stick Y"
 msgstr "Stick droit Y"
 
-#: backends/keymapper/remap-widget.cpp:285
-#: backends/keymapper/remap-widget.cpp:315
+#: backends/keymapper/remap-widget.cpp:290
+#: backends/keymapper/remap-widget.cpp:320
 msgid "Reset to defaults"
 msgstr "Rétablir défaut"
 
-#: backends/keymapper/remap-widget.cpp:286
+#: backends/keymapper/remap-widget.cpp:291
 msgid "Clear mapping"
 msgstr "Remise à zéro"
 
@@ -3263,7 +3263,6 @@ msgid "ScummVM Main Menu"
 msgstr "Menu Principal ScummVM"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:61
-#, fuzzy
 msgid "Controls"
 msgstr "Contrôles"
 
@@ -3321,7 +3320,7 @@ msgstr "Luminosité :"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:119
 msgid "General"
-msgstr ""
+msgstr "Général"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:121
 msgid "High quality audio (slower) (reboot)"
@@ -3333,117 +3332,102 @@ msgstr "Désactiver l'extinction"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:41
 msgid "DS Controls (right handed):"
-msgstr ""
+msgstr "Contrôles DS (droitier) :"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:42
 #: backends/platform/ds/arm9/source/scummhelp.cpp:67
 #: backends/platform/ds/arm9/source/scummhelp.cpp:76
-#, fuzzy
 msgid "Pad Left"
-msgstr "Croix Gauche"
+msgstr "Pad gauche"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:42
 #: backends/platform/ds/arm9/source/scummhelp.cpp:59
-#, fuzzy
 msgid "Left mouse button"
-msgstr "Souris Bouton gauche"
+msgstr "Bouton gauche de la souris"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:43
 #: backends/platform/ds/arm9/source/scummhelp.cpp:68
 #: backends/platform/ds/arm9/source/scummhelp.cpp:77
-#, fuzzy
 msgid "Pad Right"
-msgstr "Croix Droite"
+msgstr "Pad droite"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:43
 #: backends/platform/ds/arm9/source/scummhelp.cpp:60
-#, fuzzy
 msgid "Right mouse button"
-msgstr "Souris Bouton droit"
+msgstr "Bouton droit de la souris"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:44
 #: backends/platform/ds/arm9/source/scummhelp.cpp:66
 #: backends/platform/ds/arm9/source/scummhelp.cpp:78
-#, fuzzy
 msgid "Pad Up"
-msgstr "Croix Haut"
+msgstr "Pad haut"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:44
 #: backends/platform/ds/arm9/source/scummhelp.cpp:61
 msgid "Mouse hover mode (no click)"
-msgstr ""
+msgstr "Mode de survol de la souris (pas de clic)"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:45
 #: backends/platform/ds/arm9/source/scummhelp.cpp:65
 #: backends/platform/ds/arm9/source/scummhelp.cpp:79
-#, fuzzy
 msgid "Pad Down"
-msgstr "Croix Bas"
+msgstr "Pad bas"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:45
 #: backends/platform/ds/arm9/source/scummhelp.cpp:62
 msgid "Skip dialog line (some games)"
-msgstr ""
+msgstr "Passer la ligne de dialogue (certains jeux)"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:46
 #: backends/platform/ds/arm9/source/scummhelp.cpp:63
-#, fuzzy
 msgid "Pause/Game menu"
-msgstr "Menu du Jeu"
+msgstr "Pause/Menu du jeu"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:47
 #: backends/platform/ds/arm9/source/scummhelp.cpp:64
-#, fuzzy
 msgid "DS Options menu"
-msgstr "Afficher le menu des options"
+msgstr "Menu des options DS"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:48
 #: backends/platform/ds/arm9/source/scummhelp.cpp:65
-#, fuzzy
 msgid "Skip cutscenes"
-msgstr "Passer la séquence"
+msgstr "Passer les séquences vidéo"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:49
-#, fuzzy
 msgid "Switch screens"
-msgstr "Changer de personnage :"
+msgstr "Changer d'écran"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:50
 #: backends/platform/ds/arm9/source/scummhelp.cpp:67
-#, fuzzy
 msgid "Show/hide debug console"
 msgstr "Afficher/Cacher la console"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:51
 #: backends/platform/ds/arm9/source/scummhelp.cpp:66
-#, fuzzy
 msgid "Show/hide keyboard"
-msgstr "Afficher le clavier"
+msgstr "Afficher/Cacher le clavier"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:52
 #: backends/platform/ds/arm9/source/scummhelp.cpp:69
 msgid "Scroll current touch screen view"
-msgstr ""
+msgstr "Défilement de la vue de l'écran tactile"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:53
 #: backends/platform/ds/arm9/source/scummhelp.cpp:70
-#, fuzzy
 msgid "Zoom in/out"
-msgstr "Dézoomer"
+msgstr "Zoom avant/arrière"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:58
 msgid "DS Controls (left handed):"
-msgstr ""
+msgstr "Contrôles DS (gaucher) :"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:68
-#, fuzzy
 msgid "Swap screens"
-msgstr "Capture d'écran"
+msgstr "Échanger les écrans"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:75
-#, fuzzy
 msgid "Indiana Jones Fight controls:"
-msgstr "Contrôle des combats d'~I~ndy"
+msgstr "Contrôle des combats d'Indiana Jones :"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:76
 #: engines/hdb/detection.cpp:321
@@ -3457,16 +3441,15 @@ msgstr "Déplacement droite"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:78
 msgid "High guard"
-msgstr ""
+msgstr "Garde haute"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:79
 msgid "Guard down"
-msgstr ""
+msgstr "Garde basse"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:80
-#, fuzzy
 msgid "Guard middle"
-msgstr "Frapper milieu"
+msgstr "Garde milieu"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:81 engines/scumm/help.cpp:312
 msgid "Punch high"
@@ -3480,26 +3463,26 @@ msgstr "Frapper milieu"
 msgid "Punch low"
 msgstr "Frapper bas"
 
-#: backends/platform/ios7/ios7_osys_events.cpp:315
-#: backends/platform/ios7/ios7_osys_events.cpp:443
+#: backends/platform/ios7/ios7_osys_events.cpp:327
+#: backends/platform/ios7/ios7_osys_events.cpp:455
 #: backends/platform/iphone/osys_events.cpp:300
 msgid "Mouse-click-and-drag mode enabled."
 msgstr "Mode souris cliquer-et-déplacer activé."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:317
-#: backends/platform/ios7/ios7_osys_events.cpp:445
+#: backends/platform/ios7/ios7_osys_events.cpp:329
+#: backends/platform/ios7/ios7_osys_events.cpp:457
 #: backends/platform/iphone/osys_events.cpp:302
 msgid "Mouse-click-and-drag mode disabled."
 msgstr "Mode souris cliquer-et-déplacer désactivé."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:328
-#: backends/platform/ios7/ios7_osys_events.cpp:464
+#: backends/platform/ios7/ios7_osys_events.cpp:340
+#: backends/platform/ios7/ios7_osys_events.cpp:476
 #: backends/platform/iphone/osys_events.cpp:313
 msgid "Touchpad mode enabled."
 msgstr "Mode touchpad activé."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:330
-#: backends/platform/ios7/ios7_osys_events.cpp:466
+#: backends/platform/ios7/ios7_osys_events.cpp:342
+#: backends/platform/ios7/ios7_osys_events.cpp:478
 #: backends/platform/iphone/osys_events.cpp:315
 msgid "Touchpad mode disabled."
 msgstr "Mode touchpad désactivé."
@@ -3570,17 +3553,17 @@ msgid "BSD License"
 msgstr "Licence BSD"
 
 #: backends/platform/sdl/ps3/ps3.cpp:41 backends/platform/sdl/psp2/psp2.cpp:45
-#: engines/dragons/detection.cpp:301
+#: engines/dragons/detection.cpp:319
 msgid "Cross"
 msgstr "Croix"
 
 #: backends/platform/sdl/ps3/ps3.cpp:42 backends/platform/sdl/psp2/psp2.cpp:46
-#: engines/dragons/detection.cpp:295
+#: engines/dragons/detection.cpp:313
 msgid "Circle"
 msgstr "Rond"
 
 #: backends/platform/sdl/ps3/ps3.cpp:43 backends/platform/sdl/psp2/psp2.cpp:47
-#: engines/dragons/detection.cpp:283
+#: engines/dragons/detection.cpp:301
 msgid "Square"
 msgstr "Carré"
 
@@ -3636,7 +3619,7 @@ msgstr "Changement de personnage"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:51
 msgid "Skip text"
-msgstr "Sauter le texte"
+msgstr "Passer le texte"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:53
 msgid "Fast mode"
@@ -3854,7 +3837,7 @@ msgstr "Ne pas émuler les artefacts NTSC pour le texte"
 #: engines/sherlock/detection.cpp:75 engines/toltecs/detection.cpp:228
 #: engines/zvision/detection_tables.h:50
 msgid "Use original save/load screens"
-msgstr "Dialogues sauvegarde/chargement d'origine"
+msgstr "Écrans sauvegarde/chargement d'origine"
 
 #: engines/agi/detection.cpp:148 engines/cine/detection.cpp:69
 #: engines/drascula/detection.cpp:332 engines/dreamweb/detection.cpp:49
@@ -3863,7 +3846,7 @@ msgstr "Dialogues sauvegarde/chargement d'origine"
 #: engines/zvision/detection_tables.h:51
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
-"Utiliser les dialogues sauvegarde/chargement d'origine plutôt que ceux de "
+"Utiliser les écrans de sauvegarde/chargement d'origine plutôt que ceux de "
 "ScummVM"
 
 #: engines/agi/detection.cpp:157
@@ -3939,7 +3922,7 @@ msgstr ""
 #: engines/neverhood/menumodule.cpp:903 engines/prince/saveload.cpp:64
 #: engines/sci/engine/guest_additions.cpp:701 engines/sci/engine/kfile.cpp:1186
 #: engines/sherlock/scalpel/scalpel.cpp:1263
-#: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:67
+#: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:68
 #: engines/toltecs/menu.cpp:267 engines/toon/toon.cpp:3456
 #: engines/zvision/file/save_manager.cpp:62
 msgid "Restore game:"
@@ -3956,7 +3939,7 @@ msgstr "Charger le jeu :"
 #: engines/neverhood/menumodule.cpp:903 engines/prince/saveload.cpp:64
 #: engines/sci/engine/guest_additions.cpp:702 engines/sci/engine/kfile.cpp:1186
 #: engines/sherlock/scalpel/scalpel.cpp:1263
-#: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:67
+#: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:68
 #: engines/toltecs/menu.cpp:267 engines/toon/toon.cpp:3456
 #: engines/zvision/detection.cpp:220 engines/zvision/file/save_manager.cpp:62
 msgid "Restore"
@@ -3965,6 +3948,7 @@ msgstr "Charger"
 #: engines/agos/saveload.cpp:137
 msgid "Quick load or save game isn't supported in this location"
 msgstr ""
+"Le chargement ou sauvegarde rapide du jeu n'est pas possible à cet endroit"
 
 #: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2466
 #, c-format
@@ -4018,15 +4002,15 @@ msgstr ""
 "MIDI. Cependant il est possible que quelques pistes ne soient\n"
 " pas jouées correctement."
 
-#: engines/bladerunner/bladerunner.cpp:359
+#: engines/bladerunner/bladerunner.cpp:363
 msgid "Failed to initialize resources"
 msgstr "Échec de l'initialisation des ressources"
 
-#: engines/bladerunner/bladerunner.cpp:1063
+#: engines/bladerunner/bladerunner.cpp:1067
 msgid "A required game resource was not found"
 msgstr "Une ressource de jeu nécessaire n'a pas été trouvée"
 
-#: engines/bladerunner/bladerunner.cpp:2265
+#: engines/bladerunner/bladerunner.cpp:2271
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -4036,7 +4020,7 @@ msgstr ""
 "vous jouez en mode Contenu Original. Le mode sera réglé sur Contenu Montage "
 "Restauré pour cette session jusqu'à ce que vous quittiez complètement le jeu."
 
-#: engines/bladerunner/bladerunner.cpp:2267
+#: engines/bladerunner/bladerunner.cpp:2273
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -4046,7 +4030,7 @@ msgstr ""
 "jouez en mode Contenu Montage Restauré. Le mode sera ajusté au mode Contenu "
 "Original pour cette session jusqu'à ce que vous quittiez complètement le jeu."
 
-#: engines/bladerunner/bladerunner.cpp:2269
+#: engines/bladerunner/bladerunner.cpp:2275
 msgid "Continue"
 msgstr "Continuer"
 
@@ -4124,11 +4108,11 @@ msgstr ""
 msgid "Unnamed autosave"
 msgstr "Sauvegarde auto sans nom"
 
-#: engines/cine/detection.cpp:192 engines/cine/detection.cpp:271
+#: engines/cine/detection.cpp:192 engines/cine/detection.cpp:267
 msgid "Unnamed savegame"
 msgstr "Sauvegarde sans nom"
 
-#: engines/cine/detection.cpp:210 engines/cine/detection.cpp:284
+#: engines/cine/detection.cpp:210 engines/cine/detection.cpp:280
 msgid "Empty autosave"
 msgstr "Sauvegarde auto vide"
 
@@ -4147,7 +4131,7 @@ msgstr ""
 msgid "Load anyway"
 msgstr "Charger quand même"
 
-#: engines/dragons/detection.cpp:218
+#: engines/dragons/detection.cpp:236
 msgid ""
 "Error: It appears that the game data files were extracted incorrectly.\n"
 "\n"
@@ -4165,35 +4149,35 @@ msgstr ""
 "\n"
 "Voir https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
 
-#: engines/dragons/detection.cpp:236
+#: engines/dragons/detection.cpp:254
 msgid "Action"
 msgstr "Action"
 
-#: engines/dragons/detection.cpp:242
+#: engines/dragons/detection.cpp:260
 msgid "Change Command"
 msgstr "Changer de commande"
 
-#: engines/dragons/detection.cpp:248 engines/hdb/detection.cpp:347
-#: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
-#: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
-#: engines/zvision/detection.cpp:185
+#: engines/dragons/detection.cpp:266 engines/griffon/detection.cpp:160
+#: engines/hdb/detection.cpp:347 engines/scumm/help.cpp:225
+#: engines/scumm/help.cpp:234 engines/scumm/help.cpp:241
+#: engines/scumm/help.cpp:249 engines/zvision/detection.cpp:185
 msgid "Inventory"
 msgstr "Inventaire"
 
-#: engines/dragons/detection.cpp:253 engines/scumm/help.cpp:86
+#: engines/dragons/detection.cpp:271 engines/scumm/help.cpp:86
 #: engines/scumm/help.cpp:89
 msgid "Enter"
 msgstr "Entrer"
 
-#: engines/dragons/detection.cpp:319
+#: engines/dragons/detection.cpp:337
 msgid "Debug Graphics"
 msgstr "Deboguer les Graphiques"
 
-#: engines/dragons/detection.cpp:324
+#: engines/dragons/detection.cpp:342
 msgid "Quit Game"
 msgstr "Quitter le jeu"
 
-#: engines/dragons/dragons.cpp:1796
+#: engines/dragons/dragons.cpp:1803
 #, c-format
 msgid ""
 "Error: The file '%s' hasn't been extracted properly.\n"
@@ -4234,21 +4218,21 @@ msgstr "Utiliser le mode palette lumineuse"
 msgid "Display graphics using the game's bright palette"
 msgstr "Utiliser la palette lumineuse du jeu pour l'affichage"
 
-#: engines/glk/detection.cpp:354
+#: engines/glk/detection.cpp:370
 msgid "Enable Text to Speech"
 msgstr "Utiliser le synthétiseur vocal"
 
-#: engines/glk/detection.cpp:355
+#: engines/glk/detection.cpp:371
 msgid "Use TTS to read the text"
 msgstr "Utilise le synthétiseur vocal pour lire le texte"
 
-#: engines/glk/detection.cpp:360
+#: engines/glk/detection.cpp:376
 msgid "Also read input text"
 msgstr "Lire également le texte de saisie"
 
-#: engines/glk/detection.cpp:361
+#: engines/glk/detection.cpp:377
 msgid "Use TTS to read the input text"
-msgstr "Utilise le synthétiseur vocale pour lire le texte de saisie"
+msgstr "Utilise le synthétiseur vocal pour lire le texte de saisie"
 
 #: engines/glk/glk_api.cpp:63
 msgid "[ press any key to exit ]"
@@ -4276,7 +4260,7 @@ msgstr "Désolé, la sauvegarde n'a pas pu être créée"
 
 #: engines/glk/advsys/vm.cpp:561
 msgid "Speak up! I can't hear you!\n"
-msgstr "Plus fort! Je ne vous entends pas!\n"
+msgstr "Plus fort ! Je ne vous entends pas !\n"
 
 #: engines/glk/advsys/vm.cpp:597
 #, c-format
@@ -4299,7 +4283,7 @@ msgstr "Ce n'est pas un fichier Alan2 valide."
 msgid "Savegame"
 msgstr "Sauvegarde"
 
-#: engines/glk/comprehend/game.cpp:1333
+#: engines/glk/comprehend/game.cpp:1381
 msgid "Picture window toggled\n"
 msgstr "Fenêtre d'image basculée\n"
 
@@ -4538,17 +4522,17 @@ msgstr "Vous n'avez pas le pouvoir de faire ça.\n"
 msgid "It's beyond my power to do that.\n"
 msgstr "Je n'ai pas le pouvoir de faire ça.\n"
 
-#: engines/glk/zcode/zcode.cpp:144
+#: engines/glk/zcode/zcode.cpp:145
 msgid "Error writing save file\n"
 msgstr "Erreur lors de l'écriture de la sauvegarde\n"
 
 #: engines/glk/hugo/hugo.cpp:183
 msgid "Incorrect rs file."
-msgstr ""
+msgstr "Fichier rs incorrect."
 
 #: engines/glk/hugo/hugo.cpp:190
 msgid "Save file created by different version."
-msgstr ""
+msgstr "Fichier de sauvegarde créé par une version différente."
 
 #: engines/gob/inter_playtoons.cpp:258 engines/gob/inter_v2.cpp:1479
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:538
@@ -4563,6 +4547,18 @@ msgstr "Échec de l'enregistrement de la sauvegarde sur le disque."
 #: engines/gob/inter_v5.cpp:107
 msgid "Failed to delete file."
 msgstr "Échec de la suppression du fichier."
+
+#: engines/griffon/detection.cpp:117
+msgid "Menu / Skip"
+msgstr "Menu / Passer"
+
+#: engines/griffon/detection.cpp:153
+msgid "Attack"
+msgstr "Attaque"
+
+#: engines/griffon/detection.cpp:167
+msgid "Speed Up Cutscene"
+msgstr "Accélérer la séquence vidéo"
 
 #: engines/groovie/detection.cpp:321
 msgid "Fast movie speed"
@@ -4639,7 +4635,7 @@ msgstr "Support des interruptions"
 
 #: engines/kyra/detection.cpp:74
 msgid "Allow text and cutscenes to be skipped"
-msgstr "Permet de sauter les textes et scènes cinématiques"
+msgstr "Permet de passer les textes et scènes cinématiques"
 
 #. I18N: Helium mode makes people sound like they've inhaled Helium.
 #: engines/kyra/detection.cpp:84
@@ -4700,13 +4696,13 @@ msgid "Left button to attack, right button to pick up items"
 msgstr "Bouton Gauche pour attaquer, bouton Droite pour ramasser les objets"
 
 #: engines/kyra/engine/eobcommon.cpp:366 engines/kyra/engine/lol.cpp:469
-#: engines/ultima/ultima4/meta_engine.cpp:232
+#: engines/ultima/ultima4/meta_engine.cpp:233
 #: engines/ultima/ultima8/meta_engine.cpp:130
 msgid "Interact via Left Click"
 msgstr "Interagir via Clic Gauche"
 
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:470
-#: engines/ultima/ultima4/meta_engine.cpp:238
+#: engines/ultima/ultima4/meta_engine.cpp:239
 #: engines/ultima/ultima8/meta_engine.cpp:136
 msgid "Interact via Right Click"
 msgstr "Interagir via Clic Droit"
@@ -4959,7 +4955,7 @@ msgstr "Utilise la synthèse vocale pour lire les descriptions (si disponible)"
 
 #: engines/mads/detection.cpp:93
 msgid "Easy mouse interface"
-msgstr "Interface Souris simple"
+msgstr "Interface souris simple"
 
 #: engines/mads/detection.cpp:94
 msgid "Shows object names when hovering the mouse over them"
@@ -5101,7 +5097,7 @@ msgstr ""
 
 #: engines/mohawk/myst_stacks/preview.cpp:90
 msgid "You can't leave the library in the demo."
-msgstr ""
+msgstr "Vous ne pouvez pas quitter la bibliothèque dans la démo."
 
 #: engines/mohawk/riven.cpp:156
 msgid ""
@@ -5203,12 +5199,12 @@ msgstr "Impossible de trouver le fichier de données du moteur '%s'"
 
 #: engines/neverhood/detection.cpp:151
 msgid "Skip the Hall of Records storyboard scenes"
-msgstr "Sauter les scènes storyboard de la Salle des Archives"
+msgstr "Passer les scènes storyboard de la Salle des Archives"
 
 #: engines/neverhood/detection.cpp:152
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
 msgstr ""
-"Permet au joueur de sauter les scènes de storyboard de la Salle des Archives"
+"Permet au joueur de passer les scènes de storyboard de la Salle des Archives"
 
 #: engines/neverhood/detection.cpp:158
 msgid "Scale the making of videos to full screen"
@@ -5347,9 +5343,8 @@ msgid "Use an alternative game intro (CD version only)"
 msgstr "Utiliser une intro alternative (version CD uniquement)"
 
 #: engines/saga/saga.cpp:247
-#, fuzzy
 msgid "Error loading game resources."
-msgstr "Erreur lors de la lecture de la sauvegarde"
+msgstr "Erreur lors de la lecture des ressources du jeu."
 
 #: engines/sci/detection.cpp:399
 msgid "Skip EGA dithering pass (full color backgrounds)"
@@ -5433,7 +5428,7 @@ msgstr "Utiliser les curseurs argentés"
 #: engines/sci/detection.cpp:494
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
-msgstr "Utiliser les curseurs argentés au lieu des curseurs normaux  dorés"
+msgstr "Utiliser les curseurs argentés au lieu des curseurs normaux dorés"
 
 #: engines/sci/detection.cpp:504
 msgid "Enable content censoring"
@@ -5492,6 +5487,9 @@ msgid ""
 "There exists some dummy logic for now, where opponent actions are chosen "
 "randomly"
 msgstr ""
+"La logique du jeu de poker est codée en dur dans une DLL externe et n'est "
+"pas encore implémentée. Il existe pour l'instant une logique factice, dans "
+"laquelle les actions de l'adversaire sont choisies au hasard"
 
 #: engines/sci/engine/savegame.cpp:1407
 msgid "The format of this saved game is obsolete, unable to load it"
@@ -5674,7 +5672,7 @@ msgid ""
 msgstr ""
 "La version Lite iOS de Putt-Putt Saves the Zoo n'est pas supportée pour "
 "éviter le piratage.\n"
-"La version complète peut-être achetée sur l'iTunes Store."
+"La version complète peut être achetée sur l'iTunes Store."
 
 #: engines/scumm/detection.cpp:1174
 msgid ""
@@ -5824,7 +5822,7 @@ msgstr "Commandes clavier communes :"
 
 #: engines/scumm/help.cpp:74
 msgid "Save / Load dialog"
-msgstr "Dialogue de Sauvegarde/Chargement"
+msgstr "Écran de Sauvegarde/Chargement"
 
 #: engines/scumm/help.cpp:76
 msgid "Skip line of text"
@@ -5926,11 +5924,11 @@ msgstr "Changer correction du rapport d'aspect"
 
 #: engines/scumm/help.cpp:107
 msgid "* Note that using ctrl-f and"
-msgstr "* Note que l'utilisation de crtl-f et"
+msgstr "* Notez que l'utilisation de Ctrl-f et"
 
 #: engines/scumm/help.cpp:108
 msgid "  ctrl-g are not recommended"
-msgstr "  crtl-g n'est pas recommandée, car"
+msgstr "  Ctrl-g n'est pas recommandée, car"
 
 #: engines/scumm/help.cpp:109
 msgid "  since they may cause crashes"
@@ -6501,11 +6499,13 @@ msgid ""
 "Failed to save temporary game state. Make sure your save game directory is "
 "set in ScummVM and that you can write to it."
 msgstr ""
+"Échec de la sauvegarde temporaire de l'état de jeu. Assurez-vous que votre "
+"répertoire de sauvegarde du jeu est configuré dans ScummVM et que vous y "
+"avez les droits d'écriture."
 
 #: engines/supernova/supernova.cpp:828
-#, fuzzy
 msgid "Failed to load temporary game state."
-msgstr "Échec du chargement de la sauvegarde depuis le disque."
+msgstr "Échec du chargement de la sauvegarde temporaire."
 
 #: engines/supernova/detection.cpp:40
 msgid "Improved mode"
@@ -6566,7 +6566,7 @@ msgid ""
 "Target new saved game already exists!\n"
 "Would you like to keep the old saved game (%s) or the new one (%s)?\n"
 msgstr ""
-"La sauvegarde cible existe déjà!\n"
+"La sauvegarde cible existe déjà !\n"
 "Voulez-vous conserver l'ancienne sauvegarde (%s) ou la nouvelle (%s) ?\n"
 
 #: engines/sword1/control.cpp:1264
@@ -6588,11 +6588,11 @@ msgstr ""
 "Scènes cinématiques PSX détectées mais ScummVM a été compilé sans le support "
 "des couleurs RGB et ne peut donc les afficher"
 
-#: engines/sword2/sword2.cpp:79
+#: engines/sword2/sword2.cpp:80
 msgid "Show object labels"
 msgstr "Afficher la description des objets"
 
-#: engines/sword2/sword2.cpp:80
+#: engines/sword2/sword2.cpp:81
 msgid "Show labels for objects on mouse hover"
 msgstr "Afficher la description des objets lors de passage du pointeur"
 
@@ -6646,7 +6646,7 @@ msgstr "Erreur lors du chargement rapide depuis l'emplacement #%d"
 msgid "Unable to locate the '%s' data file."
 msgstr "Le fichier de données '%s' n'a pu être trouvé."
 
-#: engines/ultima/shared/early/ultima_early.cpp:67
+#: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
 msgstr "Le fichier de données ultima.dat correct n'a pas été trouvé"
 
@@ -6661,12 +6661,12 @@ msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr ""
 "Données du moteur périmées. Version attendue: %d.%d ; version trouvée: %d.%d"
 
-#: engines/ultima/nuvie/nuvie.cpp:362
+#: engines/ultima/nuvie/nuvie.cpp:382
 #, c-format
 msgid "loading quick save %d"
 msgstr "chargement de la sauvegarde rapide %d"
 
-#: engines/ultima/nuvie/nuvie.cpp:367
+#: engines/ultima/nuvie/nuvie.cpp:387
 #, c-format
 msgid "saving quick save %d"
 msgstr "sauvegarde rapide %d en cours"
@@ -7191,14 +7191,12 @@ msgid "Spin faster"
 msgstr "Tourner plus rapidement"
 
 #: engines/wintermute/keymapper_tables.h:1311
-#, fuzzy
 msgid "Zoom out"
 msgstr "Dézoomer"
 
 #: engines/wintermute/keymapper_tables.h:1318
-#, fuzzy
 msgid "Zoom in"
-msgstr "Dézoomer"
+msgstr "Zoomer"
 
 #: engines/wintermute/keymapper_tables.h:1331
 #: engines/wintermute/keymapper_tables.h:1446
@@ -7382,8 +7380,16 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+"Avant de jouer à ce jeu, vous devez copier les polices de caractères "
+"requises dans le répertoire des extras de ScummVM, ou dans le répertoire du "
+"jeu. Sous Windows, vous aurez besoin des fichiers de police suivants du "
+"répertoire des polices de Windows : Times New Roman, Century Schoolbook, "
+"Garamond, Courier New et Arial. Vous pouvez également télécharger les "
+"polices Liberation ou le paquet GNU FreeFont. Vous aurez besoin de toutes "
+"les polices du paquet de polices que vous avez choisi, c'est-à-dire "
+"LiberationMono, LiberationSans et LiberationSerif, ou respectivement "
+"FreeMono, FreeSans et FreeSerif."
 
-#, c-format
 #~ msgid "Engine does not support debug level '%s'"
 #~ msgstr "Le niveau de debug '%s' n'est pas supporté par ce moteur de jeu"
 
@@ -7409,7 +7415,6 @@ msgstr ""
 #~ "Partie sauvegardée\n"
 #~ "\n"
 
-#, c-format
 #~ msgid "Quicksave %03d"
 #~ msgstr "Sauvegarde rapide %03d"
 
