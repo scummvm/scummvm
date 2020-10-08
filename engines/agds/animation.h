@@ -44,7 +44,8 @@ class Animation {
 	Common::String 		_phaseVar;
 	bool				_loop;
 	int					_cycles;
-	int					_phase;
+	bool				_startPaused;
+	int					_frameIndex;
 	bool				_paused;
 	int					_speed;
 	int					_z;
@@ -56,7 +57,6 @@ public:
 	~Animation();
 
 	void freeFrame();
-	void decodeNextFrame(AGDSEngine &engine);
 
 	const Common::Point & position() const {
 		return _position;
@@ -72,6 +72,9 @@ public:
 
 	void phaseVar(const Common::String & phaseVar) {
 		_phaseVar = phaseVar;
+	}
+	int frameIndex() const {
+		return _frameIndex;
 	}
 
 	const Common::String & process() const {
@@ -98,17 +101,9 @@ public:
 		_random = value;
 	}
 
-	int phase() const {
-		return _phase;
-	}
-
-	void play() {
-		_paused = false;
-		_phase = 0;
-	}
-
-	void resume() {
-		_paused = false;
+	void startPaused(bool paused) {
+		_startPaused = paused;
+		_paused = paused;
 	}
 
 	bool paused() const {
@@ -117,6 +112,10 @@ public:
 
 	void pause() {
 		_paused = true;
+	}
+
+	void resume() {
+		_paused = false;
 	}
 
 	void rewind();
@@ -134,10 +133,12 @@ public:
 	}
 
 	bool load(Common::SeekableReadStream *stream);
-	void updatePhaseVar(AGDSEngine & engine);
 	void paint(AGDSEngine & engine, Graphics::Surface & backbuffer, Common::Point dst);
 	int width() const;
 	int height() const;
+	bool tick(AGDSEngine &engine);
+private:
+	void decodeNextFrame(AGDSEngine &engine);
 };
 
 

@@ -30,7 +30,7 @@
 
 namespace AGDS {
 
-Animation::Animation() : _flic(), _frame(), _frames(0), _loop(false), _cycles(1), _phase(0), _paused(true), _speed(100), _z(0), _delay(-1), _random(0) {
+Animation::Animation() : _flic(), _frame(), _frames(0), _loop(false), _cycles(1), _startPaused(false), _frameIndex(0), _paused(false), _speed(100), _z(0), _delay(-1), _random(0) {
 }
 
 Animation::~Animation() {
@@ -62,55 +62,56 @@ bool Animation::load(Common::SeekableReadStream *stream) {
 	}
 }
 
-void Animation::updatePhaseVar(AGDSEngine &engine) {
-	if (!_phaseVar.empty()) {
-		int phase = engine.getGlobal(_phaseVar);
-		if (!_paused) {
-			if (phase != _phase) {
-				debug("%s: animation (%s) %d setting phase var: %s", _process.c_str(), _paused? "paused": "playing", _phase, _phaseVar.c_str());
-				if (!_loop && _phase + 1 == _frames)
-					engine.setGlobal(_phaseVar, -1);
-				else
-					engine.setGlobal(_phaseVar, _phase);
-				engine.reactivate(_process);
-			}
-		} else if (phase != 0) {
-			debug("%s: animation (%s) %d setting phase var: %s", _process.c_str(), _paused? "paused": "playing", _phase, _phaseVar.c_str());
-			engine.setGlobal(_phaseVar, 0);
-		}
-	}
-}
-
 void Animation::decodeNextFrame(AGDSEngine &engine) {
-	if (_paused)
-		return;
-
 	auto frame = _flic->decodeNextFrame();
 	if (!frame) {
-		if (!_loop && _phase >= _cycles * _frames) {
-			updatePhaseVar(engine);
-			return;
-		}
 		rewind();
 		frame = _flic->decodeNextFrame();
 		if (!frame)
 			error("failed decoding frame after rewind");
 	}
-	++_phase;
 	freeFrame();
 	_frame = engine.convertToTransparent(frame->convertTo(engine.pixelFormat(), _flic->getPalette()));
-	updatePhaseVar(engine);
+	++_frameIndex;
 }
 
 void Animation::rewind() {
 	freeFrame();
-	_phase = 0;
+	_frameIndex = 0;
 	_flic->rewind();
 }
 
+bool Animation::tick(AGDSEngine &engine) {
+	if (_paused)
+		return true;
+
+	if (_delay > 0) {
+		--_delay;
+		return true;
+	}
+
+	if (_startPaused && !_phaseVar.empty() && engine.getGlobal(_phaseVar) == -2) {
+		debug("phase var %s signalled deleting of animation", _phaseVar.c_str());
+		return false;
+	}
+	if (_frameIndex >= _frames && !_loop) {
+		if (!_phaseVar.empty()) {
+			engine.setGlobal(_phaseVar, -1);
+		} else {
+			engine.reactivate(_process);
+		}
+		return false;
+	}
+	decodeNextFrame(engine);
+	if (!_process.empty()) {
+		if (!_phaseVar.empty()) {
+			engine.setGlobal(_phaseVar, _frameIndex - 1);
+		}
+	}
+	return true;
+}
 
 void Animation::paint(AGDSEngine &engine, Graphics::Surface &backbuffer, Common::Point dst) {
-	decodeNextFrame(engine);
 	dst += _position;
 	if (_frame) {
 		Common::Rect srcRect = _frame->getRect();
