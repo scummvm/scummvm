@@ -98,6 +98,16 @@ bool Screen::remove(const Common::String &name) {
 }
 
 void Screen::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
+	for(uint i = 0; i < _animations.size(); ++i) {
+		Animation *animation = _animations.data()[i];
+		if (animation->tick(engine))
+			++i;
+		else {
+			debug("removing animation %s:%s", animation->process().c_str(), animation->phaseVar().c_str());
+			_animations.erase(_animations.begin() + i);
+		}
+	}
+
 	ChildrenType::iterator child = _children.begin();
 	AnimationsType::iterator animation = _animations.begin();
 	while(child != _children.end() || animation != _animations.end()) {

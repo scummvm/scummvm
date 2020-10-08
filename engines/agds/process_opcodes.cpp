@@ -164,12 +164,11 @@ void Process::loadAnimation() {
 		animation->cycles(_animationCycles);
 		animation->delay(_animationDelay);
 		animation->setRandom(_animationRandom);
-		if (_phaseVar.empty()) {
+		animation->startPaused(_animationPaused);
+		if (_phaseVar.empty())
 			suspend();
-		} else if (_animationPaused) {
-			animation->pause();
+		else if (_animationPaused)
 			_engine->setGlobal(_phaseVar, 0);
-		}
 		_engine->getCurrentScreen()->add(animation);
 	}
 }
@@ -843,7 +842,7 @@ void Process::restartAnimation() {
 			animation->rewind();
 		}
 		animation->resume();
-		_engine->setGlobal(phaseVar, animation->phase());
+		_engine->setGlobal(phaseVar, animation->frameIndex());
 	} else {
 		warning("no animation with phase var %s found", phaseVar.c_str());
 		_engine->setGlobal(phaseVar, -1);
@@ -1371,19 +1370,14 @@ void Process::loadPictureFromObject() {
 void Process::loadAnimationFromObject() {
 	Common::String name = popText();
 	debug("loadAnimationFromObject %s %s", name.c_str(), _animationPaused? "(paused)": "");
-	if (!_phaseVar.empty()) {
-		_engine->setGlobal(_phaseVar, -2);
-	}
 	Animation *animation = _engine->loadAnimation(name);
 	if (animation) {
-		animation->phaseVar(_phaseVar);
-		animation->process(getName());
-		animation->loop(_animationLoop);
-		animation->cycles(_animationCycles);
-		animation->delay(_animationDelay);
-		animation->setRandom(_animationRandom);
-		if (_animationPaused)
-			animation->pause();
+		if (_animationPaused) {
+			animation->phaseVar(_phaseVar);
+			animation->process(getName());
+			animation->startPaused(_animationPaused);
+			_object->setAnimation(animation);
+		}
 	}
 }
 

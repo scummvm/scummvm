@@ -291,7 +291,6 @@ Animation *AGDSEngine::loadMouseCursor(const Common::String &name) {
 	Animation *animation = loadAnimation(name);
 	animation->loop(true);
 	animation->phaseVar(Common::String());
-	animation->play();
 	return animation;
 }
 
@@ -466,6 +465,7 @@ Common::Error AGDSEngine::run() {
 			mouseCursor = _defaultMouseCursor;
 
 		if (userEnabled() && mouseCursor) {
+			mouseCursor->tick(*this);
 			mouseCursor->paint(*this, *backbuffer, _mouse);
 		}
 
