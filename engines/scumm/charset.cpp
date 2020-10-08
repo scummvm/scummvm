@@ -1280,8 +1280,11 @@ void CharsetRendererNut::printChar(int chr, bool ignoreCharsetMask) {
 	int height = _current->getCharHeight(chr);
 
 	bool is2byte = chr >= 256 && _vm->_useCJKMode;
-	if (is2byte)
+	if (is2byte) {
 		width = _vm->_2byteWidth;
+		if (_vm->_game.id == GID_CMI)
+			height++; // One extra pixel for the shadow
+	}
 
 	shadow.right = _left + width;
 	shadow.bottom = _top + height;
