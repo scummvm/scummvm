@@ -215,6 +215,14 @@ FullDispatcher:
 		/* Phase 2. */
 		gidispatch_call(funcnum, argnum, splot.garglist);
 
+		// WORKAROUND: For stream_open_file calls, for savegame handling
+		// we need to store a copy of what the savegame description was,
+		// for use when we actually generate the savefile contents
+		if (funcnum == 0x42) {
+			frefid_t fref = (frefid_t)splot.garglist[0]._opaqueref;
+			_savegameDescription = fref->_description;
+		}
+
 		/* Phase 3. */
 		argnum2 = 0;
 		cx = proto;

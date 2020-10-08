@@ -189,6 +189,7 @@ private:
 
 	/**@}*/
 
+	Common::String _savegameDescription;
 protected:
 	/**
 	 * \defgroup glkop fields
@@ -423,19 +424,13 @@ public:
 	/**
 	 * Load a savegame from the passed Quetzal file chunk stream
 	 */
-	Common::Error readSaveData(Common::SeekableReadStream *rs) override {
-		// Unused
-		return Common::kUnknownError;
-	}
+	Common::Error readSaveData(Common::SeekableReadStream *rs) override;
 
 	/**
 	 * Save the game. The passed write stream represents access to the UMem chunk
 	 * in the Quetzal save file that will be created
 	 */
-	Common::Error writeGameData(Common::WriteStream *ws) override {
-		// Unused
-		return Common::kUnknownError;
-	}
+	Common::Error writeGameData(Common::WriteStream *ws) override;
 
 	/**
 	 * \defgroup Main access methods

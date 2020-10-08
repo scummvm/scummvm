@@ -247,8 +247,10 @@ void GraphicsWindow::drawPicture(const Graphics::Surface &image, uint transColor
 }
 
 void GraphicsWindow::getSize(uint *width, uint *height) const {
-	*width = _bbox.width();
-	*height = _bbox.height();
+	if (width)
+		*width = _bbox.width();
+	if (height)
+		*height = _bbox.height();
 }
 
 void GraphicsWindow::setBackgroundColor(uint color) {
