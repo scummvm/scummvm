@@ -132,9 +132,12 @@ void ScummEngine_v6::enqueueText(const byte *text, int x, int y, byte color, byt
 	if (_useCJKMode) {
 		// The Dig expressly checks for x == 160 && y == 189 && charset == 3. Usually, if the game wants to print CJK text at the bottom
 		// of the screen it will use y = 183. So maybe this is a hack to fix some script texts that weren forgotten in the CJK converting
-		// process. COMI doesn't have anything like that.
+		// process.
 		if (_game.id == GID_DIG && x == 160 && y == 189 && charset == 3)
 			y -= 6;
+		// COMI always adds a y-offset of 2 in CJK mode.
+		if (_game.id == GID_CMI)
+			y += 2;
 	}
 
 	convertMessageToString(text, bt.text, sizeof(bt.text));
