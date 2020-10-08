@@ -242,7 +242,7 @@ enum Opcode {
 	kStub222						= 222,
 	kStub223						= 223,
 	kSetNPCTellNotifyVar			= 224,
-	kModifyAnimationWithPhaseVar	= 225,
+	kPauseAnimation					= 225,
 	kFadeObject						= 226,
 	kLoadFont						= 227,
 	kMoveCharacterNoUserMove		= 228,
@@ -432,7 +432,7 @@ enum Opcode {
 	OP(kRestartAnimation, restartAnimation) \
 	OP(kStub223, stub223) \
 	OP(kSetNPCTellNotifyVar, setNPCTellNotifyVar) \
-	OP(kModifyAnimationWithPhaseVar, modifyAnimationWithPhaseVar) \
+	OP(kPauseAnimation, pauseAnimation) \
 	OP(kFadeObject, fadeObject) \
 	OP(kLoadFont, loadFont) \
 	OP_U(kStub201Handler, stub201) \

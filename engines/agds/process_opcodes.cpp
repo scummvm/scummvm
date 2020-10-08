@@ -839,8 +839,11 @@ void Process::restartAnimation() {
 	}
 	Animation *animation = _engine->findAnimationByPhaseVar(phaseVar);
 	if (animation) {
-		animation->rewind();
-		animation->updatePhaseVar(*_engine);
+		if (_engine->getGlobal(phaseVar) == 1 && !animation->paused()) {
+			animation->rewind();
+		}
+		animation->resume();
+		_engine->setGlobal(phaseVar, animation->phase());
 	} else {
 		warning("no animation with phase var %s found", phaseVar.c_str());
 		_engine->setGlobal(phaseVar, -1);
@@ -852,15 +855,15 @@ void Process::stub223() {
 	debug("stub223: %d", value);
 }
 
-void Process::modifyAnimationWithPhaseVar() {
+void Process::pauseAnimation() {
 	int arg = pop();
 	Common::String phaseVar = popString();
 	Animation *animation = _engine->findAnimationByPhaseVar(phaseVar);
-	debug("modifyAnimationWithPhaseVar: phaseVar %s, arg %d", phaseVar.c_str(), arg);
+	debug("pauseAnimation: phaseVar %s, arg %d", phaseVar.c_str(), arg);
 	if (animation) {
-		animation->resume();
+		animation->pause();
 		if (arg > 0) {
-			//1, 2 stop (2 with rewind?)
+			//1, 2 stop (2 with rewind)
 			animation->freeFrame();
 			if (arg == 2) {
 				animation->rewind();
