@@ -48,6 +48,8 @@ class Animation {
 	bool				_paused;
 	int					_speed;
 	int					_z;
+	int					_delay;
+	int					_random;
 
 public:
 	Animation();
@@ -86,6 +88,14 @@ public:
 
 	void cycles(int cycles) {
 		_cycles = cycles;
+	}
+
+	void delay(int delay) {
+		_delay = delay;
+	}
+
+	void setRandom(int value) { //can't declare random() because of stupid macro
+		_random = value;
 	}
 
 	int phase() const {

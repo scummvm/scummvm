@@ -60,6 +60,8 @@ private:
 	bool			_animationLoop;
 	Common::Point	_animationPosition;
 	int				_animationZ;
+	int				_animationDelay;
+	int				_animationRandom;
 	bool			_animationPaused;
 	int				_animationSpeed;
 	Common::Point	_mousePosition;
