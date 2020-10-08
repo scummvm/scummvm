@@ -162,6 +162,8 @@ void Process::loadAnimation() {
 		animation->phaseVar(_phaseVar);
 		animation->loop(_animationLoop);
 		animation->cycles(_animationCycles);
+		animation->delay(_animationDelay);
+		animation->setRandom(_animationRandom);
 		if (_phaseVar.empty()) {
 			suspend();
 		} else if (_animationPaused) {
@@ -567,7 +569,8 @@ void Process::setScreenHeight() {
 
 void Process::setDelay() {
 	int delay = pop();
-	debug("setDelay stub %d", delay);
+	debug("setDelay %d", delay);
+	_animationDelay = delay;
 }
 
 void Process::setCycles() {
@@ -578,7 +581,8 @@ void Process::setCycles() {
 
 void Process::setRandom() {
 	int value = pop();
-	debug("setRandom stub %d", value);
+	debug("setRandom %d", value);
+	_animationRandom = value;
 }
 
 void Process::stub82() {
@@ -611,6 +615,8 @@ void Process::resetState() {
 	_animationPosition = Common::Point();
 	_animationPaused = false;
 	_animationZ = 0;
+	_animationRandom = 0;
+	_animationDelay = -1;
 
 	_tileWidth = 16;
 	_tileHeight = 16;
@@ -1371,6 +1377,8 @@ void Process::loadAnimationFromObject() {
 		animation->process(getName());
 		animation->loop(_animationLoop);
 		animation->cycles(_animationCycles);
+		animation->delay(_animationDelay);
+		animation->setRandom(_animationRandom);
 		if (_animationPaused)
 			animation->pause();
 	}

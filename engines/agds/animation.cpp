@@ -30,7 +30,7 @@
 
 namespace AGDS {
 
-Animation::Animation() : _flic(), _frame(), _frames(0), _loop(false), _cycles(1), _phase(0), _paused(true), _speed(100), _z(0) {
+Animation::Animation() : _flic(), _frame(), _frames(0), _loop(false), _cycles(1), _phase(0), _paused(true), _speed(100), _z(0), _delay(-1), _random(0) {
 }
 
 Animation::~Animation() {
