@@ -168,8 +168,10 @@ PlainGameDescriptor GlkMetaEngineStatic::findGame(const char *gameId) const {
 #undef FIND_GAME
 
 DetectedGames GlkMetaEngineStatic::detectGames(const Common::FSList &fslist) const {
+#ifndef RELEASE_BUILD
 	// This is as good a place as any to detect multiple sub-engines using the same Ids
 	detectClashes();
+#endif
 
 	DetectedGames detectedGames;
 	Glk::Adrift::AdriftMetaEngine::detectGames(fslist, detectedGames);
