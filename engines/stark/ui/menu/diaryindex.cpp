@@ -30,7 +30,6 @@
 
 #include "engines/stark/ui/cursor.h"
 
-#include "common/translation.h"
 #include "engines/engine.h"
 #include "gui/message.h"
 #include "gui/saveload.h"
