@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-09 22:34+0200\n"
-"PO-Revision-Date: 2020-09-14 15:43+0000\n"
+"PO-Revision-Date: 2020-10-10 09:58+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -997,21 +997,20 @@ msgstr "Modo de Tela Cheia"
 
 #: gui/options.cpp:1300
 msgid "V-Sync in 3D Games"
-msgstr ""
+msgstr "V-Sync em Jogos 3D"
 
 #: gui/options.cpp:1300
 msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
 msgstr ""
+"Aguarda a sincronização vertical para atualizar a tela no renderizador 3D"
 
 #: gui/options.cpp:1302
-#, fuzzy
 msgid "Game 3D Renderer:"
-msgstr "Render. Interface:"
+msgstr "Renderizador 3D do Jogo:"
 
 #: gui/options.cpp:1311
-#, fuzzy
 msgid "3D Anti-aliasing:"
-msgstr "Com anti-serrilhamento"
+msgstr "Anti-serrilhamento 3D:"
 
 #: gui/options.cpp:1315 engines/mohawk/dialogs.cpp:328
 msgid "Disabled"
@@ -1030,9 +1029,8 @@ msgid "Aspect ratio correction"
 msgstr "Correção de proporção"
 
 #: gui/options.cpp:1330
-#, fuzzy
 msgid "Correct aspect ratio for games"
-msgstr "Corrige proporção para jogos de 320x200"
+msgstr "Corrige proporção para os jogos"
 
 #: gui/options.cpp:1338
 msgid "Preferred device:"
@@ -4496,13 +4494,15 @@ msgstr "Falha ao excluir arquivo."
 
 #: engines/grim/detection.cpp:45
 msgid "Load user patch (unsupported)"
-msgstr ""
+msgstr "Carregar correção do usuário (não suportado)"
 
 #: engines/grim/detection.cpp:46
 msgid ""
 "Load an user patch. Please note that the ScummVM team doesn't provide "
 "support for using such patches."
 msgstr ""
+"Carrega uma correção do usuário. Observe que a equipe ScummVM não fornece "
+"suporte para o uso de tais correções."
 
 #: engines/grim/detection.cpp:54
 msgid "Show FPS"
@@ -4510,7 +4510,7 @@ msgstr "Exibir FPS"
 
 #: engines/grim/detection.cpp:55
 msgid "Show the current FPS-rate, while you play."
-msgstr ""
+msgstr "Exibe a taxa de FPS atual, enquanto você joga."
 
 #: engines/grim/grim.cpp:344
 #, c-format
@@ -4519,10 +4519,13 @@ msgid ""
 "Running ScummVM nevertheless may cause game bugs or even crashes.\n"
 "Do you still want to run %s?"
 msgstr ""
+"ScummVM encontrou alguns problemas com seus arquivos de dados de jogo.\n"
+"Executar o ScummVM desta forma pode causar bugs ou até travar o jogo.\n"
+"Ainda deseja executar %s?"
 
 #: engines/grim/grim.cpp:468 engines/grim/grim.cpp:560
 msgid "Run"
-msgstr ""
+msgstr "Correr"
 
 #: engines/grim/grim.cpp:473 engines/scumm/help.cpp:239
 #: engines/scumm/help.cpp:247
@@ -4530,24 +4533,20 @@ msgid "Examine"
 msgstr "Examinar"
 
 #: engines/grim/grim.cpp:478 engines/grim/grim.cpp:575
-#, fuzzy
 msgid "Use/Talk"
-msgstr "Falar"
+msgstr "Usar/Conversar"
 
 #: engines/grim/grim.cpp:483 engines/grim/grim.cpp:580
-#, fuzzy
 msgid "Pick up/Put away"
-msgstr "Pegar"
+msgstr "Pegar/Deixar"
 
 #: engines/grim/grim.cpp:488 engines/grim/grim.cpp:585
-#, fuzzy
 msgid "Invetory"
 msgstr "Inventário"
 
 #: engines/grim/grim.cpp:493 engines/grim/grim.cpp:590
-#, fuzzy
 msgid "Skip dialog lines"
-msgstr "Pular linha de diálogo (para alguns jogos)"
+msgstr "Pular linha de diálogo"
 
 #: engines/grim/grim.cpp:511 engines/grim/grim.cpp:608
 msgid "Menu"
@@ -4555,25 +4554,23 @@ msgstr "Menu"
 
 #: engines/grim/grim.cpp:550
 msgid "Cycle Objects Up"
-msgstr ""
+msgstr "Percorrer por Objetos para Cima"
 
 #: engines/grim/grim.cpp:555
 msgid "Cycle Objects Down"
-msgstr ""
+msgstr "Percorrer por Objetos para Baixo"
 
 #: engines/grim/grim.cpp:565
 msgid "Quick Room Exit"
-msgstr ""
+msgstr "Saída Rápida do Cômodo"
 
 #: engines/grim/grim.cpp:570
-#, fuzzy
 msgid "Examine/Look"
-msgstr "Examinar"
+msgstr "Examinar/Olhar"
 
 #: engines/grim/grim.cpp:1356
-#, fuzzy
 msgid "Error: the game could not be saved."
-msgstr "Desculpe, o jogo salvo não pôde ser criado"
+msgstr "Erro: o jogo não pôde ser salvo."
 
 #: engines/grim/md5check.cpp:547
 #, c-format
@@ -4584,6 +4581,11 @@ msgid ""
 "version (i.e. dvd-box or jewelcase):\n"
 "%s"
 msgstr ""
+"O arquivo de dados do jogo %s pode estar corrompido.\n"
+"Se você tiver certeza de que não está, forneça à equipe ScummVM o seguinte "
+"código, junto com o nome do arquivo, o idioma e uma descrição da versão do "
+"seu jogo (por exemplo, caixa de dvd ou caixa de colecionador):\n"
+"%s"
 
 #: engines/grim/md5check.cpp:554
 #, c-format
@@ -4593,6 +4595,11 @@ msgid ""
 "Go to https://wiki.residualvm.org/index.php/Datafiles to see a list of the "
 "needed files."
 msgstr ""
+"Não foi possível abrir o arquivo %s para verificação.\n"
+"Ele pode não estar presente ou você pode não ter os autorização para abri-lo."
+"\n"
+"Vá para https://wiki.residualvm.org/index.php/Datafiles para visualizar uma "
+"lista dos arquivos necessários."
 
 #: engines/grim/md5checkdialog.cpp:42
 msgid ""
@@ -4601,6 +4608,10 @@ msgid ""
 "This may take a while, please wait.\n"
 "Successive runs will not check them again."
 msgstr ""
+"O ScummVM agora verificará os arquivos de dados do jogo para garantir que "
+"você tenha a melhor experiência de jogo.\n"
+"Isso pode demorar um pouco, aguarde.\n"
+"As execuções sucessivas não os verificarão novamente."
 
 #: engines/grim/resource.cpp:100
 msgid ""
@@ -4609,6 +4620,10 @@ msgid ""
 "https://scummvm.org/frs/extras/patches/gfupd101.exe\n"
 "and put it in the game data files directory"
 msgstr ""
+"A atualização original do Grim Fandango\n"
+"não está presente. Faça o download em\n"
+"https://scummvm.org/frs/extras/patches/gfupd101.exe\n"
+"e coloque-a no diretório de arquivos de dados do jogo"
 
 #: engines/grim/resource.cpp:105
 msgid ""
@@ -4618,6 +4633,10 @@ msgid ""
 "Pay attention to download the correct version according to the game's "
 "language"
 msgstr ""
+"A atualização original de Escape from Monkey Island não está presente.\n"
+"Faça o download em https://scummvm.org/frs/extras/patches/\n"
+"e coloque-a no diretório de arquivos de dados do jogo.\n"
+"Preste atenção para baixar a versão correta de acordo com o idioma do jogo"
 
 #: engines/grim/emi/sound/emisound.cpp:650
 msgid ""
@@ -4630,6 +4649,15 @@ msgid ""
 "\n"
 "Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.int"
 msgstr ""
+"ERRO: Não foram encontradas faixas de música suficientes!\n"
+"Escape from Monkey Island tem duas versões de FullMonkeyMap.imt,\n"
+"você precisa copiar ambos os arquivos de ambos os CDs para Textures/ e "
+"renomear\n"
+"eles da seguinte forma para obter suporte a música no jogo:\n"
+"CD 1: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap1.imt\"\n"
+"CD 2: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap2.imt\"\n"
+"\n"
+"Como alternativa, uma cópia Steam ou GOG tem um FullMonkeyMap.int combinado"
 
 #: engines/groovie/detection.cpp:320
 msgid "Fast movie speed"
@@ -5236,13 +5264,12 @@ msgid "Unable to locate the '%s' engine data file"
 msgstr "Não foi possível localizar o arquivo de dados da engine '%s'"
 
 #: engines/myst3/detection.cpp:182
-#, fuzzy
 msgid "Widescreen mod"
-msgstr "Modo de Tela Cheia"
+msgstr "Mod de Widescreen"
 
 #: engines/myst3/detection.cpp:183
 msgid "Enable enable widescreen rendering in fullscreen mode."
-msgstr ""
+msgstr "Habilita a renderização em widescreen no modo de tela inteira."
 
 #: engines/myst3/myst3.cpp:361
 msgid ""
@@ -5252,6 +5279,11 @@ msgid ""
 "The updates can be downloaded from:\n"
 "https://www.scummvm.org/frs/extras/patches/"
 msgstr ""
+"Esta versão de Myst III não foi atualizada com a atualização oficial mais "
+"recente.\n"
+"Instale a atualização oficial correspondente ao idioma do seu jogo.\n"
+"As atualizações podem ser baixadas em:\n"
+"https://www.scummvm.org/frs/extras/patches/"
 
 #: engines/myst3/myst3.cpp:1579 engines/pegasus/pegasus.cpp:701
 msgid "Invalid file name for saving"
@@ -6485,38 +6517,37 @@ msgid "Use the floppy version's intro (CD version only)"
 msgstr "Utiliza a introdução da versão de disquete (somente para versão de CD)"
 
 #: engines/stark/detection.cpp:340
-#, fuzzy
 msgid "Load modded assets"
-msgstr "Carregar estado de jogo"
+msgstr "Carregar recursos modificados"
 
 #: engines/stark/detection.cpp:341
 msgid "Enable loading of external replacement assets."
-msgstr ""
+msgstr "Habilita o carregamento de recursos de substituição externos."
 
 #: engines/stark/detection.cpp:349
 msgid "Enable linear filtering of the backgrounds images"
-msgstr ""
+msgstr "Habilitar filtragem linear das imagens de fundo"
 
 #: engines/stark/detection.cpp:350
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
 msgstr ""
+"Quando a filtragem linear está ativada, os gráficos de fundo são mais suaves "
+"no modo de tela inteira, à custa de alguns detalhes."
 
 #: engines/stark/detection.cpp:358
-#, fuzzy
 msgid "Enable font anti-aliasing"
-msgstr "Habilitar censura de conteúdo"
+msgstr "Ativar suavização de fonte"
 
 #: engines/stark/detection.cpp:359
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
+"Quando a suavização de borda de fonte está ativada, o texto fica mais suave."
 
 #: engines/stark/stark.cpp:294
-#, fuzzy
 msgid "You are missing recommended data files:"
-msgstr ""
-"Você não possui os seguintes arquivos de dados necessários de Riven: \n"
+msgstr "Estão faltando os arquivos de dados recomendados:"
 
 #: engines/stark/stark.cpp:308
 msgid ""
@@ -6524,20 +6555,28 @@ msgid ""
 "designed. The Steam release is known to be missing it. You can get the fonts "
 "from the demo version of the game."
 msgstr ""
+"A pasta 'fonts' é necessária para experimentar o estilo do texto conforme "
+"foi projetado. O lançamento no Steam é conhecido por estar faltando isso. "
+"Você pode obter as fontes na versão demo do jogo."
 
 #: engines/stark/stark.cpp:315
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
 msgstr ""
+"'gui.ini' é recomendado para obter as configurações de fonte adequadas para "
+"a localização de jogo."
 
 #: engines/stark/stark.cpp:321
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
 msgstr ""
+"'language.ini' é recomendado para obter caixas de diálogo de confirmação "
+"localizadas."
 
 #: engines/stark/stark.cpp:327
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
 msgstr ""
+"'game.exe' é recomendado para obter diálogos de confirmação estilizados."
 
 #: engines/supernova/supernova.cpp:187
 #, c-format
