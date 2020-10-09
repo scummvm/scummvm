@@ -907,7 +907,7 @@ public:
 	 * The caller can then perform arbitrary graphics transformations
 	 * on the framebuffer (blitting, scrolling, etc.).
 	 */
-	virtual Graphics::PixelBuffer getScreenPixelBuffer() { return Graphics::PixelBuffer(); }
+	virtual Graphics::PixelBuffer getScreenPixelBuffer() = 0;
 
 	/**
 	 * Returns the currently set virtual screen height.
