@@ -28,13 +28,16 @@
 #include "graphics/thumbnail.h"
 
 #include "petka/petka.h"
+#include "petka/objects/object_star.h"
 #include "petka/q_system.h"
+#include "petka/interfaces/panel.h"
 #include "petka/interfaces/save_load.h"
+#include "petka/interfaces/main.h"
 
 namespace Petka {
 
 Common::Error PetkaEngine::loadGameState(int slot) {
-	Common::SeekableReadStream *in = _saveFileMan->openForLoading(generateSaveName(slot, _targetName.c_str()));
+	Common::ScopedPtr<Common::SeekableReadStream> in(_saveFileMan->openForLoading(generateSaveName(slot, _targetName.c_str())));
 	if (!in)
 		return Common::kNoGameDataFoundError;
 
@@ -48,18 +51,17 @@ Common::Error PetkaEngine::loadGameState(int slot) {
 	_chapter = in->readUint32LE();
 	if (_nextPart == _part) {
 		loadChapter(_chapter);
-		_qsystem->load(in);
+		_qsystem->load(in.get());
 	} else {
 		_shouldChangePart = true;
 		_saveSlot = slot;
 	}
 
-	delete in;
 	return Common::kNoError;
 }
 
 Common::Error PetkaEngine::saveGameState(int slot, const Common::String &desci, bool isAutosave) {
-	Common::OutSaveFile *out = _saveFileMan->openForSaving(generateSaveName(slot, _targetName.c_str()));
+	Common::ScopedPtr<Common::OutSaveFile> out(_saveFileMan->openForSaving(generateSaveName(slot, _targetName.c_str())));
 	if (!out)
 		return Common::kUnknownError;
 
@@ -75,27 +77,33 @@ Common::Error PetkaEngine::saveGameState(int slot, const Common::String &desci, 
 
 	out->writeUint32LE(getTotalPlayTime() / 1000);
 
-	if (!Graphics::saveThumbnail(*out))
+	if (!_thumbnail)
 		return Common::kUnknownError;
+
+	out->writeStream(_thumbnail.get());
 
 	out->writeUint32LE(_part);
 	out->writeUint32LE(_chapter);
-	_qsystem->save(out);
+	_qsystem->save(out.get());
 
-	delete out;
 	return Common::kNoError;
 }
 
 bool PetkaEngine::canSaveGameStateCurrently() {
-	return true;
-	InterfaceSaveLoad *interface =_qsystem->_saveLoadInterface.get();
-	return (interface == _qsystem->_currInterface && !interface->loadMode());
+	if (isDemo() || !_qsystem)
+		return false;
+
+	Interface *panel = _qsystem->_panelInterface.get();
+	InterfaceSaveLoad *saveLoad = _qsystem->_saveLoadInterface.get();
+
+	Interface *curr = _qsystem->_currInterface;
+	Interface *prev = _qsystem->_prevInterface;
+
+	return prev == _qsystem->_mainInterface.get() && (curr == saveLoad || curr == panel);
 }
 
 bool PetkaEngine::canLoadGameStateCurrently() {
-	return true;
-	InterfaceSaveLoad *interface =_qsystem->_saveLoadInterface.get();
-	return (interface == _qsystem->_currInterface && interface->loadMode());
+	return !isDemo();
 }
 
 int PetkaEngine::getSaveSlot() {

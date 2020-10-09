@@ -25,12 +25,15 @@
 
 #include "common/random.h"
 #include "common/stream.h"
+#include "common/memstream.h"
 #include "common/savefile.h"
 
 #include "engines/engine.h"
 #include "engines/savestate.h"
 
 #include "gui/debugger.h"
+
+#include "graphics/surface.h"
 
 /*
  *  This is the namespace of the Petka engine.
@@ -108,6 +111,9 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
 	bool canSaveGameStateCurrently() override;
 
+	const ADGameDescription *const _desc;
+	Common::ScopedPtr<Common::MemoryReadStream> _thumbnail;
+
 protected:
 	void pauseEngineIntern(bool pause) override;
 
@@ -123,7 +129,6 @@ private:
 	Common::ScopedPtr<VideoSystem> _vsys;
 	Common::ScopedPtr<BigDialogue> _dialogMan;
 	Common::ScopedPtr<Video::VideoDecoder> _videoDec;
-	const ADGameDescription *_desc;
 
 	Common::RandomSource _rnd;
 

@@ -24,6 +24,8 @@
 #include "common/substream.h"
 #include "common/system.h"
 
+#include "graphics/thumbnail.h"
+
 #include "petka/petka.h"
 #include "petka/interfaces/startup.h"
 #include "petka/interfaces/main.h"
@@ -413,9 +415,11 @@ void QSystem::onEvent(const Common::Event &event) {
 		case Common::KEYCODE_ESCAPE:
 			goPrevInterface();
 			break;
-		case Common::KEYCODE_F2:
+		case Common::KEYCODE_F2: {
+			InterfaceSaveLoad::saveScreen();
 			startSaveLoad(kSaveMode);
 			break;
+		}
 		case Common::KEYCODE_F3:
 			startSaveLoad(kLoadMode);
 			break;

@@ -44,6 +44,8 @@ public:
 	void onRightButtonDown(Common::Point p) override;
 	void onMouseMove(Common::Point p) override;
 
+	static void saveScreen();
+
 private:
 	int findSaveLoadRectIndex(Common::Point p);
 

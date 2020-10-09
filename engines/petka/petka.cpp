@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/error.h"
 #include "common/events.h"
@@ -57,7 +58,7 @@ PetkaEngine::PetkaEngine(OSystem *system, const ADGameDescription *desc)
 	DebugMan.addDebugChannel(kPetkaDebugMessagingSystem, "message_system", "Engine message system");
 	DebugMan.addDebugChannel(kPetkaDebugDialogs, "dialogs", "Dialogs");
 
-	_part = 0;
+	_part = 0xFF;
 	_chapter = 0;
 	_shouldChangePart = false;
 	_nextPart = 0;
@@ -92,7 +93,11 @@ Common::Error PetkaEngine::run() {
 	_soundMgr.reset(new SoundMgr(*this));
 	_vsys.reset(new VideoSystem(*this));
 
-	loadPart(2);
+	loadPart(0);
+
+	if (ConfMan.hasKey("save_slot")) {
+		loadGameState(ConfMan.getInt("save_slot"));
+	}
 
 	while (!shouldQuit()) {
 		Common::Event event;

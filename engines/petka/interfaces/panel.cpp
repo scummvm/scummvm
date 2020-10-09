@@ -24,6 +24,7 @@
 #include "common/system.h"
 
 #include "petka/objects/object_cursor.h"
+#include "petka/objects/object_case.h"
 #include "petka/petka.h"
 #include "petka/q_system.h"
 #include "petka/flc.h"
@@ -91,9 +92,16 @@ InterfacePanel::InterfacePanel() {
 }
 
 void InterfacePanel::start(int id) {
+	QSystem *sys = g_vm->getQSystem();
 	readSettings();
 
-	QSystem *sys = g_vm->getQSystem();
+	sys->getCase()->show(false);
+
+	g_vm->videoSystem()->makeAllDirty();
+	g_vm->videoSystem()->update();
+
+	InterfaceSaveLoad::saveScreen();
+
 	QObjectBG *bg = (QObjectBG *)sys->findObject(kPanelObjName);
 	_objs.push_back(bg);
 

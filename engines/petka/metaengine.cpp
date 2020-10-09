@@ -34,7 +34,7 @@ public:
 	}
 
     virtual bool hasFeature(MetaEngineFeature f) const override;
-	virtual int getMaximumSaveSlot() const override { return 18; }
+	virtual int getMaximumSaveSlot() const override { return 17; }
 	virtual SaveStateList listSaves(const char *target) const override;
 	virtual void removeSaveState(const char *target, int slot) const override;
 	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
@@ -44,6 +44,7 @@ public:
 bool PetkaMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
+		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave) ||
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
@@ -88,6 +89,7 @@ SaveStateDescriptor PetkaMetaEngine::querySaveMetaInfos(const char *target, int 
 		if (!Petka::readSaveHeader(*f.get(), desc, false))
 			return SaveStateDescriptor();
 
+		desc.setSaveSlot(slot);
 		return desc;
 	}
 
