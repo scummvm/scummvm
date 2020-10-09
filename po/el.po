@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-09 22:34+0200\n"
-"PO-Revision-Date: 2020-09-16 01:43+0000\n"
+"PO-Revision-Date: 2020-10-10 09:58+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -1008,21 +1008,21 @@ msgstr "Λειτουργία πλήρους οθόνης"
 
 #: gui/options.cpp:1300
 msgid "V-Sync in 3D Games"
-msgstr ""
+msgstr "V-Sync σε 3D Παιχνίδια"
 
 #: gui/options.cpp:1300
 msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
 msgstr ""
+"Αναμονή του κάθετου συγχρονισμού (vertical sync) προκειμένου να ανανεωθεί η "
+"εικόνα στην οθόνη κατά την απόδοση 3D περιεχόμενου"
 
 #: gui/options.cpp:1302
-#, fuzzy
 msgid "Game 3D Renderer:"
-msgstr "Απόδοση εικόνας GUI:"
+msgstr "Απόδοση εικόνας σε παιχνίδια 3D:"
 
 #: gui/options.cpp:1311
-#, fuzzy
 msgid "3D Anti-aliasing:"
-msgstr "Εξομαλυμένη"
+msgstr "Εξομάλυνση 3D:"
 
 #: gui/options.cpp:1315 engines/mohawk/dialogs.cpp:328
 msgid "Disabled"
@@ -1041,9 +1041,8 @@ msgid "Aspect ratio correction"
 msgstr "Διόρθωση αναλογίας διαστάσεων"
 
 #: gui/options.cpp:1330
-#, fuzzy
 msgid "Correct aspect ratio for games"
-msgstr "Διόρθωση αναλογίας διαστάσεων για παιχνίδια 320x200"
+msgstr "Διόρθωση αναλογίας διαστάσεων για παιχνίδια"
 
 #: gui/options.cpp:1338
 msgid "Preferred device:"
