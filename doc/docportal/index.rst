@@ -4,9 +4,7 @@
       :maxdepth: 2
       :hidden:
 
-      getting_started/mac
-      getting_started/linux
-      getting_started/windows
+      getting_started/mac_linux_windows
       getting_started/ios
       getting_started/android
        
@@ -49,7 +47,7 @@ First steps
 ================
 We have guides available to show you how to get your games up and running with ScummVM on many different platforms:
 
-- **Computers**: :doc:`getting_started/windows` | :doc:`getting_started/mac` | :doc:`getting_started/linux`
+- **Computers**: :doc:`getting_started/mac_linux_windows`
 - **Phones and Tablets**: :doc:`getting_started/ios` | :doc:`getting_started/android`
 - **Other Platforms:** 
 
