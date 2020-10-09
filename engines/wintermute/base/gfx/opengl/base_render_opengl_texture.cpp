@@ -35,11 +35,11 @@
 #include "common/queue.h"
 #include "common/config-manager.h"
 #include "graphics/transparent_surface.h"
-#include "graphics/opengl/texture.h"
-#include "graphics/opengl/surfacerenderer.h"
 
 #if defined(USE_OPENGL) && !defined(USE_GLES2)
 
+#include "graphics/opengl/texture.h"
+#include "graphics/opengl/surfacerenderer.h"
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl_texture.h"
 #include "engines/wintermute/base/gfx/opengl/base_surface_opengl_texture.h"
 #include "engines/wintermute/base/gfx/opengl/render_ticket.h"
