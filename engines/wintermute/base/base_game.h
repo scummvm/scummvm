@@ -68,6 +68,11 @@ class VideoPlayer;
 class VideoTheoraPlayer;
 class SaveThumbHelper;
 
+#ifdef ENABLE_WME3D
+class BaseRenderer3D;
+struct FogParameters;
+#endif
+
 class BaseGame: public BaseObject {
 public:
 	DECLARE_PERSISTENT(BaseGame, BaseObject)
@@ -154,6 +159,20 @@ public:
 	void LOG(bool res, const char *fmt, ...);
 
 	BaseRenderer *_renderer;
+#ifdef ENABLE_WME3D
+	BaseRenderer3D *_renderer3D;
+	bool _playing3DGame;
+
+	bool _supportsRealTimeShadows;
+	TShadowType _maxShadowType;
+
+	bool setMaxShadowType(TShadowType maxShadowType);
+	virtual TShadowType getMaxShadowType(BaseObject *object);
+
+	virtual uint32 getAmbientLightColor();
+
+	virtual bool getFogParams(FogParameters &fogParameters);
+#endif
 	BaseSoundMgr *_soundMgr;
 #if EXTENDED_DEBUGGER_ENABLED
 	DebuggableScEngine *_scEngine;

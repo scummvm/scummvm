@@ -158,7 +158,12 @@ _png=auto
 _theoradec=auto
 _faad=auto
 _fluidsynth=auto
+_glew=auto
 _opengl_mode=auto
+_opengl_game=auto
+_opengles=no
+_opengles2=no
+_opengl_shaders=auto
 _readline=auto
 _freetype2=auto
 _taskbar=auto
@@ -261,6 +266,8 @@ add_feature freetype2 "FreeType2" "_freetype2"
 add_feature highres "high resolution" "_highres"
 add_feature mad "MAD" "_mad"
 add_feature jpeg "JPEG" "_jpeg"
+add_feature mpeg2 "mpeg2" "_mpeg2"
+add_feature opengl_shaders "OpenGL with shaders" "_opengl_shaders"
 add_feature png "PNG" "_png"
 add_feature theoradec "libtheoradec" "_theoradec"
 add_feature vorbis "Vorbis file support" "_vorbis _tremor"
@@ -1104,6 +1111,14 @@ Optional Libraries:
   --with-a52-prefix=DIR    Prefix where liba52 is installed (optional)
   --enable-a52             enable a52 codec for MPEG decoder [autodetect]
 
+  --with-opengl-prefix=DIR prefix where OpenGL (ES) is installed (optional)
+  --disable-opengl-game    disable OpenGL (ES) support in game [autodetect]
+  --disable-opengl-shaders disable use of modern OpenGL with shaders
+  --force-opengles2        only detect OpenGL ES2
+
+  --with-glew-prefix=DIR   prefix where GLEW is installed (optional)
+  --disable-glew           disable GLEW support [autodetect]
+
   --with-jpeg-prefix=DIR   Prefix where libjpeg is installed (optional)
   --disable-jpeg           disable JPEG decoder [autodetect]
 
@@ -1301,6 +1316,13 @@ for ac_option in $@; do
 	--disable-tts)                _tts=no                ;;
 	--enable-gtk)                 _gtk=yes               ;;
 	--disable-gtk)                _gtk=no                ;;
+	--enable-glew)                _glew=yes              ;;
+	--disable-glew)               _glew=no               ;;
+	--enable-opengl-game)         _opengl_game=yes       ;;
+	--disable-opengl-game)        _opengl_game=no        ;;
+	--enable-opengl-shaders)      _opengl_shaders=yes    ;;
+	--disable-opengl-shaders)     _opengl_shaders=no     ;;
+	--force-opengles2)            _opengles2=yes         ;;
 	--enable-bink)                _bink=yes              ;;
 	--disable-bink)               _bink=no               ;;
 	--enable-discord)             _discord=yes           ;;
@@ -1435,6 +1457,16 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		SDL_NET_CFLAGS="-I$arg/include"
 		SDL_NET_LIBS="-L$arg/lib"
+		;;
+	--with-opengl-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		OPENGL_CFLAGS="-I$arg/include"
+		OPENGL_LIBS="-L$arg/lib"
+		;;
+	--with-glew-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		GLEW_CFLAGS="-I$arg/include"
+		GLEW_LIBS="-L$arg/lib"
 		;;
 	--with-iconv-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -5202,6 +5234,51 @@ echo "$_freetype2"
 
 define_in_config_if_yes "$_freetype2" "USE_FREETYPE2"
 
+
+#
+# Check for GLEW
+#
+echocheck "GL Extension Wrangler (GLEW)"
+if test "$_glew" != "no" && test "$_opengl_mode" = "no"; then
+	_glew=no
+	echo "cannot use GLEW without OpenGL"
+elif test "$_glew" != "no" && test "$_opengles2" = "yes"; then
+	_glew=no
+	echo "not needed with OpenGL ES v2"
+else
+
+	case $_host_os in
+	mingw*)
+		_GLEW_CFLAGS="-DGLEW_STATIC"
+		_GLEW_LIBS="-lglew32 -lopengl32"
+		;;
+	*)
+		_GLEW_LIBS="-lGLEW"
+		;;
+	esac
+
+	if test "$_glew" = auto; then
+		_glew=no
+		cat > $TMPC << EOF
+#include <GL/glew.h>
+int main(void) {
+	glewInit();
+	return 0;
+}
+EOF
+		cc_check $DEFINES $GLEW_CFLAGS $_GLEW_CFLAGS $GLEW_LIBS $_GLEW_LIBS && _glew=yes
+	fi
+
+	if test "$_glew" = yes ; then
+		append_var LIBS "$GLEW_LIBS $_GLEW_LIBS"
+		append_var INCLUDES "$GLEW_CFLAGS $_GLEW_CFLAGS"
+	fi
+
+	echo "$_glew"
+fi
+
+define_in_config_if_yes "$_glew" "USE_GLEW"
+
 #
 # Check for OpenGL (ES)
 #
@@ -5293,7 +5370,145 @@ case $_opengl_mode in
 		;;
 esac
 
+#
+# Check for OpenGL (ES) for game
+#
+echocheck "OpenGL for game"
+
+if test "$_opengl_game" = auto ; then
+	_opengl_game=no
+	if test "$_backend" = "sdl" || test "$_backend" = "android"; then
+		# Try different header filenames
+		# 1) GL/gl.h         This is usually used on POSIX and Windows systems
+		# 2) OpenGL/gl.h     This is used on Mac OS X
+		# 3) GLES2/gl2.h     This is used for OpenGL ES 2.x
+		# 4) GLES/gl.h       This is used for OpenGL ES 1.x
+		for i in "GL/gl.h" "OpenGL/gl.h" "GLES2/gl2.h" "GLES/gl.h"; do
+			# Test the current header for OpenGL
+			if test "$_opengles2" = no ; then
+				cat > $TMPC << EOF
+#include <$i>
+#include <stdio.h>
+int main(void) { printf("ANTIVIRUS FALSE POSITIVE WORKAROUND"); return GL_VERSION_1_1; }
+EOF
+				cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl_game=yes && break
+			fi
+
+			# Test the current header for OpenGL ES2
+			cat > $TMPC << EOF
+#include <$i>
+int main(void) { return GL_ES_VERSION_2_0; }
+EOF
+			cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl_game=yes && _opengles2=yes && break
+
+			# Test the current header for OpenGL ES
+			if test "$_opengles2" = no ; then
+				cat > $TMPC << EOF
+#include <$i>
+int main(void) { return GL_OES_VERSION_1_1; }
+EOF
+				cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl_game=yes && _opengles=yes && break
+			fi
+		done
+	fi
+fi
+
+if test "$_opengl_game" = yes ; then
+	# Our simple test case
+	cat > $TMPC << EOF
+int main(void) { return 0; }
+EOF
+
+	_opengl_game=no
+	# Try different library names
+	if test "$_opengles" = "yes" ; then
+		# 1) GLES_CM    This is usually used for OpenGL ES 1.1 (Common profile)
+		# 2) GLESv1_CM  This is used by the Windows Mali OpenGL ES 1.1 Emulator
+		# 3) glesv1     This is used by the Linux Mali OpenGL ES 1.1 Emulator
+		_opengles=no
+		for lib in "-lGLES_CM" "-lGLESv1_CM" "-lglesv1"; do
+			if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS $lib
+				then
+				_opengl_game=yes
+				_opengles=yes
+				append_var OPENGL_LIBS "$lib"
+				break
+			fi
+		done
+	elif test "$_opengles2" = yes ; then
+		# 1) GLESv2    This is generally used by nearly all platforms for OpenGL ES 2
+		# 2) ogles2    This is used by AmigaOS4 (and probably others)
+		_opengles2=no
+		for lib in "-lGLESv2" "-logles2"; do
+			if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS $lib
+				then
+				_opengl_game=yes
+				_opengles2=yes
+				_opengl_shaders=yes
+				append_var OPENGL_LIBS "$lib"
+				break
+			fi
+		done
+	else
+		case $_host_os in
+		darwin*)
+			OPENGL_LIBS="-framework OpenGL"
+			;;
+		mingw*)
+			OPENGL_LIBS="-lopengl32"
+			;;
+		*)
+			OPENGL_LIBS="-lGL"
+			;;
+		esac
+		if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS
+			then
+			_opengl_game=yes
+		fi
+	fi
+
+	if test "$_opengl_game" = yes ; then
+		append_var LIBS "$OPENGL_LIBS"
+		append_var INCLUDES "$OPENGL_CFLAGS"
+		if test "$_opengl_shaders" = auto; then
+			_opengl_shaders=$_glew
+		fi
+		if test "$_opengl_shaders" = yes && test "$_opengles2" = no && test "$_glew" = no; then
+			echo "WARNING: OpenGL Shader support requires GLEW!"
+			_opengl_shaders=no
+		fi
+	else
+		_opengl_shaders=no
+	fi
+	cc_check_clean
+fi
+
+# Make sure both flags are synced to proper compile with USE_OPENGL
+if test "$_opengl" = "no" || test "$_opengl_game" = "no" ; then
+	_opengl=no
+	_opengl_game=no
+	_opengles=no
+	_opengles2=no
+fi
+
+if test "$_opengles" = "yes" ; then
+	echo "yes (OpenGL ES)"
+elif test "$_opengles2" = "yes" ; then
+	echo "yes (OpenGL ES2)"
+else
+	if test "$_opengl_shaders" = "yes" ; then
+		echo "$_opengl_game (shaders enabled)"
+	elif test "$_opengl" = "yes" ; then
+		echo "$_opengl_game (shaders disabled)"
+	else
+		echo "no"
+	fi
+fi
+
 define_in_config_if_yes "$_opengl" "USE_OPENGL"
+define_in_config_if_yes "$_opengles" "USE_GLES"
+define_in_config_if_yes "$_opengles2" "USE_GLES2"
+define_in_config_if_yes "$_opengl_shaders" "USE_OPENGL_SHADERS"
 
 #
 # Check for iconv
@@ -5860,7 +6075,7 @@ case $_host_os in
 		system_libs=''
 		for lib in $LIBS; do
 			case $lib in
-			-lz|-lm|-ldl)
+			-lz|-lm|-ldl|-lGLESv2)
 				system_libs="$system_libs $lib"
 				;;
 			*)

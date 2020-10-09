@@ -102,6 +102,10 @@ bool WintermuteEngine::hasFeature(EngineFeature f) const {
 		return true;
 	case kSupportsSavingDuringRuntime:
 		return true;
+#ifdef ENABLE_WME3D
+	case kSupportsArbitraryResolutions:
+		return true;
+#endif
 	default:
 		return false;
 	}
@@ -110,6 +114,7 @@ bool WintermuteEngine::hasFeature(EngineFeature f) const {
 
 Common::Error WintermuteEngine::run() {
 	// Initialize graphics using following:
+#ifndef ENABLE_WME3D
 	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	if (_gameDescription->adDesc.flags & GF_LOWSPEC_ASSETS) {
 		initGraphics(320, 240, &format);
@@ -123,6 +128,9 @@ Common::Error WintermuteEngine::run() {
 	if (g_system->getScreenFormat() != format) {
 		return Common::kUnsupportedColorMode;
 	}
+#else
+	initGraphics3d(800, 600, ConfMan.getBool("fullscreen"), true);
+#endif
 
 	// Create debugger console. It requires GFX to be initialized
 	_dbgController = new DebuggerController(this);
@@ -160,6 +168,12 @@ int WintermuteEngine::init() {
 		}
 	}
 
+	#ifdef ENABLE_WME3D
+	if (instance.getFlags() & GF_3D) {
+		instance.getClassRegistry()->register3DClasses();
+	}
+	#endif
+
 	// check dependencies for games with high resolution assets
 	#if !defined(USE_PNG) || !defined(USE_JPEG) || !defined(USE_VORBIS)
 		if (!(instance.getFlags() & GF_LOWSPEC_ASSETS)) {
@@ -193,6 +207,7 @@ int WintermuteEngine::init() {
 		}
 	#endif
 
+	#ifndef ENABLE_WME3D
 	// check if game require 3D capabilities
 	if (instance.getFlags() & GF_3D) {
 		GUI::MessageDialog dialog(_("This game requires 3D capabilities that are out ScummVM scope. As such, it"
@@ -203,11 +218,17 @@ int WintermuteEngine::init() {
 			return false;
 		}
 	}
+	#endif
 
 	_game = new AdGame(_targetName);
 	if (!_game) {
 		return 1;
 	}
+
+	#ifdef ENABLE_WME3D
+	Common::ArchiveMemberList actors3d;
+	_game->_playing3DGame = BaseEngine::instance().getFileManager()->listMatchingPackageMembers(actors3d, "*.act3d");
+	#endif
 	instance.setGameRef(_game);
 	BasePlatform::initialize(this, _game, 0, nullptr);
 

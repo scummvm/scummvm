@@ -1,0 +1,15 @@
+in vec2 Texcoord;
+in vec3 Color;
+
+OUTPUT
+
+uniform bool textured;
+uniform sampler2D tex;
+
+void main() {
+	outColor = vec4(Color, 1.0);
+
+	if (textured) {
+		outColor *= texture(tex, Texcoord);
+	}
+}

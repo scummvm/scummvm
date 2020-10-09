@@ -346,9 +346,28 @@
 			<widget name = 'grFullscreenCheckbox'
 					type = 'Checkbox'
 			/>
+			<widget name = 'grVSyncCheckbox'
+					type = 'Checkbox'
+			/>
 			<widget name = 'grFilteringCheckbox'
 					type = 'Checkbox'
 			/>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' align = 'center'>
+				<widget name = 'grRendererTypePopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'grRendererTypePopup'
+						type = 'PopUp'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' align = 'center'>
+				<widget name = 'grAntiAliasPopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'grAntiAliasPopup'
+						type = 'PopUp'
+				/>
+			</layout>
 		</layout>
 	</dialog>
 

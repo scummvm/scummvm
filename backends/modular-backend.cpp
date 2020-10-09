@@ -24,12 +24,14 @@
 
 #include "backends/audiocd/audiocd.h"
 #include "backends/graphics/graphics.h"
+#include "backends/graphics3d/graphics3d.h"
 #include "backends/mixer/mixer.h"
 #include "backends/mutex/mutex.h"
 #include "gui/EventRecorder.h"
 
 #include "common/timer.h"
 #include "graphics/pixelformat.h"
+#include "graphics/pixelbuffer.h"
 
 ModularGraphicsBackend::ModularGraphicsBackend()
 	:
@@ -67,8 +69,8 @@ int ModularGraphicsBackend::getDefaultGraphicsMode() const {
 	return _graphicsManager->getDefaultGraphicsMode();
 }
 
-bool ModularGraphicsBackend::setGraphicsMode(int mode) {
-	return _graphicsManager->setGraphicsMode(mode);
+bool ModularGraphicsBackend::setGraphicsMode(int mode, uint flags) {
+	return _graphicsManager->setGraphicsMode(mode, flags);
 }
 
 int ModularGraphicsBackend::getGraphicsMode() const {
@@ -122,6 +124,10 @@ Common::List<Graphics::PixelFormat> ModularGraphicsBackend::getSupportedFormats(
 }
 
 #endif
+
+Graphics::PixelBuffer ModularGraphicsBackend::getScreenPixelBuffer() {
+	return _graphicsManager->getScreenPixelBuffer();
+}
 
 void ModularGraphicsBackend::initSize(uint w, uint h, const Graphics::PixelFormat *format ) {
 	_graphicsManager->initSize(w, h, format);
@@ -232,6 +238,10 @@ int16 ModularGraphicsBackend::getOverlayWidth() {
 
 bool ModularGraphicsBackend::showMouse(bool visible) {
 	return _graphicsManager->showMouse(visible);
+}
+
+bool ModularGraphicsBackend::lockMouse(bool visible) {
+	return _graphicsManager->lockMouse(visible);
 }
 
 void ModularGraphicsBackend::warpMouse(int x, int y) {

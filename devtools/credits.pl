@@ -676,6 +676,17 @@ begin_credits("Credits");
 				add_person("Eugene Sandulenko", "sev", "");
 			end_section();
 
+			begin_section("Grim");
+				add_person("James Brown", "ender", "Grim (retired)");
+				add_person("Giulio Camuffo", "giucam", "Grim (retired)");
+				add_person("Dries Harnie", "Botje", "EMI");
+				add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "Grim");
+				add_person("Christian Krause", "chkr", "EMI (retired)");
+				add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "Grim, EMI");
+				add_person("Joel Teichroeb ", "klusark", "EMI");
+				add_person("Joni V&auml;h&auml;m&auml;ki", "Akz", "EMI (retired)");
+			end_section();
+
 			begin_section("Groovie");
 				add_person("Henry Bush", "spookypeanut", "");
 				add_person("Scott Thomas", "ST", "");
@@ -696,6 +707,12 @@ begin_credits("Credits");
 				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
 				add_person("Oystein Eftevaag", "vinterstum", "");
 				add_person("Eugene Sandulenko", "sev", "");
+			end_section();
+
+			begin_section("ICB");
+				add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
+				add_person("Joost Peters", "joostp", "");
+				add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "");
 			end_section();
 
 			begin_section("Illusions");
@@ -773,6 +790,10 @@ begin_credits("Credits");
 				add_person("Miroslav Rem&aacute;k", "MiroslavR", "");
 			end_section();
 
+			begin_section("Myst 3");
+				add_person("Bastien Bouclet", "bgK", "");
+			end_section();
+
 			begin_section("Neverhood");
 				add_person("Benjamin Haisch", "john_doe", "");
 				add_person("Filippos Karapetis", "[md5]", "");
@@ -843,6 +864,12 @@ begin_credits("Credits");
 				add_person("Robert G&ouml;ffringmann", "lavosspawn", "(retired)");
 				add_person("Oliver Kiehl", "olki", "(retired)");
 				add_person("Joost Peters", "joostp", "");
+			end_section();
+
+			begin_section("Stark");
+				add_person("Bastien Bouclet", "bgK", "");
+				add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "");
+				add_person("Liu Zhaosong", "Douglas", "");
 			end_section();
 
 			begin_section("Supernova");
@@ -956,6 +983,7 @@ begin_credits("Credits");
 			end_section();
 
 			begin_section("Wintermute");
+				add_person("Gunnar Birke", "Fury", "Wintermute 3D");
 				add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "");
 				add_person("Tobia Tesan", "t0by", "");
 			end_section();
@@ -1359,6 +1387,7 @@ begin_credits("Credits");
 				add_person("Martin Doucha", "next_ghost", "CinE engine objectification");
 				add_person("Thomas Fach-Pedersen", "madmoose", "ProTracker module player, Smacker video decoder");
 				add_person("Tobias Gunkel", "hennymcc", "Sound support for C64 version of MM/Zak, Loom PCE support");
+				add_person("Dries Harnie", "Botje", "Android port for ResidualVM");
 				add_person("Janne Huttunen", "", "V3 actor mask support, Dig/FT SMUSH audio");
 				add_person("Kov&aacute;cs Endre J&aacute;nos", "", "Several fixes for Simon1");
 				add_person("Jeroen Janssen", "japj", "Numerous readability and bugfix patches");
@@ -1378,6 +1407,7 @@ begin_credits("Credits");
 				add_person("Edward Rudd", "urkle", "Fixes for playing MP3 versions of MI1/Loom audio");
 				add_person("Daniel Schepler", "dschepler", "Final MI1 CD music support, initial Ogg Vorbis support");
 				add_person("Andr&eacute; Souza", "luke_br", "SDL-based OpenGL renderer");
+				add_person("Joel Teichroeb ", "klusark", "Android port for ResidualVM");
 				add_person("Tom Frost", "TomFrost", "WebOS port contributions");
 			end_persons();
 		end_section();
@@ -1425,6 +1455,76 @@ begin_credits("Credits");
 										"for allowing the FreeSCI VM extension as a ".
 										"course project in his Advanced OS course.");
 			add_paragraph("Special thanks to Bob Heitman and Corey Cole for their support of FreeSCI.");
+		end_section();
+
+		begin_section("Grim Contributors", "grim_contrib");
+			begin_persons();
+				add_person("Thomas Allen", "olldray", "Various engine code fixes and improvements");
+				add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "Various code fixes");
+				add_person("Ori Avtalion", "salty-horse", "Lipsync, LAF support, various code fixes");
+				add_person("Robert Biro", "DarthJDG", "Antialiasing support");
+				add_person("Bastien Bouclet", "bgK", "Various fixes to engine");
+				add_person("David Cardwell", "d356", "Few fixes to EMI");
+				add_person("Marcus Comstedt", "marcus_c", "Initial Dreamcast port");
+				add_person("Andrea Corna", "Yak Bizzarro", "Patcher module, various engine improvements");
+				add_person("Jonathan Gray", "khalek", "Various code fixes");
+				add_person("Tobias Gunkel", "tobigun", "Initial Android port, few engines fixes");
+				add_person("Azamat H. Hackimov", "winterheart", "Configure fix");
+				add_person("Vincent Hamm", "yazoo", "Various engine code fixes and improvements");
+				add_person("Sven Hesse", "DrMcCoy", "Various compilation fixes");
+				add_person("Matthew Hoops", "clone2727", "Smush codec48, Grim and EMI engine improvements");
+				add_person("Erich Hoover", "Compholio", "x86-64 fixes, various code fixes and improvements");
+				add_person("Max Horn", "fingolfin", "Few code fixes");
+				add_person("Travis Howell", "Kirben", "Various code fixes, Windows port");
+				add_person("Joseph Jezak", "JoseJX", "A lot of engine improvements and fixes");
+				add_person("Guillem Jover", "guillemj", "Few code improvements");
+				add_person("Filippos Karapetis", "bluegr", "Compilation fixes");
+				add_person("Ingo van Lil", "inguin", "Various fixes and improvements for EMI");
+				add_person("Vincent Pelletier", "vpelletier", "Various engine and TinyGL improvements");
+				add_person("Joost Peters", "joostp", "Various code fixes");
+				add_person("George Macon", "gmacon", "Few fixes");
+				add_person("Josh Matthews", "jdm", "Few fixes to engine");
+				add_person("Matthieu Milan", "usineur", "Various engine improvements");
+				add_person("Gregory Montoir", "cyx", "Few fixes to engine");
+				add_person("Stefano Musumeci", "subr3v", "TinyGL backend and engine driver improvements");
+				add_person("Christian Neumair", "mannythegnome", "Various optimisation patches");
+				add_person("Daniel Schepler", "", "Initial grim engine contributor, LUA support");
+				add_person("Dmitry Smirnov", "onlyjob", "Minor spelling corrections");
+				add_person("Yaron Tausky", "yaront", "Fixes to subtitles");
+				add_person("Julien Templier", "Littleboy", "create_project tool");
+				add_person("Pino Toscano", "pinotree", "Debian GNU/Linux package files");
+				add_person("Lionel Ulmer", "bbrox", "OpenGL optimisations");
+				add_person("", "cmayer0087", "Various engine code fixes");
+				add_person("", "JenniBee", "Compilation fixes");
+				add_person("", "karjonas", "Various engine code fixes");
+				add_person("", "mparnaudeau", "Various grim engine code fixes");
+				add_person("", "PoulpiFr", "Few fixes to Android port");
+				add_person("", "sietschie", "Few fixes to engine");
+			end_persons();
+		end_section();
+
+		begin_section("Myst 3", "myst3_contrib");
+			begin_persons();
+				add_person("David Fioramonti", "dafioram", "Autosave support and few fixes");
+				add_person("Matthew Hoops", "clone2727", "Various engine improvements and code fixes");
+				add_person("Stefano Musumeci", "subr3v", "TinyGL engine support");
+			end_persons();
+		end_section();
+
+		begin_section("Stark", "stark_contrib");
+			begin_persons();
+				add_person("Bartosz Dudziak", "Snejp", "Various engine improvements and code fixes");
+				add_person("Matthew Hoops", "clone2727", "ADPCM decoder");
+				add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "Various engine code fixes");
+				add_person("Awad Mackie", "firesock", "Few fixes to engine");
+				add_person("Marius Ioan Orban", "mj0331", "Code fix");
+				add_person("Vincent Pelletier", "vpelletier", "Raw sound support");
+				add_person("Jordi Vilalta Prat", "jvprat", "Initial engine contributor");
+				add_person("Scott Thomas", "ST", "Initial engine author");
+				add_person("Will Thomson", "wlthomson", "Few fixes to engine");
+				add_person("", "Faalagorn", "Few code improvements");
+				add_person("", "orangeforest11", "Few engine improvements");
+			end_persons();
 		end_section();
 
 		add_paragraph("And to all the contributors, users, and beta testers we've missed. Thanks!");
@@ -1528,6 +1628,20 @@ begin_credits("Credits");
 		add_paragraph(
 			"Steffen Dingel for sharing the source code of the Mission Supernova game with us.");
 
+		add_paragraph(
+			"The LUA developers, for creating a nice compact script interpreter.");
+
+		add_paragraph(
+			"Tim Schafer, for obvious reasons, and everybody else who helped make ".
+			"Grim Fandango a brilliant game; and the EMI team for giving it their ".
+			"best try.");
+
+		add_paragraph(
+			"Bret Mogilefsky, for managing to create a SPUTM-style 3D LUA engine, ".
+			"and avoiding the horrible hack it could have been.");
+
+		add_paragraph(
+			"Benjamin Haisch, for emimeshviewer, which our EMI code borrows heavily from.");
 	end_section();
 
 end_credits();

@@ -44,6 +44,9 @@ class AdPath;
 class AdScaleLevel;
 class AdRotLevel;
 class AdPathPoint;
+#ifdef ENABLE_WME3D
+class AdSceneGeometry;
+#endif
 class AdScene : public BaseObject {
 public:
 
@@ -52,6 +55,21 @@ public:
 	bool getSceneObjects(BaseArray<AdObject *> &objects, bool interactiveOnly);
 	bool getRegionObjects(AdRegion *region, BaseArray<AdObject *> &objects, bool interactiveOnly);
 
+#ifdef ENABLE_WME3D
+	uint32 _ambientLightColor;
+	TShadowType _maxShadowType;
+
+	void setMaxShadowType(TShadowType shadowType);
+
+	bool _2DPathfinding;
+	float _waypointHeight;
+
+	float _fov;
+	float _nearPlane;
+	float _farPlane;
+
+	FogParameters _fogParameters;
+#endif
 	bool afterLoad();
 
 	bool getRegionsAt(int x, int y, AdRegion **regionList, int numRegions);
@@ -123,6 +141,10 @@ public:
 	BaseArray<AdLayer *> _layers;
 	BaseArray<AdObject *> _objects;
 	BaseArray<AdWaypointGroup *> _waypointGroups;
+#ifdef ENABLE_WME3D
+	AdSceneGeometry* _sceneGeometry;
+	bool _showGeometry;
+#endif
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
 	int32 _width;

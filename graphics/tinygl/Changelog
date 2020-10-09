@@ -1,0 +1,35 @@
+This is a modified version of TinyGL 0.4 intended for use with ResidualVM.
+The changes made from the original version of TinyGL 0.4 are:
+
+* Changed file extensions from *.c to *.cpp to compile as C++.
+* Included only files needed by ResidualVM.
+* Changed include paths in source files.
+* Added needed type casts and fixes for proper compile.
+* Added 't/T' prefix to prevent OpenGL name clashes.
+* Added light shading texture mapping mode.
+* Removed unneeded code.
+* Introduced second 32-bit z-buffer for 3d objects only,
+  and kept 16-bit only for static z-buffer bitmaps.
+* Added support for drawing in shadow mode (generate mask and polygon shadow - ztriangle_shadow.cpp file).
+* Added support for reading in RGB/BGR-textures, although the only internal format is still RGB565
+* Added TGL_BGR/TGL_RGB definitions to gl.h, verifying against SDL_opengl.h that the values are ok.
+* Added additional functions missing, like glColor4ub. (To make the code similar with the GL-code we use)
+* Added simplistic glColorMask implementation, on/off.
+* Applied some C++-isms: 
+	* "for(int i = 0;" instead of "int i; for (i = 0;", 
+	* struct structName instead of typedef struct {} structName;
+	* pass-by-const-reference instead of by-value when possible
+* Changed the math-functions to use const-pointers if possible.
+* Reformatted the source to use the same code-formatting conventions as the rest of ResidualVM
+  (indentation-wise, not variable-naming wise)
+* Refactored all the maths code in a C++ fashion, removed some unused functions.
+* Heavily refactored the triangle and line drawing routines
+* Renamed ZBuffer into FrameBuffer and moved all the external C functions as member functions.
+* Added implementation of tglBlendFunc and support for 8-bit alpha.
+* Added implementation of tglAlphaTestFunc.
+* Added implementation of tglDepthFunc.
+* Added an API that enables the user to perform color and z buffer blitting.
+* Implemented a system that enables to defer draw calls.
+* Implemented dirty rectangle system that prevents redrawing of unchanged region of the screen.
+
+For more information refer to log changes in github: https://github.com/residualvm/residualvm

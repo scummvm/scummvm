@@ -1,0 +1,87 @@
+in vec3 position;
+in vec3 normal;
+in vec3 texcoord;
+
+out vec2 Texcoord;
+out vec3 Color;
+
+struct Light {
+	vec4 position;
+	vec3 direction;
+	vec3 color;
+	vec4 params;
+};
+
+const int lightTypePoint       = 1;
+const int lightTypeDirectional = 2;
+const int lightTypeSpot        = 4;
+
+const int maxLights = 10;
+
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+uniform mat3 normalMatrix;
+uniform bool doubleSided;
+uniform vec3 ambientColor;
+uniform Light lights[maxLights];
+
+vec4 eyePosition;
+vec3 eyeNormal;
+
+vec3 pointLight(vec3 position, vec3 color, float falloffNear, float falloffFar) {
+	vec3 vertexToLight = position - eyePosition.xyz;
+
+	float dist = length(vertexToLight);
+	float attn = clamp((falloffFar - dist) / max(0.001, falloffFar - falloffNear), 0.0, 1.0);
+
+	vertexToLight = normalize(vertexToLight);
+	float incidence = max(0.0, dot(eyeNormal, vertexToLight));
+
+	return color * attn * incidence;
+}
+
+vec3 directionalLight(vec3 direction, vec3 color) {
+	float incidence = max(0.0, dot(eyeNormal, -direction));
+
+	return color * incidence;
+}
+
+vec3 spotLight(vec3 position, vec3 color, float falloffNear, float falloffFar, vec3 direction, float cosInnerAngle, float cosOuterAngle) {
+	vec3 vertexToLight = position - eyePosition.xyz;
+	vertexToLight = normalize(vertexToLight);
+
+	float cosAngle = max(0.0, dot(vertexToLight, -direction));
+	float cone = clamp((cosAngle - cosInnerAngle) / max(0.001, cosOuterAngle - cosInnerAngle), 0.0, 1.0);
+
+	return pointLight(position, color, falloffNear, falloffFar) * cone;
+}
+
+void main() {
+	if (doubleSided) {
+		Texcoord = vec2(texcoord.x, 1.0 - texcoord.y);
+	} else {
+		Texcoord = vec2(1.0 - texcoord.x, 1.0 - texcoord.y);
+	}
+
+	// Compute the vertex position in screen-space
+	eyePosition = modelViewMatrix * vec4(position.xyz, 1.0);
+	eyeNormal = normalMatrix * normal;
+	eyeNormal = normalize(eyeNormal);
+	gl_Position = projectionMatrix * eyePosition;
+
+	// Shade the vertex color according to the lights
+	vec3 lightColor = ambientColor;
+	for (int i = 0; i < maxLights; i++) {
+		int type = int(lights[i].position.w);
+		if (type == lightTypePoint) {
+			lightColor += pointLight(lights[i].position.xyz, lights[i].color, lights[i].params.x, lights[i].params.y);
+		} else if (type == lightTypeDirectional) {
+			lightColor += directionalLight(lights[i].direction, lights[i].color);
+		} else if (type == lightTypeSpot) {
+			lightColor += spotLight(lights[i].position.xyz, lights[i].color, lights[i].params.x, lights[i].params.y,
+									lights[i].direction, lights[i].params.z, lights[i].params.w);
+		}
+	}
+
+	Color = clamp(lightColor, 0.0, 1.0);
+}

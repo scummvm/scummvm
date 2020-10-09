@@ -157,6 +157,11 @@ private:
 	CheckboxWidget *_fullscreenCheckbox;
 	CheckboxWidget *_filteringCheckbox;
 	CheckboxWidget *_aspectCheckbox;
+	CheckboxWidget *_vsyncCheckbox;
+	StaticTextWidget *_rendererTypePopUpDesc;
+	PopUpWidget *_rendererTypePopUp;
+	StaticTextWidget *_antiAliasPopUpDesc;
+	PopUpWidget *_antiAliasPopUp;
 	StaticTextWidget *_renderModePopUpDesc;
 	PopUpWidget *_renderModePopUp;
 

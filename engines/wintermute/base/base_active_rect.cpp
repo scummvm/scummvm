@@ -45,6 +45,10 @@ BaseActiveRect::BaseActiveRect(BaseGame *inGame) : BaseClass(inGame) {
 	_zoomY = 100;
 	_offsetX = _offsetY = 0;
 	clipRect();
+
+#ifdef ENABLE_WME3D
+	_modelX = nullptr;
+#endif
 }
 
 
@@ -59,6 +63,10 @@ BaseActiveRect::BaseActiveRect(BaseGame *inGame, BaseObject *owner, BaseSubFrame
 	_region = nullptr;
 	_offsetX = _offsetY = 0;
 	clipRect();
+
+#ifdef ENABLE_WME3D
+	_modelX = nullptr;
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -74,8 +82,23 @@ BaseActiveRect::BaseActiveRect(BaseGame *inGame, BaseObject *owner, BaseRegion *
 	clipRect();
 	_offsetX = offsetX;
 	_offsetY = offsetY;
+
+#ifdef ENABLE_WME3D
+	_modelX = nullptr;
+#endif
 }
 
+#ifdef ENABLE_WME3D
+BaseActiveRect::BaseActiveRect(BaseGame *inGame, BaseObject *owner, ModelX *model, int x, int y, int width, int height, bool precise)
+	: BaseClass(inGame) {
+	_frame = nullptr;
+	_region = nullptr;
+	_owner = owner;
+	_modelX = model;
+	_rect.setRect(x, y, x + width, y + height);
+	_precise = precise;
+}
+#endif
 
 //////////////////////////////////////////////////////////////////////
 BaseActiveRect::~BaseActiveRect() {

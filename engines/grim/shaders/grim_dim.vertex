@@ -1,0 +1,17 @@
+in vec2 position;
+in vec2 texcoord;
+
+uniform vec2 scaleWH;
+
+out vec2 Texcoord;
+
+void main()
+{
+	Texcoord = texcoord;
+	// Coordinates are [0.0;1.0], transform to [-1.0; 1.0]
+	vec2 pos = position * scaleWH;
+	pos.x = pos.x * 2.0 - 1.0;
+	pos.y = pos.y * 2.0 - 1.0;
+
+	gl_Position = vec4(pos, 0.0, 1.0);
+}

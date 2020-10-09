@@ -1,0 +1,14 @@
+in vec2 Texcoord;
+
+OUTPUT
+
+uniform sampler2D tex;
+
+void main()
+{
+	vec4 c = texture(tex, Texcoord);
+
+	float val = (c.r + c.g + c.b) / 10.0;
+
+	outColor = vec4(val, val, val, 1);
+}

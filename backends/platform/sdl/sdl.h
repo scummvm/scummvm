@@ -36,6 +36,9 @@
 #ifdef USE_DISCORD
 class DiscordPresence;
 #endif
+#ifdef USE_OPENGL
+#include "backends/graphics3d/openglsdl/openglsdl-graphics3d.h"
+#endif
 
 /**
  * Base OSystem class for all SDL ports.
@@ -87,6 +90,10 @@ public:
 	//Screenshots
 	virtual Common::String getScreenshotsPath();
 
+#ifdef USE_OPENGL
+	Common::Array<uint> getSupportedAntiAliasingLevels() const override;
+#endif
+
 protected:
 	bool _inited;
 	bool _initedSDL;
@@ -119,6 +126,15 @@ protected:
 	 */
 	SdlWindow *_window;
 
+	SdlGraphicsManager::State _gfxManagerState;
+
+#ifdef USE_OPENGL
+	// Graphics capabilities
+	void detectFramebufferSupport();
+	void detectAntiAliasingSupport();
+	OpenGLSdlGraphics3dManager::Capabilities _capabilities;
+#endif
+
 	/**
 	 * Initialze the SDL library.
 	 */
@@ -150,7 +166,7 @@ protected:
 
 	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
 	virtual int getDefaultGraphicsMode() const override;
-	virtual bool setGraphicsMode(int mode) override;
+	virtual bool setGraphicsMode(int mode, uint flags) override;
 	virtual int getGraphicsMode() const override;
 #endif
 protected:

@@ -2,16 +2,25 @@ MODULE := engines/wintermute
 
 MODULE_OBJS := \
 	ad/ad_actor.o \
+	ad/ad_actor_3dx.o \
+	ad/ad_attach_3dx.o \
+	ad/ad_block.o \
 	ad/ad_entity.o \
 	ad/ad_game.o \
+	ad/ad_generic.o \
+	ad/ad_geom_ext.o \
+	ad/ad_geom_ext_node.o \
 	ad/ad_inventory.o \
 	ad/ad_inventory_box.o \
 	ad/ad_item.o \
 	ad/ad_layer.o \
 	ad/ad_node_state.o \
 	ad/ad_object.o \
+	ad/ad_object_3d.o \
 	ad/ad_path.o \
+	ad/ad_path3d.o \
 	ad/ad_path_point.o \
+	ad/ad_path_point3d.o \
 	ad/ad_region.o \
 	ad/ad_response.o \
 	ad/ad_response_box.o \
@@ -19,6 +28,7 @@ MODULE_OBJS := \
 	ad/ad_rot_level.o \
 	ad/ad_scale_level.o \
 	ad/ad_scene.o \
+	ad/ad_scene_geometry.o \
 	ad/ad_scene_node.o \
 	ad/ad_scene_state.o \
 	ad/ad_sentence.o \
@@ -26,7 +36,9 @@ MODULE_OBJS := \
 	ad/ad_talk_def.o \
 	ad/ad_talk_holder.o \
 	ad/ad_talk_node.o \
+	ad/ad_walkplane.o \
 	ad/ad_waypoint_group.o \
+	ad/ad_waypoint_group3d.o \
 	base/scriptables/debuggable/debuggable_script.o \
 	base/scriptables/debuggable/debuggable_script_engine.o \
 	base/scriptables/script.o \
@@ -53,10 +65,37 @@ MODULE_OBJS := \
 	base/font/base_font_storage.o \
 	base/gfx/base_image.o \
 	base/gfx/base_renderer.o \
+	base/gfx/base_renderer3d.o \
 	base/gfx/base_surface.o \
+	base/gfx/shadow_volume.o \
 	base/gfx/osystem/base_surface_osystem.o \
 	base/gfx/osystem/base_render_osystem.o \
 	base/gfx/osystem/render_ticket.o \
+	base/gfx/opengl/base_surface_opengl_texture.o \
+	base/gfx/opengl/base_render_opengl_texture.o \
+	base/gfx/opengl/base_surface_opengl3d.o \
+	base/gfx/opengl/base_render_opengl3d.o \
+	base/gfx/opengl/base_render_opengl3d_shader.o \
+	base/gfx/opengl/render_ticket.o \
+	base/gfx/opengl/meshx_opengl.o \
+	base/gfx/opengl/meshx_opengl_shader.o \
+	base/gfx/opengl/mesh3ds_opengl.o \
+	base/gfx/opengl/mesh3ds_opengl_shader.o \
+	base/gfx/opengl/shadow_volume_opengl.o \
+	base/gfx/opengl/shadow_volume_opengl_shader.o \
+	base/gfx/x/active_animation.o \
+	base/gfx/x/animation.o \
+	base/gfx/x/animation_channel.o \
+	base/gfx/x/animation_set.o \
+	base/gfx/x/frame_node.o \
+	base/gfx/x/material.o \
+	base/gfx/x/meshx.o \
+	base/gfx/x/modelx.o \
+	base/gfx/x/loader_x.o \
+	base/gfx/3ds/camera3d.o \
+	base/gfx/3ds/light3d.o \
+	base/gfx/3ds/loader3ds.o \
+	base/gfx/3ds/mesh3ds.o \
 	base/particles/part_particle.o \
 	base/particles/part_emitter.o \
 	base/particles/part_force.o \
@@ -65,6 +104,7 @@ MODULE_OBJS := \
 	base/sound/base_sound_manager.o \
 	base/base_active_rect.o \
 	base/base.o \
+	base/base_animation_transition_time.o \
 	base/base_dynamic_buffer.o \
 	base/base_engine.o \
 	base/base_fader.o \

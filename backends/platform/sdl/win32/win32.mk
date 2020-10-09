@@ -2,7 +2,7 @@
 # Windows specific
 #
 
-dists/scummvm.o: $(srcdir)/icons/scummvm.ico $(DIST_FILES_THEMES) $(DIST_FILES_NETWORKING) $(DIST_FILES_ENGINEDATA) config.h $(srcdir)/base/internal_version.h
+dists/scummvm.o: $(srcdir)/icons/scummvm.ico $(DIST_FILES_THEMES) $(DIST_FILES_NETWORKING) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_SHADERS) config.h $(srcdir)/base/internal_version.h
 
 # Special target to create a win32 snapshot binary (for Inno Setup)
 win32dist: all
@@ -24,6 +24,10 @@ win32dist: all
 	cp $(srcdir)/COPYING.LGPL $(WIN32PATH)/COPYING.LGPL.txt
 	cp $(srcdir)/COPYING.FREEFONT $(WIN32PATH)/COPYING.FREEFONT.txt
 	cp $(srcdir)/COPYING.OFL $(WIN32PATH)/COPYING.OFL.txt
+	cp $(srcdir)/COPYING.ISC $(WIN32PATH)/COPYING.ISC.txt
+	cp $(srcdir)/COPYING.LUA $(WIN32PATH)/COPYING.LUA.txt
+	cp $(srcdir)/COPYING.MIT $(WIN32PATH)/COPYING.MIT.txt
+	cp $(srcdir)/COPYING.TINYGL $(WIN32PATH)/COPYING.TINYGL.txt
 	cp $(srcdir)/COPYRIGHT $(WIN32PATH)/COPYRIGHT.txt
 	cp $(srcdir)/doc/cz/PrectiMe $(WIN32PATH)/doc/cz/PrectiMe.txt
 	cp $(srcdir)/doc/QuickStart $(WIN32PATH)/doc/QuickStart.txt

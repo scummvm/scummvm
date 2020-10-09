@@ -41,6 +41,9 @@ class BaseActiveRect;
 class BaseObject;
 class BaseSurface;
 class BasePersistenceManager;
+#ifdef ENABLE_WME3D
+class Camera3D;
+#endif
 
 /**
  * @class BaseRenderer a common interface for the rendering portion of WME
@@ -120,6 +123,9 @@ public:
 	virtual bool forcedFlip() = 0;
 	virtual void initLoop();
 	virtual bool setup2D(bool force = false);
+#ifdef ENABLE_WME3D
+	virtual bool setup3D(Camera3D *camera = nullptr, bool force = false);
+#endif
 	virtual bool setupLines();
 
 	/**
@@ -230,6 +236,13 @@ private:
 };
 
 BaseRenderer *makeOSystemRenderer(BaseGame *inGame); // Implemented in BRenderSDL.cpp
+#ifdef ENABLE_WME3D
+class BaseRenderer3D;
+
+BaseRenderer *makeOpenGLTextureRenderer(BaseGame *inGame);
+BaseRenderer3D *makeOpenGL3DRenderer(BaseGame *inGame);
+BaseRenderer3D *makeOpenGL3DShaderRenderer(BaseGame *inGame);
+#endif
 
 } // End of namespace Wintermute
 

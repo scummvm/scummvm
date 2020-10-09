@@ -1,0 +1,47 @@
+in vec2 Texcoord;
+in vec4 Color;
+
+uniform sampler2D tex;
+uniform sampler2D texZBuf;
+uniform bool textured;
+uniform bool hasZBuffer;
+uniform vec2 texcropZBuf;
+uniform vec2 screenSize;
+uniform float alphaRef;
+
+//#define SGSPLUS_FIX
+#ifndef SGSPLUS_FIX
+const float offsetY = 0.0;
+#else
+// fix for bugged Samsung Galaxy S plus driver
+const float offsetY = 32.0;
+#endif
+
+OUTPUT
+
+void checkZBuffer() 
+{
+#ifndef SGSPLUS_FIX
+	vec2 zCoord = vec2((gl_FragCoord.x-0.5)/screenSize.x, 1.0-(gl_FragCoord.y-offsetY-0.5)/screenSize.y);
+#else
+	vec2 zCoord = vec2((gl_FragCoord.x-0.5)/screenSize.x, (gl_FragCoord.y-offsetY-0.5)/screenSize.y);
+#endif
+	vec2 sampled = texture(texZBuf, zCoord * texcropZBuf).ra;
+	float sceneZ = sampled.y + sampled.x / 256.0; 		
+	
+	if (gl_FragCoord.z * 1.0039 > sceneZ)
+		discard;
+}
+
+void main()
+{
+	if (hasZBuffer)
+		checkZBuffer();
+	outColor = Color;
+	if (textured) {
+		outColor *= texture(tex, Texcoord);
+	}
+
+	if (outColor.a < alphaRef)
+		discard;
+}

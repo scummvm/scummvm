@@ -36,6 +36,13 @@
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/platform_osystem.h"
 
+#ifdef ENABLE_WME3D
+#include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_surface_storage.h"
+#include "engines/wintermute/base/gfx/base_surface.h"
+#include "engines/wintermute/wintermute.h"
+#endif
+
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseObject, false)
@@ -96,6 +103,23 @@ BaseObject::BaseObject(BaseGame *inGame) : BaseScriptHolder(inGame) {
 	_sFXParam1 = _sFXParam2 = _sFXParam3 = _sFXParam4 = 0;
 
 	_blendMode = Graphics::BLEND_NORMAL;
+
+#ifdef ENABLE_WME3D
+	_modelX = nullptr;
+	_shadowModel = nullptr;
+	_posVector = Math::Vector3d(0.0f, 0.0f, 0.0f);
+	_angle = 0.0f;
+	_scale3D = 1.0f;
+	_worldMatrix.setToIdentity();
+
+	_shadowImage = nullptr;
+	_shadowSize = 10.0f;
+	_shadowType = SHADOW_NONE;
+	// argb value
+	_shadowColor = 0x80000000;
+	_shadowLightPos = Math::Vector3d(-40.0f, 200.0f, -40.0f);
+	_drawBackfaces = true;
+#endif
 }
 
 
@@ -478,6 +502,61 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		}
 		return STATUS_OK;
 	}
+
+#ifdef ENABLE_WME3D
+	//////////////////////////////////////////////////////////////////////////
+	// SetShadowImage
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "SetShadowImage") == 0) {
+		stack->correctParams(1);
+		ScValue *val = stack->pop();
+
+		if (_shadowImage) {
+			_gameRef->_surfaceStorage->removeSurface(_shadowImage);
+			_shadowImage = nullptr;
+		}
+
+		if (val->isString()) {
+			_shadowImage = _gameRef->_surfaceStorage->addSurface(val->getString());
+			stack->pushBool(_shadowImage != nullptr);
+		} else {
+			stack->pushBool(true);
+		}
+
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// GetShadowImage
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetShadowImage") == 0) {
+		stack->correctParams(0);
+
+		if (_shadowImage) {
+			stack->pushString(_shadowImage->getFileName());
+		} else {
+			stack->pushNULL();
+		}
+
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// SetLightPosition
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "SetLightPosition") == 0) {
+		stack->correctParams(3);
+
+		double x = stack->pop()->getFloat();
+		double y = stack->pop()->getFloat();
+		double z = stack->pop()->getFloat();
+		// invert z coordinate because of OpenGL coordinate system
+		_shadowLightPos = Math::Vector3d(x, y, -z);
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+#endif
 
 #ifdef ENABLE_FOXTAIL
 	//////////////////////////////////////////////////////////////////////////
@@ -1015,6 +1094,21 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferFloat(TMEMBER(_sFXParam3));
 	persistMgr->transferFloat(TMEMBER(_sFXParam4));
 
+#ifdef ENABLE_WME3D
+	if (BaseEngine::instance().getFlags() & GF_3D) {
+		persistMgr->transferAngle(TMEMBER(_angle));
+		persistMgr->transferPtr(TMEMBER(_modelX));
+		persistMgr->transferPtr(TMEMBER(_shadowModel));
+		persistMgr->transferVector3d(TMEMBER(_posVector));
+		persistMgr->transferMatrix4(TMEMBER(_worldMatrix));
+		persistMgr->transferFloat(TMEMBER(_shadowSize));
+		persistMgr->transferSint32(TMEMBER_INT(_shadowType));
+		persistMgr->transferUint32(TMEMBER(_shadowColor));
+		persistMgr->transferFloat(TMEMBER(_scale3D));
+		persistMgr->transferVector3d(TMEMBER(_shadowLightPos));
+		persistMgr->transferBool(TMEMBER(_drawBackfaces));
+	}
+#endif
 
 	persistMgr->transferSint32(TMEMBER_INT(_blendMode));
 
@@ -1258,5 +1352,34 @@ void BaseObject::setSoundEvent(const char *eventName) {
 bool BaseObject::afterMove() {
 	return STATUS_OK;
 }
+
+#ifdef ENABLE_WME3D
+bool BaseObject::getMatrix(Math::Matrix4 *modelMatrix, Math::Vector3d *posVect) {
+	if (posVect == nullptr) {
+		posVect = &_posVector;
+	}
+
+	Math::Matrix4 scale;
+	scale.setToIdentity();
+	scale(0, 0) = _scale3D;
+	scale(1, 1) = _scale3D;
+	scale(2, 2) = _scale3D;
+
+	float sinOfAngle = _angle.getSine();
+	float cosOfAngle = _angle.getCosine();
+	Math::Matrix4 rotation;
+	rotation.setToIdentity();
+	rotation(0, 0) = cosOfAngle;
+	rotation(0, 2) = sinOfAngle;
+	rotation(2, 0) = -sinOfAngle;
+	rotation(2, 2) = cosOfAngle;
+	Math::Matrix4 translation;
+	translation.setToIdentity();
+	translation.setPosition(*posVect);
+
+	*modelMatrix = translation * rotation * scale;
+	return true;
+}
+#endif
 
 } // End of namespace Wintermute

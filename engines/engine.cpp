@@ -395,6 +395,14 @@ void initGraphics(int width, int height) {
 	initGraphics(width, height, &format);
 }
 
+void initGraphics3d(int width, int height, bool fullscreen, bool accel3d) {
+	g_system->beginGFXTransaction();
+		g_system->setGraphicsMode(0, OSystem::kGfxModeRender3d | (accel3d ? OSystem::kGfxModeAcceleration3d : 0));
+		g_system->initSize(width, height);
+		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, fullscreen);
+	g_system->endGFXTransaction();
+}
+
 void GUIErrorMessageWithURL(const Common::U32String &msg, const char *url) {
 	GUIErrorMessage(msg, url);
 }

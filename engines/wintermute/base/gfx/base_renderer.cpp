@@ -36,6 +36,10 @@
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
 
+#ifdef ENABLE_WME3D
+#include "engines/wintermute/base/gfx/x/modelx.h"
+#endif
+
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////
@@ -210,6 +214,14 @@ BaseObject *BaseRenderer::getObjectAt(int x, int y) {
 						return _rectList[i]->_owner;
 					}
 				}
+
+#ifdef ENABLE_WME3D
+				if (_rectList[i]->_modelX) {
+					if (!_rectList[i]->_modelX->isTransparentAt(x, y)) {
+						return _rectList[i]->_owner;
+					}
+				}
+#endif
 				// region
 				else if (_rectList[i]->_region) {
 					if (_rectList[i]->_region->pointInRegion(x + _rectList[i]->_offsetX, y + _rectList[i]->_offsetY)) {
@@ -255,6 +267,13 @@ bool BaseRenderer::windowedBlt() {
 bool BaseRenderer::setup2D(bool Force) {
 	return STATUS_FAILED;
 }
+
+#ifdef ENABLE_WME3D
+//////////////////////////////////////////////////////////////////////////
+bool BaseRenderer::setup3D(Camera3D* camera, bool force) {
+	return STATUS_FAILED;
+}
+#endif
 
 
 //////////////////////////////////////////////////////////////////////////

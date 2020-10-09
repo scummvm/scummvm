@@ -61,6 +61,9 @@ class SystemClassRegistry {
 	void unregisterClasses();
 public:
 	void registerClasses(); // persistent.cpp
+#ifdef ENABLE_WME3D
+	void register3DClasses(); // persistent.cpp
+#endif
 	static SystemClassRegistry *getInstance();
 
 	SystemClassRegistry();

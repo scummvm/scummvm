@@ -63,6 +63,8 @@
 #endif
 #endif
 
+#include "graphics/renderer.h"
+
 namespace GUI {
 
 enum {
@@ -87,7 +89,8 @@ enum {
 	kUpdatesCheckCmd		= 'updc',
 	kKbdMouseSpeedChanged	= 'kmsc',
 	kJoystickDeadzoneChanged= 'jodc',
-	kGraphicsTabContainerReflowCmd = 'gtcr'
+	kGraphicsTabContainerReflowCmd = 'gtcr',
+	kFullscreenToggled		= 'oful'
 };
 
 enum {
@@ -178,6 +181,11 @@ void OptionsDialog::init() {
 	_enableShaderSettings = false;
 	_shaderPopUpDesc = nullptr;
 	_shaderPopUp = nullptr;
+	_vsyncCheckbox = nullptr;
+	_rendererTypePopUpDesc = nullptr;
+	_rendererTypePopUp = nullptr;
+	_antiAliasPopUpDesc = nullptr;
+	_antiAliasPopUp = nullptr;
 	_enableAudioSettings = false;
 	_midiPopUp = nullptr;
 	_midiPopUpDesc = nullptr;
@@ -350,6 +358,17 @@ void OptionsDialog::build() {
 			_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
 		}
 
+		_vsyncCheckbox->setState(ConfMan.getBool("vsync", _domain));
+
+		_rendererTypePopUp->setEnabled(true);
+		_rendererTypePopUp->setSelectedTag(Graphics::parseRendererTypeCode(ConfMan.get("renderer", _domain)));
+
+		_antiAliasPopUp->setEnabled(true);
+		if (ConfMan.hasKey("antialiasing", _domain)) {
+			_antiAliasPopUp->setSelectedTag(ConfMan.getInt("antialiasing", _domain));
+		} else {
+			_antiAliasPopUp->setSelectedTag(-1);
+		}
 	}
 
 	// Shader options
@@ -500,11 +519,14 @@ void OptionsDialog::apply() {
 				graphicsModeChanged = true;
 			if (ConfMan.getBool("aspect_ratio", _domain) != _aspectCheckbox->getState())
 				graphicsModeChanged = true;
-
+			if (ConfMan.getBool("vsync", _domain) != _vsyncCheckbox->getState())
+				graphicsModeChanged = true;
+			
 			ConfMan.setBool("filtering", _filteringCheckbox->getState(), _domain);
 			ConfMan.setBool("fullscreen", _fullscreenCheckbox->getState(), _domain);
 			ConfMan.setBool("aspect_ratio", _aspectCheckbox->getState(), _domain);
-
+			ConfMan.setBool("vsync", _vsyncCheckbox->getState(), _domain);
+			
 			bool isSet = false;
 
 			if ((int32)_gfxPopUp->getSelectedTag() >= 0) {
@@ -543,6 +565,21 @@ void OptionsDialog::apply() {
 			}
 			if (!isSet)
 				ConfMan.removeKey("stretch_mode", _domain);
+
+			if (_rendererTypePopUp->getSelectedTag() > 0) {
+				Graphics::RendererType selected = (Graphics::RendererType) _rendererTypePopUp->getSelectedTag();
+				ConfMan.set("renderer", Graphics::getRendererTypeCode(selected), _domain);
+			} else {
+				ConfMan.removeKey("renderer", _domain);
+			}
+
+			if (_antiAliasPopUp->getSelectedTag() != (uint32)-1) {
+				uint level = _antiAliasPopUp->getSelectedTag();
+				ConfMan.setInt("antialiasing", level, _domain);
+			} else {
+				ConfMan.removeKey("antialiasing", _domain);
+			}
+
 		} else {
 			ConfMan.removeKey("fullscreen", _domain);
 			ConfMan.removeKey("filtering", _domain);
@@ -550,6 +587,9 @@ void OptionsDialog::apply() {
 			ConfMan.removeKey("gfx_mode", _domain);
 			ConfMan.removeKey("stretch_mode", _domain);
 			ConfMan.removeKey("render_mode", _domain);
+			ConfMan.removeKey("renderer", _domain);
+			ConfMan.removeKey("antialiasing", _domain);
+			ConfMan.removeKey("vsync", _domain);
 		}
 	}
 
@@ -1255,13 +1295,39 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	}
 
 	// Fullscreen checkbox
-	_fullscreenCheckbox = new CheckboxWidget(boss, prefix + "grFullscreenCheckbox", _("Fullscreen mode"));
+	_fullscreenCheckbox = new CheckboxWidget(boss, prefix + "grFullscreenCheckbox", _("Fullscreen mode"), Common::U32String(""), kFullscreenToggled);
+
+	_vsyncCheckbox = new CheckboxWidget(boss, prefix + "grVSyncCheckbox", _("V-Sync in 3D Games"), _("Wait for the vertical sync to refresh the screen in 3D renderer"));
+
+	_rendererTypePopUpDesc = new StaticTextWidget(boss, prefix + "grRendererTypePopupDesc", _("Game 3D Renderer:"));
+	_rendererTypePopUp = new PopUpWidget(boss, prefix + "grRendererTypePopup");
+	_rendererTypePopUp->appendEntry(_("<default>"), Graphics::kRendererTypeDefault);
+	_rendererTypePopUp->appendEntry("");
+	const Graphics::RendererTypeDescription *rt = Graphics::listRendererTypes();
+	for (; rt->code; ++rt) {
+		_rendererTypePopUp->appendEntry(_(rt->description), rt->id);
+	}
+
+	_antiAliasPopUpDesc = new StaticTextWidget(boss, prefix + "grAntiAliasPopupDesc", _("3D Anti-aliasing:"));
+	_antiAliasPopUp = new PopUpWidget(boss, prefix + "grAntiAliasPopup");
+	_antiAliasPopUp->appendEntry(_("<default>"), -1);
+	_antiAliasPopUp->appendEntry("");
+	_antiAliasPopUp->appendEntry(_("Disabled"), 0);
+	const Common::Array<uint> levels = g_system->getSupportedAntiAliasingLevels();
+	for (uint i = 0; i < levels.size(); i++) {
+		_antiAliasPopUp->appendEntry(Common::String::format("%dx", levels[i]), levels[i]);
+	}
+	if (levels.empty()) {
+		// Don't show the anti-aliasing selection menu when it is not supported
+		_antiAliasPopUpDesc->setVisible(false);
+		_antiAliasPopUp->setVisible(false);
+	}
 
 	// Filtering checkbox
 	_filteringCheckbox = new CheckboxWidget(boss, prefix + "grFilteringCheckbox", _("Filter graphics"), _("Use linear filtering when scaling graphics"));
 
 	// Aspect ratio checkbox
-	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", _("Aspect ratio correction"), _("Correct aspect ratio for 320x200 games"));
+	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", _("Aspect ratio correction"), _("Correct aspect ratio for games"));
 
 	_enableGraphicSettings = true;
 }

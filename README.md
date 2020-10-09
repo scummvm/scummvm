@@ -28,40 +28,50 @@ page at: <https://www.scummvm.org/>
             retrospect](#374-broken-sword-games-cutscenes-in-retrospect)
       - [3.8) Day of the Tentacle notes](#38-day-of-the-tentacle-notes)
       - [3.9) Dragon History notes](#39-dragon-history-notes)
-      - [3.10) Flight of the Amazon Queen
-        notes](#310-flight-of-the-amazon-queen-notes)
-      - [3.11) Gobliiins notes](#311-gobliiins-notes)
-      - [3.12) Inherit the Earth: Quest for the Orb
-        notes](#312-inherit-the-earth-quest-for-the-orb-notes)
-      - [3.13) Mickey's Space Adventure
-        notes](#313-mickeys-space-adventure-notes)
-      - [3.14) Might and Magic Xeen games
-        notes](#314-might-and-magic-xeen-games-notes)
-      - [3.15) Myst game notes](#315-myst-game-notes)
-      - [3.16) Quest for Glory notes](#316-quest-for-glory-notes)
-      - [3.17) Riven game notes](#317-riven-game-notes)
-      - [3.18) Simon the Sorcerer games
-        notes](#318-simon-the-sorcerer-games-notes)
-      - [3.19) Starship Titanic game
-        notes](#319-starship-titanic-game-notes)
-      - [3.20) The Curse of Monkey Island
-        notes](#320-the-curse-of-monkey-island-notes)
-      - [3.21) The Feeble Files notes](#321-the-feeble-files-notes)
-      - [3.22) The Legend of Kyrandia
-        notes](#322-the-legend-of-kyrandia-notes)
-      - [3.23) Troll's Tale notes](#323-trolls-tale-notes)
-      - [3.24) Winnie the Pooh notes](#324-winnie-the-pooh-notes)
-      - [3.25) Sierra AGI games: Predictive Input
-        Dialog](#325-sierra-agi-games-predictive-input-dialog)
-      - [3.26) Sierra SCI games: Simultaneous speech and
-        subtitles](#326-sierra-sci-games-simultaneous-speech-and-subtitles)
-      - [3.27) Zork games notes](#327-zork-games-notes)
-          - [3.27.1) Zork Nemesis: The Forbidden
-            Lands](#3271-zork-nemesis-the-forbidden-lands)
-          - [3.27.2) Zork: Grand
-            Inquisitor](#3272-zork-grand-inquisitor)
-      - [3.28) Commodore64 games notes](#328-commodore64-games-notes)
-      - [3.29) Macintosh games notes](#329-macintosh-games-notes)
+      - [3.10) Escape from Monkey Island notes](#310-escape-from-monkey-island-notes)
+          - [3.10.1) Escape from Monkey Island (PS2) notes](#3101-escape-from-monkey-island-ps2-notes)
+          - [3.10.2) Default keyboard settings](#3102-default-keyboard-settings)
+          - [3.10.3) Joystick/gamepad support](#3103-joystick-gamepad-support)
+      - [3.11) Flight of the Amazon Queen
+        notes](#311-flight-of-the-amazon-queen-notes)
+      - [3.12) Gobliiins notes](#312-gobliiins-notes)
+      - [3.13) Grim Fandango notes](#313-grim-fandango-notes)
+      - [3.14) Inherit the Earth: Quest for the Orb
+        notes](#314-inherit-the-earth-quest-for-the-orb-notes)
+      - [3.15) The Longest Journey notes](#315-the-longest-jouney-notes)
+          - [3.15.1) Input controls](#3151-input-controls)
+          - [3.15.2) Modding The Longest Journey](#3152-modding-the-longest-journey)
+      - [3.16) Mickey's Space Adventure
+        notes](#316-mickeys-space-adventure-notes)
+      - [3.17) Might and Magic Xeen games
+        notes](#317-might-and-magic-xeen-games-notes)
+      - [3.18) Myst game notes](#318-myst-game-notes)
+      - [3.19) Myst3 game notes](#319-myts3-game-notes)
+          - [3.19.1) Input controls](#3191-input-controls)
+      - [3.20) Quest for Glory notes](#320-quest-for-glory-notes)
+      - [3.21) Riven game notes](#321-riven-game-notes)
+      - [3.22) Simon the Sorcerer games
+        notes](#322-simon-the-sorcerer-games-notes)
+      - [3.23) Starship Titanic game
+        notes](#323-starship-titanic-game-notes)
+      - [3.24) The Curse of Monkey Island
+        notes](#324-the-curse-of-monkey-island-notes)
+      - [3.25) The Feeble Files notes](#325-the-feeble-files-notes)
+      - [3.26) The Legend of Kyrandia
+        notes](#326-the-legend-of-kyrandia-notes)
+      - [3.27) Troll's Tale notes](#327-trolls-tale-notes)
+      - [3.28) Winnie the Pooh notes](#328-winnie-the-pooh-notes)
+      - [3.29) Sierra AGI games: Predictive Input
+        Dialog](#329-sierra-agi-games-predictive-input-dialog)
+      - [3.30) Sierra SCI games: Simultaneous speech and
+        subtitles](#330-sierra-sci-games-simultaneous-speech-and-subtitles)
+      - [3.31) Zork games notes](#331-zork-games-notes)
+          - [3.31.1) Zork Nemesis: The Forbidden
+            Lands](#3311-zork-nemesis-the-forbidden-lands)
+          - [3.31.2) Zork: Grand
+            Inquisitor](#3312-zork-grand-inquisitor)
+      - [3.32) Commodore64 games notes](#332-commodore64-games-notes)
+      - [3.33) Macintosh games notes](#333-macintosh-games-notes)
   - [4.0) Supported Platforms](#40-supported-platforms)
   - [5.0) Running ScummVM](#50-running-scummvm)
       - [5.1) Command Line Options](#51-command-line-options)
@@ -127,10 +137,10 @@ page at: <https://www.scummvm.org/>
 ### 1.1) About ScummVM
 
 ScummVM is a program which allows you to run certain classic graphical
-point-and-click adventure games, provided you already have their data
+adventure games and Role-Playing games, provided you already have their data
 files. The clever part about this: ScummVM just replaces the executables
 shipped with the game, allowing you to play them on systems for which
-they were never designed\!
+they were never designed\! Also, ScummVM is not an emulator.
 
 Originally it was designed to run LucasArts' SCUMM games, such as Maniac
 Mansion, Monkey Island, Day of the Tentacle or Sam and Max. SCUMM stands
@@ -144,10 +154,11 @@ King's Quest 1-7, Space Quest 1-6, ...), Discworld 1 and 2, Simon the
 Sorcerer 1 and 2, Beneath A Steel Sky, Lure of the Temptress, Broken
 Sword I and II, Flight of the Amazon Queen, Gobliiins 1-3, The Legend of
 Kyrandia series, many of Humongous Entertainment's children's SCUMM
-games (including Freddi Fish and Putt Putt games) and many more. You can
-find a full list with details on which adventures are supported and how
-well on the compatibility page. ScummVM is continually improving, so
-check back often.
+games (including Freddi Fish and Putt Putt games) and many more. Eventually,
+we also embraced 3D games such as Grim Fandango, Escape from Monkey Island,
+Myst III and The Longest Journey. You can find a full list with details
+on which adventures are supported and how well on the compatibility page.
+ScummVM is continually improving, so check back often.
 
 Among the systems on which you can play those games are regular desktop
 computers (running Windows, Linux, Mac OS X, ...), game consoles
@@ -446,6 +457,13 @@ supported games can be found here:
 | Voyeur                                                              | \[voyeur\]      |
 | Zork: Grand Inquisitor                                              | \[zgi\]         |
 | Zork Nemesis: The Forbidden Lands                                   | \[znemesis\]    |
+
+| 3D Games:                    |              |
+| ---------------------------- | ------------ |
+| Grim Fandango                | \[grim\]     |
+| Escape from Monkey Island    | \[monkey4\]  |
+| Myst III Exile               | \[myst3\]    |
+| The Longest Journey          | \[tlj\]      |
 
 | Humongous Entertainment (SCUMM) Games:                         |                   |
 | -------------------------------------------------------------- | ----------------- |
@@ -868,7 +886,73 @@ All game files and the walkthrough can be downloaded from:
 
 <http://www.ucw.cz/draci-historie/index-en.html>
 
-### 3.10) Flight of the Amazon Queen notes
+### 3.10) Escape from Monkey Island notes
+
+You will need to copy the data files from your Escape from Monkey Island
+CDs into one directory. Specifically, you'll need:
+  * All of the `M4B` files from both CDs.
+    One of the files is easy to miss:
+    `local.m4b` is located on CD1 in `Monkey4/MonkeyInstall`.
+        Note: The file `voiceAll.m4b` is repeated on both CDs. Use the
+              copy from the first CD, it contains all of the required
+              voice data.
+  * The `Textures` directory, combined from both CDs. When copying,
+    rename the `FullMonkeyMap.imt` files to `FullMonkeyMap1.imt` and
+    `FullMonkeyMap2.imt` from CDs 1 and 2 respectively.
+  * The `Movies` directory from each CD.
+  * A copy of the Escape from Monkey Monkey Island update EXE.
+    You will need a patch specific to the EMI version you're using:
+
+Language   | URL
+---------- |---------------------------------------------------------
+English    | https://scummvm.org/frs/extras/patches/MonkeyUpdate.exe
+Portuguese | https://scummvm.org/frs/extras/patches/MonkeyUpdate_BRZ.exe
+German     | https://scummvm.org/frs/extras/patches/MonkeyUpdate_DEU.exe
+Spanish    | https://scummvm.org/frs/extras/patches/MonkeyUpdate_ESP.exe
+French     | https://scummvm.org/frs/extras/patches/MonkeyUpdate_FRA.exe
+Italian    | https://scummvm.org/frs/extras/patches/MonkeyUpdate_ITA.exe
+
+  * "EFMI Installer" if you have the Mac version of EMI.
+
+#### 3.10.1) Escape from Monkey Island (PS2)
+
+You will need to copy the data files from your Escape from Monkey Island
+DVD into one directory. Specifically, you'll need:
+  * All of the `M4B` files from the DVD.
+  * The `Videos`, `demos`, `jambalay`, `lucre`, `melee` and `monkey`
+    directores.
+
+#### 3.10.2) Default keyboard settings
+
+Key             | Binding
+--------------- | ---------------------------------------------
+Arrow keys      | Movement
+`Shift`         | Hold to run
+`Enter`         | Selects items in inventory, conversation, etc
+`Escape`        | Skips cutscenes, exits certain screens
+`e`             | Examine
+`u`             | Use
+`p`             | Pickup
+`i`             | Inventory
+`q`             | Exit Dialog Menu
+`.`             | Skips dialogue
+`F1`            | Menu
+`Alt` + `x`     | Quit (in-game)
+`Ctrl` + `c`    | Force quit (from command line)
+`Alt` + `Enter` | Switch between windowed mode and fullscreen
+`Alt` + `s`     | Save a screenshot
+
+#### 3.10.3) Joystick/gamepad support
+
+If you want to use a joystick or gamepad for navigation, the joystick
+support of the engine needs to be enabled using one of the following two
+options:
+  * start ScummVM with `--joystick` parameter,
+  * add `joystick\_num=0` to the `[scummvm]` section of the
+    configuration file (see section 6.1. how to find it).
+
+
+### 3.11) Flight of the Amazon Queen notes
 
 Only the original non-freeware version of Flight of the Amazon Queen
 (from original CD), requires the `queen.tbl` datafile (available from the `Downloads` page on our website) in either the
@@ -881,7 +965,7 @@ specific version, and thus removing the run-time dependency on the
 `queen.tbl` file. This tool also allows you to compress the speech and
 sound effects with MP3, OGG or FLAC.
 
-### 3.11) Gobliiins notes
+### 3.12) Gobliiins notes
 
 The CD versions of the Gobliiins series contain one big audio track
 which you need to rip (see the section on using compressed audio files)
@@ -890,7 +974,16 @@ without the CD in the drive all the time. The speech is also in that
 track and its volume is therefore changed with the music volume control
 as well.
 
-### 3.12) Inherit the Earth: Quest for the Orb notes
+#### 3.13) Grim Fandango ####
+
+You will need to copy the data files from your Grim Fandango CDs into one
+directory. Specifically, you'll need:
+  * All of the `LAB` files from both CDs.
+  * A copy of the Grim Fandango 1.01 update EXE.
+        The patch can be downloaded from:
+        https://scummvm.org/frs/extras/patches/gfupd101.exe
+
+### 3.14) Inherit the Earth: Quest for the Orb notes
 
 In order to run the Mac OS X Wyrmkeep re-release of the game you will
 need to copy over data from the CD to your hard disk. If you're on a PC
@@ -909,7 +1002,117 @@ For the old Mac OS 9 release you need to copy the files in MacBinary
 format, as they should include both resource and data forks. Copy all
 'ITE \*' files.
 
-### 3.13) Mickey's Space Adventure notes
+### 3.15) The Longest Journey notes ###
+
+You will need to copy the data files from your The Longest Journey CDs,
+DVD or digital distribution into one directory. Specifically, you'll
+need:
+  * The `1a`—`79` directories (only `4f` for demo version).
+  * The `global` directory.
+  * The `static` directory.
+  * The `fonts` directory (not critical, but recommended – see below).
+  * `x.xarc` and all the `INI` files.
+  * `game.exe` (not critical, but recommended for a styled message dialog)
+
+The 2-CD and DVD versions have some of the data files packed in installer
+archives. The archives need to be unpacked before they can be used.
+
+Steam version and demo from Steam are missing the `fonts` directory.
+The required fonts can be copied over from demo version obtained from
+different sources or a GOG or retail version.
+
+Mixing files from different versions of the game is not supported.
+
+#### 3.15.1) Input controls
+
+The mouse is used to interact with objects and menu elements.
+
+Available keyboard shortcuts:
+
+Key             | Binding
+--------------- | -------------------------------------------------------------------------------------------
+`Escape`        | Skip video sequence or current line of dialogue, skip time if *Time Skip* option is enabled
+`F1`            | Diary Menu
+`F2`            | Save game
+`F3`            | Load game
+`F4`            | Conversation Log
+`F5`            | April's Diary (initially disabled)
+`F6`            | Video replay
+`F7`            | Game settings
+`F8`            | Save a screenshot
+`F9`            | Toggle subtitles on and off
+`F10`           | Quit game and return to main menu
+`A`             | Cycle back through inventory cursor items
+`S`             | Cycle forward through inventory cursor items
+`I`             | Inventory
+`P`             | Pause the game
+`X`             | Display all exits on current location
+`Page Up`       | Scroll up in dialogues and in your inventory
+`Up arrow`      | Scroll up in dialogues and in your inventory
+`Page Down`     | Scroll down in dialogues and in your inventory
+`Down arrow`    | Scroll down in dialogues and in your inventory
+`Enter`         | Select currently highlighted dialogue choice
+`1` – `9`       | Select a dialogue choice
+`Ctrl` + `F5`   | ScummVM menu
+`Alt` + `Enter` | Switch between windowed mode and fullscreen
+`Ctrl` + `c`    | Force quit (from command line)
+`Ctrl` + `q`    | Quit (in-game)
+`Alt` + `x`     | Quit
+`Alt` + `q`     | Quit
+`Alt` + `s`     | Save a screenshot
+
+#### 3.15.2) Modding The Longest Journey
+
+ScummVM can load replacement assets instead of the original files for
+some of the asset types. By leveraging this capability, users can create
+mods for the game. These are the currently supported modding features:
+
+  * Load mods from the `mods` directory inside the game data path.
+  Each mod should be in its own directory in the `mods` subdirectory.
+  Mods are loaded in alphabetical order.
+
+  * Load external PNG files instead of the XMG files inside the game
+  archives.
+    The replacement PNG files can have larger dimensions when compared to
+  the original XMG images, enabling the creation of a high resolution mod.
+    The game looks for the replacement files in a mod directory and then
+  in the `xarc` subdirectory of the directory containing the archive in
+  which the XMG picture to be replaced is located. For instance:
+  `mods/[my_mod]/1e/00/xarc/fountain_layercenter.png` needs to be used for
+  the Venice park background.
+    ScummVM expects PNGs to be in pre-multiplied alpha format for improved
+  load times. However the `replacement_png_premultiply_alpha` `scummvm.ini`
+  setting allows to load regular transparency PNGs when set to `true` for
+  convenience when testing.
+
+  * Load replacement video files for the Smacker animations.
+    The replacement files can be either in Smacker or Bink encoding. With
+  Smacker, only 1-bit transparency can be used. Transparent pixels must have
+  the Cyan color (#00FFFF). When using Bink, 8-bit transparency can be used.
+  The alpha channel should be encoded in the pre-multiplied alpha format.
+    The replacement videos can have larger dimensions than the originals
+  but must have the same number of frames and the same frame rate.
+    Like with PNG files, replacement video files are loaded from mod folders:
+  for instance `mods/[my_mod]/08/02/xarc/011001.bik` is the animation where
+  the tree spirit lifts the egg back into the nest.
+
+  * Load replacement textures for the 3d models.
+    Each original `tm` file contains several textures, each with its
+  associated mipmaps. The replacement files are `zip` archives containing
+  `dds` packaged textures. The replacement archives must be placed at the root
+  of the mod directory and be named after the `tm` file they replace:
+  `mods/[my_mod]/april_waitress.tm.zip`.
+    Each `zip` archive must contain all the textures from the replaced `tm`
+  file. The textures need to be encoded in uncompressed RGB or RGBA `dds`
+  files with mipmaps. Files inside the archive must be named according
+  to the replaced texture name, but with the `bmp` extension replaced with
+  `dds`: `backdress-highres-battic.dds`
+    The `extractAllTextures` console command can be used to extract the `tm`
+  files to `png` files.
+
+Contact us if you need further capabilities for your mod.
+
+### 3.16) Mickey's Space Adventure notes
 
 To run Mickey's Space Adventure under ScummVM, the original executable
 of the game (mickey.exe) is needed together with the game's data files.
@@ -923,7 +1126,7 @@ that direction. The player can then simply click on the edges of the
 game's screen to change location, similar to many adventure games, which
 is simpler and more straightforward than moving around using the menu.
 
-### 3.14) Might and Magic Xeen games notes
+### 3.17) Might and Magic Xeen games notes
 
 To properly play the World of Xeen CD Talkie using original discs, use
 LAME or some other encoder to rip the cd audio tracks to files, either
@@ -961,7 +1164,7 @@ games in the ScummVM launcher. They are:
     allowing the relative strength/value of armor and weapons to be
     compared.
 
-### 3.15) Myst game notes
+### 3.18) Myst game notes
 
 Left Click: Move/action
 Space: Pause the game
@@ -971,7 +1174,54 @@ F5: Menu
 Myst will autosave to slot 0 if no save or an autosave is present in
 slot 0.
 
-### 3.16) Quest for Glory notes
+### 3.19) Myst3 game notes ###
+
+You will need to copy the data files from your Myst III CDs or DVD into
+one directory. Specifically, you'll need:
+  * The `M3Data` directory.
+  * The `Data` directory.
+  * The menu language file `[LANGUAGE].m3u` (DVD only).
+
+The game must be at least version 1.1. For most releases of the game, the
+update is already applied on the installation media and no action is
+required.
+Otherwise, ScummVM asks for the update to be installed and refuses to
+run the game. The updates can be downloaded from
+https://scummvm.org/frs/extras/patches/
+
+The DVD version is multilingual, you can change the in-game language from
+the game menu. However, you must choose the language of the menus by
+copying the appropriate files. You have to copy the menu language file
+from your chosen language directory on the disc. On the DVD, the menu
+language file can be named `language.m3u` or `[LANGUAGE].m3u` depending on
+the release. It should be copied to the `M3Data/TEXT` directory. If the
+file is named `language.m3u`, it should be renamed to the explicit
+language e.g. `ENGLISH.m3u` for English.
+
+The required files must be organized in the following manner to be
+recognized:
+
+    ├── Data
+    │   └── *.m3a
+    └── M3Data
+        └── Various files and directories (including the DVD version's menu language file)
+
+#### 3.19.1) Input controls
+
+The mouse is used to look around and interact with the ages.
+
+Available keyboard shortcuts:
+
+Key           | Binding
+------------- | ------------------------------
+`Escape`      | Original Myst III menu
+`Space`       | Skip cutscenes, interact
+`Ctrl` + `F5` | ScummVM menu
+`Ctrl` + `c`  | Force quit (from command line)
+`Ctrl` + `q`  | Quit (in-game)
+`Alt`  + `s`  | Save a screenshot
+
+### 3.20) Quest for Glory notes
 
 It is possible to import characters, beginning with Quest for Glory II,
 from past games to future games and continue from the stats earned from
@@ -994,7 +1244,7 @@ on the import screen.
 
 Example: qfg2-thief.sav
 
-### 3.17) Riven game notes
+### 3.21) Riven game notes
 
 Left Click: Move/action
 Arrow Keys: Movement
@@ -1009,19 +1259,19 @@ Ctrl-s: Save game
 Riven will autosave to slot 0 if no save or an autosave is present in
 slot 0.
 
-### 3.18) Simon the Sorcerer games notes
+### 3.22) Simon the Sorcerer games notes
 
 If you have the dual version of Simon the Sorcerer 1 or 2 on CD, you
 will find the Windows version in the main directory of the CD and the
 DOS version in the DOS directory of the CD.
 
-### 3.19) Starship Titanic game notes
+### 3.23) Starship Titanic game notes
 
 For the purposes of solving the starfield puzzle, only mouse clicks, L
 and Tab are really needed, though the action glyph in the PET can be
 used instead of Tab.
 
-### 3.20) The Curse of Monkey Island notes
+### 3.24) The Curse of Monkey Island notes
 
 For this game, you will need the comi.la0, comi.la1 and comi.la2 files.
 The comi.la0 file can be found on either CD, but since they are
@@ -1032,7 +1282,7 @@ containing all of the files from -both- "resource" subdirectories on the
 two CDs. Some of the files appear on both CDs, but again they're
 identical.
 
-### 3.21) The Feeble Files notes
+### 3.25) The Feeble Files notes
 
 Amiga/Macintosh: You need to install a small pack of cutscenes that are
 missing in both of these versions of The Feeble Files. It's called "The
@@ -1058,7 +1308,7 @@ follows:
   - Rename voices.wav on CD3 to voices3.wav
   - Rename voices.wav on CD4 to voices4.wav
 
-### 3.22) The Legend of Kyrandia notes
+### 3.26) The Legend of Kyrandia notes
 
 To run The Legend of Kyrandia under ScummVM you need the `kyra.dat`
 file. The file should already be included in official ScummVM packages.
@@ -1068,13 +1318,13 @@ Windows release of ScummVM should contain the file embedded into the
 executable, thus you only need to grab it in case ScummVM complains
 about the file being missing.
 
-### 3.23) Troll's Tale notes
+### 3.27) Troll's Tale notes
 
 The original game came in a PC booter disk, therefore it is necessary to
 dump the contents of that disk in an image file and name it "troll.img"
 to be able to play the game under ScummVM.
 
-### 3.24) Winnie the Pooh notes
+### 3.28) Winnie the Pooh notes
 
 It is possible to import saved games from the original interpreter of
 the game into ScummVM.
@@ -1088,7 +1338,7 @@ that direction. The player can then simply click on the edges of the
 game's screen to change location, similar to many adventure games, which
 is simpler and more straightforward than moving around using the menu.
 
-### 3.25) Sierra AGI games: Predictive Input Dialog
+### 3.29) Sierra AGI games: Predictive Input Dialog
 
 The Predictive Input Dialog is a ScummVM aid for running AGI engine
 games (which notoriously require command line input) on devices with
@@ -1142,7 +1392,7 @@ been made in some ScummVM ports to make its use more comfortable by
 naturally mapping the functionality to the numeric keypad. Also, the
 dialog's buttons can be navigated with the arrow and the enter keys.
 
-### 3.26) Sierra SCI games: Simultaneous speech and subtitles
+### 3.30) Sierra SCI games: Simultaneous speech and subtitles
 
 Certain CD versions of Sierra SCI games had both speech and text
 resources. Some have an option to toggle between the two, but there are
@@ -1220,13 +1470,13 @@ Captioning" from the in-game "Game" menu. Speech can be disabled by
 selecting "Audio Mixer" from the in-game "Game" menu and setting the
 speech volume to zero.
 
-### 3.27) Zork games notes
+### 3.31) Zork games notes
 
 To run the supported Zork games (Zork Nemesis: The Forbidden Lands and
 Zork: Grand Inquisitor) you need to copy some (extra) data to its
 corresponding destination.
 
-#### 3.27.1) Zork Nemesis: The Forbidden Lands
+#### 3.31.1) Zork Nemesis: The Forbidden Lands
 
 Download the Liberation(tm) fonts package
 <https://releases.pagure.org/liberation-fonts/liberation-fonts-ttf-2.00.1.tar.gz>
@@ -1236,7 +1486,7 @@ time of writing these fonts cause some text rendering issues. Download
 the subtitles patch <https://www.thezorklibrary.com/installguides/znpatch.zip>
 and unzip the addon directory into the game root directory
 
-#### 3.27.2) Zork: Grand Inquisitor
+#### 3.31.2) Zork: Grand Inquisitor
 
 Download the Liberation(tm) fonts package
 <https://releases.pagure.org/liberation-fonts/liberation-fonts-ttf-2.00.1.tar.gz>
@@ -1244,7 +1494,7 @@ and unpack all the ttf files into your ScummVM extras directory.
 Alternatively, ScummVM comes with the GNU FreeFont fonts, though at the
 time of writing these fonts cause some text rendering issues.
 
-### 3.28) Commodore64 games notes
+### 3.32) Commodore64 games notes
 
 Both Maniac Mansion and Zak McKracken run but Maniac Mansion is not yet
 playable. Simply name the D64 disks "maniac1.d64" and "maniac2.d64"
@@ -1257,7 +1507,7 @@ autodetected by ScummVM, and you must make sure that the platform is set
 to Commodore64. We recommend using the much simpler approach described
 in the previous paragraph.
 
-### 3.29) Macintosh games notes
+### 3.33) Macintosh games notes
 
 All LucasArts SCUMM based adventures, except COMI, also exist in
 versions for the Macintosh. ScummVM can use most (all?) of them,

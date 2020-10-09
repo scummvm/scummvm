@@ -21,6 +21,7 @@ MODULE_OBJS := \
 	decoders/aac.o \
 	decoders/adpcm.o \
 	decoders/aiff.o \
+	decoders/asf.o \
 	decoders/flac.o \
 	decoders/iff_sound.o \
 	decoders/mac_snd.o \
@@ -31,6 +32,7 @@ MODULE_OBJS := \
 	decoders/voc.o \
 	decoders/vorbis.o \
 	decoders/wave.o \
+	decoders/wma.o \
 	decoders/xa.o \
 	mods/infogrames.o \
 	mods/maxtrax.o \

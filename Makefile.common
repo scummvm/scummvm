@@ -34,6 +34,7 @@ MODULES += \
 	image \
 	graphics \
 	audio \
+	math \
 	common \
 	po \
 	doc
@@ -320,7 +321,7 @@ dist-src: \
 	@#DEB-src?
 
 # Common files
-DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING COPYING.BSD COPYING.LGPL COPYING.FREEFONT COPYING.OFL COPYRIGHT NEWS.md README.md CONTRIBUTING.md)
+DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING COPYING.BSD COPYING.LGPL COPYING.FREEFONT COPYING.OFL COPYING.ISC COPYING.LUA COPYING.MIT COPYING.TINYGL COPYRIGHT NEWS.md README.md CONTRIBUTING.md)
 ifdef USE_PANDOC
 DIST_FILES_DOCS+=README$(PANDOCEXT) NEWS$(PANDOCEXT) CONTRIBUTING$(PANDOCEXT)
 endif
@@ -339,7 +340,7 @@ DIST_FILES_DOCS_no-nb:=$(addprefix $(srcdir)/doc/no-nb/,HurtigStart)
 DIST_FILES_DOCS_se:=$(addprefix $(srcdir)/doc/se/,LasMig Snabbstart)
 
 # Themes files
-DIST_FILES_THEMES=scummmodern.zip scummclassic.zip scummremastered.zip
+DIST_FILES_THEMES=scummmodern.zip scummclassic.zip scummremastered.zip residualvm.zip
 ifdef USE_TRANSLATION
 DIST_FILES_THEMES+=translations.dat
 endif
@@ -423,11 +424,37 @@ ifdef USE_FREETYPE2
 DIST_FILES_ENGINEDATA+=fonts.dat
 endif
 DIST_FILES_ENGINEDATA+=macgui.dat
+ifdef ENABLE_GRIM
+DIST_FILES_ENGINEDATA+=residualvm-grim-patch.lab
+endif
+ifdef ENABLE_MONKEY4
+DIST_FILES_ENGINEDATA+=residualvm-emi-patch.m4b
+endif
+ifdef ENABLE_MYST3
+DIST_FILES_ENGINEDATA+=myst3.dat
+endif
 DIST_FILES_ENGINEDATA:=$(addprefix $(srcdir)/dists/engine-data/,$(DIST_FILES_ENGINEDATA))
 
 # pred.dic is currently only used for the AGI engine
 ifdef ENABLE_AGI
 DIST_FILES_ENGINEDATA+=$(srcdir)/dists/pred.dic
+endif
+
+# Shaders
+DIST_FILES_SHADERS=
+ifdef USE_OPENGL_SHADERS
+ifdef ENABLE_GRIM
+DIST_FILES_SHADERS+=$(wildcard $(srcdir)/engines/grim/shaders/*)
+endif
+ifdef ENABLE_MYST3
+DIST_FILES_SHADERS+=$(wildcard $(srcdir)/engines/myst3/shaders/*)
+endif
+ifdef ENABLE_STARK
+DIST_FILES_SHADERS+=$(wildcard $(srcdir)/engines/stark/shaders/*)
+endif
+ifdef ENABLE_WINTERMUTE
+DIST_FILES_SHADERS+=$(wildcard $(srcdir)/engines/wintermute/base/gfx/opengl/shaders/*)
+endif
 endif
 
 .PHONY: all clean distclean plugins dist-src

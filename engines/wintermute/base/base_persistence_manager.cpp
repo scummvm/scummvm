@@ -44,6 +44,12 @@
 #include "common/system.h"
 #include "common/savefile.h"
 
+#ifdef ENABLE_WME3D
+#include "math/angle.h"
+#include "math/matrix4.h"
+#include "math/vector3d.h"
+#endif
+
 namespace Wintermute {
 
 // The original WME-Lite savegames had the following:
@@ -817,6 +823,82 @@ bool BasePersistenceManager::transferVector2(const char *name, Vector2 *val) {
 		return STATUS_OK;
 	}
 }
+
+#ifdef ENABLE_WME3D
+//////////////////////////////////////////////////////////////////////////
+// Vector3
+bool BasePersistenceManager::transferVector3d(const char *name, Math::Vector3d *val) {
+	if (_saving) {
+		putFloat(val->x());
+		putFloat(val->y());
+		putFloat(val->z());
+
+		if (_saveStream->err()) {
+			return STATUS_FAILED;
+		}
+
+		return STATUS_OK;
+	} else {
+		val->x() = getFloat();
+		val->y() = getFloat();
+		val->z() = getFloat();
+
+		if (_loadStream->err()) {
+			return STATUS_FAILED;
+		}
+
+		return STATUS_OK;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Matrix4
+bool BasePersistenceManager::transferMatrix4(const char *name, Math::Matrix4 *val) {
+	if (_saving) {
+		for (int r = 0; r < 4; ++r) {
+			for (int c = 0; c < 4; ++c) {
+				putFloat((*val)(r, c));
+			}
+		}
+
+		if (_saveStream->err()) {
+			return STATUS_FAILED;
+		}
+
+		return STATUS_OK;
+	} else {
+		for (int r = 0; r < 4; ++r) {
+			for (int c = 0; c < 4; ++c) {
+				(*val)(r, c) = getFloat();
+			}
+		}
+
+		if (_loadStream->err()) {
+			return STATUS_FAILED;
+		}
+
+		return STATUS_OK;
+	}
+}
+
+bool BasePersistenceManager::transferAngle(const char *name, Math::Angle *val) {
+	if (_saving) {
+		putFloat(val->getDegrees());
+
+		if (_saveStream->err()) {
+			return STATUS_FAILED;
+		}
+	} else {
+		*val = getFloat();
+
+		if (_loadStream->err()) {
+			return STATUS_FAILED;
+		}
+	}
+
+	return STATUS_OK;
+}
+#endif
 
 
 //////////////////////////////////////////////////////////////////////////

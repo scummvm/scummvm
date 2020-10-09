@@ -1,0 +1,70 @@
+buildscript {
+	repositories {
+		google()
+		jcenter()
+	}
+
+	dependencies {
+		classpath 'com.android.tools.build:gradle:3.3.2'
+	}
+}
+
+allprojects {
+	repositories {
+		google()
+		jcenter()
+	}
+	buildDir = "${gradle.buildDir}/android3d/build"
+}
+
+apply plugin: 'com.android.application'
+
+android {
+	compileSdkVersion 28
+    	ndkVersion "21.3.6528147"
+	defaultConfig {
+		applicationId 'com.residualvm.residualvm'
+		minSdkVersion 16
+		targetSdkVersion 28
+		versionCode gradle.versionCode
+		versionName gradle.versionName
+		ndk {
+			abiFilters gradle.androidAbi.split(" ")
+		}
+		aaptOptions {
+			noCompress "zip", "lab"
+		}
+	}
+	lintOptions {
+		disable 'GoogleAppIndexingWarning'
+	}
+
+	sourceSets {
+		main {
+			assets.srcDirs = ["${gradle.buildDir}/android3d/assets"]
+			java.srcDirs = ["${gradle.sourceDir}/backends/platform/android3d"]
+			res.srcDirs = ["${gradle.sourceDir}/dists/android3d/res"]
+			manifest.srcFile "${gradle.sourceDir}/dists/android3d/AndroidManifest.xml"
+			jniLibs.srcDirs = ["${gradle.buildDir}/android3d/jni"]
+		}
+	}
+	if ("KEYSTORE" in System.env) {
+		signingConfigs {
+			release {
+				storeFile file(System.env["KEYSTORE"])
+				keyAlias "upload_key"
+				storePassword "ResidualVM"
+				keyPassword "ResidualVM"
+			}
+		}
+		buildTypes {
+			release {
+				signingConfig signingConfigs.release
+			}
+		}
+	}
+}
+
+dependencies {
+	implementation "com.android.support:appcompat-v7:28.0.0"
+}

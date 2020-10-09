@@ -199,7 +199,15 @@ public:
 		 * showing the engine options tab in the config dialog accessed through
 		 * the Global Main Menu.
 		 */
-		kSupportsChangingOptionsDuringRuntime
+		kSupportsChangingOptionsDuringRuntime,
+
+		/**
+		 * Arbitrary resolutions are supported, that is, this engine allows
+		 * the backend to override the resolution passed to OSystem::setupScreen.
+		 * The engine will need to read the actual resolution used by the
+		 * backend using OSystem::getWidth and OSystem::getHeight.
+		 */
+		kSupportsArbitraryResolutions
 	};
 
 

@@ -29,6 +29,7 @@
 #include "common/list.h" // For OSystem::getSupportedFormats()
 #include "common/ustr.h"
 #include "graphics/pixelformat.h"
+#include "graphics/pixelbuffer.h"
 #include "graphics/mode.h"
 
 namespace Audio {
@@ -373,6 +374,30 @@ public:
 		kFeatureIconifyWindow,
 
 		/**
+		 * This feature flag can be used to check if hardware accelerated
+		 * OpenGl is supported.
+		 */
+		kFeatureOpenGL,
+
+		/**
+		 * If supported, this feature flag can be used to check if
+		 * waiting for vertical sync before refreshing the screen to reduce
+		 * tearing is enabled.
+		 */
+		kFeatureVSync,
+
+		/**
+		 * When a backend supports this feature, it guarantees the graphics
+		 * context is not destroyed when switching to and from fullscreen.
+		 *
+		 * For OpenGL that means the context is kept with all of its content:
+		 * texture, programs...
+		 *
+		 * For TinyGL that means the backbuffer surface is kept.
+		 */
+		kFeatureFullscreenToggleKeepsContext,
+
+		/**
 		 * The presence of this feature indicates whether the displayLogFile()
 		 * call is supported.
 		 *
@@ -576,14 +601,28 @@ public:
 	 */
 	virtual int getDefaultGraphicsMode() const { return 0; }
 
+	enum GfxModeFlags {
+		kGfxModeNoFlags = 0,					    /**< No Flags */
+		kGfxModeRender3d = (1 << 0),            	/**< Indicate 3d drawing mode */
+		kGfxModeAcceleration3d = (1 << 1)        	/**< Indicate 3d hardware support */
+	};
+
 	/**
 	 * Switch to the specified graphics mode. If switching to the new mode
 	 * failed, this method returns false.
 	 *
+	 * The flag 'kGfxModeRender3d' is optional. It allow to switch to 3D only rendering mode.
+	 * The argument 'mode' will be ignored. Game engine is allowed to use OpenGL(ES) or TinyGL API direclty.
+	 * Which one depends on 'kGfxModeAcceleration3d' flag.
+	 *
+	 * The flag 'kGfxModeAcceleration3d' is optional and work only with kGfxModeRender3d.
+	 * OpenGL(ES) is only allowed to use by game engine to draw graphics.
+	 *
 	 * @param mode	the ID of the new graphics mode
+	 * @param flags	the flags for new graphics mode
 	 * @return true if the switch was successful, false otherwise
 	 */
-	virtual bool setGraphicsMode(int mode) { return (mode == 0); }
+	virtual bool setGraphicsMode(int mode, uint flags = kGfxModeNoFlags) { return (mode == 0); }
 
 	/**
 	 * Switch to the graphics mode with the given name. If 'name' is unknown,
@@ -651,6 +690,16 @@ public:
 		return list;
 	};
 #endif
+
+	/**
+	 * Retrieve a list of supported levels of anti-aliasting.
+	 * Anti-aliasing only works when using one of the hardware
+	 * accelerated renderers. An empty list means anti-aliasing
+	 * is not supported.
+	 */
+	virtual Common::Array<uint> getSupportedAntiAliasingLevels() const {
+		return Common::Array<uint>();
+	}
 
 	/**
 	 * Retrieve a list of all hardware shaders supported by this backend.
@@ -853,6 +902,12 @@ public:
 	 */
 	virtual TransactionError endGFXTransaction() { return kTransactionSuccess; }
 
+	/**
+	 * Return a Graphics::PixelBuffer representing the framebuffer.
+	 * The caller can then perform arbitrary graphics transformations
+	 * on the framebuffer (blitting, scrolling, etc.).
+	 */
+	virtual Graphics::PixelBuffer getScreenPixelBuffer() { return Graphics::PixelBuffer(); }
 
 	/**
 	 * Returns the currently set virtual screen height.
@@ -979,6 +1034,12 @@ public:
 	 */
 	virtual void clearFocusRectangle() {}
 
+	/**
+	 * Instruct the backend to capture a screenshot of the current screen.
+	 *
+	 * The backend can persist it the way it considers appropriate.
+	 */
+	virtual void saveScreenshot() {}
 	//@}
 
 
@@ -1088,6 +1149,12 @@ public:
 	 * @see Graphics::CursorManager::showMouse
 	 */
 	virtual bool showMouse(bool visible) = 0;
+
+	/**
+	 * Lock or unlock the mouse cursor within the window.
+	 *
+	 */
+	virtual bool lockMouse(bool lock) { return false; }
 
 	/**
 	 * Move ("warp") the mouse cursor to the specified position in virtual

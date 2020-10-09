@@ -1,0 +1,293 @@
+# LANGUAGE translation for ResidualVM.
+# Copyright (C) YEAR ResidualVM Team
+# This file is distributed under the same license as the ResidualVM package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ResidualVM 0.4.0git\n"
+"Report-Msgid-Bugs-To: https://github.com/residualvm/residualvm/issues\n"
+"POT-Creation-Date: 2020-09-12 19:37+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: gui/downloaddialog.cpp:137 gui/launcher.cpp:537
+msgid "ResidualVM couldn't open the specified directory!"
+msgstr ""
+
+#: gui/launcher.cpp:140 backends/platform/sdl/macosx/appmenu_osx.mm:216
+msgid "Quit ResidualVM"
+msgstr ""
+
+#: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:210
+msgid "About ResidualVM"
+msgstr ""
+
+#: gui/launcher.cpp:142
+msgid "Change global ResidualVM options"
+msgstr ""
+
+#: gui/launcher.cpp:491
+msgid ""
+"ResidualVM could not find any engine capable of running the selected game!"
+msgstr ""
+
+#: gui/launcher.cpp:556
+msgid "ResidualVM could not find any game in the specified directory!"
+msgstr ""
+
+#: gui/options.cpp:1322
+msgid "Preserve aspect ratio"
+msgstr ""
+
+#: gui/options.cpp:1322
+msgid "Preserve the aspect ratio in fullscreen mode"
+msgstr ""
+
+#: gui/options.cpp:1325
+msgid "V-Sync"
+msgstr ""
+
+#: gui/options.cpp:1325
+msgid "Wait for the vertical sync to refresh the screen"
+msgstr ""
+
+#: gui/options.cpp:1327
+msgid "Game Renderer:"
+msgstr ""
+
+#: gui/options.cpp:1336
+msgid "Anti-aliasing:"
+msgstr ""
+
+#: gui/options.cpp:2060 gui/options.cpp:2062 gui/options.cpp:2063
+msgid "Specifies path to additional data used by all games or ResidualVM"
+msgstr ""
+
+#: gui/options.cpp:2113
+msgid "Language of ResidualVM GUI"
+msgstr ""
+
+#: gui/options.cpp:2139
+msgid "Switch the ResidualVM GUI language to the game language"
+msgstr ""
+
+#: gui/options.cpp:2140
+msgid ""
+"When starting a game, change the ResidualVM GUI language to the game "
+"language. That way, if a game uses the ResidualVM save and load dialogs, "
+"they are in the same language as the game."
+msgstr ""
+
+#: gui/options.cpp:2154
+msgid ""
+"Use the native system file browser instead of the ResidualVM one to select a "
+"file or directory."
+msgstr ""
+
+#: gui/options.cpp:2161
+msgid "How often to check ResidualVM updates"
+msgstr ""
+
+#: gui/options.cpp:2197
+msgid "Space used by ResidualVM's saved games on this storage"
+msgstr ""
+
+#: gui/options.cpp:2209
+msgctxt "lowres"
+msgid "You can download game files from your cloud ResidualVM folder:"
+msgstr ""
+
+#: gui/options.cpp:2211
+msgid "You can download game files from your cloud ResidualVM folder:"
+msgstr ""
+
+#: gui/remotebrowser.cpp:129
+msgid "ResidualVM could not access the directory!"
+msgstr ""
+
+#: gui/updates-dialog.cpp:49
+msgid ""
+"ResidualVM now supports automatic check for updates\n"
+"which requires access to the Internet. Would you\n"
+"like to enable this feature?"
+msgstr ""
+
+#: engines/engine.cpp:640
+msgid ""
+"WARNING: The game you are about to start is not yet fully supported by "
+"ResidualVM. As such, it is likely to be unstable, and any saved game you "
+"make might not work in future versions of ResidualVM."
+msgstr ""
+
+#: engines/game.cpp:171
+#, c-format
+msgid ""
+"The game in '%s' seems to be an unknown game variant.\n"
+"\n"
+"Please report the following data to the ResidualVM team at %s along with the "
+"name of the game you tried to add and its version, language, etc.:"
+msgstr ""
+
+#: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:59
+msgid ""
+"The page is not available without the resources. Make sure file wwwroot.zip "
+"from ResidualVM distribution is available in 'themepath'."
+msgstr ""
+
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:218
+msgid "ResidualVM couldn't list the directory you specified."
+msgstr ""
+
+#: backends/platform/sdl/macosx/appmenu_osx.mm:212
+msgid "Hide ResidualVM"
+msgstr ""
+
+#: backends/platform/sdl/macosx/appmenu_osx.mm:232
+msgid "What's New in ResidualVM"
+msgstr ""
+
+#: engines/grim/detection.cpp:57
+msgid "Load user patch (unsupported)"
+msgstr ""
+
+#: engines/grim/detection.cpp:58
+msgid ""
+"Load an user patch. Please note that the ResidualVM-team doesn't provide "
+"support for using such patches."
+msgstr ""
+
+#: engines/grim/detection.cpp:67
+msgid "Show the current FPS-rate, while you play."
+msgstr ""
+
+#: engines/grim/grim.cpp:313
+#, c-format
+msgid ""
+"ResidualVM found some problems with your game data files.\n"
+"Running ResidualVM nevertheless may cause game bugs or even crashes.\n"
+"Do you still want to run %s?"
+msgstr ""
+
+#: engines/grim/grim.cpp:1103
+msgid "Error: the game could not be saved."
+msgstr ""
+
+#: engines/grim/md5check.cpp:547
+#, c-format
+msgid ""
+"The game data file %s may be corrupted.\n"
+"If you are sure it is not please provide the ResidualVM team the following "
+"code, along with the file name, the language and a description of your game "
+"version (i.e. dvd-box or jewelcase):\n"
+"%s"
+msgstr ""
+
+#: engines/grim/md5check.cpp:554
+#, c-format
+msgid ""
+"Could not open the file %s for checking.\n"
+"It may be missing or you may not have the rights to open it.\n"
+"Go to https://wiki.residualvm.org/index.php/Datafiles to see a list of the "
+"needed files."
+msgstr ""
+
+#: engines/grim/md5checkdialog.cpp:42
+msgid ""
+"ResidualVM will now verify the game data files, to make sure you have the "
+"best gaming experience.\n"
+"This may take a while, please wait.\n"
+"Successive runs will not check them again."
+msgstr ""
+
+#: engines/grim/resource.cpp:96
+msgid ""
+"The original patch of Grim Fandango\n"
+"is missing. Please download it from\n"
+"https://www.residualvm.org/downloads/\n"
+"and put it in the game data files directory"
+msgstr ""
+
+#: engines/grim/resource.cpp:101
+msgid ""
+"The original patch of Escape from Monkey Island is missing. \n"
+"Please download it from https://www.residualvm.org/downloads/\n"
+"and put it in the game data files directory.\n"
+"Pay attention to download the correct version according to the game's "
+"language"
+msgstr ""
+
+#: engines/myst3/detection.cpp:193
+msgid "Widescreen mod"
+msgstr ""
+
+#: engines/myst3/detection.cpp:194
+msgid "Enable enable widescreen rendering in fullscreen mode."
+msgstr ""
+
+#: engines/myst3/myst3.cpp:361
+msgid ""
+"This version of Myst III has not been updated with the latest official "
+"patch.\n"
+"Please install the official update corresponding to your game's language.\n"
+"The updates can be downloaded from:\n"
+"https://www.residualvm.org/downloads/"
+msgstr ""
+
+#: engines/stark/detection.cpp:345
+msgid "Load modded assets"
+msgstr ""
+
+#: engines/stark/detection.cpp:346
+msgid "Enable loading of external replacement assets."
+msgstr ""
+
+#: engines/stark/detection.cpp:354
+msgid "Enable linear filtering of the backgrounds images"
+msgstr ""
+
+#: engines/stark/detection.cpp:355
+msgid ""
+"When linear filtering is enabled the background graphics are smoother in "
+"full screen mode, at the cost of some details."
+msgstr ""
+
+#: engines/stark/detection.cpp:363
+msgid "Enable font anti-aliasing"
+msgstr ""
+
+#: engines/stark/detection.cpp:364
+msgid "When font anti-aliasing is enabled, the text is smoother."
+msgstr ""
+
+#: engines/stark/stark.cpp:294
+msgid "You are missing recommended data files:"
+msgstr ""
+
+#: engines/stark/stark.cpp:308
+msgid ""
+"The 'fonts' folder is required to experience the text style as it was "
+"designed. The Steam release is known to be missing it. You can get the fonts "
+"from the demo version of the game."
+msgstr ""
+
+#: engines/stark/stark.cpp:315
+msgid ""
+"'gui.ini' is recommended to get proper font settings for the game "
+"localization."
+msgstr ""
+
+#: engines/stark/stark.cpp:321
+msgid "'language.ini' is recommended to get localized confirmation dialogs."
+msgstr ""
+
+#: engines/stark/stark.cpp:327
+msgid "'game.exe' is recommended to get styled confirmation dialogs."
+msgstr ""
+

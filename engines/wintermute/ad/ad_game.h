@@ -96,6 +96,14 @@ public:
 
 	TTalkSkipButton _talkSkipButton;
 
+#ifdef ENABLE_WME3D
+	uint32 getAmbientLightColor() override;
+
+	TShadowType getMaxShadowType(BaseObject *object) override;
+
+	bool getFogParams(FogParameters &fogParameters) override;
+#endif
+
 	bool getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) const override;
 	bool scheduleChangeScene(const char *filename, bool fadeIn);
 	void setPrevSceneName(const char *name);

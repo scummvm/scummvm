@@ -1,0 +1,8 @@
+in vec4 Color;
+
+OUTPUT
+
+void main()
+{
+	outColor = Color;
+}

@@ -21,8 +21,16 @@ ID_GDF_XML             DATA    "dists/win32/scummvm.gdf.xml"
 scummclassic.zip       FILE    "gui/themes/scummclassic.zip"
 scummmodern.zip        FILE    "gui/themes/scummmodern.zip"
 scummremastered.zip    FILE    "gui/themes/scummremastered.zip"
+residualvm.zip             FILE    "gui/themes/residualvm.zip"
 
 #ifdef BUILTIN_RESOURCES
+#if PLUGIN_ENABLED_STATIC(GRIM)
+residualvm-grim-patch.lab       FILE    "dists/engine-data/residualvm-grim-patch.lab"
+residualvm-emi-patch.m4b        FILE    "dists/engine-data/residualvm-emi-patch.m4b"
+#endif
+#if PLUGIN_ENABLED_STATIC(MYST3)
+myst3.dat                       FILE    "dists/engine-data/myst3.dat"
+#endif
 #ifdef USE_TRANSLATION
 translations.dat       FILE    "gui/themes/translations.dat"
 #endif
@@ -96,6 +104,70 @@ xeen.ccs               FILE    "dists/engine-data/xeen.ccs"
 #endif
 #if PLUGIN_ENABLED_STATIC(AGI)
 pred.dic               FILE    "dists/pred.dic"
+#endif
+#ifdef USE_OPENGL_SHADERS
+#if PLUGIN_ENABLED_STATIC(GRIM)
+shaders/grim_dim.fragment            FILE    "engines/grim/shaders/grim_dim.fragment"
+shaders/grim_dim.vertex              FILE    "engines/grim/shaders/grim_dim.vertex"
+shaders/grim_emerg.fragment          FILE    "engines/grim/shaders/grim_emerg.fragment"
+shaders/grim_emerg.vertex            FILE    "engines/grim/shaders/grim_emerg.vertex"
+shaders/emi_actor.fragment           FILE    "engines/grim/shaders/emi_actor.fragment"
+shaders/emi_actor.vertex             FILE    "engines/grim/shaders/emi_actor.vertex"
+shaders/emi_background.fragment      FILE    "engines/grim/shaders/emi_background.fragment"
+shaders/emi_background.vertex        FILE    "engines/grim/shaders/emi_background.vertex"
+shaders/emi_dimplane.fragment        FILE    "engines/grim/shaders/emi_dimplane.fragment"
+shaders/emi_dimplane.vertex          FILE    "engines/grim/shaders/emi_dimplane.vertex"
+shaders/grim_actor.fragment          FILE    "engines/grim/shaders/grim_actor.fragment"
+shaders/grim_actor.vertex            FILE    "engines/grim/shaders/grim_actor.vertex"
+shaders/grim_background.fragment     FILE    "engines/grim/shaders/grim_background.fragment"
+shaders/grim_background.vertex       FILE    "engines/grim/shaders/grim_background.vertex"
+shaders/grim_primitive.fragment      FILE    "engines/grim/shaders/grim_primitive.fragment"
+shaders/grim_primitive.vertex        FILE    "engines/grim/shaders/grim_primitive.vertex"
+shaders/grim_shadowplane.fragment    FILE    "engines/grim/shaders/grim_shadowplane.fragment"
+shaders/grim_shadowplane.vertex      FILE    "engines/grim/shaders/grim_shadowplane.vertex"
+shaders/grim_smush.fragment          FILE    "engines/grim/shaders/grim_smush.fragment"
+shaders/grim_smush.vertex            FILE    "engines/grim/shaders/grim_smush.vertex"
+shaders/grim_text.fragment           FILE    "engines/grim/shaders/grim_text.fragment"
+shaders/grim_text.vertex             FILE    "engines/grim/shaders/grim_text.vertex"
+#endif
+#if PLUGIN_ENABLED_STATIC(MYST3)
+shaders/myst3_box.fragment           FILE    "engines/myst3/shaders/myst3_box.fragment"
+shaders/myst3_box.vertex             FILE    "engines/myst3/shaders/myst3_box.vertex"
+shaders/myst3_cube.fragment          FILE    "engines/myst3/shaders/myst3_cube.fragment"
+shaders/myst3_cube.vertex            FILE    "engines/myst3/shaders/myst3_cube.vertex"
+shaders/myst3_text.fragment          FILE    "engines/myst3/shaders/myst3_text.fragment"
+shaders/myst3_text.vertex            FILE    "engines/myst3/shaders/myst3_text.vertex"
+#endif
+#if PLUGIN_ENABLED_STATIC(STARK)
+shaders/stark_actor.fragment         FILE    "engines/stark/shaders/stark_actor.fragment"
+shaders/stark_actor.vertex           FILE    "engines/stark/shaders/stark_actor.vertex"
+shaders/stark_prop.fragment          FILE    "engines/stark/shaders/stark_prop.fragment"
+shaders/stark_prop.vertex            FILE    "engines/stark/shaders/stark_prop.vertex"
+shaders/stark_surface.fragment       FILE    "engines/stark/shaders/stark_surface.fragment"
+shaders/stark_surface.vertex         FILE    "engines/stark/shaders/stark_surface.vertex"
+shaders/stark_fade.fragment          FILE    "engines/stark/shaders/stark_fade.fragment"
+shaders/stark_fade.vertex            FILE    "engines/stark/shaders/stark_fade.vertex"
+shaders/stark_shadow.fragment        FILE    "engines/stark/shaders/stark_shadow.fragment"
+shaders/stark_shadow.vertex          FILE    "engines/stark/shaders/stark_shadow.vertex"
+#endif
+#if PLUGIN_ENABLED_STATIC(WINTERMUTE)
+shaders/wme_fade.fragment            FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_fade.fragment"
+shaders/wme_fade.vertex              FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_fade.vertex"
+shaders/wme_geometry.fragment        FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_geometry.fragment"
+shaders/wme_geometry.vertex          FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_geometry.vertex"
+shaders/wme_line.fragment            FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_line.fragment"
+shaders/wme_line.vertex              FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_line.vertex"
+shaders/wme_fade.fragment            FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_fade.fragment"
+shaders/wme_fade.vertex              FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_fade.vertex"
+shaders/wme_modelx.fragment          FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_modelx.fragment"
+shaders/wme_modelx.vertex            FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_modelx.vertex"
+shaders/wme_shadow_mask.fragment     FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_shadow_mask.fragment"
+shaders/wme_shadow_mask.vertex       FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_shadow_mask.vertex"
+shaders/wme_shadow_volume.fragment   FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_shadow_volume.fragment"
+shaders/wme_shadow_volume.vertex     FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_shadow_volume.vertex"
+shaders/wme_sprite.fragment          FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_sprite.fragment"
+shaders/wme_sprite.vertex            FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_sprite.vertex"
+#endif
 #endif
 #endif
 

@@ -225,6 +225,11 @@ struct Event {
 	Common::String path;
 
 	/**
+	 * Mouse movement since the last mouse movement event.
+	 */
+	Common::Point relMouse;
+
+	/**
 	 * Joystick data; only valid for joystick events (EVENT_JOYAXIS_MOTION,
 	 * EVENT_JOYBUTTON_DOWN and EVENT_JOYBUTTON_UP).
 	 */

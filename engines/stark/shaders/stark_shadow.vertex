@@ -1,0 +1,30 @@
+in vec3 position1;
+in vec3 position2;
+in float bone1;
+in float bone2;
+in float boneWeight;
+
+const int maxBones = 70;
+
+uniform mat4 mvp;
+uniform vec4 boneRotation[maxBones];
+uniform vec3 bonePosition[maxBones];
+uniform vec3 lightDirection;
+
+vec3 qrot(vec4 q, vec3 v) {
+	return v + 2.0 * cross(q.xyz, cross(q.xyz, v) + q.w * v);
+}
+
+void main() {
+	vec3 b1 = qrot(boneRotation[int(bone1)], position1) + bonePosition[int(bone1)];
+	vec3 b2 = qrot(boneRotation[int(bone2)], position2) + bonePosition[int(bone2)];
+	vec3 modelPosition = mix(b2, b1, boneWeight);
+
+	// Project the modelPosition to the xz plane
+	vec3 shadowPosition = modelPosition + lightDirection * (-modelPosition.y / lightDirection.y);
+
+	// In case precision problem
+	shadowPosition.y = 0.0;
+
+	gl_Position = mvp * vec4(shadowPosition.xyz, 1.0);
+}
