@@ -24,6 +24,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Sword25:
    - Made the extracted version working.
+   - Fixed crash when selecting Croatian language.
 
  Ultima:
    - Ultima 4: Added several debugger commands.
