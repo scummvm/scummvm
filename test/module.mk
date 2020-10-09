@@ -6,7 +6,7 @@
 ######################################################################
 
 TESTS        := $(srcdir)/test/common/*.h $(srcdir)/test/audio/*.h $(srcdir)/test/math/*.h
-TEST_LIBS    := audio/libaudio.a math/libmath.a common/libcommon.a
+TEST_LIBS    := audio/libaudio.a graphics/libgraphics.a math/libmath.a common/libcommon.a
 
 ifeq ($(ENABLE_WINTERMUTE), STATIC_PLUGIN)
 	TESTS += $(srcdir)/test/engines/wintermute/*.h
