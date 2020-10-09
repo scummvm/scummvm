@@ -145,7 +145,7 @@ enum ButtonEnums {
 	__UNUSEDBUTTON = 256
 }; // Note, __EXAMINE was never used
 
-typedef struct {
+struct _input {
 	__player_momentum momentum;
 	__player_turn turn;
 
@@ -156,7 +156,7 @@ typedef struct {
 	uint IsButtonSet(const enum ButtonEnums b) const {
 		return (bitflag & b);
 	}
-} _input;
+};
 
 typedef struct {
 	PXreal x, z;
