@@ -103,7 +103,7 @@ ResourceLoader::ResourceLoader() {
 								"and put it in the game data files directory");
 			} else if (g_grim->getGameType() == GType_MONKEY4) {
 				errorMessage = _("The original patch of Escape from Monkey Island is missing. \n"
-								"Please download it from  https://scummvm.org/frs/extras/patches//\n"
+								"Please download it from https://scummvm.org/frs/extras/patches/\n"
 								"and put it in the game data files directory.\n"
 								"Pay attention to download the correct version according to the game's language");
 			}

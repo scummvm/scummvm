@@ -21,6 +21,225 @@ msgstr ""
 "X-Poedit-SourceCharset: iso-8859-1\n"
 "X-Language-name: Nederlands\n"
 
+#: gui/options.cpp:1300
+msgid "V-Sync in 3D Games"
+msgstr ""
+
+#: gui/options.cpp:1300
+msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
+msgstr ""
+
+#: gui/options.cpp:1302
+msgid "Game 3D Renderer:"
+msgstr ""
+
+#: gui/options.cpp:1311
+msgid "3D Anti-aliasing:"
+msgstr ""
+
+#: gui/options.cpp:1330
+msgid "Correct aspect ratio for games"
+msgstr ""
+
+#: engines/grim/detection.cpp:45
+msgid "Load user patch (unsupported)"
+msgstr ""
+
+#: engines/grim/detection.cpp:46
+#, fuzzy
+msgid ""
+"Load an user patch. Please note that the ScummVM team doesn't provide "
+"support for using such patches."
+msgstr ""
+"Bezig met laden van datausr.lab. Merk op dat het ScummVM team geen "
+"ondersteuning biedt voor zulke patches"
+
+#: engines/grim/detection.cpp:55
+msgid "Show the current FPS-rate, while you play."
+msgstr ""
+
+#: engines/grim/grim.cpp:344
+#, fuzzy, c-format
+msgid ""
+"ScummVM found some problems with your game data files.\n"
+"Running ScummVM nevertheless may cause game bugs or even crashes.\n"
+"Do you still want to run %s?"
+msgstr ""
+"ScummVM heeft enkele problemen gevonden in uw spelbestanden.\n"
+"Nu opstarten kan leiden tot bugs of crashes.\n"
+"Wilt u %s alsnog opstarten?"
+
+#: engines/grim/grim.cpp:468 engines/grim/grim.cpp:560
+msgid "Run"
+msgstr ""
+
+#: engines/grim/grim.cpp:478 engines/grim/grim.cpp:575
+msgid "Use/Talk"
+msgstr ""
+
+#: engines/grim/grim.cpp:483 engines/grim/grim.cpp:580
+msgid "Pick up/Put away"
+msgstr ""
+
+#: engines/grim/grim.cpp:488 engines/grim/grim.cpp:585
+msgid "Invetory"
+msgstr ""
+
+#: engines/grim/grim.cpp:493 engines/grim/grim.cpp:590
+msgid "Skip dialog lines"
+msgstr ""
+
+#: engines/grim/grim.cpp:550
+msgid "Cycle Objects Up"
+msgstr ""
+
+#: engines/grim/grim.cpp:555
+msgid "Cycle Objects Down"
+msgstr ""
+
+#: engines/grim/grim.cpp:565
+msgid "Quick Room Exit"
+msgstr ""
+
+#: engines/grim/grim.cpp:570
+msgid "Examine/Look"
+msgstr ""
+
+#: engines/grim/grim.cpp:1356
+msgid "Error: the game could not be saved."
+msgstr ""
+
+#: engines/grim/md5check.cpp:547
+#, c-format
+msgid ""
+"The game data file %s may be corrupted.\n"
+"If you are sure it is not please provide the ScummVM team the following "
+"code, along with the file name, the language and a description of your game "
+"version (i.e. dvd-box or jewelcase):\n"
+"%s"
+msgstr ""
+"Het spelbestand %s is mogelijk corrupt.\n"
+"Als u zeker bent dat dit niet het geval is, neem contact op met het ScummVM "
+"team en vermeld de volgende code, samen met de bestandsnaam en een korte "
+"beschrijving van uw spel (bvb. taal en 'dvd-box' of 'jewelcase'): \n"
+"%s"
+
+#: engines/grim/md5check.cpp:554
+#, c-format
+msgid ""
+"Could not open the file %s for checking.\n"
+"It may be missing or you may not have the rights to open it.\n"
+"Go to https://wiki.residualvm.org/index.php/Datafiles to see a list of the "
+"needed files."
+msgstr ""
+"Kon bestand %s niet openen voor integriteitscontrole.\n"
+"Misschien ontbreekt het of u heeft niet de juiste permissies om het te "
+"openen. Ga naar https://wiki.residualvm.org/index.php/Datafiles voor een "
+"overzicht van de benodigde bestanden en bestandsstructuur"
+
+#: engines/grim/md5checkdialog.cpp:42
+msgid ""
+"ScummVM will now verify the game data files, to make sure you have the best "
+"gaming experience.\n"
+"This may take a while, please wait.\n"
+"Successive runs will not check them again."
+msgstr ""
+"ScummVM zal nu de integriteit van uw spelbestanden nagaan, voor de beste "
+"spelervaring.\n"
+"Dit kan eventjes duren, maar is slechts eenmalig."
+
+#: engines/grim/resource.cpp:100
+msgid ""
+"The original patch of Grim Fandango\n"
+"is missing. Please download it from\n"
+"https://scummvm.org/frs/extras/patches/gfupd101.exe\n"
+"and put it in the game data files directory"
+msgstr ""
+"De originele patch voor Grim Fandango ontbreekt.\n"
+"Download deze van https://scummvm.org/frs/extras/patches/gfupd101.exe\n"
+"en plaats deze bij de spelbestanden."
+
+#: engines/grim/resource.cpp:105
+msgid ""
+"The original patch of Escape from Monkey Island is missing. \n"
+"Please download it from https://scummvm.org/frs/extras/patches/\n"
+"and put it in the game data files directory.\n"
+"Pay attention to download the correct version according to the game's "
+"language"
+msgstr ""
+"De originele patch voor Escape from Monkey Island ontbreekt. \n"
+"Download deze van https://scummvm.org/frs/extras/patches/ \n"
+"en plaats deze bij de spelbestanden. \n"
+"Let erop dat u de versie downloadt voor de correcte taal."
+
+#: engines/myst3/detection.cpp:182
+msgid "Widescreen mod"
+msgstr ""
+
+#: engines/myst3/detection.cpp:183
+msgid "Enable enable widescreen rendering in fullscreen mode."
+msgstr ""
+
+#: engines/myst3/myst3.cpp:361
+msgid ""
+"This version of Myst III has not been updated with the latest official "
+"patch.\n"
+"Please install the official update corresponding to your game's language.\n"
+"The updates can be downloaded from:\n"
+"https://www.scummvm.org/frs/extras/patches/"
+msgstr ""
+
+#: engines/stark/detection.cpp:340
+msgid "Load modded assets"
+msgstr ""
+
+#: engines/stark/detection.cpp:341
+msgid "Enable loading of external replacement assets."
+msgstr ""
+
+#: engines/stark/detection.cpp:349
+msgid "Enable linear filtering of the backgrounds images"
+msgstr ""
+
+#: engines/stark/detection.cpp:350
+msgid ""
+"When linear filtering is enabled the background graphics are smoother in "
+"full screen mode, at the cost of some details."
+msgstr ""
+
+#: engines/stark/detection.cpp:358
+msgid "Enable font anti-aliasing"
+msgstr ""
+
+#: engines/stark/detection.cpp:359
+msgid "When font anti-aliasing is enabled, the text is smoother."
+msgstr ""
+
+#: engines/stark/stark.cpp:294
+msgid "You are missing recommended data files:"
+msgstr ""
+
+#: engines/stark/stark.cpp:308
+msgid ""
+"The 'fonts' folder is required to experience the text style as it was "
+"designed. The Steam release is known to be missing it. You can get the fonts "
+"from the demo version of the game."
+msgstr ""
+
+#: engines/stark/stark.cpp:315
+msgid ""
+"'gui.ini' is recommended to get proper font settings for the game "
+"localization."
+msgstr ""
+
+#: engines/stark/stark.cpp:321
+msgid "'language.ini' is recommended to get localized confirmation dialogs."
+msgstr ""
+
+#: engines/stark/stark.cpp:327
+msgid "'game.exe' is recommended to get styled confirmation dialogs."
+msgstr ""
+
 #: gui/about.cpp:102
 #, c-format
 msgid "(built on %s)"
@@ -7333,6 +7552,28 @@ msgstr ""
 "alle lettertypes van de collectie nodig die u selecteert, dus "
 "LiberationMono, LiberationSans en LiberationSerif, of FreeMono, FreeSans en "
 "FreeSerif respectievelijk."
+
+#~ msgid "'%s' may be corrupted. MD5: '%s'"
+#~ msgstr "Het bestand '%s' is mogelijk corrupt. MD5: '%s'"
+
+#~ msgid "Could not open %s for checking"
+#~ msgstr "Kon bestand %s niet openen voor integriteitscontrole."
+
+#~ msgid "residualvm-grim-patch.lab not found"
+#~ msgstr "residualvm-grim-patch.lab: bestand niet gevonden"
+
+#~ msgid "%s not found"
+#~ msgstr "Bestand '%s' niet gevonden."
+
+#~ msgid ""
+#~ "Loading datausr.m4b. Please note that the ScummVM team doesn't provide "
+#~ "support for using such patches"
+#~ msgstr ""
+#~ "Bezig met laden van datausr.m4b. Merk op dat het ScummVM team geen "
+#~ "ondersteuning biedt voor zulke patches"
+
+#~ msgid "Cannot find game data - check configuration file"
+#~ msgstr "Kan spelbestanden niet vinden. Check het configuratiebestand."
 
 #~ msgid "Engine does not support debug level '%s'"
 #~ msgstr "Engine ondersteunt debug level '%s' niet"
