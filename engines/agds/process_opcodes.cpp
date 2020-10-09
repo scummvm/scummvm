@@ -156,20 +156,13 @@ void Process::loadAnimation() {
 	debug("loadAnimation %s (phase: %s) %s", name.c_str(), _phaseVar.c_str(), _animationPaused? "(paused)": "");
 	Animation *animation = _engine->loadAnimation(name);
 	if (animation) {
-		animation->position(_animationPosition);
-		animation->z(_animationZ);
-		animation->process(getName());
-		animation->phaseVar(_phaseVar);
-		animation->loop(_animationLoop);
-		animation->cycles(_animationCycles);
-		animation->delay(_animationDelay);
-		animation->setRandom(_animationRandom);
-		animation->startPaused(_animationPaused);
-		if (_phaseVar.empty())
-			suspend();
-		else if (_animationPaused)
-			_engine->setGlobal(_phaseVar, 0);
-		_engine->getCurrentScreen()->add(animation);
+		if (_animationPaused) {
+			_animationLoop = false;
+			_animationCycles = 0;
+			_animationRandom = 0;
+			_animationDelay = 0;
+		}
+		setupAnimation(animation);
 	}
 }
 
@@ -1372,12 +1365,11 @@ void Process::loadAnimationFromObject() {
 	debug("loadAnimationFromObject %s %s", name.c_str(), _animationPaused? "(paused)": "");
 	Animation *animation = _engine->loadAnimation(name);
 	if (animation) {
-		if (_animationPaused) {
-			animation->phaseVar(_phaseVar);
-			animation->process(getName());
-			animation->startPaused(_animationPaused);
-			_object->setAnimation(animation);
-		}
+		_animationCycles = 0;
+		_animationLoop = true;
+		_phaseVar.clear();
+		_object->setAnimation(animation);
+		setupAnimation(animation);
 	}
 }
 
