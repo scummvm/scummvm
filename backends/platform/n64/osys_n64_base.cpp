@@ -32,6 +32,7 @@
 #include "backends/fs/n64/n64-fs-factory.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
+#include "graphics/pixelbuffer.h"
 
 typedef unsigned long long uint64;
 
@@ -220,6 +221,9 @@ const OSystem::GraphicsMode* OSystem_N64::getSupportedGraphicsModes() const {
 	return s_supportedGraphicsModes;
 }
 
+Graphics::PixelBuffer OSystem_N64::getScreenPixelBuffer() {
+	return Graphics::PixelBuffer();
+}
 
 int OSystem_N64::getDefaultGraphicsMode() const {
 	return OVERS_NTSC_340X240;
