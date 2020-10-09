@@ -148,6 +148,7 @@ private:
 	}
 
 	ProcessExitCode resume();
+	void setupAnimation(Animation *animation);
 
 public:
 	Process(AGDSEngine *engine, ObjectPtr object, unsigned ip = 0);

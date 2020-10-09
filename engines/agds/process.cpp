@@ -22,6 +22,7 @@
 
 #include "agds/process.h"
 #include "agds/agds.h"
+#include "agds/animation.h"
 #include "common/debug.h"
 #include "common/system.h"
 
@@ -123,6 +124,25 @@ Common::String Process::popText() {
 
 void Process::updateWithCurrentMousePosition() {
 	setMousePosition(_engine->mousePosition());
+}
+
+
+void Process::setupAnimation(Animation *animation) {
+	animation->position(_animationPosition);
+	animation->z(_animationZ);
+	animation->process(getName());
+	animation->phaseVar(_phaseVar);
+	animation->loop(_animationLoop);
+	animation->cycles(_animationCycles);
+	animation->delay(_animationDelay);
+	animation->setRandom(_animationRandom);
+	animation->startPaused(_animationPaused);
+	if (_phaseVar.empty())
+			suspend();
+	else if (_animationPaused)
+			_engine->setGlobal(_phaseVar, 0);
+	_engine->getCurrentScreen()->add(animation);
+
 }
 
 void Process::activate() {
