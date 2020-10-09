@@ -130,6 +130,7 @@ public:
 
 	virtual void beginGFXTransaction();
 	virtual TransactionError endGFXTransaction();
+	virtual Graphics::PixelBuffer getScreenPixelBuffer();
 
 	virtual int16 getHeight();
 	virtual int16 getWidth();

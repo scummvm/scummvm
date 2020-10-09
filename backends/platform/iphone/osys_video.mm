@@ -27,6 +27,7 @@
 #include "backends/platform/iphone/iphone_video.h"
 
 #include "graphics/conversion.h"
+#include "graphics/pixelbuffer.h"
 
 void OSystem_IPHONE::engineInit() {
 	EventsBaseBackend::engineInit();
@@ -135,6 +136,10 @@ OSystem::TransactionError OSystem_IPHONE::endGFXTransaction() {
 	[g_iPhoneViewInstance performSelectorOnMainThread:@selector(setGraphicsMode) withObject:nil waitUntilDone: YES];
 
 	return _gfxTransactionError;
+}
+
+Graphics::PixelBuffer OSystem_IPHONE::getScreenPixelBuffer() {
+	return Graphics::PixelBuffer();
 }
 
 void OSystem_IPHONE::updateOutputSurface() {
