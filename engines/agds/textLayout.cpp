@@ -20,20 +20,23 @@ void TextLayout::reset(AGDSEngine &engine) {
 	bool valid = _valid;
 	_valid = false;
 	_lines.clear();
+
 	if (valid) {
 		Common::String &var = _npc? _npcNotifyVar: _charNotifyVar;
 		if (!var.empty()) {
 			engine.setGlobal(var, 0);
 		}
+		engine.reactivate(_process);
 	}
 }
 
-void TextLayout::layout(AGDSEngine &engine, const Common::String &text, Common::Point pos, int fontId, bool npc) {
+void TextLayout::layout(AGDSEngine &engine, const Common::String &process, const Common::String &text, Common::Point pos, int fontId, bool npc) {
 	if (text.empty()) {
 		_valid = false;
 		return;
 	}
 
+	_process = process;
 	_fontId = fontId;
 	_npc = npc;
 	Font *font = engine.getFont(fontId);

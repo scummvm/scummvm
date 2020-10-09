@@ -50,6 +50,7 @@ class TextLayout {
 
 	Common::Array<Line> _lines;
 
+	Common::String		_process;
 	Common::String		_charNotifyVar;
 	Common::String		_charDirectionNotifyVar;
 	Common::String		_npcNotifyVar;
@@ -76,7 +77,7 @@ public:
 	}
 
 	void paint(AGDSEngine &engine, Graphics::Surface &backbuffer);
-	void layout(AGDSEngine &engine, const Common::String &text, Common::Point pos, int fontId, bool npc);
+	void layout(AGDSEngine &engine, const Common::String &process, const Common::String &text, Common::Point pos, int fontId, bool npc);
 };
 
 } // End of namespace AGDS
