@@ -29,6 +29,9 @@ namespace Level9 {
 
 Level9 *g_vm = nullptr;
 
+extern GameState workspace;
+extern byte *acodeptr, *codeptr;
+
 Level9::Level9(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
 		_detection(startdata, FileSize) {
 	g_vm = this;
@@ -52,12 +55,16 @@ void Level9::deinitialize() {
 }
 
 Common::Error Level9::readSaveData(Common::SeekableReadStream *rs) {
-	// TODO
+	Common::Serializer s(rs, nullptr);
+	workspace.synchronize(s);
+	codeptr = acodeptr + workspace.codeptr;
+
 	return Common::kNoError;
 }
 
 Common::Error Level9::writeGameData(Common::WriteStream *ws) {
-	// TODO
+	Common::Serializer s(nullptr, ws);
+	workspace.synchronize(s);
 	return Common::kNoError;
 }
 

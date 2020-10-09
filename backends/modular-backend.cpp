@@ -202,6 +202,10 @@ void ModularGraphicsBackend::hideOverlay() {
 	_graphicsManager->hideOverlay();
 }
 
+bool ModularGraphicsBackend::isOverlayVisible() const {
+	return _graphicsManager->isOverlayVisible();
+}
+
 Graphics::PixelFormat ModularGraphicsBackend::getOverlayFormat() const {
 	return _graphicsManager->getOverlayFormat();
 }
@@ -243,7 +247,7 @@ void ModularGraphicsBackend::setCursorPalette(const byte *colors, uint start, ui
 	_graphicsManager->setCursorPalette(colors, start, num);
 }
 
-void ModularGraphicsBackend::displayMessageOnOSD(const char *msg) {
+void ModularGraphicsBackend::displayMessageOnOSD(const Common::U32String &msg) {
 	_graphicsManager->displayMessageOnOSD(msg);
 }
 

@@ -269,6 +269,7 @@ ios7bundle: iphone
 		s==0 {print $$0}\
 		s > 0 { s-- }' $(srcdir)/dists/ios7/Info.plist >$(bundle_name)/Info.plist
 	sed -i'' -e 's/$$(PRODUCT_BUNDLE_IDENTIFIER)/org.scummvm.scummvm/' $(bundle_name)/Info.plist
+	sed -i'' -e '/UILaunchStoryboardName/{N;d;}' $(bundle_name)/Info.plist
 	cp $(DIST_FILES_DOCS) $(bundle_name)/
 	cp $(DIST_FILES_THEMES) $(bundle_name)/
 ifdef DIST_FILES_NETWORKING
@@ -407,6 +408,10 @@ ifdef USE_ZLIB
 OSX_ZLIB ?= $(STATICLIBPATH)/lib/libz.a
 endif
 
+ifdef USE_DISCORD
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libdiscord-rpc.a
+endif
+
 ifdef USE_SPARKLE
 ifdef MACOSX
 ifneq ($(SPARKLEPATH),)
@@ -419,15 +424,15 @@ endif
 # Special target to create a static linked binary for Mac OS X.
 # We use -force_cpusubtype_ALL to ensure the binary runs on every
 # PowerPC machine.
-scummvm-static: $(OBJS)
-	$(CXX) $(LDFLAGS) -force_cpusubtype_ALL -o scummvm-static $(OBJS) \
+scummvm-static: $(DETECT_OBJS) $(OBJS)
+	$(CXX) $(LDFLAGS) -force_cpusubtype_ALL -o scummvm-static $(DETECT_OBJS) $(OBJS) \
 		-framework CoreMIDI \
 		$(OSX_STATIC_LIBS) \
 		$(OSX_ZLIB)
 
 # Special target to create a static linked binary for the iPhone (legacy, and iOS 7+)
-iphone: $(OBJS)
-	$(CXX) $(LDFLAGS) -o scummvm $(OBJS) \
+iphone: $(DETECT_OBJS) $(OBJS)
+	$(CXX) $(LDFLAGS) -o scummvm $(DETECT_OBJS) $(OBJS) \
 		$(OSX_STATIC_LIBS) \
 		-framework UIKit -framework CoreGraphics -framework OpenGLES \
 		-framework CoreFoundation -framework QuartzCore -framework Foundation \

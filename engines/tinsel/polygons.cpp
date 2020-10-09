@@ -287,7 +287,7 @@ void Poly::nextPoly() {
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
-// FIXME: Avoid non-const global vars
+// These vars are reset upon engine destruction
 
 static int MaxPolys = MAX_POLY;
 
@@ -319,6 +319,16 @@ static POLY_VOLATILE volatileStuff[MAX_POLY];
 #define CHECK_HP(mvar, str)	assert(mvar >= 0 && mvar <= noofPolys);
 
 //-------------------- METHODS ----------------------
+
+void ResetVarsPolygons() {
+	DropPolygons();
+
+	MaxPolys = MAX_POLY;
+	pHandle = 0;
+
+	memset(&extraBlock, 0, sizeof(extraBlock));
+	memset(volatileStuff, 0, sizeof(volatileStuff));
+}
 
 static HPOLYGON PolygonIndex(const POLYGON *pp) {
 	for (int i = 0; i <= MAX_POLY; ++i) {
@@ -585,7 +595,7 @@ void FindBestPoint(HPOLYGON hp, int *x, int *y, int *pline) {
 	pp = Polys[hp];
 
 	// Pointer to polygon data
-	Poly ptp(LockMem(pHandle), pp->pIndex);	// This polygon
+	Poly ptp(_vm->_handle->LockMem(pHandle), pp->pIndex); // This polygon
 
 	// Look for fit of perpendicular to lines between nodes
 	for (int i = 0; i < ptp.getNodecount() - 1; i++) {
@@ -824,7 +834,7 @@ int NearestEndNode(HPOLYGON hPath, int x, int y) {
 	CHECK_HP(hPath, "Out of range polygon handle (8)");
 	pp = Polys[hPath];
 
-	Poly ptp(LockMem(pHandle), pp->pIndex);	// This polygon
+	Poly ptp(_vm->_handle->LockMem(pHandle), pp->pIndex); // This polygon
 
 	const int nodecount = ptp.getNodecount() - 1;
 
@@ -851,7 +861,7 @@ int NearEndNode(HPOLYGON hSpath, HPOLYGON hDpath) {
 	pSpath = Polys[hSpath];
 	pDpath = Polys[hDpath];
 
-	uint8 *pps = LockMem(pHandle);		// All polygons
+	uint8 *pps = _vm->_handle->LockMem(pHandle); // All polygons
 	Poly ps(pps, pSpath->pIndex);	// Start polygon
 	Poly pd(pps, pDpath->pIndex);	// Dest polygon
 
@@ -894,7 +904,7 @@ int NearestNodeWithin(HPOLYGON hNpath, int x, int y) {
 
 	CHECK_HP(hNpath, "Out of range polygon handle (11)");
 
-	Poly ptp(LockMem(pHandle), Polys[hNpath]->pIndex);	// This polygon
+	Poly ptp(_vm->_handle->LockMem(pHandle), Polys[hNpath]->pIndex); // This polygon
 
 	const int numNodes = ptp.getNodecount();	// Number of nodes in this follow nodes path
 
@@ -991,7 +1001,7 @@ int GetScale(HPOLYGON hPath, int y) {
 
 	CHECK_HP(hPath, "Out of range polygon handle (14)");
 
-	Poly ptp(LockMem(pHandle), Polys[hPath]->pIndex);
+	Poly ptp(_vm->_handle->LockMem(pHandle), Polys[hPath]->pIndex);
 
 	// Path is of a constant scale?
 	if (FROM_32(ptp.scale2) == 0)
@@ -1030,7 +1040,7 @@ int GetBrightness(HPOLYGON hPath, int y) {
 
 	CHECK_HP(hPath, "Out of range polygon handle (38)");
 
-	Poly ptp(LockMem(pHandle), Polys[hPath]->pIndex);
+	Poly ptp(_vm->_handle->LockMem(pHandle), Polys[hPath]->pIndex);
 
 	// Path is of a constant brightness?
 	if (FROM_32(ptp.bright1) == FROM_32(ptp.bright2))
@@ -1061,7 +1071,7 @@ void getNpathNode(HPOLYGON hNpath, int node, int *px, int *py) {
 	CHECK_HP(hNpath, "Out of range polygon handle (15)");
 	assert(Polys[hNpath] != NULL && Polys[hNpath]->polyType == PATH && Polys[hNpath]->subtype == NODE); // must be given a node path!
 
-	Poly ptp(LockMem(pHandle), Polys[hNpath]->pIndex);	// This polygon
+	Poly ptp(_vm->_handle->LockMem(pHandle), Polys[hNpath]->pIndex); // This polygon
 
 	// Might have just walked to the node from above.
 	if (node == ptp.getNodecount())
@@ -1077,7 +1087,7 @@ void getNpathNode(HPOLYGON hNpath, int node, int *px, int *py) {
 void GetTagTag(HPOLYGON hp, SCNHANDLE *hTagText, int *tagx, int *tagy) {
 	CHECK_HP(hp, "Out of range polygon handle (16)");
 
-	Poly ptp(LockMem(pHandle), Polys[hp]->pIndex);
+	Poly ptp(_vm->_handle->LockMem(pHandle), Polys[hp]->pIndex);
 
 	*tagx = (int)FROM_32(ptp.tagx) + (TinselV2 ? volatileStuff[hp].xoff : 0);
 	*tagy = (int)FROM_32(ptp.tagy) + (TinselV2 ? volatileStuff[hp].yoff : 0);
@@ -1090,7 +1100,7 @@ void GetTagTag(HPOLYGON hp, SCNHANDLE *hTagText, int *tagx, int *tagy) {
 SCNHANDLE GetPolyFilm(HPOLYGON hp) {
 	CHECK_HP(hp, "Out of range polygon handle (17)");
 
-	Poly ptp(LockMem(pHandle), Polys[hp]->pIndex);
+	Poly ptp(_vm->_handle->LockMem(pHandle), Polys[hp]->pIndex);
 
 	return FROM_32(ptp.hFilm);
 }
@@ -1101,7 +1111,7 @@ SCNHANDLE GetPolyFilm(HPOLYGON hp) {
 SCNHANDLE GetPolyScript(HPOLYGON hp) {
 	CHECK_HP(hp, "Out of range polygon handle (19)");
 
-	Poly ptp(LockMem(pHandle), Polys[hp]->pIndex);
+	Poly ptp(_vm->_handle->LockMem(pHandle), Polys[hp]->pIndex);
 
 	return FROM_32(ptp.hScript);
 }
@@ -1113,7 +1123,7 @@ REEL GetPolyReelType(HPOLYGON hp) {
 
 	CHECK_HP(hp, "Out of range polygon handle (20)");
 
-	Poly ptp(LockMem(pHandle), Polys[hp]->pIndex);
+	Poly ptp(_vm->_handle->LockMem(pHandle), Polys[hp]->pIndex);
 
 	return (REEL)FROM_32(ptp.reel);
 }
@@ -1122,7 +1132,7 @@ int32 GetPolyZfactor(HPOLYGON hp) {
 	CHECK_HP(hp, "Out of range polygon handle (21)");
 	assert(Polys[hp] != NULL);
 
-	Poly ptp(LockMem(pHandle), Polys[hp]->pIndex);
+	Poly ptp(_vm->_handle->LockMem(pHandle), Polys[hp]->pIndex);
 
 	return (int)FROM_32(ptp.zFactor);
 }
@@ -1131,7 +1141,7 @@ int numNodes(HPOLYGON hp) {
 	CHECK_HP(hp, "Out of range polygon handle (22)");
 	assert(Polys[hp] != NULL);
 
-	Poly ptp(LockMem(pHandle), Polys[hp]->pIndex);
+	Poly ptp(_vm->_handle->LockMem(pHandle), Polys[hp]->pIndex);
 
 	return ptp.getNodecount();
 }
@@ -1315,7 +1325,7 @@ static int DistinctCorners(HPOLYGON hp1, HPOLYGON hp2) {
  * Returns true if the two paths are on the same level
  */
 static bool MatchingLevels(PPOLYGON p1, PPOLYGON p2) {
-	byte *pps = LockMem(pHandle);		// All polygons
+	byte *pps = _vm->_handle->LockMem(pHandle); // All polygons
 	Poly pp1(pps, p1->pIndex);	// This polygon 1
 	Poly pp2(pps, p2->pIndex);	// This polygon 2
 
@@ -1817,7 +1827,7 @@ void InitPolygons(SCNHANDLE ph, int numPoly, bool bRestart) {
 	}
 
 	if (numPoly > 0) {
-		Poly ptp(LockMem(ph));
+		Poly ptp(_vm->_handle->LockMem(ph));
 
 		for (int i = 0; i < numPoly; ++i, ++ptp) {
 			switch (ptp.getType()) {
@@ -1983,7 +1993,7 @@ void MaxPolygons(int numPolys) {
 void GetPolyNode(HPOLYGON hp, int *pNodeX, int *pNodeY) {
 	CHECK_HP(hp, "GetPolyNode(): Out of range polygon handle");
 
-	Poly ptp(LockMem(pHandle), Polys[hp]->pIndex);
+	Poly ptp(_vm->_handle->LockMem(pHandle), Polys[hp]->pIndex);
 
 	// WORKAROUND: Invalid node adjustment for DW2 Cartwheel scene refer polygon
 	if (TinselV2 && (pHandle == 0x74191900) && (hp == 8)) {

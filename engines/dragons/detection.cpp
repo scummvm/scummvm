@@ -20,12 +20,9 @@
  *
  */
 
-#include "dragons/dragons.h"
 #include "engines/advancedDetector.h"
-#include "common/savefile.h"
-#include "common/system.h"
 #include "base/plugins.h"
-#include "graphics/thumbnail.h"
+#include "dragons/detection.h"
 
 static const PlainGameDescriptor dragonsGames[] = {
 		{ "dragons", "Blazing Dragons" },
@@ -42,7 +39,7 @@ static const DragonsGameDescription gameDescriptions[] = {
 					AD_ENTRY1s("bigfile.dat", "02c26712bee57266f28235fdc0207725", 44990464),
 					Common::EN_USA,
 					Common::kPlatformPSX,
-					ADGF_DROPPLATFORM | ADGF_TESTING,
+					ADGF_DROPPLATFORM,
 					GUIO0()
 			},
 			kGameIdDragons
@@ -54,7 +51,7 @@ static const DragonsGameDescription gameDescriptions[] = {
 					AD_ENTRY1s("bigfile.dat", "02c26712bee57266f28235fdc0207725", 44992512),
 					Common::EN_GRB,
 					Common::kPlatformPSX,
-					ADGF_DROPPLATFORM | ADGF_TESTING,
+					ADGF_DROPPLATFORM,
 					GUIO0()
 			},
 			kGameIdDragons
@@ -66,7 +63,7 @@ static const DragonsGameDescription gameDescriptions[] = {
 					AD_ENTRY1s("bigfile.dat", "9854fed0d2b48522a62973e99b52a0be", 45099008),
 					Common::DE_DEU,
 					Common::kPlatformPSX,
-					ADGF_DROPPLATFORM | ADGF_UNSTABLE,
+					ADGF_DROPPLATFORM,
 					GUIO0()
 			},
 			kGameIdDragons
@@ -78,10 +75,42 @@ static const DragonsGameDescription gameDescriptions[] = {
 					AD_ENTRY1s("bigfile.dat", "9854fed0d2b48522a62973e99b52a0be", 45107200),
 					Common::FR_FRA,
 					Common::kPlatformPSX,
-					ADGF_DROPPLATFORM | ADGF_UNSTABLE,
+					ADGF_DROPPLATFORM,
 					GUIO0()
 			},
 			kGameIdDragons
+	},
+	// Russian localization by Russian Versions
+	{
+			{
+					"dragons",
+					0,
+					{
+						{"bigfile.dat", 0, "02c26712bee57266f28235fdc0207725", 44990464},
+						{"dtspeech.xa", 0, "7f7ace860e5dd3696b51eace20215274", 182138880},
+						AD_LISTEND
+					},
+					Common::RU_RUS,
+					Common::kPlatformPSX,
+					ADGF_DROPPLATFORM,
+					GUIO0()
+			},
+			kGameIdDragons
+	},
+
+
+	// BAD EXTRACTIONS
+	{
+			{
+					"dragons",
+					0,
+					AD_ENTRY1s("bigfile.dat", "92b938703611789e1a007d6dfac7ef7e", 51668736),
+					Common::EN_USA,
+					Common::kPlatformPSX,
+					ADGF_DROPPLATFORM,
+					GUIO0()
+			},
+			kGameIdDragonsBadExtraction
 	},
 
 	{ AD_TABLE_END_MARKER, 0 }
@@ -94,117 +123,24 @@ static const char * const directoryGlobs[] = {
 	0
 };
 
-class DragonsMetaEngine : public AdvancedMetaEngine {
+class DragonsMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	DragonsMetaEngine() : AdvancedMetaEngine(Dragons::gameDescriptions, sizeof(Dragons::DragonsGameDescription), dragonsGames) {
+	DragonsMetaEngineStatic() : AdvancedMetaEngineStatic(Dragons::gameDescriptions, sizeof(Dragons::DragonsGameDescription), dragonsGames) {
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
 
-	const char *getEngineId() const {
+	const char *getEngineId() const override {
 		return "dragons";
 	}
 
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "Blazing Dragons";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "(C) 1996 The Illusions Gaming Company";
 	}
-
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual SaveStateList listSaves(const char *target) const;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
-	virtual void removeSaveState(const char *target, int slot) const;
 };
 
-bool DragonsMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-			(f == kSupportsListSaves) ||
-			(f == kSupportsDeleteSave) ||
-			(f == kSupportsLoadingDuringStartup) ||
-			(f == kSavesSupportMetaInfo) ||
-			(f == kSavesSupportThumbnail) ||
-			(f == kSavesSupportCreationDate);
-}
-
-void DragonsMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
-}
-
-int DragonsMetaEngine::getMaximumSaveSlot() const {
-	return 999;
-}
-
-SaveStateList DragonsMetaEngine::listSaves(const char *target) const {
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Dragons::SaveHeader header;
-	Common::String pattern = target;
-	pattern += ".???";
-	Common::StringArray filenames;
-	filenames = saveFileMan->listSavefiles(pattern.c_str());
-	SaveStateList saveList;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(file->c_str() + file->size() - 3);
-		if (slotNum >= 0 && slotNum <= 999) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
-			if (in) {
-				if (Dragons::DragonsEngine::readSaveHeader(in, header) == Dragons::kRSHENoError) {
-					saveList.push_back(SaveStateDescriptor(slotNum, header.description));
-				}
-				delete in;
-			}
-		}
-	}
-	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
-	return saveList;
-}
-
-SaveStateDescriptor DragonsMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::String filename = Dragons::DragonsEngine::getSavegameFilename(target, slot);
-	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
-	if (in) {
-		Dragons::SaveHeader header;
-		Dragons::kReadSaveHeaderError error;
-		error = Dragons::DragonsEngine::readSaveHeader(in, header, false);
-		delete in;
-		if (error == Dragons::kRSHENoError) {
-			SaveStateDescriptor desc(slot, header.description);
-			// Slot 0 is used for the "Continue" save
-			desc.setDeletableFlag(slot != 0);
-			desc.setWriteProtectedFlag(slot == 0);
-			desc.setThumbnail(header.thumbnail);
-			desc.setSaveDate(header.saveDate & 0xFFFF, (header.saveDate >> 16) & 0xFF, (header.saveDate >> 24) & 0xFF);
-			desc.setSaveTime((header.saveTime >> 16) & 0xFF, (header.saveTime >> 8) & 0xFF);
-			desc.setPlayTime(header.playTime * 1000);
-			return desc;
-		}
-	}
-	return SaveStateDescriptor();
-}
-
-bool DragonsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Dragons::DragonsGameDescription *gd = (const Dragons::DragonsGameDescription *)desc;
-	if (gd) {
-		switch (gd->gameId) {
-		case Dragons::kGameIdDragons:
-			*engine = new Dragons::DragonsEngine(syst, desc);
-			break;
-		default:
-			error("Unknown game id");
-			break;
-		}
-	}
-	return desc != 0;
-}
-
-#if PLUGIN_ENABLED_DYNAMIC(DRAGONS)
-	REGISTER_PLUGIN_DYNAMIC(DRAGONS, PLUGIN_TYPE_ENGINE, DragonsMetaEngine);
-#else
-	REGISTER_PLUGIN_STATIC(DRAGONS, PLUGIN_TYPE_ENGINE, DragonsMetaEngine);
-#endif
+REGISTER_PLUGIN_STATIC(DRAGONS_DETECTION, PLUGIN_TYPE_METAENGINE, DragonsMetaEngineStatic);

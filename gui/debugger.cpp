@@ -59,7 +59,7 @@ Debugger::Debugger() {
 #endif
 
 	// Register variables
-	registerVar("debug_countdown", &_frameCountdown, DVAR_INT, 0);
+	registerVarImpl("debug_countdown", &_frameCountdown, DVAR_INT, 0);
 
 	// Register commands
 	//registerCmd("continue",			WRAP_METHOD(Debugger, cmdExit));
@@ -83,6 +83,10 @@ Debugger::~Debugger() {
 #ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
 	delete _debuggerDialog;
 #endif
+}
+
+void Debugger::clearVars() {
+	_vars.resize(1); // Keep "debug_countdown"
 }
 
 
@@ -520,7 +524,7 @@ char *Debugger::readlineComplete(const char *input, int state) {
 #endif
 
 // Variable registration function
-void Debugger::registerVar(const Common::String &varname, void *pointer, VarType type, int arraySize) {
+void Debugger::registerVarImpl(const Common::String &varname, void *pointer, VarType type, int arraySize) {
 	// TODO: Filter out duplicates
 	// TODO: Sort this list? Then we can do binary search later on when doing lookups.
 	assert(pointer);

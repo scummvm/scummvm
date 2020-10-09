@@ -43,7 +43,7 @@ typedef enum {
 	SCROLL_UP,
 	SCROLL_DOWN,
 	SCROLL_ESCAPE
-} ScrollEventType;
+} MsgScrollEventType;
 
 class MsgScrollNewUI: public MsgScroll {
 
@@ -99,7 +99,7 @@ protected:
 	MsgLine *add_new_line() override;
 
 private:
-	GUI_status scroll_movement_event(ScrollEventType event);
+	GUI_status scroll_movement_event(MsgScrollEventType event);
 	uint16 count_empty_lines(Std::string s);
 
 };

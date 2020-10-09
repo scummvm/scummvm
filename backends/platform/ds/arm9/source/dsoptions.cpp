@@ -53,73 +53,73 @@ static int confGetInt(Common::String key, int defaultVal) {
 
 DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 
-	new GUI::ButtonWidget(this, 10, 170, 72, 16, _("~C~lose"), 0, GUI::kCloseCmd);
-	new GUI::ButtonWidget(this, 320 - 10 - 130, 170, 120, 16, _("ScummVM Main Menu"), 0, 0x40000000, 'M');
+	new GUI::ButtonWidget(this, 10, 170, 72, 16, _("~C~lose"), U32String(""), GUI::kCloseCmd);
+	new GUI::ButtonWidget(this, 320 - 10 - 130, 170, 120, 16, _("ScummVM Main Menu"), U32String(""), 0x40000000, 'M');
 
 	_tab = new GUI::TabWidget(this, 10, 5, 300, 230 - 20 - 40 - 20);
 
-	_tab->addTab("Controls", "");
+	_tab->addTab(_("Controls"), "");
 
 	_leftHandedCheckbox = new GUI::CheckboxWidget(_tab, 5, 5, 130, 20, _("~L~eft handed mode"));
 	_indyFightCheckbox = new GUI::CheckboxWidget(_tab, 5, 20, 140, 20, _("~I~ndy fight controls"));
-	_showCursorCheckbox = new GUI::CheckboxWidget(_tab, 150, 5, 130, 20, _("Show mouse cursor"), 0, 0, 'T');
-	_snapToBorderCheckbox = new GUI::CheckboxWidget(_tab, 150, 20, 130, 20, _("Snap to edges"), 0, 0, 'T');
+	_showCursorCheckbox = new GUI::CheckboxWidget(_tab, 150, 5, 130, 20, _("Show mouse cursor"), U32String(""), 0, 'T');
+	_snapToBorderCheckbox = new GUI::CheckboxWidget(_tab, 150, 20, 130, 20, _("Snap to edges"), U32String(""), 0, 'T');
 
 	new GUI::StaticTextWidget(_tab, 20, 35, 100, 15, _("Touch X Offset"), Graphics::kTextAlignLeft);
-	_touchX = new GUI::SliderWidget(_tab, 130, 35, 130, 12, "TODO: Add tooltip", 1);
+	_touchX = new GUI::SliderWidget(_tab, 130, 35, 130, 12, U32String("TODO: Add tooltip"), 1);
 	_touchX->setMinValue(-8);
 	_touchX->setMaxValue(+8);
 	_touchX->setValue(0);
 	_touchX->setFlags(GUI::WIDGET_CLEARBG);
 
 	new GUI::StaticTextWidget(_tab, 20, 50, 100, 15, _("Touch Y Offset"), Graphics::kTextAlignLeft);
-	_touchY = new GUI::SliderWidget(_tab, 130, 50, 130, 12, "TODO: Add tooltip", 2);
+	_touchY = new GUI::SliderWidget(_tab, 130, 50, 130, 12, U32String("TODO: Add tooltip"), 2);
 	_touchY->setMinValue(-8);
 	_touchY->setMaxValue(+8);
 	_touchY->setValue(0);
 	_touchY->setFlags(GUI::WIDGET_CLEARBG);
 
-	new GUI::StaticTextWidget(_tab, 130 + 65 - 10, 65, 20, 15, "0", Graphics::kTextAlignCenter);
-	new GUI::StaticTextWidget(_tab, 130 + 130 - 10, 65, 20, 15, "8", Graphics::kTextAlignCenter);
-	new GUI::StaticTextWidget(_tab, 130 - 20, 65, 20, 15, "-8", Graphics::kTextAlignCenter);
+	new GUI::StaticTextWidget(_tab, 130 + 65 - 10, 65, 20, 15, U32String("0"), Graphics::kTextAlignCenter);
+	new GUI::StaticTextWidget(_tab, 130 + 130 - 10, 65, 20, 15, U32String("8"), Graphics::kTextAlignCenter);
+	new GUI::StaticTextWidget(_tab, 130 - 20, 65, 20, 15, U32String("-8"), Graphics::kTextAlignCenter);
 
 
-	_touchPadStyle = new GUI::CheckboxWidget(_tab, 5, 80, 270, 20, _("Use laptop trackpad-style cursor control"), 0, 0x20000001, 'T');
-	_screenTaps = new GUI::CheckboxWidget(_tab, 5, 95, 285, 20, _("Tap for left click, double tap right click"), 0, 0x20000002, 'T');
+	_touchPadStyle = new GUI::CheckboxWidget(_tab, 5, 80, 270, 20, _("Use laptop trackpad-style cursor control"), U32String(""), 0x20000001, 'T');
+	_screenTaps = new GUI::CheckboxWidget(_tab, 5, 95, 285, 20, _("Tap for left click, double tap right click"), U32String(""), 0x20000002, 'T');
 
 	_sensitivityLabel = new GUI::StaticTextWidget(_tab, 20, 110, 110, 15, _("Sensitivity"), Graphics::kTextAlignLeft);
-	_sensitivity = new GUI::SliderWidget(_tab, 130, 110, 130, 12, "TODO: Add tooltip", 1);
+	_sensitivity = new GUI::SliderWidget(_tab, 130, 110, 130, 12, U32String("TODO: Add tooltip"), 1);
 	_sensitivity->setMinValue(4);
 	_sensitivity->setMaxValue(16);
 	_sensitivity->setValue(8);
 	_sensitivity->setFlags(GUI::WIDGET_CLEARBG);
 
-	_tab->addTab("Graphics", "");
+	_tab->addTab(_("Graphics"), "");
 
 	new GUI::StaticTextWidget(_tab, 5, 67, 180, 15, _("Initial top screen scale:"), Graphics::kTextAlignLeft);
 
-	_100PercentCheckbox = new GUI::CheckboxWidget(_tab, 5, 82, 80, 20, "100%", "TODO: Add tooltip", 0x30000001, 'T');
-	_150PercentCheckbox = new GUI::CheckboxWidget(_tab, 5, 97, 80, 20, "150%", "TODO: Add tooltip", 0x30000002, 'T');
-	_200PercentCheckbox = new GUI::CheckboxWidget(_tab, 5, 112, 80, 20, "200%", "TODO: Add tooltip", 0x30000003, 'T');
+	_100PercentCheckbox = new GUI::CheckboxWidget(_tab, 5, 82, 80, 20, U32String("100%"), U32String("TODO: Add tooltip"), 0x30000001, 'T');
+	_150PercentCheckbox = new GUI::CheckboxWidget(_tab, 5, 97, 80, 20, U32String("150%"), U32String("TODO: Add tooltip"), 0x30000002, 'T');
+	_200PercentCheckbox = new GUI::CheckboxWidget(_tab, 5, 112, 80, 20, U32String("200%"), U32String("TODO: Add tooltip"), 0x30000003, 'T');
 
 	new GUI::StaticTextWidget(_tab, 5, 5, 180, 15, _("Main screen scaling:"), Graphics::kTextAlignLeft);
 
-	_hardScaler = new GUI::CheckboxWidget(_tab, 5, 20, 270, 20, _("Hardware scale (fast, but low quality)"), 0, 0x10000001, 'T');
-	_cpuScaler = new GUI::CheckboxWidget(_tab, 5, 35, 270, 20, _("Software scale (good quality, but slower)"), 0, 0x10000002, 'S');
-	_unscaledCheckbox = new GUI::CheckboxWidget(_tab, 5, 50, 270, 20, _("Unscaled (you must scroll left and right)"), 0, 0x10000003, 'S');
+	_hardScaler = new GUI::CheckboxWidget(_tab, 5, 20, 270, 20, _("Hardware scale (fast, but low quality)"), U32String(""), 0x10000001, 'T');
+	_cpuScaler = new GUI::CheckboxWidget(_tab, 5, 35, 270, 20, _("Software scale (good quality, but slower)"), U32String(""), 0x10000002, 'S');
+	_unscaledCheckbox = new GUI::CheckboxWidget(_tab, 5, 50, 270, 20, _("Unscaled (you must scroll left and right)"), U32String(""), 0x10000003, 'S');
 
 	new GUI::StaticTextWidget(_tab, 5, 125, 110, 15, _("Brightness:"), Graphics::kTextAlignLeft);
-	_gammaCorrection = new GUI::SliderWidget(_tab, 130, 120, 130, 12, "TODO: Add tooltip", 1);
+	_gammaCorrection = new GUI::SliderWidget(_tab, 130, 120, 130, 12, U32String("TODO: Add tooltip"), 1);
 	_gammaCorrection->setMinValue(0);
 	_gammaCorrection->setMaxValue(8);
 	_gammaCorrection->setValue(0);
 
 
 
-	_tab->addTab("General", "");
+	_tab->addTab(_("General"), "");
 
-	_highQualityAudioCheckbox = new GUI::CheckboxWidget(_tab, 5, 5, 250, 20, _("High quality audio (slower) (reboot)"), 0, 0, 'T');
-	_disablePowerOff = new GUI::CheckboxWidget(_tab, 5, 20, 200, 20, _("Disable power off"), 0, 0, 'T');
+	_highQualityAudioCheckbox = new GUI::CheckboxWidget(_tab, 5, 5, 250, 20, _("High quality audio (slower) (reboot)"), U32String(""), 0, 'T');
+	_disablePowerOff = new GUI::CheckboxWidget(_tab, 5, 20, 200, 20, _("Disable power off"), U32String(""), 0, 'T');
 
 	_tab->setActiveTab(0);
 

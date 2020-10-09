@@ -21,11 +21,13 @@
  */
 
 #include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
 #include "audio/decoders/ac3.h"
 #include "audio/decoders/mp3.h"
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/stream.h"
+#include "common/memstream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 
@@ -118,9 +120,15 @@ MPEGPSDecoder::MPEGStream *MPEGPSDecoder::getStream(uint32 startCode, Common::Se
 			case kPrivateStreamDVDPCM:
 				typeName = "DVD PCM";
 				break;
-			case kPrivateStreamPS2Audio:
+			case kPrivateStreamPS2Audio: {
 				typeName = "PS2 Audio";
+				handled = true;
+				PS2AudioTrack *audioTrack = new PS2AudioTrack(packet, getSoundType());
+				stream = audioTrack;
+				_streamMap[startCode] = audioTrack;
+				addTrack(audioTrack);
 				break;
+			}
 			default:
 				typeName = "Unknown";
 				break;
@@ -734,4 +742,115 @@ Audio::AudioStream *MPEGPSDecoder::AC3AudioTrack::getAudioStream() const {
 
 #endif
 
+MPEGPSDecoder::PS2AudioTrack::PS2AudioTrack(Common::SeekableReadStream *firstPacket, Audio::Mixer::SoundType soundType) :
+		AudioTrack(soundType) {
+	firstPacket->seek(12); // unknown data (4), 'SShd', header size (4)
+
+	_soundType = firstPacket->readUint32LE();
+
+	if (_soundType == PS2_ADPCM)
+		error("Unhandled PS2 ADPCM sound in MPEG-PS video");
+	else if (_soundType != PS2_PCM)
+		error("Unknown PS2 sound type %x", _soundType);
+
+	uint32 sampleRate = firstPacket->readUint32LE();
+	_channels = firstPacket->readUint32LE();
+	_interleave = firstPacket->readUint32LE();
+
+	byte flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
+	if (_channels == 2)
+		flags |= Audio::FLAG_STEREO;
+
+	_blockBuffer = new byte[_interleave * _channels];
+	_blockPos = _blockUsed = 0;
+	_audStream = Audio::makePacketizedRawStream(sampleRate, flags);
+	_isFirstPacket = true;
+
+	firstPacket->seek(0);
+}
+
+MPEGPSDecoder::PS2AudioTrack::~PS2AudioTrack() {
+	delete[] _blockBuffer;
+	delete _audStream;
+}
+
+bool MPEGPSDecoder::PS2AudioTrack::sendPacket(Common::SeekableReadStream *packet, uint32 pts, uint32 dts) {
+	packet->skip(4);
+
+	if (_isFirstPacket) {
+		// Skip over the header which we already parsed
+		packet->skip(4);
+		packet->skip(packet->readUint32LE());
+
+		if (packet->readUint32BE() != MKTAG('S', 'S', 'b', 'd'))
+			error("Failed to find 'SSbd' tag");
+
+		packet->readUint32LE(); // body size
+		_isFirstPacket = false;
+	}
+
+	uint32 size = packet->size() - packet->pos();
+	uint32 bytesPerChunk = _interleave * _channels;
+	uint32 sampleCount = calculateSampleCount(size);
+
+	byte *buffer = (byte *)malloc(sampleCount * 2);
+	int16 *ptr = (int16 *)buffer;
+
+	// Handle any full chunks first
+	while (size >= bytesPerChunk) {
+		packet->read(_blockBuffer + _blockPos, bytesPerChunk - _blockPos);
+		size -= bytesPerChunk - _blockPos;
+		_blockPos = 0;
+
+		for (uint32 i = _blockUsed; i < _interleave / 2; i++)
+			for (uint32 j = 0; j < _channels; j++)
+				*ptr++ = READ_UINT16(_blockBuffer + i * 2 + j * _interleave);
+
+		_blockUsed = 0;
+	}
+
+	// Then fallback on loading any leftover
+	if (size > 0) {
+		packet->read(_blockBuffer, size);
+		_blockPos = size;
+
+		if (size > (_channels - 1) * _interleave) {
+			_blockUsed = (size - (_channels - 1) * _interleave) / 2;
+
+			for (uint32 i = 0; i < _blockUsed; i++)
+				for (uint32 j = 0; j < _channels; j++)
+					*ptr++ = READ_UINT16(_blockBuffer + i * 2 + j * _interleave);
+		}
+	}
+
+	_audStream->queuePacket(new Common::MemoryReadStream(buffer, sampleCount * 2, DisposeAfterUse::YES));
+
+	delete packet;
+	return true;
+}
+
+Audio::AudioStream *MPEGPSDecoder::PS2AudioTrack::getAudioStream() const {
+	return _audStream;
+}
+
+uint32 MPEGPSDecoder::PS2AudioTrack::calculateSampleCount(uint32 packetSize) const {
+	uint32 bytesPerChunk = _interleave * _channels, result = 0;
+
+	// If we have a partial block, subtract the remainder from the size. That
+	// gets put towards reading the partial block
+	if (_blockPos != 0) {
+		packetSize -= bytesPerChunk - _blockPos;
+		result += (_interleave / 2) - _blockUsed;
+	}
+
+	// Round the number of whole chunks down and then calculate how many samples that gives us
+	result += (packetSize / bytesPerChunk) * _interleave / 2;
+
+	// Total up anything we can get from the remainder
+	packetSize %= bytesPerChunk;
+	if (packetSize > (_channels - 1) * _interleave)
+		result += (packetSize - (_channels - 1) * _interleave) / 2;
+
+	return result * _channels;
+}
 } // End of namespace Video

@@ -109,7 +109,7 @@ void Screen_EoB::loadSpecialAmigaCPS(const char *fileName, int destPage, bool is
 					cnt = decodeFrameAmiga_readBits(pos, val, chk, 8) + 1;
 					para2 = 12;
 				}
-					
+
 				code = decodeFrameAmiga_readBits(pos, val, chk, para2);
 				while (cnt--) {
 					dst--;
@@ -125,7 +125,7 @@ void Screen_EoB::loadSpecialAmigaCPS(const char *fileName, int destPage, bool is
 				*dst = dst[code & 0xFFFF];
 
 			} else {
-				para = 3;				
+				para = 3;
 			}
 		}
 
@@ -171,7 +171,7 @@ bool AmigaDOSFont::load(Common::SeekableReadStream &file) {
 	unload();
 
 	uint16 id = file.readUint16BE();
-	// We only support type 0x0f00, since this is the only type used for EOB 
+	// We only support type 0x0f00, since this is the only type used for EOB
 	if (id != 0x0f00)
 		return false;
 

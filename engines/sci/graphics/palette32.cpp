@@ -386,7 +386,7 @@ static const uint8 gammaTables[GfxPalette32::numGammaTables][256] = {
 	_cycleMap(),
 
 	// Gamma correction
-	_gammaLevel(-1),
+	_gammaLevel(g_sci->_features->useMacGammaLevel() ? 2 : -1),
 	_gammaChanged(false) {
 
 	for (int i = 0, len = ARRAYSIZE(_fadeTable); i < len; ++i) {

@@ -26,16 +26,13 @@
 */
 
 
-#include "common/config-manager.h"
-#include "common/error.h"
-#include "common/fs.h"
-#include "common/system.h"
-
+#include "base/plugins.h"
 #include "engines/advancedDetector.h"
 
-#include "dm/dm.h"
+#include "dm/detection.h"
 
 namespace DM {
+
 static const PlainGameDescriptor DMGames[] = {
 	{"dm", "Dungeon Master"},
 	{0, 0}
@@ -95,9 +92,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class DMMetaEngine : public AdvancedMetaEngine {
+class DMMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	DMMetaEngine() : AdvancedMetaEngine(DM::gameDescriptions, sizeof(DMADGameDescription), DMGames, optionsList) {
+	DMMetaEngineStatic() : AdvancedMetaEngineStatic(DM::gameDescriptions, sizeof(DMADGameDescription), DMGames, optionsList) {
 	}
 
 	const char *getEngineId() const override {
@@ -112,79 +109,9 @@ public:
 		return "Dungeon Master (C) 1987 FTL Games";
 	}
 
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
-		if (desc)
-			*engine = new DM::DMEngine(syst, (const DMADGameDescription*)desc);
-		return desc != nullptr;
-	}
 
-	bool hasFeature(MetaEngineFeature f) const override {
-		return
-			(f == kSupportsListSaves) ||
-			(f == kSupportsLoadingDuringStartup) ||
-			(f == kSavesSupportThumbnail) ||
-			(f == kSavesSupportMetaInfo) ||
-			(f == kSavesSupportCreationDate);
-	}
-
-	int getMaximumSaveSlot() const override { return 99; }
-
-	SaveStateList listSaves(const char *target) const override {
-		Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-		SaveGameHeader header;
-		Common::String pattern = target;
-		pattern += ".###";
-
-		Common::StringArray filenames;
-		filenames = saveFileMan->listSavefiles(pattern.c_str());
-
-		SaveStateList saveList;
-
-		for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-			// Obtain the last 3 digits of the filename, since they correspond to the save slot
-			int slotNum = atoi(file->c_str() + file->size() - 3);
-
-			if ((slotNum >= 0) && (slotNum <= 999)) {
-				Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
-				if (in) {
-					if (DM::readSaveGameHeader(in, &header))
-						saveList.push_back(SaveStateDescriptor(slotNum, header._descr.getDescription()));
-					delete in;
-				}
-			}
-		}
-
-		// Sort saves based on slot number.
-		Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
-		return saveList;
-	}
-
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override {
-		Common::String filename = Common::String::format("%s.%03u", target, slot);
-		Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
-
-		if (in) {
-			DM::SaveGameHeader header;
-
-			bool successfulRead = DM::readSaveGameHeader(in, &header);
-			delete in;
-
-			if (successfulRead) {
-				SaveStateDescriptor desc(slot, header._descr.getDescription());
-
-				return header._descr;
-			}
-		}
-
-		return SaveStateDescriptor();
-	}
-
-	void removeSaveState(const char *target, int slot) const override {}
 };
 
-}
-#if PLUGIN_ENABLED_DYNAMIC(DM)
-REGISTER_PLUGIN_DYNAMIC(DM, PLUGIN_TYPE_ENGINE, DM::DMMetaEngine);
-#else
-REGISTER_PLUGIN_STATIC(DM, PLUGIN_TYPE_ENGINE, DM::DMMetaEngine);
-#endif
+} // End of namespace DM
+
+REGISTER_PLUGIN_STATIC(DM_DETECTION, PLUGIN_TYPE_METAENGINE, DM::DMMetaEngineStatic);

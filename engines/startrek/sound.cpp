@@ -20,6 +20,7 @@
  *
  */
 
+#include "startrek/resource.h"
 #include "startrek/sound.h"
 
 #include "common/file.h"
@@ -403,7 +404,7 @@ void Sound::loadPCMusicFile(const Common::String &baseSoundName) {
 	}
 
 	debugC(5, kDebugSound, "Loading midi \'%s\'\n", soundName.c_str());
-	Common::MemoryReadStreamEndian *soundStream = _vm->loadFile(soundName.c_str());
+	Common::MemoryReadStreamEndian *soundStream = _vm->_resource->loadFile(soundName.c_str());
 
 	if (loadedSoundData != nullptr)
 		delete[] loadedSoundData;

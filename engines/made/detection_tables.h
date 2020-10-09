@@ -27,15 +27,6 @@
 
 namespace Made {
 
-struct MadeGameDescription {
-	ADGameDescription desc;
-
-	int gameID;
-	int gameType;
-	uint32 features;
-	uint16 version;
-};
-
 static const MadeGameDescription gameDescriptions[] = {
 	{
 		// NOTE: Return to Zork entries with *.dat are used to detect the game via rtzcd.dat,

@@ -61,17 +61,25 @@
 
 namespace Illusions {
 
-char *debugW2I(byte *wstr) {
+char *debugW2I(uint16 *wstr) {
 	static char buf[65];
 	char *p = buf;
 	uint i = 0;
 	while (*wstr != 0 && i < sizeof(buf) - 1) {
-		*p++ = *wstr;
-		wstr += 2;
+		*p++ = (byte)*wstr;
+		wstr++;
 		i++;
 	}
 	*p = 0;
 	return buf;
+}
+
+void swapBytesInWideString(byte *wstr) {
+#if defined(SCUMM_BIG_ENDIAN)
+	for (byte *ptr = wstr; *ptr != 0; ptr += 2) {
+		WRITE_UINT16(ptr, SWAP_BYTES_16(READ_UINT16(ptr)));
+	}
+#endif
 }
 
 IllusionsEngine::IllusionsEngine(OSystem *syst, const IllusionsGameDescription *gd) :

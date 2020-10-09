@@ -27,6 +27,7 @@
 #include "lilliput/script.h"
 #include "lilliput/sound.h"
 #include "lilliput/stream.h"
+#include "lilliput/detection.h"
 
 #include "common/file.h"
 #include "common/rect.h"
@@ -53,12 +54,6 @@ class RandomSource;
 namespace Lilliput {
 
 static const int kSavegameVersion = 1;
-
-enum GameType {
-	kGameTypeNone  = 0,
-	kGameTypeRobin,
-	kGameTypeRome
-};
 
 enum LilliputDebugChannels {
 	kDebugEngine    = 1 << 0,

@@ -47,6 +47,7 @@
 #include "xeen/sound.h"
 #include "xeen/spells.h"
 #include "xeen/window.h"
+#include "xeen/detection.h"
 
 /**
  * This is the namespace of the Xeen engine.
@@ -60,13 +61,6 @@
  * - Might & Magic: Swords of Xeen
  */
 namespace Xeen {
-
-enum {
-	GType_Clouds = 1,
-	GType_DarkSide = 2,
-	GType_WorldOfXeen = 3,
-	GType_Swords = 4
-};
 
 enum XeenDebugChannels {
 	kDebugPath      = 1 << 0,
@@ -102,9 +96,7 @@ enum GameMode {
 	GMODE_QUIT = 4
 };
 
-struct XeenGameDescription;
-
-#define XEEN_SAVEGAME_VERSION 1
+#define XEEN_SAVEGAME_VERSION 2
 
 class XeenEngine : public Engine {
 	/**
@@ -313,7 +305,7 @@ public:
 	/**
 	 * Show an error message in a GUI dialog
 	 */
-	void GUIError(const Common::String &msg);
+	void GUIError(const Common::U32String &msg);
 };
 
 extern XeenEngine *g_vm;

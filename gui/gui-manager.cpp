@@ -449,6 +449,11 @@ void GuiManager::runLoop() {
 #endif
 }
 
+void GuiManager::exitLoop() {
+	while (!_dialogStack.empty())
+		getTopDialog()->close();
+}
+
 #pragma mark -
 
 void GuiManager::saveState() {

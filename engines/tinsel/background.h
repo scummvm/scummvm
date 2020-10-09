@@ -24,6 +24,7 @@
 #ifndef TINSEL_BACKGND_H     // prevent multiple includes
 #define TINSEL_BACKGND_H
 
+#include "common/array.h"
 #include "common/coroutines.h"
 #include "common/frac.h"
 #include "common/rect.h"
@@ -65,8 +66,7 @@ struct BACKGND {
 	int refreshRate;		///< background update process refresh rate
 	frac_t *pXscrollTable;	///< pointer to x direction scroll table for this background
 	frac_t *pYscrollTable;	///< pointer to y direction scroll table for this background
-	int numPlayfields;		///< number of playfields for this background
-	PLAYFIELD *fieldArray;	///< pointer to array of all playfields for this background
+	Common::Array<PLAYFIELD> fieldArray;	///< list of all playfields for this background
 	bool bAutoErase;		///< when set - screen is cleared before anything is plotted (unused)
 };
 
@@ -93,6 +93,7 @@ public:
 	void DropBackground();
 
 	void ResetBackground() {
+		_pCurBgnd->fieldArray.clear();
 		delete _pCurBgnd;
 		_pCurBgnd = nullptr;
 	}

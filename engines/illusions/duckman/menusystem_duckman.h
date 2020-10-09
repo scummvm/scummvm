@@ -36,6 +36,7 @@ enum SliderActionType {
 
 enum {
 	kDuckmanMainMenu,
+	kDuckmanMainMenuDemo,
 	kDuckmanLoadGameMenu,
 	kDuckmanLoadGameFailedMenu,
 	kDuckmanOptionsMenu,
@@ -66,6 +67,7 @@ public://protected:
 	BaseMenu *getMenuById(int menuId) override;
 	BaseMenu *createMenuById(int menuId);
 	BaseMenu *createMainMenu();
+	BaseMenu *createMainMenuDemo();
 	BaseMenu *createLoadGameMenu();
 	BaseMenu *createLoadGameFailedMenu();
 	BaseMenu *createOptionsMenu();

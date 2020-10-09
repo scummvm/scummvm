@@ -148,77 +148,75 @@ void DragonsEngine::updateEvents() {
 		case Common::EVENT_MOUSEMOVE:
 			_cursor->updatePosition(event.mouse.x, event.mouse.y);
 			break;
-		case Common::EVENT_LBUTTONUP:
-			_leftMouseButtonUp = true;
-			_leftMouseButtonDown = false;
-			break;
-		case Common::EVENT_LBUTTONDOWN:
-			_leftMouseButtonDown = true;
-			break;
-		case Common::EVENT_RBUTTONUP:
-			_rightMouseButtonUp = true;
-			break;
 		case Common::EVENT_WHEELDOWN:
 			_mouseWheel = MOUSE_WHEEL_DOWN;
 			break;
 		case Common::EVENT_WHEELUP:
 			_mouseWheel = MOUSE_WHEEL_UP;
 			break;
-		case Common::EVENT_KEYUP:
-			if (event.kbd.keycode == Common::KEYCODE_i) {
-				_iKeyUp = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_DOWN) {
-				_downKeyUp = true;
-				_downKeyDown = false;
-			} else if (event.kbd.keycode == Common::KEYCODE_UP) {
-				_upKeyUp = true;
-				_upKeyDown = false;
-			} else if (event.kbd.keycode == Common::KEYCODE_RETURN ||
-						event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
-				_enterKeyUp = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_LEFT) {
-				_leftKeyUp = true;
-				_leftKeyDown = false;
-			} else if (event.kbd.keycode == Common::KEYCODE_RIGHT) {
-				_rightKeyUp = true;
-				_rightKeyDown = false;
-			} else if (event.kbd.keycode == Common::KEYCODE_w) {
-				_wKeyDown = false;
-			} else if (event.kbd.keycode == Common::KEYCODE_a) {
-				_aKeyDown = false;
-			} else if (event.kbd.keycode == Common::KEYCODE_s) {
-				_sKeyDown = false;
-			} else if (event.kbd.keycode == Common::KEYCODE_d) {
-				_dKeyDown = false;
-			} else if (event.kbd.keycode == Common::KEYCODE_o) {
-				_oKeyDown = false;
-			} else if (event.kbd.keycode == Common::KEYCODE_p) {
-				_pKeyDown = false;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			if (event.customType == Dragons::kDragonsActionLeft) {
+				_leftKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionRight) {
+				_rightKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionUp) {
+				_upKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionDown) {
+				_downKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionSquare) {
+				_aKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionTriangle) {
+				_wKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionCircle) {
+				_dKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionCross) {
+				_sKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionL1) {
+				_oKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionR1) {
+				_pKeyDown = true;
+			} else if (event.customType == Dragons::kDragonsActionSelect) {
+				_leftMouseButtonDown = true;
+			} else if (event.customType == Dragons::kDragonsActionDebugGfx) {
+				_debugMode = !_debugMode;
 			}
 			break;
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_LEFT) {
-				_leftKeyDown = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_RIGHT) {
-				_rightKeyDown = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_UP) {
-				_upKeyDown = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_DOWN) {
-				_downKeyDown = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_w) {
-				_wKeyDown = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_a) {
-				_aKeyDown = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_s) {
-				_sKeyDown = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_d) {
-				_dKeyDown = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_o) {
-				_oKeyDown = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_p) {
-				_pKeyDown = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_TAB) {
-				_debugMode = !_debugMode;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+			if (event.customType == Dragons::kDragonsActionLeft) {
+				_leftKeyUp = true;
+				_leftKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionRight) {
+				_rightKeyUp = true;
+				_rightKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionUp) {
+				_upKeyUp = true;
+				_upKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionDown) {
+				_downKeyUp = true;
+				_downKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionSquare) {
+				_aKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionTriangle) {
+				_wKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionCircle) {
+				_dKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionCross) {
+				_sKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionL1) {
+				_oKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionR1) {
+				_pKeyDown = false;
+			} else if (event.customType == Dragons::kDragonsActionSelect) {
+				_leftMouseButtonUp = true;
+				_leftMouseButtonDown = false;
+			} else if (event.customType == Dragons::kDragonsActionChangeCommand) {
+				_rightMouseButtonUp = true;
+			} else if (event.customType == Dragons::kDragonsActionInventory) {
+				_iKeyUp = true;
+			} else if (event.customType == Dragons::kDragonsActionEnter) {
+				_enterKeyUp = true;
+			} else if (event.customType == Dragons::kDragonsActionQuit) {
+				quitGame();
 			}
 			break;
 		default:
@@ -252,6 +250,8 @@ Common::Error DragonsEngine::run() {
 	_sound = new SoundManager(this, _bigfileArchive, _dragonRMS);
 	_strPlayer = new StrPlayer(this, _screen);
 
+	syncSoundSettings();
+
 	if (ConfMan.hasKey("save_slot")) {
 		loadGameState(ConfMan.getInt("save_slot"));
 	} else {
@@ -264,10 +264,12 @@ Common::Error DragonsEngine::run() {
 		loadScene(0);
 	}
 
-	_scene->draw();
-	_screen->updateScreen();
+	if (!shouldQuit()) {
+		_scene->draw();
+		_screen->updateScreen();
 
-	gameLoop();
+		gameLoop();
+	}
 
 	delete _scene;
 	delete _actorManager;
@@ -689,7 +691,7 @@ void DragonsEngine::updateHandler() {
 				int16 priority = _scene->getPriorityAtPosition(Common::Point(actor->_x_pos, actor->_y_pos));
 				DragonINI *flicker = _dragonINIResource->getFlickerRecord();
 				if (flicker && _scene->contains(flicker) && flicker->actor->_actorID == i) {
-					if (priority < 8 || priority == 0x10) {
+					if ((priority >= 0 && priority < 8) || priority == 0x10) {
 						actor->_priorityLayer = priority;
 					}
 				} else {
@@ -960,7 +962,7 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 }
 
 void DragonsEngine::waitForFrames(uint16 numFrames) {
-	for (uint16 i = 0; i < numFrames; i++) {
+	for (uint16 i = 0; i < numFrames && !Engine::shouldQuit(); i++) {
 		wait();
 		updateHandler();
 
@@ -1231,11 +1233,12 @@ void DragonsEngine::reset_screen_maybe() {
 }
 
 bool DragonsEngine::canLoadGameStateCurrently() {
-	return isInputEnabled();
+	//player has control and not currently talking to anyone.
+	return isInputEnabled() && isFlagSet(ENGINE_FLAG_8) && !isFlagSet(Dragons::ENGINE_FLAG_100);
 }
 
 bool DragonsEngine::canSaveGameStateCurrently() {
-	return isInputEnabled() && !_inventory->isOpen();
+	return isInputEnabled() && !_inventory->isOpen() && isFlagSet(ENGINE_FLAG_8) && !isFlagSet(Dragons::ENGINE_FLAG_100);
 }
 
 bool DragonsEngine::hasFeature(Engine::EngineFeature f) const {
@@ -1461,7 +1464,8 @@ void DragonsEngine::updatePaletteCycling() {
 
 uint32 DragonsEngine::getFontOffsetFromDragonEXE() {
 	switch (_language) {
-	case Common::EN_USA : return 0x4a144;
+	case Common::EN_USA :
+	case Common::RU_RUS : return 0x4a144;
 	case Common::EN_GRB : return 0x4b4fc;
 	case Common::DE_DEU : return 0x4af5c;
 	case Common::FR_FRA : return 0x4b158;
@@ -1471,7 +1475,8 @@ uint32 DragonsEngine::getFontOffsetFromDragonEXE() {
 
 uint32 DragonsEngine::getSpeechTblOffsetFromDragonEXE() {
 	switch (_language) {
-	case Common::EN_USA : return 0x4e138;
+	case Common::EN_USA :
+	case Common::RU_RUS : return 0x4e138;
 	case Common::EN_GRB : return 0x4f4f4;
 	case Common::DE_DEU : return 0x4f0a4;
 	case Common::FR_FRA : return 0x4f2a0;
@@ -1479,36 +1484,46 @@ uint32 DragonsEngine::getSpeechTblOffsetFromDragonEXE() {
 	}
 }
 
+uint16 DragonsEngine::getBigFileTotalRecords() {
+	if (_language == Common::EN_USA || _language == Common::EN_GRB || _language == Common::RU_RUS) {
+		return 576;
+	}
+	return 588;
+}
+
 uint32 DragonsEngine::getBigFileInfoTblFromDragonEXE() {
 	switch (_language) {
-	case Common::EN_USA : return 0x4a238;
+	case Common::EN_USA :
+	case Common::RU_RUS : return 0x4a238;
 	case Common::EN_GRB : return 0x4b5f4;
 	case Common::DE_DEU : return 0x4b054;
 	case Common::FR_FRA : return 0x4b250;
 	default :
-		error("Unable to get speech table offset from dragon.exe for %s", getLanguageCode(_language));
+		error("Unable to get bigfile info table offset from dragon.exe for %s", getLanguageCode(_language));
 	}
 }
 
 uint32 DragonsEngine::getCutscenePaletteOffsetFromDragonEXE() {
 	switch (_language) {
-	case Common::EN_USA : return 0x5336c;
+	case Common::EN_USA :
+	case Common::RU_RUS : return 0x5336c;
 	case Common::EN_GRB : return 0x54628;
 	case Common::DE_DEU : return 0x541d8;
 	case Common::FR_FRA : return 0x543d4;
 	default :
-		error("Unable to get speech table offset from dragon.exe for %s", getLanguageCode(_language));
+		error("Unable to get cutscene palette table offset from dragon.exe for %s", getLanguageCode(_language));
 	}
 }
 
 uint32 DragonsEngine::defaultResponseOffsetFromDragonEXE() {
 	switch (_language) {
-	case Common::EN_USA : return 0x541b0;
+	case Common::EN_USA :
+	case Common::RU_RUS : return 0x541b0;
 	case Common::EN_GRB : return 0x55470;
 	case Common::DE_DEU : return 0x55020;
 	case Common::FR_FRA : return 0x5521c;
 	default :
-		error("Unable to get speech table offset from dragon.exe for %s", getLanguageCode(_language));
+		error("Unable to get response offset table offset from dragon.exe for %s", getLanguageCode(_language));
 	}
 }
 
@@ -1648,14 +1663,16 @@ void DragonsEngine::mainMenu() {
 			waitForFrames(1);
 		} while (!checkForActionButtonRelease() && !shouldQuit());
 
-		if (curMenuItem == 0) {
-			_screen->clearScreen();
-			loadingScreen();
-			startGame = true;
-		} else if (curMenuItem == 1) {
-			//TODO options menu
-		} else if (curMenuItem == 2) {
-			_strPlayer->playVideo("previews.str");
+		if (!shouldQuit()) {
+			if (curMenuItem == 0) {
+				_screen->clearScreen();
+				loadingScreen();
+				startGame = true;
+			} else if (curMenuItem == 1) {
+				//TODO options menu
+			} else if (curMenuItem == 2) {
+				_strPlayer->playVideo("previews.str");
+			}
 		}
 	} while (!shouldQuit() && !startGame);
 
@@ -1684,6 +1701,17 @@ void DragonsEngine::loadingScreen() {
 	actor->setFlag(ACTOR_FLAG_100);
 	actor->setFlag(ACTOR_FLAG_200);
 	actor->setFlag(ACTOR_FLAG_80);
+
+	if (_language == Common::DE_DEU || _language == Common::FR_FRA) {
+		actor = _actorManager->loadActor(0,0x84,0,0,6);
+		actor->setFlag(ACTOR_FLAG_100);
+		actor->setFlag(ACTOR_FLAG_200);
+		actor->setFlag(ACTOR_FLAG_80);
+		actor = _actorManager->loadActor(0,0x85,0,0,6);
+		actor->setFlag(ACTOR_FLAG_100);
+		actor->setFlag(ACTOR_FLAG_200);
+		actor->setFlag(ACTOR_FLAG_80);
+	}
 
 	for (int i = 0; i < 10; i++) {
 		actor = _actorManager->loadActor(0,flamesActorOffset[(i % 4)] + 0x7e,i * 0x20 + 0x10,0xbe,6);
@@ -1772,7 +1800,8 @@ bool DragonsEngine::validateAVFile(const char *filename) {
 	file.close();
 
 	if(!fileValid) {
-		GUIErrorMessage(Common::String::format(_("Error: The file '%s' hasn't been extracted properly.\nPlease refer to the wiki page\nhttps://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos for details on how to properly extract the DTSPEECH.XA and *.STR files from your game disc."), filename));
+		GUIErrorMessageWithURL(Common::U32String::format(_("Error: The file '%s' hasn't been extracted properly.\nPlease refer to the wiki page\nhttps://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos for details on how to properly extract the DTSPEECH.XA and *.STR files from your game disc."), filename),
+				"https://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos");
 	}
 	return fileValid;
 }
@@ -1783,6 +1812,631 @@ bool DragonsEngine::checkForWheelUp() {
 
 bool DragonsEngine::checkForWheelDown() {
 	return _mouseWheel == MOUSE_WHEEL_DOWN;
+}
+
+void DragonsEngine::clearAllText() {
+	_fontManager->clearText();
+}
+
+void DragonsEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+	if (_sound) {
+		_sound->syncSoundSettings();
+	}
+}
+
+uint16 DragonsEngine::getCursorHandPointerSequenceID() {
+	return _language == Common::DE_DEU || _language == Common::FR_FRA ? 0x86 : 0x84;
+}
+
+uint32 DragonsEngine::getMiniGame3StartingDialog() {
+	switch (_language) {
+	case Common::DE_DEU : return 0x5456;
+	case Common::FR_FRA : return 0x509C;
+	default : break;
+	}
+	return 0x479A;
+}
+
+uint32 DragonsEngine::getMiniGame3PickAHatDialog() {
+	switch (_language) {
+	case Common::DE_DEU : return 0x2E32E;
+	case Common::FR_FRA : return 0x2F180;
+	default : break;
+	}
+	return 0x2958A;
+}
+
+uint32 DragonsEngine::getMiniGame3DataOffset() {
+	if (_language == Common::DE_DEU || _language == Common::FR_FRA) {
+		return 0x265c;
+	}
+	return 0x4914;
+}
+
+uint32 DragonsEngine::getDialogTextId(uint32 textId) {
+	switch (_language) {
+	case Common::EN_GRB : return getDialogTextIdGrb(textId);
+	case Common::DE_DEU : return getDialogTextIdDe(textId);
+	case Common::FR_FRA : return getDialogTextIdFr(textId);
+	default : break;
+	}
+	return textId;
+}
+
+uint32 DragonsEngine::getDialogTextIdGrb(uint32 textId) {
+	switch (textId) {
+
+		//scene 1
+	case 0x5ef2 : return 0x5ef0;
+	case 0x5ea2 : return 0x5ea0;
+	case 0x5ecc : return 0x5eca;
+
+	default: break;
+	}
+	return textId;
+}
+
+uint32 DragonsEngine::getDialogTextIdDe(uint32 textId) {
+	switch (textId) {
+	//diamond cutscene
+	case 0x4294a : return 0x4a584;
+	case 0x42A66 : return 0x4a6c4;
+	case 0x42AC2 : return 0x4a744;
+	case 0x42B56 : return 0x4a7f0;
+
+	//scene 1
+	case 0x4e26 : return 0x5c2c;
+	case 0x4ea2 : return 0x5ca0;
+	case 0x4eec : return 0x5cfa;
+	case 0x5000 : return 0x5de4;
+	case 0x5074 : return 0x5e78;
+	case 0x511c : return 0x5f0e;
+	case 0x5138 : return 0x5f28;
+	case 0x5152 : return 0x6000;
+	case 0x51fc : return 0x60e4;
+	case 0x52d6 : return 0x6208;
+	case 0x530c : return 0x6244;
+	case 0x54dc : return 0x6466;
+	case 0x55d4 : return 0x654e;
+	case 0x562c : return 0x65a6;
+	case 0x5780 : return 0x66f4;
+	case 0x581c : return 0x679c;
+	case 0x5942 : return 0x6910;
+	case 0x5aaa : return 0x6aa8;
+	case 0x5afc : return 0x6af4;
+	case 0x5b96 : return 0x6bc0;
+	case 0x5c4a : return 0x6c66;
+	case 0x5dc8 : return 0x6e30;
+	case 0x5ef2 : return 0x6f9c;
+	case 0x6000 : return 0x7000;
+	case 0x7dcc : return 0x92da;
+	case 0x60ee : return 0x710e;
+	case 0x5de8 : return 0x6e58;
+	case 0x5ea2 : return 0x6f46;
+	case 0x5ecc : return 0x6f6e;
+
+	// knights saved
+	case 0x7854 : return 0x8bb4;
+	case 0x78c6 : return 0x8c32;
+	case 0x78e8 : return 0x8c56;
+	case 0x7a1e : return 0x8d9e;
+	case 0x7aba : return 0x8e64;
+	case 0x7b60 : return 0x9000;
+	case 0x7c20 : return 0x90fa;
+	case 0x7c9c : return 0x9196;
+	case 0x7cf2 : return 0x91fa;
+	case 0x7e1a : return 0x9324;
+	case 0x7e96 : return 0x93e2;
+	case 0x7f0a : return 0x9464;
+
+	// flame returns
+	case 0x8ab2 : return 0xa190;
+	case 0x8b40 : return 0xa274;
+	case 0x8bb6 : return 0xa2e0;
+	case 0x8bd8 : return 0xa304;
+	case 0x8c70 : return 0xa3d2;
+	case 0x8cd2 : return 0xa450;
+	case 0x8e1e : return 0xa5a2;
+
+	// knights saved again
+	case 0x9000 : return 0xa806;
+	case 0x90de : return 0xa8f8;
+	case 0x921c : return 0xaa8e;
+	case 0x92aa : return 0xab3c;
+	case 0x932c : return 0xabc0;
+	case 0x93d6 : return 0xac52;
+	case 0x948c : return 0xad16;
+
+	// tournament
+	case 0x4c40c : return 0x552f8;
+	case 0x4c530 : return 0x55430;
+	case 0x4c588 : return 0x5547e;
+	case 0x4c6b0 : return 0x5557a;
+	case 0x4c6e8 : return 0x555a2;
+	case 0x4c814 : return 0x556c4;
+	case 0x4c852 : return 0x556fc;
+
+	//for camelhot
+	case 0x30DD8 : return 0x36594;
+
+	// castle garden bg dialog
+	case 0x22660 : return 0x267ec;
+	case 0x226CA : return 0x2687a;
+	case 0x22738 : return 0x2690a;
+	case 0x22790 : return 0x26972;
+	case 0x227E8 : return 0x269e6;
+	case 0x2283C : return 0x26a44;
+	case 0x228A0 : return 0x26ac4;
+	case 0x228EC : return 0x26b1e;
+
+	// knight pool reflection logic
+	case 0x23E90 : return 0x28456;
+	case 0x23EE6 : return 0x284aa;
+	case 0x23F0C : return 0x284e0;
+	case 0x23F86 : return 0x2856c;
+	case 0x24000 : return 0x285c4;
+	case 0x2406A : return 0x2863c;
+	case 0x240C2 : return 0x286a0;
+	case 0x2411E : return 0x28706;
+	case 0x24158 : return 0x28746;
+	case 0x241BC : return 0x287a6;
+	case 0x241EE : return 0x287d6;
+	case 0x24240 : return 0x28832;
+	case 0x24286 : return 0x2887e;
+	case 0x242B0 : return 0x288ae;
+	case 0x2431C : return 0x2891e;
+	case 0x2437C : return 0x28994;
+	case 0x243B2 : return 0x289dc;
+	case 0x2440A : return 0x28a46;
+	case 0x24432 : return 0x28a7e;
+	case 0x24480 : return 0x28ac8;
+	case 0x244EE : return 0x28b40;
+	case 0x2453C : return 0x28b9e;
+
+	// Zigmond fraud logic
+	case 0x2D000 : return 0x32312;
+	case 0x2D044 : return 0x32364;
+	case 0x2D0B2 : return 0x323d0;
+	case 0x2D0D6 : return 0x323fc;
+	case 0x2D152 : return 0x32490;
+	case 0x2D1A4 : return 0x324f0;
+	case 0x2D20A : return 0x32566;
+	case 0x2D27C : return 0x325f0;
+	case 0x2D2EC : return 0x32674;
+	case 0x2D336 : return 0x326c6;
+	case 0x2D3E0 : return 0x3274c;
+	case 0x2D456 : return 0x327d2;
+	case 0x2D4A8 : return 0x3283c;
+	case 0x2D504 : return 0x328a0;
+
+	// Zigmond fraud logic 1
+	case 0x2F422 : return 0x348c6;
+
+	// Black dragon on hill
+	case 0x325EA : return 0x37f94;
+	case 0x3262A : return 0x38000;
+	case 0x32686 : return 0x3806c;
+	case 0x326D8 : return 0x380fc;
+	case 0x3270E : return 0x3814a;
+	case 0x32774 : return 0x381a2;
+	case 0x32D72 : return 0x38850;
+
+	// Jester in library
+	case 0x18502 : return 0x1b7f8;
+	case 0x185E0 : return 0x1b900;
+	case 0x18596 : return 0x1b8a4;
+
+	// Broken black dragon
+	case 0x40802 : return 0x47ec2;
+	case 0x40852 : return 0x47f2a;
+	case 0x40896 : return 0x47f70;
+	case 0x408C0 : return 0x48000;
+	case 0x4092A : return 0x48084;
+
+	// Dodo under attack
+	case 0x3353A : return 0x39100;
+	case 0x335AC : return 0x3917e;
+	case 0x335F8 : return 0x391e4;
+	case 0x33660 : return 0x39252;
+	case 0x336DE : return 0x392da;
+	case 0x3375C : return 0x39364;
+
+	// Forest without dodo
+	case 0x33EA0 : return 0x39c02;
+	case 0x33EFC : return 0x39c98;
+	case 0x33F34 : return 0x39cd0;
+	case 0x34000 : return 0x39d30;
+	case 0x34074 : return 0x39dc4;
+
+	// Angry villagers
+	case 0x35946 : return 0x3ba7e;
+	case 0x359BC : return 0x3baee;
+	case 0x35A38 : return 0x3bb68;
+	case 0x35ABC : return 0x3bbd4;
+	case 0x35B28 : return 0x3bc68;
+	case 0x35B9C : return 0x3bcd4;
+	case 0x35C10 : return 0x3bd78;
+	case 0x35C80 : return 0x3be0e;
+	case 0x35CFA : return 0x3be96;
+	case 0x35D64 : return 0x3bf26;
+
+	// Flame bedroom escape
+	case 0x10458 : return 0x12ac2;
+	case 0x104A0 : return 0x12b16;
+	case 0x10500 : return 0x12b72;
+	case 0x10550 : return 0x12bb6;
+	case 0x10578 : return 0x12be6;
+
+	// Lady of the lake captured
+	case 0x490C8 : return 0x51ace;
+	case 0x490FC : return 0x51b04;
+	case 0x4913A : return 0x51b3e;
+
+	// Men in mines
+	case 0x4590A : return 0x4db1c;
+	case 0x45994 : return 0x4dbba;
+	case 0x459F4 : return 0x4dc2c;
+	case 0x45A60 : return 0x4dc92;
+
+	// Moat drained
+	case 0x3C97A : return 0x43830;
+	case 0x3C9AC : return 0x43870;
+	case 0x3C9F8 : return 0x438dc;
+	case 0x3CA48 : return 0x43966;
+
+	// Monks at bar
+	case 0x37800 : return 0x3db58;
+	case 0x37854 : return 0x3dba0;
+	case 0x378CA : return 0x3dc1e;
+	case 0x39152 : return 0x3f754;
+	case 0x3919A : return 0x3f78a;
+	case 0x3922C : return 0x3f82a;
+
+	case 0x38F2A : return 0x3f52c;
+	case 0x39000 : return 0x3f5a0;
+	case 0x39084 : return 0x3f65a;
+	case 0x390E8 : return 0x3f6d6;
+
+	case 0x38C68 : return 0x3f25e;
+	case 0x38CE2 : return 0x3f2da;
+	case 0x38D4E : return 0x3f348;
+	case 0x38DC2 : return 0x3f3ba;
+	case 0x38E0C : return 0x3f3f4;
+	case 0x38E5C : return 0x3f44a;
+	case 0x38ED0 : return 0x3f4c0;
+
+	// Mini game 1
+	case 0x21312 : return 0x25258;
+	case 0x2134C : return 0x252A0;
+	case 0x21386 : return 0x252D6;
+	case 0x213C0 : return 0x25324;
+	case 0x213E2 : return 0x25354;
+	case 0x21428 : return 0x253A4;
+	case 0x2146C : return 0x253EC;
+	case 0x214B4 : return 0x25446;
+	case 0x214E4 : return 0x25472;
+	case 0x21514 : return 0x254AC;
+	case 0x21540 : return 0x254DC;
+	case 0x21590 : return 0x25530;
+	case 0x215E2 : return 0x2559A;
+	case 0x2164E : return 0x25626;
+	case 0x216AA : return 0x25690;
+	case 0x216D2 : return 0x256D6;
+	case 0x217D8 : return 0x257DC;
+
+	// Mini game 2
+	case 0x4500 : return 0x50F4;
+	case 0x454A : return 0x5164;
+	case 0x4576 : return 0x519E;
+	case 0x46BC : return 0x532C;
+	case 0x4718 : return 0x53B6;
+	case 0x475E : return 0x5420;
+	case 0x4774 : return 0x5436;
+
+	// Mini game 4
+	case 0x49A2 : return 0x5706;
+	case 0x4A84 : return 0x580C;
+	case 0x4ADE : return 0x5876;
+	case 0x4B6A : return 0x5904;
+	case 0x4C0C : return 0x59C6;
+	case 0x4D50 : return 0x5B24;
+	case 0x4DD4 : return 0x5BC6;
+	case 0x4DEE : return 0x5BE8;
+	case 0x4CC8 : return 0x5A7E;
+	case 0x4A56 : return 0x57D4;
+
+	// Mini game 5
+	case 0x21DAE : return 0x25E68;
+	case 0x21BF0 : return 0x25C34;
+	case 0x21E3E : return 0x25F10;
+	case 0x475DA : return 0x4FC9E;
+
+	default: break;
+	}
+	warning("Unhandled textID 0x%x", textId);
+	return textId;
+}
+
+uint32 DragonsEngine::getDialogTextIdFr(uint32 textId) {
+	switch (textId) {
+	//diamond cutscene
+	case 0x4294a : return 0x4c8b2;
+	case 0x42A66 : return 0x4ca14;
+	case 0x42AC2 : return 0x4ca76;
+	case 0x42B56 : return 0x4cb34;
+
+	//scene 1
+	case 0x4e26 : return 0x5844;
+	case 0x4ea2 : return 0x58e2;
+	case 0x4eec : return 0x5950;
+	case 0x5000 : return 0x5a32;
+	case 0x5074 : return 0x5ac0;
+	case 0x511c : return 0x5b7a;
+	case 0x5138 : return 0x5b98;
+	case 0x5152 : return 0x5bb4;
+	case 0x51fc : return 0x5c6c;
+	case 0x52d6 : return 0x5d8a;
+	case 0x530c : return 0x5dc8;
+	case 0x54dc : return 0x6000;
+	case 0x55d4 : return 0x610c;
+	case 0x562c : return 0x616a;
+	case 0x5780 : return 0x62ba;
+	case 0x581c : return 0x6332;
+	case 0x5942 : return 0x64b4;
+	case 0x5aaa : return 0x660e;
+	case 0x5afc : return 0x665e;
+	case 0x5b96 : return 0x6752;
+	case 0x5c4a : return 0x6838;
+	case 0x5dc8 : return 0x69d0;
+	case 0x5ef2 : return 0x6b1a;
+	case 0x6000 : return 0x6b76;
+	case 0x7dcc : return 0x8cc0;
+	case 0x60ee : return 0x6c56;
+	case 0x5de8 : return 0x69f2;
+	case 0x5ea2 : return 0x6ac4;
+	case 0x5ecc : return 0x6aec;
+
+	// knights saved
+	case 0x7854 : return 0x86d6;
+	case 0x78c6 : return 0x8736;
+	case 0x78e8 : return 0x8750;
+	case 0x7a1e : return 0x88b0;
+	case 0x7aba : return 0x8974;
+	case 0x7b60 : return 0x8a22;
+	case 0x7c20 : return 0x8afe;
+	case 0x7c9c : return 0x8b92;
+	case 0x7cf2 : return 0x8bda;
+	case 0x7e1a : return 0x8d0e;
+	case 0x7e96 : return 0x8da6;
+	case 0x7f0a : return 0x8e30;
+
+	// flame returns
+	case 0x8ab2 : return 0x9ae2;
+	case 0x8b40 : return 0x9ba6;
+	case 0x8bb6 : return 0x9c16;
+	case 0x8bd8 : return 0x9c3c;
+	case 0x8c70 : return 0x9ccc;
+	case 0x8cd2 : return 0x9d22;
+	case 0x8e1e : return 0x9e8c;
+
+	// knights saved again
+	case 0x9000 : return 0xa086;
+	case 0x90de : return 0xa162;
+	case 0x921c : return 0xa2b8;
+	case 0x92aa : return 0xa35e;
+	case 0x932c : return 0xa400;
+	case 0x93d6 : return 0xa4d2;
+	case 0x948c : return 0xa5b6;
+
+	// tournament
+	case 0x4c40c : return 0x577b4;
+	case 0x4c530 : return 0x578be;
+	case 0x4c588 : return 0x57908;
+	case 0x4c6b0 : return 0x57a26;
+	case 0x4c6e8 : return 0x57a4a;
+	case 0x4c814 : return 0x57bd6;
+	case 0x4c852 : return 0x57c08;
+
+	//for camelhot
+	case 0x30DD8 : return 0x37cb8;
+
+	// castle garden bg dialog
+	case 0x22660 : return 0x271a4;
+	case 0x226CA : return 0x27214;
+	case 0x22738 : return 0x27292;
+	case 0x22790 : return 0x272ee;
+	case 0x227E8 : return 0x27366;
+	case 0x2283C : return 0x273c8;
+	case 0x228A0 : return 0x2743a;
+	case 0x228EC : return 0x274a2;
+
+	// knight pool reflection logic
+	case 0x23E90 : return 0x28da8;
+	case 0x23EE6 : return 0x28e16;
+	case 0x23F0C : return 0x28e42;
+	case 0x23F86 : return 0x28ec0;
+	case 0x24000 : return 0x28efa;
+	case 0x2406A : return 0x28f64;
+	case 0x240C2 : return 0x29000;
+	case 0x2411E : return 0x29068;
+	case 0x24158 : return 0x290a6;
+	case 0x241BC : return 0x29114;
+	case 0x241EE : return 0x2914a;
+	case 0x24240 : return 0x291b2;
+	case 0x24286 : return 0x29206;
+	case 0x242B0 : return 0x29234;
+	case 0x2431C : return 0x292a8;
+	case 0x2437C : return 0x29332;
+	case 0x243B2 : return 0x2937e;
+	case 0x2440A : return 0x293d0;
+	case 0x24432 : return 0x293f2;
+	case 0x24480 : return 0x29434;
+	case 0x244EE : return 0x294a8;
+	case 0x2453C : return 0x29500;
+
+	// Zigmond fraud logic
+	case 0x2D000 : return 0x33602;
+	case 0x2D044 : return 0x33654;
+	case 0x2D0B2 : return 0x336d2;
+	case 0x2D0D6 : return 0x336f6;
+	case 0x2D152 : return 0x337c2;
+	case 0x2D1A4 : return 0x33818;
+	case 0x2D20A : return 0x338a2;
+	case 0x2D27C : return 0x33952;
+	case 0x2D2EC : return 0x33a06;
+	case 0x2D336 : return 0x33a56;
+	case 0x2D3E0 : return 0x33b24;
+	case 0x2D456 : return 0x33bd0;
+	case 0x2D4A8 : return 0x33c36;
+	case 0x2D504 : return 0x33c9e;
+
+	// Zigmond fraud logic 1
+	case 0x2F422 : return 0x3608a;
+
+	// Black dragon on hill
+	case 0x325EA : return 0x39822;
+	case 0x3262A : return 0x3986e;
+	case 0x32686 : return 0x398dc;
+	case 0x326D8 : return 0x39944;
+	case 0x3270E : return 0x39982;
+	case 0x32774 : return 0x39a08;
+	case 0x32D72 : return 0x3a162;
+
+	// Jester in library
+	case 0x18502 : return 0x1b6d6;
+	case 0x185E0 : return 0x1b7e2;
+	case 0x18596 : return 0x1b790;
+
+	// Broken black dragon
+	case 0x40802 : return 0x4a178;
+	case 0x40852 : return 0x4a1d2;
+	case 0x40896 : return 0x4a212;
+	case 0x408C0 : return 0x4a252;
+	case 0x4092A : return 0x4a310;
+
+	// Dodo under attack
+	case 0x3353A : return 0x3aa2a;
+	case 0x335AC : return 0x3aaae;
+	case 0x335F8 : return 0x3ab02;
+	case 0x33660 : return 0x3ab9c;
+	case 0x336DE : return 0x3ac46;
+	case 0x3375C : return 0x3acf0;
+
+	// Forest without dodo
+	case 0x33EA0 : return 0x3b63a;
+	case 0x33EFC : return 0x3b6b2;
+	case 0x33F34 : return 0x3b6e8;
+	case 0x34000 : return 0x3b76a;
+	case 0x34074 : return 0x3b7e2;
+
+	// Angry villagers
+	case 0x35946 : return 0x3d476;
+	case 0x359BC : return 0x3d4fa;
+	case 0x35A38 : return 0x3d570;
+	case 0x35ABC : return 0x3d64e;
+	case 0x35B28 : return 0x3d6cc;
+	case 0x35B9C : return 0x3d71a;
+	case 0x35C10 : return 0x3d79e;
+	case 0x35C80 : return 0x3d81e;
+	case 0x35CFA : return 0x3d8be;
+	case 0x35D64 : return 0x3d94c;
+
+	// Flame bedroom escape
+	case 0x10458 : return 0x12598;
+	case 0x104A0 : return 0x125f4;
+	case 0x10500 : return 0x12664;
+	case 0x10550 : return 0x12692;
+	case 0x10578 : return 0x126d4;
+
+	// Lady of the lake captured
+	case 0x490C8 : return 0x53ef8;
+	case 0x490FC : return 0x53f42;
+	case 0x4913A : return 0x54000;
+
+	// Men in mines
+	case 0x4590A : return 0x50000;
+	case 0x45994 : return 0x500be;
+	case 0x459F4 : return 0x50142;
+	case 0x45A60 : return 0x501a0;
+
+	// Moat drained
+	case 0x3C97A : return 0x45826;
+	case 0x3C9AC : return 0x45862;
+	case 0x3C9F8 : return 0x458c0;
+	case 0x3CA48 : return 0x4595e;
+
+		// Monks at bar
+	case 0x37800 : return 0x3f7d4;
+	case 0x37854 : return 0x3f84e;
+	case 0x378CA : return 0x3f8b2;
+	case 0x39152 : return 0x4153a;
+	case 0x3919A : return 0x4157e;
+	case 0x3922C : return 0x41616;
+
+	case 0x38F2A : return 0x41388;
+	case 0x39000 : return 0x413f4;
+	case 0x39084 : return 0x4147e;
+	case 0x390E8 : return 0x414d4;
+
+	case 0x38C68 : return 0x41000;
+	case 0x38CE2 : return 0x41098;
+	case 0x38D4E : return 0x41126;
+	case 0x38DC2 : return 0x411b2;
+	case 0x38E0C : return 0x41218;
+	case 0x38E5C : return 0x41278;
+	case 0x38ED0 : return 0x412fa;
+
+	// Mini game 1
+	case 0x21312 : return 0x25B60;
+	case 0x2134C : return 0x25B98;
+	case 0x21386 : return 0x25BD6;
+	case 0x213C0 : return 0x25C10;
+	case 0x213E2 : return 0x25C38;
+	case 0x21428 : return 0x25C7E;
+	case 0x2146C : return 0x25CE0;
+	case 0x214B4 : return 0x25D36;
+	case 0x214E4 : return 0x25D5E;
+	case 0x21514 : return 0x25D8A;
+	case 0x21540 : return 0x25DCE;
+	case 0x21590 : return 0x25E4E;
+	case 0x215E2 : return 0x25EB8;
+	case 0x2164E : return 0x25F2C;
+	case 0x216AA : return 0x25F9C;
+	case 0x216D2 : return 0x26000;
+	case 0x217D8 : return 0x260F4;
+
+	// Mini game 2
+	case 0x4500 : return 0x4D78;
+	case 0x454A : return 0x4DCC;
+	case 0x4576 : return 0x4E0A;
+	case 0x46BC : return 0x4F32;
+	case 0x4718 : return 0x5000;
+	case 0x475E : return 0x505A;
+	case 0x4774 : return 0x5070;
+
+	// Mini game 4
+	case 0x49A2 : return 0x5360;
+	case 0x4A84 : return 0x5476;
+	case 0x4ADE : return 0x54C0;
+	case 0x4B6A : return 0x554C;
+	case 0x4C0C : return 0x55EA;
+	case 0x4D50 : return 0x5742;
+	case 0x4DD4 : return 0x57F0;
+	case 0x4DEE : return 0x580E;
+	case 0x4CC8 : return 0x569C;
+	case 0x4A56 : return 0x5438;
+
+	// Mini game 5
+	case 0x21DAE : return 0x267C2;
+	case 0x21BF0 : return 0x265BC;
+	case 0x21E3E : return 0x2686A;
+	case 0x475DA : return 0x51F88;
+
+	default: break;
+	}
+	warning("Unhandled textID 0x%x", textId);
+	return textId;
 }
 
 void (*DragonsEngine::getSceneUpdateFunction())() {

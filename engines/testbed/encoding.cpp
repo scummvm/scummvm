@@ -239,6 +239,18 @@ TestExitStatus Encodingtests::testConversionUnicodeBigEndian() {
 							//| dolar       |  cent        |    euro  
 	unsigned char utf32be[] = {0, 0, 0, 0x24, 0, 0, 0, 0xA2, 0, 0, 0x20, 0xAC, 0, 0, 0, 0};
 
+#if SCUMM_BIG_ENDIAN
+						//| dolar |  cent  |    euro   |
+	unsigned char utf16[] = {0, 0x24, 0, 0xA2, 0x20, 0xAC, 0, 0};
+						//| dolar       |  cent        |    euro
+	unsigned char utf32[] = {0, 0, 0, 0x24, 0, 0, 0, 0xA2, 0, 0, 0x20, 0xAC, 0, 0, 0, 0};
+#else
+						//| dolar |  cent  |    euro   |
+	unsigned char utf16[] = {0x24, 0, 0xA2, 0, 0xAC, 0x20, 0, 0};
+						//| dolar       |  cent        |    euro
+	unsigned char utf32[] = {0x24, 0, 0, 0, 0xA2, 0, 0, 0, 0xAC, 0x20, 0, 0, 0, 0, 0, 0};
+#endif
+
 	// UTF16 to UTF8
 	Common::Encoding converter("UTF-8", "UTF-16BE");
 
@@ -402,6 +414,69 @@ TestExitStatus Encodingtests::testConversionUnicodeBigEndian() {
 		return kTestFailed;
 	}
 	free(result);
+
+	// UTF16 to UTF16
+	converter.setFrom("UTF-16BE");
+	converter.setTo("UTF-16");
+
+	result = converter.convert((char *) utf16be, 6);
+	if (result == NULL) {
+		Testsuite::logPrintf("UTF-16BE to UTF-16 conversion isn't available");
+		return kTestFailed;
+	}
+	if (memcmp(result, utf16, 8)) {
+		Testsuite::logPrintf("UTF-16BE to UTF-16 conversion differs from the expected result.");
+		free(result);
+		return kTestFailed;
+	}
+	free(result);
+
+	converter.setFrom("UTF-16");
+	converter.setTo("UTF-16BE");
+
+	result = converter.convert((char *) utf16, 6);
+	if (result == NULL) {
+		Testsuite::logPrintf("UTF-16 to UTF-16BE conversion isn't available");
+		return kTestFailed;
+	}
+	if (memcmp(result, utf16be, 8)) {
+		Testsuite::logPrintf("UTF-16 to UTF-16BE conversion differs from the expected result.");
+		free(result);
+		return kTestFailed;
+	}
+	free(result);
+
+	// UTF32 to UTF32
+	converter.setFrom("UTF-32BE");
+	converter.setTo("UTF-32");
+
+	result = converter.convert((char *) utf32be, 12);
+	if (result == NULL) {
+		Testsuite::logPrintf("UTF-32BE to UTF-32 conversion isn't available");
+		return kTestFailed;
+	}
+	if (memcmp(result, utf32, 16)) {
+		Testsuite::logPrintf("UTF-32BE to UTF-32 conversion differs from the expected result.");
+		free(result);
+		return kTestFailed;
+	}
+	free(result);
+
+	converter.setFrom("UTF-32");
+	converter.setTo("UTF-32BE");
+
+	result = converter.convert((char *) utf32, 12);
+	if (result == NULL) {
+		Testsuite::logPrintf("UTF-32 to UTF-32BE conversion isn't available");
+		return kTestFailed;
+	}
+	if (memcmp(result, utf32be, 16)) {
+		Testsuite::logPrintf("UTF-32 to UTF-32BE conversion differs from the expected result.");
+		free(result);
+		return kTestFailed;
+	}
+	free(result);
+
 	return kTestPassed;
 }
 
@@ -421,6 +496,17 @@ TestExitStatus Encodingtests::testConversionUnicodeLittleEndian() {
 	unsigned char utf16le[] = {0x24, 0, 0xA2, 0, 0xAC, 0x20, 0, 0};
 							//| dolar       |  cent        |    euro
 	unsigned char utf32le[] = {0x24, 0, 0, 0, 0xA2, 0, 0, 0, 0xAC, 0x20, 0, 0, 0, 0, 0, 0};
+
+#if SCUMM_BIG_ENDIAN
+	unsigned char utf16[] = {0, 0x24, 0, 0xA2, 0x20, 0xAC, 0, 0};
+	//| dolar       |  cent        |    euro
+	unsigned char utf32[] = {0, 0, 0, 0x24, 0, 0, 0, 0xA2, 0, 0, 0x20, 0xAC, 0, 0, 0, 0};
+#else
+	//| dolar |  cent  |    euro   |
+	unsigned char utf16[] = {0x24, 0, 0xA2, 0, 0xAC, 0x20, 0, 0};
+	//| dolar       |  cent        |    euro
+	unsigned char utf32[] = {0x24, 0, 0, 0, 0xA2, 0, 0, 0, 0xAC, 0x20, 0, 0, 0, 0, 0, 0};
+#endif
 
 	// UTF16 to UTF8
 	Common::Encoding converter("UTF-8", "UTF-16LE");
@@ -585,6 +671,69 @@ TestExitStatus Encodingtests::testConversionUnicodeLittleEndian() {
 		return kTestFailed;
 	}
 	free(result);
+
+	// UTF16 to UTF16
+	converter.setFrom("UTF-16LE");
+	converter.setTo("UTF-16");
+
+	result = converter.convert((char *) utf16le, 6);
+	if (result == NULL) {
+		Testsuite::logPrintf("UTF-16LE to UTF-16 conversion isn't available");
+		return kTestFailed;
+	}
+	if (memcmp(result, utf16, 8)) {
+		Testsuite::logPrintf("UTF-16LE to UTF-16 conversion differs from the expected result.");
+		free(result);
+		return kTestFailed;
+	}
+	free(result);
+
+	converter.setFrom("UTF-16");
+	converter.setTo("UTF-16LE");
+
+	result = converter.convert((char *) utf16, 6);
+	if (result == NULL) {
+		Testsuite::logPrintf("UTF-16 to UTF-16LE conversion isn't available");
+		return kTestFailed;
+	}
+	if (memcmp(result, utf16le, 8)) {
+		Testsuite::logPrintf("UTF-16 to UTF-16LE conversion differs from the expected result.");
+		free(result);
+		return kTestFailed;
+	}
+	free(result);
+
+	// UTF32 to UTF32
+	converter.setFrom("UTF-32LE");
+	converter.setTo("UTF-32");
+
+	result = converter.convert((char *) utf32le, 12);
+	if (result == NULL) {
+		Testsuite::logPrintf("UTF-32LE to UTF-32 conversion isn't available");
+		return kTestFailed;
+	}
+	if (memcmp(result, utf32, 16)) {
+		Testsuite::logPrintf("UTF-32LE to UTF-32 conversion differs from the expected result.");
+		free(result);
+		return kTestFailed;
+	}
+	free(result);
+
+	converter.setFrom("UTF-32");
+	converter.setTo("UTF-32LE");
+
+	result = converter.convert((char *) utf32, 12);
+	if (result == NULL) {
+		Testsuite::logPrintf("UTF-32 to UTF-32LE conversion isn't available");
+		return kTestFailed;
+	}
+	if (memcmp(result, utf32le, 16)) {
+		Testsuite::logPrintf("UTF-32 to UTF-32LE conversion differs from the expected result.");
+		free(result);
+		return kTestFailed;
+	}
+	free(result);
+
 	return kTestPassed;
 }
 

@@ -38,12 +38,15 @@ public:
 	QText(const Common::U32String &text, uint16 textColor, uint16 outlineColor);
 
 	void draw();
+	void update(int time);
 	const Common::Rect &getRect();
 
 protected:
 	QText();
 
 	static void drawOutline(Graphics::Surface *surface, uint16 color);
+	static Common::Rect calculateBoundingBoxForText(const Common::U32String &text, Graphics::Font &font);
+	static void drawText(Graphics::Surface &s, int y, int maxWidth, const Common::U32String &text, uint color, Graphics::Font &font);
 
 protected:
 	Common::Rect _rect;
@@ -70,6 +73,7 @@ public:
 	void draw() override;
 	void onClick(Common::Point p) override;
 	bool isInPoint(Common::Point p) override { return true; }
+	void update(int t) override {}
 };
 
 class QTextChoice : public QText {

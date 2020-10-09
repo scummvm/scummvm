@@ -9,7 +9,6 @@ MODULE_OBJS := \
 	credits.o \
 	cursor.o \
 	cutscene.o \
-	detection.o \
 	dragonflg.o \
 	dragonimg.o \
 	dragonini.o \
@@ -19,6 +18,7 @@ MODULE_OBJS := \
 	dragons.o \
 	font.o \
 	inventory.o \
+	metaengine.o \
 	midimusicplayer.o \
 	minigame1.o \
 	minigame2.o \
@@ -43,3 +43,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o

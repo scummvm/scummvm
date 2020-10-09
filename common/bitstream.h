@@ -34,25 +34,34 @@
 namespace Common {
 
 /**
+ * @defgroup common_bitstream Bit stream
+ * @ingroup common
+ *
+ * @brief  API for implementing a bit stream.
+ *
+ * @{
+ */
+
+/**
  * A template implementing a bit stream for different data memory layouts.
  *
  * Such a bit stream reads valueBits-wide values from the data stream and
  * gives access to their bits, one at a time.
  *
  * For example, a bit stream with the layout parameters 32, true, false
- * for valueBits, isLE and isMSB2LSB, reads 32bit little-endian values
+ * for valueBits, isLE and isMSB2LSB, reads 32-bit little-endian values
  * from the data stream and hands out the bits in the order of LSB to MSB.
  */
 template<class STREAM, int valueBits, bool isLE, bool MSB2LSB>
 class BitStreamImpl {
 private:
-	STREAM *_stream;			///< The input stream.
-	DisposeAfterUse::Flag _disposeAfterUse; ///< Should we delete the stream on destruction?
+	STREAM *_stream;			            //!< The input stream.
+	DisposeAfterUse::Flag _disposeAfterUse; //!< Whether to delete the stream on destruction.
 
-	uint64 _bitContainer; ///< The currently available bits.
-	uint8  _bitsLeft; ///< Number of bits currently left in the bit container.
-	uint32 _size;    ///< Total bitstream size (in bits)
-	uint32 _pos;     ///< Current bitstream position (in bits)
+	uint64 _bitContainer;                   //!< The currently available bits.
+	uint8  _bitsLeft;                       //!< Number of bits currently left in the bit container.
+	uint32 _size;                           //!< Total bit stream size (in bits).
+	uint32 _pos;                            //!< Current bit stream position (in bits).
 
 	/** Read a data value. */
 	inline uint32 readData() {
@@ -76,7 +85,7 @@ private:
 		return 0;
 	}
 
-	/** Fill the container with at least min bits. */
+	/** Fill the container with at least @p min bits. */
 	inline void fillContainer(size_t min) {
 		while (_bitsLeft < min) {
 
@@ -84,11 +93,11 @@ private:
 			if (_pos + _bitsLeft + valueBits <= _size) {
 				data = readData();
 			} else {
-				// Peeking data out of bounds is well defined and returns 0 bits.
+				// Peeking data out of bounds is well-defined and returns 0 bits.
 				// This is for convenience when using speed-up techniques reading
-				// more bits than actually available. Users should call eos() to
-				// check if data was actually read out of bounds. Peeking out of
-				// bounds does not set the eos flag.
+				// more bits than actually available. Call eos() to check if data
+				// was actually read out of bounds. Peeking out of bounds does not
+				// set the eos flag.
 				data = 0;
 			}
 
@@ -102,7 +111,7 @@ private:
 		}
 }
 
-	/** Get n bits from the bit container. */
+	/** Get @p n bits from the bit container. */
 	inline static uint32 getNBits(uint64 value, size_t n) {
 		if (n == 0)
 			return 0;
@@ -174,7 +183,7 @@ public:
 	/**
 	 * Read a multi-bit value from the bit stream, without changing the stream's position.
 	 *
-	 * The bit order is the same as in getBits().
+	 * The bit order is the same as in @ref getBits().
 	 */
 	uint32 peekBits(size_t n) {
 		if (n > 32)
@@ -187,12 +196,12 @@ public:
 	/**
 	 * Read a multi-bit value from the bit stream.
 	 *
-	 * The value is read as if just taken as a whole from the bitstream.
+	 * The value is read as if just taken as a whole from the bit stream.
 	 *
 	 * For example:
-	 * Reading a 4-bit value from an 8-bit bitstream with the contents 01010011:
-	 * If the bitstream is MSB2LSB, the 4-bit value would be 0101.
-	 * If the bitstream is LSB2MSB, the 4-bit value would be 0011.
+	 * Reading a 4-bit value from an 8-bit bit stream with the contents 01010011:
+	 * If the bit stream is MSB2LSB, the 4-bit value would be 0101.
+	 * If the bit stream is LSB2MSB, the 4-bit value would be 0011.
 	 */
 	uint32 getBits(size_t n) {
 		if (n > 32)
@@ -209,12 +218,12 @@ public:
 	 * Add a bit to the value x, making it an n+1-bit value.
 	 *
 	 * The current value is shifted and the bit is added to the
-	 * appropriate place, dependant on the stream's bitorder.
+	 * appropriate place, depending on the stream's bit order.
 	 *
 	 * For example:
 	 * A bit y is added to the value 00001100 with size 4.
-	 * If the stream's bitorder is MSB2LSB, the resulting value is 0001100y.
-	 * If the stream's bitorder is LSB2MSB, the resulting value is 000y1100.
+	 * If the stream's bit order is MSB2LSB, the resulting value is 0001100y.
+	 * If the stream's bit order is LSB2MSB, the resulting value is 000y1100.
 	 */
 	void addBit(uint32 &x, uint32 n) {
 		if (n >= 32)
@@ -235,7 +244,7 @@ public:
 		_pos          = 0;
 	}
 
-	/** Skip the specified amount of bits. */
+	/** Skip the specified number of bits. */
 	void skip(uint32 n) {
 		while (n > 32) {
 			fillContainer(32);
@@ -293,7 +302,7 @@ private:
 	uint32 _pos;
 	DisposeAfterUse::Flag _disposeMemory;
 	bool _eos;
-
+/** @overload */
 public:
 	BitStreamMemoryStream(const byte *dataPtr, uint32 dataSize, DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO) :
 		_ptrOrig(dataPtr),
@@ -419,8 +428,10 @@ public:
 
 };
 
-
-// typedefs for various memory layouts.
+/**
+ * @name Typedefs for various memory layouts
+ * @{
+ */
 
 /** 8-bit data, MSB to LSB. */
 typedef BitStreamImpl<SeekableReadStream, 8, false, true > BitStream8MSB;
@@ -470,6 +481,9 @@ typedef BitStreamImpl<BitStreamMemoryStream, 32, false, true > BitStreamMemory32
 /** 32-bit big-endian data, LSB to MSB. */
 typedef BitStreamImpl<BitStreamMemoryStream, 32, false, false> BitStreamMemory32BELSB;
 
+/** @} */
+
+/** @} */
 
 } // End of namespace Common
 

@@ -44,7 +44,7 @@
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
 #include "sci/graphics/cursor32.h"
-#include "sci/graphics/font.h"
+#include "sci/graphics/scifont.h"
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/helpers.h"
 #include "sci/graphics/paint32.h"
@@ -140,7 +140,9 @@ bool GfxFrameout::detectHiRes() const {
 	}
 
 	// PQ4 DOS floppy is low resolution only
-	if (g_sci->getGameId() == GID_PQ4 && !g_sci->isCD()) {
+	if (g_sci->getGameId() == GID_PQ4 &&
+		g_sci->getPlatform() == Common::kPlatformDOS &&
+		!g_sci->isCD()) {
 		return false;
 	}
 
@@ -354,7 +356,7 @@ void GfxFrameout::deletePlanesForMacRestore() {
 	//  care of this in both PC and Mac versions.
 	if (!(g_sci->getGameId() == GID_GK1 ||
 		  g_sci->getGameId() == GID_PQ4 ||
-		  g_sci->getGameId() == GID_LSL6 ||
+		  g_sci->getGameId() == GID_LSL6HIRES ||
 		  g_sci->getGameId() == GID_KQ7)) {
 		return;
 	}

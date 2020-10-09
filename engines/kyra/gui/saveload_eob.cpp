@@ -114,7 +114,7 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 	if (slot == -1) {
 		// Skip all settings which aren't necessary for party transfer.
 		// Jump directly to the items list.
-		in.skip(108);
+		in.skip(header.version > 18 ? 124 : 108);
 	} else {
 		_currentLevel = in.readByte();
 		_currentSub = in.readSByte();
@@ -140,7 +140,7 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 		_activeSpell = in.readByte();
 		_returnAfterSpellCallback = in.readByte() ? true : false;
 
-		if (_flags.platform == Common::kPlatformSegaCD) {
+		if (_flags.platform == Common::kPlatformSegaCD || header.version > 18) {
 			_totalPlaySecs = in.readUint32BE();
 			_totalEnemiesKilled = in.readUint32BE();
 			_totalSteps = in.readUint32BE();
@@ -419,12 +419,11 @@ Common::Error EoBCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 	out->writeByte(_activeSpell);
 	out->writeByte(_returnAfterSpellCallback ? 1 : 0);
 
-	if (_flags.platform == Common::kPlatformSegaCD) {
-		out->writeUint32BE(_totalPlaySecs);
-		out->writeUint32BE(_totalEnemiesKilled);
-		out->writeUint32BE(_totalSteps);
-		out->writeUint32BE(_levelMaps);
-	}
+	// SegaCD specific
+	out->writeUint32BE(_totalPlaySecs);
+	out->writeUint32BE(_totalEnemiesKilled);
+	out->writeUint32BE(_totalSteps);
+	out->writeUint32BE(_levelMaps);
 
 	_inf->saveState(out);
 
@@ -594,7 +593,7 @@ bool EoBCoreEngine::importOriginalSaveFile(int destSlot, const char *sourceFile)
 				}
 
 				delete fs;
-				::GUI::MessageDialog dialog(Common::String::format(_("The following original saved game file has been found in your game path:\n\n%s %s\n\nDo you wish to use this saved game file with ScummVM?\n\n"), temp.c_str(), dsc.c_str()), _("Yes"), _("No"));
+				::GUI::MessageDialog dialog(Common::U32String::format(_("The following original saved game file has been found in your game path:\n\n%s %s\n\nDo you wish to use this saved game file with ScummVM?\n\n"), temp.c_str(), dsc.c_str()), _("Yes"), _("No"));
 				if (dialog.runModal())
 					origFiles.push_back(temp);
 			}
@@ -627,7 +626,7 @@ bool EoBCoreEngine::importOriginalSaveFile(int destSlot, const char *sourceFile)
 
 	if (destSlot != -1) {
 		if (Common::find(_gui->_saveSlots.begin(), _gui->_saveSlots.end(), destSlot) != _gui->_saveSlots.end()) {
-			::GUI::MessageDialog dialog(Common::String::format(_("A saved game file was found in the specified slot %d. Overwrite?\n\n"), destSlot), _("Yes"), _("No"));
+			::GUI::MessageDialog dialog(Common::U32String::format(_("A saved game file was found in the specified slot %d. Overwrite?\n\n"), destSlot), _("Yes"), _("No"));
 			if (!dialog.runModal())
 				return false;
 		}
@@ -660,7 +659,7 @@ bool EoBCoreEngine::importOriginalSaveFile(int destSlot, const char *sourceFile)
 	_inf->reset();
 
 	if (destSlot == -1 && importedCount) {
-		::GUI::MessageDialog dialog(Common::String::format(_("%d original saved games have been successfully imported into\nScummVM. If you want to manually import original saved game later you will\nneed to open the ScummVM debug console and use the command 'import_savefile'.\n\n"), importedCount));
+		::GUI::MessageDialog dialog(Common::U32String::format(_("%d original saved games have been successfully imported into\nScummVM. If you want to manually import original saved game later you will\nneed to open the ScummVM debug console and use the command 'import_savefile'.\n\n"), importedCount));
 		dialog.runModal();
 	}
 
@@ -675,7 +674,7 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 		return desc;
 
 	Common::SeekableSubReadStream test(fs, 0, fs->size(), DisposeAfterUse::NO);
-	
+
 	// detect source platform (PC98 has the exact same file layout as DOS)
 	Common::Platform sourcePlatform = Common::kPlatformDOS;
 	test.seek(32);
@@ -689,12 +688,12 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 	test.seek(_flags.gameID == GI_EOB1 ? 61 : 27);
 	bool padding = !test.readByte();
 	test.seek(0);
-		
+
 	if (testStr >= 0 && testStr <= 25 && testChr >= 0 && testChr <= 25) {
 		if (testSJIS >= 0xE0 || (testSJIS > 0x80 && testSJIS < 0xA0))
 			sourcePlatform = Common::kPlatformFMTowns;
 	}
-	
+
 	if (sourcePlatform == Common::kPlatformDOS && padding && (exp & 0xFF000000))
 		sourcePlatform = Common::kPlatformAmiga;
 
@@ -730,7 +729,7 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 		c->constitutionCur = in.readSByte();
 		c->constitutionMax = in.readSByte();
 		c->charismaCur = in.readSByte();
-		c->charismaMax = in.readSByte();		
+		c->charismaMax = in.readSByte();
 		if (_flags.gameID == GI_EOB2 && sourcePlatform == Common::kPlatformAmiga)
 			in.skip(1);
 		c->hitPointsCur = (_flags.gameID == GI_EOB1) ? in.readSByte() : in.readSint16();
@@ -810,7 +809,7 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 	}
 	if (_flags.gameID == GI_EOB2)
 		in.skip(1);
-	
+
 	_inf->loadState(in, true);
 
 	loadItemDefs();
@@ -1244,7 +1243,7 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 
 	if (_flags.gameID == GI_EOB2)
 		out->writeByte(0);
-	
+
 	_inf->saveState(out, true);
 
 	int numItems = (_flags.gameID == GI_EOB1) ? 500 : 600;
@@ -1273,7 +1272,7 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 
 	int numParts = (_flags.gameID == GI_EOB1) ? 12 : 17;
 	int partSize = (_flags.platform == Common::kPlatformFMTowns) ? 5030 :(_flags.gameID == GI_EOB1) ? 2040 : 2130;
-	
+
 	uint8 *tempData = new uint8[5030];
 	uint8 *cmpData = new uint8[1200];
 

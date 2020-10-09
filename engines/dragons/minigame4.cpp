@@ -23,10 +23,12 @@
 #include "dragons/actor.h"
 #include "dragons/dragons.h"
 #include "dragons/dragonini.h"
+#include "dragons/font.h"
 #include "dragons/talk.h"
 #include "dragons/inventory.h"
 #include "dragons/scene.h"
 #include "dragons/screen.h"
+#include "dragons/sound.h"
 
 namespace Dragons {
 
@@ -86,8 +88,7 @@ void Minigame4::run() {
 	_bruteActor->setFlag(ACTOR_FLAG_100);
 	_bruteActor->setFlag(ACTOR_FLAG_200);
 	_bruteActor->_priorityLayer = 3;
-	//DAT_800830e0_soundRelated = 0xf;
-	//UnkSoundFunc5(0xf);
+	_vm->_sound->playMusic(0xf);
 	_vm->fadeFromBlack();
 	if (_vm->_dragonINIResource->getRecord(0x1f5)->objectState == 3) {
 		actorTalk(_bruteActor, 0x3321, 0x4A84);
@@ -129,7 +130,7 @@ void Minigame4::actorTalk(Actor *actorId, uint16 param_2, uint32 textIndex) {
 		_flickerActor->updateSequence(9);
 	}
 
-	actorDialog(actorId, (uint)param_2, textIndex);
+	actorDialog(actorId, (uint)param_2, _vm->getDialogTextId(textIndex));
 	actorId->waitUntilFlag8SetThenSet1000AndWaitFor4();
 	if (actorId == _bruteActor) {
 		_bruteActor->updateSequence(0);
@@ -203,15 +204,12 @@ uint16 Minigame4::runDanceBattle() {
 	currentStep = 0;
 	while (true) {
 		if (0x11 < currentStep) {
-			_vm->_talk->loadText(0x4C0C, auStack2192, 1000);
-			_vm->_talk->displayDialogAroundPoint(auStack2192, 0x27, 0xc, 0x3321, 0, 0x4C0C);
+			uint32 textId = _vm->getDialogTextId(0x4C0C);
+			_vm->_talk->loadText(textId, auStack2192, 1000);
+			_vm->_talk->displayDialogAroundPoint(auStack2192, 0x27, 0xc, 0x3321, 0, textId);
 			_vm->waitForFrames(0x10a);
 			_bruteActor->updateSequence(8);
-			//TODO
-//			if ((((DAT_8008e7e8 != 0) || (DAT_8008e848 != 0)) || (DAT_8008e844 != 0)) ||
-//				(DAT_8008e874 != 0)) {
-//				clearTextDialog((uint)DAT_8008e7e8, (uint)DAT_8008e844, (uint)DAT_8008e848, (uint)DAT_8008e874);
-//			}
+			_vm->_fontManager->clearText();
 			_flickerActor->waitUntilFlag8SetThenSet1000AndWaitFor4();
 			_flickerActor->updateSequence(7);
 			actorTalk(_flickerActor, 0, 0x4CC8);

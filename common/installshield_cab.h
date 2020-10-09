@@ -27,6 +27,16 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_installshield InstallShield
+ * @ingroup common
+ *
+ * @brief API for managing the InstallShield.
+ *
+ *		
+ * @{
+ */
+
 class Archive;
 class SeekableReadStream;
 
@@ -37,6 +47,8 @@ class SeekableReadStream;
  * May return 0 in case of a failure.
  */
 Archive *makeInstallShieldArchive(SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+
+/** @} */
 
 } // End of namespace Common
 

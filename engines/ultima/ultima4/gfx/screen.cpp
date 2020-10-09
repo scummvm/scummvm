@@ -58,8 +58,8 @@ Screen *g_screen;
 Screen::Screen() : _filterScaler(nullptr), _currentMouseCursor(-1),
                    _gemLayout(nullptr), _tileAnims(nullptr), _charSetInfo(nullptr),
                    _gemTilesInfo(nullptr), _needPrompt(1), _currentCycle(0),
-                   _cursorStatus(0), _cursorEnabled(1), _frameDuration(0),
-                   _continueScreenRefresh(true), _priorFrameTime(0) {
+                   _cursorStatus(0), _cursorEnabled(1), _priorFrameTime(0),
+                   _continueScreenRefresh(true) {
 	g_screen = this;
 	Common::fill(&_mouseCursors[0], &_mouseCursors[5], (MouseCursorSurface *)nullptr);
 	Common::fill(&_los[0][0], &_los[0][0] + (VIEWPORT_W * VIEWPORT_H), 0);
@@ -468,7 +468,7 @@ bool Screen::screenTileUpdate(TileView *view, const Coords &coords, bool redraw)
 }
 
 void Screen::screenUpdate(TileView *view, bool showmap, bool blackout) {
-	ASSERT(g_context != nullptr, "context has not yet been initialized");
+	assertMsg(g_context != nullptr, "context has not yet been initialized");
 
 	if (blackout) {
 		screenEraseMapArea();
@@ -586,7 +586,7 @@ void Screen::screenShowChar(int chr, int x, int y) {
 }
 
 void Screen::screenScrollMessageArea() {
-	ASSERT(_charSetInfo != nullptr && _charSetInfo->_image != nullptr, "charset not initialized!");
+	assertMsg(_charSetInfo != nullptr && _charSetInfo->_image != nullptr, "charset not initialized!");
 
 	Image *screen = imageMgr->get("screen")->_image;
 
@@ -624,7 +624,7 @@ void Screen::screenCycle() {
 void Screen::screenUpdateCursor() {
 	int phase = _currentCycle * SCR_CYCLE_PER_SECOND / SCR_CYCLE_MAX;
 
-	ASSERT(phase >= 0 && phase < 4, "derived an invalid cursor phase: %d", phase);
+	assertMsg(phase >= 0 && phase < 4, "derived an invalid cursor phase: %d", phase);
 
 	if (_cursorStatus) {
 		screenShowChar(31 - phase, _cursorPos.x, _cursorPos.y);
@@ -1086,7 +1086,7 @@ int Screen::screenPointInTriangle(int x, int y, int tx1, int ty1, int tx2, int t
 }
 
 int Screen::screenPointInMouseArea(int x, int y, const MouseArea *area) {
-	ASSERT(area->_nPoints == 2 || area->_nPoints == 3, "unsupported number of points in area: %d", area->_nPoints);
+	assertMsg(area->_nPoints == 2 || area->_nPoints == 3, "unsupported number of points in area: %d", area->_nPoints);
 
 	/* two points define a rectangle */
 	if (area->_nPoints == 2) {
@@ -1159,7 +1159,7 @@ void Screen::screenShowGemTile(Layout *layout, Map *map, MapTile &t, bool focus,
 	uint tile = map->translateToRawTileIndex(t);
 
 	if (map->_type == Map::DUNGEON) {
-		ASSERT(_charSetInfo, "charset not initialized");
+		assertMsg(_charSetInfo, "charset not initialized");
 		Std::map<Common::String, int>::iterator charIndex = _dungeonTileChars.find(t.getTileType()->getName());
 		if (charIndex != _dungeonTileChars.end()) {
 			_charSetInfo->_image->drawSubRect((layout->_viewport.left + (x * layout->_tileShape.x)) * settings._scale,
@@ -1317,7 +1317,8 @@ void Screen::screenRedrawTextArea(int x, int y, int width, int height) {
 }
 
 void Screen::screenWait(int numberOfAnimationFrames) {
-	g_system->delayMillis(numberOfAnimationFrames * _frameDuration);
+	update();
+	g_system->delayMillis(numberOfAnimationFrames * SCREEN_FRAME_TIME);
 }
 
 Image *Screen::screenScale(Image *src, int scale, int n, int filter) {

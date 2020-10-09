@@ -34,8 +34,8 @@ public:
 	virtual bool displayLogFile();
 
 	virtual bool hasTextInClipboard();
-	virtual Common::String getTextFromClipboard();
-	virtual bool setTextInClipboard(const Common::String &text);
+	virtual Common::U32String getTextFromClipboard();
+	virtual bool setTextInClipboard(const Common::U32String &text);
 
 	virtual bool openUrl(const Common::String &url);
 

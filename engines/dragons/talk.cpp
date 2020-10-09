@@ -94,6 +94,7 @@ void
 Talk::FUN_8003239c(uint16 *dialog, int16 x, int16 y, int32 param_4, uint16 param_5, Actor *actor, uint16 startSequenceId,
 				   uint16 endSequenceId, uint32 textId) {
 	//TODO 0x800323a4
+	uint16 stubDialog[] = {'1', '2', '3', 0};
 
 	//TODO dragon_text_related(textId);
 	_vm->_isLoadingDialogAudio = true;
@@ -101,7 +102,7 @@ Talk::FUN_8003239c(uint16 *dialog, int16 x, int16 y, int32 param_4, uint16 param
 
 	actor->updateSequence(startSequenceId);
 	_vm->_sound->playSpeech(textId);
-	conversation_related_maybe(dialog, (int)x, (int)y, param_4 & 0xffff, (uint)param_5, textId, uVar4 & 0xffff);
+	conversation_related_maybe((*dialog != 0) ? dialog : &stubDialog[0], (int)x, (int)y, param_4 & 0xffff, (uint)param_5, textId, uVar4 & 0xffff);
 
 	actor->updateSequence(endSequenceId);
 }
@@ -416,7 +417,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 					goto LAB_80032e18;
 				}
 				uVar10 = 0; //TODO PressedThisFrameStart(0);
-			} while ((uVar10 & 0xffff) == 0);
+			} while (!Engine::shouldQuit() && (uVar10 & 0xffff) == 0);
 			returnStatus = 2;
 			curDialogTextPtr = puVar18;
 			LAB_80032e18:
@@ -425,7 +426,8 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 				_vm->_fontManager->clearTextDialog((uint) _dat_8008e7e8_dialogBox_x1, (uint) _dat_8008e844_dialogBox_y1,
 								(uint) _dat_8008e848_dialogBox_x2, (uint) _dat_8008e874_dialogBox_y2);
 			}
-		} while (!_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1) &&
+		} while (!Engine::shouldQuit() &&
+				 !_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1) &&
 				 (((!_vm->isFlagSet(ENGINE_FLAG_1000_SUBTITLES_DISABLED) || (param_7 != 0)) && (*curDialogTextPtr != 0))));
 	}
 	if (param_5 != 0) {
@@ -574,7 +576,7 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 
 	_vm->setFlags(ENGINE_FLAG_100);
 	do {
-		callMaybeResetData();
+		_vm->clearAllText();
 		int numActiveDialogEntries = 0;
 		for (Common::Array<TalkDialogEntry*>::iterator it = dialogEntries.begin(); it != dialogEntries.end(); it++) {
 			if (!((*it)->flags & 1)) {
@@ -589,7 +591,7 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 
 		selectedDialogText = displayTalkDialogMenu(dialogEntries);
 		if (selectedDialogText == nullptr) {
-			callMaybeResetData();
+			_vm->clearAllText();
 			exitTalkMenu(isFlag8Set, isFlag100Set, dialogEntries);
 			return true;
 		}
@@ -611,7 +613,7 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 		if ((selectedDialogText->flags & 2) == 0) {
 			selectedDialogText->flags = selectedDialogText->flags | 1;
 		}
-		callMaybeResetData();
+		_vm->clearAllText();
 		if (loadText(selectedDialogText->textIndex1, local_800, 1000)) {
 			if (selectedDialogText->field_26c == -1) {
 				displayDialogAroundINI(_vm->_cursor->_iniUnderCursor, local_800, selectedDialogText->textIndex1);
@@ -711,6 +713,11 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 	LAB_800317a4:
 //		CheckIfCdShellIsOpen();
 	_vm->waitForFrames(1);
+
+	if (Engine::shouldQuit()) {
+		return nullptr;
+	}
+
 	y = 0;
 	x = 0;
 	if (hasDialogEntries) {
@@ -735,7 +742,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 
 			_vm->clearFlags(ENGINE_FLAG_8);
 			y = 0;
-			callMaybeResetData();
+			_vm->clearAllText();
 			if (hasDialogEntries) {
 				uVar3 = 0;
 				do {
@@ -847,10 +854,14 @@ void Talk::exitTalkMenu(bool isFlag8Set, bool isFlag100Set, Common::Array<TalkDi
 	_vm->_fontManager->clearText();
 }
 
+//TODO move to cutscene class
 uint Talk::somethingTextAndSpeechAndAnimRelated(Actor *actor, int16 sequenceId1, int16 sequenceId2, uint32 textIndex,
 												uint16 param_5) {
 	uint16 dialog[2048];
 	dialog[0] = 0;
+
+	textIndex = _vm->getDialogTextId(textIndex);
+
 	_vm->_talk->loadText(textIndex, dialog, 2048);
 
 	if (sequenceId1 != -1) {
@@ -925,7 +936,7 @@ void Talk::flickerRandomDefaultResponse() {
 			flicker->actor->setFlag(ACTOR_FLAG_4);
 		}
 	}
-	talkFromIni(0x11, getDefaultResponseTextIndex());
+	talkFromIni(0, getDefaultResponseTextIndex());
 }
 
 uint32 Talk::getDefaultResponseTextIndex() {

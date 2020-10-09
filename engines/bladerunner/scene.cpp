@@ -179,6 +179,11 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 	for (int i = 0; i != actorCount; ++i) {
 		Actor *actor = _vm->_actors[i];
 		if (actor->getSetId() == setId) {
+			//debug("Actor added: %d", i);
+#if !BLADERUNNER_ORIGINAL_BUGS
+			// ensure that actors' "hotspot" areas from previous scene are cleared up
+			actor->resetScreenRectangleAndBbox();
+#endif
 			_vm->_sceneObjects->addActor(
 				i + kSceneObjectOffsetActors,
 				actor->getBoundingBox(),

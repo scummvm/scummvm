@@ -3,6 +3,7 @@ package org.scummvm.scummvm;
 import android.os.Handler;
 import android.os.Message;
 import android.content.Context;
+//import android.util.Log;
 import android.view.KeyEvent;
 import android.view.KeyCharacterMap;
 import android.view.MotionEvent;
@@ -11,6 +12,10 @@ import android.view.ViewConfiguration;
 import android.view.GestureDetector;
 import android.view.InputDevice;
 import android.view.inputmethod.InputMethodManager;
+
+import androidx.annotation.NonNull;
+
+import java.lang.ref.WeakReference;
 
 public class ScummVMEvents implements
 		android.view.View.OnKeyListener,
@@ -48,6 +53,41 @@ public class ScummVMEvents implements
 	final protected int _longPress;
 	final protected MouseHelper _mouseHelper;
 
+	// Custom handler code (to avoid mem leaks, see warning "This Handler Class Should Be Static Or Leaks Might Occur”) based on:
+	// https://stackoverflow.com/a/27826094
+	public static class ScummVMEventHandler extends Handler {
+
+		private final WeakReference<ScummVMEvents> mListenerReference;
+
+		public ScummVMEventHandler(ScummVMEvents listener) {
+			mListenerReference = new WeakReference<>(listener);
+		}
+
+		@Override
+		public synchronized void handleMessage(@NonNull Message msg) {
+			ScummVMEvents listener = mListenerReference.get();
+			if(listener != null) {
+				listener.handleEVHMessage(msg);
+			}
+		}
+
+		public void clear() {
+			this.removeCallbacksAndMessages(null);
+		}
+	}
+
+	final private ScummVMEventHandler _skeyHandler = new ScummVMEventHandler(this);
+
+//	/**
+//	 * An example getter to provide it to some external class
+//	 * or just use 'new MyHandler(this)' if you are using it internally.
+//	 * If you only use it internally you might even want it as final member:
+//	 * private final MyHandler mHandler = new MyHandler(this);
+//	 */
+//	public Handler ScummVMEventHandler() {
+//		return new ScummVMEventHandler(this);
+//	}
+
 	public ScummVMEvents(Context context, ScummVM scummvm, MouseHelper mouseHelper) {
 		_context = context;
 		_scummvm = scummvm;
@@ -58,6 +98,26 @@ public class ScummVMEvents implements
 		_gd.setIsLongpressEnabled(false);
 
 		_longPress = ViewConfiguration.getLongPressTimeout();
+
+	}
+
+	private void handleEVHMessage(final Message msg) {
+		if (msg.what == MSG_SMENU_LONG_PRESS) {
+			// this displays the android keyboard (see showVirtualKeyboard() in ScummVMActivity.java)
+			// when menu key is long-pressed
+			InputMethodManager imm = (InputMethodManager)
+				_context.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+			if (imm != null)
+				imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+		} else if (msg.what == MSG_SBACK_LONG_PRESS) {
+			_scummvm.pushEvent(JE_SYS_KEY, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MENU, 0, 0, 0, 0);
+			_scummvm.pushEvent(JE_SYS_KEY, KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MENU, 0, 0, 0, 0);
+		}
+	}
+
+	public void clearEventHandler() {
+		_skeyHandler.clear();
 	}
 
 	final public void sendQuitEvent() {
@@ -79,28 +139,16 @@ public class ScummVMEvents implements
 	final static int MSG_SMENU_LONG_PRESS = 1;
 	final static int MSG_SBACK_LONG_PRESS = 2;
 
-	final private Handler keyHandler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			if (msg.what == MSG_SMENU_LONG_PRESS) {
-				// this displays the android keyboard (see showVirtualKeyboard() in ScummVMActivity.java)
-				// when menu key is long-pressed
-				InputMethodManager imm = (InputMethodManager)
-					_context.getSystemService(Context.INPUT_METHOD_SERVICE);
-
-				if (imm != null)
-					imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-			} else if (msg.what == MSG_SBACK_LONG_PRESS) {
-				_scummvm.pushEvent(JE_SYS_KEY, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MENU, 0, 0, 0, 0);
-				_scummvm.pushEvent(JE_SYS_KEY, KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MENU, 0, 0, 0, 0);
-			}
-		}
-	};
-
 	// OnKeyListener
 	@Override
 	final public boolean onKey(View v, int keyCode, KeyEvent e) {
 		final int action = e.getAction();
+
+		if (e.getUnicodeChar() == (int)EditableAccommodatingLatinIMETypeNullIssues.ONE_UNPROCESSED_CHARACTER.charAt(0)) {
+			//We are ignoring this character, and we want everyone else to ignore it, too, so
+			// we return true indicating that we have handled it (by ignoring it).
+			return true;
+		}
 
 		if (keyCode == 238) {
 			// this (undocumented) event is sent when ACTION_HOVER_ENTER or ACTION_HOVER_EXIT occurs
@@ -144,13 +192,12 @@ public class ScummVMEvents implements
 					typeOfLongPressMessage = MSG_SBACK_LONG_PRESS;
 				}
 
-				final boolean fired = !keyHandler.hasMessages(typeOfLongPressMessage);
+				final boolean fired = !_skeyHandler.hasMessages(typeOfLongPressMessage);
 
-				keyHandler.removeMessages(typeOfLongPressMessage);
+				_skeyHandler.removeMessages(typeOfLongPressMessage);
 
 				if (action == KeyEvent.ACTION_DOWN) {
-					keyHandler.sendMessageDelayed(keyHandler.obtainMessage(
-									typeOfLongPressMessage), _longPress);
+					_skeyHandler.sendMessageDelayed(_skeyHandler.obtainMessage(typeOfLongPressMessage), _longPress);
 					return true;
 				} else if (action != KeyEvent.ACTION_UP) {
 					return true;
@@ -240,6 +287,7 @@ public class ScummVMEvents implements
 	// OnTouchListener
 	@Override
 	final public boolean onTouch(View v, MotionEvent e) {
+
 		if (_mouseHelper != null) {
 			boolean isMouse = MouseHelper.isMouse(e);
 			if (isMouse) {
@@ -250,6 +298,16 @@ public class ScummVMEvents implements
 
 		final int action = e.getAction();
 
+		// Deal with LINT warning "ScummVMEvents#onTouch should call View#performClick when a click is detected"
+		switch (e.getAction()) {
+			case MotionEvent.ACTION_UP:
+				v.performClick();
+				break;
+			case MotionEvent.ACTION_DOWN:
+				// fall through
+			default:
+				break;
+		}
 		// constants from APIv5:
 		// (action & ACTION_POINTER_INDEX_MASK) >> ACTION_POINTER_INDEX_SHIFT
 		final int pointer = (action & 0xff00) >> 8;
@@ -273,7 +331,7 @@ public class ScummVMEvents implements
 	@Override
 	final public boolean onFling(MotionEvent e1, MotionEvent e2,
 									float velocityX, float velocityY) {
-		//Log.d(ScummVM.LOG_TAG, String.format("onFling: %s -> %s (%.3f %.3f)",
+		//Log.d(ScummVM.LOG_TAG, String.format(Locale.ROOT, "onFling: %s -> %s (%.3f %.3f)",
 		//										e1.toString(), e2.toString(),
 		//										velocityX, velocityY));
 

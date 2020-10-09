@@ -52,7 +52,7 @@ void DuckmanCredits::start() {
 	_currText = (char*)_vm->_resSys->getResource(0x190052)->_data;
 	_creditsItems.clear();
 	for (uint i = 0; i < ARRAYSIZE(kCreditsItems);  ++i) {
-		CreditsItem creditsItem;
+		DCreditsItem creditsItem;
 		creditsItem.objectId = kCreditsItems[i].objectId;
 		creditsItem.scrollPosY = kCreditsItems[i].scrollPosY;
 		creditsItem.scrollPosIndex = 0;
@@ -85,8 +85,8 @@ int DuckmanCredits::update(uint flags) {
 
 	bool creditsRunning = false;
 	int index = 0;
-	for (CreditsItems::iterator it = _creditsItems.begin(); it != _creditsItems.end(); ++it, ++index) {
-		CreditsItem &creditsItem = *it;
+	for (DCreditsItems::iterator it = _creditsItems.begin(); it != _creditsItems.end(); ++it, ++index) {
+		DCreditsItem &creditsItem = *it;
 		Control *control = _vm->getObjectControl(creditsItem.objectId);
 		if (!creditsItem.active && creditsItem.scrollPosY == 0 && !_endReached) {
 			creditsItem.active = true;

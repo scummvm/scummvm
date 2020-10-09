@@ -30,6 +30,7 @@
 #include "common/debug-channels.h"
 #include "common/hashmap.h"
 #include "common/memstream.h"
+#include "common/mutex.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
 #include "common/util.h"
@@ -51,7 +52,7 @@ public:
 		kEnvStateRelease
 	};
 
-	MidiPlayer_AmigaMac1(SciVersion version, Audio::Mixer *mixer, uint extraSamples, bool wantSignedSamples);
+	MidiPlayer_AmigaMac1(SciVersion version, Audio::Mixer *mixer, uint extraSamples, bool wantSignedSamples, Common::Mutex &mutex);
 	virtual ~MidiPlayer_AmigaMac1();
 
 	// MidiPlayer
@@ -62,9 +63,9 @@ public:
 	byte getPlayId() const override { return 0x06; }
 	int getPolyphony() const override { return kVoices; }
 	bool hasRhythmChannel() const override { return false; }
-	void setVolume(byte volume) override { _masterVolume = volume; }
-	int getVolume() override { return _masterVolume; }
-	void playSwitch(bool play) override { _playSwitch = play; }
+	void setVolume(byte volume) override;
+	int getVolume() override;
+	void playSwitch(bool play) override;
 
 protected:
 	struct Wave {
@@ -236,9 +237,12 @@ protected:
 
 	const uint _extraSamples;
 	const bool _wantSignedSamples;
+
+	Common::Mutex &_mixMutex;
+	Common::Mutex _timerMutex;
 };
 
-MidiPlayer_AmigaMac1::MidiPlayer_AmigaMac1(SciVersion version, Audio::Mixer *mixer, uint extraSamples, bool wantSignedSamples) :
+MidiPlayer_AmigaMac1::MidiPlayer_AmigaMac1(SciVersion version, Audio::Mixer *mixer, uint extraSamples, bool wantSignedSamples, Common::Mutex &mutex) :
 	MidiPlayer(version),
 	_playSwitch(true),
 	_masterVolume(15),
@@ -248,7 +252,8 @@ MidiPlayer_AmigaMac1::MidiPlayer_AmigaMac1(SciVersion version, Audio::Mixer *mix
 	_timerParam(nullptr),
 	_isOpen(false),
 	_extraSamples(extraSamples),
-	_wantSignedSamples(wantSignedSamples) {
+	_wantSignedSamples(wantSignedSamples),
+	_mixMutex(mutex) {
 
 	assert(_extraSamples > 0);
 }
@@ -277,8 +282,24 @@ void MidiPlayer_AmigaMac1::close() {
 }
 
 void MidiPlayer_AmigaMac1::setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) {
+	Common::StackLock lock(_timerMutex);
 	_timerProc = timer_proc;
 	_timerParam = timer_param;
+}
+
+void MidiPlayer_AmigaMac1::setVolume(byte volume) {
+	Common::StackLock lock(_mixMutex);
+	_masterVolume = volume;
+}
+
+int MidiPlayer_AmigaMac1::getVolume() {
+	Common::StackLock lock(_mixMutex);
+	return _masterVolume;
+}
+
+void MidiPlayer_AmigaMac1::playSwitch(bool play) {
+	Common::StackLock lock(_mixMutex);
+	_playSwitch = play;
 }
 
 uint32 *MidiPlayer_AmigaMac1::loadFreqTable(Common::SeekableReadStream &stream) {
@@ -434,6 +455,15 @@ void MidiPlayer_AmigaMac1::freeInstruments() {
 }
 
 void MidiPlayer_AmigaMac1::onTimer() {
+	_mixMutex.unlock();
+	_timerMutex.lock();
+
+	if (_timerProc)
+		(*_timerProc)(_timerParam);
+
+	_timerMutex.unlock();
+	_mixMutex.lock();
+
 	for (VoiceIt it = _voices.begin(); it != _voices.end(); ++it) {
 		Voice *v = *it;
 		if (v->_note != -1) {
@@ -800,6 +830,8 @@ void MidiPlayer_AmigaMac1::Channel::setPitchWheel(uint16 pitch) {
 }
 
 void MidiPlayer_AmigaMac1::send(uint32 b) {
+	Common::StackLock lock(_mixMutex);
+
 	const byte command = b & 0xf0;
 	Channel *channel = _channels[b & 0xf];
 	const byte op1 = (b >> 8) & 0xff;
@@ -866,7 +898,7 @@ const byte MidiPlayer_AmigaMac1::_velocityMap[64] = {
 	0x2b, 0x2c, 0x2d, 0x2e, 0x2f, 0x30, 0x31, 0x32, 0x34, 0x35, 0x37, 0x39, 0x3a, 0x3c, 0x3e, 0x40
 };
 
-class MidiPlayer_Mac1 : public MidiPlayer_AmigaMac1, public Mixer_Mac<MidiPlayer_Mac1> {
+class MidiPlayer_Mac1 : public Mixer_Mac<MidiPlayer_Mac1>, public MidiPlayer_AmigaMac1 {
 public:
 	MidiPlayer_Mac1(SciVersion version, Audio::Mixer *mixer, Mixer_Mac<MidiPlayer_Mac1>::Mode mode);
 
@@ -878,7 +910,7 @@ public:
 
 	// Mixer_Mac
 	static int8 applyChannelVolume(byte velocity, byte sample);
-	void interrupt();
+	void interrupt() { onTimer(); }
 	void onChannelFinished(uint channel);
 
 private:
@@ -903,8 +935,8 @@ private:
 };
 
 MidiPlayer_Mac1::MidiPlayer_Mac1(SciVersion version, Audio::Mixer *mixer, Mixer_Mac<MidiPlayer_Mac1>::Mode mode) :
-	MidiPlayer_AmigaMac1(version, mixer, 1480, false),
-	Mixer_Mac<MidiPlayer_Mac1>(mode) {}
+	Mixer_Mac<MidiPlayer_Mac1>(mode),
+	MidiPlayer_AmigaMac1(version, mixer, 1480, false, _mutex) {}
 
 int MidiPlayer_Mac1::open(ResourceManager *resMan) {
 	if (_isOpen)
@@ -939,13 +971,6 @@ int MidiPlayer_Mac1::open(ResourceManager *resMan) {
 void MidiPlayer_Mac1::close() {
 	MidiPlayer_AmigaMac1::close();
 	stopMixer();
-}
-
-void MidiPlayer_Mac1::interrupt() {
-	if (_timerProc)
-		(*_timerProc)(_timerParam);
-
-	onTimer();
 }
 
 void MidiPlayer_Mac1::onChannelFinished(uint channel) {
@@ -1054,7 +1079,7 @@ int8 MidiPlayer_Mac1::applyChannelVolume(byte volume, byte sample) {
 	return euclDivide((sample - 0x80) * volume, 63);
 }
 
-class MidiPlayer_Amiga1 : public MidiPlayer_AmigaMac1, public Audio::Paula {
+class MidiPlayer_Amiga1 : public Audio::Paula, public MidiPlayer_AmigaMac1 {
 public:
 	MidiPlayer_Amiga1(SciVersion version, Audio::Mixer *mixer);
 
@@ -1091,8 +1116,8 @@ private:
 };
 
 MidiPlayer_Amiga1::MidiPlayer_Amiga1(SciVersion version, Audio::Mixer *mixer) :
-	MidiPlayer_AmigaMac1(version, mixer, 224, true),
 	Paula(true, mixer->getOutputRate(), (mixer->getOutputRate() + kBaseFreq / 2) / kBaseFreq, kFilterModeA500),
+	MidiPlayer_AmigaMac1(version, mixer, 224, true, _mutex),
 	_isSci1Ega(false) {}
 
 int MidiPlayer_Amiga1::open(ResourceManager *resMan) {
@@ -1146,9 +1171,6 @@ void MidiPlayer_Amiga1::interrupt() {
 		if (_voices[vi]->_note != -1 && !_voices[vi]->_noteRange->loop && getChannelDmaCount(vi) > 0)
 			_voices[vi]->noteOff();
 	}
-
-	if (_timerProc)
-		(*_timerProc)(_timerParam);
 
 	onTimer();
 }

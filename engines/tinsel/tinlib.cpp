@@ -108,22 +108,9 @@ extern void SuspendHook();
 extern void UnSuspendHook();
 
 #ifdef BODGE
-// In HANDLE.CPP
-bool ValidHandle(SCNHANDLE offset);
-
 // In SCENE.CPP
 SCNHANDLE GetSceneHandle();
 #endif
-
-//----------------- GLOBAL GLOBAL DATA --------------------
-
-// FIXME: Avoid non-const global vars
-
-bool g_bEnableMenu;
-
-static bool g_bInstantScroll = false;
-static bool g_bEscapedCdPlay = false;
-
 
 //----------------- LOCAL DEFINES --------------------
 
@@ -287,9 +274,18 @@ static const MASTER_LIB_CODES DW2_CODES[] = {
 	HIGHEST_LIBCODE
 };
 
+//----------------- GLOBAL GLOBAL DATA --------------------
+
+// These vars are reset upon engine destruction
+
+bool g_bEnableMenu;
+
+static bool g_bInstantScroll = false;
+static bool g_bEscapedCdPlay = false;
+
 //----------------- LOCAL GLOBAL DATA --------------------
 
-// FIXME: Avoid non-const global vars
+// These vars are reset upon engine destruction
 
 // Saved cursor co-ordinates for control(on) to restore cursor position
 // as it was at control(off).
@@ -318,6 +314,21 @@ void Walk(CORO_PARAM, int actor, int x, int y, SCNHANDLE film, int hold, bool ig
 		  int zOverride, bool escOn, int myescTime);
 
 //----------------- SUPPORT FUNCTIONS --------------------
+
+void ResetVarsTinlib() {
+	g_bEnableMenu = false;
+
+	g_bInstantScroll = false;
+	g_bEscapedCdPlay = false;
+	g_controlX = 0;
+	g_controlY = 0;
+
+	g_offtype = 0;
+	g_lastValue = 0;
+	g_scrollNumber = 0;
+
+	g_bNotPointedRunning = false;
+}
 
 /**
  * For Scroll() and Offset(), work out top left for a
@@ -523,7 +534,7 @@ void TinGetVersion(WHICH_VER which, char *buffer, int length) {
  * - currently only the text color.
  */
 static void ActorAttr(int actor, int r1, int g1, int b1) {
-	storeActorAttr(actor, r1, g1, b1);
+	_vm->_actor->storeActorAttr(actor, r1, g1, b1);
 }
 
 /**
@@ -562,14 +573,14 @@ void ActorPalette(int actor, int startColor, int length) {
  * Set actor's Z-factor.
  */
 static void ActorPriority(int actor, int zFactor) {
-	SetActorZfactor(actor, zFactor);
+	_vm->_actor->SetActorZfactor(actor, zFactor);
 }
 
 /**
  * Set actor's text color.
  */
 static void ActorRGB(int actor, COLORREF color) {
-	SetActorRGB(actor, color);
+	_vm->_actor->SetActorRGB(actor, color);
 }
 
 /**
@@ -588,7 +599,7 @@ static int ActorScale(int actor) {
 static int ActorPos(int xory, int actor) {
 	int x, y;
 
-	GetActorPos(actor, &x, &y);
+	_vm->_actor->GetActorPos(actor, &x, &y);
 	return (xory == ACTORXPOS) ? x : y;
 }
 
@@ -596,14 +607,14 @@ static int ActorPos(int xory, int actor) {
  * Make all actors alive at the start of each scene.
  */
 static void ActorsOn() {
-	setactorson();
+	_vm->_actor->SetActorsOn();
 }
 
 /**
  * Adds an icon to the conversation window.
  */
 static void AddTopic(int icon) {
-	AddToInventory(INV_CONV, icon, false);
+	_vm->_dialogs->AddToInventory(INV_CONV, icon, false);
 }
 
 /**
@@ -613,7 +624,7 @@ static void AddInv(int invno, int object) {
 	// illegal inventory number
 	assert(invno == INV_1 || invno == INV_2 || invno == INV_OPEN || invno == INV_DEFAULT);
 
-	AddToInventory(invno, object, false);
+	_vm->_dialogs->AddToInventory(invno, object, false);
 }
 
 /**
@@ -650,7 +661,7 @@ void Blocking(bool onOrOff) {
  * Sets focus of the scroll process.
  */
 static void Camera(int actor) {
-	ScrollFocus(actor);
+	_vm->_scroll->ScrollFocus(actor);
 }
 
 /**
@@ -689,7 +700,7 @@ void CdEndActor(int	actor, int	myEscape) {
 	// Only do it if escaped!
 	if (myEscape && myEscape != GetEscEvents()) {
 		// End current graphic
-		dwEndActor(actor);
+		_vm->_actor->dwEndActor(actor);
 
 		// un-hide movers
 		pMover = GetMover(actor);
@@ -710,7 +721,7 @@ static void CDload(SCNHANDLE start, SCNHANDLE next, int myEscape) {
 			return;
 		}
 
-		LoadExtraGraphData(start, next);
+		_vm->_handle->LoadExtraGraphData(start, next);
 	}
 }
 
@@ -725,7 +736,7 @@ static void ClearHookScene() {
  * Guess what.
  */
 static void CloseInventory() {
-	KillInventory();
+	_vm->_dialogs->KillInventory();
 }
 
 /**
@@ -739,11 +750,11 @@ void Control(int param) {
 		else {
 			ControlOff();
 
-			switch (WhichInventoryOpen()) {
+			switch (_vm->_dialogs->WhichInventoryOpen()) {
 			case INV_1:
 			case INV_2:
 			case INV_MENU:
-				KillInventory();
+				_vm->_dialogs->KillInventory();
 				break;
 			default:
 				break;
@@ -760,7 +771,7 @@ void Control(int param) {
 	case CONTROL_STARTOFF:
 		GetControlToken();	// Take control
 		DisableTags();			// Switch off tags
-		DwHideCursor();			// Blank out cursor
+		_vm->_cursor->DwHideCursor(); // Blank out cursor
 		g_offtype = param;
 		break;
 
@@ -771,7 +782,7 @@ void Control(int param) {
 			GetControlToken();	// Take control
 
 			DisableTags();			// Switch off tags
-			GetCursorXYNoWait(&g_controlX, &g_controlY, true);	// Store cursor position
+			_vm->_cursor->GetCursorXYNoWait(&g_controlX, &g_controlY, true); // Store cursor position
 
 			// There may be a button timing out
 			GetToken(TOKEN_LEFT_BUT);
@@ -779,30 +790,30 @@ void Control(int param) {
 		}
 
 		if (g_offtype == CONTROL_STARTOFF)
-			GetCursorXYNoWait(&g_controlX, &g_controlY, true);	// Store cursor position
+			_vm->_cursor->GetCursorXYNoWait(&g_controlX, &g_controlY, true); // Store cursor position
 
 		g_offtype = param;
 
 		if (param == CONTROL_OFF)
-			DwHideCursor();		// Blank out cursor
+			_vm->_cursor->DwHideCursor(); // Blank out cursor
 		else if (param == CONTROL_OFFV) {
-			UnHideCursor();
-			FreezeCursor();
+			_vm->_cursor->UnHideCursor();
+			_vm->_cursor->FreezeCursor();
 		} else if (param == CONTROL_OFFV2) {
-			UnHideCursor();
+			_vm->_cursor->UnHideCursor();
 		}
 		break;
 
 	case CONTROL_ON:
 		if (g_offtype != CONTROL_OFFV2 && g_offtype != CONTROL_STARTOFF)
-			SetCursorXY(g_controlX, g_controlY);// ... where it was
+			_vm->_cursor->SetCursorXY(g_controlX, g_controlY); // ... where it was
 
 		FreeControlToken();	// Release control
 
-		if (!InventoryActive())
+		if (!_vm->_dialogs->InventoryActive())
 			EnableTags();		// Tags back on
 
-		RestoreMainCursor();		// Re-instate cursor...
+		_vm->_cursor->RestoreMainCursor(); // Re-instate cursor...
 		break;
 
 	default:
@@ -822,7 +833,7 @@ static void Conversation(CORO_PARAM, int fn, HPOLYGON hp, int actor, bool escOn,
 
 	if (fn == CONV_END) {
 		// Close down conversation
-		CloseDownConv();
+		_vm->_dialogs->CloseDownConv();
 	} else if ((fn == CONV_TOP) || (fn == CONV_DEF) || (fn == CONV_BOTTOM)) {
 		// TOP of screen, Default (i.e. TOP of screen), or BOTTOM of screen
 
@@ -835,10 +846,10 @@ static void Conversation(CORO_PARAM, int fn, HPOLYGON hp, int actor, bool escOn,
 			return;
 
 		// Don't do it if already in a conversation
-		if (IsConvWindow())
+		if (_vm->_dialogs->IsConvWindow())
 			return;
 
-		KillInventory();
+		_vm->_dialogs->KillInventory();
 
 		if (TinselV2) {
 			// If this is from a tag polygon, get the associated
@@ -852,14 +863,14 @@ static void Conversation(CORO_PARAM, int fn, HPOLYGON hp, int actor, bool escOn,
 			}
 
 			// Top or bottom; tag polygon or tagged actor
-			SetConvDetails((CONV_PARAM)fn, hp, actor);
+			_vm->_dialogs->SetConvDetails((CONV_PARAM)fn, hp, actor);
 		} else {
-			convPos(fn);
-			ConvPoly(hp);
+			_vm->_dialogs->convPos(fn);
+			_vm->_dialogs->ConvPoly(hp);
 		}
 
-		PopUpInventory(INV_CONV);	// Conversation window
-		ConvAction(INV_OPENICON);	// CONVERSATION event
+		_vm->_dialogs->PopUpInventory(INV_CONV); // Conversation window
+		_vm->_dialogs->ConvAction(INV_OPENICON); // CONVERSATION event
 	}
 
 	CORO_END_CODE;
@@ -869,7 +880,7 @@ static void Conversation(CORO_PARAM, int fn, HPOLYGON hp, int actor, bool escOn,
  * Add icon to conversation window's permanent default list.
  */
 static void ConvTopic(int icon) {
-	PermaConvIcon(icon);
+	_vm->_dialogs->PermaConvIcon(icon);
 }
 
 /**
@@ -878,10 +889,10 @@ static void ConvTopic(int icon) {
 void Cursor(int onoff) {
 	if (onoff) {
 		// Re-instate cursor
-		UnHideCursor();
+		_vm->_cursor->UnHideCursor();
 	} else {
 		// Blank out cursor
-		DwHideCursor();
+		_vm->_cursor->DwHideCursor();
 	}
 }
 
@@ -891,7 +902,7 @@ void Cursor(int onoff) {
 static int CursorPos(int xory) {
 	int x, y;
 
-	GetCursorXY(&x, &y, true);
+	_vm->_cursor->GetCursorXY(&x, &y, true);
 	return (xory == CURSORXPOS) ? x : y;
 }
 
@@ -900,7 +911,7 @@ static int CursorPos(int xory) {
  */
 static void DecConvW(SCNHANDLE text, int MaxContents, int MinWidth, int MinHeight,
 			int StartWidth, int StartHeight, int MaxWidth, int MaxHeight) {
-	idec_convw(text, MaxContents, MinWidth, MinHeight,
+	_vm->_dialogs->idec_convw(text, MaxContents, MinWidth, MinHeight,
 			StartWidth, StartHeight, MaxWidth, MaxHeight);
 }
 
@@ -908,21 +919,21 @@ static void DecConvW(SCNHANDLE text, int MaxContents, int MinWidth, int MinHeigh
  * Declare config strings.
  */
 static void DecCStrings(SCNHANDLE *tp) {
-	setConfigStrings(tp);
+	_vm->_dialogs->setConfigStrings(tp);
 }
 
 /**
  * Declare cursor's reels.
  */
 static void DecCursor(SCNHANDLE hFilm) {
-	DwInitCursor(hFilm);
+	_vm->_cursor->DwInitCursor(hFilm);
 }
 
 /**
  * Declare the language flags.
  */
 static void DecFlags(SCNHANDLE hFilm) {
-	setFlagFilms(hFilm);
+	_vm->_dialogs->setFlagFilms(hFilm);
 }
 
 /**
@@ -932,7 +943,7 @@ static void DecInv1(SCNHANDLE text, int MaxContents,
 		int MinWidth, int MinHeight,
 		int StartWidth, int StartHeight,
 		int MaxWidth, int MaxHeight) {
-	idec_inv1(text, MaxContents, MinWidth, MinHeight,
+	_vm->_dialogs->idec_inv1(text, MaxContents, MinWidth, MinHeight,
 			StartWidth, StartHeight, MaxWidth, MaxHeight);
 }
 
@@ -943,7 +954,7 @@ static void DecInv2(SCNHANDLE text, int MaxContents,
 		int MinWidth, int MinHeight,
 		int StartWidth, int StartHeight,
 		int MaxWidth, int MaxHeight) {
-	idec_inv2(text, MaxContents, MinWidth, MinHeight,
+	_vm->_dialogs->idec_inv2(text, MaxContents, MinWidth, MinHeight,
 			StartWidth, StartHeight, MaxWidth, MaxHeight);
 }
 
@@ -951,7 +962,7 @@ static void DecInv2(SCNHANDLE text, int MaxContents,
  * Declare the bits that the inventory windows are constructed from.
  */
 static void DecInvW(SCNHANDLE hf) {
-	setInvWinParts(hf);
+	_vm->_dialogs->setInvWinParts(hf);
 }
 
 /**
@@ -972,13 +983,13 @@ static void DecLead(uint32 id, SCNHANDLE *rp = 0, SCNHANDLE text = 0) {
 
 	if (TinselV2) {
 		// Tinsel 2 only specifies the lead actor Id
-		SetLeadId(id);
+		_vm->_actor->SetLeadId(id);
 		RegisterMover(id);
 
 	} else {
 
-		Tag_Actor(id, text, TAG_DEF);	// The lead actor is automatically tagged
-		SetLeadId(id);			// Establish this as the lead
+		_vm->_actor->Tag_Actor(id, text, TAG_DEF); // The lead actor is automatically tagged
+		_vm->_actor->SetLeadId(id);                // Establish this as the lead
 		RegisterMover(id);			// Establish as a moving actor
 
 		pMover = GetMover(id);		// Get moving actor structure
@@ -1026,24 +1037,24 @@ static void DecScale(int actor, int scale,
  * Remove an icon from the conversation window.
  */
 static void DelIcon(int icon) {
-	RemFromInventory(INV_CONV, icon);
+	_vm->_dialogs->RemFromInventory(INV_CONV, icon);
 }
 
 /**
  * Delete the object from inventory 1 or 2.
  */
 static void DelInv(int object) {
-	if (!RemFromInventory(INV_1, object))		// Remove from inventory 1...
-		RemFromInventory(INV_2, object);		// ...or 2 (whichever)
+	if (!_vm->_dialogs->RemFromInventory(INV_1, object)) // Remove from inventory 1...
+		_vm->_dialogs->RemFromInventory(INV_2, object);  // ...or 2 (whichever)
 
-	DropItem(object);			// Stop holding it
+	_vm->_dialogs->DropItem(object); // Stop holding it
 }
 
 /**
  * DelTopic
  */
 static void DelTopic(int icon) {
-	RemFromInventory(INV_CONV, icon);
+	_vm->_dialogs->RemFromInventory(INV_CONV, icon);
 }
 
 /**
@@ -1053,20 +1064,20 @@ static void Drop(int object) {
 	if (object == -1)
 		object = HeldObject();
 
-	if (!RemFromInventory(INV_1, object))	// Remove from inventory 1...
-		RemFromInventory(INV_2, object);	// ...or 2 (whichever)
+	if (!_vm->_dialogs->RemFromInventory(INV_1, object)) // Remove from inventory 1...
+		_vm->_dialogs->RemFromInventory(INV_2, object);  // ...or 2 (whichever)
 
-	DropItem(object);			// Stop holding it
+	_vm->_dialogs->DropItem(object); // Stop holding it
 }
 
 /**
  * Delete all objects from inventory 1 and 2.
  */
 static void DropEverything() {
-	HoldItem(NOOBJECT, false);
+	_vm->_dialogs->HoldItem(NOOBJECT, false);
 
-	ClearInventory(INV_1);
-	ClearInventory(INV_2);
+	_vm->_dialogs->ClearInventory(INV_1);
+	_vm->_dialogs->ClearInventory(INV_2);
 }
 
 /**
@@ -1080,7 +1091,7 @@ static void EnableMenu() {
  * Kill an actor's current graphics.
  */
 static void EndActor(int actor) {
-	dwEndActor(actor);
+	_vm->_actor->dwEndActor(actor);
 }
 
 /**
@@ -1112,7 +1123,7 @@ static void FaceTag(int actor, HPOLYGON hp) {
 	 */
 	// See where node is and where actor is
 	GetPolyNode(hp, &nodex, &nodey);
-	GetActorPos(actor, &nowx, &nowy);
+	_vm->_actor->GetActorPos(actor, &nowx, &nowy);
 
 	if (nowx == nodex && nowy == nodey) {
 		// Stood at the tag, don't face in silly direction
@@ -1148,14 +1159,14 @@ static void FadeMidi(CORO_PARAM, int inout) {
  * Freeze the cursor, or not.
  */
 static void FreezeCursor(bool bFreeze) {
-	DoFreezeCursor(bFreeze);
+	_vm->_cursor->DoFreezeCursor(bFreeze);
 }
 
 /**
  * Guess what.
  */
 static int GetInvLimit(int invno) {
-	return InvGetLimit(invno);
+	return _vm->_dialogs->InvGetLimit(invno);
 }
 
 /**
@@ -1185,14 +1196,14 @@ static bool HasRestarted() {
  * See if an object is in the inventory.
  */
 int Have(int object) {
-	return (InventoryPos(object) != NOOBJECT);
+	return (_vm->_dialogs->InventoryPos(object) != NOOBJECT);
 }
 
 /**
  * Returns which object is currently held.
  */
 static int HeldObject() {
-	return WhichItemHeld();
+	return _vm->_dialogs->WhichItemHeld();
 }
 
 /**
@@ -1242,7 +1253,7 @@ static void HideTag(CORO_PARAM, int tag, HPOLYGON hp) {
  * Hold the specified object.
  */
 static void Hold(int object) {
-	HoldItem(object, false);
+	_vm->_dialogs->HoldItem(object, false);
 }
 
 /**
@@ -1281,14 +1292,14 @@ void InstantScroll(int onoff) {
  * invdepict
  */
 static void InvDepict(int object, SCNHANDLE hFilm) {
-	SetObjectFilm(object, hFilm);
+	_vm->_dialogs->SetObjectFilm(object, hFilm);
 }
 
 /**
  * See if an object is in the inventory.
  */
 int InInventory(int object) {
-	return (InventoryPos(object) != INV_NOICON);
+	return (_vm->_dialogs->InventoryPos(object) != INV_NOICON);
 }
 
 /**
@@ -1301,27 +1312,27 @@ static void Inventory(int invno, bool escOn, int myEscape) {
 
 	assert((invno == INV_1 || invno == INV_2)); // Trying to open illegal inventory
 
-	PopUpInventory(invno);
+	_vm->_dialogs->PopUpInventory(invno);
 }
 
 /**
  * Alter inventory object's icon.
  */
 static void InvPlay(int object, SCNHANDLE hFilm) {
-	SetObjectFilm(object, hFilm);
+	_vm->_dialogs->SetObjectFilm(object, hFilm);
 }
 
 /**
  * See if an object is in the inventory.
  */
 static int InWhichInv(int object) {
-	if (WhichItemHeld() == object)
+	if (_vm->_dialogs->WhichItemHeld() == object)
 		return 0;
 
-	if (IsInInventory(object, INV_1))
+	if (_vm->_dialogs->IsInInventory(object, INV_1))
 		return 1;
 
-	if (IsInInventory(object, INV_2))
+	if (_vm->_dialogs->IsInInventory(object, INV_2))
 		return 2;
 
 	return -1;
@@ -1331,7 +1342,7 @@ static int InWhichInv(int object) {
  * Kill an actor.
  */
 static void KillActor(int actor) {
-	DisableActor(actor);
+	_vm->_actor->DisableActor(actor);
 }
 
 /**
@@ -1383,7 +1394,7 @@ static int LToffset(int lort) {
  * Set new cursor position.
  */
 static void MoveCursor(int x, int y) {
-	SetCursorXY(x, y);
+	_vm->_cursor->SetCursorXY(x, y);
 
 	g_controlX = x;		// Save these values so that
 	g_controlY = y;		// control(on) doesn't undo this
@@ -1450,21 +1461,21 @@ static void NoBlocking() {
  * Define a no-scroll boundary for the current scene.
  */
 static void NoScroll(int x1, int y1, int x2, int y2) {
-	SetNoScroll(x1, y1, x2, y2);
+	_vm->_scroll->SetNoScroll(x1, y1, x2, y2);
 }
 
 /**
  * Hold the specified object.
  */
 static void ObjectHeld(int object) {
-	HoldItem(object);
+	_vm->_dialogs->HoldItem(object);
 }
 
 /**
  * Set the top left offset of the screen.
  */
 void Offset(EXTREME extreme, int x, int y) {
-	KillScroll();
+	_vm->_scroll->KillScroll();
 
 	if (TinselV2)
 		DecodeExtreme(extreme, &x, &y);
@@ -1484,12 +1495,12 @@ int OtherObject(INV_OBJECT *pinvo) {
 	// WhichItemHeld() gives the held object
 	// GetIcon() gives the object clicked on
 
-	assert(GetIcon() == pinvo->id || WhichItemHeld() == pinvo->id);
+	assert(_vm->_dialogs->GetIcon() == pinvo->id || _vm->_dialogs->WhichItemHeld() == pinvo->id);
 
-	if (GetIcon() == pinvo->id)
-		return WhichItemHeld();
+	if (_vm->_dialogs->GetIcon() == pinvo->id)
+		return _vm->_dialogs->WhichItemHeld();
 	else
-		return GetIcon();
+		return _vm->_dialogs->GetIcon();
 }
 
 /**
@@ -1517,7 +1528,7 @@ static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int compit, int acto
 		return;
 
 	// If this actor is dead, call a stop to the calling process
-	if (actorid && !actorAlive(actorid))
+	if (actorid && !_vm->_actor->actorAlive(actorid))
 		CORO_KILL_SELF();
 
 	// 7/4/95
@@ -1559,7 +1570,7 @@ static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, bool bComplete, int 
 		if (hPoly == NOPOLY) {
 			// Must be a tagged actor
 
-			assert(taggedActor && IsTaggedActor(taggedActor));
+			assert(taggedActor && _vm->_actor->IsTaggedActor(taggedActor));
 			actor = taggedActor;
 		} else if (taggedActor == 0) {
 			// Must be a polygon with an actor ID
@@ -1571,8 +1582,8 @@ static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, bool bComplete, int 
 			return;
 		}
 
-		SetActorTalking(actor, true);
-		SetActorTalkFilm(actor, hFilm);
+		_vm->_actor->SetActorTalking(actor, true);
+		_vm->_actor->SetActorTalkFilm(actor, hFilm);
 	}
 
 	if (bComplete) {
@@ -1631,8 +1642,8 @@ static void PlayMovie(CORO_PARAM, SCNHANDLE hFileStem, int myEscape) {
 
 	// Get rid of the cursor
 	for (_ctx->i = 0; _ctx->i < 3; _ctx->i++) {
-		DwHideCursor();
-		DropCursor();
+		_vm->_cursor->DwHideCursor();
+		_vm->_cursor->DropCursor();
 		CORO_SLEEP(1);
 	}
 
@@ -1757,9 +1768,9 @@ void PointActor(int actor) {
 	if (!SysVar(SV_ENABLEPOINTTAG))
 		return;
 
-	assert(IsTaggedActor(actor));
+	assert(_vm->_actor->IsTaggedActor(actor));
 
-	GetActorTagPos(actor, &x, &y, true);
+	_vm->_actor->GetActorTagPos(actor, &x, &y, true);
 
 	_vm->setMousePosition(Common::Point(x, y));
 }
@@ -1792,10 +1803,10 @@ static void PostActor(CORO_PARAM, int actor, TINSEL_EVENT event, HPOLYGON hp,
 	if (actor == -1) {
 		actor = taggedActor;
 		assert(hp == NOPOLY && taggedActor);
-		assert(IsTaggedActor(actor));
+		assert(_vm->_actor->IsTaggedActor(actor));
 	}
 
-	if (IsTaggedActor(actor)) {
+	if (_vm->_actor->IsTaggedActor(actor)) {
 		assert(actor);
 		ActorEvent(coroParam, actor, event, false, myEscape);
 	} else {
@@ -1843,7 +1854,7 @@ static void PostTag(CORO_PARAM, int tagno, TINSEL_EVENT event, HPOLYGON hp, int 
  */
 static void PrepareScene(SCNHANDLE scene) {
 #ifdef BODGE
-	if (!ValidHandle(scene))
+	if (!_vm->_handle->ValidHandle(scene))
 		return;
 #endif
 }
@@ -1912,7 +1923,7 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 
 		// Adjust x, y, or z if necessary
 		KeepOnScreen(_ctx->pText, &x, &y);
-		if (IsTopWindow())
+		if (_vm->_dialogs->IsTopWindow())
 			MultiSetZPosition(_ctx->pText, Z_TOPW_TEXT);
 
 	} else if (bJapDoPrintText || (!_vm->_config->isJapanMode() && (_vm->_config->_useSubtitles || !_ctx->bSample))) {
@@ -1922,7 +1933,7 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 					0, x - Loffset, y - Toffset,
 					TinselV2 ? _vm->_font->GetTagFontHandle() : _vm->_font->GetTalkFontHandle(), TXT_CENTER);
 		assert(_ctx->pText); // string produced NULL text
-		if (IsTopWindow())
+		if (_vm->_dialogs->IsTopWindow())
 			MultiSetZPosition(_ctx->pText, Z_TOPW_TEXT);
 
 		/*
@@ -2041,8 +2052,8 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 	/*
 	* Find out which icon the cursor is over, and where to put the text.
 	*/
-	GetCursorXY(&_ctx->textx, &_ctx->texty, false);	// Cursor position..
-	_ctx->item = InvItem(&_ctx->textx, &_ctx->texty, true);	// ..to text position
+	_vm->_cursor->GetCursorXY(&_ctx->textx, &_ctx->texty, false); // Cursor position..
+	_ctx->item = _vm->_dialogs->InvItem(&_ctx->textx, &_ctx->texty, true); // ..to text position
 	if (_ctx->item == INV_NOICON)
 		return;
 
@@ -2117,7 +2128,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 				int x, y;
 				do {
 					// Give up if this item gets picked up
-					if (WhichItemHeld() == pinvo->id)
+					if (_vm->_dialogs->WhichItemHeld() == pinvo->id)
 						break;
 
 					// Give way to non-POINTED-generated text
@@ -2129,8 +2140,8 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 						while (g_bNotPointedRunning)
 							CORO_SLEEP(1);
 
-						GetCursorXY(&x, &y, false);
-						if (InvItem(&x, &y, false) != _ctx->item)
+						_vm->_cursor->GetCursorXY(&x, &y, false);
+						if (_vm->_dialogs->InvItem(&x, &y, false) != _ctx->item)
 							break;
 
 						// Re-display in the same place
@@ -2147,9 +2158,9 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 					CORO_SLEEP(1);
 
 					// Carry on until the cursor leaves this icon
-					GetCursorXY(&x, &y, false);
+					_vm->_cursor->GetCursorXY(&x, &y, false);
 
-				} while (InvItemId(x, y) == pinvo->id);
+				} while (_vm->_dialogs->InvItemId(x, y) == pinvo->id);
 			} else {
 				/*
 				 * PrintObj() called from other event
@@ -2169,8 +2180,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 					// Abort if sample times out
 					// Abort if conversation hidden
 					if (LeftEventChange(_ctx->myLeftEvent)
-							|| --_ctx->timeout <= 0
-							|| ConvIsHidden())
+							|| --_ctx->timeout <= 0 || _vm->_dialogs->ConvIsHidden())
 						break;
 
 					if (_ctx->bSample) {
@@ -2235,7 +2245,7 @@ static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const INV_OBJECT *
 		int	x, y;
 		do {
 			// Give up if this item gets picked up
-			if (WhichItemHeld() == pinvo->id)
+		    if (_vm->_dialogs->WhichItemHeld() == pinvo->id)
 				break;
 
 			// Give way to non-POINTED-generated text
@@ -2246,8 +2256,8 @@ static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const INV_OBJECT *
 				while (g_bNotPointedRunning)
 					CORO_SLEEP(1);
 
-				GetCursorXY(&x, &y, false);
-				if (InvItem(&x, &y, false) != item)
+				_vm->_cursor->GetCursorXY(&x, &y, false);
+			    if (_vm->_dialogs->InvItem(&x, &y, false) != item)
 					break;
 
 				// Re-display in the same place
@@ -2261,8 +2271,8 @@ static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const INV_OBJECT *
 			CORO_SLEEP(1);
 
 			// Carry on until the cursor leaves this icon
-			GetCursorXY(&x, &y, false);
-		} while (InvItemId(x, y) == pinvo->id);
+		    _vm->_cursor->GetCursorXY(&x, &y, false);
+	    } while (_vm->_dialogs->InvItemId(x, y) == pinvo->id);
 
 	CORO_END_CODE;
 }
@@ -2305,7 +2315,7 @@ static void PrintObjNonPointed(CORO_PARAM, const SCNHANDLE text, const OBJECT *p
 			// Abort if left click - hardwired feature for talky-print!
 			// Abort if sample times out
 			// Abort if conversation hidden
-			if (_ctx->myleftEvent != GetLeftEvents() || _ctx->timeout <= 0 || ConvIsHidden())
+		    if (_ctx->myleftEvent != GetLeftEvents() || _ctx->timeout <= 0 || _vm->_dialogs->ConvIsHidden())
 				break;
 
 			if (_ctx->bSample) {
@@ -2358,7 +2368,7 @@ static void PrintTag(HPOLYGON hp, SCNHANDLE text, int actor = 0, bool bCursor = 
 		}
 	} else {
 		// Moving actor handling
-		SetActorTagWanted(actor, true, bCursor, text);
+		_vm->_actor->SetActorTagWanted(actor, true, bCursor, text);
 	}
 }
 
@@ -2498,7 +2508,7 @@ static void ScalingReels(int actor, int scale, int direction,
  * Return the icon that caused the CONVERSE event.
  */
 static int ScanIcon() {
-	return GetIcon();
+	return _vm->_dialogs->GetIcon();
 }
 
 /**
@@ -2524,7 +2534,7 @@ static void Scroll(CORO_PARAM, EXTREME extreme, int xp, int yp, int xIter, int y
 		if (TinselV2)
 			DecodeExtreme(extreme, &_ctx->x, &_ctx->y);
 
-		ScrollTo(_ctx->x, _ctx->y, xIter, yIter);
+		_vm->_scroll->ScrollTo(_ctx->x, _ctx->y, xIter, yIter);
 
 		if (bComp) {
 			int	Loffset, Toffset;
@@ -2563,7 +2573,7 @@ static void Scroll(CORO_PARAM, EXTREME extreme, int xp, int yp, int xIter, int y
  */
 static void ScrollParameters(int xTrigger, int xDistance, int xSpeed, int yTriggerTop,
 		int yTriggerBottom, int yDistance, int ySpeed) {
-	SetScrollParameters(xTrigger, xDistance, xSpeed,
+	_vm->_scroll->SetScrollParameters(xTrigger, xDistance, xSpeed,
 			yTriggerTop, yTriggerBottom, yDistance, ySpeed);
 }
 
@@ -2573,7 +2583,7 @@ static void ScrollParameters(int xTrigger, int xDistance, int xSpeed, int yTrigg
 int SendActor(CORO_PARAM, int actor, TINSEL_EVENT event, HPOLYGON hp, int myEscape) {
 	bool result;
 
-	if (IsTaggedActor(actor)) {
+	if (_vm->_actor->IsTaggedActor(actor)) {
 		assert(actor);
 		ActorEvent(coroParam, actor, event, true, myEscape, &result);
 	} else {
@@ -2628,7 +2638,7 @@ static void SendTag(CORO_PARAM, int tagno, TINSEL_EVENT event, HPOLYGON hp, int 
  * Un-kill an actor.
  */
 static void SetActor(int actor) {
-	EnableActor(actor);
+	_vm->_actor->EnableActor(actor);
 }
 
 /**
@@ -2651,7 +2661,7 @@ static void SetExit(int exitno) {
  * Guess what.
  */
 static void SetInvLimit(int invno, int n) {
-	InvSetLimit(invno, n);
+	_vm->_dialogs->InvSetLimit(invno, n);
 }
 
 /**
@@ -2659,7 +2669,7 @@ static void SetInvLimit(int invno, int n) {
  */
 static void SetInvSize(int invno, int MinWidth, int MinHeight,
 		int StartWidth, int StartHeight, int MaxWidth, int MaxHeight) {
-	InvSetSize(invno, MinWidth, MinHeight, StartWidth, StartHeight, MaxWidth, MaxHeight);
+	_vm->_dialogs->InvSetSize(invno, MinWidth, MinHeight, StartWidth, StartHeight, MaxWidth, MaxHeight);
 }
 
 /**
@@ -2762,7 +2772,7 @@ static void showstring() {
  * Shows the main menu
  */
 static void ShowMenu() {
-	OpenMenu(MAIN_MENU);
+	_vm->_dialogs->OpenMenu(MAIN_MENU);
 }
 
 /**
@@ -2822,13 +2832,13 @@ void Stand(CORO_PARAM, int actor, int x, int y, SCNHANDLE hFilm) {
 
 			// Another new special.
 			// If lead actor, and TalkVia, ignore
-			if ((actor == GetLeadId() || actor == LEAD_ACTOR) && SysVar(ISV_DIVERT_ACTOR))
+			if ((actor == _vm->_actor->GetLeadId() || actor == LEAD_ACTOR) && SysVar(ISV_DIVERT_ACTOR))
 				return;
 		}
 
 		if (!MoverIs(_ctx->pMover)) {
 			// create a moving actor process
-			MoverProcessCreate(x, y, (actor == LEAD_ACTOR) ? GetLeadId() : actor, _ctx->pMover);
+			MoverProcessCreate(x, y, (actor == LEAD_ACTOR) ? _vm->_actor->GetLeadId() : actor, _ctx->pMover);
 
 			if (hFilm == TF_NONE) {
 				// Make sure there is an assigned actorObj
@@ -2928,14 +2938,14 @@ static void StandTag(int actor, HPOLYGON hp) {
 
 	// other actors can use direction
 	if (TinselV2) {
-		if (actor != LEAD_ACTOR && actor != GetLeadId()
+		if (actor != LEAD_ACTOR && actor != _vm->_actor->GetLeadId()
 				&& hFilm != TF_UP && hFilm != TF_DOWN
 				&& hFilm != TF_LEFT && hFilm != TF_RIGHT)
 			hFilm = 0;
 
 		Stand(Common::nullContext, actor, pnodex, pnodey, hFilm);
 
-	} else if (hFilm && (actor == LEAD_ACTOR || actor == GetLeadId()))
+	} else if (hFilm && (actor == LEAD_ACTOR || actor == _vm->_actor->GetLeadId()))
 		Stand(Common::nullContext, actor, pnodex, pnodey, hFilm);
 	else
 		Stand(Common::nullContext, actor, pnodex, pnodey, 0);
@@ -3036,10 +3046,10 @@ static void Swalk(CORO_PARAM, int actor, int x1, int y1, int x2, int y2, SCNHAND
 	}
 
 	// For lead actor, lock out the user (if not already locked out)
-	if (actor == GetLeadId() || actor == LEAD_ACTOR) {
+	if (actor == _vm->_actor->GetLeadId() || actor == LEAD_ACTOR) {
 		_ctx->bTookControl = GetControl(CONTROL_OFFV2);
 		if (TinselV2 && _ctx->bTookControl)
-			RestoreMainCursor();
+			_vm->_cursor->RestoreMainCursor();
 	} else {
 		_ctx->bTookControl = false;
 	}
@@ -3093,7 +3103,7 @@ static int SystemVar(int varId) {
  * Define a tagged actor.
  */
 static void TagActor(int actor, SCNHANDLE text, int tp) {
-	Tag_Actor(actor, text, tp);
+	_vm->_actor->Tag_Actor(actor, text, tp);
 }
 
 /**
@@ -3133,8 +3143,8 @@ static void FinishTalkingReel(CORO_PARAM, PMOVER pMover, int actor) {
 		SetMoverStanding(pMover);
 		AlterMover(pMover, 0, AR_POPREEL);
 	} else {
-		SetActorTalking(actor, false);
-		CORO_INVOKE_ARGS(PlayFilm, (CORO_SUBCTX, GetActorPlayFilm(actor), -1, -1, 0, false, 0, false, 0, false));
+		_vm->_actor->SetActorTalking(actor, false);
+		CORO_INVOKE_ARGS(PlayFilm, (CORO_SUBCTX, _vm->_actor->GetActorPlayFilm(actor), -1, -1, 0, false, 0, false, 0, false));
 	}
 
 	CORO_END_CODE;
@@ -3186,7 +3196,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 	_ctx->myLeftEvent = GetLeftEvents();
 
 	// If this actor is dead, call a stop to the calling process
-	if (!TinselV2 && (actorId && !actorAlive(actorId)))
+	if (!TinselV2 && (actorId && !_vm->_actor->actorAlive(actorId)))
 		CORO_KILL_SELF();
 
 	if (!TinselV2 || (speechType == IS_TALK)) {
@@ -3200,7 +3210,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 		case TF_DOWN:
 		case TF_LEFT:
 		case TF_RIGHT:
-			_ctx->actor = GetLeadId();	// If no film, actor is lead actor
+			_ctx->actor = _vm->_actor->GetLeadId(); // If no film, actor is lead actor
 			_ctx->direction = (TFTYPE)hFilm;
 			break;
 
@@ -3218,7 +3228,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 	 * Lock out the user (for lead actor, if not already locked out)
 	 * May need to disable tags for other actors
 	 */
-	if (_ctx->actor == GetLeadId() || (TinselV2 && (_ctx->actor == LEAD_ACTOR)))
+	if (_ctx->actor == _vm->_actor->GetLeadId() || (TinselV2 && (_ctx->actor == LEAD_ACTOR)))
 		_ctx->bTookControl = GetControl(CONTROL_OFF);
 	else
 		_ctx->bTookControl = false;
@@ -3228,7 +3238,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 		/*
 		 * Divert stuff
 		 */
-		if (SysVar(ISV_DIVERT_ACTOR) && (_ctx->actor == GetLeadId() || _ctx->actor == LEAD_ACTOR)) {
+		if (SysVar(ISV_DIVERT_ACTOR) && (_ctx->actor == _vm->_actor->GetLeadId() || _ctx->actor == LEAD_ACTOR)) {
 			_ctx->actor = SysVar(ISV_DIVERT_ACTOR);
 			if (_ctx->whatSort == IS_TALK)
 				_ctx->whatSort = IS_SAY;
@@ -3259,8 +3269,8 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 				hFilm = GetMoverTalkReel(_ctx->pActor, _ctx->direction);
 			AlterMover(_ctx->pActor, hFilm, AR_PUSHREEL);
 		} else {
-			SetActorTalking(_ctx->actor, true);
-			SetActorTalkFilm(_ctx->actor, hFilm);
+			_vm->_actor->SetActorTalking(_ctx->actor, true);
+			_vm->_actor->SetActorTalkFilm(_ctx->actor, hFilm);
 			CORO_INVOKE_ARGS(PlayFilm, (CORO_SUBCTX, hFilm, -1, -1, 0, false, 0, escOn, myEscape, false));
 		}
 		_ctx->bTalkReel = true;
@@ -3271,7 +3281,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 
 	} else if ((_ctx->whatSort == IS_SAY) || (_ctx->whatSort == IS_SAYAT)) {
 		_ctx->bTalkReel = false;
-		if (IsTaggedActor(_ctx->actor)) {
+		if (_vm->_actor->IsTaggedActor(_ctx->actor)) {
 			CORO_INVOKE_ARGS(ActorEvent, (CORO_SUBCTX, _ctx->actor, TALKING, false, 0));
 		} else if (IsTagPolygon(_ctx->actor | ACTORTAG_KEY)) {
 			CORO_INVOKE_ARGS(PolygonEvent, (CORO_SUBCTX, GetTagHandle(_ctx->actor | ACTORTAG_KEY),
@@ -3309,10 +3319,10 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 
 			_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &_ctx->Loffset, &_ctx->Toffset);
 			if ((_ctx->whatSort == IS_SAY) || (_ctx->whatSort == IS_TALK))
-				GetActorMidTop(_ctx->actor, &_ctx->x, &_ctx->y);
+				_vm->_actor->GetActorMidTop(_ctx->actor, &_ctx->x, &_ctx->y);
 
 			if (!TinselV0)
-				SetTextPal(GetActorRGB(_ctx->actor));
+				SetTextPal(_vm->_actor->GetActorRGB(_ctx->actor));
 			if (TinselV2)
 				LoadSubString(hText, _ctx->sub, _vm->_font->TextBufferAddr(), TBUFSZ);
 			else {
@@ -3326,7 +3336,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 					_vm->_font->GetTalkFontHandle(), TXT_CENTER);
 			assert(_ctx->pText); // talk() string produced NULL text;
 
-			if (IsTopWindow())
+			if (_vm->_dialogs->IsTopWindow())
 				MultiSetZPosition(_ctx->pText, Z_TOPW_TEXT);
 
 			if ((_ctx->whatSort == IS_SAY) || (_ctx->whatSort == IS_TALK)) {
@@ -3461,8 +3471,8 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 
 	if (TinselV2) {
 		if ((_ctx->whatSort == IS_SAY) || (_ctx->whatSort == IS_SAYAT)) {
-			SetActorTalking(_ctx->actor, false);
-			if (IsTaggedActor(_ctx->actor))
+			_vm->_actor->SetActorTalking(_ctx->actor, false);
+			if (_vm->_actor->IsTaggedActor(_ctx->actor))
 				CORO_INVOKE_ARGS(ActorEvent, (CORO_SUBCTX, _ctx->actor, ENDTALK, false, 0));
 			else if (IsTagPolygon(_ctx->actor | ACTORTAG_KEY))
 				CORO_INVOKE_ARGS(PolygonEvent, (CORO_SUBCTX,
@@ -3497,7 +3507,7 @@ static void TalkAt(CORO_PARAM, int actor, int x, int y, SCNHANDLE text, bool esc
 			return;
 
 		if (!_vm->_config->isJapanMode() && (_vm->_config->_useSubtitles || !_vm->_sound->sampleExists(text)))
-			SetTextPal(GetActorRGB(actor));
+			SetTextPal(_vm->_actor->GetActorRGB(actor));
 	}
 
 	Print(coroParam, x, y, text, 0, false, escOn, myEscape);
@@ -3515,7 +3525,7 @@ static void TalkAtS(CORO_PARAM, int actor, int x, int y, SCNHANDLE text, int sus
 			return;
 
 		if (!_vm->_config->isJapanMode())
-			SetTextPal(GetActorRGB(actor));
+			SetTextPal(_vm->_actor->GetActorRGB(actor));
 	}
 
 	Print(coroParam, x, y, text, 0, sustain == 2, escOn, myEscape);
@@ -3602,7 +3612,7 @@ static int TimerFn(int timerno) {
  * Return the icon that caused the CONVERSE event.
  */
 int Topic() {
-	return GetIcon();
+	return _vm->_dialogs->GetIcon();
 }
 
 /**
@@ -3621,10 +3631,10 @@ static void TopPlay(CORO_PARAM, SCNHANDLE hFilm, int x, int y, bool bComplete, i
 static void TopWindow(int bpos) {
 	bool isStart = (TinselV2 && (bpos != 0)) || (!TinselV2 && (bpos == TW_START));
 
-	KillInventory();
+	_vm->_dialogs->KillInventory();
 
 	if (isStart)
-		OpenMenu(TOP_WINDOW);
+		_vm->_dialogs->OpenMenu(TOP_WINDOW);
 }
 
 /**
@@ -3659,7 +3669,7 @@ static void TryPlaySample(CORO_PARAM, int sample, bool bComplete, bool escOn, in
  * Un-define an actor as tagged.
  */
 static void UnTagActorFn(int actor) {
-	UnTagActor(actor);
+	_vm->_actor->UnTagActor(actor);
 }
 
 /**
@@ -3677,7 +3687,7 @@ static void WaitFrame(CORO_PARAM, int actor, int frameNumber, bool escOn, int my
 
 	CORO_BEGIN_CODE(_ctx);
 
-	while (GetActorSteps(actor) < frameNumber) {
+	while (_vm->_actor->GetActorSteps(actor) < frameNumber) {
 		// Don't do it if it's not wanted
 		if (escOn && myEscape != GetEscEvents())
 			break;
@@ -3707,7 +3717,7 @@ static void WaitKey(CORO_PARAM, bool escOn, int myEscape) {
 		_ctx->startEvent = getUserEvents();
 		if (TinselV1) {
 			// Store cursor position
-			while (!GetCursorXYNoWait(&_ctx->startX, &_ctx->startY, false))
+			while (!_vm->_cursor->GetCursorXYNoWait(&_ctx->startX, &_ctx->startY, false))
 				CORO_SLEEP(1);
 		}
 
@@ -3717,21 +3727,21 @@ static void WaitKey(CORO_PARAM, bool escOn, int myEscape) {
 			// Not necessary to monitor escape as it's an event anyway
 			if (TinselV1) {
 				int curX, curY;
-				GetCursorXY(&curX, &curY, false);	// Store cursor position
+				_vm->_cursor->GetCursorXY(&curX, &curY, false); // Store cursor position
 				if (curX != _ctx->startX || curY != _ctx->startY)
 					break;
 			}
 
-			if (MenuActive())
+			if (_vm->_dialogs->MenuActive())
 				break;
 		}
 
-		if (!MenuActive())
+		if (!_vm->_dialogs->MenuActive())
 			return;
 
 		do {
 			CORO_SLEEP(1);
-		} while (MenuActive());
+		} while (_vm->_dialogs->MenuActive());
 
 		CORO_SLEEP(ONE_SECOND / 2);		// Let it die down
 	}
@@ -3749,7 +3759,7 @@ void WaitScroll(CORO_PARAM, int myescEvent) {
 	CORO_BEGIN_CODE(_ctx);
 
 	// wait for ongoing scroll
-	while (IsScrolling()) {
+	while (_vm->_scroll->IsScrolling()) {
 		if (myescEvent && myescEvent != GetEscEvents())
 			break;
 
@@ -3831,7 +3841,7 @@ void Walk(CORO_PARAM, int actor, int x, int y, SCNHANDLE hFilm, int hold, bool i
 
 		_ctx->thisWalk = SetActorDest(pMover, x, y, igPath, hFilm);
 		SetMoverZoverride(pMover, zOverride);
-		DontScrollCursor();
+		_vm->_scroll->DontScrollCursor();
 
 		if (!bQuick) {
 			while (MoverMoving(pMover)) {
@@ -3853,7 +3863,7 @@ void Walk(CORO_PARAM, int actor, int x, int y, SCNHANDLE hFilm, int hold, bool i
 
 		GetToken(pMover->actorToken);
 		SetActorDest(pMover, x, y, igPath, hFilm);
-		DontScrollCursor();
+		_vm->_scroll->DontScrollCursor();
 
 		if (hold == 2) {
 			;
@@ -3923,7 +3933,7 @@ static void Walked(CORO_PARAM, int actor, int x, int y, SCNHANDLE film, bool esc
 	}
 
 	_ctx->thisWalk = SetActorDest(pMover, x, y, false, film);
-	DontScrollCursor();
+	_vm->_scroll->DontScrollCursor();
 
 	while (MoverMoving(pMover) && (_ctx->thisWalk == GetWalkNumber(pMover))) {
 		// Straight there if escaped
@@ -4014,7 +4024,7 @@ static void WalkPoly(CORO_PARAM, int actor, SCNHANDLE film, HPOLYGON hp, bool es
 
 	GetPolyNode(hp, &pnodex, &pnodey);
 	_ctx->thisWalk = SetActorDest(pMover, pnodex, pnodey, false, film);
-	DoScrollCursor();
+	_vm->_scroll->DoScrollCursor();
 
 	while (!MoverIsInPolygon(pMover, hp) && MoverMoving(pMover)) {
 		CORO_SLEEP(1);
@@ -4072,7 +4082,7 @@ static void WalkTag(CORO_PARAM, int actor, SCNHANDLE film, HPOLYGON hp, bool esc
 	GetPolyNode(hp, &pnodex, &pnodey);
 
 	_ctx->thisWalk = SetActorDest(pMover, pnodex, pnodey, false, film);
-	DoScrollCursor();
+	_vm->_scroll->DoScrollCursor();
 
 	while (MoverMoving(pMover)) {
 		if (escOn && myEscape != GetEscEvents()) {
@@ -4115,7 +4125,7 @@ static void WalkTag(CORO_PARAM, int actor, SCNHANDLE film, HPOLYGON hp, bool esc
 		break;
 
 	default:
-		if (actor == LEAD_ACTOR || actor == GetLeadId())
+		if (actor == LEAD_ACTOR || actor == _vm->_actor->GetLeadId())
 			AlterMover(pMover, pFilm, AR_NORMAL);
 		else
 			SetMoverStanding(pMover);
@@ -4153,7 +4163,7 @@ int WhichCd() {
  * whichinventory
  */
 int WhichInventory() {
-	return WhichInventoryOpen();
+	return _vm->_dialogs->WhichInventoryOpen();
 }
 
 
@@ -4869,7 +4879,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		// Common to both DW1 & DW2
 		if (TinselV2) {
 			pp -= 3;			// 4 parameters
-			if (*pResumeState == RES_1 && IsCdPlayHandle(pp[0]))
+			if (*pResumeState == RES_1 && _vm->_handle->IsCdPlayHandle(pp[0]))
 				*pResumeState = RES_NOT;
 			else {
 				Play(coroParam, pp[0], pp[1], pp[2], pp[3], pic->myEscape, false,

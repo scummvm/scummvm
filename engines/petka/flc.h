@@ -35,7 +35,6 @@ public:
 
 	uint getDelay() const;
 	const Common::Rect &getBounds() const;
-	Common::Point getPos() const;
 	const Common::Array<Common::Rect> &getMskRects() const;
 	const Graphics::Surface *getCurrentFrame() const;
 	uint32 getTransColor(const Graphics::PixelFormat &fmt) const;
@@ -45,17 +44,17 @@ protected:
 	public:
 		FlicVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, bool skipHeader = false);
 
+		const Graphics::Surface *decodeNextFrame() override;
+
 		bool loadMsk(Common::SeekableReadStream &stream);
 
 		uint getDelay() const;
 		const Common::Rect &getBounds() const;
-		Common::Point getPos() const;
 		const Common::Array<Common::Rect> &getMskRects() const;
 		const Graphics::Surface *getSurface() const;
 
 	private:
 		Common::Rect _bounds;
-		Common::Point _pos;
 		Common::Array<Common::Array<Common::Rect> > _msk;
 	};
 };

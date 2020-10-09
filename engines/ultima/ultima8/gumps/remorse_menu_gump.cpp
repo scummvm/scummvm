@@ -51,6 +51,9 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(RemorseMenuGump)
 
+static const int MENU_MUSIC_REMORSE = 21;
+static const int MENU_MUSIC_REGRET = 18;
+
 RemorseMenuGump::RemorseMenuGump()
 	: ModalGump(0, 0, 640, 480, 0, FLAG_DONT_SAVE) {
 
@@ -62,8 +65,10 @@ RemorseMenuGump::RemorseMenuGump()
 	MusicProcess *musicprocess = MusicProcess::get_instance();
 	if (musicprocess) {
 		musicprocess->saveTrackState();
+
+		int track = GAME_IS_REMORSE ? MENU_MUSIC_REMORSE : MENU_MUSIC_REGRET;
 		// Play the menu music
-		musicprocess->playMusic(20);
+		musicprocess->playMusic(track);
 	}
 	MetaEngine::setGameMenuActive(true);
 }

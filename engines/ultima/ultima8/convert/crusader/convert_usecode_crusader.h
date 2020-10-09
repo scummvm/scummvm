@@ -23,11 +23,7 @@
 #ifndef ULTIMA8_CONVERT_U8_CONVERTUSECODECRUSADER_H
 #define ULTIMA8_CONVERT_U8_CONVERTUSECODECRUSADER_H
 
-#ifndef INCLUDE_CONVERTUSECODEU8_WITHOUT_BRINGING_IN_FOLD
-#include "ultima/ultima8/convert/convert.h"
-#else
-#include "ultima/ultima8/convert/u8/convert_usecode_u8.h"
-#endif
+#include "ultima/ultima8/convert/convert_usecode.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -36,32 +32,10 @@ class ConvertUsecodeCrusader : public ConvertUsecode {
 public:
 	const char* const *intrinsics() override  { return _intrinsics;  };
 	const char* const *event_names() override { return _event_names; };
-	void readheader(Common::SeekableReadStream *ucfile, UsecodeHeader &uch, uint32 &curOffset) override;
-	void readevents(Common::SeekableReadStream *ucfile, const UsecodeHeader &/*uch*/) override
-	{
-#ifndef INCLUDE_CONVERTUSECODEU8_WITHOUT_BRINGING_IN_FOLD
-		EventMap.clear();
-		uint32 num_crusader_routines = uch.offset / 6;
-		for (uint32 i=0; i<32; ++i)
-		{
-			/*uint32 size =*/ ucfile->readUint16LE();
-			uint32 offset = ucfile->readUint32LE();
-			EventMap[offset] = i;
-#ifdef DISASM_DEBUG
-			pout << "Crusader Routine: " << i << ": " << Std::hex << Std::setw(4) << offset << Std::dec << endl;
-#endif
-		}
-#endif
-	}
 
-	void readOp(TempOp &op, Common::SeekableReadStream *ucfile, uint32 &dbg_symbol_offset, Std::vector<DebugSymbol> &debugSymbols, bool &done) override
-	{ readOpGeneric(op, ucfile, dbg_symbol_offset, debugSymbols, done, true); };
-	Node *readOp(Common::SeekableReadStream *ucfile, uint32 &dbg_symbol_offset, Std::vector<DebugSymbol> &debugSymbols, bool &done) override
-	{ return readOpGeneric(ucfile, dbg_symbol_offset, debugSymbols, done, true); };
-
+	static const char* const _event_names[];
 private:
 	static const char* const _intrinsics[512];
-	static const char* const _event_names[];
 };
 
 // By convention, last pushed argument goes first on the list.
@@ -73,7 +47,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Item::I_getMapArray(Item *)", // See TRIGGER::ordinal21 - stored in a variable 'mapNum'
 	"int16 Item::I_getStatus(Item *)",
 	"void Item::I_orStatus(Item *, uint16 flags)",
-	"int16 Item::I_equip(6 bytes)", // same coff as 0B5 - TODO: confirm this
+	"int16 Item::I_equip(6 bytes)", // same coff as 0B5
 	"byte Item::I_isOnScreen(Item *)", // called for gattling guns and camera
 	"byte Actor::I_isNPC(Item *)", // proably - actually checks is itemno < 256?
 	"byte Item::I_getZ(Item *)",
@@ -220,7 +194,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Item::I_getNPCNum(Item *)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
 	"void PaletteFaderProcess::I_jumpToAllBlack(void)",
 	// 0090
-	"void MusicProcess::I_musicStop(void)",
+	"void MusicProcess::I_stopMusic(void)",
 	"void I_setSomeMovieGlobal(void)", // sets some global (cleared by 93)
 	"void I_playFlic092(char *)", // same coff as 0A9
 	"void I_clearSomeMovieGlobal(void)", // clears some global (set by 91)
@@ -423,7 +397,7 @@ const char * const ConvertUsecodeCrusader::_event_names[] = {
 	"justMoved()",					// 0x12
 	"avatarStoleSomething(uword)",	// 0x13
 	"animGetHit()",					// 0x14
-	"guardianBark(word)",			// 0x15
+	"unhatch(word)",				// 0x15
 	"func16",						// 0x16
 	"func17",						// 0x17
 	"func18",						// 0x18
@@ -436,22 +410,6 @@ const char * const ConvertUsecodeCrusader::_event_names[] = {
 	"func1F",						// 0x1F
 	0
 };
-
-void ConvertUsecodeCrusader::readheader(Common::SeekableReadStream *ucfile, UsecodeHeader &uch, uint32 &curOffset) {
-	#ifdef DISASM_DEBUG
-	perr << Std::setfill('0') << Std::hex;
-	perr << "unknown1: " << Std::setw(4) << ucfile->readUint32LE() << endl; // unknown
-	uch.maxOffset = ucfile->readUint32LE() - 0x0C; // file size
-	perr << "maxoffset: " << Std::setw(4) << maxOffset << endl;
-	perr << "unknown2: " << Std::setw(4) << ucfile->readUint32LE() << endl; // unknown
-	curOffset = 0;
-	#else
-	ucfile->readUint32LE(); // unknown
-	uch._maxOffset = ucfile->readUint32LE() - 0x0C; // file size
-	ucfile->readUint32LE(); // unknown
-	curOffset = 0;
-	#endif
-}
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

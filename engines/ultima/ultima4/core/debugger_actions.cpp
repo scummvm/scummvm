@@ -176,7 +176,7 @@ bool DebuggerActions::jimmyAt(const Coords &coords) {
 
 	if (g_ultima->_saveGame->_keys) {
 		Tile *door = g_context->_location->_map->_tileSet->getByName("door");
-		ASSERT(door, "no door tile found in tileset");
+		assertMsg(door, "no door tile found in tileset");
 		g_ultima->_saveGame->_keys--;
 		g_context->_location->_map->_annotations->add(coords, door->getId());
 		g_screen->screenMessage("\nUnlocked!\n");
@@ -208,12 +208,12 @@ bool DebuggerActions::mixReagentsForSpellU4(int spell) {
 		}
 
 		// escape: put ingredients back and quit mixing
-		if (choice == '\033') {
+		if (choice == -1 || choice == '\033') {
 			ingredients.revert();
 			return true;
 		}
 
-		g_screen->screenMessage("%c\n", toupper(choice));
+		g_screen->screenMessage("\n");
 		if (!ingredients.addReagent((Reagent)(choice - 'a')))
 			g_screen->screenMessage("%cNone Left!%c\n", FG_GREY, FG_WHITE);
 		g_screen->screenMessage("Reagent: ");
@@ -295,7 +295,7 @@ bool DebuggerActions::openAt(const Coords &coords) {
 	}
 
 	Tile *floor = g_context->_location->_map->_tileSet->getByName("brick_floor");
-	ASSERT(floor, "no floor tile found in tileset");
+	assertMsg(floor, "no floor tile found in tileset");
 	g_context->_location->_map->_annotations->add(coords, floor->getId(), false, true)->setTTL(4);
 
 	g_screen->screenMessage("\nOpened!\n");

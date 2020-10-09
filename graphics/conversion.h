@@ -46,6 +46,22 @@ inline static void RGB2YUV(byte r, byte g, byte b, byte &y, byte &u, byte &v) {
 // TODO: generic YUV to RGB blit
 
 /**
+ * Blits a rectangle.
+ *
+ * @param dst			the buffer which will recieve the converted graphics data
+ * @param src			the buffer containing the original graphics data
+ * @param dstPitch		width in bytes of one full line of the dest buffer
+ * @param srcPitch		width in bytes of one full line of the source buffer
+ * @param w				the width of the graphics data
+ * @param h				the height of the graphics data
+ * @param bytesPerPixel	the number of bytes per pixel
+ */
+void copyBlit(byte *dst, const byte *src,
+               const uint dstPitch, const uint srcPitch,
+               const uint w, const uint h,
+               const uint bytesPerPixel);
+
+/**
  * Blits a rectangle from one graphical format to another.
  *
  * @param dst		the buffer which will recieve the converted graphics data

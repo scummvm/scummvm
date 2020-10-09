@@ -103,7 +103,7 @@ protected:
 	Widget		*_next;
 	bool		_hasFocus;
 	ThemeEngine::WidgetStateInfo _state;
-	Common::String _tooltip;
+	Common::U32String _tooltip;
 
 private:
 	uint16		_flags;
@@ -115,8 +115,8 @@ public:
 	static bool containsWidgetInChain(Widget *start, Widget *search);
 
 public:
-	Widget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip = nullptr);
-	Widget(GuiObject *boss, const Common::String &name, const char *tooltip = nullptr);
+	Widget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &tooltip = Common::U32String(""));
+	Widget(GuiObject *boss, const Common::String &name, const Common::U32String &tooltip = Common::U32String(""));
 	~Widget() override;
 
 	void init();
@@ -166,16 +166,17 @@ public:
 
 	bool useRTL() const;
 
-	uint8 parseHotkey(const Common::String &label);
-	Common::String cleanupHotkey(const Common::String &label);
+	uint8 parseHotkey(const Common::U32String &label);
+	Common::U32String cleanupHotkey(const Common::U32String &label);
 
 	bool hasTooltip() const { return !_tooltip.empty(); }
-	const Common::String &getTooltip() const { return _tooltip; }
-	void setTooltip(const Common::String &tooltip) { _tooltip = tooltip; }
+	const Common::U32String &getTooltip() const { return _tooltip; }
+	void setTooltip(const Common::U32String &tooltip) { _tooltip = tooltip; }
+	void setTooltip(const Common::String &tooltip) { _tooltip = Common::U32String(tooltip); }
 
 	virtual bool containsWidget(Widget *) const { return false; }
 
-	void read(Common::String str);
+	void read(const Common::U32String &str);
 
 protected:
 	void updateState(int oldFlags, int newFlags);
@@ -196,16 +197,16 @@ protected:
 /* StaticTextWidget */
 class StaticTextWidget : public Widget {
 protected:
-	Common::String			_label;
+	Common::U32String		_label;
 	Graphics::TextAlign		_align;
 	ThemeEngine::FontStyle	_font;
 public:
-	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &text, Graphics::TextAlign align, const char *tooltip = nullptr, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold);
-	StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::String &text, const char *tooltip = nullptr, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold);
+	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &text, Graphics::TextAlign align, const Common::U32String &tooltip = Common::U32String(""), ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold);
+	StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::U32String &text, const Common::U32String &tooltip = Common::U32String(""), ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold);
 	void setValue(int value);
-	void setLabel(const Common::String &label);
+	void setLabel(const Common::U32String &label);
 	void handleMouseEntered(int button) override	{ readLabel(); }
-	const Common::String &getLabel() const		{ return _label; }
+	const Common::U32String &getLabel() const		{ return _label; }
 	void setAlign(Graphics::TextAlign align);
 	Graphics::TextAlign getAlign() const		{ return _align; }
 	void readLabel() { read(_label); }
@@ -221,14 +222,15 @@ protected:
 	uint32	_cmd;
 	uint8	_hotkey;
 public:
-	ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, const char *tooltip = nullptr, uint32 cmd = 0, uint8 hotkey = 0);
-	ButtonWidget(GuiObject *boss, const Common::String &name, const Common::String &label, const char *tooltip = nullptr, uint32 cmd = 0, uint8 hotkey = 0);
+	ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(""), uint32 cmd = 0, uint8 hotkey = 0);
+	ButtonWidget(GuiObject *boss, const Common::String &name, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(""), uint32 cmd = 0, uint8 hotkey = 0);
 
 	void getMinSize(int &minWidth, int &minHeight) override;
 
 	void setCmd(uint32 cmd)				{ _cmd = cmd; }
 	uint32 getCmd() const				{ return _cmd; }
 
+	void setLabel(const Common::U32String &label);
 	void setLabel(const Common::String &label);
 
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
@@ -247,8 +249,8 @@ protected:
 /* DropdownButtonWidget */
 class DropdownButtonWidget : public ButtonWidget {
 public:
-	DropdownButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, const char *tooltip = nullptr, uint32 cmd = 0, uint8 hotkey = 0);
-	DropdownButtonWidget(GuiObject *boss, const Common::String &name, const Common::String &label, const char *tooltip = nullptr, uint32 cmd = 0, uint8 hotkey = 0);
+	DropdownButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(""), uint32 cmd = 0, uint8 hotkey = 0);
+	DropdownButtonWidget(GuiObject *boss, const Common::String &name, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(""), uint32 cmd = 0, uint8 hotkey = 0);
 
 	void handleMouseMoved(int x, int y, int button) override;
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
@@ -256,12 +258,12 @@ public:
 	void getMinSize(int &minWidth, int &minHeight) override;
 
 
-	void appendEntry(const Common::String &label, uint32 cmd);
+	void appendEntry(const Common::U32String &label, uint32 cmd);
 	void clearEntries();
 
 protected:
 	struct Entry {
-		Common::String label;
+		Common::U32String label;
 		uint32 cmd;
 	};
 	typedef Common::Array<Entry> EntryList;
@@ -282,8 +284,8 @@ protected:
 /* PicButtonWidget */
 class PicButtonWidget : public ButtonWidget {
 public:
-	PicButtonWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip = nullptr, uint32 cmd = 0, uint8 hotkey = 0);
-	PicButtonWidget(GuiObject *boss, const Common::String &name, const char *tooltip = nullptr, uint32 cmd = 0, uint8 hotkey = 0);
+	PicButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &tooltip = Common::U32String(""), uint32 cmd = 0, uint8 hotkey = 0);
+	PicButtonWidget(GuiObject *boss, const Common::String &name, const Common::U32String &tooltip = Common::U32String(""), uint32 cmd = 0, uint8 hotkey = 0);
 	~PicButtonWidget() override;
 
 	void setGfx(const Graphics::Surface *gfx, int statenum = kPicButtonStateEnabled);
@@ -307,8 +309,8 @@ class CheckboxWidget : public ButtonWidget {
 protected:
 	bool	_state;
 public:
-	CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, const char *tooltip = nullptr, uint32 cmd = 0, uint8 hotkey = 0);
-	CheckboxWidget(GuiObject *boss, const Common::String &name, const Common::String &label, const char *tooltip = nullptr, uint32 cmd = 0, uint8 hotkey = 0);
+	CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(""), uint32 cmd = 0, uint8 hotkey = 0);
+	CheckboxWidget(GuiObject *boss, const Common::String &name, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(""), uint32 cmd = 0, uint8 hotkey = 0);
 
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseEntered(int button) override	{ readLabel(); setFlags(WIDGET_HILITED); markAsDirty(); }
@@ -353,8 +355,8 @@ protected:
 	int _value;
 
 public:
-	RadiobuttonWidget(GuiObject *boss, int x, int y, int w, int h, RadiobuttonGroup *group, int value, const Common::String &label, const char *tooltip = nullptr, uint8 hotkey = 0);
-	RadiobuttonWidget(GuiObject *boss, const Common::String &name, RadiobuttonGroup *group, int value, const Common::String &label, const char *tooltip = nullptr, uint8 hotkey = 0);
+	RadiobuttonWidget(GuiObject *boss, int x, int y, int w, int h, RadiobuttonGroup *group, int value, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(""), uint8 hotkey = 0);
+	RadiobuttonWidget(GuiObject *boss, const Common::String &name, RadiobuttonGroup *group, int value, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(""), uint8 hotkey = 0);
 
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseEntered(int button) override	{ readLabel(); setFlags(WIDGET_HILITED); markAsDirty(); }
@@ -380,8 +382,8 @@ protected:
 	bool	_isDragging;
 	uint	_labelWidth;
 public:
-	SliderWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip = nullptr, uint32 cmd = 0);
-	SliderWidget(GuiObject *boss, const Common::String &name, const char *tooltip = nullptr, uint32 cmd = 0);
+	SliderWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &tooltip = Common::U32String(""), uint32 cmd = 0);
+	SliderWidget(GuiObject *boss, const Common::String &name, const Common::U32String &tooltip = Common::U32String(""), uint32 cmd = 0);
 
 	void setCmd(uint32 cmd)		{ _cmd = cmd; }
 	uint32 getCmd() const		{ return _cmd; }
@@ -412,8 +414,8 @@ protected:
 /* GraphicsWidget */
 class GraphicsWidget : public Widget {
 public:
-	GraphicsWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip = nullptr);
-	GraphicsWidget(GuiObject *boss, const Common::String &name, const char *tooltip = nullptr);
+	GraphicsWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &tooltip = Common::U32String(""));
+	GraphicsWidget(GuiObject *boss, const Common::String &name, const Common::U32String &tooltip = Common::U32String(""));
 	~GraphicsWidget() override;
 
 	void setGfx(const Graphics::Surface *gfx);

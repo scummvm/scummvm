@@ -4,7 +4,6 @@ MODULE_OBJS = \
 	bitmap.o \
 	console.o \
 	cursors.o \
-	detection.o \
 	dialogs.o \
 	graphics.o \
 	installer_archive.o \
@@ -12,6 +11,9 @@ MODULE_OBJS = \
 	livingbooks_code.o \
 	livingbooks_graphics.o \
 	livingbooks_lbx.o \
+	metaengine.o \
+	riven_metaengine.o \
+	myst_metaengine.o \
 	mohawk.o \
 	resource.o \
 	sound.o \
@@ -83,3 +85,13 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
+
+# Skip building the following objects if a static
+# module is enabled, because it already has the contents.
+ifneq ($(ENABLE_MOHAWK), STATIC_PLUGIN)
+DETECT_OBJS += $(MODULE)/myst_metaengine.o
+DETECT_OBJS += $(MODULE)/riven_metaengine.o
+endif

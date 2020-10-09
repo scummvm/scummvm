@@ -25,48 +25,8 @@
 #include "engines/advancedDetector.h"
 #include "common/config-manager.h"
 #include "common/file.h"
-#include "common/savefile.h"
 
-#include "pegasus/pegasus.h"
-
-namespace Pegasus {
-
-struct PegasusGameDescription {
-	ADGameDescription desc;
-};
-
-enum {
-	GF_DVD = (1 << 1)
-};
-
-bool PegasusEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsReturnToLauncher)
-		|| (f == kSupportsLoadingDuringRuntime)
-		|| (f == kSupportsSavingDuringRuntime);
-}
-
-bool PegasusEngine::isDemo() const {
-	return (_gameDescription->desc.flags & ADGF_DEMO) != 0;
-}
-
-bool PegasusEngine::isDVD() const {
-	return (_gameDescription->desc.flags & GF_DVD) != 0;
-}
-
-bool PegasusEngine::isDVDDemo() const {
-	return isDemo() && isDVD();
-}
-
-bool PegasusEngine::isOldDemo() const {
-	return isDemo() && !isDVD();
-}
-
-bool PegasusEngine::isWindows() const {
-	return _gameDescription->desc.platform == Common::kPlatformWindows;
-}
-
-} // End of namespace Pegasus
+#include "pegasus/detection.h"
 
 static const PlainGameDescriptor pegasusGames[] = {
 	{"pegasus", "The Journeyman Project: Pegasus Prime"},
@@ -131,9 +91,9 @@ static const PegasusGameDescription gameDescriptions[] = {
 } // End of namespace Pegasus
 
 
-class PegasusMetaEngine : public AdvancedMetaEngine {
+class PegasusMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	PegasusMetaEngine() : AdvancedMetaEngine(Pegasus::gameDescriptions, sizeof(Pegasus::PegasusGameDescription), pegasusGames) {
+	PegasusMetaEngineStatic() : AdvancedMetaEngineStatic(Pegasus::gameDescriptions, sizeof(Pegasus::PegasusGameDescription), pegasusGames) {
 	}
 
 	const char *getEngineId() const override {
@@ -147,62 +107,6 @@ public:
 	const char *getOriginalCopyright() const override {
 		return "The Journeyman Project: Pegasus Prime (C) Presto Studios";
 	}
-
-	bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-	SaveStateList listSaves(const char *target) const override;
-	int getMaximumSaveSlot() const override { return 999; }
-	void removeSaveState(const char *target, int slot) const override;
-	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
-bool PegasusMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves)
-		|| (f == kSupportsLoadingDuringStartup)
-		|| (f == kSupportsDeleteSave);
-}
-
-SaveStateList PegasusMetaEngine::listSaves(const char *target) const {
-	// The original had no pattern, so the user must rename theirs
-	// Note that we ignore the target because saves are compatible between
-	// all versions
-	Common::StringArray fileNames = Pegasus::PegasusEngine::listSaveFiles();
-
-	SaveStateList saveList;
-	for (uint32 i = 0; i < fileNames.size(); i++) {
-		// Isolate the description from the file name
-		Common::String desc = fileNames[i].c_str() + 8;
-		for (int j = 0; j < 4; j++)
-			desc.deleteLastChar();
-
-		saveList.push_back(SaveStateDescriptor(i, desc));
-	}
-
-	return saveList;
-}
-
-void PegasusMetaEngine::removeSaveState(const char *target, int slot) const {
-	// See listSaves() for info on the pattern
-	Common::StringArray fileNames = Pegasus::PegasusEngine::listSaveFiles();
-	g_system->getSavefileManager()->removeSavefile(fileNames[slot].c_str());
-}
-
-Common::KeymapArray PegasusMetaEngine::initKeymaps(const char *target) const {
-	return Pegasus::PegasusEngine::initKeymaps();
-}
-
-bool PegasusMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Pegasus::PegasusGameDescription *gd = (const Pegasus::PegasusGameDescription *)desc;
-
-	if (gd)
-		*engine = new Pegasus::PegasusEngine(syst, gd);
-
-	return (gd != 0);
-}
-
-#if PLUGIN_ENABLED_DYNAMIC(PEGASUS)
-	REGISTER_PLUGIN_DYNAMIC(PEGASUS, PLUGIN_TYPE_ENGINE, PegasusMetaEngine);
-#else
-	REGISTER_PLUGIN_STATIC(PEGASUS, PLUGIN_TYPE_ENGINE, PegasusMetaEngine);
-#endif
+REGISTER_PLUGIN_STATIC(PEGASUS_DETECTION, PLUGIN_TYPE_METAENGINE, PegasusMetaEngineStatic);

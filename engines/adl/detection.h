@@ -23,6 +23,8 @@
 #ifndef ADL_DETECTION_H
 #define ADL_DETECTION_H
 
+#include "engines/advancedDetector.h"
+
 namespace Adl {
 
 #define SAVEGAME_VERSION 0
@@ -62,13 +64,12 @@ enum GameVersion {
 	GAME_VER_HR1_PD
 };
 
-struct AdlGameDescription;
-
-Common::String getDiskImageName(const AdlGameDescription &adlDesc, byte volume);
-GameType getGameType(const AdlGameDescription &desc);
-GameVersion getGameVersion(const AdlGameDescription &desc);
-Common::Platform getPlatform(const AdlGameDescription &desc);
+struct AdlGameDescription {
+	ADGameDescription desc;
+	GameType gameType;
+	GameVersion version;
+};
 
 } // End of namespace Adl
 
-#endif
+#endif // ADL_DETECTION_H

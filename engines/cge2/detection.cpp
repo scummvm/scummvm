@@ -25,11 +25,9 @@
  * Copyright (c) 1994-1997 Janusz B. Wisniewski and L.K. Avalon
  */
 
-#include "cge2/cge2.h"
-#include "cge2/fileio.h"
 #include "engines/advancedDetector.h"
 #include "common/translation.h"
-#include "graphics/surface.h"
+#include "cge2/fileio.h"
 
 namespace CGE2 {
 
@@ -118,9 +116,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class CGE2MetaEngine : public AdvancedMetaEngine {
+class CGE2MetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	CGE2MetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(ADGameDescription), CGE2Games, optionsList) {
+	CGE2MetaEngineStatic() : AdvancedMetaEngineStatic(gameDescriptions, sizeof(ADGameDescription), CGE2Games, optionsList) {
 	}
 
 	const char *getEngineId() const override {
@@ -136,12 +134,6 @@ public:
 	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-	bool hasFeature(MetaEngineFeature f) const override;
-	int getMaximumSaveSlot() const override;
-	SaveStateList listSaves(const char *target) const override;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	void removeSaveState(const char *target, int slot) const override;
 };
 
 static ADGameDescription s_fallbackDesc = {
@@ -161,19 +153,19 @@ static const ADFileBasedFallback fileBasedFallback[] = {
 
 // This fallback detection looks identical to the one used for CGE. In fact, the difference resides
 // in the ResourceManager which handles a different archive format. The rest of the detection is identical.
-ADDetectedGame CGE2MetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
-	ADDetectedGame game = detectGameFilebased(allFiles, fslist, CGE2::fileBasedFallback);
+ADDetectedGame CGE2MetaEngineStatic::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+	ADDetectedGame game = detectGameFilebased(allFiles, CGE2::fileBasedFallback);
 
 	if (!game.desc)
 		return ADDetectedGame();
 
-	SearchMan.addDirectory("CGE2MetaEngine::fallbackDetect", fslist.begin()->getParent());
+	SearchMan.addDirectory("CGE2MetaEngineStatic::fallbackDetect", fslist.begin()->getParent());
 	ResourceManager *resman;
 	resman = new ResourceManager();
 	bool sayFileFound = resman->exist("CGE.SAY");
 	delete resman;
 
-	SearchMan.remove("CGE2MetaEngine::fallbackDetect");
+	SearchMan.remove("CGE2MetaEngineStatic::fallbackDetect");
 
 	if (!sayFileFound)
 		return ADDetectedGame();
@@ -181,123 +173,6 @@ ADDetectedGame CGE2MetaEngine::fallbackDetect(const FileMap &allFiles, const Com
 	return game;
 }
 
-bool CGE2MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc)
-		*engine = new CGE2::CGE2Engine(syst, desc);
-
-	return desc != 0;
-}
-
-bool CGE2MetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSimpleSavesNames);
-}
-
-int CGE2MetaEngine::getMaximumSaveSlot() const {
-	return 99;
-}
-
-SaveStateList CGE2MetaEngine::listSaves(const char *target) const {
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringArray filenames;
-	Common::String pattern = target;
-	pattern += ".###";
-
-	filenames = saveFileMan->listSavefiles(pattern);
-
-	SaveStateList saveList;
-	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
-		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(filename->c_str() + filename->size() - 3);
-
-		if (slotNum >= 0 && slotNum <= 99) {
-
-			Common::InSaveFile *file = saveFileMan->openForLoading(*filename);
-			if (file) {
-				CGE2::SavegameHeader header;
-
-				// Check to see if it's a ScummVM savegame or not
-				char buffer[kSavegameStrSize + 1];
-				file->read(buffer, kSavegameStrSize + 1);
-
-				if (!strncmp(buffer, kSavegameStr, kSavegameStrSize + 1)) {
-					// Valid savegame
-					if (CGE2::CGE2Engine::readSavegameHeader(file, header)) {
-						saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
-					}
-				} else {
-					// Must be an original format savegame
-					saveList.push_back(SaveStateDescriptor(slotNum, "Unknown"));
-				}
-
-				delete file;
-			}
-		}
-	}
-
-	// Sort saves based on slot number.
-	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
-	return saveList;
-}
-
-SaveStateDescriptor CGE2MetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(fileName);
-
-	if (f) {
-		CGE2::SavegameHeader header;
-
-		// Check to see if it's a ScummVM savegame or not
-		char buffer[kSavegameStrSize + 1];
-		f->read(buffer, kSavegameStrSize + 1);
-
-		bool hasHeader = !strncmp(buffer, kSavegameStr, kSavegameStrSize + 1) &&
-			CGE2::CGE2Engine::readSavegameHeader(f, header, false);
-		delete f;
-
-		if (!hasHeader) {
-			// Original savegame perhaps?
-			SaveStateDescriptor desc(slot, "Unknown");
-			return desc;
-		} else {
-			// Create the return descriptor
-			SaveStateDescriptor desc(slot, header.saveName);
-			desc.setThumbnail(header.thumbnail);
-			desc.setSaveDate(header.saveYear, header.saveMonth, header.saveDay);
-			desc.setSaveTime(header.saveHour, header.saveMinutes);
-
-			if (header.playTime) {
-				desc.setPlayTime(header.playTime * 1000);
-			}
-
-			// Slot 0 is used for the 'automatic save on exit' save in Soltys, thus
-			// we prevent it from being deleted or overwritten by accident.
-			desc.setDeletableFlag(slot != 0);
-			desc.setWriteProtectedFlag(slot == 0);
-
-			return desc;
-		}
-	}
-
-	return SaveStateDescriptor();
-}
-
-void CGE2MetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
-}
-
 } // End of namespace CGE2
 
-#if PLUGIN_ENABLED_DYNAMIC(CGE2)
-	REGISTER_PLUGIN_DYNAMIC(CGE2, PLUGIN_TYPE_ENGINE, CGE2::CGE2MetaEngine);
-#else
-	REGISTER_PLUGIN_STATIC(CGE2, PLUGIN_TYPE_ENGINE, CGE2::CGE2MetaEngine);
-#endif
+REGISTER_PLUGIN_STATIC(CGE2_DETECTION, PLUGIN_TYPE_METAENGINE, CGE2::CGE2MetaEngineStatic);

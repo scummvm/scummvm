@@ -32,10 +32,6 @@ namespace Dragons {
 #define DAT_80063a48 0x12d
 #define DAT_80063a40 0x12f
 #define DAT_80063bd0 0x133
-#define DAT_8006393c 0x21BF0
-#define DAT_80063938 0x21DAE
-#define DAT_80063e38 0x21E3E
-#define DAT_8006391c 0x475DA
 
 
 Minigame5::Minigame5(DragonsEngine *vm) : _vm(vm), _dat_800633e6(0) {}
@@ -348,12 +344,14 @@ void Minigame5::run() {
 					_vm->waitForFrames(0x3c);
 					pusherActor->updateSequence(0xb);
 					if (_dat_800633e6 == 0) {
-						_vm->_talk->loadText(DAT_8006393c, auStack2120, 1000);
-						_vm->_talk->displayDialogAroundPoint(auStack2120, (int)(short)(local_850 >> 3), 0xc, 0, 1, DAT_8006393c);
+						uint32 textId = _vm->getDialogTextId(0x21BF0);
+						_vm->_talk->loadText(textId, auStack2120, 1000);
+						_vm->_talk->displayDialogAroundPoint(auStack2120, (int)(short)(local_850 >> 3), 0xc, 0, 1, textId);
 						_dat_800633e6 = 1;
 					} else {
-						_vm->_talk->loadText(DAT_80063938, auStack2120, 1000);
-						_vm->_talk->displayDialogAroundPoint(auStack2120, (int)(short)(local_850 >> 3), 0xc, 0, 1, DAT_80063938);
+						uint32 textId = _vm->getDialogTextId(0x21DAE);
+						_vm->_talk->loadText(textId, auStack2120, 1000);
+						_vm->_talk->displayDialogAroundPoint(auStack2120, (int)(short)(local_850 >> 3), 0xc, 0, 1, textId);
 					}
 					_vm->waitForFrames(10);
 					local_10 = 1;
@@ -372,14 +370,14 @@ void Minigame5::run() {
 					pusherActor->updateSequence(0);
 					_vm->_dragonINIResource->getRecord(DAT_80063bd0 + -1)->actor->updateSequence(2);
 					_vm->waitForFrames(0x12);
-					_vm->_talk->loadText(DAT_80063e38, auStack2120, 1000);
-					_vm->_talk->displayDialogAroundPoint(auStack2120, 0xf, 2, 0x501, 0, DAT_80063e38);
-//						TODO	callMaybeResetData();
+					_vm->_talk->loadText(_vm->getDialogTextId(0x21E3E), auStack2120, 1000);
+					_vm->_talk->displayDialogAroundPoint(auStack2120, 0xf, 2, 0x501, 0, _vm->getDialogTextId(0x21E3E));
+					_vm->clearAllText();
 					_vm->_dragonINIResource->getRecord(DAT_80063bd0 + -1)->actor->updateSequence(3);
 					_vm->_dragonINIResource->getRecord(DAT_80063bd0 + -1)->actor->waitUntilFlag8And4AreSet();
 					pusherActor->updateSequence(7);
-					_vm->_talk->loadText(DAT_8006391c, auStack2120, 1000);
-					_vm->_talk->displayDialogAroundPoint(auStack2120, (int)(short)(local_850 >> 3), 0xc, 0, 1, DAT_8006391c);
+					_vm->_talk->loadText(_vm->getDialogTextId(0x475DA), auStack2120, 1000);
+					_vm->_talk->displayDialogAroundPoint(auStack2120, (int)(short)(local_850 >> 3), 0xc, 0, 1, _vm->getDialogTextId(0x475DA));
 					pusherActor->_flags = pusherActor->_flags | 0x1000;
 					local_10 = 2;
 					//local_48 = 1;
@@ -485,7 +483,7 @@ void Minigame5::run() {
 			_vm->waitForFrames(0x1e);
 			_vm->_dragonINIResource->getRecord(DAT_80063a40 + -1)->actor->clearFlag(ACTOR_FLAG_100);
 			LAB_8009157c:
-//			callMaybeResetData();
+			_vm->clearAllText();
 			flickerActor->updateSequence(0x15);
 			local_46 = 0;
 			//local_44 = 0;

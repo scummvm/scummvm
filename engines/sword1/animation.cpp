@@ -529,7 +529,7 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *
 			Video::VideoDecoder *psxDecoder = new Video::PSXStreamDecoder(Video::PSXStreamDecoder::kCD2x);
 			return new MoviePlayer(vm, textMan, resMan, system, psxDecoder, kVideoDecoderPSX);
 #else
-			GUI::MessageDialog dialog(Common::String::format(_("PSX stream cutscene '%s' cannot be played in paletted mode"), filename.c_str()), _("OK"));
+			GUI::MessageDialog dialog(Common::U32String::format(_("PSX stream cutscene '%s' cannot be played in paletted mode"), filename.c_str()), _("OK"));
 			dialog.runModal();
 			return 0;
 #endif
@@ -573,7 +573,7 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *
 	}
 
 	if (!vm->isPsx() || scumm_stricmp(sequenceList[id], "enddemo") != 0) {
-		Common::String buf = Common::String::format(_("Cutscene '%s' not found"), sequenceList[id]);
+		Common::U32String buf = Common::U32String::format(_("Cutscene '%s' not found"), sequenceList[id]);
 		GUI::MessageDialog dialog(buf, _("OK"));
 		dialog.runModal();
 	}

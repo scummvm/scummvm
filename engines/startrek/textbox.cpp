@@ -457,7 +457,8 @@ readjustScroll:
 		textboxSprite.dontDrawNextFrame();
 		_gfx->drawAllSprites();
 		//delete textBitmap;
-		textboxSprite.bitmap.reset();
+		delete textboxSprite.bitmap;
+		textboxSprite.bitmap = nullptr;
 		_gfx->delSprite(&textboxSprite);
 	}
 
@@ -517,7 +518,7 @@ TextBitmap *StarTrekEngine::initTextSprite(int *xoffsetPtr, int *yoffsetPtr, byt
 	*sprite = Sprite();
 	sprite->drawPriority = 15;
 	sprite->drawPriority2 = 8;
-	sprite->bitmap = SharedPtr<TextBitmap>(bitmap);	// This is deallocated explicitly at the end of showText()
+	sprite->bitmap = bitmap;	// This is deallocated explicitly at the end of showText()
 	sprite->textColor = textColor;
 
 	memset(bitmap->pixels, ' ', textHeight * TEXTBOX_WIDTH);
@@ -684,7 +685,7 @@ void StarTrekEngine::redrawTextInput() {
 	if (_textInputCursorChar != 0)
 		buf[_textInputCursorPos] = _textInputCursorChar;
 
-	drawTextLineToBitmap(buf, MAX_TEXT_INPUT_LEN, 4, 12, _textInputSprite.bitmap.get());
+	drawTextLineToBitmap(buf, MAX_TEXT_INPUT_LEN, 4, 12, _textInputSprite.bitmap);
 	_textInputSprite.bitmapChanged = true;
 	_gfx->drawAllSprites();
 }
@@ -849,7 +850,7 @@ void StarTrekEngine::initTextInputSprite(int16 textboxX, int16 textboxY, const C
 	const int16 height = row * 8 + 8;
 
 
-	_textInputSprite.bitmap = SharedPtr<Bitmap>(new Bitmap(width, height));
+	_textInputSprite.bitmap = new Bitmap(width, height);
 
 	_textInputSprite.bitmap->xoffset = width / 2;
 	if (textboxX + width / 2 >= SCREEN_WIDTH)
@@ -876,7 +877,7 @@ void StarTrekEngine::initTextInputSprite(int16 textboxX, int16 textboxY, const C
 	// Draw header text
 	for (int r = 0; r < row; r++) {
 		char *text = textBuf + r * TEXTBOX_WIDTH;
-		drawTextLineToBitmap(text, strlen(text), 4, r * 8 + 4, _textInputSprite.bitmap.get());
+		drawTextLineToBitmap(text, strlen(text), 4, r * 8 + 4, _textInputSprite.bitmap);
 	}
 
 	_textInputSprite.drawMode = 2;
@@ -892,7 +893,8 @@ void StarTrekEngine::cleanupTextInputSprite() {
 	_gfx->drawAllSprites();
 	_gfx->delSprite(&_textInputSprite);
 
-	_textInputSprite.bitmap.reset();
+	delete _textInputSprite.bitmap;
+	_textInputSprite.bitmap = nullptr;
 }
 
 } // End of namespace StarTrek

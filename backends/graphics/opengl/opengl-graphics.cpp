@@ -124,6 +124,13 @@ void OpenGLGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 			_cursor->enableLinearFiltering(enable);
 		}
 
+		// The overlay UI should also obey the filtering choice (managed via the Filter Graphics checkbox in Graphics Tab).
+		// Thus, when overlay filtering is disabled, scaling in OPENGL is done with GL_NEAREST (nearest neighbor scaling).
+		// It may look crude, but it should be crispier and it's left to user choice to enable filtering.
+		if (_overlay) {
+			_overlay->enableLinearFiltering(enable);
+		}
+
 		break;
 
 	case OSystem::kFeatureCursorPalette:
@@ -785,7 +792,7 @@ void OpenGLGraphicsManager::setCursorPalette(const byte *colors, uint start, uin
 	updateCursorPalette();
 }
 
-void OpenGLGraphicsManager::displayMessageOnOSD(const char *msg) {
+void OpenGLGraphicsManager::displayMessageOnOSD(const Common::U32String &msg) {
 #ifdef USE_OSD
 	_osdMessageChangeRequest = true;
 
@@ -796,8 +803,8 @@ void OpenGLGraphicsManager::displayMessageOnOSD(const char *msg) {
 #ifdef USE_OSD
 void OpenGLGraphicsManager::osdMessageUpdateSurface() {
 	// Split up the lines.
-	Common::Array<Common::String> osdLines;
-	Common::StringTokenizer tokenizer(_osdMessageNextData, "\n");
+	Common::Array<Common::U32String> osdLines;
+	Common::U32StringTokenizer tokenizer(_osdMessageNextData, "\n");
 	while (!tokenizer.empty()) {
 		osdLines.push_back(tokenizer.nextToken());
 	}
@@ -958,10 +965,14 @@ void OpenGLGraphicsManager::handleResizeImpl(const int width, const int height, 
 
 		_overlay = createSurface(_defaultFormatAlpha);
 		assert(_overlay);
-		// We always filter the overlay with GL_LINEAR. This assures it's
-		// readable in case it needs to be scaled and does not affect it
-		// otherwise.
-		_overlay->enableLinearFiltering(true);
+		// We should NOT always filter the overlay with GL_LINEAR. 
+		// In previous versions we always did use GL_LINEAR to assure the UI
+		// would be readable in case it needed to be scaled -- it would not affect it otherwise.
+		// However in modern devices due to larger screen size the UI display looks blurry
+		// when using the linear filtering scaling, and we got bug report(s) for it.
+		//   eg. https://bugs.scummvm.org/ticket/11742
+		// So, we now respect the choice for "Filter Graphics" made via ScummVM GUI (under Graphics Tab)
+		_overlay->enableLinearFiltering(_currentState.filtering);
 	}
 	_overlay->allocate(overlayWidth, overlayHeight);
 	_overlay->fill(0);

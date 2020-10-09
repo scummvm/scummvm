@@ -80,7 +80,7 @@ private:
 	int _introStep;
 	void introMovies_run();
 
-	bool showConfirmationDialog(const char *message, const char *confirmButton, const char *cancelButton);
+	bool showConfirmationDialog(const Common::U32String &message, const Common::U32String &confirmButton, const Common::U32String &cancelButton);
 
 	void drawButtonImages(const Common::U32String &text, MystAreaImageSwitch *area, Graphics::TextAlign align, uint16 highlightedIndex, uint16 disabledIndex) const;
 	void replaceButtonSubImageWithText(const Common::U32String &text, const Graphics::TextAlign &align, MystAreaImageSwitch *area,

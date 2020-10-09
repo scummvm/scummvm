@@ -82,6 +82,22 @@ public:
 	void convert420(Graphics::Surface *dst, LuminanceScale scale, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch);
 
 	/**
+	 * Convert a YUV420 image with Alpha component to an ARGB surface
+	 *
+	 * @param dst     the destination surface
+	 * @param scale   the scale of the luminance values
+	 * @param ySrc    the source of the y component
+	 * @param uSrc    the source of the u component
+	 * @param vSrc    the source of the v component
+	 * @param aSrc    the source of the a component
+	 * @param yWidth  the width of the y surface (must be divisible by 2)
+	 * @param yHeight the height of the y surface (must be divisible by 2)
+	 * @param yPitch  the pitch of the y surface
+	 * @param uvPitch the pitch of the u and v surfaces
+	 */
+	void convert420Alpha(Graphics::Surface *dst, LuminanceScale scale, const byte *ySrc, const byte *uSrc, const byte *vSrc, const byte *aSrc, int yWidth, int yHeight, int yPitch, int uvPitch);
+
+	/**
 	 * Convert a YUV410 image to an RGB surface
 	 *
 	 * Since the chroma has a very low resolution in 410, we perform bilinear scaling
@@ -107,10 +123,11 @@ private:
 	YUVToRGBManager();
 	~YUVToRGBManager();
 
-	const YUVToRGBLookup *getLookup(Graphics::PixelFormat format, LuminanceScale scale);
+	const YUVToRGBLookup *getLookup(Graphics::PixelFormat format, LuminanceScale scale, bool alphaMode = false);
 
 	YUVToRGBLookup *_lookup;
 	int16 _colorTab[4 * 256]; // 2048 bytes
+	bool _alphaMode;
 };
 
 } // End of namespace Graphics

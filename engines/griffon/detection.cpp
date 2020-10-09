@@ -21,10 +21,7 @@
  */
 
 #include "base/plugins.h"
-#include "common/config-manager.h"
 #include "engines/advancedDetector.h"
-
-#include "griffon/griffon.h"
 
 static const PlainGameDescriptor griffonGames[] = {
 	{"griffon", "The Griffon Legend"},
@@ -32,6 +29,7 @@ static const PlainGameDescriptor griffonGames[] = {
 };
 
 namespace Griffon {
+
 static const ADGameDescription gameDescriptions[] = {
 	{
 		"griffon",
@@ -39,17 +37,18 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("objectdb.dat", "ec5371da28f01ccf88980b32d9de2232", 27754),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NOMIDI)
 	},
 
 	AD_TABLE_END_MARKER
 };
+
 }
 
-class GriffonMetaEngine: public AdvancedMetaEngine {
+class GriffonMetaEngineStatic: public AdvancedMetaEngineStatic {
 public:
-	GriffonMetaEngine() : AdvancedMetaEngine(Griffon::gameDescriptions, sizeof(ADGameDescription), griffonGames) {
+	GriffonMetaEngineStatic() : AdvancedMetaEngineStatic(Griffon::gameDescriptions, sizeof(ADGameDescription), griffonGames) {
 	}
 
 	const char *getEngineId() const override {
@@ -60,37 +59,9 @@ public:
 		return "Griffon Engine";
 	}
 
-	int getMaximumSaveSlot() const override {
-		return ConfMan.getInt("autosave_period") ? 4 : 3;
-	}
-
 	const char *getOriginalCopyright() const override {
 		return "The Griffon Legend (c) 2005 Syn9 (Daniel Kennedy)";
 	}
-
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-
-	virtual int getAutosaveSlot() const override {
-		return 4;
-	}
 };
 
-bool Griffon::GriffonEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsReturnToLauncher) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
-}
-
-bool GriffonMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc)
-		*engine = new Griffon::GriffonEngine(syst);
-
-	return desc != nullptr;
-}
-
-#if PLUGIN_ENABLED_DYNAMIC(GRIFFON)
-REGISTER_PLUGIN_DYNAMIC(GRIFFON, PLUGIN_TYPE_ENGINE, GriffonMetaEngine);
-#else
-REGISTER_PLUGIN_STATIC(GRIFFON, PLUGIN_TYPE_ENGINE, GriffonMetaEngine);
-#endif
+REGISTER_PLUGIN_STATIC(GRIFFON_DETECTION, PLUGIN_TYPE_METAENGINE, GriffonMetaEngineStatic);

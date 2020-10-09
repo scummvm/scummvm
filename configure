@@ -169,12 +169,13 @@ _iconv=auto
 _tts=auto
 _gtk=auto
 _fribidi=auto
+_discord=auto
 _test_cxx11=no
 # Default option behavior yes/no
 _debug_build=auto
 _release_build=auto
 _optimizations=auto
-_use_cxx11=no
+_use_cxx11=yes
 _verbose_build=no
 _text_console=no
 _mt32emu=yes
@@ -209,6 +210,7 @@ _nasm=auto
 _optimization_level=
 _default_optimization_level=-O2
 _nuked_opl=yes
+_builtin_resources=yes
 # Default commands
 _ranlib=ranlib
 _strip=strip
@@ -239,6 +241,8 @@ PANDOC=""
 _pandocpath="$PATH"
 _pandocformat="default"
 _pandocext="default"
+# Detection features to be linked into executable or not
+_detection_features_static=yes
 # The following variables are automatically detected, and should not
 # be modified otherwise. Consider them read-only.
 _posix=no
@@ -263,6 +267,7 @@ add_feature vorbis "Vorbis file support" "_vorbis _tremor"
 add_feature zlib "zlib" "_zlib"
 add_feature lua "lua" "_lua"
 add_feature fribidi "FriBidi" "_fribidi"
+add_feature cxx11 "c++11" "_use_cxx11"
 add_feature test_cxx11 "Test C++11" "_test_cxx11"
 
 # Directories for installing ScummVM.
@@ -442,7 +447,7 @@ find_sdlconfig() {
 				echo $_sdlconfig
 				# Save the prefix
 				_sdlpath=$path_dir
-				if test `basename $path_dir` = bin ; then
+				if test `basename $path_dir` = bin || test `basename $path_dir` = sbin ; then
 					_sdlpath=`dirname $path_dir`
 				fi
 				# break at first sdl-config found in path
@@ -1020,6 +1025,8 @@ Game engines:
 $engines_help
 Optional Features:
   --enable-static          build a static binary instead of using shared objects
+  --enable-detection-static  build detection features into executable (default)
+  --enable-detection-dynamic build detection features into a library
   --enable-c++11           build as C++11 if the compiler allows that
   --disable-debug          disable building with debugging symbols
   --enable-Werror          treat warnings as errors
@@ -1063,6 +1070,8 @@ Optional Features:
                                             gles2 for forcing OpenGL ES 2
                            WARNING: only specify this manually if you know what
                            you are doing!
+  --no-builtin-resources   do not include additional resources (e.g. engine data, fonts)
+                           into the ScummVM binary
 
 Optional Libraries:
   --with-alsa-prefix=DIR   prefix where alsa is installed (optional)
@@ -1158,6 +1167,9 @@ Optional Libraries:
   --with-iconv-prefix=DIR    prefix where libiconv is installed (optional)
   --disable-iconv        disable libiconv encoding conversion library [autodetect]
 
+  --with-discord-prefix=DIR   prefix where discord-rpc is installed (optional)
+  --disable-discord       disable Discord rich presence integration [autodetect]
+
 Some influential environment variables:
   AR                 archiver command
   AS                 assembler command
@@ -1214,6 +1226,8 @@ for ac_option in $@; do
 	--enable-dependency-tracking)                        ;;
 	# End of ignored options.
 	--enable-static)              _static_build=yes      ;;
+	--enable-detection-static)    _detection_features_static=yes;;
+	--enable-detection-dynamic)   _detection_features_static=no;;
 	--disable-16bit)              _16bit=no              ;;
 	--enable-highres)             _highres=yes           ;;
 	--disable-highres)            _highres=no            ;;
@@ -1289,6 +1303,8 @@ for ac_option in $@; do
 	--disable-gtk)                _gtk=no                ;;
 	--enable-bink)                _bink=yes              ;;
 	--disable-bink)               _bink=no               ;;
+	--enable-discord)             _discord=yes           ;;
+	--disable-discord)            _discord=no            ;;
 	--opengl-mode=*)
 		_opengl_mode=`echo $ac_option | cut -d '=' -f 2`
 		;;
@@ -1425,6 +1441,11 @@ for ac_option in $@; do
 		ICONV_CFLAGS="-I$arg/include"
 		ICONV_LIBS="-L$arg/lib"
 		;;
+	--with-discord-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		DISCORD_CFLAGS="-I$arg/include"
+		DISCORD_LIBS="-L$arg/lib"
+		;;
 	--backend=*)
 		_backend=`echo $ac_option | cut -d '=' -f 2`
 		;;
@@ -1472,6 +1493,9 @@ for ac_option in $@; do
 		;;
 	--enable-tsan)
 		_enable_tsan=yes
+		;;
+	--no-builtin-resources)
+		_builtin_resources=no
 		;;
 	--with-sdl-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -1629,6 +1653,14 @@ androidsdl-x86_64)
 	_host_os=androidsdl
 	_host_cpu=x86_64
 	_host_alias=x86_64-linux-android
+	;;
+arm-vfp-riscos)
+	_host_os=riscos
+	_host_cpu=arm
+	_host_alias=arm-unknown-riscos
+	datarootdir='/\<ScummVM\$$Dir\>'
+	datadir='${datarootdir}/data'
+	docdir='${datarootdir}/docs'
 	;;
 arm-*riscos)
 	_host_os=riscos
@@ -2267,10 +2299,39 @@ if test "$_use_cxx11" = "yes" ; then
 	append_var CXXFLAGS "-std=c++11"
 fi
 echo $_use_cxx11
+define_in_config_if_yes "$_use_cxx11" 'USE_CXX11'
+
+#
+# Additional tests for C++11 features that may not be present
+#
+if test "$_use_cxx11" = "yes" ; then
+	# Check if initializer list is available
+	echo_n "Checking if C++11 initializer list is available... "
+	cat > $TMPC << EOF
+#include <initializer_list>
+#include <cstddef>
+class FOO {
+public:
+	FOO(std::initializer_list<int> list) : _size(list.size()) {}
+	size_t _size;
+};
+int main(int argc, char *argv[]) { return 0; }
+EOF
+	cc_check
+	if test "$TMPR" -eq 0; then
+		echo yes
+	else
+		echo no
+		define_in_config_if_yes yes 'NO_CXX11_INITIALIZER_LIST'
+	fi
+fi
 
 #
 # Determine extra build flags for debug and/or release builds
 #
+if test "$_debug_build" = auto && test "$_release_build" = yes; then
+	_debug_build=no
+fi
 if test "$_debug_build" != no; then
 	# debug mode not explicitly disabled -> compile with debug information
 	echo_n "Checking best debug mode... "
@@ -2618,6 +2679,9 @@ case $_host_os in
 		append_var LIBS "-lcitro3d"
 		;;
 	amigaos*)
+		if test "$_debug_build" = no; then
+			_optimization_level=-O2
+		fi
 		append_var LDFLAGS "-Wl,--export-dynamic"
 		append_var LDFLAGS "-L/sdk/local/newlib/lib"
 		# We have to use 'long' for our 4 byte typedef because AmigaOS already typedefs (u)int32
@@ -2627,24 +2691,6 @@ case $_host_os in
 		append_var CXXFLAGS "-Wno-format"
 		add_line_to_config_mk 'AMIGAOS = 1'
 		_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
-		_nuked_opl=no
-		;;
-	morphos*)
-		if test "$_debug_build" = no; then
-			_optimization_level=-O2
-		fi
-		append_var LDFLAGS "-Wl,--export-dynamic"
-		append_var LDFLAGS "-L/usr/local/lib"
-		append_var CXXFLAGS "-D__MORPHOS_SHAREDLIBS"
-		# We have to use 'long' for our 4 byte typedef because MorphOS already typedefs (u)int32
-		# as (unsigned) long, and consequently we'd get a compiler error otherwise.
-		type_4_byte='long'
-		# Supress format warnings as the long 4 byte causes noisy warnings.
-		append_var CXXFLAGS "-Wno-format"
-		add_line_to_config_mk 'MORPHOS = 1'
-		_port_mk="backends/platform/sdl/morphos/morphos.mk"
-		# for use SDL2
-		_sdlconfig=sdl2-config
 		_nuked_opl=no
 		;;
 	android)
@@ -2712,10 +2758,13 @@ case $_host_os in
 		# which will allow for calls larger than 32MB. The linker
 		# will discard the calls if they are not needed, but we
 		# need to ensure the compiler emits them in the first place.
+		# Also the executable has grown to a size where using -Os is necessary to avoid a
+		# 'virtual memory exhausted' error when running the executable.
 		case $_host_cpu in
 		powerpc*)
 			append_var CFLAGS "-mlongcall"
 			append_var CXXFLAGS "-mlongcall"
+			_optimization_level=-Os
 			;;
 		esac
 
@@ -2928,7 +2977,7 @@ EOF
 		append_var LIBS "-specs=ds_arm9.specs"
 		append_var LIBS "-lnds9"
 		;;
-	freebsd*)
+	freebsd* | openbsd*)
 		append_var LDFLAGS "-L/usr/local/lib"
 		append_var CXXFLAGS "-I/usr/local/include"
 		;;
@@ -2987,6 +3036,24 @@ EOF
 		append_var DEFINES "-DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		append_var DEFINES "-D_GNU_SOURCE"
 		append_var DEFINES "-D_ISOC11_SOURCE"
+		;;
+	morphos*)
+		if test "$_debug_build" = no; then
+			_optimization_level=-O2
+		fi
+		append_var LDFLAGS "-Wl,--export-dynamic"
+		append_var LDFLAGS "-L/usr/local/lib"
+		append_var CXXFLAGS "-D__MORPHOS_SHAREDLIBS"
+		# We have to use 'long' for our 4 byte typedef because MorphOS already typedefs (u)int32
+		# as (unsigned) long, and consequently we'd get a compiler error otherwise.
+		type_4_byte='long'
+		# Supress format warnings as the long 4 byte causes noisy warnings.
+		append_var CXXFLAGS "-Wno-format"
+		add_line_to_config_mk 'MORPHOS = 1'
+		_port_mk="backends/platform/sdl/morphos/morphos.mk"
+		# for use SDL2
+		_sdlconfig=sdl2-config
+		_nuked_opl=no
 		;;
 	msys)
 		echo ERROR: Using the MSYS shell in msys mode is not supported. Please use the MSYS shell in mingw mode instead.
@@ -3070,22 +3137,12 @@ EOF
 		;;
 	riscos)
 		define_in_config_if_yes yes 'RISCOS'
-		append_var LDFLAGS "-L$GCCSDK_INSTALL_ENV/lib"
-		append_var CXXFLAGS "-isystem $GCCSDK_INSTALL_ENV/include"
-		_pkgconfig=$GCCSDK_INSTALL_ENV/ro-pkg-config
-		_sdlpath=$GCCSDK_INSTALL_ENV/bin
-		_freetypepath=$GCCSDK_INSTALL_ENV/bin
-		_libcurlpath=$GCCSDK_INSTALL_ENV/bin
-		append_var CXXFLAGS "-march=armv3m"
-		append_var CXXFLAGS "-mtune=xscale"
 		append_var LDFLAGS "-static"
 		_optimization_level=-O2
-		append_var CXXFLAGS "-ffunction-sections"
-		append_var CXXFLAGS "-fdata-sections"
-		append_var LDFLAGS "-Wl,--gc-sections"
 		_port_mk="backends/platform/sdl/riscos/riscos.mk"
 		_pandoc=yes
 		_sdlconfig=sdl-config
+		_opengl_mode=none
 		;;
 	solaris*)
 		append_var DEFINES "-DSOLARIS"
@@ -3176,8 +3233,27 @@ if test -n "$_host"; then
 			;;
 		arm-linux|arm*-linux-gnueabi|arm-*-linux)
 			;;
+		arm-vfp-riscos)
+			append_var LDFLAGS "-L$GCCSDK_INSTALL_ENV/vfp/lib"
+			append_var CXXFLAGS "-isystem $GCCSDK_INSTALL_ENV/vfp/include"
+			_sdlpath=$GCCSDK_INSTALL_ENV/vfp/bin
+			_freetypepath=$GCCSDK_INSTALL_ENV/vfp/bin
+			_libcurlpath=$GCCSDK_INSTALL_ENV/vfp/bin
+			append_var CXXFLAGS "-march=armv6zk"
+			append_var CXXFLAGS "-mtune=cortex-a9"
+			append_var CXXFLAGS "-mfpu=vfp"
+			append_var LDFLAGS "-mfpu=vfp"
+			append_var ASFLAGS "-mfpu=vfp"
+			;;
 		arm-*riscos)
-			_opengl_mode=none
+			append_var LDFLAGS "-L$GCCSDK_INSTALL_ENV/lib"
+			append_var CXXFLAGS "-isystem $GCCSDK_INSTALL_ENV/include"
+			_pkgconfig=$GCCSDK_INSTALL_ENV/ro-pkg-config
+			_sdlpath=$GCCSDK_INSTALL_ENV/bin
+			_freetypepath=$GCCSDK_INSTALL_ENV/bin
+			_libcurlpath=$GCCSDK_INSTALL_ENV/bin
+			append_var CXXFLAGS "-march=armv3m"
+			append_var CXXFLAGS "-mtune=xscale"
 			_vorbis=no
 			;;
 		bfin*)
@@ -3243,7 +3319,6 @@ if test -n "$_host"; then
 			append_var CXXFLAGS "-I$RPI_ROOT/usr/include"
 			# This is so optional OpenGL ES includes are found.
 			append_var CXXFLAGS "-I$RPI_ROOT/opt/vc/include"
-			_savegame_timestamp=no
 			# We prefer SDL2 on the Raspberry Pi: acceleration now depends on it
 			# since SDL2 manages dispmanx/GLES2 very well internally.
 			# SDL1 is bit-rotten on this platform.
@@ -4032,7 +4107,7 @@ _mak_plugins='
 PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/ds/plugin.ld -mthumb-interwork -mfloat-abi=soft
 '
 		;;
-	freebsd*)
+	freebsd* | openbsd*)
 		_plugin_prefix="lib"
 		_plugin_suffix=".so"
 		append_var CXXFLAGS "-fPIC"
@@ -4142,6 +4217,12 @@ if test "$_dynamic_modules" = yes ; then
 	add_line_to_config_mk "PLUGIN_SUFFIX := $_plugin_suffix"
 fi
 
+#
+# Set up a define for detection to be used as static or not
+#
+define_in_config_if_yes "$_detection_features_static" "DETECTION_STATIC"
+echo_n "Checking if detection features building statically... "
+echo "$_detection_features_static"
 
 #
 # Check whether integrated MT-32 emulator support is requested
@@ -4221,7 +4302,7 @@ int main(void) { return 0; }
 EOF
 			cc_check -lsapi -lole32 && _tts=yes
 			;;
-		linux* | freebsd*)
+		linux* | freebsd* | openbsd*)
 			cat > $TMPC << EOF
 #include <speech-dispatcher/libspeechd.h>
 int main(void) { return 0; }
@@ -5406,13 +5487,19 @@ define_in_config_if_yes $_pandoc 'USE_PANDOC'
 # Check for FriBidi
 #
 echocheck "FriBidi"
+if test "$_pkg_config" = "yes" && $_pkgconfig --exists fribidi; then
+	append_var FRIBIDI_LIBS "`$_pkgconfig --libs fribidi`"
+	append_var FRIBIDI_CFLAGS "`$_pkgconfig --cflags fribidi`"
+else
+	append_var FRIBIDI_LIBS "-lfribidi"
+fi
 if test "$_fribidi" = auto ; then
 	_fribidi=no
 	cat > $TMPC << EOF
 #include <fribidi/fribidi.h>
 int main(void) { return 0; }
 EOF
-	cc_check $FRIBIDI_CFLAGS $FRIBIDI_LIBS -lfribidi && _fribidi=yes
+	cc_check $FRIBIDI_CFLAGS $FRIBIDI_LIBS && _fribidi=yes
 fi
 if test "$_fribidi" = yes ; then
 	append_var LIBS "$FRIBIDI_LIBS -lfribidi"
@@ -5440,6 +5527,25 @@ if test "$_pandocext" = "default"; then
 		_pandocext=".$_pandocformat"
 	fi
 fi
+
+#
+# Check for Discord
+#
+echocheck "Discord RPC"
+if test "$_discord" = auto ; then
+	_discord=no
+	cat > $TMPC << EOF
+#include <discord_rpc.h>
+int main(void) { Discord_Shutdown(); return 0; }
+EOF
+	cc_check $DISCORD_CFLAGS $DISCORD_LIBS -ldiscord-rpc && _discord=yes
+fi
+if test "$_discord" = yes ; then
+	append_var LIBS "$DISCORD_LIBS -ldiscord-rpc"
+	append_var INCLUDES "$DISCORD_CFLAGS"
+fi
+define_in_config_if_yes "$_discord" 'USE_DISCORD'
+echo "$_discord"
 
 #
 # Enable vkeybd / event recorder
@@ -5541,7 +5647,7 @@ if test "$_tts" = "no"; then
 	echo "no"
 else
 	case $_host_os in
-	linux* | freebsd*)
+	linux* | freebsd* | openbsd*)
 		echo "speech dispatcher"
 		_tts=yes
 		define_in_config_if_yes $_tts 'USE_SPEECH_DISPATCHER'
@@ -5586,6 +5692,11 @@ else
 	echo "$_updates"
 fi
 define_in_config_if_yes $_updates 'USE_UPDATES'
+
+#
+# Check whether to create a build with all resources files linked into the binary
+#
+define_in_config_if_yes "$_builtin_resources" 'BUILTIN_RESOURCES'
 
 #
 # Figure out installation directories
@@ -5655,7 +5766,11 @@ echo_n "Backend... "
 echo_n "$_backend"
 
 if test "$_sdl" = yes -a -n "$_sdlversion"; then
-	echo_n " ($_sdlversion)"
+	if test "$_backend" = sdl; then
+		echo_n " ($_sdlversion)"
+	else
+		echo_n " (SDL $_sdlversion)"
+	fi
 fi
 
 if test "$_nasm" = yes ; then
@@ -5713,10 +5828,10 @@ else
 fi
 
 #
-# Some last-minute backend specific stuff, executed
+# Some last-minute platform specific stuff, executed
 # after all of CXXFLAGS, LDFLAGS, LIBS etc. have been setup
 #
-case $_backend in
+case $_host_os in
 	3ds)
 		if test "$_freetype2" = yes -a "$_png" = yes; then
 			append_var LIBS "-lbz2"
@@ -5758,6 +5873,12 @@ case $_backend in
 		# all toolchain symbols in *our* libraries rather
 		# than pick up anything unhygenic from the Android libs.
 		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -llog -landroid -lGLESv1_CM"
+		;;
+	riscos)
+		append_var CXXFLAGS "-mno-poke-function-name"
+		append_var CXXFLAGS "-ffunction-sections"
+		append_var CXXFLAGS "-fdata-sections"
+		append_var LDFLAGS "-Wl,--gc-sections"
 		;;
 	n64)
 		# Move some libs down here, otherwise some symbols requires by libvorbis aren't found
@@ -6077,6 +6198,27 @@ endif
 EOF
 	fi
 done
+
+# Name which is suffixed to each detection plugin
+detectId="_DETECTION"
+
+echo "Creating engines/detection_table.h"
+cat > engines/detection_table.h << EOF
+/* This file is automatically generated by configure */
+/* DO NOT EDIT MANUALLY */
+// This file is being included by "base/plugins.cpp"
+EOF
+
+for engine in $_sorted_engines; do
+	if test "`get_engine_sub $engine`" = "no" ; then
+		j=`echo $engine | tr '[:lower:]' '[:upper:]'`
+		detectEngine="${j}${detectId}"
+		cat >> engines/detection_table.h << EOF
+LINK_PLUGIN($detectEngine)
+EOF
+	fi
+done
+
 
 echo "Creating engines/plugins_table.h"
 cat > engines/plugins_table.h << EOF

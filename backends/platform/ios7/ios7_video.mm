@@ -421,6 +421,8 @@ uint getSizeNextPOT(uint size) {
 - (id)initWithFrame:(struct CGRect)frame {
 	self = [super initWithFrame: frame];
 
+	_backgroundSaveStateTask = UIBackgroundTaskInvalid;
+
 #if defined(USE_SCALERS) || defined(USE_HQ_SCALERS)
 	InitScalers(565);
 #endif
@@ -1105,6 +1107,33 @@ uint getSizeNextPOT(uint size) {
 
 - (void)applicationResume {
 	[self addEvent:InternalEvent(kInputApplicationResumed, 0, 0)];
+}
+
+- (void)saveApplicationState {
+	[self addEvent:InternalEvent(kInputApplicationSaveState, 0, 0)];
+}
+
+- (void)clearApplicationState {
+	[self addEvent:InternalEvent(kInputApplicationClearState, 0, 0)];
+}
+
+- (void)restoreApplicationState {
+	[self addEvent:InternalEvent(kInputApplicationRestoreState, 0, 0)];
+}
+
+- (void) beginBackgroundSaveStateTask {
+	if (_backgroundSaveStateTask == UIBackgroundTaskInvalid) {
+		_backgroundSaveStateTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+			[self endBackgroundSaveStateTask];
+		}];
+	}
+}
+
+- (void) endBackgroundSaveStateTask {
+	if (_backgroundSaveStateTask != UIBackgroundTaskInvalid) {
+		[[UIApplication sharedApplication] endBackgroundTask: _backgroundSaveStateTask];
+		_backgroundSaveStateTask = UIBackgroundTaskInvalid;
+	}
 }
 
 @end

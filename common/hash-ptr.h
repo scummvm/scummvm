@@ -28,6 +28,15 @@
 namespace Common {
 
 /**
+ * @defgroup common_hashmap_ptr Hash table pointer
+ * @ingroup common_hashmap
+ *
+ * @brief Template for a HashMap pointer.
+ *
+ * @{
+ */
+
+/**
  * Partial specialization of the Hash functor to be able to use pointers as HashMap keys
  */
 template<typename T>
@@ -37,6 +46,8 @@ struct Hash<T *> {
 		return x + (x >> 3);
 	}
 };
+
+/** @} */
 
 } // End of namespace Common
 

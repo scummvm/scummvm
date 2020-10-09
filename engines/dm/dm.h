@@ -39,8 +39,7 @@
 #include "advancedDetector.h"
 
 #include "dm/console.h"
-
-struct ADGameDescription;
+#include "dm/detection.h"
 
 namespace DM {
 
@@ -58,42 +57,6 @@ class Timeline;
 class ProjExpl;
 class DialogMan;
 class SoundMan;
-
-enum OriginalSaveFormat {
-	kDMSaveFormatAcceptAny = -1,
-	kDMSaveFormatEndOfList = 0,
-	kDMSaveFormatNone = 0,
-	kDMSaveFormatAtari = 1,
-	kDMSaveFormatAmigaPC98FmTowns = 2,
-	kCSBSaveFormatAtari = 2,
-	kDMSaveFormatAppleIIgs = 3,
-	kDMSaveFormatAmiga36PC = 5,
-	kCSBSaveFormatAmigaPC98FmTowns = 5,
-	kDMSaveFormatTotal
-};
-
-enum OriginalSavePlatform {
-	kDMSavePlatformAcceptAny = -1,
-	kDMSavePlatformEndOfList = 0,
-	kDMSavePlatformNone = 0,
-	kDMSavePlatformAtariSt = 1, // @ C1_PLATFORM_ATARI_ST
-	kDMSavePlatformAppleIIgs = 2, // @ C2_PLATFORM_APPLE_IIGS
-	kDMSavePlatformAmiga = 3, // @ C3_PLATFORM_AMIGA
-	kDMSavePlatformPC98 = 5, // @ C5_PLATFORM_PC98
-	kDMSavePlatformX68000 = 6, // @ C6_PLATFORM_X68000
-	kDMSavePlatformFmTownsEN = 7, // @ C7_PLATFORM_FM_TOWNS_EN
-	kDMSavePlatformFmTownsJP = 8, // @ C8_PLATFORM_FM_TOWNS_JP
-	kDMSavePlatformPC = 9, // @ C9_PLATFORM_PC
-	kDMSavePlatformTotal
-};
-
-enum SaveTarget {
-	kDMSaveTargetAcceptAny = -1,
-	kDMSaveTargetEndOfList = 0,
-	kDMSaveTargetNone = 0,
-	kDMSaveTargetDM21 = 1,
-	kDMSaveTargetTotal
-};
 
 enum Direction {
 	kDMDirNorth = 0,
@@ -151,18 +114,6 @@ enum MapIndice {
 #define kDMSlotBoxInventoryFirstSlot 8  // @ C08_SLOT_BOX_INVENTORY_FIRST_SLOT
 #define kDMSlotBoxInventoryActionHand 9 // @ C09_SLOT_BOX_INVENTORY_ACTION_HAND
 #define kDMSlotBoxChestFirstSlot 38     // @ C38_SLOT_BOX_CHEST_FIRST_SLOT
-
-struct DMADGameDescription {
-	ADGameDescription _desc;
-
-	SaveTarget _saveTargetToWrite;
-	OriginalSaveFormat _origSaveFormatToWrite;
-	OriginalSavePlatform _origPlatformToWrite;
-
-	SaveTarget _saveTargetToAccept[kDMSaveTargetTotal + 1];
-	OriginalSaveFormat _saveFormatToAccept[kDMSaveFormatTotal + 1];
-	OriginalSavePlatform _origPlatformToAccept[kDMSavePlatformTotal + 1];
-};
 
 class Thing {
 public:

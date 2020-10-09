@@ -92,9 +92,6 @@ struct TransparentSurface : public Graphics::Surface {
 		return PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	}
 
-	void setColorKey(char r, char g, char b);
-	void disableColorKey();
-
 	/**
 	 @brief renders the surface to another surface
 	 @param target a pointer to the target surface. In most cases this is the framebuffer.

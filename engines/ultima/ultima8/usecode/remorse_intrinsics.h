@@ -41,7 +41,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_getMapArray, // See TRIGGER::ordinal21 - stored in a variable 'mapNum'
 	Item::I_getStatus,
 	Item::I_orStatus,
-	Item::I_equip, // void Intrinsic006(6 bytes) - TODO: confirm this
+	Item::I_equip, // void Intrinsic006(6 bytes)
 	Item::I_isOnScreen, //
 	Actor::I_isNPC, // byte Intrinsic008(Item *)
 	Item::I_getZ, // byte Intrinsic009(Item *)
@@ -49,18 +49,18 @@ Intrinsic RemorseIntrinsics[] = {
 	Actor::I_getUnkByte, // get something about npcdata - struct byte 0x63 (99)
 	Ultima8Engine::I_setAvatarInStasis, // void Intrinsic00C(2 bytes)
 	Item::I_getDirToItem, // byte Intrinsic00D(6 bytes)
-	Actor::I_turnToward, // TODO: Actor::I_turnToward(Actor *, direction, unk)
+	Actor::I_turnToward,
 	0, // TODO: VideoGump::I_playVideo(item, vidname, int16 sizex, int16 sizey)
 	// 0x010
 	Item::I_getQLo, // Based on having same coff as 02B
 	Actor::I_getMap, // int Intrinsic011(4 bytes)
-	MusicProcess::I_playMusic, // void Intrinsic012(2 bytes) TODO: Make sure the track list order is right (I don't think it is..)
+	MusicProcess::I_playMusic, // void Intrinsic012(2 bytes)
 	Item::I_getX, //int Intrinsic013(4 bytes)
 	Item::I_getY, //int Intrinsic014(4 bytes)
 	AudioProcess::I_playSFXCru,
 	Item::I_getShape,
 	Item::I_explode, // void Intrinsic017(8 bytes)
-	UCMachine::I_rndRange, // int16 Intrinsic018(4 bytes) // probably.. always called with 2 constants, then result compared to some number between
+	UCMachine::I_rndRange, // int16 Intrinsic018(4 bytes)
 	Item::I_legalCreateAtCoords, // byte Intrinsic019(14 bytes)
 	Item::I_andStatus, // void Intrinsic01A(6 bytes)
 	World::I_getControlledNPCNum,  // int16 Intrinsic01B(void)
@@ -188,7 +188,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	PaletteFaderProcess::I_jumpToAllBlack, // TODO: should also resume cycle process.
 	// 0x090
-	MusicProcess::I_musicStop, // void Intrinsic090(void)
+	MusicProcess::I_stopMusic, // void Intrinsic090(void)
 	0, // void Intrinsic091(void)
 	0, // TODO: I_playFlic(char *)? void Intrinsic092(void)
 	0, // void Intrinsic093(void)
@@ -200,10 +200,10 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_andStatus, // void Intrinsic099(6 bytes)
 	PaletteFaderProcess::I_jumpToNormalPalette, // TODO: should also stop cycle process?
 	PaletteFaderProcess::I_fadeFromBlack, // fade to game pal with number of steps
-	0, // TODO: PaletteFaderProcess::I_fadeFromBlackWithParam
+	PaletteFaderProcess::I_fadeFromBlack, // fade from black with nsteps and another unknown param
 	PaletteFaderProcess::I_fadeToBlack, // fade to black with number of steps
-	0, // TODO: PaletteFaderProcess::I_fadeToBlackWithParam
-	0, // TODO: PaletteFaderProcess::I_fadeToColor
+	PaletteFaderProcess::I_fadeToBlack, // fade to black with nsteps and another unknown param
+	PaletteFaderProcess::I_fadeToGivenColor,
 	// 0x0A0
 	Actor::I_setDead,
 	Item::I_getQLo, // based on same coff set as 02B
@@ -266,7 +266,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Actor::I_getLastAnimSet, // void Intrinsic0D7(4 bytes)
 	Actor::I_setDead,
 	Item::I_getQLo, // based on same coff set as 02B
-	0, // TODO: PaletteFaderProcess::I_setPalToAllGrey // sets all colors to 0x3F3F3F
+	PaletteFaderProcess::I_jumpToAllGrey,
 	Actor::I_setActivity, // void Intrinsic0DB(6 bytes)
 	Item::I_isOn,
 	Actor::I_getLastActivityNo, // void Intrinsic0DD(4 bytes)

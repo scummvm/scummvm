@@ -24,12 +24,22 @@
 #define BACKENDS_TEXT_TO_SPEECH_ABSTRACT_H
 
 #include "common/scummsys.h"
+#include "common/encoding.h"
 
 #if defined(USE_TTS)
 
 #include "common/array.h"
 namespace Common {
 
+
+/**
+ * @defgroup common_text_speech Text-to-speech Manager
+ * @ingroup common
+ *
+ * @brief The TTS module allows for speech synthesis.
+ *
+ * @{
+ */
 
 /**
  * Text to speech voice class.
@@ -152,15 +162,6 @@ public:
 	virtual ~TextToSpeechManager() {}
 
 	/**
-	 * Interrupts what's being said and says the given string
-	 *
-	 * @param str The string to say
-	 * @param charset The encoding of the string. If empty this is assumed to be the
-	 *        encoding used for the GUI.
-	 */
-	bool say(String str, String charset = "") { return say(str, INTERRUPT_NO_REPEAT, charset); }
-
-	/**
 	 * Says the given string
 	 *
 	 * @param str The string to say
@@ -175,10 +176,38 @@ public:
 	 *			the last string in the queue (or the string, that is currently
 	 *			being said if the queue is empty)
 	 *		DROP - does nothing if there is anything being said at the moment
-	 * @param charset The encoding of the string. If empty this is assumed to be the
-	 *        encoding used for the GUI.
 	 */
-	virtual bool say(String str, Action action, String charset = "") { return false; }
+	virtual bool say(const U32String &str, Action action) { return false; }
+
+	/**
+	 * Says the given string, but strings can have a custom charset here.
+	 * It will convert to UTF-32 before passing along to the intended method.
+	 */
+	bool say(const String &str, Action action, String charset = "UTF-8") {
+		uint32 *res = (uint32 *)Encoding::convert("UTF-32", charset, str);
+		U32String textToSpeak(res);
+		free(res);
+
+		return say(textToSpeak, action);
+	}
+
+	/**
+	 * Interrupts what's being said and says the given string
+	 *
+	 * @param str The string to say
+	 */
+	bool say(const U32String &str) { return say(str, INTERRUPT_NO_REPEAT); }
+
+	/**
+	 * Interrupts what's being said and says the given string
+	 *
+	 * @param str The string to say
+	 * @param charset The encoding of the string. It will be converted to UTF-32.
+	 *	              It will use UTF-8 by default.
+	 */
+	bool say(const String &str, String charset = "UTF-8") {
+		return say(str, INTERRUPT_NO_REPEAT, charset);
+	}
 
 	/**
 	 * Stops the speech
@@ -320,8 +349,10 @@ protected:
 	virtual void updateVoices() {};
 };
 
+/** @} */
+
 } // End of namespace Common
 
-#endif
+#endif	// USE_TTS
 
 #endif // BACKENDS_TEXT_TO_SPEECH_ABSTRACT_H

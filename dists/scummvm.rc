@@ -21,6 +21,8 @@ ID_GDF_XML             DATA    "dists/win32/scummvm.gdf.xml"
 scummclassic.zip       FILE    "gui/themes/scummclassic.zip"
 scummmodern.zip        FILE    "gui/themes/scummmodern.zip"
 scummremastered.zip    FILE    "gui/themes/scummremastered.zip"
+
+#ifdef BUILTIN_RESOURCES
 #ifdef USE_TRANSLATION
 translations.dat       FILE    "gui/themes/translations.dat"
 #endif
@@ -52,6 +54,9 @@ kyra.dat               FILE    "dists/engine-data/kyra.dat"
 #endif
 #if PLUGIN_ENABLED_STATIC(LURE)
 lure.dat               FILE    "dists/engine-data/lure.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(MACVENTURE)
+macventure.dat         FILE    "dists/engine-data/macventure.dat"
 #endif
 #if PLUGIN_ENABLED_STATIC(MORTEVIELLE)
 mort.dat               FILE    "dists/engine-data/mort.dat"
@@ -92,6 +97,7 @@ xeen.ccs               FILE    "dists/engine-data/xeen.ccs"
 #if PLUGIN_ENABLED_STATIC(AGI)
 pred.dic               FILE    "dists/pred.dic"
 #endif
+#endif
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION     SCUMMVM_VER_MAJOR,SCUMMVM_VER_MINOR,SCUMMVM_VER_PATCH,0
@@ -112,7 +118,7 @@ BEGIN
         BEGIN
             VALUE "Comments", "Look! A three headed monkey (TM)! .. Nice use of the TM!\0"
             VALUE "CompanyName", "scummvm.org\0"
-            VALUE "FileDescription", "ScummVM: A free implementation of various adventure game engines\0"
+            VALUE "FileDescription", "ScummVM: A free interpreter for numerous adventure games and role-playing games\0"
             VALUE "FileVersion", SCUMMVM_VERSION "\0"
             VALUE "InternalName", "scummvm\0"
             VALUE "LegalCopyright", "Copyright \xA9 2001-2020 The ScummVM Team\0"

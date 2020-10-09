@@ -203,8 +203,12 @@ public:
 		int xp = 0, int yp = 0);
 	bool glk_image_draw_scaled(winid_t win, const Graphics::Surface &image, uint transColor,
 		int xp, int yp, uint width, uint height);
+	bool glk_image_draw(winid_t win, const Common::String &image, int val1, int val2);
+	bool glk_image_draw_scaled(winid_t win, const Common::String &image,
+		int val1, int val2, uint width, uint height);
 
 	bool glk_image_get_info(uint image, uint *width, uint *height);
+	bool glk_image_get_info(const Common::String &name, uint *width, uint *height);
 
 	void glk_window_flow_break(winid_t win);
 

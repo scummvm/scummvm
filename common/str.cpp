@@ -125,6 +125,12 @@ String::String(char c)
 	_size = (c == 0) ? 0 : 1;
 }
 
+String::String(const U32String &str)
+	: _size(0), _str(_storage) {
+	_storage[0] = 0;
+	*this = String(str.encode());
+}
+
 String::~String() {
 	decRefCount(_extern._refCount);
 }
@@ -415,6 +421,15 @@ bool String::contains(const char *x) const {
 
 bool String::contains(char x) const {
 	return strchr(c_str(), x) != nullptr;
+}
+
+bool String::contains(uint32 x) const {
+	for (String::const_iterator itr = begin(); itr != end(); itr++) {
+		if (uint32(*itr) == x) {
+			return true;
+		}
+	}
+	return false;
 }
 
 uint64 String::asUint64() const {

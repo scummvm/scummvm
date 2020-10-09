@@ -101,14 +101,14 @@ struct ENTRANCE_STRUC {
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
-// FIXME: Avoid non-const global vars
+// These vars are reset upon engine destruction
 
 #ifdef DEBUG
 static bool g_ShowPosition = false;	// Set when showpos() has been called
 #endif
 
 int g_sceneCtr = 0;
-static int g_initialMyEscape;
+static int g_initialMyEscape = 0;
 
 static SCNHANDLE g_SceneHandle = 0;	// Current scene handle - stored in case of Save_Scene()
 
@@ -118,6 +118,15 @@ struct TP_INIT {
 	SCNHANDLE hTinselCode;		// Code
 	TINSEL_EVENT event;			// Triggering event
 };
+
+void ResetVarsScene() {
+	g_sceneCtr = 0;
+	g_initialMyEscape = 0;
+
+	g_SceneHandle = 0;
+
+	memset(&g_tempStruc, 0, sizeof(SCENE_STRUC));
+}
 
 const SCENE_STRUC *GetSceneStruc(const byte *pStruc) {
 	if (TinselVersion == TINSEL_V2)
@@ -214,8 +223,8 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 
 	// Scene handle
 	g_SceneHandle = scene;		// Save scene handle in case of Save_Scene()
-	LockMem(g_SceneHandle);		// Make sure scene is loaded
-	LockScene(g_SceneHandle);		// Prevent current scene from being discarded
+	_vm->_handle->LockMem(g_SceneHandle); // Make sure scene is loaded
+	_vm->_handle->LockScene(g_SceneHandle); // Prevent current scene from being discarded
 
 	if (TinselV2) {
 		// CdPlay() stuff
@@ -225,7 +234,7 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 		assert(i < 512);
 		cptr = FindChunk(scene, CHUNK_CDPLAY_FILENAME);
 		assert(cptr);
-		SetCdPlaySceneDetails(i, (const char *)cptr);
+		_vm->_handle->SetCdPlaySceneDetails((const char *)cptr);
 	}
 
 	// Find scene structure
@@ -246,7 +255,7 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 		InitPolygons(FROM_32(ss->hPoly), FROM_32(ss->numPoly), true);
 
 		// Initialize the actors for this scene
-		StartTaggedActors(FROM_32(ss->hTaggedActor), FROM_32(ss->numTaggedActor), false);
+		_vm->_actor->StartTaggedActors(FROM_32(ss->hTaggedActor), FROM_32(ss->numTaggedActor), false);
 
 		if (TinselV2)
 			// Returning from cutscene
@@ -259,10 +268,10 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 		InitPolygons(FROM_32(ss->hPoly), FROM_32(ss->numPoly), false);
 
 		// Initialize the actors for this scene
-		StartTaggedActors(FROM_32(ss->hTaggedActor), FROM_32(ss->numTaggedActor), true);
+		_vm->_actor->StartTaggedActors(FROM_32(ss->hTaggedActor), FROM_32(ss->numTaggedActor), true);
 
 		// Run the appropriate entrance code (if any)
-		es = (const ENTRANCE_STRUC *)LockMem(FROM_32(ss->hEntrance));
+		es = (const ENTRANCE_STRUC *)_vm->_handle->LockMem(FROM_32(ss->hEntrance));
 		for (i = 0; i < FROM_32(ss->numEntrance); i++) {
 			if (FROM_32(es->eNumber) == (uint)entry) {
 				if (es->hScript) {
@@ -306,18 +315,18 @@ static void LoadScene(SCNHANDLE scene, int entry) {
  */
 void EndScene() {
 	if (g_SceneHandle != 0) {
-		UnlockScene(g_SceneHandle);
+		_vm->_handle->UnlockScene(g_SceneHandle);
 		g_SceneHandle = 0;
 	}
 
-	KillInventory();	// Close down any open inventory
+	_vm->_dialogs->KillInventory(); // Close down any open inventory
 
 	DropPolygons();		// No polygons
-	DropScroll();	// No no-scrolls
+	_vm->_scroll->DropScroll(); // No no-scrolls
 	_vm->_bg->DropBackground();	// No background
 	DropMovers();		// No moving actors
-	DropCursor();		// No cursor
-	DropActors();		// No actor reels running
+	_vm->_cursor->DropCursor(); // No cursor
+	_vm->_actor->DropActors();      // No actor reels running
 	FreeAllTokens();	// No-one has tokens
 	FreeMostInterpretContexts();	// Only master script still interpreting
 
@@ -353,7 +362,7 @@ void PrimeScene() {
 	SetNoBlocking(false);
 	SetSysVar(SYS_SceneFxDimFactor, SysVar(SYS_DefaultFxDimFactor));
 
-	RestartCursor();	// Restart the cursor
+	_vm->_cursor->RestartCursor(); // Restart the cursor
 	if (!TinselV2)
 		EnableTags();		// Next scene with tags enabled
 
@@ -382,7 +391,7 @@ void StartNewScene(SCNHANDLE scene, int entry) {
 	if (TinselV2) {
 		TouchMoverReels();
 
-		LockMem(scene);	// Do CD change before PrimeScene
+		_vm->_handle->LockMem(scene); // Do CD change before PrimeScene
 	}
 
 	PrimeScene();	// Start up the standard stuff for the next scene.

@@ -3297,6 +3297,7 @@ void HotspotTickHandlers::droppingTorchAnimHandler(Hotspot &h) {
 			fire->flags |= 0x80;
 			fire->loadOffset = 4;
 			res.activateHotspot(0x418);
+			fire->loadOffset = 2;
 		}
 	}
 }

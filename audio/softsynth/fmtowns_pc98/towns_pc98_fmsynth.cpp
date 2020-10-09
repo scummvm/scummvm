@@ -115,7 +115,7 @@ TownsPC98_FmSynthOperator::TownsPC98_FmSynthOperator(const uint32 tickLength, co
 void TownsPC98_FmSynthOperator::keyOn() {
 	if (_keyOn)
 		return;
-	
+
 	_keyOn = true;
 	//if (_state == kEnvReady)
 		_phase = 0;
@@ -1125,7 +1125,7 @@ int TownsPC98_FmSynth::readBuffer(int16 *buffer, const int numSamples) {
 		return 0;
 	}
 	_mixerThreadLockCounter++;
-	
+
 	// This assumes that the numSamples parameter will be the same on most (if not on all) calls to readBuffer(),
 	// although I don't know whether this is true for all backends. There is no need to reallocate the temp
 	// buffer every time, unless its size needs to be increased.
@@ -1142,13 +1142,13 @@ int TownsPC98_FmSynth::readBuffer(int16 *buffer, const int numSamples) {
 		_renderBuffer = new int32[_renderBufferSize];
 		memset(_renderBuffer, 0, sizeof(int32) * _renderBufferSize);
 	}
-	
+
 	int outSamplesLeft = numSamples >> 1;
 	int inSamplesLeft = (int)(_predSmpCount * outSamplesLeft) + 1;
 
 	while (_ready && outSamplesLeft) {
 		int render = inSamplesLeft;
-	
+
 		for (int i = 0; i < 2; i++) {
 			if (_timers[i].enabled) {
 				if (!_timers[i].smpTillCb) {
@@ -1225,7 +1225,7 @@ int TownsPC98_FmSynth::readBuffer(int16 *buffer, const int numSamples) {
 
 		int consumed = 0;
 		// Convert rate to the mixer output rate. I don't want to leave that to the mixer, since doing
-		// it here allows me the best control over the precise invocation of the timer callbacks. 
+		// it here allows me the best control over the precise invocation of the timer callbacks.
 		for (; consumed < render + _numPending && outSamplesLeft; ++consumed) {
 			for (_rateConvCnt -= _outRateMult; _rateConvCnt <= 0 && outSamplesLeft; --outSamplesLeft) {
 				_rateConvCnt += _internalRate;
@@ -1259,7 +1259,7 @@ int TownsPC98_FmSynth::getRate() const {
 
 void TownsPC98_FmSynth::deinit() {
 	_mixer->stopHandle(_soundHandle);
-	_ready = false;	
+	_ready = false;
 	_timers[0].cb = _timers[1].cb = _timerProcIdle;
 }
 

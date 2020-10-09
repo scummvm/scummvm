@@ -1258,7 +1258,7 @@ bool Control::convertSaveGame(uint8 slot, char *desc) {
 	if (testSave) {
 		delete testSave;
 
-		Common::String msg = Common::String::format(_("Target new saved game already exists!\n"
+		Common::U32String msg = Common::U32String::format(_("Target new saved game already exists!\n"
 		                     "Would you like to keep the old saved game (%s) or the new one (%s)?\n"),
 		                     oldFileName, newFileName);
 		GUI::MessageDialog dialog0(msg, _("Keep the old one"), _("Keep the new one"));

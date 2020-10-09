@@ -735,6 +735,7 @@ void SmushPlayer::handleNewPalette(int32 subSize, Common::SeekableReadStream &b)
 }
 
 void smush_decode_codec1(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
+void smush_decode_codec20(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 
 void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int top, int width, int height) {
 	if ((height == 242) && (width == 384)) {
@@ -773,6 +774,10 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 			_codec47 = new Codec47Decoder(width, height);
 		if (_codec47)
 			_codec47->decode(_dst, src);
+		break;
+	case 20:
+		// Used by Full Throttle Classic (from Remastered)
+		smush_decode_codec20(_dst, src, left, top, width, height, _vm->_screenWidth);
 		break;
 	default:
 		error("Invalid codec for frame object : %d", codec);

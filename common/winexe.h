@@ -28,6 +28,15 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_winexe Windows resources
+ * @ingroup common
+ *
+ * @brief API for managing Windows resources.
+ *
+ * @{
+ */
+
 class SeekableReadStream;
 
 /** The default Windows resources. */
@@ -135,6 +144,8 @@ public:
 
 	static VersionHash *parseVersionInfo(SeekableReadStream *stream);
 };
+
+/** @} */
 
 } // End of namespace Common
 

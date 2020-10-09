@@ -49,7 +49,8 @@ private:
 	void describe_objects_in_current_room();
 	void func_set_test_result(FunctionState *func_state, bool value);
 	size_t num_objects_in_room(int room);
-	void eval_instruction(FunctionState *func_state, const Instruction *instr,
+	void eval_instruction(FunctionState *func_state,
+		const Function &func, uint functionOffset,
 		const Sentence *sentence);
 	void skip_whitespace(char **p);
 	void skip_non_whitespace(char **p);
@@ -62,6 +63,7 @@ private:
 	void read_input();
 	void doMovementVerb(uint verbNum);
 	bool isItemPresent(Item *item) const;
+	void weighInventory();
 
 protected:
 	void game_save();
@@ -83,7 +85,7 @@ protected:
 	 * is reached. Otherwise the commands instructions are skipped over and the
 	 * next test sequence (if there is one) is tried.
 	 */
-	void eval_function(const Function &func, const Sentence *sentence);
+	void eval_function(uint functionNum, const Sentence *sentence);
 
 	void parse_header(FileBuffer *fb) override {
 		GameData::parse_header(fb);

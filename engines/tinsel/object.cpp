@@ -35,13 +35,13 @@
 
 namespace Tinsel {
 
-// FIXME: Avoid non-const global vars
+// These vars are reset upon engine destruction
 
 // list of all objects
-static OBJECT *objectList = 0;
+static OBJECT *objectList = nullptr;
 
 // pointer to free object list
-static OBJECT *pFreeObjects = 0;
+static OBJECT *pFreeObjects = nullptr;
 
 #ifdef DEBUG
 // diagnostic object counters
@@ -299,7 +299,7 @@ void SortObjectList(OBJECT **pObjList) {
  */
 void GetAniOffset(SCNHANDLE hImg, int flags, int *pAniX, int *pAniY) {
 	if (hImg) {
-		const IMAGE *pImg = (const IMAGE *)LockMem(hImg);
+		const IMAGE *pImg = (const IMAGE *)_vm->_handle->LockMem(hImg);
 
 		// set ani X
 		*pAniX = (int16) FROM_16(pImg->anioffX);
@@ -371,7 +371,7 @@ OBJECT *InitObject(const OBJ_INIT *pInitTbl) {
 	if (pInitTbl->hObjImg) {
 		int aniX, aniY;		// objects animation offsets
 		PALQ *pPalQ= nullptr;	// palette queue pointer
-		const IMAGE *pImg = (const IMAGE *)LockMem(pInitTbl->hObjImg);	// handle to image
+		const IMAGE *pImg = (const IMAGE *)_vm->_handle->LockMem(pInitTbl->hObjImg); // handle to image
 
 		if (pImg->hImgPal) {
 			// allocate a palette for this object
@@ -439,7 +439,7 @@ void AnimateObjectFlags(OBJECT *pAniObj, int newflags, SCNHANDLE hNewImg) {
 
 		if (hNewImg) {
 			// get pointer to image
-			const IMAGE *pNewImg = (IMAGE *)LockMem(hNewImg);
+			const IMAGE *pNewImg = (IMAGE *)_vm->_handle->LockMem(hNewImg);
 
 			// setup new shape
 			pAniObj->width  = FROM_16(pNewImg->imgWidth);

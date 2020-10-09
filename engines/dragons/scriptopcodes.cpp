@@ -201,7 +201,7 @@ void ScriptOpcodes::executeScriptLoop(ScriptOpCall &scriptOpCall) {
 //		execOpcode(scriptOpCall);
 //	}
 //
-	while (scriptOpCall._code < scriptOpCall._codeEnd && !(scriptOpCall._result & 1)) {
+	while (scriptOpCall._code < scriptOpCall._codeEnd && !(scriptOpCall._result & 1) && !_vm->shouldQuit()) {
 
 		if (_vm->isFlagSet(ENGINE_FLAG_100000)) {
 			return;
@@ -959,7 +959,7 @@ void ScriptOpcodes::opCodeActorTalk(ScriptOpCall &scriptOpCall) {
 	} else {
 		_vm->_talk->FUN_8003239c(dialog,
 								 (int)(((uint)ini->actor->_x_pos - (uint)_vm->_scene->_camera.x) * 0x10000) >> 0x13,
-								 (int)(((ini->actor->_y_pos - ini->actor->getFrameYOffset()) - (uint)_vm->_scene->_camera.y) * 0x10000) >> 0x13,
+								 (int)((((ini->actor->_y_pos - ini->actor->getFrameYOffset()) - (uint)_vm->_scene->_camera.y) * 0x10000) >> 0x13) - 3,
 								 READ_LE_INT16(_vm->_dragonOBD->getFromOpt(iniId) + 6),
 								 1,
 								 ini->actor, startSequenceId, endSequenceId, textIndex);

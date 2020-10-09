@@ -83,9 +83,9 @@ static const ADGameDescription gameDescriptions[] = {
 
 } // End of namespace Gnap
 
-class GnapMetaEngine : public AdvancedMetaEngine {
+class GnapMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	GnapMetaEngine() : AdvancedMetaEngine(Gnap::gameDescriptions, sizeof(ADGameDescription), gnapGames) {
+	GnapMetaEngineStatic() : AdvancedMetaEngineStatic(Gnap::gameDescriptions, sizeof(ADGameDescription), gnapGames) {
 		_maxScanDepth = 3;
 	}
 
@@ -100,124 +100,6 @@ public:
 	const char *getOriginalCopyright() const override {
 		return "Gnap (C) Artech Digital Entertainment 1997";
 	}
-
-	bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-	int getMaximumSaveSlot() const override;
-	SaveStateList listSaves(const char *target) const override;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	void removeSaveState(const char *target, int slot) const override;
 };
 
-bool GnapMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSimpleSavesNames);
-}
-
-bool Gnap::GnapEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsReturnToLauncher) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
-}
-
-void GnapMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
-}
-
-int GnapMetaEngine::getMaximumSaveSlot() const { return 99; }
-
-SaveStateList GnapMetaEngine::listSaves(const char *target) const {
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringArray filenames;
-	Common::String saveDesc;
-	Common::String pattern = Common::String::format("%s.0##", target);
-	Gnap::GnapSavegameHeader header;
-
-	filenames = saveFileMan->listSavefiles(pattern);
-
-	SaveStateList saveList;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		const char *ext = strrchr(file->c_str(), '.');
-		int slot = ext ? atoi(ext + 1) : -1;
-
-		if (slot >= 0 && slot < getMaximumSaveSlot()) {
-			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
-
-			if (in) {
-				if (Gnap::GnapEngine::readSavegameHeader(in, header))
-					saveList.push_back(SaveStateDescriptor(slot, header._saveName));
-				delete in;
-			}
-		}
-	}
-
-	// Sort saves based on slot number.
-	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
-	return saveList;
-}
-
-SaveStateDescriptor GnapMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(fileName);
-	if (file) {
-		char saveIdentBuffer[5];
-		file->read(saveIdentBuffer, 5);
-
-		int32 version = file->readByte();
-		if (version > GNAP_SAVEGAME_VERSION) {
-			delete file;
-			return SaveStateDescriptor();
-		}
-
-		Common::String saveName;
-		char ch;
-		while ((ch = (char)file->readByte()) != '\0')
-			saveName += ch;
-
-		SaveStateDescriptor desc(slot, saveName);
-
-		if (version != 1) {
-			Graphics::Surface *thumbnail;
-			if (!Graphics::loadThumbnail(*file, thumbnail)) {
-				delete file;
-				return SaveStateDescriptor();
-			}
-			desc.setThumbnail(thumbnail);
-		}
-
-		int year = file->readSint16LE();
-		int month = file->readSint16LE();
-		int day = file->readSint16LE();
-		int hour = file->readSint16LE();
-		int minutes = file->readSint16LE();
-
-		desc.setSaveDate(year, month, day);
-		desc.setSaveTime(hour, minutes);
-
-		delete file;
-		return desc;
-	}
-
-	return SaveStateDescriptor();
-}
-
-bool GnapMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc) {
-		*engine = new Gnap::GnapEngine(syst, desc);
-	}
-	return desc != 0;
-}
-
-#if PLUGIN_ENABLED_DYNAMIC(GNAP)
-	REGISTER_PLUGIN_DYNAMIC(GNAP, PLUGIN_TYPE_ENGINE, GnapMetaEngine);
-#else
-	REGISTER_PLUGIN_STATIC(GNAP, PLUGIN_TYPE_ENGINE, GnapMetaEngine);
-#endif
+REGISTER_PLUGIN_STATIC(GNAP_DETECTION, PLUGIN_TYPE_METAENGINE, GnapMetaEngineStatic);

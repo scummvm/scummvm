@@ -155,7 +155,7 @@ long Scanner::ScanV2(byte *startFile, uint32 size) {
 
 	for (i = 0; i < size - 28; i++) {
 		num = L9WORD(startFile + i + 28) + 1;
-		if (i + num <= size && ((Chk[i + num] - Chk[i + 32]) & 0xff) == startFile[i + 0x1e]) {
+		if ((i + num) <= size && i < (size - 32) && ((Chk[i + num] - Chk[i + 32]) & 0xff) == startFile[i + 0x1e]) {
 			for (j = 0; j < 14; j++) {
 				d0 = L9WORD(startFile + i + j * 2);
 				if (j != 13 && d0 >= 0x8000 && d0 < 0x9000) {
@@ -743,7 +743,7 @@ bool Level9MetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &
 
 		// Read in the game data
 		Common::Array<byte> data;
-		data.resize(fileSize);
+		data.resize(fileSize + 1);
 		gameFile.read(&data[0], fileSize);
 		gameFile.close();
 

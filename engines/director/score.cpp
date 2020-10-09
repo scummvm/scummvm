@@ -452,7 +452,8 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 		g_director->setPalette(resolvePaletteId(currentPalette));
 	}
 
-	_window->render();
+	if (mode != kRenderNoWindowRender)
+		_window->render();
 
 	if (_frames[frameId]->_sound1 || _frames[frameId]->_sound2)
 		playSoundChannel(frameId);

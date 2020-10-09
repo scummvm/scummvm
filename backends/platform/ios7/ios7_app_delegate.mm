@@ -29,12 +29,14 @@
 	UIWindow *_window;
 	iOS7ScummVMViewController *_controller;
 	iPhoneView *_view;
+	BOOL _restoreState;
 }
 
 - (id)init {
 	if (self = [super init]) {
 		_window = nil;
 		_view = nil;
+		_restoreState = NO;
 	}
 	return self;
 }
@@ -76,6 +78,11 @@
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
 		iOS7_main(iOS7_argc, iOS7_argv);
 	});
+	
+	if (_restoreState)
+		[_view restoreApplicationState];
+	else
+		[_view clearApplicationState];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
@@ -84,6 +91,27 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
 	[_view applicationResume];
+}
+
+- (void)applicationDidEnterBackground:(UIApplication *)application {
+	// Start the background task before sending the application entered background event.
+	// This is because this event will be handled in a separate thread and it will likely
+	// no be started before we return from this function.
+	[[iOS7AppDelegate iPhoneView] beginBackgroundSaveStateTask];
+
+	[_view saveApplicationState];
+}
+
+- (BOOL)application:(UIApplication *)application shouldSaveApplicationState:(NSCoder *)coder {
+	return YES;
+}
+
+- (BOOL)application:(UIApplication *)application shouldRestoreApplicationState:(NSCoder *)coder {
+	return YES;
+}
+
+- (void)application:(UIApplication *)application didDecodeRestorableStateWithCoder:(NSCoder *)coder {
+	_restoreState = YES;
 }
 
 - (void)didRotate:(NSNotification *)notification {

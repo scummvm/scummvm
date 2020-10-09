@@ -633,7 +633,11 @@ Graphics::Surface *PlaybackFile::getScreenShot(int number) {
 
 void PlaybackFile::updateHeader() {
 	if (_mode == kWrite) {
+		StringArray dummy;
+		g_system->getSavefileManager()->updateSavefilesList(dummy);
 		_readStream = g_system->getSavefileManager()->openForLoading(_header.fileName);
+
+		assert (_readStream);
 	}
 	_readStream->seek(0);
 	skipHeader();

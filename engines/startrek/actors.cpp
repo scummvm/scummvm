@@ -24,6 +24,7 @@
 #include "common/memstream.h"
 
 #include "startrek/iwfile.h"
+#include "startrek/resource.h"
 #include "startrek/room.h"
 #include "startrek/startrek.h"
 
@@ -71,7 +72,7 @@ void StarTrekEngine::loadBanFile(const Common::String &name) {
 	debugC(kDebugGeneral, 7, "Load BAN file: %s.ban", name.c_str());
 	for (int i = 0; i < MAX_BAN_FILES; i++) {
 		if (!_banFiles[i]) {
-			_banFiles[i] = loadFile(name + ".ban");
+			_banFiles[i] = _resource->loadFile(name + ".ban");
 			_banFileOffsets[i] = 0;
 			return;
 		}
@@ -206,7 +207,8 @@ void StarTrekEngine::updateActorAnimations() {
 					Fixed16 newX = actor->granularPosX + actor->speedX;
 					Fixed16 newY = actor->granularPosY + actor->speedY;
 					if ((actor->field90 & 3) == 0) {
-						sprite->bitmap.reset();
+						delete sprite->bitmap;
+						sprite->bitmap = nullptr;
 						updateActorPositionWhileWalking(actor, (newX + 0.5).toInt(), (newY + 0.5).toInt());
 						actor->field92++;
 					}
@@ -222,7 +224,8 @@ void StarTrekEngine::updateActorAnimations() {
 						addAction(ACTION_FINISHED_WALKING, actor->finishedAnimActionParam & 0xff, 0, 0);
 					}
 
-					actor->sprite.bitmap.reset();
+					delete actor->sprite.bitmap;
+					actor->sprite.bitmap = nullptr;
 					updateActorPositionWhileWalking(actor, (actor->granularPosX + 0.5).toInt(), (actor->granularPosY + 0.5).toInt());
 					initStandAnim(i);
 				} else { // actor->iwSrcPosition != -1
@@ -446,7 +449,7 @@ void StarTrekEngine::drawActorToScreen(Actor *actor, const Common::String &_anim
 
 	actor->animFilename = _animName;
 	actor->animType = 2;
-	actor->animFile = SharedPtr<Common::MemoryReadStreamEndian>(loadFile(animFilename + ".anm"));
+	actor->animFile = SharedPtr<Common::MemoryReadStreamEndian>(_resource->loadFile(animFilename + ".anm"));
 	actor->numAnimFrames = actor->animFile->size() / 22;
 	actor->animFrame = 0;
 	actor->pos.x = x;
@@ -487,11 +490,11 @@ void StarTrekEngine::releaseAnim(Actor *actor) {
 	switch (actor->animType) {
 	case 0:
 	case 2:
-		actor->sprite.bitmap.reset();
 		actor->animFile.reset();
-		break;
+		// Fall through
 	case 1:
-		actor->sprite.bitmap.reset();
+		delete actor->sprite.bitmap;
+		actor->sprite.bitmap = nullptr;
 		break;
 	default:
 		error("Invalid anim type");
@@ -717,7 +720,7 @@ Bitmap *StarTrekEngine::loadAnimationFrame(const Common::String &filename, Fixed
 	        && (c == 'm' || c == 's' || c == 'k' || c == 'r')) {
 		if (c == 'm') {
 			// Mccoy has the "base" animations for all crewmen
-			bitmapToReturn = new Bitmap(loadBitmapFile(filename));
+			bitmapToReturn = new Bitmap(_resource->loadBitmapFile(filename));
 		} else {
 			// All crewman other than mccoy copy the animation frames from mccoy, change
 			// the colors of the uniforms, and load an "xor" file to redraw the face.
@@ -729,7 +732,7 @@ Bitmap *StarTrekEngine::loadAnimationFrame(const Common::String &filename, Fixed
 			if (bitmapToReturn == nullptr) {
 				Common::String mccoyFilename = filename;
 				mccoyFilename.setChar('m', 0);
-				Bitmap *bitmap = new Bitmap(loadBitmapFile(mccoyFilename));
+				Bitmap *bitmap = new Bitmap(_resource->loadBitmapFile(mccoyFilename));
 
 				uint16 width = bitmap->width;
 				uint16 height = bitmap->height;
@@ -775,7 +778,7 @@ Bitmap *StarTrekEngine::loadAnimationFrame(const Common::String &filename, Fixed
 				}
 
 				// Redraw face with xor file
-				Common::MemoryReadStreamEndian *xorFile = loadFile(filename + ".xor");
+				Common::MemoryReadStreamEndian *xorFile = _resource->loadFile(filename + ".xor");
 				xorFile->seek(0, SEEK_SET);
 				uint16 xoffset = bitmap->xoffset - xorFile->readUint16();
 				uint16 yoffset = bitmap->yoffset - xorFile->readUint16();
@@ -791,12 +794,13 @@ Bitmap *StarTrekEngine::loadAnimationFrame(const Common::String &filename, Fixed
 				}
 
 				delete xorFile;
+				delete bitmap;
 			}
 		}
 	} else {
 		// TODO: when loading a bitmap, it passes a different argument than is standard to
 		// the "file loading with cache" function...
-		bitmapToReturn = new Bitmap(loadBitmapFile(filename));
+		bitmapToReturn = new Bitmap(_resource->loadBitmapFile(filename));
 	}
 
 	if (scale != 1.0) {
@@ -1035,7 +1039,7 @@ void StarTrekEngine::showInventoryIcons(bool showItem) {
 		_itemIconSprite.pos.y = 10;
 		_itemIconSprite.drawPriority = 15;
 		_itemIconSprite.drawPriority2 = 8;
-		_itemIconSprite.setBitmap(loadBitmapFile(itemFilename));
+		_itemIconSprite.setBitmap(_resource->loadBitmapFile(itemFilename));
 
 		_inventoryIconSprite.pos.x = 46;
 	}
@@ -1046,7 +1050,7 @@ void StarTrekEngine::showInventoryIcons(bool showItem) {
 	_inventoryIconSprite.drawMode = 2;
 	_inventoryIconSprite.drawPriority = 15;
 	_inventoryIconSprite.drawPriority2 = 8;
-	_inventoryIconSprite.setBitmap(loadBitmapFile("inv00"));
+	_inventoryIconSprite.setBitmap(_resource->loadBitmapFile("inv00"));
 }
 
 bool StarTrekEngine::isObjectUnusable(int object, int action) {
@@ -1075,13 +1079,15 @@ void StarTrekEngine::hideInventoryIcons() {
 	if (_itemIconSprite.drawMode == 2) {
 		_gfx->delSprite(&_itemIconSprite);
 		_itemIconSprite.drawMode = 0;
-		_itemIconSprite.bitmap.reset();
+		delete _itemIconSprite.bitmap;
+		_itemIconSprite.bitmap = nullptr;
 	}
 
 	if (_inventoryIconSprite.drawMode == 2) {
 		_gfx->delSprite(&_inventoryIconSprite);
 		_inventoryIconSprite.drawMode = 0;
-		_inventoryIconSprite.bitmap.reset();
+		delete _inventoryIconSprite.bitmap;
+		_inventoryIconSprite.bitmap = nullptr;
 	}
 }
 
@@ -1163,7 +1169,7 @@ int StarTrekEngine::showInventoryMenu(int x, int y, bool restoreMouse) {
 		itemSprites[i].pos.y = itemPositions[i].y;
 		itemSprites[i].drawPriority = 15;
 		itemSprites[i].drawPriority2 = 8;
-		itemSprites[i].setBitmap(loadBitmapFile(itemNames[i]));
+		itemSprites[i].setBitmap(_resource->loadBitmapFile(itemNames[i]));
 	}
 
 	chooseMousePositionFromSprites(itemSprites, numItems, -1, 4);
@@ -1183,11 +1189,11 @@ int StarTrekEngine::showInventoryMenu(int x, int y, bool restoreMouse) {
 			itemIndex = getMenuButtonAt(itemSprites, numItems, mousePos.x, mousePos.y);
 			if (itemIndex != lastItemIndex) {
 				if (lastItemIndex != -1) {
-					drawMenuButtonOutline(itemSprites[lastItemIndex].bitmap.get(), 0);
+					drawMenuButtonOutline(itemSprites[lastItemIndex].bitmap, 0);
 					itemSprites[lastItemIndex].bitmapChanged = true;
 				}
 				if (itemIndex != -1) {
-					drawMenuButtonOutline(itemSprites[itemIndex].bitmap.get(), 15);
+					drawMenuButtonOutline(itemSprites[itemIndex].bitmap, 15);
 					itemSprites[itemIndex].bitmapChanged = true;
 				}
 				lastItemIndex = itemIndex;
@@ -1266,7 +1272,7 @@ exitWithoutSelection:
 
 	_sound->playSoundEffectIndex(0x10);
 	if (lastItemIndex >= 0)
-		drawMenuButtonOutline(itemSprites[lastItemIndex].bitmap.get(), 0);
+		drawMenuButtonOutline(itemSprites[lastItemIndex].bitmap, 0);
 
 	for (int i = 0; i < numItems; i++)
 		itemSprites[i].dontDrawNextFrame();
@@ -1274,7 +1280,8 @@ exitWithoutSelection:
 	_gfx->drawAllSprites();
 
 	for (int i = 0; i < numItems; i++) {
-		itemSprites[i].bitmap.reset();
+		delete itemSprites[i].bitmap;
+		itemSprites[i].bitmap = nullptr;
 		_gfx->delSprite(&itemSprites[i]);
 	}
 

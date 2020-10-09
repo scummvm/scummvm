@@ -3,8 +3,8 @@ MODULE := engines/toltecs
 MODULE_OBJS = \
 	animation.o \
 	console.o \
-	detection.o \
 	menu.o \
+	metaengine.o \
 	microtiles.o \
 	movie.o \
 	music.o \
@@ -27,3 +27,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o

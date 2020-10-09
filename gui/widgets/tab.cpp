@@ -73,8 +73,8 @@ void TabWidget::init() {
 	String leftArrow = g_gui.useRTL() ? ">" : "<";
 	String rightArrow = g_gui.useRTL() ? "<" : ">";
 
-	_navLeft = new ButtonWidget(this, x, y, _butW, _butH, leftArrow, nullptr, kCmdLeft);
-	_navRight = new ButtonWidget(this, x + _butW + 2, y, _butW, _butH, rightArrow, nullptr, kCmdRight);
+	_navLeft = new ButtonWidget(this, x, y, _butW, _butH, Common::U32String(leftArrow), Common::U32String(""), kCmdLeft);
+	_navRight = new ButtonWidget(this, x + _butW + 2, y, _butW, _butH, Common::U32String(rightArrow), Common::U32String(""), kCmdRight);
 
 	_navLeft->setEnabled(false);
 	_navRight->setEnabled(true);
@@ -112,7 +112,7 @@ uint16 TabWidget::getHeight() const {
 	return _h + _tabHeight;
 }
 
-int TabWidget::addTab(const String &title, const String &dialogName) {
+int TabWidget::addTab(const U32String &title, const String &dialogName) {
 	// Add a new tab page
 	Tab newTab;
 	newTab.title = title;
@@ -384,7 +384,7 @@ void TabWidget::reflowLayout() {
 }
 
 void TabWidget::drawWidget() {
-	Common::Array<Common::String> tabs;
+	Common::Array<Common::U32String> tabs;
 	Common::Array<int> widths;
 	for (int i = _firstVisibleTab; i <= _lastVisibleTab; ++i) {
 		tabs.push_back(_tabs[i].title);

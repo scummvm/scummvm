@@ -23,9 +23,15 @@
 #ifndef TOWNS_EUP_H
 #define TOWNS_EUP_H
 
+#define EUP_USE_MEMPOOL
+
 #include "audio/softsynth/fmtowns_pc98/towns_audio.h"
 #include "common/array.h"
 #include "common/func.h"
+
+#ifdef EUP_USE_MEMPOOL
+#include "common/memorypool.h"
+#endif
 
 class EuphonyBaseDriver {
 public:
@@ -191,6 +197,9 @@ private:
 		PendingEvent *next;
 	};
 
+#ifdef EUP_USE_MEMPOOL
+	Common::ObjectPool<PendingEvent> _pendingEventsPool;
+#endif
 	PendingEvent *_pendingEventsChain;
 
 	typedef Common::Functor0Mem<bool, EuphonyPlayer> EuphonyEvent;

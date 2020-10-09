@@ -30,8 +30,11 @@
 #include "common/savefile.h"
 #include "common/serializer.h"
 #include "common/util.h"
+
 #include "engines/engine.h"
+
 #include "graphics/surface.h"
+
 #include "access/animation.h"
 #include "access/bubble_box.h"
 #include "access/char.h"
@@ -47,6 +50,7 @@
 #include "access/scripts.h"
 #include "access/sound.h"
 #include "access/video.h"
+#include "access/detection.h"
 
 /**
  * This is the namespace of the Access engine.
@@ -58,20 +62,12 @@
  */
 namespace Access {
 
-enum {
-	GType_Amazon = 1,
-	GType_MartianMemorandum = 2,
-	GType_Noctropolis = 3
-};
-
 enum AccessDebugChannels {
 	kDebugPath      = 1 << 0,
 	kDebugScripts	= 1 << 1,
 	kDebugGraphics	= 1 << 2,
 	kDebugSound     = 1 << 3
 };
-
-struct AccessGameDescription;
 
 extern const char *const _estTable[];
 

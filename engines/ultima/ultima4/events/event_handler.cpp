@@ -219,7 +219,7 @@ KeyHandler *EventHandler::getKeyHandler() const {
 		return nullptr;
 
 	KeyHandlerController *khc = dynamic_cast<KeyHandlerController *>(_controllers.back());
-	ASSERT(khc != nullptr, "EventHandler::getKeyHandler called when controller wasn't a keyhandler");
+	assertMsg(khc != nullptr, "EventHandler::getKeyHandler called when controller wasn't a keyhandler");
 	if (khc == nullptr)
 		return nullptr;
 

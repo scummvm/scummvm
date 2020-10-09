@@ -93,9 +93,29 @@ bool AIScriptMcCoy::Update() {
 	case kGoalMcCoyNR01LayDrugged:
 		if (Global_Variable_Query(kVariableNR01GetUpCounter) >= 13) {
 			Global_Variable_Set(kVariableNR01GetUpCounter, 500);
-		} if (Global_Variable_Query(kVariableNR01GetUpCounter) > 0) {
+		}
+#if BLADERUNNER_ORIGINAL_BUGS
+		if (Global_Variable_Query(kVariableNR01GetUpCounter) > 0) {
 			Global_Variable_Decrement(kVariableNR01GetUpCounter, 1);
 		}
+#else
+		// Make it easier for McCoy to get up
+		// and possible at all for (our) high fps setting
+		if (Global_Variable_Query(kVariableNR01GetUpCounter) > 0) {
+			uint maxRandBound = 1;
+			if (Global_Variable_Query(kVariableNR01GetUpCounter) < 13) {
+				if (_vm->_framesPerSecondMax) {
+					maxRandBound = 4;
+				} else {
+					maxRandBound = 2;
+				}
+			}
+
+			if ((Random_Query(1, maxRandBound)) == 1) {
+				Global_Variable_Decrement(kVariableNR01GetUpCounter, 1);
+			}
+		}
+#endif
 		break;
 
 	case kGoalMcCoyNR04PassOut:
@@ -343,7 +363,6 @@ int AIScriptMcCoy::GetFriendlinessModifierIfGetsClue(int otherActorId, int clueI
 
 bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	unsigned int affectionTowards;
-
 	switch (newGoalNumber) {
 	case kGoalMcCoyDefault:
 		return true;
@@ -386,6 +405,7 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		} else {
 			_animationState = 53;
 			_animationFrame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
+			// redundant?
 			Actor_Set_Invisible(kActorMcCoy, false);
 		}
 		return true;
@@ -1576,6 +1596,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		break;
 
 	case 9:
+		// fall through
 	case 12:
 		if (_animationState < 3 || _animationState > 12) {
 			_animationState = 13;
@@ -1589,6 +1610,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		break;
 
 	case 10:
+		// fall through
 	case 13:
 		if (_animationState < 3 || _animationState > 12) {
 			_animationState = 13;
@@ -1602,6 +1624,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		break;
 
 	case 11:
+		// fall through
 	case 14:
 		if (_animationState < 3 || _animationState > 12) {
 			_animationState = 13;
@@ -1820,11 +1843,13 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		}
 		break;
 	case kAnimationModeClimbUp:
+		// fall through
 	case kAnimationModeCombatClimbUp:
 		_animationState = 42;
 		_animationFrame = 0;
 		break;
 	case kAnimationModeClimbDown:
+		// fall through
 	case kAnimationModeCombatClimbDown:
 		_animationState = 43;
 		_animationFrame = 0;
@@ -1881,24 +1906,19 @@ void AIScriptMcCoy::fallDown() {
 }
 
 void AIScriptMcCoy::UG15fall() {
-	if ( Actor_Query_Which_Set_In(kActorMcCoy) == kSetUG15
-	 &&  Actor_Query_Goal_Number(kActorMcCoy) != kGoalMcCoyUG15Fall
+	if (Actor_Query_Which_Set_In(kActorMcCoy) == kSetUG15
+	 && Actor_Query_Goal_Number(kActorMcCoy) != kGoalMcCoyUG15Fall
 	 && !Game_Flag_Query(kFlagUG15BridgeBroken)
 	) {
 		float x, y, z;
 		Actor_Query_XYZ(kActorMcCoy, &x, &y, &z);
-		if ( 220.0f > z
-		 && -210.0f < x
-		 &&  -70.0f > x
-		) {
+		if (z < 220.0f && -210.0f < x && x < -70.0f) {
 			Game_Flag_Set(kFlagUG15BridgeBroken);
 			Scene_Loop_Set_Default(3); // kUG15LoopMainLoopBridgeBroken
 			Scene_Loop_Start_Special(kSceneLoopModeOnce, 2, true); // kUG15LoopBridgeBreaks
 			Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyUG15Fall);
 			Actor_Query_XYZ(kActorFreeSlotA, &x, &y, &z);
-			if (-200.0 < x
-			 && -62.0f > x
-			) {
+			if (-200.0 < x && x < -62.0f) {
 				Actor_Set_Goal_Number(kActorFreeSlotA, kGoalFreeSlotAUG15Fall);
 			}
 		} else {

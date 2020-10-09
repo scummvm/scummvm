@@ -56,6 +56,7 @@
 #include "common/config-manager.h"
 
 #include "backends/audiocd/default/default-audiocd.h"
+#include "backends/events/default/default-events.h"
 #include "backends/mutex/pthread/pthread-mutex.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
@@ -301,45 +302,121 @@ void *OSystem_Android::audioThreadFunc(void *arg) {
 	return 0;
 }
 
+//
+// When launching ScummVM (from ScummVMActivity) order of business is as follows:
+// 1. scummvm_main() (base/main.cpp)
+// 1.1. call system.initBackend() (from scummvm_main() (base/main.cpp))
+//       According to comments in main.cpp:
+//         "Init the backend. Must take place after all config data (including the command line params) was read."
+// 1.2. call setupGraphics(system); (from scummvm_main() (base/main.cpp))
+// 1.3. call launcherDialog() (from scummvm_main() (base/main.cpp))
+//         Upon calling launcherDialog() the transient domain configuration options are cleared!
+//       According to comments in main.cpp:
+//         "Those that affect the graphics mode and the others (like bootparam etc.) should not blindly be passed to the first game launched from the launcher."
 void OSystem_Android::initBackend() {
 	ENTER();
 
 	_main_thread = pthread_self();
 
+	// Warning: ConfMan.registerDefault() can be used for a Session of ScummVM
+	//          but:
+	//              1. The values will NOT persist to storage
+	//                 ie. they won't get saved to scummvm.ini
+	//              2. The values will NOT be reflected on the GUI
+	//                 and they cannot be recovered after exiting scummvm and re-launching
+	//          Also, if after a ConfMan.registerDefault(), we subsequently use ConfMan.hasKey()
+	//          here or anywhere else in ScummVM, it WILL NOT return true.
+	//			As noted in ConfigManager::hasKey() implementation: (common/config_manager.cpp)
+	//			// Search the domains in the following order:
+	//              // 1) the transient domain,
+	//              // 2) the active game domain (if any),
+	//              // 3) the application domain.
+	//         -->  // The defaults domain is explicitly *not* checked. <--
+	//
+	// So for at least some of these keys,
+	// we need to additionally check with hasKey() if they are persisted
+	// and set them explicitly that way.
+	// TODO Maybe the registerDefault only has meaning for "savepath"
+	//      and similar key/values retrieved from "Command Line"
+	//      so that they won't get "nuked"
+	//      and maintained for the duration ScummVM app session (until we exit the app)
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", true);
+	ConfMan.registerDefault("filtering", false);
 	ConfMan.registerDefault("touchpad_mouse_mode", true);
 	ConfMan.registerDefault("onscreen_control", true);
-	// The swap_menu_and_back is a legacy configuration key
+	ConfMan.registerDefault("autosave_period", 0);
+
+	// explicitly set this, since fullscreen cannot be changed from GUI
+	// and for Android it should be persisted (and ConfMan.hasKey("fullscreen") check should return true for it)
+	// Also in Options::dialogBuild() (gui/options.cpp), since Android does not have kFeatureFullscreenMode (see hasFeature() below)
+	//      the state of the checkbox in the GUI is set to true (and disabled)
+	ConfMan.setBool("fullscreen", true);
+
+	// Aspect ratio can be changed from the GUI.
+	// However we set it explicitly here (in addition to the registerDefault command above)
+	//         if it's not already set in the persistent config file
+	if (!ConfMan.hasKey("aspect_ratio")) {
+		ConfMan.setBool("aspect_ratio", true);
+	}
+
+	if (!ConfMan.hasKey("filtering")) {
+		ConfMan.setBool("filtering", false);
+	}
+
+	// Note: About the stretch mode setting
+	//       If not explicitly set in the config file
+	//       the default used by OSystem::setStretchMode() (common/system.h)
+	//       is the one returned by getDefaultStretchMode() (backends/graphics/opengl-graphics.cpp)
+	//       which currently is STRETCH_FIT
+
+	if (!ConfMan.hasKey("touchpad_mouse_mode")) {
+		ConfMan.setBool("touchpad_mouse_mode", true);
+	}
+	_touchpad_mode = ConfMan.getBool("touchpad_mouse_mode");
+
+	if (!ConfMan.hasKey("onscreen_control")) {
+		ConfMan.setBool("onscreen_control", true);
+	}
+	JNI::showKeyboardControl(ConfMan.getBool("onscreen_control"));
+
+	if (!ConfMan.hasKey("autosave_period")) {
+		ConfMan.setInt("autosave_period", 0);
+	}
+
+	// The swap_menu_and_back is a deprecated configuration key
 	// It is no longer relevant, after introducing the keymapper functionality
 	// since the behaviour of the menu and back buttons is now handled by the keymapper.
-	// The key is thus registered to default to a "false" value
-	ConfMan.registerDefault("swap_menu_and_back", false);
+	// We now ignore it completely
 
-	ConfMan.registerDefault("autosave_period", 0);
 	ConfMan.setBool("FM_high_quality", false);
 	ConfMan.setBool("FM_medium_quality", true);
 
+	// We need a relaxed delay for the remapping timeout since handling touch interface and virtual keyboard can be slow
+	// and especially in some occasions when we need to pull down (hide) the keyboard and map a system key (like the AC_Back) button.
+	// 8 seconds should be enough
+	ConfMan.registerDefault("remap_timeout_delay_ms", 8000);
+	if (!ConfMan.hasKey("remap_timeout_delay_ms")) {
+		ConfMan.setInt("remap_timeout_delay_ms", 8000);
+	}
 
 	if (!ConfMan.hasKey("browser_lastpath")) {
-		// TODO remove the debug message eventually
-		LOGD("Setting Browser Lastpath to root");
 		ConfMan.set("browser_lastpath", "/");
 	}
 
-	if (ConfMan.hasKey("touchpad_mouse_mode"))
-		_touchpad_mode = ConfMan.getBool("touchpad_mouse_mode");
-	else
-		ConfMan.setBool("touchpad_mouse_mode", true);
-
-	if (ConfMan.hasKey("onscreen_control"))
-		JNI::showKeyboardControl(ConfMan.getBool("onscreen_control"));
-	else
-		ConfMan.setBool("onscreen_control", true);
-
 	// BUG: "transient" ConfMan settings get nuked by the options
 	// screen. Passing the savepath in this way makes it stick
-	// (via ConfMan.registerDefault)
+	// (via ConfMan.registerDefault() which is called from DefaultSaveFileManager constructor (backends/saves/default/default-saves.cpp))
+	// Note: The aforementioned bug is probably the one reported here:
+	//  https://bugs.scummvm.org/ticket/3712
+	//  and maybe here:
+	//  https://bugs.scummvm.org/ticket/7389
+	// However, we do NOT set the savepath key explicitly for ConfMan
+	//          and thus the savepath will only be persisted as "default" config
+	//          for the rest of the app session (until exit).
+	//          It will NOT be reflected on the GUI, if it's not set explicitly by the user there
+	// TODO Why do we need it not shown on the GUI though?
+	//      Btw, this is a ScummVM thing, the "defaults" do not show they values on our GUI)
 	_savefileManager = new DefaultSaveFileManager(ConfMan.get("savepath"));
 	// TODO remove the debug message eventually
 	LOGD("Setting DefaultSaveFileManager path to: %s", ConfMan.get("savepath").c_str());
@@ -368,10 +445,15 @@ void OSystem_Android::initBackend() {
 
 	JNI::setReadyForEvents(true);
 
+	_eventManager = new DefaultEventManager(this);
+	_audiocdManager = new DefaultAudioCDManager();
+
 	BaseBackend::initBackend();
 }
 
 bool OSystem_Android::hasFeature(Feature f) {
+	if (f == kFeatureFullscreenMode)
+		return false;
 	if (f == kFeatureVirtualKeyboard ||
 			f == kFeatureOpenUrl ||
 			f == kFeatureTouchpadMode ||
@@ -421,18 +503,37 @@ Common::KeymapperDefaultBindings *OSystem_Android::getKeymapperDefaultBindings()
 	Common::KeymapperDefaultBindings *keymapperDefaultBindings = new Common::KeymapperDefaultBindings();
 
 	// The swap_menu_and_back is a legacy configuration key
-	// It is only checked here for compatibility with old config files
-	// where it may have been set as "true"
-	// TODO Why not just ignore it entirely anyway?
-	if (ConfMan.hasKey("swap_menu_and_back")  && ConfMan.getBool("swap_menu_and_back")) {
-		keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, "MENU", "AC_BACK");
-		keymapperDefaultBindings->setDefaultBinding("engine-default", Common::kStandardActionSkip, "MENU");
-		keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, "CLOS", "MENU");
-	} else {
-		keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, "MENU", "MENU");
-		keymapperDefaultBindings->setDefaultBinding("engine-default", Common::kStandardActionSkip, "AC_BACK");
-		keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, "CLOS", "AC_BACK");
-	}
+	// We now ignore it entirely (it as always false -- ie. back short press is AC_BACK)
+
+	//
+	// Note: setDefaultBinding maps a hw input to a keymapId_actionId combo.
+	//
+	// Clarifications/Quote by developer bgK (via Discord, Oct 3, 2020)
+	// bgK: [With the introduction of the ScummVM keymapper we have] "standard actions" defined in "standard-actions.h".
+	//      The engines use those as much as possible when defining keymaps.
+	//      Then, the backends can override the default bindings to make use of the platform specific keys.
+	//
+	//
+	keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, "MENU", "MENU");
+	//
+	// We want the AC_BACK key to be the default (until overridden explicitly by the user or a game engine)
+	// mapped key for the standard SKIP action.
+	//
+	// bgK: "engine-default" is for the default keymap used by games that don't define their own keymap.
+	//      [We] want Common::kStandardActionsKeymapName to override the action for all the keymaps
+	//      Common::kStandardActionsKeymapName is used as a fallback if there are no keymap specific bindings defined.
+	//      So it should be enough on its own.
+	// [ie. we don't have to set default binding for "engine-default", as well]
+	// ["engine-default" is used for to create a Keymap sequence of type kKeymapTypeGame in engines/metaengine.cpp initKeymaps() for an engine]
+	// [In initKeymaps() is where the default key Esc is mapped to Skip action for game engines]
+	//
+	// [kStandardActionsKeymapName is defined  as (constant char*) in ./backends/keymapper/keymap, and utilised in getActionDefaultMappings()]
+	// ["If no keymap-specific default mapping was found, look for a standard action binding"]
+	keymapperDefaultBindings->setDefaultBinding(Common::kStandardActionsKeymapName, Common::kStandardActionSkip, "AC_BACK");
+
+	// The "CLOS" action ID is not a typo.
+	// See: backends/keymapper/remap-widget.cpp:	kCloseCmd        = 'CLOS'
+	keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, "CLOS", "AC_BACK");
 
 	return keymapperDefaultBindings;
 }
@@ -533,11 +634,11 @@ bool OSystem_Android::hasTextInClipboard() {
 	return JNI::hasTextInClipboard();
 }
 
-Common::String OSystem_Android::getTextFromClipboard() {
+Common::U32String OSystem_Android::getTextFromClipboard() {
 	return JNI::getTextFromClipboard();
 }
 
-bool OSystem_Android::setTextInClipboard(const Common::String &text) {
+bool OSystem_Android::setTextInClipboard(const Common::U32String &text) {
 	return JNI::setTextInClipboard(text);
 }
 

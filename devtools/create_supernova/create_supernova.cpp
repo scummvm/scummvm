@@ -18,6 +18,7 @@
 
 const char *lang[] = {
 	"en",
+	"it",
 	NULL
 };
 
@@ -263,7 +264,7 @@ void writeStrings(File& outputFile, const char* language, int part) {
 	sprintf(fileName, "strings%d-%s.po", part, language);
 	PoMessageList* poList = parsePoFile(fileName);
 	if (!poList) {
-		printf("Cannot find strings file for language '%s'.\n", language);
+		printf("Cannot find strings%d file for language '%s'.\n", part, language);
 		return;
 	}
 

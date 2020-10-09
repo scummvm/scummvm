@@ -37,9 +37,18 @@
 namespace Common {
 
 /**
- * (Inverse) Real Discrete Fourier Transform.
+ * @defgroup common_rdft RDFT algorithm
+ * @ingroup common
  *
- * Used in audio:
+ * @brief API for the Real Discrete Fourier Transform (RDFT) algorithm.
+ *
+ * @{
+ */
+
+/**
+ * @brief (Inverse) Real Discrete Fourier Transform.
+ *
+ * @details Used in audio:
  *  - QDM2
  *
  * Used in engines:
@@ -106,6 +115,8 @@ private:
 
 	FFT *_fft;
 };
+
+/** @} */
 
 } // End of namespace Common
 

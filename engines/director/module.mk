@@ -6,12 +6,12 @@ MODULE_OBJS = \
 	castmember.o \
 	channel.o \
 	cursor.o \
-	detection.o \
 	director.o \
 	events.o \
 	frame.o \
 	graphics.o \
 	images.o \
+	metaengine.o \
 	movie.o \
 	resource.o \
 	score.o \
@@ -40,9 +40,12 @@ MODULE_OBJS = \
 	lingo/xlibs/palxobj.o \
 	lingo/xlibs/winxobj.o
 
+# HACK: Skip this when including the file for detection objects.
+ifeq "$(USE_RULES)" "1"
 director-grammar:
 	`brew --prefix flex`/bin/flex engines/director/lingo/lingo-lex.l
 	`brew --prefix bison`/bin/bison -dv engines/director/lingo/lingo-gr.y
+endif
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_DIRECTOR), DYNAMIC_PLUGIN)
@@ -51,3 +54,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o

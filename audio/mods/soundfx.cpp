@@ -47,7 +47,7 @@ public:
 		NUM_INSTRUMENTS = 15
 	};
 
-	SoundFx(int rate, bool stereo);
+	SoundFx(int rate, bool stereo, bool repeat, int periodScaleDivisor = 1);
 	virtual ~SoundFx();
 
 	bool load(Common::SeekableReadStream *data, LoadSoundFxInstrumentCallback loadCb);
@@ -73,10 +73,11 @@ protected:
 	uint8 _ordersTable[128];
 	uint8 *_patternData;
 	uint16 _effects[NUM_CHANNELS];
+	bool _repeat;
 };
 
-SoundFx::SoundFx(int rate, bool stereo)
-	: Paula(stereo, rate) {
+SoundFx::SoundFx(int rate, bool stereo, bool repeat, int periodScaleDivisor)
+	: Paula(stereo, rate, 0, Paula::defaultFilterMode(), periodScaleDivisor) {
 	setTimerBaseValue(kPalCiaClock);
 	_ticks = 0;
 	_delay = 0;
@@ -87,6 +88,7 @@ SoundFx::SoundFx(int rate, bool stereo)
 	memset(_ordersTable, 0, sizeof(_ordersTable));
 	_patternData = 0;
 	memset(_effects, 0, sizeof(_effects));
+	_repeat = repeat;
 }
 
 SoundFx::~SoundFx() {
@@ -148,7 +150,7 @@ bool SoundFx::load(Common::SeekableReadStream *data, LoadSoundFxInstrumentCallba
 			}
 		} else {
 			if (ins->name[0]) {
-				ins->name[8] = '\0';
+				ins->name[22] = '\0';
 				ins->data = (int8 *)(*loadCb)(ins->name, 0);
 				if (!ins->data) {
 					return false;
@@ -244,7 +246,10 @@ void SoundFx::handleTick() {
 			_curPos = 0;
 			++_curOrder;
 			if (_curOrder == _numOrders) {
-				stopPaula();
+				if (_repeat)
+					_curOrder = 0;
+				else
+					stopPaula();
 			}
 		}
 	}
@@ -264,8 +269,8 @@ void SoundFx::interrupt() {
 	handleTick();
 }
 
-AudioStream *makeSoundFxStream(Common::SeekableReadStream *data, LoadSoundFxInstrumentCallback loadCb, int rate, bool stereo) {
-	SoundFx *stream = new SoundFx(rate, stereo);
+AudioStream *makeSoundFxStream(Common::SeekableReadStream *data, LoadSoundFxInstrumentCallback loadCb, int rate, bool stereo, bool repeat, int periodScaleDivisor) {
+	SoundFx *stream = new SoundFx(rate, stereo, repeat, periodScaleDivisor);
 	if (stream->load(data, loadCb)) {
 		stream->play();
 		return stream;

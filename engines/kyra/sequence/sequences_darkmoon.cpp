@@ -71,7 +71,7 @@ private:
 	OSystem *_system;
 	DarkMoonEngine *_vm;
 	Screen_EoB *_screen;
-	
+
 	struct Config {
 		Config(const char *const *str, const char *const *cpsfiles, const uint8 **cpsdata, const char *const *pal, const DarkMoonShapeDef **shp, const DarkMoonAnimCommand **anim, bool loadScenePalette, bool paletteFading, bool animCmdRestorePalette, bool shapeBackgroundFading, int animPalOffset, int animType1ShapeDim, bool animCmd5SetPalette, int animCmd5ExtraPage) : strings(str), cpsFiles(cpsfiles), cpsData(cpsdata), palFiles(pal), shapeDefs(shp), animData(anim), loadScenePal(loadScenePalette), palFading(paletteFading), animCmdRestorePal(animCmdRestorePalette), shpBackgroundFading(shapeBackgroundFading), animPalOffs(animPalOffset), animCmd1ShapeFrame(animType1ShapeDim), animCmd5SetPal(animCmd5SetPalette), animCmd5AltPage(animCmd5ExtraPage) {}
 		const char *const *strings;
@@ -89,7 +89,7 @@ private:
 		bool animCmd5SetPal;
 		int animCmd5AltPage;
 	};
-	
+
 	const Config *_config;
 
 	Palette *_palettes[13];
@@ -304,7 +304,7 @@ void DarkMoonEngine::seq_playIntro() {
 	_screen->setCurPage(2);
 	_screen->setClearScreenDim(17);
 	_screen->setCurPage(0);
-	
+
 	sq.animCommand(_flags.platform == Common::kPlatformAmiga ? 38 : (_configRenderMode == Common::kRenderEGA ? 41 : 40));
 	sq.animCommand(7, 18);
 
@@ -379,7 +379,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.animCommand(_flags.platform == Common::kPlatformAmiga ? 12 : 13);
 	_screen->copyRegion(104, 16, 96, 8, 120, 100, 0, 2, Screen::CR_NO_P_CHECK);
 	sq.fadeText();
-	
+
 	if (_flags.platform == Common::kPlatformAmiga)
 		sq.animCommand(9);
 
@@ -845,7 +845,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.delay(54);
 	sq.fadeText();
 	sq.loadScene(12, 2);
-	
+
 	sq.waitForSongNotifier(5);
 
 	if (!skipFlag() && !shouldQuit())
@@ -946,9 +946,9 @@ void DarkMoonEngine::seq_playFinale() {
 
 	int temp = 0;
 	const uint8 *creditsData = (_flags.platform != Common::kPlatformDOS) ? _res->fileData("CREDITS.TXT", 0) : _staticres->loadRawData(kEoB2CreditsData, temp);
-	
+
 	seq_playCredits(&sq, creditsData, 18, 2, 6, 2);
-	
+
 	if (_flags.platform != Common::kPlatformDOS)
 		delete[] creditsData;
 
@@ -1145,7 +1145,7 @@ DarkmoonSequenceHelper::~DarkmoonSequenceHelper() {
 	for (int i = 0; i < 7; i++)
 		delete[] _fadingTables[i];
 
-	for (int i = 0; i < 30; i++)
+	for (int i = 0; i < 54; i++)
 		delete[] _shapes[i];
 	delete[] _shapes;
 
@@ -1174,7 +1174,7 @@ void DarkmoonSequenceHelper::loadScene(int index, int pageNum, bool ignorePalett
 		file = _config->cpsFiles[index];
 		s = _vm->resource()->createReadStream(file);
 	}
-	
+
 	if (s) {
 		chunkID = s->readUint32LE();
 		s->seek(0);
@@ -1469,7 +1469,7 @@ void DarkmoonSequenceHelper::fadeText() {
 
 	if (_vm->_configRenderMode != Common::kRenderEGA)
 		_screen->fadeTextColor(_palettes[0], col, 8);
-	
+
 	memset(_textColor, 0, 3);
 	_screen->clearCurDim();
 }
@@ -1626,7 +1626,7 @@ void DarkmoonSequenceHelper::init(DarkmoonSequenceHelper::Mode mode) {
 	delete[] fadeData;
 
 	_shapes = new const uint8*[54];
-	memset(_shapes, 0, 54 * sizeof(uint8 *));
+	memset(_shapes, 0, 54 * sizeof(uint8*));
 
 	_fadePalTimer = 0;
 	_fadePalRate = 0;

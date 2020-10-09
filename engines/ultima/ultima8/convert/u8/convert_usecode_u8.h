@@ -23,41 +23,7 @@
 #ifndef ULTIMA8_CONVERT_U8_CONVERTUSECODEU8_H
 #define ULTIMA8_CONVERT_U8_CONVERTUSECODEU8_H
 
-#ifndef INCLUDE_CONVERTUSECODEU8_WITHOUT_BRINGING_IN_FOLD
-#include "ultima/ultima8/convert/convert.h"
-#else
-
-namespace Ultima {
-namespace Ultima8 {
-
-class ConvertUsecode {
-public:
-	virtual ~ConvertUsecode() { }	
-	class TempOp;
-	class Node;
-	typedef int DebugSymbol;
-	struct UsecodeHeader
-	{
-		uint32 _maxOffset;
-	};
-	uint32 _curOffset;
-
-	virtual const char* const *intrinsics()=0;
-	virtual const char* const *event_names()=0;
-	virtual void readheader(Common::SeekableReadStream *ucfile, UsecodeHeader &uch, uint32 &curOffset)=0;
-	virtual void readevents(Common::SeekableReadStream *ucfile, const UsecodeHeader &uch)=0;
-	virtual void readOp(TempOp &op, Common::SeekableReadStream *ucfile, uint32 &dbg_symbol_offset, Std::vector<DebugSymbol> &debugSymbols, bool &done)=0;
-	virtual Node *readOp(Common::SeekableReadStream *ucfile, uint32 &dbg_symbol_offset, Std::vector<DebugSymbol> &debugSymbols, bool &done)=0;
-	void readOpGeneric(TempOp &, Common::SeekableReadStream *, uint32 &, Std::vector<DebugSymbol> &,
-		bool &, const bool ) { }
-	Node *readOpGeneric(Common::SeekableReadStream *, uint32 &, Std::vector<DebugSymbol> &,
-		bool &, const bool ) { return nullptr; }
-};
-
-} // End of namespace Ultima8
-} // End of namespace Ultima
-
-#endif
+#include "ultima/ultima8/convert/convert_usecode.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -66,28 +32,7 @@ class ConvertUsecodeU8 : public ConvertUsecode {
 public:
 	const char* const *intrinsics() override  { return _intrinsics;  };
 	const char* const *event_names() override { return _event_names; };
-	void readheader(Common::SeekableReadStream *ucfile, UsecodeHeader &uch, uint32 &curOffset) override;
-	void readevents(Common::SeekableReadStream *ucfile, const UsecodeHeader &/*uch*/) override
-	{
-#ifndef INCLUDE_CONVERTUSECODEU8_WITHOUT_BRINGING_IN_FOLD
-		EventMap.clear();
-		for (uint32 i=0; i<32; ++i)
-		{
-			uint32 offset = readUint32LE(ucfile);
-			EventMap[offset] = i;
-#ifdef DISASM_DEBUG
-			pout << "Event " << i << ": " << Std::hex << Std::setw(4) << offset << Std::dec << endl;
-#endif
-		}
-#endif
-	}
 
-	void readOp(TempOp &op, Common::SeekableReadStream *ucfile, uint32 &dbg_symbol_offset, Std::vector<DebugSymbol> &debugSymbols, bool &done) override
-	{ readOpGeneric(op, ucfile, dbg_symbol_offset, debugSymbols, done, false); };
-	Node *readOp(Common::SeekableReadStream *ucfile, uint32 &dbg_symbol_offset, Std::vector<DebugSymbol> &debugSymbols, bool &done) override
-	{ return readOpGeneric(ucfile, dbg_symbol_offset, debugSymbols, done, false); };
-
-	
 private:
 	static const char* const _intrinsics[];
 	static const char* const _event_names[];
@@ -407,22 +352,6 @@ const char * const ConvertUsecodeU8::_event_names[] = {
 	"func1F",						// 0x1F
 	0
 };
-
-void ConvertUsecodeU8::readheader(Common::SeekableReadStream *ucfile, UsecodeHeader &uch, uint32 &curOffset_) {
-	#ifdef DISASM_DEBUG
-	perr << Std::setfill('0') << Std::hex;
-	perr << "unknown1: " << Std::setw(4) << ucfile->readUint32LE() << endl; // unknown
-	uch.maxOffset = ucfile->readUint32LE() - 0x0C; // file size
-	perr << "maxoffset: " << Std::setw(4) << maxOffset << endl;
-	perr << "unknown2: " << Std::setw(4) << ucfile->readUint32LE() << endl; // unknown
-	curOffset_ = 0;
-	#else
-	ucfile->readUint32LE(); // unknown
-	uch._maxOffset = ucfile->readUint32LE() - 0x0C; // file size
-	ucfile->readUint32LE(); // unknown
-	curOffset_ = 0;
-	#endif
-}
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

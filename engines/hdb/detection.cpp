@@ -21,45 +21,10 @@
  */
 
 #include "base/plugins.h"
-
-#include "common/debug.h"
 #include "common/translation.h"
-
 #include "engines/advancedDetector.h"
-#include "graphics/thumbnail.h"
 
-#include "hdb/hdb.h"
-
-namespace HDB {
-
-enum HDBGameFeatures {
-	GF_HANDANGO = (1 << 0)
-};
-
-const char *HDBGame::getGameId() const { return _gameDescription->gameId; }
-Common::Platform HDBGame::getPlatform() const { return _gameDescription->platform; }
-
-const char *HDBGame::getGameFile() const {
-	return _gameDescription->filesDescriptions[0].fileName;
-}
-
-uint32 HDBGame::getGameFlags() const {
-	return _gameDescription->flags;
-}
-
-bool HDBGame::isDemo() const {
-	return (getGameFlags() & ADGF_DEMO);
-}
-
-bool HDBGame::isPPC() const {
-	return (getPlatform() == Common::kPlatformPocketPC);
-}
-
-bool HDBGame::isHandango() const {
-	return (getGameFlags() & GF_HANDANGO);
-}
-
-} // End of namespace HDB
+#include "hdb/detection.h"
 
 static const PlainGameDescriptor hdbGames[] = {
 	{"hdb", "Hyperspace Delivery Boy!"},
@@ -69,6 +34,7 @@ static const PlainGameDescriptor hdbGames[] = {
 #define GAMEOPTION_CHEATMODE GUIO_GAMEOPTIONS1
 
 namespace HDB {
+
 static const ADGameDescription gameDescriptions[] = {
 	{
 		"hdb",
@@ -148,6 +114,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	AD_TABLE_END_MARKER
 };
+
 } // End of namespace HDB
 
 static const ADExtraGuiOptionsMap optionsList[] = {
@@ -164,9 +131,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class HDBMetaEngine : public AdvancedMetaEngine {
+class HDBMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	HDBMetaEngine() : AdvancedMetaEngine(HDB::gameDescriptions, sizeof(ADGameDescription), hdbGames, optionsList) {
+	HDBMetaEngineStatic() : AdvancedMetaEngineStatic(HDB::gameDescriptions, sizeof(ADGameDescription), hdbGames, optionsList) {
 	}
 
 	const char *getEngineId() const override {
@@ -180,122 +147,6 @@ public:
 	const char *getOriginalCopyright() const override {
 		return "Hyperspace Delivery Boy! (C) 2001 Monkeystone Games";
 	}
-
-	bool hasFeature(MetaEngineFeature f) const override;
-	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
-	SaveStateList listSaves(const char *target) const override;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
-bool HDBMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsListSaves) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportPlayTime);
-}
-
-bool HDB::HDBGame::hasFeature(Engine::EngineFeature f) const {
-	return (f == kSupportsReturnToLauncher) ||
-		   (f == kSupportsLoadingDuringRuntime) ||
-		   (f == kSupportsSavingDuringRuntime);
-}
-
-void HDBMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
-}
-
-int HDBMetaEngine::getMaximumSaveSlot() const { return 99; }
-
-SaveStateList HDBMetaEngine::listSaves(const char *target) const {
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringArray filenames;
-	Common::String pattern = target;
-	pattern += ".###";
-
-	filenames = saveFileMan->listSavefiles(pattern);
-
-	SaveStateList saveList;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		// Obtain the last 2 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(file->c_str() + file->size() - 2);
-
-		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
-			Common::ScopedPtr<Common::InSaveFile> in(saveFileMan->openForLoading(*file));
-			if (in) {
-				SaveStateDescriptor desc;
-				char mapName[32];
-				Graphics::Surface *thumbnail;
-
-				if (!Graphics::loadThumbnail(*in, thumbnail)) {
-					warning("Error loading thumbnail for %s", file->c_str());
-				}
-				desc.setThumbnail(thumbnail);
-
-				uint32 timeSeconds = in->readUint32LE();;
-				in->read(mapName, 32);
-
-				debug(1, "mapName: %s playtime: %d", mapName, timeSeconds);
-
-				desc.setSaveSlot(slotNum);
-				desc.setPlayTime(timeSeconds * 1000);
-
-				if (slotNum < 8)
-					desc.setDescription(Common::String::format("Auto: %s", mapName));
-				else
-					desc.setDescription(mapName);
-
-				saveList.push_back(desc);
-			}
-		}
-	}
-
-	// Sort saves based on slot number.
-	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
-	return saveList;
-}
-
-SaveStateDescriptor HDBMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::ScopedPtr<Common::InSaveFile> in(g_system->getSavefileManager()->openForLoading(Common::String::format("%s.%03d", target, slot)));
-
-	if (in) {
-		SaveStateDescriptor desc;
-		char mapName[32];
-		Graphics::Surface *thumbnail;
-
-		if (!Graphics::loadThumbnail(*in, thumbnail)) {
-			warning("Error loading thumbnail");
-		}
-		desc.setThumbnail(thumbnail);
-
-		uint32 timeSeconds = in->readUint32LE();
-		in->read(mapName, 32);
-
-		desc.setSaveSlot(slot);
-		desc.setPlayTime(timeSeconds * 1000);
-		desc.setDescription(mapName);
-
-		return desc;
-	}
-
-	return SaveStateDescriptor();
-}
-
-bool HDBMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc) {
-		*engine = new HDB::HDBGame(syst, desc);
-	}
-
-	return desc != nullptr;
-}
-
-#if PLUGIN_ENABLED_DYNAMIC(HDB)
-REGISTER_PLUGIN_DYNAMIC(HDB, PLUGIN_TYPE_ENGINE, HDBMetaEngine);
-#else
-REGISTER_PLUGIN_STATIC(HDB, PLUGIN_TYPE_ENGINE, HDBMetaEngine);
-#endif
+REGISTER_PLUGIN_STATIC(HDB_DETECTION, PLUGIN_TYPE_METAENGINE, HDBMetaEngineStatic);

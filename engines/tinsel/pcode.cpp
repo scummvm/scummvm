@@ -100,11 +100,11 @@ enum OPCODE {
 
 #define	OPMASK		0x3F	///< mask to isolate the opcode
 
-bool g_bNoPause = false;
-
 //----------------- LOCAL GLOBAL DATA --------------------
 
-// FIXME: Avoid non-const global vars
+// These vars are reset upon engine destruction
+
+bool g_bNoPause = false;
 
 static int32 *g_pGlobals = 0;		// global vars
 
@@ -233,7 +233,19 @@ const WorkaroundEntry workaroundList[] = {
 	{TINSEL_V0, false, false, Common::kPlatformUnknown, 0, 0, 0, NULL}
 };
 
-//----------------- LOCAL GLOBAL DATA --------------------
+void ResetVarsPCode() {
+	g_bNoPause = false;
+
+	free(g_pGlobals);
+	g_pGlobals = nullptr;
+
+	g_numGlobals = 0;
+
+	free(g_icList);
+	g_icList = nullptr;
+
+	g_hMasterScript = 0;
+}
 
 /**
  * Keeps the code array pointer up to date.
@@ -242,11 +254,11 @@ void LockCode(INT_CONTEXT *ic) {
 	if (ic->GSort == GS_MASTER) {
 		if (TinselV2)
 			// Get the srcipt handle from a specific global chunk
-			ic->code = (byte *)LockMem(g_hMasterScript);
+			ic->code = (byte *)_vm->_handle->LockMem(g_hMasterScript);
 		else
 			ic->code = (byte *)FindChunk(MASTER_SCNHANDLE, CHUNK_PCODE);
 	} else
-		ic->code = (byte *)LockMem(ic->hCode);
+		ic->code = (byte *)_vm->_handle->LockMem(ic->hCode);
 }
 
 /**
@@ -420,7 +432,7 @@ INT_CONTEXT *RestoreInterpretContext(INT_CONTEXT *ric) {
  * Allocates enough RAM to hold the global Glitter variables.
  */
 void RegisterGlobals(int num) {
-	if (g_pGlobals == NULL) {
+	if (g_pGlobals == nullptr) {
 		g_numGlobals = num;
 
 		g_hMasterScript = !TinselV2 ? 0 :
@@ -428,13 +440,13 @@ void RegisterGlobals(int num) {
 
 		// Allocate RAM for pGlobals and make sure it's allocated
 		g_pGlobals = (int32 *)calloc(g_numGlobals, sizeof(int32));
-		if (g_pGlobals == NULL) {
+		if (g_pGlobals == nullptr) {
 			error("Cannot allocate memory for global data");
 		}
 
 		// Allocate RAM for interpret contexts and make sure it's allocated
 		g_icList = (INT_CONTEXT *)calloc(NUM_INTERPRET, sizeof(INT_CONTEXT));
-		if (g_icList == NULL) {
+		if (g_icList == nullptr) {
 			error("Cannot allocate memory for interpret contexts");
 		}
 		CoroScheduler.setResourceCallback(FreeInterpretContextPr);

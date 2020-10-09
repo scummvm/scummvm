@@ -3,9 +3,9 @@ MODULE := engines/dreamweb
 MODULE_OBJS := \
 	backdrop.o \
 	console.o \
-	detection.o \
 	dreamweb.o \
 	keypad.o \
+	metaengine.o \
 	monitor.o \
 	mouse.o \
 	newplace.o \
@@ -31,3 +31,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o

@@ -399,9 +399,9 @@ int TalkThread::insertText() {
 	WidthHeight dimensions;
 	_vm->getDefaultTextDimensions(dimensions);
 	uint16 *outTextPtr;
-	_vm->_screenText->insertText((uint16*)_currEntryText, 0x120001, dimensions,
+	_vm->_screenText->insertText(_currEntryText, 0x120001, dimensions,
 		Common::Point(0, 0), TEXT_FLAG_CENTER_ALIGN, 0, 0, 0, 0, 0, outTextPtr);
-	_entryText = (byte*)outTextPtr;
+	_entryText = outTextPtr;
 	Common::Point pt;
 	_vm->getDefaultTextPosition(pt);
 	_vm->_screenText->updateTextInfoPosition(pt);

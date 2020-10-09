@@ -29,6 +29,15 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_timer Timer
+ * @ingroup common
+ *
+ * @brief API for managing the timer.
+ *
+ * @{
+ */
+
 class TimerManager : NonCopyable {
 public:
 	typedef void (*TimerProc)(void *refCon);
@@ -56,6 +65,8 @@ public:
 	 */
 	virtual void removeTimerProc(TimerProc proc) = 0;
 };
+
+/** @} */
 
 } // End of namespace Common
 

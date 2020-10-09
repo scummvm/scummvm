@@ -6,7 +6,6 @@ MODULE_OBJS := \
 	builtin.o \
 	console.o \
 	cursors.o \
-	detection.o \
 	event.o \
 	fileset.o \
 	floor.o \
@@ -19,6 +18,7 @@ MODULE_OBJS := \
 	language.o \
 	loadsave.o \
 	main_loop.o \
+	metaengine.o \
 	moreio.o \
 	movie.o \
 	newfatal.o \
@@ -50,3 +50,6 @@ endif
  
 # Include common rules 
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o

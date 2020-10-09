@@ -39,17 +39,18 @@
  *
  *  Games using this engine:
  *  - Red Comrades Demo
- *  - Red Comrades Save the Galaxy
- *  	- Part 1: can be completed
- *  	- Part 2: unplayable (requires support of scrolling backgrounds)
- *  	- Part 3: not tested
- *  - Red Comrades 2: For the Great Justice
+ *  - Red Comrades Save the Galaxy - Fully playable
+ *  - Red Comrades 2: For the Great Justice - Not tested
  */
 
 struct ADGameDescription;
 
 namespace Common {
 class SeekableReadStream;
+}
+
+namespace Video {
+class VideoDecoder;
 }
 
 namespace Petka {
@@ -121,6 +122,7 @@ private:
 	Common::ScopedPtr<QSystem> _qsystem;
 	Common::ScopedPtr<VideoSystem> _vsys;
 	Common::ScopedPtr<BigDialogue> _dialogMan;
+	Common::ScopedPtr<Video::VideoDecoder> _videoDec;
 	const ADGameDescription *_desc;
 
 	Common::RandomSource _rnd;

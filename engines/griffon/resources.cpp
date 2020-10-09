@@ -54,8 +54,18 @@ namespace Griffon {
 
 void GriffonEngine::initialize() {
 	// init char *_floatstri[kMaxFloat]
-	for (int i = 0; i < kMaxFloat; i++)
+	for (int i = 0; i < kMaxFloat; i++) {
 		_floatText[i].text = (char *)malloc(64); // 64 bytes each string (should be enough)
+		_floatText[i].framesLeft = 0;
+		_floatText[i].x = 0;
+		_floatText[i].y = 0;
+		_floatText[i].col = 0;
+
+		_floatIcon[i].framesLeft = 0;
+		_floatIcon[i].x = 0;
+		_floatIcon[i].y = 0;
+		_floatIcon[i].ico = 0;
+	}
 
 	_video = new Graphics::TransparentSurface;
 	_video->create(320, 240, g_system->getScreenFormat());
@@ -396,8 +406,8 @@ void GriffonEngine::loadMap(int mapnum) {
 	for (int i = 0; i < kMaxNPC; i++)
 		_npcInfo[i].onMap = false;
 
-	for (int x = 0; x <= 19; x++) {
-		for (int y = 0; y <= 19; y++) {
+	for (int x = 0; x <= 20; x++) {
+		for (int y = 0; y <= 14; y++) {
 			int d = tempmap[3 * 40 + x][y];
 
 			int npc = 0;
@@ -491,8 +501,11 @@ void GriffonEngine::loadMap(int mapnum) {
 		INPUT("%i", &_npcInfo[i].item3);
 		INPUT("%i", &_npcInfo[i].script);
 
+		_npcInfo[i].cframe = 0;
+		_npcInfo[i].frame = 0;
 		_npcInfo[i].frame2 = 0;
 		_npcInfo[i].attackattempt = 0;
+		_npcInfo[i].ticks = 0;
 
 		// baby dragon
 		if (_npcInfo[i].spriteset == kMonsterBabyDragon) {

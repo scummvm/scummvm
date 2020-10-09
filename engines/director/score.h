@@ -57,7 +57,8 @@ enum RenderMode {
 	kRenderModeNormal,
 	kRenderForceUpdate,
 	kRenderUpdateStageOnly,
-	kRenderNoUnrender
+	kRenderNoUnrender,
+	kRenderNoWindowRender
 };
 
 class Score {

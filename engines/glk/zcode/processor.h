@@ -179,6 +179,11 @@ protected:
 	 */
 	void print_string(const char *s);
 
+	/*
+	 * Print a unicode string.
+	 */
+	void print_string_uni(const uint32 *s);
+
 	/**
 	 * Print an unsigned 32bit number in decimal or hex.
 	 */

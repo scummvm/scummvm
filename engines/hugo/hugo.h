@@ -27,6 +27,7 @@
 
 // This include is here temporarily while the engine is being refactored.
 #include "hugo/game.h"
+#include "hugo/detection.h"
 
 #define HUGO_DAT_VER_MAJ 0                          // 1 byte
 #define HUGO_DAT_VER_MIN 42                         // 1 byte
@@ -90,23 +91,6 @@ typedef byte Icondib[kXPix * kInvDy];               // Icon bar dib
 typedef byte Viewdib[(long)kXPix * kYPix];          // Viewport dib
 typedef byte Overlay[kOvlSize];                     // Overlay file
 
-enum GameType {
-	kGameTypeNone  = 0,
-	kGameTypeHugo1,
-	kGameTypeHugo2,
-	kGameTypeHugo3
-};
-
-enum GameVariant {
-	kGameVariantH1Win = 0,
-	kGameVariantH2Win,
-	kGameVariantH3Win,
-	kGameVariantH1Dos,
-	kGameVariantH2Dos,
-	kGameVariantH3Dos,
-	kGameVariantNone
-};
-
 enum HugoDebugChannels {
 	kDebugSchedule  = 1 <<  0,
 	kDebugEngine    = 1 <<  1,
@@ -157,16 +141,10 @@ enum Dupdate {kDisplayInit, kDisplayAdd, kDisplayDisplay, kDisplayRestore};
  */
 enum Priority {kSoundPriorityLow, kSoundPriorityMedium, kSoundPriorityHigh};
 
-enum HugoGameFeatures {
-	GF_PACKED = (1 << 0) // Database
-};
-
 // Strings used by the engine
 enum seqTextEngine {
 	kEsAdvertise = 0
 };
-
-struct HugoGameDescription;
 
 struct Status {                                     // Game status (not saved)
 	bool     _storyModeFl;                          // Game is telling story - no commands

@@ -33,17 +33,18 @@ namespace GUI {
 class EditTextWidget : public EditableWidget {
 protected:
 	typedef Common::String String;
+	typedef Common::U32String U32String;
 
-	String		_backupString;
+	U32String		_backupString;
 
 	int				_leftPadding;
 	int				_rightPadding;
 
 public:
-	EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, const char *tooltip = nullptr, uint32 cmd = 0, uint32 finishCmd = 0, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleNormal);
-	EditTextWidget(GuiObject *boss, const String &name, const String &text, const char *tooltp = nullptr, uint32 cmd = 0, uint32 finishCmd = 0, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleNormal);
+	EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const U32String &text, const U32String &tooltip = Common::U32String(""), uint32 cmd = 0, uint32 finishCmd = 0, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleNormal);
+	EditTextWidget(GuiObject *boss, const String &name, const U32String &text, const U32String &tooltip = Common::U32String(""), uint32 cmd = 0, uint32 finishCmd = 0, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleNormal);
 
-	void setEditString(const String &str) override;
+	void setEditString(const U32String &str) override;
 
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
 

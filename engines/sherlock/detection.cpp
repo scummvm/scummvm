@@ -20,35 +20,10 @@
  *
  */
 
-#include "sherlock/sherlock.h"
-#include "sherlock/saveload.h"
-#include "sherlock/scalpel/scalpel.h"
-#include "sherlock/tattoo/tattoo.h"
-#include "common/system.h"
 #include "common/translation.h"
 #include "engines/advancedDetector.h"
 
-namespace Sherlock {
-
-struct SherlockGameDescription {
-	ADGameDescription desc;
-
-	GameType gameID;
-};
-
-GameType SherlockEngine::getGameID() const {
-	return _gameDescription->gameID;
-}
-
-Common::Platform SherlockEngine::getPlatform() const {
-	return _gameDescription->desc.platform;
-}
-
-Common::Language SherlockEngine::getLanguage() const {
-	return _gameDescription->desc.language;
-}
-
-} // End of namespace Sherlock
+#include "sherlock/detection.h"
 
 static const PlainGameDescriptor sherlockGames[] = {
 	{ "scalpel", "The Case of the Serrated Scalpel" },
@@ -146,9 +121,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 
 #include "sherlock/detection_tables.h"
 
-class SherlockMetaEngine : public AdvancedMetaEngine {
+class SherlockMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	SherlockMetaEngine() : AdvancedMetaEngine(Sherlock::gameDescriptions, sizeof(Sherlock::SherlockGameDescription),
+	SherlockMetaEngineStatic() : AdvancedMetaEngineStatic(Sherlock::gameDescriptions, sizeof(Sherlock::SherlockGameDescription),
 		sherlockGames, optionsList) {}
 
 	const char *getEngineId() const override {
@@ -162,120 +137,7 @@ public:
 	const char *getOriginalCopyright() const override {
 		return "Sherlock (C) 1992-1996 Mythos Software, (C) 1992-1996 Electronic Arts";
 	}
-
-	/**
-	 * Creates an instance of the game engine
-	 */
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-
-	/**
-	 * Returns a list of features the game's MetaEngine support
-	 */
-	bool hasFeature(MetaEngineFeature f) const override;
-
-	/**
-	 * Return a list of savegames
-	 */
-	SaveStateList listSaves(const char *target) const override;
-
-	/**
-	 * Returns the maximum number of allowed save slots
-	 */
-	int getMaximumSaveSlot() const override;
-
-	/**
-	 * Deletes a savegame in the specified slot
-	 */
-	void removeSaveState(const char *target, int slot) const override;
-
-	/**
-	 * Given a specified savegame slot, returns extended information for the save
-	 */
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-bool SherlockMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Sherlock::SherlockGameDescription *gd = (const Sherlock::SherlockGameDescription *)desc;
-	if (gd) {
-		switch (gd->gameID) {
-		case Sherlock::GType_SerratedScalpel:
-			*engine = new Sherlock::Scalpel::ScalpelEngine(syst, gd);
-			break;
-		case Sherlock::GType_RoseTattoo:
-			*engine = new Sherlock::Tattoo::TattooEngine(syst, gd);
-			break;
-		default:
-			error("Unknown game");
-			break;
-		}
-	}
-	return gd != 0;
-}
 
-bool SherlockMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSimpleSavesNames);
-}
-
-bool Sherlock::SherlockEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsReturnToLauncher) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
-}
-
-bool Sherlock::SherlockEngine::isDemo() const {
-	return _gameDescription->desc.flags & ADGF_DEMO;
-}
-
-SaveStateList SherlockMetaEngine::listSaves(const char *target) const {
-	return Sherlock::SaveManager::getSavegameList(target);
-}
-
-int SherlockMetaEngine::getMaximumSaveSlot() const {
-	return MAX_SAVEGAME_SLOTS;
-}
-
-void SherlockMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String filename = Sherlock::SaveManager(nullptr, target).generateSaveName(slot);
-	g_system->getSavefileManager()->removeSavefile(filename);
-}
-
-SaveStateDescriptor SherlockMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::String filename = Sherlock::SaveManager(nullptr, target).generateSaveName(slot);
-	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
-
-	if (f) {
-		Sherlock::SherlockSavegameHeader header;
-		if (!Sherlock::SaveManager::readSavegameHeader(f, header, false)) {
-			delete f;
-			return SaveStateDescriptor();
-		}
-		delete f;
-
-		// Create the return descriptor
-		SaveStateDescriptor desc(slot, header._saveName);
-		desc.setThumbnail(header._thumbnail);
-		desc.setSaveDate(header._year, header._month, header._day);
-		desc.setSaveTime(header._hour, header._minute);
-		desc.setPlayTime(header._totalFrames * GAME_FRAME_TIME);
-
-		return desc;
-	}
-
-	return SaveStateDescriptor();
-}
-
-
-#if PLUGIN_ENABLED_DYNAMIC(SHERLOCK)
-	REGISTER_PLUGIN_DYNAMIC(SHERLOCK, PLUGIN_TYPE_ENGINE, SherlockMetaEngine);
-#else
-	REGISTER_PLUGIN_STATIC(SHERLOCK, PLUGIN_TYPE_ENGINE, SherlockMetaEngine);
-#endif
+REGISTER_PLUGIN_STATIC(SHERLOCK_DETECTION, PLUGIN_TYPE_METAENGINE, SherlockMetaEngineStatic);

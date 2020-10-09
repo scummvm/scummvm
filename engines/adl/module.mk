@@ -7,7 +7,6 @@ MODULE_OBJS := \
 	adl_v4.o \
 	adl_v5.o \
 	console.o \
-	detection.o \
 	disk.o \
 	display.o \
 	display_a2.o \
@@ -16,6 +15,7 @@ MODULE_OBJS := \
 	hires4.o \
 	hires5.o \
 	hires6.o \
+	metaengine.o \
 	sound.o
 
 MODULE_DIRS += \
@@ -28,3 +28,13 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
+
+# Skip building the following objects if a static
+# module is enabled, because it already has the contents.
+ifneq ($(ENABLE_ADL), STATIC_PLUGIN)
+# External dependencies for detection.
+DETECT_OBJS += $(MODULE)/disk.o
+endif

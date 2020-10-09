@@ -751,7 +751,7 @@ void MidiSoundDriverH32::playSample(int mode, int channel, int param3, int param
 		break;
 	case 4: // show text in Roland MT-32 LCD display
 		// Don't display text in Roland MT-32 LCD display when loading a savegame
-		if (!runOnlyUntilCopyProtectionCheck) {
+		if (!runOnlyUntilFreePartRangeFirst200) {
 			selectInstrument5(channel);
 		}
 		break;
@@ -1390,11 +1390,13 @@ void PaulaSound::loadMusic(const char *name) {
 	Common::StackLock lock(_musicMutex);
 	assert(!_mixer->isSoundHandleActive(_moduleHandle));
 
+	bool foundFile = false;
 	if (_vm->getGameType() == GType_FW) {
 		// look for separate files
 		Common::File f;
 		if (f.open(name)) {
 			_moduleStream = Audio::makeSoundFxStream(&f, 0, _mixer->getOutputRate());
+			foundFile = true;
 		}
 	} else {
 		// look in bundle files
@@ -1402,9 +1404,23 @@ void PaulaSound::loadMusic(const char *name) {
 		byte *buf = readBundleSoundFile(name, &size);
 		if (buf) {
 			Common::MemoryReadStream s(buf, size);
-			_moduleStream = Audio::makeSoundFxStream(&s, readBundleSoundFile, _mixer->getOutputRate());
+			// Operation Stealth for Amiga has to have its music frequency halved
+			// or otherwise the music sounds too high pitched.
+			const int periodScaleDivisor = 2;
+			_moduleStream = Audio::makeSoundFxStream(&s, readBundleSoundFile, _mixer->getOutputRate(), true, true, periodScaleDivisor);
 			free(buf);
+			foundFile = true;
 		}
+	}
+
+	if (!foundFile) {
+		warning("Unable to find music file '%s', not playing music...", name);
+
+		// Remove the old module stream so that it won't be played.
+		// Fixes not trying to play a null stream or an old wrong music in
+		// e.g. Italian version of Future Wars when first teleporting from
+		// the office to to the swamp.
+		_moduleStream = nullptr;
 	}
 }
 
@@ -1443,10 +1459,14 @@ void PaulaSound::playSound(int mode, int channel, int param3, int param4, int pa
 void PaulaSound::playSound(int channel, int frequency, const uint8 *data, int size, int volumeStep, int stepCount, int volume, int repeat) {
 	debugC(5, kCineDebugSound, "PaulaSound::playSound() channel %d size %d", channel, size);
 	Common::StackLock lock(_sfxMutex);
-	assert(frequency > 0);
+
+	if (channel < 0 || channel >= NUM_CHANNELS) {
+		warning("PaulaSound::playSound: Channel number out of range (%d)", channel);
+		return;
+	}
 
 	stopSound(channel);
-	if (size > 0) {
+	if (frequency > 0 && size > 0) {
 		byte *sound = (byte *)malloc(size);
 		if (sound) {
 			// Create the audio stream
@@ -1454,6 +1474,10 @@ void PaulaSound::playSound(int channel, int frequency, const uint8 *data, int si
 
 			// Clear the first and last 16 bits like in the original.
 			sound[0] = sound[1] = sound[size - 2] = sound[size - 1] = 0;
+
+			if (g_cine->getGameType() == Cine::GType_OS) {
+				frequency = ((frequency * 2) / 20) + 50;
+			}
 
 			Audio::SeekableAudioStream *stream = Audio::makeRawStream(sound, size, PAULA_FREQ / frequency, 0);
 

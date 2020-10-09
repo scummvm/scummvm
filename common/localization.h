@@ -29,6 +29,16 @@
 namespace Common {
 
 /**
+ * @defgroup common_localization Localization
+ * @ingroup common
+ *
+ * @brief Functions for managing localized elements of the GUI.
+ *
+ *		
+ * @{
+ */
+
+/**
  * Get localized equivalents for Y/N buttons of the specified language. In
  * case there is no specialized keys for the given language it will fall back
  * to the English keys.
@@ -47,6 +57,8 @@ void getLanguageYesNo(Language id, KeyCode &keyYes, KeyCode &keyNo);
  * @param keyNo Key code for no
  */
 void getLanguageYesNo(KeyCode &keyYes, KeyCode &keyNo);
+
+/** @} */
 
 } // End of namespace Common
 

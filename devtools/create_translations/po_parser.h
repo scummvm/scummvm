@@ -87,16 +87,17 @@ public:
 
 	const char *language() const;
 	const char *languageName() const;
-	const char *charset() const;
+	bool useUTF8() const;
 
 	int size() const;
 	const PoMessageEntry *entry(int) const;
 
 private:
 	char *_lang;
-	char *_charset;
 	char *_langName;
 	char *_langNameAlt;
+
+	bool _useUTF8;
 
 	PoMessageEntry **_list;
 	int _size;

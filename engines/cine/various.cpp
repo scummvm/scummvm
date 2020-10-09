@@ -42,7 +42,7 @@ namespace Cine {
 
 int16 disableSystemMenu = 0;
 bool inMenu;
-bool runOnlyUntilCopyProtectionCheck = false;
+bool runOnlyUntilFreePartRangeFirst200 = false;
 
 int16 commandVar3[4];
 int16 commandVar1;
@@ -58,6 +58,8 @@ uint16 reloadBgPalOnNextFlip;
 uint16 forbidBgPalReload;
 uint16 gfxFadeOutCompleted;
 uint16 gfxFadeInRequested;
+uint32 safeControlsLastAccessedMs;
+int16 lastSafeControlObjIdx;
 
 int16 buildObjectListCommand(int16 param);
 int16 canUseOnObject = 0;
@@ -128,6 +130,7 @@ uint16 yMoveKeyb = kKeybMoveCenterY;
 SelectedObjStruct currentSelectedObject;
 
 CommandeType currentSaveName[kMaxSavegames];
+static const CommandeType saveChoices[] = {"0-19", "20-39", "40-59", "60-79", "80-99"};
 
 static const int16 choiceResultTable[] = { 1, 1, 1, 2, 1, 1, 1 };
 static const int16 subObjectUseTable[] = { 3, 3, 3, 3, 3, 0, 0 };
@@ -167,6 +170,10 @@ void stopMusicAfterFadeOut() {
 //	if (g_sfxPlayer->_fadeOutCounter != 0 && g_sfxPlayer->_fadeOutCounter < 100) {
 //		g_sfxPlayer->stop();
 //	}
+}
+
+uint safeControlAccessMinMs() {
+	return 250;
 }
 
 void runObjectScript(int16 entryIdx) {
@@ -438,7 +445,18 @@ void CineEngine::makeSystemMenu() {
 				}
 
 				getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
-				selectedSave = makeMenuChoice(currentSaveName, kMaxSavegames, mouseX, mouseY + 8, 180);
+
+				// Choose savegame range first (0-19, 20-39, 40-59, 60-79, 80-99) and then save slot
+				int start = makeMenuChoice(saveChoices, ARRAYSIZE(saveChoices), mouseX, mouseY + 8, 9 * 5);
+				if (start >= 0) {
+					start *= kMaxOrigUiSavegames;
+					selectedSave = makeMenuChoice(&currentSaveName[start], kMaxOrigUiSavegames, mouseX, mouseY + 8, 180);
+					if (selectedSave >= 0) {
+						selectedSave += start;
+					}
+				} else {
+					selectedSave = -1;
+				}
 
 				if (selectedSave >= 0) {
 					getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
@@ -475,7 +493,18 @@ void CineEngine::makeSystemMenu() {
 				return;
 			}
 
-			selectedSave = makeMenuChoice(currentSaveName, kMaxSavegames, mouseX, mouseY + 8, 180, g_cine->getAutosaveSlot() + 1);
+			// Choose savegame range first (0-19, 20-39, 40-59, 60-79, 80-99) and then save slot
+			int start = makeMenuChoice(saveChoices, ARRAYSIZE(saveChoices), mouseX, mouseY + 8, 9 * 5);
+			if (start >= 0) {
+				start *= kMaxOrigUiSavegames;
+				int minY = ((start == 0) ? g_cine->getAutosaveSlot() + 1 : 0); // Don't allow saving over autosave slot
+				selectedSave = makeMenuChoice(&currentSaveName[start], kMaxOrigUiSavegames, mouseX, mouseY + 8, 180, minY);
+				if (selectedSave >= 0) {
+					selectedSave += start;
+				}
+			} else {
+				selectedSave = -1;
+			}
 
 			if (selectedSave >= 0) {
 				CommandeType saveName;
@@ -558,6 +587,9 @@ void processInventory(int16 x, int16 y) {
 	for (int i = 0; i < listSize; ++i)
 		list.push_back(objectListCommand[i]);
 	SelectionMenu *menu = new SelectionMenu(Common::Point(x, y), menuWidth, list);
+
+	inMenu = true;
+
 	renderer->pushMenu(menu);
 	renderer->drawFrame();
 	renderer->popMenu();
@@ -565,6 +597,8 @@ void processInventory(int16 x, int16 y) {
 	menu = 0;
 
 	manageEvents(PROCESS_INVENTORY, UNTIL_MOUSE_BUTTON_DOWN_UP);
+
+	inMenu = false;
 }
 
 int16 buildObjectListCommand(int16 param) {
@@ -595,7 +629,9 @@ int16 selectSubObject(int16 x, int16 y, int16 param) {
 	}
 
 	if (disableSystemMenu == 0) {
+		inMenu = true;
 		selectedObject = makeMenuChoice(objectListCommand, listSize, x, y, 140, 0, osExtras, osExtras);
+		inMenu = false;
 	}
 
 	if (selectedObject == -1)
@@ -878,6 +914,8 @@ int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, 
 				case Common::KEYCODE_DOWN:
 					selectionValueDiff++;
 					break;
+				default:
+					break;
 				}
 				g_cine->_keyInputList.pop_back();
 			}
@@ -896,7 +934,7 @@ int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, 
 				}
 
 				currentSelection = CLIP<int16>(currentSelection + selectionValueDiff, 0, height - 1);
-				
+
 				if (currentSelection != oldSelection) {
 					Common::Point currentSelectionCenter(X + width / 2, (currentSelection * 9) + Y + 8);
 					g_system->warpMouse(currentSelectionCenter.x, currentSelectionCenter.y);
@@ -1064,7 +1102,20 @@ void playerCommandMouseLeftRightUp(uint16 mouseX, uint16 mouseY) {
 
 	objIdx = getObjectUnderCursor(mouseX, mouseY);
 
-	if (g_cine->getGameType() == Cine::GType_OS || commandVar2 != objIdx) {
+	// Previously in Operation Stealth the following code was always run but in
+	// Future Wars only if commandVar2 != objIdx (Both cases based on disassembly).
+	// Trying to update the command line e.g. "EXAMINE" -> "EXAMINE scaffolding"
+	// in the manageEvents function to make the user interface responsive made a
+	// regression in Future Wars.
+	//
+	// In Future Wars the command line was not always updated and thus failed sometimes
+	// to be up to date (i.e. showing wrong text, e.g. "EXAMINE" only when it should
+	// have read "EXAMINE scaffolding" because the mouse cursor was on the scaffolding).
+	//
+	// Now we just always run this code for both Future Wars and Operation Stealth
+	// which seems to fix the command line updating.
+	const bool update = true; // Previously: g_cine->getGameType() == Cine::GType_OS || commandVar2 != objIdx
+	if (update) {
 		if (objIdx != -1) {
 			renderer->setCommand(g_cine->_commandBuffer + " " + g_cine->_objectTable[objIdx].name);
 		} else {
@@ -1104,7 +1155,31 @@ void noPlayerCommandMouseLeft(uint16 &mouseX, uint16 &mouseY) {
 		relEntry = getRelEntryForObject(6, 1, &currentSelectedObject);
 
 		if (relEntry != -1) {
-			runObjectScript(relEntry);
+			bool skipSafeControlAccess = false;
+
+			// HACK: Throttle speed of otherwise overly sensitive safe controls (Bug #11621)
+			if (hacksEnabled && g_cine->getGameType() == Cine::GType_OS &&
+				scumm_stricmp(renderer->getBgName(), "COFFRE.PI1") == 0 &&
+				scumm_stricmp(currentPrcName, "PALAIS1.PRC") == 0) {
+				uint32 now = g_system->getMillis();
+
+				// Throttle access to the same safe control repeatedly in succession.
+				if (safeControlsLastAccessedMs != 0 &&
+					(now - safeControlsLastAccessedMs) < safeControlAccessMinMs() &&
+					objIdx == lastSafeControlObjIdx) {
+					skipSafeControlAccess = true;
+					warning("Skipping safe control access (Time since last called = %d ms < throttling value of %d ms)",
+						now - safeControlsLastAccessedMs, safeControlAccessMinMs());
+				} else {
+					safeControlsLastAccessedMs = now;
+				}
+
+				lastSafeControlObjIdx = objIdx;
+			}
+
+			if (!skipSafeControlAccess) {
+				runObjectScript(relEntry);
+			}
 		}
 	}
 }
@@ -1138,7 +1213,7 @@ uint16 executePlayerInput() {
 		// the command line.
 		manageEvents(EXECUTE_PLAYER_INPUT, UNTIL_WAIT_ENDED, true);
 	} else {
-		manageEvents(EXECUTE_PLAYER_INPUT, UNTIL_MOUSE_BUTTON_UP_AND_WAIT_ENDED);
+		manageEvents(EXECUTE_PLAYER_INPUT, UNTIL_MOUSE_BUTTON_UP_AND_WAIT_ENDED, true);
 	}
 
 	// Get mouse position and button states
@@ -1846,12 +1921,12 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 		ch[1] = 0;
 
 		Common::KeyState keyState = Common::KeyState();
-			
+
 		if (!g_cine->_keyInputList.empty()) {
 			keyState = g_cine->_keyInputList.back();
 			g_cine->_keyInputList.pop_back();
 		}
-		
+
 		int keycode = keyState.keycode;
 		uint16 ascii = keyState.ascii;
 		uint16 mouseButton, mouseX, mouseY;

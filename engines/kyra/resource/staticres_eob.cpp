@@ -468,10 +468,6 @@ void EoBCoreEngine::initStaticResource() {
 	_coneOfColdDest4 = (const int8 *)_staticres->loadRawData(kEoBBaseConeOfColdDest4, temp);
 	_coneOfColdGfxTbl = _staticres->loadRawData(kEoBBaseConeOfColdGfxTbl, _coneOfColdGfxTblSize);
 
-	void *sndInfo_ingame = 0;
-	void *sndInfo_intro = 0;
-	void *sndInfo_finale = 0;
-
 	if (_flags.platform == Common::kPlatformAmiga) {
 		const char *const *map = _staticres->loadStrings(kEoBBaseSoundMap, temp2);
 		_amigaSoundMap = new const char*[temp2];
@@ -485,47 +481,48 @@ void EoBCoreEngine::initStaticResource() {
 
 		const char *const *files = _staticres->loadStrings(kEoBBaseSoundFilesIngame, temp);
 		SoundResourceInfo_AmigaEoB ingame(files, temp, _amigaSoundMap, temp2);
-		sndInfo_ingame = &ingame;
 		files = _staticres->loadStrings(kEoBBaseSoundFilesIntro, temp);
 		SoundResourceInfo_AmigaEoB intro(files, temp, 0, 0);
-		sndInfo_intro = &intro;
 		files = _staticres->loadStrings(kEoBBaseSoundFilesFinale, temp);
 		SoundResourceInfo_AmigaEoB finale(files, temp, 0, 0);
-		sndInfo_finale = &finale;
+
+		_sound->initAudioResourceInfo(kMusicIngame, &ingame);
+		_sound->initAudioResourceInfo(kMusicIntro, &intro);
+		_sound->initAudioResourceInfo(kMusicFinale, &finale);
+
 	} else if (_flags.platform == Common::kPlatformFMTowns) {
 		const char *const *files = _staticres->loadStrings(kEoBBaseSoundFilesIngame, temp);
 		const uint8 *data = _staticres->loadRawData(kEoB2PcmSoundEffectsIngame, temp2);
 		SoundResourceInfo_TownsEoB ingame(files, temp, data, temp2, 127);
-		sndInfo_ingame = &ingame;
 		files = _staticres->loadStrings(kEoBBaseSoundFilesIntro, temp);
 		data = _staticres->loadRawData(kEoB2PcmSoundEffectsIntro, temp2);
 		SoundResourceInfo_TownsEoB intro(files, temp, data, temp2, 40);
-		sndInfo_intro = &intro;
 		files = _staticres->loadStrings(kEoBBaseSoundFilesFinale, temp);
 		data = _staticres->loadRawData(kEoB2PcmSoundEffectsFinale, temp2);
 		SoundResourceInfo_TownsEoB finale(files, temp, data, temp2, 40);
-		sndInfo_finale = &finale;
+
+		_sound->initAudioResourceInfo(kMusicIngame, &ingame);
+		_sound->initAudioResourceInfo(kMusicIntro, &intro);
+		_sound->initAudioResourceInfo(kMusicFinale, &finale);
+
 	} else if (_flags.platform != Common::kPlatformPC98) {
 		const char *const *files = _staticres->loadStrings(kEoBBaseSoundFilesIngame, temp);
 		SoundResourceInfo_PC ingame(files, temp);
-		sndInfo_ingame = &ingame;
 		files = _staticres->loadStrings(kEoBBaseSoundFilesIntro, temp);
 		SoundResourceInfo_PC intro(files, temp);
-		sndInfo_intro = &intro;
 		files = _staticres->loadStrings(kEoBBaseSoundFilesFinale, temp);
 		SoundResourceInfo_PC finale(files, temp);
-		sndInfo_finale = &finale;
-	}
 
-	_sound->initAudioResourceInfo(kMusicIngame, sndInfo_ingame);
-	_sound->initAudioResourceInfo(kMusicIntro, sndInfo_intro);
-	_sound->initAudioResourceInfo(kMusicFinale, sndInfo_finale);
+		_sound->initAudioResourceInfo(kMusicIngame, &ingame);
+		_sound->initAudioResourceInfo(kMusicIntro, &intro);
+		_sound->initAudioResourceInfo(kMusicFinale, &finale);
+	}
 
 	// Hard code the following strings, since EOB I doesn't have them in the original.
 	// EOB I doesn't have load and save menus, because there is only one single
 	// save slot. Instead of emulating this we provide a menu similiar to EOB II.
 	// EOB I SegaCD actually has save/load menus with more than 1 slot if there is
-	// a RAM cart present). I supply the strings here, too... 
+	// a RAM cart present). I supply the strings here, too...
 
 	static const char *const saveLoadStrings[7][4] = {
 		{   "Cancel",   "Empty Slot",		"Save Game",    "Load Game"     },
@@ -545,7 +542,7 @@ void EoBCoreEngine::initStaticResource() {
 		"\r ""\x82\xBB\x82\xCC\x83""X""\x83\x8D\x83""b""\x83""g""\x82\xC9\x82\xCD\x83""Q""\x81""[""\x83\x80\x82\xAA\x83""Z""\x81""[""\x83""u\r ""\x82\xB3\x82\xEA\x82\xC4\x82\xA2\x82\xDC\x82\xB9\x82\xF1\x81""B",
 		0
 	};
-	
+
 	switch (_flags.lang) {
 	case Common::EN_ANY: {
 		if (_flags.platform == Common::kPlatformSegaCD) {
@@ -911,7 +908,7 @@ void EoBCoreEngine::initMenus() {
 		{   0,   8,  88,  48,  16,   0,  3  },
 		{   0,   0,   0,   0,   0,   0,  0  },
 		{   0,   8,  40,  48,  16,   0,  3  },
-		{   0, 120,  40,  24,  16,   0,  3  },		
+		{   0, 120,  40,  24,  16,   0,  3  },
 		{   0,  24,  80,  48,  16,  48,  3  },
 		{   0, 104,  80,  48,  16,  19,  3  },
 		{   0, 120, 144,  48,  16,  19,  5  },
@@ -1760,7 +1757,7 @@ void DarkMoonEngine::initStaticResource() {
 		{
 			"\r No se ha encontrado ninguna partida\r de EOB. Comprueba que el fichero de la partida que quieres\r transferir se encuentra en el\r directorio de ScummVM para los\r juegos guardados. Si tienes\r varios de estos directorios debes\r copiar el fichero en tu directorio\r de guardado de EOB II.\r Quieres volver a intentarlo?",
 			"Game ID",
-			"\r Parece que ya se ha vencido\r Xanathar aqui. Deseas transferir\r el grupo que ha\r finalizado el juego? En caso contrario\r puedes seleccionar otra partida\r de las anteriores guardadas.",
+			"\r Parece que ya se ha vencido\r Xanathar aqui. Deseas transferir\r el grupo que ha finalizado el\r juego? En caso contrario puedes\r seleccionar otra partida de las\r anteriores guardadas.",
 			"Escoge Fichero",
 			"\r\r   Un momento\r   por favor..."
 		},
@@ -1794,18 +1791,18 @@ void DarkMoonEngine::initSpells() {
 
 	int temp;
 	const uint8 *data = _staticres->loadRawData(kEoBBaseSpellProperties, temp);
-	Common::MemoryReadStreamEndian *src = new Common::MemoryReadStreamEndian(data, temp, _flags.platform == Common::kPlatformAmiga);
+	Common::MemoryReadStreamEndian src(data, temp, _flags.platform == Common::kPlatformAmiga);
 
 	for (int i = 0; i < _numSpells; i++) {
 		EoBSpell *s = &_spells[i];
-		src->skip(8);
-		s->flags = src->readUint16();
-		src->skip(8);
-		s->sound = src->readByte();
+		src.skip(8);
+		s->flags = src.readUint16();
+		src.skip(8);
+		s->sound = src.readByte();
 		if (_flags.platform == Common::kPlatformAmiga)
-			src->skip(1);
-		s->effectFlags = src->readUint32();
-		s->damageFlags = src->readUint16();
+			src.skip(1);
+		s->effectFlags = src.readUint32();
+		s->damageFlags = src.readUint16();
 	}
 }
 

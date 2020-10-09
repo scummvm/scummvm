@@ -262,6 +262,11 @@ private:
 	bool cmdCompanions(int argc, const char **argv);
 
 	/**
+	 * Toggle whether combat occurs
+	 */
+	bool cmdCombat(int argc, const char **argv);
+
+	/**
 	 * Destroy an object
 	 */
 	bool cmdDestroy(int argc, const char **argv);
@@ -290,6 +295,11 @@ private:
 	 * Full stats
 	 */
 	bool cmdFullStats(int argc, const char **argv);
+
+	/**
+	 * Toggle hunger on or off
+	 */
+	bool cmdHunger(int argc, const char **argv);
 
 	/**
 	 * Moongate teleportation
@@ -392,6 +402,8 @@ private:
 	bool cmdListTriggers(int argc, const char **argv);
 public:
 	bool _collisionOverride;
+	bool _disableHunger;
+	bool _disableCombat;
 public:
 	Debugger();
 	~Debugger() override;

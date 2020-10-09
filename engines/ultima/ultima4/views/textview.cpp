@@ -55,8 +55,8 @@ void TextView::reinit() {
 }
 
 void TextView::drawChar(int chr, int x, int y) {
-	ASSERT(x < _columns, "x value of %d out of range", x);
-	ASSERT(y < _rows, "y value of %d out of range", y);
+	assertMsg(x < _columns, "x value of %d out of range", x);
+	assertMsg(y < _rows, "y value of %d out of range", y);
 
 	_charset->drawSubRect(SCALED(_bounds.left + (x * CHAR_WIDTH)),
 	                      SCALED(_bounds.top + (y * CHAR_HEIGHT)),
@@ -247,7 +247,7 @@ void TextView::setCursorPos(int x, int y, bool clearOld) {
 		x -= _columns;
 		y++;
 	}
-	ASSERT(y < _rows, "y value of %d out of range", y);
+	assertMsg(y < _rows, "y value of %d out of range", y);
 
 	if (clearOld && _cursorEnabled) {
 		drawChar(' ', _cursorX, _cursorY);
@@ -272,7 +272,7 @@ void TextView::disableCursor() {
 }
 
 void TextView::drawCursor() {
-	ASSERT(_cursorPhase >= 0 && _cursorPhase < 4, "invalid cursor phase: %d", _cursorPhase);
+	assertMsg(_cursorPhase >= 0 && _cursorPhase < 4, "invalid cursor phase: %d", _cursorPhase);
 
 	if (!_cursorEnabled)
 		return;

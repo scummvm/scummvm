@@ -6,7 +6,6 @@ MODULE_OBJS := \
 	callables_br.o \
 	callables_ns.o \
 	debug.o \
-	detection.o \
 	dialogue.o \
 	disk_br.o \
 	disk_ns.o \
@@ -21,6 +20,7 @@ MODULE_OBJS := \
 	gui_ns.o \
 	input.o \
 	inventory.o \
+	metaengine.o \
 	objects.o \
 	parallaction.o \
 	parallaction_br.o \
@@ -41,3 +41,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o

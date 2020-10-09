@@ -403,7 +403,7 @@ uint Character::getStat(Attribute attrib, bool baseOnly) const {
 		attr._permanent += attr._temporary;
 	}
 
-	return MAX(attr._permanent, (uint)0);
+	return MAX(attr._permanent, 0);
 }
 
 int Character::statColor(int amount, int threshold) {
@@ -550,7 +550,7 @@ int Character::getThievery() const {
 }
 
 uint Character::getCurrentLevel() const {
-	return MAX(_level._permanent + _level._temporary, (uint)0);
+	return MAX(_level._permanent + _level._temporary, 0);
 }
 
 int Character::itemScan(int itemId) const {

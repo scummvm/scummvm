@@ -1,0 +1,14 @@
+<vector android:height="108dp"
+	android:width="108dp"
+	android:viewportWidth="108"
+	android:viewportHeight="108"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	<group>
+		<!-- According to LINT: "Resource references will not work correctly in images generated for this vector icon for API < 21; 
+		     check generated icon to make sure it looks acceptable"
+		     So we don't reference @color/colorPrimary here in fillColor. Instead we use the explicit raw hex value -->
+		<path
+			android:fillColor="#FFCC6600"
+			android:pathData="M0,0h108v108h-108z" />
+	</group>
+</vector>

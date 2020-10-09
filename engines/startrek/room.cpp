@@ -21,6 +21,7 @@
  */
 
 #include "startrek/iwfile.h"
+#include "startrek/resource.h"
 #include "startrek/room.h"
 #include "startrek/startrek.h"
 
@@ -45,7 +46,7 @@
 namespace StarTrek {
 
 Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm), _awayMission(&vm->_awayMission) {
-	Common::MemoryReadStreamEndian *rdfFile = _vm->loadFile(name + ".RDF");
+	Common::MemoryReadStreamEndian *rdfFile = _vm->_resource->loadFile(name + ".RDF");
 
 	int size = rdfFile->size();
 	_rdfData = new byte[size];
@@ -290,7 +291,7 @@ void Room::loadOtherRoomMessages() {
 
 	while (offset < endOffset) {
 		uint16 nextOffset = readRdfWord(offset + 4);
-		if (nextOffset >= endOffset)
+		if (nextOffset >= endOffset || offset >= nextOffset)
 			break;
 		
 		while (offset < nextOffset) {
@@ -588,10 +589,18 @@ void Room::walkCrewmanC(int actorIndex, int16 destX, int16 destY, void (Room::*f
 
 void Room::loadMapFile(const Common::String &name) {
 	delete _vm->_mapFile;
-	_vm->_mapFile = _vm->loadFile(name + ".map");
+	_vm->_mapFile = _vm->_resource->loadFile(name + ".map");
 
 	delete _vm->_iwFile;
 	_vm->_iwFile = new IWFile(_vm, name + ".iw");
+}
+
+Common::MemoryReadStreamEndian *Room::loadBitmapFile(Common::String baseName) {
+	return _vm->_resource->loadBitmapFile(baseName);
+}
+
+Common::MemoryReadStreamEndian *Room::loadFileWithParams(Common::String filename, bool unk1, bool unk2, bool unk3) {
+	return _vm->_resource->loadFileWithParams(filename, unk1, unk2, unk3);
 }
 
 void Room::showBitmapFor5Ticks(const Common::String &bmpName, int priority) {
@@ -601,7 +610,7 @@ void Room::showBitmapFor5Ticks(const Common::String &bmpName, int priority) {
 	Sprite sprite;
 	_vm->_gfx->addSprite(&sprite);
 	sprite.setXYAndPriority(0, 0, priority);
-	sprite.setBitmap(_vm->loadBitmapFile(bmpName));
+	sprite.setBitmap(_vm->_resource->loadBitmapFile(bmpName));
 
 	_vm->_gfx->drawAllSprites();
 

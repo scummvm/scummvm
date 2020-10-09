@@ -40,6 +40,7 @@
 #include "startrek/console.h"
 #include "startrek/iwfile.h"
 #include "startrek/lzss.h"
+#include "startrek/resource.h"
 #include "startrek/room.h"
 #include "startrek/startrek.h"
 
@@ -70,8 +71,8 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	_gfx = nullptr;
 	_activeMenu = nullptr;
 	_sound = nullptr;
-	_macResFork = nullptr;
 	_room = nullptr;
+	_resource = nullptr;
 
 	memset(_actionOnWalkCompletionInUse, 0, sizeof(_actionOnWalkCompletionInUse));
 
@@ -117,20 +118,14 @@ StarTrekEngine::~StarTrekEngine() {
 
 	delete _gfx;
 	delete _sound;
-	delete _macResFork;
+	delete _resource;
 }
 
 Common::Error StarTrekEngine::run() {
+	_resource = new Resource(getPlatform(), getFeatures() & GF_DEMO);
 	_gfx = new Graphics(this);
 	_sound = new Sound(this);
 	setDebugger(new Console(this));
-
-	if (getPlatform() == Common::kPlatformMacintosh) {
-		_macResFork = new Common::MacResManager();
-		if (!_macResFork->open("Star Trek Data"))
-			error("Could not load Star Trek Data");
-		assert(_macResFork->hasDataFork() && _macResFork->hasResFork());
-	}
 
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 	initializeEventsAndMouse();
@@ -336,189 +331,6 @@ void StarTrekEngine::runTransportSequence(const Common::String &name) {
 	initActors();
 }
 
-/**
- * TODO:
- *   - Should return nullptr on failure to open a file?
- *   - This is supposed to cache results, return same FileStream on multiple accesses.
- *   - This is supposed to read from a "patches" folder which overrides files in the
- *     packed blob.
- */
-Common::MemoryReadStreamEndian *StarTrekEngine::loadFile(Common::String filename, int fileIndex) {
-	filename.toUppercase();
-
-	Common::String basename, extension;
-
-	bool bigEndian = getPlatform() == Common::kPlatformAmiga;
-
-	for (int i = filename.size() - 1; ; i--) {
-		if (filename[i] == '.') {
-			basename = filename;
-			extension = filename;
-			basename.replace(i, filename.size() - i, "");
-			extension.replace(0, i + 1, "");
-			break;
-		}
-	}
-
-	// FIXME: don't know if this is right, or if it goes here
-	while (!basename.empty() && basename.lastChar() == ' ') {
-		basename.erase(basename.size() - 1, 1);
-	}
-
-	filename = basename + '.' + extension;
-
-	// The Judgment Rites demo has its files not in the standard archive
-	if (getGameType() == GType_STJR && (getFeatures() & GF_DEMO)) {
-		Common::File *file = new Common::File();
-		if (!file->open(filename.c_str())) {
-			delete file;
-			error("Could not find file \'%s\'", filename.c_str());
-		}
-		int32 size = file->size();
-		byte *data = (byte *)malloc(size);
-		file->read(data, size);
-		delete file;
-		return new Common::MemoryReadStreamEndian(data, size, bigEndian);
-	}
-
-	Common::SeekableReadStream *indexFile = 0;
-
-	if (getPlatform() == Common::kPlatformAmiga) {
-		indexFile = SearchMan.createReadStreamForMember("data000.dir");
-		if (!indexFile)
-			error("Could not open data000.dir");
-	} else if (getPlatform() == Common::kPlatformMacintosh) {
-		indexFile = _macResFork->getResource("Directory");
-		if (!indexFile)
-			error("Could not find 'Directory' resource in 'Star Trek Data'");
-	} else {
-		indexFile = SearchMan.createReadStreamForMember("data.dir");
-		if (!indexFile)
-			error("Could not open data.dir");
-	}
-
-	uint32 indexOffset = 0;
-	bool foundData = false;
-	uint16 fileCount = 1;
-	uint16 uncompressedSize = 0;
-
-	while (!indexFile->eos() && !indexFile->err()) {
-		Common::String testfile;
-		for (byte i = 0; i < 8; i++) {
-			char c = indexFile->readByte();
-			if (c)
-				testfile += c;
-		}
-		testfile += '.';
-
-		for (byte i = 0; i < 3; i++)
-			testfile += indexFile->readByte();
-
-		if (getFeatures() & GF_DEMO && getPlatform() == Common::kPlatformDOS) {
-			indexFile->readByte(); // Always 0?
-			fileCount = indexFile->readUint16LE(); // Always 1
-			indexOffset = indexFile->readUint32LE();
-			uncompressedSize = indexFile->readUint16LE();
-		} else {
-			if (getPlatform() == Common::kPlatformAmiga)
-				indexOffset = (indexFile->readByte() << 16) + (indexFile->readByte() << 8) + indexFile->readByte();
-			else
-				indexOffset = indexFile->readByte() + (indexFile->readByte() << 8) + (indexFile->readByte() << 16);
-
-			if (indexOffset & (1 << 23)) {
-				fileCount = (indexOffset >> 16) & 0x7F;
-				indexOffset = indexOffset & 0xFFFF;
-				assert(fileCount > 1);
-			} else {
-				fileCount = 1;
-			}
-		}
-
-		if (filename.matchString(testfile)) {
-			foundData = true;
-			break;
-		}
-	}
-
-	delete indexFile;
-
-	if (!foundData) {
-		// Files can be accessed "sequentially" if their filenames are the same except for
-		// the last character being incremented by one.
-		if ((basename.lastChar() >= '1' && basename.lastChar() <= '9') ||
-		        (basename.lastChar() >= 'B' && basename.lastChar() <= 'Z')) {
-			basename.setChar(basename.lastChar() - 1, basename.size() - 1);
-			return loadFile(basename + "." + extension, fileIndex + 1);
-		} else
-			error("Could not find file \'%s\'", filename.c_str());
-	}
-
-	if (fileIndex >= fileCount)
-		error("Tried to access file index %d for file '%s' which doesn't exist.", fileIndex, filename.c_str());
-
-	Common::SeekableReadStream *dataFile = 0;
-	Common::SeekableReadStream *dataRunFile = 0; // FIXME: Amiga & Mac need this implemented
-
-	if (getPlatform() == Common::kPlatformAmiga) {
-		dataFile = SearchMan.createReadStreamForMember("data.000");
-		if (!dataFile)
-			error("Could not open data.000");
-	} else if (getPlatform() == Common::kPlatformMacintosh) {
-		dataFile = _macResFork->getDataFork();
-		if (!dataFile)
-			error("Could not get 'Star Trek Data' data fork");
-	} else {
-		dataFile = SearchMan.createReadStreamForMember("data.001");
-		if (!dataFile)
-			error("Could not open data.001");
-		dataRunFile = SearchMan.createReadStreamForMember("data.run");
-		if (!dataFile)
-			error("Could not open data.run");
-	}
-
-	Common::SeekableReadStream *stream;
-	if (getFeatures() & GF_DEMO && getPlatform() == Common::kPlatformDOS) {
-		assert(fileCount == 1); // Sanity check...
-		stream = dataFile->readStream(uncompressedSize);
-	} else {
-		if (fileCount != 1) {
-			dataRunFile->seek(indexOffset);
-
-			indexOffset = dataRunFile->readByte() + (dataRunFile->readByte() << 8) + (dataRunFile->readByte() << 16);
-			//indexOffset &= 0xFFFFFE;
-
-			for (uint16 i = 0; i < fileIndex; i++) {
-				uint16 size = dataRunFile->readUint16LE();
-				indexOffset += size;
-			}
-		}
-		dataFile->seek(indexOffset);
-
-		uncompressedSize = (getPlatform() == Common::kPlatformAmiga) ? dataFile->readUint16BE() : dataFile->readUint16LE();
-		uint16 compressedSize = (getPlatform() == Common::kPlatformAmiga) ? dataFile->readUint16BE() : dataFile->readUint16LE();
-
-		stream = decodeLZSS(dataFile->readStream(compressedSize), uncompressedSize);
-	}
-
-	delete dataFile;
-	delete dataRunFile;
-
-	int32 size = stream->size();
-	byte *data = (byte *)malloc(size);
-	stream->read(data, size);
-	delete stream;
-
-	return new Common::MemoryReadStreamEndian(data, size, bigEndian);
-}
-
-Common::MemoryReadStreamEndian *StarTrekEngine::loadBitmapFile(Common::String baseName) {
-	return loadFile(baseName + ".BMP");
-}
-
-Common::MemoryReadStreamEndian *StarTrekEngine::loadFileWithParams(Common::String filename, bool unk1, bool unk2, bool unk3) {
-	return loadFile(filename);
-}
-
 void StarTrekEngine::playMovie(Common::String filename) {
 	if (getPlatform() == Common::kPlatformMacintosh)
 		playMovieMac(filename);
@@ -568,32 +380,6 @@ void StarTrekEngine::playMovieMac(Common::String filename) {
 
 uint16 StarTrekEngine::getRandomWord() {
 	return _randomSource.getRandomNumber(0xffff);
-}
-
-Common::String StarTrekEngine::getLoadedText(int textIndex) {
-	Common::MemoryReadStreamEndian *txtFile = loadFile(_txtFilename + ".txt");
-
-	Common::String str;
-	byte cur;
-	int curIndex = 0;
-
-	while (!txtFile->eos()) {
-		do {
-			cur = txtFile->readByte();
-			str += cur;
-		} while (cur != '\0');
-
-		if (curIndex == textIndex) {
-			delete txtFile;
-			return str;
-		}
-
-		curIndex++;
-		str = "";
-	}
-	
-	delete txtFile;
-	return "";
 }
 
 } // End of namespace StarTrek

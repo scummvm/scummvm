@@ -101,23 +101,26 @@ KIASectionSettings::KIASectionSettings(BladeRunnerEngine *vm)
 	_selectedTextLanguageStr = "";
 	_selectedTextLanguageId = -1;
 	_textLanguageDropdown = nullptr;
-	if (_vm->_subtitles->isSystemActive()) {
-		// TODO initialize with default values or ConfMan() in open()?
-		_selectedTextLanguageStr = "";
-		_selectedTextLanguageId = -1;
-		// Put at height on top of Music setting
-		// This avoids interference and handling the case of when BLADERUNNER_ORIGINAL_SETTINGS is set
-		//      (in which case the middle part of the KIA screen is filled with controls)
-		_textLanguageDropdown = new UIDropDown(_vm,
-		                                       dropdownSelectedCallback,
-		                                       dropdownCancelledCallback,
-		                                       dropdownClickedTopFrameCallback,
-		                                       this,
-		                                       "",
-		                                       0,
-		                                       136,
-		                                       Subtitles::kMaxLanguageSelectionNum);
-	}
+	//
+	// Section commented out for 2.2.0 release since it's not ready for production
+	//
+	//if (_vm->_subtitles->isSystemActive()) {
+	//	// TODO initialize with default values or ConfMan() in open()?
+	//	_selectedTextLanguageStr = "";
+	//	_selectedTextLanguageId = -1;
+	//	// Put at height on top of Music setting
+	//	// This avoids interference and handling the case of when BLADERUNNER_ORIGINAL_SETTINGS is set
+	//	//      (in which case the middle part of the KIA screen is filled with controls)
+	//	_textLanguageDropdown = new UIDropDown(_vm,
+	//	                                       dropdownSelectedCallback,
+	//	                                       dropdownCancelledCallback,
+	//	                                       dropdownClickedTopFrameCallback,
+	//	                                       this,
+	//	                                       "",
+	//	                                       0,
+	//	                                       136,
+	//	                                       Subtitles::kMaxLanguageSelectionNum);
+	//}
 
 	_playerAgendaSelector = new UIImagePicker(_vm, 5);
 
@@ -134,7 +137,10 @@ KIASectionSettings::KIASectionSettings(BladeRunnerEngine *vm)
 		// Note: Keep _textLanguageDropdown last added to _uiContainer
 		// in order to be able to set it as the only active object
 		// when the language selection dropdown is shown.
-		_uiContainer->add(_textLanguageDropdown);
+		//
+		// commented out for 2.2.0 release since _textLanguageDropdown is not ready for production
+		//
+		//_uiContainer->add(_textLanguageDropdown);
 	}
 
 	_state = kStateNormal;
@@ -156,7 +162,10 @@ KIASectionSettings::~KIASectionSettings() {
 #endif
 	delete _directorsCut;
 	if (_vm->_subtitles->isSystemActive()) {
-		delete _textLanguageDropdown;
+		//
+		// commented out for 2.2.0 release since _textLanguageDropdown is not ready for production
+		//
+		//delete _textLanguageDropdown;
 		delete _subtitlesEnable;
 	}
 	delete _playerAgendaSelector;
@@ -178,16 +187,22 @@ void KIASectionSettings::open() {
 	_directorsCut->enable();
 	if (_vm->_subtitles->isSystemActive()) {
 		_subtitlesEnable->enable();
-		_textLanguageDropdown->activate();
+		//
+		// commented out for 2.2.0 release since _textLanguageDropdown is not ready for production
+		//
+		//_textLanguageDropdown->activate();
 		populateLanguageSelection();
 	}
 }
 
 void KIASectionSettings::close() {
 	_playerAgendaSelector->deactivate();
-	if (_vm->_subtitles->isSystemActive()) {
-		_textLanguageDropdown->deactivate();
-	}
+	//
+	// commented out for 2.2.0 release since _textLanguageDropdown is not ready for production
+	//
+	//if (_vm->_subtitles->isSystemActive()) {
+	//	_textLanguageDropdown->deactivate();
+	//}
 }
 
 void KIASectionSettings::draw(Graphics::Surface &surface) {
@@ -319,8 +334,11 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 		}
 
 		// Vertical Align with "Soft" label
-		_textLanguageDropdown->setControlLeft(posSoft);
-		_textLanguageDropdown->setLabelStr(textLanguageSelect);
+		//
+		// commented out for 2.2.0 release since _textLanguageDropdown is not ready for production
+		//
+		//_textLanguageDropdown->setControlLeft(posSoft);
+		//_textLanguageDropdown->setLabelStr(textLanguageSelect);
 	}
 
 	// Draw uiContainer contained objects after drawing the text on the section for music, sound, speech etc.
@@ -502,16 +520,18 @@ void KIASectionSettings::initConversationChoices() {
 }
 
 void KIASectionSettings::populateLanguageSelection() {
-	_textLanguageDropdown->clearLines();
-	_textLanguageDropdown->addLine("English v7 [ENG] (SCUMMVM)", 1);
-	_textLanguageDropdown->addLine("French v7 [FRA] (Kwama57)", 2);
-	_textLanguageDropdown->addLine("Spanish v7 [ESP] (Victor G. Fraile & GeekOb)", 3);
-	_textLanguageDropdown->addLine("Greek v1 [ENG] (Praetorian)", 4);
-	_textLanguageDropdown->addLine("Hebrew v1 [ENG] (Rzil)", 5);
-	_textLanguageDropdown->addLine("Chinese v0 [ENG] (*)", 6);
-	_textLanguageDropdown->addLine("Russian v1 [ENG] (*)", 7);
-	_textLanguageDropdown->addLine("Italian v0 [ITA] (*)", 8);
-	_textLanguageDropdown->addLine("Deutsch v0 [DEU] (*)", 9);
+	if (_textLanguageDropdown != nullptr) {
+		_textLanguageDropdown->clearLines();
+		_textLanguageDropdown->addLine("English v7 [ENG] (SCUMMVM)", 1);
+		_textLanguageDropdown->addLine("French v7 [FRA] (Kwama57)", 2);
+		_textLanguageDropdown->addLine("Spanish v7 [ESP] (Victor G. Fraile & GeekOb)", 3);
+		_textLanguageDropdown->addLine("Greek v1 [ENG] (Praetorian)", 4);
+		_textLanguageDropdown->addLine("Hebrew v1 [ENG] (Rzil)", 5);
+		_textLanguageDropdown->addLine("Chinese v0 [ENG] (*)", 6);
+		_textLanguageDropdown->addLine("Russian v1 [ENG] (*)", 7);
+		_textLanguageDropdown->addLine("Italian v0 [ITA] (*)", 8);
+		_textLanguageDropdown->addLine("Deutsch v0 [DEU] (*)", 9);
+	}
 }
 
 void KIASectionSettings::changeState(State state) {

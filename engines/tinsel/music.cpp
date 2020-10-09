@@ -943,7 +943,7 @@ bool PCMMusicPlayer::getNextChunk() {
 	case S_NEXT:
 		_forcePlay = false;
 
-		script = scriptBuffer = (int32 *)LockMem(_hScript);
+		script = scriptBuffer = (int32 *)_vm->_handle->LockMem(_hScript);
 
 		// Set parameters for this chunk of music
 		id = _scriptNum;
@@ -959,7 +959,7 @@ bool PCMMusicPlayer::getNextChunk() {
 			break;
 		}
 
-		musicSegments = (MusicSegment *) LockMem(_hSegment);
+		musicSegments = (MusicSegment *)_vm->_handle->LockMem(_hSegment);
 
 		assert(FROM_32(musicSegments[snum].numChannels) == 1);
 		assert(FROM_32(musicSegments[snum].bitsPerSample) == 16);
@@ -999,7 +999,7 @@ bool PCMMusicPlayer::getNextChunk() {
 		debugC(DEBUG_DETAILED, kTinselDebugMusic, "Music reached state S_END1 (script %d.%d)",
 				_scriptNum, _scriptIndex);
 
-		script = scriptBuffer = (int32 *) LockMem(_hScript);
+		script = scriptBuffer = (int32 *)_vm->_handle->LockMem(_hScript);
 
 		id = _scriptNum;
 		while (id--)

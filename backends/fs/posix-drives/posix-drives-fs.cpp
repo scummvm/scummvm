@@ -20,7 +20,7 @@
  *
  */
 
-#if defined(POSIX)
+#if defined(POSIX) || defined(PSP2)
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 

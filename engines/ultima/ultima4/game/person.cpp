@@ -149,7 +149,7 @@ void Person::setDialogue(Dialogue *d) {
 
 void Person::setNpcType(PersonNpcType t) {
 	_npcType = t;
-	ASSERT(!isVendor() || _dialogue == nullptr, "vendor has dialogue");
+	assertMsg(!isVendor() || _dialogue == nullptr, "vendor has dialogue");
 }
 
 Common::List<Common::String> Person::getConversationText(Conversation *cnv, const char *inquiry) {
@@ -267,18 +267,18 @@ Common::List<Common::String> Person::getConversationText(Conversation *cnv, cons
 			break;
 
 		case Conversation::CONFIRMATION:
-			ASSERT(_npcType == NPC_LORD_BRITISH, "invalid state: %d", cnv->_state);
+			assertMsg(_npcType == NPC_LORD_BRITISH, "invalid state: %d", cnv->_state);
 			text += lordBritishGetQuestionResponse(cnv, inquiry);
 			break;
 
 		case Conversation::ASK:
 		case Conversation::ASKYESNO:
-			ASSERT(_npcType != NPC_HAWKWIND, "invalid state for hawkwind conversation");
+			assertMsg(_npcType != NPC_HAWKWIND, "invalid state for hawkwind conversation");
 			text += talkerGetQuestionResponse(cnv, inquiry) + "\n";
 			break;
 
 		case Conversation::GIVEBEGGAR:
-			ASSERT(_npcType == NPC_TALKER_BEGGAR, "invalid npc type: %d", _npcType);
+			assertMsg(_npcType == NPC_TALKER_BEGGAR, "invalid npc type: %d", _npcType);
 			text = beggarGetQuantityResponse(cnv, inquiry);
 			break;
 

@@ -52,6 +52,8 @@ Debugger *g_debugger;
 Debugger::Debugger() : Shared::Debugger() {
 	g_debugger = this;
 	_collisionOverride = false;
+	_disableCombat = false;
+	_disableHunger = false;
 	_dontEndTurn = false;
 
 	registerCmd("move", WRAP_METHOD(Debugger, cmdMove));
@@ -91,6 +93,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("3d", WRAP_METHOD(Debugger, cmd3d));
 	registerCmd("abyss", WRAP_METHOD(Debugger, cmdAbyss));
 	registerCmd("collisions", WRAP_METHOD(Debugger, cmdCollisions));
+	registerCmd("combat", WRAP_METHOD(Debugger, cmdCombat));
 	registerCmd("companions", WRAP_METHOD(Debugger, cmdCompanions));
 	registerCmd("destroy", WRAP_METHOD(Debugger, cmdDestroy));
 	registerCmd("destroy_creatures", WRAP_METHOD(Debugger, cmdDestroyCreatures));
@@ -101,6 +104,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("fullstats", WRAP_METHOD(Debugger, cmdFullStats));
 	registerCmd("gate", WRAP_METHOD(Debugger, cmdGate));
 	registerCmd("goto", WRAP_METHOD(Debugger, cmdGoto));
+	registerCmd("hunger", WRAP_METHOD(Debugger, cmdHunger));
 	registerCmd("items", WRAP_METHOD(Debugger, cmdItems));
 	registerCmd("karma", WRAP_METHOD(Debugger, cmdKarma));
 	registerCmd("leave", WRAP_METHOD(Debugger, cmdLeave));
@@ -549,7 +553,7 @@ bool Debugger::cmdExit(int argc, const char **argv) {
 			g_context->_lastShip = obj;
 
 		Tile *avatar = g_context->_location->_map->_tileSet->getByName("avatar");
-		ASSERT(avatar, "no avatar tile found in tileset");
+		assertMsg(avatar, "no avatar tile found in tileset");
 
 		g_context->_party->setTransport(avatar->getId());
 		g_context->_horseSpeed = 0;
@@ -804,7 +808,7 @@ bool Debugger::cmdMixReagents(int argc, const char **argv) {
 			g_context->_stats->setView(STATS_MIXTURES);
 
 			int choice = ReadChoiceController::get("abcdefghijklmnopqrstuvwxyz \033\n\r");
-			if (choice == ' ' || choice == '\033' || choice == '\n' || choice == '\r')
+			if (choice == -1 || choice == ' ' || choice == '\033' || choice == '\n' || choice == '\r')
 				break;
 
 			int spell = choice - 'a';
@@ -1271,6 +1275,14 @@ bool Debugger::cmdCompanions(int argc, const char **argv) {
 	return isDebuggerActive();
 }
 
+bool Debugger::cmdCombat(int argc, const char **argv) {
+	_disableCombat = !_disableCombat;
+	print("Combat encounters %s",
+		_disableCombat ? "off" : "on");
+
+	return isDebuggerActive();
+}
+
 bool Debugger::cmdDestroy(int argc, const char **argv) {
 	Direction dir;
 
@@ -1631,6 +1643,14 @@ bool Debugger::cmdFullStats(int argc, const char **argv) {
 
 	g_context->_stats->update();
 	print("Full Stats given");
+	return isDebuggerActive();
+}
+
+bool Debugger::cmdHunger(int argc, const char **argv) {
+	_disableHunger = !_disableHunger;
+	print("Party hunger %s",
+		_disableHunger ? "off" : "on");
+
 	return isDebuggerActive();
 }
 

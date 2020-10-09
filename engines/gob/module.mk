@@ -8,8 +8,8 @@ MODULE_OBJS := \
 	cheater_geisha.o \
 	cmpfile.o \
 	console.o \
-	dataio.o \
 	databases.o \
+	dataio.o \
 	dbase.o \
 	decfile.o \
 	draw.o \
@@ -55,6 +55,7 @@ MODULE_OBJS := \
 	map.o \
 	map_v1.o \
 	map_v2.o \
+	metaengine.o \
 	mult.o \
 	mult_v1.o \
 	mult_v2.o \
@@ -77,7 +78,6 @@ MODULE_OBJS := \
 	demos/demoplayer.o \
 	demos/scnplayer.o \
 	demos/batplayer.o \
-	detection/detection.o \
 	pregob/pregob.o \
 	pregob/txtfile.o \
 	pregob/gctfile.o \
@@ -133,3 +133,13 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection/detection.o
+
+# Skip building the following objects if a static
+# module is enabled, because it already has the contents.
+ifneq ($(ENABLE_GOB), STATIC_PLUGIN)
+# External dependencies for detection.
+DETECT_OBJS += $(MODULE)/dataio.o
+endif

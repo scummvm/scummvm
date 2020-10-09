@@ -32,6 +32,15 @@
 namespace Common {
 
 /**
+ * @defgroup common_rect Rectangular zones
+ * @ingroup common
+ *
+ * @brief API for operations on rectangular zones.
+ *
+ * @{
+ */
+
+/**
  * Simple class for handling both 2D position and size.
  */
 struct Point {
@@ -44,6 +53,10 @@ struct Point {
 	bool  operator!=(const Point &p)    const { return x != p.x || y != p.y; }
 	Point operator+(const Point &delta) const { return Point(x + delta.x, y + delta.y); }
 	Point operator-(const Point &delta) const { return Point(x - delta.x, y - delta.y); }
+	Point operator/(int divisor) const { return Point(x / divisor, y / divisor); }
+	Point operator*(int multiplier) const { return Point(x * multiplier, y * multiplier); }
+	Point operator/(double divisor) const { return Point(x / divisor, y / divisor); }
+	Point operator*(double multiplier) const { return Point(x * multiplier, y * multiplier); }
 
 	void operator+=(const Point &delta) {
 		x += delta.x;
@@ -73,6 +86,9 @@ struct Point {
 		return uint(diffx * diffx + diffy * diffy);
 	}
 };
+
+static inline Point operator*(int multiplier, const Point &p) { return Point(p.x * multiplier, p.y * multiplier); }
+static inline Point operator*(double multiplier, const Point &p) { return Point(p.x * multiplier, p.y * multiplier); }
 
 /**
  * Simple class for handling a rectangular zone.
@@ -267,7 +283,37 @@ struct Rect {
 		int x = cx - w / 2, y = cy - h / 2;
 		return Rect(x, y, x + w, y + h);
 	}
+
+	/**
+	 * Given target surface with size clip, this function ensures that
+	 * blit arguments dst, rect are within clip rectangle.
+	 * @param dst blit destination coordinates
+	 * @param rect blit source rectangle
+	 * @param clip clip rectangle (size of destination surface)
+	 */
+	static bool getBlitRect(Point &dst, Rect &rect, const Rect &clip) {
+		if (dst.x < clip.left) {
+			rect.left += clip.left - dst.x;
+			dst.x = clip.left;
+		}
+
+		if (dst.y < clip.top) {
+			rect.top += clip.top - dst.y;
+			dst.y = clip.top;
+		}
+
+		int right = dst.x + rect.right;
+		if (right > clip.right)
+			rect.right -= right - clip.right;
+
+		int bottom = dst.y + rect.bottom;
+		if (bottom > clip.bottom)
+			rect.bottom -= bottom - clip.bottom;
+		return !rect.isEmpty();
+	}
 };
+
+/** @} */
 
 } // End of namespace Common
 

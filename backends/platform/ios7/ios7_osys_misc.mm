@@ -28,6 +28,8 @@
 #include <UIKit/UIKit.h>
 #include <SystemConfiguration/SCNetworkReachability.h>
 #include "common/translation.h"
+#include "backends/platform/ios7/ios7_app_delegate.h"
+#include "backends/platform/ios7/ios7_video.h"
 
 static inline void execute_on_main_thread_async(void (^block)(void)) {
 	if ([NSThread currentThread] == [NSThread mainThread]) {
@@ -48,36 +50,47 @@ bool OSystem_iOS7::hasTextInClipboard() {
 	return [[UIPasteboard generalPasteboard] containsPasteboardTypes:UIPasteboardTypeListString];
 }
 
-Common::String OSystem_iOS7::getTextFromClipboard() {
+Common::U32String OSystem_iOS7::getTextFromClipboard() {
 	if (!hasTextInClipboard())
-		return Common::String();
+		return Common::U32String();
 
 	UIPasteboard *pb = [UIPasteboard generalPasteboard];
 	NSString *str = pb.string;
 	if (str == nil)
-		return Common::String();
+		return Common::U32String();
 
 	// If translations are supported, use the current TranslationManager charset and otherwise
 	// use ASCII. If the string cannot be represented using the requested encoding we get a null
 	// pointer below, which is fine as ScummVM would not know what to do with the string anyway.
-#ifdef USE_TRANSLATION
-	NSString* encStr = [NSString stringWithCString:TransMan.getCurrentCharset().c_str() encoding:NSASCIIStringEncoding];
-	NSStringEncoding encoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding((CFStringRef)encStr));
+#ifdef SCUMM_LITTLE_ENDIAN
+	NSStringEncoding stringEncoding = NSUTF32LittleEndianStringEncoding;
 #else
-	NSStringEncoding encoding = NSISOLatin1StringEncoding;
+	NSStringEncoding stringEncoding = NSUTF32BigEndianStringEncoding;
 #endif
-	return Common::String([str cStringUsingEncoding:encoding]);
+	NSUInteger textLength = [str length];
+	uint32 *text = new uint32[textLength];
+
+	if (![str getBytes:text maxLength:4*textLength usedLength:NULL encoding: stringEncoding options:0 range:NSMakeRange(0, textLength) remainingRange:NULL]) {
+		delete[] text;
+		return Common::U32String();
+	}
+
+	Common::U32String u32String(text, textLength);
+	delete[] text;
+
+	return u32String;
 }
 
-bool OSystem_iOS7::setTextInClipboard(const Common::String &text) {
-#ifdef USE_TRANSLATION
-	NSString* encStr = [NSString stringWithCString:TransMan.getCurrentCharset().c_str() encoding:NSASCIIStringEncoding];
-	NSStringEncoding encoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding((CFStringRef)encStr));
+bool OSystem_iOS7::setTextInClipboard(const Common::U32String &text) {
+#ifdef SCUMM_LITTLE_ENDIAN
+	NSStringEncoding stringEncoding = NSUTF32LittleEndianStringEncoding;
 #else
-	NSStringEncoding encoding = NSISOLatin1StringEncoding;
+	NSStringEncoding stringEncoding = NSUTF32BigEndianStringEncoding;
 #endif
 	UIPasteboard *pb = [UIPasteboard generalPasteboard];
-	[pb setString:[NSString stringWithCString:text.c_str() encoding:encoding]];
+	NSString *nsstring = [[NSString alloc] initWithBytes:text.c_str() length:4*text.size() encoding: stringEncoding];
+	[pb setString:nsstring];
+	[nsstring release];
 	return true;
 }
 
@@ -107,4 +120,18 @@ bool OSystem_iOS7::isConnectionLimited() {
 	SCNetworkReachabilityGetFlags(ref, &flags);
 	CFRelease(ref);
 	return (flags & kSCNetworkReachabilityFlagsIsWWAN);
+}
+
+void OSystem_iOS7::handleEvent_applicationSaveState() {
+	[[iOS7AppDelegate iPhoneView] beginBackgroundSaveStateTask];
+	saveState();
+	[[iOS7AppDelegate iPhoneView] endBackgroundSaveStateTask];
+}
+
+void OSystem_iOS7::handleEvent_applicationRestoreState() {
+	restoreState();
+}
+
+void OSystem_iOS7::handleEvent_applicationClearState() {
+	clearState();
 }

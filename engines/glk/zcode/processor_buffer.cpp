@@ -132,6 +132,16 @@ void Processor::print_string(const char *s) {
 	}
 }
 
+void Processor::print_string_uni(const uint32 *s) {
+	uint32 c;
+	while ((c = *s++) != 0) {
+		if (c == '\n')
+			new_line();
+		else
+			print_char(c);
+	}
+}
+
 void Processor::print_long(uint value, int base) {
 	unsigned long i;
 	char c;

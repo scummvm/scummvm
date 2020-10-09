@@ -31,6 +31,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
+/** The process to cycle some palette colors in Crusader */
 class CycleProcess : public Process {
 	uint8 	_running;
 	uint8 	_cycleColData[7][3];

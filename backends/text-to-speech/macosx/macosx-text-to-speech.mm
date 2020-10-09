@@ -81,7 +81,8 @@ MacOSXTextToSpeechManager::~MacOSXTextToSpeechManager() {
 	[synthesizerDelegate release];
 }
 
-bool MacOSXTextToSpeechManager::say(Common::String text, Action action, Common::String encoding) {
+bool MacOSXTextToSpeechManager::say(const Common::U32String &text, Action action) {
+	Common::String textToSpeak = text.encode();
 	if (isSpeaking()) {
 		// Interruptions are done on word boundaries for nice transitions.
 		// Should we interrupt immediately?
@@ -94,25 +95,19 @@ bool MacOSXTextToSpeechManager::say(Common::String text, Action action, Common::
 			// If the new speech is the one being currently said, continue that speech but clear the queue.
 			// And otherwise both clear the queue and interrupt the current speech.
 			_messageQueue.clear();
-			if (_currentSpeech == text)
+			if (_currentSpeech == textToSpeak)
 				return true;
 			[synthesizer stopSpeakingAtBoundary:NSSpeechWordBoundary];
 		} else if (action == QUEUE_NO_REPEAT) {
 			if (!_messageQueue.empty()) {
-				if (_messageQueue.back().text == text)
+				if (_messageQueue.back() == textToSpeak)
 					return true;
-			} else if (_currentSpeech == text)
+			} else if (_currentSpeech == textToSpeak)
 				return true;
 		}
 	}
 
-	if (encoding.empty()) {
-#ifdef USE_TRANSLATION
-		encoding = TransMan.getCurrentCharset();
-#endif
-	}
-
-	_messageQueue.push(SpeechText(text, encoding));
+	_messageQueue.push(textToSpeak);
 	if (!isSpeaking())
 		startNextSpeech();
 	return true;
@@ -122,20 +117,17 @@ bool MacOSXTextToSpeechManager::startNextSpeech() {
 	_currentSpeech.clear();
 	if (_messageQueue.empty())
 		return false;
-	SpeechText text = _messageQueue.pop();
-	// Get current encoding
-	CFStringEncoding stringEncoding = kCFStringEncodingASCII;
-	if (!text.encoding.empty()) {
-		CFStringRef encStr = CFStringCreateWithCString(NULL, text.encoding.c_str(), kCFStringEncodingASCII);
-		stringEncoding = CFStringConvertIANACharSetNameToEncoding(encStr);
-		CFRelease(encStr);
-	}
 
-	CFStringRef textNSString = CFStringCreateWithCString(NULL, text.text.c_str(), stringEncoding);
+	Common::String textToSpeak = _messageQueue.pop();
+
+	// Get current encoding
+	CFStringEncoding stringEncoding = kCFStringEncodingUTF8;
+
+	CFStringRef textNSString = CFStringCreateWithCString(NULL, textToSpeak.c_str(), stringEncoding);
 	bool status = [synthesizer startSpeakingString:(NSString *)textNSString];
 	CFRelease(textNSString);
 	if (status)
-		_currentSpeech = text.text;
+		_currentSpeech = textToSpeak;
 
 	return status;
 }

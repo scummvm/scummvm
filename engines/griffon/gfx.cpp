@@ -81,7 +81,7 @@ void GriffonEngine::eventText(const char *stri) {
 	do {
 		g_system->getEventManager()->pollEvent(_event);
 
-		if (_event.type == Common::EVENT_KEYDOWN && pause_ticks < _ticks)
+		if ((_event.type == Common::EVENT_KEYDOWN || _event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) && pause_ticks < _ticks)
 			break;
 		_videoBuffer2->blit(*_videoBuffer);
 

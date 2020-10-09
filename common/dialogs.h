@@ -34,6 +34,15 @@
 namespace Common {
 
 /**
+ * @defgroup common_dialogs Dialog Manager
+ * @ingroup common
+ *
+ * @brief  The Dialog Manager allows GUI code to interact with native system dialogs.
+ *
+ * @{
+ */
+
+/**
  * The DialogManager allows GUI code to interact with native system dialogs.
  */
 class DialogManager {
@@ -58,7 +67,7 @@ public:
 	 * @param isDirBrowser Restrict selection to directories
 	 * @return The dialog result
 	 */
-	virtual DialogResult showFileBrowser(const char *title, FSNode &choice, bool isDirBrowser = false) { return kDialogError; }
+	virtual DialogResult showFileBrowser(const Common::U32String &title, FSNode &choice, bool isDirBrowser = false) { return kDialogError; }
 
 protected:
 	bool _wasFullscreen;
@@ -96,6 +105,8 @@ protected:
 		}
 	}
 };
+
+/** @} */
 
 } // End of namespace Common
 

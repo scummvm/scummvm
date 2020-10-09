@@ -96,7 +96,7 @@ void GraphicsWindow::redraw() {
 	}
 }
 
-bool GraphicsWindow::drawPicture(uint image, int xpos, int ypos, bool scale,
+bool GraphicsWindow::drawPicture(const Common::String &image, int xpos, int ypos, bool scale,
                                    uint imagewidth, uint imageheight) {
 	Picture *pic = g_vm->_pictures->load(image);
 	uint hyperlink = _attr.hyper;
@@ -247,8 +247,10 @@ void GraphicsWindow::drawPicture(const Graphics::Surface &image, uint transColor
 }
 
 void GraphicsWindow::getSize(uint *width, uint *height) const {
-	*width = _bbox.width();
-	*height = _bbox.height();
+	if (width)
+		*width = _bbox.width();
+	if (height)
+		*height = _bbox.height();
 }
 
 void GraphicsWindow::setBackgroundColor(uint color) {

@@ -50,7 +50,7 @@ int UpdateManager::normalizeInterval(int interval) {
 	return val[-1]; // Return maximal acceptable value
 }
 
-const char *UpdateManager::updateIntervalToString(int interval) {
+Common::U32String UpdateManager::updateIntervalToString(int interval) {
 	switch (interval) {
 	case kUpdateIntervalNotSupported:
 		return _("Never");

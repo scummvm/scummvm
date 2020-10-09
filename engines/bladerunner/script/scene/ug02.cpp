@@ -70,7 +70,7 @@ void SceneScriptUG02::SceneLoaded() {
 	Footstep_Sounds_Set(0, 0);
 	Footstep_Sounds_Set(8, 2);
 
-	if (!Game_Flag_Query(kFlagUG02RagiationGooglesTaken)
+	if (!Game_Flag_Query(kFlagUG02RadiationGogglesTaken)
 	  && Game_Flag_Query(kFlagIzoIsReplicant)
 	) {
 		Item_Add_To_World(kItemRadiationGoogles, kModelAnimationRadiationGoggles, kSetUG02, -300.37f, 120.16f, -81.31f, 0, 8, 8, false, true, false, true);
@@ -162,7 +162,7 @@ bool SceneScriptUG02::ClickedOnItem(int itemId, bool a2) {
 	if (itemId == kItemRadiationGoogles) {
 		Actor_Face_Item(kActorMcCoy, kItemRadiationGoogles, true);
 		Actor_Clue_Acquire(kActorMcCoy, kClueRadiationGoggles, true, -1);
-		Game_Flag_Set(kFlagUG02RagiationGooglesTaken);
+		Game_Flag_Set(kFlagUG02RadiationGogglesTaken);
 		Item_Remove_From_World(kItemRadiationGoogles);
 		Item_Pickup_Spin_Effect(kModelAnimationRadiationGoggles, 426, 316);
 		return true;

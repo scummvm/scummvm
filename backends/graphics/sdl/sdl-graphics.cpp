@@ -192,6 +192,9 @@ bool SdlGraphicsManager::showMouse(bool visible) {
 }
 
 bool SdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
+	mouse.x = CLIP<int16>(mouse.x, 0, _windowWidth - 1);
+	mouse.y = CLIP<int16>(mouse.y, 0, _windowHeight - 1);
+
 	int showCursor = SDL_DISABLE;
 	bool valid = true;
 	if (_activeArea.drawRect.contains(mouse)) {
@@ -435,7 +438,7 @@ Common::Keymap *SdlGraphicsManager::getKeymap() {
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(filters); i++) {
-		act = new Action(filters[i].id, filters[i].description);
+		act = new Action(filters[i].id, _(filters[i].description));
 		act->addDefaultInputMapping(String::format("C+A+%d", i + 1));
 		act->addDefaultInputMapping(String::format("C+A+KP%d", i + 1));
 		act->setCustomBackendActionEvent(kActionSetScaleFilter1 + i);

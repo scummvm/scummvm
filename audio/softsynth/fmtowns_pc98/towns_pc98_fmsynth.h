@@ -40,7 +40,7 @@
 #endif
 
 /* Experimental code for emulation of the chip's busy flag wait cycle.
- * Explanation: 
+ * Explanation:
  * Before attempting a port write a client application would usually read the chip's
  * busy flag and remain in a loop until the flag is cleared. This does not work with
  * an emulator that is on the same thread as the client code (the busy flag will never

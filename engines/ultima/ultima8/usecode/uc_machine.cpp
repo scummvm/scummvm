@@ -37,9 +37,9 @@
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 
-#define INCLUDE_CONVERTUSECODEU8_WITHOUT_BRINGING_IN_FOLD
 #include "ultima/ultima8/convert/u8/convert_usecode_u8.h"
 #include "ultima/ultima8/convert/crusader/convert_usecode_crusader.h"
+#include "ultima/ultima8/convert/crusader/convert_usecode_regret.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 
 namespace Ultima {
@@ -100,9 +100,9 @@ UCMachine::UCMachine(Intrinsic *iset, unsigned int icount) {
 	} else {
 		_globals = new ByteSet(0x1000);
 		// slight hack: set global 003C to start as avatar number.
+		// TODO: is this the same offset in regret?
 		_globals->setEntries(0x3C, 2, 1);
-		// TODO: Need a separate convertor for Regret
-		_convUse = new ConvertUsecodeCrusader();
+		_convUse = new ConvertUsecodeRegret();
 	}
 
 	loadIntrinsics(iset, icount); //!...

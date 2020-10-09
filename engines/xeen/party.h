@@ -222,7 +222,7 @@ public:
 	bool _worldFlags[128];
 	bool _questFlags[60];
 	int _questItems[TOTAL_QUEST_ITEMS];
-	bool _characterFlags[30][24];
+	bool _characterFlags[30][32];
 public:
 	// Other party related runtime data
 	Roster _roster;

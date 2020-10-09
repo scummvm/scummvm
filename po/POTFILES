@@ -13,6 +13,7 @@ gui/KeysDialog.cpp
 gui/KeysDialog.h
 gui/launcher.cpp
 gui/massadd.cpp
+gui/message.cpp
 gui/onscreendialog.cpp
 gui/options.cpp
 gui/predictivedialog.cpp
@@ -27,6 +28,7 @@ gui/widget.cpp
 
 base/main.cpp
 
+common/achievements.cpp
 common/error.cpp
 common/rendermode.cpp
 common/updates.cpp
@@ -35,6 +37,8 @@ engines/advancedDetector.cpp
 engines/dialogs.cpp
 engines/engine.cpp
 engines/game.cpp
+engines/metaengine.cpp
+engines/savestate.cpp
 
 audio/adlib.cpp
 audio/fmopl.cpp
@@ -44,6 +48,7 @@ audio/null.cpp
 audio/null.h
 audio/softsynth/appleiigs.cpp
 audio/softsynth/cms.cpp
+audio/softsynth/fluidsynth.cpp
 audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp
 audio/softsynth/mt32.cpp
 audio/softsynth/pcspk.cpp
@@ -72,6 +77,7 @@ backends/networking/sdl_net/handlers/downloadfilehandler.cpp
 backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp
 backends/networking/sdl_net/handlers/filespagehandler.cpp
 backends/networking/sdl_net/handlers/indexpagehandler.cpp
+backends/networking/sdl_net/handlers/listajaxhandler.cpp
 backends/networking/sdl_net/handlers/uploadfilehandler.cpp
 backends/networking/sdl_net/handlerutils.cpp
 backends/networking/sdl_net/localwebserver.cpp
@@ -79,11 +85,15 @@ backends/networking/sdl_net/uploadfileclienthandler.cpp
 backends/platform/3ds/options-dialog.cpp
 backends/platform/3ds/osystem-events.cpp
 backends/platform/ds/arm9/source/dsoptions.cpp
+backends/platform/ds/arm9/source/scummhelp.cpp
 backends/platform/ios7/ios7_osys_events.cpp
 backends/platform/iphone/osys_events.cpp
 backends/platform/maemo/maemo.cpp
 backends/platform/sdl/macosx/appmenu_osx.mm
 backends/platform/sdl/ps3/ps3.cpp
+backends/platform/sdl/psp2/psp2.cpp
+backends/platform/sdl/switch/switch.cpp
 backends/platform/symbian/src/SymbianActions.cpp
 backends/platform/wii/options.cpp
+backends/presence/discord/discord.cpp
 backends/updates/macosx/macosx-updates.mm

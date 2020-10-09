@@ -149,12 +149,14 @@ void gameSpellEffect(int spell, int player, Sound sound) {
 	case Spell::SFX_INVERT:
 		gameUpdateScreen();
 		g_game->_mapArea.highlight(0, 0, VIEWPORT_W * TILE_WIDTH, VIEWPORT_H * TILE_HEIGHT);
+		g_screen->update();
 		EventHandler::sleep(time);
 		g_game->_mapArea.unhighlight();
 		g_screen->update();
 
 		if (effect == Spell::SFX_TREMOR) {
 			gameUpdateScreen();
+			g_screen->update();
 			soundPlay(SOUND_RUMBLE, false);
 			g_screen->screenShake(8);
 		}
@@ -205,7 +207,7 @@ int gameGetPlayer(bool canBeDisabled, bool canBeActivePlayer) {
 		return -1;
 	}
 
-	ASSERT(player < g_context->_party->size(), "player %d, but only %d members\n", player, g_context->_party->size());
+	assertMsg(player < g_context->_party->size(), "player %d, but only %d members\n", player, g_context->_party->size());
 	return player;
 }
 

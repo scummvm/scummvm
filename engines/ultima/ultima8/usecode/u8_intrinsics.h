@@ -319,7 +319,7 @@ Intrinsic U8Intrinsics[] = {
 	AudioProcess::I_stopSFX,        // int16 ObjID
 	0, //U
 	0, //U
-	MusicProcess::I_musicStop,
+	MusicProcess::I_stopMusic,
 	0, //U
 	0, //U
 	FireballProcess::I_TonysBalls,

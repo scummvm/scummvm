@@ -157,6 +157,11 @@ ifdef USE_OPENGL
 MODULE_OBJS += \
 	graphics/openglsdl/openglsdl-graphics.o
 endif
+
+ifdef USE_DISCORD
+MODULE_OBJS += \
+	presence/discord/discord.o
+endif
 endif
 
 ifdef POSIX
@@ -324,8 +329,8 @@ ifeq ($(BACKEND),psp2)
 MODULE_OBJS += \
 	fs/posix/posix-fs.o \
 	fs/posix/posix-iostream.o \
-	fs/psp2/psp2-fs-factory.o \
-	fs/psp2/psp2-dirent.o \
+	fs/posix-drives/posix-drives-fs.o \
+	fs/posix-drives/posix-drives-fs-factory.o \
 	events/psp2sdl/psp2sdl-events.o \
 	graphics/psp2sdl/psp2sdl-graphics.o
 endif

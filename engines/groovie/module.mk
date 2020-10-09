@@ -4,11 +4,11 @@ MODULE_OBJS := \
 	cell.o \
 	cursor.o \
 	debug.o \
-	detection.o \
 	font.o \
 	graphics.o \
 	groovie.o \
 	lzss.o \
+	metaengine.o \
 	music.o \
 	player.o \
 	resource.o \
@@ -29,3 +29,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o

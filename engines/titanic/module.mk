@@ -3,7 +3,6 @@ MODULE := engines/titanic
 MODULE_OBJS := \
 	continue_save_dialog.o \
 	debugger.o \
-	detection.o \
 	events.o \
 	game_location.o \
 	game_manager.o \
@@ -325,6 +324,7 @@ MODULE_OBJS := \
 	messages/messages.o \
 	messages/mouse_messages.o \
 	messages/service_elevator_door.o \
+	metaengine.o \
 	moves/call_pellerator.o \
 	moves/enter_bomb_room.o \
 	moves/enter_bridge.o \
@@ -531,3 +531,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o

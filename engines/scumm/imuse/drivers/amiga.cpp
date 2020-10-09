@@ -651,13 +651,13 @@ int IMuseDriver_Amiga::open() {
 	// when playing from the floppy disks. Obviously we don't need the redundancy files. The error dialog will display
 	// only the required files. These are different for MI2 and INDY4.
 	if (_missingFiles) {
-		Common::String message = _("This AMIGA version is missing (at least) the following file(s):\n\n");
+		Common::U32String message = _("This AMIGA version is missing (at least) the following file(s):\n\n");
 		for (int i = 0; i < 11; ++i) {
 			if (_missingFiles & (1 << i))
 				message += Common::String::format("AMIGA%d.IMS\n", i + 1);
 		}
 		message += _("\nPlease copy these file(s) into the game data directory.\n\n");
-		::GUI::displayErrorDialog(message.c_str());
+		::GUI::displayErrorDialog(message);
 		return MERR_DEVICE_NOT_AVAILABLE;
 	}
 

@@ -77,6 +77,8 @@ BaseMenu *DuckmanMenuSystem::createMenuById(int menuId) {
 	switch (menuId) {
 	case kDuckmanMainMenu:
 		return createMainMenu();
+	case kDuckmanMainMenuDemo:
+		return createMainMenuDemo();
 	case kDuckmanPauseMenu:
 		return createPauseMenu();
 	case kDuckmanQueryRestartMenu:
@@ -100,10 +102,35 @@ BaseMenu *DuckmanMenuSystem::createMenuById(int menuId) {
 
 BaseMenu *DuckmanMenuSystem::createMainMenu() {
 	BaseMenu *menu = new BaseMenu(this, 0x00120003, 12, 17, 11, 27, 0);
-	menu->addMenuItem(new MenuItem("Start New Game", new MenuActionReturnChoice(this, 11)));
-	menu->addMenuItem(new MenuItem("Load Saved Game", new MenuActionLoadGame(this, 1)));
-	menu->addMenuItem(new MenuItem("Options", new MenuActionEnterMenu(this, kDuckmanOptionsMenu)));
-	menu->addMenuItem(new MenuItem("Quit Game", new MenuActionEnterQueryMenu(this, kDuckmanQueryQuitMenu, 12)));
+
+	if (_vm->getGameLanguage() != Common::RU_RUS) {
+		menu->addMenuItem(new MenuItem("Start New Game", new MenuActionReturnChoice(this, 11)));
+		menu->addMenuItem(new MenuItem("Load Saved Game", new MenuActionLoadGame(this, 1)));
+		menu->addMenuItem(new MenuItem("Options", new MenuActionEnterMenu(this, kDuckmanOptionsMenu)));
+		menu->addMenuItem(new MenuItem("Quit Game", new MenuActionEnterQueryMenu(this, kDuckmanQueryQuitMenu, 12)));
+	} else {
+		menu->addMenuItem(new MenuItem("3AHOBO      ", new MenuActionReturnChoice(this, 11)));
+		menu->addMenuItem(new MenuItem("B6IHECEM ", new MenuActionLoadGame(this, 1)));
+		menu->addMenuItem(new MenuItem("YCTAH .", new MenuActionEnterMenu(this, kDuckmanOptionsMenu)));
+		menu->addMenuItem(new MenuItem("B6IXOD   ", new MenuActionEnterQueryMenu(this, kDuckmanQueryQuitMenu, 12)));
+	}
+
+	return menu;
+}
+
+BaseMenu *DuckmanMenuSystem::createMainMenuDemo() {
+	BaseMenu *menu = new BaseMenu(this, 0x00120003, 12, 17, 11, 27, 0);
+	if (_vm->getGameLanguage() != Common::RU_RUS) {
+		menu->addMenuItem(new MenuItem("Start New Game", new MenuActionReturnChoice(this, 2)));
+		menu->addMenuItem(new MenuItem("Load Saved Game", new MenuActionLoadGame(this, 1)));
+		menu->addMenuItem(new MenuItem("Options", new MenuActionEnterMenu(this, kDuckmanOptionsMenu)));
+		menu->addMenuItem(new MenuItem("Quit Game", new MenuActionEnterQueryMenu(this, kDuckmanQueryQuitMenu, 3)));
+	} else {
+		menu->addMenuItem(new MenuItem("3AHOBO      ", new MenuActionReturnChoice(this, 2)));
+		menu->addMenuItem(new MenuItem("B6IHECEM ", new MenuActionLoadGame(this, 1)));
+		menu->addMenuItem(new MenuItem("YCTAH .", new MenuActionEnterMenu(this, kDuckmanOptionsMenu)));
+		menu->addMenuItem(new MenuItem("B6IXOD   ", new MenuActionEnterQueryMenu(this, kDuckmanQueryQuitMenu, 3)));
+	}
 	return menu;
 }
 
@@ -141,53 +168,93 @@ MenuItem *DuckmanMenuSystem::createOptionsSliderMenuItem(MenuActionUpdateSlider 
 
 BaseMenu *DuckmanMenuSystem::createOptionsMenu() {
 	BaseMenu *menu = new BaseMenu(this, 0x00120003, 12, 17, 11, 27, 6);
-	menu->addText("              GAME OPTIONS             @@@@");
-	menu->addText("--------------------------------------");
-
 	MenuActionUpdateSlider *sfxSlider;
 	MenuActionUpdateSlider *musicSlider;
 	MenuActionUpdateSlider *speechSlider;
 	MenuActionUpdateSlider *textDurationSlider;
 
-	menu->addMenuItem(createOptionsSliderMenuItem(&sfxSlider, "SFX Volume     @@", SFX, menu));
-	menu->addMenuItem(createOptionsSliderMenuItem(&musicSlider, "Music Volume  @@@", MUSIC, menu));
-	menu->addMenuItem(createOptionsSliderMenuItem(&speechSlider, "Speech Volume ", VOICE, menu));
-	menu->addMenuItem(createOptionsSliderMenuItem(&textDurationSlider, "Text Duration @@@", TEXT_DURATION, menu));
+	if (_vm->getGameLanguage() != Common::RU_RUS) {
+		menu->addText("              GAME OPTIONS             @@@@");
+		menu->addText("--------------------------------------");
 
-	menu->addMenuItem(new MenuItem("Restore Defaults", new MenuActionResetOptionSliders(this, sfxSlider, musicSlider, speechSlider, textDurationSlider)));
+		menu->addMenuItem(createOptionsSliderMenuItem(&sfxSlider, "SFX Volume     @@", SFX, menu));
+		menu->addMenuItem(createOptionsSliderMenuItem(&musicSlider, "Music Volume  @@@", MUSIC, menu));
+		menu->addMenuItem(createOptionsSliderMenuItem(&speechSlider, "Speech Volume ", VOICE, menu));
+		menu->addMenuItem(createOptionsSliderMenuItem(&textDurationSlider, "Text Duration @@@", TEXT_DURATION, menu));
 
-	menu->addMenuItem(new MenuItem("Back", new MenuActionLeaveMenu(this)));
+		menu->addMenuItem(new MenuItem("Restore Defaults", new MenuActionResetOptionSliders(this, sfxSlider, musicSlider, speechSlider, textDurationSlider)));
+
+		menu->addMenuItem(new MenuItem("Back", new MenuActionLeaveMenu(this)));
+	} else {
+		menu->addText("              YCTAHOBKA   ");
+		menu->addText("--------------------------------------");
+
+		menu->addMenuItem(createOptionsSliderMenuItem(&sfxSlider, "3BYK           @@", SFX, menu));
+		menu->addMenuItem(createOptionsSliderMenuItem(&musicSlider, "MY36IKA       @@@", MUSIC, menu));
+		menu->addMenuItem(createOptionsSliderMenuItem(&speechSlider, "6A3AP         ", VOICE, menu));
+		menu->addMenuItem(createOptionsSliderMenuItem(&textDurationSlider, "TEKCT         @@@", TEXT_DURATION, menu));
+
+		menu->addMenuItem(new MenuItem("Restore Defaults", new MenuActionResetOptionSliders(this, sfxSlider, musicSlider, speechSlider, textDurationSlider)));
+
+		menu->addMenuItem(new MenuItem("Back", new MenuActionLeaveMenu(this)));
+	}
 	return menu;
 }
 
 BaseMenu *DuckmanMenuSystem::createPauseMenu() {
 	BaseMenu *menu = new BaseMenu(this, 0x00120003, 12, 17, 11, 27, 1);
-	menu->addText("   Game Paused");
-	menu->addText("--------------------");
-	menu->addMenuItem(new MenuItem("Resume", new MenuActionReturnChoice(this, 21)));
-	menu->addMenuItem(new MenuItem("Load Game", new MenuActionLoadGame(this, 1)));
-	menu->addMenuItem(new MenuItem("Save Game", new MenuActionSaveGame(this, 11)));
-	menu->addMenuItem(new MenuItem("Restart Game", new MenuActionEnterQueryMenu(this, kDuckmanQueryRestartMenu, 2)));
-	menu->addMenuItem(new MenuItem("Options", new MenuActionEnterMenu(this, kDuckmanOptionsMenu)));
-	menu->addMenuItem(new MenuItem("Quit Game", new MenuActionEnterQueryMenu(this, kDuckmanQueryQuitMenu, 23)));
+	if (_vm->getGameLanguage() != Common::RU_RUS) {
+		menu->addText("   Game Paused");
+		menu->addText("--------------------");
+		menu->addMenuItem(new MenuItem("Resume", new MenuActionReturnChoice(this, 21)));
+		menu->addMenuItem(new MenuItem("Load Game", new MenuActionLoadGame(this, 1)));
+		menu->addMenuItem(new MenuItem("Save Game", new MenuActionSaveGame(this, 11)));
+		menu->addMenuItem(new MenuItem("Restart Game", new MenuActionEnterQueryMenu(this, kDuckmanQueryRestartMenu, 2)));
+		menu->addMenuItem(new MenuItem("Options", new MenuActionEnterMenu(this, kDuckmanOptionsMenu)));
+		menu->addMenuItem(new MenuItem("Quit Game", new MenuActionEnterQueryMenu(this, kDuckmanQueryQuitMenu, 23)));
+	} else {
+		menu->addText("   OCTAHOBKA");
+		menu->addText("--------------------");
+		menu->addMenuItem(new MenuItem("YXHEM ", new MenuActionReturnChoice(this, 21)));
+		menu->addMenuItem(new MenuItem("B6IHECEM ", new MenuActionLoadGame(this, 1)));
+		menu->addMenuItem(new MenuItem("BHECEM   ", new MenuActionSaveGame(this, 11)));
+		menu->addMenuItem(new MenuItem("3AHOBO      ", new MenuActionEnterQueryMenu(this, kDuckmanQueryRestartMenu, 2)));
+		menu->addMenuItem(new MenuItem("YCTAH .", new MenuActionEnterMenu(this, kDuckmanOptionsMenu)));
+		menu->addMenuItem(new MenuItem("B6IXOD   ", new MenuActionEnterQueryMenu(this, kDuckmanQueryQuitMenu, 23)));
+	}
 	return menu;
 }
 
 BaseMenu *DuckmanMenuSystem::createQueryRestartMenu() {
 	BaseMenu *menu = new BaseMenu(this, 0x00120003, 12, 17, 11, 27, 2);
-	menu->addText("Do you really want to restart?");
-	menu->addText("-----------------------------------");
-	menu->addMenuItem(new MenuItem("Yes, let's try again", new MenuActionReturnChoice(this, getQueryConfirmationChoiceIndex())));
-	menu->addMenuItem(new MenuItem("No, just kidding", new MenuActionLeaveMenu(this)));
+	if (_vm->getGameLanguage() != Common::RU_RUS) {
+		menu->addText("Do you really want to restart?");
+		menu->addText("-----------------------------------");
+		menu->addMenuItem(new MenuItem("Yes, let's try again", new MenuActionReturnChoice(this, getQueryConfirmationChoiceIndex())));
+		menu->addMenuItem(new MenuItem("No, just kidding", new MenuActionLeaveMenu(this)));
+	} else {
+		menu->addText("TO4HO  3AHOBO  ?              ");
+		menu->addText("-----------------------------------");
+		menu->addMenuItem(new MenuItem("DA , ECTECTBEHHO   ", new MenuActionReturnChoice(this, getQueryConfirmationChoiceIndex())));
+		menu->addMenuItem(new MenuItem("HET , ODHO3HA4HO", new MenuActionLeaveMenu(this)));
+	}
 	return menu;
 }
 
 BaseMenu *DuckmanMenuSystem::createQueryQuitMenu() {
 	BaseMenu *menu = new BaseMenu(this, 0x00120003, 12, 17, 11, 27, 2);
-	menu->addText("Do you really want to quit?");
-	menu->addText("-------------------------------");
-	menu->addMenuItem(new MenuItem("Yes, I'm outta here", new MenuActionReturnChoice(this, getQueryConfirmationChoiceIndex())));
-	menu->addMenuItem(new MenuItem("No, just kidding", new MenuActionLeaveMenu(this)));
+	if (_vm->getGameLanguage() != Common::RU_RUS) {
+		menu->addText("Do you really want to quit?");
+		menu->addText("-------------------------------");
+		menu->addMenuItem(new MenuItem("Yes, I'm outta here", new MenuActionReturnChoice(this, getQueryConfirmationChoiceIndex())));
+		menu->addMenuItem(new MenuItem("No, just kidding", new MenuActionLeaveMenu(this)));
+	} else {
+		menu->addText("TO4HO  HA  B6IXOD  ?       ");
+		menu->addText("-------------------------------");
+		menu->addMenuItem(new MenuItem("DA , ECTECTBEHHO   ", new MenuActionReturnChoice(this, getQueryConfirmationChoiceIndex())));
+		menu->addMenuItem(new MenuItem("HET , ODHO3HA4HO", new MenuActionLeaveMenu(this)));
+	}
+
 	return menu;
 }
 
@@ -277,10 +344,9 @@ int DuckmanMenuSystem::convertRootMenuId(uint32 menuId) {
 	case 0x180007: // load game failed menu
 		return kDuckmanLoadGameFailedMenu;
 
-	/* TODO CHECKME Another pause menu?
 	case 0x180008:
-		menuData = &g_menuDataPause;
-	*/
+		return kDuckmanMainMenuDemo;
+
 	default:
 		error("DuckmanMenuSystem() Menu ID %08X not found", menuId);
 	}

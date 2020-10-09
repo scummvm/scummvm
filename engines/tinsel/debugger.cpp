@@ -79,8 +79,8 @@ bool Console::cmd_item(int argc, const char **argv) {
 		return true;
 	}
 
-	HoldItem(INV_NOICON);
-	HoldItem(strToInt(argv[1]));
+	_vm->_dialogs->HoldItem(INV_NOICON);
+	_vm->_dialogs->HoldItem(strToInt(argv[1]));
 	return false;
 }
 

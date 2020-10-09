@@ -30,24 +30,34 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_arch Archive
+ * @ingroup common
+ *
+ * @brief  The Archive module allows for managing the members of arbitrary containers in a uniform
+ * fashion. 
+ * It also supports looking up by names and file names, opening a file, and returning a usable input stream.
+ * @{
+ */
+
 class FSNode;
 class SeekableReadStream;
 
 
 /**
- * ArchiveMember is an abstract interface to represent elements inside
- * implementations of Archive.
+ * The ArchiveMember class is an abstract interface to represent elements inside
+ * implementations of an archive.
  *
  * Archive subclasses must provide their own implementation of ArchiveMember,
- * and use it when serving calls to listMembers() and listMatchingMembers().
- * Alternatively, the GenericArchiveMember below can be used.
+ * and use it when serving calls to @ref Archive::listMembers and @ref Archive::listMatchingMembers.
+ * Alternatively, you can use the @ref GenericArchiveMember.
  */
 class ArchiveMember {
 public:
 	virtual ~ArchiveMember() { }
-	virtual SeekableReadStream *createReadStream() const = 0;
-	virtual String getName() const = 0;
-	virtual String getDisplayName() const { return getName(); }
+	virtual SeekableReadStream *createReadStream() const = 0; /*!< Create a read stream. */
+	virtual String getName() const = 0; /*!< Get the name of a read stream. */
+	virtual String getDisplayName() const { return getName(); } /*!< Get display name of a read stream. */
 };
 
 typedef SharedPtr<ArchiveMember> ArchiveMemberPtr;
@@ -74,16 +84,16 @@ class GenericArchiveMember : public ArchiveMember {
 	const Archive *_parent;
 	const String _name;
 public:
-	GenericArchiveMember(const String &name, const Archive *parent);
-	String getName() const;
+	GenericArchiveMember(const String &name, const Archive *parent); /*!< Create a generic archive member. */
+	String getName() const; /*!< Get the name of a generic archive member. */
 	SeekableReadStream *createReadStream() const;
 };
 
 
 /**
- * Archive allows managing of member of arbitrary containers in a uniform
- * fashion, allowing lookup by (file)names.
- * It also supports opening a file and returning an usable input stream.
+ * The Archive class allows for managing the members of arbitrary containers in a uniform
+ * fashion, allowing lookup by (file) names.
+ * It also supports opening a file and returning a usable input stream.
  */
 class Archive {
 public:
@@ -97,40 +107,42 @@ public:
 	virtual bool hasFile(const String &name) const = 0;
 
 	/**
-	 * Add all members of the Archive matching the specified pattern to list.
+	 * Add all members of the Archive matching the specified pattern to the list.
 	 * Must only append to list, and not remove elements from it.
 	 *
-	 * @return the number of members added to list
+	 * @return The number of members added to list.
 	 */
 	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern) const;
 
 	/**
-	 * Add all members of the Archive to list.
+	 * Add all members of the Archive to the list.
 	 * Must only append to list, and not remove elements from it.
 	 *
-	 * @return the number of names added to list
+	 * @return The number of names added to list.
 	 */
 	virtual int listMembers(ArchiveMemberList &list) const = 0;
 
 	/**
-	 * Returns a ArchiveMember representation of the given file.
+	 * Return an ArchiveMember representation of the given file.
 	 */
 	virtual const ArchiveMemberPtr getMember(const String &name) const = 0;
 
 	/**
 	 * Create a stream bound to a member with the specified name in the
 	 * archive. If no member with this name exists, 0 is returned.
-	 * @return the newly created input stream
+	 *
+	 * @return The newly created input stream.
 	 */
 	virtual SeekableReadStream *createReadStreamForMember(const String &name) const = 0;
 };
 
 
 /**
- * SearchSet enables access to a group of Archives through the Archive interface.
+ * The SearchSet class enables access to a group of Archives through the Archive interface.
+ *
  * Its intended usage is a situation in which there are no name clashes among names in the
  * contained Archives, hence the simplistic policy of always looking for the first
- * match. SearchSet *DOES* guarantee that searches are performed in *DESCENDING*
+ * match. SearchSet does guarantee that searches are performed in DESCENDING
  * priority order. In case of conflicting priorities, insertion order prevails.
  */
 class SearchSet : public Archive {
@@ -149,8 +161,7 @@ class SearchSet : public Archive {
 	ArchiveNodeList::iterator find(const String &name);
 	ArchiveNodeList::const_iterator find(const String &name) const;
 
-	// Add an archive keeping the list sorted by descending priority.
-	void insert(const Node& node);
+	void insert(const Node& node); //!< Add an archive keeping the list sorted by descending priority.
 
 	bool _ignoreClashes;
 
@@ -164,58 +175,56 @@ public:
 	void add(const String& name, Archive *arch, int priority = 0, bool autoFree = true);
 
 	/**
-	 * Create and add a FSDirectory by name
+	 * Create and add a FSDirectory by name.
 	 */
 	void addDirectory(const String &name, const String &directory, int priority = 0, int depth = 1, bool flat = false);
 
 	/**
-	 * Create and add a FSDirectory by FSNode
+	 * Create and add a FSDirectory by FSNode.
 	 */
 	void addDirectory(const String &name, const FSNode &directory, int priority = 0, int depth = 1, bool flat = false);
 
 	/**
-	 * Create and add a sub directory by name (caseless).
+	 * Create and add a subdirectory by name (caseless).
 	 *
-	 * It is also possible to add sub directories of sub directories (of any depth) with this function.
-	 * The path seperator for this case is SLASH for *all* systems.
+	 * It is also possible to add subdirectories of subdirectories (of any depth) with this function.
+	 * The path seperator for this case is SLASH for all systems.
 	 *
-	 * An example would be:
+	 * Example:
 	 *
 	 *   "game/itedata"
 	 *
-	 * In this example the code would first try to search for all directories matching
+	 * In this example, the code first tries to search for all directories matching
 	 * "game" (case insensitive) in the path "directory" first and search through all
 	 * of the matches for "itedata" (case insensitive too).
 	 *
-	 * Note that it will add *all* matches found!
+	 * Note that it will add all matches found!
 	 *
-	 * Even though this method is currently implemented via addSubDirectoriesMatching it is not safe
+	 * Even though this method is currently implemented via addSubDirectoriesMatching, it is not safe
 	 * to assume that this method is using anything other than a simple case insensitive compare.
-	 * Thus do not use any tokens like '*' or '?' in the "caselessName" parameter of this function!
+	 * Thus, do not use any tokens like '*' or '?' in the "caselessName" parameter of this function.
 	 */
 	void addSubDirectoryMatching(const FSNode &directory, const String &caselessName, int priority = 0, int depth = 1, bool flat = false) {
 		addSubDirectoriesMatching(directory, caselessName, true, priority, depth, flat);
 	}
 
 	/**
-	 * Create and add sub directories by pattern.
+	 * Create and add subdirectories by pattern.
 	 *
-	 * It is also possible to add sub directories of sub directories (of any depth) with this function.
-	 * The path seperator for this case is SLASH for *all* systems.
+	 * It is also possible to add subdirectories of subdirectories (of any depth) with this function.
+	 * The path seperator for this case is SLASH for all systems.
 	 *
-	 * An example would be:
+	 * Example:
 	 *
 	 *   "game/itedata"
 	 *
-	 * In this example the code would first try to search for all directories matching
+	 * In this example, the code first tries to search for all directories matching
 	 * "game" in the path "directory" first and search through all of the matches for
-	 * "itedata". If "ingoreCase" is set to true, the code would do a case insensitive
+	 * "itedata". If "ingoreCase" is set to true, the code does a case insensitive
 	 * match, otherwise it is doing a case sensitive match.
 	 *
-	 * This method works of course also with tokens. For a list of available tokens
-	 * see the documentation for Common::matchString.
-	 *
-	 * @see Common::matchString
+	 * This method also works with tokens. For a list of available tokens,
+	 * see @ref Common::matchString.
 	 */
 	void addSubDirectoriesMatching(const FSNode &directory, String origPattern, bool ignoreCase, int priority = 0, int depth = 1, bool flat = false);
 
@@ -230,7 +239,7 @@ public:
 	bool hasArchive(const String &name) const;
 
 	/**
-	 * Empties the searchable set.
+	 * Empty the searchable set.
 	 */
 	virtual void clear();
 
@@ -246,14 +255,14 @@ public:
 	virtual const ArchiveMemberPtr getMember(const String &name) const;
 
 	/**
-	 * Implements createReadStreamForMember from Archive base class. The current policy is
+	 * Implement createReadStreamForMember from the Archive base class. The current policy is
 	 * opening the first file encountered that matches the name.
 	 */
 	virtual SeekableReadStream *createReadStreamForMember(const String &name) const;
 
 	/**
-	 * Ignore clashes when adding directories. For more details see the corresponding parameter
-	 * in FSDirectory documentation
+	 * Ignore clashes when adding directories. For more details, see the corresponding parameter
+	 * in FSDirectory documentation.
 	 */
 	void setIgnoreClashes(bool ignoreClashes) { _ignoreClashes = ignoreClashes; }
 };
@@ -263,7 +272,7 @@ class SearchManager : public Singleton<SearchManager>, public SearchSet {
 public:
 
 	/**
-	 * Resets the search manager to the default list of search paths (system
+	 * Reset the Search Manager to the default list of search paths (system
 	 * specific dirs + current dir).
 	 */
 	virtual void clear();
@@ -273,8 +282,10 @@ private:
 	SearchManager();
 };
 
-/** Shortcut for accessing the search manager. */
+/** Shortcut for accessing the Search Manager. */
 #define SearchMan		Common::SearchManager::instance()
+
+/** @} */
 
 } // namespace Common
 

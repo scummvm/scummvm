@@ -58,9 +58,9 @@ void EditWidget::InitGump(Gump *newparent, bool take_focus) {
 	_dims.moveTo(0, -font->getBaseline());
 
 	if (_gameFont && getFont()->isHighRes()) {
-		Rect rect(0, 0, 0, _dims.top);
+		Rect rect(_dims);
 		ScreenSpaceToGumpRect(rect, ROUND_OUTSIDE);
-		_dims.moveTo(0, rect.height());
+		_dims.moveTo(0, rect.top);
 	}
 }
 
@@ -256,6 +256,10 @@ bool EditWidget::OnTextInput(int unicode) {
 	}
 
 	return true;
+}
+
+void EditWidget::OnFocus(bool gain) {
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, gain);
 }
 
 } // End of namespace Ultima8

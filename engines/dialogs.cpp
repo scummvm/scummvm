@@ -59,44 +59,44 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 		_logo->useThemeTransparency(true);
 		_logo->setGfx(g_gui.theme()->getImageSurface(GUI::ThemeEngine::kImageLogoSmall));
 	} else {
-		GUI::StaticTextWidget *title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", "ScummVM");
+		GUI::StaticTextWidget *title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", Common::U32String("ScummVM"));
 		title->setAlign(Graphics::kTextAlignCenter);
 	}
 #else
-	GUI::StaticTextWidget *title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", "ScummVM");
+	GUI::StaticTextWidget *title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", Common::U32String("ScummVM"));
 	title->setAlign(Graphics::kTextAlignCenter);
 #endif
 
-	GUI::StaticTextWidget *version = new GUI::StaticTextWidget(this, "GlobalMenu.Version", gScummVMVersionDate);
+	GUI::StaticTextWidget *version = new GUI::StaticTextWidget(this, "GlobalMenu.Version", Common::U32String(gScummVMVersionDate));
 	version->setAlign(Graphics::kTextAlignCenter);
 
-	new GUI::ButtonWidget(this, "GlobalMenu.Resume", _("~R~esume"), 0, kPlayCmd, 'P');
+	new GUI::ButtonWidget(this, "GlobalMenu.Resume", _("~R~esume"), Common::U32String(""), kPlayCmd, 'P');
 
-	_loadButton = new GUI::ButtonWidget(this, "GlobalMenu.Load", _("~L~oad"), 0, kLoadCmd);
+	_loadButton = new GUI::ButtonWidget(this, "GlobalMenu.Load", _("~L~oad"), Common::U32String(""), kLoadCmd);
 	_loadButton->setVisible(_engine->hasFeature(Engine::kSupportsLoadingDuringRuntime));
 	_loadButton->setEnabled(_engine->hasFeature(Engine::kSupportsLoadingDuringRuntime));
 
-	_saveButton = new GUI::ButtonWidget(this, "GlobalMenu.Save", _("~S~ave"), 0, kSaveCmd);
+	_saveButton = new GUI::ButtonWidget(this, "GlobalMenu.Save", _("~S~ave"), Common::U32String(""), kSaveCmd);
 	_saveButton->setVisible(_engine->hasFeature(Engine::kSupportsSavingDuringRuntime));
 	_saveButton->setEnabled(_engine->hasFeature(Engine::kSupportsSavingDuringRuntime));
 
-	new GUI::ButtonWidget(this, "GlobalMenu.Options", _("~O~ptions"), 0, kOptionsCmd);
+	new GUI::ButtonWidget(this, "GlobalMenu.Options", _("~O~ptions"), Common::U32String(""), kOptionsCmd);
 
 	// The help button is disabled by default.
 	// To enable "Help", an engine needs to use a subclass of MainMenuDialog
 	// (at least for now, we might change how this works in the future).
-	_helpButton = new GUI::ButtonWidget(this, "GlobalMenu.Help", _("~H~elp"), 0, kHelpCmd);
+	_helpButton = new GUI::ButtonWidget(this, "GlobalMenu.Help", _("~H~elp"), Common::U32String(""), kHelpCmd);
 
-	new GUI::ButtonWidget(this, "GlobalMenu.About", _("~A~bout"), 0, kAboutCmd);
+	new GUI::ButtonWidget(this, "GlobalMenu.About", _("~A~bout"), Common::U32String(""), kAboutCmd);
 
 	if (g_system->getOverlayWidth() > 320)
-		_returnToLauncherButton = new GUI::ButtonWidget(this, "GlobalMenu.ReturnToLauncher", _("~R~eturn to Launcher"), 0, kLauncherCmd);
+		_returnToLauncherButton = new GUI::ButtonWidget(this, "GlobalMenu.ReturnToLauncher", _("~R~eturn to Launcher"), Common::U32String(""), kLauncherCmd);
 	else
-		_returnToLauncherButton = new GUI::ButtonWidget(this, "GlobalMenu.ReturnToLauncher", _c("~R~eturn to Launcher", "lowres"), 0, kLauncherCmd);
+		_returnToLauncherButton = new GUI::ButtonWidget(this, "GlobalMenu.ReturnToLauncher", _c("~R~eturn to Launcher", "lowres"), Common::U32String(""), kLauncherCmd);
 	_returnToLauncherButton->setEnabled(_engine->hasFeature(Engine::kSupportsReturnToLauncher));
 
 	if (!g_system->hasFeature(OSystem::kFeatureNoQuit))
-		new GUI::ButtonWidget(this, "GlobalMenu.Quit", _("~Q~uit"), 0, kQuitCmd);
+		new GUI::ButtonWidget(this, "GlobalMenu.Quit", _("~Q~uit"), Common::U32String(""), kQuitCmd);
 
 	_aboutDialog = new GUI::AboutDialog();
 	_loadDialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
@@ -186,7 +186,7 @@ void MainMenuDialog::reflowLayout() {
 	} else {
 		GUI::StaticTextWidget *title = (GUI::StaticTextWidget *)findWidget("GlobalMenu.Title");
 		if (!title) {
-			title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", "ScummVM");
+			title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", Common::U32String("ScummVM"));
 			title->setAlign(Graphics::kTextAlignCenter);
 		}
 
@@ -214,7 +214,7 @@ void MainMenuDialog::save() {
 
 		Common::Error status = _engine->saveGameState(slot, result);
 		if (status.getCode() != Common::kNoError) {
-			Common::String failMessage = Common::String::format(_("Failed to save game (%s)! "
+			Common::U32String failMessage = Common::U32String::format(_("Failed to save game (%s)! "
 				  "Please consult the README for basic information, and for "
 				  "instructions on how to obtain further assistance."), status.getDesc().c_str());
 			GUI::MessageDialog dialog(failMessage);
@@ -285,7 +285,7 @@ ConfigDialog::ConfigDialog() :
 	int tabId = tab->addTab(_("Game"), "GlobalConfig_Engine");
 
 	if (g_engine->hasFeature(Engine::kSupportsChangingOptionsDuringRuntime)) {
-		_engineOptions = metaEngine.buildEngineOptionsWidget(tab, "GlobalConfig_Engine.Container", gameDomain);
+		_engineOptions = metaEngine.buildEngineOptionsWidgetDynamic(tab, "GlobalConfig_Engine.Container", gameDomain);
 	}
 
 	if (_engineOptions) {
@@ -343,8 +343,8 @@ ConfigDialog::ConfigDialog() :
 	// Add the buttons
 	//
 
-	new GUI::ButtonWidget(this, "GlobalConfig.Ok", _("~O~K"), 0, GUI::kOKCmd);
-	new GUI::ButtonWidget(this, "GlobalConfig.Cancel", _("~C~ancel"), 0, GUI::kCloseCmd);
+	new GUI::ButtonWidget(this, "GlobalConfig.Ok", _("~O~K"), Common::U32String(""), GUI::kOKCmd);
+	new GUI::ButtonWidget(this, "GlobalConfig.Cancel", _("~C~ancel"), Common::U32String(""), GUI::kCloseCmd);
 
 #ifdef GUI_ENABLE_KEYSDIALOG
 	new GUI::ButtonWidget(this, "GlobalConfig.Keys", _("~K~eys"), 0, kKeysCmd);

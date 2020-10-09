@@ -111,9 +111,12 @@ bool SoundManager::nuvieStartup(Configuration *config) {
 	Std::string music_cfg_file; //full path and filename to music.cfg
 	Std::string sound_dir;
 	Std::string sfx_style;
+	bool val;
 
 	m_Config = config;
-	m_Config->value("config/audio/enabled", audio_enabled, true);
+
+	m_Config->value("config/mute", val, false);
+	audio_enabled = !val;
 	m_Config->value("config/GameType", game_type);
 	m_Config->value("config/audio/stop_music_on_group_change", stop_music_on_group_change, true);
 
@@ -127,15 +130,17 @@ bool SoundManager::nuvieStartup(Configuration *config) {
 	      return false;
 	     }*/
 
-	m_Config->value("config/audio/enable_music", music_enabled, true);
-	m_Config->value("config/audio/enable_sfx", sfx_enabled, true);
+	m_Config->value("config/music_mute", val, false);
+	music_enabled = !val;
+	m_Config->value("config/sfx_mute", val, false);
+	sfx_enabled = !val;
 
 	int volume;
 
-	m_Config->value("config/audio/music_volume", volume, Audio::Mixer::kMaxChannelVolume);
+	m_Config->value("config/music_volume", volume, Audio::Mixer::kMaxChannelVolume);
 	music_volume = clamp(volume, 0, 255);
 
-	m_Config->value("config/audio/sfx_volume", volume, Audio::Mixer::kMaxChannelVolume);
+	m_Config->value("config/sfx_volume", volume, Audio::Mixer::kMaxChannelVolume);
 	sfx_volume = clamp(volume, 0, 255);
 
 	config_key = config_get_game_key(config);
@@ -149,12 +154,13 @@ bool SoundManager::nuvieStartup(Configuration *config) {
 	config_key = config_get_game_key(config);
 	config_key.append("/sounddir");
 	config->value(config_key, sound_dir, "");
+
 	if (game_type == NUVIE_GAME_U6) { // FM-Towns speech
-		config_key = config_get_game_key(config);
-		config_key.append("/enable_speech");
-		config->value(config_key, speech_enabled, true);
-	} else
+		config->value("config/speech_mute", val, false);
+		speech_enabled = !val;
+	} else {
 		speech_enabled = false;
+	}
 
 	if (!initAudio()) {
 		return false;

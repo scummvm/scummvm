@@ -4,7 +4,6 @@ MODULE_OBJS := \
 	core/console.o \
 	core/clock.o \
 	core/events.o \
-	detection.o \
 	file/lzss_read_stream.o \
 	file/save_manager.o \
 	file/search_manager.o \
@@ -16,6 +15,7 @@ MODULE_OBJS := \
 	graphics/effects/wave.o \
 	graphics/render_manager.o \
 	graphics/render_table.o \
+	metaengine.o \
 	scripting/actions.o \
 	scripting/control.o \
 	scripting/controls/fist_control.o \
@@ -60,3 +60,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o

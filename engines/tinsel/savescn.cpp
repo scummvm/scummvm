@@ -77,7 +77,7 @@ extern SRSTATE g_SRstate;
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
-// FIXME: Avoid non-const global vars
+// These vars are reset upon engine destruction
 
 bool g_ASceneIsSaved = false;
 
@@ -85,17 +85,30 @@ static int g_savedSceneCount = 0;
 
 static bool g_bNotDoneYet = false;
 
-//static SAVED_DATA ssData[MAX_NEST];
 static SAVED_DATA *g_ssData = nullptr;
 static SAVED_DATA g_sgData;
-
-static SAVED_DATA *g_rsd = 0;
+static SAVED_DATA *g_rsd = nullptr;
 
 static int g_RestoreSceneCount = 0;
 
 static bool g_bNoFade = false;
 
-//----------------- FORWARD REFERENCES --------------------
+void ResetVarsSaveScn() {
+	g_ASceneIsSaved = false;
+
+	g_savedSceneCount = 0;
+
+	g_bNotDoneYet = false;
+
+	free(g_ssData);
+	g_ssData = nullptr;
+
+	memset(&g_sgData, 0, sizeof(g_sgData));
+	g_rsd = nullptr;
+
+	g_RestoreSceneCount = 0;
+	g_bNoFade = false;
+}
 
 /**
  * Save current scene.
@@ -105,21 +118,21 @@ void DoSaveScene(SAVED_DATA *sd) {
 	sd->SavedSceneHandle = GetSceneHandle();
 	sd->SavedBgroundHandle = _vm->_bg->GetBgroundHandle();
 	SaveMovers(sd->SavedMoverInfo);
-	sd->NumSavedActors = SaveActors(sd->SavedActorInfo);
+	sd->NumSavedActors = _vm->_actor->SaveActors(sd->SavedActorInfo);
 	_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &sd->SavedLoffset, &sd->SavedToffset);
 	SaveInterpretContexts(sd->SavedICInfo);
 	sd->SavedControl = ControlIsOn();
 	sd->SavedNoBlocking = GetNoBlocking();
-	GetNoScrollData(&sd->SavedNoScrollData);
+	_vm->_scroll->GetNoScrollData(&sd->SavedNoScrollData);
 
 	if (TinselV2) {
 		// Tinsel 2 specific data save
-		SaveActorZ(sd->savedActorZ);
-		SaveZpositions(sd->zPositions);
+		_vm->_actor->SaveActorZ(sd->savedActorZ);
+		_vm->_actor->SaveZpositions(sd->zPositions);
 		SavePolygonStuff(sd->SavedPolygonStuff);
 		_vm->_pcmMusic->getTunePlaying(sd->SavedTune, sizeof(sd->SavedTune));
 		sd->bTinselDim = _vm->_pcmMusic->getMusicTinselDimmed();
-		sd->SavedScrollFocus = GetScrollFocus();
+		sd->SavedScrollFocus = _vm->_scroll->GetScrollFocus();
 		SaveSysVars(sd->SavedSystemVars);
 		SaveSoundReels(sd->SavedSoundReels);
 
@@ -171,11 +184,11 @@ void FreeSaveScenes() {
 void sortActors(SAVED_DATA *sd) {
 	assert(!TinselV2);
 	for (int i = 0; i < sd->NumSavedActors; i++) {
-		ActorsLife(sd->SavedActorInfo[i].actorID, sd->SavedActorInfo[i].bAlive);
+		_vm->_actor->ActorsLife(sd->SavedActorInfo[i].actorID, sd->SavedActorInfo[i].bAlive);
 
 		// Should be playing the same reel.
 		if (sd->SavedActorInfo[i].presFilm != 0) {
-			if (!actorAlive(sd->SavedActorInfo[i].actorID))
+			if (!_vm->_actor->actorAlive(sd->SavedActorInfo[i].actorID))
 				continue;
 
 			RestoreActorReels(sd->SavedActorInfo[i].presFilm, sd->SavedActorInfo[i].presRnum, sd->SavedActorInfo[i].zFactor,
@@ -341,22 +354,22 @@ static int DoRestoreSceneFrame(SAVED_DATA *sd, int n) {
 		if (TinselV2) {
 			Offset(EX_USEXY, sd->SavedLoffset, sd->SavedToffset);
 		} else {
-			KillScroll();
+			_vm->_scroll->KillScroll();
 			_vm->_bg->PlayfieldSetPos(FIELD_WORLD, sd->SavedLoffset, sd->SavedToffset);
 			SetNoBlocking(sd->SavedNoBlocking);
 		}
 
-		RestoreNoScrollData(&sd->SavedNoScrollData);
+		_vm->_scroll->RestoreNoScrollData(&sd->SavedNoScrollData);
 
 		if (TinselV2) {
 			// create process to sort out the moving actors
 			CoroScheduler.createProcess(PID_MOVER, SortMAProcess, NULL, 0);
 			g_bNotDoneYet = true;
 
-			RestoreActorZ(sd->savedActorZ);
-			RestoreZpositions(sd->zPositions);
+			_vm->_actor->RestoreActorZ(sd->savedActorZ);
+			_vm->_actor->RestoreZpositions(sd->zPositions);
 			RestoreSysVars(sd->SavedSystemVars);
-			RestoreActors(sd->NumSavedActors, sd->SavedActorInfo);
+			_vm->_actor->RestoreActors(sd->NumSavedActors, sd->SavedActorInfo);
 			RestoreSoundReels(sd->SavedSoundReels);
 			return 1;
 		}
@@ -373,11 +386,11 @@ static int DoRestoreSceneFrame(SAVED_DATA *sd, int n) {
 				return n;
 
 			if (sd == &g_sgData)
-				HoldItem(g_thingHeld, true);
+				_vm->_dialogs->HoldItem(g_thingHeld, true);
 			if (sd->bTinselDim)
 				_vm->_pcmMusic->dim(true);
 			_vm->_pcmMusic->restoreThatTune(sd->SavedTune);
-			ScrollFocus(sd->SavedScrollFocus);
+			_vm->_scroll->ScrollFocus(sd->SavedScrollFocus);
 		} else {
 			_vm->_music->RestoreMidiFacts(sd->SavedMidi, sd->SavedLoop);
 		}
@@ -399,7 +412,7 @@ static int DoRestoreSceneFrame(SAVED_DATA *sd, int n) {
  * @param num			num
  */
 void RestoreGame(int num) {
-	KillInventory();
+	_vm->_dialogs->KillInventory();
 
 	RequestRestoreGame(num, &g_sgData, &g_savedSceneCount, g_ssData);
 

@@ -1,0 +1,103 @@
+                       Istruzioni
+                       --------
+
+In questo gioco impersoni Horst Hummel, il cuoco di bordo
+della "Supernova". Puoi decidere le sue azioni cliccando
+con il mouse sui comandi visualizzati a schermo.
+
+Premi F1 durante il gioco per aprire la schermata di aiuto.
+Puoi anche avviare SETUP.BAT per modificare le impostazioni
+del suono.
+In caso di problemi con il gioco (specialmente per l'audio)
+consulta il file PROBLEME.TXT.
+
+1. Selezione dei comandi
+--------------------
+Un comando e` costituito da un verbo ed 1 o 2 oggetti.
+Puoi selezionare un verbo cliccando nella barra dei comandi
+(es. Guarda, Prendi). Il verbo prescelto apparira` quindi
+nella riga sovrastante la barra dei comandi. Questa riga
+funge da "registro" per tenere traccia del comando che stai
+costruendo.
+
+Puoi selezionare un oggetto in due modi:
+-Cliccandoci sopra nella schermata grafica. Gli oggetti
+ importanti vengono indicati nella riga-registro quando
+ passi sopra il puntatore.
+-Cliccando su un oggetto nell'inventario. L'inventario si 
+ trova in basso sullo schermo e mostra tutti gli oggetti
+ che stai portando con te. Puoi raccogliere tutti gli
+ oggetti che desideri. Se possiedi piu` di otto oggetti,
+ verranno visualizzate delle freccette sulla destra, che
+ puoi usare per scorrere la lista completa.
+ 
+ Dopo avere selezionato un verbo ed un oggetto, l'azione
+ prescelta verra` subito eseguita (solitamente).
+ Esempi:
+         Apri Portello
+         Guarda Scacchiera
+         Prendi Scacchiera
+         Guarda Tesserino
+ Puoi provare questi esempi nella stanza dove inizia il
+ gioco.   
+
+Il verbo "Usa" talvolta richiede due oggetti. Il verbo "Dai"
+richiede sempre due "oggetti".
+Esempio:
+          Ti trovi nella stanza dove inizia il gioco.
+          Seleziona il verbo "Usa" e l'oggetto "Tesserino"
+          dal tuo inventario. La riga del testo indichera`
+          "Usa Tesserino con". Ora clicca sullo slot
+          dell'armadietto centrale per aprirlo.
+		   
+Informazioni aggiuntive per i comandi:
+-Dopo avere eseguito un comando, il gioco passa sempre al
+ verbo "Vai verso".
+-Alcune azioni possono essere svolte piu` rapidamente
+ premendo il tasto destro del mouse:
+  -Aprire e chiudere sportelli/porte...
+  -Premere pulsanti
+  -Parlare con persone
+  -Guardare oggetti
+   Esempio: 
+            Desideri aprire un portello chiuso.
+            Sposta il puntatore del mouse sopra al portello
+            e premi il tasto destro. Il portello si aprira`.
+            Premendo di nuovo il tasto destro, il portello
+            si richiudera`.
+
+ Se un oggetto non presenta possibilita` EVIDENTI di
+ essere aperto, chiuso, spinto o interrogato, premendo il
+ tasto destro verra` automaticamente eseguito il comando
+ "Guarda".
+
+2. Movimento
+----------
+Puoi spostarti in due modi.
+-Cliccando uno dei quadratini nell'area in basso a destra
+ dello schermo, quando il comando "Vai" e` selezionato.
+ I quadratini rappresentano le possibili uscite dalla stanza
+ dove ti trovi.
+-Puoi anche cliccare su di un'uscita direttamente nella
+ schermata grafica (per es. un portello aperto).
+ 
+ Importante: La schermata grafica non mostra sempre tutte 
+             le uscite di una stanza. Alcune uscite 
+             potrebbero essere accessibili solo tramite la
+             "mappa" in basso a destra.
+
+3. Salvataggio/Caricamento
+-----------------------
+Puoi salvare o caricare il gioco in qualsiasi momento. Per
+fare cio`, premi "F5". Apparira` un menu`.
+Per salvare il gioco, seleziona una delle 10 posizioni con
+il mouse o le frecce direzionali. Quindi inserisci un nome
+per il salvataggio e clicca "salva".
+Per caricare, clicca semplicemente sul salvataggio
+desiderato e quindi clicca su "carica".
+
+4. Parlare con altre creature
+-------------------------
+Proseguendo nel gioco incontrerai altre creature. Parlando
+con loro avrai a disposizione diverse domande e risposte.
+Selezionale usando il mouse.

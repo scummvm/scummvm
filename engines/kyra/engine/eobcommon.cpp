@@ -80,7 +80,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	memset(_thrownItemShapesScl, 0, sizeof(_thrownItemShapesScl));
 
 	_monsterAcHitChanceTable1 = _monsterAcHitChanceTable2 = 0;
-	
+
 	_monsterDustStrings = 0;
 	_enemyMageSpellList = 0;
 	_enemyMageSfx = 0;
@@ -240,7 +240,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_dcrShpDataPos = 0;
 	_amigaSoundMap = 0;
 	_amigaCurSoundFile = -1;
-	_prefMenuPlatformOffset = 0;	
+	_prefMenuPlatformOffset = 0;
 	_lastVIntTick = _lastSecTick = _totalPlaySecs = _totalEnemiesKilled = _totalSteps = 0;
 	_levelMaps = 0;
 	_closeSpellbookAfterUse = false;
@@ -359,12 +359,12 @@ EoBCoreEngine::~EoBCoreEngine() {
 	delete _txt;
 	_txt = 0;
 }
- 
+
 Common::KeymapArray EoBCoreEngine::initKeymaps(const Common::String &gameId) {
 	Common::Keymap *const keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kKeymapName, "Eye of the Beholder");
 
-	addKeymapAction(keyMap, "LCLK", _("Interact via Left Click)"), &Common::Action::setLeftClickEvent, "MOUSE_LEFT", "JOY_A");
-	addKeymapAction(keyMap, "RCLK", _("Interact via Right Click)"), &Common::Action::setRightClickEvent, "MOUSE_RIGHT", "JOY_B");
+	addKeymapAction(keyMap, "LCLK", _("Interact via Left Click"), &Common::Action::setLeftClickEvent, "MOUSE_LEFT", "JOY_A");
+	addKeymapAction(keyMap, "RCLK", _("Interact via Right Click"), &Common::Action::setRightClickEvent, "MOUSE_RIGHT", "JOY_B");
 	addKeymapAction(keyMap, "MVF", _("Move Forward"), Common::KeyState(Common::KEYCODE_UP), "UP", "JOY_UP");
 	addKeymapAction(keyMap, "MVB", _("Move Back"), Common::KeyState(Common::KEYCODE_DOWN), "DOWN", "JOY_DOWN");
 	addKeymapAction(keyMap, "MVL", _("Move Left"), Common::KeyState(Common::KEYCODE_LEFT), "LEFT", "JOY_LEFT_TRIGGER");
@@ -401,7 +401,7 @@ Common::Error EoBCoreEngine::init() {
 	_res = new Resource(this);
 	assert(_res);
 	_res->reset();
- 
+
 	_staticres = new StaticResource(this);
 	assert(_staticres);
 	if (!_staticres->init())
@@ -474,7 +474,7 @@ Common::Error EoBCoreEngine::init() {
 	_inf = new EoBInfProcessor(this, _screen);
 	assert(_inf);
 	setDebugger(new Debugger_EoB(this));
-	
+
 	loadFonts();
 
 	Common::Error err = KyraRpgEngine::init();
@@ -507,7 +507,7 @@ Common::Error EoBCoreEngine::init() {
 
 	_wllVcnOffset = (_flags.platform == Common::kPlatformFMTowns) ? 0 : 16;
 	int bpp = (_flags.platform == Common::kPlatformFMTowns) ? 2 : 1;
-	
+
 	_greenFadingTable = new uint8[256 * bpp];
 	_blueFadingTable = new uint8[256 * bpp];
 	_lightBlueFadingTable = new uint8[256 * bpp];
@@ -678,7 +678,7 @@ void EoBCoreEngine::registerDefaultSettings() {
 void EoBCoreEngine::readSettings() {
 	_configHpBarGraphs = ConfMan.getBool("hpbargraphs");
 	_configMouseBtSwap = ConfMan.getBool("mousebtswap");
-	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;	
+	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;
 	_configMusic = (_flags.platform == Common::kPlatformPC98 || _flags.platform == Common::kPlatformSegaCD) ? (ConfMan.getBool("music_mute") ? 0 : 1) : (_configSounds ? 1 : 0);
 
 	if (_sound) {
@@ -895,7 +895,7 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 
 	for (int i = 0; i < 6; i++)
 		_teleporterShapes[i] = _screen->encodeShape(_teleporterShapeDefs[(i << 2)], _teleporterShapeDefs[(i << 2) + 1], _teleporterShapeDefs[(i << 2) + 2], _teleporterShapeDefs[(i << 2) + 3], false, _cgaMappingDefault);
-		
+
 	_sparkShapes[0] = _screen->encodeShape(29, 0, 2, 16, false, _cgaMappingDeco);
 	_sparkShapes[1] = _screen->encodeShape(31, 0, 2, 16, false, _cgaMappingDeco);
 	_sparkShapes[2] = _screen->encodeShape(33, 0, 2, 16, false, _cgaMappingDeco);
@@ -908,7 +908,7 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 
 	static const uint8 dHeight[] = { 17, 10, 10 };
 	static const uint8 dY[] = { 120, 137, 147 };
-		
+
 	for (int y = 0; y < 3; y++) {
 		for (int x = 0; x < 4; x++)
 			_compassShapes[(y << 2) + x] = _screen->encodeShape(x * 3, dY[y], 3, dHeight[y], false, _cgaMappingDeco);
@@ -1496,7 +1496,7 @@ void EoBCoreEngine::increasePartyExperience(int16 points) {
 void EoBCoreEngine::increaseCharacterExperience(int charIndex, int32 points) {
 	int cl = _characters[charIndex].cClass;
 	points /= _numLevelsPerClass[cl];
-	
+
 	for (int i = 0; i < 3; i++) {
 		if (getCharacterClassType(cl, i) == -1)
 			continue;
@@ -1971,11 +1971,11 @@ void EoBCoreEngine::seq_portal() {
 					snd_playSoundEffect(90);
 			}
 		}
-	
+
 		_screen->updateScreen();
 		delay(2 * _tickLength);
 	}
-	
+
 	for (int i = 0; i < 16; i++)
 		delete[] shapes[i];
 	delete[] shapes;

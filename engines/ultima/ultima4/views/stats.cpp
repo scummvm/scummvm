@@ -180,7 +180,7 @@ void StatsArea::update(Menu *menu, MenuEvent &event) {
 }
 
 void StatsArea::highlightPlayer(int player) {
-	ASSERT(player < g_context->_party->size(), "player number out of range: %d", player);
+	assertMsg(player < g_context->_party->size(), "player number out of range: %d", player);
 	_mainArea.highlight(0, player * CHAR_HEIGHT, STATS_AREA_WIDTH * CHAR_WIDTH, CHAR_HEIGHT);
 #ifdef IOS_ULTIMA4
 	U4IOS::updateActivePartyMember(player);
@@ -212,7 +212,7 @@ void StatsArea::showPartyView(bool avatarOnly) {
 	PartyMember *p = nullptr;
 	int activePlayer = g_context->_party->getActivePlayer();
 
-	ASSERT(g_context->_party->size() <= 8, "party members out of range: %d", g_context->_party->size());
+	assertMsg(g_context->_party->size() <= 8, "party members out of range: %d", g_context->_party->size());
 
 	if (!avatarOnly) {
 		for (int i = 0; i < g_context->_party->size(); i++) {
@@ -228,7 +228,7 @@ void StatsArea::showPartyView(bool avatarOnly) {
 void StatsArea::showPlayerDetails() {
 	int player = _view - STATS_CHAR1;
 
-	ASSERT(player < 8, "character number out of range: %d", player);
+	assertMsg(player < 8, "character number out of range: %d", player);
 
 	PartyMember *p = g_context->_party->member(player);
 	setTitle(p->getName());

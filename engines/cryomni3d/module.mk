@@ -8,10 +8,10 @@ MODULE_OBJS = \
 	video/hnm_decoder.o \
 	cryomni3d.o \
 	datstream.o \
-	detection.o \
 	dialogs_manager.o \
 	fixed_image.o \
 	font_manager.o \
+	metaengine.o \
 	mouse_boxes.o \
 	objects.o \
 	omni3d.o \
@@ -39,3 +39,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o

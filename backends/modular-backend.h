@@ -102,6 +102,7 @@ public:
 
 	virtual void showOverlay() override final;
 	virtual void hideOverlay() override final;
+	virtual bool isOverlayVisible() const override final;
 	virtual Graphics::PixelFormat getOverlayFormat() const override final;
 	virtual void clearOverlay() override final;
 	virtual void grabOverlay(void *buf, int pitch) override final;
@@ -119,7 +120,7 @@ public:
 	/** @name Miscellaneous */
 	//@{
 
-	virtual void displayMessageOnOSD(const char *msg) override final;
+	virtual void displayMessageOnOSD(const Common::U32String &msg) override final;
 	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon) override final;
 
 	//@}

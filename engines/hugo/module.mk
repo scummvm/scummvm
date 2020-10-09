@@ -2,7 +2,6 @@ MODULE := engines/hugo
 
 MODULE_OBJS := \
 	console.o \
-	detection.o \
 	dialogs.o \
 	display.o \
 	file.o \
@@ -14,6 +13,7 @@ MODULE_OBJS := \
 	hugo.o \
 	intro.o \
 	inventory.o \
+	metaengine.o \
 	mouse.o \
 	object.o \
 	object_v1d.o \
@@ -38,3 +38,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o

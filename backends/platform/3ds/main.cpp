@@ -30,6 +30,29 @@ enum {
 	SYSTEM_MODEL_2DS = 3
 };
 
+struct CommandLine {
+	int argumentCount;
+	char** argumentsValue;
+
+	CommandLine(int argc, char** argv): argumentCount(argc), argumentsValue(argv) {}
+};
+
+static void mainThreadFunc(void *threadParams) {
+	g_system = new _3DS::OSystem_3DS();
+	assert(g_system);
+
+#ifdef DYNAMIC_MODULES
+	PluginManager::instance().addPluginProvider(new CTRPluginProvider());
+#endif
+
+	CommandLine *commandLine = static_cast<CommandLine *>(threadParams);
+	int res = scummvm_main(commandLine->argumentCount, commandLine->argumentsValue);
+
+	g_system->destroy();
+
+	threadExit(res);
+};
+
 int main(int argc, char *argv[]) {
 	// Initialize basic libctru stuff
 	cfguInit();
@@ -52,16 +75,17 @@ int main(int argc, char *argv[]) {
 	socInit((u32 *)soc_sharedmem, soc_sharedmem_size);
 #endif
 
-	g_system = new _3DS::OSystem_3DS();
-	assert(g_system);
+	// Start ScummVM in a separate thread to be able to set the stack size.
+	// The default stack is not large enough.
+	CommandLine commandLine(argc, argv);
 
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new CTRPluginProvider());
-#endif
+	s32 mainThreadPriority = 0;
+	svcGetThreadPriority(&mainThreadPriority, CUR_THREAD_HANDLE);
 
-	int res = scummvm_main(argc, argv);
-
-	g_system->destroy();
+	Thread mainThread = threadCreate(&mainThreadFunc, &commandLine, 64 * 1024, mainThreadPriority, -2, false);
+	threadJoin(mainThread, U64_MAX);
+	int res = threadGetExitCode(mainThread);
+	threadFree(mainThread);
 
 	// Turn on both screen backlights before exiting.
 	if (R_SUCCEEDED(gspLcdInit())) {

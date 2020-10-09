@@ -120,7 +120,7 @@ Ingredients::Ingredients() {
 }
 
 bool Ingredients::addReagent(Reagent reagent) {
-	ASSERT(reagent < REAG_MAX, "invalid reagent: %d", reagent);
+	assertMsg(reagent < REAG_MAX, "invalid reagent: %d", reagent);
 	if (g_context->_party->getReagent(reagent) < 1)
 		return false;
 	g_context->_party->adjustReagent(reagent, -1);
@@ -129,7 +129,7 @@ bool Ingredients::addReagent(Reagent reagent) {
 }
 
 bool Ingredients::removeReagent(Reagent reagent) {
-	ASSERT(reagent < REAG_MAX, "invalid reagent: %d", reagent);
+	assertMsg(reagent < REAG_MAX, "invalid reagent: %d", reagent);
 	if (_reagents[reagent] == 0)
 		return false;
 	g_context->_party->adjustReagent(reagent, 1);
@@ -138,7 +138,7 @@ bool Ingredients::removeReagent(Reagent reagent) {
 }
 
 int Ingredients::getReagent(Reagent reagent) const {
-	ASSERT(reagent < REAG_MAX, "invalid reagent: %d", reagent);
+	assertMsg(reagent < REAG_MAX, "invalid reagent: %d", reagent);
 	return _reagents[reagent];
 }
 
@@ -162,7 +162,7 @@ bool Ingredients::checkMultiple(int batches) const {
 }
 
 void Ingredients::multiply(int batches) {
-	ASSERT(checkMultiple(batches), "not enough reagents to multiply ingredients by %d\n", batches);
+	assertMsg(checkMultiple(batches), "not enough reagents to multiply ingredients by %d\n", batches);
 	for (int i = 0; i < REAG_MAX; i++) {
 		if (_reagents[i] > 0) {
 			g_ultima->_saveGame->_reagents[i] -= batches - 1;
@@ -188,25 +188,25 @@ void Spells::spellSetEffectCallback(SpellEffectCallback callback) {
 }
 
 const char *Spells::spellGetName(uint spell) const {
-	ASSERT(spell < N_SPELLS, "invalid spell: %d", spell);
+	assertMsg(spell < N_SPELLS, "invalid spell: %d", spell);
 
 	return SPELL_LIST[spell]._name;
 }
 
 int Spells::spellGetRequiredMP(uint spell) const {
-	ASSERT(spell < N_SPELLS, "invalid spell: %d", spell);
+	assertMsg(spell < N_SPELLS, "invalid spell: %d", spell);
 
 	return SPELL_LIST[spell]._mp;
 }
 
 LocationContext Spells::spellGetContext(uint spell) const {
-	ASSERT(spell < N_SPELLS, "invalid spell: %d", spell);
+	assertMsg(spell < N_SPELLS, "invalid spell: %d", spell);
 
 	return SPELL_LIST[spell]._context;
 }
 
 TransportContext Spells::spellGetTransportContext(uint spell) const {
-	ASSERT(spell < N_SPELLS, "invalid spell: %d", spell);
+	assertMsg(spell < N_SPELLS, "invalid spell: %d", spell);
 
 	return SPELL_LIST[spell]._transportContext;
 }
@@ -244,7 +244,7 @@ Common::String Spells::spellGetErrorMessage(uint spell, SpellCastError error) {
 int Spells::spellMix(uint spell, const Ingredients *ingredients) {
 	int regmask, reg;
 
-	ASSERT(spell < N_SPELLS, "invalid spell: %d", spell);
+	assertMsg(spell < N_SPELLS, "invalid spell: %d", spell);
 
 	regmask = 0;
 	for (reg = 0; reg < REAG_MAX; reg++) {
@@ -261,7 +261,7 @@ int Spells::spellMix(uint spell, const Ingredients *ingredients) {
 }
 
 Spell::Param Spells::spellGetParamType(uint spell) const {
-	ASSERT(spell < N_SPELLS, "invalid spell: %d", spell);
+	assertMsg(spell < N_SPELLS, "invalid spell: %d", spell);
 
 	return SPELL_LIST[spell]._paramType;
 }
@@ -271,8 +271,8 @@ bool Spells::isDebuggerActive() const {
 }
 
 SpellCastError Spells::spellCheckPrerequisites(uint spell, int character) {
-	ASSERT(spell < N_SPELLS, "invalid spell: %d", spell);
-	ASSERT(character >= 0 && character < g_ultima->_saveGame->_members, "character out of range: %d", character);
+	assertMsg(spell < N_SPELLS, "invalid spell: %d", spell);
+	assertMsg(character >= 0 && character < g_ultima->_saveGame->_members, "character out of range: %d", character);
 
 	// Don't bother checking mix count and map when the spell
 	// has been manually triggered from the debugger
@@ -297,8 +297,8 @@ bool Spells::spellCast(uint spell, int character, int param, SpellCastError *err
 	int subject = (SPELL_LIST[spell]._paramType == Spell::PARAM_PLAYER) ? param : -1;
 	PartyMember *p = g_context->_party->member(character);
 
-	ASSERT(spell < N_SPELLS, "invalid spell: %d", spell);
-	ASSERT(character >= 0 && character < g_ultima->_saveGame->_members, "character out of range: %d", character);
+	assertMsg(spell < N_SPELLS, "invalid spell: %d", spell);
+	assertMsg(character >= 0 && character < g_ultima->_saveGame->_members, "character out of range: %d", character);
 
 	*error = spellCheckPrerequisites(spell, character);
 
@@ -388,7 +388,7 @@ bool Spells::spellMagicAttackAt(const Coords &coords, MapTile attackTile, int at
 }
 
 int Spells::spellAwaken(int player) {
-	ASSERT(player < 8, "player out of range: %d", player);
+	assertMsg(player < 8, "player out of range: %d", player);
 	PartyMember *p = g_context->_party->member(player);
 
 	if ((player < g_context->_party->size()) && (p->getStatus() == STAT_SLEEPING)) {
@@ -451,7 +451,7 @@ int Spells::spellBlink(int dir) {
 }
 
 int Spells::spellCure(int player) {
-	ASSERT(player < 8, "player out of range: %d", player);
+	assertMsg(player < 8, "player out of range: %d", player);
 
 	GameController::flashTile(g_context->_party->member(player)->getCoords(), "wisp", 1);
 	return g_context->_party->member(player)->heal(HT_CURE);
@@ -595,7 +595,7 @@ int Spells::spellGate(int phase) {
 }
 
 int Spells::spellHeal(int player) {
-	ASSERT(player < 8, "player out of range: %d", player);
+	assertMsg(player < 8, "player out of range: %d", player);
 
 	GameController::flashTile(g_context->_party->member(player)->getCoords(), "wisp", 1);
 	g_context->_party->member(player)->heal(HT_HEAL);
@@ -643,7 +643,7 @@ int Spells::spellProtect(int unused) {
 }
 
 int Spells::spellRez(int player) {
-	ASSERT(player < 8, "player out of range: %d", player);
+	assertMsg(player < 8, "player out of range: %d", player);
 
 	return g_context->_party->member(player)->heal(HT_RESURRECT);
 }

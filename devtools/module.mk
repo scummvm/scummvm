@@ -62,7 +62,6 @@ credits:
 #	$(srcdir)/devtools/credits.pl --rtf > $(srcdir)/Credits.rtf
 	$(srcdir)/devtools/credits.pl --cpp > $(srcdir)/gui/credits.h
 	$(srcdir)/devtools/credits.pl --yaml > $(srcdir)/../scummvm-web/data/credits.yaml
-#	$(srcdir)/devtools/credits.pl --xml-docbook > $(srcdir)/../../docs/trunk/docbook/credits.xml
 
 md5scumm: devtools/md5table$(EXEEXT)
 	devtools/md5table$(EXEEXT) --c++ < $(srcdir)/devtools/scumm-md5.txt > $(srcdir)/engines/scumm/scumm-md5.h

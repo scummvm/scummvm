@@ -42,85 +42,82 @@ namespace Tinsel {
 #define UP	'U'
 #define DOWN	'D'
 
+#define SCROLLPIXELS 8 // Number of pixels to scroll per iteration
 
+// Distance from edge that triggers a scroll
+#define RLDISTANCE (TinselV2 ? _scrollData.xTrigger : 50)
+#define UDISTANCE (TinselV2 ? _scrollData.yTriggerTop : 20)
+#define DDISTANCE (TinselV2 ? _scrollData.yTriggerBottom : 20)
 
-//----------------- LOCAL GLOBAL DATA --------------------
+// Number of iterations to make
+#define RLSCROLL 160 // 20*8 = 160 = half a screen
+#define UDSCROLL 100 // 12.5*8 = 100 = half a screen
 
-// FIXME: Avoid non-const global vars
+Scroll::Scroll() {
+	_leftScroll = 0;
+	_downScroll = 0;
+	_scrollActor = 0;
+	_pScrollMover = nullptr;
+	_oldx = 0;
+	_oldy = 0;
 
+	_scrollData = {
+	    {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
+	    {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
+	    0,
+	    0,
+	    // DW2 fields
+	    0,
+	    0,
+	    0,
+	    0,
+	    0,
+	    0,
+	    0};
 
-static int g_LeftScroll = 0, g_DownScroll = 0;	// Number of iterations outstanding
+	_imageH = 0;
+	_imageW = 0;
 
-static int g_scrollActor = 0;
-static PMOVER g_pScrollMover = 0;
-static int g_oldx = 0, g_oldy = 0;
+	_scrollCursor = 0;
 
-/** Boundaries and numbers of boundaries */
-static SCROLLDATA g_sd = {
-		{
-			{0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0},
-			{0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}
-		},
-		{
-			{0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0},
-			{0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}
-		},
-		0,
-		0,
-		// DW2 fields
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0
-	};
-
-static int g_ImageH = 0, g_ImageW = 0;
-
-static bool g_ScrollCursor = 0;	// If a TAG or EXIT polygon is clicked on,
-				// the cursor is kept over that polygon
-				// whilst scrolling
-
-static int g_scrollPixelsX = SCROLLPIXELS;
-static int g_scrollPixelsY = SCROLLPIXELS;
-
+	_scrollPixelsX = SCROLLPIXELS;
+	_scrollPixelsY = SCROLLPIXELS;
+}
 
 /**
  * Reset the ScrollCursor flag
  */
-void DontScrollCursor() {
-	g_ScrollCursor = false;
+void Scroll::DontScrollCursor() {
+	_scrollCursor = false;
 }
 
 /**
  * Set the ScrollCursor flag
  */
-void DoScrollCursor() {
-	g_ScrollCursor = true;
+void Scroll::DoScrollCursor() {
+	_scrollCursor = true;
 }
 
 /**
  * Configure a no-scroll boundary for a scene.
  */
-void SetNoScroll(int x1, int y1, int x2, int y2) {
+void Scroll::SetNoScroll(int x1, int y1, int x2, int y2) {
 	if (x1 == x2) {
 		/* Vertical line */
-		assert(g_sd.NumNoH < MAX_HNOSCROLL);
+		assert(_scrollData.NumNoH < MAX_HNOSCROLL);
 
-		g_sd.NoHScroll[g_sd.NumNoH].ln = x1;	// X pos of vertical line
-		g_sd.NoHScroll[g_sd.NumNoH].c1 = y1;
-		g_sd.NoHScroll[g_sd.NumNoH].c2 = y2;
-		g_sd.NumNoH++;
+		_scrollData.NoHScroll[_scrollData.NumNoH].ln = x1;	// X pos of vertical line
+		_scrollData.NoHScroll[_scrollData.NumNoH].c1 = y1;
+		_scrollData.NoHScroll[_scrollData.NumNoH].c2 = y2;
+		_scrollData.NumNoH++;
 	} else if (y1 == y2) {
 		/* Horizontal line */
-		assert(g_sd.NumNoV < MAX_VNOSCROLL);
+		assert(_scrollData.NumNoV < MAX_VNOSCROLL);
 
-		g_sd.NoVScroll[g_sd.NumNoV].ln = y1;	// Y pos of horizontal line
-		g_sd.NoVScroll[g_sd.NumNoV].c1 = x1;
-		g_sd.NoVScroll[g_sd.NumNoV].c2 = x2;
-		g_sd.NumNoV++;
+		_scrollData.NoVScroll[_scrollData.NumNoV].ln = y1;	// Y pos of horizontal line
+		_scrollData.NoVScroll[_scrollData.NumNoV].c1 = x1;
+		_scrollData.NoVScroll[_scrollData.NumNoV].c2 = x2;
+		_scrollData.NumNoV++;
 	} else {
 		/* No-scroll lines must be horizontal or vertical */
 	}
@@ -130,7 +127,7 @@ void SetNoScroll(int x1, int y1, int x2, int y2) {
  * Called from scroll process when it thinks that a scroll is in order.
  * Checks for no-scroll boundaries and sets off a scroll if allowed.
  */
-static void NeedScroll(int direction) {
+void Scroll::NeedScroll(int direction) {
 	uint	i;
 	int	BottomLine, RightCol;
 	int	Loffset, Toffset;
@@ -144,21 +141,21 @@ static void NeedScroll(int direction) {
 		BottomLine = Toffset + (SCREEN_HEIGHT - 1);
 		RightCol = Loffset + (SCREEN_WIDTH - 1);
 
-		for (i = 0; i < g_sd.NumNoH; i++) {
-			if (RightCol >= g_sd.NoHScroll[i].ln - 1 && RightCol <= g_sd.NoHScroll[i].ln + 1 &&
-					((g_sd.NoHScroll[i].c1 >= Toffset && g_sd.NoHScroll[i].c1 <= BottomLine) ||
-					(g_sd.NoHScroll[i].c2 >= Toffset && g_sd.NoHScroll[i].c2 <= BottomLine) ||
-					(g_sd.NoHScroll[i].c1 < Toffset && g_sd.NoHScroll[i].c2 > BottomLine)))
+		for (i = 0; i < _scrollData.NumNoH; i++) {
+			if (RightCol >= _scrollData.NoHScroll[i].ln - 1 && RightCol <= _scrollData.NoHScroll[i].ln + 1 &&
+					((_scrollData.NoHScroll[i].c1 >= Toffset && _scrollData.NoHScroll[i].c1 <= BottomLine) ||
+					(_scrollData.NoHScroll[i].c2 >= Toffset && _scrollData.NoHScroll[i].c2 <= BottomLine) ||
+					(_scrollData.NoHScroll[i].c1 < Toffset && _scrollData.NoHScroll[i].c2 > BottomLine)))
 				return;
 		}
 
-		if (g_LeftScroll <= 0) {
+		if (_leftScroll <= 0) {
 			if (TinselV2) {
-				g_scrollPixelsX = g_sd.xSpeed;
-				g_LeftScroll += g_sd.xDistance;
+				_scrollPixelsX = _scrollData.xSpeed;
+				_leftScroll += _scrollData.xDistance;
 			} else {
-				g_scrollPixelsX = SCROLLPIXELS;
-				g_LeftScroll = RLSCROLL;
+				_scrollPixelsX = SCROLLPIXELS;
+				_leftScroll = RLSCROLL;
 			}
 		}
 		break;
@@ -167,21 +164,21 @@ static void NeedScroll(int direction) {
 
 		BottomLine = Toffset + (SCREEN_HEIGHT - 1);
 
-		for (i = 0; i < g_sd.NumNoH; i++) {
-			if (Loffset >= g_sd.NoHScroll[i].ln - 1 && Loffset <= g_sd.NoHScroll[i].ln + 1 &&
-					((g_sd.NoHScroll[i].c1 >= Toffset && g_sd.NoHScroll[i].c1 <= BottomLine) ||
-					(g_sd.NoHScroll[i].c2 >= Toffset && g_sd.NoHScroll[i].c2 <= BottomLine) ||
-					(g_sd.NoHScroll[i].c1 < Toffset && g_sd.NoHScroll[i].c2 > BottomLine)))
+		for (i = 0; i < _scrollData.NumNoH; i++) {
+			if (Loffset >= _scrollData.NoHScroll[i].ln - 1 && Loffset <= _scrollData.NoHScroll[i].ln + 1 &&
+					((_scrollData.NoHScroll[i].c1 >= Toffset && _scrollData.NoHScroll[i].c1 <= BottomLine) ||
+					(_scrollData.NoHScroll[i].c2 >= Toffset && _scrollData.NoHScroll[i].c2 <= BottomLine) ||
+					(_scrollData.NoHScroll[i].c1 < Toffset && _scrollData.NoHScroll[i].c2 > BottomLine)))
 				return;
 		}
 
-		if (g_LeftScroll >= 0) {
+		if (_leftScroll >= 0) {
 			if (TinselV2) {
-				g_scrollPixelsX = g_sd.xSpeed;
-				g_LeftScroll -= g_sd.xDistance;
+				_scrollPixelsX = _scrollData.xSpeed;
+				_leftScroll -= _scrollData.xDistance;
 			} else {
-				g_scrollPixelsX = SCROLLPIXELS;
-				g_LeftScroll = -RLSCROLL;
+				_scrollPixelsX = SCROLLPIXELS;
+				_leftScroll = -RLSCROLL;
 			}
 		}
 		break;
@@ -191,21 +188,21 @@ static void NeedScroll(int direction) {
 		BottomLine = Toffset + (SCREEN_HEIGHT - 1);
 		RightCol = Loffset + (SCREEN_WIDTH - 1);
 
-		for (i = 0; i < g_sd.NumNoV; i++) {
-			if ((BottomLine >= g_sd.NoVScroll[i].ln - 1 && BottomLine <= g_sd.NoVScroll[i].ln + 1) &&
-					((g_sd.NoVScroll[i].c1 >= Loffset && g_sd.NoVScroll[i].c1 <= RightCol) ||
-					(g_sd.NoVScroll[i].c2 >= Loffset && g_sd.NoVScroll[i].c2 <= RightCol) ||
-					(g_sd.NoVScroll[i].c1 < Loffset && g_sd.NoVScroll[i].c2 > RightCol)))
+		for (i = 0; i < _scrollData.NumNoV; i++) {
+			if ((BottomLine >= _scrollData.NoVScroll[i].ln - 1 && BottomLine <= _scrollData.NoVScroll[i].ln + 1) &&
+					((_scrollData.NoVScroll[i].c1 >= Loffset && _scrollData.NoVScroll[i].c1 <= RightCol) ||
+					(_scrollData.NoVScroll[i].c2 >= Loffset && _scrollData.NoVScroll[i].c2 <= RightCol) ||
+					(_scrollData.NoVScroll[i].c1 < Loffset && _scrollData.NoVScroll[i].c2 > RightCol)))
 				return;
 			}
 
-		if (g_DownScroll <= 0) {
+		if (_downScroll <= 0) {
 			if (TinselV2) {
-				g_scrollPixelsY = g_sd.ySpeed;
-				g_DownScroll += g_sd.yDistance;
+				_scrollPixelsY = _scrollData.ySpeed;
+				_downScroll += _scrollData.yDistance;
 			} else {
-				g_scrollPixelsY = SCROLLPIXELS;
-				g_DownScroll = UDSCROLL;
+				_scrollPixelsY = SCROLLPIXELS;
+				_downScroll = UDSCROLL;
 			}
 		}
 		break;
@@ -214,21 +211,21 @@ static void NeedScroll(int direction) {
 
 		RightCol = Loffset + (SCREEN_WIDTH - 1);
 
-		for (i = 0; i < g_sd.NumNoV; i++) {
-			if (Toffset >= g_sd.NoVScroll[i].ln - 1  && Toffset <= g_sd.NoVScroll[i].ln + 1  &&
-					((g_sd.NoVScroll[i].c1 >= Loffset && g_sd.NoVScroll[i].c1 <= RightCol) ||
-					(g_sd.NoVScroll[i].c2 >= Loffset && g_sd.NoVScroll[i].c2 <= RightCol) ||
-					(g_sd.NoVScroll[i].c1 < Loffset && g_sd.NoVScroll[i].c2 > RightCol)))
+		for (i = 0; i < _scrollData.NumNoV; i++) {
+			if (Toffset >= _scrollData.NoVScroll[i].ln - 1  && Toffset <= _scrollData.NoVScroll[i].ln + 1  &&
+					((_scrollData.NoVScroll[i].c1 >= Loffset && _scrollData.NoVScroll[i].c1 <= RightCol) ||
+					(_scrollData.NoVScroll[i].c2 >= Loffset && _scrollData.NoVScroll[i].c2 <= RightCol) ||
+					(_scrollData.NoVScroll[i].c1 < Loffset && _scrollData.NoVScroll[i].c2 > RightCol)))
 				return;
 		}
 
-		if (g_DownScroll >= 0) {
+		if (_downScroll >= 0) {
 			if (TinselV2) {
-				g_scrollPixelsY = g_sd.ySpeed;
-				g_DownScroll -= g_sd.yDistance;
+				_scrollPixelsY = _scrollData.ySpeed;
+				_downScroll -= _scrollData.yDistance;
 			} else {
-				g_scrollPixelsY = SCROLLPIXELS;
-				g_DownScroll = -UDSCROLL;
+				_scrollPixelsY = SCROLLPIXELS;
+				_downScroll = -UDSCROLL;
 			}
 		}
 		break;
@@ -241,10 +238,13 @@ static void NeedScroll(int direction) {
 /**
  * Called from scroll process - Scrolls the image as appropriate.
  */
-static void ScrollImage() {
+void Scroll::ScrollImage() {
 	int OldLoffset = 0, OldToffset = 0;	// Used when keeping cursor on a tag
 	int Loffset, Toffset;
 	int curX, curY;
+
+	if (!_leftScroll && !_downScroll) // Only scroll if required
+		return;
 
 	// get background offsets
 	_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
@@ -252,39 +252,39 @@ static void ScrollImage() {
 	/*
 	 * Keeping cursor on a tag?
 	 */
-	if (g_ScrollCursor) {
-		GetCursorXYNoWait(&curX, &curY, true);
+	if (_scrollCursor) {
+		_vm->_cursor->GetCursorXYNoWait(&curX, &curY, true);
 		if (InPolygon(curX, curY, TAG) != NOPOLY || InPolygon(curX, curY, EXIT) != NOPOLY) {
 			OldLoffset = Loffset;
 			OldToffset = Toffset;
 		} else
-			g_ScrollCursor = false;
+			_scrollCursor = false;
 	}
 
 	/*
 	 * Horizontal scrolling
 	 */
-	if (g_LeftScroll > 0) {
-		g_LeftScroll -= g_scrollPixelsX;
-		if (g_LeftScroll < 0) {
-			Loffset += g_LeftScroll;
-			g_LeftScroll = 0;
+	if (_leftScroll > 0) {
+		_leftScroll -= _scrollPixelsX;
+		if (_leftScroll < 0) {
+			Loffset += _leftScroll;
+			_leftScroll = 0;
 		}
-		Loffset += g_scrollPixelsX;		// Move right
-		if (Loffset > g_ImageW - SCREEN_WIDTH)
-			Loffset = g_ImageW - SCREEN_WIDTH;// Now at extreme right
+		Loffset += _scrollPixelsX;		// Move right
+		if (Loffset > _imageW - SCREEN_WIDTH)
+			Loffset = _imageW - SCREEN_WIDTH;// Now at extreme right
 
 		/*** New feature to prop up rickety scroll boundaries ***/
 		if (TinselV2 && SysVar(SV_MaximumXoffset) &&  (Loffset > SysVar(SV_MaximumXoffset)))
 			Loffset = SysVar(SV_MaximumXoffset);
 
-	} else if (g_LeftScroll < 0) {
-		g_LeftScroll += g_scrollPixelsX;
-		if (g_LeftScroll > 0) {
-			Loffset += g_LeftScroll;
-			g_LeftScroll = 0;
+	} else if (_leftScroll < 0) {
+		_leftScroll += _scrollPixelsX;
+		if (_leftScroll > 0) {
+			Loffset += _leftScroll;
+			_leftScroll = 0;
 		}
-		Loffset -= g_scrollPixelsX;	// Move left
+		Loffset -= _scrollPixelsX;	// Move left
 		if (Loffset < 0)
 			Loffset = 0;		// Now at extreme left
 
@@ -296,28 +296,28 @@ static void ScrollImage() {
 	/*
 	 * Vertical scrolling
 	 */
-	if (g_DownScroll > 0) {
-		g_DownScroll -= g_scrollPixelsY;
-		if (g_DownScroll < 0) {
-			Toffset += g_DownScroll;
-			g_DownScroll = 0;
+	if (_downScroll > 0) {
+		_downScroll -= _scrollPixelsY;
+		if (_downScroll < 0) {
+			Toffset += _downScroll;
+			_downScroll = 0;
 		}
-		Toffset += g_scrollPixelsY;		// Move down
+		Toffset += _scrollPixelsY;		// Move down
 
-		if (Toffset > g_ImageH - SCREEN_HEIGHT)
-			Toffset = g_ImageH - SCREEN_HEIGHT;// Now at extreme bottom
+		if (Toffset > _imageH - SCREEN_HEIGHT)
+			Toffset = _imageH - SCREEN_HEIGHT;// Now at extreme bottom
 
 		/*** New feature to prop up rickety scroll boundaries ***/
 		if (TinselV2 && SysVar(SV_MaximumYoffset) &&  Toffset > SysVar(SV_MaximumYoffset))
 			Toffset = SysVar(SV_MaximumYoffset);
 
-	} else if (g_DownScroll < 0) {
-		g_DownScroll += g_scrollPixelsY;
-		if (g_DownScroll > 0) {
-			Toffset += g_DownScroll;
-			g_DownScroll = 0;
+	} else if (_downScroll < 0) {
+		_downScroll += _scrollPixelsY;
+		if (_downScroll > 0) {
+			Toffset += _downScroll;
+			_downScroll = 0;
 		}
-		Toffset -= g_scrollPixelsY;		// Move up
+		Toffset -= _scrollPixelsY;		// Move up
 
 		if (Toffset < 0)
 			Toffset = 0;			// Now at extreme top
@@ -330,8 +330,8 @@ static void ScrollImage() {
 	/*
 	 * Move cursor if keeping cursor on a tag.
 	 */
-	if (g_ScrollCursor)
-		AdjustCursorXY(OldLoffset - Loffset, OldToffset - Toffset);
+	if (_scrollCursor)
+		_vm->_cursor->AdjustCursorXY(OldLoffset - Loffset, OldToffset - Toffset);
 
 	_vm->_bg->PlayfieldSetPos(FIELD_WORLD, Loffset, Toffset);
 }
@@ -341,19 +341,19 @@ static void ScrollImage() {
  * See if the actor on whom the camera is is approaching an edge.
  * Request a scroll if he is.
  */
-static void MonitorScroll() {
+void Scroll::MonitorScroll() {
 	int newx, newy;
 	int Loffset, Toffset;
 
 	/*
 	 * Only do it if the actor is there and is visible
 	 */
-	if (!g_pScrollMover || MoverHidden(g_pScrollMover) || !MoverIs(g_pScrollMover))
+	if (!_pScrollMover || MoverHidden(_pScrollMover) || !MoverIs(_pScrollMover))
 		return;
 
-	GetActorPos(g_scrollActor, &newx, &newy);
+	_vm->_actor->GetActorPos(_scrollActor, &newx, &newy);
 
-	if (g_oldx == newx && g_oldy == newy)
+	if (_oldx == newx && _oldy == newy)
 		return;
 
 	_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
@@ -361,57 +361,155 @@ static void MonitorScroll() {
 	/*
 	 * Approaching right side or left side of the screen?
 	 */
-	if (newx > Loffset+SCREEN_WIDTH - RLDISTANCE && Loffset < g_ImageW - SCREEN_WIDTH) {
-		if (newx > g_oldx)
+	if (newx > Loffset+SCREEN_WIDTH - RLDISTANCE && Loffset < _imageW - SCREEN_WIDTH) {
+		if (newx > _oldx)
 				NeedScroll(LEFT);
 	} else if (newx < Loffset + RLDISTANCE  &&  Loffset) {
-		if (newx < g_oldx)
+		if (newx < _oldx)
 				NeedScroll(RIGHT);
 	}
 
 	/*
 	 * Approaching bottom or top of the screen?
 	 */
-	if (newy > Toffset+SCREEN_HEIGHT-DDISTANCE && Toffset < g_ImageH-SCREEN_HEIGHT) {
-		if (newy > g_oldy)
+	if (newy > Toffset+SCREEN_HEIGHT-DDISTANCE && Toffset < _imageH-SCREEN_HEIGHT) {
+		if (newy > _oldy)
 				NeedScroll(UP);
-	} else if (Toffset && newy < Toffset + UDISTANCE + GetActorBottom(g_scrollActor) - GetActorTop(g_scrollActor)) {
-		if (newy < g_oldy)
+	} else if (Toffset && newy < Toffset + UDISTANCE + _vm->_actor->GetActorBottom(_scrollActor) - _vm->_actor->GetActorTop(_scrollActor)) {
+		if (newy < _oldy)
 				NeedScroll(DOWN);
 	}
 
-	g_oldx = newx;
-	g_oldy = newy;
+	_oldx = newx;
+	_oldy = newy;
 }
 
-static void RestoreScrollDefaults() {
-	g_sd.xTrigger		= SysVar(SV_SCROLL_XTRIGGER);
-	g_sd.xDistance	= SysVar(SV_SCROLL_XDISTANCE);
-	g_sd.xSpeed		= SysVar(SV_SCROLL_XSPEED);
-	g_sd.yTriggerTop	= SysVar(SV_SCROLL_YTRIGGERTOP);
-	g_sd.yTriggerBottom= SysVar(SV_SCROLL_YTRIGGERBOT);
-	g_sd.yDistance	= SysVar(SV_SCROLL_YDISTANCE);
-	g_sd.ySpeed		= SysVar(SV_SCROLL_YSPEED);
+void Scroll::RestoreScrollDefaults() {
+	_scrollData.xTrigger		= SysVar(SV_SCROLL_XTRIGGER);
+	_scrollData.xDistance	= SysVar(SV_SCROLL_XDISTANCE);
+	_scrollData.xSpeed		= SysVar(SV_SCROLL_XSPEED);
+	_scrollData.yTriggerTop	= SysVar(SV_SCROLL_YTRIGGERTOP);
+	_scrollData.yTriggerBottom= SysVar(SV_SCROLL_YTRIGGERBOT);
+	_scrollData.yDistance	= SysVar(SV_SCROLL_YDISTANCE);
+	_scrollData.ySpeed		= SysVar(SV_SCROLL_YSPEED);
 }
 
 /**
  * Does the obvious - called at the end of a scene.
  */
-void DropScroll() {
-	g_sd.NumNoH = g_sd.NumNoV = 0;
+void Scroll::DropScroll() {
+	_scrollData.NumNoH = _scrollData.NumNoV = 0;
 	if (TinselV2) {
-		g_LeftScroll = g_DownScroll = 0;		// No iterations outstanding
-		g_oldx = g_oldy = 0;
-		g_scrollPixelsX = g_sd.xSpeed;
-		g_scrollPixelsY = g_sd.ySpeed;
+		_leftScroll = _downScroll = 0;		// No iterations outstanding
+		_oldx = _oldy = 0;
+		_scrollPixelsX = _scrollData.xSpeed;
+		_scrollPixelsY = _scrollData.ySpeed;
 		RestoreScrollDefaults();
 	}
+}
+
+/**
+ * Change which actor the camera is following.
+ */
+void Scroll::ScrollFocus(int ano) {
+	if (_scrollActor != ano) {
+		_oldx = _oldy = 0;
+		_scrollActor = ano;
+
+		_pScrollMover = ano ? GetMover(_scrollActor) : NULL;
+	}
+}
+
+/**
+ * Returns the actor which the camera is following
+ */
+int Scroll::GetScrollFocus() {
+	return _scrollActor;
+}
+
+/**
+ * Scroll to abslote position.
+ */
+void Scroll::ScrollTo(int x, int y, int xIter, int yIter) {
+	int Loffset, Toffset;		// for background offsets
+
+	_scrollPixelsX = xIter != 0 ? xIter : (TinselV2 ? _scrollData.xSpeed : SCROLLPIXELS);
+	_scrollPixelsY = yIter != 0 ? yIter : (TinselV2 ? _scrollData.ySpeed : SCROLLPIXELS);
+
+	_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);	// get background offsets
+
+	_leftScroll = x - Loffset;
+	_downScroll = y - Toffset;
+}
+
+/**
+ * Kill of any current scroll.
+ */
+void Scroll::KillScroll() {
+	_leftScroll = _downScroll = 0;
+}
+
+void Scroll::GetNoScrollData(SCROLLDATA *ssd) {
+	memcpy(ssd, &_scrollData, sizeof(SCROLLDATA));
+}
+
+void Scroll::RestoreNoScrollData(SCROLLDATA *ssd) {
+	memcpy(&_scrollData, ssd, sizeof(SCROLLDATA));
+}
+
+/**
+ * SetScrollParameters
+ */
+void Scroll::SetScrollParameters(int xTrigger, int xDistance, int xSpeed, int yTriggerTop,
+		int yTriggerBottom, int yDistance, int ySpeed) {
+	if (xTrigger == 0 && xDistance == 0 && xSpeed == 0
+	 && yTriggerTop == 0 && yTriggerBottom && yDistance == 0 && ySpeed == 0) {
+		// Restore defaults
+		RestoreScrollDefaults();
+	} else {
+		if (xTrigger)
+			_scrollData.xTrigger = xTrigger;
+		if (xDistance)
+			_scrollData.xDistance = xDistance;
+		if (xSpeed)
+			_scrollData.xSpeed = xSpeed;
+		if (yTriggerTop)
+			_scrollData.yTriggerTop = yTriggerTop;
+		if (yTriggerBottom)
+			_scrollData.yTriggerBottom = yTriggerBottom;
+		if (yDistance)
+			_scrollData.yDistance = yDistance;
+		if (ySpeed)
+			_scrollData.ySpeed = ySpeed;
+	}
+}
+
+bool Scroll::IsScrolling() {
+	return (_leftScroll || _downScroll);
+}
+
+void Scroll::InitScroll(int width, int height) {
+	_imageH = height; // Dimensions
+	_imageW = width;  //  of this scene.
+
+	if (!TinselV2) {
+		_leftScroll = _downScroll = 0; // No iterations outstanding
+		_oldx = _oldy = 0;
+		_scrollPixelsX = _scrollPixelsY = SCROLLPIXELS;
+	}
+
+	if (!_scrollActor)
+		_scrollActor = _vm->_actor->GetLeadId();
+
+	_pScrollMover = GetMover(_scrollActor);
 }
 
 /**
  * Decide when to scroll and scroll when decided to.
  */
 void ScrollProcess(CORO_PARAM, const void *) {
+	int width, height;
+
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
@@ -423,116 +521,23 @@ void ScrollProcess(CORO_PARAM, const void *) {
 	while (!_vm->_bg->GetBgObject())
 		CORO_SLEEP(1);
 
-	g_ImageH = _vm->_bg->BgHeight();		// Dimensions
-	g_ImageW = _vm->_bg->BgWidth();		//  of this scene.
+	width = _vm->_bg->BgWidth();   // Dimensions
+	height = _vm->_bg->BgHeight(); // of this scene.
 
 	// Give up if there'll be no purpose in this process
-	if (g_ImageW == SCREEN_WIDTH  &&  g_ImageH == SCREEN_HEIGHT)
+	if (width == SCREEN_WIDTH && height == SCREEN_HEIGHT)
 		CORO_KILL_SELF();
 
-	if (!TinselV2) {
-		g_LeftScroll = g_DownScroll = 0;		// No iterations outstanding
-		g_oldx = g_oldy = 0;
-		g_scrollPixelsX = g_scrollPixelsY = SCROLLPIXELS;
-	}
-
-	if (!g_scrollActor)
-		g_scrollActor = GetLeadId();
-
-	g_pScrollMover = GetMover(g_scrollActor);
+	_vm->_scroll->InitScroll(width, height);
 
 	while (1) {
-		MonitorScroll();		// Set scroll requirement
+		_vm->_scroll->MonitorScroll(); // Set scroll requirement
+		_vm->_scroll->ScrollImage();
 
-		if (g_LeftScroll || g_DownScroll)	// Scroll if required
-			ScrollImage();
-
-		CORO_SLEEP(1);		// allow re-scheduling
+		CORO_SLEEP(1); // allow re-scheduling
 	}
 
 	CORO_END_CODE;
-}
-
-/**
- * Change which actor the camera is following.
- */
-void ScrollFocus(int ano) {
-	if (g_scrollActor != ano) {
-		g_oldx = g_oldy = 0;
-		g_scrollActor = ano;
-
-		g_pScrollMover = ano ? GetMover(g_scrollActor) : NULL;
-	}
-}
-
-/**
- * Returns the actor which the camera is following
- */
-int GetScrollFocus() {
-	return g_scrollActor;
-}
-
-
-/**
- * Scroll to abslote position.
- */
-void ScrollTo(int x, int y, int xIter, int yIter) {
-	int Loffset, Toffset;		// for background offsets
-
-	g_scrollPixelsX = xIter != 0 ? xIter : (TinselV2 ? g_sd.xSpeed : SCROLLPIXELS);
-	g_scrollPixelsY = yIter != 0 ? yIter : (TinselV2 ? g_sd.ySpeed : SCROLLPIXELS);
-
-	_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);	// get background offsets
-
-	g_LeftScroll = x - Loffset;
-	g_DownScroll = y - Toffset;
-}
-
-/**
- * Kill of any current scroll.
- */
-void KillScroll() {
-	g_LeftScroll = g_DownScroll = 0;
-}
-
-
-void GetNoScrollData(SCROLLDATA *ssd) {
-	memcpy(ssd, &g_sd, sizeof(SCROLLDATA));
-}
-
-void RestoreNoScrollData(SCROLLDATA *ssd) {
-	memcpy(&g_sd, ssd, sizeof(SCROLLDATA));
-}
-
-/**
- * SetScrollParameters
- */
-void SetScrollParameters(int xTrigger, int xDistance, int xSpeed, int yTriggerTop,
-		int yTriggerBottom, int yDistance, int ySpeed) {
-	if (xTrigger == 0 && xDistance == 0 && xSpeed == 0
-	 && yTriggerTop == 0 && yTriggerBottom && yDistance == 0 && ySpeed == 0) {
-		// Restore defaults
-		RestoreScrollDefaults();
-	} else {
-		if (xTrigger)
-			g_sd.xTrigger = xTrigger;
-		if (xDistance)
-			g_sd.xDistance = xDistance;
-		if (xSpeed)
-			g_sd.xSpeed = xSpeed;
-		if (yTriggerTop)
-			g_sd.yTriggerTop = yTriggerTop;
-		if (yTriggerBottom)
-			g_sd.yTriggerBottom = yTriggerBottom;
-		if (yDistance)
-			g_sd.yDistance = yDistance;
-		if (ySpeed)
-			g_sd.ySpeed = ySpeed;
-	}
-}
-
-bool IsScrolling() {
-	return (g_LeftScroll || g_DownScroll);
 }
 
 } // End of namespace Tinsel

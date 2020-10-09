@@ -356,7 +356,7 @@ void IntroController::deleteIntro() {
 }
 
 byte *IntroController::getSigData() {
-	ASSERT(_binData->_sigData != nullptr, "intro sig data not loaded");
+	assertMsg(_binData->_sigData != nullptr, "intro sig data not loaded");
 	return _binData->_sigData;
 }
 
@@ -583,7 +583,7 @@ void IntroController::drawBeastie(int beast, int vertoffset, int frame) {
 	char buffer[128];
 	int destx;
 
-	ASSERT(beast == 0 || beast == 1, "invalid beast: %d", beast);
+	assertMsg(beast == 0 || beast == 1, "invalid beast: %d", beast);
 
 	sprintf(buffer, "beast%dframe%02d", beast, frame);
 
@@ -601,16 +601,16 @@ void IntroController::drawCard(int pos, int card) {
 		"sacrificecard", "honorcard", "spiritualitycard", "humilitycard"
 	};
 
-	ASSERT(pos == 0 || pos == 1, "invalid pos: %d", pos);
-	ASSERT(card >= 0 && card < 8, "invalid card: %d", card);
+	assertMsg(pos == 0 || pos == 1, "invalid pos: %d", pos);
+	assertMsg(card >= 0 && card < 8, "invalid card: %d", card);
 
 	_backgroundArea.draw(cardNames[card], pos ? 218 : 12, 12);
 }
 
 void IntroController::drawAbacusBeads(int row, int selectedVirtue, int rejectedVirtue) {
-	ASSERT(row >= 0 && row < 7, "invalid row: %d", row);
-	ASSERT(selectedVirtue < 8 && selectedVirtue >= 0, "invalid virtue: %d", selectedVirtue);
-	ASSERT(rejectedVirtue < 8 && rejectedVirtue >= 0, "invalid virtue: %d", rejectedVirtue);
+	assertMsg(row >= 0 && row < 7, "invalid row: %d", row);
+	assertMsg(selectedVirtue < 8 && selectedVirtue >= 0, "invalid virtue: %d", selectedVirtue);
+	assertMsg(rejectedVirtue < 8 && rejectedVirtue >= 0, "invalid virtue: %d", rejectedVirtue);
 
 	_backgroundArea.draw("whitebead", 128 + (selectedVirtue * 9), 24 + (row * 15));
 	_backgroundArea.draw("blackbead", 128 + (rejectedVirtue * 9), 24 + (row * 15));
@@ -878,7 +878,7 @@ Common::String IntroController::getQuestion(int v1, int v2) {
 	int i = 0;
 	int d = 7;
 
-	ASSERT(v1 < v2, "first virtue must be smaller (v1 = %d, v2 = %d)", v1, v2);
+	assertMsg(v1 < v2, "first virtue must be smaller (v1 = %d, v2 = %d)", v1, v2);
 
 	while (v1 > 0) {
 		i += d;
@@ -887,7 +887,7 @@ Common::String IntroController::getQuestion(int v1, int v2) {
 		v2--;
 	}
 
-	ASSERT((i + v2 - 1) < 28, "calculation failed");
+	assertMsg((i + v2 - 1) < 28, "calculation failed");
 
 	return _binData->_introQuestions[i + v2 - 1];
 }
@@ -1323,7 +1323,7 @@ void IntroController::initPlayers(SaveGame *saveGame) {
 
 	saveGame->_players[0]._class = static_cast<ClassType>(_questionTree[14]);
 
-	ASSERT((int)saveGame->_players[0]._class < 8, "bad class: %d", saveGame->_players[0]._class);
+	assertMsg((int)saveGame->_players[0]._class < 8, "bad class: %d", saveGame->_players[0]._class);
 	saveGame->_positions.resize(1);
 	saveGame->_positions[0] = LocationCoords(MAP_WORLD,
 		initValuesForClass[saveGame->_players[0]._class].x,

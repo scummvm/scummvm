@@ -24,6 +24,8 @@
 #define LURE_LURE_H
 
 #include "engines/engine.h"
+#include "engines/advancedDetector.h"
+
 #include "common/rect.h"
 #include "common/file.h"
 #include "common/savefile.h"
@@ -38,6 +40,7 @@
 #include "lure/strings.h"
 #include "lure/room.h"
 #include "lure/fights.h"
+#include "lure/detection.h"
 
 /**
  * This is the namespace of the Lure engine.

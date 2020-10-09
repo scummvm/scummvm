@@ -72,6 +72,7 @@ bool INIFile::loadFromStream(SeekableReadStream &stream) {
 	KeyValue kv;
 	String comment;
 	int lineno = 0;
+	section.name = _defaultSectionName;
 
 	// TODO: Detect if a section occurs multiple times (or likewise, if
 	// a key occurs multiple times inside one section).
@@ -297,6 +298,9 @@ void INIFile::renameSection(const String &oldName, const String &newName) {
 	// - merge the two sections "oldName" and "newName"
 }
 
+void INIFile::setDefaultSectionName(const String &name) {
+	_defaultSectionName = name;
+}
 
 bool INIFile::hasKey(const String &key, const String &section) const {
 	if (!isValidName(key)) {

@@ -35,6 +35,7 @@
 #include "audio/mixer.h"
 
 #include "agos/vga.h"
+#include "agos/detection.h"
 
 /**
  * This is the namespace of the AGOS engine.
@@ -175,17 +176,6 @@ struct AnimTable {
 	AnimTable() { memset(this, 0, sizeof(*this)); }
 };
 
-enum SIMONGameType {
-	GType_PN = 0,
-	GType_ELVIRA1 = 1,
-	GType_ELVIRA2 = 2,
-	GType_WW = 3,
-	GType_SIMON1 = 4,
-	GType_SIMON2 = 5,
-	GType_FF = 6,
-	GType_PP = 7
-};
-
 enum EventType {
 	ANIMATE_INT   = 1 << 1,
 	ANIMATE_EVENT = 1 << 2,
@@ -193,8 +183,6 @@ enum EventType {
 	PLAYER_DAMAGE_EVENT = 1 << 4,
 	MONSTER_DAMAGE_EVENT = 1 << 5
 };
-
-struct AGOSGameDescription;
 
 struct GameSpecificSettings;
 

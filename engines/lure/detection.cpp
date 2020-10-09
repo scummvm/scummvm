@@ -23,39 +23,10 @@
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
-#include "engines/engine.h"
-#include "common/savefile.h"
-#include "common/system.h"
+
 #include "common/translation.h"
-#include "lure/lure.h"
 
-namespace Lure {
-
-struct LureGameDescription {
-	ADGameDescription desc;
-
-	uint32 features;
-};
-
-uint32 LureEngine::getFeatures() const { return _gameDescription->features; }
-Common::Language LureEngine::getLanguage() const { return _gameDescription->desc.language; }
-Common::Platform LureEngine::getPlatform() const { return _gameDescription->desc.platform; }
-
-LureLanguage LureEngine::getLureLanguage() const {
-	switch (_gameDescription->desc.language) {
-	case Common::IT_ITA: return LANG_IT_ITA;
-	case Common::FR_FRA: return LANG_FR_FRA;
-	case Common::DE_DEU: return LANG_DE_DEU;
-	case Common::ES_ESP: return LANG_ES_ESP;
-	case Common::RU_RUS: return LANG_RU_RUS;
-	case Common::EN_ANY: return LANG_EN_ANY;
-	case Common::UNK_LANG: return LANG_UNKNOWN;
-	default:
-		error("Unknown game language");
-	}
-}
-
-} // End of namespace Lure
+#include "lure/detection.h"
 
 static const PlainGameDescriptor lureGames[] = {
 	{"lure", "Lure of the Temptress"},
@@ -231,9 +202,9 @@ static const LureGameDescription gameDescriptions[] = {
 
 } // End of namespace Lure
 
-class LureMetaEngine : public AdvancedMetaEngine {
+class LureMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	LureMetaEngine() : AdvancedMetaEngine(Lure::gameDescriptions, sizeof(Lure::LureGameDescription), lureGames
+	LureMetaEngineStatic() : AdvancedMetaEngineStatic(Lure::gameDescriptions, sizeof(Lure::LureGameDescription), lureGames
 #ifdef USE_TTS
 			, optionsList
 #endif
@@ -257,75 +228,6 @@ public:
 	const char *getOriginalCopyright() const override {
 		return "Lure of the Temptress (C) Revolution";
 	}
-
-	bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-	SaveStateList listSaves(const char *target) const override;
-	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
 };
 
-bool LureMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave);
-}
-
-bool Lure::LureEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsReturnToLauncher) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
-}
-
-bool LureMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Lure::LureGameDescription *gd = (const Lure::LureGameDescription *)desc;
-	if (gd) {
-		*engine = new Lure::LureEngine(syst, gd);
-	}
-	return gd != 0;
-}
-
-SaveStateList LureMetaEngine::listSaves(const char *target) const {
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringArray filenames;
-	Common::String saveDesc;
-	Common::String pattern = "lure.###";
-
-	filenames = saveFileMan->listSavefiles(pattern);
-
-	SaveStateList saveList;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(file->c_str() + file->size() - 3);
-
-		if (slotNum >= 0 && slotNum <= 999) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
-			if (in) {
-				saveDesc = Lure::getSaveName(in);
-				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
-				delete in;
-			}
-		}
-	}
-
-	// Sort saves based on slot number.
-	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
-	return saveList;
-}
-
-int LureMetaEngine::getMaximumSaveSlot() const { return 999; }
-
-void LureMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String filename = target;
-	filename += Common::String::format(".%03d", slot);
-
-	g_system->getSavefileManager()->removeSavefile(filename);
-}
-
-#if PLUGIN_ENABLED_DYNAMIC(LURE)
-	REGISTER_PLUGIN_DYNAMIC(LURE, PLUGIN_TYPE_ENGINE, LureMetaEngine);
-#else
-	REGISTER_PLUGIN_STATIC(LURE, PLUGIN_TYPE_ENGINE, LureMetaEngine);
-#endif
+REGISTER_PLUGIN_STATIC(LURE_DETECTION, PLUGIN_TYPE_METAENGINE, LureMetaEngineStatic);

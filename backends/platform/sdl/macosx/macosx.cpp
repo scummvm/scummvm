@@ -138,11 +138,11 @@ bool OSystem_MacOSX::hasTextInClipboard() {
 	return hasTextInClipboardMacOSX();
 }
 
-Common::String OSystem_MacOSX::getTextFromClipboard() {
+Common::U32String OSystem_MacOSX::getTextFromClipboard() {
 	return getTextFromClipboardMacOSX();
 }
 
-bool OSystem_MacOSX::setTextInClipboard(const Common::String &text) {
+bool OSystem_MacOSX::setTextInClipboard(const Common::U32String &text) {
 	return setTextInClipboardMacOSX(text);
 }
 

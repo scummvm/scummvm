@@ -87,8 +87,7 @@ struct Dialog {
 };
 
 struct DialogHandler {
-	uint16 opcode;
-	uint16 objId;
+	uint32 opcode;
 	uint32 startDialogIndex;
 	Common::Array<Dialog> dialogs;
 };

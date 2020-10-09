@@ -22,12 +22,7 @@
 
 /**
  * @file
- * Macintosh resource fork manager used in engines:
- * - groovie
- * - mohawk
- * - pegasus
- * - sci
- * - scumm
+
  */
 
 #include "common/array.h"
@@ -39,6 +34,21 @@
 #define COMMON_MACRESMAN_H
 
 namespace Common {
+
+/**
+ * @defgroup common_macresman Macintosh resource fork manager
+ * @ingroup common
+ *
+ * @brief API for Macintosh resource fork manager.
+ *
+ * @details Used in engines:
+ *          - groovie
+ *          - mohawk
+ *          - pegasus
+ *          - sci
+ *          - scumm
+ * @{
+ */
 
 typedef Array<uint16> MacResIDArray;
 typedef Array<uint32> MacResTagArray;
@@ -68,14 +78,14 @@ public:
 	bool open(const String &fileName);
 
 	/**
-	 * Open a Mac data/resource fork pair.
+	 * Open a Mac data/resource fork pair from within the given archive.
 	 *
 	 * @param path The path that holds the forks
 	 * @param fileName The base file name of the file
 	 * @note This will check for the raw resource fork, MacBinary, and AppleDouble formats.
 	 * @return True on success
 	 */
-	bool open(const FSNode &path, const String &fileName);
+	bool open(const String &fileName, Archive &archive);
 
 	/**
 	 * See if a Mac data/resource fork pair exists.
@@ -281,6 +291,8 @@ private:
 	ResType *_resTypes;
 	ResPtr  *_resLists;
 };
+
+/** @} */
 
 } // End of namespace Common
 

@@ -104,8 +104,7 @@ public:
 
 	int _sceneWidth;
 	int _xOffset;
-
-	int _field6C;
+	int _reqOffset;
 
 	QObjectBG *_room;
 };

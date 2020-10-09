@@ -23,19 +23,8 @@
 #ifndef GOB_DETECTION_TABLES_H
 #define GOB_DETECTION_TABLES_H
 
-namespace Gob {
-
-struct GOBGameDescription {
-	ADGameDescription desc;
-
-	GameType gameType;
-	int32 features;
-	const char *startStkBase;
-	const char *startTotBase;
-	uint32 demoIndex;
-};
-
-}
+// Struct "GOBGameDescription"
+#include "gob/detection/detection.h"
 
 using namespace Common;
 

@@ -130,6 +130,18 @@ enum {
 	kMonsterBatKitty = 12		// bat kitty
 };
 
+// engine actions
+enum GriffonActions {
+	kGriffonLeft,
+	kGriffonRight,
+	kGriffonUp,
+	kGriffonDown,
+	kGriffonAttack,
+	kGriffonInventory,
+	kGriffonMenu,
+	kGriffonConfirm,
+	kGriffonCutsceneSpeedUp
+};
 
 #define kEpsilon 0.001
 

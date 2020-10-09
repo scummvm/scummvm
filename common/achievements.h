@@ -31,6 +31,15 @@
 namespace Common {
 
 /**
+ * @defgroup common_achieve Achievements
+ * @ingroup common
+ *
+ * @brief API related to in-game achievements.
+ *
+ * @{
+ */
+
+/**
  * List of game achievements provider platforms.
  * Possible candidates are XBOX Gamerscore, PSN Trophies, Kongregate Badges, etc...
  */
@@ -42,60 +51,138 @@ enum AchievementsPlatform {
 
 
 /**
- * Per-game achievements information structure item.
+ * Information structure for game-specific achievements.
  */
 struct AchievementDescription {
-	const char *id;            // achievement internal id, e.g. "ACHIEVEMENT_TIMING"
-	bool isHidden;             // achievement is hidden
-	const char *title;         // achievement displayed text, e.g. "Marathon Runner"
-	const char *comment;       // optional achievement hint / comment, e.g. "Finish the game in less than 4 hours"
+	const char *id;            //!< Achievement internal ID, such as "ACHIEVEMENT_TIMING".
+	bool isHidden;             //!< Whether the achievement is hidden.
+	const char *title;         //!< Achievement displayed text, such as "Marathon Runner".
+	const char *comment;       //!< Optional achievement hint or comment, such as "Finish the game in less than 4 hours".
 };
 
 
 /**
- * Per-game achievements information structure item.
+ * Information structure for platform-specific achievements.
  */
 struct AchievementsInfo {
-	Common::AchievementsPlatform platform;              // achievements platform, e.g. STEAM_ACHIEVEMENTS
-	Common::String appId;                               // achievements application ID of given platform
-	Common::Array<AchievementDescription> descriptions; // descriptions of all game achievements
+	Common::AchievementsPlatform platform;              //!< Achievements platform, such as "STEAM_ACHIEVEMENTS".
+	Common::String appId;                               //!< Achievements application ID of the given platform.
+	Common::Array<AchievementDescription> descriptions; //!< Descriptions of all game achievements.
 
 	AchievementsInfo() {platform = Common::UNK_ACHIEVEMENTS;}
 };
 
+/**
+ * Class for manipulating the achievements.
+ *
+ * Use the Achievements Manager class to edit the in-game achievements.
+ */
 
 class AchievementsManager : public Singleton<AchievementsManager> {
 public:
 	AchievementsManager();
 	~AchievementsManager();
-
+    
+    /**
+     * Set a platform and application ID as active domain.
+     *
+     * @param[in] platform Achievements platform.
+     * @param[in] appId    Achievements application ID of the given platform.
+     */
 	bool setActiveDomain(AchievementsPlatform platform, const String &appId);
-	bool unsetActiveDomain();
-	bool isReady() { return _iniFile != nullptr; }
+	bool unsetActiveDomain();                      //!< Unset the current active domain.
+	bool isReady() { return _iniFile != nullptr; } //!< Check whether the domain is ready.
 
-	// Methods to manipulate individual achievements
+	/**
+     * @name Methods for manipulating individual achievements
+     * @{
+     */
+	 
+	/** Set an achievement.
+     *
+     * @param[in] id               Internal ID of the achievement.
+     * @param[in] displayedMessage Message displayed when the achievement is achieved.
+     */
+
 	bool setAchievement(const String &id, const String &displayedMessage);
+	
+    /**
+     * Set an achievement as achieved.
+     *
+     * @param[in] id Internal ID of the achievement.
+     */	
+	
 	bool isAchieved(const String &id);
+	
+    /**
+     * Clear an achieved achievement.
+     *
+     * @param[in] id Internal ID of the achievement.
+     */	
+	
 	bool clearAchievement(const String &id);
+    
+    /** @} */
+	
+    /**
+     * @name Methods for manipulating individual statistics
+     * @{
+     */
 
-	// Methods to manipulate individual statistics
+    /**
+     * Get a statistic (integer).
+     *
+     * @param[in] id Internal ID of the achievement.
+     */	
+	 
 	int getStatInt(const String &id);
+	
+    /**
+     * Set a statistic to an integer number.
+     *
+     * @param[in] id    Internal ID of the achievement.
+     * @param[in] value Value to which the statistic is set.
+     */	
+	
 	bool setStatInt(const String &id, int value);
+	
+    /**
+     * Get a statistic (float).
+     *
+     * @param[in] id    Internal ID of the achievement.
+     */	
+	
 	float getStatFloat(const String &id);
+	
+    /**
+     * Set a statistic to a float number.
+     *
+     * @param[in] id    Internal ID of the achievement.
+     * @param[in] value Value to which the statistic is set.
+     */	
+	
 	bool setStatFloat(const String &id, float value);
 
-	// Methods to reset everything
-	bool resetAllAchievements();
-	bool resetAllStats();
+    /** @} */
+
+    /**
+     * @name Methods for resetting achievements and statistics
+     * @{
+     */
+	bool resetAllAchievements(); //!< Reset all achievements.
+	bool resetAllStats();        //!< Reset all statistics.
+
+    /** @} */
 
 private:
 	INIFile *_iniFile;
 	String _iniFileName;
 };
 
-/** Shortcut for accessing the achievements manager. */
+/** Shortcut for accessing the Achievements Manager. */
 #define AchMan Common::AchievementsManager::instance()
 
+/** @} */
 
 } // End of namespace Common
 

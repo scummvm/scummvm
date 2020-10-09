@@ -22,6 +22,7 @@
 
 #include "startrek/console.h"
 #include "gui/debugger.h"
+#include "startrek/resource.h"
 #include "startrek/room.h"
 #include "startrek/startrek.h"
 
@@ -63,7 +64,7 @@ bool Console::Cmd_Actions(int argc, const char **argv) {
 		screenName = missionName + (char)(roomIndex + '0');
 	}
 
-	Common::MemoryReadStreamEndian *rdfFile = _vm->loadFile(screenName + ".RDF");
+	Common::MemoryReadStreamEndian *rdfFile = _vm->_resource->loadFile(screenName + ".RDF");
 	rdfFile->seek(14);
 
 	uint16 startOffset = rdfFile->readUint16LE();

@@ -25,31 +25,14 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
-#include "avalanche/avalanche.h"
 
-#include "common/system.h"
-#include "common/savefile.h"
 
+#include "base/plugins.h"
 #include "engines/advancedDetector.h"
-#include "graphics/thumbnail.h"
+
+#include "avalanche/detection.h"
 
 namespace Avalanche {
-
-struct AvalancheGameDescription {
-	ADGameDescription desc;
-};
-
-uint32 AvalancheEngine::getFeatures() const {
-	return _gameDescription->desc.flags;
-}
-
-const char *AvalancheEngine::getGameId() const {
-	return _gameDescription->desc.gameId;
-}
-
-Common::Platform AvalancheEngine::getPlatform() const {
-	return _gameDescription->desc.platform;
-}
 
 static const PlainGameDescriptor avalancheGames[] = {
 	{"avalanche", "Lord Avalot d'Argent"},
@@ -73,9 +56,9 @@ static const ADGameDescription gameDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
-class AvalancheMetaEngine : public AdvancedMetaEngine {
+class AvalancheMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	AvalancheMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(AvalancheGameDescription), avalancheGames) {
+	AvalancheMetaEngineStatic() : AdvancedMetaEngineStatic(gameDescriptions, sizeof(AvalancheGameDescription), avalancheGames) {
 	}
 
 	const char *getEngineId() const override {
@@ -89,140 +72,8 @@ public:
 	const char *getOriginalCopyright() const override {
 		return "Avalanche (C) 1994-1995 Mike, Mark and Thomas Thurman.";
 	}
-
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
-	bool hasFeature(MetaEngineFeature f) const override;
-
-	int getMaximumSaveSlot() const override { return 99; }
-	SaveStateList listSaves(const char *target) const override;
-	void removeSaveState(const char *target, int slot) const override;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
-
-bool AvalancheMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
-	if (gd)
-		*engine = new AvalancheEngine(syst, (const AvalancheGameDescription *)gd);
-	return gd != 0;
-}
-
-bool AvalancheMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSimpleSavesNames);
-}
-
-SaveStateList AvalancheMetaEngine::listSaves(const char *target) const {
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringArray filenames;
-	Common::String pattern = target;
-	pattern.toUppercase();
-	pattern += ".###";
-
-	filenames = saveFileMan->listSavefiles(pattern);
-
-	SaveStateList saveList;
-	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
-		const Common::String &fname = *filename;
-		int slotNum = atoi(fname.c_str() + fname.size() - 3);
-		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
-			Common::InSaveFile *file = saveFileMan->openForLoading(fname);
-			if (file) {
-				// Check for our signature.
-				uint32 signature = file->readUint32LE();
-				if (signature != MKTAG('A', 'V', 'A', 'L')) {
-					warning("Savegame of incompatible type!");
-					delete file;
-					continue;
-				}
-
-				// Check version.
-				byte saveVersion = file->readByte();
-				if (saveVersion > kSavegameVersion) {
-					warning("Savegame of incompatible version!");
-					delete file;
-					continue;
-				}
-
-				// Read name.
-				uint32 nameSize = file->readUint32LE();
-				if (nameSize >= 255) {
-					delete file;
-					continue;
-				}
-				char *name = new char[nameSize + 1];
-				file->read(name, nameSize);
-				name[nameSize] = 0;
-
-				saveList.push_back(SaveStateDescriptor(slotNum, name));
-				delete[] name;
-				delete file;
-			}
-		}
-	}
-
-	// Sort saves based on slot number.
-	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
-	return saveList;
-}
-
-void AvalancheMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
-}
-
-SaveStateDescriptor AvalancheMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(fileName);
-
-	if (f) {
-		// Check for our signature.
-		uint32 signature = f->readUint32LE();
-		if (signature != MKTAG('A', 'V', 'A', 'L')) {
-			warning("Savegame of incompatible type!");
-			delete f;
-			return SaveStateDescriptor();
-		}
-
-		// Check version.
-		byte saveVersion = f->readByte();
-		if (saveVersion > kSavegameVersion) {
-			warning("Savegame of a too recent version!");
-			delete f;
-			return SaveStateDescriptor();
-		}
-
-		// Read the description.
-		uint32 descSize = f->readUint32LE();
-		Common::String description;
-		for (uint32 i = 0; i < descSize; i++) {
-			char actChar = f->readByte();
-			description += actChar;
-		}
-
-		SaveStateDescriptor desc(slot, description);
-
-		Graphics::Surface *thumbnail;
-		if (!Graphics::loadThumbnail(*f, thumbnail)) {
-			warning("Cannot read thumbnail data, possibly broken savegame");
-			delete f;
-			return SaveStateDescriptor();
-		}
-		desc.setThumbnail(thumbnail);
-
-		delete f;
-		return desc;
-	}
-	return SaveStateDescriptor();
-}
 
 } // End of namespace Avalanche
 
-#if PLUGIN_ENABLED_DYNAMIC(AVALANCHE)
-	REGISTER_PLUGIN_DYNAMIC(AVALANCHE, PLUGIN_TYPE_ENGINE, Avalanche::AvalancheMetaEngine);
-#else
-	REGISTER_PLUGIN_STATIC(AVALANCHE, PLUGIN_TYPE_ENGINE, Avalanche::AvalancheMetaEngine);
-#endif
+REGISTER_PLUGIN_STATIC(AVALANCHE_DETECTION, PLUGIN_TYPE_METAENGINE, Avalanche::AvalancheMetaEngineStatic);

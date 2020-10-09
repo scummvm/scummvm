@@ -34,7 +34,8 @@ struct Token {
 	Common::PROCESS		*proc;
 };
 
-static Token g_tokens[NUMTOKENS];	// FIXME: Avoid non-const global vars
+// These vars are reset upon engine destruction
+static Token g_tokens[NUMTOKENS];
 
 
 /**

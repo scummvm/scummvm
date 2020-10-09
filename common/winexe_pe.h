@@ -30,6 +30,15 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_winexe_ne Windows Portable Executable resources
+ * @ingroup common_winexe
+ *
+ * @brief API for managing Windows Portable Executable resources.
+ *
+ * @{
+ */
+
 template<class T> class Array;
 class SeekableReadStream;
 
@@ -91,6 +100,8 @@ private:
 
 	TypeMap _resources;
 };
+
+/** @} */
 
 } // End of namespace Common
 

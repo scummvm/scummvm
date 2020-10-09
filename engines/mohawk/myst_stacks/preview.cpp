@@ -29,6 +29,7 @@
 #include "mohawk/myst_stacks/preview.h"
 
 #include "common/system.h"
+#include "common/translation.h"
 #include "gui/message.h"
 
 namespace Mohawk {
@@ -86,7 +87,7 @@ void Preview::o_fadeFromBlack(uint16 var, const ArgumentsArray &args) {
 
 void Preview::o_stayHere(uint16 var, const ArgumentsArray &args) {
 	// Nuh-uh! No leaving the library in the demo!
-	GUI::MessageDialog dialog("You can't leave the library in the demo.");
+	GUI::MessageDialog dialog(_("You can't leave the library in the demo."));
 	dialog.runModal();
 }
 

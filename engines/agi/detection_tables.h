@@ -670,8 +670,8 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Winnie the Pooh in the Hundred Acre Wood (C64)
 	GAMEpre_P("winnie", "", "title.pic", "d4eb97cffc866110f71e1ec9f84fe643", 0x0000, GID_WINNIE, Common::kPlatformC64),
 
-	// Winnie the Pooh in the Hundred Acre Wood (Apple //gs)
-	GAMEpre_P("winnie", "", "title.pic", "45e06010a3c61d78f4661103c901ae11", 0x0000, GID_WINNIE, Common::kPlatformApple2GS),
+	// Winnie the Pooh in the Hundred Acre Wood (Apple ][)
+	GAMEpre_P("winnie", "", "title.pic", "45e06010a3c61d78f4661103c901ae11", 0x0000, GID_WINNIE, Common::kPlatformApple2),
 
 	// Xmas Card 1986 (PC) [AGI 2.272]
 	GAME("xmascard", "1986-11-13 [version 1]", "3067b8d5957e2861e069c3c0011bd43d", 0x2272, GID_XMASCARD),

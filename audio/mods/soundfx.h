@@ -45,7 +45,7 @@ typedef byte *(*LoadSoundFxInstrumentCallback)(const char *name, uint32 *size);
  * stream object is kept). If loadCb is non 0, then instruments are loaded using
  * it, buffers returned are free'd at the end of playback.
  */
-AudioStream *makeSoundFxStream(Common::SeekableReadStream *data, LoadSoundFxInstrumentCallback loadCb, int rate = 44100, bool stereo = true);
+AudioStream *makeSoundFxStream(Common::SeekableReadStream *data, LoadSoundFxInstrumentCallback loadCb, int rate = 44100, bool stereo = true, bool repeat = true, int periodScaleDivisor = 1);
 
 } // End of namespace Audio
 

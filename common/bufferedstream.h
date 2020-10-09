@@ -29,37 +29,60 @@
 namespace Common {
 
 /**
- * Take an arbitrary ReadStream and wrap it in a custom stream which
+ * @defgroup common_buffstream Buffered stream
+ * @ingroup common
+ *
+ * @brief  API for implementing a buffered stream.
+ *
+ * @{
+ */
+
+/**
+ * Take an arbitrary ReadStream and wrap it in a custom stream that
  * transparently provides buffering.
- * Users can specify how big the buffer should be, and whether the wrapped
+ * You can specify how big the buffer should be, and whether the wrapped
  * stream should be disposed when the wrapper is disposed.
  *
  * It is safe to call this with a NULL parameter (in this case, NULL is
  * returned).
+ *
+ * @param parentStream        The ReadStream to wrap in a custom stream.
+ * @param bufSize             Size of the buffer.
+ * @param disposeParentStream Flag indicating whether to dispose of the wrapped stream.
  */
 ReadStream *wrapBufferedReadStream(ReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream);
 
 /**
- * Take an arbitrary SeekableReadStream and wrap it in a custom stream which
+ * Take an arbitrary SeekableReadStream and wrap it in a custom stream that
  * transparently provides buffering.
- * Users can specify how big the buffer should be, and whether the wrapped
+ * You can specify how big the buffer should be, and whether the wrapped
  * stream should be disposed when the wrapper is disposed.
  *
  * It is safe to call this with a NULL parameter (in this case, NULL is
  * returned).
+ *
+ * @param parentStream        The SeekableReadStream to wrap in a custom stream.
+ * @param bufSize             Size of the buffer.
+ * @param disposeParentStream Flag indicating whether to dispose of the wrapped stream.
  */
 SeekableReadStream *wrapBufferedSeekableReadStream(SeekableReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream);
 
 /**
- * Take an arbitrary WriteStream and wrap it in a custom stream which
+ * Take an arbitrary WriteStream and wrap it in a custom stream that
  * transparently provides buffering.
- * Users can specify how big the buffer should be. Currently, the
+ * You can specify how big the buffer should be. Currently, the
  * parent stream is \em always disposed when the wrapper is disposed.
  *
  * It is safe to call this with a NULL parameter (in this case, NULL is
  * returned).
+ *
+ * @param parentStream        The WriteStream to wrap in a custom stream.
+ * @param bufSize             Size of the buffer.
  */
+
 WriteStream *wrapBufferedWriteStream(WriteStream *parentStream, uint32 bufSize);
+
+/** @} */
 
 } // End of namespace Common
 

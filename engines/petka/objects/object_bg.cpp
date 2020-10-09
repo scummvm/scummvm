@@ -39,6 +39,8 @@
 
 namespace Petka {
 
+// COMPLETED
+
 QObjectBG::QObjectBG() {
 	_x = 0;
 	_y = 0;
@@ -85,13 +87,12 @@ void QObjectBG::processMessage(const QMessage &msg) {
 
 void QObjectBG::draw() {
 	Graphics::Surface *s = g_vm->resMgr()->loadBitmap(_resourceId);
-	if (s) {
-		const Common::List<Common::Rect> &dirty = g_vm->videoSystem()->rects();
-		for (Common::List<Common::Rect>::const_iterator it = dirty.begin(); it != dirty.end(); ++it) {
-			Common::Rect srcRect = *it;
-			srcRect.translate(g_vm->getQSystem()->_xOffset, 0);
-			g_vm->videoSystem()->blitFrom(*s, srcRect, Common::Point(it->left, it->top));
-		}
+	if (!s)
+		return;
+	int xOffset = g_vm->getQSystem()->_xOffset;
+	for (auto rect : g_vm->videoSystem()->rects()) {
+		rect.translate(xOffset, 0);
+		g_vm->videoSystem()->blitFrom(*s, rect, Common::Point(rect.left - xOffset, rect.top));
 	}
 }
 
@@ -117,13 +118,12 @@ void QObjectBG::goTo() {
 		return;
 	}
 
-	/*Common::Array<QObjectBG> &bgs = sys->_bgs;
-	for (uint i = 0; i < bgs.size(); ++i) {
-		if (bgsIni.getKey(bgs[i]._name, _name, entranceName)) {
+	for (auto o : sys->_allObjects) {
+		QObjectBG *bg = dynamic_cast<QObjectBG *>(o);
+		if (bg && bgsIni.getKey(bg->_name, _name, entranceName)) {
 			setEntrance(entranceName);
-			break;
 		}
-	}*/
+	}
 }
 
 void QObjectBG::setEntrance(const Common::String &name) {
@@ -137,7 +137,7 @@ void QObjectBG::setEntrance(const Common::String &name) {
 		sys->getChapay()->setPos(Common::Point(entrance->_walkX, entrance->_walkY - 2), false);
 
 		sys->_xOffset = CLIP<int32>(entrance->_walkX - 320, 0, sys->_sceneWidth - 640);
-		sys->_field6C = sys->_xOffset;
+		sys->_reqOffset = sys->_xOffset;
 	}
 	g_vm->videoSystem()->makeAllDirty();
 }
@@ -159,4 +159,4 @@ void QObjectBG::readInisData(Common::INIFile &names, Common::INIFile &cast, Comm
 	QMessageObject::readInisData(names, cast, bgs);
 }
 
-}
+} // End of namespace Petka

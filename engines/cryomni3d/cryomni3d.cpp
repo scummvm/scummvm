@@ -24,7 +24,6 @@
 #include "common/error.h"
 #include "common/system.h"
 #include "common/textconsole.h"
-#include "common/translation.h"
 #include "common/debug-channels.h"
 
 #include "common/events.h"

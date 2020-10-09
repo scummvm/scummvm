@@ -65,9 +65,7 @@
 #include "backends/platform/sdl/win32/win32-window.h"
 #include "backends/platform/sdl/win32/win32_wrapper.h"
 
-#include "common/config-manager.h"
 #include "common/textconsole.h"
-#include "common/file.h"
 
 // System.Title property key, values taken from http://msdn.microsoft.com/en-us/library/bb787584.aspx
 const PROPERTYKEY PKEY_Title = { /* fmtid = */ { 0xF29F85E0, 0x4FF9, 0x1068, { 0xAB, 0x91, 0x08, 0x00, 0x2B, 0x27, 0xB3, 0xD9 } }, /* propID = */ 2 };
@@ -120,7 +118,7 @@ void Win32TaskbarManager::setOverlayIcon(const Common::String &name, const Commo
 	}
 
 	// Compute full icon path
-	Common::String path = getIconPath(name);
+	Common::String path = getIconPath(name, ".ico");
 	if (path.empty())
 		return;
 
@@ -293,7 +291,7 @@ void Win32TaskbarManager::addRecent(const Common::String &name, const Common::St
 		link->SetPath(path);
 		link->SetArguments(game);
 
-		Common::String iconPath = getIconPath(name);
+		Common::String iconPath = getIconPath(name, ".ico");
 		if (iconPath.empty()) {
 			link->SetIconLocation(path, 0); // No game-specific icon available
 		} else {
@@ -333,38 +331,6 @@ void Win32TaskbarManager::notifyError() {
 
 void Win32TaskbarManager::clearError() {
 	setProgressState(kTaskbarNoProgress);
-}
-
-Common::String Win32TaskbarManager::getIconPath(Common::String target) {
-	// We first try to look for a iconspath configuration variable then
-	// fallback to the extra path
-	//
-	// Icons can be either in a subfolder named "icons" or directly in the path
-
-	Common::String iconsPath = ConfMan.get("iconspath");
-	Common::String extraPath = ConfMan.get("extrapath");
-
-#define TRY_ICON_PATH(path) { \
-	Common::FSNode node((path)); \
-	if (node.exists()) \
-		return (path); \
-}
-
-	if (!iconsPath.empty()) {
-		TRY_ICON_PATH(iconsPath + "/" + target + ".ico");
-		TRY_ICON_PATH(iconsPath + "/" + ConfMan.get("gameid") + ".ico");
-		TRY_ICON_PATH(iconsPath + "/icons/" + target + ".ico");
-		TRY_ICON_PATH(iconsPath + "/icons/" + ConfMan.get("gameid") + ".ico");
-	}
-
-	if (!extraPath.empty()) {
-		TRY_ICON_PATH(extraPath + "/" + target + ".ico");
-		TRY_ICON_PATH(extraPath + "/" + ConfMan.get("gameid") + ".ico");
-		TRY_ICON_PATH(extraPath + "/icons/" + target + ".ico");
-		TRY_ICON_PATH(extraPath + "/icons/" + ConfMan.get("gameid") + ".ico");
-	}
-
-	return "";
 }
 
 #endif

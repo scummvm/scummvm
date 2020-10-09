@@ -37,6 +37,7 @@
 #include "ultima/nuvie/core/party.h"
 #include "ultima/nuvie/core/converse.h"
 #include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/nuvie.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -235,7 +236,7 @@ GUI_status AudioDialog::callback(uint16 msg, GUI_CallBack *caller, void *data) {
 			sm->set_music_volume(musicVol);
 			if (sm->get_m_pCurrentSong() != NULL)
 				sm->get_m_pCurrentSong()->SetVolume(musicVol);
-			config->set("config/audio/music_volume", musicVol);
+			config->set("config/music_volume", musicVol);
 		}
 
 		int sfx_selection = sfxVol_button->GetSelection();
@@ -243,12 +244,12 @@ GUI_status AudioDialog::callback(uint16 msg, GUI_CallBack *caller, void *data) {
 			uint8 sfxVol = sfx_selection * 25.5;
 			sm->set_sfx_volume(sfxVol);
 // probably need to update sfx volume if we have background sfx implemented
-			config->set("config/audio/sfx_volume", sfxVol);
+			config->set("config/sfx_volume", sfxVol);
 		}
 
 		if ((bool)music_button->GetSelection() != sm->is_music_enabled())
 			sm->set_music_enabled(music_button->GetSelection());
-		config->set("config/audio/enable_music", music_button->GetSelection() ? "yes" : "no");
+		config->set("config/music_mute", !music_button->GetSelection());
 		if ((bool)sfx_button->GetSelection() != sm->is_sfx_enabled())
 			sm->set_sfx_enabled(sfx_button->GetSelection());
 
@@ -265,14 +266,14 @@ GUI_status AudioDialog::callback(uint16 msg, GUI_CallBack *caller, void *data) {
 		sm->stop_music_on_group_change = group_b->GetSelection();
 		config->set("config/audio/stop_music_on_group_change", group_b->GetSelection() ? "yes" : "no");
 
-		config->set("config/audio/enable_sfx", sfx_button->GetSelection() ? "yes" : "no");
+		config->set("config/sfx_mute", !sfx_button->GetSelection());
 		if ((bool)audio_button->GetSelection() != sm->is_audio_enabled())
 			sm->set_audio_enabled(audio_button->GetSelection());
-		config->set("config/audio/enabled", audio_button->GetSelection() ? "yes" : "no");
+		config->set("config/mute", !audio_button->GetSelection());
 
 		if (speech_b) {
 			bool speech_enabled = speech_b->GetSelection() ? true : false;
-			config->set("config/ultima6/enable_speech", speech_b->GetSelection() ? "yes" : "no");
+			config->set("config/speech_mute", !speech_b->GetSelection());
 			if (speech_enabled != sm->is_speech_enabled())
 				sm->set_speech_enabled(speech_enabled);
 		}

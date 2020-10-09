@@ -68,7 +68,7 @@ Sound::~Sound() {
 uint32 Sound::getSampleId(int32 fxNo) {
 	byte cluster = _fxList[fxNo].sampleId.cluster;
 	byte id;
-	if (SwordEngine::_systemVars.isDemo && SwordEngine::_systemVars.platform == Common::kPlatformWindows) {
+	if (SwordEngine::_systemVars.isDemo && SwordEngine::_systemVars.platform == Common::kPlatformWindows && !SwordEngine::_systemVars.isSpanishDemo) {
 		id = _fxList[fxNo].sampleId.idWinDemo;
 	} else {
 		id = _fxList[fxNo].sampleId.idStd;

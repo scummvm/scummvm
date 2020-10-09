@@ -51,7 +51,7 @@ public:
 	float y;
 	float z;
 
-	Vector3() : x(0.0), y(0.0), z(0.0) {}
+	Vector3() : x(0.0f), y(0.0f), z(0.0f) {}
 
 	Vector3(float ax, float ay, float az) : x(ax), y(ay), z(az) {}
 

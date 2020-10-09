@@ -196,7 +196,10 @@ static const char *const selectorNameTable[] = {
 	"setLooper",    // QFG4
 	"useStamina",   // QFG4
 	"value",        // QFG4
+	"enable",       // SQ6
+	"setupExit",    // SQ6
 	"vol",          // SQ6
+	"walkIconItem", // SQ6
 #endif
 	NULL
 };
@@ -317,7 +320,10 @@ enum ScriptPatcherSelectors {
 	SELECTOR_setLooper,
 	SELECTOR_useStamina,
 	SELECTOR_value,
-	SELECTOR_vol
+	SELECTOR_enable,
+	SELECTOR_setupExit,
+	SELECTOR_vol,
+	SELECTOR_walkIconItem
 #endif
 };
 
@@ -1729,9 +1735,35 @@ static const uint16 fanmadePatchDemoQuestInfiniteLoop[] = {
 	PATCH_END
 };
 
+// This patch is for a bug that first appeared in the LSL3 volume dialog and was
+//  then copied into the templates included with SCI Studio and SCI Companion,
+//  causing it to appear in fan games. See larry3SignatureVolumeSlider.
+//
+// Applies to: Fan games built with the SCI Studio / SCI Companion SCI0 template
+// Responsible method: TheMenuBar:handleEvent
+static const uint16 fangameSignatureVolumeSlider[] = {
+	0x39, SIG_SELECTOR8(doit),       // pushi doit
+	SIG_ADDTOOFFSET(+1),             // push1 [ opcode 79 instead of 78 in some games ]
+	SIG_ADDTOOFFSET(+1),             // push2 [ opcode 7b instead of 7a in some games ]
+	SIG_MAGICDWORD,
+	0x39, 0x08,                      // pushi 08 [ volume ]
+	0x8d, 0x03,                      // lst 03   [ uninitialized variable ]
+	0x43, 0x31, 0x04,                // callk DoSound 04 [ set volume and return previous ]
+	SIG_END
+};
+
+static const uint16 fangamePatchVolumeSlider[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x39, 0x01,                      // pushi 01
+	0x38, PATCH_UINT16(0x0008),      // pushi 0008 [ volume ]
+	0x43, 0x31, 0x02,                // callk DoSound 02 [ return volume ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                  patch
 static const SciScriptPatcherEntry fanmadeSignatures[] = {
 	{  true,   994, "Cascade Quest: fix auto-saving",              1, fanmadeSignatureCascadeQuestFixAutoSaving, fanmadePatchCascadeQuestFixAutoSaving },
+	{  true,   997, "SCI Template: fix volume slider",             1, fangameSignatureVolumeSlider,              fangamePatchVolumeSlider },
 	{  true,   999, "Demo Quest: infinite loop on typo",           1, fanmadeSignatureDemoQuestInfiniteLoop,     fanmadePatchDemoQuestInfiniteLoop },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
@@ -3537,6 +3569,153 @@ static const uint16 gk1LoreleiDanceTimerPatch[] = {
 	PATCH_END
 };
 
+// When walking between rooms in Jackson Square, the cursor is often initialized
+//  to the wrong view, even though it's really the Walk cursor. This seemingly
+//  random event with many variations is due to a bug in the ExitFeature class.
+//
+// ExitFeature is responsible for swapping the cursor with an Exit cursor when
+//  the mouse is over it and then restoring afterwards. The previous cursor is
+//  stored in ExitFeature:lastCursor. The first problem is that ExitFeature:init
+//  initializes lastCursor to the current cursor even though the mouse hasn't
+//  touched it yet. The second problem is that ExitFeature:dispose restores the
+//  cursor to lastCursor if the current cursor is any Exit cursor, including
+//  ones it's not responsible for. Entering Jackson Square from the cathedral
+//  causes all three ExitFeatures in the room to initialize lastCursor to
+//  theWaitCursor (the shield). When exiting the room, the ExitFeatures are
+//  disposed in the order they were added, which means northExit disposes first.
+//  northExit:lastCursor is still theWaitCursor unless it was moused over.
+//  Exiting to another Jackson Square room will cause northExit:dispose to check
+//  if the cursor is globeCursor, which represents all Exit cursors, and if so
+//  then it will incorrectly restore the cursor to theWaitCursor, preventing
+//  the ExitFeature responsible for the room change from correctly restoring.
+//
+// We fix this by patching ExitFeature:dispose to only restore the cursor if
+//  its view matches the Exit cursor that it's responsible for.
+//
+// Applies to: All versions
+// Responsible method: ExitFeature:dispose
+static const uint16 gk1ExitFeatureCursorSignature[] = {
+	0x89, 0x13,                             // lsg 13 [ current-cursor ]
+	0x7a,                                   // push2
+	0x76,                                   // push0
+	0x78,                                   // push1
+	0x43, 0x02, SIG_UINT16(0x0004),         // callk ScriptID 0 1 [ globeCursor ]
+	0x1a,                                   // eq?
+	0x31, 0x0b,                             // bnt 0b [ skip if current-cursor isn't an exit cursor ]
+	0x38, SIG_SELECTOR16(setCursor),        // pushi setCursor
+	0x78,                                   // push1
+	0x67, SIG_ADDTOOFFSET(+1),              // pTos lastCursor
+	0x81, 0x01,                             // lag 01
+	0x4a, SIG_UINT16(0x0006),               // send 06 [ GK1 setCursor: lastCursor ]
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(delete),            // pushi delete
+	0x78,                                   // push1
+	0x7c,                                   // pushSelf
+	0x81, 0xce,                             // lag ce
+	0x4a, SIG_UINT16(0x0006),               // send 06 [ gk1Exits delete: self ]
+	0x48,                                   // ret
+	SIG_ADDTOOFFSET(+372),
+	0x38, SIG_SELECTOR16(setCursor),        // pushi setCursor
+	0x78,                                   // push1
+	0x67, SIG_ADDTOOFFSET(+1),              // pTos lastCursor
+	0x81, 0x01,                             // lag 01
+	0x4a, SIG_UINT16(0x0006),               // send 06 [ GK1 setCursor: lastCursor ]
+	0x35, 0x01,                             // ldi 01
+	0x65, SIG_ADDTOOFFSET(+1),              // aTop eCursor [ eCursor = 1 ]
+	0x48,                                   // ret
+	SIG_END
+};
+
+static const uint16 gk1ExitFeatureCursorPatch[] = {
+	0x39, PATCH_SELECTOR8(delete),          // pushi delete
+	0x78,                                   // push1
+	0x7c,                                   // pushSelf
+	0x81, 0xce,                             // lag ce
+	0x4a, PATCH_UINT16(0x0006),             // send 06 [ gk1Exits delete: self ]
+	0x39, PATCH_SELECTOR8(view),            // pushi view
+	0x76,                                   // push0
+	0x81, 0x13,                             // lag 13  [ current-cursor ]
+	0x4a, PATCH_UINT16(0x0004),             // send 04 [ current-cursor: view? ]
+	0x67, PATCH_GETORIGINALBYTEADJUST(+17, -2), // pTos cursor
+	0x1a,                                   // eq?     [ current-cursor:view == self:cursor ]
+	0x2e, PATCH_UINT16(0x017e),             // bt 017e [ GK1 setCursor: lastCursor ]
+	0x48,                                   // ret
+	PATCH_END
+};
+
+// The Windows CD version never plays its AVI videos during the bayou ritual,
+//  instead it runs the view-based slide shows for the floppy versions. The
+//  ritual script contains the normal code for playing its AVI and SEQ files
+//  depending on kPlatform, just like every video script in the game, except
+//  that the initial floppy flag test has been replaced with another kPlatform
+//  call which prevents the real platform test from executing.
+//
+// It's unclear if this is a script bug or why it would be intentional, but
+//  the end result is that selecting Windows as the platform excludes videos
+//  from this one scene whereas selecting DOS doesn't, so we patch the platform
+//  tests back to floppy tests like everywhere else and enable the AVI videos.
+//
+// Applies to: All CD versions, though only English versions support Windows
+// Responsible method: roomScript:changeState
+// Fixes bug: #9807
+static const uint16 gk1BayouRitualAviSignature[] = {
+	0x76,                                   // push0
+	0x43, 0x68, SIG_UINT16(0x0000),         // callk Platform
+	SIG_MAGICDWORD,
+	0x36,                                   // push
+	0x35, 0x01,                             // ldi 01 [ DOS ]
+	0x1c,                                   // ne?
+	SIG_END
+};
+
+static const uint16 gk1BayouRitualAviPatch[] = {
+	0x78,                                   // push1
+	0x38, PATCH_UINT16(0x01d6),             // pushi 01d6     [ flag 470 ]
+	0x47, 0x0d, 0x00, PATCH_UINT16(0x0002), // calle proc13_0 [ is floppy flag set? ]
+	PATCH_END
+};
+
+// On day 6, an envelope is dropped off in the bookstore after 20 seconds, but
+//  if the game is in the middle of a message sequence then it can lockup.
+//  When a timer expires, bookstore:cue tests a number of properties to make
+//  sure that it's not interrupting anything, but unlike other rooms such as
+//  nwJackson:cue it doesn't test if a message is being said. Looking at Grace
+//  triggers one of many message sequences which can prevent ego from completing
+//  his turn to face the door, leaving dropTheEnvelope stuck in handsOff mode.
+//
+// We fix this by adding a test to bookstore:cue to verify that a message isn't
+//  being said, just like nwJackson:cue. We make room for this by overwriting a
+//  redundant handsOff call. This also prevents the florist script from starting
+//  in the middle of a message, as this could have similar conflicts.
+//
+// Applies to: All versions
+// Responsible method: bookstore:cue
+static const uint16 gk1Day6EnvelopeSignature[] = {
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(state),             // pushi state
+	0x76,                                   // push0
+	0x51, SIG_ADDTOOFFSET(+1),              // class CueObj
+	0x4a, SIG_UINT16(0x0004),               // send 04 [ CueObj state? ]
+	0x18,                                   // not
+	0x31, SIG_ADDTOOFFSET(+1),              // bnt [ reset timer ]
+	0x38, SIG_SELECTOR16(handsOff),         // pushi handsOff
+	0x76,                                   // push0
+	0x81, 0x01,                             // lag 01
+	0x4a, SIG_UINT16(0x0004),               // send 04 [ GK1 handsOff: ]
+	SIG_END
+};
+
+static const uint16 gk1Day6EnvelopePatch[] = {
+	PATCH_ADDTOOFFSET(+8),
+	0x2f, PATCH_GETORIGINALBYTEADJUST(+10, +1), // bt [ reset timer ]
+	0x39, PATCH_SELECTOR8(size),                // pushi size
+	0x76,                                       // push0
+	0x81, 0x54,                                 // lag 54
+	0x4a, PATCH_UINT16(0x0004),                 // send 04 [ talkers size? ]
+	0x2f, PATCH_GETORIGINALBYTEADJUST(+10, -9), // bt [ reset timer ]
+	PATCH_END
+};
+
 // GK1 Mac is missing view 56, which is the close-up of the talisman. Clicking
 //  Look on the talisman from inventory is supposed to display an inset with
 //  view 56 and say a message, but instead this would crash the Mac interpreter.
@@ -3600,9 +3779,11 @@ static const uint16 gk1NarratorLockupPatch[] = {
 static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,     0, "remove alt+n syslogger hotkey",               1, gk1SysLoggerHotKeySignature,      gk1SysLoggerHotKeyPatch },
 	{  true,    17, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
+	{  true,    21, "fix ExitFeature cursor restore",              1, gk1ExitFeatureCursorSignature,    gk1ExitFeatureCursorPatch },
 	{  false,   24, "mac: fix missing talisman view",              1, gk1MacTalismanInsetSignature,     gk1MacTalismanInsetPatch },
 	{  true,    51, "fix interrogation bug",                       1, gk1InterrogationBugSignature,     gk1InterrogationBugPatch },
 	{  true,    93, "fix inventory on restart",                    1, gk1RestartInventorySignature,     gk1RestartInventoryPatch },
+	{  true,   210, "fix day 6 envelope lockup",                   2, gk1Day6EnvelopeSignature,         gk1Day6EnvelopePatch },
 	{  true,   211, "fix day 1 grace phone speech timing",         1, gk1Day1GracePhoneSignature,       gk1Day1GracePhonePatch },
 	{  true,   212, "fix day 5 drum book dialogue error",          1, gk1Day5DrumBookDialogueSignature, gk1Day5DrumBookDialoguePatch },
 	{  true,   212, "fix day 5 phone softlock",                    1, gk1Day5PhoneFreezeSignature,      gk1Day5PhoneFreezePatch },
@@ -3621,6 +3802,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   410, "fix day 2 binoculars lockup",                 1, gk1Day2BinocularsLockupSignature, gk1Day2BinocularsLockupPatch },
 	{  true,   420, "fix day 6 empty booth message",               6, gk1EmptyBoothMessageSignature,    gk1EmptyBoothMessagePatch },
 	{  true,   420, "fix lorelei dance timer",                     1, gk1LoreleiDanceTimerSignature,    gk1LoreleiDanceTimerPatch },
+	{  true,   480, "win: play day 6 bayou ritual avi videos",     3, gk1BayouRitualAviSignature,       gk1BayouRitualAviPatch },
 	{  true,   710, "fix day 9 vine swing speech playing",         1, gk1Day9VineSwingSignature,        gk1Day9VineSwingPatch },
 	{  true,   710, "fix day 9 mummy animation (floppy)",          1, gk1MummyAnimateFloppySignature,   gk1MummyAnimateFloppyPatch },
 	{  true,   710, "fix day 9 mummy animation (cd)",              1, gk1MummyAnimateCDSignature,       gk1MummyAnimateCDPatch },
@@ -6883,6 +7065,46 @@ static const uint16 larry2PatchWearParachutePoints[] = {
 //          script, description,                                      signature                           patch
 static const SciScriptPatcherEntry larry2Signatures[] = {
 	{  true,    63, "plane: no points for wearing parachute",      1, larry2SignatureWearParachutePoints, larry2PatchWearParachutePoints },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
+// Leisure Suit Larry 3
+
+// The LSL3 volume dialog initialize its slider to the current volume by calling
+//  kDoSoundMasterVolume, but it passes an uninitialized variable as an extra
+//  parameter. This changes the volume instead of just querying it, leaving the
+//  slider out of sync with the abruptly changed volume.
+//
+// We remove the uninitialized parameter so that this code correctly queries the
+//  volume instead of setting it. This was fixed in later versions but the buggy
+//  one was used as the basis for SCI Studio's template script, which is also
+//  included with SCI Companion, and so this bug lives on in fan games.
+//
+// Applies to: English PC, English Amiga, English Atari ST
+// Responsible method: TheMenuBar:handleEvent
+static const uint16 larry3SignatureVolumeSlider[] = {
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(doit),       // pushi doit
+	0x78,                            // push1
+	0x7a,                            // push2
+	0x39, 0x08,                      // pushi 08 [ volume ]
+	0x8d, 0x01,                      // lst 01   [ uninitialized variable ]
+	0x43, 0x31, 0x04,                // callk DoSound 04 [ set volume and return previous ]
+	SIG_END
+};
+
+static const uint16 larry3PatchVolumeSlider[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x39, 0x01,                      // pushi 01
+	0x38, PATCH_UINT16(0x0008),      // pushi 0008 [ volume ]
+	0x43, 0x31, 0x02,                // callk DoSound 02 [ return volume ]
+	PATCH_END
+};
+
+//          script, description,                                      signature                     patch
+static const SciScriptPatcherEntry larry3Signatures[] = {
+	{  true,   997, "fix volume slider",                           1, larry3SignatureVolumeSlider,  larry3PatchVolumeSlider },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -18718,13 +18940,78 @@ static const uint16 sq5PatchTransporterRoomSpeedFix[] = {
 	PATCH_END
 };
 
+// When the elevator doors close in room 250, sElevatorDoors makes an extra
+//  call to handsOn which allows ego to walk around and interact with the room
+//  during room transitions, and this can lock up the game by running unexpected
+//  scripts such as the chicken closet. We patch out this code since all of
+//  sElevatorDoors' callers either call handsOn afterwards or change rooms.
+//
+// Applies to: All versions
+// Responsible method: sElevatorDoors:changeState(2)
+// Fixes bug: #11605
+static const uint16 sq5SignatureElevatorHandsOn[] = {
+	0x67, 0x12,                     // pTos client
+	0x72, SIG_ADDTOOFFSET(+2),      // lofsa sOpenElev
+	SIG_MAGICDWORD,
+	0x1c,                           // ne?
+	0x31, 0x08,                     // bnt 08
+	0x38, SIG_SELECTOR16(handsOn),  // pushi handsOn
+	0x76,                           // push0
+	0x81, 0x01,                     // lag 01
+	0x4a, 0x04,                     // send 04 [ SQ5 handsOn: ]
+	SIG_END
+};
+
+static const uint16 sq5PatchElevatorHandsOn[] = {
+	0x33, 0x0e,                     // jmp 0e [ skip SQ5 handsOn: ]
+	PATCH_END
+};
+
+// When walking to Genetix room 730 from the bridge in room 760, clicking Walk
+//  while ego enters the room interrupts the room script, breaks the exits, and
+//  prevents WD-40 from returning the communicator. This can make it impossible
+//  to leave. The script sHuman760 is missing a call to handsOff which the other
+//  entrance scripts have. We fix this by calling handsOff before starting
+//  sHuman760. We make room for this by overwriting a redundant handsOn call.
+//
+// Applies to: All versions
+// Responsible method: rm730:init
+// Fixes bug: #11620
+static const uint16 sq5SignatureGenetixBridgeHandsOn[] = {
+	0x31, 0x16,                       // bnt 16 [ skip fly code if human ]
+	0x7a,                             // push2
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x00e6),         // pushi 00e6
+	0x38, SIG_UINT16(0x0096),         // pushi 0096
+	0x47, 0x1f, 0x01, 0x04,           // calle proc31_1 [ fly to 230, 150 ]
+	0x38, SIG_SELECTOR16(handsOn),    // pushi handsOn
+	0x76,                             // push0
+	0x81, 0x01,                       // lag 01
+	0x4a, 0x04,                       // send 04 [ SQ5 handsOn: (redundant) ]
+	0x32, SIG_UINT16(0x00b1),         // jmp 00b1 [ end of method ]
+	SIG_END
+};
+
+static const uint16 sq5PatchGenetixBridgeHandsOn[] = {
+	0x31, 0x0e,                       // bnt 0e [ skip fly code if human ]
+	PATCH_ADDTOOFFSET(+0x0b),
+	0x32, PATCH_UINT16(0x00b9),       // jmp 00b9 [ end of method ]
+	0x38, PATCH_SELECTOR16(handsOff), // pushi handsOff
+	0x76,                             // push0
+	0x81, 0x01,                       // lag 01
+	0x4a, 0x04,                       // send 04 [ SQ5 handsOff: ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                             patch
 static const SciScriptPatcherEntry sq5Signatures[] = {
 	{  true,   200, "captain chair lockup fix",                    1, sq5SignatureCaptainChairFix,          sq5PatchCaptainChairFix },
 	{  true,   226, "toolbox fix",                                 1, sq5SignatureToolboxFix,               sq5PatchToolboxFix },
 	{  true,   243, "transporter room speed fix",                  3, sq5SignatureTransporterRoomSpeedFix,  sq5PatchTransporterRoomSpeedFix },
+	{  true,   250, "elevator handsOn fix",                        1, sq5SignatureElevatorHandsOn,          sq5PatchElevatorHandsOn },
 	{  true,   305, "wd40 fruit fix",                              1, sq5SignatureWd40FruitFix,             sq5PatchWd40FruitFix },
 	{  true,   335, "wd40 alarm countdown fix",                    1, sq5SignatureWd40AlarmCountdownFix,    sq5PatchWd40AlarmCountdownFix },
+	{  true,   730, "genetix bridge handsOn fix",                  1, sq5SignatureGenetixBridgeHandsOn,     sq5PatchGenetixBridgeHandsOn },
 	{  true,    30, "ChoiceTalker lockup fix",                     1, sciNarratorLockupSignature,           sciNarratorLockupPatch },
 	{  true,   928, "Narrator lockup fix",                         1, sciNarratorLockupSignature,           sciNarratorLockupPatch },
 	{  true,  1000, "drive bay pathfinding fix",                   1, sq5SignatureDriveBayPathfindingFix,   sq5PatchDriveBayPathfindingFix },
@@ -19087,6 +19374,37 @@ static const uint16 sq6RestoreErrorDialogPatch[] = {
 	PATCH_END
 };
 
+// When the save/restore dialog is in save-mode, it hides the restore message
+//  by setting its priority to zero, but this is the same priority as the dialog
+//  view which contains the save message. This is another instance of a priority
+//  conflict that happens to work in SSCI due to its last ditch sorting which
+//  uses internal memory ID values. In our interpreter the restore message is
+//  always drawn on top of the dialog and always hides the save message.
+//
+// As with similar priority conflicts, we work around this by adjusting the
+//  restore message's "hidden" priority, and lower it from zero to negative two.
+//  Negative one is a reserved sentinel value in View:setPri.
+//
+// Applies to: All versions
+// Responsible method: SRDialog:update
+static const uint16 sq6SaveDialogMessageSignature[] = {
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(setPri),        // pushi setPri
+	0x78,                               // push1
+	0x8b, 0x04,                         // lsl 04
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq? 
+	0x31, 0x04,                         // bnt 04 [ skip if not saving ]
+	0x35, 0x00,                         // ldi 00 [ message priority: 0 ]
+	SIG_END
+};
+
+static const uint16 sq6SaveDialogMessagePatch[] = {
+	PATCH_ADDTOOFFSET(+10),
+	0x35, 0xfe,                         // ldi fe [ new priority: -2 ]
+	PATCH_END
+};
+
 // The scripts that manage the music volume on Polysorbate LX have conflicts
 //  which can set the volume too low outside and in the arcade and club.
 //
@@ -19126,6 +19444,86 @@ static const uint16 sq6PolysorbateVolumeSignature[] = {
 static const uint16 sq6PolysorbateVolumePatch[] = {
 	0x35, 0x7f,                         // ldi 7f [ normal volume ]
 	0x32, PATCH_UINT16(0x0003),         // jmp 0003
+	PATCH_END
+};
+
+// The shuttle's cockpit initializes the control panel incorrectly if the cursor
+//  is Walk. If the game is saved in this state then it won't load because
+//  walkIcon0's screen item was deleted even though it's the current icon.
+//
+// We fix this as Sierra did in later versions by setting the current icon to Do
+//  when initializing the control panel in room 490.
+//
+// Applies to: English PC 1.0 (TODO: develop a Mac patch)
+// Responsible method: localproc_5c38 in script 490
+// Fixes bug: #11673
+static const uint16 sq6CockpitIconBarSignature[] = {
+	0x7e, SIG_ADDTOOFFSET(+2),          // line
+	0x38, SIG_SELECTOR16(setupExit),    // pushi setupExit
+	0x78,                               // push1
+	0x78,                               // push1
+	0x81, 0x45,                         // lag 45
+	0x4a, SIG_UINT16(0x0006),           // send 06 [ SQIconBar setupExit: 1 ]
+	0x7e, SIG_ADDTOOFFSET(+2),          // line
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(enable),       // pushi enable
+	0x78,                               // push1
+	0x76,                               // push0
+	0x81, 0x45,                         // lag 45
+	0x4a, SIG_UINT16(0x0006),           // send 06 [ SQIconBar enable: 0 ]
+	0x7e, SIG_ADDTOOFFSET(+2),          // line
+	SIG_END
+};
+
+static const uint16 sq6CockpitIconBarPatch[] = {
+	0x38, PATCH_SELECTOR16(curIcon),    // pushi curIcon
+	0x78,                               // push1
+	0x39, PATCH_SELECTOR8(at),          // pushi at
+	0x78,                               // push1
+	0x7a,                               // push2
+	0x81, 0x45,                         // lag 45
+	0x4a, PATCH_UINT16(0x0006),         // send 06 [ SQIconBar at: 2 ]
+	0x36,                               // push
+	0x38, PATCH_SELECTOR16(setupExit),  // pushi setupExit
+	0x78,                               // push1
+	0x78,                               // push1
+	0x38, PATCH_SELECTOR16(enable),     // pushi enable
+	0x78,                               // push1
+	0x76,                               // push0
+	0x81, 0x45,                         // lag 45
+	0x4a, PATCH_UINT16(0x0012),         // send 12 [ SQIconBar curIcon: doIcon2, setupExit: 1, enable: 0 ]
+	PATCH_END
+};
+
+// The ExitFeature class has a bug which permanently breaks the game's cursors.
+//  ExitFeature:doit is responsible for toggling the Walk cursor to and from an
+//  Exit cursor. If an ExitFeature's area overlaps with the icon bar and a user
+//  mouses from it to the icon bar while the cursor is Exit and clicks on an
+//  icon then the new cursor will no longer work. ExitFeature assumes the new
+//  icon is Walk and incorrectly sets its message property to Exit, preventing
+//  it from ever sending the correct verb again. This occurs in the esophagus
+//  where room 640 can be scrolled to a position where the southern ExitFeature
+//  is partially under the icon bar.
+//
+// We fix by this by patching ExitFeature to explicitly use the Walk icon
+//  instead of assuming that the current icon is always Walk when the cursor is.
+//  This assumption is false when SQIconbar is in the middle of changing icons
+//  and calls everyone's doit methods.
+//
+// Applies to: All versions
+// Responsible method: ExitFeature:doit
+// Fixes bug: #11640
+static const uint16 sq6ExitFeatureIconSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(curIcon),      // pushi curIcon
+	0x76,                               // push0
+	0x81, 0x45,                         // lag 45
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ SQIconbar curIcon? ]
+	SIG_END
+};
+
+static const uint16 sq6ExitFeatureIconPatch[] = {
+	0x38, PATCH_SELECTOR16(walkIconItem), // pushi walkIconItem
 	PATCH_END
 };
 
@@ -19187,10 +19585,12 @@ static const SciScriptPatcherEntry sq6Signatures[] = {
 	{  true,    15, "fix hookah hose missing point",               1, sq6HookahHosePointSignature,     sq6HookahHosePointPatch },
 	{  true,    15, "fix invalid array construction",              1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true,    22, "fix invalid array construction",              1, sci21IntArraySignature,          sci21IntArrayPatch },
+	{  true,    31, "fix ExitFeature breaking icons",              2, sq6ExitFeatureIconSignature,     sq6ExitFeatureIconPatch },
 	{  true,    33, "disable video benchmarking",                  1, sci2BenchmarkSignature,          sci2BenchmarkPatch },
 	{  true,   330, "fix polysorbate lx music volume",             1, sq6PolysorbateVolumeSignature,   sq6PolysorbateVolumePatch },
 	{  true,   410, "fix slow transitions",                        1, sq6SlowTransitionSignature2,     sq6SlowTransitionPatch2 },
 	{  true,   460, "fix invalid array construction",              1, sci21IntArraySignature,          sci21IntArrayPatch },
+	{  true,   490, "fix invalid cockpit icon bar",                1, sq6CockpitIconBarSignature,      sq6CockpitIconBarPatch },
 	{  true,   500, "fix slow transitions",                        1, sq6SlowTransitionSignature1,     sq6SlowTransitionPatch1 },
 	{  true,   510, "fix invalid array construction",              1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true,   690, "fix duplicate points",                        1, sq6DuplicatePointsSignature,     sq6DuplicatePointsPatch },
@@ -19200,6 +19600,7 @@ static const SciScriptPatcherEntry sq6Signatures[] = {
 	{  true, 64928, "Narrator lockup fix",                         1, sciNarratorLockupLineSignature,  sciNarratorLockupLinePatch },
 	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,          sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,          sci2NumSavesPatch2 },
+	{  true, 64990, "fix save game dialog message",                1, sq6SaveDialogMessageSignature,   sq6SaveDialogMessagePatch },
 	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,          sci2ChangeDirPatch },
 	{  true, 64994, "fix restore-error dialog",                    1, sq6RestoreErrorDialogSignature,  sq6RestoreErrorDialogPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
@@ -19991,6 +20392,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 		break;
 	case GID_LSL2:
 		signatureTable = larry2Signatures;
+		break;
+	case GID_LSL3:
+		signatureTable = larry3Signatures;
 		break;
 	case GID_LSL5:
 		signatureTable = larry5Signatures;

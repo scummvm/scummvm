@@ -86,8 +86,8 @@ void TileView::drawTile(MapTile &mapTile, bool focus, int x, int y) {
 	Tile *tile = _tileSet->get(mapTile._id);
 	Image *image = tile->getImage();
 
-	ASSERT(x < _columns, "x value of %d out of range", x);
-	ASSERT(y < _rows, "y value of %d out of range", y);
+	assertMsg(x < _columns, "x value of %d out of range", x);
+	assertMsg(y < _rows, "y value of %d out of range", y);
 
 	// Blank scratch pad
 	_animated->fillRect(0, 0, SCALED(_tileWidth), SCALED(_tileHeight), 0, 0, 0, 255);
@@ -122,8 +122,8 @@ void TileView::drawTile(MapTile &mapTile, bool focus, int x, int y) {
 }
 
 void TileView::drawTile(Std::vector<MapTile> &tiles, bool focus, int x, int y) {
-	ASSERT(x < _columns, "x value of %d out of range", x);
-	ASSERT(y < _rows, "y value of %d out of range", y);
+	assertMsg(x < _columns, "x value of %d out of range", x);
+	assertMsg(y < _rows, "y value of %d out of range", y);
 
 	// Clear tile contents
 	_animated->fillRect(0, 0, SCALED(_tileWidth), SCALED(_tileHeight), 0, 0, 0, 255);
@@ -173,8 +173,8 @@ void TileView::drawTile(Std::vector<MapTile> &tiles, bool focus, int x, int y) {
 }
 
 void TileView::drawFocus(int x, int y) {
-	ASSERT(x < _columns, "x value of %d out of range", x);
-	ASSERT(y < _rows, "y value of %d out of range", y);
+	assertMsg(x < _columns, "x value of %d out of range", x);
+	assertMsg(y < _rows, "y value of %d out of range", y);
 
 	// Draw the focus rectangle around the tile
 	if ((g_screen->_currentCycle * 4 / SCR_CYCLE_PER_SECOND) % 2) {

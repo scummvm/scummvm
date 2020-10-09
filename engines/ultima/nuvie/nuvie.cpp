@@ -49,7 +49,7 @@ NuvieEngine *g_engine;
 
 NuvieEngine::NuvieEngine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Ultima::Shared::UltimaEngine(syst, gameDesc),  _config(nullptr), _savegame(nullptr),
-		_screen(nullptr), _script(nullptr), _game(nullptr) {
+		_screen(nullptr), _script(nullptr), _game(nullptr), _soundManager(nullptr) {
 	g_engine = this;
 }
 
@@ -144,12 +144,12 @@ bool NuvieEngine::initialize() {
 	if (checkDataDir() == false)
 		return false;
 
-	SoundManager *sound_manager = new SoundManager(_mixer);
-	sound_manager->nuvieStartup(_config);
+	_soundManager = new SoundManager(_mixer);
+	_soundManager->nuvieStartup(_config);
 
-	_game = new Game(_config, events, _screen, gui, gameType, sound_manager);
+	_game = new Game(_config, events, _screen, gui, gameType, _soundManager);
 
-	_script = new Script(_config, gui, sound_manager, gameType);
+	_script = new Script(_config, gui, _soundManager, gameType);
 	if (_script->init() == false)
 		return false;
 
@@ -184,18 +184,7 @@ Common::Error NuvieEngine::run() {
 
 void NuvieEngine::initConfig() {
 	_config = new Configuration();
-
-	// nuvie.cfg in the game folder can supercede any ScummVM settings
-	if (Common::File::exists("nuvie.cfg"))
-		(void)_config->readConfigFile("nuvie.cfg", "config");
-
-	if (!_config->isDefaultsSet()) {
-		if (isEnhanced())
-			_config->setEnhancedDefaults(_gameDescription->gameId);
-		else
-			_config->setUnenhancedDefaults(_gameDescription->gameId);
-	}
-
+	_config->load(_gameDescription->gameId, isEnhanced());
 }
 
 void NuvieEngine::assignGameConfigValues(uint8 gameType) {
@@ -239,6 +228,26 @@ bool NuvieEngine::checkDataDir() {
 	ConsoleAddInfo("datadir: \"%s\"", path.c_str());
 
 	return true;
+}
+
+void NuvieEngine::syncSoundSettings() {
+	Ultima::Shared::UltimaEngine::syncSoundSettings();
+	if (!_soundManager)
+		return;
+
+	_soundManager->set_audio_enabled(
+		!ConfMan.hasKey("mute") || !ConfMan.getBool("mute"));
+	_soundManager->set_sfx_enabled(
+		!ConfMan.hasKey("sfx_mute") || !ConfMan.getBool("sfx_mute"));
+	_soundManager->set_music_enabled(
+		!ConfMan.hasKey("music_mute") || !ConfMan.getBool("music_mute"));
+	_soundManager->set_speech_enabled(
+		!ConfMan.hasKey("speech_mute") || !ConfMan.getBool("speech_mute"));
+
+	_soundManager->set_sfx_volume(ConfMan.hasKey("sfx_volume") ?
+		ConfMan.getInt("sfx_volume") : 255);
+	_soundManager->set_music_volume(ConfMan.hasKey("music_volume") ?
+		ConfMan.getInt("music_volume") : 255);
 }
 
 bool NuvieEngine::canLoadGameStateCurrently(bool isAutosave) {
@@ -321,7 +330,7 @@ Common::Error NuvieEngine::saveGameState(int slot, const Common::String &desc, b
 
 			// Display that the game was saved
 			MsgScroll *scroll = Game::get_game()->get_scroll();
-			scroll->display_string(_("\nGame Saved\n\n"));
+			scroll->display_string("\nGame Saved\n\n");
 			scroll->display_prompt();
 		}
 
@@ -370,12 +379,12 @@ bool NuvieEngine::quickSave(int saveSlot, bool isLoad) {
 		if (!canLoadGameStateCurrently(false))
 			return false;
 
-		text = _("loading quick save %d");
+		text = Common::convertFromU32String(_("loading quick save %d"));
 	} else {
 		if (!canSaveGameStateCurrently(false))
 			return false;
 
-		text = _("saving quick save %d");
+		text = Common::convertFromU32String(_("saving quick save %d"));
 	}
 
 	text = Std::string::format(text.c_str(), saveSlot);
@@ -389,7 +398,7 @@ bool NuvieEngine::quickSave(int saveSlot, bool isLoad) {
 			return false;
 		}
 	} else {
-		Common::String saveDesc = Common::String::format(_("Quicksave %03d"), saveSlot);
+		Common::String saveDesc = Common::String::format("Quicksave %03d", saveSlot);
 		return saveGameState(saveSlot, saveDesc, false).getCode() == Common::kNoError;
 	}
 }

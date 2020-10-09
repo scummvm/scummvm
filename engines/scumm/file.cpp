@@ -22,8 +22,6 @@
 
 #include "scumm/file.h"
 
-#include "scumm/scumm.h"
-
 #include "common/memstream.h"
 #include "common/substream.h"
 

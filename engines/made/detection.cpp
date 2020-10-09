@@ -20,30 +20,10 @@
  *
  */
 
-#include "made/made.h"
-#include "made/detection_tables.h"
-
+#include "base/plugins.h"
 #include "engines/advancedDetector.h"
 
-namespace Made {
-
-uint32 MadeEngine::getGameID() const {
-	return _gameDescription->gameID;
-}
-
-uint32 MadeEngine::getFeatures() const {
-	return _gameDescription->features;
-}
-
-Common::Platform MadeEngine::getPlatform() const {
-	return _gameDescription->desc.platform;
-}
-
-uint16 MadeEngine::getVersion() const {
-	return _gameDescription->version;
-}
-
-}
+#include "made/detection.h"
 
 static const PlainGameDescriptor madeGames[] = {
 	{"manhole", "The Manhole"},
@@ -53,9 +33,11 @@ static const PlainGameDescriptor madeGames[] = {
 	{0, 0}
 };
 
-class MadeMetaEngine : public AdvancedMetaEngine {
+#include "made/detection_tables.h"
+
+class MadeMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	MadeMetaEngine() : AdvancedMetaEngine(Made::gameDescriptions, sizeof(Made::MadeGameDescription), madeGames) {
+	MadeMetaEngineStatic() : AdvancedMetaEngineStatic(Made::gameDescriptions, sizeof(Made::MadeGameDescription), madeGames) {
 	}
 
 	const char *getEngineId() const override {
@@ -70,32 +52,10 @@ public:
 		return "MADE Engine (C) Activision";
 	}
 
-	bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
-
 };
 
-bool MadeMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		false;
-}
-
-bool Made::MadeEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsReturnToLauncher);
-}
-
-bool MadeMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Made::MadeGameDescription *gd = (const Made::MadeGameDescription *)desc;
-	if (gd) {
-		*engine = new Made::MadeEngine(syst, gd);
-	}
-	return gd != 0;
-}
-
-ADDetectedGame MadeMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+ADDetectedGame MadeMetaEngineStatic::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 	// Set the default values for the fallback descriptor's ADGameDescription part.
 	Made::g_fallbackDesc.desc.language = Common::UNK_LANG;
 	Made::g_fallbackDesc.desc.platform = Common::kPlatformDOS;
@@ -110,8 +70,4 @@ ADDetectedGame MadeMetaEngine::fallbackDetect(const FileMap &allFiles, const Com
 	return ADDetectedGame();
 }
 
-#if PLUGIN_ENABLED_DYNAMIC(MADE)
-	REGISTER_PLUGIN_DYNAMIC(MADE, PLUGIN_TYPE_ENGINE, MadeMetaEngine);
-#else
-	REGISTER_PLUGIN_STATIC(MADE, PLUGIN_TYPE_ENGINE, MadeMetaEngine);
-#endif
+REGISTER_PLUGIN_STATIC(MADE_DETECTION, PLUGIN_TYPE_METAENGINE, MadeMetaEngineStatic);

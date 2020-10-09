@@ -143,7 +143,7 @@ void GameHeader::clear() {
 	addr_strings = 0;
 	addr_strings_end = 0;
 
-	Common::fill(&addr_actions[0], &addr_actions[8], 0);
+	Common::fill(&addr_actions[0], &addr_actions[7], 0);
 	Common::fill(&room_direction_table[0], &room_direction_table[NR_DIRECTIONS], 0);
 }
 
@@ -160,6 +160,8 @@ void GameData::clearGame() {
 	_currentReplaceWord = 0;
 	_updateFlags = 0;
 	_colorTable = 0;
+	_itemCount = 0;
+	_totalInventoryWeight = 0;
 
 	_strings.clear();
 	_strings2.clear();
@@ -528,6 +530,8 @@ void GameData::parse_header(FileBuffer *fb) {
 
 	fb->seek(0);
 	header->magic = fb->readUint16LE();
+	fb->skip(2);		// Unknown in earlier versions
+
 	switch (header->magic) {
 	case 0x2000: /* Transylvania, Crimson Crown disk one */
 	case 0x4800: /* Crimson Crown disk two */
@@ -536,13 +540,12 @@ void GameData::parse_header(FileBuffer *fb) {
 		break;
 
 	case 0x93f0: /* OO-Topos */
-		_comprehendVersion = 2;
-		_magicWord = (uint16)-0x5a00;
-		break;
-
 	case 0xa429: /* Talisman */
 		_comprehendVersion = 2;
 		_magicWord = (uint16)-0x5a00;
+
+		// Actions table starts right at the start of the file
+		fb->seek(0);
 		break;
 
 	default:
@@ -550,15 +553,8 @@ void GameData::parse_header(FileBuffer *fb) {
 		break;
 	}
 
-	/* FIXME - Second word in header has unknown usage */
-	parse_header_le16(fb, &dummy);
-
-	/*
-	* Action tables.
-	*
-	* Layout depends on the comprehend version.
-	*/
-	for (int idx = 0; idx < (_comprehendVersion == 1 ? 7 : 5); ++idx)
+	/* Basic data */
+	for (int idx = 0; idx < 7; ++idx)
 		parse_header_le16(fb, &header->addr_actions[idx]);
 
 	parse_header_le16(fb, &header->addr_vm);
@@ -618,6 +614,9 @@ void GameData::parse_header(FileBuffer *fb) {
 	parse_variables(fb);
 	parse_flags(fb);
 
+	fb->skip(9);
+	_itemCount = fb->readByte();
+
 	_rooms.resize(header->room_direction_table[DIRECTION_SOUTH] -
 	                    header->room_direction_table[DIRECTION_NORTH] + 1);
 
@@ -631,7 +630,7 @@ void GameData::load_extra_string_file(const StringFile &stringFile) {
 
 	if (stringFile._baseOffset > 0) {
 		// Explicit offset specified, so read the strings in sequentially
-		uint endOffset = stringFile._baseOffset;
+		uint endOffset = stringFile._endOffset;
 		if (!endOffset)
 			endOffset = fb.size();
 

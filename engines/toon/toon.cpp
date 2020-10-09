@@ -222,12 +222,12 @@ void ToonEngine::parseInput() {
 				if (slotNum >= 0 && slotNum <= 9 && canSaveGameStateCurrently()) {
 					if (saveGame(slotNum, "")) {
 						// ok
-						Common::String buf = Common::String::format(_("Saved game in slot #%d "), slotNum);
+						Common::U32String buf = Common::U32String::format(_("Saved game in slot #%d "), slotNum);
 						GUI::TimedMessageDialog dialog(buf, 1000);
 						dialog.runModal();
 					} else {
-						Common::String buf = Common::String::format(_("Could not quick save into slot #%d"), slotNum);
-						GUI::MessageDialog dialog(buf, "OK", 0);
+						Common::U32String buf = Common::U32String::format(_("Could not quick save into slot #%d"), slotNum);
+						GUI::MessageDialog dialog(buf);
 						dialog.runModal();
 
 					}
@@ -239,13 +239,14 @@ void ToonEngine::parseInput() {
 				if (slotNum >= 0 && slotNum <= 9 && canLoadGameStateCurrently()) {
 					if (loadGame(slotNum)) {
 						// ok
-						Common::String buf = Common::String::format(_("Saved game #%d quick loaded"), slotNum);
+						Common::U32String buf = Common::U32String::format(_("Saved game #%d quick loaded"), slotNum);
 						GUI::TimedMessageDialog dialog(buf, 1000);
 						dialog.runModal();
 					} else {
-						Common::String buf = Common::String::format(_("Could not quick load the saved game #%d"), slotNum);
-						GUI::MessageDialog dialog(buf, "OK", 0);
-						warning("%s", buf.c_str());
+						const char *msg = _s("Could not quick load the saved game #%d");
+						Common::U32String buf = Common::U32String::format(_(msg), slotNum);
+						GUI::MessageDialog dialog(buf);
+						warning(msg, slotNum);
 						dialog.runModal();
 					}
 				}
@@ -1524,9 +1525,12 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 
 	// load package
 	if (!resources()->openPackage(createRoomFilename(locationName + ".PAK"))) {
-		Common::String msg = Common::String::format(_("Unable to locate the '%s' data file."), createRoomFilename(locationName + ".PAK").c_str());
-		GUIErrorMessage(msg);
-		warning("%s", msg.c_str());
+		const char *msg = _s("Unable to locate the '%s' data file.");
+		Common::String roomFileName = createRoomFilename(locationName + ".PAK");
+
+		Common::U32String buf = Common::U32String::format(_(msg), roomFileName.c_str());
+		GUIErrorMessage(buf);
+		warning(msg, roomFileName.c_str());
 		_shouldQuit = true;
 		return;
 	}
@@ -4942,16 +4946,17 @@ void ToonEngine::createShadowLUT() {
 
 bool ToonEngine::loadToonDat() {
 	Common::File in;
-	Common::String msg;
+	Common::U32String errorMessage;
 	Common::String filename = "toon.dat";
 	int majVer, minVer;
 
 	in.open(filename.c_str());
 
 	if (!in.isOpen()) {
-		msg = Common::String::format(_("Unable to locate the '%s' engine data file."), filename.c_str());
-		GUIErrorMessage(msg);
-		warning("%s", msg.c_str());
+		const char *msg = _s("Unable to locate the '%s' engine data file.");
+		errorMessage = Common::U32String::format(_(msg), filename.c_str());
+		GUIErrorMessage(errorMessage);
+		warning(msg, filename.c_str());
 		return false;
 	}
 
@@ -4961,9 +4966,10 @@ bool ToonEngine::loadToonDat() {
 	buf[4] = '\0';
 
 	if (strcmp(buf, "TOON")) {
-		msg = Common::String::format(_("The '%s' engine data file is corrupt."), filename.c_str());
-		GUIErrorMessage(msg);
-		warning("%s", msg.c_str());
+		const char *msg = _s("The '%s' engine data file is corrupt.");
+		errorMessage = Common::U32String::format(_(msg), filename.c_str());
+		GUIErrorMessage(errorMessage);
+		warning(msg, filename.c_str());
 		return false;
 	}
 
@@ -4971,12 +4977,11 @@ bool ToonEngine::loadToonDat() {
 	minVer = in.readByte();
 
 	if ((majVer != TOON_DAT_VER_MAJ) || (minVer != TOON_DAT_VER_MIN)) {
-		msg = Common::String::format(
-			_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d."),
-			filename.c_str(), TOON_DAT_VER_MAJ, TOON_DAT_VER_MIN, majVer, minVer);
-		GUIErrorMessage(msg);
-		warning("%s", msg.c_str());
+		const char *msg = _s("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d.");
+		errorMessage = Common::U32String::format(_(msg), filename.c_str(), TOON_DAT_VER_MAJ, TOON_DAT_VER_MIN, majVer, minVer);
+		GUIErrorMessage(errorMessage);
 
+		warning(msg, filename.c_str(), TOON_DAT_VER_MAJ, TOON_DAT_VER_MIN, majVer, minVer);
 		return false;
 	}
 

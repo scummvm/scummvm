@@ -49,16 +49,18 @@ struct VIDEO_DAC_Q {
 };
 
 
+/** video DAC transfer Q length */
+#define VDACQLENGTH (NUM_PALETTES + 2)
+
+/** color index of the 4 colors used for the translucent palette */
+#define COL_HILIGHT TBLUE1
+
 //----------------- LOCAL GLOBAL DATA --------------------
 
-// FIXME: Avoid non-const global vars
+// These vars are reset upon engine destruction
 
 /** palette allocator data */
 static PALQ g_palAllocData[NUM_PALETTES];
-
-
-/** video DAC transfer Q length */
-#define VDACQLENGTH (NUM_PALETTES+2)
 
 /** video DAC transfer Q */
 static VIDEO_DAC_Q g_vidDACdata[VDACQLENGTH];
@@ -66,19 +68,14 @@ static VIDEO_DAC_Q g_vidDACdata[VDACQLENGTH];
 /** video DAC transfer Q head pointer */
 static VIDEO_DAC_Q *g_pDAChead;
 
-/** color index of the 4 colors used for the translucent palette */
-#define COL_HILIGHT	TBLUE1
-
 /** the translucent palette lookup table */
 uint8 g_transPalette[MAX_COLORS];	// used in graphics.cpp
 
 static int g_translucentIndex	= 228;
-
 static int g_talkIndex		= 233;
 
-static COLORREF g_talkColRef;
-
-static COLORREF g_tagColRef;
+static COLORREF g_talkColRef = 0;
+static COLORREF g_tagColRef = 0;
 
 
 #ifdef DEBUG
@@ -88,11 +85,25 @@ static int maxPals = 0;
 static int maxDACQ = 0;
 #endif
 
+void ResetVarsPalette() {
+	memset(g_palAllocData, 0, sizeof(g_palAllocData));
+
+	g_pDAChead = g_vidDACdata;
+
+	memset(g_transPalette, 0, sizeof(g_transPalette));
+
+	g_translucentIndex = 228;
+	g_talkIndex = 233;
+
+	g_talkColRef = 0;
+	g_tagColRef = 0;
+}
+
 /**
  * Map PSX palettes to original palette from resource file
  */
 void psxPaletteMapper(PALQ *originalPal, uint8 *psxClut, byte *mapperTable) {
-	PALETTE *pal = (PALETTE *)LockMem(originalPal->hPal);
+	PALETTE *pal = (PALETTE *)_vm->_handle->LockMem(originalPal->hPal);
 	bool colorFound = false;
 	uint16 clutEntry = 0;
 
@@ -152,7 +163,7 @@ void PalettesToVideoDAC() {
 			// we are using a palette handle
 
 			// get hardware palette pointer
-			pPalette = (const PALETTE *)LockMem(pDACtail->pal.hRGBarray);
+			pPalette = (const PALETTE *)_vm->_handle->LockMem(pDACtail->pal.hRGBarray);
 
 			// get RGB pointer
 			pColors = pPalette->palRGB;
@@ -308,7 +319,7 @@ PALQ *AllocPalette(SCNHANDLE hNewPal) {
 	PALETTE *pNewPal;
 
 	// get pointer to new palette
-	pNewPal = (PALETTE *)LockMem(hNewPal);
+	pNewPal = (PALETTE *)_vm->_handle->LockMem(hNewPal);
 
 	// search all structs in palette allocator - see if palette already allocated
 	for (p = g_palAllocData; p < g_palAllocData + NUM_PALETTES; p++) {
@@ -435,7 +446,7 @@ PALQ *FindPalette(SCNHANDLE hSrchPal) {
  */
 void SwapPalette(PALQ *pPalQ, SCNHANDLE hNewPal) {
 	// convert handle to palette pointer
-	PALETTE *pNewPal = (PALETTE *)LockMem(hNewPal);
+	PALETTE *pNewPal = (PALETTE *)_vm->_handle->LockMem(hNewPal);
 
 	// validate palette Q pointer
 	assert(pPalQ >= g_palAllocData && pPalQ <= g_palAllocData + NUM_PALETTES - 1);
@@ -551,7 +562,7 @@ void NoFadingPalettes() {
  */
 void CreateTranslucentPalette(SCNHANDLE hPalette) {
 	// get a pointer to the palette
-	PALETTE *pPal = (PALETTE *)LockMem(hPalette);
+	PALETTE *pPal = (PALETTE *)_vm->_handle->LockMem(hPalette);
 
 	// leave background color alone
 	g_transPalette[0] = 0;
@@ -611,7 +622,7 @@ void DimPartPalette(SCNHANDLE hDimPal, int startColor, int length, int brightnes
 	assert(pPalQ);
 
 	// get pointer to dim palette
-	pDimPal = (PALETTE *)LockMem(hDimPal);
+	pDimPal = (PALETTE *)_vm->_handle->LockMem(hDimPal);
 
 	// Adjust for the fact that palettes don't contain color 0
 	startColor -= 1;

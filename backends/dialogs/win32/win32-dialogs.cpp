@@ -67,6 +67,7 @@
 #include "backends/platform/sdl/win32/win32-window.h"
 
 #include "common/config-manager.h"
+#include "common/encoding.h"
 #include "common/translation.h"
 
 Win32DialogManager::Win32DialogManager(SdlWindow_Win32 *window) : _window(window) {
@@ -100,7 +101,7 @@ HRESULT getShellPath(IShellItem *item, Common::String &path) {
 	return hr;
 }
 
-Common::DialogManager::DialogResult Win32DialogManager::showFileBrowser(const char *title, Common::FSNode &choice, bool isDirBrowser) {
+Common::DialogManager::DialogResult Win32DialogManager::showFileBrowser(const Common::U32String &title, Common::FSNode &choice, bool isDirBrowser) {
 	DialogResult result = kDialogError;
 
 	// Do nothing if not running on Windows Vista or later
@@ -130,14 +131,15 @@ Common::DialogManager::DialogResult Win32DialogManager::showFileBrowser(const ch
 			hr = dialog->SetOptions(dwOptions);
 		}
 
-		LPWSTR str = Win32::ansiToUnicode(title, Win32::getCurrentCharset());
-		hr = dialog->SetTitle(str);
-		free(str);
+		LPWSTR dialogTitle = (LPWSTR)Common::Encoding::convert("UTF-16", title);
+		hr = dialog->SetTitle(dialogTitle);
+		free(dialogTitle);
 
-		str = Win32::ansiToUnicode(_("Choose"), Win32::getCurrentCharset());
-		hr = dialog->SetOkButtonLabel(str);
-		free(str);
+		LPWSTR okTitle = (LPWSTR)Common::Encoding::convert("UTF-16", _("Choose"));
+		hr = dialog->SetOkButtonLabel(okTitle);
+		free(okTitle);
 
+		LPWSTR str;
 		if (ConfMan.hasKey("browser_lastpath")) {
 			str = Win32::ansiToUnicode(ConfMan.get("browser_lastpath").c_str());
 			IShellItem *item = NULL;

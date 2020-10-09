@@ -192,6 +192,9 @@ Start:
 
 	do
 	{
+		if (shouldQuit())
+			return;
+
 		if (xverb==0)
 		{
 			undorecord = true;
@@ -948,7 +951,13 @@ void Hugo::RunPrint() {
 			{
 				codeptr++;
 
-#if !defined (ACTUAL_LINELENGTH)
+#ifdef GLK
+				// WORKAROUND: Glk uses a non-fixed width font for displaying
+				// text, so get the length, but don't allow long runs of spaces
+				if ((a = GetValue()) > 20)
+					a = 0;
+
+#elif !defined (ACTUAL_LINELENGTH)
 				if ((a = GetValue()) > physical_windowwidth/FIXEDCHARWIDTH)
 					a = physical_windowwidth/FIXEDCHARWIDTH;
 #else
@@ -1343,7 +1352,8 @@ ContinueRunning:
 
 	while (MEM(codeptr) != CLOSE_BRACE_T)   /* until "}" */
 	{
-
+		if (shouldQuit())
+			return;
 #if defined (DEBUGGER)
 		/* Check if we're stepping over, and if we've returned to
 		   the original level of nesting:

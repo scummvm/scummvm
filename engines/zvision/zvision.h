@@ -26,6 +26,7 @@
 
 #include "zvision/core/clock.h"
 #include "zvision/file/search_manager.h"
+#include "zvision/detection.h"
 
 #include "common/random.h"
 #include "common/events.h"
@@ -56,7 +57,6 @@ class VideoDecoder;
  */
 namespace ZVision {
 
-struct ZVisionGameDescription;
 class Console;
 class ScriptManager;
 class RenderManager;
@@ -88,16 +88,6 @@ enum {
 	MAX_ROTATION_SPEED = 400, // Pixels per second
 
 	KEYBUF_SIZE = 20
-};
-
-enum ZVisionGameId {
-	GID_NONE = 0,
-	GID_NEMESIS = 1,
-	GID_GRANDINQUISITOR = 2
-};
-
-enum ZVisionFeatures {
-	GF_DVD = (1 << 0) // ZGI DVD version
 };
 
 enum ZVisionAction {

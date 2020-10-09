@@ -46,10 +46,8 @@ struct SCIdataStruct {
 	SCNHANDLE reels[4];
 };
 
-// FIXME: Avoid non-const global vars
-
+// These vars are reset upon engine destruction
 static SCIdataStruct g_SCIdata[MAX_SCRENTRIES];
-
 static int g_scrEntries = 0;
 
 /**
@@ -185,7 +183,7 @@ void TouchMoverReels() {
 
 	do {
 		for (scale = 0; scale < TOTAL_SCALES; scale++) {
-			TouchMem(pMover->walkReels[scale][LEFTREEL]);
+			_vm->_handle->TouchMem(pMover->walkReels[scale][LEFTREEL]);
 		}
 	} while ((pMover = NextMover(pMover)) != NULL);
 }

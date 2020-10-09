@@ -35,10 +35,8 @@
 
 namespace Tinsel {
 
-enum {
-	SG_DESC_LEN	= 40,	// Max. saved game description length
-	MAX_SAVED_FILES	= 100
-};
+#define SG_DESC_LEN 40 // Max. saved game description length
+#define MAX_SAVED_FILES 100
 
 struct SAVED_DATA {
 	SCNHANDLE	SavedSceneHandle;		// Scene handle

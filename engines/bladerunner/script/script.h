@@ -142,6 +142,7 @@ protected:
 	int Animation_Stop();
 	int Animation_Skip_To_Frame();
 	void Delay(uint32 miliseconds);
+	bool Player_Has_Control();
 	void Player_Loses_Control();
 	void Player_Gains_Control();
 	void Player_Set_Combat_Mode(bool activate);

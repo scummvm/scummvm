@@ -472,11 +472,10 @@ void Gump::GumpRectToScreenSpace(Rect &gr, RectRoundDir r) {
 	PointRoundDir br = (r == ROUND_OUTSIDE ? ROUND_BOTTOMRIGHT : ROUND_TOPLEFT);
 
 	int32 x1 = gr.left, y1 = gr.top;
-	int32 x2 = gr.left + gr.width(), y2 = gr.top + gr.height();
+	int32 x2 = gr.right, y2 = gr.bottom;
 	GumpToScreenSpace(x1, y1, tl);
 	GumpToScreenSpace(x2, y2, br);
-	gr.left = x1;
-	gr.top = y1;
+	gr.moveTo(x1, y1);
 	if (gr.width() != 0)
 		gr.setWidth(x2 - x1);
 	if (gr.height() != 0)
@@ -489,11 +488,10 @@ void Gump::ScreenSpaceToGumpRect(Rect &sr, RectRoundDir r) {
 	PointRoundDir br = (r == ROUND_OUTSIDE ? ROUND_BOTTOMRIGHT : ROUND_TOPLEFT);
 
 	int32 x1 = sr.left, y1 = sr.top;
-	int32 x2 = sr.left + sr.width(), y2 = sr.top + sr.height();
+	int32 x2 = sr.right, y2 = sr.bottom;
 	ScreenSpaceToGump(x1, y1, tl);
 	ScreenSpaceToGump(x2, y2, br);
-	sr.left = x1;
-	sr.top = y1;
+	sr.moveTo(x1, y1);
 	if (sr.width() != 0)
 		sr.setWidth(x2 - x1);
 	if (sr.height() != 0)

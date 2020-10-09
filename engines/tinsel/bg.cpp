@@ -23,6 +23,7 @@
 
 #include "tinsel/anim.h"
 #include "tinsel/background.h"
+#include "tinsel/cursor.h"
 #include "tinsel/dw.h"
 #include "tinsel/faders.h"
 #include "tinsel/film.h"
@@ -64,7 +65,7 @@ void BGmainProcess(CORO_PARAM, const void *param) {
 			pReel = (const FREEL *)param;
 
 			// Get the MULTI_INIT structure
-			pmi = (const MULTI_INIT *)LockMem(FROM_32(pReel->mobj));
+			pmi = (const MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pReel->mobj));
 
 			// Initialize and insert the object, and initialize its script.
 			_vm->_bg->_pBG[0] = MultiInitObject(pmi);
@@ -73,13 +74,13 @@ void BGmainProcess(CORO_PARAM, const void *param) {
 			_vm->_bg->_bgReels = 1;
 		} else {
 			/*** At start of scene ***/
-			pFilm = (const FILM *)LockMem(_vm->_bg->GetBgroundHandle());
+			pFilm = (const FILM *)_vm->_handle->LockMem(_vm->_bg->GetBgroundHandle());
 			_vm->_bg->_bgReels = FROM_32(pFilm->numreels);
 
 			int i;
 			for (i = 0; i < _vm->_bg->_bgReels; i++) {
 				// Get the MULTI_INIT structure
-				pmi = (PMULTI_INIT) LockMem(FROM_32(pFilm->reels[i].mobj));
+				pmi = (PMULTI_INIT)_vm->_handle->LockMem(FROM_32(pFilm->reels[i].mobj));
 
 				// Initialize and insert the object, and initialize its script.
 				_vm->_bg->_pBG[i] = MultiInitObject(pmi);
@@ -113,7 +114,7 @@ void BGmainProcess(CORO_PARAM, const void *param) {
 			InitStepAnimScript(&_vm->_bg->_thisAnim[0], _vm->_bg->_pBG[0], FROM_32(pReel->script), _vm->_bg->getBgSpeed());
 			StepAnimScript(&_vm->_bg->_thisAnim[0]);
 		} else {
-			pFilm = (const FILM *)LockMem(_vm->_bg->GetBgroundHandle());
+			pFilm = (const FILM *)_vm->_handle->LockMem(_vm->_bg->GetBgroundHandle());
 			assert(_vm->_bg->_bgReels == (int32)FROM_32(pFilm->numreels));
 
 			// Just re-initialize the scripts.
@@ -138,7 +139,7 @@ void BGotherProcess(CORO_PARAM, const void *param) {
 	CORO_END_CONTEXT(_ctx);
 
 	const FREEL *pReel = (const FREEL *)param;
-	const MULTI_INIT *pmi = (const MULTI_INIT *)LockMem(FROM_32(pReel->mobj));
+	const MULTI_INIT *pmi = (const MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pReel->mobj));
 
 	CORO_BEGIN_CODE(_ctx);
 
@@ -171,7 +172,7 @@ void Background::StartupBackground(CORO_PARAM, SCNHANDLE hFilm) {
 
 	_hBackground = hFilm;		// Save handle in case of Save_Scene()
 
-	pim = GetImageFromFilm(hFilm, 0, NULL, NULL, &pfilm);
+	pim = _vm->_cursor->GetImageFromFilm(hFilm, 0, NULL, NULL, &pfilm);
 
 	SetBackPal(FROM_32(pim->hImgPal));
 

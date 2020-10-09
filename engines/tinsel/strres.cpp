@@ -34,7 +34,7 @@
 
 namespace Tinsel {
 
-// FIXME: Avoid non-const global vars
+// These vars are reset upon engine destruction
 
 #ifdef DEBUG
 // Diagnostic number
@@ -42,7 +42,7 @@ int g_newestString;
 #endif
 
 // buffer for resource strings
-static uint8 *g_textBuffer = 0;
+static uint8 *g_textBuffer = nullptr;
 
 static struct {
 	bool		bPresent;
@@ -76,6 +76,12 @@ LANGUAGE g_textLanguage, g_sampleLanguage = TXT_ENGLISH;
 #define sampleExtension		".smp"
 
 //----------------- FUNCTIONS --------------------------------
+
+void ResetVarsStrRes() {
+	g_textBuffer = nullptr;
+	g_bMultiByte = false;
+	g_textLanguage = g_sampleLanguage = TXT_ENGLISH;
+}
 
 /**
  * Called to load a resource file for a different language

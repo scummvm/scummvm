@@ -662,7 +662,7 @@ bool Debugger_EoB::cmdPrintMap(int, const char **) {
 		}
 
 		if (_vm->_currentBlock == i) {
-			c = 'X';			
+			c = 'X';
 		} else if (key) {
 			c = signs[8];
 		} else {
@@ -673,7 +673,7 @@ bool Debugger_EoB::cmdPrintMap(int, const char **) {
 				}
 			}
 		}
-		
+
 		debugPrintf("%c", c);
 	}
 	debugPrintf("\n\nParty Position:   %c  Door:             %c  Stairs Up/Down: %c/%c  Plate:      %c   Hole: %c\nSwitch:           %c  Clickable Object: %c  Illusion Wall:  %c    Teleporter: %c   Key:  %c\n\n", 'X', 216, signs[3], signs[4], signs[6], signs[5], '/', 176, signs[1], signs[0], signs[8]);

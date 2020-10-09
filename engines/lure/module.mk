@@ -4,7 +4,6 @@ MODULE_OBJS := \
 	animseq.o \
 	debugger.o \
 	decode.o \
-	detection.o \
 	disk.o \
 	events.o \
 	fights.o \
@@ -14,6 +13,7 @@ MODULE_OBJS := \
 	lure.o \
 	memory.o \
 	menu.o \
+	metaengine.o \
 	palette.o \
 	res.o \
 	res_struct.o \
@@ -31,3 +31,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o

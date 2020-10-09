@@ -364,7 +364,7 @@ reg_t kDoAudioWaitForPlay(EngineState *s, int argc, reg_t *argv) {
 		}
 	}
 
-	return g_sci->_audio32->kernelPlay(false, argc, argv);
+	return g_sci->_audio32->kernelPlay(false, s, argc, argv);
 }
 
 reg_t kDoAudioPlay(EngineState *s, int argc, reg_t *argv) {
@@ -372,23 +372,23 @@ reg_t kDoAudioPlay(EngineState *s, int argc, reg_t *argv) {
 		return make_reg(0, g_sci->_audio32->getNumActiveChannels());
 	}
 
-	return g_sci->_audio32->kernelPlay(true, argc, argv);
+	return g_sci->_audio32->kernelPlay(true, s, argc, argv);
 }
 
 reg_t kDoAudioStop(EngineState *s, int argc, reg_t *argv) {
-	return g_sci->_audio32->kernelStop(argc, argv);
+	return g_sci->_audio32->kernelStop(s, argc, argv);
 }
 
 reg_t kDoAudioPause(EngineState *s, int argc, reg_t *argv) {
-	return g_sci->_audio32->kernelPause(argc, argv);
+	return g_sci->_audio32->kernelPause(s, argc, argv);
 }
 
 reg_t kDoAudioResume(EngineState *s, int argc, reg_t *argv) {
-	return g_sci->_audio32->kernelResume(argc, argv);
+	return g_sci->_audio32->kernelResume(s, argc, argv);
 }
 
 reg_t kDoAudioPosition(EngineState *s, int argc, reg_t *argv) {
-	return g_sci->_audio32->kernelPosition(argc, argv);
+	return g_sci->_audio32->kernelPosition(s, argc, argv);
 }
 
 reg_t kDoAudioRate(EngineState *s, int argc, reg_t *argv) {
@@ -403,7 +403,7 @@ reg_t kDoAudioRate(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kDoAudioVolume(EngineState *s, int argc, reg_t *argv) {
-	return g_sci->_audio32->kernelVolume(argc, argv);
+	return g_sci->_audio32->kernelVolume(s, argc, argv);
 }
 
 reg_t kDoAudioGetCapability(EngineState *s, int argc, reg_t *argv) {
@@ -445,7 +445,7 @@ reg_t kDoAudioPreload(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kDoAudioFade(EngineState *s, int argc, reg_t *argv) {
-	return g_sci->_audio32->kernelFade(argc, argv);
+	return g_sci->_audio32->kernelFade(s, argc, argv);
 }
 
 reg_t kDoAudioHasSignal(EngineState *s, int argc, reg_t *argv) {
@@ -453,17 +453,17 @@ reg_t kDoAudioHasSignal(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kDoAudioSetLoop(EngineState *s, int argc, reg_t *argv) {
-	g_sci->_audio32->kernelLoop(argc, argv);
+	g_sci->_audio32->kernelLoop(s, argc, argv);
 	return s->r_acc;
 }
 
 reg_t kDoAudioPan(EngineState *s, int argc, reg_t *argv) {
-	g_sci->_audio32->kernelPan(argc, argv);
+	g_sci->_audio32->kernelPan(s, argc, argv);
 	return s->r_acc;
 }
 
 reg_t kDoAudioPanOff(EngineState *s, int argc, reg_t *argv) {
-	g_sci->_audio32->kernelPanOff(argc, argv);
+	g_sci->_audio32->kernelPanOff(s, argc, argv);
 	return s->r_acc;
 }
 

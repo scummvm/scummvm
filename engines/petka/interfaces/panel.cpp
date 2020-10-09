@@ -87,7 +87,7 @@ InterfacePanel::InterfacePanel() {
 	_objectPoints[21] = Common::Point(0, 0);
 	_objectPoints[22] = Common::Point(0, 0);
 	_objectPoints[23] = Common::Point(0, 0);
-
+	readSettings();
 }
 
 void InterfacePanel::start(int id) {
@@ -273,10 +273,10 @@ void InterfacePanel::readSettings() {
 }
 
 void InterfacePanel::applySettings() {
-	_speechFrame = MIN(MAX(1, _speechFrame), 31);
-	_musicFrame = MIN(MAX(1, _musicFrame), 41);
-	_sfxFrame = MIN(MAX(1, _sfxFrame), 31);
-	_speedFrame = MIN(MAX(1, _speedFrame), 26);
+	_speechFrame = CLIP<int>(_speechFrame, 1, 31);
+	_musicFrame = CLIP<int>(_musicFrame, 1, 41);
+	_sfxFrame = CLIP<int>(_sfxFrame, 1, 31);
+	_speedFrame = CLIP<int>(_speedFrame, 1, 26);
 
 	ConfMan.setInt("speech_volume", 255 * (_speechFrame - 1) / (31 - 1));
 	ConfMan.setInt("music_volume", 255 * (_musicFrame - 1) / (41 - 1));
@@ -289,6 +289,10 @@ void InterfacePanel::applySettings() {
 
 void InterfacePanel::onRightButtonDown(Common::Point p) {
 	stop();
+}
+
+int InterfacePanel::getHeroSpeed() {
+	return (_speedFrame * 100 - 100) / 25;
 }
 
 } // End of namespace Petka

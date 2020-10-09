@@ -63,7 +63,7 @@ static struct PredefinedProto {
 	{ "respondsTo",				LM::m_respondsTo,			 1, 1,	kXObj,					200 },	// D2
 
 	// script object and Xtra
-	{ "birth",					LM::m_new,					-1, 0,	kScriptObj | kXtraObj, 	4 },			// D4
+	{ "birth",					LM::m_new,					-1, 0,	kScriptObj | kXtraObj, 	400 },			// D4
 
 	{ 0, 0, 0, 0, 0, 0 }
 };

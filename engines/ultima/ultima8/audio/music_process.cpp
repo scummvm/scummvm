@@ -45,7 +45,7 @@ MusicProcess::~MusicProcess() {
 	_theMusicProcess = nullptr;
 }
 
-uint32 MusicProcess::I_musicStop(const uint8 * /*args*/,
+uint32 MusicProcess::I_stopMusic(const uint8 * /*args*/,
                                  unsigned int /*argsize*/) {
 	if (_theMusicProcess) _theMusicProcess->playMusic_internal(0);
 	return 0;
@@ -57,6 +57,22 @@ uint32 MusicProcess::I_playMusic(const uint8 *args,
 	if (_theMusicProcess) _theMusicProcess->playMusic(song & 0x7F);
 	return 0;
 }
+
+
+uint32 MusicProcess::I_pauseMusic(const uint8 *args,
+								 unsigned int /*argsize*/) {
+	// This is only used in Crusader: No Regret.
+	warning("TODO: MusicProcess::I_pauseMusic Implement me");
+	return 0;
+}
+
+uint32 MusicProcess::I_unpauseMusic(const uint8 *args,
+								 unsigned int /*argsize*/) {
+	// This is only used in Crusader: No Regret.
+	warning("TODO: MusicProcess::I_unpauseMusic Implement me");
+	return 0;
+}
+
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

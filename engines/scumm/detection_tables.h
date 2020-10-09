@@ -29,18 +29,12 @@
 #include "common/util.h"
 
 #include "scumm/detection.h"
-#include "scumm/scumm.h"
 
 #include "scumm/scumm-md5.h"
 
+#include "scumm/obsolete.h"
 
 namespace Scumm {
-
-#pragma mark -
-#pragma mark --- Data types & constants ---
-#pragma mark -
-
-#define UNK Common::kPlatformUnknown
 
 #pragma mark -
 #pragma mark --- Tables ---
@@ -145,44 +139,6 @@ static const PlainGameDescriptor gameDescriptions[] = {
 	{ "water", "Freddi Fish and Luther's Water Worries" },
 #endif
 	{ 0, 0 }
-};
-
-/**
- * Conversion table mapping old obsolete game IDs to the
- * corresponding new game ID and platform combination.
- */
-static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
-	{"bluesabctimedemo", "bluesabctime", UNK},
-	{"BluesBirthdayDemo", "BluesBirthday", UNK},
-	{"comidemo", "comi", UNK},
-	{"digdemo", "dig", UNK},
-	{"digdemoMac", "dig", Common::kPlatformMacintosh},
-	{"dottdemo", "tentacle", UNK},
-	{"fate", "atlantis", UNK},
-	{"ftMac", "ft",  Common::kPlatformMacintosh},
-	{"ftpcdemo", "ft", UNK},
-	{"ftdemo", "ft",  Common::kPlatformMacintosh},
-	{"game", "monkey", UNK},
-	{"indy3ega", "indy3", UNK},
-	{"indy3towns", "indy3", Common::kPlatformFMTowns},
-	{"indy4", "atlantis", Common::kPlatformFMTowns},
-	{"indydemo", "atlantis", Common::kPlatformFMTowns},
-	{"loomcd", "loom", UNK},
-	{"loomTowns", "loom", Common::kPlatformFMTowns},
-	{"mi2demo", "monkey2", UNK},
-	{"monkey1", "monkey", UNK},
-	{"monkeyEGA", "monkey", UNK},
-	{"monkeyVGA", "monkey", UNK},
-	{"playfate", "atlantis", UNK},
-	{"samnmax-alt", "samnmax", UNK},
-	{"samnmaxMac", "samnmax", Common::kPlatformMacintosh},
-	{"samdemo", "samnmax", UNK},
-	{"samdemoMac", "samnmax", Common::kPlatformMacintosh},
-	{"snmdemo", "samnmax", UNK},
-	{"snmidemo", "samnmax", UNK},
-	{"tentacleMac", "tentacle", Common::kPlatformMacintosh},
-	{"zakTowns", "zak", Common::kPlatformFMTowns},
-	{NULL, NULL, UNK}
 };
 
 // The following table contains information about variants of our various

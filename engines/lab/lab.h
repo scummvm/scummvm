@@ -41,6 +41,7 @@
 #include "lab/console.h"
 #include "lab/image.h"
 #include "lab/labsets.h"
+#include "lab/detection.h"
 
 struct ADGameDescription;
 
@@ -72,11 +73,6 @@ struct SaveGameHeader {
 	SaveStateDescriptor _descr;
 	uint16 _roomNumber;
 	uint16 _direction;
-};
-
-enum GameFeatures {
-	GF_LOWRES = 1 << 0,
-	GF_WINDOWS_TRIAL = 1 << 1
 };
 
 typedef Common::List<Button *> ButtonList;

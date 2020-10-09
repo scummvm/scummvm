@@ -20,13 +20,7 @@
  *
  */
 
-#include "mutationofjb/mutationofjb.h"
-
-#include "common/config-manager.h"
-#include "common/system.h"
-#include "common/savefile.h"
-#include "common/serializer.h"
-
+#include "base/plugins.h"
 #include "engines/advancedDetector.h"
 
 static const PlainGameDescriptor mutationofjbGames[] = {
@@ -85,9 +79,9 @@ static const char *const mutationofjbDirectoryGlobs[] = {
 	nullptr
 };
 
-class MutationOfJBMetaEngine : public AdvancedMetaEngine {
+class MutationOfJBMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	MutationOfJBMetaEngine() : AdvancedMetaEngine(mutationofjbDescriptions, sizeof(ADGameDescription), mutationofjbGames) {
+	MutationOfJBMetaEngineStatic() : AdvancedMetaEngineStatic(mutationofjbDescriptions, sizeof(ADGameDescription), mutationofjbGames) {
 		_maxScanDepth = 2;
 		_directoryGlobs = mutationofjbDirectoryGlobs;
 	}
@@ -103,56 +97,6 @@ public:
 	const char *getOriginalCopyright() const override {
 		return "Mutation of J.B. (C) 1996 RIKI Computer Games";
 	}
-
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
-		if (desc) {
-			*engine = new MutationOfJB::MutationOfJBEngine(syst, desc);
-		}
-		return desc != nullptr;
-	}
-
-	bool hasFeature(MetaEngineFeature f) const override {
-		if (f == kSupportsListSaves || f == kSimpleSavesNames || f == kSupportsLoadingDuringStartup) {
-			return true;
-		}
-
-		return false;
-	}
-
-	int getMaximumSaveSlot() const override {
-		return 999;
-	}
-
-	SaveStateList listSaves(const char *target) const override {
-		Common::SaveFileManager *const saveFileMan = g_system->getSavefileManager();
-		Common::StringArray filenames;
-		Common::String pattern = target;
-		pattern += ".###";
-
-		filenames = saveFileMan->listSavefiles(pattern);
-
-		SaveStateList saveList;
-		int slotNo = 0;
-		for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-			// Obtain the last 3 digits of the filename, since they correspond to the save slot
-			slotNo = atoi(file->c_str() + file->size() - 3);
-
-			Common::InSaveFile *const in = saveFileMan->openForLoading(*file);
-			if (in) {
-				Common::Serializer sz(in, nullptr);
-
-				MutationOfJB::SaveHeader saveHdr;
-				if (saveHdr.sync(sz)) {
-					saveList.push_back(SaveStateDescriptor(slotNo, saveHdr._description));
-				}
-			}
-		}
-		return saveList;
-	}
 };
 
-#if PLUGIN_ENABLED_DYNAMIC(MUTATIONOFJB)
-	REGISTER_PLUGIN_DYNAMIC(MUTATIONOFJB, PLUGIN_TYPE_ENGINE, MutationOfJBMetaEngine);
-#else
-	REGISTER_PLUGIN_STATIC(MUTATIONOFJB, PLUGIN_TYPE_ENGINE, MutationOfJBMetaEngine);
-#endif
+REGISTER_PLUGIN_STATIC(MUTATIONOFJB_DETECTION, PLUGIN_TYPE_METAENGINE, MutationOfJBMetaEngineStatic);

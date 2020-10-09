@@ -249,10 +249,12 @@ void Quests::execute() {
 			break;
 		case Common::KEYCODE_UP:
 		case Common::KEYCODE_KP8:
+		case Common::KEYCODE_u:
 			topRow = MAX(topRow - 1, 0);
 			break;
 		case Common::KEYCODE_DOWN:
 		case Common::KEYCODE_KP2:
+		case Common::KEYCODE_d:
 			topRow = CLIP(topRow + 1, 0, MAX(count - 1, 0));
 			break;
 		default:

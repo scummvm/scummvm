@@ -58,14 +58,14 @@ DownloadDialog::DownloadDialog(uint32 storageId, LauncherDialog *launcher) :
 	_progressBar->setValue(progress);
 	_progressBar->setEnabled(false);
 	_percentLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.PercentText", Common::String::format("%u %%", progress));
-	_downloadSizeLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.DownloadSize", "");
-	_downloadSpeedLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.DownloadSpeed", "");
+	_downloadSizeLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.DownloadSize", Common::U32String(""));
+	_downloadSpeedLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.DownloadSpeed", Common::U32String(""));
 	if (g_system->getOverlayWidth() > 320)
-		_cancelButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.MainButton", _("Cancel download"), nullptr, kDownloadDialogButtonCmd);
+		_cancelButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.MainButton", _("Cancel download"), Common::U32String(""), kDownloadDialogButtonCmd);
 	else
-		_cancelButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.MainButton", _c("Cancel download", "lowres"), nullptr, kDownloadDialogButtonCmd);
+		_cancelButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.MainButton", _c("Cancel download", "lowres"), Common::U32String(""), kDownloadDialogButtonCmd);
 
-	_closeButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.CloseButton", _("Hide"), nullptr, kCloseCmd);
+	_closeButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.CloseButton", _("Hide"), Common::U32String(""), kCloseCmd);
 	refreshWidgets();
 
 	CloudMan.setDownloadTarget(this);
@@ -149,7 +149,7 @@ bool DownloadDialog::selectDirectories() {
 				return false;
 			}
 			GUI::MessageDialog alert(
-				Common::String::format(_("The \"%s\" already exists in the specified directory.\nDo you really want to download files into that directory?"), remoteDirectory.name().c_str()),
+				Common::U32String::format(_("The \"%s\" already exists in the specified directory.\nDo you really want to download files into that directory?"), remoteDirectory.name().c_str()),
 				_("Yes"),
 				_("No")
 				);
@@ -208,24 +208,24 @@ void DownloadDialog::reflowLayout() {
 	refreshWidgets();
 }
 
-Common::String DownloadDialog::getSizeLabelText() {
+Common::U32String DownloadDialog::getSizeLabelText() {
 	Common::String downloaded, downloadedUnits, total, totalUnits;
 	downloaded = getHumanReadableBytes(CloudMan.getDownloadBytesNumber(), downloadedUnits);
 	total = getHumanReadableBytes(CloudMan.getDownloadTotalBytesNumber(), totalUnits);
-	return Common::String::format(_("Downloaded %s %s / %s %s"), downloaded.c_str(), _(downloadedUnits.c_str()), total.c_str(), _(totalUnits.c_str()));
+	return Common::U32String::format(_("Downloaded %s %S / %s %S"), downloaded.c_str(), _(downloadedUnits).c_str(), total.c_str(), _(totalUnits).c_str());
 }
 
-Common::String DownloadDialog::getSpeedLabelText() {
+Common::U32String DownloadDialog::getSpeedLabelText() {
 	Common::String speed, speedUnits;
 	speed = getHumanReadableBytes(CloudMan.getDownloadSpeed(), speedUnits);
 	speedUnits += "/s";
-	return Common::String::format(_("Download speed: %s %s"), speed.c_str(), _(speedUnits.c_str()));
+	return Common::U32String::format(_("Download speed: %s %S"), speed.c_str(), _(speedUnits).c_str());
 }
 
 void DownloadDialog::refreshWidgets() {
 	_localDirectory = CloudMan.getDownloadLocalDirectory();
-	_remoteDirectoryLabel->setLabel(_("From: ") + CloudMan.getDownloadRemoteDirectory());
-	_localDirectoryLabel->setLabel(_("To: ") + _localDirectory);
+	_remoteDirectoryLabel->setLabel(_("From: ") + Common::U32String(CloudMan.getDownloadRemoteDirectory()));
+	_localDirectoryLabel->setLabel(_("To: ") + Common::U32String(_localDirectory));
 	uint32 progress = (uint32)(100 * CloudMan.getDownloadingProgress());
 	_percentLabel->setLabel(Common::String::format("%u %%", progress));
 	_downloadSizeLabel->setLabel(getSizeLabelText());

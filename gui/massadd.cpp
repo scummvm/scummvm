@@ -64,7 +64,7 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 	_dirProgressText(nullptr),
 	_gameProgressText(nullptr) {
 
-	StringArray l;
+	U32StringArray l;
 
 	// The dir we start our scan at
 	_scanStack.push(startDir);
@@ -73,10 +73,10 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 	// new StaticTextWidget(this, "massadddialog_caption", "Mass Add Dialog");
 
 	_dirProgressText = new StaticTextWidget(this, "MassAdd.DirProgressText",
-	                                       _("... progress ..."));
+						_("... progress ..."));
 
 	_gameProgressText = new StaticTextWidget(this, "MassAdd.GameProgressText",
-	                                         _("... progress ..."));
+						_("... progress ..."));
 
 	_dirProgressText->setAlign(Graphics::kTextAlignCenter);
 	_gameProgressText->setAlign(Graphics::kTextAlignCenter);
@@ -86,10 +86,10 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 	_list->setNumberingMode(kListNumberingOff);
 	_list->setList(l);
 
-	_okButton = new ButtonWidget(this, "MassAdd.Ok", _("OK"), nullptr, kOkCmd, Common::ASCII_RETURN);
+	_okButton = new ButtonWidget(this, "MassAdd.Ok", _("OK"), Common::U32String(""), kOkCmd, Common::ASCII_RETURN);
 	_okButton->setEnabled(false);
 
-	new ButtonWidget(this, "MassAdd.Cancel", _("Cancel"), nullptr, kCancelCmd, Common::ASCII_ESCAPE);
+	new ButtonWidget(this, "MassAdd.Cancel", _("Cancel"), Common::U32String(""), kCancelCmd, Common::ASCII_ESCAPE);
 
 	// Build a map from all configured game paths to the targets using them
 	const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
@@ -187,8 +187,8 @@ void MassAddDialog::handleTickle() {
 		DetectionResults detectionResults = EngineMan.detectGames(files);
 
 		if (detectionResults.foundUnknownGames()) {
-			Common::String report = detectionResults.generateUnknownGameReport(false, 80);
-			g_system->logMessage(LogMessageType::kInfo, report.c_str());
+			Common::U32String report = detectionResults.generateUnknownGameReport(false, 80);
+			g_system->logMessage(LogMessageType::kInfo, report.encode().c_str());
 		}
 
 		// Just add all detected games / game variants. If we get more than one,
@@ -257,7 +257,7 @@ void MassAddDialog::handleTickle() {
 
 
 	// Update the dialog
-	Common::String buf;
+	Common::U32String buf;
 
 	if (_scanStack.empty()) {
 		// Enable the OK button
@@ -266,14 +266,14 @@ void MassAddDialog::handleTickle() {
 		buf = _("Scan complete!");
 		_dirProgressText->setLabel(buf);
 
-		buf = Common::String::format(_("Discovered %d new games, ignored %d previously added games."), _games.size(), _oldGamesCount);
+		buf = Common::U32String::format(_("Discovered %d new games, ignored %d previously added games."), _games.size(), _oldGamesCount);
 		_gameProgressText->setLabel(buf);
 
 	} else {
-		buf = Common::String::format(_("Scanned %d directories ..."), _dirsScanned);
+		buf = Common::U32String::format(_("Scanned %d directories ..."), _dirsScanned);
 		_dirProgressText->setLabel(buf);
 
-		buf = Common::String::format(_("Discovered %d new games, ignored %d previously added games ..."), _games.size(), _oldGamesCount);
+		buf = Common::U32String::format(_("Discovered %d new games, ignored %d previously added games ..."), _games.size(), _oldGamesCount);
 		_gameProgressText->setLabel(buf);
 	}
 

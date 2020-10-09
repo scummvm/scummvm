@@ -37,9 +37,8 @@
 #endif // main
 
 #include "po_parser.h"
-#include "cp_parser.h"
 
-#define TRANSLATIONS_DAT_VER 3	// 1 byte
+#define TRANSLATIONS_DAT_VER 4	// 1 byte
 
 // Portable implementation of stricmp / strcasecmp / strcmpi.
 int scumm_stricmp(const char *s1, const char *s2) {
@@ -107,12 +106,7 @@ void writeString(FILE *fp, const char *string) {
 
 // Main
 int main(int argc, char *argv[]) {
-	std::vector<Codepage *> codepages;
-	// Add default codepages, we won't store them in the output later on
-	codepages.push_back(new Codepage("ascii", 0));
-	codepages.push_back(new Codepage("iso-8859-1", 0));
-
-	// Build the translation and codepage list
+	// Build the translation
 	PoMessageList messageIds;
 	std::vector<PoMessageEntryList *> translations;
 	int numLangs = 0;
@@ -125,31 +119,21 @@ int main(int argc, char *argv[]) {
 				translations.push_back(po);
 				++numLangs;
 			}
-		} else if (scumm_stricmp(argv[i] + len - 2, "cp") == 0) {
-			// Else try to parse an codepage
-			Codepage *co = parseCodepageMapping(argv[i]);
-			if (co)
-				codepages.push_back(co);
 		}
 	}
 
-	// Parse all charset mappings
-	for (int i = 0; i < numLangs; ++i) {
-		bool found = false;
-		for (size_t j = 0; j < codepages.size(); ++j) {
-			if (scumm_stricmp(codepages[j]->getName().c_str(), translations[i]->charset()) == 0) {
-				found = true;
-				break;
-			}
-		}
+	if (!numLangs) {
+		fprintf(stderr, "ERROR: No valid translation files\n");
+		fprintf(stderr, "usage: create_translations lang1.po [lang2.po ...]\n");
+		return -1;
+	}
 
-		// In case the codepage was not found error out
-		if (!found) {
-			fprintf(stderr, "ERROR: No codepage mapping for codepage \"%s\" present!\n", translations[i]->charset());
+	for (int i = 0; i < numLangs; i++) {
+		if (!translations[i]->useUTF8()) {
+			fprintf(stderr, "ERROR: Po Language file for: \"%s\", named as \"%s\" is not encoded in UTF-8\n", translations[i]->languageName(), translations[i]->language());
 			for (size_t j = 0; j < translations.size(); ++j)
 				delete translations[j];
-			for (size_t j = 0; j < codepages.size(); ++j)
-				delete codepages[j];
+
 			return -1;
 		}
 	}
@@ -172,8 +156,6 @@ int main(int argc, char *argv[]) {
 
 	// Write number of translations
 	writeUint16BE(outFile, numLangs);
-	// Write number of codepages, we don't save ascii and iso-8859-1
-	writeUint16BE(outFile, codepages.size() - 2);
 
 	// Write the length of each data block here.
 	// We could write it at the start of each block but that would mean that
@@ -183,14 +165,9 @@ int main(int argc, char *argv[]) {
 	// file and can then skip to the block we want.
 	// Blocks are:
 	//   1. List of languages with the language name
-	//   2. List of codepages
-	//   3. Original messages (i.e. english)
-	//   4. First translation
-	//   5. Second translation
-	//   ...
-	//   n. First codepage (These don't have any data size, since they are all
-	//                      256 * 4 bytes long)
-	//   n+1. Second codepage
+	//   2. Original messages (i.e. english)
+	//   3. First translation
+	//   4. Second translation
 	//   ...
 
 	// Write length for translation description
@@ -199,13 +176,7 @@ int main(int argc, char *argv[]) {
 		len += stringSize(translations[lang]->language());
 		len += stringSize(translations[lang]->languageName());
 	}
-	writeUint16BE(outFile, len);
-
-	// Write length for the codepage names
-	len = 0;
-	for (size_t j = 2; j < codepages.size(); ++j)
-		len += stringSize(codepages[j]->getName().c_str());
-	writeUint16BE(outFile, len);
+	writeUint32BE(outFile, len);
 
 	// Write size for the original language (english) block
 	// It starts with the number of strings coded on 2 bytes followed by each
@@ -213,30 +184,25 @@ int main(int argc, char *argv[]) {
 	len = 2;
 	for (i = 0; i < messageIds.size(); ++i)
 		len += stringSize(messageIds[i]);
-	writeUint16BE(outFile, len);
+	writeUint32BE(outFile, len);
 
 	// Then comes the size of each translation block.
-	// It starts with the number of strings coded on 2 bytes, the charset and then the strings.
+	// It starts with the number of strings coded on 2 bytes, and then the strings.
 	// For each string we have the string id (on two bytes) followed by
 	// the string size (two bytes for the number of chars and the string itself).
 	for (lang = 0; lang < numLangs; lang++) {
-		len = 2 + stringSize(translations[lang]->charset());
+		len = 2;
 		for (i = 0; i < translations[lang]->size(); ++i) {
 			len += 2 + stringSize(translations[lang]->entry(i)->msgstr);
 			len += stringSize(translations[lang]->entry(i)->msgctxt);
 		}
-		writeUint16BE(outFile, len);
+		writeUint32BE(outFile, len);
 	}
 
 	// Write list of languages
 	for (lang = 0; lang < numLangs; lang++) {
 		writeString(outFile, translations[lang]->language());
 		writeString(outFile, translations[lang]->languageName());
-	}
-
-	// Write list of codepages
-	for (size_t j = 2; j < codepages.size(); ++j) {
-		writeString(outFile, codepages[j]->getName().c_str());
 	}
 
 	// Write original messages
@@ -248,19 +214,11 @@ int main(int argc, char *argv[]) {
 	// Write translations
 	for (lang = 0; lang < numLangs; lang++) {
 		writeUint16BE(outFile, translations[lang]->size());
-		writeString(outFile, translations[lang]->charset());
 		for (i = 0; i < translations[lang]->size(); ++i) {
 			writeUint16BE(outFile, messageIds.findIndex(translations[lang]->entry(i)->msgid));
 			writeString(outFile, translations[lang]->entry(i)->msgstr);
 			writeString(outFile, translations[lang]->entry(i)->msgctxt);
 		}
-	}
-
-	// Write codepages
-	for (size_t j = 2; j < codepages.size(); ++j) {
-		const Codepage *cp = codepages[j];
-		for (i = 0; i < 256; ++i)
-			writeUint32BE(outFile, cp->getMapping(i));
 	}
 
 	fclose(outFile);

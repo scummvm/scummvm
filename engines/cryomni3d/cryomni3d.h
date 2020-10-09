@@ -38,6 +38,7 @@
 #include "cryomni3d/font_manager.h"
 #include "cryomni3d/objects.h"
 #include "cryomni3d/sprites.h"
+#include "cryomni3d/detection.h"
 
 class OSystem;
 
@@ -62,26 +63,6 @@ class ImageDecoder;
 namespace CryOmni3D {
 
 class DATSeekableStream;
-
-enum CryOmni3DGameType {
-	GType_VERSAILLES
-};
-
-enum CryOmni3DGameFeatures {
-	GF_VERSAILLES_FONTS_MASK               = (3 << 0), // Fonts flag mask
-	GF_VERSAILLES_FONTS_NUMERIC            = (0 << 0), // Fonts are font01.crf, ...
-	GF_VERSAILLES_FONTS_SET_A              = (1 << 0), // Fonts are for French Macintosh (development version)
-	GF_VERSAILLES_FONTS_SET_B              = (2 << 0), // Standard set (Helvet12 is used for debugging docs)
-	GF_VERSAILLES_FONTS_SET_C              = (3 << 0), // Fonts for Italian version (Helvet12 is used for docs texts)
-
-	GF_VERSAILLES_AUDIOPADDING_NO          = (0 << 2), // Audio files have underscore padding before extension
-	GF_VERSAILLES_AUDIOPADDING_YES         = (1 << 2), // Audio files have underscore padding before extension
-
-	GF_VERSAILLES_LINK_STANDARD            = (0 << 3), // Links file is lien_doc.txt
-	GF_VERSAILLES_LINK_LOCALIZED           = (1 << 3)  // Links file is taken from cryomni3d.dat
-};
-
-struct CryOmni3DGameDescription;
 
 // Engine Debug Flags
 enum {

@@ -809,6 +809,37 @@ bool Actor::tick(bool forceDraw, Common::Rect *screenRect) {
 		}
 	}
 
+#if !BLADERUNNER_ORIGINAL_BUGS
+	// For consistency we need to init the screen rectangle and bbox for the actor's *scene object*
+	// in a new scene (since we also reset the screen rectangle at Scene::open())
+	// for the case of the actor not moving
+	if (_vm->_scene->getSetId() == _setId
+	    && !_isInvisible
+	    && _vm->_sceneObjects->findById(_id + kSceneObjectOffsetActors) != -1
+	    && (_vm->_sceneObjects->isEmptyScreenRectangle(_id + kSceneObjectOffsetActors)
+	        || _vm->_sceneObjects->compareScreenRectangle(_id + kSceneObjectOffsetActors, _screenRectangle) != 0)
+	) {
+		if (isVisible) {
+			Vector3 pos = getPosition();
+			int facing = getFacing();
+			setAtXYZ(pos, facing, false, _isMoving, false);
+		} else {
+			resetScreenRectangleAndBbox();
+			_vm->_sceneObjects->resetScreenRectangleAndBbox(_id + kSceneObjectOffsetActors);
+		}
+	}
+
+	if ((_vm->_scene->getSetId() != _setId || _isInvisible || !isVisible)
+	    && !_screenRectangle.isEmpty()
+	) {
+		resetScreenRectangleAndBbox();
+		if (_vm->_sceneObjects->findById(_id + kSceneObjectOffsetActors) != -1
+		    && !_vm->_sceneObjects->isEmptyScreenRectangle(_id + kSceneObjectOffsetActors)) {
+			_vm->_sceneObjects->resetScreenRectangleAndBbox(_id + kSceneObjectOffsetActors);
+		}
+	}
+#endif
+
 	if (needsUpdate) {
 		// timeLeft is supposed to be negative or 0 here in the original!
 		int32 nextFrameTime = timeLeft + _frameMs;
@@ -951,6 +982,14 @@ void Actor::setBoundingBox(const Vector3 &position, bool retired) {
 		             position.y + 72.0f,
 		             position.z + 12.0f);
 	}
+}
+
+void Actor::resetScreenRectangleAndBbox() {
+	_screenRectangle.left   = -1;
+	_screenRectangle.top    = -1;
+	_screenRectangle.right  = -1;
+	_screenRectangle.bottom = -1;
+	_bbox.setXYZ(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 float Actor::distanceFromView(View *view) const{

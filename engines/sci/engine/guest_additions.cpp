@@ -692,8 +692,8 @@ int GuestAdditions::runSaveRestore(const bool isSave, Common::String &outDescrip
 	if (!isSave && forcedSaveId != -1) {
 		saveId = forcedSaveId;
 	} else {
-		const char *title;
-		const char *action;
+		Common::U32String title;
+		Common::U32String action;
 		if (isSave) {
 			title = _("Save game:");
 			action = _("Save");

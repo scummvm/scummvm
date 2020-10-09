@@ -35,7 +35,8 @@ MODULES += \
 	graphics \
 	audio \
 	common \
-	po
+	po \
+	doc
 
 ifdef USE_MT32EMU
 MODULES += audio/softsynth/mt32
@@ -51,6 +52,38 @@ CPPFLAGS := $(DEFINES) $(INCLUDES)
 
 # Include the build instructions for all modules
 -include $(addprefix $(srcdir)/, $(addsuffix /module.mk,$(MODULES)))
+
+# Store original info
+MODULES_ORIG:= $(MODULES)
+MODULE_DIRS_ORIG := $(MODULE_DIRS)
+KYRARPG_COMMON_OBJ_ORIG := $(KYRARPG_COMMON_OBJ)
+
+# Skip rules for these files, by resetting the LOAD_RULES_MK
+LOAD_RULES_MK :=
+
+# Reset detection objects, which uptill now are filled with only
+# enabled engines.
+DETECT_OBJS :=
+
+# Include all engine's module files, which populate DETECT_OBJS
+-include $(srcdir)/engines/*/module.mk
+
+# Reset stuff
+MODULES := $(MODULES_ORIG)
+MODULE :=
+MODULE_OBJS :=
+MODULE_DIRS := $(MODULE_DIRS_ORIG)
+PLUGIN :=
+KYRARPG_COMMON_OBJ := $(KYRARPG_COMMON_OBJ_ORIG)
+
+# Enable-rules again
+LOAD_RULES_MK := 1
+
+ifneq ($(DETECTION_STATIC), 1)
+-include $(srcdir)/engines/detect_modules.mk
+else
+MODULE_DIRS += $(sort $(dir $(DETECT_OBJS)))
+endif
 
 # Depdir information
 DEPDIRS = $(addsuffix $(DEPDIR),$(MODULE_DIRS))
@@ -86,7 +119,7 @@ endif
 endif
 
 # The build rule for the ScummVM executable
-$(EXECUTABLE): $(OBJS)
+$(EXECUTABLE): $(DETECT_OBJS) $(OBJS)
 	$(QUIET_LINK)$(LD) $(LDFLAGS) $(PRE_OBJS_FLAGS) $+ $(POST_OBJS_FLAGS) $(LIBS) -o $@
 
 ifdef SPLIT_DWARF
@@ -99,7 +132,7 @@ distclean: clean clean-devtools
 
 clean:
 	$(RM_REC) $(DEPDIRS)
-	$(RM) $(OBJS) $(EXECUTABLE)
+	$(RM) $(OBJS) $(DETECT_OBJS) $(EXECUTABLE)
 ifdef SPLIT_DWARF
 	$(RM) $(OBJS:.o=.dwo)
 	$(RM) $(EXECUTABLE).dwp
@@ -347,6 +380,9 @@ endif
 ifdef ENABLE_LURE
 DIST_FILES_ENGINEDATA+=lure.dat
 endif
+ifdef ENABLE_MACVENTURE
+DIST_FILES_ENGINEDATA+=macventure.dat
+endif
 ifdef ENABLE_MORTEVIELLE
 DIST_FILES_ENGINEDATA+=mort.dat
 endif
@@ -380,15 +416,13 @@ endif
 ifdef ENABLE_WINTERMUTE
 DIST_FILES_ENGINEDATA+=wintermute.zip
 endif
-ifdef ENABLE_MACVENTURE
-DIST_FILES_ENGINEDATA+=macventure.dat
-endif
 ifdef ENABLE_XEEN
 DIST_FILES_ENGINEDATA+=xeen.ccs
 endif
 ifdef USE_FREETYPE2
 DIST_FILES_ENGINEDATA+=fonts.dat
 endif
+DIST_FILES_ENGINEDATA+=macgui.dat
 DIST_FILES_ENGINEDATA:=$(addprefix $(srcdir)/dists/engine-data/,$(DIST_FILES_ENGINEDATA))
 
 # pred.dic is currently only used for the AGI engine

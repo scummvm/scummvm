@@ -225,6 +225,27 @@ uint Glulx::perform_restoreundo() {
 	return res;
 }
 
+Common::Error Glulx::readSaveData(Common::SeekableReadStream *rs) {
+	Common::ErrorCode errCode = Common::kNoError;
+	QuetzalReader r;
+	if (r.open(rs, ID_IFSF))
+		// Load in the savegame chunks
+		errCode = loadGameChunks(r).getCode();
+
+	return errCode;
+}
+
+Common::Error Glulx::writeGameData(Common::WriteStream *ws) {
+	QuetzalWriter w;
+	Common::ErrorCode errCode = saveGameChunks(w).getCode();
+
+	if (errCode == Common::kNoError) {
+		w.save(ws, _savegameDescription);
+	}
+
+	return errCode;
+}
+
 Common::Error Glulx::loadGameChunks(QuetzalReader &quetzal) {
 	uint res = 0;
 	uint heapsumlen = 0;

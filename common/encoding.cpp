@@ -44,7 +44,7 @@ String addUtfEndianness(const String &str) {
 		return str + "LE";
 #endif
 	} else
-		return String(str);
+		return str;
 }
 
 Encoding::Encoding(const String &to, const String &from)
@@ -55,7 +55,7 @@ Encoding::Encoding(const String &to, const String &from)
 char *Encoding::switchEndian(const char *string, int length, int bitCount) {
 	assert(bitCount % 8 == 0);
 	assert(length % (bitCount / 8) == 0);
-	char *newString = (char *)malloc(length);
+	char *newString = (char *)calloc(sizeof(char), length + 4);
 	if (!newString) {
 		warning("Could not allocate memory for string conversion");
 		return nullptr;
@@ -98,19 +98,33 @@ char *Encoding::convertWithTransliteration(const String &to, const String &from,
 		return result;
 	}
 
-	if ((addUtfEndianness(to).equalsIgnoreCase("utf-16be") &&
-			addUtfEndianness(from).equalsIgnoreCase("utf-16le")) ||
-			(addUtfEndianness(to).equalsIgnoreCase("utf-16le") &&
-			addUtfEndianness(from).equalsIgnoreCase("utf-16be")) ||
-			(addUtfEndianness(to).equalsIgnoreCase("utf-32be") &&
-			addUtfEndianness(from).equalsIgnoreCase("utf-32le")) ||
-			(addUtfEndianness(to).equalsIgnoreCase("utf-32le") &&
-			addUtfEndianness(from).equalsIgnoreCase("utf-32be"))) {
-		// The encoding is the same, we just need to switch the endianness
-		if (to.hasPrefixIgnoreCase("utf-16"))
-			return switchEndian(string, length, 16);
-		else
-			return switchEndian(string, length, 32);
+	if ((to.hasPrefixIgnoreCase("utf-16") && from.hasPrefixIgnoreCase("utf-16")) ||
+		(to.hasPrefixIgnoreCase("utf-32") && from.hasPrefixIgnoreCase("utf-32"))) {
+		// Since the two strings are not equal as this is already checked above,
+		// this likely mean that one or both has an endianness suffix, and we
+		// just need to switch the endianess.
+#ifdef SCUMM_BIG_ENDIAN
+		bool fromBigEndian = !from.hasSuffixIgnoreCase("le");
+		bool toBigEndian = !to.hasSuffixIgnoreCase("le");
+#else
+		bool fromBigEndian = from.hasSuffixIgnoreCase("be");
+		bool toBigEndian = to.hasSuffixIgnoreCase("be");
+#endif
+		if (fromBigEndian == toBigEndian) {
+			// don't convert, just copy the string and return it
+			char *result = (char *)calloc(sizeof(char), length + 4);
+			if (!result) {
+				warning("Could not allocate memory for string conversion");
+				return nullptr;
+			}
+			memcpy(result, string, length);
+			return result;
+		} else {
+			if (to.hasPrefixIgnoreCase("utf-16"))
+				return switchEndian(string, length, 16);
+			else
+				return switchEndian(string, length, 32);
+		}
 	}
 
 	char *newString = nullptr;
@@ -181,10 +195,6 @@ char *Encoding::conversion(const String &to, const String &from, const char *str
 				addUtfEndianness(from).c_str(), string, length);
 
 	if (result == nullptr) {
-		result = convertTransManMapping(addUtfEndianness(to).c_str(), addUtfEndianness(from).c_str(), string, length);
-	}
-
-	if (result == nullptr) {
 		result = convertConversionTable(addUtfEndianness(to).c_str(), addUtfEndianness(from).c_str(), string, length);
 	}
 
@@ -239,7 +249,7 @@ char *Encoding::convertIconv(const char *to, const char *from, const char *strin
 				}
 				dst = buffer + (dst - oldString);
 				outSize = stringSize - (dst - buffer);
-				memset(dst, 0, stringSize / 2);
+				memset(dst, 0, outSize);
 			} else {
 				error = true;
 				break;
@@ -275,81 +285,6 @@ char *Encoding::convertIconv(const char *to, const char *from, const char *strin
 #else
 	return nullptr;
 #endif //USE_ICONV
-}
-
-// This algorithm is able to convert only between the current TransMan charset
-// and UTF-32, but if it fails, it tries to at least convert from the current
-// TransMan encoding to UTF-32 and then it calls convert() again with that.
-char *Encoding::convertTransManMapping(const char *to, const char *from, const char *string, size_t length) {
-#ifdef USE_TRANSLATION
-	String currentCharset = TransMan.getCurrentCharset();
-	if (currentCharset.equalsIgnoreCase(from)) {
-		// We can use the transMan mapping directly
-		uint32 *partialResult = (uint32 *)calloc(sizeof(uint32), (length + 1));
-		if (!partialResult) {
-			warning("Couldn't allocate memory for encoding conversion");
-			return nullptr;
-		}
-		const uint32 *mapping = TransMan.getCharsetMapping();
-		if (mapping == 0) {
-			for(unsigned i = 0; i < length; i++) {
-				partialResult[i] = string[i];
-			}
-		} else {
-			for(unsigned i = 0; i < length; i++) {
-				partialResult[i] = mapping[(unsigned char)string[i]] & 0x7FFFFFFF;
-			}
-		}
-		char *finalResult = convert(to, "UTF-32", (char *)partialResult, length * 4);
-		free(partialResult);
-		return finalResult;
-	} else if (currentCharset.equalsIgnoreCase(to) && String(from).hasPrefixIgnoreCase("utf-32")) {
-		bool swapEndian = false;
-		char *newString = nullptr;
-
-#ifdef SCUMM_BIG_ENDIAN
-		if (String(from).hasSuffixIgnoreCase("LE"))
-			swapEndian = true;
-#else
-		if (String(from).hasSuffixIgnoreCase("BE"))
-			swapEndian = true;
-#endif
-		if (swapEndian) {
-			if (String(from).hasPrefixIgnoreCase("utf-16"))
-				newString = switchEndian(string, length, 16);
-			if (String(from).hasPrefixIgnoreCase("utf-32"))
-				newString = switchEndian(string, length, 32);
-			if (newString != nullptr)
-				string = newString;
-			else
-				return nullptr;
-		}
-		// We can do reverse mapping
-		const uint32 *mapping = TransMan.getCharsetMapping();
-		const uint32 *src = (const uint32 *)string;
-		char *result = (char *)calloc(sizeof(char), (length + 4));
-		if (!result) {
-			warning("Couldn't allocate memory for encoding conversion");
-			if (newString != nullptr)
-				free(newString);
-			return nullptr;
-		}
-		for (unsigned i = 0; i < length; i++) {
-			for (int j = 0; j < 256; j++) {
-				if ((mapping[j] & 0x7FFFFFFF) == src[i]) {
-					result[i] = j;
-					break;
-				}
-			}
-		}
-		if (newString != nullptr)
-			free(newString);
-		return result;
-	} else
-		return nullptr;
-#else
-	return nullptr;
-#endif // USE_TRANSLATION
 }
 
 static uint32 g_cp850ConversionTable[] = {

@@ -38,6 +38,7 @@
 #include "petka/objects/object_case.h"
 #include "petka/objects/heroes.h"
 #include "petka/objects/text.h"
+#include "petka/walk.h"
 
 namespace Petka {
 
@@ -81,16 +82,23 @@ void InterfaceMain::start(int id) {
 
 void InterfaceMain::loadRoom(int id, bool fromSave) {
 	QSystem *sys = g_vm->getQSystem();
+
 	sys->_currInterface->stop();
 	if (_roomId == id)
 		return;
+
 	unloadRoom(fromSave);
-	_roomId = id;
+
 	const BGInfo *info = findBGInfo(id);
 	QObjectBG *room = (QObjectBG *)sys->findObject(id);
+	QManager *resMgr = g_vm->resMgr();
+
+	_roomId = id;
 	sys->_room = room;
-	g_vm->resMgr()->loadBitmap(room->_resourceId);
 	_objs.push_back(room);
+
+	resMgr->loadBitmap(room->_resourceId);
+
 	for (uint i = 0; i < info->attachedObjIds.size(); ++i) {
 		QMessageObject *obj = sys->findObject(info->attachedObjIds[i]);
 		obj->loadSound();
@@ -98,8 +106,21 @@ void InterfaceMain::loadRoom(int id, bool fromSave) {
 			g_vm->resMgr()->loadFlic(obj->_resourceId);
 		_objs.push_back(obj);
 	}
+
+	auto petka = sys->getPetka();
+	auto chapay = sys->getChapay();
+
+	auto bkgName = resMgr->findResourceName(room->_resourceId);
+
+	petka->_walk->setBackground(bkgName);
+	chapay->_walk->setBackground(bkgName);
+
+	petka->setPos(Common::Point(petka->_x, petka->_y), false);
+	chapay->setPos(Common::Point(chapay->_x, chapay->_y), false);
+
 	playSound(room->_musicId, Audio::Mixer::kMusicSoundType);
 	playSound(room->_fxId, Audio::Mixer::kSFXSoundType);
+
 	if (!fromSave)
 		sys->addMessageForAllObjects(kInitBG, 0, 0, 0, 0, room);
 	g_vm->videoSystem()->updateTime();

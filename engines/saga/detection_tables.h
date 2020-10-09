@@ -22,6 +22,10 @@
 
 // Game detection information and MD5s
 
+// From sage/scene.h, these are some defines that also
+// help with detection.
+#include "saga/shared_detection_defines.h"
+
 namespace Saga {
 
 static const GameResourceDescription ITE_Resources = {
@@ -359,6 +363,30 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
 		ITEMacPatch_Files,
+	},
+
+	// Inherit the earth - MAC CD GOG version 1.1
+	{
+		{
+			"ite",
+			"GOG CD Mac v1.1",
+			{
+				{"ite_i.rsc",					GAME_RESOURCEFILE,	"a6433e34b97b15e64fe8214651012db9", 8927165},
+				{"scripts_i.rsc",				GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84", 335927},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformUnknown,	// Most of the resources are Little Endian
+			ADGF_CD,
+			GUIO0()
+		},
+		GID_ITE,
+		GF_SOME_MAC_RESOURCES,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
+		NULL,
 	},
 
 

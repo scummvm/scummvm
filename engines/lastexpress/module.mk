@@ -69,9 +69,9 @@ MODULE_OBJS := \
 	sound/queue.o \
 	sound/sound.o \
 	debug.o \
-	detection.o \
 	graphics.o \
 	lastexpress.o \
+	metaengine.o \
 	resource.o
 
 # This module can be built as a plugin
@@ -81,3 +81,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o

@@ -226,11 +226,11 @@ void JNI::getDPI(float *values) {
 	env->DeleteLocalRef(array);
 }
 
-void JNI::displayMessageOnOSD(const Common::String &msg) {
+void JNI::displayMessageOnOSD(const Common::U32String &msg) {
 	// called from common/osd_message_queue, method: OSDMessageQueue::pollEvent()
 	JNIEnv *env = JNI::getEnv();
 
-	jstring java_msg = convertToJString(env, msg, getCurrentCharset());
+	jstring java_msg = convertToJString(env, msg.encode(), "UTF-8");
 	if (java_msg == nullptr) {
 		// Show a placeholder indicative of the translation error instead of silent failing
 		java_msg = env->NewStringUTF("?");
@@ -283,7 +283,7 @@ bool JNI::hasTextInClipboard() {
 	return hasText;
 }
 
-Common::String JNI::getTextFromClipboard() {
+Common::U32String JNI::getTextFromClipboard() {
 	JNIEnv *env = JNI::getEnv();
 
 	jstring javaText = (jstring)env->CallObjectMethod(_jobj, _MID_getTextFromClipboard);
@@ -294,18 +294,18 @@ Common::String JNI::getTextFromClipboard() {
 		env->ExceptionDescribe();
 		env->ExceptionClear();
 
-		return Common::String();
+		return Common::U32String();
 	}
 
-	Common::String text = convertFromJString(env, javaText, getCurrentCharset());
+	Common::String text = convertFromJString(env, javaText, "UTF-8");
 	env->DeleteLocalRef(javaText);
 
-	return text;
+	return text.decode();
 }
 
-bool JNI::setTextInClipboard(const Common::String &text) {
+bool JNI::setTextInClipboard(const Common::U32String &text) {
 	JNIEnv *env = JNI::getEnv();
-	jstring javaText = convertToJString(env, text, getCurrentCharset());
+	jstring javaText = convertToJString(env, text.encode(), "UTF-8");
 
 	bool success = env->CallBooleanMethod(_jobj, _MID_setTextInClipboard, javaText);
 
@@ -378,11 +378,15 @@ void JNI::showKeyboardControl(bool enable) {
 	}
 }
 
+// The following adds assets folder to search set.
+// However searching and retrieving from "assets" on Android this is slow
+// so we also make sure to add the "path" directory, with a higher priority
+// This is done via a call to ScummVMActivity's (java) getSysArchives
 void JNI::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	JNIEnv *env = JNI::getEnv();
 
-	s.add("ASSET", _asset_archive, priority, false);
-
+	// get any additional specified paths (from ScummVMActivity code)
+	// Insert them with "priority" priority.
 	jobjectArray array =
 		(jobjectArray)env->CallObjectMethod(_jobj, _MID_getSysArchives);
 
@@ -407,6 +411,15 @@ void JNI::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 
 		env->DeleteLocalRef(path_obj);
 	}
+
+	// add the internal asset (android's structure) with a lower priority,
+	// since:
+	// 1. It is very slow in accessing large files (eg our growing fonts.dat)
+	// 2. we extract the asset contents anyway to the internal app path
+	// 3. we pass the internal app path in the process above (via _MID_getSysArchives)
+	// However, we keep android APK's "assets" as a fall back, in case something went wrong with the extraction process
+	//          and since we had the code anyway
+	s.add("ASSET", _asset_archive, priority - 1, false);
 }
 
 char *JNI::convertEncoding(const char *to, const char *from, const char *string, size_t length) {
@@ -726,15 +739,6 @@ void JNI::setPause(JNIEnv *env, jobject self, jboolean value) {
 		for (uint i = 0; i < 3; ++i)
 			sem_post(&pause_sem);
 	}
-}
-
-Common::String JNI::getCurrentCharset() {
-#ifdef USE_TRANSLATION
-	if (TransMan.getCurrentCharset() != "ASCII") {
-		return TransMan.getCurrentCharset();
-	}
-#endif
-	return "ISO-8859-1";
 }
 
 jstring JNI::convertToJString(JNIEnv *env, const Common::String &str, const Common::String &from) {

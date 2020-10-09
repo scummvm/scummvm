@@ -94,8 +94,10 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 	Common::String filename = "teenagent.dat";
 	if (!dat_file->open(filename.c_str())) {
 		delete dat_file;
-		Common::String errorMessage = Common::String::format(_("Unable to locate the '%s' engine data file."), filename.c_str());
-		warning("%s", errorMessage.c_str());
+
+		const char *msg = _s("Unable to locate the '%s' engine data file.");
+		Common::U32String errorMessage = Common::U32String::format(_(msg), filename.c_str());
+		warning(msg, filename.c_str());
 		GUIErrorMessage(errorMessage);
 		return false;
 	}
@@ -115,8 +117,10 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 	if (isCompressed) {
 		// teenagent.dat is compressed, but zlib hasn't been compiled in
 		delete dat;
-		Common::String errorMessage = _("The teenagent.dat file is compressed and zlib hasn't been included in this executable. Please decompress it");
-		warning("%s", errorMessage.c_str());
+
+		const char *msg = _s("The teenagent.dat file is compressed and zlib hasn't been included in this executable. Please decompress it");
+		Common::U32String errorMessage = _(msg);
+		warning(msg);
 		GUIErrorMessage(errorMessage);
 		return false;
 	}

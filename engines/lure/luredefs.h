@@ -51,12 +51,6 @@ enum {
 #define ERROR_DETAILED 3
 
 enum {
-	GF_FLOPPY	= 1 <<  0,
-	GF_EGA		= 1 <<  1,
-	GF_LNGUNK	= 1 << 15
-};
-
-enum {
 	GI_LURE = 0
 };
 

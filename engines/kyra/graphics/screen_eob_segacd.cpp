@@ -342,7 +342,7 @@ void Screen_EoB::sega_encodeShapesFromSprites(const uint8 **dst, const uint8 *sr
 			if (((++s) % 80) == 0)
 				break;
 		}
-		
+
 		_segaAnimator->update();
 		_segaRenderer->render(Screen_EoB::kSegaInitShapesPage, -1, -1, -1, -1, true);
 
@@ -677,7 +677,7 @@ void SegaRenderer::render(int destPageNum, int renderBlockX, int renderBlockY, i
 		/*if ((x >> 3) < renderBlockX) {
 			bW = MIN<int>(0, (int)bW - (renderBlockX - (x >> 3)));
 			x = (renderBlockX << 3);
-			
+
 		}
 
 		if ((y >> 3) < renderBlockY) {
@@ -933,7 +933,11 @@ template<bool hflip> void SegaRenderer::renderLineFragment(uint8 *dst, uint8 *ma
 #undef mRenderLineFragment
 
 void SegaRenderer::initPrioRenderTask(uint8 *dst, uint8 *mask, const uint8 *src, int start, int end, uint8 pal, bool hflip) {
+#if SEGA_USE_MEMPOOL
+	_prioChainEnd =	new (_prioRenderMemPool) PrioTileRenderObj(_prioChainEnd, dst, mask, src, start, end, pal, hflip);
+#else
 	_prioChainEnd = new PrioTileRenderObj(_prioChainEnd, dst, mask, src, start, end, pal, hflip);
+#endif
 	if (!_prioChainStart)
 		_prioChainStart = _prioChainEnd;
 }
@@ -942,7 +946,11 @@ void SegaRenderer::clearPrioChain() {
 	while (_prioChainEnd) {
 		_prioChainEnd->_next = 0;
 		PrioTileRenderObj *e = _prioChainEnd->_pred;
+#if SEGA_USE_MEMPOOL
+		_prioRenderMemPool.deleteChunk(_prioChainEnd);
+#else
 		delete _prioChainEnd;
+#endif
 		_prioChainEnd = e;
 	}
 	_prioChainStart = 0;
@@ -964,6 +972,7 @@ SegaAnimator::SegaAnimator(SegaRenderer *renderer) : _renderer(renderer), _needU
 
 SegaAnimator::~SegaAnimator() {
 	delete[] _sprites;
+	delete[] _tempBuffer;
 }
 
 void SegaAnimator::initSprite(int id, int16 x, int16 y, uint16 nameTbl, uint16 hw) {
@@ -1110,7 +1119,7 @@ void SegaCDFont::drawChar(uint16 c, byte *dst, int pitch, int xOffs, int yOffs) 
 				dst++;
 			if ((x & 7) == 7)
 				dst += 28;
- 		}
+		}
 		dst = dst2 + 4;
 		if ((++yOffs & 7) == 0)
 			dst = dst + (pitch << 5) - 32;
@@ -1252,6 +1261,13 @@ void ScrollManager::updateScrollTimers() {
 	_renderer->writeUint16VSRAM(2, _vScrollTimers[1]._offsCur);
 	_renderer->writeUint16VRAM(0xD800, _hScrollTimers[0]._offsCur);
 	_renderer->writeUint16VRAM(0xD802, _hScrollTimers[1]._offsCur);
+}
+
+void ScrollManager::fastForward() {
+	_renderer->writeUint16VSRAM(0, _vScrollTimers[0]._offsDest);
+	_renderer->writeUint16VSRAM(2, _vScrollTimers[1]._offsDest);
+	_renderer->writeUint16VRAM(0xD800, _hScrollTimers[0]._offsDest);
+	_renderer->writeUint16VRAM(0xD802, _hScrollTimers[1]._offsDest);
 }
 
 } // End of namespace Kyra

@@ -27,6 +27,15 @@
 #include "common/str.h"
 
 /**
+ * @defgroup common_util Util
+ * @ingroup common
+ *
+ * @brief Various utility functions.
+ *
+ * @{
+ */
+
+/**
  * Check whether a given pointer is aligned correctly.
  * Note that 'alignment' must be a power of two!
  */
@@ -81,6 +90,15 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
  */
 #define ARRAYEND(x) ((x) + ARRAYSIZE((x)))
 
+/*
+ * Clear array using default or provided value
+ */
+template<typename T, size_t N> inline void ARRAYCLEAR(T (&array) [N], const T &value = T()) {
+	T * ptr = array;
+	size_t n = N;
+	while(n--)
+		*ptr++ = value;
+}
 
 /**
  * @def SCUMMVM_CURRENT_FUNCTION
@@ -96,7 +114,14 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 #  define SCUMMVM_CURRENT_FUNCTION "<unknown>"
 #endif
 
+/** @} */
+
 namespace Common {
+
+/**
+ * @addtogroup common_util
+ * @{
+ */
 
 /**
  * Print a hexdump of the data passed in. The number of bytes per line is
@@ -242,6 +267,8 @@ bool isGraph(int c);
  * @return			string with a floating point number representing given size
  */
 Common::String getHumanReadableBytes(uint64 bytes, Common::String &unitsOut);
+
+/** @} */
 
 } // End of namespace Common
 

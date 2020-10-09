@@ -42,7 +42,7 @@ SoundTowns_Darkmoon::SoundTowns_Darkmoon(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 	_timerSwitch = 0;
 	memset(_resource, 0, sizeof(_resource));
 }
-	
+
 SoundTowns_Darkmoon::~SoundTowns_Darkmoon() {
 	for (int i = 0; i < 3; i++)
 		initAudioResourceInfo(i, 0);
@@ -100,7 +100,7 @@ void SoundTowns_Darkmoon::selectAudioResourceSet(int set) {
 	_fileListLen = _resource[set]->numFiles;
 
 	_pcmDataSize = _resource[kMusicIngame]->pcmDataSize;
-	_pcmData = new uint8[_pcmDataSize];	
+	_pcmData = new uint8[_pcmDataSize];
 	_pcmVol = _resource[set]->pcmVolume;
 	memcpy(_pcmData, _resource[kMusicIngame]->pcmData, _pcmDataSize);
 
@@ -141,7 +141,7 @@ void SoundTowns_Darkmoon::loadSoundFile(Common::String name) {
 		uint8 *src = pmb + 8;
 		for (int i = 0; i < 32; i++)
 			_intf->callback(5, 0x40, i, &src[i << 7]);
-		
+
 		_intf->callback(35, -1);
 		src += 0x1000;
 		bytesLeft -= 0x1008;

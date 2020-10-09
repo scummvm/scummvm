@@ -138,7 +138,8 @@ void SciMusic::init() {
 		_pMidiDrv = MidiPlayer_PC9801_create(_soundVersion);
 		break;
 	default:
-		if (ConfMan.getBool("native_fb01"))
+		if (ConfMan.getInt("midi_mode") == kMidiModeFB01
+		    || (ConfMan.hasKey("native_fb01") && ConfMan.getBool("native_fb01")))
 			_pMidiDrv = MidiPlayer_Fb01_create(_soundVersion);
 		else
 			_pMidiDrv = MidiPlayer_Midi_create(_soundVersion);
@@ -156,10 +157,10 @@ void SciMusic::init() {
 		} else {
 			const char *missingFiles = _pMidiDrv->reportMissingFiles();
 			if (missingFiles) {
-				Common::String message = _(
+				Common::U32String message = _(
 					"The selected audio driver requires the following file(s):\n\n"
 				);
-				message += missingFiles;
+				message += Common::U32String(missingFiles);
 				message += _("\n\n"
 					"Some audio drivers (at least for some games) were made\n"
 					"available by Sierra as aftermarket patches and thus might not\n"
@@ -169,7 +170,7 @@ void SciMusic::init() {
 					"separately but only as content of (patched) resource bundles.\n"
 					"In that case you may need to apply the original Sierra patch.\n\n"
 				);
-				::GUI::displayErrorDialog(message.c_str());
+				::GUI::displayErrorDialog(message);
 			}
 			error("Failed to initialize sound driver");
 		}
@@ -392,7 +393,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 				}
 			}
 		} else
-			playSample = (track->digitalChannelNr != -1);
+			playSample = (track->digitalChannelNr != -1 && (_useDigitalSFX || track->channelCount == 1));
 
 		// Play digital sample
 		if (playSample) {

@@ -343,13 +343,13 @@ void Storage::directoryDownloadedCallback(FileArrayResponse response) {
 	_downloadFolderRequest = nullptr;
 	_runningRequestsMutex.unlock();
 
-	Common::String message;
+	Common::U32String message;
 	if (response.value.size()) {
-		message = Common::String::format(_("Download complete.\nFailed to download %u files."), response.value.size());
+		message = Common::U32String::format(_("Download complete.\nFailed to download %u files."), response.value.size());
 	} else {
 		message = _("Download complete.");
 	}
-	Common::OSDMessageQueue::instance().addMessage(message.c_str());
+	Common::OSDMessageQueue::instance().addMessage(message);
 }
 
 void Storage::directoryDownloadedErrorCallback(Networking::ErrorResponse error) {

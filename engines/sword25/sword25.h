@@ -27,6 +27,7 @@
 #include "engines/engine.h"
 
 #include "sword25/console.h"
+#include "sword25/detection.h"
 
 namespace Common {
 class Error;
@@ -56,10 +57,6 @@ enum {
 	kDebugScript = 1 << 0,
 	kDebugSound = 1 << 1,
 	kDebugResource = 1 << 2
-};
-
-enum GameFlags {
-	GF_EXTRACTED = 1 << 0
 };
 
 #define MESSAGE_BASIC 1

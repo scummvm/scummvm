@@ -67,6 +67,8 @@ public:
 
 	bool rewind();
 
+	Common::Rational getFrameRate() const;
+
 protected:
 	void readNextPacket();
 	bool supportsAudioTrackSwitching() const { return true; }
@@ -96,9 +98,9 @@ protected:
 		void decodeFrame(Common::BitStreamMemory8LSB &bs);
 		void unpackPalette(Common::SeekableReadStream *stream);
 
-	protected:
 		Common::Rational getFrameRate() const { return _frameRate; }
 
+	protected:
 		Graphics::Surface *_surface;
 
 	private:

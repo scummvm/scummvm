@@ -36,13 +36,13 @@ private:
 	int _transColor;
 public:
 	int _refCount;
-	uint _id;
+	Common::String _name;
 	bool _scaled;
 
 	/**
 	 * Constructor
 	 */
-	Picture() : Graphics::ManagedSurface(), _refCount(0), _id(0), _scaled(false), _transColor(0x7777) {}
+	Picture() : Graphics::ManagedSurface(), _refCount(0), _scaled(false), _transColor(0x7777) {}
 
 	/**
 	 * Constructor
@@ -90,7 +90,7 @@ class Pictures {
 private:
 	int _refCount;
 	Common::Array<PictureEntry> _store;
-	Common::Array<uint> _adaptivePics;
+	Common::Array<Common::String> _adaptivePics;
 	Common::Array<byte> _savedPalette;
 private:
 	/**
@@ -131,7 +131,7 @@ public:
 	/**
 	 * Searches for an existing picture entry
 	 */
-	PictureEntry *search(uint id);
+	PictureEntry *search(const Common::String &name);
 
 	/**
 	 * Stores a picture in the store
@@ -141,12 +141,12 @@ public:
 	/**
 	 * Retrieves a picture from the store
 	 */
-	Picture *retrieve(uint id, bool scaled);
+	Picture *retrieve(const Common::String &name, bool scaled);
 
 	/**
 	 * Load a given picture
 	 */
-	Picture *load(uint32 id);
+	Picture *load(const Common::String &name);
 
 	/**
 	 * Rescale the passed picture to a new picture of a given size

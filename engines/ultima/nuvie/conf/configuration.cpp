@@ -26,6 +26,7 @@
 #include "ultima/nuvie/conf/config_node.h"
 #include "ultima/shared/conf/xml_tree.h"
 #include "common/config-manager.h"
+#include "common/file.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -37,7 +38,7 @@ Configuration::Configuration() : _configChanged(false) {
 	_localKeys["GameName"] = "";
 	_localKeys["GameID"] = "";
 	_localKeys["datadir"] = "data";		// This maps to ultima6/ in ultima.dat
-	_localKeys["quit"] = "false";
+	_localKeys["quit"] = "no";
 }
 
 Configuration::~Configuration() {
@@ -101,8 +102,8 @@ void Configuration::value(const Std::string &key, Std::string &ret,
 	}
 
 	// Check for ScummVM entry
-	if (ConfMan.hasKey(k)) {
-		ret = ConfMan.get(k);
+	if (_settings.contains(k)) {
+		ret = _settings[k];
 		return;
 	}
 
@@ -129,8 +130,8 @@ void Configuration::value(const Std::string &key, int &ret, int defaultvalue) {
 	}
 
 	// Check for ScummVM key
-	if (ConfMan.hasKey(k)) {
-		ret = ConfMan.getInt(k);
+	if (_settings.contains(k)) {
+		ret = atoi(_settings[k].c_str());
 		return;
 	}
 
@@ -152,13 +153,15 @@ void Configuration::value(const Std::string &key, bool &ret, bool defaultvalue) 
 
 	// Check for local entry
 	if (_localKeys.contains(k)) {
-		ret = _localKeys[k].hasPrefixIgnoreCase("t");
+		ret = _localKeys[k].hasPrefixIgnoreCase("y") ||
+			_localKeys[k].hasPrefixIgnoreCase("t");
 		return;
 	}
 
 	// Check for ScummVM key
-	if (ConfMan.hasKey(k)) {
-		ret = ConfMan.getBool(k);
+	if (_settings.contains(k)) {
+		ret = _settings[k].hasPrefixIgnoreCase("y") ||
+			_settings[k].hasPrefixIgnoreCase("t");
 		return;
 	}
 
@@ -197,6 +200,7 @@ bool Configuration::set(const Std::string &key, const Std::string &value) {
 		return true;
 	}
 
+	_settings[k] = value;
 	ConfMan.set(k, value);
 	_configChanged = true;
 
@@ -229,6 +233,7 @@ bool Configuration::set(const Std::string &key, int value) {
 		return true;
 	}
 
+	_settings[k] = Common::String::format("%d", value);
 	ConfMan.setInt(k, value);
 	_configChanged = true;
 
@@ -250,10 +255,12 @@ bool Configuration::set(const Std::string &key, bool value) {
 
 	assert(key.hasPrefix("config/"));
 	Std::string k = key.substr(7);
+	Common::String strValue = value ? "yes" : "no";
 
 	if (_localKeys.contains(k)) {
-		_localKeys[k] = value ? "true" : "false";
+		_localKeys[k] = strValue;
 	} else {
+		_settings[k] = strValue;
 		ConfMan.setBool(k, value);
 		_configChanged = true;
 	}
@@ -307,38 +314,57 @@ bool Configuration::isDefaultsSet() const {
 	return ConfMan.hasKey("config/video/screen_width");
 }
 
+void Configuration::load(GameId gameId, bool isEnhanced) {
+	// Load basic defaults for enhanced vs unehanced
+	if (isEnhanced)
+		setEnhancedDefaults(gameId);
+	else
+		setUnenhancedDefaults(gameId);
+
+	// nuvie.cfg in the game folder can supercede any ScummVM settings
+	if (Common::File::exists("nuvie.cfg"))
+		(void)readConfigFile("nuvie.cfg", "config");
+
+	// Load any further settings from scummvm.ini
+	const Common::ConfigManager::Domain &domain = *ConfMan.getActiveDomain();
+	Common::ConfigManager::Domain::const_iterator it;
+	for (it = domain.begin(); it != domain.end(); ++it) {
+		_settings[(*it)._key] = (*it)._value;
+	}
+}
+
 void Configuration::setCommonDefaults(GameId gameType) {
-	set("config/video/non_square_pixels", "no");
+	_settings["video/non_square_pixels"] = "no";
 
 #ifdef TODO
-	set("config/audio/enabled", true);
-	set("config/audio/enable_music", true);
-	set("config/audio/enable_sfx", true);
-	set("config/audio/music_volume", 100);
-	set("config/audio/sfx_volume", 255);
+	_settings["audio/enabled"] = true;
+	_settings["audio/enable_music"] = true;
+	_settings["audio/enable_sfx"] = true;
+	_settings["audio/music_volume"] = 100;
+	_settings["audio/sfx_volume"] = 255;
 #endif
-	set("config/audio/combat_changes_music", true);
-	set("config/audio/vehicles_change_music", true);
-	set("config/audio/conversations_stop_music", false); // original stopped music - maybe due to memory and disk swapping
-	set("config/audio/stop_music_on_group_change", true);
+	_settings["audio/combat_changes_music"] = "yes";
+	_settings["audio/vehicles_change_music"] = "yes";
+	_settings["audio/conversations_stop_music"] = "no"; // original stopped music - maybe due to memory and disk swapping
+	_settings["audio/stop_music_on_group_change"] = "yes";
 
-	set("config/input/enable_doubleclick", true);
-	set("config/input/enabled_dragging", true);
-	set("config/input/look_on_left_click", true);
-	set("config/input/walk_with_left_button", true);
-	set("config/input/direction_selects_target", true);
+	_settings["input/enable_doubleclick"] = "yes";
+	_settings["input/enabled_dragging"] = "yes";
+	_settings["input/look_on_left_click"] = "yes";
+	_settings["input/walk_with_left_button"] = "yes";
+	_settings["input/direction_selects_target"] = "yes";
 
-	set("config/general/dither_mode", "none");
-	set("config/general/enable_cursors", true);
-	set("config/general/party_formation", "standard");
+	_settings["general/dither_mode"] = "none";
+	_settings["general/enable_cursors"] = "yes";
+	_settings["general/party_formation"] = "standard";
 
 	// Only show the startup console if in ScummVM debug mode
-	set("config/general/show_console", gDebugLevel > 0);
+	_settings["general/show_console"] = gDebugLevel > 0 ? "yes" : "no";
 
-	set("config/cheats/enabled", false);
-	set("config/cheats/enable_hackmove", false);
-	set("config/cheats/min_brightness", 0);
-	set("config/cheats/party_all_the_time", false);
+	_settings["cheats/enabled"] = "no";
+	_settings["cheats/enable_hackmove"] = "no";
+	_settings["cheats/min_brightness"] = "0";
+	_settings["cheats/party_all_the_time"] = "no";
 
 	// game specific settings
 	uint8 bg_color[] = { 218, 136, 216 }; // U6, MD, SE
@@ -351,87 +377,90 @@ void Configuration::setCommonDefaults(GameId gameType) {
 		i = 2;
 
 #ifdef TODO
-	set("config/language", "en");
-	set("config/music", "native");
-	set("config/sfx", "native");
+	_settings["language", "en";
+	_settings["music", "native";
+	_settings["sfx", "native";
 
 	if (i == 0) // U6
-		set("config/enable_speech", "yes");
+		_settings["enable_speech", "yes";
 #endif
-	set("config/skip_intro", false);
-	set("config/show_eggs", false);
+	_settings["skip_intro"] = "no";
+	_settings["show_eggs"] = "no";
 	if (i == 0) { // U6
-		set("config/show_stealing", false);
-		set("config/roof_mode", false);
+		_settings["show_stealing"] = "no";
+		_settings["roof_mode"] = "no";
 	}
-	set("config/use_new_dolls", false);
-	set("config/cb_position", "default");
-	set("config/show_orig_style_cb", "default");
+	_settings["use_new_dolls"] = "no";
+	_settings["cb_position"] = "default";
+	_settings["show_orig_style_cb"] = "default";
 	if (i == 0) // U6
-		set("config/cb_text_color", 115);
-	set("config/map_tile_lighting", i == 1 ? false : true); // MD has canals lit up so disable
-	set("config/custom_actor_tiles", "default");
-	set("config/converse_solid_bg", false);
-	set("config/converse_bg_color", bg_color[i]);
-	set("config/converse_width", "default");
-	set("config/converse_height", "default");
+		_settings["cb_text_color"] = "115";
+	_settings["map_tile_lighting"] = i == 1 ? "no": "yes"; // MD has canals lit up so disable
+	_settings["custom_actor_tiles"] = "default";
+	_settings["converse_solid_bg"] = "no";
+	_settings["converse_bg_color"] =
+		Common::String::format("%d", bg_color[i]);
+	_settings["converse_width"] = "default";
+	_settings["converse_height"] = "default";
 	if (i == 0) { // U6
-		set("config/displayed_wind_dir", "from");
-		set("config/free_balloon_movement", false);
+		_settings["displayed_wind_dir"] = "from";
+		_settings["free_balloon_movement"] = "no";
 	}
-	set("config/game_specific_keys", "(default)");
-	set("config/newscroll/width", 30);
-	set("config/newscroll/height", 19);
-	set("config/newscroll/solid_bg", false);
-	set("config/newscroll/bg_color", bg_color[i]);
-	set("config/newscroll/border_color", border_color[i]);
+	_settings["game_specific_keys"] = "(default)";
+	_settings["newscroll/width"] = "30";
+	_settings["newscroll/height"] = "19";
+	_settings["newscroll/solid_bg"] = "no";
+	_settings["newscroll/bg_color"] =
+		Common::String::format("%d", bg_color[i]);
+	_settings["newscroll/border_color"] =
+		Common::String::format("%d", border_color[i]);
 
-	//	set("config/newgamedata/name", "Avatar");
-	//	set("config/newgamedata/gender", 0);
-	//	set("config/newgamedata/portrait", 0);
-	//	set("config/newgamedata/str", 0xf);
-	//	set("config/newgamedata/dex", 0xf);
-	//	set("config/newgamedata/int", 0xf);
+	//	_settings["newgamedata/name"] = "Avatar";
+	//	_settings["newgamedata/gender"] = "0";
+	//	_settings["newgamedata/portrait"] = "0";
+	//	_settings["newgamedata/str"] = "15";
+	//	_settings["newgamedata/dex"] = "15";
+	//	_settings["newgamedata/int"] = "15";
 }
 
 void Configuration::setUnenhancedDefaults(GameId gameType) {
 	setCommonDefaults(gameType);
 
-	set("config/video/screen_width", 320);
-	set("config/video/screen_height", 200);
-	set("config/video/game_width", 320);
-	set("config/video/game_height", 200);
-	set("config/video/game_style", "original");
-	set("config/video/game_position", "center");
+	_settings["video/screen_width"] = "320";
+	_settings["video/screen_height"] = "200";
+	_settings["video/game_width"] = "320";
+	_settings["video/game_height"] = "200";
+	_settings["video/game_style"] = "original";
+	_settings["video/game_position"] = "center";
 
-	set("config/general/converse_gump", "default");
-	set("config/general/lighting", "original");
-	set("config/general/use_text_gumps", false);
+	_settings["general/converse_gump"] = "default";
+	_settings["general/lighting"] = "original";
+	_settings["general/use_text_gumps"] = "no";
 
-	set("config/input/doubleclick_opens_containers", false);
-	set("config/input/party_view_targeting", false);
-	set("config/input/new_command_bar", false);
-	set("config/input/interface", "normal");
+	_settings["input/doubleclick_opens_containers"] = "no";
+	_settings["input/party_view_targeting"] = "no";
+	_settings["input/new_command_bar"] = "no";
+	_settings["input/interface"] = "normal";
 }
 
 void Configuration::setEnhancedDefaults(GameId gameType) {
 	setCommonDefaults(gameType);
 
-	set("config/video/screen_width", 640);
-	set("config/video/screen_height", 400);
-	set("config/video/game_width", 640);
-	set("config/video/game_height", 400);
-	set("config/video/game_style", "original+_full_map");
-	set("config/video/game_position", "center");
+	_settings["video/screen_width"] = "640";
+	_settings["video/screen_height"] = "400";
+	_settings["video/game_width"] = "640";
+	_settings["video/game_height"] = "400";
+	_settings["video/game_style"] = "original+_full_map";
+	_settings["video/game_position"] = "center";
 
-	set("config/general/converse_gump", "yes");
-	set("config/general/lighting", "smooth");
-	set("config/general/use_text_gumps", true);
+	_settings["general/converse_gump"] = "yes";
+	_settings["general/lighting"] = "smooth";
+	_settings["general/use_text_gumps"] = "yes";
 
-	set("config/input/doubleclick_opens_containers", true);
-	set("config/input/party_view_targeting", true);
-	set("config/input/new_command_bar", true);
-	set("config/input/interface", "fullscreen");
+	_settings["input/doubleclick_opens_containers"] = "yes";
+	_settings["input/party_view_targeting"] = "yes";
+	_settings["input/new_command_bar"] = "yes";
+	_settings["input/interface"] = "fullscreen";
 }
 
 } // End of namespace Nuvie

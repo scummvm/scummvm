@@ -74,7 +74,7 @@ HPOLYGON InitExtraBlock(PMOVER ca, PMOVER ta);
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
-// FIXME: Avoid non-const global vars
+// These vars are reset upon engine destruction
 
 #if SLOW_RINCE_DOWN
 static int g_Interlude = 0;	// For slowing down walking, for testing
@@ -106,6 +106,12 @@ void AddInterlude(int n) {
 		g_Interlude = 0;
 }
 #endif
+
+void ResetVarsMove() {
+	g_DefaultRefer = 0;
+	g_lastLeadXdest = g_lastLeadYdest = 0;
+	g_hSlowVar = 0;
+}
 
 /**
  * Given (x, y) of a click within a path polygon, checks that the
@@ -485,7 +491,7 @@ static void GotThereWithoutMoving(PMOVER pActor) {
 	DIRECTION	reel;
 
 	if (!pActor->bSpecReel) {
-		GetCursorXYNoWait(&curX, &curY, true);
+		_vm->_cursor->GetCursorXYNoWait(&curX, &curY, true);
 
 		reel = GetDirection(pActor->objX, pActor->objY, curX, curY, pActor->direction, pActor->hCpath);
 
@@ -512,7 +518,7 @@ static void GotThere(PMOVER pMover) {
 			int curX, curY;
 			DIRECTION direction;
 
-			GetCursorXY(&curX, &curY, true);
+			_vm->_cursor->GetCursorXY(&curX, &curY, true);
 			direction = GetDirection(pMover->objX, pMover->objY,
 						curX, curY,
 						pMover->direction,
@@ -525,7 +531,7 @@ static void GotThere(PMOVER pMover) {
 	}
 
 	if (!TinselV2)
-		ReTagActor(pMover->actorID);	// Tag allowed while stationary
+		_vm->_actor->ReTagActor(pMover->actorID);	// Tag allowed while stationary
 
 	SetMoverStanding(pMover);
 	pMover->bMoving = false;
@@ -1338,8 +1344,8 @@ int SetActorDest(PMOVER pMover, int clickX, int clickY, bool igPath, SCNHANDLE h
 		// Fix interrupted-walking-to-wardrobe bug in mortuary
 		StopMover(pMover);
 	} else {
-		if (pMover->actorID == GetLeadId())		// Now only for lead actor
-			UnTagActor(pMover->actorID);	// Tag not allowed while moving
+		if (pMover->actorID == _vm->_actor->GetLeadId()) // Now only for lead actor
+			_vm->_actor->UnTagActor(pMover->actorID);    // Tag not allowed while moving
 	}
 
 	pMover->walkNumber++;
@@ -1364,14 +1370,14 @@ int SetActorDest(PMOVER pMover, int clickX, int clickY, bool igPath, SCNHANDLE h
 		targetX = clickX;
 		targetY = clickY;
 
-		if (pMover->actorID == GetLeadId()) {
+		if (pMover->actorID == _vm->_actor->GetLeadId()) {
 			g_lastLeadXdest = targetX;
 			g_lastLeadYdest = targetY;
 		}
 	} else {
 		int wodResult = WorkOutDestination(clickX, clickY, &targetX, &targetY);
 
-		if (pMover->actorID == GetLeadId()) {
+		if (pMover->actorID == _vm->_actor->GetLeadId()) {
 			g_lastLeadXdest = targetX;
 			g_lastLeadYdest = targetY;
 		}

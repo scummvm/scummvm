@@ -28,6 +28,7 @@
 #include "backends/base-backend.h"
 #include "common/events.h"
 #include "common/str.h"
+#include "common/ustr.h"
 #include "audio/mixer_intern.h"
 #include "backends/fs/posix/posix-fs-factory.h"
 #include "graphics/colormasks.h"
@@ -165,6 +166,7 @@ public:
 
 	virtual void showOverlay();
 	virtual void hideOverlay();
+	virtual bool isOverlayVisible() const { return _videoContext->overlayVisible; }
 	virtual void clearOverlay();
 	virtual void grabOverlay(void *buf, int pitch);
 	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h);
@@ -207,8 +209,8 @@ public:
 	virtual void fatalError() override;
 
 	virtual bool hasTextInClipboard();
-	virtual Common::String getTextFromClipboard();
-	virtual bool setTextInClipboard(const Common::String &text);
+	virtual Common::U32String getTextFromClipboard();
+	virtual bool setTextInClipboard(const Common::U32String &text);
 
 	virtual bool openUrl(const Common::String &url);
 
@@ -226,6 +228,9 @@ protected:
 	void dirtyFullScreen();
 	void dirtyFullOverlayScreen();
 	void suspendLoop();
+	void saveState();
+	void restoreState();
+	void clearState();
 	void drawDirtyRect(const Common::Rect &dirtyRect);
 	void updateMouseTexture();
 	static void AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBufferRef outQB);
@@ -237,6 +242,9 @@ protected:
 	void handleEvent_orientationChanged(int orientation);
 	void handleEvent_applicationSuspended();
 	void handleEvent_applicationResumed();
+	void handleEvent_applicationSaveState();
+	void handleEvent_applicationRestoreState();
+	void handleEvent_applicationClearState();
 
 	bool handleEvent_mouseDown(Common::Event &event, int x, int y);
 	bool handleEvent_mouseUp(Common::Event &event, int x, int y);

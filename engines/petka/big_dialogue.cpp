@@ -52,8 +52,7 @@ BigDialogue::BigDialogue(PetkaEngine &vm)
 	}
 	for (uint i = 0; i < _objDialogs.size(); ++i) {
 		for (uint j = 0; j < _objDialogs[i].handlers.size(); ++j) {
-			_objDialogs[i].handlers[j].opcode = file->readUint16LE();
-			_objDialogs[i].handlers[j].objId = file->readUint16LE();
+			_objDialogs[i].handlers[j].opcode = file->readUint32LE();
 			_objDialogs[i].handlers[j].dialogs.resize(file->readUint32LE());
 			_objDialogs[i].handlers[j].startDialogIndex = file->readUint32LE();
 			file->skip(4); // pointer
@@ -151,22 +150,25 @@ const DialogHandler *BigDialogue::findHandler(uint objId, uint opcode, bool *fal
 		*fallback = false;
 	}
 	for (uint i = 0; i < _objDialogs.size(); ++i) {
-		if (_objDialogs[i].objId == objId) {
-			for (uint j = 0; j < _objDialogs[i].handlers.size(); ++j) {
-				if (_objDialogs[i].handlers[j].opcode == opcode) {
-					return &_objDialogs[i].handlers[j];
-				}
-			}
-			if (opcode != kObjectUse) {
-				continue;
-			}
-			for (uint j = 0; j < _objDialogs[i].handlers.size(); ++j) {
-				if (_objDialogs[i].handlers[j].opcode == kFallback) {
-					if (fallback)
-						*fallback = true;
-					return &_objDialogs[i].handlers[j];
-				}
+		if (_objDialogs[i].objId != objId) {
+			continue;
+		}
 
+		for (uint j = 0; j < _objDialogs[i].handlers.size(); ++j) {
+			if (_objDialogs[i].handlers[j].opcode == opcode) {
+				return &_objDialogs[i].handlers[j];
+			}
+		}
+
+		if ((uint16)opcode != kObjectUse) {
+			continue;
+		}
+
+		for (uint j = 0; j < _objDialogs[i].handlers.size(); ++j) {
+			if (_objDialogs[i].handlers[j].opcode == kFallback) {
+				if (fallback)
+					*fallback = true;
+				return &_objDialogs[i].handlers[j];
 			}
 		}
 	}

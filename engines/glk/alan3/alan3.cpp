@@ -29,7 +29,6 @@
 #include "glk/alan3/save.h"
 #include "glk/alan3/syserr.h"
 #include "common/system.h"
-#include "common/translation.h"
 #include "common/error.h"
 #include "common/scummsys.h"
 #include "common/serializer.h"

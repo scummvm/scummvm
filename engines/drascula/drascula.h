@@ -39,6 +39,7 @@
 #include "engines/savestate.h"
 
 #include "drascula/console.h"
+#include "drascula/detection.h"
 
 #include "audio/mixer.h"
 
@@ -56,10 +57,6 @@ namespace Drascula {
 
 #define DRASCULA_DAT_VER 6
 #define DATAALIGNMENT 4
-
-enum DrasculaGameFeatures {
-	GF_PACKED = (1 << 0)
-};
 
 enum Languages {
 	kEnglish = 0,

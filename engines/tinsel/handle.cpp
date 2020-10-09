@@ -37,13 +37,6 @@
 
 namespace Tinsel {
 
-//----------------- EXTERNAL GLOBAL DATA --------------------
-
-#ifdef DEBUG
-static uint32 s_lockedScene = 0;
-#endif
-
-
 //----------------- LOCAL DEFINES --------------------
 
 struct MEMHANDLE {
@@ -65,32 +58,22 @@ enum {
 };
 #define	FSIZE_MASK	0x00FFFFFFL	///< mask to isolate the filesize
 
-//----------------- LOCAL GLOBAL DATA --------------------
+Handle::Handle() : _handleTable(0), _numHandles(0), _cdPlayHandle((uint32)-1), _cdBaseHandle(0), _cdTopHandle(0), _cdGraphStream(nullptr) {
+}
 
-// FIXME: Avoid non-const global vars
+Handle::~Handle() {
+	free(_handleTable);
+	_handleTable = nullptr;
 
-// handle table gets loaded from index file at runtime
-static MEMHANDLE *g_handleTable = 0;
-
-// number of handles in the handle table
-static uint g_numHandles = 0;
-
-static uint32 g_cdPlayHandle = (uint32)-1;
-
-static SCNHANDLE g_cdBaseHandle = 0, g_cdTopHandle = 0;
-static Common::File *g_cdGraphStream = 0;
-
-static char g_szCdPlayFile[100];
-
-//----------------- FORWARD REFERENCES --------------------
-
-static void LoadFile(MEMHANDLE *pH);	// load a memory block as a file
+	delete _cdGraphStream;
+	_cdGraphStream = nullptr;
+}
 
 /**
  * Loads the graphics handle table index file and preloads all the
  * permanent graphics etc.
  */
-void SetupHandleTable() {
+void Handle::SetupHandleTable() {
 	bool t2Flag = (TinselVersion == TINSEL_V2);
 	int RECORD_SIZE = t2Flag ? 24 : 20;
 
@@ -112,24 +95,24 @@ void SetupHandleTable() {
 			}
 
 			// calc number of handles
-			g_numHandles = len / RECORD_SIZE;
+			_numHandles = len / RECORD_SIZE;
 
 			// allocate memory for the index file
-			g_handleTable = (MEMHANDLE *)calloc(g_numHandles, sizeof(struct MEMHANDLE));
+			_handleTable = (MEMHANDLE *)calloc(_numHandles, sizeof(struct MEMHANDLE));
 
 			// make sure memory allocated
-			assert(g_handleTable);
+			assert(_handleTable);
 
 			// load data
-			for (i = 0; i < g_numHandles; i++) {
-				f.read(g_handleTable[i].szName, 12);
-				g_handleTable[i].filesize = f.readUint32();
+			for (i = 0; i < _numHandles; i++) {
+				f.read(_handleTable[i].szName, 12);
+				_handleTable[i].filesize = f.readUint32();
 				// The pointer should always be NULL. We don't
 				// need to read that from the file.
-				g_handleTable[i]._node= nullptr;
+				_handleTable[i]._node= nullptr;
 				f.seek(4, SEEK_CUR);
 				// For Discworld 2, read in the flags2 field
-				g_handleTable[i].flags2 = t2Flag ? f.readUint32() : 0;
+				_handleTable[i].flags2 = t2Flag ? f.readUint32() : 0;
 			}
 
 			if (f.eos() || f.err()) {
@@ -147,7 +130,7 @@ void SetupHandleTable() {
 	}
 
 	// allocate memory nodes and load all permanent graphics
-	for (i = 0, pH = g_handleTable; i < g_numHandles; i++, pH++) {
+	for (i = 0, pH = _handleTable; i < _numHandles; i++, pH++) {
 		if (pH->filesize & fPreload) {
 			// allocate a fixed memory node for permanent files
 			pH->_node = MemoryAllocFixed((pH->filesize & FSIZE_MASK));
@@ -173,28 +156,20 @@ void SetupHandleTable() {
 	}
 }
 
-void FreeHandleTable() {
-	free(g_handleTable);
-	g_handleTable= nullptr;
-
-	delete g_cdGraphStream;
-	g_cdGraphStream= nullptr;
-}
-
 /**
  * Loads a memory block as a file.
  */
-void OpenCDGraphFile() {
-	delete g_cdGraphStream;
+void Handle::OpenCDGraphFile() {
+	delete _cdGraphStream;
 
 	// As the theory goes, the right CD will be in there!
 
-	g_cdGraphStream = new Common::File;
-	if (!g_cdGraphStream->open(g_szCdPlayFile))
-		error(CANNOT_FIND_FILE, g_szCdPlayFile);
+	_cdGraphStream = new Common::File;
+	if (!_cdGraphStream->open(_szCdPlayFile))
+		error(CANNOT_FIND_FILE, _szCdPlayFile.c_str());
 }
 
-void LoadCDGraphData(MEMHANDLE *pH) {
+void Handle::LoadCDGraphData(MEMHANDLE *pH) {
 	// read the data
 	uint bytes;
 	byte *addr;
@@ -212,15 +187,15 @@ void LoadCDGraphData(MEMHANDLE *pH) {
 	assert(addr);
 
 	// Move to correct place in file and load the required data
-	assert(g_cdGraphStream);
-	g_cdGraphStream->seek(g_cdBaseHandle & OFFSETMASK, SEEK_SET);
-	bytes = g_cdGraphStream->read(addr, (g_cdTopHandle - g_cdBaseHandle) & OFFSETMASK);
+	assert(_cdGraphStream);
+	_cdGraphStream->seek(_cdBaseHandle & OFFSETMASK, SEEK_SET);
+	bytes = _cdGraphStream->read(addr, (_cdTopHandle - _cdBaseHandle) & OFFSETMASK);
 
 	// New code to try and handle CD read failures 24/2/97
-	while (bytes != ((g_cdTopHandle - g_cdBaseHandle) & OFFSETMASK) && retries++ < MAX_READ_RETRIES)	{
+	while (bytes != ((_cdTopHandle - _cdBaseHandle) & OFFSETMASK) && retries++ < MAX_READ_RETRIES)	{
 		// Try again
-		g_cdGraphStream->seek(g_cdBaseHandle & OFFSETMASK, SEEK_SET);
-		bytes = g_cdGraphStream->read(addr, (g_cdTopHandle - g_cdBaseHandle) & OFFSETMASK);
+		_cdGraphStream->seek(_cdBaseHandle & OFFSETMASK, SEEK_SET);
+		bytes = _cdGraphStream->read(addr, (_cdTopHandle - _cdBaseHandle) & OFFSETMASK);
 	}
 
 	// discardable - unlock the memory
@@ -232,7 +207,7 @@ void LoadCDGraphData(MEMHANDLE *pH) {
 	// clear the loading flag
 //	pH->filesize &= ~fLoading;
 
-	if (bytes != ((g_cdTopHandle - g_cdBaseHandle) & OFFSETMASK))
+	if (bytes != ((_cdTopHandle - _cdBaseHandle) & OFFSETMASK))
 		// file is corrupt
 		error(FILE_READ_ERROR, "CD play file");
 }
@@ -244,33 +219,32 @@ void LoadCDGraphData(MEMHANDLE *pH) {
  * @param start			Handle of start of range
  * @param next			Handle of end of range + 1
  */
-void LoadExtraGraphData(SCNHANDLE start, SCNHANDLE next) {
+void Handle::LoadExtraGraphData(SCNHANDLE start, SCNHANDLE next) {
 	OpenCDGraphFile();
 
-	MemoryDiscard((g_handleTable + g_cdPlayHandle)->_node); // Free it
+	MemoryDiscard((_handleTable + _cdPlayHandle)->_node); // Free it
 
 	// It must always be the same
-	assert(g_cdPlayHandle == (start >> SCNHANDLE_SHIFT));
-	assert(g_cdPlayHandle == (next >> SCNHANDLE_SHIFT));
+	assert(_cdPlayHandle == (start >> SCNHANDLE_SHIFT));
+	assert(_cdPlayHandle == (next >> SCNHANDLE_SHIFT));
 
-	g_cdBaseHandle = start;
-	g_cdTopHandle = next;
+	_cdBaseHandle = start;
+	_cdTopHandle = next;
 }
 
-void SetCdPlaySceneDetails(int fileNum, const char *fileName) {
-	Common::strlcpy(g_szCdPlayFile, fileName, 100);
+void Handle::SetCdPlaySceneDetails(const char *fileName) {
+	_szCdPlayFile = fileName;
 }
 
-void SetCdPlayHandle(int fileNum) {
-	g_cdPlayHandle = fileNum;
+void Handle::SetCdPlayHandle(int fileNum) {
+	_cdPlayHandle = fileNum;
 }
-
 
 /**
  * Loads a memory block as a file.
  * @param pH			Memory block pointer
  */
-void LoadFile(MEMHANDLE *pH) {
+void Handle::LoadFile(MEMHANDLE *pH) {
 	Common::File f;
 	char szFilename[sizeof(pH->szName) + 1];
 
@@ -320,32 +294,27 @@ void LoadFile(MEMHANDLE *pH) {
  * Compute and return the address specified by a SCNHANDLE.
  * @param offset			Handle and offset to data
  */
-byte *LockMem(SCNHANDLE offset) {
+byte *Handle::LockMem(SCNHANDLE offset) {
 	uint32 handle = offset >> SCNHANDLE_SHIFT;	// calc memory handle to use
 	//debug("Locking offset of type %d (%x), offset %d, handle %d", (offset & HANDLEMASK) >> SCNHANDLE_SHIFT, (offset & HANDLEMASK) >> SCNHANDLE_SHIFT, offset & OFFSETMASK, handle);
 	MEMHANDLE *pH;			// points to table entry
 
 	// range check the memory handle
-	assert(handle < g_numHandles);
+	assert(handle < _numHandles);
 
-#ifdef DEBUG
-	if (handle != s_lockedScene)
-		warning("  Calling LockMem(0x%x), handle %d differs from active scene %d", offset, handle, s_lockedScene);
-#endif
-
-	pH = g_handleTable + handle;
+	pH = _handleTable + handle;
 
 	if (pH->filesize & fPreload) {
 		// permanent files are already loaded, nothing to be done
-	} else if (handle == g_cdPlayHandle) {
+	} else if (handle == _cdPlayHandle) {
 		// Must be in currently loaded/loadable range
-		if (offset < g_cdBaseHandle || offset >= g_cdTopHandle)
+		if (offset < _cdBaseHandle || offset >= _cdTopHandle)
 			error("Overlapping (in time) CD-plays");
 
 		// May have been discarded, if so, we have to reload
 		if (!MemoryDeref(pH->_node)) {
 			// Data was discarded, we have to reload
-			MemoryReAlloc(pH->_node, g_cdTopHandle - g_cdBaseHandle);
+			MemoryReAlloc(pH->_node, _cdTopHandle - _cdBaseHandle);
 
 			LoadCDGraphData(pH);
 
@@ -356,7 +325,7 @@ byte *LockMem(SCNHANDLE offset) {
 		// make sure address is valid
 		assert(pH->filesize & fLoaded);
 
-		offset -= g_cdBaseHandle;
+		offset -= _cdBaseHandle;
 	} else {
 		if (!MemoryDeref(pH->_node)) {
 			// Data was discarded, we have to reload
@@ -380,19 +349,15 @@ byte *LockMem(SCNHANDLE offset) {
  * Called to lock the current scene and make it non-discardable.
  * @param offset			Handle and offset to data
  */
-void LockScene(SCNHANDLE offset) {
+void Handle::LockScene(SCNHANDLE offset) {
 
 	uint32 handle = offset >> SCNHANDLE_SHIFT;	// calc memory handle to use
 	MEMHANDLE *pH;					// points to table entry
 
-#ifdef DEBUG
-	assert(0 == s_lockedScene); // Trying to lock more than one scene
-#endif
-
 	// range check the memory handle
-	assert(handle < g_numHandles);
+	assert(handle < _numHandles);
 
-	pH = g_handleTable + handle;
+	pH = _handleTable + handle;
 
 	if ((pH->filesize & fPreload) == 0) {
 		// Ensure the scene handle is allocated.
@@ -400,10 +365,6 @@ void LockScene(SCNHANDLE offset) {
 
 		// Now lock it to make sure it stays allocated and in a fixed position.
 		MemoryLock(pH->_node);
-
-#ifdef DEBUG
-		s_lockedScene = handle;
-#endif
 	}
 }
 
@@ -411,23 +372,19 @@ void LockScene(SCNHANDLE offset) {
  * Called to make the current scene discardable again.
  * @param offset			Handle and offset to data
  */
-void UnlockScene(SCNHANDLE offset) {
+void Handle::UnlockScene(SCNHANDLE offset) {
 
 	uint32 handle = offset >> SCNHANDLE_SHIFT;	// calc memory handle to use
 	MEMHANDLE *pH;					// points to table entry
 
 	// range check the memory handle
-	assert(handle < g_numHandles);
+	assert(handle < _numHandles);
 
-	pH = g_handleTable + handle;
+	pH = _handleTable + handle;
 
 	if ((pH->filesize & fPreload) == 0) {
 		// unlock the scene data
 		MemoryUnlock(pH->_node);
-
-#ifdef DEBUG
-		s_lockedScene = 0;
-#endif
 	}
 }
 
@@ -439,14 +396,14 @@ void UnlockScene(SCNHANDLE offset) {
  * Validates that a specified handle pointer is valid
  * @param offset			Handle and offset to data
  */
-bool ValidHandle(SCNHANDLE offset) {
+bool Handle::ValidHandle(SCNHANDLE offset) {
 	uint32 handle = offset >> SCNHANDLE_SHIFT;	// calc memory handle to use
 	MEMHANDLE *pH;					// points to table entry
 
 	// range check the memory handle
-	assert(handle < g_numHandles);
+	assert(handle < _numHandles);
 
-	pH = g_handleTable + handle;
+	pH = _handleTable + handle;
 
 	return (pH->filesize & FSIZE_MASK) != 8;
 }
@@ -456,12 +413,12 @@ bool ValidHandle(SCNHANDLE offset) {
  * TouchMem
  * @param offset			Handle and offset to data
  */
-void TouchMem(SCNHANDLE offset) {
+void Handle::TouchMem(SCNHANDLE offset) {
 	MEMHANDLE *pH;					// points to table entry
 	uint32 handle = offset >> SCNHANDLE_SHIFT;	// calc memory handle to use
 
 	if (offset != 0) {
-		pH = g_handleTable + handle;
+		pH = _handleTable + handle;
 
 		// update the LRU time whether its loaded or not!
 		if (pH->_node)
@@ -473,25 +430,25 @@ void TouchMem(SCNHANDLE offset) {
  * Returns true if the given handle is into the cd graph data
  * @param offset			Handle and offset to data
  */
-bool IsCdPlayHandle(SCNHANDLE offset) {
+bool Handle::IsCdPlayHandle(SCNHANDLE offset) {
 	uint32 handle = offset >> SCNHANDLE_SHIFT;	// calc memory handle to use
 
 	// range check the memory handle
-	assert(handle < g_numHandles);
+	assert(handle < _numHandles);
 
-	return (handle == g_cdPlayHandle);
+	return (handle == _cdPlayHandle);
 }
 
 /**
  * Returns the CD for a given scene handle
  */
-int CdNumber(SCNHANDLE offset) {
+int Handle::CdNumber(SCNHANDLE offset) {
 	uint handle = offset >> SCNHANDLE_SHIFT;	// calc memory handle to use
 
 	// range check the memory handle
-	assert(handle < g_numHandles);
+	assert(handle < _numHandles);
 
-	MEMHANDLE *pH = g_handleTable + handle;
+	MEMHANDLE *pH = _handleTable + handle;
 
 	if (!TinselV2)
 		return 1;

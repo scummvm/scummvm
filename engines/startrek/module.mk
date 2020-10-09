@@ -6,7 +6,6 @@ MODULE_OBJS = \
 	bitmap.o \
 	common.o \
 	console.o \
-	detection.o \
 	events.o \
 	font.o \
 	graphics.o \
@@ -14,6 +13,8 @@ MODULE_OBJS = \
 	iwfile.o \
 	lzss.o \
 	menu.o \
+	resource.o \
+	metaengine.o \
 	room.o \
 	saveload.o \
 	sound.o \
@@ -87,3 +88,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o

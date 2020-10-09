@@ -205,7 +205,7 @@ bool Screen::init() {
 	_palettes.resize(paletteCount);
 	_palettes[0] = new Palette(numColorsInternal);
 	assert(_palettes[0]);
-	
+
 	for (int i = 1; i < paletteCount; ++i) {
 		_palettes[i] = new Palette(numColors);
 		assert(_palettes[i]);
@@ -311,7 +311,7 @@ void Screen::setResolution() {
 		initGraphics(width, height, tryModes);
 		if (_system->getScreenFormat().bytesPerPixel != 2)
 			error("Required graphics mode not supported by platform.");
-		
+
 	} else {
 		initGraphics(width, height);
 		_system->getPaletteManager()->setPalette(palette, 0, 256);
@@ -745,8 +745,8 @@ void Screen::setPagePixel(int pageNum, int x, int y, uint8 color) {
 		color &= 0x03;
 	} else if (_use16ColorMode || (_renderMode == Common::kRenderEGA && !_useHiResEGADithering)) {
 		color &= 0x0F;
-	} 
-	
+	}
+
 	if (_bytesPerPixel == 2) {
 		((uint16*)_pagePtrs[pageNum])[y * SCREEN_W + x] = _16bitPalette[color];
 	} else {
@@ -1304,7 +1304,7 @@ void Screen::setTextColor(const uint8 *cmap8, int a, int b) {
 	// We need to update the color tables of all fonts, we
 	// setup so far here.
 	for (int i = 0; i < FID_NUM; ++i) {
-		if (_fonts[i]) 
+		if (_fonts[i])
 			_fonts[i]->setColorMap(_textColorsMap);
 	}
 }
@@ -3206,7 +3206,7 @@ void Screen::shakeScreen(int times) {
 
 	const int8 *shakeData = _shakeParaPC;
 	int steps = ARRAYSIZE(_shakeParaPC) / 3;
-	
+
 	// The FM-TOWNS version has a slightly better shake animation
 	// TODO: check PC-98 version
 	if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
@@ -3879,7 +3879,7 @@ void Palette::loadEGAPalette(Common::ReadStream &stream, int startIndex, int col
 void Palette::setCGAPalette(int palIndex, CGAIntensity intensity) {
 	assert(_numColors >= _cgaNumColors);
 	assert(!(palIndex & ~1));
-	memcpy(_palData, _cgaColors[palIndex * 2 + intensity], _numColors * 3);
+	memcpy(_palData, _cgaColors[palIndex * 2 + intensity], _cgaNumColors * 3);
 }
 
 void Palette::loadAmigaPalette(Common::ReadStream &stream, int startIndex, int colors) {

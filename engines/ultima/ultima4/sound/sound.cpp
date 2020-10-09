@@ -77,7 +77,7 @@ SoundManager::~SoundManager() {
 }
 
 bool SoundManager::load(Sound sound) {
-	ASSERT(sound < SOUND_MAX, "Attempted to load an invalid sound");
+	assertMsg(sound < SOUND_MAX, "Attempted to load an invalid sound");
 
 	if (_sounds[sound] == nullptr) {
 		Common::String pathname(u4find_sound(_soundFilenames[sound]));
@@ -90,7 +90,7 @@ bool SoundManager::load(Sound sound) {
 }
 
 void SoundManager::play(Sound sound, bool onlyOnce, int specificDurationInTicks) {
-	ASSERT(sound < SOUND_MAX, "Attempted to play an invalid sound");
+	assertMsg(sound < SOUND_MAX, "Attempted to play an invalid sound");
 
 	if (_sounds[sound] == nullptr) {
 		if (!load(sound)) {

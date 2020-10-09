@@ -82,6 +82,8 @@ public:
 	int _principalCtr, _principalFirstFrameIndex, _principalLastFrameIndex;
 	bool _principalAngry;
 
+	char _prefix[20];
+
 	const ObjAnimation *getAnimation(int animIndex);
 
 	void buildDrawList(DrawList &drawList);

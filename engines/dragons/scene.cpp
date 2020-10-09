@@ -115,7 +115,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 	}
 
 	_actorManager->clearActorFlags(2);
-	//TODO sub_8003fadc(); might be fade related
+	//TODO stopAndCloseSceneVab()
 
 	_vm->_cursor->setActorFlag400();
 	_vm->_inventory->setActorFlag400();
@@ -388,7 +388,7 @@ void Scene::draw() {
 					debug(5, "Actor %d %s (%d, %d) w:%d h:%d Priority: %d Scale: %d", actor->_actorID, actor->_actorResource->getFilename(), x,
 						  y,
 						  s->w, s->h, actor->_priorityLayer, actor->_scale);
-						_screen->copyRectToSurface8bpp(*s, actor->getPalette(), x, y, Common::Rect(s->w, s->h), (bool)(actor->_frame->flags & FRAME_FLAG_FLIP_X), actor->isFlagSet(ACTOR_FLAG_8000) ? NONE : NORMAL, actor->_scale);
+					_screen->copyRectToSurface8bpp(*s, actor->getPalette(), x, y, Common::Rect(s->w, s->h), (bool)(actor->_frame->flags & FRAME_FLAG_FLIP_X), actor->isFlagSet(ACTOR_FLAG_8000) ? NONE : NORMAL, actor->_scale);
 					if (_vm->isDebugMode()) {
 						_screen->drawRect(0x7fff, Common::Rect(x, y, x + s->w, y + s->h), actor->_actorID);
 						drawActorNumber(x + s->w, y + 8, actor->_actorID);

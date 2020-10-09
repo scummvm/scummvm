@@ -260,6 +260,12 @@ bool Cast::loadArchive() {
 		debug("STUB: Unhandled VWtc resource");
 	}
 
+	// Tape Key resource. Perhaps a lookup for labels?
+	// TODO: Is this a score resource?
+	if (_castArchive->hasResource(MKTAG('V', 'W', 't', 'k'), -1)) {
+		debug("STUB: Unhandled VWtk resource");
+	}
+
 	// External sound files
 	if (_castArchive->hasResource(MKTAG('S', 'T', 'R', ' '), -1)) {
 		debug("STUB: Unhandled 'STR ' resource");
@@ -312,6 +318,16 @@ bool Cast::loadArchive() {
 	// Film Loop resources
 	if (_castArchive->hasResource(MKTAG('S', 'C', 'V', 'W'), -1)) {
 		debug("STUB: Unhandled 'SCVW' resource");
+	}
+
+	// External Cast Reference resources
+	if (_castArchive->hasResource(MKTAG('S', 'C', 'R', 'F'), -1)) {
+		debug("STUB: Unhandled 'SCRF' resource");
+	}
+
+	// Score Order List resources
+	if (_castArchive->hasResource(MKTAG('S', 'o', 'r', 'd'), -1)) {
+		debug("STUB: Unhandled 'Sord' resource");
 	}
 
 	// Now process STXTs

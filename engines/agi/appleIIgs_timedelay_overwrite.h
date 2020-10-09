@@ -69,6 +69,12 @@ static const AgiAppleIIgsDelayOverwriteRoomEntry appleIIgsDelayOverwriteMH1[] = 
 	{  -1,  -1, -1, -1, false }
 };
 
+static const AgiAppleIIgsDelayOverwriteRoomEntry appleIIgsDelayOverwriteMIXEDUP[] = {
+	{   1,   1, -1,  3, true }, // Jack and Jill cutscene	(issue 11210)
+	{  -1,  -1, -1, -1, false }
+};
+
+
 static const AgiAppleIIgsDelayOverwriteRoomEntry appleIIgsDelayOverwriteSQ2[] = {
 	{   1,   1, -1, -1, false }, // Intro: space ship entering space port, don't touch speed
 	{  -1,  -1, -1, -1, false }
@@ -83,7 +89,7 @@ static const AgiAppleIIgsDelayOverwriteGameEntry appleIIgsDelayOverwriteGameTabl
 	{ GID_KQ4,        2, appleIIgsDelayOverwriteKQ4 },
 	{ GID_LSL1,       2, nullptr }, // Switch Larry 1 to 10 cycles per second (that's around PC Larry 1's "normal" speed
 	{ GID_MH1,        2, appleIIgsDelayOverwriteMH1 },
-	{ GID_MIXEDUP,    2, nullptr },
+	{ GID_MIXEDUP,    2, appleIIgsDelayOverwriteMIXEDUP },
 	{ GID_PQ1,        2, nullptr },
 	{ GID_SQ1,        2, nullptr }, // completed, no issues using these settings
 	{ GID_SQ2,        2, appleIIgsDelayOverwriteSQ2 },

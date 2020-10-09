@@ -28,6 +28,15 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_rational Rational class
+ * @ingroup common
+ *
+ * @brief API for rational class.
+ *
+ * @{
+ */
+
 /** A simple rational class that holds fractions. */
 class Rational {
 public:
@@ -107,6 +116,8 @@ bool operator>(int left, const Rational &right);
 bool operator<(int left, const Rational &right);
 bool operator>=(int left, const Rational &right);
 bool operator<=(int left, const Rational &right);
+
+/** @} */
 
 } // End of namespace Common
 

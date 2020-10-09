@@ -62,6 +62,9 @@
 #include "mohawk/myst_stacks/slides.h"
 #include "mohawk/myst_stacks/stoneship.h"
 
+// Common files for detection & engines
+#include "mohawk/myst_metaengine.h"
+
 namespace Mohawk {
 
 MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription *gamedesc) :
@@ -444,20 +447,8 @@ Common::Error MohawkEngine_Myst::run() {
 	return Common::kNoError;
 }
 
-const MystLanguage *MohawkEngine_Myst::listLanguages() {
-	static const MystLanguage languages[] = {
-	    { Common::EN_ANY,   "english"  },
-	    { Common::FR_FRA,   "french"   },
-	    { Common::DE_DEU,   "german"   },
-	    { Common::PL_POL,   "polish"   },
-	    { Common::ES_ESP,   "spanish"  },
-	    { Common::UNK_LANG, nullptr    }
-	};
-	return languages;
-}
-
 const MystLanguage *MohawkEngine_Myst::getLanguageDesc(Common::Language language) {
-	const MystLanguage *languages = listLanguages();
+	const MystLanguage *languages = MohawkMetaEngine_Myst::listLanguages();
 
 	while (languages->language != Common::UNK_LANG) {
 		if (languages->language == language) {
@@ -533,12 +524,6 @@ void MohawkEngine_Myst::loadArchive(const char *archiveName, const char *languag
 	}
 
 	_mhk.push_back(archive);
-}
-
-void MohawkEngine_Myst::registerDefaultSettings() {
-	ConfMan.registerDefault("playmystflyby", false);
-	ConfMan.registerDefault("zip_mode", false);
-	ConfMan.registerDefault("transition_mode", false);
 }
 
 void MohawkEngine_Myst::applyGameSettings() {

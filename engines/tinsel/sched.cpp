@@ -43,18 +43,26 @@ struct PROCESS_STRUC {
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
-// FIXME: Avoid non-const global vars
+// These vars are reset upon engine destruction
 
-static uint32 g_numSceneProcess;
-static SCNHANDLE g_hSceneProcess;
+static uint32 g_numSceneProcess = 0;
+static SCNHANDLE g_hSceneProcess = 0;
 
-static uint32 g_numGlobalProcess;
-static PROCESS_STRUC *g_pGlobalProcess;
+static uint32 g_numGlobalProcess = 0;
+static PROCESS_STRUC *g_pGlobalProcess = nullptr;
 
 
 /**************************************************************************\
 |***********    Stuff to do with scene and global processes    ************|
 \**************************************************************************/
+
+void ResetVarsSched() {
+	g_numSceneProcess = 0;
+	g_hSceneProcess = 0;
+
+	g_numGlobalProcess = 0;
+	g_pGlobalProcess = nullptr;
+}
 
 /**
  * The code for for restored scene processes.
@@ -107,7 +115,7 @@ void RestoreSceneProcess(INT_CONTEXT *pic) {
 	uint32 i;
 	PROCESS_STRUC	*pStruc;
 
-	pStruc = (PROCESS_STRUC *)LockMem(g_hSceneProcess);
+	pStruc = (PROCESS_STRUC *)_vm->_handle->LockMem(g_hSceneProcess);
 	for (i = 0; i < g_numSceneProcess; i++) {
 		if (FROM_32(pStruc[i].hProcessCode) == pic->hCode) {
 			CoroScheduler.createProcess(PID_PROCESS + i, RestoredProcessProcess,
@@ -135,7 +143,7 @@ void SceneProcessEvent(CORO_PARAM, uint32 procID, TINSEL_EVENT event, bool bWait
 
 	CORO_BEGIN_CODE(_ctx);
 
-	_ctx->pStruc = (PROCESS_STRUC *)LockMem(g_hSceneProcess);
+	_ctx->pStruc = (PROCESS_STRUC *)_vm->_handle->LockMem(g_hSceneProcess);
 	for (i = 0; i < g_numSceneProcess; i++) {
 		if (FROM_32(_ctx->pStruc[i].processId) == procID) {
 			assert(_ctx->pStruc[i].hProcessCode);		// Must have some code to run
@@ -174,7 +182,7 @@ void KillSceneProcess(uint32 procID) {
 	uint32 i;		// Loop counter
 	PROCESS_STRUC	*pStruc;
 
-	pStruc = (PROCESS_STRUC *) LockMem(g_hSceneProcess);
+	pStruc = (PROCESS_STRUC *)_vm->_handle->LockMem(g_hSceneProcess);
 	for (i = 0; i < g_numSceneProcess; i++) {
 		if (FROM_32(pStruc[i].processId) == procID) {
 			CoroScheduler.killMatchingProcess(PID_PROCESS + i, -1);

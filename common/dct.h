@@ -38,10 +38,19 @@
 namespace Common {
 
 /**
+ * @defgroup common_dct Discrete Cosine Transforms
+ * @ingroup common
+ *
+ * @brief  Discrete Cosine Transforms.
+ *
+ * @{
+ */
+
+/**
  * (Inverse) Discrete Cosine Transforms.
  *
  * Used in engines:
- *  - scumm
+ *  - Scumm
  */
 class DCT {
 public:
@@ -73,6 +82,8 @@ private:
 	void calcDCTIII(float *data);
 	void calcDSTI  (float *data);
 };
+
+/** @} */
 
 } // End of namespace Common
 

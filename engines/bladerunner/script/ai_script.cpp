@@ -358,7 +358,7 @@ void AIScripts::setAnimationState(int actor, int animationState, int animationFr
 
 
 void AIScripts::queryAnimationState(int actor, int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-		if (actor >= _actorCount) {
+	if (actor >= _actorCount) {
 		return;
 	}
 

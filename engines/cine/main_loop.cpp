@@ -103,13 +103,13 @@ static void processEvent(Common::Event &event) {
 			}
 			break;
 		case Common::KEYCODE_F3:
-			if (allowPlayerInput) {
+			if (allowPlayerInput && !inMenu) {
 				playerCommand = 2; // INVENTORY
 				makeCommandLine();
 			}
 			break;
 		case Common::KEYCODE_F4:
-			if (allowPlayerInput) {
+			if (allowPlayerInput && !inMenu) {
 				playerCommand = 3; // USE
 				makeCommandLine();
 			}
@@ -242,9 +242,9 @@ void manageEvents(CallSource callSource, EventTarget eventTarget, bool useMaxMou
 	bool updateAudio = false;
 
 	do {
-		Common::Event event;
+		Common::Event event = Common::Event();
 		int eventsCheckedBeforePolling = eventsChecked;
-		while (!foundTarget && !frameEnded && eventMan->pollEvent(event)) {
+		while (!foundTarget && !frameEnded && (eventMan->pollEvent(event) || eventsChecked == 0)) {
 			processEvent(event);
 			eventsChecked++;
 			maxMouseLeft = MAX<uint16>(mouseLeft, maxMouseLeft);
@@ -287,12 +287,14 @@ void manageEvents(CallSource callSource, EventTarget eventTarget, bool useMaxMou
 			case UNTIL_MOUSE_BUTTON_DOWN_OR_KEY_INPUT:
 				foundTarget = mouseButtonDown || keysPressed < g_cine->_keyInputList.size();
 				break;
+			default:
+				break;
 			}
 
 			uint32 now = g_system->getMillis();
 			frameEnded = (now >= frameEnd);
 			waitEnded = (now >= waitEnd);
-			
+
 			if (foundTarget) {
 				switch (eventTarget) {
 				case UNTIL_MOUSE_BUTTON_UP_DOWN_UP:
@@ -311,6 +313,8 @@ void manageEvents(CallSource callSource, EventTarget eventTarget, bool useMaxMou
 					eventTarget = UNTIL_WAIT_ENDED;
 					checkWaitEnd = true;
 					foundTarget = false;
+					break;
+				default:
 					break;
 				}
 			}
@@ -336,14 +340,6 @@ void manageEvents(CallSource callSource, EventTarget eventTarget, bool useMaxMou
 		}
 
 		foundTarget |= (checkWaitEnd && waitEnded);
-
-		if (!foundTarget && eventsChecked == 0) {
-			// If there are no events to check then
-			// add an empty event to check the current state.
-			eventMan->pushEvent(Common::Event());
-			continue;
-		}
-		
 		updateScreen = updateAudio = (foundTarget || frameEnded);
 
 		if (updateScreen) {
@@ -354,12 +350,9 @@ void manageEvents(CallSource callSource, EventTarget eventTarget, bool useMaxMou
 				// responsive by updating it here.
 				if (allowPlayerInput && playerCommand != -1 && !mouseLeft && !mouseRight) {
 					// A player command is given, left and right mouse buttons are up
-					Common::String oldCommand = renderer->getCommand();
 					mousePos = eventMan->getMousePos();
 					playerCommandMouseLeftRightUp(mousePos.x, mousePos.y);
-					if (!oldCommand.equals(renderer->getCommand())) {
-						renderer->drawCommand();
-					}
+					renderer->drawCommand();
 				}
 
 				renderer->blit();
@@ -443,6 +436,8 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 		forbidBgPalReload = 0;
 		gfxFadeOutCompleted = 0;
 		gfxFadeInRequested = 0;
+		safeControlsLastAccessedMs = 0;
+		lastSafeControlObjIdx = -1;
 		isDrawCommandEnabled = 0;
 		waitForPlayerClick = 0;
 		menuCommandLen = 0;

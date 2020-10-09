@@ -91,7 +91,7 @@ Image *scale2xBilinear(Image *src, int scale, int n) {
 	Image *dest;
 
 	/* this scaler works only with images scaled by 2x */
-	ASSERT(scale == 2, "invalid scale: %d", scale);
+	assertMsg(scale == 2, "invalid scale: %d", scale);
 
 	dest = Image::create(src->width() * scale, src->height() * scale, false, Image::HARDWARE);
 	if (!dest)
@@ -193,7 +193,7 @@ Image *scale2xSaI(Image *src, int scale, int N) {
 	Image *dest;
 
 	/* this scaler works only with images scaled by 2x */
-	ASSERT(scale == 2, "invalid scale: %d", scale);
+	assertMsg(scale == 2, "invalid scale: %d", scale);
 
 	dest = Image::create(src->width() * scale, src->height() * scale, false, Image::HARDWARE);
 	if (!dest)
@@ -359,7 +359,7 @@ Image *scaleScale2x(Image *src, int scale, int n) {
 	Image *dest;
 
 	/* this scaler works only with images scaled by 2x or 3x */
-	ASSERT(scale == 2 || scale == 3, "invalid scale: %d", scale);
+	assertMsg(scale == 2 || scale == 3, "invalid scale: %d", scale);
 
 	dest = Image::create(src->width() * scale, src->height() * scale, src->isIndexed(), Image::HARDWARE);
 	if (!dest)

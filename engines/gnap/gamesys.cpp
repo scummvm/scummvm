@@ -396,11 +396,11 @@ void GameSys::drawBitmap(int resourceId) {
 
 	Graphics::Surface *bmpSurface = loadBitmap(resourceId);
 	if (!bmpSurface)
-		error("GameSys::drawBitmap() Error loading the bitmap");
+		error("GameSys::drawBitmap(%08X) Error loading the bitmap", resourceId);
 
 	if (bmpSurface->format != _backgroundSurface->format
 		|| bmpSurface->w != _backgroundSurface->w || bmpSurface->h != _backgroundSurface->h)
-		error("GameSys::drawBitmap() Different bitmap properties than current background");
+		error("GameSys::drawBitmap(%08X) Different bitmap properties than current background", resourceId);
 
 	byte *src = (byte *)bmpSurface->getPixels();
 	byte *dst = (byte *)_backgroundSurface->getPixels();

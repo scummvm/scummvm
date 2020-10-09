@@ -246,15 +246,18 @@ Common::String convertPath(Common::String &path) {
 	if (path.empty())
 		return path;
 
-	if (!path.contains(':') && !path.contains('/') && !path.contains('\\')) {
+	if (!path.contains(':') && !path.contains('/') && !path.contains('\\') && !path.contains('@')) {
 		return path;
 	}
 
 	Common::String res;
 	uint32 idx = 0;
 
-	if (path.hasPrefix("::")) {
+	if (path.hasPrefix("::")) { // Root of the filesystem
 		res = "..\\";
+		idx = 2;
+	} else if (path.hasPrefix("@:")) { // Root of the game
+		res = ".\\";
 		idx = 2;
 	} else {
 		res = ".\\";

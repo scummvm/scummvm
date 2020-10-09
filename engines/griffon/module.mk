@@ -4,7 +4,6 @@ MODULE_OBJS := \
 	combat.o \
 	console.o \
 	cutscenes.o \
-	detection.o \
 	dialogs.o \
 	draw.o \
 	engine.o \
@@ -12,6 +11,7 @@ MODULE_OBJS := \
 	griffon.o \
 	input.o \
 	logic.o \
+	metaengine.o \
 	resources.o \
 	saveload.o \
 	sound.o
@@ -26,3 +26,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o

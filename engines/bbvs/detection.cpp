@@ -20,14 +20,10 @@
  *
  */
 
-#include "bbvs/bbvs.h"
-
-#include "common/config-manager.h"
 #include "engines/advancedDetector.h"
-#include "common/savefile.h"
-#include "common/system.h"
 #include "base/plugins.h"
-#include "graphics/thumbnail.h"
+
+#include "bbvs/detection.h"
 
 static const PlainGameDescriptor bbvsGames[] = {
 	{ "bbvs", "Beavis and Butt-head in Virtual Stupidity" },
@@ -43,25 +39,37 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("vspr0001.vnm", "7ffe9b9e7ca322db1d48e86f5130578e", 1166628),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NOMIDI)
 	},
+
 	{
 		"bbvs",
-		0,
+		"Demo",
 		AD_ENTRY1s("vspr0007.vnm", "5db44940fa93fdd5becb5c2a5ded7478", 242376),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_DEMO,
+		ADGF_DEMO | ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NOMIDI)
 	},
+
+	{
+		"bbvs",
+		"Loogie Demo",
+		AD_ENTRY1s("BBLOOGIE.000", "607d3bf55ec6458dce484473b1eecb4d", 324416),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		GF_LOOGIE_DEMO | ADGF_DEMO | ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NOMIDI)
+	},
+
 	{
 		"bbvs",
 		0,
 		AD_ENTRY1s("vspr0001.vnm", "91c76b1048f93208cd7b1a05ebccb408", 1176976),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
-		GF_GUILANGSWITCH | ADGF_NO_FLAGS,
+		GF_GUILANGSWITCH | ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NOMIDI)
 	},
 
@@ -75,9 +83,9 @@ static const char * const directoryGlobs[] = {
 	0
 };
 
-class BbvsMetaEngine : public AdvancedMetaEngine {
+class BbvsMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	BbvsMetaEngine() : AdvancedMetaEngine(Bbvs::gameDescriptions, sizeof(ADGameDescription), bbvsGames) {
+	BbvsMetaEngineStatic() : AdvancedMetaEngineStatic(Bbvs::gameDescriptions, sizeof(ADGameDescription), bbvsGames) {
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 	}
@@ -93,93 +101,6 @@ public:
 	const char *getOriginalCopyright() const override {
 		return "(C) 1995 Viacom New Media";
 	}
-
-	bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-	int getMaximumSaveSlot() const override;
-	SaveStateList listSaves(const char *target) const override;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	void removeSaveState(const char *target, int slot) const override;
 };
 
-bool BbvsMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-	    (f == kSupportsListSaves) ||
-	    (f == kSupportsDeleteSave) ||
-	    (f == kSupportsLoadingDuringStartup) ||
-	    (f == kSavesSupportMetaInfo) ||
-	    (f == kSavesSupportThumbnail) ||
-	    (f == kSavesSupportCreationDate) ||
-		(f == kSimpleSavesNames);
-}
-
-void BbvsMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
-}
-
-int BbvsMetaEngine::getMaximumSaveSlot() const {
-	return 999;
-}
-
-SaveStateList BbvsMetaEngine::listSaves(const char *target) const {
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Bbvs::BbvsEngine::SaveHeader header;
-	Common::String pattern = target;
-	pattern += ".###";
-	Common::StringArray filenames;
-	filenames = saveFileMan->listSavefiles(pattern.c_str());
-	SaveStateList saveList;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(file->c_str() + file->size() - 3);
-		if (slotNum >= 0 && slotNum <= 999) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
-			if (in) {
-				if (Bbvs::BbvsEngine::readSaveHeader(in, header) == Bbvs::BbvsEngine::kRSHENoError) {
-					saveList.push_back(SaveStateDescriptor(slotNum, header.description));
-				}
-				delete in;
-			}
-		}
-	}
-	// Sort saves based on slot number.
-	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
-	return saveList;
-}
-
-SaveStateDescriptor BbvsMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::String filename = Bbvs::BbvsEngine::getSavegameFilename(target, slot);
-	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
-	if (in) {
-		Bbvs::BbvsEngine::SaveHeader header;
-		Bbvs::BbvsEngine::kReadSaveHeaderError error;
-		error = Bbvs::BbvsEngine::readSaveHeader(in, header, false);
-		delete in;
-		if (error == Bbvs::BbvsEngine::kRSHENoError) {
-			SaveStateDescriptor desc(slot, header.description);
-			// Slot 0 is used for the "Continue" save
-			desc.setDeletableFlag(slot != 0);
-			desc.setWriteProtectedFlag(slot == 0);
-			desc.setThumbnail(header.thumbnail);
-			desc.setSaveDate(header.saveDate & 0xFFFF, (header.saveDate >> 16) & 0xFF, (header.saveDate >> 24) & 0xFF);
-			desc.setSaveTime((header.saveTime >> 16) & 0xFF, (header.saveTime >> 8) & 0xFF);
-			desc.setPlayTime(header.playTime * 1000);
-			return desc;
-		}
-	}
-	return SaveStateDescriptor();
-}
-
-bool BbvsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc) {
-		*engine = new Bbvs::BbvsEngine(syst, desc);
-	}
-	return desc != 0;
-}
-
-#if PLUGIN_ENABLED_DYNAMIC(BBVS)
-	REGISTER_PLUGIN_DYNAMIC(BBVS, PLUGIN_TYPE_ENGINE, BbvsMetaEngine);
-#else
-	REGISTER_PLUGIN_STATIC(BBVS, PLUGIN_TYPE_ENGINE, BbvsMetaEngine);
-#endif
+REGISTER_PLUGIN_STATIC(BBVS_DETECTION, PLUGIN_TYPE_METAENGINE, BbvsMetaEngineStatic);

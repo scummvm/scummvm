@@ -25,10 +25,20 @@
 
 #include "common/scummsys.h"
 #include "common/str-enc.h"
+#include "common/ustr.h"
 
 #include <stdarg.h>
 
 namespace Common {
+
+/**
+ * @defgroup common_str Strings
+ * @ingroup common
+ *
+ * @brief API for working with strings.
+ *
+ * @{
+ */
 
 class U32String;
 
@@ -128,6 +138,9 @@ public:
 	/** Construct a string consisting of the given character. */
 	explicit String(char c);
 
+	/** Construct a new string from the given u32 string. */
+	String(const U32String &str);
+
 	~String();
 
 	String &operator=(const char *str);
@@ -172,6 +185,7 @@ public:
 	bool contains(const String &x) const;
 	bool contains(const char *x) const;
 	bool contains(char x) const;
+	bool contains(uint32 x) const;
 
 	/** Return uint64 corrensponding to String's contents. */
 	uint64 asUint64() const;
@@ -560,6 +574,8 @@ size_t strnlen(const char *src, size_t maxSize);
  * @return The converted string.
  */
 String toPrintable(const String &src, bool keepNewLines = true);
+
+/** @} */
 
 } // End of namespace Common
 

@@ -78,8 +78,7 @@ void CdIntToPos_0(uint32 param_1) { //, byte *param_2)
 
 void SoundManager::playSpeech(uint32 textIndex) {
 	if (isSpeechPlaying()) {
-//		_vm->_mixer->stopHandle(_speechHandle);
-		return;
+		_vm->_mixer->stopHandle(_speechHandle);
 	}
 
 	// Reduce music volume while playing dialog.
@@ -267,6 +266,9 @@ Audio::QueuingAudioStream *SoundManager::PSXAudioTrack::createNewAudioStream(Com
 
 SoundManager::SoundManager(DragonsEngine *vm, BigfileArchive *bigFileArchive, DragonRMS *dragonRMS)
 		: _vm(vm),
+		  _sfxVolume(0),
+		  _musicVolume(0),
+		  _speechVolume(0),
 		  _bigFileArchive(bigFileArchive),
 		  _dragonRMS(dragonRMS) {
 	_dat_8006bb60_sound_related = 0;
@@ -276,9 +278,6 @@ SoundManager::SoundManager(DragonsEngine *vm, BigfileArchive *bigFileArchive, Dr
 	if (ConfMan.hasKey("mute")) {
 		allSoundIsMuted = ConfMan.getBool("mute");
 	}
-	_speechVolume = ConfMan.getInt("speech_volume");
-	_sfxVolume = ConfMan.getInt("sfx_volume");
-	_musicVolume = ConfMan.getInt("music_volume");
 
 	if (ConfMan.hasKey("speech_mute") && !allSoundIsMuted) {
 		_vm->_mixer->muteSoundType(_vm->_mixer->kSpeechSoundType, ConfMan.getBool("speech_mute"));
@@ -295,7 +294,8 @@ SoundManager::SoundManager(DragonsEngine *vm, BigfileArchive *bigFileArchive, Dr
 	SomeInitSound_FUN_8003f64c();
 	initVabData();
 	_midiPlayer = new MidiMusicPlayer(_bigFileArchive, _vabMusx);
-	_midiPlayer->setVolume(_musicVolume);
+
+	syncSoundSettings();
 }
 
 SoundManager::~SoundManager() {
@@ -315,64 +315,64 @@ SoundManager::~SoundManager() {
 
 void SoundManager::SomeInitSound_FUN_8003f64c() {
 	// TODO: Check if this changes on different game versions?
-	memset(_soundArr, 0x10, sizeof(_soundArr));
+	memset(_sfxVolumeTbl, 0x10, sizeof(_sfxVolumeTbl));
 
-	_soundArr[192] = 0x0b;
-	_soundArr[193] = 0x0b;
-	_soundArr[226] = _soundArr[226] | 0x80u;
-	_soundArr[229] = 0x0b;
-	_soundArr[230] = 0x0b;
-	_soundArr[450] = 0x0b;
-	_soundArr[451] = 0x0b;
-	_soundArr[514] = 0x8b;
-	_soundArr[515] = 0x0b;
-	_soundArr[516] = 0x0b;
-	_soundArr[578] = 0x0b;
-	_soundArr[579] = 0x0b;
-	_soundArr[580] = 0x0b;
-	_soundArr[611] = 0x0b;
-	_soundArr[674] = 0x8b;
-	_soundArr[675] = 0x88;
-	_soundArr[711] = 0x08;
-	_soundArr[866] = 0x0b;
-	_soundArr[896] = 0x0b;
-	_soundArr[897] = _soundArr[897] | 0x80u;
-	_soundArr[930] = _soundArr[930] | 0x80u;
-	_soundArr[934] = 0x8b;
-	_soundArr[935] = 0x8b;
-	_soundArr[936] = 0x0b;
-	_soundArr[937] = 0x88;
-	_soundArr[941] = 0x0b;
-	_soundArr[964] = 0x0b;
-	_soundArr[995] = _soundArr[995] | 0x80u;
-	_soundArr[1027] = 0x08;
-	_soundArr[1056] = 0x8b;
-	_soundArr[1059] = _soundArr[1059] | 0x80u;
-	_soundArr[1122] = 0x0b;
-	_soundArr[1250] = 0x08;
-	_soundArr[1252] = 0x0b;
-	_soundArr[1256] = 0x0b;
-	_soundArr[1257] = 0x08;
-	_soundArr[1258] = 0x0b;
-	_soundArr[1284] = 0x0b;
-	_soundArr[1378] = 0x0b;
-	_soundArr[1379] = _soundArr[1379] | 0x80u;
-	_soundArr[1380] = 0x0b;
-	_soundArr[1385] = 0x0b;
-	_soundArr[1443] = 0x8b;
-	_soundArr[1444] = _soundArr[1444] | 0x80u;
-	_soundArr[1445] = _soundArr[1445] | 0x80u;
-	_soundArr[1446] = 0x8b;
-	_soundArr[1472] = 0x8b;
-	_soundArr[1508] = _soundArr[1508] | 0x80u;
-	_soundArr[1575] = 0x08;
-	_soundArr[1576] = 0x08;
-	_soundArr[1577] = 0x08;
-	_soundArr[1604] = 0x08;
-	_soundArr[1605] = 0x08;
-	_soundArr[1610] = 0x0b;
-	_soundArr[1611] = 0x0b;
-	_soundArr[1612] = 0x0b;
+	_sfxVolumeTbl[192] = 0x0b;
+	_sfxVolumeTbl[193] = 0x0b;
+	_sfxVolumeTbl[226] = _sfxVolumeTbl[226] | 0x80u;
+	_sfxVolumeTbl[229] = 0x0b;
+	_sfxVolumeTbl[230] = 0x0b;
+	_sfxVolumeTbl[450] = 0x0b;
+	_sfxVolumeTbl[451] = 0x0b;
+	_sfxVolumeTbl[514] = 0x8b;
+	_sfxVolumeTbl[515] = 0x0b;
+	_sfxVolumeTbl[516] = 0x0b;
+	_sfxVolumeTbl[578] = 0x0b;
+	_sfxVolumeTbl[579] = 0x0b;
+	_sfxVolumeTbl[580] = 0x0b;
+	_sfxVolumeTbl[611] = 0x0b;
+	_sfxVolumeTbl[674] = 0x8b;
+	_sfxVolumeTbl[675] = 0x88;
+	_sfxVolumeTbl[711] = 0x08;
+	_sfxVolumeTbl[866] = 0x0b;
+	_sfxVolumeTbl[896] = 0x0b;
+	_sfxVolumeTbl[897] = _sfxVolumeTbl[897] | 0x80u;
+	_sfxVolumeTbl[930] = _sfxVolumeTbl[930] | 0x80u;
+	_sfxVolumeTbl[934] = 0x8b;
+	_sfxVolumeTbl[935] = 0x8b;
+	_sfxVolumeTbl[936] = 0x0b;
+	_sfxVolumeTbl[937] = 0x88;
+	_sfxVolumeTbl[941] = 0x0b;
+	_sfxVolumeTbl[964] = 0x0b;
+	_sfxVolumeTbl[995] = _sfxVolumeTbl[995] | 0x80u;
+	_sfxVolumeTbl[1027] = 0x08;
+	_sfxVolumeTbl[1056] = 0x8b;
+	_sfxVolumeTbl[1059] = _sfxVolumeTbl[1059] | 0x80u;
+	_sfxVolumeTbl[1122] = 0x0b;
+	_sfxVolumeTbl[1250] = 0x08;
+	_sfxVolumeTbl[1252] = 0x0b;
+	_sfxVolumeTbl[1256] = 0x0b;
+	_sfxVolumeTbl[1257] = 0x08;
+	_sfxVolumeTbl[1258] = 0x0b;
+	_sfxVolumeTbl[1284] = 0x0b;
+	_sfxVolumeTbl[1378] = 0x0b;
+	_sfxVolumeTbl[1379] = _sfxVolumeTbl[1379] | 0x80u;
+	_sfxVolumeTbl[1380] = 0x0b;
+	_sfxVolumeTbl[1385] = 0x0b;
+	_sfxVolumeTbl[1443] = 0x8b;
+	_sfxVolumeTbl[1444] = _sfxVolumeTbl[1444] | 0x80u;
+	_sfxVolumeTbl[1445] = _sfxVolumeTbl[1445] | 0x80u;
+	_sfxVolumeTbl[1446] = 0x8b;
+	_sfxVolumeTbl[1472] = 0x8b;
+	_sfxVolumeTbl[1508] = _sfxVolumeTbl[1508] | 0x80u;
+	_sfxVolumeTbl[1575] = 0x08;
+	_sfxVolumeTbl[1576] = 0x08;
+	_sfxVolumeTbl[1577] = 0x08;
+	_sfxVolumeTbl[1604] = 0x08;
+	_sfxVolumeTbl[1605] = 0x08;
+	_sfxVolumeTbl[1610] = 0x0b;
+	_sfxVolumeTbl[1611] = 0x0b;
+	_sfxVolumeTbl[1612] = 0x0b;
 }
 
 void SoundManager::initVabData() {
@@ -415,39 +415,37 @@ void SoundManager::playOrStopSound(uint16 soundId) {
 void SoundManager::playSound(uint16 soundId, uint16 volumeId) {
 	byte volume = 0;
 
-	volume = _soundArr[volumeId];
-	_soundArr[volumeId] = _soundArr[volumeId] | 0x40u;      // Set bit 0x40
+	volume = _sfxVolumeTbl[volumeId] & 0x1fu;
+	_sfxVolumeTbl[volumeId] = _sfxVolumeTbl[volumeId] | 0x40u;      // Set bit 0x40
 
 	VabSound *vabSound = ((soundId & 0x8000u) != 0) ? _vabGlob : _vabMsf;
-
-	// TODO: CdVolume!
-	int cdVolume = 1;
-	int newVolume = cdVolume * volume;
-	if (newVolume < 0) {
-		newVolume += 0xf;
-	}
 
 	uint16 realId = soundId & 0x7fffu;
 
 	uint16 program = realId >> 4u;
 	uint16 key = ((realId & 0xfu) << 1u | 0x40u);
 
-	// TODO: Volume
 	if (isVoicePlaying(soundId)) {
 		stopVoicePlaying(soundId);
 	}
 
-	int16 vagID = vabSound->getVagID(program, key);
-	if (vagID >= 0) {
+	if (vabSound->hasSound(program, key)) {
 		Audio::SoundHandle *handle = getVoiceHandle(soundId);
 		if (handle) {
-			_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, handle, vabSound->getAudioStream(program, vagID), -1, _sfxVolume);
+			uint8 adjustedVolume = (uint8)((float)_sfxVolume * ((float)volume / 31));
+			debug(3, "Playing SFX: Master Volume %d  Adjusted Volume %d diff %f%%", _sfxVolume, adjustedVolume, 100 * ((float)volume / 31));
+			Audio::AudioStream *audioStream = vabSound->getAudioStream(program, key);
+			if (audioStream) {
+				_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, handle, audioStream, -1, adjustedVolume);
+			}
 		}
+	} else {
+		warning("Sound not found Program: %d, key %d", program, key);
 	}
 }
 
 void SoundManager::stopSound(uint16 soundId, uint16 volumeId) {
-	_soundArr[volumeId] = _soundArr[volumeId] & 0xbfu;      // Clear bit 0x40
+	_sfxVolumeTbl[volumeId] = _sfxVolumeTbl[volumeId] & 0xbfu;      // Clear bit 0x40
 
 //	uint16 vabId = getVabFromSoundId(soundId);
 
@@ -536,6 +534,14 @@ void SoundManager::playMusic(int16 song) {
 	Common::MemoryReadStream *seq = new Common::MemoryReadStream(seqData, dataSize, DisposeAfterUse::YES);
 	_midiPlayer->playSong(seq);
 	delete seq;
+}
+
+void SoundManager::syncSoundSettings() {
+	_musicVolume = CLIP<int>(ConfMan.getInt("music_volume"), 0, 255);
+	_sfxVolume = CLIP<int>(ConfMan.getInt("sfx_volume"), 0, 255);
+	_speechVolume = CLIP<int>(ConfMan.getInt("speech_volume"), 0, 255);
+
+	_midiPlayer->setVolume(_musicVolume);
 }
 
 } // End of namespace Dragons

@@ -28,13 +28,25 @@
 #include "common/textconsole.h" // For error()
 #include "common/memory.h"
 
+#ifdef USE_CXX11
+#include "common/initializer_list.h"
+#endif
+
 namespace Common {
 
 /**
+ * @defgroup common_array Arrays
+ * @ingroup common
+ *
+ * @brief  Functions for replacing std arrays.
+ * @{
+ */
+
+/**
  * This class implements a dynamically sized container, which
- * can be accessed similar to a regular C++ array. Accessing
+ * can be accessed similarly to a regular C++ array. Accessing
  * elements is performed in constant time (like with plain arrays).
- * In addition, one can append, insert and remove entries (this
+ * In addition, you can append, insert, and remove entries (this
  * is the 'dynamic' part). Doing that in general takes time
  * proportional to the number of elements in the array.
  *
@@ -60,7 +72,7 @@ public:
 	Array() : _capacity(0), _size(0), _storage(nullptr) {}
 
 	/**
-	 * Constructs an array with `count` default-inserted instances of T. No
+	 * Construct an array with `count` default-inserted instances of @p T. No
 	 * copies are made.
 	 */
 	explicit Array(size_type count) : _size(count) {
@@ -70,7 +82,7 @@ public:
 	}
 
 	/**
-	 * Constructs an array with `count` copies of elements with value `value`.
+	 * Construct an array with `count` copies of elements with value `value`.
 	 */
 	Array(size_type count, const T &value) : _size(count) {
 		allocCapacity(count);
@@ -83,6 +95,26 @@ public:
 			uninitialized_copy(array._storage, array._storage + _size, _storage);
 		}
 	}
+
+#ifdef USE_CXX11
+	/**
+	 * Constructs an array as a copy of the given array using the c++11 move semantic.
+	 */
+	Array(Array<T> &&old) : _capacity(old._capacity), _size(old._size), _storage(old._storage) {
+		old._storage = nullptr;
+		old._capacity = 0;
+		old._size = 0;
+	}
+
+	/**
+	 * Constructs an array using list initialization.
+	 */
+	Array(std::initializer_list<T> list) : _size(list.size()) {
+		allocCapacity(list.size());
+		if (_storage)
+			Common::uninitialized_copy(list.begin(), list.end(), _storage);
+	}
+#endif
 
 	/**
 	 * Construct an array by copying data from a regular array.
@@ -100,7 +132,7 @@ public:
 		_capacity = _size = 0;
 	}
 
-	/** Appends element to the end of the array. */
+	/** Append an element to the end of the array. */
 	void push_back(const T &element) {
 		if (_size + 1 <= _capacity)
 			new ((void *)&_storage[_size++]) T(element);
@@ -108,6 +140,7 @@ public:
 			insert_aux(end(), &element, &element + 1);
 	}
 
+    /** Append an element to the end of the array. */
 	void push_back(const Array<T> &array) {
 		if (_size + array.size() <= _capacity) {
 			uninitialized_copy(array.begin(), array.end(), end());
@@ -116,7 +149,7 @@ public:
 			insert_aux(end(), array.begin(), array.end());
 	}
 
-	/** Removes the last element of the array. */
+	/** Remove the last element of the array. */
 	void pop_back() {
 		assert(_size > 0);
 		_size--;
@@ -124,35 +157,35 @@ public:
 		_storage[_size].~T();
 	}
 
-	/** Returns a pointer to the underlying memory serving as element storage. */
+	/** Return a pointer to the underlying memory serving as element storage. */
 	const T *data() const {
 		return _storage;
 	}
 
-	/** Returns a pointer to the underlying memory serving as element storage. */
+	/** Return a pointer to the underlying memory serving as element storage. */
 	T *data() {
 		return _storage;
 	}
 
-	/** Returns a reference to the first element of the array. */
+	/** Return a reference to the first element of the array. */
 	T &front() {
 		assert(_size > 0);
 		return _storage[0];
 	}
 
-	/** Returns a reference to the first element of the array. */
+	/** Return a reference to the first element of the array. */
 	const T &front() const {
 		assert(_size > 0);
 		return _storage[0];
 	}
 
-	/** Returns a reference to the last element of the array. */
+	/** Return a reference to the last element of the array. */
 	T &back() {
 		assert(_size > 0);
 		return _storage[_size-1];
 	}
 
-	/** Returns a reference to the last element of the array. */
+	/** Return a reference to the last element of the array. */
 	const T &back() const {
 		assert(_size > 0);
 		return _storage[_size-1];
@@ -170,7 +203,7 @@ public:
 	}
 
 	/**
-	 * Inserts element before pos.
+	 * Insert an element before @p pos.
 	 */
 	void insert(iterator pos, const T &element) {
 		insert_aux(pos, &element, &element + 1);
@@ -209,6 +242,24 @@ public:
 
 		return *this;
 	}
+
+#ifdef USE_CXX11
+	Array &operator=(Array<T> &&old) {
+		if (this == &old)
+			return *this;
+
+		freeStorage(_storage, _size);
+		_capacity = old._capacity;
+		_size = old._size;
+		_storage = old._storage;
+
+		old._storage = nullptr;
+		old._capacity = 0;
+		old._size = 0;
+
+		return *this;
+	}
+#endif
 
 	size_type size() const {
 		return _size;
@@ -325,7 +376,7 @@ protected:
 	 * Unlike std::vector::insert, this method does not accept
 	 * arbitrary iterators, mainly because our iterator system is
 	 * seriously limited and does not distinguish between input iterators,
-	 * output iterators, forward iterators or random access iterators.
+	 * output iterators, forward iterators, or random access iterators.
 	 *
 	 * So, we simply restrict to Array iterators. Extending this to arbitrary
 	 * random access iterators would be trivial.
@@ -352,7 +403,7 @@ protected:
 				uninitialized_copy(oldStorage, oldStorage + idx, _storage);
 				// Copy the data we insert
 				uninitialized_copy(first, last, _storage + idx);
-				// Afterwards copy the old data from the position where we
+				// Afterwards, copy the old data from the position where we
 				// insert.
 				uninitialized_copy(oldStorage + idx, oldStorage + _size, _storage + idx + n);
 
@@ -390,20 +441,21 @@ protected:
 };
 
 /**
- * Double linked list with sorted nodes.
+ * Array with sorted nodes.
  */
-template<class T>
+template<class T, typename CompareArgType = const void *>
 class SortedArray : public Array<T> {
 public:
+	typedef int (*Comparator)(CompareArgType, CompareArgType);
 	typedef T *iterator;
 	typedef uint size_type;
 
-	SortedArray(int (*comparator)(const void *, const void *)) {
+	SortedArray(Comparator comparator) {
 		_comparator = comparator;
 	}
 
 	/**
-	 * Inserts element at the sorted position.
+	 * Insert an element at the sorted position.
 	 */
 	void insert(const T &element) {
 		if (!this->_size) {
@@ -435,7 +487,7 @@ private:
 	// Based on code Copyright (C) 2008-2009 Ksplice, Inc.
 	// Author: Tim Abbott <tabbott@ksplice.com>
 	// Licensed under GPLv2+
-	T *bsearchMin(void *key) {
+	T *bsearchMin(CompareArgType key) {
 		uint start_ = 0, end_ = this->_size;
 		int result;
 
@@ -445,17 +497,17 @@ private:
 			result = this->_comparator(key, this->_storage[mid]);
 			if (result < 0)
 				end_ = mid;
-			else if (result > 0)
-				start_ = mid + 1;
 			else
-				return &this->_storage[mid];
+				start_ = mid + 1;
 		}
 
 		return &this->_storage[start_];
 	}
 
-	int (*_comparator)(const void *, const void *);
+	Comparator _comparator;
 };
+
+/** @} */
 
 } // End of namespace Common
 

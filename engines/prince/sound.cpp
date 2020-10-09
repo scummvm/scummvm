@@ -94,6 +94,8 @@ bool PrinceEngine::loadVoice(uint32 slot, uint32 sampleSlot, const Common::Strin
 	if (getFeatures() & GF_NOVOICES)
 		return false;
 
+	_missingVoice = false;
+
 	debugEngine("Loading wav %s slot %d", streamName.c_str(), slot);
 
 	if (slot >= kMaxTexts) {
@@ -105,6 +107,9 @@ bool PrinceEngine::loadVoice(uint32 slot, uint32 sampleSlot, const Common::Strin
 	Common::SeekableReadStream *sampleStream = SearchMan.createReadStreamForMember(streamName);
 	if (sampleStream == nullptr) {
 		warning("loadVoice: Can't open %s", streamName.c_str());
+		_missingVoice = true;	// Insert END tag if needed
+		_textSlots[slot]._time = 1; // Set phrase time to none
+		_mainHero->_talkTime = 1;
 		return false;
 	}
 

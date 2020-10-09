@@ -54,6 +54,8 @@ void Logic::initVariables() {
 	_lastObstacle = 0;
 	_help = false;
 	_eye = false;
+	_fstFwd = false;
+
 	for (int i = 0; i < 99; i++)
 		_nodes[i] = 0;
 	_currMap = 0;
@@ -154,7 +156,7 @@ void Logic::initOpcodes() {
 	if (_vm->isDemo())
 		initOpcodesDemo();
 	else
-		initOpcodesFull();	
+		initOpcodesFull();
 }
 
 void Logic::initOpcodesDemo() {
@@ -520,7 +522,7 @@ void Logic::gameHelp() {
 		break;
 	case 0x245: {
 		// Show Credits
-		
+
 		_vm->fadeToBlack1();
 		// The demo isn't saving pMovie.
 		// It's obviously a bug and this behavior wasn't kept in ScummVM

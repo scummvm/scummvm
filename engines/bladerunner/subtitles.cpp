@@ -270,7 +270,7 @@ void Subtitles::loadOuttakeSubsText(const Common::String &outtakesName, int fram
  * Used for debug purposes mainly.
  */
 void Subtitles::setGameSubsText(Common::String dbgQuote, bool forceShowWhenNoSpeech) {
-	_currentText = _useUTF8 ? Common::convertUtf8ToUtf32(dbgQuote) : dbgQuote;
+	_currentText = _useUTF8 ? Common::convertUtf8ToUtf32(dbgQuote) : Common::U32String(dbgQuote);
 	_forceShowWhenNoSpeech = forceShowWhenNoSpeech; // overrides not showing subtitles when no one is speaking
 }
 

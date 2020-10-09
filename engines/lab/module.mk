@@ -3,7 +3,6 @@ MODULE := engines/lab
 MODULE_OBJS := \
 	anim.o \
 	console.o \
-	detection.o \
 	dispman.o \
 	engine.o \
 	eventman.o \
@@ -13,6 +12,7 @@ MODULE_OBJS := \
 	lab.o \
 	labsets.o \
 	map.o \
+	metaengine.o \
 	music.o \
 	processroom.o \
 	resource.o \
@@ -28,3 +28,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o

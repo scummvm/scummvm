@@ -21,6 +21,7 @@
  */
 
 #include "common/ustr.h"
+#include "common/str.h"
 #include "common/memorypool.h"
 #include "common/util.h"
 #include "unicode-bidi.h"
@@ -126,6 +127,7 @@ U32String &U32String::operator=(const U32String &str) {
 }
 
 U32String &U32String::operator=(const String &str) {
+	clear();
 	initWithCStr(str.c_str(), str.size());
 	return *this;
 }
@@ -135,6 +137,7 @@ U32String &U32String::operator=(const value_type *str) {
 }
 
 U32String &U32String::operator=(const char *str) {
+	clear();
 	initWithCStr(str, strlen(str));
 	return *this;
 }
@@ -195,6 +198,38 @@ bool U32String::operator!=(const char *x) const {
 	return !equals(x);
 }
 
+bool U32String::operator<(const U32String &x) const {
+	for (uint32 i = 0, n = x.size(); i < _size && i < n; ++i) {
+		uint32 sc = _str[i];
+		uint32 xc = x[i];
+		if (sc < xc)
+			return true;
+		else if (sc > xc)
+			return false;
+	}
+	return (_size < x.size());
+}
+
+bool U32String::operator<=(const U32String &x) const {
+	return !operator>(x);
+}
+
+bool U32String::operator>(const U32String &x) const {
+	for (uint i = 0, n = x.size(); i < _size && i < n; ++i) {
+		uint32 sc = _str[i];
+		uint32 xc = x[i];
+		if (sc > xc)
+			return true;
+		else if (sc < xc)
+			return false;
+	}
+	return (_size > x.size());
+}
+
+bool U32String::operator>=(const U32String &x) const {
+	return !operator<(x);
+}
+
 bool U32String::equals(const U32String &x) const {
 	if (this == &x || _str == x._str) {
 		return true;
@@ -211,8 +246,8 @@ bool U32String::equals(const String &x) const {
 	if (x.size() != _size)
 		return false;
 
-	for (size_t idx = 0; idx < _size; ++idx)
-		if (_str[idx] != (value_type)x[idx])
+	for (uint32 idx = 0; idx < _size; ++idx)
+		if (_str[idx] != static_cast<value_type>(x[idx]))
 			return false;
 
 	return true;
@@ -228,6 +263,29 @@ bool U32String::contains(value_type x) const {
 	return false;
 }
 
+bool U32String::contains(const U32String &otherString) const {
+	if (empty() || otherString.empty() || _size < otherString.size()) {
+		return false;
+	}
+
+	uint32 size = 0;
+	U32String::const_iterator itr = otherString.begin();
+
+	for (U32String::const_iterator itr2 = begin(); itr != otherString.end() && itr2 != end(); itr2++) {
+		if (*itr == *itr2) {
+			itr++;
+			size++;
+			if (size == otherString.size())
+				return true;
+		} else {
+			size = 0;
+			itr = otherString.begin();
+		}
+	}
+
+	return false;
+}
+
 void U32String::insertChar(value_type c, uint32 p) {
 	assert(p <= _size);
 
@@ -236,6 +294,18 @@ void U32String::insertChar(value_type c, uint32 p) {
 	for (uint32 i = _size; i > p; --i)
 		_str[i] = _str[i - 1];
 	_str[p] = c;
+}
+
+void U32String::insertString(String s, uint32 p) {
+	for (String::iterator i = s.begin(); i != s.end(); i++) {
+		U32String::insertChar(*i, p++);
+	}
+}
+
+void U32String::insertString(value_type *s, uint32 p) {
+	while (*s != '\0') {
+		U32String::insertChar(*s++, p++);
+	}
 }
 
 void U32String::deleteChar(uint32 p) {
@@ -487,6 +557,202 @@ U32String operator+(const U32String &x, const U32String &y) {
 	U32String temp(x);
 	temp += y;
 	return temp;
+}
+
+void U32String::wordWrap(const uint32 maxLength) {
+	if (_size < maxLength) {
+		return;
+	}
+
+	makeUnique();
+
+	const uint32 kNoSpace = 0xFFFFFFFF;
+
+	uint32 i = 0;
+	while (i < _size) {
+		uint32 lastSpace = kNoSpace;
+		uint32 x = 0;
+		while (i < _size && x <= maxLength) {
+			const char c = _str[i];
+			if (c == '\n') {
+				lastSpace = kNoSpace;
+				x = 0;
+			} else {
+				if (Common::isSpace(c)) {
+					lastSpace = i;
+				}
+				++x;
+			}
+			++i;
+		}
+
+		if (x > maxLength) {
+			if (lastSpace == kNoSpace) {
+				insertChar('\n', i - 1);
+			} else {
+				setChar('\n', lastSpace);
+				i = lastSpace + 1;
+			}
+		}
+	}
+}
+
+uint64 U32String::asUint64() const {
+	uint64 result = 0;
+	for (uint32 i = 0; i < _size; ++i) {
+		if (_str[i] < '0' || _str[i] > '9') break;
+		result = result * 10L + (_str[i] - '0');
+	}
+	return result;
+}
+
+void U32String::trim() {
+	if (_size == 0)
+		return;
+
+	makeUnique();
+
+	// Trim trailing whitespace
+	while (_size >= 1 && isSpace(_str[_size - 1]))
+		--_size;
+	_str[_size] = 0;
+
+	// Trim leading whitespace
+	value_type *t = _str;
+	while (isSpace(*t))
+		t++;
+
+	if (t != _str) {
+		_size -= t - _str;
+		memmove(_str, t, _size + 1);
+	}
+}
+
+U32String U32String::format(U32String fmt, ...) {
+	U32String output;
+
+	va_list va;
+	va_start(va, fmt);
+	U32String::vformat(fmt.begin(), fmt.end(), output, va);
+	va_end(va);
+
+	return output;
+}
+
+U32String U32String::format(const char *fmt, ...) {
+	U32String output;
+
+	Common::U32String fmtU32(fmt);
+	va_list va;
+	va_start(va, fmt);
+	U32String::vformat(fmtU32.begin(), fmtU32.end(), output, va);
+	va_end(va);
+
+	return output;
+}
+
+int U32String::vformat(U32String::const_iterator fmt, const U32String::const_iterator inputItrEnd, U32String &output, va_list args) {
+	int int_temp;
+	char *string_temp;
+
+	value_type ch;
+	value_type *u32string_temp;
+	int length = 0;
+	int len = 0;
+	int pos = 0;
+	int tempPos = 0;
+
+	char buffer[512];
+
+	while (fmt != inputItrEnd) {
+		ch = *fmt++;
+		if (ch == '%') {
+			switch (ch = *fmt++) {
+			case 'S':
+				u32string_temp = va_arg(args, value_type *);
+
+				tempPos = output.size();
+				output.insertString(u32string_temp, pos);
+				len = output.size() - tempPos;
+				length += len;
+
+				pos += len - 1;
+				break;
+			case 's':
+				string_temp = va_arg(args, char *);
+				len = strlen(string_temp);
+				length += len;
+
+				output.insertString(string_temp, pos);
+				pos += len - 1;
+				break;
+			case 'i':
+			// fallthrough intended
+			case 'd':
+				int_temp = va_arg(args, int);
+				itoa(int_temp, buffer, 10);
+				len = strlen(buffer);
+				length += len;
+
+				output.insertString(buffer, pos);
+				pos += len - 1;
+				break;
+			case 'u':
+				int_temp = va_arg(args, uint);
+				itoa(int_temp, buffer, 10);
+				len = strlen(buffer);
+				length += len;
+
+				output.insertString(buffer, pos);
+				pos += len - 1;
+				break;
+			case 'c':
+				//char is promoted to int when passed through '...'
+				int_temp = va_arg(args, int);
+				output.insertChar(int_temp, pos);
+				++length;
+				break;
+			default:
+				warning("Unexpected formatting type for U32String::Format.");
+				break;
+			}
+		} else {
+			output += *(fmt - 1);
+		}
+		pos++;
+	}
+	return length;
+}
+
+char* U32String::itoa(int num, char* str, int base) {
+	int i = 0;
+
+	if (num) {
+		// go digit by digit
+		while (num != 0) {
+			int rem = num % base;
+			str[i++] = rem + '0';
+			num /= base;
+		}
+	} else {
+		str[i++] = '0';
+	}
+
+	// append string terminator
+	str[i] = '\0';
+	int k = 0;
+	int j = i - 1;
+
+	// reverse the string
+	while (k < j) {
+		char temp = str[k];
+		str[k] = str[j];
+		str[j] = temp;
+		k++;
+		j--;
+	}
+
+	return str;
 }
 
 } // End of namespace Common

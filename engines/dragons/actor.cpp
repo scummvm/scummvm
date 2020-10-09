@@ -495,7 +495,7 @@ void Actor::stopWalk() {
 }
 
 void Actor::waitUntilFlag4IsSet() {
-	while (!isFlagSet(ACTOR_FLAG_4)) {
+	while (!isFlagSet(ACTOR_FLAG_4) && !Engine::shouldQuit()) {
 		getEngine()->waitForFrames(1);
 	}
 }
@@ -505,7 +505,7 @@ void Actor::waitUntilFlag8IsSet() {
 		return;
 	}
 
-	while (!(_flags & ACTOR_FLAG_8)) {
+	while (!(_flags & ACTOR_FLAG_8) && !Engine::shouldQuit()) {
 		getEngine()->waitForFrames(1);
 	}
 }
@@ -782,7 +782,7 @@ bool Actor::actorSetSequenceAndWaitAllowSkip(uint16 newSequenceID) {
 }
 
 bool Actor::waitUntilFlag4IsSetAllowSkip() {
-	while (!isFlagSet(ACTOR_FLAG_4)) {
+	while (!isFlagSet(ACTOR_FLAG_4) && !Engine::shouldQuit()) {
 		getEngine()->waitForFrames(1);
 		if (getEngine()->checkForActionButtonRelease()) {
 			return true;
@@ -814,7 +814,7 @@ void Actor::waitForWalkToFinish() {
 	DragonsEngine *vm = getEngine();
 	do {
 		vm->waitForFrames(1);
-	} while (isFlagSet(ACTOR_FLAG_10));
+	} while (!Engine::shouldQuit() && isFlagSet(ACTOR_FLAG_10));
 }
 
 } // End of namespace Dragons

@@ -38,6 +38,13 @@ inline void debugCN(uint32 debugChannels, const char *s, ...) {}
 
 #else
 
+/**
+ * @defgroup common_debug Debug functions
+ * @ingroup common
+ *
+ * @brief  Functions for printing debug messages.
+ * @{
+ */
 
 /**
  * Print a debug message to the text console (stdout).
@@ -110,28 +117,29 @@ void debugCN(uint32 debugChannels, const char *s, ...) GCC_PRINTF(2, 3);
 #endif
 
 /**
- * Returns true if the debug level is set to the specified level
+ * Check whether the debug level is set to the specified level.
  */
 bool debugLevelSet(int level);
 
 /**
- * Returns true if the debug level and channel are active
+ * Check whether the debug level and channel are active.
  *
- * @param level debug level to check against. If set to -1, only channel check is active
+ * @param level         Debug level to check against. If set to -1, only channel check is active.
+ * @param debugChannels Debug channel to check against.
  * @see enableDebugChannel
  */
 bool debugChannelSet(int level, uint32 debugChannels);
 
 /**
  * The debug level. Initially set to -1, indicating that no debug output
- * should be shown. Positive values usually imply an increasing number of
- * debug output shall be generated, the higher the value, the more verbose the
+ * should be shown. Positive values usually imply that an increasing number of
+ * debug output shall be generated. The higher the value, the more verbose the
  * information (although the exact semantics are up to the engines).
  */
 extern int gDebugLevel;
 
 /**
- * Specify if we want to show only the debug channels and suppress
+ * Specify whether to show only the debug channels and suppress
  * the non-channeled output.
  *
  * This option is useful when you want to have higher levels of channels
@@ -139,9 +147,11 @@ extern int gDebugLevel;
  */
 extern bool gDebugChannelsOnly;
 
-//Global constant for EventRecorder debug channel
+/** Global constant for EventRecorder debug channel. */
 enum GlobalDebugLevels {
 	kDebugLevelEventRec = 1 << 30
 };
+
+/** @} */
 
 #endif

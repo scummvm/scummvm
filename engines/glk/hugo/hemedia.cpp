@@ -81,51 +81,6 @@ int Hugo::hugo_hasgraphics() {
 		&& glk_gestalt(gestalt_DrawImage, glk_window_get_type(mainwin));
 }
 
-int Hugo::hugo_displaypicture(HUGO_FILE infile, long reslen) {
-	int idVal;
-
-	/* Ignore the call if the current window is set elsewhere. */
-	if (currentwin != NULL && currentwin != mainwin)
-	{
-		hugo_fclose(infile);
-		return false;
-	}
-
-	idVal = loadres(infile, reslen, PIC);
-	if (idVal < 0)
-	{
-		hugo_fclose(infile);
-		return false;
-	}
-
-#if 0
-	/* Get picture width and height for scaling. */
-	glui32 width, height;
-	if (glk_image_get_info(idVal, &width, &height))
-	{
-		/* Scale large images. */
-		if (width > PIC_MAX_WIDTH)
-		{
-			height = height * PIC_MAX_WIDTH / width;
-			width = PIC_MAX_WIDTH;
-		}
-		if (height > PIC_MAX_HEIGHT)
-		{
-			width = width * PIC_MAX_HEIGHT / height;
-			height = PIC_MAX_HEIGHT;
-		}
-	}
-#endif
-
-	hugo_fclose(infile);
-
-	/* Draw, then move cursor down to the next line. */
-	glk_image_draw(mainwin, idVal, imagealign_InlineUp, 0);
-	glk_put_char('\n');
-
-	return true;
-}
-
 void Hugo::initsound() {
 	if (!glk_gestalt(gestalt_Sound, 0))
 		return;

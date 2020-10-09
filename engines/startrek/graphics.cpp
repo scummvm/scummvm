@@ -22,6 +22,7 @@
 #include "startrek/common.h"
 #include "startrek/console.h"
 #include "startrek/graphics.h"
+#include "startrek/resource.h"
 
 #include "common/algorithm.h"
 #include "common/config-manager.h"
@@ -76,7 +77,7 @@ Graphics::~Graphics() {
 
 void Graphics::setBackgroundImage(Common::String imageName) {
 	delete _backgroundImage;
-	_backgroundImage = new Bitmap(_vm->loadBitmapFile(imageName));
+	_backgroundImage = new Bitmap(_vm->_resource->loadBitmapFile(imageName));
 }
 
 void Graphics::drawBitmapToBackground(const Common::Rect &origRect, const Common::Rect &drawRect, Bitmap *bitmap) {
@@ -135,12 +136,12 @@ void Graphics::loadPalette(const Common::String &paletteName) {
 	Common::String palFile = paletteName + ".PAL";
 	Common::String lutFile = paletteName + ".LUT";
 
-	Common::MemoryReadStreamEndian *palStream = _vm->loadFile(palFile.c_str());
+	Common::MemoryReadStreamEndian *palStream = _vm->_resource->loadFile(palFile.c_str());
 	palStream->read(_palData, 256 * 3);
 	delete palStream;
 
 	// Load LUT file
-	Common::MemoryReadStreamEndian *lutStream = _vm->loadFile(lutFile.c_str());
+	Common::MemoryReadStreamEndian *lutStream = _vm->_resource->loadFile(lutFile.c_str());
 	lutStream->read(_lutData, 256);
 	delete lutStream;
 }
@@ -217,7 +218,7 @@ void Graphics::decPaletteFadeLevel() {
 
 
 void Graphics::loadPri(const Common::String &priFile) {
-	Common::MemoryReadStream *priStream = _vm->loadFile(priFile + ".pri");
+	Common::MemoryReadStream *priStream = _vm->_resource->loadFile(priFile + ".pri");
 	priStream->read(_priData, SCREEN_WIDTH * SCREEN_HEIGHT / 2);
 	delete priStream;
 }
@@ -246,7 +247,7 @@ Common::Point Graphics::getMousePos() {
 }
 
 void Graphics::setMouseBitmap(Common::String bitmapName) {
-	Bitmap *bitmap = new Bitmap(_vm->loadBitmapFile(bitmapName));
+	Bitmap *bitmap = new Bitmap(_vm->_resource->loadBitmapFile(bitmapName));
 
 	CursorMan.pushCursor(
 		bitmap->pixels,
@@ -693,7 +694,7 @@ void Graphics::loadEGAData(const char *filename) {
 	if (!_egaData)
 		_egaData = new byte[256];
 
-	Common::MemoryReadStreamEndian *egaStream = _vm->loadFile(filename);
+	Common::MemoryReadStreamEndian *egaStream = _vm->_resource->loadFile(filename);
 	egaStream->read(_egaData, 256);
 	delete egaStream;
 }
@@ -701,7 +702,7 @@ void Graphics::loadEGAData(const char *filename) {
 void Graphics::drawBackgroundImage(const char *filename) {
 	// Draw an stjr BGD image (palette built-in)
 
-	Common::MemoryReadStreamEndian *imageStream = _vm->loadFile(filename);
+	Common::MemoryReadStreamEndian *imageStream = _vm->_resource->loadFile(filename);
 	byte *palette = new byte[256 * 3];
 	imageStream->read(palette, 256 * 3);
 

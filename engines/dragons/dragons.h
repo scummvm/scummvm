@@ -25,17 +25,9 @@
 #include "gui/EventRecorder.h"
 #include "engines/engine.h"
 #include "dragons/specialopcodes.h"
+#include "dragons/detection.h"
 
 namespace Dragons {
-
-enum {
-	kGameIdDragons = 1
-};
-
-struct DragonsGameDescription {
-	ADGameDescription desc;
-	int gameId;
-};
 
 struct SaveHeader {
 	Common::String description;
@@ -106,6 +98,29 @@ struct PaletteCyclingInstruction {
 	int16 endOffset;
 	int16 updateInterval;
 	int16 updateCounter;
+};
+
+enum DragonsAction {
+	kDragonsActionNone,
+	kDragonsActionUp,
+	kDragonsActionDown,
+	kDragonsActionLeft,
+	kDragonsActionRight,
+	kDragonsActionSquare,
+	kDragonsActionTriangle,
+	kDragonsActionCircle,
+	kDragonsActionCross,
+	kDragonsActionL1,
+	kDragonsActionR1,
+	kDragonsActionSelect,
+	kDragonsActionChangeCommand,
+	kDragonsActionInventory,
+	kDragonsActionEnter,
+	kDragonsActionMenu,
+	kDragonsActionPause,
+	kDragonsActionDebug,
+	kDragonsActionDebugGfx,
+	kDragonsActionQuit
 };
 
 class BigfileArchive;
@@ -245,6 +260,7 @@ public:
 	bool canLoadGameStateCurrently() override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
 	bool canSaveGameStateCurrently() override;
+	void syncSoundSettings() override;
 
 	void updateActorSequences();
 	void setFlags(uint32 flags);
@@ -324,12 +340,20 @@ public:
 
 	void loadingScreenUpdate();
 
+	void clearAllText();
+
 	//TODO this logic should probably go in its own class.
+	uint16 getBigFileTotalRecords();
 	uint32 getBigFileInfoTblFromDragonEXE();
 	uint32 getFontOffsetFromDragonEXE();
 	uint32 getSpeechTblOffsetFromDragonEXE();
 	uint32 getCutscenePaletteOffsetFromDragonEXE();
 	uint32 defaultResponseOffsetFromDragonEXE();
+	uint16 getCursorHandPointerSequenceID();
+	uint32 getMiniGame3StartingDialog();
+	uint32 getMiniGame3PickAHatDialog();
+	uint32 getMiniGame3DataOffset();
+	uint32 getDialogTextId(uint32 textId);
 private:
 	bool savegame(const char *filename, const char *description);
 	bool loadgame(const char *filename);
@@ -367,6 +391,10 @@ private:
 
 	bool checkAudioVideoFiles();
 	bool validateAVFile(const char *filename);
+
+	uint32 getDialogTextIdGrb(uint32 textId);
+	uint32 getDialogTextIdDe(uint32 textId);
+	uint32 getDialogTextIdFr(uint32 textId);
 };
 
 DragonsEngine *getEngine();

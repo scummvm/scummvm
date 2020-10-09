@@ -30,7 +30,7 @@
 namespace Glk {
 namespace Comprehend {
 
-#define MAX_FLAGS 64
+#define MAX_FLAGS 256
 #define MAX_VARIABLES 128
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 
@@ -54,7 +54,12 @@ enum {
 	OPCODE_HAVE_OBJECT,
 	OPCODE_OR,
 	OPCODE_IN_ROOM,
-	OPCODE_VAR_EQ,
+	OPCODE_VAR_EQ1,
+	OPCODE_VAR_EQ2,
+	OPCODE_VAR_GT1,
+	OPCODE_VAR_GT2,
+	OPCODE_VAR_GTE1,
+	OPCODE_VAR_GTE2,
 	OPCODE_CURRENT_OBJECT_TAKEABLE,
 	OPCODE_OBJECT_PRESENT,
 	OPCODE_ELSE,
@@ -118,7 +123,11 @@ enum {
 	OPCODE_DRAW_ROOM,
 	OPCODE_DRAW_OBJECT,
 	OPCODE_WAIT_KEY,
-	OPCODE_TEST_FALSE
+	OPCODE_TEST_FALSE,
+	OPCODE_CAN_TAKE,
+	OPCODE_TOO_HEAVY,
+	OPCODE_NOT_MAX_WEIGHT,
+	OPCODE_OBJECT_CAN_TAKE
 };
 
 /* Game state update flags */
@@ -161,7 +170,7 @@ enum {
 
 /* Item flags */
 enum ItemFlag {
-	ITEMF_WEIGHT_MASK = 0x3,
+	ITEMF_WEIGHT_MASK = 0x7,
 	ITEMF_CAN_TAKE    = 1 << 3,
 	ITEMF_UNKNOWN     = 1 << 6,
 	ITEMF_INVISIBLE   = 1 << 7
@@ -364,6 +373,8 @@ public:
 	Common::Array<Room> _rooms;
 	uint8 _currentRoom;
 	uint8 _startRoom;
+	uint8 _itemCount;
+	uint8 _totalInventoryWeight;
 
 	Common::Array<Item> _items;
 

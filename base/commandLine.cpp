@@ -298,6 +298,10 @@ void registerDefaults() {
 
 	ConfMan.registerDefault("gui_browser_show_hidden", false);
 	ConfMan.registerDefault("gui_browser_native", true);
+	// Specify threshold for scanning directories in the launcher
+	// If number of game entries in scummvm.ini exceeds the specified
+	// number, then skip scanning. -1 = scan always
+	ConfMan.registerDefault("gui_list_max_scan_entries", -1);
 	ConfMan.registerDefault("game", "");
 
 #ifdef USE_FLUIDSYNTH
@@ -784,7 +788,7 @@ static void listGames() {
 
 	const PluginList &plugins = EngineMan.getPlugins();
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		const MetaEngine &metaengine = (*iter)->get<MetaEngine>();
+		const MetaEngineStatic &metaengine = (*iter)->get<MetaEngineStatic>();
 
 		PlainGameList list = metaengine.getSupportedGames();
 		for (PlainGameList::const_iterator v = list.begin(); v != list.end(); ++v) {
@@ -800,7 +804,7 @@ static void listEngines() {
 
 	const PluginList &plugins = EngineMan.getPlugins();
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		const MetaEngine &metaEngine = (*iter)->get<MetaEngine>();
+		const MetaEngineStatic &metaEngine = (*iter)->get<MetaEngineStatic>();
 		printf("%-15s %s\n", metaEngine.getEngineId(), metaEngine.getName());
 	}
 }
@@ -867,15 +871,18 @@ static Common::Error listSaves(const Common::String &singleTarget) {
 		// the specified game name, or alternatively whether there is a matching game id.
 		Common::String currentTarget;
 		QualifiedGameDescriptor game;
-		const Plugin *plugin = nullptr;
+
+		const Plugin *metaEnginePlugin = nullptr;
+		const Plugin *enginePlugin = nullptr;
+
 		if (ConfMan.hasGameDomain(*i)) {
 			// The name is a known target
 			currentTarget = *i;
 			EngineMan.upgradeTargetIfNecessary(*i);
-			game = EngineMan.findTarget(*i, &plugin);
+			game = EngineMan.findTarget(*i, &metaEnginePlugin);
 		} else if (game = findGameMatchingName(*i), !game.gameId.empty()) {
 			// The name is a known game id
-			plugin = EngineMan.findPlugin(game.engineId);
+			metaEnginePlugin = EngineMan.findPlugin(game.engineId);
 			currentTarget = createTemporaryTarget(game.engineId, game.gameId);
 		} else {
 			return Common::Error(Common::kEnginePluginNotFound, Common::String::format("target '%s'", singleTarget.c_str()));
@@ -884,16 +891,27 @@ static Common::Error listSaves(const Common::String &singleTarget) {
 		// If we actually found a domain, we're going to change the domain
 		ConfMan.setActiveDomain(currentTarget);
 
-		if (!plugin) {
+		if (!metaEnginePlugin) {
 			// If the target was specified, treat this as an error, and otherwise skip it.
 			if (!singleTarget.empty())
-				return Common::Error(Common::kEnginePluginNotFound,
+				return Common::Error(Common::kMetaEnginePluginNotFound,
 				                     Common::String::format("target '%s'", i->c_str()));
-			printf("Plugin could not be loaded for target '%s'\n", i->c_str());
+			printf("MetaEnginePlugin could not be loaded for target '%s'\n", i->c_str());
 			continue;
+		} else {
+			enginePlugin = PluginMan.getEngineFromMetaEngine(metaEnginePlugin);
+
+			if (!enginePlugin) {
+				// If the target was specified, treat this as an error, and otherwise skip it.
+				if (!singleTarget.empty())
+					return Common::Error(Common::kEnginePluginNotFound,
+				                     	 Common::String::format("target '%s'", i->c_str()));
+				printf("EnginePlugin could not be loaded for target '%s'\n", i->c_str());
+				continue;
+			}
 		}
 
-		const MetaEngine &metaEngine = plugin->get<MetaEngine>();
+		const MetaEngine &metaEngine = enginePlugin->get<MetaEngine>();
 		Common::String qualifiedGameId = buildQualifiedGameName(game.engineId, game.gameId);
 
 		if (!metaEngine.hasFeature(MetaEngine::kSupportsListSaves)) {
@@ -917,7 +935,7 @@ static Common::Error listSaves(const Common::String &singleTarget) {
 					   "  ---- ------------------------------------------------------\n");
 
 			for (SaveStateList::const_iterator x = saveList.begin(); x != saveList.end(); ++x) {
-				printf("  %-4d %s\n", x->getSaveSlot(), x->getDescription().c_str());
+				printf("  %-4d %s\n", x->getSaveSlot(), x->getDescription().encode().c_str());
 				// TODO: Could also iterate over the full hashmap, printing all key-value pairs
 			}
 			atLeastOneFound = true;
@@ -980,8 +998,8 @@ static DetectedGames getGameList(const Common::FSNode &dir) {
 	DetectionResults detectionResults = EngineMan.detectGames(files);
 
 	if (detectionResults.foundUnknownGames()) {
-		Common::String report = detectionResults.generateUnknownGameReport(false, 80);
-		g_system->logMessage(LogMessageType::kInfo, report.c_str());
+		Common::U32String report = detectionResults.generateUnknownGameReport(false, 80);
+		g_system->logMessage(LogMessageType::kInfo, report.encode().c_str());
 	}
 
 	return detectionResults.listRecognizedGames();

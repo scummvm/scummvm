@@ -71,7 +71,7 @@ void ActorClues::acquire(int clueId, bool flag2, int fromActorId) {
 		return;
 	} else {
 		_clues[clueIndex].flags |= 0x01;
-		_clues[clueIndex].flags = (_clues[clueIndex].flags & ~0x02) | ((flag2 << 1) & 0x02);
+		_clues[clueIndex].flags = (_clues[clueIndex].flags & ~0x02) | (((flag2? 1:0) << 1) & 0x02);
 		_clues[clueIndex].fromActorId = fromActorId;
 	// debug("Actor acquired clue: \"%s\" from %d", _vm->_crimesDatabase->getClueText(clueId), fromActorId);
 	}
@@ -105,10 +105,11 @@ int ActorClues::getWeight(int clueId) const {
 
 int ActorClues::getModifier(int actorId, int otherActorId, int clueId) {
 	Actor *actor = _vm->_actors[actorId];
+	Actor *otherActor = _vm->_actors[otherActorId];
 	int modifier1, modifier2, modifier3, modifier4;
 
 	int friendliness = actor->getFriendlinessToOther(otherActorId);
-	int clueWeight = actor->_clues->getWeight(clueId);
+	int clueWeight = otherActor->_clues->getWeight(clueId);
 
 	if (actor->_clues->isFlag2(clueId)) {
 		modifier1 = 100 - actor->getHonesty() - friendliness;
@@ -216,7 +217,7 @@ void ActorClues::acquireCluesByRelations(int actorId, int otherActorId) {
 	}
 }
 
-int ActorClues::findAcquirableCluesFromActor(int actorId, int targetActorId, CluesUS *list, int size) {
+int ActorClues::findAcquirableCluesFromActor(int actorId, int targetActorId, ActorClues::CluesUS *list, int size) {
 	Actor *actor = _vm->_actors[actorId];
 	Actor *otherActor = _vm->_actors[targetActorId];
 	int count = 0;
@@ -300,19 +301,6 @@ void ActorClues::setPrivate(int clueId, bool value) {
 	}
 }
 
-int ActorClues::getField1(int clueId) const {
-	if (!_count) {
-		return 0;
-	}
-
-	int clueIndex = findClueIndex(clueId);
-	if (clueIndex == -1) {
-		return 0;
-	}
-
-	return _clues[clueIndex].weight;
-}
-
 int ActorClues::getCount() const {
 	return _count;
 }
@@ -349,8 +337,8 @@ void ActorClues::add(int actorId, int clueId, int weight, bool acquired, bool un
 	_clues[_count].weight = weight;
 
 	_clues[_count].flags = 0;
-	_clues[_count].flags = (_clues[_count].flags & ~0x01) | (acquired & 0x01);
-	_clues[_count].flags = (_clues[_count].flags & ~0x02) | ((unknownFlag << 1) & 0x02);
+	_clues[_count].flags = (_clues[_count].flags & ~0x01) | ((acquired? 1:0) & 0x01);
+	_clues[_count].flags = (_clues[_count].flags & ~0x02) | (((unknownFlag? 1:0) << 1) & 0x02);
 
 	_clues[_count].fromActorId = fromActorId;
 	++_count;

@@ -26,6 +26,7 @@
 #include "illusions/graphics.h"
 #include "audio/mixer.h"
 #include "audio/decoders/aiff.h"
+
 #include "common/array.h"
 #include "common/events.h"
 #include "common/file.h"
@@ -34,12 +35,15 @@
 #include "common/str.h"
 #include "common/substream.h"
 #include "common/system.h"
+
 #include "engines/engine.h"
 #include "graphics/surface.h"
+#include "illusions/detection.h"
 
 namespace Illusions {
 
-char *debugW2I(byte *wstr);
+char *debugW2I(uint16 *wstr);
+void swapBytesInWideString(byte * wstr);
 
 #define ILLUSIONS_SAVEGAME_VERSION 0
 
@@ -59,7 +63,6 @@ class Cursor;
 class Dictionary;
 struct Fader;
 class FramesList;
-struct IllusionsGameDescription;
 class Input;
 class Screen;
 class ScreenText;
@@ -74,11 +77,6 @@ class ThreadList;
 class UpdateFunctions;
 class GameState;
 class ScreenPaletteBase;
-
-enum {
-	kGameIdBBDOU   = 1,
-	kGameIdDuckman = 2
-};
 
 class IllusionsEngine : public Engine {
 public:
@@ -145,6 +143,7 @@ public:
 	int16 _menuChoiceOfs;
 
 	int getGameId() const;
+	Common::Language getGameLanguage() const;
 
 	void runUpdateFunctions();
 	int updateActors(uint flags);

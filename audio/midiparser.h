@@ -58,16 +58,6 @@ struct Tracker {
 
 	Tracker() { clear(); }
 
-	/// Copy constructor for each duplication of Tracker information.
-	Tracker(const Tracker &copy) :
-	_playPos(copy._playPos),
-	_playTime(copy._playTime),
-	_playTick(copy._playTick),
-	_lastEventTime(copy._lastEventTime),
-	_lastEventTick(copy._lastEventTick),
-	_runningStatus(copy._runningStatus)
-	{ }
-
 	/// Clears all data; used by the constructor for initialization.
 	void clear() {
 		_playPos = 0;

@@ -37,6 +37,9 @@ public:
 	void onRightButtonDown(Common::Point p) override;
 	void onMouseMove(Common::Point p) override;
 
+	int getHeroSpeed();
+	bool showSubtitles() const { return _subtitles; }
+
 private:
 	void readSettings();
 	void applySettings();
@@ -44,8 +47,8 @@ private:
 	void updateSliders();
 	void updateSubtitles();
 
-public:
-	int _subtitles;
+private:
+	bool _subtitles;
 	int _speechFrame;
 	int _musicFrame;
 	int _sfxFrame;

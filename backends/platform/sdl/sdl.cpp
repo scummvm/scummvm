@@ -30,6 +30,10 @@
 #include "common/translation.h"
 #include "common/encoding.h"
 
+#ifdef USE_DISCORD
+#include "backends/presence/discord/discord.h"
+#endif
+
 #include "backends/saves/default/default-saves.h"
 
 // Audio CD support was removed with SDL 2.0
@@ -127,6 +131,11 @@ OSystem_SDL::~OSystem_SDL() {
 
 	delete _logger;
 	_logger = 0;
+
+#ifdef USE_DISCORD
+	delete _presence;
+	_presence = 0;
+#endif
 
 #ifdef USE_SDL_NET
 	if (_initedSDLnet) SDLNet_Quit();
@@ -263,6 +272,10 @@ void OSystem_SDL::initBackend() {
 	// Setup a custom program icon.
 	_window->setupIcon();
 
+#ifdef USE_DISCORD
+	_presence = new DiscordPresence();
+#endif
+
 	_inited = true;
 
 	BaseBackend::initBackend();
@@ -284,9 +297,15 @@ void OSystem_SDL::engineInit() {
 	// Add the started engine to the list of recent tasks
 	_taskbarManager->addRecent(ConfMan.getActiveDomainName(), ConfMan.get("description"));
 
-	// Set the overlay icon the current running engine
+	// Set the overlay icon to the current running engine
 	_taskbarManager->setOverlayIcon(ConfMan.getActiveDomainName(), ConfMan.get("description"));
 #endif
+#ifdef USE_DISCORD
+	// Set the presence status to the current running engine
+	Common::String qualifiedGameId = Common::String::format("%s-%s", ConfMan.get("engineid").c_str(), ConfMan.get("gameid").c_str());
+	_presence->updateStatus(qualifiedGameId, ConfMan.get("description"));
+#endif
+
 	_eventSource->setEngineRunning(true);
 }
 
@@ -298,6 +317,10 @@ void OSystem_SDL::engineDone() {
 #ifdef USE_TASKBAR
 	// Remove overlay icon
 	_taskbarManager->setOverlayIcon("", "");
+#endif
+#ifdef USE_DISCORD
+	// Reset presence status
+	_presence->updateStatus("", "");
 #endif
 	_eventSource->setEngineRunning(false);
 }
@@ -473,41 +496,22 @@ bool OSystem_SDL::hasTextInClipboard() {
 	return SDL_HasClipboardText() == SDL_TRUE;
 }
 
-Common::String OSystem_SDL::getTextFromClipboard() {
-	if (!hasTextInClipboard()) return "";
+Common::U32String OSystem_SDL::getTextFromClipboard() {
+	if (!hasTextInClipboard()) return Common::U32String("");
 
 	char *text = SDL_GetClipboardText();
-	// The string returned by SDL is in UTF-8. Convert to the
-	// current TranslationManager encoding or ISO-8859-1.
-#ifdef USE_TRANSLATION
-	char *conv_text = SDL_iconv_string(TransMan.getCurrentCharset().c_str(), "UTF-8", text, SDL_strlen(text) + 1);
-#else
-	char *conv_text = SDL_iconv_string("ISO-8859-1", "UTF-8", text, SDL_strlen(text) + 1);
-#endif
-	if (conv_text) {
-		SDL_free(text);
-		text = conv_text;
-	}
-	Common::String strText = text;
+
+	Common::String utf8Text(text);
+	Common::U32String strText = utf8Text.decode();
 	SDL_free(text);
 
 	return strText;
 }
 
-bool OSystem_SDL::setTextInClipboard(const Common::String &text) {
-	// The encoding we need to use is UTF-8. Assume we currently have the
-	// current TranslationManager encoding or ISO-8859-1.
-#ifdef USE_TRANSLATION
-	char *utf8_text = SDL_iconv_string("UTF-8", TransMan.getCurrentCharset().c_str(), text.c_str(), text.size() + 1);
-#else
-	char *utf8_text = SDL_iconv_string("UTF-8", "ISO-8859-1", text.c_str(), text.size() + 1);
-#endif
-	if (utf8_text) {
-		int status = SDL_SetClipboardText(utf8_text);
-		SDL_free(utf8_text);
-		return status == 0;
-	}
-	return SDL_SetClipboardText(text.c_str()) == 0;
+bool OSystem_SDL::setTextInClipboard(const Common::U32String &text) {
+	// The encoding we need to use is UTF-8.
+	Common::String utf8Text = text.encode();
+	return SDL_SetClipboardText(utf8Text.c_str()) == 0;
 }
 #endif
 

@@ -24,9 +24,13 @@
 #define GROOVIE_DETECTION_H
 
 #include "engines/advancedDetector.h"
-#include "groovie/script.h"	// for EngineVersion
 
 namespace Groovie {
+
+enum EngineVersion {
+	kGroovieT7G,
+	kGroovieV2
+};
 
 struct GroovieGameDescription {
 	ADGameDescription desc;

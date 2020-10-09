@@ -54,10 +54,14 @@ class RandomSource;
 
 namespace Adl {
 
+Common::String getDiskImageName(const AdlGameDescription &adlDesc, byte volume);
+GameType getGameType(const AdlGameDescription &desc);
+GameVersion getGameVersion(const AdlGameDescription &desc);
+Common::Platform getPlatform(const AdlGameDescription &desc);
+
 class Console;
 class Display;
 class GraphicsMan;
-struct AdlGameDescription;
 class ScriptEnv;
 
 enum kDebugChannels {

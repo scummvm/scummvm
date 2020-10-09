@@ -33,6 +33,10 @@
 
 #include "common/array.h"
 
+#ifdef USE_DISCORD
+class DiscordPresence;
+#endif
+
 /**
  * Base OSystem class for all SDL ports.
  */
@@ -67,8 +71,8 @@ public:
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	// Clipboard
 	virtual bool hasTextInClipboard() override;
-	virtual Common::String getTextFromClipboard() override;
-	virtual bool setTextInClipboard(const Common::String &text) override;
+	virtual Common::U32String getTextFromClipboard() override;
+	virtual bool setTextInClipboard(const Common::U32String &text) override;
 #endif
 
 	virtual void setWindowCaption(const char *caption) override;
@@ -88,6 +92,10 @@ protected:
 	bool _initedSDL;
 #ifdef USE_SDL_NET
 	bool _initedSDLnet;
+#endif
+
+#ifdef USE_DISCORD
+	DiscordPresence *_presence;
 #endif
 
 	/**

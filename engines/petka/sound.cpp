@@ -33,7 +33,9 @@
 namespace Petka {
 
 Sound::Sound(Common::SeekableReadStream *stream, Audio::Mixer::SoundType type)
-	: _stream(stream), _type(type) {}
+	: _type(type), _stream(stream->readStream(stream->size())) {
+	delete stream;
+}
 
 Sound::~Sound() {
 	stop();
@@ -84,7 +86,7 @@ Sound *SoundMgr::addSound(const Common::String &name, Audio::Mixer::SoundType ty
 	Common::SeekableReadStream *s = _vm.openFile(name, false);
 	if (s) {
 		debug("SoundMgr: added sound %s", name.c_str());
-		sound = new Sound(_vm.openFile(name, false), type);
+		sound = new Sound(s, type);
 		_sounds.getVal(name).reset(sound);
 	}
 	return sound;
@@ -110,7 +112,7 @@ void SoundMgr::removeSoundsWithType(Audio::Mixer::SoundType type) {
 	for (it = _sounds.begin(); it != _sounds.end(); ++it) {
 		Sound *s = it->_value.get();
 		if (s->type() == type) {
-			_sounds.erase(it);
+			_sounds.erase(it); // it is safe to inc iterator after erasing in our hashmap impl
 		}
 	}
 }

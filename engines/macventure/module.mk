@@ -5,11 +5,11 @@ MODULE_OBJS := \
 	controls.o \
 	cursor.o \
 	datafiles.o \
-	detection.o \
 	dialog.o \
 	gui.o \
 	image.o \
 	macventure.o \
+	metaengine.o \
 	prebuilt_dialogs.o \
 	saveload.o \
 	script.o \
@@ -29,3 +29,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o

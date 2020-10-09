@@ -119,7 +119,7 @@ public:
 	* Sets a text 16bit palette map. Only used in in EOB II FM-Towns. The map contains 2 entries.
 	*/
 	virtual void set16bitColorMap(const uint16 *src) {}
-	
+
 	enum FontStyle {
 		kStyleNone			=	0,
 		kStyleLeftShadow	=	1	<<	0,

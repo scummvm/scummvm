@@ -27,6 +27,15 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_rng RNG
+ * @ingroup common
+ *
+ * @brief Random number generator (RNG) implementation.
+ *
+ * @{
+ */
+
 class String;
 
 /**
@@ -74,6 +83,8 @@ public:
 	 */
 	uint getRandomNumberRng(uint min, uint max);
 };
+
+/** @} */
 
 } // End of namespace Common
 

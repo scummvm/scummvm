@@ -52,7 +52,12 @@ private:
 
 	int _savedTrack;
 
+	uint8 _m16offset;
+
 	Audio::SoundHandle _soundHandle;
+
+	int _maxTrack;
+	const char **_trackNames;
 
 public:
 	RemorseMusicProcess();
@@ -76,9 +81,6 @@ public:
 	void saveTrackState() override;
 	//! Bring back the track state from before it was put on hold
 	void restoreTrackState() override;
-
-	INTRINSIC(I_playMusic);
-	INTRINSIC(I_musicStop);
 
 	void run() override;
 

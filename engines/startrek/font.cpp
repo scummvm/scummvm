@@ -20,10 +20,11 @@
  *
  */
 
-#include "common/stream.h"
 #include "common/memstream.h"
+#include "common/stream.h"
 
 #include "startrek/font.h"
+#include "startrek/resource.h"
 
 namespace StarTrek {
 
@@ -31,7 +32,7 @@ static const byte CHARACTER_COUNT = 0x80;
 static const byte CHARACTER_SIZE = 0x40;
 
 Font::Font(StarTrekEngine *vm) : _vm(vm) {
-	Common::MemoryReadStreamEndian *fontStream = _vm->loadFile("FONT.FNT");
+	Common::MemoryReadStreamEndian *fontStream = _vm->_resource->loadFile("FONT.FNT");
 
 	_characters = new Character[CHARACTER_COUNT];
 
@@ -53,7 +54,6 @@ bool Font::isDisplayableCharacter(char c) {
 	// True if lowercase, uppercase, a digit, punctuation, or space
 	return _fontProperties[c & 0xff] & 0x57;
 }
-
 
 // Bit 0 set for lowercase characters;
 // Bit 1 set for uppercase characters;

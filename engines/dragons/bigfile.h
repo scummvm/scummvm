@@ -22,13 +22,12 @@
 #ifndef DRAGONS_BIGFILE_H
 #define DRAGONS_BIGFILE_H
 
+#include "common/array.h"
 #include "common/file.h"
 
 namespace Dragons {
 
 class DragonsEngine;
-
-#define DRAGONS_BIGFILE_TOTAL_FILES 576
 
 struct FileInfo {
 	Common::String filename;
@@ -45,7 +44,8 @@ class BigfileArchive {
 private:
 	DragonsEngine *_vm;
 	Common::File *_fd;
-	FileInfo _fileInfoTbl[DRAGONS_BIGFILE_TOTAL_FILES];
+	uint16 _totalRecords;
+	Common::Array<FileInfo> _fileInfoTbl;
 
 public:
 	BigfileArchive(DragonsEngine *vm, const char *filename);

@@ -5,10 +5,10 @@ MODULE_OBJS := \
 	animation.o \
 	callbacks.o \
 	console.o \
-	detection.o \
 	dialog.o \
 	font.o \
 	inventory.o \
+	metaengine.o \
 	music.o \
 	objects.o \
 	pack.o \
@@ -26,3 +26,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o

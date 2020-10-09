@@ -91,24 +91,28 @@ void StartCrusaderProcess::run() {
 	Ultima8Engine::get_instance()->setCheatMode(true);
 
 	if (!_skipStart) {
-		MainActor *avatar = getMainActor();
-		int mapnum = avatar->getMapNum();
-		// The game doesn't do the weapon this way, but it's the same for our purposes..
-		Item *weapon = ItemFactory::createItem(0x32E, 0, 0, 0, 0, mapnum, 0, true);
-		avatar->addItemCru(weapon, false);
-		Item *datalink = ItemFactory::createItem(0x4d4, 0, 0, 0, 0, mapnum, 0, true);
-		avatar->addItemCru(datalink, false);
-		Item *smiley = ItemFactory::createItem(0x598, 0, 0, 0, 0, mapnum, 0, true);
-		smiley->moveToContainer(avatar);
+		if (GAME_IS_REMORSE) {
+			MainActor *avatar = getMainActor();
+			int mapnum = avatar->getMapNum();
+			// The game doesn't do the weapon this way, but it's the same for our purposes..
+			Item *weapon = ItemFactory::createItem(0x32E, 0, 0, 0, 0, mapnum, 0, true);
+			avatar->addItemCru(weapon, false);
+			Item *datalink = ItemFactory::createItem(0x4d4, 0, 0, 0, 0, mapnum, 0, true);
+			avatar->addItemCru(datalink, false);
+			Item *smiley = ItemFactory::createItem(0x598, 0, 0, 0, 0, mapnum, 0, true);
+			smiley->moveToContainer(avatar);
 
-		// TODO: How is this created in the game??
-		Egg *miss1egg = new Egg();
-		miss1egg->setShape(2317);
-		miss1egg->setMapNum(mapnum);
-		miss1egg->assignObjId();
-		miss1egg->callUsecodeEvent_hatch();
+			// TODO: How is this created in the game??
+			Egg *miss1egg = new Egg();
+			miss1egg->setShape(2317);
+			miss1egg->setMapNum(mapnum);
+			miss1egg->assignObjId();
+			miss1egg->callUsecodeEvent_hatch();
 
-		avatar->setDir(dir_east);
+			avatar->setDir(dir_east);
+		} else if (GAME_IS_REGRET) {
+			// TODO: Give the appropriate startup objects to the avatar
+		}
 
 		// TODO: The game actually teleports to egg 0x1f (31) which has another
 		// egg to teleport to egg 99.  Is there any purpose to that?
@@ -118,7 +122,7 @@ void StartCrusaderProcess::run() {
 		Kernel::get_instance()->addProcess(fader);
 	}
 
-	//MusicProcess::get_instance()->playMusic(2);
+	MusicProcess::get_instance()->playMusic(1);
 
 	Ultima8Engine::get_instance()->setAvatarInStasis(false);
 

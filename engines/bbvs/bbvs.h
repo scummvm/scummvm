@@ -24,6 +24,7 @@
 #define BBVS_BBVS_H
 
 #include "audio/mixer.h"
+
 #include "common/array.h"
 #include "common/events.h"
 #include "common/file.h"
@@ -32,7 +33,10 @@
 #include "common/str.h"
 #include "common/substream.h"
 #include "common/system.h"
+
 #include "engines/engine.h"
+
+#include "bbvs/detection.h"
 
 struct ADGameDescription;
 
@@ -58,10 +62,6 @@ class Screen;
 class SoundMan;
 
 #define BBVS_SAVEGAME_VERSION 0
-
-enum {
-	GF_GUILANGSWITCH =    (1 << 0) // If GUI language switch is required for menus
-};
 
 enum {
 	kVerbLook      = 0,
@@ -228,6 +228,8 @@ public:
 	void setNewSceneNum(int newSceneNum);
 	const Common::String getTargetName() { return _targetName; }
 	const ADGameDescription *_gameDescription;
+
+	bool isLoogieDemo() const;
 
 private:
 	Graphics::PixelFormat _pixelFormat;

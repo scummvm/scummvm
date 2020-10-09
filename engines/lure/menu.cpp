@@ -599,9 +599,10 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 
 				if (r.contains(x, y)) {
 					selectedIndex = (y - r.top) / FONT_HEIGHT;
-					if (e.type() == Common::EVENT_LBUTTONDOWN)
+					if (e.type() == Common::EVENT_LBUTTONDOWN) {
 						bailOut = true;
 						break;
+					}
 				}
 #else
 			} else if ((e.type() == Common::EVENT_LBUTTONDOWN) ||

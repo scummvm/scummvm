@@ -41,13 +41,18 @@ namespace Common {
 	class MacResManager;
 
 /**
- * Parser for QuickTime/MPEG-4 files.
+ * @defgroup common_quicktime Quicktime file parser
+ * @ingroup common
  *
- * File parser used in engines:
- *  - groovie
- *  - mohawk
- *  - sci
+ * @brief Parser for QuickTime/MPEG-4 files.
+ *
+ * @details File parser used in engines:
+ *          - groovie
+ *          - mohawk
+ *          - sci
+ * @{
  */
+
 class QuickTimeParser {
 public:
 	QuickTimeParser();
@@ -210,6 +215,8 @@ private:
 	int readESDS(Atom atom);
 	int readSMI(Atom atom);
 };
+
+/** @} */
 
 } // End of namespace Common
 

@@ -168,24 +168,28 @@ bool FSNode::createDirectory() const {
 	return _realNode->createDirectory();
 }
 
-FSDirectory::FSDirectory(const FSNode &node, int depth, bool flat, bool ignoreClashes)
-  : _node(node), _cached(false), _depth(depth), _flat(flat), _ignoreClashes(ignoreClashes) {
+FSDirectory::FSDirectory(const FSNode &node, int depth, bool flat, bool ignoreClashes, bool includeDirectories)
+  : _node(node), _cached(false), _depth(depth), _flat(flat), _ignoreClashes(ignoreClashes),
+	_includeDirectories(includeDirectories) {
 }
 
 FSDirectory::FSDirectory(const String &prefix, const FSNode &node, int depth, bool flat,
-                         bool ignoreClashes)
-  : _node(node), _cached(false), _depth(depth), _flat(flat), _ignoreClashes(ignoreClashes) {
+                         bool ignoreClashes, bool includeDirectories)
+  : _node(node), _cached(false), _depth(depth), _flat(flat), _ignoreClashes(ignoreClashes),
+    _includeDirectories(includeDirectories) {
 
 	setPrefix(prefix);
 }
 
-FSDirectory::FSDirectory(const String &name, int depth, bool flat, bool ignoreClashes)
-  : _node(name), _cached(false), _depth(depth), _flat(flat), _ignoreClashes(ignoreClashes) {
+FSDirectory::FSDirectory(const String &name, int depth, bool flat, bool ignoreClashes, bool includeDirectories)
+  : _node(name), _cached(false), _depth(depth), _flat(flat), _ignoreClashes(ignoreClashes),
+    _includeDirectories(includeDirectories) {
 }
 
 FSDirectory::FSDirectory(const String &prefix, const String &name, int depth, bool flat,
-                         bool ignoreClashes)
-  : _node(name), _cached(false), _depth(depth), _flat(flat), _ignoreClashes(ignoreClashes) {
+                         bool ignoreClashes, bool includeDirectories)
+  : _node(name), _cached(false), _depth(depth), _flat(flat), _ignoreClashes(ignoreClashes),
+    _includeDirectories(includeDirectories) {
 
 	setPrefix(prefix);
 }
@@ -337,13 +341,21 @@ int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const String &patt
 	lowercasePattern.toLowercase();
 
 	int matches = 0;
-	NodeCache::const_iterator it = _fileCache.begin();
-	for ( ; it != _fileCache.end(); ++it) {
+	for (NodeCache::const_iterator it = _fileCache.begin(); it != _fileCache.end(); ++it) {
 		if (it->_key.matchString(lowercasePattern, false, true)) {
 			list.push_back(ArchiveMemberPtr(new FSNode(it->_value)));
 			matches++;
 		}
 	}
+	if (_includeDirectories) {
+		for (NodeCache::const_iterator it = _subDirCache.begin(); it != _subDirCache.end(); ++it) {
+			if (it->_key.matchString(lowercasePattern, false, true)) {
+				list.push_back(ArchiveMemberPtr(new FSNode(it->_value)));
+				matches++;
+			}
+		}
+	}
+
 	return matches;
 }
 
@@ -358,6 +370,13 @@ int FSDirectory::listMembers(ArchiveMemberList &list) const {
 	for (NodeCache::const_iterator it = _fileCache.begin(); it != _fileCache.end(); ++it) {
 		list.push_back(ArchiveMemberPtr(new FSNode(it->_value)));
 		++files;
+	}
+
+	if (_includeDirectories) {
+		for (NodeCache::const_iterator it = _subDirCache.begin(); it != _subDirCache.end(); ++it) {
+			list.push_back(ArchiveMemberPtr(new FSNode(it->_value)));
+			++files;
+		}
 	}
 
 	return files;

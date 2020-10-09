@@ -33,7 +33,7 @@
 
 namespace Petka {
 
-//const uint kFirstCursorId = 5001;
+const uint kFirstCursorId = 5001;
 const uint kCaseButtonIndex = 0;
 
 QObjectStar::QObjectStar() {
@@ -87,11 +87,13 @@ uint QObjectStar::findButtonIndex(int16 x, int16 y) const {
 
 void QObjectStar::setPos(Common::Point p, bool) {
 	if (!_isShown) {
+		QSystem *sys = g_vm->getQSystem();
+
 		FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
-		p.x = MAX<int16>(p.x - flc->getWidth() / 2, 0);
+		p.x = MAX<int16>(p.x - sys->_xOffset - flc->getWidth() / 2, 0);
 		p.y = MAX<int16>(p.y - flc->getHeight() / 2, 0);
 
-		_x = MIN<int16>(p.x, 639 - flc->getWidth());
+		_x = MIN<int16>(p.x, 639 - flc->getWidth()) + sys->_xOffset;
 		_y = MIN<int16>(p.y, 479 - flc->getHeight());
 	}
 }

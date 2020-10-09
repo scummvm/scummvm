@@ -90,6 +90,8 @@ void QObjectCursor::setPos(Common::Point p, bool center) {
 		flc->setFrame(1);
 	}
 
+	p.x = p.x - g_vm->getQSystem()->_xOffset;
+
 	g_vm->videoSystem()->addDirtyRect(Common::Point(_x, _y), flc->getBounds());
 
 	if (center) {

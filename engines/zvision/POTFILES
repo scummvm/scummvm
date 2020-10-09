@@ -1,2 +1,4 @@
 engines/zvision/detection_tables.h
+engines/zvision/detection.cpp
 engines/zvision/file/save_manager.cpp
+engines/zvision/zvision.cpp

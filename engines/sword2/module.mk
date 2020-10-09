@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	maketext.o \
 	memory.o \
 	menu.o \
+	metaengine.o \
 	mouse.o \
 	music.o \
 	palette.o \
@@ -41,3 +42,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o

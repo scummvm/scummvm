@@ -29,7 +29,9 @@
 
 #include <list>
 #include <map>
+#include <map>
 #include <string>
+#include <vector>
 
 #include <cassert>
 
@@ -238,6 +240,7 @@ struct BuildSetup {
 	bool createInstaller;      ///< Create installer after the build
 	bool useSDL2;              ///< Whether to use SDL2 or not.
 	bool useCanonicalLibNames; ///< Whether to use canonical libraries names or default ones
+	bool useStaticDetection;   ///< Whether to link detection features inside the executable or not.
 
 	BuildSetup() {
 		devTools = false;
@@ -246,6 +249,7 @@ struct BuildSetup {
 		createInstaller = false;
 		useSDL2 = true;
 		useCanonicalLibNames = false;
+		useStaticDetection = true;
 	}
 };
 
@@ -565,7 +569,7 @@ protected:
 	 * @param includeList Reference to a list, where included files should be added.
 	 * @param excludeList Reference to a list, where excluded files should be added.
 	 */
-	void createModuleList(const std::string &moduleDir, const StringList &defines, StringList &testDirs, StringList &includeList, StringList &excludeList) const;
+	void createModuleList(const std::string &moduleDir, const StringList &defines, StringList &testDirs, StringList &includeList, StringList &excludeList, bool forDetection = false) const;
 
 	/**
 	 * Creates an UUID for every enabled engine of the

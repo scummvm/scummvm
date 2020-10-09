@@ -34,6 +34,14 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_debug_channels Debug channels
+ * @ingroup common
+ *
+ * @brief  Functions for managing debug channels.
+ * @{
+ */
+
 // TODO: Find a better name for this
 class DebugManager : public Singleton<DebugManager> {
 public:
@@ -43,68 +51,69 @@ public:
 		DebugChannel(uint32 c, const String &n, const String &d)
 			: name(n), description(d), channel(c), enabled(false) {}
 
-		String name;
-		String description;
+		String name; /*!< Name of the channel */
+		String description; /*!< Description of the channel */
 
-		uint32 channel;
-		bool enabled;
+		uint32 channel; /*!< Channel number. */
+		bool enabled; /*!< Whether the channel is enabled. */
 	};
 
 	/**
-	 * Adds a debug channel.
+	 * Add a debug channel.
 	 *
-	 * A debug channel is considered roughly similar to what our debug levels described by
+	 * A debug channel is considered roughly similar to what the debug levels described by
 	 * gDebugLevel try to achieve:
 	 *
-	 *  Debug channels should only affect the display of additional debug output, based on
-	 *  their state. That is if they are enabled, channel specific debug messages should
-	 *  be shown. If they are disabled on the other hand, those messages will be hidden.
+	 * Debug channels should only affect the display of additional debug output, based on
+	 * their state. That is, if they are enabled, channel-specific debug messages should
+	 * be shown. If they are disabled on the other hand, those messages will be hidden.
 	 *
-	 * @see gDebugLevel.
+	 * @see gDebugLevel
 	 *
-	 * Note that we have debug* functions which depend both on the debug level set and
+	 * Note that we have debug* functions that depend both on the debug level set and
 	 * specific debug channels. Those functions will only show output, when *both* criteria
 	 * are satisfied.
 	 *
-	 * @param channel the channel flag (should be OR-able i.e. first one should be 1 then 2, 4, etc.)
-	 * @param name the option name which is used in the debugger/on the command line to enable
-	 *             this special debug level (case will be ignored)
-	 * @param description the description which shows up in the debugger
-	 * @return true on success false on failure
+	 * @param channel     Channel flag (should be OR-able i.e. first one should be 1 then 2, 4, etc.).
+	 * @param name        The option name that is used in the debugger/on the command line to enable
+	 *                    this special debug level (case will be ignored).
+	 * @param description The description that shows up in the debugger.
+	 *
+	 * @return True on success, false on failure.
 	 */
 	bool addDebugChannel(uint32 channel, const String &name, const String &description);
 
 	/**
-	 * Resets all engine specific debug channels.
+	 * Reset all engine-specific debug channels.
 	 */
 	void clearAllDebugChannels();
 
 	/**
-	 * Enables a debug channel.
+	 * Enable a debug channel.
 	 *
-	 * @param name the name of the debug channel to enable
-	 * @return true on success, false on failure
+	 * @param name Name of the debug channel to enable.
+	 * @return True on success, false on failure.
 	 */
 	bool enableDebugChannel(const String &name);
 
 	/**
-	 * Enables a debug channel.
+	 * @overload enableDebugChannel(uint32 channel)
 	 *
-	 * @param channel The debug channel
-	 * @return true on success, false on failure
+	 * @param channel Debug channel.
+	 * @return True on success, false on failure.
 	 */
 	bool enableDebugChannel(uint32 channel);
 
 	/**
-	 * Disables a debug channel.
+	 * Disable a debug channel.
 	 *
-	 * @param name the name of the debug channel to disable
-	 * @return true on success, false on failure
+	 * @param name Name of the debug channel to disable.
+	 * @return True on success, false on failure.
 	 */
 	bool disableDebugChannel(const String &name);
 
 	/**
-	 * Disables a debug channel.
+	 * @overload bool disableDebugChannel(uint32 channel)
 	 *
 	 * @param channel The debug channel
 	 * @return true on success, false on failure
@@ -145,8 +154,10 @@ private:
 	DebugManager() : gDebugChannelsEnabled(0) {}
 };
 
-/** Shortcut for accessing the debug manager. */
+/** Shortcut for accessing the Debug Manager. */
 #define DebugMan		Common::DebugManager::instance()
+
+/** @} */
 
 } // End of namespace Common
 

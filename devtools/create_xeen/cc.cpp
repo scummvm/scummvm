@@ -151,7 +151,6 @@ Common::MemFile CCArchive::getMember(const Common::String &name) {
 	for (uint idx = 0; idx < _index.size(); ++idx) {
 		CCEntry &entry = _index[idx];
 		if (entry._id == id) {
-			assert(entry._size < MAX_MEM_SIZE);
 			_file.seek(entry._offset);
 			_file.read(entry._data, entry._size);
 

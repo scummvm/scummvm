@@ -23,6 +23,8 @@
 #ifndef AGOS_INTERN_H
 #define AGOS_INTERN_H
 
+#include "agos/intern_detection.h"
+
 namespace AGOS {
 
 enum ChildType {
@@ -243,58 +245,6 @@ enum SubObjectFlags {
 	kOFNumber         = 0x100,
 	kOFSoft           = 0x200, // Waxworks
 	kOFVoice          = 0x200  // Others
-};
-
-enum GameFeatures {
-	GF_TALKIE           = 1 << 0,
-	GF_OLD_BUNDLE       = 1 << 1,
-	GF_CRUNCHED         = 1 << 2,
-	GF_CRUNCHED_GAMEPC  = 1 << 3,
-	GF_ZLIBCOMP         = 1 << 4,
-	GF_32COLOR          = 1 << 5,
-	GF_EGA              = 1 << 6,
-	GF_PLANAR           = 1 << 7,
-	GF_DEMO             = 1 << 8,
-	GF_PACKED           = 1 << 9,
-	GF_BROKEN_FF_RATING = 1 << 10,
-	GF_WAVSFX           = 1 << 11
-};
-
-enum GameFileTypes {
-	GAME_BASEFILE = 1 << 0,
-	GAME_ICONFILE = 1 << 1,
-	GAME_GMEFILE  = 1 << 2,
-	GAME_MENUFILE = 1 << 3,
-	GAME_STRFILE  = 1 << 4,
-	GAME_RMSLFILE = 1 << 5,
-	GAME_STATFILE = 1 << 6,
-	GAME_TBLFILE  = 1 << 7,
-	GAME_XTBLFILE = 1 << 8,
-	GAME_RESTFILE = 1 << 9,
-	GAME_TEXTFILE = 1 << 10,
-	GAME_VGAFILE  = 1 << 11,
-
-	GAME_GFXIDXFILE = 1 << 12
-};
-
-enum GameIds {
-	GID_PN,
-	GID_ELVIRA1,
-	GID_ELVIRA2,
-	GID_WAXWORKS,
-
-	GID_SIMON1,
-	GID_SIMON1DOS,
-	GID_SIMON1CD32,
-
-	GID_SIMON2,
-
-	GID_FEEBLEFILES,
-
-	GID_DIMP,
-	GID_JUMBLE,
-	GID_PUZZLE,
-	GID_SWAMPY
 };
 
 } // End of namespace AGOS

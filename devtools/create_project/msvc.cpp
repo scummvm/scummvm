@@ -74,6 +74,7 @@ std::string MSVCProvider::getLibraryFromFeature(const char *feature, const Build
 		{   "libcurl", "libcurl.lib",               "libcurl-d.lib", "ws2_32.lib wldap32.lib crypt32.lib normaliz.lib", 0 },
 		{    "sdlnet", "SDL_net.lib",               0,               "iphlpapi.lib",                                    0 },
 		{   "sdl2net", "SDL2_net.lib",              0,               "iphlpapi.lib",                                    "SDL_net.lib" },
+		{   "discord", "discord-rpc.lib",           0,               0,                                                 0 },
 		// Feature flags with library dependencies
 		{   "updates", "winsparkle.lib",            0,               0,                                                 0 },
 		{       "tts", 0,                           0,               "sapi.lib",                                        0 }

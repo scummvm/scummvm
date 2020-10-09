@@ -92,8 +92,8 @@ class XeenEngine;
 
 class AttributePair {
 public:
-	uint _permanent;
-	uint _temporary;
+	int _permanent;
+	int _temporary;
 public:
 	AttributePair();
 	void synchronize(Common::Serializer &s);

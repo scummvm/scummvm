@@ -33,6 +33,8 @@
 
 namespace Petka {
 
+// COMPLETED
+
 const uint kShakeTime = 30;
 const int kShakeOffset = 3;
 
@@ -44,9 +46,27 @@ VideoSystem::VideoSystem(PetkaEngine &vm) :
 }
 
 void VideoSystem::update() {
-	Interface *interface = _vm.getQSystem()->_currInterface;
+	QSystem *sys = _vm.getQSystem();
+	Interface *interface = sys->_currInterface;
 	uint32 time = g_system->getMillis();
 	if (interface) {
+		if (sys->_currInterface == sys->_mainInterface.get()) {
+			int xOff = sys->_xOffset;
+			int reqOffset = sys->_reqOffset;
+			if (xOff != reqOffset && ((xOff != sys->_sceneWidth - 640 && xOff < reqOffset) || (xOff > 0 && xOff > reqOffset))) {
+				if (xOff <= reqOffset) {
+					xOff += 8;
+					xOff = MIN<int>(xOff, reqOffset);
+				} else {
+					xOff -= 8;
+					xOff = MAX<int>(xOff, reqOffset);
+				}
+				sys->_xOffset = CLIP(xOff, 0, sys->_sceneWidth - 640);
+				makeAllDirty();
+			}
+		}
+
+
 		for (uint i = interface->_startIndex; i < interface->_objs.size(); ++i) {
 			interface->_objs[i]->update(time - _time);
 		}
@@ -56,7 +76,6 @@ void VideoSystem::update() {
 		}
 
 		sort();
-
 		mergeDirtyRects();
 
 		_allowAddingRects = false;
@@ -100,6 +119,7 @@ void VideoSystem::addDirtyRect(Common::Point pos, Common::Rect rect) {
 }
 
 void VideoSystem::addDirtyRect(Common::Point pos, FlicDecoder &flc) {
+	pos.x = pos.x - g_vm->getQSystem()->_xOffset;
 	addDirtyRect(pos, flc.getBounds());
 }
 
@@ -114,7 +134,7 @@ void VideoSystem::addDirtyMskRects(FlicDecoder &flc) {
 	addDirtyMskRects(Common::Point(0, 0), flc);
 }
 
-const Common::List<Common::Rect> VideoSystem::rects() const {
+const Common::List<Common::Rect> &VideoSystem::rects() const {
 	return _dirtyRects;
 }
 

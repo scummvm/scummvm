@@ -71,6 +71,10 @@
 #define FAKE_BOLD 0
 #endif
 
+#if FREETYPE_MAJOR > 2 || ( FREETYPE_MAJOR == 2 &&  FREETYPE_MINOR >= 9)
+#include FT_TRUETYPE_DRIVER_H
+#endif
+
 namespace Graphics {
 
 namespace {
@@ -138,9 +142,9 @@ public:
 	virtual ~TTFFont();
 
 	bool load(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode,
-	          uint dpi, TTFRenderMode renderMode, const uint32 *mapping);
+	          uint dpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening);
 	bool load(uint8 *ttfFile, uint32 sizeFile, int32 faceIndex, bool fakeBold, bool fakeItalic,
-	          int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, const uint32 *mapping);
+	          int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening);
 
 	virtual int getFontHeight() const;
 
@@ -211,7 +215,7 @@ TTFFont::~TTFFont() {
 }
 
 bool TTFFont::load(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode,
-                   uint dpi, TTFRenderMode renderMode, const uint32 *mapping) {
+                   uint dpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening) {
 	if (!g_ttf.isInitialized())
 		return false;
 
@@ -227,7 +231,7 @@ bool TTFFont::load(Common::SeekableReadStream &stream, int size, TTFSizeMode siz
 		return false;
 	}
 
-	if (!load(ttfFile, sizeFile, 0, false, false, size, sizeMode, dpi, renderMode, mapping)) {
+	if (!load(ttfFile, sizeFile, 0, false, false, size, sizeMode, dpi, renderMode, mapping, stemDarkening)) {
 		delete[] ttfFile;
 		return false;
 	}
@@ -237,7 +241,7 @@ bool TTFFont::load(Common::SeekableReadStream &stream, int size, TTFSizeMode siz
 }
 
 bool TTFFont::load(uint8 *ttfFile, uint32 sizeFile, int32 faceIndex, bool bold, bool italic,
-                   int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, const uint32 *mapping) {
+                   int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening) {
 	_initialized = false;
 
 	if (!g_ttf.isInitialized())
@@ -265,6 +269,16 @@ bool TTFFont::load(uint8 *ttfFile, uint32 sizeFile, int32 faceIndex, bool bold, 
 		_ttfFile = 0;
 
 		return false;
+	}
+	if (stemDarkening) {
+#if FREETYPE_MAJOR > 2 || ( FREETYPE_MAJOR == 2 &&  FREETYPE_MINOR >= 9)
+		FT_Parameter param;
+		param.tag = FT_PARAM_TAG_STEM_DARKENING;
+		param.data = &stemDarkening;
+		FT_Face_Properties(_face, 1, &param);
+#else
+		warning("Stem darkening is not available with this version of FreeType");
+#endif
 	}
 
 	// Check whether we have kerning support
@@ -808,10 +822,10 @@ void TTFFont::assureCached(uint32 chr) const {
 	}
 }
 
-Font *loadTTFFont(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, const uint32 *mapping) {
+Font *loadTTFFont(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening) {
 	TTFFont *font = new TTFFont();
 
-	if (!font->load(stream, size, sizeMode, dpi, renderMode, mapping)) {
+	if (!font->load(stream, size, sizeMode, dpi, renderMode, mapping, stemDarkening)) {
 		delete font;
 		return 0;
 	}
@@ -1000,7 +1014,7 @@ Font *findTTFace(const Common::Array<Common::String> &files, const Common::U32St
 	}
 
 	if (!font->load(bestTTFFile, bestSize, bestFaceId, bold, italic, size, sizeMode,
-	                dpi, renderMode, mapping)) {
+	                dpi, renderMode, mapping, false)) {
 		delete font;
 		delete [] bestTTFFile;
 		return nullptr;

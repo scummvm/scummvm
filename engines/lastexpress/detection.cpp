@@ -20,7 +20,6 @@
  *
  */
 
-#include "lastexpress/lastexpress.h"
 #include "engines/advancedDetector.h"
 
 namespace LastExpress {
@@ -201,33 +200,20 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
-	// The Last Express (GOG)
-	//   expressw.exe ???
-	//   express.exe  2010-12-14 13:49:04
-	{
-		"lastexpress",
-		"",
-		{
-			{"HD.HPF",  0, "ab940d5815008b176502f759ae753fb7", 30715904},   // 2000-03-01 17:03:58
-			{"CD1.HPF", 0, "cec8810125b050f41b7f34ab72371f81", 525522944},  // 2000-02-14 16:02:02
-			{"CD2.HPF", 0, "c648872b31e43d458680cf16bedc636c", 669581312},  // 1997-02-10 21:19:30
-			{"CD3.HPF", 0, "8cb3e68a6dca354e556c487ea24a6b10", 641128448},  // 1997-02-10 20:44:08
-			AD_LISTEND
-		},
-		Common::EN_ANY,
-		Common::kPlatformUnknown,
-		ADGF_UNSTABLE,
-		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
-	},
-
 	AD_TABLE_END_MARKER
 };
 
+static const char *const directoryGlobs[] = {
+        "data", // GOG release
+        0
+};
 
-class LastExpressMetaEngine : public AdvancedMetaEngine {
+class LastExpressMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	LastExpressMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(ADGameDescription), lastExpressGames) {
+	LastExpressMetaEngineStatic() : AdvancedMetaEngineStatic(gameDescriptions, sizeof(ADGameDescription), lastExpressGames) {
 		_guiOptions = GUIO2(GUIO_NOSUBTITLES, GUIO_NOSFX);
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
 	}
 
 	const char *getEngineId() const override {
@@ -241,26 +227,8 @@ public:
 	const char *getOriginalCopyright() const override {
 		return "The Last Express (C) 1997 Smoking Car Productions";
 	}
-
-protected:
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 };
-
-bool LastExpressMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
-	if (gd) {
-		*engine = new LastExpressEngine(syst, (const ADGameDescription *)gd);
-	}
-	return gd != 0;
-}
-
-bool LastExpressEngine::isDemo() const {
-	return (bool)(_gameDescription->flags & ADGF_DEMO);
-}
 
 } // End of namespace LastExpress
 
-#if PLUGIN_ENABLED_DYNAMIC(LASTEXPRESS)
-	REGISTER_PLUGIN_DYNAMIC(LASTEXPRESS, PLUGIN_TYPE_ENGINE, LastExpress::LastExpressMetaEngine);
-#else
-	REGISTER_PLUGIN_STATIC(LASTEXPRESS, PLUGIN_TYPE_ENGINE, LastExpress::LastExpressMetaEngine);
-#endif
+REGISTER_PLUGIN_STATIC(LASTEXPRESS_DETECTION, PLUGIN_TYPE_METAENGINE, LastExpress::LastExpressMetaEngineStatic);

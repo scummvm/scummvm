@@ -28,6 +28,15 @@
 namespace Common {
 
 /**
+ * @defgroup common_update Update Manager
+ * @ingroup common
+ *
+ * @brief The UpdateManager module allows for automatic update checking.
+ *
+ * @{
+ */
+
+/**
  * The UpdateManager allows configuring of the automatic update checking
  * for systems that support it:
  *  - using Sparkle on Mac OS X
@@ -114,9 +123,9 @@ public:
 	 * Returns string representation of a given interval.
 	 *
 	 * @param  interval    The interval.
-	 * @return  pointer to localized string of given interval.
+	 * @return Localized string of given interval as a U32String.
 	 */
-	static const char *updateIntervalToString(int interval);
+	static Common::U32String updateIntervalToString(int interval);
 
 	/**
 	 * Rounds up the given interval to acceptable value.
@@ -126,6 +135,8 @@ public:
 	 */
 	static int normalizeInterval(int interval);
 };
+
+/** @} */
 
 } // End of namespace Common
 

@@ -24,18 +24,6 @@
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
-#include "common/system.h"
-#include "common/savefile.h"
-
-#include "wage/wage.h"
-
-namespace Wage {
-
-const char *WageEngine::getGameFile() const {
-	return _gameDescription->filesDescriptions[0].fileName;
-}
-
-}
 
 static const PlainGameDescriptor wageGames[] = {
 	{"afm", "Another Fine Mess"},
@@ -51,9 +39,9 @@ static const PlainGameDescriptor wageGames[] = {
 
 #include "wage/detection_tables.h"
 
-class WageMetaEngine : public AdvancedMetaEngine {
+class WageMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	WageMetaEngine() : AdvancedMetaEngine(Wage::gameDescriptions, sizeof(ADGameDescription), wageGames) {
+	WageMetaEngineStatic() : AdvancedMetaEngineStatic(Wage::gameDescriptions, sizeof(ADGameDescription), wageGames) {
 		_md5Bytes = 2 * 1024 * 1024;
 		_guiOptions = GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI);
 	}
@@ -69,97 +57,6 @@ public:
 	const char *getOriginalCopyright() const override {
 		return "World Builder (C) Silicon Beach Software";
 	}
-
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-	bool hasFeature(MetaEngineFeature f) const override;
-	SaveStateList listSaves(const char *target) const override;
-	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
 };
 
-bool WageMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSimpleSavesNames);
-}
-
-bool Wage::WageEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsReturnToLauncher) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
-}
-
-bool WageMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc) {
-		*engine = new Wage::WageEngine(syst, desc);
-	}
-	return desc != 0;
-}
-
-SaveStateList WageMetaEngine::listSaves(const char *target) const {
-	const uint32 WAGEflag = MKTAG('W','A','G','E');
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringArray filenames;
-	char saveDesc[128] = {0};
-	Common::String pattern = target;
-	pattern += ".###";
-
-	filenames = saveFileMan->listSavefiles(pattern);
-
-	SaveStateList saveList;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(file->c_str() + file->size() - 3);
-
-		if (slotNum >= 0 && slotNum <= 999) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
-			if (in) {
-				saveDesc[0] = 0;
-				in->seek(in->size() - 8);
-				uint32 offset = in->readUint32BE();
-				uint32 type = in->readUint32BE();
-				if (type == WAGEflag) {
-					in->seek(offset);
-
-					type = in->readUint32BE();
-					if (type == WAGEflag) {
-						in->read(saveDesc, 127);
-					}
-				}
-				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
-				delete in;
-			}
-		}
-	}
-
-	// Sort saves based on slot number.
-	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
-	return saveList;
-}
-
-int WageMetaEngine::getMaximumSaveSlot() const { return 999; }
-
-void WageMetaEngine::removeSaveState(const char *target, int slot) const {
-	g_system->getSavefileManager()->removeSavefile(Common::String::format("%s.%03d", target, slot));
-}
-
-#if PLUGIN_ENABLED_DYNAMIC(WAGE)
-	REGISTER_PLUGIN_DYNAMIC(WAGE, PLUGIN_TYPE_ENGINE, WageMetaEngine);
-#else
-	REGISTER_PLUGIN_STATIC(WAGE, PLUGIN_TYPE_ENGINE, WageMetaEngine);
-#endif
-
-namespace Wage {
-
-bool WageEngine::canLoadGameStateCurrently() {
-	return true;
-}
-
-bool WageEngine::canSaveGameStateCurrently() {
-	return true;
-}
-
-} // End of namespace Wage
+REGISTER_PLUGIN_STATIC(WAGE_DETECTION, PLUGIN_TYPE_METAENGINE, WageMetaEngineStatic);

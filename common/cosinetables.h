@@ -25,18 +25,27 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_cosinetables Cosine tables
+ * @ingroup common
+ *
+ * @brief  Functions for working with cosine tables.
+ *
+ * @{
+ */
+
 class CosineTable {
 public:
 	/**
-	 * Construct a cosine table given the number of points
+	 * Construct a cosine table given the number of points.
 	 *
-	 * @param nPoints Number of distinct radian points, which must be in range [16,65536] and be divisible by 4
+	 * @param nPoints Number of distinct radian points that must be in range [16,65536] and be divisible by 4.
 	 */
 	CosineTable(int nPoints);
 	~CosineTable();
 
 	/**
-	 * Get pointer to table.
+	 * Get a pointer to a table.
 	 *
 	 * This table contains nPoints/2 entries.
 	 * Prefer to use at()
@@ -49,9 +58,9 @@ public:
 	const float *getTable() { return _tableEOS; }
 
 	/**
-	 * Returns cos(2*pi * index / nPoints )
+	 * Return cos(2*pi * index / nPoints )
 	 * Index must be in range [0, nPoints - 1]
-	 * Faster than atLegacy
+	 * Faster than atLegacy.
 	 */
 	float at(int index) const;
 
@@ -68,6 +77,8 @@ private:
 	int _refSize; // _nPoints / 4
 	int _nPoints; // range of operator[]
 };
+
+/** @} */
 
 } // End of namespace Common
 

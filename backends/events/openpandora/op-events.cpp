@@ -86,31 +86,23 @@ bool OPEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
 }
 
 bool OPEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
-	if (ev.button.button == SDL_BUTTON_LEFT) {
-		if (_buttonStateL == true) /* _buttonStateL = Left Trigger Held, force Right Click */
-			event.type = Common::EVENT_RBUTTONUP;
-		else if (_tapmodeLevel == TAPMODE_LEFT) /* TAPMODE_LEFT = Left Click Tap Mode */
-			event.type = Common::EVENT_LBUTTONUP;
-		else if (_tapmodeLevel == TAPMODE_RIGHT) /* TAPMODE_RIGHT = Right Click Tap Mode */
-			event.type = Common::EVENT_RBUTTONUP;
-		else if (_tapmodeLevel == TAPMODE_HOVER) /* TAPMODE_HOVER = Hover (No Click) Tap Mode */
-			event.type = Common::EVENT_MOUSEMOVE;
-		else if (_tapmodeLevel == TAPMODE_HOVER_DPAD) /* TAPMODE_HOVER_DPAD = Hover (DPad Clicks) Tap Mode */
-			event.type = Common::EVENT_MOUSEMOVE;
-		else
-			event.type = Common::EVENT_LBUTTONUP; /* For normal mice etc. */
-	} else if (ev.button.button == SDL_BUTTON_RIGHT)
+	if (ev.button.button != SDL_BUTTON_LEFT)
+		return SdlEventSource::handleMouseButtonUp(ev, event);
+
+	if (_buttonStateL == true) /* _buttonStateL = Left Trigger Held, force Right Click */
 		event.type = Common::EVENT_RBUTTONUP;
-#if defined(SDL_BUTTON_MIDDLE)
-	else if (ev.button.button == SDL_BUTTON_MIDDLE)
-		event.type = Common::EVENT_MBUTTONUP;
-#endif
+	else if (_tapmodeLevel == TAPMODE_LEFT) /* TAPMODE_LEFT = Left Click Tap Mode */
+		event.type = Common::EVENT_LBUTTONUP;
+	else if (_tapmodeLevel == TAPMODE_RIGHT) /* TAPMODE_RIGHT = Right Click Tap Mode */
+		event.type = Common::EVENT_RBUTTONUP;
+	else if (_tapmodeLevel == TAPMODE_HOVER) /* TAPMODE_HOVER = Hover (No Click) Tap Mode */
+		event.type = Common::EVENT_MOUSEMOVE;
+	else if (_tapmodeLevel == TAPMODE_HOVER_DPAD) /* TAPMODE_HOVER_DPAD = Hover (DPad Clicks) Tap Mode */
+		event.type = Common::EVENT_MOUSEMOVE;
 	else
-		return false;
+		event.type = Common::EVENT_LBUTTONUP; /* For normal mice etc. */
 
-	processMouseEvent(event, ev.button.x, ev.button.y);
-
-	return true;
+	return processMouseEvent(event, ev.button.x, ev.button.y);
 }
 
 /* On the OpenPandora by default the ABXY and L/R Trigger buttons are returned by SDL as

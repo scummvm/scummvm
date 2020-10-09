@@ -461,6 +461,7 @@ void AI::processCines() {
 			return;
 
 		if (complete && _cine.size()) {
+			delete _cine[i];
 			_cine.remove_at(i);
 			i--;
 			complete = false;

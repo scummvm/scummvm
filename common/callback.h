@@ -26,31 +26,39 @@
 namespace Common {
 
 /**
+ * @defgroup common_callback Callbacks
+ * @ingroup common
+ *
+ * @brief  Callback class templates.
+ * @{
+ */
+
+/**
  * BaseCallback<S> is a simple base class for object-oriented callbacks.
  *
- * Object-oriented callbacks are such callbacks that know exact instance
- * which method must be called.
+ * Object-oriented callbacks are callbacks that know the exact instance
+ * of the method that must be called.
  *
- * For backwards compatibility purposes, there is a GlobalFunctionCallback,
+ * For backward compatibility purposes, GlobalFunctionCallback is available,
  * which is BaseCallback<void *>, so it can be used with global C-like
  * functions too.
  *
- * <S> is the type, which is passed to operator() of this callback.
- * This allows you to specify that you accept a callback, which wants
- * to receive an <S> object.
+ * \<S\> is the type that is passed to operator() of this callback.
+ * This allows you to specify that you accept a callback that wants
+ * to receive an \<S\> object.
  */
 template<typename S = void *> class BaseCallback {
 public:
 	BaseCallback() {}
 	virtual ~BaseCallback() {}
-	virtual void operator()(S data) = 0;
+	virtual void operator()(S data) = 0; /*!< Type of the object passed to the operator. */
 };
 
 /**
  * GlobalFunctionCallback<T> is a simple wrapper for global C functions.
  *
- * If there is a method, which accepts BaseCallback<T>, you can
- * easily pass your C function by passing
+ * If a method accepts BaseCallback<T>, you can
+ * pass your C function by passing
  *     new GlobalFunctionCallback<T>(yourFunction)
  */
 template<typename T> class GlobalFunctionCallback: public BaseCallback<T> {
@@ -60,7 +68,7 @@ template<typename T> class GlobalFunctionCallback: public BaseCallback<T> {
 public:
 	GlobalFunctionCallback(GlobalFunction cb): _callback(cb) {}
 	virtual ~GlobalFunctionCallback() {}
-	virtual void operator()(T data) {
+	virtual void operator()(T data) { /*!< C function passed to the operator. */
 		if (_callback) _callback(data);
 	}
 };
@@ -68,16 +76,18 @@ public:
 /**
  * Callback<T, S> implements an object-oriented callback.
  *
- * <T> stands for a class which method you want to call.
- * <S>, again, is the type of an object passed to operator().
+ * \<T\> stands for a class whose method you want to call.
+ * \<S\> is the type of the object passed to operator().
  *
  * So, if you have void MyClass::myMethod(AnotherClass) method,
  * the corresponding callback is Callback<MyClass, AnotherClass>.
- * You create it similarly to this:
+ * You can create it in the following way:
+ * @code
  *     new Callback<MyClass, AnotherClass>(
  *         pointerToMyClassObject,
  *         &MyClass::myMethod
  *     )
+ * @endcode
  */
 template<class T, typename S = void *> class Callback: public BaseCallback<S> {
 protected:
@@ -87,16 +97,16 @@ protected:
 public:
 	Callback(T *object, TMethod method): _object(object), _method(method) {}
 	virtual ~Callback() {}
-	void operator()(S data) { (_object->*_method)(data); }
+	void operator()(S data) { (_object->*_method)(data); } /*!< Type of the object passed to the operator. */
 };
 
 /**
- * CallbackBridge<T, OS, S> helps you to chain callbacks.
+ * CallbackBridge<T, OS, S> allows you to chain callbacks.
  *
  * CallbackBridge keeps a pointer to BaseCallback<OS>.
  * When its operator() is called, it passes this pointer
- * along with the actual data (of type <S>) to the method
- * of <T> class.
+ * along with the actual data (of type \<S\>) to the method
+ * of \<T\> class.
  *
  * This is needed when you have to call a callback only
  * when your own callback is called. So, your callback
@@ -110,9 +120,9 @@ public:
  * So, if you receive a BaseCallback<SomeClass> callback
  * and you want to call it from your MyClass::myMethod method,
  * you should create CallbackBridge<MyClass, SomeClass, S>,
- * where <S> is data type you want to receive in MyClass::myMethod.
+ * where \<S\> is the data type you want to receive in MyClass::myMethod.
  *
- * You create it similarly to this:
+ * You can create it in the following way:
  *     new Callback<MyClass, SomeClass, AnotherClass>(
  *         pointerToMyClassObject,
  *         &MyClass::myMethod,
@@ -130,8 +140,10 @@ public:
 	CallbackBridge(T *object, TCallbackMethod method, BaseCallback<OS> *outerCallback):
 		_object(object), _method(method), _outerCallback(outerCallback) {}
 	virtual ~CallbackBridge() {}
-	void operator()(S data) { (_object->*_method)(_outerCallback, data); }
+	void operator()(S data) { (_object->*_method)(_outerCallback, data); } /*!< Type of the object passed to the operator. */
 };
+
+/** @} */
 
 } // End of namespace Common
 

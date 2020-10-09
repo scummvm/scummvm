@@ -463,7 +463,6 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_LSL1,          720,   720,  0,              "rm720", "init",                            NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // age check room
 	{ GID_LSL2,           38,    38,  0,        "cloudScript", "changeState",                     NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // entering the room in the middle deck of the ship - bug #5034
 	{ GID_LSL3,          340,   340,  0,        "ComicScript", "changeState",                     NULL,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // right after entering the 3 ethnic groups inside comedy club (temps 200, 201, 202, 203)
-	{ GID_LSL3,           -1,   997,  0,         "TheMenuBar", "handleEvent",                     NULL,     1,     1, { WORKAROUND_FAKE, 0xf } }, // when setting volume the first time, this temp is used to set volume on entry (normally it would have been initialized to 's')
 	{ GID_LSL6,          820,    82,  0,                   "", "export 0",                        NULL,     0,   326, { WORKAROUND_FAKE,   0 } }, // when touching the electric fence (temp 193 for English release, temp 293 for French/German, temp 313 for Spanish - used for setting the loop of the death animation), it's not setting it for this death - bug #5103
 	{ GID_LSL6,           -1,    85,  0,          "washcloth", "doVerb",                          NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // washcloth in inventory
 	{ GID_LSL6,           -1,   928, -1,           "Narrator", "startText",                       NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // used by various objects that are even translated in foreign versions, that's why we use the base-class
@@ -544,6 +543,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_SQ1,           103,   103,  0,               "hand", "internalEvent",                   NULL,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // Spanish (and maybe early versions?) only: when moving cursor over input pad, temps 1 and 2
 	{ GID_SQ1,            -1,   703,  0,                   "", "export 1",                        NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // sub that's called from several objects while on sarien battle cruiser
 	{ GID_SQ1,            -1,   703,  0,         "firePulsar", "changeState",     sig_uninitread_sq1_1,     0,     0, { WORKAROUND_FAKE,   0 } }, // export 1, but called locally (when shooting at aliens)
+	{ GID_SQ1,            -1,   703,  0,      "DeltaurRegion", "init",            sig_uninitread_sq1_1,     0,     0, { WORKAROUND_FAKE,   0 } }, // export 1, but called locally (when teleporting to a deltaur room)
 	{ GID_SQ4,            -1,   398,  0,            "showBox", "changeState",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // CD: called when rummaging in Software Excess bargain bin
 	{ GID_SQ4,            -1,   928, -1,           "Narrator", "startText",                       NULL,  1000,  1000, { WORKAROUND_FAKE,   1 } }, // CD: happens in the options dialog and in-game when speech and subtitles are used simultaneously
 	{ GID_SQ4,           395,   395, -1,    "fromStoreScript", "changeState",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // CD: happens when shoplifting in Galaxy Galleria - bug #10229
@@ -887,12 +887,30 @@ static const uint16 sig_kGraphRedrawBox_sq4_1[] = {
 	SIG_END
 };
 
+// same as above but for NRS SQ4 Update, which has a different first instruction
+static const uint16 sig_kGraphRedrawBox_sq4_2[] = {
+	0x3e, SIG_UINT16(0x0007),        // link 0007
+	0x39, SIG_ADDTOOFFSET(+1),       // pushi 2Ah for PC floppy, pushi 27h for PC CD
+	0x76,                            // push0
+	0x72,                            // lofsa laserSound
+	SIG_END
+};
+
 //                Game: Space Quest 4
 //      Calling method: shootEgoScript::changeState
 //   Subroutine offset: English/German/French/Russian PC floppy, Japanese PC-9801: 0x0f8c, English PC CD: 0x0c4d (script 703)
 // Applies to at least: English/German/French/Russian PC floppy, English PC CD, Japanese PC-9801
-static const uint16 sig_kGraphRedrawBox_sq4_2[] = {
+static const uint16 sig_kGraphRedrawBox_sq4_3[] = {
 	0x3f, 0x03,                      // link 03
+	0x39, SIG_ADDTOOFFSET(+1),       // pushi [ number ]
+	0x78,                            // push1
+	0x39, 0x69,                      // pushi 69h
+	SIG_END
+};
+
+// same as above but for NRS SQ4 Update, which has a different first instruction
+static const uint16 sig_kGraphRedrawBox_sq4_4[] = {
+	0x3e, SIG_UINT16(0x0003),        // link 0003
 	0x39, SIG_ADDTOOFFSET(+1),       // pushi [ number ]
 	0x78,                            // push1
 	0x39, 0x69,                      // pushi 69h
@@ -913,8 +931,10 @@ const SciWorkaroundEntry kGraphRedrawBox_workarounds[] = {
 	{ GID_SQ4,            -1,   411,  0,                   "", "changeState",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air... Russian version - bug #5573
 	{ GID_SQ4,           150,   150,  0,        "laserScript", "changeState", sig_kGraphRedrawBox_sq4_1,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // when visiting the pedestral where Roger Jr. is trapped, before trashing the brain icon in the programming chapter, accidental additional parameter specified - bug #5479, German - bug #5527
 	{ GID_SQ4,           150,   150,  0,                   "", "changeState", sig_kGraphRedrawBox_sq4_1,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // same as above, for the Russian version - bug #5573
-	{ GID_SQ4,            -1,   703,  0,     "shootEgoScript", "changeState", sig_kGraphRedrawBox_sq4_2,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // estros when getting shot by the police - accidental additional parameter specified
-	{ GID_SQ4,            -1,   703,  0,                   "", "changeState", sig_kGraphRedrawBox_sq4_2,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // same as above, for the Russian version
+	{ GID_SQ4,           150,   150,  0,        "laserScript", "changeState", sig_kGraphRedrawBox_sq4_2,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // same as above, for NRS SQ4 Update
+	{ GID_SQ4,            -1,   703,  0,     "shootEgoScript", "changeState", sig_kGraphRedrawBox_sq4_3,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // estros when getting shot by the police - accidental additional parameter specified
+	{ GID_SQ4,            -1,   703,  0,                   "", "changeState", sig_kGraphRedrawBox_sq4_3,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // same as above, for the Russian version
+	{ GID_SQ4,            -1,   703,  0,     "shootEgoScript", "changeState", sig_kGraphRedrawBox_sq4_4,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // same as above, for NRS SQ4 Update
 	{ GID_SQ4,            -1,   704,  0,           "shootEgo", "changeState",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // When shot by Droid in Super Computer Maze (Rooms 500, 505, 510...) - accidental additional parameter specified
 	{ GID_KQ5,            -1,   981,  0,           "myWindow",     "dispose",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // Happens in the floppy version, when closing any dialog box, accidental additional parameter specified - bug #5031
 	{ GID_KQ5,            -1,   995,  0,               "invW",        "doit",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // Happens in the floppy version, when closing the inventory window, accidental additional parameter specified

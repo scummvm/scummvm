@@ -158,11 +158,11 @@ void Settings::synchronize(Shared::ConfSerializer &s) {
 	s.syncAsInt("titleSpeedOther", _titleSpeedOther, DEFAULT_TITLE_SPEED_OTHER);
 	s.syncAsBool("innAlwaysCombat", _innAlwaysCombat, false);
 	s.syncAsBool("campingAlwaysCombat", _campingAlwaysCombat, false);
+	s.syncAsBool("u5spellMixing", _enhancementsOptions._u5SpellMixing, isEnhanced);
 
 	// all specific minor enhancements default to "on", any major enhancements default to "off"
 	// minor enhancement options
 	s.syncAsBool("activePlayer", _enhancementsOptions._activePlayer, true);
-	s.syncAsBool("u5spellMixing", _enhancementsOptions._u5SpellMixing, true);
 	s.syncAsBool("u5shrines", _enhancementsOptions._u5Shrines, true);
 	s.syncAsBool("slimeDivides", _enhancementsOptions._slimeDivides, true);
 	s.syncAsBool("gazerSpawnsInsects", _enhancementsOptions._gazerSpawnsInsects, true);

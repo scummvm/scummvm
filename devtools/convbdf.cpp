@@ -204,8 +204,8 @@ int main(int argc, char *argv[]) {
 				error("Invalid FAMILY_NAME");
 			*p = '\0'; // Remove last quote
 		} else if (hasPrefix(line, "SLANT \"")) {
-			font.familyName = new char[line.size()]; // We will definitely fit here
-			strncpy(font.familyName, &line.c_str()[7], line.size() - 1);
+			font.slant = new char[line.size()]; // We will definitely fit here
+			strncpy(font.slant, &line.c_str()[7], line.size() - 1);
 			char *p = &font.slant[strlen(font.slant)];
 			while (p != font.slant && *p != '"')
 				p--;

@@ -97,7 +97,7 @@ void EoBCoreEngine::loadLevel(int level, int sub) {
 		_levelBlockProperties[0x035C].assignedObjects = 0x0E8D;
 
 	loadVcnData(gfxFile.c_str(), _cgaLevelMappingIndex ? _cgaMappingLevel[_cgaLevelMappingIndex[level - 1]] : 0);
-	gui_setupPlayFieldHelperPages();		
+	gui_setupPlayFieldHelperPages();
 	if (_flags.platform == Common::kPlatformAmiga && _flags.gameID == GI_EOB1)
 		_screen->getPalette(0).copy(_screen->getPalette(1), 1, 5, 1);
 
@@ -122,7 +122,7 @@ void EoBCoreEngine::readLevelFileData(int level) {
 		file = Common::String::format("LEVEL%d.%s", level, *sf);
 		s = _res->createReadStream(file);
 	}
-	
+
 	if (!s)
 		error("Failed to load level file LEVEL%d.INF/DRO/ELO/JOT", level);
 
@@ -164,7 +164,7 @@ Common::String EoBCoreEngine::initLevelData(int sub) {
 		loadBlockProperties((const char *)pos);
 		pos += slen;
 
-		Common::SeekableReadStreamEndian *s = getVmpData((const char*)pos);		
+		Common::SeekableReadStreamEndian *s = getVmpData((const char*)pos);
 		assert(s);
 		uint16 size = (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformSegaCD) ? 2916 : s->readUint16();
 		delete[] _vmpPtr;
@@ -317,7 +317,7 @@ void EoBCoreEngine::addLevelItems() {
 	}
 }
 
-void EoBCoreEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {	
+void EoBCoreEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
 	uint32 vcnSize = 0;
 	Common::String fn = Common::String::format(_vcnFilePattern.c_str(), _lastBlockDataFile);
 	_screen->loadBitmap(fn.c_str(), 3, 3, 0, true);
@@ -354,7 +354,7 @@ void EoBCoreEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
 	} else {
 		if (_flags.platform != Common::kPlatformAmiga && !(_flags.gameID == GI_EOB1 && _configRenderMode == Common::kRenderEGA))
 			memcpy(_vcnColTable, colMap, 32);
-		
+
 		memcpy(_vcnBlocks, pos, vcnSize);
 	}
 }

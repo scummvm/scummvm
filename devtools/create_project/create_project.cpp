@@ -28,6 +28,21 @@
 #undef main
 #endif // main
 
+#if (defined(_WIN32) || defined(WIN32)) && !defined(__GNUC__)
+#define USE_WIN32_API
+#endif
+
+#if (defined(_WIN32) || defined(WIN32))
+#define _WIN32_WINNT 0x0502
+#include <windows.h>
+#else
+#include <dirent.h>
+#include <errno.h>
+#include <sstream>
+#include <sys/param.h>
+#include <sys/stat.h>
+#endif
+
 #include "create_project.h"
 #include "config.h"
 
@@ -50,20 +65,6 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
-
-#if (defined(_WIN32) || defined(WIN32)) && !defined(__GNUC__)
-#define USE_WIN32_API
-#endif
-
-#if (defined(_WIN32) || defined(WIN32))
-#include <windows.h>
-#else
-#include <dirent.h>
-#include <errno.h>
-#include <sstream>
-#include <sys/param.h>
-#include <sys/stat.h>
-#endif
 
 namespace {
 /**
@@ -101,6 +102,8 @@ enum ProjectType {
 	kProjectMSVC,
 	kProjectXcode
 };
+
+std::map<std::string, bool> isEngineEnabled;
 
 int main(int argc, char *argv[]) {
 #ifndef USE_WIN32_API
@@ -311,6 +314,7 @@ int main(int argc, char *argv[]) {
 					break;
 				}
 			}
+			isEngineEnabled[i->name] = true;
 		}
 	}
 
@@ -399,6 +403,10 @@ int main(int argc, char *argv[]) {
 		// this in our configure/make based build system. Adapt create_project
 		// to replicate this behavior.
 		setup.defines.push_back("USE_SDL2");
+	}
+
+	if (setup.useStaticDetection) {
+		setup.defines.push_back("DETECTION_STATIC");
 	}
 
 	// List of global warnings and map of project-specific warnings
@@ -1032,29 +1040,33 @@ const Feature s_features[] = {
 	{"fluidsynth",  "USE_FLUIDSYNTH", true, true,  "FluidSynth support" },
 	{   "libcurl",     "USE_LIBCURL", true, true,  "libcurl support" },
 	{    "sdlnet",     "USE_SDL_NET", true, true,  "SDL_net support" },
+	{   "discord",     "USE_DISCORD", true, false, "Discord support" },
 
 	// Feature flags
-	{            "bink",                      "USE_BINK", false, true,  "Bink video support" },
-	{         "scalers",                   "USE_SCALERS", false, true,  "Scalers" },
-	{       "hqscalers",                "USE_HQ_SCALERS", false, true,  "HQ scalers" },
-	{           "16bit",                 "USE_RGB_COLOR", false, true,  "16bit color support" },
-	{         "highres",                   "USE_HIGHRES", false, true,  "high resolution" },
-	{         "mt32emu",                   "USE_MT32EMU", false, true,  "integrated MT-32 emulator" },
-	{             "lua",                       "USE_LUA", false, true,  "lua" },
-	{            "nasm",                      "USE_NASM", false, true,  "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
-	{          "opengl",                    "USE_OPENGL", false, true,  "OpenGL support" },
-	{        "opengles",                      "USE_GLES", false, true,  "forced OpenGL ES mode" },
-	{         "taskbar",                   "USE_TASKBAR", false, true,  "Taskbar integration support" },
-	{           "cloud",                     "USE_CLOUD", false, true,  "Cloud integration support" },
-	{     "translation",               "USE_TRANSLATION", false, true,  "Translation support" },
-	{          "vkeybd",                 "ENABLE_VKEYBD", false, false, "Virtual keyboard support"},
-	{   "eventrecorder",          "ENABLE_EVENTRECORDER", false, false, "Event recorder support"},
-	{         "updates",                   "USE_UPDATES", false, false, "Updates support"},
-	{         "dialogs",                "USE_SYSDIALOGS", false, true,  "System dialogs support"},
-	{      "langdetect",                "USE_DETECTLANG", false, true,  "System language detection support" }, // This feature actually depends on "translation", there
+	{             "bink",                      "USE_BINK", false, true,  "Bink video support" },
+	{          "scalers",                   "USE_SCALERS", false, true,  "Scalers" },
+	{        "hqscalers",                "USE_HQ_SCALERS", false, true,  "HQ scalers" },
+	{            "16bit",                 "USE_RGB_COLOR", false, true,  "16bit color support" },
+	{          "highres",                   "USE_HIGHRES", false, true,  "high resolution" },
+	{          "mt32emu",                   "USE_MT32EMU", false, true,  "integrated MT-32 emulator" },
+	{              "lua",                       "USE_LUA", false, true,  "lua" },
+	{             "nasm",                      "USE_NASM", false, true,  "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
+	{           "opengl",                    "USE_OPENGL", false, true,  "OpenGL support" },
+	{         "opengles",                      "USE_GLES", false, true,  "forced OpenGL ES mode" },
+	{          "taskbar",                   "USE_TASKBAR", false, true,  "Taskbar integration support" },
+	{            "cloud",                     "USE_CLOUD", false, true,  "Cloud integration support" },
+	{      "translation",               "USE_TRANSLATION", false, true,  "Translation support" },
+	{           "vkeybd",                 "ENABLE_VKEYBD", false, false, "Virtual keyboard support"},
+	{    "eventrecorder",          "ENABLE_EVENTRECORDER", false, false, "Event recorder support"},
+	{          "updates",                   "USE_UPDATES", false, false, "Updates support"},
+	{          "dialogs",                "USE_SYSDIALOGS", false, true,  "System dialogs support"},
+	{       "langdetect",                "USE_DETECTLANG", false, true,  "System language detection support" }, // This feature actually depends on "translation", there
 	                                                                                                           // is just no current way of properly detecting this...
-	{    "text-console", "USE_TEXT_CONSOLE_FOR_DEBUGGER", false, false, "Text console debugger" }, // This feature is always applied in xcode projects
-	{             "tts",                       "USE_TTS", false, true,  "Text to speech support"}
+	{     "text-console", "USE_TEXT_CONSOLE_FOR_DEBUGGER", false, false, "Text console debugger" }, // This feature is always applied in xcode projects
+	{              "tts",                       "USE_TTS", false, true,  "Text to speech support"},
+	{"builtin-resources",             "BUILTIN_RESOURCES", false, true,  "include resources (e.g. engine data, fonts) into the binary"},
+	{"detection-static", "USE_DETECTION_FEATURES_STATIC",  false, true,  "Static linking of detection objects for engines."},
+	{            "cxx11",                     "USE_CXX11", false, true,  "Compile with c++11 support"}
 };
 
 const Tool s_tools[] = {
@@ -1198,7 +1210,7 @@ int getInstalledMSVC() {
 	// Use the registry to get the latest version
 	if (latest == 0) {
 		HKEY key;
-		LSTATUS err = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\VisualStudio\\SxS\\VS7", 0, KEY_QUERY_VALUE | KEY_WOW64_32KEY, &key);
+		LONG err = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\VisualStudio\\SxS\\VS7", 0, KEY_QUERY_VALUE | KEY_WOW64_32KEY, &key);
 		if (err == ERROR_SUCCESS && key != NULL) {
 			const MSVCList msvc = getAllMSVCVersions();
 			for (MSVCList::const_reverse_iterator i = msvc.rbegin(); i != msvc.rend(); ++i) {
@@ -1536,6 +1548,24 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		createModuleList(setup.srcDir + "/video", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/image", setup.defines, setup.testDirs, in, ex);
 
+		// Create engine-detection submodules.
+		if (setup.useStaticDetection) {
+			std::vector<std::string> detectionModuleDirs;
+			detectionModuleDirs.reserve(setup.engines.size());
+
+			for (EngineDescList::const_iterator i = setup.engines.begin(), end = setup.engines.end(); i != end; ++i) {
+				// We ignore all sub engines here because they require no special handling.
+				if (isSubEngine(i->name, setup.engines)) {
+					continue;
+				}
+				detectionModuleDirs.push_back(setup.srcDir + "/engines/" + i->name);
+			}
+
+			for (std::string &str : detectionModuleDirs) {
+				createModuleList(str, setup.defines, setup.testDirs, in, ex, true);
+			}
+		}
+
 		// Resource files
 		addResourceFiles(setup, in, ex);
 
@@ -1559,7 +1589,7 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 	createOtherBuildFiles(setup);
 
 	// In case we create the main ScummVM project files we will need to
-	// generate engines/plugins_table.h too.
+	// generate engines/plugins_table.h & engines/detection_table.h
 	if (!setup.tests && !setup.devTools) {
 		createEnginePluginsTable(setup);
 	}
@@ -1737,7 +1767,7 @@ void ProjectProvider::addFilesToProject(const std::string &dir, std::ofstream &p
 	delete files;
 }
 
-void ProjectProvider::createModuleList(const std::string &moduleDir, const StringList &defines, StringList &testDirs, StringList &includeList, StringList &excludeList) const {
+void ProjectProvider::createModuleList(const std::string &moduleDir, const StringList &defines, StringList &testDirs, StringList &includeList, StringList &excludeList, bool forDetection) const {
 	const std::string moduleMkFile = moduleDir + "/module.mk";
 	std::ifstream moduleMk(moduleMkFile.c_str());
 	if (!moduleMk)
@@ -1749,6 +1779,7 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 	shouldInclude.push(true);
 
 	StringList filesInVariableList;
+	std::string moduleRootDir;
 
 	bool hadModule = false;
 	std::string line;
@@ -1782,6 +1813,10 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 				error("MODULE root " + moduleRoot + " does not match base dir " + moduleDir);
 
 			hadModule = true;
+			if (forDetection) {
+				moduleRootDir = moduleRoot;
+				break;
+			}
 		} else if (*i == "MODULE_OBJS") {
 			if (tokens.size() < 3)
 				error("Malformed MODULE_OBJS definition in " + moduleMkFile);
@@ -1949,12 +1984,95 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 			shouldInclude.pop();
 		} else if (*i == "elif") {
 			error("Unsupported operation 'elif' in " + moduleMkFile);
-		} else if (*i == "ifeq") {
+		} else if (*i == "ifeq" || *i == "ifneq") {
 			//XXX
 			shouldInclude.push(false);
 		}
 	}
 
+	if (forDetection) {
+		int p = moduleRootDir.find('/');
+		std::string engineName = moduleRootDir.substr(p + 1);
+		std::string engineNameUpper;
+
+		for (char &c : engineName) {
+			engineNameUpper += toupper(c);
+		}
+		for (;;) {
+			std::getline(moduleMk, line);
+
+			if (moduleMk.eof())
+				break;
+
+			if (moduleMk.fail())
+				error("Failed while reading from " + moduleMkFile);
+
+			TokenList tokens = tokenize(line);
+			if (tokens.empty())
+				continue;
+
+			TokenList::const_iterator i = tokens.begin();
+
+			if (*i != "DETECT_OBJS" && *i != "ifneq") {
+				continue;
+			}
+
+			if (*i == "ifneq") {
+				++i;
+				if (*i != ("($(ENABLE_" + engineNameUpper + "),")) {
+					continue;
+				}
+
+				// If the engine is already enabled, skip the additional
+				// dependencies for detection objects.
+				if (isEngineEnabled[engineName]) {
+					bool breakEarly = false;
+					while (true) {
+						std::getline(moduleMk, line);
+						if (moduleMk.eof()) {
+							error("Unexpected EOF found, while parsing for " + engineName + " engine's module file.");
+						} else if (line != "endif") {
+							continue;
+						} else {
+							breakEarly = true;
+							break;
+						}
+					}
+					if (breakEarly) {
+						break;
+					}
+				}
+
+				while (*i != "DETECT_OBJS") {
+					std::getline(moduleMk, line);
+					if (moduleMk.eof()) {
+						break;
+					}
+
+					tokens = tokenize(line);
+
+					if (tokens.empty())
+						continue;
+					i = tokens.begin();
+				}
+			}
+
+
+			if (tokens.size() < 3)
+				error("Malformed DETECT_OBJS definition in " + moduleMkFile);
+			++i;
+
+			if (*i != "+=")
+				error("Malformed DETECT_OBJS definition in " + moduleMkFile);
+
+			++i;
+
+			p = (*i).find('/');
+			const std::string filename = moduleDir + "/" + (*i).substr(p + 1);
+
+			includeList.push_back(filename);
+		}
+	}
 	if (shouldInclude.size() != 1)
 		error("Malformed file " + moduleMkFile);
 }
@@ -1963,14 +2081,26 @@ void ProjectProvider::createEnginePluginsTable(const BuildSetup &setup) {
 	// First we need to create the "engines" directory.
 	createDirectory(setup.outputDir + "/engines");
 
-	// Then, we can generate the actual "plugins_table.h" file.
+	// Then, we can generate the actual "plugins_table.h" & "detection_table.h" file.
 	const std::string enginePluginsTableFile = setup.outputDir + "/engines/plugins_table.h";
+	const std::string detectionTableFile = setup.outputDir + "/engines/detection_table.h";
+
 	std::ofstream enginePluginsTable(enginePluginsTableFile.c_str());
+	std::ofstream detectionTable(detectionTableFile.c_str());
+
 	if (!enginePluginsTable) {
 		error("Could not open \"" + enginePluginsTableFile + "\" for writing");
 	}
 
+	if (!detectionTable) {
+		error("Could not open \"" + detectionTableFile + "\" for writing");
+	}
+
 	enginePluginsTable << "/* This file is automatically generated by create_project */\n"
+	                   << "/* DO NOT EDIT MANUALLY */\n"
+	                   << "// This file is being included by \"base/plugins.cpp\"\n";
+
+	detectionTable	   << "/* This file is automatically generated by create_project */\n"
 	                   << "/* DO NOT EDIT MANUALLY */\n"
 	                   << "// This file is being included by \"base/plugins.cpp\"\n";
 
@@ -1988,6 +2118,8 @@ void ProjectProvider::createEnginePluginsTable(const BuildSetup &setup) {
 		enginePluginsTable << "#if PLUGIN_ENABLED_STATIC(" << engineName << ")\n"
 		                   << "LINK_PLUGIN(" << engineName << ")\n"
 		                   << "#endif\n";
+
+		detectionTable << "LINK_PLUGIN(" << engineName << "_DETECTION)\n";
 	}
 }
 } // namespace CreateProjectTool

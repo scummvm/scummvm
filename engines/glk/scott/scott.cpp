@@ -24,6 +24,7 @@
 #include "glk/quetzal.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
+#include "common/ustr.h"
 
 namespace Glk {
 namespace Scott {
@@ -164,6 +165,18 @@ void Scott::display(winid_t w, const char *fmt, ...) {
 	va_end(ap);
 
 	glk_put_string_stream(glk_window_get_stream(w), msg.c_str());
+}
+
+void Scott::display(winid_t w, const Common::U32String fmt, ...) {
+	Common::U32String msg;
+
+	va_list ap;
+
+	va_start(ap, fmt);
+	Common::U32String::vformat(fmt.begin(), fmt.end(), msg, ap);
+	va_end(ap);
+
+	glk_put_string_stream_uni(glk_window_get_stream(w), msg.c_str());
 }
 
 void Scott::delay(int seconds) {
@@ -385,13 +398,18 @@ void Scott::output(const Common::String &a) {
 		display(_bottomWindow, "%s", a.c_str());
 }
 
+void Scott::output(const Common::U32String &a) {
+	if (_saveSlot == -1)
+		display(_bottomWindow, Common::U32String("%S"), a.c_str());
+}
+
 void Scott::outputNumber(int a) {
 	display(_bottomWindow, "%d", a);
 }
 
 void Scott::look(void) {
 	const char *const ExitNames[6] = {
-		_("North"), _("South"), _("East"), _("West"), _("Up"), _("Down")
+		_s("North"), _s("South"), _s("East"), _s("West"), _s("Up"), _s("Down")
 	};
 	Room *r;
 	int ct, f;
@@ -429,7 +447,7 @@ void Scott::look(void) {
 				f = 1;
 			else
 				display(_topWindow, ", ");
-			display(_topWindow, "%s", ExitNames[ct]);
+			display(_topWindow, Common::U32String("%S"), _(ExitNames[ct]).c_str());
 		}
 		ct++;
 	}

@@ -2419,7 +2419,7 @@ bool CryOmni3DEngine_Versailles::handleEpigraph(ZonFixedImage *fimg) {
 				}
 				if (keyCode >= Common::KEYCODE_a &&
 				        keyCode <= Common::KEYCODE_z &&
-				        _epigraphContent.contains(keyCode - Common::KEYCODE_a + 'A')) {
+				        _epigraphContent.contains((char)(keyCode - Common::KEYCODE_a + 'A'))) {
 					password += keyCode - Common::KEYCODE_a + 'A';
 				} else {
 					continue;

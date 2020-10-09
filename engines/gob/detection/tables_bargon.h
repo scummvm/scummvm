@@ -97,6 +97,20 @@
 	kFeaturesNone,
 	0, 0, 0
 },
+{ // Russian fan translation by PRCA
+	{
+		"bargon",
+		"Fanmade",
+		AD_ENTRY1s("intro.stk", "0937f20c9177a9c4111e48f8916fea47", 3185593),
+		RU_RUS,
+		kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeBargon,
+	kFeaturesNone,
+	0, 0, 0
+},
 
 // -- Amiga --
 

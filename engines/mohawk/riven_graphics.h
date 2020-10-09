@@ -24,6 +24,7 @@
 #define MOHAWK_RIVEN_GRAPHICS_H
 
 #include "mohawk/graphics.h"
+#include "mohawk/riven_graphics_detection_enums.h"
 
 #include "common/ustr.h"
 
@@ -49,13 +50,6 @@ enum RivenTransition {
 	kRivenTransitionPanDown   = 15,
 	kRivenTransitionBlend     = 16,
 	kRivenTransitionBlend2    = 17
-};
-
-enum RivenTransitionMode {
-	kRivenTransitionModeDisabled = 5000,
-	kRivenTransitionModeFastest  = 5001,
-	kRivenTransitionModeNormal   = 5002,
-	kRivenTransitionModeBest     = 5003
 };
 
 enum RivenCreditsImageNumber {

@@ -38,6 +38,7 @@
 #include "engines/engine.h"
 
 #include "tucker/console.h"
+#include "tucker/detection.h"
 
 namespace Audio {
 class RewindableAudioStream;
@@ -359,13 +360,6 @@ enum InputKey {
 	kInputKeySkipSpeech,
 
 	kInputKeyCount
-};
-
-enum GameFlag {
-	kGameFlagDemo = 1 << 0,
-	kGameFlagEncodedData = 1 << 1,
-	kGameFlagNoSubtitles = 1 << 2,
-	kGameFlagIntroOnly = 1 << 3
 };
 
 enum CompressedSoundType {

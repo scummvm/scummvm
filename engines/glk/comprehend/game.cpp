@@ -547,7 +547,7 @@ void ComprehendGame::move_object(Item *item, int new_room) {
 }
 
 void ComprehendGame::eval_instruction(FunctionState *func_state,
-		const Instruction *instr, const Sentence *sentence) {
+		const Function &func, uint functionOffset, const Sentence *sentence) {
 	const byte *opcode_map = _opcodeMap;
 	byte verb = sentence ? sentence->_formattedWords[0] : 0;
 	byte noun = sentence ? sentence->_formattedWords[2] : 0;
@@ -557,6 +557,7 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 	bool test;
 	uint i, count;
 
+	const Instruction *instr = &func[functionOffset];
 	room = get_room(_currentRoom);
 
 	if (DebugMan.isDebugChannelEnabled(kDebugScripts)) {
@@ -570,6 +571,7 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 				line += "- ";
 		}
 
+		line += Common::String::format("%.2x  ", functionOffset);
 		line += g_debugger->dumpInstruction(this, func_state, instr);
 		debugC(kDebugScripts, "%s", line.c_str());
 	}
@@ -622,10 +624,40 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 		_variables[instr->_operand[0]]--;
 		break;
 
-	case OPCODE_VAR_EQ:
+	case OPCODE_VAR_EQ1:
 		func_set_test_result(func_state,
-		                     _variables[instr->_operand[0]] ==
-		                     _variables[instr->_operand[1]]);
+			_variables[0] ==
+			_variables[instr->_operand[0]]);
+		break;
+
+	case OPCODE_VAR_EQ2:
+		func_set_test_result(func_state,
+		    _variables[instr->_operand[0]] ==
+		    _variables[instr->_operand[1]]);
+		break;
+
+	case OPCODE_VAR_GT1:
+		func_set_test_result(func_state,
+			_variables[0] >
+			_variables[instr->_operand[0]]);
+		break;
+
+	case OPCODE_VAR_GT2:
+		func_set_test_result(func_state,
+			_variables[instr->_operand[0]] >
+			_variables[instr->_operand[1]]);
+		break;
+
+	case OPCODE_VAR_GTE1:
+		func_set_test_result(func_state,
+			_variables[0] >=
+			_variables[instr->_operand[0]]);
+		break;
+
+	case OPCODE_VAR_GTE2:
+		func_set_test_result(func_state,
+			_variables[instr->_operand[0]] >=
+			_variables[instr->_operand[1]]);
 		break;
 
 	case OPCODE_TURN_TICK:
@@ -701,6 +733,11 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 		func_set_test_result(func_state, !item || item->_room != _currentRoom);
 		break;
 
+	case OPCODE_OBJECT_CAN_TAKE:
+		item = get_item(instr->_operand[0] - 1);
+		func_set_test_result(func_state, item->_flags & ITEMF_CAN_TAKE);
+		break;
+
 	case OPCODE_CURRENT_OBJECT_NOT_IN_ROOM:
 		item = get_item_by_noun(noun);
 		func_set_test_result(func_state, !item || item->_room != _currentRoom);
@@ -713,10 +750,18 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 
 	case OPCODE_INVENTORY_FULL:
 		item = get_item_by_noun(noun);
-		func_set_test_result(func_state,
-		                     _variables[VAR_INVENTORY_WEIGHT] +
-		                     (item->_flags & ITEMF_WEIGHT_MASK) >
-		                     _variables[VAR_INVENTORY_LIMIT]);
+
+		if (_comprehendVersion == 1) {
+			func_set_test_result(func_state,
+				_variables[VAR_INVENTORY_WEIGHT] +
+				(item->_flags & ITEMF_WEIGHT_MASK) >
+				_variables[VAR_INVENTORY_LIMIT]);
+		} else {
+			weighInventory();
+			func_set_test_result(func_state,
+				_totalInventoryWeight + (item->_flags & ITEMF_WEIGHT_MASK) <
+				_variables[VAR_INVENTORY_LIMIT]);
+		}
 		break;
 
 	case OPCODE_DESCRIBE_CURRENT_OBJECT:
@@ -996,8 +1041,7 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 			error("Bad function %.4x >= %.4x\n",
 			      index, _functions.size());
 
-		debugC(kDebugScripts, "Calling subfunction %.4x", index);
-		eval_function(_functions[index], sentence);
+		eval_function(index, sentence);
 		break;
 
 	case OPCODE_TEST_FALSE:
@@ -1075,12 +1119,15 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 	}
 }
 
-void ComprehendGame::eval_function(const Function &func, const Sentence *sentence) {
+void ComprehendGame::eval_function(uint functionNum, const Sentence *sentence) {
 	FunctionState func_state;
 	uint i;
 
+	const Function &func = _functions[functionNum];
 	func_state._elseResult = true;
 	func_state._executed = false;
+
+	debugC(kDebugScripts, "Start of function %.4x", functionNum);
 
 	for (i = 0; i < func.size(); i++) {
 		if (func_state._executed && !func[i]._isCommand) {
@@ -1091,8 +1138,10 @@ void ComprehendGame::eval_function(const Function &func, const Sentence *sentenc
 			break;
 		}
 
-		eval_instruction(&func_state, &func[i], sentence);
+		eval_instruction(&func_state, func, i, sentence);
 	}
+
+	debugC(kDebugScripts, "End of function %.4x\n", functionNum);
 }
 
 void ComprehendGame::skip_whitespace(char **p) {
@@ -1207,8 +1256,7 @@ bool ComprehendGame::handle_sentence(uint tableNum, Sentence *sentence, Common::
 
 		if (isMatch) {
 			// Match
-			const Function &func = _functions[action._function];
-			eval_function(func, sentence);
+			eval_function(action._function, sentence);
 			return true;
 		}
 	}
@@ -1294,7 +1342,7 @@ void ComprehendGame::doBeforeTurn() {
 	beforeTurn();
 
 	// Run the each turn functions
-	eval_function(_functions[0], nullptr);
+	eval_function(0, nullptr);
 
 	update();
 }
@@ -1389,6 +1437,16 @@ bool ComprehendGame::isItemPresent(Item *item) const {
 		item->_room == _currentRoom || item->_room == ROOM_INVENTORY
 		|| item->_room == ROOM_CONTAINER
 	);
+}
+
+void ComprehendGame::weighInventory() {
+	_totalInventoryWeight = 0;
+
+	for (int idx = _itemCount - 1; idx > 0; --idx) {
+		Item *item = get_item(idx);
+		if (item->_room == ROOM_INVENTORY)
+			_totalInventoryWeight += item->_flags & ITEMF_WEIGHT_MASK;
+	}
 }
 
 } // namespace Comprehend

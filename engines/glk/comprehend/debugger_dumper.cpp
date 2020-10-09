@@ -52,7 +52,12 @@ DebuggerDumper::DebuggerDumper() : _game(nullptr) {
 
 	_opcodes[OPCODE_OR] = "or";
 	_opcodes[OPCODE_IN_ROOM] = "in_room";
-	_opcodes[OPCODE_VAR_EQ] = "var_eq";
+	_opcodes[OPCODE_VAR_EQ1] = "var_eq1";
+	_opcodes[OPCODE_VAR_EQ2] = "var_eq2";
+	_opcodes[OPCODE_VAR_GT1] = "var_gt1";
+	_opcodes[OPCODE_VAR_GT2] = "var_gt2";
+	_opcodes[OPCODE_VAR_GTE1] = "var_gte1";
+	_opcodes[OPCODE_VAR_GTE2] = "var_gte2";
 	_opcodes[OPCODE_CURRENT_OBJECT_NOT_VALID] = "current_object_not_valid";
 	_opcodes[OPCODE_INVENTORY_FULL] = "inventory_full";
 	_opcodes[OPCODE_OBJECT_PRESENT] = "object_present";
@@ -103,6 +108,7 @@ DebuggerDumper::DebuggerDumper() : _game(nullptr) {
 	_opcodes[OPCODE_DRAW_OBJECT] = "draw_object";
 	_opcodes[OPCODE_WAIT_KEY] = "wait_key";
 	_opcodes[OPCODE_TEST_FALSE] = "test_false";
+	_opcodes[OPCODE_OBJECT_CAN_TAKE] = "object_can_take";
 }
 
 Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
@@ -156,7 +162,6 @@ Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
 		break;
 	}
 
-	line += "\n";
 	return line;
 }
 
@@ -174,7 +179,7 @@ void DebuggerDumper::dumpFunction(uint functionNum) {
 	print("[%.4x] (%u instructions)\n", functionNum, func.size());
 	for (uint i = 0; i < func.size(); i++) {
 		Common::String line = dumpInstruction(_game, NULL, &func[i]);
-		print("%s", line.c_str());
+		print("%s\n", line.c_str());
 	}
 
 	print("\n");

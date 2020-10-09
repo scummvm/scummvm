@@ -34,6 +34,15 @@ class AbstractFSNode;
 
 namespace Common {
 
+/**
+ * @defgroup common_fs File system
+ * @ingroup common
+ *
+ * @brief API for operations on the file system.
+ *
+ * @{
+ */
+
 class FSNode;
 class SeekableReadStream;
 class WriteStream;
@@ -286,6 +295,7 @@ class FSDirectory : public Archive {
 	int _depth;
 	bool _flat;
 	bool _ignoreClashes;
+	bool _includeDirectories;
 
 	String	_prefix; // string that is prepended to each cache item key
 	void setPrefix(const String &prefix);
@@ -312,18 +322,18 @@ public:
 	 * valid directory.
 	 */
 	FSDirectory(const String &name, int depth = 1, bool flat = false,
-	            bool ignoreClashes = false);
+	            bool ignoreClashes = false, bool includeDirectories = false);
 	FSDirectory(const FSNode &node, int depth = 1, bool flat = false,
-	            bool ignoreClashes = false);
+	            bool ignoreClashes = false, bool includeDirectories = false);
 
 	/**
 	 * Create a FSDirectory representing a tree with the specified depth. The parameter
 	 * prefix is prepended to the keys in the cache. See class comment.
 	 */
 	FSDirectory(const String &prefix, const String &name, int depth = 1,
-	            bool flat = false, bool ignoreClashes = false);
+	            bool flat = false, bool ignoreClashes = false, bool includeDirectories = false);
 	FSDirectory(const String &prefix, const FSNode &node, int depth = 1,
-	            bool flat = false, bool ignoreClashes = false);
+	            bool flat = false, bool ignoreClashes = false, bool includeDirectories = false);
 
 	virtual ~FSDirectory();
 
@@ -371,6 +381,7 @@ public:
 	virtual SeekableReadStream *createReadStreamForMember(const String &name) const;
 };
 
+/** @} */
 
 } // End of namespace Common
 

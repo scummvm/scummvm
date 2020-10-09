@@ -91,11 +91,11 @@ SeekableAudioStream *SeekableAudioStream::openStreamFile(const Common::String &b
 #pragma mark --- LoopingAudioStream ---
 #pragma mark -
 
-LoopingAudioStream::LoopingAudioStream(RewindableAudioStream *stream, uint loops, DisposeAfterUse::Flag disposeAfterUse)
+LoopingAudioStream::LoopingAudioStream(RewindableAudioStream *stream, uint loops, DisposeAfterUse::Flag disposeAfterUse, bool rewind)
     : _parent(stream, disposeAfterUse), _loops(loops), _completeIterations(0) {
 	assert(stream);
 
-	if (!stream->rewind()) {
+	if (rewind && !stream->rewind()) {
 		// TODO: Properly indicate error
 		_loops = _completeIterations = 1;
 	}

@@ -31,6 +31,9 @@ namespace Ultima4 {
 
 bool ZtatsController::keyPressed(int key) {
 	switch (key) {
+	case Common::KEYCODE_RETURN:
+		keybinder(KEYBIND_ESCAPE);
+		return true;
 	case Common::KEYCODE_UP:
 	case Common::KEYCODE_LEFT:
 		g_context->_stats->prevItem();

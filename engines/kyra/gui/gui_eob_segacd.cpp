@@ -877,7 +877,7 @@ void GUI_EoB_SegaCD::updateOptionsStrings() {
 	SegaRenderer *r = _screen->sega_getRenderer();
 	r->loadToVRAM(&_campMenu[(0x1CE + (_vm->_configMouse ? 0x240 : 0x24C)) << 5], 0x180, 0x42E0);
 	r->loadToVRAM(&_campMenu[(0x1CE + (_vm->_configMusic ? 0x258 : 0x264)) << 5], 0x180, 0x4460);
-	r->loadToVRAM(&_campMenu[(0x1CE + (_vm->_configSounds ? 0x258 : 0x264)) << 5], 0x180, 0x45E0);	
+	r->loadToVRAM(&_campMenu[(0x1CE + (_vm->_configSounds ? 0x258 : 0x264)) << 5], 0x180, 0x45E0);
 	r->loadToVRAM(&_campMenu[(0x1CE + ntblInputMode[_vm->_inputMode]) << 5], 0x280, 0x49A0);
 	r->loadToVRAM(&_campMenu[(0x444 + speed * 12) << 5], 0xC0, 0x48E0);
 

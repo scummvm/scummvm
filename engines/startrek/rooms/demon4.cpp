@@ -73,9 +73,9 @@ void Room::demon4FinishedAnimation2() {
 
 void Room::demon4FinishedAnimation3() {
 	showText(TX_SPEAKER_NAUIAN, 34, true);
-	showText(TX_SPEAKER_KIRK,   10, true);
+	showText(TX_SPEAKER_KIRK, 10, true);
 	showText(TX_SPEAKER_NAUIAN, 35, true);
-	showText(TX_SPEAKER_SPOCK,  30, true);
+	showText(TX_SPEAKER_SPOCK, 30, true);
 
 	_awayMission->disableInput = true;
 	_awayMission->demon.missionScore += 5;
@@ -186,7 +186,7 @@ void Room::demon4UseSkullOnNauian() {
 void Room::demon4KirkReachedNauianWithSkull() {
 	showText(TX_SPEAKER_NAUIAN, 36, true);
 
-	const TextRef choices[] = { TX_SPEAKER_KIRK, 6, 3, 5, TX_BLANK };
+	const TextRef choices[] = {TX_SPEAKER_KIRK, 6, 3, 5, TX_BLANK};
 	int choice = showMultipleTexts(choices, true);
 
 	switch (choice) {
@@ -227,7 +227,7 @@ void Room::demon4TalkToNauian() {
 		_awayMission->demon.metNauian = true;
 		showText(TX_SPEAKER_NAUIAN, 44, true);
 
-		const TextRef choices[] = { TX_SPEAKER_KIRK, 2, 4, 9, TX_BLANK };
+		const TextRef choices[] = {TX_SPEAKER_KIRK, 2, 4, 9, TX_BLANK};
 		int choice = showMultipleTexts(choices, true);
 
 		switch (choice) {
@@ -250,7 +250,7 @@ void Room::demon4TalkToNauian() {
 
 		showText(TX_SPEAKER_NAUIAN, 43, true);
 
-		const TextRef choices2[] = { TX_SPEAKER_KIRK, 8, 7, TX_BLANK };
+		const TextRef choices2[] = {TX_SPEAKER_KIRK, 8, 7, TX_BLANK};
 		choice = showMultipleTexts(choices2, true);
 
 		switch (choice) {
@@ -272,9 +272,9 @@ void Room::demon4TalkToNauian() {
 
 			// BUGFIX: Originally all of these used no audio, despite the files existing
 			// (being used elsewhere).
-			showText(TX_SPEAKER_KIRK,   10, true);
+			showText(TX_SPEAKER_KIRK, 10, true);
 			showText(TX_SPEAKER_NAUIAN, 35, true);
-			showText(TX_SPEAKER_SPOCK,  30, true);
+			showText(TX_SPEAKER_SPOCK, 30, true);
 
 			_awayMission->disableInput = true;
 			_awayMission->demon.missionScore += 5;
@@ -393,13 +393,13 @@ bool Room::demon4ShowSunPuzzle() {
 		_vm->_gfx->addSprite(&sprites[i]);
 	}
 
-	sprites[0].setBitmap(_vm->loadBitmapFile("levery"));
-	sprites[1].setBitmap(_vm->loadBitmapFile("leverr"));
-	sprites[2].setBitmap(_vm->loadBitmapFile("leverb"));
+	sprites[0].setBitmap(loadBitmapFile("levery"));
+	sprites[1].setBitmap(loadBitmapFile("leverr"));
+	sprites[2].setBitmap(loadBitmapFile("leverb"));
 
-	Bitmap *lightyBitmap = new Bitmap(_vm->loadBitmapFile("lighty"));
-	Bitmap *lightrBitmap = new Bitmap(_vm->loadBitmapFile("lightr"));
-	Bitmap *lightbBitmap = new Bitmap(_vm->loadBitmapFile("lightb"));
+	Bitmap *lightyBitmap = new Bitmap(loadBitmapFile("lighty"));
+	Bitmap *lightrBitmap = new Bitmap(loadBitmapFile("lightr"));
+	Bitmap *lightbBitmap = new Bitmap(loadBitmapFile("lightb"));
 
 	for (int i = 3; i < 9; i++)
 		sprites[i].setBitmap(lightyBitmap);
@@ -411,7 +411,7 @@ bool Room::demon4ShowSunPuzzle() {
 	Sprite doneButtonSprite;
 	_vm->_gfx->addSprite(&doneButtonSprite);
 	doneButtonSprite.setXYAndPriority(0x104, 0x64, 2);
-	doneButtonSprite.setBitmap(_vm->loadBitmapFile("donebutt"));
+	doneButtonSprite.setBitmap(loadBitmapFile("donebutt"));
 	// BUGFIX: use draw mode 2 so the entire button is clickable (not just non-transparent
 	// pixels)
 	doneButtonSprite.drawMode = 2;
@@ -427,43 +427,43 @@ bool Room::demon4ShowSunPuzzle() {
 			sprites[1].setXYAndPriority(0xa8, sliderR + 0x75, 14);
 			sprites[2].setXYAndPriority(0xb0, sliderB + 0x75, 14);
 
-			int var56 = 0x82;
-			int var58 = 0x83;
-			int var5a = 3;
+			int y = 0x82;
+			int x = 0x83;
+			int start = 3;
 			int numSprites = abs(sliderY) / 3;
 			for (int i = 0; i < 6; i++) {
-				sprites[i + var5a].setXYAndPriority(var58, var56, 14);
+				sprites[i + start].setXYAndPriority(x, y, 14);
 			}
-			var56 -= 6;
+			y -= 6;
 			for (int i = 0; i < numSprites; i++) {
-				sprites[i + var5a].setXYAndPriority(var58, var56, 14);
-				var56 -= 6;
+				sprites[i + start].setXYAndPriority(x, y, 14);
+				y -= 6;
 			}
 
-			var56 = 0x82;
-			var58 = 0x8b;
-			var5a = 9;
+			y = 0x82;
+			x = 0x8b;
+			start = 9;
 			numSprites = abs(sliderR) / 3;
 			for (int i = 0; i < 6; i++) {
-				sprites[i + var5a].setXYAndPriority(var58, var56, 14);
+				sprites[i + start].setXYAndPriority(x, y, 14);
 			}
-			var56 -= 6;
+			y -= 6;
 			for (int i = 0; i < numSprites; i++) {
-				sprites[i + var5a].setXYAndPriority(var58, var56, 14);
-				var56 -= 6;
+				sprites[i + start].setXYAndPriority(x, y, 14);
+				y -= 6;
 			}
 
-			var56 = 0x82;
-			var58 = 0x93;
-			var5a = 15;
+			y = 0x82;
+			x = 0x93;
+			start = 15;
 			numSprites = abs(sliderB) / 3;
 			for (int i = 0; i < 6; i++) {
-				sprites[i + var5a].setXYAndPriority(var58, var56, 14);
+				sprites[i + start].setXYAndPriority(x, y, 14);
 			}
-			var56 -= 6;
+			y -= 6;
 			for (int i = 0; i < numSprites; i++) {
-				sprites[i + var5a].setXYAndPriority(var58, var56, 14);
-				var56 -= 6;
+				sprites[i + start].setXYAndPriority(x, y, 14);
+				y -= 6;
 			}
 
 			sliderChanged = false;
@@ -475,7 +475,7 @@ bool Room::demon4ShowSunPuzzle() {
 
 		switch (event.type) {
 		case TREKEVENT_LBUTTONDOWN: {
-lclick:
+		lclick:
 			Common::Point mousePos = _vm->_gfx->getMousePos();
 			if (_vm->_gfx->getSpriteAt(mousePos) == &doneButtonSprite)
 				goto done;
@@ -494,7 +494,7 @@ lclick:
 		}
 
 		case TREKEVENT_RBUTTONDOWN:
-done:
+		done:
 			if (abs(sliderY) <= 2 && abs(sliderR) <= 2 && abs(sliderB) <= 2)
 				solved = true;
 			else
@@ -531,6 +531,10 @@ done:
 	_vm->_gfx->setBackgroundImage(_vm->getScreenName());
 	_vm->_gfx->copyBackgroundScreen();
 	_vm->_gfx->forceDrawAllSprites();
+
+	for (int i = 0; i < 21; i++) {
+		sprites[i].bitmap = nullptr;
+	}
 
 	delete lightbBitmap;
 	delete lightrBitmap;
@@ -629,4 +633,4 @@ void Room::demon4UseMTricorderOnSecurityEquipment() {
 	showText(TX_SPEAKER_SPOCK, 26, true); // BUG: Uses spock's voice (speaker says "Spock" too)
 }
 
-}
+} // namespace StarTrek

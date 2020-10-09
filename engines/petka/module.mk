@@ -2,15 +2,16 @@ MODULE := engines/petka
 
 MODULE_OBJS = \
     big_dialogue.o \
-    detection.o \
     file_mgr.o \
     flc.o \
+    metaengine.o \
     petka.o \
     saveload.o \
     q_manager.o \
     q_system.o \
     sound.o \
     video.o \
+    walk.o \
     interfaces/dialog_interface.o \
     interfaces/interface.o \
     interfaces/main.o \
@@ -34,3 +35,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o

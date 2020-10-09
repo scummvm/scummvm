@@ -86,11 +86,11 @@ MainMenu::~MainMenu() {
 }
 
 void MainMenu::init() {
-	_buttons[0] = new GUI::ButtonWidget(this, 0, 0, 1, 1, "", 0, 0);
-	_buttons[1] = new GUI::ButtonWidget(this, 0, 0, 1, 1, "", 0, 0);
-	_buttons[2] = new GUI::ButtonWidget(this, 0, 0, 1, 1, "", 0, 0);
-	_buttons[3] = new GUI::ButtonWidget(this, 0, 0, 1, 1, "", 0, 0);
-	_buttons[4] = new GUI::ButtonWidget(this, 0, 0, 1, 1, "", 0, 0);
+	_buttons[0] = new GUI::ButtonWidget(this, 0, 0, 1, 1, Common::U32String(""));
+	_buttons[1] = new GUI::ButtonWidget(this, 0, 0, 1, 1, Common::U32String(""));
+	_buttons[2] = new GUI::ButtonWidget(this, 0, 0, 1, 1, Common::U32String(""));
+	_buttons[3] = new GUI::ButtonWidget(this, 0, 0, 1, 1, Common::U32String(""));
+	_buttons[4] = new GUI::ButtonWidget(this, 0, 0, 1, 1, Common::U32String(""));
 	gotoMenuScreen(kMainMenuScr);
 }
 

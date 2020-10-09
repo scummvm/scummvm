@@ -33,7 +33,7 @@
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/animate.h"
 #include "sci/graphics/cursor.h"
-#include "sci/graphics/font.h"
+#include "sci/graphics/scifont.h"
 #include "sci/graphics/text16.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/menu.h"

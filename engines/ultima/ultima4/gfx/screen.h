@@ -118,7 +118,6 @@ private:
 	int _cursorStatus;
 	int _cursorEnabled;
 	int _los[VIEWPORT_W][VIEWPORT_H];
-	int _frameDuration;
 	bool _continueScreenRefresh;
 	uint32 _priorFrameTime;
 
