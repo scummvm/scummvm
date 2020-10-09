@@ -565,6 +565,7 @@ begin_credits("Credits");
 		add_person("", "cmayer0087", "Various engine code fixes");
 		add_person("", "JenniBee", "Compilation fixes");
 		add_person("", "karjonas", "Various engine code fixes");
+		add_person("", "mparnaudeau", "Various grim engine code fixes");
 		add_person("", "PoulpiFr", "Few fixes to Android port");
 		add_person("", "sietschie", "Few fixes to engine");
 	    end_section();
