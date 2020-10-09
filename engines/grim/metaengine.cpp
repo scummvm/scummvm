@@ -28,7 +28,6 @@
 #include "common/system.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
-#include "common/translation.h"
 
 namespace Grim {
 
@@ -96,7 +95,7 @@ SaveStateList GrimMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String pattern = gameId == "monkey4" ? "efmi###.gsv" : "grim##.gsv";
-	
+
 	if (platform == Common::kPlatformPS2)
 		pattern = "efmi###.ps2";
 
