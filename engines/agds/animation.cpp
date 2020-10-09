@@ -82,8 +82,12 @@ void Animation::rewind() {
 }
 
 bool Animation::tick(AGDSEngine &engine) {
-	if (_paused)
+	if (_paused) {
+		if (_frameIndex == 0 && !_frame) {
+			decodeNextFrame(engine);
+		}
 		return true;
+	}
 
 	if (_delay > 0) {
 		--_delay;
