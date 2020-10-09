@@ -985,7 +985,7 @@ void Process::tell(bool npc, const Common::String &sound) {
 	Common::String text = popText();
 	Common::String region = popString();
 	debug("%s '%s' '%s' '%s'", npc? "npcSay": "playerSay", region.c_str(), text.c_str(), sound.c_str());
-	_engine->tell(region, text, sound, _phaseVar, npc);
+	_engine->tell(*this, region, text, sound, npc);
 
 	//close inventory here if close flag was set
 	Common::String inventoryClose = _engine->getSystemVariable("inv_close")->getString();

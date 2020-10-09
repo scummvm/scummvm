@@ -669,7 +669,7 @@ void AGDSEngine::addSystemVar(const Common::String &name, SystemVariable *var) {
 	_systemVars[name] = var;
 }
 
-void AGDSEngine::tell(const Common::String &regionName, Common::String text, Common::String sound, const Common::String &soundPhaseVar, bool npc) {
+void AGDSEngine::tell(Process &process, const Common::String &regionName, Common::String text, Common::String sound, bool npc) {
 	int font_id = getSystemVariable(npc? "npc_tell_font": "tell_font")->getInteger();
 	Common::Point pos;
 
@@ -687,9 +687,9 @@ void AGDSEngine::tell(const Common::String &regionName, Common::String text, Com
 		sound = _dialog.getNextDialogSound();
 
 	_tellTextTimer = _dialog.textDelay(text);
-	_textLayout.layout(*this, text, pos, font_id, npc);
+	_textLayout.layout(*this, process.getName(), text, pos, font_id, npc);
 	if (!sound.empty()) {
-		playSoundSync(sound, soundPhaseVar);
+		playSoundSync(sound, process.phaseVar());
 	} else {
 		_syncSoundId = -1;
 	}
