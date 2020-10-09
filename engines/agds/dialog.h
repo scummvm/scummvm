@@ -35,12 +35,28 @@ class Dialog {
 	typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> DialogDefsType;
 
 private:
+	struct Sound {
+		Common::String Name;
+		Common::String Sample;
+		int Step;
+
+		Sound(): Step(1) {
+		}
+
+		Sound(const Common::String &name, const Common::String &sample, int step): Name(name), Sample(sample), Step(step) {
+		}
+	};
+	typedef Common::Array<Sound> SoundsType;
+
 	AGDSEngine * 				_engine;
 	DialogDefsType				_dialogDefs;
 	Common::String				_dialogScript;
 	uint32						_dialogScriptPos;
 	Common::String				_dialogProcessName;
 	Common::String				_dialogLine;
+
+	SoundsType					_sounds;
+	Common::String				_currentDef;
 
 	void parseDialogDefs(const Common::String &defs);
 
@@ -51,6 +67,7 @@ public:
 	const Common::String &getNextDialogLine() const {
 		return _dialogLine;
 	}
+	Common::String getNextDialogSound();
 
 	void load(const Common::String &dialogScript, const Common::String & defs);
 	bool tick();

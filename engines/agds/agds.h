@@ -223,7 +223,7 @@ public:
 		_syncSoundId = playSound(Common::String(), resource, phaseVar);
 	}
 
-	void tell(const Common::String &region, const Common::String &text, const Common::String &sound, const Common::String &soundPhaseVar, bool npc);
+	void tell(const Common::String &region, Common::String text, Common::String sound, const Common::String &soundPhaseVar, bool npc);
 
 	bool fastMode() const {
 		return _fastMode;

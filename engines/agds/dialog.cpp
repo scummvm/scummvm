@@ -45,6 +45,8 @@ void Dialog::parseDialogDefs(const Common::String &defs) {
 }
 
 void Dialog::load(const Common::String &dialogScript, const Common::String &defs) {
+	_currentDef.clear();
+	_sounds.clear();
 	parseDialogDefs(defs);
 	_dialogScript = dialogScript;
 	_dialogScriptPos = 0;
@@ -109,11 +111,40 @@ bool Dialog::tick() {
 
 		if (line.hasPrefix("sound")) {
 			debug("sound: %s", line.c_str());
+			auto arg1 = line.find('(');
+			if (arg1 == line.npos) {
+				warning("invalid sound directive");
+				return true;
+			}
+			++arg1;
+
+			auto comma1 = line.find(',', arg1);
+			if (comma1 == line.npos) {
+				warning("invalid sound directive, missing arg2");
+				return true;
+			}
+			auto comma2 = line.find(',', comma1 + 1);
+			if (comma2 == line.npos) {
+				warning("invalid sound directive, missing arg3");
+				return true;
+			}
+			auto end = line.find(')', comma2 + 1);
+			if (end == line.npos) {
+				warning("invalid sound directive");
+				return true;
+			}
+			--end;
+			Common::String name = line.substr(arg1, comma1 - arg1 - 1);
+			Common::String sample = line.substr(comma1 + 1, comma2 - comma1 - 1);
+			Common::String step = line.substr(comma2 + 1, end - comma2);
+			debug("sound args = %s,%s,%s", name.c_str(), sample.c_str(), step.c_str());
+			_sounds.push_back(Sound(name, sample, atoi(step.c_str())));
 		} else {
 			DialogDefsType::const_iterator it = _dialogDefs.find(line);
 			if (it != _dialogDefs.end()) {
 				int value = it->_value;
-				debug("dialog value %d (0x%04x)", value, value);
+				debug("dialog value %s = %d (0x%04x)", line.c_str(), value, value);
+				_currentDef = line;
 				_engine->getSystemVariable("dialog_var")->setInteger(value);
 				_engine->reactivate(_dialogProcessName);
 			} else
@@ -135,5 +166,37 @@ bool Dialog::tick() {
 	return true;
 }
 
+Common::String Dialog::getNextDialogSound() {
+	if (_currentDef.empty())
+		return Common::String();
+
+	uint it;
+	for(it = 0; it < _sounds.size(); ++it) {
+		auto & sound = _sounds[it];
+		if (_currentDef.hasPrefix(sound.Name))
+			break;
+	}
+	if (it == _sounds.size())
+		return Common::String();
+
+	auto &sound = _sounds[it];
+	auto &sample = sound.Sample;
+	auto currentSample = sample;
+
+	int carry = sound.Step;
+	for(auto pos = sample.size() - 1; pos > 0 && sample[pos] >= '0' && sample[pos] <= '9'; --pos) {
+		int d = sample[pos] - '0';
+		d += carry;
+		carry = d / 10;
+		sample.setChar('0' + (d % 10), pos);
+		if (carry == 0)
+			break;
+	}
+	if (carry != 0)
+		warning("sample index overflow, %s", sample.c_str());
+
+	debug("returning sample name %s", sample.c_str());
+	return currentSample + ".ogg";
+}
 
 }
