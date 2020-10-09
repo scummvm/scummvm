@@ -513,6 +513,19 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		}
 
 	case SDL_WINDOWEVENT:
+		// We're only interested in events from the current display window
+		if (_graphicsManager) {
+			uint32 windowID = 0;
+			if (dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)) {
+				windowID = SDL_GetWindowID(dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)->getWindow()->getSDLWindow());
+			} else if (dynamic_cast<SdlGraphicsManager *>(_graphicsManager)) {
+				windowID = SDL_GetWindowID(dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->getWindow()->getSDLWindow());
+			}
+			if (windowID != ev.window.windowID) {
+				return false;
+			}
+		}
+
 		switch (ev.window.event) {
 		case SDL_WINDOWEVENT_EXPOSED:
 			if (_graphicsManager) {
