@@ -597,14 +597,18 @@ bool OtherOptionsDialog::handleEvents() {
 	case Common::KEYCODE_d:
 		delete this;
 		sound.stopAllAudio();
+		WOX_VM._events->hideCursor();
 		WOX_VM.showDarkSideIntro(false);
+		WOX_VM._events->showCursor();
 		break;
 
 	case Common::KEYCODE_c:
 		if (g_vm->getGameID() == GType_WorldOfXeen) {
 			delete this;
 			sound.stopAllAudio();
+			WOX_VM._events->hideCursor();
 			WOX_VM.showCloudsIntro();
+			WOX_VM._events->showCursor();
 		}
 		break;
 
@@ -612,7 +616,9 @@ bool OtherOptionsDialog::handleEvents() {
 		if (g_vm->_gameWon[1]) {
 			delete this;
 			sound.stopAllAudio();
+			WOX_VM._events->hideCursor();
 			WOX_VM.showDarkSideEnding(g_vm->_finalScore);
+			WOX_VM._events->showCursor();
 		}
 		break;
 
@@ -620,7 +626,9 @@ bool OtherOptionsDialog::handleEvents() {
 		if (g_vm->_gameWon[0]) {
 			delete this;
 			sound.stopAllAudio();
+			WOX_VM._events->hideCursor();
 			WOX_VM.showCloudsEnding(g_vm->_finalScore);
+			WOX_VM._events->showCursor();
 		}
 		break;
 
@@ -628,7 +636,9 @@ bool OtherOptionsDialog::handleEvents() {
 		if (g_vm->_gameWon[2]) {
 			delete this;
 			sound.stopAllAudio();
+			WOX_VM._events->hideCursor();
 			WOX_VM.showWorldOfXeenEnding(NON_GOOBER, g_vm->_finalScore);
+			WOX_VM._events->showCursor();
 		}
 		break;
 
