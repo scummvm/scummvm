@@ -75,9 +75,11 @@ std::string MSVCProvider::getLibraryFromFeature(const char *feature, const Build
 		{    "sdlnet", "SDL_net.lib",               0,               "iphlpapi.lib",                                    0 },
 		{   "sdl2net", "SDL2_net.lib",              0,               "iphlpapi.lib",                                    "SDL_net.lib" },
 		{   "discord", "discord-rpc.lib",           0,               0,                                                 0 },
+		{      "glew", "glew32.lib",                "glew32d.lib",   0,                                                 0 },
 		// Feature flags with library dependencies
 		{   "updates", "winsparkle.lib",            0,               0,                                                 0 },
-		{       "tts", 0,                           0,               "sapi.lib",                                        0 }
+		{       "tts", 0,                           0,               "sapi.lib",                                        0 },
+		{    "opengl", 0,                           0,               "opengl32.lib",                                    0 }
 	};
 
 	// HACK for switching SDL_net to SDL2_net
