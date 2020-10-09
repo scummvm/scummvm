@@ -20,12 +20,6 @@
  *
  */
 
-#if defined(WIN32)
-#include <windows.h>
-// winnt.h defines ARRAYSIZE, but we want our own one...
-#undef ARRAYSIZE
-#endif
-
 #include "engines/myst3/gfx.h"
 
 #include "engines/util.h"
