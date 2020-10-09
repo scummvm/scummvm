@@ -1,6 +1,22 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
+#### 2.2.1 (XXXX-XX-XX)
+
+ Glk:
+   - Fix savegame issues with several subengines.
+   - Fix memory overrun in Level9 game detector.
+
+ Lure:
+   - Fix fire animation in first room when loading saves.
+
+ Ultima:
+   - Ultima 4: Added several debugger commands.
+   - Ultima 4: Allow Enter key to exit ZStats display.
+
+ Xeen:
+   - Fixed occasional border corruption during fights.
+
 #### 2.2.0 "Interactive Fantasy" (2020-09-27)
 
  New games:
