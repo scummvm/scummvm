@@ -84,7 +84,8 @@ void EventsManager::pollEvents() {
 		case Common::EVENT_RETURN_TO_LAUNCHER:
 			return;
 		case Common::EVENT_KEYDOWN:
-			addEvent(event.kbd);
+			if (!isModifierKey(event.kbd.keycode))
+				addEvent(event.kbd);
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			_mousePos = event.mouse;
@@ -205,6 +206,15 @@ void EventsManager::nextFrame() {
 
 	// Update the screen
 	_vm->_screen->update();
+}
+
+bool EventsManager::isModifierKey(const Common::KeyCode &keycode) const {
+	return keycode == Common::KEYCODE_LCTRL || keycode == Common::KEYCODE_LALT
+		|| keycode == Common::KEYCODE_RCTRL || keycode == Common::KEYCODE_RALT
+		|| keycode == Common::KEYCODE_LSHIFT || keycode == Common::KEYCODE_RSHIFT
+		|| keycode == Common::KEYCODE_LSUPER || keycode == Common::KEYCODE_RSUPER
+		|| keycode == Common::KEYCODE_CAPSLOCK || keycode == Common::KEYCODE_NUMLOCK
+		|| keycode == Common::KEYCODE_SCROLLOCK;
 }
 
 } // End of namespace Xeen

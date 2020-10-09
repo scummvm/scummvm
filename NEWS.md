@@ -31,6 +31,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Xeen:
    - Fixed occasional border corruption during fights.
+   - Improvements to cutscenes to better match the original games.
 
 #### 2.2.0 "Interactive Fantasy" (2020-09-27)
 

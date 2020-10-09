@@ -74,6 +74,11 @@ private:
 	 * Handles moving to the next game frame
 	 */
 	void nextFrame();
+
+	/**
+	 * Returns whether the keypress is a modifier key like Ctrl or Alt
+	 */
+	bool isModifierKey(const Common::KeyCode &keycode) const;
 public:
 	Common::Point _mousePos;
 public:
