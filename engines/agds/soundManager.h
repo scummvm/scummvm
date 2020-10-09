@@ -63,8 +63,6 @@ namespace AGDS {
 		bool playing(int id) const;
 		void stopAll();
 		Sound *findSampleByPhaseVar(const Common::String &phaseVar);
-	private:
-		void setPhaseVar(const Sound &sound, int value);
 	};
 
 } // End of namespace AGDS

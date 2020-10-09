@@ -32,33 +32,29 @@
 
 namespace AGDS {
 
-void SoundManager::setPhaseVar(const Sound &sound, int value) {
-	if (!sound.phaseVar.empty())
-		_engine->setGlobal(sound.phaseVar, value);
-	_engine->reactivate(sound.process);
-}
-
 void SoundManager::tick() {
 	for (SoundList::iterator i = _sounds.begin(); i != _sounds.end(); ++i) {
 		Sound &sound = *i;
+		auto &phaseVar = sound.phaseVar;
 
 		bool active = _mixer->isSoundHandleActive(sound.handle);
 		if (!sound.phaseVar.empty()) {
 			int value = _engine->getGlobal(sound.phaseVar);
 			if (value <= 1) {
 				if (value == 1 && !active)
-					setPhaseVar(sound, 0);
+					_engine->setGlobal(phaseVar, 0);
 			} else if (value & 2) {
 				debug("sample %s restarts (via phase var)", sound.name.c_str());
-				setPhaseVar(sound, 1);
+				_engine->setGlobal(phaseVar, 1);
 				_mixer->stopID(sound.id);
 				play(sound.process, sound.name, sound.phaseVar, sound.id);
 			} else if (value & 4) {
 				debug("sample %s stops (via phase var)", sound.name.c_str());
 				_mixer->stopID(sound.id);
-				setPhaseVar(sound, 0);
+				_engine->setGlobal(phaseVar, 0);
 			}
-		}
+		} else if (!active)
+			_engine->reactivate(sound.process);
 	}
 }
 
@@ -77,7 +73,8 @@ void SoundManager::stopAll() {
 	_mixer->stopAll();
 	for (auto i = _sounds.begin(); i != _sounds.end(); ++i) {
 		auto &sound = *i;
-		setPhaseVar(sound, 0);
+		if (!sound.phaseVar.empty())
+			_engine->setGlobal(sound.phaseVar, 0);
 	}
 	_sounds.clear();
 }
@@ -106,7 +103,8 @@ int SoundManager::play(const Common::String &process, const Common::String &reso
 		delete file;
 		if (!phaseVar.empty())
 			_engine->setGlobal(phaseVar, 0);
-		_engine->reactivate(process);
+		else
+			_engine->reactivate(process);
 		return -1;
 	}
 	Audio::SoundHandle handle;
