@@ -111,7 +111,7 @@ int FindMissionNumber(const char *mission) {
 
 	// Find which mission number this mission is
 	for (m = 0; m < NUMBER_OF_MISSIONS; m++) {
-		if (strcasecmp(g_mission_names[m], mission) == 0) {
+		if (scumm_stricmp(g_mission_names[m], mission) == 0) {
 			// Mission 8-9 special case check
 			if (m == 6) {
 				if (g_globalScriptVariables.GetVariable("mission9") == 1)

@@ -63,7 +63,7 @@ _map_marker *_marker::Fetch_marker_by_object_name(const char *name) {
 
 	if (num_markers) {
 		for (j = 0; j < num_markers; j++) {
-			if (!strncasecmp(marks[j].name, name, MARKER_NAME_LEN - 1))
+			if (!scumm_strnicmp(marks[j].name, name, MARKER_NAME_LEN - 1))
 				return (&marks[j]);
 		}
 	}
