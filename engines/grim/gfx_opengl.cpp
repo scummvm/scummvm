@@ -20,12 +20,6 @@
  *
  */
 
-#if defined(WIN32)
-#include <windows.h>
-// winnt.h defines ARRAYSIZE, but we want our own one...
-#undef ARRAYSIZE
-#endif
-
 #include "common/endian.h"
 #include "common/system.h"
 #include "common/config-manager.h"
