@@ -2284,10 +2284,12 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		stack->correctParams(0);
 		stack->pushNULL();
 		return STATUS_OK;
-	} else {
-		return BaseObject::scCallMethod(script, stack, thisStack, name);
 	}
 #endif
+
+	else {
+		return BaseObject::scCallMethod(script, stack, thisStack, name);
+	}
 }
 
 
