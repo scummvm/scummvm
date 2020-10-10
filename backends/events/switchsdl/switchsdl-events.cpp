@@ -220,8 +220,8 @@ void SwitchEventSource::preprocessFingerMotion(SDL_Event *event) {
 	if (numFingersDown >= 1) {
 		int x = _mouseX;
 		int y = _mouseY;
-		int xMax = dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->getWindowWidth() - 1;
-		int yMax = dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->getWindowHeight() - 1;
+		int xMax = dynamic_cast<WindowedGraphicsManager *>(_graphicsManager)->getWindowWidth() - 1;
+		int yMax = dynamic_cast<WindowedGraphicsManager *>(_graphicsManager)->getWindowHeight() - 1;
 
 		if (port == 0 && !ConfMan.getBool("touchpad_mouse_mode")) {
 			convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
@@ -353,8 +353,8 @@ void SwitchEventSource::preprocessFingerMotion(SDL_Event *event) {
 }
 
 void SwitchEventSource::convertTouchXYToGameXY(float touchX, float touchY, int *gameX, int *gameY) {
-	int screenH = dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->getWindowHeight();
-	int screenW = dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->getWindowWidth();
+	int screenH = dynamic_cast<WindowedGraphicsManager *>(_graphicsManager)->getWindowHeight();
+	int screenW = dynamic_cast<WindowedGraphicsManager *>(_graphicsManager)->getWindowWidth();
 
 	const int dispW = TOUCHSCREEN_WIDTH;
 	const int dispH = TOUCHSCREEN_HEIGHT;
