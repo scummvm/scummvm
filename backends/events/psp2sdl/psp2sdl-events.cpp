@@ -379,7 +379,7 @@ void PSP2EventSource::preprocessFingerMotion(SDL_Event *event) {
 }
 
 void PSP2EventSource::convertTouchXYToGameXY(float touchX, float touchY, int *gameX, int *gameY) {
-	int screenH = dynamic_cast<WindowedGraphicsManager *>(_graphicsManager)->getWindowHeight;
+	int screenH = dynamic_cast<WindowedGraphicsManager *>(_graphicsManager)->getWindowHeight();
 	int screenW = dynamic_cast<WindowedGraphicsManager *>(_graphicsManager)->getWindowWidth();
 
 	const int dispW = TOUCHSCREEN_WIDTH;
