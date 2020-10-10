@@ -98,7 +98,7 @@ bool Screen::remove(const Common::String &name) {
 }
 
 void Screen::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
-	for(uint i = 0; i < _animations.size(); ++i) {
+	for(uint i = 0; i < _animations.size(); ) {
 		Animation *animation = _animations.data()[i];
 		if (animation->tick(engine))
 			++i;
