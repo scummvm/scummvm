@@ -38,7 +38,7 @@
 #include "common/stream.h"
 #include "common/system.h"
 
-#if defined(USE_OPENGL) && !defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
 
 #include "engines/wintermute/base/gfx/opengl/base_surface_opengl_texture.h"
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl_texture.h"
@@ -487,4 +487,4 @@ bool BaseSurfaceOpenGLTexture::putSurface(const Graphics::Surface &surface, bool
 
 } // End of namespace Wintermute
 
-#endif // defined(USE_OPENGL) && !defined(USE_GLES2)
+#endif // defined(USE_OPENGL_GAME) && !defined(USE_GLES2)

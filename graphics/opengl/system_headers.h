@@ -48,9 +48,9 @@
 
 #elif defined(USE_GLEW)
 #include <GL/glew.h>
-#elif defined(SDL_BACKEND) && defined(USE_OPENGL)
+#elif defined(SDL_BACKEND) && defined(USE_OPENGL_GAME)
 #include <SDL_opengl.h>
-#elif defined(USE_OPENGL)
+#elif defined(USE_OPENGL_GAME)
 #include <GL/gl.h>
 #endif
 

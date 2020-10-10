@@ -22,7 +22,7 @@
 
 #include "common/textconsole.h"
 
-#if defined(USE_OPENGL)
+#if defined(USE_OPENGL_GAME)
 
 #include "graphics/opengl/texture.h"
 #include "graphics/opengl/context.h"

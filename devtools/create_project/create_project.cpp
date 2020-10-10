@@ -1053,8 +1053,9 @@ const Feature s_features[] = {
 	{              "lua",                       "USE_LUA", false, true,  "lua" },
 	{             "nasm",                      "USE_NASM", false, true,  "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
 	{           "opengl",                    "USE_OPENGL", false, true,  "OpenGL support" },
-	{    "openglshaders",            "USE_OPENGL_SHADERS", false, true,  "OpenGL support (shaders)" },
-	{         "opengles",                      "USE_GLES", false, true,  "forced OpenGL ES mode" },
+	{      "opengl_game",               "USE_OPENGL_GAME", false, true,  "OpenGL support in 3d games" },
+	{   "opengl_shaders",            "USE_OPENGL_SHADERS", false, true,  "OpenGL support (shaders) in 3d games" },
+	{         "opengles",                      "USE_GLES", false, true,  "forced OpenGL ES mode in 3d games" },
 	{          "taskbar",                   "USE_TASKBAR", false, true,  "Taskbar integration support" },
 	{            "cloud",                     "USE_CLOUD", false, true,  "Cloud integration support" },
 	{      "translation",               "USE_TRANSLATION", false, true,  "Translation support" },

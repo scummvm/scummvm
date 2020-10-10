@@ -157,7 +157,11 @@ endif
 
 ifdef USE_OPENGL
 MODULE_OBJS += \
-	graphics/openglsdl/openglsdl-graphics.o \
+	graphics/openglsdl/openglsdl-graphics.o
+endif
+
+ifdef USE_OPENGL_GAME
+MODULE_OBJS += \
 	graphics3d/openglsdl/openglsdl-graphics3d.o
 endif
 

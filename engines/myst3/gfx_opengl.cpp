@@ -23,7 +23,7 @@
 #include "common/rect.h"
 #include "common/textconsole.h"
 
-#if defined(USE_OPENGL) && !defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
 
 #include "graphics/colormasks.h"
 #include "graphics/opengl/context.h"

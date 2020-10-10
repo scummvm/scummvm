@@ -26,7 +26,7 @@
 #include "common/config-manager.h"
 
 #include "graphics/surface.h"
-#ifdef USE_OPENGL
+#ifdef USE_OPENGL_GAME
 #include "graphics/opengl/context.h"
 #endif
 

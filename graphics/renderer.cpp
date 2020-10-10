@@ -27,7 +27,7 @@
 namespace Graphics {
 
 static const RendererTypeDescription rendererTypes[] = {
-#if defined(USE_OPENGL) && !defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
 	{ "opengl", _s("OpenGL"), kRendererTypeOpenGL },
 #endif
 #if defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
@@ -76,13 +76,13 @@ RendererType getBestMatchingAvailableRendererType(RendererType desired) {
 	}
 #endif
 
-#if (!defined(USE_OPENGL) && defined(USE_OPENGL_SHADERS)) || defined(USE_GLES2)
+#if (!defined(USE_OPENGL_GAME) && defined(USE_OPENGL_SHADERS)) || defined(USE_GLES2)
 	if (desired == kRendererTypeOpenGL) {
 		desired = kRendererTypeOpenGLShaders;
 	}
 #endif
 
-#if !defined(USE_OPENGL) && !defined(USE_GLES2) && !defined(USE_OPENGL_SHADERS)
+#if !defined(USE_OPENGL_GAME) && !defined(USE_GLES2) && !defined(USE_OPENGL_SHADERS)
 	if (desired == kRendererTypeOpenGL || desired == kRendererTypeOpenGLShaders) {
 		desired = kRendererTypeTinyGL;
 	}

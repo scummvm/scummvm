@@ -29,7 +29,7 @@
 #include "engines/wintermute/base/gfx/x/material.h"
 #include "graphics/opengl/system_headers.h"
 
-#if defined(USE_OPENGL) && !defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
 
 #include "engines/wintermute/base/gfx/opengl/base_surface_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/meshx_opengl.h"
@@ -82,4 +82,4 @@ bool MeshXOpenGL::render(ModelX *model) {
 
 } // namespace Wintermute
 
-#endif // defined(USE_OPENGL) && !defined(USE_GLES2)
+#endif // defined(USE_OPENGL_GAME) && !defined(USE_GLES2)

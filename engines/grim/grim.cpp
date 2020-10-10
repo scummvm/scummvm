@@ -41,7 +41,7 @@
 #include "graphics/pixelbuffer.h"
 #include "graphics/renderer.h"
 
-#ifdef USE_OPENGL
+#ifdef USE_OPENGL_GAME
 #include "graphics/opengl/context.h"
 #endif
 
@@ -271,7 +271,7 @@ GfxBase *GrimEngine::createRenderer(int screenW, int screenH, bool fullscreen) {
 	_softRenderer = matchingRendererType == Graphics::kRendererTypeTinyGL;
 	initGraphics3d(screenW, screenH, fullscreen, !_softRenderer);
 
-#if defined(USE_OPENGL)
+#if defined(USE_OPENGL_GAME)
 	// Check the OpenGL context actually supports shaders
 	if (matchingRendererType == Graphics::kRendererTypeOpenGLShaders && !OpenGLContext.shadersSupported) {
 		matchingRendererType = Graphics::kRendererTypeOpenGL;
@@ -289,7 +289,7 @@ GfxBase *GrimEngine::createRenderer(int screenW, int screenH, bool fullscreen) {
 		renderer = CreateGfxOpenGLShader();
 	}
 #endif
-#if defined(USE_OPENGL) && !defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
 	if (matchingRendererType == Graphics::kRendererTypeOpenGL) {
 		renderer = CreateGfxOpenGL();
 	}

@@ -31,7 +31,7 @@
 
 #include "engines/wintermute/base/gfx/shadow_volume.h"
 
-#if defined(USE_OPENGL) && !defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
 
 namespace Wintermute {
 
@@ -51,6 +51,6 @@ private:
 
 } // namespace Wintermute
 
-#endif // defined(USE_OPENGL) && !defined(USE_GLES2)
+#endif // defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
 
 #endif

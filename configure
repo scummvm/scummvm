@@ -5459,9 +5459,8 @@ EOF
 	cc_check_clean
 fi
 
-# Make sure both flags are synced to proper compile with USE_OPENGL
-if test "$_opengl" = "no" || test "$_opengl_game" = "no" ; then
-	_opengl=no
+# If 2d sdl gfx backend has no opengl we will not enable opengl in games due lack of gfx dynamic switch
+if test "$_opengl" = "no" ; then
 	_opengl_game=no
 	_opengles2=no
 	_glew=no
@@ -5480,6 +5479,7 @@ else
 fi
 
 define_in_config_if_yes "$_opengl" "USE_OPENGL"
+define_in_config_if_yes "$_opengl_game" "USE_OPENGL_GAME"
 define_in_config_if_yes "$_opengles2" "USE_GLES2"
 define_in_config_if_yes "$_opengl_shaders" "USE_OPENGL_SHADERS"
 

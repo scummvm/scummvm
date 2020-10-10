@@ -23,7 +23,7 @@
 #include "engines/wintermute/wintypes.h"
 #include "graphics/opengl/system_headers.h"
 
-#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#if defined(USE_OPENGL_SHADERS)
 
 #include "engines/wintermute/base/gfx/opengl/mesh3ds_opengl_shader.h"
 

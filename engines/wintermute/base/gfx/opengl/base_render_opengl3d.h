@@ -155,6 +155,6 @@ private:
 
 } // wintermute namespace
 
-#endif // defined(USE_OPENGL) && !defined(USE_GLES2)
+#endif // defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
 
 #endif

@@ -29,7 +29,7 @@
 #include "graphics/renderer.h"
 #include "graphics/surface.h"
 
-#ifdef USE_OPENGL
+#ifdef USE_OPENGL_GAME
 #include "graphics/opengl/context.h"
 #endif
 
@@ -206,7 +206,7 @@ Renderer *createRenderer(OSystem *system) {
 
 	initGraphics3d(width, height, fullscreen, isAccelerated);
 
-#if defined(USE_OPENGL)
+#if defined(USE_OPENGL_GAME)
 	// Check the OpenGL context actually supports shaders
 	if (matchingRendererType == Graphics::kRendererTypeOpenGLShaders && !OpenGLContext.shadersSupported) {
 		matchingRendererType = Graphics::kRendererTypeOpenGL;
@@ -223,7 +223,7 @@ Renderer *createRenderer(OSystem *system) {
 		return CreateGfxOpenGLShader(system);
 	}
 #endif
-#if defined(USE_OPENGL) && !defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
 	if (matchingRendererType == Graphics::kRendererTypeOpenGL) {
 		return CreateGfxOpenGL(system);
 	}

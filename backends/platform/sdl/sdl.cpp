@@ -52,9 +52,11 @@
 #include "backends/graphics3d/surfacesdl/surfacesdl-graphics3d.h"
 #ifdef USE_OPENGL
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
+#include "graphics/cursorman.h"
+#endif
+#ifdef USE_OPENGL_GAME
 #include "backends/graphics3d/openglsdl/openglsdl-graphics3d.h"
 #include "graphics/opengl/context.h"
-#include "graphics/cursorman.h"
 #endif
 #include "graphics/renderer.h"
 
@@ -214,7 +216,7 @@ void OSystem_SDL::initBackend() {
 #endif
 	debug(1, "Using SDL Video Driver \"%s\"", sdlDriverName);
 
-#ifdef USE_OPENGL
+#ifdef USE_OPENGL_GAME
 	detectFramebufferSupport();
 	detectAntiAliasingSupport();
 #endif
@@ -304,7 +306,7 @@ void OSystem_SDL::initBackend() {
 	}
 }
 
-#ifdef USE_OPENGL
+#ifdef USE_OPENGL_GAME
 void OSystem_SDL::detectFramebufferSupport() {
 	_capabilities.openGLFrameBuffer = false;
 #if defined(USE_GLES2)
@@ -380,7 +382,7 @@ void OSystem_SDL::detectAntiAliasingSupport() {
 	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
 }
 
-#endif // USE_OPENGL
+#endif // USE_OPENGL_GAME
 
 void OSystem_SDL::engineInit() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -486,7 +488,7 @@ void OSystem_SDL::setWindowCaption(const char *caption) {
 	_window->setWindowCaption(cap);
 }
 
-#ifdef USE_OPENGL
+#ifdef USE_OPENGL_GAME
 Common::Array<uint> OSystem_SDL::getSupportedAntiAliasingLevels() const {
 	return _capabilities.openGLAntiAliasLevels;
 }
@@ -784,6 +786,7 @@ bool OSystem_SDL::setGraphicsMode(int mode, uint flags) {
 			delete sdlGraphicsManager;
 		}
 
+#ifdef USE_OPENGL_GAME
 		if (accel3d && !dynamic_cast<OpenGLSdlGraphics3dManager *>(sdlGraphics3dManager)) {
 			if (sdlGraphics3dManager) {
 				sdlGraphics3dManager->deactivateManager();
@@ -794,7 +797,9 @@ bool OSystem_SDL::setGraphicsMode(int mode, uint flags) {
 			if (sdlGraphicsManager)
 				sdlGraphics3dManager->setDefaultFeatureState();
 			switchedManager = true;
-		} else if (!accel3d && !dynamic_cast<SurfaceSdlGraphics3dManager *>(sdlGraphics3dManager)) {
+		} else
+#endif
+		if (!accel3d && !dynamic_cast<SurfaceSdlGraphics3dManager *>(sdlGraphics3dManager)) {
 			if (sdlGraphics3dManager) {
 				sdlGraphics3dManager->deactivateManager();
 				delete sdlGraphics3dManager;

@@ -29,7 +29,7 @@
 #include "graphics/opengl/system_headers.h"
 #include "math/glmath.h"
 
-#if defined(USE_OPENGL) && !defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
 
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/base_surface_opengl3d.h"
@@ -241,7 +241,7 @@ void BaseRenderOpenGL3D::setWindowed(bool windowed) {
 }
 
 void BaseRenderOpenGL3D::fadeToColor(byte r, byte g, byte b, byte a) {
-#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#if defined(USE_OPENGL_SHADERS)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 #endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
@@ -612,7 +612,7 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute
 
 	// The ShaderSurfaceRenderer sets an array buffer which appearently conflicts with us
 	// Reset it!
-#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#if defined(USE_OPENGL_SHADERS)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 #endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 

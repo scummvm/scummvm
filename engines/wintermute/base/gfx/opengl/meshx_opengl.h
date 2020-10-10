@@ -31,7 +31,7 @@
 
 #include "engines/wintermute/base/gfx/x/meshx.h"
 
-#if defined(USE_OPENGL) && !defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
 
 namespace Wintermute {
 

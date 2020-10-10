@@ -31,7 +31,7 @@
 
 #include "engines/wintermute/base/gfx/x/meshx.h"
 
-#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#if defined(USE_OPENGL_SHADERS)
 
 #include "graphics/opengl/shader.h"
 

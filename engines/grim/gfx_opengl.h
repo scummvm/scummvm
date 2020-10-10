@@ -25,7 +25,7 @@
 
 #include "engines/grim/gfx_base.h"
 
-#ifdef USE_OPENGL
+#ifdef USE_OPENGL_GAME
 
 #ifdef USE_GLEW
 #include <GL/glew.h>
