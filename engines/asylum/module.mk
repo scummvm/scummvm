@@ -43,7 +43,7 @@ MODULE_OBJS := \
 	views/video.o \
 	asylum.o \
 	console.o \
-	detection.o \
+	metaengine.o \
 	respack.o
 
 # This module can be built as a plugin
@@ -53,3 +53,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
