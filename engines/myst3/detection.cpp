@@ -180,7 +180,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		GAMEOPTION_WIDESCREEN_MOD,
 		{
 			_s("Widescreen mod"),
-			_s("Enable enable widescreen rendering in fullscreen mode."),
+			_s("Enable widescreen rendering in fullscreen mode."),
 			"widescreen_mod",
 			false
 		}
