@@ -47,7 +47,9 @@ bool CloudsCutscenes::showCloudsIntro() {
 	bool seenIntro = showCloudsTitle() && showCloudsIntroInner();
 
 	events.clearEvents();
+	screen.doScroll(true, false);
 	sound.stopAllAudio();
+
 	screen.freePages();
 	files.setGameCc(darkCc ? 1 : 0);
 
@@ -145,7 +147,8 @@ bool CloudsCutscenes::showCloudsIntroInner() {
 		screen.vertMerge(yScroll);
 		if (yCtr < 160) {
 			xeen.draw(0, 0);
-		} else if (yCtr < 100) {
+		}
+		if (yCtr < 100) {
 			xeen.draw(0, 0);
 			if (++xeenCtr < 14)
 				xeen1.draw(0, xeenCtr);
