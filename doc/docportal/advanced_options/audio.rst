@@ -27,12 +27,12 @@ MIDI is a communications protocol for musical information; it can be likened to 
 ,,,,,,,,,,,,,,,,,,,,,,
 
 General MIDI
-^^^^^^^^^^^^^
+******************
 
 General MIDI is a MIDI standard which is implemented by a large number or devices. While using MIDI as its protocol, it also specifies an instrument map and some other information that devices must implement.
 
 MT-32
-^^^^^^^
+******************
 
 The MT-32 is a `Roland sound module <https://en.wikipedia.org/wiki/Roland_MT-32>`_, although the term also commonly refers to a range of devices that are compatible with the way instruments are mapped for the MT-32. MT-32 devices also use MIDI as the communications protocol.
 
