@@ -117,7 +117,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		gameId == "dreamcat" ||
 		gameId == "openquest"
 	) {
-		act = new Action("LOOK", _("Look At"));
+		act = new Action("LOOK", _("Look at"));
 		act->setKeyEvent(KeyState(KEYCODE_l, 'l'));
 		act->addDefaultInputMapping("l"); // original keyboard
 		act->addDefaultInputMapping("JOY_UP"); // extra joy
@@ -1165,6 +1165,71 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("DOWN"); // extra keyboard
 		act->addDefaultInputMapping("JOY_DOWN"); // extra joy
 		gameKeyMap->addAction(act);
+	} else if (gameId == "petka02") {
+		act = new Action("INV", _("Show inventory"));
+		act->setKeyEvent(KeyState(KEYCODE_i, 'i'));
+		act->addDefaultInputMapping("i"); // original keyboard
+		act->addDefaultInputMapping("MOUSE_MIDDLE"); // extra mouse
+		act->addDefaultInputMapping("JOY_UP"); // extra joy
+		gameKeyMap->addAction(act);
+
+		act = new Action("MAP", _("Show map"));
+		act->setKeyEvent(KeyState(KEYCODE_m, 'm'));
+		act->addDefaultInputMapping("TAB"); // original keyboard
+		act->addDefaultInputMapping("F1"); // original keyboard
+		act->addDefaultInputMapping("m"); // original keyboard
+		act->addDefaultInputMapping("JOY_DOWN"); // extra joy
+		gameKeyMap->addAction(act);
+
+		act = new Action("LOOK", _("Look at"));
+		act->setKeyEvent(KeyState(KEYCODE_l, 'l'));
+		act->addDefaultInputMapping("1"); // original keyboard
+		act->addDefaultInputMapping("l"); // original keyboard
+		gameKeyMap->addAction(act);
+
+		act = new Action("WALK", _("Walk to"));
+		act->setKeyEvent(KeyState(KEYCODE_w, 'w'));
+		act->addDefaultInputMapping("2"); // original keyboard
+		act->addDefaultInputMapping("w"); // original keyboard
+		gameKeyMap->addAction(act);
+
+		act = new Action("PICK", _("Pick up"));
+		act->setKeyEvent(KeyState(KEYCODE_g, 'g'));
+		act->addDefaultInputMapping("3"); // original keyboard
+		act->addDefaultInputMapping("g"); // original keyboard
+		gameKeyMap->addAction(act);
+
+		act = new Action("USE", _("Use"));
+		act->setKeyEvent(KeyState(KEYCODE_u, 'u'));
+		act->addDefaultInputMapping("4"); // original keyboard
+		act->addDefaultInputMapping("u"); // original keyboard
+		gameKeyMap->addAction(act);
+
+		act = new Action("TALK", _("Talk to"));
+		act->setKeyEvent(KeyState(KEYCODE_t, 't'));
+		act->addDefaultInputMapping("5"); // original keyboard
+		act->addDefaultInputMapping("t"); // original keyboard
+		gameKeyMap->addAction(act);
+
+		act = new Action("VICH", _("Use Chapayev"));
+		act->setKeyEvent(KeyState(KEYCODE_c, 'c'));
+		act->addDefaultInputMapping("6"); // original keyboard
+		act->addDefaultInputMapping("c"); // original keyboard
+		gameKeyMap->addAction(act);
+
+		Common::String extra = ConfMan.get("extra", target);
+		if (extra.hasSuffix("2015")) {
+			act = new Action("WTF", _("???"));
+			act->setKeyEvent(KeyState(KEYCODE_q, 'q'));
+			act->addDefaultInputMapping("q"); // original keyboard
+			//TODO: extra joy control, e.g. "JOY_R+JOY_A"
+			gameKeyMap->addAction(act);
+
+			act = new Action("DBGTXT", _("Debug print"));
+			act->setKeyEvent(KEYCODE_BACKSPACE);
+			act->addDefaultInputMapping("BACKSPACE"); // original keyboard
+			gameKeyMap->addAction(act);
+		}
 	} else if (gameId == "pizzamorgana") {
 		act = new Action("ACTNXT", _("Next action"));
 		act->setMouseWheelUpEvent();
