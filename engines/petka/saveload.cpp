@@ -103,7 +103,7 @@ bool PetkaEngine::canSaveGameStateCurrently() {
 }
 
 bool PetkaEngine::canLoadGameStateCurrently() {
-	return !isDemo();
+	return !isDemo() && _qsystem;
 }
 
 int PetkaEngine::getSaveSlot() {
