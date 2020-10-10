@@ -25,6 +25,7 @@ Programmcodes finden Sie auf Englisch unter:
 
  Sword25:
    - Unterstützung für die entpackte Version hinzugefügt.
+   - Absturz behoben, der auftritt, wenn kroatisch als Spielsprache gewählt wird.
 
  Ultima:
    - Ultima 4: Erweiterung des Debuggers um mehrere Befehle.
@@ -32,6 +33,7 @@ Programmcodes finden Sie auf Englisch unter:
 
  Xeen:
    - Gelegentliche Grafikfehler in Kampf-Szenen korrigiert.
+   - Verbesserte Unterstützung für Zwischensequenzen, die nun dem Original genauer entsprechen.
 
 #### 2.2.0 "Interactive Fantasy" (27.09.2020)
 
