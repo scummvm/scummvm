@@ -16,7 +16,7 @@ import android.view.inputmethod.InputConnection;
 import android.annotation.TargetApi;
 
 public class EditableSurfaceView extends SurfaceView {
-	Context _context;
+	final Context _context;
 	public EditableSurfaceView(Context context) {
 
 		super(context);

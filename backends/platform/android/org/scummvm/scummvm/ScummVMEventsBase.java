@@ -17,7 +17,7 @@ import androidx.annotation.NonNull;
 
 import java.lang.ref.WeakReference;
 
-public class ScummVMEvents implements
+public class ScummVMEventsBase implements
 		android.view.View.OnKeyListener,
 		android.view.View.OnTouchListener,
 		android.view.GestureDetector.OnGestureListener,
@@ -57,15 +57,15 @@ public class ScummVMEvents implements
 	// https://stackoverflow.com/a/27826094
 	public static class ScummVMEventHandler extends Handler {
 
-		private final WeakReference<ScummVMEvents> mListenerReference;
+		private final WeakReference<ScummVMEventsBase> mListenerReference;
 
-		public ScummVMEventHandler(ScummVMEvents listener) {
+		public ScummVMEventHandler(ScummVMEventsBase listener) {
 			mListenerReference = new WeakReference<>(listener);
 		}
 
 		@Override
 		public synchronized void handleMessage(@NonNull Message msg) {
-			ScummVMEvents listener = mListenerReference.get();
+			ScummVMEventsBase listener = mListenerReference.get();
 			if(listener != null) {
 				listener.handleEVHMessage(msg);
 			}
@@ -88,7 +88,7 @@ public class ScummVMEvents implements
 //		return new ScummVMEventHandler(this);
 //	}
 
-	public ScummVMEvents(Context context, ScummVM scummvm, MouseHelper mouseHelper) {
+	public ScummVMEventsBase(Context context, ScummVM scummvm, MouseHelper mouseHelper) {
 		_context = context;
 		_scummvm = scummvm;
 		_mouseHelper = mouseHelper;

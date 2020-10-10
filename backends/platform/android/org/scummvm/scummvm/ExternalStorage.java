@@ -5,6 +5,7 @@ import android.os.Environment;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 import android.text.TextUtils;
@@ -53,21 +54,24 @@ public class ExternalStorage {
 		}
 	}
 
-	private static Pattern
-		// Pattern that SD card device should match
-		devicePattern = Pattern.compile("/dev/(block/.*vold.*|fuse)|/mnt/.*"),
-		// Pattern that SD card mount path should match
-		pathPattern = Pattern.compile("/(mnt|storage|external_sd|extsd|_ExternalSD|Removable|.*MicroSD).*", Pattern.CASE_INSENSITIVE),
-		// Pattern that the mount path should not match.
-		//' emulated' indicates an internal storage location, so skip it.
-		// 'asec' is an encrypted package file, decrypted and mounted as a directory.
-		pathAntiPattern = Pattern.compile(".*(/secure|/asec|/emulated).*"),
-		/** These are expected fs types, including vfat. tmpfs is not OK.
-		 * fuse can be removable SD card (as on Moto E or Asus ZenPad), or can be internal (Huawei G610). */
+	// Pattern that SD card device should match
+	private static final Pattern
+		devicePattern = Pattern.compile("/dev/(block/.*vold.*|fuse)|/mnt/.*");
+	// Pattern that SD card mount path should match
+	private static final Pattern
+		pathPattern = Pattern.compile("/(mnt|storage|external_sd|extsd|_ExternalSD|Removable|.*MicroSD).*", Pattern.CASE_INSENSITIVE);
+	// Pattern that the mount path should not match.
+	//' emulated' indicates an internal storage location, so skip it.
+	// 'asec' is an encrypted package file, decrypted and mounted as a directory.
+	private static final Pattern
+		pathAntiPattern = Pattern.compile(".*(/secure|/asec|/emulated).*");
+	// These are expected fs types, including vfat. tmpfs is not OK.
+	// fuse can be removable SD card (as on Moto E or Asus ZenPad), or can be internal (Huawei G610).
+	private static final Pattern
 		fsTypePattern = Pattern.compile(".*(fat|msdos|ntfs|ext[34]|fuse|sdcard|esdfs).*");
 
 	/** Common paths for microSD card. **/
-	private static String[] commonPaths = {
+	private static final String[] commonPaths = {
 		// Some of these taken from
 		// https://stackoverflow.com/questions/13976982/removable-storage-external-sdcard-path-by-manufacturers
 		// These are roughly in order such that the earlier ones, if they exist, are more sure
@@ -204,7 +208,7 @@ public class ExternalStorage {
 		if (!mountedPaths.isEmpty()) {
 			// See https://stackoverflow.com/a/5374346/423105 on why the following is necessary.
 			// Basically, .toArray() needs its parameter to know what type of array to return.
-			File[] mountedPathsArray = mountedPaths.toArray(new File[mountedPaths.size()]);
+			File[] mountedPathsArray = mountedPaths.toArray(new File[0]);
 			addAncestors(mountedPathsArray, candidatePaths);
 		}
 
@@ -237,7 +241,7 @@ public class ExternalStorage {
 		// Note that you can't pass null, or you'll get an NPE.
 		final File publicDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
 		// Take the parent, because we tend to get a path like /pathTo/sdCard/Music.
-		addPath(publicDirectory.getParentFile().getAbsolutePath(), candidatePaths);
+		addPath(Objects.requireNonNull(publicDirectory.getParentFile()).getAbsolutePath(), candidatePaths);
 		// EXTERNAL_STORAGE: may not be removable.
 		val = System.getenv("EXTERNAL_STORAGE");
 		if (!TextUtils.isEmpty(val)) {
@@ -460,7 +464,7 @@ public class ExternalStorage {
 		map.add(DATA_DIRECTORY_INT);
 		map.add(ctx.getFilesDir().getPath());
 		map.add(DATA_DIRECTORY_EXT);
-		map.add(ctx.getExternalFilesDir(null).getPath());
+		map.add(Objects.requireNonNull(ctx.getExternalFilesDir(null)).getPath());
 
 		// Now go through the external storage
 		if (isAvailable()) {  // we can read the External Storage...
@@ -481,7 +485,7 @@ public class ExternalStorage {
 
 				if (files != null) {
 					for (final File file : files) {
-						if (file.isDirectory() && file.canRead() && (file.listFiles().length > 0)) {  // it is a real directory (not a USB drive)...
+						if (file.isDirectory() && file.canRead() && (Objects.requireNonNull(file.listFiles()).length > 0)) {  // it is a real directory (not a USB drive)...
 							String key = file.getAbsolutePath();
 							if (!map.contains(key)) {
 								map.add(key); // Make name as directory

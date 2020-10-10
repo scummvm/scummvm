@@ -1,9 +1,11 @@
 package org.scummvm.scummvm;
 
 import android.content.res.AssetManager;
+import android.media.AudioAttributes;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
+import android.os.Build;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
@@ -246,7 +248,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 		_sample_rate = AudioTrack.getNativeOutputSampleRate(
 									AudioManager.STREAM_MUSIC);
 		_buffer_size = AudioTrack.getMinBufferSize(_sample_rate,
-									AudioFormat.CHANNEL_CONFIGURATION_STEREO,
+									AudioFormat.CHANNEL_OUT_STEREO,
 									AudioFormat.ENCODING_PCM_16BIT);
 
 		// ~50ms
@@ -262,12 +264,28 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 		Log.i(LOG_TAG, String.format(Locale.ROOT, "Using %d bytes buffer for %dHz audio",
 										_buffer_size, _sample_rate));
 
-		_audio_track = new AudioTrack(AudioManager.STREAM_MUSIC,
-									_sample_rate,
-									AudioFormat.CHANNEL_CONFIGURATION_STEREO,
-									AudioFormat.ENCODING_PCM_16BIT,
-									_buffer_size,
-									AudioTrack.MODE_STREAM);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			_audio_track = new AudioTrack(
+				new AudioAttributes.Builder()
+					.setUsage(AudioAttributes.USAGE_MEDIA)
+					.setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+					.build(),
+				new AudioFormat.Builder()
+					.setSampleRate(_sample_rate)
+					.setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+					.setChannelMask(AudioFormat.CHANNEL_OUT_STEREO).build(),
+				_buffer_size,
+				AudioTrack.MODE_STREAM,
+				AudioManager.AUDIO_SESSION_ID_GENERATE);
+		} else {
+			//support for Android KitKat or lower
+			_audio_track = new AudioTrack(AudioManager.STREAM_MUSIC,
+				_sample_rate,
+				AudioFormat.CHANNEL_OUT_STEREO,
+				AudioFormat.ENCODING_PCM_16BIT,
+				_buffer_size,
+				AudioTrack.MODE_STREAM);
+		}
 
 		if (_audio_track.getState() != AudioTrack.STATE_INITIALIZED)
 			throw new Exception(
@@ -444,14 +462,14 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	}
 
 	static {
-		// For grabbing with gdb...
-		final boolean sleep_for_debugger = false;
-		if (sleep_for_debugger) {
-			try {
-				Thread.sleep(20 * 1000);
-			} catch (InterruptedException ignored) {
-			}
-		}
+//		// For grabbing with gdb...
+//		final boolean sleep_for_debugger = false;
+//		if (sleep_for_debugger) {
+//			try {
+//				Thread.sleep(20 * 1000);
+//			} catch (InterruptedException ignored) {
+//			}
+//		}
 
 		System.loadLibrary("scummvm");
 	}
