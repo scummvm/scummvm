@@ -120,6 +120,11 @@ MODULE_OBJS := \
 	visual/smacker.o \
 	visual/text.o
 
+# This module can be built as a plugin
+ifeq ($(ENABLE_STARK), DYNAMIC_PLUGIN)
+PLUGIN := 1
+endif
+
 # Include common rules
 include $(srcdir)/rules.mk
 
