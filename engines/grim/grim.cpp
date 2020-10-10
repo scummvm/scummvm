@@ -24,6 +24,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_fgetc
 #define FORBIDDEN_SYMBOL_EXCEPTION_stderr
 #define FORBIDDEN_SYMBOL_EXCEPTION_stdin
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 
 #include "common/archive.h"
 #include "common/debug-channels.h"
@@ -186,8 +187,8 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	SearchMan.addSubDirectoryMatching(gameDataDir, "widescreen");
 
 	Debug::registerDebugChannels();
-	
-	
+
+
 	//Remastered:
 	if (getGameFlags() & ADGF_REMASTERED) {
 		for (int i = 0; i < kNumCutscenes; i++) {
@@ -196,7 +197,7 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 		for (int i = 0; i < kNumConcepts; i++) {
 			_conceptEnabled[i] = false;
 		}
-		
+
 		_saveMeta1 = "";
 		_saveMeta2 = 0;
 		_saveMeta3 = "";
@@ -620,7 +621,7 @@ Common::KeymapArray GrimEngine::initKeymapsEMI(const char *target) {
 
 void GrimEngine::playAspyrLogo() {
 	// A trimmed down version of the code found in mainloop
-	// for the purpose of playing the Aspyr-logo. 
+	// for the purpose of playing the Aspyr-logo.
 	// The reason for this, is that the logo needs a different
 	// codec than all the other videos (which are Bink).
 	// Code is provided to keep within the fps-limit, as well as to
@@ -1698,7 +1699,7 @@ void GrimEngine::enableConcept(uint32 number) {
 	assert (number < kNumConcepts);
 	_conceptEnabled[number] = true;
 }
-	
+
 bool GrimEngine::isCutsceneEnabled(uint32 number) const {
 	assert (number < kNumCutscenes);
 	return _cutsceneEnabled[number];
