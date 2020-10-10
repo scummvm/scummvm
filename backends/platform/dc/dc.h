@@ -98,6 +98,8 @@ protected:
 
 public:
 
+  virtual Graphics::PixelBuffer getScreenPixelBuffer();
+
   // Determine the pixel format currently in use for screen rendering.
   Graphics::PixelFormat getScreenFormat() const;
 

@@ -22,8 +22,9 @@
 
 #define RONIN_TIMER_ACCESS
 
-#include <common/scummsys.h>
-#include <graphics/surface.h>
+#include "common/scummsys.h"
+#include "graphics/surface.h"
+#include "graphics/pixelbuffer.h"
 #include "dc.h"
 
 #define SCREEN_W 640
@@ -183,6 +184,11 @@ void OSystem_Dreamcast::grabPalette(byte *colors, uint start, uint num) const
       colors[2] = ((p&0x001f)<<3)|((p&0x001c)>>2);
       colors += 3;
     }
+}
+
+Graphics::PixelBuffer OSystem_Dreamcast::getScreenPixelBuffer()
+{
+  return Graphics::PixelBuffer();
 }
 
 Graphics::PixelFormat OSystem_Dreamcast::getScreenFormat() const
