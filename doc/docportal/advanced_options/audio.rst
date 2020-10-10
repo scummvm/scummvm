@@ -128,7 +128,7 @@ Here are a couple of helpful articles from the Ubuntu community documentation to
 AdLib 
 --------
 
-AdLib devices do not use MIDI. They instead have an FM synthesis chip that writes data to the chip registers. While some games do store their audio data using a MIDI-derived format, this is converted to chip register writes by the game. ScummVM emulates a few different AdLib configuations, and selects the most appropriate for the game:
+AdLib devices do not use MIDI. They instead have a chip that produces sound via FM synthesis. While some games do store their audio data using a MIDI-derived format, this is converted by the game to work with the AdLib chip. ScummVM emulates a few different AdLib configuations, and selects the most appropriate for the game:
 
 - The original AdLib and SoundBlaster card had one OPL2 chip. 
 - The SoundBlaster Pro 1 had two OPL2 chips
