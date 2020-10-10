@@ -161,7 +161,6 @@ _fluidsynth=auto
 _glew=auto
 _opengl_mode=auto
 _opengl_game=auto
-_opengles=no
 _opengles2=no
 _opengl_shaders=auto
 _readline=auto
@@ -5400,15 +5399,6 @@ EOF
 int main(void) { return GL_ES_VERSION_2_0; }
 EOF
 			cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl_game=yes && _opengles2=yes && break
-
-			# Test the current header for OpenGL ES
-			if test "$_opengles2" = no ; then
-				cat > $TMPC << EOF
-#include <$i>
-int main(void) { return GL_OES_VERSION_1_1; }
-EOF
-				cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl_game=yes && _opengles=yes && break
-			fi
 		done
 	fi
 fi
@@ -5421,21 +5411,7 @@ EOF
 
 	_opengl_game=no
 	# Try different library names
-	if test "$_opengles" = "yes" ; then
-		# 1) GLES_CM    This is usually used for OpenGL ES 1.1 (Common profile)
-		# 2) GLESv1_CM  This is used by the Windows Mali OpenGL ES 1.1 Emulator
-		# 3) glesv1     This is used by the Linux Mali OpenGL ES 1.1 Emulator
-		_opengles=no
-		for lib in "-lGLES_CM" "-lGLESv1_CM" "-lglesv1"; do
-			if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS $lib
-				then
-				_opengl_game=yes
-				_opengles=yes
-				append_var OPENGL_LIBS "$lib"
-				break
-			fi
-		done
-	elif test "$_opengles2" = yes ; then
+	if test "$_opengles2" = yes ; then
 		# 1) GLESv2    This is generally used by nearly all platforms for OpenGL ES 2
 		# 2) ogles2    This is used by AmigaOS4 (and probably others)
 		_opengles2=no
@@ -5487,14 +5463,11 @@ fi
 if test "$_opengl" = "no" || test "$_opengl_game" = "no" ; then
 	_opengl=no
 	_opengl_game=no
-	_opengles=no
 	_opengles2=no
 	_glew=no
 fi
 
-if test "$_opengles" = "yes" ; then
-	echo "yes (OpenGL ES)"
-elif test "$_opengles2" = "yes" ; then
+if test "$_opengles2" = "yes" ; then
 	echo "yes (OpenGL ES2)"
 else
 	if test "$_opengl_shaders" = "yes" ; then
@@ -5507,7 +5480,6 @@ else
 fi
 
 define_in_config_if_yes "$_opengl" "USE_OPENGL"
-define_in_config_if_yes "$_opengles" "USE_GLES"
 define_in_config_if_yes "$_opengles2" "USE_GLES2"
 define_in_config_if_yes "$_opengl_shaders" "USE_OPENGL_SHADERS"
 
