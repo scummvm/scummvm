@@ -5420,7 +5420,6 @@ EOF
 				then
 				_opengl_game=yes
 				_opengles2=yes
-				_opengl_shaders=yes
 				append_var OPENGL_LIBS "$lib"
 				break
 			fi
