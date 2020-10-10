@@ -33,21 +33,21 @@ public:
 
 protected:
 	void createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
-	                       const StringList &includeList, const StringList &excludeList);
+	                       const StringList &includeList, const StringList &excludeList) override;
 
 	void outputProjectSettings(std::ofstream &project, const std::string &name, const BuildSetup &setup, bool isRelease, MSVC_Architecture arch, const std::string &configuration);
 
 	void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
-	                            const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix);
+	                            const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix) override;
 
-	void writeReferences(const BuildSetup &setup, std::ofstream &output);
+	void writeReferences(const BuildSetup &setup, std::ofstream &output) override;
 
 	void outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, MSVC_Architecture arch, const StringList &defines, const std::string &prefix, bool runBuildEvents) override;
 
 	void createBuildProp(const BuildSetup &setup, bool isRelease, MSVC_Architecture arch, const std::string &configuration) override;
 
-	const char *getProjectExtension();
-	const char *getPropertiesExtension();
+	const char *getProjectExtension() override;
+	const char *getPropertiesExtension() override;
 
 private:
 	struct FileEntry {
