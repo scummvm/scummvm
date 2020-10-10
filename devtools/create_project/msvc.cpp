@@ -43,12 +43,11 @@ MSVCProvider::MSVCProvider(StringList &global_warnings, std::map<std::string, St
 	amd64_disabled_features.push_back("nasm");
 	_arch_disabled_features[ARCH_AMD64] = amd64_disabled_features;
 	// NASM not supported for WoA target
-	// No OpenGL, OpenGL ES on Windows on ARM
+	// No OpenGL on Windows on ARM
 	// https://github.com/microsoft/vcpkg/issues/11248 [fribidi] Fribidi doesn't cross-compile on x86-64 to target arm/arm64
 	StringList arm64_disabled_features;
 	arm64_disabled_features.push_back("nasm");
 	arm64_disabled_features.push_back("opengl");
-	arm64_disabled_features.push_back("opengles");
 	arm64_disabled_features.push_back("fribidi");
 	_arch_disabled_features[ARCH_ARM64] = arm64_disabled_features;
 }

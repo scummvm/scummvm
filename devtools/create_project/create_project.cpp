@@ -1055,7 +1055,7 @@ const Feature s_features[] = {
 	{           "opengl",                    "USE_OPENGL", false, true,  "OpenGL support" },
 	{      "opengl_game",               "USE_OPENGL_GAME", false, true,  "OpenGL support in 3d games" },
 	{   "opengl_shaders",            "USE_OPENGL_SHADERS", false, true,  "OpenGL support (shaders) in 3d games" },
-	{         "opengles",                      "USE_GLES", false, true,  "forced OpenGL ES mode in 3d games" },
+	{        "opengles2",                     "USE_GLES2", false, false, "forced OpenGL ES2 mode in 3d games" },
 	{          "taskbar",                   "USE_TASKBAR", false, true,  "Taskbar integration support" },
 	{            "cloud",                     "USE_CLOUD", false, true,  "Cloud integration support" },
 	{      "translation",               "USE_TRANSLATION", false, true,  "Translation support" },
