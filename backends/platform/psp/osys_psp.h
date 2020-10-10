@@ -79,6 +79,7 @@ public:
 	virtual Graphics::PixelFormat getScreenFormat() const;
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
 #endif
+	virtual Graphics::PixelBuffer getScreenPixelBuffer();
 
 	// Screen size
 	void initSize(uint width, uint height, const Graphics::PixelFormat *format);
