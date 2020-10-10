@@ -26,6 +26,10 @@
 #include "common/system.h"
 #include "common/events.h"
 
+/**
+ * Subclass of OSystem that contains default implementations of functions that would
+ * cause circular dependencies if they were implemented in common/system.cpp
+ */
 class BaseBackend : public OSystem {
 public:
 	virtual void initBackend() override;
