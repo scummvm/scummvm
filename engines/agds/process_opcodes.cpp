@@ -831,7 +831,7 @@ void Process::restartAnimation() {
 	}
 	Animation *animation = _engine->findAnimationByPhaseVar(phaseVar);
 	if (animation) {
-		if (_engine->getGlobal(phaseVar) == 1 && !animation->paused()) {
+		if (_engine->getGlobal(phaseVar) == -1 && !animation->paused()) {
 			animation->rewind();
 		}
 		animation->resume();
