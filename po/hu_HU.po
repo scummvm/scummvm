@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-09 22:34+0200\n"
-"PO-Revision-Date: 2020-09-26 21:13+0000\n"
-"Last-Translator: anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2020-10-10 09:58+0000\n"
+"Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
 "Language: hu_HU\n"
@@ -988,21 +988,19 @@ msgstr "Teljesképernyõs mód"
 
 #: gui/options.cpp:1300
 msgid "V-Sync in 3D Games"
-msgstr ""
+msgstr "V-Sync 3D játékokban"
 
 #: gui/options.cpp:1300
 msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
-msgstr ""
+msgstr "Várj amíg a függőleges szinkron frissíti a képernyőt 3D renderben"
 
 #: gui/options.cpp:1302
-#, fuzzy
 msgid "Game 3D Renderer:"
-msgstr "GUI Renderelõ:"
+msgstr "3D játék Renderelõ:"
 
 #: gui/options.cpp:1311
-#, fuzzy
 msgid "3D Anti-aliasing:"
-msgstr "Élsimított"
+msgstr "3D Élsimított:"
 
 #: gui/options.cpp:1315 engines/mohawk/dialogs.cpp:328
 msgid "Disabled"
@@ -1021,9 +1019,8 @@ msgid "Aspect ratio correction"
 msgstr "Képméretarány korrekció"
 
 #: gui/options.cpp:1330
-#, fuzzy
 msgid "Correct aspect ratio for games"
-msgstr "Helyes képarány a 320x200 játékokhoz"
+msgstr "A játékok megfelelő képaránya"
 
 #: gui/options.cpp:1338
 msgid "Preferred device:"
@@ -3429,9 +3426,8 @@ msgid "Guard down"
 msgstr "Alsótest védekezés"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:80
-#, fuzzy
 msgid "Guard middle"
-msgstr "Ütés középen"
+msgstr "Védekezés középen"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:81 engines/scumm/help.cpp:312
 msgid "Punch high"
@@ -4466,13 +4462,15 @@ msgstr "Fájl törlés sikertelen."
 
 #: engines/grim/detection.cpp:45
 msgid "Load user patch (unsupported)"
-msgstr ""
+msgstr "Felhasználói javítás betöltése (nem támogatott)"
 
 #: engines/grim/detection.cpp:46
 msgid ""
 "Load an user patch. Please note that the ScummVM team doesn't provide "
 "support for using such patches."
 msgstr ""
+"Felhasználói javítás betöltése. Felhívjuk figyelmét, hogy a ScummVM csapat "
+"nem nyújt támogatást az ilyen javítások használatához."
 
 #: engines/grim/detection.cpp:54
 msgid "Show FPS"
@@ -4480,7 +4478,7 @@ msgstr "FPS látszik"
 
 #: engines/grim/detection.cpp:55
 msgid "Show the current FPS-rate, while you play."
-msgstr ""
+msgstr "Mutassa az aktuális FPS-sebességet játék közben."
 
 #: engines/grim/grim.cpp:344
 #, c-format
@@ -4489,10 +4487,13 @@ msgid ""
 "Running ScummVM nevertheless may cause game bugs or even crashes.\n"
 "Do you still want to run %s?"
 msgstr ""
+"A ScummVM problémákat talált a játékadatfájljaival kapcsolatban.\n"
+"A ScummVM futtatása ezért játékhibákat vagy összeomlásokat okozhat.\n"
+"Szeretné mégis futtatni %s?"
 
 #: engines/grim/grim.cpp:468 engines/grim/grim.cpp:560
 msgid "Run"
-msgstr ""
+msgstr "Futtat"
 
 #: engines/grim/grim.cpp:473 engines/scumm/help.cpp:239
 #: engines/scumm/help.cpp:247
@@ -4500,24 +4501,20 @@ msgid "Examine"
 msgstr "Vizsgál"
 
 #: engines/grim/grim.cpp:478 engines/grim/grim.cpp:575
-#, fuzzy
 msgid "Use/Talk"
-msgstr "Beszél"
+msgstr "Használ/Beszél"
 
 #: engines/grim/grim.cpp:483 engines/grim/grim.cpp:580
-#, fuzzy
 msgid "Pick up/Put away"
-msgstr "Felvesz"
+msgstr "Felvesz/Letesz"
 
 #: engines/grim/grim.cpp:488 engines/grim/grim.cpp:585
-#, fuzzy
 msgid "Invetory"
-msgstr "Tárgylista"
+msgstr "Leltár"
 
 #: engines/grim/grim.cpp:493 engines/grim/grim.cpp:590
-#, fuzzy
 msgid "Skip dialog lines"
-msgstr "Párbeszéd kihagyása (néhány játéknál)"
+msgstr "A párbeszédsorok kihagyása"
 
 #: engines/grim/grim.cpp:511 engines/grim/grim.cpp:608
 msgid "Menu"
@@ -4525,25 +4522,23 @@ msgstr "Menü"
 
 #: engines/grim/grim.cpp:550
 msgid "Cycle Objects Up"
-msgstr ""
+msgstr "Ciklus objektumok fel"
 
 #: engines/grim/grim.cpp:555
 msgid "Cycle Objects Down"
-msgstr ""
+msgstr "Ciklus Objektumok Le"
 
 #: engines/grim/grim.cpp:565
 msgid "Quick Room Exit"
-msgstr ""
+msgstr "Gyors szoba elhagyás"
 
 #: engines/grim/grim.cpp:570
-#, fuzzy
 msgid "Examine/Look"
-msgstr "Vizsgál"
+msgstr "Vizsgál/Néz"
 
 #: engines/grim/grim.cpp:1356
-#, fuzzy
 msgid "Error: the game could not be saved."
-msgstr "Sajnálom, a mentést nem lehet létrehozni"
+msgstr "Hiba: a játékot nem sikerült menteni."
 
 #: engines/grim/md5check.cpp:547
 #, c-format
@@ -4554,6 +4549,11 @@ msgid ""
 "version (i.e. dvd-box or jewelcase):\n"
 "%s"
 msgstr ""
+"A(z) %s játékadatfájl hibás lehet.\n"
+"Ha biztos vagy benne hogy nem, add meg a ScummVM csapatának a következő "
+"kódot, a fájl nevével, a nyelvével és a játék verziójának leírásával együtt ("
+"azaz dvd-box vagy ékszerdoboz):\n"
+"%s"
 
 #: engines/grim/md5check.cpp:554
 #, c-format
@@ -4563,6 +4563,10 @@ msgid ""
 "Go to https://wiki.residualvm.org/index.php/Datafiles to see a list of the "
 "needed files."
 msgstr ""
+"Nem sikerült megnyitni a %s fájlt ellenőrzésre.\n"
+"Lehet hogy hiányzik, vagy nincs jogod megnyitni.\n"
+"Menj ide https://wiki.residualvm.org/index.php/Datafiles hogy megnézd a "
+"szükséges fájlokat."
 
 #: engines/grim/md5checkdialog.cpp:42
 msgid ""
@@ -4571,6 +4575,10 @@ msgid ""
 "This may take a while, please wait.\n"
 "Successive runs will not check them again."
 msgstr ""
+"A ScummVM most ellenőrzi a játék adatfájljait, hogy megbizonyosodjon a "
+"legjobb játékélményről.\n"
+"Ez eltarthat egy ideig, kérlek várj.\n"
+"A következő futtatások nem ellenőrzik őket újra."
 
 #: engines/grim/resource.cpp:100
 msgid ""
@@ -4579,6 +4587,10 @@ msgid ""
 "https://scummvm.org/frs/extras/patches/gfupd101.exe\n"
 "and put it in the game data files directory"
 msgstr ""
+"A Grim Fandango eredeti javítása\n"
+"hiányzik. Kérlek, töltsd le innen\n"
+"https://scummvm.org/frs/extras/patches/gfupd101.exe\n"
+"és tedd a játék adatfájlok könyvtárába"
 
 #: engines/grim/resource.cpp:105
 msgid ""
@@ -4588,6 +4600,10 @@ msgid ""
 "Pay attention to download the correct version according to the game's "
 "language"
 msgstr ""
+"Az Escape from Monkey Island eredeti javítása hiányzik.\n"
+"Kérlek, töltsd le innen https://scummvm.org/frs/extras/patches/\n"
+"és tedd a játék adatfájlok könyvtárába.\n"
+"Ügyelj arra, hogy a játék nyelvének megfelelően töltsd le a megfelelő verziót"
 
 #: engines/grim/emi/sound/emisound.cpp:650
 msgid ""
@@ -4600,6 +4616,16 @@ msgid ""
 "\n"
 "Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.int"
 msgstr ""
+"HIBA: Nincs elég zeneszám!\n"
+"Az Escape from Monkey Island-nak két FullMonkeyMap.imt verziója van,\n"
+"át kell másolnod mindkét fájlt mindkét CD-ről a Textures/ mappába és át kell "
+"nevezni\n"
+"az alábbiak szerint, hogy játékon belül zenei támogatást kapj:\n"
+"CD 1: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap1.imt\"\n"
+"CD 2: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap2.imt\"\n"
+"\n"
+"Alternatív megoldásként a Steam vagy a GOG másolat kombinált "
+"FullMonkeyMap.int fájlját"
 
 #: engines/groovie/detection.cpp:320
 msgid "Fast movie speed"
@@ -5197,13 +5223,12 @@ msgid "Unable to locate the '%s' engine data file"
 msgstr "Nem található '%s' motor adatfájl"
 
 #: engines/myst3/detection.cpp:182
-#, fuzzy
 msgid "Widescreen mod"
-msgstr "Teljesképernyõs mód"
+msgstr "Szélesvásznú mód"
 
 #: engines/myst3/detection.cpp:183
 msgid "Enable enable widescreen rendering in fullscreen mode."
-msgstr ""
+msgstr "Engedélyezi a széles képernyős megjelenítést teljes képernyős módban."
 
 #: engines/myst3/myst3.cpp:361
 msgid ""
@@ -5213,6 +5238,10 @@ msgid ""
 "The updates can be downloaded from:\n"
 "https://www.scummvm.org/frs/extras/patches/"
 msgstr ""
+"A Myst III ezen verzióját nem frissítették a legújabb hivatalos javítással.\n"
+"Kérlek, telepítsd a játék nyelvének megfelelő hivatalos frissítést.\n"
+"A frissítések letölthetők innen:\n"
+"https://www.scummvm.org/frs/extras/patches/"
 
 #: engines/myst3/myst3.cpp:1579 engines/pegasus/pegasus.cpp:701
 msgid "Invalid file name for saving"
@@ -6433,37 +6462,36 @@ msgid "Use the floppy version's intro (CD version only)"
 msgstr "A floppy verzió intro használata (csak CD verziónál)"
 
 #: engines/stark/detection.cpp:340
-#, fuzzy
 msgid "Load modded assets"
-msgstr "Játékállás betöltése"
+msgstr "Módosított eszközök betöltése"
 
 #: engines/stark/detection.cpp:341
 msgid "Enable loading of external replacement assets."
-msgstr ""
+msgstr "Külső helyettesítő eszközök betöltésének engedélyezése."
 
 #: engines/stark/detection.cpp:349
 msgid "Enable linear filtering of the backgrounds images"
-msgstr ""
+msgstr "A háttérképek lineáris szűrésének engedélyezése"
 
 #: engines/stark/detection.cpp:350
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
 msgstr ""
+"Ha a lineáris szűrés engedélyezve van, a háttérgrafika simább teljes "
+"képernyős módban, egyes részletek árán."
 
 #: engines/stark/detection.cpp:358
-#, fuzzy
 msgid "Enable font anti-aliasing"
-msgstr "Tartalmi cenzúra engedélyezése"
+msgstr "Font anti-aliasing engedélyezése"
 
 #: engines/stark/detection.cpp:359
 msgid "When font anti-aliasing is enabled, the text is smoother."
-msgstr ""
+msgstr "Ha a font anti-aliasing engedélyezve van, a szöveg simább."
 
 #: engines/stark/stark.cpp:294
-#, fuzzy
 msgid "You are missing recommended data files:"
-msgstr "A következõ szükséges Riven adatfájlok hiányoznak:\n"
+msgstr "Hiányoznak az ajánlott adatfájlok:"
 
 #: engines/stark/stark.cpp:308
 msgid ""
@@ -6471,20 +6499,27 @@ msgid ""
 "designed. The Steam release is known to be missing it. You can get the fonts "
 "from the demo version of the game."
 msgstr ""
+"A 'fonts' mappa szükséges ahhoz, hogy a szövegstílust a tervezéskor élje át. "
+"A Steam kiadásból ez köztudottan hiányzik. A betűtípusokat a játék demó "
+"verziójából szerezheted be."
 
 #: engines/stark/stark.cpp:315
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
 msgstr ""
+"A 'gui.ini' használata a játék fordítás szükséges betűtípus-beállítások "
+"megadásához ajánlott."
 
 #: engines/stark/stark.cpp:321
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
 msgstr ""
+"A 'language.ini' használata ajánlott a lokalizált megerősítő "
+"párbeszédpanelekhez."
 
 #: engines/stark/stark.cpp:327
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
-msgstr ""
+msgstr "A 'game.exe' használata ajánlott a megerősítő párbeszédpanelekhez."
 
 #: engines/supernova/supernova.cpp:187
 #, c-format
