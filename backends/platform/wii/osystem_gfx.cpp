@@ -29,7 +29,6 @@
 
 #include "common/config-manager.h"
 #include "graphics/conversion.h"
-#include "graphics/pixelbuffer.h"
 #include "backends/fs/wii/wii-fs-factory.h"
 
 #include "osystem.h"
@@ -373,10 +372,6 @@ void OSystem_Wii::grabPalette(byte *colors, uint start, uint num) const {
 		d[1] = g;
 		d[2] = b;
 	}
-}
-
-Graphics::PixelBuffer OSystem_Wii::getScreenPixelBuffer() {
-	return Graphics::PixelBuffer();
 }
 
 void OSystem_Wii::setCursorPalette(const byte *colors, uint start, uint num) {

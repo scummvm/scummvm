@@ -41,7 +41,6 @@
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/psp/timer.h"
 #include "graphics/surface.h"
-#include "graphics/pixelbuffer.h"
 #include "audio/mixer_intern.h"
 
 //#define __PSP_DEBUG_FUNCS__	/* For debugging function calls */
@@ -129,10 +128,6 @@ bool OSystem_PSP::getFeatureState(Feature f) {
 
 const OSystem::GraphicsMode* OSystem_PSP::getSupportedGraphicsModes() const {
 	return _displayManager.getSupportedGraphicsModes();
-}
-
-Graphics::PixelBuffer OSystem_PSP::getScreenPixelBuffer() {
-	return Graphics::PixelBuffer();
 }
 
 int OSystem_PSP::getDefaultGraphicsMode() const {

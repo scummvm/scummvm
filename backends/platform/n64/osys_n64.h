@@ -153,7 +153,6 @@ public:
 	virtual int16 getWidth();
 
 	virtual PaletteManager *getPaletteManager() { return this; }
-	virtual Graphics::PixelBuffer getScreenPixelBuffer();
 protected:
 	// PaletteManager API
 	virtual void setPalette(const byte *colors, uint start, uint num);

@@ -166,8 +166,6 @@ protected:
 	virtual void setPalette(const byte *colors, uint start, uint num);
 	virtual void grabPalette(byte *colors, uint start, uint num) const;
 public:
-	virtual Graphics::PixelBuffer getScreenPixelBuffer();
-
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y,
 									int w, int h);

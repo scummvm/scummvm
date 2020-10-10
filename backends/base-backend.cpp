@@ -22,6 +22,8 @@
 
 #include "backends/base-backend.h"
 
+#include "graphics/pixelbuffer.h"
+
 #ifndef DISABLE_DEFAULT_EVENT_MANAGER
 #include "backends/events/default/default-events.h"
 #endif
@@ -47,6 +49,11 @@ void BaseBackend::initBackend() {
 #endif
 
 	OSystem::initBackend();
+}
+
+Graphics::PixelBuffer BaseBackend::getScreenPixelBuffer() {
+	warning("BaseBackend::getScreenPixelBuffer(): not implemented");
+	return Graphics::PixelBuffer();
 }
 
 void BaseBackend::fillScreen(uint32 col) {

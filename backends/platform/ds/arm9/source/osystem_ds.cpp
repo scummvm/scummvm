@@ -42,7 +42,6 @@
 #include "common/str.h"
 #include "cdaudio.h"
 #include "graphics/surface.h"
-#include "graphics/pixelbuffer.h"
 #include "touchkeyboard.h"
 #include "backends/fs/ds/ds-fs-factory.h"
 
@@ -161,10 +160,6 @@ bool OSystem_DS::getFeatureState(Feature f) {
 	if (f == kFeatureCursorPalette)
 		return !_disableCursorPalette;
 	return false;
-}
-
-Graphics::PixelBuffer OSystem_DS::getScreenPixelBuffer() {
-	return Graphics::PixelBuffer();
 }
 
 void OSystem_DS::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
