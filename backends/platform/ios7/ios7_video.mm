@@ -23,10 +23,10 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
+#include "common/system.h"
 #include "backends/platform/ios7/ios7_video.h"
 
 #include "graphics/colormasks.h"
-#include "common/system.h"
 #include "backends/platform/ios7/ios7_app_delegate.h"
 
 static int g_needsScreenUpdate = 0;
