@@ -66,6 +66,7 @@ OSystem_SDL_Symbian::OSystem_SDL_Symbian()
 void OSystem_SDL_Symbian::init() {
 	_RFs = &CEikonEnv::Static()->FsSession();
 	// Use iconless window: it uses the EScummVM.aif file for the icon.
+	initSDL();
 	_window = new SdlIconlessWindow();
 	_fsFactory = new SymbianFilesystemFactory();
 	OSystem_SDL::init();

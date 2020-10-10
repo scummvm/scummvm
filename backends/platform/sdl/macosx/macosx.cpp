@@ -51,6 +51,7 @@ OSystem_MacOSX::~OSystem_MacOSX() {
 
 void OSystem_MacOSX::init() {
 	// Use an iconless window on OS X, as we use a nicer external icon there.
+	initSDL();
 	_window = new SdlIconlessWindow();
 
 #if defined(USE_TASKBAR)
