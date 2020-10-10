@@ -44,7 +44,7 @@ class Animation {
 	Common::String 		_phaseVar;
 	bool				_loop;
 	int					_cycles;
-	bool				_startPaused;
+	bool				_phaseVarControlled;
 	int					_frameIndex;
 	bool				_paused;
 	int					_speed;
@@ -101,9 +101,8 @@ public:
 		_random = value;
 	}
 
-	void startPaused(bool paused) {
-		_startPaused = paused;
-		_paused = paused;
+	void phaseVarControlled(bool controlled) {
+		_phaseVarControlled = controlled;
 	}
 
 	bool paused() const {

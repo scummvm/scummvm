@@ -153,10 +153,10 @@ void Process::loadPicture() {
 
 void Process::loadAnimation() {
 	Common::String name = popText();
-	debug("loadAnimation %s (phase: %s) %s", name.c_str(), _phaseVar.c_str(), _animationPaused? "(paused)": "");
+	debug("loadAnimation %s (phase: %s) %s", name.c_str(), _phaseVar.c_str(), _phaseVarControlled? "(paused)": "");
 	Animation *animation = _engine->loadAnimation(name);
 	if (animation) {
-		if (_animationPaused) {
+		if (_phaseVarControlled) {
 			_animationLoop = false;
 			_animationCycles = 0;
 			_animationRandom = 0;
@@ -596,7 +596,7 @@ void Process::stub102() {
 
 void Process::setAnimationPaused() {
 	debug("setAnimationPaused");
-	_animationPaused = true;
+	_phaseVarControlled = true;
 }
 
 void Process::resetState() {
@@ -605,7 +605,7 @@ void Process::resetState() {
 	_animationCycles = 1;
 	_animationLoop = false;
 	_animationPosition = Common::Point();
-	_animationPaused = false;
+	_phaseVarControlled = false;
 	_animationZ = 0;
 	_animationRandom = 0;
 	_animationDelay = -1;
@@ -1362,7 +1362,7 @@ void Process::loadPictureFromObject() {
 
 void Process::loadAnimationFromObject() {
 	Common::String name = popText();
-	debug("loadAnimationFromObject %s %s", name.c_str(), _animationPaused? "(paused)": "");
+	debug("loadAnimationFromObject %s %s", name.c_str(), _phaseVarControlled? "(paused)": "");
 	Animation *animation = _engine->loadAnimation(name);
 	if (animation) {
 		_animationCycles = 0;
