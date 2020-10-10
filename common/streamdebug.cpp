@@ -100,10 +100,12 @@ Debug &Debug::operator<<(unsigned int num) {
 	return maybeSpace();
 }
 
+#ifndef __DC__
 Debug &Debug::operator<<(double num) {
 	_stream->msg += String::format("%g", num);
 	return maybeSpace();
 }
+#endif
 
 Debug &Debug::operator<<(float num) {
 	_stream->msg += String::format("%g", num);
@@ -132,4 +134,3 @@ Debug &Debug::operator=(const Debug &other) {
 Common::Debug streamDbg(int level) {
 	return Common::Debug(level);
 }
-

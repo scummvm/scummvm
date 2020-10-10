@@ -42,7 +42,11 @@ public:
 	Debug &operator<<(char str);
 	Debug &operator<<(int number);
 	Debug &operator<<(unsigned int number);
+
+	// DC has float and double equal
+#ifndef __DC__
 	Debug &operator<<(double number);
+#endif
 	Debug &operator<<(float number);
 	Debug &operator<<(bool value);
 	Debug &operator<<(void *p);
