@@ -2,6 +2,24 @@ Umfangreichere Informationen über die Änderungen des aktuellen experimentellen
 Programmcodes finden Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
+#### 2.2.1 (DD.MM.YYYY)
+
+ GLK:
+   - Probleme mit Spielständen in mehreren Sub-Engines behoben.
+   - Speicherüberlauf im Erkennungsmechanismus für Level9-Spiele behoben.
+
+ Lure:
+   - Die Feuer-Animation im ersten Raum wird nun auch nach dem Laden eines Spielstands abgespielt.
+
+ Ultima:
+   - Ultima 4: Erweiterung des Debuggers um mehrere Befehle.
+   - Ultima 4: Die Return-Taste kann nun dazu genutzt werden, die ZStats-Anzeige zu verlassen.
+
+ Xeen:
+   - Gelegentliche Grafikfehler in Kampf-Szenen korrigiert.
+   - Verbesserte Unterstützung für Zwischensequenzen, die nun dem Original genauer entsprechen.
+
+
 #### 2.2.0 (27.09.2020)
 
  Neue Spiele:
