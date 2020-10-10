@@ -240,7 +240,7 @@ int MacOSXTextToSpeechManager::getDefaultVoice() {
 	NSString *defaultVoice = [NSSpeechSynthesizer defaultVoice];
 	if (defaultVoice == nil)
 		return 0;
-	for (int i = 0 ; i < _ttsState->_availableVoices.size() ; ++i) {
+	for (unsigned int i = 0 ; i < _ttsState->_availableVoices.size() ; ++i) {
 		if ([defaultVoice isEqualToString:(NSString*)(_ttsState->_availableVoices[i].getData())])
 			return i;
 	}
