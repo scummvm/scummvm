@@ -49,7 +49,7 @@
  *  - Walking is partialy implemented but the primitive pathfinding is missing
  *
  * Maintainers:
- *  alexbevi, alexandrefontoura, bluegr, littleboy, midstream
+ *  alexbevi, alexandrefontoura, bluegr, littleboy, midstream, deledrius
  *
  * Supported games:
  *  - Sanitarium

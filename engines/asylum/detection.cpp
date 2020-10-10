@@ -20,178 +20,104 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "engines/advancedDetector.h"
-#include "common/savefile.h"
-#include "common/system.h"
-
-#include "asylum/asylum.h"
+#include "base/plugins.h"
 
 static const PlainGameDescriptor asylumGames[] = {
-	{ "asylum", "Sanitarium" },
+	{ "sanitarium", "Sanitarium" },
 	{ 0, 0 }
 };
 
 namespace Asylum {
 
 static const ADGameDescription gameDescriptions[] = {
-	{
-		// Sanitarium - English Demo
-		"asylum",
-		"Demo",
-		{
-			{"SNTRM.DAT", 0, "6a8079e0b49affc99d148624fbb584a1", 326},
-			{"RES.000", 0, "57446ce089c6f9decb7f3faf41d09edf", 9022},
-			{0,0,0,0}
-		},
-		Common::EN_ANY,
-		Common::kPlatformWindows,
-		ADGF_DEMO|ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+
+	// Sanitarium - English Demo
+	{ "sanitarium", "Demo", {
+		{"SNTRM.DAT", 0, "6a8079e0b49affc99d148624fbb584a1", 326},
+		{"RES.000", 0, "57446ce089c6f9decb7f3faf41d09edf", 9022},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE, GUIO0()
 	},
-	{
-		"asylum",
-		"Unpatched",
-		{
-			{"SNTRM.DAT", 0, "7cfcc457c1f579fbf9878ac175d29374", 8930},
-			{"RES.000",   0, "4d13f1412f9e7dd3eaf0a58f0e00e662", 272057},
-			{"SCN.006",   0, "71a5f49cbda597a11e877589075e27b5", 2918330},
-			{0,0,0,0}
-		},
-		Common::EN_ANY,
-		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+
+	{ "sanitarium", "Unpatched",{
+		{"SNTRM.DAT", 0, "7cfcc457c1f579fbf9878ac175d29374", 8930},
+		{"RES.000", 0, "4d13f1412f9e7dd3eaf0a58f0e00e662", 272057},
+		{"SCN.006", 0, "71a5f49cbda597a11e877589075e27b5", 2918330},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO0()
 	},
-	{
-		"asylum",
-		"Patched", // Level 2 Lockout Bug patch was applied
-		{
-			{"SNTRM.DAT", 0, "7cfcc457c1f579fbf9878ac175d29374", 8930},
-			{"RES.000",   0, "4d13f1412f9e7dd3eaf0a58f0e00e662", 272057},
-			{"SCN.006",   0, "3a5b54da08198012dc0614114782d5fb", 2918330},
-			{0,0,0,0}
-		},
-		Common::EN_ANY,
-		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+
+	// Level 2 Lockout Bug patch was applied
+	{ "sanitarium", "Patched", {
+		{"SNTRM.DAT", 0, "7cfcc457c1f579fbf9878ac175d29374", 8930},
+		{"RES.000", 0, "4d13f1412f9e7dd3eaf0a58f0e00e662", 272057},
+		{"SCN.006", 0, "3a5b54da08198012dc0614114782d5fb", 2918330},
+		 AD_LISTEND}, Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO0()
 	},
-	{
-		"asylum",
-		"GOG.com",
-		{
-			{"SNTRM.DAT", 0, "7cfcc457c1f579fbf9878ac175d29374", 8930},
-			{"RES.000",   0, "f58f8dc3e63663f174977d359e11132c", 272057},
-			{"SCN.006",   0, "3a5b54da08198012dc0614114782d5fb", 2918330},
-			{0,0,0,0}
-		},
-		Common::EN_ANY,
-		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+
+	{ "sanitarium", "GOG.com", {
+		{"SNTRM.DAT", 0, "7cfcc457c1f579fbf9878ac175d29374", 8930},
+		{"RES.000", 0, "f58f8dc3e63663f174977d359e11132c", 272057},
+		{"SCN.006", 0, "3a5b54da08198012dc0614114782d5fb", 2918330},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO0()
 	},
-	{
-		"asylum",
-		"French Version",
-		{
-			{"SNTRM.DAT", 0, "e09a12543c6ede1727c8ecffb74e7fd2", 8930},
-			{"RES.000",   0, "2a4677ee3fd7bfa3161e16cd59371238", 277931},
-			{"SCN.006",   0, "3a5b54da08198012dc0614114782d5fb", 2918330},
-			{0,0,0,0}
-		},
-		Common::FR_FRA,
-		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+
+	{ "sanitarium", "French Version", {
+		{"SNTRM.DAT", 0, "e09a12543c6ede1727c8ecffb74e7fd2", 8930},
+		{"RES.000", 0, "2a4677ee3fd7bfa3161e16cd59371238", 277931},
+		{"SCN.006", 0, "3a5b54da08198012dc0614114782d5fb", 2918330},
+		AD_LISTEND},
+		Common::FR_FRA, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO0()
 	},
-	{
-		"asylum",
-		"Russian Version",
-		{
-			{"SNTRM.DAT", 0, "7cfcc457c1f579fbf9878ac175d29374", 8930},
-			{"RES.000",   0, "1f8a262bf8b3035bd3cfda24068c4651", 263624},
-			{"SCN.006",   0, "3a5b54da08198012dc0614114782d5fb", 2918330},
-			{0,0,0,0}
-		},
-		Common::RU_RUS,
-		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+
+	{ "sanitarium", "Russian Version", {
+		{"SNTRM.DAT", 0, "7cfcc457c1f579fbf9878ac175d29374", 8930},
+		{"RES.000", 0, "1f8a262bf8b3035bd3cfda24068c4651", 263624},
+		{"SCN.006", 0, "3a5b54da08198012dc0614114782d5fb", 2918330},
+		AD_LISTEND},
+		Common::RU_RUS, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO0()
 	},
-	AD_TABLE_END_MARKER
-};
+
+	AD_TABLE_END_MARKER};
 
 static const ADFileBasedFallback fileBasedFallback[] = {
-	{ &gameDescriptions[0], { "SNTRM.DAT", 0 } }, // default to english version
-	{ 0, { 0 } }
+	{ &Asylum::gameDescriptions[0], { "SNTRM.DAT", 0 } }, // default to english version
+	{ 0, {0} } };
+
+
+static const char *directoryGlobs[] = {
+	"Data",
+	0
 };
 
 } // End of namespace Asylum
 
-class AsylumMetaEngine : public AdvancedMetaEngine {
+
+class AsylumMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	AsylumMetaEngine() : AdvancedMetaEngine(Asylum::gameDescriptions, sizeof(ADGameDescription), asylumGames) {
-		_singleId = "asylum";
+	AsylumMetaEngineStatic() : AdvancedMetaEngineStatic(Asylum::gameDescriptions, sizeof(ADGameDescription), asylumGames) {
 		_md5Bytes = 0;
-		_guiOptions = GUIO1(GUIO_NONE);
+		_maxScanDepth = 2;
+		_directoryGlobs = Asylum::directoryGlobs;
 	}
 
-	virtual const char *getName() const {
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override {
+		return detectGameFilebased(allFiles, Asylum::fileBasedFallback);
+	}
+
+	const char *getEngineId() const override {
+		return "asylum";
+	}
+
+	const char *getName() const override {
 		return "Asylum";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "Sanitarium (c) ASC Games";
 	}
-
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual void removeSaveState(const char *target, int slot) const;
-
-	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const
-	{
-		return detectGameFilebased(allFiles, fslist, Asylum::fileBasedFallback);
-	}
-protected:
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 };
 
-bool AsylumMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return (f == kSupportsListSaves) ||
-	       (f == kSupportsLoadingDuringStartup) ||
-	       (f == kSupportsDeleteSave);
-}
-
-bool Asylum::AsylumEngine::hasFeature(EngineFeature f) const {
-	return (f == kSupportsRTL) ||
-	       (f == kSupportsLoadingDuringRuntime) ||
-	       (f == kSupportsSavingDuringRuntime) ||
-	       (f == kSupportsSubtitleOptions);
-}
-
-bool AsylumMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc) {
-		*engine = new Asylum::AsylumEngine(syst, desc);
-	}
-	return desc != 0;
-}
-
-SaveStateList AsylumMetaEngine::listSaves(const char * /*target*/) const {
-	error("[AsylumMetaEngine::listSaves] Not implemented");
-}
-
-int AsylumMetaEngine::getMaximumSaveSlot() const {
-	error("[AsylumMetaEngine::getMaximumSaveSlot] Not implemented");
-}
-
-void AsylumMetaEngine::removeSaveState(const char * /*target*/, int /*slot*/) const {
-	error("[AsylumMetaEngine::removeSaveState] Not implemented");
-}
-
-#if PLUGIN_ENABLED_DYNAMIC(ASYLUM)
-REGISTER_PLUGIN_DYNAMIC(ASYLUM, PLUGIN_TYPE_ENGINE, AsylumMetaEngine);
-#else
-REGISTER_PLUGIN_STATIC(ASYLUM, PLUGIN_TYPE_ENGINE, AsylumMetaEngine);
-#endif
+REGISTER_PLUGIN_STATIC(ASYLUM_DETECTION, PLUGIN_TYPE_METAENGINE, AsylumMetaEngineStatic);
