@@ -107,6 +107,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"palladion",       "Palladion"},
 	{"papasdaughters1", "Papa's Daughters"},
 	{"papasdaughters2", "Papa's Daughters Go to the Sea"},
+	{"petka02", "Red Comrades 0.2: Operation F."},
 	{"pigeons",         "Pigeons in the Park"},
 	{"pizzamorgana",    "Pizza Morgana: Episode 1 - Monsters and Manipulations in the Magical Forest"},
 	{"polechudes",      "Pole Chudes"},
@@ -1548,6 +1549,14 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Papa's Daughters 2
 	WME_WINENTRY("papasdaughters2", "",
 		WME_ENTRY1s("data.dcp", "8f7dfc4b46c01318ba2bd8e1d79a0edb", 107690073), Common::RU_RUS, ADGF_UNSTABLE, WME_HEROCRAFT),
+
+	// Red Comrades 0.2: Operation F. (Fan game) (Demo 2015)
+	WME_WINENTRY("petka02", "Demo 2015",
+		WME_ENTRY1s("data.dcp", "aeba8e75c26625d744f866813450c1d4", 108623057), Common::RU_RUS, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
+
+	// Red Comrades 0.2: Operation F. (Fan game) (Demo 2017)
+	WME_WINENTRY("petka02", "Demo 2017",
+		WME_ENTRY1s("data.dcp", "20d138270fd7552be9c1959cbfb8bcd7", 29081611), Common::RU_RUS, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
 
 	// Pigeons in the Park
 	WME_WINENTRY("pigeons", "",
