@@ -30,7 +30,7 @@
 
 namespace AGDS {
 
-Animation::Animation() : _flic(), _frame(), _frames(0), _loop(false), _cycles(1), _phaseVarControlled(false), _frameIndex(0), _paused(false), _speed(100), _z(0), _delay(-1), _random(0) {
+Animation::Animation() : _flic(), _frame(), _frames(0), _loop(false), _cycles(1), _phaseVarControlled(false), _frameIndex(0), _paused(false), _resumed(false), _speed(100), _z(0), _delay(-1), _random(0) {
 }
 
 Animation::~Animation() {
@@ -85,6 +85,11 @@ bool Animation::tick(AGDSEngine &engine) {
 	if (_paused) {
 		return true;
 	}
+
+	if (!_frame && _phaseVarControlled && !_resumed)
+		return true;
+
+	_resumed = false;
 
 	if (_delay > 0) {
 		--_delay;
