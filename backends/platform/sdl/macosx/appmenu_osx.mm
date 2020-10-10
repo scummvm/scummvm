@@ -204,7 +204,6 @@ void replaceApplicationMenuItems() {
 		[[NSApp mainMenu] removeItemAtIndex:0];
 	}
 
-	NSString *nsString = NULL;
 	NSMenu *appleMenu = addMenu(Common::U32String("ScummVM"), @"", @selector(setAppleMenu:));
 	if (appleMenu) {
 		addMenuItem(_("About ScummVM"), nil, @selector(orderFrontStandardAboutPanel:), @"", appleMenu);
