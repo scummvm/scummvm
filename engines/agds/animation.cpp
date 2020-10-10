@@ -30,7 +30,7 @@
 
 namespace AGDS {
 
-Animation::Animation() : _flic(), _frame(), _frames(0), _loop(false), _cycles(1), _startPaused(false), _frameIndex(0), _paused(false), _speed(100), _z(0), _delay(-1), _random(0) {
+Animation::Animation() : _flic(), _frame(), _frames(0), _loop(false), _cycles(1), _phaseVarControlled(false), _frameIndex(0), _paused(false), _speed(100), _z(0), _delay(-1), _random(0) {
 }
 
 Animation::~Animation() {
@@ -83,9 +83,6 @@ void Animation::rewind() {
 
 bool Animation::tick(AGDSEngine &engine) {
 	if (_paused) {
-		if (_frameIndex == 0 && !_frame) {
-			decodeNextFrame(engine);
-		}
 		return true;
 	}
 
@@ -94,7 +91,7 @@ bool Animation::tick(AGDSEngine &engine) {
 		return true;
 	}
 
-	if (_startPaused && !_phaseVar.empty() && engine.getGlobal(_phaseVar) == -2) {
+	if (_phaseVarControlled && !_phaseVar.empty() && engine.getGlobal(_phaseVar) == -2) {
 		debug("phase var %s signalled deleting of animation", _phaseVar.c_str());
 		return false;
 	}

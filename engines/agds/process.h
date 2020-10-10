@@ -62,7 +62,7 @@ private:
 	int				_animationZ;
 	int				_animationDelay;
 	int				_animationRandom;
-	bool			_animationPaused;
+	bool			_phaseVarControlled;
 	int				_animationSpeed;
 	Common::Point	_mousePosition;
 

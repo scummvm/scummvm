@@ -32,7 +32,7 @@ Process::Process(AGDSEngine *engine, ObjectPtr object, unsigned ip) : _engine(en
                                                                                        _status(kStatusActive), _exitCode(kExitCodeDestroy),
                                                                                        _tileWidth(16), _tileHeight(16), _tileResource(0), _tileIndex(0),
                                                                                        _timer(0),
-                                                                                       _animationCycles(1), _animationLoop(false), _animationZ(0), _animationDelay(-1), _animationRandom(0), _animationPaused(false), _animationSpeed(100)
+                                                                                       _animationCycles(1), _animationLoop(false), _animationZ(0), _animationDelay(-1), _animationRandom(0), _phaseVarControlled(false), _animationSpeed(100)
                                                                                        {
 }
 
@@ -136,10 +136,10 @@ void Process::setupAnimation(Animation *animation) {
 	animation->cycles(_animationCycles);
 	animation->delay(_animationDelay);
 	animation->setRandom(_animationRandom);
-	animation->startPaused(_animationPaused);
+	animation->phaseVarControlled(_phaseVarControlled);
 	if (_phaseVar.empty())
 			suspend();
-	else if (_animationPaused)
+	else if (_phaseVarControlled)
 			_engine->setGlobal(_phaseVar, 0);
 	_engine->getCurrentScreen()->add(animation);
 
