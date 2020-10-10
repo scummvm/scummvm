@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-10-09 22:34+0200\n"
+"POT-Creation-Date: 2020-10-10 12:59+0200\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -130,7 +130,7 @@ msgstr ""
 #: gui/launcher.cpp:380 gui/launcher.cpp:401 gui/launcher.cpp:444
 #: gui/options.cpp:2654 gui/options.cpp:2692
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
-#: engines/grim/grim.cpp:349 engines/kyra/gui/saveload_eob.cpp:596
+#: engines/grim/grim.cpp:350 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
 #: engines/sci/graphics/controls32.cpp:928
 msgid "Yes"
@@ -141,7 +141,7 @@ msgstr "Ja"
 #: gui/launcher.cpp:380 gui/launcher.cpp:401 gui/launcher.cpp:444
 #: gui/options.cpp:2654 gui/options.cpp:2692
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
-#: engines/grim/grim.cpp:349 engines/kyra/gui/saveload_eob.cpp:596
+#: engines/grim/grim.cpp:350 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
 #: engines/sci/graphics/controls32.cpp:928
 msgid "No"
@@ -596,8 +596,8 @@ msgstr "Stäng"
 
 #: gui/gui-manager.cpp:137 engines/metaengine.cpp:108
 #: backends/platform/symbian/src/SymbianActions.cpp:40
-#: engines/glk/scott/scott.cpp:412 engines/grim/grim.cpp:448
-#: engines/grim/grim.cpp:530 engines/wintermute/keymapper_tables.h:1011
+#: engines/glk/scott/scott.cpp:412 engines/grim/grim.cpp:449
+#: engines/grim/grim.cpp:531 engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
 #: engines/wintermute/keymapper_tables.h:1409
 #: engines/wintermute/keymapper_tables.h:1639
@@ -606,8 +606,8 @@ msgstr "Upp"
 
 #: gui/gui-manager.cpp:142 engines/metaengine.cpp:113
 #: backends/platform/symbian/src/SymbianActions.cpp:41
-#: engines/glk/scott/scott.cpp:412 engines/grim/grim.cpp:453
-#: engines/grim/grim.cpp:535 engines/wintermute/keymapper_tables.h:1017
+#: engines/glk/scott/scott.cpp:412 engines/grim/grim.cpp:454
+#: engines/grim/grim.cpp:536 engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
 #: engines/wintermute/keymapper_tables.h:1415
 #: engines/wintermute/keymapper_tables.h:1645
@@ -616,7 +616,7 @@ msgstr "Ned"
 
 #: gui/gui-manager.cpp:147 engines/metaengine.cpp:118
 #: backends/platform/symbian/src/SymbianActions.cpp:42
-#: engines/grim/grim.cpp:458 engines/grim/grim.cpp:540
+#: engines/grim/grim.cpp:459 engines/grim/grim.cpp:541
 #: engines/wintermute/keymapper_tables.h:1023
 #: engines/wintermute/keymapper_tables.h:1397
 #: engines/wintermute/keymapper_tables.h:1505
@@ -626,7 +626,7 @@ msgstr "Vänster"
 
 #: gui/gui-manager.cpp:152 engines/metaengine.cpp:123
 #: backends/platform/symbian/src/SymbianActions.cpp:43
-#: engines/grim/grim.cpp:463 engines/grim/grim.cpp:545
+#: engines/grim/grim.cpp:464 engines/grim/grim.cpp:546
 #: engines/wintermute/keymapper_tables.h:1029
 #: engines/wintermute/keymapper_tables.h:1403
 #: engines/wintermute/keymapper_tables.h:1513
@@ -667,7 +667,7 @@ msgstr "Välj en handling att ställa in"
 msgid "~Q~uit"
 msgstr "~A~vsluta"
 
-#: gui/launcher.cpp:140 backends/platform/sdl/macosx/appmenu_osx.mm:216
+#: gui/launcher.cpp:140 backends/platform/sdl/macosx/appmenu_osx.mm:215
 msgid "Quit ScummVM"
 msgstr "Avsluta ScummVM"
 
@@ -675,7 +675,7 @@ msgstr "Avsluta ScummVM"
 msgid "A~b~out..."
 msgstr "O~m~..."
 
-#: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:210
+#: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:209
 msgid "About ScummVM"
 msgstr "Om ScummVM"
 
@@ -2320,7 +2320,7 @@ msgstr "Spelmeny"
 
 #: engines/metaengine.cpp:87
 #: backends/platform/symbian/src/SymbianActions.cpp:47
-#: engines/grim/grim.cpp:499 engines/grim/grim.cpp:596
+#: engines/grim/grim.cpp:500 engines/grim/grim.cpp:597
 #: engines/mohawk/myst.cpp:564 engines/mohawk/riven.cpp:834
 #: engines/wintermute/keymapper_tables.h:217
 #: engines/wintermute/keymapper_tables.h:997
@@ -2338,8 +2338,8 @@ msgstr "Skippa rad"
 msgid "Predictive input dialog"
 msgstr ""
 
-#: engines/metaengine.cpp:103 engines/grim/grim.cpp:505
-#: engines/grim/grim.cpp:602 engines/wintermute/keymapper_tables.h:55
+#: engines/metaengine.cpp:103 engines/grim/grim.cpp:506
+#: engines/grim/grim.cpp:603 engines/wintermute/keymapper_tables.h:55
 msgid "Confirm"
 msgstr ""
 
@@ -2526,7 +2526,7 @@ msgstr "Vill du verkligen avsluta?"
 #: backends/events/default/default-events.cpp:199
 #: backends/events/default/default-events.cpp:316
 #: backends/platform/symbian/src/SymbianActions.cpp:54
-#: engines/grim/grim.cpp:516 engines/grim/grim.cpp:613
+#: engines/grim/grim.cpp:517 engines/grim/grim.cpp:614
 #: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:185
 #: engines/scumm/help.cpp:82 engines/scumm/help.cpp:84
@@ -3559,63 +3559,63 @@ msgstr "Touchpad-läge inaktiverat."
 msgid "Click Mode"
 msgstr "Klickläge"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:212
+#: backends/platform/sdl/macosx/appmenu_osx.mm:211
 msgid "Hide ScummVM"
 msgstr "Göm ScummVM"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:213
+#: backends/platform/sdl/macosx/appmenu_osx.mm:212
 msgid "Hide Others"
 msgstr "Göm övriga"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:214
+#: backends/platform/sdl/macosx/appmenu_osx.mm:213
 msgid "Show All"
 msgstr "Visa alla"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:219
+#: backends/platform/sdl/macosx/appmenu_osx.mm:218
 msgid "Window"
 msgstr "Fönster"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:221
+#: backends/platform/sdl/macosx/appmenu_osx.mm:220
 msgid "Minimize"
 msgstr "Minimera"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:224
+#: backends/platform/sdl/macosx/appmenu_osx.mm:223
 msgid "Help"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:229
+#: backends/platform/sdl/macosx/appmenu_osx.mm:228
 msgid "User Manual"
 msgstr "Användarhandbok"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:231
+#: backends/platform/sdl/macosx/appmenu_osx.mm:230
 msgid "General Information"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:232
+#: backends/platform/sdl/macosx/appmenu_osx.mm:231
 msgid "What's New in ScummVM"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:234
+#: backends/platform/sdl/macosx/appmenu_osx.mm:233
 msgid "Credits"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:235
+#: backends/platform/sdl/macosx/appmenu_osx.mm:234
 msgid "GPL License"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:236
+#: backends/platform/sdl/macosx/appmenu_osx.mm:235
 msgid "LGPL License"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:237
+#: backends/platform/sdl/macosx/appmenu_osx.mm:236
 msgid "Freefont License"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:238
+#: backends/platform/sdl/macosx/appmenu_osx.mm:237
 msgid "OFL License"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:239
+#: backends/platform/sdl/macosx/appmenu_osx.mm:238
 msgid "BSD License"
 msgstr ""
 
@@ -4136,11 +4136,11 @@ msgid ""
 "clicking the mouse"
 msgstr ""
 
-#: engines/cge/detection.cpp:113 engines/cge2/detection.cpp:109
+#: engines/cge/detection.cpp:113
 msgid "Color Blind Mode"
 msgstr "Färgblint läge"
 
-#: engines/cge/detection.cpp:114 engines/cge2/detection.cpp:110
+#: engines/cge/detection.cpp:114
 msgid "Enable Color Blind Mode by default"
 msgstr "Aktivera färgblint läge som standard"
 
@@ -4560,7 +4560,7 @@ msgstr "Visa FPS-räknare"
 msgid "Show the current FPS-rate, while you play."
 msgstr ""
 
-#: engines/grim/grim.cpp:344
+#: engines/grim/grim.cpp:345
 #, c-format
 msgid ""
 "ScummVM found some problems with your game data files.\n"
@@ -4568,57 +4568,58 @@ msgid ""
 "Do you still want to run %s?"
 msgstr ""
 
-#: engines/grim/grim.cpp:468 engines/grim/grim.cpp:560
+#: engines/grim/grim.cpp:469 engines/grim/grim.cpp:561
 msgid "Run"
 msgstr ""
 
-#: engines/grim/grim.cpp:473 engines/scumm/help.cpp:239
+#: engines/grim/grim.cpp:474 engines/scumm/help.cpp:239
 #: engines/scumm/help.cpp:247
 msgid "Examine"
 msgstr "Undersök"
 
-#: engines/grim/grim.cpp:478 engines/grim/grim.cpp:575
+#: engines/grim/grim.cpp:479 engines/grim/grim.cpp:576
 #, fuzzy
 msgid "Use/Talk"
 msgstr "Tala"
 
-#: engines/grim/grim.cpp:483 engines/grim/grim.cpp:580
+#: engines/grim/grim.cpp:484 engines/grim/grim.cpp:581
 #, fuzzy
 msgid "Pick up/Put away"
 msgstr "Ta"
 
-#: engines/grim/grim.cpp:488 engines/grim/grim.cpp:585
-#, fuzzy
-msgid "Invetory"
+#: engines/grim/grim.cpp:489 engines/grim/grim.cpp:586
+#: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
+#: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
+msgid "Inventory"
 msgstr "Inventarie"
 
-#: engines/grim/grim.cpp:493 engines/grim/grim.cpp:590
+#: engines/grim/grim.cpp:494 engines/grim/grim.cpp:591
 #, fuzzy
 msgid "Skip dialog lines"
 msgstr "Skippa rad"
 
-#: engines/grim/grim.cpp:511 engines/grim/grim.cpp:608
+#: engines/grim/grim.cpp:512 engines/grim/grim.cpp:609
 msgid "Menu"
 msgstr "Meny"
 
-#: engines/grim/grim.cpp:550
+#: engines/grim/grim.cpp:551
 msgid "Cycle Objects Up"
 msgstr ""
 
-#: engines/grim/grim.cpp:555
+#: engines/grim/grim.cpp:556
 msgid "Cycle Objects Down"
 msgstr ""
 
-#: engines/grim/grim.cpp:565
+#: engines/grim/grim.cpp:566
 msgid "Quick Room Exit"
 msgstr ""
 
-#: engines/grim/grim.cpp:570
+#: engines/grim/grim.cpp:571
 #, fuzzy
 msgid "Examine/Look"
 msgstr "Undersök"
 
-#: engines/grim/grim.cpp:1356
+#: engines/grim/grim.cpp:1357
 #, fuzzy
 msgid "Error: the game could not be saved."
 msgstr "videoläget kunde inte ändras"
@@ -6152,11 +6153,6 @@ msgstr "Markera nästa dialog"
 msgid "Walk"
 msgstr "Gå"
 
-#: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
-#: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
-msgid "Inventory"
-msgstr "Inventarie"
-
 #: engines/scumm/help.cpp:226
 msgid "Object"
 msgstr "Objekt"
@@ -7430,6 +7426,10 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Invetory"
+#~ msgstr "Inventarie"
 
 #, fuzzy
 #~ msgid "Unnamed autosave"

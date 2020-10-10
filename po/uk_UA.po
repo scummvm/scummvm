@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-10-09 22:34+0200\n"
+"POT-Creation-Date: 2020-10-10 12:59+0200\n"
 "PO-Revision-Date: 2020-09-17 13:45+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -131,7 +131,7 @@ msgstr ""
 #: gui/launcher.cpp:380 gui/launcher.cpp:401 gui/launcher.cpp:444
 #: gui/options.cpp:2654 gui/options.cpp:2692
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
-#: engines/grim/grim.cpp:349 engines/kyra/gui/saveload_eob.cpp:596
+#: engines/grim/grim.cpp:350 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
 #: engines/sci/graphics/controls32.cpp:928
 msgid "Yes"
@@ -142,7 +142,7 @@ msgstr "Так"
 #: gui/launcher.cpp:380 gui/launcher.cpp:401 gui/launcher.cpp:444
 #: gui/options.cpp:2654 gui/options.cpp:2692
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
-#: engines/grim/grim.cpp:349 engines/kyra/gui/saveload_eob.cpp:596
+#: engines/grim/grim.cpp:350 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
 #: engines/sci/graphics/controls32.cpp:928
 msgid "No"
@@ -593,8 +593,8 @@ msgstr "Закрити"
 
 #: gui/gui-manager.cpp:137 engines/metaengine.cpp:108
 #: backends/platform/symbian/src/SymbianActions.cpp:40
-#: engines/glk/scott/scott.cpp:412 engines/grim/grim.cpp:448
-#: engines/grim/grim.cpp:530 engines/wintermute/keymapper_tables.h:1011
+#: engines/glk/scott/scott.cpp:412 engines/grim/grim.cpp:449
+#: engines/grim/grim.cpp:531 engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
 #: engines/wintermute/keymapper_tables.h:1409
 #: engines/wintermute/keymapper_tables.h:1639
@@ -603,8 +603,8 @@ msgstr "Догори"
 
 #: gui/gui-manager.cpp:142 engines/metaengine.cpp:113
 #: backends/platform/symbian/src/SymbianActions.cpp:41
-#: engines/glk/scott/scott.cpp:412 engines/grim/grim.cpp:453
-#: engines/grim/grim.cpp:535 engines/wintermute/keymapper_tables.h:1017
+#: engines/glk/scott/scott.cpp:412 engines/grim/grim.cpp:454
+#: engines/grim/grim.cpp:536 engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
 #: engines/wintermute/keymapper_tables.h:1415
 #: engines/wintermute/keymapper_tables.h:1645
@@ -613,7 +613,7 @@ msgstr "Донизу"
 
 #: gui/gui-manager.cpp:147 engines/metaengine.cpp:118
 #: backends/platform/symbian/src/SymbianActions.cpp:42
-#: engines/grim/grim.cpp:458 engines/grim/grim.cpp:540
+#: engines/grim/grim.cpp:459 engines/grim/grim.cpp:541
 #: engines/wintermute/keymapper_tables.h:1023
 #: engines/wintermute/keymapper_tables.h:1397
 #: engines/wintermute/keymapper_tables.h:1505
@@ -623,7 +623,7 @@ msgstr "Наліво"
 
 #: gui/gui-manager.cpp:152 engines/metaengine.cpp:123
 #: backends/platform/symbian/src/SymbianActions.cpp:43
-#: engines/grim/grim.cpp:463 engines/grim/grim.cpp:545
+#: engines/grim/grim.cpp:464 engines/grim/grim.cpp:546
 #: engines/wintermute/keymapper_tables.h:1029
 #: engines/wintermute/keymapper_tables.h:1403
 #: engines/wintermute/keymapper_tables.h:1513
@@ -664,7 +664,7 @@ msgstr "Виберіть дію для призначення"
 msgid "~Q~uit"
 msgstr "~В~ихід"
 
-#: gui/launcher.cpp:140 backends/platform/sdl/macosx/appmenu_osx.mm:216
+#: gui/launcher.cpp:140 backends/platform/sdl/macosx/appmenu_osx.mm:215
 msgid "Quit ScummVM"
 msgstr "Вихід зі ScummVM"
 
@@ -672,7 +672,7 @@ msgstr "Вихід зі ScummVM"
 msgid "A~b~out..."
 msgstr "Про п~р~ограму..."
 
-#: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:210
+#: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:209
 msgid "About ScummVM"
 msgstr "Про ScummVM"
 
@@ -2314,7 +2314,7 @@ msgstr "Меню гри"
 
 #: engines/metaengine.cpp:87
 #: backends/platform/symbian/src/SymbianActions.cpp:47
-#: engines/grim/grim.cpp:499 engines/grim/grim.cpp:596
+#: engines/grim/grim.cpp:500 engines/grim/grim.cpp:597
 #: engines/mohawk/myst.cpp:564 engines/mohawk/riven.cpp:834
 #: engines/wintermute/keymapper_tables.h:217
 #: engines/wintermute/keymapper_tables.h:997
@@ -2332,8 +2332,8 @@ msgstr "Пропустити рядок"
 msgid "Predictive input dialog"
 msgstr "Діалог предиктивного вводу"
 
-#: engines/metaengine.cpp:103 engines/grim/grim.cpp:505
-#: engines/grim/grim.cpp:602 engines/wintermute/keymapper_tables.h:55
+#: engines/metaengine.cpp:103 engines/grim/grim.cpp:506
+#: engines/grim/grim.cpp:603 engines/wintermute/keymapper_tables.h:55
 msgid "Confirm"
 msgstr "Підтвердити"
 
@@ -2520,7 +2520,7 @@ msgstr "Ви дійсно хочете вийти?"
 #: backends/events/default/default-events.cpp:199
 #: backends/events/default/default-events.cpp:316
 #: backends/platform/symbian/src/SymbianActions.cpp:54
-#: engines/grim/grim.cpp:516 engines/grim/grim.cpp:613
+#: engines/grim/grim.cpp:517 engines/grim/grim.cpp:614
 #: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:185
 #: engines/scumm/help.cpp:82 engines/scumm/help.cpp:84
@@ -3490,63 +3490,63 @@ msgstr "Режим тачпаду вимкнено."
 msgid "Click Mode"
 msgstr "Режим кліків"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:212
+#: backends/platform/sdl/macosx/appmenu_osx.mm:211
 msgid "Hide ScummVM"
 msgstr "Сховати ScummVM"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:213
+#: backends/platform/sdl/macosx/appmenu_osx.mm:212
 msgid "Hide Others"
 msgstr "Сховати Інші"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:214
+#: backends/platform/sdl/macosx/appmenu_osx.mm:213
 msgid "Show All"
 msgstr "Показати Все"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:219
+#: backends/platform/sdl/macosx/appmenu_osx.mm:218
 msgid "Window"
 msgstr "Вікно"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:221
+#: backends/platform/sdl/macosx/appmenu_osx.mm:220
 msgid "Minimize"
 msgstr "Мінімізувати"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:224
+#: backends/platform/sdl/macosx/appmenu_osx.mm:223
 msgid "Help"
 msgstr "Довідка"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:229
+#: backends/platform/sdl/macosx/appmenu_osx.mm:228
 msgid "User Manual"
 msgstr "Керівництво користувача"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:231
+#: backends/platform/sdl/macosx/appmenu_osx.mm:230
 msgid "General Information"
 msgstr "Загальна інформація"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:232
+#: backends/platform/sdl/macosx/appmenu_osx.mm:231
 msgid "What's New in ScummVM"
 msgstr "Що нового у ScummVM"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:234
+#: backends/platform/sdl/macosx/appmenu_osx.mm:233
 msgid "Credits"
 msgstr "Кредити"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:235
+#: backends/platform/sdl/macosx/appmenu_osx.mm:234
 msgid "GPL License"
 msgstr "Ліцензія GPL"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:236
+#: backends/platform/sdl/macosx/appmenu_osx.mm:235
 msgid "LGPL License"
 msgstr "Ліцензія LGPL"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:237
+#: backends/platform/sdl/macosx/appmenu_osx.mm:236
 msgid "Freefont License"
 msgstr "Ліцензія на Freefont"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:238
+#: backends/platform/sdl/macosx/appmenu_osx.mm:237
 msgid "OFL License"
 msgstr "Ліцензія OFL"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:239
+#: backends/platform/sdl/macosx/appmenu_osx.mm:238
 msgid "BSD License"
 msgstr "Ліцензія BSD"
 
@@ -4078,11 +4078,11 @@ msgstr ""
 "Під час бігу МакКой не буде уповільнюватися коли гравець припиняє клікати "
 "мишею"
 
-#: engines/cge/detection.cpp:113 engines/cge2/detection.cpp:109
+#: engines/cge/detection.cpp:113
 msgid "Color Blind Mode"
 msgstr "Режим без кольору"
 
-#: engines/cge/detection.cpp:114 engines/cge2/detection.cpp:110
+#: engines/cge/detection.cpp:114
 msgid "Enable Color Blind Mode by default"
 msgstr "Включає режим для людей з погіршенним сприяттям кольору"
 
@@ -4500,7 +4500,7 @@ msgstr "Показати лічильник кадрів"
 msgid "Show the current FPS-rate, while you play."
 msgstr ""
 
-#: engines/grim/grim.cpp:344
+#: engines/grim/grim.cpp:345
 #, c-format
 msgid ""
 "ScummVM found some problems with your game data files.\n"
@@ -4508,57 +4508,58 @@ msgid ""
 "Do you still want to run %s?"
 msgstr ""
 
-#: engines/grim/grim.cpp:468 engines/grim/grim.cpp:560
+#: engines/grim/grim.cpp:469 engines/grim/grim.cpp:561
 msgid "Run"
 msgstr ""
 
-#: engines/grim/grim.cpp:473 engines/scumm/help.cpp:239
+#: engines/grim/grim.cpp:474 engines/scumm/help.cpp:239
 #: engines/scumm/help.cpp:247
 msgid "Examine"
 msgstr "Розглянути"
 
-#: engines/grim/grim.cpp:478 engines/grim/grim.cpp:575
+#: engines/grim/grim.cpp:479 engines/grim/grim.cpp:576
 #, fuzzy
 msgid "Use/Talk"
 msgstr "Говорити"
 
-#: engines/grim/grim.cpp:483 engines/grim/grim.cpp:580
+#: engines/grim/grim.cpp:484 engines/grim/grim.cpp:581
 #, fuzzy
 msgid "Pick up/Put away"
 msgstr "Підібрати"
 
-#: engines/grim/grim.cpp:488 engines/grim/grim.cpp:585
-#, fuzzy
-msgid "Invetory"
+#: engines/grim/grim.cpp:489 engines/grim/grim.cpp:586
+#: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
+#: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
+msgid "Inventory"
 msgstr "Інвентар"
 
-#: engines/grim/grim.cpp:493 engines/grim/grim.cpp:590
+#: engines/grim/grim.cpp:494 engines/grim/grim.cpp:591
 #, fuzzy
 msgid "Skip dialog lines"
 msgstr "Пропустити рядок діалогу (у деяких іграх)"
 
-#: engines/grim/grim.cpp:511 engines/grim/grim.cpp:608
+#: engines/grim/grim.cpp:512 engines/grim/grim.cpp:609
 msgid "Menu"
 msgstr "Меню"
 
-#: engines/grim/grim.cpp:550
+#: engines/grim/grim.cpp:551
 msgid "Cycle Objects Up"
 msgstr ""
 
-#: engines/grim/grim.cpp:555
+#: engines/grim/grim.cpp:556
 msgid "Cycle Objects Down"
 msgstr ""
 
-#: engines/grim/grim.cpp:565
+#: engines/grim/grim.cpp:566
 msgid "Quick Room Exit"
 msgstr ""
 
-#: engines/grim/grim.cpp:570
+#: engines/grim/grim.cpp:571
 #, fuzzy
 msgid "Examine/Look"
 msgstr "Розглянути"
 
-#: engines/grim/grim.cpp:1356
+#: engines/grim/grim.cpp:1357
 #, fuzzy
 msgid "Error: the game could not be saved."
 msgstr "Вибачте, не вдалося створити файл збереження гри"
@@ -6131,11 +6132,6 @@ msgstr "Виділити наступний діалог"
 msgid "Walk"
 msgstr "Іти"
 
-#: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
-#: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
-msgid "Inventory"
-msgstr "Інвентар"
-
 #: engines/scumm/help.cpp:226
 msgid "Object"
 msgstr "Об'єкт"
@@ -7364,6 +7360,10 @@ msgstr ""
 "завантажити Liberation Fonts, або пакет GNU FreeFont. Вам будуть потрібні "
 "всі шрифти з пакету, який ви оберете, тобто, LiberationMono, LiberationSans "
 "та LiberationSerif, або FreeMono, FreeSans та FreeSerif відповідно."
+
+#, fuzzy
+#~ msgid "Invetory"
+#~ msgstr "Інвентар"
 
 #~ msgid "Unnamed autosave"
 #~ msgstr "Автозбереження без імені"
