@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-10 12:59+0200\n"
-"PO-Revision-Date: 2020-10-10 09:58+0000\n"
+"PO-Revision-Date: 2020-10-10 17:39+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -4547,13 +4547,16 @@ msgstr "Η διαγραφή του αρχείου απέτυχε."
 
 #: engines/grim/detection.cpp:45
 msgid "Load user patch (unsupported)"
-msgstr ""
+msgstr "Φόρτωση patch χρήστη (δεν υποστηρίζεται)"
 
 #: engines/grim/detection.cpp:46
 msgid ""
 "Load an user patch. Please note that the ScummVM team doesn't provide "
 "support for using such patches."
 msgstr ""
+"Φόρτωση μιας διορθωτικής παρέμβασης (patch) από το χρήστη. Παρακαλούμε "
+"σημειώστε ότι η ομάδα του ScummVM δεν παρέχει υποστήριξη για τη χρήση "
+"τέτοιων παρεμβάσεων (patches)."
 
 #: engines/grim/detection.cpp:54
 msgid "Show FPS"
@@ -4561,7 +4564,7 @@ msgstr "Προβολή FPS"
 
 #: engines/grim/detection.cpp:55
 msgid "Show the current FPS-rate, while you play."
-msgstr ""
+msgstr "Προβολή του τρέχοντος ρυθμού καρέ (FPS), όσο παίζετε."
 
 #: engines/grim/grim.cpp:345
 #, c-format
@@ -4570,10 +4573,15 @@ msgid ""
 "Running ScummVM nevertheless may cause game bugs or even crashes.\n"
 "Do you still want to run %s?"
 msgstr ""
+"Το ScummVM εντόπισε μερικά προβλήματα με τα αρχεία δεδομένων του παιχνιδιού "
+"σας.\n"
+"Αν προχωρήσετε με την εκτέλεση του ScummVM μπορεί να προκύψουν προβλήματα "
+"(bugs) ή και απότομο σταμάτημα της εφαρμογής (crashes).\n"
+"Επιθυμείτε ακόμα να τρέξετε το %s;"
 
 #: engines/grim/grim.cpp:469 engines/grim/grim.cpp:561
 msgid "Run"
-msgstr ""
+msgstr "Εκτέλεση"
 
 #: engines/grim/grim.cpp:474 engines/scumm/help.cpp:239
 #: engines/scumm/help.cpp:247
@@ -4581,14 +4589,12 @@ msgid "Examine"
 msgstr "Εξέτασε"
 
 #: engines/grim/grim.cpp:479 engines/grim/grim.cpp:576
-#, fuzzy
 msgid "Use/Talk"
-msgstr "Μίλα"
+msgstr "Χρησιμοποίησε/Μίλα"
 
 #: engines/grim/grim.cpp:484 engines/grim/grim.cpp:581
-#, fuzzy
 msgid "Pick up/Put away"
-msgstr "Μάζεψε"
+msgstr "Πάρε/Απόθεσε"
 
 #: engines/grim/grim.cpp:489 engines/grim/grim.cpp:586
 #: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
@@ -4597,9 +4603,8 @@ msgid "Inventory"
 msgstr "Υπάρχοντα"
 
 #: engines/grim/grim.cpp:494 engines/grim/grim.cpp:591
-#, fuzzy
 msgid "Skip dialog lines"
-msgstr "Παράκαμψη γραμμής διαλόγου (σε μερικά παιχνίδια)"
+msgstr "Παράκαμψη γραμμής διαλόγου"
 
 #: engines/grim/grim.cpp:512 engines/grim/grim.cpp:609
 msgid "Menu"
@@ -4607,25 +4612,23 @@ msgstr "Μενού"
 
 #: engines/grim/grim.cpp:551
 msgid "Cycle Objects Up"
-msgstr ""
+msgstr "Προηγούμενο Αντικείμενο"
 
 #: engines/grim/grim.cpp:556
 msgid "Cycle Objects Down"
-msgstr ""
+msgstr "Επόμενο Αντικείμενο"
 
 #: engines/grim/grim.cpp:566
 msgid "Quick Room Exit"
-msgstr ""
+msgstr "Γρήγορη Έξοδος από το Δωμάτιο"
 
 #: engines/grim/grim.cpp:571
-#, fuzzy
 msgid "Examine/Look"
-msgstr "Εξέτασε"
+msgstr "Εξέτασε/Κοίτα"
 
 #: engines/grim/grim.cpp:1357
-#, fuzzy
 msgid "Error: the game could not be saved."
-msgstr "Λυπούμαστε, δεν ήταν δυνατή η αποθήκευση του παιχνιδιού"
+msgstr "Σφάλμα: αδυναμία αποθήκευσης του παιχνιδιού."
 
 #: engines/grim/md5check.cpp:547
 #, c-format
@@ -4636,6 +4639,12 @@ msgid ""
 "version (i.e. dvd-box or jewelcase):\n"
 "%s"
 msgstr ""
+"Το αρχείο δεδομένων %s του παιχνιδιού μπορεί να είναι κατεστραμμένο "
+"(corrupted).\n"
+"Αν είστε βέβαιοι πως δεν είναι, παρακαλούμε να παρέχετε στην ομάδα του "
+"ScummVM τον ακόλουθο κώδικα, μαζί με το όνομα αρχείου, τη γλώσσα και μια "
+"περιγραφή της έκδοσης του παιχνιδιού σας (πχ. dvd-box ή jewelcase):\n"
+"%s"
 
 #: engines/grim/md5check.cpp:554
 #, c-format
@@ -4645,6 +4654,11 @@ msgid ""
 "Go to https://wiki.residualvm.org/index.php/Datafiles to see a list of the "
 "needed files."
 msgstr ""
+"Αδυναμία ανοίγματος του αρχείου %s για έλεγχο.\n"
+"Μπορεί να λείπει ή να μην έχετε τα απαιτούμενα δικαιώματα για να το ανοίξετε."
+"\n"
+"Δείτε στο https://wiki.residualvm.org/index.php/Datafiles μια λίστα των "
+"απαραίτητων αρχείων."
 
 #: engines/grim/md5checkdialog.cpp:42
 msgid ""
@@ -4653,6 +4667,11 @@ msgid ""
 "This may take a while, please wait.\n"
 "Successive runs will not check them again."
 msgstr ""
+"Το ScummVM θα εξακριβώσει τώρα την ακεραιότητα των αρχείων δεδομένων για το "
+"παιχνίδι, για να επιβεβαιώσει ότι θα έχετε την καλύτερη δυνατή εμπειρία "
+"παίζοντας.\n"
+"Η διαδικασία μπορεί να κρατήσει για λίγο, παρακαλούμε περιμένετε.\n"
+"Στις επόμενες εκτελέσεις δεν θα επαναληφθεί αυτός ο έλεγχος."
 
 #: engines/grim/resource.cpp:100
 msgid ""
@@ -4661,6 +4680,10 @@ msgid ""
 "https://scummvm.org/frs/extras/patches/gfupd101.exe\n"
 "and put it in the game data files directory"
 msgstr ""
+"Το επίσημο patch για το Grim Fandango\n"
+"λείπει. Παρακαλούμε να το κατεβάσετε από εδώ:\n"
+"https://scummvm.org/frs/extras/patches/gfupd101.exe\n"
+"και να το βάλετε στο φάκελο με τα αρχεία του παιχνιδιού"
 
 #: engines/grim/resource.cpp:105
 msgid ""
@@ -4670,6 +4693,11 @@ msgid ""
 "Pay attention to download the correct version according to the game's "
 "language"
 msgstr ""
+"Το επίσημο patch για το Escape from Monkey Island λείπει. \n"
+"Παρακαλούμε να το κατεβάσετε από εδώ: https://scummvm.org/frs/extras/patches/"
+"\n"
+"και να το βάλετε στο φάκελο με τα αρχεία του παιχνιδιού.\n"
+"Προσέξτε να κατεβάσετε τη σωστή έκδοση σύμφωνα με τη γλώσσα του παιχνιδιού"
 
 #: engines/grim/emi/sound/emisound.cpp:650
 msgid ""
@@ -4682,6 +4710,16 @@ msgid ""
 "\n"
 "Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.int"
 msgstr ""
+"Σφάλμα: Δεν βρέθηκαν αρκετά μουσικά κομμάτια!\n"
+"Το Escape from Monkey Island έχει δύο εκδοχές του FullMonkeyMap.imt,\n"
+"και χρειάζεται να αντιγράψετε και τα δύο αρχεία από τα δύο CDs στο Textures/"
+", και να τα μετονομάσετε\n"
+"όπως παρακάτω για να έχετε υποστήριξη μουσικής στο παιχνίδι: \n"
+"CD 1: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap1.imt\"\n"
+"CD 2: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap2.imt\"\n"
+"\n"
+"Εναλλακτικά, μια έκδοση του παιχνιδιού από Steam ή GOG περικλείει ήδη ένα "
+"ενιαίο αρχείο FullMonkeyMap.int που συνδυάζει τα δύο αρχικά"
 
 #: engines/groovie/detection.cpp:320
 msgid "Fast movie speed"
@@ -5297,13 +5335,14 @@ msgid "Unable to locate the '%s' engine data file"
 msgstr "Αδυναμία εύρεσης του αρχείου μηχανής '%s'"
 
 #: engines/myst3/detection.cpp:182
-#, fuzzy
 msgid "Widescreen mod"
-msgstr "Λειτουργία πλήρους οθόνης"
+msgstr "Λειτουργία ευρείας οθόνης"
 
 #: engines/myst3/detection.cpp:183
 msgid "Enable enable widescreen rendering in fullscreen mode."
 msgstr ""
+"Ενεργοποίηση απόδοσης εικόνας σε ευρεία οθόνη (widescreen) σε λειτουργία "
+"πλήρους οθόνης (fullscreen)."
 
 #: engines/myst3/myst3.cpp:361
 msgid ""
@@ -5313,6 +5352,12 @@ msgid ""
 "The updates can be downloaded from:\n"
 "https://www.scummvm.org/frs/extras/patches/"
 msgstr ""
+"Αυτή η έκδοση του Myst III δεν έχει ενημερωθεί με το τελευταίο επίσημο patch."
+"\n"
+"Παρακαλούμε να εγκαταστήσετε την επίσημη ενημέρωση που αντιστοιχεί στη "
+"γλώσσα του παιχνιδιού σας.\n"
+"Οι ενημερώσεις μπορούν να ληφθούν από εδώ:\n"
+"https://www.scummvm.org/frs/extras/patches/"
 
 #: engines/myst3/myst3.cpp:1579 engines/pegasus/pegasus.cpp:701
 msgid "Invalid file name for saving"
@@ -6554,37 +6599,41 @@ msgid "Use the floppy version's intro (CD version only)"
 msgstr "Χρήση της εισαγωγής από την έκδοση δισκέτας (έκδοση CD μόνο)"
 
 #: engines/stark/detection.cpp:340
-#, fuzzy
 msgid "Load modded assets"
-msgstr "Φόρτωση κατάστασης παιχνιδιού"
+msgstr "Φόρτωση τροποποιημένων στοιχείων"
 
 #: engines/stark/detection.cpp:341
 msgid "Enable loading of external replacement assets."
 msgstr ""
+"Ενεργοποίηση φόρτωσης εξωτερικών στοιχείων (assets) που θα αντικαταστήσουν "
+"αυτά του παιχνιδιού."
 
 #: engines/stark/detection.cpp:349
 msgid "Enable linear filtering of the backgrounds images"
-msgstr ""
+msgstr "Ενεργοποίηση γραμμικού φίλτρου στις εικόνες φόντου"
 
 #: engines/stark/detection.cpp:350
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
 msgstr ""
+"Όταν το γραμμικό φίλτρο είναι ενεργοποιημένο τα γραφικά φόντου δείχνουν πιο "
+"ομαλά σε λειτουργία πλήρους οθόνης, με αντίτιμο την απώλεια κάποιας "
+"λεπτομέρειας."
 
 #: engines/stark/detection.cpp:358
-#, fuzzy
 msgid "Enable font anti-aliasing"
-msgstr "Ενεργοποίηση λογοκρισίας περιεχομένου"
+msgstr "Ενεργοποίηση εξομάλυνσης γραμματοσειράς"
 
 #: engines/stark/detection.cpp:359
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
+"Όταν η εξομάλυνση γραμματοσειράς (font anti-aliasing) είναι ενεργοποιημένη, "
+"το κείμενο απεικονίζεται με λιγότερο τραχύ περίγραμμα."
 
 #: engines/stark/stark.cpp:294
-#, fuzzy
 msgid "You are missing recommended data files:"
-msgstr "Λείπουν τα ακόλουθα αρχεία δεδομένων του Riven:\n"
+msgstr "Λείπουν τα ακόλουθα συνιστώμενα αρχεία δεδομένων:"
 
 #: engines/stark/stark.cpp:308
 msgid ""
@@ -6592,20 +6641,30 @@ msgid ""
 "designed. The Steam release is known to be missing it. You can get the fonts "
 "from the demo version of the game."
 msgstr ""
+"Ο φάκελος 'fonts' απαιτείται για να απεικονιστεί το κείμενο με το στιλ που "
+"είχε σχεδιαστεί. Είναι γνωστό πως η έκδοση από το Steam δεν τον περιέχει. "
+"Μπορείτε να βρείτε τις γραμματοσειρές από την έκδοση demo του παιχνιδιού."
 
 #: engines/stark/stark.cpp:315
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
 msgstr ""
+"Το 'gui.ini' προτείνεται για να έχετε τις κατάλληλες ρυθμίσεις "
+"γραμματοσειράς για τις μεταφράσεις του παιχνιδιού σε άλλες γλώσσες "
+"(localization)."
 
 #: engines/stark/stark.cpp:321
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
 msgstr ""
+"Το 'language.ini' προτείνεται για να μπορείτε να έχετε τα παράθυρα με "
+"διαλόγους επιβεβαίωσης και σε άλλες γλώσσες."
 
 #: engines/stark/stark.cpp:327
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
 msgstr ""
+"Το 'game.exe' προτείνεται για να έχουν ξεχωριστό στιλ τα παράθυρα με "
+"διαλόγους επιβεβαίωσης."
 
 #: engines/supernova/supernova.cpp:187
 #, c-format
