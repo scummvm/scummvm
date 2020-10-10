@@ -71,8 +71,8 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 	// Add default search directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "vids");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "music");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "data/vids");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "data/music");
 
 	// Initialize custom debug levels
 	DebugMan.addDebugChannel(kDebugLevelMain,      "Main",      "Generic debug level");
