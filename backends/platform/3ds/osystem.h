@@ -141,6 +141,7 @@ public:
 	virtual int getScreenChangeID() const { return _screenChangeId; };
 	GraphicsModeID chooseMode(Graphics::PixelFormat *format);
 	bool setGraphicsMode(GraphicsModeID modeID);
+	virtual Graphics::PixelBuffer getScreenPixelBuffer();
 
 	void beginGFXTransaction();
 	OSystem::TransactionError endGFXTransaction();

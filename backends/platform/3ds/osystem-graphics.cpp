@@ -27,6 +27,7 @@
 #include "backends/platform/3ds/config.h"
 #include "common/rect.h"
 #include "graphics/fontman.h"
+#include "graphics/pixelbuffer.h"
 #include "gui/gui-manager.h"
 
 // Used to transfer the final rendered display to the framebuffer
@@ -184,6 +185,10 @@ bool OSystem_3DS::setGraphicsMode(GraphicsModeID modeID) {
 	default:
 		return false;
 	}
+}
+
+Graphics::PixelBuffer OSystem_3DS::getScreenPixelBuffer() {
+	return Graphics::PixelBuffer();
 }
 
 void OSystem_3DS::initSize(uint width, uint height,
