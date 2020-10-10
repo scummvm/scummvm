@@ -47,9 +47,12 @@ bool CloudsCutscenes::showCloudsIntro() {
 	bool seenIntro = showCloudsTitle() && showCloudsIntroInner();
 
 	events.clearEvents();
-	screen.doScroll(true, false);
-	sound.stopAllAudio();
 
+	// Roll up the scroll again
+	sound.songCommand(50);
+	doScroll(true, false);
+
+	sound.stopAllAudio();
 	screen.freePages();
 	files.setGameCc(darkCc ? 1 : 0);
 
@@ -282,6 +285,7 @@ bool CloudsCutscenes::showCloudsIntroInner() {
 			sound.playVoice(_INTRO_VOCS[lineCtr]);
 		}
 
+		events.timeMark1();
 		for (int frameCtr = 0, lookup = 0; sound.isSoundPlaying() ||
 				(_subtitles.active() && (lineCtr == 0 || lineCtr == 4 || lineCtr == 10 || lineCtr == 13)); ) {
 			groupo.draw(0, 0);
@@ -352,10 +356,10 @@ bool CloudsCutscenes::showCloudsIntroInner() {
 				break;
 			}
 
-			int duration = _INTRO_FRAMES_WAIT[_INTRO_FRAMES_LOOKUP[lineCtr]][lookup];
-			if (duration == 0)
-				duration = 1;
-			WAIT(duration);
+			uint expiry = _INTRO_FRAMES_WAIT[_INTRO_FRAMES_LOOKUP[lineCtr]][lookup];
+			do {
+				WAIT(1);
+			} while (events.timeElapsed1() < expiry);
 
 			++lookup;
 			if (!sound._fxOn && lookup > 30)
@@ -370,10 +374,6 @@ bool CloudsCutscenes::showCloudsIntroInner() {
 		else if (lineCtr == 6)
 			sound.playVoice(_INTRO_VOCS[7]);
 	}
-
-	// Roll up the scroll again
-	sound.songCommand(50);
-	doScroll(true, false);
 
 	return true;
 }
