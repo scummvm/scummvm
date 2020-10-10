@@ -8,7 +8,7 @@ public class EditableAccommodatingLatinIMETypeNullIssues extends SpannableString
 	  }
 
 	//This character must be ignored by your onKey() code.
-	public static CharSequence ONE_UNPROCESSED_CHARACTER = "/";
+	public static final CharSequence ONE_UNPROCESSED_CHARACTER = "/";
 
 	@Override
 	public SpannableStringBuilder replace(final int spannableStringStart, final int spannableStringEnd, CharSequence replacementSequence, int replacementStart, int replacementEnd) {

@@ -3,8 +3,8 @@ package org.scummvm.scummvm;
 // Based on code from: https://stackoverflow.com/a/11024200
 public class Version implements Comparable<Version> {
 
-	private String versionOnlyDigits;
-	private String versionDescription;
+	private final String versionOnlyDigits;
+	private final String versionDescription;
 
 	public final String getDescription() {
 		return this.versionDescription;

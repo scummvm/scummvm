@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,8 +18,6 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.text.ClipboardManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -48,12 +47,9 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
-
-import static org.scummvm.scummvm.ExternalStorage.getAllStorageLocations;
 
 //import android.os.Environment;
 //import java.util.List;
@@ -63,7 +59,8 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	/* Establish whether the hover events are available */
 	private static boolean _hoverAvailable;
 
-	private ClipboardManager _clipboard;
+	private ClipboardManager _clipboardManager;
+
 	private Version _currentScummVMVersion;
 	private File _configScummvmFile;
 	private File _actualScummVMDataDir;
@@ -96,7 +93,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 	}
 
-	public View.OnClickListener keyboardBtnOnClickListener = new View.OnClickListener() {
+	public final View.OnClickListener keyboardBtnOnClickListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			runOnUiThread(new Runnable() {
@@ -140,21 +137,31 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 		@Override
 		protected boolean hasTextInClipboard() {
-			return _clipboard.hasText();
+			final android.content.ClipData clip = _clipboardManager.getPrimaryClip();
+
+			return (clip != null
+			        && clip.getItemCount() > 0
+			        && clip.getItemAt(0).getText() != null);
 		}
 
 		@Override
 		protected String getTextFromClipboard() {
-			CharSequence text = _clipboard.getText();
-			if (text != null) {
-				return text.toString();
+			// based on: https://stackoverflow.com/q/37196571
+			final android.content.ClipData clip = _clipboardManager.getPrimaryClip();
+
+			if (clip == null
+			    || clip.getItemCount() == 0
+			    || clip.getItemCount() > 0 && clip.getItemAt(0).getText() == null) {
+				return null;
 			}
-			return null;
+
+			return  clip.getItemAt(0).getText().toString();
 		}
 
 		@Override
-		protected boolean setTextInClipboard(String text) {
-			_clipboard.setText(text);
+		protected boolean setTextInClipboard(String textStr) {
+			final android.content.ClipData clip = android.content.ClipData.newPlainText("ScummVM clip", textStr);
+			_clipboardManager.setPrimaryClip(clip);
 			return true;
 		}
 
@@ -237,7 +244,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	}
 
 	private MyScummVM _scummvm;
-	private ScummVMEvents _events;
+	private ScummVMEventsBase _events;
 	private MouseHelper _mouseHelper;
 	private Thread _scummvm_thread;
 
@@ -256,9 +263,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		EditableSurfaceView main_surface = findViewById(R.id.main_surface);
 
 		main_surface.requestFocus();
-
-		_clipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
-
+		_clipboardManager = (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 		_currentScummVMVersion = new Version(BuildConfig.VERSION_NAME);
 		Log.d(ScummVM.LOG_TAG, "Current ScummVM version running is: " + _currentScummVMVersion.getDescription() + " (" + _currentScummVMVersion.get() + ")");
 
@@ -307,10 +312,10 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				_mouseHelper.attach(main_surface);
 			}
 
-			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1) {
-				_events = new ScummVMEvents(this, _scummvm, _mouseHelper);
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
+				_events = new ScummVMEventsModern(this, _scummvm, _mouseHelper);
 			} else {
-				_events = new ScummVMEventsHoneycomb(this, _scummvm, _mouseHelper);
+				_events = new ScummVMEventsBase(this, _scummvm, _mouseHelper);
 			}
 
 			// On screen button listener
@@ -890,7 +895,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 					if (tmpOldVersionFound.compareTo(maxOldVersionFound) > 0) {
 						maxOldVersionFound = tmpOldVersionFound;
 						existingVersionFoundInScummVMDataDir = tmpOldVersionFound;
-						scummVMConfigHandled = false; // invalidate the handled flag
+						//scummVMConfigHandled = false; // invalidate the handled flag
 					}
 				} else {
 					Log.d(ScummVM.LOG_TAG, "Could not find info on existing ScummVM version. Unsupported or corrupt file?");
@@ -911,7 +916,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			for (String oldConfigFileDescription : candidateOldLocationsOfScummVMConfigMap.keySet()) {
 				File oldCandidateScummVMConfig = candidateOldLocationsOfScummVMConfigMap.get(oldConfigFileDescription);
 				Log.d(ScummVM.LOG_TAG, "Looking for old config " + oldConfigFileDescription + " ScummVM file...");
-				Log.d(ScummVM.LOG_TAG, "at Path: " + oldCandidateScummVMConfig.getPath() + "...");
+				Log.d(ScummVM.LOG_TAG, "at Path: " + Objects.requireNonNull(oldCandidateScummVMConfig).getPath() + "...");
 				if (oldCandidateScummVMConfig.exists() && oldCandidateScummVMConfig.isFile()) {
 					Log.d(ScummVM.LOG_TAG, "Old config " + oldConfigFileDescription + " ScummVM file was found!");
 					String existingVersionInfo = getVersionInfoFromScummvmConfiguration(oldCandidateScummVMConfig.getPath());
@@ -928,7 +933,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 						//          and old version found is lower than 2.2.1
 						//       Then: replace our current config ini and remove the recovered ini from the aux external storage
 						if ((tmpOldVersionFound.compareTo(maxOldVersionFound) > 0)
-						     || (existingConfigInScummVMDataDirReplacedOnce == false
+						     || (!existingConfigInScummVMDataDirReplacedOnce
 						         && existingVersionFoundInScummVMDataDir.compareTo(version2_2_1_forPatch) == 0
 						         && tmpOldVersionFound.compareTo(version2_2_1_forPatch) < 0
 						         && oldConfigFileDescription.startsWith("A-"))
@@ -1071,10 +1076,10 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			//       Then: Scan for previous usable ScummVM folder (it will still only copy the larger one found)
 			boolean scanOnlyInAuxExternalStorage = false;
 			if (defaultSaveDirFiles.length == 0
-			    || (existingConfigInScummVMDataDirReplacedOnce == true
+			    || (existingConfigInScummVMDataDirReplacedOnce
 			        && existingVersionFoundInScummVMDataDir.compareTo(version2_2_1_forPatch) == 0)
 			) {
-				if (existingConfigInScummVMDataDirReplacedOnce == true
+				if (existingConfigInScummVMDataDirReplacedOnce
 					&& existingVersionFoundInScummVMDataDir.compareTo(version2_2_1_forPatch) == 0) {
 					scanOnlyInAuxExternalStorage = true;
 				}
@@ -1157,7 +1162,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 					File iterCandidateScummVMSavesPath = candidateOldLocationsOfScummVMSavesMap.get(oldSavesPathDescription);
 					Log.d(ScummVM.LOG_TAG, "Looking for old saves path " + oldSavesPathDescription + "...");
 					try {
-						Log.d(ScummVM.LOG_TAG, " at Path: " + iterCandidateScummVMSavesPath.getPath());
+						Log.d(ScummVM.LOG_TAG, " at Path: " + Objects.requireNonNull(iterCandidateScummVMSavesPath).getPath());
 						if (iterCandidateScummVMSavesPath.exists() && iterCandidateScummVMSavesPath.isDirectory()) {
 							File[] sgfiles = iterCandidateScummVMSavesPath.listFiles();
 							if (sgfiles != null) {
