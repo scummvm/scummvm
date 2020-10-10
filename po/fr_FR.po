@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-10 12:59+0200\n"
-"PO-Revision-Date: 2020-09-15 18:44+0000\n"
+"PO-Revision-Date: 2020-10-10 17:39+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -997,7 +997,7 @@ msgstr "Plein écran"
 
 #: gui/options.cpp:1300
 msgid "V-Sync in 3D Games"
-msgstr ""
+msgstr "V-Sync dans les jeux 3D"
 
 #: gui/options.cpp:1300
 msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
