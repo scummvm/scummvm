@@ -153,7 +153,7 @@ void Process::loadPicture() {
 
 void Process::loadAnimation() {
 	Common::String name = popText();
-	debug("loadAnimation %s (phase: %s) %s", name.c_str(), _phaseVar.c_str(), _phaseVarControlled? "(paused)": "");
+	debug("loadAnimation %s (phase: %s) %s", name.c_str(), _phaseVar.c_str(), _phaseVarControlled? "(phase-var)": "");
 	Animation *animation = _engine->loadAnimation(name);
 	if (animation) {
 		if (_phaseVarControlled) {
@@ -1362,7 +1362,7 @@ void Process::loadPictureFromObject() {
 
 void Process::loadAnimationFromObject() {
 	Common::String name = popText();
-	debug("loadAnimationFromObject %s %s", name.c_str(), _phaseVarControlled? "(paused)": "");
+	debug("loadAnimationFromObject %s %s", name.c_str(), _phaseVarControlled? "(phase-var)": "");
 	Animation *animation = _engine->loadAnimation(name);
 	if (animation) {
 		_animationCycles = 0;
