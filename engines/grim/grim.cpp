@@ -486,7 +486,7 @@ Common::KeymapArray GrimEngine::initKeymapsGrim(const char *target) {
 	act->addDefaultInputMapping("JOY_B");
 	engineKeyMap->addAction(act);
 
-	act = new Action("INVT", _("Invetory"));
+	act = new Action("INVT", _("Inventory"));
 	act->setKeyEvent(KeyState(KEYCODE_d, 'i'));
 	act->addDefaultInputMapping("JOY_Y");
 	engineKeyMap->addAction(act);
