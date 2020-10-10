@@ -28,12 +28,12 @@
 
 class BaseBackend : public OSystem {
 public:
-	virtual void initBackend();
+	virtual void initBackend() override;
 
-	virtual Graphics::PixelBuffer getScreenPixelBuffer();
-	virtual void displayMessageOnOSD(const Common::U32String &msg);
-	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon) {}
-	virtual void fillScreen(uint32 col);
+	virtual Graphics::PixelBuffer getScreenPixelBuffer() override;
+	virtual void displayMessageOnOSD(const Common::U32String &msg) override;
+	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon) override {}
+	virtual void fillScreen(uint32 col) override;
 };
 
 class EventsBaseBackend : virtual public BaseBackend, Common::EventSource {
