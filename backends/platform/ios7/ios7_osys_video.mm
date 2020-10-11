@@ -107,7 +107,7 @@ int OSystem_iOS7::getDefaultGraphicsMode() const {
 	return kGraphicsModeNone;
 }
 
-bool OSystem_iOS7::setGraphicsMode(int mode) {
+bool OSystem_iOS7::setGraphicsMode(int mode, uint /*flags*/) {
 	switch (mode) {
 	case kGraphicsModeNone:
 	case kGraphicsMode2xSaI:
