@@ -135,7 +135,9 @@ bool ShadowVolumeOpenGL::renderToScene() {
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	// Draw a big, gray square
+#ifndef __MORPHOS__	
 	glInterleavedArrays(GL_C4UB_V3F, 0, _shadowMask);
+#endif
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	// Restore render states

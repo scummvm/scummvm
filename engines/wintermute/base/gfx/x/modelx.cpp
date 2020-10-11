@@ -588,7 +588,7 @@ void ModelX::updateBoundingRect() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void ModelX::updateRect(Rect32 *rc, int x, int y) {
+void ModelX::updateRect(Rect32 *rc, int32 x, int32 y) {
 	rc->left   = MIN(rc->left, x);
 	rc->right  = MAX(rc->right, x);
 	rc->top    = MIN(rc->top, y);

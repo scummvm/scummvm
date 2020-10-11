@@ -109,11 +109,12 @@ void OpenGLTexture::updateTexture(const Graphics::Surface *surface, const Common
 		const Graphics::Surface subArea = surface->getSubArea(rect);
 
 		glPixelStorei(GL_UNPACK_ROW_LENGTH, surface->pitch / surface->format.bytesPerPixel);
-		glTexSubImage2D(GL_TEXTURE_2D, 0, rect.left, rect.top, subArea.w, subArea.h, internalFormat, sourceFormat, subArea.getPixels());
+		
+		glTexSubImage2D(GL_TEXTURE_2D, 0, rect.left, rect.top, subArea.w, subArea.h, internalFormat, sourceFormat, const_cast<void *>(subArea.getPixels()));
 		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 	} else {
 		// GL_UNPACK_ROW_LENGTH is not supported, don't bother and do a full texture update
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, surface->w, surface->h, internalFormat, sourceFormat, surface->getPixels());
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, surface->w, surface->h, internalFormat, sourceFormat, const_cast<void *>(surface->getPixels()));
 	}
 }
 

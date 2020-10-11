@@ -1900,7 +1900,9 @@ void GfxOpenGL::drawEmergString(int x, int y, const char *text, const Color &fgC
 	glColor3f(1.0f, 1.0f, 1.0f);
 
 	glListBase(_emergFont);
-	glCallLists(strlen(text), GL_UNSIGNED_BYTE, (const GLubyte *)text);
+	
+	char *list = const_cast<char *>(text);
+	glCallLists(strlen(text), GL_UNSIGNED_BYTE, (void *)text);
 
 	glEnable(GL_LIGHTING);
 

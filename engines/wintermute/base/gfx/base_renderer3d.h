@@ -88,7 +88,7 @@ public:
 	virtual void resetModelViewTransform() = 0;
 	virtual void setWorldTransform(const Math::Matrix4 &transform) = 0;
 
-	void project(const Math::Matrix4 &worldMatrix, const Math::Vector3d &point, int &x, int &y);
+	void project(const Math::Matrix4 &worldMatrix, const Math::Vector3d &point, int32 &x, int32 &y);
 	Math::Ray rayIntoScene(int x, int y);
 
 	Math::Matrix4 lastProjectionMatrix() {
