@@ -587,12 +587,7 @@ Animation *AGDSEngine::loadAnimation(const Common::String &name) {
 }
 
 Animation *AGDSEngine::findAnimationByPhaseVar(const Common::String &phaseVar) {
-	for (AnimationsType::iterator i = _animations.begin(); i != _animations.end(); ++i) {
-		Animation *animation = i->_value;
-		if (animation->phaseVar() == phaseVar)
-			return animation;
-	}
-	return NULL;
+	return _currentScreen? _currentScreen->findAnimationByPhaseVar(phaseVar): nullptr;
 }
 
 Character *AGDSEngine::loadCharacter(const Common::String &id, const Common::String &filename, const Common::String &object) {
