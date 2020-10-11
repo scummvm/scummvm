@@ -213,8 +213,10 @@ void BaseRenderOpenGL3D::displayShadow(BaseObject *object, const Math::Vector3d 
 	glEnable(GL_TEXTURE_2D);
 	static_cast<BaseSurfaceOpenGL3D *>(shadowImage)->setTexture();
 
+	#ifndef __MORPHOS__
 	glInterleavedArrays(GL_T2F_N3F_V3F, 0, _simpleShadow);
-
+	#endif
+	
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	glDepthMask(true);
@@ -476,7 +478,11 @@ bool BaseRenderOpenGL3D::setup2D(bool force) {
 #if defined(__MINGW32__) && defined (SDL_BACKEND) && !defined(USE_GLEW)
 		glActiveTexturePtr(GL_TEXTURE0);
 #else
+		#ifdef __MORPHOS__
+		glActiveTextureARB(GL_TEXTURE0);
+		#else
 		glActiveTexture(GL_TEXTURE0);
+		#endif
 #endif
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
 		glTexEnvf(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE);
@@ -489,14 +495,22 @@ bool BaseRenderOpenGL3D::setup2D(bool force) {
 #if defined(__MINGW32__) && defined (SDL_BACKEND) && !defined(USE_GLEW)
 		glActiveTexturePtr(GL_TEXTURE1);
 #else
+		#ifdef __MORPHOS__
+		glActiveTextureARB(GL_TEXTURE1);
+		#else
 		glActiveTexture(GL_TEXTURE1);
+		#endif
 #endif
 		glDisable(GL_TEXTURE_2D);
 
 #if defined(__MINGW32__) && defined (SDL_BACKEND) && !defined(USE_GLEW)
 		glActiveTexturePtr(GL_TEXTURE0);
 #else
+		#ifdef __MORPHOS__
+		glActiveTextureARB(GL_TEXTURE0);
+		#else
 		glActiveTexture(GL_TEXTURE0);
+		#endif
 
 #endif
 		glViewport(0, 0, _width, _height);
@@ -722,7 +736,10 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
+#ifndef __MORPHOS__
 	glInterleavedArrays(GL_T2F_C4UB_V3F, 0, vertices);
+#endif
+	
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	if (alphaDisable) {

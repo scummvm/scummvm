@@ -120,7 +120,7 @@ bool AdObject3D::update() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdObject3D::convert3DTo2D(Math::Matrix4 *worldMat, int *posX, int *posY) {
+bool AdObject3D::convert3DTo2D(Math::Matrix4 *worldMat, int32 *posX, int32 *posY) {
 	Math::Vector3d origin(0.0f, 0.0f, 0.0f);
 	_gameRef->_renderer3D->project(*worldMat, origin, *posX, *posY);
 
@@ -180,7 +180,7 @@ bool AdObject3D::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	else if (strcmp(name, "GetBonePosition2D") == 0) {
 		stack->correctParams(1);
 		const char *boneName = stack->pop()->getString();
-		int x = 0, y = 0;
+		int32 x = 0, y = 0;
 		getBonePosition2D(boneName, &x, &y);
 
 		ScValue *val = stack->getPushValue();
@@ -583,7 +583,7 @@ ShadowVolume *AdObject3D::getShadowVolume() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdObject3D::getBonePosition2D(const char *boneName, int *x, int *y) {
+bool AdObject3D::getBonePosition2D(const char *boneName, int32 *x, int32 *y) {
 	if (!_modelX) {
 		return false;
 	}

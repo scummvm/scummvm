@@ -69,8 +69,9 @@ bool MeshXOpenGL::render(ModelX *model) {
 			glDisable(GL_TEXTURE_2D);
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
-
+#ifndef __MORPHOS__
 		glInterleavedArrays(GL_T2F_N3F_V3F, 0, _vertexData);
+#endif
 		glDrawElements(GL_TRIANGLES, _indexRanges[i + 1] - _indexRanges[i], GL_UNSIGNED_SHORT, _indexData.data() + _indexRanges[i]);
 	}
 

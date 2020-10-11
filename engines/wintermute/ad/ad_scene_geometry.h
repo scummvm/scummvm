@@ -81,7 +81,7 @@ public:
 	bool getPath(Math::Vector3d source, Math::Vector3d target, AdPath3D *path, bool rerun = false);
 	bool convert2Dto3D(int x, int y, Math::Vector3d *pos);
 	bool convert2Dto3DTolerant(int x, int y, Math::Vector3d *pos);
-	bool convert3Dto2D(Math::Vector3d *pos, int *x, int *y);
+	bool convert3Dto2D(Math::Vector3d *pos, int32 *x, int32 *y);
 	BaseSprite *_wptMarker;
 	float _waypointHeight;
 	bool directPathExists(Math::Vector3d *p1, Math::Vector3d *p2);
@@ -98,11 +98,11 @@ public:
 	//bool SetActiveCameraTwin(char* Camera);
 	//bool SetActiveCameraTwin(int Camera);
 	Camera3D *getActiveCamera();
-	int _activeCamera;
+	int32 _activeCamera;
 
 	bool setActiveLight(char *light);
 	bool setActiveLight(int light);
-	int _activeLight;
+	int32 _activeLight;
 
 	void cleanup();
 	AdSceneGeometry(BaseGame *inGame);

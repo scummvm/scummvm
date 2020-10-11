@@ -193,12 +193,12 @@ private:
 	void parseFrameDuringMerge(XFileLexer &lexer, const Common::String &filename);
 
 	void updateBoundingRect();
-	void static inline updateRect(Rect32 *rc, int x, int y);
+	void static inline updateRect(Rect32 *rc, int32 x, int32 y);
 	Rect32 _drawingViewport;
 	Math::Matrix4 _lastViewMat;
 	Math::Matrix4 _lastProjMat;
-	int _lastOffsetX;
-	int _lastOffsetY;
+	int32 _lastOffsetX;
+	int32 _lastOffsetY;
 
 	Math::Vector3d _BBoxStart;
 	Math::Vector3d _BBoxEnd;

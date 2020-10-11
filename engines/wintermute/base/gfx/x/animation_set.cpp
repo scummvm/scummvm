@@ -204,7 +204,7 @@ bool AnimationSet::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_looping));
 
 	// persist events
-	int numEvents;
+	int32 numEvents;
 	if (persistMgr->getIsSaving()) {
 		numEvents = _events.size();
 	}

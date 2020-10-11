@@ -63,7 +63,7 @@ public:
 
 private:
 	ModelX *_model;
-	int _currentFrame;
+	int32 _currentFrame;
 	uint32 _startTime;
 	bool _looping;
 	bool _finished;
