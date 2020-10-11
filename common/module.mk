@@ -35,6 +35,7 @@ MODULE_OBJS := \
 	str-enc.o \
 	stream.o \
 	streamdebug.o \
+	stuffit.o \
 	system.o \
 	textconsole.o \
 	tokenizer.o \

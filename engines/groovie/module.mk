@@ -14,7 +14,6 @@ MODULE_OBJS := \
 	resource.o \
 	saveload.o \
 	script.o \
-	stuffit.o \
 	vdx.o
 
 ifdef ENABLE_GROOVIE2
