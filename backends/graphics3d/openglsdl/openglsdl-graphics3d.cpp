@@ -294,7 +294,7 @@ void OpenGLSdlGraphics3dManager::createOrUpdateScreen() {
 
 	_screenChangeCount++;
 
-#if !defined(AMIGAOS)
+#if !defined(AMIGAOS) && !defined(__MORPHOS__)
 	if (renderToFrameBuffer) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		_frameBuffer = createFramebuffer(_engineRequestedWidth, _engineRequestedHeight);
@@ -537,7 +537,7 @@ void OpenGLSdlGraphics3dManager::drawOverlay() {
 	_surfaceRenderer->restorePreviousState();
 }
 
-#ifndef AMIGAOS
+#if !defined(AMIGAOS) && !defined(__MORPHOS__)
 OpenGL::FrameBuffer *OpenGLSdlGraphics3dManager::createFramebuffer(uint width, uint height) {
 #if !defined(USE_GLES2)
 	if (_antialiasing && OpenGLContext.framebufferObjectMultisampleSupported) {
