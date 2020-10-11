@@ -115,6 +115,7 @@ public:
 	ObjectPtr find(Common::Point pos) const;
 	ObjectPtr find(const Common::String &name);
 	KeyHandler findKeyHandler(const Common::String &keyName);
+	Animation * findAnimationByPhaseVar(const Common::String &phaseVar);
 
 	void load(AGDSEngine & engine, const PatchPtr &patch);
 	void save(AGDSEngine & engine, const PatchPtr &patch);

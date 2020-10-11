@@ -97,6 +97,15 @@ bool Screen::remove(const Common::String &name) {
 	return false;
 }
 
+Animation *Screen::findAnimationByPhaseVar(const Common::String &phaseVar) {
+	for (auto i = _animations.begin(); i != _animations.end(); ++i) {
+		Animation *animation = *i;
+		if (animation->phaseVar() == phaseVar)
+			return animation;
+	}
+	return NULL;
+}
+
 void Screen::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 	for(uint i = 0; i < _animations.size(); ) {
 		Animation *animation = _animations.data()[i];

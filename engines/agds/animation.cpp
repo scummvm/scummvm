@@ -106,6 +106,10 @@ bool Animation::tick(AGDSEngine &engine) {
 		} else {
 			engine.reactivate(_process);
 		}
+		if (_phaseVarControlled) {
+			freeFrame();
+			return true;
+		}
 		return false;
 	}
 	decodeNextFrame(engine);
