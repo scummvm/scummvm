@@ -1,0 +1,69 @@
+; ScummVM - Graphic Adventure Engine
+; Copyright (C) 2020 Stryzhniou Fiodar
+;
+; ScummVM is the legal property of its developers, whose names
+; are too numerous to list here. Please refer to the COPYRIGHT
+; file distributed with this source distribution.
+;
+; This program is free software; you can redistribute it and/or
+; modify it under the terms of the GNU General Public License
+; as published by the Free Software Foundation; either version 2
+; of the License, or (at your option) any later version.
+
+; This program is distributed in the hope that it will be useful,
+; but WITHOUT ANY WARRANTY; without even the implied warranty of
+; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+; GNU General Public License for more details.
+
+; You should have received a copy of the GNU General Public License
+; along with this program; if not, write to the Free Software
+; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+;
+;
+
+;;;
+;;; ScummVM .PKG file for .SIS generation
+;;;
+
+;Language - standard language definitions
+&EN
+
+; List of localised vendor names - one per language. At least one must be provided (English [EN]).
+; List must correspond to list of languages specified elsewhere in the .pkg
+%{"ScummVM"}
+; The non-localised, globally unique vendor name (mandatory)
+:"ScummVM"
+
+; UID is the app's UID
+#{"ScummVM S60v3"},(0x2006FE7E), 2,02,0
+
+;Supports Series 60 v 3.0
+[0x101F7961], 0, 0, 0, {"Series60ProductID"}
+;Supports Series 60 v 5.0
+[0x1028315F], 0, 0, 0, {"Series60ProductID"}
+
+;ScummVM1 dependency
+(0xA0000657), 2, 2, 0 ~ 2, 2, 0, {"ScummVM1.sisx"}
+
+; Launcher, Application, AIF & Resource file
+"$(EPOCROOT)epoc32\release\gcce\urel\ScummVM5.exe" -		"!:\sys\bin\ScummVM5.exe"
+"$(EPOCROOT)epoc32\data\z\resource\apps\ScummVM5.rsc" -	"!:\resource\apps\ScummVM5.rsc"
+"$(EPOCROOT)epoc32\Data\Z\resource\apps\ScummVM5_loc.rsc"-	"!:\resource\apps\ScummVM5_loc.rsc"
+"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\ScummVM5_reg.rsc" -
+							"!:\private\10003a3f\import\apps\ScummVM5_reg.rsc"
+
+
+; Scummvm Documentation
+"..\..\..\..\COPYRIGHT"-"", FT, TC
+"..\..\..\..\COPYING"-"", FT, TC
+"..\README"-"", FT, TC
+"..\BELARUS"-"", FT, TC
+"..\HUMBLE"-"", FT, TC
+
+
+;IF NOT exists("!:\data\scummvm\")
+;"..\..\..\..\"-"!:\data\scummvm\"
+;endif
+
+;IF NOT exists()
+;endif

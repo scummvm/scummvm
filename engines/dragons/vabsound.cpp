@@ -19,7 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include <cmath>
 #include "common/textconsole.h"
 #include "common/debug.h"
 #include "audio/decoders/xa.h"
