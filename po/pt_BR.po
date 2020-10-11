@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-11 22:16+0200\n"
-"PO-Revision-Date: 2020-10-10 09:58+0000\n"
+"PO-Revision-Date: 2020-10-12 09:43+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -5271,9 +5271,8 @@ msgid "Widescreen mod"
 msgstr "Mod de Widescreen"
 
 #: engines/myst3/detection.cpp:183
-#, fuzzy
 msgid "Enable widescreen rendering in fullscreen mode."
-msgstr "Habilita a renderização em widescreen no modo de tela inteira."
+msgstr "Habilita renderização em widescreen no modo de tela cheia."
 
 #: engines/myst3/myst3.cpp:361
 msgid ""
@@ -7250,7 +7249,7 @@ msgstr "Alternar"
 
 #: engines/wintermute/keymapper_tables.h:1214
 msgid "Use Chapayev"
-msgstr ""
+msgstr "Utilizar Chapayev"
 
 #: engines/wintermute/keymapper_tables.h:1234
 #: engines/wintermute/keymapper_tables.h:1639
