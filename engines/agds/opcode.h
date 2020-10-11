@@ -137,12 +137,12 @@ enum Opcode {
 	kLoadAnimation					= 117,
 	kLoadSample						= 118,
 	kSetAnimationPaused				= 119,
-	kStub120						= 120,
+	kPlayerSay120					= 120,
 	kStub121						= 121,
-	kPlayerSay						= 122,
+	kPlayerSay122					= 122,
 	kNPCSayNoSound					= 123,
 	kNPCSay							= 124,
-	kStub125						= 125,
+	kPlayerSay125					= 125,
 	kStub126						= 126,
 	kSetTimer						= 127,
 	kProcessResetState				= 128,
@@ -356,7 +356,9 @@ enum Opcode {
 	OP(kLoadAnimation, loadAnimation) \
 	OP(kLoadSample, loadSample) \
 	OP(kSetAnimationPaused, setAnimationPaused) \
-	OP(kPlayerSay, playerSay) \
+	OP(kPlayerSay120, playerSay120) \
+	OP(kPlayerSay122, playerSay122) \
+	OP(kPlayerSay125, playerSay125) \
 	OP(kNPCSay, npcSay) \
 	OP(kNPCSayNoSound, npcSayNoSound) \
 	OP(kSetTimer, setTimer) \
