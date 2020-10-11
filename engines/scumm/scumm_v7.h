@@ -84,8 +84,9 @@ protected:
 	struct SubtitleText : TextObject {
 		bool actorSpeechMsg;
 	};
-	friend void syncWithSerializer(Common::Serializer &, SubtitleText &);
 #endif
+
+	friend void syncWithSerializer(Common::Serializer &, SubtitleText &);
 
 	int _subtitleQueuePos;
 	SubtitleText _subtitleQueue[20];

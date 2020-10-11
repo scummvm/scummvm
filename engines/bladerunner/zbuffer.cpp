@@ -101,7 +101,7 @@ static int decodePartialZBuffer(const uint8 *src, uint16 *curZBUF, uint32 srcLen
 	uint16 *curzp = curZBUF;
 	const uint16 *inp = (const uint16 *)src;
 
-	while (dstRemain && (inp - (const uint16 *)src) < (std::ptrdiff_t)srcLen) {
+	while (dstRemain && (inp - (const uint16 *)src) < (ptrdiff_t)srcLen) {
 		uint32 count = FROM_LE_16(*inp++);
 
 		if (count & 0x8000) {

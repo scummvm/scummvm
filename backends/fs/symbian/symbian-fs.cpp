@@ -126,7 +126,8 @@ bool SymbianFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 
 	if (_isPseudoRoot) {
 		// Drives enumeration
-		RFs& fs = static_cast<OSystem_SDL_Symbian *>(g_system)->FsSession();
+		// TODO: check if can use static_cast in next release
+		RFs& fs = dynamic_cast<OSystem_SDL_Symbian *>(g_system)->FsSession();
 		TInt driveNumber;
 		TChar driveLetter;
 		TUint driveLetterValue;
@@ -171,7 +172,8 @@ bool SymbianFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 		if (_path.lastChar() != '\\')
 			fname.Append('\\');
 
-		if (static_cast<OSystem_SDL_Symbian *>(g_system)->FsSession().GetDir(fname, KEntryAttNormal|KEntryAttDir, 0, dirPtr) == KErrNone) {
+		// TODO: check if can use static_cast in next release
+		if (dynamic_cast<OSystem_SDL_Symbian *>(g_system)->FsSession().GetDir(fname, KEntryAttNormal|KEntryAttDir, 0, dirPtr) == KErrNone) {
 			CleanupStack::PushL(dirPtr);
 			TInt cnt = dirPtr->Count();
 			for (TInt loop = 0; loop < cnt; loop++) {
