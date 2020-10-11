@@ -978,7 +978,12 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_renderModePopUp->setEnabled(enabled);
 	_stretchPopUpDesc->setEnabled(enabled);
 	_stretchPopUp->setEnabled(enabled);
+	_vsyncCheckbox->setEnabled(enabled);
 	_filteringCheckbox->setEnabled(enabled);
+	_rendererTypePopUpDesc->setEnabled(enabled);
+	_rendererTypePopUp->setEnabled(enabled);
+	_antiAliasPopUpDesc->setEnabled(enabled);
+	_antiAliasPopUp->setEnabled(enabled);
 
 	if (g_system->hasFeature(OSystem::kFeatureFullscreenMode))
 		_fullscreenCheckbox->setEnabled(enabled);
