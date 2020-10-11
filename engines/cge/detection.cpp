@@ -177,4 +177,4 @@ ADDetectedGame CGEMetaEngineStatic::fallbackDetect(const FileMap &allFiles, cons
 
 } // End of namespace CGE
 
-REGISTER_PLUGIN_STATIC(CGE_DETECTION, PLUGIN_TYPE_METAENGINE, CGE::CGEMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(CGE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, CGE::CGEMetaEngineStatic);

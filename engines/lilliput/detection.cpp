@@ -124,4 +124,4 @@ public:
 
 } // End of namespace Lilliput
 
-REGISTER_PLUGIN_STATIC(LILLIPUT_DETECTION, PLUGIN_TYPE_METAENGINE, Lilliput::LilliputMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(LILLIPUT_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Lilliput::LilliputMetaEngineStatic);

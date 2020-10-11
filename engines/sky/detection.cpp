@@ -175,4 +175,4 @@ DetectedGames SkyMetaEngineStatic::detectGames(const Common::FSList &fslist) con
 	return detectedGames;
 }
 
-REGISTER_PLUGIN_STATIC(SKY_DETECTION, PLUGIN_TYPE_METAENGINE, SkyMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(SKY_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, SkyMetaEngineStatic);

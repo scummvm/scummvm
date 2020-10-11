@@ -559,7 +559,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 #if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES)
 			// Unload all MetaEngines not needed for the current engine, if we're using uncached plugins
 			// to save extra memory.
-			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_METAENGINE, plugin);
+			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE_DETECTION, plugin);
 #endif
 
 #ifdef ENABLE_EVENTRECORDER

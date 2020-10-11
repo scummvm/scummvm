@@ -70,4 +70,4 @@ ADDetectedGame MadeMetaEngineStatic::fallbackDetect(const FileMap &allFiles, con
 	return ADDetectedGame();
 }
 
-REGISTER_PLUGIN_STATIC(MADE_DETECTION, PLUGIN_TYPE_METAENGINE, MadeMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(MADE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, MadeMetaEngineStatic);

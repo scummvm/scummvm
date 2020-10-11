@@ -159,4 +159,4 @@ const ExtraGuiOptions NeverhoodMetaEngineStatic::getExtraGuiOptions(const Common
 	return options;
 }
 
-REGISTER_PLUGIN_STATIC(NEVERHOOD_DETECTION, PLUGIN_TYPE_METAENGINE, NeverhoodMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(NEVERHOOD_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, NeverhoodMetaEngineStatic);

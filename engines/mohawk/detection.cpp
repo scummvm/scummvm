@@ -146,4 +146,4 @@ void MohawkMetaEngineStatic::registerDefaultSettings(const Common::String &targe
 	return AdvancedMetaEngineStatic::registerDefaultSettings(target);
 }
 
-REGISTER_PLUGIN_STATIC(MOHAWK_DETECTION, PLUGIN_TYPE_METAENGINE, MohawkMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(MOHAWK_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, MohawkMetaEngineStatic);

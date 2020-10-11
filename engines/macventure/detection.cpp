@@ -72,4 +72,4 @@ public:
 
 } // End of namespace MacVenture
 
-REGISTER_PLUGIN_STATIC(MACVENTURE_DETECTION, PLUGIN_TYPE_METAENGINE, MacVenture::MacVentureMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(MACVENTURE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, MacVenture::MacVentureMetaEngineStatic);

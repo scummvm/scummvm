@@ -101,4 +101,4 @@ DetectedGames Sword2MetaEngineStatic::detectGames(const Common::FSList &fslist) 
 	return detectGamesImpl(fslist);
 }
 
-REGISTER_PLUGIN_STATIC(SWORD2_DETECTION, PLUGIN_TYPE_METAENGINE, Sword2MetaEngineStatic);
+REGISTER_PLUGIN_STATIC(SWORD2_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Sword2MetaEngineStatic);

@@ -323,4 +323,4 @@ ADDetectedGame AgiMetaEngineStatic::fallbackDetect(const FileMap &allFilesXXX, c
 	return ADDetectedGame();
 }
 
-REGISTER_PLUGIN_STATIC(AGI_DETECTION, PLUGIN_TYPE_METAENGINE, AgiMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(AGI_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, AgiMetaEngineStatic);

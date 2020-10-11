@@ -35,7 +35,7 @@
 // Plugin versioning
 
 int pluginTypeVersions[PLUGIN_TYPE_MAX] = {
-	PLUGIN_TYPE_METAENGINE_VERSION,
+	PLUGIN_TYPE_ENGINE_DETECTION_VERSION,
 	PLUGIN_TYPE_ENGINE_VERSION,
 	PLUGIN_TYPE_MUSIC_VERSION,
 	PLUGIN_TYPE_DETECTION_VERSION,
@@ -53,7 +53,7 @@ const char *Plugin::getName() const {
 }
 
 const char *Plugin::getEngineId() const {
-	if (_type == PLUGIN_TYPE_METAENGINE) {
+	if (_type == PLUGIN_TYPE_ENGINE_DETECTION) {
 		return _pluginObject->getEngineId();
 	}
 
@@ -272,7 +272,7 @@ void PluginManager::addPluginProvider(PluginProvider *pp) {
 }
 
 Plugin *PluginManager::getEngineFromMetaEngine(const Plugin *plugin) {
-	assert(plugin->getType() == PLUGIN_TYPE_METAENGINE);
+	assert(plugin->getType() == PLUGIN_TYPE_ENGINE_DETECTION);
 
 	Plugin *enginePlugin = nullptr;
 	bool found = false;
@@ -310,7 +310,7 @@ Plugin *PluginManager::getMetaEngineFromEngine(const Plugin *plugin) {
 
 	Plugin *metaEngine = nullptr;
 
-	PluginList pl = PluginMan.getPlugins(PLUGIN_TYPE_METAENGINE);
+	PluginList pl = PluginMan.getPlugins(PLUGIN_TYPE_ENGINE_DETECTION);
 
 	// This will return a name of the Engine plugin, which will be identical to
 	// a getEngineID from a relevant MetaEngine.
@@ -467,7 +467,7 @@ void PluginManagerUncached::loadDetectionPlugin() {
 	}
 
 	if (linkMetaEngines) {
-		_pluginsInMem[PLUGIN_TYPE_METAENGINE].clear();
+		_pluginsInMem[PLUGIN_TYPE_ENGINE_DETECTION].clear();
 		const Detection &detectionConnect = _detectionPlugin->get<Detection>();
 		const PluginList &pl = detectionConnect.getPlugins();
 		Common::for_each(pl.begin(), pl.end(), Common::bind1st(Common::mem_fun(&PluginManagerUncached::tryLoadPlugin), this));
@@ -477,7 +477,7 @@ void PluginManagerUncached::loadDetectionPlugin() {
 
 void PluginManagerUncached::unloadDetectionPlugin() {
 	if (_isDetectionLoaded) {
-		_pluginsInMem[PLUGIN_TYPE_METAENGINE].clear();
+		_pluginsInMem[PLUGIN_TYPE_ENGINE_DETECTION].clear();
 		_detectionPlugin->unloadPlugin();
 		_isDetectionLoaded = false;
 	} else {
@@ -683,7 +683,7 @@ DetectionResults EngineManager::detectGames(const Common::FSList &fslist) const 
 
 	// MetaEngines are always loaded into memory, so, get them and
 	// run detection for all of them.
-	plugins = getPlugins(PLUGIN_TYPE_METAENGINE);
+	plugins = getPlugins(PLUGIN_TYPE_ENGINE_DETECTION);
 
 	// Iterate over all known games and for each check if it might be
 	// the game in the presented directory.

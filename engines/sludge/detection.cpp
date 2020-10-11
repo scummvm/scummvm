@@ -146,4 +146,4 @@ ADDetectedGame SludgeMetaEngineStatic::fallbackDetect(const FileMap &allFiles, c
 	return ADDetectedGame();
 }
 
-REGISTER_PLUGIN_STATIC(SLUDGE_DETECTION, PLUGIN_TYPE_METAENGINE, SludgeMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(SLUDGE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, SludgeMetaEngineStatic);

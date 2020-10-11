@@ -532,4 +532,4 @@ ADDetectedGame QueenMetaEngineStatic::fallbackDetect(const FileMap &allFiles, co
 	return ADDetectedGame();
 }
 
-REGISTER_PLUGIN_STATIC(QUEEN_DETECTION, PLUGIN_TYPE_METAENGINE, QueenMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(QUEEN_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, QueenMetaEngineStatic);

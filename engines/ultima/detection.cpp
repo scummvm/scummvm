@@ -56,4 +56,4 @@ UltimaMetaEngineStatic::UltimaMetaEngineStatic() : AdvancedMetaEngineStatic(Ulti
 	_directoryGlobs = DIRECTORY_GLOBS;
 }
 
-REGISTER_PLUGIN_STATIC(ULTIMA_DETECTION, PLUGIN_TYPE_METAENGINE, UltimaMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(ULTIMA_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, UltimaMetaEngineStatic);

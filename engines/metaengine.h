@@ -469,9 +469,9 @@ public:
 	 * By default, it will get METAENGINES, for now.
 	 * If usage of actual engines never occurs, we can skip
 	 * the default arguments, and always have it return
-	 * PLUGIN_TYPE_METAENGINE.
+	 * PLUGIN_TYPE_ENGINE_DETECTION.
 	 */
-	const PluginList &getPlugins(const PluginType fetchPluginType = PLUGIN_TYPE_METAENGINE) const;
+	const PluginList &getPlugins(const PluginType fetchPluginType = PLUGIN_TYPE_ENGINE_DETECTION) const;
 
 	/** Find a target */
 	QualifiedGameDescriptor findTarget(const Common::String &target, const Plugin **plugin = NULL) const;

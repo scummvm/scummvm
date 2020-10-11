@@ -321,4 +321,4 @@ ADDetectedGame DirectorMetaEngineStatic::fallbackDetect(const FileMap &allFiles,
 	return ADDetectedGame();
 }
 
-REGISTER_PLUGIN_STATIC(DIRECTOR_DETECTION, PLUGIN_TYPE_METAENGINE, DirectorMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(DIRECTOR_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, DirectorMetaEngineStatic);

@@ -76,4 +76,4 @@ public:
 
 } // End of namespace Avalanche
 
-REGISTER_PLUGIN_STATIC(AVALANCHE_DETECTION, PLUGIN_TYPE_METAENGINE, Avalanche::AvalancheMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(AVALANCHE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Avalanche::AvalancheMetaEngineStatic);

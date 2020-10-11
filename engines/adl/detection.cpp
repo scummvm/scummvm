@@ -474,4 +474,4 @@ ADDetectedGames AdlMetaEngineStatic::detectGame(const Common::FSNode &parent, co
 
 } // End of namespace Adl
 
-REGISTER_PLUGIN_STATIC(ADL_DETECTION, PLUGIN_TYPE_METAENGINE, Adl::AdlMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(ADL_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Adl::AdlMetaEngineStatic);

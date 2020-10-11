@@ -204,4 +204,4 @@ ADDetectedGame TinselMetaEngineStatic::fallbackDetect(const FileMap &allFilesXXX
 	return matched;
 }
 
-REGISTER_PLUGIN_STATIC(TINSEL_DETECTION, PLUGIN_TYPE_METAENGINE, TinselMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(TINSEL_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, TinselMetaEngineStatic);

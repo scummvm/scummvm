@@ -217,4 +217,4 @@ DetectedGames SwordMetaEngineStatic::detectGames(const Common::FSList &fslist) c
 	return detectedGames;
 }
 
-REGISTER_PLUGIN_STATIC(SWORD1_DETECTION, PLUGIN_TYPE_METAENGINE, SwordMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(SWORD1_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, SwordMetaEngineStatic);

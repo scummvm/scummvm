@@ -123,4 +123,4 @@ public:
 
 } // End of namespace Wintermute
 
-REGISTER_PLUGIN_STATIC(WINTERMUTE_DETECTION, PLUGIN_TYPE_METAENGINE, Wintermute::WintermuteMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(WINTERMUTE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Wintermute::WintermuteMetaEngineStatic);

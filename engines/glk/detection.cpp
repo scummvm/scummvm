@@ -239,4 +239,4 @@ const ExtraGuiOptions GlkMetaEngineStatic::getExtraGuiOptions(const Common::Stri
 	return options;
 }
 
-REGISTER_PLUGIN_STATIC(GLK_DETECTION, PLUGIN_TYPE_METAENGINE, GlkMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(GLK_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, GlkMetaEngineStatic);

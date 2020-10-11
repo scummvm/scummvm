@@ -231,4 +231,4 @@ public:
 
 } // End of namespace LastExpress
 
-REGISTER_PLUGIN_STATIC(LASTEXPRESS_DETECTION, PLUGIN_TYPE_METAENGINE, LastExpress::LastExpressMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(LASTEXPRESS_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, LastExpress::LastExpressMetaEngineStatic);

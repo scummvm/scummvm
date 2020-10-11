@@ -179,4 +179,4 @@ const ExtraGuiOptions ScummMetaEngineStatic::getExtraGuiOptions(const Common::St
 	return options;
 }
 
-REGISTER_PLUGIN_STATIC(SCUMM_DETECTION, PLUGIN_TYPE_METAENGINE, ScummMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(SCUMM_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, ScummMetaEngineStatic);

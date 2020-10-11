@@ -73,4 +73,4 @@ const ExtraGuiOptions Sword25MetaEngineStatic::getExtraGuiOptions(const Common::
 	return options;
 }
 
-REGISTER_PLUGIN_STATIC(SWORD25_DETECTION, PLUGIN_TYPE_METAENGINE, Sword25MetaEngineStatic);
+REGISTER_PLUGIN_STATIC(SWORD25_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Sword25MetaEngineStatic);

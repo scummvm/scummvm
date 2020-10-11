@@ -242,4 +242,4 @@ const ExtraGuiOptions ToltecsMetaEngineStatic::getExtraGuiOptions(const Common::
 	return options;
 }
 
-REGISTER_PLUGIN_STATIC(TOLTECS_DETECTION, PLUGIN_TYPE_METAENGINE, ToltecsMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(TOLTECS_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, ToltecsMetaEngineStatic);

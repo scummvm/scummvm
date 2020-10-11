@@ -120,4 +120,4 @@ const char *BladeRunnerMetaEngineStatic::getOriginalCopyright() const {
 	return "Blade Runner (C) 1997 Westwood Studios";
 }
 
-REGISTER_PLUGIN_STATIC(BLADERUNNER_DETECTION, PLUGIN_TYPE_METAENGINE, BladeRunnerMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(BLADERUNNER_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, BladeRunnerMetaEngineStatic);

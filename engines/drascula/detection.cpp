@@ -331,4 +331,4 @@ const ExtraGuiOptions DrasculaMetaEngineStatic::getExtraGuiOptions(const Common:
 
 } // End of namespace Drascula
 
-REGISTER_PLUGIN_STATIC(DRASCULA_DETECTION, PLUGIN_TYPE_METAENGINE, Drascula::DrasculaMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(DRASCULA_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Drascula::DrasculaMetaEngineStatic);

@@ -478,4 +478,4 @@ ADDetectedGame SciMetaEngineStatic::fallbackDetect(const FileMap &allFiles, cons
 
 } // End of namespace Sci
 
-REGISTER_PLUGIN_STATIC(SCI_DETECTION, PLUGIN_TYPE_METAENGINE, Sci::SciMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(SCI_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Sci::SciMetaEngineStatic);
