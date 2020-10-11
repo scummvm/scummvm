@@ -19,33 +19,48 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#include "agds/agds.h"
+#include "agds/object.h"
 
-#include "engines/advancedDetector.h"
+namespace AGDS {
 
-static const PlainGameDescriptor agdsGames[] = {
-    {"nibiru", "NiBiRu: Age of Secrets"},
-    {"black-mirror", "Black Mirror"},
-    {0, 0}};
-
-#include "agds/detection_tables.h"
-
-class AGDSMetaEngineDetection : public AdvancedMetaEngineDetection {
+class AGDSMetaEngine : public AdvancedMetaEngine {
 public:
-	AGDSMetaEngineDetection() : AdvancedMetaEngineDetection(AGDS::gameDescriptions, sizeof(ADGameDescription), agdsGames) {
-		_maxScanDepth = 3;
-	}
-
-	const char *getEngineId() const override {
-		return "agds";
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	bool hasFeature(MetaEngineFeature f) const override {
+		switch (f) {
+		case kSupportsListSaves:
+		case kSupportsLoadingDuringStartup:
+		case kSupportsDeleteSave:
+		case kSavesSupportMetaInfo:
+		case kSavesSupportThumbnail:
+		case kSimpleSavesNames:
+			return true;
+		default:
+			return AdvancedMetaEngine::hasFeature(f);
+		}
 	}
 
 	const char *getName() const override {
-		return "AGDS Engine";
+		return "agds";
 	}
 
-	const char *getOriginalCopyright() const override {
-		return "AGDS (C) Future Games";
+	int getMaximumSaveSlot() const override {
+		return 99;
 	}
 };
 
-REGISTER_PLUGIN_STATIC(AGDS_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, AGDSMetaEngineDetection);
+bool AGDSMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	if (desc) {
+		*engine = new AGDS::AGDSEngine(syst, desc);
+	}
+	return *engine;
+}
+
+}
+
+#if PLUGIN_ENABLED_DYNAMIC(AGDS)
+	REGISTER_PLUGIN_DYNAMIC(AGDS, PLUGIN_TYPE_ENGINE, AGDS::AGDSMetaEngine);
+#else
+	REGISTER_PLUGIN_STATIC(AGDS, PLUGIN_TYPE_ENGINE, AGDS::AGDSMetaEngine);
+#endif
