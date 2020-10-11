@@ -2441,7 +2441,7 @@ bool AdActor3DX::updatePartEmitter() {
 
 	Math::Vector3d bonePos;
 	getBonePosition3D(_partBone.c_str(), &bonePos, &_partOffset);
-	int x = 0, y = 0;
+	int32 x = 0, y = 0;
 	static_cast<AdGame *>(_gameRef)->_scene->_sceneGeometry->convert3Dto2D(&bonePos, &x, &y);
 
 	_partEmitter->_posX = x - _gameRef->_renderer->_drawOffsetX;
