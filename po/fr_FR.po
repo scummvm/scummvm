@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-11 22:16+0200\n"
-"PO-Revision-Date: 2020-10-10 17:39+0000\n"
+"PO-Revision-Date: 2020-10-12 09:43+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -1002,6 +1002,8 @@ msgstr "V-Sync dans les jeux 3D"
 #: gui/options.cpp:1300
 msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
 msgstr ""
+"Attend la synchronisation verticale pour rafraîchir l'écran lors d'un rendu "
+"3D"
 
 #: gui/options.cpp:1302
 #, fuzzy
@@ -1009,9 +1011,8 @@ msgid "Game 3D Renderer:"
 msgstr "Interface :"
 
 #: gui/options.cpp:1311
-#, fuzzy
 msgid "3D Anti-aliasing:"
-msgstr "Anti-crénelé"
+msgstr "Anti-crénelage 3D :"
 
 #: gui/options.cpp:1315 engines/mohawk/dialogs.cpp:328
 msgid "Disabled"
@@ -1032,9 +1033,8 @@ msgid "Aspect ratio correction"
 msgstr "Correction du rapport d'aspect"
 
 #: gui/options.cpp:1330
-#, fuzzy
 msgid "Correct aspect ratio for games"
-msgstr "Corrige le rapport d'aspect pour les jeux en 320x200"
+msgstr "Corrige le rapport d'aspect pour les jeux"
 
 #: gui/options.cpp:1338
 msgid "Preferred device:"
@@ -4510,13 +4510,15 @@ msgstr "Échec de la suppression du fichier."
 
 #: engines/grim/detection.cpp:45
 msgid "Load user patch (unsupported)"
-msgstr ""
+msgstr "Charger un patch utilisateur (non-supporté)"
 
 #: engines/grim/detection.cpp:46
 msgid ""
 "Load an user patch. Please note that the ScummVM team doesn't provide "
 "support for using such patches."
 msgstr ""
+"Charge un patch utilisateur. Veuillez noter que l'équipe de ScummVM ne "
+"fournit pas de support pour l'utilisation de ces patchs."
 
 #: engines/grim/detection.cpp:54
 msgid "Show FPS"
@@ -4524,7 +4526,7 @@ msgstr "Afficher les FPS"
 
 #: engines/grim/detection.cpp:55
 msgid "Show the current FPS-rate, while you play."
-msgstr ""
+msgstr "Montre le taux de FPS actuel, pendant que vous jouez."
 
 #: engines/grim/grim.cpp:345
 #, c-format
@@ -4533,10 +4535,14 @@ msgid ""
 "Running ScummVM nevertheless may cause game bugs or even crashes.\n"
 "Do you still want to run %s?"
 msgstr ""
+"ScummVM a rencontré des problèmes avec vos fichiers de donnée de jeu\n"
+"Exécuter ScummVM malgré tout peut provoquer des bogues dans le jeu, ou même "
+"des plantages.\n"
+"Voulez-vous quand-même lancer %s ?"
 
 #: engines/grim/grim.cpp:469 engines/grim/grim.cpp:561
 msgid "Run"
-msgstr ""
+msgstr "Courir"
 
 #: engines/grim/grim.cpp:474 engines/scumm/help.cpp:239
 #: engines/scumm/help.cpp:247
@@ -4544,14 +4550,12 @@ msgid "Examine"
 msgstr "Examiner"
 
 #: engines/grim/grim.cpp:479 engines/grim/grim.cpp:576
-#, fuzzy
 msgid "Use/Talk"
-msgstr "Parler"
+msgstr "Utiliser/Parler"
 
 #: engines/grim/grim.cpp:484 engines/grim/grim.cpp:581
-#, fuzzy
 msgid "Pick up/Put away"
-msgstr "Prendre"
+msgstr "Prendre/Déposer"
 
 #: engines/grim/grim.cpp:489 engines/grim/grim.cpp:586
 #: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
@@ -4560,35 +4564,35 @@ msgid "Inventory"
 msgstr "Inventaire"
 
 #: engines/grim/grim.cpp:494 engines/grim/grim.cpp:591
-#, fuzzy
 msgid "Skip dialog lines"
-msgstr "Passer la ligne de dialogue (certains jeux)"
+msgstr "Passer les dialogues"
 
 #: engines/grim/grim.cpp:512 engines/grim/grim.cpp:609
 msgid "Menu"
 msgstr "Menu"
 
 #: engines/grim/grim.cpp:551
+#, fuzzy
 msgid "Cycle Objects Up"
-msgstr ""
+msgstr "Objet suivant"
 
 #: engines/grim/grim.cpp:556
+#, fuzzy
 msgid "Cycle Objects Down"
-msgstr ""
+msgstr "Objet précédent"
 
 #: engines/grim/grim.cpp:566
+#, fuzzy
 msgid "Quick Room Exit"
-msgstr ""
+msgstr "Sortie rapide d'une pièce"
 
 #: engines/grim/grim.cpp:571
-#, fuzzy
 msgid "Examine/Look"
-msgstr "Examiner"
+msgstr "Examiner/Regarder"
 
 #: engines/grim/grim.cpp:1357
-#, fuzzy
 msgid "Error: the game could not be saved."
-msgstr "Désolé, la sauvegarde n'a pas pu être créée"
+msgstr "Erreur : le jeu n'a pas été sauvegardé"
 
 #: engines/grim/md5check.cpp:547
 #, c-format
@@ -4599,6 +4603,11 @@ msgid ""
 "version (i.e. dvd-box or jewelcase):\n"
 "%s"
 msgstr ""
+"Le fichier de données de jeu %s est peut-être corrompu.\n"
+"Si vous êtes sûr que ce n'est pas le cas, veuillez fournir à l'équipe "
+"ScummVM le code suivant, ainsi que le nom du fichier, la langue et une "
+"description de votre version du jeu (par exemple version CD ou DVD) :\n"
+"%s"
 
 #: engines/grim/md5check.cpp:554
 #, c-format
