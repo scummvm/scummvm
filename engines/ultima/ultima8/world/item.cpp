@@ -1398,6 +1398,12 @@ uint32 Item::callUsecodeEvent_unequip() {                       // event B
 	return callUsecodeEvent(0xB); // CONSTANT
 }
 
+uint32 Item::callUsecodeEvent_unequipWithParam(ObjId param) {   // event B
+	DynamicUCStack  arg_stack(2);
+	arg_stack.push2(param);
+	return callUsecodeEvent(0xB, arg_stack.access(), 2);
+}
+
 uint32 Item::callUsecodeEvent_combine() {                       // event C
 	return callUsecodeEvent(0xC);   // CONSTANT
 }
@@ -2725,25 +2731,32 @@ uint32 Item::I_use(const uint8 *args, unsigned int /*argsize*/) {
 uint32 Item::I_gotHit(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_UINT16(hitter);
-	ARG_SINT16(unk);
+	ARG_SINT16(force);
 	if (!item) return 0;
 
-	return item->callUsecodeEvent_gotHit(hitter, unk);
+	return item->callUsecodeEvent_gotHit(hitter, force);
 }
 
-uint32 Item::I_equip(const uint8 *args, unsigned int /*argsize*/) {
-	ARG_ITEM_FROM_PTR(item);
-	ARG_UINT16(unk);
-	if (!item) return 0;
-
-	return item->callUsecodeEvent_equipWithParam(unk);
-}
-
-uint32 Item::I_unequip(const uint8 *args, unsigned int /*argsize*/) {
+uint32 Item::I_equip(const uint8 *args, unsigned int argsize) {
 	ARG_ITEM_FROM_PTR(item);
 	if (!item) return 0;
 
-	return item->callUsecodeEvent_unequip();
+	// Note: The U8 version (no param) is never actually called in the usecode.
+	assert(argsize > 4);
+
+	ARG_UINT16(val);
+	return item->callUsecodeEvent_equipWithParam(val);
+}
+
+uint32 Item::I_unequip(const uint8 *args, unsigned int argsize) {
+	ARG_ITEM_FROM_PTR(item);
+	if (!item) return 0;
+
+	// Note: The U8 version (no param) is never actually called in the usecode.
+	assert(argsize > 4);
+
+	ARG_UINT16(val)
+	return item->callUsecodeEvent_unequipWithParam(val);
 }
 
 uint32 Item::I_enterFastArea(const uint8 *args, unsigned int /*argsize*/) {

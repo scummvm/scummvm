@@ -102,7 +102,6 @@ void TypeFlags::load(Common::SeekableReadStream *rs) {
 			if (data[5] & 0x80) si._flags |= ShapeInfo::SI_UNKNOWN47;
 
 			si._weight = data[6];
-
 			si._volume = data[7];
 
 		} else if (GAME_IS_CRUSADER) {
@@ -129,15 +128,12 @@ void TypeFlags::load(Common::SeekableReadStream *rs) {
 
 			uint32 unk2data = (data[2] >> 1) & 0xF;
 
-			// (copied from old/viewer/ShapeManager.h)
 			si._x = ((data[3] << 3) | (data[2] >> 5)) & 0x1F;
 			si._y = (data[3] >> 2) & 0x1F;
 			si._z = ((data[4] << 1) | (data[3] >> 7)) & 0x1F;
 
-			si._unknown = (unk2data << 24) + (((data[4] & 0xF0) << 16) | (data[5] << 8) | data[8]);
-
-			// This seems to be how it's used..
-			si._weight = data[7];
+			// Left over bits we're not sure what to do with yet..
+			si._unknown = (unk2data << 16) | (((data[4] & 0xF0) << 8) | data[5]);
 
 			if (data[6] & 0x01) si._flags |= ShapeInfo::SI_EDITOR;
 			if (data[6] & 0x02) si._flags |= ShapeInfo::SI_SELECTABLE;
@@ -148,6 +144,9 @@ void TypeFlags::load(Common::SeekableReadStream *rs) {
 			if (data[6] & 0x40) si._flags |= ShapeInfo::SI_CRUSUNK66;
 			if (data[6] & 0x80) si._flags |= ShapeInfo::SI_CRUSUNK67;
 
+			si._weight = data[7];
+			si._volume = data[8];
+
 			// FIXME: this is not exactly right, but it is close and at
 			// least it animates the main items that need
 			// continuously animating
@@ -157,7 +156,8 @@ void TypeFlags::load(Common::SeekableReadStream *rs) {
 				// reactor) has this type what should it do?
 				si._animType = 1;
 			}
-
+		} else {
+			error("unknown game type in type flags");
 		}
 
 		si._weaponInfo = nullptr;
