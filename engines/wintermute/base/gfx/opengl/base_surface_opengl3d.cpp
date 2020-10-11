@@ -243,11 +243,7 @@ bool BaseSurfaceOpenGL3D::putSurface(const Graphics::Surface &surface, bool hasA
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _texWidth, _texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-	#ifdef __MORPHOS__	
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _width, _height, GL_RGBA, GL_UNSIGNED_BYTE, const_cast<void *>(surface.getPixels()));
-	#else
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _width, _height, GL_RGBA, GL_UNSIGNED_BYTE, surface.getPixels());
-	#endif
 	glBindTexture(GL_TEXTURE_2D, 0);
 	_valid = true;
 
