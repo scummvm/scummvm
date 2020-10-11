@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-11 22:16+0200\n"
-"PO-Revision-Date: 2020-10-11 14:40+0000\n"
+"PO-Revision-Date: 2020-10-12 09:43+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -5285,11 +5285,10 @@ msgid "Widescreen mod"
 msgstr "Mod de pantalla panorámica"
 
 #: engines/myst3/detection.cpp:183
-#, fuzzy
 msgid "Enable widescreen rendering in fullscreen mode."
 msgstr ""
-"Permite renderizar la imagen (a pantalla completa) con una relación de "
-"aspecto panorámica."
+"Permite renderizar la imagen a pantalla completa con una relación de aspecto "
+"panorámica."
 
 #: engines/myst3/myst3.cpp:361
 msgid ""
@@ -7263,7 +7262,7 @@ msgstr "Mayúsculas"
 
 #: engines/wintermute/keymapper_tables.h:1214
 msgid "Use Chapayev"
-msgstr ""
+msgstr "Usar Chapáyev"
 
 #: engines/wintermute/keymapper_tables.h:1234
 #: engines/wintermute/keymapper_tables.h:1639
