@@ -43,8 +43,8 @@ public:
 	Debug &operator<<(int number);
 	Debug &operator<<(unsigned int number);
 
-	// DC has float and double equal
-#ifndef __DC__
+	// DC and DS has float and double equal
+#if !defined(__DC__) && !defined(__DS__)
 	Debug &operator<<(double number);
 #endif
 	Debug &operator<<(float number);
