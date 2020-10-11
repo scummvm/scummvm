@@ -1257,7 +1257,7 @@ void AdActor3DX::talk(const char *text, const char *sound, uint32 duration, cons
 }
 
 //////////////////////////////////////////////////////////////////////////
-int AdActor3DX::getHeight() {
+int32 AdActor3DX::getHeight() {
 	if (!_modelX) {
 		return 0;
 	} else {
@@ -2262,13 +2262,13 @@ bool AdActor3DX::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferUint32(TMEMBER(_defaultStopTransTime));
 
 	if (persistMgr->getIsSaving()) {
-		int numItems = _transitionTimes.size();
+		int32 numItems = _transitionTimes.size();
 		persistMgr->transferSint32(TMEMBER(numItems));
 		for (uint32 i = 0; i < _transitionTimes.size(); i++) {
 			_transitionTimes[i]->persist(persistMgr);
 		}
 	} else {
-		int numItems = _transitionTimes.size();
+		int32 numItems = _transitionTimes.size();
 		persistMgr->transferSint32(TMEMBER(numItems));
 		for (int i = 0; i < numItems; i++) {
 			BaseAnimationTransitionTime *trans = new BaseAnimationTransitionTime();

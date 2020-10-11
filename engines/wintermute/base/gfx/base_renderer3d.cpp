@@ -45,7 +45,7 @@ bool BaseRenderer3D::setDefaultAmbientLightColor() {
 	return true;
 }
 
-void BaseRenderer3D::project(const Math::Matrix4 &worldMatrix, const Math::Vector3d &point, int &x, int &y) {
+void BaseRenderer3D::project(const Math::Matrix4 &worldMatrix, const Math::Vector3d &point, int32 &x, int32 &y) {
 	Math::Matrix4 tmp = worldMatrix;
 	tmp.transpose();
 	Math::Vector3d windowCoords;

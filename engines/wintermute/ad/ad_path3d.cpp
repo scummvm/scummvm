@@ -108,7 +108,7 @@ bool AdPath3D::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_ready));
 
 	if (persistMgr->getIsSaving()) {
-		int j = _points.size();
+		int32 j = _points.size();
 		persistMgr->transferSint32("ArraySize", &j);
 		for (int i = 0; i < j; i++) {
 			persistMgr->transferFloat("x", &_points[i]->x());
@@ -116,7 +116,7 @@ bool AdPath3D::persist(BasePersistenceManager *persistMgr) {
 			persistMgr->transferFloat("z", &_points[i]->z());
 		}
 	} else {
-		int j = 0;
+		int32 j = 0;
 		persistMgr->transferSint32("ArraySize", &j);
 		for (int i = 0; i < j; i++) {
 			float x, y, z;

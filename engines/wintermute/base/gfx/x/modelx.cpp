@@ -559,8 +559,8 @@ void ModelX::updateBoundingRect() {
 	float z1 = _BBoxStart.z();
 	float z2 = _BBoxEnd.z();
 
-	int screenX = 0;
-	int screenY = 0;
+	int32 screenX = 0;
+	int32 screenY = 0;
 
 	_gameRef->_renderer3D->project(_lastWorldMat, Math::Vector3d(x1, y1, z1), screenX, screenY);
 	updateRect(&_boundingRect, screenX, screenY);
@@ -855,7 +855,7 @@ bool ModelX::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER(_parentModel));
 
 	// animation properties
-	int numAnims;
+	int32 numAnims;
 	if (persistMgr->getIsSaving()) {
 		numAnims = _animationSets.size();
 	}
@@ -893,7 +893,7 @@ bool ModelX::persist(BasePersistenceManager *persistMgr) {
 	}
 
 	// persist material sprites
-	int numMatSprites;
+	int32 numMatSprites;
 	if (persistMgr->getIsSaving()) {
 		numMatSprites = _matSprites.size();
 	}

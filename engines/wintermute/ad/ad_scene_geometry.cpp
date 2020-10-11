@@ -1167,7 +1167,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 	int i;
 
 	//////////////////////////////////////////////////////////////////////////
-	int numLights = _lights.size();
+	int32 numLights = _lights.size();
 	persistMgr->transferSint32(TMEMBER(numLights));
 	for (i = 0; i < numLights; i++) {
 		if (persistMgr->getIsSaving()) {
@@ -1200,7 +1200,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 	createLights();
 
 	//////////////////////////////////////////////////////////////////////////
-	int numBlocks = _blocks.size();
+	int32 numBlocks = _blocks.size();
 	persistMgr->transferSint32(TMEMBER(numBlocks));
 	for (i = 0; i < numBlocks; i++) {
 		if (persistMgr->getIsSaving()) {
@@ -1230,7 +1230,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	int numPlanes = _planes.size();
+	int32 numPlanes = _planes.size();
 	persistMgr->transferSint32(TMEMBER(numPlanes));
 	for (i = 0; i < numPlanes; i++) {
 		if (persistMgr->getIsSaving()) {
@@ -1260,7 +1260,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	int numGenerics = _generics.size();
+	int32 numGenerics = _generics.size();
 	persistMgr->transferSint32(TMEMBER(numGenerics));
 	for (i = 0; i < numGenerics; i++) {
 		if (persistMgr->getIsSaving()) {
@@ -1297,7 +1297,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdSceneGeometry::convert3Dto2D(Math::Vector3d *pos, int *x, int *y) {
+bool AdSceneGeometry::convert3Dto2D(Math::Vector3d *pos, int32 *x, int32 *y) {
 	Math::Matrix4 worldMat;
 	worldMat.setToIdentity();
 

@@ -49,7 +49,7 @@ public:
 	virtual ~AdPath3D();
 	bool _ready;
 	BaseArray<Math::Vector3d *> _points;
-	int _currIndex;
+	int32 _currIndex;
 
 	DECLARE_PERSISTENT(AdPath3D, BaseClass)
 };

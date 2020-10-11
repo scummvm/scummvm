@@ -51,9 +51,9 @@ public:
 	bool displayShadowVolume();
 	bool restoreDeviceObjects() override;
 	bool invalidateDeviceObjects() override;
-	int _stateAnimChannel;
+	int32 _stateAnimChannel;
 	void talk(const char *text, const char *sound = nullptr, uint32 duration = 0, const char *stances = nullptr, TTextAlign align = TAL_CENTER) override;
-	int getHeight() override;
+	int32 getHeight() override;
 	bool playAnim3DX(const char *name, bool setState);
 	bool playAnim3DX(int channel, const char *name, bool setState);
 
@@ -72,7 +72,7 @@ public:
 	Common::String _turnLeftAnimName;
 	Common::String _turnRightAnimName;
 
-	int _talkAnimChannel;
+	int32 _talkAnimChannel;
 
 	TDirectWalkMode _directWalkMode;
 	TDirectTurnMode _directTurnMode;
@@ -81,7 +81,7 @@ public:
 	float _directWalkVelocity;
 	float _directTurnVelocity;
 
-	int _goToTolerance;
+	int32 _goToTolerance;
 
 	DECLARE_PERSISTENT(AdActor3DX, AdObject3D)
 	bool _turningLeft;

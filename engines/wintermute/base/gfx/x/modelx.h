@@ -197,8 +197,8 @@ private:
 	Rect32 _drawingViewport;
 	Math::Matrix4 _lastViewMat;
 	Math::Matrix4 _lastProjMat;
-	int _lastOffsetX;
-	int _lastOffsetY;
+	int32 _lastOffsetX;
+	int32 _lastOffsetY;
 
 	Math::Vector3d _BBoxStart;
 	Math::Vector3d _BBoxEnd;
