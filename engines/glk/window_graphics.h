@@ -109,6 +109,11 @@ public:
 	void fillRect(uint color, const Rect &box) override;
 
 	/**
+	 * Clear the window
+	 */
+	virtual void clear() override;
+
+	/**
 	 * Draw a rectangle in the given area
 	 */
 	void frameRect(uint color, const Rect &box);
