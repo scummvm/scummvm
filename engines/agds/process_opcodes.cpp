@@ -1288,13 +1288,19 @@ void Process::leaveCharacterEx() {
 void Process::setCharacter() {
 	Common::String object = popString();
 	Common::String region = popString();
-	debug("setCharacter %s %s", region.c_str(), object.c_str());
+	debug("setCharacter stub %s %s", region.c_str(), object.c_str());
+}
+
+void Process::setCharacterDirection() {
+	int dir = pop();
+	Common::String name = popString();
+	debug("setCharacterDirection stub %s %d", name.c_str(), dir);
 }
 
 void Process::pointCharacter() {
 	Common::String arg2 = popString();
 	Common::String arg1 = popString();
-	debug("pointCharacter %s %s", arg1.c_str(), arg2.c_str());
+	debug("pointCharacter stub %s %s", arg1.c_str(), arg2.c_str());
 	suspend();
 }
 

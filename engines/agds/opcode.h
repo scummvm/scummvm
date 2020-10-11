@@ -113,7 +113,7 @@ enum Opcode {
 	kMoveCharacterUserMove			= 93,
 	kLeaveCharacter					= 94,
 	kSetCharacter					= 95,
-	kStub96							= 96,
+	kSetCharacterDirection			= 96,
 	kPointCharacter					= 97,
 	kDisableUser					= 98,
 	kEnableUser						= 99,
@@ -328,6 +328,7 @@ enum Opcode {
 	OP(kMoveCharacterUserMove, moveCharacterUserMove) \
 	OP(kLeaveCharacter, leaveCharacter) \
 	OP(kSetCharacter, setCharacter) \
+	OP(kSetCharacterDirection, setCharacterDirection) \
 	OP(kPointCharacter, pointCharacter) \
 	OP(kDisableUser, disableUser) \
 	OP(kEnableUser, enableUser) \
