@@ -310,6 +310,14 @@ uint Conf::parseColor(const byte *rgb) {
 	return _screenFormat.RGBToColor(rgb[0], rgb[1], rgb[2]);
 }
 
+uint Conf::parseColor(const uint32 rgb) {
+	byte r = (rgb >> 16) & 0xff,
+		g = (rgb >> 8) & 0xff,
+		b = rgb & 0xff;
+
+	return _screenFormat.RGBToColor(r, g, b);
+}
+
 void Conf::syncAsString(const Common::String &name, Common::String &val) {
 	if (_isLoading && exists(name))
 		val = ConfMan.get(name);

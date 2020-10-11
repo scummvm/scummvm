@@ -68,6 +68,11 @@ public:
 	uint parseColor(const byte *rgb);
 
 	/**
+	 * Convert an RGB uint32 to a color
+	 */
+	uint parseColor(const uint32 rgb);
+
+	/**
 	 * Encode a color to an 6-character RGB hex string
 	 */
 	Common::String encodeColor(uint color);
