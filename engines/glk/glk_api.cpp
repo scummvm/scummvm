@@ -1015,7 +1015,8 @@ void GlkAPI::glk_window_fill_rect(winid_t win, uint color, int left, int top,
 	if (!win) {
 		warning("window_fill_rect: invalid ref");
 	} else {
-		win->eraseRect(color, Rect(left, top, left + width, top + height));
+		uint c = _conf->parseColor(color);
+		win->fillRect(c, Rect(left, top, left + width, top + height));
 	}
 }
 
@@ -1023,7 +1024,8 @@ void GlkAPI::glk_window_set_background_color(winid_t win, uint color) {
 	if (!win) {
 		warning("window_set_background_color: invalid ref");
 	} else {
-		win->setBackgroundColor(color);
+		uint c = _conf->parseColor(color);
+		win->setBackgroundColor(c);
 	}
 }
 

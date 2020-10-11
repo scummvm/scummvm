@@ -177,6 +177,10 @@ void GraphicsWindow::fillRect(uint color, const Rect &box) {
 	touch();
 }
 
+void GraphicsWindow::clear() {
+	fillRect(_bgnd, Rect(0, 0, _bbox.width(), _bbox.width()));
+}
+
 void GraphicsWindow::frameRect(uint color, const Rect &box) {
 	_surface->frameRect(box, color);
 	touch();
