@@ -1,15 +1,19 @@
 MODULE := engines/agds
 
+# Detection objects
+DETECT_OBJS += \
+	$(MODULE)/detection.o
+
 MODULE_OBJS := \
 	agds.o \
 	animation.o \
 	character.o \
 	console.o \
 	database.o \
-	detection.o \
 	dialog.o \
 	font.o \
 	inventory.o \
+	metaengine.o \
 	mjpgPlayer.o \
 	mouseMap.o \
 	object.o \
