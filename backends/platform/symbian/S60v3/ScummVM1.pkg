@@ -1,0 +1,99 @@
+; ScummVM - Graphic Adventure Engine
+; Copyright (C) 2020 Stryzhniou Fiodar
+;
+; ScummVM is the legal property of its developers, whose names
+; are too numerous to list here. Please refer to the COPYRIGHT
+; file distributed with this source distribution.
+;
+; This program is free software; you can redistribute it and/or
+; modify it under the terms of the GNU General Public License
+; as published by the Free Software Foundation; either version 2
+; of the License, or (at your option) any later version.
+
+; This program is distributed in the hope that it will be useful,
+; but WITHOUT ANY WARRANTY; without even the implied warranty of
+; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+; GNU General Public License for more details.
+
+; You should have received a copy of the GNU General Public License
+; along with this program; if not, write to the Free Software
+; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+;
+;
+
+;;;
+;;; ScummVM .PKG file for .SIS generation
+;;;
+
+;Language - standard language definitions
+&EN
+
+; List of localised vendor names - one per language. At least one must be provided (English [EN]).
+; List must correspond to list of languages specified elsewhere in the .pkg
+%{"ScummVM"}
+; The non-localised, globally unique vendor name (mandatory)
+:"ScummVM"
+
+; UID is the app's UID
+#{"ScummVM S60v3"},(0xA0000657),2,02,0
+;#{"ScummVM S60v3"},(0xAA000657),2,02,0
+
+;Supports Series 60 v 3.0
+[0x101F7961], 0, 0, 0, {"Series60ProductID"}
+;Supports Series 60 v 5.0
+[0x1028315F], 0, 0, 0, {"Series60ProductID"}
+
+; Launcher, Application, AIF & Resource file
+"$(EPOCROOT)epoc32\release\gcce\urel\ScummVM1.exe" -		"!:\sys\bin\ScummVM1.exe"
+"$(EPOCROOT)epoc32\data\z\resource\apps\ScummVM1.rsc" -	"!:\resource\apps\ScummVM1.rsc"
+"$(EPOCROOT)epoc32\Data\Z\resource\apps\ScummVM1_loc.rsc"-	"!:\resource\apps\ScummVM1_loc.rsc"
+"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\ScummVM1_reg.rsc" -
+							"!:\private\10003a3f\import\apps\ScummVM1_reg.rsc"
+
+"$(EPOCROOT)epoc32\data\Z\resource\APPS\ScummVM.mif" -	"!:\resource\apps\ScummVM.mif"
+
+; Scummvm Documentation
+"..\..\..\..\COPYRIGHT" - "!:\data\scummvm\COPYRIGHT", FT, TC
+"..\..\..\..\COPYING"   - "!:\data\scummvm\COPYING", FT, TC
+"..\..\..\..\COPYING.BSD"  - "!:\data\scummvm\COPYING.BSD"
+"..\..\..\..\COPYING.LGPL" - "!:\data\scummvm\COPYING.LGPL"
+"..\README"  - "!:\data\scummvm\SYMBIAN_README", FT, TC
+"..\BELARUS" - "!:\data\scummvm\BELARUS", FT, TC
+"..\HUMBLE"  - "!:\data\scummvm\HUMBLE", FT, TC
+"..\..\..\..\AUTHORS"   - "!:\data\scummvm\AUTHORS"
+"..\..\..\..\README.md" - "!:\data\scummvm\README.md"
+"..\..\..\..\NEWS.md"   - "!:\data\scummvm\NEWS.md"
+
+; Scummvm help
+"..\help\ScummVM.hlp" - "!:\resource\help\ScummVM.hlp"
+
+;dictionary used by several games
+"..\..\..\..\dists\pred.dic" - "c:\data\scummvm\pred.dic"
+;set of free TTF fonts used by Glk, ZVision, Wintermute engines and GUI
+"..\..\..\..\dists\engine-data\fonts.dat" - "c:\data\scummvm\fonts.dat"
+;used by Director, MacVenture and WAGE engines.
+"..\..\..\..\dists\engine-data\macgui.dat" - "c:\data\scummvm\macgui.dat"
+;localization
+"..\..\..\..\gui\themes\translations.dat" - "c:\data\scummvm\translations.dat"
+
+;Themes
+"..\..\..\..\gui\themes\scummclassic.zip" - "c:\data\scummvm\scummclassic.zip"
+"..\..\..\..\gui\themes\scummmodern.zip" - "c:\data\scummvm\scummmodern.zip"
+"..\..\..\..\gui\themes\scummremastered.zip" - "c:\data\scummvm\scummremastered.zip"
+
+;Screen keyboard
+"..\..\..\vkeybd\packs\vkeybd_default.zip"-"c:\data\scummvm\vkeybd_default.zip"
+"..\..\..\vkeybd\packs\vkeybd_small.zip"-"c:\data\scummvm\vkeybd_small.zip"
+
+; Config/log files: 'empty' will automagically be removed on uninstall
+""- "c:\data\scummvm\scummvm.ini",FILENULL
+""- "c:\data\scummvm\scummvm.stdout.txt",FILENULL
+""- "c:\data\scummvm\scummvm.stderr.txt",FILENULL
+""- "c:\data\scummvm\sdl.ini",FILENULL
+
+;IF NOT exists("!:\data\scummvm\")
+;"..\..\..\..\"-"!:\data\scummvm\"
+;endif
+
+;IF NOT exists()
+;endif

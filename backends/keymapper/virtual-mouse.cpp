@@ -188,7 +188,7 @@ void VirtualMouse::handleAxisMotion(int16 axisPositionX, int16 axisPositionY) {
 	float analogY  = (float)_inputAxisPositionY;
 	float deadZone = (float)ConfMan.getInt("joystick_deadzone") * 1000.0f;
 
-	float magnitude = sqrtf(analogX * analogX + analogY * analogY);
+	float magnitude = sqrt(analogX * analogX + analogY * analogY);
 
 	if (magnitude >= deadZone) {
 		float scalingFactor = 1.0f / magnitude * (magnitude - deadZone) / (JOYAXIS_MAX - deadZone);
