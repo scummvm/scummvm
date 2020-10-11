@@ -23,7 +23,8 @@
 #ifndef PETKA_FILE_MGR_H
 #define PETKA_FILE_MGR_H
 
-#include "common/array.h"
+#include "common/list.h"
+#include "common/ptr.h"
 
 namespace Common {
 	class File;
@@ -34,8 +35,6 @@ namespace Petka {
 
 class FileMgr {
 public:
-	~FileMgr();
-
 	bool openStore(const Common::String &name);
 	void closeStore(const Common::String &name);
 	void closeAll();
@@ -43,14 +42,14 @@ public:
 	Common::SeekableReadStream *getFileStream(const Common::String &name);
 
 private:
-	struct Description {
+	struct Resource {
 		Common::String name;
 		uint32 offset;
 		uint32 size;
 	};
 	struct Store {
-		Common::File *file;
-		Common::Array<Description> descriptions;
+		Common::SharedPtr<Common::File> file;
+		Common::Array<Resource> descriptions;
 	};
 	Common::Array<Store> _stores;
 };

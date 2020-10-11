@@ -100,7 +100,7 @@ Debug &Debug::operator<<(unsigned int num) {
 	return maybeSpace();
 }
 
-#ifndef __DC__
+#if !defined(__DC__) && !defined(__DS__)
 Debug &Debug::operator<<(double num) {
 	_stream->msg += String::format("%g", num);
 	return maybeSpace();

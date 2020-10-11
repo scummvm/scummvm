@@ -27,6 +27,8 @@
 
 #include "graphics/surface.h"
 
+#ifdef USE_OPENGL_GAME
+
 namespace OpenGL {
 
 class TextureGL {
@@ -53,5 +55,7 @@ protected:
 };
 
 } // End of namespace OpenGL
+
+#endif
 
 #endif

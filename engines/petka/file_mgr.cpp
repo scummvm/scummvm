@@ -29,13 +29,8 @@
 
 namespace Petka {
 
-FileMgr::~FileMgr() {
-	debug("FileMgr::dtor");
-	closeAll();
-}
-
 bool FileMgr::openStore(const Common::String &name) {
-	Common::ScopedPtr<Common::File> file(new Common::File());
+	Common::SharedPtr<Common::File> file(new Common::File());
 	if (name.empty() || !file->open(name) || file->readUint32BE() != MKTAG('S', 't', 'O', 'R')) {
 		return false;
 	}
@@ -45,45 +40,45 @@ bool FileMgr::openStore(const Common::String &name) {
 		return false;
 	}
 
-	_stores.push_back(Store());
-	Store &store = _stores.back();
-	store.descriptions.resize(file->readUint32LE());
+	const uint32 tableSize = file->size() - file->pos();
 
-	for (uint i = 0; i < store.descriptions.size(); ++i) {
-		file->skip(4);
-		store.descriptions[i].offset = file->readUint32LE();
-		store.descriptions[i].size = file->readUint32LE();
+	Common::ScopedPtr<Common::SeekableReadStream> stream(file->readStream(tableSize));
+	if (stream->size() != (int)tableSize)
+		return false;
+
+	_stores.push_back(Store());
+
+	Store &store = _stores.back();
+	store.file = file;
+	store.descriptions.resize(stream->readUint32LE());
+
+	for (auto &description : store.descriptions) {
+		stream->skip(4);
+		description.offset = stream->readUint32LE();
+		description.size = stream->readUint32LE();
 	}
 
-	for (uint i = 0; i < store.descriptions.size(); ++i) {
+	for (auto &description : store.descriptions) {
 		char ch;
-		while ((ch = file->readByte()) != 0) {
-			store.descriptions[i].name += ch;
+		while ((ch = stream->readByte()) != '\0') {
+			description.name += ch;
 		}
 	}
-	store.file = file.release();
 
-	debug("FileMgr: opened store %s (files count: %d)", name.c_str(), store.descriptions.size());
-
+	debugC(kPetkaDebugResources, "FileMgr: opened store %s (files count: %d)", name.c_str(), store.descriptions.size());
 	return true;
 }
 
 void FileMgr::closeStore(const Common::String &name) {
-	for (uint i = 0; i < _stores.size(); ++i) {
-		if (_stores[i].file->getName() == name) {
-			delete _stores[i].file;
-			_stores.remove_at(i);
+	for (auto it = _stores.begin(); it != _stores.end(); ++it) {
+		if (it->file->getName() == name) {
+			_stores.erase(it);
 			return;
 		}
 	}
-
 }
 
 void FileMgr::closeAll() {
-	debug("FileMgr::closeAll");
-	for (uint i = 0; i < _stores.size(); ++i) {
-		delete _stores[i].file;
-	}
 	_stores.clear();
 }
 
@@ -102,15 +97,14 @@ Common::SeekableReadStream *FileMgr::getFileStream(const Common::String &name) {
 		debugC(kPetkaDebugResources, "FileMgr: %s is opened from game directory", name.c_str());
 		return file.release();
 	}
-	for (uint i = 0; i < _stores.size(); ++i) {
-		for (uint j = 0; j < _stores[i].descriptions.size(); ++j) {
-			const Description &desc = _stores[i].descriptions[j];
-			if (desc.name.compareToIgnoreCase(name) == 0) {
-				return new Common::SafeSeekableSubReadStream(_stores[i].file, desc.offset, desc.offset + desc.size);
-			}
 
+	for (auto &store : _stores) {
+		for (auto &resource : store.descriptions) {
+			if (resource.name.compareToIgnoreCase(name) == 0)
+				return new Common::SafeSeekableSubReadStream(store.file.get(), resource.offset, resource.offset + resource.size);
 		}
 	}
+
 	debugC(kPetkaDebugResources, "FileMgr: %s not found", name.c_str());
 	return nullptr;
 }

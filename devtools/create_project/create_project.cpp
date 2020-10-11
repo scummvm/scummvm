@@ -304,6 +304,19 @@ int main(int argc, char *argv[]) {
 			j->enable = false;
 	}
 
+	// HACK: Vorbis and Tremor can not be enabled simultaneously
+	if (getFeatureBuildState("tremor", setup.features)) {
+		setFeatureBuildState("vorbis", setup.features, false);
+	}
+
+	// HACK: These features depend on OpenGL
+	if (!getFeatureBuildState("opengl", setup.features)) {
+		setFeatureBuildState("opengl_game", setup.features, false);
+		setFeatureBuildState("opengl_shaders", setup.features, false);
+		setFeatureBuildState("opengles2", setup.features, false);
+		setFeatureBuildState("glew", setup.features, false);
+	}
+
 	// Disable engines for which we are missing dependencies
 	for (EngineDescList::const_iterator i = setup.engines.begin(); i != setup.engines.end(); ++i) {
 		if (i->enable) {
@@ -316,11 +329,6 @@ int main(int argc, char *argv[]) {
 			}
 			isEngineEnabled[i->name] = true;
 		}
-	}
-
-	// HACK: Vorbis and Tremor can not be enabled simultaneously
-	if (getFeatureBuildState("tremor", setup.features)) {
-		setFeatureBuildState("vorbis", setup.features, false);
 	}
 
 	// Print status
@@ -1055,7 +1063,7 @@ const Feature s_features[] = {
 	{           "opengl",                    "USE_OPENGL", false, true,  "OpenGL support" },
 	{      "opengl_game",               "USE_OPENGL_GAME", false, true,  "OpenGL support in 3d games" },
 	{   "opengl_shaders",            "USE_OPENGL_SHADERS", false, true,  "OpenGL support (shaders) in 3d games" },
-	{         "opengles",                      "USE_GLES", false, true,  "forced OpenGL ES mode in 3d games" },
+	{        "opengles2",                     "USE_GLES2", false, false, "forced OpenGL ES2 mode in 3d games" },
 	{          "taskbar",                   "USE_TASKBAR", false, true,  "Taskbar integration support" },
 	{            "cloud",                     "USE_CLOUD", false, true,  "Cloud integration support" },
 	{      "translation",               "USE_TRANSLATION", false, true,  "Translation support" },
@@ -1068,7 +1076,7 @@ const Feature s_features[] = {
 	{     "text-console", "USE_TEXT_CONSOLE_FOR_DEBUGGER", false, false, "Text console debugger" }, // This feature is always applied in xcode projects
 	{              "tts",                       "USE_TTS", false, true,  "Text to speech support"},
 	{"builtin-resources",             "BUILTIN_RESOURCES", false, true,  "include resources (e.g. engine data, fonts) into the binary"},
-	{"detection-static", "USE_DETECTION_FEATURES_STATIC",  false, true,  "Static linking of detection objects for engines."},
+	{ "detection-static", "USE_DETECTION_FEATURES_STATIC", false, true,  "Static linking of detection objects for engines."},
 	{            "cxx11",                     "USE_CXX11", false, true,  "Compile with c++11 support"}
 };
 

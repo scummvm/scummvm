@@ -498,7 +498,7 @@ int Walk::sub_423600(Point p) {
 
 		for (int k = 2; k < _bkg3_1[j]; ++k) {
 			for (int l = 0; l < _bkg3_1[j]; ++l) {
-				if (sub_423570(v4[k - 1], _bkg3_2[j][l]) || v4[k - 2] == _bkg3_2[j][l]) {
+				if (sub_423570(v4[k - 1], _bkg3_2[j][l]) && v4[k - 2] != _bkg3_2[j][l]) {
 					v4[k] = _bkg3_2[j][l];
 					break;
 				}
