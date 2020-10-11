@@ -577,19 +577,17 @@ void OSystem_iOS7::updateMouseTexture() {
 	} else {
 		if (crossBlit((byte *)mouseTexture.getPixels(), (const byte *)_mouseBuffer.getPixels(), mouseTexture.pitch,
 			          _mouseBuffer.pitch, _mouseBuffer.w, _mouseBuffer.h, mouseTexture.format, _mouseBuffer.format)) {
-			if (!_mouseBuffer.format.aBits()) {
-				// Apply color keying since the original cursor had no alpha channel.
-				const uint16 *src = (const uint16 *)_mouseBuffer.getPixels();
-				uint8 *dstRaw = (uint8 *)mouseTexture.getPixels();
+			// Apply color keying since the original cursor had no alpha channel.
+			const uint16 *src = (const uint16 *)_mouseBuffer.getPixels();
+			uint8 *dstRaw = (uint8 *)mouseTexture.getPixels();
 
-				for (uint y = 0; y < _mouseBuffer.h; ++y, dstRaw += mouseTexture.pitch) {
-					uint16 *dst = (uint16 *)dstRaw;
-					for (uint x = 0; x < _mouseBuffer.w; ++x, ++dst) {
-						if (*src++ == _mouseKeyColor)
-							*dst &= ~1;
-						else
-							*dst |= 1;
-					}
+			for (uint y = 0; y < _mouseBuffer.h; ++y, dstRaw += mouseTexture.pitch) {
+				uint16 *dst = (uint16 *)dstRaw;
+				for (uint x = 0; x < _mouseBuffer.w; ++x, ++dst) {
+					if (*src++ == _mouseKeyColor)
+						*dst &= ~1;
+					else
+						*dst |= 1;
 				}
 			}
 		} else {
