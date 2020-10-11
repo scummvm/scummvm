@@ -5,9 +5,20 @@ Audio
 
 ScummVM has several ways to adjust the audio playback of games, and these settings can be found in the Audio, MIDI, MT-32 and Volume tabs of both the :doc:`global <../using_scummvm/global_settings>` and :doc:`game-specific <../using_scummvm/game_settings>` settings. They can also be changed directly in the :doc:`configuration file <../advanced_options/configuration_file>`, or passed as an option on the :doc:`command line <../advanced_options/command_line>`.  
 
-For a look at the evolution of PC audio, see `this video on YouTube <https://www.youtube.com/watch?v=a324ykKV-7Y>`_, or `this excellent post <http://www.oldskool.org/sound/pc>`_. Many of these devices can be emulated by ScummVM. 
+For a look at the evolution of PC audio, see `this video on YouTube <https://www.youtube.com/watch?v=a324ykKV-7Y>`_, or `this excellent post <http://www.oldskool.org/sound/pc>`_. 
 
-See the game manual to find out what sound hardware is supported by your game. 
+Many of these devices can be emulated by ScummVM:
+
+- PC Speaker: emulates the built-in PC speaker. This is mostly supported by older games, and was the only option before sound cards became widely used.  
+- IBM PCjr: emulates the sound of the 1984 IBM PCjr computer, which, enhanced with a Texas Instruments chip, provided three-voice sound and a white noise generator. 
+- Creative Music System `(C/MS) <https://en.wikipedia.org/wiki/Sound_Blaster#Creative_Music_System>`_: emulates the first sound card developed by Creative Technology (later Creative Labs), the precursor to the SoundBlaster line of sound cards. The C/MS provided 12 channels of square-wave stereo sound.    
+C64 Audio: emulates the sound chip `(Sound Interface Device) <https://theconversation.com/the-sound-of-sid-35-years-of-chiptunes-influence-on-electronic-music-74935>`_ in the Commodore 64 computer. The SID wass a three-voice synthesizer module, with a fourth voice for sampled drums or speech. 
+- Amiga Audio: emulates the Amiga audio chip, `Paula <https://en.wikipedia.org/wiki/Original_Chip_Set#Audio>`_, which had four 8-bit PCM sound channels. 
+- FM-Towns Audio: emulates the audio of the `FM Towns PC <https://en.wikipedia.org/wiki/FM_Towns#Sound`_>. Games on FM Towns computers often used audio CD standard tracks. The soundchips were capable of eight PCM voices and six FM channels.  
+- PC-98 Audio: emulates the audio of the NEC PC-9801 computers.  
+- SegaCD Audio: emulates the audio of the Sega CD add-on for the Sega Genesis/32x. 
+
+To find which emulation is compatible with the game you're playing, have a look at the manual that comes with the game.
 
 
 General audio settings overview
@@ -34,7 +45,7 @@ General MIDI is a MIDI standard which is implemented by a large number or device
 MT-32
 ******************
 
-The MT-32 is a `Roland sound module <https://en.wikipedia.org/wiki/Roland_MT-32>`_, although the term also commonly refers to a range of devices that are compatible with the way instruments are mapped for the MT-32. MT-32 devices also use MIDI as the communications protocol.
+The MT-32 is a `Roland sound module <https://en.wikipedia.org/wiki/Roland_MT-32>`_, although the term also commonly refers to a range of devices that are fully compatible with the MT-32. MT-32 devices also use MIDI as the communications protocol.
 
 ,,,,,,,,,,,,,,,,,,,,
 
@@ -67,7 +78,7 @@ Some games which contain MIDI music data have tracks designed specifically for t
 - MT32_PCM.ROM - IC21 (512KB)
 - MT32_CONTROL.ROM - IC26 (32KB) and IC27 (32KB)
 
-Place these ROMs in the game directory, in your extrapath, or in the directory where your ScummVM executable resides. ScummVM will also look for ``CM32L_PCM.ROM`` and ``CM32LCONTROL.ROM`` - the ROMs from the CM-32L device - and will use these instead of the MT32 ROMs if they are available. 
+Place these ROMs in the game directory, in your extrapath, or in the directory where your ScummVM executable resides. ScummVM will also look for ``CM32L_PCM.ROM`` and ``CM32L_CONTROL.ROM`` - the ROMs from the CM-32L device - and will use these instead of the MT32 ROMs if they are available. 
 
 ScummVM will use the MT-32 emulator if it is set as the **Preferred device** or **Music device**, or if it is specified in the MT-32 tab when **Preferred device** or **Music device** is set to **<default>** and ScummVM chooses MT-32 output automatically. 
 
@@ -85,13 +96,13 @@ The processor requirements for the MT-32 emulator are quite high; a fast CPU is 
 Native MIDI support
 ***********************
 
-If you have a MIDI-capable device (hardware or software synthesizer) connected, it will show up in the **Preferred device** or **Music device** dropdown selector. If you have selected this device, you will also need to specify what type of device this is with the options in the :ref:`MT-32 <mt32>` tab. 
+All MIDI ports will show up in the **Preferred device** or **Music device** dropdown selector. If you have selected a MIDI port, you will also need to specify what type of MIDI device this is with the options in the :ref:`MT-32 <mt32>` tab. 
 
-- Enabling the **True Roland MT-32** option tells ScummVM that the MIDI device you have selected is an MT-32 (or compatible) device. 
+- Enabling the **True Roland MT-32** option tells ScummVM that the MIDI device is an MT-32 (or fully compatible) device. 
 - Enabling **Roland GS device** tells ScummVM to use an MT-32 soundtrack on a GS device. This is not supported by all games.
-- If no options are selected, this tells ScummVM that the selected device is General MIDI.  
+- If no options are selected, this tells ScummVM that the device is General MIDI.  
 
-Selecting an option that does not match the MIDI device selected may have unintended consequences; for example, if a game only has support for MT-32 and you have a General MIDI device selected as the **Preferred device** or **Music device**, ScummVM will convert the MT-32 MIDI data to GM-compatible MIDI data. However, GM devices do not support custom sound programming like MT-32 devices do, and the audio will not be correct. The opposite is also true, and is not supported by all games. 
+Selecting an option that does not match the MIDI port selected may have unintended consequences; for example, if a game only has support for MT-32 and you have a General MIDI device selected as the **Preferred device** or **Music device**, ScummVM will convert the MT-32 MIDI data to GM-compatible MIDI data. While this may work fine for some games, it really depends on how the game has made use of the MT-32. 
 
 .. note::
 
@@ -101,14 +112,14 @@ Selecting an option that does not match the MIDI device selected may have uninte
 Mac OSX 
 ^^^^^^^^^^^^
 
-Mac has a built-in MIDI synthesizer; Apple DLS software synthesizer. It uses the Mac's built-in sounds (based on Roland GS), and shows up independently from any connect MIDI devices. 
+Mac has a built-in MIDI synthesizer; Apple DLS software synthesizer. It uses the Mac's built-in sounds (which are based on Roland GS).
 
 The `Apple Support page <https://support.apple.com/en-nz/guide/audio-midi-setup/ams875bae1e0/mac>`_ has further information about setting up MIDI devices on a Mac. 
 
 Windows
 ^^^^^^^^^
 
-Windows has a generic built-in MIDI synthesizer; GS WaveTable Synth.
+Windows has a generic built-in MIDI synthesizer - GS WaveTable Synth - also based on Roland's GS sounds. 
 
 For an in-depth look at audio and MIDI device setup on a Windows computer, see this `very helpful article <http://donyaquick.com/midi-on-windows/>`_.
 
@@ -116,6 +127,8 @@ Linux
 ^^^^^^^^^^
 
 MIDI device setup may vary depending on your Linux distro. 
+
+If you do not have a hardware MIDI device, there are two options: FluidSynth and TiMidity. FluidSynth is recommended as TiMidity may have some lag, depending on the system. 
 
 Here are a couple of helpful articles from the Ubuntu community documentation to get you started. These instructions should work for any Debian-based distro. 
 
@@ -138,6 +151,8 @@ The AdLib emulator setting offers MAME, DOSBox and Nuked emulation, with MAME be
 
 There is also the option to select the OPL2LPT and OPL3LPT devices, which are external hardware devices with a real OPL chip, connected via the parallel port of a computer. 
 
+AdLib does not require a SoundFont or ROMs, so for many games it may be the easiest to configure. However, if an MT-32 or GS emulator or device is available, ScummVM will prioritize this over AdLib. 
+
 Mixed AdLib/MIDI mode
 ------------------------
 Some games contain sound effects that are exclusive to the AdLib soundtrack, or the AdLib soundtrack may provide better sound effects. For these games, you can combine MIDI music with AdLib sound effects by using the :ref:`mixed AdLib/MIDI mode <multi>`.
@@ -146,4 +161,7 @@ Some games contain sound effects that are exclusive to the AdLib soundtrack, or 
 
     Mixed AdLib/MIDI mode is not supported by all games. 
 
+Digital Sound effects
+----------------------
 
+ Some games have both sampled and synthesized sound effects. ScummVM will usually use the sampled sound effects, even if you select Adlib, MT-32 or GM as your audio device. Some games allow you to choose between sampled and synthesized sound effects by using the **Prefer digital sound effects** option in the Engine tab. 
