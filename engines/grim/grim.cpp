@@ -32,6 +32,7 @@
 #include "common/foreach.h"
 #include "common/fs.h"
 #include "common/config-manager.h"
+#include "common/stuffit.h"
 #include "common/translation.h"
 
 #include "backends/keymapper/action.h"
@@ -75,7 +76,6 @@
 #include "engines/grim/objectstate.h"
 #include "engines/grim/set.h"
 #include "engines/grim/sound.h"
-#include "engines/grim/stuffit.h"
 #include "engines/grim/debugger.h"
 #include "engines/grim/remastered/overlay.h"
 #include "engines/grim/remastered/lua_remastered.h"
@@ -319,21 +319,16 @@ Common::Error GrimEngine::run() {
 	// Currently, this requires the data fork to be standalone
 	if (getGameType() == GType_MONKEY4) {
 		if (SearchMan.hasFile("Monkey Island 4 Installer")) {
-			StuffItArchive *archive = new StuffItArchive();
+			Common::Archive *archive = Common::createStuffItArchive("Monkey Island 4 Installer");
 
-			if (archive->open("Monkey Island 4 Installer"))
+			if (archive)
 				SearchMan.add("Monkey Island 4 Installer", archive, 0, true);
-			else
-				delete archive;
 		}
 		if (SearchMan.hasFile("EFMI Installer")) {
-			StuffItArchive *archive = new StuffItArchive();
+			Common::Archive *archive = Common::createStuffItArchive("EFMI Installer");
 
-			if (archive->open("EFMI Installer"))
+			if (archive)
 				SearchMan.add("EFMI Installer", archive, 0, true);
-			else
-				delete archive;
-
 		}
 	}
 
