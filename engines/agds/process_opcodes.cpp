@@ -993,8 +993,16 @@ void Process::npcSayNoSound() {
 	tell(true);
 }
 
-void Process::playerSay() {
+void Process::playerSay122() {
 	tell(false, popText());
+}
+
+void Process::playerSay120() {
+	tell(false, Common::String());
+}
+
+void Process::playerSay125() {
+	playerSay120(); //same case
 }
 
 void Process::loadDialog() {
