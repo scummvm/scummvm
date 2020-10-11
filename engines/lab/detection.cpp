@@ -101,9 +101,9 @@ static const char *const directoryGlobs[] = {
 
 
 
-class LabMetaEngineStatic : public AdvancedMetaEngineStatic {
+class LabMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	LabMetaEngineStatic() : AdvancedMetaEngineStatic(labDescriptions, sizeof(ADGameDescription), lab_setting) {
+	LabMetaEngineDetection() : AdvancedMetaEngineDetection(labDescriptions, sizeof(ADGameDescription), lab_setting) {
 		_maxScanDepth = 4;
 		_directoryGlobs = directoryGlobs;
 		_flags = kADFlagUseExtraAsHint;
@@ -122,4 +122,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(LAB_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, LabMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(LAB_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, LabMetaEngineDetection);

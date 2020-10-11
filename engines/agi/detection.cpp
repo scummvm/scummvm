@@ -131,12 +131,12 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 
 using namespace Agi;
 
-class AgiMetaEngineStatic : public AdvancedMetaEngineStatic {
+class AgiMetaEngineDetection : public AdvancedMetaEngineDetection {
 	mutable Common::String _gameid;
 	mutable Common::String _extra;
 
 public:
-	AgiMetaEngineStatic() : AdvancedMetaEngineStatic(Agi::gameDescriptions, sizeof(Agi::AGIGameDescription), agiGames, optionsList) {
+	AgiMetaEngineDetection() : AdvancedMetaEngineDetection(Agi::gameDescriptions, sizeof(Agi::AGIGameDescription), agiGames, optionsList) {
 		_guiOptions = GUIO1(GUIO_NOSPEECH);
 	}
 
@@ -155,7 +155,7 @@ public:
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
 };
 
-ADDetectedGame AgiMetaEngineStatic::fallbackDetect(const FileMap &allFilesXXX, const Common::FSList &fslist) const {
+ADDetectedGame AgiMetaEngineDetection::fallbackDetect(const FileMap &allFilesXXX, const Common::FSList &fslist) const {
 	typedef Common::HashMap<Common::String, int32> IntMap;
 	IntMap allFiles;
 	bool matchedUsingFilenames = false;
@@ -323,4 +323,4 @@ ADDetectedGame AgiMetaEngineStatic::fallbackDetect(const FileMap &allFilesXXX, c
 	return ADDetectedGame();
 }
 
-REGISTER_PLUGIN_STATIC(AGI_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, AgiMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(AGI_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, AgiMetaEngineDetection);

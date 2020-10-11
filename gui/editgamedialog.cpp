@@ -185,7 +185,7 @@ EditGameDialog::EditGameDialog(const String &domain)
 	if (metaEnginePlugin) {
 		int tabId = tab->addTab(_("Engine"), "GameOptions_Engine");
 
-		const MetaEngineStatic &metaEngine = metaEnginePlugin->get<MetaEngineStatic>();
+		const MetaEngineDetection &metaEngine = metaEnginePlugin->get<MetaEngineDetection>();
 		metaEngine.registerDefaultSettings(_domain);
 		_engineOptions = metaEngine.buildEngineOptionsWidgetStatic(tab, "GameOptions_Engine.Container", _domain);
 

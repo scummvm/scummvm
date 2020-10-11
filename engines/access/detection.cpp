@@ -32,9 +32,9 @@ static const PlainGameDescriptor AccessGames[] = {
 
 #include "access/detection_tables.h"
 
-class AccessMetaEngineStatic : public AdvancedMetaEngineStatic {
+class AccessMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	AccessMetaEngineStatic() : AdvancedMetaEngineStatic(Access::gameDescriptions, sizeof(Access::AccessGameDescription), AccessGames) {
+	AccessMetaEngineDetection() : AdvancedMetaEngineDetection(Access::gameDescriptions, sizeof(Access::AccessGameDescription), AccessGames) {
 		_maxScanDepth = 3;
 	}
 
@@ -52,4 +52,4 @@ public:
 };
 
 
-REGISTER_PLUGIN_STATIC(ACCESS_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, AccessMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(ACCESS_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, AccessMetaEngineDetection);

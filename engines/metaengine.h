@@ -96,15 +96,15 @@ struct ExtendedSavegameHeader {
 /**
  * A meta engine static is essentially a factory for Engine instances with the
  * added ability of listing and detecting supported games.
- * Every engine "plugin" provides a hook to get an instance of a MetaEngineStatic
- * subclass for that "engine plugin". E.g. SCUMM povides ScummMetaEngineStatic.
+ * Every engine "plugin" provides a hook to get an instance of a MetaEngineDetection
+ * subclass for that "engine plugin". E.g. SCUMM povides ScummMetaEngineDetection.
  * This is then in turn used by the frontend code to detect games,
  * and other useful functionality. To instantiate actual Engine objects,
  * See the class MetaEngine below.
  */
-class MetaEngineStatic : public PluginObject {
+class MetaEngineDetection : public PluginObject {
 public:
-	virtual ~MetaEngineStatic() {}
+	virtual ~MetaEngineDetection() {}
 
 	/** Get the engine ID */
 	virtual const char *getEngineId() const = 0;

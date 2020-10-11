@@ -83,9 +83,9 @@ static const char * const directoryGlobs[] = {
 	0
 };
 
-class BbvsMetaEngineStatic : public AdvancedMetaEngineStatic {
+class BbvsMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	BbvsMetaEngineStatic() : AdvancedMetaEngineStatic(Bbvs::gameDescriptions, sizeof(ADGameDescription), bbvsGames) {
+	BbvsMetaEngineDetection() : AdvancedMetaEngineDetection(Bbvs::gameDescriptions, sizeof(ADGameDescription), bbvsGames) {
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 	}
@@ -103,4 +103,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(BBVS_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, BbvsMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(BBVS_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, BbvsMetaEngineDetection);

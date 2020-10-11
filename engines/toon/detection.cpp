@@ -130,9 +130,9 @@ static const char * const directoryGlobs[] = {
 	0
 };
 
-class ToonMetaEngineStatic : public AdvancedMetaEngineStatic {
+class ToonMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	ToonMetaEngineStatic() : AdvancedMetaEngineStatic(Toon::gameDescriptions, sizeof(ADGameDescription), toonGames) {
+	ToonMetaEngineDetection() : AdvancedMetaEngineDetection(Toon::gameDescriptions, sizeof(ADGameDescription), toonGames) {
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 	}
@@ -154,4 +154,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(TOON_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, ToonMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(TOON_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, ToonMetaEngineDetection);

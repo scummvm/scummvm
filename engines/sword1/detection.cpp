@@ -71,7 +71,7 @@ static const char *const g_filesToCheck[NUM_FILES_TO_CHECK] = { // these files h
 	// the engine needs several more files to work, but checking these should be sufficient
 };
 
-class SwordMetaEngineStatic : public MetaEngineStatic {
+class SwordMetaEngineDetection : public MetaEngineDetection {
 public:
 	const char *getEngineId() const override {
 		return "sword1";
@@ -89,7 +89,7 @@ public:
 	DetectedGames detectGames(const Common::FSList &fslist) const override;
 };
 
-PlainGameList SwordMetaEngineStatic::getSupportedGames() const {
+PlainGameList SwordMetaEngineDetection::getSupportedGames() const {
 	PlainGameList games;
 	games.push_back(sword1FullSettings);
 	games.push_back(sword1DemoSettings);
@@ -100,7 +100,7 @@ PlainGameList SwordMetaEngineStatic::getSupportedGames() const {
 	return games;
 }
 
-PlainGameDescriptor SwordMetaEngineStatic::findGame(const char *gameId) const {
+PlainGameDescriptor SwordMetaEngineDetection::findGame(const char *gameId) const {
 	if (0 == scumm_stricmp(gameId, sword1FullSettings.gameId))
 		return sword1FullSettings;
 	if (0 == scumm_stricmp(gameId, sword1DemoSettings.gameId))
@@ -133,7 +133,7 @@ void Sword1CheckDirectory(const Common::FSList &fslist, bool *filesFound) {
 	}
 }
 
-DetectedGames SwordMetaEngineStatic::detectGames(const Common::FSList &fslist) const {
+DetectedGames SwordMetaEngineDetection::detectGames(const Common::FSList &fslist) const {
 	int i, j;
 	DetectedGames detectedGames;
 	bool filesFound[NUM_FILES_TO_CHECK];
@@ -217,4 +217,4 @@ DetectedGames SwordMetaEngineStatic::detectGames(const Common::FSList &fslist) c
 	return detectedGames;
 }
 
-REGISTER_PLUGIN_STATIC(SWORD1_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, SwordMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(SWORD1_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, SwordMetaEngineDetection);

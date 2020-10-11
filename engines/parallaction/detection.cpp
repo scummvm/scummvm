@@ -201,9 +201,9 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 
 }
 
-class ParallactionMetaEngineStatic : public AdvancedMetaEngineStatic {
+class ParallactionMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	ParallactionMetaEngineStatic() : AdvancedMetaEngineStatic(Parallaction::gameDescriptions, sizeof(Parallaction::PARALLACTIONGameDescription), parallactionGames) {
+	ParallactionMetaEngineDetection() : AdvancedMetaEngineDetection(Parallaction::gameDescriptions, sizeof(Parallaction::PARALLACTIONGameDescription), parallactionGames) {
 		_guiOptions = GUIO1(GUIO_NOLAUNCHLOAD);
 	}
 
@@ -220,4 +220,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(PARALLACTION_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, ParallactionMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(PARALLACTION_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, ParallactionMetaEngineDetection);

@@ -59,9 +59,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class CineMetaEngineStatic : public AdvancedMetaEngineStatic {
+class CineMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	CineMetaEngineStatic() : AdvancedMetaEngineStatic(Cine::gameDescriptions, sizeof(Cine::CINEGameDescription), cineGames, optionsList) {
+	CineMetaEngineDetection() : AdvancedMetaEngineDetection(Cine::gameDescriptions, sizeof(Cine::CINEGameDescription), cineGames, optionsList) {
 		_guiOptions = GUIO3(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TRANSPARENT_DIALOG_BOXES);
 	}
 
@@ -78,4 +78,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(CINE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, CineMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(CINE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, CineMetaEngineDetection);

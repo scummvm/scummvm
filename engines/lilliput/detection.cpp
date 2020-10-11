@@ -104,9 +104,9 @@ static const LilliputGameDescription gameDescriptions[] = {
 	{AD_TABLE_END_MARKER, kGameTypeNone}
 };
 
-class LilliputMetaEngineStatic : public AdvancedMetaEngineStatic {
+class LilliputMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	LilliputMetaEngineStatic() : AdvancedMetaEngineStatic(gameDescriptions, sizeof(LilliputGameDescription), lilliputGames) {
+	LilliputMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(LilliputGameDescription), lilliputGames) {
 	}
 
 	const char *getEngineId() const override {
@@ -124,4 +124,4 @@ public:
 
 } // End of namespace Lilliput
 
-REGISTER_PLUGIN_STATIC(LILLIPUT_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Lilliput::LilliputMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(LILLIPUT_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Lilliput::LilliputMetaEngineDetection);

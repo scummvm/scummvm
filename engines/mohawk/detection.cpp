@@ -76,9 +76,9 @@ static const char *directoryGlobs[] = {
 	nullptr
 };
 
-class MohawkMetaEngineStatic : public AdvancedMetaEngineStatic {
+class MohawkMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	MohawkMetaEngineStatic() : AdvancedMetaEngineStatic(Mohawk::gameDescriptions, sizeof(Mohawk::MohawkGameDescription), mohawkGames) {
+	MohawkMetaEngineDetection() : AdvancedMetaEngineDetection(Mohawk::gameDescriptions, sizeof(Mohawk::MohawkGameDescription), mohawkGames) {
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
@@ -104,8 +104,8 @@ public:
 	void registerDefaultSettings(const Common::String &target) const override;
 };
 
-DetectedGame MohawkMetaEngineStatic::toDetectedGame(const ADDetectedGame &adGame) const {
-	DetectedGame game = AdvancedMetaEngineStatic::toDetectedGame(adGame);
+DetectedGame MohawkMetaEngineDetection::toDetectedGame(const ADDetectedGame &adGame) const {
+	DetectedGame game = AdvancedMetaEngineDetection::toDetectedGame(adGame);
 
 	// The AdvancedDetector model only allows specifying a single supported
 	// game language. The 25th anniversary edition Myst games are multilanguage.
@@ -132,7 +132,7 @@ DetectedGame MohawkMetaEngineStatic::toDetectedGame(const ADDetectedGame &adGame
 	return game;
 }
 
-void MohawkMetaEngineStatic::registerDefaultSettings(const Common::String &target) const {
+void MohawkMetaEngineDetection::registerDefaultSettings(const Common::String &target) const {
 	Common::String gameId = ConfMan.get("gameid", target);
 
 	if (gameId == "myst" || gameId == "makingofmyst") {
@@ -143,7 +143,7 @@ void MohawkMetaEngineStatic::registerDefaultSettings(const Common::String &targe
 		return Mohawk::MohawkMetaEngine_Riven::registerDefaultSettings();
 	}
 
-	return AdvancedMetaEngineStatic::registerDefaultSettings(target);
+	return AdvancedMetaEngineDetection::registerDefaultSettings(target);
 }
 
-REGISTER_PLUGIN_STATIC(MOHAWK_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, MohawkMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(MOHAWK_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, MohawkMetaEngineDetection);

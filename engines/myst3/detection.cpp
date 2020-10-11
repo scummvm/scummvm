@@ -189,9 +189,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class Myst3MetaEngineStatic : public AdvancedMetaEngineStatic {
+class Myst3MetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	Myst3MetaEngineStatic() : AdvancedMetaEngineStatic(gameDescriptions, sizeof(Myst3GameDescription), myst3Games, optionsList) {
+	Myst3MetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(Myst3GameDescription), myst3Games, optionsList) {
 		_guiOptions = GUIO5(GUIO_NOMIDI, GUIO_NOSFX, GUIO_NOSPEECH, GUIO_NOSUBTITLES, GAMEOPTION_WIDESCREEN_MOD);
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
@@ -212,4 +212,4 @@ public:
 
 } // End of namespace Myst3
 
-REGISTER_PLUGIN_STATIC(MYST3_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Myst3::Myst3MetaEngineStatic);
+REGISTER_PLUGIN_STATIC(MYST3_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Myst3::Myst3MetaEngineDetection);

@@ -114,9 +114,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class MADSMetaEngineStatic : public AdvancedMetaEngineStatic {
+class MADSMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	MADSMetaEngineStatic() : AdvancedMetaEngineStatic(MADS::gameDescriptions, sizeof(MADS::MADSGameDescription), MADSGames, optionsList) {
+	MADSMetaEngineDetection() : AdvancedMetaEngineDetection(MADS::gameDescriptions, sizeof(MADS::MADSGameDescription), MADSGames, optionsList) {
 		_maxScanDepth = 3;
 	}
 
@@ -133,4 +133,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(MADS_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, MADSMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(MADS_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, MADSMetaEngineDetection);

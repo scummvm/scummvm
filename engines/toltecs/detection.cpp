@@ -216,9 +216,9 @@ static const ExtraGuiOption toltecsExtraGuiOption = {
 	false
 };
 
-class ToltecsMetaEngineStatic : public AdvancedMetaEngineStatic {
+class ToltecsMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	ToltecsMetaEngineStatic() : AdvancedMetaEngineStatic(Toltecs::gameDescriptions, sizeof(Toltecs::ToltecsGameDescription), toltecsGames) {
+	ToltecsMetaEngineDetection() : AdvancedMetaEngineDetection(Toltecs::gameDescriptions, sizeof(Toltecs::ToltecsGameDescription), toltecsGames) {
 	}
 
 	const char *getEngineId() const override {
@@ -236,10 +236,10 @@ public:
 	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 };
 
-const ExtraGuiOptions ToltecsMetaEngineStatic::getExtraGuiOptions(const Common::String &target) const {
+const ExtraGuiOptions ToltecsMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	options.push_back(toltecsExtraGuiOption);
 	return options;
 }
 
-REGISTER_PLUGIN_STATIC(TOLTECS_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, ToltecsMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(TOLTECS_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, ToltecsMetaEngineDetection);

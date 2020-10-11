@@ -123,9 +123,9 @@ static const char * const directoryGlobs[] = {
 	0
 };
 
-class DragonsMetaEngineStatic : public AdvancedMetaEngineStatic {
+class DragonsMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	DragonsMetaEngineStatic() : AdvancedMetaEngineStatic(Dragons::gameDescriptions, sizeof(Dragons::DragonsGameDescription), dragonsGames) {
+	DragonsMetaEngineDetection() : AdvancedMetaEngineDetection(Dragons::gameDescriptions, sizeof(Dragons::DragonsGameDescription), dragonsGames) {
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
@@ -143,4 +143,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(DRAGONS_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, DragonsMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(DRAGONS_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, DragonsMetaEngineDetection);

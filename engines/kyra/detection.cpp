@@ -144,9 +144,9 @@ const ADExtraGuiOptionsMap gameGuiOptions[] = {
 
 } // End of anonymous namespace
 
-class KyraMetaEngineStatic : public AdvancedMetaEngineStatic {
+class KyraMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	KyraMetaEngineStatic() : AdvancedMetaEngineStatic(adGameDescs, sizeof(KYRAGameDescription), gameList, gameGuiOptions) {
+	KyraMetaEngineDetection() : AdvancedMetaEngineDetection(adGameDescs, sizeof(KYRAGameDescription), gameList, gameGuiOptions) {
 		_md5Bytes = 1024 * 1024;
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
@@ -172,4 +172,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(KYRA_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, KyraMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(KYRA_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, KyraMetaEngineDetection);

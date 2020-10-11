@@ -131,9 +131,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class HDBMetaEngineStatic : public AdvancedMetaEngineStatic {
+class HDBMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	HDBMetaEngineStatic() : AdvancedMetaEngineStatic(HDB::gameDescriptions, sizeof(ADGameDescription), hdbGames, optionsList) {
+	HDBMetaEngineDetection() : AdvancedMetaEngineDetection(HDB::gameDescriptions, sizeof(ADGameDescription), hdbGames, optionsList) {
 	}
 
 	const char *getEngineId() const override {
@@ -149,4 +149,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(HDB_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, HDBMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(HDB_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, HDBMetaEngineDetection);

@@ -62,9 +62,9 @@ static const ADGameDescription gameDescriptions[] = {
 
 } // End of namespace Plumbers
 
-class PlumbersMetaEngineStatic : public AdvancedMetaEngineStatic {
+class PlumbersMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	PlumbersMetaEngineStatic() : AdvancedMetaEngineStatic(Plumbers::gameDescriptions, sizeof(ADGameDescription), plumbersGames) {
+	PlumbersMetaEngineDetection() : AdvancedMetaEngineDetection(Plumbers::gameDescriptions, sizeof(ADGameDescription), plumbersGames) {
 	}
 
 	const char *getEngineId() const override {
@@ -80,4 +80,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(PLUMBERS_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, PlumbersMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(PLUMBERS_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, PlumbersMetaEngineDetection);

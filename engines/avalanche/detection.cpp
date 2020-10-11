@@ -56,9 +56,9 @@ static const ADGameDescription gameDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
-class AvalancheMetaEngineStatic : public AdvancedMetaEngineStatic {
+class AvalancheMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	AvalancheMetaEngineStatic() : AdvancedMetaEngineStatic(gameDescriptions, sizeof(AvalancheGameDescription), avalancheGames) {
+	AvalancheMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(AvalancheGameDescription), avalancheGames) {
 	}
 
 	const char *getEngineId() const override {
@@ -76,4 +76,4 @@ public:
 
 } // End of namespace Avalanche
 
-REGISTER_PLUGIN_STATIC(AVALANCHE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Avalanche::AvalancheMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(AVALANCHE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Avalanche::AvalancheMetaEngineDetection);

@@ -133,7 +133,7 @@ static const Plugin *detectPlugin() {
 
 	// Query the plugin for the game descriptor
 	printf("   Looking for a plugin supporting this target... %s\n", plugin->getName());
-	PlainGameDescriptor game = plugin->get<MetaEngineStatic>().findGame(gameId.c_str());
+	PlainGameDescriptor game = plugin->get<MetaEngineDetection>().findGame(gameId.c_str());
 	if (!game.gameId) {
 		warning("'%s' is an invalid game ID for the engine '%s'. Use the --list-games option to list supported game IDs", gameId.c_str(), engineId.c_str());
 		return 0;
@@ -182,7 +182,7 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 	}
 
 	// Create the game's MetaEngine.
-	const MetaEngineStatic &metaEngine = plugin->get<MetaEngineStatic>();
+	const MetaEngineDetection &metaEngine = plugin->get<MetaEngineDetection>();
 	if (err.getCode() == Common::kNoError) {
 		// Set default values for all of the custom engine options
 		// Apparently some engines query them in their constructor, thus we

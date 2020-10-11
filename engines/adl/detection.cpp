@@ -337,9 +337,9 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 	{ AD_TABLE_END_MARKER, GAME_TYPE_NONE, GAME_VER_NONE }
 };
 
-class AdlMetaEngineStatic : public AdvancedMetaEngineStatic {
+class AdlMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	AdlMetaEngineStatic() : AdvancedMetaEngineStatic(gameFileDescriptions, sizeof(AdlGameDescription), adlGames, optionsList) { }
+	AdlMetaEngineDetection() : AdvancedMetaEngineDetection(gameFileDescriptions, sizeof(AdlGameDescription), adlGames, optionsList) { }
 
 	const char *getName() const override {
 		return "ADL";
@@ -358,7 +358,7 @@ public:
 	bool addFileProps(const FileMap &allFiles, Common::String fname, FilePropertiesMap &filePropsMap) const;
 };
 
-bool AdlMetaEngineStatic::addFileProps(const FileMap &allFiles, Common::String fname, FilePropertiesMap &filePropsMap) const {
+bool AdlMetaEngineDetection::addFileProps(const FileMap &allFiles, Common::String fname, FilePropertiesMap &filePropsMap) const {
 	if (filePropsMap.contains(fname))
 		return true;
 
@@ -377,9 +377,9 @@ bool AdlMetaEngineStatic::addFileProps(const FileMap &allFiles, Common::String f
 }
 
 // Based on AdvancedMetaEngine::detectGame
-ADDetectedGames AdlMetaEngineStatic::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const {
+ADDetectedGames AdlMetaEngineDetection::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const {
 	// We run the file-based detector first, if it finds a match we do not search for disk images
-	ADDetectedGames matched = AdvancedMetaEngineStatic::detectGame(parent, allFiles, language, platform, extra);
+	ADDetectedGames matched = AdvancedMetaEngineDetection::detectGame(parent, allFiles, language, platform, extra);
 
 	if (!matched.empty())
 		return matched;
@@ -474,4 +474,4 @@ ADDetectedGames AdlMetaEngineStatic::detectGame(const Common::FSNode &parent, co
 
 } // End of namespace Adl
 
-REGISTER_PLUGIN_STATIC(ADL_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Adl::AdlMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(ADL_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Adl::AdlMetaEngineDetection);

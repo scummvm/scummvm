@@ -121,9 +121,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 
 #include "sherlock/detection_tables.h"
 
-class SherlockMetaEngineStatic : public AdvancedMetaEngineStatic {
+class SherlockMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	SherlockMetaEngineStatic() : AdvancedMetaEngineStatic(Sherlock::gameDescriptions, sizeof(Sherlock::SherlockGameDescription),
+	SherlockMetaEngineDetection() : AdvancedMetaEngineDetection(Sherlock::gameDescriptions, sizeof(Sherlock::SherlockGameDescription),
 		sherlockGames, optionsList) {}
 
 	const char *getEngineId() const override {
@@ -140,4 +140,4 @@ public:
 };
 
 
-REGISTER_PLUGIN_STATIC(SHERLOCK_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, SherlockMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(SHERLOCK_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, SherlockMetaEngineDetection);

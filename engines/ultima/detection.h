@@ -58,10 +58,10 @@ struct UltimaGameDescription {
 
 } // End of namespace Ultima
 
-class UltimaMetaEngineStatic : public AdvancedMetaEngineStatic {
+class UltimaMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	UltimaMetaEngineStatic();
-	~UltimaMetaEngineStatic() override {}
+	UltimaMetaEngineDetection();
+	~UltimaMetaEngineDetection() override {}
 
 	const char *getEngineId() const override {
 		return "ultima";

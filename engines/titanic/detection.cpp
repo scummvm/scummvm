@@ -34,9 +34,9 @@ static const PlainGameDescriptor TitanicGames[] = {
 
 #include "titanic/detection_tables.h"
 
-class TitanicMetaEngineStatic : public AdvancedMetaEngineStatic {
+class TitanicMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	TitanicMetaEngineStatic() : AdvancedMetaEngineStatic(Titanic::gameDescriptions, sizeof(Titanic::TitanicGameDescription), TitanicGames) {
+	TitanicMetaEngineDetection() : AdvancedMetaEngineDetection(Titanic::gameDescriptions, sizeof(Titanic::TitanicGameDescription), TitanicGames) {
 		_maxScanDepth = 3;
 	}
 
@@ -53,4 +53,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(TITANIC_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, TitanicMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(TITANIC_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, TitanicMetaEngineDetection);

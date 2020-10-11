@@ -54,7 +54,7 @@
 
 using namespace Scumm;
 
-class ScummMetaEngineStatic : public MetaEngineStatic {
+class ScummMetaEngineDetection : public MetaEngineDetection {
 public:
 	const char *getEngineId() const override {
 		return "scumm";
@@ -70,11 +70,11 @@ public:
 	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 };
 
-PlainGameList ScummMetaEngineStatic::getSupportedGames() const {
+PlainGameList ScummMetaEngineDetection::getSupportedGames() const {
 	return PlainGameList(gameDescriptions);
 }
 
-PlainGameDescriptor ScummMetaEngineStatic::findGame(const char *gameid) const {
+PlainGameDescriptor ScummMetaEngineDetection::findGame(const char *gameid) const {
 	return Engines::findGameID(gameid, gameDescriptions, obsoleteGameIDsTable);
 }
 
@@ -104,7 +104,7 @@ static Common::String generatePreferredTarget(const DetectorResult &x) {
 	return res;
 }
 
-DetectedGames ScummMetaEngineStatic::detectGames(const Common::FSList &fslist) const {
+DetectedGames ScummMetaEngineDetection::detectGames(const Common::FSList &fslist) const {
 	DetectedGames detectedGames;
 	Common::List<DetectorResult> results;
 	::detectGames(fslist, results, 0);
@@ -129,7 +129,7 @@ DetectedGames ScummMetaEngineStatic::detectGames(const Common::FSList &fslist) c
 	return detectedGames;
 }
 
-const char *ScummMetaEngineStatic::getName() const {
+const char *ScummMetaEngineDetection::getName() const {
 	return "SCUMM ["
 
 #if defined(ENABLE_SCUMM_7_8) && defined(ENABLE_HE)
@@ -149,7 +149,7 @@ const char *ScummMetaEngineStatic::getName() const {
 		"]";
 }
 
-const char *ScummMetaEngineStatic::getOriginalCopyright() const {
+const char *ScummMetaEngineDetection::getOriginalCopyright() const {
 	return "LucasArts SCUMM Games (C) LucasArts\n"
 	       "Humongous SCUMM Games (C) Humongous";
 }
@@ -168,7 +168,7 @@ static const ExtraGuiOption mmnesObjectLabelsOption = {
 	false
 };
 
-const ExtraGuiOptions ScummMetaEngineStatic::getExtraGuiOptions(const Common::String &target) const {
+const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	if (target.empty() || ConfMan.get("gameid", target) == "comi") {
 		options.push_back(comiObjectLabelsOption);
@@ -179,4 +179,4 @@ const ExtraGuiOptions ScummMetaEngineStatic::getExtraGuiOptions(const Common::St
 	return options;
 }
 
-REGISTER_PLUGIN_STATIC(SCUMM_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, ScummMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(SCUMM_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, ScummMetaEngineDetection);

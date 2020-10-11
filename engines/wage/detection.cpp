@@ -39,9 +39,9 @@ static const PlainGameDescriptor wageGames[] = {
 
 #include "wage/detection_tables.h"
 
-class WageMetaEngineStatic : public AdvancedMetaEngineStatic {
+class WageMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	WageMetaEngineStatic() : AdvancedMetaEngineStatic(Wage::gameDescriptions, sizeof(ADGameDescription), wageGames) {
+	WageMetaEngineDetection() : AdvancedMetaEngineDetection(Wage::gameDescriptions, sizeof(ADGameDescription), wageGames) {
 		_md5Bytes = 2 * 1024 * 1024;
 		_guiOptions = GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI);
 	}
@@ -59,4 +59,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(WAGE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, WageMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(WAGE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, WageMetaEngineDetection);

@@ -32,9 +32,9 @@ static const PlainGameDescriptor MortevielleGame[] = {
 
 #include "mortevielle/detection_tables.h"
 
-class MortevielleMetaEngineStatic : public AdvancedMetaEngineStatic {
+class MortevielleMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	MortevielleMetaEngineStatic() : AdvancedMetaEngineStatic(Mortevielle::MortevielleGameDescriptions, sizeof(Mortevielle::MortevielleGameDescription),
+	MortevielleMetaEngineDetection() : AdvancedMetaEngineDetection(Mortevielle::MortevielleGameDescriptions, sizeof(Mortevielle::MortevielleGameDescription),
 		MortevielleGame) {
 		_md5Bytes = 512;
 		// Use kADFlagUseExtraAsHint to distinguish between original and improved versions
@@ -56,4 +56,4 @@ public:
 };
 
 
-REGISTER_PLUGIN_STATIC(MORTEVIELLE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, MortevielleMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(MORTEVIELLE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, MortevielleMetaEngineDetection);
