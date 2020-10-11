@@ -23,7 +23,7 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 
-#if defined(USE_OPENGL_GAME) && !defined(AMIGAOS)
+#if defined(USE_OPENGL_GAME) && !defined(AMIGAOS) && !defined(__MORPHOS__)
 
 #if defined(SDL_BACKEND) && !defined(USE_GLEW) && !defined(USE_GLES2)
 #define GL_GLEXT_PROTOTYPES // For the GL_EXT_framebuffer_object extension
@@ -188,7 +188,7 @@ void FrameBuffer::detach() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-#if !defined(USE_GLES2) && !defined(AMIGAOS)
+#if !defined(USE_GLES2) && !defined(AMIGAOS) && !defined(__MORPHOS__)
 MultiSampleFrameBuffer::MultiSampleFrameBuffer(uint width, uint height, int samples)
 		: FrameBuffer(width,height) {
 	if (!OpenGLContext.framebufferObjectMultisampleSupported) {
@@ -251,7 +251,7 @@ void MultiSampleFrameBuffer::detach() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-#endif // !defined(USE_GLES2) && !defined(AMIGAOS)
+#endif // !defined(USE_GLES2) && !defined(AMIGAOS) && !defined(__MORPHOS__)
 
 } // End of namespace OpenGL
 
