@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-12 13:14+0200\n"
-"PO-Revision-Date: 2020-10-12 09:43+0000\n"
+"PO-Revision-Date: 2020-10-12 19:56+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -4657,7 +4657,6 @@ msgstr ""
 "Asegúrate de que descargas el parche acorde al idioma de tu copia del juego."
 
 #: engines/grim/emi/sound/emisound.cpp:650
-#, fuzzy
 msgid ""
 "ERROR: Not enough music tracks found!\n"
 "Escape from Monkey Island has two versions of FullMonkeyMap.imt,\n"
@@ -4677,7 +4676,7 @@ msgstr ""
 "CD 2: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap2.imt\"\n"
 "\n"
 "Por otro lado, las versiones de Steam o GOG tienen un archivo\n"
-"FullMonkeyMap.int precombinado."
+"FullMonkeyMap.imt precombinado."
 
 #: engines/groovie/detection.cpp:320
 msgid "Fast movie speed"
