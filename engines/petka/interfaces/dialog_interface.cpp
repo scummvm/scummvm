@@ -198,7 +198,7 @@ void DialogInterface::playSound(const Common::String &name) {
 		FlicDecoder *flc = g_vm->resMgr()->loadFlic(_talker->_resourceId);
 		if (flc) {
 			Common::Rect bounds = flc->getBounds();
-			s->setBalance(bounds.left + _talker->_x + bounds.width(), 640);
+			s->setBalance(bounds.left + _talker->_x + bounds.width(), _qsys->_sceneWidth);
 		}
 		s->play(false);
 	}
