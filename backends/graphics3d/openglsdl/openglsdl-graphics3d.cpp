@@ -204,11 +204,23 @@ void OpenGLSdlGraphics3dManager::setupScreen() {
 	int glflag;
 	const GLubyte *str;
 
+	#ifdef __MORPHOS__
+	str = (GLubyte*)glGetString(GL_VENDOR);
+	#else
 	str = glGetString(GL_VENDOR);
+	#endif
 	debug("INFO: OpenGL Vendor: %s", str);
+	#ifdef __MORPHOS__
+	str = (GLubyte*)glGetString(GL_RENDERER);
+	#else
 	str = glGetString(GL_RENDERER);
+	#endif
 	debug("INFO: OpenGL Renderer: %s", str);
+	#ifdef __MORPHOS__
+	str = (GLubyte*)glGetString(GL_VERSION);
+	#else
 	str = glGetString(GL_VERSION);
+	#endif
 	debug("INFO: OpenGL Version: %s", str);
 	SDL_GL_GetAttribute(SDL_GL_RED_SIZE, &glflag);
 	debug("INFO: OpenGL Red bits: %d", glflag);

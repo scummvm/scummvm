@@ -28,6 +28,10 @@
 #include "common/safe-bool.h"
 #include "common/types.h"
 
+#ifdef __MORPHOS__
+#undef D
+#endif
+
 namespace Common {
 
 /**

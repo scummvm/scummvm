@@ -23,6 +23,10 @@
 #ifndef COMMON_STREAMDEBUG_H
 #define COMMON_STREAMDEBUG_H
 
+#ifdef __MORPHOS__
+#undef Debug
+#endif
+
 namespace Common {
 
 class String;
