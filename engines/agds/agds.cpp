@@ -47,7 +47,7 @@ namespace AGDS {
 
 AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Engine(system),
                                                                              _gameDescription(gameDesc), _pictureCacheId(1), _sharedStorageIndex(-2),
-                                                                             _mjpgPlayer(), _currentScreen(),
+                                                                             _mjpgPlayer(), _currentScreen(), _currentCharacter(),
                                                                              _defaultMouseCursor(),
                                                                              _mouse(400, 300),
 																			 _userEnabled(true), _systemUserEnabled(true),
@@ -62,6 +62,7 @@ AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Eng
 }
 
 AGDSEngine::~AGDSEngine() {
+	delete _currentCharacter;
 	delete _currentScreen;
 	for (PictureCacheType::iterator i = _pictureCache.begin(); i != _pictureCache.end(); ++i) {
 		i->_value->free();
@@ -469,8 +470,8 @@ Common::Error AGDSEngine::run() {
 			mouseCursor->paint(*this, *backbuffer, _mouse);
 		}
 
-		for (CharactersType::iterator i = _characters.begin(); i != _characters.end(); ++i)
-			i->_value->paint(*this, *backbuffer);
+		if (_currentCharacter)
+			_currentCharacter->paint(*backbuffer);
 
 		if (_textLayout.valid()) {
 			if (_syncSoundId >= 0) {
@@ -590,21 +591,14 @@ Animation *AGDSEngine::findAnimationByPhaseVar(const Common::String &phaseVar) {
 	return _currentScreen? _currentScreen->findAnimationByPhaseVar(phaseVar): nullptr;
 }
 
-Character *AGDSEngine::loadCharacter(const Common::String &id, const Common::String &filename, const Common::String &object) {
+void AGDSEngine::loadCharacter(const Common::String &id, const Common::String &filename, const Common::String &object) {
 	debug("loadCharacter %s %s %s", id.c_str(), filename.c_str(), object.c_str());
-	CharactersType::iterator i = _characters.find(id);
-	if (i != _characters.end())
-		return i->_value;
 
-	Character *character = new Character(id, object);
-	character->load(_resourceManager.getResource(filename));
-	_characters[id] = character;
-	return character;
-}
-
-Character *AGDSEngine::getCharacter(const Common::String &name) const {
-	CharactersType::const_iterator i = _characters.find(name);
-	return i != _characters.end() ? i->_value : NULL;
+	delete _currentCharacter;
+	_currentCharacterName = id;
+	_currentCharacter = new Character(this, id, loadObject(object));
+	_currentCharacter->load(_resourceManager.getResource(filename));
+	runObject(_currentCharacter->object());
 }
 
 Graphics::TransparentSurface *AGDSEngine::loadPicture(const Common::String &name) { return convertToTransparent(_resourceManager.loadPicture(name, _pixelFormat)); }

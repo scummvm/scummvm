@@ -76,4 +76,15 @@ void Character::load(Common::SeekableReadStream* stream) {
 	delete stream;
 }
 
+void Character::setDirection(int dir) {
+	debug("setDirection %d", dir);
+	_direction = dir;
+}
+
+
+void Character::paint(Graphics::Surface & backbuffer) {
+	if (_enabled && _phase <= _frames)
+		++_phase;
+}
+
 }
