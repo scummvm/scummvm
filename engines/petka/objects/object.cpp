@@ -520,6 +520,11 @@ void QObject::update(int time) {
 	_time += time;
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
 	if (flc && flc->getFrameCount() != 1) {
+		if (_sound) {
+			Common::Rect bounds = flc->getBounds();
+			_sound->setBalance(bounds.left + bounds.width() / 2 - g_vm->getQSystem()->_xOffset, 640);
+		}
+
 		while (_time >= (int32)flc->getDelay()) {
 			if (_sound && flc->getCurFrame() == 0) {
 				_startSound = true;
