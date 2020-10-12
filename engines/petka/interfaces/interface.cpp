@@ -126,6 +126,9 @@ void SubInterface::start(int id) {
 	_savedXOffset = sys->_xOffset;
 	_savedSceneWidth = sys->_sceneWidth;
 
+	sys->_xOffset = 0;
+	sys->_sceneWidth = 640;
+
 	g_vm->getQSystem()->_currInterface = this;
 	g_vm->videoSystem()->updateTime();
 	g_vm->videoSystem()->makeAllDirty();
