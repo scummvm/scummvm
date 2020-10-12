@@ -276,4 +276,22 @@ void InterfaceMain::removeTextDescription() {
 	removeTexts();
 }
 
+void InterfaceMain::update(uint time) {
+	QSystem *sys = g_vm->getQSystem();
+	int xOff = sys->_xOffset;
+	int reqOffset = sys->_reqOffset;
+	if (xOff != reqOffset && ((xOff != sys->_sceneWidth - 640 && xOff < reqOffset) || (xOff > 0 && xOff > reqOffset))) {
+		if (xOff <= reqOffset) {
+			xOff += 8;
+			xOff = MIN<int>(xOff, reqOffset);
+		} else {
+			xOff -= 8;
+			xOff = MAX<int>(xOff, reqOffset);
+		}
+		sys->_xOffset = CLIP(xOff, 0, sys->_sceneWidth - 640);
+		g_vm->videoSystem()->makeAllDirty();
+	}
+	Interface::update(time);
+}
+
 } // End of namespace Petka

@@ -22,77 +22,48 @@
 
 #include "common/system.h"
 
-#include "petka/sound.h"
 #include "petka/flc.h"
 #include "petka/petka.h"
 #include "petka/q_system.h"
-#include "petka/interfaces/main.h"
-#include "petka/interfaces/dialog_interface.h"
-#include "petka/objects/object.h"
+#include "petka/interfaces/interface.h"
 #include "petka/video.h"
 
 namespace Petka {
 
-// COMPLETED
-
 const uint kShakeTime = 30;
 const int kShakeOffset = 3;
 
-VideoSystem::VideoSystem(PetkaEngine &vm) :
-	_vm(vm), _shake(false), _shift(false), _shakeTime(0), _time(0) {
-	makeAllDirty();
+VideoSystem::VideoSystem(PetkaEngine &vm)
+	: _vm(vm) {
+	_shakeTime = 0;
 	_time = g_system->getMillis();
-	_allowAddingRects = true;
+	_shake = false;
+	_shift = false;
+	_allowAddingRects = false;
 }
 
 void VideoSystem::update() {
 	QSystem *sys = _vm.getQSystem();
 	Interface *interface = sys->_currInterface;
 	uint32 time = g_system->getMillis();
-	if (interface) {
-		if (sys->_currInterface == sys->_mainInterface.get()) {
-			int xOff = sys->_xOffset;
-			int reqOffset = sys->_reqOffset;
-			if (xOff != reqOffset && ((xOff != sys->_sceneWidth - 640 && xOff < reqOffset) || (xOff > 0 && xOff > reqOffset))) {
-				if (xOff <= reqOffset) {
-					xOff += 8;
-					xOff = MIN<int>(xOff, reqOffset);
-				} else {
-					xOff -= 8;
-					xOff = MAX<int>(xOff, reqOffset);
-				}
-				sys->_xOffset = CLIP(xOff, 0, sys->_sceneWidth - 640);
-				makeAllDirty();
-			}
-		}
 
+	assert(sys);
+	assert(interface);
 
-		for (uint i = interface->_startIndex; i < interface->_objs.size(); ++i) {
-			interface->_objs[i]->update(time - _time);
-		}
+	interface->update(time - _time);
 
-		for (uint i = 0; i < interface->_objs.size(); ++i) {
-			interface->_objs[i]->updateZ();
-		}
+	mergeDirtyRects();
 
-		sort();
-		mergeDirtyRects();
+	_allowAddingRects = false;
+	interface->draw();
+	_allowAddingRects = true;
 
-		_allowAddingRects = false;
-		for (uint i = 0; i < interface->_objs.size(); ++i) {
-			interface->_objs[i]->draw();
-		}
-		_allowAddingRects = true;
-
-		for (Common::List<Common::Rect>::iterator i = _dirtyRects.begin(); i != _dirtyRects.end(); ++i) {
-			const Common::Rect &r = *i;
-			const byte *srcP = (const byte *)getBasePtr(r.left, r.top);
-			g_system->copyRectToScreen(srcP, pitch, r.left, r.top,
-									   r.width(), r.height());
-		}
-
-		_dirtyRects.clear();
+	for (Common::Rect &r : _dirtyRects) {
+		const byte *srcP = (const byte *)getBasePtr(r.left, r.top);
+		g_system->copyRectToScreen(srcP, pitch, r.left, r.top, r.width(), r.height());
 	}
+
+	_dirtyRects.clear();
 
 	_time = time;
 
@@ -119,14 +90,13 @@ void VideoSystem::addDirtyRect(Common::Point pos, Common::Rect rect) {
 }
 
 void VideoSystem::addDirtyRect(Common::Point pos, FlicDecoder &flc) {
-	pos.x = pos.x - g_vm->getQSystem()->_xOffset;
+	pos.x = pos.x - _vm.getQSystem()->_xOffset;
 	addDirtyRect(pos, flc.getBounds());
 }
 
 void VideoSystem::addDirtyMskRects(Common::Point pos, FlicDecoder &flc) {
-	const Common::Array<Common::Rect> &rects = flc.getMskRects();
-	for (uint i = 0; i < rects.size(); ++i) {
-		addDirtyRect(pos, rects[i]);
+	for (auto rect : flc.getMskRects()) {
+		addDirtyRect(pos, rect);
 	}
 }
 
@@ -147,22 +117,4 @@ void VideoSystem::setShake(bool shake) {
 	g_system->setShakePos(0, 0);
 }
 
-void VideoSystem::sort() {
-	Common::Array<QVisibleObject *> &objs = _vm.getQSystem()->_currInterface->_objs;
-	for (uint i = 0; i < objs.size() - 1; ++i) {
-		uint minIndex = i;
-		for (uint j = i + 1; j < objs.size(); ++j) {
-			if (objs[j]->_z < objs[minIndex]->_z) {
-				minIndex = j;
-			}
-		}
-
-		if (i != minIndex) {
-			QVisibleObject *tmp = objs[i];
-			objs[i] = objs[minIndex];
-			objs[minIndex] = tmp;
-		}
-	}
-}
-
-}
+} // End of namespace Petka

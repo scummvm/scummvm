@@ -43,6 +43,8 @@ public:
 
 	void start(int id) override;
 
+	virtual void update(uint time);
+
 	void loadRoom(int id, bool fromSave);
 
 	const BGInfo *findBGInfo(int id) const;

@@ -82,6 +82,38 @@ void Interface::removeTexts() {
 	}
 }
 
+void Interface::update(uint time) {
+	for (uint i = _startIndex; i < _objs.size(); ++i) {
+		_objs[i]->update(time);
+	}
+
+	for (uint i = 0; i < _objs.size(); ++i) {
+		_objs[i]->updateZ();
+	}
+	sort();
+}
+
+void Interface::draw() {
+	for (uint i = 0; i < _objs.size(); ++i) {
+		_objs[i]->draw();
+	}
+}
+
+void Interface::sort() {
+	for (uint i = 0; i < _objs.size() - 1; ++i) {
+		uint minIndex = i;
+		for (uint j = i + 1; j < _objs.size(); ++j) {
+			if (_objs[j]->_z < _objs[minIndex]->_z) {
+				minIndex = j;
+			}
+		}
+
+		if (i != minIndex) {
+			SWAP(_objs[i], _objs[minIndex]);
+		}
+	}
+}
+
 void SubInterface::start(int id) {
 	QSystem *sys = g_vm->getQSystem();
 	QObjectCursor *cursor = sys->getCursor();
