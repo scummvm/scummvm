@@ -440,7 +440,7 @@ ifdef ENABLE_AGI
 DIST_FILES_ENGINEDATA+=$(srcdir)/dists/pred.dic
 endif
 
-# Shaders
+# Shaders: install if USE_OPENGL_SHADERS or USE_GLES2 defined
 DIST_FILES_SHADERS=
 ifneq ($(USE_OPENGL_SHADERS)$(USE_GLES2),)
 ifdef ENABLE_GRIM
