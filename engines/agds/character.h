@@ -43,6 +43,7 @@ class Character {
 	ObjectPtr		_object;
 	Common::String 	_name;
 	Common::Point	_pos;
+	Common::Point	_dst;
 	bool _enabled;
 	int _phase;
 	int _frames;
@@ -98,6 +99,8 @@ public:
 	Common::Point position() const {
 		return _pos;
 	}
+
+	void moveTo(Common::Point dst, int frames);
 
 	void setDirection(int dir);
 

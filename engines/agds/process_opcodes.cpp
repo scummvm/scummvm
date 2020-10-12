@@ -1233,10 +1233,18 @@ void Process::enableCharacter() {
 }
 
 void Process::moveCharacter(bool usermove) {
-	int arg3 = pop();
-	Common::String arg2 = popString();
-	Common::String arg1 = popString();
-	debug("moveCharacter %s %s %d, usermove: %d", arg1.c_str(), arg2.c_str(), arg3, usermove);
+	int frames = pop();
+	Common::String regionName = popString();
+	Common::String id = popString();
+	debug("moveCharacter %s %s, frames: %d, usermove: %d", id.c_str(), regionName.c_str(), frames, usermove);
+	Character *character = _engine->getCharacter(id);
+	if (character) {
+		auto region = _engine->loadRegion(regionName);
+		if (region) {
+			character->moveTo(region->center, frames);
+		}
+	} else
+		warning("character %s could not be found", id.c_str());
 	if (_status == kStatusPassive)
 		suspend();
 }
@@ -1293,9 +1301,10 @@ void Process::setCharacter() {
 	auto character = _engine->getCharacter(id);
 	if (character) {
 		auto region = _engine->loadRegion(regionName);
-		if (region)
+		if (region) {
+			debug("setting character position to %d,%d", region->center.x, region->center.y);
 			character->position(region->center);
-		else
+		} else
 			warning("no region %s", regionName.c_str());
 		character->setDirection(dir);
 	} else

@@ -81,6 +81,12 @@ void Character::setDirection(int dir) {
 	_direction = dir;
 }
 
+void Character::moveTo(Common::Point dst, int frames) {
+	debug("move to %d,%d", dst.x, dst.y);
+	_dst = dst;
+	_frames = frames;
+}
+
 
 void Character::paint(Graphics::Surface & backbuffer) {
 	if (_enabled && _phase <= _frames)
