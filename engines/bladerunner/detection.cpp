@@ -92,32 +92,32 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 
 } // End of namespace BladeRunner
 
-class BladeRunnerMetaEngineStatic : public AdvancedMetaEngineStatic {
+class BladeRunnerMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	BladeRunnerMetaEngineStatic();
+	BladeRunnerMetaEngineDetection();
 
 	const char *getEngineId() const override;
 	const char *getName() const override;
 	const char *getOriginalCopyright() const override;
 };
 
-BladeRunnerMetaEngineStatic::BladeRunnerMetaEngineStatic()
-	: AdvancedMetaEngineStatic(
+BladeRunnerMetaEngineDetection::BladeRunnerMetaEngineDetection()
+	: AdvancedMetaEngineDetection(
 		BladeRunner::gameDescriptions,
 		sizeof(BladeRunner::gameDescriptions[0]),
 		BladeRunner::bladeRunnerGames,
 		BladeRunner::optionsList) {}
 
-const char *BladeRunnerMetaEngineStatic::getEngineId() const {
+const char *BladeRunnerMetaEngineDetection::getEngineId() const {
 	return "bladerunner";
 }
 
-const char *BladeRunnerMetaEngineStatic::getName() const {
+const char *BladeRunnerMetaEngineDetection::getName() const {
 	return "Blade Runner";
 }
 
-const char *BladeRunnerMetaEngineStatic::getOriginalCopyright() const {
+const char *BladeRunnerMetaEngineDetection::getOriginalCopyright() const {
 	return "Blade Runner (C) 1997 Westwood Studios";
 }
 
-REGISTER_PLUGIN_STATIC(BLADERUNNER_DETECTION, PLUGIN_TYPE_METAENGINE, BladeRunnerMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(BLADERUNNER_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, BladeRunnerMetaEngineDetection);

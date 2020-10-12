@@ -1,7 +1,7 @@
-/* ResidualVM - A 3D game interpreter
+/* ScummVM - Graphic Adventure Engine
  *
- * ResidualVM is the legal property of its developers, whose names
- * are too numerous to list here. Please refer to the AUTHORS
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
@@ -23,13 +23,55 @@
 // StuffIt parsing based on http://code.google.com/p/theunarchiver/wiki/StuffItFormat
 // Compression 14 based on libxad (http://sourceforge.net/projects/libxad/)
 
-#include "engines/grim/stuffit.h"
+#include "common/stuffit.h"
 
+#include "common/archive.h"
+#include "common/bitstream.h"
 #include "common/debug.h"
+#include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "common/memstream.h"
 #include "common/substream.h"
 
-namespace Grim {
+namespace Common {
+
+struct SIT14Data;
+
+class StuffItArchive : public Common::Archive {
+public:
+	StuffItArchive();
+	~StuffItArchive() override;
+
+	bool open(const Common::String &filename);
+	void close();
+	bool isOpen() const { return _stream != 0; }
+
+	// Common::Archive API implementation
+	bool hasFile(const Common::String &name) const override;
+	int listMembers(Common::ArchiveMemberList &list) const override;
+	const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
+
+private:
+	struct FileEntry {
+		byte compression;
+		uint32 uncompressedSize;
+		uint32 compressedSize;
+		uint32 offset;
+	};
+
+	Common::SeekableReadStream *_stream;
+
+	typedef Common::HashMap<Common::String, FileEntry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
+	FileMap _map;
+
+	// Decompression Functions
+	Common::SeekableReadStream *decompress14(Common::SeekableReadStream *src, uint32 uncompressedSize) const;
+
+	// Decompression Helpers
+	void update14(uint16 first, uint16 last, byte *code, uint16 *freq) const;
+	void readTree14(Common::BitStream8LSB *bits, SIT14Data *dat, uint16 codesize, uint16 *result) const;
+};
 
 StuffItArchive::StuffItArchive() : Common::Archive() {
 	_stream = nullptr;
@@ -40,7 +82,7 @@ StuffItArchive::~StuffItArchive() {
 }
 
 // Some known values of StuffIt FourCC's
-// EMI Mac in particular uses ST65
+// 11H Mac in particular uses ST46, while EMI Mac uses ST65
 static const uint32 s_magicNumbers[] = {
 	MKTAG('S', 'I', 'T', '!'), MKTAG('S', 'T', '6', '5'), MKTAG('S', 'T', '5', '0'),
 	MKTAG('S', 'T', '6', '0'), MKTAG('S', 'T', 'i', 'n'), MKTAG('S', 'T', 'i', '2'),
@@ -185,6 +227,8 @@ Common::SeekableReadStream *StuffItArchive::createReadStreamForMember(const Comm
 
 	// We currently only support type 14 compression
 	switch (entry.compression) {
+	case 0: // Uncompressed
+		return subStream.readStream(subStream.size());
 	case 14: // Installer
 		return decompress14(&subStream, entry.uncompressedSize);
 	default:
@@ -382,7 +426,7 @@ void StuffItArchive::readTree14(Common::BitStream8LSB *bits, SIT14Data *dat, uin
 	j &= 0x3FFFF
 
 Common::SeekableReadStream *StuffItArchive::decompress14(Common::SeekableReadStream *src, uint32 uncompressedSize) const {
-	byte *dst = new byte[uncompressedSize];
+	byte *dst = (byte *)malloc(uncompressedSize);
 	Common::MemoryWriteStream out(dst, uncompressedSize);
 
 	Common::BitStream8LSB *bits = new Common::BitStream8LSB(src);
@@ -479,4 +523,15 @@ Common::SeekableReadStream *StuffItArchive::decompress14(Common::SeekableReadStr
 #undef OUTPUT_VAL
 #undef ALIGN_BITS
 
-} // End of namespace Grim
+Common::Archive *createStuffItArchive(const Common::String &fileName) {
+	StuffItArchive *archive = new StuffItArchive();
+
+	if (!archive->open(fileName)) {
+		delete archive;
+		return 0;
+	}
+
+	return archive;
+}
+
+} // End of namespace Common

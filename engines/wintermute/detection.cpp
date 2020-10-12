@@ -66,9 +66,9 @@ static const char *directoryGlobs[] = {
 	0
 };
 
-class WintermuteMetaEngineStatic : public AdvancedMetaEngineStatic {
+class WintermuteMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	WintermuteMetaEngineStatic() : AdvancedMetaEngineStatic(Wintermute::gameDescriptions, sizeof(WMEGameDescription), Wintermute::wintermuteGames, gameGuiOptions) {
+	WintermuteMetaEngineDetection() : AdvancedMetaEngineDetection(Wintermute::gameDescriptions, sizeof(WMEGameDescription), Wintermute::wintermuteGames, gameGuiOptions) {
 		// Use kADFlagUseExtraAsHint to distinguish between SD and HD versions
 		// of J.U.L.I.A. when their datafiles sit in the same directory (e.g. in Steam distribution).
 		_flags = kADFlagUseExtraAsHint;
@@ -123,4 +123,4 @@ public:
 
 } // End of namespace Wintermute
 
-REGISTER_PLUGIN_STATIC(WINTERMUTE_DETECTION, PLUGIN_TYPE_METAENGINE, Wintermute::WintermuteMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(WINTERMUTE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Wintermute::WintermuteMetaEngineDetection);

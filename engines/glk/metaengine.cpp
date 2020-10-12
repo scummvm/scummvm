@@ -145,7 +145,7 @@ Common::String GlkMetaEngine::findFileByGameId(const Common::String &gameId) con
 	folder.getChildren(fslist, Common::FSNode::kListFilesOnly);
 
 	// Get the matching MetaEngine for this Engine.
-	const MetaEngineStatic &metaEngine = g_engine->getMetaEngineStatic();
+	const MetaEngineDetection &metaEngine = g_engine->getMetaEngineDetection();
 
 	// Iterate over the files
 	for (Common::FSList::iterator i = fslist.begin(); i != fslist.end(); ++i) {

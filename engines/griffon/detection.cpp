@@ -46,9 +46,9 @@ static const ADGameDescription gameDescriptions[] = {
 
 }
 
-class GriffonMetaEngineStatic: public AdvancedMetaEngineStatic {
+class GriffonMetaEngineDetection: public AdvancedMetaEngineDetection {
 public:
-	GriffonMetaEngineStatic() : AdvancedMetaEngineStatic(Griffon::gameDescriptions, sizeof(ADGameDescription), griffonGames) {
+	GriffonMetaEngineDetection() : AdvancedMetaEngineDetection(Griffon::gameDescriptions, sizeof(ADGameDescription), griffonGames) {
 	}
 
 	const char *getEngineId() const override {
@@ -64,4 +64,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(GRIFFON_DETECTION, PLUGIN_TYPE_METAENGINE, GriffonMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(GRIFFON_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, GriffonMetaEngineDetection);

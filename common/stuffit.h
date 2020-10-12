@@ -20,24 +20,40 @@
  *
  */
 
-#ifndef GROOVIE_STUFFIT_H
-#define GROOVIE_STUFFIT_H
+/**
+ * @file
+ * StuffIt decompressor used in engines:
+ * - grim
+ * - groovie
+ */
+
+#ifndef COMMON_STUFFIT_H
+#define COMMON_STUFFIT_H
 
 namespace Common {
+
+/**
+ * @defgroup common_stuffit StuffIt decompressor
+ * @ingroup common
+ *
+ * @brief API related to StuffIt archive files.
+ *
+ * @{
+ */
+
 class Archive;
 class String;
-}
-
-namespace Groovie {
 
 /**
  * This factory method creates an Archive instance corresponding to the content
- * of the StuffIt compressed file.
+ * of the StuffIt compressed file with the given name.
  *
  * May return 0 in case of a failure.
  */
-Common::Archive *createStuffItArchive(const Common::String &fileName);
+Archive *createStuffItArchive(const String &fileName);
 
-} // End of namespace Groovie
+/** @} */
+
+} // End of namespace Common
 
 #endif

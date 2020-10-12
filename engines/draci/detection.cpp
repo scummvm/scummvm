@@ -78,9 +78,9 @@ const ADGameDescription gameDescriptions[] = {
 
 } // End of namespace Draci
 
-class DraciMetaEngineStatic : public AdvancedMetaEngineStatic {
+class DraciMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	DraciMetaEngineStatic() : AdvancedMetaEngineStatic(Draci::gameDescriptions, sizeof(ADGameDescription), draciGames) {
+	DraciMetaEngineDetection() : AdvancedMetaEngineDetection(Draci::gameDescriptions, sizeof(ADGameDescription), draciGames) {
 	}
 
 	const char *getEngineId() const override {
@@ -96,4 +96,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(DRACI_DETECTION, PLUGIN_TYPE_METAENGINE, DraciMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(DRACI_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, DraciMetaEngineDetection);

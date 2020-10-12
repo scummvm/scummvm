@@ -101,9 +101,9 @@ static const ADGameDescription gameDescriptions[] = {
 };
 }
 
-class SupernovaMetaEngineStatic: public AdvancedMetaEngineStatic {
+class SupernovaMetaEngineDetection: public AdvancedMetaEngineDetection {
 public:
-	SupernovaMetaEngineStatic() : AdvancedMetaEngineStatic(Supernova::gameDescriptions, sizeof(ADGameDescription), supernovaGames, optionsList) {
+	SupernovaMetaEngineDetection() : AdvancedMetaEngineDetection(Supernova::gameDescriptions, sizeof(ADGameDescription), supernovaGames, optionsList) {
 	}
 
 	const char *getEngineId() const override {
@@ -120,4 +120,4 @@ public:
 };
 
 
-REGISTER_PLUGIN_STATIC(SUPERNOVA_DETECTION, PLUGIN_TYPE_METAENGINE, SupernovaMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(SUPERNOVA_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, SupernovaMetaEngineDetection);

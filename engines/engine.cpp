@@ -873,10 +873,10 @@ EnginePlugin *Engine::getMetaEnginePlugin() const {
 
 */
 
-MetaEngineStatic &Engine::getMetaEngineStatic() {
+MetaEngineDetection &Engine::getMetaEngineDetection() {
 	const Plugin *plugin = EngineMan.findPlugin(ConfMan.get("engineid"));
 	assert(plugin);
-	return plugin->get<MetaEngineStatic>();
+	return plugin->get<MetaEngineDetection>();
 }
 
 MetaEngine &Engine::getMetaEngine() {

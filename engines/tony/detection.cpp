@@ -33,9 +33,9 @@ static const PlainGameDescriptor tonyGames[] = {
 
 #include "tony/detection_tables.h"
 
-class TonyMetaEngineStatic : public AdvancedMetaEngineStatic {
+class TonyMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	TonyMetaEngineStatic() : AdvancedMetaEngineStatic(Tony::gameDescriptions, sizeof(Tony::TonyGameDescription), tonyGames) {
+	TonyMetaEngineDetection() : AdvancedMetaEngineDetection(Tony::gameDescriptions, sizeof(Tony::TonyGameDescription), tonyGames) {
 	}
 
 	const char *getEngineId() const override {
@@ -51,4 +51,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(TONY_DETECTION, PLUGIN_TYPE_METAENGINE, TonyMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(TONY_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, TonyMetaEngineDetection);

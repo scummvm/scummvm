@@ -35,7 +35,7 @@
 // Plugin versioning
 
 int pluginTypeVersions[PLUGIN_TYPE_MAX] = {
-	PLUGIN_TYPE_METAENGINE_VERSION,
+	PLUGIN_TYPE_ENGINE_DETECTION_VERSION,
 	PLUGIN_TYPE_ENGINE_VERSION,
 	PLUGIN_TYPE_MUSIC_VERSION,
 	PLUGIN_TYPE_DETECTION_VERSION,
@@ -53,7 +53,7 @@ const char *Plugin::getName() const {
 }
 
 const char *Plugin::getEngineId() const {
-	if (_type == PLUGIN_TYPE_METAENGINE) {
+	if (_type == PLUGIN_TYPE_ENGINE_DETECTION) {
 		return _pluginObject->getEngineId();
 	}
 
@@ -272,7 +272,7 @@ void PluginManager::addPluginProvider(PluginProvider *pp) {
 }
 
 Plugin *PluginManager::getEngineFromMetaEngine(const Plugin *plugin) {
-	assert(plugin->getType() == PLUGIN_TYPE_METAENGINE);
+	assert(plugin->getType() == PLUGIN_TYPE_ENGINE_DETECTION);
 
 	Plugin *enginePlugin = nullptr;
 	bool found = false;
@@ -310,7 +310,7 @@ Plugin *PluginManager::getMetaEngineFromEngine(const Plugin *plugin) {
 
 	Plugin *metaEngine = nullptr;
 
-	PluginList pl = PluginMan.getPlugins(PLUGIN_TYPE_METAENGINE);
+	PluginList pl = PluginMan.getPlugins(PLUGIN_TYPE_ENGINE_DETECTION);
 
 	// This will return a name of the Engine plugin, which will be identical to
 	// a getEngineID from a relevant MetaEngine.
@@ -467,7 +467,7 @@ void PluginManagerUncached::loadDetectionPlugin() {
 	}
 
 	if (linkMetaEngines) {
-		_pluginsInMem[PLUGIN_TYPE_METAENGINE].clear();
+		_pluginsInMem[PLUGIN_TYPE_ENGINE_DETECTION].clear();
 		const Detection &detectionConnect = _detectionPlugin->get<Detection>();
 		const PluginList &pl = detectionConnect.getPlugins();
 		Common::for_each(pl.begin(), pl.end(), Common::bind1st(Common::mem_fun(&PluginManagerUncached::tryLoadPlugin), this));
@@ -477,7 +477,7 @@ void PluginManagerUncached::loadDetectionPlugin() {
 
 void PluginManagerUncached::unloadDetectionPlugin() {
 	if (_isDetectionLoaded) {
-		_pluginsInMem[PLUGIN_TYPE_METAENGINE].clear();
+		_pluginsInMem[PLUGIN_TYPE_ENGINE_DETECTION].clear();
 		_detectionPlugin->unloadPlugin();
 		_isDetectionLoaded = false;
 	} else {
@@ -636,7 +636,7 @@ QualifiedGameList EngineManager::findGamesMatching(const Common::String &engineI
 		// If we got an engine name, look for THE game only in that engine
 		const Plugin *p = EngineMan.findPlugin(engineId);
 		if (p) {
-			const MetaEngineStatic &engine = p->get<MetaEngineStatic>();
+			const MetaEngineDetection &engine = p->get<MetaEngineDetection>();
 
 			PlainGameDescriptor pluginResult = engine.findGame(gameId.c_str());
 			if (pluginResult.gameId) {
@@ -665,7 +665,7 @@ QualifiedGameList EngineManager::findGameInLoadedPlugins(const Common::String &g
 	PluginList::const_iterator iter;
 
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		const MetaEngineStatic &engine = (*iter)->get<MetaEngineStatic>();
+		const MetaEngineDetection &engine = (*iter)->get<MetaEngineDetection>();
 		PlainGameDescriptor pluginResult = engine.findGame(gameId.c_str());
 
 		if (pluginResult.gameId) {
@@ -683,12 +683,12 @@ DetectionResults EngineManager::detectGames(const Common::FSList &fslist) const 
 
 	// MetaEngines are always loaded into memory, so, get them and
 	// run detection for all of them.
-	plugins = getPlugins(PLUGIN_TYPE_METAENGINE);
+	plugins = getPlugins(PLUGIN_TYPE_ENGINE_DETECTION);
 
 	// Iterate over all known games and for each check if it might be
 	// the game in the presented directory.
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		const MetaEngineStatic &metaEngine = (*iter)->get<MetaEngineStatic>();
+		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
 		DetectedGames engineCandidates = metaEngine.detectGames(fslist);
 
 		for (uint i = 0; i < engineCandidates.size(); i++) {
@@ -766,7 +766,7 @@ const Plugin *EngineManager::findLoadedPlugin(const Common::String &engineId) co
 	const PluginList &plugins = getPlugins();
 
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); iter++)
-		if (engineId == (*iter)->get<MetaEngineStatic>().getEngineId())
+		if (engineId == (*iter)->get<MetaEngineDetection>().getEngineId())
 			return *iter;
 
 	return 0;
@@ -818,7 +818,7 @@ QualifiedGameDescriptor EngineManager::findTarget(const Common::String &target, 
 	}
 
 	// Make sure it does support the game ID
-	const MetaEngineStatic &engine = foundPlugin->get<MetaEngineStatic>();
+	const MetaEngineDetection &engine = foundPlugin->get<MetaEngineDetection>();
 	PlainGameDescriptor desc = engine.findGame(domain->getVal("gameid").c_str());
 	if (!desc.gameId) {
 		return QualifiedGameDescriptor();
@@ -883,7 +883,7 @@ void EngineManager::upgradeTargetForEngineId(const Common::String &target) const
 		}
 
 		// Take the first detection entry
-		const MetaEngineStatic &metaEngine = plugin->get<MetaEngineStatic>();
+		const MetaEngineDetection &metaEngine = plugin->get<MetaEngineDetection>();
 		DetectedGames candidates = metaEngine.detectGames(files);
 		if (candidates.empty()) {
 			warning("No games supported by the engine '%s' were found in path '%s' when upgrading target '%s'",

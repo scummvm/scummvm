@@ -49,11 +49,11 @@ static const PlainGameDescriptor ULTIMA_GAMES[] = {
 
 #include "ultima/detection_tables.h"
 
-UltimaMetaEngineStatic::UltimaMetaEngineStatic() : AdvancedMetaEngineStatic(Ultima::GAME_DESCRIPTIONS,
+UltimaMetaEngineDetection::UltimaMetaEngineDetection() : AdvancedMetaEngineDetection(Ultima::GAME_DESCRIPTIONS,
 	        sizeof(Ultima::UltimaGameDescription), Ultima::ULTIMA_GAMES) {
 	static const char *const DIRECTORY_GLOBS[2] = { "usecode", 0 };
 	_maxScanDepth = 2;
 	_directoryGlobs = DIRECTORY_GLOBS;
 }
 
-REGISTER_PLUGIN_STATIC(ULTIMA_DETECTION, PLUGIN_TYPE_METAENGINE, UltimaMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(ULTIMA_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, UltimaMetaEngineDetection);

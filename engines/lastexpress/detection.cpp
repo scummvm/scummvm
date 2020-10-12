@@ -208,9 +208,9 @@ static const char *const directoryGlobs[] = {
         0
 };
 
-class LastExpressMetaEngineStatic : public AdvancedMetaEngineStatic {
+class LastExpressMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	LastExpressMetaEngineStatic() : AdvancedMetaEngineStatic(gameDescriptions, sizeof(ADGameDescription), lastExpressGames) {
+	LastExpressMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(ADGameDescription), lastExpressGames) {
 		_guiOptions = GUIO2(GUIO_NOSUBTITLES, GUIO_NOSFX);
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
@@ -231,4 +231,4 @@ public:
 
 } // End of namespace LastExpress
 
-REGISTER_PLUGIN_STATIC(LASTEXPRESS_DETECTION, PLUGIN_TYPE_METAENGINE, LastExpress::LastExpressMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(LASTEXPRESS_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, LastExpress::LastExpressMetaEngineDetection);

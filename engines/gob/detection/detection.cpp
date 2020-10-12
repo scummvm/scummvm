@@ -27,9 +27,9 @@
 #include "gob/detection/detection.h"
 #include "gob/detection/tables.h"
 
-class GobMetaEngineStatic : public AdvancedMetaEngineStatic {
+class GobMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	GobMetaEngineStatic();
+	GobMetaEngineDetection();
 
 	const char *getEngineId() const override {
 		return "gob";
@@ -47,13 +47,13 @@ private:
 	static const Gob::GOBGameDescription *detectOnceUponATime(const Common::FSList &fslist);
 };
 
-GobMetaEngineStatic::GobMetaEngineStatic() :
-	AdvancedMetaEngineStatic(Gob::gameDescriptions, sizeof(Gob::GOBGameDescription), gobGames) {
+GobMetaEngineDetection::GobMetaEngineDetection() :
+	AdvancedMetaEngineDetection(Gob::gameDescriptions, sizeof(Gob::GOBGameDescription), gobGames) {
 
 	_guiOptions = GUIO1(GUIO_NOLAUNCHLOAD);
 }
 
-ADDetectedGame GobMetaEngineStatic::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+ADDetectedGame GobMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 	ADDetectedGame detectedGame = detectGameFilebased(allFiles, Gob::fileBased);
 	if (!detectedGame.desc) {
 		return ADDetectedGame();
@@ -71,7 +71,7 @@ ADDetectedGame GobMetaEngineStatic::fallbackDetect(const FileMap &allFiles, cons
 	return detectedGame;
 }
 
-const Gob::GOBGameDescription *GobMetaEngineStatic::detectOnceUponATime(const Common::FSList &fslist) {
+const Gob::GOBGameDescription *GobMetaEngineDetection::detectOnceUponATime(const Common::FSList &fslist) {
 	// Add the game path to the search manager
 	SearchMan.clear();
 	SearchMan.addDirectory(fslist.begin()->getParent().getPath(), fslist.begin()->getParent());
@@ -140,7 +140,7 @@ const Gob::GOBGameDescription *GobMetaEngineStatic::detectOnceUponATime(const Co
 	SearchMan.clear();
 
 	if ((gameType == Gob::kOnceUponATimeInvalid) || (platform == Gob::kOnceUponATimePlatformInvalid)) {
-		warning("GobMetaEngineStatic::detectOnceUponATime(): Detection failed (%d, %d)",
+		warning("GobMetaEngineDetection::detectOnceUponATime(): Detection failed (%d, %d)",
 		        (int)gameType, (int)platform);
 		return 0;
 	}
@@ -148,12 +148,12 @@ const Gob::GOBGameDescription *GobMetaEngineStatic::detectOnceUponATime(const Co
 	return &Gob::fallbackOnceUpon[gameType][platform];
 }
 
-const char *GobMetaEngineStatic::getName() const {
+const char *GobMetaEngineDetection::getName() const {
 	return "Gob";
 }
 
-const char *GobMetaEngineStatic::getOriginalCopyright() const {
+const char *GobMetaEngineDetection::getOriginalCopyright() const {
 	return "Goblins Games (C) Coktel Vision";
 }
 
-REGISTER_PLUGIN_STATIC(GOB_DETECTION, PLUGIN_TYPE_METAENGINE, GobMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(GOB_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, GobMetaEngineDetection);

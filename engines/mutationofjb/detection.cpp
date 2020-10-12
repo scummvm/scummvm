@@ -79,9 +79,9 @@ static const char *const mutationofjbDirectoryGlobs[] = {
 	nullptr
 };
 
-class MutationOfJBMetaEngineStatic : public AdvancedMetaEngineStatic {
+class MutationOfJBMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	MutationOfJBMetaEngineStatic() : AdvancedMetaEngineStatic(mutationofjbDescriptions, sizeof(ADGameDescription), mutationofjbGames) {
+	MutationOfJBMetaEngineDetection() : AdvancedMetaEngineDetection(mutationofjbDescriptions, sizeof(ADGameDescription), mutationofjbGames) {
 		_maxScanDepth = 2;
 		_directoryGlobs = mutationofjbDirectoryGlobs;
 	}
@@ -99,4 +99,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(MUTATIONOFJB_DETECTION, PLUGIN_TYPE_METAENGINE, MutationOfJBMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(MUTATIONOFJB_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, MutationOfJBMetaEngineDetection);

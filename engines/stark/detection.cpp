@@ -365,9 +365,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class StarkMetaEngineStatic : public AdvancedMetaEngineStatic {
+class StarkMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	StarkMetaEngineStatic() : AdvancedMetaEngineStatic(gameDescriptions, sizeof(ADGameDescription), starkGames, optionsList) {
+	StarkMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(ADGameDescription), starkGames, optionsList) {
 		_guiOptions = GUIO4(GUIO_NOMIDI, GAMEOPTION_ASSETS_MOD, GAMEOPTION_LINEAR_FILTERING, GAMEOPTION_FONT_ANTIALIASING);
 	}
 
@@ -386,4 +386,4 @@ public:
 
 } // End of namespace Stark
 
-REGISTER_PLUGIN_STATIC(STARK_DETECTION, PLUGIN_TYPE_METAENGINE, Stark::StarkMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(STARK_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Stark::StarkMetaEngineDetection);

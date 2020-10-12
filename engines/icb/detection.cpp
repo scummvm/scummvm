@@ -63,9 +63,9 @@ static const ADGameDescription gameDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
-class IcbMetaEngineStatic : public AdvancedMetaEngineStatic {
+class IcbMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	IcbMetaEngineStatic() : AdvancedMetaEngineStatic(gameDescriptions, sizeof(ADGameDescription), icbGames) {
+	IcbMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(ADGameDescription), icbGames) {
 		_guiOptions = GUIO_NOMIDI;
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
@@ -82,4 +82,4 @@ public:
 
 } // End of namespace ICB
 
-REGISTER_PLUGIN_STATIC(ICB_DETECTION, PLUGIN_TYPE_METAENGINE, ICB::IcbMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(ICB_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, ICB::IcbMetaEngineDetection);

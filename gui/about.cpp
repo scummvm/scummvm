@@ -127,7 +127,7 @@ AboutDialog::AboutDialog()
 		addLine(str);
 
 		str = "C2";
-		str += (*iter)->get<MetaEngineStatic>().getOriginalCopyright();
+		str += (*iter)->get<MetaEngineDetection>().getOriginalCopyright();
 		addLine(str);
 
 		//addLine("");

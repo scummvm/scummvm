@@ -477,8 +477,10 @@ bool BaseRenderOpenGL3D::setup2D(bool force) {
 
 #if defined(__MINGW32__) && defined (SDL_BACKEND) && !defined(USE_GLEW)
 		glActiveTexturePtr(GL_TEXTURE0);
-#else
+#elif defined(__MORPHOS__)
 		glActiveTextureARB(GL_TEXTURE0);
+#else
+		glActiveTexture(GL_TEXTURE0);
 #endif
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
 		glTexEnvf(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE);
@@ -490,15 +492,19 @@ bool BaseRenderOpenGL3D::setup2D(bool force) {
 
 #if defined(__MINGW32__) && defined (SDL_BACKEND) && !defined(USE_GLEW)
 		glActiveTexturePtr(GL_TEXTURE1);
-#else
+#elif defined(__MORPHOS__)
 		glActiveTextureARB(GL_TEXTURE1);
+#else
+		glActiveTexture(GL_TEXTURE1);
 #endif
 		glDisable(GL_TEXTURE_2D);
 
 #if defined(__MINGW32__) && defined (SDL_BACKEND) && !defined(USE_GLEW)
 		glActiveTexturePtr(GL_TEXTURE0);
-#else
+#elif defined(__MORPHOS__)
 		glActiveTextureARB(GL_TEXTURE0);
+#else
+		glActiveTexture(GL_TEXTURE0);
 #endif
 		
 		glViewport(0, 0, _width, _height);

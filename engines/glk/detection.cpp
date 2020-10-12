@@ -114,7 +114,7 @@ GlkDetectedGame::GlkDetectedGame(const char *id, const char *desc, const Common:
 
 } // End of namespace Glk
 
-PlainGameList GlkMetaEngineStatic::getSupportedGames() const {
+PlainGameList GlkMetaEngineDetection::getSupportedGames() const {
 	PlainGameList list;
 	Glk::Adrift::AdriftMetaEngine::getSupportedGames(list);
 	Glk::AdvSys::AdvSysMetaEngine::getSupportedGames(list);
@@ -142,7 +142,7 @@ PlainGameList GlkMetaEngineStatic::getSupportedGames() const {
 	Glk::GameDescriptor gd##SUBENGINE = Glk::SUBENGINE::SUBENGINE##MetaEngine::findGame(gameId); \
 	if (gd##SUBENGINE._description) return gd##SUBENGINE
 
-PlainGameDescriptor GlkMetaEngineStatic::findGame(const char *gameId) const {
+PlainGameDescriptor GlkMetaEngineDetection::findGame(const char *gameId) const {
 	FIND_GAME(Adrift);
 	FIND_GAME(AdvSys);
 	FIND_GAME(Alan2);
@@ -167,7 +167,7 @@ PlainGameDescriptor GlkMetaEngineStatic::findGame(const char *gameId) const {
 
 #undef FIND_GAME
 
-DetectedGames GlkMetaEngineStatic::detectGames(const Common::FSList &fslist) const {
+DetectedGames GlkMetaEngineDetection::detectGames(const Common::FSList &fslist) const {
 #ifndef RELEASE_BUILD
 	// This is as good a place as any to detect multiple sub-engines using the same Ids
 	detectClashes();
@@ -196,7 +196,7 @@ DetectedGames GlkMetaEngineStatic::detectGames(const Common::FSList &fslist) con
 	return detectedGames;
 }
 
-void GlkMetaEngineStatic::detectClashes() const {
+void GlkMetaEngineDetection::detectClashes() const {
 	Common::StringMap map;
 	Glk::Adrift::AdriftMetaEngine::detectClashes(map);
 	Glk::AdvSys::AdvSysMetaEngine::detectClashes(map);
@@ -218,7 +218,7 @@ void GlkMetaEngineStatic::detectClashes() const {
 #endif
 }
 
-const ExtraGuiOptions GlkMetaEngineStatic::getExtraGuiOptions(const Common::String &) const {
+const ExtraGuiOptions GlkMetaEngineDetection::getExtraGuiOptions(const Common::String &) const {
 	ExtraGuiOptions  options;
 #if defined(USE_TTS)
 	static const ExtraGuiOption ttsSpeakOptions = {
@@ -239,4 +239,4 @@ const ExtraGuiOptions GlkMetaEngineStatic::getExtraGuiOptions(const Common::Stri
 	return options;
 }
 
-REGISTER_PLUGIN_STATIC(GLK_DETECTION, PLUGIN_TYPE_METAENGINE, GlkMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(GLK_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, GlkMetaEngineDetection);

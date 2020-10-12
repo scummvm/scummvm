@@ -36,9 +36,9 @@ static const PlainGameDescriptor tinselGames[] = {
 
 #include "tinsel/detection_tables.h"
 
-class TinselMetaEngineStatic : public AdvancedMetaEngineStatic {
+class TinselMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	TinselMetaEngineStatic() : AdvancedMetaEngineStatic(Tinsel::gameDescriptions, sizeof(Tinsel::TinselGameDescription), tinselGames) {
+	TinselMetaEngineDetection() : AdvancedMetaEngineDetection(Tinsel::gameDescriptions, sizeof(Tinsel::TinselGameDescription), tinselGames) {
 	}
 
 	const char *getEngineId() const  override{
@@ -68,7 +68,7 @@ typedef Common::Array<const ADGameDescription *> ADGameDescList;
  * Fallback detection scans the list of Discworld 2 targets to see if it can detect an installation
  * where the files haven't been renamed (i.e. don't have the '1' just before the extension)
  */
-ADDetectedGame TinselMetaEngineStatic::fallbackDetect(const FileMap &allFilesXXX, const Common::FSList &fslist) const {
+ADDetectedGame TinselMetaEngineDetection::fallbackDetect(const FileMap &allFilesXXX, const Common::FSList &fslist) const {
 	Common::String extra;
 	FileMap allFiles;
 	SizeMD5Map filesSizeMD5;
@@ -204,4 +204,4 @@ ADDetectedGame TinselMetaEngineStatic::fallbackDetect(const FileMap &allFilesXXX
 	return matched;
 }
 
-REGISTER_PLUGIN_STATIC(TINSEL_DETECTION, PLUGIN_TYPE_METAENGINE, TinselMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(TINSEL_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, TinselMetaEngineDetection);

@@ -287,9 +287,9 @@ static const StarTrekGameDescription gameDescriptions[] = {
 
 } // End of namespace StarTrek
 
-class StarTrekMetaEngineStatic : public AdvancedMetaEngineStatic {
+class StarTrekMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	StarTrekMetaEngineStatic() : AdvancedMetaEngineStatic(StarTrek::gameDescriptions, sizeof(StarTrek::StarTrekGameDescription), starTrekGames) {
+	StarTrekMetaEngineDetection() : AdvancedMetaEngineDetection(StarTrek::gameDescriptions, sizeof(StarTrek::StarTrekGameDescription), starTrekGames) {
 	}
 
 	const char *getEngineId() const override {
@@ -307,4 +307,4 @@ public:
 
 
 
-REGISTER_PLUGIN_STATIC(STARTREK_DETECTION, PLUGIN_TYPE_METAENGINE, StarTrekMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(STARTREK_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, StarTrekMetaEngineDetection);

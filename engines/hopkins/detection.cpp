@@ -63,9 +63,9 @@ const static char *directoryGlobs[] = {
 	0
 };
 
-class HopkinsMetaEngineStatic : public AdvancedMetaEngineStatic {
+class HopkinsMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	HopkinsMetaEngineStatic() : AdvancedMetaEngineStatic(Hopkins::gameDescriptions, sizeof(Hopkins::HopkinsGameDescription), hopkinsGames, optionsList) {
+	HopkinsMetaEngineDetection() : AdvancedMetaEngineDetection(Hopkins::gameDescriptions, sizeof(Hopkins::HopkinsGameDescription), hopkinsGames, optionsList) {
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 	}
@@ -84,4 +84,4 @@ public:
 };
 
 
-REGISTER_PLUGIN_STATIC(HOPKINS_DETECTION, PLUGIN_TYPE_METAENGINE, HopkinsMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(HOPKINS_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, HopkinsMetaEngineDetection);

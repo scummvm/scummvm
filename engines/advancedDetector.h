@@ -167,9 +167,9 @@ struct ADExtraGuiOptionsMap {
 #define AD_EXTRA_GUI_OPTIONS_TERMINATOR { 0, { 0, 0, 0, 0 } }
 
 /**
- * A MetaEngineStatic implementation based around the advanced detector code.
+ * A MetaEngineDetection implementation based around the advanced detector code.
  */
-class AdvancedMetaEngineStatic : public MetaEngineStatic {
+class AdvancedMetaEngineDetection : public MetaEngineDetection {
 protected:
 	/**
 	 * Pointer to an array of objects which are either ADGameDescription
@@ -247,7 +247,7 @@ protected:
 	bool _matchFullPaths;
 
 public:
-	AdvancedMetaEngineStatic(const void *descs, uint descItemSize, const PlainGameDescriptor *gameIds, const ADExtraGuiOptionsMap *extraGuiOptions = 0);
+	AdvancedMetaEngineDetection(const void *descs, uint descItemSize, const PlainGameDescriptor *gameIds, const ADExtraGuiOptionsMap *extraGuiOptions = 0);
 
 	/**
 	 * Returns list of targets supported by the engine.

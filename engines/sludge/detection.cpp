@@ -65,9 +65,9 @@ static Sludge::SludgeGameDescription s_fallbackDesc =
 
 static char s_fallbackFileNameBuffer[51];
 
-class SludgeMetaEngineStatic : public AdvancedMetaEngineStatic {
+class SludgeMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	SludgeMetaEngineStatic() : AdvancedMetaEngineStatic(Sludge::gameDescriptions, sizeof(Sludge::SludgeGameDescription), sludgeGames) {
+	SludgeMetaEngineDetection() : AdvancedMetaEngineDetection(Sludge::gameDescriptions, sizeof(Sludge::SludgeGameDescription), sludgeGames) {
 		_maxScanDepth = 1;
 	}
 
@@ -87,7 +87,7 @@ public:
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
 };
 
-ADDetectedGame SludgeMetaEngineStatic::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+ADDetectedGame SludgeMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 	// reset fallback description
 	s_fallbackDesc.desc.gameId = "sludge";
 	s_fallbackDesc.desc.extra = "";
@@ -146,4 +146,4 @@ ADDetectedGame SludgeMetaEngineStatic::fallbackDetect(const FileMap &allFiles, c
 	return ADDetectedGame();
 }
 
-REGISTER_PLUGIN_STATIC(SLUDGE_DETECTION, PLUGIN_TYPE_METAENGINE, SludgeMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(SLUDGE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, SludgeMetaEngineDetection);

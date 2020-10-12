@@ -36,7 +36,7 @@ static const ExtraGuiOption sword2ExtraGuiOption = {
 	false
 };
 
-class Sword2MetaEngineStatic : public MetaEngineStatic {
+class Sword2MetaEngineDetection : public MetaEngineDetection {
 public:
 	const char *getEngineId() const override {
 		return "sword2";
@@ -55,7 +55,7 @@ public:
 	DetectedGames detectGames(const Common::FSList &fslist) const override;
 };
 
-PlainGameList Sword2MetaEngineStatic::getSupportedGames() const {
+PlainGameList Sword2MetaEngineDetection::getSupportedGames() const {
 	const Sword2::GameSettings *g = Sword2::sword2_settings;
 	PlainGameList games;
 	while (g->gameid) {
@@ -65,13 +65,13 @@ PlainGameList Sword2MetaEngineStatic::getSupportedGames() const {
 	return games;
 }
 
-const ExtraGuiOptions Sword2MetaEngineStatic::getExtraGuiOptions(const Common::String &target) const {
+const ExtraGuiOptions Sword2MetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	options.push_back(sword2ExtraGuiOption);
 	return options;
 }
 
-PlainGameDescriptor Sword2MetaEngineStatic::findGame(const char *gameid) const {
+PlainGameDescriptor Sword2MetaEngineDetection::findGame(const char *gameid) const {
 	const Sword2::GameSettings *g = Sword2::sword2_settings;
 	while (g->gameid) {
 		if (0 == scumm_stricmp(gameid, g->gameid))
@@ -81,7 +81,7 @@ PlainGameDescriptor Sword2MetaEngineStatic::findGame(const char *gameid) const {
 	return PlainGameDescriptor::of(g->gameid, g->description);
 }
 
-DetectedGames Sword2MetaEngineStatic::detectGames(const Common::FSList &fslist) const {
+DetectedGames Sword2MetaEngineDetection::detectGames(const Common::FSList &fslist) const {
 	// The required game data files can be located in the game directory, or in
 	// a subdirectory called "clusters". In the latter case, we don't want to
 	// detect the game in that subdirectory, as this will detect the game twice
@@ -101,4 +101,4 @@ DetectedGames Sword2MetaEngineStatic::detectGames(const Common::FSList &fslist) 
 	return detectGamesImpl(fslist);
 }
 
-REGISTER_PLUGIN_STATIC(SWORD2_DETECTION, PLUGIN_TYPE_METAENGINE, Sword2MetaEngineStatic);
+REGISTER_PLUGIN_STATIC(SWORD2_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Sword2MetaEngineDetection);

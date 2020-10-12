@@ -31,7 +31,7 @@
 #include "common/singleton.h"
 
 class OSystem;
-class MetaEngineStatic;
+class MetaEngineDetection;
 class MetaEngine;
 
 namespace Audio {
@@ -387,7 +387,7 @@ public:
 	 */
 	static bool shouldQuit();
 
-	static MetaEngineStatic &getMetaEngineStatic();
+	static MetaEngineDetection &getMetaEngineDetection();
 	static MetaEngine &getMetaEngine();
 
 	/**

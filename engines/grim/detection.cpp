@@ -586,9 +586,9 @@ static const GrimGameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER, GType_GRIM }
 };
 
-class GrimMetaEngineStatic : public AdvancedMetaEngineStatic {
+class GrimMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	GrimMetaEngineStatic() : AdvancedMetaEngineStatic(Grim::gameDescriptions, sizeof(Grim::GrimGameDescription), grimGames, gameGuiOptions) {
+	GrimMetaEngineDetection() : AdvancedMetaEngineDetection(Grim::gameDescriptions, sizeof(Grim::GrimGameDescription), grimGames, gameGuiOptions) {
 		_guiOptions = GUIO_NOMIDI;
 	}
 
@@ -613,4 +613,4 @@ public:
 } // End of namespace Grim
 
 
-REGISTER_PLUGIN_STATIC(GRIM_DETECTION, PLUGIN_TYPE_METAENGINE, Grim::GrimMetaEngineStatic);
+REGISTER_PLUGIN_STATIC(GRIM_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Grim::GrimMetaEngineDetection);

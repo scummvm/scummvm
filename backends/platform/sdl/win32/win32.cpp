@@ -66,6 +66,7 @@ void OSystem_Win32::init() {
 	_fsFactory = new WindowsFilesystemFactory();
 
 	// Create Win32 specific window
+	initSDL();
 	_window = new SdlWindow_Win32();
 
 #if defined(USE_TASKBAR)
