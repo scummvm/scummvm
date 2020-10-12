@@ -37,10 +37,12 @@ class AGDSEngine;
 class Process;
 class Object;
 typedef Common::SharedPtr<Object> ObjectPtr;
+class Animation;
 
 class Character {
 	AGDSEngine *	_engine;
 	ObjectPtr		_object;
+	Animation *		_animation;
 	Common::String 	_name;
 	Common::Point	_pos;
 	Common::Point	_dst;
@@ -62,7 +64,7 @@ class Character {
 
 public:
 	Character(AGDSEngine * engine, const Common::String & name, const ObjectPtr & object):
-		_engine(engine), _name(name), _object(object), _enabled(false), _phase(0), _frames(0), _direction(-1) {
+		_engine(engine), _name(name), _object(object), _animation(nullptr), _enabled(false), _phase(-1), _frames(0), _direction(-1) {
 	}
 
 	const Common::String & name() const {
@@ -79,9 +81,7 @@ public:
 		_enabled = enabled;
 	}
 
-	void animate(int frames) {
-		_frames += frames;
-	}
+	void animate(Common::Point pos, int frames, int speed);
 
 	void stop() {
 		_phase = 0;
@@ -89,7 +89,7 @@ public:
 	}
 
 	int getPhase() const {
-		return _phase <= _frames? _phase + 1: -1;
+		return _phase;
 	}
 
 	void position(Common::Point pos) {

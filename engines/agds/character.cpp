@@ -21,6 +21,9 @@
  */
 
 #include "agds/character.h"
+#include "agds/agds.h"
+#include "agds/animation.h"
+#include "agds/object.h"
 #include "agds/resourceManager.h"
 #include "common/array.h"
 #include "common/debug.h"
@@ -79,18 +82,57 @@ void Character::load(Common::SeekableReadStream* stream) {
 void Character::setDirection(int dir) {
 	debug("setDirection %d", dir);
 	_direction = dir;
+	_animation = _engine->loadAnimation(_animations[dir].filename);
+	if (!_animation) {
+		debug("no animation?");
+		_phase = -1;
+		_frames = 0;
+	}
+	_animation->loop(true);
 }
 
 void Character::moveTo(Common::Point dst, int frames) {
 	debug("move to %d,%d", dst.x, dst.y);
 	_dst = dst;
+	_phase = 0;
 	_frames = frames;
 }
 
+void Character::animate(Common::Point pos, int frames, int speed) {
+	_animation = _engine->loadAnimation(_animations[_direction].filename);
+	if (!_animation) {
+		debug("no animation?");
+		_phase = -1;
+		_frames = 0;
+	}
+	_animation->loop(true);
+	_phase = 0;
+	_frames = frames;
+	_pos = pos;
+}
 
 void Character::paint(Graphics::Surface & backbuffer) {
-	if (_enabled && _phase <= _frames)
-		++_phase;
+	if (!_enabled || !_animation)
+		return;
+
+	Common::Point pos = _pos;
+	if (_phase >= 0 && _phase < _frames) {
+		_animation->tick(*_engine);
+		if (_phase + 1 >= _frames) {
+			_phase = -1;
+			_frames = 0;
+			_pos = _dst = pos;
+		} else {
+			float dx = _dst.x - _pos.x;
+			float dy = _dst.y - _pos.y;
+			float t = 1.0f * _phase / _frames;
+			pos.x += dx * t;
+			pos.y += dy * t;
+			++_phase;
+		}
+	}
+
+	_animation->paint(*_engine, backbuffer, pos);
 }
 
 }

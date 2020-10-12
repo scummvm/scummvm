@@ -598,7 +598,6 @@ void AGDSEngine::loadCharacter(const Common::String &id, const Common::String &f
 	_currentCharacterName = id;
 	_currentCharacter = new Character(this, id, loadObject(object));
 	_currentCharacter->load(_resourceManager.getResource(filename));
-	runObject(_currentCharacter->object());
 }
 
 Graphics::TransparentSurface *AGDSEngine::loadPicture(const Common::String &name) { return convertToTransparent(_resourceManager.loadPicture(name, _pixelFormat)); }
