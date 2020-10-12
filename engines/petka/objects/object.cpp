@@ -424,21 +424,18 @@ QObject::QObject() {
 bool QObject::isInPoint(Common::Point p) {
 	if (!_isActive)
 		return false;
+
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
-	if (flc) {
-		if (!flc->getBounds().contains(p.x - _x, p.y - _y))
-			return false;
-		const Graphics::Surface *s = flc->getCurrentFrame();
-		if (s->format.bytesPerPixel == 1) {
-			byte index = *(const byte *) flc->getCurrentFrame()->getBasePtr(p.x - _x,
-																			p.y - _y);
-			const byte *pal = flc->getPalette();
-			return (pal[0] != pal[index * 3] || pal[1] != pal[index * 3 + 1] || pal[2] != pal[index * 3 + 2]);
-		}
-		if (s->format.bytesPerPixel == 2)
-			return *(const uint16*)flc->getCurrentFrame()->getBasePtr(p.x - _x, p.y - _y) != flc->getTransColor(s->format);
-	}
-	return false;
+	if (!flc || !flc->getBounds().contains(p.x - _x, p.y - _y))
+		return false;
+
+	const Graphics::Surface *s = flc->getCurrentFrame();
+	auto format = g_system->getScreenFormat();
+
+	byte index = *(const byte *)s->getBasePtr(p.x - _x, p.y - _y);
+	const byte *pal = flc->getPalette();
+
+	return format.RGBToColor(pal[0], pal[1], pal[2]) != format.RGBToColor(pal[index * 3], pal[index * 3 + 1], pal[index * 3 + 2]);
 }
 
 void QObject::draw() {
