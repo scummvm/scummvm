@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-12 13:14+0200\n"
-"PO-Revision-Date: 2020-10-10 17:39+0000\n"
+"PO-Revision-Date: 2020-10-12 19:56+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -4651,7 +4651,6 @@ msgstr ""
 "Assicurati di scaricare la versione corrispondente alla lingua del tuo gioco"
 
 #: engines/grim/emi/sound/emisound.cpp:650
-#, fuzzy
 msgid ""
 "ERROR: Not enough music tracks found!\n"
 "Escape from Monkey Island has two versions of FullMonkeyMap.imt,\n"
@@ -4669,8 +4668,8 @@ msgstr ""
 "CD 1: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap1.imt\"\n"
 "CD 2: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap2.imt\"\n"
 "\n"
-"In alternativa, le versioni Steam e GOG contengono già il file FullMonkeyMap."
-"int completo"
+"In alternativa, le edizioni Steam e GOG contengono già il file "
+"FullMonkeyMap.int completo"
 
 #: engines/groovie/detection.cpp:320
 msgid "Fast movie speed"
@@ -5278,7 +5277,6 @@ msgid "Widescreen mod"
 msgstr "Modalità widescreen"
 
 #: engines/myst3/detection.cpp:183
-#, fuzzy
 msgid "Enable widescreen rendering in fullscreen mode."
 msgstr "Abilita la modalità widescreen nella visualizzazione a schermo intero."
 
@@ -7273,7 +7271,7 @@ msgstr "Maiusc"
 
 #: engines/wintermute/keymapper_tables.h:1214
 msgid "Use Chapayev"
-msgstr ""
+msgstr "Usa Chapayev"
 
 #: engines/wintermute/keymapper_tables.h:1234
 #: engines/wintermute/keymapper_tables.h:1639
