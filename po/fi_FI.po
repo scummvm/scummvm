@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-12 13:14+0200\n"
-"PO-Revision-Date: 2020-09-16 01:43+0000\n"
+"PO-Revision-Date: 2020-10-12 19:56+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -991,21 +991,19 @@ msgstr "Kokoruututila"
 
 #: gui/options.cpp:1300
 msgid "V-Sync in 3D Games"
-msgstr ""
+msgstr "V-Sync 3D-peleissä"
 
 #: gui/options.cpp:1300
 msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
-msgstr ""
+msgstr "Odota pystytahdistusta 3D-renderöijän ruudunpäivityksessä"
 
 #: gui/options.cpp:1302
-#, fuzzy
 msgid "Game 3D Renderer:"
-msgstr "GUI renderöijä:"
+msgstr "Pelin 3d-renderöijä:"
 
 #: gui/options.cpp:1311
-#, fuzzy
 msgid "3D Anti-aliasing:"
-msgstr "Antialiasoitu"
+msgstr "3D Antialiasointi:"
 
 #: gui/options.cpp:1315 engines/mohawk/dialogs.cpp:328
 msgid "Disabled"
@@ -1024,9 +1022,8 @@ msgid "Aspect ratio correction"
 msgstr "Kuvasuhteen korjaus"
 
 #: gui/options.cpp:1330
-#, fuzzy
 msgid "Correct aspect ratio for games"
-msgstr "Korjaa kuvasuhde 320x200 peleille"
+msgstr "Korjaa pelien kuvasuhde"
 
 #: gui/options.cpp:1338
 msgid "Preferred device:"
@@ -4470,13 +4467,15 @@ msgstr "Tiedoston poistaminen ei onnistunut."
 
 #: engines/grim/detection.cpp:45
 msgid "Load user patch (unsupported)"
-msgstr ""
+msgstr "Lataa epävirallinen päivitys (ei tuettu)"
 
 #: engines/grim/detection.cpp:46
 msgid ""
 "Load an user patch. Please note that the ScummVM team doesn't provide "
 "support for using such patches."
 msgstr ""
+"Lataa epävirallisen päivityksen. Huomaathan että ScummVM:n tiimi ei anna "
+"tukea tällaisten päivitysten käyttöön."
 
 #: engines/grim/detection.cpp:54
 msgid "Show FPS"
@@ -4484,7 +4483,7 @@ msgstr "Näytä FPS-laskuri"
 
 #: engines/grim/detection.cpp:55
 msgid "Show the current FPS-rate, while you play."
-msgstr ""
+msgstr "Näytä FPS pelin aikana."
 
 #: engines/grim/grim.cpp:340
 #, c-format
@@ -4493,10 +4492,14 @@ msgid ""
 "Running ScummVM nevertheless may cause game bugs or even crashes.\n"
 "Do you still want to run %s?"
 msgstr ""
+"ScummVM törmäsi ongelmiin pelisi datatiedostojen kanssa.\n"
+"Jos käynnistät pelin tästä huolimatta, saatat törmätä bugeihin tai jopa "
+"kaatumisiin.\n"
+"Haluatko silti käynnistää %s?"
 
 #: engines/grim/grim.cpp:464 engines/grim/grim.cpp:556
 msgid "Run"
-msgstr ""
+msgstr "Juokse"
 
 #: engines/grim/grim.cpp:469 engines/scumm/help.cpp:239
 #: engines/scumm/help.cpp:247
@@ -4504,14 +4507,12 @@ msgid "Examine"
 msgstr "Tutki"
 
 #: engines/grim/grim.cpp:474 engines/grim/grim.cpp:571
-#, fuzzy
 msgid "Use/Talk"
-msgstr "Puhu"
+msgstr "Käytä/Puhu"
 
 #: engines/grim/grim.cpp:479 engines/grim/grim.cpp:576
-#, fuzzy
 msgid "Pick up/Put away"
-msgstr "Ota"
+msgstr "Poimi/Laita pois"
 
 #: engines/grim/grim.cpp:484 engines/grim/grim.cpp:581
 #: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
@@ -4520,9 +4521,8 @@ msgid "Inventory"
 msgstr "Tavarat"
 
 #: engines/grim/grim.cpp:489 engines/grim/grim.cpp:586
-#, fuzzy
 msgid "Skip dialog lines"
-msgstr "Ohita dialogi (joissain peleissä)"
+msgstr "Ohita dialogi"
 
 #: engines/grim/grim.cpp:507 engines/grim/grim.cpp:604
 msgid "Menu"
@@ -4530,25 +4530,23 @@ msgstr "Valikko"
 
 #: engines/grim/grim.cpp:546
 msgid "Cycle Objects Up"
-msgstr ""
+msgstr "Kierrä esineistöä ylöspäin"
 
 #: engines/grim/grim.cpp:551
 msgid "Cycle Objects Down"
-msgstr ""
+msgstr "Kierrä esineistöä alaspäin"
 
 #: engines/grim/grim.cpp:561
 msgid "Quick Room Exit"
-msgstr ""
+msgstr "Pikapoistuminen huoneesta"
 
 #: engines/grim/grim.cpp:566
-#, fuzzy
 msgid "Examine/Look"
-msgstr "Tutki"
+msgstr "Tutki/Katso"
 
 #: engines/grim/grim.cpp:1352
-#, fuzzy
 msgid "Error: the game could not be saved."
-msgstr "Valitettavasti pelitallennusta ei kyetty luomaan"
+msgstr "Virhe: peliä ei pystytty tallentamaan."
 
 #: engines/grim/md5check.cpp:547
 #, c-format
@@ -4559,6 +4557,11 @@ msgid ""
 "version (i.e. dvd-box or jewelcase):\n"
 "%s"
 msgstr ""
+"Pelidatatiedosto %s saattaa olla korruptoitunut.\n"
+"Jos olet varma ettei se ole, ole hyvä ja toimita ScummVM:n tiimille seuraava "
+"koodi, sekä teidostonnimi, kieli ja kuvaus pelisi versiosta (i.e. dvd-boksi "
+"tai jewelcase):\n"
+"%s"
 
 #: engines/grim/md5check.cpp:554
 #, c-format
@@ -4568,6 +4571,10 @@ msgid ""
 "Go to https://wiki.residualvm.org/index.php/Datafiles to see a list of the "
 "needed files."
 msgstr ""
+"Tiedostoa %s ei pystytty avaamaan sen tarkistamiseksi.\n"
+"Joko se on hävyksissä, tai sitten sinulla ei ole oikeuksia avata sitä.\n"
+"Mene osoitteeseen https://wiki.residualvm.org/index.php/Datafiles nähdäksesi "
+"listan tarvituista tiedostoista."
 
 #: engines/grim/md5checkdialog.cpp:42
 msgid ""
@@ -4576,6 +4583,10 @@ msgid ""
 "This may take a while, please wait.\n"
 "Successive runs will not check them again."
 msgstr ""
+"ScummVM tarkistaa nyt pelitiedostojen sisällön varmistaakseen sinulle "
+"parhaan mahdollisen pelinautinnon.\n"
+"Tässä saattaa mennä tovi, odottele rauhassa.\n"
+"Seuraavilla kerroilla tätä tarkistusta ei enää tehdä."
 
 #: engines/grim/resource.cpp:100
 msgid ""
@@ -4584,6 +4595,10 @@ msgid ""
 "https://scummvm.org/frs/extras/patches/gfupd101.exe\n"
 "and put it in the game data files directory"
 msgstr ""
+"Grim Fandango:n alkuperäistä päivitystä\n"
+"ei löydy. Ole hyvä ja lataa se osoitteesta\n"
+"https://scummvm.org/frs/extras/patches/gfupd101.exe\n"
+"ja laita se pelisi pelidatahakemistoon"
 
 #: engines/grim/resource.cpp:105
 msgid ""
@@ -4593,6 +4608,11 @@ msgid ""
 "Pay attention to download the correct version according to the game's "
 "language"
 msgstr ""
+"Escape from Monkey Island:in alkuperäistä päivitystä\n"
+"ei löydy. Ole hyvä ja lataa se osoitteesta https://scummvm.org/frs/extras/"
+"patches/\n"
+"ja laita se pelisi pelidatahakemistoon.\n"
+"Lataathan pelisi kielelle sopivan version"
 
 #: engines/grim/emi/sound/emisound.cpp:650
 msgid ""
@@ -4605,6 +4625,17 @@ msgid ""
 "\n"
 "Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.imt"
 msgstr ""
+"VIRHE: Musiikkiraitoja ei löytynyt tarpeeksi!\n"
+"Escape from Monkey Island sisältää kaksi versiota FullMonkeyMap.imt-"
+"tiedostosta,\n"
+" sinun tarvitsee kopioida tiedostot molemmilta CD:iltä pelin Textures-"
+"kansioon ja\n"
+"uudelleennimetä ne seuraavasti jotta kuulet musiikkia pelissä:\n"
+"CD 1: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap1.imt\"\n"
+"CD 2: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap2.imt\"\n"
+"\n"
+"Voit myös käyttää pelin Steam- tai GOG-versioita, joissa tiedostot on "
+"yhdistetty"
 
 #: engines/groovie/detection.cpp:320
 msgid "Fast movie speed"
@@ -5200,13 +5231,12 @@ msgid "Unable to locate the '%s' engine data file"
 msgstr "Pelimoottorin datatiedostoa \"%s\" ei löydetty"
 
 #: engines/myst3/detection.cpp:182
-#, fuzzy
 msgid "Widescreen mod"
-msgstr "Kokoruututila"
+msgstr "Laajakuvamodi"
 
 #: engines/myst3/detection.cpp:183
 msgid "Enable widescreen rendering in fullscreen mode."
-msgstr ""
+msgstr "Mahdollista laajakuva kokoruututilassa."
 
 #: engines/myst3/myst3.cpp:361
 msgid ""
@@ -5216,6 +5246,11 @@ msgid ""
 "The updates can be downloaded from:\n"
 "https://www.scummvm.org/frs/extras/patches/"
 msgstr ""
+"Tätä Myst III:sta ei ole päivitetty viimeisimpään versioon.\n"
+"Ole hyvä ja päivitä peli virallisella päivitystiedostolla joka sopii pelisi "
+"kieleen.\n"
+"Päivitykset voi ladata osoitteesta:\n"
+"https://www.scummvm.org/frs/extras/patches/"
 
 #: engines/myst3/myst3.cpp:1579 engines/pegasus/pegasus.cpp:701
 msgid "Invalid file name for saving"
@@ -6438,37 +6473,36 @@ msgid "Use the floppy version's intro (CD version only)"
 msgstr "Käytä levykeversion introa (vain CD versiossa)"
 
 #: engines/stark/detection.cpp:340
-#, fuzzy
 msgid "Load modded assets"
-msgstr "Lataa pelitallennus"
+msgstr "Lataa modattuja peliresursseja"
 
 #: engines/stark/detection.cpp:341
 msgid "Enable loading of external replacement assets."
-msgstr ""
+msgstr "Mahdollista ulkoisten korvaavien peliresurssien lataus."
 
 #: engines/stark/detection.cpp:349
 msgid "Enable linear filtering of the backgrounds images"
-msgstr ""
+msgstr "Taustakuvien lineaarinen suodatus"
 
 #: engines/stark/detection.cpp:350
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
 msgstr ""
+"Kun lineaarinen suodatus on päällä, taustakuvat ovat pehmeämpiä "
+"kokoruututilassa, mutta menettävät hieman yksityiskohtia."
 
 #: engines/stark/detection.cpp:358
-#, fuzzy
 msgid "Enable font anti-aliasing"
-msgstr "Sisällön sensurointi"
+msgstr "Fonttien antialiasointi"
 
 #: engines/stark/detection.cpp:359
 msgid "When font anti-aliasing is enabled, the text is smoother."
-msgstr ""
+msgstr "Kirjaimet näyttävät sileämmiltä kun antialiasointi on päällä."
 
 #: engines/stark/stark.cpp:294
-#, fuzzy
 msgid "You are missing recommended data files:"
-msgstr "Sinulta puuttuu seuraavat vaaditut Rivenin datatiedostot:\n"
+msgstr "Sinulta puuttuu seuraavat suositellut datatiedostot:"
 
 #: engines/stark/stark.cpp:308
 msgid ""
@@ -6476,20 +6510,26 @@ msgid ""
 "designed. The Steam release is known to be missing it. You can get the fonts "
 "from the demo version of the game."
 msgstr ""
+"'fonts'-kansio tarvitaan jotta pelin teksti näyttäisi siltä millaiseksi se "
+"on suunniteltu. Pelin Steam-julkaisusta sen tiedetään puuttuvan. Voit "
+"kopioida fontit pelin demoversiosta."
 
 #: engines/stark/stark.cpp:315
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
 msgstr ""
+"'gui.ini':ä suositellaan jotta saat sopivat fonttiasetukset pelin "
+"lokalisaatiolle."
 
 #: engines/stark/stark.cpp:321
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
 msgstr ""
+"'language.ini':ä suositellaan jotta saat lokalisoidut vahvistusdialogit."
 
 #: engines/stark/stark.cpp:327
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
-msgstr ""
+msgstr "'game.exe':ä suositellaan jotta saat tyylitellyt vahvistusdialogit."
 
 #: engines/supernova/supernova.cpp:187
 #, c-format
@@ -7159,7 +7199,7 @@ msgstr "Shift"
 
 #: engines/wintermute/keymapper_tables.h:1214
 msgid "Use Chapayev"
-msgstr ""
+msgstr "Käytä Chapayev:iä"
 
 #: engines/wintermute/keymapper_tables.h:1234
 #: engines/wintermute/keymapper_tables.h:1639
