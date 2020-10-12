@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-12 13:14+0200\n"
-"PO-Revision-Date: 2020-10-12 11:12+0000\n"
+"PO-Revision-Date: 2020-10-12 11:31+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -17,8 +17,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Українська\n"
 
@@ -1141,8 +1141,8 @@ msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
 msgstr ""
-"Відмітьте, якщо хочете включити латки для інструментів для емуляції MT-32 на "
-"Roland"
+"Відмітьте, якщо хочете ввімкнути латки для інструментів для емуляції MT-32 "
+"на Roland"
 
 #: gui/options.cpp:1455
 msgid "Don't use Roland MT-32 music"
@@ -1914,7 +1914,7 @@ msgid ""
 msgstr ""
 "ScummVM став підтримувати автоматичну перевірку\n"
 "оновлень, що потребує досупу до Інтернету.\n"
-"Чи хотіли б ви включити таку перевірку?"
+"Чи хотіли б ви ввімкнути таку перевірку?"
 
 #: gui/updates-dialog.cpp:52
 msgid ""
@@ -3861,7 +3861,7 @@ msgstr "Підтримка миші"
 msgid ""
 "Enables mouse support. Allows to use mouse for movement and in game menus."
 msgstr ""
-"Включає підтримку миші. Дозволяє використовувати мишу для пересування та "
+"Вмикає підтримку миші. Дозволяє використовувати мишу для пересування та "
 "управління меню."
 
 #: engines/agi/detection.cpp:102
@@ -4083,7 +4083,7 @@ msgstr "Режим без кольору"
 
 #: engines/cge/detection.cpp:114 engines/cge2/detection.cpp:110
 msgid "Enable Color Blind Mode by default"
-msgstr "Включає режим для людей з погіршенним сприяттям кольору"
+msgstr "Вмикає режим для людей з погіршенним сприяттям кольору"
 
 #: engines/cine/detection.cpp:52
 msgid "Use transparent dialog boxes in 16 color scenes"
@@ -4153,7 +4153,7 @@ msgstr "Відображення графіки з використанням я
 
 #: engines/glk/detection.cpp:225
 msgid "Enable Text to Speech"
-msgstr "Включити генератор мови"
+msgstr "Ввімкнути генератор мови"
 
 #: engines/glk/detection.cpp:226
 msgid "Use TTS to read the text"
@@ -4631,7 +4631,6 @@ msgstr ""
 "гри"
 
 #: engines/grim/emi/sound/emisound.cpp:650
-#, fuzzy
 msgid ""
 "ERROR: Not enough music tracks found!\n"
 "Escape from Monkey Island has two versions of FullMonkeyMap.imt,\n"
@@ -4666,7 +4665,7 @@ msgstr "Не вдалося записати гру"
 
 #: engines/hdb/detection.cpp:124
 msgid "Enable cheat mode"
-msgstr "Увімкнути режим чітера"
+msgstr "Ввімкнути режим чітера"
 
 #: engines/hdb/detection.cpp:125
 msgid "Debug info and level selection becomes available"
@@ -4678,7 +4677,7 @@ msgstr "Режим з кров'ю"
 
 #: engines/hopkins/detection.cpp:41 engines/hopkins/detection.cpp:51
 msgid "Enable Gore Mode when available"
-msgstr "Увімкнути режим з кров'ю, якщо є доступний"
+msgstr "Ввімкнути режим з кров'ю, якщо є доступний"
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
@@ -4706,7 +4705,7 @@ msgstr "Режим гелію"
 
 #: engines/kyra/detection.cpp:68
 msgid "Enable helium mode"
-msgstr "Увімкнути режим гелієвих голосів"
+msgstr "Ввімкнути режим гелієвих голосів"
 
 #. I18N: When enabled, this option makes scrolling smoother when
 #. changing from one screen to another.
@@ -4716,7 +4715,7 @@ msgstr "Плавна прокрутка"
 
 #: engines/kyra/detection.cpp:83
 msgid "Enable smooth scrolling when walking"
-msgstr "Увімкнути плавну прокрутку під час ходіння"
+msgstr "Ввімкнути плавну прокрутку під час ходіння"
 
 #. I18N: When enabled, this option changes the cursor when it floats to the
 #. edge of the screen to a directional arrow. The player can then click to
@@ -4727,7 +4726,7 @@ msgstr "Плаваючі курсори"
 
 #: engines/kyra/detection.cpp:96
 msgid "Enable floating cursors"
-msgstr "Увімкнути плаваючі курсори"
+msgstr "Ввімкнути плаваючі курсори"
 
 #. I18N: When enabled, this option will fill in an autogenerated savegame
 #. description into the input prompt where.
@@ -4746,7 +4745,7 @@ msgstr "Стовпчики здоров'я"
 
 #: engines/kyra/detection.cpp:123
 msgid "Enable hit point bar graphs"
-msgstr "Уиімкнути графічні стовпчики здоров'я"
+msgstr "Ввімкнути графічні стовпчики здоров'я"
 
 #. I18N: L/R stands for Left/Right
 #: engines/kyra/detection.cpp:133
@@ -5037,7 +5036,7 @@ msgstr "Режим швидкого переходу активовано"
 
 #: engines/mohawk/dialogs.cpp:115
 msgid "~T~ransitions Enabled"
-msgstr "Переходи активовано"
+msgstr "Переходи ввімкнено"
 
 #: engines/mohawk/dialogs.cpp:118
 msgid "Play the Myst fly by movie"
@@ -5254,7 +5253,7 @@ msgstr "Мод для широкого екрану"
 
 #: engines/myst3/detection.cpp:183
 msgid "Enable widescreen rendering in fullscreen mode."
-msgstr "Включити режим широкого екрану у повноекранному режимі."
+msgstr "Ввімкнути режим широкого екрану у повноекранному режимі."
 
 #: engines/myst3/myst3.cpp:361
 msgid ""
@@ -5428,15 +5427,15 @@ msgstr ""
 
 #: engines/sci/detection.cpp:153
 msgid "Enable high resolution graphics"
-msgstr "Увімкнути графіку високого розгалуження"
+msgstr "Ввімкнути графіку високого розгалуження"
 
 #: engines/sci/detection.cpp:154
 msgid "Enable high resolution graphics/content"
-msgstr "Увімкнути графіку та контент у високому розгалуженні"
+msgstr "Ввімкнути графіку та контент у високому розгалуженні"
 
 #: engines/sci/detection.cpp:163
 msgid "Enable black-lined video"
-msgstr "Увімкнути відео з чорними лініями"
+msgstr "Ввімкнути відео з чорними лініями"
 
 #: engines/sci/detection.cpp:164
 msgid "Draw black lines over videos to increase their apparent sharpness"
@@ -5499,11 +5498,11 @@ msgstr ""
 
 #: engines/sci/detection.cpp:248
 msgid "Enable content censoring"
-msgstr "Увімкнути цензуру контенту"
+msgstr "Ввімкнути цензуру контенту"
 
 #: engines/sci/detection.cpp:249
 msgid "Enable the game's built-in optional content censoring"
-msgstr "Увімкніть вбудовану додаткову цензуру вмісту гри"
+msgstr "Ввімкніть вбудовану додаткову цензуру вмісту гри"
 
 #: engines/sci/detection.cpp:259
 msgid "Upscale videos"
@@ -5598,7 +5597,7 @@ msgid ""
 "not always render properly or reflect the actual game speech. This is not a "
 "ScummVM bug -- it is a problem with the game's assets."
 msgstr ""
-"Субтитри включені, але субтитри в King's Quest 7 були незавершені та "
+"Субтитри ввімкнено, але субтитри в King's Quest 7 були незавершені та "
 "вимкнені у версії гри. ScummVM дозволяє повторно увімкнути субтитри, але "
 "оскільки вони були вилучені з оригінальної гри, вони не завжди "
 "відображаються належним чином або відображають фактичну промову гри. Це не "
@@ -6495,31 +6494,31 @@ msgstr "Завантажити дані для моду"
 
 #: engines/stark/detection.cpp:341
 msgid "Enable loading of external replacement assets."
-msgstr "Включити заванатження додаткових даних для заміни."
+msgstr "Ввімкнути заванатження додаткових даних для заміни."
 
 #: engines/stark/detection.cpp:349
 msgid "Enable linear filtering of the backgrounds images"
-msgstr ""
+msgstr "Ввімкнути лінійну фільтрацію фонових зображень"
 
 #: engines/stark/detection.cpp:350
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
 msgstr ""
+"Лінійна фільтрація згладжує фонові зображення у повноекранному режимі за "
+"рахунок втрати деяких деталей."
 
 #: engines/stark/detection.cpp:358
-#, fuzzy
 msgid "Enable font anti-aliasing"
-msgstr "Увімкнути цензуру контенту"
+msgstr "Ввімкнути згладжування шрифтів"
 
 #: engines/stark/detection.cpp:359
 msgid "When font anti-aliasing is enabled, the text is smoother."
-msgstr ""
+msgstr "Якщо згладжування увімкнено, текст стає гладкішим."
 
 #: engines/stark/stark.cpp:294
-#, fuzzy
 msgid "You are missing recommended data files:"
-msgstr "У вас відсутні такі потрібні файли даних Riven:\n"
+msgstr "У вас відсутні насупні рекомендовані файли даних:"
 
 #: engines/stark/stark.cpp:308
 msgid ""
@@ -6527,20 +6526,28 @@ msgid ""
 "designed. The Steam release is known to be missing it. You can get the fonts "
 "from the demo version of the game."
 msgstr ""
+"Папка 'fonts' необхідна для того, щоб відтворити гру так, як її було "
+"задумано. У релізі Steam вона відсутня. Ви можете взяти шрифти з демо-версії "
+"цієї гри."
 
 #: engines/stark/stark.cpp:315
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
 msgstr ""
+"Файл 'gui.ini' рекомендований, щоб отримати правильні налаштування шрифтів у "
+"локалізованій версії гри."
 
 #: engines/stark/stark.cpp:321
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
 msgstr ""
+"Файл 'language.ini' рекомендований, щоб отрімати перекладені версії "
+"діалогових вікон."
 
 #: engines/stark/stark.cpp:327
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
 msgstr ""
+"Файл 'game.exe' рекомендований, щоби отримати стилізовані діалогові вікна."
 
 #: engines/supernova/supernova.cpp:187
 #, c-format
@@ -7199,7 +7206,7 @@ msgstr "Shift"
 
 #: engines/wintermute/keymapper_tables.h:1214
 msgid "Use Chapayev"
-msgstr ""
+msgstr "Використовувати Чапаєва"
 
 #: engines/wintermute/keymapper_tables.h:1234
 #: engines/wintermute/keymapper_tables.h:1639
@@ -7351,11 +7358,11 @@ msgstr "Підвищити кількість кадрів на секунду �
 
 #: engines/zvision/detection_tables.h:70
 msgid "Enable Venus"
-msgstr "Увімкнути Venus"
+msgstr "Ввімкнути Venus"
 
 #: engines/zvision/detection_tables.h:71
 msgid "Enable the Venus help system"
-msgstr "Увімкнути допоміжну систему Venus"
+msgstr "Ввімкнути допоміжну систему Venus"
 
 #: engines/zvision/detection_tables.h:80
 msgid "Disable animation while turning"
