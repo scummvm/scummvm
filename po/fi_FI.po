@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-10-11 22:16+0200\n"
+"POT-Creation-Date: 2020-10-12 13:14+0200\n"
 "PO-Revision-Date: 2020-09-16 01:43+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -128,7 +128,7 @@ msgstr ""
 #: gui/launcher.cpp:380 gui/launcher.cpp:401 gui/launcher.cpp:444
 #: gui/options.cpp:2654 gui/options.cpp:2692
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
-#: engines/grim/grim.cpp:350 engines/kyra/gui/saveload_eob.cpp:596
+#: engines/grim/grim.cpp:345 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
 #: engines/sci/graphics/controls32.cpp:928
 msgid "Yes"
@@ -139,7 +139,7 @@ msgstr "Kyllä"
 #: gui/launcher.cpp:380 gui/launcher.cpp:401 gui/launcher.cpp:444
 #: gui/options.cpp:2654 gui/options.cpp:2692
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
-#: engines/grim/grim.cpp:350 engines/kyra/gui/saveload_eob.cpp:596
+#: engines/grim/grim.cpp:345 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
 #: engines/sci/graphics/controls32.cpp:928
 msgid "No"
@@ -587,8 +587,8 @@ msgstr "Sulje"
 
 #: gui/gui-manager.cpp:137 engines/metaengine.cpp:108
 #: backends/platform/symbian/src/SymbianActions.cpp:40
-#: engines/glk/scott/scott.cpp:412 engines/grim/grim.cpp:449
-#: engines/grim/grim.cpp:531 engines/wintermute/keymapper_tables.h:1011
+#: engines/glk/scott/scott.cpp:412 engines/grim/grim.cpp:444
+#: engines/grim/grim.cpp:526 engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
 #: engines/wintermute/keymapper_tables.h:1474
 #: engines/wintermute/keymapper_tables.h:1704
@@ -597,8 +597,8 @@ msgstr "Ylös"
 
 #: gui/gui-manager.cpp:142 engines/metaengine.cpp:113
 #: backends/platform/symbian/src/SymbianActions.cpp:41
-#: engines/glk/scott/scott.cpp:412 engines/grim/grim.cpp:454
-#: engines/grim/grim.cpp:536 engines/wintermute/keymapper_tables.h:1017
+#: engines/glk/scott/scott.cpp:412 engines/grim/grim.cpp:449
+#: engines/grim/grim.cpp:531 engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
 #: engines/wintermute/keymapper_tables.h:1480
 #: engines/wintermute/keymapper_tables.h:1710
@@ -607,7 +607,7 @@ msgstr "Alas"
 
 #: gui/gui-manager.cpp:147 engines/metaengine.cpp:118
 #: backends/platform/symbian/src/SymbianActions.cpp:42
-#: engines/grim/grim.cpp:459 engines/grim/grim.cpp:541
+#: engines/grim/grim.cpp:454 engines/grim/grim.cpp:536
 #: engines/wintermute/keymapper_tables.h:1023
 #: engines/wintermute/keymapper_tables.h:1462
 #: engines/wintermute/keymapper_tables.h:1570
@@ -617,7 +617,7 @@ msgstr "Vasen"
 
 #: gui/gui-manager.cpp:152 engines/metaengine.cpp:123
 #: backends/platform/symbian/src/SymbianActions.cpp:43
-#: engines/grim/grim.cpp:464 engines/grim/grim.cpp:546
+#: engines/grim/grim.cpp:459 engines/grim/grim.cpp:541
 #: engines/wintermute/keymapper_tables.h:1029
 #: engines/wintermute/keymapper_tables.h:1468
 #: engines/wintermute/keymapper_tables.h:1578
@@ -2272,20 +2272,20 @@ msgstr "Täsmäävät tunnisteet pelimoottorille %s:"
 msgid "Default game keymap"
 msgstr "Oletusnäppäinasetukset"
 
-#: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:174
+#: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:175
 #: backends/platform/symbian/src/SymbianActions.cpp:44
 #: engines/wintermute/keymapper_tables.h:43
 msgid "Left Click"
 msgstr "Vasen klikkaus"
 
-#: engines/metaengine.cpp:65 backends/platform/maemo/maemo.cpp:178
+#: engines/metaengine.cpp:65 backends/platform/maemo/maemo.cpp:179
 #: engines/wintermute/keymapper_tables.h:249
 #: engines/wintermute/keymapper_tables.h:293
 #: engines/wintermute/keymapper_tables.h:1716
 msgid "Middle Click"
 msgstr "Keskiklikkaus"
 
-#: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:182
+#: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:183
 #: backends/platform/symbian/src/SymbianActions.cpp:45
 #: engines/wintermute/keymapper_tables.h:49
 msgid "Right Click"
@@ -2304,7 +2304,7 @@ msgstr "Pelivalikko"
 
 #: engines/metaengine.cpp:87
 #: backends/platform/symbian/src/SymbianActions.cpp:47
-#: engines/grim/grim.cpp:500 engines/grim/grim.cpp:597
+#: engines/grim/grim.cpp:495 engines/grim/grim.cpp:592
 #: engines/mohawk/myst.cpp:564 engines/mohawk/riven.cpp:834
 #: engines/wintermute/keymapper_tables.h:217
 #: engines/wintermute/keymapper_tables.h:997
@@ -2322,8 +2322,8 @@ msgstr "Ohita rivi"
 msgid "Predictive input dialog"
 msgstr "Ennustava tekstinsyöttö"
 
-#: engines/metaengine.cpp:103 engines/grim/grim.cpp:506
-#: engines/grim/grim.cpp:603 engines/wintermute/keymapper_tables.h:55
+#: engines/metaengine.cpp:103 engines/grim/grim.cpp:501
+#: engines/grim/grim.cpp:598 engines/wintermute/keymapper_tables.h:55
 msgid "Confirm"
 msgstr "Vahvista"
 
@@ -2510,7 +2510,7 @@ msgstr "Haluatko varmasti lopettaa?"
 #: backends/events/default/default-events.cpp:199
 #: backends/events/default/default-events.cpp:316
 #: backends/platform/symbian/src/SymbianActions.cpp:54
-#: engines/grim/grim.cpp:517 engines/grim/grim.cpp:614
+#: engines/grim/grim.cpp:512 engines/grim/grim.cpp:609
 #: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:185
 #: engines/scumm/help.cpp:82 engines/scumm/help.cpp:84
@@ -3475,7 +3475,7 @@ msgstr "Touchpad tila päällä."
 msgid "Touchpad mode disabled."
 msgstr "Touchpad tila pois päältä."
 
-#: backends/platform/maemo/maemo.cpp:170
+#: backends/platform/maemo/maemo.cpp:171
 msgid "Click Mode"
 msgstr "Klikkaus moodi"
 
@@ -4066,11 +4066,11 @@ msgstr ""
 "McCoy ei juostessaan ala hidastamaan heti kun pelaaja lakkaa klikkaamasta "
 "hiirellä"
 
-#: engines/cge/detection.cpp:113
+#: engines/cge/detection.cpp:113 engines/cge2/detection.cpp:109
 msgid "Color Blind Mode"
 msgstr "Värisokeustila"
 
-#: engines/cge/detection.cpp:114
+#: engines/cge/detection.cpp:114 engines/cge2/detection.cpp:110
 msgid "Enable Color Blind Mode by default"
 msgstr "Aktivoi värisokeustila vakiona"
 
@@ -4486,7 +4486,7 @@ msgstr "Näytä FPS-laskuri"
 msgid "Show the current FPS-rate, while you play."
 msgstr ""
 
-#: engines/grim/grim.cpp:345
+#: engines/grim/grim.cpp:340
 #, c-format
 msgid ""
 "ScummVM found some problems with your game data files.\n"
@@ -4494,58 +4494,58 @@ msgid ""
 "Do you still want to run %s?"
 msgstr ""
 
-#: engines/grim/grim.cpp:469 engines/grim/grim.cpp:561
+#: engines/grim/grim.cpp:464 engines/grim/grim.cpp:556
 msgid "Run"
 msgstr ""
 
-#: engines/grim/grim.cpp:474 engines/scumm/help.cpp:239
+#: engines/grim/grim.cpp:469 engines/scumm/help.cpp:239
 #: engines/scumm/help.cpp:247
 msgid "Examine"
 msgstr "Tutki"
 
-#: engines/grim/grim.cpp:479 engines/grim/grim.cpp:576
+#: engines/grim/grim.cpp:474 engines/grim/grim.cpp:571
 #, fuzzy
 msgid "Use/Talk"
 msgstr "Puhu"
 
-#: engines/grim/grim.cpp:484 engines/grim/grim.cpp:581
+#: engines/grim/grim.cpp:479 engines/grim/grim.cpp:576
 #, fuzzy
 msgid "Pick up/Put away"
 msgstr "Ota"
 
-#: engines/grim/grim.cpp:489 engines/grim/grim.cpp:586
+#: engines/grim/grim.cpp:484 engines/grim/grim.cpp:581
 #: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
 #: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
 msgid "Inventory"
 msgstr "Tavarat"
 
-#: engines/grim/grim.cpp:494 engines/grim/grim.cpp:591
+#: engines/grim/grim.cpp:489 engines/grim/grim.cpp:586
 #, fuzzy
 msgid "Skip dialog lines"
 msgstr "Ohita dialogi (joissain peleissä)"
 
-#: engines/grim/grim.cpp:512 engines/grim/grim.cpp:609
+#: engines/grim/grim.cpp:507 engines/grim/grim.cpp:604
 msgid "Menu"
 msgstr "Valikko"
 
-#: engines/grim/grim.cpp:551
+#: engines/grim/grim.cpp:546
 msgid "Cycle Objects Up"
 msgstr ""
 
-#: engines/grim/grim.cpp:556
+#: engines/grim/grim.cpp:551
 msgid "Cycle Objects Down"
 msgstr ""
 
-#: engines/grim/grim.cpp:566
+#: engines/grim/grim.cpp:561
 msgid "Quick Room Exit"
 msgstr ""
 
-#: engines/grim/grim.cpp:571
+#: engines/grim/grim.cpp:566
 #, fuzzy
 msgid "Examine/Look"
 msgstr "Tutki"
 
-#: engines/grim/grim.cpp:1357
+#: engines/grim/grim.cpp:1352
 #, fuzzy
 msgid "Error: the game could not be saved."
 msgstr "Valitettavasti pelitallennusta ei kyetty luomaan"
@@ -4603,7 +4603,7 @@ msgid ""
 "CD 1: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap1.imt\"\n"
 "CD 2: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap2.imt\"\n"
 "\n"
-"Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.int"
+"Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.imt"
 msgstr ""
 
 #: engines/groovie/detection.cpp:320

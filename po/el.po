@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-10-11 22:16+0200\n"
+"POT-Creation-Date: 2020-10-12 13:14+0200\n"
 "PO-Revision-Date: 2020-10-10 17:39+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -128,7 +128,7 @@ msgstr ""
 #: gui/launcher.cpp:380 gui/launcher.cpp:401 gui/launcher.cpp:444
 #: gui/options.cpp:2654 gui/options.cpp:2692
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
-#: engines/grim/grim.cpp:350 engines/kyra/gui/saveload_eob.cpp:596
+#: engines/grim/grim.cpp:345 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
 #: engines/sci/graphics/controls32.cpp:928
 msgid "Yes"
@@ -139,7 +139,7 @@ msgstr "Ναι"
 #: gui/launcher.cpp:380 gui/launcher.cpp:401 gui/launcher.cpp:444
 #: gui/options.cpp:2654 gui/options.cpp:2692
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
-#: engines/grim/grim.cpp:350 engines/kyra/gui/saveload_eob.cpp:596
+#: engines/grim/grim.cpp:345 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
 #: engines/sci/graphics/controls32.cpp:928
 msgid "No"
@@ -595,8 +595,8 @@ msgstr "Κλείσιμο"
 
 #: gui/gui-manager.cpp:137 engines/metaengine.cpp:108
 #: backends/platform/symbian/src/SymbianActions.cpp:40
-#: engines/glk/scott/scott.cpp:412 engines/grim/grim.cpp:449
-#: engines/grim/grim.cpp:531 engines/wintermute/keymapper_tables.h:1011
+#: engines/glk/scott/scott.cpp:412 engines/grim/grim.cpp:444
+#: engines/grim/grim.cpp:526 engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
 #: engines/wintermute/keymapper_tables.h:1474
 #: engines/wintermute/keymapper_tables.h:1704
@@ -605,8 +605,8 @@ msgstr "Πάνω"
 
 #: gui/gui-manager.cpp:142 engines/metaengine.cpp:113
 #: backends/platform/symbian/src/SymbianActions.cpp:41
-#: engines/glk/scott/scott.cpp:412 engines/grim/grim.cpp:454
-#: engines/grim/grim.cpp:536 engines/wintermute/keymapper_tables.h:1017
+#: engines/glk/scott/scott.cpp:412 engines/grim/grim.cpp:449
+#: engines/grim/grim.cpp:531 engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
 #: engines/wintermute/keymapper_tables.h:1480
 #: engines/wintermute/keymapper_tables.h:1710
@@ -615,7 +615,7 @@ msgstr "Κάτω"
 
 #: gui/gui-manager.cpp:147 engines/metaengine.cpp:118
 #: backends/platform/symbian/src/SymbianActions.cpp:42
-#: engines/grim/grim.cpp:459 engines/grim/grim.cpp:541
+#: engines/grim/grim.cpp:454 engines/grim/grim.cpp:536
 #: engines/wintermute/keymapper_tables.h:1023
 #: engines/wintermute/keymapper_tables.h:1462
 #: engines/wintermute/keymapper_tables.h:1570
@@ -625,7 +625,7 @@ msgstr "Αριστερά"
 
 #: gui/gui-manager.cpp:152 engines/metaengine.cpp:123
 #: backends/platform/symbian/src/SymbianActions.cpp:43
-#: engines/grim/grim.cpp:464 engines/grim/grim.cpp:546
+#: engines/grim/grim.cpp:459 engines/grim/grim.cpp:541
 #: engines/wintermute/keymapper_tables.h:1029
 #: engines/wintermute/keymapper_tables.h:1468
 #: engines/wintermute/keymapper_tables.h:1578
@@ -2323,20 +2323,20 @@ msgstr "Αντιστοιχισμένα αναγνωριστικά παιχνιδ
 msgid "Default game keymap"
 msgstr "Προκαθορισμένες αντιστοιχίες"
 
-#: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:174
+#: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:175
 #: backends/platform/symbian/src/SymbianActions.cpp:44
 #: engines/wintermute/keymapper_tables.h:43
 msgid "Left Click"
 msgstr "Αριστερό Click"
 
-#: engines/metaengine.cpp:65 backends/platform/maemo/maemo.cpp:178
+#: engines/metaengine.cpp:65 backends/platform/maemo/maemo.cpp:179
 #: engines/wintermute/keymapper_tables.h:249
 #: engines/wintermute/keymapper_tables.h:293
 #: engines/wintermute/keymapper_tables.h:1716
 msgid "Middle Click"
 msgstr "Μεσαίο Click"
 
-#: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:182
+#: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:183
 #: backends/platform/symbian/src/SymbianActions.cpp:45
 #: engines/wintermute/keymapper_tables.h:49
 msgid "Right Click"
@@ -2355,7 +2355,7 @@ msgstr "Μενού παιχνιδιού"
 
 #: engines/metaengine.cpp:87
 #: backends/platform/symbian/src/SymbianActions.cpp:47
-#: engines/grim/grim.cpp:500 engines/grim/grim.cpp:597
+#: engines/grim/grim.cpp:495 engines/grim/grim.cpp:592
 #: engines/mohawk/myst.cpp:564 engines/mohawk/riven.cpp:834
 #: engines/wintermute/keymapper_tables.h:217
 #: engines/wintermute/keymapper_tables.h:997
@@ -2373,8 +2373,8 @@ msgstr "Παράλειψη γραμμής"
 msgid "Predictive input dialog"
 msgstr "Παράθυρο διαλόγου με πρόβλεψη κειμένου"
 
-#: engines/metaengine.cpp:103 engines/grim/grim.cpp:506
-#: engines/grim/grim.cpp:603 engines/wintermute/keymapper_tables.h:55
+#: engines/metaengine.cpp:103 engines/grim/grim.cpp:501
+#: engines/grim/grim.cpp:598 engines/wintermute/keymapper_tables.h:55
 msgid "Confirm"
 msgstr "Επιβεβαίωση"
 
@@ -2565,7 +2565,7 @@ msgstr "Θέλετε σίγουρα να βγείτε από το πρόγραμ
 #: backends/events/default/default-events.cpp:199
 #: backends/events/default/default-events.cpp:316
 #: backends/platform/symbian/src/SymbianActions.cpp:54
-#: engines/grim/grim.cpp:517 engines/grim/grim.cpp:614
+#: engines/grim/grim.cpp:512 engines/grim/grim.cpp:609
 #: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:185
 #: engines/scumm/help.cpp:82 engines/scumm/help.cpp:84
@@ -3536,7 +3536,7 @@ msgstr "Η λειτουργία Touchpad ενεργοποιήθηκε."
 msgid "Touchpad mode disabled."
 msgstr "Η λειτουργία Touchpad απενεργοποιήθηκε."
 
-#: backends/platform/maemo/maemo.cpp:170
+#: backends/platform/maemo/maemo.cpp:171
 msgid "Click Mode"
 msgstr "Λειτουργία Κλικ"
 
@@ -4139,11 +4139,11 @@ msgstr ""
 "Όταν τρέχει, ο McCoy δεν θα αρχίσει να επιβραδύνει αμέσως μόλις ο παίκτης "
 "σταματήσει να κάνει κλικ με το ποντίκι"
 
-#: engines/cge/detection.cpp:113
+#: engines/cge/detection.cpp:113 engines/cge2/detection.cpp:109
 msgid "Color Blind Mode"
 msgstr "Λειτουργία για Άτομα με Αχρωματοψία"
 
-#: engines/cge/detection.cpp:114
+#: engines/cge/detection.cpp:114 engines/cge2/detection.cpp:110
 msgid "Enable Color Blind Mode by default"
 msgstr "Ενεργοποίηση λειτουργίας για Άτομα με Αχρωματοψία εξ'ορισμού"
 
@@ -4566,7 +4566,7 @@ msgstr "Προβολή FPS"
 msgid "Show the current FPS-rate, while you play."
 msgstr "Προβολή του τρέχοντος ρυθμού καρέ (FPS), όσο παίζετε."
 
-#: engines/grim/grim.cpp:345
+#: engines/grim/grim.cpp:340
 #, c-format
 msgid ""
 "ScummVM found some problems with your game data files.\n"
@@ -4579,54 +4579,54 @@ msgstr ""
 "(bugs) ή και απότομο σταμάτημα της εφαρμογής (crashes).\n"
 "Επιθυμείτε ακόμα να τρέξετε το %s;"
 
-#: engines/grim/grim.cpp:469 engines/grim/grim.cpp:561
+#: engines/grim/grim.cpp:464 engines/grim/grim.cpp:556
 msgid "Run"
 msgstr "Εκτέλεση"
 
-#: engines/grim/grim.cpp:474 engines/scumm/help.cpp:239
+#: engines/grim/grim.cpp:469 engines/scumm/help.cpp:239
 #: engines/scumm/help.cpp:247
 msgid "Examine"
 msgstr "Εξέτασε"
 
-#: engines/grim/grim.cpp:479 engines/grim/grim.cpp:576
+#: engines/grim/grim.cpp:474 engines/grim/grim.cpp:571
 msgid "Use/Talk"
 msgstr "Χρησιμοποίησε/Μίλα"
 
-#: engines/grim/grim.cpp:484 engines/grim/grim.cpp:581
+#: engines/grim/grim.cpp:479 engines/grim/grim.cpp:576
 msgid "Pick up/Put away"
 msgstr "Πάρε/Απόθεσε"
 
-#: engines/grim/grim.cpp:489 engines/grim/grim.cpp:586
+#: engines/grim/grim.cpp:484 engines/grim/grim.cpp:581
 #: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
 #: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
 msgid "Inventory"
 msgstr "Υπάρχοντα"
 
-#: engines/grim/grim.cpp:494 engines/grim/grim.cpp:591
+#: engines/grim/grim.cpp:489 engines/grim/grim.cpp:586
 msgid "Skip dialog lines"
 msgstr "Παράκαμψη γραμμής διαλόγου"
 
-#: engines/grim/grim.cpp:512 engines/grim/grim.cpp:609
+#: engines/grim/grim.cpp:507 engines/grim/grim.cpp:604
 msgid "Menu"
 msgstr "Μενού"
 
-#: engines/grim/grim.cpp:551
+#: engines/grim/grim.cpp:546
 msgid "Cycle Objects Up"
 msgstr "Προηγούμενο Αντικείμενο"
 
-#: engines/grim/grim.cpp:556
+#: engines/grim/grim.cpp:551
 msgid "Cycle Objects Down"
 msgstr "Επόμενο Αντικείμενο"
 
-#: engines/grim/grim.cpp:566
+#: engines/grim/grim.cpp:561
 msgid "Quick Room Exit"
 msgstr "Γρήγορη Έξοδος από το Δωμάτιο"
 
-#: engines/grim/grim.cpp:571
+#: engines/grim/grim.cpp:566
 msgid "Examine/Look"
 msgstr "Εξέτασε/Κοίτα"
 
-#: engines/grim/grim.cpp:1357
+#: engines/grim/grim.cpp:1352
 msgid "Error: the game could not be saved."
 msgstr "Σφάλμα: αδυναμία αποθήκευσης του παιχνιδιού."
 
@@ -4700,6 +4700,7 @@ msgstr ""
 "Προσέξτε να κατεβάσετε τη σωστή έκδοση σύμφωνα με τη γλώσσα του παιχνιδιού"
 
 #: engines/grim/emi/sound/emisound.cpp:650
+#, fuzzy
 msgid ""
 "ERROR: Not enough music tracks found!\n"
 "Escape from Monkey Island has two versions of FullMonkeyMap.imt,\n"
@@ -4708,7 +4709,7 @@ msgid ""
 "CD 1: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap1.imt\"\n"
 "CD 2: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap2.imt\"\n"
 "\n"
-"Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.int"
+"Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.imt"
 msgstr ""
 "Σφάλμα: Δεν βρέθηκαν αρκετά μουσικά κομμάτια!\n"
 "Το Escape from Monkey Island έχει δύο εκδοχές του FullMonkeyMap.imt,\n"
