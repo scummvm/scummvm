@@ -382,8 +382,13 @@ void EditGameDialog::open() {
 
 	e = ConfMan.hasKey("gfx_mode", _domain) ||
 		ConfMan.hasKey("render_mode", _domain) ||
+		ConfMan.hasKey("stretch_mode", _domain) ||
+		ConfMan.hasKey("aspect_ratio", _domain) ||
 		ConfMan.hasKey("fullscreen", _domain) ||
-		ConfMan.hasKey("aspect_ratio", _domain);
+		ConfMan.hasKey("vsync", _domain) ||
+		ConfMan.hasKey("filtering", _domain) ||
+		ConfMan.hasKey("renderer", _domain) ||
+		ConfMan.hasKey("antialiasing", _domain);
 	_globalGraphicsOverride->setState(e);
 
 	if (g_system->hasFeature(OSystem::kFeatureShader)) {
