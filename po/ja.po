@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-12 13:14+0200\n"
-"PO-Revision-Date: 2020-09-26 12:37+0000\n"
+"PO-Revision-Date: 2020-10-12 19:56+0000\n"
 "Last-Translator: Matthew Duggan <mgithub@guarana.org>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -986,21 +986,19 @@ msgstr "全面モード"
 
 #: gui/options.cpp:1300
 msgid "V-Sync in 3D Games"
-msgstr ""
+msgstr "3Dゲームで垂直同期"
 
 #: gui/options.cpp:1300
 msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
-msgstr ""
+msgstr "3Dゲームをプレイ中、垂直同期のときだけ画像データを変える"
 
 #: gui/options.cpp:1302
-#, fuzzy
 msgid "Game 3D Renderer:"
-msgstr "GUIのレンダラー："
+msgstr "ゲームの3Dレンダラー："
 
 #: gui/options.cpp:1311
-#, fuzzy
 msgid "3D Anti-aliasing:"
-msgstr "アンチエイリアス"
+msgstr "3Dアンチエイリアス："
 
 #: gui/options.cpp:1315 engines/mohawk/dialogs.cpp:328
 msgid "Disabled"
@@ -1019,9 +1017,8 @@ msgid "Aspect ratio correction"
 msgstr "縦横比調整"
 
 #: gui/options.cpp:1330
-#, fuzzy
 msgid "Correct aspect ratio for games"
-msgstr "320x200画像のゲームに縦横比の調整する"
+msgstr "ゲームの縦横比を調整する"
 
 #: gui/options.cpp:1338
 msgid "Preferred device:"
@@ -1378,9 +1375,8 @@ msgid "Enable storage"
 msgstr "有効にする"
 
 #: gui/options.cpp:2154
-#, fuzzy
 msgid "Confirm you want to use this account for this storage"
-msgstr "このアカウントを使うことを確認する"
+msgstr "ストレージにこのアカウントを使うことを確認する"
 
 #: gui/options.cpp:2156 backends/platform/wii/options.cpp:114
 msgid "Username:"
@@ -1399,7 +1395,6 @@ msgid "Used space:"
 msgstr "使用容量："
 
 #: gui/options.cpp:2159
-#, fuzzy
 msgid "Space used by ScummVM's saved games on this storage"
 msgstr "ScummVMのセーブデータの現在使用中容量"
 
@@ -1416,17 +1411,13 @@ msgid "<never>"
 msgstr "＜無い＞"
 
 #: gui/options.cpp:2165
-#, fuzzy
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
-msgstr ""
-"セーブデータはゲームを起動する時とロード／セーブする時に自動に同期されます。"
+msgstr "セーブデータはゲームを起動する時とロード／セーブする時に自動に同期されます。"
 
 #: gui/options.cpp:2167
-#, fuzzy
 msgid "Saved games sync automatically on launch, after saving and on loading."
-msgstr ""
-"セーブデータはゲームを起動する時とロード／セーブする時に自動に同期されます。"
+msgstr "セーブデータはゲームを起動する時とロード／セーブする時に自動に同期されます。"
 
 #: gui/options.cpp:2168
 msgid "Sync now"
@@ -1575,7 +1566,7 @@ msgstr "なし"
 
 #: gui/options.cpp:2325
 msgid "Failed to change cloud storage!"
-msgstr ""
+msgstr "クラウドストーレジを変えることを失敗しました！"
 
 #: gui/options.cpp:2328
 msgid "Another cloud storage is already active."
@@ -1594,10 +1585,12 @@ msgid ""
 "\n"
 "Misc settings will be restored."
 msgstr ""
+"\n"
+"設定を復元します。"
 
 #: gui/options.cpp:2474
 msgid "The chosen directory cannot be written to. Please select another one."
-msgstr ""
+msgstr "選択されたフォルダーに保存できませんでした。保存ができるフォルダーを選択してください。"
 
 #: gui/options.cpp:2483
 msgid "Select directory for GUI themes"
@@ -1643,7 +1636,7 @@ msgstr "＜只今＞"
 
 #: gui/options.cpp:2999
 msgid "Stop server"
-msgstr "サバー停止"
+msgstr "サバーを停止"
 
 #: gui/options.cpp:3000
 msgid "Stop local webserver"
@@ -1682,26 +1675,26 @@ msgstr "一文字削除"
 
 #: gui/predictivedialog.cpp:117 gui/predictivedialog.cpp:193
 msgid "<"
-msgstr ""
+msgstr "＜"
 
 #. I18N: Pre means 'Predictive', leave '*' as is
 #: gui/predictivedialog.cpp:119 gui/predictivedialog.cpp:606
 msgid "*  Pre"
-msgstr ""
+msgstr "*  予測"
 
 #. I18N: 'Num' means Numbers
 #: gui/predictivedialog.cpp:609
 msgid "*  Num"
-msgstr ""
+msgstr "*  数字"
 
 #. I18N: 'Abc' means Latin alphabet input
 #: gui/predictivedialog.cpp:612
 msgid "*  Abc"
-msgstr ""
+msgstr "*  Abc"
 
 #: gui/recorderdialog.cpp:62
 msgid "Recorder or Playback Gameplay"
-msgstr ""
+msgstr "ゲームプレイの記録と再生"
 
 #: gui/recorderdialog.cpp:67 gui/recorderdialog.cpp:155
 #: gui/saveload-dialog.cpp:397 gui/saveload-dialog.cpp:465
@@ -1813,7 +1806,7 @@ msgstr "名前： "
 #: gui/saveload-dialog.cpp:1183
 #, c-format
 msgid "Enter a description for slot %d:"
-msgstr ""
+msgstr "セーブデータ%dの詳細を入力してください："
 
 #: gui/themebrowser.cpp:45
 msgid "Select a Theme"
@@ -1898,7 +1891,7 @@ msgstr ""
 
 #: base/main.cpp:614
 msgid "Error running game:"
-msgstr ""
+msgstr "ゲームを実行のエラー："
 
 #: base/main.cpp:662
 msgid "Could not find any engine capable of running the selected game"
@@ -1910,55 +1903,55 @@ msgstr ""
 
 #: common/error.cpp:38
 msgid "No error"
-msgstr ""
+msgstr "エラーなし"
 
 #: common/error.cpp:40
 msgid "Game data not found"
-msgstr ""
+msgstr "ゲームデータを見つかりませんでした"
 
 #: common/error.cpp:42
 msgid "Game id not supported"
-msgstr ""
+msgstr "未対応のゲームID"
 
 #: common/error.cpp:44
 msgid "Unsupported color mode"
-msgstr ""
+msgstr "未対応のカラーモード"
 
 #: common/error.cpp:46
 msgid "Audio device initialization failed"
-msgstr ""
+msgstr "音声デバイスの初期化を失敗しました"
 
 #: common/error.cpp:49
 msgid "Read permission denied"
-msgstr ""
+msgstr "読み取りアクセス権は拒否された"
 
 #: common/error.cpp:51
 msgid "Write permission denied"
-msgstr ""
+msgstr "書き込みアクセス権は拒否された"
 
 #: common/error.cpp:54
 msgid "Path does not exist"
-msgstr ""
+msgstr "フォルダーは存在しません"
 
 #: common/error.cpp:56
 msgid "Path not a directory"
-msgstr ""
+msgstr "フォルダーではありません"
 
 #: common/error.cpp:58
 msgid "Path not a file"
-msgstr ""
+msgstr "ファイルではありません"
 
 #: common/error.cpp:61
 msgid "Cannot create file"
-msgstr ""
+msgstr "ファイルを作成できませんでした"
 
 #: common/error.cpp:63
 msgid "Reading data failed"
-msgstr ""
+msgstr "データの読み取りを失敗しました"
 
 #: common/error.cpp:65
 msgid "Writing data failed"
-msgstr ""
+msgstr "データの書き込みを失敗しました"
 
 #: common/error.cpp:68
 msgid "Could not find suitable engine plugin"
@@ -1970,7 +1963,7 @@ msgstr ""
 
 #: common/error.cpp:73
 msgid "User canceled"
-msgstr ""
+msgstr "キャンセルされました"
 
 #: common/error.cpp:77
 msgid "Unknown error"
@@ -1979,29 +1972,29 @@ msgstr "不明なエラー"
 #. I18N: Hercules is graphics card name
 #: common/rendermode.cpp:35
 msgid "Hercules Green"
-msgstr ""
+msgstr "Herculesの緑"
 
 #: common/rendermode.cpp:36
 msgid "Hercules Amber"
-msgstr ""
+msgstr "Herculesの琥珀"
 
 #: common/rendermode.cpp:42
 msgid "PC-9821 (256 Colors)"
-msgstr ""
+msgstr "PC-9821（256色）"
 
 #: common/rendermode.cpp:43
 msgid "PC-9801 (16 Colors)"
-msgstr ""
+msgstr "PC-9801（16色）"
 
 #: common/rendermode.cpp:73
 msgctxt "lowres"
 msgid "Hercules Green"
-msgstr ""
+msgstr "Herculesの緑"
 
 #: common/rendermode.cpp:74
 msgctxt "lowres"
 msgid "Hercules Amber"
-msgstr ""
+msgstr "Herculesの琥珀"
 
 #: common/updates.cpp:58
 msgid "Daily"
@@ -2351,7 +2344,7 @@ msgstr "音楽なし"
 
 #: audio/softsynth/appleiigs.cpp:33
 msgid "Apple II GS emulator (NOT IMPLEMENTED)"
-msgstr ""
+msgstr "Apple II GSエミュレーター（未実装）"
 
 #: audio/softsynth/cms.cpp:351
 msgid "Creative Music System emulator"
@@ -2382,7 +2375,7 @@ msgstr "SegaCDオーディオ"
 
 #: audio/softsynth/mt32.cpp:175
 msgid "Initializing MT-32 Emulator"
-msgstr ""
+msgstr "MT-32エミュレーター起動中"
 
 #: audio/softsynth/mt32.cpp:442
 msgid "MT-32 emulator"
@@ -2398,21 +2391,23 @@ msgstr "IBM PCjr エミュレーター"
 
 #: audio/softsynth/sid.cpp:1434
 msgid "C64 Audio emulator"
-msgstr ""
+msgstr "C64音声エミュレーター"
 
 #: backends/cloud/cloudmanager.cpp:156
 msgid "<syncing...>"
-msgstr ""
+msgstr "＜同期中。。。＞"
 
 #: backends/cloud/storage.cpp:242
 msgid "Saved games sync was cancelled."
-msgstr ""
+msgstr "セーブデータの同期をキャンセルしました。"
 
 #: backends/cloud/storage.cpp:244
 msgid ""
 "Saved games sync failed.\n"
 "Check your Internet connection."
 msgstr ""
+"セーブデータの同期を失敗しました。\n"
+"インターネットの接続を確認してください。"
 
 #: backends/cloud/storage.cpp:348
 #, c-format
@@ -2421,7 +2416,7 @@ msgid ""
 "Failed to download %u files."
 msgstr ""
 "ダウンロード完了。\n"
-"%uファイルをダウンロードできなかった。"
+"%uファイルをダウンロードできませんでした。"
 
 #: backends/cloud/storage.cpp:350
 msgid "Download complete."
@@ -2433,12 +2428,12 @@ msgstr "ダウンロード失敗した。"
 
 #: backends/events/default/default-events.cpp:176
 msgid "Do you really want to return to the Launcher?"
-msgstr ""
+msgstr "ロンチャーの戻ってもよろしいですか？"
 
 #: backends/events/default/default-events.cpp:176
 #: backends/presence/discord/discord.cpp:46
 msgid "Launcher"
-msgstr ""
+msgstr "ロンチャー"
 
 #: backends/events/default/default-events.cpp:199
 msgid "Do you really want to quit?"
@@ -4366,27 +4361,26 @@ msgstr ""
 
 #: engines/grim/grim.cpp:464 engines/grim/grim.cpp:556
 msgid "Run"
-msgstr ""
+msgstr "走る"
 
 #: engines/grim/grim.cpp:469 engines/scumm/help.cpp:239
 #: engines/scumm/help.cpp:247
 msgid "Examine"
-msgstr ""
+msgstr "調べる"
 
 #: engines/grim/grim.cpp:474 engines/grim/grim.cpp:571
-#, fuzzy
 msgid "Use/Talk"
-msgstr "話す"
+msgstr "使う／話す"
 
 #: engines/grim/grim.cpp:479 engines/grim/grim.cpp:576
 msgid "Pick up/Put away"
-msgstr ""
+msgstr "拾う／片付ける"
 
 #: engines/grim/grim.cpp:484 engines/grim/grim.cpp:581
 #: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
 #: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
 msgid "Inventory"
-msgstr ""
+msgstr "インベントリ"
 
 #: engines/grim/grim.cpp:489 engines/grim/grim.cpp:586
 msgid "Skip dialog lines"
@@ -4413,9 +4407,8 @@ msgid "Examine/Look"
 msgstr ""
 
 #: engines/grim/grim.cpp:1352
-#, fuzzy
 msgid "Error: the game could not be saved."
-msgstr "画像モードを変更できませんでした"
+msgstr "エラー：ゲームをセーブできませんでした。"
 
 #: engines/grim/md5check.cpp:547
 #, c-format
