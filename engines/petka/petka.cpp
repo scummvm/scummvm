@@ -54,7 +54,7 @@ PetkaEngine::PetkaEngine(OSystem *system, const ADGameDescription *desc)
 	_qsystem(nullptr), _vsys(nullptr), _desc(desc), _videoDec(nullptr), _rnd("petka") {
 
 	DebugMan.addDebugChannel(kPetkaDebugGeneral, "general", "General issues");
-	DebugMan.addDebugChannel(kPetkaDebugMessagingSystem, "resources", "Resources");
+	DebugMan.addDebugChannel(kPetkaDebugResources, "resources", "Resources");
 	DebugMan.addDebugChannel(kPetkaDebugMessagingSystem, "message_system", "Engine message system");
 	DebugMan.addDebugChannel(kPetkaDebugDialogs, "dialogs", "Dialogs");
 
