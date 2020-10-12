@@ -442,7 +442,7 @@ endif
 
 # Shaders
 DIST_FILES_SHADERS=
-ifdef USE_OPENGL_SHADERS
+ifneq ($(USE_OPENGL_SHADERS)$(USE_GLES2),)
 ifdef ENABLE_GRIM
 DIST_FILES_SHADERS+=$(wildcard $(srcdir)/engines/grim/shaders/*)
 endif
