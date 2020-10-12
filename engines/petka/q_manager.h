@@ -39,39 +39,39 @@ class PetkaEngine;
 
 class FlicDecoder;
 
-struct QResource {
-	union {
-		Graphics::Surface *surface;
-		FlicDecoder *flcDecoder;
-	};
-	enum ResType {
-		kSurface,
-		kFlic
-	} type;
-};
-
 class QManager {
 public:
 	explicit QManager(PetkaEngine &vm);
-	~QManager();
 
 	bool init();
 
 	Common::String findResourceName(uint32 id) const;
 	Common::String findSoundName(uint32 id) const;
 
-	Graphics::Surface *findOrCreateSurface(uint32 id, uint16 w, uint16 h);
-	Graphics::Surface *loadBitmap(uint32 id);
-	FlicDecoder *loadFlic(uint32 id);
+	Graphics::Surface *getSurface(uint32 id, uint16 w, uint16 h);
+	Graphics::Surface *getSurface(uint32 id);
+	FlicDecoder *getFlic(uint32 id);
 
 	void removeResource(uint32 id);
 	void clearUnneeded();
 	void clear();
 
 private:
+	struct QResource {
+		union {
+			Graphics::Surface *surface;
+			FlicDecoder *flcDecoder;
+		};
+		enum ResType {
+			kSurface,
+			kFlic
+		} type;
+
+		~QResource();
+	};
+
 	Common::SeekableReadStream *loadFileStream(uint32 id) const;
 
-	static void destructResourceContent(QResource &resource);
 	static Graphics::Surface *loadBitmapSurface(Common::SeekableReadStream &stream);
 
 private:

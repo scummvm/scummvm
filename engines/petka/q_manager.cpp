@@ -31,25 +31,16 @@
 
 #include "petka/flc.h"
 #include "petka/q_manager.h"
-#include "petka/q_system.h"
 #include "petka/petka.h"
 
 namespace Petka {
 
-const uint32 kHeaderSize = 14 + 40;
-const uint32 kAdditionalDataSize = 8;
-
 QManager::QManager(PetkaEngine &vm)
 	: _vm(vm) {}
 
-QManager::~QManager() {
-	for (Common::HashMap<uint32, QResource>::iterator it = _resourceMap.begin(); it != _resourceMap.end(); ++it) {
-		destructResourceContent(it->_value);
-	}
-}
-
 bool QManager::init() {
 	clear();
+
 	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm.openFile("resource.qrc", true));
 	if (!stream) {
 		return false;
@@ -70,10 +61,7 @@ bool QManager::init() {
 }
 
 Common::String QManager::findResourceName(uint32 id) const {
-	if (_nameMap.contains(id)) {
-		return _nameMap.getVal(id);
-	}
-	return "";
+	return _nameMap.contains(id) ? _nameMap.getVal(id) : "";
 }
 
 Common::String QManager::findSoundName(uint32 id) const {
@@ -88,43 +76,30 @@ Common::String QManager::findSoundName(uint32 id) const {
 
 void QManager::removeResource(uint32 id) {
 	if (_resourceMap.contains(id)) {
-		destructResourceContent(_resourceMap.getVal(id));
 		_resourceMap.erase(id);
 	}
 }
 
 void QManager::clearUnneeded() {
-	for (Common::HashMap<uint32, QResource>::iterator it = _resourceMap.begin(); it != _resourceMap.end(); ++it) {
+	for (auto it = _resourceMap.begin(); it != _resourceMap.end(); ++it) {
 		if (!_isAlwaysNeededMap.getVal(it->_key)) {
-			destructResourceContent(it->_value);
 			_resourceMap.erase(it);
 		}
 	}
 }
 
-Graphics::Surface *QManager::findOrCreateSurface(uint32 id, uint16 w, uint16 h) {
+Graphics::Surface *QManager::getSurface(uint32 id, uint16 w, uint16 h) {
 	if (_resourceMap.contains(id)) {
 		QResource &res = _resourceMap.getVal(id);
-		if (res.type != QResource::kSurface) {
-			return nullptr;
-		}
-		return res.surface;
+		return res.type == QResource::kSurface ? res.surface : nullptr;
 	}
 
 	QResource &res = _resourceMap.getVal(id);
 	res.type = QResource::kSurface;
 	res.surface = new Graphics::Surface;
 	res.surface->create(w, h, _vm._system->getScreenFormat());
-	return res.surface;
-}
 
-void QManager::destructResourceContent(QResource &res) {
-	if (res.type == QResource::kSurface) {
-		res.surface->free();
-		delete res.surface;
-	} else {
-		delete res.flcDecoder;
-	}
+	return res.surface;
 }
 
 Common::SeekableReadStream *QManager::loadFileStream(uint32 id) const {
@@ -132,13 +107,10 @@ Common::SeekableReadStream *QManager::loadFileStream(uint32 id) const {
 	return name.empty() ? nullptr : _vm.openFile(name, false);
 }
 
-Graphics::Surface *QManager::loadBitmap(uint32 id) {
+Graphics::Surface *QManager::getSurface(uint32 id) {
 	if (_resourceMap.contains(id)) {
 		QResource &res = _resourceMap.getVal(id);
-		if (res.type != QResource::kSurface) {
-			return nullptr;
-		}
-		return res.surface;
+		return res.type == QResource::kSurface ? res.surface : nullptr;
 	}
 
 	Common::ScopedPtr<Common::SeekableReadStream> stream(loadFileStream(id));
@@ -148,25 +120,19 @@ Graphics::Surface *QManager::loadBitmap(uint32 id) {
 
 	Graphics::Surface *s = loadBitmapSurface(*stream);
 	if (s) {
-		s->convertToInPlace(g_system->getScreenFormat());
-		_vm.getQSystem()->_sceneWidth = s->w;
-		_vm.getQSystem()->_xOffset = 0;
-
 		QResource &res = _resourceMap.getVal(id);
 		res.type = QResource::kSurface;
 		res.surface = s;
 		return res.surface;
 	}
+
 	return nullptr;
 }
 
-FlicDecoder *QManager::loadFlic(uint32 id) {
+FlicDecoder *QManager::getFlic(uint32 id) {
 	if (_resourceMap.contains(id)) {
 		QResource &res = _resourceMap.getVal(id);
-		if (res.type != QResource::kFlic) {
-			return nullptr;
-		}
-		return res.flcDecoder;
+		return res.type == QResource::kFlic ? res.flcDecoder : nullptr;
 	}
 
 	Common::String name = findResourceName(id);
@@ -174,28 +140,31 @@ FlicDecoder *QManager::loadFlic(uint32 id) {
 	if (!stream) {
 		return nullptr;
 	}
+
 	name.erase(name.size() - 3, 3);
 	name.toUppercase();
 	name += "MSK";
 
 	FlicDecoder *flc = new FlicDecoder;
 	flc->load(stream, _vm.openFile(name, false));
+
 	QResource &res = _resourceMap.getVal(id);
 	res.type = QResource::kFlic;
 	res.flcDecoder = flc;
+
 	return res.flcDecoder;
 }
 
 void QManager::clear() {
-	for (Common::HashMap<uint32, QResource>::iterator it = _resourceMap.begin(); it != _resourceMap.end(); ++it) {
-		destructResourceContent(it->_value);
-	}
 	_resourceMap.clear();
 	_nameMap.clear();
 	_isAlwaysNeededMap.clear();
 }
 
 Graphics::Surface *QManager::loadBitmapSurface(Common::SeekableReadStream &stream) {
+	const uint32 kHeaderSize = 14 + 40;
+	const uint32 kAdditionalDataSize = 8;
+
 	if (stream.readByte() != 'B')
 		return nullptr;
 
@@ -248,7 +217,17 @@ Graphics::Surface *QManager::loadBitmapSurface(Common::SeekableReadStream &strea
 	Image::BitmapDecoder decoder;
 	if (!decoder.loadStream(convBmpStream))
 		return nullptr;
+
 	return decoder.getSurface()->convertTo(g_system->getScreenFormat(), decoder.getPalette());
+}
+
+QManager::QResource::~QResource() {
+	if (type == QResource::kSurface && surface) {
+		surface->free();
+		delete surface;
+	} else {
+		delete flcDecoder;
+	}
 }
 
 } // End of namespace Petka

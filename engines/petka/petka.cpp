@@ -92,6 +92,7 @@ Common::Error PetkaEngine::run() {
 	_fileMgr.reset(new FileMgr());
 	_soundMgr.reset(new SoundMgr(*this));
 	_vsys.reset(new VideoSystem(*this));
+	_resMgr.reset(new QManager(*this));
 
 	loadPart(0);
 

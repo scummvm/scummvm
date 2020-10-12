@@ -45,7 +45,7 @@ QObjectCursor::QObjectCursor() {
 	Common::Point pos = g_vm->getEventManager()->getMousePos();
 	_x = pos.x;
 	_y = pos.y;
-	g_vm->resMgr()->loadFlic(kCursorLook);
+	g_vm->resMgr()->getFlic(kCursorLook);
 	_actionType = kActionLook;
 	_invObj = nullptr;
 	_name = "Cursor";
@@ -55,7 +55,7 @@ void QObjectCursor::draw() {
 	if (!_isShown) {
 		return;
 	}
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	FlicDecoder *flc = g_vm->resMgr()->getFlic(_resourceId);
 	const Graphics::Surface *frame = flc->getCurrentFrame();
 	if (frame) {
 		Graphics::Surface *s = frame->convertTo(g_system->getScreenFormat(), flc->getPalette());
@@ -75,7 +75,7 @@ void QObjectCursor::draw() {
 void QObjectCursor::update(int time) {
 	if (!_isShown || !_animate)
 		return;
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	FlicDecoder *flc = g_vm->resMgr()->getFlic(_resourceId);
 	_time += time;
 	while (flc && _time >= (int32)flc->getDelay()) {
 		flc->setFrame(-1);
@@ -85,7 +85,7 @@ void QObjectCursor::update(int time) {
 }
 
 void QObjectCursor::setPos(Common::Point p, bool center) {
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	FlicDecoder *flc = g_vm->resMgr()->getFlic(_resourceId);
 	if (!_animate) {
 		flc->setFrame(1);
 	}
@@ -107,7 +107,7 @@ void QObjectCursor::setPos(Common::Point p, bool center) {
 }
 
 void QObjectCursor::show(bool v) {
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	FlicDecoder *flc = g_vm->resMgr()->getFlic(_resourceId);
 	g_vm->videoSystem()->addDirtyRect(Common::Point(_x, _y), flc->getBounds());
 	QMessageObject::show(v);
 }

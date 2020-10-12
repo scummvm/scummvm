@@ -53,7 +53,7 @@ void InterfaceSequence::start(int id) {
 	if (info) {
 		for (uint i = 0; i < info->attachedObjIds.size(); ++i) {
 			QMessageObject *obj = g_vm->getQSystem()->findObject(info->attachedObjIds[i]);
-			g_vm->resMgr()->loadFlic(obj->_resourceId);
+			g_vm->resMgr()->getFlic(obj->_resourceId);
 			obj->loadSound();
 			_objs.push_back(obj);
 		}

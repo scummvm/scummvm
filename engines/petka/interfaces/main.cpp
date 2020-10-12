@@ -97,13 +97,17 @@ void InterfaceMain::loadRoom(int id, bool fromSave) {
 	sys->_room = room;
 	_objs.push_back(room);
 
-	resMgr->loadBitmap(room->_resourceId);
+	auto surface = resMgr->getSurface(room->_resourceId);
+	if (surface) {
+		sys->_sceneWidth = surface->w;
+		sys->_xOffset = 0;
+	}
 
 	for (uint i = 0; i < info->attachedObjIds.size(); ++i) {
 		QMessageObject *obj = sys->findObject(info->attachedObjIds[i]);
 		obj->loadSound();
 		if (obj->_isShown || obj->_isActive)
-			g_vm->resMgr()->loadFlic(obj->_resourceId);
+			g_vm->resMgr()->getFlic(obj->_resourceId);
 		_objs.push_back(obj);
 	}
 

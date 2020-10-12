@@ -341,7 +341,7 @@ void QMessageObject::play(int id, int type) {
 		removeSound();
 	}
 
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	FlicDecoder *flc = g_vm->resMgr()->getFlic(_resourceId);
 	if (flc) {
 		g_vm->videoSystem()->addDirtyRect(Common::Point(_x, _y), *flc);
 	}
@@ -350,7 +350,7 @@ void QMessageObject::play(int id, int type) {
 
 	loadSound();
 
-	flc = g_vm->resMgr()->loadFlic(id);
+	flc = g_vm->resMgr()->getFlic(id);
 	flc->setFrame(1);
 	_time = 0;
 	_loopedSound = (type == 5);
@@ -425,7 +425,7 @@ bool QObject::isInPoint(Common::Point p) {
 	if (!_isActive)
 		return false;
 
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	FlicDecoder *flc = g_vm->resMgr()->getFlic(_resourceId);
 	if (!flc || !flc->getBounds().contains(p.x - _x, p.y - _y))
 		return false;
 
@@ -442,7 +442,7 @@ void QObject::draw() {
 	if (!_isShown || _resourceId == -1) {
 		return;
 	}
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	FlicDecoder *flc = g_vm->resMgr()->getFlic(_resourceId);
 	if (!flc) {
 		return;
 	}
@@ -494,7 +494,7 @@ void QObject::draw() {
 void QObject::updateZ() {
 	if (!_animate || !_isShown || !_updateZ)
 		return;
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	FlicDecoder *flc = g_vm->resMgr()->getFlic(_resourceId);
 	if (flc) {
 		_z = 1;
 		const Common::Array<Common::Rect> &rects = flc->getMskRects();
@@ -507,7 +507,7 @@ void QObject::updateZ() {
 }
 
 void QObject::show(bool v) {
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	FlicDecoder *flc = g_vm->resMgr()->getFlic(_resourceId);
 	if (flc) {
 		g_vm->videoSystem()->addDirtyRect(Common::Point(_x, _y), *flc);
 	}
@@ -518,7 +518,7 @@ void QObject::update(int time) {
 	if (!_animate || !_isShown)
 		return;
 	_time += time;
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	FlicDecoder *flc = g_vm->resMgr()->getFlic(_resourceId);
 	if (flc && flc->getFrameCount() != 1) {
 		if (_sound) {
 			Common::Rect bounds = flc->getBounds();
@@ -544,7 +544,7 @@ void QObject::update(int time) {
 }
 
 void QObject::setPos(Common::Point p, bool) {
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	FlicDecoder *flc = g_vm->resMgr()->getFlic(_resourceId);
 	if (flc) {
 		g_vm->videoSystem()->addDirtyMskRects(Common::Point(_x, _y), *flc);
 		g_vm->videoSystem()->addDirtyMskRects(p, *flc);
