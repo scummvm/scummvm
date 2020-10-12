@@ -171,8 +171,10 @@ public:
 	Animation * loadAnimation(const Common::String &name);
 	Animation * loadMouseCursor(const Common::String &name);
 	Animation * findAnimationByPhaseVar(const Common::String &phaseVar);
-	Character * loadCharacter(const Common::String &id, const Common::String &name, const Common::String &object);
-	Character * getCharacter(const Common::String &name) const;
+	void loadCharacter(const Common::String &id, const Common::String &name, const Common::String &object);
+	Character * getCharacter(const Common::String &name) {
+		return _currentCharacterName == name? _currentCharacter: nullptr;
+	}
 
 	void loadDefaultMouseCursor(const Common::String &name) {
 		_defaultMouseCursorName = name;
@@ -244,7 +246,6 @@ private:
 	typedef Common::HashMap<Common::String, SystemVariable *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SystemVariablesType;
 	typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> GlobalsType;
 	typedef Common::HashMap<Common::String, Animation *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> AnimationsType;
-	typedef Common::HashMap<Common::String, Character *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> CharactersType;
 	typedef Common::HashMap<int, Font *> FontsType;
 	typedef Common::HashMap<Common::String, PatchPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> PatchesType;
 
@@ -257,7 +258,6 @@ private:
 	int							_pictureCacheId;
 	FontsType					_fonts;
 	AnimationsType				_animations;
-	CharactersType				_characters;
 	ProcessListType				_processes;
 	PatchesType					_patches;
 	int							_sharedStorageIndex;
@@ -270,6 +270,8 @@ private:
 	Common::String				_filmProcess;
 	Screen *					_currentScreen;
 	Common::String				_currentScreenName;
+	Character *					_currentCharacter;
+	Common::String				_currentCharacterName;
 	Common::String				_nextScreenName;
 	Common::String				_previousScreenName;
 	Common::String 				_defaultMouseCursorName;

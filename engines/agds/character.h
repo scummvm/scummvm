@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/ptr.h"
 #include "common/rect.h"
 
 namespace Common	{ class SeekableReadStream; }
@@ -33,15 +34,19 @@ namespace Graphics	{ struct Surface; }
 namespace AGDS {
 
 class AGDSEngine;
+class Process;
 class Object;
+typedef Common::SharedPtr<Object> ObjectPtr;
 
 class Character {
+	AGDSEngine *	_engine;
+	ObjectPtr		_object;
 	Common::String 	_name;
-	Common::String 	_object;
 	Common::Point	_pos;
 	bool _enabled;
 	int _phase;
 	int _frames;
+	int _direction;
 
 	struct AnimationDescription {
 		struct Frame {
@@ -55,20 +60,16 @@ class Character {
 	Common::Array<AnimationDescription> _animations;
 
 public:
-	Character(const Common::String & name, const Common::String & object):
-		_name(name), _object(object), _enabled(true), _phase(0), _frames(0) {
+	Character(AGDSEngine * engine, const Common::String & name, const ObjectPtr & object):
+		_engine(engine), _name(name), _object(object), _enabled(false), _phase(0), _frames(0), _direction(-1) {
 	}
 
 	const Common::String & name() const {
 		return _name;
 	}
 
-	const Common::String & object() const {
+	const ObjectPtr & object() const {
 		return _object;
-	}
-
-	Common::Point position() const {
-		return _pos;
 	}
 
 	void load(Common::SeekableReadStream* stream);
@@ -90,10 +91,17 @@ public:
 		return _phase <= _frames? _phase + 1: -1;
 	}
 
-	void paint(AGDSEngine & engine, Graphics::Surface & backbuffer) {
-		if (_enabled && _phase <= _frames)
-			++_phase;
+	void position(Common::Point pos) {
+		_pos = pos;
 	}
+
+	Common::Point position() const {
+		return _pos;
+	}
+
+	void setDirection(int dir);
+
+	void paint(Graphics::Surface & backbuffer);
 
 };
 

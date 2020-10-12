@@ -1286,9 +1286,20 @@ void Process::leaveCharacterEx() {
 }
 
 void Process::setCharacter() {
-	Common::String object = popString();
-	Common::String region = popString();
-	debug("setCharacter stub %s %s", region.c_str(), object.c_str());
+	int dir = pop();
+	Common::String regionName = popString();
+	Common::String id = popString();
+	debug("setCharacter %s %s %d", id.c_str(), regionName.c_str(), dir);
+	auto character = _engine->getCharacter(id);
+	if (character) {
+		auto region = _engine->loadRegion(regionName);
+		if (region)
+			character->position(region->center);
+		else
+			warning("no region %s", regionName.c_str());
+		character->setDirection(dir);
+	} else
+		warning("no character %s", id.c_str());
 }
 
 void Process::setCharacterDirection() {
@@ -1308,6 +1319,8 @@ void Process::getCharacterAnimationPhase() {
 	Common::String name = popString();
 	debug("getCharacterAnimationPhase: %s", name.c_str());
 	Character *character = _engine->getCharacter(name);
+	if (!character)
+		warning("no character %s", name.c_str());
 	int phase = character ? character->getPhase() : -1;
 	debug("animation phase = %d", phase);
 	push(phase);
