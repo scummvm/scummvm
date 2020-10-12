@@ -1258,13 +1258,13 @@ void Process::moveCharacterNoUserMove() {
 }
 
 void Process::animateCharacter() {
-	int arg2 = pop();
+	int frames = pop();
 	Common::String name = popString();
-	debug("animateCharacter: %s %d", name.c_str(), arg2);
+	debug("animateCharacter: %s %d %d", name.c_str(), frames, _animationSpeed);
 
 	Character *character = _engine->getCharacter(name);
 	if (character)
-		character->animate(arg2 * 100 / _animationSpeed);
+		character->animate(_animationPosition, frames, _animationSpeed);
 	else
 		warning("character %s could not be found", name.c_str());
 }
