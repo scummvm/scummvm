@@ -903,13 +903,6 @@ public:
 	virtual TransactionError endGFXTransaction() { return kTransactionSuccess; }
 
 	/**
-	 * Return a Graphics::PixelBuffer representing the framebuffer.
-	 * The caller can then perform arbitrary graphics transformations
-	 * on the framebuffer (blitting, scrolling, etc.).
-	 */
-	virtual Graphics::PixelBuffer getScreenPixelBuffer() = 0;
-
-	/**
 	 * Returns the currently set virtual screen height.
 	 * @see initSize
 	 * @return the currently set virtual screen height

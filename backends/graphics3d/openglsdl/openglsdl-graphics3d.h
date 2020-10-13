@@ -76,7 +76,6 @@ public:
 #endif
 	virtual int getScreenChangeID() const override { return _screenChangeCount; }
 	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format) override;
-	virtual Graphics::PixelBuffer getScreenPixelBuffer() override;
 	virtual int16 getHeight() const override;
 	virtual int16 getWidth() const override;
 

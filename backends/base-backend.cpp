@@ -51,11 +51,6 @@ void BaseBackend::initBackend() {
 	OSystem::initBackend();
 }
 
-Graphics::PixelBuffer BaseBackend::getScreenPixelBuffer() {
-	warning("BaseBackend::getScreenPixelBuffer(): not implemented");
-	return Graphics::PixelBuffer();
-}
-
 void BaseBackend::fillScreen(uint32 col) {
 	Graphics::Surface *screen = lockScreen();
 	if (screen)

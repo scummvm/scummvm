@@ -112,7 +112,6 @@ public:
 	//virtual void setPalette(const byte *colors, uint start, uint num) = 0;
 	//virtual void grabPalette(byte *colors, uint start, uint num) const = 0;
 
-	virtual Graphics::PixelBuffer getScreenPixelBuffer() { return Graphics::PixelBuffer(); }
 	virtual void saveScreenshot() {}
 	virtual bool lockMouse(bool lock) { return false; }
 };

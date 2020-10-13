@@ -689,10 +689,6 @@ void AndroidGraphicsManager::setupScreen(uint screenW, uint screenH, bool fullsc
 	}
 }
 
-Graphics::PixelBuffer AndroidGraphicsManager::getScreenPixelBuffer() {
-	return _game_pbuf;
-}
-
 void AndroidGraphicsManager::clipMouse(Common::Point &p) const {
 	const GLESBaseTexture *tex = getActiveTexture();
 

@@ -352,10 +352,6 @@ void OpenGLSdlGraphics3dManager::notifyResize(const int width, const int height)
 #endif
 }
 
-Graphics::PixelBuffer OpenGLSdlGraphics3dManager::getScreenPixelBuffer() {
-	error("Direct screen buffer access is not allowed when using OpenGL");
-}
-
 void OpenGLSdlGraphics3dManager::initializeOpenGLContext() const {
 	OpenGL::ContextOGLType type;
 
