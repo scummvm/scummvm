@@ -163,6 +163,7 @@ void Process::loadAnimation() {
 			_animationDelay = 0;
 		}
 		setupAnimation(animation);
+		_engine->getCurrentScreen()->add(animation);
 	}
 }
 
