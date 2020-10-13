@@ -64,7 +64,7 @@ class Character {
 
 public:
 	Character(AGDSEngine * engine, const Common::String & name, const ObjectPtr & object):
-		_engine(engine), _name(name), _object(object), _animation(nullptr), _enabled(false), _phase(-1), _frames(0), _direction(-1) {
+		_engine(engine), _name(name), _object(object), _animation(nullptr), _enabled(true), _phase(-1), _frames(0), _direction(-1) {
 	}
 
 	const Common::String & name() const {
