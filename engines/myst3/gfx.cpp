@@ -204,7 +204,11 @@ Renderer *createRenderer(OSystem *system) {
 		width = Renderer::kOriginalWidth;
 	}
 
-	initGraphics3d(width, height, fullscreen, isAccelerated);
+	if (isAccelerated) {
+		initGraphics3d(width, height, fullscreen, true);
+	} else {
+		initGraphics(width, height, nullptr);
+	}
 
 #if defined(USE_OPENGL_GAME)
 	// Check the OpenGL context actually supports shaders

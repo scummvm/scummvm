@@ -63,8 +63,7 @@ void TinyGLRenderer::init() {
 
 	computeScreenViewport();
 
-	Graphics::PixelBuffer screenBuffer = _system->getScreenPixelBuffer();
-	_fb = new TinyGL::FrameBuffer(kOriginalWidth, kOriginalHeight, screenBuffer);
+	_fb = new TinyGL::FrameBuffer(kOriginalWidth, kOriginalHeight, g_system->getScreenFormat());
 	TinyGL::glInit(_fb, 512);
 	tglEnableDirtyRects(ConfMan.getBool("dirtyrects"));
 
@@ -291,6 +290,8 @@ Graphics::Surface *TinyGLRenderer::getScreenshot() {
 
 void TinyGLRenderer::flipBuffer() {
 	TinyGL::tglPresentBuffer();
+	g_system->copyRectToScreen(_fb->getPixelBuffer(), _fb->linesize,
+	                           0, 0, _fb->xsize, _fb->ysize);
 }
 
 } // End of namespace Myst3
