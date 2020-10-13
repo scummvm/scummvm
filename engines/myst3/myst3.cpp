@@ -495,11 +495,7 @@ void Myst3Engine::processInput(bool interactive) {
 				break;
 			case Common::KEYCODE_RETURN:
 			case Common::KEYCODE_KP_ENTER:
-				if (event.kbd.hasFlags(Common::KBD_ALT)) {
-					_gfx->toggleFullscreen();
-				} else {
-					shouldInteractWithHoveredElement = true;
-				}
+				shouldInteractWithHoveredElement = true;
 				break;
 			case Common::KEYCODE_F5:
 				// Open main menu

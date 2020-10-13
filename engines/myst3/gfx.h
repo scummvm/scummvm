@@ -113,7 +113,6 @@ public:
 
 	virtual void init() = 0;
 	virtual void clear() = 0;
-	void toggleFullscreen();
 
 	/**
 	 *  Swap the buffers, making the drawn screen visible
