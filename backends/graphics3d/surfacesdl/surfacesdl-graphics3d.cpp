@@ -76,9 +76,7 @@ SurfaceSdlGraphics3dManager::~SurfaceSdlGraphics3dManager() {
 
 bool SurfaceSdlGraphics3dManager::hasFeature(OSystem::Feature f) const {
 	return
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 		(f == OSystem::kFeatureFullscreenToggleKeepsContext) ||
-#endif
 		(f == OSystem::kFeatureAspectRatioCorrection) ||
 		(f == OSystem::kFeatureFullscreenMode);
 }
