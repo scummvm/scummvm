@@ -48,7 +48,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Properties;
 
 //import android.os.Environment;
@@ -387,6 +386,8 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 			_scummvm = null;
 		}
+
+		showKeyboardView(false);
 	}
 
 
@@ -638,8 +639,10 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	private static String getVersionInfoFromScummvmConfiguration(String fullIniFilePath) {
 		try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fullIniFilePath))) {
 			Map<String, Properties> parsedIniMap = parseINI(bufferedReader);
-			if (!parsedIniMap.isEmpty() && parsedIniMap.containsKey("scummvm")) {
-				return Objects.requireNonNull(parsedIniMap.get("scummvm")).getProperty("versioninfo", "");
+			if (!parsedIniMap.isEmpty()
+			    && parsedIniMap.containsKey("scummvm")
+			    && parsedIniMap.get("scummvm") != null) {
+				return parsedIniMap.get("scummvm").getProperty("versioninfo", "");
 			}
 		} catch (IOException ignored) {
 		} catch (NullPointerException ignored) {
@@ -651,8 +654,10 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	private static String getSavepathInfoFromScummvmConfiguration(String fullIniFilePath) {
 		try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fullIniFilePath))) {
 			Map<String, Properties> parsedIniMap = parseINI(bufferedReader);
-			if (!parsedIniMap.isEmpty() && parsedIniMap.containsKey("scummvm")) {
-				return Objects.requireNonNull(parsedIniMap.get("scummvm")).getProperty("savepath", "");
+			if (!parsedIniMap.isEmpty()
+			    && parsedIniMap.containsKey("scummvm")
+			    && parsedIniMap.get("scummvm") != null) {
+				return parsedIniMap.get("scummvm").getProperty("savepath", "");
 			}
 		} catch (IOException ignored) {
 		} catch (NullPointerException ignored) {
@@ -889,7 +894,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				Log.d(ScummVM.LOG_TAG, "ScummVM Config file already exists!");
 				Log.d(ScummVM.LOG_TAG, "Existing ScummVM INI: " + _configScummvmFile.getPath());
 				String existingVersionInfo = getVersionInfoFromScummvmConfiguration(_configScummvmFile.getPath());
-				if (!"".equals(existingVersionInfo.trim())) {
+				if (!existingVersionInfo.trim().isEmpty()) {
 					Log.d(ScummVM.LOG_TAG, "Existing ScummVM Version: " + existingVersionInfo.trim());
 					Version tmpOldVersionFound = new Version(existingVersionInfo.trim());
 					if (tmpOldVersionFound.compareTo(maxOldVersionFound) > 0) {
@@ -916,49 +921,53 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			for (String oldConfigFileDescription : candidateOldLocationsOfScummVMConfigMap.keySet()) {
 				File oldCandidateScummVMConfig = candidateOldLocationsOfScummVMConfigMap.get(oldConfigFileDescription);
 				Log.d(ScummVM.LOG_TAG, "Looking for old config " + oldConfigFileDescription + " ScummVM file...");
-				Log.d(ScummVM.LOG_TAG, "at Path: " + Objects.requireNonNull(oldCandidateScummVMConfig).getPath() + "...");
-				if (oldCandidateScummVMConfig.exists() && oldCandidateScummVMConfig.isFile()) {
-					Log.d(ScummVM.LOG_TAG, "Old config " + oldConfigFileDescription + " ScummVM file was found!");
-					String existingVersionInfo = getVersionInfoFromScummvmConfiguration(oldCandidateScummVMConfig.getPath());
-					if (!"".equals(existingVersionInfo.trim())) {
-						Log.d(ScummVM.LOG_TAG, "Old config's ScummVM version: " + existingVersionInfo.trim());
-						Version tmpOldVersionFound = new Version(existingVersionInfo.trim());
-						//
-						// Replace the current config.ini with another recovered,
-						//         if the recovered one is of higher version.
-						//
-						// patch for 2.2.1 Beta1: (additional check)
-						//       if current version max is 2.2.1 and existingVersionFoundInScummVMDataDir is 2.2.1 (meaning we have a config.ini created for 2.2.1)
-						//          and file location key starts with "A-" (aux external storage locations)
-						//          and old version found is lower than 2.2.1
-						//       Then: replace our current config ini and remove the recovered ini from the aux external storage
-						if ((tmpOldVersionFound.compareTo(maxOldVersionFound) > 0)
-						     || (!existingConfigInScummVMDataDirReplacedOnce
-						         && existingVersionFoundInScummVMDataDir.compareTo(version2_2_1_forPatch) == 0
-						         && tmpOldVersionFound.compareTo(version2_2_1_forPatch) < 0
-						         && oldConfigFileDescription.startsWith("A-"))
-						) {
-							maxOldVersionFound = tmpOldVersionFound;
-							scummVMConfigHandled = false; // invalidate the handled flag, since we found a new great(er) version so we should re-use that one
+				if (oldCandidateScummVMConfig != null) {
+					Log.d(ScummVM.LOG_TAG, "at Path: " + oldCandidateScummVMConfig.getPath() + "...");
+					if (oldCandidateScummVMConfig.exists() && oldCandidateScummVMConfig.isFile()) {
+						Log.d(ScummVM.LOG_TAG, "Old config " + oldConfigFileDescription + " ScummVM file was found!");
+						String existingVersionInfo = getVersionInfoFromScummvmConfiguration(oldCandidateScummVMConfig.getPath());
+						if (!existingVersionInfo.trim().isEmpty()) {
+							Log.d(ScummVM.LOG_TAG, "Old config's ScummVM version: " + existingVersionInfo.trim());
+							Version tmpOldVersionFound = new Version(existingVersionInfo.trim());
+							//
+							// Replace the current config.ini with another recovered,
+							//         if the recovered one is of higher version.
+							//
+							// patch for 2.2.1 Beta1: (additional check)
+							//       if current version max is 2.2.1 and existingVersionFoundInScummVMDataDir is 2.2.1 (meaning we have a config.ini created for 2.2.1)
+							//          and file location key starts with "A-" (aux external storage locations)
+							//          and old version found is lower than 2.2.1
+							//       Then: replace our current config ini and remove the recovered ini from the aux external storage
+							if ((tmpOldVersionFound.compareTo(maxOldVersionFound) > 0)
+								|| (!existingConfigInScummVMDataDirReplacedOnce
+								&& existingVersionFoundInScummVMDataDir.compareTo(version2_2_1_forPatch) == 0
+								&& tmpOldVersionFound.compareTo(version2_2_1_forPatch) < 0
+								&& oldConfigFileDescription.startsWith("A-"))
+							) {
+								maxOldVersionFound = tmpOldVersionFound;
+								scummVMConfigHandled = false; // invalidate the handled flag, since we found a new great(er) version so we should re-use that one
+							}
+						} else {
+							Log.d(ScummVM.LOG_TAG, "Could not find info on the old config's ScummVM version. Unsupported or corrupt file?");
+						}
+						if (!scummVMConfigHandled) {
+							// We copy the old file over the new one.
+							// This will happen once during this installation, but on a subsequent one it will again copy that old config file
+							// if we don't remove it
+							copyFileUsingStream(oldCandidateScummVMConfig, _configScummvmFile);
+							Log.d(ScummVM.LOG_TAG, "Old config " + oldConfigFileDescription + " ScummVM file was renamed and overwrote the new (empty) scummvm.ini");
+							scummVMConfigHandled = true;
+							existingConfigInScummVMDataDirReplacedOnce = true;
+						}
+
+						// Here we remove the old config
+						if (oldCandidateScummVMConfig.delete()) {
+							Log.d(ScummVM.LOG_TAG, "The old config " + oldConfigFileDescription + " ScummVM file is now deleted!");
+						} else {
+							Log.d(ScummVM.LOG_TAG, "Failed to delete the old config " + oldConfigFileDescription + " ScummVM file!");
 						}
 					} else {
-						Log.d(ScummVM.LOG_TAG, "Could not find info on the old config's ScummVM version. Unsupported or corrupt file?");
-					}
-					if (!scummVMConfigHandled) {
-						// We copy the old file over the new one.
-						// This will happen once during this installation, but on a subsequent one it will again copy that old config file
-						// if we don't remove it
-						copyFileUsingStream(oldCandidateScummVMConfig, _configScummvmFile);
-						Log.d(ScummVM.LOG_TAG, "Old config " + oldConfigFileDescription + " ScummVM file was renamed and overwrote the new (empty) scummvm.ini");
-						scummVMConfigHandled = true;
-						existingConfigInScummVMDataDirReplacedOnce = true;
-					}
-
-					// Here we remove the old config
-					if (oldCandidateScummVMConfig.delete()) {
-						Log.d(ScummVM.LOG_TAG, "The old config " + oldConfigFileDescription + " ScummVM file is now deleted!");
-					} else {
-						Log.d(ScummVM.LOG_TAG, "Failed to delete the old config " + oldConfigFileDescription + " ScummVM file!");
+						Log.d(ScummVM.LOG_TAG, "...not found!");
 					}
 				} else {
 					Log.d(ScummVM.LOG_TAG, "...not found!");
@@ -1162,27 +1171,33 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 					File iterCandidateScummVMSavesPath = candidateOldLocationsOfScummVMSavesMap.get(oldSavesPathDescription);
 					Log.d(ScummVM.LOG_TAG, "Looking for old saves path " + oldSavesPathDescription + "...");
 					try {
-						Log.d(ScummVM.LOG_TAG, " at Path: " + Objects.requireNonNull(iterCandidateScummVMSavesPath).getPath());
-						if (iterCandidateScummVMSavesPath.exists() && iterCandidateScummVMSavesPath.isDirectory()) {
-							File[] sgfiles = iterCandidateScummVMSavesPath.listFiles();
-							if (sgfiles != null) {
-								Log.d(ScummVM.LOG_TAG, "Size: " + sgfiles.length);
-								for (File sgfile : sgfiles) {
-									smallNodeDesc = "(F)";
-									if (sgfile.isDirectory()) {
-										smallNodeDesc = "(D)";
-									}
-									Log.d(ScummVM.LOG_TAG, "Name: " + smallNodeDesc + " " + sgfile.getName());
-								}
+						if (iterCandidateScummVMSavesPath != null) {
+							Log.d(ScummVM.LOG_TAG, "at Path: " + iterCandidateScummVMSavesPath.getPath() + "...");
 
-								if (sgfiles.length > maxSavesFolderFoundSize) {
-									maxSavesFolderFoundSize = sgfiles.length;
-									candidateOldScummVMSavesPath = iterCandidateScummVMSavesPath;
+							if (iterCandidateScummVMSavesPath.exists() && iterCandidateScummVMSavesPath.isDirectory()) {
+								File[] sgfiles = iterCandidateScummVMSavesPath.listFiles();
+								if (sgfiles != null) {
+									Log.d(ScummVM.LOG_TAG, "Size: " + sgfiles.length);
+									for (File sgfile : sgfiles) {
+										smallNodeDesc = "(F)";
+										if (sgfile.isDirectory()) {
+											smallNodeDesc = "(D)";
+										}
+										Log.d(ScummVM.LOG_TAG, "Name: " + smallNodeDesc + " " + sgfile.getName());
+									}
+
+									if (sgfiles.length > maxSavesFolderFoundSize) {
+										maxSavesFolderFoundSize = sgfiles.length;
+										candidateOldScummVMSavesPath = iterCandidateScummVMSavesPath;
+									}
 								}
+							} else {
+								Log.d(ScummVM.LOG_TAG, "...not found.");
 							}
 						} else {
 							Log.d(ScummVM.LOG_TAG, "...not found.");
 						}
+
 					} catch (Exception e) {
 						Log.d(ScummVM.LOG_TAG, "ScummVM Saves path exception CAUGHT!");
 					}
@@ -1235,7 +1250,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		if (_configScummvmFile.exists() && _configScummvmFile.isFile()) {
 			Log.d(ScummVM.LOG_TAG, "Looking into config file for save path: " + _configScummvmFile.getPath());
 			String persistentGlobalSavePathStr = getSavepathInfoFromScummvmConfiguration(_configScummvmFile.getPath());
-			if (!"".equals(persistentGlobalSavePathStr.trim())) {
+			if (!persistentGlobalSavePathStr.trim().isEmpty()) {
 				Log.d(ScummVM.LOG_TAG, "Found explicit save path: " + persistentGlobalSavePathStr);
 				persistentGlobalSavePath = new File(persistentGlobalSavePathStr);
 				if (persistentGlobalSavePath.exists() && persistentGlobalSavePath.isDirectory() && persistentGlobalSavePath.listFiles() != null) {
