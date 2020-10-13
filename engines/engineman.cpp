@@ -353,25 +353,15 @@ void EngineManager::updateConfigWithFileName(const Plugin *plugin, const Common:
 	}
 }
 
-Plugin *EngineManager::getEngineFromMetaEngine(const Plugin *plugin) {
+const Plugin *EngineManager::getEngineFromMetaEngine(const Plugin *plugin) {
 	assert(plugin->getType() == PLUGIN_TYPE_ENGINE_DETECTION);
 
-	Plugin *enginePlugin = nullptr;
+	const Plugin *enginePlugin = nullptr;
 
 	// Use the engineID from MetaEngine for comparasion.
-	Common::String metaEnginePluginName = plugin->getEngineId();
-	PluginList pl = PluginMan.getAllPluginsOfType(PLUGIN_TYPE_ENGINE);
-	// Iterate over all engine plugins.
-	for (PluginList::const_iterator itr = pl.begin(); itr != pl.end(); itr++) {
-		// The getName() provides a name which is similiar to getEngineId.
-		// Because engines are engines themselves, this function is simply named getName.
-		Common::String enginePluginName((*itr)->getName());
+	Common::String engineId = plugin->getEngineId();
 
-		if (metaEnginePluginName.equalsIgnoreCase(enginePluginName)) {
-			enginePlugin = (*itr);
-			break;
-		}
-	}
+	enginePlugin = findPluginForEngine(engineId);
 
 	if (enginePlugin) {
 		debug(9, "MetaEngine: %s \t matched to \t Engine: %s", plugin->getName(), enginePlugin->getFileName());

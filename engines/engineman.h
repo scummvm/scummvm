@@ -93,7 +93,7 @@ public:
 	 *
 	 * @return A plugin of type ENGINE.
 	 */
-	Plugin *getEngineFromMetaEngine(const Plugin *plugin);
+	const Plugin *getEngineFromMetaEngine(const Plugin *plugin);
 
 private:
 	/** Find a loaded plugin with the given engine ID */

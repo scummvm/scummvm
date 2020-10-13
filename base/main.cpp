@@ -193,7 +193,7 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 
 	// Right now we have a MetaEngine plugin. We must find the matching engine plugin to
 	// call createInstance and other connecting functions.
-	Plugin *enginePluginToLaunchGame = EngineMan.getEngineFromMetaEngine(plugin);
+	const Plugin *enginePluginToLaunchGame = EngineMan.getEngineFromMetaEngine(plugin);
 
 	if (!enginePluginToLaunchGame) {
 		err = Common::kEnginePluginNotFound;
