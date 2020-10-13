@@ -94,9 +94,6 @@ bool OpenGLGraphicsManager::hasFeature(OSystem::Feature f) const {
 	case OSystem::kFeatureAspectRatioCorrection:
 	case OSystem::kFeatureCursorPalette:
 	case OSystem::kFeatureFilteringMode:
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	case OSystem::kFeatureFullscreenToggleKeepsContext:
-#endif
 	case OSystem::kFeatureStretchMode:
 		return true;
 
