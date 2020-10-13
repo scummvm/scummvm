@@ -1274,9 +1274,20 @@ void Process::showCharacter() {
 	Common::String name = popString();
 	debug("showCharacter %s", name.c_str());
 	Character *character = _engine->getCharacter(name);
-	if (character)
+	if (character) {
+		character->visible(true);
 		_engine->runObject(character->object());
-	else
+	} else
+		warning("character %s could not be found", name.c_str());
+}
+
+void Process::hideCharacter() {
+	Common::String name = popString();
+	debug("hideCharacter %s", name.c_str());
+	Character *character = _engine->getCharacter(name);
+	if (character) {
+		character->visible(false);
+	} else
 		warning("character %s could not be found", name.c_str());
 }
 

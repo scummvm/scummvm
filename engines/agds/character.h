@@ -47,6 +47,7 @@ class Character {
 	Common::Point	_pos;
 	Common::Point	_dst;
 	bool _enabled;
+	bool _visible;
 	int _phase;
 	int _frames;
 	int _direction;
@@ -64,7 +65,7 @@ class Character {
 
 public:
 	Character(AGDSEngine * engine, const Common::String & name, const ObjectPtr & object):
-		_engine(engine), _name(name), _object(object), _animation(nullptr), _enabled(true), _phase(-1), _frames(0), _direction(-1) {
+		_engine(engine), _name(name), _object(object), _animation(nullptr), _enabled(true), _visible(true), _phase(-1), _frames(0), _direction(-1) {
 	}
 
 	const Common::String & name() const {
@@ -79,6 +80,10 @@ public:
 
 	void enable(bool enabled = true) {
 		_enabled = enabled;
+	}
+
+	void visible(bool visible) {
+		_visible = visible;
 	}
 
 	void animate(Common::Point pos, int frames, int speed);

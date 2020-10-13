@@ -106,7 +106,7 @@ enum Opcode {
 	kStub86							= 86,
 	kStub87							= 87,
 	kAnimateCharacter				= 88,
-	kStub89							= 89,
+	kHideCharacter					= 89,
 	kShowCharacter					= 90,
 	kStub91							= 91,
 	kEnableCharacter				= 92,
@@ -323,6 +323,7 @@ enum Opcode {
 	OP(kLoadRegionFromObject, loadRegionFromObject) \
 	OP(kLoadPictureFromObject, loadPictureFromObject) \
 	OP(kLoadAnimationFromObject, loadAnimationFromObject) \
+	OP(kHideCharacter, hideCharacter) \
 	OP(kShowCharacter, showCharacter) \
 	OP(kEnableCharacter, enableCharacter) \
 	OP(kMoveCharacterUserMove, moveCharacterUserMove) \
