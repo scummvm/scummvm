@@ -121,7 +121,7 @@ void Character::paint(Graphics::Surface & backbuffer) {
 		if (_phase + 1 >= _frames) {
 			_phase = -1;
 			_frames = 0;
-			_pos = _dst = pos;
+			pos = _pos = _dst;
 		} else {
 			float dx = _dst.x - _pos.x;
 			float dy = _dst.y - _pos.y;
