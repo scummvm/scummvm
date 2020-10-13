@@ -77,13 +77,13 @@ GfxTinyGL::~GfxTinyGL() {
 	}
 }
 
-void GfxTinyGL::setupScreen(int screenW, int screenH, bool fullscreen) {
+void GfxTinyGL::setupScreen(int screenW, int screenH) {
 	_screenWidth = screenW;
 	_screenHeight = screenH;
 	_scaleW = _screenWidth / (float)_gameWidth;
 	_scaleH = _screenHeight / (float)_gameHeight;
 
-	g_system->showMouse(!fullscreen);
+	g_system->showMouse(false);
 
 	_pixelFormat = g_system->getScreenFormat();
 	debug("INFO: TinyGL front buffer pixel format: %s", _pixelFormat.toString().c_str());

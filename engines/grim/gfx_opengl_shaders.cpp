@@ -400,7 +400,7 @@ void GfxOpenGLS::setupShaders() {
 	}
 }
 
-void GfxOpenGLS::setupScreen(int screenW, int screenH, bool fullscreen) {
+void GfxOpenGLS::setupScreen(int screenW, int screenH) {
 	_screenWidth = screenW;
 	_screenHeight = screenH;
 	_scaleW = _screenWidth / (float)_gameWidth;
