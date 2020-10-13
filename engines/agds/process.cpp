@@ -141,8 +141,6 @@ void Process::setupAnimation(Animation *animation) {
 			suspend();
 	else if (_phaseVarControlled)
 			_engine->setGlobal(_phaseVar, 0);
-	_engine->getCurrentScreen()->add(animation);
-
 }
 
 void Process::activate() {
