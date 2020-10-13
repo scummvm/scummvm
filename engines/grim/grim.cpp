@@ -270,7 +270,7 @@ GfxBase *GrimEngine::createRenderer(int screenW, int screenH, bool fullscreen) {
 
 	_softRenderer = matchingRendererType == Graphics::kRendererTypeTinyGL;
 	if (!_softRenderer) {
-		initGraphics3d(screenW, screenH, fullscreen, true);
+		initGraphics3d(screenW, screenH, fullscreen);
 	} else {
 		initGraphics(screenW, screenH, nullptr);
 	}

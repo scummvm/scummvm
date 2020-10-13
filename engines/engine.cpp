@@ -395,9 +395,9 @@ void initGraphics(int width, int height) {
 	initGraphics(width, height, &format);
 }
 
-void initGraphics3d(int width, int height, bool fullscreen, bool accel3d) {
+void initGraphics3d(int width, int height, bool fullscreen) {
 	g_system->beginGFXTransaction();
-		g_system->setGraphicsMode(0, OSystem::kGfxModeRender3d | (accel3d ? OSystem::kGfxModeAcceleration3d : 0));
+		g_system->setGraphicsMode(0, OSystem::kGfxModeRender3d | OSystem::kGfxModeAcceleration3d);
 		g_system->initSize(width, height);
 		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, fullscreen);
 	g_system->endGFXTransaction();

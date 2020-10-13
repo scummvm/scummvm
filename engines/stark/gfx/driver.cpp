@@ -38,7 +38,7 @@ namespace Gfx {
 Driver *Driver::create() {
 #if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 	bool fullscreen = ConfMan.getBool("fullscreen");
-	initGraphics3d(kOriginalWidth, kOriginalHeight, fullscreen, true);
+	initGraphics3d(kOriginalWidth, kOriginalHeight, fullscreen);
 
 	if (OpenGLContext.shadersSupported) {
 		return new OpenGLSDriver();

@@ -129,7 +129,7 @@ Common::Error WintermuteEngine::run() {
 		return Common::kUnsupportedColorMode;
 	}
 #else
-	initGraphics3d(800, 600, ConfMan.getBool("fullscreen"), true);
+	initGraphics3d(800, 600, ConfMan.getBool("fullscreen"));
 #endif
 
 	// Create debugger console. It requires GFX to be initialized

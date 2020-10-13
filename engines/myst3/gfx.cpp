@@ -205,7 +205,7 @@ Renderer *createRenderer(OSystem *system) {
 	}
 
 	if (isAccelerated) {
-		initGraphics3d(width, height, fullscreen, true);
+		initGraphics3d(width, height, fullscreen);
 	} else {
 		initGraphics(width, height, nullptr);
 	}
