@@ -255,6 +255,7 @@ void PetkaEngine::loadPart(byte part) {
 void PetkaEngine::loadPartAtNextFrame(byte part) {
 	_shouldChangePart = true;
 	_nextPart = part;
+	_chapter = 1;
 	_saveSlot = -1;
 }
 
