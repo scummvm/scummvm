@@ -1,5 +1,6 @@
 package org.scummvm.scummvm;
 
+import androidx.annotation.NonNull;
 import android.content.res.AssetManager;
 import android.media.AudioAttributes;
 import android.media.AudioFormat;
@@ -375,6 +376,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 			return score;
 		}
 
+		@NonNull
 		public String toString() {
 			String s;
 
