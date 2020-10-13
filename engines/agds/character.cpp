@@ -112,7 +112,7 @@ void Character::animate(Common::Point pos, int frames, int speed) {
 }
 
 void Character::paint(Graphics::Surface & backbuffer) {
-	if (!_enabled || !_animation)
+	if (!_enabled || !_visible || !_animation)
 		return;
 
 	Common::Point pos = _pos;

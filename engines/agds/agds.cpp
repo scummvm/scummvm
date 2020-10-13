@@ -829,8 +829,15 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 		loadCharacter(id, filename, object);
 		int x = agds_c->readUint16LE();
 		int y = agds_c->readUint16LE();
-		debug("character at %d, %d", x, y);
-		int n = 3;
+		int dir = agds_c->readUint16LE();
+		debug("character at %d, %d, dir: %d", x, y, dir);
+		auto character = getCharacter(id);
+		if (character) {
+			character->position(Common::Point(x, y));
+			character->setDirection(dir);
+		} else
+			warning("no character");
+		int n = 2;
 		while(n--) {
 			int v = agds_c->readUint16LE();
 			debug("savegame character leftover: %d", v);
