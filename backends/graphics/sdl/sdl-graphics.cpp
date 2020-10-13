@@ -335,7 +335,7 @@ bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
 
 	switch ((CustomEventAction) event.customType) {
 	case kActionToggleMouseCapture:
-		getWindow()->toggleMouseGrab();
+		getWindow()->grabMouse(!getWindow()->mouseIsGrabbed());
 		return true;
 
 	case kActionToggleFullscreen:

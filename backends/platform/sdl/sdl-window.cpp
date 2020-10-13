@@ -34,8 +34,10 @@ static const uint32 fullscreenMask = SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_
 
 SdlWindow::SdlWindow()
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	: _window(nullptr), _inputGrabState(false), _windowCaption("ScummVM"),
+	: _window(nullptr), _windowCaption("ScummVM"),
 	_lastFlags(0), _lastX(SDL_WINDOWPOS_UNDEFINED), _lastY(SDL_WINDOWPOS_UNDEFINED)
+#else
+	: _inputGrabState(false), _inputLockState(false)
 #endif
 	{
 
@@ -145,34 +147,35 @@ void SdlWindow::setWindowCaption(const Common::String &caption) {
 #endif
 }
 
-void SdlWindow::toggleMouseGrab() {
+void SdlWindow::grabMouse(bool grab) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	if (_window) {
-		_inputGrabState = SDL_GetWindowGrab(_window) == SDL_FALSE;
-		SDL_SetWindowGrab(_window, _inputGrabState ? SDL_TRUE : SDL_FALSE);
+		SDL_SetWindowGrab(_window, grab ? SDL_TRUE : SDL_FALSE);
 	}
 #else
-	if (SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_OFF) {
-		SDL_WM_GrabInput(SDL_GRAB_ON);
+	if (grab) {
 		_inputGrabState = true;
+		SDL_WM_GrabInput(SDL_GRAB_ON);
 	} else {
-		SDL_WM_GrabInput(SDL_GRAB_OFF);
 		_inputGrabState = false;
+		if (!_inputLockState)
+			SDL_WM_GrabInput(SDL_GRAB_OFF);
 	}
 #endif
 }
 
 bool SdlWindow::lockMouse(bool lock) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	if (lock)
-		SDL_SetRelativeMouseMode(SDL_TRUE);
-	else
-		SDL_SetRelativeMouseMode(SDL_FALSE);
+	SDL_SetRelativeMouseMode(lock ? SDL_TRUE : SDL_FALSE);
 #else
-	if (lock)
+	if (lock) {
+		_inputLockState = true;
 		SDL_WM_GrabInput(SDL_GRAB_ON);
-	else
-		SDL_WM_GrabInput(SDL_GRAB_OFF);
+	} else {
+		_inputLockState = false;
+		if (!_inputGrabState)
+			SDL_WM_GrabInput(SDL_GRAB_OFF);
+	}
 #endif
 	return true;
 }
@@ -262,7 +265,7 @@ SDL_Surface *copySDLSurface(SDL_Surface *src) {
 }
 
 bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
-	if (_inputGrabState) {
+	if (mouseIsGrabbed()) {
 		flags |= SDL_WINDOW_INPUT_GRABBED;
 	}
 
