@@ -228,6 +228,8 @@ public:
 	~StaticPlugin();
 	virtual bool loadPlugin();
 	virtual void unloadPlugin();
+	virtual bool isDynamic() const;
+	virtual bool isLoaded() const;
 };
 
 

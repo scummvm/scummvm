@@ -52,14 +52,6 @@ const char *Plugin::getName() const {
 	return _pluginObject->getName();
 }
 
-class StaticPlugin : public Plugin {
-public:
-	StaticPlugin(PluginObject *pluginobject, PluginType type) : Plugin(type) {
-		assert(pluginobject);
-		assert(type < PLUGIN_TYPE_MAX);
-		_pluginObject = pluginobject;
-	}
-
 const char *Plugin::getEngineId() const {
 	if (_type == PLUGIN_TYPE_ENGINE_DETECTION) {
 		return _pluginObject->getEngineId();
@@ -68,15 +60,25 @@ const char *Plugin::getEngineId() const {
 	return nullptr;
 }
 
-StaticPlugin::~StaticPlugin() {
-		delete _pluginObject;
-	}
+StaticPlugin::StaticPlugin(PluginObject *pluginobject, PluginType type) : Plugin(type) {
+	assert(pluginobject);
+	assert(type < PLUGIN_TYPE_MAX);
+	_pluginObject = pluginobject;
+}
 
-	virtual bool isDynamic() const override { return false; }
-	virtual bool isLoaded() const override { return true; }
-	virtual bool loadPlugin() override { return true; }
-	virtual void unloadPlugin() override {}
-};
+StaticPlugin::~StaticPlugin() {
+	delete _pluginObject;
+}
+
+bool StaticPlugin::isDynamic() const { return false; }
+bool StaticPlugin::isLoaded() const { return true; }
+bool StaticPlugin::loadPlugin() {
+	error("Tried to load a static plugin!");
+	return false;
+}
+void StaticPlugin::unloadPlugin() {
+	error("Tried to unload a static plugin!");
+}
 
 class StaticPluginProvider : public PluginProvider {
 public:
