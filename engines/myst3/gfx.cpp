@@ -193,7 +193,6 @@ Renderer *createRenderer(OSystem *system) {
 	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
 	Graphics::RendererType matchingRendererType = Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
 
-	bool fullscreen = ConfMan.getBool("fullscreen");
 	bool isAccelerated = matchingRendererType != Graphics::kRendererTypeTinyGL;
 
 	uint width;
@@ -205,7 +204,7 @@ Renderer *createRenderer(OSystem *system) {
 	}
 
 	if (isAccelerated) {
-		initGraphics3d(width, height, fullscreen);
+		initGraphics3d(width, height);
 	} else {
 		initGraphics(width, height, nullptr);
 	}

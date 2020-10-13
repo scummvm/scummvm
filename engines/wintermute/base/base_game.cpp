@@ -499,8 +499,7 @@ bool BaseGame::initialize1() {
 //////////////////////////////////////////////////////////////////////
 bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 #ifdef ENABLE_WME3D
-	bool fullscreen = ConfMan.getBool("fullscreen");
-	initGraphics3d(_settings->getResWidth(), _settings->getResHeight(), fullscreen);
+	initGraphics3d(_settings->getResWidth(), _settings->getResHeight());
 
 	Common::String rendererConfig = ConfMan.get("renderer");
 	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);

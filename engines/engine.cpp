@@ -395,11 +395,11 @@ void initGraphics(int width, int height) {
 	initGraphics(width, height, &format);
 }
 
-void initGraphics3d(int width, int height, bool fullscreen) {
+void initGraphics3d(int width, int height) {
 	g_system->beginGFXTransaction();
 		g_system->setGraphicsMode(0, OSystem::kGfxModeRender3d);
 		g_system->initSize(width, height);
-		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, fullscreen);
+		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen")); // TODO: Replace this with initCommonGFX()
 	g_system->endGFXTransaction();
 }
 
