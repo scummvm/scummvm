@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-13 21:41+0200\n"
-"PO-Revision-Date: 2020-10-12 09:43+0000\n"
+"PO-Revision-Date: 2020-10-14 04:43+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -1000,15 +1000,16 @@ msgid "V-Sync in 3D Games"
 msgstr "V-Sync dans les jeux 3D"
 
 #: gui/options.cpp:1305
+#, fuzzy
 msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
 msgstr ""
-"Attend la synchronisation verticale pour rafraîchir l'écran lors d'un rendu "
-"3D"
+"Attend la synchronisation verticale pour rafraîchir l'écran dans le moteur "
+"de rendu 3D"
 
 #: gui/options.cpp:1307
 #, fuzzy
 msgid "Game 3D Renderer:"
-msgstr "Interface :"
+msgstr "Moteur de rendu 3D du jeu :"
 
 #: gui/options.cpp:1316
 msgid "3D Anti-aliasing:"
@@ -4592,7 +4593,7 @@ msgstr "Examiner/Regarder"
 
 #: engines/grim/grim.cpp:1352
 msgid "Error: the game could not be saved."
-msgstr "Erreur : le jeu n'a pas été sauvegardé"
+msgstr "Erreur : le jeu n'a pas été sauvegardé."
 
 #: engines/grim/md5check.cpp:547
 #, c-format
@@ -4617,6 +4618,10 @@ msgid ""
 "Go to https://wiki.residualvm.org/index.php/Datafiles to see a list of the "
 "needed files."
 msgstr ""
+"Impossible d'ouvrir le fichier %s pour vérification.\n"
+"Il peut être manquant ou vous n'avez pas les droits pour l'ouvrir.\n"
+"Consultez la page https://wiki.residualvm.org/index.php/Datafiles pour voir "
+"la liste des fichiers nécessaires."
 
 #: engines/grim/md5checkdialog.cpp:42
 msgid ""
@@ -4625,6 +4630,10 @@ msgid ""
 "This may take a while, please wait.\n"
 "Successive runs will not check them again."
 msgstr ""
+"ScummVM va maintenant vérifier les fichiers de données du jeu, pour "
+"s'assurer que vous avez la meilleure expérience de jeu possible.\n"
+"Cela peut prendre un certain temps, veuillez patienter.\n"
+"Les lancements suivantes ne les vérifieront plus."
 
 #: engines/grim/resource.cpp:100
 msgid ""
@@ -4633,6 +4642,10 @@ msgid ""
 "https://scummvm.org/frs/extras/patches/gfupd101.exe\n"
 "and put it in the game data files directory"
 msgstr ""
+"Le patch original de Grim Fandango\n"
+"est manquant. Veuillez le télécharger à cette adresse\n"
+"https://scummvm.org/frs/extras/patches/gfupd101.exe\n"
+"et le placer dans le répertoire des fichiers de données du jeu"
 
 #: engines/grim/resource.cpp:105
 msgid ""
@@ -4642,6 +4655,11 @@ msgid ""
 "Pay attention to download the correct version according to the game's "
 "language"
 msgstr ""
+"Le patch original de \"Escape from Monkey Island\" est manquant. \n"
+"Veuillez le télécharger à cette adresse : https://scummvm.org/frs/extras/"
+"patches/\n"
+"et le placer dans le répertoire des fichiers de données de jeu.\n"
+"Assurez-vous de télécharger la bonne version en fonction de la langue du jeu"
 
 #: engines/grim/emi/sound/emisound.cpp:650
 msgid ""
@@ -4654,6 +4672,15 @@ msgid ""
 "\n"
 "Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.imt"
 msgstr ""
+"ERREUR : Pas assez de pistes musicales trouvées !\n"
+"Escape from Monkey Island dispose de deux versions de FullMonkeyMap.imt,\n"
+"vous devez copier les deux fichiers des deux CD sur Textures/, et les "
+"renommer\n"
+"comme suit pour faire fonctionner les musiques dans le jeu : \n"
+"CD 1 : \"FullMonkeyMap.imt\" -> \"FullMonkeyMap1.imt\"\n"
+"CD 2 : \"FullMonkeyMap.imt\" -> \"FullMonkeyMap2.imt\"\n"
+"\n"
+"Autre possibilité, une copie Steam ou GOG a un FullMonkeyMap.imt combiné"
 
 #: engines/groovie/detection.cpp:320
 msgid "Fast movie speed"
@@ -5262,13 +5289,12 @@ msgid "Unable to locate the '%s' engine data file"
 msgstr "Impossible de trouver le fichier de données du moteur '%s'"
 
 #: engines/myst3/detection.cpp:182
-#, fuzzy
 msgid "Widescreen mod"
-msgstr "Plein écran"
+msgstr "Mode Ecran large"
 
 #: engines/myst3/detection.cpp:183
 msgid "Enable widescreen rendering in fullscreen mode."
-msgstr ""
+msgstr "Active le rendu écran large en mode plein écran."
 
 #: engines/myst3/myst3.cpp:361
 msgid ""
@@ -5278,6 +5304,12 @@ msgid ""
 "The updates can be downloaded from:\n"
 "https://www.scummvm.org/frs/extras/patches/"
 msgstr ""
+"Cette version de Myst III n'a pas été mise à jour avec le dernier patch "
+"officiel.\n"
+"Veuillez installer la mise à jour officielle correspondant à la langue de "
+"votre jeu.\n"
+"Les mises à jour peuvent être téléchargées à cette adresse :\n"
+"https://www.scummvm.org/frs/extras/patches/"
 
 #: engines/myst3/myst3.cpp:1579 engines/pegasus/pegasus.cpp:701
 msgid "Invalid file name for saving"
@@ -6527,36 +6559,38 @@ msgstr "Utiliser l'intro de la version disquette (version CD uniquement)"
 #: engines/stark/detection.cpp:340
 #, fuzzy
 msgid "Load modded assets"
-msgstr "Charger la position du jeu"
+msgstr "Charger des ressources modifiées"
 
 #: engines/stark/detection.cpp:341
 msgid "Enable loading of external replacement assets."
 msgstr ""
+"Permet le chargement de ressources (ou \"assets\") de remplacement externes."
 
 #: engines/stark/detection.cpp:349
 msgid "Enable linear filtering of the backgrounds images"
-msgstr ""
+msgstr "Activer le filtrage linéaire des images d'arrière-plan"
 
 #: engines/stark/detection.cpp:350
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
 msgstr ""
+"Lorsque le filtrage linéaire est activé, les graphismes d'arrière-plan sont "
+"plus lisses en mode plein écran, au prix de certains détails."
 
 #: engines/stark/detection.cpp:358
-#, fuzzy
 msgid "Enable font anti-aliasing"
-msgstr "Censurer le contenu"
+msgstr "Activer l'anti-crénelage des polices"
 
 #: engines/stark/detection.cpp:359
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
+"Quand l'anti-crénelage des polices est activé, les textes affichés sont plus "
+"lisses."
 
 #: engines/stark/stark.cpp:294
-#, fuzzy
 msgid "You are missing recommended data files:"
-msgstr ""
-"Il vous manque les fichiers de données obligatoires suivants pour Riven :\n"
+msgstr "Il vous manque des fichiers de données recommandés :"
 
 #: engines/stark/stark.cpp:308
 msgid ""
@@ -6564,20 +6598,29 @@ msgid ""
 "designed. The Steam release is known to be missing it. You can get the fonts "
 "from the demo version of the game."
 msgstr ""
+"Le dossier de polices 'fonts' est nécessaire pour que le style du texte soit "
+"conforme à sa conception. La version Steam est connue pour ne pas comporter "
+"ce dossier. Vous pouvez récupérer les polices depuis la version démo du jeu."
 
 #: engines/stark/stark.cpp:315
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
 msgstr ""
+"'gui.ini' est recommandé pour obtenir les paramètres de police appropriés à "
+"la traduction du jeu."
 
 #: engines/stark/stark.cpp:321
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
 msgstr ""
+"'language.ini' est recommandé pour obtenir des boites de dialogues de "
+"confirmation traduites."
 
 #: engines/stark/stark.cpp:327
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
 msgstr ""
+"'game.exe' est recommandé pour obtenir des boites de dialogues de "
+"confirmation stylisés."
 
 #: engines/supernova/supernova.cpp:187
 #, c-format
@@ -7254,8 +7297,9 @@ msgid "Shift"
 msgstr "Majuscule"
 
 #: engines/wintermute/keymapper_tables.h:1214
+#, fuzzy
 msgid "Use Chapayev"
-msgstr ""
+msgstr "Utiliser Chapayev"
 
 #: engines/wintermute/keymapper_tables.h:1234
 #: engines/wintermute/keymapper_tables.h:1639
