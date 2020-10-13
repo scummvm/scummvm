@@ -723,7 +723,6 @@ int OSystem_SDL::getDefaultGraphicsMode() const {
 
 bool OSystem_SDL::setGraphicsMode(int mode, uint flags) {
 	bool render3d = flags & OSystem::kGfxModeRender3d;
-	bool accel3d = flags & OSystem::kGfxModeAcceleration3d;
 
 	// In 3d render mode gfx mode param is ignored.
 	if (_graphicsModes.empty() && !render3d) {
@@ -787,7 +786,7 @@ bool OSystem_SDL::setGraphicsMode(int mode, uint flags) {
 		}
 
 #ifdef USE_OPENGL_GAME
-		if (accel3d && !dynamic_cast<OpenGLSdlGraphics3dManager *>(sdlGraphics3dManager)) {
+		if (!dynamic_cast<OpenGLSdlGraphics3dManager *>(sdlGraphics3dManager)) {
 			if (sdlGraphics3dManager) {
 				sdlGraphics3dManager->deactivateManager();
 				delete sdlGraphics3dManager;
@@ -797,20 +796,8 @@ bool OSystem_SDL::setGraphicsMode(int mode, uint flags) {
 			if (sdlGraphicsManager)
 				sdlGraphics3dManager->setDefaultFeatureState();
 			switchedManager = true;
-		} else
-#endif
-		if (!accel3d && !dynamic_cast<SurfaceSdlGraphics3dManager *>(sdlGraphics3dManager)) {
-			if (sdlGraphics3dManager) {
-				sdlGraphics3dManager->deactivateManager();
-				delete sdlGraphics3dManager;
-			}
-			_graphicsManager = sdlGraphics3dManager = new SurfaceSdlGraphics3dManager(_eventSource, _window);
-			// Setup feature defaults for 3D gfx while switching from 2D
-			if (sdlGraphicsManager)
-				sdlGraphics3dManager->setDefaultFeatureState();
-			switchedManager = true;
 		}
-
+#endif
 		if (sdlGraphicsManager) {
 			sdlGraphicsManager = nullptr;
 		}

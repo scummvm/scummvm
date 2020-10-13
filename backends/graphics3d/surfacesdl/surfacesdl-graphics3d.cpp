@@ -140,7 +140,6 @@ int SurfaceSdlGraphics3dManager::getDefaultGraphicsMode() const {
 bool SurfaceSdlGraphics3dManager::setGraphicsMode(int mode, uint flags) {
 	assert(_transactionMode != kTransactionNone);
 	assert(flags & OSystem::kGfxModeRender3d);
-	assert(!(flags & OSystem::kGfxModeAcceleration3d));
 
 	return true;
 }

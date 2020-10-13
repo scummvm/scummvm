@@ -148,7 +148,6 @@ int OpenGLSdlGraphics3dManager::getDefaultGraphicsMode() const {
 bool OpenGLSdlGraphics3dManager::setGraphicsMode(int mode, uint flags) {
 	assert(_transactionMode != kTransactionNone);
 	assert(flags & OSystem::kGfxModeRender3d);
-	assert(flags & OSystem::kGfxModeAcceleration3d);
 
 	return true;
 }
