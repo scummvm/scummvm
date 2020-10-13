@@ -191,6 +191,10 @@ bool SdlGraphicsManager::showMouse(bool visible) {
 	return WindowedGraphicsManager::showMouse(visible);
 }
 
+bool SdlGraphicsManager::lockMouse(bool lock) {
+	return _window->lockMouse(lock);
+}
+
 bool SdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
 	mouse.x = CLIP<int16>(mouse.x, 0, _windowWidth - 1);
 	mouse.y = CLIP<int16>(mouse.y, 0, _windowHeight - 1);

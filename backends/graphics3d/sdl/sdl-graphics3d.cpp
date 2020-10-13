@@ -190,20 +190,8 @@ bool SdlGraphics3dManager::showMouse(bool visible) {
 }
 
 bool SdlGraphics3dManager::lockMouse(bool lock) {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	if (lock)
-		SDL_SetRelativeMouseMode(SDL_TRUE);
-	else
-		SDL_SetRelativeMouseMode(SDL_FALSE);
-#else
-	if (lock)
-		SDL_WM_GrabInput(SDL_GRAB_ON);
-	else
-		SDL_WM_GrabInput(SDL_GRAB_OFF);
-#endif
-	return true;
+	return _window->lockMouse(lock);
 }
-
 
 bool SdlGraphics3dManager::notifyMousePosition(Common::Point &mouse) {
 	transformMouseCoordinates(mouse);

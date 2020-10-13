@@ -52,6 +52,11 @@ public:
 	void toggleMouseGrab();
 
 	/**
+	 * Lock or unlock the mouse cursor within the window.
+	 */
+	bool lockMouse(bool lock);
+
+	/**
 	 * Check whether the application has mouse focus.
 	 */
 	bool hasMouseFocus() const;
