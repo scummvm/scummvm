@@ -18,10 +18,10 @@
 #ifndef MT32EMU_CONFIG_H
 #define MT32EMU_CONFIG_H
 
-#define MT32EMU_VERSION      "2.4.0"
+#define MT32EMU_VERSION      "2.4.1"
 #define MT32EMU_VERSION_MAJOR 2
 #define MT32EMU_VERSION_MINOR 4
-#define MT32EMU_VERSION_PATCH 0
+#define MT32EMU_VERSION_PATCH 1
 
 /* Library Exports Configuration
  *
@@ -33,6 +33,6 @@
  *    is exported, and thus the client application may ONLY use MT32EMU_API_TYPE 2.
  * 3: All the available API types are provided by the library build.
  */
-#define MT32EMU_EXPORTS_TYPE  3
+#define MT32EMU_EXPORTS_TYPE  0
 
 #endif
