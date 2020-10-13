@@ -197,10 +197,7 @@ void StarkEngine::processEvents() {
 				continue;
 			}
 
-			if ((e.kbd.keycode == Common::KEYCODE_RETURN || e.kbd.keycode == Common::KEYCODE_KP_ENTER)
-						&& e.kbd.hasFlags(Common::KBD_ALT)) {
-					StarkGfx->toggleFullscreen();
-			} else if (e.kbd.keycode == Common::KEYCODE_p) {
+			if (e.kbd.keycode == Common::KEYCODE_p) {
 				if (StarkUserInterface->isInGameScreen()) {
 					_gamePauseToken = pauseEngine();
 					debug("The game is paused");

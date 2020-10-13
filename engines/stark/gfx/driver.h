@@ -49,11 +49,6 @@ public:
 
 	virtual void init() = 0;
 
-	/**
-	 * Toggle between windowed mode and fullscreen when spported by the backend.
-	 */
-	void toggleFullscreen() const;
-
 	bool computeScreenViewport();
 	virtual void setScreenViewport(bool noScaling) = 0; // deprecated
 
