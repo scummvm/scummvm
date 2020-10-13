@@ -105,6 +105,10 @@ bool SdlGraphics3dManager::notifyEvent(const Common::Event &event) {
 	}
 
 	switch ((CustomEventAction) event.customType) {
+	case kActionToggleMouseCapture:
+		getWindow()->toggleMouseGrab();
+		return true;
+
 	case kActionToggleFullscreen:
 		toggleFullScreen();
 		return true;
@@ -139,10 +143,22 @@ Common::Keymap *SdlGraphics3dManager::getKeymap() {
 		keymap->addAction(act);
 	}
 
+	act = new Action("CAPT", _("Toggle mouse capture"));
+	act->addDefaultInputMapping("C+m");
+	act->setCustomBackendActionEvent(kActionToggleMouseCapture);
+	keymap->addAction(act);
+
 	act = new Action("SCRS", _("Save screenshot"));
 	act->addDefaultInputMapping("A+s");
 	act->setCustomBackendActionEvent(kActionSaveScreenshot);
 	keymap->addAction(act);
+
+	if (hasFeature(OSystem::kFeatureAspectRatioCorrection)) {
+		act = new Action("ASPT", _("Toggle aspect ratio correction"));
+		act->addDefaultInputMapping("C+A+a");
+		act->setCustomBackendActionEvent(kActionToggleAspectRatioCorrection);
+		keymap->addAction(act);
+	}
 
 	return keymap;
 }

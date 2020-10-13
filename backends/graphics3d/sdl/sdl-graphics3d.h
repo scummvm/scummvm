@@ -101,7 +101,7 @@ public:
 	virtual bool notifyMousePosition(Common::Point &mouse);
 
 	virtual bool showMouse(bool visible) override;
-	virtual bool lockMouse(bool lock) override; 
+	virtual bool lockMouse(bool lock) override;
 
 	virtual bool saveScreenshot(const Common::String &filename) const { return false; }
 	void saveScreenshot() override;
@@ -136,7 +136,9 @@ public:
 protected:
 	enum CustomEventAction {
 		kActionToggleFullscreen = 100,
-		kActionSaveScreenshot
+		kActionToggleMouseCapture,
+		kActionSaveScreenshot,
+		kActionToggleAspectRatioCorrection
 	};
 
 protected:
