@@ -95,7 +95,6 @@ public:
 	void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d);
 
 	void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d, bool isGame);
-	virtual Graphics::PixelBuffer getScreenPixelBuffer() override;
 	void updateScreenRect();
 	const GLESBaseTexture *getActiveTexture() const;
 	void clipMouse(Common::Point &p) const;

@@ -82,7 +82,6 @@ public:
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const override final;
 #endif
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL) override final;
-	virtual Graphics::PixelBuffer getScreenPixelBuffer() override;
 	virtual void initSizeHint(const Graphics::ModeList &modes) override final;
 	virtual int getScreenChangeID() const override final;
 

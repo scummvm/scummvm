@@ -232,10 +232,6 @@ void SurfaceSdlGraphics3dManager::createOrUpdateScreen() {
 	_screenChangeCount++;
 }
 
-Graphics::PixelBuffer SurfaceSdlGraphics3dManager::getScreenPixelBuffer() {
-	return Graphics::PixelBuffer(_screenFormat, (byte *)_subScreen->pixels);
-}
-
 void SurfaceSdlGraphics3dManager::drawOverlay() {
 	if (!_overlayscreen)
 		return;
