@@ -375,9 +375,9 @@ public:
 
 		/**
 		 * This feature flag can be used to check if hardware accelerated
-		 * OpenGl is supported.
+		 * OpenGL is supported and can be used for 3D game rendering.
 		 */
-		kFeatureOpenGL,
+		kFeatureOpenGLForGame,
 
 		/**
 		 * If supported, this feature flag can be used to check if

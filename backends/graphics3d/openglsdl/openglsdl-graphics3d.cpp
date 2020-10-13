@@ -78,7 +78,7 @@ OpenGLSdlGraphics3dManager::~OpenGLSdlGraphics3dManager() {
 bool OpenGLSdlGraphics3dManager::hasFeature(OSystem::Feature f) const {
 	return
 		(f == OSystem::kFeatureFullscreenMode) ||
-		(f == OSystem::kFeatureOpenGL) ||
+		(f == OSystem::kFeatureOpenGLForGame) ||
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		(f == OSystem::kFeatureFullscreenToggleKeepsContext) ||
 #endif
