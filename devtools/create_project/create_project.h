@@ -482,7 +482,8 @@ protected:
 	StringList &_globalWarnings;                         ///< Global warnings
 	std::map<std::string, StringList> &_projectWarnings; ///< Per-project warnings
 
-	UUIDMap _uuidMap; ///< List of (project name, UUID) pairs
+	UUIDMap _engineUuidMap; ///< List of (project name, UUID) pairs
+	UUIDMap _allProjUuidMap;
 
 	/**
 	 *  Create workspace/solution file

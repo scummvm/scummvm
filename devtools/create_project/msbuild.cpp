@@ -255,7 +255,7 @@ void MSBuildProvider::outputFilter(std::ostream &filters, const FileEntries &fil
 void MSBuildProvider::writeReferences(const BuildSetup &setup, std::ofstream &output) {
 	output << "\t<ItemGroup>\n";
 
-	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
+	for (UUIDMap::const_iterator i = _allProjUuidMap.begin(); i != _allProjUuidMap.end(); ++i) {
 		if (i->first == setup.projectName)
 			continue;
 

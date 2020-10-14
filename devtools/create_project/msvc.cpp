@@ -144,8 +144,8 @@ std::string MSVCProvider::outputLibraryDependencies(const BuildSetup &setup, boo
 }
 
 void MSVCProvider::createWorkspace(const BuildSetup &setup) {
-	UUIDMap::const_iterator svmUUID = _uuidMap.find(setup.projectName);
-	if (svmUUID == _uuidMap.end())
+	UUIDMap::const_iterator svmUUID = _allProjUuidMap.find(setup.projectName);
+	if (svmUUID == _allProjUuidMap.end())
 		error("No UUID for \"" + setup.projectName + "\" project created");
 
 	const std::string svmProjectUUID = svmUUID->second;
@@ -174,7 +174,7 @@ void MSVCProvider::createWorkspace(const BuildSetup &setup) {
 	}
 
 	// Note we assume that the UUID map only includes UUIDs for enabled engines!
-	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
+	for (UUIDMap::const_iterator i = _allProjUuidMap.begin(); i != _allProjUuidMap.end(); ++i) {
 		if (i->first == setup.projectName)
 			continue;
 
@@ -195,7 +195,7 @@ void MSVCProvider::createWorkspace(const BuildSetup &setup) {
 	solution << "\tEndGlobalSection\n"
 	            "\tGlobalSection(ProjectConfigurationPlatforms) = postSolution\n";
 
-	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
+	for (UUIDMap::const_iterator i = _allProjUuidMap.begin(); i != _allProjUuidMap.end(); ++i) {
 		for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
 			solution << "\t\t{" << i->second << "}.Debug|" << getMSVCConfigName(*arch) << ".ActiveCfg = Debug|" << getMSVCConfigName(*arch) << "\n"
 			         << "\t\t{" << i->second << "}.Debug|" << getMSVCConfigName(*arch) << ".Build.0 = Debug|" << getMSVCConfigName(*arch) << "\n"
