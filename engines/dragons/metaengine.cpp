@@ -33,7 +33,7 @@
 
 class DragonsMetaEngine : public AdvancedMetaEngine {
 public:
-	const char *getName() const {
+	const char *getName() const override {
 		return "dragons";
 	}
 
