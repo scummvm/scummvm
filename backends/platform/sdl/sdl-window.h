@@ -46,10 +46,10 @@ public:
 	void setWindowCaption(const Common::String &caption);
 
 	/**
-	 * Toggle mouse grab state. This decides whether the cursor can leave the
-	 * window or not.
+	 * Grab or ungrab the mouse cursor. This decides whether the cursor can leave
+	 * the window or not.
 	 */
-	void toggleMouseGrab();
+	void grabMouse(bool grab);
 
 	/**
 	 * Lock or unlock the mouse cursor within the window.
@@ -92,13 +92,21 @@ public:
 		if (_window) {
 			return SDL_GetWindowGrab(_window) == SDL_TRUE;
 		}
-#endif
+		return false;
+#else
 		return _inputGrabState;
+#endif
+	}
+
+	bool mouseIsLocked() const {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		return SDL_GetRelativeMouseMode() == SDL_TRUE;
+#else
+		return _inputLockState;
+#endif
 	}
 
 private:
-	bool _inputGrabState;
-
 	Common::Rect _desktopRes;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -137,6 +145,8 @@ private:
 	int _lastX, _lastY;
 
 	Common::String _windowCaption;
+#else
+	bool _inputGrabState, _inputLockState;
 #endif
 };
 
