@@ -603,7 +603,7 @@ public:
 
 	enum GfxModeFlags {
 		kGfxModeNoFlags = 0,				/**< No Flags */
-		kGfxModeRender3d = (1 << 0),            	/**< Indicate 3d h/w accelerated in game gfx */
+		kGfxModeRender3d = (1 << 0)            	/**< Indicate 3d h/w accelerated in game gfx */
 	};
 
 	/**
