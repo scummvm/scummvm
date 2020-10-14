@@ -1,55 +1,53 @@
-/** @file interface.cpp
-	@brief
-	This file contains in-game interface routines
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 
-	TwinEngine: a Little Big Adventure engine
+#include "twine/interface.h"
+#include "twine/twine.h"
 
-	Copyright (C) 2013 The TwinEngine team
-	Copyright (C) 2008-2013 Prequengine team
-	Copyright (C) 2002-2007 The TwinEngine team
+namespace TwinE {
 
-	This program is free software; you can redistribute it and/or
-	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 2
-	of the License, or (at your option) any later version.
+Interface::Interface(TwinEEngine *engine) : _engine(engine) {}
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*/
-
-#include "interface.h"
-#include "sdlengine.h"
-#include "main.h"
-#include "lbaengine.h"
 const int32 INSIDE = 0; // 0000
 const int32 LEFT = 1;   // 0001
 const int32 RIGHT = 2;  // 0010
-const int32 TOP = 4; // 0100
-const int32 BOTTOM = 8;    // 1000
+const int32 TOP = 4;    // 0100
+const int32 BOTTOM = 8; // 1000
 
-int32 checkClipping(int32 x, int32 y)
-{
+int32 Interface::checkClipping(int32 x, int32 y) {
 	int32 code = INSIDE;
-	if (x < textWindowLeft) code |= LEFT;
-	else if (x > textWindowRight) code |= RIGHT;
-	if (y < textWindowTop) code |= TOP;
-	else if (y > textWindowBottom) code |= BOTTOM;
+	if (x < textWindowLeft)
+		code |= LEFT;
+	else if (x > textWindowRight)
+		code |= RIGHT;
+	if (y < textWindowTop)
+		code |= TOP;
+	else if (y > textWindowBottom)
+		code |= BOTTOM;
 	return code;
 }
 
-/** Draw button line
-	@param startWidth width value where the line starts
-	@param startHeight height value where the line starts
-	@param endWidth width value where the line ends
-	@param endHeight height value where the line ends
-	@param lineColor line color in the current palette */
-void drawLine(int32 startWidth, int32 startHeight, int32 endWidth, int32 endHeight, int32 lineColor) {
+// TODO: check if Graphics::drawLine() works here
+void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, int32 endHeight, int32 lineColor) {
 	int32 temp;
 	int32 flag2;
 	uint8 *out;
@@ -71,26 +69,27 @@ void drawLine(int32 startWidth, int32 startHeight, int32 endWidth, int32 endHeig
 		startHeight = temp;
 	}
 
-	// Perform proper clipping (Cohen–Sutherland algorithm)
+	// Perform proper clipping (CohenSutherland algorithm)
 	outcode0 = checkClipping(startWidth, startHeight);
 	outcode1 = checkClipping(endWidth, endHeight);
 
 	while ((outcode0 | outcode1) != 0) {
-		if (((outcode0 & outcode1) != 0) && (outcode0 != INSIDE)) return; // Reject lines which are behind one clipping plane
+		if (((outcode0 & outcode1) != 0) && (outcode0 != INSIDE))
+			return; // Reject lines which are behind one clipping plane
 
 		// At least one endpoint is outside the clip rectangle; pick it.
 		outcodeOut = outcode0 ? outcode0 : outcode1;
 
-		if (outcodeOut & TOP) {           // point is above the clip rectangle
+		if (outcodeOut & TOP) { // point is above the clip rectangle
 			x = startWidth + (int)((endWidth - startWidth) * (float)(textWindowTop - startHeight) / (float)(endHeight - startHeight));
 			y = textWindowTop;
 		} else if (outcodeOut & BOTTOM) { // point is below the clip rectangle
 			x = startWidth + (int)((endWidth - startWidth) * (float)(textWindowBottom - startHeight) / (float)(endHeight - startHeight));
 			y = textWindowBottom;
-		} else if (outcodeOut & RIGHT) {  // point is to the right of clip rectangle
+		} else if (outcodeOut & RIGHT) { // point is to the right of clip rectangle
 			y = startHeight + (int)((endHeight - startHeight) * (float)(textWindowRight - startWidth) / (float)(endWidth - startWidth));
 			x = textWindowRight;
-		} else if (outcodeOut & LEFT) {   // point is to the left of clip rectangle
+		} else if (outcodeOut & LEFT) { // point is to the left of clip rectangle
 			y = startHeight + (int)((endHeight - startHeight) * (float)(textWindowLeft - startWidth) / (float)(endWidth - startWidth));
 			x = textWindowLeft;
 		}
@@ -107,7 +106,7 @@ void drawLine(int32 startWidth, int32 startHeight, int32 endWidth, int32 endHeig
 		}
 	}
 
-	flag2 = 640;//SCREEN_WIDTH;
+	flag2 = 640; //SCREEN_WIDTH;
 	endWidth -= startWidth;
 	endHeight -= startHeight;
 	if (endHeight < 0) {
@@ -115,10 +114,10 @@ void drawLine(int32 startWidth, int32 startHeight, int32 endWidth, int32 endHeig
 		endHeight = -endHeight;
 	}
 
-	out = frontVideoBuffer + screenLookupTable[startHeight] + startWidth;
+	out = _engine->frontVideoBuffer + _engine->screenLookupTable[startHeight] + startWidth;
 
 	color = currentLineColor;
-	if (endWidth < endHeight) {    // significant slope
+	if (endWidth < endHeight) { // significant slope
 		xchg = endWidth;
 		endWidth = endHeight;
 		endHeight = xchg;
@@ -128,7 +127,7 @@ void drawLine(int32 startWidth, int32 startHeight, int32 endWidth, int32 endHeig
 		endHeight <<= 1;
 		endWidth++;
 		do {
-			*out = (uint8) color;
+			*out = (uint8)color;
 			startHeight -= endHeight;
 			if (startHeight > 0) {
 				out += flag2;
@@ -137,14 +136,14 @@ void drawLine(int32 startWidth, int32 startHeight, int32 endWidth, int32 endHeig
 				out += flag2 + 1;
 			}
 		} while (--endWidth);
-	} else {   // reduced slope
+	} else { // reduced slope
 		var2 = endWidth;
 		var2 <<= 1;
 		startHeight = endWidth;
 		endHeight <<= 1;
 		endWidth++;
 		do {
-			*out = (uint8) color;
+			*out = (uint8)color;
 			out++;
 			startHeight -= endHeight;
 			if (startHeight < 0) {
@@ -155,16 +154,7 @@ void drawLine(int32 startWidth, int32 startHeight, int32 endWidth, int32 endHeig
 	}
 }
 
-/** Blit button box from working buffer to front buffer
-	@param left start width to draw the button
-	@param top start height to draw the button
-	@param right end width to draw the button
-	@param bottom end height to draw the button
-	@source source screen buffer, in this case working buffer
-	@param leftDest start width to draw the button in destination buffer
-	@param topDest start height to draw the button in destination buffer
-	@dest destination screen buffer, in this case front buffer */
-void blitBox(int32 left, int32 top, int32 right, int32 bottom, int8 *source, int32 leftDest, int32 topDest, int8 *dest) {
+void Interface::blitBox(int32 left, int32 top, int32 right, int32 bottom, int8 *source, int32 leftDest, int32 topDest, int8 *dest) {
 	int32 width;
 	int32 height;
 	int8 *s;
@@ -174,8 +164,8 @@ void blitBox(int32 left, int32 top, int32 right, int32 bottom, int8 *source, int
 	int32 i;
 	int32 j;
 
-	s = screenLookupTable[top] + source + left;
-	d = screenLookupTable[topDest] + dest + leftDest;
+	s = _engine->screenLookupTable[top] + source + left;
+	d = _engine->screenLookupTable[topDest] + dest + leftDest;
 
 	width = right - left + 1;
 	height = bottom - top + 1;
@@ -196,13 +186,7 @@ void blitBox(int32 left, int32 top, int32 right, int32 bottom, int8 *source, int
 	}
 }
 
-/** Draws inside buttons transparent area
-	@param left start width to draw the button
-	@param top start height to draw the button
-	@param right end width to draw the button
-	@param bottom end height to draw the button
-	@param colorAdj index to adjust the transparent box color */
-void drawTransparentBox(int32 left, int32 top, int32 right, int32 bottom, int32 colorAdj) {
+void Interface::drawTransparentBox(int32 left, int32 top, int32 right, int32 bottom, int32 colorAdj) {
 	uint8 *pos;
 	int32 width;
 	int32 height;
@@ -231,7 +215,7 @@ void drawTransparentBox(int32 left, int32 top, int32 right, int32 bottom, int32 
 	if (bottom > SCREEN_TEXTLIMIT_BOTTOM)
 		bottom = SCREEN_TEXTLIMIT_BOTTOM;
 
-	pos = screenLookupTable[top] + frontVideoBuffer + left;
+	pos = _engine->screenLookupTable[top] + _engine->frontVideoBuffer + left;
 	height2 = height = bottom - top;
 	height2++;
 
@@ -259,7 +243,7 @@ void drawTransparentBox(int32 left, int32 top, int32 right, int32 bottom, int32 
 	} while (height2 > 0);
 }
 
-void drawSplittedBox(int32 left, int32 top, int32 right, int32 bottom, uint8 e) { // Box
+void Interface::drawSplittedBox(int32 left, int32 top, int32 right, int32 bottom, uint8 e) { // Box
 	uint8 *ptr;
 
 	int32 offset;
@@ -279,7 +263,7 @@ void drawSplittedBox(int32 left, int32 top, int32 right, int32 bottom, uint8 e) 
 	// cropping
 	offset = -((right - left) - SCREEN_WIDTH);
 
-	ptr = frontVideoBuffer + screenLookupTable[top] + left;
+	ptr = _engine->frontVideoBuffer + _engine->screenLookupTable[top] + left;
 
 	for (x = top; x < bottom; x++) {
 		for (y = left; y < right; y++) {
@@ -289,7 +273,7 @@ void drawSplittedBox(int32 left, int32 top, int32 right, int32 bottom, uint8 e) 
 	}
 }
 
-void setClip(int32 left, int32 top, int32 right, int32 bottom) {
+void Interface::setClip(int32 left, int32 top, int32 right, int32 bottom) {
 	if (left < 0)
 		left = 0;
 	textWindowLeft = left;
@@ -307,22 +291,24 @@ void setClip(int32 left, int32 top, int32 right, int32 bottom) {
 	textWindowBottom = bottom;
 }
 
-void saveClip() { // saveTextWindow
+void Interface::saveClip() { // saveTextWindow
 	textWindowLeftSave = textWindowLeft;
 	textWindowTopSave = textWindowTop;
 	textWindowRightSave = textWindowRight;
 	textWindowBottomSave = textWindowBottom;
 }
 
-void loadClip() { // loadSavedTextWindow
+void Interface::loadClip() { // loadSavedTextWindow
 	textWindowLeft = textWindowLeftSave;
 	textWindowTop = textWindowTopSave;
 	textWindowRight = textWindowRightSave;
 	textWindowBottom = textWindowBottomSave;
 }
 
-void resetClip() {
+void Interface::resetClip() {
 	textWindowTop = textWindowLeft = SCREEN_TEXTLIMIT_TOP;
 	textWindowRight = SCREEN_TEXTLIMIT_RIGHT;
 	textWindowBottom = SCREEN_TEXTLIMIT_BOTTOM;
 }
+
+} // namespace TwinE

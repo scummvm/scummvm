@@ -20,14 +20,15 @@
  *
  */
 
+#include "base/plugins.h"
+#include "common/fs.h"
 #include "common/savefile.h"
 #include "common/system.h"
-#include "common/fs.h"
 #include "engines/advancedDetector.h"
-#include "base/plugins.h"
-#include "graphics/thumbnail.h"
 
-#include "tucker/tucker.h"
+#include "twine/twine.h"
+
+namespace TwinE {
 
 class TwinEMetaEngine : public AdvancedMetaEngine {
 public:
@@ -36,18 +37,7 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override {
-		switch (f) {
-		case kSupportsListSaves:
-		case kSupportsLoadingDuringStartup:
-		case kSupportsDeleteSave:
-		case kSavesSupportMetaInfo:
-		case kSavesSupportThumbnail:
-		case kSavesSupportCreationDate:
-		case kSavesSupportPlayTime:
-			return true;
-		default:
-			return false;
-		}
+		return false;
 	}
 
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
@@ -56,101 +46,12 @@ public:
 		}
 		return desc != nullptr;
 	}
-
-	SaveStateList listSaves(const char *target) const override {
-		Common::String pattern = TwinE::generateGameStateFileName(target, 0, true);
-		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles(pattern);
-		TwinE::TwinEEngine::SavegameHeader header;
-		SaveStateList saveList;
-
-		for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-			int slot;
-			const char *ext = strrchr(file->c_str(), '.');
-			if (ext && (slot = atoi(ext + 1)) >= 0 && slot <= TwinE::kLastSaveSlot) {
-				Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
-				if (in) {
-					if (TwinE::TwinEEngine::readSavegameHeader(in, header) == TwinE::TwinEEngine::kSavegameNoError) {
-						saveList.push_back(SaveStateDescriptor(slot, header.description));
-					}
-
-					delete in;
-				}
-			}
-		}
-
-		// Sort saves based on slot number.
-		Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
-		return saveList;
-	}
-
-	int getMaximumSaveSlot() const override {
-		return TwinE::kLastSaveSlot;
-	}
-
-	virtual int getAutosaveSlot() const override {
-		return TwinE::kAutoSaveSlot;
-	}
-
-	void removeSaveState(const char *target, int slot) const override {
-		Common::String filename = TwinE::generateGameStateFileName(target, slot);
-		g_system->getSavefileManager()->removeSavefile(filename);
-	}
-
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override {
-		Common::String fileName = Common::String::format("%s.%d", target, slot);
-		Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(fileName);
-
-		if (!file) {
-			return SaveStateDescriptor();
-		}
-
-		TwinE::TwinEEngine::SavegameHeader header;
-		TwinE::TwinEEngine::SavegameError savegameError = TwinE::TwinEEngine::readSavegameHeader(file, header, false);
-		if (savegameError) {
-			delete file;
-			return SaveStateDescriptor();
-		}
-
-		SaveStateDescriptor desc(slot, header.description);
-
-		if (slot == TwinE::kAutoSaveSlot) {
-			bool autosaveAllowed = TwinE::TwinEEngine::isAutosaveAllowed(target);
-			desc.setDeletableFlag(!autosaveAllowed);
-			desc.setWriteProtectedFlag(autosaveAllowed);
-		}
-
-		if (header.version >= 2) {
-			// creation/play time
-			if (header.saveDate) {
-				int day   = (header.saveDate >> 24) & 0xFF;
-				int month = (header.saveDate >> 16) & 0xFF;
-				int year  =  header.saveDate        & 0xFFFF;
-				desc.setSaveDate(year, month, day);
-			}
-
-			if (header.saveTime) {
-				int hour    = (header.saveTime >> 16) & 0xFF;
-				int minutes = (header.saveTime >>  8) & 0xFF;
-				desc.setSaveTime(hour, minutes);
-			}
-
-			if (header.playTime) {
-				desc.setPlayTime(header.playTime * 1000);
-			}
-
-			// thumbnail
-			if (header.thumbnail) {
-				desc.setThumbnail(header.thumbnail);
-			}
-		}
-
-		delete file;
-		return desc;
-	}
 };
 
-#if PLUGIN_ENABLED_DYNAMIC(TwinE)
-	REGISTER_PLUGIN_DYNAMIC(TwinE, PLUGIN_TYPE_ENGINE, TwinEMetaEngine);
+} // namespace TwinE
+
+#if PLUGIN_ENABLED_DYNAMIC(TWINE)
+REGISTER_PLUGIN_DYNAMIC(TWINE, PLUGIN_TYPE_ENGINE, TwinE::TwinEMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(TwinE, PLUGIN_TYPE_ENGINE, TwinEMetaEngine);
+REGISTER_PLUGIN_STATIC(TWINE, PLUGIN_TYPE_ENGINE, TwinE::TwinEMetaEngine);
 #endif

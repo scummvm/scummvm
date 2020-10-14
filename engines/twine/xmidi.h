@@ -1,32 +1,31 @@
-/** @file xmidi.h
-	@brief
-	This file contains MIDI-related routines.
-	These routines were adapted from ScrummVM/Exult engine source code.
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 
-	TwinEngine: a Little Big Adventure engine
+#ifndef TWINE_XMIDI_H
+#define TWINE_XMIDI_H
 
-	Copyright (C) 2013 The TwinEngine team
-	Copyright (C) 2013 The ScrummVM/ExultEngine team
+#include "common/scummsys.h"
 
-	This program is free software; you can redistribute it and/or
-	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 2
-	of the License, or (at your option) any later version.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*/
-
-#ifndef XMIDI_H
-#define XMIDI_H
-
-#include "sys.h"
+namespace TwinE {
 
 /**
  * Credit where credit is due:
@@ -35,11 +34,15 @@
  * //risca
  */
 
+// TODO: use MidiParser_XMIDI
+
 /*
  * Takes a pointer to XMIDI data of size 'size' and converts it to MIDI. The
  * result is allocated dynamically and saved to the 'dest' pointer. Returns
  * the size of the MIDI data or 0 on error.
  */
-uint32 convert_to_midi(uint8* data, uint32 size, uint8** dest);
+uint32 convert_to_midi(uint8 *data, uint32 size, uint8 **dest);
+
+} // namespace TwinE
 
 #endif // XMIDI_H

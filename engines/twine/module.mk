@@ -5,21 +5,16 @@ MODULE_OBJS := \
 	animations.o \
 	collision.o \
 	debug.o \
-	debug.grid.o \
-	debug.scene.o \
+	debug_grid.o \
+	debug_scene.o \
 	detection.o \
 	extra.o \
-	fcaseopen.o \
-	filereader.o \
 	flamovies.o \
 	gamestate.o \
 	grid.o \
 	holomap.o \
 	hqrdepack.o \
 	interface.o \
-	keyboard.o \
-	lbaengine.o \
-	main.o \
 	menu.o \
 	menuoptions.o \
 	metaengine.o \
@@ -30,12 +25,11 @@ MODULE_OBJS := \
 	resources.o \
 	scene.o \
 	screens.o \
-	script.life.o \
-	script.move.o \
-	sdlengine.o \
+	script_life.o \
+	script_move.o \
 	sound.o \
-	sys.o \
 	text.o \
+	twine.o \
 	xmidi.o
 
 # This module can be built as a plugin

@@ -1,41 +1,116 @@
-/** @file debug.h
-	@brief
-	This file contains the main game debug window routines
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 
-	TwinEngine: a Little Big Adventure engine
+#ifndef TWINE_DEBUG_H
+#define TWINE_DEBUG_H
 
-	Copyright (C) 2013 The TwinEngine team
-	Copyright (C) 2008-2013 Prequengine team
-	Copyright (C) 2002-2007 The TwinEngine team
+#include "common/scummsys.h"
 
-	This program is free software; you can redistribute it and/or
-	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 2
-	of the License, or (at your option) any later version.
+namespace TwinE {
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+enum ButtonType {
+	NO_ACTION,
+	FREE_CAMERA,
+	CHANGE_SCENE,
+	SHOW_CELLING_GRID,
+	SHOW_ZONES,
+	SHOW_ZONE_CUBE,
+	SHOW_ZONE_CAMERA,
+	SHOW_ZONE_SCENARIC,
+	SHOW_ZONE_CELLINGGRID,
+	SHOW_ZONE_OBJECT,
+	SHOW_ZONE_TEXT,
+	SHOW_ZONE_LADDER
+};
 
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*/
+enum WindowType {
+	NO_MENU,
+	FREE_CAMERA_INFO_MENU,
+	CHANGE_SCENE_INFO_MENU,
+	ZONES_MENU
+};
 
-#ifndef DEBUG_H
-#define DEBUG_H
+typedef struct DebugButtonStruct {
+	int32 left = 0;
+	int32 top = 0;
+	int32 right = 0;
+	int32 bottom = 0;
+	const char *text = "";
+	int32 textLeft = 0;
+	int32 textTop = 0;
+	int32 isActive = 0;
+	int32 color = 0;
+	int32 activeColor = 0;
+	int32 submenu = 0;
+	int32 type = 0;
+} DebugButtonStruct;
 
-#include "sys.h"
+typedef struct DebugWindowStruct {
+	int32 left = 0;
+	int32 top = 0;
+	int32 right = 0;
+	int32 bottom = 0;
+	int32 alpha = 0;
+	int32 isActive = 0;
+	int32 numLines = 0;
+	const char *text[20] {0};
+	int32 numButtons = 0;
+	DebugButtonStruct debugButtons[50];
+} DebugWindowStruct;
 
-typedef struct MouseStatusStruct {
-	int32 left;
-	int32 right;
-	int32 X;
-	int32 Y;
-} MouseStatusStruct;
+class TwinEEngine;
 
+class Debug {
+private:
+	TwinEEngine *_engine;
 
-void processDebug(int16 pKey);
+	DebugWindowStruct debugWindows[10];
+	int32 numDebugWindows = 0;
+	void debugFillButton(int32 X, int32 Y, int32 width, int32 height, int8 color);
+	void debugDrawButton(int32 left, int32 top, int32 right, int32 bottom, const char *text, int32 textLeft, int32 textRight, int32 isActive, int8 color);
+	void debugDrawWindowBox(int32 left, int32 top, int32 right, int32 bottom, int32 alpha);
+	void debugDrawWindowButtons(int32 w);
+	void debugDrawWindow(int32 w);
+	int32 debugTypeUseMenu(int32 type);
+	void debugResetButtonsState();
+	void debugRefreshButtons(int32 type);
+	void debugDrawWindows();
+	void debugResetButton(int32 type);
+	void debugRedrawScreen();
+	int32 debugGetActionsState(int32 type);
+	void debugSetActions(int32 type);
+	void debugAddButton(int32 window, int32 left, int32 top, int32 right, int32 bottom, const char *text, int32 textLeft, int32 textTop, int32 isActive, int32 color, int32 activeColor, int32 submenu, int32 type);
+	void debugAddWindowText(int32 window, const char *text);
+	void debugAddWindow(int32 left, int32 top, int32 right, int32 bottom, int32 alpha, int32 isActive);
+	void debugLeftMenu();
+	int32 debugProcessButton(int32 X, int32 Y);
+	void debugPlasmaWindow(const char *text, int32 color);
+	void debugProcessWindow();
+
+public:
+	Debug(TwinEEngine *engine) : _engine(engine) {}
+	void processDebug(int16 pKey);
+};
+
+} // namespace TwinE
 
 #endif

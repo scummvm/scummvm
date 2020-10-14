@@ -1,128 +1,104 @@
-/** @file resources.cpp
-	@brief
-	This file contains the definitions of most used game resources.
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 
-	TwinEngine: a Little Big Adventure engine
+#include "twine/resources.h"
+#include "twine/animations.h"
+#include "twine/scene.h"
+#include "twine/screens.h"
+#include "twine/sound.h"
+#include "twine/text.h"
 
-	Copyright (C) 2013 The TwinEngine team
-	Copyright (C) 2008-2013 Prequengine team
-	Copyright (C) 2002-2007 The TwinEngine team
+namespace TwinE {
 
-	This program is free software; you can redistribute it and/or
-	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 2
-	of the License, or (at your option) any later version.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*/
-
-#include "resources.h"
-#include "text.h"
-#include "scene.h"
-#include "animations.h"
-#include "screens.h"
-#include "sdlengine.h"
-#include "sound.h"
-
-int8 * HQR_RESS_FILE			= "ress.hqr";
-int8 * HQR_TEXT_FILE			= "text.hqr";
-int8 * HQR_FLASAMP_FILE			= "flasamp.hqr";
-int8 * HQR_MIDI_MI_DOS_FILE		= "midi_mi.hqr";
-int8 * HQR_MIDI_MI_WIN_FILE		= "midi_mi_win.hqr";
-int8 * HQR_MIDI_MI_WIN_MP3_FILE = "midi_mi_win_mp3.hqr";
-int8 * HQR_MIDI_MI_WIN_OGG_FILE = "midi_mi_win_ogg.hqr";
-int8 * HQR_SAMPLES_FILE			= "samples.hqr";
-int8 * HQR_LBA_GRI_FILE			= "lba_gri.hqr";
-int8 * HQR_LBA_BLL_FILE			= "lba_bll.hqr";
-int8 * HQR_LBA_BRK_FILE			= "lba_brk.hqr";
-int8 * HQR_SCENE_FILE			= "scene.hqr";
-int8 * HQR_SPRITES_FILE			= "sprites.hqr";
-int8 * HQR_FILE3D_FILE			= "file3d.hqr";
-int8 * HQR_BODY_FILE			= "body.hqr";
-int8 * HQR_ANIM_FILE			= "anim.hqr";
-int8 * HQR_INVOBJ_FILE			= "invobj.hqr";
-
-/** Init palettes */
-void initPalettes() {
+void Resources::initPalettes() {
 	// Init standard palette
-	hqrGetallocEntry(&mainPalette, HQR_RESS_FILE, RESSHQR_MAINPAL);
-	convertPalToRGBA(mainPalette, mainPaletteRGBA);
+	_engine->_hqrdepack->hqrGetallocEntry(&_engine->_screens->mainPalette, Resources::HQR_RESS_FILE, RESSHQR_MAINPAL);
+	_engine->_screens->copyPal(_engine->_screens->mainPalette, _engine->_screens->mainPaletteRGB);
 
-	memcpy(palette, mainPalette, NUMOFCOLORS * 3);
+	memcpy(_engine->_screens->palette, _engine->_screens->mainPalette, NUMOFCOLORS * 3);
 
-	convertPalToRGBA(palette, paletteRGBA);
-	setPalette(paletteRGBA);
+	_engine->_screens->copyPal(_engine->_screens->palette, _engine->_screens->paletteRGB);
+	_engine->setPalette(_engine->_screens->paletteRGB);
 
 	// We use it now
-	palCustom = 0;
+	_engine->_screens->palCustom = 0;
 }
 
-/** Preload all sprites */
-void preloadSprites() {
+void Resources::preloadSprites() {
 	int32 i;
-	int32 numEntries = hqrNumEntries(HQR_SPRITES_FILE) - 1;
+	int32 numEntries = _engine->_hqrdepack->hqrNumEntries(Resources::HQR_SPRITES_FILE) - 1;
 
 	for (i = 0; i < numEntries; i++) {
-		spriteSizeTable[i] = hqrGetallocEntry(&spriteTable[i], HQR_SPRITES_FILE, i);
+		_engine->_actor->spriteSizeTable[i] = _engine->_hqrdepack->hqrGetallocEntry(&_engine->_actor->spriteTable[i], Resources::HQR_SPRITES_FILE, i);
 	}
 }
 
-/** Preload all animations */
-void preloadAnimations() {
+void Resources::preloadAnimations() {
 	int32 i;
-	int32 numEntries = hqrNumEntries(HQR_ANIM_FILE) - 1;
+	int32 numEntries = _engine->_hqrdepack->hqrNumEntries(Resources::HQR_ANIM_FILE) - 1;
 
 	for (i = 0; i < numEntries; i++) {
-		animSizeTable[i] = hqrGetallocEntry(&animTable[i], HQR_ANIM_FILE, i);
+		_engine->_animations->animSizeTable[i] = _engine->_hqrdepack->hqrGetallocEntry(&_engine->_animations->animTable[i], Resources::HQR_ANIM_FILE, i);
 	}
 }
 
-/** Preload all animations */
-void preloadSamples() {
+void Resources::preloadSamples() {
 	int32 i;
-	int32 numEntries = hqrNumEntries(HQR_SAMPLES_FILE) - 1;
+	int32 numEntries = _engine->_hqrdepack->hqrNumEntries(Resources::HQR_SAMPLES_FILE) - 1;
 
 	for (i = 0; i < numEntries; i++) {
-		samplesSizeTable[i] = hqrGetallocEntry(&samplesTable[i], HQR_SAMPLES_FILE, i);
+		_engine->_sound->samplesSizeTable[i] = _engine->_hqrdepack->hqrGetallocEntry(&_engine->_sound->samplesTable[i], Resources::HQR_SAMPLES_FILE, i);
 	}
 }
 
-/** Preload all animations */
-void preloadInventoryItems() {
+void Resources::preloadInventoryItems() {
 	int32 i;
-	int32 numEntries = hqrNumEntries(HQR_INVOBJ_FILE) - 1;
+	int32 numEntries = _engine->_hqrdepack->hqrNumEntries(Resources::HQR_INVOBJ_FILE) - 1;
 
 	for (i = 0; i < numEntries; i++) {
-		inventorySizeTable[i] = hqrGetallocEntry(&inventoryTable[i], HQR_INVOBJ_FILE, i);
+		inventorySizeTable[i] = _engine->_hqrdepack->hqrGetallocEntry(&inventoryTable[i], Resources::HQR_INVOBJ_FILE, i);
 	}
 }
 
-/** Initialize resource pointers */
-void initResources() {
+void Resources::initResources() {
 	// Menu and in-game palette
 	initPalettes();
 
 	// load LBA font
-	hqrGetallocEntry(&fontPtr, HQR_RESS_FILE, RESSHQR_LBAFONT);
+	_engine->_hqrdepack->hqrGetallocEntry(&_engine->_text->fontPtr, Resources::HQR_RESS_FILE, RESSHQR_LBAFONT);
 
-	setFontParameters(2, 8);
-	setFontColor(14);
-	setTextCrossColor(136, 143, 2);
+	_engine->_text->setFontParameters(2, 8);
+	_engine->_text->setFontColor(14);
+	_engine->_text->setTextCrossColor(136, 143, 2);
 
-	hqrGetallocEntry(&spriteShadowPtr, HQR_RESS_FILE, RESSHQR_SPRITESHADOW);
+	_engine->_hqrdepack->hqrGetallocEntry(&_engine->_scene->spriteShadowPtr, Resources::HQR_RESS_FILE, RESSHQR_SPRITESHADOW);
 
 	// load sprite actors bounding box data
-	hqrGetallocEntry(&spriteBoundingBoxPtr, HQR_RESS_FILE, RESSHQR_SPRITEBOXDATA);
+	_engine->_hqrdepack->hqrGetallocEntry(&_engine->_scene->spriteBoundingBoxPtr, Resources::HQR_RESS_FILE, RESSHQR_SPRITEBOXDATA);
 
 	preloadSprites();
 	preloadAnimations();
 	//preloadSamples();
 	preloadInventoryItems();
 }
+
+} // namespace TwinE
