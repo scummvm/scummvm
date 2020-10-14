@@ -1500,22 +1500,26 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 	std::string targetFolder;
 
 	if (setup.devTools) {
-		_uuidMap = createToolsUUIDMap();
+		_engineUuidMap = createToolsUUIDMap();
 		targetFolder = "/devtools/";
 	} else if (!setup.tests) {
-		_uuidMap = createUUIDMap(setup);
+		_engineUuidMap = createUUIDMap(setup);
 		targetFolder = "/engines/";
 	}
 
+	_allProjUuidMap = _engineUuidMap;
+
 	// We also need to add the UUID of the main project file.
-	const std::string svmUUID = _uuidMap[setup.projectName] = createUUID(setup.projectName);
+	const std::string svmUUID = _allProjUuidMap[setup.projectName] = createUUID(setup.projectName);
+	// Add the uuid of the detection project
+	const std::string detUUID = _allProjUuidMap["scummvm-detection"] = createUUID("scummvm-detection");
 
 	createWorkspace(setup);
 
 	StringList in, ex;
 
 	// Create project files
-	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
+	for (UUIDMap::const_iterator i = _engineUuidMap.begin(); i != _engineUuidMap.end(); ++i) {
 		if (i->first == setup.projectName)
 			continue;
 		// Retain the files between engines if we're creating a single project
@@ -1526,6 +1530,28 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 
 		createModuleList(moduleDir, setup.defines, setup.testDirs, in, ex);
 		createProjectFile(i->first, i->second, setup, moduleDir, in, ex);
+	}
+
+	// Create engine-detection submodules.
+	{
+		in.clear();
+		ex.clear();
+		std::vector<std::string> detectionModuleDirs;
+		detectionModuleDirs.reserve(setup.engines.size());
+
+		for (EngineDescList::const_iterator i = setup.engines.begin(), end = setup.engines.end(); i != end; ++i) {
+			// We ignore all sub engines here because they require no special handling.
+			if (isSubEngine(i->name, setup.engines)) {
+				continue;
+			}
+			detectionModuleDirs.push_back(setup.srcDir + "/engines/" + i->name);
+		}
+
+		for (std::string &str : detectionModuleDirs) {
+			createModuleList(str, setup.defines, setup.testDirs, in, ex, true);
+		}
+
+		createProjectFile("Detection", detUUID, setup, setup.srcDir, in, ex);
 	}
 
 	if (setup.tests) {
@@ -1560,24 +1586,6 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		createModuleList(setup.srcDir + "/video", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/image", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/math", setup.defines, setup.testDirs, in, ex);
-
-		// Create engine-detection submodules.
-		if (setup.useStaticDetection) {
-			std::vector<std::string> detectionModuleDirs;
-			detectionModuleDirs.reserve(setup.engines.size());
-
-			for (EngineDescList::const_iterator i = setup.engines.begin(), end = setup.engines.end(); i != end; ++i) {
-				// We ignore all sub engines here because they require no special handling.
-				if (isSubEngine(i->name, setup.engines)) {
-					continue;
-				}
-				detectionModuleDirs.push_back(setup.srcDir + "/engines/" + i->name);
-			}
-
-			for (std::string &str : detectionModuleDirs) {
-				createModuleList(str, setup.defines, setup.testDirs, in, ex, true);
-			}
-		}
 
 		// Resource files
 		addResourceFiles(setup, in, ex);
