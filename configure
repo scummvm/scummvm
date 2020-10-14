@@ -5425,8 +5425,8 @@ EOF
 			if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS $lib
 				then
 				_opengl_game_es2=yes
-				append_var OPENGL_LIBS "$lib"
-				append_var LIBS_3D "$OPENGL_LIBS"
+				append_var LIBS "$lib"
+				append_var LIBS_3D "$lib"
 				break
 			fi
 		done
@@ -5449,8 +5449,8 @@ EOF
 	fi
 
 	if test "$_opengl_game" = yes ; then
-		append_var LIBS "$OPENGL_LIBS"
 		append_var INCLUDES "$OPENGL_CFLAGS"
+		append_var LIBS "$OPENGL_LIBS"
 		append_var LIBS_3D "$OPENGL_LIBS"
 		_opengl_game_classic=yes
 		if test "$_opengl_game_shaders" = auto; then
