@@ -164,6 +164,7 @@ _opengl_game=auto
 _opengl_game_classic=no
 _opengl_game_shaders=auto
 _opengl_game_es2=no
+_tinygl=yes
 _readline=auto
 _freetype2=auto
 _taskbar=auto
@@ -270,6 +271,7 @@ add_feature mpeg2 "mpeg2" "_mpeg2"
 add_feature opengl_game_shaders "OpenGL with shaders" "_opengl_game_shaders"
 add_feature png "PNG" "_png"
 add_feature theoradec "libtheoradec" "_theoradec"
+add_feature tinygl "TinyGL" "_tinygl"
 add_feature vorbis "Vorbis file support" "_vorbis _tremor"
 add_feature zlib "zlib" "_zlib"
 add_feature lua "lua" "_lua"
@@ -1321,6 +1323,8 @@ for ac_option in $@; do
 	--disable-opengl-game)        _opengl_game=no        ;;
 	--disable-opengl-game-shaders) _opengl_game_shaders=no ;;
 	--force-opengl-game-es2)      _opengl_game_es2=yes   ;;
+	--enable-tinygl)              _tinygl=yes            ;;
+	--disable-tinygl)             _tinygl=no             ;;
 	--enable-bink)                _bink=yes              ;;
 	--disable-bink)               _bink=no               ;;
 	--enable-discord)             _discord=yes           ;;
@@ -3396,6 +3400,7 @@ if test -n "$_host"; then
 			_build_scalers=no
 			_mt32emu=no
 			_nuked_opl=no
+			_tinygl=no
 			_bink=no
 			_lua=no
 			_port_mk="backends/platform/ds/ds.mk"
@@ -5861,6 +5866,16 @@ fi
 define_in_config_if_yes $_tts 'USE_TTS'
 
 #
+# Check whether to build with TinyGL support
+#
+echo_n "Building TinyGL support... "
+if test "$_16bit" = "no"; then
+	_tinygl=no
+fi
+define_in_config_if_yes $_tinygl 'USE_TINYGL'
+echo "$_tinygl"
+
+#
 # Check whether to build Bink video support
 #
 echo_n "Building Bink video support... "
@@ -5973,6 +5988,10 @@ fi
 
 if test "$_highres" = yes ; then
 	echo_n ", high resolution"
+fi
+
+if test "$_tinygl" = yes ; then
+	echo_n ", TinyGL"
 fi
 
 if test "$_savegame_timestamp" = yes ; then

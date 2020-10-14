@@ -33,7 +33,9 @@ static const RendererTypeDescription rendererTypes[] = {
 #if defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
 	{ "opengl_shaders", _s("OpenGL with shaders"), kRendererTypeOpenGLShaders },
 #endif
+#ifdef USE_TINYGL
 	{ "software", "Software", kRendererTypeTinyGL },
+#endif
 	{ 0, 0, kRendererTypeDefault }
 };
 
