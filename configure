@@ -3251,8 +3251,10 @@ if test -n "$_host"; then
 			append_var LDFLAGS "-static-libstdc++"
 			HOSTEXEPRE=lib
 			HOSTEXEEXT=.so
-			_backend="android"
-			_port_mk="backends/platform/android/android.mk"
+			if test "$_backend" != android3d; then
+				_backend="android"
+			fi
+			_port_mk="backends/platform/$_backend/android.mk"
 			_build_scalers=no
 			_seq_midi=no
 			_timidity=no
@@ -3652,10 +3654,10 @@ fi
 case $_backend in
 	3ds)
 		;;
-	android)
+	android | android3d)
 		append_var DEFINES "-DREDUCE_MEMORY_USAGE"
 		append_var DEFINES "-DNONSTANDARD_PORT"
-		append_var INCLUDES '-I$(srcdir)/backends/platform/android'
+		append_var INCLUDES '-I$(srcdir)/backends/platform/'$_backend
 		append_var CXXFLAGS "-Wa,--noexecstack"
 		append_var LDFLAGS "-Wl,-z,noexecstack"
 		# removed the following directive - was causing compilation issues when not also explicitly using --disable-mt32emu
@@ -3924,7 +3926,7 @@ fi
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	3ds | android | androidsdl | dingux | dc | gph | iphone | ios7 | maemo | null | openpandora | psp | psp2 | samsungtv | sdl | switch | wii)
+	3ds | android | android3d | androidsdl | dingux | dc | gph | iphone | ios7 | maemo | null | openpandora | psp | psp2 | samsungtv | sdl | switch | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -5382,9 +5384,9 @@ define_in_config_if_yes "$_glew" "USE_GLEW"
 #
 echocheck "OpenGL for game"
 
-if test "$_opengl_game" = auto && test "$_opengl" = yes ; then
+if test "$_opengl_game" = auto ; then
 	_opengl_game=no
-	if test "$_backend" = "sdl" || test "$_backend" = "android"; then
+	if (test "$_backend" = "sdl" && test "$_opengl" = yes) || test "$_backend" = "android3d"; then
 		# Try different header filenames
 		# 1) GL/gl.h         This is usually used on POSIX and Windows systems
 		# 2) OpenGL/gl.h     This is used on Mac OS X
@@ -5410,7 +5412,7 @@ EOF
 	fi
 fi
 
-if test "$_opengl_game" = yes && test "$_opengl" = yes ; then
+if test "$_opengl_game" = yes ; then
 	# Our simple test case
 	cat > $TMPC << EOF
 int main(void) { return 0; }
