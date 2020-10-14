@@ -20,15 +20,26 @@
  *
  */
 
-#ifndef TWINE_DETECTION_H
-#define TWINE_DETECTION_H
+#ifndef TWINE_SCRIPTMOVE_H
+#define TWINE_SCRIPTMOVE_H
+
+#include "common/scummsys.h"
 
 namespace TwinE {
 
-enum GameFlag {
-	kGameFlagDemo = 1 << 0
+class TwinEEngine;
+
+class ScriptMove {
+private:
+	TwinEEngine *_engine;
+public:
+	ScriptMove(TwinEEngine *engine);
+
+	/** Process actor move script
+	@param actorIdx Current processed actor index */
+	void processMoveScript(int32 actorIdx);
 };
 
-} // End of namespace TwinE
+} // namespace TwinE
 
-#endif // TWINE_DETECTION_H
+#endif

@@ -20,15 +20,29 @@
  *
  */
 
-#ifndef TWINE_DETECTION_H
-#define TWINE_DETECTION_H
+#ifndef TWINE_SCRIPTLIFE_H
+#define TWINE_SCRIPTLIFE_H
+
+#include "common/scummsys.h"
 
 namespace TwinE {
 
-enum GameFlag {
-	kGameFlagDemo = 1 << 0
+#define MAX_TARGET_ACTOR_DISTANCE 0x7D00
+
+class TwinEEngine;
+
+class ScriptLife {
+private:
+	TwinEEngine *_engine;
+
+public:
+	ScriptLife(TwinEEngine *engine);
+
+	/** Process actor life script
+	@param actorIdx Current processed actor index */
+	void processLifeScript(int32 actorIdx);
 };
 
-} // End of namespace TwinE
+} // namespace TwinE
 
-#endif // TWINE_DETECTION_H
+#endif

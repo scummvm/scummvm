@@ -1,59 +1,116 @@
-/** @file hqrdepack.h
-	@brief
-	This file contains High Quality Resource (HQR) decompress routines.
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 
-	TwinEngine: a Little Big Adventure engine
+#ifndef TWINE_HQRDEPACK_H
+#define TWINE_HQRDEPACK_H
 
-	Copyright (C) 2013 The TwinEngine team
-	Copyright (C) 2008-2013 Prequengine team
-	Copyright (C) 2002-2007 The TwinEngine team
+#include "common/scummsys.h"
 
-	This program is free software; you can redistribute it and/or
-	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 2
-	of the License, or (at your option) any later version.
+namespace TwinE {
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+class TwinEEngine;
 
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*/
+class HQRDepack {
+private:
+	TwinEEngine *_engine;
 
-#ifndef HQRDEPACK_H
-#define HQRDEPACK_H
+	/**
+	 * Get a HQR entry pointer
+	 * @param filename HQR file name
+	 * @param index entry index to extract
+	 * @return entry real size
+	 * */
+	int hqrVoxEntrySize(const char *filename, int32 index, int32 hiddenIndex);
+	/**
+	 * Decompress entry based in the original expand lzss lba code
+	 * @param dst destination pointer where will be the decompressed entry
+	 * @param src compressed data pointer
+	 * @param decompsize real file size after decompression
+	 * @param mode compression mode used
+	 */
+	void hqrDecompressLZEntry(uint8 *dst, uint8 *src, int32 decompsize, int32 mode);
+	/**
+	 * Decompress entry based in Yaz0r and Zink decompression code
+	 * @param dst destination pointer where will be the decompressed entry
+	 * @param src compressed data pointer
+	 * @param decompsize real file size after decompression
+	 * @param mode compression mode used
+	 */
+	void hqrDecompressEntry(uint8 *dst, uint8 *src, int32 decompsize, int32 mode);
 
-#include "sys.h"
+public:
+	HQRDepack(TwinEEngine *engine);
 
-/** Get a HQR entry pointer
-	@param ptr pointer to save the entry
-	@param filename HQR file name
-	@param index entry index to extract
-	@return entry real size */
-int32 hqrGetEntry(uint8 * ptr, int8 *filename, int32 index);
+	/**
+	 * Get a HQR entry pointer
+	 * @param ptr pointer to save the entry
+	 * @param filename HQR file name
+	 * @param index entry index to extract
+	 * @return entry real size
+	 */
+	int32 hqrGetEntry(uint8 *ptr, const char *filename, int32 index);
 
-/** Get a HQR entry pointer
-	@param filename HQR file name
-	@param index entry index to extract
-	@return entry real size */
-int32 hqrEntrySize(int8 *filename, int32 index);
+	/**
+	 * Get a HQR entry pointer
+	 * @param filename HQR file name
+	 * @param index entry index to extract
+	 * @return entry real size
+	 */
+	int32 hqrEntrySize(const char *filename, int32 index);
 
-/** Get a HQR total number of entries
-	@param filename HQR file name
-	@return total number of entries */
-int32 hqrNumEntries(int8 *filename);
+	/**
+	 * Get a HQR total number of entries
+	 * @param filename HQR file name
+	 * @return total number of entries
+	 */
+	int32 hqrNumEntries(const char *filename);
 
-/** Get a HQR entry pointer with memory allocation
-	@param ptr pointer to save the entry
-	@param filename HQR file name
-	@param index entry index to extract
-	@return entry real size */
-int32 hqrGetallocEntry(uint8 ** ptr, int8 *filename, int32 index);
+	/**
+	 * Get a HQR entry pointer with memory allocation
+	 * @param ptr pointer to save the entry
+	 * @param filename HQR file name
+	 * @param index entry index to extract
+	 * @return entry real size
+	 */
+	int32 hqrGetallocEntry(uint8 **ptr, const char *filename, int32 index);
 
-int32 hqrGetVoxEntry(uint8 * ptr, int8 *filename, int32 index, int32 hiddenIndex);
-int32 hqrGetallocVoxEntry(uint8 ** ptr, int8 *filename, int32 index, int32 hiddenIndex);
+	/**
+	 * Get a HQR entry pointer
+	 * @param ptr pointer to save the entry
+	 * @param filename HQR file name
+	 * @param index entry index to extract
+	 * @return entry real size
+	 */
+	int32 hqrGetVoxEntry(uint8 *ptr, const char *filename, int32 index, int32 hiddenIndex);
+	/**
+	 * Get a HQR entry pointer with memory allocation
+	 * @param ptr pointer to save the entry
+	 * @param filename HQR file name
+	 * @param index entry index to extract
+	 * @return entry real size
+	 */
+	int32 hqrGetallocVoxEntry(uint8 **ptr, const char *filename, int32 index, int32 hiddenIndex);
+};
+
+} // namespace TwinE
 
 #endif

@@ -21,6 +21,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/language.h"
 #include "engines/advancedDetector.h"
 #include "base/plugins.h"
 #include "twine/detection.h"
@@ -33,12 +34,12 @@ static const PlainGameDescriptor twineGames[] = {
 static const ADGameDescription twineGameDescriptions[] = {
 	{
 		"twine",
-		"",
-		AD_ENTRY1s("infobar.txt", "f1e42a95972643462b9c3c2ea79d6683", 543),
-		Common::FR_FRA,
+		"GOG 1.0",
+		AD_ENTRY1s("text.hqr", "ae7343552f8fbd17a1fc6cea2197a912", 248654),
+		Common::EN_ANY,
 		Common::kPlatformDOS,
-		TwinE::kGameFlagNoSubtitles,
-		GUIO1(GUIO_NOMIDI)
+		0,
+		GUIO1(GUIO_NONE)
 	},
 	AD_TABLE_END_MARKER
 };
@@ -46,7 +47,6 @@ static const ADGameDescription twineGameDescriptions[] = {
 class TwinEMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	TwinEMetaEngineDetection() : AdvancedMetaEngineDetection(twineGameDescriptions, sizeof(ADGameDescription), twineGames) {
-		_md5Bytes = 512;
 	}
 
 	const char *getEngineId() const override {

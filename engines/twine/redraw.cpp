@@ -1,84 +1,47 @@
-/** @file redraw.cpp
-	@brief
-	This file contains engine redraw actions routines
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 
-	TwinEngine: a Little Big Adventure engine
+#include "twine/redraw.h"
+#include "common/textconsole.h"
+#include "twine/actor.h"
+#include "twine/animations.h"
+#include "twine/collision.h"
+#include "twine/grid.h"
+#include "twine/hqrdepack.h"
+#include "twine/interface.h"
+#include "twine/keyboard.h"
+#include "twine/menu.h"
+#include "twine/movements.h"
+#include "twine/renderer.h"
+#include "twine/resources.h"
+#include "twine/scene.h"
+#include "twine/screens.h"
+#include "twine/sound.h"
+#include "twine/text.h"
+#include "twine/debug_scene.h"
 
-	Copyright (C) 2013 The TwinEngine team
-	Copyright (C) 2008-2013 Prequengine team
-	Copyright (C) 2002-2007 The TwinEngine team
+namespace TwinE {
 
-	This program is free software; you can redistribute it and/or
-	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 2
-	of the License, or (at your option) any later version.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*/
-
-#include "redraw.h"
-#include "sdlengine.h"
-#include "lbaengine.h"
-#include "renderer.h"
-#include "interface.h"
-#include "screens.h"
-#include "grid.h"
-#include "scene.h"
-#include "actor.h"
-#include "hqrdepack.h"
-#include "resources.h"
-#include "menu.h"
-#include "animations.h"
-#include "keyboard.h"
-#include "movements.h"
-#include "text.h"
-#include "collision.h"
-#include "sound.h"
-
-#ifdef GAMEMOD
-#include "debug.scene.h"
-#endif
-
-typedef struct RedrawStruct {
-	uint16 left;
-	uint16 top;
-	uint16 right;
-	uint16 bottom;
-} RedrawStruct;
-
-RedrawStruct currentRedrawList[300];
-RedrawStruct nextRedrawList[300];
-
-typedef struct DrawListStruct {
-	int16  posValue;
-	uint16 index; // field_2
-	uint16 X;
-	uint16 Y;
-	uint16 Z;
-	uint16 field_A;
-	uint16 field_C;
-	uint16 field_E;
-	uint16 field_10;
-} DrawListStruct;
-
-/** Draw list array to grab the necessary */
-DrawListStruct drawList[150];
-
-int16 overlayRotation = 0;
-
-/** Add a certain region to the current redraw list array
-	@param left start width to redraw the region
-	@param top start height to redraw the region
-	@param right end width to redraw the region
-	@param bottom end height to redraw the region */
-void addRedrawCurrentArea(int32 left, int32 top, int32 right, int32 bottom) {
+void Redraw::addRedrawCurrentArea(int32 left, int32 top, int32 right, int32 bottom) {
 	int32 area;
 	int32 i = 0;
 	int32 leftValue;
@@ -109,7 +72,7 @@ void addRedrawCurrentArea(int32 left, int32 top, int32 right, int32 bottom) {
 		else
 			bottomValue = currentRedrawList[i].bottom;
 
-		if ((rightValue - leftValue) *(bottomValue - topValue) < ((currentRedrawList[i].bottom - currentRedrawList[i].top) *(currentRedrawList[i].right - currentRedrawList[i].left) + area)) {
+		if ((rightValue - leftValue) * (bottomValue - topValue) < ((currentRedrawList[i].bottom - currentRedrawList[i].top) * (currentRedrawList[i].right - currentRedrawList[i].left) + area)) {
 			currentRedrawList[i].left = leftValue;
 			currentRedrawList[i].top = topValue;
 			currentRedrawList[i].right = rightValue;
@@ -134,12 +97,7 @@ void addRedrawCurrentArea(int32 left, int32 top, int32 right, int32 bottom) {
 	numOfRedrawBox++;
 }
 
-/** Add a certain region to redraw list array
-	@param left start width to redraw the region
-	@param top start height to redraw the region
-	@param right end width to redraw the region
-	@param bottom end height to redraw the region */
-void addRedrawArea(int32 left, int32 top, int32 right, int32 bottom) {
+void Redraw::addRedrawArea(int32 left, int32 top, int32 right, int32 bottom) {
 	if (left < 0)
 		left = 0;
 	if (top < 0)
@@ -162,8 +120,7 @@ void addRedrawArea(int32 left, int32 top, int32 right, int32 bottom) {
 	addRedrawCurrentArea(left, top, right, bottom);
 }
 
-/** Move next regions to the current redraw list */
-void moveNextAreas() {
+void Redraw::moveNextAreas() {
 	int32 i;
 
 	numOfRedrawBox = 0;
@@ -173,14 +130,11 @@ void moveNextAreas() {
 	}
 }
 
-/** Flip currentRedrawList regions in the screen
-
-	This only updates small areas in the screen so few CPU processor is used */
-void flipRedrawAreas() {
+void Redraw::flipRedrawAreas() {
 	int32 i;
 
 	for (i = 0; i < numOfRedrawBox; i++) { // redraw areas on screen
-		copyBlockPhys(currentRedrawList[i].left, currentRedrawList[i].top, currentRedrawList[i].right, currentRedrawList[i].bottom);
+		_engine->copyBlockPhys(currentRedrawList[i].left, currentRedrawList[i].top, currentRedrawList[i].right, currentRedrawList[i].bottom);
 	}
 
 	numOfRedrawBox = 0;
@@ -190,22 +144,17 @@ void flipRedrawAreas() {
 	}
 }
 
-/** Blit/Update all screen regions in the currentRedrawList */
-void blitBackgroundAreas() {
+void Redraw::blitBackgroundAreas() {
 	int32 i;
-	RedrawStruct* currentArea;
-	currentArea = currentRedrawList;
+	const RedrawStruct *currentArea = currentRedrawList;
 
 	for (i = 0; i < numOfRedrawBox; i++) {
-		blitBox(currentArea->left, currentArea->top, currentArea->right, currentArea->bottom, (int8 *) workVideoBuffer, currentArea->left, currentArea->top, (int8 *) frontVideoBuffer);
+		_engine->_interface->blitBox(currentArea->left, currentArea->top, currentArea->right, currentArea->bottom, (int8 *)_engine->workVideoBuffer, currentArea->left, currentArea->top, (int8 *)_engine->frontVideoBuffer);
 		currentArea++;
 	}
 }
 
-/** Sort drawing list struct ordered as the first objects appear in the top left corner of the screen
-	@param list drawing list variable which contains information of the drawing objects
-	@param listSize number of drawing objects in the list */
-void sortDrawingList(DrawListStruct *list, int32 listSize) {
+void Redraw::sortDrawingList(DrawListStruct *list, int32 listSize) {
 	int32 i;
 	int32 j;
 
@@ -213,19 +162,17 @@ void sortDrawingList(DrawListStruct *list, int32 listSize) {
 
 	for (i = 0; i < listSize - 1; i++) {
 		for (j = 0; j < listSize - 1 - i; j++) {
-			if (list[j+1].posValue < list[j].posValue) {
-				memcpy(&tempStruct, &list[j+1], sizeof(DrawListStruct));
-				memcpy(&list[j+1], &list[j], sizeof(DrawListStruct));
+			if (list[j + 1].posValue < list[j].posValue) {
+				memcpy(&tempStruct, &list[j + 1], sizeof(DrawListStruct));
+				memcpy(&list[j + 1], &list[j], sizeof(DrawListStruct));
 				memcpy(&list[j], &tempStruct, sizeof(DrawListStruct));
 			}
 		}
 	}
 }
 
-/** */
-void addOverlay(int16 type, int16 info0, int16 X, int16 Y, int16 info1, int16 posType, int16 lifeTime) {
-	int32 i;
-	for (i = 0; i < OVERLAY_MAX_ENTRIES; i++) {
+void Redraw::addOverlay(int16 type, int16 info0, int16 X, int16 Y, int16 info1, int16 posType, int16 lifeTime) {
+	for (int32 i = 0; i < OVERLAY_MAX_ENTRIES; i++) {
 		OverlayListStruct *overlay = &overlayList[i];
 		if (overlay->info0 == -1) {
 			overlay->type = type;
@@ -234,21 +181,17 @@ void addOverlay(int16 type, int16 info0, int16 X, int16 Y, int16 info1, int16 po
 			overlay->Y = Y;
 			overlay->info1 = info1;
 			overlay->posType = posType;
-			overlay->lifeTime = lbaTime + lifeTime * 50;
-			return;
+			overlay->lifeTime = _engine->lbaTime + lifeTime * 50;
+			break;
 		}
 	}
 }
 
-/** */
-void updateOverlayTypePosition(int16 X1, int16 Y1, int16 X2, int16 Y2) {
-	int32 i;
-	int16 newX, newY;
+void Redraw::updateOverlayTypePosition(int16 X1, int16 Y1, int16 X2, int16 Y2) {
+	const int16 newX = X2 - X1;
+	const int16 newY = Y2 - Y1;
 
-	newX = X2 - X1;
-	newY = Y2 - Y1;
-
-	for (i = 0; i < OVERLAY_MAX_ENTRIES; i++) {
+	for (int32 i = 0; i < OVERLAY_MAX_ENTRIES; i++) {
 		OverlayListStruct *overlay = &overlayList[i];
 		if (overlay->type == koFollowActor) {
 			overlay->X = newX;
@@ -257,11 +200,9 @@ void updateOverlayTypePosition(int16 X1, int16 Y1, int16 X2, int16 Y2) {
 	}
 }
 
-/** This is responsible for the entire game screen redraw
-	@param bgRedraw true if we want to redraw background grid, false if we want to update certain screen areas */
-void redrawEngineActions(int32 bgRedraw) { // fullRedraw
-	int16 tmpProjPosX;
-	int16 tmpProjPosY;
+void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
+	int16 tmp_projPosX;
+	int16 tmp_projPosY;
 	int32 i;
 	int32 tmpVal;
 	int32 modelActorPos;  // arg_1A
@@ -270,23 +211,23 @@ void redrawEngineActions(int32 bgRedraw) { // fullRedraw
 	int32 drawListPos;    // a12
 	ActorStruct *actor;
 
-	tmpProjPosX = projPosXScreen;
-	tmpProjPosY = projPosYScreen;
+	tmp_projPosX = _engine->_renderer->projPosXScreen;
+	tmp_projPosY = _engine->_renderer->projPosYScreen;
 
-	resetClip();
+	_engine->_interface->resetClip();
 
 	if (bgRedraw) {
-		freezeTime();
-		if (needChangeScene != -1 && needChangeScene != -2)
-			fadeOut(paletteRGBA);
-		clearScreen();
-		redrawGrid();
-		updateOverlayTypePosition(tmpProjPosX, tmpProjPosY, projPosXScreen, projPosYScreen);
-		copyScreen(frontVideoBuffer, workVideoBuffer);
+		_engine->freezeTime();
+		if (_engine->_scene->needChangeScene != -1 && _engine->_scene->needChangeScene != -2)
+			_engine->_screens->fadeOut(_engine->_screens->paletteRGB);
+		_engine->_screens->clearScreen();
+		_engine->_grid->redrawGrid();
+		updateOverlayTypePosition(tmp_projPosX, tmp_projPosY, _engine->_renderer->projPosXScreen, _engine->_renderer->projPosYScreen);
+		_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 
-		if (needChangeScene != -1 && needChangeScene != -2) {
-			fadeIn(paletteRGBA);
-			setPalette(paletteRGBA);
+		if (_engine->_scene->needChangeScene != -1 && _engine->_scene->needChangeScene != -2) {
+			_engine->_screens->fadeIn(_engine->_screens->paletteRGB);
+			_engine->setPalette(_engine->_screens->paletteRGB);
 		}
 	} else {
 		blitBackgroundAreas();
@@ -300,40 +241,40 @@ void redrawEngineActions(int32 bgRedraw) { // fullRedraw
 	shadowActorPos = 0x0C00;
 
 	// Process actors drawing list
-	for (modelActorPos = 0; modelActorPos < sceneNumActors; modelActorPos++, spriteActorPos++, shadowActorPos++) {
-		actor = &sceneActors[modelActorPos];
+	for (modelActorPos = 0; modelActorPos < _engine->_scene->sceneNumActors; modelActorPos++, spriteActorPos++, shadowActorPos++) {
+		actor = &_engine->_scene->sceneActors[modelActorPos];
 		actor->dynamicFlags.bIsVisible = 0; // reset visible state
 
-		if ((useCellingGrid == -1) || actor->Y <= (*(int16 *)(cellingGridIdx*24 + (int8 *)sceneZones + 8))) {
+		if ((_engine->_grid->useCellingGrid == -1) || actor->y <= (*(int16 *)(_engine->_grid->cellingGridIdx * 24 + (int8 *)_engine->_scene->sceneZones + 8))) {
 			// no redraw required
 			if (actor->staticFlags.bIsBackgrounded && bgRedraw == 0) {
 				// get actor position on screen
-				projectPositionOnScreen(actor->X - cameraX, actor->Y - cameraY, actor->Z - cameraZ);
+				_engine->_renderer->projectPositionOnScreen(actor->x - _engine->_grid->cameraX, actor->y - _engine->_grid->cameraY, actor->z - _engine->_grid->cameraZ);
 
 				// check if actor is visible on screen, otherwise don't display it
-				if (projPosX > -50 && projPosX < 680 && projPosY > -30 && projPosY < 580) {
+				if (_engine->_renderer->projPosX > -50 && _engine->_renderer->projPosX < 680 && _engine->_renderer->projPosY > -30 && _engine->_renderer->projPosY < 580) {
 					actor->dynamicFlags.bIsVisible = 1;
 				}
 			} else {
 				// if the actor isn't set as hidden
 				if (actor->entity != -1 && !(actor->staticFlags.bIsHidden)) {
 					// get actor position on screen
-					projectPositionOnScreen(actor->X - cameraX, actor->Y - cameraY, actor->Z - cameraZ);
+					_engine->_renderer->projectPositionOnScreen(actor->x - _engine->_grid->cameraX, actor->y - _engine->_grid->cameraY, actor->z - _engine->_grid->cameraZ);
 
-					if ((actor->staticFlags.bUsesClipping && projPosX > -112 && projPosX < 752 && projPosY > -50 && projPosY < 651) ||
-					   ((!actor->staticFlags.bUsesClipping) && projPosX > -50 && projPosX < 680 && projPosY > -30 && projPosY < 580)) {
+					if ((actor->staticFlags.bUsesClipping && _engine->_renderer->projPosX > -112 && _engine->_renderer->projPosX < 752 && _engine->_renderer->projPosY > -50 && _engine->_renderer->projPosY < 651) ||
+					    ((!actor->staticFlags.bUsesClipping) && _engine->_renderer->projPosX > -50 && _engine->_renderer->projPosX < 680 && _engine->_renderer->projPosY > -30 && _engine->_renderer->projPosY < 580)) {
 
-						tmpVal = actor->Z + actor->X - cameraX - cameraZ;
+						tmpVal = actor->z + actor->x - _engine->_grid->cameraX - _engine->_grid->cameraZ;
 
 						// if actor is above another actor
 						if (actor->standOn != -1) {
-							tmpVal = sceneActors[actor->standOn].X - cameraX + sceneActors[actor->standOn].Z - cameraZ + 2;
+							tmpVal = _engine->_scene->sceneActors[actor->standOn].x - _engine->_grid->cameraX + _engine->_scene->sceneActors[actor->standOn].z - _engine->_grid->cameraZ + 2;
 						}
 
 						if (actor->staticFlags.bIsSpriteActor) {
 							drawList[drawListPos].index = spriteActorPos; // > 0x1000
 							if (actor->staticFlags.bUsesClipping) {
-								tmpVal = actor->lastX - cameraX + actor->lastZ - cameraZ;
+								tmpVal = actor->lastX - _engine->_grid->cameraX + actor->lastZ - _engine->_grid->cameraZ;
 							}
 						} else {
 							drawList[drawListPos].index = modelActorPos;
@@ -344,21 +285,21 @@ void redrawEngineActions(int32 bgRedraw) { // fullRedraw
 						drawListPos++;
 
 						// if use shadows
-						if (cfgfile.ShadowMode != 0 && !(actor->staticFlags.bDoesntCastShadow)) {
+						if (_engine->cfgfile.ShadowMode != 0 && !(actor->staticFlags.bDoesntCastShadow)) {
 							if (actor->standOn != -1) {
-								shadowX = actor->X;
-								shadowY = actor->Y - 1;
-								shadowZ = actor->Z;
+								_engine->_actor->shadowX = actor->x;
+								_engine->_actor->shadowY = actor->y - 1;
+								_engine->_actor->shadowZ = actor->z;
 							} else {
-								getShadowPosition(actor->X, actor->Y, actor->Z);
+								_engine->_movements->getShadowPosition(actor->x, actor->y, actor->z);
 							}
 
 							tmpVal--;
 							drawList[drawListPos].posValue = tmpVal; // save the shadow entry in the drawList
 							drawList[drawListPos].index = 0xC00;     // shadowActorPos
-							drawList[drawListPos].X = shadowX;
-							drawList[drawListPos].Y = shadowY;
-							drawList[drawListPos].Z = shadowZ;
+							drawList[drawListPos].X = _engine->_actor->shadowX;
+							drawList[drawListPos].Y = _engine->_actor->shadowY;
+							drawList[drawListPos].Z = _engine->_actor->shadowZ;
 							drawList[drawListPos].field_A = 2;
 							drawListPos++;
 						}
@@ -370,32 +311,32 @@ void redrawEngineActions(int32 bgRedraw) { // fullRedraw
 
 	// second loop
 	for (i = 0; i < EXTRA_MAX_ENTRIES; i++) {
-		ExtraListStruct *extra = &extraList[i];
+		ExtraListStruct *extra = &_engine->_extra->extraList[i];
 		if (extra->info0 != -1) {
 			if (extra->type & 0x400) {
-				if (lbaTime - extra->lifeTime > 35) {
-					extra->lifeTime = lbaTime;
+				if (_engine->lbaTime - extra->lifeTime > 35) {
+					extra->lifeTime = _engine->lbaTime;
 					extra->type &= 0xFBFF;
 					// FIXME make constant for sample index
-					playSample(11, 0x1000, 1, extra->X, extra->Y, extra->Z, -1);
+					_engine->_sound->playSample(11, 0x1000, 1, extra->x, extra->y, extra->z, -1);
 				}
 			} else {
-				if ((extra->type & 1) || (extra->type & 0x40) || (extra->actorIdx + extra->lifeTime - 150 < lbaTime) || (!((lbaTime + extra->lifeTime) & 8))) {
-					projectPositionOnScreen(extra->X - cameraX, extra->Y - cameraY, extra->Z - cameraZ);
+				if ((extra->type & 1) || (extra->type & 0x40) || (extra->actorIdx + extra->lifeTime - 150 < _engine->lbaTime) || (!((_engine->lbaTime + extra->lifeTime) & 8))) {
+					_engine->_renderer->projectPositionOnScreen(extra->x - _engine->_grid->cameraX, extra->y - _engine->_grid->cameraY, extra->z - _engine->_grid->cameraZ);
 
-					if (projPosX > -50 && projPosX < 680 && projPosY > -30 && projPosY < 580) {
-						drawList[drawListPos].posValue = extra->X - cameraX + extra->Z - cameraZ;
+					if (_engine->_renderer->projPosX > -50 && _engine->_renderer->projPosX < 680 && _engine->_renderer->projPosY > -30 && _engine->_renderer->projPosY < 580) {
+						drawList[drawListPos].posValue = extra->x - _engine->_grid->cameraX + extra->z - _engine->_grid->cameraZ;
 						drawList[drawListPos].index = 0x1800 + i;
 						drawListPos++;
 
-						if (cfgfile.ShadowMode == 2 && !(extra->info0 & 0x8000)) {
-							getShadowPosition(extra->X, extra->Y, extra->Z);
+						if (_engine->cfgfile.ShadowMode == 2 && !(extra->info0 & 0x8000)) {
+							_engine->_movements->getShadowPosition(extra->x, extra->y, extra->z);
 
-							drawList[drawListPos].posValue = extra->X - cameraX + extra->Z - cameraZ - 1;
+							drawList[drawListPos].posValue = extra->x - _engine->_grid->cameraX + extra->z - _engine->_grid->cameraZ - 1;
 							drawList[drawListPos].index = 0xC00;
-							drawList[drawListPos].X = shadowX;
-							drawList[drawListPos].Y = shadowY;
-							drawList[drawListPos].Z = shadowZ;
+							drawList[drawListPos].X = _engine->_actor->shadowX;
+							drawList[drawListPos].Y = _engine->_actor->shadowY;
+							drawList[drawListPos].Z = _engine->_actor->shadowZ;
 							drawList[drawListPos].field_A = 0;
 							drawListPos++;
 						}
@@ -411,21 +352,18 @@ void redrawEngineActions(int32 bgRedraw) { // fullRedraw
 	// if has something to draw
 	if (drawListPos > 0) {
 		int32 pos = 0;
-		uint32 flags;
-		int32 actorIdx;
-		ActorStruct *actor;
 
 		do {
-			actorIdx = drawList[pos].index & 0x3FF;
-			actor = &sceneActors[actorIdx];
-			flags = ((uint32) drawList[pos].index) & 0xFC00;
+			int32 actorIdx = drawList[pos].index & 0x3FF;
+			ActorStruct *actor2 = &_engine->_scene->sceneActors[actorIdx];
+			uint32 flags = ((uint32)drawList[pos].index) & 0xFC00;
 
 			// Drawing actors
 			if (flags < 0xC00) {
 				if (!flags) {
-					setModelAnimation(actor->animPosition, animTable[actor->previousAnimIdx], bodyTable[actor->entity], &actor->animTimerData);
+					_engine->_animations->setModelAnimation(actor2->animPosition, _engine->_animations->animTable[actor2->previousAnimIdx], _engine->_actor->bodyTable[actor2->entity], &actor2->animTimerData);
 
-					if (!renderIsoModel(actor->X - cameraX, actor->Y - cameraY, actor->Z - cameraZ, 0, actor->angle, 0, bodyTable[actor->entity])) {
+					if (!_engine->_renderer->renderIsoModel(actor2->x - _engine->_grid->cameraX, actor2->y - _engine->_grid->cameraY, actor2->z - _engine->_grid->cameraZ, 0, actor2->angle, 0, _engine->_actor->bodyTable[actor2->entity])) {
 						if (renderLeft < 0)
 							renderLeft = SCREEN_TEXTLIMIT_LEFT;
 
@@ -438,70 +376,70 @@ void redrawEngineActions(int32 bgRedraw) { // fullRedraw
 						if (renderBottom >= SCREEN_HEIGHT)
 							renderBottom = SCREEN_TEXTLIMIT_BOTTOM;
 
-						setClip(renderLeft, renderTop, renderRight, renderBottom);
+						_engine->_interface->setClip(renderLeft, renderTop, renderRight, renderBottom);
 
-						if (textWindowLeft <= textWindowRight && textWindowTop <= textWindowBottom) {
+						if (_engine->_interface->textWindowLeft <= _engine->_interface->textWindowRight && _engine->_interface->textWindowTop <= _engine->_interface->textWindowBottom) {
 							int32 tempX;
 							int32 tempY;
 							int32 tempZ;
 
-							actor->dynamicFlags.bIsVisible = 1;
+							actor2->dynamicFlags.bIsVisible = 1;
 
-							tempX = (actor->X + 0x100) >> 9;
-							tempY = actor->Y >> 8;
+							tempX = (actor2->x + 0x100) >> 9;
+							tempY = actor2->y >> 8;
 
-							if (actor->brickShape & 0x7F)
+							if (actor2->brickShape & 0x7F)
 								tempY++;
 
-							tempZ = (actor->Z + 0x100) >> 9;
+							tempZ = (actor2->z + 0x100) >> 9;
 
-							drawOverModelActor(tempX, tempY, tempZ);
+							_engine->_grid->drawOverModelActor(tempX, tempY, tempZ);
 
-							if(cropBottomScreen) {
-								renderBottom = textWindowBottom = cropBottomScreen + 10;
+							if (_engine->_actor->cropBottomScreen) {
+								renderBottom = _engine->_interface->textWindowBottom = _engine->_actor->cropBottomScreen + 10;
 							}
 
-							addRedrawArea(textWindowLeft, textWindowTop, renderRight, renderBottom);
+							addRedrawArea(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, renderRight, renderBottom);
 
-							if (actor->staticFlags.bIsBackgrounded && bgRedraw == 1) {
-								blitBox(textWindowLeft, textWindowTop, renderRight, renderBottom, (int8 *) frontVideoBuffer, textWindowLeft, textWindowTop, (int8 *) workVideoBuffer);
+							if (actor2->staticFlags.bIsBackgrounded && bgRedraw == 1) {
+								_engine->_interface->blitBox(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, renderRight, renderBottom, (int8 *)_engine->frontVideoBuffer, _engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, (int8 *)_engine->workVideoBuffer);
 							}
 						}
 					}
 				}
 			}
 			// Drawing shadows
-			else if (flags == 0xC00 && !cropBottomScreen) {
+			else if (flags == 0xC00 && !_engine->_actor->cropBottomScreen) {
 				int32 spriteWidth, spriteHeight, tmpX, tmpY, tmpZ;
-				DrawListStruct shadow =	drawList[pos];
+				DrawListStruct shadow = drawList[pos];
 
 				// get actor position on screen
-				projectPositionOnScreen(shadow.X - cameraX, shadow.Y - cameraY, shadow.Z - cameraZ);
+				_engine->_renderer->projectPositionOnScreen(shadow.X - _engine->_grid->cameraX, shadow.Y - _engine->_grid->cameraY, shadow.Z - _engine->_grid->cameraZ);
 
-				getSpriteSize(shadow.field_A, &spriteWidth, &spriteHeight, spriteShadowPtr);
+				_engine->_grid->getSpriteSize(shadow.field_A, &spriteWidth, &spriteHeight, _engine->_scene->spriteShadowPtr);
 
 				// calculate sprite size and position on screen
-				renderLeft   = projPosX - (spriteWidth / 2);
-				renderTop    = projPosY - (spriteHeight / 2);
-				renderRight  = projPosX + (spriteWidth / 2);
-				renderBottom = projPosY + (spriteHeight / 2);
+				renderLeft = _engine->_renderer->projPosX - (spriteWidth / 2);
+				renderTop = _engine->_renderer->projPosY - (spriteHeight / 2);
+				renderRight = _engine->_renderer->projPosX + (spriteWidth / 2);
+				renderBottom = _engine->_renderer->projPosY + (spriteHeight / 2);
 
-				setClip(renderLeft, renderTop, renderRight, renderBottom);
+				_engine->_interface->setClip(renderLeft, renderTop, renderRight, renderBottom);
 
-				if (textWindowLeft <= textWindowRight && textWindowTop <= textWindowBottom) {
-					drawSprite(shadow.field_A, renderLeft, renderTop, spriteShadowPtr);
+				if (_engine->_interface->textWindowLeft <= _engine->_interface->textWindowRight && _engine->_interface->textWindowTop <= _engine->_interface->textWindowBottom) {
+					_engine->_grid->drawSprite(shadow.field_A, renderLeft, renderTop, _engine->_scene->spriteShadowPtr);
 				}
 
 				tmpX = (shadow.X + 0x100) >> 9;
 				tmpY = shadow.Y >> 8;
 				tmpZ = (shadow.Z + 0x100) >> 9;
 
-				drawOverModelActor(tmpX, tmpY, tmpZ);
+				_engine->_grid->drawOverModelActor(tmpX, tmpY, tmpZ);
 
-				addRedrawArea(textWindowLeft, textWindowTop, renderRight, renderBottom);
+				addRedrawArea(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, renderRight, renderBottom);
 
 				// show clipping area
-				//drawBox(renderLeft, renderTop, renderRight, renderBottom);
+				//drawBox(_engine->_renderer->renderLeft, _engine->_renderer->renderTop, _engine->_renderer->renderRight, _engine->_renderer->renderBottom);
 			}
 			// Drawing unknown
 			else if (flags < 0x1000) {
@@ -510,49 +448,49 @@ void redrawEngineActions(int32 bgRedraw) { // fullRedraw
 			// Drawing sprite actors
 			else if (flags == 0x1000) {
 				int32 spriteWidth, spriteHeight;
-				uint8 *spritePtr = spriteTable[actor->entity];
+				uint8 *spritePtr = _engine->_actor->spriteTable[actor2->entity];
 
 				// get actor position on screen
-				projectPositionOnScreen(actor->X - cameraX, actor->Y - cameraY, actor->Z - cameraZ);
+				_engine->_renderer->projectPositionOnScreen(actor2->x - _engine->_grid->cameraX, actor2->y - _engine->_grid->cameraY, actor2->z - _engine->_grid->cameraZ);
 
-				getSpriteSize(0, &spriteWidth, &spriteHeight, spritePtr);
+				_engine->_grid->getSpriteSize(0, &spriteWidth, &spriteHeight, spritePtr);
 
 				// calculate sprite position on screen
-				renderLeft = projPosX +  *((int16 *)(spriteBoundingBoxPtr + (actor->entity * 16)));
-				renderTop = projPosY + *((int16 *)(spriteBoundingBoxPtr + (actor->entity * 16) + 2));
+				renderLeft = _engine->_renderer->projPosX + *((int16 *)(_engine->_scene->spriteBoundingBoxPtr + (actor2->entity * 16)));
+				renderTop = _engine->_renderer->projPosY + *((int16 *)(_engine->_scene->spriteBoundingBoxPtr + (actor2->entity * 16) + 2));
 				renderRight = renderLeft + spriteWidth;
 				renderBottom = renderTop + spriteHeight;
 
-				if (actor->staticFlags.bUsesClipping) {
-					setClip(projPosXScreen + actor->info0, projPosYScreen + actor->info1, projPosXScreen + actor->info2, projPosYScreen + actor->info3);
+				if (actor2->staticFlags.bUsesClipping) {
+					_engine->_interface->setClip(_engine->_renderer->projPosXScreen + actor2->info0, _engine->_renderer->projPosYScreen + actor2->info1, _engine->_renderer->projPosXScreen + actor2->info2, _engine->_renderer->projPosYScreen + actor2->info3);
 				} else {
-					setClip(renderLeft, renderTop, renderRight, renderBottom);
+					_engine->_interface->setClip(renderLeft, renderTop, renderRight, renderBottom);
 				}
 
-				if (textWindowLeft <= textWindowRight && textWindowTop <= textWindowBottom) {
-					drawSprite(0, renderLeft, renderTop, spritePtr);
+				if (_engine->_interface->textWindowLeft <= _engine->_interface->textWindowRight && _engine->_interface->textWindowTop <= _engine->_interface->textWindowBottom) {
+					_engine->_grid->drawSprite(0, renderLeft, renderTop, spritePtr);
 
-					actor->dynamicFlags.bIsVisible = 1;
+					actor2->dynamicFlags.bIsVisible = 1;
 
-					if (actor->staticFlags.bUsesClipping) {
-						drawOverSpriteActor((actor->lastX + 0x100) >> 9, actor->lastY >> 8, (actor->lastZ + 0x100) >> 9);
+					if (actor2->staticFlags.bUsesClipping) {
+						_engine->_grid->drawOverSpriteActor((actor2->lastX + 0x100) >> 9, actor2->lastY >> 8, (actor2->lastZ + 0x100) >> 9);
 					} else {
 						int32 tmpX, tmpY, tmpZ;
 
-						tmpX = (actor->X + actor->boudingBox.X.topRight + 0x100) >> 9;
-						tmpY = actor->Y >> 8;
-						if (actor->brickShape & 0x7F) {
+						tmpX = (actor2->x + actor2->boudingBox.x.topRight + 0x100) >> 9;
+						tmpY = actor2->y >> 8;
+						if (actor2->brickShape & 0x7F) {
 							tmpY++;
 						}
-						tmpZ = (actor->Z + actor->boudingBox.Z.topRight + 0x100) >> 9;
+						tmpZ = (actor2->z + actor2->boudingBox.z.topRight + 0x100) >> 9;
 
-						drawOverSpriteActor(tmpX, tmpY, tmpZ);
+						_engine->_grid->drawOverSpriteActor(tmpX, tmpY, tmpZ);
 					}
 
-					addRedrawArea(textWindowLeft, textWindowTop, textWindowRight, textWindowBottom);
+					addRedrawArea(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, _engine->_interface->textWindowRight, _engine->_interface->textWindowBottom);
 
-					if (actor->staticFlags.bIsBackgrounded && bgRedraw == 1) {
-						blitBox(textWindowLeft, textWindowTop, textWindowRight, textWindowBottom, (int8 *) frontVideoBuffer, textWindowLeft, textWindowTop, (int8 *) workVideoBuffer);
+					if (actor2->staticFlags.bIsBackgrounded && bgRedraw == 1) {
+						_engine->_interface->blitBox(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, _engine->_interface->textWindowRight, _engine->_interface->textWindowBottom, (int8 *)_engine->frontVideoBuffer, _engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, (int8 *)_engine->workVideoBuffer);
 					}
 
 					// show clipping area
@@ -561,301 +499,298 @@ void redrawEngineActions(int32 bgRedraw) { // fullRedraw
 			}
 			// Drawing extras
 			else if (flags == 0x1800) {
-				ExtraListStruct *extra = &extraList[actorIdx];
+				ExtraListStruct *extra = &_engine->_extra->extraList[actorIdx];
 
-				projectPositionOnScreen(extra->X - cameraX, extra->Y - cameraY, extra->Z - cameraZ);
+				_engine->_renderer->projectPositionOnScreen(extra->x - _engine->_grid->cameraX, extra->y - _engine->_grid->cameraY, extra->z - _engine->_grid->cameraZ);
 
 				if (extra->info0 & 0x8000) {
-					drawExtraSpecial(actorIdx, projPosX, projPosY);
+					_engine->_extra->drawExtraSpecial(actorIdx, _engine->_renderer->projPosX, _engine->_renderer->projPosY);
 				} else {
 					int32 spriteWidth, spriteHeight;
 
-					getSpriteSize(0, &spriteWidth, &spriteHeight, spriteTable[extra->info0]);
+					_engine->_grid->getSpriteSize(0, &spriteWidth, &spriteHeight, _engine->_actor->spriteTable[extra->info0]);
 
 					// calculate sprite position on screen
-					renderLeft = projPosX + *(int16 *)(spriteBoundingBoxPtr + extra->info0 * 16);
-					renderTop = projPosY + *(int16 *)(spriteBoundingBoxPtr + extra->info0 * 16 + 2);
+					renderLeft = _engine->_renderer->projPosX + *(int16 *)(_engine->_scene->spriteBoundingBoxPtr + extra->info0 * 16);
+					renderTop = _engine->_renderer->projPosY + *(int16 *)(_engine->_scene->spriteBoundingBoxPtr + extra->info0 * 16 + 2);
 					renderRight = renderLeft + spriteWidth;
 					renderBottom = renderTop + spriteHeight;
 
-					drawSprite(0, renderLeft, renderTop, spriteTable[extra->info0]);
+					_engine->_grid->drawSprite(0, renderLeft, renderTop, _engine->_actor->spriteTable[extra->info0]);
 				}
 
-				setClip(renderLeft, renderTop, renderRight, renderBottom);
+				_engine->_interface->setClip(renderLeft, renderTop, renderRight, renderBottom);
 
-				if (textWindowLeft <= textWindowRight && textWindowTop <= textWindowBottom) {
+				if (_engine->_interface->textWindowLeft <= _engine->_interface->textWindowRight && _engine->_interface->textWindowTop <= _engine->_interface->textWindowBottom) {
 					int32 tmpX, tmpY, tmpZ;
 
 					tmpX = (drawList[pos].X + 0x100) >> 9;
 					tmpY = drawList[pos].Y >> 8;
 					tmpZ = (drawList[pos].Z + 0x100) >> 9;
 
-					drawOverModelActor(tmpX, tmpY, tmpZ);
-					addRedrawArea(textWindowLeft, textWindowTop, renderRight, renderBottom);
+					_engine->_grid->drawOverModelActor(tmpX, tmpY, tmpZ);
+					addRedrawArea(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, renderRight, renderBottom);
 
 					// show clipping area
 					//drawBox(renderLeft, renderTop, renderRight, renderBottom);
 				}
 			}
 
-			resetClip();
+			_engine->_interface->resetClip();
 			pos++;
 		} while (pos < drawListPos);
 	}
 
-#ifdef GAMEMOD
-	displayZones(skipIntro);
-#endif
+	if (_engine->cfgfile.Debug) {
+		_engine->_debugScene->displayZones(_engine->_keyboard.skipIntro);
+	}
 
 	for (i = 0; i < OVERLAY_MAX_ENTRIES; i++) {
 		OverlayListStruct *overlay = &overlayList[i];
 		if (overlay->info0 != -1) {
 			// process position overlay
-			switch(overlay->posType) {
+			switch (overlay->posType) {
 			case koNormal:
-				if (lbaTime >= overlay->lifeTime) {
+				if (_engine->lbaTime >= overlay->lifeTime) {
 					overlay->info0 = -1;
 					continue;
 				}
 				break;
 			case koFollowActor: {
-				ActorStruct *actor = &sceneActors[overlay->info1];
+				ActorStruct *actor2 = &_engine->_scene->sceneActors[overlay->info1];
 
-				projectPositionOnScreen(actor->X - cameraX, actor->Y + actor->boudingBox.Y.topRight - cameraY, actor->Z - cameraZ);
+				_engine->_renderer->projectPositionOnScreen(actor2->x - _engine->_grid->cameraX, actor2->y + actor2->boudingBox.y.topRight - _engine->_grid->cameraY, actor2->z - _engine->_grid->cameraZ);
 
-				overlay->X = projPosX;
-				overlay->Y = projPosY;
+				overlay->X = _engine->_renderer->projPosX;
+				overlay->Y = _engine->_renderer->projPosY;
 
-				if (lbaTime >= overlay->lifeTime) {
+				if (_engine->lbaTime >= overlay->lifeTime) {
 					overlay->info0 = -1;
 					continue;
 				}
-			}
-				break;
+			} break;
 			}
 
 			// process overlay type
-			switch(overlay->type) {
+			switch (overlay->type) {
 			case koSprite: {
 				int16 offsetX, offsetY;
 				int32 spriteWidth, spriteHeight;
-				uint8 *spritePtr = spriteTable[overlay->info0];
+				uint8 *spritePtr = _engine->_actor->spriteTable[overlay->info0];
 
-				getSpriteSize(0, &spriteWidth, &spriteHeight, spritePtr);
+				_engine->_grid->getSpriteSize(0, &spriteWidth, &spriteHeight, spritePtr);
 
-				offsetX = *((int16 *)(spriteBoundingBoxPtr + (overlay->info0 * 16)));
-				offsetY = *((int16 *)(spriteBoundingBoxPtr + (overlay->info0 * 16) + 2));
+				offsetX = *((int16 *)(_engine->_scene->spriteBoundingBoxPtr + (overlay->info0 * 16)));
+				offsetY = *((int16 *)(_engine->_scene->spriteBoundingBoxPtr + (overlay->info0 * 16) + 2));
 
-				renderLeft   = offsetX + overlay->X;
-				renderTop    = offsetY + overlay->Y;
-				renderRight  = renderLeft + spriteWidth;
+				renderLeft = offsetX + overlay->X;
+				renderTop = offsetY + overlay->Y;
+				renderRight = renderLeft + spriteWidth;
 				renderBottom = renderTop + spriteHeight;
 
-				drawSprite(0, renderLeft, renderTop, spritePtr);
+				_engine->_grid->drawSprite(0, renderLeft, renderTop, spritePtr);
 
-				if (textWindowLeft <= textWindowRight && textWindowTop <= textWindowBottom) {
-					addRedrawArea(textWindowLeft, textWindowTop, renderRight, renderBottom);
+				if (_engine->_interface->textWindowLeft <= _engine->_interface->textWindowRight && _engine->_interface->textWindowTop <= _engine->_interface->textWindowBottom) {
+					addRedrawArea(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, renderRight, renderBottom);
 				}
 
-			}
-				break;
+			} break;
 			case koNumber: {
 				int32 textLength, textHeight;
-				int8 text[10];
+				char text[10];
 				sprintf(text, "%d", overlay->info0);
 
-				textLength = getTextSize(text);
+				textLength = _engine->_text->getTextSize(text);
 				textHeight = 48;
 
-				renderLeft   = overlay->X - (textLength/2);
-				renderTop    = overlay->Y - 24;
-				renderRight  = overlay->X + (textLength/2);
+				renderLeft = overlay->X - (textLength / 2);
+				renderTop = overlay->Y - 24;
+				renderRight = overlay->X + (textLength / 2);
 				renderBottom = overlay->Y + textHeight;
 
-				setClip(renderLeft, renderTop, renderRight, renderBottom);
+				_engine->_interface->setClip(renderLeft, renderTop, renderRight, renderBottom);
 
-				setFontColor(overlay->info1);
+				_engine->_text->setFontColor(overlay->info1);
 
-				drawText(renderLeft, renderTop, text);
+				_engine->_text->drawText(renderLeft, renderTop, text);
 
-				if (textWindowLeft <= textWindowRight && textWindowTop <= textWindowBottom) {
-					addRedrawArea(textWindowLeft, textWindowTop, renderRight, renderBottom);
+				if (_engine->_interface->textWindowLeft <= _engine->_interface->textWindowRight && _engine->_interface->textWindowTop <= _engine->_interface->textWindowBottom) {
+					addRedrawArea(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, renderRight, renderBottom);
 				}
-			}
-				break;
+			} break;
 			case koNumberRange: {
 				int32 textLength, textHeight, range;
-				int8 text[10];
+				char text[10];
 
-				range = getAverageValue(overlay->info1, overlay->info0, 100, overlay->lifeTime - lbaTime - 50);
+				range = _engine->_collision->getAverageValue(overlay->info1, overlay->info0, 100, overlay->lifeTime - _engine->lbaTime - 50);
 
 				sprintf(text, "%d", range);
 
-				textLength = getTextSize(text);
+				textLength = _engine->_text->getTextSize(text);
 				textHeight = 48;
 
-				renderLeft   = overlay->X - (textLength/2);
-				renderTop    = overlay->Y - 24;
-				renderRight  = overlay->X + (textLength/2);
+				renderLeft = overlay->X - (textLength / 2);
+				renderTop = overlay->Y - 24;
+				renderRight = overlay->X + (textLength / 2);
 				renderBottom = overlay->Y + textHeight;
 
-				setClip(renderLeft, renderTop, renderRight, renderBottom);
+				_engine->_interface->setClip(renderLeft, renderTop, renderRight, renderBottom);
 
-				setFontColor(155);
+				_engine->_text->setFontColor(155);
 
-				drawText(renderLeft, renderTop, text);
+				_engine->_text->drawText(renderLeft, renderTop, text);
 
-				if (textWindowLeft <= textWindowRight && textWindowTop <= textWindowBottom) {
-					addRedrawArea(textWindowLeft, textWindowTop, renderRight, renderBottom);
+				if (_engine->_interface->textWindowLeft <= _engine->_interface->textWindowRight && _engine->_interface->textWindowTop <= _engine->_interface->textWindowBottom) {
+					addRedrawArea(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, renderRight, renderBottom);
 				}
-			}
-				break;
+			} break;
 			case koInventoryItem: {
 				int32 item = overlay->info0;
 
-				drawSplittedBox(10, 10, 69, 69, 0);
-				setClip(10, 10, 69, 69);
+				_engine->_interface->drawSplittedBox(10, 10, 69, 69, 0);
+				_engine->_interface->setClip(10, 10, 69, 69);
 
-				prepareIsoModel(inventoryTable[item]);
-				setCameraPosition(40, 40, 128, 200, 200);
-				setCameraAngle(0, 0, 0, 60, 0, 0, 16000);
+				_engine->_renderer->prepareIsoModel(_engine->_resources->inventoryTable[item]);
+				_engine->_renderer->setCameraPosition(40, 40, 128, 200, 200);
+				_engine->_renderer->setCameraAngle(0, 0, 0, 60, 0, 0, 16000);
 
 				overlayRotation += 1; // overlayRotation += 8;
 
-				renderIsoModel(0, 0, 0, 0, overlayRotation, 0, inventoryTable[item]);
-				drawBox(10, 10, 69, 69);
+				_engine->_renderer->renderIsoModel(0, 0, 0, 0, overlayRotation, 0, _engine->_resources->inventoryTable[item]);
+				_engine->_menu->drawBox(10, 10, 69, 69);
 				addRedrawArea(10, 10, 69, 69);
-				initEngineProjections();
-			}
-				break;
+				_engine->_gameState->initEngineProjections();
+			} break;
 			case koText: {
-				int32 textLength, textHeight;
-				int8 text[256];
+				char text[256];
 
-				getMenuText(overlay->info0, text);
+				_engine->_text->getMenuText(overlay->info0, text, sizeof(text));
 
-				textLength = getTextSize(text);
-				textHeight = 48;
+				int32 textLength = _engine->_text->getTextSize(text);
+				int32 textHeight = 48;
 
-				renderLeft   = overlay->X - (textLength/2);
-				renderTop    = overlay->Y - 24;
-				renderRight  = overlay->X + (textLength/2);
+				renderLeft = overlay->X - (textLength / 2);
+				renderTop = overlay->Y - 24;
+				renderRight = overlay->X + (textLength / 2);
 				renderBottom = overlay->Y + textHeight;
 
-				if(renderLeft < 0) {
+				if (renderLeft < 0) {
 					renderLeft = 0;
 				}
 
-				if(renderTop < 0) {
+				if (renderTop < 0) {
 					renderTop = 0;
 				}
 
-				if(renderRight > SCREEN_TEXTLIMIT_RIGHT) {
+				if (renderRight > SCREEN_TEXTLIMIT_RIGHT) {
 					renderRight = SCREEN_TEXTLIMIT_RIGHT;
 				}
 
-				if(renderBottom > SCREEN_TEXTLIMIT_BOTTOM) {
+				if (renderBottom > SCREEN_TEXTLIMIT_BOTTOM) {
 					renderBottom = SCREEN_TEXTLIMIT_BOTTOM;
 				}
 
-				setClip(renderLeft, renderTop, renderRight, renderBottom);
+				_engine->_interface->setClip(renderLeft, renderTop, renderRight, renderBottom);
 
-				setFontColor(sceneActors[overlay->info1].talkColor);
+				_engine->_text->setFontColor(_engine->_scene->sceneActors[overlay->info1].talkColor);
 
-				drawText(renderLeft, renderTop, text);
+				_engine->_text->drawText(renderLeft, renderTop, text);
 
-				if (textWindowLeft <= textWindowRight && textWindowTop <= textWindowBottom) {
-					addRedrawArea(textWindowLeft, textWindowTop, renderRight, renderBottom);
+				if (_engine->_interface->textWindowLeft <= _engine->_interface->textWindowRight && _engine->_interface->textWindowTop <= _engine->_interface->textWindowBottom) {
+					addRedrawArea(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, renderRight, renderBottom);
 				}
-			}
-				break;
+			} break;
 			}
 		}
 	}
 
-	resetClip();
+	_engine->_interface->resetClip();
 
 	// make celling grid fade
 	// need to be here to fade after drawing all actors in scene
-	if (needChangeScene == -2) {
-		crossFade(frontVideoBuffer, paletteRGBA);
-		needChangeScene = -1;
+	if (_engine->_scene->needChangeScene == -2) {
+		_engine->crossFade(_engine->frontVideoBuffer, _engine->_screens->paletteRGB);
+		_engine->_scene->needChangeScene = -1;
 	}
 
 	if (bgRedraw) {
-		flip();
+		_engine->flip();
 		moveNextAreas();
-		unfreezeTime();
+		_engine->unfreezeTime();
 	} else {
 		flipRedrawAreas();
 	}
 
-	if (lockPalette) {
-		if (useAlternatePalette) {
-			fadeToPal(paletteRGBA);
+	if (_engine->_screens->lockPalette) {
+		if (_engine->_screens->useAlternatePalette) {
+			_engine->_screens->fadeToPal(_engine->_screens->paletteRGB);
 		} else {
-			fadeToPal(mainPaletteRGBA);
+			_engine->_screens->fadeToPal(_engine->_screens->mainPaletteRGB);
 		}
-		lockPalette = 0;
+		_engine->_screens->lockPalette = 0;
 	}
 
-	if (zoomScreen) {
-        //zoomScreenScale();
-    }
+	if (_engine->zoomScreen) {
+		//zoomScreenScale();
+	}
 }
 
-void drawBubble(int32 actorIdx) {
-    int32 spriteWidth, spriteHeight;
-    uint8 *spritePtr;
-    ActorStruct *actor = &sceneActors[actorIdx];
+void Redraw::drawBubble(int32 actorIdx) {
+	int32 spriteWidth, spriteHeight;
+	uint8 *spritePtr;
+	ActorStruct *actor = &_engine->_scene->sceneActors[actorIdx];
 
-    // get actor position on screen
-    projectPositionOnScreen(actor->X - cameraX, actor->Y + actor->boudingBox.Y.topRight - cameraY, actor->Z - cameraZ);
+	// get actor position on screen
+	_engine->_renderer->projectPositionOnScreen(actor->x - _engine->_grid->cameraX, actor->y + actor->boudingBox.y.topRight - _engine->_grid->cameraY, actor->z - _engine->_grid->cameraZ);
 
-    if (actorIdx != bubbleActor) {
-        bubbleSpriteIndex = bubbleSpriteIndex ^ 1;
-        bubbleActor = actorIdx;
-    }
+	if (actorIdx != bubbleActor) {
+		bubbleSpriteIndex = bubbleSpriteIndex ^ 1;
+		bubbleActor = actorIdx;
+	}
 
-    spritePtr = spriteTable[bubbleSpriteIndex];
-    getSpriteSize(0, &spriteWidth, &spriteHeight, spritePtr);
+	spritePtr = _engine->_actor->spriteTable[bubbleSpriteIndex];
+	_engine->_grid->getSpriteSize(0, &spriteWidth, &spriteHeight, spritePtr);
 
-    // calculate sprite position on screen
-    if (bubbleSpriteIndex == SPRITEHQR_DIAG_BUBBLE_RIGHT) {
-        renderLeft = projPosX + 10;
-    } else {
-        renderLeft = projPosX - 10 - spriteWidth;
-    }
-    renderTop = projPosY - 20;
-    renderRight = spriteWidth + renderLeft - 1;
-    renderBottom = spriteHeight + renderTop - 1;
+	// calculate sprite position on screen
+	if (bubbleSpriteIndex == SPRITEHQR_DIAG_BUBBLE_RIGHT) {
+		renderLeft = _engine->_renderer->projPosX + 10;
+	} else {
+		renderLeft = _engine->_renderer->projPosX - 10 - spriteWidth;
+	}
+	renderTop = _engine->_renderer->projPosY - 20;
+	renderRight = spriteWidth + renderLeft - 1;
+	renderBottom = spriteHeight + renderTop - 1;
 
-    setClip(renderLeft, renderTop, renderRight, renderBottom);
+	_engine->_interface->setClip(renderLeft, renderTop, renderRight, renderBottom);
 
-    drawSprite(0, renderLeft, renderTop, spritePtr);
-    if (textWindowLeft <= textWindowRight && textWindowTop <= textWindowBottom) {
-        copyBlockPhys(renderLeft, renderTop, renderRight, renderBottom);
-    }
+	_engine->_grid->drawSprite(0, renderLeft, renderTop, spritePtr);
+	if (_engine->_interface->textWindowLeft <= _engine->_interface->textWindowRight && _engine->_interface->textWindowTop <= _engine->_interface->textWindowBottom) {
+		_engine->copyBlockPhys(renderLeft, renderTop, renderRight, renderBottom);
+	}
 
-    resetClip();
+	_engine->_interface->resetClip();
 }
 
-void zoomScreenScale() {
-    int h, w;
-	uint8 * dest;
-    uint8 * zoomWorkVideoBuffer = (uint8 *) malloc((SCREEN_WIDTH * SCREEN_HEIGHT) * sizeof(uint8));
-    memcpy(zoomWorkVideoBuffer, workVideoBuffer, SCREEN_WIDTH*SCREEN_HEIGHT);
+void Redraw::zoomScreenScale() {
+	uint8 *dest;
+	uint8 *zoomWorkVideoBuffer = (uint8 *)malloc((SCREEN_WIDTH * SCREEN_HEIGHT) * sizeof(uint8));
+	if (!zoomWorkVideoBuffer) {
+		error("Failed to allocate memory for the scale buffer");
+	}
+	memcpy(zoomWorkVideoBuffer, _engine->workVideoBuffer, SCREEN_WIDTH * SCREEN_HEIGHT);
 
-	dest = workVideoBuffer;
+	dest = _engine->workVideoBuffer;
 
-    for (h = 0; h < SCREEN_HEIGHT; h++) {
-		for (w = 0; w < SCREEN_WIDTH; w++) {
+	for (int h = 0; h < SCREEN_HEIGHT; h++) {
+		for (int w = 0; w < SCREEN_WIDTH; w++) {
 			*dest++ = *zoomWorkVideoBuffer;
 			*dest++ = *zoomWorkVideoBuffer++;
 		}
 		//memcpy(dest, dest - SCREEN_WIDTH, SCREEN_WIDTH);
 		//dest += SCREEN_WIDTH;
 	}
-	copyScreen(workVideoBuffer, frontVideoBuffer);
-    //free(zoomWorkVideoBuffer);
+	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+	free(zoomWorkVideoBuffer);
 }
+
+} // namespace TwinE

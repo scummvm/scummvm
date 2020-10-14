@@ -20,15 +20,33 @@
  *
  */
 
-#ifndef TWINE_DETECTION_H
-#define TWINE_DETECTION_H
+#ifndef TWINE_GRIDDEBUG_H
+#define TWINE_GRIDDEBUG_H
+
+#include "common/scummsys.h"
 
 namespace TwinE {
 
-enum GameFlag {
-	kGameFlagDemo = 1 << 0
+class TwinEEngine;
+
+class DebugGrid {
+private:
+	TwinEEngine *_engine;
+
+public:
+	DebugGrid(TwinEEngine *engine);
+
+	int32 useFreeCamera = 0;
+	int32 canChangeScenes = 0;
+
+	/** Change scenario camera positions */
+	void changeGridCamera(int16 pKey);
+	/** Change grid index */
+	void changeGrid(int16 pKey);
+	/** Apply and change disappear celling grid */
+	void applyCellingGrid(int16 pKey);
 };
 
-} // End of namespace TwinE
+} // namespace TwinE
 
-#endif // TWINE_DETECTION_H
+#endif

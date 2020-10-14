@@ -1,107 +1,65 @@
-/** @file movies.cpp
-	@brief
-	This file contains movies routines
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 
-	TwinEngine: a Little Big Adventure engine
+#include "twine/flamovies.h"
+#include "common/file.h"
+#include "common/system.h"
+#include "twine/grid.h"
+#include "twine/keyboard.h"
+#include "twine/music.h"
+#include "twine/screens.h"
+#include "twine/sound.h"
+#include "twine/twine.h"
 
-	Copyright (C) 2013 The TwinEngine team
-	Copyright (C) 2008-2013 Prequengine team
-	Copyright (C) 2002-2007 The TwinEngine team
-
-	This program is free software; you can redistribute it and/or
-	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 2
-	of the License, or (at your option) any later version.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*/
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include "flamovies.h"
-#include "screens.h"
-#include "sdlengine.h"
-#include "main.h"
-#include "sound.h"
-#include "music.h"
-#include "filereader.h"
-#include "lbaengine.h"
-#include "keyboard.h"
+namespace TwinE {
 
 /** Config movie types */
-#define CONF_MOVIE_NONE    0
-#define CONF_MOVIE_FLA     1
+#define CONF_MOVIE_NONE 0
+#define CONF_MOVIE_FLA 1
 #define CONF_MOVIE_FLAWIDE 2
-#define CONF_MOVIE_FLAPCX  3
+#define CONF_MOVIE_FLAPCX 3
 
 /** FLA movie extension */
 #define FLA_EXT ".fla"
 
-/** FLA Frame Opcode types */
-enum FlaFrameOpcode {
-	kLoadPalette	= 0,
-	kFade			= 1,
-	kPlaySample		= 2,
-	kStopSample		= 4,
-	kDeltaFrame		= 5,
-	kKeyFrame		= 7
-};
-
-/** Auxiliar FLA fade out variable */
-int32 _fadeOut;
-/** Auxiliar FLA fade out variable to count frames between the fade */
-int32 fadeOutFrames;
-
-/** FLA movie sample auxiliar table */
-int32 flaSampleTable[100];
-/** Number of samples in FLA movie */
-int32 samplesInFla;
-/** Auxiliar work video buffer */
-uint8* workVideoBufferCopy;
-/** FLA movie header data */
-FLAHeaderStruct flaHeaderData;
-/** FLA movie header data */
-FLAFrameDataStruct frameData;
-
-FileReader frFla;
-
-/** FLA movie draw key frame
-	@param ptr FLA frame buffer pointer
-	@param width FLA movie width
-	@param height FLA movie height */
-void drawKeyFrame(uint8 * ptr, int32 width, int32 height) {
-	int32 a, b;
-	uint8 * destPtr = (uint8 *)flaBuffer;
-	uint8 * startOfLine = destPtr;
-	int8 flag1;
-	int8 flag2;
+void FlaMovies::drawKeyFrame(uint8 *ptr, int32 width, int32 height) {
+	uint8 *destPtr = (uint8 *)flaBuffer;
+	uint8 *startOfLine = destPtr;
 
 	do {
-		flag1 = *(ptr++);
+		int8 flag1 = *(ptr++);
 
-		for (a = 0; a < flag1; a++) {
-			flag2 = *(ptr++);
+		for (int8 a = 0; a < flag1; a++) {
+			int8 flag2 = *(ptr++);
 
 			if (flag2 < 0) {
-				flag2 = - flag2;
-				for (b = 0; b < flag2; b++) {
+				flag2 = -flag2;
+				for (int8 b = 0; b < flag2; b++) {
 					*(destPtr++) = *(ptr++);
 				}
 			} else {
-				char colorFill;
+				char colorFill = *(ptr++);
 
-				colorFill = *(ptr++);
-
-				for (b = 0; b < flag2; b++) {
+				for (int8 b = 0; b < flag2; b++) {
 					*(destPtr++) = colorFill;
 				}
 			}
@@ -111,31 +69,28 @@ void drawKeyFrame(uint8 * ptr, int32 width, int32 height) {
 	} while (--height);
 }
 
-/** FLA movie draw delta frame
-	@param ptr FLA frame buffer pointer
-	@param width FLA movie width */
-void drawDeltaFrame(uint8 * ptr, int32 width) {
+void FlaMovies::drawDeltaFrame(uint8 *ptr, int32 width) {
 	int32 a, b;
 	uint16 skip;
-	uint8 * destPtr;
-	uint8 * startOfLine;
+	uint8 *destPtr;
+	uint8 *startOfLine;
 	int32 height;
 
 	int8 flag1;
 	int8 flag2;
 
-	skip = *((uint16*)ptr);
+	skip = *((uint16 *)ptr);
 	ptr += 2;
 	skip *= width;
 	startOfLine = destPtr = (uint8 *)flaBuffer + skip;
-	height = *((int16*)ptr);
+	height = *((int16 *)ptr);
 	ptr += 2;
 
 	do {
 		flag1 = *(ptr++);
 
 		for (a = 0; a < flag1; a++) {
-			destPtr += (unsigned char) * (ptr++);
+			destPtr += (unsigned char)*(ptr++);
 			flag2 = *(ptr++);
 
 			if (flag2 > 0) {
@@ -144,7 +99,7 @@ void drawDeltaFrame(uint8 * ptr, int32 width) {
 				}
 			} else {
 				char colorFill;
-				flag2 = - flag2;
+				flag2 = -flag2;
 
 				colorFill = *(ptr++);
 
@@ -158,17 +113,13 @@ void drawDeltaFrame(uint8 * ptr, int32 width) {
 	} while (--height);
 }
 
-/** Scale FLA movie 2 times
-
-	According with the settins we can put the original aspect radio stretch
-	to fullscreen or preserve it and use top and button black bars */
-void scaleFla2x() {
+void FlaMovies::scaleFla2x() {
 	int32 i, j;
-	uint8* source = (uint8*)flaBuffer;
-	uint8* dest = (uint8*)workVideoBuffer;
+	uint8 *source = (uint8 *)flaBuffer;
+	uint8 *dest = (uint8 *)_engine->workVideoBuffer;
 
-	if (cfgfile.Movie == CONF_MOVIE_FLAWIDE) {
-		for (i = 0; i < SCREEN_WIDTH / SCALE*40; i++) {
+	if (_engine->cfgfile.Movie == CONF_MOVIE_FLAWIDE) {
+		for (i = 0; i < SCREEN_WIDTH / SCALE * 40; i++) {
 			*(dest++) = 0x00;
 		}
 	}
@@ -178,41 +129,40 @@ void scaleFla2x() {
 			*(dest++) = *(source);
 			*(dest++) = *(source++);
 		}
-		if (cfgfile.Movie == CONF_MOVIE_FLAWIDE) { // include wide bars
-			memcpy(dest, dest - SCREEN_WIDTH / SCALE, FLASCREEN_WIDTH*2);
+		if (_engine->cfgfile.Movie == CONF_MOVIE_FLAWIDE) { // include wide bars
+			memcpy(dest, dest - SCREEN_WIDTH / SCALE, FLASCREEN_WIDTH * 2);
 			dest += FLASCREEN_WIDTH * 2;
 		} else { // stretch the movie like original game.
 			if (i % (2)) {
-				memcpy(dest, dest - SCREEN_WIDTH / SCALE, FLASCREEN_WIDTH*2);
+				memcpy(dest, dest - SCREEN_WIDTH / SCALE, FLASCREEN_WIDTH * 2);
 				dest += FLASCREEN_WIDTH * 2;
 			}
 			if (i % 10) {
-				memcpy(dest, dest - SCREEN_WIDTH / SCALE, FLASCREEN_WIDTH*2);
+				memcpy(dest, dest - SCREEN_WIDTH / SCALE, FLASCREEN_WIDTH * 2);
 				dest += FLASCREEN_WIDTH * 2;
 			}
 		}
 	}
 
-	if (cfgfile.Movie == CONF_MOVIE_FLAWIDE) {
-		for (i = 0; i < SCREEN_WIDTH / SCALE*40; i++) {
+	if (_engine->cfgfile.Movie == CONF_MOVIE_FLAWIDE) {
+		for (i = 0; i < SCREEN_WIDTH / SCALE * 40; i++) {
 			*(dest++) = 0x00;
 		}
 	}
 }
 
-/** FLA movie process frame */
-void processFrame() {
+void FlaMovies::processFrame() {
 	FLASampleStruct sample;
 	uint32 opcodeBlockSize;
 	uint8 opcode;
 	int32 aux = 0;
-	uint8 * ptr;
+	uint8 *ptr;
 
-	frread(&frFla, &frameData.videoSize, 1);
-	frread(&frFla, &frameData.dummy, 1);
-	frread(&frFla, &frameData.frameVar0, 4);
+	file.read(&frameData.videoSize, 1);
+	file.read(&frameData.dummy, 1);
+	file.read(&frameData.frameVar0, 4);
 
-	frread(&frFla, workVideoBufferCopy, frameData.frameVar0);
+	file.read(workVideoBufferCopy, frameData.frameVar0);
 
 	if ((int32)frameData.videoSize <= 0)
 		return;
@@ -220,35 +170,35 @@ void processFrame() {
 	ptr = workVideoBufferCopy;
 
 	do {
-		opcode = *((uint8*)ptr);
+		opcode = *((uint8 *)ptr);
 		ptr += 2;
-		opcodeBlockSize = *((uint16*)ptr);
+		opcodeBlockSize = *((uint16 *)ptr);
 		ptr += 2;
 
 		switch (opcode - 1) {
 		case kLoadPalette: {
-			int16 numOfColor = *((int16*)ptr);
-			int16 startColor = *((int16*)(ptr + 2));
-			memcpy((palette + (startColor*3)), (ptr + 4), numOfColor*3);
+			int16 numOfColor = *((int16 *)ptr);
+			int16 startColor = *((int16 *)(ptr + 2));
+			memcpy((_engine->_screens->palette + (startColor * 3)), (ptr + 4), numOfColor * 3);
 			break;
 		}
 		case kFade: {
 			// FLA movies don't use cross fade
 			// fade out tricky
 			if (_fadeOut != 1) {
-				convertPalToRGBA(palette, paletteRGBACustom);
-				fadeToBlack(paletteRGBACustom);
+				_engine->_screens->copyPal(_engine->_screens->palette, _engine->_screens->paletteRGBCustom);
+				_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBCustom);
 				_fadeOut = 1;
 			}
 			break;
 		}
 		case kPlaySample: {
 			memcpy(&sample, ptr, sizeof(FLASampleStruct));
-			playFlaSample(sample.sampleNum, sample.freq, sample.repeat, sample.x, sample.y);
+			_engine->_sound->playFlaSample(sample.sampleNum, sample.freq, sample.repeat, sample.x, sample.y);
 			break;
 		}
 		case kStopSample: {
-			stopSample(sample.sampleNum);
+			_engine->_sound->stopSample(sample.sampleNum);
 			break;
 		}
 		case kDeltaFrame: {
@@ -275,116 +225,107 @@ void processFrame() {
 
 /** Play FLA PCX Screens
 	@param flaName FLA movie name */
-void fla_pcxList(int8 *flaName) {
+static void fla_pcxList(const char *flaName) {
 	// TODO if is using FLA PCX than show the images instead
 }
 
-/** Play FLA movies
-	@param flaName FLA movie name */
-void playFlaMovie(int8 *flaName) {
-	int32 i;
-	int32 quit = 0;
-	int32 currentFrame;
-	int16 tmpValue;
-	int8 fileNamePath[256];
+FlaMovies::FlaMovies(TwinEEngine *engine) : _engine(engine) {}
 
-	stopSamples();
+void FlaMovies::playFlaMovie(const char *flaName) {
+	_engine->_sound->stopSamples();
 
 	// Play FLA PCX instead of movies
-	if (cfgfile.Movie == CONF_MOVIE_FLAPCX) {
+	if (_engine->cfgfile.Movie == CONF_MOVIE_FLAPCX) {
 		fla_pcxList(flaName);
 		return;
 	}
 
-	stopMusic();
+	_engine->_music->stopMusic();
 
-	// take extension if movie name has it
-	for (i = 0; i < (int32)strlen(flaName); i++) {
-		if(flaName[i] == '.') {
-			flaName[i] = 0;
-		}
+	Common::String fileNamePath = Common::String::format(FLA_DIR "%s", flaName);
+	const size_t n = fileNamePath.findLastOf(".");
+	if (n != Common::String::npos) {
+		fileNamePath.erase(n);
 	}
-
-	sprintf(fileNamePath, FLA_DIR);
-	strcat(fileNamePath, flaName);
-	strcat(fileNamePath, FLA_EXT);
+	fileNamePath += FLA_EXT;
 
 	_fadeOut = -1;
 	fadeOutFrames = 0;
 
-	if (!fropen2(&frFla, fileNamePath, "rb"))
+	if (!file.open(fileNamePath)) {
+		warning("Failed to open fla movie '%s'", fileNamePath.c_str());
 		return;
-
-	workVideoBufferCopy = workVideoBuffer;
-
-	frread(&frFla, &flaHeaderData.version, 6);
-	frread(&frFla, &flaHeaderData.numOfFrames, 4);
-	frread(&frFla, &flaHeaderData.speed, 1);
-	frread(&frFla, &flaHeaderData.var1, 1);
-	frread(&frFla, &flaHeaderData.xsize, 2);
-	frread(&frFla, &flaHeaderData.ysize, 2);
-
-	frread(&frFla, &samplesInFla, 2);
-	frread(&frFla, &tmpValue, 2);
-
-	for (i = 0; i < samplesInFla; i++) {
-		int16 var0;
-		int16 var1;
-		frread(&frFla, &var0, 2);
-		frread(&frFla, &var1, 2);
-		flaSampleTable[i] = var0;
 	}
 
-	if (!strcmp(flaHeaderData.version, "V1.3")) {
-		currentFrame = 0;
+	workVideoBufferCopy = _engine->workVideoBuffer;
 
-		if (!quit) {
-			do {
-				if (currentFrame == flaHeaderData.numOfFrames)
-					quit = 1;
-				else {
-					processFrame();
-					scaleFla2x();
-					copyScreen(workVideoBuffer, frontVideoBuffer);
+	file.read(&flaHeaderData.version, 6);
+	flaHeaderData.numOfFrames = file.readUint32LE();
+	flaHeaderData.speed = file.readByte();
+	flaHeaderData.var1 = file.readByte();
+	flaHeaderData.xsize = file.readUint16LE();
+	flaHeaderData.ysize = file.readUint16LE();
 
-					// Only blit to screen if isn't a fade
-					if (_fadeOut == -1) {
-						convertPalToRGBA(palette, paletteRGBACustom);
-						if (!currentFrame) // fade in the first frame
-							fadeIn(paletteRGBACustom);
-						else
-							setPalette(paletteRGBACustom);
-					}
+	samplesInFla = file.readUint16LE();
+	file.skip(2);
 
-					// TRICKY: fade in tricky
-					if (fadeOutFrames >= 2) {
-						flip();
-						convertPalToRGBA(palette, paletteRGBACustom);
-						fadeToPal(paletteRGBACustom);
-						_fadeOut = -1;
-						fadeOutFrames = 0;
-					}
-
-					currentFrame++;
-
-					fpsCycles(flaHeaderData.speed + 1);
-
-					readKeys();
-
-					if (skipIntro)
-						break;
-				}
-			} while (!quit);
-		}
+	for (int32 i = 0; i < samplesInFla; i++) {
+		flaSampleTable[i] = file.readSint16LE();
+		file.skip(2);
 	}
 
-	if (cfgfile.CrossFade) {
-		crossFade(frontVideoBuffer, paletteRGBACustom);
+	if (!strcmp((const char *)flaHeaderData.version, "V1.3")) {
+		int32 currentFrame = 0;
+
+		do {
+			if (currentFrame == flaHeaderData.numOfFrames) {
+				break;
+			}
+			processFrame();
+			scaleFla2x();
+			_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+
+			// Only blit to screen if isn't a fade
+			if (_fadeOut == -1) {
+				_engine->_screens->copyPal(_engine->_screens->palette, _engine->_screens->paletteRGBCustom);
+				if (!currentFrame) // fade in the first frame
+					_engine->_screens->fadeIn(_engine->_screens->paletteRGBCustom);
+				else
+					_engine->setPalette(_engine->_screens->paletteRGBCustom);
+			}
+
+			// TRICKY: fade in tricky
+			if (fadeOutFrames >= 2) {
+				_engine->flip();
+				_engine->_screens->copyPal(_engine->_screens->palette, _engine->_screens->paletteRGBCustom);
+				_engine->_screens->fadeToPal(_engine->_screens->paletteRGBCustom);
+				_fadeOut = -1;
+				fadeOutFrames = 0;
+			}
+
+			currentFrame++;
+
+			_engine->_system->delayMillis(1000 / flaHeaderData.speed + 1);
+
+			_engine->readKeys();
+
+			if (_engine->shouldQuit()) {
+				break;
+			}
+
+			if (_engine->_keyboard.skipIntro) {
+				break;
+			}
+		} while (true);
+	}
+
+	if (_engine->cfgfile.CrossFade) {
+		_engine->crossFade(_engine->frontVideoBuffer, _engine->_screens->paletteRGBCustom);
 	} else {
-		fadeToBlack(paletteRGBACustom);
+		_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBCustom);
 	}
 
-	stopSamples();
+	_engine->_sound->stopSamples();
 }
 
 /*
@@ -490,3 +431,5 @@ void prepareFlaPCX(int index)
 
 	osystem_FlaPCXCrossFade(image);
 }*/
+
+} // namespace TwinE

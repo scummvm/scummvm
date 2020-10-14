@@ -1,130 +1,107 @@
-/** @file movements.cpp
-	@brief
-	This file contains 3d actor movement rendering routines
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 
-	TwinEngine: a Little Big Adventure engine
+#include "twine/movements.h"
+#include "common/textconsole.h"
+#include "twine/actor.h"
+#include "twine/animations.h"
+#include "twine/collision.h"
+#include "twine/gamestate.h"
+#include "twine/grid.h"
+#include "twine/keyboard.h"
+#include "twine/renderer.h"
+#include "twine/scene.h"
+#include "twine/twine.h"
 
-	Copyright (C) 2013 The TwinEngine team
-	Copyright (C) 2008-2013 Prequengine team
-	Copyright (C) 2002-2007 The TwinEngine team
+namespace TwinE {
 
-	This program is free software; you can redistribute it and/or
-	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 2
-	of the License, or (at your option) any later version.
+Movements::Movements(TwinEEngine *engine) : _engine(engine) {}
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*/
-
-#include <stdio.h>
-#include <math.h>
-
-#include "movements.h"
-#include "actor.h"
-#include "lbaengine.h"
-#include "renderer.h"
-#include "grid.h"
-#include "scene.h"
-#include "keyboard.h"
-#include "animations.h"
-#include "collision.h"
-#include "gamestate.h"
-
-/** Get shadow position
-	@param X Shadow X coordinate
-	@param Y Shadow Y coordinate
-	@param Z Shadow Z coordinate */
-void getShadowPosition(int32 X, int32 Y, int32 Z) {
+void Movements::getShadowPosition(int32 X, int32 Y, int32 Z) {
 	int32 tempX;
 	int32 tempY;
 	int32 tempZ;
-	uint8* ptr;
+	uint8 *ptr;
 
 	tempX = (X + 0x100) >> 9;
 	tempY = Y >> 8;
 	tempZ = (Z + 0x100) >> 9;
 
-	ptr = blockBuffer + tempY * 2 + tempX * 25 * 2 + (tempZ << 6) * 25 * 2;
+	ptr = _engine->_grid->blockBuffer + tempY * 2 + tempX * 25 * 2 + (tempZ << 6) * 25 * 2;
 
-	while (tempY) { // search down until either ground is found or lower border of the cube is reached
-		if (*(int16*)ptr) // found the ground
+	while (tempY) {        // search down until either ground is found or lower border of the cube is reached
+		if (*(int16 *)ptr) // found the ground
 			break;
 
 		tempY--;
 		ptr -= 2;
 	}
 
-	shadowCollisionType = 0;
+	_engine->_actor->shadowCollisionType = 0;
 
-	collisionX = tempX;
-	collisionY = tempY;
-	collisionZ = tempZ;
+	_engine->_collision->collisionX = tempX;
+	_engine->_collision->collisionY = tempY;
+	_engine->_collision->collisionZ = tempZ;
 
 	processActorX = X;
 	processActorY = (tempY + 1) << 8;
 	processActorZ = Z;
 
 	if (*ptr) { //*((uint8 *)(blockPtr))
-        uint8 *blockPtr;
-        uint8 brickShape;
+		uint8 *blockPtr;
+		uint8 brickShape;
 
-        blockPtr = getBlockLibrary(*(ptr) - 1) + 3 + *(ptr + 1) * 4;
-        brickShape = *((uint8 *)(blockPtr));
+		blockPtr = _engine->_grid->getBlockLibrary(*(ptr)-1) + 3 + *(ptr + 1) * 4;
+		brickShape = *((uint8 *)(blockPtr));
 
-		shadowCollisionType = brickShape;
-		reajustActorPosition(shadowCollisionType);
+		_engine->_actor->shadowCollisionType = brickShape;
+		_engine->_collision->reajustActorPosition(_engine->_actor->shadowCollisionType);
 	}
 
-	shadowX = processActorX;
-	shadowY = processActorY;
-	shadowZ = processActorZ;
+	_engine->_actor->shadowX = processActorX;
+	_engine->_actor->shadowY = processActorY;
+	_engine->_actor->shadowZ = processActorZ;
 }
 
-/** Set actor safe angle
-	@param startAngle start angle
-	@param endAngle end angle
-	@param stepAngle number of steps
-	@param movePtr Pointer to process movements */
-void setActorAngleSafe(int16 startAngle, int16 endAngle, int16 stepAngle, ActorMoveStruct * movePtr) {
+void Movements::setActorAngleSafe(int16 startAngle, int16 endAngle, int16 stepAngle, ActorMoveStruct *movePtr) {
 	movePtr->from = startAngle & 0x3FF;
 	movePtr->to = endAngle & 0x3FF;
 	movePtr->numOfStep = stepAngle & 0x3FF;
-	movePtr->timeOfChange = lbaTime;
+	movePtr->timeOfChange = _engine->lbaTime;
 }
 
-/** Clear actors safe angle
-	@param actorPtr actor pointer */
-void clearRealAngle(ActorStruct * actorPtr) {
+void Movements::clearRealAngle(ActorStruct *actorPtr) {
 	setActorAngleSafe(actorPtr->angle, actorPtr->angle, 0, &actorPtr->move);
 }
 
-/** Set actor safe angle
-	@param startAngle start angle
-	@param endAngle end angle
-	@param stepAngle number of steps
-	@param movePtr Pointer to process movements */
-void setActorAngle(int16 startAngle, int16 endAngle, int16 stepAngle, ActorMoveStruct * movePtr) {
+void Movements::setActorAngle(int16 startAngle, int16 endAngle, int16 stepAngle, ActorMoveStruct *movePtr) {
 	movePtr->from = startAngle;
 	movePtr->to = endAngle;
 	movePtr->numOfStep = stepAngle;
-	movePtr->timeOfChange = lbaTime;
+	movePtr->timeOfChange = _engine->lbaTime;
 }
 
-/** Get actor angle
-	@param x1 Actor 1 X
-	@param z1 Actor 1 Z
-	@param x2 Actor 2 X
-	@param z2 Actor 2 Z */
-#define PI 3.14159265
-int32 getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2, int32 z2) {
-    /*
+int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2, int32 z2) {
+	/*
 	//Pythagoras
     targetActorDistance = (int32)sqrt((int64)(((z2 - z1)*(z2 - z1) + (x2 - x1)*(x2 - x1))));
 
@@ -132,9 +109,9 @@ int32 getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2, int32 z2) 
         return 0;
 
     //given two points, we calculate its arc-tangent in radians
-    //Then we convert from radians (360 degrees == 2*PI) to a 10bit value (360 degrees == 1024) and invert the rotation direction
+    //Then we convert from radians (360 degrees == 2*M_PI) to a 10bit value (360 degrees == 1024) and invert the rotation direction
     //Then we add an offset of 90 degrees (256) and limit it to the 10bit value range.
-    return (256 + ((int32)floor((-1024 * atan2((int64)(z2-z1), (int32)(x2-x1))) / (2*PI)))) % 1024;
+    return (256 + ((int32)floor((-1024 * atan2((int64)(z2-z1), (int32)(x2-x1))) / (2*M_PI)))) % 1024;
 	*/
 
 	int32 newX, newZ, difX, difZ, tmpX, tmpZ, tmpEx, flag, destAngle, startAngle, finalAngle;
@@ -165,14 +142,14 @@ int32 getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2, int32 z2) 
 	destAngle = (difZ << 14) / targetActorDistance;
 
 	startAngle = 0;
-//	stopAngle  = 0x100;
+	//	stopAngle  = 0x100;
 
-	while (shadeAngleTab3[startAngle] > destAngle) {
+	while (_engine->_renderer->shadeAngleTab3[startAngle] > destAngle) {
 		startAngle++;
 	}
 
-	if (shadeAngleTab3[startAngle] != destAngle) {
-		if ((shadeAngleTab3[startAngle - 1] + shadeAngleTab3[startAngle]) / 2 <= destAngle) {
+	if (_engine->_renderer->shadeAngleTab3[startAngle] != destAngle) {
+		if ((_engine->_renderer->shadeAngleTab3[startAngle - 1] + _engine->_renderer->shadeAngleTab3[startAngle]) / 2 <= destAngle) {
 			startAngle--;
 		}
 	}
@@ -190,16 +167,14 @@ int32 getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2, int32 z2) 
 	return finalAngle & 0x3FF;
 }
 
-/** Get actor real angle
-	@param movePtr Pointer to process movements */
-int32 getRealAngle(ActorMoveStruct * movePtr) {
+int32 Movements::getRealAngle(ActorMoveStruct *movePtr) {
 	int32 timePassed;
 	int32 remainingAngle;
 
 	if (movePtr->numOfStep) {
-		timePassed = lbaTime - movePtr->timeOfChange;
+		timePassed = _engine->lbaTime - movePtr->timeOfChange;
 
-		if (timePassed >= movePtr->numOfStep) {	// rotation is finished
+		if (timePassed >= movePtr->numOfStep) { // rotation is finished
 			movePtr->numOfStep = 0;
 			return movePtr->to;
 		}
@@ -222,72 +197,49 @@ int32 getRealAngle(ActorMoveStruct * movePtr) {
 	return movePtr->to;
 }
 
-/** Get actor step
-	@param movePtr Pointer to process movements */
-int32 getRealValue(ActorMoveStruct * movePtr) {
+int32 Movements::getRealValue(ActorMoveStruct *movePtr) {
 	int32 tempStep;
 
 	if (!movePtr->numOfStep)
 		return movePtr->to;
 
-	if (!(lbaTime - movePtr->timeOfChange < movePtr->numOfStep)) {
+	if (!(_engine->lbaTime - movePtr->timeOfChange < movePtr->numOfStep)) {
 		movePtr->numOfStep = 0;
 		return movePtr->to;
 	}
 
 	tempStep = movePtr->to - movePtr->from;
-	tempStep *= lbaTime - movePtr->timeOfChange;
+	tempStep *= _engine->lbaTime - movePtr->timeOfChange;
 	tempStep /= movePtr->numOfStep;
 
 	return tempStep + movePtr->from;
 }
 
-/** Rotate actor with a given angle
-	@param X Actor current X coordinate
-	@param Z Actor current Z coordinate
-	@param angle Actor angle to rotate */
-void rotateActor(int32 X, int32 Z, int32 angle) {
-    double radians = 2*PI*angle/0x400;
-    destX = (int32)(X*cos(radians) + Z*sin(radians));
-    destZ = (int32)(-X*sin(radians) + Z*cos(radians));
+void Movements::rotateActor(int32 X, int32 Z, int32 angle) {
+	const double radians = 2 * M_PI * angle / 0x400;
+	_engine->_renderer->destX = (int32)(X * cos(radians) + Z * sin(radians));
+	_engine->_renderer->destZ = (int32)(-X * sin(radians) + Z * cos(radians));
 }
 
-/** Get distance value in 2D
-	@param x1 Actor 1 X coordinate
-	@param z1 Actor 1 Z coordinate
-	@param x2 Actor 2 X coordinate
-	@param z2 Actor 2 Z coordinate */
-int32 getDistance2D(int32 x1, int32 z1, int32 x2, int32 z2) {
-	return (int32)sqrt((int64)((x2-x1)*(x2-x1) + (z2-z1)*(z2-z1)));
+int32 Movements::getDistance2D(int32 x1, int32 z1, int32 x2, int32 z2) {
+	return (int32)sqrt((int64)((x2 - x1) * (x2 - x1) + (z2 - z1) * (z2 - z1)));
 }
 
-/** Get distance value in 3D
-	@param x1 Actor 1 X coordinate
-	@param y1 Actor 1 Y coordinate
-	@param z1 Actor 1 Z coordinate
-	@param x2 Actor 2 X coordinate
-	@param y2 Actor 2 Y coordinate
-	@param z2 Actor 2 Z coordinate */
-int32 getDistance3D(int32 x1, int32 y1, int32 z1, int32 x2, int32 y2, int32 z2) {
-	return (int32)sqrt((int64)((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1)));
+int32 Movements::getDistance3D(int32 x1, int32 y1, int32 z1, int32 x2, int32 y2, int32 z2) {
+	return (int32)sqrt((int64)((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) + (z2 - z1) * (z2 - z1)));
 }
 
-/** Move actor around the scene
-	@param angleFrom Current actor angle
-	@param angleTo Angle to rotate
-	@param speed Rotate speed
-	@param movePtr Pointer to process movements */
-void moveActor(int32 angleFrom, int32 angleTo, int32 speed, ActorMoveStruct *movePtr) { // ManualRealAngle
+void Movements::moveActor(int32 angleFrom, int32 angleTo, int32 speed, ActorMoveStruct *movePtr) { // ManualRealAngle
 	int32 numOfStepInt;
 	int16 numOfStep;
 	int16 from;
 	int16 to;
 
 	from = angleFrom & 0x3FF;
-	to   = angleTo & 0x3FF;
+	to = angleTo & 0x3FF;
 
 	movePtr->from = from;
-	movePtr->to   = to;
+	movePtr->to = to;
 
 	numOfStep = (from - to) << 6;
 
@@ -303,11 +255,11 @@ void moveActor(int32 angleFrom, int32 angleTo, int32 speed, ActorMoveStruct *mov
 	numOfStepInt >>= 8;
 
 	movePtr->numOfStep = (int16)numOfStepInt;
-	movePtr->timeOfChange = lbaTime;
+	movePtr->timeOfChange = _engine->lbaTime;
 }
 
-void processActorMovements(int32 actorIdx) {
-	ActorStruct *actor = &sceneActors[actorIdx];
+void Movements::processActorMovements(int32 actorIdx) {
+	ActorStruct *actor = &_engine->_scene->sceneActors[actorIdx];
 
 	if (actor->entity == -1)
 		return;
@@ -318,15 +270,15 @@ void processActorMovements(int32 actorIdx) {
 		if (actor->controlMode != 1)
 			return;
 
-		if (key & 4)
+		if (_engine->_keyboard.key & 4)
 			tempAngle = 0x100;
 
-		if (key & 8)
+		if (_engine->_keyboard.key & 8)
 			tempAngle = -0x100;
 
 		moveActor(actor->angle, actor->angle + tempAngle, actor->speed, &actor->move);
 
-		heroPressedKey = key;
+		_engine->_keyboard.heroPressedKey = _engine->_keyboard.key;
 	} else {
 		int16 tempAngle;
 
@@ -344,82 +296,82 @@ void processActorMovements(int32 actorIdx) {
 				heroAction = 0;
 
 				// If press W for action
-				if (skipIntro == 0x11) {
+				if (_engine->_keyboard.skipIntro == 0x11) {
 					heroAction = 1;
 				}
 
 				// Process hero actions
-				switch (heroBehaviour) {
+				switch (_engine->_actor->heroBehaviour) {
 				case kNormal:
-					if (loopPressedKey & 1) {
+					if (_engine->loopPressedKey & 1) {
 						heroAction = 1;
 					}
 					break;
 				case kAthletic:
-					if (loopPressedKey & 1) {
-						initAnim(kJump, 1, 0, actorIdx);
+					if (_engine->loopPressedKey & 1) {
+						_engine->_animations->initAnim(kJump, 1, 0, actorIdx);
 					}
 					break;
 				case kAggressive:
-					if (loopPressedKey & 1) {
-						if (autoAgressive) {
+					if (_engine->loopPressedKey & 1) {
+						if (_engine->_actor->autoAgressive) {
 							heroMoved = 1;
 							actor->angle = getRealAngle(&actor->move);
-							if (!(previousLoopPressedKey & 1) || !actor->anim) {
-								int32 aggresiveMode = Rnd(3);
+							if (!(_engine->previousLoopPressedKey & 1) || !actor->anim) {
+								int32 aggresiveMode = _engine->getRandomNumber(3);
 
 								switch (aggresiveMode) {
 								case 0:
-									initAnim(kKick, 1, 0, actorIdx);
+									_engine->_animations->initAnim(kKick, 1, 0, actorIdx);
 									break;
 								case 1:
-									initAnim(kRightPunch, 1, 0, actorIdx);
+									_engine->_animations->initAnim(kRightPunch, 1, 0, actorIdx);
 									break;
 								case 2:
-									initAnim(kLeftPunch, 1, 0, actorIdx);
+									_engine->_animations->initAnim(kLeftPunch, 1, 0, actorIdx);
 									break;
 								}
 							}
 						} else {
-							if (key & 8) {
-								initAnim(kRightPunch, 1, 0, actorIdx);
+							if (_engine->_keyboard.key & 8) {
+								_engine->_animations->initAnim(kRightPunch, 1, 0, actorIdx);
 							}
 
-							if (key & 4) {
-								initAnim(kLeftPunch, 1, 0, actorIdx);
+							if (_engine->_keyboard.key & 4) {
+								_engine->_animations->initAnim(kLeftPunch, 1, 0, actorIdx);
 							}
 
-							if (key & 1) {
-								initAnim(kKick, 1, 0, actorIdx);
+							if (_engine->_keyboard.key & 1) {
+								_engine->_animations->initAnim(kKick, 1, 0, actorIdx);
 							}
 						}
 					}
 					break;
 				case kDiscrete:
-					if (loopPressedKey & 1) {
-						initAnim(kHide, 0, 255, actorIdx);
+					if (_engine->loopPressedKey & 1) {
+						_engine->_animations->initAnim(kHide, 0, 255, actorIdx);
 					}
 					break;
 				}
 			}
 
-			if ((loopPressedKey & 8) && !gameFlags[GAMEFLAG_INVENTORY_DISABLED]) {
-				if (usingSabre == 0) { // Use Magic Ball
-					if (gameFlags[GAMEFLAG_HAS_MAGICBALL]) {
-						if (magicBallIdx == -1) {
-							initAnim(kThrowBall, 1, 0, actorIdx);
+			if ((_engine->loopPressedKey & 8) && !_engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED]) {
+				if (_engine->_gameState->usingSabre == 0) { // Use Magic Ball
+					if (_engine->_gameState->gameFlags[InventoryItems::kiMagicBall]) {
+						if (_engine->_gameState->magicBallIdx == -1) {
+							_engine->_animations->initAnim(kThrowBall, 1, 0, actorIdx);
 						}
 
 						heroMoved = 1;
 						actor->angle = getRealAngle(&actor->move);
 					}
 				} else {
-					if (gameFlags[GAMEFLAG_HAS_SABRE]) {
-						if (actor->body != GAMEFLAG_HAS_SABRE) {
-							initModelActor(GAMEFLAG_HAS_SABRE, actorIdx);
+					if (_engine->_gameState->gameFlags[InventoryItems::kiUseSabre]) {
+						if (actor->body != InventoryItems::kiUseSabre) {
+							_engine->_actor->initModelActor(InventoryItems::kiUseSabre, actorIdx);
 						}
 
-						initAnim(kSabreAttack, 1, 0, actorIdx);
+						_engine->_animations->initAnim(kSabreAttack, 1, 0, actorIdx);
 
 						heroMoved = 1;
 						actor->angle = getRealAngle(&actor->move);
@@ -427,36 +379,36 @@ void processActorMovements(int32 actorIdx) {
 				}
 			}
 
-			if (!loopPressedKey || heroAction) {
+			if (!_engine->loopPressedKey || heroAction) {
 
-				if (key & 3) {  // if continue walking
+				if (_engine->_keyboard.key & 3) {     // if continue walking
 					heroMoved = 0; // don't break animation
 				}
 
-				if (key != heroPressedKey || loopPressedKey != heroPressedKey2) {
+				if (_engine->_keyboard.key != _engine->_keyboard.heroPressedKey || _engine->loopPressedKey != _engine->_keyboard.heroPressedKey2) {
 					if (heroMoved) {
-						initAnim(kStanding, 0, 255, actorIdx);
+						_engine->_animations->initAnim(kStanding, 0, 255, actorIdx);
 					}
 				}
 
 				heroMoved = 0;
 
-				if (key & 1) { // walk forward
-					if (!currentActorInZone) {
-						initAnim(kForward, 0, 255, actorIdx);
+				if (_engine->_keyboard.key & 1) { // walk forward
+					if (!_engine->_scene->currentActorInZone) {
+						_engine->_animations->initAnim(kForward, 0, 255, actorIdx);
 					}
 					heroMoved = 1;
 				}
 
-				if (key & 2 && !(key & 1)) { // walk backward
-					initAnim(kBackward, 0, 255, actorIdx);
+				if (_engine->_keyboard.key & 2 && !(_engine->_keyboard.key & 1)) { // walk backward
+					_engine->_animations->initAnim(kBackward, 0, 255, actorIdx);
 					heroMoved = 1;
 				}
 
-				if (key & 4) { // turn left
+				if (_engine->_keyboard.key & 4) { // turn left
 					heroMoved = 1;
 					if (actor->anim == 0) {
-						initAnim(kTurnLeft, 0, 255, actorIdx);
+						_engine->_animations->initAnim(kTurnLeft, 0, 255, actorIdx);
 					} else {
 						if (!actor->dynamicFlags.bIsRotationByAnim) {
 							actor->angle = getRealAngle(&actor->move);
@@ -464,10 +416,10 @@ void processActorMovements(int32 actorIdx) {
 					}
 				}
 
-				if (key & 8) { // turn right
+				if (_engine->_keyboard.key & 8) { // turn right
 					heroMoved = 1;
 					if (actor->anim == 0) {
-						initAnim(kTurnRight, 0, 255, actorIdx);
+						_engine->_animations->initAnim(kTurnRight, 0, 255, actorIdx);
 					} else {
 						if (!actor->dynamicFlags.bIsRotationByAnim) {
 							actor->angle = getRealAngle(&actor->move);
@@ -478,62 +430,62 @@ void processActorMovements(int32 actorIdx) {
 
 			tempAngle = 0;
 
-			if (key & 4) {
+			if (_engine->_keyboard.key & 4) {
 				tempAngle = 0x100;
 			}
 
-			if (key & 8) {
+			if (_engine->_keyboard.key & 8) {
 				tempAngle = -0x100;
 			}
 
 			moveActor(actor->angle, actor->angle + tempAngle, actor->speed, &actor->move);
 
-			heroPressedKey  = key;
-			heroPressedKey2 = loopPressedKey;
+			_engine->_keyboard.heroPressedKey = _engine->_keyboard.key;
+			_engine->_keyboard.heroPressedKey2 = _engine->loopPressedKey;
 
 			break;
 		case kFollow: {
-			int32 newAngle = getAngleAndSetTargetActorDistance(actor->X, actor->Z, sceneActors[actor->followedActor].X, sceneActors[actor->followedActor].Z);
+			int32 newAngle = getAngleAndSetTargetActorDistance(actor->x, actor->z, _engine->_scene->sceneActors[actor->followedActor].x, _engine->_scene->sceneActors[actor->followedActor].z);
 			if (actor->staticFlags.bIsSpriteActor) {
 				actor->angle = newAngle;
 			} else {
 				moveActor(actor->angle, newAngle, actor->speed, &actor->move);
 			}
-		}
-			break;
+		} break;
 		case kTrack:
 			if (actor->positionInMoveScript == -1) {
 				actor->positionInMoveScript = 0;
 			}
 			break;
-		case kFollow2:		// unused
+		case kFollow2:     // unused
 		case kTrackAttack: // unused
 			break;
 		case kSameXZ:
-			actor->X = sceneActors[actor->followedActor].X;
-			actor->Z = sceneActors[actor->followedActor].Z;
+			actor->x = _engine->_scene->sceneActors[actor->followedActor].x;
+			actor->z = _engine->_scene->sceneActors[actor->followedActor].z;
 			break;
 		case kRandom: {
 			if (!actor->dynamicFlags.bIsRotationByAnim) {
 				if (actor->brickShape & 0x80) {
-					moveActor(actor->angle, (((rand() & 0x100) + (actor->angle - 0x100)) & 0x3FF ), actor->speed, &actor->move);
-					actor->info0 = Rnd(300) + lbaTime + 300;
-					initAnim(0, 0, 255, actorIdx);
+					moveActor(actor->angle, (((_engine->getRandomNumber() & 0x100) + (actor->angle - 0x100)) & 0x3FF), actor->speed, &actor->move);
+					actor->info0 = _engine->getRandomNumber(300) + _engine->lbaTime + 300;
+					_engine->_animations->initAnim(kStanding, 0, 255, actorIdx);
 				}
 
 				if (!actor->move.numOfStep) {
-					initAnim(1, 0, 255, actorIdx);
-					if(lbaTime > actor->info0) {
-						moveActor(actor->angle, (((rand() & 0x100) + (actor->angle - 0x100)) & 0x3FF), actor->speed, &actor->move);
-                        actor->info0 = Rnd(300) + lbaTime + 300;
-                    }
+					_engine->_animations->initAnim(kForward, 0, 255, actorIdx);
+					if (_engine->lbaTime > actor->info0) {
+						moveActor(actor->angle, (((_engine->getRandomNumber() & 0x100) + (actor->angle - 0x100)) & 0x3FF), actor->speed, &actor->move);
+						actor->info0 = _engine->getRandomNumber(300) + _engine->lbaTime + 300;
+					}
 				}
 			}
-		}
-			break;
+		} break;
 		default:
-			printf("Unknown Control mode %d\n", actor->controlMode);
+			warning("Unknown Control mode %d\n", actor->controlMode);
 			break;
 		}
 	}
 }
+
+} // namespace TwinE

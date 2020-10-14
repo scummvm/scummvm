@@ -1,43 +1,60 @@
-/** @file menuoptions.h
-	@brief
-	This file contains movies routines
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 
-	TwinEngine: a Little Big Adventure engine
+#ifndef TWINE_MENUOPTIONS_H
+#define TWINE_MENUOPTIONS_H
 
-	Copyright (C) 2013 The TwinEngine team
-	Copyright (C) 2008-2013 Prequengine team
-	Copyright (C) 2002-2007 The TwinEngine team
+#include "common/scummsys.h"
+#include "twine/actor.h"
 
-	This program is free software; you can redistribute it and/or
-	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 2
-	of the License, or (at your option) any later version.
+namespace TwinE {
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+class MenuOptions {
+private:
+	TwinEEngine *_engine;
 
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*/
+	int32 enterPlayerName(int32 textIdx);
+	void drawSelectableCharacters();
+	void drawPlayerName(int32 centerx, int32 top, int8 *playerName, int32 type);
+	void drawSelectableCharacter(int32 x, int32 y, int32 arg);
+	void showCredits();
+	void newGame();
 
-#ifndef MENUOPTIONS_H
-#define MENUOPTIONS_H
+public:
+	MenuOptions(TwinEEngine *engine) : _engine(engine) {}
 
-#include "sys.h"
+	int32 canShowCredits = 0;
 
-int32 canShowCredits;
+	int8 playerName[256] = "";
+	int8 enterPlayerNameVar1 = 0;
+	int32 enterPlayerNameVar2 = 0;
 
-int8 playerName[256];
-int8 enterPlayerNameVar1;
-int32 enterPlayerNameVar2;
+	/** Main menu new game options */
+	void newGameMenu();
 
-/** Main menu new game options */
-void newGameMenu();
+	/** Main menu continue game options */
+	void continueGameMenu();
+};
 
-/** Main menu continue game options */
-void continueGameMenu();
+} // namespace TwinE
 
 #endif

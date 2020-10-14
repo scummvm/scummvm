@@ -1,101 +1,119 @@
-/** @file sound.h
-	@brief
-	This file contains music playing routines
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 
-	TwinEngine: a Little Big Adventure engine
+#ifndef TWINE_SOUND_H
+#define TWINE_SOUND_H
 
-	Copyright (C) 2013 The TwinEngine team
-	Copyright (C) 2008-2013 Prequengine team
-	Copyright (C) 2002-2007 The TwinEngine team
+#include "audio/mixer.h"
+#include "common/scummsys.h"
 
-	This program is free software; you can redistribute it and/or
-	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 2
-	of the License, or (at your option) any later version.
+namespace TwinE {
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*/
-
-#ifndef SOUND_H
-#define SOUND_H
-
-#include "sys.h"
-#include "sys.h"
-
-/** Total number of sprites allowed in the game */
+/** Total number of samples allowed in the game */
 #define NUM_SAMPLES 243
 #define NUM_CHANNELS 32
 
-/** Table with all loaded samples */
-uint8* samplesTable[NUM_SAMPLES];
-/** Table with all loaded samples sizes */
-uint32 samplesSizeTable[NUM_SAMPLES];
+class TwinEEngine;
+class Sound {
+private:
+	TwinEEngine *_engine;
 
-/** Samples playing at the same time */
-int32 samplesPlaying[NUM_CHANNELS];
+	/** Get the channel where the sample is playing */
+	int32 getSampleChannel(int32 index);
 
-/** Samples playing at a actors position */
-int32 samplesPlayingActors[NUM_CHANNELS];
+	/** Samples playing at the same time */
+	Audio::SoundHandle samplesPlaying[NUM_CHANNELS];
 
-/** Sample volume
-	@param channel sample channel
-	@param volume sample volume number */
-void sampleVolume(int32 channel, int32 volume);
+	/** Samples playing at a actors position */
+	int32 samplesPlayingActors[NUM_CHANNELS];
 
-/** Play FLA movie samples
-	@param index sample index under flasamp.hqr file
-	@param frequency frequency used to play the sample
-	@param repeat number of times to repeat the sample
-	@param x unknown x variable
-	@param y unknown y variable */
-void playFlaSample(int32 index, int32 frequency, int32 repeat, int32 x, int32 y);
+public:
+	Sound(TwinEEngine *engine);
 
-/** Update sample position in channel */
-void setSamplePosition(int32 channelIdx, int32 x, int32 y, int32 z);
+	bool isChannelPlaying(int32 channel);
+	/** Table with all loaded samples */
+	uint8 *samplesTable[NUM_SAMPLES] {nullptr};
+	/** Table with all loaded samples sizes */
+	uint32 samplesSizeTable[NUM_SAMPLES] {0};
 
-/** Play samples
-	@param index sample index under flasamp.hqr file
-	@param frequency frequency used to play the sample
-	@param repeat number of times to repeat the sample
-	@param x unknown x variable
-	@param y unknown y variable
-	@param z unknown z variable */
-void playSample(int32 index, int32 frequency, int32 repeat, int32 x, int32 y, int32 z, int32 actorIdx);
+	/**
+	 * Sample volume
+	 * @param channel sample channel
+	 * @param volume sample volume number
+	 */
+	void sampleVolume(int32 channel, int32 volume);
 
-/** Pause samples */
-void pauseSamples();
+	/**
+	 * Play FLA movie samples
+	 * @param index sample index under flasamp.hqr file
+	 * @param frequency frequency used to play the sample
+	 * @param repeat number of times to repeat the sample
+	 * @param x unknown x variable
+	 * @param y unknown y variable
+	 */
+	void playFlaSample(int32 index, int32 frequency, int32 repeat, int32 x, int32 y);
 
-void resumeSamples();
+	/** Update sample position in channel */
+	void setSamplePosition(int32 channelIdx, int32 x, int32 y, int32 z);
 
-/** Stop samples */
-void stopSamples();
+	/**
+	 * Play samples
+	 * @param index sample index under flasamp.hqr file
+	 * @param frequency frequency used to play the sample
+	 * @param repeat number of times to repeat the sample
+	 * @param x unknown x variable
+	 * @param y unknown y variable
+	 * @param z unknown z variable
+	 */
+	void playSample(int32 index, int32 frequency, int32 repeat, int32 x, int32 y, int32 z, int32 actorIdx);
 
-/** Get the channel where the actor sample is playing */
-int32 getActorChannel(int32 index);
+	/** Pause samples */
+	void pauseSamples();
 
-/** Get the channel where the sample is playing */
-int32 getSampleChannel(int32 index);
+	/** Resume samples */
+	void resumeSamples();
 
-/** Stops a specific sample */
-void stopSample(int32 index);
+	/** Stop samples */
+	void stopSamples();
 
-/** Find a free channel slot to use */
-int32 getFreeSampleChannelIndex();
+	/** Get the channel where the actor sample is playing */
+	int32 getActorChannel(int32 index);
 
-/** Remove a sample from the channel usage list */
-void removeSampleChannel(int32 index);
+	/** Stops a specific sample */
+	void stopSample(int32 index);
 
-/** Check if a sample is playing */
-int32 isSamplePlaying(int32 index);
+	/** Find a free channel slot to use */
+	int32 getFreeSampleChannelIndex();
 
-/** Play VOX sample */
-void playVoxSample(int32 index);
+	/** Remove a sample from the channel usage list */
+	void removeSampleChannel(int32 index);
+
+	/** Check if a sample is playing */
+	int32 isSamplePlaying(int32 index);
+
+	/** Play VOX sample */
+	void playVoxSample(int32 index);
+};
+
+} // namespace TwinE
 
 #endif

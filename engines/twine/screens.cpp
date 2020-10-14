@@ -1,189 +1,133 @@
-/** @file images.cpp
-	@brief
-	This file contains image processing.
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 
-	TwinEngine: a Little Big Adventure engine
+#include "common/system.h"
+#include "twine/screens.h"
+#include "twine/hqrdepack.h"
+#include "twine/music.h"
+#include "twine/resources.h"
+#include "twine/twine.h"
 
-	Copyright (C) 2013 The TwinEngine team
-	Copyright (C) 2008-2013 Prequengine team
-	Copyright (C) 2002-2007 The TwinEngine team
+namespace TwinE {
 
-	This program is free software; you can redistribute it and/or
-	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 2
-	of the License, or (at your option) any later version.
+void Screens::adelineLogo() {
+	_engine->_music->playMidiMusic(31, 0);
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*/
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include "screens.h"
-#include "resources.h"
-#include "main.h"
-#include "sdlengine.h"
-#include "music.h"
-#include "hqrdepack.h"
-#include "lbaengine.h"
-
-
-/** Load and display Adeline Logo */
-void adelineLogo() {
-	playMidiMusic(31, 0);
-
-	loadImage(RESSHQR_ADELINEIMG, 1);
-	delaySkip(7000);
-	fadeOut(paletteRGBACustom);
+	loadImage(RESSHQR_ADELINEIMG);
+	_engine->delaySkip(7000);
+	fadeOut(paletteRGBCustom);
 	palCustom = 1;
 }
 
-/** Load and display Main Menu image */
-void loadMenuImage(int16 fade_in) {
-	hqrGetEntry(workVideoBuffer, HQR_RESS_FILE, RESSHQR_MENUIMG);
-	copyScreen(workVideoBuffer, frontVideoBuffer);
+void Screens::loadMenuImage(bool fade_in) {
+	_engine->_hqrdepack->hqrGetEntry(_engine->workVideoBuffer, Resources::HQR_RESS_FILE, RESSHQR_MENUIMG);
+	copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 	if (fade_in) {
-		fadeToPal(paletteRGBA);
+		fadeToPal(paletteRGB);
 	} else {
-		setPalette(paletteRGBA);
+		_engine->setPalette(paletteRGB);
 	}
 
 	palCustom = 0;
 }
 
-/** Load a custom palette */
-void loadCustomPalette(int32 index) {
-	hqrGetEntry(palette, HQR_RESS_FILE, index);
-	convertPalToRGBA(palette, paletteRGBACustom);
+void Screens::loadCustomPalette(int32 index) {
+	_engine->_hqrdepack->hqrGetEntry(palette, Resources::HQR_RESS_FILE, index);
+	copyPal(palette, paletteRGBCustom);
 }
 
-/** Load and display a particulary image on \a RESS.HQR file with cross fade effect
-	@param index \a RESS.HQR entry index (starting from 0) */
-void loadImage(int32 index, int16 fade_in) {
-	hqrGetEntry(workVideoBuffer, HQR_RESS_FILE, index);
-	copyScreen(workVideoBuffer, frontVideoBuffer);
+void Screens::copyPal(const uint8* in, uint8* out) {
+	memcpy(out, in, NUMOFCOLORS * 3);
+}
+
+void Screens::loadImage(int32 index, bool fade_in) {
+	_engine->_hqrdepack->hqrGetEntry(_engine->workVideoBuffer, Resources::HQR_RESS_FILE, index);
+	copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 	loadCustomPalette(index + 1);
 	if (fade_in) {
-		fadeToPal(paletteRGBACustom);
+		fadeToPal(paletteRGBCustom);
 	} else {
-		setPalette(paletteRGBACustom);
+		_engine->setPalette(paletteRGBCustom);
 	}
 
 	palCustom = 1;
 }
 
-/** Load and display a particulary image on \a RESS.HQR file with cross fade effect and delay
-	@param index \a RESS.HQR entry index (starting from 0)
-	@param time number of seconds to delay */
-void loadImageDelay(int32 index, int32 time) {
-	loadImage(index, 1);
-	delaySkip(1000*time);
-	fadeOut(paletteRGBACustom);
+void Screens::loadImageDelay(int32 index, int32 time) {
+	loadImage(index);
+	_engine->delaySkip(1000 * time);
+	fadeOut(paletteRGBCustom);
 }
 
-/** Converts in-game palette to SDL palette
-	@param palSource palette source with RGB
-	@param palDest palette destination with RGBA */
-void convertPalToRGBA(uint8 * palSource, uint8 * palDest) {
-	int i;
-
-	for (i = 0; i < NUMOFCOLORS; i++) {
-		palDest[0] = palSource[0];
-		palDest[1] = palSource[1];
-		palDest[2] = palSource[2];
-		palDest += 4;
-		palSource += 3;
-	}
-}
-
-/** Fade image in
-	@param palette current palette to fade in */
-void fadeIn(uint8 * palette) {
-	if (cfgfile.CrossFade)
-		crossFade(frontVideoBuffer, palette);
+void Screens::fadeIn(uint8 *pal) {
+	if (_engine->cfgfile.CrossFade)
+		_engine->crossFade(_engine->frontVideoBuffer, pal);
 	else
-		fadeToPal(palette);
+		fadeToPal(pal);
 
-	setPalette(palette);
+	_engine->setPalette(pal);
 }
 
-/** Fade image out
-	@param palette current palette to fade out */
-void fadeOut(uint8 * palette) {
+void Screens::fadeOut(uint8 *pal) {
 	/*if(cfgfile.CrossFade)
 		crossFade(frontVideoBuffer, palette);
 	else
 		fadeToBlack(palette);*/
-	if (!cfgfile.CrossFade)
-		fadeToBlack(palette);
+	if (!_engine->cfgfile.CrossFade)
+		fadeToBlack(pal);
 }
 
-/** Calculate a new color component according with an intensity
-	@param modifier color compenent
-	@param color color value
-	@param param unknown
-	@param intensity intensity value to adjust
-	@return new color component*/
-int32 crossDot(int32 modifier, int32 color, int32 param, int32 intensity) {
+int32 Screens::crossDot(int32 modifier, int32 color, int32 param, int32 intensity) {
 	if (!param)
 		return (color);
 	return (((color - modifier) * intensity) / param) + modifier;
 }
 
-/** Adjust palette intensity
-	@param R red component of color
-	@param G green component of color
-	@param B blue component of color
-	@param palette palette to adjust
-	@param intensity intensity value to adjust */
-void adjustPalette(uint8 R, uint8 G, uint8 B, uint8 * palette, int32 intensity) {
-	uint8 localPalette[NUMOFCOLORS*4];
-	uint8 *newR;
-	uint8 *newG;
-	uint8 *newB;
-	uint8 *newA;
+void Screens::adjustPalette(uint8 R, uint8 G, uint8 B, uint8 *pal, int32 intensity) {
+	uint8 localPalette[NUMOFCOLORS * 3];
 
-	int32 local;
 	int32 counter = 0;
-	int32 i;
 
-	local = intensity;
+	uint8 *newR = &localPalette[0];
+	uint8 *newG = &localPalette[1];
+	uint8 *newB = &localPalette[2];
 
-	newR = &localPalette[0];
-	newG = &localPalette[1];
-	newB = &localPalette[2];
-	newA = &localPalette[3];
+	for (int32 i = 0; i < NUMOFCOLORS; i++) {
+		*newR = crossDot(R, pal[counter], 100, intensity);
+		*newG = crossDot(G, pal[counter + 1], 100, intensity);
+		*newB = crossDot(B, pal[counter + 2], 100, intensity);
 
-	for (i = 0; i < NUMOFCOLORS; i++) {
-		*newR = crossDot(R, palette[counter], 100, local);
-		*newG = crossDot(G, palette[counter + 1], 100, local);
-		*newB = crossDot(B, palette[counter + 2], 100, local);
-		*newA = 0;
+		newR += 3;
+		newG += 3;
+		newB += 3;
 
-		newR += 4;
-		newG += 4;
-		newB += 4;
-		newA += 4;
-
-		counter += 4;
+		counter += 3;
 	}
 
-	setPalette(localPalette);
+	_engine->setPalette(localPalette);
 }
 
-/** Adjust between two palettes
-	@param pal1 palette from adjust
-	@param pal2 palette to adjust */
-void adjustCrossPalette(uint8 * pal1, uint8 * pal2) {
-	uint8 localPalette[NUMOFCOLORS*4];
+void Screens::adjustCrossPalette(uint8 *pal1, uint8 *pal2) {
+	uint8 localPalette[NUMOFCOLORS * 4];
 
 	uint8 *newR;
 	uint8 *newG;
@@ -194,8 +138,7 @@ void adjustCrossPalette(uint8 * pal1, uint8 * pal2) {
 	int32 counter = 0;
 	int32 intensity = 0;
 
-	do
-	{
+	do {
 		counter = 0;
 
 		newR = &localPalette[counter];
@@ -217,98 +160,82 @@ void adjustCrossPalette(uint8 * pal1, uint8 * pal2) {
 			counter += 4;
 		}
 
-		setPalette(localPalette);
-		fpsCycles(50);
+		_engine->setPalette(localPalette);
+		_engine->_system->delayMillis(1000 / 50);
 
 		intensity++;
-	} while(intensity <= 100);
+	} while (intensity <= 100);
 }
 
-/** Fade image to black
-	@param palette current palette to fade */
-void fadeToBlack(uint8 *palette) {
+void Screens::fadeToBlack(uint8 *pal) {
 	int32 i = 0;
 
 	if (palReseted == 0) {
 		for (i = 100; i >= 0; i -= 3) {
-			adjustPalette(0, 0, 0, (uint8 *) palette, i);
-			fpsCycles(50);
+			adjustPalette(0, 0, 0, (uint8 *)pal, i);
+			_engine->_system->delayMillis(1000 / 50);
 		}
 	}
 
 	palReseted = 1;
 }
 
-/** Fade image with another palette source
-	@param palette current palette to fade */
-void fadeToPal(uint8 *palette) {
+void Screens::fadeToPal(uint8 *pal) {
 	int32 i = 100;
 
 	for (i = 0; i <= 100; i += 3) {
-		adjustPalette(0, 0, 0, (uint8 *) palette, i);
-		fpsCycles(50);
+		adjustPalette(0, 0, 0, (uint8 *)pal, i);
+		_engine->_system->delayMillis(1000 / 50);
 	}
 
-	setPalette((uint8*)palette);
+	_engine->setPalette((uint8 *)pal);
 
 	palReseted = 0;
 }
 
-/** Fade black palette to with palette */
-void blackToWhite() {
-	uint8 palette[NUMOFCOLORS*4];
-	int32 i;
+void Screens::blackToWhite() {
+	uint8 pal[NUMOFCOLORS * 4];
 
-	i = 256;
-	for (i = 0; i < NUMOFCOLORS; i += 3) {
-		memset(palette, i, 1024);
+	for (int32 i = 0; i < NUMOFCOLORS; i += 3) {
+		memset(pal, i, sizeof(pal));
 
-		setPalette(palette);
+		_engine->setPalette(pal);
 	}
 }
 
-/** Resets both in-game and sdl palettes */
-void setBackPal() {
-	memset(palette, 0, NUMOFCOLORS*3);
-	memset(paletteRGBA, 0, NUMOFCOLORS*4);
+void Screens::setBackPal() {
+	memset(palette, 0, sizeof(palette));
+	memset(paletteRGB, 0, sizeof(paletteRGB));
 
-	setPalette(paletteRGBA);
+	_engine->setPalette(paletteRGB);
 
 	palReseted = 1;
 }
 
-/** Fade palette to red palette
-	@param palette current palette to fade */
-void fadePalRed(uint8 *palette) {
+void Screens::fadePalRed(uint8 *pal) {
 	int32 i = 100;
 
 	for (i = 100; i >= 0; i -= 2) {
-		adjustPalette(0xFF, 0, 0, (uint8 *) palette, i);
-		fpsCycles(50);
+		adjustPalette(0xFF, 0, 0, (uint8 *)pal, i);
+		_engine->_system->delayMillis(1000 / 50);
 	}
 }
 
-
-/** Fade red to palette
-	@param palette current palette to fade */
-void fadeRedPal(uint8 *palette) {
+void Screens::fadeRedPal(uint8 *pal) {
 	int32 i = 0;
 
 	for (i = 0; i <= 100; i += 2) {
-		adjustPalette(0xFF, 0, 0, (uint8 *) palette, i);
-		fpsCycles(50);
+		adjustPalette(0xFF, 0, 0, (uint8 *)pal, i);
+		_engine->_system->delayMillis(1000 / 50);
 	}
 }
 
-/** Copy a determinate screen buffer to another
-	@param source screen buffer
-	@param destination screen buffer */
-void copyScreen(uint8 * source, uint8 * destination) {
+void Screens::copyScreen(const uint8 *source, uint8 *destination) {
 	int32 w, h;
 
-	if (SCALE == 1)
-		memcpy(destination, source, SCREEN_WIDTH*SCREEN_HEIGHT);
-	else if (SCALE == 2)
+	if (SCALE == 1) {
+		memcpy(destination, source, SCREEN_WIDTH * SCREEN_HEIGHT);
+	} else if (SCALE == 2) {
 		for (h = 0; h < SCREEN_HEIGHT / SCALE; h++) {
 			for (w = 0; w < SCREEN_WIDTH / SCALE; w++) {
 				*destination++ = *source;
@@ -317,10 +244,11 @@ void copyScreen(uint8 * source, uint8 * destination) {
 			memcpy(destination, destination - SCREEN_WIDTH, SCREEN_WIDTH);
 			destination += SCREEN_WIDTH;
 		}
-
+	}
 }
 
-/** Clear front buffer screen */
-void clearScreen() {
-	memset(frontVideoBuffer, 0, SCREEN_WIDTH*SCREEN_HEIGHT);
+void Screens::clearScreen() {
+	memset(_engine->frontVideoBuffer, 0, SCREEN_WIDTH * SCREEN_HEIGHT);
 }
+
+} // namespace TwinE

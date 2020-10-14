@@ -20,15 +20,30 @@
  *
  */
 
-#ifndef TWINE_DETECTION_H
-#define TWINE_DETECTION_H
+#ifndef TWINE_DEBUG_SCENE_H
+#define TWINE_DEBUG_SCENE_H
+
+#include "common/scummsys.h"
 
 namespace TwinE {
 
-enum GameFlag {
-	kGameFlagDemo = 1 << 0
+class TwinEEngine;
+struct ScenePoint;
+
+class DebugScene {
+private:
+	TwinEEngine *_engine;
+
+	void drawBoundingBoxProjectPoints(ScenePoint *pPoint3d, ScenePoint *pPoint3dProjected);
+	int32 checkZoneType(int32 type);
+public:
+	DebugScene(TwinEEngine *engine);
+	int32 showingZones = 0;
+	int32 typeZones = 127; // all zones on as default
+
+	void displayZones(int16 pKey);
 };
 
-} // End of namespace TwinE
+} // namespace TwinE
 
-#endif // TWINE_DETECTION_H
+#endif

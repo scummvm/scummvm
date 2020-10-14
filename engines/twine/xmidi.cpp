@@ -1,38 +1,31 @@
-/** @file xmidi.cpp
-	@brief
-	This file contains MIDI-related routines.
-	These routines were adapted from ScrummVM/Exult engine source code.
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 
-	TwinEngine: a Little Big Adventure engine
+#include "twine/xmidi.h"
+#include "common/textconsole.h"
+#include "common/util.h"
+#include "twine/twine.h"
 
-	Copyright (C) 2013 The TwinEngine team
-	Copyright (C) 2013 The ScrummVM/ExultEngine team
-
-	This program is free software; you can redistribute it and/or
-	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 2
-	of the License, or (at your option) any later version.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*/
-
-#include "xmidi.h"
-#include "main.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-//#define warning(...) if (cfgfile.Debug) { fprintf(stderr, __VA_ARGS__); fprintf(stderr, "\n"); }
-//#define info(...) if (cfgfile.Debug) { fprintf(stderr, __VA_ARGS__); fprintf(stderr, "\n"); }
-#define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
+namespace TwinE {
 
 /**
  * Provides comprehensive information on the next event in the MIDI stream.
@@ -42,10 +35,10 @@
  * Adapted from the ScummVM project
  */
 struct EventInfo {
-	uint8 * start; ///< Position in the MIDI stream where the event starts.
+	uint8 *start; ///< Position in the MIDI stream where the event starts.
 	              ///< For delta-based MIDI streams (e.g. SMF and XMIDI), this points to the delta.
 	uint32 delta; ///< The number of ticks after the previous event that this event should occur.
-	uint8 event; ///< Upper 4 bits are the command code, lower 4 bits are the MIDI channel.
+	uint8 event;  ///< Upper 4 bits are the command code, lower 4 bits are the MIDI channel.
 	              ///< For META, event == 0xFF. For SysEx, event == 0xF0.
 	union {
 		struct {
@@ -53,8 +46,8 @@ struct EventInfo {
 			uint8 param2; ///< The second parameter in a simple MIDI message.
 		} basic;
 		struct {
-			uint8   type; ///< For META events, this indicates the META type.
-			uint8 * data; ///< For META and SysEx events, this points to the start of the data.
+			uint8 type;  ///< For META events, this indicates the META type.
+			uint8 *data; ///< For META and SysEx events, this points to the start of the data.
 		} ext;
 	};
 	uint32 length; ///< For META and SysEx blocks, this indicates the length of the data.
@@ -66,62 +59,59 @@ struct EventInfo {
 // Adapted from the ScummVM project
 struct XMIDI_info {
 	uint8 num_tracks;
-	uint8* tracks[120]; // Maximum 120 tracks
+	uint8 *tracks[120]; // Maximum 120 tracks
 };
 
 /* Linked list of saved note offs to be injected in the midi stream at a later
  * time. */
 struct CachedEvent {
-	struct EventInfo* eventInfo;
+	struct EventInfo *eventInfo;
 	uint32 time;
-	struct CachedEvent* next;
+	struct CachedEvent *next;
 };
-static struct CachedEvent* cached_events = NULL;
+static struct CachedEvent *cached_events = NULL;
 
 /*
  * Forward declarations
  */
-static uint16 read2low(uint8** data);
-static uint32 read4high(uint8** data);
-static void write4high(uint8** data, uint32 val);
-static void write2high(uint8** data, uint16 val);
-static uint32 readVLQ2(uint8** data);
-static uint32 readVLQ(uint8** data);
-static int32 putVLQ(uint8* dest, uint32 value);
+static uint16 read2low(uint8 **data);
+static uint32 read4high(uint8 **data);
+static void write4high(uint8 **data, uint32 val);
+static void write2high(uint8 **data, uint16 val);
+static uint32 readVLQ2(uint8 **data);
+static uint32 readVLQ(uint8 **data);
+static int32 putVLQ(uint8 *dest, uint32 value);
 
 /* Returns an EventInfo struct if there is a cached event that should be
  * played between current_time and current_time + delta. The cached event
  * is removed from the internal list of cached events! */
-static struct EventInfo* pop_cached_event(uint32 current_time, uint32 delta);
-static void save_event(struct EventInfo* info, uint32 current_time);
+static struct EventInfo *pop_cached_event(uint32 current_time, uint32 delta);
+static void save_event(struct EventInfo *info, uint32 current_time);
 
-static int32 read_event_info(uint8* data, struct EventInfo* info, uint32 current_time);
-static int32 put_event(uint8* dest, struct EventInfo* info);
-static int32 convert_to_mtrk(uint8* data, uint32 size, uint8* dest);
-static int32 read_XMIDI_header(uint8* data, uint32 size, struct XMIDI_info* info);
+static int32 read_event_info(uint8 *data, struct EventInfo *info, uint32 current_time);
+static int32 put_event(uint8 *dest, struct EventInfo *info);
+static int32 convert_to_mtrk(uint8 *data, uint32 size, uint8 *dest);
+static int32 read_XMIDI_header(uint8 *data, uint32 size, struct XMIDI_info *info);
 
 // Adapted from the ScummVM project
-static uint16 read2low(uint8** data)
-{
-	uint8* d = *data;
+static uint16 read2low(uint8 **data) {
+	uint8 *d = *data;
 	uint16 value = (d[1] << 8) | d[0];
 	*data = (d + 2);
 	return value;
 }
 
 // Adapted from the ScummVM project
-static uint32 read4high(uint8** data)
-{
-	uint8* d = *data;
+static uint32 read4high(uint8 **data) {
+	uint8 *d = *data;
 	uint16 value = (d[0] << 24) | (d[1] << 16) | (d[2] << 8) | (d[3]);
 	*data = (d + 4);
 	return value;
 }
 
 // Adapted from the ScummVM project
-static void write4high(uint8** data, uint32 val)
-{
-	uint8* d = *data;
+static void write4high(uint8 **data, uint32 val) {
+	uint8 *d = *data;
 	*d++ = (val >> 24) & 0xff;
 	*d++ = (val >> 16) & 0xff;
 	*d++ = (val >> 8) & 0xff;
@@ -130,9 +120,8 @@ static void write4high(uint8** data, uint32 val)
 }
 
 // Adapted from the ScummVM project
-static void write2high(uint8** data, uint16 val)
-{
-	uint8* d = *data;
+static void write2high(uint8 **data, uint16 val) {
+	uint8 *d = *data;
 	*d++ = (val >> 8) & 0xff;
 	*d++ = val & 0xff;
 	*data = d;
@@ -141,9 +130,8 @@ static void write2high(uint8** data, uint16 val)
 // This is a special XMIDI variable length quantity
 //
 // Adapted from the ScummVM project
-static uint32 readVLQ2(uint8** data)
-{
-	uint8* pos = *data;
+static uint32 readVLQ2(uint8 **data) {
+	uint8 *pos = *data;
 	uint32 value = 0;
 	while (!(pos[0] & 0x80)) {
 		value += *pos++;
@@ -155,8 +143,8 @@ static uint32 readVLQ2(uint8** data)
 // This is the conventional (i.e. SMF) variable length quantity
 //
 // Adapted from the ScummVM project
-static uint32 readVLQ(uint8** data) {
-	uint8* d = *data;
+static uint32 readVLQ(uint8 **data) {
+	uint8 *d = *data;
 	uint8 str;
 	uint32 value = 0;
 	int32 i;
@@ -176,33 +164,33 @@ static uint32 readVLQ(uint8** data) {
 // Write a Conventional Variable Length Quantity
 //
 // Code adapted from the Exult engine
-static int32 putVLQ(uint8* dest, uint32 value)
-{
+static int32 putVLQ(uint8 *dest, uint32 value) {
 	int32 buffer;
 	int32 j, i = 1;
 
 	buffer = value & 0x7F;
-	while (value >>= 7)
-	{
+	while (value >>= 7) {
 		buffer <<= 8;
 		buffer |= ((value & 0x7F) | 0x80);
 		i++;
 	}
-	if (!dest) return i;
-	for (j = 0; j < i; j++)
-	{
+	if (!dest)
+		return i;
+	for (j = 0; j < i; j++) {
 		*dest++ = buffer & 0xFF;
 		buffer >>= 8;
 	}
 	return i;
 }
 
-static void save_event(struct EventInfo* info, uint32 current_time)
-{
+static void save_event(struct EventInfo *info, uint32 current_time) {
 	uint32 delta = info->length;
 	struct CachedEvent *prev, *next, *temp;
 
-	temp = malloc(sizeof(struct CachedEvent));
+	temp = (struct CachedEvent *)malloc(sizeof(struct CachedEvent));
+	if (!temp) {
+		error("Failed to allocate memory for the midi buffer");
+	}
 	temp->eventInfo = info;
 	temp->time = current_time + delta;
 	temp->next = NULL;
@@ -211,8 +199,7 @@ static void save_event(struct EventInfo* info, uint32 current_time)
 
 	if (!cached_events) {
 		cached_events = temp;
-	}
-	else {
+	} else {
 		prev = NULL;
 		next = cached_events;
 
@@ -224,13 +211,11 @@ static void save_event(struct EventInfo* info, uint32 current_time)
 
 		if (!next) {
 			prev->next = temp;
-		}
-		else {
+		} else {
 			if (prev) {
 				temp->next = prev->next;
 				prev->next = temp;
-			}
-			else {
+			} else {
 				temp->next = cached_events;
 				cached_events = temp;
 			}
@@ -238,10 +223,9 @@ static void save_event(struct EventInfo* info, uint32 current_time)
 	}
 }
 
-static struct EventInfo* pop_cached_event(uint32 current_time, uint32 delta)
-{
-	struct EventInfo* info = NULL;
-	struct CachedEvent* old;
+static struct EventInfo *pop_cached_event(uint32 current_time, uint32 delta) {
+	struct EventInfo *info = NULL;
+	struct CachedEvent *old;
 
 	if (cached_events && cached_events->time < current_time + delta) {
 		info = cached_events->eventInfo;
@@ -255,9 +239,8 @@ static struct EventInfo* pop_cached_event(uint32 current_time, uint32 delta)
 }
 
 // Adapted from the ScummVM project
-static int32 read_event_info(uint8* data, struct EventInfo* info, uint32 current_time)
-{
-	struct EventInfo* injectedEvent;
+static int32 read_event_info(uint8 *data, struct EventInfo *info, uint32 current_time) {
+	struct EventInfo *injectedEvent;
 	info->start = data;
 	info->delta = readVLQ2(&data);
 	info->event = *data++;
@@ -275,10 +258,12 @@ static int32 read_event_info(uint8* data, struct EventInfo* info, uint32 current
 		if (info->basic.param2 == 0) {
 			info->event = (info->event & 0x0F) | 0x80;
 			info->length = 0;
-		}
-		else {
+		} else {
 			//info("Found Note On with duration %X. Saving a Note Off for later", info->length);
-			injectedEvent = malloc(sizeof(struct EventInfo));
+			injectedEvent = (struct EventInfo *)malloc(sizeof(struct EventInfo));
+			if (!injectedEvent) {
+				error("Could not allocate memory for event info");
+			}
 			injectedEvent->event = 0x80 | (info->event & 0x0f);
 			injectedEvent->basic.param1 = info->basic.param1;
 			injectedEvent->basic.param2 = info->basic.param2;
@@ -309,8 +294,8 @@ static int32 read_event_info(uint8* data, struct EventInfo* info, uint32 current
 
 		switch (info->basic.param1) {
 		// Simplified XMIDI looping.
-		case 0x74: {	// XMIDI_CONTROLLER_FOR_LOOP
-#if 0 // TODO
+		case 0x74: { // XMIDI_CONTROLLER_FOR_LOOP
+#if 0                // TODO
 				uint8 *pos = data;
 				if (_loopCount < ARRAYSIZE(_loop) - 1)
 					_loopCount++;
@@ -320,11 +305,11 @@ static int32 read_event_info(uint8* data, struct EventInfo* info, uint32 current
 				_loop[_loopCount].pos = pos;
 				_loop[_loopCount].repeat = info->basic.param2;
 #endif
-				break;
-			}
+			break;
+		}
 
-		case 0x75:	// XMIDI_CONTORLLER_NEXT_BREAK
-#if 0 // TODO
+		case 0x75: // XMIDI_CONTORLLER_NEXT_BREAK
+#if 0              // TODO
 			if (_loopCount >= 0) {
 				if (info->basic.param2 < 64) {
 					// End the current loop.
@@ -344,21 +329,21 @@ static int32 read_event_info(uint8* data, struct EventInfo* info, uint32 current
 #endif
 			break;
 
-		case 0x77:	// XMIDI_CONTROLLER_CALLBACK_TRIG
-#if 0 // TODO
+		case 0x77: // XMIDI_CONTROLLER_CALLBACK_TRIG
+#if 0              // TODO
 			if (_callbackProc)
 				_callbackProc(info->basic.param2, _callbackData);
 #endif
 			break;
 
-		case 0x6e:	// XMIDI_CONTROLLER_CHAN_LOCK
-		case 0x6f:	// XMIDI_CONTROLLER_CHAN_LOCK_PROT
-		case 0x70:	// XMIDI_CONTROLLER_VOICE_PROT
-		case 0x71:	// XMIDI_CONTROLLER_TIMBRE_PROT
-		case 0x72:	// XMIDI_CONTROLLER_BANK_CHANGE
-		case 0x73:	// XMIDI_CONTROLLER_IND_CTRL_PREFIX
-		case 0x76:	// XMIDI_CONTROLLER_CLEAR_BB_COUNT
-		case 0x78:	// XMIDI_CONTROLLER_SEQ_BRANCH_INDEX
+		case 0x6e: // XMIDI_CONTROLLER_CHAN_LOCK
+		case 0x6f: // XMIDI_CONTROLLER_CHAN_LOCK_PROT
+		case 0x70: // XMIDI_CONTROLLER_VOICE_PROT
+		case 0x71: // XMIDI_CONTROLLER_TIMBRE_PROT
+		case 0x72: // XMIDI_CONTROLLER_BANK_CHANGE
+		case 0x73: // XMIDI_CONTROLLER_IND_CTRL_PREFIX
+		case 0x76: // XMIDI_CONTROLLER_CLEAR_BB_COUNT
+		case 0x78: // XMIDI_CONTROLLER_SEQ_BRANCH_INDEX
 		default:
 			if (info->basic.param1 >= 0x6e && info->basic.param1 <= 0x78) {
 				/*warning("Unsupported XMIDI controller %d (0x%2x)",
@@ -423,73 +408,74 @@ static int32 read_event_info(uint8* data, struct EventInfo* info, uint32 current
 }
 
 // Code adapted from the Exult engine
-static int32 put_event(uint8* dest, struct EventInfo* info)
-{
-	int32 i = 0,j;
+static int32 put_event(uint8 *dest, struct EventInfo *info) {
+	int32 i = 0, j;
 	int32 rc = 0;
 	static uint8 last_event = 0;
 
-	rc = putVLQ (dest, info->delta);
-	if (dest) dest += rc;
+	rc = putVLQ(dest, info->delta);
+	if (dest)
+		dest += rc;
 	i += rc;
 
-	if ((info->event != last_event) || (info->event >= 0xF0))
-	{
-		if (dest) *dest++ = (info->event);
+	if ((info->event != last_event) || (info->event >= 0xF0)) {
+		if (dest)
+			*dest++ = (info->event);
 		i++;
 	}
 
 	last_event = info->event;
 
-	switch (info->event >> 4)
-	{
-		// 2 bytes data
-		// Note off, Note on, Aftertouch, Controller and Pitch Wheel
-		case 0x8: case 0x9: case 0xA: case 0xB: case 0xE:
-		if (dest)
-		{
+	switch (info->event >> 4) {
+	// 2 bytes data
+	// Note off, Note on, Aftertouch, Controller and Pitch Wheel
+	case 0x8:
+	case 0x9:
+	case 0xA:
+	case 0xB:
+	case 0xE:
+		if (dest) {
 			*dest++ = (info->basic.param1);
 			*dest++ = (info->basic.param2);
 		}
 		i += 2;
 		break;
 
-
-		// 1 bytes data
-		// Program Change and Channel Pressure
-		case 0xC: case 0xD:
-		if (dest) *dest++ = (info->basic.param1);
+	// 1 bytes data
+	// Program Change and Channel Pressure
+	case 0xC:
+	case 0xD:
+		if (dest)
+			*dest++ = (info->basic.param1);
 		i++;
 		break;
 
-
-		// Variable length
-		// SysEx
-		case 0xF:
-		if (info->event == 0xFF)
-		{
-			if (dest) *dest++ = (info->basic.param1);
+	// Variable length
+	// SysEx
+	case 0xF:
+		if (info->event == 0xFF) {
+			if (dest)
+				*dest++ = (info->basic.param1);
 			i++;
 		}
 
-		rc = putVLQ (dest, info->length);
-		if (dest) dest += rc;
+		rc = putVLQ(dest, info->length);
+		if (dest)
+			dest += rc;
 		i += rc;
 
-		if (info->length)
-		{
-			for (j = 0; j < (int)info->length; j++)
-			{
-				if (dest) *dest++ = (info->ext.data[j]);
+		if (info->length) {
+			for (j = 0; j < (int)info->length; j++) {
+				if (dest)
+					*dest++ = (info->ext.data[j]);
 				i++;
 			}
 		}
 
 		break;
 
-
-		// Never occur
-		default:
+	// Never occur
+	default:
 		//warning("Not supposed to see this");
 		break;
 	}
@@ -498,24 +484,22 @@ static int32 put_event(uint8* dest, struct EventInfo* info)
 }
 
 // Code adapted from the Exult engine
-static int32 convert_to_mtrk(uint8* data, uint32 size, uint8* dest)
-{
+static int32 convert_to_mtrk(uint8 *data, uint32 size, uint8 *dest) {
 	int32 time = 0;
 	int32 lasttime = 0;
 	int32 rc;
-	uint32 	i = 8;
-	uint8*	size_pos = NULL;
-	uint8*	data_end = data + size;
+	uint32 i = 8;
+	uint8 *size_pos = NULL;
+	uint8 *data_end = data + size;
 	struct XMIDI_info xmidi_info;
 	struct EventInfo info;
-	struct EventInfo* cached_info;
+	struct EventInfo *cached_info;
 
-	if (dest)
-	{
-		*dest++ =('M');
-		*dest++ =('T');
-		*dest++ =('r');
-		*dest++ =('k');
+	if (dest) {
+		*dest++ = ('M');
+		*dest++ = ('T');
+		*dest++ = ('r');
+		*dest++ = ('k');
 
 		size_pos = dest;
 		dest += 4;
@@ -529,13 +513,12 @@ static int32 convert_to_mtrk(uint8* data, uint32 size, uint8* dest)
 
 	data = xmidi_info.tracks[0];
 
-	while (data < data_end)
-	{
+	while (data < data_end) {
 		//info("=======================================================================");
 		// We don't write the end of stream marker here, we'll do it later
 		if (data[0] == 0xFF && data[1] == 0x2f) {
 			//info("Got EOX");
-//			lasttime = event->time;
+			//			lasttime = event->time;
 			continue;
 		}
 
@@ -554,7 +537,8 @@ static int32 convert_to_mtrk(uint8* data, uint32 size, uint8* dest)
 				//warning("Failed to save injected event!");
 				return 0;
 			}
-			if (dest) dest += rc;
+			if (dest)
+				dest += rc;
 			i += rc;
 			time += cached_info->delta;
 			info.delta -= cached_info->delta;
@@ -568,7 +552,8 @@ static int32 convert_to_mtrk(uint8* data, uint32 size, uint8* dest)
 			//warning("Failed to save event!");
 			return 0;
 		}
-		if (dest) dest += rc;
+		if (dest)
+			dest += rc;
 		i += rc;
 		time += info.delta;
 		if (info.event == 0xFF && info.ext.type == 0x2F) {
@@ -579,34 +564,33 @@ static int32 convert_to_mtrk(uint8* data, uint32 size, uint8* dest)
 
 	// Write out end of stream marker
 	if (lasttime > time) {
-		rc = putVLQ (dest, lasttime-time);
-		if (dest) dest += rc;
+		rc = putVLQ(dest, lasttime - time);
+		if (dest)
+			dest += rc;
 		i += rc;
-	}
-	else {
-		rc = putVLQ (dest, 0);
-		if (dest) dest += rc;
+	} else {
+		rc = putVLQ(dest, 0);
+		if (dest)
+			dest += rc;
 		i += rc;
 	}
 	if (dest) {
 		*dest++ = (0xFF);
 		*dest++ = (0x2F);
 	}
-	rc = putVLQ (dest, 0);
-	i += 2+rc;
+	rc = putVLQ(dest, 0);
+	i += 2 + rc;
 
-	if (dest)
-	{
+	if (dest) {
 		dest += rc;
-		write4high(&size_pos, i-8);
+		write4high(&size_pos, i - 8);
 	}
 	return i;
 }
 
 /* Code adapted from the ScummVM project, which originally adapted it from the
  * Exult engine */
-static int32 read_XMIDI_header(uint8* data, uint32 size, struct XMIDI_info* info)
-{
+static int32 read_XMIDI_header(uint8 *data, uint32 size, struct XMIDI_info *info) {
 	uint32 i = 0;
 	uint8 *start;
 	uint32 len;
@@ -627,7 +611,7 @@ static int32 read_XMIDI_header(uint8* data, uint32 size, struct XMIDI_info* info
 			//warning("XMIDI doesn't have XDIR");
 			pos += 4;
 			info->num_tracks = 1;
-		} else if (memcmp(pos, "XDIR", 4)) {
+		} else if (memcmp(pos, "XDIR", 4) != 0) {
 			// Not an XMIDI that we recognize
 			//warning("Expected 'XDIR' but found '%c%c%c%c'", pos[0], pos[1], pos[2], pos[3]);
 			return 0;
@@ -679,7 +663,7 @@ static int32 read_XMIDI_header(uint8* data, uint32 size, struct XMIDI_info* info
 			// Goto the right place
 			pos = start + ((len + 1) & ~1);
 
-			if (memcmp(pos, "CAT ", 4)) {
+			if (memcmp(pos, "CAT ", 4) != 0) {
 				// Not an XMID
 				//warning("Expected 'CAT ' but found '%c%c%c%c'", pos[0], pos[1], pos[2], pos[3]);
 				return 0;
@@ -689,13 +673,12 @@ static int32 read_XMIDI_header(uint8* data, uint32 size, struct XMIDI_info* info
 			// Now read length of this track
 			len = read4high(&pos);
 
-			if (memcmp(pos, "XMID", 4)) {
+			if (memcmp(pos, "XMID", 4) != 0) {
 				// Not an XMID
 				//warning("Expected 'XMID' but found '%c%c%c%c'", pos[0], pos[1], pos[2], pos[3]);
 				return 0;
 			}
 			pos += 4;
-
 		}
 
 		// Ok it's an XMIDI.
@@ -740,23 +723,22 @@ static int32 read_XMIDI_header(uint8* data, uint32 size, struct XMIDI_info* info
 
 /********************************* Public API *********************************/
 // Code adapted from the Exult engine
-uint32 convert_to_midi(uint8* data, uint32 size, uint8** dest)
-{
+uint32 convert_to_midi(uint8 *data, uint32 size, uint8 **dest) {
 	int32 len;
-	uint8* d,* start;
+	uint8 *d, *start;
 
 	if (!dest)
 		return 0;
 
 	/* Do a dry run first so we know how much memory to allocate */
-	len = convert_to_mtrk (data, size, NULL);
+	len = convert_to_mtrk(data, size, NULL);
 	if (!len) {
 		//warning("Failed dummy conversion!");
 		return 0;
 	}
 
 	//info("Allocating %d bytes of memory", len);
-	d = malloc(len + 14);
+	d = (uint8 *)malloc(len + 14);
 	if (!d) {
 		perror("Could not allocate memory");
 		return 0;
@@ -768,11 +750,11 @@ uint32 convert_to_midi(uint8* data, uint32 size, uint8** dest)
 	*d++ = ('h');
 	*d++ = ('d');
 
-	write4high (&d, 6);
+	write4high(&d, 6);
 
-	write2high (&d, 0);
-	write2high (&d, 1);
-	write2high (&d, 60);	// The PPQN
+	write2high(&d, 0);
+	write2high(&d, 1);
+	write2high(&d, 60); // The PPQN
 
 	len = convert_to_mtrk(data, size, d);
 	if (!len) {
@@ -786,3 +768,4 @@ uint32 convert_to_midi(uint8* data, uint32 size, uint8** dest)
 	return len + 14;
 }
 
+} // namespace TwinE
