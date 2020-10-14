@@ -43,7 +43,7 @@ public:
 
 	void start(int id) override;
 
-	virtual void update(uint time);
+	virtual void update(uint time) override;
 
 	void loadRoom(int id, bool fromSave);
 
