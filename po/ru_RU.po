@@ -7,16 +7,16 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-13 21:41+0200\n"
-"PO-Revision-Date: 2020-10-11 14:40+0000\n"
-"Last-Translator: anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2020-10-14 09:44+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
 "Language: ru_RU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Русский\n"
 
@@ -992,21 +992,20 @@ msgstr "Полноэкранный режим"
 
 #: gui/options.cpp:1305
 msgid "V-Sync in 3D Games"
-msgstr ""
+msgstr "Вертикальная синхронизация в 3D играх"
 
 #: gui/options.cpp:1305
 msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
 msgstr ""
+"Ожидать вертикальную синхронизацию перед перерисовкой экрана в 3D отрисовщике"
 
 #: gui/options.cpp:1307
-#, fuzzy
 msgid "Game 3D Renderer:"
-msgstr "Отрисовщик интерфейса:"
+msgstr "Отрисовщик 3D игр:"
 
 #: gui/options.cpp:1316
-#, fuzzy
 msgid "3D Anti-aliasing:"
-msgstr "Со сглаживанием"
+msgstr "Сглаживание 3D:"
 
 #: gui/options.cpp:1320 engines/mohawk/dialogs.cpp:328
 msgid "Disabled"
@@ -1025,9 +1024,8 @@ msgid "Aspect ratio correction"
 msgstr "Коррекция соотношения сторон"
 
 #: gui/options.cpp:1335
-#, fuzzy
 msgid "Correct aspect ratio for games"
-msgstr "Корректировать соотношение сторон для игр с разрешением 320x200"
+msgstr "Корректировать соотношение сторон для игр"
 
 #: gui/options.cpp:1343
 msgid "Preferred device:"
@@ -4485,13 +4483,15 @@ msgstr "Не удалось удалить файл."
 
 #: engines/grim/detection.cpp:45
 msgid "Load user patch (unsupported)"
-msgstr ""
+msgstr "Загрузить пользовательский патч (без поддержки)"
 
 #: engines/grim/detection.cpp:46
 msgid ""
 "Load an user patch. Please note that the ScummVM team doesn't provide "
 "support for using such patches."
 msgstr ""
+"Загрузить пользовательский патч. Пожалуйста, заметьте, что команда ScummVM "
+"не оказывает поддержку при использовании таких патчей."
 
 #: engines/grim/detection.cpp:54
 msgid "Show FPS"
@@ -4508,10 +4508,13 @@ msgid ""
 "Running ScummVM nevertheless may cause game bugs or even crashes.\n"
 "Do you still want to run %s?"
 msgstr ""
+"ScummVM нашла некоторые проблемы с файлами данных вашей игры.\n"
+"Дальнейшая работа ScummVM может привести к багам или крешам.\n"
+"Вы всё ещё хотите запустить %s?"
 
 #: engines/grim/grim.cpp:464 engines/grim/grim.cpp:556
 msgid "Run"
-msgstr ""
+msgstr "Бежать"
 
 #: engines/grim/grim.cpp:469 engines/scumm/help.cpp:239
 #: engines/scumm/help.cpp:247
@@ -4519,14 +4522,12 @@ msgid "Examine"
 msgstr "Проверить"
 
 #: engines/grim/grim.cpp:474 engines/grim/grim.cpp:571
-#, fuzzy
 msgid "Use/Talk"
-msgstr "Говорить"
+msgstr "Использовать/Говорить"
 
 #: engines/grim/grim.cpp:479 engines/grim/grim.cpp:576
-#, fuzzy
 msgid "Pick up/Put away"
-msgstr "Поднять"
+msgstr "Поднять/Отложить"
 
 #: engines/grim/grim.cpp:484 engines/grim/grim.cpp:581
 #: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
@@ -4535,9 +4536,8 @@ msgid "Inventory"
 msgstr "Инвентарь"
 
 #: engines/grim/grim.cpp:489 engines/grim/grim.cpp:586
-#, fuzzy
 msgid "Skip dialog lines"
-msgstr "Пропустить строчку диалога (некоторые игры)"
+msgstr "Пропустить строчку диалога"
 
 #: engines/grim/grim.cpp:507 engines/grim/grim.cpp:604
 msgid "Menu"
@@ -4545,25 +4545,23 @@ msgstr "Меню"
 
 #: engines/grim/grim.cpp:546
 msgid "Cycle Objects Up"
-msgstr ""
+msgstr "Прокрутить объекты вверх"
 
 #: engines/grim/grim.cpp:551
 msgid "Cycle Objects Down"
-msgstr ""
+msgstr "Прокрутить объекты вниз"
 
 #: engines/grim/grim.cpp:561
 msgid "Quick Room Exit"
-msgstr ""
+msgstr "Быстрый выход из комнаты"
 
 #: engines/grim/grim.cpp:566
-#, fuzzy
 msgid "Examine/Look"
-msgstr "Проверить"
+msgstr "Проверить/Посмотреть"
 
 #: engines/grim/grim.cpp:1352
-#, fuzzy
 msgid "Error: the game could not be saved."
-msgstr "К сожалению, сохранить игру не удалось"
+msgstr "Ошибка: к сожалению, сохранить игру не удалось."
 
 #: engines/grim/md5check.cpp:547
 #, c-format
@@ -4574,6 +4572,11 @@ msgid ""
 "version (i.e. dvd-box or jewelcase):\n"
 "%s"
 msgstr ""
+"Файл данных игры %s может быть повреждён.\n"
+"Если вы уверены, что это не так, пожалуйста, передайте команде ScummVM "
+"нижеследующий код вместе с именем файла, языком и описанием вашей версии "
+"игры (т.е. DVD, коробочная версия):\n"
+"%s"
 
 #: engines/grim/md5check.cpp:554
 #, c-format
