@@ -34,21 +34,21 @@ public:
 	void initSurface();
 	void deinitSurface();
 
-	void updateScreen();
+	virtual void updateScreen() override;
 
-	void displayMessageOnOSD(const Common::U32String &msg);
+	virtual void displayMessageOnOSD(const Common::U32String &msg) override;
 
 	bool notifyMousePosition(Common::Point &mouse);
 	Common::Point getMousePosition() { return Common::Point(_cursorX, _cursorY); }
 
 protected:
-	void setSystemMousePosition(int x, int y) {}
+	virtual void setSystemMousePosition(const int x, const int y) override {}
 
-	bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format);
+	virtual bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) override;
 
-	void refreshScreen();
+	virtual void refreshScreen() override;
 
-	void *getProcAddress(const char *name) const;
+	virtual void *getProcAddress(const char *name) const override;
 
 };
 
