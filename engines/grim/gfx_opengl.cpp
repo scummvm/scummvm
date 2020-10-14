@@ -124,7 +124,7 @@ GfxOpenGL::~GfxOpenGL() {
 	}
 }
 
-void GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
+void GfxOpenGL::setupScreen(int screenW, int screenH) {
 	_screenWidth = screenW;
 	_screenHeight = screenH;
 	_scaleW = _screenWidth / (float)_gameWidth;
@@ -136,7 +136,7 @@ void GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 	_useDepthShader = false;
 	_useDimShader = false;
 
-	g_system->showMouse(!fullscreen);
+	g_system->showMouse(false);
 
 	int screenSize = _screenWidth * _screenHeight * 4;
 	_storedDisplay = new byte[screenSize];

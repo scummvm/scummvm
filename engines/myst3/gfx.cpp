@@ -193,7 +193,6 @@ Renderer *createRenderer(OSystem *system) {
 	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
 	Graphics::RendererType matchingRendererType = Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
 
-	bool fullscreen = ConfMan.getBool("fullscreen");
 	bool isAccelerated = matchingRendererType != Graphics::kRendererTypeTinyGL;
 
 	uint width;
@@ -205,7 +204,7 @@ Renderer *createRenderer(OSystem *system) {
 	}
 
 	if (isAccelerated) {
-		initGraphics3d(width, height, fullscreen);
+		initGraphics3d(width, height);
 	} else {
 		initGraphics(width, height, nullptr);
 	}
@@ -237,16 +236,6 @@ Renderer *createRenderer(OSystem *system) {
 	}
 
 	error("Unable to create a '%s' renderer", rendererConfig.c_str());
-}
-
-void Renderer::toggleFullscreen() {
-	if (!_system->hasFeature(OSystem::kFeatureFullscreenToggleKeepsContext)) {
-		warning("Unable to toggle the fullscreen state because the current backend would destroy the graphics context");
-		return;
-	}
-
-	bool oldFullscreen = _system->getFeatureState(OSystem::kFeatureFullscreenMode);
-	_system->setFeatureState(OSystem::kFeatureFullscreenMode, !oldFullscreen);
 }
 
 void Renderer::renderDrawable(Drawable *drawable, Window *window) {

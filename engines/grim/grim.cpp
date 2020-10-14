@@ -263,14 +263,14 @@ LuaBase *GrimEngine::createLua() {
 	}
 }
 
-GfxBase *GrimEngine::createRenderer(int screenW, int screenH, bool fullscreen) {
+GfxBase *GrimEngine::createRenderer(int screenW, int screenH) {
 	Common::String rendererConfig = ConfMan.get("renderer");
 	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
 	Graphics::RendererType matchingRendererType = Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
 
 	_softRenderer = matchingRendererType == Graphics::kRendererTypeTinyGL;
 	if (!_softRenderer) {
-		initGraphics3d(screenW, screenH, fullscreen);
+		initGraphics3d(screenW, screenH);
 	} else {
 		initGraphics(screenW, screenH, nullptr);
 	}
@@ -306,7 +306,7 @@ GfxBase *GrimEngine::createRenderer(int screenW, int screenH, bool fullscreen) {
 		error("Unable to create a '%s' renderer", rendererConfig.c_str());
 	}
 
-	renderer->setupScreen(screenW, screenH, fullscreen);
+	renderer->setupScreen(screenW, screenH);
 	renderer->loadEmergFont();
 	return renderer;
 }
@@ -379,11 +379,10 @@ Common::Error GrimEngine::run() {
 	}
 	g_sound = new SoundPlayer();
 
-	bool fullscreen = ConfMan.getBool("fullscreen");
 	if (getGameType() == GType_GRIM && (g_grim->getGameFlags() & ADGF_REMASTERED)) {
-		g_driver = createRenderer(1600, 900, fullscreen);
+		g_driver = createRenderer(1600, 900);
 	} else {
-		g_driver = createRenderer(640, 480, fullscreen);
+		g_driver = createRenderer(640, 480);
 	}
 
 	if (getGameType() == GType_MONKEY4 && SearchMan.hasFile("AMWI.m4b")) {
@@ -970,7 +969,6 @@ void GrimEngine::mainLoop() {
 	_shortFrame = false;
 	bool resetShortFrame = false;
 	_changeHardwareState = false;
-	_changeFullscreenState = false;
 	_setupChanged = true;
 
 	for (;;) {
@@ -992,24 +990,10 @@ void GrimEngine::mainLoop() {
 			savegameSave();
 		}
 
-		// If the backend can keep the OpenGL context when switching to fullscreen,
-		// just toggle the fullscreen feature (SDL2 path).
-		if (_changeFullscreenState &&
-				_system->hasFeature(OSystem::kFeatureFullscreenToggleKeepsContext)) {
-			bool fullscreen = _system->getFeatureState(OSystem::kFeatureFullscreenMode);
-			_system->setFeatureState(OSystem::kFeatureFullscreenMode, !fullscreen);
-			_changeFullscreenState = false;
-		}
-
 		// If the backend destroys the OpenGL context or the user switched to a different
-		// renderer, the GFX driver needs to be recreated (SDL1 path).
-		if (_changeHardwareState || _changeFullscreenState) {
+		// renderer, the GFX driver needs to be recreated.
+		if (_changeHardwareState) {
 			_changeHardwareState = false;
-
-			bool fullscreen = _system->getFeatureState(OSystem::kFeatureFullscreenMode);
-			if (_changeFullscreenState) {
-				fullscreen = !fullscreen;
-			}
 
 			uint screenWidth = g_driver->getScreenWidth();
 			uint screenHeight = g_driver->getScreenHeight();
@@ -1021,7 +1005,7 @@ void GrimEngine::mainLoop() {
 			clearPools();
 
 			delete g_driver;
-			g_driver = createRenderer(screenWidth, screenHeight, fullscreen);
+			g_driver = createRenderer(screenWidth, screenHeight);
 			savegameRestore();
 
 			if (mode == DrawMode) {
@@ -1031,7 +1015,6 @@ void GrimEngine::mainLoop() {
 				g_driver->dimScreen();
 			}
 			setMode(mode);
-			_changeFullscreenState = false;
 		}
 
 		g_sound->flushTracks();
