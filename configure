@@ -5418,7 +5418,6 @@ EOF
 		for lib in "-lGLESv2" "-logles2"; do
 			if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS $lib
 				then
-				_opengl_game=yes
 				_opengles2=yes
 				append_var OPENGL_LIBS "$lib"
 				break
@@ -5461,6 +5460,7 @@ fi
 # If 2d sdl gfx backend has no opengl we will not enable opengl in games due lack of gfx dynamic switch
 if test "$_opengl" = "no" ; then
 	_opengl_game=no
+	_opengl_shaders=no
 	_opengles2=no
 	_glew=no
 fi

@@ -49,11 +49,12 @@
 #include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/timer/sdl/sdl-timer.h"
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
+#include "backends/graphics3d/sdl/sdl-graphics3d.h"
 #ifdef USE_OPENGL
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
 #include "graphics/cursorman.h"
 #endif
-#ifdef USE_OPENGL_GAME
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
 #include "backends/graphics3d/openglsdl/openglsdl-graphics3d.h"
 #include "graphics/opengl/context.h"
 #endif
@@ -305,7 +306,7 @@ void OSystem_SDL::initBackend() {
 	}
 }
 
-#ifdef USE_OPENGL_GAME
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
 void OSystem_SDL::detectFramebufferSupport() {
 	_capabilities.openGLFrameBuffer = false;
 #if defined(USE_GLES2)
@@ -381,7 +382,7 @@ void OSystem_SDL::detectAntiAliasingSupport() {
 	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
 }
 
-#endif // USE_OPENGL_GAME
+#endif // defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 
 void OSystem_SDL::engineInit() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -487,7 +488,7 @@ void OSystem_SDL::setWindowCaption(const char *caption) {
 	_window->setWindowCaption(cap);
 }
 
-#ifdef USE_OPENGL_GAME
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
 Common::Array<uint> OSystem_SDL::getSupportedAntiAliasingLevels() const {
 	return _capabilities.openGLAntiAliasLevels;
 }
@@ -783,8 +784,7 @@ bool OSystem_SDL::setGraphicsMode(int mode, uint flags) {
 			sdlGraphicsManager->deactivateManager();
 			delete sdlGraphicsManager;
 		}
-
-#ifdef USE_OPENGL_GAME
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
 		if (!dynamic_cast<OpenGLSdlGraphics3dManager *>(sdlGraphics3dManager)) {
 			if (sdlGraphics3dManager) {
 				sdlGraphics3dManager->deactivateManager();

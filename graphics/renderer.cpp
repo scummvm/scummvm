@@ -27,7 +27,7 @@
 namespace Graphics {
 
 static const RendererTypeDescription rendererTypes[] = {
-#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME)
 	{ "opengl", _s("OpenGL"), kRendererTypeOpenGL },
 #endif
 #if defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
