@@ -25,6 +25,8 @@
 
 #include "backends/graphics3d/sdl/sdl-graphics3d.h"
 
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+
 namespace OpenGL {
 	class FrameBuffer;
 	class SurfaceRenderer;
@@ -181,5 +183,7 @@ protected:
 	 */
 	TransactionMode _transactionMode;
 };
+
+#endif // defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
 
 #endif
