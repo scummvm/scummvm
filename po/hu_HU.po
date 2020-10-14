@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-14 11:46+0200\n"
-"PO-Revision-Date: 2020-10-12 09:43+0000\n"
-"Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
+"PO-Revision-Date: 2020-10-14 17:43+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
 "Language: hu_HU\n"
@@ -4558,7 +4558,7 @@ msgstr ""
 "%s"
 
 #: engines/grim/md5check.cpp:554
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Could not open the file %s for checking.\n"
 "It may be missing or you may not have the rights to open it.\n"
@@ -4567,7 +4567,7 @@ msgid ""
 msgstr ""
 "Nem sikerült megnyitni a %s fájlt ellenőrzésre.\n"
 "Lehet hogy hiányzik, vagy nincs jogod megnyitni.\n"
-"Menj ide https://wiki.residualvm.org/index.php/Datafiles hogy megnézd a "
+"Menj ide https://wiki.scummvm.org/index.php/Datafiles hogy megnézd a "
 "szükséges fájlokat."
 
 #: engines/grim/md5checkdialog.cpp:42
@@ -4608,7 +4608,6 @@ msgstr ""
 "Ügyelj arra, hogy a játék nyelvének megfelelően töltsd le a megfelelő verziót"
 
 #: engines/grim/emi/sound/emisound.cpp:650
-#, fuzzy
 msgid ""
 "ERROR: Not enough music tracks found!\n"
 "Escape from Monkey Island has two versions of FullMonkeyMap.imt,\n"
@@ -4627,8 +4626,8 @@ msgstr ""
 "CD 1: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap1.imt\"\n"
 "CD 2: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap2.imt\"\n"
 "\n"
-"Alternatív megoldásként a Steam vagy a GOG másolat kombinált FullMonkeyMap."
-"int fájlját"
+"Alternatív megoldásként a Steam vagy a GOG másolat kombinált "
+"FullMonkeyMap.imt fájlját"
 
 #: engines/groovie/detection.cpp:320
 msgid "Fast movie speed"
