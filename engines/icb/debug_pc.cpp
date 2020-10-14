@@ -54,8 +54,7 @@ void Fatal_error(const char *format...) {
 	va_list args;
 	va_start(args, format);
 	vsnprintf(buf, 256, const_cast<char *>(format), args);
-	warning("%s", buf);
-	assert(0); // To trap the debugger
+	error("%s", buf);
 }
 void Message_box(const char *, ...) { ; }
 void Zdebug(const char *, ...) { ; }
