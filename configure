@@ -5271,6 +5271,7 @@ EOF
 	if test "$_glew" = yes ; then
 		append_var LIBS "$GLEW_LIBS $_GLEW_LIBS"
 		append_var INCLUDES "$GLEW_CFLAGS $_GLEW_CFLAGS"
+		append_var LIBS_3D "$GLEW_LIBS $_GLEW_LIBS"
 	fi
 
 	echo "$_glew"
@@ -5288,6 +5289,7 @@ case $_backend in
 		# Only enable OpenGL ES on the OpanPandora if --opengl-mode=gles is passed in explicitly.
 		if test "$_opengl_mode" = "gles" ; then
 			append_var LIBS "-lGLES_CM -lEGL -lX11"
+			append_var LIBS_3D "-lGLES_CM -lEGL -lX11"
 		else
 			_opengl_mode=none
 		fi
@@ -5444,6 +5446,7 @@ EOF
 	if test "$_opengl_game" = yes ; then
 		append_var LIBS "$OPENGL_LIBS"
 		append_var INCLUDES "$OPENGL_CFLAGS"
+		append_var LIBS_3D "$OPENGL_LIBS"
 		if test "$_opengl_shaders" = auto; then
 			_opengl_shaders=$_glew
 		fi
@@ -5481,6 +5484,12 @@ define_in_config_if_yes "$_opengl" "USE_OPENGL"
 define_in_config_if_yes "$_opengl_game" "USE_OPENGL_GAME"
 define_in_config_if_yes "$_opengles2" "USE_GLES2"
 define_in_config_if_yes "$_opengl_shaders" "USE_OPENGL_SHADERS"
+
+# If we have OpenGL libraries, then add them to plugins
+# so they could link
+if test -n "$LIBS_3D" ; then
+	_mak_plugins=$_mak_plugins"PLUGIN_LDFLAGS  += $LIBS_3D"
+fi
 
 #
 # Check for iconv
