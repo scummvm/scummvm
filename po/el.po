@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-13 21:41+0200\n"
-"PO-Revision-Date: 2020-10-10 17:39+0000\n"
+"PO-Revision-Date: 2020-10-14 09:44+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -4700,7 +4700,6 @@ msgstr ""
 "Προσέξτε να κατεβάσετε τη σωστή έκδοση σύμφωνα με τη γλώσσα του παιχνιδιού"
 
 #: engines/grim/emi/sound/emisound.cpp:650
-#, fuzzy
 msgid ""
 "ERROR: Not enough music tracks found!\n"
 "Escape from Monkey Island has two versions of FullMonkeyMap.imt,\n"
@@ -4711,11 +4710,12 @@ msgid ""
 "\n"
 "Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.imt"
 msgstr ""
-"Σφάλμα: Δεν βρέθηκαν αρκετά μουσικά κομμάτια!\n"
+"ΣΦΑΛΜΑ: Δεν βρέθηκαν αρκετά μουσικά κομμάτια!\n"
 "Το Escape from Monkey Island έχει δύο εκδοχές του FullMonkeyMap.imt,\n"
-"και χρειάζεται να αντιγράψετε και τα δύο αρχεία από τα δύο CDs στο "
-"Textures/, και να τα μετονομάσετε\n"
-"όπως παρακάτω για να έχετε υποστήριξη μουσικής στο παιχνίδι: \n"
+"και χρειάζεται να αντιγράψετε και τα δύο αρχεία από τα δύο CDs στο Textures/"
+", \n"
+"και να τα μετονομάσετε όπως παρακάτω για να έχετε υποστήριξη μουσικής στο "
+"παιχνίδι: \n"
 "CD 1: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap1.imt\"\n"
 "CD 2: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap2.imt\"\n"
 "\n"
@@ -5341,11 +5341,8 @@ msgid "Widescreen mod"
 msgstr "Λειτουργία ευρείας οθόνης"
 
 #: engines/myst3/detection.cpp:183
-#, fuzzy
 msgid "Enable widescreen rendering in fullscreen mode."
-msgstr ""
-"Ενεργοποίηση απόδοσης εικόνας σε ευρεία οθόνη (widescreen) σε λειτουργία "
-"πλήρους οθόνης (fullscreen)."
+msgstr "Εικόνα ευρείας οθόνης κατά τη λειτουργία πλήρους οθόνης."
 
 #: engines/myst3/myst3.cpp:361
 msgid ""
@@ -7349,7 +7346,7 @@ msgstr "Shift"
 
 #: engines/wintermute/keymapper_tables.h:1214
 msgid "Use Chapayev"
-msgstr ""
+msgstr "Χρήση Chapayev"
 
 #: engines/wintermute/keymapper_tables.h:1234
 #: engines/wintermute/keymapper_tables.h:1639
