@@ -470,7 +470,7 @@ void OSystem_Android::setFeatureState(Feature f, bool enable) {
 	switch (f) {
 	case kFeatureVirtualKeyboard:
 		_virtkeybd_on = enable;
-		showVirtualKeyboard(enable);
+		JNI::showVirtualKeyboard(enable);
 		break;
 	case kFeatureTouchpadMode:
 		ConfMan.setBool("touchpad_mouse_mode", enable);
@@ -567,12 +567,6 @@ void OSystem_Android::setWindowCaption(const char *caption) {
 	ENTER("%s", caption);
 
 	JNI::setWindowCaption(caption);
-}
-
-void OSystem_Android::showVirtualKeyboard(bool enable) {
-	ENTER("%d", enable);
-
-	JNI::showVirtualKeyboard(enable);
 }
 
 Audio::Mixer *OSystem_Android::getMixer() {

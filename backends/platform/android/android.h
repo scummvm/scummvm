@@ -110,11 +110,9 @@ private:
 	int _joystick_scale;
 	int _fingersDown;
 
-	void clipMouse(Common::Point &p);
-	void scaleMouse(Common::Point &p, int x, int y, bool deductDrawRect = true, bool touchpadMode = false);
+	void pushEvent(const Common::Event &event);
 
 public:
-	virtual void pushEvent(const Common::Event &event);
 	virtual bool pollEvent(Common::Event &event);
 	virtual Common::KeymapperDefaultBindings *getKeymapperDefaultBindings();
 
@@ -124,7 +122,6 @@ public:
 	virtual void quit();
 
 	virtual void setWindowCaption(const char *caption);
-	virtual void showVirtualKeyboard(bool enable);
 
 	virtual Audio::Mixer *getMixer();
 	virtual void getTimeAndDate(TimeDate &t) const;
