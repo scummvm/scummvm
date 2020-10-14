@@ -51,7 +51,10 @@ MODULE_OBJS := \
 	opengl/surfacerenderer.o \
 	opengl/box_shaders.o \
 	opengl/control_shaders.o \
-	opengl/compat_shaders.o \
+	opengl/compat_shaders.o
+
+ifdef USE_TINYGL
+MODULE_OBJS += \
 	tinygl/api.o \
 	tinygl/arrays.o \
 	tinygl/clear.o \
@@ -73,7 +76,8 @@ MODULE_OBJS := \
 	tinygl/zmath.o \
 	tinygl/ztriangle.o \
 	tinygl/zblit.o \
-	tinygl/zdirtyrect.o \
+	tinygl/zdirtyrect.o
+endif
 
 ifdef USE_SCALERS
 MODULE_OBJS += \

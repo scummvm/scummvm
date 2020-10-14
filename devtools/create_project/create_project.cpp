@@ -1060,6 +1060,7 @@ const Feature s_features[] = {
 	{          "mt32emu",                   "USE_MT32EMU", false, true,  "integrated MT-32 emulator" },
 	{              "lua",                       "USE_LUA", false, true,  "lua" },
 	{             "nasm",                      "USE_NASM", false, true,  "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
+	{           "tinygl",                    "USE_TINYGL", false, true,  "TinyGL support" },
 	{           "opengl",                    "USE_OPENGL", false, true,  "OpenGL support" },
 	{      "opengl_game",               "USE_OPENGL_GAME", false, true,  "OpenGL support in 3d games" },
 	{   "opengl_shaders",            "USE_OPENGL_SHADERS", false, true,  "OpenGL support (shaders) in 3d games" },
