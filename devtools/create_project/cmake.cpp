@@ -81,6 +81,8 @@ void CMakeProvider::createWorkspace(const BuildSetup &setup) {
 	workspace << "cmake_minimum_required(VERSION 3.2)\n"
 			"project(" << setup.projectDescription << ")\n\n";
 
+	workspace << "set(CMAKE_EXPORT_COMPILE_COMMANDS ON)\n";
+
 	workspace << "# Define the engines and subengines\n";
 	writeEngines(setup, workspace);
 	writeSubEngines(setup, workspace);
