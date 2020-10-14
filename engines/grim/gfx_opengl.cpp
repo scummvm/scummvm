@@ -1902,6 +1902,7 @@ void GfxOpenGL::drawEmergString(int x, int y, const char *text, const Color &fgC
 	glListBase(_emergFont);
 	
 	char *list = const_cast<char *>(text);
+	(void)list; // silence compiler warning
 	glCallLists(strlen(text), GL_UNSIGNED_BYTE, (void *)text);
 
 	glEnable(GL_LIGHTING);
