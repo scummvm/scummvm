@@ -31,6 +31,7 @@ addons:
     - libieee1284-3-dev
     - libsndio-dev
     - libreadline-dev
+    - libglew-dev
 
 branches:
  only:
