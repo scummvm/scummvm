@@ -6,9 +6,10 @@ For a more comprehensive changelog of the latest experimental code, see:
  General:
    - Switched ScummVM GUI output to UTF-32.
 
- GLK:
+ Glk:
    - Fix savegame issues with several subengines.
    - Fix memory overrun in Level9 game detector.
+   - Added detections for 2020 IF Comp games.
 
  Lure:
    - Fix fire animation in first room when loading saves.
