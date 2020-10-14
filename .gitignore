@@ -41,7 +41,7 @@ lib*.a
 /*.apk
 
 /README
-/README.html
+/README.html*
 /NEWS
 /NEWS.html
 /CONTRIBUTING
