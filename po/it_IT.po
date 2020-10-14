@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-14 11:46+0200\n"
-"PO-Revision-Date: 2020-10-12 19:56+0000\n"
-"Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
+"PO-Revision-Date: 2020-10-14 17:43+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
 "Language: it_IT\n"
@@ -4601,7 +4601,7 @@ msgstr ""
 "%s"
 
 #: engines/grim/md5check.cpp:554
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Could not open the file %s for checking.\n"
 "It may be missing or you may not have the rights to open it.\n"
@@ -4610,8 +4610,8 @@ msgid ""
 msgstr ""
 "Impossibile effettuare il controllo del file %s.\n"
 "Potrebbe non essere presente, o potresti non avere i permessi di lettura.\n"
-"Consulta https://wiki.residualvm.org/index.php/Datafiles per l'elenco dei "
-"file necessari."
+"Consulta https://wiki.scummvm.org/index.php/Datafiles per l'elenco dei file "
+"necessari."
 
 #: engines/grim/md5checkdialog.cpp:42
 msgid ""
