@@ -32,7 +32,7 @@
 #include "engines/wintermute/base/gfx/shadow_volume.h"
 #include "graphics/opengl/system_headers.h"
 
-#if defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_SHADERS)// || defined(USE_GLES2)
 
 #include "graphics/opengl/shader.h"
 

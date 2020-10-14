@@ -504,7 +504,7 @@ bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 	Common::String rendererConfig = ConfMan.get("renderer");
 	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
 
-#if defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_SHADERS)// || defined(USE_GLES2)
 	if (desiredRendererType == Graphics::kRendererTypeOpenGLShaders) {
 		_renderer3D = makeOpenGL3DShaderRenderer(this);
 	}

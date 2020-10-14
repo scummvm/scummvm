@@ -28,7 +28,7 @@
 #include "graphics/opengl/system_headers.h"
 #include "math/glmath.h"
 
-#if defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_SHADERS)// || defined(USE_GLES2)
 
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d_shader.h"
 #include "engines/wintermute/base/gfx/opengl/base_surface_opengl3d.h"
