@@ -330,10 +330,10 @@
 			<widget name = 'grFullscreenCheckbox'
 					type = 'Checkbox'
 			/>
-			<widget name = 'grVSyncCheckbox'
+			<widget name = 'grFilteringCheckbox'
 					type = 'Checkbox'
 			/>
-			<widget name = 'grFilteringCheckbox'
+			<widget name = 'grVSyncCheckbox'
 					type = 'Checkbox'
 			/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' align = 'center'>
