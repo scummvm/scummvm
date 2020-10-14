@@ -6,6 +6,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  Glk:
    - Fix savegame issues with several subengines.
    - Fix memory overrun in Level9 game detector.
+   - Added detections for 2020 IF Comp games.
 
  Lure:
    - Fix fire animation in first room when loading saves.

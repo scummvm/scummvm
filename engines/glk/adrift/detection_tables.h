@@ -268,22 +268,17 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 };
 
 const PlainGameDescriptor ADRIFT5_GAME_LIST[] = {
+	{ "1hgamonkeytoomany", "A Monkey too many" },
 	{ "axeofkolt", "The Axe of Kolt" },
 	{ "castlecoris", "The Spectre of Castle Coris" },
 	{ "cybercow", "Lair of the Cybercrow" },
 	{ "fistoffire", "Die Feuerfaust - The Fist of Fire" },
 	{ "hangover", "Hangover" },
+	{ "jaft", "Just Another Fairy Tale" },
 	{ "magneticmoon", "Magnetic Moon" },
 	{ "mystman", "Mystman" },
-	{ "starshipquest", "Starship Quest" },
+	{ "rtcc", "Return to Castle Coris" },
 	{ "sixsilverbullets", "Six Silver Bullets" },
-	{ "tcom1", "The Cave of Morpheus 1" },
-	{ "tcom2", "The Cave of Morpheus 2" },
-	{ "thetest", "The Test" },
-	{ "tingalan", "Tingalan" },
-	// ADRIFT One-Hour Game Competition 1
-	{ "1hgamonkeytoomany", "A Monkey too many" },
-	// English Blorb Games
 	{ "spacedetective1", "Space Detective, episode 1" },
 	{ "spacedetective2", "Space Detective, episode 2" },
 	{ "spacedetective3", "Space Detective, episode 3" },
@@ -291,6 +286,11 @@ const PlainGameDescriptor ADRIFT5_GAME_LIST[] = {
 	{ "spacedetective5", "Space Detective, episode 5" },
 	{ "spacedetective6", "Space Detective, episode 6" },
 	{ "spacedetective7", "Space Detective, episode 7" },
+	{ "starshipquest", "Starship Quest" },
+	{ "tcom1", "The Cave of Morpheus 1" },
+	{ "tcom2", "The Cave of Morpheus 2" },
+	{ "thetest", "The Test" },
+	{ "tingalan", "Tingalan" },
 
 	{ nullptr, nullptr }
 };
@@ -444,15 +444,10 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY0("cybercow", "1ee59ffd44378be75b4b099c06e386a9", 108209),
 	DT_ENTRY0("fistoffire", "3b76af72ce4876dfea4da23ab0b7f641", 567450),
 	DT_ENTRY0("hangover", "610c83cbe9d9e1353ebc444a769c85a9", 33933),
+	DT_ENTRY0("jaft", "0c754a07c00d9701b36f68703f1a58bd", 2018252),
 	DT_ENTRY0("magneticmoon", "26a11345dd49413dea2c1b4f7fd2b3fd", 488582),
 	DT_ENTRY0("mystman", "c3ca694117fbf7b655f3b7d729d94048", 74498),
-	DT_ENTRY0("starshipquest", "02fb2460c61c8d82c31fa1d763e63a7e", 449736),
-	DT_ENTRY0("sixsilverbullets", "e0f6170b5cbde7005609e68d8a25ddd3", 376934),
-	DT_ENTRY0("tcom", "61364f96ffdfd01e878f1a33557aff93", 37422),
-	DT_ENTRY0("tcom2", "b22abbff746998051e06bfa9a8083432", 67783),
-	DT_ENTRY0("thetest", "61a6f178f646c6158c0557ae4257b20d", 22465),
-	DT_ENTRY0("tingalan", "08c9ecd86664b62335d3852a2bb3d201", 259969026),
-	// English Blorb games
+	DT_ENTRY0("rtcc", "c79ed07084f08890c2ec4912c353ed34", 300308),
 	DT_ENTRY0("spacedetective1", "170517dae3a195f37d876f5645637953", 34044),
 	DT_ENTRY0("spacedetective2", "1e12b19d8777173cbf9866b3dd2fc2f0", 32632),
 	DT_ENTRY0("spacedetective3", "fc9fb75830d7f59bf932896152b1e759", 30560),
@@ -460,6 +455,12 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY0("spacedetective5", "f1bf863cce436a5ef17e64237803571a", 32676),
 	DT_ENTRY0("spacedetective6", "6035c865f7a4831e4539b7a2ff2ab711", 31922),
 	DT_ENTRY0("spacedetective7", "2044086edd9b2288ff2279b3824dfcef", 30066),
+	DT_ENTRY0("starshipquest", "02fb2460c61c8d82c31fa1d763e63a7e", 449736),
+	DT_ENTRY0("sixsilverbullets", "e0f6170b5cbde7005609e68d8a25ddd3", 376934),
+	DT_ENTRY0("tcom", "61364f96ffdfd01e878f1a33557aff93", 37422),
+	DT_ENTRY0("tcom2", "b22abbff746998051e06bfa9a8083432", 67783),
+	DT_ENTRY0("thetest", "61a6f178f646c6158c0557ae4257b20d", 22465),
+	DT_ENTRY0("tingalan", "08c9ecd86664b62335d3852a2bb3d201", 259969026),
 #endif
 
 	// Italian Games

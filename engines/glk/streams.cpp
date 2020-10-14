@@ -309,7 +309,7 @@ void WindowStream::setReverseVideo(bool reverse) {
 MemoryStream::MemoryStream(Streams *streams, void *buf, size_t buflen, FileMode mode, uint rock, bool unicode) :
 	Stream(streams, mode != filemode_Write, mode != filemode_Read, rock, unicode),
 	_buf(buf), _bufLen(buflen), _bufPtr(buf) {
-	assert(_buf && _bufLen);
+	assert(_buf || !_bufLen);
 	assert(mode == filemode_Read || mode == filemode_Write || mode == filemode_ReadWrite);
 
 	if (unicode)
