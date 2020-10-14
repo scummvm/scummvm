@@ -42,7 +42,7 @@
 #include "graphics/pixelbuffer.h"
 #include "graphics/renderer.h"
 
-#ifdef USE_OPENGL_GAME
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
 #include "graphics/opengl/context.h"
 #endif
 
