@@ -552,7 +552,7 @@ bool MD5Check::advanceCheck(int *pos, int *total) {
 	} else {
 		warning("Could not open %s for checking", sum.filename);
 		GUI::displayErrorDialog(Common::U32String::format(_("Could not open the file %s for checking.\nIt may be missing or "
-								"you may not have the rights to open it.\nGo to https://wiki.residualvm.org/index.php/Datafiles to see a list "
+								"you may not have the rights to open it.\nGo to https://wiki.scummvm.org/index.php/Datafiles to see a list "
 								"of the needed files."), sum.filename));
 		return false;
 	}
