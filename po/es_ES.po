@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-14 11:46+0200\n"
-"PO-Revision-Date: 2020-10-12 19:56+0000\n"
-"Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
+"PO-Revision-Date: 2020-10-14 17:43+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
 "Language: es_ES\n"
@@ -4606,7 +4606,7 @@ msgstr ""
 "%s"
 
 #: engines/grim/md5check.cpp:554
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Could not open the file %s for checking.\n"
 "It may be missing or you may not have the rights to open it.\n"
@@ -4614,9 +4614,9 @@ msgid ""
 "needed files."
 msgstr ""
 "No se ha podido abrir el archivo %s para su validación.\n"
-"Es posible que no esté o que no tengas los permisos necesarios para "
-"abrirlo.\n"
-"Ve a https://wiki.residualvm.org/index.php/Datafiles para ver la lista de "
+"Es posible que no esté o que no tengas los permisos necesarios para abrirlo."
+"\n"
+"Ve a https://wiki.scummvm.org/index.php/Datafiles para ver la lista de "
 "archivos necesarios."
 
 #: engines/grim/md5checkdialog.cpp:42
