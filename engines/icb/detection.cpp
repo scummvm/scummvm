@@ -32,6 +32,7 @@ static const PlainGameDescriptor icbGames[] = {
 static const char *directoryGlobs[] = {
 	"engine",
 	"linc",
+	"demo",
 	0
 };
 
@@ -48,17 +49,29 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
-/*	{
+	{
 		// In Cold Blood
 		// English Demo
 		"icb",
 		"Demo",
-		AD_ENTRY1s("engine.exe", "0c4a7a5046ec13ccac89ab3f959cc217", 837632),  // TODO: Fill with correct values
-		Common::EN_ANY,
+		AD_ENTRY1s("engine.exe", "94222e343795853b0aa59cb9876415ae", 827392),
+		Common::EN_GRB,
 		Common::kPlatformWindows,
 		ADGF_DEMO,
 		GUIO1(GUIO_NONE)
-	},*/
+	},
+
+	{
+		// In Cold Blood
+		// English Demo
+		"icb",
+		"Demo",
+		AD_ENTRY1s("engine.exe", "d0702069d95423107463001b99a19e73", 939520),
+		Common::EN_USA,
+		Common::kPlatformWindows,
+		ADGF_DEMO,
+		GUIO1(GUIO_NONE)
+	},
 
 	AD_TABLE_END_MARKER
 };

@@ -83,14 +83,16 @@ void InitisliaseScrollingText(const char *textFileName, const char *movieFileNam
 #endif
 
 	// Find movie to play
-	char fullMovieName[128];
+	pxString fullMovieName;
 
 #ifdef PC_DEMO
 	// All in one directory, which is nice
-	sprintf(fullMovieName, "gmovies\\%s.bik", movieFileName);
+	fullMovieName.Format("gmovies\\%s.bik", movieFileName);
+	fullMovieName.ConvertPath();
 #else
 	// All in one directory, which is nice
-	sprintf(fullMovieName, "movies\\%s.bik", movieFileName);
+	fullMovieName.Format("movies\\%s.bik", movieFileName);
+	fullMovieName.ConvertPath();
 #endif
 
 	// Ensure correct CD is in the drive (can't assume this because of movie library)
@@ -132,7 +134,8 @@ void InitisliaseScrollingText(const char *textFileName, const char *movieFileNam
 	if (!checkFileExists(fullMovieName)) { // amode = 0
 		// File is not present in the mission directory so check the global directory
 
-		sprintf(fullMovieName, "gmovies\\%s.bik", movieFileName);
+		fullMovieName.Format("gmovies\\%s.bik", movieFileName);
+		fullMovieName.ConvertPath();
 
 		if (!checkFileExists(fullMovieName))
 			Fatal_error(pxVString("Movie %s.bik does not exist in mission or global movie directory", movieFileName));
