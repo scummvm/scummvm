@@ -9,7 +9,7 @@ The games list
 
 The pane on the left lists the games you have added to ScummVM. This list usually offers some additional information about each game, such as original platform and language. To highlight any game on the list, type the first letter(s) of its title, or click on it.
 
-.. image:: ../images/Launcher/the_launcher.jpg
+.. image:: ../images/Launcher/the_launcher.png
    :class: with-shadow
 
 Quick search
@@ -20,7 +20,7 @@ The quick search input is located at the top of the page next to the magnifying 
 
 There are many ways to filter games. For instance, you can type "Monkey Island" to quickly locate all "Monkey Island" games on the list, or you can type "German" if you wish to play a game in German. 
 
-.. image:: ../images/Launcher/quicksearch.jpg
+.. image:: ../images/Launcher/quicksearch.png
    :class: with-shadow
 
 The buttons
@@ -31,7 +31,7 @@ Start
 -----
 Launches the highlighted game.
 
-.. image:: ../images/Launcher/start_game.jpg
+.. image:: ../images/Launcher/start_game.png
 
 Load 
 ----
@@ -52,10 +52,10 @@ In tile view, each tile shows a screenshot of the saved state, as well as the de
 .. caution::
   There are games that do not support the save game feature, or whose saved states lack information such as playtime or screenshots. 
 
-.. image:: ../images/Launcher/save_game_list.jpg
+.. image:: ../images/Launcher/save_game_list.png
    :class: with-shadow
 
-.. image:: ../images/Launcher/save_game_tile.jpg
+.. image:: ../images/Launcher/save_game_tile.png
    :class: with-shadow
 
 
@@ -70,8 +70,10 @@ Once you have selected the folder that contains the game data files, click **Cho
 .. image:: ../images/Launcher/choose_game_directory.jpg
    :class: with-shadow
 
-To add more than one game at a time, hold :kbd:`Shift` while clicking **Add Game**.
-   
+To add more than one game at a time, click on the dropdown arrow next to **Add Game**, and select **Mass Add...**.
+
+.. image:: ../images/Launcher/mass_add.png
+
 For more information, see the :doc:`adding_games` page.
 
 Edit Game 
@@ -82,7 +84,7 @@ Opens the game settings window. This window also opens whenever a game is added 
 
 Use this window to configure a game individually by overriding the default global game settings you have set via the **Options** window. You can also change the game's language and original platform, if applicable. For more information, see the :doc:`game_settings` page. 
 
-.. image:: ../images/Launcher/edit_game.jpg
+.. image:: ../images/Launcher/edit_game.png
    :class: with-shadow
 
 Remove Game
@@ -96,7 +98,7 @@ Options
 
 Opens the global settings window. Use this window to define global game settings, as well as change a number of the ScummVM Launcher settings. For more details on how to fine-tune ScummVM, see the :doc:`global_settings` page.
 
-.. image:: ../images/Launcher/options.jpg
+.. image:: ../images/Launcher/options.png
    :class: with-shadow..
 
 About
@@ -112,7 +114,7 @@ The Global Main Menu
 
 The Global Main Menu (GMM) is available while playing any game by pressing :kbd:`Ctrl` + :kbd:`F5`, or :kbd:`Ctrl` + :kbd:`fn` + :kbd:`F5` on a Mac. It provides the following options:
 
-.. image:: ../images/Launcher/gmm.jpg
+.. image:: ../images/Launcher/gmm.png
    :class: with-shadow
 
 - **Resume:** Closes the GMM and resume the game.
@@ -120,13 +122,17 @@ The Global Main Menu (GMM) is available while playing any game by pressing :kbd:
 - **Save:** Saves a game state. This is not available for all games.
 - **Options:** Provides gameplay options, such as sound volume and subtitle settings. 
 
-.. image:: ../images/Launcher/gmm_options.jpg   
+.. image:: ../images/Launcher/gmm_options_audio.png   
+   :class: with-shadow
+
+.. image:: ../images/Launcher/gmm_options_keymaps.png   
    :class: with-shadow
 
 - **About:** Displays the ScummVM About box. This is also available from the The Launcher.
 - **Help:** Displays a list of keyboard shortcuts for the game. This not available for all games.
 
-.. image:: ../images/Launcher/gmm_help.jpg
+.. image:: ../images/Launcher/gmm_help.png
+
 - **Return to Launcher:** Quits the game and returns to The Launcher. This is not available for all games.
 - **Quit:** Quits the game and ScummVM, and returns to the Operating System.
 
