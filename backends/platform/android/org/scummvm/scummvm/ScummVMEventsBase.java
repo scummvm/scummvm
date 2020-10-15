@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.content.Context;
 //import android.util.Log;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.KeyCharacterMap;
 import android.view.MotionEvent;
@@ -11,7 +12,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.GestureDetector;
 import android.view.InputDevice;
-import android.view.inputmethod.InputMethodManager;
+//import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
 
@@ -103,13 +104,14 @@ public class ScummVMEventsBase implements
 
 	private void handleEVHMessage(final Message msg) {
 		if (msg.what == MSG_SMENU_LONG_PRESS) {
-			// this displays the android keyboard (see showVirtualKeyboard() in ScummVMActivity.java)
+			// this toggles the android keyboard (see showVirtualKeyboard() in ScummVMActivity.java)
 			// when menu key is long-pressed
-			InputMethodManager imm = (InputMethodManager)
-				_context.getSystemService(Context.INPUT_METHOD_SERVICE);
-
-			if (imm != null)
-				imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+//			InputMethodManager imm = (InputMethodManager)
+//				_context.getSystemService(Context.INPUT_METHOD_SERVICE);
+//
+//			if (imm != null)
+//				imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+			((ScummVMActivity) _context).toggleScreenKeyboard();
 		} else if (msg.what == MSG_SBACK_LONG_PRESS) {
 			_scummvm.pushEvent(JE_SYS_KEY, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MENU, 0, 0, 0, 0);
 			_scummvm.pushEvent(JE_SYS_KEY, KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MENU, 0, 0, 0, 0);
@@ -142,6 +144,7 @@ public class ScummVMEventsBase implements
 	// OnKeyListener
 	@Override
 	final public boolean onKey(View v, int keyCode, KeyEvent e) {
+		//Log.d(ScummVM.LOG_TAG, "SCUMMV-EVENTS-BASE - onKEY");
 		final int action = e.getAction();
 
 		if (e.getUnicodeChar() == (int)EditableAccommodatingLatinIMETypeNullIssues.ONE_UNPROCESSED_CHARACTER.charAt(0)) {
@@ -287,6 +290,7 @@ public class ScummVMEventsBase implements
 	// OnTouchListener
 	@Override
 	final public boolean onTouch(View v, MotionEvent e) {
+		//Log.d(ScummVM.LOG_TAG, "SCUMMV-EVENTS-BASE - onTOUCH");
 
 		if (_mouseHelper != null) {
 			boolean isMouse = MouseHelper.isMouse(e);
@@ -324,6 +328,7 @@ public class ScummVMEventsBase implements
 	// OnGestureListener
 	@Override
 	final public boolean onDown(MotionEvent e) {
+		//Log.d(ScummVM.LOG_TAG, "SCUMMV-EVENTS-BASE - onDONW");
 		_scummvm.pushEvent(JE_DOWN, (int)e.getX(), (int)e.getY(), 0, 0, 0, 0);
 		return true;
 	}
