@@ -289,8 +289,6 @@ void OpenGLSdlGraphics3dManager::createOrUpdateScreen() {
 	_overlayFormat = OpenGL::TextureGL::getRGBAPixelFormat();
 	_overlayScreen = new OpenGL::TiledSurface(obtainedWidth, obtainedHeight, _overlayFormat);
 
-	_screenFormat = _overlayFormat;
-
 	_screenChangeCount++;
 
 #if !defined(AMIGAOS) && !defined(__MORPHOS__)

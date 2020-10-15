@@ -74,7 +74,7 @@ public:
 
 	// GraphicsManager API - Graphics mode
 #ifdef USE_RGB_COLOR
-	virtual Graphics::PixelFormat getScreenFormat() const override { return _screenFormat; }
+	virtual Graphics::PixelFormat getScreenFormat() const override { return _overlayFormat; }
 #endif
 	virtual int getScreenChangeID() const override { return _screenChangeCount; }
 	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format) override;
@@ -156,9 +156,6 @@ protected:
 	OpenGL::SurfaceRenderer *_surfaceRenderer;
 
 	Graphics::PixelFormat _overlayFormat;
-#ifdef USE_RGB_COLOR
-	Graphics::PixelFormat _screenFormat;
-#endif
 
 	void initializeOpenGLContext() const;
 	void drawOverlay();
