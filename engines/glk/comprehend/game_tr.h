@@ -23,14 +23,14 @@
 #ifndef GLK_COMPREHEND_GAME_TR_H
 #define GLK_COMPREHEND_GAME_TR_H
 
-#include "glk/comprehend/game.h"
+#include "glk/comprehend/game_opcodes.h"
 
 namespace Glk {
 namespace Comprehend {
 
 struct TransylvaniaMonster;
 
-class TransylvaniaGame : public ComprehendGame {
+class TransylvaniaGame : public ComprehendGameV1 {
 private:
 	static const TransylvaniaMonster WEREWOLF;
 	static const TransylvaniaMonster VAMPIRE;

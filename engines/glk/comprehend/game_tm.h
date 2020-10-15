@@ -23,12 +23,12 @@
 #ifndef GLK_COMPREHEND_GAME_TM_H
 #define GLK_COMPREHEND_GAME_TM_H
 
-#include "glk/comprehend/game.h"
+#include "glk/comprehend/game_opcodes.h"
 
 namespace Glk {
 namespace Comprehend {
 
-class TalismanGame : public ComprehendGame {
+class TalismanGame : public ComprehendGameV2 {
 public:
 	TalismanGame();
 	~TalismanGame() override {}

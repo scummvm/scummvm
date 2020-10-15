@@ -123,9 +123,6 @@ Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
 		                              func_state->_orCount, func_state->_and,
 		                              func_state->_testResult, func_state->_elseResult);
 
-	opcode_map = game->_opcodeMap;
-	opcode = opcode_map[instr->_opcode];
-
 	line += Common::String::format("  [%.2x] ", instr->_opcode);
 	if (_opcodes.contains(opcode))
 		line += _opcodes[opcode];

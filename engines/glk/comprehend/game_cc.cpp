@@ -29,7 +29,7 @@ namespace Comprehend {
 
 static const GameStrings CC1_STRINGS = {0x9};
 
-CrimsonCrownGame::CrimsonCrownGame() : ComprehendGame(),
+CrimsonCrownGame::CrimsonCrownGame() : ComprehendGameV1(),
 		_diskNum(1), _newDiskNum(1) {
 	setupDisk(1);
 }

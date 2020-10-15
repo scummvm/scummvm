@@ -23,12 +23,12 @@
 #ifndef GLK_COMPREHEND_GAME_OO_H
 #define GLK_COMPREHEND_GAME_OO_H
 
-#include "glk/comprehend/game.h"
+#include "glk/comprehend/game_opcodes.h"
 
 namespace Glk {
 namespace Comprehend {
 
-class OOToposGame : public ComprehendGame {
+class OOToposGame : public ComprehendGameV2 {
 public:
 	OOToposGame();
 	~OOToposGame() override {}
