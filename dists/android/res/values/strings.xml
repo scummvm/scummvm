@@ -34,4 +34,23 @@
 	<string name="keyboard_toggle_btn_desc">Toggle virtual keyboard</string>
 	<!-- <string name="title_activity_splash">ScummVM Logo Activity</string> -->
 	<!-- <string name="title_activity_main">ScummVM Main Activity</string> -->
+
+	<!-- Copy from AOSP (Android Open Source Project) -->
+	<!-- CustomKeyboardView - accessibility support -->
+	<!-- Description of the Alt button in a KeyboardView. [CHAR LIMIT=NONE] -->
+	<string name="customkeyboardview_keycode_alt">Alt</string>
+	<!-- Description of the Cancel button in a KeyboardView. [CHAR LIMIT=NONE] -->
+	<string name="customkeyboardview_keycode_cancel">Cancel</string>
+	<!-- Description of the Delete button in a KeyboardView. [CHAR LIMIT=NONE] -->
+	<string name="customkeyboardview_keycode_delete">Delete</string>
+	<!-- Description of the Done button in a KeyboardView. [CHAR LIMIT=NONE] -->
+	<string name="customkeyboardview_keycode_done">Done</string>
+	<!-- Description of the Mode change button in a KeyboardView. [CHAR LIMIT=NONE] -->
+	<string name="customkeyboardview_keycode_mode_change">Mode change</string>
+	<!-- Description of the Shift button in a KeyboardView. [CHAR LIMIT=NONE] -->
+	<string name="customkeyboardview_keycode_shift">Shift</string>
+	<!-- Description of the Enter button in a KeyboardView. [CHAR LIMIT=NONE] -->
+	<string name="customkeyboardview_keycode_enter">Enter</string>
+	<!-- End of copy from AOSP -->
+	<string name="customkeyboardview_popup_close">Close popup</string>
 </resources>

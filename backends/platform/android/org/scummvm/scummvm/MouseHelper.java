@@ -11,8 +11,8 @@ import android.view.View;
  * Contains helper methods for mouse/hover events that were introduced in Android 4.0.
  */
 public class MouseHelper {
-	private View.OnHoverListener _listener;
-	private ScummVM _scummvm;
+	private final View.OnHoverListener _listener;
+	private final ScummVM _scummvm;
 	private boolean _rmbPressed;
 	private boolean _lmbPressed;
 	private boolean _mmbPressed;
@@ -110,7 +110,7 @@ public class MouseHelper {
 		boolean lmbDown = (buttonState & MotionEvent.BUTTON_PRIMARY) == MotionEvent.BUTTON_PRIMARY;
 
 		if (!hover && e.getAction() != MotionEvent.ACTION_UP && buttonState == 0) {
-			// On some device types, ButtonState is 0 even when tapping on the touchpad or using the stylus on the screen etc.
+			// On some device types, ButtonState is 0 even when tapping on the touch-pad or using the stylus on the screen etc.
 			lmbDown = true;
 		}
 

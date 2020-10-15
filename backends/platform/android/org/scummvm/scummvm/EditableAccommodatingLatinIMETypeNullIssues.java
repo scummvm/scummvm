@@ -8,7 +8,7 @@ public class EditableAccommodatingLatinIMETypeNullIssues extends SpannableString
 	  }
 
 	//This character must be ignored by your onKey() code.
-	public static final CharSequence ONE_UNPROCESSED_CHARACTER = "/";
+	public static final CharSequence ONE_UNPROCESSED_CHARACTER = "\\";
 
 	@Override
 	public SpannableStringBuilder replace(final int spannableStringStart, final int spannableStringEnd, CharSequence replacementSequence, int replacementStart, int replacementEnd) {
@@ -22,7 +22,7 @@ public class EditableAccommodatingLatinIMETypeNullIssues extends SpannableString
 		super.replace(0, length(), "", 0, 0);
 
 		//We DO care about preserving the new stuff that is replacing the stuff in the
-		// editable, because this stuff might be sent to us as a keydown event.  So, we
+		// editable, because this stuff might be sent to us as a keyDown event.  So, we
 		// insert the new stuff (typically, a single character) into the now-empty editable,
 		// and return the result to the caller.
 		return super.replace(0, 0, replacementSequence, replacementStart, replacementEnd);

@@ -54,8 +54,8 @@ public class SplashActivity extends Activity {
 			int numOfReqPermsGranted = 0;
 			// If request is cancelled, the result arrays are empty.
 			if (grantResults.length > 0) {
-				for (int iterGrantResult: grantResults) {
-					if (iterGrantResult == PackageManager.PERMISSION_GRANTED) {
+				for (int iterateGrantResult: grantResults) {
+					if (iterateGrantResult == PackageManager.PERMISSION_GRANTED) {
 						Log.i(ScummVM.LOG_TAG, permissions[0] + " permission was granted at Runtime");
 						++numOfReqPermsGranted;
 					} else {

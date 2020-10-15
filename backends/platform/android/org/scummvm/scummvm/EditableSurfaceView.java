@@ -6,6 +6,7 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.Selection;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.PointerIcon;
@@ -34,6 +35,89 @@ public class EditableSurfaceView extends SurfaceView {
 		super(context, attrs, defStyle);
 		_context = context;
 	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, final KeyEvent event) {
+		Log.d(ScummVM.LOG_TAG, "onKeyDown - EditableSurface!!!"); // Called
+		if( keyCode == KeyEvent.KEYCODE_BACK ) {
+
+			if( ScummVMActivity.keyboardWithoutTextInputShown ) {
+				return true;
+			}
+		}
+
+		if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+			// Don't handle these
+			return false;
+		}
+		// Let our event manager handle it (ScummVMEventsBase class)
+		return super.dispatchKeyEvent(event);
+		//return false;
+
+		// This did not work
+		//return super.onKeyDown(keyCode, event);
+	}
+
+	@Override
+	public boolean onKeyUp(int keyCode, final KeyEvent event) {
+		Log.d(ScummVM.LOG_TAG, "onKeyUp - EditableSurface!!!");
+		if( keyCode == KeyEvent.KEYCODE_BACK ) {
+
+			if( ScummVMActivity.keyboardWithoutTextInputShown ) {
+				((ScummVMActivity) _context).showScreenKeyboardWithoutTextInputField(0); // Hide keyboard
+				return true;
+			}
+		}
+
+		if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+			// Don't handle these
+			return false;
+		}
+		// Let our event manager handle it (ScummVMEventsBase class)
+		return super.dispatchKeyEvent(event);
+		//return false;
+
+		// This did not work
+		//return super.onKeyUp(keyCode, event);
+	}
+
+	@Override
+	public boolean onTouchEvent(final MotionEvent event)  {
+		if( ScummVMActivity.keyboardWithoutTextInputShown && ((ScummVMActivity) _context)._screenKeyboard != null &&
+			((ScummVMActivity) _context)._screenKeyboard.getY() <= event.getY() ) {
+			event.offsetLocation(-((ScummVMActivity) _context)._screenKeyboard.getX(), -((ScummVMActivity) _context)._screenKeyboard.getY());
+			((ScummVMActivity) _context)._screenKeyboard.onTouchEvent(event);
+			return true;
+		}
+
+		if( android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH ) {
+			if (getX() != 0) {
+				event.offsetLocation(-getX(), -getY());
+			}
+		}
+
+		// TODO what is this for?
+		//DifferentTouchInput.touchInput.process(event);
+
+//		// Despite the LINT warning "ScummVMEvents#onTouch should call View#performClick when a click is detected"
+//		// we deal with this in our touch event handler (in ScummVMEventsBase class
+//		switch (event.getAction()) {
+//			case MotionEvent.ACTION_UP:
+//				performClick();
+//				break;
+//			case MotionEvent.ACTION_DOWN:
+//				// fall through
+//			default:
+//				break;
+//		}
+
+//		super.onTouchEvent(event);
+		return true;
+		// This causes a crash if we dispatch to super
+		// Let our event manager handle it (ScummVMEvents class)
+//		return super.dispatchTouchEvent(event);
+	}
+
 
 	// Deal with LINT warning: Custom view `SurfaceView` has setOnTouchListener called on it but does not override performClick (in ScummVMActivity.java)
 	@Override
@@ -307,4 +391,32 @@ public class EditableSurfaceView extends SurfaceView {
 	public PointerIcon onResolvePointerIcon(MotionEvent me, int pointerIndex) {
 		return PointerIcon.getSystemIcon(_context, PointerIcon.TYPE_NULL);
 	}
+
+	public void captureMouse(boolean capture) {
+		final boolean bGlobalsHideSystemMousePointer = true;
+		if (capture) {
+			setFocusableInTouchMode(true);
+			setFocusable(true);
+			requestFocus();
+			if (bGlobalsHideSystemMousePointer && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O ) {
+				postDelayed( new Runnable() {
+					public void run()
+					{
+						Log.v(ScummVM.LOG_TAG, "captureMouse::requestPointerCapture() delayed");
+						requestPointerCapture();
+					}
+				}, 50 );
+			}
+		} else {
+			if (bGlobalsHideSystemMousePointer && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O ) {
+				postDelayed( new Runnable() {
+					public void run() {
+						Log.v(ScummVM.LOG_TAG, "captureMouse::releasePointerCapture()");
+						releasePointerCapture();
+					}
+				}, 50 );
+			}
+		}
+	}
+
 }
