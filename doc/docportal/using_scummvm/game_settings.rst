@@ -115,6 +115,8 @@ For more information including comprehensive explanation of the audio settings, 
 **Override global audio settings**
 	Check this box to make the game use custom settings instead of global settings.
 
+.. _gamedevice:
+
 **Music device**
 	Specifies the device ScummVM uses to output audio. When set to <default>, ScummVM will automatically choose the most appropriate option for the played game. If set to an MT-32 or a General MIDI device, or if ScummVM chooses one of these automatically, the settings on the MT-32 or MIDI tabs also apply. 
 
@@ -272,7 +274,7 @@ Engines: ADL_ | AGI_ | BLADERUNNER_ | CGE_ | CINE_ | DRASCULA_ | DREAMWEB_ | HDB
 .. _ADL:
 
 ADL
-******
+=========
 .. _ntsc:
 
 TV emulation
@@ -677,7 +679,7 @@ Use high-quality "LarryScale" cel scaling
 .. _dsfx:
 
 Prefer digital sound effects
-	Prefer digital sound effects instead of synthesized ones
+	Prefer digital (sampled) sound effects instead of synthesized ones
 
 	*prefer_digitalsfx*
 
@@ -754,7 +756,7 @@ Use NES Classic Palette
 .. _SHERLOCK:
 
 **SHERLOCK**
-=================
+===============
 Use original load/save screens
 	Use the original save/load screens instead of the ScummVM ones"),
 	
