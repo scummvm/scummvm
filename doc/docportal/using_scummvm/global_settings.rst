@@ -181,6 +181,8 @@ Use the MIDI tab to change the settings of General MIDI devices.
 	 
 	*midi_gain* 
 
+.. _fluid:
+
 FluidSynth settings	
 	Opens a new dialog, with three further tabs:
 	`Reverb`_ | `Chorus`_ | `Misc`_
