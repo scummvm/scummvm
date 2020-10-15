@@ -205,7 +205,9 @@ There are many recognized configuration keywords. In the table below, each keywo
 		iconpath,string,,
 		":ref:`improved <improved>`",,true,
 		":ref:`InvObjectsAnimated <objanimated>`",,true,
+		":ref:`joystick_deadzone <deadzone>`",integer, 3
 		joystick_num,number,,
+		":ref:`kbdmouse_speed <mousespeed>`", integer, 10 
 		":ref:`language <lang>`",string,,
 		":ref:`local_server_port <serverport>`",integer,12345,
 		":ref:`midi_gain <gain>`",number,,"- 0 - 1000"

@@ -8,10 +8,11 @@ To open the game settings window, highlight a game in the main Launcher
 window, and click on **Edit Game**. This window also opens any time a
 game is added to the Launcher.
 
+For most settings, hovering over the setting with your mouse pointer will show a short explanation of that setting.
 
 There are many settings, and they are separated into tabs:
 
-`Game tab`_ | `Engine tab`_ | `Graphics tab`_ | `Audio tab`_ | `Volume tab`_ | `Midi tab`_ | `MT-32 tab`_ | `Paths tab`_ |
+`Game tab`_ | `Engine tab`_ | `Graphics tab`_ | `Keymaps tab`_ | `Audio tab`_ | `Volume tab`_ | `Midi tab`_ | `MT-32 tab`_ | `Paths tab`_ |
 
 Settings may also be edited directly in the configuration file. These configuration keywords are listed below in italics. For more information, including a complete list of configuration keywords, see the :doc:`../advanced_options/configuration_file` .
 
@@ -101,6 +102,25 @@ Use the graphics tab to change how the game looks when it is played. For more in
 	*filtering* 
 ,,,,,
 
+
+_`Keymaps tab`
+---------------
+
+Use the keymaps tab to assign actions to keyboard keys or shortcuts, or mouse or joystick buttons. Click on the red box next to the desired action to add an additional key or button. Click on the dropdown arrow for further options. 
+
+,,,,,,,,,,,,,,,,,
+
+Reset
+	Resets all keymaps to default.
+
+Reset to defaults
+	Resets the keymaps for that action to default. 
+
+Clear mapping
+	Clears all keymaps for that action.
+
+
+,,,,,,,,,,,,,,,,
 
 _`Audio tab`
 --------------------
