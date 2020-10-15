@@ -41,33 +41,29 @@ Adding the games to the Launcher
 
 1. Run ScummVM to open :doc:`../using_scummvm/the_launcher`.
 
-2. In the Launcher window, click **Add Game**. This opens a file browser. To add multiple games at once, hold :kbd:`Shift` while clicking **Add Game**.
+2. In the Launcher window, click **Add Game**. This opens a file browser. To add multiple games at once, click on the dropdown arrow next to **Add Game**, and select **Mass Add...**.
 
-.. image:: ../images/Launcher/add_game.jpg
+.. image:: ../images/Launcher/add_game.png
    :class: with-shadow
 
 
 3.  Use the file browser to locate the folder containing the game you wish to add. Double click on a folder to open it, and use **Go up** to go back up one level. 
 
-.. image:: ../images/Launcher/choose_directory.jpg
-   :class: with-shadow
-
-
 4. Once you have selected the folder that contains the data files, click **Choose**. 
 
-.. image:: ../images/Launcher/choose_game_directory.jpg
+.. image:: ../images/Launcher/choose_game_directory.png
    :class: with-shadow
 
 
 
 5.  A dialog opens to allow configuration of various settings for the game. These can be reconfigured at any time, but for now everything should work at the default settings. Click **Ok**. 
 
-.. image:: ../images/Launcher/add_game_settings.jpg
+.. image:: ../images/Launcher/game_settings.png
    :class: with-shadow
 
 6. Added games are now ready to play! To play, select a game and click **Start** to play. 
 
-.. image:: ../images/Launcher/start_game.jpg
+.. image:: ../images/Launcher/start_game.png
    :class: with-shadow
 
 Games can also be launched directly from the command line.
