@@ -62,6 +62,12 @@ class DialogScreen;
 class Cursor;
 class FMVScreen;
 
+enum {
+	kThumbnailWidth = 160,
+	kThumbnailHeight = 92,
+	kThumbnailSize = kThumbnailWidth * kThumbnailHeight * 4
+};
+
 /**
  * Facade object for interacting with the user interface from the rest of the engine
  */
@@ -188,10 +194,6 @@ public:
 
 	/** Perform an action after a keypress */
 	void handleKeyPress(const Common::KeyState &keyState);
-
-	static const uint kThumbnailWidth = 160;
-	static const uint kThumbnailHeight = 92;
-	static const uint kThumbnailSize = kThumbnailWidth * kThumbnailHeight * 4;
 
 private:
 	Screen *getScreenByName(Screen::Name screenName) const;
