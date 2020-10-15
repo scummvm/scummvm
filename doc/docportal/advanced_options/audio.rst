@@ -15,8 +15,8 @@ Many of these devices can be emulated by ScummVM:
 - C64 Audio: emulates the sound chip `(Sound Interface Device) <https://theconversation.com/the-sound-of-sid-35-years-of-chiptunes-influence-on-electronic-music-74935>`_ in the Commodore 64 computer. The SID was a three-voice synthesizer module, with a fourth voice for sampled drums or speech. 
 
 - Amiga Audio: emulates the Amiga audio chip, `Paula <https://en.wikipedia.org/wiki/Original_Chip_Set#Audio>`_, which had four 8-bit PCM sound channels. 
-- FM-Towns Audio: emulates the audio of the `FM Towns PC  <https://en.wikipedia.org/wiki/FM_Towns#Sound>`_>. Games on FM Towns computers often used audio CD standard tracks. The soundchips were capable of eight PCM voices and six FM channels.  
-- PC-98 Audio: emulates the audio of the NEC PC-9801 computers.  
+- FM-Towns Audio: emulates the audio of the `FM Towns PC  <https://en.wikipedia.org/wiki/FM_Towns#Sound>`_. Games on FM Towns computers often used audio CD standard tracks. The soundchips were capable of eight PCM voices and six FM channels.  
+- PC-98 Audio: emulates the audio of the NEC PC-9801-26 and PC-9801-86 sound cards.  
 - SegaCD Audio: emulates the audio of the Sega CD add-on for the Sega Genesis/32x. 
 
 To find out which emulation is compatible with the game you're playing, have a look at the manual that comes with the game.
