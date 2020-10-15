@@ -87,7 +87,7 @@ public:
 		/** Should this reply only be made available when there are no other options left? */
 		bool isLastOnly() const;
 
-	private:
+	protected:
 		// Static data
 		Common::Array<ResourceReference> _lines;
 		uint32 _conditionType;
@@ -126,7 +126,7 @@ public:
 		/** Get the reply with the specified index */
 		Reply *getReply(uint32 index);
 
-	private:
+	protected:
 		Common::Array<Reply> _replies;
 
 		bool _removeOnceDepleted;
