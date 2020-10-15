@@ -26,6 +26,8 @@
 
 #include "graphics/surface.h"
 
+#if defined(USE_OPENGL_GAME) || defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+
 namespace Stark {
 namespace Gfx {
 
@@ -127,3 +129,5 @@ void OpenGlTexture::addLevel(uint32 level, const Graphics::Surface *surface, con
 
 } // End of namespace Gfx
 } // End of namespace Stark
+
+#endif // defined(USE_OPENGL_GAME) || defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
