@@ -67,7 +67,7 @@ On some platforms, the Add Game button opens the default system dialog to allow 
 
 Once you have selected the folder that contains the game data files, click **Choose**. 
 
-.. image:: ../images/Launcher/choose_game_directory.jpg
+.. image:: ../images/Launcher/choose_game_directory.png
    :class: with-shadow
 
 To add more than one game at a time, click on the dropdown arrow next to **Add Game**, and select **Mass Add...**.
