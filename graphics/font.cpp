@@ -52,8 +52,7 @@ Common::Rect getBoundingBoxImpl(const Font &font, const StringType &str, int x, 
 		x = x + w - width;
 	x += deltax;
 
-	bool first = true;
-	Common::Rect bbox;
+	Common::Rect bbox(x, y, x + width, y);
 
 	typename StringType::unsigned_type last = 0;
 	for (typename StringType::const_iterator i = str.begin(), end = str.end(); i != end; ++i) {
@@ -66,12 +65,7 @@ Common::Rect getBoundingBoxImpl(const Font &font, const StringType &str, int x, 
 			break;
 		if (x + charBox.right >= leftX) {
 			charBox.translate(x, y);
-			if (first) {
-				bbox = charBox;
-				first = false;
-			} else {
-				bbox.extend(charBox);
-			}
+			bbox.extend(charBox);
 		}
 
 		x += font.getCharWidth(cur);
