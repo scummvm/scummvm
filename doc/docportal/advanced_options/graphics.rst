@@ -19,7 +19,7 @@ The first setting applied to the image is the graphics mode.
 The original game graphics are upscaled using different graphical filters, which are specialized algorithms used to ensure that low resolution pixel-art still looks good when it is displayed at a higher resolution.
 
 If the game originally ran at a resolution of 320x200 - which is typical for most SCUMM games - then using a graphics mode with a scale factor of 2x will yield 640x400 graphics. A 3x scale factor will yield 960x600.
-
+ 
 
 Comparison of graphics modes
 ******************************
@@ -73,17 +73,22 @@ Comparison of graphics modes
     **DotMatrix**: Dot matrix effect. Factor 2x.
 
 
+Not all engines support all, or even any, of the graphics modes. 
 
-.. note::
-
-    Not all engines support all, or even any, of the graphics modes. 
-    
-    There is always a speed penalty when using any form of anti-aliasing/linear filtering.
+There is always a speed penalty when using any form of anti-aliasing/linear filtering.
 
 
+OpenGL mode
+************
 
-Aspect Ratio
+OpenGL graphics mode works a little differently to the other graphics modes. Instead of applying the `aspect ratio <Aspect ratio>`_ and `stretch mode <Stretch mode>`_ settings one after the other (and after the graphics mode scaling has been applied), it does all the scaling and stretching in one step, going directly from the original game resolution to the final display resolution. 
+
+Output is controlled by your window size (or screen resolution if in full screen) and the stretch mode selected, as well as the `Filter graphics <Filter graphics>`_ option. 
+
+
+Aspect ratio
 -------------
+
 The next setting applied to the image is the aspect ratio correction.
 
 Older games were designed to be run at 320x200 pixels, but on systems where each pixel was rectangular instead of square. This means that on modern systems these games look wider and flatter than they are supposed to. Aspect ratio correction duplicates lines of pixels to correct this. 
@@ -94,7 +99,7 @@ Older games were designed to be run at 320x200 pixels, but on systems where each
 
 .. figure:: ../images/graphics/aspect_ratio/aspect_ratio.png
 
-    Aspect ratio correction applied. 
+    Aspect ratio correction applied - notice the moon is actually round now.  
 
 Stretch mode
 ----------------
@@ -104,10 +109,11 @@ The last setting applied to the image is the stretch mode.
 There are five stretch modes:
 
 - Center - centers the image in the window. 
-- Pixel-perfect scaling - keeps the image at its resolution.
-- Fit to window - fits the image to the window, but maintains the aspect ratio; does not stretch it to fill the window.
+- Pixel-perfect scaling - scales the image to a multiple of the original game resolution as much as possible (for example, 2x, 3x, 4x and so on), and fills the remaining empty space with black borders. 
+- Fit to window - fits the image to the window, but maintains the aspect ratio and does not stretch it to fill the window.
 - Stretch - stretches the image to fill the window
--  Fit to window (4:3) - fits the image to the window, at a 4:3 aspect ratio.
+-  Fit to window (4:3) - fits the image to the window, at a forced 4:3 aspect ratio.
+
 
 Render mode
 -------------
@@ -140,4 +146,7 @@ Below are some of the common render modes, to illustrate how the render mode set
 
     Maniac Mansion with Amiga (32 color) render mode
 
+Filter graphics
+----------------
 
+When enabled, ScummVM uses bilinear interpolation instead of nearest neighbor for the `aspect ratio <Aspect ratio>`_ and `stretch mode <Stretch mode>`_. It does not affect the graphics mode scaling unless OpenGL is selected, in which case it determines how the OpenGL scaling is done. 
