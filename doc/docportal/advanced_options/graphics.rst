@@ -77,6 +77,7 @@ Not all engines support all, or even any, of the graphics modes.
 
 There is always a speed penalty when using any form of anti-aliasing/linear filtering.
 
+To switch between graphics modes on the go, use :kbd:`Ctrl` + :kbd:`Alt` + :kbd:`1` to :kbd:`8`. 
 
 OpenGL mode
 ************
@@ -101,6 +102,8 @@ Older games were designed to be run at 320x200 pixels, but on systems where each
 
     Aspect ratio correction applied - notice the moon is actually round now.  
 
+To toggle aspect ratio on and off, use :kbd:`Ctrl` + :kbd:`Alt` + :kbd:`a`.
+
 Stretch mode
 ----------------
 
@@ -114,6 +117,7 @@ There are five stretch modes:
 - Stretch - stretches the image to fill the window
 -  Fit to window (4:3) - fits the image to the window, at a forced 4:3 aspect ratio.
 
+To switch between stretch modes on the go, use :kbd:`Ctrl` + :kbd:`Alt` + :kbd:`s`.
 
 Render mode
 -------------
@@ -150,3 +154,5 @@ Filter graphics
 ----------------
 
 When enabled, ScummVM uses bilinear interpolation instead of nearest neighbor for the `aspect ratio <Aspect ratio>`_ and `stretch mode <Stretch mode>`_. It does not affect the graphics mode scaling unless OpenGL is selected, in which case it determines how the OpenGL scaling is done. 
+
+To toggle between bilinear interpolation and nearest neighbor, us :kbd:`Ctrl` + :kbd:`Alt` + :kbd:`f`.
