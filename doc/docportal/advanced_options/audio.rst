@@ -9,15 +9,37 @@ For a look at the evolution of PC audio, see `this video on YouTube <https://www
 
 Many of these devices can be emulated by ScummVM:
 
-- PC Speaker: emulates the built-in PC speaker. This is mostly supported by older games, and was the only option before sound cards became widely used.  
+- PC Speaker: emulates the built-in PC speaker. This is mostly supported by older games, and was the only option before sound cards became widely used. 
+
+    *pcspk*
+
 - IBM PCjr: emulates the sound of the 1984 IBM PCjr computer, which, enhanced with a Texas Instruments chip, provided three-voice sound and a white noise generator. 
-- Creative Music System `(C/MS) <https://en.wikipedia.org/wiki/Sound_Blaster#Creative_Music_System>`_: emulates the first sound card developed by Creative Technology (later Creative Labs), the precursor to the SoundBlaster line of sound cards. The C/MS provided 12 channels of square-wave stereo sound.    
+
+    *pcjr*
+
+- Creative Music System `(C/MS) <https://en.wikipedia.org/wiki/Sound_Blaster#Creative_Music_System>`_: emulates the first sound card developed by Creative Technology (later Creative Labs), the precursor to the SoundBlaster line of sound cards. The C/MS provided 12 channels of square-wave stereo sound.   
+
+    *cms*
+
 - C64 Audio: emulates the sound chip `(Sound Interface Device) <https://theconversation.com/the-sound-of-sid-35-years-of-chiptunes-influence-on-electronic-music-74935>`_ in the Commodore 64 computer. The SID was a three-voice synthesizer module, with a fourth voice for sampled drums or speech. 
 
+    *C64*
+
 - Amiga Audio: emulates the Amiga audio chip, `Paula <https://en.wikipedia.org/wiki/Original_Chip_Set#Audio>`_, which had four 8-bit PCM sound channels. 
+
+    *CAMD*
+
 - FM-Towns Audio: emulates the audio of the `FM Towns PC  <https://en.wikipedia.org/wiki/FM_Towns#Sound>`_. Games on FM Towns computers often used audio CD standard tracks. The soundchips were capable of eight PCM voices and six FM channels.  
-- PC-98 Audio: emulates the audio of the NEC PC-9801-26 and PC-9801-86 sound cards.  
+
+    *towns*
+
+- PC-98 Audio: emulates the audio of the NEC PC-9801-26 and PC-9801-86 sound cards. 
+
+    *pc98*
+
 - SegaCD Audio: emulates the audio of the Sega CD add-on for the Sega Genesis/32x. 
+
+    *segacd*
 
 To find out which emulation is compatible with the game you're playing, have a look at the manual that comes with the game.
 
@@ -167,6 +189,8 @@ Digital Sound effects
 
 Some games have both sampled and synthesized sound effects. ScummVM will usually use the sampled sound effects, even if you select Adlib, MT-32 or GM as your audio device. Some games allow you to choose between sampled and synthesized sound effects by using the **Prefer digital sound effects** option in the Engine tab. 
 
+.. _outputrate:
+
 Sample output rate
 -------------------
 
@@ -179,6 +203,19 @@ For games that use CD audio, the sounds were probably sampled at 44100Hz, so tha
 ScummVM generates the samples when using AdLib, FM-Towns, PC Speaker or IBM PCjr emulated sound. 22050Hz will usually be fine for these options, although for Beneath a Steel Sky 44100Hz is recommended.
 
 ScummVM has to resample all sounds to the selected output frequency. It is recommended to choose an output frequency that is a multiple of the original frequency. Choosing an in-between number may not be supported by your sound card.
+
+.. _buffer:
+
+Audio buffer size
+------------------
+
+There is no option to control audio buffer size through the GUI, but the default value can be overridden in the the :doc:`configuration file <configuration_file>`_. The default value is calculated based on output sampling frequency to keep audio latency below 45ms. 
+
+Appropriate values are normally between 512 and 8192, but the value must be one of: 256, 512, 1024, 2048, 4096, 8192, 16384, or 32768. 
+
+Smaller values yield faster response time, but can lead to stuttering if your CPU isn't able to catch up with audio sampling when using the sound emulators. Large buffer sizes may lead to minor audio delays (high latency).
+
+
 
 CD audio
 ----------

@@ -18,7 +18,7 @@ The configuration file saves to different default locations, depending on the pl
 
 	.. tab:: Mac OSX
 
-		``~/Library/Preferences/ScummVM Preferences``, where ``~`` is your Home directory. 
+		``~/Library/Preferences/ScummVM Preferences``, where ``~`` is your Home directory. To see the Libraries folder you will need to view hidden files.
 
 		Note that if an earlier version of ScummVM was installed on your system, the previous default location of ``~/.scummvmrc`` will be kept.
 	
@@ -113,7 +113,7 @@ There are many recognized configuration keywords. In the table below, each keywo
 		":ref:`altamigapalette <altamiga>`",boolean,false,
 		":ref:`apple2gs_speedmenu <2gs>`",boolean,false,
 		":ref:`aspect_ratio <ratio>`",boolean,false,
-		audio_buffer_size,number,"Calculated","
+		":ref:`audio_buffer_size <buffer>`",number,"Calculated","
 	- 256 
 	- 512 
 	- 1024 
@@ -191,7 +191,7 @@ There are many recognized configuration keywords. In the table below, each keywo
 	- opengl"
 		":ref:`gm_device <gm>`",string,null,"
 	- auto
-	- alsa_midi Through
+	- alsa
 	- seq 
 	- sndio
 	- fluidsynth 
@@ -215,26 +215,45 @@ There are many recognized configuration keywords. In the table below, each keywo
 		":ref:`mousesupport <support>`",boolean,true,
 		":ref:`mt32_device <mt32>`",string,,"
 	- auto
-	- alsa_midi Through
+	- alsa
 	- seq 
-	- sndio
 	- fluidsynth
 	- mt32
 	- timidity "
 		":ref:`multi_midi <multi>`",boolean,,
-		":ref:`music_driver <device>`",string,auto,"	
+		":ref:`music_driver [scummvm] <device>`",string,auto,"	
 	- null
 	- auto
-	- alsa_Midi Through 
-	- seq
-	- sndio
+
+	- seq (Unix)
+	- sndio (Unix)
+	- alsa (Unix)
+	- CAMD (Amiga)
+	- core (Mac)
+	- coremidi (Mac - hardware)
+
+	- windows (Windows)
+
 	- fluidsynth 
 	- mt32
-	- timidity
+	- adlib
 	- pcspk 
 	- pcjr
 	- cms
-	- adlib "
+	- timidity
+	"
+		":ref:`music_driver [game] <gamedevice>`",string, auto, "
+	The same options as 
+	
+	``music_driver in [scummvm]`` 
+	
+	plus:
+
+	- towns
+	- C64
+	- pc98
+	- segacd
+	"
 		":ref:`music_volume <music>`",number,,"- 0-256 "
 		":ref:`mute <mute>`",boolean,false,
 		":ref:`native_fb01 <fb01>`",,false,
@@ -252,9 +271,9 @@ There are many recognized configuration keywords. In the table below, each keywo
 	- op2lpt
 	- op3lpt "
 		":ref:`originalsaveload <osl>`",boolean,false,
-		output_rate,number,,"
+		":ref:`output_rate <outputrate>`",number,,"
 	Sensible values are:
-	
+
 	- 11025 
 	- 22050
 	- 44100"
