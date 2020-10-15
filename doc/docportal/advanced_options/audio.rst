@@ -15,11 +15,11 @@ Many of these devices can be emulated by ScummVM:
 - C64 Audio: emulates the sound chip `(Sound Interface Device) <https://theconversation.com/the-sound-of-sid-35-years-of-chiptunes-influence-on-electronic-music-74935>`_ in the Commodore 64 computer. The SID was a three-voice synthesizer module, with a fourth voice for sampled drums or speech. 
 
 - Amiga Audio: emulates the Amiga audio chip, `Paula <https://en.wikipedia.org/wiki/Original_Chip_Set#Audio>`_, which had four 8-bit PCM sound channels. 
-- FM-Towns Audio: emulates the audio of the `FM Towns PC <https://en.wikipedia.org/wiki/FM_Towns#Sound`_>. Games on FM Towns computers often used audio CD standard tracks. The soundchips were capable of eight PCM voices and six FM channels.  
+- FM-Towns Audio: emulates the audio of the `FM Towns PC  <https://en.wikipedia.org/wiki/FM_Towns#Sound>`_>. Games on FM Towns computers often used audio CD standard tracks. The soundchips were capable of eight PCM voices and six FM channels.  
 - PC-98 Audio: emulates the audio of the NEC PC-9801 computers.  
 - SegaCD Audio: emulates the audio of the Sega CD add-on for the Sega Genesis/32x. 
 
-To find which emulation is compatible with the game you're playing, have a look at the manual that comes with the game.
+To find out which emulation is compatible with the game you're playing, have a look at the manual that comes with the game.
 
 
 General audio settings overview
@@ -166,3 +166,44 @@ Digital Sound effects
 ----------------------
 
 Some games have both sampled and synthesized sound effects. ScummVM will usually use the sampled sound effects, even if you select Adlib, MT-32 or GM as your audio device. Some games allow you to choose between sampled and synthesized sound effects by using the **Prefer digital sound effects** option in the Engine tab. 
+
+Sample output rate
+-------------------
+
+The output sample rate tells ScummVM how many sound samples to play per channel per second. 
+
+Most of the sounds were originally sampled at either 22050Hz or 11025Hz, so using a higher sample rate in these cases will not improve the quality of the audio.
+
+For games that use CD audio, the sounds were probably sampled at 44100Hz, so that is a better sample rate to choose for these games.
+
+ScummVM generates the samples when using AdLib, FM-Towns, PC Speaker or IBM PCjr emulated sound. 22050Hz will usually be fine for these options, although for Beneath a Steel Sky 44100Hz is recommended.
+
+ScummVM has to resample all sounds to the selected output frequency. It is recommended to choose an output frequency that is a multiple of the original frequency. Choosing an in-between number may not be supported by your sound card.
+
+CD audio
+----------
+
+Some games contain one or more separate audio tracks on CD. To use these with ScummVM, they need to be extracted from the CD in .wav or .aiff format, and then converted to either .mp3, .flac or .ogg file formats. 
+
+.. tip::
+
+    Software suggestion:
+
+    `fre:ac <https://www.freac.org/>`_ is a multi-platform, open-source software, with the ability to both rip CDs and convert audio between .mp3, .ogg, .flac and .wav formats. 
+
+Compressing audio files
+------------------------
+
+ScummVM has tools to compress the audio files that come with games.
+
+The ScummVM tools package is available for download on the `ScummVM downloads page <https://www.scummvm.org/downloads/#tools>`_.
+
+For more information on how to use the tools, see the :doc:`Tools` page. 
+
+
+
+
+
+
+
+
