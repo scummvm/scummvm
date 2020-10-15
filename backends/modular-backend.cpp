@@ -261,6 +261,10 @@ void ModularGraphicsBackend::displayActivityIconOnOSD(const Graphics::Surface *i
 	_graphicsManager->displayActivityIconOnOSD(icon);
 }
 
+void ModularGraphicsBackend::saveScreenshot() {
+	_graphicsManager->saveScreenshot();
+}
+
 
 ModularMixerBackend::ModularMixerBackend()
 	:
