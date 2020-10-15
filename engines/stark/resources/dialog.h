@@ -87,7 +87,6 @@ public:
 		/** Should this reply only be made available when there are no other options left? */
 		bool isLastOnly() const;
 
-	protected:
 		// Static data
 		Common::Array<ResourceReference> _lines;
 		uint32 _conditionType;
