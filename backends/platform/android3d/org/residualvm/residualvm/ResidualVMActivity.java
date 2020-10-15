@@ -35,6 +35,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -171,33 +172,17 @@ public class ResidualVMActivity extends Activity {
 		}
 
 		@Override
-		protected byte[] getTextFromClipboard() {
+		protected String getTextFromClipboard() {
 			CharSequence text = _clipboard.getText();
 			if (text != null) {
-				String encoding = getCurrentCharset();
-				byte[] out;
-				Log.d(LOG_TAG, String.format("Converting from UTF-8 to %s", encoding));
-				try {
-					out = text.toString().getBytes(encoding);
-				} catch (java.io.UnsupportedEncodingException e) {
-					out = text.toString().getBytes();
-				}
-				return out;
+				return text.toString();
 			}
 			return null;
 		}
 
 		@Override
-		protected boolean setTextInClipboard(byte[] text) {
-			String encoding = getCurrentCharset();
-			String out;
-			Log.d(LOG_TAG, String.format("Converting from %s to UTF-8", encoding));
-			try {
-				out = new String(text, encoding);
-			} catch (java.io.UnsupportedEncodingException e) {
-				out = new String(text);
-			}
-			_clipboard.setText(out);
+		protected boolean setTextInClipboard(String text) {
+			_clipboard.setText(text);
 			return true;
 		}
 
@@ -241,6 +226,12 @@ public class ResidualVMActivity extends Activity {
 		@Override
 		protected String[] getSysArchives() {
 			return new String[0];
+		}
+
+		@Override
+		protected byte[] convertEncoding(String to, String from, byte[] string) throws UnsupportedEncodingException {
+			String str = new String(string, from);
+			return str.getBytes(to);
 		}
 
 		@Override
@@ -322,7 +313,7 @@ public class ResidualVMActivity extends Activity {
 				"ResidualVM",
 				"--config=" + getFileStreamPath("residualvmrc").getPath(),
 				"--path=" + Environment.getExternalStorageDirectory().getPath(),
-				"--gui-theme=modern",
+				"--gui-theme=residualvm",
 				"--savepath=" + savePath
 		});
 

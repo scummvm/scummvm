@@ -15,6 +15,7 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -57,13 +58,14 @@ public abstract class ResidualVM implements SurfaceHolder.Callback, Runnable {
 	abstract protected void displayMessageOnOSD(String msg);
 	abstract protected void openUrl(String url);
 	abstract protected boolean hasTextInClipboard();
-	abstract protected byte[] getTextFromClipboard();
-	abstract protected boolean setTextInClipboard(byte[] text);
+	abstract protected String getTextFromClipboard();
+	abstract protected boolean setTextInClipboard(String text);
 	abstract protected boolean isConnectionLimited();
 	abstract protected void setWindowCaption(String caption);
 	abstract protected void showVirtualKeyboard(boolean enable);
 	abstract protected void showKeyboardControl(boolean enable);
 	abstract protected String[] getSysArchives();
+	abstract protected byte[] convertEncoding(String to, String from, byte[] string) throws UnsupportedEncodingException;
 	abstract protected String[] getAllStorageLocations();
 
 	public ResidualVM(AssetManager asset_manager, SurfaceHolder holder) {
@@ -461,6 +463,6 @@ public abstract class ResidualVM implements SurfaceHolder.Callback, Runnable {
 			}
 		}
 
-		System.loadLibrary("residualvm");
+		System.loadLibrary("scummvm");
 	}
 }
