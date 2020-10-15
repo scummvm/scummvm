@@ -126,7 +126,6 @@ public:
 		/** Get the reply with the specified index */
 		Reply *getReply(uint32 index);
 
-	protected:
 		Common::Array<Reply> _replies;
 
 		bool _removeOnceDepleted;
@@ -156,7 +155,6 @@ public:
 	/** Get the character's id - index in the KnowledgeSet */
 	int32 getCharacter() const;
 
-protected:
 	void printData() override;
 
 	Common::Array<Topic> _topics;
