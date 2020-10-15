@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-14 11:46+0200\n"
-"PO-Revision-Date: 2020-10-14 04:43+0000\n"
+"PO-Revision-Date: 2020-10-15 11:43+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -4611,7 +4611,7 @@ msgstr ""
 "%s"
 
 #: engines/grim/md5check.cpp:554
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Could not open the file %s for checking.\n"
 "It may be missing or you may not have the rights to open it.\n"
