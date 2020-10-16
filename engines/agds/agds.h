@@ -62,6 +62,7 @@ typedef Common::SharedPtr<Object> ObjectPtr;
 struct Patch;
 typedef Common::SharedPtr<Patch> PatchPtr;
 class Process;
+typedef Common::SharedPtr<Process> ProcessPtr;
 struct Region;
 typedef Common::SharedPtr<Region> RegionPtr;
 struct MouseRegion;
@@ -72,7 +73,7 @@ class Console;
 
 class AGDSEngine : public Engine {
 	friend class Process;
-	typedef Common::List<Process> ProcessListType;
+	typedef Common::List<ProcessPtr> ProcessListType;
 
 public:
 	AGDSEngine(OSystem *syst, const ADGameDescription *gameDesc);
