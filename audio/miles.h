@@ -92,6 +92,8 @@ struct MilesMT32InstrumentEntry {
  */
 class MidiDriver_Miles_Xmidi_Timbres {
 public:
+	virtual ~MidiDriver_Miles_Xmidi_Timbres() { }
+
 	/**
 	 * Processes the timbre chunk specified for a track
 	 * in an XMIDI file. This will load the necessary
