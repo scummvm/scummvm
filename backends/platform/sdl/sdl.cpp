@@ -791,9 +791,6 @@ bool OSystem_SDL::setGraphicsMode(int mode, uint flags) {
 				delete sdlGraphics3dManager;
 			}
 			_graphicsManager = sdlGraphics3dManager = new OpenGLSdlGraphics3dManager(_eventSource, _window, _capabilities);
-			// Setup feature defaults for 3D gfx while switching from 2D
-			if (sdlGraphicsManager)
-				sdlGraphics3dManager->setDefaultFeatureState();
 			switchedManager = true;
 		}
 #endif
