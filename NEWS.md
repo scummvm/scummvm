@@ -3,6 +3,12 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2.3.0 (XXXX-XX-XX)
 
+ New games:
+   - Added support for Grim Fandango.
+   - Added support for Escape from Monkey Island.
+   - Added support for The Longest Journey.
+   - Added support for Myst 3: Exile.
+
  General:
    - Switched ScummVM GUI output to UTF-32.
 
@@ -16,6 +22,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Bargon Attack Russian translation.
    - Added support for Woodruff Russian translation.
 
+ Grim:
+   - Added support for Brazillian Portuguese Grim Fandango.
+   - Added support for Russian EMI.
+
  Lure:
    - Fix fire animation in first room when loading saves.
 
@@ -24,6 +34,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Tinsel:
    - Enabled the Return to Launcher feature.
+
+ Stark:
+   - Added support for Hungarian translation.
 
  Supernova:
    - Added Italian translation for part 1.
