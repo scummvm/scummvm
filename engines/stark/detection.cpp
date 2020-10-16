@@ -336,7 +336,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::RU_RUS,
 		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		GUIO_NONE
 	},
 
