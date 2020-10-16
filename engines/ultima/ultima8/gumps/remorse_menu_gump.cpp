@@ -51,7 +51,7 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(RemorseMenuGump)
 
-static const int MENU_MUSIC_REMORSE = 21;
+static const int MENU_MUSIC_REMORSE = 20;
 static const int MENU_MUSIC_REGRET = 18;
 
 RemorseMenuGump::RemorseMenuGump()
