@@ -212,6 +212,7 @@ const char *emi_artAll[] = {
 	"f2ec4854639cd25792dd3e88fb08a1e6", // spanish patched
 	"e0fbba846efca842553bb1a726a25dcf", // french patched
 	"b9838ab13a672a42b1fbc8893b94ca26", // italian patched
+	"52111c719bcccacd4b4b8548007edd9c" 	// Russian version
 };
 const char *emi_artJam[] = {
 	"e5ff286dbf7b23d1ad41dd8defe48291", // english patched
@@ -251,6 +252,7 @@ const char *emi_lip[] = {
 };
 const char *emi_local[] = {
 	"c3b694d941c05264e8c37dc2be75ca1c", // english patched
+	"6bd6582e9ab602c1f86c8593563cc9e5"	// Russian version
 };
 const char *emi_patch[] = {
 	"067100a100b3ca9283b796480aa39b52", // english patched

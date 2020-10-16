@@ -31,7 +31,7 @@
 
 using namespace GUI;
 
-class WiiOptionsDialog: public GUI::Dialog {
+class WiiOptionsDialog final : public GUI::Dialog {
 	typedef Common::String String;
 	typedef Common::U32String U32String;
 
@@ -40,8 +40,8 @@ public:
 	virtual ~WiiOptionsDialog();
 
 protected:
-	virtual void handleTickle();
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void handleTickle() override;
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
 private:
 	bool _doubleStrike;

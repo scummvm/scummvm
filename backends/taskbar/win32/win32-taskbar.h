@@ -31,18 +31,18 @@
 class SdlWindow_Win32;
 struct ITaskbarList3;
 
-class Win32TaskbarManager : public Common::TaskbarManager {
+class Win32TaskbarManager final : public Common::TaskbarManager {
 public:
 	Win32TaskbarManager(SdlWindow_Win32 *window);
 	virtual ~Win32TaskbarManager();
 
-	virtual void setOverlayIcon(const Common::String &name, const Common::String &description);
-	virtual void setProgressValue(int completed, int total);
-	virtual void setProgressState(TaskbarProgressState state);
-	virtual void setCount(int count);
-	virtual void addRecent(const Common::String &name, const Common::String &description);
-	virtual void notifyError();
-	virtual void clearError();
+	virtual void setOverlayIcon(const Common::String &name, const Common::String &description) override;
+	virtual void setProgressValue(int completed, int total) override;
+	virtual void setProgressState(TaskbarProgressState state) override;
+	virtual void setCount(int count) override;
+	virtual void addRecent(const Common::String &name, const Common::String &description) override;
+	virtual void notifyError() override;
+	virtual void clearError() override;
 
 private:
 	SdlWindow_Win32 *_window;

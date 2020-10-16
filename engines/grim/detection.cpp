@@ -337,7 +337,7 @@ static const GrimGameDescription gameDescriptions[] = {
 		},
 		GType_GRIM
 	},
-#ifdef ENABLE_MONKEY4
+
 	{
 		// Escape from Monkey Island English
 		{
@@ -581,7 +581,6 @@ static const GrimGameDescription gameDescriptions[] = {
 		},
 		GType_MONKEY4
 	},
-#endif // ENABLE_MONKEY4
 
 	{ AD_TABLE_END_MARKER, GType_GRIM }
 };

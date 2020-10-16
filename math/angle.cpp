@@ -171,7 +171,7 @@ Angle Angle::arcTangent2(float y, float x) {
 	return a;
 }
 
-Common::Debug &operator<<(Common::Debug &dbg, const Math::Angle &a) {
+Common::StreamDebug &operator<<(Common::StreamDebug &dbg, const Math::Angle &a) {
 	dbg.nospace() << "Angle(" << a.getDegrees(-180) << ")";
 
 	return dbg.space();

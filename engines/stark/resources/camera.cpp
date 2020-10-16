@@ -91,7 +91,7 @@ Math::Angle Camera::getHorizontalAngle() const {
 }
 
 void Camera::printData() {
-	Common::Debug debug = streamDbg();
+	Common::StreamDebug debug = streamDbg();
 	debug << "position: " << _position << "\n";
 	debug << "lookDirection: " << _lookDirection << "\n";
 	debug << "f1: " << _f1 << "\n";

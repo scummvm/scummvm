@@ -217,7 +217,7 @@ void Floor::enableFloorField(FloorField *floorfield, bool enable) {
 void Floor::printData() {
 	debug("face count: %d", _facesCount);
 
-	Common::Debug debug = streamDbg();
+	Common::StreamDebug debug = streamDbg();
 	for (uint i = 0; i < _vertices.size(); i++) {
 		debug << i << ": " << _vertices[i] << "\n";
 	}

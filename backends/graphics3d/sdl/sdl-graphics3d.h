@@ -118,11 +118,6 @@ public:
 		bool fullscreen;
 	};
 
-	/**
-	 * Gets the default feature state of the graphics manager.
-	 */
-	virtual void setDefaultFeatureState();
-
 	/** Obtain the user configured fullscreen resolution, or default to the desktop resolution */
 	virtual Common::Rect getPreferredFullscreenResolution();
 

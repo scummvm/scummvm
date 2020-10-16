@@ -58,7 +58,7 @@ void Bookmark::readData(Formats::XRCReadStream *stream) {
 }
 
 void Bookmark::printData() {
-	Common::Debug debug = streamDbg();
+	Common::StreamDebug debug = streamDbg();
 	debug << "position: " << _position << "\n";
 }
 

@@ -26,36 +26,36 @@
 #include "backends/platform/sdl/sdl.h"
 #include "backends/platform/sdl/win32/win32-window.h"
 
-class OSystem_Win32 : public OSystem_SDL {
+class OSystem_Win32 final : public OSystem_SDL {
 public:
-	virtual void init();
-	virtual void initBackend();
+	virtual void init() override;
+	virtual void initBackend() override;
 
-	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
+	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override;
 
-	virtual bool hasFeature(Feature f);
+	virtual bool hasFeature(Feature f) override;
 
-	virtual bool displayLogFile();
+	virtual bool displayLogFile() override;
 
-	virtual bool openUrl(const Common::String &url);
+	virtual bool openUrl(const Common::String &url) override;
 
-	virtual void logMessage(LogMessageType::Type type, const char *message);
+	virtual void logMessage(LogMessageType::Type type, const char *message) override;
 
-	virtual Common::String getSystemLanguage() const;
+	virtual Common::String getSystemLanguage() const override;
 
-	virtual Common::String getScreenshotsPath();
+	virtual Common::String getScreenshotsPath() override;
 
 protected:
-	virtual Common::String getDefaultConfigFileName();
-	virtual Common::String getDefaultLogFileName();
+	virtual Common::String getDefaultConfigFileName() override;
+	virtual Common::String getDefaultLogFileName() override;
 
 	// Override createAudioCDManager() to get our Windows-specific
 	// version.
-	virtual AudioCDManager *createAudioCDManager();
+	virtual AudioCDManager *createAudioCDManager() override;
 	
 	HWND getHwnd() { return ((SdlWindow_Win32*)_window)->getHwnd(); }
 
-	virtual char *convertEncoding(const char *to, const char *from, const char *string, size_t length);
+	virtual char *convertEncoding(const char *to, const char *from, const char *string, size_t length) override;
 };
 
 #endif

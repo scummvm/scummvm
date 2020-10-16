@@ -28,39 +28,39 @@ namespace Common {
 class String;
 class MessageStream;
 
-class Debug {
+class StreamDebug {
 public:
-	Debug(int level);
-	Debug(const Debug &other);
-	~Debug();
+	StreamDebug(int level);
+	StreamDebug(const StreamDebug &other);
+	~StreamDebug();
 
-	Debug &space();
-	Debug &nospace();
+	StreamDebug &space();
+	StreamDebug &nospace();
 
-	Debug &operator<<(const String &str);
-	Debug &operator<<(const char *str);
-	Debug &operator<<(char str);
-	Debug &operator<<(int number);
-	Debug &operator<<(unsigned int number);
+	StreamDebug &operator<<(const String &str);
+	StreamDebug &operator<<(const char *str);
+	StreamDebug &operator<<(char str);
+	StreamDebug &operator<<(int number);
+	StreamDebug &operator<<(unsigned int number);
 
 	// DC and DS has float and double equal
 #if !defined(__DC__) && !defined(__DS__)
-	Debug &operator<<(double number);
+	StreamDebug &operator<<(double number);
 #endif
-	Debug &operator<<(float number);
-	Debug &operator<<(bool value);
-	Debug &operator<<(void *p);
+	StreamDebug &operator<<(float number);
+	StreamDebug &operator<<(bool value);
+	StreamDebug &operator<<(void *p);
 
-	Debug &operator=(const Debug &other);
+	StreamDebug &operator=(const StreamDebug &other);
 
 private:
-	Debug &maybeSpace();
+	StreamDebug &maybeSpace();
 
 	MessageStream *_stream;
 };
 
 }
 
-Common::Debug streamDbg(int level = -1);
+Common::StreamDebug streamDbg(int level = -1);
 
 #endif

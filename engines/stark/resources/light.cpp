@@ -97,7 +97,7 @@ Gfx::LightEntry *Light::getLightEntry() {
 }
 
 void Light::printData() {
-	Common::Debug debug = streamDbg();
+	Common::StreamDebug debug = streamDbg();
 	debug << "color: " << _color << "\n";
 	debug << "position: " << _position << "\n";
 	debug << "direction: " << _direction << "\n";

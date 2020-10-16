@@ -315,7 +315,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// The Longest Journey
 	// Russian 2CD by 1C
 	{
-		"tlj", "2 CD", {
+		"tlj", "2 CD/Fargus", {
 			{"x.xarc", 0, "de8327850d7bba90b690b141eaa23f61", 3032},
 			{"chapters.ini", 0, "740b97b94e97ed11f064f5fa125ebee1", 486},
 			{nullptr, 0, nullptr, 0}
@@ -323,6 +323,20 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::RU_RUS,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
+		GUIO_NONE
+	},
+
+	// The Longest Journey
+	// Russian 2CD by 7Wolf
+	{
+		"tlj", "2 CD/7Wolf", {
+			{"x.xarc", 0, "a0559457126caadab0cadac02d35f26f", 3032},
+			{"chapters.ini", 0, "8e08025c89575d2573c2edf0daa1cb34", 406},
+			{nullptr, 0, nullptr, 0}
+		},
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
 		GUIO_NONE
 	},
 

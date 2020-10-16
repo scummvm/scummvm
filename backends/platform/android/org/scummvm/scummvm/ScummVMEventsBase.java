@@ -144,7 +144,7 @@ public class ScummVMEventsBase implements
 	// OnKeyListener
 	@Override
 	final public boolean onKey(View v, int keyCode, KeyEvent e) {
-		//Log.d(ScummVM.LOG_TAG, "SCUMMV-EVENTS-BASE - onKEY");
+//		Log.d(ScummVM.LOG_TAG, "SCUMMV-EVENTS-BASE - onKEY:::" + keyCode); // Called
 		final int action = e.getAction();
 
 		if (e.getUnicodeChar() == (int)EditableAccommodatingLatinIMETypeNullIssues.ONE_UNPROCESSED_CHARACTER.charAt(0)) {
@@ -162,6 +162,16 @@ public class ScummVMEventsBase implements
 			if (_mouseHelper != null) {
 				if (MouseHelper.isMouse(e)) {
 					// right mouse button was just clicked which sends an extra back button press (which should be ignored)
+					return true;
+				}
+			}
+
+			if (ScummVMActivity.keyboardWithoutTextInputShown ) {
+				if (action == KeyEvent.ACTION_DOWN) {
+					return true;
+				} else if (action == KeyEvent.ACTION_UP) {
+					// Hide keyboard (the argument here (0) does not matter)
+					((ScummVMActivity) _context).showScreenKeyboardWithoutTextInputField(0);
 					return true;
 				}
 			}
@@ -289,21 +299,31 @@ public class ScummVMEventsBase implements
 
 	// OnTouchListener
 	@Override
-	final public boolean onTouch(View v, MotionEvent e) {
+	final public boolean onTouch(View v, final MotionEvent event) {
 		//Log.d(ScummVM.LOG_TAG, "SCUMMV-EVENTS-BASE - onTOUCH");
 
+		if (ScummVMActivity.keyboardWithoutTextInputShown
+			&& ((ScummVMActivity) _context).isScreenKeyboardShown()
+			&& ((ScummVMActivity) _context).getScreenKeyboard().getY() <= event.getY() ) {
+			event.offsetLocation(-((ScummVMActivity) _context).getScreenKeyboard().getX(), -((ScummVMActivity) _context).getScreenKeyboard().getY());
+			// TODO maybe call the onTouchEvent of something else here?
+			((ScummVMActivity) _context).getScreenKeyboard().onTouchEvent(event);
+			// correct the offset for continuing handling the event
+			event.offsetLocation(((ScummVMActivity) _context).getScreenKeyboard().getX(), ((ScummVMActivity) _context).getScreenKeyboard().getY());
+		}
+
 		if (_mouseHelper != null) {
-			boolean isMouse = MouseHelper.isMouse(e);
+			boolean isMouse = MouseHelper.isMouse(event);
 			if (isMouse) {
 				// mouse button is pressed
-				return _mouseHelper.onMouseEvent(e, false);
+				return _mouseHelper.onMouseEvent(event, false);
 			}
 		}
 
-		final int action = e.getAction();
+		final int action = event.getAction();
 
 		// Deal with LINT warning "ScummVMEvents#onTouch should call View#performClick when a click is detected"
-		switch (e.getAction()) {
+		switch (event.getAction()) {
 			case MotionEvent.ACTION_UP:
 				v.performClick();
 				break;
@@ -318,11 +338,11 @@ public class ScummVMEventsBase implements
 
 		if (pointer > 0) {
 			_scummvm.pushEvent(JE_MULTI, pointer, action & 0xff, // ACTION_MASK
-								(int)e.getX(), (int)e.getY(), 0, 0);
+								(int)event.getX(), (int)event.getY(), 0, 0);
 			return true;
 		}
 
-		return _gd.onTouchEvent(e);
+		return _gd.onTouchEvent(event);
 	}
 
 	// OnGestureListener

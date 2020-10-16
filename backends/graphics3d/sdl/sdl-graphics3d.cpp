@@ -54,11 +54,6 @@ void SdlGraphics3dManager::deactivateManager() {
 	_eventSource->setGraphicsManager(0);
 }
 
-void SdlGraphics3dManager::setDefaultFeatureState() {
-	setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
-	setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
-}
-
 void SdlGraphics3dManager::saveScreenshot() {
 	Common::String filename;
 

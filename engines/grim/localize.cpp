@@ -99,9 +99,10 @@ Localizer::Localizer() {
 				}
 			}
 		case MKTAG('D', 'O', 'E', 'L'):
+		case MKTAG('a', 'r', 't', 'p'):
 			break;
 		default:
-			error("Invalid magic reading %s: %08x", filename.c_str(), READ_BE_UINT32(data));
+			error("Invalid magic reading %s: %08x (%s)", filename.c_str(), READ_BE_UINT32(data), tag2str(READ_BE_UINT32(data)));
 		}
 	}
 

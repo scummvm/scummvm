@@ -30,9 +30,9 @@
 #include "backends/plugins/wii/wii-provider.h"
 #include "backends/plugins/elf/ppc-loader.h"
 
-class WiiDLObject : public PPCDLObject {
+class WiiDLObject final : public PPCDLObject {
 protected:
-	virtual void flushDataCache(void *ptr, uint32 len) const {
+	virtual void flushDataCache(void *ptr, uint32 len) const override {
 		DCFlushRange(ptr, len);
 		ICInvalidateRange(ptr, len);
 	}

@@ -28,7 +28,7 @@
 /**
  * Provides a default savefile manager implementation for common platforms.
  */
-class WindowsSaveFileManager : public DefaultSaveFileManager {
+class WindowsSaveFileManager final : public DefaultSaveFileManager {
 public:
 	WindowsSaveFileManager();
 };

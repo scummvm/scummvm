@@ -44,7 +44,7 @@
 //
 ////////////////////////////////////////
 
-class MidiDriver_WIN : public MidiDriver_MPU401 {
+class MidiDriver_WIN final : public MidiDriver_MPU401 {
 private:
 	MIDIHDR _streamHeader;
 	byte _streamBuffer[266];	// SysEx blocks should be no larger than 266 bytes
@@ -57,11 +57,11 @@ private:
 
 public:
 	MidiDriver_WIN(int deviceIndex) : _isOpen(false), _device(deviceIndex) { }
-	int open();
-	bool isOpen() const { return _isOpen; }
-	void close();
+	int open() override;
+	bool isOpen() const override { return _isOpen; }
+	void close() override;
 	void send(uint32 b) override;
-	void sysEx(const byte *msg, uint16 length);
+	void sysEx(const byte *msg, uint16 length) override;
 };
 
 int MidiDriver_WIN::open() {

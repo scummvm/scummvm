@@ -34,7 +34,7 @@
  *
  * Parts of this class are documented in the base interface class, FilesystemFactory.
  */
-class WiiFilesystemFactory : public FilesystemFactory, public Common::Singleton<WiiFilesystemFactory> {
+class WiiFilesystemFactory final : public FilesystemFactory, public Common::Singleton<WiiFilesystemFactory> {
 public:
 	typedef Common::String String;
 
@@ -43,9 +43,9 @@ public:
 		kSMB
 	};
 
-	virtual AbstractFSNode *makeRootFileNode() const;
-	virtual AbstractFSNode *makeCurrentDirectoryFileNode() const;
-	virtual AbstractFSNode *makeFileNodePath(const Common::String &path) const;
+	virtual AbstractFSNode *makeRootFileNode() const override;
+	virtual AbstractFSNode *makeCurrentDirectoryFileNode() const override;
+	virtual AbstractFSNode *makeFileNodePath(const Common::String &path) const override;
 
 	void asyncInit();
 	void asyncDeinit();

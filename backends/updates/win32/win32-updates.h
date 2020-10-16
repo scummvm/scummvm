@@ -31,20 +31,20 @@
 
 class SdlWindow_Win32;
 
-class Win32UpdateManager : public Common::UpdateManager {
+class Win32UpdateManager final : public Common::UpdateManager {
 public:
 	Win32UpdateManager(SdlWindow_Win32 *window);
 	virtual ~Win32UpdateManager();
 
-	virtual void checkForUpdates();
+	virtual void checkForUpdates() override;
 
-	virtual void setAutomaticallyChecksForUpdates(UpdateState state);
-	virtual UpdateState getAutomaticallyChecksForUpdates();
+	virtual void setAutomaticallyChecksForUpdates(UpdateState state) override;
+	virtual UpdateState getAutomaticallyChecksForUpdates() override;
 
-	virtual void setUpdateCheckInterval(int interval);
-	virtual int getUpdateCheckInterval();
+	virtual void setUpdateCheckInterval(int interval) override;
+	virtual int getUpdateCheckInterval() override;
 
-	virtual bool getLastUpdateCheckTimeAndDate(TimeDate &t);
+	virtual bool getLastUpdateCheckTimeAndDate(TimeDate &t) override;
 
 private:
 	static int canShutdownCallback();

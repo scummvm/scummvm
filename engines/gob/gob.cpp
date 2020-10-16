@@ -320,7 +320,6 @@ Common::Error GobEngine::run() {
 
 	switch (_language) {
 	case Common::FR_FRA:
-	case Common::RU_RUS:
 		_global->_language = kLanguageFrench;
 		break;
 	case Common::DE_DEU:
@@ -354,6 +353,12 @@ Common::Error GobEngine::run() {
 		break;
 	case Common::JA_JPN:
 		_global->_language = kLanguageJapanese;
+		break;
+	case Common::RU_RUS:
+		if (_gameType == kGameTypeWoodruff)
+			_global->_language = kLanguageBritish;
+		else
+			_global->_language = kLanguageFrench;
 		break;
 	default:
 		_global->_language = kLanguageBritish;
