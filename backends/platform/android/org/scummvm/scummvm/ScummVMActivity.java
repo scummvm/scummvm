@@ -203,7 +203,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 										key -= 100000;
 										_main_surface.onKeyDown(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SHIFT_LEFT));
 									}
-									_main_surface.onKeyDown(key, new KeyEvent(KeyEvent.ACTION_DOWN, key)); // calls onKeyDown - EditableSurface!!!
+									_main_surface.onKeyDown(key, new KeyEvent(KeyEvent.ACTION_DOWN, key));
 								}
 
 								public void onRelease(int key) {
@@ -288,7 +288,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 							_videoLayout.addView(_screenKeyboard, sKeyboardLayout);
 							_videoLayout.bringChildToFront(_screenKeyboard);
-							Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 005" );
 						}
 					}
 				});
@@ -356,9 +355,12 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 	}
 
-	public boolean isScreenKeyboardShown()
-	{
+	public boolean isScreenKeyboardShown() {
 		return _screenKeyboard != null;
+	}
+
+	public View getScreenKeyboard () {
+		return _screenKeyboard;
 	}
 
 	//
