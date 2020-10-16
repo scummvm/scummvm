@@ -91,6 +91,9 @@ Joy deadzone
 
 ,,,,,,,,,,,,,
 
+
+.. _keyglobal:
+
 _`Keymaps tab`
 ---------------
 
@@ -507,4 +510,3 @@ Use Text to Speech
 
 	*tts_enabled* 
 
-,,,,,,,,,,,,,,,,,,,,,

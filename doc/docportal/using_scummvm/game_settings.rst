@@ -16,6 +16,7 @@ There are many settings, and they are separated into tabs:
 
 Settings may also be edited directly in the configuration file. These configuration keywords are listed below in italics. For more information, including a complete list of configuration keywords, see the :doc:`../advanced_options/configuration_file` .
 
+
 _`Game tab`
 ------------
 
@@ -102,6 +103,8 @@ Use the graphics tab to change how the game looks when it is played. For more in
 	*filtering* 
 ,,,,,
 
+
+.. _keygame:
 
 _`Keymaps tab`
 ---------------

@@ -33,7 +33,7 @@ The configuration file saves to different default locations, depending on the pl
 
 		**Window 7/Vista**: ``\Users\username\AppData\Roaming\ScummVM\scummvm.ini``
 
-		Note that if an earlier version of ScummVM was installed under Windows, the previous default location of <windir>\scummvm.ini will be kept.
+		Note that if an earlier version of ScummVM was installed under Windows, the previous default location of ``<windir>\scummvm.ini`` will be kept.
 
 	.. tab:: Linux/Unix
 
@@ -42,6 +42,8 @@ The configuration file saves to different default locations, depending on the pl
 		If XDG_CONFIG_HOME is not defined or empty, ``~/.config`` will be used, where ``~`` is your Home directory. 
 		
 		Note that ``.config`` is a hidden directory; to view it use ``ls -a`` on the command line. If you are using a GUI file manager, go to **View > Show Hidden Files**, or use the keyboard shortcut :kbd:`Ctrl + H`.
+
+		If ScummVM was installed using Snap, the configuration file can be found at ``~/snap/scummvm/current/.config/scummvm/scummvm.ini``
 
 	.. tab:: iOS
 
@@ -54,7 +56,7 @@ The configuration file saves to different default locations, depending on the pl
 Using the configuration file
 ==================================
 
-Global settings are listed under the ``[scummvm]`` heading. Game settings are listed under the heading for that game, for example ``[queen]`` for Flight of the Amazon Queen. Use the configuration keywords_ to change settings. 
+Global settings are listed under the ``[scummvm]`` heading. Global keymap settings are listed under the ``[keymapper]`` heading. Game-specific settings, including keymaps, are listed under the heading for that game, for example ``[queen]`` for Flight of the Amazon Queen. Use the configuration keywords_ to change settings. 
 
 
 Example of a configuration file
@@ -105,7 +107,7 @@ There are many recognized configuration keywords. In the table below, each keywo
 
 .. csv-table:: 
   	:widths: 25, 25, 15, 35
-  	:header-rows: 1
+  	:header-rows: 1 
 
 		Keyword,Type,Default,Options
 		alsa_port,number,,
@@ -122,8 +124,7 @@ There are many recognized configuration keywords. In the table below, each keywo
 	- 8192 
 	- 16384 
 	- 32768" 
-		auto_savenames,boolean,false,
-		
+		auto_savenames,boolean,false
 		":ref:`bilinear_filtering <bilinear>`",boolean,false,
 		boot_param,number,none,
 		":ref:`bright_palette <bright>`",boolean,true,
@@ -134,7 +135,7 @@ There are many recognized configuration keywords. In the table below, each keywo
 		console,boolean,true,
 		controller_map_db,string,,
 		copy_protection,boolean,false,
-		demo_mode,,false,
+		demo_mode,boolean,false,
 		":ref:`description <description>`",string,,
 		":ref:`disable_dithering <dither>`",boolean,false,
 		":ref:`disable_stamina_drain <stamina>`",boolean,false,
@@ -196,18 +197,62 @@ There are many recognized configuration keywords. In the table below, each keywo
 	- sndio
 	- fluidsynth 
 	- timidity"
-		":ref:`GraphicsDithering <gdither>`",,true,
-		":ref:`helium_mode <helium>`",,false,
-		":ref:`help_style <help>`",,false,
-		":ref:`herculesfont <herc>`",,false,
-		":ref:`hpbargraphs <hp>`",,true,
-		":ref:`hypercheat <hyper>`",,false,
+		":ref:`GraphicsDithering <gdither>`",boolean,true,
+		":ref:`helium_mode <helium>`",boolean,false,
+		":ref:`help_style <help>`",boolean,false,
+		":ref:`herculesfont <herc>`",boolean,false,
+		":ref:`hpbargraphs <hp>`",boolean,true,
+		":ref:`hypercheat <hyper>`",boolean,false,
 		iconpath,string,,
-		":ref:`improved <improved>`",,true,
-		":ref:`InvObjectsAnimated <objanimated>`",,true,
+		":ref:`improved <improved>`",boolean,true,
+		":ref:`InvObjectsAnimated <objanimated>`",boolean,true,
 		":ref:`joystick_deadzone <deadzone>`",integer, 3
 		joystick_num,number,,
-		":ref:`kbdmouse_speed <mousespeed>`", integer, 10 
+		":ref:`kbdmouse_speed <mousespeed>`", integer, 10
+		":ref:`keymap_engine-default_DOWN <keygame>`",string,JOY_DOWN
+		":ref:`keymap_engine-default_LCLK <keygame>`",string,MOUSE_LEFT JOY_A
+		":ref:`keymap_engine-default_LEFT <keygame>`",string,JOY_LEFT
+		":ref:`keymap_engine-default_MCLK <keygame>`",string,MOUSE_MIDDLE
+		":ref:`keymap_engine-default_MENU <keygame>`",string,F5 JOY_LEFT_SHOULDER
+		":ref:`keymap_engine-default_PAUSE <keygame>`",string,SPACE
+		":ref:`keymap_engine-default_PIND <keygame>`",string,
+		":ref:`keymap_engine-default_RCLK <keygame>`",string,MOUSE_RIGHT JOY_B
+		":ref:`keymap_engine-default_RETURN <keygame>`",string,RETURN
+		":ref:`keymap_engine-default_RIGHT <keygame>`",string,JOY_RIGHT
+		":ref:`keymap_engine-default_SKIP <keygame>`",string,ESCAPE JOY
+		":ref:`keymap_engine-default_SKLI <keygame>`",string,PERIOD JOY_X
+		":ref:`keymap_engine-default_UP <keygame>`",string,JOY_UP 
+		":ref:`keymap_global_DEBUGGER <keyglobal>`",string,C+A+d 
+		":ref:`keymap_global_MENU <keyglobal>`",string,C+F5 JOY_START
+		":ref:`keymap_global_MUTE <keyglobal>`",string,C+u 
+		":ref:`keymap_global_QUIT <keyglobal>`",string,C+q 
+		":ref:`keymap_global_VMOUSEDOWN <keyglobal>`",string,JOY_LEFT_STICK_Y+
+		":ref:`keymap_global_VMOUSELEFT <keyglobal>`",string,JOY_LEFT_STICK_X-
+		":ref:`keymap_global_VMOUSERIGHT <keyglobal>`",string,JOY_LEFT_STICK_X+
+		":ref:`keymap_global_VMOUSESLOW <keyglobal>`",string,JOY_RIGHT_SHOULDER
+		":ref:`keymap_global_VMOUSEUP <keyglobal>`",string,JOY_LEFT_STICK_Y-
+		":ref:`keymap_gui_CLOS <keyglobal>`",string,ESCAPE JOY_Y
+		":ref:`keymap_gui_DOWN <keyglobal>`",string,JOY_DOWN
+		":ref:`keymap_gui_INTRCT <keyglobal>`",string,JOY_A
+		":ref:`keymap_gui_LEFT <keyglobal>`",string,
+		":ref:`keymap_gui_RIGHT <keyglobal>`",string,JOY_RIGHT
+		":ref:`keymap_gui_UP <keyglobal>`",string,JOY_UP
+		":ref:`keymap_sdl-graphics_ASPT <keyglobal>`",string,C+A+a
+		":ref:`keymap_sdl-graphics_CAPT <keyglobal>`",string,C+m
+		":ref:`keymap_sdl-graphics_FILT <keyglobal>`",string,C+A+f
+		":ref:`keymap_sdl-graphics_FLT1 <keyglobal>`",string,C+A+1 
+		":ref:`keymap_sdl-graphics_FLT2 <keyglobal>`",string,C+A+2
+		":ref:`keymap_sdl-graphics_FLT3 <keyglobal>`",string,C+A+3 
+		":ref:`keymap_sdl-graphics_FLT4 <keyglobal>`",string,C+A+4 
+		":ref:`keymap_sdl-graphics_FLT5 <keyglobal>`",string,C+A+5 
+		":ref:`keymap_sdl-graphics_FLT6 <keyglobal>`",string, C+A+6
+		":ref:`keymap_sdl-graphics_FLT7 <keyglobal>`",string,C+A+7
+		":ref:`keymap_sdl-graphics_FLT8 <keyglobal>`",string,C+A+8
+		":ref:`keymap_sdl-graphics_FULS <keyglobal>`",string,A+RETURN
+		":ref:`keymap_sdl-graphics_SCL- <keyglobal>`",string,C+A+MINUS 
+		":ref:`keymap_sdl-graphics_SCL+ <keyglobal>`",string,C+A+PLUS 
+		":ref:`keymap_sdl-graphics_SCRS <keyglobal>`",string,A+s 
+		":ref:`keymap_sdl-graphics_STCH <keyglobal>`",string,C+A+s 
 		":ref:`language <lang>`",string,,
 		":ref:`local_server_port <serverport>`",integer,12345,
 		":ref:`midi_gain <gain>`",number,,"- 0 - 1000"
@@ -258,12 +303,12 @@ There are many recognized configuration keywords. In the table below, each keywo
 	"
 		":ref:`music_volume <music>`",number,,"- 0-256 "
 		":ref:`mute <mute>`",boolean,false,
-		":ref:`native_fb01 <fb01>`",,false,
+		":ref:`native_fb01 <fb01>`",boolean,false,
 		":ref:`native_mt32 <nativemt32>`",boolean,false,
-		":ref:`NaughtyMode <naughty>`",,true,
-		":ref:`nodelaymillisfl <nodelay>`",,false,
-		":ref:`ntsc <ntsc>`",,?,
-		":ref:`object_labels <labels>`",,true,
+		":ref:`NaughtyMode <naughty>`",boolean,true,
+		":ref:`nodelaymillisfl <nodelay>`",boolean,false,
+		":ref:`ntsc <ntsc>`",boolean,,
+		":ref:`object_labels <labels>`",boolean,true,
 		":ref:`opl_driver <opl>`",string,,"
 	- auto
 	- mame
