@@ -27,9 +27,9 @@
 
 #include "backends/plugins/elf/elf-provider.h"
 
-class WiiPluginProvider : public ELFPluginProvider {
+class WiiPluginProvider final : public ELFPluginProvider {
 public:
-	Plugin *createPlugin(const Common::FSNode &node) const;
+	Plugin *createPlugin(const Common::FSNode &node) const override;
 };
 
 #endif // BACKENDS_PLUGINS_WII_PROVIDER_H

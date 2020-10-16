@@ -30,7 +30,7 @@
  *
  * Parts of this class are documented in the base interface class, AbstractFSNode.
  */
-class WiiFilesystemNode : public AbstractFSNode {
+class WiiFilesystemNode final : public AbstractFSNode {
 protected:
 	Common::String _displayName;
 	Common::String _path;
@@ -55,21 +55,21 @@ public:
 	WiiFilesystemNode(const Common::String &p);
 	WiiFilesystemNode(const Common::String &p, const struct stat *st);
 
-	virtual bool exists() const;
-	virtual Common::String getDisplayName() const { return _displayName; }
-	virtual Common::String getName() const { return _displayName; }
-	virtual Common::String getPath() const { return _path; }
-	virtual bool isDirectory() const { return _isDirectory; }
-	virtual bool isReadable() const { return _isReadable; }
-	virtual bool isWritable() const { return _isWritable; }
+	virtual bool exists() const override;
+	virtual Common::String getDisplayName() const override { return _displayName; }
+	virtual Common::String getName() const override { return _displayName; }
+	virtual Common::String getPath() const override { return _path; }
+	virtual bool isDirectory() const override { return _isDirectory; }
+	virtual bool isReadable() const override { return _isReadable; }
+	virtual bool isWritable() const override { return _isWritable; }
 
-	virtual AbstractFSNode *getChild(const Common::String &n) const;
-	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
-	virtual AbstractFSNode *getParent() const;
+	virtual AbstractFSNode *getChild(const Common::String &n) const override;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const override;
+	virtual AbstractFSNode *getParent() const override;
 
-	virtual Common::SeekableReadStream *createReadStream();
-	virtual Common::WriteStream *createWriteStream();
-	virtual bool createDirectory();
+	virtual Common::SeekableReadStream *createReadStream() override;
+	virtual Common::WriteStream *createWriteStream() override;
+	virtual bool createDirectory() override;
 };
 
 #endif

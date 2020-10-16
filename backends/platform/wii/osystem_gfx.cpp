@@ -198,7 +198,7 @@ int OSystem_Wii::getDefaultGraphicsMode() const {
 	return gmStandard;
 }
 
-bool OSystem_Wii::setGraphicsMode(int mode) {
+bool OSystem_Wii::setGraphicsMode(int mode, uint flags) {
 	_configGraphicsMode = mode;
 	return true;
 }
