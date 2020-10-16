@@ -57,7 +57,11 @@ bool GrimMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 
 	if (gd) {
 		if (gd->gameType == GType_MONKEY4) {
+#ifdef ENABLE_MONKEY4
 			*engine = new EMIEngine(syst, gd->desc.flags, gd->gameType, gd->desc.platform, gd->desc.language);
+#else
+			return false;
+#endif
 		} else {
 			*engine = new GrimEngine(syst, gd->desc.flags, gd->gameType, gd->desc.platform, gd->desc.language);
 		}
