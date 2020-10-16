@@ -201,9 +201,9 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 									if (key > 100000) {
 										key -= 100000;
-										_main_surface.onKeyDown(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SHIFT_LEFT));
+										_main_surface.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SHIFT_LEFT));
 									}
-									_main_surface.onKeyDown(key, new KeyEvent(KeyEvent.ACTION_DOWN, key));
+									_main_surface.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, key));
 								}
 
 								public void onRelease(int key) {
@@ -216,20 +216,22 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 									if (key == CustomKeyboard.KEYCODE_SHIFT) {
 										builtinKeyboard.shift = ! builtinKeyboard.shift;
-										if (builtinKeyboard.shift && !builtinKeyboard.alt)
-											_main_surface.onKeyDown(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SHIFT_LEFT));
-										else
-											_main_surface.onKeyUp(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_SHIFT_LEFT));
+										if (builtinKeyboard.shift && !builtinKeyboard.alt) {
+											_main_surface.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SHIFT_LEFT));
+										} else {
+											_main_surface.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_SHIFT_LEFT));
+										}
 										builtinKeyboard.ChangeKeyboard();
 										return;
 									}
 
 									if (key == CustomKeyboard.KEYCODE_ALT) {
 										builtinKeyboard.alt = ! builtinKeyboard.alt;
-										if (builtinKeyboard.alt)
-											_main_surface.onKeyUp(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_SHIFT_LEFT));
-										else
+										if (builtinKeyboard.alt) {
+											_main_surface.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_SHIFT_LEFT));
+										} else {
 											builtinKeyboard.shift = false;
+										}
 										builtinKeyboard.ChangeKeyboard();
 										return;
 									}
@@ -242,10 +244,10 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 										if (k.sticky && key == k.codes[0]) {
 											if (k.on) {
 												builtinKeyboard.stickyKeys.add(key);
-												_main_surface.onKeyDown(key, new KeyEvent(KeyEvent.ACTION_DOWN, key));
+												_main_surface.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, key));
 											} else {
 												builtinKeyboard.stickyKeys.remove(key);
-												_main_surface.onKeyUp(key, new KeyEvent(KeyEvent.ACTION_UP, key));
+												_main_surface.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, key));
 											}
 											return;
 										}
@@ -257,10 +259,10 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 										shifted = true;
 									}
 
-									_main_surface.onKeyUp(key, new KeyEvent(KeyEvent.ACTION_UP, key));
+									_main_surface.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, key));
 
 									if (shifted) {
-										_main_surface.onKeyUp(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_SHIFT_LEFT));
+										_main_surface.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_SHIFT_LEFT));
 										builtinKeyboard.stickyKeys.remove(KeyEvent.KEYCODE_SHIFT_LEFT);
 										for (CustomKeyboard.CustomKey k: builtinKeyboard.getKeyboard().getKeys())
 										{
