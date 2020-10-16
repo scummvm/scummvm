@@ -37,52 +37,6 @@ public class EditableSurfaceView extends SurfaceView {
 	}
 
 	@Override
-	public boolean onKeyDown(int keyCode, final KeyEvent event) {
-		Log.d(ScummVM.LOG_TAG, "onKeyDown - EditableSurface!!!"); // Called
-		if (keyCode == KeyEvent.KEYCODE_BACK ) {
-
-			if (ScummVMActivity.keyboardWithoutTextInputShown ) {
-				return true;
-			}
-		}
-
-		if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-			// Don't handle these
-			return false;
-		}
-		// Let our event manager handle it (ScummVMEventsBase class)
-		return super.dispatchKeyEvent(event);
-		//return false;
-
-		// This did not work
-		//return super.onKeyDown(keyCode, event);
-	}
-
-	@Override
-	public boolean onKeyUp(int keyCode, final KeyEvent event) {
-		Log.d(ScummVM.LOG_TAG, "onKeyUp - EditableSurface!!!");
-		if (keyCode == KeyEvent.KEYCODE_BACK ) {
-
-			if (ScummVMActivity.keyboardWithoutTextInputShown ) {
-				// Hide keyboard (the argument here (0) does not matter)
-				((ScummVMActivity) _context).showScreenKeyboardWithoutTextInputField(0);
-				return true;
-			}
-		}
-
-		if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-			// Don't handle these
-			return false;
-		}
-		// Let our event manager handle it (ScummVMEventsBase class)
-		return super.dispatchKeyEvent(event);
-		//return false;
-
-		// This did not work
-		//return super.onKeyUp(keyCode, event);
-	}
-
-	@Override
 	public boolean onCheckIsTextEditor() {
 		return false;
 	}

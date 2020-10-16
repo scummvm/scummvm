@@ -144,7 +144,7 @@ public class ScummVMEventsBase implements
 	// OnKeyListener
 	@Override
 	final public boolean onKey(View v, int keyCode, KeyEvent e) {
-		//Log.d(ScummVM.LOG_TAG, "SCUMMV-EVENTS-BASE - onKEY");
+//		Log.d(ScummVM.LOG_TAG, "SCUMMV-EVENTS-BASE - onKEY:::" + keyCode); // Called
 		final int action = e.getAction();
 
 		if (e.getUnicodeChar() == (int)EditableAccommodatingLatinIMETypeNullIssues.ONE_UNPROCESSED_CHARACTER.charAt(0)) {
