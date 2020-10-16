@@ -171,7 +171,7 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_NO_FLAGS,
 		GUIO_NONE
 	},
-	
+
 	// The Longest Journey
 	// Italian DVD version
 	{
@@ -321,6 +321,20 @@ static const ADGameDescription gameDescriptions[] = {
 			{nullptr, 0, nullptr, 0}
 		},
 		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO_NONE
+	},
+
+	// The Longest Journey
+	// Hungarian fan-made
+	{
+		"tlj", "Fanmade", {
+			{"x.xarc", 0, "a0559457126caadab0cadac02d35f26f", 3032},
+			{"chapters.ini", 0, "790b51a88b5493bff5168a77738e0e84", 451},
+			{nullptr, 0, nullptr, 0}
+		},
+		Common::HU_HUN,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO_NONE
