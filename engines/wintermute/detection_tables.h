@@ -5137,6 +5137,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("strangechange", "",
 		WME_ENTRY1s("data.dcp", "818e53c1584dac28f336195d7dcfb97d", 3762512), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_8_6),
 
+	// Sunrise: The game (German)
+	WME_WINENTRY("sunrise", "",
+		WME_ENTRY1s("data.dcp", "d06744fc60982a30e82d96075698c8bc", 134409552), Common::DE_DEU, ADGF_UNSTABLE | GF_3D, WME_1_7_93),
+
 	// Sunrise: The game (Demo) (German)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
 	WME_WINENTRY("sunrise", "Demo",
