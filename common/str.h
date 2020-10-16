@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/str-enc.h"
 #include "common/ustr.h"
+#include "common/base-str.h"
 
 #include <stdarg.h>
 
@@ -56,92 +57,35 @@ class U32String;
  * The presence of \0 characters in the string will cause undefined
  * behavior in some operations.
  */
-class String {
+class String : public BaseString<char> {
 public:
-	static const uint32 npos = 0xFFFFFFFF;
-
-	static void releaseMemoryPoolMutex();
-
-	typedef char          value_type;
 	/**
 	 * Unsigned version of the underlying type. This can be used to cast
 	 * individual string characters to bigger integer types without sign
 	 * extension happening.
 	 */
 	typedef unsigned char unsigned_type;
-	typedef char *        iterator;
-	typedef const char *  const_iterator;
 
-protected:
-	/**
-	 * The size of the internal storage. Increasing this means less heap
-	 * allocations are needed, at the cost of more stack memory usage,
-	 * and of course lots of wasted memory. Empirically, 90% or more of
-	 * all String instances are less than 32 chars long. If a platform
-	 * is very short on stack space, it would be possible to lower this.
-	 * A value of 24 still seems acceptable, though considerably worse,
-	 * while 16 seems to be the lowest you want to go... Anything lower
-	 * than 8 makes no sense, since that's the size of member _extern
-	 * (on 32 bit machines; 12 bytes on systems with 64bit pointers).
-	 */
-	static const uint32 _builtinCapacity = 32 - sizeof(uint32) - sizeof(char *);
-
-	/**
-	 * Length of the string. Stored to avoid having to call strlen
-	 * a lot. Yes, we limit ourselves to strings shorter than 4GB --
-	 * on purpose :-).
-	 */
-	uint32 _size;
-
-	/**
-	 * Pointer to the actual string storage. Either points to _storage,
-	 * or to a block allocated on the heap via malloc.
-	 */
-	char  *_str;
-
-
-	union {
-		/**
-		 * Internal string storage.
-		 */
-		char _storage[_builtinCapacity];
-		/**
-		 * External string storage data -- the refcounter, and the
-		 * capacity of the string _str points to.
-		 */
-		struct {
-			mutable int *_refCount;
-			uint32       _capacity;
-		} _extern;
-	};
-
-	inline bool isStorageIntern() const {
-		return _str == _storage;
-	}
-
-public:
 	/** Construct a new empty string. */
-	String() : _size(0), _str(_storage) { _storage[0] = 0; }
+	String() : BaseString<char>() {}
 
 	/** Construct a new string from the given NULL-terminated C string. */
-	String(const char *str);
+	String(const char *str) : BaseString<char>(str) {}
 
 	/** Construct a new string containing exactly len characters read from address str. */
-	String(const char *str, uint32 len);
+	String(const char *str, uint32 len) : BaseString<char>(str, len) {}
 
 	/** Construct a new string containing the characters between beginP (including) and endP (excluding). */
-	String(const char *beginP, const char *endP);
+	String(const char *beginP, const char *endP) : BaseString<char>(beginP, endP) {}
 
 	/** Construct a copy of the given string. */
-	String(const String &str);
+	String(const String &str) : BaseString<char>(str) {};
 
 	/** Construct a string consisting of the given character. */
 	explicit String(char c);
 
 	/** Construct a new string from the given u32 string. */
 	String(const U32String &str);
-
-	~String();
 
 	String &operator=(const char *str);
 	String &operator=(const String &str);
@@ -150,24 +94,10 @@ public:
 	String &operator+=(const String &str);
 	String &operator+=(char c);
 
-	bool operator==(const String &x) const;
-	bool operator==(const char *x) const;
-	bool operator!=(const String &x) const;
-	bool operator!=(const char *x) const;
-
-	bool operator<(const String &x) const;
-	bool operator<=(const String &x) const;
-	bool operator>(const String &x) const;
-	bool operator>=(const String &x) const;
-
-	bool equals(const String &x) const;
 	bool equalsIgnoreCase(const String &x) const;
-	int compareTo(const String &x) const;           // strcmp clone
 	int compareToIgnoreCase(const String &x) const; // stricmp clone
 
-	bool equals(const char *x) const;
 	bool equalsIgnoreCase(const char *x) const;
-	int compareTo(const char *x) const;             // strcmp clone
 	int compareToIgnoreCase(const char *x) const;   // stricmp clone
 	int compareDictionary(const String &x) const;
 	int compareDictionary(const char *x) const;
@@ -186,12 +116,9 @@ public:
 	bool contains(const char *x) const;
 	bool contains(char x) const;
 	bool contains(uint32 x) const;
-
-	/** Return uint64 corrensponding to String's contents. */
-	uint64 asUint64() const;
-
-  	/** Return uint64 corrensponding to String's contents. This variant recognizes 0 (oct) and 0x (hex) prefixes. */
-	uint64 asUint64Ext() const;
+#ifdef USE_CXX11
+	bool contains(char32_t x) const;
+#endif
 
 	/**
 	 * Simple DOS-style pattern matching function (understands * and ? like used in DOS).
@@ -220,65 +147,6 @@ public:
 	 */
 	bool matchString(const char *pat, bool ignoreCase = false, bool pathMode = false) const;
 	bool matchString(const String &pat, bool ignoreCase = false, bool pathMode = false) const;
-
-
-	inline const char *c_str() const { return _str; }
-	inline uint size() const         { return _size; }
-
-	inline bool empty() const { return (_size == 0); }
-	char firstChar() const    { return (_size > 0) ? _str[0] : 0; }
-	char lastChar() const     { return (_size > 0) ? _str[_size - 1] : 0; }
-
-	char operator[](int idx) const {
-		assert(_str && idx >= 0 && idx < (int)_size);
-		return _str[idx];
-	}
-
-	/** Remove the last character from the string. */
-	void deleteLastChar();
-
-	/** Remove the character at position p from the string. */
-	void deleteChar(uint32 p);
-
-	/** Remove all characters from position p to the p + len. If len = String::npos, removes all characters to the end */
-	void erase(uint32 p, uint32 len = npos);
-
-	/** Erases the character at the given iterator location */
-	iterator erase(iterator it);
-
-	/** Set character c at position p, replacing the previous character there. */
-	void setChar(char c, uint32 p);
-
-	/** Insert character c before position p. */
-	void insertChar(char c, uint32 p);
-
-	/** Clears the string, making it empty. */
-	void clear();
-
-	/** Convert all characters in the string to lowercase. */
-	void toLowercase();
-
-	/** Convert all characters in the string to uppercase. */
-	void toUppercase();
-
-	/**
-	 * Removes trailing and leading whitespaces. Uses isspace() to decide
-	 * what is whitespace and what not.
-	 */
-	void trim();
-
-	/**
-	 * Wraps the text in the string to the given line maximum. Lines will be
-	 * broken at any whitespace character. New lines are assumed to be
-	 * represented using '\n'.
-	 *
-	 * This is a very basic line wrap which does not perform tab stop
-	 * calculation, consecutive whitespace collapsing, auto-hyphenation, or line
-	 * balancing.
-	 */
-	void wordWrap(const uint32 maxLength);
-
-	uint hash() const;
 
 	/**@{
 	 * Functions to replace some amount of chars with chars from some other string.
@@ -325,13 +193,6 @@ public:
 	 * instead of a fixed size buffer.
 	 */
 	static String vformat(const char *fmt, va_list args);
-
-	/** Finds the index of a character in the string */
-	size_t find(char c, size_t pos = 0) const;
-
-	/** Does a find for the passed string */
-	size_t find(const char *s) const;
-	uint32 find(const String &str, uint32 pos = 0) const;
 
 	/** Does a reverse find for the passed string */
 	size_t rfind(const char *s) const;
@@ -381,42 +242,10 @@ public:
 	/** Return a substring of this string */
 	String substr(size_t pos = 0, size_t len = npos) const;
 
-public:
-
-	iterator begin() {
-		// Since the user could potentially
-		// change the string via the returned
-		// iterator we have to assure we are
-		// pointing to a unique storage.
-		makeUnique();
-
-		return _str;
-	}
-
-	iterator end() {
-		return begin() + size();
-	}
-
-	const_iterator begin() const {
-		return _str;
-	}
-
-	const_iterator end() const {
-		return begin() + size();
-	}
-
 	/** Python-like method **/
 	U32String decode(CodePage page = kUtf8) const;
 
 protected:
-	void makeUnique();
-	void ensureCapacity(uint32 new_size, bool keep_old);
-	void incRefCount() const;
-	void decRefCount(int *oldRefCount);
-	void initWithCStr(const char *str, uint32 len);
-
-	bool pointerInOwnBuffer(const char *str) const;
-
 	void decodeUTF8(U32String &dst) const;
 	void decodeOneByte(U32String &dst, CodePage page) const;
 };

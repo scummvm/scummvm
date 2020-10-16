@@ -42,7 +42,7 @@ namespace Common {
 
 /**
  * A class which allows game engines to load game state data.
- * That typically means "save games", but also includes things like the
+ * This typically means "save games", but also includes things like the
  * IQ points in Indy3.
  */
 typedef SeekableReadStream InSaveFile;
@@ -54,48 +54,89 @@ typedef SeekableReadStream InSaveFile;
  */
 class OutSaveFile: public WriteStream {
 protected:
-	WriteStream *_wrapped;
+	WriteStream *_wrapped; /*!< @todo Doc required. */
 
 public:
-	OutSaveFile(WriteStream *w);
+	OutSaveFile(WriteStream *w); /*!< Create an OutSaveFile that uses the given WriteStream to write the data. */
 	virtual ~OutSaveFile();
 
+    /**
+	 * Return true if an I/O failure occurred.
+	 * This flag is never cleared automatically. In order to clear it,
+	 * you must call clearErr() explicitly.
+	 */
 	virtual bool err() const;
+	
+    /**
+	 * Reset the I/O error status as returned by err().
+	 */
 	virtual void clearErr();
+	
+	/**
+	 * Finalize and close this stream. To be called right before this
+	 * stream instance is deleted. The goal here is to enable calling
+	 * code to detect and handle I/O errors which might occur when
+	 * closing (and flushing, if buffered) the stream.
+	 *
+	 * After this method has been called, no further writes may be
+	 * performed on the stream. Calling err() is allowed.
+	 *
+	 * By default, this just flushes the stream.
+	 */
 	virtual void finalize();
+
+	/**
+	 * Commit any buffered data to the underlying channel or
+	 * storage medium. Unbuffered streams can use the default
+	 * implementation
+	 */
 	virtual bool flush();
+
+	/**
+     * Write data into the stream.
+	 *
+	 * @param dataPtr	Pointer to the data to be written.
+	 * @param dataSize	Number of bytes to be written.
+     */
 	virtual uint32 write(const void *dataPtr, uint32 dataSize);
+
+	/**
+	* Obtain the current value of the stream position indicator of the
+	* stream.
+	*
+	* @return The current position indicator, or -1 if an error occurred.
+	 */
 	virtual int32 pos() const;
 };
 
 /**
- * The SaveFileManager is serving as a factory for InSaveFile
+ * The SaveFileManager serves as a factory for InSaveFile
  * and OutSaveFile objects.
  *
  * Engines and other code should use SaveFiles whenever they need to
- * store data which they need to be able to retrieve again later on --
+ * store data that they need to retrieve again later on --
  * i.e. typically save states, but also configuration files and similar
- * things.
+ * objects.
  *
- * Savefile names represent SaveFiles. These names are case insensitive, that
- * means a name of "Kq1.000" represents the same savefile as "kq1.000". In
- * addition, SaveFileManager does not allow for names which contain path
- * separators like '/' or '\'. This is because we do not support directories
+ * Save file names represent SaveFiles. These names are case insensitive. That
+ * means a name of "Kq1.000" represents the same save file as "kq1.000". In
+ * addition, SaveFileManager does not allow for names that contain path
+ * separators like '/' or '\'. This is because directories are not supported
  * in SaveFileManager.
  *
  * While not declared as a singleton, it is effectively used as such,
- * with OSystem::getSavefileManager returning a pointer to the single
+ * with OSystem::getSavefileManager returning a pointer to single
  * SaveFileManager instances to be used.
  */
 class SaveFileManager : NonCopyable {
 
 protected:
-	Error _error;
-	String _errorDesc;
+	Error _error;      /*!< Error code. */
+	String _errorDesc; /*!< Description of an error. */
 
 	/**
-	 * Set some information about the last error which occurred .
-	 * @param error Code identifying the last error.
+	 * Set some information about the last error that occurred.
+	 * @param error     Code identifying the last error.
 	 * @param errorDesc String describing the last error.
 	 */
 	virtual void setError(Error error, const String &errorDesc) { _error = error; _errorDesc = errorDesc; }
@@ -104,114 +145,114 @@ public:
 	virtual ~SaveFileManager() {}
 
 	/**
-	 * Clears the last set error code and string.
+	 * Clear the last set error code and string.
 	 */
 	virtual void clearError() { _error = kNoError; _errorDesc.clear(); }
 
 	/**
-	 * Returns the last occurred error code. If none occurred, returns kNoError.
+	 * Return the last occurred error code. If none occurred, return kNoError.
 	 *
 	 * @return A value indicating the type of the last error.
 	 */
 	virtual Error getError() { return _error; }
 
 	/**
-	 * Returns the last occurred error description. If none occurred, returns 0.
+	 * Return the last occurred error description. If none occurred, return 0.
 	 *
 	 * @return A string describing the last error.
 	 */
 	virtual String getErrorDesc() { return _errorDesc; }
 
 	/**
-	 * Returns the last occurred error description. If none occurred, returns 0.
-	 * Also clears the last error state and description.
+	 * Return the last occurred error description. If none occurred, return 0.
+	 * Also, clear the last error state and description.
 	 *
 	 * @return A string describing the last error.
 	 */
 	virtual String popErrorDesc();
 
 	/**
-	 * Open the savefile with the specified name in the given directory for
+	 * Open the save file with the specified @p name in the given directory for
 	 * saving.
 	 *
 	 * Saved games are compressed by default, and engines are expected to
 	 * always write compressed saves.
 	 *
-	 * A notable exception is if uncompressed files are needed for
+	 * A notable exception is when uncompressed files are needed for
 	 * compatibility with games not supported by ScummVM, such as character
-	 * exports from the Quest for Glory series. QfG5 is a 3D game and won't be
+	 * exports from the Quest for Glory series. QfG5 is a 3D game and will not be
 	 * supported by ScummVM.
 	 *
-	 * @param name      The name of the savefile.
-	 * @param compress  Toggles whether to compress the resulting save file
-	 *                  (default) or not.
+	 * @param name      Name of the save file.
+	 * @param compress  Whether to compress the resulting save file (default) or not.
+	 * 
 	 * @return Pointer to an OutSaveFile, or NULL if an error occurred.
 	 */
 	virtual OutSaveFile *openForSaving(const String &name, bool compress = true) = 0;
 
 	/**
-	 * Open the file with the specified name in the given directory for loading.
+	 * Open the file with the specified @p name in the given directory for loading.
 	 *
-	 * @param name  The name of the savefile.
+	 * @param name  Name of the save file.
 	 * @return Pointer to an InSaveFile, or NULL if an error occurred.
 	 */
 	virtual InSaveFile *openForLoading(const String &name) = 0;
 
 	/**
 	* Open the file with the specified name in the given directory for loading.
-	* In contrast to openForLoading(), it returns raw file instead of unpacked.
+	* In contrast to openForLoading(), it returns a raw file instead of unpacked.
 	*
-	* @param name  The name of the savefile.
+	* @param name  Name of the save file.
 	* @return Pointer to an InSaveFile, or NULL if an error occurred.
 	*/
 	virtual InSaveFile *openRawFile(const String &name) = 0;
 
 	/**
-	 * Removes the given savefile from the system.
+	 * Remove the given save file from the system.
 	 *
-	 * @param name  The name of the savefile to be removed.
-	 * @return true if no error occurred, false otherwise.
+	 * @param name  Name of the save file to be removed.
+	 * @return True if no error occurred, false otherwise.
 	 */
 	virtual bool removeSavefile(const String &name) = 0;
 
 	/**
-	 * Renames the given savefile.
+	 * Rename the given save file.
 	 *
-	 * @param oldName  Old name.
-	 * @param newName  New name.
-	 * @param compress  Toggles whether to compress the resulting save file
-	 *                  (default) or not.
-	 * @return true if no error occurred. false otherwise.
+	 * @param oldName   Old name.
+	 * @param newName   New name.
+	 * @param compress  Whether to compress the resulting save file (default) or not.
+	 * 
+	 * @return True if no error occurred, false otherwise.
 	 */
 	virtual bool renameSavefile(const String &oldName, const String &newName, bool compress = true);
 
 	/**
-	 * Copy the given savefile.
+	 * Copy the given save file.
 	 *
-	 * @param oldName  Old name.
-	 * @param newName  New name.
-	 * @param compress  Toggles whether to compress the resulting save file
-	 *                  (default) or not.
+	 * @param oldName   Old name.
+	 * @param newName   New name.
+	 * @param compress  Whether to compress the resulting save file (default) or not.
+	 * 
 	 * @return true if no error occurred. false otherwise.
 	 */
 	virtual bool copySavefile(const String &oldName, const String &newName, bool compress = true);
 
 	/**
-	 * List available savegames matching a given pattern.
+	 * List available save files matching a given pattern.
 	 *
-	 * Our pattern format is based on DOS paterns, also known as "glob" in the
-	 * POSIX world. Please refer to the Common::matchString() function to learn
+	 * The pattern format is based on DOS patterns, also known as "glob" in the
+	 * POSIX world. Refer to the Common::matchString() function for information
 	 * about the precise pattern format.
 	 *
-	 * @param pattern  Pattern to match. Wildcards like * or ? are available.
+	 * @param pattern  Pattern to match. Wildcards like * or ? are allowed.
 	 * @return List of strings for all present file names.
-	 * @see Common::matchString()
+	 * @sa Common::matchString()
 	 */
 	virtual StringArray listSavefiles(const String &pattern) = 0;
 
 	/**
-	 * Refreshes the save files list (because some new files could've been added)
-	 * and remembers the "locked" files list. These files could not be used
+	 * Refresh the save files list (because some new files might have been added)
+	 * and remember the "locked" files list. These files cannot be used
 	 * for saving or loading because they are being synced by CloudManager.
 	 */
 	virtual void updateSavefilesList(StringArray &lockedFiles) = 0;
