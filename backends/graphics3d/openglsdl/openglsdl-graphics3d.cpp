@@ -201,7 +201,11 @@ void OpenGLSdlGraphics3dManager::setupScreen() {
 	createOrUpdateScreen();
 
 	int glflag;
+#ifdef __MORPHOS__
+	const GLbyte *str;
+#else
 	const GLubyte *str;
+#endif
 
 	str = glGetString(GL_VENDOR);
 	debug("INFO: OpenGL Vendor: %s", str);
