@@ -48,38 +48,38 @@ private:
 
 public:
 	/**
-	 * Construct a new randomness source with the specific name.
-	 * The name used name must be globally unique, and is used to
+	 * Construct a new randomness source with the specific @p name.
+	 * The name used must be globally unique, and is used to
 	 * register the randomness source with the active event recorder,
 	 * if any.
 	 */
 	RandomSource(const String &name);
 
-	void setSeed(uint32 seed);
+	void setSeed(uint32 seed); /*!< Set the seed used to initialize the RNG. */
 
-	uint32 getSeed() const {
+	uint32 getSeed() const { /*!< Get a random seed that can be used to initialize the RNG. */
 		return _randSeed;
 	}
 
 	/**
-	 * Generates a random unsigned integer in the interval [0, max].
-	 * @param max	the upper bound
-	 * @return	a random number in the interval [0, max]
+	 * Generate a random unsigned integer in the interval [0, max].
+	 * @param max	The upper bound
+	 * @return	A random number in the interval [0, max].
 	 */
 	uint getRandomNumber(uint max);
 
 	/**
-	 * Generates a random bit, i.e. either 0 or 1.
-	 * Identical to getRandomNumber(1), but potentially faster.
-	 * @return	a random bit, either 0 or 1
+	 * Generate a random bit, i.e. either 0 or 1.
+	 * Identical to @c getRandomNumber(1), but potentially faster.
+	 * @return	A random bit, either 0 or 1.
 	 */
 	uint getRandomBit();
 
 	/**
-	 * Generates a random unsigned integer in the interval [min, max].
-	 * @param min	the lower bound
-	 * @param max	the upper bound
-	 * @return	a random number in the interval [min, max]
+	 * Generate a random unsigned integer in the interval [min, max].
+	 * @param min	The lower bound.
+	 * @param max	The upper bound.
+	 * @return	A random number in the interval [min, max].
 	 */
 	uint getRandomNumberRng(uint min, uint max);
 

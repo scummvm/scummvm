@@ -47,7 +47,7 @@ namespace Common {
  * can be accessed similarly to a regular C++ array. Accessing
  * elements is performed in constant time (like with plain arrays).
  * In addition, you can append, insert, and remove entries (this
- * is the 'dynamic' part). Doing that in general takes time
+ * is the 'dynamic' part). In general, doing that takes time
  * proportional to the number of elements in the array.
  *
  * The container class closest to this in the C++ standard library is
@@ -56,23 +56,23 @@ namespace Common {
 template<class T>
 class Array {
 public:
-	typedef T *iterator;
-	typedef const T *const_iterator;
+	typedef T *iterator; /*!< Array iterator. */
+	typedef const T *const_iterator; /*!< Const-qualified array iterator. */
 
-	typedef T value_type;
+	typedef T value_type; /*!< Value type of the array. */
 
-	typedef uint size_type;
+	typedef uint size_type; /*!< Size type of the array. */
 
 protected:
-	size_type _capacity;
-	size_type _size;
-	T *_storage;
+	size_type _capacity; /*!< Maximum number of elements the array can hold. */
+	size_type _size; /*!< How many elements the array holds. */
+	T *_storage;  /*!< Memory used for element storage. */
 
 public:
 	Array() : _capacity(0), _size(0), _storage(nullptr) {}
 
 	/**
-	 * Construct an array with `count` default-inserted instances of @p T. No
+	 * Construct an array with @p count default-inserted instances of @p T. No
 	 * copies are made.
 	 */
 	explicit Array(size_type count) : _size(count) {
@@ -82,13 +82,16 @@ public:
 	}
 
 	/**
-	 * Construct an array with `count` copies of elements with value `value`.
+	 * Construct an array with @p count copies of elements with value @p value.
 	 */
 	Array(size_type count, const T &value) : _size(count) {
 		allocCapacity(count);
 		uninitialized_fill_n(_storage, count, value);
 	}
 
+	/**
+	 * Construct an array as a copy of the given @p array.
+	 */
 	Array(const Array<T> &array) : _capacity(array._size), _size(array._size), _storage(nullptr) {
 		if (array._storage) {
 			allocCapacity(_size);
@@ -98,7 +101,7 @@ public:
 
 #ifdef USE_CXX11
 	/**
-	 * Constructs an array as a copy of the given array using the c++11 move semantic.
+	 * Construct an array as a copy of the given array using the C++11 move semantic.
 	 */
 	Array(Array<T> &&old) : _capacity(old._capacity), _size(old._size), _storage(old._storage) {
 		old._storage = nullptr;
@@ -107,7 +110,14 @@ public:
 	}
 
 	/**
-	 * Constructs an array using list initialization.
+	 * Construct an array using list initialization.
+	 * For example:
+	 * @code
+	 * Common::Array<int> myArray = {1, 7, 42};
+	 * @endcode
+	 * constructs an array with 3 elements whose values are 1, 7, and 42 respectively.
+	 * @note
+	 * This constructor is only available when C++11 support is enabled.
 	 */
 	Array(std::initializer_list<T> list) : _size(list.size()) {
 		allocCapacity(list.size());
@@ -191,12 +201,13 @@ public:
 		return _storage[_size-1];
 	}
 
-
+    /** Insert an element into the array at the given position. */
 	void insert_at(size_type idx, const T &element) {
 		assert(idx <= _size);
 		insert_aux(_storage + idx, &element, &element + 1);
 	}
-
+    
+	/** Insert copies of all the elements from the given array into this array at the given position. */
 	void insert_at(size_type idx, const Array<T> &array) {
 		assert(idx <= _size);
 		insert_aux(_storage + idx, array.begin(), array.end());
@@ -208,7 +219,8 @@ public:
 	void insert(iterator pos, const T &element) {
 		insert_aux(pos, &element, &element + 1);
 	}
-
+    
+	/** Remove an element at the given position from the array and return the value of that element. */
 	T remove_at(size_type idx) {
 		assert(idx < _size);
 		T tmp = _storage[idx];
@@ -221,16 +233,19 @@ public:
 
 	// TODO: insert, remove, ...
 
+	/** Return a reference to the element at the given position in the array. */
 	T &operator[](size_type idx) {
 		assert(idx < _size);
 		return _storage[idx];
 	}
 
+    /** Return a const reference to the element at the given position in the array. */
 	const T &operator[](size_type idx) const {
 		assert(idx < _size);
 		return _storage[idx];
 	}
 
+    /** Assign the given @p array to this array. */
 	Array<T> &operator=(const Array<T> &array) {
 		if (this == &array)
 			return *this;
@@ -244,6 +259,7 @@ public:
 	}
 
 #ifdef USE_CXX11
+    /** Assign the given array to this array using the C++11 move semantic. */
 	Array &operator=(Array<T> &&old) {
 		if (this == &old)
 			return *this;
@@ -261,10 +277,12 @@ public:
 	}
 #endif
 
+    /** Return the size of the array. */
 	size_type size() const {
 		return _size;
 	}
 
+    /** Clear the array of all its elements. */
 	void clear() {
 		freeStorage(_storage, _size);
 		_storage = nullptr;
@@ -272,6 +290,7 @@ public:
 		_capacity = 0;
 	}
 
+    /** Erase the element at @p pos position and return an iterator pointing to the next element in the array. */
 	iterator erase(iterator pos) {
 		copy(pos + 1, _storage + _size, pos);
 		_size--;
@@ -279,11 +298,13 @@ public:
 		_storage[_size].~T();
 		return pos;
 	}
-
+		
+    /** Check whether the array is empty. */
 	bool empty() const {
 		return (_size == 0);
 	}
 
+    /** Check whether two arrays are identical. */
 	bool operator==(const Array<T> &other) const {
 		if (this == &other)
 			return true;
@@ -296,26 +317,34 @@ public:
 		return true;
 	}
 
+    /** Check if two arrays are different. */
 	bool operator!=(const Array<T> &other) const {
 		return !(*this == other);
 	}
 
+    /** Return an iterator pointing to the first element in the array. */
 	iterator       begin() {
 		return _storage;
 	}
 
+    /** Return an iterator pointing past the last element in the array. */
 	iterator       end() {
 		return _storage + _size;
 	}
 
+    /** Return a const iterator pointing to the first element in the array. */
 	const_iterator begin() const {
 		return _storage;
 	}
 
+    /** Return a const iterator pointing past the last element in the array. */
 	const_iterator end() const {
 		return _storage + _size;
 	}
 
+    /** Reserve enough memory in the array so that it can store at least the given number of elements. 
+	 *  The current content of the array is not modified.
+	 */
 	void reserve(size_type newCapacity) {
 		if (newCapacity <= _capacity)
 			return;
@@ -330,6 +359,7 @@ public:
 		}
 	}
 
+    /** Change the size of the array. */
 	void resize(size_type newSize) {
 		reserve(newSize);
 		for (size_type i = newSize; i < _size; ++i)
@@ -339,6 +369,9 @@ public:
 		_size = newSize;
 	}
 
+    /** Assign to this array the elements between the given iterators from another array,
+	 *  from @p first included to @p last excluded.
+	 */
 	void assign(const_iterator first, const_iterator last) {
 		resize(distance(first, last)); // FIXME: ineffective?
 		T *dst = _storage;
@@ -347,15 +380,17 @@ public:
 	}
 
 protected:
+    /** Round up capacity to the next power of 2.
+	  * A minimal capacity of 8 is used.
+	  */
 	static size_type roundUpCapacity(size_type capacity) {
-		// Round up capacity to the next power of 2;
-		// we use a minimal capacity of 8.
 		size_type capa = 8;
 		while (capa < capacity)
 			capa <<= 1;
 		return capa;
 	}
 
+    /** Allocate a specific capacity for the array. */
 	void allocCapacity(size_type capacity) {
 		_capacity = capacity;
 		if (capacity) {
@@ -367,6 +402,7 @@ protected:
 		}
 	}
 
+    /** Free the storage used by the array. */
 	void freeStorage(T *storage, const size_type elements) {
 		for (size_type i = 0; i < elements; ++i)
 			storage[i].~T();

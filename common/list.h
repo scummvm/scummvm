@@ -31,37 +31,40 @@ namespace Common {
  * @defgroup common_list Lists
  * @ingroup common
  *
- * @brief API and templates for managing lists.
+ * @brief API for managing doubly linked lists.
  *
  *		
  * @{
  */
 
 /**
- * Simple double linked list, modeled after the list template of the standard
+ * Simple doubly linked list, modeled after the list template of the standard
  * C++ library.
  */
 template<typename t_T>
 class List {
 protected:
-	typedef ListInternal::NodeBase		NodeBase;
-	typedef ListInternal::Node<t_T>		Node;
+	typedef ListInternal::NodeBase		NodeBase; /*!< @todo Doc required. */
+	typedef ListInternal::Node<t_T>		Node;     /*!< An element of the doubly linked list. */
 
-	NodeBase _anchor;
-
-public:
-	typedef ListInternal::Iterator<t_T>		iterator;
-	typedef ListInternal::ConstIterator<t_T>	const_iterator;
-
-	typedef t_T value_type;
-	typedef uint size_type;
+	NodeBase _anchor; /*!< Pointer to the position of the element in the list. */
 
 public:
+	typedef ListInternal::Iterator<t_T>		iterator; /*!< List iterator. */
+	typedef ListInternal::ConstIterator<t_T>	const_iterator; /*!< Const-qualified list iterator. */
+
+	typedef t_T value_type; /*!< Value type of the list. */
+	typedef uint size_type; /*!< Size type of the list. */
+
+public:
+	/**
+	 * Construct a new empty list.
+	 */
 	List() {
 		_anchor._prev = &_anchor;
 		_anchor._next = &_anchor;
 	}
-	List(const List<t_T> &list) {
+	List(const List<t_T> &list) {  /*!< Construct a new list as a copy of the given @p list. */
 		_anchor._prev = &_anchor;
 		_anchor._next = &_anchor;
 
@@ -73,14 +76,14 @@ public:
 	}
 
 	/**
-	 * Inserts element before pos.
+	 * Insert an @p element before @p pos.
 	 */
 	void insert(iterator pos, const t_T &element) {
 		insert(pos._node, element);
 	}
 
 	/**
-	 * Inserts the elements from first to last before pos.
+	 * Insert elements from @p first to @p last before @p pos.
 	 */
 	template<typename iterator2>
 	void insert(iterator pos, iterator2 first, iterator2 last) {
@@ -89,8 +92,8 @@ public:
 	}
 
 	/**
-	 * Deletes the element at location pos and returns an iterator pointing
-	 * to the element after the one which was deleted.
+	 * Delete the element at location @p pos and return an iterator pointing
+	 * to the element after the one that was deleted.
 	 */
 	iterator erase(iterator pos) {
 		assert(pos != end());
@@ -98,8 +101,8 @@ public:
 	}
 
 	/**
-	 * Deletes the element at location pos and returns an iterator pointing
-	 * to the element before the one which was deleted.
+	 * Delete the element at location @p pos and return an iterator pointing
+	 * to the element before the one that was deleted.
 	 */
 	iterator reverse_erase(iterator pos) {
 		assert(pos != end());
@@ -107,9 +110,9 @@ public:
 	}
 
 	/**
-	 * Deletes the elements between first and last (including first but not
-	 * last) and returns an iterator pointing to the element after the one
-	 * which was deleted (i.e., last).
+	 * Delete the elements between @p first and @p last (including @p first but not
+	 * @p last). Return an iterator pointing to the element after the one
+	 * that was deleted (that is, @p last).
 	 */
 	iterator erase(iterator first, iterator last) {
 		NodeBase *f = first._node;
@@ -120,7 +123,7 @@ public:
 	}
 
 	/**
-	 * Removes all elements that are equal to val from the list.
+	 * Remove all elements that are equal to @p val from the list.
 	 */
 	void remove(const t_T &val) {
 		NodeBase *i = _anchor._next;
@@ -131,48 +134,49 @@ public:
 				i = i->_next;
 	}
 
-	/** Inserts element at the start of the list. */
+	/** Insert an @p element at the start of the list. */
 	void push_front(const t_T &element) {
 		insert(_anchor._next, element);
 	}
 
-	/** Appends element to the end of the list. */
+	/** Append an @p element to the end of the list. */
 	void push_back(const t_T &element) {
 		insert(&_anchor, element);
 	}
 
-	/** Removes the first element of the list. */
+	/** Remove the first element of the list. */
 	void pop_front() {
 		assert(!empty());
 		erase(_anchor._next);
 	}
 
-	/** Removes the last element of the list. */
+	/** Remove the last element of the list. */
 	void pop_back() {
 		assert(!empty());
 		erase(_anchor._prev);
 	}
 
-	/** Returns a reference to the first element of the list. */
+	/** Return a reference to the first element of the list. */
 	t_T &front() {
 		return static_cast<Node *>(_anchor._next)->_data;
 	}
 
-	/** Returns a reference to the first element of the list. */
+	/** Return a reference to the first element of the list. */
 	const t_T &front() const {
 		return static_cast<Node *>(_anchor._next)->_data;
 	}
 
-	/** Returns a reference to the last element of the list. */
+	/** Return a reference to the last element of the list. */
 	t_T &back() {
 		return static_cast<Node *>(_anchor._prev)->_data;
 	}
 
-	/** Returns a reference to the last element of the list. */
+	/** Return a reference to the last element of the list. */
 	const t_T &back() const {
 		return static_cast<Node *>(_anchor._prev)->_data;
 	}
 
+    /** Assign a given @p list to this list. */
 	List<t_T> &operator=(const List<t_T> &list) {
 		if (this != &list) {
 			iterator i;
@@ -193,6 +197,7 @@ public:
 		return *this;
 	}
 
+    /** Return the size of the list. */
 	size_type size() const {
 		size_type n = 0;
 		for (const NodeBase *cur = _anchor._next; cur != &_anchor; cur = cur->_next)
@@ -200,6 +205,7 @@ public:
 		return n;
 	}
 
+    /** Remove all elements from the list. */
 	void clear() {
 		NodeBase *pos = _anchor._next;
 		while (pos != &_anchor) {
@@ -212,36 +218,57 @@ public:
 		_anchor._next = &_anchor;
 	}
 
+    /** Check whether the list is empty. */
 	bool empty() const {
 		return (&_anchor == _anchor._next);
 	}
 
-
+    /** Return an iterator to the start of the list.	
+	 *  This can be used, for example, to iterate from the first element
+	 *  of the list to the last element of the list.
+	 */
 	iterator		begin() {
 		return iterator(_anchor._next);
 	}
 
+    /** Return a reverse iterator to the start of the list.	
+	 *  This can be used, for example, to iterate from the last element
+	 *  of the list to the first element of the list.
+	 */
 	iterator		reverse_begin() {
 		return iterator(_anchor._prev);
 	}
 
+    /** Return an iterator to the end of the list. */
 	iterator		end() {
 		return iterator(&_anchor);
 	}
 
+    /** Return a const iterator to the start of the list.	
+	 *  This can be used, for example, to iterate from the first element
+	 *  of the list to the last element of the list.
+	 */
 	const_iterator	begin() const {
 		return const_iterator(_anchor._next);
 	}
 
+    /** Return a const reverse iterator to the start of the list.	
+	 *  This can be used, for example, to iterate from the last element
+	 *  of the list to the first element of the list.
+	 */
 	const_iterator	reverse_begin() const {
 		return const_iterator(_anchor._prev);
 	}
 
+    /** Return a const iterator to the end of the list. */
 	const_iterator	end() const {
 		return const_iterator(const_cast<NodeBase *>(&_anchor));
 	}
 
 protected:
+    /**
+	 * Erase an element at @p pos.
+	 */
 	NodeBase erase(NodeBase *pos) {
 		NodeBase n = *pos;
 		Node *node = static_cast<Node *>(pos);
@@ -252,7 +279,7 @@ protected:
 	}
 
 	/**
-	 * Inserts element before pos.
+	 * Insert an @p element before @p pos.
 	 */
 	void insert(NodeBase *pos, const t_T &element) {
 		ListInternal::NodeBase *newNode = new Node(element);
