@@ -33,7 +33,7 @@
 #include "common/list.h"
 
 
-class WindowsTextToSpeechManager : public Common::TextToSpeechManager {
+class WindowsTextToSpeechManager final : public Common::TextToSpeechManager {
 public:
 	enum SpeechState {
 		READY,

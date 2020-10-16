@@ -33,7 +33,7 @@
 #include <windows.h>
 
 
-class Win32Plugin : public DynamicPlugin {
+class Win32Plugin final : public DynamicPlugin {
 private:
 	static const TCHAR* toUnicode(const char *x) {
 	#ifndef UNICODE
@@ -49,7 +49,7 @@ private:
 protected:
 	void *_dlHandle;
 
-	virtual VoidFunc findSymbol(const char *symbol) {
+	virtual VoidFunc findSymbol(const char *symbol) override {
 		FARPROC func = GetProcAddress((HMODULE)_dlHandle, toUnicode(symbol));
 		if (!func)
 			debug("Failed loading symbol '%s' from plugin '%s'", symbol, _filename.c_str());
@@ -61,7 +61,7 @@ public:
 	Win32Plugin(const Common::String &filename)
 		: DynamicPlugin(filename), _dlHandle(0) {}
 
-	bool loadPlugin() {
+	virtual bool loadPlugin() override {
 		assert(!_dlHandle);
 		_dlHandle = LoadLibrary(toUnicode(_filename.c_str()));
 
@@ -75,7 +75,7 @@ public:
 		return DynamicPlugin::loadPlugin();
 	}
 
-	void unloadPlugin() {
+	virtual void unloadPlugin() override {
 		DynamicPlugin::unloadPlugin();
 		if (_dlHandle) {
 			if (!FreeLibrary((HMODULE)_dlHandle))

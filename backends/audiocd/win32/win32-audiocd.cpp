@@ -74,15 +74,15 @@
 #include <ntddcdrm.h>
 #endif
 
-class Win32AudioCDStream : public AudioCDStream {
+class Win32AudioCDStream final : public AudioCDStream {
 public:
 	Win32AudioCDStream(HANDLE handle, const TRACK_DATA &startEntry, const TRACK_DATA &endEntry);
 	~Win32AudioCDStream();
 
 protected:
-	uint getStartFrame() const;
-	uint getEndFrame() const;
-	bool readFrame(int frame, int16 *buffer);
+	uint getStartFrame() const override;
+	uint getEndFrame() const override;
+	bool readFrame(int frame, int16 *buffer) override;
 
 private:
 	HANDLE _driveHandle;
@@ -143,7 +143,7 @@ bool Win32AudioCDStream::readFrame(int frame, int16 *buffer) {
 }
 
 
-class Win32AudioCDManager : public DefaultAudioCDManager {
+class Win32AudioCDManager final : public DefaultAudioCDManager {
 public:
 	Win32AudioCDManager();
 	~Win32AudioCDManager();

@@ -27,11 +27,11 @@
 
 #if defined(DYNAMIC_MODULES) && defined(_WIN32)
 
-class Win32PluginProvider : public FilePluginProvider {
+class Win32PluginProvider final : public FilePluginProvider {
 protected:
-	Plugin* createPlugin(const Common::FSNode &node) const;
+	Plugin* createPlugin(const Common::FSNode &node) const override;
 
-	bool isPluginFilename(const Common::FSNode &node) const;
+	bool isPluginFilename(const Common::FSNode &node) const override;
 };
 
 #endif // defined(DYNAMIC_MODULES) && defined(_WIN32)

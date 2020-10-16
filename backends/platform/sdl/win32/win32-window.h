@@ -27,9 +27,9 @@
 
 #include "backends/platform/sdl/sdl-window.h"
 
-class SdlWindow_Win32 : public SdlWindow {
+class SdlWindow_Win32 final : public SdlWindow {
 public:
-	virtual void setupIcon();
+	virtual void setupIcon() override;
 	HWND getHwnd();
 };
 
