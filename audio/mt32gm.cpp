@@ -296,18 +296,20 @@ void MidiDriver_MT32GM::initGM(bool initForMT32, bool enableGS) {
 
 			// Note: All Roland GS devices support CM-64/32L maps
 
-			// Set Percussion Channel to SC-55 Map (CC#32, 01H), then
-			// Switch Drum Map to CM-64/32L (MT-32 Compatible Drums)
-			// Bank select MSB: bank 0
-			getPercussionChannel()->controlChange(MIDI_CONTROLLER_BANK_SELECT_MSB, 0);
-			// Bank select LSB: map 1 (SC-55)
-			getPercussionChannel()->controlChange(MIDI_CONTROLLER_BANK_SELECT_LSB, 1);
+			if (getPercussionChannel() != 0) {
+				// Set Percussion Channel to SC-55 Map (CC#32, 01H), then
+				// Switch Drum Map to CM-64/32L (MT-32 Compatible Drums)
+				// Bank select MSB: bank 0
+				getPercussionChannel()->controlChange(MIDI_CONTROLLER_BANK_SELECT_MSB, 0);
+				// Bank select LSB: map 1 (SC-55)
+				getPercussionChannel()->controlChange(MIDI_CONTROLLER_BANK_SELECT_LSB, 1);
+			}
 			// Patch change: 127 (CM-64/32L)
 			send(127 << 8 | MIDI_COMMAND_PROGRAM_CHANGE | 9);
 
 			// Set Channels 1-16 to SC-55 Map, then CM-64/32L Variation
 			for (i = 0; i < 16; ++i) {
-				if (i == getPercussionChannel()->getNumber())
+				if (getPercussionChannel() != 0 && i == getPercussionChannel()->getNumber())
 					continue;
 				// Bank select MSB: bank 127 (CM-64/32L)
 				send((127 << 16) | (MIDI_CONTROLLER_BANK_SELECT_MSB << 8) | (MIDI_COMMAND_CONTROL_CHANGE | i));
