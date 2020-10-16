@@ -538,6 +538,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		_videoLayout = new FrameLayout(this);
 		SetLayerType.get().setLayerType(_videoLayout);
 		setContentView(_videoLayout);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		_videoLayout.setFocusable(true);
 		_videoLayout.setFocusableInTouchMode(true);
 		_videoLayout.requestFocus();
