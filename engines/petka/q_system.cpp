@@ -312,8 +312,8 @@ void QSystem::save(Common::WriteStream *s) {
 	QObjectPetka *petka = getPetka();
 	QObjectChapayev *chapayev = getChapay();
 
-	FlicDecoder *petkaFlc = _vm.resMgr()->loadFlic(petka->_resourceId);
-	FlicDecoder *chapayFlc = _vm.resMgr()->loadFlic(chapayev->_resourceId);
+	FlicDecoder *petkaFlc = _vm.resMgr()->getFlic(petka->_resourceId);
+	FlicDecoder *chapayFlc = _vm.resMgr()->getFlic(chapayev->_resourceId);
 
 	s->writeSint32LE(petka->_x - petkaFlc->getCurrentFrame()->w * petka->_k * -0.5);
 	s->writeSint32LE(petka->_y + petkaFlc->getCurrentFrame()->h * petka->_k);

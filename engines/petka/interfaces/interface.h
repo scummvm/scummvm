@@ -40,6 +40,9 @@ public:
 	virtual void start(int id) {};
 	virtual void stop();
 
+	virtual void update(uint time);
+	void draw();
+
 	virtual void onLeftButtonDown(Common::Point p) {};
 	virtual void onRightButtonDown(Common::Point p) {};
 	virtual void onMouseMove(Common::Point p) {};
@@ -52,6 +55,9 @@ public:
 	QVisibleObject *findObject(int resourceId);
 
 	void initCursor(int id, bool show, bool animate);
+
+private:
+	void sort();
 
 public:
 	Common::Array<QVisibleObject *> _objs;

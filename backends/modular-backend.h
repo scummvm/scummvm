@@ -82,7 +82,6 @@ public:
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const override final;
 #endif
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL) override final;
-	virtual Graphics::PixelBuffer getScreenPixelBuffer() override;
 	virtual void initSizeHint(const Graphics::ModeList &modes) override final;
 	virtual int getScreenChangeID() const override final;
 
@@ -115,7 +114,7 @@ public:
 	virtual void warpMouse(int x, int y) override final;
 	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL) override final;
 	virtual void setCursorPalette(const byte *colors, uint start, uint num) override final;
-	virtual bool lockMouse(bool lock) override;
+	virtual bool lockMouse(bool lock) override final;
 
 	//@}
 
@@ -124,6 +123,8 @@ public:
 
 	virtual void displayMessageOnOSD(const Common::U32String &msg) override final;
 	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon) override final;
+
+	virtual void saveScreenshot() override final;
 
 	//@}
 

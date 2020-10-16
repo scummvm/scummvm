@@ -69,11 +69,11 @@ enum Sequence {
 	//36: Vividos only: magic?
 	//37: Mythran only: magic?
 	//38: Vividos only: ?
-	//39: unused
+	//39: unused in u8
 	//40: ? - could be a slow attack or quick block ???
-	//41: unused
+	//41: unused in u8
 	keepBalance = 42,
-	//43: unused
+	//43: unused in u8
 	fallBackwards = 44,
 	hang = 45,
 	climbUp = 46,
@@ -91,28 +91,50 @@ enum Sequence {
 	kick = 58,
 	startBlock = 59,
 	stopBlock = 60,
-	            //61: unused
-	            //62: unused
-	            //63: unused
+	            //61: unused in u8
+	            //62: unused in u8
+	            //63: unused in u8
 	// Some crusader-specific animations (some use the same IDs as above)
 	reload = 15,
 	combatRollLeft = 23,
 	combatRollRight = 24,
 	walkWithGun = 25,
 	kneelAndFire = 26,
+	slideLeft = 28,
 	slideRight = 29,
 	startRunWithLargeWeapon = 31,
 	teleportIn = 32,
 	teleportOut = 33,
 	startRunWithSmallWeapon = 34,
 	startRunWithLargeWeapon2 = 35,
+	advanceWithSmallWeapon = 36,
+	halfStep = 37,
 	startRun = 38,
 	stopRunningAndDrawWeapon = 39,
+	kneelStart = 40,
+	kneelEnd = 41,
 	kneelAndFire2 = 42,
 	kneelAndFire3 = 43,
+	advanceWithLargeWeapon = 44,
+	quickRetreat = 45,
+	kneelingWithSmallWeapon = 46,
+	kneelingWithLargeWeapon = 47,
+	run2 = 48,
+	runWithSmallWeapon = 49,
 	runWithLargeWeapon = 50,
+	kneelingRetreat = 51,
+	kneelingAdvance = 52,
+	kneelingSlowRetreat = 53,
+	fire2 = 54,
+	electrocuted = 55,
+	jumpForward = 56,
 	surrender = 57,
+	anotherJump = 58,
+	jumpLanding = 59,
 	surrenderStand = 60,
+	slowCombatRollLeft = 61,
+	slowCombatRollRight = 62,
+	finishFiring = 63,
 	teleportInReplacement = 0x1020,	//!< See notes in Actor::I_doAnim
 	teleportOutReplacement = 0x1021	//!< See notes in Actor::I_doAnim
 };

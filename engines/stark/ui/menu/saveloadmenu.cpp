@@ -72,29 +72,29 @@ void SaveLoadMenuScreen::open() {
 			"loadsavebg",
 			nullptr,
 			nullptr));
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"back to index",
 			CLICK_HANDLER(SaveLoadMenuScreen, backHandler),
 			nullptr));
 	_widgets.back()->setupSounds(0, 1);
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"Cancel",
 			CLICK_HANDLER(SaveLoadMenuScreen, backHandler),
 			nullptr));
 	_widgets.back()->setupSounds(0, 1);
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"SaveText",
 			nullptr,
 			nullptr));
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"LoadText",
 			nullptr,
 			nullptr));
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"Back",
 			CLICK_HANDLER(SaveLoadMenuScreen, prevPageHandler),
@@ -102,7 +102,7 @@ void SaveLoadMenuScreen::open() {
 	_widgets.back()->setupSounds(0, 1);
 	_widgets.back()->setTextColor(Color(0, 0, 0));
 	_widgets.back()->setVisible(_page > 0);
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"Next",
 			CLICK_HANDLER(SaveLoadMenuScreen, nextPageHandler),
@@ -244,8 +244,8 @@ SaveDataWidget::SaveDataWidget(int slot, Gfx::Driver *gfx, SaveLoadMenuScreen *s
 		StaticLocationWidget(nullptr, nullptr, nullptr),
 		_slot(slot),
 		_screen(screen),
-		_thumbWidth(StarkUserInterface->kThumbnailWidth),
-		_thumbHeight(StarkUserInterface->kThumbnailHeight),
+		_thumbWidth(kThumbnailWidth),
+		_thumbHeight(kThumbnailHeight),
 		_texture(gfx->createTexture()),
 		_outline(gfx->createTexture()),
 		_surfaceRenderer(gfx->createSurfaceRenderer()),

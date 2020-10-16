@@ -26,7 +26,6 @@ $(PATH_BUILD_GRADLE): $(GRADLE_FILES) | $(PATH_BUILD)
 	$(ECHO) "android.useAndroidX=true\n" >> $(PATH_BUILD)/gradle.properties
 	$(ECHO) "android.enableJetifier=true\n" >> $(PATH_BUILD)/gradle.properties
 	$(ECHO) "sdk.dir=$(realpath $(ANDROID_SDK_ROOT))\n" > $(PATH_BUILD)/local.properties
-	$(ECHO) "ndk.dir=$(realpath $(ANDROID_NDK_ROOT))\n" >> $(PATH_BUILD)/local.properties
 
 $(PATH_BUILD_ASSETS): $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(DIST_FILES_DOCS) $(PORT_DISTFILES) | $(PATH_BUILD)
 	$(INSTALL) -d $(PATH_BUILD_ASSETS)

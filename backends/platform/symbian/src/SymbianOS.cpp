@@ -20,9 +20,21 @@
  *
  */
 
+#if (__GNUC__ && __cplusplus)
+#pragma GCC diagnostic ignored "-Wreturn-local-addr"
+#pragma GCC diagnostic ignored "-Wnarrowing"
+#pragma GCC diagnostic ignored "-Wc++14-compat"
+#endif
+
 #include <sdlapp.h> // for CSDLApp::GetExecutablePathCStr() @ Symbian::GetExecutablePath()
 #include <bautils.h>
 #include <eikenv.h> // for CEikonEnv::Static()
+
+#if (__GNUC__ && __cplusplus)
+//If a pop has no matching push, the command-line options are restored. 
+#pragma GCC diagnostic pop
+#endif
+
 #define FORBIDDEN_SYMBOL_EXCEPTION_fclose
 #define FORBIDDEN_SYMBOL_EXCEPTION_fopen
 
@@ -84,6 +96,12 @@ void OSystem_SDL_Symbian::initBackend() {
 		ConfMan.set("savepath", savePath);
 	}
 
+#if _DEBUG
+#warning "set debuglevel = 20"
+	ConfMan.set("debuglevel", "20");
+	if (!ConfMan.hasKey("debuglevel"))
+		printf("debuglevel not set!\n");
+#endif
 	// Ensure that the current set path (might have been altered by the user) exists
 	Common::String currentPath = ConfMan.get("savepath");
 	TFileName fname;
@@ -213,3 +231,4 @@ void* scumm_bsearch(const void *key, const void *base, size_t nmemb, size_t size
 	return NULL;
 }
 
+extern "C" void __sync_synchronize(){}

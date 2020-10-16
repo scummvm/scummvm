@@ -46,14 +46,14 @@ QText::QText(const Common::U32String &text, uint16 textColor, uint16 outlineColo
 	rect.bottom += 10;
 
 	_rect = Common::Rect((640 - rect.width()) / 2, 479 - rect.height(), 639 - (640 - rect.width()) / 2, 479);
-	Graphics::Surface *s = g_vm->resMgr()->findOrCreateSurface(-2, _rect.width(), _rect.height());
+	Graphics::Surface *s = g_vm->resMgr()->getSurface(-2, _rect.width(), _rect.height());
 
 	drawText(*s, 0, 630, text, textColor, *font);
 	drawOutline(s, outlineColor);
 }
 
 void QText::draw() {
-	const Graphics::Surface *s = g_vm->resMgr()->loadBitmap(-2);
+	const Graphics::Surface *s = g_vm->resMgr()->getSurface(-2);
 	if (s) {
 		g_vm->videoSystem()->transBlitFrom(*s, Common::Point((640 - s->w) / 2, 479 - s->h));
 	}
@@ -135,11 +135,11 @@ QTextDescription::QTextDescription(const Common::U32String &desc, uint32 frame) 
 	_resourceId = -2;
 	_rect = Common::Rect(0, 0, 640, 480);
 
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(6008);
+	FlicDecoder *flc = g_vm->resMgr()->getFlic(6008);
 	flc->setFrame(frame);
 
 	const Graphics::Surface *frameS = flc->getCurrentFrame();
-	Graphics::Surface *s = g_vm->resMgr()->findOrCreateSurface(-2, 640, 480);
+	Graphics::Surface *s = g_vm->resMgr()->getSurface(-2, 640, 480);
 
 	Graphics::Surface *convS = frameS->convertTo(s->format, flc->getPalette());
 	s->copyRectToSurface(*convS, 0, 0, _rect);
@@ -163,8 +163,8 @@ void QTextDescription::onClick(Common::Point p) {
 void QTextDescription::draw() {
 	QManager *resMgr = g_vm->resMgr();
 	VideoSystem *videoSys = g_vm->videoSystem();
-	Graphics::Surface *s = resMgr->loadBitmap(-2);
-	FlicDecoder *flc = resMgr->loadFlic(6008);
+	Graphics::Surface *s = resMgr->getSurface(-2);
+	FlicDecoder *flc = resMgr->getFlic(6008);
 
 	for (auto dirty : videoSys->rects()) {
 		videoSys->transBlitFrom(*s, dirty, dirty, flc->getTransColor(s->format));
@@ -193,7 +193,7 @@ QTextChoice::QTextChoice(const Common::Array<Common::U32String> &choices, uint16
 
 	_rect = Common::Rect((640 - w) / 2, 479 - h, 639 - (640 - w) / 2, 479);
 
-	Graphics::Surface *s = g_vm->resMgr()->findOrCreateSurface(-2, w, h);
+	Graphics::Surface *s = g_vm->resMgr()->getSurface(-2, w, h);
 
 	int y = 0;
 	for (uint i = 0; i < _choices.size(); ++i) {
@@ -215,7 +215,7 @@ void QTextChoice::onMouseMove(Common::Point p) {
 	}
 
 	if (newChoice != _activeChoice) {
-		Graphics::Surface *s = g_vm->resMgr()->loadBitmap(-2);
+		Graphics::Surface *s = g_vm->resMgr()->getSurface(-2);
 		Common::ScopedPtr<Graphics::Font> font(Graphics::loadTTFFontFromArchive("FreeSans.ttf", 20));
 
 		s->fillRect(Common::Rect(s->w, s->h), 0);

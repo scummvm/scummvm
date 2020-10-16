@@ -11,6 +11,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Rect;
+//import android.inputmethodservice.Keyboard;
+//import android.inputmethodservice.KeyboardView;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.net.wifi.WifiInfo;
@@ -21,14 +23,17 @@ import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.PointerIcon;
 import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -48,8 +53,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Properties;
+import java.util.TreeSet;
 
 //import android.os.Environment;
 //import java.util.List;
@@ -93,12 +98,280 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 	}
 
+	//
+	// --------------------------------------------------------------------------------------------------------------------------------------------
+	// Code for emulated in-app keyboard largely copied
+	// from https://github.com/pelya/commandergenius/tree/sdl_android/project
+	//
+	FrameLayout _videoLayout = null;
+
+	private EditableSurfaceView _main_surface = null;
+	private ImageView _toggleKeyboardBtnIcon = null;
+
+	public View _screenKeyboard = null;
+	static boolean keyboardWithoutTextInputShown = false;
+
+//	boolean _isPaused = false;
+	private InputMethodManager _inputManager = null;
+
+	private final int[][] TextInputKeyboardList =
+	{
+		{ 0, R.xml.qwerty },
+		{ 0, R.xml.qwerty_shift },
+		{ 0, R.xml.qwerty_alt },
+		{ 0, R.xml.qwerty_alt_shift }
+	};
+
+	public void showScreenKeyboardWithoutTextInputField(final int keyboard) {
+		if (_main_surface != null) {
+			_inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+			if (!keyboardWithoutTextInputShown) {
+				keyboardWithoutTextInputShown = true;
+				runOnUiThread(new Runnable() {
+					public void run() {
+						_main_surface.captureMouse(false);
+						if (keyboard == 0) {
+							// TODO do we need SHOW_FORCED HERE?
+							//_inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+							//_inputManager.showSoftInput(_main_surface, InputMethodManager.SHOW_FORCED);
+
+							_inputManager.toggleSoftInputFromWindow(_main_surface.getWindowToken(), InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_IMPLICIT_ONLY);
+							_inputManager.showSoftInput(_main_surface, InputMethodManager.SHOW_IMPLICIT);
+							getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+						} else {
+							if (_screenKeyboard != null) {
+								return;
+							}
+							class BuiltInKeyboardView extends CustomKeyboardView {
+
+								public boolean shift = false;
+								public boolean alt = false;
+								public final TreeSet<Integer> stickyKeys = new TreeSet<>();
+
+								public BuiltInKeyboardView(Context context, android.util.AttributeSet attrs) {
+									super(context, attrs);
+								}
+
+								public boolean onKeyDown(int key, final KeyEvent event) {
+									Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - onKeyDown()" );
+									return false;
+								}
+
+								public boolean onKeyUp(int key, final KeyEvent event) {
+									Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - onKeyUp()" );
+									return false;
+								}
+
+								public void ChangeKeyboard() {
+									// Called when bringing up the keyboard
+									// or pressing one of the special keyboard keys that change the layout (eg "123...")
+									//
+									int idx = (shift ? 1 : 0) + (alt ? 2 : 0);
+									setKeyboard(new CustomKeyboard(ScummVMActivity.this, TextInputKeyboardList[idx][keyboard]));
+									setPreviewEnabled(false);
+									setProximityCorrectionEnabled(false);
+									for (CustomKeyboard.CustomKey k: getKeyboard().getKeys()) {
+										if (stickyKeys.contains(k.codes[0])) {
+											k.on = true;
+											invalidateAllKeys();
+										}
+									}
+								}
+							}
+
+							final BuiltInKeyboardView builtinKeyboard = new BuiltInKeyboardView(ScummVMActivity.this, null);
+							builtinKeyboard.setAlpha(0.7f);
+							builtinKeyboard.ChangeKeyboard();
+							builtinKeyboard.setOnKeyboardActionListener(new CustomKeyboardView.OnKeyboardActionListener() {
+
+								public void onPress(int key) {
+									Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - onPress key: " + key ); // CALLED
+									if (key == KeyEvent.KEYCODE_BACK) {
+										return;
+									}
+
+									if (key < 0) {
+										return;
+									}
+
+									for (CustomKeyboard.CustomKey k: builtinKeyboard.getKeyboard().getKeys()) {
+										if (k.sticky && key == k.codes[0])
+											return;
+									}
+
+									if (key > 100000) {
+										key -= 100000;
+										_main_surface.onKeyDown(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SHIFT_LEFT));
+									}
+									_main_surface.onKeyDown(key, new KeyEvent(KeyEvent.ACTION_DOWN, key)); // calls onKeyDown - EditableSurface!!!
+								}
+
+								public void onRelease(int key) {
+									Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - onRelease key: " + key );
+									if (key == KeyEvent.KEYCODE_BACK) {
+										builtinKeyboard.setOnKeyboardActionListener(null);
+										showScreenKeyboardWithoutTextInputField(0); // Hide keyboard
+										return;
+									}
+
+									if (key == CustomKeyboard.KEYCODE_SHIFT) {
+										builtinKeyboard.shift = ! builtinKeyboard.shift;
+										if (builtinKeyboard.shift && !builtinKeyboard.alt)
+											_main_surface.onKeyDown(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SHIFT_LEFT));
+										else
+											_main_surface.onKeyUp(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_SHIFT_LEFT));
+										builtinKeyboard.ChangeKeyboard();
+										return;
+									}
+
+									if (key == CustomKeyboard.KEYCODE_ALT) {
+										builtinKeyboard.alt = ! builtinKeyboard.alt;
+										if (builtinKeyboard.alt)
+											_main_surface.onKeyUp(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_SHIFT_LEFT));
+										else
+											builtinKeyboard.shift = false;
+										builtinKeyboard.ChangeKeyboard();
+										return;
+									}
+
+									if (key < 0) {
+										return;
+									}
+
+									for (CustomKeyboard.CustomKey k: builtinKeyboard.getKeyboard().getKeys()) {
+										if (k.sticky && key == k.codes[0]) {
+											if (k.on) {
+												builtinKeyboard.stickyKeys.add(key);
+												_main_surface.onKeyDown(key, new KeyEvent(KeyEvent.ACTION_DOWN, key));
+											} else {
+												builtinKeyboard.stickyKeys.remove(key);
+												_main_surface.onKeyUp(key, new KeyEvent(KeyEvent.ACTION_UP, key));
+											}
+											return;
+										}
+									}
+
+									boolean shifted = false;
+									if (key > 100000) {
+										key -= 100000;
+										shifted = true;
+									}
+
+									_main_surface.onKeyUp(key, new KeyEvent(KeyEvent.ACTION_UP, key));
+
+									if (shifted) {
+										_main_surface.onKeyUp(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_SHIFT_LEFT));
+										builtinKeyboard.stickyKeys.remove(KeyEvent.KEYCODE_SHIFT_LEFT);
+										for (CustomKeyboard.CustomKey k: builtinKeyboard.getKeyboard().getKeys())
+										{
+											if (k.sticky && k.codes[0] == KeyEvent.KEYCODE_SHIFT_LEFT && k.on)
+											{
+												k.on = false;
+												builtinKeyboard.invalidateAllKeys();
+											}
+										}
+									}
+								}
+
+								public void onText(CharSequence p1) {}
+								public void swipeLeft() {}
+								public void swipeRight() {}
+								public void swipeDown() {}
+								public void swipeUp() {}
+								public void onKey(int p1, int[] p2) {}
+							});
+
+							_screenKeyboard = builtinKeyboard;
+							// TODO better to have specific dimensions in dp and not adjusted to parent
+							//		it may resolve the issue of resizing the keyboard wrongly (smaller) when returning to the suspended Activity in low resolution
+							FrameLayout.LayoutParams sKeyboardLayout = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
+
+							_videoLayout.addView(_screenKeyboard, sKeyboardLayout);
+							_videoLayout.bringChildToFront(_screenKeyboard);
+							Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 005" );
+						}
+					}
+				});
+			} else {
+				keyboardWithoutTextInputShown = false;
+				runOnUiThread(new Runnable() {
+					public void run() {
+						if (_screenKeyboard != null ) {
+							_videoLayout.removeView(_screenKeyboard);
+							_screenKeyboard = null;
+						}
+						getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+						// TODO do we need this instead?
+						// _inputManager.hideSoftInputFromWindow(_main_surface.getWindowToken(), 0);
+						_inputManager.hideSoftInputFromWindow(_main_surface.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+
+						DimSystemStatusBar.get().dim(_videoLayout);
+						//DimSystemStatusBar.get().dim(_main_surface);
+						_main_surface.captureMouse(true);
+					}
+				});
+			}
+			// TODO Do we need to inform native ScummVM code of keyboard shown state?
+//			_main_surface.nativeScreenKeyboardShown( keyboardWithoutTextInputShown ? 1 : 0 );
+		}
+	}
+
+	public void showScreenKeyboard() {
+		final boolean bGlobalsCompatibilityHacksTextInputEmulatesHwKeyboard = true;
+		final int dGlobalsTextInputKeyboard = 1;
+		if (_main_surface != null) {
+
+			if (bGlobalsCompatibilityHacksTextInputEmulatesHwKeyboard) {
+				showScreenKeyboardWithoutTextInputField(dGlobalsTextInputKeyboard);
+				Log.d(ScummVM.LOG_TAG, "showScreenKeyboard - showScreenKeyboardWithoutTextInputField()");
+				_main_surface.captureMouse(false);
+				return;
+			}
+			Log.d(ScummVM.LOG_TAG, "showScreenKeyboard: YOU SHOULD NOT SEE ME!!!");
+
+//			// TODO redundant ?
+//			if (_screenKeyboard != null) {
+//				return;
+//			}
+//
+		}
+	}
+
+	public void hideScreenKeyboard() {
+
+		final int dGlobalsTextInputKeyboard = 1;
+		if (_main_surface != null) {
+			if (keyboardWithoutTextInputShown) {
+				showScreenKeyboardWithoutTextInputField(dGlobalsTextInputKeyboard);
+				_main_surface.captureMouse(true);
+			}
+		}
+	}
+
+	public void toggleScreenKeyboard() {
+		if (isScreenKeyboardShown()) {
+			hideScreenKeyboard();
+		} else {
+			showScreenKeyboard();
+		}
+	}
+
+	public boolean isScreenKeyboardShown()
+	{
+		return _screenKeyboard != null;
+	}
+
+	//
+	// END OF new screenKeyboardCode
+	// ---------------------------------------------------------------------------------------------------------------------------
+	//
+
 	public final View.OnClickListener keyboardBtnOnClickListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			runOnUiThread(new Runnable() {
 				public void run() {
-					toggleKeyboard();
+					toggleScreenKeyboard();
 				}
 			});
 		}
@@ -189,7 +462,12 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		protected void showVirtualKeyboard(final boolean enable) {
 			runOnUiThread(new Runnable() {
 				public void run() {
-					showKeyboard(enable);
+					//showKeyboard(enable);
+					if (enable) {
+						showScreenKeyboard();
+					} else {
+						hideScreenKeyboard();
+					}
 				}
 			});
 		}
@@ -198,7 +476,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		protected void showKeyboardControl(final boolean enable) {
 			runOnUiThread(new Runnable() {
 				public void run() {
-					showKeyboardView(enable);
+					showToggleKeyboardBtnIcon(enable);
 				}
 			});
 		}
@@ -255,14 +533,41 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 		hideSystemUI();
 
+		_videoLayout = new FrameLayout(this);
+		SetLayerType.get().setLayerType(_videoLayout);
+		setContentView(_videoLayout);
+		_videoLayout.setFocusable(true);
+		_videoLayout.setFocusableInTouchMode(true);
+		_videoLayout.requestFocus();
+
+		_main_surface = new EditableSurfaceView(this);
+		SetLayerType.get().setLayerType(_main_surface);
+
+		_videoLayout.addView(_main_surface, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+
+		_toggleKeyboardBtnIcon = new ImageView(this);
+		_toggleKeyboardBtnIcon.setImageResource(R.drawable.ic_action_keyboard);
+		FrameLayout.LayoutParams keybrdBtnlayout = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.TOP | Gravity.END);
+		keybrdBtnlayout.setMarginEnd(15);
+		keybrdBtnlayout.topMargin = 15;
+		keybrdBtnlayout.rightMargin = 15;
+		_videoLayout.addView(_toggleKeyboardBtnIcon, keybrdBtnlayout);
+		_videoLayout.bringChildToFront(_toggleKeyboardBtnIcon);
+
+		_main_surface.captureMouse(true);
+		// REDUNDANT?
+		if ( android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N ) {
+			_main_surface.setPointerIcon(android.view.PointerIcon.getSystemIcon(this, android.view.PointerIcon.TYPE_NULL));
+		}
+
+		// TODO is this redundant since we call hideSystemUI() ?
+		DimSystemStatusBar.get().dim(_videoLayout);
+
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
-		setContentView(R.layout.main);
+		// TODO needed?
 		takeKeyEvents(true);
 
-		EditableSurfaceView main_surface = findViewById(R.id.main_surface);
-
-		main_surface.requestFocus();
 		_clipboardManager = (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 		_currentScummVMVersion = new Version(BuildConfig.VERSION_NAME);
 		Log.d(ScummVM.LOG_TAG, "Current ScummVM version running is: " + _currentScummVMVersion.getDescription() + " (" + _currentScummVMVersion.get() + ")");
@@ -280,7 +585,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		//                            so app's internal space (which would be deleted on uninstall) was set as WORLD_READABLE which is no longer supported in newer versions of Android API
 		//                            In newer APIs we can set that path as Context.MODE_PRIVATE which is the default - but this makes the files inaccessible to other apps
 
-		_scummvm = new MyScummVM(main_surface.getHolder());
+		_scummvm = new MyScummVM(_main_surface.getHolder());
 
 		//
 		// seekAndInitScummvmConfiguration() returns false if something went wrong
@@ -309,7 +614,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			Log.d(ScummVM.LOG_TAG, "Hover available: " + _hoverAvailable);
 			if (_hoverAvailable) {
 				_mouseHelper = new MouseHelper(_scummvm);
-				_mouseHelper.attach(main_surface);
+				_mouseHelper.attach(_main_surface);
 			}
 
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
@@ -319,13 +624,14 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			}
 
 			// On screen button listener
-			findViewById(R.id.show_keyboard).setOnClickListener(keyboardBtnOnClickListener);
+			//findViewById(R.id.show_keyboard).setOnClickListener(keyboardBtnOnClickListener);
+			_toggleKeyboardBtnIcon.setOnClickListener(keyboardBtnOnClickListener);
 
-			// Keyboard visibility listener
+			// Keyboard visibility listener - mainly to hide system UI if keyboard is shown and we return from Suspend to the Activity
 			setKeyboardVisibilityListener(this);
 
-			main_surface.setOnKeyListener(_events);
-			main_surface.setOnTouchListener(_events);
+			_main_surface.setOnKeyListener(_events);
+			_main_surface.setOnTouchListener(_events);
 
 			_scummvm_thread = new Thread(_scummvm, "ScummVM");
 			_scummvm_thread.start();
@@ -343,6 +649,8 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	public void onResume() {
 		Log.d(ScummVM.LOG_TAG, "onResume");
 
+//		_isPaused = false;
+
 		super.onResume();
 
 		if (_scummvm != null)
@@ -353,6 +661,8 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	@Override
 	public void onPause() {
 		Log.d(ScummVM.LOG_TAG, "onPause");
+
+//		_isPaused = true;
 
 		super.onPause();
 
@@ -387,6 +697,11 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 			_scummvm = null;
 		}
+
+		if (isScreenKeyboardShown()) {
+			hideScreenKeyboard();
+		}
+		showToggleKeyboardBtnIcon(false);
 	}
 
 
@@ -462,7 +777,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 	}
 
-
 	// TODO setSystemUiVisibility is introduced in API 11 and deprecated in API 30 - When we move to API 30 we will have to replace this code
 	//	https://developer.android.com/training/system-ui/immersive.html#java
 	//
@@ -498,53 +812,61 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 //		    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 //	}
 
-	// Show or hide the Android keyboard.
-	// Called by the override of showVirtualKeyboard()
-	@TargetApi(Build.VERSION_CODES.CUPCAKE)
-	private void showKeyboard(boolean show) {
-		SurfaceView main_surface = findViewById(R.id.main_surface);
-		InputMethodManager imm = (InputMethodManager)
-			getSystemService(INPUT_METHOD_SERVICE);
-
-		if (show) {
-			imm.showSoftInput(main_surface, InputMethodManager.SHOW_IMPLICIT);
-		} else  {
-			imm.hideSoftInputFromWindow(main_surface.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
-		}
-	}
-
-	// Toggle showing or hiding the virtual keyboard.
-	// Called by keyboardBtnOnClickListener()
-	@TargetApi(Build.VERSION_CODES.CUPCAKE)
-	private void toggleKeyboard() {
-		SurfaceView main_surface = findViewById(R.id.main_surface);
-		InputMethodManager imm = (InputMethodManager)
-			getSystemService(INPUT_METHOD_SERVICE);
-
-		imm.toggleSoftInputFromWindow(main_surface.getWindowToken(),
-			InputMethodManager.SHOW_IMPLICIT,
-			InputMethodManager.HIDE_IMPLICIT_ONLY);
-	}
+//	// Show or hide the Android keyboard.
+//	// Called by the override of showVirtualKeyboard()
+//	@TargetApi(Build.VERSION_CODES.CUPCAKE)
+//	private void showKeyboard(boolean show) {
+//		//SurfaceView main_surface = findViewById(R.id.main_surface);
+//		if (_main_surface != null) {
+//
+//			InputMethodManager imm = (InputMethodManager)
+//				getSystemService(INPUT_METHOD_SERVICE);
+//
+//			if (show) {
+//				imm.showSoftInput(_main_surface, InputMethodManager.SHOW_IMPLICIT);
+//			} else {
+//				imm.hideSoftInputFromWindow(_main_surface.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+//			}
+//		}
+//	}
+//
+//	// Toggle showing or hiding the virtual keyboard.
+//	// Called by keyboardBtnOnClickListener()
+//	@TargetApi(Build.VERSION_CODES.CUPCAKE)
+//	private void toggleKeyboard() {
+//		//SurfaceView main_surface = findViewById(R.id.main_surface);
+//		if (_main_surface != null ) {
+//			InputMethodManager imm = (InputMethodManager)
+//				getSystemService(INPUT_METHOD_SERVICE);
+//
+//			imm.toggleSoftInputFromWindow(_main_surface.getWindowToken(),
+//				InputMethodManager.SHOW_IMPLICIT,
+//				InputMethodManager.HIDE_IMPLICIT_ONLY);
+//		}
+//	}
 
 	// Show or hide the semi-transparent keyboard btn (which is used to explicitly bring up the android keyboard).
 	// Called by the override of showKeyboardControl()
-	private void showKeyboardView(boolean show) {
-		ImageView keyboardBtn = findViewById(R.id.show_keyboard);
-
-		if (show) {
-			keyboardBtn.setVisibility(View.VISIBLE);
-		} else {
-			keyboardBtn.setVisibility(View.GONE);
+	private void showToggleKeyboardBtnIcon(boolean show) {
+		//ImageView keyboardBtn = findViewById(R.id.show_keyboard);
+		if (_toggleKeyboardBtnIcon != null ) {
+			if (show) {
+				_toggleKeyboardBtnIcon.setVisibility(View.VISIBLE);
+			} else {
+				_toggleKeyboardBtnIcon.setVisibility(View.GONE);
+			}
 		}
 	}
 
 	private void showMouseCursor(boolean show) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 			// Android N (Nougat) is Android 7.0
-			SurfaceView main_surface = findViewById(R.id.main_surface);
-			int type = show ? PointerIcon.TYPE_DEFAULT : PointerIcon.TYPE_NULL;
-			// https://stackoverflow.com/a/55482761
-			main_surface.setPointerIcon(PointerIcon.getSystemIcon(this, type));
+			//SurfaceView main_surface = findViewById(R.id.main_surface);
+			if (_main_surface != null) {
+				int type = show ? PointerIcon.TYPE_DEFAULT : PointerIcon.TYPE_NULL;
+				// https://stackoverflow.com/a/55482761
+				_main_surface.setPointerIcon(PointerIcon.getSystemIcon(this, type));
+			}
 		} else {
 			/* Currently hiding the system mouse cursor is only
 			   supported on OUYA.  If other systems provide similar
@@ -561,29 +883,31 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	// https://stackoverflow.com/a/36259261
 	private void setKeyboardVisibilityListener(final OnKeyboardVisibilityListener onKeyboardVisibilityListener) {
 		final View parentView = ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
-		parentView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+		if (parentView != null) {
+			parentView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 
-			private boolean alreadyOpen;
-			private final int defaultKeyboardHeightDP = 100;
-			private final int EstimatedKeyboardDP = defaultKeyboardHeightDP + (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? 48 : 0);
-			private final Rect rect = new Rect();
+				private boolean alreadyOpen;
+				private final int defaultKeyboardHeightDP = 100;
+				private final int EstimatedKeyboardDP = defaultKeyboardHeightDP + (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? 48 : 0);
+				private final Rect rect = new Rect();
 
-			@TargetApi(Build.VERSION_CODES.CUPCAKE)
-			@Override
-			public void onGlobalLayout() {
-				int estimatedKeyboardHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, EstimatedKeyboardDP, parentView.getResources().getDisplayMetrics());
-				parentView.getWindowVisibleDisplayFrame(rect);
-				int heightDiff = parentView.getRootView().getHeight() - (rect.bottom - rect.top);
-				boolean isShown = heightDiff >= estimatedKeyboardHeight;
+				@TargetApi(Build.VERSION_CODES.CUPCAKE)
+				@Override
+				public void onGlobalLayout() {
+					int estimatedKeyboardHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, EstimatedKeyboardDP, parentView.getResources().getDisplayMetrics());
+					parentView.getWindowVisibleDisplayFrame(rect);
+					int heightDiff = parentView.getRootView().getHeight() - (rect.bottom - rect.top);
+					boolean isShown = heightDiff >= estimatedKeyboardHeight;
 
-				if (isShown == alreadyOpen) {
-					Log.i("Keyboard state", "Ignoring global layout change...");
-					return;
+					if (isShown == alreadyOpen) {
+						Log.i(ScummVM.LOG_TAG, "Keyboard state:: ignoring global layout change...");
+						return;
+					}
+					alreadyOpen = isShown;
+					onKeyboardVisibilityListener.onVisibilityChanged(isShown);
 				}
-				alreadyOpen = isShown;
-				onKeyboardVisibilityListener.onVisibilityChanged(isShown);
-			}
-		});
+			});
+		}
 	}
 
 	@Override
@@ -638,8 +962,10 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	private static String getVersionInfoFromScummvmConfiguration(String fullIniFilePath) {
 		try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fullIniFilePath))) {
 			Map<String, Properties> parsedIniMap = parseINI(bufferedReader);
-			if (!parsedIniMap.isEmpty() && parsedIniMap.containsKey("scummvm")) {
-				return Objects.requireNonNull(parsedIniMap.get("scummvm")).getProperty("versioninfo", "");
+			if (!parsedIniMap.isEmpty()
+			    && parsedIniMap.containsKey("scummvm")
+			    && parsedIniMap.get("scummvm") != null) {
+				return parsedIniMap.get("scummvm").getProperty("versioninfo", "");
 			}
 		} catch (IOException ignored) {
 		} catch (NullPointerException ignored) {
@@ -651,8 +977,10 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	private static String getSavepathInfoFromScummvmConfiguration(String fullIniFilePath) {
 		try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fullIniFilePath))) {
 			Map<String, Properties> parsedIniMap = parseINI(bufferedReader);
-			if (!parsedIniMap.isEmpty() && parsedIniMap.containsKey("scummvm")) {
-				return Objects.requireNonNull(parsedIniMap.get("scummvm")).getProperty("savepath", "");
+			if (!parsedIniMap.isEmpty()
+			    && parsedIniMap.containsKey("scummvm")
+			    && parsedIniMap.get("scummvm") != null) {
+				return parsedIniMap.get("scummvm").getProperty("savepath", "");
 			}
 		} catch (IOException ignored) {
 		} catch (NullPointerException ignored) {
@@ -694,7 +1022,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		//
 		// If the dir can't be reached, it will print a warning!
 		//
-		//   Log.w(TAG, "Failed to ensure directory: " + dir);
+		//   Log.w(ScummVM.LOG_TAG, "Failed to ensure directory: " + dir);
 		//   dir = null;
 		//
 		// So, if your device has two sdcard paths, it will produce two dirs. If one is not available, the warning will come up.
@@ -889,7 +1217,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				Log.d(ScummVM.LOG_TAG, "ScummVM Config file already exists!");
 				Log.d(ScummVM.LOG_TAG, "Existing ScummVM INI: " + _configScummvmFile.getPath());
 				String existingVersionInfo = getVersionInfoFromScummvmConfiguration(_configScummvmFile.getPath());
-				if (!"".equals(existingVersionInfo.trim())) {
+				if (!existingVersionInfo.trim().isEmpty()) {
 					Log.d(ScummVM.LOG_TAG, "Existing ScummVM Version: " + existingVersionInfo.trim());
 					Version tmpOldVersionFound = new Version(existingVersionInfo.trim());
 					if (tmpOldVersionFound.compareTo(maxOldVersionFound) > 0) {
@@ -916,49 +1244,53 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			for (String oldConfigFileDescription : candidateOldLocationsOfScummVMConfigMap.keySet()) {
 				File oldCandidateScummVMConfig = candidateOldLocationsOfScummVMConfigMap.get(oldConfigFileDescription);
 				Log.d(ScummVM.LOG_TAG, "Looking for old config " + oldConfigFileDescription + " ScummVM file...");
-				Log.d(ScummVM.LOG_TAG, "at Path: " + Objects.requireNonNull(oldCandidateScummVMConfig).getPath() + "...");
-				if (oldCandidateScummVMConfig.exists() && oldCandidateScummVMConfig.isFile()) {
-					Log.d(ScummVM.LOG_TAG, "Old config " + oldConfigFileDescription + " ScummVM file was found!");
-					String existingVersionInfo = getVersionInfoFromScummvmConfiguration(oldCandidateScummVMConfig.getPath());
-					if (!"".equals(existingVersionInfo.trim())) {
-						Log.d(ScummVM.LOG_TAG, "Old config's ScummVM version: " + existingVersionInfo.trim());
-						Version tmpOldVersionFound = new Version(existingVersionInfo.trim());
-						//
-						// Replace the current config.ini with another recovered,
-						//         if the recovered one is of higher version.
-						//
-						// patch for 2.2.1 Beta1: (additional check)
-						//       if current version max is 2.2.1 and existingVersionFoundInScummVMDataDir is 2.2.1 (meaning we have a config.ini created for 2.2.1)
-						//          and file location key starts with "A-" (aux external storage locations)
-						//          and old version found is lower than 2.2.1
-						//       Then: replace our current config ini and remove the recovered ini from the aux external storage
-						if ((tmpOldVersionFound.compareTo(maxOldVersionFound) > 0)
-						     || (!existingConfigInScummVMDataDirReplacedOnce
-						         && existingVersionFoundInScummVMDataDir.compareTo(version2_2_1_forPatch) == 0
-						         && tmpOldVersionFound.compareTo(version2_2_1_forPatch) < 0
-						         && oldConfigFileDescription.startsWith("A-"))
-						) {
-							maxOldVersionFound = tmpOldVersionFound;
-							scummVMConfigHandled = false; // invalidate the handled flag, since we found a new great(er) version so we should re-use that one
+				if (oldCandidateScummVMConfig != null) {
+					Log.d(ScummVM.LOG_TAG, "at Path: " + oldCandidateScummVMConfig.getPath() + "...");
+					if (oldCandidateScummVMConfig.exists() && oldCandidateScummVMConfig.isFile()) {
+						Log.d(ScummVM.LOG_TAG, "Old config " + oldConfigFileDescription + " ScummVM file was found!");
+						String existingVersionInfo = getVersionInfoFromScummvmConfiguration(oldCandidateScummVMConfig.getPath());
+						if (!existingVersionInfo.trim().isEmpty()) {
+							Log.d(ScummVM.LOG_TAG, "Old config's ScummVM version: " + existingVersionInfo.trim());
+							Version tmpOldVersionFound = new Version(existingVersionInfo.trim());
+							//
+							// Replace the current config.ini with another recovered,
+							//         if the recovered one is of higher version.
+							//
+							// patch for 2.2.1 Beta1: (additional check)
+							//       if current version max is 2.2.1 and existingVersionFoundInScummVMDataDir is 2.2.1 (meaning we have a config.ini created for 2.2.1)
+							//          and file location key starts with "A-" (aux external storage locations)
+							//          and old version found is lower than 2.2.1
+							//       Then: replace our current config ini and remove the recovered ini from the aux external storage
+							if ((tmpOldVersionFound.compareTo(maxOldVersionFound) > 0)
+								|| (!existingConfigInScummVMDataDirReplacedOnce
+								&& existingVersionFoundInScummVMDataDir.compareTo(version2_2_1_forPatch) == 0
+								&& tmpOldVersionFound.compareTo(version2_2_1_forPatch) < 0
+								&& oldConfigFileDescription.startsWith("A-"))
+							) {
+								maxOldVersionFound = tmpOldVersionFound;
+								scummVMConfigHandled = false; // invalidate the handled flag, since we found a new great(er) version so we should re-use that one
+							}
+						} else {
+							Log.d(ScummVM.LOG_TAG, "Could not find info on the old config's ScummVM version. Unsupported or corrupt file?");
+						}
+						if (!scummVMConfigHandled) {
+							// We copy the old file over the new one.
+							// This will happen once during this installation, but on a subsequent one it will again copy that old config file
+							// if we don't remove it
+							copyFileUsingStream(oldCandidateScummVMConfig, _configScummvmFile);
+							Log.d(ScummVM.LOG_TAG, "Old config " + oldConfigFileDescription + " ScummVM file was renamed and overwrote the new (empty) scummvm.ini");
+							scummVMConfigHandled = true;
+							existingConfigInScummVMDataDirReplacedOnce = true;
+						}
+
+						// Here we remove the old config
+						if (oldCandidateScummVMConfig.delete()) {
+							Log.d(ScummVM.LOG_TAG, "The old config " + oldConfigFileDescription + " ScummVM file is now deleted!");
+						} else {
+							Log.d(ScummVM.LOG_TAG, "Failed to delete the old config " + oldConfigFileDescription + " ScummVM file!");
 						}
 					} else {
-						Log.d(ScummVM.LOG_TAG, "Could not find info on the old config's ScummVM version. Unsupported or corrupt file?");
-					}
-					if (!scummVMConfigHandled) {
-						// We copy the old file over the new one.
-						// This will happen once during this installation, but on a subsequent one it will again copy that old config file
-						// if we don't remove it
-						copyFileUsingStream(oldCandidateScummVMConfig, _configScummvmFile);
-						Log.d(ScummVM.LOG_TAG, "Old config " + oldConfigFileDescription + " ScummVM file was renamed and overwrote the new (empty) scummvm.ini");
-						scummVMConfigHandled = true;
-						existingConfigInScummVMDataDirReplacedOnce = true;
-					}
-
-					// Here we remove the old config
-					if (oldCandidateScummVMConfig.delete()) {
-						Log.d(ScummVM.LOG_TAG, "The old config " + oldConfigFileDescription + " ScummVM file is now deleted!");
-					} else {
-						Log.d(ScummVM.LOG_TAG, "Failed to delete the old config " + oldConfigFileDescription + " ScummVM file!");
+						Log.d(ScummVM.LOG_TAG, "...not found!");
 					}
 				} else {
 					Log.d(ScummVM.LOG_TAG, "...not found!");
@@ -1162,27 +1494,33 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 					File iterCandidateScummVMSavesPath = candidateOldLocationsOfScummVMSavesMap.get(oldSavesPathDescription);
 					Log.d(ScummVM.LOG_TAG, "Looking for old saves path " + oldSavesPathDescription + "...");
 					try {
-						Log.d(ScummVM.LOG_TAG, " at Path: " + Objects.requireNonNull(iterCandidateScummVMSavesPath).getPath());
-						if (iterCandidateScummVMSavesPath.exists() && iterCandidateScummVMSavesPath.isDirectory()) {
-							File[] sgfiles = iterCandidateScummVMSavesPath.listFiles();
-							if (sgfiles != null) {
-								Log.d(ScummVM.LOG_TAG, "Size: " + sgfiles.length);
-								for (File sgfile : sgfiles) {
-									smallNodeDesc = "(F)";
-									if (sgfile.isDirectory()) {
-										smallNodeDesc = "(D)";
-									}
-									Log.d(ScummVM.LOG_TAG, "Name: " + smallNodeDesc + " " + sgfile.getName());
-								}
+						if (iterCandidateScummVMSavesPath != null) {
+							Log.d(ScummVM.LOG_TAG, "at Path: " + iterCandidateScummVMSavesPath.getPath() + "...");
 
-								if (sgfiles.length > maxSavesFolderFoundSize) {
-									maxSavesFolderFoundSize = sgfiles.length;
-									candidateOldScummVMSavesPath = iterCandidateScummVMSavesPath;
+							if (iterCandidateScummVMSavesPath.exists() && iterCandidateScummVMSavesPath.isDirectory()) {
+								File[] sgfiles = iterCandidateScummVMSavesPath.listFiles();
+								if (sgfiles != null) {
+									Log.d(ScummVM.LOG_TAG, "Size: " + sgfiles.length);
+									for (File sgfile : sgfiles) {
+										smallNodeDesc = "(F)";
+										if (sgfile.isDirectory()) {
+											smallNodeDesc = "(D)";
+										}
+										Log.d(ScummVM.LOG_TAG, "Name: " + smallNodeDesc + " " + sgfile.getName());
+									}
+
+									if (sgfiles.length > maxSavesFolderFoundSize) {
+										maxSavesFolderFoundSize = sgfiles.length;
+										candidateOldScummVMSavesPath = iterCandidateScummVMSavesPath;
+									}
 								}
+							} else {
+								Log.d(ScummVM.LOG_TAG, "...not found.");
 							}
 						} else {
 							Log.d(ScummVM.LOG_TAG, "...not found.");
 						}
+
 					} catch (Exception e) {
 						Log.d(ScummVM.LOG_TAG, "ScummVM Saves path exception CAUGHT!");
 					}
@@ -1235,7 +1573,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		if (_configScummvmFile.exists() && _configScummvmFile.isFile()) {
 			Log.d(ScummVM.LOG_TAG, "Looking into config file for save path: " + _configScummvmFile.getPath());
 			String persistentGlobalSavePathStr = getSavepathInfoFromScummvmConfiguration(_configScummvmFile.getPath());
-			if (!"".equals(persistentGlobalSavePathStr.trim())) {
+			if (!persistentGlobalSavePathStr.trim().isEmpty()) {
 				Log.d(ScummVM.LOG_TAG, "Found explicit save path: " + persistentGlobalSavePathStr);
 				persistentGlobalSavePath = new File(persistentGlobalSavePathStr);
 				if (persistentGlobalSavePath.exists() && persistentGlobalSavePath.isDirectory() && persistentGlobalSavePath.listFiles() != null) {
@@ -1369,5 +1707,76 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			}
 		}
 	}
+} // end of ScummVMActivity
 
+// *** HONEYCOMB / ICS FIX FOR FULLSCREEN MODE, by lmak ***
+// TODO DimSystemStatusBar may be redundant for us
+abstract class DimSystemStatusBar {
+
+	final boolean bGlobalsImmersiveMode = true;
+
+	public static DimSystemStatusBar get() {
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+			return DimSystemStatusBarHoneycomb.Holder.sInstance;
+		} else {
+			return DimSystemStatusBarDummy.Holder.sInstance;
+		}
+	}
+
+	public abstract void dim(final View view);
+
+	private static class DimSystemStatusBarHoneycomb extends DimSystemStatusBar {
+		private static class Holder {
+			private static final DimSystemStatusBarHoneycomb sInstance = new DimSystemStatusBarHoneycomb();
+		}
+
+		public void dim(final View view) {
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT && bGlobalsImmersiveMode) {
+				// Immersive mode, I already hear curses when system bar reappears mid-game from the slightest swipe at the bottom of the screen
+				view.setSystemUiVisibility(android.view.View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | android.view.View.SYSTEM_UI_FLAG_FULLSCREEN);
+			} else {
+				view.setSystemUiVisibility(android.view.View.SYSTEM_UI_FLAG_LOW_PROFILE);
+			}
+		}
+	}
+
+	private static class DimSystemStatusBarDummy extends DimSystemStatusBar {
+		private static class Holder {
+			private static final DimSystemStatusBarDummy sInstance = new DimSystemStatusBarDummy();
+		}
+
+		public void dim(final View view) { }
+	}
+}
+
+abstract class SetLayerType {
+
+	public static SetLayerType get() {
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+			return SetLayerTypeHoneycomb.Holder.sInstance;
+		} else {
+			return SetLayerTypeDummy.Holder.sInstance;
+		}
+	}
+
+	public abstract void setLayerType(final View view);
+
+	private static class SetLayerTypeHoneycomb extends SetLayerType {
+		private static class Holder {
+			private static final SetLayerTypeHoneycomb sInstance = new SetLayerTypeHoneycomb();
+		}
+
+		public void setLayerType(final View view) {
+			view.setLayerType(android.view.View.LAYER_TYPE_NONE, null);
+			//view.setLayerType(android.view.View.LAYER_TYPE_HARDWARE, null);
+		}
+	}
+
+	private static class SetLayerTypeDummy extends SetLayerType {
+		private static class Holder {
+			private static final SetLayerTypeDummy sInstance = new SetLayerTypeDummy();
+		}
+
+		public void setLayerType(final View view) { }
+	}
 }

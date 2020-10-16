@@ -29,7 +29,7 @@
 #include "graphics/renderer.h"
 #include "graphics/surface.h"
 
-#ifdef USE_OPENGL_GAME
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
 #include "graphics/opengl/context.h"
 #endif
 
@@ -193,7 +193,6 @@ Renderer *createRenderer(OSystem *system) {
 	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
 	Graphics::RendererType matchingRendererType = Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
 
-	bool fullscreen = ConfMan.getBool("fullscreen");
 	bool isAccelerated = matchingRendererType != Graphics::kRendererTypeTinyGL;
 
 	uint width;
@@ -204,7 +203,11 @@ Renderer *createRenderer(OSystem *system) {
 		width = Renderer::kOriginalWidth;
 	}
 
-	initGraphics3d(width, height, fullscreen, isAccelerated);
+	if (isAccelerated) {
+		initGraphics3d(width, height);
+	} else {
+		initGraphics(width, height, nullptr);
+	}
 
 #if defined(USE_OPENGL_GAME)
 	// Check the OpenGL context actually supports shaders
@@ -233,16 +236,6 @@ Renderer *createRenderer(OSystem *system) {
 	}
 
 	error("Unable to create a '%s' renderer", rendererConfig.c_str());
-}
-
-void Renderer::toggleFullscreen() {
-	if (!_system->hasFeature(OSystem::kFeatureFullscreenToggleKeepsContext)) {
-		warning("Unable to toggle the fullscreen state because the current backend would destroy the graphics context");
-		return;
-	}
-
-	bool oldFullscreen = _system->getFeatureState(OSystem::kFeatureFullscreenMode);
-	_system->setFeatureState(OSystem::kFeatureFullscreenMode, !oldFullscreen);
 }
 
 void Renderer::renderDrawable(Drawable *drawable, Window *window) {

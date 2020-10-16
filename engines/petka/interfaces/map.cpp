@@ -48,7 +48,7 @@ void InterfaceMap::start(int id) {
 	const BGInfo *info = g_vm->getQSystem()->_mainInterface->findBGInfo(bg->_id);
 	for (uint i = 0; i < info->attachedObjIds.size(); ++i) {
 		QMessageObject *obj = sys->findObject(info->attachedObjIds[i]);
-		FlicDecoder *flc = g_vm->resMgr()->loadFlic(obj->_resourceId);
+		FlicDecoder *flc = g_vm->resMgr()->getFlic(obj->_resourceId);
 		flc->setFrame(1);
 		obj->_z = 1;
 		obj->_x = 0;
@@ -86,7 +86,7 @@ void InterfaceMap::onMouseMove(Common::Point p) {
 	for (int i = _objs.size() - 1; i > 0; --i) {
 		QMessageObject *obj = (QMessageObject *)_objs[i];
 		if (obj->_resourceId != 4901 && obj->_resourceId != _roomResID) {
-			FlicDecoder *flc = g_vm->resMgr()->loadFlic(obj->_resourceId);
+			FlicDecoder *flc = g_vm->resMgr()->getFlic(obj->_resourceId);
 			if (flc) {
 				bool show = false;
 				if (!found && obj->isInPoint(p)) {

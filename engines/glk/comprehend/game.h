@@ -24,7 +24,6 @@
 #define GLK_COMPREHEND_GAME_H
 
 #include "glk/comprehend/game_data.h"
-#include "glk/comprehend/opcode_map.h"
 #include "common/array.h"
 #include "common/serializer.h"
 
@@ -38,17 +37,38 @@ namespace Comprehend {
 struct GameStrings;
 struct Sentence;
 
-class ComprehendGame : public GameData, public OpcodeMap {
+struct Sentence {
+	Word _words[4];
+	size_t _nr_words;
+	byte _formattedWords[6];
+	byte _specialOpcodeVal2;
+
+	Sentence() {
+		clear();
+	}
+
+	bool empty() const {
+		return _nr_words == 0;
+	}
+
+	void clear();
+
+	/**
+	 * Splits up the array of _words into a _formattedWords
+	 * array, placing the words in appropriate noun, verb, etc.
+	 * positions appropriately
+	 */
+	void format();
+};
+
+class ComprehendGame : public GameData {
 private:
 	bool _ended;
 public:
 	const GameStrings *_gameStrings;
 
 private:
-	Item *get_item_by_noun(byte noun);
 	void describe_objects_in_current_room();
-	void func_set_test_result(FunctionState *func_state, bool value);
-	size_t num_objects_in_room(int room);
 	void eval_instruction(FunctionState *func_state,
 		const Function &func, uint functionOffset,
 		const Sentence *sentence);
@@ -61,9 +81,6 @@ private:
 	void doBeforeTurn();
 	void doAfterTurn();
 	void read_input();
-	void doMovementVerb(uint verbNum);
-	bool isItemPresent(Item *item) const;
-	void weighInventory();
 
 protected:
 	void game_save();
@@ -72,6 +89,10 @@ protected:
 		_ended = true;
 	}
 	virtual bool handle_restart();
+
+	virtual void execute_opcode(const Instruction *instr, const Sentence *sentence,
+		FunctionState *func_state, Room *room, Item *&item) = 0;
+
 	int console_get_key();
 	void console_println(const char *text);
 	void move_object(Item *item, int new_room);
@@ -89,8 +110,12 @@ protected:
 
 	void parse_header(FileBuffer *fb) override {
 		GameData::parse_header(fb);
-		loadOpcodes(_comprehendVersion);
 	}
+
+	Item *get_item_by_noun(byte noun);
+	void weighInventory();
+	size_t num_objects_in_room(int room);
+	void doMovementVerb(uint verbNum);
 
 public:
 	ComprehendGame();

@@ -208,7 +208,7 @@ protected:
 	void cameraPostChangeHandle(int num);
 	void buildActiveActorsList();
 	void savegameCallback();
-	GfxBase *createRenderer(int screenW, int screenH, bool fullscreen);
+	GfxBase *createRenderer(int screenW, int screenH);
 	void playAspyrLogo();
 	virtual LuaBase *createLua();
 	virtual void updateNormalMode();
@@ -255,7 +255,6 @@ protected:
 	float *_joyAxisPosition;
 
 	bool _changeHardwareState;
-	bool _changeFullscreenState;
 
 	Actor *_selectedActor;
 	Iris *_iris;

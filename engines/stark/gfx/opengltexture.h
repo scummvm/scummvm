@@ -27,6 +27,8 @@
 
 #include "graphics/opengl/system_headers.h"
 
+#if defined(USE_OPENGL_GAME) || defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+
 namespace Stark {
 namespace Gfx {
 
@@ -54,5 +56,7 @@ protected:
 
 } // End of namespace Gfx
 } // End of namespace Stark
+
+#endif // defined(USE_OPENGL_GAME) || defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
 #endif // STARK_GFX_OPENGL_TEXTURE_H

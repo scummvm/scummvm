@@ -86,7 +86,7 @@ void QObjectBG::processMessage(const QMessage &msg) {
 }
 
 void QObjectBG::draw() {
-	Graphics::Surface *s = g_vm->resMgr()->loadBitmap(_resourceId);
+	Graphics::Surface *s = g_vm->resMgr()->getSurface(_resourceId);
 	if (!s)
 		return;
 	int xOffset = g_vm->getQSystem()->_xOffset;

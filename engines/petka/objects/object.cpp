@@ -341,7 +341,7 @@ void QMessageObject::play(int id, int type) {
 		removeSound();
 	}
 
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	FlicDecoder *flc = g_vm->resMgr()->getFlic(_resourceId);
 	if (flc) {
 		g_vm->videoSystem()->addDirtyRect(Common::Point(_x, _y), *flc);
 	}
@@ -350,7 +350,7 @@ void QMessageObject::play(int id, int type) {
 
 	loadSound();
 
-	flc = g_vm->resMgr()->loadFlic(id);
+	flc = g_vm->resMgr()->getFlic(id);
 	flc->setFrame(1);
 	_time = 0;
 	_loopedSound = (type == 5);
@@ -424,28 +424,25 @@ QObject::QObject() {
 bool QObject::isInPoint(Common::Point p) {
 	if (!_isActive)
 		return false;
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
-	if (flc) {
-		if (!flc->getBounds().contains(p.x - _x, p.y - _y))
-			return false;
-		const Graphics::Surface *s = flc->getCurrentFrame();
-		if (s->format.bytesPerPixel == 1) {
-			byte index = *(const byte *) flc->getCurrentFrame()->getBasePtr(p.x - _x,
-																			p.y - _y);
-			const byte *pal = flc->getPalette();
-			return (pal[0] != pal[index * 3] || pal[1] != pal[index * 3 + 1] || pal[2] != pal[index * 3 + 2]);
-		}
-		if (s->format.bytesPerPixel == 2)
-			return *(const uint16*)flc->getCurrentFrame()->getBasePtr(p.x - _x, p.y - _y) != flc->getTransColor(s->format);
-	}
-	return false;
+
+	FlicDecoder *flc = g_vm->resMgr()->getFlic(_resourceId);
+	if (!flc || !flc->getBounds().contains(p.x - _x, p.y - _y))
+		return false;
+
+	const Graphics::Surface *s = flc->getCurrentFrame();
+	auto format = g_system->getScreenFormat();
+
+	byte index = *(const byte *)s->getBasePtr(p.x - _x, p.y - _y);
+	const byte *pal = flc->getPalette();
+
+	return format.RGBToColor(pal[0], pal[1], pal[2]) != format.RGBToColor(pal[index * 3], pal[index * 3 + 1], pal[index * 3 + 2]);
 }
 
 void QObject::draw() {
 	if (!_isShown || _resourceId == -1) {
 		return;
 	}
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	FlicDecoder *flc = g_vm->resMgr()->getFlic(_resourceId);
 	if (!flc) {
 		return;
 	}
@@ -497,7 +494,7 @@ void QObject::draw() {
 void QObject::updateZ() {
 	if (!_animate || !_isShown || !_updateZ)
 		return;
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	FlicDecoder *flc = g_vm->resMgr()->getFlic(_resourceId);
 	if (flc) {
 		_z = 1;
 		const Common::Array<Common::Rect> &rects = flc->getMskRects();
@@ -510,7 +507,7 @@ void QObject::updateZ() {
 }
 
 void QObject::show(bool v) {
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	FlicDecoder *flc = g_vm->resMgr()->getFlic(_resourceId);
 	if (flc) {
 		g_vm->videoSystem()->addDirtyRect(Common::Point(_x, _y), *flc);
 	}
@@ -521,8 +518,13 @@ void QObject::update(int time) {
 	if (!_animate || !_isShown)
 		return;
 	_time += time;
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	FlicDecoder *flc = g_vm->resMgr()->getFlic(_resourceId);
 	if (flc && flc->getFrameCount() != 1) {
+		if (_sound) {
+			Common::Rect bounds = flc->getBounds();
+			_sound->setBalance(bounds.left + bounds.width() / 2 - g_vm->getQSystem()->_xOffset, 640);
+		}
+
 		while (_time >= (int32)flc->getDelay()) {
 			if (_sound && flc->getCurFrame() == 0) {
 				_startSound = true;
@@ -542,7 +544,7 @@ void QObject::update(int time) {
 }
 
 void QObject::setPos(Common::Point p, bool) {
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	FlicDecoder *flc = g_vm->resMgr()->getFlic(_resourceId);
 	if (flc) {
 		g_vm->videoSystem()->addDirtyMskRects(Common::Point(_x, _y), *flc);
 		g_vm->videoSystem()->addDirtyMskRects(p, *flc);

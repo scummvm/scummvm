@@ -33,7 +33,7 @@
 #include "math/matrix4.h"
 #include "math/ray.h"
 
-#if defined(USE_OPENGL_SHADERS)
+#if defined(USE_OPENGL_SHADERS)// || defined(USE_GLES2)
 
 #include "graphics/opengl/shader.h"
 

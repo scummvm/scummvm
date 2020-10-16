@@ -36,7 +36,7 @@
 #ifdef USE_DISCORD
 class DiscordPresence;
 #endif
-#ifdef USE_OPENGL_GAME
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
 #include "backends/graphics3d/openglsdl/openglsdl-graphics3d.h"
 #endif
 
@@ -90,7 +90,7 @@ public:
 	//Screenshots
 	virtual Common::String getScreenshotsPath();
 
-#ifdef USE_OPENGL_GAME
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
 	Common::Array<uint> getSupportedAntiAliasingLevels() const override;
 #endif
 
@@ -128,7 +128,7 @@ protected:
 
 	SdlGraphicsManager::State _gfxManagerState;
 
-#ifdef USE_OPENGL_GAME
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
 	// Graphics capabilities
 	void detectFramebufferSupport();
 	void detectAntiAliasingSupport();

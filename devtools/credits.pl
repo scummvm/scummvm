@@ -482,9 +482,11 @@ sub add_paragraph {
 
 begin_credits("Credits");
 	begin_section("ScummVM Team", "scummvm_team");
-		begin_section("Project Leader", "project_leader");
+		begin_section("Project Leaders", "project_leader");
 			begin_persons();
+				add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
 				add_person("Eugene Sandulenko", "sev", "");
+				add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "");
 			end_persons();
 		end_section();
 

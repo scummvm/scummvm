@@ -108,7 +108,7 @@ void InterfacePanel::start(int id) {
 	const BGInfo *info = sys->_mainInterface->findBGInfo(bg->_id);
 	for (uint i = 0; i < info->attachedObjIds.size(); ++i) {
 		QMessageObject *obj = sys->findObject(info->attachedObjIds[i]);
-		FlicDecoder *flc = g_vm->resMgr()->loadFlic(obj->_resourceId);
+		FlicDecoder *flc = g_vm->resMgr()->getFlic(obj->_resourceId);
 		flc->setFrame(1);
 		obj->_z = 1;
 		obj->_x = _objectPoints[i].x;
@@ -234,7 +234,7 @@ void InterfacePanel::onMouseMove(Common::Point p) {
 			pointIndex = i - 1;
 			break;
 		}
-		FlicDecoder *flc = g_vm->resMgr()->loadFlic(obj->_resourceId);
+		FlicDecoder *flc = g_vm->resMgr()->getFlic(obj->_resourceId);
 		flc->setFrame(frame);
 		g_vm->videoSystem()->addDirtyRect(_objectPoints[pointIndex], *flc);
 	}
@@ -246,30 +246,30 @@ void InterfacePanel::onMouseMove(Common::Point p) {
 void InterfacePanel::updateSliders() {
 	applySettings();
 
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_objs[kSpeechVolumeSliderIndex]->_resourceId);
+	FlicDecoder *flc = g_vm->resMgr()->getFlic(_objs[kSpeechVolumeSliderIndex]->_resourceId);
 	flc->setFrame(_speechFrame);
 	g_vm->videoSystem()->addDirtyRect(_objectPoints[kSpeechVolumeSliderIndex - 1], *flc);
 
-	flc = g_vm->resMgr()->loadFlic(_objs[kMusicVolumeSliderIndex]->_resourceId);
+	flc = g_vm->resMgr()->getFlic(_objs[kMusicVolumeSliderIndex]->_resourceId);
 	flc->setFrame(_musicFrame);
 	g_vm->videoSystem()->addDirtyRect(_objectPoints[kMusicVolumeSliderIndex - 1], *flc);
 
-	flc = g_vm->resMgr()->loadFlic(_objs[kSfxVolumeSliderIndex]->_resourceId);
+	flc = g_vm->resMgr()->getFlic(_objs[kSfxVolumeSliderIndex]->_resourceId);
 	flc->setFrame(_sfxFrame);
 	g_vm->videoSystem()->addDirtyRect(_objectPoints[kSfxVolumeSliderIndex - 1], *flc);
 
-	flc = g_vm->resMgr()->loadFlic(_objs[kSpeedSliderIndex]->_resourceId);
+	flc = g_vm->resMgr()->getFlic(_objs[kSpeedSliderIndex]->_resourceId);
 	flc->setFrame(_speedFrame);
 	g_vm->videoSystem()->addDirtyRect(_objectPoints[kSpeedSliderIndex - 1], *flc);
 }
 
 void InterfacePanel::updateSubtitles() {
 	applySettings();
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_objs[kSubtitleButtonIndex]->_resourceId);
+	FlicDecoder *flc = g_vm->resMgr()->getFlic(_objs[kSubtitleButtonIndex]->_resourceId);
 	flc->setFrame(_subtitles == 0 ? 1 : 7);
 	g_vm->videoSystem()->addDirtyRect(_objectPoints[kSubtitleButtonIndex - 1], *flc);
 
-	flc = g_vm->resMgr()->loadFlic(_objs[kSubtitleLabelIndex]->_resourceId);
+	flc = g_vm->resMgr()->getFlic(_objs[kSubtitleLabelIndex]->_resourceId);
 	flc->setFrame(_subtitles == 0 ? 1 : 2);
 	g_vm->videoSystem()->addDirtyRect(_objectPoints[kSubtitleLabelIndex - 1], *flc);
 }

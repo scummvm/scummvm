@@ -87,7 +87,6 @@ public:
 		/** Should this reply only be made available when there are no other options left? */
 		bool isLastOnly() const;
 
-	private:
 		// Static data
 		Common::Array<ResourceReference> _lines;
 		uint32 _conditionType;
@@ -126,7 +125,6 @@ public:
 		/** Get the reply with the specified index */
 		Reply *getReply(uint32 index);
 
-	private:
 		Common::Array<Reply> _replies;
 
 		bool _removeOnceDepleted;
@@ -156,7 +154,6 @@ public:
 	/** Get the character's id - index in the KnowledgeSet */
 	int32 getCharacter() const;
 
-protected:
 	void printData() override;
 
 	Common::Array<Topic> _topics;

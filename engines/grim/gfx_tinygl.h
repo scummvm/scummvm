@@ -39,7 +39,7 @@ public:
 	GfxTinyGL();
 	virtual ~GfxTinyGL();
 
-	void setupScreen(int screenW, int screenH, bool fullscreen) override;
+	void setupScreen(int screenW, int screenH) override;
 
 	const char *getVideoDeviceName() override;
 

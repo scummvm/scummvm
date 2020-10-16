@@ -23,7 +23,7 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 
-#if defined(USE_OPENGL_GAME) && !defined(AMIGAOS) && !defined(__MORPHOS__)
+#if (defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)) && !defined(AMIGAOS) && !defined(__MORPHOS__)
 
 #if defined(SDL_BACKEND) && !defined(USE_GLEW) && !defined(USE_GLES2)
 #define GL_GLEXT_PROTOTYPES // For the GL_EXT_framebuffer_object extension

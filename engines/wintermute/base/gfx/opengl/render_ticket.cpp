@@ -31,7 +31,7 @@
 #include "graphics/transform_tools.h"
 #include "common/textconsole.h"
 
-#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)// || defined(USE_GLES2)
 
 #include "engines/wintermute/base/gfx/opengl/render_ticket.h"
 #include "engines/wintermute/base/gfx/opengl/base_surface_opengl_texture.h"

@@ -5,7 +5,6 @@ import android.os.Environment;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Scanner;
 
 import android.text.TextUtils;
@@ -241,7 +240,10 @@ public class ExternalStorage {
 		// Note that you can't pass null, or you'll get an NPE.
 		final File publicDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
 		// Take the parent, because we tend to get a path like /pathTo/sdCard/Music.
-		addPath(Objects.requireNonNull(publicDirectory.getParentFile()).getAbsolutePath(), candidatePaths);
+		if (publicDirectory.getParentFile() != null) {
+			addPath(publicDirectory.getParentFile().getAbsolutePath(), candidatePaths);
+		}
+
 		// EXTERNAL_STORAGE: may not be removable.
 		val = System.getenv("EXTERNAL_STORAGE");
 		if (!TextUtils.isEmpty(val)) {
@@ -454,7 +456,7 @@ public class ExternalStorage {
 		mMounts.clear();
 
 		if (Environment.getDataDirectory() != null
-		    && !"".equals(Environment.getDataDirectory().getAbsolutePath())) {
+		    && !Environment.getDataDirectory().getAbsolutePath().isEmpty()) {
 			File dataFilePath = new File(Environment.getDataDirectory().getAbsolutePath());
 			if (dataFilePath.exists() && dataFilePath.isDirectory()) {
 				map.add(DATA_DIRECTORY);
@@ -464,7 +466,9 @@ public class ExternalStorage {
 		map.add(DATA_DIRECTORY_INT);
 		map.add(ctx.getFilesDir().getPath());
 		map.add(DATA_DIRECTORY_EXT);
-		map.add(Objects.requireNonNull(ctx.getExternalFilesDir(null)).getPath());
+		if (ctx.getExternalFilesDir(null) != null) {
+			map.add(ctx.getExternalFilesDir(null).getPath());
+		}
 
 		// Now go through the external storage
 		if (isAvailable()) {  // we can read the External Storage...
@@ -485,7 +489,11 @@ public class ExternalStorage {
 
 				if (files != null) {
 					for (final File file : files) {
-						if (file.isDirectory() && file.canRead() && (Objects.requireNonNull(file.listFiles()).length > 0)) {  // it is a real directory (not a USB drive)...
+						// Check if it is a real directory (not a USB drive)...
+						if (file.isDirectory()
+						    && file.canRead()
+						    && file.listFiles() != null
+						    && (file.listFiles().length > 0)) {
 							String key = file.getAbsolutePath();
 							if (!map.contains(key)) {
 								map.add(key); // Make name as directory

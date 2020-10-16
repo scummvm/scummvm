@@ -191,6 +191,10 @@ bool SdlGraphicsManager::showMouse(bool visible) {
 	return WindowedGraphicsManager::showMouse(visible);
 }
 
+bool SdlGraphicsManager::lockMouse(bool lock) {
+	return _window->lockMouse(lock);
+}
+
 bool SdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
 	mouse.x = CLIP<int16>(mouse.x, 0, _windowWidth - 1);
 	mouse.y = CLIP<int16>(mouse.y, 0, _windowHeight - 1);
@@ -331,7 +335,7 @@ bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
 
 	switch ((CustomEventAction) event.customType) {
 	case kActionToggleMouseCapture:
-		getWindow()->toggleMouseGrab();
+		getWindow()->grabMouse(!getWindow()->mouseIsGrabbed());
 		return true;
 
 	case kActionToggleFullscreen:
@@ -348,8 +352,10 @@ bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
 }
 
 void SdlGraphicsManager::toggleFullScreen() {
-	if (!g_system->hasFeature(OSystem::kFeatureFullscreenMode))
+	if (!g_system->hasFeature(OSystem::kFeatureFullscreenMode) ||
+	   (!g_system->hasFeature(OSystem::kFeatureFullscreenToggleKeepsContext) && g_system->hasFeature(OSystem::kFeatureOpenGLForGame))) {
 		return;
+	}
 
 	beginGFXTransaction();
 	setFeatureState(OSystem::kFeatureFullscreenMode, !getFeatureState(OSystem::kFeatureFullscreenMode));

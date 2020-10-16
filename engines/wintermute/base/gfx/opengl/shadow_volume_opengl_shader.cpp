@@ -30,7 +30,7 @@
 #include "engines/wintermute/dcgf.h"
 #include "graphics/opengl/system_headers.h"
 
-#if defined(USE_OPENGL_SHADERS)
+#if defined(USE_OPENGL_SHADERS)// || defined(USE_GLES2)
 
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/shadow_volume_opengl_shader.h"

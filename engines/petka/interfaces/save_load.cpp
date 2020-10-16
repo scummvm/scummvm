@@ -65,7 +65,7 @@ void InterfaceSaveLoad::start(int id) {
 	bg->_resourceId = kFirstSaveLoadPageId + _page + (_loadMode ? 0 : 5);
 
 	resMgr->removeResource(bg->_resourceId);
-	auto bmp = resMgr->loadBitmap(bg->_resourceId);
+	auto bmp = resMgr->getSurface(bg->_resourceId);
 
 	Graphics::ManagedSurface surf(bmp->w, bmp->h, bmp->format);
 	surf.blitFrom(*bmp);

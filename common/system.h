@@ -375,9 +375,9 @@ public:
 
 		/**
 		 * This feature flag can be used to check if hardware accelerated
-		 * OpenGl is supported.
+		 * OpenGL is supported and can be used for 3D game rendering.
 		 */
-		kFeatureOpenGL,
+		kFeatureOpenGLForGame,
 
 		/**
 		 * If supported, this feature flag can be used to check if
@@ -602,9 +602,8 @@ public:
 	virtual int getDefaultGraphicsMode() const { return 0; }
 
 	enum GfxModeFlags {
-		kGfxModeNoFlags = 0,					    /**< No Flags */
-		kGfxModeRender3d = (1 << 0),            	/**< Indicate 3d drawing mode */
-		kGfxModeAcceleration3d = (1 << 1)        	/**< Indicate 3d hardware support */
+		kGfxModeNoFlags = 0,				/**< No Flags */
+		kGfxModeRender3d = (1 << 0)            	/**< Indicate 3d h/w accelerated in game gfx */
 	};
 
 	/**
@@ -612,11 +611,7 @@ public:
 	 * failed, this method returns false.
 	 *
 	 * The flag 'kGfxModeRender3d' is optional. It allow to switch to 3D only rendering mode.
-	 * The argument 'mode' will be ignored. Game engine is allowed to use OpenGL(ES) or TinyGL API direclty.
-	 * Which one depends on 'kGfxModeAcceleration3d' flag.
-	 *
-	 * The flag 'kGfxModeAcceleration3d' is optional and work only with kGfxModeRender3d.
-	 * OpenGL(ES) is only allowed to use by game engine to draw graphics.
+	 * Game engine is allowed to use OpenGL(ES) direclty.
 	 *
 	 * @param mode	the ID of the new graphics mode
 	 * @param flags	the flags for new graphics mode
@@ -901,13 +896,6 @@ public:
 	 * @return returns a ORed combination of TransactionError values or 0 on success
 	 */
 	virtual TransactionError endGFXTransaction() { return kTransactionSuccess; }
-
-	/**
-	 * Return a Graphics::PixelBuffer representing the framebuffer.
-	 * The caller can then perform arbitrary graphics transformations
-	 * on the framebuffer (blitting, scrolling, etc.).
-	 */
-	virtual Graphics::PixelBuffer getScreenPixelBuffer() = 0;
 
 	/**
 	 * Returns the currently set virtual screen height.

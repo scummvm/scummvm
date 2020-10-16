@@ -400,7 +400,7 @@ bool OSystem_Android::hasFeature(Feature f) {
 			f == kFeatureTouchpadMode ||
 			f == kFeatureOnScreenControl ||
 			f == kFeatureClipboardSupport ||
-			f == kFeatureOpenGL ||
+			f == kFeatureOpenGLForGame ||
 			f == kFeatureOverlaySupportsAlpha ||
 			f == kFeatureClipboardSupport) {
 		return true;

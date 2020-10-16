@@ -97,13 +97,17 @@ void InterfaceMain::loadRoom(int id, bool fromSave) {
 	sys->_room = room;
 	_objs.push_back(room);
 
-	resMgr->loadBitmap(room->_resourceId);
+	auto surface = resMgr->getSurface(room->_resourceId);
+	if (surface) {
+		sys->_sceneWidth = surface->w;
+		sys->_xOffset = 0;
+	}
 
 	for (uint i = 0; i < info->attachedObjIds.size(); ++i) {
 		QMessageObject *obj = sys->findObject(info->attachedObjIds[i]);
 		obj->loadSound();
 		if (obj->_isShown || obj->_isActive)
-			g_vm->resMgr()->loadFlic(obj->_resourceId);
+			g_vm->resMgr()->getFlic(obj->_resourceId);
 		_objs.push_back(obj);
 	}
 
@@ -274,6 +278,24 @@ void InterfaceMain::removeTextDescription() {
 	_objUnderCursor = nullptr;
 	g_vm->getQSystem()->getStar()->_isActive = true;
 	removeTexts();
+}
+
+void InterfaceMain::update(uint time) {
+	QSystem *sys = g_vm->getQSystem();
+	int xOff = sys->_xOffset;
+	int reqOffset = sys->_reqOffset;
+	if (xOff != reqOffset && ((xOff != sys->_sceneWidth - 640 && xOff < reqOffset) || (xOff > 0 && xOff > reqOffset))) {
+		if (xOff <= reqOffset) {
+			xOff += 8;
+			xOff = MIN<int>(xOff, reqOffset);
+		} else {
+			xOff -= 8;
+			xOff = MAX<int>(xOff, reqOffset);
+		}
+		sys->_xOffset = CLIP(xOff, 0, sys->_sceneWidth - 640);
+		g_vm->videoSystem()->makeAllDirty();
+	}
+	Interface::update(time);
 }
 
 } // End of namespace Petka

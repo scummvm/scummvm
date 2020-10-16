@@ -78,9 +78,8 @@ public:
 	 *
 	 * @param screenW       the width of the context
 	 * @param screenH       the height of the context
-	 * @param fullscreen    true if fullscreen is desired, false otherwise.
 	 */
-	virtual void setupScreen(int screenW, int screenH, bool fullscreen) = 0;
+	virtual void setupScreen(int screenW, int screenH) = 0;
 
 	/**
 	 * Query whether the current context is hardware-accelerated

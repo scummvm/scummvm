@@ -25,6 +25,8 @@
 
 #include "backends/graphics3d/sdl/sdl-graphics3d.h"
 
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+
 namespace OpenGL {
 	class FrameBuffer;
 	class SurfaceRenderer;
@@ -72,11 +74,10 @@ public:
 
 	// GraphicsManager API - Graphics mode
 #ifdef USE_RGB_COLOR
-	virtual Graphics::PixelFormat getScreenFormat() const override { return _screenFormat; }
+	virtual Graphics::PixelFormat getScreenFormat() const override { return _overlayFormat; }
 #endif
 	virtual int getScreenChangeID() const override { return _screenChangeCount; }
 	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format) override;
-	virtual Graphics::PixelBuffer getScreenPixelBuffer() override;
 	virtual int16 getHeight() const override;
 	virtual int16 getWidth() const override;
 
@@ -155,9 +156,6 @@ protected:
 	OpenGL::SurfaceRenderer *_surfaceRenderer;
 
 	Graphics::PixelFormat _overlayFormat;
-#ifdef USE_RGB_COLOR
-	Graphics::PixelFormat _screenFormat;
-#endif
 
 	void initializeOpenGLContext() const;
 	void drawOverlay();
@@ -182,5 +180,7 @@ protected:
 	 */
 	TransactionMode _transactionMode;
 };
+
+#endif // defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
 
 #endif

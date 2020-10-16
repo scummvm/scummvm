@@ -93,7 +93,7 @@ void QObjectPetka::processMessage(const QMessage &arg) {
 
 void QObjectPetka::initSurface() {
 	QManager *resMgr = g_vm->resMgr();
-	FlicDecoder *flc = resMgr->loadFlic(_resourceId);
+	FlicDecoder *flc = resMgr->getFlic(_resourceId);
 	_surfW = flc->getWidth() * _k;
 	_surfH = flc->getHeight() * _k;
 }
@@ -124,7 +124,7 @@ void QObjectPetka::walk(int x, int y) {
 		_animate = true;
 
 		initSurface();
-		FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+		FlicDecoder *flc = g_vm->resMgr()->getFlic(_resourceId);
 		flc->setFrame(1);
 
 		sub_408940();
@@ -152,7 +152,7 @@ void QObjectPetka::draw() {
 		_startSound = false;
 	}
 
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	FlicDecoder *flc = g_vm->resMgr()->getFlic(_resourceId);
 	if (!flc) {
 		return;
 	}
@@ -175,7 +175,7 @@ void QObjectPetka::setPos(Common::Point p, bool) {
 	g_vm->videoSystem()->addDirtyRect(dirty);
 
 	p.y = MIN<int16>(p.y, 480);
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	FlicDecoder *flc = g_vm->resMgr()->getFlic(_resourceId);
 
 	_k = calcPerspective(p.y);
 
@@ -226,7 +226,7 @@ void QObjectPetka::updateWalk() {
 				if (_heroReaction->messages[i].opcode == kGoTo || _heroReaction->messages[i].opcode == kSetSeq) {
 					_resourceId = _imageId + _walk->getSpriteId() + 10;
 
-					FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+					FlicDecoder *flc = g_vm->resMgr()->getFlic(_resourceId);
 					flc->setFrame(1);
 
 					initSurface();
@@ -253,7 +253,7 @@ void QObjectPetka::updateWalk() {
 	case 2: {
 		_resourceId = _walk->getSpriteId() + _imageId + 10;
 
-		FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+		FlicDecoder *flc = g_vm->resMgr()->getFlic(_resourceId);
 		flc->setFrame(1);
 
 		_time = flc->getDelay();
@@ -320,8 +320,13 @@ void QObjectPetka::update(int time) {
 		_time += time * (g_vm->getQSystem()->_panelInterface->getHeroSpeed() + 50) / 50;
 	else
 		_time += time;
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	FlicDecoder *flc = g_vm->resMgr()->getFlic(_resourceId);
 	if (flc && flc->getFrameCount() != 1) {
+		if (_sound) {
+			Common::Rect bounds = flc->getBounds();
+			_sound->setBalance(bounds.left + bounds.width() / 2 - g_vm->getQSystem()->_xOffset, 640);
+		}
+
 		while (_time >= (int)flc->getDelay()) {
 			if (_sound && flc->getCurFrame() == 0) {
 				_startSound = true;
@@ -338,7 +343,7 @@ void QObjectPetka::update(int time) {
 				_time = -10000;
 
 			updateWalk();
-			flc = g_vm->resMgr()->loadFlic(_resourceId);
+			flc = g_vm->resMgr()->getFlic(_resourceId);
 
 			_surfH = flc->getHeight() * _k;
 			_surfW = flc->getWidth() * _k;
@@ -353,7 +358,7 @@ void QObjectPetka::update(int time) {
 bool QObjectPetka::isInPoint(Common::Point p) {
 	if (!_isActive)
 		return false;
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	FlicDecoder *flc = g_vm->resMgr()->getFlic(_resourceId);
 	const Graphics::Surface *flcSurface = flc->getCurrentFrame();
 	Common::Rect bounds(_surfW, _surfH);
 	Graphics::ManagedSurface s(_surfW, _surfH, flcSurface->format);
@@ -367,7 +372,7 @@ bool QObjectPetka::isInPoint(Common::Point p) {
 
 void QObjectPetka::updateZ() {
 	if (_animate && _isShown && _updateZ) {
-		FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+		FlicDecoder *flc = g_vm->resMgr()->getFlic(_resourceId);
 		if (_isWalking) {
 			_z = _walk->currPos().y;
 		} else {
@@ -377,7 +382,7 @@ void QObjectPetka::updateZ() {
 }
 
 void QObjectPetka::sub_408940() {
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	FlicDecoder *flc = g_vm->resMgr()->getFlic(_resourceId);
 	QSystem *sys = g_vm->getQSystem();
 
 	int xOff = sys->_xOffset;

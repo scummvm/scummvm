@@ -34,7 +34,7 @@ namespace Comprehend {
 #define OO_FLAG_WEARING_GOGGLES 0x1b
 #define OO_FLAG_FLASHLIGHT_ON 0x27
 
-OOToposGame::OOToposGame() : ComprehendGame() {
+OOToposGame::OOToposGame() : ComprehendGameV2() {
 	_gameDataFile = "g0";
 
 	// Extra strings are (annoyingly) stored in the game binary

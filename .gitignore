@@ -41,7 +41,7 @@ lib*.a
 /*.apk
 
 /README
-/README.html
+/README.html*
 /NEWS
 /NEWS.html
 /CONTRIBUTING
@@ -133,6 +133,7 @@ project.xcworkspace
 /test/*.dSYM
 
 /devtools/convbdf
+/devtools/convbdf.dSYM
 /devtools/md5table
 /devtools/make-scumm-fontdata
 /devtools/create_access/create_access
@@ -144,6 +145,7 @@ project.xcworkspace
 /devtools/create_kyradat/create_kyradat
 /devtools/create_lure/create_lure
 /devtools/create_mortdat/create_mortdat
+/devtools/create_myst3/create_myst3
 /devtools/create_neverhood/create_neverhood
 /devtools/create_project/create_project
 /devtools/create_supernova/create_supernova

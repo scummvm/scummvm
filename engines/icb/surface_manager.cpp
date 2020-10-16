@@ -193,10 +193,9 @@ unsigned int _surface_manager::Init_direct_draw() {
 	Zdebug("*SURFACE_MANAGER* Initalizing the SDL video interface");
 
 	g_system->setWindowCaption("In Cold Blood (C)2000 Revolution Software Ltd");
-	initGraphics3d(640, 480, ConfMan.getBool("fullscreen"), false);
+	initGraphics(640, 480, nullptr);
 
-	Graphics::PixelBuffer pixBuff = g_system->getScreenPixelBuffer();
-	_zb = new TinyGL::FrameBuffer(640, 480, pixBuff); // TODO: delete
+	_zb = new TinyGL::FrameBuffer(640, 480, g_system->getScreenFormat()); // TODO: delete
 	TinyGL::glInit(_zb, 256);
 
 	sdl_screen = new Graphics::Surface();
@@ -413,6 +412,8 @@ void _surface_manager::Flip() {
 	Graphics::tglUploadBlitImage(blitImage, *sdl_screen, 0, false);
 	Graphics::tglBlitFast(blitImage, 0, 0);
 	TinyGL::tglPresentBuffer();
+	g_system->copyRectToScreen(_zb->getPixelBuffer(), _zb->linesize,
+	                           0, 0, _zb->xsize, _zb->ysize);
 	g_system->updateScreen();
 	Graphics::tglDeleteBlitImage(blitImage);
 #endif

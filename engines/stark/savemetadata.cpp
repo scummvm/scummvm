@@ -126,20 +126,20 @@ void SaveMetadata::setSaveTime(const TimeDate &timeDate) {
 
 void SaveMetadata::writeGameScreenThumbnail(Common::WriteStream *stream) {
 	assert(gameWindowThumbnail);
-	assert(gameWindowThumbnail->pitch * gameWindowThumbnail->h == UserInterface::kThumbnailSize);
+	assert(gameWindowThumbnail->pitch * gameWindowThumbnail->h == kThumbnailSize);
 
-	stream->write((const byte *)gameWindowThumbnail->getPixels(), UserInterface::kThumbnailSize);
+	stream->write((const byte *)gameWindowThumbnail->getPixels(), kThumbnailSize);
 }
 
 void SaveMetadata::skipGameScreenThumbnail(Common::SeekableReadStream *stream) {
-	stream->skip(UserInterface::kThumbnailSize);
+	stream->skip(kThumbnailSize);
 }
 
 Graphics::Surface *SaveMetadata::readGameScreenThumbnail(Common::SeekableReadStream *stream) {
 	Graphics::Surface *thumb = new Graphics::Surface();
-	thumb->create(UserInterface::kThumbnailWidth, UserInterface::kThumbnailHeight, Gfx::Driver::getRGBAPixelFormat());
+	thumb->create(kThumbnailWidth, kThumbnailHeight, Gfx::Driver::getRGBAPixelFormat());
 
-	stream->read(thumb->getPixels(), UserInterface::kThumbnailSize);
+	stream->read(thumb->getPixels(), kThumbnailSize);
 
 	return thumb;
 }

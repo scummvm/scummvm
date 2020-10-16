@@ -30,10 +30,10 @@
  */
 class PthreadMutexManager : public MutexManager {
 public:
-	virtual OSystem::MutexRef createMutex();
-	virtual void lockMutex(OSystem::MutexRef mutex);
-	virtual void unlockMutex(OSystem::MutexRef mutex);
-	virtual void deleteMutex(OSystem::MutexRef mutex);
+	virtual OSystem::MutexRef createMutex() override;
+	virtual void lockMutex(OSystem::MutexRef mutex) override;
+	virtual void unlockMutex(OSystem::MutexRef mutex) override;
+	virtual void deleteMutex(OSystem::MutexRef mutex) override;
 };
 
 

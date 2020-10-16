@@ -36,7 +36,7 @@
 #include "common/config-manager.h"
 #include "graphics/transparent_surface.h"
 
-#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)// || defined(USE_GLES2)
 
 #include "graphics/opengl/texture.h"
 #include "graphics/opengl/surfacerenderer.h"

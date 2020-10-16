@@ -125,11 +125,7 @@ Common::List<Graphics::PixelFormat> ModularGraphicsBackend::getSupportedFormats(
 
 #endif
 
-Graphics::PixelBuffer ModularGraphicsBackend::getScreenPixelBuffer() {
-	return _graphicsManager->getScreenPixelBuffer();
-}
-
-void ModularGraphicsBackend::initSize(uint w, uint h, const Graphics::PixelFormat *format ) {
+void ModularGraphicsBackend::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
 	_graphicsManager->initSize(w, h, format);
 }
 
@@ -263,6 +259,10 @@ void ModularGraphicsBackend::displayMessageOnOSD(const Common::U32String &msg) {
 
 void ModularGraphicsBackend::displayActivityIconOnOSD(const Graphics::Surface *icon) {
 	_graphicsManager->displayActivityIconOnOSD(icon);
+}
+
+void ModularGraphicsBackend::saveScreenshot() {
+	_graphicsManager->saveScreenshot();
 }
 
 

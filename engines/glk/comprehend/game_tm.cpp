@@ -28,7 +28,7 @@ namespace Comprehend {
 
 /* FIXME - This is broken */
 
-TalismanGame::TalismanGame() : ComprehendGame() {
+TalismanGame::TalismanGame() : ComprehendGameV2() {
 	_gameDataFile = "G0";
 
 	_locationGraphicFiles.push_back("RA");

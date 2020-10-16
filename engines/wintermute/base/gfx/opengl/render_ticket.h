@@ -33,7 +33,7 @@
 #include "graphics/surface.h"
 #include "common/rect.h"
 
-#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)// || defined(USE_GLES2)
 
 namespace Wintermute {
 

@@ -143,7 +143,7 @@ MODULE_OBJS += \
 	graphics/sdl/sdl-graphics.o \
 	graphics/surfacesdl/surfacesdl-graphics.o \
 	graphics3d/sdl/sdl-graphics3d.o \
-	graphics3d/surfacesdl/surfacesdl-graphics3d.o \
+	graphics3d/openglsdl/openglsdl-graphics3d.o \
 	mixer/sdl/sdl-mixer.o \
 	mutex/sdl/sdl-mutex.o \
 	plugins/sdl/sdl-provider.o \
@@ -158,11 +158,6 @@ endif
 ifdef USE_OPENGL
 MODULE_OBJS += \
 	graphics/openglsdl/openglsdl-graphics.o
-endif
-
-ifdef USE_OPENGL_GAME
-MODULE_OBJS += \
-	graphics3d/openglsdl/openglsdl-graphics3d.o
 endif
 
 ifdef USE_DISCORD
@@ -230,6 +225,11 @@ endif
 endif
 
 ifeq ($(BACKEND),android)
+MODULE_OBJS += \
+	mutex/pthread/pthread-mutex.o
+endif
+
+ifeq ($(BACKEND),android3d)
 MODULE_OBJS += \
 	mutex/pthread/pthread-mutex.o
 endif

@@ -172,9 +172,9 @@ MODULE_OBJS := \
 	comprehend/game_cc.o \
 	comprehend/game_data.o \
 	comprehend/game_oo.o \
+	comprehend/game_opcodes.o \
 	comprehend/game_tm.o \
 	comprehend/game_tr.o \
-	comprehend/opcode_map.o \
 	comprehend/pics.o \
 	glulx/accel.o \
 	glulx/exec.o \

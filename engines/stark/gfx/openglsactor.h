@@ -31,6 +31,8 @@
 
 #include "graphics/opengl/system_headers.h"
 
+#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+
 namespace OpenGL {
 	class ShaderGL;
 }
@@ -74,5 +76,7 @@ protected:
 
 } // End of namespace Gfx
 } // End of namespace Stark
+
+#endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
 #endif // STARK_GFX_OPENGL_S_ACTOR_H

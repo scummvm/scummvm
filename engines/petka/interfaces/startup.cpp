@@ -100,7 +100,7 @@ void InterfaceStartup::onMouseMove(Common::Point p) {
 	for (int i = _objs.size() - 1; i > 0; --i) {
 		QMessageObject *obj = (QMessageObject *)_objs[i];
 		if (obj->_resourceId != kStartupCursorId && obj->_resourceId != kBackgroundId) {
-			FlicDecoder *flc = g_vm->resMgr()->loadFlic(obj->_resourceId);
+			FlicDecoder *flc = g_vm->resMgr()->getFlic(obj->_resourceId);
 			if (flc) {
 				bool show = false;
 				if (!found && obj->isInPoint(p)) {

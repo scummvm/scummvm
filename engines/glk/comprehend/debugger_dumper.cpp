@@ -109,6 +109,7 @@ DebuggerDumper::DebuggerDumper() : _game(nullptr) {
 	_opcodes[OPCODE_WAIT_KEY] = "wait_key";
 	_opcodes[OPCODE_TEST_FALSE] = "test_false";
 	_opcodes[OPCODE_OBJECT_CAN_TAKE] = "object_can_take";
+	_opcodes[OPCODE_CLEAR_INVISIBLE] = "clear_invisible";
 }
 
 Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
@@ -122,9 +123,6 @@ Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
 		line = Common::String::format("[or=%d,and=%d,test=%d,else=%d]",
 		                              func_state->_orCount, func_state->_and,
 		                              func_state->_testResult, func_state->_elseResult);
-
-	opcode_map = game->_opcodeMap;
-	opcode = opcode_map[instr->_opcode];
 
 	line += Common::String::format("  [%.2x] ", instr->_opcode);
 	if (_opcodes.contains(opcode))

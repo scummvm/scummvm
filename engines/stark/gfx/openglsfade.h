@@ -23,6 +23,10 @@
 #ifndef STARK_GFX_OPENGL_S_FADE_H
 #define STARK_GFX_OPENGL_S_FADE_H
 
+#include "graphics/opengl/system_headers.h"
+
+#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+
 #include "engines/stark/gfx/faderenderer.h"
 
 namespace OpenGL {
@@ -52,5 +56,7 @@ private:
 
 } // End of namespace Gfx
 } // End of namespace Stark
+
+#endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
 #endif // STARK_GFX_OPENGL_S_FADE_H

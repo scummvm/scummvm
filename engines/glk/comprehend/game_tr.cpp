@@ -69,7 +69,7 @@ static const GameStrings TR_STRINGS = {
 };
 
 
-TransylvaniaGame::TransylvaniaGame() : ComprehendGame(),
+TransylvaniaGame::TransylvaniaGame() : ComprehendGameV1(),
 		_miceReleased(false) {
 	_gameDataFile = "tr.gda";
 

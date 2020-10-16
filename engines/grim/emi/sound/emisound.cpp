@@ -616,7 +616,7 @@ void EMISound::initMusicTableRetail(MusicEntry *musicTable, const Common::String
 		warning("Couldn't open %s", filename.c_str());
 		return;
 	}
-	
+
 	TextSplitter *ts = new TextSplitter(filename, data);
 	int id, x, y, sync, trim;
 	char musicfilename[64];
@@ -654,7 +654,7 @@ void tableLoadErrorDialog() {
 	"CD 1: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap1.imt\"\n"
 	"CD 2: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap2.imt\"\n"
 	"\n"
-	"Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.int");
+	"Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.imt");
 	GUI::displayErrorDialog(errorMessage);
 }
 

@@ -346,6 +346,10 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("data.dcp", "130545e152d0b53d84c2c99ce118d5e5", 409564920,
 					"german language pack.dcp", "71e19682f93399018bef90ceda0a1bfd", 16174995), Common::DE_DEU, ADGF_UNSTABLE | ADGF_DEMO | GF_3D, WME_1_9_3),
 
+	// Alpha Polaris (Polish Demo)
+	WME_WINENTRY("alphapolaris", "Demo",
+		WME_ENTRY1s("data.dcp", "c040af58c38c40997fce4b4832f43a5d", 416066977), Common::PL_POL, ADGF_UNSTABLE | ADGF_DEMO | GF_3D, WME_1_9_1),
+
 	// Apeiron
 	WME_WINENTRY("apeiron", "",
 		WME_ENTRY1s("data.dcp", "c0d6190de52b3da9995cbd4b78976bc8", 89912566), Common::SE_SWE, ADGF_UNSTABLE, WME_1_9_1),

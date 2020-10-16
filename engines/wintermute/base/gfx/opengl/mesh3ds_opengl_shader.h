@@ -25,7 +25,7 @@
 
 #include "engines/wintermute/base/gfx/3ds/mesh3ds.h"
 
-#if defined(USE_OPENGL_SHADERS)
+#if defined(USE_OPENGL_SHADERS)// || defined(USE_GLES2)
 
 #include "graphics/opengl/shader.h"
 

@@ -26,7 +26,7 @@
 #include "common/config-manager.h"
 
 #include "graphics/surface.h"
-#ifdef USE_OPENGL_GAME
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
 #include "graphics/opengl/context.h"
 #endif
 
@@ -37,8 +37,7 @@ namespace Gfx {
 
 Driver *Driver::create() {
 #if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
-	bool fullscreen = ConfMan.getBool("fullscreen");
-	initGraphics3d(kOriginalWidth, kOriginalHeight, fullscreen, true);
+	initGraphics3d(kOriginalWidth, kOriginalHeight);
 
 	if (OpenGLContext.shadersSupported) {
 		return new OpenGLSDriver();
@@ -56,16 +55,6 @@ const Graphics::PixelFormat Driver::getRGBAPixelFormat() {
 #else
 	return Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
 #endif
-}
-
-void Driver::toggleFullscreen() const {
-	if (!g_system->hasFeature(OSystem::kFeatureFullscreenToggleKeepsContext)) {
-		warning("Unable to toggle the fullscreen state because the current backend would destroy the graphics context");
-		return;
-	}
-
-	bool oldFullscreen = g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
-	g_system->setFeatureState(OSystem::kFeatureFullscreenMode, !oldFullscreen);
 }
 
 bool Driver::computeScreenViewport() {

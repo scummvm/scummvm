@@ -499,22 +499,21 @@ bool BaseGame::initialize1() {
 //////////////////////////////////////////////////////////////////////
 bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 #ifdef ENABLE_WME3D
-	bool fullscreen = ConfMan.getBool("fullscreen");
-	initGraphics3d(_settings->getResWidth(), _settings->getResHeight(), fullscreen, true);
+	initGraphics3d(_settings->getResWidth(), _settings->getResHeight());
 
 	Common::String rendererConfig = ConfMan.get("renderer");
 	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
 
-#if defined(USE_OPENGL_SHADERS)
+#if defined(USE_OPENGL_SHADERS)// || defined(USE_GLES2)
 	if (desiredRendererType == Graphics::kRendererTypeOpenGLShaders) {
 		_renderer3D = makeOpenGL3DShaderRenderer(this);
 	}
 #endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
-#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME)
 	if (desiredRendererType == Graphics::kRendererTypeOpenGL) {
 		_renderer3D = makeOpenGL3DRenderer(this);
 	}
-#endif // defined(USE_OPENGL) && !defined(USE_GLES2)
+#endif // defined(USE_OPENGL)
 	if (desiredRendererType == Graphics::kRendererTypeTinyGL) {
 		// TODO
 		//_renderer3D = makeTinyGL3DRenderer(this);

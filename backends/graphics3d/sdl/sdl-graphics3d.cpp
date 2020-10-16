@@ -105,6 +105,10 @@ bool SdlGraphics3dManager::notifyEvent(const Common::Event &event) {
 	}
 
 	switch ((CustomEventAction) event.customType) {
+	case kActionToggleMouseCapture:
+		getWindow()->grabMouse(!getWindow()->mouseIsGrabbed());
+		return true;
+
 	case kActionToggleFullscreen:
 		toggleFullScreen();
 		return true;
@@ -119,8 +123,10 @@ bool SdlGraphics3dManager::notifyEvent(const Common::Event &event) {
 }
 
 void SdlGraphics3dManager::toggleFullScreen() {
-	if (!g_system->hasFeature(OSystem::kFeatureFullscreenMode))
+	if (!g_system->hasFeature(OSystem::kFeatureFullscreenMode) ||
+	   (!g_system->hasFeature(OSystem::kFeatureFullscreenToggleKeepsContext) && g_system->hasFeature(OSystem::kFeatureOpenGLForGame))) {
 		return;
+	}
 
 	setFeatureState(OSystem::kFeatureFullscreenMode, !getFeatureState(OSystem::kFeatureFullscreenMode));
 }
@@ -139,10 +145,22 @@ Common::Keymap *SdlGraphics3dManager::getKeymap() {
 		keymap->addAction(act);
 	}
 
+	act = new Action("CAPT", _("Toggle mouse capture"));
+	act->addDefaultInputMapping("C+m");
+	act->setCustomBackendActionEvent(kActionToggleMouseCapture);
+	keymap->addAction(act);
+
 	act = new Action("SCRS", _("Save screenshot"));
 	act->addDefaultInputMapping("A+s");
 	act->setCustomBackendActionEvent(kActionSaveScreenshot);
 	keymap->addAction(act);
+
+	if (hasFeature(OSystem::kFeatureAspectRatioCorrection)) {
+		act = new Action("ASPT", _("Toggle aspect ratio correction"));
+		act->addDefaultInputMapping("C+A+a");
+		act->setCustomBackendActionEvent(kActionToggleAspectRatioCorrection);
+		keymap->addAction(act);
+	}
 
 	return keymap;
 }
@@ -174,20 +192,8 @@ bool SdlGraphics3dManager::showMouse(bool visible) {
 }
 
 bool SdlGraphics3dManager::lockMouse(bool lock) {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	if (lock)
-		SDL_SetRelativeMouseMode(SDL_TRUE);
-	else
-		SDL_SetRelativeMouseMode(SDL_FALSE);
-#else
-	if (lock)
-		SDL_WM_GrabInput(SDL_GRAB_ON);
-	else
-		SDL_WM_GrabInput(SDL_GRAB_OFF);
-#endif
-	return true;
+	return _window->lockMouse(lock);
 }
-
 
 bool SdlGraphics3dManager::notifyMousePosition(Common::Point &mouse) {
 	transformMouseCoordinates(mouse);

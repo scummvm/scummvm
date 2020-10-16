@@ -35,7 +35,7 @@
 #include "common/list.h"
 #include "graphics/transform_struct.h"
 
-#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)// || defined(USE_GLES2)
 
 namespace Wintermute {
 class BaseSurfaceOpenGLTexture;

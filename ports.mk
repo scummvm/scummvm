@@ -22,7 +22,7 @@ install:
 	$(INSTALL) -c -m 644 "$(srcdir)/dists/scummvm.desktop" "$(DESTDIR)$(datarootdir)/applications/scummvm.desktop"
 	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/metainfo"
 	$(INSTALL) -c -m 644 "$(srcdir)/dists/scummvm.appdata.xml" "$(DESTDIR)$(datarootdir)/metainfo/scummvm.appdata.xml"
-ifdef USE_OPENGL_SHADERS
+ifneq ($(DIST_FILES_SHADERS),)
 	$(INSTALL) -d "$(DESTDIR)$(datadir)/shaders"
 	$(INSTALL) -c -m 644 $(DIST_FILES_SHADERS) "$(DESTDIR)$(datadir)/shaders"
 endif
@@ -48,7 +48,7 @@ install-strip:
 	$(INSTALL) -c -m 644 "$(srcdir)/dists/scummvm.desktop" "$(DESTDIR)$(datarootdir)/applications/scummvm.desktop"
 	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/metainfo"
 	$(INSTALL) -c -m 644 "$(srcdir)/dists/scummvm.appdata.xml" "$(DESTDIR)$(datarootdir)/metainfo/scummvm.appdata.xml"
-ifdef USE_OPENGL_SHADERS
+ifneq ($(DIST_FILES_SHADERS),)
 	$(INSTALL) -d "$(DESTDIR)$(datadir)/shaders"
 	$(INSTALL) -c -m 644 $(DIST_FILES_SHADERS) "$(DESTDIR)$(datadir)/shaders"
 endif
@@ -135,7 +135,7 @@ endif
 ifdef DIST_FILES_VKEYBD
 	cp $(DIST_FILES_VKEYBD) $(bundle_name)/Contents/Resources/
 endif
-ifdef USE_OPENGL_SHADERS
+ifneq ($(DIST_FILES_SHADERS),)
 	mkdir -p $(bundle_name)/Contents/Resources/shaders
 	cp $(DIST_FILES_SHADERS) $(bundle_name)/Contents/Resources/shaders/
 endif
@@ -150,7 +150,7 @@ endif
 	cp $(bundle_name)/Contents/Resources/COPYING.OFL $(bundle_name)/Contents/Resources/COPYING-OFL
 	cp $(bundle_name)/Contents/Resources/COPYING.BSD $(bundle_name)/Contents/Resources/COPYING-BSD
 	chmod 644 $(bundle_name)/Contents/Resources/*
-ifdef USE_OPENGL_SHADERS
+ifneq ($(DIST_FILES_SHADERS),)
 	chmod 755 $(bundle_name)/Contents/Resources/shaders
 endif
 	cp scummvm-static $(bundle_name)/Contents/MacOS/scummvm

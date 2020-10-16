@@ -86,7 +86,7 @@ static const MadeGameDescription gameDescriptions[] = {
 	},
 
 	{
-		// Return to Zork - English CD version 1.1 12/7/93
+		// Return to Zork - English OEM CD version 1.1 12/7/93
 		{
 			"rtz",
 			"V1.1, 12/7/93, CD",
@@ -103,7 +103,7 @@ static const MadeGameDescription gameDescriptions[] = {
 	},
 
 	{
-		// Return to Zork - English CD version 1.1 12/7/93
+		// Return to Zork - English Retail CD version 1.1 12/7/93
 		{
 			"rtz",
 			"V1.1, 12/7/93, CD",

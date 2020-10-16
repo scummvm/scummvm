@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#if defined(SDL_BACKEND)
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
 
 #include "backends/graphics3d/openglsdl/openglsdl-graphics3d.h"
 
@@ -78,7 +78,7 @@ OpenGLSdlGraphics3dManager::~OpenGLSdlGraphics3dManager() {
 bool OpenGLSdlGraphics3dManager::hasFeature(OSystem::Feature f) const {
 	return
 		(f == OSystem::kFeatureFullscreenMode) ||
-		(f == OSystem::kFeatureOpenGL) ||
+		(f == OSystem::kFeatureOpenGLForGame) ||
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		(f == OSystem::kFeatureFullscreenToggleKeepsContext) ||
 #endif
@@ -148,7 +148,6 @@ int OpenGLSdlGraphics3dManager::getDefaultGraphicsMode() const {
 bool OpenGLSdlGraphics3dManager::setGraphicsMode(int mode, uint flags) {
 	assert(_transactionMode != kTransactionNone);
 	assert(flags & OSystem::kGfxModeRender3d);
-	assert(flags & OSystem::kGfxModeAcceleration3d);
 
 	return true;
 }
@@ -302,8 +301,6 @@ void OpenGLSdlGraphics3dManager::createOrUpdateScreen() {
 	_overlayFormat = OpenGL::TextureGL::getRGBAPixelFormat();
 	_overlayScreen = new OpenGL::TiledSurface(obtainedWidth, obtainedHeight, _overlayFormat);
 
-	_screenFormat = _overlayFormat;
-
 	_screenChangeCount++;
 
 #if !defined(AMIGAOS) && !defined(__MORPHOS__)
@@ -362,10 +359,6 @@ void OpenGLSdlGraphics3dManager::notifyResize(const int width, const int height)
 
 	_screenChangeCount++;
 #endif
-}
-
-Graphics::PixelBuffer OpenGLSdlGraphics3dManager::getScreenPixelBuffer() {
-	error("Direct screen buffer access is not allowed when using OpenGL");
 }
 
 void OpenGLSdlGraphics3dManager::initializeOpenGLContext() const {
