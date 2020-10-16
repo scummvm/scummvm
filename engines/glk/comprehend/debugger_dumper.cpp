@@ -109,6 +109,7 @@ DebuggerDumper::DebuggerDumper() : _game(nullptr) {
 	_opcodes[OPCODE_WAIT_KEY] = "wait_key";
 	_opcodes[OPCODE_TEST_FALSE] = "test_false";
 	_opcodes[OPCODE_OBJECT_CAN_TAKE] = "object_can_take";
+	_opcodes[OPCODE_CLEAR_INVISIBLE] = "clear_invisible";
 }
 
 Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
