@@ -28,10 +28,6 @@
 #include "common/safe-bool.h"
 #include "common/types.h"
 
-#ifdef __MORPHOS__
-#undef D
-#endif
-
 namespace Common {
 
 /**
@@ -59,14 +55,14 @@ private:
 	T *_ptr;
 };
 
-template<class T, class D>
+template<class T, class DL>
 class SharedPtrDeletionDeleterImpl : public SharedPtrDeletionInternal {
 public:
-	SharedPtrDeletionDeleterImpl(T *ptr, D d) : _ptr(ptr), _deleter(d) {}
+	SharedPtrDeletionDeleterImpl(T *ptr, DL d) : _ptr(ptr), _deleter(d) {}
 	~SharedPtrDeletionDeleterImpl() { _deleter(_ptr); }
 private:
 	T *_ptr;
-	D _deleter;
+	DL _deleter;
 };
 
 /**
@@ -126,8 +122,8 @@ public:
 	template<class T2>
 	explicit SharedPtr(T2 *p) : _refCount(new RefValue(1)), _deletion(new SharedPtrDeletionImpl<T2>(p)), _pointer(p) {}
 
-	template<class T2, class D>
-	SharedPtr(T2 *p, D d) : _refCount(new RefValue(1)), _deletion(new SharedPtrDeletionDeleterImpl<T2, D>(p, d)), _pointer(p) {}
+	template<class T2, class DL>
+	SharedPtr(T2 *p, DL d) : _refCount(new RefValue(1)), _deletion(new SharedPtrDeletionDeleterImpl<T2, DL>(p, d)), _pointer(p) {}
 
 	SharedPtr(const SharedPtr &r) : _refCount(r._refCount), _deletion(r._deletion), _pointer(r._pointer) { if (_refCount) ++(*_refCount); }
 	template<class T2>
@@ -238,8 +234,8 @@ struct DefaultDeleter {
 	}
 };
 
-template<typename T, class D = DefaultDeleter<T> >
-class ScopedPtr : private NonCopyable, public SafeBool<ScopedPtr<T, D> > {
+template<typename T, class DL = DefaultDeleter<T> >
+class ScopedPtr : private NonCopyable, public SafeBool<ScopedPtr<T, DL> > {
 public:
 	typedef T ValueType;
 	typedef T *PointerType;
@@ -257,14 +253,14 @@ public:
 	bool operator_bool() const { return _pointer != nullptr; }
 
 	~ScopedPtr() {
-		D()(_pointer);
+		DL()(_pointer);
 	}
 
 	/**
 	 * Resets the pointer with the new value. Old object will be destroyed
 	 */
 	void reset(PointerType o = nullptr) {
-		D()(_pointer);
+		DL()(_pointer);
 		_pointer = o;
 	}
 
@@ -291,8 +287,8 @@ private:
 	PointerType _pointer;
 };
 
-template<typename T, class D = DefaultDeleter<T> >
-class DisposablePtr : private NonCopyable, public SafeBool<DisposablePtr<T, D> > {
+template<typename T, class DL = DefaultDeleter<T> >
+class DisposablePtr : private NonCopyable, public SafeBool<DisposablePtr<T, DL> > {
 public:
 	typedef T  ValueType;
 	typedef T *PointerType;
@@ -301,7 +297,7 @@ public:
 	explicit DisposablePtr(PointerType o, DisposeAfterUse::Flag dispose) : _pointer(o), _dispose(dispose) {}
 
 	~DisposablePtr() {
-		if (_dispose) D()(_pointer);
+		if (_dispose) DL()(_pointer);
 	}
 
 	ReferenceType operator*() const { return *_pointer; }
@@ -317,7 +313,7 @@ public:
 	 * Resets the pointer with the new value. Old object will be destroyed
 	 */
 	void reset(PointerType o, DisposeAfterUse::Flag dispose) {
-		if (_dispose) D()(_pointer);
+		if (_dispose) DL()(_pointer);
 		_pointer = o;
 		_dispose = dispose;
 	}
