@@ -194,6 +194,7 @@ void AGDSEngine::runObject(const Common::String &name, const Common::String &pro
 }
 
 void AGDSEngine::loadScreen(const Common::String &name) {
+	_nextScreenName.clear();
 	debug("loadScreen %s", name.c_str());
 	if (_currentScreen && !_currentScreenName.empty())
 	{
@@ -277,7 +278,6 @@ void AGDSEngine::newGame() {
 void AGDSEngine::tick() {
 	while (!_nextScreenName.empty()) {
 		Common::String nextScreenName = _nextScreenName;
-		_nextScreenName.clear();
 		loadScreen(nextScreenName);
 	}
 	if (_dialog.tick()) {
