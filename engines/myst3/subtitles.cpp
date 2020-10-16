@@ -286,12 +286,12 @@ void FontSubtitles::drawToTexture(const Phrase *phrase) {
 
 
 	if (_fontCharsetCode == 0) {
-		font->drawString(_surface, phrase->string, 0, _singleLineTop * _scale, _surface->w, 0xFFFFFFFF, Graphics::kTextAlignCenter);
+		font->drawString(_surface, phrase->string, 0, _singleLineTop * _scale, _surface->w, 0xFFFFFFFF, Graphics::kTextAlignCenter, 0, false);
 	} else {
 #ifdef USE_ICONV
 		Common::IconvEncoding encoding = getEncodingFromCharsetCode(_fontCharsetCode);
 		Common::U32String unicode = Common::convertToU32String(encoding, phrase->string);
-		font->drawString(_surface, unicode, 0, _singleLineTop * _scale, _surface->w, 0xFFFFFFFF, Graphics::kTextAlignCenter);
+		font->drawString(_surface, unicode, 0, _singleLineTop * _scale, _surface->w, 0xFFFFFFFF, Graphics::kTextAlignCenter, 0, false);
 #else
 		warning("Unable to display charset '%d' subtitles, iconv support is not compiled in.", _fontCharsetCode);
 #endif
