@@ -56,21 +56,24 @@ const char *vox0004[] = {
 	"57915d4dd3aa5aa44817477b7bd41ce6", //italian unpatched
 	"bae246c5335c1d139b97a48277ee8841", //german unpatched
 	"a49dce6e1bb83ad40b47e03903aaff1b", //french unpatched
-	"3577a8b6cf013bc5b9c9133e29d1f4f0" //spanish unpatched
+	"3577a8b6cf013bc5b9c9133e29d1f4f0", //spanish unpatched
+	"2be5b0cc13a83f59945d31080b0949bb"  //brasilian-portuguese
 };
 const char *vox0003[] = {
 	"7c88ad7c949a516793b584299f33ed23", //english unpatched
 	"f900cb063fbd0ef2a0516e9a00291d13", //italian unpatched
 	"5bda9a36181c1fea368491b842c11efe", //german unpatched
 	"c4aa2c45b24f351e8fce40a141084fb0", //french unpatched
-	"1d4e94e3d3fd803a02c9993412359082" //spanish unpatched
+	"1d4e94e3d3fd803a02c9993412359082", //spanish unpatched
+	"e107073a05f588df0c057b594c28b50e"  //brasilian-portuguese
 };
 const char *vox0002[] = {
 	"70419878e32377d9d2906fbcb2cb59b5", //english unpatched
 	"616e4147c39268b650ce112bf79ea3a1", //italian unpatched
 	"5ea9fde04f3315a51fe1fe9c5bdb9d0d", //german unpatched
 	"24bbf1f6d3d63ae07ad2dd06bd7dad8c", //french unpatched
-	"c4484dadd4a33066290e1847523d7d64" //spanish unpatched
+	"c4484dadd4a33066290e1847523d7d64", //spanish unpatched
+	"0748f44ee1e67b6d7555a644a1fa43ce"  //brasilian-portuguese
 };
 const char *vox0001[] = {
 	"40beb2e0a6572dc89fddb21f282bc237", //english pre-patched
@@ -78,7 +81,8 @@ const char *vox0001[] = {
 	"a0455d5d883ed46f0bda5030e4b5654c", //italian unpatched
 	"e13eb421b9490cbaeef66f0cf6156764", //german unpatched
 	"e940d5a4a4f2229f0a6674bf45464457", //french unpatched
-	"77cdd6f02bc3f7085bff17c454066de3" //spanish unpatched
+	"77cdd6f02bc3f7085bff17c454066de3", //spanish unpatched
+	"31f261f87cc4854055c1ca1afddf677e"  //brasilian-portuguese
 };
 const char *vox0000[] = {
 	"c7900f32d48d7e265629bd355a21c795", //english pre-patched
@@ -86,35 +90,40 @@ const char *vox0000[] = {
 	"c9e1a755f280b3ebff58578c4e5f1e52", //italian unpatched
 	"e884221099ba62dacf04a35be8428419", //german unpatched
 	"dbe35af39eec29db21a4c6e1c228cc9d", //french unpatched
-	"076bf048de229ad8cefcb3d7c0bfd134" //spanish unpatched
+	"076bf048de229ad8cefcb3d7c0bfd134", //spanish unpatched
+	"d48832ea234015e74590654ada02e163"  //brasilian-portuguese
 };
 const char *movie04[] = {
 	"605d6f2cc4d21fbe702d8e637b5bcfa1", //english unpatched
 	"7c8d7e0f4beaca3910658290e8b14cf8", //italian unpatched
 	"f1b8c1de4f82099ab080f9cbe2b02da6", //german unpatched
 	"7e2a4578010cdf5407bb24dcfb6705e4", //french unpatched
-	"2daf2ec272a7be49cbfde053482f182c" //spanish unpatched
+	"2daf2ec272a7be49cbfde053482f182c", //spanish unpatched
+	"d9bfe59690a5de0500d18e29cdaa293f"  //brasilian-portuguese
 };
 const char *movie03[] = {
 	"113a768e7206016df72f9d2f5c1851b7", //english unpatched
 	"0fdb7dda9ebc049eac386d29bface366", //italian unpatched
 	"d2aae2e27616f78016a71818e528acda", //german unpatched
 	"c2ba7adbf09b7a4f69c180f1c74297ee", //french unpatched
-	"fb87d5a9e3a81d3ffd521dee4432c4da" //spanish unpatched
+	"fb87d5a9e3a81d3ffd521dee4432c4da", //spanish unpatched
+	"5280486c3aee4fb1f9dcbc289f5f58b9"  //brasilian-portuguese
 };
 const char *movie02[] = {
 	"24a8704a331a03097d195f3597fe21e1", //english unpatched
 	"129dad4e40987e91c5549c819d0dad1d", //italian unpatched
 	"a4d5c108a167afb0674e26790edf65e6", //german unpatched
 	"90fce3e6e1f91455d92b072f773f0a67", //french unpatched
-	"f5879c544f4c1f1f2e2d2e92c026c245" //spanish unpatched
+	"f5879c544f4c1f1f2e2d2e92c026c245", //spanish unpatched
+	"000185c50bbf09bcd7421667d46a9e5c"  //brasilian-portuguese
 };
 const char *movie01[] = {
 	"548a19a0a4d4ccb8660966d646210820", //english unpatched
 	"9fd30d0289f9b4d5c09e821a0a478db5", //italian unpatched
 	"500bc51ce211d528f6c7170f479c9525", //german unpatched
 	"16674e1496e4fb3f0f5f173f12e30617", //french unpatched
-	"ede9fb7d035a5d4af496f23f811707a2" //spanish unpatched
+	"ede9fb7d035a5d4af496f23f811707a2", //spanish unpatched
+	"a88876b3347106d49b733c178f0d606a"  //brasilian-portuguese
 };
 const char *movie00[] = {
 	"0c6b8e4fa74024c4afdf7758f8d8b1a0" //english unpatched
@@ -141,13 +150,15 @@ const char *credits[] = {
 	"1827307248d55c07642342c9213a4723", //italian unpatched
 	"2e6319c2ec5772ced5dc9f8b41eb5de7", //german unpatched
 	"cd71ca4e600198277f22e944988f7516", //french unpatched
-	"836a2081d5e57ed6ef5eaade7f770b0e" //spanish unpatched
+	"836a2081d5e57ed6ef5eaade7f770b0e", //spanish unpatched
+	"368baa2f319a72278035095e4f4a4466"  //brasilian-portuguese
 };
 const char *local[] = {
 	"6142624ce13ea3c9079aa80918010c4a", //italian unpatched
 	"27c961c16f9eaf0260781883150e5611", //german unpatched
 	"c9dd41f66883959de27f80bbe457f30d", //french unpatched
-	"d22648d6787c2f8f0a789ee3ed0c08f7" //spanish unpatched
+	"d22648d6787c2f8f0a789ee3ed0c08f7", //spanish unpatched
+	"04d76cbbd5e603f35318bebb64f69378"  //brasilian-portuguese
 };
 
 
