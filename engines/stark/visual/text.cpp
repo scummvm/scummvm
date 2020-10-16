@@ -285,7 +285,7 @@ void VisualText::createTexture() {
 
 	// Render the lines to the surface
 	for (uint i = 0; i < lines.size(); i++) {
-		font->drawString(&surface, lines[i], 0, scaledLineHeight * i, surface.w, white, _align);
+		font->drawString(&surface, lines[i], 0, scaledLineHeight * i, surface.w, white, _align, 0, false);
 	}
 
 	// Blend the text color with the alpha mask to produce an image of the text
