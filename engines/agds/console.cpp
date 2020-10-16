@@ -78,7 +78,7 @@ bool Console::info(int argc, const char **argv) {
 	debugPrintf("processes:\n");
 	auto & processes = _engine->processes();
 	for(auto & process : processes) {
-		debugPrintf("%s\n", process.getName().c_str());
+		debugPrintf("%s\n", process->getName().c_str());
 	}
 	return true;
 }

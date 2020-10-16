@@ -177,8 +177,8 @@ void AGDSEngine::runObject(const ObjectPtr &object) {
 
 void AGDSEngine::runProcess(const ObjectPtr &object, uint ip) {
 	debug("starting process %s:%04x", object->getName().c_str(), ip);
-	_processes.push_front(Process(this, object, ip));
-	_processes.front().run();
+	_processes.push_front(ProcessPtr(new Process(this, object, ip)));
+	_processes.front()->run();
 }
 
 ObjectPtr AGDSEngine::getCurrentScreenObject(const Common::String &name) {
@@ -238,16 +238,16 @@ void AGDSEngine::resetCurrentScreen() {
 
 void AGDSEngine::runProcesses() {
 	for (ProcessListType::iterator i = _processes.begin(); i != _processes.end(); ) {
-		Process &process = *i;
-		if (process.active()) {
-			process.run();
+		ProcessPtr process = *i;
+		if (process->active()) {
+			process->run();
 			++i;
-		} else if (process.finished()) {
-			debug("deleting process %s", process.getName().c_str());
+		} else if (process->finished()) {
+			debug("deleting process %s", process->getName().c_str());
 			i = _processes.erase(i);
 			//FIXME: when the last process exits, remove object from scene
 		} else {
-			//debug("suspended process %s", process.getName().c_str());
+			//debug("suspended process %s", process->getName().c_str());
 			++i;
 		}
 	}
@@ -338,6 +338,7 @@ Common::Error AGDSEngine::run() {
 	setDebugger(new Console(this));
 
 	int loadSlot = ConfMan.getInt("save_slot");
+	debug("save_slot = %d", loadSlot);
 	if (loadSlot >= 0)
 		loadGameState(loadSlot);
 
@@ -918,10 +919,10 @@ void AGDSEngine::reactivate(const Common::String &name) {
 		return;
 
 	for(ProcessListType::iterator i = _processes.begin(); i != _processes.end(); ++i) {
-		Process &process = *i;
-		if (process.getName() == name) {
+		ProcessPtr process = *i;
+		if (process->getName() == name) {
 			debug("reactivate %s", name.c_str());
-			process.activate();
+			process->activate();
 		}
 	}
 }
