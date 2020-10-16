@@ -441,6 +441,37 @@ uint64 String::asUint64() const {
 	return result;
 }
 
+uint64 String::asUint64Ext() const {
+	uint64 result = 0;
+	uint64 base = 10;
+	uint32 skip = 0;
+	
+	if (_size >= 3 && _str[0] == '0' && _str[1] == 'x') {
+		base = 16;
+		skip = 2;
+	} else if (_size >= 2 && _str[0] == '0') {
+		base = 8;
+		skip = 1;
+	} else {
+		base = 10;
+		skip = 0;
+	}
+	for (uint32 i = skip; i < _size; ++i) {
+		char digit = _str[i];
+		uint64 digitval = 17; // sentinel
+		if (digit >= '0' && digit <= '9')
+			digitval = digit - '0';
+		else if (digit >= 'a' && digit <= 'f')
+			digitval = digit - 'a' + 10;
+		else if (digit >= 'A' && digit <= 'F')
+			digitval = digit - 'A' + 10;
+		if (digitval > base)
+			break;
+		result = result * base + digitval;
+	}
+	return result;
+}
+
 bool String::matchString(const char *pat, bool ignoreCase, bool pathMode) const {
 	return Common::matchString(c_str(), pat, ignoreCase, pathMode);
 }
