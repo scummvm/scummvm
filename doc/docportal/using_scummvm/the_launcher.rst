@@ -33,6 +33,8 @@ Launches the highlighted game.
 
 .. image:: ../images/Launcher/start_game.png
 
+.. _loadlauncher:
+
 Load 
 ----
 
@@ -58,7 +60,7 @@ In tile view, each tile shows a screenshot of the saved state, as well as the de
 .. image:: ../images/Launcher/save_game_tile.png
    :class: with-shadow
 
-
+For more information about saving and loading games, see the :doc:`save_load_games` page.
 
 Add Game 
 ---------

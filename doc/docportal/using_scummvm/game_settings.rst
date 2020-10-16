@@ -259,8 +259,10 @@ Use the paths tab to tell ScummVM where to look for particular game files.
 
 ,,,,,,,
 
+.. _savepathgame:
+
 **Save Path**
-	Chooses the folder in which ScummVM will store the saved games. If this is not set, the saved games will be stored in the default directory.
+	Chooses the folder in which ScummVM will store the saved games. If this is not set, the saved games will be stored in the default directory. For more information, see the :doc:`save_load_games` page. 
 
 	*savepath* 
 

@@ -377,17 +377,7 @@ Use the paths tab to tell ScummVM where to look for particular files.
 .. _savepath:
 
 Save Path
-	The default folder in which ScummVM will store saved games. If this is not set, saved games will generally be stored in the current directory. Exceptions to this include:
-
-	* Windows Vista and up ``\Users\username\AppData\Roaming\ScummVM\Saved games\``
-
-	* Windows 2000 and XP ``\Documents and Settings\username\ApplicationData\ScummVM\Saved games\``
-
-	* Mac OS X ``$HOME/Documents/ScummVM Savegames/``
-
-	* Other UNIX variants ``$HOME/.scummvm/``
-
-	* iPhone ``/private/var/mobile/Library/ScummVM/Savegames``
+	The folder in which ScummVM will store saved games. If this is not set, saved games will generally be stored in the current directory, although there are exceptions to this. For more information, see the :doc:`save_load_games` page.
 	
 	*savepath* 
 
@@ -430,6 +420,8 @@ GUI Renderer
 
 	*gui_renderer* 
 
+.. _autosave:
+
 Autosave
 	Adjusts the time period that ScummVM waits between autosaves. The default setting is 5 minutes. This is not available for all games. 
 
@@ -444,6 +436,13 @@ Switch the GUI language to the game language
 	If ticked, the Launcher language will be the same as the game language. 
 
 	*gui_use_game_language* 
+
+.. _guibrowser:
+
+Use native system file browser
+	Uses the system file browser instead of the ScummVM browser. 
+
+	*gui_browser_native*
 
 ,,,,,,,,,,,,,
 
