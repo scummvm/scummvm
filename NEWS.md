@@ -12,6 +12,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added detections for 2020 IF Comp games.
    - Enabled Glulx sub-engine.
 
+ Gob:
+   - Added support for Bargon Attack Russian translation.
+   - Added support for Woodruff Russian translation.
+
  Lure:
    - Fix fire animation in first room when loading saves.
 
