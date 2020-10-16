@@ -190,6 +190,9 @@ public:
 	/** Return uint64 corrensponding to String's contents. */
 	uint64 asUint64() const;
 
+  	/** Return uint64 corrensponding to String's contents. This variant recognizes 0 (oct) and 0x (hex) prefixes. */
+	uint64 asUint64Ext() const;
+
 	/**
 	 * Simple DOS-style pattern matching function (understands * and ? like used in DOS).
 	 * Taken from exult/files/listfiles.cc
