@@ -41,7 +41,7 @@ public:
 
 	float getYatX(float x) const;
 
-	friend Common::Debug &operator<<(Common::Debug &dbg, const Line2d &line);
+	friend Common::StreamDebug &operator<<(Common::StreamDebug &dbg, const Line2d &line);
 
 private:
 	float _a, _b, _c;

@@ -39,23 +39,23 @@ public:
 	int level;
 };
 
-Debug::Debug(int level) :
+StreamDebug::StreamDebug(int level) :
 	_stream(new MessageStream()) {
 	_stream->level = level;
 }
 
-Debug::Debug(const Debug &other) {
+StreamDebug::StreamDebug(const StreamDebug &other) {
 	*this = other;
 }
 
-Debug::~Debug() {
+StreamDebug::~StreamDebug() {
 	if (--_stream->ref == 0) {
 		debug(_stream->level, "%s", _stream->msg.c_str());
 		delete _stream;
 	}
 }
 
-Debug &Debug::space() {
+StreamDebug &StreamDebug::space() {
 	if (!_stream->space) {
 		_stream->msg += String(" ");
 		_stream->space = true;
@@ -63,66 +63,66 @@ Debug &Debug::space() {
 	return *this;
 }
 
-Debug &Debug::nospace() {
+StreamDebug &StreamDebug::nospace() {
 	_stream->space = false;
 	return *this;
 }
 
-Debug &Debug::maybeSpace() {
+StreamDebug &StreamDebug::maybeSpace() {
 	if (_stream->space) {
 		_stream->msg += " ";
 	}
 	return *this;
 }
 
-Debug &Debug::operator<<(const String &str) {
+StreamDebug &StreamDebug::operator<<(const String &str) {
 	_stream->msg += str;
 	return maybeSpace();
 }
 
-Debug &Debug::operator<<(const char *str) {
+StreamDebug &StreamDebug::operator<<(const char *str) {
 	_stream->msg += str;
 	return maybeSpace();
 }
 
-Debug &Debug::operator<<(char str) {
+StreamDebug &StreamDebug::operator<<(char str) {
 	_stream->msg += str;
 	return maybeSpace();
 }
 
-Debug &Debug::operator<<(int num) {
+StreamDebug &StreamDebug::operator<<(int num) {
 	_stream->msg += String::format("%d", num);
 	return maybeSpace();
 }
 
-Debug &Debug::operator<<(unsigned int num) {
+StreamDebug &StreamDebug::operator<<(unsigned int num) {
 	_stream->msg += String::format("%d", num);
 	return maybeSpace();
 }
 
 #if !defined(__DC__) && !defined(__DS__)
-Debug &Debug::operator<<(double num) {
+StreamDebug &StreamDebug::operator<<(double num) {
 	_stream->msg += String::format("%g", num);
 	return maybeSpace();
 }
 #endif
 
-Debug &Debug::operator<<(float num) {
+StreamDebug &StreamDebug::operator<<(float num) {
 	_stream->msg += String::format("%g", num);
 	return maybeSpace();
 }
 
-Debug &Debug::operator<<(bool value) {
+StreamDebug &StreamDebug::operator<<(bool value) {
 	_stream->msg += (value ? "true" : "false");
 	return maybeSpace();
 }
 
-Debug &Debug::operator<<(void *p) {
+StreamDebug &StreamDebug::operator<<(void *p) {
 	_stream->msg += String::format("%p", p);
 	return maybeSpace();
 }
 
-Debug &Debug::operator=(const Debug &other) {
+StreamDebug &StreamDebug::operator=(const StreamDebug &other) {
 	_stream = other._stream;
 	++_stream->ref;
 
@@ -131,6 +131,6 @@ Debug &Debug::operator=(const Debug &other) {
 
 }
 
-Common::Debug streamDbg(int level) {
-	return Common::Debug(level);
+Common::StreamDebug streamDbg(int level) {
+	return Common::StreamDebug(level);
 }

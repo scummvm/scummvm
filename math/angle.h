@@ -26,7 +26,7 @@
 #include "common/scummsys.h"
 
 namespace Common {
-class Debug;
+class StreamDebug;
 }
 
 namespace Math {
@@ -160,7 +160,7 @@ inline bool operator>(const Angle &a1, const Angle &a2) {
 	return a1.getDegrees() > a2.getDegrees();
 }
 
-Common::Debug &operator<<(Common::Debug &dbg, const Math::Angle &a);
+Common::StreamDebug &operator<<(Common::StreamDebug &dbg, const Math::Angle &a);
 
 }
 
