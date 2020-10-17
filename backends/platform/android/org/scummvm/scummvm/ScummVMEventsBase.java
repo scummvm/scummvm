@@ -289,6 +289,7 @@ public class ScummVMEventsBase implements
 			break;
 		}
 
+		// look in events.cpp for how this is handled
 		_scummvm.pushEvent(type, action, keyCode,
 					e.getUnicodeChar() & KeyCharacterMap.COMBINING_ACCENT_MASK,
 					e.getMetaState(), e.getRepeatCount(),
