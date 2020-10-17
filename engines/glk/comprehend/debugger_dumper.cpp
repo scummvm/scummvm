@@ -108,8 +108,13 @@ DebuggerDumper::DebuggerDumper() : _game(nullptr) {
 	_opcodes[OPCODE_WAIT_KEY] = "wait_key";
 	_opcodes[OPCODE_TEST_FALSE] = "test_false";
 	_opcodes[OPCODE_OBJECT_CAN_TAKE] = "object_can_take";
-	_opcodes[OPCODE_CLEAR_INVISIBLE] = "clear_invisible";
 	_opcodes[OPCODE_NOT_TAKEABLE] = "not_takeable";
+	_opcodes[OPCODE_CLEAR_INVISIBLE] = "clear_invisible";
+	_opcodes[OPCODE_SET_INVISIBLE] = "set_invisible";
+	_opcodes[OPCODE_CLEAR_CAN_TAKE] = "clear_can_take";
+	_opcodes[OPCODE_SET_CAN_TAKE] = "set_can_take";
+	_opcodes[OPCODE_SET_FLAG40] = "set_flag40";
+	_opcodes[OPCODE_CLEAR_FLAG40] = "clear_flag40";
 }
 
 Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,

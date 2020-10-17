@@ -53,6 +53,21 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 		eval_function(index, sentence);
 		break;
 
+	case OPCODE_CLEAR_CAN_TAKE:
+		item = get_item_by_noun(noun);
+		item->_flags &= ~ITEMF_CAN_TAKE;
+		break;
+
+	case OPCODE_CLEAR_FLAG40:
+		item = get_item_by_noun(noun);
+		item->_flags &= ~ITEMF_UNKNOWN;
+		break;
+
+	case OPCODE_CLEAR_INVISIBLE:
+		item = get_item_by_noun(noun);
+		item->_flags &= ~ITEMF_INVISIBLE;
+		break;
+
 	case OPCODE_CURRENT_IS_OBJECT:
 		func_set_test_result(func_state, get_item_by_noun(noun) != NULL);
 		break;
@@ -97,8 +112,23 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 		console_println(instrStringLookup(instr->_operand[0], instr->_operand[1]).c_str());
 		break;
 
+	case OPCODE_SET_CAN_TAKE:
+		item = get_item_by_noun(noun);
+		item->_flags |= ITEMF_CAN_TAKE;
+		break;
+
 	case OPCODE_SET_FLAG:
 		_flags[instr->_operand[0]] = true;
+		break;
+
+	case OPCODE_SET_FLAG40:
+		item = get_item_by_noun(noun);
+		item->_flags |= ITEMF_UNKNOWN;
+		break;
+
+	case OPCODE_SET_INVISIBLE:
+		item = get_item_by_noun(noun);
+		item->_flags |= ITEMF_INVISIBLE;
 		break;
 
 	case OPCODE_SET_ROOM_DESCRIPTION:
@@ -220,7 +250,9 @@ ComprehendGameV1::ComprehendGameV1() {
 	_opcodeMap[0x8a] = OPCODE_VAR_SUB;
 	_opcodeMap[0x8b] = OPCODE_SET_OBJECT_DESCRIPTION;
 	_opcodeMap[0x8c] = OPCODE_MOVE_DEFAULT;
+	_opcodeMap[0x8d] = OPCODE_SET_CAN_TAKE;
 	_opcodeMap[0x8e] = OPCODE_PRINT;
+	_opcodeMap[0x91] = OPCODE_CLEAR_CAN_TAKE;
 	_opcodeMap[0x95] = OPCODE_REMOVE_OBJECT;
 	_opcodeMap[0x99] = OPCODE_SET_FLAG;
 	_opcodeMap[0x92] = OPCODE_CALL_FUNC;
@@ -235,10 +267,14 @@ ComprehendGameV1::ComprehendGameV1() {
 	_opcodeMap[0xb1] = OPCODE_MOVE_DIR;
 	_opcodeMap[0xb5] = OPCODE_SET_STRING_REPLACEMENT1;
 	_opcodeMap[0xb9] = OPCODE_SET_STRING_REPLACEMENT2;
-	_opcodeMap[0xc5] = OPCODE_SET_STRING_REPLACEMENT3;
 	_opcodeMap[0xbd] = OPCODE_VAR_INC;
 	_opcodeMap[0xc1] = OPCODE_VAR_DEC;
+	_opcodeMap[0xc5] = OPCODE_SET_STRING_REPLACEMENT3;
 	_opcodeMap[0xc9] = OPCODE_MOVE_CURRENT_OBJECT_TO_ROOM;
+	_opcodeMap[0xcd] = OPCODE_CLEAR_INVISIBLE;
+	_opcodeMap[0xd1] = OPCODE_SET_INVISIBLE;
+	_opcodeMap[0xd5] = OPCODE_CLEAR_FLAG40;
+	_opcodeMap[0xd9] = OPCODE_SET_FLAG40;
 }
 
 void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *sentence,
@@ -670,10 +706,15 @@ ComprehendGameV2::ComprehendGameV2() {
 	_opcodeMap[0x8e] = OPCODE_PRINT;
 	_opcodeMap[0x92] = OPCODE_CALL_FUNC;
 	_opcodeMap[0x99] = OPCODE_SET_FLAG;
+	_opcodeMap[0xa1] = OPCODE_CLEAR_FLAG40;
+	_opcodeMap[0xa5] = OPCODE_SET_FLAG40;
 	_opcodeMap[0xa9] = OPCODE_CLEAR_INVISIBLE;
+	_opcodeMap[0xad] = OPCODE_SET_INVISIBLE;
 	_opcodeMap[0xc5] = OPCODE_SET_STRING_REPLACEMENT3;
 	_opcodeMap[0xc9] = OPCODE_SET_STRING_REPLACEMENT1;
 	_opcodeMap[0xcd] = OPCODE_SET_STRING_REPLACEMENT2;
+	_opcodeMap[0xe5] = OPCODE_SET_CAN_TAKE;
+	_opcodeMap[0xe9] = OPCODE_CLEAR_CAN_TAKE;
 
 #if 0
 	_opcodeMap[0x01] = OPCODE_HAVE_OBJECT;
