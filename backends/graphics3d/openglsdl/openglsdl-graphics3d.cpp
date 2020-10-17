@@ -672,7 +672,7 @@ int16 OpenGLSdlGraphics3dManager::getOverlayWidth() const {
 }
 
 void OpenGLSdlGraphics3dManager::warpMouse(int x, int y) {
-	if (_frameBuffer) {
+	if (!_overlayVisible && _frameBuffer) {
 		// Scale from game coordinates to screen coordinates
 		x = (x * _gameRect.getWidth() * _overlayScreen->getWidth()) / _frameBuffer->getWidth();
 		y = (y * _gameRect.getHeight() * _overlayScreen->getHeight()) / _frameBuffer->getHeight();
