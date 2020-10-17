@@ -34,6 +34,36 @@ For games downloaded from digital distributors such as `GOG.com  <gog.com>`__, `
 - Run the installer or
 - If the data files are supplied as a .zip file, extract the archive.
 
+Multi-disc games
+*****************
+
+ScummVM needs access to all the data files, so it will not be able to run directly from a CD in the case where the game has multiple discs. To add a multi-CD game, copy the required data files directly from the CD to a dedicated game folder on your hard drive. 
+
+- Where there are duplicate, identical files (same name, same file size) on more than one disc, only one copy of the file is required. 
+- Where there are files that have the same name but are different on each disc, rename them. For example, where there is a ``music.clu`` on two discs, rename the files to ``music1.clu`` and ``music2.clu``.
+- If you are using a game that requires CD Audio track, the CD Audio tracks will also need to be in the game folder. See the :ref:`audio <cd>` page for more information on using CD Audio. 
+
+.. tip::
+
+   The exact layout of files and folders within the game folder is not important, as long as all the files are there. 
+
+Macintosh games
+******************
+
+All LucasArts SCUMM games also exist in versions for the Macintosh. Most of the newer games shipped with only a single data file; ScummVM can use this file like it does any other data files. Some discs shipped with hidden files. To view hidden files in Mac OSX, use the keyboard shortcut :kbd:`Cmd` + :kbd:`Shift` + :kbd:`Period (.)`. 
+
+Mac uses a different file system to other systems (HFS+), so if you are accessing the CD or floppy from a Windows or Linux machine you will need additional software in order to view and copy the files. 
+
+For Windows, HFSExplorer is a basic free option, which allows read-only access to HFS drives. `Download the installer <http://www.catacombae.org/hfsexplorer/>`_ rather than the ZIP file, to ensure it is installed correctly. 
+
+For Linux, hfsplus allows read-only access to HFS drives. To use hfsplus:
+
+   1. Install hfsplus using the software manager. On Debian-based distributions, use ``sudo apt install hfsplus``.
+   2. Find the game disc by running ``sudo fdisk -l`` and finding the one with type ``Apple HFS/HFS+``. In this example we will say this is ``/dev/fd0``.
+   3. Create a mount point, for example: ``sudo mkdir /media/macgamedrive``
+   4. Mount the device to that moint point: ``sudo mount -t hfsplus /dev/fd0 /media/macgamedrive``
+   5. Access the device at ``/media/macgamedrive``.
+
 .. _add and play games:
 
 Adding the games to the Launcher
@@ -54,7 +84,9 @@ Adding the games to the Launcher
 .. image:: ../images/Launcher/choose_game_directory.png
    :class: with-shadow
 
+.. note::
 
+   You may choose to use your :ref:`system's file browser <guibrowser>` instead by setting this option in the Misc tab of the global settings. 
 
 5.  A dialog opens to allow configuration of various settings for the game. These can be reconfigured at any time, but for now everything should work at the default settings. Click **Ok**. 
 

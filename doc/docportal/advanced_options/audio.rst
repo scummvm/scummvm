@@ -216,6 +216,7 @@ Appropriate values are normally between 512 and 8192, but the value must be one 
 Smaller values yield faster response time, but can lead to stuttering if your CPU isn't able to catch up with audio sampling when using the sound emulators. Large buffer sizes may lead to minor audio delays (high latency).
 
 
+.. _cd:
 
 CD audio
 ----------
