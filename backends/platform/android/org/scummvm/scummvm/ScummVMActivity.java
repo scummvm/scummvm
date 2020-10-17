@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
+import android.content.res.Configuration;
 import android.graphics.Rect;
 //import android.inputmethodservice.Keyboard;
 //import android.inputmethodservice.KeyboardView;
@@ -57,6 +58,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeSet;
+
+import static android.content.res.Configuration.KEYBOARD_QWERTY;
 
 //import android.os.Environment;
 //import java.util.List;
@@ -123,6 +126,18 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		{ 0, R.xml.qwerty_alt },
 		{ 0, R.xml.qwerty_alt_shift }
 	};
+
+	@Override
+	public void onConfigurationChanged(@NonNull Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		if (isHWKeyboardConnected()) {
+			hideScreenKeyboard();
+		}
+	}
+
+	private boolean isHWKeyboardConnected() {
+		return getResources().getConfiguration().keyboard == KEYBOARD_QWERTY;
+	}
 
 	public void showScreenKeyboardWithoutTextInputField(final int keyboard) {
 		if (_main_surface != null) {
@@ -431,6 +446,11 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	public void showScreenKeyboard() {
 		final boolean bGlobalsCompatibilityHacksTextInputEmulatesHwKeyboard = true;
 		final int dGlobalsTextInputKeyboard = 1;
+
+		if (isHWKeyboardConnected()) {
+			return;
+		}
+
 		if (_main_surface != null) {
 
 			if (bGlobalsCompatibilityHacksTextInputEmulatesHwKeyboard) {
