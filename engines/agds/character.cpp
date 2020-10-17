@@ -32,25 +32,27 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 
+#include <math.h>
+
 namespace AGDS {
 
-void Character::load(Common::SeekableReadStream* stream) {
+void Character::load(Common::SeekableReadStream *stream) {
 	debug("loading character...");
 	stream->readUint32LE(); //unk
 	uint16 magic = stream->readUint16LE();
-	switch(magic) {
-		case 0xdead:
-			_movementDirections = 16;
-			break;
-		case 0x8888:
-			_movementDirections = 8;
-			break;
-		default:
-			error("invalid magic %04x", magic);
+	switch (magic) {
+	case 0xdead:
+		_movementDirections = 16;
+		break;
+	case 0x8888:
+		_movementDirections = 8;
+		break;
+	default:
+		error("invalid magic %04x", magic);
 	}
 
 	_animations.clear();
-	while(stream->pos() < stream->size()) {
+	while (stream->pos() < stream->size()) {
 		uint size = stream->readUint32LE();
 		uint index = stream->readUint16LE();
 		debug("header size %u, index: %u", size, index);
@@ -62,12 +64,12 @@ void Character::load(Common::SeekableReadStream* stream) {
 		AnimationDescription animation;
 		animation.filename = filename;
 		debug("animation %s, frames: %d, format: %d", animation.filename.c_str(), frames, format);
-		while(frames--) {
+		while (frames--) {
 			int x = stream->readSint16LE();
 			int y = stream->readSint16LE();
 			int w = stream->readUint32LE();
 			int h = stream->readUint32LE();
-			AnimationDescription::Frame frame = { x, y, w, h };
+			AnimationDescription::Frame frame = {x, y, w, h};
 			animation.frames.push_back(frame);
 			debug("frame %d, %d, %dx%d", x, y, w, h);
 			uint unk1 = stream->readUint32LE();
@@ -85,10 +87,9 @@ void Character::load(Common::SeekableReadStream* stream) {
 			uint unk11 = stream->readByte();
 			stream->readUint32LE(); //CDCDCDCD
 			debug("unknown: %u %u %u 0x%08x - %u %u %u %u - %u %u %u",
-				unk1, unk2, unk3, unk4,
-				unk5, unk6, unk7, unk8,
-				unk9, unk10, unk11
-			);
+			      unk1, unk2, unk3, unk4,
+			      unk5, unk6, unk7, unk8,
+			      unk9, unk10, unk11);
 		}
 		_animations.push_back(animation);
 	}
@@ -128,7 +129,7 @@ void Character::animate(Common::Point pos, int frames, int speed) {
 	_pos = pos;
 }
 
-void Character::paint(Graphics::Surface & backbuffer) {
+void Character::paint(Graphics::Surface &backbuffer) {
 	if (!_enabled || !_visible || !_animation)
 		return;
 
@@ -152,4 +153,100 @@ void Character::paint(Graphics::Surface & backbuffer) {
 	_animation->paint(*_engine, backbuffer, pos);
 }
 
+int Character::getDirectionForMovement(int dx, int dy) {
+	auto angle = atan2(dy, dx);
+	if (angle < 0)
+		angle += M_PI * 2;
+
+	if (_movementDirections == 16) {
+		if (angle < 6.1850053125 && angle > 0.0981746875) {
+			if (angle > 0.5235983333333333) {
+				if (angle > 0.9490219791666666) {
+					if (angle > 1.374445625) {
+						if (angle > 1.767144375) {
+							if (angle > 2.192568020833333) {
+								if (angle > 2.617991666666666) {
+									if (angle > 3.0434153125) {
+										if (angle > 3.2397646875) {
+											if (angle > 3.665188333333333) {
+												if (angle > 4.090611979166667) {
+													if (angle > 4.516035625) {
+														if (angle > 4.908734375) {
+															if (angle > 5.334158020833333) {
+																if (angle > 5.759581666666667)
+																	return 3;
+																else
+																	return 2;
+															} else {
+																return 1;
+															}
+														} else {
+															return 0;
+														}
+													} else {
+														return 15;
+													}
+												} else {
+													return 14;
+												}
+											} else {
+												return 13;
+											}
+										} else {
+											return 12;
+										}
+									} else {
+										return 11;
+									}
+								} else {
+									return 10;
+								}
+							} else {
+								return 9;
+							}
+						} else {
+							return 8;
+						}
+					} else {
+						return 7;
+					}
+				} else {
+					return 6;
+				}
+			} else {
+				return 5;
+			}
+		} else {
+			return 4;
+		}
+	} else if (angle < 5.89048125 && angle > 0.39269875) {
+		if (angle > 1.17809625) {
+			if (angle > 1.96349375) {
+				if (angle > 2.74889125) {
+					if (angle > 3.53428875) {
+						if (angle > 4.31968625) {
+							if (angle > 5.105083749999999)
+								return 2;
+							else
+								return 0;
+						} else {
+							return 14;
+						}
+					} else {
+						return 12;
+					}
+				} else {
+					return 10;
+				}
+			} else {
+				return 8;
+			}
+		} else {
+			return 6;
+		}
+	} else {
+		return 4;
+	}
 }
+
+} // namespace AGDS
