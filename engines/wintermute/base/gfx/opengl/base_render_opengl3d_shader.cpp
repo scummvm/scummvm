@@ -558,11 +558,8 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wint
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	// might as well provide getters for those
-	int texWidth;
-	int texHeight;
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &texWidth);
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &texHeight);
+	int texWidth = tex.getGLTextureWidth();
+	int texHeight = tex.getGLTextureHeight();
 
 	float texLeft = (float)rect.left / (float)texWidth;
 	float texTop = (float)rect.top / (float)texHeight;
