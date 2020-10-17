@@ -312,7 +312,7 @@ static const char *const k1OutroHomeStringDOSCDRussian[1] = {
 static const StringListProvider k1OutroHomeStringDOSCDRussianProvider = { ARRAYSIZE(k1OutroHomeStringDOSCDRussian), k1OutroHomeStringDOSCDRussian };
 
 static const char *const k1VeryCleverStringDOSCDRussian[1] = {
-	"Very clever!  But your feeble efforts are futile."
+	"O\\e""\x1D""{ y""\x1C\x1D""o! Ho ""\x1F\x14""o""\x18"" yc""\x18\x1B\x18""~ ""\x1F\x5E""e""\x1F\x1D""`."
 };
 
 static const StringListProvider k1VeryCleverStringDOSCDRussianProvider = { ARRAYSIZE(k1VeryCleverStringDOSCDRussian), k1VeryCleverStringDOSCDRussian };
