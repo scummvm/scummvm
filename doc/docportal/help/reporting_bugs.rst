@@ -5,7 +5,7 @@ Reporting a bug
 
 To report a bug, go to the ScummVM `Issue Tracker <https://bugs.scummvm.org/>`_ and log in with your GitHub account. 
 
-Please make sure the bug is reproducible, and still occurs in the latest git/Daily build version. Also check the :doc:`known problems <known_problems>` page and the `compatibility list <https://www.scummvm.org/compatibility/>`_for that game, to ensure the issue is not already known.
+Please make sure the bug is reproducible, and still occurs in the latest git/Daily build version. Also check the :doc:`known problems <known_problems>` page and the `compatibility list <https://www.scummvm.org/compatibility/>`_ for that game, to ensure the issue is not already known.
 
 Please do not report bugs for games that are not listed as being completeable on the `Supported Games <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_ wiki page, or on the compatibility list. We know those games have bugs.
 
