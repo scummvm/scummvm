@@ -7,6 +7,7 @@ Programmcodes finden Sie auf Englisch unter:
  GLK:
    - Probleme mit Spielständen in mehreren Sub-Engines behoben.
    - Speicherüberlauf im Erkennungsmechanismus für Level9-Spiele behoben.
+   - Unterstützung für die Spiele der IF Comp 2020 hinzugefügt.
 
  Lure:
    - Die Feuer-Animation im ersten Raum wird nun auch nach dem Laden eines Spielstands abgespielt.
