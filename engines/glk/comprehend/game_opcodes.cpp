@@ -30,7 +30,7 @@ namespace Glk {
 namespace Comprehend {
 
 ComprehendGameOpcodes::ComprehendGameOpcodes() {
-	Common::fill(&_opcodeMap[0], &_opcodeMap[0x100], (ScriptOpcode)0);
+	Common::fill(&_opcodeMap[0], &_opcodeMap[0x100], OPCODE_UNKNOWN);
 }
 
 void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sentence *sentence,
@@ -47,15 +47,13 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 		if (instr->_operand[1] == 0x81)
 			index += 256;
 		if (index >= _functions.size())
-			error("Bad function %.4x >= %.4x\n",
-				index, _functions.size());
+			error("Bad function %.4x >= %.4x\n", index, _functions.size());
 
 		eval_function(index, sentence);
 		break;
 
 	case OPCODE_CURRENT_IS_OBJECT:
-		func_set_test_result(func_state,
-			get_item_by_noun(noun) != NULL);
+		func_set_test_result(func_state, get_item_by_noun(noun) != NULL);
 		break;
 
 	case OPCODE_CURRENT_OBJECT_NOT_VALID:
@@ -97,21 +95,18 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 			room->_stringDesc = instr->_operand[1] + 0x200;
 			break;
 		default:
-			error("Bad string desc %.2x:%.2x\n",
-				instr->_operand[1], instr->_operand[2]);
+			error("Bad string desc %.2x:%.2x\n", instr->_operand[1], instr->_operand[2]);
 			break;
 		}
 		break;
 
 	case OPCODE_TEST_FLAG:
-		func_set_test_result(func_state,
-			_flags[instr->_operand[0]]);
+		func_set_test_result(func_state, _flags[instr->_operand[0]]);
 		break;
 
 	case OPCODE_VAR_EQ2:
 		func_set_test_result(func_state,
-			_variables[instr->_operand[0]] ==
-			_variables[instr->_operand[1]]);
+			_variables[instr->_operand[0]] == _variables[instr->_operand[1]]);
 		break;
 
 	default:
@@ -656,7 +651,7 @@ ComprehendGameV2::ComprehendGameV2() {
 	_opcodeMap[0x0c] = OPCODE_ELSE;
 	_opcodeMap[0x14] = OPCODE_CURRENT_OBJECT_NOT_VALID;
 	_opcodeMap[0x19] = OPCODE_TEST_FLAG;
-	_opcodeMap[0x25] = OPCODE_NOT_MAX_WEIGHT;
+	_opcodeMap[0x25] = OPCODE_NOT_TAKEABLE;
 	_opcodeMap[0x87] = OPCODE_SET_ROOM_DESCRIPTION;
 	_opcodeMap[0x8e] = OPCODE_PRINT;
 	_opcodeMap[0x92] = OPCODE_CALL_FUNC;
@@ -744,9 +739,9 @@ void ComprehendGameV2::execute_opcode(const Instruction *instr, const Sentence *
 			_variables[VAR_INVENTORY_LIMIT]);
 		break;
 
-	case OPCODE_NOT_MAX_WEIGHT:
+	case OPCODE_NOT_TAKEABLE:
 		item = get_item_by_noun(noun);
-		func_set_test_result(func_state, (item->_flags & ITEMF_WEIGHT_MASK) != ITEMF_WEIGHT_MASK);
+		func_set_test_result(func_state, (item->_flags & ITEMF_WEIGHT_MASK) == ITEMF_WEIGHT_MASK);
 		break;
 
 	default:

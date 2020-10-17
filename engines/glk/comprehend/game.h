@@ -134,6 +134,8 @@ public:
 
 	virtual void synchronizeSave(Common::Serializer &s);
 
+	virtual ScriptOpcode getScriptOpcode(const Instruction *instr) = 0;
+
 	Common::String stringLookup(uint16 index);
 	Common::String instrStringLookup(uint8 index, uint8 table);
 

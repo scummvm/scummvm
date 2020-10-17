@@ -38,12 +38,17 @@ protected:
 
 	void execute_opcode(const Instruction *instr, const Sentence *sentence, FunctionState *func_state) override;
 
-	virtual byte getOpcode(const Instruction *instr) { return instr->_opcode; }
-
 	void func_set_test_result(FunctionState *func_state, bool value);
 	bool isItemPresent(Item *item) const;
 public:
 	ComprehendGameOpcodes();
+
+	virtual byte getOpcode(const Instruction *instr) {
+		return instr->_opcode;
+	}
+	virtual ScriptOpcode getScriptOpcode(const Instruction *instr) {
+		return _opcodeMap[getOpcode(instr)];
+	}
 };
 
 
@@ -62,11 +67,11 @@ public:
  */
 class ComprehendGameV2 : public ComprehendGameOpcodes {
 protected:
-	byte getOpcode(const Instruction *instr) override;
-
 	void execute_opcode(const Instruction *instr, const Sentence *sentence, FunctionState *func_state) override;
 public:
 	ComprehendGameV2();
+
+	byte getOpcode(const Instruction *instr) override;
 };
 
 } // namespace Comprehend

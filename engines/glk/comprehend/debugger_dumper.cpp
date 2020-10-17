@@ -109,13 +109,14 @@ DebuggerDumper::DebuggerDumper() : _game(nullptr) {
 	_opcodes[OPCODE_TEST_FALSE] = "test_false";
 	_opcodes[OPCODE_OBJECT_CAN_TAKE] = "object_can_take";
 	_opcodes[OPCODE_CLEAR_INVISIBLE] = "clear_invisible";
+	_opcodes[OPCODE_NOT_TAKEABLE] = "not_takeable";
 }
 
 Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
         const FunctionState *func_state, const Instruction *instr) {
 	uint i;
 	int str_index, str_table;
-	uint8 *opcode_map, opcode;
+	ScriptOpcode opcode = _game->getScriptOpcode(instr);
 	Common::String line;
 
 	if (func_state)
