@@ -45,7 +45,7 @@
 
 
 enum {
-	kKyraDatVersion = 103
+	kKyraDatVersion = 104
 };
 
 const ExtractFilename extractFilenames[] = {

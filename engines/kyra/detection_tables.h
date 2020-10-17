@@ -458,7 +458,18 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_DEMO_FLAGS
 	},
-
+	{ // Modern fan-made Russian translation by Siberian GRemlin
+		{
+			"kyra1",
+			"CD",
+			AD_ENTRY1("MAIN_ENG.CPS", "535765395e3594bfd9b727834028e288"),
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
+		},
+		KYRA1_CD_FLAGS
+	},
 	{	// Special Kyrandia 1 CD demo
 		{
 			"kyra1",
