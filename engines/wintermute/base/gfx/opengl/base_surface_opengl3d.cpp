@@ -66,6 +66,7 @@ BaseSurfaceOpenGL3D::~BaseSurfaceOpenGL3D() {
 
 bool BaseSurfaceOpenGL3D::invalidate() {
 	glDeleteTextures(1, &_tex);
+	_imageData->free();
 	delete[] _imageData;
 	_imageData = nullptr;
 
@@ -81,16 +82,7 @@ bool BaseSurfaceOpenGL3D::displayHalfTrans(int x, int y, Rect32 rect) {
 bool BaseSurfaceOpenGL3D::isTransparentAt(int x, int y) {
 	prepareToDraw();
 
-	uint8 *imageData = new uint8[4 * _texWidth * _texHeight]();
-
-	// assume 32 bit rgba for now
-	glBindTexture(GL_TEXTURE_2D, _tex);
-	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	uint8 alpha = imageData[y * _texWidth * 4 + x * 4 + 3];
-
-	delete[] imageData;
+	uint8 alpha = reinterpret_cast<uint8 *>(_imageData->getPixels())[y * _width * 4 + x * 4 + 3];
 	return alpha < 128;
 }
 
@@ -179,7 +171,12 @@ bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK,
 	bool needsColorKey = false;
 	bool replaceAlpha = true;
 
-	Graphics::Surface *surf = img.getSurface()->convertTo(OpenGL::TextureGL::getRGBAPixelFormat(), img.getPalette());
+	if (_imageData) {
+		_imageData->free();
+		delete _imageData;
+	}
+
+	_imageData = img.getSurface()->convertTo(OpenGL::TextureGL::getRGBAPixelFormat(), img.getPalette());
 
 	if (_filename.hasSuffix(".bmp") && img.getSurface()->format.bytesPerPixel == 4) {
 		// 32 bpp BMPs have nothing useful in their alpha-channel -> color-key
@@ -190,13 +187,10 @@ bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK,
 	}
 
 	if (needsColorKey) {
-		applyColorKey(*surf, ckRed, ckGreen, ckBlue, replaceAlpha);
+		applyColorKey(*_imageData, ckRed, ckGreen, ckBlue, replaceAlpha);
 	}
 
-	putSurface(*surf);
-
-	surf->free();
-	delete surf;
+	putSurface(*_imageData);
 
 	if (_lifeTime == 0 || lifeTime == -1 || lifeTime > _lifeTime) {
 		_lifeTime = lifeTime;
@@ -227,6 +221,14 @@ bool BaseSurfaceOpenGL3D::create(int width, int height) {
 }
 
 bool BaseSurfaceOpenGL3D::putSurface(const Graphics::Surface &surface, bool hasAlpha) {
+	if (!_imageData) {
+		_imageData = new Graphics::Surface();
+	}
+
+	if (_imageData && _imageData != &surface) {
+		_imageData->copyFrom(surface);
+	}
+
 	_width = surface.w;
 	_height = surface.h;
 	_texWidth = Common::nextHigher2(_width);
@@ -266,22 +268,11 @@ bool BaseSurfaceOpenGL3D::comparePixel(int x, int y, byte r, byte g, byte b, int
 }
 
 bool BaseSurfaceOpenGL3D::startPixelOp() {
-	if (_imageData) {
-		return true;
-	}
-
 	prepareToDraw();
-
-	_imageData = new uint8[4 * _texWidth * _texHeight]();
-	glBindTexture(GL_TEXTURE_2D, _tex);
-	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, _imageData);
 	return true;
 }
 
 bool BaseSurfaceOpenGL3D::endPixelOp() {
-	glBindTexture(GL_TEXTURE_2D, 0);
-	delete[] _imageData;
-	_imageData = nullptr;
 	return true;
 }
 
@@ -295,7 +286,7 @@ bool BaseSurfaceOpenGL3D::isTransparentAtLite(int x, int y) {
 	}
 
 	//TODO: Check for endianness issues
-	uint8 alpha = _imageData[y * _texWidth * 4 + x * 4 + 3];
+	uint8 alpha = reinterpret_cast<uint8 *>(_imageData->getPixels())[y * _width * 4 + x * 4 + 3];
 	return alpha == 0;
 }
 

@@ -69,7 +69,7 @@ public:
 private:
 	GLuint _tex;
 	BaseRenderer3D *_renderer;
-	uint8 *_imageData;
+	Graphics::Surface *_imageData;
 	uint _texWidth;
 	uint _texHeight;
 };
