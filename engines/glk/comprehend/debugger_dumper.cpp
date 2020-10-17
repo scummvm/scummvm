@@ -165,6 +165,9 @@ Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
 	case OPCODE_SET_STRING_REPLACEMENT3:
 		line += Common::String::format(" %s", game->_replaceWords[instr->_operand[0] - 1].c_str());
 		break;
+
+	default:
+		break;
 	}
 
 	return line;
