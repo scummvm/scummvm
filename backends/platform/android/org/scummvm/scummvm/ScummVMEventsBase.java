@@ -113,8 +113,20 @@ public class ScummVMEventsBase implements
 //				imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 			((ScummVMActivity) _context).toggleScreenKeyboard();
 		} else if (msg.what == MSG_SBACK_LONG_PRESS) {
-			_scummvm.pushEvent(JE_SYS_KEY, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MENU, 0, 0, 0, 0);
-			_scummvm.pushEvent(JE_SYS_KEY, KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MENU, 0, 0, 0, 0);
+			_scummvm.pushEvent(JE_SYS_KEY,
+			                   KeyEvent.ACTION_DOWN,
+			                   KeyEvent.KEYCODE_MENU,
+			                   0,
+			                   0,
+			                   0,
+			                   0);
+			_scummvm.pushEvent(JE_SYS_KEY,
+			                   KeyEvent.ACTION_UP,
+			                   KeyEvent.KEYCODE_MENU,
+			                   0,
+			                   0,
+			                   0,
+			                   0);
 		}
 	}
 
@@ -147,7 +159,16 @@ public class ScummVMEventsBase implements
 //		Log.d(ScummVM.LOG_TAG, "SCUMMV-EVENTS-BASE - onKEY:::" + keyCode); // Called
 		final int action = e.getAction();
 
-		if (e.getUnicodeChar() == (int)EditableAccommodatingLatinIMETypeNullIssues.ONE_UNPROCESSED_CHARACTER.charAt(0)) {
+		int eventUnicodeChar = e.getUnicodeChar();
+		if (e.getDeviceId() != 0) {
+			// getDeviceId: Gets the id for the device that this event came from.
+			// An id of zero indicates that the event didn't come from a physical device and maps to the default keymap.
+			// The other numbers are arbitrary and you shouldn't depend on the values.
+			final KeyCharacterMap m = KeyCharacterMap.load(e.getDeviceId());
+			eventUnicodeChar = m.get(e.getKeyCode(), e.getMetaState());
+		}
+
+		if (eventUnicodeChar == (int)EditableAccommodatingLatinIMETypeNullIssues.ONE_UNPROCESSED_CHARACTER.charAt(0)) {
 			//We are ignoring this character, and we want everyone else to ignore it, too, so
 			// we return true indicating that we have handled it (by ignoring it).
 			return true;
@@ -221,26 +242,34 @@ public class ScummVMEventsBase implements
 				}
 
 				// It's still necessary to send a key down event to the backend.
-				_scummvm.pushEvent(JE_SYS_KEY, KeyEvent.ACTION_DOWN, keyCode,
-							e.getUnicodeChar() & KeyCharacterMap.COMBINING_ACCENT_MASK,
-							e.getMetaState(), e.getRepeatCount(),
-							(int)(e.getEventTime() - e.getDownTime()));
+				_scummvm.pushEvent(JE_SYS_KEY,
+				                   KeyEvent.ACTION_DOWN,
+				                   keyCode,
+				                   eventUnicodeChar & KeyCharacterMap.COMBINING_ACCENT_MASK,
+				                   e.getMetaState(),
+				                   e.getRepeatCount(),
+				                   (int)(e.getEventTime() - e.getDownTime()));
 			}
 		}
 
 		// sequence of characters
-		if (action == KeyEvent.ACTION_MULTIPLE &&
-				keyCode == KeyEvent.KEYCODE_UNKNOWN) {
+		if (action == KeyEvent.ACTION_MULTIPLE
+		    && keyCode == KeyEvent.KEYCODE_UNKNOWN) {
 			final KeyCharacterMap m = KeyCharacterMap.load(e.getDeviceId());
 			final KeyEvent[] es = m.getEvents(e.getCharacters().toCharArray());
 
-			if (es == null)
+			if (es == null) {
 				return true;
+			}
 
 			for (KeyEvent s : es) {
-				_scummvm.pushEvent(JE_KEY, s.getAction(), s.getKeyCode(),
-					s.getUnicodeChar() & KeyCharacterMap.COMBINING_ACCENT_MASK,
-					s.getMetaState(), s.getRepeatCount(), 0);
+				_scummvm.pushEvent(JE_KEY,
+				                   s.getAction(),
+				                   s.getKeyCode(),
+				                   eventUnicodeChar & KeyCharacterMap.COMBINING_ACCENT_MASK,
+				                   s.getMetaState(),
+				                   s.getRepeatCount(),
+				                   0);
 			}
 
 			return true;
@@ -289,11 +318,16 @@ public class ScummVMEventsBase implements
 			break;
 		}
 
+//		_scummvm.displayMessageOnOSD("GetKey: " + keyCode + " unic=" + eventUnicodeChar+ " arg3= " + (eventUnicodeChar& KeyCharacterMap.COMBINING_ACCENT_MASK));
+
 		// look in events.cpp for how this is handled
-		_scummvm.pushEvent(type, action, keyCode,
-					e.getUnicodeChar() & KeyCharacterMap.COMBINING_ACCENT_MASK,
-					e.getMetaState(), e.getRepeatCount(),
-					(int)(e.getEventTime() - e.getDownTime()));
+		_scummvm.pushEvent(type,
+		                   action,
+		                   keyCode,
+		                   eventUnicodeChar & KeyCharacterMap.COMBINING_ACCENT_MASK,
+		                   e.getMetaState(),
+		                   e.getRepeatCount(),
+		                   (int)(e.getEventTime() - e.getDownTime()));
 
 		return true;
 	}
@@ -304,8 +338,8 @@ public class ScummVMEventsBase implements
 		//Log.d(ScummVM.LOG_TAG, "SCUMMV-EVENTS-BASE - onTOUCH");
 
 		if (ScummVMActivity.keyboardWithoutTextInputShown
-			&& ((ScummVMActivity) _context).isScreenKeyboardShown()
-			&& ((ScummVMActivity) _context).getScreenKeyboard().getY() <= event.getY() ) {
+		    && ((ScummVMActivity) _context).isScreenKeyboardShown()
+		    && ((ScummVMActivity) _context).getScreenKeyboard().getY() <= event.getY() ) {
 			event.offsetLocation(-((ScummVMActivity) _context).getScreenKeyboard().getX(), -((ScummVMActivity) _context).getScreenKeyboard().getY());
 			// TODO maybe call the onTouchEvent of something else here?
 			((ScummVMActivity) _context).getScreenKeyboard().onTouchEvent(event);

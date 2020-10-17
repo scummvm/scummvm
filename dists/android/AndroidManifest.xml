@@ -40,7 +40,7 @@
 		<activity
 			android:name=".SplashActivity"
 			android:banner="@drawable/leanback_icon"
-			android:configChanges="orientation|keyboardHidden|screenSize"
+			android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
 			android:screenOrientation="landscape"
 			android:theme="@style/SplashTheme"
 			android:windowSoftInputMode="adjustResize">
@@ -55,7 +55,7 @@
 		<activity
 			android:name=".ScummVMActivity"
 			android:banner="@drawable/leanback_icon"
-			android:configChanges="orientation|keyboardHidden|screenSize"
+			android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
 			android:screenOrientation="landscape"
 			android:theme="@style/AppTheme"
 			android:windowSoftInputMode="adjustResize">
