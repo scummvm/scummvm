@@ -85,7 +85,6 @@ public:
 	void initLoop() override;
 
 	virtual bool setProjection2D() = 0;
-	virtual void resetModelViewTransform() = 0;
 	virtual void setWorldTransform(const Math::Matrix4 &transform) = 0;
 
 	void project(const Math::Matrix4 &worldMatrix, const Math::Vector3d &point, int32 &x, int32 &y);
