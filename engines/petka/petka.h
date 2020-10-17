@@ -43,7 +43,7 @@
  *  Games using this engine:
  *  - Red Comrades Demo
  *  - Red Comrades Save the Galaxy - Fully playable
- *  - Red Comrades 2: For the Great Justice - Not tested
+ *  - Red Comrades 2: For the Great Justice - Fully playable
  */
 
 struct ADGameDescription;
