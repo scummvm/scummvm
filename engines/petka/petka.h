@@ -79,6 +79,7 @@ public:
 	~PetkaEngine() override;
 
 	bool isDemo() const;
+	bool isPetka2() const;
 
 	void loadPart(byte part);
 	void loadPartAtNextFrame(byte part);
