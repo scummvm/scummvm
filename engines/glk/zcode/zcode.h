@@ -74,7 +74,7 @@ public:
 	/**
 	 * Indicates whether an autosave can currently be saved.
 	 */
-	virtual bool canSaveAutosaveCurrently() {
+	virtual bool canSaveAutosaveCurrently() override {
 		/* ZCode saves also include the execution stack.
 		 * So I don't know how to do autosaves in the background
 		 * without ending up with an invalid stack state
