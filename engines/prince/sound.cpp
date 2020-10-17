@@ -157,7 +157,7 @@ void PrinceEngine::setVoice(uint16 slot, uint32 sampleSlot, uint16 flag) {
 		sampleName = Common::String::format("inv%02d-01.WAV", currentString - 70000);
 	} else if (currentString >= 60000) {
 		sampleName = Common::String::format("M%04d-%02d.WAV", currentString - 60000, flag);
-	} else if (currentString >= 2000) {
+	} else if (currentString == 316 || currentString >= 2000) {
 		return;
 	} else if (flag >= 100) {
 		sampleName = Common::String::format("%03d-%03d.WAV", currentString, flag);
