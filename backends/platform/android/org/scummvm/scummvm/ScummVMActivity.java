@@ -20,6 +20,7 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -51,6 +52,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -147,6 +149,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 								public boolean shift = false;
 								public boolean alt = false;
 								public final TreeSet<Integer> stickyKeys = new TreeSet<>();
+								public long mEventTime = -1;
 
 								public BuiltInKeyboardView(Context context, android.util.AttributeSet attrs) {
 									super(context, attrs);
@@ -162,6 +165,76 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 									return false;
 								}
 
+								public int getCompiledMetaState() {
+									int retCompiledMetaState = 0;
+									// search in the list of currently "ON" sticky keys to set the meta flags
+									for (int stickyActiveKeyCode : stickyKeys) {
+										switch (stickyActiveKeyCode) {
+											case KeyEvent.KEYCODE_SHIFT_LEFT:
+												retCompiledMetaState|= KeyEvent.META_SHIFT_LEFT_ON;
+												break;
+											case KeyEvent.KEYCODE_SHIFT_RIGHT:
+												retCompiledMetaState|= KeyEvent.META_SHIFT_RIGHT_ON;
+												break;
+											case KeyEvent.KEYCODE_CTRL_LEFT:
+												retCompiledMetaState|= KeyEvent.META_CTRL_LEFT_ON;
+												break;
+											case KeyEvent.KEYCODE_CTRL_RIGHT:
+												retCompiledMetaState|= KeyEvent.META_CTRL_RIGHT_ON;
+												break;
+											case KeyEvent.KEYCODE_ALT_LEFT:
+												retCompiledMetaState|= KeyEvent.META_ALT_LEFT_ON;
+												break;
+											case KeyEvent.KEYCODE_ALT_RIGHT:
+												retCompiledMetaState|= KeyEvent.META_ALT_RIGHT_ON;
+												break;
+											case KeyEvent.KEYCODE_META_LEFT:
+												retCompiledMetaState|= KeyEvent.META_META_LEFT_ON;
+												break;
+											case KeyEvent.KEYCODE_META_RIGHT:
+												retCompiledMetaState|= KeyEvent.META_META_RIGHT_ON;
+												break;
+											case KeyEvent.KEYCODE_CAPS_LOCK:
+												retCompiledMetaState|= KeyEvent.META_CAPS_LOCK_ON;
+												break;
+											case KeyEvent.KEYCODE_NUM_LOCK:
+												retCompiledMetaState|= KeyEvent.META_NUM_LOCK_ON;
+												break;
+											case KeyEvent.KEYCODE_SCROLL_LOCK:
+												retCompiledMetaState|= KeyEvent.META_SCROLL_LOCK_ON;
+												break;
+											case KeyEvent.KEYCODE_SYM:
+												// TODO Do we have or need a SYM key?
+												retCompiledMetaState|= KeyEvent.META_SYM_ON;
+												break;
+											default: break;
+										}
+									}
+
+									if (shift && !alt) {
+										retCompiledMetaState |= KeyEvent.META_SHIFT_LEFT_ON;
+									}
+									return retCompiledMetaState;
+								}
+
+								public void recheckStickyKeys() {
+									// setting sticky keys to their proper on or off state
+									// h
+									boolean atLeastOneStickyKeyWasChanged = false;
+									for (CustomKeyboard.CustomKey k: getKeyboard().getKeys()) {
+										if (stickyKeys.contains(k.codes[0]) && !k.on) {
+											k.on = true;
+											atLeastOneStickyKeyWasChanged = true;
+										} else if (!stickyKeys.contains(k.codes[0]) && k.sticky && k.on) {
+											k.on = false;
+											atLeastOneStickyKeyWasChanged = true;
+										}
+									}
+									if (atLeastOneStickyKeyWasChanged) {
+										invalidateAllKeys();
+									}
+								}
+
 								public void ChangeKeyboard() {
 									// Called when bringing up the keyboard
 									// or pressing one of the special keyboard keys that change the layout (eg "123...")
@@ -170,12 +243,12 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 									setKeyboard(new CustomKeyboard(ScummVMActivity.this, TextInputKeyboardList[idx][keyboard]));
 									setPreviewEnabled(false);
 									setProximityCorrectionEnabled(false);
-									for (CustomKeyboard.CustomKey k: getKeyboard().getKeys()) {
-										if (stickyKeys.contains(k.codes[0])) {
-											k.on = true;
-											invalidateAllKeys();
-										}
-									}
+
+									// setKeyboard() already invalidates all keys,
+									// here we check for our memory of sticky keys state (and any that changed to on and were added to stickyKeys Set)
+									recheckStickyKeys();
+									//ScummVMActivity.this._scummvm.displayMessageOnOSD ("NEW KEYBOARD LAYOUT: QWERTY"
+									//	+ (alt ? " ALT " : "") + (shift? " SHIFT" : ""));
 								}
 							}
 
@@ -185,92 +258,130 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 							builtinKeyboard.setOnKeyboardActionListener(new CustomKeyboardView.OnKeyboardActionListener() {
 
 								public void onPress(int key) {
-									Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - onPress key: " + key ); // CALLED
+									//Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - onPress key: " + key ); // CALLED
 									if (key == KeyEvent.KEYCODE_BACK) {
 										return;
 									}
 
-									if (key < 0) {
+									if (key <= 0) {
 										return;
 									}
 
 									for (CustomKeyboard.CustomKey k: builtinKeyboard.getKeyboard().getKeys()) {
-										if (k.sticky && key == k.codes[0])
+										if (k.sticky && key == k.codes[0]) {
 											return;
+										}
 									}
 
+									int compiledMetaState = builtinKeyboard.getCompiledMetaState();
+
+									// keys with keyCode greater than 100000, should be submitted with a LEFT_SHIFT_ modifier (and decreased by 100000 to get their proper code)
 									if (key > 100000) {
 										key -= 100000;
-										_main_surface.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SHIFT_LEFT));
+										compiledMetaState |= KeyEvent.META_SHIFT_LEFT_ON;
 									}
-									_main_surface.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, key));
+
+									//
+									// downTime (long) - The time (in SystemClock.uptimeMillis()) at which this key code originally went down.
+									// ** Since this is a down event, this will be the same as getEventTime(). **
+									// Note that when chording keys, this value is the down time of the most recently pressed key, which may not be the same physical key of this event.
+									// eventTime (long) -  The time (in SystemClock.uptimeMillis()) at which this event happened.
+									// TODO update repeat and event time? with
+									builtinKeyboard.mEventTime = SystemClock.uptimeMillis();
+									KeyEvent compiledKeyEvent = new KeyEvent(builtinKeyboard.mEventTime,
+									                                         builtinKeyboard.mEventTime,
+									                                         KeyEvent.ACTION_DOWN,
+									                                         key,
+									                                         0,
+									                                         compiledMetaState);
+
+									_main_surface.dispatchKeyEvent(compiledKeyEvent);
 								}
 
 								public void onRelease(int key) {
-									Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - onRelease key: " + key );
+									//Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - onRelease key: " + key );
 									if (key == KeyEvent.KEYCODE_BACK) {
 										builtinKeyboard.setOnKeyboardActionListener(null);
 										showScreenKeyboardWithoutTextInputField(0); // Hide keyboard
 										return;
 									}
 
+									// CustomKeyboard.KEYCODE_SHIFT is a special button (negative value)
+									// which basically changes the keyboard to a another,"SHIFTED", layout (other keys)
+									// In this layout, if it's NOT also an "ALT" layout, keys are assumed to get the LEFT SHIFT modifier by default
 									if (key == CustomKeyboard.KEYCODE_SHIFT) {
-										builtinKeyboard.shift = ! builtinKeyboard.shift;
-										if (builtinKeyboard.shift && !builtinKeyboard.alt) {
-											_main_surface.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SHIFT_LEFT));
-										} else {
-											_main_surface.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_SHIFT_LEFT));
-										}
+										builtinKeyboard.shift = !builtinKeyboard.shift;
 										builtinKeyboard.ChangeKeyboard();
 										return;
 									}
 
 									if (key == CustomKeyboard.KEYCODE_ALT) {
-										builtinKeyboard.alt = ! builtinKeyboard.alt;
-										if (builtinKeyboard.alt) {
-											_main_surface.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_SHIFT_LEFT));
-										} else {
+										builtinKeyboard.alt = !builtinKeyboard.alt;
+										if (!builtinKeyboard.alt) {
 											builtinKeyboard.shift = false;
 										}
 										builtinKeyboard.ChangeKeyboard();
 										return;
 									}
 
-									if (key < 0) {
+									if (key <= 0) {
 										return;
 									}
 
+									//
+									// TODO - Probably remove keys like caps lock, scroll lock, num lock, print etc...
+									//
 									for (CustomKeyboard.CustomKey k: builtinKeyboard.getKeyboard().getKeys()) {
 										if (k.sticky && key == k.codes[0]) {
-											if (k.on) {
-												builtinKeyboard.stickyKeys.add(key);
-												_main_surface.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, key));
-											} else {
+											if (builtinKeyboard.stickyKeys.contains(key)) {
+												// if it was "remembered" (in stickyKeys set) as ON
+												// (and it off by removing them from stickyKeys set)
 												builtinKeyboard.stickyKeys.remove(key);
-												_main_surface.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, key));
+											} else {
+												// if it was "remembered" (in stickyKeys set) as OFF
+												// (turn it on by adding them to stickyKeys set)
+												builtinKeyboard.stickyKeys.add(key);
 											}
+											builtinKeyboard.recheckStickyKeys();
 											return;
 										}
 									}
 
-									boolean shifted = false;
+									int compiledMetaState = builtinKeyboard.getCompiledMetaState();
+
+									//boolean shifted = false;
 									if (key > 100000) {
 										key -= 100000;
-										shifted = true;
+										//shifted = true;
+										compiledMetaState |= KeyEvent.META_SHIFT_LEFT_ON;
 									}
 
-									_main_surface.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, key));
+									// TODO properly set repeat value?
+									KeyEvent compiledKeyEvent = new KeyEvent(builtinKeyboard.mEventTime,
+										SystemClock.uptimeMillis(),
+										KeyEvent.ACTION_UP,
+										key,
+										0,
+										compiledMetaState);
 
-									if (shifted) {
-										_main_surface.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_SHIFT_LEFT));
-										builtinKeyboard.stickyKeys.remove(KeyEvent.KEYCODE_SHIFT_LEFT);
-										for (CustomKeyboard.CustomKey k: builtinKeyboard.getKeyboard().getKeys())
-										{
-											if (k.sticky && k.codes[0] == KeyEvent.KEYCODE_SHIFT_LEFT && k.on)
-											{
-												k.on = false;
-												builtinKeyboard.invalidateAllKeys();
+									_main_surface.dispatchKeyEvent(compiledKeyEvent);
+									builtinKeyboard.mEventTime = -1; // reset event time
+
+									// Excluding the CAPS LOCK NUM LOCK AND SCROLL LOCK keys,
+									// clear the state of all other sticky keys that are used in a key combo
+									// when we reach this part of the code
+									if (builtinKeyboard.stickyKeys.size() > 0) {
+										HashSet<Integer> stickiesToReleaseSet = new HashSet<>();
+										for (int tmpKeyCode : builtinKeyboard.stickyKeys) {
+											if (tmpKeyCode != KeyEvent.KEYCODE_CAPS_LOCK
+												&& tmpKeyCode != KeyEvent.KEYCODE_NUM_LOCK
+												&& tmpKeyCode != KeyEvent.KEYCODE_SCROLL_LOCK) {
+												stickiesToReleaseSet.add(tmpKeyCode);
 											}
+										}
+										if (stickiesToReleaseSet.size() > 0) {
+											builtinKeyboard.stickyKeys.removeAll(stickiesToReleaseSet);
+											builtinKeyboard.recheckStickyKeys();
 										}
 									}
 								}
@@ -324,11 +435,11 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 			if (bGlobalsCompatibilityHacksTextInputEmulatesHwKeyboard) {
 				showScreenKeyboardWithoutTextInputField(dGlobalsTextInputKeyboard);
-				Log.d(ScummVM.LOG_TAG, "showScreenKeyboard - showScreenKeyboardWithoutTextInputField()");
+				//Log.d(ScummVM.LOG_TAG, "showScreenKeyboard - showScreenKeyboardWithoutTextInputField()");
 				_main_surface.captureMouse(false);
 				return;
 			}
-			Log.d(ScummVM.LOG_TAG, "showScreenKeyboard: YOU SHOULD NOT SEE ME!!!");
+			//Log.d(ScummVM.LOG_TAG, "showScreenKeyboard: YOU SHOULD NOT SEE ME!!!");
 
 //			// TODO redundant ?
 //			if (_screenKeyboard != null) {
