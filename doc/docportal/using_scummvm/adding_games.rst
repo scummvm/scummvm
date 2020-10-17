@@ -47,6 +47,9 @@ ScummVM needs access to all the data files, so it will not be able to run direct
 
    The exact layout of files and folders within the game folder is not important, as long as all the files are there. 
 
+
+.. _macgames:
+
 Macintosh games
 ******************
 
