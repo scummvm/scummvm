@@ -23,8 +23,21 @@
       :glob:
       :hidden:
 
+      using_scummvm/the_launcher
+      using_scummvm/adding_games
+      using_scummvm/save_load_games
+      using_scummvm/cloud_and_lan
+      using_scummvm/keyboard_shortcuts
+      using_scummvm/global_settings
       using_scummvm/game_settings
       using_scummvm/*
+
+.. toctree::
+      :caption: Games
+      :glob:
+      :hidden:
+
+      games/*
 
 .. toctree::
       :caption: Advanced Options
@@ -32,6 +45,14 @@
       :hidden:
 
       advanced_options/*
+
+
+.. toctree::
+      :caption: Help
+      :glob:
+      :hidden:
+
+      help/*
 
 ====================
 Welcome to ScummVM!
