@@ -107,8 +107,6 @@ bool ShadowVolumeOpenGLShader::renderToStencilBuffer() {
 	// renderstate is really not needed.
 	glStencilFunc(GL_ALWAYS, 0x1, 0xFFFFFFFF);
 
-	glShadeModel(GL_FLAT);
-
 	// Make sure that no pixels get drawn to the frame buffer
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ZERO, GL_ONE);
@@ -128,7 +126,6 @@ bool ShadowVolumeOpenGLShader::renderToStencilBuffer() {
 
 	// Restore render states
 	glFrontFace(GL_CCW);
-	glShadeModel(GL_SMOOTH);
 	glDepthMask(GL_TRUE);
 	glDisable(GL_STENCIL_TEST);
 	glDisable(GL_BLEND);
