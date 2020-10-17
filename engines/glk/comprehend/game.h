@@ -91,7 +91,7 @@ protected:
 	virtual bool handle_restart();
 
 	virtual void execute_opcode(const Instruction *instr, const Sentence *sentence,
-		FunctionState *func_state, Room *room, Item *&item) = 0;
+		FunctionState *func_state) = 0;
 
 	int console_get_key();
 	void console_println(const char *text);

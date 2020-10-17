@@ -505,11 +505,8 @@ void ComprehendGame::move_object(Item *item, int new_room) {
 
 void ComprehendGame::eval_instruction(FunctionState *func_state,
 		const Function &func, uint functionOffset, const Sentence *sentence) {
-	Room *room = nullptr;
-	Item *item = nullptr;
 
 	const Instruction *instr = &func[functionOffset];
-	room = get_room(_currentRoom);
 
 	if (DebugMan.isDebugChannelEnabled(kDebugScripts)) {
 		Common::String line;
@@ -556,7 +553,7 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 		}
 	}
 
-	execute_opcode(instr, sentence, func_state, room, item);
+	execute_opcode(instr, sentence, func_state);
 }
 
 void ComprehendGame::eval_function(uint functionNum, const Sentence *sentence) {

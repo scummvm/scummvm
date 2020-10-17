@@ -102,7 +102,6 @@ DebuggerDumper::DebuggerDumper() : _game(nullptr) {
 	_opcodes[OPCODE_DESCRIBE_CURRENT_OBJECT] = "describe_current_object";
 	_opcodes[OPCODE_SET_STRING_REPLACEMENT] = "set_string_replacement";
 	_opcodes[OPCODE_SET_CURRENT_NOUN_STRING_REPLACEMENT] = "set_current_noun_string_replacement";
-	_opcodes[OPCODE_CURRENT_NOT_OBJECT] = "current_not_object";
 	_opcodes[OPCODE_CURRENT_IS_OBJECT] = "current_is_object";
 	_opcodes[OPCODE_DRAW_ROOM] = "draw_room";
 	_opcodes[OPCODE_DRAW_OBJECT] = "draw_object";
