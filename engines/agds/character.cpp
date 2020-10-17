@@ -71,7 +71,25 @@ void Character::load(Common::SeekableReadStream* stream) {
 			AnimationDescription::Frame frame = { x, y, w, h };
 			animation.frames.push_back(frame);
 			debug("frame %d, %d, %dx%d", x, y, w, h);
-			stream->skip(50);
+			uint unk1 = stream->readUint32LE();
+			uint unk2 = stream->readUint32LE();
+			uint unk3 = stream->readUint32LE();
+			uint unk4 = stream->readUint32LE(); //GRP file offset?
+			uint unk5 = stream->readUint32LE();
+			uint unk6 = stream->readByte();
+			uint unk7 = stream->readUint32LE();
+			uint unk8 = stream->readUint32LE();
+			stream->readUint32LE(); //CDCDCDCD
+			uint unk9 = stream->readUint32LE();
+			uint unk10 = stream->readUint32LE();
+			stream->readUint32LE(); //CDCDCDCD
+			uint unk11 = stream->readByte();
+			stream->readUint32LE(); //CDCDCDCD
+			debug("unknown: %u %u %u 0x%08x - %u %u %u %u - %u %u %u",
+				unk1, unk2, unk3, unk4,
+				unk5, unk6, unk7, unk8,
+				unk9, unk10, unk11
+			);
 		}
 		_animations.push_back(animation);
 	}
