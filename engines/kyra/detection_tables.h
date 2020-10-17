@@ -334,6 +334,18 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra1",
 			"CD",
+			AD_ENTRY1("GEMCUT.PAK", "cb49b077165b7bb845da4f061a8b4e94"),
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
+		},
+		KYRA1_CD_FLAGS
+	},
+	{
+		{
+			"kyra1",
+			"CD",
 			AD_ENTRY1("GEMCUT.PAK", "230f54e6afc007ab4117159181a1c722"),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
