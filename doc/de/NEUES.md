@@ -4,12 +4,28 @@ Programmcodes finden Sie auf Englisch unter:
 
 #### 2.3.0 (DD.MM.YYYY)
 
+ Neue Spiele:
+   - Unterstützung für Grim Fandango hinzugefügt.
+   - Unterstützung für Escape from Monkey Island hinzugefügt.
+   - Unterstützung für The Longes Journey hinzugefügt.
+   - Unterstützung für Myst 3: Exile hinzugefügt.
+
  Allgemein:
    - Die ScummVM-Benutzeroberfläche unterstützt nun UTF-32.
 
  GLK:
    - Probleme mit Spielständen in mehreren Sub-Engines behoben.
    - Speicherüberlauf im Erkennungsmechanismus für Level9-Spiele behoben.
+   - Unterstützung für die Spiele der IF Comp 2020 hinzugefügt.
+   - Die Sub-Engine Glulx ist jetzt aktiviert.
+
+ Gob:
+   - Unterstützung für die russische Fan-Übersetzung von Bargon Attack hinzugefügt.
+   - Unterstützung für die russische Übersetzung von Woodruff hinzugefügt.
+
+ Grim:
+   - Unterstützung für die Version in brasilianischem Portugiesisch von Grim Fandango hinzugefügt.
+   - Unterstützung für die russiche Version von Escape from Monkey Island hinzugefügt.
 
  Lure:
    - Die Feuer-Animation im ersten Raum wird nun auch nach dem Laden eines Spielstands abgespielt.
@@ -19,6 +35,9 @@ Programmcodes finden Sie auf Englisch unter:
 
  Tinsel:
    - Unterstützung für die Rückkehr zur ScummVM-Benutzeroberfläche hinzugefügt.
+
+ Stark:
+   - Unterstützung für die ungarische Übersetzung hinzugefügt.
 
  Supernova:
    - Teil 1 von Supernova ist nun in einer italienischen Übersetzung verfügbar.
