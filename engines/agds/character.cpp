@@ -38,13 +38,12 @@ void Character::load(Common::SeekableReadStream* stream) {
 	debug("loading character...");
 	stream->readUint32LE(); //unk
 	uint16 magic = stream->readUint16LE();
-	uint n;
 	switch(magic) {
 		case 0xdead:
-			n = 16;
+			_movementDirections = 16;
 			break;
 		case 0x8888:
-			n = 8;
+			_movementDirections = 8;
 			break;
 		default:
 			error("invalid magic %04x", magic);

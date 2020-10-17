@@ -51,6 +51,7 @@ class Character {
 	int _phase;
 	int _frames;
 	int _direction;
+	int _movementDirections;
 
 	struct AnimationDescription {
 		struct Frame {
@@ -65,7 +66,7 @@ class Character {
 
 public:
 	Character(AGDSEngine * engine, const Common::String & name, const ObjectPtr & object):
-		_engine(engine), _name(name), _object(object), _animation(nullptr), _enabled(true), _visible(true), _phase(-1), _frames(0), _direction(-1) {
+		_engine(engine), _name(name), _object(object), _animation(nullptr), _enabled(true), _visible(true), _phase(-1), _frames(0), _direction(-1), _movementDirections(0) {
 	}
 
 	const Common::String & name() const {
