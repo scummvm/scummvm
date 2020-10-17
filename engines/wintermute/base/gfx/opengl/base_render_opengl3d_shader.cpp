@@ -308,11 +308,6 @@ bool BaseRenderOpenGL3DShader::setProjection2D() {
 	return true;
 }
 
-void BaseRenderOpenGL3DShader::resetModelViewTransform() {
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-}
-
 void BaseRenderOpenGL3DShader::setWorldTransform(const Math::Matrix4 &transform) {
 	Math::Matrix4 tmp = transform;
 	tmp.transpose();
@@ -648,7 +643,6 @@ void BaseRenderOpenGL3DShader::renderSceneGeometry(const BaseArray<AdWalkplane *
 }
 
 void BaseRenderOpenGL3DShader::renderShadowGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks, const BaseArray<AdGeneric *> &generics, Camera3D *camera) {
-	resetModelViewTransform();
 	setup3D(camera, true);
 
 	// disable color write
