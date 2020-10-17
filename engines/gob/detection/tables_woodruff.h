@@ -97,6 +97,20 @@
 	kFeatures640x480,
 	0, 0, 0
 },
+{ // Russian Akella version
+	{
+		"woodruff",
+		"",
+		AD_ENTRY1s("intro.stk", "dccf9d31cb720b34d75487408821b77e", 20296390),
+		RU_RUS,
+		kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
+	},
+	kGameTypeWoodruff,
+	kFeatures640x480,
+	0, 0, 0
+},
 {
 	{
 		"woodruff",
