@@ -49,7 +49,9 @@ void InterfaceMap::start(int id) {
 	for (uint i = 0; i < info->attachedObjIds.size(); ++i) {
 		QMessageObject *obj = sys->findObject(info->attachedObjIds[i]);
 		FlicDecoder *flc = g_vm->resMgr()->getFlic(obj->_resourceId);
-		flc->setFrame(1);
+		if (flc) {
+			flc->setFrame(1);
+		}
 		obj->_z = 1;
 		obj->_x = 0;
 		obj->_y = 0;
