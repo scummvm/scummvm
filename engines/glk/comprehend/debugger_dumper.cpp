@@ -28,8 +28,6 @@ namespace Glk {
 namespace Comprehend {
 
 DebuggerDumper::DebuggerDumper() : _game(nullptr) {
-	_opcodes[OPCODE_UNKNOWN] = "unknown";
-
 	_opcodes[OPCODE_HAVE_OBJECT] = "have_object";
 	_opcodes[OPCODE_NOT_HAVE_OBJECT] = "not_have_object";
 	_opcodes[OPCODE_HAVE_CURRENT_OBJECT] = "have_current_object";
@@ -100,7 +98,9 @@ DebuggerDumper::DebuggerDumper() : _game(nullptr) {
 	_opcodes[OPCODE_VAR_DEC] = "var_dec";
 	_opcodes[OPCODE_MOVE_CURRENT_OBJECT_TO_ROOM] = "move_current_object_to_room";
 	_opcodes[OPCODE_DESCRIBE_CURRENT_OBJECT] = "describe_current_object";
-	_opcodes[OPCODE_SET_STRING_REPLACEMENT] = "set_string_replacement";
+	_opcodes[OPCODE_SET_STRING_REPLACEMENT1] = "set_string_replacement1";
+	_opcodes[OPCODE_SET_STRING_REPLACEMENT2] = "set_string_replacement2";
+	_opcodes[OPCODE_SET_STRING_REPLACEMENT3] = "set_string_replacement3";
 	_opcodes[OPCODE_SET_CURRENT_NOUN_STRING_REPLACEMENT] = "set_current_noun_string_replacement";
 	_opcodes[OPCODE_CURRENT_IS_OBJECT] = "current_is_object";
 	_opcodes[OPCODE_DRAW_ROOM] = "draw_room";
@@ -155,7 +155,9 @@ Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
 		line += Common::String::format(" %s", game->instrStringLookup(str_index, str_table).c_str());
 		break;
 
-	case OPCODE_SET_STRING_REPLACEMENT:
+	case OPCODE_SET_STRING_REPLACEMENT1:
+	case OPCODE_SET_STRING_REPLACEMENT2:
+	case OPCODE_SET_STRING_REPLACEMENT3:
 		line += Common::String::format(" %s", game->_replaceWords[instr->_operand[0] - 1].c_str());
 		break;
 	}
