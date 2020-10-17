@@ -24,6 +24,7 @@
 #define AGDS_AGDS_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 #include "common/hashmap.h"
 #include "common/ptr.h"
 #include "common/random.h"
@@ -73,7 +74,8 @@ class Console;
 
 class AGDSEngine : public Engine {
 	friend class Process;
-	typedef Common::List<ProcessPtr> ProcessListType;
+	typedef Common::Array<ProcessPtr> ProcessListType;
+	static constexpr uint MaxProcesses = 100;
 
 public:
 	AGDSEngine(OSystem *syst, const ADGameDescription *gameDesc);
