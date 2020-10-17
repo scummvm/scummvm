@@ -2,7 +2,9 @@
 Keyboard shortcuts
 ===================
 
-ScummVM supports various in-game keyboard and mouse shortcuts. 
+ScummVM supports various in-game keyboard and mouse shortcuts, and since version 2.2.0 these can be manually configured in the :ref:`global settings <keyglobal>` or the :ref:`game settings <keygame>` Keymaps tab, or in the :doc:`configuration file <../advanced_options/configuration_file>`.
+
+The shortcuts listed below are the defaults. 
 
 Common shortcuts (all games)
 -------------------------------
@@ -188,6 +190,19 @@ Indiana Jones and the Last Crusade
         Shortcut, Description
         :kbd:`i` ,Displays IQ points
 
+Myst
+------
+
+.. csv-table::
+      :widths: 40 60
+      :header-rows: 1
+
+      Shortcut, Description
+      Left Click, Move/action 
+      :kbd:`Space`, Pause the game 
+      :kbd:`Esc`, Skip cutscene 
+      :kbd:`F5`, Menu
+
 Nippon Safes
 ---------------
 
@@ -199,6 +214,25 @@ Nippon Safes
         :kbd:`Ctrl + d` ,Starts the debugger
         :kbd:`l`,Load game
         :kbd:`s`,Save game
+
+Riven
+------
+
+.. csv-table::
+      :widths: 40 60
+      :header-rows: 1
+
+      Shortcut, Description
+      Left Click, Move/action 
+      Arrow Keys, Movement 
+      :kbd:`PgUp`, Look up 
+      :kbd:`PgDn`, Look down 
+      :kbd:`Space`, Pause the game 
+      :kbd:`Esc`, Skip cutscene 
+      :kbd:`F5`, Menu 
+      :kbd:`Ctrl + o`, Load game 
+      :kbd:`Ctrl + s`, Save game
+
 
 
 Simon the Sorcerer 1 and 2

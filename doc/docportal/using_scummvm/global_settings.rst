@@ -99,6 +99,8 @@ _`Keymaps tab`
 
 Use the keymaps tab to assign actions to keyboard keys or shortcuts, or mouse or joystick buttons. Click on the red box next to the desired action to add an additional key or button. Click on the dropdown arrow for further options. 
 
+If all the mapped keys are not visible, hover over the red box to see all the mapped keys. 
+
 There are three categories: Global, Graphics and GUI. 
 
 ,,,,,,,,,,,,,,,,,
