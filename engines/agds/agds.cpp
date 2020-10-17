@@ -47,6 +47,7 @@ namespace AGDS {
 
 AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Engine(system),
                                                                              _gameDescription(gameDesc), _pictureCacheId(1), _sharedStorageIndex(-2),
+																			 _processes(MaxProcesses),
                                                                              _mjpgPlayer(), _currentScreen(), _currentCharacter(),
                                                                              _defaultMouseCursor(),
                                                                              _mouse(400, 300),
@@ -177,8 +178,15 @@ void AGDSEngine::runObject(const ObjectPtr &object) {
 
 void AGDSEngine::runProcess(const ObjectPtr &object, uint ip) {
 	debug("starting process %s:%04x", object->getName().c_str(), ip);
-	_processes.push_front(ProcessPtr(new Process(this, object, ip)));
-	_processes.front()->run();
+	for(uint i = 0; i < _processes.size(); ++i) {
+		auto &process = _processes[i];
+		if (!process) {
+			process = ProcessPtr(new Process(this, object, ip));
+			process->run();
+			return;
+		}
+	}
+	error("process table exhausted");
 }
 
 ObjectPtr AGDSEngine::getCurrentScreenObject(const Common::String &name) {
@@ -206,7 +214,9 @@ void AGDSEngine::loadScreen(const Common::String &name) {
 	}
 	_mouseMap.hideAll(this);
 	resetCurrentScreen();
-	_processes.clear();
+	for(uint i = 0; i < _processes.size(); ++i) {
+		_processes[i].reset();
+	}
 	_animations.clear();
 
 	_soundManager.stopAll();
@@ -237,18 +247,20 @@ void AGDSEngine::resetCurrentScreen() {
 
 
 void AGDSEngine::runProcesses() {
-	for (ProcessListType::iterator i = _processes.begin(); i != _processes.end(); ) {
-		ProcessPtr process = *i;
+	for (uint i = 0; i < _processes.size(); ++i) {
+		ProcessPtr &process = _processes[i];
+		if (!process)
+			continue;
+
 		if (process->active()) {
 			process->run();
-			++i;
-		} else if (process->finished()) {
+		}
+		if (process->finished()) {
 			debug("deleting process %s", process->getName().c_str());
-			i = _processes.erase(i);
+			process.reset();
 			//FIXME: when the last process exits, remove object from scene
 		} else {
 			//debug("suspended process %s", process->getName().c_str());
-			++i;
 		}
 	}
 }
@@ -918,9 +930,9 @@ void AGDSEngine::reactivate(const Common::String &name) {
 	if (name.empty())
 		return;
 
-	for(ProcessListType::iterator i = _processes.begin(); i != _processes.end(); ++i) {
-		ProcessPtr process = *i;
-		if (process->getName() == name) {
+	for(uint i = 0; i < _processes.size(); ++i) {
+		ProcessPtr &process = _processes[i];
+		if (process && process->getName() == name) {
 			debug("reactivate %s", name.c_str());
 			process->activate();
 		}
