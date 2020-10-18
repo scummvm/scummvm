@@ -47,6 +47,7 @@ CruHealerProcess::CruHealerProcess() : Process() {
 		_targetMaxHP = avatar->getMaxHP();
 		AudioProcess *audio = AudioProcess::get_instance();
 		if (audio) {
+			// Sound num is the same in both No Remorse and No Regret
 			audio->playSFX(0xdb, 0x80, _itemNum, 1, false);
 		}
 	}
