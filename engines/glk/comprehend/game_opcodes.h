@@ -46,7 +46,7 @@ public:
 	virtual byte getOpcode(const Instruction *instr) {
 		return instr->_opcode;
 	}
-	virtual ScriptOpcode getScriptOpcode(const Instruction *instr) override {
+	ScriptOpcode getScriptOpcode(const Instruction *instr) override {
 		return _opcodeMap[getOpcode(instr)];
 	}
 };
