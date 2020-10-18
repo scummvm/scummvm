@@ -275,31 +275,36 @@ bool KyraEngine_LoK::seq_introStory() {
 		_screen->setScreenPalette(_screen->getPalette(0));
 	_screen->copyPage(3, 0);
 
-	if (_flags.lang == Common::JA_JPN) {
-		const int y1 = 175;
-		int x1, x2, y2, col1;
-		const char *s1, *s2;
+	// Render subtitle text for TEXT*.CPS for game variants that did not translate graphic assets.
+	if (_flags.lang == Common::JA_JPN || _flags.lang == Common::RU_RUS) {
 
-		if (_flags.platform == Common::kPlatformFMTowns) {
-			s1 = _seq_textsTable[18];
-			s2 = _seq_textsTable[19];
-			x1 = (Screen::SCREEN_W - _screen->getTextWidth(s1)) / 2;
-			x2 = (Screen::SCREEN_W - _screen->getTextWidth(s2)) / 2;
+		if (_flags.platform == Common::kPlatformFMTowns || _flags.lang == Common::RU_RUS) {
+			const int y1 = 166,
+			          y2 = 175,
+			          y3 = 184;
+			const char *s1 = _seq_textsTable[18],
+			           *s2 = _seq_textsTable[19],
+			           *s3 = _seq_textsTable[20];
+			const int x1 = (Screen::SCREEN_W - _screen->getTextWidth(s1)) / 2,
+			          x2 = (Screen::SCREEN_W - _screen->getTextWidth(s2)) / 2,
+			          x3 = (Screen::SCREEN_W - _screen->getTextWidth(s3)) / 2;
+			const int col1 = 5;
 			uint8 colorMap[] = { 0, 15, 12, 12 };
 			_screen->setTextColor(colorMap, 0, 3);
-			y2 = 184;
-			col1 = 5;
-
+			_screen->printText(s1, x1, y1, col1, 8);
+			_screen->printText(s2, x2, y2, col1, 8);
+			_screen->printText(s3, x3, y3, col1, 8);
 		} else {
-			s1 = _storyStrings[0];
-			s2 = _storyStrings[1];
-			x1 = x2 = 54;
-			y2 = 185;
-			col1 = 15;
+			const int x1 = 54,
+			          x2 = 54,
+			          y1 = 175,
+			          y2 = 185;
+			const char *s1 = _storyStrings[0],
+			           *s2 = _storyStrings[1];
+			const int col1 = 15;
+			_screen->printText(s1, x1, y1, col1, 8);
+			_screen->printText(s2, x2, y2, col1, 8);
 		}
-
-		_screen->printText(s1, x1, y1, col1, 8);
-		_screen->printText(s2, x2, y2, col1, 8);
 	}
 
 	_screen->updateScreen();
