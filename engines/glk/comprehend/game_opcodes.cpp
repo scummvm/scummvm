@@ -33,8 +33,6 @@ ComprehendGameOpcodes::ComprehendGameOpcodes() {
 	Common::fill(&_opcodeMap[0], &_opcodeMap[0x100], OPCODE_UNKNOWN);
 }
 
-#define GET_ITEM item = get_item(instr->_operand[0] - (_comprehendVersion == 2 ? 0 : 1))
-
 void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sentence *sentence,
 		FunctionState *func_state) {
 //	byte verb = sentence ? sentence->_formattedWords[0] : 0;
@@ -84,7 +82,7 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 		break;
 
 	case OPCODE_HAVE_OBJECT:
-		GET_ITEM;
+		item = getItem(instr, sentence);
 		func_set_test_result(func_state, item->_room == ROOM_INVENTORY);
 		break;
 
@@ -115,12 +113,12 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 		break;
 
 	case OPCODE_OBJECT_IS_NOWHERE:
-		GET_ITEM;
+		item = getItem(instr, sentence);
 		func_set_test_result(func_state, item->_room == ROOM_NOWHERE);
 		break;
 
 	case OPCODE_OBJECT_PRESENT:
-		GET_ITEM;
+		item = getItem(instr, sentence);
 		func_set_test_result(func_state, item->_room == _currentRoom);
 		break;
 
@@ -191,7 +189,7 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 		break;
 
 	case OPCODE_TAKE_OBJECT:
-		GET_ITEM;
+		item = getItem(instr, sentence);
 		move_object(item, ROOM_INVENTORY);
 		break;
 
@@ -419,18 +417,18 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 		break;
 
 	case OPCODE_MOVE_OBJECT_TO_CURRENT_ROOM:
-		GET_ITEM;
+		item = getItem(instr, sentence);
 		move_object(item, _currentRoom);
 		break;
 
 	case OPCODE_OBJECT_IN_ROOM:
-		GET_ITEM;
+		item = getItem(instr, sentence);
 		func_set_test_result(func_state,
 			item->_room == instr->_operand[1]);
 		break;
 
 	case OPCODE_OBJECT_NOT_IN_ROOM:
-		GET_ITEM;
+		item = getItem(instr, sentence);
 		func_set_test_result(func_state, !item || item->_room != _currentRoom);
 		break;
 
@@ -440,7 +438,7 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 		break;
 
 	case OPCODE_MOVE_OBJECT_TO_ROOM:
-		GET_ITEM;
+		item = getItem(instr, sentence);
 		move_object(item, instr->_operand[1]);
 		break;
 
@@ -488,7 +486,7 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 		break;
 
 	case OPCODE_NOT_HAVE_OBJECT:
-		GET_ITEM;
+		item = getItem(instr, sentence);
 		func_set_test_result(func_state,
 			item->_room != ROOM_INVENTORY);
 		break;
@@ -517,7 +515,7 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 		break;
 
 	case OPCODE_OBJECT_IS_NOT_NOWHERE:
-		GET_ITEM;
+		item = getItem(instr, sentence);
 		func_set_test_result(func_state, item->_room != ROOM_NOWHERE);
 		break;
 
@@ -527,12 +525,12 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 		break;
 
 	case OPCODE_OBJECT_NOT_PRESENT:
-		GET_ITEM;
+		item = getItem(instr, sentence);
 		func_set_test_result(func_state, !isItemPresent(item));
 		break;
 
 	case OPCODE_REMOVE_OBJECT:
-		GET_ITEM;
+		item = getItem(instr, sentence);
 		move_object(item, ROOM_NOWHERE);
 		break;
 
@@ -566,7 +564,7 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 		break;
 
 	case OPCODE_DROP_OBJECT:
-		GET_ITEM;
+		item = getItem(instr, sentence);
 		move_object(item, _currentRoom);
 		break;
 
@@ -588,17 +586,17 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 		break;
 
 	case OPCODE_SET_OBJECT_DESCRIPTION:
-		GET_ITEM;
+		item = getItem(instr, sentence);
 		item->_stringDesc = (instr->_operand[2] << 8) | instr->_operand[1];
 		break;
 
 	case OPCODE_SET_OBJECT_LONG_DESCRIPTION:
-		GET_ITEM;
+		item = getItem(instr, sentence);
 		item->_longString = (instr->_operand[2] << 8) | instr->_operand[1];
 		break;
 
 	case OPCODE_SET_OBJECT_GRAPHIC:
-		GET_ITEM;
+		item = getItem(instr, sentence);
 		item->_graphic = instr->_operand[1];
 		if (item->_room == _currentRoom)
 			_updateFlags |= UPDATE_GRAPHICS;
@@ -674,6 +672,10 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 		ComprehendGameOpcodes::execute_opcode(instr, sentence, func_state);
 		break;
 	}
+}
+
+Item *ComprehendGameV1::getItem(const Instruction *instr, const Sentence *sentence) {
+	return get_item(instr->_operand[0] - (_comprehendVersion == 2 ? 0 : 1));
 }
 
 /*-------------------------------------------------------*/
@@ -796,7 +798,7 @@ void ComprehendGameV2::execute_opcode(const Instruction *instr, const Sentence *
 		break;
 
 	case OPCODE_OBJECT_CAN_TAKE:
-		GET_ITEM;
+		item = getItem(instr, sentence);
 		func_set_test_result(func_state, item->_flags & ITEMF_CAN_TAKE);
 		break;
 
@@ -811,13 +813,21 @@ void ComprehendGameV2::execute_opcode(const Instruction *instr, const Sentence *
 	}
 }
 
+Item *ComprehendGameV2::getItem(const Instruction *instr, const Sentence *sentence) {
+	if ((instr->_opcode & 0x30) == 0x30) {
+		byte noun = sentence ? sentence->_formattedWords[2] : 0;
+		return get_item_by_noun(noun);
+	} else {
+		return get_item(instr->_operand[0]);
+	}
+}
+
 byte ComprehendGameV2::getOpcode(const Instruction *instr) {
 	// Special pre-processing for opcodes
 	byte opcode = instr->_opcode;
 	if (!(opcode & 0x80))
 		opcode &= 0x3f;
 	if ((opcode & 0x30) == 0x30) {
-		// TODO: Check if getCurrentObjectRoom call in original is needed in ScummVM
 		opcode = (opcode & ~0x10) + 1;
 	}
 
