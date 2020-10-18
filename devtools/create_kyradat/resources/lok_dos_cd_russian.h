@@ -1,3 +1,5 @@
+// Includes engine data originally translated by Siberian GRemlin.
+
 static const char *const k1IntroStringsDOSCDRussian[51] = {
 	"This is a text test - 1",
 	"This is a text test - 2",
