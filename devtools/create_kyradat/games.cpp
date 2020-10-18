@@ -50,6 +50,7 @@ const Game kyra1Games[] = {
 	{ kKyra1, kPlatformDOS, kTalkieVersion, FR_FRA },
 	{ kKyra1, kPlatformDOS, kTalkieVersion, IT_ITA },
 	{ kKyra1, kPlatformDOS, kTalkieVersion, ES_ESP },
+	{ kKyra1, kPlatformDOS, kTalkieVersion, RU_RUS },
 
 	{ kKyra1, kPlatformFMTowns, kNoSpecial, EN_ANY },
 	{ kKyra1, kPlatformFMTowns, kNoSpecial, JA_JPN },
