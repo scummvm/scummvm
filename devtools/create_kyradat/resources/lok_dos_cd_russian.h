@@ -337,7 +337,7 @@ static const char *const k1GUIStringsDOSCDRussian[] = {
 	"",
 	"",
 	"",
-	"\x02\x1B""a""\x14"".""\x1C""e""\x1D""}",
+	"\x02\x1B""a""\x14\x1D""oe ""\x1C""e""\x1D""}",
 	"\x14\x1A\x1B",
 	"\x14`""\x1A\x1B",
 	"\x03""a",
