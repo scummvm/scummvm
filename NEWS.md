@@ -29,6 +29,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Kyra:
    - Added support for Russian fan translation of The Legend of Kyrandia (translation by Siberian GRemlin).
+   - Fixed Russian fan translation of The Legend of Kyrandia 2 - Hand of Fate (added Russian subtitles for intro and credits).
 
  Lure:
    - Fix fire animation in first room when loading saves.
