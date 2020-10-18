@@ -157,6 +157,19 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 		_currentReplaceWord = instr->_operand[0] - 1;
 		break;
 
+	case OPCODE_TAKE_CURRENT_OBJECT:
+		item = get_item_by_noun(noun);
+		if (!item)
+			error("Attempt to take object failed\n");
+
+		move_object(item, ROOM_INVENTORY);
+		break;
+
+	case OPCODE_TAKE_OBJECT:
+		item = get_item(instr->_operand[0] - 1);
+		move_object(item, ROOM_INVENTORY);
+		break;
+
 	case OPCODE_TEST_FLAG:
 		func_set_test_result(func_state, _flags[instr->_operand[0]]);
 		break;
@@ -576,19 +589,6 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 		move_object(item, _currentRoom);
 		break;
 
-	case OPCODE_TAKE_CURRENT_OBJECT:
-		item = get_item_by_noun(noun);
-		if (!item)
-			error("Attempt to take object failed\n");
-
-		move_object(item, ROOM_INVENTORY);
-		break;
-
-	case OPCODE_TAKE_OBJECT:
-		item = get_item(instr->_operand[0] - 1);
-		move_object(item, ROOM_INVENTORY);
-		break;
-
 	case OPCODE_TEST_NOT_FLAG:
 		func_set_test_result(func_state,
 			!_flags[instr->_operand[0]]);
@@ -701,11 +701,13 @@ ComprehendGameV2::ComprehendGameV2() {
 	_opcodeMap[0x21] = OPCODE_OBJECT_PRESENT;
 	_opcodeMap[0x25] = OPCODE_NOT_TAKEABLE;
 	_opcodeMap[0x29] = OPCODE_INVENTORY_FULL;
+	_opcodeMap[0x81] = OPCODE_TAKE_OBJECT;
 	_opcodeMap[0x85] = OPCODE_MOVE_TO_ROOM;
 	_opcodeMap[0x87] = OPCODE_SET_ROOM_DESCRIPTION;
 	_opcodeMap[0x8e] = OPCODE_PRINT;
 	_opcodeMap[0x92] = OPCODE_CALL_FUNC;
 	_opcodeMap[0x99] = OPCODE_SET_FLAG;
+	_opcodeMap[0xa0] = OPCODE_TAKE_CURRENT_OBJECT;
 	_opcodeMap[0xa1] = OPCODE_CLEAR_FLAG40;
 	_opcodeMap[0xa5] = OPCODE_SET_FLAG40;
 	_opcodeMap[0xa9] = OPCODE_CLEAR_INVISIBLE;
@@ -739,7 +741,6 @@ ComprehendGameV2::ComprehendGameV2() {
 	_opcodeMap[0x61] = OPCODE_OBJECT_NOT_PRESENT;
 	_opcodeMap[0x70] = OPCODE_CURRENT_OBJECT_NOT_PRESENT;
 	_opcodeMap[0x80] = OPCODE_INVENTORY;
-	_opcodeMap[0x81] = OPCODE_TAKE_OBJECT;
 	_opcodeMap[0x82] = OPCODE_MOVE_OBJECT_TO_ROOM;
 	_opcodeMap[0x84] = OPCODE_SAVE_ACTION;
 	_opcodeMap[0x86] = OPCODE_VAR_ADD;
@@ -753,7 +754,6 @@ ComprehendGameV2::ComprehendGameV2() {
 	_opcodeMap[0x98] = OPCODE_TURN_TICK;
 	_opcodeMap[0x9d] = OPCODE_CLEAR_FLAG;
 	_opcodeMap[0x9e] = OPCODE_INVENTORY_ROOM;
-	_opcodeMap[0xa0] = OPCODE_TAKE_CURRENT_OBJECT;
 	_opcodeMap[0xa2] = OPCODE_SET_OBJECT_GRAPHIC;
 	_opcodeMap[0xb1] = OPCODE_MOVE_DIR;
 	_opcodeMap[0xb5] = OPCODE_DESCRIBE_CURRENT_OBJECT;
