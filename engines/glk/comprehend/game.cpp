@@ -778,9 +778,8 @@ void ComprehendGame::doBeforeTurn() {
 	// Run the game specific before turn bits
 	beforeTurn();
 
-	if (_comprehendVersion == 1)
-		// Run the each turn functions
-		eval_function(0, nullptr);
+	// Run the each turn functions
+	eval_function(0, nullptr);
 
 	update();
 }
