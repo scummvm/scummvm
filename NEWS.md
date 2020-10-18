@@ -27,6 +27,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Brazillian Portuguese Grim Fandango.
    - Added support for Russian EMI.
 
+ Kyra:
+   - Added support for Russian fan translation of The Legend of Kyrandia (translation by Siberian GRemlin).
+
  Lure:
    - Fix fire animation in first room when loading saves.
 
