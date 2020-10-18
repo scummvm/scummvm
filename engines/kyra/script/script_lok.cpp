@@ -1034,6 +1034,8 @@ int KyraEngine_LoK::o1_specialEventDisplayBrynnsNote(EMCState *script) {
 			_screen->loadBitmap("NOTEFRE.CPS", 3, 3, 0);
 		else if (_flags.lang == Common::DE_DEU)
 			_screen->loadBitmap("NOTEGER.CPS", 3, 3, 0);
+		else if (_flags.lang == Common::RU_RUS)
+			_screen->loadBitmap("NOTEENG.CPS", 3, 3, 0);
 	} else {
 		_screen->loadBitmap("NOTE.CPS", 3, 3, 0);
 	}
