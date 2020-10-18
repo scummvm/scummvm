@@ -37,11 +37,11 @@ $(PATH_BUILD_LIBSCUMMVM): libscummvm.so | $(PATH_BUILD)
 
 $(APK_MAIN): $(PATH_BUILD_GRADLE) $(PATH_BUILD_ASSETS) $(PATH_BUILD_LIBSCUMMVM) | $(PATH_BUILD)
 	(cd $(PATH_BUILD); ./gradlew assembleDebug)
-	$(CP) $(PATH_BUILD)/build/outputs/apk/debug/ScummVM-debug.apk $@
+	$(CP) $(PATH_BUILD)/build/outputs/apk/debug/$(APK_MAIN) $@
 
 $(APK_MAIN_RELEASE): $(PATH_BUILD_GRADLE) $(PATH_BUILD_ASSETS) $(PATH_BUILD_LIBSCUMMVM) | $(PATH_BUILD)
-	(cd $(PATH_BUILD); ./gradlew build)
-	$(CP) $(PATH_BUILD)/build/outputs/apk/release/ScummVM-release-unsigned.apk $@
+	(cd $(PATH_BUILD); ./gradlew assembleRelease)
+	$(CP) $(PATH_BUILD)/build/outputs/apk/release/$(APK_MAIN_RELEASE) $@
 
 all: $(APK_MAIN)
 
