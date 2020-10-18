@@ -32,6 +32,7 @@ namespace {
 #define KYRA1_TOWNS_FLAGS FLAGS(false, true, false, false, false, false, false, false, false, Kyra::GI_KYRA1)
 #define KYRA1_TOWNS_SJIS_FLAGS FLAGS(false, true, false, false, true, false, false, false, false, Kyra::GI_KYRA1)
 #define KYRA1_CD_FLAGS FLAGS(false, true, true, false, false, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, true, true, false, false, false, false, false, false, Kyra::GI_KYRA1)
 #define KYRA1_DEMO_FLAGS FLAGS(true, false, false, false, false, false, false, false, false, Kyra::GI_KYRA1)
 #define KYRA1_DEMO_CD_FLAGS FLAGS(true, true, true, false, false, false, false, false, false, Kyra::GI_KYRA1)
 
@@ -468,7 +469,7 @@ const KYRAGameDescription adGameDescs[] = {
 			ADGF_CD,
 			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
 		},
-		KYRA1_CD_FLAGS
+		KYRA1_CD_FAN_FLAGS(Common::RU_RUS, Common::EN_ANY)
 	},
 	{	// Special Kyrandia 1 CD demo
 		{
