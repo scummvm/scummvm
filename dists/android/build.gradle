@@ -55,8 +55,14 @@ android {
 
     }
     buildTypes {
+        debug{
+            debuggable true
+        }
         release {
+            debuggable false
             minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            zipAlignEnabled true
         }
     }
     sourceSets {
