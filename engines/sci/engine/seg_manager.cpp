@@ -132,7 +132,7 @@ SegmentObj *SegManager::allocSegment(SegmentObj *mem, SegmentId *segid) {
 Script *SegManager::allocateScript(int script_nr, SegmentId *segid) {
 	// Check if the script already has an allocated segment. If it
 	// does, return that segment.
-	*segid = _scriptSegMap.getVal(script_nr, 0);
+	*segid = _scriptSegMap.getValOrDefault(script_nr, 0);
 	if (*segid > 0) {
 		return (Script *)_heap[*segid];
 	}
@@ -344,7 +344,7 @@ reg_t SegManager::findObjectByName(const Common::String &name, int index) {
 
 // return the seg if script_id is valid and in the map, else 0
 SegmentId SegManager::getScriptSegment(int script_id) const {
-	return _scriptSegMap.getVal(script_id, 0);
+	return _scriptSegMap.getValOrDefault(script_id, 0);
 }
 
 SegmentId SegManager::getScriptSegment(int script_nr, ScriptLoadType load, bool applyScriptPatches) {
