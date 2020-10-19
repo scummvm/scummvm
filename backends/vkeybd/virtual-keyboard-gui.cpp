@@ -106,8 +106,17 @@ VirtualKeyboardGUI::~VirtualKeyboardGUI() {
 void VirtualKeyboardGUI::initMode(VirtualKeyboard::Mode *mode) {
 	assert(mode->image);
 
-	_kbdSurface = mode->image;
-	_kbdTransparentColor = mode->transparentColor;
+	Graphics::PixelFormat kbdFormat = mode->image->format;
+	Graphics::PixelFormat overlayFormat = _system->getOverlayFormat();
+	if (kbdFormat.bytesPerPixel == overlayFormat.bytesPerPixel) {
+		_kbdSurface = mode->image;
+		_kbdTransparentColor = mode->transparentColor;
+	} else {
+		_kbdSurface = mode->image->convertTo(overlayFormat);
+		byte a, r, g, b;
+		kbdFormat.colorToARGB(mode->transparentColor, a, r, g, b);
+		_kbdTransparentColor = overlayFormat.ARGBToColor(a, r, g, b);
+	}
 	_kbdBound.setWidth(_kbdSurface->w);
 	_kbdBound.setHeight(_kbdSurface->h);
 
