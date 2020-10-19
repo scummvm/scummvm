@@ -49,29 +49,25 @@ public:
 		return _name;
 	};
 
-	const uint8 *getSequence1() const {
-		return _sequence1;
+	const uint8 *getData() const {
+		return _data;
 	}
 
-	const uint8 *getSequence2() const {
-		return _sequence2;
+	uint16 getOffset(int block) const {
+		assert(block < ARRAYSIZE(_offsets));
+		return _offsets[block];
 	}
 
-	uint16 getSequence1Len() const {
-		return _sequence1len;
-	}
-
-	uint16 getSequence2Len() const {
-		return _sequence2len;
+	uint16 getDataLen() const {
+		return _dataLen;
 	}
 
 private:
 	Std::string _name;
 
-	uint16 _sequence1len;
-	uint16 _sequence2len;
-	uint8 *_sequence1;
-	uint8 *_sequence2;
+	uint16 _offsets[4];
+	uint8 *_data;
+	uint16 _dataLen;
 };
 
 } // End of namespace Ultima8

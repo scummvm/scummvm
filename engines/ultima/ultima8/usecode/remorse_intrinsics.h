@@ -216,7 +216,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Actor::I_setDead,
 	0, // I_playFlic(char *) Intrinsic0A9(void)
 	AudioProcess::I_playSFX, // void Intrinsic0AA(2 bytes)
-	0, // int Intrinsic0AB(4 bytes)
+	Actor::I_getField0x59Bit1, // int Intrinsic0AB(4 bytes)
 	Item::I_getFamilyOfType, // void Intrinsic0AC(2 bytes)
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	Item::I_getQLo, // based on same coff set as 02B

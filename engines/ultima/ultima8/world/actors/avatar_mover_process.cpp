@@ -901,7 +901,7 @@ void AvatarMoverProcess::tryAttack() {
 	MainActor *avatar = getMainActor();
 	Direction dir = avatar->getDir();
 	if (!avatar->isInCombat()) {
-		avatar->setInCombat();
+		avatar->setInCombat(0);
 		waitFor(avatar->doAnim(Animation::readyWeapon, dir));
 	} else {
 		if (canAttack()) {

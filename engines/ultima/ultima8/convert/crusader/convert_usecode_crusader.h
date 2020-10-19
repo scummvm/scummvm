@@ -222,7 +222,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void Actor::I_setDead(Actor *)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
 	"void I_playFlic0A9(char *)", // same coff as 092
 	"void AudioProcess::I_playSFX(2 bytes)", // same coff as 0D4
-	"byte Actor::I_NPCGetField0x59Flag1_0AB(Actor *)",
+	"byte Actor::I_getField0x59Bit1(Actor *)",
 	"int16 Item::I_getFamilyOfType(Item *)", // per pentagram notes, matches disasm.
 	"int16 Item::I_getNPCNum(Item *)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
 	"int16 Item::I_getQLo(Item *)", // same as 02B based on same coff set 010, 02B, 066, 084, 0A1, 0AE, 0D9, 0EA

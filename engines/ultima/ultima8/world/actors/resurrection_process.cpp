@@ -72,7 +72,8 @@ void ResurrectionProcess::run() {
 	}
 
 	// go into combat mode
-	a->setInCombat();
+	// Note: only happens in U8, so activity num is not important.
+	a->setInCombat(0);
 
 	// we should already be killed by going into combat mode.
 	if (!(_flags & PROC_TERMINATED))

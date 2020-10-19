@@ -86,6 +86,7 @@ SuperSpriteProcess::SuperSpriteProcess(int shape, int frame, int sx, int sy, int
 				rng /= 2;
 			} else {
 				// TODO: various other flags are checked in the game (around 1138:0bd1)
+				// such as World_FinishedAvatarMoveTimeout() -> 8
 				//  to make it either 5 or 8.  For now just use 5.
 				rng /= 5;
 			}

@@ -46,6 +46,7 @@
 #include "ultima/ultima8/world/actors/loiter_process.h"
 #include "ultima/ultima8/world/actors/guard_process.h"
 #include "ultima/ultima8/world/actors/combat_process.h"
+#include "ultima/ultima8/world/actors/attack_process.h"
 #include "ultima/ultima8/world/actors/pace_process.h"
 #include "ultima/ultima8/world/actors/surrender_process.h"
 #include "ultima/ultima8/world/world.h"
@@ -75,7 +76,7 @@ Actor::Actor() : _strength(0), _dexterity(0), _intelligence(0),
 		_lastAnim(Animation::stand), _animFrame(0), _direction(dir_north),
 		_fallStart(0), _unkByte(0), _actorFlags(0), _combatTactic(0),
 		_homeX(0), _homeY(0), _homeZ(0), _currentActivityNo(0),
-		_lastActivityNo(0), _activeWeapon(0) {
+		_lastActivityNo(0), _activeWeapon(0), _lastTimeWasHit(0) {
 	_defaultActivity[0] = 0;
 	_defaultActivity[1] = 0;
 	_defaultActivity[2] = 0;
@@ -635,7 +636,7 @@ uint16 Actor::setActivityU8(int activity) {
 		return Kernel::get_instance()->addProcess(new DelayProcess(1));
 		break;
 	case 1: // combat
-		setInCombat();
+		setInCombatU8();
 		return 0;
 	case 2: // stand
 		// NOTE: temporary fall-throughs!
@@ -676,11 +677,11 @@ uint16 Actor::setActivityCru(int activity) {
 	    break;
 	case 5:
 	case 9:
-	case 10:
+	case 0xa:
 	case 0xb:
 	case 0xc:
 		// attack
-		setInCombat();
+		setInCombatCru(activity);
 		return 0;
 	case 0xd:
 		// Only in No Regret
@@ -804,12 +805,14 @@ void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage
 	if (isDead())
 		return;
 
+	_lastTimeWasHit = Kernel::get_instance()->getFrameNum() * 2;
+
 	if (shape != 1 && this != getControlledActor()) {
 		Actor *controlled = getControlledActor();
 		if (!isInCombat()) {
 			setActivity(getDefaultActivity(2)); // get activity from field 0xA
 			if (!isInCombat()) {
-				setInCombat();
+				setInCombatCru(5);
 				CombatProcess *combat = getCombatProcess();
 				if (combat && controlled) {
 					combat->setTarget(controlled->getObjId());
@@ -819,7 +822,7 @@ void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage
 			if (getCurrentActivityNo() == 8) {
 				setActivity(5);
 			}
-			setInCombat();
+			setInCombatCru(5);
 			CombatProcess *combat = getCombatProcess();
 			if (combat && controlled) {
 				combat->setTarget(controlled->getObjId());
@@ -1004,7 +1007,7 @@ void Actor::receiveHitU8(uint16 other, Direction dir, int damage, uint16 damage_
 		if (attacker)
 			target = attacker->getObjId();
 		if (!isInCombat())
-			setInCombat();
+			setInCombatU8();
 
 		CombatProcess *cp = getCombatProcess();
 		assert(cp);
@@ -1303,7 +1306,24 @@ CombatProcess *Actor::getCombatProcess() {
 	return cp;
 }
 
-void Actor::setInCombat() {
+AttackProcess *Actor::getAttackProcess() {
+	Process *p = Kernel::get_instance()->findProcess(_objId, 0x259); // CONSTANT!
+	if (!p)
+		return nullptr;
+	AttackProcess *ap = dynamic_cast<AttackProcess *>(p);
+	assert(ap);
+
+	return ap;
+}
+
+void Actor::setInCombat(int activity) {
+	if (GAME_IS_U8)
+		setInCombatU8();
+	else
+		setInCombatCru(activity);
+}
+
+void Actor::setInCombatU8() {
 	if ((_actorFlags & ACT_INCOMBAT) != 0) return;
 
 	assert(getCombatProcess() == nullptr);
@@ -1324,12 +1344,55 @@ void Actor::setInCombat() {
 	setActorFlag(ACT_INCOMBAT);
 }
 
+void Actor::setInCombatCru(int activity) {
+	if ((_actorFlags & ACT_INCOMBAT) != 0) return;
+
+	assert(getAttackProcess() == nullptr);
+
+	setActorFlag(ACT_INCOMBAT);
+
+	AttackProcess *ap = new AttackProcess(this);
+	Kernel::get_instance()->addProcess(ap);
+
+	if (getCurrentActivityNo() == 8) {
+		// Guard process.. set some flag in ap
+		ap->setField97();
+	}
+	if (activity == 0xc) {
+		ap->setTimer3();
+		// This sets fields 0x77 and 0x79 of the attack process
+		// to some random timer value in the future
+		//ap->AttackProcess_1108_1485();
+	}
+
+	uint16 animproc = 0;
+	if (activity == 9 || activity == 0xb) {
+		ap->setIsActivity9OrB();
+		animproc = doAnim(Animation::readyWeapon, dir_current);
+	} else {
+		animproc = doAnim(Animation::stand, dir_current);
+	}
+	if (animproc) {
+		// Do the animation first
+		ap->waitFor(animproc);
+	}
+
+	if (activity == 0xa || activity == 0xb) {
+		ap->setIsActivityAOrB();
+	}
+}
+
 void Actor::clearInCombat() {
 	if ((_actorFlags & ACT_INCOMBAT) == 0) return;
 
-	CombatProcess *cp = getCombatProcess();
-	if (cp)
-		cp->terminate();
+	Process *p;
+	if (GAME_IS_U8) {
+		p = getCombatProcess();
+	} else {
+		p = getAttackProcess();
+	}
+	if (p)
+		p->terminate();
 
 	clearActorFlag(ACT_INCOMBAT);
 }
@@ -1477,6 +1540,7 @@ void Actor::saveData(Common::WriteStream *ws) {
 		ws->writeUint16LE(_currentActivityNo);
 		ws->writeUint16LE(_lastActivityNo);
 		ws->writeUint16LE(_activeWeapon);
+		ws->writeSint32LE(_lastTimeWasHit);
 	}
 }
 
@@ -1508,6 +1572,7 @@ bool Actor::loadData(Common::ReadStream *rs, uint32 version) {
 		_currentActivityNo = rs->readUint16LE();
 		_lastActivityNo = rs->readUint16LE();
 		_activeWeapon = rs->readUint16LE();
+		_lastTimeWasHit = rs->readSint32LE();
 	}
 
 	return true;
@@ -1720,7 +1785,8 @@ uint32 Actor::I_setInCombat(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ACTOR_FROM_PTR(actor);
 	if (!actor) return 0;
 
-	actor->setInCombat();
+	assert(GAME_IS_U8);
+	actor->setInCombatU8();
 
 	return 0;
 }
@@ -1739,9 +1805,11 @@ uint32 Actor::I_setTarget(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(target);
 	if (!actor) return 0;
 
+	assert(GAME_IS_U8);
+
 	CombatProcess *cp = actor->getCombatProcess();
 	if (!cp) {
-		actor->setInCombat();
+		actor->setInCombatU8();
 		cp = actor->getCombatProcess();
 	}
 	if (!cp) {
@@ -2234,6 +2302,15 @@ uint32 Actor::I_turnToward(const uint8 *args, unsigned int /*argsize*/) {
 	warning("Actor::I_turnToward: Ignoring unknown param %d", unk);
 
 	return actor->turnTowardDir(Direction_FromUsecodeDir(dir));
+}
+
+uint32 Actor::I_getField0x59Bit1(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	if (!actor) return 0;
+
+	if (actor->hasActorFlags(ACT_CRU5ABIT1))
+		return 1;
+	return 0;
 }
 
 

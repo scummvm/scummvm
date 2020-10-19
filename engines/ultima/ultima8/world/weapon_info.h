@@ -48,6 +48,7 @@ struct WeaponInfo {
 	uint16 _displayGumpShape; //! The gump shape to use for inventory display (3,4,5)
 	uint16 _displayGumpFrame; //!< The frame to use in the inventory gump
 	uint8 _small;	//! A flag whether or not the weapon is "small" (changes the animations used)
+	uint8 _field8;	//! Not totally sure, used like "cycle time" in Attack Process
 
 	enum DmgType {
 		DMG_NORMAL = 0x0001,

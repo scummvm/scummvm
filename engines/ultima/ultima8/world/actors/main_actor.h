@@ -89,7 +89,15 @@ public:
 	uint16 getDamageType() const override;
 	int getDamageAmount() const override;
 
-	void setInCombat() override;
+	void toggleInCombat() {
+		if (isInCombat())
+			clearInCombat();
+		else
+			setInCombat(0);
+	}
+
+	// Note: activity num parameter is ignored for Avatar.
+	void setInCombat(int activity) override;
 	void clearInCombat() override;
 
 	ProcId die(uint16 DamageType) override;

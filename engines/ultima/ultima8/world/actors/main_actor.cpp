@@ -478,7 +478,7 @@ int MainActor::getDamageAmount() const {
 	return damage;
 }
 
-void MainActor::setInCombat() {
+void MainActor::setInCombat(int activity) {
 	setActorFlag(ACT_INCOMBAT);
 	if (GAME_IS_U8)
 		MusicProcess::get_instance()->playCombatMusic(98); // CONSTANT!
@@ -760,7 +760,8 @@ uint32 MainActor::I_clrAvatarInCombat(const uint8 * /*args*/,
 uint32 MainActor::I_setAvatarInCombat(const uint8 * /*args*/,
                                       unsigned int /*argsize*/) {
 	MainActor *av = getMainActor();
-	av->setInCombat();
+	// Note: only happens in U8, so activity num is not important.
+	av->setInCombat(0);
 
 	return 0;
 }
@@ -847,6 +848,9 @@ void MainActor::useInventoryItem(Item *item) {
 	}
 	item->callUsecodeEvent_use();
 
+	// 0x4d4 = datalink, 0x52d = scanner, 0x52e = ionic,
+	// 0x52f = plasma, 0x530 = graviton
+	// TODO: check these for no regret
 	if (GAME_IS_CRUSADER && (shapenum != 0x4d4 && shapenum != 0x52d &&
 							 shapenum != 0x530 && shapenum != 0x52f &&
 							 shapenum != 0x52e)) {

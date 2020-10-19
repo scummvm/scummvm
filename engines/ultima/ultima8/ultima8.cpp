@@ -110,7 +110,10 @@
 #include "ultima/ultima8/world/actors/surrender_process.h"
 #include "ultima/ultima8/world/actors/combat_process.h"
 #include "ultima/ultima8/world/actors/guard_process.h"
+#include "ultima/ultima8/world/actors/attack_process.h"
+#include "ultima/ultima8/world/actors/pace_process.h"
 #include "ultima/ultima8/world/fireball_process.h"
+#include "ultima/ultima8/world/super_sprite_process.h"
 #include "ultima/ultima8/world/destroy_item_process.h"
 #include "ultima/ultima8/world/actors/ambush_process.h"
 #include "ultima/ultima8/world/actors/pathfinder.h"
@@ -306,6 +309,12 @@ bool Ultima8Engine::startup() {
 		ProcessLoader<CrosshairProcess>::load);
 	_kernel->addProcessLoader("ItemSelectionProcess",
 		ProcessLoader<ItemSelectionProcess>::load);
+	_kernel->addProcessLoader("PaceProcess",
+		ProcessLoader<PaceProcess>::load);
+	_kernel->addProcessLoader("SuperSpriteProcess",
+		ProcessLoader<SuperSpriteProcess>::load);
+	_kernel->addProcessLoader("AttackProcess",
+		ProcessLoader<AttackProcess>::load);
 
 	_objectManager = new ObjectManager();
 	_mouse = new Mouse();

@@ -413,7 +413,8 @@ void ActorAnimProcess::doSpecial() {
 		}
 
 		if (hostile) {
-			hostile->setInCombat();
+			// Note: only happens in U8, so activity num is not important.
+			hostile->setInCombat(0);
 			CombatProcess *hostilecp = hostile->getCombatProcess();
 			CombatProcess *cp = a->getCombatProcess();
 			if (hostilecp && cp)

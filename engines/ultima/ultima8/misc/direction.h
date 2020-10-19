@@ -46,7 +46,8 @@ enum Direction {
 	dir_wnw = 13,
 	dir_northwest = 14,
 	dir_nnw = 15,
-	dir_current = 16
+	dir_current = 16,
+	dir_invalid = 100
 };
 
 enum DirectionMode {

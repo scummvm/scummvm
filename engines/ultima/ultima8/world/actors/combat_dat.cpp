@@ -31,24 +31,18 @@ CombatDat::CombatDat(Common::SeekableReadStream &rs) {
 	rs.read(namebuf, 16);
 	_name.assign(namebuf);
 
-	uint16 offset1 = rs.readUint16LE();
-	uint16 offset2 = rs.readUint16LE();
+	for (int i = 0; i < 4; i++)
+		_offsets[i] = rs.readUint16LE();
 
-	int data1size = offset2 - offset1;
-	int data2size = rs.size() - offset2;
-	_sequence1 = new uint8[data1size];
-	_sequence2 = new uint8[data2size];
+	int datasize = rs.size();
+	rs.seek(0, SEEK_SET);
+	_data = new uint8[datasize];
 
-	rs.seek(offset1);
-	_sequence1len = rs.read(_sequence1, data1size);
-
-	rs.seek(offset2);
-	_sequence2len = rs.read(_sequence2, data2size);
+	_dataLen = rs.read(_data, datasize);
 }
 
 CombatDat::~CombatDat() {
-	delete [] _sequence1;
-	delete [] _sequence2;
+	delete [] _data;
 }
 
 } // End of namespace Ultima8

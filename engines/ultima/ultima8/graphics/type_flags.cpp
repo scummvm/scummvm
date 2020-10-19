@@ -267,6 +267,10 @@ void TypeFlags::loadWeaponInfo() {
 		else
 			wi->_small = 0;
 
+		// TODO: this should be 1, 2, or 3 depending on weapon.
+		// It's used in the AttackProcess
+		wi->_field8 = 1;
+
 		if (wi->_shape > _shapeInfo.size()) {
 			warning("ignoring weapon info for shape %d beyond size %d.",
 					wi->_shape, _shapeInfo.size());
