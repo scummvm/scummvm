@@ -733,7 +733,7 @@
 		AD_ENTRY1s("intro.stk", "ae38e1dac63576b9a7d34a96fd6eb37c", 5731374),
 		FR_FRA,
 		kPlatformCDi,
-		ADGF_DEMO,
+		ADGF_DEMO | ADGF_UNSTABLE,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeGob1,
@@ -747,7 +747,7 @@
 		AD_ENTRY1s("intro.stk", "ca15cc119fea5ee432083e7f6b873c38", 2441216),
 		FR_FRA,
 		kPlatformCDi,
-		ADGF_DEMO,
+		ADGF_DEMO | ADGF_UNSTABLE,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeGob1,
