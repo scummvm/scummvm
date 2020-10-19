@@ -275,9 +275,13 @@ GfxBase *GrimEngine::createRenderer(int screenW, int screenH) {
 		initGraphics(screenW, screenH, nullptr);
 	}
 
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+	bool backendCapableOpenGL = g_system->hasFeature(OSystem::kFeatureOpenGLForGame);
+#endif
+
 #if defined(USE_OPENGL_GAME)
 	// Check the OpenGL context actually supports shaders
-	if (matchingRendererType == Graphics::kRendererTypeOpenGLShaders && !OpenGLContext.shadersSupported) {
+	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders && !OpenGLContext.shadersSupported) {
 		matchingRendererType = Graphics::kRendererTypeOpenGL;
 	}
 #endif
@@ -289,12 +293,12 @@ GfxBase *GrimEngine::createRenderer(int screenW, int screenH) {
 
 	GfxBase *renderer = nullptr;
 #if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
-	if (matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
+	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
 		renderer = CreateGfxOpenGLShader();
 	}
 #endif
 #if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
-	if (matchingRendererType == Graphics::kRendererTypeOpenGL) {
+	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGL) {
 		renderer = CreateGfxOpenGL();
 	}
 #endif

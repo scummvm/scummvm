@@ -84,6 +84,9 @@
 #ifdef ENABLE_WME3D
 #include "graphics/renderer.h"
 #include "engines/util.h"
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#include "graphics/opengl/context.h"
+#endif
 #endif
 
 namespace Wintermute {
@@ -501,16 +504,27 @@ bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 #ifdef ENABLE_WME3D
 	initGraphics3d(_settings->getResWidth(), _settings->getResHeight());
 
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+	bool backendCapableOpenGL = g_system->hasFeature(OSystem::kFeatureOpenGLForGame);
+#endif
+
 	Common::String rendererConfig = ConfMan.get("renderer");
 	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
 
+#if defined(USE_OPENGL_GAME)
+	// Check the OpenGL context actually supports shaders
+	if (backendCapableOpenGL && desiredRendererType == Graphics::kRendererTypeOpenGLShaders && !OpenGLContext.shadersSupported) {
+		desiredRendererType = Graphics::kRendererTypeOpenGL;
+	}
+#endif
+
 #if defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
-	if (desiredRendererType == Graphics::kRendererTypeOpenGLShaders) {
+	if (backendCapableOpenGL && desiredRendererType == Graphics::kRendererTypeOpenGLShaders) {
 		_renderer3D = makeOpenGL3DShaderRenderer(this);
 	}
 #endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 #if defined(USE_OPENGL_GAME)
-	if (desiredRendererType == Graphics::kRendererTypeOpenGL) {
+	if (backendCapableOpenGL && desiredRendererType == Graphics::kRendererTypeOpenGL) {
 		_renderer3D = makeOpenGL3DRenderer(this);
 	}
 #endif // defined(USE_OPENGL)
