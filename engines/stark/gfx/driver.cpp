@@ -43,11 +43,13 @@ Driver *Driver::create() {
 	bool backendCapableOpenGL = g_system->hasFeature(OSystem::kFeatureOpenGLForGame);
 
 	if (backendCapableOpenGL) {
+#if defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
 		if (OpenGLContext.shadersSupported) {
 			driver = new OpenGLSDriver();
 		} else {
 			error("Your system does not have the required OpenGL capabilities");
 		}
+#endif
 	}
 #endif
 	if (driver)
