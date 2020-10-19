@@ -90,7 +90,7 @@ void QManager::clearUnneeded() {
 
 Graphics::Surface *QManager::getSurface(uint32 id, uint16 w, uint16 h) {
 	if (_resourceMap.contains(id)) {
-		QResource &res = _resourceMap.getVal(id);
+		const QResource &res = _resourceMap.getVal(id);
 		return res.type == QResource::kSurface ? res.surface : nullptr;
 	}
 
@@ -109,7 +109,7 @@ Common::SeekableReadStream *QManager::loadFileStream(uint32 id) const {
 
 Graphics::Surface *QManager::getSurface(uint32 id) {
 	if (_resourceMap.contains(id)) {
-		QResource &res = _resourceMap.getVal(id);
+		const QResource &res = _resourceMap.getVal(id);
 		return res.type == QResource::kSurface ? res.surface : nullptr;
 	}
 
@@ -131,7 +131,7 @@ Graphics::Surface *QManager::getSurface(uint32 id) {
 
 FlicDecoder *QManager::getFlic(uint32 id) {
 	if (_resourceMap.contains(id)) {
-		QResource &res = _resourceMap.getVal(id);
+		const QResource &res = _resourceMap.getVal(id);
 		return res.type == QResource::kFlic ? res.flcDecoder : nullptr;
 	}
 
