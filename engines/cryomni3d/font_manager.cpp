@@ -70,8 +70,8 @@ void FontManager::loadFonts(const Common::Array<Common::String> &fontFiles,
 
 	for (Common::Array<Common::String>::const_iterator it = fontFiles.begin(); it != fontFiles.end();
 	        it++) {
-		Graphics::Font *fontEntry = fontsCache.getVal(*it, nullptr);
-		if (fontEntry) {
+		Graphics::Font *fontEntry = nullptr;
+		if (fontsCache.tryGetVal(*it, fontEntry)) {
 			_fonts.push_back(fontEntry);
 			continue;
 		}
