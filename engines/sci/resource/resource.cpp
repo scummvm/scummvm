@@ -626,7 +626,7 @@ void ResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 }
 
 Resource *ResourceManager::testResource(ResourceId id) {
-	return _resMap.getVal(id, NULL);
+	return _resMap.getValOrDefault(id, NULL);
 }
 
 int ResourceManager::addAppropriateSources() {
@@ -1998,8 +1998,8 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 				return SCI_ERROR_NO_RESOURCE_FILES_FOUND;
 			}
 
-			Resource *resource = _resMap.getVal(resId, NULL);
-			if (!resource) {
+			Resource *resource =  NULL;
+			if (!_resMap.tryGetVal(resId,resource)) {
 				addResource(resId, source, fileOffset, 0, map->getLocationName());
 			} else {
 				// If the resource is already present in a volume, change it to
@@ -2196,7 +2196,7 @@ Resource *ResourceManager::updateResource(ResourceId resId, ResourceSource *src,
 
 Resource *ResourceManager::updateResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size, const Common::String &sourceMapLocation) {
 	// Update a patched resource, whether it exists or not
-	Resource *res = _resMap.getVal(resId, nullptr);
+	Resource *res = _resMap.getValOrDefault(resId, nullptr);
 
 	// When pulling from resource the "main" file may not even
 	// exist as both forks may be combined into MacBin

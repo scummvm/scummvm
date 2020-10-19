@@ -363,9 +363,9 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 
 	uint32 offset = 0;
 	const ResourceId mapResId(kResourceTypeMap, map->_mapNumber);
-	Resource *mapRes = _resMap.getVal(mapResId, nullptr);
+	Resource *mapRes = nullptr;
 
-	if (!mapRes) {
+	if (!_resMap.tryGetVal(mapResId,mapRes)) {
 		warning("Failed to open %s", mapResId.toString().c_str());
 		return SCI_ERROR_RESMAP_NOT_FOUND;
 	}
