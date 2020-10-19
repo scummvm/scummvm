@@ -386,6 +386,20 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
+{
+	{
+		"gob1",
+		"",
+		AD_ENTRY1s("intro.stk", "acdda40f4b20a87d4cfd760d3833a6e1", 453404),
+		JA_JPN,
+		kPlatformMacintosh,
+		ADGF_UNSTABLE,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeGob1,
+	kFeaturesAdLib,
+	0, 0, 0
+},
 
 // -- Windows --
 
