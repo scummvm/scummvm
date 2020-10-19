@@ -73,7 +73,6 @@ public:
         /** Return the configuration value for the given key.
 		 *  If no entry exists for the given key in the configuration, it is created.
 		 */
-		String &operator[](const String &key) { return _entries[key]; }
 		/** Return the configuration value for the given key.
 		 *  @note This function does *not* create a configuration entry
 		 *  for the given key if it does not exist.
