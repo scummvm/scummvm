@@ -250,7 +250,7 @@ void PoolObject<T>::Pool::removeObject(int32 id) {
 
 template <class T>
 T *PoolObject<T>::Pool::getObject(int32 id) {
-	return _map.getVal(id, NULL);
+	return _map.getValOrDefault(id, NULL);
 }
 
 template <class T>
