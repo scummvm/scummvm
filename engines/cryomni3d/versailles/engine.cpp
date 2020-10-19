@@ -1560,12 +1560,8 @@ void CryOmni3DEngine_Versailles::executeSeeAction(uint actionId) {
 		return;
 	}
 
-	const FixedImgCallback cb = _imgScripts.getVal(actionId, nullptr);
-	if (cb != nullptr) {
-		handleFixedImg(cb);
-	} else {
-		warning("Image script %u not found", actionId);
-	}
+	const FixedImgCallback cb = _imgScripts.getVal(actionId);
+	handleFixedImg(cb);
 }
 
 void CryOmni3DEngine_Versailles::executeSpeakAction(uint actionId) {
