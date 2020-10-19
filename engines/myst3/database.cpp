@@ -737,11 +737,7 @@ uint32 Database::getAgeLabelId(uint32 ageID) {
 }
 
 Common::String Database::getSoundName(uint32 id) {
-	const Common::String result = _soundNames.getVal(id, "");
-	if (result.empty())
-		error("Unable to find a sound with id %d", id);
-
-	return result;
+	return _soundNames.getVal(id);
 }
 
 void Database::loadAmbientCues(Common::ReadStream *s) {
