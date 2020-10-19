@@ -244,9 +244,11 @@ public:
 	Val &operator[](const Key &key);
 	const Val &operator[](const Key &key) const;
 
+	Val &getOrCreateVal(const Key &key);
 	Val &getVal(const Key &key);
 	const Val &getVal(const Key &key) const;
-	const Val &getVal(const Key &key, const Val &defaultVal) const;
+	const Val &getValOrDefault(const Key &key) const;
+	const Val &getValOrDefault(const Key &key, const Val &defaultVal) const;
 	bool tryGetVal(const Key &key, Val &out) const;
 	void setVal(const Key &key, const Val &val);
 
@@ -569,7 +571,7 @@ bool HashMap<Key, Val, HashFunc, EqualFunc>::contains(const Key &key) const {
 
 template<class Key, class Val, class HashFunc, class EqualFunc>
 Val &HashMap<Key, Val, HashFunc, EqualFunc>::operator[](const Key &key) {
-	return getVal(key);
+	return getOrCreateVal(key);
 }
 
 /**
@@ -586,7 +588,7 @@ const Val &HashMap<Key, Val, HashFunc, EqualFunc>::operator[](const Key &key) co
  */
 
 template<class Key, class Val, class HashFunc, class EqualFunc>
-Val &HashMap<Key, Val, HashFunc, EqualFunc>::getVal(const Key &key) {
+Val &HashMap<Key, Val, HashFunc, EqualFunc>::getOrCreateVal(const Key &key) {
 	size_type ctr = lookupAndCreateIfMissing(key);
 	assert(_storage[ctr] != nullptr);
 	return _storage[ctr]->_value;
@@ -597,8 +599,26 @@ Val &HashMap<Key, Val, HashFunc, EqualFunc>::getVal(const Key &key) {
  */
 
 template<class Key, class Val, class HashFunc, class EqualFunc>
+Val &HashMap<Key, Val, HashFunc, EqualFunc>::getVal(const Key &key) {
+	size_type ctr = lookup(key);
+	if (_storage[ctr] != nullptr)
+		return _storage[ctr]->_value;
+	else
+		error("Unknown key");
+}
+
+template<class Key, class Val, class HashFunc, class EqualFunc>
 const Val &HashMap<Key, Val, HashFunc, EqualFunc>::getVal(const Key &key) const {
-	return getVal(key, _defaultVal);
+	size_type ctr = lookup(key);
+	if (_storage[ctr] != nullptr)
+		return _storage[ctr]->_value;
+	else
+		error("Unknown key");
+}
+
+template<class Key, class Val, class HashFunc, class EqualFunc>
+const Val &HashMap<Key, Val, HashFunc, EqualFunc>::getValOrDefault(const Key &key) const {
+	return getValOrDefault(key, _defaultVal);
 }
 
 /**
@@ -606,7 +626,7 @@ const Val &HashMap<Key, Val, HashFunc, EqualFunc>::getVal(const Key &key) const 
  */
 
 template<class Key, class Val, class HashFunc, class EqualFunc>
-const Val &HashMap<Key, Val, HashFunc, EqualFunc>::getVal(const Key &key, const Val &defaultVal) const {
+const Val &HashMap<Key, Val, HashFunc, EqualFunc>::getValOrDefault(const Key &key, const Val &defaultVal) const {
 	size_type ctr = lookup(key);
 	if (_storage[ctr] != nullptr)
 		return _storage[ctr]->_value;
