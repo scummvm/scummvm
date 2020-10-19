@@ -2,6 +2,7 @@ MODULE := image
 
 MODULE_OBJS := \
 	bmp.o \
+	cel_3do.o \
 	iff.o \
 	jpeg.o \
 	pcx.o \
