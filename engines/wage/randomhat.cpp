@@ -53,7 +53,7 @@
 namespace Wage {
 
 void RandomHat::addTokens(int type, int count) {
-	_tokens.setVal(type, _tokens.getVal(type, 0) + count);
+	_tokens.setVal(type, _tokens.getValOrDefault(type, 0) + count);
 }
 
 int RandomHat::countTokens() {
