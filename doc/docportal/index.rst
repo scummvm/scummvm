@@ -26,25 +26,32 @@
       using_scummvm/the_launcher
       using_scummvm/adding_games
       using_scummvm/save_load_games
-      using_scummvm/cloud_and_lan
       using_scummvm/keyboard_shortcuts
-      using_scummvm/global_settings
-      using_scummvm/game_settings
-      using_scummvm/*
+
+
+.. toctree::
+      :caption: Settings
+      :glob:
+      :hidden:
+
+      settings/how_to
+      settings/*
 
 .. toctree::
       :caption: Games
       :glob:
       :hidden:
 
-      games/*
+      games/copy_protection
+
 
 .. toctree::
       :caption: Advanced Options
       :glob:
       :hidden:
 
-      advanced_options/*
+      advanced_options/command_line
+      advanced_options/configuration_file
 
 
 .. toctree::
@@ -52,7 +59,8 @@
       :glob:
       :hidden:
 
-      help/*
+      help/contact
+      help/reporting_bugs
 
 ====================
 Welcome to ScummVM!

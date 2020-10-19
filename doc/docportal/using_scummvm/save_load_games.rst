@@ -3,56 +3,72 @@
 Saving and loading games
 ===============================
 
-Games can be saved and loaded directly from the Global Main Menu (GMM), which can be accessed during game play by using the default :kbd:`Ctrl` + :kbd:`F5` keyboard shortcut, or the shortcut set in the :ref:`global keymap <keyglobal>`.
+Saving a game
+==============
 
-Saved games can also be loaded directly from the :ref:`Launcher <loadlauncher>` by clicking on the desired game, and then clicking the **Load** button. 
+
+Games can be saved from the Global Main Menu (GMM), which can be accessed during game play by using the default :kbd:`Ctrl` + :kbd:`F5` keyboard shortcut, or by using the shortcut set in the :doc:`../settings/keymaps` setting. 
+
+.. figure:: ../images/Launcher/gmm_save.png
+
+	The Global Main Menu, or GMM. 
+
+There are two views: list view and tile view. Toggle between the two by clicking the list and tile icons at the bottom left of the window.  
+
+.. figure:: ../images/Launcher/save_game_tile.png
+
+	Saving a game, tile view.
+
+.. figure:: ../images/Launcher/save_game_tile_desc.png
+
+	Save game decription, tile view. 
+
+.. figure:: ../images/Launcher/save_game_list.png
+
+	Saving a game, list view.  
+
 
 Autosave
 ------------
 
-For some games, ScummVM will automatically save the game every 5 minutes. The :ref:`autosave period <autosave>` can be changed in the Misc tab of the :doc:`global_settings`, or in the :doc:`configuration file <../advanced_options/configuration_file>`
+For some games, ScummVM will automatically save the game every 5 minutes. The :ref:`autosave period <autosave>` can be changed in the :doc:`Misc tab <../settings/misc>` or in the :doc:`configuration file <../advanced_options/configuration_file>`.
 
 
-The command line
---------------------
 
-Viewing saved games
-*********************
+Loading a game
+===============
 
-``--list-saves`` can be used to display the list of current saved games for the specified game, as well as the corresponding save slot. Note that this option is not available for all game engines. 
+Saved games can be loaded directly from the Launcher without starting the game first, by selecting the **Load** button.
 
-Usage:
+There are two views: list view and tile view. Toggle between the two by clicking the list and tile icons at the bottom left of the window. 
 
-.. code-block::
+In list view, the pane on the left displays a list of your saved states. Click on a saved state to highlight it. On the right, information about the highlighted state such as timestamps, screenshots and playtime is displayed. 
 
-	scummvm --list-saves --game=GAMEID
+When you have located the desired saved game:
+
+- Click **Load** to launch the game using that state.
+- Click **Delete** to delete the saved state.
+
+.. figure:: ../images/Launcher/load_game_list.png
+
+	Loading a game, list view. 
+
+In tile view, each tile shows a screenshot of the saved state, as well as the description and save slot number. Click on the tile to load that saved state.
 
 
-For example, to see the saved games for the Curse of Monkey Island, run the following on the command line:
+.. figure:: ../images/Launcher/load_game_tile.png
+  
+  Loading a game, tile view. 
 
-.. code-block::
+Saved games can also be loaded from the Global Main Menu, which can be accessed during game play by using the default :kbd:`Ctrl` + :kbd:`F5` keyboard shortcut, or by using the shortcut set in the :doc:`../settings/keymaps` setting. 
 
-	scummvm --list-saves --game=comi
 
-Loading saved games
-*********************
+.. caution::
+  - In some games you can still access the original game menu by using :kbd:`Alt` + :kbd:`F5`. You can save and load games this way, however it is not intended for this purpose and may crash ScummVM in some games. 
 
-``--save-slot`` or ``-x`` can be used to load a saved gamed directly from the command line. Where no save slot is specified, the default is the autosave. Note that this option is not available for all game engines. 
+  - There are games that do not support the save game feature, or whose saved states lack information such as playtime or screenshots. 
 
-Usage:
 
-.. code-block::
-
-	scummvm --save-slot=SLOT GAMEID
-	scummvm -x=SLOT GAMEID
-
-For example, to load the saved game at slot 0, for Flight of the Amazon Queen, run the following on the command line:
-
-.. code-block::
-
-	scummvm --save-slot=0 queen
-
-For more information on how to use ScummVM with the command line, see the :doc:`command line <../advanced_options/command_line>` page.  	
 
 Location of saved game files
 -------------------------------

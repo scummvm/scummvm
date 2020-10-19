@@ -29,6 +29,8 @@ The configuration file saves to different default locations, depending on the pl
 
 		**Windows NT4**: ``<windir>\Profiles\username\Application Data\ScummVM\scummvm.ini``
 
+		``<windir>`` refers to the Windows directory. Most commonly, this is ``C:\WINDOWS``.
+        
 		**Windows 2000/XP**: ``\Documents and Settings\username\Application Data\ScummVM\scummvm.ini``
 
 		**Window 7/Vista**: ``\Users\username\AppData\Roaming\ScummVM\scummvm.ini``
@@ -123,7 +125,8 @@ There are many recognized configuration keywords. In the table below, each keywo
 	- 4096                             
 	- 8192 
 	- 16384 
-	- 32768" 
+	- 32768"
+		":ref:`autosave_period <autosave>`", integer, 300s 
 		auto_savenames,boolean,false
 		":ref:`bilinear_filtering <bilinear>`",boolean,false,
 		boot_param,number,none,
@@ -150,6 +153,7 @@ There are many recognized configuration keywords. In the table below, each keywo
 		":ref:`enable_hq_video <hq>`",boolean,true,
 		":ref:`enable_larryscale <larry>`",boolean,true,
 		":ref:`enable_video_upscale <upscale>`",boolean,true,
+		":ref:`enable_tts <ttsenabled>`",boolean,false,
 		":ref:`extrapath <extra>`",string,None,"		path"
 		":ref:`fade_style <fade>`",boolean,true,
 		":ref:`filtering <filtering>`",boolean,false,
@@ -198,6 +202,7 @@ There are many recognized configuration keywords. In the table below, each keywo
 	- fluidsynth 
 	- timidity"
 		":ref:`GraphicsDithering <gdither>`",boolean,true,
+		":ref:`gui_browser_native <guibrowser>`", boolean, true
 		":ref:`helium_mode <helium>`",boolean,false,
 		":ref:`help_style <help>`",boolean,false,
 		":ref:`herculesfont <herc>`",boolean,false,

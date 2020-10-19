@@ -41,11 +41,25 @@ ScummVM needs access to all the data files, so it will not be able to run direct
 
 - Where there are duplicate, identical files (same name, same file size) on more than one disc, only one copy of the file is required. 
 - Where there are files that have the same name but are different on each disc, rename them. For example, where there is a ``music.clu`` on two discs, rename the files to ``music1.clu`` and ``music2.clu``.
-- If you are using a game that requires CD Audio track, the CD Audio tracks will also need to be in the game folder. See the :ref:`audio <cd>` page for more information on using CD Audio. 
 
 .. tip::
 
    The exact layout of files and folders within the game folder is not important, as long as all the files are there. 
+
+.. _cd:
+
+CD audio
+^^^^^^^^^^
+
+Some games contain one or more separate audio tracks on CD. To use these with ScummVM, they need to be extracted from the CD in .wav or .aiff format, and then converted to either .mp3, .flac or .ogg file formats. 
+
+.. tip::
+
+    Software suggestion:
+
+    `fre:ac <https://www.freac.org/>`_ is a multi-platform, open-source software, with the ability to both rip CDs and convert audio between .mp3, .ogg, .flac and .wav formats. 
+
+
 
 
 .. _macgames:
@@ -74,22 +88,20 @@ Adding the games to the Launcher
 
 1. Run ScummVM to open :doc:`../using_scummvm/the_launcher`.
 
-2. In the Launcher window, click **Add Game**. This opens a file browser. To add multiple games at once, click on the dropdown arrow next to **Add Game**, and select **Mass Add...**.
+2. In the Launcher window, click **Add Game**. This opens a file browser; either the system file browser or the ScummVM file browser. To add multiple games at once, click on the dropdown arrow next to **Add Game**, and select **Mass Add...**.
 
 .. image:: ../images/Launcher/add_game.png
    :class: with-shadow
 
 
-3.  Use the file browser to locate the folder containing the game you wish to add. Double click on a folder to open it, and use **Go up** to go back up one level. 
-
-4. Once you have selected the folder that contains the data files, click **Choose**. 
+3.  Use the file browser to locate the folder containing the game you wish to add. For the ScummVM file browser: Double click on a folder to open it, and use **Go up** to go back up one level. Once you have selected the folder that contains the data files, click **Choose**. 
 
 .. image:: ../images/Launcher/choose_game_directory.png
    :class: with-shadow
 
 .. note::
 
-   You may choose to use your :ref:`system's file browser <guibrowser>` instead by setting this option in the Misc tab of the global settings. 
+   You may choose which file browser to use by setting the **Use Native file browser  option in the :doc:`Misc <..settings/misc>` tab of the global settings. 
 
 5.  A dialog opens to allow configuration of various settings for the game. These can be reconfigured at any time, but for now everything should work at the default settings. Click **Ok**. 
 
