@@ -425,7 +425,7 @@ void Location::goToLayer(Layer *layer) {
 }
 
 ItemVisual *Location::getCharacterItem(int32 character) const {
-	return _characterItemMap.getVal(character, nullptr);
+	return _characterItemMap.getValOrDefault(character, nullptr);
 }
 
 void Location::registerCharacterItem(int32 character, ItemVisual *item) {
