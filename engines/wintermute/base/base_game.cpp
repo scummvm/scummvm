@@ -502,9 +502,8 @@ bool BaseGame::initialize1() {
 //////////////////////////////////////////////////////////////////////
 bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 #ifdef ENABLE_WME3D
-	initGraphics3d(_settings->getResWidth(), _settings->getResHeight());
-
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+	initGraphics3d(_settings->getResWidth(), _settings->getResHeight());
 	bool backendCapableOpenGL = g_system->hasFeature(OSystem::kFeatureOpenGLForGame);
 #endif
 
@@ -528,16 +527,15 @@ bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 		_renderer3D = makeOpenGL3DRenderer(this);
 	}
 #endif // defined(USE_OPENGL)
-	if (desiredRendererType == Graphics::kRendererTypeTinyGL) {
+	if (_playing3DGame && desiredRendererType == Graphics::kRendererTypeTinyGL) {
 		// TODO
 		//_renderer3D = makeTinyGL3DRenderer(this);
 	}
-	if (!_renderer3D) {
-		error("Unable to create a 3D renderer");
-		return STATUS_FAILED;
-	}
-
 	_renderer = _renderer3D;
+#if !defined(USE_OPENGL_GAME) && !defined(USE_OPENGL_SHADERS) && !defined(USE_GLES2)
+	if (!_playing3DGame && !_renderer3D)
+		_renderer = makeOSystemRenderer(this);
+#endif
 #else
 	_renderer = makeOSystemRenderer(this);
 #endif
