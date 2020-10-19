@@ -156,7 +156,7 @@ void MacFontManager::loadFontsBDF() {
 		if (font->getFamilyName() && *font->getFamilyName()) {
 			fontName = Common::String::format("%s-%s-%d", font->getFamilyName(), font->getFontSlant(), font->getFontSize());
 
-			macfont = new MacFont(_fontIds.getVal(font->getFamilyName(), kMacFontNonStandard), font->getFontSize(), parseFontSlant(font->getFontSlant()));
+			macfont = new MacFont(_fontIds.getValOrDefault(font->getFamilyName(), kMacFontNonStandard), font->getFontSize(), parseFontSlant(font->getFontSlant()));
 		} else { // Get it from the file name
 			fontName = (*it)->getName();
 
@@ -267,7 +267,7 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 				if (!fontstream) {
 					// The sfnt resource should be just a copy of a TTF
 					fontstream = fontFile->getResource(MKTAG('s', 'f', 'n', 't'), (*assoc)[i]._fontID);
-					_ttfData[_fontIds.getVal(familyName, kMacFontNonStandard)] = fontstream;
+					_ttfData[_fontIds.getValOrDefault(familyName, kMacFontNonStandard)] = fontstream;
 					continue;
 				}
 #endif
@@ -290,7 +290,7 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 
 				Common::String fontName = Common::String::format("%s-%d-%d", familyName.c_str(), (*assoc)[i]._fontStyle | familySlant, (*assoc)[i]._fontSize);
 
-				macfont = new MacFont(_fontIds.getVal(familyName, kMacFontNonStandard), (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle | familySlant);
+				macfont = new MacFont(_fontIds.getValOrDefault(familyName, kMacFontNonStandard), (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle | familySlant);
 
 				FontMan.assignFontToName(fontName, font);
 				macfont->setFont(font, false);
