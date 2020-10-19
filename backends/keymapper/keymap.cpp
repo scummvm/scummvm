@@ -68,7 +68,7 @@ void Keymap::addAction(Action *action) {
 }
 
 void Keymap::registerMapping(Action *action, const HardwareInput &hwInput) {
-	ActionArray &actionArray = _hwActionMap.getVal(hwInput);
+	ActionArray &actionArray = _hwActionMap.getOrCreateVal(hwInput);
 
 	// Don't allow an input to map to the same action multiple times
 	ActionArray::const_iterator found = find(actionArray.begin(), actionArray.end(), action);
@@ -141,7 +141,7 @@ Keymap::KeymapMatch Keymap::getMappedActions(const Event &event, ActionArray &ac
 	case EVENT_KEYUP: {
 		KeyState normalizedKeystate = KeyboardHardwareInputSet::normalizeKeyState(event.kbd);
 		HardwareInput hardwareInput = HardwareInput::createKeyboard("", normalizedKeystate, U32String());
-		actions.push_back(_hwActionMap[hardwareInput]);
+		actions.push_back(_hwActionMap.getValOrDefault(hardwareInput));
 		if (!actions.empty()) {
 			return kKeymapMatchExact;
 		}
@@ -162,7 +162,7 @@ Keymap::KeymapMatch Keymap::getMappedActions(const Event &event, ActionArray &ac
 			// Lastly check again for matches no non-sticky keyboard modifiers
 			normalizedKeystate.flags &= ~KBD_NON_STICKY;
 			hardwareInput = HardwareInput::createKeyboard("", normalizedKeystate, U32String());
-			actions.push_back(_hwActionMap[hardwareInput]);
+			actions.push_back(_hwActionMap.getValOrDefault(hardwareInput));
 			return actions.empty() ? kKeymapMatchNone : kKeymapMatchPartial;
 		}
 		break;
@@ -170,47 +170,47 @@ Keymap::KeymapMatch Keymap::getMappedActions(const Event &event, ActionArray &ac
 	case EVENT_LBUTTONDOWN:
 	case EVENT_LBUTTONUP: {
 		HardwareInput hardwareInput = HardwareInput::createMouse("", MOUSE_BUTTON_LEFT, U32String());
-		actions.push_back(_hwActionMap[hardwareInput]);
+		actions.push_back(_hwActionMap.getValOrDefault(hardwareInput));
 		break;
 	}
 	case EVENT_RBUTTONDOWN:
 	case EVENT_RBUTTONUP: {
 		HardwareInput hardwareInput = HardwareInput::createMouse("", MOUSE_BUTTON_RIGHT, U32String());
-		actions.push_back(_hwActionMap[hardwareInput]);
+		actions.push_back(_hwActionMap.getValOrDefault(hardwareInput));
 		break;
 	}
 	case EVENT_MBUTTONDOWN:
 	case EVENT_MBUTTONUP: {
 		HardwareInput hardwareInput = HardwareInput::createMouse("", MOUSE_BUTTON_MIDDLE, U32String());
-		actions.push_back(_hwActionMap[hardwareInput]);
+		actions.push_back(_hwActionMap.getValOrDefault(hardwareInput));
 		break;
 	}
 	case Common::EVENT_WHEELUP: {
 		HardwareInput hardwareInput = HardwareInput::createMouse("", MOUSE_WHEEL_UP, U32String());
-		actions.push_back(_hwActionMap[hardwareInput]);
+		actions.push_back(_hwActionMap.getValOrDefault(hardwareInput));
 		break;
 	}
 	case Common::EVENT_WHEELDOWN: {
 		HardwareInput hardwareInput = HardwareInput::createMouse("", MOUSE_WHEEL_DOWN, U32String());
-		actions.push_back(_hwActionMap[hardwareInput]);
+		actions.push_back(_hwActionMap.getValOrDefault(hardwareInput));
 		break;
 	}
 	case EVENT_X1BUTTONDOWN:
 	case EVENT_X1BUTTONUP: {
 		HardwareInput hardwareInput = HardwareInput::createMouse("", MOUSE_BUTTON_X1, U32String());
-		actions.push_back(_hwActionMap[hardwareInput]);
+		actions.push_back(_hwActionMap.getValOrDefault(hardwareInput));
 		break;
 	}
 	case EVENT_X2BUTTONDOWN:
 	case EVENT_X2BUTTONUP: {
 		HardwareInput hardwareInput = HardwareInput::createMouse("", MOUSE_BUTTON_X2, U32String());
-		actions.push_back(_hwActionMap[hardwareInput]);
+		actions.push_back(_hwActionMap.getValOrDefault(hardwareInput));
 		break;
 	}
 	case EVENT_JOYBUTTON_DOWN:
 	case EVENT_JOYBUTTON_UP: {
 		HardwareInput hardwareInput = HardwareInput::createJoystickButton("", event.joystick.button, U32String());
-		actions.push_back(_hwActionMap[hardwareInput]);
+		actions.push_back(_hwActionMap.getValOrDefault(hardwareInput));
 		break;
 	}
 	case EVENT_JOYAXIS_MOTION: {
@@ -222,14 +222,14 @@ Keymap::KeymapMatch Keymap::getMappedActions(const Event &event, ActionArray &ac
 			// Axis position zero is part of both half axes, and triggers actions bound to both
 			HardwareInput hardwareInputPos = HardwareInput::createJoystickHalfAxis("", event.joystick.axis, true, U32String());
 			HardwareInput hardwareInputNeg = HardwareInput::createJoystickHalfAxis("", event.joystick.axis, false, U32String());
-			actions.push_back(_hwActionMap[hardwareInputPos]);
-			actions.push_back(_hwActionMap[hardwareInputNeg]);
+			actions.push_back(_hwActionMap.getValOrDefault(hardwareInputPos));
+			actions.push_back(_hwActionMap.getValOrDefault(hardwareInputNeg));
 		}
 		break;
 	}
 	case EVENT_CUSTOM_BACKEND_HARDWARE: {
 		HardwareInput hardwareInput = HardwareInput::createCustom("", event.customType, U32String());
-		actions.push_back(_hwActionMap[hardwareInput]);
+		actions.push_back(_hwActionMap.getValOrDefault(hardwareInput));
 		break;
 	}
 	default:
