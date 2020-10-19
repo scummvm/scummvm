@@ -180,6 +180,11 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 		_currentReplaceWord = instr->_operand[0] - 1;
 		break;
 
+	case OPCODE_SPECIAL:
+		// Game specific opcode
+		handleSpecialOpcode(instr->_operand[0]);
+		break;
+
 	case OPCODE_TAKE_CURRENT_OBJECT:
 		item = get_item_by_noun(noun);
 		if (!item)
@@ -405,13 +410,6 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 
 		if (room->_direction[verb - 1])
 			move_to(room->_direction[verb - 1]);
-		else
-			console_println(stringLookup(STRING_CANT_GO).c_str());
-		break;
-
-	case OPCODE_MOVE_DIRECTION:
-		if (room->_direction[instr->_operand[0] - 1])
-			move_to(room->_direction[instr->_operand[0] - 1]);
 		else
 			console_println(stringLookup(STRING_CANT_GO).c_str());
 		break;
@@ -659,11 +657,6 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 		console_get_key();
 		break;
 
-	case OPCODE_SPECIAL:
-		// Game specific opcode
-		handleSpecialOpcode(instr->_operand[0]);
-		break;
-
 	case OPCODE_MOVE_DIR:
 		doMovementVerb(instr->_operand[0]);
 		break;
@@ -703,6 +696,7 @@ ComprehendGameV2::ComprehendGameV2() {
 	_opcodeMap[0x85] = OPCODE_MOVE_TO_ROOM;
 	_opcodeMap[0x86] = OPCODE_VAR_ADD;
 	_opcodeMap[0x87] = OPCODE_SET_ROOM_DESCRIPTION;
+	_opcodeMap[0x89] = OPCODE_SPECIAL;
 	_opcodeMap[0x8a] = OPCODE_VAR_SUB;
 	_opcodeMap[0x8e] = OPCODE_PRINT;
 	_opcodeMap[0x92] = OPCODE_CALL_FUNC;
@@ -716,6 +710,7 @@ ComprehendGameV2::ComprehendGameV2() {
 	_opcodeMap[0xc5] = OPCODE_SET_STRING_REPLACEMENT3;
 	_opcodeMap[0xc9] = OPCODE_SET_STRING_REPLACEMENT1;
 	_opcodeMap[0xcd] = OPCODE_SET_STRING_REPLACEMENT2;
+	_opcodeMap[0xd1] = OPCODE_MOVE_DIR;
 	_opcodeMap[0xdd] = OPCODE_VAR_INC;
 	_opcodeMap[0xe5] = OPCODE_SET_CAN_TAKE;
 	_opcodeMap[0xe9] = OPCODE_CLEAR_CAN_TAKE;
@@ -737,7 +732,6 @@ ComprehendGameV2::ComprehendGameV2() {
 	_opcodeMap[0x70] = OPCODE_CURRENT_OBJECT_NOT_PRESENT;
 	_opcodeMap[0x82] = OPCODE_MOVE_OBJECT_TO_ROOM;
 	_opcodeMap[0x84] = OPCODE_SAVE_ACTION;
-	_opcodeMap[0x89] = OPCODE_SPECIAL;
 	_opcodeMap[0x8b] = OPCODE_SET_OBJECT_DESCRIPTION;
 	_opcodeMap[0x8c] = OPCODE_MOVE_DEFAULT;
 	_opcodeMap[0x8f] = OPCODE_SET_OBJECT_LONG_DESCRIPTION;
@@ -747,11 +741,8 @@ ComprehendGameV2::ComprehendGameV2() {
 	_opcodeMap[0x9d] = OPCODE_CLEAR_FLAG;
 	_opcodeMap[0x9e] = OPCODE_INVENTORY_ROOM;
 	_opcodeMap[0xa2] = OPCODE_SET_OBJECT_GRAPHIC;
-	_opcodeMap[0xb1] = OPCODE_MOVE_DIR;
-	_opcodeMap[0xb5] = OPCODE_DESCRIBE_CURRENT_OBJECT;
 	_opcodeMap[0xc2] = OPCODE_SET_ROOM_GRAPHIC;
 	_opcodeMap[0xc6] = OPCODE_SET_OBJECT_GRAPHIC;
-	_opcodeMap[0xd1] = OPCODE_MOVE_DIRECTION;
 	_opcodeMap[0xd5] = OPCODE_DRAW_ROOM;
 	_opcodeMap[0xd9] = OPCODE_DRAW_OBJECT;
 	_opcodeMap[0xe1] = OPCODE_MOVE_OBJECT_TO_CURRENT_ROOM;
@@ -764,6 +755,7 @@ ComprehendGameV2::ComprehendGameV2() {
 void ComprehendGameV2::execute_opcode(const Instruction *instr, const Sentence *sentence,
 		FunctionState *func_state) {
 	byte noun = sentence ? sentence->_formattedWords[2] : 0;
+	Room *room = get_room(_currentRoom);
 	Item *item;
 
 	switch (_opcodeMap[getOpcode(instr)]) {
@@ -790,6 +782,13 @@ void ComprehendGameV2::execute_opcode(const Instruction *instr, const Sentence *
 		weighInventory();
 		func_set_test_result(func_state, _totalInventoryWeight + (item->_flags & ITEMF_WEIGHT_MASK) >
 			_variables[instr->_operand[1]]);
+		break;
+
+	case OPCODE_MOVE_DIR:
+		if (room->_direction[instr->_operand[0] - 1])
+			move_to(room->_direction[instr->_operand[0] - 1]);
+		else
+			console_println(stringLookup(STRING_CANT_GO).c_str());
 		break;
 
 	case OPCODE_NOT_TAKEABLE:
