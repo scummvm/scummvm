@@ -1287,14 +1287,14 @@ void upgradeTargets() {
 		// the target referred to by dom. We update several things
 
 		// Always set the engine ID and game ID explicitly (in case of legacy targets)
-		dom["engineid"] = g->engineId;
-		dom["gameid"] = g->gameId;
+		dom.setVal("engineid", g->engineId);
+		dom.setVal("gameid", g->gameId);
 
 		// Always set the GUI options. The user should not modify them, and engines might
 		// gain more features over time, so we want to keep this list up-to-date.
 		if (!g->getGUIOptions().empty()) {
 			printf("  -> update guioptions to '%s'\n", g->getGUIOptions().c_str());
-			dom["guioptions"] = g->getGUIOptions();
+			dom.setVal("guioptions", g->getGUIOptions());
 		} else if (dom.contains("guioptions")) {
 			dom.erase("guioptions");
 		}
@@ -1302,13 +1302,13 @@ void upgradeTargets() {
 		// Update the language setting but only if none has been set yet.
 		if (lang == Common::UNK_LANG && g->language != Common::UNK_LANG) {
 			printf("  -> set language to '%s'\n", Common::getLanguageCode(g->language));
-			dom["language"] = Common::getLanguageCode(g->language);
+			dom.setVal("language", Common::getLanguageCode(g->language));
 		}
 
 		// Update the platform setting but only if none has been set yet.
 		if (plat == Common::kPlatformUnknown && g->platform != Common::kPlatformUnknown) {
 			printf("  -> set platform to '%s'\n", Common::getPlatformCode(g->platform));
-			dom["platform"] = Common::getPlatformCode(g->platform);
+			dom.setVal("platform", Common::getPlatformCode(g->platform));
 		}
 
 		// TODO: We could also update the description. But not everybody will want that.
@@ -1318,7 +1318,7 @@ void upgradeTargets() {
 #if 0
 		if (desc != g->description) {
 			printf("  -> update desc from '%s' to\n                      '%s' ?\n", desc.c_str(), g->description.c_str());
-			dom["description"] = g->description;
+			dom.setVal("description", = g->description);
 		}
 #endif
 	}

@@ -441,7 +441,7 @@ void PluginManagerUncached::updateConfigWithFileName(const Common::String &engin
 
 		Common::ConfigManager::Domain *domain = ConfMan.getDomain("engine_plugin_files");
 		assert(domain);
-		(*domain)[engineId] = (*_currentPlugin)->getFileName();
+		(*domain).setVal(engineId, (*_currentPlugin)->getFileName());
 
 		ConfMan.flushToDisk();
 	}

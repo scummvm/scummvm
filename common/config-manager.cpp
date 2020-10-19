@@ -237,7 +237,7 @@ void ConfigManager::loadFromStream(SeekableReadStream &stream) {
 			value.trim();
 
 			// Finally, store the key/value pair in the active domain
-			domain[key] = value;
+			domain.setVal(key, value);
 
 			// Store comment
 			domain.setKVComment(key, comment);
@@ -522,9 +522,9 @@ void ConfigManager::set(const String &key, const String &value) {
 	// Write the new key/value pair into the active domain, resp. into
 	// the application domain if no game domain is active.
 	if (_activeDomain)
-		(*_activeDomain)[key] = value;
+		(*_activeDomain).setVal(key, value);
 	else
-		_appDomain[key] = value;
+		_appDomain.setVal(key, value);
 }
 
 void ConfigManager::setAndFlush(const String &key, const Common::String &value) {
@@ -555,7 +555,7 @@ void ConfigManager::set(const String &key, const String &value, const String &do
 		error("ConfigManager::set(%s,%s,%s) called on non-existent domain",
 		      key.c_str(), value.c_str(), domName.c_str());
 
-	(*domain)[key] = value;
+	(*domain).setVal(key, value);
 
 	// TODO/FIXME: We used to erase the given key from the transient domain
 	// here. Do we still want to do that?
@@ -570,14 +570,14 @@ void ConfigManager::set(const String &key, const String &value, const String &do
 	// to replace it in a clean fashion...
 #if 0
 	if (domName == kTransientDomain)
-		_transientDomain[key] = value;
+		_transientDomain.setVal(key, value);
 	else {
 		if (domName == kApplicationDomain) {
-			_appDomain[key] = value;
+			_appDomain.setVal(key, value;
 			if (_activeDomainName.empty() || !_gameDomains[_activeDomainName].contains(key))
 				_transientDomain.erase(key);
 		} else {
-			_gameDomains[domName][key] = value;
+			_gameDomains[domName].setVal(key, value);
 			if (domName == _activeDomainName)
 				_transientDomain.erase(key);
 		}
@@ -598,7 +598,7 @@ void ConfigManager::setBool(const String &key, bool value, const String &domName
 
 
 void ConfigManager::registerDefault(const String &key, const String &value) {
-	_defaultsDomain[key] = value;
+	_defaultsDomain.setVal(key, value);
 }
 
 void ConfigManager::registerDefault(const String &key, const char *value) {
@@ -694,7 +694,7 @@ void ConfigManager::renameDomain(const String &oldName, const String &newName, D
 	Domain &newDom = map[newName];
 	Domain::const_iterator iter;
 	for (iter = oldDom.begin(); iter != oldDom.end(); ++iter)
-		newDom[iter->_key] = iter->_value;
+		newDom.setVal(iter->_key, iter->_value);
 
 	map.erase(oldName);
 }
