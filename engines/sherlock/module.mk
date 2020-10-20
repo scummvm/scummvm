@@ -2,7 +2,6 @@ MODULE := engines/sherlock
 
 MODULE_OBJS = \
 	scalpel/scalpel.o \
-	scalpel/3do/movie_decoder.o \
 	scalpel/3do/scalpel_3do_screen.o \
 	scalpel/drivers/adlib.o \
 	scalpel/drivers/mt32.o \
