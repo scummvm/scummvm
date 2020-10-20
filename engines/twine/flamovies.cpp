@@ -116,7 +116,7 @@ void FlaMovies::drawDeltaFrame(uint8 *ptr, int32 width) {
 void FlaMovies::scaleFla2x() {
 	int32 i, j;
 	uint8 *source = (uint8 *)flaBuffer;
-	uint8 *dest = (uint8 *)_engine->workVideoBuffer;
+	uint8 *dest = (uint8 *)_engine->workVideoBuffer.getPixels();
 
 	if (_engine->cfgfile.Movie == CONF_MOVIE_FLAWIDE) {
 		for (i = 0; i < SCREEN_WIDTH / SCALE * 40; i++) {
@@ -156,18 +156,19 @@ void FlaMovies::processFrame() {
 	uint32 opcodeBlockSize;
 	uint8 opcode;
 	int32 aux = 0;
-	uint8 *ptr;
 
 	file.read(&frameData.videoSize, 1);
 	file.read(&frameData.dummy, 1);
 	file.read(&frameData.frameVar0, 4);
+	if (frameData.frameVar0 > _engine->workVideoBuffer.w * _engine->workVideoBuffer.h * _engine->workVideoBuffer.format.bpp()) {
+		return;
+	}
 
-	file.read(workVideoBufferCopy, frameData.frameVar0);
+	uint8 *ptr = (uint8*)_engine->workVideoBuffer.getPixels();
+	file.read(ptr, frameData.frameVar0);
 
 	if ((int32)frameData.videoSize <= 0)
 		return;
-
-	ptr = workVideoBufferCopy;
 
 	do {
 		opcode = *((uint8 *)ptr);
@@ -257,8 +258,6 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 		warning("Failed to open fla movie '%s'", fileNamePath.c_str());
 		return;
 	}
-
-	workVideoBufferCopy = _engine->workVideoBuffer;
 
 	file.read(&flaHeaderData.version, 6);
 	flaHeaderData.numOfFrames = file.readUint32LE();

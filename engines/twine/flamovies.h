@@ -104,8 +104,6 @@ private:
 	int32 flaSampleTable[100] {0};
 	/** Number of samples in FLA movie */
 	int32 samplesInFla = 0;
-	/** Auxiliar work video buffer */
-	uint8 *workVideoBufferCopy = nullptr;
 	/** FLA movie header data */
 	FLAHeaderStruct flaHeaderData;
 	/** FLA movie header data */

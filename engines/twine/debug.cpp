@@ -40,7 +40,7 @@ void Debug::debugFillButton(int32 X, int32 Y, int32 width, int32 height, int8 co
 	uint8 *ptr;
 	int32 offset;
 
-	ptr = _engine->frontVideoBuffer + _engine->screenLookupTable[Y] + X;
+	ptr = (uint8*)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[Y] + X;
 	offset = 640 - (width);
 
 	for (i = 0; i < height; i++) {

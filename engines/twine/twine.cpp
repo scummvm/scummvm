@@ -31,6 +31,7 @@
 #include "common/textconsole.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
+#include "graphics/surface.h"
 #include "gui/debugger.h"
 #include "twine/actor.h"
 #include "twine/animations.h"
@@ -138,9 +139,9 @@ bool TwinEEngine::hasFeature(EngineFeature f) const {
 }
 
 void TwinEEngine::allocVideoMemory() {
-	const size_t videoBufferSize = (SCREEN_WIDTH * SCREEN_HEIGHT) * sizeof(uint8);
-	workVideoBuffer = (uint8 *)malloc(videoBufferSize);
-	frontVideoBuffer = (uint8 *)malloc(videoBufferSize);
+	const Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
+	workVideoBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, format);
+	frontVideoBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, format);
 
 	int32 j = 0;
 	int32 k = 0;
@@ -803,19 +804,24 @@ void TwinEEngine::fadeBlackToWhite() {
 }
 
 void TwinEEngine::flip() {
-	g_system->copyRectToScreen(frontVideoBuffer, SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	g_system->copyRectToScreen(frontVideoBuffer.getPixels(), frontVideoBuffer.pitch, 0, 0, frontVideoBuffer.w, frontVideoBuffer.h);
 	g_system->updateScreen();
 }
 
 void TwinEEngine::copyBlockPhys(int32 left, int32 top, int32 right, int32 bottom) {
-	g_system->copyRectToScreen(frontVideoBuffer, SCREEN_WIDTH, left, top, right - left + 1, bottom - top + 1);
+	// TODO: fix this
+	//g_system->copyRectToScreen(frontVideoBuffer, SCREEN_WIDTH, left, top, right - left + 1, bottom - top + 1);
 	g_system->updateScreen();
 }
 
-void TwinEEngine::crossFade(uint8 *buffer, uint8 *palette) {
+void TwinEEngine::crossFade(const uint8 *buffer, uint8 *palette) {
 	// TODO: implement cross fading
 	g_system->copyRectToScreen(buffer, SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	g_system->updateScreen();
+}
+
+void TwinEEngine::crossFade(const Graphics::Surface &buffer, uint8 *palette) {
+	crossFade((const uint8*)buffer.getPixels(), palette);
 }
 
 void TwinEEngine::toggleFullscreen() {
