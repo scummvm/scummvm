@@ -62,9 +62,6 @@
 
 namespace TwinE {
 
-/** Engine current version */
-static const char *ENGINE_VERSION = "0.2.0";
-
 TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flags)
     : Engine(system), _gameLang(language), _gameFlags(flags), _rnd("twine") {
 	setDebugger(new GUI::Debugger());
@@ -220,6 +217,9 @@ void TwinEEngine::initConfigurations() {
 void TwinEEngine::initEngine() {
 	// getting configuration file
 	initConfigurations();
+
+	/** Engine current version */
+	const char *ENGINE_VERSION = "0.2.0";
 
 	// Show engine information
 	debug("TwinEngine v%s", ENGINE_VERSION);
