@@ -42,6 +42,8 @@
 
 #include "common/func.h"
 
+#include "common/str.h"
+
 #ifdef DEBUG_HASH_COLLISIONS
 #include "common/debug.h"
 #endif
@@ -303,6 +305,32 @@ public:
 		return (_size == 0);
 	}
 };
+
+template <class Key>
+void NORETURN_PRE unknownKeyError(Key k) NORETURN_POST {
+	error("Unknown key");
+}
+
+template<>
+void NORETURN_PRE unknownKeyError(::Common::String key) NORETURN_POST;
+template<>
+void NORETURN_PRE unknownKeyError(signed char key) NORETURN_POST;
+template<>
+void NORETURN_PRE unknownKeyError(unsigned char key) NORETURN_POST;
+template<>
+void NORETURN_PRE unknownKeyError(short signed key) NORETURN_POST;
+template<>
+void NORETURN_PRE unknownKeyError(short unsigned key) NORETURN_POST;
+template<>
+void NORETURN_PRE unknownKeyError(long signed key) NORETURN_POST;
+template<>
+void NORETURN_PRE unknownKeyError(long unsigned key) NORETURN_POST;
+template<>
+void NORETURN_PRE unknownKeyError(long long signed key) NORETURN_POST;
+template<>
+void NORETURN_PRE unknownKeyError(long long unsigned key) NORETURN_POST;
+template<>
+void NORETURN_PRE unknownKeyError(void *key) NORETURN_POST;
 
 //-------------------------------------------------------
 // HashMap functions
@@ -604,7 +632,7 @@ Val &HashMap<Key, Val, HashFunc, EqualFunc>::getVal(const Key &key) {
 	if (_storage[ctr] != nullptr)
 		return _storage[ctr]->_value;
 	else
-		error("Unknown key");
+		unknownKeyError(key);
 }
 
 template<class Key, class Val, class HashFunc, class EqualFunc>
@@ -613,7 +641,7 @@ const Val &HashMap<Key, Val, HashFunc, EqualFunc>::getVal(const Key &key) const 
 	if (_storage[ctr] != nullptr)
 		return _storage[ctr]->_value;
 	else
-		error("Unknown key");
+		unknownKeyError(key);
 }
 
 template<class Key, class Val, class HashFunc, class EqualFunc>
