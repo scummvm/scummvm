@@ -516,7 +516,7 @@ void Renderer::renderPolygons(int32 renderType, int32 color) {
 
 	int16 start, stop;
 
-	out = _engine->frontVideoBuffer + 640 * vtop;
+	out = (uint8*)_engine->frontVideoBuffer.getPixels() + 640 * vtop;
 
 	ptr1 = &polyTab[vtop];
 	ptr2 = &polyTab2[vtop];

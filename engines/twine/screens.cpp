@@ -21,6 +21,7 @@
  */
 
 #include "common/system.h"
+#include "graphics/surface.h"
 #include "twine/screens.h"
 #include "twine/hqrdepack.h"
 #include "twine/music.h"
@@ -39,7 +40,7 @@ void Screens::adelineLogo() {
 }
 
 void Screens::loadMenuImage(bool fade_in) {
-	_engine->_hqrdepack->hqrGetEntry(_engine->workVideoBuffer, Resources::HQR_RESS_FILE, RESSHQR_MENUIMG);
+	_engine->_hqrdepack->hqrGetEntry((uint8*)_engine->workVideoBuffer.getPixels(), Resources::HQR_RESS_FILE, RESSHQR_MENUIMG);
 	copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 	if (fade_in) {
 		fadeToPal(paletteRGB);
@@ -60,7 +61,7 @@ void Screens::copyPal(const uint8* in, uint8* out) {
 }
 
 void Screens::loadImage(int32 index, bool fade_in) {
-	_engine->_hqrdepack->hqrGetEntry(_engine->workVideoBuffer, Resources::HQR_RESS_FILE, index);
+	_engine->_hqrdepack->hqrGetEntry((uint8*)_engine->workVideoBuffer.getPixels(), Resources::HQR_RESS_FILE, index);
 	copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 	loadCustomPalette(index + 1);
 	if (fade_in) {
@@ -247,8 +248,12 @@ void Screens::copyScreen(const uint8 *source, uint8 *destination) {
 	}
 }
 
+void Screens::copyScreen(const Graphics::Surface& source, Graphics::Surface &destination) {
+	copyScreen((const uint8 *)source.getPixels(), (uint8 *)destination.getPixels());
+}
+
 void Screens::clearScreen() {
-	memset(_engine->frontVideoBuffer, 0, SCREEN_WIDTH * SCREEN_HEIGHT);
+	memset(_engine->frontVideoBuffer.getPixels(), 0, SCREEN_WIDTH * SCREEN_HEIGHT);
 }
 
 } // namespace TwinE

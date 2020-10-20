@@ -94,7 +94,7 @@ void Grid::copyGridMask(int32 index, int32 x, int32 y, uint8 *buffer) {
 			return;
 	}
 
-	uint8 *outPtr = _engine->frontVideoBuffer + _engine->screenLookupTable[absY] + left;
+	uint8 *outPtr = (uint8 *)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[absY] + left;
 	uint8 *inPtr = buffer + _engine->screenLookupTable[absY] + left;
 
 	do {
@@ -140,7 +140,7 @@ void Grid::drawOverModelActor(int32 X, int32 Y, int32 Z) {
 
 			if (currBrickEntry->posY + 38 > _engine->_interface->textWindowTop && currBrickEntry->posY <= _engine->_interface->textWindowBottom && currBrickEntry->y >= Y) {
 				if (currBrickEntry->x + currBrickEntry->z > Z + X) {
-					copyGridMask(currBrickEntry->index, (j * 24) - 24, currBrickEntry->posY, _engine->workVideoBuffer);
+					copyGridMask(currBrickEntry->index, (j * 24) - 24, currBrickEntry->posY, (uint8 *)_engine->workVideoBuffer.getPixels());
 				}
 			}
 		}
@@ -163,11 +163,11 @@ void Grid::drawOverSpriteActor(int32 X, int32 Y, int32 Z) {
 
 			if (currBrickEntry->posY + 38 > _engine->_interface->textWindowTop && currBrickEntry->posY <= _engine->_interface->textWindowBottom && currBrickEntry->y >= Y) {
 				if ((currBrickEntry->x == X) && (currBrickEntry->z == Z)) {
-					copyGridMask(currBrickEntry->index, (j * 24) - 24, currBrickEntry->posY, _engine->workVideoBuffer);
+					copyGridMask(currBrickEntry->index, (j * 24) - 24, currBrickEntry->posY, (uint8 *)_engine->workVideoBuffer.getPixels());
 				}
 
 				if ((currBrickEntry->x > X) || (currBrickEntry->z > Z)) {
-					copyGridMask(currBrickEntry->index, (j * 24) - 24, currBrickEntry->posY, _engine->workVideoBuffer);
+					copyGridMask(currBrickEntry->index, (j * 24) - 24, currBrickEntry->posY, (uint8 *)_engine->workVideoBuffer.getPixels());
 				}
 			}
 		}
@@ -475,7 +475,7 @@ void Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, uint8 *ptr, bool
 		right++;
 		bottom++;
 
-		outPtr = _engine->frontVideoBuffer + _engine->screenLookupTable[top] + left;
+		outPtr = (uint8 *)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[top] + left;
 
 		int32 offset = -((right - left) - SCREEN_WIDTH);
 
@@ -489,16 +489,18 @@ void Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, uint8 *ptr, bool
 					if (!(temp & 0x40)) {
 						temp = *(ptr++);
 						for (int32 i = 0; i < iteration; i++) {
-							if (x >= _engine->_interface->textWindowLeft && x < _engine->_interface->textWindowRight && y >= _engine->_interface->textWindowTop && y < _engine->_interface->textWindowBottom)
-								_engine->frontVideoBuffer[y * SCREEN_WIDTH + x] = temp;
+							if (x >= _engine->_interface->textWindowLeft && x < _engine->_interface->textWindowRight && y >= _engine->_interface->textWindowTop && y < _engine->_interface->textWindowBottom) {
+								*(uint8 *)_engine->frontVideoBuffer.getBasePtr(x, y) = temp;
+							}
 
 							x++;
 							outPtr++;
 						}
 					} else {
 						for (int32 i = 0; i < iteration; i++) {
-							if (x >= _engine->_interface->textWindowLeft && x < _engine->_interface->textWindowRight && y >= _engine->_interface->textWindowTop && y < _engine->_interface->textWindowBottom)
-								_engine->frontVideoBuffer[y * SCREEN_WIDTH + x] = *ptr;
+							if (x >= _engine->_interface->textWindowLeft && x < _engine->_interface->textWindowRight && y >= _engine->_interface->textWindowTop && y < _engine->_interface->textWindowBottom) {
+								*(uint8 *)_engine->frontVideoBuffer.getBasePtr(x, y) = *ptr;
+							}
 
 							x++;
 							ptr++;

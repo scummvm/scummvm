@@ -22,6 +22,7 @@
 
 #include "twine/redraw.h"
 #include "common/textconsole.h"
+#include "graphics/surface.h"
 #include "twine/actor.h"
 #include "twine/animations.h"
 #include "twine/collision.h"
@@ -149,7 +150,7 @@ void Redraw::blitBackgroundAreas() {
 	const RedrawStruct *currentArea = currentRedrawList;
 
 	for (i = 0; i < numOfRedrawBox; i++) {
-		_engine->_interface->blitBox(currentArea->left, currentArea->top, currentArea->right, currentArea->bottom, (int8 *)_engine->workVideoBuffer, currentArea->left, currentArea->top, (int8 *)_engine->frontVideoBuffer);
+		_engine->_interface->blitBox(currentArea->left, currentArea->top, currentArea->right, currentArea->bottom, (const int8*)_engine->workVideoBuffer.getPixels(), currentArea->left, currentArea->top, (int8*)_engine->frontVideoBuffer.getPixels());
 		currentArea++;
 	}
 }
@@ -393,7 +394,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 							addRedrawArea(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, renderRight, renderBottom);
 
 							if (actor2->staticFlags.bIsBackgrounded && bgRedraw == 1) {
-								_engine->_interface->blitBox(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, renderRight, renderBottom, (int8 *)_engine->frontVideoBuffer, _engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, (int8 *)_engine->workVideoBuffer);
+								_engine->_interface->blitBox(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, renderRight, renderBottom, (const int8*)_engine->frontVideoBuffer.getPixels(), _engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, (int8*)_engine->workVideoBuffer.getPixels());
 							}
 						}
 					}
@@ -481,7 +482,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 					addRedrawArea(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, _engine->_interface->textWindowRight, _engine->_interface->textWindowBottom);
 
 					if (actor2->staticFlags.bIsBackgrounded && bgRedraw == 1) {
-						_engine->_interface->blitBox(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, _engine->_interface->textWindowRight, _engine->_interface->textWindowBottom, (int8 *)_engine->frontVideoBuffer, _engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, (int8 *)_engine->workVideoBuffer);
+						_engine->_interface->blitBox(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, _engine->_interface->textWindowRight, _engine->_interface->textWindowBottom, (const int8*)_engine->frontVideoBuffer.getPixels(), _engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, (int8*)_engine->workVideoBuffer.getPixels());
 					}
 
 					// show clipping area
@@ -763,25 +764,22 @@ void Redraw::drawBubble(int32 actorIdx) {
 }
 
 void Redraw::zoomScreenScale() {
-	uint8 *dest;
-	uint8 *zoomWorkVideoBuffer = (uint8 *)malloc((SCREEN_WIDTH * SCREEN_HEIGHT) * sizeof(uint8));
-	if (!zoomWorkVideoBuffer) {
-		error("Failed to allocate memory for the scale buffer");
-	}
-	memcpy(zoomWorkVideoBuffer, _engine->workVideoBuffer, SCREEN_WIDTH * SCREEN_HEIGHT);
+	Graphics::Surface zoomWorkVideoBuffer;
+	zoomWorkVideoBuffer.copyFrom(_engine->workVideoBuffer);
 
-	dest = _engine->workVideoBuffer;
-
-	for (int h = 0; h < SCREEN_HEIGHT; h++) {
-		for (int w = 0; w < SCREEN_WIDTH; w++) {
-			*dest++ = *zoomWorkVideoBuffer;
-			*dest++ = *zoomWorkVideoBuffer++;
+	// TODO: this is broken
+	const uint8 *src = (const uint8*)zoomWorkVideoBuffer.getPixels();
+	uint8 *dest = (uint8*)_engine->workVideoBuffer.getPixels();
+	for (int h = 0; h < zoomWorkVideoBuffer.h; h++) {
+		for (int w = 0; w < zoomWorkVideoBuffer.w; w++) {
+			*dest++ = *src;
+			*dest++ = *src++;
 		}
 		//memcpy(dest, dest - SCREEN_WIDTH, SCREEN_WIDTH);
 		//dest += SCREEN_WIDTH;
 	}
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-	free(zoomWorkVideoBuffer);
+	zoomWorkVideoBuffer.free();
 }
 
 } // namespace TwinE

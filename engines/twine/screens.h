@@ -24,6 +24,7 @@
 #define TWINE_SCREENS_H
 
 #include "common/scummsys.h"
+#include "graphics/surface.h"
 #include "twine/twine.h"
 
 namespace TwinE {
@@ -37,13 +38,13 @@ public:
 	Screens(TwinEEngine *engine) : _engine(engine) {}
 
 	/** In-game palette (should not be used, except in special case. otherwise use other images functions instead) */
-	uint8 palette[NUMOFCOLORS * 3] {0};
+	uint8 palette[NUMOFCOLORS * 3]{0};
 
 	/** converted in-game palette */
-	uint8 paletteRGB[NUMOFCOLORS * 3] {0};
+	uint8 paletteRGB[NUMOFCOLORS * 3]{0};
 
 	/** converted custom palette */
-	uint8 paletteRGBCustom[NUMOFCOLORS * 3] {0};
+	uint8 paletteRGBCustom[NUMOFCOLORS * 3]{0};
 
 	/** flag to check if a custom palette is in use */
 	int16 palCustom = 0;
@@ -61,12 +62,12 @@ public:
 	uint8 *mainPalette = nullptr;
 
 	/** converted in-game palette */
-	uint8 mainPaletteRGB[NUMOFCOLORS * 3] {0};
+	uint8 mainPaletteRGB[NUMOFCOLORS * 3]{0};
 
 	/** Load and display Adeline Logo */
 	void adelineLogo();
 
-	void copyPal(const uint8* in, uint8* out);
+	void copyPal(const uint8 *in, uint8 *out);
 
 	/**
 	 * Load a custom palette
@@ -136,8 +137,10 @@ public:
 	 */
 	void fadeToBlack(uint8 *palette);
 
-	/** Fade image with another palette source
-	@param palette current palette to fade */
+	/**
+	 * Fade image with another palette source
+	 * @param palette current palette to fade
+	 */
 	void fadeToPal(uint8 *palette);
 
 	/** Fade black palette to white palette */
@@ -146,18 +149,25 @@ public:
 	/** Resets both in-game and sdl palettes */
 	void setBackPal();
 
-	/** Fade palette to red palette
-	@param palette current palette to fade */
+	/**
+	 * Fade palette to red palette
+	 * @param palette current palette to fade
+	 */
 	void fadePalRed(uint8 *palette);
 
-	/** Fade red to palette
-	@param palette current palette to fade */
+	/**
+	 * Fade red to palette
+	 * @param palette current palette to fade
+	 */
 	void fadeRedPal(uint8 *palette);
 
-	/** Copy a determinate screen buffer to another
-	@param source screen buffer
-	@param destination screen buffer */
+	/**
+	 * Copy a determinate screen buffer to another
+	 * @param source screen buffer
+	 * @param destination screen buffer
+	 */
 	void copyScreen(const uint8 *source, uint8 *destination);
+	void copyScreen(const Graphics::Surface &source, Graphics::Surface &destination);
 
 	/** Clear front buffer screen */
 	void clearScreen();

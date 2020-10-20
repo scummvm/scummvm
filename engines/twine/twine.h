@@ -218,9 +218,9 @@ public:
 	int16 rightMouse = 0;
 
 	/** Work video buffer */
-	uint8 *workVideoBuffer = nullptr;
+	Graphics::Surface workVideoBuffer;
 	/** Main game video buffer */
-	uint8 *frontVideoBuffer = nullptr;
+	Graphics::Surface frontVideoBuffer;
 
 	/** temporary screen table */
 	int32 screenLookupTable[2000]{0};
@@ -280,7 +280,8 @@ public:
 	 * @param buffer screen buffer
 	 * @param palette new palette to cross fade
 	 */
-	void crossFade(uint8 *buffer, uint8 *palette);
+	void crossFade(const uint8 *buffer, uint8 *palette);
+	void crossFade(const Graphics::Surface &buffer, uint8 *palette);
 
 	/** Switch between window and fullscreen modes */
 	void toggleFullscreen();

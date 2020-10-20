@@ -114,7 +114,7 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 		endHeight = -endHeight;
 	}
 
-	out = _engine->frontVideoBuffer + _engine->screenLookupTable[startHeight] + startWidth;
+	out = (uint8*)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[startHeight] + startWidth;
 
 	color = currentLineColor;
 	if (endWidth < endHeight) { // significant slope
@@ -154,10 +154,10 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 	}
 }
 
-void Interface::blitBox(int32 left, int32 top, int32 right, int32 bottom, int8 *source, int32 leftDest, int32 topDest, int8 *dest) {
+void Interface::blitBox(int32 left, int32 top, int32 right, int32 bottom, const int8 *source, int32 leftDest, int32 topDest, int8 *dest) {
 	int32 width;
 	int32 height;
-	int8 *s;
+	const int8 *s;
 	int8 *d;
 	int32 insideLine;
 	int32 temp3;
@@ -215,7 +215,7 @@ void Interface::drawTransparentBox(int32 left, int32 top, int32 right, int32 bot
 	if (bottom > SCREEN_TEXTLIMIT_BOTTOM)
 		bottom = SCREEN_TEXTLIMIT_BOTTOM;
 
-	pos = _engine->screenLookupTable[top] + _engine->frontVideoBuffer + left;
+	pos = _engine->screenLookupTable[top] + (uint8*)_engine->frontVideoBuffer.getPixels() + left;
 	height2 = height = bottom - top;
 	height2++;
 
@@ -263,7 +263,7 @@ void Interface::drawSplittedBox(int32 left, int32 top, int32 right, int32 bottom
 	// cropping
 	offset = -((right - left) - SCREEN_WIDTH);
 
-	ptr = _engine->frontVideoBuffer + _engine->screenLookupTable[top] + left;
+	ptr = (uint8*)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[top] + left;
 
 	for (x = top; x < bottom; x++) {
 		for (y = left; y < right; y++) {
