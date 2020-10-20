@@ -34,9 +34,27 @@ static const PlainGameDescriptor twineGames[] = {
 static const ADGameDescription twineGameDescriptions[] = {
 	{
 		"twine",
-		"GOG 1.0",
+		"GOG 1.0 English",
 		AD_ENTRY1s("text.hqr", "ae7343552f8fbd17a1fc6cea2197a912", 248654),
 		Common::EN_ANY,
+		Common::kPlatformDOS,
+		0,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"twine",
+		"GOG 1.0 French",
+		AD_ENTRY1s("text.hqr", "ae7343552f8fbd17a1fc6cea2197a912", 248654),
+		Common::FR_FRA,
+		Common::kPlatformDOS,
+		0,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"twine",
+		"GOG 1.0 German",
+		AD_ENTRY1s("text.hqr", "ae7343552f8fbd17a1fc6cea2197a912", 248654),
+		Common::DE_DEU,
 		Common::kPlatformDOS,
 		0,
 		GUIO1(GUIO_NONE)
